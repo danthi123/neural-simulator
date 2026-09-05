@@ -163,13 +163,17 @@ class AffectProductionOrgan:
         appraisal and the V- ladder for a negative one, so the held differential is genuinely signed. `lesion`
         clamps affect_out=0 -> the readout collapses (the load-bearing proof). Returns the differential + rates.
 
-        BOARD-#84 ADAPTATION (2026-09-05, default-OFF de-risk; scaffold-retirement backlog rank 5):
-        `appraisal_interoceptive_enabled()` routes this call through `research.runners.
+        BOARD-#84 ADAPTATION (2026-09-05, PRODUCTION-DEFAULT-ON as of the same-day flip; scaffold-retirement
+        backlog rank 5): `appraisal_interoceptive_enabled()` routes this call through `research.runners.
         _appraisal_interoceptive_ladder_derisk.AppraisalInteroceptiveLadder` -- the SAME ladder spec (reused by
         import) driven by a real interoceptive-relay CURRENT afferent (the board #49/#81 pattern) instead of the
-        `nm.set_concentration(...)` write below. Default (env var unset) -> this method's body below is
-        COMPLETELY UNCHANGED -- byte-identical-off by construction (a distinct code path, not a shared one with
-        new parameters). See `research/findings/` for the de-risk verdict."""
+        `nm.set_concentration(...)` write below. Default (env var unset) -> NOW takes this branch (the new
+        production default). The ESCAPE HATCH (`BRAIN_AFFECT_APPRAISAL_INTEROCEPTIVE=0`) -> this method's body
+        below runs, COMPLETELY UNCHANGED -- byte-identical-to-pre-flip by construction (a distinct code path,
+        not a shared one with new parameters), re-verified post-flip against the pre-recorded 6-seed host
+        reference. See `research/findings/2026-09-05-gateB-appraisal-interoceptive-afferent-derisk-GO.md` (the de-risk)
+        and `research/findings/2026-09-05-gateB-appraisal-interoceptive-production-flip-GO.md` (the flip
+        verification) for the verdicts."""
         self.ensure_built()
         if appraisal_interoceptive_enabled():
             from research.runners._appraisal_interoceptive_ladder_derisk import get_ladder
@@ -242,16 +246,19 @@ def affect_lesioned() -> bool:
 
 
 def appraisal_interoceptive_enabled() -> bool:
-    """Default-OFF de-risk flag (board-#84 adaptation, scaffold-retirement backlog rank 5).
-    `BRAIN_AFFECT_APPRAISAL_INTEROCEPTIVE` truthy (1/true/on/yes) routes the Gate-B appraisal through the
-    interoceptive-relay CURRENT afferent (`research.runners._appraisal_interoceptive_ladder_derisk.
-    AppraisalInteroceptiveLadder`) instead of the direct host `nm.set_concentration(...)` write in
-    `AffectProductionOrgan.read_differential`. Unset/0/false/no/off -> the ORIGINAL, byte-unchanged host-write
-    path (the current production default)."""
+    """PRODUCTION-DEFAULT-ON (2026-09-05 flip; was a default-OFF de-risk flag, scaffold-retirement backlog rank
+    5). Unset -> ON: the Gate-B appraisal routes through the interoceptive-relay CURRENT afferent
+    (`research.runners._appraisal_interoceptive_ladder_derisk.AppraisalInteroceptiveLadder`) instead of the
+    direct host `nm.set_concentration(...)` write in `AffectProductionOrgan.read_differential` — matching the
+    board #49/#81 pattern already running in production for the same substrate. `BRAIN_AFFECT_APPRAISAL_
+    INTEROCEPTIVE` in {0,false,no,off} -> the ESCAPE HATCH: reverts to the ORIGINAL, byte-unchanged host-write
+    path (the pre-flip production default), for instant rollback. See `research/findings/
+    2026-09-05-gateB-appraisal-interoceptive-production-flip-GO.md` for the flip verification (6-seed
+    mechanism-level + integrated handler-level, no-regression + load-bearing + anti-hollow)."""
     v = os.environ.get("BRAIN_AFFECT_APPRAISAL_INTEROCEPTIVE")
     if v is None:
-        return False
-    return v.strip().lower() in ("1", "true", "yes", "on")
+        return True
+    return v.strip().lower() not in ("0", "false", "no", "off", "")
 
 
 def appraisal_interoceptive_lesioned() -> bool:

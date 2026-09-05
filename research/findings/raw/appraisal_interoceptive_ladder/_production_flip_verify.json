@@ -1,0 +1,927 @@
+{
+  "runner": "_appraisal_interoceptive_production_flip_verify",
+  "go": true,
+  "status": "GO",
+  "verdict": "GO -- production flip of Gate-B appraisal-via-interoceptive-afferent (BRAIN_AFFECT_APPRAISAL_INTEROCEPTIVE default-ON). 6/6 seeds pass every mechanism-level check (default genuinely on, sign+ordered-tracking in the realistic band, downstream load-bearing intact AND provably hollow-under-lesion, the pre-existing readout lesion unchanged, the escape hatch exact-matching the pre-recorded host reference). Integrated handler-level (webapp.server.brain_chat, seed=42, real production organs): no-regression panel holds (recalled_svo/abstained/verified byte-identical whichever mechanism realizes the affect read); the live hollow-mouth check holds (a strongly-primed positive vs negative mood genuinely changes tone_level/forthcomingness through a real conversational turn, and that difference VANISHES once the new synapse is lesioned, while the recalled fact never moves).",
+  "n_seeds_go_phase1": 6,
+  "n_seeds": 6,
+  "phase1_per_seed": [
+    {
+      "seed": 42,
+      "elapsed_seconds": 32.3,
+      "default_is_on": true,
+      "intact_diffs": [
+        -0.08333333333333333,
+        -0.059166666666666666,
+        -0.03888888888888889,
+        0.0,
+        0.0,
+        0.0,
+        0.03777777777777778,
+        0.059722222222222225,
+        0.08638888888888889
+      ],
+      "intact_n_sentences": [
+        1,
+        1,
+        1,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4
+      ],
+      "intact_manners": [
+        "Keep the words cat, sat, mat and the verb 'sat'. Write ONE short, blunt, matter-of-fact sentence.",
+        "Keep the words cat, sat, mat and the verb 'sat'. Write ONE short, blunt, matter-of-fact sentence.",
+        "Keep the words cat, sat, mat and the verb 'sat'. Write ONE short, blunt, matter-of-fact sentence.",
+        "",
+        "",
+        "",
+        "Keep the words cat, sat, mat and the verb 'sat'. Write ONE short, warm, friendly sentence.",
+        "Keep the words cat, sat, mat and the verb 'sat'. Write ONE short, warm, friendly sentence.",
+        "Keep the words cat, sat, mat and the verb 'sat'. Write ONE short, warm, friendly sentence."
+      ],
+      "corr_new": 0.9744278784448785,
+      "range_new": 0.16972222222222222,
+      "signs_ok_realistic_band": true,
+      "downstream_varies_intact": true,
+      "readout_lesion_values": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "readout_lesion_collapses": true,
+      "intero_lesion_diffs": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "intero_lesion_n_sentences": [
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4
+      ],
+      "range_intero_lesioned": 0.0,
+      "downstream_collapses_under_intero_lesion": true,
+      "relay_enc_intact": 0.9592845981529566,
+      "relay_enc_under_intero_lesion": 0.9592845981529566,
+      "intero_synapse_owns_range_frac": 1.0,
+      "off_diffs": [
+        -0.06638888888888889,
+        -0.058611111111111114,
+        -0.035833333333333335,
+        -0.020277777777777777,
+        0.0,
+        0.021944444444444444,
+        0.03944444444444444,
+        0.06138888888888889,
+        0.07944444444444444
+      ],
+      "off_reference_diffs": [
+        -0.06638888888888889,
+        -0.058611111111111114,
+        -0.035833333333333335,
+        -0.020277777777777777,
+        0.0,
+        0.021944444444444444,
+        0.03944444444444444,
+        0.06138888888888889,
+        0.07944444444444444
+      ],
+      "off_mechanism_absent": true,
+      "escape_exact_match": true,
+      "GO": true
+    },
+    {
+      "seed": 43,
+      "elapsed_seconds": 35.2,
+      "default_is_on": true,
+      "intact_diffs": [
+        -0.07833333333333334,
+        -0.06305555555555556,
+        -0.03805555555555556,
+        0.0,
+        0.0,
+        0.0,
+        0.0375,
+        0.06194444444444445,
+        0.08555555555555555
+      ],
+      "intact_n_sentences": [
+        1,
+        1,
+        1,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4
+      ],
+      "intact_manners": [
+        "Keep the words cat, sat, mat and the verb 'sat'. Write ONE short, blunt, matter-of-fact sentence.",
+        "Keep the words cat, sat, mat and the verb 'sat'. Write ONE short, blunt, matter-of-fact sentence.",
+        "Keep the words cat, sat, mat and the verb 'sat'. Write ONE short, blunt, matter-of-fact sentence.",
+        "",
+        "",
+        "",
+        "Keep the words cat, sat, mat and the verb 'sat'. Write ONE short, warm, friendly sentence.",
+        "Keep the words cat, sat, mat and the verb 'sat'. Write ONE short, warm, friendly sentence.",
+        "Keep the words cat, sat, mat and the verb 'sat'. Write ONE short, warm, friendly sentence."
+      ],
+      "corr_new": 0.9732373943548993,
+      "range_new": 0.1638888888888889,
+      "signs_ok_realistic_band": true,
+      "downstream_varies_intact": true,
+      "readout_lesion_values": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "readout_lesion_collapses": true,
+      "intero_lesion_diffs": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "intero_lesion_n_sentences": [
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4
+      ],
+      "range_intero_lesioned": 0.0,
+      "downstream_collapses_under_intero_lesion": true,
+      "relay_enc_intact": 0.9598672312214653,
+      "relay_enc_under_intero_lesion": 0.9598672312214653,
+      "intero_synapse_owns_range_frac": 1.0,
+      "off_diffs": [
+        -0.07055555555555555,
+        -0.06027777777777778,
+        -0.03722222222222222,
+        -0.021666666666666667,
+        0.0,
+        0.022222222222222223,
+        0.03777777777777778,
+        0.059444444444444446,
+        0.06861111111111111
+      ],
+      "off_reference_diffs": [
+        -0.07055555555555555,
+        -0.06027777777777778,
+        -0.03722222222222222,
+        -0.021666666666666667,
+        0.0,
+        0.022222222222222223,
+        0.03777777777777778,
+        0.059444444444444446,
+        0.06861111111111111
+      ],
+      "off_mechanism_absent": true,
+      "escape_exact_match": true,
+      "GO": true
+    },
+    {
+      "seed": 44,
+      "elapsed_seconds": 33.6,
+      "default_is_on": true,
+      "intact_diffs": [
+        -0.09277777777777778,
+        -0.06861111111111111,
+        -0.044444444444444446,
+        0.0,
+        0.0,
+        0.0,
+        0.03861111111111111,
+        0.0625,
+        0.0775
+      ],
+      "intact_n_sentences": [
+        1,
+        1,
+        1,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4
+      ],
+      "intact_manners": [
+        "Keep the words cat, sat, mat and the verb 'sat'. Write ONE short, blunt, matter-of-fact sentence.",
+        "Keep the words cat, sat, mat and the verb 'sat'. Write ONE short, blunt, matter-of-fact sentence.",
+        "Keep the words cat, sat, mat and the verb 'sat'. Write ONE short, blunt, matter-of-fact sentence.",
+        "",
+        "",
+        "",
+        "Keep the words cat, sat, mat and the verb 'sat'. Write ONE short, warm, friendly sentence.",
+        "Keep the words cat, sat, mat and the verb 'sat'. Write ONE short, warm, friendly sentence.",
+        "Keep the words cat, sat, mat and the verb 'sat'. Write ONE short, warm, friendly sentence."
+      ],
+      "corr_new": 0.9727534957017424,
+      "range_new": 0.17027777777777778,
+      "signs_ok_realistic_band": true,
+      "downstream_varies_intact": true,
+      "readout_lesion_values": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "readout_lesion_collapses": true,
+      "intero_lesion_diffs": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "intero_lesion_n_sentences": [
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4
+      ],
+      "range_intero_lesioned": 0.0,
+      "downstream_collapses_under_intero_lesion": true,
+      "relay_enc_intact": 0.96011789707475,
+      "relay_enc_under_intero_lesion": 0.96011789707475,
+      "intero_synapse_owns_range_frac": 1.0,
+      "off_diffs": [
+        -0.0811111111111111,
+        -0.06222222222222222,
+        -0.0375,
+        -0.022222222222222223,
+        0.0,
+        0.023333333333333334,
+        0.03888888888888889,
+        0.049444444444444444,
+        0.06944444444444445
+      ],
+      "off_reference_diffs": [
+        -0.0811111111111111,
+        -0.06222222222222222,
+        -0.0375,
+        -0.022222222222222223,
+        0.0,
+        0.023333333333333334,
+        0.03888888888888889,
+        0.049444444444444444,
+        0.06944444444444445
+      ],
+      "off_mechanism_absent": true,
+      "escape_exact_match": true,
+      "GO": true
+    },
+    {
+      "seed": 100,
+      "elapsed_seconds": 30.4,
+      "default_is_on": true,
+      "intact_diffs": [
+        -0.07583333333333334,
+        -0.058888888888888886,
+        -0.03638888888888889,
+        0.0,
+        0.0,
+        0.0,
+        0.04138888888888889,
+        0.05305555555555556,
+        0.07861111111111112
+      ],
+      "intact_n_sentences": [
+        1,
+        1,
+        1,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4
+      ],
+      "intact_manners": [
+        "Keep the words cat, sat, mat and the verb 'sat'. Write ONE short, blunt, matter-of-fact sentence.",
+        "Keep the words cat, sat, mat and the verb 'sat'. Write ONE short, blunt, matter-of-fact sentence.",
+        "Keep the words cat, sat, mat and the verb 'sat'. Write ONE short, blunt, matter-of-fact sentence.",
+        "",
+        "",
+        "",
+        "Keep the words cat, sat, mat and the verb 'sat'. Write ONE short, warm, friendly sentence.",
+        "Keep the words cat, sat, mat and the verb 'sat'. Write ONE short, warm, friendly sentence.",
+        "Keep the words cat, sat, mat and the verb 'sat'. Write ONE short, warm, friendly sentence."
+      ],
+      "corr_new": 0.9742291021939115,
+      "range_new": 0.15444444444444444,
+      "signs_ok_realistic_band": true,
+      "downstream_varies_intact": true,
+      "readout_lesion_values": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "readout_lesion_collapses": true,
+      "intero_lesion_diffs": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "intero_lesion_n_sentences": [
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4
+      ],
+      "range_intero_lesioned": 0.0,
+      "downstream_collapses_under_intero_lesion": true,
+      "relay_enc_intact": 0.9598382401777849,
+      "relay_enc_under_intero_lesion": 0.9598382401777849,
+      "intero_synapse_owns_range_frac": 1.0,
+      "off_diffs": [
+        -0.06944444444444445,
+        -0.050277777777777775,
+        -0.03888888888888889,
+        -0.02361111111111111,
+        0.0,
+        0.019166666666666665,
+        0.03361111111111111,
+        0.05694444444444444,
+        0.06583333333333333
+      ],
+      "off_reference_diffs": [
+        -0.06944444444444445,
+        -0.050277777777777775,
+        -0.03888888888888889,
+        -0.02361111111111111,
+        0.0,
+        0.019166666666666665,
+        0.03361111111111111,
+        0.05694444444444444,
+        0.06583333333333333
+      ],
+      "off_mechanism_absent": true,
+      "escape_exact_match": true,
+      "GO": true
+    },
+    {
+      "seed": 101,
+      "elapsed_seconds": 83.8,
+      "default_is_on": true,
+      "intact_diffs": [
+        -0.08194444444444444,
+        -0.05416666666666667,
+        -0.041666666666666664,
+        0.0,
+        0.0,
+        0.0,
+        0.035,
+        0.04861111111111111,
+        0.07472222222222222
+      ],
+      "intact_n_sentences": [
+        1,
+        1,
+        1,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4
+      ],
+      "intact_manners": [
+        "Keep the words cat, sat, mat and the verb 'sat'. Write ONE short, blunt, matter-of-fact sentence.",
+        "Keep the words cat, sat, mat and the verb 'sat'. Write ONE short, blunt, matter-of-fact sentence.",
+        "Keep the words cat, sat, mat and the verb 'sat'. Write ONE short, blunt, matter-of-fact sentence.",
+        "",
+        "",
+        "",
+        "Keep the words cat, sat, mat and the verb 'sat'. Write ONE short, warm, friendly sentence.",
+        "Keep the words cat, sat, mat and the verb 'sat'. Write ONE short, warm, friendly sentence.",
+        "Keep the words cat, sat, mat and the verb 'sat'. Write ONE short, warm, friendly sentence."
+      ],
+      "corr_new": 0.9742045950332303,
+      "range_new": 0.15666666666666668,
+      "signs_ok_realistic_band": true,
+      "downstream_varies_intact": true,
+      "readout_lesion_values": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "readout_lesion_collapses": true,
+      "intero_lesion_diffs": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "intero_lesion_n_sentences": [
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4
+      ],
+      "range_intero_lesioned": 0.0,
+      "downstream_collapses_under_intero_lesion": true,
+      "relay_enc_intact": 0.959452364811305,
+      "relay_enc_under_intero_lesion": 0.959452364811305,
+      "intero_synapse_owns_range_frac": 1.0,
+      "off_diffs": [
+        -0.075,
+        -0.0575,
+        -0.03722222222222222,
+        -0.020277777777777777,
+        0.0,
+        0.021111111111111112,
+        0.035277777777777776,
+        0.058888888888888886,
+        0.06722222222222222
+      ],
+      "off_reference_diffs": [
+        -0.075,
+        -0.0575,
+        -0.03722222222222222,
+        -0.020277777777777777,
+        0.0,
+        0.021111111111111112,
+        0.035277777777777776,
+        0.058888888888888886,
+        0.06722222222222222
+      ],
+      "off_mechanism_absent": true,
+      "escape_exact_match": true,
+      "GO": true
+    },
+    {
+      "seed": 102,
+      "elapsed_seconds": 92.8,
+      "default_is_on": true,
+      "intact_diffs": [
+        -0.07916666666666666,
+        -0.06,
+        -0.03611111111111111,
+        0.0,
+        0.0,
+        0.0,
+        0.03777777777777778,
+        0.060833333333333336,
+        0.07972222222222222
+      ],
+      "intact_n_sentences": [
+        1,
+        1,
+        1,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4
+      ],
+      "intact_manners": [
+        "Keep the words cat, sat, mat and the verb 'sat'. Write ONE short, blunt, matter-of-fact sentence.",
+        "Keep the words cat, sat, mat and the verb 'sat'. Write ONE short, blunt, matter-of-fact sentence.",
+        "Keep the words cat, sat, mat and the verb 'sat'. Write ONE short, blunt, matter-of-fact sentence.",
+        "",
+        "",
+        "",
+        "Keep the words cat, sat, mat and the verb 'sat'. Write ONE short, warm, friendly sentence.",
+        "Keep the words cat, sat, mat and the verb 'sat'. Write ONE short, warm, friendly sentence.",
+        "Keep the words cat, sat, mat and the verb 'sat'. Write ONE short, warm, friendly sentence."
+      ],
+      "corr_new": 0.9738510152226113,
+      "range_new": 0.15888888888888889,
+      "signs_ok_realistic_band": true,
+      "downstream_varies_intact": true,
+      "readout_lesion_values": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "readout_lesion_collapses": true,
+      "intero_lesion_diffs": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "intero_lesion_n_sentences": [
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4
+      ],
+      "range_intero_lesioned": 0.0,
+      "downstream_collapses_under_intero_lesion": true,
+      "relay_enc_intact": 0.9610662760615503,
+      "relay_enc_under_intero_lesion": 0.9610662760615503,
+      "intero_synapse_owns_range_frac": 1.0,
+      "off_diffs": [
+        -0.06888888888888889,
+        -0.06166666666666667,
+        -0.03666666666666667,
+        -0.021111111111111112,
+        0.0,
+        0.02388888888888889,
+        0.04027777777777778,
+        0.06277777777777778,
+        0.07138888888888889
+      ],
+      "off_reference_diffs": [
+        -0.06888888888888889,
+        -0.06166666666666667,
+        -0.03666666666666667,
+        -0.021111111111111112,
+        0.0,
+        0.02388888888888889,
+        0.04027777777777778,
+        0.06277777777777778,
+        0.07138888888888889
+      ],
+      "off_mechanism_absent": true,
+      "escape_exact_match": true,
+      "GO": true
+    }
+  ],
+  "phase2_no_regression": {
+    "ok": true,
+    "rows": [
+      {
+        "q": "what does dog chase?",
+        "cls": "stored",
+        "new_recalled": [
+          "dog",
+          "chase",
+          "cat"
+        ],
+        "old_recalled": [
+          "dog",
+          "chase",
+          "cat"
+        ],
+        "new_abstained": false,
+        "old_abstained": false,
+        "identical": true,
+        "answered_ok": true,
+        "moat_ok": true,
+        "both_answer": true
+      },
+      {
+        "q": "what does cat eat?",
+        "cls": "stored",
+        "new_recalled": [
+          "cat",
+          "eat",
+          "fish"
+        ],
+        "old_recalled": [
+          "cat",
+          "eat",
+          "fish"
+        ],
+        "new_abstained": false,
+        "old_abstained": false,
+        "identical": true,
+        "answered_ok": true,
+        "moat_ok": true,
+        "both_answer": true
+      },
+      {
+        "q": "what does brain use?",
+        "cls": "stored",
+        "new_recalled": [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        "old_recalled": [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        "new_abstained": false,
+        "old_abstained": false,
+        "identical": true,
+        "answered_ok": true,
+        "moat_ok": true,
+        "both_answer": true
+      },
+      {
+        "q": "what does fish fly?",
+        "cls": "unstored",
+        "new_recalled": null,
+        "old_recalled": null,
+        "new_abstained": true,
+        "old_abstained": true,
+        "identical": true,
+        "answered_ok": true,
+        "moat_ok": true,
+        "both_answer": true
+      },
+      {
+        "q": "what does bird sing?",
+        "cls": "unstored",
+        "new_recalled": null,
+        "old_recalled": null,
+        "new_abstained": true,
+        "old_abstained": true,
+        "identical": true,
+        "answered_ok": true,
+        "moat_ok": true,
+        "both_answer": true
+      },
+      {
+        "q": "what does dog eat?",
+        "cls": "inconsistent",
+        "new_recalled": null,
+        "old_recalled": null,
+        "new_abstained": true,
+        "old_abstained": true,
+        "identical": true,
+        "answered_ok": true,
+        "moat_ok": true,
+        "both_answer": true
+      },
+      {
+        "q": "what does cat chase?",
+        "cls": "inconsistent",
+        "new_recalled": null,
+        "old_recalled": null,
+        "new_abstained": true,
+        "old_abstained": true,
+        "identical": true,
+        "answered_ok": true,
+        "moat_ok": true,
+        "both_answer": true
+      },
+      {
+        "q": "what are you",
+        "cls": "self",
+        "new_recalled": [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        "old_recalled": [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        "new_abstained": false,
+        "old_abstained": false,
+        "identical": true,
+        "answered_ok": true,
+        "moat_ok": true,
+        "both_answer": true
+      }
+    ]
+  },
+  "phase2_hollow_check": {
+    "ok": true,
+    "arms": {
+      "pos_intact": {
+        "prime_valence": 0.6561414999999998,
+        "recalled_svo": [
+          "dog",
+          "chase",
+          "cat"
+        ],
+        "abstained": false,
+        "answer": "Wonderful! The dog chases cat. The cat eats fish. \u2014 worth going further here.",
+        "n_sentences": 2,
+        "tone_level": 3,
+        "forthcomingness": {
+          "max_sentences": 4,
+          "max_elaborations": 3
+        }
+      },
+      "neg_intact": {
+        "prime_valence": -0.6313775999999999,
+        "recalled_svo": [
+          "dog",
+          "chase",
+          "cat"
+        ],
+        "abstained": false,
+        "answer": "The dog chases cat. \u2014 worth going further here.",
+        "n_sentences": 1,
+        "tone_level": -2,
+        "forthcomingness": {
+          "max_sentences": 1,
+          "max_elaborations": 0
+        }
+      },
+      "pos_lesioned": {
+        "prime_valence": 0.6561414999999998,
+        "recalled_svo": [
+          "dog",
+          "chase",
+          "cat"
+        ],
+        "abstained": false,
+        "answer": "Wonderful! The dog chases cat. The cat eats fish. \u2014 worth going further here.",
+        "n_sentences": 2,
+        "tone_level": 0,
+        "forthcomingness": {
+          "max_sentences": 4,
+          "max_elaborations": 2
+        }
+      },
+      "neg_lesioned": {
+        "prime_valence": -0.6313775999999999,
+        "recalled_svo": [
+          "dog",
+          "chase",
+          "cat"
+        ],
+        "abstained": false,
+        "answer": "Honestly! The dog chases cat. The cat eats fish. \u2014 worth going further here.",
+        "n_sentences": 2,
+        "tone_level": 0,
+        "forthcomingness": {
+          "max_sentences": 4,
+          "max_elaborations": 2
+        }
+      }
+    },
+    "primes_strong": true,
+    "varies_intact": true,
+    "vanishes_lesioned": true,
+    "facts_untouched": true
+  },
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "all 6 seeds ran",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "[1-mechanism] default is genuinely ON on every seed (unset env -> interoceptive dispatch)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "[1-mechanism] signs correct in the production-realistic band, every seed",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "[1-mechanism] ordered tracking corr>=0.8, every seed",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "[2-load-bearing] downstream (tone/content/manner) VARIES intact, every seed",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "[2-anti-hollow] downstream COLLAPSES to constant under the intero-synapse lesion, every seed",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "[2-dissociation] relay_enc_under_intero_lesion>=0.8, every seed (still fires, still encodes the appraisal even while the synapse to the ladder is cut -- a genuine dissociation, not silence)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "[old semantics] readout lesion (affect_out=0) still collapses to exactly 0.0, every seed",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "[3-escape hatch] BRAIN_AFFECT_APPRAISAL_INTEROCEPTIVE=0 exact-matches the pre-recorded host reference, every seed (rollback verified on all 6 seeds, not just 42)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "[3-escape hatch] no 'mechanism' key leaks into the off-path response (genuinely the old branch)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "[1-no-regression, integrated] factual panel byte-identical recalled_svo/abstained/verified, new-default vs explicit-off, real handler",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "[2-anti-hollow, integrated] priming establishes a strong, correctly-signed mood every arm (|valence|>=0.6, real handler)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "[2-load-bearing, integrated] intact pos-primed turn genuinely differs from intact neg-primed (real handler, real answer)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "[2-anti-hollow, integrated] that difference VANISHES under the intero-synapse lesion (real handler) -- the explicit vary-vs-lesion pairing the brief requires",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "[honesty floor, integrated] the recalled fact is IDENTICAL across all 4 mood/lesion arms (mood colors HOW, never WHAT)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    }
+  ],
+  "undefined_reasons": [],
+  "elapsed_seconds": 1780.8,
+  "flag": "BRAIN_AFFECT_APPRAISAL_INTEROCEPTIVE",
+  "lesion_flag": "BRAIN_AFFECT_APPRAISAL_INTEROCEPTIVE_LESION"
+}
