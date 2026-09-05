@@ -1,0 +1,119 @@
+{
+  "mode": "onebrain_single_pool_flip_regression",
+  "seeds": [
+    100
+  ],
+  "per_seed": [
+    {
+      "seed": 100,
+      "per_key": {
+        "surprise": {
+          "on": [
+            false,
+            true,
+            true,
+            false
+          ],
+          "off": [
+            false,
+            true,
+            true,
+            false
+          ],
+          "same": true
+        },
+        "worldmodel_pred": {
+          "on": [
+            1,
+            -1
+          ],
+          "off": [
+            1,
+            -1
+          ],
+          "same": true
+        },
+        "worldmodel_surprised": {
+          "on": [
+            false,
+            true,
+            false,
+            true
+          ],
+          "off": [
+            false,
+            true,
+            false,
+            true
+          ],
+          "same": true
+        },
+        "metacog": {
+          "on": [
+            false,
+            false,
+            true
+          ],
+          "off": [
+            false,
+            false,
+            true
+          ],
+          "same": true
+        },
+        "pragmatic": {
+          "on": [
+            "some but not all",
+            "undetermined (implicature collapsed)",
+            "undetermined (implicature collapsed)"
+          ],
+          "off": [
+            "some but not all",
+            "undetermined (implicature collapsed)",
+            "undetermined (implicature collapsed)"
+          ],
+          "same": true
+        }
+      },
+      "organ_answer_preserved": {
+        "surprise": true,
+        "worldmodel": true,
+        "metacog": true,
+        "pragmatic": true
+      },
+      "on_flag": true,
+      "off_flag": false,
+      "GO": true
+    }
+  ],
+  "per_organ": {
+    "surprise": 1,
+    "worldmodel": 1,
+    "metacog": 1,
+    "pragmatic": 1
+  },
+  "n_go": 1,
+  "n_seeds": 1,
+  "all_go": true,
+  "backend": "numpy",
+  "label": "one-brain SINGLE-POOL flip \u2014 brain-chat answer-preservation (4 organs on ONE pool vs two-pool)",
+  "status": "GO",
+  "go": true,
+  "undefined_reasons": [],
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "every organ's live chat answer preserved under the single-pool flip, every seed",
+      "ok": true,
+      "detail": "measured=1 expect=1",
+      "note": ""
+    }
+  ],
+  "disabled_processes": [
+    {
+      "process": "cross-region interaction (the one-brain INTEGRATION goal)",
+      "why": "MIGRATION flip: the single pool has zero cross-organ synapses by construction"
+    }
+  ],
+  "chance": null
+}

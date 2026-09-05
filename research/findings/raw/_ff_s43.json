@@ -1,0 +1,84 @@
+{
+  "mode": "onebrain_single_pool_flipped_faculty_independence",
+  "seeds": [
+    43
+  ],
+  "per_seed": [
+    {
+      "seed": 43,
+      "faculty_byte_identical": {
+        "salience": true,
+        "appraisal": true,
+        "value_substrate": true
+      },
+      "pool_witness_diverged": true,
+      "on": {
+        "salience": [
+          0.643500643501,
+          93.055555555556
+        ],
+        "appraisal": 0.049722222222,
+        "value_substrate": {
+          "cp_neuron_firing_thresholds": "1001ac6cabf5217f",
+          "cp_membrane_potential_v": "9c24d872900e0661"
+        }
+      },
+      "off": {
+        "salience": [
+          0.643500643501,
+          93.055555555556
+        ],
+        "appraisal": 0.049722222222,
+        "value_substrate": {
+          "cp_neuron_firing_thresholds": "1001ac6cabf5217f",
+          "cp_membrane_potential_v": "9c24d872900e0661"
+        }
+      },
+      "pool_on": "N=2034:f2f886a0c8a175e1",
+      "pool_off": "N=6064:7574c90f99754ad5",
+      "rng_state_on": "64c38778fbea8190",
+      "rng_state_off": "64c38778fbea8190",
+      "on_flag": true,
+      "off_flag": false,
+      "GO": true
+    }
+  ],
+  "per_faculty": {
+    "salience": 1,
+    "appraisal": 1,
+    "value_substrate": 1
+  },
+  "n_go": 1,
+  "n_seeds": 1,
+  "n_witness_diverged": 1,
+  "all_go": true,
+  "gnw_stop": "architectural (host-random snapshot/restore + chat-state verdict; zero merge references)",
+  "backend": "numpy",
+  "label": "one-brain SINGLE-POOL flip \u2014 flipped-faculty independence (salience/appraisal/value-choice)",
+  "status": "GO",
+  "go": true,
+  "undefined_reasons": [],
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "every flipped faculty's read byte-identical ON vs OFF, every seed",
+      "ok": true,
+      "detail": "measured=1 expect=1",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "the pool-divergence witness fired (non-vacuous: ON/OFF built different pools), every seed",
+      "ok": true,
+      "detail": "measured=1 expect=1",
+      "note": ""
+    }
+  ],
+  "disabled_processes": [
+    {
+      "process": "gnw-stop empirical exercise",
+      "why": "architectural: host-random snapshot/restore + chat-state verdict, zero merge references \u2014 needs a live ChatBrain, covered by source analysis"
+    }
+  ],
+  "chance": null
+}

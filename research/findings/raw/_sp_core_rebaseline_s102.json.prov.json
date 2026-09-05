@@ -1,0 +1,29 @@
+{
+ "run_id": "1788605721-4116982",
+ "runner": "research/runners/_onebrain_single_pool_flip_regression.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-a0568e76f9a78e2e6/research/runners/_onebrain_single_pool_flip_regression.py",
+  "--seeds",
+  "102",
+  "--out",
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-a0568e76f9a78e2e6/research/findings/raw/_sp_core_rebaseline_s102.json"
+ ],
+ "git_sha": "b94ab45ee",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-05T06:55:21",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_sp_core_rebaseline_s102.json"
+}
