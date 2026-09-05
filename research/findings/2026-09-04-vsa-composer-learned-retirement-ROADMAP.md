@@ -15,7 +15,9 @@ verdict: >
   biology-grounded STRUCTURAL primitive, not a shortcut to be learned away; (2) a mature LEARNED replacement for
   the WHOLE FHRR surface already exists and is 6-seed GO with an on-bridge Hebbian WRITE — SlotBinderComposer —
   declared "FHRR exact-inverse algebra FULLY RETIRABLE", but its production wire-in was scoped and never executed,
-  blocked on an unmeasured dense-pathway scale question; (3) the LIVE deployed brain bundles still run
+  blocked on an unmeasured dense-pathway scale question — ⚠️ NOW MEASURED 2026-09-04c: NO-GO at live scale on the
+  dense wiring (968M synapses / ~463GB by the consumer-hardware gate, does not fit the 3090; incumbent FHRR is
+  ~1000× lighter + correct), so L2 sparsification is the real next rung, NOT the direct wholesale wire-in; (3) the LIVE deployed brain bundles still run
   composer_kind=rf (pure host exact-inverse algebra), so the shortcut is fully in production today. The retirement
   therefore splits into two PATHS (A: retire the host COMPUTATION around a kept structural FHRR bind; B: replace
   FHRR wholesale with the learned SlotBinder) and the first tractable de-risk is the SlotBinder SCALE measurement,
@@ -111,8 +113,15 @@ algebra ... a host shortcut for what a learned cortex would do."*
   replacements (spiking cleanup, reciprocal-conjugate unbind, substrate store) + learned codes; keep the
   multiplicative coincidence bind as a fixed structural primitive. `OneBrainComposer` is already partway.
 - **Path B — REPLACE FHRR wholesale with the learned SlotBinder.** The bind, write, recall and moat are all
-  learned/on-substrate; superposition (and its multi-attribute boundary) is sidestepped by separate slots. **Most
-  mature; the recommended primary path.** Blocker = a scale de-risk + the wire-in.
+  learned/on-substrate; superposition (and its multi-attribute boundary) is sidestepped by separate slots. Most
+  mature at SMALL scale. **⚠️ NO LONGER the recommended path AS-IS (UPDATED 2026-09-04c):** the named blocker (the
+  scale de-risk) came back **NO-GO** (`2026-09-04-slotbinder-live-scale-derisk-NOGO-dense-pathway-blowup.md`) — the
+  dense all-to-all slot→filler wiring is 968M synapses at 404-fact scale (~463GB by the consumer-hardware gate),
+  does NOT fit the 3090, while incumbent FHRR measured 334MB / 0.9s / 3-of-3-correct at the same scale (~1000×
+  lighter). Banked = the DENSE-WIRING method (NOT the capability; the small-scale 6-seed GO stands). Real next rung
+  = **L2: sparsify the slot→filler pathway** (~40× fewer synapses, a fixed small fan-out per slot) then re-de-risk;
+  FHRR stays the efficient+correct incumbent meanwhile (its exact-inverse algebra = the host-idealization
+  honest-negative).
 - **The boundary (both paths inherit or sidestep it):** a *learned* multiplicative bind does not systematically
   generalize (even the oracle fails). Path A keeps the fixed structural bind (accepts the primitive); Path B
   sidesteps superposition with separate slots. Neither requires "learn the bind operator from scratch" — the record
