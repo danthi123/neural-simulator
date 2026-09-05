@@ -4719,10 +4719,13 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
             # the open-ended trace: the raw free reply, the VERIFY-filtered reply, topic/known, retrieved facts,
             # the assembled state, and the generation latency. The moat lives in `filtered` vs `raw`. `generator`
             # (2026-08-28, crutch-burndown) names which FORM generator wrote `raw` -- "qwen" (default), "wkv_mouth"
-            # (BRAIN_OPEN_ENDED_WKV_MOUTH, in-vocab prompts only), or "spiking_clause" (2026-09-02, board #112
+            # (BRAIN_OPEN_ENDED_WKV_MOUTH, in-vocab prompts only), "spiking_clause" (2026-09-02, board #112
             # residual -- BRAIN_OPEN_ENDED_FACT_CLAUSE_FALLBACK, a known topic the WKV mouth did not handle,
-            # answered by the SAME brain-based fact->sentence render instead of Qwen); byte-identical omission
-            # risk avoided via .get() defaults so this key is additive even against an older `_oe` dict shape.
+            # answered by the SAME brain-based fact->sentence render instead of Qwen), or "no_qwen_fallback"
+            # (2026-09-04, one-brain Stage-1 retirement -- BRAIN_OPEN_ENDED_NO_QWEN_FALLBACK, default-OFF, an
+            # unknown topic that would have reached the literal Qwen one-shot instead skipped the call, see
+            # webapp/open_ended_chat.py::no_qwen_fallback_enabled); byte-identical omission risk avoided via
+            # .get() defaults so this key is additive even against an older `_oe` dict shape.
             "open_ended": {
                 "raw": _oe["raw"], "filtered": _oe["filtered"], "topic": _oe["topic"],
                 "known": _oe["known"], "facts": _oe["facts"], "n_sentences": _oe["n_sentences"],

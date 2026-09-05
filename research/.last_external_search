@@ -1,1 +1,1 @@
-2026-09-03T18:58:50Z	perplexity/NLL comparability across tokenization granularities (char vs BPE vs word) -- does the crossing bar move with tokenizer choice
+2026-09-05T00:03:52Z	skip an expensive LLM call when a cheaper already-computed path/fallback gives an equivalent answer -- LLM cascade / cost-routing precedent for retiring the Qwen one-shot fallback

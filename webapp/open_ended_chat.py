@@ -132,16 +132,29 @@ that concrete and all are GO on `main`:
     fallback on `not wkv_used` alone (now `wkv_used` no longer covers the inner-sentence-fact case) would have
     made it re-render the SAME fact a second time. See research/findings/2026-09-04-generator-trace-mislabel-
     fix.md for the root cause, the fix, and the byte-identical-reply verification.
+  * ONE-BRAIN STAGE-1 QWEN-FALLBACK RETIREMENT (2026-09-04, `BRAIN_OPEN_ENDED_NO_QWEN_FALLBACK`, default-OFF,
+    see `no_qwen_fallback_enabled` below) — the roadmap's own Stage 1 (research/findings/2026-09-03-one-
+    brain-mouth-integration-ROADMAP.md SS4), scoped + measured: a fresh per-touchpoint re-measurement AFTER
+    the linattn flip found the literal Qwen one-shot already fires on 0/15 forked turns of the project's own
+    16-probe battery (was 9/15 = 60% pre-flip, ALL on known=False traffic — research/findings/2026-09-04-
+    per-touchpoint-qwen-call-share.md) — the flip's `BRAIN_WKV_MOUTH_SCOPE=broad` default already routes
+    known=False traffic to the WKV mouth's own free generation instead. This flag closes the narrower residual
+    that measurement disclosed: when the WKV mouth genuinely does not cover a known=False turn (disabled,
+    reverted to narrow vocab scope, or an exception), skip the Qwen forward pass entirely and set `raw=""` —
+    `post_filter`'s unknown-topic branch reduces this to the IDENTICAL fixed honest-abstain string every
+    sampled known=False Qwen/wkv_mouth reply already converged to, so the visible answer is unchanged. See
+    research/findings/2026-09-04-onebrain-stage1-qwen-fallback-retire-GO.md.
 
 THE LIVE RECIPE (per turn): extract the TOPIC from the user message -> RETRIEVE the grounded facts the live brain
 holds about it (the LTM / chat bundle) -> ASSEMBLE a StateContext from the LIVE affect read (valence/arousal) +
 familiarity/novelty/curiosity grounded in whether the store knows the topic -> `build_prompt` -> generate the reply
 (FORM: `BRAIN_OPEN_ENDED_WKV_MOUTH` + an in-vocab prompt -> the WKV mouth's few-spike spiking decode; else —
 `BRAIN_OPEN_ENDED_FACT_CLAUSE_FALLBACK` + a known topic -> the SAME brain-based fact->sentence render, reached
-regardless of vocab; else the one-shot `OpenEndedGenerator.generate`, or — `BRAIN_OPEN_ENDED_GEN_TIME_HONESTY` +
-a live `chat` + a known topic — the sentence-by-sentence generation-TIME consensus veto) -> `post_filter`
-(HONESTY safety net: base persona-strip/hedge/abstain + the known-topic contradiction filter, always applied
-either way, REGARDLESS of which generator wrote the reply) -> return the filtered reply.
+regardless of vocab; else — `BRAIN_OPEN_ENDED_GEN_TIME_HONESTY` + a live `chat` + a known topic — the
+sentence-by-sentence generation-TIME consensus veto; else — `BRAIN_OPEN_ENDED_NO_QWEN_FALLBACK` + an unknown
+topic — skip straight to the honest-abstain string; else the one-shot `OpenEndedGenerator.generate`) ->
+`post_filter` (HONESTY safety net: base persona-strip/hedge/abstain + the known-topic contradiction filter,
+always applied either way, REGARDLESS of which generator wrote the reply) -> return the filtered reply.
 
 MEMORY / COST DISCIPLINE (the two hard lessons this session).
   (1) ONE Qwen. `OpenEndedGenerator.__init__` would load a SECOND Qwen-0.5B. Instead we REUSE the server's already
@@ -453,6 +466,49 @@ def fact_clause_fallback_enabled() -> bool:
     return os.environ.get("BRAIN_OPEN_ENDED_FACT_CLAUSE_FALLBACK", "1").strip().lower() in ("1", "true", "on", "yes")
 
 
+def no_qwen_fallback_enabled() -> bool:
+    """`BRAIN_OPEN_ENDED_NO_QWEN_FALLBACK` truthy -> one-brain Stage-1 scaffold-retirement (2026-09-04, see
+    research/findings/2026-09-04-onebrain-stage1-qwen-fallback-retire-GO.md): on a brain-UNKNOWN topic
+    (`known=False`) that reaches the literal one-shot Qwen fallback (`answer_turn`'s final `else` branch below
+    -- the WKV mouth was disabled, out-of-scope, or raised; `not wkv_attempted`), skip the `gen.generate(...)`
+    forward pass entirely and set `raw=""` instead.
+
+    WHY THIS IS SAFE, not just cheaper. The per-touchpoint measurement (research/findings/2026-09-04-
+    per-touchpoint-qwen-call-share.md, commit 64fc4d5f) found `post_filter`'s unknown-topic branch
+    (`_base_post_filter`) discarded EVERY sentence of Qwen's raw reply on 9/9 sampled known=False turns and
+    substituted the SAME fixed string, `f"I'm not sure about {topic} -- I don't have anything about it in
+    what I've actually learned, so I'd only be guessing."` -- regardless of topic. The 2026-09-04 re-measurement
+    AFTER the linattn flip (`_per_touchpoint_qwen_share_open_ended_AFTER_flip_and_recallgate.json`) found the
+    IDENTICAL convergence on all 11/11 known=False turns the flip now routes to the WKV mouth's own free
+    generation instead of Qwen -- so the fixed string is a property of `post_filter`'s hedge/abstain logic,
+    not of Qwen specifically. `raw=""` reproduces it exactly: `_sentences("")` is `[]`, so `hedges=[]`,
+    `filtered=""`, `uncertainty_signaled("")` is False, and the SAME fixed prefix is prepended to nothing --
+    byte-for-byte the identical answer text a live Qwen (or wkv_mouth) call would have produced on this
+    battery, at zero forward-pass cost. `generator` reports `"no_qwen_fallback"` (never `"qwen"`, which would
+    repeat the exact mislabel the 2026-09-04 generator-trace fix corrected -- see that finding).
+
+    THE MEASURED RESIDUAL THIS FLAG ACTUALLY REACHES TODAY. After the linattn flip's `BRAIN_WKV_MOUTH_SCOPE=
+    broad` default (admits every prompt), the literal Qwen one-shot already fires on 0/15 forked turns of the
+    project's own 16-probe battery (down from 9/15 = 60% pre-flip) -- the WKV mouth's free generation now
+    covers what Qwen used to word, so this flag is BYTE-IDENTICAL to the flag being off on that entire battery
+    TODAY (the branch it guards is simply never reached there). Its practical effect is scoped to hosts/configs
+    where the WKV mouth genuinely does not cover a known=False turn: `BRAIN_OPEN_ENDED_WKV_MOUTH=0`
+    (explicitly disabled), an explicit `BRAIN_WKV_MOUTH_RECURRENCE=ssm` + narrow-vocab-scope revert, or a
+    genuine exception inside `_WKV.generate()` -- all three still degrade safely to this flag's fixed abstain
+    when it is ON, or to the pre-existing Qwen call when it is OFF (the default).
+
+    SCOPED TO known=False ONLY -- deliberately narrower than "every turn reaching this branch". A known=True
+    turn that reaches the SAME branch (the WKV mouth's `sentence_facts` path AND the separate fact-clause
+    fallback both declined -- e.g. a topic whose relation `RELATION_LEXICON` does not cover) is UNCHANGED by
+    this flag: Qwen stays the honest residual there, on purpose. That case was not measured here (this task's
+    probe battery's `RELATION_LEXICON` covered 34/34 live relation types in the sampled store), so retiring
+    Qwen on it is NOT validated safe -- it would trade a possibly-correct, moat-checked multi-sentence paragraph
+    for the terser `_empty_known_fallback` string, a real richness loss this flag does not force. Default OFF
+    (unset/0/false/off/no): the pre-existing `else: raw, secs = gen.generate(...)` branch runs exactly as
+    before this flag existed, byte-identical."""
+    return os.environ.get("BRAIN_OPEN_ENDED_NO_QWEN_FALLBACK", "0").strip().lower() in ("1", "true", "on", "yes")
+
+
 # ── topic extraction (host comprehension of the world input — the declared scaffold boundary) ────────────────────
 # Longest-first so "what do you know about" wins over "what is"; each strips a natural lead-in to the bare entity.
 _LEADINS = sorted([
@@ -588,9 +644,10 @@ def answer_turn(msg: str, warm_faculty, valence: float, arousal: float, *,
 
     Returns a dict with the final `answer` (the filtered reply) plus a trace (`raw`, `filtered`, `topic`, `known`,
     `facts`, the assembled `state`, `gen_seconds`, `gen_time_honesty_used`, `gen_time_trace`, `generator` —
-    `"wkv_mouth"`, `"spiking_clause"`, or `"qwen"` — `wkv_mouth_used`, and `fact_clause_used`). `known` is True
-    iff the store held facts about the topic — the caller maps it to `abstained = not known` / `verified = known`
-    (an unknown topic is an honest abstain). ALL THREE of `generator`/`wkv_mouth_used`/`fact_clause_used` follow
+    `"wkv_mouth"`, `"spiking_clause"`, `"qwen"`, or `"no_qwen_fallback"` — `wkv_mouth_used`, and
+    `fact_clause_used`). `known` is True iff the store held facts about the topic — the caller maps it to
+    `abstained = not known` / `verified = known` (an unknown topic is an honest abstain). ALL THREE of
+    `generator`/`wkv_mouth_used`/`fact_clause_used` follow
     the ACTUAL PRODUCER of `raw`, independent of which internal try-block reached it (fixed 2026-09-04, see
     research/findings/2026-09-04-generator-trace-mislabel-fix.md): `wkv_mouth_used` is True only when the
     genuine WKV/linattn free-gen spiking decode wrote `raw`; `fact_clause_used` (see `fact_clause_fallback_enabled`)
@@ -599,7 +656,11 @@ def answer_turn(msg: str, warm_faculty, valence: float, arousal: float, *,
     path (the mouth was attempted, and it happened to render via that mechanism) or the separate fact-clause
     FALLBACK below (the mouth was never attempted, or attempted-but-declined) — closing the much larger
     Qwen-routed known-topic grounding regression
-    `research/findings/2026-09-01-open-ended-bundle-moat-safety-soak-fabrication-delta.md` measured."""
+    `research/findings/2026-09-01-open-ended-bundle-moat-safety-soak-fabrication-delta.md` measured.
+    `generator == "no_qwen_fallback"` (a FIFTH, independent, default-OFF gate — `no_qwen_fallback_enabled()`,
+    2026-09-04) means an unknown topic reached the literal Qwen one-shot branch and the call was skipped
+    entirely (`raw=""`) rather than paid for — see that flag's own docstring for why this is byte-for-byte
+    equivalent to the pre-existing Qwen-then-filter answer on every sampled known=False turn."""
     by_agent = build_index(ltm_bundle, brain_bundle)
     topic = extract_topic(msg)
     facts = retrieve(by_agent, topic)
@@ -730,6 +791,15 @@ def answer_turn(msg: str, warm_faculty, valence: float, arousal: float, *,
             # never let a generation-time-honesty failure crash a turn -- degrade to the one-shot path (still
             # honesty-safe: the SAME post_filter safety net runs on whatever this produces, unconditionally).
             raw, secs = gen.generate(system, user, seed=seed, max_new_tokens=max_new_tokens)
+    elif (not known) and no_qwen_fallback_enabled():
+        # ONE-BRAIN STAGE-1 RETIREMENT (2026-09-04, `BRAIN_OPEN_ENDED_NO_QWEN_FALLBACK`, default-OFF -- see
+        # `no_qwen_fallback_enabled`'s own docstring for the measured justification). A known=False turn that
+        # reaches this branch (the WKV mouth was disabled, out-of-scope, or raised -- `not wkv_attempted`)
+        # would otherwise pay a Qwen forward pass only to have `post_filter`'s unknown-topic branch discard
+        # every sentence and substitute the SAME fixed honest-abstain string regardless of what was generated
+        # -- so skip the call and produce that string directly, at zero forward-pass cost.
+        raw, secs = "", 0.0
+        generator_name = "no_qwen_fallback"
     else:
         raw, secs = gen.generate(system, user, seed=seed, max_new_tokens=max_new_tokens)
 
