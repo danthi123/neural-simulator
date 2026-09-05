@@ -1,0 +1,43 @@
+{
+ "run_id": "1788573721-873101",
+ "runner": "research/runners/_vision_lindiscrim_readout_derisk.py",
+ "argv": [
+  "/home/node/derisk-pool/sim/research/runners/_vision_lindiscrim_readout_derisk.py",
+  "--ridge",
+  "0.5",
+  "--conj-bind",
+  "none",
+  "--n-s2",
+  "1152",
+  "--heldout-position",
+  "--scramble-null",
+  "--seeds",
+  "42",
+  "43",
+  "44",
+  "100",
+  "101",
+  "102",
+  "--out",
+  "research/findings/raw/lanes/perception/conjbind_widthctrl_n1152_heldoutpos_scramblenull_6seed.json"
+ ],
+ "git_sha": "65c5a334",
+ "git_dirty": true,
+ "source_kind": "git_archive",
+ "source_manifest_sha256": "b2370335f7eae4e623125ec2a82bb722048f594756bc22bb42cfab25e5bb3af2",
+ "source_manifest_verified_at_start": true,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": true,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-04T22:02:01",
+ "env": {
+  "POOL_CHECKED_REASON": "vision anti-cheats held-out+scramble (open Q1)",
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/lanes/perception/conjbind_widthctrl_n1152_heldoutpos_scramblenull_6seed.json"
+}

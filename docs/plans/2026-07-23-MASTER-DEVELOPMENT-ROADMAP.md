@@ -61,6 +61,14 @@ R4 itself already has a precedent for (`BRAIN_ONEBRAIN_XEDGE_SELFSCHEMA`, defaul
 
 ## ⭐⭐ STRATEGIC REFRAME (2026-08-19, owner directive) — READ THIS BEFORE §0
 
+> **⚠️ SUPERSEDED FOR NEAR-TERM SEQUENCING (2026-09-04 owner directive).** This section's near-term route below
+> — "lead with the continuous-substrate engine + widening Qwen, with per-faculty couplings + onebrain merges
+> underneath" — is REVERSED by the 2026-09-04 directive: **scaffold-retirement (faculties emergent + on the shared
+> ONE-brain + properly implemented) comes FIRST, BEFORE continuous learning/growth-over-time.**
+> The long-term north-star is UNCHANGED; only the near-term ORDER changed. For the live ordered plan see §8's
+> newest entry, memory `project_2026_09_04_scaffold_retirement_before_learning`, and GAP_CLOSURE_MISSION.md
+> CURRENT STATE. Do NOT anchor near-term work on this section's sequencing.
+
 **The long-term north-star is UNCHANGED: one spiking substrate (the onebrain), every host crutch burned down, faculties
 emergent-not-hand-wired. That remains the destination.** What changes is the near-term route: we are **loosening the
 requirements to reach fluent, open-ended speech SOONER**, and shifting the emphasis from "faithful biological emulation

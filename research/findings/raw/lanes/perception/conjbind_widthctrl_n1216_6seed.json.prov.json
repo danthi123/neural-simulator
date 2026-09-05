@@ -1,0 +1,41 @@
+{
+ "run_id": "1788494486-739631",
+ "runner": "research/runners/_vision_lindiscrim_readout_derisk.py",
+ "argv": [
+  "/home/node/derisk-pool/sim/research/runners/_vision_lindiscrim_readout_derisk.py",
+  "--ridge",
+  "0.5",
+  "--conj-bind",
+  "none",
+  "--n-s2",
+  "1216",
+  "--seeds",
+  "42",
+  "43",
+  "44",
+  "100",
+  "101",
+  "102",
+  "--out",
+  "research/findings/raw/lanes/perception/conjbind_widthctrl_n1216_6seed.json"
+ ],
+ "git_sha": "65c5a334",
+ "git_dirty": true,
+ "source_kind": "git_archive",
+ "source_manifest_sha256": "8ecd02de632e8efea5b5920395a9b6d7a877e1fb7ecbdb78e686528e3c82cc95",
+ "source_manifest_verified_at_start": true,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": true,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-04T00:01:26",
+ "env": {
+  "POOL_CHECKED_REASON": "vision capacity-crossing width-robustness: finding 1a3e0bfc noted non-monotonic n1024=5/6 n1152=6/6 n1280=4/6 -- is the flat-control crossing a robust plateau or a lucky peak? existing flags, pool-routable, verifies a landed claim",
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/lanes/perception/conjbind_widthctrl_n1216_6seed.json"
+}
