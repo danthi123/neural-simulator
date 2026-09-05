@@ -87,3 +87,17 @@ being re-verified.
   (`webapp/gnw_global_stop.detect_trigger` behind `BRAIN_GNW_STOP_TRIGGER_SPIKING`, default-off) is byte-identical
   when off. See `research/findings/2026-09-05-gnw-stop-trigger-accbg-circuit-derisk-GO.md`. NOT flipped default-on
   (owner call); the STOP *clear* itself is unchanged (still the distributed-overwrite workspace's own depression).
+- **Rank 8 (GNW congruence host string-id) — DE-RISKED + WIRED DEFAULT-OFF, 2026-09-05.** The N-organ bus's organ-B
+  (VERIFY re-check) / organ-C (reverse-binding VERIFY) congruence checks in `webapp/gnw_bus_shadow.py::_organ_reads`
+  decided "does this second read match the first" with a host `==`; a `SpikingCongruenceReader` reuses the
+  ALREADY-6/6-GO'd swap-intention circuit's `pred_k->mm_k` MATCH VETO (the same ignition-workspace populations
+  already load-bearing on the neural thought-swap decision) to read the verdict off spiking population dynamics
+  instead. 6/6-seed GO on 100% parity vs the host `==` on a REAL organ-B/organ-C battery (32 pairs/seed, real
+  `query_patient`/`query_agent` reads on stored facts), the trigger-lesion collapses discrimination on every
+  genuine mismatch (96/96 pairs flip), and build-twice determinism holds. A second 6/6-seed check confirms the
+  production dispatch (behind `BRAIN_GNW_CONGRUENCE_SPIKING`, default-off) is byte-identical to a FROZEN pre-edit
+  reference when off, matches the host on genuine real-fact agreement when on, and — on a manufactured mismatch —
+  lesioning via `BRAIN_GNW_CONGRUENCE_LESION` makes `bus_combine`'s own COMMITTED decision WRONGLY corroborate a
+  fact the host correctly withheld (the load-bearing collapse at the full production-decision level). See
+  `research/findings/2026-09-05-gnw-congruence-spiking-read-rank8-derisk-GO.md`. NOT flipped default-on (owner
+  call); the ignition/WTA consensus and organ A's forward recall are unchanged.

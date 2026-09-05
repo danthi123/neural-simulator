@@ -1,0 +1,2040 @@
+{
+  "runner": "_gnw_congruence_spiking_hook_verify",
+  "mode": "six_seed",
+  "verdict": "GO",
+  "pooled_go": true,
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "verdict_status": "GO",
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "flag-off byte-identical on 6/6 seeds",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "flag-on real-match parity on 6/6 seeds",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "lesion-via-flag reverts on 6/6 seeds",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    }
+  ],
+  "disabled_processes": [],
+  "counts": {
+    "seed_go": 6,
+    "flag_off_byte_identical": 6,
+    "real_match_parity": 6,
+    "lesion_reverts": 6,
+    "n_seeds": 6
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "verdict": "GO",
+      "seed_go": true,
+      "flag_off_byte_identical": true,
+      "real_match_parity": true,
+      "lesion_reverts": true,
+      "n_queries": 8,
+      "n_flag_off_identical": 8,
+      "n_parity_matches": 8,
+      "organ_b": {
+        "withholds_intact": true,
+        "false_corroborates_lesioned": true,
+        "attributable_fraction": 1.0
+      },
+      "organ_c": {
+        "withholds_intact": true,
+        "false_corroborates_lesioned": true,
+        "attributable_fraction": 1.0
+      },
+      "bus_combine": {
+        "host_committed": null,
+        "intact_committed": null,
+        "lesioned_committed": "cat",
+        "intact_matches_host": true,
+        "lesion_wrongly_commits": true,
+        "attributable_fraction": 1.0
+      },
+      "flag_off_rows": [
+        {
+          "agent": "dog",
+          "action": "eat",
+          "new": [
+            "cat",
+            "cat",
+            "cat"
+          ],
+          "frozen_ref": [
+            "cat",
+            "cat",
+            "cat"
+          ],
+          "identical": true
+        },
+        {
+          "agent": "lion",
+          "action": "eat",
+          "new": [
+            "deer",
+            "deer",
+            "deer"
+          ],
+          "frozen_ref": [
+            "deer",
+            "deer",
+            "deer"
+          ],
+          "identical": true
+        },
+        {
+          "agent": "hawk",
+          "action": "eat",
+          "new": [
+            "snake",
+            "snake",
+            "snake"
+          ],
+          "frozen_ref": [
+            "snake",
+            "snake",
+            "snake"
+          ],
+          "identical": true
+        },
+        {
+          "agent": "bear",
+          "action": "eat",
+          "new": [
+            "fish",
+            "fish",
+            "fish"
+          ],
+          "frozen_ref": [
+            "fish",
+            "fish",
+            "fish"
+          ],
+          "identical": true
+        },
+        {
+          "agent": "wolf",
+          "action": "eat",
+          "new": [
+            "rabbit",
+            "rabbit",
+            "rabbit"
+          ],
+          "frozen_ref": [
+            "rabbit",
+            "rabbit",
+            "rabbit"
+          ],
+          "identical": true
+        },
+        {
+          "agent": "owl",
+          "action": "eat",
+          "new": [
+            "vole",
+            "vole",
+            "vole"
+          ],
+          "frozen_ref": [
+            "vole",
+            "vole",
+            "vole"
+          ],
+          "identical": true
+        },
+        {
+          "agent": "shark",
+          "action": "eat",
+          "new": [
+            "tuna",
+            "tuna",
+            "tuna"
+          ],
+          "frozen_ref": [
+            "tuna",
+            "tuna",
+            "tuna"
+          ],
+          "identical": true
+        },
+        {
+          "agent": "eagle",
+          "action": "eat",
+          "new": [
+            "trout",
+            "trout",
+            "trout"
+          ],
+          "frozen_ref": [
+            "trout",
+            "trout",
+            "trout"
+          ],
+          "identical": true
+        }
+      ],
+      "parity_rows": [
+        {
+          "agent": "dog",
+          "action": "eat",
+          "flag_on": [
+            "cat",
+            "cat",
+            "cat"
+          ],
+          "flag_off": [
+            "cat",
+            "cat",
+            "cat"
+          ],
+          "same": true
+        },
+        {
+          "agent": "lion",
+          "action": "eat",
+          "flag_on": [
+            "deer",
+            "deer",
+            "deer"
+          ],
+          "flag_off": [
+            "deer",
+            "deer",
+            "deer"
+          ],
+          "same": true
+        },
+        {
+          "agent": "hawk",
+          "action": "eat",
+          "flag_on": [
+            "snake",
+            "snake",
+            "snake"
+          ],
+          "flag_off": [
+            "snake",
+            "snake",
+            "snake"
+          ],
+          "same": true
+        },
+        {
+          "agent": "bear",
+          "action": "eat",
+          "flag_on": [
+            "fish",
+            "fish",
+            "fish"
+          ],
+          "flag_off": [
+            "fish",
+            "fish",
+            "fish"
+          ],
+          "same": true
+        },
+        {
+          "agent": "wolf",
+          "action": "eat",
+          "flag_on": [
+            "rabbit",
+            "rabbit",
+            "rabbit"
+          ],
+          "flag_off": [
+            "rabbit",
+            "rabbit",
+            "rabbit"
+          ],
+          "same": true
+        },
+        {
+          "agent": "owl",
+          "action": "eat",
+          "flag_on": [
+            "vole",
+            "vole",
+            "vole"
+          ],
+          "flag_off": [
+            "vole",
+            "vole",
+            "vole"
+          ],
+          "same": true
+        },
+        {
+          "agent": "shark",
+          "action": "eat",
+          "flag_on": [
+            "tuna",
+            "tuna",
+            "tuna"
+          ],
+          "flag_off": [
+            "tuna",
+            "tuna",
+            "tuna"
+          ],
+          "same": true
+        },
+        {
+          "agent": "eagle",
+          "action": "eat",
+          "flag_on": [
+            "trout",
+            "trout",
+            "trout"
+          ],
+          "flag_off": [
+            "trout",
+            "trout",
+            "trout"
+          ],
+          "same": true
+        }
+      ],
+      "preconditions": [
+        {
+          "kind": "require",
+          "name": "flag-off byte-identical vs the FROZEN pre-edit reference (every real query)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": "8/8"
+        },
+        {
+          "kind": "require",
+          "name": "flag-on real-match parity vs flag-off (genuine matches unaffected)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": "8/8"
+        },
+        {
+          "kind": "require",
+          "name": "organ B: intact withholds on a manufactured mismatch",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "organ B: lesion falsely corroborates the SAME mismatch",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "organ C: intact withholds on a manufactured mismatch",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "organ C: lesion falsely corroborates the SAME mismatch",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "bus_combine intact matches the host verdict on the manufactured mismatch",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "bus_combine lesioned WRONGLY commits (the load-bearing collapse)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        }
+      ],
+      "disabled_processes": []
+    },
+    {
+      "seed": 43,
+      "verdict": "GO",
+      "seed_go": true,
+      "flag_off_byte_identical": true,
+      "real_match_parity": true,
+      "lesion_reverts": true,
+      "n_queries": 8,
+      "n_flag_off_identical": 8,
+      "n_parity_matches": 8,
+      "organ_b": {
+        "withholds_intact": true,
+        "false_corroborates_lesioned": true,
+        "attributable_fraction": 1.0
+      },
+      "organ_c": {
+        "withholds_intact": true,
+        "false_corroborates_lesioned": true,
+        "attributable_fraction": 1.0
+      },
+      "bus_combine": {
+        "host_committed": null,
+        "intact_committed": null,
+        "lesioned_committed": "cat",
+        "intact_matches_host": true,
+        "lesion_wrongly_commits": true,
+        "attributable_fraction": 1.0
+      },
+      "flag_off_rows": [
+        {
+          "agent": "dog",
+          "action": "eat",
+          "new": [
+            "cat",
+            "cat",
+            "cat"
+          ],
+          "frozen_ref": [
+            "cat",
+            "cat",
+            "cat"
+          ],
+          "identical": true
+        },
+        {
+          "agent": "lion",
+          "action": "eat",
+          "new": [
+            "deer",
+            "deer",
+            "deer"
+          ],
+          "frozen_ref": [
+            "deer",
+            "deer",
+            "deer"
+          ],
+          "identical": true
+        },
+        {
+          "agent": "hawk",
+          "action": "eat",
+          "new": [
+            "snake",
+            "snake",
+            "snake"
+          ],
+          "frozen_ref": [
+            "snake",
+            "snake",
+            "snake"
+          ],
+          "identical": true
+        },
+        {
+          "agent": "bear",
+          "action": "eat",
+          "new": [
+            "fish",
+            "fish",
+            "fish"
+          ],
+          "frozen_ref": [
+            "fish",
+            "fish",
+            "fish"
+          ],
+          "identical": true
+        },
+        {
+          "agent": "wolf",
+          "action": "eat",
+          "new": [
+            "rabbit",
+            "rabbit",
+            "rabbit"
+          ],
+          "frozen_ref": [
+            "rabbit",
+            "rabbit",
+            "rabbit"
+          ],
+          "identical": true
+        },
+        {
+          "agent": "owl",
+          "action": "eat",
+          "new": [
+            "vole",
+            "vole",
+            "vole"
+          ],
+          "frozen_ref": [
+            "vole",
+            "vole",
+            "vole"
+          ],
+          "identical": true
+        },
+        {
+          "agent": "shark",
+          "action": "eat",
+          "new": [
+            "tuna",
+            "tuna",
+            "tuna"
+          ],
+          "frozen_ref": [
+            "tuna",
+            "tuna",
+            "tuna"
+          ],
+          "identical": true
+        },
+        {
+          "agent": "eagle",
+          "action": "eat",
+          "new": [
+            "trout",
+            "trout",
+            "trout"
+          ],
+          "frozen_ref": [
+            "trout",
+            "trout",
+            "trout"
+          ],
+          "identical": true
+        }
+      ],
+      "parity_rows": [
+        {
+          "agent": "dog",
+          "action": "eat",
+          "flag_on": [
+            "cat",
+            "cat",
+            "cat"
+          ],
+          "flag_off": [
+            "cat",
+            "cat",
+            "cat"
+          ],
+          "same": true
+        },
+        {
+          "agent": "lion",
+          "action": "eat",
+          "flag_on": [
+            "deer",
+            "deer",
+            "deer"
+          ],
+          "flag_off": [
+            "deer",
+            "deer",
+            "deer"
+          ],
+          "same": true
+        },
+        {
+          "agent": "hawk",
+          "action": "eat",
+          "flag_on": [
+            "snake",
+            "snake",
+            "snake"
+          ],
+          "flag_off": [
+            "snake",
+            "snake",
+            "snake"
+          ],
+          "same": true
+        },
+        {
+          "agent": "bear",
+          "action": "eat",
+          "flag_on": [
+            "fish",
+            "fish",
+            "fish"
+          ],
+          "flag_off": [
+            "fish",
+            "fish",
+            "fish"
+          ],
+          "same": true
+        },
+        {
+          "agent": "wolf",
+          "action": "eat",
+          "flag_on": [
+            "rabbit",
+            "rabbit",
+            "rabbit"
+          ],
+          "flag_off": [
+            "rabbit",
+            "rabbit",
+            "rabbit"
+          ],
+          "same": true
+        },
+        {
+          "agent": "owl",
+          "action": "eat",
+          "flag_on": [
+            "vole",
+            "vole",
+            "vole"
+          ],
+          "flag_off": [
+            "vole",
+            "vole",
+            "vole"
+          ],
+          "same": true
+        },
+        {
+          "agent": "shark",
+          "action": "eat",
+          "flag_on": [
+            "tuna",
+            "tuna",
+            "tuna"
+          ],
+          "flag_off": [
+            "tuna",
+            "tuna",
+            "tuna"
+          ],
+          "same": true
+        },
+        {
+          "agent": "eagle",
+          "action": "eat",
+          "flag_on": [
+            "trout",
+            "trout",
+            "trout"
+          ],
+          "flag_off": [
+            "trout",
+            "trout",
+            "trout"
+          ],
+          "same": true
+        }
+      ],
+      "preconditions": [
+        {
+          "kind": "require",
+          "name": "flag-off byte-identical vs the FROZEN pre-edit reference (every real query)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": "8/8"
+        },
+        {
+          "kind": "require",
+          "name": "flag-on real-match parity vs flag-off (genuine matches unaffected)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": "8/8"
+        },
+        {
+          "kind": "require",
+          "name": "organ B: intact withholds on a manufactured mismatch",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "organ B: lesion falsely corroborates the SAME mismatch",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "organ C: intact withholds on a manufactured mismatch",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "organ C: lesion falsely corroborates the SAME mismatch",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "bus_combine intact matches the host verdict on the manufactured mismatch",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "bus_combine lesioned WRONGLY commits (the load-bearing collapse)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        }
+      ],
+      "disabled_processes": []
+    },
+    {
+      "seed": 44,
+      "verdict": "GO",
+      "seed_go": true,
+      "flag_off_byte_identical": true,
+      "real_match_parity": true,
+      "lesion_reverts": true,
+      "n_queries": 8,
+      "n_flag_off_identical": 8,
+      "n_parity_matches": 8,
+      "organ_b": {
+        "withholds_intact": true,
+        "false_corroborates_lesioned": true,
+        "attributable_fraction": 1.0
+      },
+      "organ_c": {
+        "withholds_intact": true,
+        "false_corroborates_lesioned": true,
+        "attributable_fraction": 1.0
+      },
+      "bus_combine": {
+        "host_committed": null,
+        "intact_committed": null,
+        "lesioned_committed": "cat",
+        "intact_matches_host": true,
+        "lesion_wrongly_commits": true,
+        "attributable_fraction": 1.0
+      },
+      "flag_off_rows": [
+        {
+          "agent": "dog",
+          "action": "eat",
+          "new": [
+            "cat",
+            "cat",
+            "cat"
+          ],
+          "frozen_ref": [
+            "cat",
+            "cat",
+            "cat"
+          ],
+          "identical": true
+        },
+        {
+          "agent": "lion",
+          "action": "eat",
+          "new": [
+            "deer",
+            "deer",
+            "deer"
+          ],
+          "frozen_ref": [
+            "deer",
+            "deer",
+            "deer"
+          ],
+          "identical": true
+        },
+        {
+          "agent": "hawk",
+          "action": "eat",
+          "new": [
+            "snake",
+            "snake",
+            "snake"
+          ],
+          "frozen_ref": [
+            "snake",
+            "snake",
+            "snake"
+          ],
+          "identical": true
+        },
+        {
+          "agent": "bear",
+          "action": "eat",
+          "new": [
+            "fish",
+            "fish",
+            "fish"
+          ],
+          "frozen_ref": [
+            "fish",
+            "fish",
+            "fish"
+          ],
+          "identical": true
+        },
+        {
+          "agent": "wolf",
+          "action": "eat",
+          "new": [
+            "rabbit",
+            "rabbit",
+            "rabbit"
+          ],
+          "frozen_ref": [
+            "rabbit",
+            "rabbit",
+            "rabbit"
+          ],
+          "identical": true
+        },
+        {
+          "agent": "owl",
+          "action": "eat",
+          "new": [
+            "vole",
+            "vole",
+            "vole"
+          ],
+          "frozen_ref": [
+            "vole",
+            "vole",
+            "vole"
+          ],
+          "identical": true
+        },
+        {
+          "agent": "shark",
+          "action": "eat",
+          "new": [
+            "tuna",
+            "tuna",
+            "tuna"
+          ],
+          "frozen_ref": [
+            "tuna",
+            "tuna",
+            "tuna"
+          ],
+          "identical": true
+        },
+        {
+          "agent": "eagle",
+          "action": "eat",
+          "new": [
+            "trout",
+            "trout",
+            "trout"
+          ],
+          "frozen_ref": [
+            "trout",
+            "trout",
+            "trout"
+          ],
+          "identical": true
+        }
+      ],
+      "parity_rows": [
+        {
+          "agent": "dog",
+          "action": "eat",
+          "flag_on": [
+            "cat",
+            "cat",
+            "cat"
+          ],
+          "flag_off": [
+            "cat",
+            "cat",
+            "cat"
+          ],
+          "same": true
+        },
+        {
+          "agent": "lion",
+          "action": "eat",
+          "flag_on": [
+            "deer",
+            "deer",
+            "deer"
+          ],
+          "flag_off": [
+            "deer",
+            "deer",
+            "deer"
+          ],
+          "same": true
+        },
+        {
+          "agent": "hawk",
+          "action": "eat",
+          "flag_on": [
+            "snake",
+            "snake",
+            "snake"
+          ],
+          "flag_off": [
+            "snake",
+            "snake",
+            "snake"
+          ],
+          "same": true
+        },
+        {
+          "agent": "bear",
+          "action": "eat",
+          "flag_on": [
+            "fish",
+            "fish",
+            "fish"
+          ],
+          "flag_off": [
+            "fish",
+            "fish",
+            "fish"
+          ],
+          "same": true
+        },
+        {
+          "agent": "wolf",
+          "action": "eat",
+          "flag_on": [
+            "rabbit",
+            "rabbit",
+            "rabbit"
+          ],
+          "flag_off": [
+            "rabbit",
+            "rabbit",
+            "rabbit"
+          ],
+          "same": true
+        },
+        {
+          "agent": "owl",
+          "action": "eat",
+          "flag_on": [
+            "vole",
+            "vole",
+            "vole"
+          ],
+          "flag_off": [
+            "vole",
+            "vole",
+            "vole"
+          ],
+          "same": true
+        },
+        {
+          "agent": "shark",
+          "action": "eat",
+          "flag_on": [
+            "tuna",
+            "tuna",
+            "tuna"
+          ],
+          "flag_off": [
+            "tuna",
+            "tuna",
+            "tuna"
+          ],
+          "same": true
+        },
+        {
+          "agent": "eagle",
+          "action": "eat",
+          "flag_on": [
+            "trout",
+            "trout",
+            "trout"
+          ],
+          "flag_off": [
+            "trout",
+            "trout",
+            "trout"
+          ],
+          "same": true
+        }
+      ],
+      "preconditions": [
+        {
+          "kind": "require",
+          "name": "flag-off byte-identical vs the FROZEN pre-edit reference (every real query)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": "8/8"
+        },
+        {
+          "kind": "require",
+          "name": "flag-on real-match parity vs flag-off (genuine matches unaffected)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": "8/8"
+        },
+        {
+          "kind": "require",
+          "name": "organ B: intact withholds on a manufactured mismatch",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "organ B: lesion falsely corroborates the SAME mismatch",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "organ C: intact withholds on a manufactured mismatch",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "organ C: lesion falsely corroborates the SAME mismatch",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "bus_combine intact matches the host verdict on the manufactured mismatch",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "bus_combine lesioned WRONGLY commits (the load-bearing collapse)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        }
+      ],
+      "disabled_processes": []
+    },
+    {
+      "seed": 100,
+      "verdict": "GO",
+      "seed_go": true,
+      "flag_off_byte_identical": true,
+      "real_match_parity": true,
+      "lesion_reverts": true,
+      "n_queries": 8,
+      "n_flag_off_identical": 8,
+      "n_parity_matches": 8,
+      "organ_b": {
+        "withholds_intact": true,
+        "false_corroborates_lesioned": true,
+        "attributable_fraction": 1.0
+      },
+      "organ_c": {
+        "withholds_intact": true,
+        "false_corroborates_lesioned": true,
+        "attributable_fraction": 1.0
+      },
+      "bus_combine": {
+        "host_committed": null,
+        "intact_committed": null,
+        "lesioned_committed": "cat",
+        "intact_matches_host": true,
+        "lesion_wrongly_commits": true,
+        "attributable_fraction": 1.0
+      },
+      "flag_off_rows": [
+        {
+          "agent": "dog",
+          "action": "eat",
+          "new": [
+            "cat",
+            "cat",
+            "cat"
+          ],
+          "frozen_ref": [
+            "cat",
+            "cat",
+            "cat"
+          ],
+          "identical": true
+        },
+        {
+          "agent": "lion",
+          "action": "eat",
+          "new": [
+            "deer",
+            "deer",
+            "deer"
+          ],
+          "frozen_ref": [
+            "deer",
+            "deer",
+            "deer"
+          ],
+          "identical": true
+        },
+        {
+          "agent": "hawk",
+          "action": "eat",
+          "new": [
+            "snake",
+            "snake",
+            "snake"
+          ],
+          "frozen_ref": [
+            "snake",
+            "snake",
+            "snake"
+          ],
+          "identical": true
+        },
+        {
+          "agent": "bear",
+          "action": "eat",
+          "new": [
+            "fish",
+            "fish",
+            "fish"
+          ],
+          "frozen_ref": [
+            "fish",
+            "fish",
+            "fish"
+          ],
+          "identical": true
+        },
+        {
+          "agent": "wolf",
+          "action": "eat",
+          "new": [
+            "rabbit",
+            "rabbit",
+            "rabbit"
+          ],
+          "frozen_ref": [
+            "rabbit",
+            "rabbit",
+            "rabbit"
+          ],
+          "identical": true
+        },
+        {
+          "agent": "owl",
+          "action": "eat",
+          "new": [
+            "vole",
+            "vole",
+            "vole"
+          ],
+          "frozen_ref": [
+            "vole",
+            "vole",
+            "vole"
+          ],
+          "identical": true
+        },
+        {
+          "agent": "shark",
+          "action": "eat",
+          "new": [
+            "tuna",
+            "tuna",
+            "tuna"
+          ],
+          "frozen_ref": [
+            "tuna",
+            "tuna",
+            "tuna"
+          ],
+          "identical": true
+        },
+        {
+          "agent": "eagle",
+          "action": "eat",
+          "new": [
+            "trout",
+            "trout",
+            "trout"
+          ],
+          "frozen_ref": [
+            "trout",
+            "trout",
+            "trout"
+          ],
+          "identical": true
+        }
+      ],
+      "parity_rows": [
+        {
+          "agent": "dog",
+          "action": "eat",
+          "flag_on": [
+            "cat",
+            "cat",
+            "cat"
+          ],
+          "flag_off": [
+            "cat",
+            "cat",
+            "cat"
+          ],
+          "same": true
+        },
+        {
+          "agent": "lion",
+          "action": "eat",
+          "flag_on": [
+            "deer",
+            "deer",
+            "deer"
+          ],
+          "flag_off": [
+            "deer",
+            "deer",
+            "deer"
+          ],
+          "same": true
+        },
+        {
+          "agent": "hawk",
+          "action": "eat",
+          "flag_on": [
+            "snake",
+            "snake",
+            "snake"
+          ],
+          "flag_off": [
+            "snake",
+            "snake",
+            "snake"
+          ],
+          "same": true
+        },
+        {
+          "agent": "bear",
+          "action": "eat",
+          "flag_on": [
+            "fish",
+            "fish",
+            "fish"
+          ],
+          "flag_off": [
+            "fish",
+            "fish",
+            "fish"
+          ],
+          "same": true
+        },
+        {
+          "agent": "wolf",
+          "action": "eat",
+          "flag_on": [
+            "rabbit",
+            "rabbit",
+            "rabbit"
+          ],
+          "flag_off": [
+            "rabbit",
+            "rabbit",
+            "rabbit"
+          ],
+          "same": true
+        },
+        {
+          "agent": "owl",
+          "action": "eat",
+          "flag_on": [
+            "vole",
+            "vole",
+            "vole"
+          ],
+          "flag_off": [
+            "vole",
+            "vole",
+            "vole"
+          ],
+          "same": true
+        },
+        {
+          "agent": "shark",
+          "action": "eat",
+          "flag_on": [
+            "tuna",
+            "tuna",
+            "tuna"
+          ],
+          "flag_off": [
+            "tuna",
+            "tuna",
+            "tuna"
+          ],
+          "same": true
+        },
+        {
+          "agent": "eagle",
+          "action": "eat",
+          "flag_on": [
+            "trout",
+            "trout",
+            "trout"
+          ],
+          "flag_off": [
+            "trout",
+            "trout",
+            "trout"
+          ],
+          "same": true
+        }
+      ],
+      "preconditions": [
+        {
+          "kind": "require",
+          "name": "flag-off byte-identical vs the FROZEN pre-edit reference (every real query)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": "8/8"
+        },
+        {
+          "kind": "require",
+          "name": "flag-on real-match parity vs flag-off (genuine matches unaffected)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": "8/8"
+        },
+        {
+          "kind": "require",
+          "name": "organ B: intact withholds on a manufactured mismatch",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "organ B: lesion falsely corroborates the SAME mismatch",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "organ C: intact withholds on a manufactured mismatch",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "organ C: lesion falsely corroborates the SAME mismatch",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "bus_combine intact matches the host verdict on the manufactured mismatch",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "bus_combine lesioned WRONGLY commits (the load-bearing collapse)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        }
+      ],
+      "disabled_processes": []
+    },
+    {
+      "seed": 101,
+      "verdict": "GO",
+      "seed_go": true,
+      "flag_off_byte_identical": true,
+      "real_match_parity": true,
+      "lesion_reverts": true,
+      "n_queries": 8,
+      "n_flag_off_identical": 8,
+      "n_parity_matches": 8,
+      "organ_b": {
+        "withholds_intact": true,
+        "false_corroborates_lesioned": true,
+        "attributable_fraction": 1.0
+      },
+      "organ_c": {
+        "withholds_intact": true,
+        "false_corroborates_lesioned": true,
+        "attributable_fraction": 1.0
+      },
+      "bus_combine": {
+        "host_committed": null,
+        "intact_committed": null,
+        "lesioned_committed": "cat",
+        "intact_matches_host": true,
+        "lesion_wrongly_commits": true,
+        "attributable_fraction": 1.0
+      },
+      "flag_off_rows": [
+        {
+          "agent": "dog",
+          "action": "eat",
+          "new": [
+            "cat",
+            "cat",
+            "cat"
+          ],
+          "frozen_ref": [
+            "cat",
+            "cat",
+            "cat"
+          ],
+          "identical": true
+        },
+        {
+          "agent": "lion",
+          "action": "eat",
+          "new": [
+            "deer",
+            "deer",
+            "deer"
+          ],
+          "frozen_ref": [
+            "deer",
+            "deer",
+            "deer"
+          ],
+          "identical": true
+        },
+        {
+          "agent": "hawk",
+          "action": "eat",
+          "new": [
+            "snake",
+            "snake",
+            "snake"
+          ],
+          "frozen_ref": [
+            "snake",
+            "snake",
+            "snake"
+          ],
+          "identical": true
+        },
+        {
+          "agent": "bear",
+          "action": "eat",
+          "new": [
+            "fish",
+            "fish",
+            "fish"
+          ],
+          "frozen_ref": [
+            "fish",
+            "fish",
+            "fish"
+          ],
+          "identical": true
+        },
+        {
+          "agent": "wolf",
+          "action": "eat",
+          "new": [
+            "rabbit",
+            "rabbit",
+            "rabbit"
+          ],
+          "frozen_ref": [
+            "rabbit",
+            "rabbit",
+            "rabbit"
+          ],
+          "identical": true
+        },
+        {
+          "agent": "owl",
+          "action": "eat",
+          "new": [
+            "vole",
+            "vole",
+            "vole"
+          ],
+          "frozen_ref": [
+            "vole",
+            "vole",
+            "vole"
+          ],
+          "identical": true
+        },
+        {
+          "agent": "shark",
+          "action": "eat",
+          "new": [
+            "tuna",
+            "tuna",
+            "tuna"
+          ],
+          "frozen_ref": [
+            "tuna",
+            "tuna",
+            "tuna"
+          ],
+          "identical": true
+        },
+        {
+          "agent": "eagle",
+          "action": "eat",
+          "new": [
+            "trout",
+            "trout",
+            "trout"
+          ],
+          "frozen_ref": [
+            "trout",
+            "trout",
+            "trout"
+          ],
+          "identical": true
+        }
+      ],
+      "parity_rows": [
+        {
+          "agent": "dog",
+          "action": "eat",
+          "flag_on": [
+            "cat",
+            "cat",
+            "cat"
+          ],
+          "flag_off": [
+            "cat",
+            "cat",
+            "cat"
+          ],
+          "same": true
+        },
+        {
+          "agent": "lion",
+          "action": "eat",
+          "flag_on": [
+            "deer",
+            "deer",
+            "deer"
+          ],
+          "flag_off": [
+            "deer",
+            "deer",
+            "deer"
+          ],
+          "same": true
+        },
+        {
+          "agent": "hawk",
+          "action": "eat",
+          "flag_on": [
+            "snake",
+            "snake",
+            "snake"
+          ],
+          "flag_off": [
+            "snake",
+            "snake",
+            "snake"
+          ],
+          "same": true
+        },
+        {
+          "agent": "bear",
+          "action": "eat",
+          "flag_on": [
+            "fish",
+            "fish",
+            "fish"
+          ],
+          "flag_off": [
+            "fish",
+            "fish",
+            "fish"
+          ],
+          "same": true
+        },
+        {
+          "agent": "wolf",
+          "action": "eat",
+          "flag_on": [
+            "rabbit",
+            "rabbit",
+            "rabbit"
+          ],
+          "flag_off": [
+            "rabbit",
+            "rabbit",
+            "rabbit"
+          ],
+          "same": true
+        },
+        {
+          "agent": "owl",
+          "action": "eat",
+          "flag_on": [
+            "vole",
+            "vole",
+            "vole"
+          ],
+          "flag_off": [
+            "vole",
+            "vole",
+            "vole"
+          ],
+          "same": true
+        },
+        {
+          "agent": "shark",
+          "action": "eat",
+          "flag_on": [
+            "tuna",
+            "tuna",
+            "tuna"
+          ],
+          "flag_off": [
+            "tuna",
+            "tuna",
+            "tuna"
+          ],
+          "same": true
+        },
+        {
+          "agent": "eagle",
+          "action": "eat",
+          "flag_on": [
+            "trout",
+            "trout",
+            "trout"
+          ],
+          "flag_off": [
+            "trout",
+            "trout",
+            "trout"
+          ],
+          "same": true
+        }
+      ],
+      "preconditions": [
+        {
+          "kind": "require",
+          "name": "flag-off byte-identical vs the FROZEN pre-edit reference (every real query)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": "8/8"
+        },
+        {
+          "kind": "require",
+          "name": "flag-on real-match parity vs flag-off (genuine matches unaffected)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": "8/8"
+        },
+        {
+          "kind": "require",
+          "name": "organ B: intact withholds on a manufactured mismatch",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "organ B: lesion falsely corroborates the SAME mismatch",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "organ C: intact withholds on a manufactured mismatch",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "organ C: lesion falsely corroborates the SAME mismatch",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "bus_combine intact matches the host verdict on the manufactured mismatch",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "bus_combine lesioned WRONGLY commits (the load-bearing collapse)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        }
+      ],
+      "disabled_processes": []
+    },
+    {
+      "seed": 102,
+      "verdict": "GO",
+      "seed_go": true,
+      "flag_off_byte_identical": true,
+      "real_match_parity": true,
+      "lesion_reverts": true,
+      "n_queries": 8,
+      "n_flag_off_identical": 8,
+      "n_parity_matches": 8,
+      "organ_b": {
+        "withholds_intact": true,
+        "false_corroborates_lesioned": true,
+        "attributable_fraction": 1.0
+      },
+      "organ_c": {
+        "withholds_intact": true,
+        "false_corroborates_lesioned": true,
+        "attributable_fraction": 1.0
+      },
+      "bus_combine": {
+        "host_committed": null,
+        "intact_committed": null,
+        "lesioned_committed": "cat",
+        "intact_matches_host": true,
+        "lesion_wrongly_commits": true,
+        "attributable_fraction": 1.0
+      },
+      "flag_off_rows": [
+        {
+          "agent": "dog",
+          "action": "eat",
+          "new": [
+            "cat",
+            "cat",
+            "cat"
+          ],
+          "frozen_ref": [
+            "cat",
+            "cat",
+            "cat"
+          ],
+          "identical": true
+        },
+        {
+          "agent": "lion",
+          "action": "eat",
+          "new": [
+            "deer",
+            "deer",
+            "deer"
+          ],
+          "frozen_ref": [
+            "deer",
+            "deer",
+            "deer"
+          ],
+          "identical": true
+        },
+        {
+          "agent": "hawk",
+          "action": "eat",
+          "new": [
+            "snake",
+            "snake",
+            "snake"
+          ],
+          "frozen_ref": [
+            "snake",
+            "snake",
+            "snake"
+          ],
+          "identical": true
+        },
+        {
+          "agent": "bear",
+          "action": "eat",
+          "new": [
+            "fish",
+            "fish",
+            "fish"
+          ],
+          "frozen_ref": [
+            "fish",
+            "fish",
+            "fish"
+          ],
+          "identical": true
+        },
+        {
+          "agent": "wolf",
+          "action": "eat",
+          "new": [
+            "rabbit",
+            "rabbit",
+            "rabbit"
+          ],
+          "frozen_ref": [
+            "rabbit",
+            "rabbit",
+            "rabbit"
+          ],
+          "identical": true
+        },
+        {
+          "agent": "owl",
+          "action": "eat",
+          "new": [
+            "vole",
+            "vole",
+            "vole"
+          ],
+          "frozen_ref": [
+            "vole",
+            "vole",
+            "vole"
+          ],
+          "identical": true
+        },
+        {
+          "agent": "shark",
+          "action": "eat",
+          "new": [
+            "tuna",
+            "tuna",
+            "tuna"
+          ],
+          "frozen_ref": [
+            "tuna",
+            "tuna",
+            "tuna"
+          ],
+          "identical": true
+        },
+        {
+          "agent": "eagle",
+          "action": "eat",
+          "new": [
+            "trout",
+            "trout",
+            "trout"
+          ],
+          "frozen_ref": [
+            "trout",
+            "trout",
+            "trout"
+          ],
+          "identical": true
+        }
+      ],
+      "parity_rows": [
+        {
+          "agent": "dog",
+          "action": "eat",
+          "flag_on": [
+            "cat",
+            "cat",
+            "cat"
+          ],
+          "flag_off": [
+            "cat",
+            "cat",
+            "cat"
+          ],
+          "same": true
+        },
+        {
+          "agent": "lion",
+          "action": "eat",
+          "flag_on": [
+            "deer",
+            "deer",
+            "deer"
+          ],
+          "flag_off": [
+            "deer",
+            "deer",
+            "deer"
+          ],
+          "same": true
+        },
+        {
+          "agent": "hawk",
+          "action": "eat",
+          "flag_on": [
+            "snake",
+            "snake",
+            "snake"
+          ],
+          "flag_off": [
+            "snake",
+            "snake",
+            "snake"
+          ],
+          "same": true
+        },
+        {
+          "agent": "bear",
+          "action": "eat",
+          "flag_on": [
+            "fish",
+            "fish",
+            "fish"
+          ],
+          "flag_off": [
+            "fish",
+            "fish",
+            "fish"
+          ],
+          "same": true
+        },
+        {
+          "agent": "wolf",
+          "action": "eat",
+          "flag_on": [
+            "rabbit",
+            "rabbit",
+            "rabbit"
+          ],
+          "flag_off": [
+            "rabbit",
+            "rabbit",
+            "rabbit"
+          ],
+          "same": true
+        },
+        {
+          "agent": "owl",
+          "action": "eat",
+          "flag_on": [
+            "vole",
+            "vole",
+            "vole"
+          ],
+          "flag_off": [
+            "vole",
+            "vole",
+            "vole"
+          ],
+          "same": true
+        },
+        {
+          "agent": "shark",
+          "action": "eat",
+          "flag_on": [
+            "tuna",
+            "tuna",
+            "tuna"
+          ],
+          "flag_off": [
+            "tuna",
+            "tuna",
+            "tuna"
+          ],
+          "same": true
+        },
+        {
+          "agent": "eagle",
+          "action": "eat",
+          "flag_on": [
+            "trout",
+            "trout",
+            "trout"
+          ],
+          "flag_off": [
+            "trout",
+            "trout",
+            "trout"
+          ],
+          "same": true
+        }
+      ],
+      "preconditions": [
+        {
+          "kind": "require",
+          "name": "flag-off byte-identical vs the FROZEN pre-edit reference (every real query)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": "8/8"
+        },
+        {
+          "kind": "require",
+          "name": "flag-on real-match parity vs flag-off (genuine matches unaffected)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": "8/8"
+        },
+        {
+          "kind": "require",
+          "name": "organ B: intact withholds on a manufactured mismatch",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "organ B: lesion falsely corroborates the SAME mismatch",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "organ C: intact withholds on a manufactured mismatch",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "organ C: lesion falsely corroborates the SAME mismatch",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "bus_combine intact matches the host verdict on the manufactured mismatch",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "bus_combine lesioned WRONGLY commits (the load-bearing collapse)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        }
+      ],
+      "disabled_processes": []
+    }
+  ]
+}
