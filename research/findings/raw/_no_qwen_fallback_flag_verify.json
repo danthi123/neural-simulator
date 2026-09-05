@@ -1,0 +1,56 @@
+{
+ "phaseA_wkvoff_flagoff": {
+  "Tell me about zorplaxian.": {
+   "answer": "I'm not sure about zorplaxian \u2014 I don't have anything about it in what I've actually learned, so I'd only be guessing.",
+   "generator": "qwen",
+   "known": false,
+   "abstained": true
+  },
+  "Tell me about paris.": {
+   "answer": "I'm not sure about paris \u2014 I don't have anything about it in what I've actually learned, so I'd only be guessing.",
+   "generator": "qwen",
+   "known": false,
+   "abstained": true
+  },
+  "hello": {
+   "answer": "I'm not sure about hello \u2014 I don't have anything about it in what I've actually learned, so I'd only be guessing.",
+   "generator": "qwen",
+   "known": false,
+   "abstained": true
+  }
+ },
+ "phaseB_wkvoff_flagon": {
+  "Tell me about zorplaxian.": {
+   "answer": "I'm not sure about zorplaxian \u2014 I don't have anything about it in what I've actually learned, so I'd only be guessing.",
+   "generator": "no_qwen_fallback",
+   "known": false,
+   "abstained": true
+  },
+  "Tell me about paris.": {
+   "answer": "I'm not sure about paris \u2014 I don't have anything about it in what I've actually learned, so I'd only be guessing.",
+   "generator": "no_qwen_fallback",
+   "known": false,
+   "abstained": true
+  },
+  "hello": {
+   "answer": "I'm not sure about hello \u2014 I don't have anything about it in what I've actually learned, so I'd only be guessing.",
+   "generator": "no_qwen_fallback",
+   "known": false,
+   "abstained": true
+  }
+ },
+ "phaseC_wkvdefault_flagon": {
+  "Tell me about zorplaxian.": {
+   "answer": "I'm not sure about zorplaxian \u2014 I don't have anything about it in what I've actually learned, so I'd only be guessing.",
+   "generator": "wkv_mouth",
+   "known": false,
+   "abstained": true
+  }
+ },
+ "phaseD_known_wkvoff_flagon": {
+  "answer": "the Angora Turkey is located in the time zone of the Kaliningrad Time",
+  "generator": "spiking_clause",
+  "known": true,
+  "abstained": false
+ }
+}
