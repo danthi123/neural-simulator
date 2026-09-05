@@ -717,6 +717,137 @@ def build_and_train_wkv(tr_ids, V, seed, args, device, init_emb=None):
                 outs.append(self.Wo(r[:, t] * read))
             return torch.stack(outs, 1)
 
+    class DeltaNetLayer(nn.Module):
+        """ERROR-CORRECTIVE DELTA-RULE FAST-WEIGHT WRITE on the linattn substrate (--recurrence deltanet,
+        2026-09-05, own-voice-fluency arc, DR-ladder rung 3). This is a WRITE-RULE FIX to LinAttnLayer's SAME
+        D x D fast-weight KV trace -- NOT a new content-addressing key, and NOT a reproposal of the banked
+        content-addressing family (assoc/assoc_t/learnkey/hippokey, all of which lose to trigram): the query,
+        key, value, feature map phi, learned per-channel decay and output gate are IDENTICAL to LinAttnLayer;
+        ONLY the line that UPDATES the KV trace M changes, from additive Hebbian to error-correcting delta.
+
+        WHY (the measured failure this targets): LinAttnLayer's additive Hebbian write
+            M_t = lam (*) M_{t-1} + phi(k_t) (x) v_t
+        accumulates EVERY token's key->value binding into M with NO erasure, so as content diversity rises
+        (narrow simplewiki -> broad wikitext-103) the trace saturates with mutually-interfering bindings and its
+        norm grows unbounded. Measured directly: linattn CROSSES a fair interpolated-trigram on simplewiki
+        (+0.05, 6/6; research/findings/2026-09-03-OPEN-FLUENCY-BREAKTHROUGH-linattn-deployable-spiking-mouth-
+        beats-trigram-6of6.md) but FALLS BELOW trigram on the broad wikitext-103 domain (margin_vs_trigram
+        -0.29..-0.57 at depth>=2; research/findings/raw/_emerge_wkv_lm_linattn_wt103_scale_s43.json) -- exactly
+        the interference / unbounded-norm signature.
+
+        THE DELTA RULE (Widrow-Hoff error correction; erase-before-write; Schlag et al. 2021 "Linear
+        Transformers Are Secretly Fast Weight Programmers" arXiv:2102.11174; Yang et al. 2024 "Gated Delta
+        Networks: Improving Mamba2 with Delta Rule" arXiv:2412.06464). Per position t (key-major M [D_k, D_v]):
+            k_hat_t = phi(k_t) / ||phi(k_t)||_2            (--delta-key-norm l2, default; the unit-norm key that
+                                                            makes the erase an EXACT projection removal)
+            M'      = lam (*) M_{t-1}                       (learned per-channel decay diag(w), exactly linattn's)
+            v_old   = k_hat_t^T M'                          (the value CURRENTLY bound to this key, retrieved)
+            M_t     = M' + beta * k_hat_t (x) (v_t - v_old) (subtract it, write ONLY the RESIDUAL)
+            read_t  = phi(q_t)^T M_t                        (raw content read; NO num/den -- see NORMALIZATION)
+            delta_t = Wo(r_t (*) read_t), r_t = sigmoid(Wr(z_t))    -- caller adds this to the residual stream
+        Reading the just-written key back gives k_hat^T M_t = v_old + beta*||k_hat||^2 (v - v_old) = v_t at
+        beta=1, ||k_hat||=1 -- EXACT error correction. Because each write REPLACES rather than ADDS the binding
+        for its key, M's norm stays BOUNDED under interference (the delta rule's defining property, and the
+        direct fix for linattn's measured unbounded-norm failure). lam = exp(-softplus(w)) is linattn's
+        IDENTICAL learned per-channel (or scalar, --uniform-decay) decay, here also playing the gated-delta-
+        rule's decay-gate role (Yang 2024's alpha_t; the erase reads the DECAYED prior state M', the consistent
+        gated form). beta (--delta-beta, default 1.0) is the write strength (canonical unit-step Widrow-Hoff at
+        1.0), a FIXED scalar -> this arm adds ZERO extra parameters over linattn.
+
+        NORMALIZATION (why raw read, no num/den): the delta rule bounds the state at the WRITE (erase-before-
+        write) -- a DIFFERENT and stronger mechanism than linattn's read-side num/den average. Keeping linattn's
+        additive denominator (zden_t = lam*zden + phi(k)) alongside a delta-corrected M is INCOHERENT: zden
+        would grow unbounded while M stays bounded, so the read num/den -> 0 over long contexts. The entire
+        DeltaNet family (Schlag 2021, Yang 2024, RWKV-7 Peng et al. 2025 arXiv:2503.14456) therefore reads the
+        fast weight RAW (o_t = S_t q_t), which the L2-normalized keys keep well-conditioned. The clean ISOLATION
+        control for 'is the win the write rule or the loss of the denominator?' is the already-existing linattn
+        --no-linattn-norm arm (additive write + raw read): deltanet vs that isolates the delta WRITE, since both
+        read raw.
+
+        BIOLOGY (brain-based-only, DESIGN-consistent with LinAttnLayer): the delta rule is LOCAL and weight-
+        transport-free (the correction v_t - v_old is available at the synapse from the postsynaptic value
+        cell's own activity minus the retrieved prediction), so it is the SPIKING-PORTABLE write rule, not a
+        host-only trick. Erase-before-write is realizable by short-term synaptic plasticity: the presynaptic key
+        drive both reads the currently-bound value (facilitated transmission) and DEPRESSES the pre-existing
+        binding before the new value is potentiated (presynaptic-driven short-term / heterosynaptic depression).
+        Widrow & Hoff 1960 (the classical local LMS/delta error-correcting synaptic rule; Dayan & Abbott 2001
+        Ch.8). Same fast-weight = STP anchor as LinAttnLayer (Mongillo, Barak & Tsodyks 2008; Ba, Hinton et al.
+        2016).
+
+        OUR-RECORD PROVENANCE (this is NOT a refuted reproposal -- stated explicitly per the build scope): the
+        delta-rule fast-weight store was scoped the cheap-first #1 next mechanism (bio HIGH, drop-in;
+        "M += eta(v - M k)k^T, read v_hat = M q") on 2026-07-15 (research/findings/2026-07-15-emergence-engine-
+        research-gate-horizon-frontier-is-a-nonfading-content-addressable-store-delta-rule-fastweight-is-1.md)
+        but was NEVER BUILT for the LM. 2026-07-13 (research/findings/2026-07-13-input-magnitude-gating-robust-
+        generic-deep-context-lift-but-NOT-content-selective-6seed.md) conditionally green-lit the content-
+        selective / delta memory PENDING 'structured codes + real scale' (one-hot x random-W_in codes had no
+        content-vs-filler structure for a selective write to exploit) -- a precondition linattn's LEARNED BPE
+        embeddings at 13.5M tokens now MEET. The 2026-07-15 edge5-rung3 delta-write that WAS refuted
+        (research/findings/2026-07-15-edge5-rung3-delta-write-PARTIAL-error-correction-refuted.md) is a
+        DIFFERENT mechanism at a DIFFERENT scale: a store-side ONE-SHOT ON-BRIDGE potentiate/depress for a
+        spiking discourse BINDER (KV=4/8 value pools, P<=8 binds) -- refuted BECAUSE it was 'too coarse to
+        reproduce the numpy delta rule's ITERATIVE MATRIX error-correction' (that finding's own words). THIS arm
+        IS that iterative matrix delta, at LM scale.
+
+        BYTE-IDENTICAL WHEN OFF: this class and self.deltanet_layers are constructed ONLY when
+        --recurrence deltanet is selected (see the ModuleList construction in WKV.__init__ and the
+        RECUR=="deltanet" forward dispatch) -- defined-but-never-instantiated otherwise, consuming ZERO init-RNG
+        draws, so wkv/ssm/hippo/assoc/assoc_t/linattn/learnkey/hippokey are completely unaffected at any
+        --n-layers. Its __init__ mirrors LinAttnLayer's module set exactly (Wq/Wk/Wv/Wr/Wo/w + optional Wg), so
+        deltanet is a clean structural sibling of linattn differing ONLY in the write rule.
+
+        MEMORYLESS anti-cheat (identical semantics to LinAttn/Assoc): when True, M is NEVER carried across
+        positions -- each position's read uses ONLY its own k_hat (x) v, so no past position can be recalled
+        (collapses to ~bigram). The generic sequence-level --permute anti-cheat (eval_perdepth permute=True)
+        applies unmodified. Both MUST collapse for the context/order use to be genuine.
+        """
+        def __init__(self, D, uniform_decay=False, phi="elu", gate=False, beta=1.0, key_norm="l2"):
+            super().__init__()
+            self.ln = nn.LayerNorm(D)
+            self.Wq = nn.Linear(D, D, bias=False); self.Wk = nn.Linear(D, D, bias=False)
+            self.Wv = nn.Linear(D, D, bias=False); self.Wr = nn.Linear(D, D, bias=False)
+            self.Wo = nn.Linear(D, D, bias=False)
+            self.w = nn.Parameter(torch.zeros(1 if uniform_decay else D))   # lam = exp(-softplus(w)), like linattn
+            self.phi = phi
+            self.beta = float(beta)              # write strength (FIXED scalar -> zero extra params over linattn)
+            self.key_norm = key_norm            # "l2" (exact erase) | "none" (task-literal unnormalized phi(k))
+            self.gate = gate
+            if gate:
+                self.Wg = nn.Linear(D, D, bias=True)
+                nn.init.zeros_(self.Wg.weight); nn.init.constant_(self.Wg.bias, 2.0)   # init-open, reuse assoc-gate
+
+        def _phi(self, x):                       # identical feature map to LinAttnLayer._phi
+            if self.phi == "elu":  return torch.nn.functional.elu(x) + 1.0
+            if self.phi == "relu": return torch.relu(x) + 1e-3
+            if self.phi == "exp":  return torch.exp(x - x.amax(-1, keepdim=True))       # stable RWKV-like
+            if self.phi == "sparse":                                                     # k-WTA sparse key
+                kth = torch.topk(x, max(1, x.shape[-1] // 8), dim=-1).values[..., -1:]
+                return torch.relu(x - kth)
+            raise ValueError(self.phi)
+
+        def forward(self, h, memoryless=False):        # h:[B,T,D] -> delta:[B,T,D] (pre-norm residual block)
+            B, T, D = h.shape
+            z = self.ln(h)
+            q = self._phi(self.Wq(z)); kk = self._phi(self.Wk(z)); v = self.Wv(z)
+            r = torch.sigmoid(self.Wr(z))
+            if self.key_norm == "l2":
+                kk = kk / (kk.norm(dim=-1, keepdim=True) + 1e-6)            # unit-norm key -> EXACT erase
+            lam = torch.exp(-torch.nn.functional.softplus(self.w))          # (D,) or (1,), identical to linattn
+            M = torch.zeros(B, D, D, device=h.device)                       # outer-product KV trace [B,D_k,D_v]
+            outs = []
+            for t in range(T):
+                if memoryless:                                             # ANTI-CHEAT: current token only, no carry
+                    M_r = torch.einsum("bd,be->bde", kk[:, t], v[:, t])
+                else:
+                    Md = lam.unsqueeze(-1) * M                             # decayed prior state (gated-delta form)
+                    v_old = torch.einsum("bd,bde->be", kk[:, t], Md)       # value CURRENTLY bound to this key
+                    M = Md + self.beta * torch.einsum("bd,be->bde", kk[:, t], v[:, t] - v_old)  # write RESIDUAL
+                    M_r = M
+                read = torch.einsum("bd,bde->be", q[:, t], M_r)            # phi(q)^T M  (raw -- DeltaNet reads raw)
+                if self.gate: read = torch.sigmoid(self.Wg(z[:, t])) * read
+                outs.append(self.Wo(r[:, t] * read))
+            return torch.stack(outs, 1)
+
     class LearnKeyLayer(nn.Module):
         """FIXED-CAPACITY LEARNED-KEY CONTENT-ADDRESSABLE MEMORY (--recurrence learnkey, 2026-09-04). Build-ahead
         fallback: gap#1's NAMED next mechanism CLASS after `linattn` in the roadmap's own fluency lineage
@@ -1091,6 +1222,24 @@ def build_and_train_wkv(tr_ids, V, seed, args, device, init_emb=None):
                 for _ in range(max(n_layers, 1))
             ]) if RECUR == "hippokey" else nn.ModuleList()
 
+            # --recurrence deltanet (2026-09-05, own-voice-fluency arc, DR-ladder rung 3): ERROR-CORRECTIVE
+            # DELTA-RULE fast-weight WRITE on the linattn substrate (see DeltaNetLayer's docstring for the full
+            # mechanism, the convergent external evidence, the bio framing, and the explicit distinction from
+            # the refuted edge5-rung3 store-side write and the banked content-addressing family). Composed with
+            # --n-layers depth exactly like linattn_layers above (ALL n_layers blocks are uniform DeltaNetLayer
+            # instances in ONE list). Reuses --linattn-phi (same feature map -- deltanet IS linattn-with-delta-
+            # write) and --assoc-gate (the SAME learned-retrieval-gate flag assoc/linattn use). Built ONLY when
+            # RECUR=="deltanet" (else an empty ModuleList, consuming ZERO extra RNG draws) so every other arm's
+            # (wkv/ssm/hippo/assoc/assoc_t/linattn/learnkey/hippokey) parameter-init RNG order -- hence its
+            # outputs -- is UNCHANGED by this addition at any --n-layers.
+            self.deltanet_layers = nn.ModuleList([
+                DeltaNetLayer(D, uniform_decay=getattr(args, "uniform_decay", False),
+                              phi=getattr(args, "linattn_phi", "elu"), gate=getattr(args, "assoc_gate", False),
+                              beta=getattr(args, "delta_beta", 1.0),
+                              key_norm=getattr(args, "delta_key_norm", "l2"))
+                for _ in range(max(n_layers, 1))
+            ]) if RECUR == "deltanet" else nn.ModuleList()
+
             # PREDICTIVE-CODING AUXILIARY OBJECTIVE (2026-09-03, --pred-aux-weight, own-voice-fluency arc). WHY:
             # the bound-investigation of the fluency arc (research/findings/2026-09-03-spiking-depth-tokens-
             # closing-fluency-gap-milestone.md and its completeness-critic) converged every --recurrence family
@@ -1215,6 +1364,16 @@ def build_and_train_wkv(tr_ids, V, seed, args, device, init_emb=None):
                 # below runs byte-identically to before this addition.
                 hh = h
                 for blk in self.hippoassoc_layers:
+                    hh = hh + blk(hh, memoryless=self.memoryless)
+                return self._out(hh, aux)
+            if RECUR == "deltanet":
+                # ERROR-CORRECTIVE DELTA-RULE fast-weight write on the linattn substrate (see DeltaNetLayer).
+                # Self-contained: does NOT touch self.Wk/Wv/Wr/w/u below (unused on this branch, no gradient
+                # reaches them). Inserted BEFORE any wkv/ssm-specific line, mirroring the hippo/assoc/linattn/
+                # learnkey/hippokey insertions above, so when RECUR != "deltanet" this is one skipped comparison
+                # and every line below runs byte-identically to before this addition.
+                hh = h
+                for blk in self.deltanet_layers:
                     hh = hh + blk(hh, memoryless=self.memoryless)
                 return self._out(hh, aux)
             k = self.Wk(h); v = self.Wv(h); r = torch.sigmoid(self.Wr(h))
@@ -1604,7 +1763,7 @@ def main():
                     help="learned = LM-trained embedding (Rung 1a); ppmi = EMERGENT unsupervised PPMI co-occurrence codes, "
                          "frozen (Rung 1b, the gap#1<->gap#4 convergence).")
     ap.add_argument("--ppmi-window", type=int, default=5)
-    ap.add_argument("--recurrence", choices=["wkv", "ssm", "hippo", "assoc", "assoc_t", "linattn", "learnkey", "hippokey"], default="wkv",
+    ap.add_argument("--recurrence", choices=["wkv", "ssm", "hippo", "assoc", "assoc_t", "linattn", "learnkey", "hippokey", "deltanet"], default="wkv",
                     help="wkv = full RWKV linear-attention (num/den normalized); ssm = spiking-substrate-faithful "
                          "leaky-integrator (a_t=decay*a_{t-1}+v_t, no normalization = the Rung 2 spiking-port form); "
                          "hippo = FIXED diagonal HiPPO-structured multi-timescale recurrence (A=fixed log-spaced "
@@ -1645,7 +1804,16 @@ def main():
                          "assoc at the -0.147 bound, and its full per-position softmax recall is not subject to "
                          "the fixed-state compression trigram-bound the linear-recurrence family (wkv/ssm/hippo/"
                          "linattn) shares. Bio anchor: entorhinal multi-timescale context -> CA3 pattern "
-                         "completion. Exact-softmax CEILING instrument (O(T^2), spike-port is a named next rung).")
+                         "completion. Exact-softmax CEILING instrument (O(T^2), spike-port is a named next rung). "
+                         "deltanet = ERROR-CORRECTIVE DELTA-RULE fast-weight WRITE on the linattn substrate (see "
+                         "DeltaNetLayer, 2026-09-05, DR-ladder rung 3) -- a WRITE-RULE fix to linattn's SAME KV "
+                         "trace (erase-before-write: retrieve the value currently bound to the incoming key, "
+                         "subtract it, write only the residual; L2-normalized keys + linattn's learned per-channel "
+                         "decay; raw read like the DeltaNet family). NOT a new content-addressing key and NOT the "
+                         "banked assoc/learnkey family -- ONLY the M-update line differs from linattn (Widrow-Hoff; "
+                         "Schlag 2021, Yang et al. Gated DeltaNet 2024, RWKV-7 2025). Targets linattn's measured "
+                         "interference/unbounded-norm failure on the broad wikitext-103 domain; the linattn "
+                         "--no-linattn-norm arm is the write-rule isolation control.")
     ap.add_argument("--assoc-gate", dest="assoc_gate", action="store_true",
                     help="(--recurrence assoc / assoc_t only) LEARNED RETRIEVAL GATE (2026-09-03, default OFF, "
                          "see AssocLayer's LEARNED RETRIEVAL GATE docstring section): a per-channel, input-"
@@ -1677,8 +1845,21 @@ def main():
                          "prototypes in the codebook (see LearnKeyLayer). Independent of sequence length T and "
                          "of --d-model D -- this is the whole point (spiking-realizable = a bounded population, "
                          "unlike assoc's per-token O(T) key count). Default 64.")
+    ap.add_argument("--delta-beta", dest="delta_beta", type=float, default=1.0,
+                    help="(--recurrence deltanet only) beta, the delta-rule write strength in "
+                         "M_t = lam*M_{t-1} + beta*k_hat (x) (v - v_old) (see DeltaNetLayer). Default 1.0 = the "
+                         "canonical unit-step Widrow-Hoff / exact error correction (reading the just-written key "
+                         "back yields v exactly at beta=1, ||k_hat||=1). A FIXED scalar -- adds NO parameters, so "
+                         "deltanet stays byte-identical-when-off and a clean structural sibling of linattn.")
+    ap.add_argument("--delta-key-norm", dest="delta_key_norm", choices=["l2", "none"], default="l2",
+                    help="(--recurrence deltanet only) key normalization for the delta write/erase. l2 (default) "
+                         "= unit-normalize phi(k) so the erase is an EXACT projection removal (the DeltaNet-"
+                         "faithful form with bounded state, Schlag 2021 / Yang et al. 2024). none = use phi(k) "
+                         "unnormalized (the build scope's literal formula S_t <- S_{t-1}diag(w) + "
+                         "beta*(v - S_{t-1}phi(k))phi(k)^T) -- error-correcting in direction but not unit-gain; "
+                         "offered as an ablation, l2 is the principled + literature-faithful default.")
     ap.add_argument("--linattn-baseline-margin", dest="linattn_baseline_margin", type=float, default=0.0505,
-                    help="(--recurrence learnkey only, REPORTING) the already-measured linattn 6-seed mean "
+                    help="(--recurrence learnkey/deltanet, REPORTING) the already-measured linattn 6-seed mean "
                          "deep-context margin_vs_trigram (research/findings/2026-09-03-OPEN-FLUENCY-"
                          "BREAKTHROUGH-linattn-deployable-spiking-mouth-beats-trigram-6of6.md: mean +0.0505, "
                          "min +0.039, max +0.060). Printed alongside each learnkey seed's own margin so the "
@@ -1905,19 +2086,20 @@ def main():
             go = (deep["margin_vs_trigram"] > 0.02) and (deep["wkv_perm"] - deep["wkv"] > 0.05) and (deep["wkv_memoryless"] - deep["wkv"] > 0.05)
             print(f"    [seed {seed}] DEEP (d10-99): WKV-beats-trigram {deep['margin_vs_trigram']:+.3f}, perm-collapse {deep['wkv_perm']-deep['wkv']:+.3f}, "
                   f"mless-collapse {deep['wkv_memoryless']-deep['wkv']:+.3f} -> {'GO' if go else 'no-go'}", flush=True)
-            if args.recurrence == "learnkey":
-                # BUILD-AHEAD FALLBACK GO GATE (2026-09-04, see LearnKeyLayer's HONEST SCOPE docstring section):
-                # the universal per-arm bar above (>0.02 margin + anti-cheat collapse) is necessary but not
-                # sufficient for THIS mechanism's purpose -- it exists as a candidate REPLACEMENT for linattn,
-                # so it must also at least match linattn's own measured 6-seed deep-context margin
-                # (--linattn-baseline-margin, default the recorded +0.0505 mean), not merely re-clear the same
-                # bar assoc/assoc_t already failed. This is a REPORT-TIME comparison against a constant supplied
-                # on the command line (not a fresh linattn run in this invocation) -- the 6-seed verdict is the
-                # mean of this per-seed comparison across all --seeds, computed the same way the linattn
-                # breakthrough finding itself was (per-seed margin_vs_trigram at d10-99 -> mean/min/max).
+            if args.recurrence in ("learnkey", "deltanet"):
+                # CANDIDATE-REPLACEMENT GO GATE (2026-09-04 learnkey / 2026-09-05 deltanet): the universal
+                # per-arm bar above (>0.02 margin + anti-cheat collapse) is necessary but not sufficient for a
+                # mechanism whose PURPOSE is to REPLACE linattn -- it must also at least match linattn's own
+                # measured deep-context margin (--linattn-baseline-margin), not merely re-clear the trigram bar
+                # assoc/assoc_t already failed. PASS THE RIGHT CONSTANT PER DOMAIN: for a broad wikitext-103 run
+                # this is linattn's OWN wt103 floor (--linattn-baseline-margin -0.286, the d10-99 value in
+                # research/findings/raw/_emerge_wkv_lm_linattn_wt103_scale_s43.json) -- the direction-test asks
+                # whether deltanet LIFTS off that floor; for a simplewiki run it is linattn's +0.0505 6-seed mean
+                # (the default). REPORT-TIME comparison against a command-line constant (not a fresh linattn run
+                # in this invocation); the 6-seed verdict is the mean of this per-seed comparison across --seeds.
                 go_vs_linattn = deep["margin_vs_trigram"] >= args.linattn_baseline_margin
-                print(f"    [seed {seed}] vs-linattn-baseline: learnkey {deep['margin_vs_trigram']:+.3f} vs linattn "
-                      f"{args.linattn_baseline_margin:+.3f} (Δ{deep['margin_vs_trigram']-args.linattn_baseline_margin:+.3f}) "
+                print(f"    [seed {seed}] vs-linattn-baseline: {args.recurrence} {deep['margin_vs_trigram']:+.3f} vs "
+                      f"linattn {args.linattn_baseline_margin:+.3f} (Δ{deep['margin_vs_trigram']-args.linattn_baseline_margin:+.3f}) "
                       f"-> {'GO (matches/beats linattn)' if go_vs_linattn else 'short of linattn'}", flush=True)
 
     out = {"runner": "_emerge_wkv_lm_derisk", "corpus": args.corpus, "seeds": args.seeds, "d_model": args.d_model,
