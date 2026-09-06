@@ -84,6 +84,16 @@ class PCSConfig:
     surrogate_alpha: float = 2.0  # atan-surrogate slope (spike backward; and the soft-forward for gradcheck)
     # objective
     tbptt_T: int = 18            # truncated-BPTT window length
+    # PREDICTION HORIZON (the fork's 2nd move). k=1 (default) is the 1-step next-latent objective,
+    # byte-identical to the first-move code (the existing 5 control artifacts stay valid). k>1 ADDS an
+    # h-step-ahead JEPA term: predict the latent of view_{t+k} from h_t + the SUMMED efference of the k
+    # intervening actions (a count-vector = net displacement in a translation grid). Predicting k ahead
+    # REQUIRES path-integrating where you'll be after k actions, so a persistent position code becomes
+    # load-bearing ON THE OBJECTIVE — the 1st move's finding was that the plain 1-step objective does NOT
+    # require it and specializes the emergent place code away. Kept ADDITIVE (horizons {1, k}) so the
+    # dense 1-step gradient is retained alongside the horizon pressure. (Honesty: this is the named
+    # surpass, not a guarantee — if k-ahead still does not retain place, that is itself the next finding.)
+    pred_horizon: int = 1
     beta_reward: float = 1.0     # weight of the reward-prediction term
     var_lambda: float = 1.0      # weight of the VICReg variance floor on e (0 disables)
     var_gamma: float = 0.3       # target per-dim std for the variance floor (tanh-bounded e)
@@ -551,21 +561,30 @@ class PredictiveContinualSubstrate:
             e_list.append(e_t); h_list.append(h_raw); rhat_list.append(rhat)
             hp = h_raw
 
-        # loss: action-conditional JEPA over t=0..T-2 (predict next-view EMA encoding given the CHOSEN
-        # action a_t = tape[t+1].a_prev), plus reward over all t with a reward.
-        loss = 0.0
-        n_jepa = max(1, T - 1)
-        z_targets = [None] * T
-        ehat_list = [None] * T
-        for t in range(T - 1):
-            z_targets[t] = xp.tanh(self.W_enc_ema @ tape[t + 1]["v1feat"] + self.b_enc_ema)  # stop-grad target
-            a_act = tape[t + 1]["a_prev"]                                                     # the action taken at t
-            ehat_list[t] = P["W_pred"] @ h_list[t] + P["W_pred_a"] @ a_act + P["b_pred"]
+        # loss: action-conditional JEPA. For each horizon h in `horizons`, predict the latent of the view
+        # h steps ahead (view_{t+h}) from h_t + the SUMMED efference of the h intervening actions
+        # a_t..a_{t+h-1} (a count-vector = net displacement in a translation grid; W_pred_a's columns are
+        # per-action displacement embeddings, so their sum is the net-displacement embedding). horizon==1
+        # reproduces the 1-step objective BYTE-IDENTICALLY (single term, accumulate-then-divide-once);
+        # horizon k>1 adds an h-step term that is only predictable if h_t PATH-INTEGRATES position, making
+        # the place code load-bearing ON the objective (the 2nd move). Kept ADDITIVE (horizons {1, k}) so
+        # the dense 1-step signal is retained alongside the horizon pressure.
+        horizons = [hh for hh in sorted(set([1, cfg.pred_horizon])) if hh < T]
+        jepa_terms = []                       # (t, ehat, z_target, a_count, n_h) — consumed by the backward
         jl = 0.0
-        for t in range(T - 1):
-            diff = ehat_list[t] - z_targets[t]
-            jl = jl + float((diff * diff).sum())
-        jl = jl / n_jepa
+        for h in horizons:
+            n_h = max(1, T - h)
+            s = 0.0
+            for t in range(T - h):
+                z = xp.tanh(self.W_enc_ema @ tape[t + h]["v1feat"] + self.b_enc_ema)  # stop-grad target view_{t+h}
+                a_count = tape[t + 1]["a_prev"]                                        # action taken at t
+                for j in range(2, h + 1):
+                    a_count = a_count + tape[t + j]["a_prev"]                          # + actions t+1..t+h-1
+                ehat = P["W_pred"] @ h_list[t] + P["W_pred_a"] @ a_count + P["b_pred"]
+                diff = ehat - z
+                s = s + float((diff * diff).sum())
+                jepa_terms.append((t, ehat, z, a_count, n_h))
+            jl = jl + s / n_h
         rl = 0.0
         n_r = 0
         for t in range(T):
@@ -586,8 +605,8 @@ class PredictiveContinualSubstrate:
         loss = jl + cfg.beta_reward * rl + vl
         cache = {
             "e_list": e_list, "h_list": h_list, "g_list": g_list, "pre_list": pre_list,
-            "v_list": v_list, "s_list": s_list, "ehat_list": ehat_list, "rhat_list": rhat_list,
-            "z_targets": z_targets, "h_prev": h_prev, "v_prev0": v_prev, "n_jepa": n_jepa, "n_r": n_r,
+            "v_list": v_list, "s_list": s_list, "jepa_terms": jepa_terms, "rhat_list": rhat_list,
+            "h_prev": h_prev, "v_prev0": v_prev, "n_r": n_r,
         }
         return loss, cache
 
@@ -600,20 +619,22 @@ class PredictiveContinualSubstrate:
         grads = {k: xp.zeros_like(v) for k, v in P.items()}
         e_list = cache["e_list"]; h_list = cache["h_list"]; g_list = cache["g_list"]
         pre_list = cache["pre_list"]; v_list = cache["v_list"]; s_list = cache["s_list"]
-        ehat_list = cache["ehat_list"]; rhat_list = cache["rhat_list"]; z_targets = cache["z_targets"]
-        n_jepa = cache["n_jepa"]; n_r = cache["n_r"]
+        jepa_terms = cache["jepa_terms"]; rhat_list = cache["rhat_list"]
+        n_r = cache["n_r"]
 
         # upstream grad on each h_t from the heads
         dh_head = [xp.zeros((H,), dtype=xp.float32) for _ in range(T)]
+        # JEPA head(s): each term (t, ehat, z, a_count, n_h) predicts view_{t+h} from h_t + a_count.
+        # At horizon 1 the term list is exactly t=0..T-2, so this reproduces the 1-step backward
+        # byte-identically (same g_ehat, same accumulation order into W_pred/W_pred_a/b_pred and dh_head).
+        for (t, ehat, z, a_count, n_h) in jepa_terms:
+            g_ehat = (2.0 / n_h) * (ehat - z)                     # dL/dehat
+            grads["W_pred"] += xp.outer(g_ehat, h_list[t])
+            grads["W_pred_a"] += xp.outer(g_ehat, a_count)        # action-conditioning grad (net displacement)
+            grads["b_pred"] += g_ehat
+            dh_head[t] = dh_head[t] + P["W_pred"].T @ g_ehat
+        # reward head
         for t in range(T):
-            # JEPA head (t predicts t+1), only for t < T-1
-            if t < T - 1:
-                g_ehat = (2.0 / n_jepa) * (ehat_list[t] - z_targets[t])   # dL/dehat_t
-                grads["W_pred"] += xp.outer(g_ehat, h_list[t])
-                grads["W_pred_a"] += xp.outer(g_ehat, tape[t + 1]["a_prev"])   # action-conditioning grad
-                grads["b_pred"] += g_ehat
-                dh_head[t] = dh_head[t] + P["W_pred"].T @ g_ehat
-            # reward head
             if tape[t]["reward"] is not None and n_r > 0:
                 g_rhat = (2.0 * cfg.beta_reward / n_r) * (rhat_list[t] - tape[t]["reward"])
                 grads["w_r"] += g_rhat * h_list[t]
@@ -811,9 +832,10 @@ class PredictiveContinualSubstrate:
 # ─────────────────────────────────────────────────────────────────────────────
 # self-checks
 # ─────────────────────────────────────────────────────────────────────────────
-def _make_tiny(units="rate", seed=1):
+def _make_tiny(units="rate", seed=1, pred_horizon=1):
     cfg = PCSConfig(n_hidden=7, feat_dim=6, n_latent=4, n_actions=3, n_drive=2,
-                    tbptt_T=5, units=units, var_lambda=0.5, encoder="learned_ema", seed=seed)
+                    tbptt_T=5, units=units, var_lambda=0.5, encoder="learned_ema", seed=seed,
+                    pred_horizon=pred_horizon)
     return PredictiveContinualSubstrate(cfg)
 
 
@@ -830,13 +852,16 @@ def _fill_tape(sub, T, rng):
     return sub._tape
 
 
-def gradcheck(units="rate", tol=2e-2):
+def gradcheck(units="rate", tol=2e-2, pred_horizon=1):
     """Finite-difference the analytic BPTT grads for a tiny substrate. For spike mode the
     forward uses the SMOOTH surrogate-integral (soft=True) whose exact derivative is the
     atan surrogate the backward uses — the correct FD validation of a surrogate-gradient net
-    (a hard-Heaviside forward is non-differentiable and cannot be FD-checked)."""
+    (a hard-Heaviside forward is non-differentiable and cannot be FD-checked).
+
+    pred_horizon>1 validates the multi-horizon (2nd-move) JEPA backward — the k-ahead term's grads
+    into W_pred / W_pred_a (net-displacement conditioning) / b_pred and the extra dh_head path."""
     soft = (units == "spike")
-    sub = _make_tiny(units=units, seed=3)
+    sub = _make_tiny(units=units, seed=3, pred_horizon=pred_horizon)
     rng = np.random.default_rng(7)
     tape = _fill_tape(sub, sub.cfg.tbptt_T, rng)
     P = sub.P
@@ -882,7 +907,7 @@ def gradcheck(units="rate", tol=2e-2):
                 max_rel = rel
                 worst = (name, int(i), float(num), float(ana))
     ok = max_rel < tol
-    print(f"[gradcheck units={units}] checked={checked} max_rel_err={max_rel:.2e} "
+    print(f"[gradcheck units={units} pred_horizon={pred_horizon}] checked={checked} max_rel_err={max_rel:.2e} "
           f"{'OK' if ok else 'FAIL'}  worst={worst}")
     return ok
 
@@ -909,4 +934,7 @@ if __name__ == "__main__":
     if args.gradcheck or not (args.gradcheck or args.selftest):
         all_ok &= gradcheck("rate")
         all_ok &= gradcheck("spike", tol=5e-2)
+        # multi-horizon (2nd move) backward — validate the k-ahead JEPA grads (tbptt_T=5 -> horizons {1,3})
+        all_ok &= gradcheck("rate", pred_horizon=3)
+        all_ok &= gradcheck("spike", tol=5e-2, pred_horizon=3)
     raise SystemExit(0 if all_ok else 1)
