@@ -78,13 +78,22 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
   spikes the loss regardless of clipping). CONFIRMED: replay (cons) + gradient-clipping (stable) BOTH ruled out;
   the wall is the **EMA target**. Emergence is real (place 0.873≫untrained at 15k); target-instability destroys
   it by 200k. Artifacts on disk: base/cons/stable `_fork_pcs_emergence_rate*_6seed.json`.
-- **NEXT (the surpass — EMA-target stabilization):** agent ae8d9516 → in `sim/pcs_substrate.py` raise the EMA
-  target momentum (slower target, e.g. 0.99→0.999/0.9995) and/or normalize the target / frozen-target warmup, so
-  the JEPA target stops spiking; verify INLINE (single-thread CPU) the max held-out loss drops well below ~45 (no
-  spikes); then 6-seed re-run → do faculties emerge AND STAY? If yes → instability(target) WALL SURPASSED (GO) →
-  spike-arm (FORK-THESIS). If the target-fix ALSO fails → the objective doesn't REQUIRE position (make it
-  load-bearing: nav-reward/longer-horizon). Then write the fork finding (emergence-real-but-target-drift; replay
-  + clip + EMA levers). Lane-gate: doc-only exempt; code/.json need served lane (pool) or genuine-BLOCKER waiver.
+- **✅ EMA-FIX BUILT + INLINE-VERIFIED (agent ae8d9516, `a8169c215`/`3199b14b4`/`bd3a3d6f`):** EMA momentum
+  **0.99→0.9999** (slower target, `--ema-momentum`) + optional frozen-target warmup (`--ema-warmup`). Inline
+  smoke (50k/256u/s42): **max held-out loss 27.7→6.82** — the 40-47 spikes GONE (EMA A/B PASS). 3-checkpoint
+  diagnostic isolated the cause cleanly (0.99→27/27/27 flat-high; 0.9999→3/5/12 climbing; fixed→2.1 flat) ⇒ the
+  spikes were ENTIRELY the moving EMA target. OFF/control byte-identical (`--ema-momentum 0.99 --grad-clip 5.0
+  --grad-skip-factor 0.0` = old). Honest caveats: at smoke scale taming the loss only MODESTLY lifted place
+  (Δ+0.03-0.09); AND 0.9999 still slowly climbs over long horizons (→12 by 80k) while `--encoder fixed` is flat
+  (~2.1) — if the 200k still climbs, fixed / 0.99999 is the wired next lever.
+- **⚡ DECISIVE EMA-FIX 6-seed RUNNING:** pid 2108666 via gpu_queue (defaults now ema=0.9999+clip1+skip8),
+  `--out research/findings/raw/_fork_pcs_emergence_rate_emafix_6seed.json`, Monitor **bjcjvs97t**. THE question:
+  does stable-target training let faculties emerge AND STAY at 200k/512u (vs base/cons/stable all 0/6)? Watching
+  seed 42's loss-stability + place-vs-untrained. ~1.5h. **If GO (≥3 faculties emerge+stay)** → instability(target)
+  WALL SURPASSED → then spike-arm (FORK-THESIS) + fork finding. **If place still drifts despite tamed loss** →
+  run `--encoder fixed` (flat loss); if THAT fails → the objective doesn't REQUIRE position (make it load-bearing:
+  nav-reward/longer-horizon). Fork finding (emergence-real; replay+clip ruled out; EMA-target is the wall) to be
+  written after this verdict.
 - **NEXT (after the stable 6-seed):** if stable-alone rescues emergence (≥3 faculties emerge+stay) → the
   instability WALL is SURPASSED (GO); then (a) stable+consolidation (does replay add retention on top?), (b)
   matched **spike arm** (FORK-THESIS: rate-vs-spike per GPU-hour), (c) fork finding + honest ledger. If stable
