@@ -17,15 +17,20 @@ LOG="$STATE/qwen_server.log"
 
 # --- configurable (env overrides) ------------------------------------------------------------------------------------
 LLAMA="${QWEN_LLAMA_SERVER:-/home/dant123/.unsloth/llama.cpp/llama-server}"   # unsloth build has --spec-type draft-dflash
-# Target: prefer the already-downloaded local GGUF (fast, no HF re-resolution); fall back to -hf auto-download.
-TARGET_GGUF="${QWEN_TARGET_GGUF:-/home/dant123/.cache/huggingface/hub/models--sdkyuan--qwen3.8-27B-qat-q2_0-gguf/snapshots/a5885499d443cbf4a7998001508ddb3b279eeb5f/qwen38-27b-qat-q2_0.gguf}"
-TARGET_HF="${QWEN_TARGET_HF:-sdkyuan/qwen3.8-27B-qat-q2_0-gguf}"              # fallback if the local GGUF is absent
-DRAFT_HF="${QWEN_DRAFT_HF:-HermiHg/Qwen3.8-27B-DFlash2-Q2_K_S-MIX-GGUF:Q2_K_S}"  # the DFlash2 drafter (535 MiB, auto-downloads)
+# CUTOVER 2026-09-06 (Q2 -> Q4_K_M): served TARGET-ONLY via local --model. Q4_K_M (Unsloth Dynamic UD-Q4_K_M,
+# ~16GB weights) keeps ~92-95% quality vs Q2's degraded code/reasoning, and fits the ~19-20GB monitor budget at
+# 32k ctx + Q8 KV (VALIDATED 2026-09-06: 19.3GB, coherent). No Q4 DFlash2 drafter exists -> target-only (DRAFT_HF
+# empty). REVERT to the old Q2+DFlash2 path with env: QWEN_TARGET_GGUF=<q2 gguf> QWEN_TARGET_HF=sdkyuan/... \
+#   QWEN_DRAFT_HF=HermiHg/Qwen3.8-27B-DFlash2-Q2_K_S-MIX-GGUF:Q2_K_S QWEN_CTX=163840 QWEN_KV_TYPE=f16
+TARGET_GGUF="${QWEN_TARGET_GGUF:-/home/dant123/.cache/huggingface/hub/models--unsloth--Qwen3.8-27B-GGUF/snapshots/4ca720788d1e01f1bff70c033e0d0028fd02e502/Qwen3.8-27B-UD-Q4_K_M.gguf}"
+TARGET_HF="${QWEN_TARGET_HF:-unsloth/Qwen3.8-27B-GGUF:Q4_K_M}"               # fallback if the local GGUF is absent
+DRAFT_HF="${QWEN_DRAFT_HF:-}"                                                # empty = target-only (no Q4 DFlash2 drafter)
 PORT="${QWEN_PORT:-8033}"
 HOSTADDR="${QWEN_HOST:-127.0.0.1}"
-CTX="${QWEN_CTX:-163840}"
+CTX="${QWEN_CTX:-32768}"                                                     # 32k fits the ~19-20GB budget (65k=20.3GB, tight)
+KV_TYPE="${QWEN_KV_TYPE:-q8_0}"                                              # Q8 KV cache — keeps VRAM in budget (f16 to revert)
 NGL="${QWEN_NGL:-99}"
-SPEC_NMAX="${QWEN_SPEC_NMAX:-3}"                                              # DFlash2 draft block size
+SPEC_NMAX="${QWEN_SPEC_NMAX:-3}"                                              # DFlash2 draft block size (only if DRAFT_HF set)
 
 endpoint() { echo "http://$HOSTADDR:$PORT/v1"; }
 running()  { [ -f "$PIDF" ] && kill -0 "$(cat "$PIDF" 2>/dev/null)" 2>/dev/null; }
@@ -41,10 +46,19 @@ case "${1:-status}" in
     # crucially, keeps the HF machinery active so the -hfd DRAFT resolves; mixing local --model with -hfd made
     # the draft path resolve to '' and the server exited on "failed to load draft model, ''").
     _launch() {   # $1 = draft|nodraft
-      local a=(-hf "$TARGET_HF" --jinja --reasoning-budget -1 --ctx-size "$CTX" --host "$HOSTADDR" --port "$PORT" \
-               -ngl "$NGL" --flash-attn on --parallel 1 --temp 1.0 --top-p 0.95 --top-k 20 --min-p 0.0 --presence-penalty 0.0 \
-               --repeat-penalty 1.0 --no-mmproj)
-      [ "$1" = draft ] && a+=(-hfd "$DRAFT_HF" --spec-type draft-dflash --spec-draft-n-max "$SPEC_NMAX")
+      local a=()
+      if [ "$1" = draft ] && [ -n "$DRAFT_HF" ]; then
+        # Q2+DFlash2 path: -hf (NOT local --model) keeps HF machinery active so -hfd resolves; local --model + -hfd
+        # made the draft path resolve to '' and the server exited (documented). Drafter only when DRAFT_HF is set.
+        a=(-hf "$TARGET_HF" -hfd "$DRAFT_HF" --spec-type draft-dflash --spec-draft-n-max "$SPEC_NMAX")
+      elif [ -f "$TARGET_GGUF" ]; then
+        a=(--model "$TARGET_GGUF")            # Q4 target-only: local file on disk (fast, no HF re-resolution)
+      else
+        a=(-hf "$TARGET_HF")                  # target-only fallback: auto-download from HF
+      fi
+      a+=(--jinja --reasoning-budget -1 --ctx-size "$CTX" --cache-type-k "$KV_TYPE" --cache-type-v "$KV_TYPE" \
+          --host "$HOSTADDR" --port "$PORT" -ngl "$NGL" --flash-attn on --parallel 1 --temp 1.0 --top-p 0.95 \
+          --top-k 20 --min-p 0.0 --presence-penalty 0.0 --repeat-penalty 1.0 --no-mmproj)
       setsid "$LLAMA" "${a[@]}" </dev/null >>"$LOG" 2>&1 &
       echo $! > "$PIDF"
     }
@@ -62,22 +76,27 @@ case "${1:-status}" in
       echo "[qwen] existing server still not ready after wait — leaving it in place (no double-launch)"; exit 1
     fi
     [ -x "$LLAMA" ] || { echo "[qwen] ERROR: llama-server not found/executable at $LLAMA (set QWEN_LLAMA_SERVER)"; exit 1; }
-    # DFlash2 support check — refuse to launch a build that lacks the drafter (would silently fall back / error)
-    if ! "$LLAMA" --help 2>&1 | grep -q 'draft-dflash'; then
-      echo "[qwen] ERROR: $LLAMA has no --spec-type draft-dflash (needs a llama.cpp built after 2026-08-27). Aborting."; exit 1
+    if [ -n "$DRAFT_HF" ]; then
+      # DFlash2 support check — refuse to launch a build that lacks the drafter (would silently fall back / error)
+      if ! "$LLAMA" --help 2>&1 | grep -q 'draft-dflash'; then
+        echo "[qwen] ERROR: $LLAMA has no --spec-type draft-dflash (needs a llama.cpp built after 2026-08-27). Aborting."; exit 1
+      fi
+      echo "[qwen] launching WITH DFlash2 drafter (drafter auto-downloads if absent, ~535 MiB)…  log: $LOG"
+      _launch draft
+      echo "[qwen] pid $(cat "$PIDF"); waiting (first run may download)…"
+      if _wait_ready 600; then echo "[qwen] READY (DFlash2) at $(endpoint)  (VRAM: $(vram))"; exit 0; fi
+      # Drafter failed? DFlash2 is a SPEED optimization, not correctness — fall through to target-only so Hermes
+      # still gets a working brain. (Only retry if the failure was draft-related and the server actually exited.)
+      if ! running && grep -qi "draft model" "$LOG" 2>/dev/null; then
+        echo "[qwen] ⚠ drafter failed to load — retrying TARGET-ONLY (no DFlash2; a bit slower, fully functional)…"
+        "$0" down >/dev/null 2>&1; sleep 1
+      fi
     fi
-    echo "[qwen] launching WITH DFlash2 drafter (drafter auto-downloads if absent, ~535 MiB)…  log: $LOG"
-    _launch draft
+    # TARGET-ONLY launch (the Q4 default path, or the Q2-drafter-failed fallback)
+    echo "[qwen] launching TARGET-ONLY (model=$(basename "$TARGET_GGUF"), ctx=$CTX, KV=$KV_TYPE)…  log: $LOG"
+    _launch nodraft
     echo "[qwen] pid $(cat "$PIDF"); waiting (first run may download)…"
-    if _wait_ready 600; then echo "[qwen] READY (DFlash2) at $(endpoint)  (VRAM: $(vram))"; exit 0; fi
-    # Drafter failed? DFlash2 is a SPEED optimization, not correctness — fall back to target-only so Hermes still
-    # gets a working brain. (Only retry if the failure was draft-related and the server actually exited.)
-    if ! running && grep -qi "draft model" "$LOG" 2>/dev/null; then
-      echo "[qwen] ⚠ drafter failed to load — retrying TARGET-ONLY (no DFlash2; a bit slower, fully functional)…"
-      "$0" down >/dev/null 2>&1; sleep 1
-      _launch nodraft
-      if _wait_ready 600; then echo "[qwen] READY (target-only, no DFlash2) at $(endpoint)  (VRAM: $(vram))"; exit 0; fi
-    fi
+    if _wait_ready 600; then echo "[qwen] READY (target-only) at $(endpoint)  (VRAM: $(vram))"; exit 0; fi
     echo "[qwen] server failed/timed out — see $LOG:"; tail -8 "$LOG"; exit 1 ;;
   down)
     if running; then p=$(cat "$PIDF"); kill -TERM "$p" 2>/dev/null; for _ in 1 2 3 4 5; do kill -0 "$p" 2>/dev/null || break; sleep 1; done; kill -KILL "$p" 2>/dev/null; fi
