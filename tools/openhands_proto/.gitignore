@@ -1,0 +1,8 @@
+# Isolated venv (uv-managed Python 3.12, installed via `uv venv --python 3.12 .venv` +
+# `uv pip install openhands-sdk openhands-tools`) — never committed, fully reversible with `rm -rf`.
+.venv/
+# Runtime state: the persisted conversation (event history + base_state.json), sentinel files, logs.
+state/
+*.log
+__pycache__/
+*.pyc
