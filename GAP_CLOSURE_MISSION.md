@@ -70,14 +70,21 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
   clip, default-ON, PRIMARY) + `grad_skip_factor=8.0` (skip an update whose pre-clip grad-norm >8× typical) in
   the TBPTT step. OFF/control = `grad_clip=5.0 grad_skip=0` (byte-identical to the base/cons artifacts → they
   stay valid controls); flags `--grad-clip`/`--grad-skip-factor`.
-- **⚡ STABLE 6-seed re-run — seed 42 = 0/4, clipping ALONE did NOT rescue it.** place R²=0.6055, still BELOW
-  untrained (0.6616) — base 0.598 → cons 0.670 → stable 0.606, all below untrained. ⇒ training instability was
-  NOT the whole story. Run continues (5 seeds left, `_fork_pcs_emergence_rate_stable_6seed.json`, Monitor
-  bjcjvs97t). **DECISIVE disambiguation = the loss curve (written at run-end):** if clipping TAMED the loss
-  (no more 0.3→37 spikes) but place STILL drifts below untrained → the cause is deeper: the **EMA-target-drift**
-  (agent ae8d9516's lead — the JEPA prediction target moving out from under the representation, a known JEPA
-  failure mode) or the objective not REQUIRING a clean position code (→ make position load-bearing for the task).
-  If clipping did NOT tame the loss → stronger stabilization. **PRIME next lever: fix/slow the EMA target.**
+- **⚡⚡ STABLE 6-seed DONE — clipping RULED OUT; root cause = EMA-TARGET instability (decisive).** stable
+  EMERGENCE_GO=false 0/6, place R² 0.669 (marg −0.035, still below untrained). **The loss curve settles it:**
+  max held-out loss base **47.1** vs stable **45.4** — clipping did NOT tame the spikes, AND `n_skipped=None`
+  (the grad-norm skip guard never fired). ⇒ **the loss spikes are NOT gradient explosions** (grad-norm is
+  bounded/fine) — they're **EMA-TARGET-driven** (JEPA predicts vs a moving EMA of the encoder; an erratic target
+  spikes the loss regardless of clipping). CONFIRMED: replay (cons) + gradient-clipping (stable) BOTH ruled out;
+  the wall is the **EMA target**. Emergence is real (place 0.873≫untrained at 15k); target-instability destroys
+  it by 200k. Artifacts on disk: base/cons/stable `_fork_pcs_emergence_rate*_6seed.json`.
+- **NEXT (the surpass — EMA-target stabilization):** agent ae8d9516 → in `sim/pcs_substrate.py` raise the EMA
+  target momentum (slower target, e.g. 0.99→0.999/0.9995) and/or normalize the target / frozen-target warmup, so
+  the JEPA target stops spiking; verify INLINE (single-thread CPU) the max held-out loss drops well below ~45 (no
+  spikes); then 6-seed re-run → do faculties emerge AND STAY? If yes → instability(target) WALL SURPASSED (GO) →
+  spike-arm (FORK-THESIS). If the target-fix ALSO fails → the objective doesn't REQUIRE position (make it
+  load-bearing: nav-reward/longer-horizon). Then write the fork finding (emergence-real-but-target-drift; replay
+  + clip + EMA levers). Lane-gate: doc-only exempt; code/.json need served lane (pool) or genuine-BLOCKER waiver.
 - **NEXT (after the stable 6-seed):** if stable-alone rescues emergence (≥3 faculties emerge+stay) → the
   instability WALL is SURPASSED (GO); then (a) stable+consolidation (does replay add retention on top?), (b)
   matched **spike arm** (FORK-THESIS: rate-vs-spike per GPU-hour), (c) fork finding + honest ledger. If stable
