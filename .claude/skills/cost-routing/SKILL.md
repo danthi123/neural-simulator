@@ -35,6 +35,16 @@ Agents are for BUILDS/integration that need judgment. **If you are about to put 
 agent, stop — it goes on the engine.** (This session's affect sensitivity map, lesion A/Bs and cupy verifies were
 run this way: 0 Claude tokens. Keep doing that; do not regress them into agents.)
 
+**Verify the command BEFORE you queue it (2026-09-06).** A malformed engine command `rc=2`'s INSTANTLY and the
+`gpu_queue`/pool daemon silently pops the NEXT job — so one wrong flag can burn through a whole queued battery
+unnoticed (you see `runners=1` and assume progress). Before `gpu_queue.sh add` / `sweep_pool.sh` / a backgrounded
+run, confirm the flags AND their FORMAT against the runner's argparse (`grep add_argument <runner>` or `--help`):
+flag-EXISTS is not enough — check `nargs` / comma-vs-space / `type`. Earned this session: `_rank2 --seeds 42 43 44
+...` rc=2'd (that runner splits ONE comma-string: `--seeds 42,43,44,...`) while a sibling runner's `--seeds` is
+`nargs='+'` (space-separated) — same flag name, OPPOSITE format; and a mouth run rc=2'd on `--eval-corpus` launched
+from a checkout that lacked the flag (verify the flag exists on the BRANCH/worktree the command runs in, not just
+on main). Cheap check; a rc=2 wastes the slot + masks a stalled battery.
+
 **RAM guard (2026-09-01) — the "careful with the computer's limits" half of engine-first.** The sim's 15k-LTM
 brain build is ~2GB RSS and ACCUMULATES over repeated builds; several concurrent LOCAL builds OOM (the 2026-08-26
 OOM; a heavy per-case verify this session). So: heavy 6-seed 15k-LTM sweeps go to the pool/gpu (above), and before
