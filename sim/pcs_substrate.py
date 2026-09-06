@@ -90,6 +90,15 @@ class PCSConfig:
     # encoder
     encoder: str = "learned_ema"  # "learned_ema" (JEPA: learned enc + EMA target) or "fixed" (collapse-proof)
     ema_rate: float = 0.99       # EMA decay of the target encoder (learned_ema only)
+    # consolidation companion (default OFF -> byte-identical to no-replay online learning).
+    # Biology: online cortical learning is paired with hippocampal REPLAY -> cortical consolidation
+    # (sleep-replay). Online TBPTT WITHOUT it catastrophically OVERWRITES earlier structure on a
+    # never-ending stream (the 200k drift). Interleaved experience-replay is that companion,
+    # function-first (FORK.md): a reservoir of past TBPTT windows, replayed among the online updates.
+    consolidation: bool = False
+    replay_capacity: int = 2000  # reservoir size (windows); uniform sample over ALL past experience
+    replay_every: int = 2        # every N online updates, run a replay (consolidation) update
+    replay_batch: int = 1        # replayed windows per replay event
     # optimizer
     lr: float = 3e-4             # Adam lr for the predictive objective (online TBPTT — lower = stable)
     grad_clip: float = 5.0       # global-norm clip on the predictive grads
@@ -239,6 +248,14 @@ class PredictiveContinualSubstrate:
         self._loss_fast = None
         self._loss_slow = None
         self._last_lp = 0.0
+
+        # consolidation companion (replay buffer). Allocated always but ONLY touched when
+        # cfg.consolidation is True, so the OFF path is byte-identical to no-replay learning.
+        self._replay: List[Any] = []
+        self._replay_seen = 0
+        self._replay_rng = np.random.default_rng(cfg.seed + 20_000)
+        self._online_update_count = 0
+        self.n_replay_updates = 0
 
         # diagnostics
         self.last_pred_loss = None
@@ -413,6 +430,12 @@ class PredictiveContinualSubstrate:
             loss = self._tbptt_update(self._tape)
             self.last_pred_loss = loss
             self._update_learning_progress(loss)
+            # CONSOLIDATION COMPANION (only when ON -> OFF path byte-identical): store the window in
+            # the hippocampal-replay reservoir and interleave a consolidation update on past experience,
+            # so the online update does not overwrite earlier cortical structure (the 200k drift).
+            if self.cfg.consolidation:
+                self._push_replay(self._tape)
+                self._replay_step()
             # truncate: keep the running state self.h/v/s (already carried), drop the tape
             self._tape = []
 
@@ -663,6 +686,44 @@ class PredictiveContinualSubstrate:
             self.b_enc_ema = r * self.b_enc_ema + (1.0 - r) * self.b_enc
         self.n_updates += 1
         return float(loss)
+
+    # ── consolidation companion: hippocampal-replay reservoir + interleaved consolidation ──
+    def _snapshot_window(self, tape):
+        """A backend copy of a completed TBPTT window, ready to re-feed _tbptt_update. Copies only the
+        fields the window recompute reads (raw inputs per step + the first step's carried state), so a
+        later online update (which replaces the param objects) cannot mutate the stored segment."""
+        steps = [{"v1feat": st["v1feat"].copy(), "a_prev": st["a_prev"].copy(),
+                  "d": st["d"].copy(), "reward": st["reward"]} for st in tape]
+        steps[0]["h_prev"] = tape[0]["h_prev"].copy()
+        if tape[0].get("v_prev") is not None:
+            steps[0]["v_prev"] = tape[0]["v_prev"].copy()
+            steps[0]["s_prev"] = tape[0]["s_prev"].copy()
+        return steps
+
+    def _push_replay(self, tape):
+        """Reservoir-sample the completed window: a UNIFORM sample over ALL past windows within a bounded
+        buffer, so consolidation replays the whole lived history (not just the recent past), which is what
+        stops recent experience from overwriting older structure."""
+        w = self._snapshot_window(tape)
+        self._replay_seen += 1
+        if len(self._replay) < self.cfg.replay_capacity:
+            self._replay.append(w)
+        else:
+            j = int(self._replay_rng.integers(self._replay_seen))
+            if j < self.cfg.replay_capacity:
+                self._replay[j] = w
+
+    def _replay_step(self):
+        """Every replay_every online updates, run replay_batch consolidation updates on sampled past
+        windows (interleaved experience replay). Stored-state replay: each window resumes from its
+        recorded (stale) carry with the CURRENT weights (standard recurrent-replay approximation)."""
+        self._online_update_count += 1
+        if (self._online_update_count % self.cfg.replay_every != 0) or not self._replay:
+            return
+        for _ in range(self.cfg.replay_batch):
+            j = int(self._replay_rng.integers(len(self._replay)))
+            self._tbptt_update(self._replay[j])
+            self.n_replay_updates += 1
 
     # ── held-out predictive-loss evaluator (learning signal on a non-stationary stream) ──
     def eval_predictive_loss(self, seq, respect_lesion=False) -> float:
