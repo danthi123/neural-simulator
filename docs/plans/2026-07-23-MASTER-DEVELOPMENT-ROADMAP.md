@@ -150,6 +150,17 @@ long-pole stays gated and honest, not faked with more templates.
 > [`docs/PRODUCTION_INTEGRATION_LEDGER.yaml`](../PRODUCTION_INTEGRATION_LEDGER.yaml). This doc is the single PLAN that
 > ties them to the staged path.
 
+> **🗓️ 2026-09-06 — MOUTH token-scaling STEP-2 BUILT (FineWeb-Edu pipeline + AWS grid spec, queued).** STEP-1
+> (domain-mix proxy, wt103+simplewiki) concluded NO-GO (deep margin -0.312 vs -0.286 baseline, -0.026 lift,
+> anti-cheats healthy) and never tested the real same-domain lever since wt103 is ~exhausted. STEP-2 built the
+> comparable pipeline: `research/runners/lm_fineweb_to_txt.py` (new, additive) streams FineWeb-Edu to a plain
+> `.txt` corpus feeding `_emerge_wkv_lm_derisk.py --contiguous --eval-corpus` UNCHANGED (no runner edit — the
+> additive `--eval-corpus` flag already covers it); `data/corpus/fineweb_edu.txt` (700M words) is produced;
+> a bounded CPU smoke (no GPU) verified the pipeline end-to-end. A LOCAL SMOKE (d192, ~0.4B FineWeb tokens,
+> reusing the STEP-1 recipe exactly) and a 3x3 AWS capacity x token-supply grid (d96/192/384 x
+> ~0.4B/2B/10B tokens, ~481 GPU-h full grid, staged cheapest-first) are SPECIFIED and QUEUED for the GPU
+> controller — none run yet. Finding: `2026-09-06-mouth-token-scaling-fineweb-pipeline-and-grid-spec`.
+>
 > **🗓️ 2026-09-05 (evening) — MOUTH broad-domain wall DIAGNOSED (token/data-bound) + AFFECT gate ADVANCED.**
 > MOUTH (Wall #7 / R4, #1 blocker): the broad-domain (wt103) wall is now diagnosed as TRAINING-TOKEN/DATA-bound,
 > NOT architecture — every architecture lever came back small/flat on broad wt103 (content-addressing exhausted;
