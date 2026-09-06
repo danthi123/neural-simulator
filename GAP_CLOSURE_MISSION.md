@@ -13,9 +13,15 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ---
 
-## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-05 ~15:00 (HOST REBOOT RECOVERED; READ FIRST; LATEST anchor)
+## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-05 ~21:45 (HOST REBOOT RECOVERED; READ FIRST; LATEST anchor)
 
-**A host reboot interrupted the session ~11:03 (NOT a GPU fault — the 3090 came back clean, no Xid/fell-off-bus).** Root cause in the prior-boot kernel log: a process crashed and dumped a **~15 GB core**; `systemd-coredump` choking on it deadlocked tasks (Chrome/Bun/llvmpipe blocked >122s "Blocked by coredump") → reboot. No OOM-kill; RAM/swap healthy. **Mitigation PENDING OWNER APPROVAL (system setting):** cap coredump size in `/etc/systemd/coredump.conf` (e.g. `ProcessSizeMax=2G`/`ExternalSizeMax=2G` or `Storage=none`) so a giant core can't hang the box again.
+**IN-FLIGHT NOW (21:45) — compaction-safe live-work snapshot:**
+- 🔴 **MOUTH #1 token-scaling train** — pid **402197** (`_emerge_wkv_lm_derisk` linattn, wt103+simplewiki train / wt103 eval, s43, ~2h08m in, 99.8% CPU + ~16.9 GB VRAM = it OWNS the GPU). ⚠️ do NOT clean worktree **a1c2076629041b2a2** (its cwd) until artifact `research/findings/raw/_emerge_wkv_lm_linattn_wt103plus_simplewiki_evalwt103_s43.json` lands. Harvest: deep-bucket (10-99) margin_vs_trigram vs the **-0.286** baseline; direction-positive ≥+0.03 → justifies the STEP-2 corpus DOWNLOAD (name corpus/source/size per the download safety-gate). Flat → reconsider.
+- 🟢 **2 diversified CPU build agents launched (numpy, zero GPU contention w/ the mouth):** (a) **a642d4315** — fix `ShardedPhasorStore.save()` pickle bug (`mappingproxy`), unblocks scaling the GO'd synaptic write path (rank-6); (b) **adef2e73c** — production-flip 3 GO'd default-off faculties to default-ON w/ 6-seed numpy verify + lesion-load-bearing check (rank-16 DA write-gain, rank-20 value-choice, rank-10 curiosity graded-novelty). Both verify-first, commit topic branch → I merge to main.
+- ✅ **Backlog re-audit merged to main (79727e35a):** 13 stale scaffold-backlog pointers corrected + a diversified ready-next-rungs plan (`research/findings/2026-09-05-scaffold-backlog-hygiene-and-diversified-ready-next-rungs-PLANNING.md`).
+- ⏸️ **DEFERRED to POST-MOUTH (GPU-shaped — would collide with the mouth's 16.9 GB; queue via gpu_queue only AFTER pid 402197 exits):** #1 rank-2 at-scale 6-seed re-verify (now unblocked by the fact-shard wire-in — the single most decisive memory measurement) + #2 rank-1 composer bundle rebuild rf→onebrain (maximal-leverage scaffold-retirement). The gpu_queue is EMPTY by design; do NOT add GPU jobs while the mouth trains.
+
+**A host reboot interrupted the session ~11:03 (NOT a GPU fault — the 3090 came back clean, no Xid/fell-off-bus).** Root cause in the prior-boot kernel log: a process crashed and dumped a **~15 GB core**; `systemd-coredump` choking on it deadlocked tasks (Chrome/Bun/llvmpipe blocked >122s "Blocked by coredump") → reboot. No OOM-kill; RAM/swap healthy. **Mitigation DONE (owner-approved):** coredump capped in `/etc/systemd/coredump.conf` (`ProcessSizeMax=2G`/`ExternalSizeMax=2G`) + memory-throttle heartbeat live — a giant core can't hang the box again (see item 3).
 
 **RECOVERED (all committed, both remotes):**
 - ✅ **Composer FHRR recall-latency RETIRED** — `BRAIN_FACT_SHARD_RETRIEVAL` default-ON flip landed pre-crash (`361484d39`, GO 6/6 parity 720/720 recall 404/404 411x, `=0` reverts). SAFE.
