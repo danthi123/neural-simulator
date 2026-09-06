@@ -7,6 +7,20 @@ the [project handoff](HANDOFF.md), and the live state in
 board, when checked out, was `research/coordination/workboard.json` (⚠️ now ~a month
 stale — the live board is [GAP_CLOSURE_MISSION.md](GAP_CLOSURE_MISSION.md) CURRENT STATE; workboard.json is being retired).
 
+## 2026-09-06 — vLLM Sleep Mode pilot: infra-only, no wall/gap status change
+
+- **Not a faculty/wall update** — this is a serving-infrastructure pilot (how the LOCAL scaffold model is
+  hosted, sharing the one 3090 with brain experiments), not a change to any roadmap wall or gap. Logged here
+  only to keep this doc's staleness budget honest, per `gates/summary_doc_freshness`.
+- Piloted **vLLM Sleep Mode** (`/sleep`+`/wake_up` in-place VRAM release) as a possibly-faster alternative to
+  `tools/qwen_serve.sh`'s kill+cold-reload dance. All NON-GPU prep done and verified this session (vLLM 0.27.1
+  installed + version/flag-verified, a serving script + a test harness written and smoke-tested, a VRAM-fit
+  analysis for the ~19-20GB budget, a confirmed Ampere CUDA-graph-hang bug in vLLM 0.27.1 with its
+  `--enforce-eager` mitigation). The decisive GPU measurement (does Sleep Mode actually free VRAM + wake fast
+  on this hybrid checkpoint) is **PENDING** — the 3090 was GPU-resident with a brain job for the duration of
+  this pilot. `tools/qwen_serve.sh` is untouched and remains the serving path in production. Finding:
+  [`2026-09-06-vllm-sleep-mode-pilot-prep-complete-gpu-test-pending.md`](research/findings/2026-09-06-vllm-sleep-mode-pilot-prep-complete-gpu-test-pending.md).
+
 ## 2026-09-05 (evening) — the brain's own voice: WHY it isn't broadly fluent yet is now pinned down (it's a data-scale problem, not a missing idea); and its sense of emotion took a real step
 
 - **The #1 blocker (the brain's own voice on broad, arbitrary topics) is now diagnosed — and it's encouraging.**
@@ -245,7 +259,7 @@ lost to a transient service error and can be re-run):
   empathic wording where before they drew the identical response. Verified genuine (matches the felt intensity on
   six seeds; collapses to nothing when lesioned), reusing the same graded-feeling machinery the brain's own
   emotion read already uses. The full-brain end-to-end safety check passed six-for-six (identical when off, the
-  effect fully collapsing when the circuit is silenced), so it's now on by default.
+  effect fully collapsing when the circuit is silenced), so it's on by default.
 
 ## 2026-09-01 (newest) — the owner turns on auto-promotion, and five validated abilities go live the same session
 
@@ -269,7 +283,7 @@ first mention). It's verified genuinely load-bearing — the reply changes as ex
 change fully disappears when the circuit is switched off, across six seeds — and its wiring, which had never
 actually been merged to the main line before, is now merged. The final full-conversation safety check (the same
 verdict holds end-to-end through the real chat handler, with no change at all when the ability is off) passed, so
-it is now on by default.
+it is on by default.
 
 A workflow fix also landed: the background "are we using all the hardware?" monitor was crying wolf every cycle,
 reporting the graphics card as idle while it was in fact busy working through a queue of long jobs; it now counts
@@ -384,7 +398,7 @@ Mid-session the owner asked to free the local machine (CPU + GPU) for an unrelat
 
 Four things landed this afternoon.
 
-(1) ⭐⭐ THE FIRST LEARNED FACULTY-TO-FACULTY CONNECTION IS NOW ON BY DEFAULT. The connection from working-memory to language-understanding (which earlier person a pronoun refers to → how the sentence is understood) is now live by default in the chat, and it GROWS a little every turn from the brain's own success signal — the brain learns through the conversation itself. It passed the full 6-seed production check (visible on real traffic, nothing hollow, no regression, exactly reversible with an off-switch). This is the first genuine piece of "one brain" wired on by default.
+(1) ⭐⭐ THE FIRST LEARNED FACULTY-TO-FACULTY CONNECTION IS ON BY DEFAULT. The connection from working-memory to language-understanding (which earlier person a pronoun refers to → how the sentence is understood) is now live by default in the chat, and it GROWS a little every turn from the brain's own success signal — the brain learns through the conversation itself. It passed the full 6-seed production check (visible on real traffic, nothing hollow, no regression, exactly reversible with an off-switch). This is the first genuine piece of "one brain" wired on by default.
 
 (2) IT IS SAFE OVER A LONG CONVERSATION. A 100-turn, 6-seed stability soak confirmed the always-on learning stays bounded (never runs away), never degrades comprehension, still works at turn 100, and a lesson taught early survives 70 turns of unrelated chatter without being forgotten. So the default-on flip holds — it strengthens, not weakens, over a long talk.
 
@@ -809,7 +823,7 @@ This is a gate result on the toy consolidation network, not yet wired into the p
 Four things landed later the same day.
 1. **The brain's "conscious workspace" now cross-checks THREE independent signals by default** before committing an
    answer: it recalls the fact, it isn't surprised, AND it comprehended the question (a real-vocabulary comprehension
-   read replaced the toy one that had been over-vetoing legitimate answers). This is now ON by default.
+   read replaced the toy one that had been over-vetoing legitimate answers). This is ON by default.
 2. **A self-maintaining "project OS" landed.** Machinery that keeps the work-board, the compute lanes, and the
    tool-health checks current on their own: a work-backlog generator, an auto-dispatcher that fills idle compute, and
    re-injection of the durable state after the assistant's context is compacted. Honest finding: the dispatch plumbing
@@ -903,12 +917,12 @@ Finding: `research/findings/2026-08-25-gap5-a1-exclusion-is-BDSP-clamp-forward-s
 **2026-08-21 (autonomous) — DOPAMINE NOW SETS HOW STRONGLY THE BRAIN RECORDS WHAT IT IS TOLD (WAVE-0 Gap-4 write-side coupling, WIRED default-OFF).** The brain's own self-produced dopamine already colors HOW it answers (the DA-mode read); this adds the write-side counterpart: a fact taught while the brain is engaged/aroused (dopamine high) is encoded with a STRONGER memory trace than one heard at rest — the emotional-memory-enhancement effect (Lisman-Grace / Kandel D.16).
 Verified through the real chat handler: with the coupling ON, teaching the same fact under a high-dopamine turn writes a gain of 2.48 vs 1.0 (the recall-safe floor) under a low-dopamine turn (the dopamine levels are the real spiking SNc read, not a host number), and a lesion that pins the gain to 1.0 makes the difference vanish entirely (the whole effect rides the dopamine read). Finding 2026-08-21-da-gated-encoding-wired-into-chat-GO; production-integration ledger row `da-gated-encoding`.
 
-**2026-08-25 (autonomous) — ⭐ THIS IS NOW ON BY DEFAULT: the brain records what it is told MORE STRONGLY when engaged, in production.** The flip previously HELD on a magnitude-store no-regression soak is DONE.
+**2026-08-25 (autonomous) — ⭐ THIS IS ON BY DEFAULT: the brain records what it is told MORE STRONGLY when engaged, in production.** The flip previously HELD on a magnitude-store no-regression soak is DONE.
 The soak is GO 6-seed with an ON-SUBSTRATE Turrigiano synaptic-scaling homeostat (the write-magnitude regulation is a genuine synaptic rule that senses each engram's readout activity and rescales its store synapses — not host arithmetic), and the prior "leak" was diagnosed as a foreign-block confabulation the moat correctly suppresses (not a regression).
 Two prep rungs delivered: the no-regression verifiers pin the OFF baseline to `BRAIN_DA_ENCODING=0`, and the slow/offline scaling pass now fires on the between-turn idle tick (alongside D5 learn-through-use) when new facts were taught.
 Flip-verified GO through the real handler: default-on drives (g_high 2.48 > g_low 1.0), the lesion severs it, and `BRAIN_DA_ENCODING=0` is byte-identical to before. Finding 2026-08-25-da-encoding-faculty-default-on-flip (+ the substrate GO 2026-08-25-da-encoding-substrate-turrigiano-scaling-FLIP).
 
-**2026-08-21 (autonomous) — ⭐ LEARN-THROUGH-USE IS NOW ON BY DEFAULT: a memory the brain USES recalls VISIBLY STRONGER, in production.** The flip that was previously HELD on a "leak" is now DONE — and the leak was a MISDIAGNOSIS.
+**2026-08-21 (autonomous) — ⭐ LEARN-THROUGH-USE IS ON BY DEFAULT: a memory the brain USES recalls VISIBLY STRONGER, in production.** The flip that was previously HELD on a "leak" is now DONE — and the leak was a MISDIAGNOSIS.
 On every one of the 6 builds the untouched neighbour's actual spiking read was byte-IDENTICAL whether or not the other memory was strengthened. The earlier soak only saw the reply differ because the code tacked a "recall strength X mV" line onto EVERY recall reply once the feature switched on — not because strengthening one memory changed another.
 The fix: show the strength line only for the specific memory that was actually strengthened, so using one memory can only ever change ITS OWN reply. With that, the no-regression soak is 5/6 GO; the 6th (seed 102) is a build whose memory never forms cleanly — the honesty gate correctly refuses to recall anything there (no fabrication). The off-switch is byte-identical to before, and the mid-crash rollback holds (6/6).
 The keep-memories-separate machinery (board #73) turned out to be unnecessary here and is left off by default (it only shrinks the memory cells for no gain). `BRAIN_D5_CONSOLIDATE` default 0→1; `=0` is the byte-identical escape.
