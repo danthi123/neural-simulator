@@ -5,7 +5,27 @@ Claude-substitute from the in-house **Hermes** harness to **DeepSeek** or **Pi**
 Qwen3.8-27B on the single RTX 3090 and how to run the GPU auto-offload. Compiled from a 6-agent
 web-verified research sweep. Full report artifact: https://claude.ai/code/artifact/15ec6d75-5659-48b5-b209-980ee83c02ef
 
-## Reframe
+## ⭐ REVISED after owner input (2026-09-06, same session)
+The owner corrected/steered several points, which SHIFT the recommendation:
+- **Offload is ORTHOGONAL to the harness** — it's a supervisor wrapping the model SERVER, not a Hermes-only
+  capability. So it is NOT a reason to stay on Hermes; we keep + re-wrap it around any harness (cheap; Claude
+  Code + Hermes are templates — don't fear the rebuild).
+- **Owner requires ONE continuous, scrollable session** (like Claude Code), not many short sessions. Hermes v2's
+  fresh-session-per-turn design fails this by construction. ⇒ this flips the call: **MIGRATE to OpenHands** (its
+  LLMSummarizingCondenser + resume give one session with linear context) — now the LEAD, not "optional". Pi is the
+  lightweight alt (sub-1k-token harness tax). OpenHands also doubles as a reusable local-automation platform the
+  owner wants beyond this project.
+- **VRAM budget is ~19-20GB, not 24** (3.5-5GB monitors, NO 2nd GPU coming). ⇒ **Q4_K_M, NOT Q5** (Q5 ~19-21GB
+  leaves no room for KV+monitors). Q4_K_M ~15-16GB + Q8 KV ~2.6GB@80k + ~1GB overhead ≈ ~19GB (fits, tight);
+  ~64-100k context; drop KV→Q4 for more room. Q4_K_M download (Unsloth Dynamic UD-Q4_K_M) STARTED this session.
+- **Vision already OFF** (`qwen_serve.sh --no-mmproj`, llama.cpp text-only) — keep it off if migrating to vLLM.
+- **vLLM Sleep Mode**: owner enthusiastic; pilot it (fast in-place offload). Offload dance stays essential (no 2nd GPU).
+
+**Revised order:** (0) Q4_K_M + Q8 KV text-only [running] → (1) pilot vLLM Sleep Mode w/ Q4 → (2) prototype
+OpenHands on the local endpoint + wrap our offload supervisor → (3) cut Hermes' role over if it holds; keep the
+supervisor + gate/push conventions. Full report artifact updated (same URL above).
+
+## Reframe (original)
 The harness is NOT the weak link — the model QUANT is. Hermes' loop (`tools/hermes/loop.py`) is solid
 and owns the one thing no alternative provides (GPU offload/reload). It drives Qwen3.8-27B at `Q2_0`
 (~2-bit, `sdkyuan/qwen3.8-27B-qat-q2_0-gguf`), the real quality ceiling of the stack.
