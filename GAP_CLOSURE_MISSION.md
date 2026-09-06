@@ -102,7 +102,7 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
   PRESERVES/enhances the place code instead of specializing away from it. A task/objective redesign (a genuine
   build). THEN write the fork's first FINDING (emergence-real-but-transient; replay+clip+EMA-slow+fixed-encoder
   ALL ruled out; place-drift loss-independent → objective-doesn't-require-position is the wall). spike-arm
-  (FORK-THESIS) deferred until an arm HOLDS a faculty. [Owner: the fork's honest 1st-move result — emergence is
+  (FORK-THESIS) deferred until an arm HOLDS a faculty. **FINDING DRAFTED (on disk, uncommitted):** research/findings/2026-09-06-agi-fork-firstmove-emergence-transient-objective-does-not-retain.md (on agi-fork) — negative, cites the 5 arm artifacts; ON fixed-encoder completion → slot its 6-seed place-aggregate into the table, commit the 5 artifacts THEN the finding (artifacts-then-finding; lane-gate: pool served or genuine waiver), verify-go, then the 2nd-move build (make position task-required). [Owner: the fork's honest 1st-move result — emergence is
   real but the plain predictive objective doesn't retain it; the fix is making faculties task-required.]
 - **NEXT (after the stable 6-seed):** if stable-alone rescues emergence (≥3 faculties emerge+stay) → the
   instability WALL is SURPASSED (GO); then (a) stable+consolidation (does replay add retention on top?), (b)
