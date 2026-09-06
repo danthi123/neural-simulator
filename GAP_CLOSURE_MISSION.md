@@ -56,18 +56,23 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 - **BASELINE DONE — NO-GO (0/6, EMERGENCE_GO=false):** faculty LB-counts of 6: place 2, object 3, permanence
   3, value 1; none clearing ≥3 in one seed (drift control). Artifact on disk
   (`_fork_pcs_emergence_rate_6seed.json`, uncommitted — lane-gate blocks the `.json`; will commit with the finding).
-- **⚡ CONSOLIDATION A/B RUNNING — seed 42 = DIRECTIONALLY POSITIVE (drift reduced, not yet cleared):** WITH
-  `--consolidation`, place R²=**0.670** vs the no-consolidation baseline's **0.598** (place moved from BELOW the
-  untrained floor back UP to it, ~0.674); object/permanence also improved; still 0/4 cleared (place stuck AT the
-  untrained floor). ⇒ the replay-consolidation surpass WORKS directionally (less drift) but as-built is
-  INSUFFICIENT to clear the bars. Monitor **bjcjvs97t**; awaiting the full 6 seeds.
-- **NEXT (after the 6-seed A/B lands):** (1) confirm the directional effect holds across seeds + quantify the
-  gap; (2) **STRENGTHEN consolidation** — a hyperparameter sweep (replay ratio, buffer size, consolidation
-  frequency) is **CPU-poolable** at small scale → dispatch it to the idle mini-PC pool via
-  `pool_queue.sh add` (this ALSO serves the lane-starvation gate + the owner's parallelize-flag — a real fix,
-  not a waiver); (3) once consolidation RETAINS ≥3 faculties → the matched **spike arm** (FORK-THESIS:
-  rate-vs-spike per GPU-hour). Lane-gate note: doc-only commits are exempt; `.json`/code commits need a served
-  lane (`pool_queue.sh add`) or a genuine-BLOCKER waiver (priority/focus waivers are rejected).
+- **⚡⚡ CONSOLIDATION A/B DONE (6-seed) — the real root cause is TRAINING INSTABILITY, not drift/consolidation.**
+  Consolidation ENGAGED (5555 replay updates/seed) but its effect is SMALL+MIXED: place R² 0.643→0.667
+  (margin-over-untrained −0.038→−0.027, still BELOW untrained), object slightly WORSE; EMERGENCE_GO=false 0/6
+  (LB-counts base 9 → cons 4). **The loss curves expose why:** the online-TBPTT held-out loss SPIKES wildly
+  (baseline seed0: 0.33 → **37.2** → 0.36 across consecutive 5k checkpoints; cons similar 25/16) — the probes at
+  200k catch the model mid-spike. So the "drift" is largely **gradient/training INSTABILITY**, which replay
+  can't fix (both arms unstable). ⇒ the wall is TRAINING STABILITY; the surpass is **stabilization (gradient
+  clipping / LR schedule / grad-norm)**, NOT stronger replay. Emergence IS real (place 0.873≫untrained at 15k) —
+  instability destroys it by 200k. Artifacts: `_fork_pcs_emergence_rate_6seed.json` (base, committed) +
+  `_fork_pcs_emergence_rate_consolidation_6seed.json` (cons, on disk).
+- **NEXT (the surpass):** (1) build agent ae8d9516 → add **gradient clipping (+ grad-norm/LR-schedule as
+  needed)** to `sim/pcs_substrate.py`'s TBPTT step; verify a short CPU smoke (OMP_NUM_THREADS=1, single-thread —
+  avoid the earlier load-throttle) shows the loss no longer spikes to 25-37. (2) Re-run the rate arm (1-seed
+  smoke → 6-seed) → do the faculties emerge AND STAY with stable training? (3) THEN consolidation becomes a
+  clean 2nd-order question (does replay add retention ON TOP of stable training?). (4) matched spike arm last
+  (FORK-THESIS). Lane-gate: doc-only commits exempt; `.json`/code need a served lane (pool now serving 3 jobs)
+  or genuine-BLOCKER waiver (priority waivers rejected).
 - **✅ POOL SERVED (lane-gate actively addressed, not waived):** stocking agent ae3970c6 queued **3
   record-verified valuable CPU jobs**, now RUNNING on node pool41 — Lane D·Perception (vision
   configural-binding held-out-position + scramble-null 6-seed, a named-but-unrun arm) + Lane E·Language
