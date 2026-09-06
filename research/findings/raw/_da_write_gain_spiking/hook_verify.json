@@ -2,7 +2,8 @@
   "runner": "_da_write_gain_spiking_hook_verify",
   "go": true,
   "status": "GO",
-  "A_off_byte_identical": {
+  "flipped_default_on": "2026-09-05",
+  "A_off_byte_identical_explicit0": {
     "substrate_leaf": true,
     "raw_leaf": true,
     "off_substrate": [
@@ -22,14 +23,38 @@
       2.48
     ]
   },
+  "A2_flip_correctness_unset_eq_explicit1": {
+    "go": true,
+    "decisive_boolean_ok": true,
+    "tolerance_sanity_ok": true,
+    "enabled_unset": true,
+    "enabled_explicit1": true,
+    "unset_substrate_3rep_avg": [
+      1.0,
+      1.0,
+      1.0,
+      1.4185693142575235,
+      1.7097582634435124,
+      2.4717809570794276
+    ],
+    "explicit_on_substrate_3rep_avg": [
+      1.0,
+      1.0,
+      1.0268048018418021,
+      1.408001973359644,
+      1.7661174148988656,
+      2.4694326591021216
+    ],
+    "max_abs_diff": 0.056359151455353196
+  },
   "B_on_load_bearing_parity": {
     "on_vals": [
       1.0,
       1.0,
-      1.0,
-      1.4009570794277257,
-      1.8306956092747901,
-      2.4400789343857925
+      1.0557572767636905,
+      1.4326591021213617,
+      1.7672915638875182,
+      2.3872422298963993
     ],
     "host_vals": [
       1.0,
@@ -39,8 +64,8 @@
       1.8,
       2.48
     ],
-    "span": 1.4400789343857925,
-    "corr": 0.9994210331690812,
+    "span": 1.3872422298963993,
+    "corr": 0.9988193844796983,
     "load_bearing": true,
     "parity_ok": true
   },
@@ -56,7 +81,7 @@
     "span": 0.0,
     "collapses": true,
     "near_floor": true,
-    "differential_live": 1.4400789343857925,
+    "differential_live": 1.3872422298963993,
     "differential_lesion": 0.0,
     "attribution_to_live_excitability_drive_link": 1.0
   },
@@ -71,7 +96,7 @@
     ],
     "GO": true
   },
-  "E_lazy_import": {
+  "E_lazy_import_on_explicit_off": {
     "subprocess_stdout": "NOT_IMPORTED",
     "subprocess_stderr": "",
     "GO": true
@@ -79,31 +104,45 @@
   "preconditions": [
     {
       "kind": "require",
-      "name": "(A) OFF byte-identical on the substrate/default leaf (floor=1.0)",
+      "name": "(A) explicit-0 (the byte-identical escape) on the substrate/default leaf (floor=1.0)",
       "ok": true,
       "detail": "measured=True expect=True",
       "note": "off=[1.0, 1.0, 1.0, 1.4, 1.8, 2.48] == expected=[1.0, 1.0, 1.0, 1.4, 1.8, 2.48]"
     },
     {
       "kind": "require",
-      "name": "(A) OFF byte-identical on the raw/ablation leaf (floor=0.5)",
+      "name": "(A) explicit-0 (the byte-identical escape) on the raw/ablation leaf (floor=0.5)",
       "ok": true,
       "detail": "measured=True expect=True",
       "note": "off=[0.5, 0.6, 1.0, 1.4, 1.8, 2.48] == expected=[0.5, 0.6, 1.0, 1.4, 1.8, 2.48]"
     },
     {
       "kind": "require",
+      "name": "(A2) THE FLIP: unset dispatches the IDENTICAL boolean branch as explicit-1 (decisive, exact)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "enabled_unset=True enabled_explicit1=True"
+    },
+    {
+      "kind": "require",
+      "name": "(A2) sanity: unset's 3-rep-averaged live read lands within noise tolerance of explicit-1's",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "unset=[1.0, 1.0, 1.0, 1.4185693142575235, 1.7097582634435124, 2.4717809570794276] explicit_on=[1.0, 1.0, 1.0268048018418021, 1.408001973359644, 1.7661174148988656, 2.4694326591021216] max_abs_diff=0.0564"
+    },
+    {
+      "kind": "require",
       "name": "(B) ON load-bearing (span > 0.3 across the DA sweep)",
       "ok": true,
       "detail": "measured=True expect=True",
-      "note": "on_vals=[1.0, 1.0, 1.0, 1.4009570794277257, 1.8306956092747901, 2.4400789343857925] span=1.4400789343857925"
+      "note": "on_vals=[1.0, 1.0, 1.0557572767636905, 1.4326591021213617, 1.7672915638875182, 2.3872422298963993] span=1.3872422298963993"
     },
     {
       "kind": "require",
       "name": "(B) ON parity with the host formula (corr > 0.9)",
       "ok": true,
       "detail": "measured=True expect=True",
-      "note": "corr=0.9994210331690812 host_vals=[1.0, 1.0, 1.0, 1.4, 1.8, 2.48]"
+      "note": "corr=0.9988193844796983 host_vals=[1.0, 1.0, 1.0, 1.4, 1.8, 2.48]"
     },
     {
       "kind": "require",
@@ -128,7 +167,7 @@
     },
     {
       "kind": "require",
-      "name": "(E) the spiking module is never imported while the flag is OFF",
+      "name": "(E) the spiking module is never imported on the EXPLICIT-OFF (=0) escape",
       "ok": true,
       "detail": "measured=True expect=True",
       "note": "subprocess stdout='NOT_IMPORTED' stderr_tail=''"
@@ -137,7 +176,7 @@
       "kind": "control",
       "name": "the write gain rides the LEVER-4 spiking read (on) and is severed by ITS OWN lesion",
       "ok": true,
-      "detail": "treatment=1.44008 control=0 |sep|=1.44008 > 0.2",
+      "detail": "treatment=1.38724 control=0 |sep|=1.38724 > 0.2",
       "note": "on: gain rises with DA; inner lesion: flat regardless of DA"
     }
   ],

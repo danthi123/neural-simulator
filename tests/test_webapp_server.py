@@ -1985,14 +1985,16 @@ def test_brain_chat_xedge_curiosity_d6_session_isolated(client, monkeypatch):
     _xcd6._POOL = None
 
 
-def test_brain_chat_curiosity_graded_novelty_default_off_is_byte_identical(client, monkeypatch):
-    """Scaffold-retirement backlog rank-10 (2026-09-05): the graded per-topic novelty read is additive,
-    default-OFF. With `BRAIN_CURIOSITY_GRADED_NOVELTY` unset, `_curiosity_followup` must keep feeding the
-    curiosity judge the EXACT pre-existing host constant `NOVEL_SIGNAL` -- no `graded_novelty` trace key is
-    attached, and `curiosity.novelty` is unchanged from HEAD."""
+def test_brain_chat_curiosity_graded_novelty_explicit_off_is_byte_identical(client, monkeypatch):
+    """Scaffold-retirement backlog rank-10: FLIPPED DEFAULT-ON 2026-09-05 (production-flip GO,
+    `research/findings/2026-09-05-rank16-rank20-rank10-production-flip-GO.md`). The BYTE-IDENTICAL ESCAPE is now the
+    EXPLICIT `BRAIN_CURIOSITY_GRADED_NOVELTY=0` (unset means ON post-flip, per the flip_offarm_staleness
+    discipline): with it set, `_curiosity_followup` must keep feeding the curiosity judge the EXACT pre-existing
+    host constant `NOVEL_SIGNAL` -- no `graded_novelty` trace key is attached, and `curiosity.novelty` is
+    unchanged from pre-flip HEAD."""
     pytest.importorskip("numpy")
     monkeypatch.setenv("SIM_BACKEND", "numpy")
-    monkeypatch.delenv("BRAIN_CURIOSITY_GRADED_NOVELTY", raising=False)
+    monkeypatch.setenv("BRAIN_CURIOSITY_GRADED_NOVELTY", "0")
     monkeypatch.delenv("BRAIN_CURIOSITY_GRADED_NOVELTY_LESION", raising=False)
     try:
         import research.runners.brain_chat_tui  # noqa: F401
@@ -2007,8 +2009,36 @@ def test_brain_chat_curiosity_graded_novelty_default_off_is_byte_identical(clien
     cu = res.json().get("curiosity") or {}
     assert cu.get("curious") is True, "expected a genuine crave to fire (the established wombat probe)"
     assert cu.get("novelty") == pytest.approx(_CU.NOVEL_SIGNAL), \
-        "flag OFF -> the judge must still be fed the exact pre-existing constant"
-    assert "graded_novelty" not in cu, "flag OFF -> no new trace key may be attached (byte-identical to HEAD)"
+        "flag explicit-OFF -> the judge must still be fed the exact pre-existing constant"
+    assert "graded_novelty" not in cu, "flag explicit-OFF -> no new trace key may be attached (byte-identical)"
+
+    client.post("/api/brain-chat/reset", json={"session": sess, "brain": "tiny-demo", "renderer": "stub"})
+
+
+def test_brain_chat_curiosity_graded_novelty_default_unset_matches_explicit_on(client, monkeypatch):
+    """THE FLIP ITSELF: with `BRAIN_CURIOSITY_GRADED_NOVELTY` fully UNSET (the shipped default post-flip), the
+    handler must attach the SAME `graded_novelty` trace shape (on=True, a real [0,1] value, lesioned=False) that
+    the explicit `=1` arm produces -- unset and explicit-ON take the identical code branch by construction."""
+    pytest.importorskip("numpy")
+    monkeypatch.setenv("SIM_BACKEND", "numpy")
+    monkeypatch.delenv("BRAIN_CURIOSITY_GRADED_NOVELTY", raising=False)
+    monkeypatch.delenv("BRAIN_CURIOSITY_GRADED_NOVELTY_LESION", raising=False)
+    try:
+        import research.runners.brain_chat_tui  # noqa: F401
+    except Exception as e:
+        pytest.skip(f"brain_chat_tui not importable here: {e}")
+
+    sess = "pytest-curiosity-graded-novelty-default-unset"
+    res = client.post("/api/brain-chat", json={
+        "session": sess, "brain": "tiny-demo", "renderer": "stub", "message": "what does the wombat eat"})
+    assert res.status_code == 200, res.text
+    cu = res.json().get("curiosity") or {}
+    assert cu.get("curious") is True
+    gn = cu.get("graded_novelty")
+    assert gn is not None and gn.get("on") is True, "unset must take the SAME branch as explicit BRAIN_CURIOSITY_GRADED_NOVELTY=1"
+    assert 0.0 <= float(gn["value"]) <= 1.0
+    assert gn.get("lesioned") is False
+    assert cu.get("novelty") == pytest.approx(float(gn["value"]))
 
     client.post("/api/brain-chat/reset", json={"session": sess, "brain": "tiny-demo", "renderer": "stub"})
 

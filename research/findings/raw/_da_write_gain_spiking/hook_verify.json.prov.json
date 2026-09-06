@@ -1,10 +1,10 @@
 {
- "run_id": "1788597924-3937488",
+ "run_id": "1788659787-546150",
  "runner": "research/runners/_da_write_gain_spiking_hook_verify.py",
  "argv": [
-  "/home/dant123/Projects/sim/.claude/worktrees/agent-adf01e0ae9602b5ee/research/runners/_da_write_gain_spiking_hook_verify.py"
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-adef2e73c4169b375/research/runners/_da_write_gain_spiking_hook_verify.py"
  ],
- "git_sha": "ff19d5212",
+ "git_sha": "79727e35a",
  "git_dirty": true,
  "source_kind": null,
  "source_manifest_sha256": null,
@@ -12,15 +12,14 @@
  "source_manifest_start_error": null,
  "source_manifest_verified_at_exit": null,
  "source_manifest_exit_error": null,
- "started": "2026-09-05T04:45:24",
+ "started": "2026-09-05T21:56:27",
  "env": {
   "SIM_BACKEND": "numpy"
  },
  "sim_backend": "numpy",
  "sim_backend_requested": "numpy",
  "sim_backend_cupy_importable": true,
- "corpus_check_age_s": 2565.8,
- "corpus_check_query": "DA write-magnitude host linear spiking gain",
- "corpus_check_fresh": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
  "artifact": "research/findings/raw/_da_write_gain_spiking/hook_verify.json"
 }
