@@ -66,13 +66,20 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
   clipping / LR schedule / grad-norm)**, NOT stronger replay. Emergence IS real (place 0.873≫untrained at 15k) —
   instability destroys it by 200k. Artifacts: `_fork_pcs_emergence_rate_6seed.json` (base, committed) +
   `_fork_pcs_emergence_rate_consolidation_6seed.json` (cons, on disk).
-- **NEXT (the surpass):** (1) build agent ae8d9516 → add **gradient clipping (+ grad-norm/LR-schedule as
-  needed)** to `sim/pcs_substrate.py`'s TBPTT step; verify a short CPU smoke (OMP_NUM_THREADS=1, single-thread —
-  avoid the earlier load-throttle) shows the loss no longer spikes to 25-37. (2) Re-run the rate arm (1-seed
-  smoke → 6-seed) → do the faculties emerge AND STAY with stable training? (3) THEN consolidation becomes a
-  clean 2nd-order question (does replay add retention ON TOP of stable training?). (4) matched spike arm last
-  (FORK-THESIS). Lane-gate: doc-only commits exempt; `.json`/code need a served lane (pool now serving 3 jobs)
-  or genuine-BLOCKER waiver (priority waivers rejected).
+- **✅ STABILIZATION COMMITTED (`c64435668`+`104ff559f`, agent ae8d9516):** `grad_clip=1.0` (global grad-norm
+  clip, default-ON, PRIMARY) + `grad_skip_factor=8.0` (skip an update whose pre-clip grad-norm >8× typical) in
+  the TBPTT step. OFF/control = `grad_clip=5.0 grad_skip=0` (byte-identical to the base/cons artifacts → they
+  stay valid controls); flags `--grad-clip`/`--grad-skip-factor`.
+- **⚡ STABLE 6-seed re-run RUNNING (THE KEY TEST):** pid 2040449 via gpu_queue (defaults now stable), `--out
+  research/findings/raw/_fork_pcs_emergence_rate_stable_6seed.json`, Monitor **bjcjvs97t**. Question: does
+  gradient clipping ALONE (no consolidation) let the faculties emerge AND STAY (vs the unstable base's 0/6)?
+  Watching seed 42's loss-stability + faculty clears. ~1.5h. (Agent's single-threaded CPU max-loss A/B also
+  running, harmless — a cross-check on whether clip tamed the 0.3→37 spikes.)
+- **NEXT (after the stable 6-seed):** if stable-alone rescues emergence (≥3 faculties emerge+stay) → the
+  instability WALL is SURPASSED (GO); then (a) stable+consolidation (does replay add retention on top?), (b)
+  matched **spike arm** (FORK-THESIS: rate-vs-spike per GPU-hour), (c) fork finding + honest ledger. If stable
+  still 0/6 → the instability wasn't the whole story; next lever = LR-schedule / objective / task-requires-position.
+  Lane-gate: doc-only exempt; `.json`/code need a served lane (pool serving 3 jobs) or genuine-BLOCKER waiver.
 - **✅ POOL SERVED (lane-gate actively addressed, not waived):** stocking agent ae3970c6 queued **3
   record-verified valuable CPU jobs**, now RUNNING on node pool41 — Lane D·Perception (vision
   configural-binding held-out-position + scramble-null 6-seed, a named-but-unrun arm) + Lane E·Language
