@@ -36,3 +36,4 @@ cur_branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)
 up_sha=$(git ls-remote origin "refs/heads/${cur_branch}" 2>/dev/null | cut -f1); [ -z "$up_sha" ] && up_sha=$(git ls-remote origin refs/heads/main 2>/dev/null | cut -f1)
 ahead=$(git rev-list --count "${up_sha}"..HEAD 2>/dev/null || echo 0)
 [ "$ahead" != "0" ] && echo "⛔ $ahead COMMIT(S) UNPUSHED — run: bash tools/push_both.sh"
+exit 0   # never let the last test's falsey exit status read as a script failure (silent-failure rule: a test-as-last-line eats the status)
