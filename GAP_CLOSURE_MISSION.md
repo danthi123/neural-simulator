@@ -86,9 +86,13 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 — "20.7GB allocated, tried 1.74GB, expandable_segments suggested"; no artifact). Batch 128 fit the local 3090
 (21GB usable) so it's fragmentation over the long run, not config-too-big. **RE-LAUNCHED on the SAME instance**
 (pid 22823, Monitor **bopld03se**) with `PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True` (batch 128 kept for a
-fair vs-base comparison), **tokcache HIT** (skips the ~2.2h re-tokenize) → **~3h to verdict**. 60h backstop still
-covers it. ON DONE: harvest deep-margin vs 0 (crosses trigram?) → terminate. If it OOMs AGAIN (Monitor/early
-check), reduce `--batch` to 96/64. ~$12 spent + ~$6 for the re-run.
+fair vs-base comparison), **tokcache HIT** (saves the 2.2h re-tokenize only). **ETA CORRECTION: ~44h TRAIN**
+(d192×2B = 5× the 0.4B cell's ~8.8h on the L4; the tokcache saves the tokenize, NOT the train) → **verdict ~2
+days out (~Sep 8)**; the 60h backstop (Sep 9 03:10 UTC) covers it with ~10h margin. Confirmed progressing at
+~32min: CPU 100% single-threaded tr_ids build, RSS 78.7GB, no re-OOM. ON DONE: harvest deep-margin vs 0 (crosses
+trigram?) → terminate. If it OOMs AGAIN (Monitor), reduce `--batch` to 96/64. ~$12 (OOM'd run) + ~$90 (~44h
+re-run) ≈ ~$100 total (within the $180 cap + $900). Bird-in-hand (set up + tokcache) → NOT re-provisioning to a
+~2× faster g6e/L40S mid-run (churn+risk not worth it). FORK is the active near-term work; mouth is background.
 
 ---
 
