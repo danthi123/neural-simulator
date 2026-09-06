@@ -70,11 +70,14 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
   clip, default-ON, PRIMARY) + `grad_skip_factor=8.0` (skip an update whose pre-clip grad-norm >8× typical) in
   the TBPTT step. OFF/control = `grad_clip=5.0 grad_skip=0` (byte-identical to the base/cons artifacts → they
   stay valid controls); flags `--grad-clip`/`--grad-skip-factor`.
-- **⚡ STABLE 6-seed re-run RUNNING (THE KEY TEST):** pid 2040449 via gpu_queue (defaults now stable), `--out
-  research/findings/raw/_fork_pcs_emergence_rate_stable_6seed.json`, Monitor **bjcjvs97t**. Question: does
-  gradient clipping ALONE (no consolidation) let the faculties emerge AND STAY (vs the unstable base's 0/6)?
-  Watching seed 42's loss-stability + faculty clears. ~1.5h. (Agent's single-threaded CPU max-loss A/B also
-  running, harmless — a cross-check on whether clip tamed the 0.3→37 spikes.)
+- **⚡ STABLE 6-seed re-run — seed 42 = 0/4, clipping ALONE did NOT rescue it.** place R²=0.6055, still BELOW
+  untrained (0.6616) — base 0.598 → cons 0.670 → stable 0.606, all below untrained. ⇒ training instability was
+  NOT the whole story. Run continues (5 seeds left, `_fork_pcs_emergence_rate_stable_6seed.json`, Monitor
+  bjcjvs97t). **DECISIVE disambiguation = the loss curve (written at run-end):** if clipping TAMED the loss
+  (no more 0.3→37 spikes) but place STILL drifts below untrained → the cause is deeper: the **EMA-target-drift**
+  (agent ae8d9516's lead — the JEPA prediction target moving out from under the representation, a known JEPA
+  failure mode) or the objective not REQUIRING a clean position code (→ make position load-bearing for the task).
+  If clipping did NOT tame the loss → stronger stabilization. **PRIME next lever: fix/slow the EMA target.**
 - **NEXT (after the stable 6-seed):** if stable-alone rescues emergence (≥3 faculties emerge+stay) → the
   instability WALL is SURPASSED (GO); then (a) stable+consolidation (does replay add retention on top?), (b)
   matched **spike arm** (FORK-THESIS: rate-vs-spike per GPU-hour), (c) fork finding + honest ledger. If stable
