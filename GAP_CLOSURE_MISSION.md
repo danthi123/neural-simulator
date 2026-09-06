@@ -52,13 +52,20 @@ agent `a35f5728` (STOPPED) after finding its setup was poor-value + fragile. Cur
   prefer **g6e/L40S (864 GB/s ≈ 3090-class)** — ~2× faster at ~same $/hr = better value than g6/L4 (didn't
   re-provision this run: bird-in-hand + tied-$, don't risk progress). Local 3090 is fastest+free but capped
   at 46GB RAM (can't hold ≥64GB passage pools — the real reason big cells need cloud).
-- **PARALLEL LOCAL RUN (complementary, keeps the free local GPU busy):** the base -0.082 is single-seed
-  (s43); the finding itself flagged the multi-seed confirm as needed. So the **6-seed base confirm** is now
-  running LOCALLY via gpu_queue (pid 1568088, ~27h): `_emerge_wkv_lm_derisk ... --d-model 192 --n-sentences
-  3000000 --max-train-sents 2500000 --seeds 42 43 44 100 101 102 --corpus data/corpus/fineweb_edu.txt
-  --eval-corpus data/corpus/wikitext103.txt` → `research/findings/raw/_emerge_wkv_lm_linattn_fineweb_evalwt103_6seed.json`.
-  Fits the 46GB box (pool ~14GB, shared across seeds, sequential loop line 2029). AWS=scale(1-seed) +
-  local=base(6-seed) = a strong mouth picture. Harvest on gpu_q idle (heartbeat).
+- **PARALLEL LOCAL 6-seed base confirm — TRIED, THRASHED, PAUSED+DEFERRED (do NOT re-launch locally).**
+  Launched the 6-seed base FineWeb confirm (d192×0.4B) locally via gpu_queue, but at ~30min it drove the
+  46GB box into **swap-thrash** (34k pg/s, cap=THROTTLE): the train pool + the `--eval-corpus` wt103 pool
+  (~24GB combined) + **baloo's residual 6.9GB** exceeded RAM. Paused (`gpu_queue pause --now`) → RAM
+  recovered to 37G avail; queue now empty, dispatcher resumed idle, GPU free. **Learning: the 46GB local
+  box CANNOT hold a d192×0.4B 6-seed (with eval-corpus) alongside the desktop — these pools are cloud-only.**
+  The base 6-seed is SECONDARY (base known at s43) and its value is CONDITIONAL on the d192×2B verdict, so
+  it's DEFERRED: if d192×2B crosses → scaling is the lever, base-6seed is minor; if not → run the base
+  6-seed on AWS (128GB) to characterize variance. Decide post-verdict.
+- **BALOO:** the owner-approved repo-exclude IS applied (`exclude folders[$e]=$HOME/Projects/sim/`, status
+  Idle/0-waiting → repo won't re-index). But a **40GB index + 6.9GB RSS from the 4.9M repo-artifact files
+  indexed BEFORE the exclude** persists (stable, not growing; tolerable at 37G avail). Full reclaim would
+  need a purge+rebuild (temporary loss of the owner's file-search) — beyond the explicit approval; raise
+  with owner if baloo RAM recurs as a problem.
 - **CUTOVER deliberately NOT rushed:** it's a non-trivial edit to the tightly-coupled production-fallback
   `qwen_serve.sh` (the -hf/-hfd drafter coupling; open task_176e9088) + a harness swap that changes the
   owner's downtime UX — best as a focused/owner-aware pass, not squeezed in unsupervised. Pieces validated
