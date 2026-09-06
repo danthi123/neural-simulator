@@ -66,11 +66,14 @@ agent `a35f5728` (STOPPED) after finding its setup was poor-value + fragile. Cur
   indexed BEFORE the exclude** persists (stable, not growing; tolerable at 37G avail). Full reclaim would
   need a purge+rebuild (temporary loss of the owner's file-search) — beyond the explicit approval; raise
   with owner if baloo RAM recurs as a problem.
-- **CUTOVER deliberately NOT rushed:** it's a non-trivial edit to the tightly-coupled production-fallback
-  `qwen_serve.sh` (the -hf/-hfd drafter coupling; open task_176e9088) + a harness swap that changes the
-  owner's downtime UX — best as a focused/owner-aware pass, not squeezed in unsupervised. Pieces validated
-  (Q4 GO, OpenHands GO-live); not urgent (14.6M tokens left, fork days out). Q4 launch cmd in
-  docs/2026-09-06-local-agent-stack-review.md.
+- **CUTOVER part (a) DONE + VALIDATED LIVE (`eaa82891`):** `qwen_serve.sh` now serves Q4_K_M target-only
+  (local `--model`, 32k ctx, Q8 KV, `--no-mmproj`) instead of the degraded Q2_0 — tested live (18.9GB VRAM,
+  17*23=391 coherent, clean `reasoning_content`), hermes-loop restarted on Q4. Reversible via env
+  (QWEN_TARGET_GGUF/QWEN_DRAFT_HF/QWEN_CTX/QWEN_KV_TYPE restore Q2+DFlash2). Note: Q4 (like Q2) is a
+  Qwen3.8 REASONING model — needs max_tokens headroom + puts CoT in `reasoning_content`, answer in `content`
+  (hermes-loop already handled this for Q2). **Part (b) — hermes-loop.py → openhands_loop.py (the
+  one-continuous-session harness swap, a downtime-UX change) — still DEFERRED to an owner-aware pass**
+  (not urgent; OpenHands validated GO-live). Q4 launch details: docs/2026-09-06-local-agent-stack-review.md.
 - **NEXT (unchanged sequence, after the verdict):** (1) **CUTOVER** — qwen_serve.sh Q4 budget config +
   hermes-loop→openhands_loop (focused pass); (2) **open `agi-fork`**. Pending tasks: task_176e9088,
   task_ed3cf6cf, task_a6b008ab, task_0ca41c4c, task_91eaf588. Heartbeat `bsxzdnse2` live; AWS Monitor
