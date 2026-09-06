@@ -81,16 +81,17 @@ class PCSConfig:
     units: str = "rate"          # "rate" (tanh) or "spike" (LIF + surrogate)
     threshold: float = 1.0       # spike threshold (spike mode)
     leak: float = 0.95           # membrane leak exp(-dt/tau) (spike mode; matches bptt_snn)
+    surrogate_alpha: float = 2.0  # atan-surrogate slope (spike backward; and the soft-forward for gradcheck)
     # objective
     tbptt_T: int = 18            # truncated-BPTT window length
     beta_reward: float = 1.0     # weight of the reward-prediction term
     var_lambda: float = 1.0      # weight of the VICReg variance floor on e (0 disables)
-    var_gamma: float = 1.0       # target per-dim std for the variance floor
+    var_gamma: float = 0.3       # target per-dim std for the variance floor (tanh-bounded e)
     # encoder
     encoder: str = "learned_ema"  # "learned_ema" (JEPA: learned enc + EMA target) or "fixed" (collapse-proof)
     ema_rate: float = 0.99       # EMA decay of the target encoder (learned_ema only)
     # optimizer
-    lr: float = 1e-3             # Adam lr for the predictive objective
+    lr: float = 3e-4             # Adam lr for the predictive objective (online TBPTT — lower = stable)
     grad_clip: float = 5.0       # global-norm clip on the predictive grads
     # policy (H3) — REINFORCE with a running-mean baseline, online per step
     lr_policy: float = 5e-3
@@ -192,7 +193,8 @@ class PredictiveContinualSubstrate:
             "W_a": w((H, A), A),
             "W_d": w((H, D), D),
             "b_h": xp.zeros((H,), dtype=xp.float32),
-            "W_pred": w((E, H), H),   # JEPA head: h -> ehat (predict next latent)
+            "W_pred": w((E, H), H),   # JEPA head: (h_t, a_t) -> ehat (predict next latent)
+            "W_pred_a": w((E, A), A),  # action-conditioning: the next view depends on the CHOSEN action
             "b_pred": xp.zeros((E,), dtype=xp.float32),
             "w_r": w((H,), H),        # reward head: h -> rhat (scalar)
             "b_r": xp.zeros((1,), dtype=xp.float32),
@@ -278,9 +280,11 @@ class PredictiveContinualSubstrate:
 
     # ── forward primitives (shared by online loop AND gradcheck) ────────────
     def _encode(self, v1feat, ema=False):
+        # tanh-bounded encoding: caps the JEPA target magnitude in [-1,1] so the
+        # learned-encoder + EMA-target loop cannot run away (the 14->266 divergence).
         W = self.W_enc_ema if ema else self.W_enc
         b = self.b_enc_ema if ema else self.b_enc
-        return W @ v1feat + b
+        return self.xp.tanh(W @ v1feat + b)
 
     def _core_forward_rate(self, h_prev, e_t, a_prev, d_t, P):
         """One rate step. Returns dict of intermediates. h_prev is ALREADY lesion-masked."""
@@ -289,24 +293,31 @@ class PredictiveContinualSubstrate:
         h_raw = (1.0 - self.cfg.alpha) * h_prev + self.cfg.alpha * g
         return {"pre": pre, "g": g, "h_raw": h_raw}
 
-    def _core_forward_spike(self, v_prev, s_prev, h_prev_trace, e_t, a_prev, d_t, P):
+    def _core_forward_spike(self, v_prev, s_prev, h_prev_trace, e_t, a_prev, d_t, P, soft=False):
         """One spike (LIF) step, mirroring sim/bptt_snn.py's hard-reset LIF with a
         recurrent W_h on spikes, plus a low-pass rate trace the heads read.
 
         v_t = leak * v_{t-1} * (1 - s_{t-1}) + (W_h s_{t-1} + W_e e_t + W_a a + W_d d + b_h)
-        s_t = Heaviside(v_t - threshold)
-        h_t = (1-alpha) h_{t-1} + alpha * s_t          # rate trace (what heads read)
+        s_t = Heaviside(v_t - threshold)                 # real spikes (forward)
+        h_t = (1-alpha) h_{t-1} + alpha * s_t            # rate trace (what heads read)
+
+        soft=True replaces the Heaviside with s = 0.5 + (1/(pi*alpha))*arctan(alpha*(v-thr)),
+        whose exact derivative IS atan_surrogate(v-thr, alpha) — used ONLY to finite-difference-
+        validate the surrogate backward (a hard-Heaviside forward cannot be FD-checked).
         """
+        xp = self.xp
         inp = P["W_h"] @ s_prev + P["W_e"] @ e_t + P["W_a"] @ a_prev + P["W_d"] @ d_t + P["b_h"]
         v = self.cfg.leak * v_prev * (1.0 - s_prev) + inp
-        s = (v >= self.cfg.threshold).astype(self.xp.float32)
+        if soft:
+            a = self.cfg.surrogate_alpha
+            s = 0.5 + (1.0 / (np.pi * a)) * xp.arctan(a * (v - self.cfg.threshold))
+        else:
+            s = (v >= self.cfg.threshold).astype(xp.float32)
         h_raw = (1.0 - self.cfg.alpha) * h_prev_trace + self.cfg.alpha * s
         return {"v": v, "s": s, "g": s, "h_raw": h_raw}
 
-    def _heads_forward(self, h_t, P):
-        ehat = P["W_pred"] @ h_t + P["b_pred"]
-        rhat = P["w_r"] @ h_t + P["b_r"][0]
-        return ehat, rhat
+    def _reward_head(self, h_t, P):
+        return P["w_r"] @ h_t + P["b_r"][0]
 
     # ── online step: observe / act / learn ──────────────────────────────────
     def observe(self, v1feat, a_prev_idx: int, d):
@@ -317,9 +328,14 @@ class PredictiveContinualSubstrate:
         d : (n_drive,) interoceptive drive afferent
         """
         xp = self.xp
-        # backend-agnostic input coercion (accepts numpy or cupy arrays / lists)
-        v1feat = xp.asarray(np.asarray(to_host(v1feat), dtype=np.float32))
-        d = xp.asarray(np.asarray(to_host(d), dtype=np.float32))
+        # backend-agnostic input coercion. Avoid a device->host->device round-trip when the
+        # world already hands us a backend array (the GPU path); only marshal host inputs.
+        def _to_backend(a):
+            if isinstance(a, (list, tuple)) or isinstance(a, np.ndarray):
+                return xp.asarray(np.asarray(a, dtype=np.float32))
+            return a.astype(xp.float32)          # already a backend (xp) array
+        v1feat = _to_backend(v1feat)
+        d = _to_backend(d)
         a_prev = xp.zeros((self.cfg.n_actions,), dtype=xp.float32)
         if a_prev_idx is not None and a_prev_idx >= 0:
             a_prev[a_prev_idx] = 1.0
@@ -355,8 +371,14 @@ class PredictiveContinualSubstrate:
         self._tape.append(step)
         return h_t
 
-    def act(self, h_t=None, greedy: bool = False) -> int:
-        """Sample an action from pi(h_t). Records logits/probs/action for the REINFORCE update."""
+    def act(self, h_t=None, greedy: bool = False, explore_eps: float = 0.0) -> int:
+        """Sample an action from pi(h_t). Records logits/probs/action for the REINFORCE update.
+
+        explore_eps>0 mixes in a uniform-random action with that probability (epsilon-random),
+        used to guarantee trajectory coverage when probing REPRESENTATION emergence independent
+        of whether the curiosity policy itself has learned to explore. The actually-taken action
+        is what REINFORCE credits and what the efference copy reports.
+        """
         xp = self.xp
         if h_t is None:
             h_t = self._apply_lesion(self.h)
@@ -367,7 +389,9 @@ class PredictiveContinualSubstrate:
         probs_host = np.asarray(to_host(probs), dtype=np.float64)
         probs_host = np.clip(probs_host, 1e-8, None)
         probs_host = probs_host / probs_host.sum()
-        if greedy:
+        if explore_eps > 0.0 and self._sampler.random() < explore_eps:
+            a = int(self._sampler.integers(self.cfg.n_actions))
+        elif greedy:
             a = int(np.argmax(probs_host))
         else:
             a = int(self._sampler.choice(self.cfg.n_actions, p=probs_host))
@@ -428,10 +452,11 @@ class PredictiveContinualSubstrate:
         self.b_pi = self.b_pi - self.cfg.lr_policy * gb
 
     # ── TBPTT: forward-recompute + backward over a window (pure over params) ──
-    def _window_forward(self, tape, P, W_enc, b_enc):
+    def _window_forward(self, tape, P, W_enc, b_enc, soft=False):
         """Recompute the window forward from tape[0]['h_prev'] with the given params.
         Returns (loss, cache) where cache holds per-step tensors for the backward.
-        Uses EMA encoder (stop-grad) for the JEPA target.
+        Uses EMA encoder (stop-grad) for the JEPA target. `soft` (spike mode) swaps the
+        Heaviside for its smooth surrogate-integral, for FD-validating the backward.
         """
         xp = self.xp
         cfg = self.cfg
@@ -450,33 +475,33 @@ class PredictiveContinualSubstrate:
                 s_prev = xp.zeros((cfg.n_hidden,), dtype=xp.float32)
 
         e_list, h_list, g_list, pre_list, v_list, s_list = [], [], [], [], [], []
-        ehat_list, rhat_list = [], []
+        rhat_list = []
         hp = h_prev
         for t in range(T):
-            e_t = W_enc @ tape[t]["v1feat"] + b_enc
+            e_t = xp.tanh(W_enc @ tape[t]["v1feat"] + b_enc)
             if cfg.units == "rate":
                 fwd = self._core_forward_rate(hp, e_t, tape[t]["a_prev"], tape[t]["d"], P)
                 h_raw = fwd["h_raw"]
                 pre_list.append(fwd["pre"]); g_list.append(fwd["g"])
             else:
-                fwd = self._core_forward_spike(v_prev, s_prev, hp, e_t, tape[t]["a_prev"], tape[t]["d"], P)
+                fwd = self._core_forward_spike(v_prev, s_prev, hp, e_t, tape[t]["a_prev"], tape[t]["d"], P, soft=soft)
                 h_raw = fwd["h_raw"]
                 v_prev, s_prev = fwd["v"], fwd["s"]
                 v_list.append(fwd["v"]); s_list.append(fwd["s"]); g_list.append(fwd["g"]); pre_list.append(None)
-            ehat, rhat = self._heads_forward(h_raw, P)
-            e_list.append(e_t); h_list.append(h_raw); ehat_list.append(ehat); rhat_list.append(rhat)
+            rhat = self._reward_head(h_raw, P)
+            e_list.append(e_t); h_list.append(h_raw); rhat_list.append(rhat)
             hp = h_raw
 
-        # loss: JEPA over t=0..T-2 (predict next-view EMA encoding), reward over all t with a reward
+        # loss: action-conditional JEPA over t=0..T-2 (predict next-view EMA encoding given the CHOSEN
+        # action a_t = tape[t+1].a_prev), plus reward over all t with a reward.
         loss = 0.0
         n_jepa = max(1, T - 1)
-        z_targets = []
-        for t in range(T):
-            if t < T - 1:
-                z = self.W_enc_ema @ tape[t + 1]["v1feat"] + self.b_enc_ema   # stop-grad target
-                z_targets.append(z)
-            else:
-                z_targets.append(None)
+        z_targets = [None] * T
+        ehat_list = [None] * T
+        for t in range(T - 1):
+            z_targets[t] = xp.tanh(self.W_enc_ema @ tape[t + 1]["v1feat"] + self.b_enc_ema)  # stop-grad target
+            a_act = tape[t + 1]["a_prev"]                                                     # the action taken at t
+            ehat_list[t] = P["W_pred"] @ h_list[t] + P["W_pred_a"] @ a_act + P["b_pred"]
         jl = 0.0
         for t in range(T - 1):
             diff = ehat_list[t] - z_targets[t]
@@ -526,6 +551,7 @@ class PredictiveContinualSubstrate:
             if t < T - 1:
                 g_ehat = (2.0 / n_jepa) * (ehat_list[t] - z_targets[t])   # dL/dehat_t
                 grads["W_pred"] += xp.outer(g_ehat, h_list[t])
+                grads["W_pred_a"] += xp.outer(g_ehat, tape[t + 1]["a_prev"])   # action-conditioning grad
                 grads["b_pred"] += g_ehat
                 dh_head[t] = dh_head[t] + P["W_pred"].T @ g_ehat
             # reward head
@@ -574,8 +600,9 @@ class PredictiveContinualSubstrate:
                 if de_var[t] is not None:
                     de_t = de_t + de_var[t]
                 if "W_enc" in P:
-                    grads["W_enc"] += xp.outer(de_t, tape[t]["v1feat"])
-                    grads["b_enc"] += de_t
+                    de_pre = de_t * (1.0 - e_list[t] * e_list[t])   # through tanh encoder
+                    grads["W_enc"] += xp.outer(de_pre, tape[t]["v1feat"])
+                    grads["b_enc"] += de_pre
                 # propagate to h_{t-1}: direct leak term + through W_h
                 grad_h[t] = grad_h[t] + (1.0 - alpha) * dh_t + P["W_h"].T @ dpre
         else:
@@ -593,7 +620,7 @@ class PredictiveContinualSubstrate:
                 # s_t also feeds v_{t+1} (reset factor and W_h). grad_s_next holds that.
                 ds_t = ds_from_htrace + grad_s_next
                 v_t = v_list[t]
-                surro = _atan_surrogate(xp, v_t - cfg.threshold)
+                surro = _atan_surrogate(xp, v_t - cfg.threshold, alpha=cfg.surrogate_alpha)
                 dv_t = ds_t * surro + grad_v_next            # v feeds s (surrogate) and next-step reset (grad_v_next)
                 # params via v_t = leak*v_{t-1}*(1-s_{t-1}) + (W_h s_{t-1} + W_e e_t + W_a a + W_d d + b_h)
                 s_prev = s_list[t - 1] if t > 0 else (tape[0].get("s_prev") if tape[0].get("s_prev") is not None else xp.zeros((H,), dtype=xp.float32))
@@ -606,8 +633,9 @@ class PredictiveContinualSubstrate:
                 if de_var[t] is not None:
                     de_t = de_t + de_var[t]
                 if "W_enc" in P:
-                    grads["W_enc"] += xp.outer(de_t, tape[t]["v1feat"])
-                    grads["b_enc"] += de_t
+                    de_pre = de_t * (1.0 - e_list[t] * e_list[t])   # through tanh encoder
+                    grads["W_enc"] += xp.outer(de_pre, tape[t]["v1feat"])
+                    grads["b_enc"] += de_pre
                 # carries to t-1:
                 if t > 0:
                     v_prev = v_list[t - 1]
@@ -634,6 +662,28 @@ class PredictiveContinualSubstrate:
             self.b_enc_ema = r * self.b_enc_ema + (1.0 - r) * self.b_enc
         self.n_updates += 1
         return float(loss)
+
+    # ── held-out predictive-loss evaluator (learning signal on a non-stationary stream) ──
+    def eval_predictive_loss(self, seq) -> float:
+        """Mean windowed predictive loss on a FIXED transition sequence with the CURRENT weights,
+        WITHOUT training and WITHOUT disturbing the live state. On a widening online stream the
+        online loss rises with coverage; this stationary-target eval is the honest 'is it learning'
+        signal. seq = list of (v1feat, a_prev_idx, d, reward)."""
+        saved = (self.h, self.v, self.s, self._tape, self._frozen, self._lesion)
+        self._lesion = None
+        self.freeze()
+        self.reset_state()
+        for (v1, ap, d, r) in seq:
+            self.observe(v1, ap, d)
+            self._tape[-1]["reward"] = float(r)
+        tape = self._tape
+        T = self.cfg.tbptt_T
+        losses = []
+        for i in range(0, len(tape) - T + 1, T):
+            loss, _ = self._window_forward(tape[i:i + T], self.P, self.W_enc, self.b_enc)
+            losses.append(loss)
+        (self.h, self.v, self.s, self._tape, self._frozen, self._lesion) = saved
+        return float(np.mean(losses)) if losses else float("nan")
 
     # ── read-outs for probes ────────────────────────────────────────────────
     def state(self):
@@ -670,20 +720,23 @@ def _fill_tape(sub, T, rng):
 
 
 def gradcheck(units="rate", tol=2e-2):
-    """Finite-difference the analytic BPTT grads for a tiny substrate."""
-    xp_is_numpy = True
+    """Finite-difference the analytic BPTT grads for a tiny substrate. For spike mode the
+    forward uses the SMOOTH surrogate-integral (soft=True) whose exact derivative is the
+    atan surrogate the backward uses — the correct FD validation of a surrogate-gradient net
+    (a hard-Heaviside forward is non-differentiable and cannot be FD-checked)."""
+    soft = (units == "spike")
     sub = _make_tiny(units=units, seed=3)
     rng = np.random.default_rng(7)
     tape = _fill_tape(sub, sub.cfg.tbptt_T, rng)
     P = sub.P
-    loss0, cache = sub._window_forward(tape, P, sub.W_enc, sub.b_enc)
+    loss0, cache = sub._window_forward(tape, P, sub.W_enc, sub.b_enc, soft=soft)
     grads = sub._window_backward(tape, P, cache)
 
     eps = 1e-4
     max_rel = 0.0
     worst = None
     checked = 0
-    for name in ["W_h", "W_e", "W_a", "W_d", "b_h", "W_pred", "b_pred", "w_r", "b_r", "W_enc", "b_enc"]:
+    for name in ["W_h", "W_e", "W_a", "W_d", "b_h", "W_pred", "W_pred_a", "b_pred", "w_r", "b_r", "W_enc", "b_enc"]:
         if name not in P:
             continue
         arr = np.asarray(to_host(P[name]), dtype=np.float64)
@@ -699,14 +752,14 @@ def gradcheck(units="rate", tol=2e-2):
                 Wenc, benc = (P["W_enc"], P["b_enc"])
             else:
                 Wenc, benc = sub.W_enc, sub.b_enc
-            lp, _ = sub._window_forward(tape, P, Wenc, benc)
+            lp, _ = sub._window_forward(tape, P, Wenc, benc, soft=soft)
             flat[i] = orig - eps
             P[name] = from_host(flat.reshape(arr.shape).astype(np.float32))
             if name in ("W_enc", "b_enc"):
                 Wenc, benc = (P["W_enc"], P["b_enc"])
             else:
                 Wenc, benc = sub.W_enc, sub.b_enc
-            lm, _ = sub._window_forward(tape, P, Wenc, benc)
+            lm, _ = sub._window_forward(tape, P, Wenc, benc, soft=soft)
             flat[i] = orig
             P[name] = from_host(flat.reshape(arr.shape).astype(np.float32))
             num = (lp - lm) / (2 * eps)
