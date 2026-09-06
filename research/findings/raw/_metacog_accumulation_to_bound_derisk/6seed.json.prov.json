@@ -1,0 +1,43 @@
+{
+ "run_id": "1788667075-671780",
+ "runner": "research/runners/_metacog_accumulation_to_bound_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/research/runners/_metacog_accumulation_to_bound_derisk.py",
+  "--seeds",
+  "42",
+  "43",
+  "44",
+  "100",
+  "101",
+  "102",
+  "--sigmas",
+  "1.5",
+  "1.8",
+  "2.0",
+  "2.2",
+  "2.5",
+  "--n-trials-per-sigma",
+  "40",
+  "--out",
+  "research/findings/raw/_metacog_accumulation_to_bound_derisk/6seed.json"
+ ],
+ "git_sha": "056373699",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-05T23:57:55",
+ "env": {
+  "SIM_BACKEND": "cupy"
+ },
+ "sim_backend": "cupy",
+ "sim_backend_requested": "cupy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 16447.7,
+ "corpus_check_query": "noise-robust homeostatic three-factor affect concept code convergence",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_metacog_accumulation_to_bound_derisk/6seed.json"
+}
