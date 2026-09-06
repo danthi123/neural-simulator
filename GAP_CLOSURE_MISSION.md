@@ -71,6 +71,14 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 - Cross-checks: egocentric CROP (NOT `render_egocentric_goal` the pre-solved goal-compass); anti-hollow lesion
   gate (not mere decodability); `cfg.seed` seeding (not `actual_seed_used`).
 
+**🩹 MOUTH (AWS d192×2B) UPDATE ~16:16:** the first run **CRASHED at ~5h with a CUDA OOM** (torch, fragmentation
+— "20.7GB allocated, tried 1.74GB, expandable_segments suggested"; no artifact). Batch 128 fit the local 3090
+(21GB usable) so it's fragmentation over the long run, not config-too-big. **RE-LAUNCHED on the SAME instance**
+(pid 22823, Monitor **bopld03se**) with `PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True` (batch 128 kept for a
+fair vs-base comparison), **tokcache HIT** (skips the ~2.2h re-tokenize) → **~3h to verdict**. 60h backstop still
+covers it. ON DONE: harvest deep-margin vs 0 (crosses trigram?) → terminate. If it OOMs AGAIN (Monitor/early
+check), reduce `--batch` to 96/64. ~$12 spent + ~$6 for the re-run.
+
 ---
 
 ## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-06 ~11:15 (AWS DECISIVE MOUTH CELL LIVE — took over the grid; earlier anchor)
