@@ -15,9 +15,11 @@ These tests pin, at unit level (fast, deterministic, no on-bridge substrate buil
   (3) The IMPRINT<->QUERY correspondence, not word-string shape, drives a low reading (imprinting a DISJOINT
       vocabulary leaves the original "known" words reading at the ceiling too).
   (4) Determinism: the SAME (seed, word) always renders the SAME phase code / novelty (repeated reads agree).
-  (5) BYTE-IDENTICAL-OFF: `graded_novelty_enabled()` / `graded_novelty_lesioned()` default False (env unset),
-      and `topic_novelty()` with `topic=None` (or falsy) falls back to the EXACT `NOVEL_SIGNAL` constant used by
-      the pre-existing production call -- the escape hatch a caller relies on to stay byte-identical.
+  (5) FLIPPED DEFAULT-ON (2026-09-05, rank-10 production-flip GO): `graded_novelty_enabled()` now defaults True
+      (env unset); `graded_novelty_lesioned()` stays default False (unaffected by the flip). The explicit
+      `BRAIN_CURIOSITY_GRADED_NOVELTY=0` (or false/off/no) is the BYTE-IDENTICAL ESCAPE, and `topic_novelty()`
+      with `topic=None` (or falsy) always falls back to the EXACT `NOVEL_SIGNAL` constant regardless of the flag
+      -- the escape hatch a caller relies on to stay byte-identical.
 
 The full 6-seed scientific validation (graded novelty IS load-bearing on the real on-bridge ASK-pool `want_hz` /
 `curious` decision, discriminating the old always-curious constant) lives in the dedicated research runner
@@ -147,9 +149,15 @@ def test_different_seeds_still_agree_on_the_gradation_shape():
         assert g.novelty("apple") < g.novelty("apple", noise=0.2) < g.novelty("wombat")
 
 
-# ── (5) byte-identical-off ──────────────────────────────────────────────────────────────────────────────────
-def test_graded_novelty_enabled_defaults_off(monkeypatch):
+# ── (5) FLIPPED DEFAULT-ON 2026-09-05 (rank-10 production-flip GO) -- unset now means ON; explicit "0"/false/
+#     off/no is the BYTE-IDENTICAL escape back to the pre-flip constant. ─────────────────────────────────────
+def test_graded_novelty_enabled_defaults_on(monkeypatch):
     monkeypatch.delenv("BRAIN_CURIOSITY_GRADED_NOVELTY", raising=False)
+    assert graded_novelty_enabled() is True
+
+
+def test_graded_novelty_enabled_explicit_off_is_the_byte_identical_escape(monkeypatch):
+    monkeypatch.setenv("BRAIN_CURIOSITY_GRADED_NOVELTY", "0")
     assert graded_novelty_enabled() is False
 
 

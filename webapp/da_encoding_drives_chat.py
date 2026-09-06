@@ -96,14 +96,18 @@ _G_MAX = 3.0
 # rule read from measured neural activity). What it left untouched is the PER-WRITE leaf itself: "given the live
 # DA, how much gain does THIS fact get" was still `_gain_map()`'s closed-form `g = clip(g_min, g_max, 1 +
 # k_DA*(DA-baseline))` -- host arithmetic on a scalar. `da_encoding_spiking_gain_enabled()` (`BRAIN_DA_ENCODING_
-# SPIKING_GAIN`, DEFAULT OFF) swaps that ONE leaf for `research.runners._da_write_gain_spiking_derisk.
+# SPIKING_GAIN`) swaps that ONE leaf for `research.runners._da_write_gain_spiking_derisk.
 # spiking_write_gain`: a small excitatory population (IZH2007_HIPPO_PYRAMIDAL -- the SAME hippocampal cell class
 # this coupling's own Lisman-Grace citation names) whose excitability is modulated by the SAME live DA through the
 # neuromodulator subsystem's `excitability_drive` target (the identical target_type/scope idiom
 # `_neuromod_spiking_da_mode_derisk` already uses for DA->str_D1/D2); the gain is read from that population's OWN
 # firing rate, not a python formula. 6/6-seed GO (load-bearing, monotonic, lesion-collapses, parity corr>=0.99
-# with the host map, deterministic): see `research/findings/2026-09-05-da-write-gain-spiking-derisk-GO.md`. A
-# DE-RISK, not a flip -- `BRAIN_DA_ENCODING_SPIKING_GAIN` unset keeps `_gain_map()` running exactly as before.
+# with the host map, deterministic): see `research/findings/2026-09-05-da-write-gain-spiking-derisk-GO.md`.
+# FLIPPED DEFAULT-ON 2026-09-05 (production-flip verify GO, `research/runners/_da_write_gain_spiking_hook_verify.py`
+# re-run against the new default -- OFF-arm pinned to the EXPLICIT `=0` escape per the flip_offarm_staleness
+# discipline, plus a new flip-correctness arm proving unset==explicit-"1"; see
+# `research/findings/2026-09-05-rank16-rank20-rank10-production-flip-GO.md`): `BRAIN_DA_ENCODING_SPIKING_GAIN` unset now
+# runs the spiking population read; `=0` (or false/no/off) is the BYTE-IDENTICAL escape back to `_gain_map()`.
 _A_STAR = 1.0        # the homeostatic activity set-point == the recall-safe unit-magnitude (tonic) write
 _G_FLOOR_HOMEO = 1.0 # the recall-safe floor: a low-DA fact is written at unit magnitude, never below (Turrigiano floor)
 _EMA_BETA = 0.25     # the homeostatic integration rate for the running mean of the raw salience (slow self-tuning)
@@ -179,19 +183,28 @@ def da_encoding_lesioned() -> bool:
     return os.environ.get("BRAIN_DA_ENCODING_LESION", "0").strip().lower() in ("1", "true", "on", "yes")
 
 
+_DA_ENCODING_SPIKING_GAIN_DEFAULT_ON = True   # FLIPPED 2026-09-05 (rank-16 production-flip GO, 6/6 no-regression)
+
+
 def da_encoding_spiking_gain_enabled() -> bool:
     """LEVER-4 (2026-09-05, scaffold-retirement rank-16): retire the remaining LEAF host linear map. Even with
     LEVER-3's on-substrate homeostat (`da_encoding_substrate_enabled`) doing the POPULATION-level regulation, the
     PER-WRITE computation "how strongly does THIS DA level drive the gain" was still `_gain_map()`'s closed-form
     `g = clip(g_min, g_max, 1 + k_DA*(DA - DA_baseline))` -- host arithmetic on a scalar, not a neuron or synapse.
-    `BRAIN_DA_ENCODING_SPIKING_GAIN` truthy (DEFAULT OFF) swaps that leaf for
-    `research.runners._da_write_gain_spiking_derisk.spiking_write_gain`: a small excitatory population
-    (IZH2007_HIPPO_PYRAMIDAL, the SAME cell class this coupling's own Lisman-Grace citation names) whose
-    excitability is modulated by the SAME live DA via the neuromodulator `excitability_drive` target (the exact
-    target_type/scope idiom `_neuromod_spiking_da_mode_derisk` already uses for str_D1/D2); the population's OWN
-    firing rate -- not a python formula -- is what the gain is read from. Unset/0/false/off/no -> `_gain_map()`
-    runs exactly as before (byte-identical; the new module is never even imported)."""
-    return os.environ.get("BRAIN_DA_ENCODING_SPIKING_GAIN", "0").strip().lower() in ("1", "true", "on", "yes")
+    `BRAIN_DA_ENCODING_SPIKING_GAIN` unset -> ON (FLIPPED DEFAULT-ON 2026-09-05, `_DA_ENCODING_SPIKING_GAIN_
+    DEFAULT_ON`): swaps that leaf for `research.runners._da_write_gain_spiking_derisk.spiking_write_gain`: a
+    small excitatory population (IZH2007_HIPPO_PYRAMIDAL, the SAME cell class this coupling's own Lisman-Grace
+    citation names) whose excitability is modulated by the SAME live DA via the neuromodulator `excitability_
+    drive` target (the exact target_type/scope idiom `_neuromod_spiking_da_mode_derisk` already uses for
+    str_D1/D2); the population's OWN firing rate -- not a python formula -- is what the gain is read from.
+    `BRAIN_DA_ENCODING_SPIKING_GAIN` in {0,false,off,no} (explicit) is the BYTE-IDENTICAL ESCAPE back to
+    `_gain_map()` (the new module is never even imported on that path). Any of {1,true,on,yes} also arms it
+    (identical branch to unset, by construction). Flip verify:
+    `research/findings/2026-09-05-rank16-rank20-rank10-production-flip-GO.md`."""
+    v = os.environ.get("BRAIN_DA_ENCODING_SPIKING_GAIN")
+    if v is None:
+        return _DA_ENCODING_SPIKING_GAIN_DEFAULT_ON
+    return v.strip().lower() in ("1", "true", "on", "yes")
 
 
 def da_encoding_spiking_gain_lesioned() -> bool:

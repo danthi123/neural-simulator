@@ -152,8 +152,10 @@ def extract_topic(text: str) -> str | None:
 # regardless of content) — the gradation collapses. The graded read rides the LEARNED weights, not an artifact of
 # the render.
 #
-# BYTE-IDENTICAL OFF: `graded_novelty_enabled()` defaults OFF (`BRAIN_CURIOSITY_GRADED_NOVELTY` unset) -> the
-# production call keeps passing the constant `NOVEL_SIGNAL` exactly as before -> unchanged.
+# FLIPPED DEFAULT-ON 2026-09-05 (rank-10 production-flip GO, `research/findings/2026-09-05-rank16-rank10-
+# production-flip-GO.md`): `graded_novelty_enabled()` now defaults ON (`BRAIN_CURIOSITY_GRADED_NOVELTY` unset) --
+# the production call feeds the GRADED per-topic read. `BRAIN_CURIOSITY_GRADED_NOVELTY` in {0,false,off,no}
+# (explicit) is the BYTE-IDENTICAL ESCAPE back to the constant `NOVEL_SIGNAL`.
 #
 # HONEST SCOPE (declared, not hidden): the word->phase code is a FIXED per-word draw (a declared host boundary,
 # exactly like the v320 gate's percept->phase projection and the curiosity organ's own wh-frame scaffold) — it
@@ -165,12 +167,18 @@ def extract_topic(text: str) -> str | None:
 TOPIC_GATE_D = 256   # SAME dimension as the v320 spiking conjunctive familiarity gate
 
 
+_GRADED_NOVELTY_DEFAULT_ON = True   # FLIPPED 2026-09-05 (rank-10 production-flip GO, 6/6 no-regression)
+
+
 def graded_novelty_enabled() -> bool:
-    """`BRAIN_CURIOSITY_GRADED_NOVELTY` truthy -> feed the curiosity judge a GRADED per-topic novelty (this
-    section) instead of the constant `NOVEL_SIGNAL`. Default OFF (unset) -> byte-identical to HEAD."""
+    """`BRAIN_CURIOSITY_GRADED_NOVELTY` unset -> ON (FLIPPED DEFAULT-ON 2026-09-05, `_GRADED_NOVELTY_DEFAULT_ON`):
+    feed the curiosity judge a GRADED per-topic novelty (this section) instead of the constant `NOVEL_SIGNAL`.
+    `BRAIN_CURIOSITY_GRADED_NOVELTY` in {0,false,off,no} (explicit) is the BYTE-IDENTICAL ESCAPE back to the
+    constant. Any of {1,true,yes,on} also arms it (identical branch to unset, by construction). Flip verify:
+    `research/findings/2026-09-05-rank16-rank20-rank10-production-flip-GO.md`."""
     v = os.environ.get("BRAIN_CURIOSITY_GRADED_NOVELTY")
     if v is None:
-        return False
+        return _GRADED_NOVELTY_DEFAULT_ON
     return v.strip().lower() in ("1", "true", "yes", "on")
 
 
