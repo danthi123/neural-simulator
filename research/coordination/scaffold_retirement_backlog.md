@@ -115,6 +115,12 @@ being re-verified.
   cross-checked against the bundle's own uncontended build record — flagged explicitly, not papered over). See
   `research/findings/2026-09-05-rank6-knowledge-core-substrate-write-scaled-derisk-mixed.md`. Default-off; the
   production knowledge-core WRITE path is unchanged.
+  **UPDATE 2026-09-05 (later): the `ShardedPhasorStore.save()` pickle bug is FIXED (`fede9d596`).** `save()` now
+  reads the composite back via `_retrieve_substrate` before numpy (and `load()` rebuilds via `_store_substrate`),
+  so the GO'd `enable_substrate_store=True` write path is save/load-clean END-TO-END at real 78,857-fact scale
+  (smoke: save_ok/load_ok/answers_match all true). No `sim/` edit; production default still OFF. The two remaining
+  rank-6 residuals are unchanged: query-time batching loss + per-fact `SimulationBridge` footprint vs a lean
+  Crawford-Eliasmith-sized cleanup population. See `2026-09-05-rank6-shardedphasorstore-pickle-fix-GO.md`.
 - **Rank 12 (GNW STOP host boolean-OR) — DE-RISKED + WIRED DEFAULT-OFF, 2026-09-05.** An ACC/BG hyperdirect circuit
   (two afferent relay pools → ACC → STN → GPi, reusing the STN-veto de-risk's chain shape) reads the SAME
   `n_ignited` / `mm_peak` afferents `detect_trigger`'s boolean-OR read, directly as synaptic input, and decides the
