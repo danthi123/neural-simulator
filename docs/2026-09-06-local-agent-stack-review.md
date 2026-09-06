@@ -5,6 +5,34 @@ Claude-substitute from the in-house **Hermes** harness to **DeepSeek** or **Pi**
 Qwen3.8-27B on the single RTX 3090 and how to run the GPU auto-offload. Compiled from a 6-agent
 web-verified research sweep. Full report artifact: https://claude.ai/code/artifact/15ec6d75-5659-48b5-b209-980ee83c02ef
 
+## ⭐⭐ VALIDATION RESULTS (2026-09-06 ~02:40, owner asked to test before the AGI-fork)
+Tested the harness/serving/quant migration LIVE on the box (paused the smoke, stopped hermes-loop which
+otherwise pkills port-8033 servers while idle):
+- **Q4_K_M quant — VALIDATED ✅.** llama.cpp direct (`--ctx-size 32768 --cache-type-k/v q8_0 --flash-attn on
+  --no-mmproj`), coherent + CORRECT on sanity ("17*23=391; Spain borders France"), **19.3 GB VRAM @ 32k ctx** —
+  fits the ~19-20GB monitor budget with headroom. A clear step up from the shipped Q2_0. The deployable serving
+  quant. (65k ctx = 20.3GB, tight; 32k is the safe default.)
+- **OpenHands SDK harness — VALIDATED LIVE ✅.** `tools/openhands_proto/run_turn.py` drove the Q4 endpoint over
+  TWO turns of one persisted conversation: turn 1 "remember 42" → "OK noted"; turn 2 (same session) "what number?"
+  → "42", with 99.55% context cache-reuse. The one-continuous-session requirement is proven end-to-end. (venv is
+  a gitignored build artifact — rebuild on main via `cd tools/openhands_proto && uv venv --python 3.12 .venv &&
+  uv pip install openhands-sdk openhands-tools`.)
+- **vLLM Sleep Mode — TESTED → BLOCKED ⛔ (tasked task_91eaf588).** Two blockers found; one fixed (checkpoint
+  files were root:root mode-600 → chmod 644). The deeper one: vLLM 0.27.1's brand-new Qwen3_5 loader rejects the
+  W4A16-AutoRound checkpoint's QUANTIZED (packed) embedding (`embed_tokens.weight_packed` — it wants unquantized
+  `embed_tokens.weight`). Needs an embed-unquantized 4-bit checkpoint or a newer vLLM. Sleep Mode itself is stock;
+  the model-load is the blocker. **llama.cpp Q4 (kill/reload offload) is the deployable path meanwhile.**
+- **Gotcha:** hermes-loop.service (idle while Claude is active, HERMES_ACTIVE off) periodically runs `qwen_serve
+  down` → pkills port 8033, killing any manual server there. STOP it (`systemctl --user stop hermes-loop`) during
+  manual qwen work, restart after.
+
+**CUTOVER (the migration EXECUTION — de-risked, all pieces validated; NOT yet done, deliberately not rushed at
+03:00 on the production fallback):** (a) teach `qwen_serve.sh` to serve the local Q4 GGUF + budget config (32k
+ctx, `--cache-type-k/v q8_0`, `--no-mmproj`, target-only) so hermes-loop's model becomes Q4; (b) swap
+hermes-loop.service's loop.py for `tools/openhands_proto/openhands_loop.py` (OpenHands one-session + our offload
+wrapper). Both validated in pieces tonight; execute as a careful pass before/at the start of the AGI-fork so the
+fork's local-agent stretches (Claude-downtime) run on the upgraded stack.
+
 ## ⭐ REVISED after owner input (2026-09-06, same session)
 The owner corrected/steered several points, which SHIFT the recommendation:
 - **Offload is ORTHOGONAL to the harness** — it's a supervisor wrapping the model SERVER, not a Hermes-only
