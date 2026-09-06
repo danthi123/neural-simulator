@@ -1,0 +1,33 @@
+{
+ "run_id": "1788657343-500257",
+ "runner": "research/runners/_affect_onsubstrate_noise_robust_convergence_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-aa035b9a64004d3a9/research/runners/_affect_onsubstrate_noise_robust_convergence_derisk.py",
+  "--spiking",
+  "--seeds",
+  "42",
+  "--max-stories",
+  "60000",
+  "--out",
+  "research/findings/raw/_affect_onsubstrate_noise_robust_convergence_1seed_full.json"
+ ],
+ "git_sha": "b1c18fdd4",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-05T21:15:43",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 2877.8,
+ "corpus_check_query": "spiking substrate grounded affect convergence one-brain port",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_affect_onsubstrate_noise_robust_convergence_1seed_full.json"
+}
