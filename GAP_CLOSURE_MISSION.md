@@ -29,12 +29,21 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
   the single next-experience objective, read post-hoc with presence probes AND **behavioral-dependency lesions**
   (anti-hollow). Two pre-registered GOs: **EMERGENCE** (≥3 load-bearing faculties, rate arm) + **FORK-THESIS**
   (rate beats spike per GPU-hour = what relaxing all-spiking bought). Fits the 3090, few-day time-box.
-- **BUILD IN FLIGHT:** opus build agent **ae8d9516** building the 3 files (`sim/pcs_substrate.py`,
-  `research/runners/fork_pcs_world.py`, `research/runners/_fork_pcs_emergence_derisk.py`) + a Day-1 numpy smoke
-  (loss drops + abs-position decode beats untrained-core & raw-V1 floors), commit-before-verify on agi-fork.
-  Will notify on completion. **ON COMPLETION:** review + smoke result → queue the **6-seed rate** run via
-  `gpu_queue.sh` (0 agent tokens) → EMERGENCE GO/NO-GO → matched **spike arm** → FORK-THESIS verdict → fork
-  finding + honest relaxation ledger. Do NOT re-launch the build (ae8d9516 owns it).
+- **BUILD DONE (agent ae8d9516, HEAD `d338dcb66` on agi-fork, pushed both):** 3 files built —
+  `sim/pcs_substrate.py` (rate/spike core + JEPA/reward/policy heads + TBPTT + lesion hook, gradcheck
+  rate 4.9e-4/spike 3.9e-4), `research/runners/fork_pcs_world.py` (egocentric-CROP world + TwoPoolDrive
+  reward), `research/runners/_fork_pcs_emergence_derisk.py` (presence probes vs 3 floors + behavioral-dependency
+  lesions + pre-registered GO gate; `--smoke`=6k steps, real=200k). **Day-1 smoke PASS (seed42, 15k):** pred
+  loss 17.17→5.86, **abs-position R²=0.873 vs untrained 0.599 vs raw-V1 0.212** (a place code EMERGED,
+  path-integrated). Honest caveat: `drift_up` under online TBPTT w/o replay (named next rung). My independent
+  numpy `--smoke` (6k, short) = 0/4 cleared but the instrument is HONEST (floors/lesions/GO-logic correct;
+  the anti-hollow gate correctly flagged `value` not-load-bearing) — emergence is step-dependent, needs the 200k run.
+- **6-seed RATE ARM RUNNING (the EMERGENCE verdict):** pid 1907485 via gpu_queue (200k steps, ~1.5h, VRAM
+  <1GB — light, no thrash), `--out research/findings/raw/_fork_pcs_emergence_rate_6seed.json`. Monitor
+  **bjcjvs97t** watches per-seed SEED_GO + EMERGENCE_GO + crashes. **ON COMPLETION:** harvest → if EMERGENCE
+  GO, queue the matched **spike arm** (`--units spike`, ~3-5x slower) for the FORK-THESIS verdict (does rate
+  beat spike per GPU-hour = what relaxing all-spiking bought) → verify-go → fork finding + honest relaxation
+  ledger. Spike-arm cmd: same as rate w/ `--units spike --out ..._spike_6seed.json`.
 - Cross-checks: egocentric CROP (NOT `render_egocentric_goal` the pre-solved goal-compass); anti-hollow lesion
   gate (not mere decodability); `cfg.seed` seeding (not `actual_seed_used`).
 
