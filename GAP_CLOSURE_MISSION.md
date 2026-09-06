@@ -86,19 +86,24 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
   --grad-skip-factor 0.0` = old). Honest caveats: at smoke scale taming the loss only MODESTLY lifted place
   (Δ+0.03-0.09); AND 0.9999 still slowly climbs over long horizons (→12 by 80k) while `--encoder fixed` is flat
   (~2.1) — if the 200k still climbs, fixed / 0.99999 is the wired next lever.
-- **⚡ EMA-FIX 6-seed RUNNING — seed 42 = 0/4, place 0.588 STILL below untrained (0.654).** EMA-slowing ALSO
-  fails to restore place at 200k (base 0.598 / stable 0.606 / emafix 0.588 — all below untrained ~0.65). pid
-  2108666, Monitor bjcjvs97t. **THE EMERGING CONCLUSION (decisive across 4 arms): NO training-stabilization lever
-  (replay, clip, EMA-target) restores the place code** that was 0.873≫untrained at 15k → strongly points to the
-  **OBJECTIVE not REQUIRING a persistent position code** (built transiently as a useful early feature, then
-  repurposed away as prediction converges on features that don't need it). Awaiting the emafix LOSS CURVE (run
-  end) to disambiguate: (a) loss stayed tamed + place drifts → OBJECTIVE issue CONFIRMED; (b) loss climbed at
-  200k (0.9999 still drifts, per the 80k→12 diagnostic) → run `--encoder fixed` (flat loss) for the clean test.
-- **NEXT LEVER (likely): make position LOAD-BEARING for the objective** — longer prediction horizon (requires
-  path-integration) and/or a navigation/drive reward that requires knowing position. This is a task/objective
-  redesign (a build), the real surpass if stabilization is confirmed insufficient. THEN the fork finding (the
-  full A/B ladder: emergence-real-but-transient; replay/clip/EMA all ruled out; objective-doesn't-require-position
-  is the wall) + the objective-redesign as the fork's 2nd move. spike-arm (FORK-THESIS) deferred until an arm holds.
+- **⚡⚡ 4-ARM A/B LADDER COMPLETE (all 6-seed, EMERGENCE_GO=false 0/6 each) — place-drift is LOSS-INDEPENDENT:**
+  | arm | median max-loss | place R² | place−untrained |
+  base 43.4 / 0.643 / −0.038 · cons 41.2 / 0.667 / −0.027 · stable 42.8 / 0.669 / −0.035 · **emafix 26.6 /
+  0.615 / −0.062**. Loss dropped 43→26.6 (−40%) yet place got NO better (emafix has the WORST margin). ⇒
+  **place-drift does NOT track loss magnitude** — strong evidence it's NOT a stability problem but the
+  **OBJECTIVE not REQUIRING a persistent position code** (place emerges strong at 15k = 0.873≫untrained, then
+  gets specialized/repurposed away as next-latent-prediction converges on features that don't need it; a random
+  reservoir's rich dynamics decode position at ~0.65, a high bar the prediction-specialized core falls below).
+- **⚡ FIXED-ENCODER confirmatory RUNNING (pid 2152533, Monitor bjcjvs97t):** the CLEAN flat-loss test
+  (`--encoder fixed` → loss ~2 flat, per the diagnostic) — if place STILL drifts at a perfectly-stable target →
+  stability DEFINITIVELY ruled out → objective-issue CONFIRMED. ~1.5h.
+- **NEXT (the real surpass — fork's 2nd move): make position LOAD-BEARING for the objective** — a longer
+  prediction horizon (requires path-integration) and/or a navigation/drive reward requiring position, so training
+  PRESERVES/enhances the place code instead of specializing away from it. A task/objective redesign (a genuine
+  build). THEN write the fork's first FINDING (emergence-real-but-transient; replay+clip+EMA-slow+fixed-encoder
+  ALL ruled out; place-drift loss-independent → objective-doesn't-require-position is the wall). spike-arm
+  (FORK-THESIS) deferred until an arm HOLDS a faculty. [Owner: the fork's honest 1st-move result — emergence is
+  real but the plain predictive objective doesn't retain it; the fix is making faculties task-required.]
 - **NEXT (after the stable 6-seed):** if stable-alone rescues emergence (≥3 faculties emerge+stay) → the
   instability WALL is SURPASSED (GO); then (a) stable+consolidation (does replay add retention on top?), (b)
   matched **spike arm** (FORK-THESIS: rate-vs-spike per GPU-hour), (c) fork finding + honest ledger. If stable
