@@ -1,0 +1,29 @@
+{
+ "run_id": "1788659654-543392",
+ "runner": "research/runners/_rank6_knowledge_core_substrate_write_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-a642d4315acdb8db6/research/runners/_rank6_knowledge_core_substrate_write_derisk.py",
+  "--smoke",
+  "--skip-cost",
+  "--out",
+  "research/findings/raw/_rank6_shardedphasorstore_pickle_fix/smoke_save_reload_probe.json"
+ ],
+ "git_sha": "79727e35a",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-05T21:54:14",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_rank6_shardedphasorstore_pickle_fix/smoke_save_reload_probe.json"
+}

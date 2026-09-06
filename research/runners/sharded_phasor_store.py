@@ -344,7 +344,25 @@ class ShardedPhasorStore:
     # for a live chat server. Mirroring developed_brain_io's kb_composites speedup: save each fact's already-bound
     # COMPOSITE, and on load reconstruct the shards (the codebook regenerates byte-identically from seed+vocab --
     # the LTM is a bulk store that is never runtime-grown, so no growth diverges the codes) and set kb DIRECTLY,
-    # skipping the resonate. Numpy fast path only (enable_substrate_store=False, the LTM default).
+    # skipping the resonate.
+    #
+    # SUBSTRATE-STORE FIX (2026-09-05, rank-6 pickle bug): with `enable_substrate_store=True` a shard's `kb`
+    # holds a live `SimulationBridge` HANDLE per fact (`RFPhasorComposer._store_substrate`), not a numpy array.
+    # The original code did `np.asarray(handle)` on that bridge object; numpy silently accepts this (it makes a
+    # 0-d OBJECT array wrapping the bridge instance instead of raising), so the failure surfaced two steps
+    # later, at `np.savez`'s pickling of the object array: `TypeError: cannot pickle 'mappingproxy' object` --
+    # `SimulationBridge` sets several instance attributes (`snr_packet_bindings`/`snr_packet_kernel_parameters`/
+    # `snr_packet_hh_phi`, see `sim/bridge.py`) to `types.MappingProxyType(...)`, and a mappingproxy has no
+    # pickle support. Serializing the WHOLE bridge object graph was never the intent -- the actual per-fact
+    # information is the D-dim composite phase vector the bridge's synaptic weights carry (identical in kind to
+    # the numpy-kb path's plain array); the bridge is just WHERE that vector lives when the substrate store is
+    # on. The fix reads the vector back out with the composer's own `_retrieve_substrate` (the same call every
+    # substrate-store query already uses) before it ever reaches numpy, so `composites.npz` keeps holding plain
+    # real-valued phase arrays -- byte-identical on-disk shape/dtype to the numpy-kb path, whether or not the
+    # substrate store produced them. `load()`'s mirror-image fix rebuilds the substrate handle from that same
+    # vector via `_store_substrate` (the identical call `store()` makes on first write) -- deterministic given
+    # the manifest's seed, so the reloaded bridge is structurally the one `store()` would have built directly.
+    # No `sim/` edit; no change to the numpy-kb on-disk format.
     def save(self, path):
         """Persist to `path/` (manifest.json + facts.json + composites.npz) so `ShardedPhasorStore.load(path)`
         reloads WITHOUT the per-fact RF resonate. Returns the number of facts saved."""
@@ -364,7 +382,10 @@ class ShardedPhasorStore:
             comps = []
             for fact, handle in sh.kb:
                 facts.append({"shard": i, "fact": fact})
-                comps.append(np.asarray(handle))
+                # A substrate handle is a live bridge object (unpicklable -- see the note above); pull the
+                # composite phase vector back out. A numpy-kb handle already IS that vector.
+                comp = sh._retrieve_substrate(handle) if sh.enable_substrate_store else handle
+                comps.append(np.asarray(comp))
             if comps:
                 comp_arrays[f"sh{i}"] = np.stack(comps)
         with open(os.path.join(path, "manifest.json"), "w") as f:
@@ -406,6 +427,14 @@ class ShardedPhasorStore:
                 arr = comps[f"sh{i}"]
                 shard_arrays[i] = arr
             j = per_shard_idx.get(i, 0)
-            store.shards[i].kb.append((rec["fact"], np.array(arr[j])))
+            sh = store.shards[i]
+            comp = np.array(arr[j])
+            # Mirror `store()`'s own store-path choice (`RFPhasorComposer.store`): under the substrate store,
+            # `kb` holds a bridge HANDLE, not the raw composite -- rebuild it deterministically (same seed) via
+            # the composer's own `_store_substrate`, exactly the call the original write made. `sh.
+            # enable_substrate_store` comes from the manifest's `composer_kwargs`, so it matches how this bundle
+            # was actually built (see the fix note above `save()`).
+            handle = sh._store_substrate(comp) if sh.enable_substrate_store else comp
+            sh.kb.append((rec["fact"], handle))
             per_shard_idx[i] = j + 1
         return store
