@@ -52,9 +52,22 @@ agent `a35f5728` (STOPPED) after finding its setup was poor-value + fragile. Cur
   prefer **g6e/L40S (864 GB/s ≈ 3090-class)** — ~2× faster at ~same $/hr = better value than g6/L4 (didn't
   re-provision this run: bird-in-hand + tied-$, don't risk progress). Local 3090 is fastest+free but capped
   at 46GB RAM (can't hold ≥64GB passage pools — the real reason big cells need cloud).
+- **PARALLEL LOCAL RUN (complementary, keeps the free local GPU busy):** the base -0.082 is single-seed
+  (s43); the finding itself flagged the multi-seed confirm as needed. So the **6-seed base confirm** is now
+  running LOCALLY via gpu_queue (pid 1568088, ~27h): `_emerge_wkv_lm_derisk ... --d-model 192 --n-sentences
+  3000000 --max-train-sents 2500000 --seeds 42 43 44 100 101 102 --corpus data/corpus/fineweb_edu.txt
+  --eval-corpus data/corpus/wikitext103.txt` → `research/findings/raw/_emerge_wkv_lm_linattn_fineweb_evalwt103_6seed.json`.
+  Fits the 46GB box (pool ~14GB, shared across seeds, sequential loop line 2029). AWS=scale(1-seed) +
+  local=base(6-seed) = a strong mouth picture. Harvest on gpu_q idle (heartbeat).
+- **CUTOVER deliberately NOT rushed:** it's a non-trivial edit to the tightly-coupled production-fallback
+  `qwen_serve.sh` (the -hf/-hfd drafter coupling; open task_176e9088) + a harness swap that changes the
+  owner's downtime UX — best as a focused/owner-aware pass, not squeezed in unsupervised. Pieces validated
+  (Q4 GO, OpenHands GO-live); not urgent (14.6M tokens left, fork days out). Q4 launch cmd in
+  docs/2026-09-06-local-agent-stack-review.md.
 - **NEXT (unchanged sequence, after the verdict):** (1) **CUTOVER** — qwen_serve.sh Q4 budget config +
-  hermes-loop→openhands_loop; (2) **open `agi-fork`**. Pending tasks: task_176e9088, task_ed3cf6cf,
-  task_a6b008ab, task_0ca41c4c, task_91eaf588. Heartbeat `bsxzdnse2` live.
+  hermes-loop→openhands_loop (focused pass); (2) **open `agi-fork`**. Pending tasks: task_176e9088,
+  task_ed3cf6cf, task_a6b008ab, task_0ca41c4c, task_91eaf588. Heartbeat `bsxzdnse2` live; AWS Monitor
+  `b0oa4kz22`; AWS money-watchdog `bv0p9w3yt`.
 
 ---
 
