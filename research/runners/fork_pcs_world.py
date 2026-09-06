@@ -400,7 +400,7 @@ def _collect_stationary_eval(cfg, seed, n=400):
     return seq
 
 
-def run_smoke(steps=4000, seed=42, units="rate", encoder="learned_ema", verbose=True):
+def run_smoke(steps=4000, seed=42, units="rate", encoder="learned_ema", consolidation=False, verbose=True):
     """Collect a trajectory while training online; then decode abs-position from (i) the trained
     core, (ii) a fresh UNTRAINED core replayed on the SAME input sequence, (iii) the raw V1 of the
     crop. GO signal: trained R^2 beats BOTH floors AND the prediction loss dropped."""
@@ -410,7 +410,8 @@ def run_smoke(steps=4000, seed=42, units="rate", encoder="learned_ema", verbose=
     world = ForkPCSWorld(wcfg)
     stationary_eval = _collect_stationary_eval(wcfg, seed, n=400)
     scfg = PCSConfig(n_hidden=256, feat_dim=wcfg.n_v1, n_latent=64, n_actions=N_ACTIONS,
-                     n_drive=4, tbptt_T=16, units=units, encoder=encoder, seed=seed)
+                     n_drive=4, tbptt_T=16, units=units, encoder=encoder, seed=seed,
+                     consolidation=consolidation)
     sub = PredictiveContinualSubstrate(scfg)
 
     inputs = []          # (v1feat_host, a_prev, d) per step — replayed through the untrained core
@@ -500,14 +501,181 @@ def run_smoke(steps=4000, seed=42, units="rate", encoder="learned_ema", verbose=
             "beats_floors": beats_floors, "eats": world.n_eats, "n_updates": sub.n_updates}
 
 
+def _probe_place_decode(sub, world, seed, n_probe, n_hidden, n_latent, units, encoder, feat_dim):
+    """Freeze `sub`, run an exploratory probe, and decode abs-position from (i) the trained core,
+    (ii) a fresh UNTRAINED core replayed on the SAME inputs, (iii) raw V1. Returns the three R^2.
+    Advances world/sub state (sub is frozen -> no weight change; used symmetrically across arms)."""
+    from sim.pcs_substrate import PredictiveContinualSubstrate, PCSConfig
+    sub.freeze()
+    H, POS, RAW, INSEQ = [], [], [], []
+    a_prev = -1
+    for _ in range(n_probe):
+        d = world.drive_afferent(); v1 = world.crop_v1feat()
+        v1h = np.asarray(v1.get() if hasattr(v1, "get") else v1, dtype=np.float32)
+        pos = world.agent
+        h = sub.observe(v1, a_prev, d)
+        a = sub.act(h, explore_eps=0.4)
+        world.step(a)
+        H.append(np.asarray(h.get() if hasattr(h, "get") else h, dtype=np.float32))
+        POS.append(np.asarray(pos, dtype=np.float32)); RAW.append(v1h)
+        INSEQ.append((v1h, a_prev, d.copy())); a_prev = a
+    untr = PredictiveContinualSubstrate(PCSConfig(
+        n_hidden=n_hidden, feat_dim=feat_dim, n_latent=n_latent, n_actions=N_ACTIONS,
+        n_drive=4, units=units, encoder=encoder, seed=seed + 777))
+    untr.freeze()
+    H_un = []
+    for (v1h, ap, d) in INSEQ:
+        hu = untr.observe(v1h, ap, d)
+        H_un.append(np.asarray(hu.get() if hasattr(hu, "get") else hu, dtype=np.float32))
+    H = np.asarray(H); H_un = np.asarray(H_un); POS = np.asarray(POS); RAW = np.asarray(RAW)
+    n = len(POS); perm = np.random.default_rng(seed + 5).permutation(n); cut = int(0.7 * n)
+    tr, te = perm[:cut], perm[cut:]
+    sub.unfreeze()
+    return {"trained": _ridge_r2(H[tr], POS[tr], H[te], POS[te]),
+            "untrained": _ridge_r2(H_un[tr], POS[tr], H_un[te], POS[te]),
+            "rawv1": _ridge_r2(RAW[tr], POS[tr], RAW[te], POS[te])}
+
+
+def run_consolidation_ab(seed=42, steps=60000, n_hidden=128, n_latent=64, n_probe=1500,
+                         units="rate", encoder="learned_ema", verbose=True):
+    """OFF-vs-ON demonstration at a scaled-down LONG horizon: online TBPTT alone (OFF) OVERWRITES the
+    place code over the horizon (falls toward/below the untrained floor); the consolidation companion
+    (ON) RETAINS it (stays clearly above untrained). Reports place-decode-vs-untrained at an early and a
+    late checkpoint for both arms, plus held-out predictive-loss drift. Honest: if ON does not retain,
+    it says so."""
+    from sim.pcs_substrate import PredictiveContinualSubstrate, PCSConfig
+    checkpoints = sorted(set([max(1, steps // 5), steps // 2, steps]))   # early peak, mid, late
+    arms = {}
+    for consol in (False, True):
+        wcfg = WorldConfig(seed=seed)
+        world = ForkPCSWorld(wcfg)
+        stat_eval = _collect_stationary_eval(wcfg, seed, n=400)
+        scfg = PCSConfig(n_hidden=n_hidden, feat_dim=wcfg.n_v1, n_latent=n_latent, n_actions=N_ACTIONS,
+                         n_drive=4, tbptt_T=16, units=units, encoder=encoder, seed=seed,
+                         consolidation=consol)
+        sub = PredictiveContinualSubstrate(scfg)
+        traj = []
+        done = 0
+        a_prev = -1
+        for ckpt in checkpoints:
+            for _ in range(ckpt - done):
+                d = world.drive_afferent(); v1 = world.crop_v1feat()
+                h = sub.observe(v1, a_prev, d)
+                a = sub.act(h, explore_eps=0.4)
+                r, _ = world.step(a); sub.learn(r); a_prev = a
+            done = ckpt
+            place = _probe_place_decode(sub, world, seed, n_probe, n_hidden, n_latent, units, encoder, wcfg.n_v1)
+            held = sub.eval_predictive_loss(stat_eval)
+            traj.append({"step": ckpt, **place, "held_out": round(float(held), 4),
+                         "n_replay": int(sub.n_replay_updates)})
+        arms["ON" if consol else "OFF"] = traj
+
+    off_last, on_last = arms["OFF"][-1], arms["ON"][-1]
+    retention_ok = on_last["trained"] > on_last["untrained"] + 0.05
+    drift_shown = off_last["trained"] < on_last["trained"] - 0.05
+    off_degraded = off_last["trained"] <= off_last["untrained"] + 0.05
+    passed = retention_ok and drift_shown
+    if verbose:
+        print(f"[consolidation A/B  seed={seed} units={units} steps={steps} n_hidden={n_hidden}]")
+        for arm in ("OFF", "ON"):
+            print(f"  {arm}:")
+            for c in arms[arm]:
+                print(f"    step={c['step']:>7}  place(trained)={c['trained']:+.3f}  untrained={c['untrained']:+.3f}"
+                      f"  rawV1={c['rawv1']:+.3f}  held_out={c['held_out']:.3f}  n_replay={c['n_replay']}")
+        print(f"  --> OFF place@end={off_last['trained']:+.3f} (untrained {off_last['untrained']:+.3f}); "
+              f"ON place@end={on_last['trained']:+.3f} (untrained {on_last['untrained']:+.3f})")
+        print(f"  retention_ok(ON above untrained)={retention_ok}  drift_shown(OFF below ON)={drift_shown}  "
+              f"OFF_degraded_to_floor={off_degraded}")
+        print(f"  CONSOLIDATION A/B {'PASS' if passed else 'INCONCLUSIVE'}")
+    return {"OFF": arms["OFF"], "ON": arms["ON"], "retention_ok": retention_ok,
+            "drift_shown": drift_shown, "off_degraded": off_degraded, "passed": passed}
+
+
+def _train_and_track(sub, world, stationary_eval, steps, hb_every):
+    """Train `steps` online, tracking spike diagnostics: max online (training) loss, max held-out loss
+    on the stationary set, max pre-clip grad-norm, and #updates skipped by the spike guard."""
+    max_online = 0.0
+    heldout = []
+    a_prev = -1
+    for t in range(steps):
+        d = world.drive_afferent(); v1 = world.crop_v1feat()
+        h = sub.observe(v1, a_prev, d)
+        a = sub.act(h, explore_eps=0.4)
+        r, _ = world.step(a); sub.learn(r); a_prev = a
+        if sub.last_pred_loss is not None and sub.last_pred_loss > max_online:
+            max_online = float(sub.last_pred_loss)
+        if t > 0 and t % hb_every == 0:
+            heldout.append(round(float(sub.eval_predictive_loss(stationary_eval)), 3))
+    heldout.append(round(float(sub.eval_predictive_loss(stationary_eval)), 3))
+    return {"max_online_loss": round(max_online, 3),
+            "max_heldout_loss": round(float(np.max(heldout)), 3),
+            "final_heldout_loss": heldout[-1],
+            "max_grad_norm": round(float(sub.max_grad_norm), 3),
+            "n_skipped": int(sub.n_skipped), "heldout_curve": heldout}
+
+
+def run_stability_ab(seed=42, steps=40000, n_hidden=256, n_latent=64, units="rate",
+                     encoder="learned_ema", verbose=True):
+    """Stabilization A/B: UNSTABLE (grad_clip=5.0, skip=0 — the current control that produced the
+    existing 6-seed artifacts) vs STABLE (grad_clip=1.0 + spike-skip=20 — the new default). Reports
+    the max online/held-out loss and max grad-norm for each, plus end place-decode-vs-untrained.
+    PASS if the STABLE arm's loss spikes are gone (max loss much lower) AND it retains the place code."""
+    from sim.pcs_substrate import PredictiveContinualSubstrate, PCSConfig
+    configs = {"UNSTABLE(clip5,noskip)": dict(grad_clip=5.0, grad_skip_factor=0.0),
+               "STABLE(clip1,skipx8)": dict(grad_clip=1.0, grad_skip_factor=8.0)}
+    out = {}
+    for name, gk in configs.items():
+        wcfg = WorldConfig(seed=seed)
+        world = ForkPCSWorld(wcfg)
+        stat_eval = _collect_stationary_eval(wcfg, seed, n=400)
+        scfg = PCSConfig(n_hidden=n_hidden, feat_dim=wcfg.n_v1, n_latent=n_latent, n_actions=N_ACTIONS,
+                         n_drive=4, tbptt_T=16, units=units, encoder=encoder, seed=seed, **gk)
+        sub = PredictiveContinualSubstrate(scfg)
+        tr = _train_and_track(sub, world, stat_eval, steps, hb_every=max(1, steps // 20))
+        place = _probe_place_decode(sub, world, seed, 1500, n_hidden, n_latent, units, encoder, wcfg.n_v1)
+        out[name] = {**tr, "place_trained": round(place["trained"], 3),
+                     "place_untrained": round(place["untrained"], 3)}
+    u = out["UNSTABLE(clip5,noskip)"]; s = out["STABLE(clip1,skipx8)"]
+    spikes_tamed = s["max_heldout_loss"] < 0.5 * u["max_heldout_loss"]
+    retains = s["place_trained"] > s["place_untrained"] + 0.05
+    passed = spikes_tamed and retains
+    if verbose:
+        print(f"[stability A/B  seed={seed} units={units} steps={steps} n_hidden={n_hidden}]")
+        for name in configs:
+            c = out[name]
+            print(f"  {name:22}  max_online={c['max_online_loss']:>9}  max_heldout={c['max_heldout_loss']:>9}"
+                  f"  final_heldout={c['final_heldout_loss']:>8}  max_grad_norm={c['max_grad_norm']:>9}"
+                  f"  n_skipped={c['n_skipped']:>4}  place={c['place_trained']:+.3f}(untr {c['place_untrained']:+.3f})")
+        print(f"    UNSTABLE heldout curve: {u['heldout_curve']}")
+        print(f"    STABLE   heldout curve: {s['heldout_curve']}")
+        print(f"  spikes_tamed(STABLE max_heldout < 0.5x UNSTABLE)={spikes_tamed}  retains(place>untrained)={retains}")
+        print(f"  STABILIZATION A/B {'PASS' if passed else 'INCONCLUSIVE'}")
+    return {"unstable": u, "stable": s, "spikes_tamed": spikes_tamed, "retains": retains, "passed": passed}
+
+
 if __name__ == "__main__":
     ap = argparse.ArgumentParser(description="fork PCS grounded world + Day-1 smoke")
     ap.add_argument("--smoke", action="store_true", help="run the Day-1 smoke (loss drop + position vs floors)")
+    ap.add_argument("--consolidation-ab", action="store_true",
+                    help="OFF-vs-ON long-horizon demonstration of consolidation (drift vs retention)")
+    ap.add_argument("--stability-ab", action="store_true",
+                    help="UNSTABLE-vs-STABLE demonstration (grad-clip/spike-skip taming loss spikes)")
+    ap.add_argument("--consolidation", action="store_true", help="single-arm smoke with consolidation ON")
     ap.add_argument("--steps", type=int, default=4000)
+    ap.add_argument("--ab-steps", type=int, default=60000)
+    ap.add_argument("--n-hidden", type=int, default=128)
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--units", choices=["rate", "spike"], default="rate")
     ap.add_argument("--encoder", choices=["learned_ema", "fixed"], default="learned_ema")
     args = ap.parse_args()
-    if args.smoke or True:
-        res = run_smoke(steps=args.steps, seed=args.seed, units=args.units, encoder=args.encoder)
-        raise SystemExit(0 if (res["loss_dropped"] and res["beats_floors"]) else 1)
+    if args.stability_ab:
+        res = run_stability_ab(seed=args.seed, steps=args.ab_steps, n_hidden=args.n_hidden,
+                               units=args.units, encoder=args.encoder)
+        raise SystemExit(0 if res["passed"] else 1)
+    if args.consolidation_ab:
+        res = run_consolidation_ab(seed=args.seed, steps=args.ab_steps, n_hidden=args.n_hidden,
+                                   units=args.units, encoder=args.encoder)
+        raise SystemExit(0 if res["passed"] else 1)
+    res = run_smoke(steps=args.steps, seed=args.seed, units=args.units, encoder=args.encoder,
+                    consolidation=args.consolidation)
+    raise SystemExit(0 if (res["loss_dropped"] and res["beats_floors"]) else 1)
