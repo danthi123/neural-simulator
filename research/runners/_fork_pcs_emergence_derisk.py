@@ -152,17 +152,20 @@ def _manhattan(a, b):
 # rollout: run world+substrate online, collect traces
 # ─────────────────────────────────────────────────────────────────────────────
 def rollout(world, sub, n_steps, train, explore_eps, collect=False, lesion_mask=None,
-            a_prev_start=-1):
+            a_prev_start=-1, log_loss=False):
     """Drive the substrate against the world. Returns traces (+ leaves world/sub advanced).
 
     train=False freezes the predictive update (probe/behavioral rollouts). lesion_mask sets a
     hidden-unit lesion for the whole rollout. collect=True records per-step h/labels/rawv1.
+    log_loss=True records a downsampled training-loss curve (train-stability visibility).
     """
     if train:
         sub.unfreeze()
     else:
         sub.freeze()
     sub.set_lesion_mask(lesion_mask)
+    loss_curve = []
+    log_every = max(1, n_steps // 40)
     H, POS, FOOD, FIC, OBJ, RAW, REW, INSEQ = [], [], [], [], [], [], [], []
     approach_in, approach_off = [], []
     a_prev = a_prev_start
@@ -194,13 +197,15 @@ def rollout(world, sub, n_steps, train, explore_eps, collect=False, lesion_mask=
             RAW.append(v1_host)                       # raw V1 of the CURRENT crop (the raw-V1 floor feature)
             INSEQ.append((v1_host, a_prev, np.asarray(d, np.float32)))   # exact input for the untrained replay
         REW.append(r)
+        if log_loss and (t % log_every == 0) and sub.last_pred_loss is not None:
+            loss_curve.append((t, round(float(sub.last_pred_loss), 4)))
         a_prev = a
     sub.set_lesion_mask(None)
     out = {
         "reward_rate": total_reward / max(1, n_steps),
         "approach_in": float(np.mean(approach_in)) if approach_in else float("nan"),
         "approach_off": float(np.mean(approach_off)) if approach_off else float("nan"),
-        "eats": world.n_eats, "a_prev_end": a_prev,
+        "eats": world.n_eats, "a_prev_end": a_prev, "loss_curve": loss_curve,
     }
     if collect:
         out.update({"H": np.asarray(H), "POS": np.asarray(POS), "FOOD": np.asarray(FOOD),
@@ -236,7 +241,7 @@ def run_seed(seed, units="rate", encoder="learned_ema", n_hidden=512, n_latent=6
     sub = PredictiveContinualSubstrate(scfg)
 
     # ---- 1. TRAIN online with the curiosity policy (small explore for early coverage) ----
-    rollout(world, sub, n_train, train=True, explore_eps=0.2)
+    train_out = rollout(world, sub, n_train, train=True, explore_eps=0.2, log_loss=True)
 
     # ---- 2. PROBE rollout (frozen) collecting h/labels/rawv1 + the input seq. Higher explore_eps here
     #         gives the FROZEN core coverage of the whole grid so the decode is measured over varied
@@ -384,6 +389,7 @@ def run_seed(seed, units="rate", encoder="learned_ema", n_hidden=512, n_latent=6
         "core_lesion_collapses_all": bool(core_collapses),
         "coverage": {k2: _f(v2) if isinstance(v2, (int, float)) else v2 for k2, v2 in coverage.items()},
         "rate_map_summary": ratemap,
+        "train_loss_curve": train_out.get("loss_curve", []),
         "intact_behavior": {k2: _f(v2) for k2, v2 in intact.items() if isinstance(v2, (int, float))},
         "SEED_GO": bool(seed_go),
         "elapsed_s": round(time.time() - t0, 1),
