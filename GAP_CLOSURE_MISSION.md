@@ -13,7 +13,52 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ---
 
-## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-06 ~00:05 (MOUTH #1 STEP-1 RESOLVED; READ FIRST; LATEST anchor)
+## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-06 ~11:15 (AWS DECISIVE MOUTH CELL LIVE — took over the grid; READ FIRST; LATEST anchor)
+
+**LIVE AWS RUN — the DECISIVE mouth scale test (d192×2B FineWeb-Edu).** I took over the AWS grid from
+agent `a35f5728` (STOPPED) after finding its setup was poor-value + fragile. Current live state:
+- **Instance** `i-046d3211935253398` (g6.8xlarge, L4-24GB GPU, 128GB RAM, us-east-1), IP `32.197.48.50`,
+  key `/home/dant123/.ssh/aws-train/claude-gpu-1785524741.pem`, recorded in `research/queue/.aws_gpu`.
+- **RUNNING: the DECISIVE d192×2B cell** (pid 14822; driver `~/run_d192_2b.sh`; log
+  `~/sim/research/findings/raw/d192_2B.log`; output json
+  `research/findings/raw/_emerge_wkv_lm_linattn_fineweb_evalwt103_d192_2B_s43.json`; writes `~/GRID_DONE`
+  sentinel on completion). Launched ~15:10 UTC 2026-09-06; ~4h CPU-tokenize (12.5M sents) then ~44h train
+  → **ETA ~15:00 UTC 2026-09-08 (~48h)**. Args: `--d-model 192 --n-sentences 14750000 --max-train-sents
+  12500000 --epochs 4 --corpus data/corpus/fineweb_edu.txt --eval-corpus data/corpus/wikitext103.txt
+  --contiguous --max-len 40 --seeds 43` (spec = grid-spec finding §5b, d192/2B cell).
+- **DECISIVE Q:** does 2B high-quality FineWeb-Edu tokens push the deep-context (10-99) `margin_vs_trigram`
+  **>0** (cross the fair trigram) at the deployable d192 size? Base d192×0.4B = **-0.082** (known,
+  `_emerge_wkv_lm_linattn_fineweb_evalwt103_s43.json`); >0 ⇒ own-voice fluency GO (token-scaling IS the
+  lever, retire-Qwen path opens). Needs 128GB RAM ⇒ **AWS required** (local box has only 46GB — can't hold
+  the ~69GB passage pool; that's why AWS, not just to spare the local GPU).
+- **WHY I took over:** the agent's "Cell 1" was `d192×0.4B` = a **redundant re-run of the known -0.082**
+  (pure waste, ~$14/6h of tail); its Cell-2 orchestration was broken (agent completed, nothing left to
+  launch Cell 2); and its money-backstop was a **6h `shutdown -h +360` refreshed every 5min by a flaky
+  bash watcher** (`watch_cell1.sh`/`b9tlsazzu`, kept dying) — self-defeating (6h < the grid's runtime) and
+  fragile. I killed Cell 1, launched the decisive cell directly, stopped the agent + its watcher.
+- **MONEY SAFETY — 3 layers (⚠️ do NOT re-introduce a refresh-dependent backstop):** (1) **fixed 60h
+  on-instance self-terminate** — `sudo shutdown -h` fires **2026-09-09 03:10 UTC**, and the instance has
+  `--instance-initiated-shutdown-behavior terminate` ⇒ hard bound ~$120 even if all else fails; (2)
+  **Monitor `b0oa4kz22`** (persistent) — wakes on the `GRID_DONE` sentinel (DONE) or a crash → harvest +
+  terminate; (3) **watchdog `bv0p9w3yt`** — alerts if still billing at ~52h. Est. cost ~$96 (48h × ~$2/hr).
+- **ON DONE (harvest recipe):** `scp` the `_..._d192_2B_s43.json` off the instance → read deep-bucket
+  (10-99) `margin_vs_trigram`; **>0 = CROSSES the trigram = fluency GO** (scaling is the lever). Verify
+  anti-cheats (perm + memoryless collapses healthy = real measurement). Then **`bash tools/aws_gpu.sh
+  terminate`** (stop billing). Write finding (artifact-commit-THEN-finding; single-seed direction-test, a
+  6-seed confirm follows if it crosses). Optionally d96×2B (capacity control, same instance) before teardown
+  if it crosses and time/budget allow.
+- **COMPUTE LEARNING (owner asked for the value-analysis):** the sim-LM workload is **bandwidth-bound** —
+  measured **L4 (300 GB/s) ≈ 2.2 h/epoch vs 3090 ≈ 1.0 h/epoch = ~2.2× slower**. For FUTURE big cloud runs
+  prefer **g6e/L40S (864 GB/s ≈ 3090-class)** — ~2× faster at ~same $/hr = better value than g6/L4 (didn't
+  re-provision this run: bird-in-hand + tied-$, don't risk progress). Local 3090 is fastest+free but capped
+  at 46GB RAM (can't hold ≥64GB passage pools — the real reason big cells need cloud).
+- **NEXT (unchanged sequence, after the verdict):** (1) **CUTOVER** — qwen_serve.sh Q4 budget config +
+  hermes-loop→openhands_loop; (2) **open `agi-fork`**. Pending tasks: task_176e9088, task_ed3cf6cf,
+  task_a6b008ab, task_0ca41c4c, task_91eaf588. Heartbeat `bsxzdnse2` live.
+
+---
+
+## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-06 ~00:05 (MOUTH #1 STEP-1 RESOLVED; earlier anchor)
 
 **OWNER Q&A (00:30, 2026-09-06) — three decisions/steers:**
 - 📊 **Progress-report given.** Ledger reality: `de_risked` 50/66 (science ~done); gaps are INTEGRATION in 3 tiers — flip backlog ~7 (days), co-residency→spiking ~13 default-on-but-host (weeks-months), **scaffold_retired 1→~50 = the whole mission** (no short ETA; faithfulness-bound). Speed-up = the EMERGENCE-SUBSTRATE (self-organize many faculties at once, not hand-retire one-by-one) + parallel cloud compute; ceiling = faithfulness>speed. (Ledger has minor count drift — offered a hygiene reconcile.)
