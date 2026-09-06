@@ -348,22 +348,36 @@ class ForkPCSWorld:
 # ─────────────────────────────────────────────────────────────────────────────
 # Day-1 SMOKE: loss drops AND abs-position decode beats untrained-core + raw-V1 floors
 # ─────────────────────────────────────────────────────────────────────────────
-def _ridge_r2(X_tr, Y_tr, X_te, Y_te, lam=10.0):
-    """Closed-form ridge; return mean R^2 over targets on the test split.
-    std floored at 1e-2 so a near-constant unit cannot blow up test predictions."""
+def _ridge_r2(X_tr, Y_tr, X_te, Y_te, lam=10.0, min_samples=30):
+    """Closed-form ridge; mean R^2 over targets on the test split.
+
+    Guards (repo discipline: UNDEFINED, not a fake score):
+      * too few samples -> nan (an underdetermined decode is not a measurement);
+      * a target dim with ~zero test variance -> that dim is UNDEFINED (R^2 of a constant is not 1.0);
+      * lam scaled up when underdetermined + std floored + result clipped to [-1,1] (kills numerical blow-ups).
+    """
+    Y_tr = np.asarray(Y_tr, np.float64); Y_te = np.asarray(Y_te, np.float64)
+    if Y_tr.ndim == 1:
+        Y_tr = Y_tr[:, None]; Y_te = Y_te[:, None]
+    if len(X_tr) < min_samples or len(X_te) < 5:
+        return float("nan")
+    ss_tot = ((Y_te - Y_te.mean(0, keepdims=True)) ** 2).sum(0)
+    valid = ss_tot >= 1e-6
+    if not np.any(valid):
+        return float("nan")                     # constant target -> R^2 undefined
     mu = X_tr.mean(0, keepdims=True)
     sd = np.maximum(X_tr.std(0, keepdims=True), 1e-2)
     Xtr = (X_tr - mu) / sd
     Xte = (X_te - mu) / sd
-    Xtr1 = np.concatenate([Xtr, np.ones((Xtr.shape[0], 1), np.float32)], 1)
-    Xte1 = np.concatenate([Xte, np.ones((Xte.shape[0], 1), np.float32)], 1)
+    Xtr1 = np.concatenate([Xtr, np.ones((Xtr.shape[0], 1))], 1)
+    Xte1 = np.concatenate([Xte, np.ones((Xte.shape[0], 1))], 1)
     d = Xtr1.shape[1]
-    A = Xtr1.T @ Xtr1 + lam * np.eye(d, dtype=np.float32)
-    W = np.linalg.solve(A, Xtr1.T @ Y_tr)
+    lam_eff = lam * max(1.0, d / len(X_tr))       # stronger reg when underdetermined
+    W = np.linalg.solve(Xtr1.T @ Xtr1 + lam_eff * np.eye(d), Xtr1.T @ Y_tr)
     pred = Xte1 @ W
     ss_res = ((Y_te - pred) ** 2).sum(0)
-    ss_tot = ((Y_te - Y_te.mean(0, keepdims=True)) ** 2).sum(0) + 1e-9
-    return float((1.0 - ss_res / ss_tot).mean())
+    r2_per = 1.0 - ss_res[valid] / ss_tot[valid]
+    return float(np.clip(r2_per.mean(), -1.0, 1.0))
 
 
 def run_smoke(steps=4000, seed=42, units="rate", encoder="learned_ema", verbose=True):
