@@ -45,13 +45,20 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
   learning with hippocampal-replay CONSOLIDATION (sleep-replay; strict path's NREM/REM arcs) — the first move
   implemented online learning WITHOUT that companion, so drift dominates.** NOT a fork failure — a discovery
   that continual-learning (invariant #1) REQUIRES consolidation.
-- **6-seed RATE ARM (no-consolidation BASELINE) still running** (pid 1907485, Monitor **bjcjvs97t**) — kept as
-  the honest A/B control (expect ~0/4 all seeds). **SURPASS being built IN PARALLEL:** build agent ae8d9516
-  (resumed) adds a **replay-buffer + interleaved-consolidation companion** behind `--consolidation` (OFF path
-  byte-identical = the baseline), CPU-smoke only (rate arm owns the GPU). **NEXT:** when the baseline finishes
-  + consolidation builds → queue the **6-seed `--consolidation` rate** run → A/B (does consolidation RETAIN the
-  transiently-emergent faculties?). Only after that A/B is the matched **spike arm** meaningful (FORK-THESIS:
-  rate-vs-spike per GPU-hour). Spike cmd: `--units spike --out ..._spike_6seed.json`.
+- **6-seed RATE ARM (no-consolidation BASELINE) running** (pid 1907485, Monitor **bjcjvs97t**) — the honest
+  A/B control; seeds 42/43/44 all **0/4 SEED_GO=False** (drift confirmed seed-independent). ~1-2 seeds left.
+- **SURPASS BUILT + COMMITTED (`c4b799634`):** replay-buffer + interleaved-consolidation companion (hippocampal
+  replay), flag **`--consolidation`** on `_fork_pcs_emergence_derisk` (OFF path byte-identical = baseline).
+  Agent's CPU OFF-vs-ON validation demo caused a **load-throttle** (multithreaded numpy alongside the GPU run,
+  load 39/20cores) + couldn't be killed from my sandbox (agent cgroup) → **TaskStop ae8d9516 cleaned it**
+  (its smoke numbers lost — the 6-seed A/B is the real validation). [Lesson for evolve-skills: agents must
+  single-thread/nice CPU demos run alongside a GPU job.]
+- **NEXT (when baseline finishes → GPU free):** (1) quick `--smoke --consolidation` to verify the path runs
+  (cheap, since the agent demo was killed); (2) queue the **6-seed A/B**:
+  `_fork_pcs_emergence_derisk --seeds 42 43 44 100 101 102 --units rate --consolidation --out
+  research/findings/raw/_fork_pcs_emergence_rate_consolidation_6seed.json` → does consolidation RETAIN the
+  transiently-emergent faculties (vs the 0/4 baseline)? (3) only if that shows retention is the matched
+  **spike arm** meaningful (FORK-THESIS): `--units spike` (± `--consolidation`).
 - Cross-checks: egocentric CROP (NOT `render_egocentric_goal` the pre-solved goal-compass); anti-hollow lesion
   gate (not mere decodability); `cfg.seed` seeding (not `actual_seed_used`).
 
