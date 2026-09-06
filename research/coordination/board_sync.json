@@ -1,7 +1,7 @@
 {
  "schema": "board-sync-v1",
  "_doc": "Audit trail of board mutations written by tools/vikunja.sh. gates/board_sync_on_status_change.py requires this file to GROW in the same commit that changes docs/PRODUCTION_INTEGRATION_LEDGER.yaml (a faculty-status change must sync the board). Seeded 2026-08-21.",
- "updated_at": "2026-09-06T02:06:21Z",
+ "updated_at": "2026-09-06T05:42:59Z",
  "entries": [
   {
    "at": "2026-08-22T02:19:31Z",
@@ -1172,6 +1172,24 @@
    "op": "append-desc",
    "args": "task=209",
    "head": "79727e35a"
+  },
+  {
+   "at": "2026-09-06T05:42:45Z",
+   "op": "append-desc",
+   "args": "task=193",
+   "head": "47683c90a"
+  },
+  {
+   "at": "2026-09-06T05:42:45Z",
+   "op": "create-task",
+   "args": "proj=2 title=Try an experimental 'AGI-first' branch: keep what makes it a real brain, allow faster shortcuts + more compute",
+   "head": "47683c90a"
+  },
+  {
+   "at": "2026-09-06T05:42:59Z",
+   "op": "label-task",
+   "args": "task=210 label=8",
+   "head": "47683c90a"
   }
  ]
 }
