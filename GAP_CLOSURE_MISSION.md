@@ -53,12 +53,21 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
   load 39/20cores) + couldn't be killed from my sandbox (agent cgroup) → **TaskStop ae8d9516 cleaned it**
   (its smoke numbers lost — the 6-seed A/B is the real validation). [Lesson for evolve-skills: agents must
   single-thread/nice CPU demos run alongside a GPU job.]
-- **NEXT (when baseline finishes → GPU free):** (1) quick `--smoke --consolidation` to verify the path runs
-  (cheap, since the agent demo was killed); (2) queue the **6-seed A/B**:
-  `_fork_pcs_emergence_derisk --seeds 42 43 44 100 101 102 --units rate --consolidation --out
-  research/findings/raw/_fork_pcs_emergence_rate_consolidation_6seed.json` → does consolidation RETAIN the
-  transiently-emergent faculties (vs the 0/4 baseline)? (3) only if that shows retention is the matched
-  **spike arm** meaningful (FORK-THESIS): `--units spike` (± `--consolidation`).
+- **BASELINE DONE — NO-GO (0/6, EMERGENCE_GO=false):** faculty LB-counts of 6: place 2, object 3, permanence
+  3, value 1; none clearing ≥3 in one seed (drift control). Artifact on disk
+  (`_fork_pcs_emergence_rate_6seed.json`, uncommitted — lane-gate blocks the `.json`; will commit with the finding).
+- **⚡ CONSOLIDATION A/B RUNNING — seed 42 = DIRECTIONALLY POSITIVE (drift reduced, not yet cleared):** WITH
+  `--consolidation`, place R²=**0.670** vs the no-consolidation baseline's **0.598** (place moved from BELOW the
+  untrained floor back UP to it, ~0.674); object/permanence also improved; still 0/4 cleared (place stuck AT the
+  untrained floor). ⇒ the replay-consolidation surpass WORKS directionally (less drift) but as-built is
+  INSUFFICIENT to clear the bars. Monitor **bjcjvs97t**; awaiting the full 6 seeds.
+- **NEXT (after the 6-seed A/B lands):** (1) confirm the directional effect holds across seeds + quantify the
+  gap; (2) **STRENGTHEN consolidation** — a hyperparameter sweep (replay ratio, buffer size, consolidation
+  frequency) is **CPU-poolable** at small scale → dispatch it to the idle mini-PC pool via
+  `pool_queue.sh add` (this ALSO serves the lane-starvation gate + the owner's parallelize-flag — a real fix,
+  not a waiver); (3) once consolidation RETAINS ≥3 faculties → the matched **spike arm** (FORK-THESIS:
+  rate-vs-spike per GPU-hour). Lane-gate note: doc-only commits are exempt; `.json`/code commits need a served
+  lane (`pool_queue.sh add`) or a genuine-BLOCKER waiver (priority/focus waivers are rejected).
 - Cross-checks: egocentric CROP (NOT `render_egocentric_goal` the pre-solved goal-compass); anti-hollow lesion
   gate (not mere decodability); `cfg.seed` seeding (not `actual_seed_used`).
 
