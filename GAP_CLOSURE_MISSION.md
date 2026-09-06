@@ -68,6 +68,12 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
   not a waiver); (3) once consolidation RETAINS ≥3 faculties → the matched **spike arm** (FORK-THESIS:
   rate-vs-spike per GPU-hour). Lane-gate note: doc-only commits are exempt; `.json`/code commits need a served
   lane (`pool_queue.sh add`) or a genuine-BLOCKER waiver (priority/focus waivers are rejected).
+- **✅ POOL SERVED (lane-gate actively addressed, not waived):** stocking agent ae3970c6 queued **3
+  record-verified valuable CPU jobs**, now RUNNING on node pool41 — Lane D·Perception (vision
+  configural-binding held-out-position + scramble-null 6-seed, a named-but-unrun arm) + Lane E·Language
+  (Touchpoint-A fact-clause seeds 43+100, the GO-finding's requested multi-seed). Lanes A/B/C: honestly
+  NOTHING queued — their next-steps are new-mechanism BUILDS, not parameter sweeps (verified via
+  before_you_build+RAG) = a genuine no-ready-de-risk basis for those three if the gate flags them.
 - Cross-checks: egocentric CROP (NOT `render_egocentric_goal` the pre-solved goal-compass); anti-hollow lesion
   gate (not mere decodability); `cfg.seed` seeding (not `actual_seed_used`).
 
