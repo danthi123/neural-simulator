@@ -1,0 +1,88 @@
+{
+  "runner": "_emerge_wkv_lm_derisk",
+  "corpus": "/home/dant123/Projects/sim/data/corpus/fineweb_edu.txt",
+  "seeds": [
+    43
+  ],
+  "d_model": 32,
+  "pred_aux_weight": 0.0,
+  "pred_aux_offsets": [
+    2
+  ],
+  "per_seed": {
+    "43": {
+      "V": 8001,
+      "n_train": 6000,
+      "lambdas": [
+        0.050000000000000044,
+        0.05,
+        0.2,
+        0.7
+      ],
+      "by_depth": {
+        "1": {
+          "n": 500,
+          "wkv": 7.107,
+          "bigram": 7.711,
+          "trigram": 7.914,
+          "wkv_perm": 8.097,
+          "wkv_memoryless": 7.107,
+          "margin_vs_trigram": 0.807,
+          "margin_vs_bigram": 0.603
+        },
+        "2": {
+          "n": 500,
+          "wkv": 7.047,
+          "bigram": 7.8,
+          "trigram": 7.378,
+          "wkv_perm": 8.147,
+          "wkv_memoryless": 7.133,
+          "margin_vs_trigram": 0.331,
+          "margin_vs_bigram": 0.753
+        },
+        "3": {
+          "n": 500,
+          "wkv": 6.901,
+          "bigram": 7.895,
+          "trigram": 7.264,
+          "wkv_perm": 7.909,
+          "wkv_memoryless": 6.98,
+          "margin_vs_trigram": 0.363,
+          "margin_vs_bigram": 0.994
+        },
+        "4-5": {
+          "n": 1000,
+          "wkv": 6.99,
+          "bigram": 7.787,
+          "trigram": 7.463,
+          "wkv_perm": 8.022,
+          "wkv_memoryless": 7.082,
+          "margin_vs_trigram": 0.473,
+          "margin_vs_bigram": 0.798
+        },
+        "6-9": {
+          "n": 2000,
+          "wkv": 6.831,
+          "bigram": 7.799,
+          "trigram": 7.281,
+          "wkv_perm": 8.022,
+          "wkv_memoryless": 6.938,
+          "margin_vs_trigram": 0.451,
+          "margin_vs_bigram": 0.968
+        },
+        "10-99": {
+          "n": 22163,
+          "wkv": 6.819,
+          "bigram": 7.751,
+          "trigram": 7.291,
+          "wkv_perm": 7.966,
+          "wkv_memoryless": 6.933,
+          "margin_vs_trigram": 0.471,
+          "margin_vs_bigram": 0.931
+        }
+      }
+    }
+  },
+  "elapsed_s": 180.5,
+  "eval_corpus": "/home/dant123/Projects/sim/data/corpus/wikitext103.txt"
+}
