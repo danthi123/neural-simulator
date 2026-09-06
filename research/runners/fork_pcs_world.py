@@ -654,10 +654,10 @@ def run_stability_ab(seed=42, steps=40000, n_hidden=256, n_latent=64, units="rat
 
 
 def run_ema_ab(seed=42, steps=50000, n_hidden=256, n_latent=64, units="rate",
-               ema_values=(0.99, 0.999, 0.9999), verbose=True):
+               ema_values=(0.99, 0.999, 0.9999), new_default=0.9999, verbose=True):
     """EMA-target A/B: the 200k failure was TARGET-driven (grad clip/skip did nothing). Slower EMA =
     a target that can't jump. Reports max online/held-out loss + place-decode for each EMA momentum.
-    PASS if the new default (0.999) tames the held-out spikes (< 0.5x the old 0.99 control)."""
+    PASS if the new default (0.9999) tames the held-out spikes (< 0.5x the old 0.99 control)."""
     from sim.pcs_substrate import PredictiveContinualSubstrate, PCSConfig
     out = {}
     for ema in ema_values:
@@ -672,7 +672,7 @@ def run_ema_ab(seed=42, steps=50000, n_hidden=256, n_latent=64, units="rate",
         out[ema] = {**tr, "place_trained": round(place["trained"], 3),
                     "place_untrained": round(place["untrained"], 3)}
     old = out[ema_values[0]]
-    new = out[0.999] if 0.999 in out else out[ema_values[min(1, len(ema_values) - 1)]]
+    new = out[new_default] if new_default in out else out[ema_values[-1]]
     tamed = new["max_heldout_loss"] < 0.5 * old["max_heldout_loss"]
     if verbose:
         print(f"[EMA A/B seed={seed} units={units} steps={steps} n_hidden={n_hidden}]")
@@ -682,7 +682,7 @@ def run_ema_ab(seed=42, steps=50000, n_hidden=256, n_latent=64, units="rate",
                   f" final_heldout={c['final_heldout_loss']:>8} place={c['place_trained']:+.3f}"
                   f"(untr {c['place_untrained']:+.3f}) delta={c['place_trained']-c['place_untrained']:+.3f}")
             print(f"      heldout curve: {c['heldout_curve']}")
-        print(f"  spikes_tamed(new-default 0.999 max_heldout < 0.5x old 0.99)={tamed}")
+        print(f"  spikes_tamed(new-default {new_default} max_heldout < 0.5x old 0.99)={tamed}")
         print(f"  EMA A/B {'PASS' if tamed else 'INCONCLUSIVE'}")
     return {"arms": out, "tamed": tamed}
 

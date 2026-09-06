@@ -92,8 +92,9 @@ class PCSConfig:
     # EMA decay of the JEPA TARGET encoder. The 200k failure was TARGET-driven, not gradient (clip/skip
     # did nothing): the held-out loss (pred vs sg(EncEMA(view))) spiked/climbed to ~27-47 because the
     # target DRIFTS. A slower target tames it decisively (diagnostic: 0.99->held~27; 0.9999->~3-12;
-    # fixed->flat ~2.1). Default raised 0.99 -> 0.999; reproduce the old control with ema_rate=0.99.
-    ema_rate: float = 0.999      # slower target = the primary EMA-stability fix
+    # fixed->flat ~2.1). Default raised 0.99 -> 0.9999; reproduce the old control with ema_rate=0.99.
+    # (Inline smoke @50k: 0.99->max held-out 27.7 ; 0.999 only DELAYS the climb -> ~26 ; 0.9999->6.8 tamed.)
+    ema_rate: float = 0.9999     # slow target = the primary EMA-stability fix (0.999 was insufficient)
     ema_warmup_updates: int = 0  # optionally hold the target FROZEN (== init encoder) for the first N
                                  # updates so the online encoder locks onto a stable target early (0=off)
     # consolidation companion (default OFF -> byte-identical to no-replay online learning).
