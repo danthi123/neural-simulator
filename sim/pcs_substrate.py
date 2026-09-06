@@ -95,8 +95,9 @@ class PCSConfig:
     grad_clip: float = 5.0       # global-norm clip on the predictive grads
     # policy (H3) — REINFORCE with a running-mean baseline, online per step
     lr_policy: float = 5e-3
-    curiosity_beta: float = 0.5  # weight of learning-progress in the intrinsic reward
-    entropy_beta: float = 0.01   # entropy bonus (exploration)
+    curiosity_beta: float = 0.1  # weight of learning-progress (GLOBAL LP; kept small — a large global LP
+                                 # credited to arbitrary actions collapses the policy. Per-state LP is a next rung.)
+    entropy_beta: float = 0.03   # entropy bonus (exploration floor; prevents policy-logit saturation/collapse)
     baseline_decay: float = 0.99
     lp_fast: float = 0.1         # learning-progress fast/slow loss EMAs (LP = relu(slow - fast))
     lp_slow: float = 0.01
@@ -664,13 +665,17 @@ class PredictiveContinualSubstrate:
         return float(loss)
 
     # ── held-out predictive-loss evaluator (learning signal on a non-stationary stream) ──
-    def eval_predictive_loss(self, seq) -> float:
+    def eval_predictive_loss(self, seq, respect_lesion=False) -> float:
         """Mean windowed predictive loss on a FIXED transition sequence with the CURRENT weights,
         WITHOUT training and WITHOUT disturbing the live state. On a widening online stream the
         online loss rises with coverage; this stationary-target eval is the honest 'is it learning'
-        signal. seq = list of (v1feat, a_prev_idx, d, reward)."""
+        signal. seq = list of (v1feat, a_prev_idx, d, reward).
+
+        respect_lesion=True keeps the current lesion mask active (used by the behavioral-dependency
+        gate to measure how much a faculty-unit lesion RAISES prediction error)."""
         saved = (self.h, self.v, self.s, self._tape, self._frozen, self._lesion)
-        self._lesion = None
+        if not respect_lesion:
+            self._lesion = None
         self.freeze()
         self.reset_state()
         for (v1, ap, d, r) in seq:
