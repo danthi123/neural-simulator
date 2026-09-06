@@ -13,7 +13,34 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ---
 
-## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-06 ~11:15 (AWS DECISIVE MOUTH CELL LIVE — took over the grid; READ FIRST; LATEST anchor)
+## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-06 ~14:30 (AGI-FORK STARTED + AWS mouth training; READ FIRST; LATEST anchor)
+
+**🍴 AGI-FORK STARTED (owner pushed to start it, lots of local usage before reset).** Separate from `main`
+(strict biology path, untouched). Live state:
+- **Branch + worktree:** `agi-fork` at `/home/dant123/Projects/sim-agi-fork` (main checkout keeps running the
+  live infra). Charter: `FORK.md` on the fork (relaxes all-spiking/bit-exact-fidelity/speed<faithfulness +
+  unconstrains compute; KEEPS 6 hard invariants — continual-learning/grounding/integration/emergence/
+  intrinsic-motivation/honesty — + all rigor). Pushed both remotes.
+- **First-move DESIGN LOCKED** (`03aa7120`, `docs/plans/2026-09-06-agi-fork-first-move-design.md` on the fork) —
+  synthesized by an 11-agent adversarial panel (`agi-fork-first-move-design` workflow). The move: **ONE shared
+  RATE-recurrent PREDICTIVE core** (`sim/pcs_substrate.py`, `--units {rate,spike}` dial) trained online by
+  truncated-BPTT on the EXISTING grid world (agent-centered egocentric crop through fixed Gabor V1, grounded
+  drive-reduction reward, learning-progress curiosity). Faculties (place/object/permanence/value) EMERGE from
+  the single next-experience objective, read post-hoc with presence probes AND **behavioral-dependency lesions**
+  (anti-hollow). Two pre-registered GOs: **EMERGENCE** (≥3 load-bearing faculties, rate arm) + **FORK-THESIS**
+  (rate beats spike per GPU-hour = what relaxing all-spiking bought). Fits the 3090, few-day time-box.
+- **BUILD IN FLIGHT:** opus build agent **ae8d9516** building the 3 files (`sim/pcs_substrate.py`,
+  `research/runners/fork_pcs_world.py`, `research/runners/_fork_pcs_emergence_derisk.py`) + a Day-1 numpy smoke
+  (loss drops + abs-position decode beats untrained-core & raw-V1 floors), commit-before-verify on agi-fork.
+  Will notify on completion. **ON COMPLETION:** review + smoke result → queue the **6-seed rate** run via
+  `gpu_queue.sh` (0 agent tokens) → EMERGENCE GO/NO-GO → matched **spike arm** → FORK-THESIS verdict → fork
+  finding + honest relaxation ledger. Do NOT re-launch the build (ae8d9516 owns it).
+- Cross-checks: egocentric CROP (NOT `render_egocentric_goal` the pre-solved goal-compass); anti-hollow lesion
+  gate (not mere decodability); `cfg.seed` seeding (not `actual_seed_used`).
+
+---
+
+## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-06 ~11:15 (AWS DECISIVE MOUTH CELL LIVE — took over the grid; earlier anchor)
 
 **LIVE AWS RUN — the DECISIVE mouth scale test (d192×2B FineWeb-Edu).** I took over the AWS grid from
 agent `a35f5728` (STOPPED) after finding its setup was poor-value + fragile. Current live state:
