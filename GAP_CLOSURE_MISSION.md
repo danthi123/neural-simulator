@@ -86,14 +86,19 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
   --grad-skip-factor 0.0` = old). Honest caveats: at smoke scale taming the loss only MODESTLY lifted place
   (Δ+0.03-0.09); AND 0.9999 still slowly climbs over long horizons (→12 by 80k) while `--encoder fixed` is flat
   (~2.1) — if the 200k still climbs, fixed / 0.99999 is the wired next lever.
-- **⚡ DECISIVE EMA-FIX 6-seed RUNNING:** pid 2108666 via gpu_queue (defaults now ema=0.9999+clip1+skip8),
-  `--out research/findings/raw/_fork_pcs_emergence_rate_emafix_6seed.json`, Monitor **bjcjvs97t**. THE question:
-  does stable-target training let faculties emerge AND STAY at 200k/512u (vs base/cons/stable all 0/6)? Watching
-  seed 42's loss-stability + place-vs-untrained. ~1.5h. **If GO (≥3 faculties emerge+stay)** → instability(target)
-  WALL SURPASSED → then spike-arm (FORK-THESIS) + fork finding. **If place still drifts despite tamed loss** →
-  run `--encoder fixed` (flat loss); if THAT fails → the objective doesn't REQUIRE position (make it load-bearing:
-  nav-reward/longer-horizon). Fork finding (emergence-real; replay+clip ruled out; EMA-target is the wall) to be
-  written after this verdict.
+- **⚡ EMA-FIX 6-seed RUNNING — seed 42 = 0/4, place 0.588 STILL below untrained (0.654).** EMA-slowing ALSO
+  fails to restore place at 200k (base 0.598 / stable 0.606 / emafix 0.588 — all below untrained ~0.65). pid
+  2108666, Monitor bjcjvs97t. **THE EMERGING CONCLUSION (decisive across 4 arms): NO training-stabilization lever
+  (replay, clip, EMA-target) restores the place code** that was 0.873≫untrained at 15k → strongly points to the
+  **OBJECTIVE not REQUIRING a persistent position code** (built transiently as a useful early feature, then
+  repurposed away as prediction converges on features that don't need it). Awaiting the emafix LOSS CURVE (run
+  end) to disambiguate: (a) loss stayed tamed + place drifts → OBJECTIVE issue CONFIRMED; (b) loss climbed at
+  200k (0.9999 still drifts, per the 80k→12 diagnostic) → run `--encoder fixed` (flat loss) for the clean test.
+- **NEXT LEVER (likely): make position LOAD-BEARING for the objective** — longer prediction horizon (requires
+  path-integration) and/or a navigation/drive reward that requires knowing position. This is a task/objective
+  redesign (a build), the real surpass if stabilization is confirmed insufficient. THEN the fork finding (the
+  full A/B ladder: emergence-real-but-transient; replay/clip/EMA all ruled out; objective-doesn't-require-position
+  is the wall) + the objective-redesign as the fork's 2nd move. spike-arm (FORK-THESIS) deferred until an arm holds.
 - **NEXT (after the stable 6-seed):** if stable-alone rescues emergence (≥3 faculties emerge+stay) → the
   instability WALL is SURPASSED (GO); then (a) stable+consolidation (does replay add retention on top?), (b)
   matched **spike arm** (FORK-THESIS: rate-vs-spike per GPU-hour), (c) fork finding + honest ledger. If stable
