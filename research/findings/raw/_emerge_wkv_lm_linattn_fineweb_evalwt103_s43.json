@@ -1,0 +1,88 @@
+{
+  "runner": "_emerge_wkv_lm_derisk",
+  "corpus": "data/corpus/fineweb_edu.txt",
+  "seeds": [
+    43
+  ],
+  "d_model": 192,
+  "pred_aux_weight": 0.0,
+  "pred_aux_offsets": [
+    2
+  ],
+  "per_seed": {
+    "43": {
+      "V": 8001,
+      "n_train": 2500000,
+      "lambdas": [
+        0.050000000000000044,
+        0.05,
+        0.2,
+        0.7
+      ],
+      "by_depth": {
+        "1": {
+          "n": 4000,
+          "wkv": 5.912,
+          "bigram": 5.692,
+          "trigram": 6.861,
+          "wkv_perm": 9.012,
+          "wkv_memoryless": 5.912,
+          "margin_vs_trigram": 0.948,
+          "margin_vs_bigram": -0.22
+        },
+        "2": {
+          "n": 4000,
+          "wkv": 5.531,
+          "bigram": 5.682,
+          "trigram": 5.144,
+          "wkv_perm": 8.96,
+          "wkv_memoryless": 6.148,
+          "margin_vs_trigram": -0.387,
+          "margin_vs_bigram": 0.151
+        },
+        "3": {
+          "n": 4000,
+          "wkv": 5.414,
+          "bigram": 5.717,
+          "trigram": 5.132,
+          "wkv_perm": 8.908,
+          "wkv_memoryless": 6.216,
+          "margin_vs_trigram": -0.282,
+          "margin_vs_bigram": 0.302
+        },
+        "4-5": {
+          "n": 8000,
+          "wkv": 5.458,
+          "bigram": 5.77,
+          "trigram": 5.276,
+          "wkv_perm": 8.754,
+          "wkv_memoryless": 6.26,
+          "margin_vs_trigram": -0.182,
+          "margin_vs_bigram": 0.312
+        },
+        "6-9": {
+          "n": 16000,
+          "wkv": 5.394,
+          "bigram": 5.757,
+          "trigram": 5.233,
+          "wkv_perm": 8.717,
+          "wkv_memoryless": 6.236,
+          "margin_vs_trigram": -0.161,
+          "margin_vs_bigram": 0.363
+        },
+        "10-99": {
+          "n": 183709,
+          "wkv": 5.291,
+          "bigram": 5.746,
+          "trigram": 5.209,
+          "wkv_perm": 8.644,
+          "wkv_memoryless": 6.238,
+          "margin_vs_trigram": -0.082,
+          "margin_vs_bigram": 0.454
+        }
+      }
+    }
+  },
+  "elapsed_s": 17330.3,
+  "eval_corpus": "data/corpus/wikitext103.txt"
+}
