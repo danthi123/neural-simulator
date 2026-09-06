@@ -131,9 +131,16 @@ fair vs-base comparison), **tokcache HIT** (saves the 2.2h re-tokenize only). **
 (d192×2B = 5× the 0.4B cell's ~8.8h on the L4; the tokcache saves the tokenize, NOT the train) → **verdict ~2
 days out (~Sep 8)**; the 60h backstop (Sep 9 03:10 UTC) covers it with ~10h margin. Confirmed progressing at
 ~32min: CPU 100% single-threaded tr_ids build, RSS 78.7GB, no re-OOM. ON DONE: harvest deep-margin vs 0 (crosses
-trigram?) → terminate. If it OOMs AGAIN (Monitor), reduce `--batch` to 96/64. ~$12 (OOM'd run) + ~$90 (~44h
-re-run) ≈ ~$100 total (within the $180 cap + $900). Bird-in-hand (set up + tokcache) → NOT re-provisioning to a
-~2× faster g6e/L40S mid-run (churn+risk not worth it). FORK is the active near-term work; mouth is background.
+trigram?) → terminate. Bird-in-hand (set up + tokcache) → NOT re-provisioning; FORK is the active work.
+**UPDATE ~19:19: the batch-128+expandable_segments RE-RUN ALSO OOM'd (EXIT=1, ~3h in, same 21GB+1.74GB at
+cross_entropy).** So batch 128 genuinely needs >22GB for d192×2B on the L4 (24GB) — not just fragmentation.
+**3rd attempt: `--batch 64` (halves activation/logits memory → fits with headroom), same instance (tokcache
+HIT), pid 28346, Monitor b0gdia5we, expandable_segments kept.** ~44h train (batch 64 = same total token-passes)
+→ verdict ~Sep 8; 60h backstop (Sep 9 03:10 UTC) covers it. Minor caveat: batch 64 vs the base's 128 (small
+confound for the deep-margin comparison; noted). Cost so far ~$30 (Cell1 + 2 OOM'd attempts) + ~$88 (batch-64
+run) ≈ ~$118 total for this decisive cell — within the $180 cap. Early-check ~3h to confirm batch-64 clears the
+OOM point. If batch 64 ALSO OOMs (unlikely — halves memory) → batch 32 or terminate + g6e/L40S-48GB (batch 128,
+fair, ~$56). [Owner: the L4 is marginal for d192×2B; batch-64 is the pragmatic reliable path to the verdict.]
 
 ---
 
