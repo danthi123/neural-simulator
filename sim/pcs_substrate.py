@@ -89,7 +89,13 @@ class PCSConfig:
     var_gamma: float = 0.3       # target per-dim std for the variance floor (tanh-bounded e)
     # encoder
     encoder: str = "learned_ema"  # "learned_ema" (JEPA: learned enc + EMA target) or "fixed" (collapse-proof)
-    ema_rate: float = 0.99       # EMA decay of the target encoder (learned_ema only)
+    # EMA decay of the JEPA TARGET encoder. The 200k failure was TARGET-driven, not gradient (clip/skip
+    # did nothing): the held-out loss (pred vs sg(EncEMA(view))) spiked/climbed to ~27-47 because the
+    # target DRIFTS. A slower target tames it decisively (diagnostic: 0.99->held~27; 0.9999->~3-12;
+    # fixed->flat ~2.1). Default raised 0.99 -> 0.999; reproduce the old control with ema_rate=0.99.
+    ema_rate: float = 0.999      # slower target = the primary EMA-stability fix
+    ema_warmup_updates: int = 0  # optionally hold the target FROZEN (== init encoder) for the first N
+                                 # updates so the online encoder locks onto a stable target early (0=off)
     # consolidation companion (default OFF -> byte-identical to no-replay online learning).
     # Biology: online cortical learning is paired with hippocampal REPLAY -> cortical consolidation
     # (sleep-replay). Online TBPTT WITHOUT it catastrophically OVERWRITES earlier structure on a
@@ -716,10 +722,12 @@ class PredictiveContinualSubstrate:
         if self.cfg.encoder == "learned_ema":
             self.W_enc = self.P["W_enc"]
             self.b_enc = self.P["b_enc"]
-            # EMA target update
-            r = self.cfg.ema_rate
-            self.W_enc_ema = r * self.W_enc_ema + (1.0 - r) * self.W_enc
-            self.b_enc_ema = r * self.b_enc_ema + (1.0 - r) * self.b_enc
+            # EMA target update — held FROZEN (target == init encoder) during an optional warmup so the
+            # online encoder locks onto a stable target early; then the slow EMA follows it gradually.
+            if self.n_updates >= self.cfg.ema_warmup_updates:
+                r = self.cfg.ema_rate
+                self.W_enc_ema = r * self.W_enc_ema + (1.0 - r) * self.W_enc
+                self.b_enc_ema = r * self.b_enc_ema + (1.0 - r) * self.b_enc
         self.n_updates += 1
         return float(loss)
 
