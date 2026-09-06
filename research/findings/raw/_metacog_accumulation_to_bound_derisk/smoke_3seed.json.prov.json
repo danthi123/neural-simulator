@@ -1,0 +1,39 @@
+{
+ "run_id": "1788663425-613877",
+ "runner": "research/runners/_metacog_accumulation_to_bound_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-a825a0b66d622d97f/research/runners/_metacog_accumulation_to_bound_derisk.py",
+  "--seeds",
+  "42",
+  "43",
+  "44",
+  "--sigmas",
+  "1.5",
+  "1.8",
+  "2.0",
+  "2.2",
+  "2.5",
+  "--n-trials-per-sigma",
+  "20",
+  "--out",
+  "research/findings/raw/_metacog_accumulation_to_bound_derisk/smoke_3seed.json"
+ ],
+ "git_sha": "636008670",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-05T22:57:05",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_metacog_accumulation_to_bound_derisk/smoke_3seed.json"
+}

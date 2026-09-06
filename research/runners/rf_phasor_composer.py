@@ -202,6 +202,41 @@ class RFPhasorComposer:
         # Spearman rho=0.900 against the host `margin` across 25 role reads). `_cleanup_window` (120) is reused
         # UNCHANGED -- it already suffices at this drive; no new window constant.
         self._margin_drive_pA = 300.0
+        # ACCUMULATION-TO-BOUND read (2026-09-05, wall-reframe follow-on to rank 9's PARTIAL verdict --
+        # research/findings/2026-09-05-metacog-spiking-recall-margin-derisk-PARTIAL.md's own residual: the
+        # ambiguous middle band agrees with the host formula only 50% of the time, and a `_margin_drive_pA`/
+        # `_cleanup_window` sweep did NOT resolve it by adding integration time -- because that sweep only ever
+        # changed how LONG the window was, still reading a SINGLE SNAPSHOT at the end of it. The wall-reframe
+        # question ("what companion process did we replace with a constant?"): the animal's own confidence read
+        # is not a fixed-duration tally, it is a SEQUENTIAL-SAMPLING / accumulation-to-bound process (Ratcliff's
+        # drift-diffusion; Reddi & Carpenter 2000's LATER model of decision latency; Pleskac & Busemeyer 2010's
+        # two-stage DDM for confidence) -- evidence integrates over deliberation TIME, and both the accumulated
+        # TRAJECTORY and the TIME-TO-BOUND carry information a fixed-endpoint snapshot discards. `_spiking_margin`
+        # already RUNS a `_cleanup_window`-step deliberation (the Izhikevich WTA settling); `_spiking_margin_accum`
+        # (below) reads the SAME per-step running state it already computes en route to that one snapshot -- no
+        # additional simulation cost.
+        #
+        # THE BOUND IS ON THE RAW SPIKE-COUNT DIFFERENCE, NOT THE NORMALIZED RATIO (an instrument fix found
+        # WHILE building this, not assumed): a first attempt put the criterion on the normalized ratio
+        # `(top1-top2)/(top1+eps)` itself (the SAME form `_spiking_margin` reports) -- but that ratio is a
+        # genuine race-model DECISION VARIABLE only once BOTH accumulators hold enough evidence to be a stable
+        # estimate; at the SMALL integer counts this competition produces early in the window (its FIRST
+        # non-degenerate value is exactly 1.0, the instant the very first spike lands and nothing else has fired
+        # yet), the ratio is dominated by spike-ORDER noise, not by the true rate differential -- measured
+        # directly on a hand-built nearly-tied 4-way competition (all candidates driven within ~2% of each
+        # other's current): its normalized-ratio trajectory spuriously touched 1.0 (a "confident" reading) at
+        # step 12 purely from firing-order coincidence, identical to a LESIONED (uniform-drive, no differential)
+        # run of the SAME competition -- while a genuinely decisive (20:1) competition's raw spike-COUNT
+        # difference (winner vs runner-up) instead grows LINEARLY and MONOTONICALLY once the winner starts
+        # firing (0,0,...,1,1,...,2,2,...,7 over the window) and NEVER exceeds 1 for the entire window in the
+        # nearly-tied case (both measured directly, `_cleanup_window`=120, seed=42). The raw difference is
+        # exactly the accumulator a real race/DDM model puts a threshold ON (Usher & McClelland 2001's
+        # leaky-competing-accumulator; Ratcliff's diffusion boundary) -- unlike a ratio, it is non-decreasing
+        # once a lead opens and is not renormalized by a small, noisy denominator. `_margin_accum_count_bound=3`
+        # (a few "extra" spikes for the leader) sits above the tied case's observed ceiling (max sustained lead 1
+        # spike across the whole window) and is reliably, monotonically crossed by a genuinely decisive
+        # competition partway through the window -- a single fixed criterion, not re-tuned per seed/condition.
+        self._margin_accum_count_bound = 3
         self.words = sorted(vocab) if vocab is not None else sorted(DEFAULT_VOCAB)
         rng = np.random.default_rng(seed)
         # phasor codes: phases in [0,1)^D per concept + per role (deterministic per seed)
@@ -849,6 +884,84 @@ class RFPhasorComposer:
         if s[0] <= 0.0:
             return 0.0
         return float((s[0] - s[1]) / (s[0] + 1e-9))
+
+    def _spiking_margin_accum(self, scores, lesion=False):
+        """ACCUMULATION-TO-BOUND confidence read over the SAME winner-vs-runner-up Izhikevich competition
+        `_spiking_margin` drives (2026-09-05, follow-on to the rank-9 PARTIAL's own residual: a fixed-endpoint
+        snapshot agrees with the host formula only 50% of the time in the ambiguous middle band, and a
+        drive/window sweep did not resolve it -- see `_margin_accum_count_bound`'s docstring above). ADDITIVE: a
+        new method nothing calls by default; `_spiking_margin` itself is untouched (byte-identical), so every
+        existing caller/test is unaffected.
+
+        Runs the IDENTICAL drive setup (`_margin_drive_pA`-normalized input, the SAME cached `_izh_bank`, the
+        SAME `_cleanup_window` steps, the SAME `lesion=True` uniform-drive substitution) but, instead of reading
+        the winner-vs-runner-up margin ONCE off the final accumulated spike count, reads the RUNNING
+        (cumulative-so-far) state at EVERY step of the SAME deliberation window -- no extra simulation cost,
+        since `_spiking_margin` already runs this exact loop and discards every intermediate state but the last.
+        Returns a dict:
+
+          `final_margin`      -- the NORMALIZED margin at the LAST step; identical in VALUE to
+                                  `_spiking_margin(scores, lesion)` on the same input (same formula, same final
+                                  cumulative counts) -- reported so a caller can compare the OLD snapshot read
+                                  against the NEW accumulation reads on the exact same competition, not a re-run.
+          `mean_trajectory_margin` -- the ACCUMULATED-EVIDENCE read: the mean of the RUNNING NORMALIZED margin
+                                  across every step of the window. A competition that separates EARLY and stays
+                                  separated spends nearly the whole window near its high final value (mean close
+                                  to final_margin); a competition that only barely crosses by the last step
+                                  spends most of the window near 0 (mean well BELOW final_margin) even if the two
+                                  final-margin numbers happen to be similar -- exactly the "sustained vs.
+                                  just-barely-arrived" distinction a single endpoint snapshot cannot see. Safe to
+                                  average over the whole window BECAUSE it is a mean, not a first-crossing test
+                                  (see `steps_to_bound` below for why a first-crossing test needs the RAW count,
+                                  not this ratio).
+          `steps_to_bound`    -- the first step (1-indexed) at which the RAW spike-COUNT DIFFERENCE (top1-top2,
+                                  NOT the normalized ratio -- see `_margin_accum_count_bound`'s docstring) >=
+                                  `_margin_accum_count_bound`, or None if the window ends without crossing it --
+                                  the TIME-TO-BOUND read (Reddi & Carpenter 2000 LATER: latency is inversely
+                                  related to evidence strength). A fast crossing is the fast-high-drift
+                                  signature; a late-or-never crossing is the slow/ambiguous signature the mission
+                                  frame names.
+          `bounded`           -- whether the criterion was reached within the window at all.
+
+        `confidence_accum` is deliberately NOT collapsed into one blended scalar here beyond
+        `mean_trajectory_margin` (the primary accumulation read used downstream) -- `steps_to_bound`/`bounded`
+        are reported alongside as the time-to-bound diagnostic rather than folded in with an unjustified blend
+        weight; the smoke/unit tests compare both against the single-snapshot `final_margin` empirically instead
+        of presupposing which combination wins. Trace-only / test-only by construction: not called from
+        `_cleanup_all_score_stats`, `OneBrainComposer._block_role_scores`, or any production/preference-chain
+        code path -- this de-risk is explicitly NOT wired to production."""
+        scores = np.maximum(np.asarray(scores, dtype=float), 0.0)
+        V = scores.size
+        if V < 2:
+            return {"final_margin": 0.0, "mean_trajectory_margin": 0.0, "steps_to_bound": None, "bounded": False}
+        peak = float(scores.max())
+        if peak <= 1e-9:
+            return {"final_margin": 0.0, "mean_trajectory_margin": 0.0, "steps_to_bound": None, "bounded": False}
+        if lesion:
+            scores = np.ones(V, dtype=float)   # NO differential -> every candidate drives the bank identically
+            peak = 1.0
+        drive = (scores / peak) * self._margin_drive_pA
+        bank = self._izh_bank(V)
+        bank.cp_membrane_potential_v[:] = bank._cleanup_v0   # reset to resting -> each read is independent
+        bank.cp_recovery_variable_u[:] = bank._cleanup_u0
+        import sim.backend as _b
+        xp, _ = _b.get_backend()
+        bank.cp_external_input_current[:] = xp.asarray(drive, dtype=bank.cp_external_input_current.dtype)
+        firing = np.zeros(V)
+        trajectory = np.empty(self._cleanup_window, dtype=float)
+        steps_to_bound = None
+        for t in range(self._cleanup_window):
+            bank._run_one_simulation_step()
+            firing += np.asarray(to_host(bank.cp_firing_states)).astype(float)
+            s = np.sort(firing)[::-1]
+            m_t = 0.0 if s[0] <= 0.0 else float((s[0] - s[1]) / (s[0] + 1e-9))
+            trajectory[t] = m_t
+            if steps_to_bound is None and (s[0] - s[1]) >= self._margin_accum_count_bound:
+                steps_to_bound = t + 1   # 1-indexed: "reached the criterion after this many steps"
+        bank.cp_external_input_current[:] = 0.0
+        return {"final_margin": float(trajectory[-1]), "mean_trajectory_margin": float(trajectory.mean()),
+                "steps_to_bound": steps_to_bound, "bounded": steps_to_bound is not None,
+                "trajectory": trajectory.tolist()}
 
     # --- (#66 knowledge-scale, PORTED from OneBrainComposer) DG-indexed cleanup fast path ---------------------
     def _ensure_dg_index(self):
