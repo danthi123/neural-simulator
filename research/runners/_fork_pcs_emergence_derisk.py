@@ -233,13 +233,14 @@ def replay_untrained(world_cfg, seed, units, encoder, feat_dim, n_latent, n_hidd
 def run_seed(seed, units="rate", encoder="learned_ema", n_hidden=512, n_latent=64,
              n_train=200_000, n_probe=8000, n_behav=4000, n_cov=8000, gamma=0.95,
              lesion_frac=0.10, n_random_lesions=3, consolidation=False,
-             grad_clip=1.0, grad_skip_factor=8.0, verbose=True):
+             grad_clip=1.0, grad_skip_factor=8.0, ema_momentum=0.999, ema_warmup=0, verbose=True):
     t0 = time.time()
     wcfg = WorldConfig(seed=seed)
     world = ForkPCSWorld(wcfg)
     scfg = PCSConfig(n_hidden=n_hidden, feat_dim=wcfg.n_v1, n_latent=n_latent, n_actions=N_ACTIONS,
                      n_drive=4, tbptt_T=18, units=units, encoder=encoder, seed=seed,
-                     consolidation=consolidation, grad_clip=grad_clip, grad_skip_factor=grad_skip_factor)
+                     consolidation=consolidation, grad_clip=grad_clip, grad_skip_factor=grad_skip_factor,
+                     ema_rate=ema_momentum, ema_warmup_updates=ema_warmup)
     sub = PredictiveContinualSubstrate(scfg)
 
     # ---- 1. TRAIN online with the curiosity policy (small explore for early coverage) ----
@@ -384,6 +385,7 @@ def run_seed(seed, units="rate", encoder="learned_ema", n_hidden=512, n_latent=6
         "seed": seed, "units": units, "encoder": encoder, "n_hidden": n_hidden, "n_train": n_train,
         "consolidation": consolidation, "n_replay_updates": int(sub.n_replay_updates),
         "grad_clip": grad_clip, "grad_skip_factor": grad_skip_factor,
+        "ema_momentum": ema_momentum, "ema_warmup": ema_warmup,
         "max_grad_norm": round(float(sub.max_grad_norm), 3), "n_grad_skipped": int(sub.n_skipped),
         "train_max_online_loss": round(float(max([v for _, v in (train_out.get("loss_curve") or [(0, 0.0)])])), 3),
         "presence": {f: {kk: _f(vv) for kk, vv in presence[f].items() if isinstance(vv, (int, float))}
@@ -545,6 +547,11 @@ def main():
                     help="global grad-norm clip (default 1.0 = stable). Set 5.0 to reproduce the unstable control; 0 disables.")
     ap.add_argument("--grad-skip-factor", type=float, default=8.0,
                     help="relative spike-skip guard (default 8.0). Set 0 to reproduce the unstable control.")
+    ap.add_argument("--ema-momentum", type=float, default=0.999,
+                    help="JEPA target EMA decay (default 0.999 = slow/stable target). Set 0.99 to reproduce "
+                         "the drifting-target control; 0.9999/fixed encoder are even more stable.")
+    ap.add_argument("--ema-warmup", type=int, default=0,
+                    help="hold the JEPA target frozen for the first N updates (0=off)")
     ap.add_argument("--smoke", action="store_true",
                     help="tiny end-to-end self-test (small core, short, 1 seed)")
     args = ap.parse_args()
@@ -556,12 +563,14 @@ def main():
         kw = dict(n_hidden=args.n_hidden, n_train=args.n_train, n_probe=8000, n_behav=4000, n_cov=8000)
 
     per_seed = [run_seed(s, units=args.units, encoder=args.encoder, consolidation=args.consolidation,
-                         grad_clip=args.grad_clip, grad_skip_factor=args.grad_skip_factor, **kw)
+                         grad_clip=args.grad_clip, grad_skip_factor=args.grad_skip_factor,
+                         ema_momentum=args.ema_momentum, ema_warmup=args.ema_warmup, **kw)
                 for s in args.seeds]
     agg = aggregate(per_seed)
     payload = {"battery": "fork_pcs_emergence", "units": args.units, "encoder": args.encoder,
                "consolidation": args.consolidation,
                "grad_clip": args.grad_clip, "grad_skip_factor": args.grad_skip_factor,
+               "ema_momentum": args.ema_momentum, "ema_warmup": args.ema_warmup,
                "pre_registered_gate": {
                    "presence_bars": PRESENCE_BAR, "floor_margin": FLOOR_MARGIN,
                    "behav_lesion_ratio": BEHAV_LESION_RATIO, "min_faculties": MIN_FACULTIES,

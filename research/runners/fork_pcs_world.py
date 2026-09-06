@@ -653,6 +653,40 @@ def run_stability_ab(seed=42, steps=40000, n_hidden=256, n_latent=64, units="rat
     return {"unstable": u, "stable": s, "spikes_tamed": spikes_tamed, "retains": retains, "passed": passed}
 
 
+def run_ema_ab(seed=42, steps=50000, n_hidden=256, n_latent=64, units="rate",
+               ema_values=(0.99, 0.999, 0.9999), verbose=True):
+    """EMA-target A/B: the 200k failure was TARGET-driven (grad clip/skip did nothing). Slower EMA =
+    a target that can't jump. Reports max online/held-out loss + place-decode for each EMA momentum.
+    PASS if the new default (0.999) tames the held-out spikes (< 0.5x the old 0.99 control)."""
+    from sim.pcs_substrate import PredictiveContinualSubstrate, PCSConfig
+    out = {}
+    for ema in ema_values:
+        wcfg = WorldConfig(seed=seed); world = ForkPCSWorld(wcfg)
+        stat = _collect_stationary_eval(wcfg, seed, n=400)
+        scfg = PCSConfig(n_hidden=n_hidden, feat_dim=wcfg.n_v1, n_latent=n_latent, n_actions=N_ACTIONS,
+                         n_drive=4, tbptt_T=16, units=units, encoder="learned_ema", seed=seed,
+                         ema_rate=ema, grad_clip=1.0, grad_skip_factor=8.0)
+        sub = PredictiveContinualSubstrate(scfg)
+        tr = _train_and_track(sub, world, stat, steps, hb_every=max(1, steps // 20))
+        place = _probe_place_decode(sub, world, seed, 1500, n_hidden, n_latent, units, "learned_ema", wcfg.n_v1)
+        out[ema] = {**tr, "place_trained": round(place["trained"], 3),
+                    "place_untrained": round(place["untrained"], 3)}
+    old = out[ema_values[0]]
+    new = out[0.999] if 0.999 in out else out[ema_values[min(1, len(ema_values) - 1)]]
+    tamed = new["max_heldout_loss"] < 0.5 * old["max_heldout_loss"]
+    if verbose:
+        print(f"[EMA A/B seed={seed} units={units} steps={steps} n_hidden={n_hidden}]")
+        for ema in ema_values:
+            c = out[ema]
+            print(f"  ema={ema:<8} max_online={c['max_online_loss']:>9} max_heldout={c['max_heldout_loss']:>9}"
+                  f" final_heldout={c['final_heldout_loss']:>8} place={c['place_trained']:+.3f}"
+                  f"(untr {c['place_untrained']:+.3f}) delta={c['place_trained']-c['place_untrained']:+.3f}")
+            print(f"      heldout curve: {c['heldout_curve']}")
+        print(f"  spikes_tamed(new-default 0.999 max_heldout < 0.5x old 0.99)={tamed}")
+        print(f"  EMA A/B {'PASS' if tamed else 'INCONCLUSIVE'}")
+    return {"arms": out, "tamed": tamed}
+
+
 if __name__ == "__main__":
     ap = argparse.ArgumentParser(description="fork PCS grounded world + Day-1 smoke")
     ap.add_argument("--smoke", action="store_true", help="run the Day-1 smoke (loss drop + position vs floors)")
@@ -660,6 +694,8 @@ if __name__ == "__main__":
                     help="OFF-vs-ON long-horizon demonstration of consolidation (drift vs retention)")
     ap.add_argument("--stability-ab", action="store_true",
                     help="UNSTABLE-vs-STABLE demonstration (grad-clip/spike-skip taming loss spikes)")
+    ap.add_argument("--ema-ab", action="store_true",
+                    help="EMA-target A/B (0.99 vs 0.999 vs 0.9999) — taming the target-driven loss spikes")
     ap.add_argument("--consolidation", action="store_true", help="single-arm smoke with consolidation ON")
     ap.add_argument("--steps", type=int, default=4000)
     ap.add_argument("--ab-steps", type=int, default=60000)
@@ -668,6 +704,9 @@ if __name__ == "__main__":
     ap.add_argument("--units", choices=["rate", "spike"], default="rate")
     ap.add_argument("--encoder", choices=["learned_ema", "fixed"], default="learned_ema")
     args = ap.parse_args()
+    if args.ema_ab:
+        res = run_ema_ab(seed=args.seed, steps=args.ab_steps, n_hidden=args.n_hidden, units=args.units)
+        raise SystemExit(0 if res["tamed"] else 1)
     if args.stability_ab:
         res = run_stability_ab(seed=args.seed, steps=args.ab_steps, n_hidden=args.n_hidden,
                                units=args.units, encoder=args.encoder)
