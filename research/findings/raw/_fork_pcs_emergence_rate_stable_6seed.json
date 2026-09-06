@@ -1,0 +1,1723 @@
+{
+  "battery": "fork_pcs_emergence",
+  "units": "rate",
+  "encoder": "learned_ema",
+  "consolidation": false,
+  "grad_clip": 1.0,
+  "grad_skip_factor": 8.0,
+  "pre_registered_gate": {
+    "presence_bars": {
+      "place": 0.6,
+      "object": 0.4,
+      "permanence": 0.4,
+      "value": 0.4
+    },
+    "floor_margin": 0.05,
+    "behav_lesion_ratio": 1.5,
+    "min_faculties": 3,
+    "core_lesion_collapse_frac": 0.5,
+    "curiosity_ratio": 1.5,
+    "seeds_required_frac": 0.8333333333333334
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "units": "rate",
+      "encoder": "learned_ema",
+      "n_hidden": 512,
+      "n_train": 200000,
+      "consolidation": false,
+      "n_replay_updates": 0,
+      "grad_clip": 1.0,
+      "grad_skip_factor": 8.0,
+      "max_grad_norm": 80.036,
+      "n_grad_skipped": 3,
+      "train_max_online_loss": 42.707,
+      "presence": {
+        "place": {
+          "r2": 0.6055,
+          "floor_untrained": 0.6616,
+          "floor_rawv1": 0.2324,
+          "floor_shuffle": -0.0778
+        },
+        "value": {
+          "r2": 0.5207,
+          "floor_untrained": 0.4193,
+          "floor_rawv1": 0.3077,
+          "floor_shuffle": -0.068
+        },
+        "permanence": {
+          "r2": 0.2664,
+          "floor_untrained": 0.2139,
+          "floor_rawv1": 0.022,
+          "floor_shuffle": -0.0601
+        },
+        "object": {
+          "r2": 0.266,
+          "floor_untrained": 0.0626,
+          "floor_rawv1": -0.0273,
+          "floor_shuffle": 0.0029
+        }
+      },
+      "cleared_presence_and_floors": {
+        "place": false,
+        "object": false,
+        "permanence": false,
+        "value": true
+      },
+      "behavioral_dependency": {
+        "place": {
+          "metric": "approach_in",
+          "faculty_degradation": NaN,
+          "random_degradation": 0.0942,
+          "attributable_fraction": NaN,
+          "load_bearing": false
+        },
+        "object": {
+          "metric": "pred_err",
+          "faculty_degradation": 0.0057,
+          "random_degradation": 0.0046,
+          "attributable_fraction": 0.1914,
+          "load_bearing": false
+        },
+        "permanence": {
+          "metric": "approach_off",
+          "faculty_degradation": 0.0018,
+          "random_degradation": 0.0077,
+          "attributable_fraction": -3.3381,
+          "load_bearing": false
+        },
+        "value": {
+          "metric": "reward_rate",
+          "faculty_degradation": 0.0007,
+          "random_degradation": 0.0006,
+          "attributable_fraction": 0.181,
+          "load_bearing": false
+        }
+      },
+      "n_faculties_load_bearing": 0,
+      "core_lesion_presence": {
+        "place": 0.906,
+        "value": 0.5542,
+        "permanence": NaN,
+        "object": 0.1491
+      },
+      "core_lesion_collapses_all": false,
+      "coverage": {
+        "curiosity_cells": 34.0,
+        "random_cells": 29.0,
+        "budget": 72.0,
+        "ratio": 1.1724,
+        "pass": 0.0
+      },
+      "rate_map_summary": {
+        "n_units_scored": 512,
+        "top8_selectivity": [
+          830.549,
+          764.397,
+          694.063,
+          561.229,
+          409.118,
+          382.134,
+          350.354,
+          339.629
+        ],
+        "top8_units": [
+          13,
+          234,
+          91,
+          368,
+          96,
+          464,
+          471,
+          283
+        ]
+      },
+      "train_loss_curve": [
+        [
+          5000,
+          15.9305
+        ],
+        [
+          10000,
+          21.1473
+        ],
+        [
+          15000,
+          10.4764
+        ],
+        [
+          20000,
+          21.8539
+        ],
+        [
+          25000,
+          5.5976
+        ],
+        [
+          30000,
+          0.4891
+        ],
+        [
+          35000,
+          11.5058
+        ],
+        [
+          40000,
+          1.5143
+        ],
+        [
+          45000,
+          18.2952
+        ],
+        [
+          50000,
+          0.4551
+        ],
+        [
+          55000,
+          26.6889
+        ],
+        [
+          60000,
+          16.4291
+        ],
+        [
+          65000,
+          22.9187
+        ],
+        [
+          70000,
+          25.8918
+        ],
+        [
+          75000,
+          0.3672
+        ],
+        [
+          80000,
+          5.6777
+        ],
+        [
+          85000,
+          17.7573
+        ],
+        [
+          90000,
+          0.5039
+        ],
+        [
+          95000,
+          0.34
+        ],
+        [
+          100000,
+          0.5361
+        ],
+        [
+          105000,
+          23.8695
+        ],
+        [
+          110000,
+          3.3041
+        ],
+        [
+          115000,
+          3.6216
+        ],
+        [
+          120000,
+          18.9313
+        ],
+        [
+          125000,
+          15.7104
+        ],
+        [
+          130000,
+          42.7067
+        ],
+        [
+          135000,
+          18.8446
+        ],
+        [
+          140000,
+          10.1634
+        ],
+        [
+          145000,
+          37.3734
+        ],
+        [
+          150000,
+          0.3485
+        ],
+        [
+          155000,
+          26.2632
+        ],
+        [
+          160000,
+          35.8396
+        ],
+        [
+          165000,
+          0.4844
+        ],
+        [
+          170000,
+          32.2728
+        ],
+        [
+          175000,
+          37.4087
+        ],
+        [
+          180000,
+          30.5129
+        ],
+        [
+          185000,
+          9.8841
+        ],
+        [
+          190000,
+          13.687
+        ],
+        [
+          195000,
+          0.3245
+        ]
+      ],
+      "intact_behavior": {
+        "reward_rate": 0.0007,
+        "approach_in": 0.5,
+        "approach_off": 0.4615,
+        "eats": 155.0,
+        "a_prev_end": 3.0
+      },
+      "SEED_GO": false,
+      "elapsed_s": 320.6
+    },
+    {
+      "seed": 43,
+      "units": "rate",
+      "encoder": "learned_ema",
+      "n_hidden": 512,
+      "n_train": 200000,
+      "consolidation": false,
+      "n_replay_updates": 0,
+      "grad_clip": 1.0,
+      "grad_skip_factor": 8.0,
+      "max_grad_norm": 83.067,
+      "n_grad_skipped": 9,
+      "train_max_online_loss": 45.374,
+      "presence": {
+        "place": {
+          "r2": 0.7417,
+          "floor_untrained": 0.7452,
+          "floor_rawv1": 0.2917,
+          "floor_shuffle": -0.068
+        },
+        "value": {
+          "r2": NaN,
+          "floor_untrained": NaN,
+          "floor_rawv1": NaN,
+          "floor_shuffle": NaN
+        },
+        "permanence": {
+          "r2": NaN,
+          "floor_untrained": NaN,
+          "floor_rawv1": NaN,
+          "floor_shuffle": NaN
+        },
+        "object": {
+          "r2": 0.1975,
+          "floor_untrained": 0.0642,
+          "floor_rawv1": 0.1594,
+          "floor_shuffle": -0.024
+        }
+      },
+      "cleared_presence_and_floors": {
+        "place": false,
+        "object": false,
+        "permanence": false,
+        "value": false
+      },
+      "behavioral_dependency": {
+        "place": {
+          "metric": "approach_in",
+          "faculty_degradation": NaN,
+          "random_degradation": -0.0952,
+          "attributable_fraction": NaN,
+          "load_bearing": false
+        },
+        "object": {
+          "metric": "pred_err",
+          "faculty_degradation": 0.0007,
+          "random_degradation": 0.0039,
+          "attributable_fraction": -4.8632,
+          "load_bearing": false
+        },
+        "permanence": {
+          "metric": "approach_off",
+          "faculty_degradation": -0.0266,
+          "random_degradation": 0.0067,
+          "attributable_fraction": 1.2529,
+          "load_bearing": false
+        },
+        "value": {
+          "metric": "reward_rate",
+          "faculty_degradation": -0.0004,
+          "random_degradation": -0.0001,
+          "attributable_fraction": 0.6667,
+          "load_bearing": false
+        }
+      },
+      "n_faculties_load_bearing": 0,
+      "core_lesion_presence": {
+        "place": 0.5397,
+        "value": 0.9109,
+        "permanence": NaN,
+        "object": 0.1763
+      },
+      "core_lesion_collapses_all": false,
+      "coverage": {
+        "curiosity_cells": 30.4,
+        "random_cells": 30.4,
+        "budget": 72.0,
+        "ratio": 1.0,
+        "pass": 0.0
+      },
+      "rate_map_summary": {
+        "n_units_scored": 512,
+        "top8_selectivity": [
+          99662.016,
+          1091.166,
+          875.031,
+          513.5,
+          354.524,
+          342.328,
+          303.375,
+          239.135
+        ],
+        "top8_units": [
+          210,
+          276,
+          369,
+          509,
+          13,
+          365,
+          373,
+          240
+        ]
+      },
+      "train_loss_curve": [
+        [
+          5000,
+          2.3808
+        ],
+        [
+          10000,
+          8.7649
+        ],
+        [
+          15000,
+          16.5279
+        ],
+        [
+          20000,
+          1.6287
+        ],
+        [
+          25000,
+          0.5406
+        ],
+        [
+          30000,
+          31.7623
+        ],
+        [
+          35000,
+          31.9252
+        ],
+        [
+          40000,
+          8.9591
+        ],
+        [
+          45000,
+          0.3751
+        ],
+        [
+          50000,
+          37.3579
+        ],
+        [
+          55000,
+          8.1038
+        ],
+        [
+          60000,
+          12.5228
+        ],
+        [
+          65000,
+          0.5435
+        ],
+        [
+          70000,
+          32.5218
+        ],
+        [
+          75000,
+          27.7866
+        ],
+        [
+          80000,
+          31.8916
+        ],
+        [
+          85000,
+          0.4284
+        ],
+        [
+          90000,
+          20.4476
+        ],
+        [
+          95000,
+          24.8814
+        ],
+        [
+          100000,
+          0.6291
+        ],
+        [
+          105000,
+          25.8274
+        ],
+        [
+          110000,
+          2.5788
+        ],
+        [
+          115000,
+          27.2837
+        ],
+        [
+          120000,
+          28.6017
+        ],
+        [
+          125000,
+          32.7006
+        ],
+        [
+          130000,
+          11.3385
+        ],
+        [
+          135000,
+          37.4149
+        ],
+        [
+          140000,
+          14.8403
+        ],
+        [
+          145000,
+          0.3448
+        ],
+        [
+          150000,
+          6.5963
+        ],
+        [
+          155000,
+          32.8059
+        ],
+        [
+          160000,
+          36.0681
+        ],
+        [
+          165000,
+          45.374
+        ],
+        [
+          170000,
+          23.2397
+        ],
+        [
+          175000,
+          19.5994
+        ],
+        [
+          180000,
+          11.91
+        ],
+        [
+          185000,
+          0.3786
+        ],
+        [
+          190000,
+          28.4588
+        ],
+        [
+          195000,
+          0.3489
+        ]
+      ],
+      "intact_behavior": {
+        "reward_rate": 0.0,
+        "approach_in": 0.3333,
+        "approach_off": 0.4472,
+        "eats": 169.0,
+        "a_prev_end": 1.0
+      },
+      "SEED_GO": false,
+      "elapsed_s": 314.4
+    },
+    {
+      "seed": 44,
+      "units": "rate",
+      "encoder": "learned_ema",
+      "n_hidden": 512,
+      "n_train": 200000,
+      "consolidation": false,
+      "n_replay_updates": 0,
+      "grad_clip": 1.0,
+      "grad_skip_factor": 8.0,
+      "max_grad_norm": 67.639,
+      "n_grad_skipped": 8,
+      "train_max_online_loss": 38.743,
+      "presence": {
+        "place": {
+          "r2": 0.721,
+          "floor_untrained": 0.7356,
+          "floor_rawv1": 0.3324,
+          "floor_shuffle": -0.0501
+        },
+        "value": {
+          "r2": 0.6726,
+          "floor_untrained": 0.6313,
+          "floor_rawv1": 0.1178,
+          "floor_shuffle": -0.0388
+        },
+        "permanence": {
+          "r2": 0.2608,
+          "floor_untrained": 0.2147,
+          "floor_rawv1": 0.0324,
+          "floor_shuffle": -0.0834
+        },
+        "object": {
+          "r2": 0.1537,
+          "floor_untrained": 0.1235,
+          "floor_rawv1": 0.2778,
+          "floor_shuffle": 0.0141
+        }
+      },
+      "cleared_presence_and_floors": {
+        "place": false,
+        "object": false,
+        "permanence": false,
+        "value": false
+      },
+      "behavioral_dependency": {
+        "place": {
+          "metric": "approach_in",
+          "faculty_degradation": NaN,
+          "random_degradation": -0.0504,
+          "attributable_fraction": NaN,
+          "load_bearing": false
+        },
+        "object": {
+          "metric": "pred_err",
+          "faculty_degradation": 0.034,
+          "random_degradation": 0.0356,
+          "attributable_fraction": -0.0454,
+          "load_bearing": false
+        },
+        "permanence": {
+          "metric": "approach_off",
+          "faculty_degradation": -0.0015,
+          "random_degradation": -0.0155,
+          "attributable_fraction": -9.3878,
+          "load_bearing": false
+        },
+        "value": {
+          "metric": "reward_rate",
+          "faculty_degradation": 0.0004,
+          "random_degradation": -0.0005,
+          "attributable_fraction": 2.3332,
+          "load_bearing": true
+        }
+      },
+      "n_faculties_load_bearing": 0,
+      "core_lesion_presence": {
+        "place": 0.8593,
+        "value": 0.7855,
+        "permanence": NaN,
+        "object": 0.607
+      },
+      "core_lesion_collapses_all": false,
+      "coverage": {
+        "curiosity_cells": 37.2,
+        "random_cells": 29.2,
+        "budget": 72.0,
+        "ratio": 1.274,
+        "pass": 0.0
+      },
+      "rate_map_summary": {
+        "n_units_scored": 512,
+        "top8_selectivity": [
+          645.041,
+          344.848,
+          326.764,
+          312.952,
+          260.25,
+          215.924,
+          210.565,
+          199.729
+        ],
+        "top8_units": [
+          117,
+          487,
+          337,
+          271,
+          81,
+          270,
+          76,
+          291
+        ]
+      },
+      "train_loss_curve": [
+        [
+          5000,
+          15.8235
+        ],
+        [
+          10000,
+          17.9094
+        ],
+        [
+          15000,
+          1.5945
+        ],
+        [
+          20000,
+          32.5956
+        ],
+        [
+          25000,
+          27.8183
+        ],
+        [
+          30000,
+          0.965
+        ],
+        [
+          35000,
+          23.0996
+        ],
+        [
+          40000,
+          28.8458
+        ],
+        [
+          45000,
+          0.541
+        ],
+        [
+          50000,
+          18.2896
+        ],
+        [
+          55000,
+          32.5664
+        ],
+        [
+          60000,
+          3.7511
+        ],
+        [
+          65000,
+          38.7427
+        ],
+        [
+          70000,
+          0.5671
+        ],
+        [
+          75000,
+          0.3782
+        ],
+        [
+          80000,
+          0.3082
+        ],
+        [
+          85000,
+          21.1505
+        ],
+        [
+          90000,
+          19.8557
+        ],
+        [
+          95000,
+          0.5942
+        ],
+        [
+          100000,
+          5.6067
+        ],
+        [
+          105000,
+          0.7603
+        ],
+        [
+          110000,
+          0.5098
+        ],
+        [
+          115000,
+          9.9642
+        ],
+        [
+          120000,
+          29.8476
+        ],
+        [
+          125000,
+          7.5241
+        ],
+        [
+          130000,
+          0.3541
+        ],
+        [
+          135000,
+          24.8649
+        ],
+        [
+          140000,
+          0.36
+        ],
+        [
+          145000,
+          1.1864
+        ],
+        [
+          150000,
+          0.3427
+        ],
+        [
+          155000,
+          10.9437
+        ],
+        [
+          160000,
+          18.0087
+        ],
+        [
+          165000,
+          7.4474
+        ],
+        [
+          170000,
+          5.3307
+        ],
+        [
+          175000,
+          37.3734
+        ],
+        [
+          180000,
+          12.9813
+        ],
+        [
+          185000,
+          5.5275
+        ],
+        [
+          190000,
+          23.312
+        ],
+        [
+          195000,
+          21.9004
+        ]
+      ],
+      "intact_behavior": {
+        "reward_rate": 0.0004,
+        "approach_in": 0.3714,
+        "approach_off": 0.4578,
+        "eats": 145.0,
+        "a_prev_end": 0.0
+      },
+      "SEED_GO": false,
+      "elapsed_s": 317.5
+    },
+    {
+      "seed": 100,
+      "units": "rate",
+      "encoder": "learned_ema",
+      "n_hidden": 512,
+      "n_train": 200000,
+      "consolidation": false,
+      "n_replay_updates": 0,
+      "grad_clip": 1.0,
+      "grad_skip_factor": 8.0,
+      "max_grad_norm": 95.504,
+      "n_grad_skipped": 0,
+      "train_max_online_loss": 40.664,
+      "presence": {
+        "place": {
+          "r2": 0.691,
+          "floor_untrained": 0.735,
+          "floor_rawv1": 0.3456,
+          "floor_shuffle": -0.0627
+        },
+        "value": {
+          "r2": 0.2701,
+          "floor_untrained": 0.2471,
+          "floor_rawv1": 0.1816,
+          "floor_shuffle": -0.0373
+        },
+        "permanence": {
+          "r2": 0.2637,
+          "floor_untrained": 0.2464,
+          "floor_rawv1": 0.029,
+          "floor_shuffle": -0.0671
+        },
+        "object": {
+          "r2": 0.0837,
+          "floor_untrained": 0.0802,
+          "floor_rawv1": -0.2872,
+          "floor_shuffle": 0.0099
+        }
+      },
+      "cleared_presence_and_floors": {
+        "place": false,
+        "object": false,
+        "permanence": false,
+        "value": false
+      },
+      "behavioral_dependency": {
+        "place": {
+          "metric": "approach_in",
+          "faculty_degradation": NaN,
+          "random_degradation": -0.1059,
+          "attributable_fraction": NaN,
+          "load_bearing": false
+        },
+        "object": {
+          "metric": "pred_err",
+          "faculty_degradation": 0.0025,
+          "random_degradation": -0.0152,
+          "attributable_fraction": 7.0667,
+          "load_bearing": true
+        },
+        "permanence": {
+          "metric": "approach_off",
+          "faculty_degradation": -0.0106,
+          "random_degradation": -0.002,
+          "attributable_fraction": 0.8132,
+          "load_bearing": false
+        },
+        "value": {
+          "metric": "reward_rate",
+          "faculty_degradation": 0.0,
+          "random_degradation": -0.0004,
+          "attributable_fraction": null,
+          "load_bearing": false
+        }
+      },
+      "n_faculties_load_bearing": 0,
+      "core_lesion_presence": {
+        "place": 0.7543,
+        "value": 0.6749,
+        "permanence": NaN,
+        "object": 0.0444
+      },
+      "core_lesion_collapses_all": false,
+      "coverage": {
+        "curiosity_cells": 31.0,
+        "random_cells": 26.0,
+        "budget": 72.0,
+        "ratio": 1.1923,
+        "pass": 0.0
+      },
+      "rate_map_summary": {
+        "n_units_scored": 512,
+        "top8_selectivity": [
+          587.057,
+          585.777,
+          334.005,
+          249.675,
+          248.82,
+          209.753,
+          209.743,
+          202.347
+        ],
+        "top8_units": [
+          499,
+          133,
+          28,
+          230,
+          161,
+          320,
+          264,
+          304
+        ]
+      },
+      "train_loss_curve": [
+        [
+          5000,
+          21.3569
+        ],
+        [
+          10000,
+          14.1702
+        ],
+        [
+          15000,
+          27.3386
+        ],
+        [
+          20000,
+          0.6441
+        ],
+        [
+          25000,
+          33.2022
+        ],
+        [
+          30000,
+          24.1781
+        ],
+        [
+          35000,
+          28.3386
+        ],
+        [
+          40000,
+          14.7444
+        ],
+        [
+          45000,
+          33.3501
+        ],
+        [
+          50000,
+          15.9363
+        ],
+        [
+          55000,
+          0.5364
+        ],
+        [
+          60000,
+          18.1896
+        ],
+        [
+          65000,
+          26.0148
+        ],
+        [
+          70000,
+          0.9654
+        ],
+        [
+          75000,
+          0.4442
+        ],
+        [
+          80000,
+          40.0425
+        ],
+        [
+          85000,
+          22.225
+        ],
+        [
+          90000,
+          32.6942
+        ],
+        [
+          95000,
+          33.5373
+        ],
+        [
+          100000,
+          34.1053
+        ],
+        [
+          105000,
+          25.7183
+        ],
+        [
+          110000,
+          1.6121
+        ],
+        [
+          115000,
+          28.4887
+        ],
+        [
+          120000,
+          0.5021
+        ],
+        [
+          125000,
+          20.3526
+        ],
+        [
+          130000,
+          28.7485
+        ],
+        [
+          135000,
+          17.0753
+        ],
+        [
+          140000,
+          0.3377
+        ],
+        [
+          145000,
+          40.4513
+        ],
+        [
+          150000,
+          0.3852
+        ],
+        [
+          155000,
+          15.7256
+        ],
+        [
+          160000,
+          0.4154
+        ],
+        [
+          165000,
+          23.5577
+        ],
+        [
+          170000,
+          40.6637
+        ],
+        [
+          175000,
+          26.0193
+        ],
+        [
+          180000,
+          0.415
+        ],
+        [
+          185000,
+          0.4058
+        ],
+        [
+          190000,
+          32.7172
+        ],
+        [
+          195000,
+          17.3549
+        ]
+      ],
+      "intact_behavior": {
+        "reward_rate": 0.0,
+        "approach_in": 0.5,
+        "approach_off": 0.4507,
+        "eats": 137.0,
+        "a_prev_end": 1.0
+      },
+      "SEED_GO": false,
+      "elapsed_s": 306.2
+    },
+    {
+      "seed": 101,
+      "units": "rate",
+      "encoder": "learned_ema",
+      "n_hidden": 512,
+      "n_train": 200000,
+      "consolidation": false,
+      "n_replay_updates": 0,
+      "grad_clip": 1.0,
+      "grad_skip_factor": 8.0,
+      "max_grad_norm": 74.321,
+      "n_grad_skipped": 12,
+      "train_max_online_loss": 42.886,
+      "presence": {
+        "place": {
+          "r2": 0.5758,
+          "floor_untrained": 0.6502,
+          "floor_rawv1": 0.1541,
+          "floor_shuffle": -0.0622
+        },
+        "value": {
+          "r2": 0.4592,
+          "floor_untrained": 0.4113,
+          "floor_rawv1": 0.2078,
+          "floor_shuffle": -0.0911
+        },
+        "permanence": {
+          "r2": 0.3177,
+          "floor_untrained": 0.3271,
+          "floor_rawv1": 0.0558,
+          "floor_shuffle": -0.0672
+        },
+        "object": {
+          "r2": 0.1997,
+          "floor_untrained": 0.1004,
+          "floor_rawv1": -0.0341,
+          "floor_shuffle": -0.0163
+        }
+      },
+      "cleared_presence_and_floors": {
+        "place": false,
+        "object": false,
+        "permanence": false,
+        "value": false
+      },
+      "behavioral_dependency": {
+        "place": {
+          "metric": "approach_in",
+          "faculty_degradation": -0.0462,
+          "random_degradation": -0.0715,
+          "attributable_fraction": -0.5494,
+          "load_bearing": false
+        },
+        "object": {
+          "metric": "pred_err",
+          "faculty_degradation": -0.018,
+          "random_degradation": -0.0103,
+          "attributable_fraction": 0.4275,
+          "load_bearing": false
+        },
+        "permanence": {
+          "metric": "approach_off",
+          "faculty_degradation": 0.0103,
+          "random_degradation": 0.0007,
+          "attributable_fraction": 0.9286,
+          "load_bearing": true
+        },
+        "value": {
+          "metric": "reward_rate",
+          "faculty_degradation": 0.0008,
+          "random_degradation": 0.0001,
+          "attributable_fraction": 0.8333,
+          "load_bearing": true
+        }
+      },
+      "n_faculties_load_bearing": 0,
+      "core_lesion_presence": {
+        "place": 0.6687,
+        "value": 0.5429,
+        "permanence": NaN,
+        "object": 0.504
+      },
+      "core_lesion_collapses_all": false,
+      "coverage": {
+        "curiosity_cells": 35.0,
+        "random_cells": 28.4,
+        "budget": 72.0,
+        "ratio": 1.2324,
+        "pass": 0.0
+      },
+      "rate_map_summary": {
+        "n_units_scored": 512,
+        "top8_selectivity": [
+          886.403,
+          613.987,
+          551.399,
+          270.115,
+          261.109,
+          206.592,
+          204.312,
+          199.779
+        ],
+        "top8_units": [
+          217,
+          263,
+          140,
+          9,
+          199,
+          251,
+          401,
+          159
+        ]
+      },
+      "train_loss_curve": [
+        [
+          5000,
+          3.0431
+        ],
+        [
+          10000,
+          1.6568
+        ],
+        [
+          15000,
+          3.9144
+        ],
+        [
+          20000,
+          26.9744
+        ],
+        [
+          25000,
+          42.8856
+        ],
+        [
+          30000,
+          26.6084
+        ],
+        [
+          35000,
+          0.3857
+        ],
+        [
+          40000,
+          29.0369
+        ],
+        [
+          45000,
+          27.4085
+        ],
+        [
+          50000,
+          12.6246
+        ],
+        [
+          55000,
+          22.8781
+        ],
+        [
+          60000,
+          29.7442
+        ],
+        [
+          65000,
+          0.5155
+        ],
+        [
+          70000,
+          39.232
+        ],
+        [
+          75000,
+          0.3406
+        ],
+        [
+          80000,
+          36.0972
+        ],
+        [
+          85000,
+          0.3424
+        ],
+        [
+          90000,
+          35.7559
+        ],
+        [
+          95000,
+          28.3828
+        ],
+        [
+          100000,
+          31.9032
+        ],
+        [
+          105000,
+          26.7357
+        ],
+        [
+          110000,
+          0.7581
+        ],
+        [
+          115000,
+          24.6219
+        ],
+        [
+          120000,
+          27.9271
+        ],
+        [
+          125000,
+          27.5527
+        ],
+        [
+          130000,
+          12.2603
+        ],
+        [
+          135000,
+          0.4277
+        ],
+        [
+          140000,
+          31.0609
+        ],
+        [
+          145000,
+          35.5537
+        ],
+        [
+          150000,
+          19.4534
+        ],
+        [
+          155000,
+          0.4913
+        ],
+        [
+          160000,
+          21.4166
+        ],
+        [
+          165000,
+          22.7033
+        ],
+        [
+          170000,
+          0.3292
+        ],
+        [
+          175000,
+          28.3024
+        ],
+        [
+          180000,
+          8.9113
+        ],
+        [
+          185000,
+          18.1811
+        ],
+        [
+          190000,
+          0.4807
+        ],
+        [
+          195000,
+          18.6794
+        ]
+      ],
+      "intact_behavior": {
+        "reward_rate": 0.0008,
+        "approach_in": 0.4,
+        "approach_off": 0.4645,
+        "eats": 150.0,
+        "a_prev_end": 1.0
+      },
+      "SEED_GO": false,
+      "elapsed_s": 296.1
+    },
+    {
+      "seed": 102,
+      "units": "rate",
+      "encoder": "learned_ema",
+      "n_hidden": 512,
+      "n_train": 200000,
+      "consolidation": false,
+      "n_replay_updates": 0,
+      "grad_clip": 1.0,
+      "grad_skip_factor": 8.0,
+      "max_grad_norm": 77.938,
+      "n_grad_skipped": 28,
+      "train_max_online_loss": 43.404,
+      "presence": {
+        "place": {
+          "r2": 0.679,
+          "floor_untrained": 0.6952,
+          "floor_rawv1": 0.2305,
+          "floor_shuffle": -0.0648
+        },
+        "value": {
+          "r2": 0.4979,
+          "floor_untrained": 0.3271,
+          "floor_rawv1": 0.1799,
+          "floor_shuffle": -0.0674
+        },
+        "permanence": {
+          "r2": 0.2945,
+          "floor_untrained": 0.2685,
+          "floor_rawv1": 0.0393,
+          "floor_shuffle": -0.0548
+        },
+        "object": {
+          "r2": 0.1693,
+          "floor_untrained": 0.0567,
+          "floor_rawv1": 0.042,
+          "floor_shuffle": 0.0022
+        }
+      },
+      "cleared_presence_and_floors": {
+        "place": false,
+        "object": false,
+        "permanence": false,
+        "value": true
+      },
+      "behavioral_dependency": {
+        "place": {
+          "metric": "approach_in",
+          "faculty_degradation": -0.0563,
+          "random_degradation": -0.0958,
+          "attributable_fraction": -0.7029,
+          "load_bearing": false
+        },
+        "object": {
+          "metric": "pred_err",
+          "faculty_degradation": 0.0187,
+          "random_degradation": 0.0218,
+          "attributable_fraction": -0.1626,
+          "load_bearing": false
+        },
+        "permanence": {
+          "metric": "approach_off",
+          "faculty_degradation": 0.0007,
+          "random_degradation": 0.0017,
+          "attributable_fraction": -1.4399,
+          "load_bearing": false
+        },
+        "value": {
+          "metric": "reward_rate",
+          "faculty_degradation": -0.0004,
+          "random_degradation": -0.001,
+          "attributable_fraction": -1.6267,
+          "load_bearing": false
+        }
+      },
+      "n_faculties_load_bearing": 0,
+      "core_lesion_presence": {
+        "place": 0.7024,
+        "value": NaN,
+        "permanence": NaN,
+        "object": 0.1665
+      },
+      "core_lesion_collapses_all": false,
+      "coverage": {
+        "curiosity_cells": 31.0,
+        "random_cells": 29.0,
+        "budget": 72.0,
+        "ratio": 1.069,
+        "pass": 0.0
+      },
+      "rate_map_summary": {
+        "n_units_scored": 512,
+        "top8_selectivity": [
+          825.582,
+          775.036,
+          372.295,
+          297.123,
+          288.058,
+          273.701,
+          224.27,
+          210.066
+        ],
+        "top8_units": [
+          136,
+          241,
+          235,
+          131,
+          265,
+          6,
+          76,
+          171
+        ]
+      },
+      "train_loss_curve": [
+        [
+          5000,
+          7.3259
+        ],
+        [
+          10000,
+          15.6518
+        ],
+        [
+          15000,
+          19.9212
+        ],
+        [
+          20000,
+          26.2525
+        ],
+        [
+          25000,
+          22.4465
+        ],
+        [
+          30000,
+          4.5171
+        ],
+        [
+          35000,
+          13.9209
+        ],
+        [
+          40000,
+          3.7567
+        ],
+        [
+          45000,
+          8.5179
+        ],
+        [
+          50000,
+          4.1644
+        ],
+        [
+          55000,
+          0.3215
+        ],
+        [
+          60000,
+          21.6572
+        ],
+        [
+          65000,
+          1.241
+        ],
+        [
+          70000,
+          25.2682
+        ],
+        [
+          75000,
+          0.3978
+        ],
+        [
+          80000,
+          28.7616
+        ],
+        [
+          85000,
+          22.7199
+        ],
+        [
+          90000,
+          2.6018
+        ],
+        [
+          95000,
+          13.3207
+        ],
+        [
+          100000,
+          26.3721
+        ],
+        [
+          105000,
+          26.4126
+        ],
+        [
+          110000,
+          0.3483
+        ],
+        [
+          115000,
+          0.3297
+        ],
+        [
+          120000,
+          22.9269
+        ],
+        [
+          125000,
+          0.51
+        ],
+        [
+          130000,
+          30.0456
+        ],
+        [
+          135000,
+          32.3098
+        ],
+        [
+          140000,
+          11.4946
+        ],
+        [
+          145000,
+          17.6608
+        ],
+        [
+          150000,
+          0.3514
+        ],
+        [
+          155000,
+          4.3036
+        ],
+        [
+          160000,
+          20.1623
+        ],
+        [
+          165000,
+          0.733
+        ],
+        [
+          170000,
+          2.5614
+        ],
+        [
+          175000,
+          22.1599
+        ],
+        [
+          180000,
+          9.2636
+        ],
+        [
+          185000,
+          20.3991
+        ],
+        [
+          190000,
+          43.4044
+        ],
+        [
+          195000,
+          3.2728
+        ]
+      ],
+      "intact_behavior": {
+        "reward_rate": 0.0004,
+        "approach_in": 0.3544,
+        "approach_off": 0.4626,
+        "eats": 149.0,
+        "a_prev_end": 2.0
+      },
+      "SEED_GO": false,
+      "elapsed_s": 290.8
+    }
+  ],
+  "aggregate": {
+    "n_seeds": 6,
+    "n_seed_go": 0,
+    "n_coverage_pass": 0,
+    "faculty_load_bearing_counts": {
+      "place": 0,
+      "object": 1,
+      "permanence": 1,
+      "value": 2
+    },
+    "seeds_required": 5,
+    "EMERGENCE_GO": false
+  }
+}

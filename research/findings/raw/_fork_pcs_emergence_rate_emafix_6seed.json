@@ -1,0 +1,1737 @@
+{
+  "battery": "fork_pcs_emergence",
+  "units": "rate",
+  "encoder": "learned_ema",
+  "consolidation": false,
+  "grad_clip": 1.0,
+  "grad_skip_factor": 8.0,
+  "ema_momentum": 0.9999,
+  "ema_warmup": 0,
+  "pre_registered_gate": {
+    "presence_bars": {
+      "place": 0.6,
+      "object": 0.4,
+      "permanence": 0.4,
+      "value": 0.4
+    },
+    "floor_margin": 0.05,
+    "behav_lesion_ratio": 1.5,
+    "min_faculties": 3,
+    "core_lesion_collapse_frac": 0.5,
+    "curiosity_ratio": 1.5,
+    "seeds_required_frac": 0.8333333333333334
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "units": "rate",
+      "encoder": "learned_ema",
+      "n_hidden": 512,
+      "n_train": 200000,
+      "consolidation": false,
+      "n_replay_updates": 0,
+      "grad_clip": 1.0,
+      "grad_skip_factor": 8.0,
+      "ema_momentum": 0.9999,
+      "ema_warmup": 0,
+      "max_grad_norm": 80.337,
+      "n_grad_skipped": 0,
+      "train_max_online_loss": 32.498,
+      "presence": {
+        "place": {
+          "r2": 0.588,
+          "floor_untrained": 0.6541,
+          "floor_rawv1": 0.258,
+          "floor_shuffle": -0.0684
+        },
+        "value": {
+          "r2": 0.4409,
+          "floor_untrained": 0.3735,
+          "floor_rawv1": 0.2407,
+          "floor_shuffle": -0.0775
+        },
+        "permanence": {
+          "r2": 0.2698,
+          "floor_untrained": 0.2308,
+          "floor_rawv1": 0.0355,
+          "floor_shuffle": -0.08
+        },
+        "object": {
+          "r2": 0.2189,
+          "floor_untrained": 0.0901,
+          "floor_rawv1": 0.052,
+          "floor_shuffle": 0.0023
+        }
+      },
+      "cleared_presence_and_floors": {
+        "place": false,
+        "object": false,
+        "permanence": false,
+        "value": true
+      },
+      "behavioral_dependency": {
+        "place": {
+          "metric": "approach_in",
+          "faculty_degradation": -0.0826,
+          "random_degradation": 0.2694,
+          "attributable_fraction": 4.263,
+          "load_bearing": false
+        },
+        "object": {
+          "metric": "pred_err",
+          "faculty_degradation": 0.0076,
+          "random_degradation": 0.0001,
+          "attributable_fraction": 0.9914,
+          "load_bearing": true
+        },
+        "permanence": {
+          "metric": "approach_off",
+          "faculty_degradation": 0.0047,
+          "random_degradation": 0.0131,
+          "attributable_fraction": -1.8074,
+          "load_bearing": false
+        },
+        "value": {
+          "metric": "reward_rate",
+          "faculty_degradation": -0.0015,
+          "random_degradation": 0.0004,
+          "attributable_fraction": 1.25,
+          "load_bearing": false
+        }
+      },
+      "n_faculties_load_bearing": 0,
+      "core_lesion_presence": {
+        "place": 0.5545,
+        "value": 0.5468,
+        "permanence": -0.913,
+        "object": 0.2403
+      },
+      "core_lesion_collapses_all": false,
+      "coverage": {
+        "curiosity_cells": 30.6,
+        "random_cells": 29.0,
+        "budget": 72.0,
+        "ratio": 1.0552,
+        "pass": 0.0
+      },
+      "rate_map_summary": {
+        "n_units_scored": 512,
+        "top8_selectivity": [
+          3487.63,
+          875.791,
+          514.262,
+          425.085,
+          268.904,
+          231.078,
+          222.847,
+          212.868
+        ],
+        "top8_units": [
+          472,
+          221,
+          430,
+          159,
+          502,
+          208,
+          249,
+          422
+        ]
+      },
+      "train_loss_curve": [
+        [
+          5000,
+          5.8469
+        ],
+        [
+          10000,
+          0.9734
+        ],
+        [
+          15000,
+          1.1572
+        ],
+        [
+          20000,
+          0.5058
+        ],
+        [
+          25000,
+          4.6092
+        ],
+        [
+          30000,
+          0.3152
+        ],
+        [
+          35000,
+          7.7236
+        ],
+        [
+          40000,
+          0.4426
+        ],
+        [
+          45000,
+          0.3281
+        ],
+        [
+          50000,
+          5.0163
+        ],
+        [
+          55000,
+          7.6139
+        ],
+        [
+          60000,
+          6.6127
+        ],
+        [
+          65000,
+          0.315
+        ],
+        [
+          70000,
+          3.0095
+        ],
+        [
+          75000,
+          6.5868
+        ],
+        [
+          80000,
+          16.979
+        ],
+        [
+          85000,
+          9.9334
+        ],
+        [
+          90000,
+          4.0524
+        ],
+        [
+          95000,
+          0.4727
+        ],
+        [
+          100000,
+          0.5561
+        ],
+        [
+          105000,
+          12.8906
+        ],
+        [
+          110000,
+          5.5491
+        ],
+        [
+          115000,
+          0.331
+        ],
+        [
+          120000,
+          10.2207
+        ],
+        [
+          125000,
+          4.1677
+        ],
+        [
+          130000,
+          14.5733
+        ],
+        [
+          135000,
+          17.0464
+        ],
+        [
+          140000,
+          21.728
+        ],
+        [
+          145000,
+          10.6958
+        ],
+        [
+          150000,
+          23.9606
+        ],
+        [
+          155000,
+          8.6695
+        ],
+        [
+          160000,
+          16.1581
+        ],
+        [
+          165000,
+          32.4978
+        ],
+        [
+          170000,
+          20.9409
+        ],
+        [
+          175000,
+          24.2315
+        ],
+        [
+          180000,
+          30.8072
+        ],
+        [
+          185000,
+          0.3274
+        ],
+        [
+          190000,
+          0.3084
+        ],
+        [
+          195000,
+          0.3178
+        ]
+      ],
+      "intact_behavior": {
+        "reward_rate": 0.0008,
+        "approach_in": 0.3936,
+        "approach_off": 0.4762,
+        "eats": 207.0,
+        "a_prev_end": 3.0
+      },
+      "SEED_GO": false,
+      "elapsed_s": 295.1
+    },
+    {
+      "seed": 43,
+      "units": "rate",
+      "encoder": "learned_ema",
+      "n_hidden": 512,
+      "n_train": 200000,
+      "consolidation": false,
+      "n_replay_updates": 0,
+      "grad_clip": 1.0,
+      "grad_skip_factor": 8.0,
+      "ema_momentum": 0.9999,
+      "ema_warmup": 0,
+      "max_grad_norm": 83.203,
+      "n_grad_skipped": 0,
+      "train_max_online_loss": 27.145,
+      "presence": {
+        "place": {
+          "r2": 0.6083,
+          "floor_untrained": 0.6722,
+          "floor_rawv1": 0.205,
+          "floor_shuffle": -0.075
+        },
+        "value": {
+          "r2": 0.3893,
+          "floor_untrained": 0.3155,
+          "floor_rawv1": 0.0439,
+          "floor_shuffle": -0.0553
+        },
+        "permanence": {
+          "r2": 0.3195,
+          "floor_untrained": 0.2765,
+          "floor_rawv1": 0.0374,
+          "floor_shuffle": -0.0673
+        },
+        "object": {
+          "r2": 0.2926,
+          "floor_untrained": 0.0754,
+          "floor_rawv1": 0.3136,
+          "floor_shuffle": -0.0117
+        }
+      },
+      "cleared_presence_and_floors": {
+        "place": false,
+        "object": false,
+        "permanence": false,
+        "value": false
+      },
+      "behavioral_dependency": {
+        "place": {
+          "metric": "approach_in",
+          "faculty_degradation": 0.4205,
+          "random_degradation": 0.067,
+          "attributable_fraction": 0.8408,
+          "load_bearing": true
+        },
+        "object": {
+          "metric": "pred_err",
+          "faculty_degradation": 0.0069,
+          "random_degradation": 0.0025,
+          "attributable_fraction": 0.6365,
+          "load_bearing": true
+        },
+        "permanence": {
+          "metric": "approach_off",
+          "faculty_degradation": -0.0108,
+          "random_degradation": -0.0133,
+          "attributable_fraction": -0.2285,
+          "load_bearing": false
+        },
+        "value": {
+          "metric": "reward_rate",
+          "faculty_degradation": -0.0008,
+          "random_degradation": -0.0008,
+          "attributable_fraction": -0.1175,
+          "load_bearing": false
+        }
+      },
+      "n_faculties_load_bearing": 0,
+      "core_lesion_presence": {
+        "place": 0.5232,
+        "value": 0.502,
+        "permanence": NaN,
+        "object": 0.2423
+      },
+      "core_lesion_collapses_all": false,
+      "coverage": {
+        "curiosity_cells": 28.6,
+        "random_cells": 30.4,
+        "budget": 72.0,
+        "ratio": 0.9408,
+        "pass": 0.0
+      },
+      "rate_map_summary": {
+        "n_units_scored": 512,
+        "top8_selectivity": [
+          3050.197,
+          2316.0,
+          2235.227,
+          2026.646,
+          1844.984,
+          988.021,
+          842.76,
+          807.218
+        ],
+        "top8_units": [
+          127,
+          372,
+          199,
+          37,
+          212,
+          390,
+          140,
+          267
+        ]
+      },
+      "train_loss_curve": [
+        [
+          5000,
+          2.2799
+        ],
+        [
+          10000,
+          1.3789
+        ],
+        [
+          15000,
+          2.0465
+        ],
+        [
+          20000,
+          0.5425
+        ],
+        [
+          25000,
+          1.7282
+        ],
+        [
+          30000,
+          0.4103
+        ],
+        [
+          35000,
+          7.2603
+        ],
+        [
+          40000,
+          5.6839
+        ],
+        [
+          45000,
+          0.3209
+        ],
+        [
+          50000,
+          2.3468
+        ],
+        [
+          55000,
+          0.3697
+        ],
+        [
+          60000,
+          11.6467
+        ],
+        [
+          65000,
+          7.4598
+        ],
+        [
+          70000,
+          3.3755
+        ],
+        [
+          75000,
+          14.9051
+        ],
+        [
+          80000,
+          0.3171
+        ],
+        [
+          85000,
+          11.339
+        ],
+        [
+          90000,
+          6.8558
+        ],
+        [
+          95000,
+          0.8129
+        ],
+        [
+          100000,
+          0.3636
+        ],
+        [
+          105000,
+          7.9015
+        ],
+        [
+          110000,
+          10.2939
+        ],
+        [
+          115000,
+          22.7841
+        ],
+        [
+          120000,
+          9.5805
+        ],
+        [
+          125000,
+          2.6328
+        ],
+        [
+          130000,
+          11.7449
+        ],
+        [
+          135000,
+          13.9193
+        ],
+        [
+          140000,
+          2.8401
+        ],
+        [
+          145000,
+          27.1453
+        ],
+        [
+          150000,
+          0.375
+        ],
+        [
+          155000,
+          17.2895
+        ],
+        [
+          160000,
+          26.9962
+        ],
+        [
+          165000,
+          0.368
+        ],
+        [
+          170000,
+          0.407
+        ],
+        [
+          175000,
+          21.9926
+        ],
+        [
+          180000,
+          4.0436
+        ],
+        [
+          185000,
+          0.4159
+        ],
+        [
+          190000,
+          15.7722
+        ],
+        [
+          195000,
+          26.7085
+        ]
+      ],
+      "intact_behavior": {
+        "reward_rate": 0.0004,
+        "approach_in": 0.4205,
+        "approach_off": 0.4599,
+        "eats": 175.0,
+        "a_prev_end": 0.0
+      },
+      "SEED_GO": false,
+      "elapsed_s": 324.9
+    },
+    {
+      "seed": 44,
+      "units": "rate",
+      "encoder": "learned_ema",
+      "n_hidden": 512,
+      "n_train": 200000,
+      "consolidation": false,
+      "n_replay_updates": 0,
+      "grad_clip": 1.0,
+      "grad_skip_factor": 8.0,
+      "ema_momentum": 0.9999,
+      "ema_warmup": 0,
+      "max_grad_norm": 67.497,
+      "n_grad_skipped": 0,
+      "train_max_online_loss": 33.637,
+      "presence": {
+        "place": {
+          "r2": 0.626,
+          "floor_untrained": 0.6628,
+          "floor_rawv1": 0.204,
+          "floor_shuffle": -0.0553
+        },
+        "value": {
+          "r2": 0.3918,
+          "floor_untrained": 0.3105,
+          "floor_rawv1": 0.1858,
+          "floor_shuffle": -0.093
+        },
+        "permanence": {
+          "r2": 0.2307,
+          "floor_untrained": 0.191,
+          "floor_rawv1": 0.0011,
+          "floor_shuffle": -0.0509
+        },
+        "object": {
+          "r2": 0.1096,
+          "floor_untrained": 0.0808,
+          "floor_rawv1": 0.3275,
+          "floor_shuffle": 0.004
+        }
+      },
+      "cleared_presence_and_floors": {
+        "place": false,
+        "object": false,
+        "permanence": false,
+        "value": false
+      },
+      "behavioral_dependency": {
+        "place": {
+          "metric": "approach_in",
+          "faculty_degradation": -0.0699,
+          "random_degradation": -0.0912,
+          "attributable_fraction": -0.3042,
+          "load_bearing": false
+        },
+        "object": {
+          "metric": "pred_err",
+          "faculty_degradation": 0.0675,
+          "random_degradation": 0.0035,
+          "attributable_fraction": 0.9487,
+          "load_bearing": true
+        },
+        "permanence": {
+          "metric": "approach_off",
+          "faculty_degradation": -0.0104,
+          "random_degradation": -0.0165,
+          "attributable_fraction": -0.5845,
+          "load_bearing": false
+        },
+        "value": {
+          "metric": "reward_rate",
+          "faculty_degradation": -0.0033,
+          "random_degradation": -0.0009,
+          "attributable_fraction": 0.7341,
+          "load_bearing": false
+        }
+      },
+      "n_faculties_load_bearing": 0,
+      "core_lesion_presence": {
+        "place": 0.7989,
+        "value": 0.5413,
+        "permanence": NaN,
+        "object": 0.3093
+      },
+      "core_lesion_collapses_all": false,
+      "coverage": {
+        "curiosity_cells": 34.4,
+        "random_cells": 29.2,
+        "budget": 72.0,
+        "ratio": 1.1781,
+        "pass": 0.0
+      },
+      "rate_map_summary": {
+        "n_units_scored": 512,
+        "top8_selectivity": [
+          2433.835,
+          2390.924,
+          1886.297,
+          1429.237,
+          1160.315,
+          888.152,
+          659.189,
+          572.618
+        ],
+        "top8_units": [
+          307,
+          282,
+          463,
+          182,
+          201,
+          341,
+          298,
+          443
+        ]
+      },
+      "train_loss_curve": [
+        [
+          5000,
+          5.1354
+        ],
+        [
+          10000,
+          1.7934
+        ],
+        [
+          15000,
+          0.9634
+        ],
+        [
+          20000,
+          2.3914
+        ],
+        [
+          25000,
+          6.5458
+        ],
+        [
+          30000,
+          0.8864
+        ],
+        [
+          35000,
+          2.5121
+        ],
+        [
+          40000,
+          2.8269
+        ],
+        [
+          45000,
+          8.3861
+        ],
+        [
+          50000,
+          5.5935
+        ],
+        [
+          55000,
+          0.5048
+        ],
+        [
+          60000,
+          5.739
+        ],
+        [
+          65000,
+          5.9603
+        ],
+        [
+          70000,
+          0.3411
+        ],
+        [
+          75000,
+          0.3091
+        ],
+        [
+          80000,
+          0.6221
+        ],
+        [
+          85000,
+          4.3658
+        ],
+        [
+          90000,
+          9.7701
+        ],
+        [
+          95000,
+          0.3229
+        ],
+        [
+          100000,
+          12.298
+        ],
+        [
+          105000,
+          9.223
+        ],
+        [
+          110000,
+          20.9361
+        ],
+        [
+          115000,
+          6.729
+        ],
+        [
+          120000,
+          0.5924
+        ],
+        [
+          125000,
+          21.1138
+        ],
+        [
+          130000,
+          0.3276
+        ],
+        [
+          135000,
+          6.6638
+        ],
+        [
+          140000,
+          11.8798
+        ],
+        [
+          145000,
+          7.5043
+        ],
+        [
+          150000,
+          10.5762
+        ],
+        [
+          155000,
+          20.3715
+        ],
+        [
+          160000,
+          27.2621
+        ],
+        [
+          165000,
+          0.3305
+        ],
+        [
+          170000,
+          0.3322
+        ],
+        [
+          175000,
+          21.5878
+        ],
+        [
+          180000,
+          33.6371
+        ],
+        [
+          185000,
+          16.2168
+        ],
+        [
+          190000,
+          5.1261
+        ],
+        [
+          195000,
+          4.8534
+        ]
+      ],
+      "intact_behavior": {
+        "reward_rate": 0.0,
+        "approach_in": 0.3784,
+        "approach_off": 0.4464,
+        "eats": 225.0,
+        "a_prev_end": 0.0
+      },
+      "SEED_GO": false,
+      "elapsed_s": 322.4
+    },
+    {
+      "seed": 100,
+      "units": "rate",
+      "encoder": "learned_ema",
+      "n_hidden": 512,
+      "n_train": 200000,
+      "consolidation": false,
+      "n_replay_updates": 0,
+      "grad_clip": 1.0,
+      "grad_skip_factor": 8.0,
+      "ema_momentum": 0.9999,
+      "ema_warmup": 0,
+      "max_grad_norm": 75.604,
+      "n_grad_skipped": 0,
+      "train_max_online_loss": 26.07,
+      "presence": {
+        "place": {
+          "r2": 0.6229,
+          "floor_untrained": 0.7073,
+          "floor_rawv1": 0.326,
+          "floor_shuffle": -0.0688
+        },
+        "value": {
+          "r2": 0.4317,
+          "floor_untrained": 0.3162,
+          "floor_rawv1": 0.0806,
+          "floor_shuffle": -0.0971
+        },
+        "permanence": {
+          "r2": 0.3264,
+          "floor_untrained": 0.2692,
+          "floor_rawv1": 0.0225,
+          "floor_shuffle": -0.09
+        },
+        "object": {
+          "r2": 0.1254,
+          "floor_untrained": 0.0654,
+          "floor_rawv1": -0.1278,
+          "floor_shuffle": 0.0053
+        }
+      },
+      "cleared_presence_and_floors": {
+        "place": false,
+        "object": false,
+        "permanence": false,
+        "value": true
+      },
+      "behavioral_dependency": {
+        "place": {
+          "metric": "approach_in",
+          "faculty_degradation": 0.0341,
+          "random_degradation": -0.0225,
+          "attributable_fraction": 1.6607,
+          "load_bearing": true
+        },
+        "object": {
+          "metric": "pred_err",
+          "faculty_degradation": -0.0053,
+          "random_degradation": 0.0211,
+          "attributable_fraction": 4.9447,
+          "load_bearing": false
+        },
+        "permanence": {
+          "metric": "approach_off",
+          "faculty_degradation": 0.0123,
+          "random_degradation": 0.0081,
+          "attributable_fraction": 0.3358,
+          "load_bearing": true
+        },
+        "value": {
+          "metric": "reward_rate",
+          "faculty_degradation": -0.0003,
+          "random_degradation": -0.0009,
+          "attributable_fraction": -1.4708,
+          "load_bearing": false
+        }
+      },
+      "n_faculties_load_bearing": 0,
+      "core_lesion_presence": {
+        "place": 0.5505,
+        "value": 0.5987,
+        "permanence": NaN,
+        "object": 0.1448
+      },
+      "core_lesion_collapses_all": false,
+      "coverage": {
+        "curiosity_cells": 29.4,
+        "random_cells": 26.0,
+        "budget": 72.0,
+        "ratio": 1.1308,
+        "pass": 0.0
+      },
+      "rate_map_summary": {
+        "n_units_scored": 512,
+        "top8_selectivity": [
+          1202.347,
+          787.721,
+          636.258,
+          508.871,
+          486.186,
+          316.232,
+          202.477,
+          185.92
+        ],
+        "top8_units": [
+          54,
+          182,
+          0,
+          143,
+          484,
+          421,
+          88,
+          69
+        ]
+      },
+      "train_loss_curve": [
+        [
+          5000,
+          3.39
+        ],
+        [
+          10000,
+          3.3259
+        ],
+        [
+          15000,
+          1.1402
+        ],
+        [
+          20000,
+          4.4811
+        ],
+        [
+          25000,
+          4.1295
+        ],
+        [
+          30000,
+          4.926
+        ],
+        [
+          35000,
+          1.7131
+        ],
+        [
+          40000,
+          0.4097
+        ],
+        [
+          45000,
+          1.8608
+        ],
+        [
+          50000,
+          1.1064
+        ],
+        [
+          55000,
+          8.9441
+        ],
+        [
+          60000,
+          9.4911
+        ],
+        [
+          65000,
+          7.2403
+        ],
+        [
+          70000,
+          0.4654
+        ],
+        [
+          75000,
+          8.9685
+        ],
+        [
+          80000,
+          15.1506
+        ],
+        [
+          85000,
+          10.5325
+        ],
+        [
+          90000,
+          0.365
+        ],
+        [
+          95000,
+          10.2544
+        ],
+        [
+          100000,
+          14.8091
+        ],
+        [
+          105000,
+          1.8753
+        ],
+        [
+          110000,
+          23.164
+        ],
+        [
+          115000,
+          10.3749
+        ],
+        [
+          120000,
+          18.9724
+        ],
+        [
+          125000,
+          18.7255
+        ],
+        [
+          130000,
+          10.1317
+        ],
+        [
+          135000,
+          19.5232
+        ],
+        [
+          140000,
+          20.6675
+        ],
+        [
+          145000,
+          7.6574
+        ],
+        [
+          150000,
+          16.8703
+        ],
+        [
+          155000,
+          19.679
+        ],
+        [
+          160000,
+          0.4014
+        ],
+        [
+          165000,
+          3.3449
+        ],
+        [
+          170000,
+          21.8853
+        ],
+        [
+          175000,
+          0.5867
+        ],
+        [
+          180000,
+          24.8698
+        ],
+        [
+          185000,
+          0.4551
+        ],
+        [
+          190000,
+          16.2382
+        ],
+        [
+          195000,
+          26.0702
+        ]
+      ],
+      "intact_behavior": {
+        "reward_rate": 0.0011,
+        "approach_in": 0.4091,
+        "approach_off": 0.4851,
+        "eats": 190.0,
+        "a_prev_end": 1.0
+      },
+      "SEED_GO": false,
+      "elapsed_s": 295.3
+    },
+    {
+      "seed": 101,
+      "units": "rate",
+      "encoder": "learned_ema",
+      "n_hidden": 512,
+      "n_train": 200000,
+      "consolidation": false,
+      "n_replay_updates": 0,
+      "grad_clip": 1.0,
+      "grad_skip_factor": 8.0,
+      "ema_momentum": 0.9999,
+      "ema_warmup": 0,
+      "max_grad_norm": 74.37,
+      "n_grad_skipped": 0,
+      "train_max_online_loss": 22.247,
+      "presence": {
+        "place": {
+          "r2": 0.5852,
+          "floor_untrained": 0.664,
+          "floor_rawv1": 0.1665,
+          "floor_shuffle": -0.0715
+        },
+        "value": {
+          "r2": 0.655,
+          "floor_untrained": 0.4859,
+          "floor_rawv1": 0.2085,
+          "floor_shuffle": -0.0806
+        },
+        "permanence": {
+          "r2": 0.3104,
+          "floor_untrained": 0.2611,
+          "floor_rawv1": 0.0267,
+          "floor_shuffle": -0.0941
+        },
+        "object": {
+          "r2": 0.1074,
+          "floor_untrained": 0.0615,
+          "floor_rawv1": -0.1196,
+          "floor_shuffle": 0.0039
+        }
+      },
+      "cleared_presence_and_floors": {
+        "place": false,
+        "object": false,
+        "permanence": false,
+        "value": true
+      },
+      "behavioral_dependency": {
+        "place": {
+          "metric": "approach_in",
+          "faculty_degradation": 0.0559,
+          "random_degradation": 0.1444,
+          "attributable_fraction": -1.5813,
+          "load_bearing": false
+        },
+        "object": {
+          "metric": "pred_err",
+          "faculty_degradation": -0.0134,
+          "random_degradation": -0.0008,
+          "attributable_fraction": 0.9418,
+          "load_bearing": false
+        },
+        "permanence": {
+          "metric": "approach_off",
+          "faculty_degradation": 0.0124,
+          "random_degradation": -0.0024,
+          "attributable_fraction": 1.1944,
+          "load_bearing": true
+        },
+        "value": {
+          "metric": "reward_rate",
+          "faculty_degradation": 0.0011,
+          "random_degradation": 0.0004,
+          "attributable_fraction": 0.6667,
+          "load_bearing": true
+        }
+      },
+      "n_faculties_load_bearing": 1,
+      "core_lesion_presence": {
+        "place": 0.6125,
+        "value": 0.714,
+        "permanence": NaN,
+        "object": 0.1648
+      },
+      "core_lesion_collapses_all": false,
+      "coverage": {
+        "curiosity_cells": 37.4,
+        "random_cells": 28.4,
+        "budget": 72.0,
+        "ratio": 1.3169,
+        "pass": 0.0
+      },
+      "rate_map_summary": {
+        "n_units_scored": 512,
+        "top8_selectivity": [
+          1744.029,
+          339.071,
+          253.176,
+          211.759,
+          163.506,
+          162.864,
+          146.957,
+          142.291
+        ],
+        "top8_units": [
+          131,
+          331,
+          119,
+          164,
+          480,
+          468,
+          175,
+          243
+        ]
+      },
+      "train_loss_curve": [
+        [
+          5000,
+          2.8889
+        ],
+        [
+          10000,
+          1.0475
+        ],
+        [
+          15000,
+          0.9869
+        ],
+        [
+          20000,
+          3.1229
+        ],
+        [
+          25000,
+          0.3569
+        ],
+        [
+          30000,
+          5.0689
+        ],
+        [
+          35000,
+          0.3201
+        ],
+        [
+          40000,
+          2.1979
+        ],
+        [
+          45000,
+          6.4875
+        ],
+        [
+          50000,
+          6.9137
+        ],
+        [
+          55000,
+          7.0164
+        ],
+        [
+          60000,
+          0.369
+        ],
+        [
+          65000,
+          0.3157
+        ],
+        [
+          70000,
+          0.3936
+        ],
+        [
+          75000,
+          6.7647
+        ],
+        [
+          80000,
+          11.4185
+        ],
+        [
+          85000,
+          1.7047
+        ],
+        [
+          90000,
+          7.3629
+        ],
+        [
+          95000,
+          10.8808
+        ],
+        [
+          100000,
+          19.2368
+        ],
+        [
+          105000,
+          13.7903
+        ],
+        [
+          110000,
+          9.3153
+        ],
+        [
+          115000,
+          20.6039
+        ],
+        [
+          120000,
+          15.801
+        ],
+        [
+          125000,
+          16.6603
+        ],
+        [
+          130000,
+          16.194
+        ],
+        [
+          135000,
+          0.4679
+        ],
+        [
+          140000,
+          20.5194
+        ],
+        [
+          145000,
+          22.2471
+        ],
+        [
+          150000,
+          19.3651
+        ],
+        [
+          155000,
+          21.9722
+        ],
+        [
+          160000,
+          0.4606
+        ],
+        [
+          165000,
+          0.4527
+        ],
+        [
+          170000,
+          0.39
+        ],
+        [
+          175000,
+          17.7049
+        ],
+        [
+          180000,
+          17.3758
+        ],
+        [
+          185000,
+          0.4504
+        ],
+        [
+          190000,
+          17.003
+        ],
+        [
+          195000,
+          14.2242
+        ]
+      ],
+      "intact_behavior": {
+        "reward_rate": 0.0011,
+        "approach_in": 0.4059,
+        "approach_off": 0.4706,
+        "eats": 196.0,
+        "a_prev_end": 1.0
+      },
+      "SEED_GO": false,
+      "elapsed_s": 290.2
+    },
+    {
+      "seed": 102,
+      "units": "rate",
+      "encoder": "learned_ema",
+      "n_hidden": 512,
+      "n_train": 200000,
+      "consolidation": false,
+      "n_replay_updates": 0,
+      "grad_clip": 1.0,
+      "grad_skip_factor": 8.0,
+      "ema_momentum": 0.9999,
+      "ema_warmup": 0,
+      "max_grad_norm": 77.996,
+      "n_grad_skipped": 1,
+      "train_max_online_loss": 25.933,
+      "presence": {
+        "place": {
+          "r2": 0.6579,
+          "floor_untrained": 0.7008,
+          "floor_rawv1": 0.2284,
+          "floor_shuffle": -0.0666
+        },
+        "value": {
+          "r2": 0.5842,
+          "floor_untrained": 0.4976,
+          "floor_rawv1": 0.0312,
+          "floor_shuffle": -0.1167
+        },
+        "permanence": {
+          "r2": 0.2011,
+          "floor_untrained": 0.1869,
+          "floor_rawv1": 0.0142,
+          "floor_shuffle": -0.0784
+        },
+        "object": {
+          "r2": 0.1068,
+          "floor_untrained": 0.047,
+          "floor_rawv1": 0.0147,
+          "floor_shuffle": -0.0186
+        }
+      },
+      "cleared_presence_and_floors": {
+        "place": false,
+        "object": false,
+        "permanence": false,
+        "value": true
+      },
+      "behavioral_dependency": {
+        "place": {
+          "metric": "approach_in",
+          "faculty_degradation": -0.2202,
+          "random_degradation": -0.1055,
+          "attributable_fraction": 0.5211,
+          "load_bearing": false
+        },
+        "object": {
+          "metric": "pred_err",
+          "faculty_degradation": 0.0789,
+          "random_degradation": 0.0131,
+          "attributable_fraction": 0.8341,
+          "load_bearing": true
+        },
+        "permanence": {
+          "metric": "approach_off",
+          "faculty_degradation": -0.008,
+          "random_degradation": 0.0003,
+          "attributable_fraction": 1.042,
+          "load_bearing": false
+        },
+        "value": {
+          "metric": "reward_rate",
+          "faculty_degradation": -0.0004,
+          "random_degradation": -0.0008,
+          "attributable_fraction": -1.0,
+          "load_bearing": false
+        }
+      },
+      "n_faculties_load_bearing": 0,
+      "core_lesion_presence": {
+        "place": 0.6458,
+        "value": NaN,
+        "permanence": NaN,
+        "object": 0.2031
+      },
+      "core_lesion_collapses_all": false,
+      "coverage": {
+        "curiosity_cells": 33.2,
+        "random_cells": 29.0,
+        "budget": 72.0,
+        "ratio": 1.1448,
+        "pass": 0.0
+      },
+      "rate_map_summary": {
+        "n_units_scored": 512,
+        "top8_selectivity": [
+          1257.354,
+          1153.93,
+          1111.214,
+          807.657,
+          613.757,
+          441.414,
+          209.221,
+          179.442
+        ],
+        "top8_units": [
+          41,
+          240,
+          313,
+          28,
+          106,
+          290,
+          13,
+          55
+        ]
+      },
+      "train_loss_curve": [
+        [
+          5000,
+          4.0598
+        ],
+        [
+          10000,
+          2.1474
+        ],
+        [
+          15000,
+          5.9206
+        ],
+        [
+          20000,
+          0.4428
+        ],
+        [
+          25000,
+          0.3862
+        ],
+        [
+          30000,
+          1.1041
+        ],
+        [
+          35000,
+          0.325
+        ],
+        [
+          40000,
+          4.138
+        ],
+        [
+          45000,
+          3.5548
+        ],
+        [
+          50000,
+          0.3107
+        ],
+        [
+          55000,
+          0.8289
+        ],
+        [
+          60000,
+          0.4222
+        ],
+        [
+          65000,
+          9.0302
+        ],
+        [
+          70000,
+          10.5444
+        ],
+        [
+          75000,
+          0.3596
+        ],
+        [
+          80000,
+          3.9354
+        ],
+        [
+          85000,
+          0.4116
+        ],
+        [
+          90000,
+          5.3577
+        ],
+        [
+          95000,
+          0.3897
+        ],
+        [
+          100000,
+          8.9776
+        ],
+        [
+          105000,
+          17.4749
+        ],
+        [
+          110000,
+          0.3106
+        ],
+        [
+          115000,
+          14.6648
+        ],
+        [
+          120000,
+          19.4104
+        ],
+        [
+          125000,
+          4.0856
+        ],
+        [
+          130000,
+          25.9335
+        ],
+        [
+          135000,
+          3.1868
+        ],
+        [
+          140000,
+          21.7484
+        ],
+        [
+          145000,
+          5.0898
+        ],
+        [
+          150000,
+          18.5753
+        ],
+        [
+          155000,
+          14.1763
+        ],
+        [
+          160000,
+          0.3688
+        ],
+        [
+          165000,
+          12.0696
+        ],
+        [
+          170000,
+          16.1391
+        ],
+        [
+          175000,
+          19.8945
+        ],
+        [
+          180000,
+          0.3895
+        ],
+        [
+          185000,
+          11.9975
+        ],
+        [
+          190000,
+          19.7519
+        ],
+        [
+          195000,
+          15.714
+        ]
+      ],
+      "intact_behavior": {
+        "reward_rate": 0.0,
+        "approach_in": 0.3333,
+        "approach_off": 0.4593,
+        "eats": 185.0,
+        "a_prev_end": 2.0
+      },
+      "SEED_GO": false,
+      "elapsed_s": 290.9
+    }
+  ],
+  "aggregate": {
+    "n_seeds": 6,
+    "n_seed_go": 0,
+    "n_coverage_pass": 0,
+    "faculty_load_bearing_counts": {
+      "place": 2,
+      "object": 4,
+      "permanence": 2,
+      "value": 1
+    },
+    "seeds_required": 5,
+    "EMERGENCE_GO": false
+  }
+}
