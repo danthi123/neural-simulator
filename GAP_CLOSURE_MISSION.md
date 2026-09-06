@@ -38,12 +38,20 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
   path-integrated). Honest caveat: `drift_up` under online TBPTT w/o replay (named next rung). My independent
   numpy `--smoke` (6k, short) = 0/4 cleared but the instrument is HONEST (floors/lesions/GO-logic correct;
   the anti-hollow gate correctly flagged `value` not-load-bearing) — emergence is step-dependent, needs the 200k run.
-- **6-seed RATE ARM RUNNING (the EMERGENCE verdict):** pid 1907485 via gpu_queue (200k steps, ~1.5h, VRAM
-  <1GB — light, no thrash), `--out research/findings/raw/_fork_pcs_emergence_rate_6seed.json`. Monitor
-  **bjcjvs97t** watches per-seed SEED_GO + EMERGENCE_GO + crashes. **ON COMPLETION:** harvest → if EMERGENCE
-  GO, queue the matched **spike arm** (`--units spike`, ~3-5x slower) for the FORK-THESIS verdict (does rate
-  beat spike per GPU-hour = what relaxing all-spiking bought) → verify-go → fork finding + honest relaxation
-  ledger. Spike-arm cmd: same as rate w/ `--units spike --out ..._spike_6seed.json`.
+- **⚡ KEY FINDING (seed 42, rate, 200k): TRANSIENT emergence DESTROYED BY DRIFT.** Place code was R²=0.873
+  at 15k steps → **0.598 at 200k, BELOW the untrained-core floor (0.632)** = online TBPTT on the never-ending
+  stream actively OVERWROTE the position code (catastrophic interference). cleared+LB 0/4, SEED_GO=False. The
+  agent's `drift_up` flag made decisive. **This is the wall-reframe in action: biology pairs online cortical
+  learning with hippocampal-replay CONSOLIDATION (sleep-replay; strict path's NREM/REM arcs) — the first move
+  implemented online learning WITHOUT that companion, so drift dominates.** NOT a fork failure — a discovery
+  that continual-learning (invariant #1) REQUIRES consolidation.
+- **6-seed RATE ARM (no-consolidation BASELINE) still running** (pid 1907485, Monitor **bjcjvs97t**) — kept as
+  the honest A/B control (expect ~0/4 all seeds). **SURPASS being built IN PARALLEL:** build agent ae8d9516
+  (resumed) adds a **replay-buffer + interleaved-consolidation companion** behind `--consolidation` (OFF path
+  byte-identical = the baseline), CPU-smoke only (rate arm owns the GPU). **NEXT:** when the baseline finishes
+  + consolidation builds → queue the **6-seed `--consolidation` rate** run → A/B (does consolidation RETAIN the
+  transiently-emergent faculties?). Only after that A/B is the matched **spike arm** meaningful (FORK-THESIS:
+  rate-vs-spike per GPU-hour). Spike cmd: `--units spike --out ..._spike_6seed.json`.
 - Cross-checks: egocentric CROP (NOT `render_egocentric_goal` the pre-solved goal-compass); anti-hollow lesion
   gate (not mere decodability); `cfg.seed` seeding (not `actual_seed_used`).
 
