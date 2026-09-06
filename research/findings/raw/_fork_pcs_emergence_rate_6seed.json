@@ -1,0 +1,1678 @@
+{
+  "battery": "fork_pcs_emergence",
+  "units": "rate",
+  "encoder": "learned_ema",
+  "pre_registered_gate": {
+    "presence_bars": {
+      "place": 0.6,
+      "object": 0.4,
+      "permanence": 0.4,
+      "value": 0.4
+    },
+    "floor_margin": 0.05,
+    "behav_lesion_ratio": 1.5,
+    "min_faculties": 3,
+    "core_lesion_collapse_frac": 0.5,
+    "curiosity_ratio": 1.5,
+    "seeds_required_frac": 0.8333333333333334
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "units": "rate",
+      "encoder": "learned_ema",
+      "n_hidden": 512,
+      "n_train": 200000,
+      "presence": {
+        "place": {
+          "r2": 0.5979,
+          "floor_untrained": 0.6323,
+          "floor_rawv1": 0.2173,
+          "floor_shuffle": -0.0601
+        },
+        "value": {
+          "r2": 0.59,
+          "floor_untrained": 0.4991,
+          "floor_rawv1": 0.0755,
+          "floor_shuffle": -0.0893
+        },
+        "permanence": {
+          "r2": 0.292,
+          "floor_untrained": 0.2529,
+          "floor_rawv1": 0.0684,
+          "floor_shuffle": -0.0809
+        },
+        "object": {
+          "r2": 0.2069,
+          "floor_untrained": 0.0562,
+          "floor_rawv1": 0.0446,
+          "floor_shuffle": -0.0004
+        }
+      },
+      "cleared_presence_and_floors": {
+        "place": false,
+        "object": false,
+        "permanence": false,
+        "value": true
+      },
+      "behavioral_dependency": {
+        "place": {
+          "metric": "approach_in",
+          "faculty_degradation": -0.0151,
+          "random_degradation": 0.02,
+          "attributable_fraction": 2.3268,
+          "load_bearing": false
+        },
+        "object": {
+          "metric": "pred_err",
+          "faculty_degradation": 0.0088,
+          "random_degradation": -0.0031,
+          "attributable_fraction": 1.3505,
+          "load_bearing": true
+        },
+        "permanence": {
+          "metric": "approach_off",
+          "faculty_degradation": -0.0133,
+          "random_degradation": -0.0056,
+          "attributable_fraction": 0.5805,
+          "load_bearing": false
+        },
+        "value": {
+          "metric": "reward_rate",
+          "faculty_degradation": -0.0004,
+          "random_degradation": -0.0006,
+          "attributable_fraction": -0.6667,
+          "load_bearing": false
+        }
+      },
+      "n_faculties_load_bearing": 0,
+      "core_lesion_presence": {
+        "place": 0.8987,
+        "value": 0.6991,
+        "permanence": NaN,
+        "object": 0.1551
+      },
+      "core_lesion_collapses_all": false,
+      "coverage": {
+        "curiosity_cells": 34.8,
+        "random_cells": 29.0,
+        "budget": 72.0,
+        "ratio": 1.2,
+        "pass": 0.0
+      },
+      "rate_map_summary": {
+        "n_units_scored": 512,
+        "top8_selectivity": [
+          1113.07,
+          994.563,
+          585.25,
+          479.715,
+          473.227,
+          430.853,
+          338.071,
+          321.752
+        ],
+        "top8_units": [
+          51,
+          137,
+          129,
+          370,
+          75,
+          127,
+          364,
+          504
+        ]
+      },
+      "train_loss_curve": [
+        [
+          5000,
+          15.9755
+        ],
+        [
+          10000,
+          1.3308
+        ],
+        [
+          15000,
+          7.7517
+        ],
+        [
+          20000,
+          33.934
+        ],
+        [
+          25000,
+          33.5908
+        ],
+        [
+          30000,
+          0.544
+        ],
+        [
+          35000,
+          9.7625
+        ],
+        [
+          40000,
+          0.3884
+        ],
+        [
+          45000,
+          8.4997
+        ],
+        [
+          50000,
+          0.3692
+        ],
+        [
+          55000,
+          7.4341
+        ],
+        [
+          60000,
+          0.401
+        ],
+        [
+          65000,
+          35.4506
+        ],
+        [
+          70000,
+          35.5064
+        ],
+        [
+          75000,
+          0.331
+        ],
+        [
+          80000,
+          26.3111
+        ],
+        [
+          85000,
+          0.368
+        ],
+        [
+          90000,
+          15.2802
+        ],
+        [
+          95000,
+          12.5961
+        ],
+        [
+          100000,
+          28.4878
+        ],
+        [
+          105000,
+          25.5568
+        ],
+        [
+          110000,
+          8.4186
+        ],
+        [
+          115000,
+          10.6143
+        ],
+        [
+          120000,
+          13.9235
+        ],
+        [
+          125000,
+          37.942
+        ],
+        [
+          130000,
+          14.698
+        ],
+        [
+          135000,
+          9.838
+        ],
+        [
+          140000,
+          38.286
+        ],
+        [
+          145000,
+          11.113
+        ],
+        [
+          150000,
+          6.4905
+        ],
+        [
+          155000,
+          43.347
+        ],
+        [
+          160000,
+          37.6061
+        ],
+        [
+          165000,
+          35.9132
+        ],
+        [
+          170000,
+          25.6778
+        ],
+        [
+          175000,
+          0.4126
+        ],
+        [
+          180000,
+          0.3782
+        ],
+        [
+          185000,
+          0.3292
+        ],
+        [
+          190000,
+          37.1717
+        ],
+        [
+          195000,
+          0.3611
+        ]
+      ],
+      "intact_behavior": {
+        "reward_rate": 0.0,
+        "approach_in": 0.4,
+        "approach_off": 0.4639,
+        "eats": 153.0,
+        "a_prev_end": 3.0
+      },
+      "SEED_GO": false,
+      "elapsed_s": 291.0
+    },
+    {
+      "seed": 43,
+      "units": "rate",
+      "encoder": "learned_ema",
+      "n_hidden": 512,
+      "n_train": 200000,
+      "presence": {
+        "place": {
+          "r2": 0.605,
+          "floor_untrained": 0.6503,
+          "floor_rawv1": 0.1789,
+          "floor_shuffle": -0.0573
+        },
+        "value": {
+          "r2": 0.5152,
+          "floor_untrained": 0.3894,
+          "floor_rawv1": 0.2062,
+          "floor_shuffle": -0.056
+        },
+        "permanence": {
+          "r2": 0.3783,
+          "floor_untrained": 0.3186,
+          "floor_rawv1": 0.0451,
+          "floor_shuffle": -0.0598
+        },
+        "object": {
+          "r2": 0.2921,
+          "floor_untrained": 0.1308,
+          "floor_rawv1": 0.3387,
+          "floor_shuffle": -0.0044
+        }
+      },
+      "cleared_presence_and_floors": {
+        "place": false,
+        "object": false,
+        "permanence": false,
+        "value": true
+      },
+      "behavioral_dependency": {
+        "place": {
+          "metric": "approach_in",
+          "faculty_degradation": -0.0439,
+          "random_degradation": -0.0684,
+          "attributable_fraction": -0.5593,
+          "load_bearing": false
+        },
+        "object": {
+          "metric": "pred_err",
+          "faculty_degradation": 0.0021,
+          "random_degradation": -0.0029,
+          "attributable_fraction": 2.3677,
+          "load_bearing": true
+        },
+        "permanence": {
+          "metric": "approach_off",
+          "faculty_degradation": 0.0051,
+          "random_degradation": -0.0055,
+          "attributable_fraction": 2.0642,
+          "load_bearing": true
+        },
+        "value": {
+          "metric": "reward_rate",
+          "faculty_degradation": -0.0019,
+          "random_degradation": -0.0005,
+          "attributable_fraction": 0.7337,
+          "load_bearing": false
+        }
+      },
+      "n_faculties_load_bearing": 0,
+      "core_lesion_presence": {
+        "place": 0.6132,
+        "value": 0.7042,
+        "permanence": NaN,
+        "object": 0.1736
+      },
+      "core_lesion_collapses_all": false,
+      "coverage": {
+        "curiosity_cells": 28.6,
+        "random_cells": 30.4,
+        "budget": 72.0,
+        "ratio": 0.9408,
+        "pass": 0.0
+      },
+      "rate_map_summary": {
+        "n_units_scored": 512,
+        "top8_selectivity": [
+          3067.419,
+          527.713,
+          482.454,
+          454.926,
+          418.16,
+          378.189,
+          298.447,
+          243.776
+        ],
+        "top8_units": [
+          393,
+          428,
+          398,
+          301,
+          210,
+          452,
+          57,
+          269
+        ]
+      },
+      "train_loss_curve": [
+        [
+          5000,
+          2.3812
+        ],
+        [
+          10000,
+          8.7517
+        ],
+        [
+          15000,
+          1.3154
+        ],
+        [
+          20000,
+          4.6783
+        ],
+        [
+          25000,
+          19.2148
+        ],
+        [
+          30000,
+          7.057
+        ],
+        [
+          35000,
+          1.0714
+        ],
+        [
+          40000,
+          20.7803
+        ],
+        [
+          45000,
+          0.4783
+        ],
+        [
+          50000,
+          0.4159
+        ],
+        [
+          55000,
+          0.4242
+        ],
+        [
+          60000,
+          8.1293
+        ],
+        [
+          65000,
+          26.1689
+        ],
+        [
+          70000,
+          33.8401
+        ],
+        [
+          75000,
+          11.1815
+        ],
+        [
+          80000,
+          25.7385
+        ],
+        [
+          85000,
+          0.3479
+        ],
+        [
+          90000,
+          16.2085
+        ],
+        [
+          95000,
+          31.6257
+        ],
+        [
+          100000,
+          0.4897
+        ],
+        [
+          105000,
+          8.6834
+        ],
+        [
+          110000,
+          0.6226
+        ],
+        [
+          115000,
+          22.1484
+        ],
+        [
+          120000,
+          34.3458
+        ],
+        [
+          125000,
+          26.9032
+        ],
+        [
+          130000,
+          31.6948
+        ],
+        [
+          135000,
+          20.9711
+        ],
+        [
+          140000,
+          20.7518
+        ],
+        [
+          145000,
+          25.1181
+        ],
+        [
+          150000,
+          17.9509
+        ],
+        [
+          155000,
+          29.9891
+        ],
+        [
+          160000,
+          11.6469
+        ],
+        [
+          165000,
+          12.13
+        ],
+        [
+          170000,
+          23.9447
+        ],
+        [
+          175000,
+          22.8882
+        ],
+        [
+          180000,
+          0.3656
+        ],
+        [
+          185000,
+          28.6677
+        ],
+        [
+          190000,
+          0.3277
+        ],
+        [
+          195000,
+          0.3587
+        ]
+      ],
+      "intact_behavior": {
+        "reward_rate": 0.0011,
+        "approach_in": 0.3955,
+        "approach_off": 0.4827,
+        "eats": 197.0,
+        "a_prev_end": 0.0
+      },
+      "SEED_GO": false,
+      "elapsed_s": 321.2
+    },
+    {
+      "seed": 44,
+      "units": "rate",
+      "encoder": "learned_ema",
+      "n_hidden": 512,
+      "n_train": 200000,
+      "presence": {
+        "place": {
+          "r2": 0.6561,
+          "floor_untrained": 0.6973,
+          "floor_rawv1": 0.279,
+          "floor_shuffle": -0.0578
+        },
+        "value": {
+          "r2": NaN,
+          "floor_untrained": NaN,
+          "floor_rawv1": NaN,
+          "floor_shuffle": NaN
+        },
+        "permanence": {
+          "r2": NaN,
+          "floor_untrained": NaN,
+          "floor_rawv1": NaN,
+          "floor_shuffle": NaN
+        },
+        "object": {
+          "r2": 0.4279,
+          "floor_untrained": 0.148,
+          "floor_rawv1": 0.349,
+          "floor_shuffle": 0.0193
+        }
+      },
+      "cleared_presence_and_floors": {
+        "place": false,
+        "object": true,
+        "permanence": false,
+        "value": false
+      },
+      "behavioral_dependency": {
+        "place": {
+          "metric": "approach_in",
+          "faculty_degradation": NaN,
+          "random_degradation": NaN,
+          "attributable_fraction": NaN,
+          "load_bearing": false
+        },
+        "object": {
+          "metric": "pred_err",
+          "faculty_degradation": -0.0421,
+          "random_degradation": -0.0375,
+          "attributable_fraction": 0.1081,
+          "load_bearing": false
+        },
+        "permanence": {
+          "metric": "approach_off",
+          "faculty_degradation": -0.0242,
+          "random_degradation": -0.007,
+          "attributable_fraction": 0.7109,
+          "load_bearing": false
+        },
+        "value": {
+          "metric": "reward_rate",
+          "faculty_degradation": -0.0004,
+          "random_degradation": 0.0,
+          "attributable_fraction": 1.0,
+          "load_bearing": false
+        }
+      },
+      "n_faculties_load_bearing": 0,
+      "core_lesion_presence": {
+        "place": 0.6165,
+        "value": 0.695,
+        "permanence": -1.0,
+        "object": 0.3078
+      },
+      "core_lesion_collapses_all": false,
+      "coverage": {
+        "curiosity_cells": 33.6,
+        "random_cells": 29.2,
+        "budget": 72.0,
+        "ratio": 1.1507,
+        "pass": 0.0
+      },
+      "rate_map_summary": {
+        "n_units_scored": 512,
+        "top8_selectivity": [
+          1556.306,
+          694.939,
+          321.461,
+          269.031,
+          247.358,
+          227.987,
+          220.732,
+          220.404
+        ],
+        "top8_units": [
+          487,
+          142,
+          246,
+          242,
+          466,
+          383,
+          27,
+          228
+        ]
+      },
+      "train_loss_curve": [
+        [
+          5000,
+          15.8262
+        ],
+        [
+          10000,
+          17.9085
+        ],
+        [
+          15000,
+          1.5963
+        ],
+        [
+          20000,
+          17.7142
+        ],
+        [
+          25000,
+          47.0179
+        ],
+        [
+          30000,
+          17.0699
+        ],
+        [
+          35000,
+          33.7568
+        ],
+        [
+          40000,
+          25.1441
+        ],
+        [
+          45000,
+          29.2696
+        ],
+        [
+          50000,
+          0.386
+        ],
+        [
+          55000,
+          0.3293
+        ],
+        [
+          60000,
+          10.6124
+        ],
+        [
+          65000,
+          3.056
+        ],
+        [
+          70000,
+          0.9742
+        ],
+        [
+          75000,
+          0.3155
+        ],
+        [
+          80000,
+          0.6728
+        ],
+        [
+          85000,
+          32.834
+        ],
+        [
+          90000,
+          39.5288
+        ],
+        [
+          95000,
+          0.9532
+        ],
+        [
+          100000,
+          13.3487
+        ],
+        [
+          105000,
+          0.3405
+        ],
+        [
+          110000,
+          10.9779
+        ],
+        [
+          115000,
+          1.1614
+        ],
+        [
+          120000,
+          0.9662
+        ],
+        [
+          125000,
+          10.5836
+        ],
+        [
+          130000,
+          0.383
+        ],
+        [
+          135000,
+          16.7235
+        ],
+        [
+          140000,
+          0.4882
+        ],
+        [
+          145000,
+          24.3496
+        ],
+        [
+          150000,
+          23.609
+        ],
+        [
+          155000,
+          0.5385
+        ],
+        [
+          160000,
+          31.629
+        ],
+        [
+          165000,
+          0.51
+        ],
+        [
+          170000,
+          15.6655
+        ],
+        [
+          175000,
+          33.8848
+        ],
+        [
+          180000,
+          13.6077
+        ],
+        [
+          185000,
+          0.3407
+        ],
+        [
+          190000,
+          0.3303
+        ],
+        [
+          195000,
+          16.0073
+        ]
+      ],
+      "intact_behavior": {
+        "reward_rate": 0.0,
+        "approach_in": NaN,
+        "approach_off": 0.4552,
+        "eats": 154.0,
+        "a_prev_end": 0.0
+      },
+      "SEED_GO": false,
+      "elapsed_s": 347.8
+    },
+    {
+      "seed": 100,
+      "units": "rate",
+      "encoder": "learned_ema",
+      "n_hidden": 512,
+      "n_train": 200000,
+      "presence": {
+        "place": {
+          "r2": 0.6268,
+          "floor_untrained": 0.6567,
+          "floor_rawv1": 0.1889,
+          "floor_shuffle": -0.0623
+        },
+        "value": {
+          "r2": 0.5635,
+          "floor_untrained": 0.5179,
+          "floor_rawv1": 0.1125,
+          "floor_shuffle": -0.0441
+        },
+        "permanence": {
+          "r2": 0.3207,
+          "floor_untrained": 0.285,
+          "floor_rawv1": 0.0633,
+          "floor_shuffle": -0.0533
+        },
+        "object": {
+          "r2": 0.071,
+          "floor_untrained": 0.0644,
+          "floor_rawv1": -0.1474,
+          "floor_shuffle": -0.0038
+        }
+      },
+      "cleared_presence_and_floors": {
+        "place": false,
+        "object": false,
+        "permanence": false,
+        "value": false
+      },
+      "behavioral_dependency": {
+        "place": {
+          "metric": "approach_in",
+          "faculty_degradation": 0.107,
+          "random_degradation": 0.0252,
+          "attributable_fraction": 0.7643,
+          "load_bearing": true
+        },
+        "object": {
+          "metric": "pred_err",
+          "faculty_degradation": 0.0175,
+          "random_degradation": 0.0106,
+          "attributable_fraction": 0.3944,
+          "load_bearing": true
+        },
+        "permanence": {
+          "metric": "approach_off",
+          "faculty_degradation": 0.0101,
+          "random_degradation": 0.0059,
+          "attributable_fraction": 0.4146,
+          "load_bearing": true
+        },
+        "value": {
+          "metric": "reward_rate",
+          "faculty_degradation": -0.0008,
+          "random_degradation": 0.0001,
+          "attributable_fraction": 1.0745,
+          "load_bearing": false
+        }
+      },
+      "n_faculties_load_bearing": 0,
+      "core_lesion_presence": {
+        "place": 0.7452,
+        "value": 0.5807,
+        "permanence": NaN,
+        "object": 0.1048
+      },
+      "core_lesion_collapses_all": false,
+      "coverage": {
+        "curiosity_cells": 30.6,
+        "random_cells": 26.0,
+        "budget": 72.0,
+        "ratio": 1.1769,
+        "pass": 0.0
+      },
+      "rate_map_summary": {
+        "n_units_scored": 512,
+        "top8_selectivity": [
+          10510.308,
+          10135.868,
+          313.317,
+          292.427,
+          290.237,
+          227.42,
+          208.684,
+          197.408
+        ],
+        "top8_units": [
+          50,
+          124,
+          39,
+          336,
+          212,
+          82,
+          161,
+          454
+        ]
+      },
+      "train_loss_curve": [
+        [
+          5000,
+          17.4536
+        ],
+        [
+          10000,
+          14.4008
+        ],
+        [
+          15000,
+          8.443
+        ],
+        [
+          20000,
+          27.5493
+        ],
+        [
+          25000,
+          30.8561
+        ],
+        [
+          30000,
+          21.8431
+        ],
+        [
+          35000,
+          20.0613
+        ],
+        [
+          40000,
+          1.1232
+        ],
+        [
+          45000,
+          28.1539
+        ],
+        [
+          50000,
+          0.3917
+        ],
+        [
+          55000,
+          11.0667
+        ],
+        [
+          60000,
+          0.3884
+        ],
+        [
+          65000,
+          32.431
+        ],
+        [
+          70000,
+          6.678
+        ],
+        [
+          75000,
+          33.4853
+        ],
+        [
+          80000,
+          39.5904
+        ],
+        [
+          85000,
+          12.167
+        ],
+        [
+          90000,
+          30.0723
+        ],
+        [
+          95000,
+          7.5103
+        ],
+        [
+          100000,
+          35.2614
+        ],
+        [
+          105000,
+          0.6883
+        ],
+        [
+          110000,
+          13.6981
+        ],
+        [
+          115000,
+          0.8398
+        ],
+        [
+          120000,
+          38.2699
+        ],
+        [
+          125000,
+          17.2432
+        ],
+        [
+          130000,
+          38.8033
+        ],
+        [
+          135000,
+          11.9765
+        ],
+        [
+          140000,
+          15.5873
+        ],
+        [
+          145000,
+          39.5093
+        ],
+        [
+          150000,
+          0.5515
+        ],
+        [
+          155000,
+          0.5271
+        ],
+        [
+          160000,
+          21.1442
+        ],
+        [
+          165000,
+          1.52
+        ],
+        [
+          170000,
+          33.5971
+        ],
+        [
+          175000,
+          40.8442
+        ],
+        [
+          180000,
+          0.7682
+        ],
+        [
+          185000,
+          0.4931
+        ],
+        [
+          190000,
+          28.4478
+        ],
+        [
+          195000,
+          29.6215
+        ]
+      ],
+      "intact_behavior": {
+        "reward_rate": 0.0011,
+        "approach_in": 0.5526,
+        "approach_off": 0.474,
+        "eats": 129.0,
+        "a_prev_end": 1.0
+      },
+      "SEED_GO": false,
+      "elapsed_s": 526.6
+    },
+    {
+      "seed": 101,
+      "units": "rate",
+      "encoder": "learned_ema",
+      "n_hidden": 512,
+      "n_train": 200000,
+      "presence": {
+        "place": {
+          "r2": 0.6909,
+          "floor_untrained": 0.7353,
+          "floor_rawv1": 0.2779,
+          "floor_shuffle": -0.058
+        },
+        "value": {
+          "r2": 0.811,
+          "floor_untrained": 0.58,
+          "floor_rawv1": -0.1781,
+          "floor_shuffle": -0.1861
+        },
+        "permanence": {
+          "r2": 0.2382,
+          "floor_untrained": 0.1968,
+          "floor_rawv1": 0.0226,
+          "floor_shuffle": -0.0574
+        },
+        "object": {
+          "r2": 0.1649,
+          "floor_untrained": 0.022,
+          "floor_rawv1": 0.1438,
+          "floor_shuffle": 0.0059
+        }
+      },
+      "cleared_presence_and_floors": {
+        "place": false,
+        "object": false,
+        "permanence": false,
+        "value": true
+      },
+      "behavioral_dependency": {
+        "place": {
+          "metric": "approach_in",
+          "faculty_degradation": NaN,
+          "random_degradation": NaN,
+          "attributable_fraction": NaN,
+          "load_bearing": false
+        },
+        "object": {
+          "metric": "pred_err",
+          "faculty_degradation": 0.0149,
+          "random_degradation": 0.025,
+          "attributable_fraction": -0.6801,
+          "load_bearing": false
+        },
+        "permanence": {
+          "metric": "approach_off",
+          "faculty_degradation": 0.0232,
+          "random_degradation": 0.0012,
+          "attributable_fraction": 0.9498,
+          "load_bearing": true
+        },
+        "value": {
+          "metric": "reward_rate",
+          "faculty_degradation": 0.0,
+          "random_degradation": 0.0,
+          "attributable_fraction": null,
+          "load_bearing": false
+        }
+      },
+      "n_faculties_load_bearing": 0,
+      "core_lesion_presence": {
+        "place": 0.7338,
+        "value": 0.6872,
+        "permanence": NaN,
+        "object": NaN
+      },
+      "core_lesion_collapses_all": false,
+      "coverage": {
+        "curiosity_cells": 34.2,
+        "random_cells": 28.4,
+        "budget": 72.0,
+        "ratio": 1.2042,
+        "pass": 0.0
+      },
+      "rate_map_summary": {
+        "n_units_scored": 512,
+        "top8_selectivity": [
+          24389.586,
+          10114.501,
+          1176.916,
+          581.122,
+          363.432,
+          357.552,
+          332.353,
+          330.847
+        ],
+        "top8_units": [
+          257,
+          59,
+          349,
+          489,
+          33,
+          117,
+          455,
+          248
+        ]
+      },
+      "train_loss_curve": [
+        [
+          5000,
+          3.0434
+        ],
+        [
+          10000,
+          1.657
+        ],
+        [
+          15000,
+          1.1191
+        ],
+        [
+          20000,
+          0.9925
+        ],
+        [
+          25000,
+          21.3025
+        ],
+        [
+          30000,
+          21.5517
+        ],
+        [
+          35000,
+          1.0598
+        ],
+        [
+          40000,
+          26.0278
+        ],
+        [
+          45000,
+          5.5779
+        ],
+        [
+          50000,
+          0.3916
+        ],
+        [
+          55000,
+          33.6154
+        ],
+        [
+          60000,
+          0.4774
+        ],
+        [
+          65000,
+          8.6561
+        ],
+        [
+          70000,
+          25.5216
+        ],
+        [
+          75000,
+          3.3595
+        ],
+        [
+          80000,
+          28.7804
+        ],
+        [
+          85000,
+          11.3566
+        ],
+        [
+          90000,
+          28.0233
+        ],
+        [
+          95000,
+          0.34
+        ],
+        [
+          100000,
+          43.454
+        ],
+        [
+          105000,
+          0.4554
+        ],
+        [
+          110000,
+          0.5077
+        ],
+        [
+          115000,
+          37.7715
+        ],
+        [
+          120000,
+          24.5441
+        ],
+        [
+          125000,
+          22.9225
+        ],
+        [
+          130000,
+          7.1332
+        ],
+        [
+          135000,
+          0.3394
+        ],
+        [
+          140000,
+          18.1863
+        ],
+        [
+          145000,
+          22.3618
+        ],
+        [
+          150000,
+          22.3991
+        ],
+        [
+          155000,
+          12.0605
+        ],
+        [
+          160000,
+          0.3087
+        ],
+        [
+          165000,
+          21.7797
+        ],
+        [
+          170000,
+          6.3823
+        ],
+        [
+          175000,
+          32.8705
+        ],
+        [
+          180000,
+          0.6249
+        ],
+        [
+          185000,
+          10.3539
+        ],
+        [
+          190000,
+          0.4608
+        ],
+        [
+          195000,
+          36.9042
+        ]
+      ],
+      "intact_behavior": {
+        "reward_rate": 0.0,
+        "approach_in": NaN,
+        "approach_off": 0.438,
+        "eats": 178.0,
+        "a_prev_end": 1.0
+      },
+      "SEED_GO": false,
+      "elapsed_s": 314.8
+    },
+    {
+      "seed": 102,
+      "units": "rate",
+      "encoder": "learned_ema",
+      "n_hidden": 512,
+      "n_train": 200000,
+      "presence": {
+        "place": {
+          "r2": 0.6819,
+          "floor_untrained": 0.7148,
+          "floor_rawv1": 0.3244,
+          "floor_shuffle": -0.0578
+        },
+        "value": {
+          "r2": 0.5097,
+          "floor_untrained": 0.3026,
+          "floor_rawv1": 0.1245,
+          "floor_shuffle": -0.0838
+        },
+        "permanence": {
+          "r2": 0.2969,
+          "floor_untrained": 0.2804,
+          "floor_rawv1": 0.0097,
+          "floor_shuffle": -0.04
+        },
+        "object": {
+          "r2": 0.1865,
+          "floor_untrained": 0.0781,
+          "floor_rawv1": -0.0657,
+          "floor_shuffle": 0.0069
+        }
+      },
+      "cleared_presence_and_floors": {
+        "place": false,
+        "object": false,
+        "permanence": false,
+        "value": true
+      },
+      "behavioral_dependency": {
+        "place": {
+          "metric": "approach_in",
+          "faculty_degradation": 0.1394,
+          "random_degradation": 0.0044,
+          "attributable_fraction": 0.9685,
+          "load_bearing": true
+        },
+        "object": {
+          "metric": "pred_err",
+          "faculty_degradation": 0.0303,
+          "random_degradation": 0.0281,
+          "attributable_fraction": 0.0733,
+          "load_bearing": false
+        },
+        "permanence": {
+          "metric": "approach_off",
+          "faculty_degradation": -0.0036,
+          "random_degradation": 0.0107,
+          "attributable_fraction": 3.9918,
+          "load_bearing": false
+        },
+        "value": {
+          "metric": "reward_rate",
+          "faculty_degradation": 0.0022,
+          "random_degradation": 0.0009,
+          "attributable_fraction": 0.5844,
+          "load_bearing": true
+        }
+      },
+      "n_faculties_load_bearing": 1,
+      "core_lesion_presence": {
+        "place": 0.6398,
+        "value": 0.4982,
+        "permanence": NaN,
+        "object": NaN
+      },
+      "core_lesion_collapses_all": false,
+      "coverage": {
+        "curiosity_cells": 33.4,
+        "random_cells": 29.0,
+        "budget": 72.0,
+        "ratio": 1.1517,
+        "pass": 0.0
+      },
+      "rate_map_summary": {
+        "n_units_scored": 512,
+        "top8_selectivity": [
+          1424.921,
+          1362.741,
+          605.24,
+          589.594,
+          414.208,
+          378.232,
+          263.752,
+          256.982
+        ],
+        "top8_units": [
+          230,
+          425,
+          114,
+          265,
+          417,
+          155,
+          330,
+          189
+        ]
+      },
+      "train_loss_curve": [
+        [
+          5000,
+          5.8597
+        ],
+        [
+          10000,
+          1.321
+        ],
+        [
+          15000,
+          30.6628
+        ],
+        [
+          20000,
+          26.9712
+        ],
+        [
+          25000,
+          23.6314
+        ],
+        [
+          30000,
+          17.3677
+        ],
+        [
+          35000,
+          0.5131
+        ],
+        [
+          40000,
+          25.1193
+        ],
+        [
+          45000,
+          0.4666
+        ],
+        [
+          50000,
+          0.3755
+        ],
+        [
+          55000,
+          29.6622
+        ],
+        [
+          60000,
+          6.4849
+        ],
+        [
+          65000,
+          29.4587
+        ],
+        [
+          70000,
+          25.6645
+        ],
+        [
+          75000,
+          0.3416
+        ],
+        [
+          80000,
+          0.4503
+        ],
+        [
+          85000,
+          30.014
+        ],
+        [
+          90000,
+          28.0793
+        ],
+        [
+          95000,
+          0.5088
+        ],
+        [
+          100000,
+          23.8066
+        ],
+        [
+          105000,
+          0.4817
+        ],
+        [
+          110000,
+          38.1691
+        ],
+        [
+          115000,
+          19.5383
+        ],
+        [
+          120000,
+          34.9761
+        ],
+        [
+          125000,
+          0.4342
+        ],
+        [
+          130000,
+          0.7215
+        ],
+        [
+          135000,
+          0.353
+        ],
+        [
+          140000,
+          47.0952
+        ],
+        [
+          145000,
+          0.3906
+        ],
+        [
+          150000,
+          35.2567
+        ],
+        [
+          155000,
+          24.7439
+        ],
+        [
+          160000,
+          43.5091
+        ],
+        [
+          165000,
+          32.4061
+        ],
+        [
+          170000,
+          9.6232
+        ],
+        [
+          175000,
+          19.8216
+        ],
+        [
+          180000,
+          0.339
+        ],
+        [
+          185000,
+          16.645
+        ],
+        [
+          190000,
+          4.1383
+        ],
+        [
+          195000,
+          1.5248
+        ]
+      ],
+      "intact_behavior": {
+        "reward_rate": 0.0022,
+        "approach_in": 0.4172,
+        "approach_off": 0.4734,
+        "eats": 119.0,
+        "a_prev_end": 2.0
+      },
+      "SEED_GO": false,
+      "elapsed_s": 330.1
+    }
+  ],
+  "aggregate": {
+    "n_seeds": 6,
+    "n_seed_go": 0,
+    "n_coverage_pass": 0,
+    "faculty_load_bearing_counts": {
+      "place": 2,
+      "object": 3,
+      "permanence": 3,
+      "value": 1
+    },
+    "seeds_required": 5,
+    "EMERGENCE_GO": false
+  }
+}

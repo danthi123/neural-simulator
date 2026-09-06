@@ -99,9 +99,18 @@ class PCSConfig:
     replay_capacity: int = 2000  # reservoir size (windows); uniform sample over ALL past experience
     replay_every: int = 2        # every N online updates, run a replay (consolidation) update
     replay_batch: int = 1        # replayed windows per replay event
-    # optimizer
+    # optimizer + ONLINE-TRAINING STABILITY (default-ON; the 200k run's place code was destroyed by
+    # gradient/loss SPIKES, not drift — held-out loss 0.33->37->0.36 across checkpoints). Primary fix is
+    # a tight global grad-norm clip; the spike-skip guard drops the rare pathological/non-finite update
+    # so it cannot corrupt the Adam moments. To REPRODUCE the old unstable behavior (the existing
+    # base/cons 6-seed artifacts are the control): grad_clip=5.0, grad_skip_norm=0.0 (byte-identical to
+    # the prior code); fully-unclipped escape: grad_clip=0.0, grad_skip_norm=0.0.
     lr: float = 3e-4             # Adam lr for the predictive objective (online TBPTT — lower = stable)
-    grad_clip: float = 5.0       # global-norm clip on the predictive grads
+    grad_clip: float = 1.0       # global grad-norm clip (0 disables). PRIMARY stabilizer.
+    grad_skip_factor: float = 8.0  # RELATIVE spike guard: skip an update whose pre-clip grad-norm is
+                                 # non-finite or > this x the running-mean norm (0 disables). Relative,
+                                 # not absolute, because normal early-training grad-norms are large
+                                 # (~55-70 @256u) and vary with scale — an absolute cap skips all learning.
     # policy (H3) — REINFORCE with a running-mean baseline, online per step
     lr_policy: float = 5e-3
     curiosity_beta: float = 0.1  # weight of learning-progress (GLOBAL LP; kept small — a large global LP
@@ -138,14 +147,28 @@ class _Adam:
         self.t = 0
         self.m = {k: xp.zeros_like(v) for k, v in params.items()}
         self.v = {k: xp.zeros_like(v) for k, v in params.items()}
+        self._gn_ema = None       # running-mean grad norm (for the relative spike guard)
 
-    def step(self, params: Dict[str, Any], grads: Dict[str, Any], clip: float = 0.0):
+    def step(self, params: Dict[str, Any], grads: Dict[str, Any], clip: float = 0.0,
+             skip_factor: float = 0.0):
+        """Return (pre_clip_grad_norm, skipped). With skip_factor<=0 the skip branch is inert, so the
+        clip>0 path is byte-identical to the prior optimizer (the unstable control)."""
         xp = self.xp
+        total = 0.0
+        for k in grads:
+            total = total + float((grads[k] ** 2).sum())
+        norm = np.sqrt(total) + 1e-12
+        # SPIKE-SKIP GUARD (only when skip_factor>0): drop a non-finite or FAR-ABOVE-AVERAGE update
+        # entirely so it never contaminates the Adam moments (a spike step corrupts m/v for many steps).
+        # Relative to a running mean, so it tracks the scale of normal gradients instead of a brittle cap.
+        if skip_factor and skip_factor > 0:
+            if not np.isfinite(norm):
+                return float(norm), True
+            if self._gn_ema is not None and norm > skip_factor * self._gn_ema:
+                return float(norm), True            # a genuine spike: skip, and do NOT pollute the mean
+        # update the running-mean grad norm on KEPT updates (read-only; does not affect params/grads)
+        self._gn_ema = norm if self._gn_ema is None else (0.97 * self._gn_ema + 0.03 * norm)
         if clip and clip > 0:
-            total = 0.0
-            for k in grads:
-                total = total + float((grads[k] ** 2).sum())
-            norm = np.sqrt(total) + 1e-12
             if norm > clip:
                 scale = clip / norm
                 for k in grads:
@@ -160,6 +183,7 @@ class _Adam:
             mhat = self.m[k] / bc1
             vhat = self.v[k] / bc2
             params[k] = params[k] - self.lr * mhat / (xp.sqrt(vhat) + self.eps)
+        return float(norm), False
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -261,6 +285,10 @@ class PredictiveContinualSubstrate:
         self.last_pred_loss = None
         self.n_updates = 0
         self.n_steps = 0
+        # stability diagnostics (grad-norm spike visibility)
+        self.last_grad_norm = 0.0
+        self.max_grad_norm = 0.0
+        self.n_skipped = 0
 
     # ── lesion / freeze API ────────────────────────────────────────────────
     def set_lesion_mask(self, mask):
@@ -675,7 +703,15 @@ class PredictiveContinualSubstrate:
     def _tbptt_update(self, tape) -> float:
         loss, cache = self._window_forward(tape, self.P, self.W_enc, self.b_enc)
         grads = self._window_backward(tape, self.P, cache)
-        self.opt.step(self.P, grads, clip=self.cfg.grad_clip)
+        norm, skipped = self.opt.step(self.P, grads, clip=self.cfg.grad_clip,
+                                      skip_factor=self.cfg.grad_skip_factor)
+        self.last_grad_norm = norm
+        if norm > self.max_grad_norm:
+            self.max_grad_norm = norm
+        if skipped:
+            # spike/non-finite update dropped: weights unchanged, so no encoder sync / EMA / count
+            self.n_skipped += 1
+            return float(loss)
         # keep the encoder refs in sync (Adam replaced the array objects in self.P)
         if self.cfg.encoder == "learned_ema":
             self.W_enc = self.P["W_enc"]
