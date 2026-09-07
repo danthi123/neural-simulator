@@ -13,7 +13,26 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ---
 
-## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-06 ~21:15 (FORK 4th move launched + research-at-wall; READ FIRST; LATEST anchor)
+## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-07 ~00:12 (OWNER REBOOTING; READ FIRST; LATEST anchor)
+
+**⛔ POST-REBOOT RESUME CHECKLIST (owner rebooted the PC ~00:12 2026-09-07 — a reboot KILLS: gpu_queue dispatcher,
+heartbeat Monitor, all in-session Monitors, baloo-suspend; SURVIVES: AWS mouth (remote), all git branches/worktrees
+(pushed), on-disk artifacts). On "continue", DO in order:**
+1. `bash tools/gpu_queue.sh start` then `bash tools/gpu_queue.sh resume` (queue file persists → resumes the queued
+   jobs: auxloc_alone [RE-QUEUE if it was mid-run at reboot — no checkpoint], auxloc_composed, VRAM-measure
+   `vram_measure_substrate.sh`, shaping4/8). VERIFY the queue order + that auxloc_alone's JSON exists (else re-add it).
+2. `balooctl6 suspend` (reboot un-suspends the indexer → it re-balloons to ~10GB; re-suspend per the known hog).
+3. Re-arm the state-checking heartbeat Monitor (15-min GPU/load/RAM + parallel_audit; the bsxzdnse2 recipe).
+4. Re-arm completion Monitors: fork DONE-lines (was bjcjvs97t, greps gpu_queue.log for `_fork_pcs.*DONE`) + VRAM
+   measure (was brzjy25oj, greps `VRAM-MEASURE DONE`).
+5. Check AWS mouth (remote, still training ~Sep 8): `bash tools/aws_gpu.sh status`; harvest the d192×2B verdict when done.
+6. Batch-commit the uncommitted fork JSONs on agi-fork (sr10/sr20/sr_composed/shaping_ns10/ns20 + auxloc when done) —
+   they're on disk (survived), just bank+push them. Pool dispatcher: restart if pool work is wanted (was serving perception/touchpoint).
+FRONTIER on resume: the aux-loc 6-seed results (the promising lead — does forcing position in make place persist+LB
+at 200k?), then the VRAM measurement (gates the owner-APPROVED Rank-6 substrate-store flip on branch
+research/substrate-store-flip). SR retired (full negative). Rank-15 landed (6/6). See the ~21:15 detail below.
+
+## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-06 ~21:15 (FORK 4th move launched + research-at-wall; earlier detail)
 
 **Owner (this session): pursue the AGI fork with local usage; "GO HARD on tokens/workflows" (48% weekly budget left,
 resets in ~14h → burn it) + "advance BOTH fronts simultaneously".** Proceed autonomously. All lanes below are LIVE
