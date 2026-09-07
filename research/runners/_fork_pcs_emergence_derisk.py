@@ -114,12 +114,61 @@ def _rsa(H, labels, max_n=600):
 
 
 def _ridge_weights(X, Y, lam=10.0):
-    """Fit ridge (standardized) and return per-input-unit importance = sum|weight| over targets."""
+    """DECODING-importance: fit ridge (standardized) and return per-input-unit importance = sum|weight|
+    over targets. This selects the most DECODABLE units (the current battery's only lesion-selection rule)."""
     mu = X.mean(0, keepdims=True); sd = np.maximum(X.std(0, keepdims=True), 1e-2)
     Xs = (X - mu) / sd
     d = Xs.shape[1]
     W = np.linalg.solve(Xs.T @ Xs + lam * np.eye(d, dtype=np.float64), Xs.T @ Y)
     return np.abs(W).sum(axis=1)   # (d,) importance per unit
+
+
+def _host(a):
+    """Marshal a backend (cupy/numpy) array to a host float64 ndarray."""
+    return np.asarray(a.get() if hasattr(a, "get") else a, dtype=np.float64)
+
+
+def _behavioral_saliency(sub, H_probe, metric):
+    """BEHAVIORAL-importance ranking of hidden units — the causal read-head SALIENCY, per faculty metric.
+
+    WHY THIS METHOD (the fix's core choice). Our decoding-importance ranking (_ridge_weights) selects the
+    most DECODABLE units. The literature (Schøyen 2023; Schaeffer 2022 "No Free Lunch") shows decodability
+    and causal LOAD-BEARING can DISSOCIATE: high-decodability spatial units were found causally DISPENSABLE
+    while a DIFFERENT population carried path integration. So a lesion aimed by decodability can miss the
+    behaviorally load-bearing units. This ranking aims instead at the units the BEHAVIOR-PRODUCING read-head
+    actually reads, so the two arms can be compared and the dissociation made visible.
+
+    A unit is behaviorally load-bearing iff the head that PRODUCES the faculty's behavioral metric reads it
+    strongly AND it varies (a strongly-read but constant unit cannot change behavior). So rank unit u by
+        saliency(u) = |head weight on u|  *  std(h_u over the frozen probe rollout).
+      * approach_in / approach_off / reward_rate  -> the ACTION/VALUE channel: sum_a |W_pi[a,u]| (policy
+        head over all actions) + |w_v[u]| when the value head is present (actor-critic). These metrics are
+        produced by action selection and, with a value head, the value estimate — the units those heads read.
+      * pred_err (object)                         -> the JEPA PREDICTOR head sum_e |W_pred[e,u]|, the head
+        whose loss IS the object faculty's metric.
+    This is the standard connection-strength x activity saliency. It is CHEAP (reads the trained read-head
+    weights + one std over the ALREADY-collected probe H — no extra rollouts), and FAITHFUL to the causal
+    path (it ranks by the head that generates the metric, not by decodability). It is a first-order
+    (linear-readout) proxy for SELECTING the candidate set; the behavioral LESION that follows is the actual
+    causal test, exactly as ridge-importance only SELECTS the decoding set before its lesion.
+    """
+    std_h = H_probe.std(axis=0)                                   # (H,) activation variability over the probe
+    if metric == "pred_err":
+        head = np.abs(_host(sub.P["W_pred"])).sum(axis=0)         # (H,) predictor head reads h -> next latent
+    else:
+        head = np.abs(_host(sub.W_pi)).sum(axis=0)               # (H,) policy head, summed over actions
+        if "w_v" in sub.P:
+            head = head + np.abs(_host(sub.P["w_v"]))            # + value head (actor-critic) when present
+    return head * std_h                                          # (H,) behavioral importance per unit
+
+
+def _jaccard(mask_a, mask_b):
+    """Jaccard overlap of two boolean top-k unit masks (|A∩B| / |A∪B|). The Schøyen dissociation measure:
+    low overlap between the decoding-selected and behavioral-selected sets + only-behavioral-lesion-degrades
+    means decodability is misleading (the decodable units are not the load-bearing ones)."""
+    inter = int(np.logical_and(mask_a, mask_b).sum())
+    union = int(np.logical_or(mask_a, mask_b).sum())
+    return (inter / union) if union > 0 else float("nan")
 
 
 def _r2_with_floors(H, H_un, RAW, labels, seed):
@@ -235,7 +284,7 @@ def run_seed(seed, units="rate", encoder="learned_ema", n_hidden=512, n_latent=6
              lesion_frac=0.10, n_random_lesions=3, consolidation=False,
              grad_clip=1.0, grad_skip_factor=8.0, ema_momentum=0.9999, ema_warmup=0,
              pred_horizon=1, nav_required=False, nav_dmin=6, value_weight=0.0, sr_weight=0.0,
-             nav_shaping=0.0, verbose=True):
+             nav_shaping=0.0, lesion_mode="decoding", verbose=True):
     t0 = time.time()
     wcfg = WorldConfig(seed=seed, nav_required=nav_required, nav_dmin=nav_dmin, nav_shaping=nav_shaping)
     world = ForkPCSWorld(wcfg)
@@ -300,6 +349,14 @@ def run_seed(seed, units="rate", encoder="learned_ema", n_hidden=512, n_latent=6
                for f in PRESENCE_BAR}
 
     # ---- 4. BEHAVIORAL-DEPENDENCY LESIONS (the anti-hollow gate) ----
+    # TWO instruments select the units to lesion, compared side-by-side when --lesion-mode both:
+    #   DECODING importance  = ridge weights of the target on h (_ridge_weights) — the MOST DECODABLE units.
+    #   BEHAVIORAL importance = policy/value(-or-predictor)-head SALIENCY x activation std
+    #                           (_behavioral_saliency) — the units the BEHAVIOR-PRODUCING read-head reads.
+    # Motivation (Schøyen 2023 / Schaeffer 2022): the decodable units and the causally load-bearing units can
+    # DISSOCIATE, so a lesion aimed by decodability alone can mis-report a faculty's true behavioral
+    # dependence. The Jaccard overlap of the two top-k sets (reported in `both`) IS the dissociation measure.
+    # DEFAULT lesion_mode="decoding" runs ONLY the original decoding block below -> byte-identical output.
     k = max(8, int(lesion_frac * n_hidden))
     imp = {}
     imp["place"] = _ridge_weights(H, place_lab)
@@ -315,7 +372,7 @@ def run_seed(seed, units="rate", encoder="learned_ema", n_hidden=512, n_latent=6
 
     # intact behavioral baseline
     intact = rollout(world, sub, n_behav, train=False, explore_eps=0.1)
-    # random-unit lesion baseline (mean over draws)
+    # random-unit lesion baseline (mean over draws) — SHARED by both lesion arms (the equal-size control)
     rng = np.random.default_rng(seed + 3)
     rand_metrics = {"reward_rate": [], "approach_in": [], "approach_off": [], "pred_err": []}
     eval_seq = _capture_eval_seq(world, sub, 400)
@@ -330,16 +387,15 @@ def run_seed(seed, units="rate", encoder="learned_ema", n_hidden=512, n_latent=6
     rand = {kk: float(np.nanmean(vv)) for kk, vv in rand_metrics.items()}
     intact_pe = _pred_err(sub, eval_seq)
 
-    behav = {}
     metric_for = {"place": "approach_in", "permanence": "approach_off", "value": "reward_rate", "object": "pred_err"}
-    for f in PRESENCE_BAR:
-        if imp[f] is None:
-            behav[f] = {"note": "insufficient data for lesion", "load_bearing": False}
-            continue
-        m = _mask_from_imp(imp[f])
-        fl = rollout(world, sub, n_behav, train=False, explore_eps=0.1, lesion_mask=m)
-        sub.set_lesion_mask(m); fpe = sub.eval_predictive_loss(eval_seq, respect_lesion=True); sub.set_lesion_mask(None)
+
+    def _lesion_dependency(f, mask, label):
+        """Lesion `mask` (a top-k unit set) and measure the attributable_to degradation on faculty f's
+        behavioral metric vs the SHARED random-unit lesion baseline. Instrument-agnostic (the decoding and
+        behavioral arms call this with their own mask), so the two are measured identically."""
         met = metric_for[f]
+        fl = rollout(world, sub, n_behav, train=False, explore_eps=0.1, lesion_mask=mask)
+        sub.set_lesion_mask(mask); fpe = sub.eval_predictive_loss(eval_seq, respect_lesion=True); sub.set_lesion_mask(None)
         if met == "pred_err":
             # degradation = pred-error RISE; faculty must raise it >= ratio x the random rise
             fac_deg = fpe - intact_pe
@@ -354,10 +410,41 @@ def run_seed(seed, units="rate", encoder="learned_ema", n_hidden=512, n_latent=6
             rnd_deg = base - rand[met]
         # ATTRIBUTION (not just measurement): fraction of the degradation due to the FACULTY units, not
         # what an equal random-unit lesion does. frac >= (1 - 1/ratio) is equivalent to fac_deg >= ratio*rnd_deg.
-        frac = attributable_to(f"behav-lesion {f}", fac_deg, rnd_deg)
+        frac = attributable_to(f"{label} {f}", fac_deg, rnd_deg)
         load_bearing = (frac is not None) and (fac_deg > 0) and (frac >= (1.0 - 1.0 / BEHAV_LESION_RATIO))
-        behav[f] = {"metric": met, "faculty_degradation": _f(fac_deg), "random_degradation": _f(rnd_deg),
-                    "attributable_fraction": _f(frac), "load_bearing": bool(load_bearing)}
+        return {"metric": met, "faculty_degradation": _f(fac_deg), "random_degradation": _f(rnd_deg),
+                "attributable_fraction": _f(frac), "load_bearing": bool(load_bearing)}
+
+    # DECODING arm (the current instrument; UNCHANGED code path -> byte-identical when mode=decoding).
+    behav_decoding = {}
+    if lesion_mode in ("decoding", "both"):
+        for f in PRESENCE_BAR:
+            if imp[f] is None:
+                behav_decoding[f] = {"note": "insufficient data for lesion", "load_bearing": False}
+                continue
+            behav_decoding[f] = _lesion_dependency(f, _mask_from_imp(imp[f]), "behav-lesion")
+
+    # BEHAVIORAL arm (the new instrument): rank by causal read-head saliency, lesion its top-k, same metric.
+    behav_behavioral = {}
+    overlap = {}
+    if lesion_mode in ("behavioral", "both"):
+        for f in PRESENCE_BAR:
+            # parity with the decoding arm's data-availability guard: if a faculty had no decoding importance
+            # (insufficient single-object / off-view steps), its behavioral lesion is equally undefined.
+            if imp[f] is None:
+                behav_behavioral[f] = {"note": "insufficient data for lesion", "load_bearing": False}
+                continue
+            bmask = _mask_from_imp(_behavioral_saliency(sub, H, metric_for[f]))
+            d = _lesion_dependency(f, bmask, "behav-lesion-BEHAV")
+            d["n_behav_units"] = int(bmask.sum())
+            behav_behavioral[f] = d
+            if lesion_mode == "both":     # Jaccard overlap of decoding vs behavioral top-k (dissociation)
+                overlap[f] = _f(_jaccard(_mask_from_imp(imp[f]), bmask))
+
+    # The GATE-facing `behav` is the DECODING instrument (the pre-registered gate) in decoding/both modes;
+    # in behavioral-only mode it is the behavioral instrument (the only arm run). Both/behavioral ADD the
+    # behavioral results (and, in both, the Jaccard overlap) as separate keys below.
+    behav = behav_behavioral if lesion_mode == "behavioral" else behav_decoding
 
     # ---- 5. CORE LESION: zero W_h -> integration faculties collapse ----
     core = _core_lesion_presence(sub, H_un, RAW, POS, value_lab, FOOD, off, obj_single_idx, obj_lab,
@@ -397,6 +484,7 @@ def run_seed(seed, units="rate", encoder="learned_ema", n_hidden=512, n_latent=6
         "presence": {f: {kk: _f(vv) for kk, vv in presence[f].items() if isinstance(vv, (int, float))}
                      | ({"note": presence[f]["note"]} if "note" in presence[f] else {}) for f in presence},
         "cleared_presence_and_floors": cleared,
+        "lesion_mode": lesion_mode,
         "behavioral_dependency": behav,
         "n_faculties_load_bearing": n_cleared_lb,
         "core_lesion_presence": {k2: _f(v2) for k2, v2 in core.items()},
@@ -408,15 +496,32 @@ def run_seed(seed, units="rate", encoder="learned_ema", n_hidden=512, n_latent=6
         "SEED_GO": bool(seed_go),
         "elapsed_s": round(time.time() - t0, 1),
     }
+    # BEHAVIORAL-arm results (only when run) — reported ALONGSIDE the decoding arm so the Schøyen
+    # dissociation is visible. In `both` mode, `behavioral_dependency` above is the DECODING arm (the
+    # pre-registered gate, byte-identical), and these keys add the behavioral arm + the Jaccard overlap.
+    if lesion_mode in ("behavioral", "both"):
+        n_lb_behav = sum(1 for f in PRESENCE_BAR
+                         if cleared[f] and behav_behavioral.get(f, {}).get("load_bearing", False))
+        result["behavioral_dependency_behavioral"] = behav_behavioral
+        result["n_faculties_load_bearing_behavioral"] = n_lb_behav
+    if lesion_mode == "both":
+        result["lesion_overlap_jaccard"] = overlap
     if verbose:
         print(f"[seed {seed} units={units} k={pred_horizon}] cleared+LB={n_cleared_lb}/4 "
               f"core_collapse={core_collapses} coverage_ratio={coverage['ratio']:.2f} SEED_GO={seed_go} "
-              f"({result['elapsed_s']}s)")
+              f"lesion_mode={lesion_mode} ({result['elapsed_s']}s)")
         for f in PRESENCE_BAR:
             p = presence[f]
-            print(f"    {f:11s} r2/rho={_f(p['r2'])}  floors(un/raw/sh)="
-                  f"{_f(p['floor_untrained'])}/{_f(p['floor_rawv1'])}/{_f(p['floor_shuffle'])}  "
-                  f"cleared={cleared[f]}  LB={behav.get(f, {}).get('load_bearing')}")
+            line = (f"    {f:11s} r2/rho={_f(p['r2'])}  floors(un/raw/sh)="
+                    f"{_f(p['floor_untrained'])}/{_f(p['floor_rawv1'])}/{_f(p['floor_shuffle'])}  "
+                    f"cleared={cleared[f]}  LB[dec]={behav_decoding.get(f, {}).get('load_bearing')}")
+            if lesion_mode in ("behavioral", "both"):
+                bb = behav_behavioral.get(f, {})
+                line += (f"  LB[beh]={bb.get('load_bearing')}"
+                         f"  facΔ[beh]={bb.get('faculty_degradation')} rndΔ={bb.get('random_degradation')}")
+                if lesion_mode == "both":
+                    line += f"  jaccard={overlap.get(f)}"
+            print(line)
     return result
 
 
@@ -583,6 +688,14 @@ def main():
                          "occupancy (Stachenfeld 2017: place cells ARE an SR); its gradient flows into the "
                          "shared core, making position load-bearing on the self-supervised objective (no host "
                          "position label).")
+    ap.add_argument("--lesion-mode", choices=["decoding", "behavioral", "both"], default="decoding",
+                    help="which instrument SELECTS the units to lesion for the behavioral-dependency gate. "
+                         "'decoding' (default, BYTE-IDENTICAL to the prior code) = ridge-decoding importance "
+                         "(most decodable units). 'behavioral' = policy/value(-or-predictor)-head saliency x "
+                         "activation std (the units the behavior-producing read-head reads). 'both' = run BOTH "
+                         "per faculty and also record their top-k Jaccard overlap — the Schøyen dissociation "
+                         "measure (low overlap + only-behavioral-lesion-degrades => decodability is misleading, "
+                         "e.g. Schøyen 2023: the high-decodability spatial units were causally DISPENSABLE).")
     ap.add_argument("--smoke", action="store_true",
                     help="tiny end-to-end self-test (small core, short, 1 seed)")
     args = ap.parse_args()
@@ -598,7 +711,7 @@ def main():
                          ema_momentum=args.ema_momentum, ema_warmup=args.ema_warmup,
                          pred_horizon=args.pred_horizon, nav_required=args.nav_required,
                          nav_dmin=args.nav_dmin, value_weight=args.value_weight, sr_weight=args.sr_weight,
-                         nav_shaping=args.nav_shaping, **kw)
+                         nav_shaping=args.nav_shaping, lesion_mode=args.lesion_mode, **kw)
                 for s in args.seeds]
     agg = aggregate(per_seed)
     payload = {"battery": "fork_pcs_emergence", "units": args.units, "encoder": args.encoder,
@@ -606,6 +719,7 @@ def main():
                "nav_required": args.nav_required, "nav_dmin": args.nav_dmin, "value_weight": args.value_weight,
                "sr_weight": args.sr_weight,
                "nav_shaping": args.nav_shaping,
+               "lesion_mode": args.lesion_mode,
                "grad_clip": args.grad_clip, "grad_skip_factor": args.grad_skip_factor,
                "ema_momentum": args.ema_momentum, "ema_warmup": args.ema_warmup,
                "pre_registered_gate": {
