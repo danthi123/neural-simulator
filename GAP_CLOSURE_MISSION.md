@@ -67,8 +67,14 @@ background work — do not double-launch.
   not position → it COMPETES with (feature-suppresses) the place code rather than reinforcing it. SR theory needs a
   GOAL-DIRECTED policy for the successor map to be position-relevant → **the composed SR+nav+shaping run (queued) is
   the faithful SR test, NOT this.** Also: the high capacity-inflated floor (n_hidden=512) makes beat-floor stringent →
-  **n_hidden=128 (floor ~0.49) is a concrete next lever** (place has room to exceed a lower floor). Pending: sr20
-  (SR stronger) + sr10_nav_shap20 (SR + goal-directed task — the real test).
+  **n_hidden=128 (floor ~0.49) is a concrete next lever** (place has room to exceed a lower floor).
+- **⚡ SR sr20 (stronger) DONE — WORSE: place margin mean −0.190 (vs sr10 −0.11, base −0.04), LB 0/6. Stronger SR =
+  more place suppression → SR is a COMPETING objective, confirmed. SR-alone is a NEGATIVE (both magnitudes).**
+- **NO-DEFER → next method BUILDING: AUXILIARY SELF-LOCALIZATION LOSS** (Cueva-Wei/Banino, the research's other
+  rank-1; forces position into the state DIRECTLY via a supervised readout off efference-copy, vs SR's competing
+  target). Opus build agent `a6ae3a938f59c597e` (worktree, gradcheck-gated, additive `--aux-loc-weight` default-off;
+  host position target = fork-accepted scaffold like reward shaping). Ready regardless of the composed SR result.
+  Pending fork GPU: sr10_nav_shap20 (composed SR+goal-directed — last SR hope) + shaping4/8 + the VRAM measurement.
 
 - **FORK 4th MOVE — potential-based approach SHAPING (make homing LEARNABLE).** The 3rd move (nav-required) failed
   only because reward was too SPARSE (larder reached ~0.1-0.5% of steps → REINFORCE never learned to home →
