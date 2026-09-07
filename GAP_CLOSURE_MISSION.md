@@ -43,8 +43,12 @@ background work — do not double-launch.
   APPROVED the production-default FLIP.** Flip WORKFLOW `wv43sdc6m` running (locate → flip+CPU-verify → 3 adversarial
   skeptics → LAND/QUEUE-GPU/HOLD rec; NEVER touches the GPU). Retires the STORAGE shortcut (numpy-kb→synaptic), NOT
   the host-computed BINDING idealization (2026-08-08 note). On its rec: merge+push+sync, or queue the GPU 6-seed.
-- **Rank-15 agent DORMANT mid-validation-sweep (exp16/32/64 robustness)** — built the pattern-separation fix; will
-  harvest from worktree agent-aaeb4d21802d9932a if it doesn't self-resume (secondary, main-path).
+- **✅ RANK-15 CLOSED 5/6→6/6 (`b0d3c916a` merged to main, pushed; finding synced GO `ca7f5faa3`):** self-schema
+  authorship neural turn-class via DG-like pattern separation on the novelty read (brain-based granule-cell recoding +
+  unchanged anti-Hebbian gate; robust plateau, no false positives, default-ON behind --dg-sep). De-risk only, NOT
+  wired to webapp (board = de-risked label, not DONE). Honesty boundary respected (functional turn-class correlate).
+- **⚡ Shaping sweep: ns1.0 AND ns2.0 both EMERGENCE_GO=false** (place not load-bearing at either magnitude — the
+  2nd-order-lever picture holds). **SR-alone (sr10, --lesion-mode both) now RUNNING — the DECISIVE fork test** (~35min).
 
 - **FORK 4th MOVE — potential-based approach SHAPING (make homing LEARNABLE).** The 3rd move (nav-required) failed
   only because reward was too SPARSE (larder reached ~0.1-0.5% of steps → REINFORCE never learned to home →
