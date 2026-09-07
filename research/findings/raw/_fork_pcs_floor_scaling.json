@@ -1,0 +1,433 @@
+{
+  "battery": "fork_pcs_floor_scaling",
+  "question": "does the untrained-reservoir place-decode floor rise with n_hidden (core size)?",
+  "units": "rate",
+  "encoder": "learned_ema",
+  "sizes": [
+    128,
+    256,
+    512,
+    1024,
+    2048
+  ],
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "n_probe": 8000,
+  "train_contrast_run": true,
+  "n_train": 18000,
+  "train_contrast_seeds": [
+    42,
+    43,
+    44
+  ],
+  "per_size_seed_untrained_floor": [
+    {
+      "n_hidden": 128,
+      "seed": 42,
+      "n_probe": 8000,
+      "r2_untrained": 0.4848,
+      "r2_rawv1": 0.239,
+      "r2_shuffle": -0.0133,
+      "elapsed_s": 0.17
+    },
+    {
+      "n_hidden": 256,
+      "seed": 42,
+      "n_probe": 8000,
+      "r2_untrained": 0.5599,
+      "r2_rawv1": 0.239,
+      "r2_shuffle": -0.0174,
+      "elapsed_s": 0.24
+    },
+    {
+      "n_hidden": 512,
+      "seed": 42,
+      "n_probe": 8000,
+      "r2_untrained": 0.627,
+      "r2_rawv1": 0.239,
+      "r2_shuffle": -0.0258,
+      "elapsed_s": 0.56
+    },
+    {
+      "n_hidden": 1024,
+      "seed": 42,
+      "n_probe": 8000,
+      "r2_untrained": 0.6811,
+      "r2_rawv1": 0.239,
+      "r2_shuffle": -0.0374,
+      "elapsed_s": 0.73
+    },
+    {
+      "n_hidden": 2048,
+      "seed": 42,
+      "n_probe": 8000,
+      "r2_untrained": 0.7272,
+      "r2_rawv1": 0.239,
+      "r2_shuffle": -0.0503,
+      "elapsed_s": 5.04
+    },
+    {
+      "n_hidden": 128,
+      "seed": 43,
+      "n_probe": 8000,
+      "r2_untrained": 0.4648,
+      "r2_rawv1": 0.1662,
+      "r2_shuffle": -0.0093,
+      "elapsed_s": 0.19
+    },
+    {
+      "n_hidden": 256,
+      "seed": 43,
+      "n_probe": 8000,
+      "r2_untrained": 0.5618,
+      "r2_rawv1": 0.1662,
+      "r2_shuffle": -0.0144,
+      "elapsed_s": 0.28
+    },
+    {
+      "n_hidden": 512,
+      "seed": 43,
+      "n_probe": 8000,
+      "r2_untrained": 0.6135,
+      "r2_rawv1": 0.1662,
+      "r2_shuffle": -0.0224,
+      "elapsed_s": 0.65
+    },
+    {
+      "n_hidden": 1024,
+      "seed": 43,
+      "n_probe": 8000,
+      "r2_untrained": 0.6632,
+      "r2_rawv1": 0.1662,
+      "r2_shuffle": -0.0265,
+      "elapsed_s": 0.89
+    },
+    {
+      "n_hidden": 2048,
+      "seed": 43,
+      "n_probe": 8000,
+      "r2_untrained": 0.7061,
+      "r2_rawv1": 0.1662,
+      "r2_shuffle": -0.0373,
+      "elapsed_s": 6.57
+    },
+    {
+      "n_hidden": 128,
+      "seed": 44,
+      "n_probe": 8000,
+      "r2_untrained": 0.5289,
+      "r2_rawv1": 0.1866,
+      "r2_shuffle": -0.02,
+      "elapsed_s": 0.17
+    },
+    {
+      "n_hidden": 256,
+      "seed": 44,
+      "n_probe": 8000,
+      "r2_untrained": 0.5939,
+      "r2_rawv1": 0.1866,
+      "r2_shuffle": -0.0252,
+      "elapsed_s": 0.27
+    },
+    {
+      "n_hidden": 512,
+      "seed": 44,
+      "n_probe": 8000,
+      "r2_untrained": 0.6495,
+      "r2_rawv1": 0.1866,
+      "r2_shuffle": -0.0314,
+      "elapsed_s": 0.58
+    },
+    {
+      "n_hidden": 1024,
+      "seed": 44,
+      "n_probe": 8000,
+      "r2_untrained": 0.6975,
+      "r2_rawv1": 0.1866,
+      "r2_shuffle": -0.0412,
+      "elapsed_s": 0.85
+    },
+    {
+      "n_hidden": 2048,
+      "seed": 44,
+      "n_probe": 8000,
+      "r2_untrained": 0.729,
+      "r2_rawv1": 0.1866,
+      "r2_shuffle": -0.0518,
+      "elapsed_s": 6.37
+    }
+  ],
+  "aggregate_untrained_floor_curve": [
+    {
+      "n_hidden": 128,
+      "n": 3,
+      "r2_untrained_mean": 0.4928,
+      "r2_untrained_sd": 0.0328,
+      "r2_rawv1_mean": 0.1973,
+      "r2_shuffle_mean": -0.0142
+    },
+    {
+      "n_hidden": 256,
+      "n": 3,
+      "r2_untrained_mean": 0.5719,
+      "r2_untrained_sd": 0.0191,
+      "r2_rawv1_mean": 0.1973,
+      "r2_shuffle_mean": -0.019
+    },
+    {
+      "n_hidden": 512,
+      "n": 3,
+      "r2_untrained_mean": 0.63,
+      "r2_untrained_sd": 0.0182,
+      "r2_rawv1_mean": 0.1973,
+      "r2_shuffle_mean": -0.0265
+    },
+    {
+      "n_hidden": 1024,
+      "n": 3,
+      "r2_untrained_mean": 0.6806,
+      "r2_untrained_sd": 0.0172,
+      "r2_rawv1_mean": 0.1973,
+      "r2_shuffle_mean": -0.035
+    },
+    {
+      "n_hidden": 2048,
+      "n": 3,
+      "r2_untrained_mean": 0.7208,
+      "r2_untrained_sd": 0.0127,
+      "r2_rawv1_mean": 0.1973,
+      "r2_shuffle_mean": -0.0465
+    }
+  ],
+  "verdict": {
+    "n_hidden_smallest": 128,
+    "n_hidden_largest": 2048,
+    "floor_mean_at_smallest": 0.4928,
+    "floor_mean_at_largest": 0.7208,
+    "delta_largest_minus_smallest": 0.228,
+    "spearman_rho_size_vs_untrained_r2": 0.9857,
+    "monotonic_nondecreasing_within_tolerance": true,
+    "floor_rises_with_size": true,
+    "interpretation": "The untrained-reservoir floor RISES with n_hidden (delta>=0.05, rho>=0.5): the 'place fell below the untrained floor' result at n_hidden=512 is AT LEAST PARTLY a capacity artifact \u2014 a bigger random reservoir decodes position better purely from richer untrained dynamics, independent of any learning."
+  },
+  "per_size_seed_trained_contrast": [
+    {
+      "n_hidden": 128,
+      "seed": 42,
+      "n_train": 18000,
+      "n_probe": 8000,
+      "r2_trained": 0.5573,
+      "r2_untrained_matched_probe": 0.5301,
+      "r2_rawv1": 0.2971,
+      "advantage_trained_minus_untrained": 0.0272,
+      "train_elapsed_s": 8.0
+    },
+    {
+      "n_hidden": 256,
+      "seed": 42,
+      "n_train": 18000,
+      "n_probe": 8000,
+      "r2_trained": 0.6292,
+      "r2_untrained_matched_probe": 0.6052,
+      "r2_rawv1": 0.2787,
+      "advantage_trained_minus_untrained": 0.024,
+      "train_elapsed_s": 10.4
+    },
+    {
+      "n_hidden": 512,
+      "seed": 42,
+      "n_train": 18000,
+      "n_probe": 8000,
+      "r2_trained": 0.7136,
+      "r2_untrained_matched_probe": 0.6972,
+      "r2_rawv1": 0.3156,
+      "advantage_trained_minus_untrained": 0.0164,
+      "train_elapsed_s": 21.3
+    },
+    {
+      "n_hidden": 1024,
+      "seed": 42,
+      "n_train": 18000,
+      "n_probe": 8000,
+      "r2_trained": 0.7194,
+      "r2_untrained_matched_probe": 0.7101,
+      "r2_rawv1": 0.248,
+      "advantage_trained_minus_untrained": 0.0093,
+      "train_elapsed_s": 63.4
+    },
+    {
+      "n_hidden": 2048,
+      "seed": 42,
+      "n_train": 18000,
+      "n_probe": 8000,
+      "r2_trained": 0.8237,
+      "r2_untrained_matched_probe": 0.8117,
+      "r2_rawv1": 0.3464,
+      "advantage_trained_minus_untrained": 0.012,
+      "train_elapsed_s": 360.3
+    },
+    {
+      "n_hidden": 128,
+      "seed": 43,
+      "n_train": 18000,
+      "n_probe": 8000,
+      "r2_trained": 0.5733,
+      "r2_untrained_matched_probe": 0.5466,
+      "r2_rawv1": 0.2235,
+      "advantage_trained_minus_untrained": 0.0267,
+      "train_elapsed_s": 8.8
+    },
+    {
+      "n_hidden": 256,
+      "seed": 43,
+      "n_train": 18000,
+      "n_probe": 8000,
+      "r2_trained": 0.6006,
+      "r2_untrained_matched_probe": 0.5893,
+      "r2_rawv1": 0.1863,
+      "advantage_trained_minus_untrained": 0.0113,
+      "train_elapsed_s": 12.0
+    },
+    {
+      "n_hidden": 512,
+      "seed": 43,
+      "n_train": 18000,
+      "n_probe": 8000,
+      "r2_trained": 0.6625,
+      "r2_untrained_matched_probe": 0.638,
+      "r2_rawv1": 0.1923,
+      "advantage_trained_minus_untrained": 0.0245,
+      "train_elapsed_s": 24.7
+    },
+    {
+      "n_hidden": 1024,
+      "seed": 43,
+      "n_train": 18000,
+      "n_probe": 8000,
+      "r2_trained": 0.7333,
+      "r2_untrained_matched_probe": 0.7062,
+      "r2_rawv1": 0.1663,
+      "advantage_trained_minus_untrained": 0.0271,
+      "train_elapsed_s": 82.3
+    },
+    {
+      "n_hidden": 2048,
+      "seed": 43,
+      "n_train": 18000,
+      "n_probe": 8000,
+      "r2_trained": 0.8122,
+      "r2_untrained_matched_probe": 0.7898,
+      "r2_rawv1": 0.2082,
+      "advantage_trained_minus_untrained": 0.0223,
+      "train_elapsed_s": 374.0
+    },
+    {
+      "n_hidden": 128,
+      "seed": 44,
+      "n_train": 18000,
+      "n_probe": 8000,
+      "r2_trained": 0.486,
+      "r2_untrained_matched_probe": 0.4941,
+      "r2_rawv1": 0.2022,
+      "advantage_trained_minus_untrained": -0.0081,
+      "train_elapsed_s": 8.9
+    },
+    {
+      "n_hidden": 256,
+      "seed": 44,
+      "n_train": 18000,
+      "n_probe": 8000,
+      "r2_trained": 0.6082,
+      "r2_untrained_matched_probe": 0.6018,
+      "r2_rawv1": 0.2238,
+      "advantage_trained_minus_untrained": 0.0064,
+      "train_elapsed_s": 12.5
+    },
+    {
+      "n_hidden": 512,
+      "seed": 44,
+      "n_train": 18000,
+      "n_probe": 8000,
+      "r2_trained": 0.6587,
+      "r2_untrained_matched_probe": 0.648,
+      "r2_rawv1": 0.2274,
+      "advantage_trained_minus_untrained": 0.0107,
+      "train_elapsed_s": 26.6
+    },
+    {
+      "n_hidden": 1024,
+      "seed": 44,
+      "n_train": 18000,
+      "n_probe": 8000,
+      "r2_trained": 0.6945,
+      "r2_untrained_matched_probe": 0.6769,
+      "r2_rawv1": 0.1991,
+      "advantage_trained_minus_untrained": 0.0176,
+      "train_elapsed_s": 90.2
+    },
+    {
+      "n_hidden": 2048,
+      "seed": 44,
+      "n_train": 18000,
+      "n_probe": 8000,
+      "r2_trained": 0.7545,
+      "r2_untrained_matched_probe": 0.7149,
+      "r2_rawv1": 0.2218,
+      "advantage_trained_minus_untrained": 0.0395,
+      "train_elapsed_s": 406.4
+    }
+  ],
+  "aggregate_trained_contrast_curve": [
+    {
+      "n_hidden": 128,
+      "n": 3,
+      "r2_trained_mean": 0.5389,
+      "r2_untrained_matched_mean": 0.5236,
+      "advantage_mean": 0.0153,
+      "advantage_sd": 0.0202
+    },
+    {
+      "n_hidden": 256,
+      "n": 3,
+      "r2_trained_mean": 0.6127,
+      "r2_untrained_matched_mean": 0.5988,
+      "advantage_mean": 0.0139,
+      "advantage_sd": 0.0091
+    },
+    {
+      "n_hidden": 512,
+      "n": 3,
+      "r2_trained_mean": 0.6783,
+      "r2_untrained_matched_mean": 0.6611,
+      "advantage_mean": 0.0172,
+      "advantage_sd": 0.0069
+    },
+    {
+      "n_hidden": 1024,
+      "n": 3,
+      "r2_trained_mean": 0.7157,
+      "r2_untrained_matched_mean": 0.6977,
+      "advantage_mean": 0.018,
+      "advantage_sd": 0.0089
+    },
+    {
+      "n_hidden": 2048,
+      "n": 3,
+      "r2_trained_mean": 0.7968,
+      "r2_untrained_matched_mean": 0.7721,
+      "advantage_mean": 0.0246,
+      "advantage_sd": 0.0139
+    }
+  ],
+  "trained_contrast_verdict": {
+    "advantage_at_smallest": 0.0153,
+    "advantage_at_largest": 0.0246,
+    "delta_advantage_largest_minus_smallest": 0.0093,
+    "spearman_rho_size_vs_advantage": 0.9,
+    "advantage_shrinks_with_size": false
+  },
+  "elapsed_total_s": 1626.0
+}
