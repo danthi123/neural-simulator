@@ -48,7 +48,17 @@ background work — do not double-launch.
   unchanged anti-Hebbian gate; robust plateau, no false positives, default-ON behind --dg-sep). De-risk only, NOT
   wired to webapp (board = de-risked label, not DONE). Honesty boundary respected (functional turn-class correlate).
 - **⚡ Shaping sweep: ns1.0 AND ns2.0 both EMERGENCE_GO=false** (place not load-bearing at either magnitude — the
-  2nd-order-lever picture holds). **SR-alone (sr10, --lesion-mode both) now RUNNING — the DECISIVE fork test** (~35min).
+  2nd-order-lever picture holds).
+- **⚡⚡ SR-ALONE (sr10, --lesion-mode both) DONE — NEGATIVE, informative.** EMERGENCE_GO=false 0/6; **place BELOW the
+  untrained floor on ALL 6 seeds (marg −0.065..−0.165, WORSE than base ~−0.04)**; place LB 0/6 under BOTH decoding AND
+  behavioral instruments; **Jaccard(place)=0.0 every seed** (decoding-important ≠ behavioral-important units — first
+  real on-behavior confirmation of the Schøyen dissociation the instrument was built for). Reading: SR-alone runs
+  under a random/curiosity policy → the successor target (discounted future VIEWS) is dominated by policy stochasticity,
+  not position → it COMPETES with (feature-suppresses) the place code rather than reinforcing it. SR theory needs a
+  GOAL-DIRECTED policy for the successor map to be position-relevant → **the composed SR+nav+shaping run (queued) is
+  the faithful SR test, NOT this.** Also: the high capacity-inflated floor (n_hidden=512) makes beat-floor stringent →
+  **n_hidden=128 (floor ~0.49) is a concrete next lever** (place has room to exceed a lower floor). Pending: sr20
+  (SR stronger) + sr10_nav_shap20 (SR + goal-directed task — the real test).
 
 - **FORK 4th MOVE — potential-based approach SHAPING (make homing LEARNABLE).** The 3rd move (nav-required) failed
   only because reward was too SPARSE (larder reached ~0.1-0.5% of steps → REINFORCE never learned to home →
