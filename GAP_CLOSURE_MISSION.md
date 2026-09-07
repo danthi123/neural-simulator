@@ -13,8 +13,16 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ---
 
-## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-07 ~00:12 (OWNER REBOOTING; READ FIRST; LATEST anchor)
+## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-07 ~01:20 (RESUMED post-reboot; both fronts live; READ FIRST; LATEST anchor)
 
+**✅ RESUME DONE (01:20):** gpu_queue resumed → **aux-loc-alone RUNNING** (re-run from scratch; queue: auxloc_alone →
+auxloc_composed → VRAM-measure → shaping4/8) · baloo re-suspended · heartbeat Monitor re-armed (b5kjwer7j, mem_cap.sh
+15-min) · fork-DONE+VRAM Monitor re-armed (br0cyaqmx, tails gpu_queue.log) · pool re-stocked (2 Touchpoint-A jobs
+seed43/100, dispatcher pid 1110 up) · AWS mouth confirmed RUNNING (harvest d192×2B ~Sep 8, then `aws_gpu.sh stop`) ·
+fork run artifacts banked (`c502c4b2`). Ollama cleared by the reboot. FRONTIER: the **aux-loc 6-seed verdict** (the
+promising lead — does forcing position in make place persist+load-bearing at 200k?), then the Rank-6 VRAM measurement.
+
+<!-- prior reboot checklist kept below for reference; superseded by the RESUME DONE line above -->
 **⛔ POST-REBOOT RESUME CHECKLIST (owner rebooted the PC ~00:12 2026-09-07 — a reboot KILLS: gpu_queue dispatcher,
 heartbeat Monitor, all in-session Monitors, baloo-suspend; SURVIVES: AWS mouth (remote), all git branches/worktrees
 (pushed), on-disk artifacts). On "continue", DO in order:**
