@@ -283,7 +283,11 @@ def run_seed(seed, units="rate", encoder="learned_ema", n_hidden=128, n_latent=6
     # ---- 5. SUPPORTING — per-unit soundness on GRADED novelty (phi): trained vs untrained ----
     # h_t units tuned to the graded prediction-error magnitude, split-half stable AND significant vs the
     # CYCLIC-SHIFT null (reused verbatim from the valence probe). Continuous phi is the tuning label (a binary
-    # label collapses the quantile bins). Attributable trained-over-untrained = the grew-through-training test.
+    # label collapses the quantile bins). CAVEAT (reported, not gated): phi is a LINEAR read of h_t (via
+    # W_pred), so h-units "tune" to their own phi in BOTH a trained core and an untrained reservoir — this
+    # per-unit metric does NOT cleanly separate the two (the smoke confirmed untrained ~ trained here). It is
+    # kept for completeness; the DECISIVE emergence test is the phi-AUROC-vs-untrained (step 3), which is the
+    # one measurement the input-level novelty manipulation cannot confound (only prediction needs learning).
     fin_tr = np.isfinite(PHI)
     fin_un = np.isfinite(PHI_un)
     sound_tr = _valence_selectivity_metrics(H[fin_tr], PHI[fin_tr], seed, n_bins=PHI_SI_N_BINS)
