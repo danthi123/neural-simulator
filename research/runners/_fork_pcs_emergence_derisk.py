@@ -201,13 +201,18 @@ def _manhattan(a, b):
 # rollout: run world+substrate online, collect traces
 # ─────────────────────────────────────────────────────────────────────────────
 def rollout(world, sub, n_steps, train, explore_eps, collect=False, lesion_mask=None,
-            a_prev_start=-1, log_loss=False):
+            a_prev_start=-1, log_loss=False, aux_loc=False):
     """Drive the substrate against the world. Returns traces (+ leaves world/sub advanced).
 
     train=False freezes the predictive update (probe/behavioral rollouts). lesion_mask sets a
     hidden-unit lesion for the whole rollout. collect=True records per-step h/labels/rawv1.
     log_loss=True records a downsampled training-loss curve (train-stability visibility).
+    aux_loc=True supplies the true allocentric position (normalized by grid_size) as the per-step
+    stop-grad target of the substrate's aux self-localization loss (5th move) — a fork-accepted mild
+    host scaffold, only meaningful when the substrate was built with aux_loc_weight>0. Passed only on
+    the online TRAINING rollout; OFF -> observe() gets no target and the tape is byte-identical.
     """
+    gsz = float(world.cfg.grid_size)
     if train:
         sub.unfreeze()
     else:
@@ -228,7 +233,11 @@ def rollout(world, sub, n_steps, train, explore_eps, collect=False, lesion_mask=
         food_before = world.food
         fic = world.food_in_crop
         obj_in = world.objects_in_crop()
-        h = sub.observe(v1, a_prev, d)
+        # AUX-LOC (5th move): the true allocentric position when the substrate makes THIS observation is
+        # pos_before (captured pre-step), normalized to ~[0,1) by the grid size -> the stop-grad target of the
+        # supervised self-localization loss. Supplied only on the training rollout with aux_loc=True.
+        pos_target = (np.asarray(pos_before, dtype=np.float32) / gsz) if aux_loc else None
+        h = sub.observe(v1, a_prev, d, pos_target=pos_target)
         a = sub.act(h, explore_eps=explore_eps)
         r, info = world.step(a)
         sub.learn(r)
@@ -284,7 +293,7 @@ def run_seed(seed, units="rate", encoder="learned_ema", n_hidden=512, n_latent=6
              lesion_frac=0.10, n_random_lesions=3, consolidation=False,
              grad_clip=1.0, grad_skip_factor=8.0, ema_momentum=0.9999, ema_warmup=0,
              pred_horizon=1, nav_required=False, nav_dmin=6, value_weight=0.0, sr_weight=0.0,
-             nav_shaping=0.0, lesion_mode="decoding", verbose=True):
+             aux_loc_weight=0.0, nav_shaping=0.0, lesion_mode="decoding", verbose=True):
     t0 = time.time()
     wcfg = WorldConfig(seed=seed, nav_required=nav_required, nav_dmin=nav_dmin, nav_shaping=nav_shaping)
     world = ForkPCSWorld(wcfg)
@@ -292,11 +301,13 @@ def run_seed(seed, units="rate", encoder="learned_ema", n_hidden=512, n_latent=6
                      n_drive=4, tbptt_T=18, units=units, encoder=encoder, seed=seed,
                      consolidation=consolidation, grad_clip=grad_clip, grad_skip_factor=grad_skip_factor,
                      ema_rate=ema_momentum, ema_warmup_updates=ema_warmup, pred_horizon=pred_horizon,
-                     value_weight=value_weight, sr_weight=sr_weight)
+                     value_weight=value_weight, sr_weight=sr_weight, aux_loc_weight=aux_loc_weight)
     sub = PredictiveContinualSubstrate(scfg)
 
     # ---- 1. TRAIN online with the curiosity policy (small explore for early coverage) ----
-    train_out = rollout(world, sub, n_train, train=True, explore_eps=0.2, log_loss=True)
+    # aux_loc>0 -> supply the true per-step position target to the substrate's self-localization loss (5th move).
+    train_out = rollout(world, sub, n_train, train=True, explore_eps=0.2, log_loss=True,
+                        aux_loc=(aux_loc_weight > 0))
 
     # ---- 2. PROBE rollout (frozen) collecting h/labels/rawv1 + the input seq. Higher explore_eps here
     #         gives the FROZEN core coverage of the whole grid so the decode is measured over varied
@@ -476,7 +487,7 @@ def run_seed(seed, units="rate", encoder="learned_ema", n_hidden=512, n_latent=6
         "consolidation": consolidation, "n_replay_updates": int(sub.n_replay_updates),
         "grad_clip": grad_clip, "grad_skip_factor": grad_skip_factor, "pred_horizon": pred_horizon,
         "nav_required": nav_required, "nav_dmin": nav_dmin, "value_weight": value_weight,
-        "sr_weight": sr_weight,
+        "sr_weight": sr_weight, "aux_loc_weight": aux_loc_weight,
         "nav_shaping": nav_shaping,
         "ema_momentum": ema_momentum, "ema_warmup": ema_warmup,
         "max_grad_norm": round(float(sub.max_grad_norm), 3), "n_grad_skipped": int(sub.n_skipped),
@@ -688,6 +699,13 @@ def main():
                          "occupancy (Stachenfeld 2017: place cells ARE an SR); its gradient flows into the "
                          "shared core, making position load-bearing on the self-supervised objective (no host "
                          "position label).")
+    ap.add_argument("--aux-loc-weight", type=float, default=0.0,
+                    help="weight of the supervised self-localization auxiliary loss (5th move; default 0.0 = "
+                         "OFF, byte-identical: no W_loc/b_loc params, no position target read). >0 adds a linear "
+                         "readout of the true allocentric (x,y) from h_t at every step (Cueva & Wei 2018; Banino "
+                         "2018), whose gradient flows into the shared core -> position load-bearing on the "
+                         "objective DIRECTLY. The host-supplied position target is a fork-accepted mild scaffold "
+                         "(same category as reward shaping), supplied per-step on the training rollout.")
     ap.add_argument("--lesion-mode", choices=["decoding", "behavioral", "both"], default="decoding",
                     help="which instrument SELECTS the units to lesion for the behavioral-dependency gate. "
                          "'decoding' (default, BYTE-IDENTICAL to the prior code) = ridge-decoding importance "
@@ -711,13 +729,14 @@ def main():
                          ema_momentum=args.ema_momentum, ema_warmup=args.ema_warmup,
                          pred_horizon=args.pred_horizon, nav_required=args.nav_required,
                          nav_dmin=args.nav_dmin, value_weight=args.value_weight, sr_weight=args.sr_weight,
+                         aux_loc_weight=args.aux_loc_weight,
                          nav_shaping=args.nav_shaping, lesion_mode=args.lesion_mode, **kw)
                 for s in args.seeds]
     agg = aggregate(per_seed)
     payload = {"battery": "fork_pcs_emergence", "units": args.units, "encoder": args.encoder,
                "consolidation": args.consolidation, "pred_horizon": args.pred_horizon,
                "nav_required": args.nav_required, "nav_dmin": args.nav_dmin, "value_weight": args.value_weight,
-               "sr_weight": args.sr_weight,
+               "sr_weight": args.sr_weight, "aux_loc_weight": args.aux_loc_weight,
                "nav_shaping": args.nav_shaping,
                "lesion_mode": args.lesion_mode,
                "grad_clip": args.grad_clip, "grad_skip_factor": args.grad_skip_factor,

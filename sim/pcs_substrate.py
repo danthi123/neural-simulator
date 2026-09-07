@@ -128,6 +128,22 @@ class PCSConfig:
     # if the SR term still does not RETAIN place, that is itself the next finding.)
     sr_weight: float = 0.0       # weight of the successor-representation prediction term (0 = OFF, byte-identical)
     sr_gamma: float = 0.95       # discount for the within-window truncated MC latent-occupancy (SR) target
+    # AUXILIARY SELF-LOCALIZATION LOSS (the fork's 5th move — supervised position readout). Default 0.0 == OFF,
+    # byte-identical to the SR-head code (no W_loc/b_loc params allocated, no rng draws, no loss/grad terms → every
+    # prior artifact stays valid). Motivation (Cueva & Wei 2018; Banino et al. 2018; Sorscher 2019): add a
+    # SUPERVISED loss forcing a linear readout of allocentric position (x,y) from the recurrent state at EVERY
+    # step, driven by the agent's own efference-copy/velocity (already an input). This makes position LOAD-BEARING
+    # ON THE OBJECTIVE DIRECTLY (Banino: grid-like units then emerge AND are causally load-bearing) — unlike the
+    # self-supervised SR term, which was found to COMPETE with the place code rather than reinforce it. On the FORK
+    # the host-supplied position TARGET is an ACCEPTED MILD SCAFFOLD (same category as the already-accepted reward
+    # shaping — function-first, documented honestly; NOT a strict-branch shortcut). The target is a stop-grad
+    # CONSTANT (like the value MC-return / SR latent-occupancy targets) so the analytic grad matches finite-
+    # difference exactly (gradcheck-clean). aux_loss = aux_loc_weight * mean_t || W_loc@h_t + b_loc - pos_t ||^2,
+    # pos_t = true allocentric (x,y) normalized by grid_size; its gradient flows into the shared core through the
+    # recurrence (W_loc^T upstream into dL/dh_t), so the recurrent state MUST encode position to minimize it.
+    # (Honesty: this is the named surpass, not a guarantee — if a direct supervised term still does not RETAIN
+    # place, that is itself the next finding.)
+    aux_loc_weight: float = 0.0  # weight of the supervised self-localization auxiliary loss (0 = OFF, byte-identical)
     var_lambda: float = 1.0      # weight of the VICReg variance floor on e (0 disables)
     var_gamma: float = 0.3       # target per-dim std for the variance floor (tanh-bounded e)
     # encoder
@@ -314,6 +330,16 @@ class PredictiveContinualSubstrate:
             self.P["W_sr"] = w((E, H), H)       # SR head: h -> psi (vector future latent-occupancy estimate)
             self.P["b_sr"] = xp.zeros((E,), dtype=xp.float32)
 
+        # AUX-LOC head (H6) — the 5th-move supervised self-localization channel (Cueva & Wei 2018 / Banino 2018).
+        # Allocated ONLY when aux_loc_weight>0, and its rng draw happens AFTER W_sr so every OFF path (no W_loc)
+        # leaves every prior weight byte-identical. In self.P so its grad flows into the shared core through the
+        # TBPTT recurrence, making position load-bearing on the objective DIRECTLY. W_loc: (2,H) linear (x,y)
+        # readout, b_loc: (2,). The TARGET is the host-supplied true allocentric position (a fork-accepted mild
+        # scaffold, same category as reward shaping — supplied per-step by the runner via observe(pos_target=...)).
+        if cfg.aux_loc_weight > 0:
+            self.P["W_loc"] = w((2, H), H)      # self-localization head: h -> (x,y) position estimate
+            self.P["b_loc"] = xp.zeros((2,), dtype=xp.float32)
+
         self.opt = _Adam(self.P, xp, lr=cfg.lr)
 
         # ---- runtime state ----
@@ -440,13 +466,22 @@ class PredictiveContinualSubstrate:
         off the shared state (present only when sr_weight>0). Shape (E,)."""
         return P["W_sr"] @ h_t + P["b_sr"]
 
+    def _loc_head(self, h_t, P):
+        """loc(h_t): VECTOR (x,y) self-localization estimate off the shared state (present only when
+        aux_loc_weight>0). A linear readout of allocentric position. Shape (2,)."""
+        return P["W_loc"] @ h_t + P["b_loc"]
+
     # ── online step: observe / act / learn ──────────────────────────────────
-    def observe(self, v1feat, a_prev_idx: int, d):
+    def observe(self, v1feat, a_prev_idx: int, d, pos_target=None):
         """Advance the shared state one step and return h_t (lesion-aware).
 
         v1feat : (feat_dim,) fixed Gabor-V1 features of the CURRENT egocentric view
         a_prev_idx : int index of the last action (efference copy); -1 for "none"
         d : (n_drive,) interoceptive drive afferent
+        pos_target : optional (2,) host-supplied true allocentric position (normalized) for THIS step —
+                     the stop-grad target of the aux self-localization loss (5th move). Only read when
+                     aux_loc_weight>0; when None (the default / OFF path) NO key is stored, so the tape
+                     and every downstream loss/grad are byte-identical to the pre-change substrate.
         """
         xp = self.xp
         # backend-agnostic input coercion. Avoid a device->host->device round-trip when the
@@ -489,6 +524,10 @@ class PredictiveContinualSubstrate:
             "v_prev": v_prev_carry, "s_prev": s_prev_carry,
             "reward": None,
         }
+        # AUX-LOC target (5th move): store the host-supplied true position ONLY when provided, so the OFF path
+        # (pos_target is None) leaves the tape step byte-identical to the pre-change substrate.
+        if pos_target is not None:
+            step["pos_target"] = _to_backend(pos_target)
         self._tape.append(step)
         return h_t
 
@@ -727,13 +766,36 @@ class PredictiveContinualSubstrate:
             if sr_cnt > 0:
                 sr_loss = cfg.sr_weight * (s / sr_cnt)
 
-        loss = jl + cfg.beta_reward * rl + vl + val_loss + sr_loss
+        # AUX-LOC (self-localization) head (5th move; present only when aux_loc_weight>0 -> off path
+        # byte-identical). Supervised loss forcing a linear readout of the true allocentric position (x,y) from
+        # the SAME h_t: aux_loss = aux_loc_weight * mean_t || loc(h_t) - pos_target_t ||^2. pos_target_t is the
+        # host-supplied stop-grad CONSTANT position (a fork-accepted mild scaffold, like reward shaping) recorded
+        # in the tape by observe(pos_target=...) -> the analytic grad matches finite-difference exactly. Steps
+        # with no recorded target (e.g. frozen eval tapes) are skipped, so this term is 0 there. The grad flows
+        # into the core (below), making position load-bearing on the objective DIRECTLY.
+        aux_loss = 0.0
+        loc_list = loc_targets = None
+        loc_cnt = 0
+        if "W_loc" in P and cfg.aux_loc_weight > 0:
+            loc_list = [self._loc_head(h_list[t], P) for t in range(T)]
+            loc_targets = [tape[t].get("pos_target") for t in range(T)]
+            s = 0.0
+            for t in range(T):
+                if loc_targets[t] is not None:
+                    diff = loc_list[t] - loc_targets[t]
+                    s = s + float((diff * diff).sum())
+                    loc_cnt += 1
+            if loc_cnt > 0:
+                aux_loss = cfg.aux_loc_weight * (s / loc_cnt)
+
+        loss = jl + cfg.beta_reward * rl + vl + val_loss + sr_loss + aux_loss
         cache = {
             "e_list": e_list, "h_list": h_list, "g_list": g_list, "pre_list": pre_list,
             "v_list": v_list, "s_list": s_list, "jepa_terms": jepa_terms, "rhat_list": rhat_list,
             "h_prev": h_prev, "v_prev0": v_prev, "n_r": n_r,
             "val_list": val_list, "val_targets": val_targets, "val_cnt": val_cnt,
             "sr_list": sr_list, "sr_targets": sr_targets, "sr_cnt": sr_cnt,
+            "loc_list": loc_list, "loc_targets": loc_targets, "loc_cnt": loc_cnt,
         }
         return loss, cache
 
@@ -790,6 +852,18 @@ class PredictiveContinualSubstrate:
                     grads["W_sr"] += xp.outer(g_psi, h_list[t])
                     grads["b_sr"] += g_psi
                     dh_head[t] = dh_head[t] + P["W_sr"].T @ g_psi
+        # AUX-LOC (self-localization) head (5th move; present only when aux_loc_weight>0). VECTOR analogue of the
+        # value head: dL/dloc_t = 2*aux_loc_weight/loc_cnt * (loc(h_t) - pos_target_t) (shape (2,)). Its grad
+        # flows into the shared core via dh_head (W_loc^T @ dL/dloc_t), so position is load-bearing on the
+        # objective DIRECTLY. Target is a host-supplied constant -> gradcheck-clean.
+        loc_list = cache.get("loc_list"); loc_targets = cache.get("loc_targets"); loc_cnt = cache.get("loc_cnt", 0)
+        if "W_loc" in P and cfg.aux_loc_weight > 0 and loc_cnt > 0:
+            for t in range(T):
+                if loc_targets[t] is not None:
+                    g_loc = (2.0 * cfg.aux_loc_weight / loc_cnt) * (loc_list[t] - loc_targets[t])   # (2,)
+                    grads["W_loc"] += xp.outer(g_loc, h_list[t])
+                    grads["b_loc"] += g_loc
+                    dh_head[t] = dh_head[t] + P["W_loc"].T @ g_loc
 
         # VICReg variance grad on e (adds to de_t during the loop)
         de_var = [None] * T
@@ -982,27 +1056,30 @@ class PredictiveContinualSubstrate:
 # ─────────────────────────────────────────────────────────────────────────────
 # self-checks
 # ─────────────────────────────────────────────────────────────────────────────
-def _make_tiny(units="rate", seed=1, pred_horizon=1, value_weight=0.0, sr_weight=0.0):
+def _make_tiny(units="rate", seed=1, pred_horizon=1, value_weight=0.0, sr_weight=0.0, aux_loc_weight=0.0):
     cfg = PCSConfig(n_hidden=7, feat_dim=6, n_latent=4, n_actions=3, n_drive=2,
                     tbptt_T=5, units=units, var_lambda=0.5, encoder="learned_ema", seed=seed,
-                    pred_horizon=pred_horizon, value_weight=value_weight, sr_weight=sr_weight)
+                    pred_horizon=pred_horizon, value_weight=value_weight, sr_weight=sr_weight,
+                    aux_loc_weight=aux_loc_weight)
     return PredictiveContinualSubstrate(cfg)
 
 
-def _fill_tape(sub, T, rng):
-    """Drive `sub` for T steps with deterministic random inputs, register rewards."""
+def _fill_tape(sub, T, rng, with_pos=False):
+    """Drive `sub` for T steps with deterministic random inputs, register rewards. with_pos=True also
+    supplies a random (2,) stop-grad position target per step (the aux self-localization gradcheck arm)."""
     sub.reset_state()
     a_prev = -1
     for t in range(T):
         v1 = rng.standard_normal(sub.cfg.feat_dim).astype(np.float32)
         d = rng.standard_normal(sub.cfg.n_drive).astype(np.float32)
-        sub.observe(v1, a_prev, d)
+        pos = rng.standard_normal(2).astype(np.float32) if with_pos else None
+        sub.observe(v1, a_prev, d, pos_target=pos)
         sub._tape[-1]["reward"] = float(rng.standard_normal())
         a_prev = int(rng.integers(sub.cfg.n_actions))
     return sub._tape
 
 
-def gradcheck(units="rate", tol=2e-2, pred_horizon=1, value_weight=0.0, sr_weight=0.0):
+def gradcheck(units="rate", tol=2e-2, pred_horizon=1, value_weight=0.0, sr_weight=0.0, aux_loc_weight=0.0):
     """Finite-difference the analytic BPTT grads for a tiny substrate. For spike mode the
     forward uses the SMOOTH surrogate-integral (soft=True) whose exact derivative is the
     atan surrogate the backward uses — the correct FD validation of a surrogate-gradient net
@@ -1013,12 +1090,14 @@ def gradcheck(units="rate", tol=2e-2, pred_horizon=1, value_weight=0.0, sr_weigh
     value_weight>0 validates the 3rd-move VALUE head backward — grads into w_v/b_v and the extra
     dh_head path (MC-return target is a constant, so FD and analytic agree).
     sr_weight>0 validates the 4th-move SR head backward — grads into W_sr/b_sr and the extra dh_head
-    path (truncated MC latent-occupancy target is a constant, so FD and analytic agree)."""
+    path (truncated MC latent-occupancy target is a constant, so FD and analytic agree).
+    aux_loc_weight>0 validates the 5th-move AUX-LOC head backward — grads into W_loc/b_loc and the extra
+    dh_head path (host-supplied position target is a constant, so FD and analytic agree)."""
     soft = (units == "spike")
     sub = _make_tiny(units=units, seed=3, pred_horizon=pred_horizon, value_weight=value_weight,
-                     sr_weight=sr_weight)
+                     sr_weight=sr_weight, aux_loc_weight=aux_loc_weight)
     rng = np.random.default_rng(7)
-    tape = _fill_tape(sub, sub.cfg.tbptt_T, rng)
+    tape = _fill_tape(sub, sub.cfg.tbptt_T, rng, with_pos=(aux_loc_weight > 0))
     P = sub.P
     loss0, cache = sub._window_forward(tape, P, sub.W_enc, sub.b_enc, soft=soft)
     grads = sub._window_backward(tape, P, cache)
@@ -1028,7 +1107,7 @@ def gradcheck(units="rate", tol=2e-2, pred_horizon=1, value_weight=0.0, sr_weigh
     worst = None
     checked = 0
     for name in ["W_h", "W_e", "W_a", "W_d", "b_h", "W_pred", "W_pred_a", "b_pred", "w_r", "b_r",
-                 "w_v", "b_v", "W_sr", "b_sr", "W_enc", "b_enc"]:
+                 "w_v", "b_v", "W_sr", "b_sr", "W_loc", "b_loc", "W_enc", "b_enc"]:
         if name not in P:
             continue
         arr = np.asarray(to_host(P[name]), dtype=np.float64)
@@ -1064,7 +1143,7 @@ def gradcheck(units="rate", tol=2e-2, pred_horizon=1, value_weight=0.0, sr_weigh
                 worst = (name, int(i), float(num), float(ana))
     ok = max_rel < tol
     print(f"[gradcheck units={units} pred_horizon={pred_horizon} value_weight={value_weight} "
-          f"sr_weight={sr_weight}] checked={checked} "
+          f"sr_weight={sr_weight} aux_loc_weight={aux_loc_weight}] checked={checked} "
           f"max_rel_err={max_rel:.2e} {'OK' if ok else 'FAIL'}  worst={worst}")
     return ok
 
@@ -1102,6 +1181,9 @@ if __name__ == "__main__":
         # SR head (4th move) backward — validate W_sr/b_sr grads + the SR dh_head path (into the recurrence)
         all_ok &= gradcheck("rate", sr_weight=1.0)
         all_ok &= gradcheck("spike", tol=5e-2, sr_weight=1.0)
-        # all moves combined (k-ahead JEPA + value head + SR head together)
-        all_ok &= gradcheck("rate", pred_horizon=3, value_weight=1.0, sr_weight=1.0)
+        # AUX-LOC head (5th move) backward — validate W_loc/b_loc grads + the aux-loc dh_head path (recurrence)
+        all_ok &= gradcheck("rate", aux_loc_weight=1.0)
+        all_ok &= gradcheck("spike", tol=5e-2, aux_loc_weight=1.0)
+        # all moves combined (k-ahead JEPA + value head + SR head + aux-loc head together)
+        all_ok &= gradcheck("rate", pred_horizon=3, value_weight=1.0, sr_weight=1.0, aux_loc_weight=1.0)
     raise SystemExit(0 if all_ok else 1)
