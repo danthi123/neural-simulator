@@ -307,7 +307,7 @@ def run_seed(seed, units="rate", encoder="learned_ema", n_hidden=512, n_latent=6
              grad_clip=1.0, grad_skip_factor=8.0, ema_momentum=0.9999, ema_warmup=0,
              pred_horizon=1, nav_required=False, nav_dmin=6, value_weight=0.0, sr_weight=0.0,
              aux_loc_weight=0.0, nav_shaping=0.0, nav_curriculum=False, nav_curriculum_frac=0.5,
-             nav_curriculum_dmin_start=1, lesion_mode="decoding", verbose=True):
+             nav_curriculum_dmin_start=1, si=False, lesion_mode="decoding", verbose=True):
     t0 = time.time()
     wcfg = WorldConfig(seed=seed, nav_required=nav_required, nav_dmin=nav_dmin, nav_shaping=nav_shaping,
                        nav_curriculum=nav_curriculum, nav_curriculum_frac=nav_curriculum_frac,
@@ -317,7 +317,7 @@ def run_seed(seed, units="rate", encoder="learned_ema", n_hidden=512, n_latent=6
                      n_drive=4, tbptt_T=18, units=units, encoder=encoder, seed=seed,
                      consolidation=consolidation, grad_clip=grad_clip, grad_skip_factor=grad_skip_factor,
                      ema_rate=ema_momentum, ema_warmup_updates=ema_warmup, pred_horizon=pred_horizon,
-                     value_weight=value_weight, sr_weight=sr_weight, aux_loc_weight=aux_loc_weight)
+                     value_weight=value_weight, sr_weight=sr_weight, aux_loc_weight=aux_loc_weight, si=si)
     sub = PredictiveContinualSubstrate(scfg)
 
     # ---- 1. TRAIN online with the curiosity policy (small explore for early coverage) ----
@@ -1298,6 +1298,8 @@ def main():
     ap.add_argument("--n-train", type=int, default=200_000)
     ap.add_argument("--consolidation", action="store_true",
                     help="enable the hippocampal-replay consolidation companion (default OFF = the baseline arm)")
+    ap.add_argument("--si", action="store_true",
+                    help="enable Synaptic Intelligence weight-anchoring (Zenke 2017) anti-forgetting on the online path (default OFF)")
     ap.add_argument("--grad-clip", type=float, default=1.0,
                     help="global grad-norm clip (default 1.0 = stable). Set 5.0 to reproduce the unstable control; 0 disables.")
     ap.add_argument("--grad-skip-factor", type=float, default=8.0,
@@ -1379,11 +1381,12 @@ def main():
                          nav_shaping=args.nav_shaping, nav_curriculum=args.nav_curriculum,
                          nav_curriculum_frac=args.nav_curriculum_frac,
                          nav_curriculum_dmin_start=args.nav_curriculum_dmin_start,
+                         si=args.si,
                          lesion_mode=args.lesion_mode, **kw)
                 for s in args.seeds]
     agg = aggregate(per_seed)
     payload = {"battery": "fork_pcs_emergence", "units": args.units, "encoder": args.encoder,
-               "consolidation": args.consolidation, "pred_horizon": args.pred_horizon,
+               "consolidation": args.consolidation, "si": args.si, "pred_horizon": args.pred_horizon,
                "nav_required": args.nav_required, "nav_dmin": args.nav_dmin, "value_weight": args.value_weight,
                "sr_weight": args.sr_weight, "aux_loc_weight": args.aux_loc_weight,
                "nav_shaping": args.nav_shaping,
