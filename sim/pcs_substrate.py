@@ -144,6 +144,26 @@ class PCSConfig:
     # (Honesty: this is the named surpass, not a guarantee — if a direct supervised term still does not RETAIN
     # place, that is itself the next finding.)
     aux_loc_weight: float = 0.0  # weight of the supervised self-localization auxiliary loss (0 = OFF, byte-identical)
+    # VALENCE-FORECAST head (the AFFECT arc's dedicated objective — a predictive-coding valence organ). Default
+    # 0.0 == OFF, byte-identical to the aux-loc-head code (no w_valence/b_valence params allocated, no rng draws,
+    # no loss/grad terms → every prior artifact stays valid). Motivation: two raw-READOUT methods for emergent
+    # valence were honest NEGATIVES — the instantaneous reward-PE (last_valence_rpe) is a trivial linear read of
+    # h_t decoded as well by an UNTRAINED reservoir, and the leaky-integrated MOOD rides the reservoir's intrinsic
+    # memory. A raw signal already present in the dynamics is NOT emergent affect. The MAIN project's proven affect
+    # organ is a predictive-coding valence FORECAST (state→predicted upcoming valence, a next-turn forecast that is
+    # spiking, queryable, and lesion-load-bearing). So the fork's method is a dedicated valence-forecast OBJECTIVE:
+    # a scalar head predicts, off the SAME shared h_t, the UPCOMING valence = the valence_gamma-discounted sum of
+    # FUTURE rewards from t+1 onward (excludes the present step, so it is a genuine forecast, distinct from the
+    # value head's return which INCLUDES the present). The target is a CONSTANT of the in-window rewards (no
+    # bootstrap, like the value MC-return / SR latent-occupancy / aux-loc position targets) so the analytic grad
+    # matches finite-difference exactly (gradcheck-clean). Its gradient FLOWS INTO THE CORE through the recurrence
+    # (w_valence^T upstream into dL/dh_t), so the recurrent state must ANTICIPATE upcoming reward to minimize it —
+    # making valence load-bearing on the objective the way aux-loc made position load-bearing (an objective grows a
+    # faculty where pure readout does not). (Honesty: this is the named surpass, not a guarantee — a FUNCTIONAL
+    # forecast instrument; if a trained-vs-untrained valence gap still does not OPEN under the objective, that is
+    # itself the next finding. Never asserts felt/phenomenal experience.)
+    valence_weight: float = 0.0  # weight of the valence-forecast prediction term (0 = OFF, byte-identical)
+    valence_gamma: float = 0.9   # discount for the within-window upcoming-reward (valence-forecast) target
     var_lambda: float = 1.0      # weight of the VICReg variance floor on e (0 disables)
     var_gamma: float = 0.3       # target per-dim std for the variance floor (tanh-bounded e)
     # encoder
@@ -359,6 +379,16 @@ class PredictiveContinualSubstrate:
             self.P["W_loc"] = w((2, H), H)      # self-localization head: h -> (x,y) position estimate
             self.P["b_loc"] = xp.zeros((2,), dtype=xp.float32)
 
+        # VALENCE-FORECAST head (the AFFECT arc's dedicated objective). Allocated ONLY when valence_weight>0, and
+        # its rng draw happens AFTER W_loc so every OFF path (no w_valence) leaves every prior weight byte-identical
+        # (the base recurrent/head weights are all drawn before any conditional head, so turning valence ON with the
+        # others OFF is byte-identical to those weights too). In self.P so its grad flows into the shared core
+        # through the TBPTT recurrence, making UPCOMING valence load-bearing on the objective. w_valence: (H,)
+        # scalar readout of predicted upcoming valence, b_valence: (1,).
+        if cfg.valence_weight > 0:
+            self.P["w_valence"] = w((H,), H)    # valence-forecast head: h -> predicted upcoming valence (scalar)
+            self.P["b_valence"] = xp.zeros((1,), dtype=xp.float32)
+
         self.opt = _Adam(self.P, xp, lr=cfg.lr)
 
         # SYNAPTIC INTELLIGENCE state (allocated ONLY when cfg.si -> the OFF path allocates NOTHING and draws
@@ -508,6 +538,11 @@ class PredictiveContinualSubstrate:
         """loc(h_t): VECTOR (x,y) self-localization estimate off the shared state (present only when
         aux_loc_weight>0). A linear readout of allocentric position. Shape (2,)."""
         return P["W_loc"] @ h_t + P["b_loc"]
+
+    def _valence_head(self, h_t, P):
+        """vf(h_t): scalar VALENCE FORECAST — predicted upcoming valence off the shared state (present only
+        when valence_weight>0). A linear readout of the discounted future reward from t+1 onward."""
+        return P["w_valence"] @ h_t + P["b_valence"][0]
 
     # ── online step: observe / act / learn ──────────────────────────────────
     def observe(self, v1feat, a_prev_idx: int, d, pos_target=None):
@@ -832,7 +867,45 @@ class PredictiveContinualSubstrate:
             if loc_cnt > 0:
                 aux_loss = cfg.aux_loc_weight * (s / loc_cnt)
 
-        loss = jl + cfg.beta_reward * rl + vl + val_loss + sr_loss + aux_loss
+        # VALENCE-FORECAST head (AFFECT arc; present only when valence_weight>0 -> off path byte-identical).
+        # Predict the UPCOMING valence off the SAME h_t: vf_target_t = sum_{k>=1} valence_gamma^{k-1} * r_{t+k}
+        # (the discounted sum of FUTURE rewards from t+1 onward, within-window, truncated). This EXCLUDES the
+        # present step's reward (unlike the value head's return G_t which includes it), so it is a genuine
+        # forecast of upcoming valence. The target is a CONSTANT of the in-window rewards (no bootstrap) so the
+        # analytic grad matches finite-difference exactly (gradcheck-clean). Built like the value MC-return by a
+        # backward accumulation returns_t = r_t + gamma*returns_{t+1} (gaps reset), then vf_target_t = returns_{t+1}
+        # (the return STARTING at t+1). Steps with no upcoming in-window reward (or the last step) are skipped.
+        # The grad flows into the core (below), making anticipated valence load-bearing on the objective.
+        vf_loss = 0.0
+        vf_list = vf_targets = None
+        vf_cnt = 0
+        if "w_valence" in P and cfg.valence_weight > 0:
+            vf_list = [self._valence_head(h_list[t], P) for t in range(T)]
+            gvf = cfg.valence_gamma
+            # returns_t = discounted return STARTING at t (within-window; a reward gap resets the accumulation)
+            vf_returns = [None] * T
+            running = None
+            for t in range(T - 1, -1, -1):
+                r_t = tape[t]["reward"]
+                if r_t is None:
+                    running = None          # a gap resets the truncated return accumulation
+                    continue
+                running = float(r_t) + (gvf * running if running is not None else 0.0)
+                vf_returns[t] = running
+            # forecast target at t = the return starting at t+1 (upcoming valence; excludes the present step)
+            vf_targets = [None] * T
+            for t in range(T - 1):
+                vf_targets[t] = vf_returns[t + 1]
+            s = 0.0
+            for t in range(T):
+                if vf_targets[t] is not None:
+                    d = vf_list[t] - vf_targets[t]
+                    s = s + float(d * d)
+                    vf_cnt += 1
+            if vf_cnt > 0:
+                vf_loss = cfg.valence_weight * (s / vf_cnt)
+
+        loss = jl + cfg.beta_reward * rl + vl + val_loss + sr_loss + aux_loss + vf_loss
         cache = {
             "e_list": e_list, "h_list": h_list, "g_list": g_list, "pre_list": pre_list,
             "v_list": v_list, "s_list": s_list, "jepa_terms": jepa_terms, "rhat_list": rhat_list,
@@ -840,6 +913,7 @@ class PredictiveContinualSubstrate:
             "val_list": val_list, "val_targets": val_targets, "val_cnt": val_cnt,
             "sr_list": sr_list, "sr_targets": sr_targets, "sr_cnt": sr_cnt,
             "loc_list": loc_list, "loc_targets": loc_targets, "loc_cnt": loc_cnt,
+            "vf_list": vf_list, "vf_targets": vf_targets, "vf_cnt": vf_cnt,
         }
         return loss, cache
 
@@ -908,6 +982,18 @@ class PredictiveContinualSubstrate:
                     grads["W_loc"] += xp.outer(g_loc, h_list[t])
                     grads["b_loc"] += g_loc
                     dh_head[t] = dh_head[t] + P["W_loc"].T @ g_loc
+        # VALENCE-FORECAST head (AFFECT arc; present only when valence_weight>0). Scalar analogue of the value
+        # head: dL/dvf_t = 2*valence_weight/vf_cnt * (vf(h_t) - vf_target_t). Its grad flows into the shared core
+        # via dh_head (g_vf * w_valence), so the recurrence must anticipate upcoming reward to minimize the loss
+        # (valence load-bearing on the objective). Target is a constant (discounted upcoming reward) -> gradcheck-clean.
+        vf_list = cache.get("vf_list"); vf_targets = cache.get("vf_targets"); vf_cnt = cache.get("vf_cnt", 0)
+        if "w_valence" in P and cfg.valence_weight > 0 and vf_cnt > 0:
+            for t in range(T):
+                if vf_targets[t] is not None:
+                    g_vf = (2.0 * cfg.valence_weight / vf_cnt) * (vf_list[t] - vf_targets[t])
+                    grads["w_valence"] += g_vf * h_list[t]
+                    grads["b_valence"] += xp.asarray([g_vf], dtype=xp.float32)
+                    dh_head[t] = dh_head[t] + g_vf * P["w_valence"]
 
         # VICReg variance grad on e (adds to de_t during the loop)
         de_var = [None] * T
@@ -1159,11 +1245,12 @@ class PredictiveContinualSubstrate:
 # ─────────────────────────────────────────────────────────────────────────────
 # self-checks
 # ─────────────────────────────────────────────────────────────────────────────
-def _make_tiny(units="rate", seed=1, pred_horizon=1, value_weight=0.0, sr_weight=0.0, aux_loc_weight=0.0):
+def _make_tiny(units="rate", seed=1, pred_horizon=1, value_weight=0.0, sr_weight=0.0, aux_loc_weight=0.0,
+               valence_weight=0.0):
     cfg = PCSConfig(n_hidden=7, feat_dim=6, n_latent=4, n_actions=3, n_drive=2,
                     tbptt_T=5, units=units, var_lambda=0.5, encoder="learned_ema", seed=seed,
                     pred_horizon=pred_horizon, value_weight=value_weight, sr_weight=sr_weight,
-                    aux_loc_weight=aux_loc_weight)
+                    aux_loc_weight=aux_loc_weight, valence_weight=valence_weight)
     return PredictiveContinualSubstrate(cfg)
 
 
@@ -1182,7 +1269,8 @@ def _fill_tape(sub, T, rng, with_pos=False):
     return sub._tape
 
 
-def gradcheck(units="rate", tol=2e-2, pred_horizon=1, value_weight=0.0, sr_weight=0.0, aux_loc_weight=0.0):
+def gradcheck(units="rate", tol=2e-2, pred_horizon=1, value_weight=0.0, sr_weight=0.0, aux_loc_weight=0.0,
+              valence_weight=0.0):
     """Finite-difference the analytic BPTT grads for a tiny substrate. For spike mode the
     forward uses the SMOOTH surrogate-integral (soft=True) whose exact derivative is the
     atan surrogate the backward uses — the correct FD validation of a surrogate-gradient net
@@ -1195,10 +1283,12 @@ def gradcheck(units="rate", tol=2e-2, pred_horizon=1, value_weight=0.0, sr_weigh
     sr_weight>0 validates the 4th-move SR head backward — grads into W_sr/b_sr and the extra dh_head
     path (truncated MC latent-occupancy target is a constant, so FD and analytic agree).
     aux_loc_weight>0 validates the 5th-move AUX-LOC head backward — grads into W_loc/b_loc and the extra
-    dh_head path (host-supplied position target is a constant, so FD and analytic agree)."""
+    dh_head path (host-supplied position target is a constant, so FD and analytic agree).
+    valence_weight>0 validates the AFFECT-arc VALENCE-FORECAST head backward — grads into w_valence/b_valence
+    and the extra dh_head path (the discounted upcoming-reward target is a constant, so FD and analytic agree)."""
     soft = (units == "spike")
     sub = _make_tiny(units=units, seed=3, pred_horizon=pred_horizon, value_weight=value_weight,
-                     sr_weight=sr_weight, aux_loc_weight=aux_loc_weight)
+                     sr_weight=sr_weight, aux_loc_weight=aux_loc_weight, valence_weight=valence_weight)
     rng = np.random.default_rng(7)
     tape = _fill_tape(sub, sub.cfg.tbptt_T, rng, with_pos=(aux_loc_weight > 0))
     P = sub.P
@@ -1210,7 +1300,7 @@ def gradcheck(units="rate", tol=2e-2, pred_horizon=1, value_weight=0.0, sr_weigh
     worst = None
     checked = 0
     for name in ["W_h", "W_e", "W_a", "W_d", "b_h", "W_pred", "W_pred_a", "b_pred", "w_r", "b_r",
-                 "w_v", "b_v", "W_sr", "b_sr", "W_loc", "b_loc", "W_enc", "b_enc"]:
+                 "w_v", "b_v", "W_sr", "b_sr", "W_loc", "b_loc", "w_valence", "b_valence", "W_enc", "b_enc"]:
         if name not in P:
             continue
         arr = np.asarray(to_host(P[name]), dtype=np.float64)
@@ -1246,8 +1336,8 @@ def gradcheck(units="rate", tol=2e-2, pred_horizon=1, value_weight=0.0, sr_weigh
                 worst = (name, int(i), float(num), float(ana))
     ok = max_rel < tol
     print(f"[gradcheck units={units} pred_horizon={pred_horizon} value_weight={value_weight} "
-          f"sr_weight={sr_weight} aux_loc_weight={aux_loc_weight}] checked={checked} "
-          f"max_rel_err={max_rel:.2e} {'OK' if ok else 'FAIL'}  worst={worst}")
+          f"sr_weight={sr_weight} aux_loc_weight={aux_loc_weight} valence_weight={valence_weight}] "
+          f"checked={checked} max_rel_err={max_rel:.2e} {'OK' if ok else 'FAIL'}  worst={worst}")
     return ok
 
 
@@ -1392,8 +1482,13 @@ if __name__ == "__main__":
         # AUX-LOC head (5th move) backward — validate W_loc/b_loc grads + the aux-loc dh_head path (recurrence)
         all_ok &= gradcheck("rate", aux_loc_weight=1.0)
         all_ok &= gradcheck("spike", tol=5e-2, aux_loc_weight=1.0)
-        # all moves combined (k-ahead JEPA + value head + SR head + aux-loc head together)
-        all_ok &= gradcheck("rate", pred_horizon=3, value_weight=1.0, sr_weight=1.0, aux_loc_weight=1.0)
+        # VALENCE-FORECAST head (AFFECT arc) backward — validate w_valence/b_valence grads + the valence dh_head
+        # path (into the recurrence; the discounted upcoming-reward target is a constant, so FD == analytic)
+        all_ok &= gradcheck("rate", valence_weight=1.0)
+        all_ok &= gradcheck("spike", tol=5e-2, valence_weight=1.0)
+        # all moves combined (k-ahead JEPA + value head + SR head + aux-loc head + valence-forecast head together)
+        all_ok &= gradcheck("rate", pred_horizon=3, value_weight=1.0, sr_weight=1.0, aux_loc_weight=1.0,
+                            valence_weight=1.0)
         # SYNAPTIC INTELLIGENCE (anti-forgetting) backward — validate the anchor-penalty gradient (Omega
         # non-zero, anchor offset = mid-training) against FD, composing with the aux-loc place head. THE GATE.
         all_ok &= si_gradcheck("rate")

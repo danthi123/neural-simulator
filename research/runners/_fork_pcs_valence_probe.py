@@ -353,7 +353,7 @@ def _omission_probe(world, sub, n_steps, seed, explore_eps=0.4):
 # per-seed battery
 # ─────────────────────────────────────────────────────────────────────────────
 def run_seed(seed, units="rate", encoder="learned_ema", n_hidden=128, n_latent=64,
-             n_train=200_000, value_weight=1.0, n_probe=None, n_omit=None,
+             n_train=200_000, value_weight=1.0, valence_weight=0.0, n_probe=None, n_omit=None,
              grid_size=18, crop_radius=2, verbose=True):
     t0 = time.time()
     # auto-scale probe/omission budgets down for small (smoke) n_train
@@ -364,9 +364,12 @@ def run_seed(seed, units="rate", encoder="learned_ema", n_hidden=128, n_latent=6
 
     wcfg = WorldConfig(seed=seed, grid_size=grid_size, crop_radius=crop_radius)  # base foraging world (no nav)
     world = ForkPCSWorld(wcfg)
+    # valence_weight>0 trains the substrate WITH the dedicated valence-FORECAST objective (the AFFECT-arc
+    # method): the C1 raw READ-OUTS were honest negatives (untrained reservoirs carried them), so this asks
+    # whether an OBJECTIVE grows a valence representation that beats the untrained floor + is attributable.
     scfg = PCSConfig(n_hidden=n_hidden, feat_dim=wcfg.n_v1, n_latent=n_latent, n_actions=N_ACTIONS,
                      n_drive=4, tbptt_T=18, units=units, encoder=encoder, seed=seed,
-                     value_weight=value_weight)
+                     value_weight=value_weight, valence_weight=valence_weight)
     sub = PredictiveContinualSubstrate(scfg)
 
     # ---- 1. TRAIN online (curiosity policy + small exploration for early coverage) ----
@@ -443,6 +446,7 @@ def run_seed(seed, units="rate", encoder="learned_ema", n_hidden=128, n_latent=6
     result = {
         "seed": seed, "units": units, "encoder": encoder, "n_hidden": n_hidden, "n_latent": n_latent,
         "n_train": n_train, "n_probe": n_probe, "n_omit": n_omit, "value_weight": value_weight,
+        "valence_weight": valence_weight,
         "grid_size": grid_size, "crop_radius": crop_radius, "curiosity_beta": float(sub.cfg.curiosity_beta),
         "go_signal": GO_SIGNAL, "adv_note": "reconstructed per substrate learn() formula (frozen probe; "
                                             "sub.last_valence_adv is not written under freeze)",
@@ -539,6 +543,9 @@ def main():
     ap.add_argument("--n-train", type=int, default=200_000)
     ap.add_argument("--value-weight", type=float, default=1.0,
                     help="value-head weight (default 1.0 so BOTH valence signals exist: adv needs value_weight>0)")
+    ap.add_argument("--valence-weight", type=float, default=0.0,
+                    help="valence-FORECAST objective weight in the TRAINING substrate (default 0.0=OFF, byte-"
+                         "identical). >0 trains WITH the AFFECT-arc dedicated objective (the surpass over raw read-outs).")
     ap.add_argument("--n-probe", type=int, default=None, help="frozen probe steps (auto-scaled from n_train if unset)")
     ap.add_argument("--n-omit", type=int, default=None, help="omission-probe steps (auto-scaled from n_train if unset)")
     ap.add_argument("--grid-size", type=int, default=18)
@@ -548,6 +555,7 @@ def main():
 
     per_seed = [run_seed(s, units=args.units, encoder=args.encoder, n_hidden=args.n_hidden,
                          n_latent=args.n_latent, n_train=args.n_train, value_weight=args.value_weight,
+                         valence_weight=args.valence_weight,
                          n_probe=args.n_probe, n_omit=args.n_omit, grid_size=args.grid_size,
                          crop_radius=args.crop_radius)
                 for s in args.seeds]
@@ -555,9 +563,9 @@ def main():
     payload = {
         "battery": "fork_pcs_valence_presence", "stage": "C1 (presence + soundness + expectation-violation)",
         "units": args.units, "encoder": args.encoder, "n_hidden": args.n_hidden, "n_latent": args.n_latent,
-        "n_train": args.n_train, "value_weight": args.value_weight, "n_probe": args.n_probe,
-        "n_omit": args.n_omit, "grid_size": args.grid_size, "crop_radius": args.crop_radius,
-        "seeds": args.seeds,
+        "n_train": args.n_train, "value_weight": args.value_weight, "valence_weight": args.valence_weight,
+        "n_probe": args.n_probe, "n_omit": args.n_omit, "grid_size": args.grid_size,
+        "crop_radius": args.crop_radius, "seeds": args.seeds,
         "honesty_note": ("FUNCTIONAL read-outs only; no phenomenal claim. This C1 probe tests PRESENCE + "
                          "SOUNDNESS + EXPECTATION-VIOLATION of the reward-prediction-error read-out, "
                          "explicitly NOT the load-bearing faculty claim. adv presence is reported but NOT "
