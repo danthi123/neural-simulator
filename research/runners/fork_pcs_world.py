@@ -113,6 +113,22 @@ class WorldConfig:
     # approach it EARNED, not the trial-reset displacement. Default 0.0 -> byte-identical to the 3rd-move world.
     nav_shaping: float = 0.0         # PBS coefficient (0 = OFF); only active when nav_required
     nav_shaping_gamma: float = 0.99  # PBS discount (telescoping term; keeps total shaping policy-invariant)
+    # ── 5th move: REVERSE / START-DISTANCE CURRICULUM (Florensa 2017 reverse curriculum; Andrychowicz 2017 HER)
+    # — the LEARNABILITY mechanism that REPLACES potential-based shaping (nav_shaping) WITHOUT leaking a
+    # per-step goal gradient. nav_shaping hands the agent r += k*(gamma*Phi(s')-Phi(s)) with Phi=-dist(agent,
+    # larder): a per-step, ground-truth-position-derived signal it can hill-climb REACTIVELY, so the task
+    # becomes solvable WITHOUT integrating/persisting position and the emergent place code goes behaviorally
+    # INERT (Ng-Harada-Russell 1999; Vijayabaskaran-Cheng 2022). The curriculum instead makes homing learnable
+    # by STARTING the agent NEAR the larder (reachable from the SPARSE TERMINAL drive-reduction reward alone —
+    # NO distance term) and ramping the post-eat respawn distance out to the full nav_dmin over the first
+    # nav_curriculum_frac of training; past that fraction it is the exact full-difficulty far respawn. Because
+    # the reward stays the pure grounded drive-reduction, the agent must ACTUALLY REACH the larder to be
+    # rewarded -> the place code stays load-bearing and nothing points it at the out-of-view goal. Default OFF
+    # -> byte-identical to the nav world (the respawn code path is UNCHANGED when nav_curriculum is False).
+    # Requires nav_required. Test load-bearing with the emergence runner's held-out novel-start shortcut probe.
+    nav_curriculum: bool = False
+    nav_curriculum_frac: float = 0.5       # fraction of training over which the respawn distance ramps to nav_dmin
+    nav_curriculum_dmin_start: int = 1     # respawn distance (Manhattan, near the larder) at curriculum progress 0
     seed: int = 42
 
     @property
@@ -286,6 +302,11 @@ class ForkPCSWorld:
         self.last_action = -1
         self.t = 0
         self.n_eats = 0
+        # reverse-curriculum runtime state (inert unless cfg.nav_curriculum): progress in [0,1] driven by the
+        # training loop via set_curriculum_progress(); the set of post-eat respawn cells seen (for the
+        # emergence runner's held-out novel-start shortcut probe). Both untouched on the non-curriculum path.
+        self._curr_progress = 0.0
+        self._respawn_cells: set = set()
 
     def _respawn_food(self):
         cfg = self.cfg
@@ -312,6 +333,48 @@ class ForkPCSWorld:
             if d > best_d:
                 best_d, best = d, c
         return best if best is not None else self.agent
+
+    # ── reverse / start-distance curriculum (5th move) ──────────────────────────────────────────────
+    def set_curriculum_progress(self, p: float):
+        """Set the reverse-curriculum progress in [0,1] (called by the online TRAINING loop). Only affects the
+        post-eat respawn distance when cfg.nav_curriculum is ON; inert otherwise. Eval rollouts pin it to 1.0
+        so the frozen policy is always measured at full difficulty."""
+        self._curr_progress = float(np.clip(p, 0.0, 1.0))
+
+    def _respawn_agent_near_dist(self, target, d_target):
+        """Reverse-curriculum respawn: place the agent at a Manhattan distance as CLOSE as possible to
+        d_target (>=1, not on an object/landmark, not on the larder), preferring cells AT OR BELOW d_target so
+        early-curriculum trials genuinely START NEAR the larder (Florensa 2017). Deterministic given self.rng;
+        falls back to the current agent cell if no candidate is sampled."""
+        cfg = self.cfg
+        occupied = set(self.objects) | set(self.landmarks)
+        d_target = max(1, int(round(d_target)))
+        best = None; best_key = None
+        for _ in range(200):
+            c = (int(self.rng.integers(cfg.grid_size)), int(self.rng.integers(cfg.grid_size)))
+            if c in occupied or c == target:
+                continue
+            d = abs(c[0] - target[0]) + abs(c[1] - target[1])
+            if d < 1:
+                continue
+            key = (abs(d - d_target), 0 if d <= d_target else 1)   # closest to d_target; tie -> the nearer side
+            if best_key is None or key < best_key:
+                best_key, best = key, c
+        return best if best is not None else self.agent
+
+    def _curriculum_respawn(self):
+        """Post-eat respawn under the reverse/start-distance curriculum. The effective respawn distance ramps
+        from nav_curriculum_dmin_start (NEAR the larder -> homing learnable from the SPARSE TERMINAL reward
+        alone, no leaked distance gradient) up to the full nav_dmin over the first nav_curriculum_frac of
+        training; past that fraction it reverts to the EXACT full-difficulty far respawn (distance >= nav_dmin).
+        This replaces reward shaping as the learnability mechanism while keeping position load-bearing."""
+        cfg = self.cfg
+        frac = max(1e-6, cfg.nav_curriculum_frac)
+        p_raw = self._curr_progress / frac
+        if p_raw >= 1.0:
+            return self._respawn_agent_far(self.larder, cfg.nav_dmin)
+        eff = cfg.nav_curriculum_dmin_start + p_raw * (cfg.nav_dmin - cfg.nav_curriculum_dmin_start)
+        return self._respawn_agent_near_dist(self.larder, eff)
 
     def _prime_drive(self):
         # settle the 2-pool drive to the current deficit so d_t is well-defined at t=0
@@ -384,9 +447,16 @@ class ForkPCSWorld:
         if ate:
             self.energy = min(cfg.e_max, self.energy + cfg.eat_refill)
             if cfg.nav_required:
-                # food REGROWS at the fixed larder; the agent is displaced far -> must navigate back (trial reset)
+                # food REGROWS at the fixed larder; the agent is displaced -> must navigate back (trial reset).
+                # nav_curriculum ON: the respawn distance ramps NEAR->FAR over training (shaping-free
+                # learnability). OFF: the exact original far respawn (byte-identical). Record the respawn cell
+                # (nav only) for the emergence runner's held-out novel-start shortcut probe.
                 self.food = self.larder
-                self.agent = self._respawn_agent_far(self.larder, cfg.nav_dmin)
+                if cfg.nav_curriculum:
+                    self.agent = self._curriculum_respawn()
+                else:
+                    self.agent = self._respawn_agent_far(self.larder, cfg.nav_dmin)
+                self._respawn_cells.add(self.agent)
             else:
                 self.food = self._respawn_food()
             self.n_eats += 1

@@ -46,6 +46,12 @@ Run:
   # full 6-seed rate arm (GPU — queue it; 0 agent tokens):
   SIM_BACKEND=cupy python -m research.runners._fork_pcs_emergence_derisk \
       --seeds 42 43 44 100 101 102 --units rate --out research/findings/raw/_fork_pcs_emergence_rate_6seed.json
+  # DECISIVE behavioral-load-bearing arm (5th move): shaping-FREE homing via the reverse curriculum + the
+  # aux-loc/value heads + the held-out novel-start SHORTCUT probe (NO --nav-shaping — the leaked cue is gone):
+  SIM_BACKEND=cupy python -m research.runners._fork_pcs_emergence_derisk \
+      --seeds 42 43 44 100 101 102 --units rate --nav-required --nav-curriculum \
+      --value-weight 1.0 --aux-loc-weight 1.0 --lesion-mode both \
+      --out research/findings/raw/_fork_pcs_emergence_navcurriculum_6seed.json
 """
 from __future__ import annotations
 
@@ -224,7 +230,14 @@ def rollout(world, sub, n_steps, train, explore_eps, collect=False, lesion_mask=
     approach_in, approach_off = [], []
     a_prev = a_prev_start
     total_reward = 0.0
+    curriculum = train and getattr(world.cfg, "nav_curriculum", False)
     for t in range(n_steps):
+        # REVERSE-CURRICULUM (5th move): during ONLINE TRAINING only, advance the post-eat respawn distance
+        # from NEAR the larder to the full nav_dmin over the schedule (fraction of training). Eval rollouts
+        # (train=False) never enter here, so the frozen policy is always probed at full difficulty (the caller
+        # pins progress to 1.0). Inert unless the world has nav_curriculum ON.
+        if curriculum:
+            world.set_curriculum_progress(t / max(1, n_steps))
         # capture ALL pre-step sensory info aligned to the observation the substrate acts on
         d = world.drive_afferent()
         v1 = world.crop_v1feat()
@@ -293,9 +306,12 @@ def run_seed(seed, units="rate", encoder="learned_ema", n_hidden=512, n_latent=6
              lesion_frac=0.10, n_random_lesions=3, consolidation=False,
              grad_clip=1.0, grad_skip_factor=8.0, ema_momentum=0.9999, ema_warmup=0,
              pred_horizon=1, nav_required=False, nav_dmin=6, value_weight=0.0, sr_weight=0.0,
-             aux_loc_weight=0.0, nav_shaping=0.0, lesion_mode="decoding", verbose=True):
+             aux_loc_weight=0.0, nav_shaping=0.0, nav_curriculum=False, nav_curriculum_frac=0.5,
+             nav_curriculum_dmin_start=1, lesion_mode="decoding", verbose=True):
     t0 = time.time()
-    wcfg = WorldConfig(seed=seed, nav_required=nav_required, nav_dmin=nav_dmin, nav_shaping=nav_shaping)
+    wcfg = WorldConfig(seed=seed, nav_required=nav_required, nav_dmin=nav_dmin, nav_shaping=nav_shaping,
+                       nav_curriculum=nav_curriculum, nav_curriculum_frac=nav_curriculum_frac,
+                       nav_curriculum_dmin_start=nav_curriculum_dmin_start)
     world = ForkPCSWorld(wcfg)
     scfg = PCSConfig(n_hidden=n_hidden, feat_dim=wcfg.n_v1, n_latent=n_latent, n_actions=N_ACTIONS,
                      n_drive=4, tbptt_T=18, units=units, encoder=encoder, seed=seed,
@@ -308,6 +324,13 @@ def run_seed(seed, units="rate", encoder="learned_ema", n_hidden=512, n_latent=6
     # aux_loc>0 -> supply the true per-step position target to the substrate's self-localization loss (5th move).
     train_out = rollout(world, sub, n_train, train=True, explore_eps=0.2, log_loss=True,
                         aux_loc=(aux_loc_weight > 0))
+    # Curriculum: pin progress to 1.0 so EVERY subsequent frozen eval (probe/behav/coverage/shortcut) runs at
+    # FULL difficulty (far respawns). Capture the set of TRAINING respawn start cells NOW, before
+    # _core_lesion_presence resets the world to a different layout (which would clear it). The shortcut probe
+    # rebuilds its own world from wcfg, so the fixed larder is recovered there (same seed layout).
+    if nav_curriculum:
+        world.set_curriculum_progress(1.0)
+    train_respawn_cells = set(world._respawn_cells)
 
     # ---- 2. PROBE rollout (frozen) collecting h/labels/rawv1 + the input seq. Higher explore_eps here
     #         gives the FROZEN core coverage of the whole grid so the decode is measured over varied
@@ -522,6 +545,19 @@ def run_seed(seed, units="rate", encoder="learned_ema", n_hidden=512, n_latent=6
         "SEED_GO": bool(seed_go),
         "elapsed_s": round(time.time() - t0, 1),
     }
+    # CURRICULUM echo (only when ON -> non-curriculum output stays byte-identical, no new keys).
+    if nav_curriculum:
+        result["nav_curriculum"] = True
+        result["nav_curriculum_frac"] = nav_curriculum_frac
+        result["nav_curriculum_dmin_start"] = nav_curriculum_dmin_start
+    # NOVEL-START SHORTCUT PROBE — only meaningful with a fixed larder (nav_required). Runs LAST on a fresh
+    # world with the FROZEN trained core, so it never perturbs any measurement above. Uses the same place-unit
+    # importance (imp["place"]) that selects the main place lesion, over the TRAINING respawn cells captured
+    # pre-core-lesion. Absent from the output entirely on the non-nav path (byte-identical).
+    if nav_required:
+        result["shortcut_probe"] = _shortcut_probe(
+            sub, wcfg, seed, imp["place"], n_hidden, lesion_frac=lesion_frac,
+            n_random_lesions=n_random_lesions, exclude_cells=train_respawn_cells, verbose=verbose)
     # BEHAVIORAL-arm results (only when run) — reported ALONGSIDE the decoding arm so the Schøyen
     # dissociation is visible. In `both` mode, `behavioral_dependency` above is the DECODING arm (the
     # pre-registered gate, byte-identical), and these keys add the behavioral arm + the Jaccard overlap.
@@ -621,6 +657,8 @@ def _core_lesion_presence(sub, H_un, RAW, POS, value_lab, FOOD, off, obj_idx, ob
     sub.P["W_h"] = xp.zeros_like(saved)
     sub.freeze()
     world.reset(seed + 55)
+    if getattr(world.cfg, "nav_curriculum", False):
+        world.set_curriculum_progress(1.0)     # reset zeroed progress; probe at full difficulty
     pr = rollout(world, sub, n_probe, train=False, explore_eps=0.1, collect=True)
     sub.P["W_h"] = saved
     H = pr["H"]; POS2 = pr["POS"]; FOOD2 = pr["FOOD"]; FIC2 = pr["FIC"]; OBJ2 = pr["OBJ"]; REW2 = pr["REW"]
@@ -799,6 +837,105 @@ def _place_cell_metrics(H, POS, grid_size, seed, n_shuffle=PLACE_SI_SHUFFLES,
 
 
 # ─────────────────────────────────────────────────────────────────────────────
+# NOVEL-START SHORTCUT / DETOUR PROBE (Banino 2018) — the sharp behavioral-load-bearing test
+# ─────────────────────────────────────────────────────────────────────────────
+def _shortcut_probe(sub, wcfg, seed, place_importance, n_hidden, lesion_frac=0.10,
+                    n_random_lesions=3, exclude_cells=frozenset(), n_starts=24, verbose=False):
+    """HELD-OUT novel-start homing probe — the decisive load-bearing test the curriculum unlocks.
+
+    Evaluate the FROZEN trained policy homing to the fixed, OUT-OF-VIEW larder from a set of far START cells
+    that were NOT used as training respawns (drawn from an independent RNG = an out-of-sample eval set). A
+    reactive/memoryless policy CANNOT home from a novel far start: the larder is invisible from afar and — with
+    shaping off — nothing in the observation points to it, so there is no local gradient to hill-climb. Only a
+    policy routing through a PERSISTENT, path-integrated place code reaches it. So success on this set, and its
+    DROP under a place-unit lesion vs an equal RANDOM-unit lesion, is a low-noise causal read of whether the
+    emergent place code is behaviorally load-bearing (Banino 2018's shortcut/detour test). HONESTY: functional
+    read-out only. Requires nav_required (a fixed larder); returns None-ish note if no far start cells exist.
+    """
+    world = ForkPCSWorld(wcfg)
+    larder = world.larder
+    G = wcfg.grid_size
+    dist_min = max(wcfg.crop_radius + 1, wcfg.nav_dmin)     # out of view AND >= the trial-reset distance
+    occupied = set(world.objects) | set(world.landmarks) | {larder}
+    all_far = [(x, y) for x in range(G) for y in range(G)
+               if (x, y) not in occupied and _manhattan((x, y), larder) >= dist_min]
+    heldout = [c for c in all_far if c not in exclude_cells]
+    # prefer truly-held-out far cells; if too few exist (training covered the far region), fall back to all far
+    # cells (reported), so the probe still yields a number — the lesion contrast is still valid either way.
+    pool = heldout if len(heldout) >= max(6, n_starts // 2) else all_far
+    if len(pool) == 0:
+        return {"note": "no far start cells available", "n_starts": 0, "shortcut_probe_success": None,
+                "place_load_bearing": False}
+    rng = np.random.default_rng(seed + 99991)
+    idx = rng.choice(len(pool), size=int(min(n_starts, len(pool))), replace=False)
+    starts = [pool[int(i)] for i in idx]
+    n_truly_heldout = int(sum(1 for c in starts if c not in exclude_cells))
+    max_steps = int(max(2 * (G - 1), 3 * G))               # slack for the farthest start; bounded so a random
+                                                           # walk rarely reaches a specific far cell in-window
+
+    def _run_starts(mask):
+        sub.set_lesion_mask(mask)
+        succ = 0; steps_to = []
+        for s in starts:
+            world.reset(wcfg.seed)                          # fresh drive + fixed layout (larder unchanged)
+            world.agent = s
+            world.food = larder
+            world.energy = 0.5 * wcfg.set_point             # hungry -> a real interoceptive drive to home
+            world._prime_drive()
+            a_prev = -1; reached = False; used = max_steps
+            for step_i in range(max_steps):
+                d = world.drive_afferent(); v1 = world.crop_v1feat()
+                h = sub.observe(v1, a_prev, d)
+                a = sub.act(h, explore_eps=0.0)             # the pure frozen policy (no forced exploration)
+                r, info = world.step(a)
+                a_prev = a
+                if info.get("ate"):                         # stepped onto the larder = homed successfully
+                    reached = True; used = step_i + 1; break
+            if reached:
+                succ += 1; steps_to.append(used)
+        sub.set_lesion_mask(None)
+        return succ / len(starts), (float(np.mean(steps_to)) if steps_to else float("nan"))
+
+    k = max(8, int(lesion_frac * n_hidden))
+    place_mask = np.zeros(n_hidden, dtype=bool)
+    place_mask[np.argsort(place_importance)[::-1][:k]] = True
+
+    intact_succ, intact_steps = _run_starts(None)
+    place_succ, _ = _run_starts(place_mask)
+    rng2 = np.random.default_rng(seed + 131)
+    rand_succs = []
+    for _ in range(n_random_lesions):
+        m = np.zeros(n_hidden, dtype=bool); m[rng2.choice(n_hidden, k, replace=False)] = True
+        rs, _ = _run_starts(m); rand_succs.append(rs)
+    rand_succ = float(np.mean(rand_succs)) if rand_succs else float("nan")
+    place_deg = intact_succ - place_succ
+    rand_deg = intact_succ - rand_succ
+    frac = attributable_to("shortcut place-lesion", place_deg, rand_deg)
+    load_bearing = (frac is not None) and (place_deg > 0) and (frac >= (1.0 - 1.0 / BEHAV_LESION_RATIO))
+    out = {
+        "n_starts": len(starts), "n_truly_heldout": n_truly_heldout,
+        "n_train_respawn_cells": int(len(exclude_cells)), "dist_min": int(dist_min),
+        "max_steps": max_steps, "k_units": int(k),
+        "shortcut_probe_success": _f(intact_succ),
+        "success_place_lesion": _f(place_succ), "success_random_lesion": _f(rand_succ),
+        "shortcut_probe_place_lesion_degradation": _f(place_deg),
+        "random_lesion_degradation": _f(rand_deg),
+        "attributable_fraction": _f(frac),
+        "shortcut_probe_place_lesion_degradation_vs_random": _f((place_deg / rand_deg) if abs(rand_deg) > 1e-9
+                                                                 else float("inf") if place_deg > 1e-9 else float("nan")),
+        "place_load_bearing": bool(load_bearing),
+        "intact_mean_steps_to_larder": _f(intact_steps),
+    }
+    if verbose:
+        print(f"    shortcut-probe: success={out['shortcut_probe_success']} "
+              f"(place-lesion {out['success_place_lesion']}, random-lesion {out['success_random_lesion']})  "
+              f"place_deg={out['shortcut_probe_place_lesion_degradation']} vs rand_deg={out['random_lesion_degradation']}  "
+              f"LOAD_BEARING={out['place_load_bearing']}  "
+              f"(n_starts={out['n_starts']}, truly_heldout={out['n_truly_heldout']}, dist_min={out['dist_min']})")
+    return out
+
+
+# ─────────────────────────────────────────────────────────────────────────────
 # aggregate + main
 # ─────────────────────────────────────────────────────────────────────────────
 def aggregate(per_seed):
@@ -828,11 +965,34 @@ def aggregate(per_seed):
         "trained_mean_stability": _col(lambda r: r["place_cell_si"].get("mean_stability")),
         "untrained_mean_stability": _col(lambda r: r["place_cell_si_untrained"].get("mean_stability")),
     }
-    return {"n_seeds": n, "n_seed_go": n_go, "n_coverage_pass": n_cov,
-            "faculty_load_bearing_counts": faculty_lb_counts,
-            "seeds_required": int(np.ceil(SEEDS_REQUIRED_FRAC * n)),
-            "place_cell_si_summary": place_cell_si_summary,
-            "EMERGENCE_GO": bool(emergence_go)}
+    # NOVEL-START shortcut-probe summary (additive; only present when the nav runs carried it). The decisive
+    # behavioral-load-bearing read: mean held-out homing success + how much a place-unit lesion degrades it
+    # vs a random-unit lesion, and on how many seeds place was load-bearing on THIS probe.
+    sc = [r["shortcut_probe"] for r in per_seed if isinstance(r.get("shortcut_probe"), dict)
+          and r["shortcut_probe"].get("shortcut_probe_success") is not None]
+    shortcut_summary = None
+    if sc:
+        def _mean_key(key):
+            vals = [s[key] for s in sc if isinstance(s.get(key), (int, float))]
+            return _f(float(np.mean(vals))) if vals else None
+        shortcut_summary = {
+            "n_seeds_with_probe": len(sc),
+            "mean_success": _mean_key("shortcut_probe_success"),
+            "mean_success_place_lesion": _mean_key("success_place_lesion"),
+            "mean_success_random_lesion": _mean_key("success_random_lesion"),
+            "mean_place_lesion_degradation": _mean_key("shortcut_probe_place_lesion_degradation"),
+            "mean_random_lesion_degradation": _mean_key("random_lesion_degradation"),
+            "n_seeds_place_load_bearing": int(sum(1 for s in sc if s.get("place_load_bearing"))),
+        }
+
+    out = {"n_seeds": n, "n_seed_go": n_go, "n_coverage_pass": n_cov,
+           "faculty_load_bearing_counts": faculty_lb_counts,
+           "seeds_required": int(np.ceil(SEEDS_REQUIRED_FRAC * n)),
+           "place_cell_si_summary": place_cell_si_summary,
+           "EMERGENCE_GO": bool(emergence_go)}
+    if shortcut_summary is not None:
+        out["shortcut_probe_summary"] = shortcut_summary
+    return out
 
 
 def main():
@@ -866,7 +1026,20 @@ def main():
                          "control (byte-identical world). Pair with --value-weight>0 so reward/value shapes the core.")
     ap.add_argument("--nav-shaping", type=float, default=0.0,
                     help="4th move: potential-based approach-shaping coefficient (0=OFF). Makes homing LEARNABLE "
-                         "so the task-required place code can actually bind (PBS is policy-invariant).")
+                         "but LEAKS a per-step position-derived goal gradient the agent can hill-climb reactively "
+                         "-> the place code goes behaviorally INERT. PREFER --nav-curriculum (shaping-free).")
+    ap.add_argument("--nav-curriculum", action="store_true",
+                    help="5th move: REVERSE/START-DISTANCE CURRICULUM — the shaping-FREE learnability mechanism "
+                         "(Florensa 2017; Andrychowicz 2017). Start the agent NEAR the larder (homing learnable "
+                         "from the SPARSE TERMINAL drive-reduction reward alone) and ramp the post-eat respawn "
+                         "distance out to the full nav_dmin over the first --nav-curriculum-frac of training. NO "
+                         "leaked goal gradient (reward stays pure drive-reduction) -> the place code stays "
+                         "load-bearing. Use INSTEAD of --nav-shaping, with --nav-required. Default OFF "
+                         "(byte-identical).")
+    ap.add_argument("--nav-curriculum-frac", type=float, default=0.5,
+                    help="fraction of training over which the reverse-curriculum respawn distance ramps to nav_dmin")
+    ap.add_argument("--nav-curriculum-dmin-start", type=int, default=1,
+                    help="reverse-curriculum starting respawn distance (near the larder) at progress 0")
     ap.add_argument("--nav-dmin", type=int, default=6,
                     help="min post-eat agent-respawn Manhattan distance from the larder (nav-required only)")
     ap.add_argument("--value-weight", type=float, default=0.0,
@@ -910,7 +1083,10 @@ def main():
                          pred_horizon=args.pred_horizon, nav_required=args.nav_required,
                          nav_dmin=args.nav_dmin, value_weight=args.value_weight, sr_weight=args.sr_weight,
                          aux_loc_weight=args.aux_loc_weight,
-                         nav_shaping=args.nav_shaping, lesion_mode=args.lesion_mode, **kw)
+                         nav_shaping=args.nav_shaping, nav_curriculum=args.nav_curriculum,
+                         nav_curriculum_frac=args.nav_curriculum_frac,
+                         nav_curriculum_dmin_start=args.nav_curriculum_dmin_start,
+                         lesion_mode=args.lesion_mode, **kw)
                 for s in args.seeds]
     agg = aggregate(per_seed)
     payload = {"battery": "fork_pcs_emergence", "units": args.units, "encoder": args.encoder,
@@ -919,6 +1095,8 @@ def main():
                "sr_weight": args.sr_weight, "aux_loc_weight": args.aux_loc_weight,
                "nav_shaping": args.nav_shaping,
                "lesion_mode": args.lesion_mode,
+               **({"nav_curriculum": True, "nav_curriculum_frac": args.nav_curriculum_frac,
+                   "nav_curriculum_dmin_start": args.nav_curriculum_dmin_start} if args.nav_curriculum else {}),
                "grad_clip": args.grad_clip, "grad_skip_factor": args.grad_skip_factor,
                "ema_momentum": args.ema_momentum, "ema_warmup": args.ema_warmup,
                "pre_registered_gate": {
