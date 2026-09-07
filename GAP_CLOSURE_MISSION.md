@@ -26,8 +26,13 @@ memory (structurally the hand-the-(x,y) cheat), so shaping made homing learnable
 → that is WHY place stayed non-load-bearing, and the QUEUED composed aux-loc+nav+**shaping** run is CONFOUNDED for
 behavioral-LB. FIX (Florensa 2017 reverse-curriculum; Andrychowicz 2017 HER; Banino 2018 shortcut-test): make homing
 learnable via a START-DISTANCE CURRICULUM (no leaked gradient) + a NOVEL-SHORTCUT probe a reactive policy CANNOT
-pass. **BUILDING now (agent a44caf97, worktree, GPU-free): `--nav-curriculum` + the shortcut load-bearing probe.**
-When it lands + GPU frees: queue aux-loc + nav + curriculum + probe (NO shaping) = the decisive behavioral-LB test.
+pass. **✅ BUILT + MERGED (`f8fac299`): `--nav-curriculum` + the held-out shortcut probe. GUIDANCE-TASK AUDIT
+CONFIRMS shaping WAS the leak** (reward on 1.0% of steps without it vs 100% dense-signed with it; no goal-compass
+in the crop). CPU smoke (shaping-free): place code emerges STRONGLY (SI frac-place-cells 0.98, stability 0.88 vs
+untrained ~0.45), probe discriminative (place-lesion→0% vs random 9.7%). Honest: homing didn't bind at CPU scale
+(removing the leak makes it harder — the 200k GPU run is decisive); flagged next lever if it still doesn't bind =
+STRONGER GROUNDED REWARD magnitude, NEVER re-adding shaping. **Decisive tests QUEUED (paused): nav-curriculum
+6-seed @ n_hidden 512 + 128** (`_fork_pcs_navcurriculum{,_h128}_6seed.json`) — run when GPU frees (`resume`).
 Also flagged: re-check whether a DIFFERENT population (not the labeled aux-loc units) carries the causal weight
 (Schøyen dissociation). Research citations in the agent outputs (banked).
 
