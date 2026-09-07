@@ -73,6 +73,20 @@ VALENCE_ABS_BAR = FLOOR_MARGIN          # population presence: held-out R^2 must
 CYCLIC_SHIFT_DRAWS = 100                # cyclic-shift null draws for the per-unit significance test
 VALENCE_SI_N_BINS = 5                  # quantile bins the valence label is discretized into for tuning
 STAB_TRAINED_OVER_UNTRAINED = 2.0      # trained #valence-selective units must be >= this x the untrained
+MOOD_TAU = 0.9                          # leaky-EMA constant for the integrated-valence (mood) target (~10 steps)
+
+
+def _leaky_integrate(x, tau):
+    """Leaky EMA m_t = tau*m_{t-1} + (1-tau)*x_t; non-finite inputs carry the previous value forward.
+    MOOD = integrated-valence target (a SLOW valence dimension). C1 showed the INSTANTANEOUS rpe is a
+    trivial linear read present in the untrained reservoir; this tests whether a TRAINED core carries a
+    persistent mood the reservoir's random dynamics cannot. Computed post-hoc as a decode TARGET (NOT
+    installed on the substrate) so the emergence bar holds: the question is whether trained h_t carries it."""
+    m = np.zeros(len(x), dtype=np.float64); acc = 0.0
+    for t in range(len(x)):
+        if np.isfinite(x[t]): acc = tau * acc + (1.0 - tau) * float(x[t])
+        m[t] = acc
+    return m
 #                                          reservoir's (the grew-through-training, not-relabeled control).
 SEEDS_REQUIRED_FRAC = 5.0 / 6.0        # >= 5/6 seeds must pass for the aggregate GO
 # The signal the GO gate is built on is the reward-PREDICTION-ERROR read-out (last_valence_rpe): the
@@ -374,13 +388,14 @@ def run_seed(seed, units="rate", encoder="learned_ema", n_hidden=128, n_latent=6
     pr = _collect_probe(world, sub, n_probe, explore_eps=0.4)
     H, POS, RAW, RPE, ADV, VHAT = pr["H"], pr["POS"], pr["RAW"], pr["RPE"], pr["ADV"], pr["VHAT"]
     input_seq = pr["INPUT_SEQ"]
+    MOOD = _leaky_integrate(RPE, MOOD_TAU)   # integrated-valence (mood) — the next-method decode target
 
     # untrained-core reservoir replayed on the SAME input sequence (the grew-through-training floor)
     H_un = replay_untrained(wcfg, seed, units, encoder, wcfg.n_v1, n_latent, n_hidden, input_seq)
 
     # ---- 3. POPULATION PRESENCE — ridge-decode EACH valence signal from h_t vs 3 floors ----
     presence = {}
-    for sig, lab in (("rpe", RPE), ("adv", ADV)):
+    for sig, lab in (("rpe", RPE), ("adv", ADV), ("mood", MOOD)):
         fin = np.isfinite(lab)
         if fin.sum() < 40:
             presence[sig] = {"note": f"too few finite {sig} labels ({int(fin.sum())})"}
@@ -403,6 +418,16 @@ def run_seed(seed, units="rate", encoder="learned_ema", n_hidden=128, n_latent=6
     sound_frac = attributable_to(f"valence-soundness s{seed}", float(tr_nsel), float(un_nsel))
     soundness_pass = bool(sound_frac is not None and tr_nsel >= 1
                           and sound_frac >= (1.0 - 1.0 / STAB_TRAINED_OVER_UNTRAINED))
+    # MOOD (integrated-valence) soundness — the next-method test alongside the rpe GO
+    mood_sound_tr = _valence_selectivity_metrics(H, MOOD, seed)
+    mood_sound_un = _valence_selectivity_metrics(H_un, MOOD, seed)
+    mood_tr_nsel = int(mood_sound_tr.get("n_valence_selective_units", 0) or 0)
+    mood_un_nsel = int(mood_sound_un.get("n_valence_selective_units", 0) or 0)
+    mood_sound_frac = attributable_to(f"mood-soundness s{seed}", float(mood_tr_nsel), float(mood_un_nsel))
+    mood_soundness_pass = bool(mood_sound_frac is not None and mood_tr_nsel >= 1
+                               and mood_sound_frac >= (1.0 - 1.0 / STAB_TRAINED_OVER_UNTRAINED))
+    mood_presence_beats = bool(presence.get("mood", {}).get("beats_floors", False))
+    mood_go = bool(mood_presence_beats and mood_soundness_pass)
 
     # ---- 5. ANTI-COLLINEARITY: regress position + value out of the valence label, re-decode residual ----
     regress = _regress_out_and_decode(H, go_lab, POS, VHAT, seed)
@@ -436,6 +461,10 @@ def run_seed(seed, units="rate", encoder="learned_ema", n_hidden=128, n_latent=6
         "omission": omission,
         "presence_go": presence_go, "soundness_go": soundness_pass, "omission_go": omission_go,
         "VALENCE_PRESENCE_GO": valence_presence_go,
+        "mood_tau": MOOD_TAU, "mood_presence_beats": mood_presence_beats,
+        "mood_soundness": {"trained_n_selective": mood_tr_nsel, "untrained_n_selective": mood_un_nsel,
+                           "attributable_fraction": _f(mood_sound_frac), "pass": mood_soundness_pass},
+        "MOOD_GO": mood_go,
         "elapsed_s": round(time.time() - t0, 1),
     }
     if verbose:
@@ -453,6 +482,9 @@ def run_seed(seed, units="rate", encoder="learned_ema", n_hidden=128, n_latent=6
               f"stab(tr/un)={sound_trained.get('mean_stability')}/{sound_untrained.get('mean_stability')} "
               f"stab_sel(tr/un)={sound_trained.get('mean_stability_selective')}/"
               f"{sound_untrained.get('mean_stability_selective')} pass={soundness_pass}")
+        pm = presence.get("mood", {})
+        print(f"    MOOD(integrated tau={MOOD_TAU}): presence R2={pm.get('r2')} beats={pm.get('beats_floors')} "
+              f"| soundness tr/un_nsel={mood_tr_nsel}/{mood_un_nsel} attr={_f(mood_sound_frac)} => MOOD_GO={mood_go}")
         print(f"    regress-out({','.join(regress.get('nuisance_regressed', []))}): "
               f"resid_R2={regress.get('resid_decode_r2')} floor={regress.get('resid_shuffle_floor')} "
               f"survives={regress.get('survives_regress_out')}")
