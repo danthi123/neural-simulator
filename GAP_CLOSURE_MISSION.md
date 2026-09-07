@@ -13,7 +13,14 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ---
 
-## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-07 ~04:40 (GPU-free dev while owner games; READ FIRST; LATEST anchor)
+## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-07 ~05:25 (GAME DONE → GOING HAM; sweep RESUMED decisive-first; READ FIRST; LATEST anchor)
+
+**⚡ Owner: "compute available, go ham" (05:25). GPU sweep RESUMED + REORDERED decisive-first:** nav-curriculum @ n128
+(best behavioral-LB shot) RUNNING → aux-loc@h128 → nav-curriculum+SI@h128 → nav-curriculum@512 → base_h128 → VRAM-measure
+→ aux-loc SI/floor sweep → shaping magnitude last. Dropped the 2 CONFOUNDED aux-loc+shaping runs (superseded by
+curriculum). SI (081da375) + curriculum (f8fac299) + SI-metric (e6fff9be) all live in the sweep. Last de-risk agent
+(a0767d04, floor-independent metrics for object/permanence/value) building — merges into the queued runs when it lands.
+
 
 **⚡ Owner gaming (local GPU paused, sweep waits); tokens plentiful → GPU-free dev. Done this stretch:** Vikunja
 board synced (#210 fork, #211 rank-6 synaptic-store; stamped `0f96da0d`) · fork consolidating finding banked
@@ -36,11 +43,10 @@ STRONGER GROUNDED REWARD magnitude, NEVER re-adding shaping. **Decisive tests QU
 - **⚡ DE-RISK-AHEAD RESEARCH (workflow w8hrsn5u1) → 3 builds launched:** (1) **anti-forgetting = SYNAPTIC
   INTELLIGENCE** (weight-anchoring, per-param importance + periodic consolidation; anchoring behaves very
   differently from the replay we tried, small-effect; protects the aux-loc place code from the OTHER objectives) —
-  BUILDING (a649398b, pcs_substrate.py, gradcheck-gated). (2) **the OTHER faculties share place's capacity-artifact**
+  MERGED (081da375c, gradcheck 5.71e-6, default-OFF --si). (2) **the OTHER faculties share place's capacity-artifact**
   (object/permanence/value use the IDENTICAL flawed decode-vs-floor `_r2_with_floors`) → floor-independent metrics
   BUILDING (a0767d04, runner) — may reveal MORE fork "negatives" are instrument artifacts. (3) **VRAM-reduction
-  options** for the Rank-6 flip (host-RAM-not-VRAM / pooled-bridge / paged-shards) — research re-running (ae13a5b0;
-  first attempt returned empty). BANKED DIRECTION (not built): **multi-faculty emergence = TEM/CSCG structure-content
+  options** for the Rank-6 flip BANKED (docs/plans/2026-09-07-rank6-substrate-store-vram-reduction-options.md — #1 lazy per-shard demat ~25-50%, #2 numpy worker near-zero, float32 free; pooled-bridge REJECTED on query latency) → the flip lands under ANY VRAM verdict. BANKED DIRECTION (not built): **multi-faculty emergence = TEM/CSCG structure-content
   factorization** (slow structural + fast content sub-populations) — the fork's next ARCHITECTURE move after place.
 Also flagged: re-check whether a DIFFERENT population (not the labeled aux-loc units) carries the causal weight
 (Schøyen dissociation). Research citations in the agent outputs (banked).
