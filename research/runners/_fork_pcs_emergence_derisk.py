@@ -307,11 +307,12 @@ def run_seed(seed, units="rate", encoder="learned_ema", n_hidden=512, n_latent=6
              grad_clip=1.0, grad_skip_factor=8.0, ema_momentum=0.9999, ema_warmup=0,
              pred_horizon=1, nav_required=False, nav_dmin=6, value_weight=0.0, sr_weight=0.0,
              aux_loc_weight=0.0, nav_shaping=0.0, nav_curriculum=False, nav_curriculum_frac=0.5,
-             nav_curriculum_dmin_start=1, si=False, lesion_mode="decoding", verbose=True):
+             nav_curriculum_dmin_start=1, si=False, reward_scale=1.0, eat_refill=0.5, lesion_mode="decoding", verbose=True):
     t0 = time.time()
     wcfg = WorldConfig(seed=seed, nav_required=nav_required, nav_dmin=nav_dmin, nav_shaping=nav_shaping,
                        nav_curriculum=nav_curriculum, nav_curriculum_frac=nav_curriculum_frac,
-                       nav_curriculum_dmin_start=nav_curriculum_dmin_start)
+                       nav_curriculum_dmin_start=nav_curriculum_dmin_start,
+                       reward_scale=reward_scale, eat_refill=eat_refill)
     world = ForkPCSWorld(wcfg)
     scfg = PCSConfig(n_hidden=n_hidden, feat_dim=wcfg.n_v1, n_latent=n_latent, n_actions=N_ACTIONS,
                      n_drive=4, tbptt_T=18, units=units, encoder=encoder, seed=seed,
@@ -1300,6 +1301,10 @@ def main():
                     help="enable the hippocampal-replay consolidation companion (default OFF = the baseline arm)")
     ap.add_argument("--si", action="store_true",
                     help="enable Synaptic Intelligence weight-anchoring (Zenke 2017) anti-forgetting on the online path (default OFF)")
+    ap.add_argument("--reward-scale", type=float, default=1.0,
+                    help="scale on the grounded drive-reduction reward (body/homeostatic knob; >1 = stronger learning signal for homing)")
+    ap.add_argument("--eat-refill", type=float, default=0.5,
+                    help="energy gained per eat (body knob; larger = bigger drive-reduction reward per eat)")
     ap.add_argument("--grad-clip", type=float, default=1.0,
                     help="global grad-norm clip (default 1.0 = stable). Set 5.0 to reproduce the unstable control; 0 disables.")
     ap.add_argument("--grad-skip-factor", type=float, default=8.0,
@@ -1382,11 +1387,12 @@ def main():
                          nav_curriculum_frac=args.nav_curriculum_frac,
                          nav_curriculum_dmin_start=args.nav_curriculum_dmin_start,
                          si=args.si,
+                         reward_scale=args.reward_scale, eat_refill=args.eat_refill,
                          lesion_mode=args.lesion_mode, **kw)
                 for s in args.seeds]
     agg = aggregate(per_seed)
     payload = {"battery": "fork_pcs_emergence", "units": args.units, "encoder": args.encoder,
-               "consolidation": args.consolidation, "si": args.si, "pred_horizon": args.pred_horizon,
+               "consolidation": args.consolidation, "si": args.si, "reward_scale": args.reward_scale, "eat_refill": args.eat_refill, "pred_horizon": args.pred_horizon,
                "nav_required": args.nav_required, "nav_dmin": args.nav_dmin, "value_weight": args.value_weight,
                "sr_weight": args.sr_weight, "aux_loc_weight": args.aux_loc_weight,
                "nav_shaping": args.nav_shaping,
