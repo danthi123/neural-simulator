@@ -15,7 +15,17 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-07 ~01:40 (OVERNIGHT HEADLESS QUEUE — harvest after; READ FIRST; LATEST anchor)
 
-**🌙 OVERNIGHT (owner: low token budget → run ~9h headless, HARVEST AFTER, ZERO token use while running).**
+**⚡ AUX-LOC-ALONE (n_hidden=512, 200k) DONE — PROMISING (best mechanism yet, but floor-masked):** EMERGENCE_GO=false
+0/6, BUT place margin **−0.037** (≈ base −0.04; FAR better than SR −0.11/−0.14 — aux-loc does NOT suppress place,
+unlike SR) and **place decode-LB 3/6 (best of any mechanism**; base 2, SR 0). The high n_hidden=512 floor (0.65-0.73)
+masks it (place decode 0.59-0.70 sits at/below floor) — exactly the capacity-artifact (smoke at n_hidden=256 showed
++0.044). **→ the QUEUED n_hidden=128 run (floor ~0.49) is the decisive test: does aux-loc + low floor make place
+CLEAR + load-bearing?** Result: `sim-agi-fork/research/findings/raw/_fork_pcs_auxloc10_6seed.json` (rc=0 01:49).
+**⚡ Owner gaming (GPU PAUSED for no contention) but TOKENS PLENTIFUL for dev work.** GPU-free dev in flight: an
+INSTRUMENT FIX (floor-independent place metric — rate-map spatial-information, since the linear-decode-vs-reservoir
+metric is capacity-artifact-flawed) + heartbeat re-armed. GPU sweep resumes after gaming (`gpu_queue.sh resume`).
+
+**🌙 OVERNIGHT (owner: prior low-budget plan → run headless, HARVEST AFTER; now UPDATED: tokens plentiful, GPU paused for gaming).**
 - **MONITORS DELIBERATELY STOPPED** (heartbeat b5kjwer7j + fork-DONE br0cyaqmx) so nothing re-invokes the session
   overnight. gpu_queue dispatcher runs the whole sweep headless (0 tokens); pool + AWS run remotely.
 - **GPU QUEUE (~9h, 14 jobs):** auxloc_alone(running) · auxloc_composed · **VRAM-measure** (gates Rank-6 flip) ·
