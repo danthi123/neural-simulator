@@ -508,6 +508,26 @@ def run_seed(seed, units="rate", encoder="learned_ema", n_hidden=512, n_latent=6
     place_si_trained = _place_cell_metrics(H, POS, wcfg.grid_size, seed)
     place_si_untrained = _place_cell_metrics(H_un, POS, wcfg.grid_size, seed)
 
+    # ---- 7c. OBJECT / PERMANENCE / VALUE floor-independent diagnostics (ADDITIVE; SAME SI formalism) ----
+    # Computed for TRAINED (H) and UNTRAINED-reservoir-replay (H_un) on the identical aligned input sequence,
+    # exactly as the place SI pair above, so the trained-vs-reservoir separation is visible per faculty. See
+    # the banner above `_categorical_tuning_metrics` for why each is the floor-independent read for its
+    # faculty. Guarded by the SAME data-availability checks as their presence[...] counterparts.
+    if len(obj_single_idx) >= 8:
+        object_si_trained = _object_selectivity_metrics(H[obj_single_idx], obj_lab, seed)
+        object_si_untrained = _object_selectivity_metrics(H_un[obj_single_idx], obj_lab, seed)
+    else:
+        note = {"note": f"only {len(obj_single_idx)} single-object steps"}
+        object_si_trained = dict(note); object_si_untrained = dict(note)
+    if off.sum() >= 20:
+        permanence_si_trained = _permanence_food_si_metrics(H[off], FOOD[off], wcfg.grid_size, seed)
+        permanence_si_untrained = _permanence_food_si_metrics(H_un[off], FOOD[off], wcfg.grid_size, seed)
+    else:
+        note = {"note": f"only {int(off.sum())} off-view-food steps"}
+        permanence_si_trained = dict(note); permanence_si_untrained = dict(note)
+    value_si_trained = _value_tuning_metrics(H, value_lab, seed)
+    value_si_untrained = _value_tuning_metrics(H_un, value_lab, seed)
+
     # ---- seed verdict ----
     n_cleared_lb = sum(1 for f in PRESENCE_BAR if cleared[f] and behav.get(f, {}).get("load_bearing", False))
     cleared_names = [f for f in PRESENCE_BAR if cleared[f]]
@@ -540,6 +560,14 @@ def run_seed(seed, units="rate", encoder="learned_ema", n_hidden=512, n_latent=6
         # side-by-side with the linear-decode place metric in presence["place"] (r2 vs floor_untrained).
         "place_cell_si": place_si_trained,
         "place_cell_si_untrained": place_si_untrained,
+        # FLOOR-INDEPENDENT object/permanence/value diagnostics (additive) — trained core vs the untrained
+        # reservoir, side-by-side with their linear-decode/RSA presence[...] counterparts (unchanged above).
+        "object_selectivity_si": object_si_trained,
+        "object_selectivity_si_untrained": object_si_untrained,
+        "permanence_food_si": permanence_si_trained,
+        "permanence_food_si_untrained": permanence_si_untrained,
+        "value_tuning_si": value_si_trained,
+        "value_tuning_si_untrained": value_si_untrained,
         "train_loss_curve": train_out.get("loss_curve", []),
         "intact_behavior": {k2: _f(v2) for k2, v2 in intact.items() if isinstance(v2, (int, float))},
         "SEED_GO": bool(seed_go),
@@ -593,6 +621,28 @@ def run_seed(seed, units="rate", encoder="learned_ema", n_hidden=512, n_latent=6
               f"SI={pu.get('mean_si')} (shuf={pu.get('mean_si_shuffle')}, x{pu.get('si_real_over_shuffle_ratio')}) "
               f"place_cells={pu.get('n_place_cells')}/{pu.get('n_units')} stab={pu.get('mean_stability')}  "
               f"<- HIGH decode, LOW SI = the inflated floor")
+        # FLOOR-INDEPENDENT object/permanence/value — same trained-vs-untrained side-by-side print
+        ot, ou = object_si_trained, object_si_untrained
+        print(f"    object[SI] trained:   RSA={_f(presence['object']['r2'])} "
+              f"SI={ot.get('mean_si')} (shuf={ot.get('mean_si_shuffle')}, x{ot.get('si_real_over_shuffle_ratio')}) "
+              f"sel_units={ot.get('n_object_selective_units')}/{ot.get('n_units')}")
+        print(f"    object[SI] UNTRAINED: RSA={_f(presence['object']['floor_untrained'])} "
+              f"SI={ou.get('mean_si')} (shuf={ou.get('mean_si_shuffle')}, x{ou.get('si_real_over_shuffle_ratio')}) "
+              f"sel_units={ou.get('n_object_selective_units')}/{ou.get('n_units')}")
+        pmt, pmu = permanence_si_trained, permanence_si_untrained
+        print(f"    perman[SI] trained:   decodeR2={_f(presence['permanence']['r2'])} "
+              f"SI={pmt.get('mean_si')} (shuf={pmt.get('mean_si_shuffle')}, x{pmt.get('si_real_over_shuffle_ratio')}) "
+              f"cells={pmt.get('n_permanence_cells')}/{pmt.get('n_units')}")
+        print(f"    perman[SI] UNTRAINED: decodeR2={_f(presence['permanence']['floor_untrained'])} "
+              f"SI={pmu.get('mean_si')} (shuf={pmu.get('mean_si_shuffle')}, x{pmu.get('si_real_over_shuffle_ratio')}) "
+              f"cells={pmu.get('n_permanence_cells')}/{pmu.get('n_units')}")
+        vt, vu = value_si_trained, value_si_untrained
+        print(f"    value[SI]  trained:   decodeR2={_f(presence['value']['r2'])} "
+              f"SI={vt.get('mean_si')} (shuf={vt.get('mean_si_shuffle')}, x{vt.get('si_real_over_shuffle_ratio')}) "
+              f"tuned_units={vt.get('n_value_tuned_units')}/{vt.get('n_units')}")
+        print(f"    value[SI]  UNTRAINED: decodeR2={_f(presence['value']['floor_untrained'])} "
+              f"SI={vu.get('mean_si')} (shuf={vu.get('mean_si_shuffle')}, x{vu.get('si_real_over_shuffle_ratio')}) "
+              f"tuned_units={vu.get('n_value_tuned_units')}/{vu.get('n_units')}")
     return result
 
 
@@ -837,6 +887,213 @@ def _place_cell_metrics(H, POS, grid_size, seed, n_shuffle=PLACE_SI_SHUFFLES,
 
 
 # ─────────────────────────────────────────────────────────────────────────────
+# FLOOR-INDEPENDENT diagnostics for OBJECT / PERMANENCE / VALUE (ADDITIVE, additive-only)
+#
+# WHY (research-pass motivation). _r2_with_floors is the IDENTICAL ridge-linear-decode-vs-3-floors function
+# used for place/value/permanence, and object's RSA is a population-similarity metric with the same failure
+# mode: a big random reservoir can score well on either instrument WITHOUT any single unit being genuinely
+# TUNED, because (a) linear decode over many random features approximates a smooth label (the place-metric
+# finding: floor R^2 rises with n_hidden), and (b) RSA over h can track INPUT similarity (the raw V1 already
+# differs by object type) rather than a learned category code. Both are magnitude/capacity-sensitive, not
+# tuning-sensitive. The place fix's floor-independent answer was Skaggs spatial information: a magnitude-
+# NORMALIZED (bits per activation) measure of whether a unit's firing CONCENTRATES on specific bins of a
+# label, tested against the unit's OWN shuffle null. That formalism generalizes beyond spatial (x,y) bins to
+# ANY discrete binning of a label -- so the SAME math (below, factored out of _place_cell_metrics as
+# `_categorical_tuning_metrics`) is reused for:
+#   OBJECT      bins = the 4 discrete object types already used by the RSA presence metric (obj_lab).
+#   PERMANENCE  bins = (x,y) of the REMEMBERED off-crop food location -- this IS the place-SI formalism,
+#               just keyed on the food's location instead of the agent's own, so it delegates to
+#               `_place_cell_metrics` directly rather than re-deriving the identical math.
+#   VALUE       bins = quantiles of the discounted-return label (a continuous target discretized the same
+#               way (x,y) is already discretized into grid cells for place) -- "does firing concentrate by
+#               value level" is a floor-independent stand-in for "TD-consistency" that needs no extra
+#               rollouts or a trained critic to evaluate.
+# Each is computed for BOTH the trained core (H) and the untrained-reservoir replay (H_un) on the identical
+# input sequence, exactly as place_cell_si / place_cell_si_untrained are, so the trained-vs-reservoir
+# separation is visible per faculty. ADDITIVE ONLY: presence[...], _beats_floors, and the pre-registered GO
+# gate are untouched; these are new per-seed + aggregate diagnostic fields.
+# ─────────────────────────────────────────────────────────────────────────────
+VALUE_SI_N_BINS = 5   # target # of discounted-return quantile bins for the value tuning-info metric
+
+
+def _categorical_tuning_metrics(H, bin_idx, n_bins, seed, n_shuffle=PLACE_SI_SHUFFLES,
+                                stab_thresh=PLACE_SI_STABILITY_THRESH, cell_noun="tuned"):
+    """Generic FLOOR-INDEPENDENT tuning-information metric: the SAME Skaggs-style bits-per-activation math as
+    `_place_cell_metrics`, generalized from spatial (x,y) bins to ANY discrete per-step label `bin_idx`
+    (0..n_bins-1) -- object type, a value-return quantile, etc. A unit's rectified rate must CONCENTRATE on
+    specific bins (KL(q||p) so SI>=0, and >0 only under non-uniform firing across bins) to clear its OWN
+    shuffle null; a reservoir unit whose firing is driven near-uniformly by input magnitude does not clear
+    this even when a population linear-decode/RSA of the same label is high. See the section banner above
+    for why this generalization is the correct fix for object/permanence/value, not just place.
+
+    Not used for place itself (`_place_cell_metrics` is left byte-identical/untouched); permanence delegates
+    to `_place_cell_metrics` directly since its label is already an (x,y) position. This function backs the
+    object (categorical bins = object type) and value (quantile bins = discretized return) diagnostics.
+
+    Returns a dict shaped like `_place_cell_metrics`'s (mean/median/max SI, shuffle-null level, real/shuffle
+    ratio, mean split-half stability, #/frac significant units) but with the "place_cells" naming replaced by
+    `cell_noun` so the JSON is unambiguous about which faculty it's reporting. HONESTY: a functional tuning
+    read-out; asserts nothing about felt/represented content.
+    """
+    H = np.asarray(H, dtype=np.float64)
+    bin_idx = np.asarray(bin_idx, dtype=np.int64)
+    if H.ndim != 2 or len(H) < 50 or n_bins < 2:
+        return {"note": "too few probe steps or bins", "n_steps": int(len(H)) if H.ndim == 2 else 0,
+                "n_bins": int(n_bins)}
+    T, U = H.shape
+    R = np.maximum(0.0, H)                          # non-negative rate proxy (rectified activation)
+    counts = np.bincount(bin_idx, minlength=n_bins).astype(np.float64)
+    occ = counts > 0
+    n_occ = int(occ.sum())
+    if n_occ < 2:
+        return {"note": "too few occupied bins", "n_occupied_bins": n_occ, "n_steps": int(T)}
+    p_i = counts / counts.sum()
+
+    B = np.zeros((n_bins, T), dtype=np.float64)
+    B[bin_idx, np.arange(T)] = 1.0
+    lam = R.mean(axis=0)
+    live = lam > 1e-9
+
+    def _si_from_sumR(sum_R):
+        lam_i = np.zeros_like(sum_R)
+        lam_i[occ] = sum_R[occ] / counts[occ, None]
+        lam_safe = np.where(live, lam, 1.0)
+        ratio = lam_i / lam_safe[None, :]
+        with np.errstate(divide="ignore", invalid="ignore"):
+            contrib = p_i[:, None] * ratio * np.log2(ratio)
+        contrib[~np.isfinite(contrib)] = 0.0
+        si = contrib.sum(axis=0)
+        si[~live] = 0.0
+        return si
+
+    si_real = _si_from_sumR(B @ R)
+    rng = np.random.default_rng(seed + 6060)
+    si_shuf = np.empty((n_shuffle, U), dtype=np.float64)
+    for s in range(n_shuffle):
+        si_shuf[s] = _si_from_sumR(B @ R[rng.permutation(T)])
+    thresh_u = np.percentile(si_shuf, 95, axis=0)
+
+    def _binmeans(sl):
+        bi = bin_idx[sl]
+        c = np.bincount(bi, minlength=n_bins).astype(np.float64)
+        Bh = np.zeros((n_bins, len(bi))); Bh[bi, np.arange(len(bi))] = 1.0
+        o = c > 0
+        bm = np.full((n_bins, U), np.nan)
+        bm[o] = (Bh @ R[sl])[o] / c[o, None]
+        return bm, o
+
+    half = T // 2
+    bm1, o1 = _binmeans(slice(0, half))
+    bm2, o2 = _binmeans(slice(half, T))
+    both = o1 & o2
+    stability = np.full(U, np.nan)
+    if int(both.sum()) >= 3:
+        a = bm1[both]; b = bm2[both]
+        am = a - a.mean(0); bmn = b - b.mean(0)
+        denom = np.sqrt((am * am).sum(0) * (bmn * bmn).sum(0)) + 1e-12
+        stability = (am * bmn).sum(0) / denom
+        stability[~live] = np.nan
+
+    is_tuned = live & (si_real > thresh_u) & (np.nan_to_num(stability, nan=-1.0) > stab_thresh)
+    n_tuned = int(is_tuned.sum())
+    live_any = bool(live.any())
+    mean_si_live = float(np.nanmean(si_real[live])) if live_any else float("nan")
+    return {
+        "n_steps": int(T), "n_units": int(U), "n_live_units": int(live.sum()),
+        "n_bins": int(n_bins), "n_occupied_bins": n_occ, "n_shuffle": int(n_shuffle),
+        "stability_thresh": stab_thresh,
+        "mean_si": _f(mean_si_live) if live_any else None,
+        "median_si": _f(np.nanmedian(si_real[live])) if live_any else None,
+        "max_si": _f(np.nanmax(si_real[live])) if live_any else None,
+        "mean_si_shuffle": _f(float(si_shuf.mean())),
+        "si_95_shuffle_pooled": _f(float(np.percentile(si_shuf, 95))),
+        "si_real_over_shuffle_ratio": _f(mean_si_live / (float(si_shuf.mean()) + 1e-9)) if live_any else None,
+        "mean_stability": _f(float(np.nanmean(stability))) if np.isfinite(stability).any() else None,
+        f"n_{cell_noun}_units": n_tuned,
+        f"frac_{cell_noun}_units": _f(n_tuned / U),
+        f"mean_si_{cell_noun}_units": _f(float(np.nanmean(si_real[is_tuned]))) if n_tuned > 0 else None,
+        f"mean_stability_{cell_noun}_units": _f(float(np.nanmean(stability[is_tuned]))) if n_tuned > 0 else None,
+    }
+
+
+def _rename_cell_keys(d, noun):
+    """Rename `_place_cell_metrics`'s generic 'place_cells' terminology to `noun` (e.g. 'permanence') for
+    output clarity, WITHOUT touching `_place_cell_metrics`'s tested code path (it stays byte-identical)."""
+    mapping = {
+        "n_place_cells": f"n_{noun}_cells",
+        "frac_place_cells": f"frac_{noun}_cells",
+        "mean_si_place_cells": f"mean_si_{noun}_cells",
+        "mean_stability_place_cells": f"mean_stability_{noun}_cells",
+    }
+    return {mapping.get(k, k): v for k, v in d.items()}
+
+
+def _object_selectivity_metrics(H, obj_lab, seed, n_shuffle=PLACE_SI_SHUFFLES,
+                                stab_thresh=PLACE_SI_STABILITY_THRESH):
+    """FLOOR-INDEPENDENT object metric: per-unit object-TYPE selectivity index (Skaggs SI over the 4 discrete
+    object-type bins already used by the presence RSA metric), trained vs shuffle-null. WHY floor-independent
+    vs RSA: RSA(h, same-type-indicator) can be high because the raw V1 input already differs by object type
+    (distinct oriented bars -> distinct Gabor responses) and a random reservoir linearly mixes that input
+    similarity into h's similarity structure WITHOUT any unit being object-TUNED (magnitude/capacity, not
+    tuning). SI is magnitude-normalized (bits per activation) and asks a different question per unit -- does
+    ITS firing concentrate on one object type -- so a reservoir whose per-unit rate is roughly type-invariant
+    (even while its POPULATION geometry echoes the input) scores near its own shuffle null. Restricted to the
+    same single-object-in-crop steps the RSA presence metric uses, for an apples-to-apples population."""
+    return _categorical_tuning_metrics(H, obj_lab, K_OBJECTS, seed, n_shuffle=n_shuffle,
+                                       stab_thresh=stab_thresh, cell_noun="object_selective")
+
+
+def _permanence_food_si_metrics(H, FOOD, grid_size, seed, n_shuffle=PLACE_SI_SHUFFLES,
+                                stab_thresh=PLACE_SI_STABILITY_THRESH):
+    """FLOOR-INDEPENDENT permanence metric: Skaggs spatial information of the REMEMBERED food location,
+    restricted to steps where food is OFF the current crop (the permanence-relevant regime) -- IDENTICAL
+    formalism to the place SI metric, just keyed on the food's (x,y) instead of the agent's own, since a
+    genuine allocentric-memory ("object permanence") code should concentrate off-view firing by WHERE the
+    food is remembered to be, exactly as a place code concentrates firing by where the agent itself is. Why
+    floor-independent vs the linear-decode presence metric: the same capacity artifact applies (a large
+    random reservoir's rate still correlates with recent input/position history enough for a linear head to
+    partially reconstruct the food's location without any unit being permanence-tuned); SI is magnitude-
+    normalized and tests each unit against its own shuffle null, so it does not credit the reservoir for
+    incidental linear reconstructability. Delegates to `_place_cell_metrics` (identical math; not touched)."""
+    raw = _place_cell_metrics(H, FOOD, grid_size, seed, n_shuffle=n_shuffle, stab_thresh=stab_thresh)
+    return _rename_cell_keys(raw, "permanence")
+
+
+def _quantile_bin_edges(x, n_bins):
+    """De-duplicated quantile bin edges for `x` -> (edges, effective_n_bins). Ties (e.g. many exact-0 returns
+    from a sparse reward signal) collapse adjacent edges, so effective_n_bins can be < n_bins; the caller
+    reports that honestly (UNDEFINED, not a faked bin count) rather than forcing degenerate bins."""
+    edges = np.unique(np.quantile(x, np.linspace(0.0, 1.0, n_bins + 1)))
+    return edges, max(0, len(edges) - 1)
+
+
+def _value_tuning_metrics(H, G, seed, n_bins=VALUE_SI_N_BINS, n_shuffle=PLACE_SI_SHUFFLES,
+                          stab_thresh=PLACE_SI_STABILITY_THRESH):
+    """FLOOR-INDEPENDENT value metric: Skaggs tuning-information of firing w.r.t. QUANTILE bins of the
+    discounted-return label G -- a floor-independent stand-in for "TD-consistency"/value-tuning that needs no
+    extra rollouts or a trained critic (only a re-binning of the label already used by the presence R^2
+    decode). WHY floor-independent vs linear decode: G correlates with recent drive/position/action history,
+    all of which are DIRECT inputs to the reservoir, so a big random projection can linearly reconstruct G
+    reasonably well without any unit being value-tuned (the same capacity story as place/permanence). SI asks
+    whether a unit's firing CONCENTRATES by value level (magnitude-normalized, shuffle-null-tested per unit),
+    which a reservoir echoing its inputs does not do merely by being reconstructable in aggregate. Quantile
+    (not raw-value) binning keeps occupancy p_i comparable across bins the way place's spatial bins are."""
+    G = np.asarray(G, dtype=np.float64).reshape(-1)
+    if len(G) < 50:
+        return {"note": "too few probe steps", "n_steps": int(len(G))}
+    edges, eff_bins = _quantile_bin_edges(G, n_bins)
+    if eff_bins < 2:
+        return {"note": "insufficient value spread for quantile binning", "n_steps": int(len(G)),
+                "n_unique_values": int(len(np.unique(G)))}
+    bin_idx = np.clip(np.digitize(G, edges[1:-1], right=False), 0, eff_bins - 1)
+    out = _categorical_tuning_metrics(H, bin_idx, eff_bins, seed, n_shuffle=n_shuffle,
+                                      stab_thresh=stab_thresh, cell_noun="value_tuned")
+    out["n_value_bins_requested"] = int(n_bins)
+    out["n_value_bins_effective"] = int(eff_bins)
+    return out
+
+
+# ─────────────────────────────────────────────────────────────────────────────
 # NOVEL-START SHORTCUT / DETOUR PROBE (Banino 2018) — the sharp behavioral-load-bearing test
 # ─────────────────────────────────────────────────────────────────────────────
 def _shortcut_probe(sub, wcfg, seed, place_importance, n_hidden, lesion_frac=0.10,
@@ -965,6 +1222,39 @@ def aggregate(per_seed):
         "trained_mean_stability": _col(lambda r: r["place_cell_si"].get("mean_stability")),
         "untrained_mean_stability": _col(lambda r: r["place_cell_si_untrained"].get("mean_stability")),
     }
+    # FLOOR-INDEPENDENT object/permanence/value summaries (additive; NOT part of the GO gate) — same
+    # trained-vs-untrained-reservoir side-by-side as place_cell_si_summary, plus their linear-decode/RSA
+    # presence[...] counterparts for direct comparison (does THIS faculty show the same capacity artifact?).
+    object_selectivity_si_summary = {
+        "trained_rsa": _col(lambda r: r["presence"]["object"].get("r2")),
+        "untrained_rsa": _col(lambda r: r["presence"]["object"].get("floor_untrained")),
+        "trained_mean_si": _col(lambda r: r["object_selectivity_si"].get("mean_si")),
+        "untrained_mean_si": _col(lambda r: r["object_selectivity_si_untrained"].get("mean_si")),
+        "trained_si_over_shuffle_ratio": _col(lambda r: r["object_selectivity_si"].get("si_real_over_shuffle_ratio")),
+        "untrained_si_over_shuffle_ratio": _col(lambda r: r["object_selectivity_si_untrained"].get("si_real_over_shuffle_ratio")),
+        "trained_frac_object_selective_units": _col(lambda r: r["object_selectivity_si"].get("frac_object_selective_units")),
+        "untrained_frac_object_selective_units": _col(lambda r: r["object_selectivity_si_untrained"].get("frac_object_selective_units")),
+    }
+    permanence_food_si_summary = {
+        "trained_decode_r2": _col(lambda r: r["presence"]["permanence"].get("r2")),
+        "untrained_decode_r2": _col(lambda r: r["presence"]["permanence"].get("floor_untrained")),
+        "trained_mean_si": _col(lambda r: r["permanence_food_si"].get("mean_si")),
+        "untrained_mean_si": _col(lambda r: r["permanence_food_si_untrained"].get("mean_si")),
+        "trained_si_over_shuffle_ratio": _col(lambda r: r["permanence_food_si"].get("si_real_over_shuffle_ratio")),
+        "untrained_si_over_shuffle_ratio": _col(lambda r: r["permanence_food_si_untrained"].get("si_real_over_shuffle_ratio")),
+        "trained_frac_permanence_cells": _col(lambda r: r["permanence_food_si"].get("frac_permanence_cells")),
+        "untrained_frac_permanence_cells": _col(lambda r: r["permanence_food_si_untrained"].get("frac_permanence_cells")),
+    }
+    value_tuning_si_summary = {
+        "trained_decode_r2": _col(lambda r: r["presence"]["value"].get("r2")),
+        "untrained_decode_r2": _col(lambda r: r["presence"]["value"].get("floor_untrained")),
+        "trained_mean_si": _col(lambda r: r["value_tuning_si"].get("mean_si")),
+        "untrained_mean_si": _col(lambda r: r["value_tuning_si_untrained"].get("mean_si")),
+        "trained_si_over_shuffle_ratio": _col(lambda r: r["value_tuning_si"].get("si_real_over_shuffle_ratio")),
+        "untrained_si_over_shuffle_ratio": _col(lambda r: r["value_tuning_si_untrained"].get("si_real_over_shuffle_ratio")),
+        "trained_frac_value_tuned_units": _col(lambda r: r["value_tuning_si"].get("frac_value_tuned_units")),
+        "untrained_frac_value_tuned_units": _col(lambda r: r["value_tuning_si_untrained"].get("frac_value_tuned_units")),
+    }
     # NOVEL-START shortcut-probe summary (additive; only present when the nav runs carried it). The decisive
     # behavioral-load-bearing read: mean held-out homing success + how much a place-unit lesion degrades it
     # vs a random-unit lesion, and on how many seeds place was load-bearing on THIS probe.
@@ -989,6 +1279,9 @@ def aggregate(per_seed):
            "faculty_load_bearing_counts": faculty_lb_counts,
            "seeds_required": int(np.ceil(SEEDS_REQUIRED_FRAC * n)),
            "place_cell_si_summary": place_cell_si_summary,
+           "object_selectivity_si_summary": object_selectivity_si_summary,
+           "permanence_food_si_summary": permanence_food_si_summary,
+           "value_tuning_si_summary": value_tuning_si_summary,
            "EMERGENCE_GO": bool(emergence_go)}
     if shortcut_summary is not None:
         out["shortcut_probe_summary"] = shortcut_summary
