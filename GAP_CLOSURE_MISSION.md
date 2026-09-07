@@ -37,12 +37,24 @@ resets in ~14h → burn it). Proceed autonomously.** All lanes below are LIVE ba
   policy-load-bearing; Mirowski 2017 aux self-localization loss). Shaping VALIDATED sound + NOT a goal-compass
   cheat (a reward term, unlike an observation, still needs internalized rel-position) + terminal-potential bug
   AVOIDED. Pending: path-integration/grid-cells agent + drift/anti-forgetting agent.
-- **BUILD AGENT RUNNING (worktree, CPU):** `_fork_pcs_floor_scaling.py` — is "place below untrained floor" partly a
-  CAPACITY ARTIFACT (does the untrained-reservoir floor RISE with n_hidden)?
-- **NEXT ACTIONS:** (1) harvest the shaping sweep → magnitude curve + honest read on whether ANY magnitude makes
-  place load-bearing; (2) with full research in, BUILD the **SR objective** (vector successor-feature head modeled
-  on the existing value head's within-window discounted-MC target + analytic grad + **gradcheck**, additive/
-  default-off) as the principled "retain position" mechanism; (3) SR 6-seed after the sweep. Compose SR + shaping.
+- **✅ SR OBJECTIVE BUILT + GRADCHECK-VERIFIED + QUEUED (`27561aba0` on agi-fork, pushed both).** Successor-
+  representation predictive head (`--sr-weight`, default 0.0 = byte-identical, PROVEN bit-equal loss). Gradcheck
+  on the merged tree: SR-on rate **5.05e-04 OK**, all compositions (SR+value+k-ahead) <1e-3; smoke SR-loss −54.5%.
+  Research all 4 agents DONE + banked as finding `cb0b45ce5`. GPU queue (depth 6, ~4h): shaping {2,4,8} +
+  **SR-alone `_fork_pcs_sr10_6seed`** (the decisive test: does SR retain the place code plain JEPA loses?) +
+  SR-stronger `_sr20` + SR+nav+shaping composed `_sr10_nav_shap20`. Monitor **bjcjvs97t** catches DONE lines.
+- **FLOOR-SCALING run (capacity-artifact Q) still going (pid 2407366)** in worktree agent-a113c75e64c15883a;
+  MY waiter **bpmxytjbn** notifies on exit → I harvest the JSON (the subagent went dormant; don't rely on it).
+- **BOTH FRONTS (owner asked 21:24 "advance AGI + main simultaneously?"): YES.** Fork = local GPU (full ~4h) +
+  its builds. MAIN lane = agents + CPU pool + AWS (no local-GPU contention), FORK-INDEPENDENT work only (ship
+  already-GO de-risks to default-on · pending 6-seed validations · mouth token-scaling) — NOT new hand-built
+  mechanisms (the fork tests that premise). Opus scoping agent LAUNCHED (reads ledger/findings/board → ranked
+  ready fork-independent actions + commands + lane); execute its output on pool/AWS/agents alongside the fork.
+- **NEXT ACTIONS:** (1) harvest shaping sweep + SR runs → does SR make place LOAD-BEARING/persist (the fork's
+  core question)? (2) instrument fix — lesion BEHAVIORALLY-important units, not decoding-important (Schøyen/Banino;
+  my metric may be mis-aimed) — build AFTER current runs (touches the runner); (3) if SR insufficient, add the
+  auxiliary self-localization loss then anti-forgetting (compose, don't substitute); (4) launch the scoped
+  main-path lane.
 - **AWS mouth batch-64 running (~Sep 8):** `research/queue/.aws_gpu` (i-046d3211935253398, us-east-1); harvest the
   d192×2B wt103 verdict (crosses fair trigram?), then `bash tools/aws_gpu.sh terminate` (billing while up).
 - Honesty boundary kept throughout: functional read-outs only; a fork negative is a first-class deliverable (FORK.md).
