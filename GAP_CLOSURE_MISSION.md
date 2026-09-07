@@ -13,7 +13,30 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ---
 
-## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-07 ~01:20 (RESUMED post-reboot; both fronts live; READ FIRST; LATEST anchor)
+## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-07 ~01:40 (OVERNIGHT HEADLESS QUEUE — harvest after; READ FIRST; LATEST anchor)
+
+**🌙 OVERNIGHT (owner: low token budget → run ~9h headless, HARVEST AFTER, ZERO token use while running).**
+- **MONITORS DELIBERATELY STOPPED** (heartbeat b5kjwer7j + fork-DONE br0cyaqmx) so nothing re-invokes the session
+  overnight. gpu_queue dispatcher runs the whole sweep headless (0 tokens); pool + AWS run remotely.
+- **GPU QUEUE (~9h, 14 jobs):** auxloc_alone(running) · auxloc_composed · **VRAM-measure** (gates Rank-6 flip) ·
+  shaping4/8 · then the aux-loc sweep: auxloc {0.5, 2.0} alone · base+auxloc @ n_hidden {128,256,1024} · base_h128 ·
+  auxloc train400k (retention) · auxloc+nav+shaping @ h128 · auxloc2.0+nav+shaping. Answers: does aux-loc make place
+  PERSIST+LOAD-BEARING; the n_hidden/floor (capacity-artifact) sweep; aux-loc magnitude; retention; behavioral combos.
+- **POOL:** 2 Touchpoint-A jobs (seed43/100) headless.  **AWS:** mouth d192×2B (~Sep 8).
+- **⚠️ NO live heartbeat overnight (owner's no-token choice):** if the 3090 falls off the bus (crash-config: LACT
+  300W cap in place, low risk with these small runs), the queue stalls until reboot — harvest what completed + re-run.
+- **HARVEST-AFTER (on "continue"/next session): (1)** RE-ARM the heartbeat + fork-DONE Monitors + re-suspend baloo
+  (the resume checklist below). **(2)** Read each `research/findings/raw/_fork_pcs_auxloc*_6seed.json` +
+  `_fork_pcs_base_h128*` + the VRAM `_substrate_prodflip_verify_{off,on}.json` (+ gpu_queue.log PEAK_VRAM lines).
+  Key read per fork JSON: aggregate.EMERGENCE_GO + per-seed place `r2` vs `floor_untrained` (margin) + n_faculties
+  _load_bearing (decode) + _behavioral + lesion_overlap_jaccard. **THE question: does aux-loc make place persist
+  ABOVE floor AND load-bearing (esp. at n_hidden=128 where the floor is lower ~0.49)?** If yes → fork's first
+  retained faculty (write it up, verify-go). If no → next methods: grid-cell/CAN inductive bias or anti-forgetting
+  (both need builds; research banked in `2026-09-06-agi-fork-why-place-fades-*`). **(3)** VRAM: if the substrate-store
+  delta fits the 24GB budget → land the Rank-6 flip (merge research/substrate-store-flip → main); else keep env-opt-in.
+  **(4)** bank all fork JSONs (lane-waiver if pool idle) + batch-commit; harvest+stop AWS mouth.
+
+## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-07 ~01:20 (RESUMED post-reboot; both fronts live; earlier detail)
 
 **✅ RESUME DONE (01:20):** gpu_queue resumed → **aux-loc-alone RUNNING** (re-run from scratch; queue: auxloc_alone →
 auxloc_composed → VRAM-measure → shaping4/8) · baloo re-suspended · heartbeat Monitor re-armed (b5kjwer7j, mem_cap.sh
