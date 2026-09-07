@@ -77,7 +77,10 @@ background work — do not double-launch.
   the mechanism that forces position in DIRECTLY (vs SR's competing target). **6-seed runs QUEUED + PRIORITIZED:**
   auxloc-alone (isolate persistence) + auxloc+nav+shaping (behaviorally-load-bearing test) run NEXT after the composed
   SR, then VRAM-measure, then confirmatory shaping4/8. Monitor bjcjvs97t.
-  (Composed SR sr10_nav_shap20 still running = last SR hope; SR-alone already NEGATIVE both magnitudes.)
+- **⚡ COMPOSED SR (sr10+nav+shaping) DONE — WORST: place margin −0.142 AND navigation COLLAPSED (approach_off 0.236,
+  BELOW chance 0.5); adding SR to the goal-directed task HARMED both place AND homing.** SR method DECISIVELY RETIRED
+  (negative alone ×2 magnitudes + composed; it's a competing objective that degrades what it was meant to help). The
+  full SR record is banked. → aux-loc (opposite sign) is the lead; its 6-seed runs are RUNNING/next.
 
 - **FORK 4th MOVE — potential-based approach SHAPING (make homing LEARNABLE).** The 3rd move (nav-required) failed
   only because reward was too SPARSE (larder reached ~0.1-0.5% of steps → REINFORCE never learned to home →
