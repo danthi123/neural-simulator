@@ -13,7 +13,21 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ---
 
-## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-07 ~06:25 (COMPUTE FULLY PARALLELIZED; fork place-emergence ANSWERED YES; READ FIRST; LATEST anchor)
+## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-07 ~07:20 (FORK RE-ANCHORED to the MAIN GOALS: affect + self-awareness on the predictive substrate; READ FIRST; LATEST anchor)
+
+**⚡ OWNER STEER (07:15): the AGI fork's purpose is to ADVANCE THE MAIN PROJECT GOALS (genuine conversation · affective world-model · emotion · self-awareness · curiosity) with LOOSER biological-strictness (rate substrate not strict-spiking; tractable-function not bit-exact) — NOT to explore tangential faculties. Navigation/homing was a measurability-driven VALIDATION of the substrate, now CLOSED. Re-aim at the north-star.**
+
+**SPATIAL CHAPTER — CLOSED (honest, validated):**
+- A genuine place-LIKE code (split-half stable single-unit spatial tuning) emerges from ONE self-supervised predictive substrate. SOUND criterion = split-half rate-map STABILITY (capacity- + shuffle-independent): **~0.8 trained vs ~0.3 untrained-reservoir, 6/6 seeds, in BOTH aux-loc AND the pure-prediction base control (NO position supervision)** — genuine emergence from prediction, not aux-loc-elicited. VALIDATES the fork's core bet (faculties emerge from one predictive substrate).
+- Adversarial-verify (w1wnitp9h) caveats, handled: (1) Skaggs SI-significance uses an INVALID i.i.d. shuffle (should be cyclic-shift) — NON-load-bearing (stability carries it), logged in FAILURE_LOG for fix as pivot infra; (2) report frac over LIVE units (liveness confound).
+- Behavioral-homing (1-2/6, noisy) = DROPPED (least AGI-relevant). Foraging/reward/grid levers built this session (e2ec6180, 6524826f) are BANKED, not pursued.
+
+**NEW ANCHOR — the predictive substrate IS a world-model; grow it into an AFFECTIVE, SELF-AWARE one (the mission's exact north-star phrasing):**
+- Both faculties fall out of the substrate's own PREDICTION ERROR (already computed): SELF-AWARENESS/honesty = novelty/familiarity read-out from prediction-error ("reads as novel -> uncertain"); AFFECT/valence = reward + prediction-error.
+- BAR (owner, 2026-08-19): they must be LOAD-BEARING (drive the substrate's output; vanish under lesion), NOT merely decodable.
+- NEXT: design + build the emergent-affect + emergent-self-awareness probes on sim/pcs_substrate.py (with the SOUND stability/tuning metric + the cyclic-shift fix as measurement infra).
+
+## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-07 ~06:25 (COMPUTE FULLY PARALLELIZED; fork place-emergence ANSWERED YES; history)
 
 **⚡ Owner: "optimally use compute (local AND minipc pool) within RAM/VRAM limits" (06:20).** Compute is now FULLY spread (heartbeat cleared from UNDER-PARALLELIZED):
 - **Local GPU** (was 44% util, one-at-a-time): NEW `tools/gpu_parallel_dispatch.sh 3 4000` (pid 685891, committed `c319085b`) drains `research/queue/gpu.queue` **3-wide @ 99% util, ~7GB/24GB VRAM** (each fork job ~0.9GB). The strict-serial `gpu_queue` daemon is PAUSED (GPU_PAUSE sentinel) — it exists to stop the BIG 20GB brain stacking, not these tiny nets. RESTORE serial: empty the parallel queue, then `bash tools/gpu_queue.sh resume`. Monitor bx89jasi0 catches DONE/EMERGENCE_GO.
