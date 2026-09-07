@@ -1,0 +1,38 @@
+{
+ "run_id": "1788736848-2233619",
+ "runner": "research/runners/_fork_pcs_emergence_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim-agi-fork/research/runners/_fork_pcs_emergence_derisk.py",
+  "--seeds",
+  "42",
+  "43",
+  "44",
+  "100",
+  "101",
+  "102",
+  "--units",
+  "rate",
+  "--pred-horizon",
+  "4",
+  "--out",
+  "research/findings/raw/_fork_pcs_emergence_rate_horizon4_6seed.json"
+ ],
+ "git_sha": "5e394c75f",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-06T19:20:48",
+ "env": {
+  "SIM_BACKEND": "cupy"
+ },
+ "sim_backend": "cupy",
+ "sim_backend_requested": "cupy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_fork_pcs_emergence_rate_horizon4_6seed.json"
+}
