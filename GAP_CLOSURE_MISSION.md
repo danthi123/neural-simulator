@@ -18,8 +18,12 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 **⚡ Owner: "compute available, go ham" (05:25). GPU sweep RESUMED + REORDERED decisive-first:** nav-curriculum @ n128
 (best behavioral-LB shot) RUNNING → aux-loc@h128 → nav-curriculum+SI@h128 → nav-curriculum@512 → base_h128 → VRAM-measure
 → aux-loc SI/floor sweep → shaping magnitude last. Dropped the 2 CONFOUNDED aux-loc+shaping runs (superseded by
-curriculum). SI (081da375) + curriculum (f8fac299) + SI-metric (e6fff9be) all live in the sweep. Last de-risk agent
-(a0767d04, floor-independent metrics for object/permanence/value) building — merges into the queued runs when it lands.
+curriculum). SI (081da375) + curriculum (f8fac299) + SI-metric (e6fff9be) all live in the sweep. ✅ ALL 4 de-risk builds MERGED into the sweep: SI (081da375) + curriculum+probe (f8fac299) + place-SI (e6fff9be) +
+object/permanence/value floor-independent SI (5701c9ea). ⚡ REFRAME: the metric audit found VALUE shares place's
+capacity-artifact (significance-filtered tuned-unit count separates + GROWS with training where linear-decode is
+floor-ambiguous); OBJECT corroborated (genuine tuning, less severe); PERMANENCE underpowered (food relocates too
+rarely — needs a longer/higher-relocation probe). So the fork likely has MORE genuine emergent faculties than the
+flawed metric showed — the queued runs now measure all four floor-independently.
 
 
 **⚡ Owner gaming (local GPU paused, sweep waits); tokens plentiful → GPU-free dev. Done this stretch:** Vikunja
