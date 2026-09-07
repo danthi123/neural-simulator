@@ -29,6 +29,13 @@ background work — do not double-launch.
   is a stringent bar at n_hidden=512; consider a smaller n_hidden and/or the instrument fix when reading SR.
 - **GPU queue REORDERED — SR runs FIRST (the decisive principled test):** sr10 (SR-alone) NEXT, then sr20,
   sr10+nav+shaping20, then shaping 4.0/8.0. SR-alone verdict ~1h out.
+- **✅ BEHAVIORAL-LESION instrument MERGED (`6bdeae925`, pushed): `--lesion-mode {decoding,behavioral,both}`** on the
+  battery (Schøyen dissociation: causal read-head saliency selects load-bearing units, not decoding-important ones;
+  reports both arms + Jaccard overlap). Synthetic validation PASS (behavioral-lesion TV 0.69 vs decoding-lesion TV
+  0.00 = the exact dispensable-decodable-units failure the old instrument mis-reported). Could NOT validate on
+  emergent nav at CPU-short scales (nav homes at chance there) → **the 200k SR GPU runs are its first real
+  on-behavior test.** ALL 5 queued fork runs RE-QUEUED with `--lesion-mode both` so SR load-bearing is read
+  correctly. Interpret SR with BOTH the capacity-artifact (high floor) AND behavioral-lesion caveats in hand.
 - **BOTH FRONTS live:** MAIN-path = Rank-6 substrate-store query-cost 6-seed running LOCALLY (bg bm329nwms, CPU nice'd)
   + Rank-15 self-schema 5/6→6/6 fix (opus build agent, worktree) + AWS mouth. Instrument-fix (behavioral-lesion,
   opus agent) also in flight on the fork. Scoping agent found the clean ship-a-GO bucket largely EXHAUSTED (09-05).
