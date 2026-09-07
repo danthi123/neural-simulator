@@ -1,0 +1,176 @@
+{
+  "battery": "fork_pcs_valence_presence",
+  "stage": "C1 (presence + soundness + expectation-violation)",
+  "units": "rate",
+  "encoder": "learned_ema",
+  "n_hidden": 128,
+  "n_latent": 64,
+  "n_train": 200000,
+  "value_weight": 1.0,
+  "n_probe": null,
+  "n_omit": null,
+  "grid_size": 18,
+  "crop_radius": 2,
+  "seeds": [
+    42
+  ],
+  "honesty_note": "FUNCTIONAL read-outs only; no phenomenal claim. This C1 probe tests PRESENCE + SOUNDNESS + EXPECTATION-VIOLATION of the reward-prediction-error read-out, explicitly NOT the load-bearing faculty claim. adv presence is reported but NOT gated (tautology: adv IS the policy-gradient multiplier).",
+  "pre_registered_gate": {
+    "go_signal": "rpe",
+    "valence_abs_bar": 0.05,
+    "floor_margin": 0.05,
+    "cyclic_shift_draws": 100,
+    "valence_si_n_bins": 5,
+    "split_half_stability_thresh": 0.3,
+    "stability_trained_over_untrained": 2.0,
+    "seeds_required_frac": 0.8333333333333334,
+    "VALENCE_PRESENCE_GO": "(population presence of the reward-PE signal beats all 3 floors) AND (per-unit trained #valence-selective units >= 2x untrained via the cyclic-shift null) AND (mean omission RPE < mean delivery RPE), on >= 5/6 seeds"
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "units": "rate",
+      "encoder": "learned_ema",
+      "n_hidden": 128,
+      "n_latent": 64,
+      "n_train": 200000,
+      "n_probe": 6000,
+      "n_omit": 4000,
+      "value_weight": 1.0,
+      "grid_size": 18,
+      "crop_radius": 2,
+      "curiosity_beta": 0.1,
+      "go_signal": "rpe",
+      "adv_note": "reconstructed per substrate learn() formula (frozen probe; sub.last_valence_adv is not written under freeze)",
+      "train_max_online_loss": 46.9284,
+      "presence": {
+        "rpe": {
+          "r2": 0.3308,
+          "floor_untrained": 0.49,
+          "floor_rawv1": -0.6808,
+          "floor_shuffle": -0.009,
+          "beats_floors": 0.0
+        },
+        "adv": {
+          "r2": 0.3676,
+          "floor_untrained": 0.4146,
+          "floor_rawv1": -0.5197,
+          "floor_shuffle": -0.0169,
+          "beats_floors": 0.0
+        },
+        "mood": {
+          "r2": 0.7757,
+          "floor_untrained": 0.8203,
+          "floor_rawv1": 0.1294,
+          "floor_shuffle": -0.0259,
+          "beats_floors": 0.0
+        }
+      },
+      "soundness_trained": {
+        "n_steps": 6000,
+        "n_units": 128,
+        "n_live_units": 128,
+        "n_bins_requested": 5,
+        "n_bins_effective": 5,
+        "n_shift": 100,
+        "stability_thresh": 0.3,
+        "mean_si": 0.4646,
+        "max_si": 1.9668,
+        "mean_si_cyclic_shift": 0.0237,
+        "si95_cyclic_shift_pooled": 0.0917,
+        "si_real_over_shift_ratio": 19.5773,
+        "mean_stability": 0.9749,
+        "n_valence_selective_units": 128,
+        "frac_valence_selective_units": 1.0,
+        "mean_stability_selective": 0.9749,
+        "mean_si_selective": 0.4646
+      },
+      "soundness_untrained": {
+        "n_steps": 6000,
+        "n_units": 128,
+        "n_live_units": 96,
+        "n_bins_requested": 5,
+        "n_bins_effective": 5,
+        "n_shift": 100,
+        "stability_thresh": 0.3,
+        "mean_si": 0.3757,
+        "max_si": 2.3219,
+        "mean_si_cyclic_shift": 0.1271,
+        "si95_cyclic_shift_pooled": 0.9886,
+        "si_real_over_shift_ratio": 2.9552,
+        "mean_stability": 0.8679,
+        "n_valence_selective_units": 87,
+        "frac_valence_selective_units": 0.6797,
+        "mean_stability_selective": 0.9329,
+        "mean_si_selective": 0.2972
+      },
+      "soundness": {
+        "trained_n_selective": 128,
+        "untrained_n_selective": 87,
+        "trained_mean_stability": 0.9749,
+        "untrained_mean_stability": 0.8679,
+        "trained_mean_stability_selective": 0.9749,
+        "untrained_mean_stability_selective": 0.9329,
+        "ratio_required": 2.0,
+        "attributable_fraction": 0.3203,
+        "pass": false
+      },
+      "regress_out": {
+        "nuisance_regressed": [
+          "pos_x",
+          "pos_y",
+          "value_head"
+        ],
+        "resid_decode_r2": 0.2553,
+        "resid_shuffle_floor": -0.0087,
+        "survives_regress_out": true,
+        "raw_valence_var": 0.0004,
+        "resid_var": 0.0003
+      },
+      "omission": {
+        "n_eats": 3,
+        "n_omission": 0,
+        "n_delivery": 3,
+        "mean_rpe_omission": NaN,
+        "mean_rpe_delivery": 0.5813,
+        "mean_rhat_omission": NaN,
+        "mean_rhat_delivery": -0.0188,
+        "omission_below_delivery": false,
+        "omission_is_negative": false
+      },
+      "presence_go": false,
+      "soundness_go": false,
+      "omission_go": false,
+      "VALENCE_PRESENCE_GO": false,
+      "mood_tau": 0.9,
+      "mood_presence_beats": false,
+      "mood_soundness": {
+        "trained_n_selective": 125,
+        "untrained_n_selective": 68,
+        "attributable_fraction": 0.456,
+        "pass": false
+      },
+      "MOOD_GO": false,
+      "elapsed_s": 258.7
+    }
+  ],
+  "aggregate": {
+    "n_seeds": 1,
+    "seeds_required": 1,
+    "n_presence_go": 0,
+    "n_soundness_go": 0,
+    "n_omission_go": 0,
+    "n_VALENCE_PRESENCE_GO": 0,
+    "VALENCE_PRESENCE_GO_AGGREGATE": false,
+    "mean_presence_rpe_r2": 0.3308,
+    "mean_presence_adv_r2": 0.3676,
+    "mean_trained_stability": 0.9749,
+    "mean_untrained_stability": 0.8679,
+    "mean_trained_n_selective": 128.0,
+    "mean_untrained_n_selective": 87.0,
+    "mean_regress_out_resid_r2": 0.2553,
+    "n_survives_regress_out": 1,
+    "mean_rpe_omission": null,
+    "mean_rpe_delivery": 0.5813
+  }
+}

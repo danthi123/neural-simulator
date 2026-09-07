@@ -1,0 +1,581 @@
+{
+  "battery": "fork_pcs_emergence",
+  "units": "rate",
+  "encoder": "learned_ema",
+  "consolidation": false,
+  "pred_horizon": 1,
+  "nav_required": false,
+  "nav_dmin": 6,
+  "value_weight": 0.0,
+  "sr_weight": 0.0,
+  "aux_loc_weight": 0.0,
+  "nav_shaping": 0.0,
+  "lesion_mode": "both",
+  "grad_clip": 1.0,
+  "grad_skip_factor": 8.0,
+  "ema_momentum": 0.9999,
+  "ema_warmup": 0,
+  "pre_registered_gate": {
+    "presence_bars": {
+      "place": 0.6,
+      "object": 0.4,
+      "permanence": 0.4,
+      "value": 0.4
+    },
+    "floor_margin": 0.05,
+    "behav_lesion_ratio": 1.5,
+    "min_faculties": 3,
+    "core_lesion_collapse_frac": 0.5,
+    "curiosity_ratio": 1.5,
+    "seeds_required_frac": 0.8333333333333334
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "units": "rate",
+      "encoder": "learned_ema",
+      "n_hidden": 128,
+      "n_train": 200000,
+      "consolidation": false,
+      "n_replay_updates": 0,
+      "grad_clip": 1.0,
+      "grad_skip_factor": 8.0,
+      "pred_horizon": 1,
+      "nav_required": false,
+      "nav_dmin": 6,
+      "value_weight": 0.0,
+      "sr_weight": 0.0,
+      "aux_loc_weight": 0.0,
+      "nav_shaping": 0.0,
+      "ema_momentum": 0.9999,
+      "ema_warmup": 0,
+      "max_grad_norm": 56.758,
+      "n_grad_skipped": 0,
+      "train_max_online_loss": 34.579,
+      "presence": {
+        "place": {
+          "r2": 0.5639,
+          "floor_untrained": 0.5781,
+          "floor_rawv1": 0.3109,
+          "floor_shuffle": -0.0219
+        },
+        "value": {
+          "r2": 0.2194,
+          "floor_untrained": 0.2605,
+          "floor_rawv1": 0.1266,
+          "floor_shuffle": -0.0187
+        },
+        "permanence": {
+          "r2": 0.1291,
+          "floor_untrained": 0.1431,
+          "floor_rawv1": -0.0073,
+          "floor_shuffle": -0.0151
+        },
+        "object": {
+          "r2": 0.2726,
+          "floor_untrained": 0.0987,
+          "floor_rawv1": 0.0843,
+          "floor_shuffle": -0.0198
+        }
+      },
+      "cleared_presence_and_floors": {
+        "place": false,
+        "object": false,
+        "permanence": false,
+        "value": false
+      },
+      "lesion_mode": "both",
+      "behavioral_dependency": {
+        "place": {
+          "metric": "approach_in",
+          "faculty_degradation": 0.1394,
+          "random_degradation": 0.2965,
+          "attributable_fraction": -1.1263,
+          "load_bearing": false
+        },
+        "object": {
+          "metric": "pred_err",
+          "faculty_degradation": 0.0009,
+          "random_degradation": 0.0154,
+          "attributable_fraction": -15.5591,
+          "load_bearing": false
+        },
+        "permanence": {
+          "metric": "approach_off",
+          "faculty_degradation": 0.0043,
+          "random_degradation": 0.0086,
+          "attributable_fraction": -0.9879,
+          "load_bearing": false
+        },
+        "value": {
+          "metric": "reward_rate",
+          "faculty_degradation": 0.0011,
+          "random_degradation": 0.0015,
+          "attributable_fraction": -0.3351,
+          "load_bearing": false
+        }
+      },
+      "n_faculties_load_bearing": 0,
+      "core_lesion_presence": {
+        "place": 0.624,
+        "value": 0.231,
+        "permanence": NaN,
+        "object": 0.1954
+      },
+      "core_lesion_collapses_all": false,
+      "coverage": {
+        "curiosity_cells": 33.2,
+        "random_cells": 29.0,
+        "budget": 72.0,
+        "ratio": 1.1448,
+        "pass": 0.0
+      },
+      "rate_map_summary": {
+        "n_units_scored": 128,
+        "top8_selectivity": [
+          150.764,
+          146.6,
+          131.151,
+          78.7,
+          62.16,
+          57.105,
+          55.437,
+          47.929
+        ],
+        "top8_units": [
+          17,
+          3,
+          89,
+          38,
+          11,
+          117,
+          30,
+          98
+        ]
+      },
+      "place_cell_si": {
+        "n_steps": 8000,
+        "n_units": 128,
+        "n_live_units": 128,
+        "n_occupied_bins": 308,
+        "n_shuffle": 100,
+        "stability_thresh": 0.3,
+        "mean_si": 1.4263,
+        "median_si": 1.1097,
+        "max_si": 6.443,
+        "mean_si_shuffle": 0.2046,
+        "si_95_shuffle_pooled": 0.695,
+        "si_real_over_shuffle_ratio": 6.972,
+        "mean_stability": 0.8843,
+        "n_place_cells": 128,
+        "frac_place_cells": 1.0,
+        "mean_si_place_cells": 1.4263,
+        "mean_stability_place_cells": 0.8843
+      },
+      "place_cell_si_untrained": {
+        "n_steps": 8000,
+        "n_units": 128,
+        "n_live_units": 100,
+        "n_occupied_bins": 308,
+        "n_shuffle": 100,
+        "stability_thresh": 0.3,
+        "mean_si": 1.3172,
+        "median_si": 0.021,
+        "max_si": 9.1584,
+        "mean_si_shuffle": 0.7743,
+        "si_95_shuffle_pooled": 5.1563,
+        "si_real_over_shuffle_ratio": 1.7012,
+        "mean_stability": 0.406,
+        "n_place_cells": 69,
+        "frac_place_cells": 0.5391,
+        "mean_si_place_cells": 0.3982,
+        "mean_stability_place_cells": 0.5494
+      },
+      "object_selectivity_si": {
+        "n_steps": 1389,
+        "n_units": 128,
+        "n_live_units": 128,
+        "n_bins": 4,
+        "n_occupied_bins": 4,
+        "n_shuffle": 100,
+        "stability_thresh": 0.3,
+        "mean_si": 0.2977,
+        "median_si": 0.1769,
+        "max_si": 2.6006,
+        "mean_si_shuffle": 0.0077,
+        "si_95_shuffle_pooled": 0.026,
+        "si_real_over_shuffle_ratio": 38.6734,
+        "mean_stability": 0.8316,
+        "n_object_selective_units": 121,
+        "frac_object_selective_units": 0.9453,
+        "mean_si_object_selective_units": 0.3076,
+        "mean_stability_object_selective_units": 0.8874
+      },
+      "object_selectivity_si_untrained": {
+        "n_steps": 1389,
+        "n_units": 128,
+        "n_live_units": 96,
+        "n_bins": 4,
+        "n_occupied_bins": 4,
+        "n_shuffle": 100,
+        "stability_thresh": 0.3,
+        "mean_si": 0.3537,
+        "median_si": 0.0028,
+        "max_si": 3.521,
+        "mean_si_shuffle": 0.0677,
+        "si_95_shuffle_pooled": 0.4267,
+        "si_real_over_shuffle_ratio": 5.2226,
+        "mean_stability": 0.5933,
+        "n_object_selective_units": 71,
+        "frac_object_selective_units": 0.5547,
+        "mean_si_object_selective_units": 0.2424,
+        "mean_stability_object_selective_units": 0.8272
+      },
+      "permanence_food_si": {
+        "n_steps": 7917,
+        "n_units": 128,
+        "n_live_units": 128,
+        "n_occupied_bins": 5,
+        "n_shuffle": 100,
+        "stability_thresh": 0.3,
+        "mean_si": 0.0456,
+        "median_si": 0.0202,
+        "max_si": 0.657,
+        "mean_si_shuffle": 0.0035,
+        "si_95_shuffle_pooled": 0.0114,
+        "si_real_over_shuffle_ratio": 12.8441,
+        "mean_stability": null,
+        "n_permanence_cells": 0,
+        "frac_permanence_cells": 0.0,
+        "mean_si_permanence_cells": null,
+        "mean_stability_permanence_cells": null
+      },
+      "permanence_food_si_untrained": {
+        "n_steps": 7917,
+        "n_units": 128,
+        "n_live_units": 100,
+        "n_occupied_bins": 5,
+        "n_shuffle": 100,
+        "stability_thresh": 0.3,
+        "mean_si": 0.6137,
+        "median_si": 0.0012,
+        "max_si": 4.9339,
+        "mean_si_shuffle": 0.056,
+        "si_95_shuffle_pooled": 0.2567,
+        "si_real_over_shuffle_ratio": 10.966,
+        "mean_stability": null,
+        "n_permanence_cells": 0,
+        "frac_permanence_cells": 0.0,
+        "mean_si_permanence_cells": null,
+        "mean_stability_permanence_cells": null
+      },
+      "value_tuning_si": {
+        "n_steps": 8000,
+        "n_units": 128,
+        "n_live_units": 128,
+        "n_bins": 2,
+        "n_occupied_bins": 2,
+        "n_shuffle": 100,
+        "stability_thresh": 0.3,
+        "mean_si": 0.0176,
+        "median_si": 0.004,
+        "max_si": 0.2709,
+        "mean_si_shuffle": 0.0008,
+        "si_95_shuffle_pooled": 0.0031,
+        "si_real_over_shuffle_ratio": 20.9648,
+        "mean_stability": null,
+        "n_value_tuned_units": 0,
+        "frac_value_tuned_units": 0.0,
+        "mean_si_value_tuned_units": null,
+        "mean_stability_value_tuned_units": null,
+        "n_value_bins_requested": 5,
+        "n_value_bins_effective": 2
+      },
+      "value_tuning_si_untrained": {
+        "n_steps": 8000,
+        "n_units": 128,
+        "n_live_units": 100,
+        "n_bins": 2,
+        "n_occupied_bins": 2,
+        "n_shuffle": 100,
+        "stability_thresh": 0.3,
+        "mean_si": 0.2169,
+        "median_si": 0.0002,
+        "max_si": 2.3219,
+        "mean_si_shuffle": 0.0249,
+        "si_95_shuffle_pooled": 0.1383,
+        "si_real_over_shuffle_ratio": 8.7031,
+        "mean_stability": null,
+        "n_value_tuned_units": 0,
+        "frac_value_tuned_units": 0.0,
+        "mean_si_value_tuned_units": null,
+        "mean_stability_value_tuned_units": null,
+        "n_value_bins_requested": 5,
+        "n_value_bins_effective": 2
+      },
+      "train_loss_curve": [
+        [
+          5000,
+          2.5999
+        ],
+        [
+          10000,
+          1.1156
+        ],
+        [
+          15000,
+          5.4336
+        ],
+        [
+          20000,
+          1.624
+        ],
+        [
+          25000,
+          2.4664
+        ],
+        [
+          30000,
+          0.3729
+        ],
+        [
+          35000,
+          7.9254
+        ],
+        [
+          40000,
+          0.4111
+        ],
+        [
+          45000,
+          4.101
+        ],
+        [
+          50000,
+          3.7862
+        ],
+        [
+          55000,
+          4.0073
+        ],
+        [
+          60000,
+          6.6322
+        ],
+        [
+          65000,
+          5.7749
+        ],
+        [
+          70000,
+          0.4142
+        ],
+        [
+          75000,
+          5.7347
+        ],
+        [
+          80000,
+          14.2226
+        ],
+        [
+          85000,
+          0.3302
+        ],
+        [
+          90000,
+          6.1735
+        ],
+        [
+          95000,
+          8.8793
+        ],
+        [
+          100000,
+          20.3418
+        ],
+        [
+          105000,
+          0.5623
+        ],
+        [
+          110000,
+          24.2211
+        ],
+        [
+          115000,
+          17.1205
+        ],
+        [
+          120000,
+          22.5223
+        ],
+        [
+          125000,
+          4.8378
+        ],
+        [
+          130000,
+          16.192
+        ],
+        [
+          135000,
+          23.9539
+        ],
+        [
+          140000,
+          0.4083
+        ],
+        [
+          145000,
+          18.7337
+        ],
+        [
+          150000,
+          16.9668
+        ],
+        [
+          155000,
+          0.3082
+        ],
+        [
+          160000,
+          11.0152
+        ],
+        [
+          165000,
+          0.5756
+        ],
+        [
+          170000,
+          34.579
+        ],
+        [
+          175000,
+          0.3624
+        ],
+        [
+          180000,
+          21.1444
+        ],
+        [
+          185000,
+          10.2998
+        ],
+        [
+          190000,
+          0.6573
+        ],
+        [
+          195000,
+          13.9229
+        ]
+      ],
+      "intact_behavior": {
+        "reward_rate": 0.0019,
+        "approach_in": 0.6296,
+        "approach_off": 0.4747,
+        "eats": 190.0,
+        "a_prev_end": 3.0
+      },
+      "SEED_GO": false,
+      "elapsed_s": 258.8,
+      "behavioral_dependency_behavioral": {
+        "place": {
+          "metric": "approach_in",
+          "faculty_degradation": 0.2725,
+          "random_degradation": 0.2965,
+          "attributable_fraction": -0.0881,
+          "load_bearing": false,
+          "n_behav_units": 12
+        },
+        "object": {
+          "metric": "pred_err",
+          "faculty_degradation": 0.024,
+          "random_degradation": 0.0154,
+          "attributable_fraction": 0.3606,
+          "load_bearing": true,
+          "n_behav_units": 12
+        },
+        "permanence": {
+          "metric": "approach_off",
+          "faculty_degradation": 0.0089,
+          "random_degradation": 0.0086,
+          "attributable_fraction": 0.0342,
+          "load_bearing": false,
+          "n_behav_units": 12
+        },
+        "value": {
+          "metric": "reward_rate",
+          "faculty_degradation": 0.0019,
+          "random_degradation": 0.0015,
+          "attributable_fraction": 0.2006,
+          "load_bearing": false,
+          "n_behav_units": 12
+        }
+      },
+      "n_faculties_load_bearing_behavioral": 0,
+      "lesion_overlap_jaccard": {
+        "place": 0.2,
+        "object": 0.0909,
+        "permanence": 0.0909,
+        "value": 0.0435
+      }
+    }
+  ],
+  "aggregate": {
+    "n_seeds": 1,
+    "n_seed_go": 0,
+    "n_coverage_pass": 0,
+    "faculty_load_bearing_counts": {
+      "place": 0,
+      "object": 0,
+      "permanence": 0,
+      "value": 0
+    },
+    "seeds_required": 1,
+    "place_cell_si_summary": {
+      "trained_place_decode_r2": 0.5639,
+      "untrained_place_decode_r2": 0.5781,
+      "trained_mean_si": 1.4263,
+      "untrained_mean_si": 1.3172,
+      "trained_si_over_shuffle_ratio": 6.972,
+      "untrained_si_over_shuffle_ratio": 1.7012,
+      "trained_frac_place_cells": 1.0,
+      "untrained_frac_place_cells": 0.5391,
+      "trained_mean_stability": 0.8843,
+      "untrained_mean_stability": 0.406
+    },
+    "object_selectivity_si_summary": {
+      "trained_rsa": 0.2726,
+      "untrained_rsa": 0.0987,
+      "trained_mean_si": 0.2977,
+      "untrained_mean_si": 0.3537,
+      "trained_si_over_shuffle_ratio": 38.6734,
+      "untrained_si_over_shuffle_ratio": 5.2226,
+      "trained_frac_object_selective_units": 0.9453,
+      "untrained_frac_object_selective_units": 0.5547
+    },
+    "permanence_food_si_summary": {
+      "trained_decode_r2": 0.1291,
+      "untrained_decode_r2": 0.1431,
+      "trained_mean_si": 0.0456,
+      "untrained_mean_si": 0.6137,
+      "trained_si_over_shuffle_ratio": 12.8441,
+      "untrained_si_over_shuffle_ratio": 10.966,
+      "trained_frac_permanence_cells": 0.0,
+      "untrained_frac_permanence_cells": 0.0
+    },
+    "value_tuning_si_summary": {
+      "trained_decode_r2": 0.2194,
+      "untrained_decode_r2": 0.2605,
+      "trained_mean_si": 0.0176,
+      "untrained_mean_si": 0.2169,
+      "trained_si_over_shuffle_ratio": 20.9648,
+      "untrained_si_over_shuffle_ratio": 8.7031,
+      "trained_frac_value_tuned_units": 0.0,
+      "untrained_frac_value_tuned_units": 0.0
+    },
+    "EMERGENCE_GO": false
+  }
+}

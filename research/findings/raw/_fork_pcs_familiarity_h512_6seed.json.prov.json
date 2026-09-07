@@ -1,0 +1,40 @@
+{
+ "run_id": "1788786822-1150413",
+ "runner": "research/runners/_fork_pcs_familiarity_probe.py",
+ "argv": [
+  "/home/dant123/Projects/sim-agi-fork/research/runners/_fork_pcs_familiarity_probe.py",
+  "--seeds",
+  "42",
+  "43",
+  "44",
+  "100",
+  "101",
+  "102",
+  "--units",
+  "rate",
+  "--n-hidden",
+  "512",
+  "--n-train",
+  "200000",
+  "--out",
+  "research/findings/raw/_fork_pcs_familiarity_h512_6seed.json"
+ ],
+ "git_sha": "43da6fc3d",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-07T09:13:42",
+ "env": {
+  "SIM_BACKEND": "cupy"
+ },
+ "sim_backend": "cupy",
+ "sim_backend_requested": "cupy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_fork_pcs_familiarity_h512_6seed.json"
+}
