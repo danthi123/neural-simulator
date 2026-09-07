@@ -394,6 +394,9 @@ class PredictiveContinualSubstrate:
         self._last_action = None
         self._last_h_for_pi = None
         self._last_value = None       # V(h_t) at act() time — the actor-critic baseline when the value head is ON
+        self._last_rhat = None        # rhat = reward-head prediction at act() time (for the valence RPE read-out)
+        self.last_valence_rpe = None  # AFFECT signal A: reward - rhat (better/worse than expected; dopamine-RPE sign)
+        self.last_valence_adv = 0.0   # AFFECT signal B: actor-critic advantage (value_weight>0 only)
         self._baseline = 0.0
         # learning-progress (LP) EMAs of the predictive loss
         self._loss_fast = None
@@ -596,6 +599,8 @@ class PredictiveContinualSubstrate:
         self._last_h_for_pi = h_t
         # actor-critic baseline: V(h_t) off the shared state (only when the value head is present)
         self._last_value = float(to_host(self._value_head(h_t, self.P))) if "w_v" in self.P else None
+        # valence read-out prep: reward-head prediction rhat at act() time (byte-identical — pure linear read of h_t)
+        self._last_rhat = float(to_host(self._reward_head(h_t, self.P))) if "w_r" in self.P else None
         return a
 
     def learn(self, reward: float):
@@ -603,6 +608,9 @@ class PredictiveContinualSubstrate:
         update at the window boundary; run the online policy (REINFORCE) update."""
         if self._tape:
             self._tape[-1]["reward"] = float(reward)
+        # expose the valence RPE read-out (byte-identical bookkeeping; available in eval too): better/worse than expected
+        if self._last_rhat is not None:
+            self.last_valence_rpe = float(reward) - self._last_rhat
 
         # ---- predictive objective: TBPTT at the window boundary ----
         if not self._frozen and len(self._tape) >= self.cfg.tbptt_T:
@@ -629,6 +637,7 @@ class PredictiveContinualSubstrate:
             else:
                 adv = r_int - self._baseline    # OFF path: byte-identical scalar-baseline REINFORCE
             self._baseline = self.cfg.baseline_decay * self._baseline + (1 - self.cfg.baseline_decay) * r_int
+            self.last_valence_adv = adv   # AFFECT signal B read-out (byte-identical): actor-critic advantage
             self._policy_update(adv)
         self._last_action = None
         self._last_value = None
