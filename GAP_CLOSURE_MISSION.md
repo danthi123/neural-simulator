@@ -70,11 +70,14 @@ background work — do not double-launch.
   **n_hidden=128 (floor ~0.49) is a concrete next lever** (place has room to exceed a lower floor).
 - **⚡ SR sr20 (stronger) DONE — WORSE: place margin mean −0.190 (vs sr10 −0.11, base −0.04), LB 0/6. Stronger SR =
   more place suppression → SR is a COMPETING objective, confirmed. SR-alone is a NEGATIVE (both magnitudes).**
-- **NO-DEFER → next method BUILDING: AUXILIARY SELF-LOCALIZATION LOSS** (Cueva-Wei/Banino, the research's other
-  rank-1; forces position into the state DIRECTLY via a supervised readout off efference-copy, vs SR's competing
-  target). Opus build agent `a6ae3a938f59c597e` (worktree, gradcheck-gated, additive `--aux-loc-weight` default-off;
-  host position target = fork-accepted scaffold like reward shaping). Ready regardless of the composed SR result.
-  Pending fork GPU: sr10_nav_shap20 (composed SR+goal-directed — last SR hope) + shaping4/8 + the VRAM measurement.
+- **✅ AUX SELF-LOCALIZATION LOSS BUILT + MERGED (`f2a418777` agi-fork, pushed; gradcheck rate 5.39e-04 OK, byte-
+  identical-off proven).** Cueva-Wei/Banino: supervised (x,y) readout off the recurrent state (`--aux-loc-weight`,
+  default-off; host position target = fork-accepted scaffold like reward shaping). **PROMISING smoke (30k): unlike SR
+  which SUPPRESSED place, aux-loc IMPROVED it — place margin-over-floor +0.011→+0.044 (4x), aux-loss −4.3x.** This is
+  the mechanism that forces position in DIRECTLY (vs SR's competing target). **6-seed runs QUEUED + PRIORITIZED:**
+  auxloc-alone (isolate persistence) + auxloc+nav+shaping (behaviorally-load-bearing test) run NEXT after the composed
+  SR, then VRAM-measure, then confirmatory shaping4/8. Monitor bjcjvs97t.
+  (Composed SR sr10_nav_shap20 still running = last SR hope; SR-alone already NEGATIVE both magnitudes.)
 
 - **FORK 4th MOVE — potential-based approach SHAPING (make homing LEARNABLE).** The 3rd move (nav-required) failed
   only because reward was too SPARSE (larder reached ~0.1-0.5% of steps → REINFORCE never learned to home →
