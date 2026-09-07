@@ -234,7 +234,8 @@ def run_seed(seed, units="rate", encoder="learned_ema", n_hidden=512, n_latent=6
              n_train=200_000, n_probe=8000, n_behav=4000, n_cov=8000, gamma=0.95,
              lesion_frac=0.10, n_random_lesions=3, consolidation=False,
              grad_clip=1.0, grad_skip_factor=8.0, ema_momentum=0.9999, ema_warmup=0,
-             pred_horizon=1, nav_required=False, nav_dmin=6, value_weight=0.0, nav_shaping=0.0, verbose=True):
+             pred_horizon=1, nav_required=False, nav_dmin=6, value_weight=0.0, sr_weight=0.0,
+             nav_shaping=0.0, verbose=True):
     t0 = time.time()
     wcfg = WorldConfig(seed=seed, nav_required=nav_required, nav_dmin=nav_dmin, nav_shaping=nav_shaping)
     world = ForkPCSWorld(wcfg)
@@ -242,7 +243,7 @@ def run_seed(seed, units="rate", encoder="learned_ema", n_hidden=512, n_latent=6
                      n_drive=4, tbptt_T=18, units=units, encoder=encoder, seed=seed,
                      consolidation=consolidation, grad_clip=grad_clip, grad_skip_factor=grad_skip_factor,
                      ema_rate=ema_momentum, ema_warmup_updates=ema_warmup, pred_horizon=pred_horizon,
-                     value_weight=value_weight)
+                     value_weight=value_weight, sr_weight=sr_weight)
     sub = PredictiveContinualSubstrate(scfg)
 
     # ---- 1. TRAIN online with the curiosity policy (small explore for early coverage) ----
@@ -388,6 +389,7 @@ def run_seed(seed, units="rate", encoder="learned_ema", n_hidden=512, n_latent=6
         "consolidation": consolidation, "n_replay_updates": int(sub.n_replay_updates),
         "grad_clip": grad_clip, "grad_skip_factor": grad_skip_factor, "pred_horizon": pred_horizon,
         "nav_required": nav_required, "nav_dmin": nav_dmin, "value_weight": value_weight,
+        "sr_weight": sr_weight,
         "nav_shaping": nav_shaping,
         "ema_momentum": ema_momentum, "ema_warmup": ema_warmup,
         "max_grad_norm": round(float(sub.max_grad_norm), 3), "n_grad_skipped": int(sub.n_skipped),
@@ -575,6 +577,12 @@ def main():
                     help="weight of the value(return)-prediction head (default 0.0 = OFF, byte-identical: no "
                          "w_v/b_v params). >0 adds a value head whose gradient flows into the shared core "
                          "(value shapes cortex) + serves as the actor-critic baseline. Use 1.0 with --nav-required.")
+    ap.add_argument("--sr-weight", type=float, default=0.0,
+                    help="weight of the successor-representation head (default 0.0 = OFF, byte-identical: no "
+                         "W_sr/b_sr params). >0 adds an SR head predicting gamma-discounted future latent "
+                         "occupancy (Stachenfeld 2017: place cells ARE an SR); its gradient flows into the "
+                         "shared core, making position load-bearing on the self-supervised objective (no host "
+                         "position label).")
     ap.add_argument("--smoke", action="store_true",
                     help="tiny end-to-end self-test (small core, short, 1 seed)")
     args = ap.parse_args()
@@ -589,13 +597,14 @@ def main():
                          grad_clip=args.grad_clip, grad_skip_factor=args.grad_skip_factor,
                          ema_momentum=args.ema_momentum, ema_warmup=args.ema_warmup,
                          pred_horizon=args.pred_horizon, nav_required=args.nav_required,
-                         nav_dmin=args.nav_dmin, value_weight=args.value_weight,
+                         nav_dmin=args.nav_dmin, value_weight=args.value_weight, sr_weight=args.sr_weight,
                          nav_shaping=args.nav_shaping, **kw)
                 for s in args.seeds]
     agg = aggregate(per_seed)
     payload = {"battery": "fork_pcs_emergence", "units": args.units, "encoder": args.encoder,
                "consolidation": args.consolidation, "pred_horizon": args.pred_horizon,
                "nav_required": args.nav_required, "nav_dmin": args.nav_dmin, "value_weight": args.value_weight,
+               "sr_weight": args.sr_weight,
                "nav_shaping": args.nav_shaping,
                "grad_clip": args.grad_clip, "grad_skip_factor": args.grad_skip_factor,
                "ema_momentum": args.ema_momentum, "ema_warmup": args.ema_warmup,

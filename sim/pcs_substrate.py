@@ -113,6 +113,21 @@ class PCSConfig:
     # pointing at a memory-capacity lever.)
     value_weight: float = 0.0    # weight of the value(return)-prediction term (0 = OFF, byte-identical)
     value_gamma: float = 0.95    # discount for the within-window truncated MC return target
+    # SUCCESSOR-REPRESENTATION HEAD (the fork's 4th move — a predictive place code). Default 0.0 == OFF,
+    # byte-identical to the value-head code (no W_sr/b_sr params allocated, no rng draws, no loss/grad terms
+    # → every prior artifact stays valid). Motivation (Stachenfeld et al. 2017, "the hippocampus as a
+    # predictive map"): PLACE CELLS ARE A SUCCESSOR REPRESENTATION. The 1st-move finding was that a single-
+    # step next-latent JEPA objective does NOT require persistent position (feature suppression / primacy
+    # bias), so the emergent place code fades. When sr_weight>0 a VECTOR head predicts, off the SAME shared
+    # h_t, the gamma-discounted FUTURE LATENT OCCUPANCY psi_t = sum_{k>=0} sr_gamma^k * z_{t+k} (z = the EMA
+    # stop-grad latent of view_{t+k}, a CONSTANT — so the analytic grad matches finite-difference exactly,
+    # gradcheck-clean, exactly like the value MC-return target). Its gradient FLOWS INTO THE CORE through the
+    # recurrence, so the recurrent state must encode where it is in the environment's future-reachability
+    # structure (== position) to minimize the SR loss — making position LOAD-BEARING ON THE SELF-SUPERVISED
+    # objective with NO host-supplied position label. (Honesty: this is the named surpass, not a guarantee —
+    # if the SR term still does not RETAIN place, that is itself the next finding.)
+    sr_weight: float = 0.0       # weight of the successor-representation prediction term (0 = OFF, byte-identical)
+    sr_gamma: float = 0.95       # discount for the within-window truncated MC latent-occupancy (SR) target
     var_lambda: float = 1.0      # weight of the VICReg variance floor on e (0 disables)
     var_gamma: float = 0.3       # target per-dim std for the variance floor (tanh-bounded e)
     # encoder
@@ -291,6 +306,14 @@ class PredictiveContinualSubstrate:
             self.P["w_v"] = w((H,), H)          # value head: h -> V (scalar return estimate)
             self.P["b_v"] = xp.zeros((1,), dtype=xp.float32)
 
+        # SR head (H5) — the 4th-move predictive-place-code channel (Stachenfeld 2017). Allocated ONLY when
+        # sr_weight>0, and its rng draw happens AFTER w_v so every OFF path (no W_sr) leaves every prior
+        # weight byte-identical. In self.P so its grad flows into the shared core through the TBPTT recurrence
+        # (SR shapes the cortex -> position load-bearing). W_sr: (E,H) latent-occupancy readout, b_sr: (E,).
+        if cfg.sr_weight > 0:
+            self.P["W_sr"] = w((E, H), H)       # SR head: h -> psi (vector future latent-occupancy estimate)
+            self.P["b_sr"] = xp.zeros((E,), dtype=xp.float32)
+
         self.opt = _Adam(self.P, xp, lr=cfg.lr)
 
         # ---- runtime state ----
@@ -411,6 +434,11 @@ class PredictiveContinualSubstrate:
     def _value_head(self, h_t, P):
         """V(h_t): scalar return estimate off the shared state (present only when value_weight>0)."""
         return P["w_v"] @ h_t + P["b_v"][0]
+
+    def _sr_head(self, h_t, P):
+        """psi(h_t): VECTOR successor-representation estimate (gamma-discounted future latent occupancy)
+        off the shared state (present only when sr_weight>0). Shape (E,)."""
+        return P["W_sr"] @ h_t + P["b_sr"]
 
     # ── online step: observe / act / learn ──────────────────────────────────
     def observe(self, v1feat, a_prev_idx: int, d):
@@ -670,12 +698,42 @@ class PredictiveContinualSubstrate:
             if val_cnt > 0:
                 val_loss = cfg.value_weight * (s / val_cnt)
 
-        loss = jl + cfg.beta_reward * rl + vl + val_loss
+        # SR (successor-representation) head (4th move; present only when sr_weight>0 -> off path
+        # byte-identical). Predict the truncated within-window gamma-discounted FUTURE LATENT OCCUPANCY
+        # psi_t = sum_{k=0}^{T-1-t} sr_gamma^k * z_{t+k} off the SAME h_t, where z_{t+k} is the EMA stop-grad
+        # latent of view_{t+k} (reusing the JEPA target encoder). The target is a CONSTANT of the in-window
+        # latents (no bootstrap) so the analytic grad matches finite-difference exactly (gradcheck-clean).
+        # Computed by the same backward accumulation as the value MC target: running = z_t + gamma*running.
+        # The grad flows into the core (below), making the SR (=position) load-bearing on the objective.
+        sr_loss = 0.0
+        sr_list = sr_targets = None
+        sr_cnt = 0
+        if "W_sr" in P and cfg.sr_weight > 0:
+            sr_list = [self._sr_head(h_list[t], P) for t in range(T)]
+            gs = cfg.sr_gamma
+            # EMA stop-grad latent of each in-window view (a CONSTANT, like the JEPA target / value return)
+            z_sr = [xp.tanh(self.W_enc_ema @ tape[t]["v1feat"] + self.b_enc_ema) for t in range(T)]
+            sr_targets = [None] * T
+            running = None
+            for t in range(T - 1, -1, -1):
+                running = z_sr[t] + (gs * running if running is not None else 0.0)
+                sr_targets[t] = running
+            s = 0.0
+            for t in range(T):
+                if sr_targets[t] is not None:
+                    diff = sr_list[t] - sr_targets[t]
+                    s = s + float((diff * diff).sum())
+                    sr_cnt += 1
+            if sr_cnt > 0:
+                sr_loss = cfg.sr_weight * (s / sr_cnt)
+
+        loss = jl + cfg.beta_reward * rl + vl + val_loss + sr_loss
         cache = {
             "e_list": e_list, "h_list": h_list, "g_list": g_list, "pre_list": pre_list,
             "v_list": v_list, "s_list": s_list, "jepa_terms": jepa_terms, "rhat_list": rhat_list,
             "h_prev": h_prev, "v_prev0": v_prev, "n_r": n_r,
             "val_list": val_list, "val_targets": val_targets, "val_cnt": val_cnt,
+            "sr_list": sr_list, "sr_targets": sr_targets, "sr_cnt": sr_cnt,
         }
         return loss, cache
 
@@ -720,6 +778,18 @@ class PredictiveContinualSubstrate:
                     grads["w_v"] += g_v * h_list[t]
                     grads["b_v"] += xp.asarray([g_v], dtype=xp.float32)
                     dh_head[t] = dh_head[t] + g_v * P["w_v"]
+        # SR (successor-representation) head (4th move; present only when sr_weight>0). VECTOR analogue of the
+        # value head: dL/dpsi_t = 2*sr_weight/sr_cnt * (psi(h_t) - psi_target_t) (shape (E,)). Its grad flows
+        # into the shared core via dh_head (W_sr^T @ dL/dpsi_t), so SR shapes the recurrence (position load-
+        # bearing on the objective). Target is a constant (truncated MC latent occupancy) -> gradcheck-clean.
+        sr_list = cache.get("sr_list"); sr_targets = cache.get("sr_targets"); sr_cnt = cache.get("sr_cnt", 0)
+        if "W_sr" in P and cfg.sr_weight > 0 and sr_cnt > 0:
+            for t in range(T):
+                if sr_targets[t] is not None:
+                    g_psi = (2.0 * cfg.sr_weight / sr_cnt) * (sr_list[t] - sr_targets[t])   # (E,)
+                    grads["W_sr"] += xp.outer(g_psi, h_list[t])
+                    grads["b_sr"] += g_psi
+                    dh_head[t] = dh_head[t] + P["W_sr"].T @ g_psi
 
         # VICReg variance grad on e (adds to de_t during the loop)
         de_var = [None] * T
@@ -912,10 +982,10 @@ class PredictiveContinualSubstrate:
 # ─────────────────────────────────────────────────────────────────────────────
 # self-checks
 # ─────────────────────────────────────────────────────────────────────────────
-def _make_tiny(units="rate", seed=1, pred_horizon=1, value_weight=0.0):
+def _make_tiny(units="rate", seed=1, pred_horizon=1, value_weight=0.0, sr_weight=0.0):
     cfg = PCSConfig(n_hidden=7, feat_dim=6, n_latent=4, n_actions=3, n_drive=2,
                     tbptt_T=5, units=units, var_lambda=0.5, encoder="learned_ema", seed=seed,
-                    pred_horizon=pred_horizon, value_weight=value_weight)
+                    pred_horizon=pred_horizon, value_weight=value_weight, sr_weight=sr_weight)
     return PredictiveContinualSubstrate(cfg)
 
 
@@ -932,7 +1002,7 @@ def _fill_tape(sub, T, rng):
     return sub._tape
 
 
-def gradcheck(units="rate", tol=2e-2, pred_horizon=1, value_weight=0.0):
+def gradcheck(units="rate", tol=2e-2, pred_horizon=1, value_weight=0.0, sr_weight=0.0):
     """Finite-difference the analytic BPTT grads for a tiny substrate. For spike mode the
     forward uses the SMOOTH surrogate-integral (soft=True) whose exact derivative is the
     atan surrogate the backward uses — the correct FD validation of a surrogate-gradient net
@@ -941,9 +1011,12 @@ def gradcheck(units="rate", tol=2e-2, pred_horizon=1, value_weight=0.0):
     pred_horizon>1 validates the multi-horizon (2nd-move) JEPA backward — the k-ahead term's grads
     into W_pred / W_pred_a (net-displacement conditioning) / b_pred and the extra dh_head path.
     value_weight>0 validates the 3rd-move VALUE head backward — grads into w_v/b_v and the extra
-    dh_head path (MC-return target is a constant, so FD and analytic agree)."""
+    dh_head path (MC-return target is a constant, so FD and analytic agree).
+    sr_weight>0 validates the 4th-move SR head backward — grads into W_sr/b_sr and the extra dh_head
+    path (truncated MC latent-occupancy target is a constant, so FD and analytic agree)."""
     soft = (units == "spike")
-    sub = _make_tiny(units=units, seed=3, pred_horizon=pred_horizon, value_weight=value_weight)
+    sub = _make_tiny(units=units, seed=3, pred_horizon=pred_horizon, value_weight=value_weight,
+                     sr_weight=sr_weight)
     rng = np.random.default_rng(7)
     tape = _fill_tape(sub, sub.cfg.tbptt_T, rng)
     P = sub.P
@@ -955,7 +1028,7 @@ def gradcheck(units="rate", tol=2e-2, pred_horizon=1, value_weight=0.0):
     worst = None
     checked = 0
     for name in ["W_h", "W_e", "W_a", "W_d", "b_h", "W_pred", "W_pred_a", "b_pred", "w_r", "b_r",
-                 "w_v", "b_v", "W_enc", "b_enc"]:
+                 "w_v", "b_v", "W_sr", "b_sr", "W_enc", "b_enc"]:
         if name not in P:
             continue
         arr = np.asarray(to_host(P[name]), dtype=np.float64)
@@ -990,7 +1063,8 @@ def gradcheck(units="rate", tol=2e-2, pred_horizon=1, value_weight=0.0):
                 max_rel = rel
                 worst = (name, int(i), float(num), float(ana))
     ok = max_rel < tol
-    print(f"[gradcheck units={units} pred_horizon={pred_horizon} value_weight={value_weight}] checked={checked} "
+    print(f"[gradcheck units={units} pred_horizon={pred_horizon} value_weight={value_weight} "
+          f"sr_weight={sr_weight}] checked={checked} "
           f"max_rel_err={max_rel:.2e} {'OK' if ok else 'FAIL'}  worst={worst}")
     return ok
 
@@ -1025,4 +1099,9 @@ if __name__ == "__main__":
         all_ok &= gradcheck("spike", tol=5e-2, value_weight=1.0)
         # 2nd + 3rd move combined (k-ahead JEPA + value head together)
         all_ok &= gradcheck("rate", pred_horizon=3, value_weight=1.0)
+        # SR head (4th move) backward — validate W_sr/b_sr grads + the SR dh_head path (into the recurrence)
+        all_ok &= gradcheck("rate", sr_weight=1.0)
+        all_ok &= gradcheck("spike", tol=5e-2, sr_weight=1.0)
+        # all moves combined (k-ahead JEPA + value head + SR head together)
+        all_ok &= gradcheck("rate", pred_horizon=3, value_weight=1.0, sr_weight=1.0)
     raise SystemExit(0 if all_ok else 1)
