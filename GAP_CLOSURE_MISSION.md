@@ -33,6 +33,15 @@ untrained ~0.45), probe discriminative (place-lesion→0% vs random 9.7%). Hones
 (removing the leak makes it harder — the 200k GPU run is decisive); flagged next lever if it still doesn't bind =
 STRONGER GROUNDED REWARD magnitude, NEVER re-adding shaping. **Decisive tests QUEUED (paused): nav-curriculum
 6-seed @ n_hidden 512 + 128** (`_fork_pcs_navcurriculum{,_h128}_6seed.json`) — run when GPU frees (`resume`).
+- **⚡ DE-RISK-AHEAD RESEARCH (workflow w8hrsn5u1) → 3 builds launched:** (1) **anti-forgetting = SYNAPTIC
+  INTELLIGENCE** (weight-anchoring, per-param importance + periodic consolidation; anchoring behaves very
+  differently from the replay we tried, small-effect; protects the aux-loc place code from the OTHER objectives) —
+  BUILDING (a649398b, pcs_substrate.py, gradcheck-gated). (2) **the OTHER faculties share place's capacity-artifact**
+  (object/permanence/value use the IDENTICAL flawed decode-vs-floor `_r2_with_floors`) → floor-independent metrics
+  BUILDING (a0767d04, runner) — may reveal MORE fork "negatives" are instrument artifacts. (3) **VRAM-reduction
+  options** for the Rank-6 flip (host-RAM-not-VRAM / pooled-bridge / paged-shards) — research re-running (ae13a5b0;
+  first attempt returned empty). BANKED DIRECTION (not built): **multi-faculty emergence = TEM/CSCG structure-content
+  factorization** (slow structural + fast content sub-populations) — the fork's next ARCHITECTURE move after place.
 Also flagged: re-check whether a DIFFERENT population (not the labeled aux-loc units) carries the causal weight
 (Schøyen dissociation). Research citations in the agent outputs (banked).
 
