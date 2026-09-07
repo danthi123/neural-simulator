@@ -95,6 +95,24 @@ class PCSConfig:
     # surpass, not a guarantee — if k-ahead still does not retain place, that is itself the next finding.)
     pred_horizon: int = 1
     beta_reward: float = 1.0     # weight of the reward-prediction term
+    # VALUE HEAD (the fork's 3rd move — task-required position). Default 0.0 == OFF, byte-identical to the
+    # first/second-move code (no w_v/b_v params allocated, no rng draws, no loss/grad terms → the existing 5
+    # control artifacts + the k-ahead artifacts stay valid). When value_weight>0 a 4th thin head predicts the
+    # (truncated, within-window) discounted RETURN off the SAME shared h_t, and — crucially — its gradient
+    # FLOWS INTO THE CORE through the recurrence (like the reward head, unlike the REINFORCE policy head which
+    # only trains its own readout). In the nav-required world (fork_pcs_world --nav-required) the return when
+    # the food is OFF-VIEW depends on distance-to-the-remembered-larder, i.e. on PATH-INTEGRATED position — so
+    # predicting value REQUIRES a persistent place code, making position LOAD-BEARING ON THE OBJECTIVE via the
+    # value/reward channel (the 1st-move finding was that plain next-latent prediction does NOT require it and
+    # specializes it away; a rich reservoir already decodes position over short windows, so only a term the
+    # reservoir CANNOT satisfy forces the trained core to retain it). The value head also serves as the
+    # REINFORCE baseline when ON (actor-critic — a dense, position-dependent advantage that materially helps the
+    # agent LEARN to home). MC (not bootstrapped) return target → gradcheck-clean (target is a constant of the
+    # in-window rewards, no stop-grad/finite-difference mismatch). (Honesty: this is the named surpass, not a
+    # guarantee — if a task-required value term still does not RETAIN place, that is itself the next finding,
+    # pointing at a memory-capacity lever.)
+    value_weight: float = 0.0    # weight of the value(return)-prediction term (0 = OFF, byte-identical)
+    value_gamma: float = 0.95    # discount for the within-window truncated MC return target
     var_lambda: float = 1.0      # weight of the VICReg variance floor on e (0 disables)
     var_gamma: float = 0.3       # target per-dim std for the variance floor (tanh-bounded e)
     # encoder
@@ -266,6 +284,13 @@ class PredictiveContinualSubstrate:
         self.W_pi = w((A, H), H)
         self.b_pi = xp.zeros((A,), dtype=xp.float32)
 
+        # value head (H4) — the 3rd-move task-required-position channel. Allocated ONLY when value_weight>0,
+        # and its rng draw happens AFTER W_pi so the OFF path (no w_v) leaves every prior weight byte-identical.
+        # In self.P so its grad flows into the shared core through the TBPTT recurrence (value shapes cortex).
+        if cfg.value_weight > 0:
+            self.P["w_v"] = w((H,), H)          # value head: h -> V (scalar return estimate)
+            self.P["b_v"] = xp.zeros((1,), dtype=xp.float32)
+
         self.opt = _Adam(self.P, xp, lr=cfg.lr)
 
         # ---- runtime state ----
@@ -284,6 +309,7 @@ class PredictiveContinualSubstrate:
         self._last_probs = None
         self._last_action = None
         self._last_h_for_pi = None
+        self._last_value = None       # V(h_t) at act() time — the actor-critic baseline when the value head is ON
         self._baseline = 0.0
         # learning-progress (LP) EMAs of the predictive loss
         self._loss_fast = None
@@ -382,6 +408,10 @@ class PredictiveContinualSubstrate:
     def _reward_head(self, h_t, P):
         return P["w_r"] @ h_t + P["b_r"][0]
 
+    def _value_head(self, h_t, P):
+        """V(h_t): scalar return estimate off the shared state (present only when value_weight>0)."""
+        return P["w_v"] @ h_t + P["b_v"][0]
+
     # ── online step: observe / act / learn ──────────────────────────────────
     def observe(self, v1feat, a_prev_idx: int, d):
         """Advance the shared state one step and return h_t (lesion-aware).
@@ -462,6 +492,8 @@ class PredictiveContinualSubstrate:
         self._last_probs = probs
         self._last_action = a
         self._last_h_for_pi = h_t
+        # actor-critic baseline: V(h_t) off the shared state (only when the value head is present)
+        self._last_value = float(to_host(self._value_head(h_t, self.P))) if "w_v" in self.P else None
         return a
 
     def learn(self, reward: float):
@@ -484,13 +516,20 @@ class PredictiveContinualSubstrate:
             # truncate: keep the running state self.h/v/s (already carried), drop the tape
             self._tape = []
 
-        # ---- policy: REINFORCE with running-mean baseline + learning-progress curiosity ----
+        # ---- policy: REINFORCE with a baseline + learning-progress curiosity ----
         if not self._frozen and self._last_action is not None:
             r_int = float(reward) + self.cfg.curiosity_beta * self._last_lp
-            adv = r_int - self._baseline
+            if self._last_value is not None:
+                # actor-critic: the value head is a state-dependent baseline (a dense, position-dependent
+                # advantage that helps the agent LEARN to home). The running-mean baseline is still tracked
+                # for diagnostics but not used to form the advantage in this branch.
+                adv = r_int - self._last_value
+            else:
+                adv = r_int - self._baseline    # OFF path: byte-identical scalar-baseline REINFORCE
             self._baseline = self.cfg.baseline_decay * self._baseline + (1 - self.cfg.baseline_decay) * r_int
             self._policy_update(adv)
         self._last_action = None
+        self._last_value = None
 
     def _update_learning_progress(self, loss: float):
         cfg = self.cfg
@@ -602,11 +641,41 @@ class PredictiveContinualSubstrate:
             hinge = xp.clip(cfg.var_gamma - std, 0.0, None)
             vl = float(hinge.mean()) * cfg.var_lambda
 
-        loss = jl + cfg.beta_reward * rl + vl
+        # VALUE (return) head (3rd move; present only when value_weight>0 -> off path byte-identical). Predict
+        # the truncated within-window discounted MC return G_t = sum_{j>=0} gamma^j r_{t+j} (rewards in-window)
+        # off the SAME h_t. The target is a CONSTANT of the in-window rewards (no bootstrap) so the analytic
+        # grad matches finite-difference exactly (gradcheck-clean). The grad flows into the core (below),
+        # making value load-bearing on the objective — and in the nav world value off-view needs position.
+        val_loss = 0.0
+        val_list = val_targets = None
+        val_cnt = 0
+        if "w_v" in P and cfg.value_weight > 0:
+            val_list = [self._value_head(h_list[t], P) for t in range(T)]
+            gv = cfg.value_gamma
+            val_targets = [None] * T
+            running = None
+            for t in range(T - 1, -1, -1):
+                r_t = tape[t]["reward"]
+                if r_t is None:
+                    running = None          # a gap resets the truncated return accumulation
+                    continue
+                running = float(r_t) + (gv * running if running is not None else 0.0)
+                val_targets[t] = running
+            s = 0.0
+            for t in range(T):
+                if val_targets[t] is not None:
+                    d = val_list[t] - val_targets[t]
+                    s = s + float(d * d)
+                    val_cnt += 1
+            if val_cnt > 0:
+                val_loss = cfg.value_weight * (s / val_cnt)
+
+        loss = jl + cfg.beta_reward * rl + vl + val_loss
         cache = {
             "e_list": e_list, "h_list": h_list, "g_list": g_list, "pre_list": pre_list,
             "v_list": v_list, "s_list": s_list, "jepa_terms": jepa_terms, "rhat_list": rhat_list,
             "h_prev": h_prev, "v_prev0": v_prev, "n_r": n_r,
+            "val_list": val_list, "val_targets": val_targets, "val_cnt": val_cnt,
         }
         return loss, cache
 
@@ -640,6 +709,17 @@ class PredictiveContinualSubstrate:
                 grads["w_r"] += g_rhat * h_list[t]
                 grads["b_r"] += xp.asarray([g_rhat], dtype=xp.float32)
                 dh_head[t] = dh_head[t] + g_rhat * P["w_r"]
+        # VALUE (return) head (3rd move; present only when value_weight>0). Same shape as the reward head:
+        # its grad flows into the shared core via dh_head, so value shapes the recurrence (task-required
+        # position). Target is a constant (MC return) -> gradcheck-clean.
+        val_list = cache.get("val_list"); val_targets = cache.get("val_targets"); val_cnt = cache.get("val_cnt", 0)
+        if "w_v" in P and cfg.value_weight > 0 and val_cnt > 0:
+            for t in range(T):
+                if val_targets[t] is not None:
+                    g_v = (2.0 * cfg.value_weight / val_cnt) * (val_list[t] - val_targets[t])
+                    grads["w_v"] += g_v * h_list[t]
+                    grads["b_v"] += xp.asarray([g_v], dtype=xp.float32)
+                    dh_head[t] = dh_head[t] + g_v * P["w_v"]
 
         # VICReg variance grad on e (adds to de_t during the loop)
         de_var = [None] * T
@@ -832,10 +912,10 @@ class PredictiveContinualSubstrate:
 # ─────────────────────────────────────────────────────────────────────────────
 # self-checks
 # ─────────────────────────────────────────────────────────────────────────────
-def _make_tiny(units="rate", seed=1, pred_horizon=1):
+def _make_tiny(units="rate", seed=1, pred_horizon=1, value_weight=0.0):
     cfg = PCSConfig(n_hidden=7, feat_dim=6, n_latent=4, n_actions=3, n_drive=2,
                     tbptt_T=5, units=units, var_lambda=0.5, encoder="learned_ema", seed=seed,
-                    pred_horizon=pred_horizon)
+                    pred_horizon=pred_horizon, value_weight=value_weight)
     return PredictiveContinualSubstrate(cfg)
 
 
@@ -852,16 +932,18 @@ def _fill_tape(sub, T, rng):
     return sub._tape
 
 
-def gradcheck(units="rate", tol=2e-2, pred_horizon=1):
+def gradcheck(units="rate", tol=2e-2, pred_horizon=1, value_weight=0.0):
     """Finite-difference the analytic BPTT grads for a tiny substrate. For spike mode the
     forward uses the SMOOTH surrogate-integral (soft=True) whose exact derivative is the
     atan surrogate the backward uses — the correct FD validation of a surrogate-gradient net
     (a hard-Heaviside forward is non-differentiable and cannot be FD-checked).
 
     pred_horizon>1 validates the multi-horizon (2nd-move) JEPA backward — the k-ahead term's grads
-    into W_pred / W_pred_a (net-displacement conditioning) / b_pred and the extra dh_head path."""
+    into W_pred / W_pred_a (net-displacement conditioning) / b_pred and the extra dh_head path.
+    value_weight>0 validates the 3rd-move VALUE head backward — grads into w_v/b_v and the extra
+    dh_head path (MC-return target is a constant, so FD and analytic agree)."""
     soft = (units == "spike")
-    sub = _make_tiny(units=units, seed=3, pred_horizon=pred_horizon)
+    sub = _make_tiny(units=units, seed=3, pred_horizon=pred_horizon, value_weight=value_weight)
     rng = np.random.default_rng(7)
     tape = _fill_tape(sub, sub.cfg.tbptt_T, rng)
     P = sub.P
@@ -872,7 +954,8 @@ def gradcheck(units="rate", tol=2e-2, pred_horizon=1):
     max_rel = 0.0
     worst = None
     checked = 0
-    for name in ["W_h", "W_e", "W_a", "W_d", "b_h", "W_pred", "W_pred_a", "b_pred", "w_r", "b_r", "W_enc", "b_enc"]:
+    for name in ["W_h", "W_e", "W_a", "W_d", "b_h", "W_pred", "W_pred_a", "b_pred", "w_r", "b_r",
+                 "w_v", "b_v", "W_enc", "b_enc"]:
         if name not in P:
             continue
         arr = np.asarray(to_host(P[name]), dtype=np.float64)
@@ -907,8 +990,8 @@ def gradcheck(units="rate", tol=2e-2, pred_horizon=1):
                 max_rel = rel
                 worst = (name, int(i), float(num), float(ana))
     ok = max_rel < tol
-    print(f"[gradcheck units={units} pred_horizon={pred_horizon}] checked={checked} max_rel_err={max_rel:.2e} "
-          f"{'OK' if ok else 'FAIL'}  worst={worst}")
+    print(f"[gradcheck units={units} pred_horizon={pred_horizon} value_weight={value_weight}] checked={checked} "
+          f"max_rel_err={max_rel:.2e} {'OK' if ok else 'FAIL'}  worst={worst}")
     return ok
 
 
@@ -937,4 +1020,9 @@ if __name__ == "__main__":
         # multi-horizon (2nd move) backward — validate the k-ahead JEPA grads (tbptt_T=5 -> horizons {1,3})
         all_ok &= gradcheck("rate", pred_horizon=3)
         all_ok &= gradcheck("spike", tol=5e-2, pred_horizon=3)
+        # value head (3rd move) backward — validate w_v/b_v grads + the value dh_head path
+        all_ok &= gradcheck("rate", value_weight=1.0)
+        all_ok &= gradcheck("spike", tol=5e-2, value_weight=1.0)
+        # 2nd + 3rd move combined (k-ahead JEPA + value head together)
+        all_ok &= gradcheck("rate", pred_horizon=3, value_weight=1.0)
     raise SystemExit(0 if all_ok else 1)

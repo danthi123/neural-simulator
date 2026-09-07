@@ -87,6 +87,20 @@ class WorldConfig:
     start_energy: float = 1.0
     drive_tau: float = 0.5
     reward_scale: float = 1.0
+    # ── NAV-REQUIRED homing task (the fork's 3rd move; default OFF -> byte-identical to the first/second-move
+    # world: food respawns at a RANDOM cell each eat, so the goal is findable reactively/by wandering and a
+    # persistent place code is not REQUIRED — the 1st-move finding). When ON the food sits at a FIXED larder
+    # cell (per seed), and each time it is eaten the AGENT is displaced to a random cell >= nav_dmin Manhattan
+    # from the larder (a trial reset) while the food REGROWS at the same larder. So the goal is a stable,
+    # REMEMBERED, out-of-view location the agent must NAVIGATE BACK to from a novel start — a reactive/
+    # memoryless policy cannot (the larder is invisible from afar; only landmarks localize), so reaching it
+    # (and thus reducing the interoceptive drive = reward) REQUIRES a persistent, path-integrated place code.
+    # This makes position LOAD-BEARING ON REWARD. Displacing after each eat forbids the degenerate "sit on the
+    # larder" solution (which needs no position). Teleport = a world/trial event (legit host: world state),
+    # standard in animal navigation trials; relocalization-after-displacement is itself a real place-cell
+    # function. Pair with sim.pcs_substrate value_weight>0 so the reward/value gradient shapes the shared core.
+    nav_required: bool = False
+    nav_dmin: int = 6                # min Manhattan distance the post-eat agent-respawn keeps from the larder
     seed: int = 42
 
     @property
@@ -246,7 +260,14 @@ class ForkPCSWorld:
             self.objects[next(it)] = k
         self.landmarks: List[Tuple[int, int]] = [next(it) for _ in range(cfg.n_landmarks)]
         self.agent = next(it)
-        self.food = self._respawn_food()
+        # NAV-REQUIRED (3rd move): a FIXED larder cell (per seed) the food always returns to; the agent must
+        # navigate back to this remembered, out-of-view location. OFF path unchanged (larder=None, random food).
+        if cfg.nav_required:
+            self.larder: Optional[Tuple[int, int]] = next(it)      # extra draw ONLY in nav mode -> OFF unaffected
+            self.food = self.larder
+        else:
+            self.larder = None
+            self.food = self._respawn_food()
         self.energy = float(cfg.start_energy)
         self.drive = TwoPoolDrive(tau=cfg.drive_tau)
         self._prime_drive()
@@ -261,6 +282,24 @@ class ForkPCSWorld:
             c = (int(self.rng.integers(cfg.grid_size)), int(self.rng.integers(cfg.grid_size)))
             if c not in occupied:
                 return c
+
+    def _respawn_agent_far(self, target, dmin):
+        """NAV-REQUIRED trial reset: place the agent at a random cell >= dmin Manhattan from `target`
+        (the larder), not on an object/landmark — so the remembered larder is out of view and the agent
+        must re-localize + navigate back. Falls back to the farthest sampled cell if dmin is unreachable."""
+        cfg = self.cfg
+        occupied = set(self.objects) | set(self.landmarks)
+        best = None; best_d = -1
+        for _ in range(200):
+            c = (int(self.rng.integers(cfg.grid_size)), int(self.rng.integers(cfg.grid_size)))
+            if c in occupied or c == target:
+                continue
+            d = abs(c[0] - target[0]) + abs(c[1] - target[1])
+            if d >= dmin:
+                return c
+            if d > best_d:
+                best_d, best = d, c
+        return best if best is not None else self.agent
 
     def _prime_drive(self):
         # settle the 2-pool drive to the current deficit so d_t is well-defined at t=0
@@ -321,7 +360,12 @@ class ForkPCSWorld:
         ate = (self.food is not None and self.agent == self.food)
         if ate:
             self.energy = min(cfg.e_max, self.energy + cfg.eat_refill)
-            self.food = self._respawn_food()
+            if cfg.nav_required:
+                # food REGROWS at the fixed larder; the agent is displaced far -> must navigate back (trial reset)
+                self.food = self.larder
+                self.agent = self._respawn_agent_far(self.larder, cfg.nav_dmin)
+            else:
+                self.food = self._respawn_food()
             self.n_eats += 1
         # drive AFTER the consequence
         drive_after = float(self.drive.update(self._deficit()))
@@ -687,6 +731,144 @@ def run_ema_ab(seed=42, steps=50000, n_hidden=256, n_latent=64, units="rate",
     return {"arms": out, "tamed": tamed}
 
 
+def _local_ridge_importance(X, Y, lam=10.0):
+    """Per-hidden-unit importance for decoding Y from X = sum|ridge weight| over targets (standardized)."""
+    Y = np.asarray(Y, np.float64)
+    if Y.ndim == 1:
+        Y = Y[:, None]
+    mu = X.mean(0, keepdims=True); sd = np.maximum(X.std(0, keepdims=True), 1e-2)
+    Xs = (X - mu) / sd
+    d = Xs.shape[1]
+    W = np.linalg.solve(Xs.T @ Xs + lam * np.eye(d, dtype=np.float64), Xs.T @ Y)
+    return np.abs(W).sum(axis=1)
+
+
+def _behav_reward_rate(sub, world, n=1500, explore_eps=0.05):
+    """Frozen behavioral rollout (the substrate's OWN policy, no learning): mean reward per step + #eats.
+    Respects any lesion mask the caller has set on `sub` (set it before, clear it after)."""
+    was_frozen = sub._frozen
+    sub.freeze()
+    e0 = world.n_eats
+    tot = 0.0
+    a_prev = world.last_action
+    for _ in range(n):
+        d = world.drive_afferent(); v1 = world.crop_v1feat()
+        h = sub.observe(v1, a_prev, d)
+        a = sub.act(h, explore_eps=explore_eps)
+        r, _ = world.step(a); tot += r; a_prev = a
+    if not was_frozen:
+        sub.unfreeze()
+    return tot / max(1, n), int(world.n_eats - e0)
+
+
+def _place_lesion_reward(sub, world, seed, n_hidden, n_probe=1500, n_behav=3000, lesion_frac=0.10,
+                         n_random=4):
+    """Is the place code LOAD-BEARING on reward now? Find the place-carrying units (ridge importance for
+    abs-position), lesion them, and measure the reward-rate DROP vs an equal RANDOM-unit lesion."""
+    sub.freeze()
+    sub.set_lesion_mask(None)
+    H, POS = [], []
+    a_prev = world.last_action
+    for _ in range(n_probe):
+        d = world.drive_afferent(); v1 = world.crop_v1feat()
+        pos = world.agent
+        h = sub.observe(v1, a_prev, d)
+        a = sub.act(h, explore_eps=0.3)
+        world.step(a)
+        H.append(np.asarray(h.get() if hasattr(h, "get") else h, dtype=np.float32))
+        POS.append(np.asarray(pos, dtype=np.float32)); a_prev = a
+    H = np.asarray(H); POS = np.asarray(POS)
+    k = max(8, int(lesion_frac * n_hidden))
+    imp = _local_ridge_importance(H, POS)
+    place_mask = np.zeros(n_hidden, dtype=bool); place_mask[np.argsort(imp)[::-1][:k]] = True
+
+    rr_intact, _ = _behav_reward_rate(sub, world, n_behav)
+    sub.set_lesion_mask(place_mask); rr_place, eats_place = _behav_reward_rate(sub, world, n_behav)
+    sub.set_lesion_mask(None)
+    rng = np.random.default_rng(seed + 71)
+    rand_rrs = []
+    for _ in range(n_random):
+        m = np.zeros(n_hidden, dtype=bool); m[rng.choice(n_hidden, k, replace=False)] = True
+        sub.set_lesion_mask(m); rr_r, _ = _behav_reward_rate(sub, world, n_behav); rand_rrs.append(rr_r)
+    sub.set_lesion_mask(None)
+    rr_rand = float(np.mean(rand_rrs))
+    place_drop = rr_intact - rr_place
+    rand_drop = rr_intact - rr_rand
+    ratio = (place_drop / rand_drop) if rand_drop > 1e-9 else float("inf") if place_drop > 1e-9 else float("nan")
+    load_bearing = (place_drop > 0) and (rand_drop <= 0 or place_drop >= 1.5 * rand_drop)
+    return {"rr_intact": round(rr_intact, 5), "rr_place_lesion": round(rr_place, 5),
+            "rr_random_lesion": round(rr_rand, 5), "place_drop": round(place_drop, 5),
+            "random_drop": round(rand_drop, 5), "ratio": (round(ratio, 3) if np.isfinite(ratio) else ratio),
+            "k_units": k, "place_load_bearing": bool(load_bearing)}
+
+
+def run_nav_ab(seed=42, steps=60000, n_hidden=128, n_latent=64, n_probe=1500, units="rate",
+               encoder="learned_ema", value_weight=1.0, nav_dmin=6, pred_horizon=1,
+               grid_size=18, verbose=True):
+    """3rd-move A/B — TASK-REQUIRED position. OFF = the predictive-only control (random-respawn food, value
+    head off) — the regime the 1st-move finding showed LOSES the place code by the long horizon (drifts to /
+    below the untrained-reservoir floor). ON = the nav-required homing world (fixed remembered larder + trial
+    reset on eat) + a value head whose gradient shapes the shared core. Reports, at early/mid/late checkpoints
+    for both arms: place-decode vs the untrained-reservoir floor (does ON PERSIST where OFF FADES?), the
+    held-out predictive loss, and the behavioral reward-rate (does ON LEARN to home?). Then an END place-unit
+    lesion vs a random-unit lesion (is place LOAD-BEARING on reward now?). Honest: if ON does not persist or
+    is not load-bearing, the printout says so."""
+    from sim.pcs_substrate import PredictiveContinualSubstrate, PCSConfig
+    checkpoints = sorted(set([max(1, steps // 5), steps // 2, steps]))
+    arms = {}
+    for nav in (False, True):
+        wcfg = WorldConfig(seed=seed, nav_required=nav, nav_dmin=nav_dmin, grid_size=grid_size)
+        world = ForkPCSWorld(wcfg)
+        stat_eval = _collect_stationary_eval(wcfg, seed, n=400)
+        vw = value_weight if nav else 0.0
+        scfg = PCSConfig(n_hidden=n_hidden, feat_dim=wcfg.n_v1, n_latent=n_latent, n_actions=N_ACTIONS,
+                         n_drive=4, tbptt_T=16, units=units, encoder=encoder, seed=seed,
+                         value_weight=vw, pred_horizon=pred_horizon)
+        sub = PredictiveContinualSubstrate(scfg)
+        traj = []; done = 0; a_prev = -1
+        for ckpt in checkpoints:
+            for _ in range(ckpt - done):
+                d = world.drive_afferent(); v1 = world.crop_v1feat()
+                h = sub.observe(v1, a_prev, d); a = sub.act(h, explore_eps=0.3)
+                r, _ = world.step(a); sub.learn(r); a_prev = a
+            done = ckpt
+            place = _probe_place_decode(sub, world, seed, n_probe, n_hidden, n_latent, units, encoder, wcfg.n_v1)
+            held = sub.eval_predictive_loss(stat_eval)
+            rr, eats = _behav_reward_rate(sub, world, 1500)
+            traj.append({"step": ckpt, **place, "held_out": round(float(held), 4),
+                         "reward_rate": round(rr, 5), "eats": eats})
+        lesion = _place_lesion_reward(sub, world, seed, n_hidden, n_probe)
+        arms["ON" if nav else "OFF"] = {"traj": traj, "lesion": lesion, "value_weight": vw}
+
+    off, on = arms["OFF"]["traj"][-1], arms["ON"]["traj"][-1]
+    # PERSIST: ON keeps place clearly above the untrained floor at the long horizon
+    on_persists = on["trained"] > on["untrained"] + 0.05
+    off_faded = off["trained"] <= off["untrained"] + 0.05
+    on_beats_off = on["trained"] > off["trained"] + 0.05
+    lb = arms["ON"]["lesion"]["place_load_bearing"]
+    learned = on["reward_rate"] > off["reward_rate"] * 1.05 or arms["ON"]["traj"][-1]["reward_rate"] > arms["ON"]["traj"][0]["reward_rate"]
+    passed = on_persists and lb
+    if verbose:
+        print(f"[NAV A/B seed={seed} units={units} steps={steps} n_hidden={n_hidden} vw={value_weight} dmin={nav_dmin}]")
+        for arm in ("OFF", "ON"):
+            print(f"  {arm} (value_weight={arms[arm]['value_weight']}):")
+            for c in arms[arm]["traj"]:
+                print(f"    step={c['step']:>7}  place(trained)={c['trained']:+.3f}  untrained={c['untrained']:+.3f}"
+                      f"  rawV1={c['rawv1']:+.3f}  Δ(tr-un)={c['trained']-c['untrained']:+.3f}"
+                      f"  held={c['held_out']:.3f}  reward_rate={c['reward_rate']:.5f}  eats={c['eats']}")
+            L = arms[arm]["lesion"]
+            print(f"    place-lesion: rr_intact={L['rr_intact']:.5f} rr_place={L['rr_place_lesion']:.5f} "
+                  f"rr_random={L['rr_random_lesion']:.5f}  place_drop={L['place_drop']:+.5f} "
+                  f"random_drop={L['random_drop']:+.5f} ratio={L['ratio']} LOAD_BEARING={L['place_load_bearing']}")
+        print(f"  --> ON place@end={on['trained']:+.3f}(untr {on['untrained']:+.3f})  "
+              f"OFF place@end={off['trained']:+.3f}(untr {off['untrained']:+.3f})")
+        print(f"  ON_persists(above untrained)={on_persists}  OFF_faded(at/below untrained)={off_faded}  "
+              f"ON_beats_OFF={on_beats_off}  ON_place_load_bearing={lb}  ON_learned(reward)={learned}")
+        print(f"  NAV A/B {'PASS' if passed else 'INCONCLUSIVE'}  (PASS = ON persists above floor AND place load-bearing)")
+    return {"OFF": arms["OFF"], "ON": arms["ON"], "on_persists": on_persists, "off_faded": off_faded,
+            "on_beats_off": on_beats_off, "place_load_bearing": lb, "learned": learned, "passed": passed}
+
+
 if __name__ == "__main__":
     ap = argparse.ArgumentParser(description="fork PCS grounded world + Day-1 smoke")
     ap.add_argument("--smoke", action="store_true", help="run the Day-1 smoke (loss drop + position vs floors)")
@@ -696,14 +878,27 @@ if __name__ == "__main__":
                     help="UNSTABLE-vs-STABLE demonstration (grad-clip/spike-skip taming loss spikes)")
     ap.add_argument("--ema-ab", action="store_true",
                     help="EMA-target A/B (0.99 vs 0.999 vs 0.9999) — taming the target-driven loss spikes")
+    ap.add_argument("--nav-ab", action="store_true",
+                    help="3rd-move A/B — TASK-REQUIRED position: predictive-only OFF vs nav-required homing + "
+                         "value-head ON (place persistence + reward-rate + place-lesion load-bearing)")
     ap.add_argument("--consolidation", action="store_true", help="single-arm smoke with consolidation ON")
     ap.add_argument("--steps", type=int, default=4000)
     ap.add_argument("--ab-steps", type=int, default=60000)
     ap.add_argument("--n-hidden", type=int, default=128)
     ap.add_argument("--seed", type=int, default=42)
+    ap.add_argument("--value-weight", type=float, default=1.0,
+                    help="value-head weight for the ON arm of --nav-ab (0 disables the value channel)")
+    ap.add_argument("--nav-dmin", type=int, default=6, help="min post-eat agent-respawn distance from the larder")
+    ap.add_argument("--grid-size", type=int, default=18, help="world grid size for --nav-ab (smoke: smaller = more eating)")
+    ap.add_argument("--pred-horizon", type=int, default=1, help="JEPA horizon k for --nav-ab arms (isolate: 1)")
     ap.add_argument("--units", choices=["rate", "spike"], default="rate")
     ap.add_argument("--encoder", choices=["learned_ema", "fixed"], default="learned_ema")
     args = ap.parse_args()
+    if args.nav_ab:
+        res = run_nav_ab(seed=args.seed, steps=args.ab_steps, n_hidden=args.n_hidden, units=args.units,
+                         encoder=args.encoder, value_weight=args.value_weight, nav_dmin=args.nav_dmin,
+                         pred_horizon=args.pred_horizon, grid_size=args.grid_size)
+        raise SystemExit(0 if res["passed"] else 1)
     if args.ema_ab:
         res = run_ema_ab(seed=args.seed, steps=args.ab_steps, n_hidden=args.n_hidden, units=args.units)
         raise SystemExit(0 if res["tamed"] else 1)
