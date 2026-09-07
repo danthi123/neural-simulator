@@ -39,10 +39,20 @@ background work — do not double-launch.
 - **BOTH FRONTS live:** MAIN-path = Rank-6 substrate-store query-cost 6-seed running LOCALLY (bg bm329nwms, CPU nice'd)
   + Rank-15 self-schema 5/6→6/6 fix (opus build agent, worktree) + AWS mouth. Instrument-fix (behavioral-lesion,
   opus agent) also in flight on the fork. Scoping agent found the clean ship-a-GO bucket largely EXHAUSTED (09-05).
-- **✅ RANK-6 DONE = GO (`c013ab206`): synaptic fact-store parity 6/6, query-time ~= numpy, ~4.7GB RAM. Owner
-  APPROVED the production-default FLIP.** Flip WORKFLOW `wv43sdc6m` running (locate → flip+CPU-verify → 3 adversarial
-  skeptics → LAND/QUEUE-GPU/HOLD rec; NEVER touches the GPU). Retires the STORAGE shortcut (numpy-kb→synaptic), NOT
-  the host-computed BINDING idealization (2026-08-08 note). On its rec: merge+push+sync, or queue the GPU 6-seed.
+- **✅ RANK-6 DONE = GO (`c013ab206`). Owner APPROVED the production-default FLIP.** Flip WORKFLOW `wv43sdc6m` DONE
+  (5 agents): flip BUILT + committed (`c7a147350`, on branch **research/substrate-store-flip** + worktree
+  `sim-worktrees/substrate-store-flip`, NOT on main — production untouched). Flip = `BRAIN_LTM_SUBSTRATE_STORE`
+  default-ON in developed_brain_io + webapp LTM load paths; retires the LTM numpy-KB STORAGE shortcut (→ synaptic),
+  NOT the host BINDING arithmetic. Verify: parity REAL + substrate LOAD-BEARING (2 adversarial lenses cleared).
+- **⛔ FLIP HELD — footprint adversarial lens REFUTED (high conf, the sharp catch): the CPU verify measured the WRONG
+  backend.** Production auto-selects cupy (GPU host); under cupy `_store_substrate` builds a SimulationBridge/fact →
+  the 78k-fact store lands ~3.8-5GB in **VRAM (not RAM)**, UNMEASURED (extrapolated; two findings disagree 34%),
+  competing with the 24GB-3090 budget + the spiking Qwen surface. This is EXACTLY the owner's flagged open question.
+  → **GPU VRAM measurement QUEUED** (`vram_measure_substrate.sh`, cupy, substrate OFF-vs-ON delta + GPU parity
+  re-confirm, behind the fork; Monitor **brzjy25oj**). LAND the flip (merge research/substrate-store-flip → main) only
+  if VRAM fits the budget; else keep env-opt-in (honest characterized limit → lighter/RAM-resident backend next).
+- **NOTE: Ollama llama-server holding 7.6GB VRAM (external proc, not ours)** — no one-GPU-proc violation (fork run is
+  the only sim-brain proc, 1.7GB; 12GB free); flagged in case it's unintended co-residency competing for the 24GB.
 - **✅ RANK-15 CLOSED 5/6→6/6 (`b0d3c916a` merged to main, pushed; finding synced GO `ca7f5faa3`):** self-schema
   authorship neural turn-class via DG-like pattern separation on the novelty read (brain-based granule-cell recoding +
   unchanged anti-Hebbian gate; robust plateau, no false positives, default-ON behind --dg-sep). De-risk only, NOT
