@@ -16,7 +16,22 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 ## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-06 ~21:15 (FORK 4th move launched + research-at-wall; READ FIRST; LATEST anchor)
 
 **Owner (this session): pursue the AGI fork with local usage; "GO HARD on tokens/workflows" (48% weekly budget left,
-resets in ~14h → burn it). Proceed autonomously.** All lanes below are LIVE background work — do not double-launch.
+resets in ~14h → burn it) + "advance BOTH fronts simultaneously".** Proceed autonomously. All lanes below are LIVE
+background work — do not double-launch.
+
+**⚡ LIVE DELTAS (~21:52):**
+- **Shaping ns=1.0 6-seed DONE: EMERGENCE_GO=False, 0/6** (place LB 2/6, place R² AT the high floor, homing/eats up
+  2-10x). Confirms research: shaping raises homing but does NOT make place robustly load-bearing (2nd-order lever).
+  ns=2.0 running; 4.0/8.0 queued (deprioritized below the SR runs).
+- **✅ FLOOR-SCALING banked (`bac40864`): the 'below floor' result is PARTLY a capacity artifact** — untrained floor
+  RISES with n_hidden (0.49@128→0.72@2048, ρ0.986) but SATURATES (only 31.6% of the 2048 floor unexplained by 128);
+  only ~1-5% of the trained core's place decode is attributable to TRAINING vs the reservoir. ⇒ beat-floor-by-0.05
+  is a stringent bar at n_hidden=512; consider a smaller n_hidden and/or the instrument fix when reading SR.
+- **GPU queue REORDERED — SR runs FIRST (the decisive principled test):** sr10 (SR-alone) NEXT, then sr20,
+  sr10+nav+shaping20, then shaping 4.0/8.0. SR-alone verdict ~1h out.
+- **BOTH FRONTS live:** MAIN-path = Rank-6 substrate-store query-cost 6-seed running LOCALLY (bg bm329nwms, CPU nice'd)
+  + Rank-15 self-schema 5/6→6/6 fix (opus build agent, worktree) + AWS mouth. Instrument-fix (behavioral-lesion,
+  opus agent) also in flight on the fork. Scoping agent found the clean ship-a-GO bucket largely EXHAUSTED (09-05).
 
 - **FORK 4th MOVE — potential-based approach SHAPING (make homing LEARNABLE).** The 3rd move (nav-required) failed
   only because reward was too SPARSE (larder reached ~0.1-0.5% of steps → REINFORCE never learned to home →
