@@ -234,9 +234,9 @@ def run_seed(seed, units="rate", encoder="learned_ema", n_hidden=512, n_latent=6
              n_train=200_000, n_probe=8000, n_behav=4000, n_cov=8000, gamma=0.95,
              lesion_frac=0.10, n_random_lesions=3, consolidation=False,
              grad_clip=1.0, grad_skip_factor=8.0, ema_momentum=0.9999, ema_warmup=0,
-             pred_horizon=1, nav_required=False, nav_dmin=6, value_weight=0.0, verbose=True):
+             pred_horizon=1, nav_required=False, nav_dmin=6, value_weight=0.0, nav_shaping=0.0, verbose=True):
     t0 = time.time()
-    wcfg = WorldConfig(seed=seed, nav_required=nav_required, nav_dmin=nav_dmin)
+    wcfg = WorldConfig(seed=seed, nav_required=nav_required, nav_dmin=nav_dmin, nav_shaping=nav_shaping)
     world = ForkPCSWorld(wcfg)
     scfg = PCSConfig(n_hidden=n_hidden, feat_dim=wcfg.n_v1, n_latent=n_latent, n_actions=N_ACTIONS,
                      n_drive=4, tbptt_T=18, units=units, encoder=encoder, seed=seed,
@@ -388,6 +388,7 @@ def run_seed(seed, units="rate", encoder="learned_ema", n_hidden=512, n_latent=6
         "consolidation": consolidation, "n_replay_updates": int(sub.n_replay_updates),
         "grad_clip": grad_clip, "grad_skip_factor": grad_skip_factor, "pred_horizon": pred_horizon,
         "nav_required": nav_required, "nav_dmin": nav_dmin, "value_weight": value_weight,
+        "nav_shaping": nav_shaping,
         "ema_momentum": ema_momentum, "ema_warmup": ema_warmup,
         "max_grad_norm": round(float(sub.max_grad_norm), 3), "n_grad_skipped": int(sub.n_skipped),
         "train_max_online_loss": round(float(max([v for _, v in (train_out.get("loss_curve") or [(0, 0.0)])])), 3),
@@ -565,6 +566,9 @@ def main():
                          "(food at a remembered, out-of-view larder; agent displaced on each eat), so reaching "
                          "food REQUIRES a persistent path-integrated place code. Default OFF = the random-respawn "
                          "control (byte-identical world). Pair with --value-weight>0 so reward/value shapes the core.")
+    ap.add_argument("--nav-shaping", type=float, default=0.0,
+                    help="4th move: potential-based approach-shaping coefficient (0=OFF). Makes homing LEARNABLE "
+                         "so the task-required place code can actually bind (PBS is policy-invariant).")
     ap.add_argument("--nav-dmin", type=int, default=6,
                     help="min post-eat agent-respawn Manhattan distance from the larder (nav-required only)")
     ap.add_argument("--value-weight", type=float, default=0.0,
@@ -585,12 +589,14 @@ def main():
                          grad_clip=args.grad_clip, grad_skip_factor=args.grad_skip_factor,
                          ema_momentum=args.ema_momentum, ema_warmup=args.ema_warmup,
                          pred_horizon=args.pred_horizon, nav_required=args.nav_required,
-                         nav_dmin=args.nav_dmin, value_weight=args.value_weight, **kw)
+                         nav_dmin=args.nav_dmin, value_weight=args.value_weight,
+                         nav_shaping=args.nav_shaping, **kw)
                 for s in args.seeds]
     agg = aggregate(per_seed)
     payload = {"battery": "fork_pcs_emergence", "units": args.units, "encoder": args.encoder,
                "consolidation": args.consolidation, "pred_horizon": args.pred_horizon,
                "nav_required": args.nav_required, "nav_dmin": args.nav_dmin, "value_weight": args.value_weight,
+               "nav_shaping": args.nav_shaping,
                "grad_clip": args.grad_clip, "grad_skip_factor": args.grad_skip_factor,
                "ema_momentum": args.ema_momentum, "ema_warmup": args.ema_warmup,
                "pre_registered_gate": {

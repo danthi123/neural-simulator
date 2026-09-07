@@ -101,6 +101,18 @@ class WorldConfig:
     # function. Pair with sim.pcs_substrate value_weight>0 so the reward/value gradient shapes the shared core.
     nav_required: bool = False
     nav_dmin: int = 6                # min Manhattan distance the post-eat agent-respawn keeps from the larder
+    # ── 4th move: POTENTIAL-BASED APPROACH SHAPING (Ng-Harada-Russell 1999) to make homing LEARNABLE.
+    # The 3rd move failed not because task-required-position is wrong but because the reward was too SPARSE
+    # (larder reached ~0.1-0.5% of steps -> REINFORCE never learned to home -> the requirement never bound).
+    # PBS densifies the reward with r += nav_shaping*(gamma*Phi(s') - Phi(s)), Phi(s) = -dist(agent,larder)/dnorm.
+    # PBS is provably POLICY-INVARIANT (it changes learning SPEED, not the optimal policy), so it does NOT
+    # hand the agent the goal direction: the scalar shaping reward is a post-hoc CONSEQUENCE (never a policy
+    # input), so to exploit it the policy must still infer which action approaches the out-of-view larder from
+    # its OWN state -> the place code stays load-bearing; shaping only makes the credit-assignment tractable.
+    # Applied on the pre-teleport post-move position so an EAT step (which teleports the agent far) scores the
+    # approach it EARNED, not the trial-reset displacement. Default 0.0 -> byte-identical to the 3rd-move world.
+    nav_shaping: float = 0.0         # PBS coefficient (0 = OFF); only active when nav_required
+    nav_shaping_gamma: float = 0.99  # PBS discount (telescoping term; keeps total shaping policy-invariant)
     seed: int = 42
 
     @property
@@ -351,10 +363,21 @@ class ForkPCSWorld:
         # drive BEFORE the action's consequence
         drive_before = self._drive_val
         # apply move (bounded)
+        px, py = self.agent                       # pre-move position (for PBS shaping)
         dx, dy = MOVES[action]
         nx = int(np.clip(self.agent[0] + dx, 0, cfg.grid_size - 1))
         ny = int(np.clip(self.agent[1] + dy, 0, cfg.grid_size - 1))
         self.agent = (nx, ny)
+        # 4th-move POTENTIAL-BASED approach shaping (Phi=-dist/dnorm), computed on the PRE-teleport post-move
+        # position so an eat step scores the approach it EARNED, not the trial-reset displacement. 0 when OFF ->
+        # the reward stays the pure drive-reduction of the 3rd-move world (byte-identical).
+        shaping = 0.0
+        if cfg.nav_required and cfg.nav_shaping > 0.0 and self.larder is not None:
+            dnorm = 2.0 * (cfg.grid_size - 1)
+            lx, ly = self.larder
+            phi_pre = -(abs(px - lx) + abs(py - ly)) / dnorm
+            phi_post = -(abs(nx - lx) + abs(ny - ly)) / dnorm
+            shaping = cfg.nav_shaping * (cfg.nav_shaping_gamma * phi_post - phi_pre)
         # metabolism
         self.energy = max(0.0, self.energy - cfg.deplete)
         ate = (self.food is not None and self.agent == self.food)
@@ -370,8 +393,10 @@ class ForkPCSWorld:
         # drive AFTER the consequence
         drive_after = float(self.drive.update(self._deficit()))
         self._drive_val = drive_after
-        # GROUNDED reward = drive-reduction (reduction in the homeostatic-need signal), NOT distance
-        reward = cfg.reward_scale * max(0.0, drive_before - drive_after)
+        # GROUNDED reward = drive-reduction (reduction in the homeostatic-need signal), NOT distance;
+        # + the PBS approach-shaping term (0 unless nav_shaping>0). PBS is policy-invariant, so it only
+        # densifies the LEARNING signal (it does not change which policy is optimal, i.e. no goal-compass cheat).
+        reward = cfg.reward_scale * max(0.0, drive_before - drive_after) + shaping
         self.last_action = action
         self.t += 1
         info = {"ate": ate, "energy": self.energy, "deficit": self._deficit(),
