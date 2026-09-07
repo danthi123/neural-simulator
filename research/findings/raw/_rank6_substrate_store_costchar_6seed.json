@@ -1,0 +1,238 @@
+{
+  "verdict": {
+    "label": "rank6 knowledge-core substrate-store write: recall+moat parity vs the shipped numpy-kb path",
+    "status": "GO",
+    "go": true,
+    "undefined_reasons": [],
+    "preconditions": [
+      {
+        "kind": "floor",
+        "name": "seed 42: baseline actually recalls most stored facts",
+        "ok": true,
+        "detail": "1 vs floor 0.9",
+        "note": ""
+      },
+      {
+        "kind": "floor",
+        "name": "seed 43: baseline actually recalls most stored facts",
+        "ok": true,
+        "detail": "1 vs floor 0.9",
+        "note": ""
+      },
+      {
+        "kind": "floor",
+        "name": "seed 44: baseline actually recalls most stored facts",
+        "ok": true,
+        "detail": "1 vs floor 0.9",
+        "note": ""
+      },
+      {
+        "kind": "floor",
+        "name": "seed 100: baseline actually recalls most stored facts",
+        "ok": true,
+        "detail": "1 vs floor 0.9",
+        "note": ""
+      },
+      {
+        "kind": "floor",
+        "name": "seed 101: baseline actually recalls most stored facts",
+        "ok": true,
+        "detail": "1 vs floor 0.9",
+        "note": ""
+      },
+      {
+        "kind": "floor",
+        "name": "seed 102: baseline actually recalls most stored facts",
+        "ok": true,
+        "detail": "1 vs floor 0.9",
+        "note": ""
+      },
+      {
+        "kind": "knob",
+        "name": "enable_substrate_store reaches the base shard's composer (a real lever, not a no-op)",
+        "ok": true,
+        "detail": "requested=1 applied=1",
+        "note": ""
+      }
+    ],
+    "disabled_processes": [
+      {
+        "process": "curation selection (which facts are worth learning)",
+        "why": "closed-form host frequency ranking, unchanged by this probe -- see module docstring point 4"
+      }
+    ],
+    "chance": null
+  },
+  "bundle": "/home/dant123/Projects/sim-data/knowledge_bundles/wikidata_100k",
+  "n_facts_in_bundle": 78857,
+  "target_n": 78857,
+  "parity": {
+    "n_stored": 240,
+    "n_moat": 40,
+    "per_seed": [
+      {
+        "seed": 42,
+        "n_stored": 240,
+        "n_moat": 40,
+        "base_build_s": 7.275,
+        "cand_build_s": 7.349,
+        "n_base_recalled": 240,
+        "n_agree": 240,
+        "base_moat_abstained": 40,
+        "moat_agree": 40
+      },
+      {
+        "seed": 43,
+        "n_stored": 240,
+        "n_moat": 40,
+        "base_build_s": 6.655,
+        "cand_build_s": 7.53,
+        "n_base_recalled": 240,
+        "n_agree": 240,
+        "base_moat_abstained": 40,
+        "moat_agree": 40
+      },
+      {
+        "seed": 44,
+        "n_stored": 240,
+        "n_moat": 40,
+        "base_build_s": 7.714,
+        "cand_build_s": 8.168,
+        "n_base_recalled": 240,
+        "n_agree": 240,
+        "base_moat_abstained": 40,
+        "moat_agree": 40
+      },
+      {
+        "seed": 100,
+        "n_stored": 240,
+        "n_moat": 40,
+        "base_build_s": 7.011,
+        "cand_build_s": 7.34,
+        "n_base_recalled": 240,
+        "n_agree": 240,
+        "base_moat_abstained": 40,
+        "moat_agree": 40
+      },
+      {
+        "seed": 101,
+        "n_stored": 240,
+        "n_moat": 40,
+        "base_build_s": 7.39,
+        "cand_build_s": 7.785,
+        "n_base_recalled": 240,
+        "n_agree": 240,
+        "base_moat_abstained": 40,
+        "moat_agree": 40
+      },
+      {
+        "seed": 102,
+        "n_stored": 240,
+        "n_moat": 40,
+        "base_build_s": 7.956,
+        "cand_build_s": 8.327,
+        "n_base_recalled": 240,
+        "n_agree": 240,
+        "base_moat_abstained": 40,
+        "moat_agree": 40
+      }
+    ]
+  },
+  "cost": [
+    {
+      "n": 500,
+      "substrate": false,
+      "elapsed_s": 15.355,
+      "rss0_kb": 341988,
+      "rss_kb": 341988,
+      "marginal_kb": 0
+    },
+    {
+      "n": 2000,
+      "substrate": false,
+      "elapsed_s": 61.001,
+      "rss0_kb": 341988,
+      "rss_kb": 341988,
+      "marginal_kb": 0
+    },
+    {
+      "n": 8000,
+      "substrate": false,
+      "elapsed_s": 276.046,
+      "rss0_kb": 341988,
+      "rss_kb": 341988,
+      "marginal_kb": 0
+    },
+    {
+      "n": 500,
+      "substrate": true,
+      "elapsed_s": 15.456,
+      "rss0_kb": 341820,
+      "rss_kb": 341820,
+      "marginal_kb": 0
+    },
+    {
+      "n": 2000,
+      "substrate": true,
+      "elapsed_s": 61.747,
+      "rss0_kb": 341820,
+      "rss_kb": 404124,
+      "marginal_kb": 62304
+    },
+    {
+      "n": 8000,
+      "substrate": true,
+      "elapsed_s": 247.092,
+      "rss0_kb": 341820,
+      "rss_kb": 812764,
+      "marginal_kb": 470944
+    }
+  ],
+  "projection": {
+    "label": "wikidata_100k(78857 facts)",
+    "target_n": 78857,
+    "substrate_slope": {
+      "per_fact_kb": 62.79253333333333,
+      "per_fact_s": 0.030884800000000004,
+      "n_lo": 500,
+      "n_hi": 8000
+    },
+    "proj_rss_gb": 4.7222,
+    "proj_build_s": 2435.5,
+    "numpy_kb_slope": {
+      "per_fact_kb": 0.0,
+      "per_fact_s": 0.0347588,
+      "n_lo": 500,
+      "n_hi": 8000
+    },
+    "numpy_kb_proj_gb": 0.0
+  },
+  "save_reload_probe": {
+    "attempted": true,
+    "save_ok": true,
+    "save_error": null,
+    "load_ok": true,
+    "load_error": null,
+    "reloaded_answers_match": true
+  },
+  "provenance_characterization": {
+    "tier_signal_exists": true,
+    "buffer_sourced_example": {
+      "cue": [
+        "buffer_taught_thing",
+        "is"
+      ],
+      "answer": "new",
+      "tier": "buffer"
+    },
+    "ltm_sourced_example": {
+      "cue": [
+        "frank_lincoln_wright",
+        "instance_of"
+      ],
+      "answer": "human_specie",
+      "tier": "ltm"
+    },
+    "tier_correctly_distinguishes_origin": true
+  }
+}
