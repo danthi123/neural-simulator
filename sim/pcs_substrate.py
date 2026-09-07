@@ -165,6 +165,25 @@ class PCSConfig:
     replay_capacity: int = 2000  # reservoir size (windows); uniform sample over ALL past experience
     replay_every: int = 2        # every N online updates, run a replay (consolidation) update
     replay_batch: int = 1        # replayed windows per replay event
+    # SYNAPTIC INTELLIGENCE (SI) anti-forgetting companion (Zenke, Poole & Ganguli, ICML 2017,
+    # arXiv:1703.04200). Default OFF -> byte-identical to no-SI (no state allocated, no rng draw, no grad or
+    # param touched -> every prior artifact stays valid). SI protects an EMERGENT representation (here the
+    # aux-localization place code) from being OVERWRITTEN by the OTHER objective terms (JEPA / reward / value
+    # / SR) under continued online truncated BPTT. Mechanism: a per-PARAMETER online importance path-integral
+    # omega (accumulated every online update, = -sum grad_k * delta_theta_k, i.e. how much each weight's motion
+    # reduced the loss), periodically FOLDED into a consolidated importance Omega at a TASK-FREE pseudo-boundary,
+    # added back as a quadratic anchor whose gradient (si_c * Omega_k * (theta_k - theta_star_k)) pulls each
+    # param toward its consolidated value theta_star with a stiffness proportional to how much it mattered. It
+    # COMPOSES with aux-loc: it re-uses the gradient already computed by _window_backward, so the weights that
+    # carry position accrue high importance and get protected. Applied ONLY on the ONLINE update, NOT on replay
+    # (guarded by is_replay). The stability/plasticity trade-off is REAL: si_c must be tuned (start small) — too
+    # high freezes learning, too low fails to protect; retention vs continued-learning-ability must be measured.
+    # (Honesty: SI protects whatever representation the weights currently encode; it does not assert that
+    # representation is correct — the surpass is anti-forgetting, not a correctness claim.)
+    si: bool = False             # master switch (False = OFF, byte-identical to no-SI)
+    si_c: float = 0.1            # regularization strength (the anchor stiffness; TUNE — start small)
+    si_xi: float = 1e-3          # damping in the importance denominator (avoids div-by-~0 on tiny param moves)
+    si_consolidate_every: int = 500  # fold omega -> Omega every N online TBPTT updates (task-free boundary)
     # optimizer + ONLINE-TRAINING STABILITY (default-ON; the 200k run's place code was destroyed by
     # gradient/loss SPIKES, not drift — held-out loss 0.33->37->0.36 across checkpoints). Primary fix is
     # a tight global grad-norm clip; the spike-skip guard drops the rare pathological/non-finite update
@@ -341,6 +360,22 @@ class PredictiveContinualSubstrate:
             self.P["b_loc"] = xp.zeros((2,), dtype=xp.float32)
 
         self.opt = _Adam(self.P, xp, lr=cfg.lr)
+
+        # SYNAPTIC INTELLIGENCE state (allocated ONLY when cfg.si -> the OFF path allocates NOTHING and draws
+        # NO rng, so weight init + every downstream update is byte-identical to the pre-SI substrate). All dicts
+        # over the CURRENT self.P keys (so SI protects exactly the trainable params, whichever heads are on).
+        #   _si_omega      Omega  : consolidated per-param importance (grows at each fold)
+        #   _si_w          omega  : running path-integral since the last fold (reset at each fold)
+        #   _si_theta_star theta~ : the anchor (a copy of the params at the last fold)
+        self._si_omega = None
+        self._si_w = None
+        self._si_theta_star = None
+        self._si_since_fold = 0
+        self.n_si_folds = 0
+        if cfg.si:
+            self._si_omega = {k: xp.zeros_like(v) for k, v in self.P.items()}
+            self._si_w = {k: xp.zeros_like(v) for k, v in self.P.items()}
+            self._si_theta_star = {k: v.copy() for k, v in self.P.items()}
 
         # ---- runtime state ----
         self.h = xp.zeros((H,), dtype=xp.float32)          # shared state (rate-trace)
@@ -952,18 +987,77 @@ class PredictiveContinualSubstrate:
                     grad_s_next = xp.zeros((H,), dtype=xp.float32)
         return grads
 
-    def _tbptt_update(self, tape) -> float:
+    # ── SYNAPTIC INTELLIGENCE (SI) anti-forgetting — Zenke, Poole & Ganguli 2017 ──
+    def _si_penalty_grads(self):
+        """The SI quadratic-anchor penalty gradient per param: si_c * Omega_k * (theta_k - theta_star_k).
+        This is EXACTLY d/dtheta of the surrogate loss 0.5 * si_c * sum_k Omega_k (theta_k - theta_star_k)^2
+        (see _si_penalty_loss), so it FD-validates cleanly (si_gradcheck). Returns a dict over self.P keys."""
+        c = self.cfg.si_c
+        return {k: c * self._si_omega[k] * (self.P[k] - self._si_theta_star[k]) for k in self.P}
+
+    def _si_penalty_loss(self, P=None):
+        """The SI surrogate loss 0.5 * si_c * sum_k Omega_k (theta_k - theta_star_k)^2. Used ONLY by the
+        gradcheck (the online path never needs the loss value, only _si_penalty_grads), so it is free to
+        accumulate in float64 to give the finite-difference a clean, cancellation-free reference."""
+        P = self.P if P is None else P
+        c = self.cfg.si_c
+        tot = 0.0
+        for k in P:
+            d = np.asarray(to_host(P[k]), dtype=np.float64) - np.asarray(to_host(self._si_theta_star[k]), dtype=np.float64)
+            om = np.asarray(to_host(self._si_omega[k]), dtype=np.float64)
+            tot += float((om * d * d).sum())
+        return 0.5 * c * tot
+
+    def _si_consolidate(self):
+        """Task-free FOLD of the online path-integral into the consolidated importance, then re-anchor.
+        Omega_k += omega_k / ((theta_k - theta_star_k)^2 + si_xi); reset omega_k=0; theta_star_k = theta_k.
+        The denominator normalises importance by the distance the param actually travelled since the last
+        fold (Zenke eq.), damped by si_xi so a param that barely moved cannot acquire huge importance."""
+        xp = self.xp
+        xi = self.cfg.si_xi
+        for k in self.P:
+            delta = self.P[k] - self._si_theta_star[k]
+            self._si_omega[k] = self._si_omega[k] + self._si_w[k] / (delta * delta + xi)
+            self._si_w[k] = xp.zeros_like(self._si_w[k])
+            self._si_theta_star[k] = self.P[k].copy()
+        self._si_since_fold = 0
+        self.n_si_folds += 1
+
+    def _tbptt_update(self, tape, is_replay: bool = False) -> float:
         loss, cache = self._window_forward(tape, self.P, self.W_enc, self.b_enc)
         grads = self._window_backward(tape, self.P, cache)
+        # SYNAPTIC INTELLIGENCE (online update ONLY; NOT replay -> is_replay guard). Add the quadratic-anchor
+        # penalty gradient BEFORE the Adam step and snapshot the params so we can measure the ACTUAL update
+        # for the path integral. When cfg.si is False (or SI state unallocated) this whole block is skipped,
+        # so the OFF path is byte-identical to the pre-SI code. On the FIRST fold-period Omega is all-zero,
+        # so the penalty gradient is exactly zero (SI only starts pulling once an importance has consolidated).
+        si_on = self.cfg.si and (self._si_omega is not None) and (not is_replay)
+        theta_before = None
+        if si_on:
+            pen = self._si_penalty_grads()
+            for k in grads:
+                grads[k] = grads[k] + pen[k]
+            theta_before = {k: self.P[k].copy() for k in self.P}
         norm, skipped = self.opt.step(self.P, grads, clip=self.cfg.grad_clip,
                                       skip_factor=self.cfg.grad_skip_factor)
         self.last_grad_norm = norm
         if norm > self.max_grad_norm:
             self.max_grad_norm = norm
         if skipped:
-            # spike/non-finite update dropped: weights unchanged, so no encoder sync / EMA / count
+            # spike/non-finite update dropped: weights unchanged, so no path integral / encoder sync / count
             self.n_skipped += 1
             return float(loss)
+        # SI PATH INTEGRAL + periodic fold (kept online updates only; the params DID change this step).
+        # omega_k += -grad_k * delta_theta_k, where grad_k is the (post-penalty, post-clip) gradient Adam
+        # actually consumed and delta_theta_k is the true Adam param change -> importance = how much this
+        # weight's motion reduced the loss. Fold every si_consolidate_every kept updates (a task-free boundary).
+        if si_on:
+            for k in self.P:
+                delta = self.P[k] - theta_before[k]
+                self._si_w[k] = self._si_w[k] - grads[k] * delta
+            self._si_since_fold += 1
+            if self._si_since_fold >= self.cfg.si_consolidate_every:
+                self._si_consolidate()
         # keep the encoder refs in sync (Adam replaced the array objects in self.P)
         if self.cfg.encoder == "learned_ema":
             self.W_enc = self.P["W_enc"]
@@ -1012,7 +1106,7 @@ class PredictiveContinualSubstrate:
             return
         for _ in range(self.cfg.replay_batch):
             j = int(self._replay_rng.integers(len(self._replay)))
-            self._tbptt_update(self._replay[j])
+            self._tbptt_update(self._replay[j], is_replay=True)   # SI is NOT applied on replay updates
             self.n_replay_updates += 1
 
     # ── held-out predictive-loss evaluator (learning signal on a non-stationary stream) ──
@@ -1159,15 +1253,120 @@ def selftest():
     return ok
 
 
+def si_gradcheck(units="rate", tol=1e-3, aux_loc_weight=1.0):
+    """Validate the SYNAPTIC INTELLIGENCE anchor-penalty gradient (the new analytic backward) against
+    finite difference. Builds a substrate MID-TRAINING: consolidated importance Omega set non-zero and the
+    anchor theta_star offset from the current params (as it would be after a real fold + subsequent drift).
+    The SI surrogate loss is L_si = 0.5*si_c*sum_k Omega_k (theta_k - theta_star_k)^2 (a quadratic, so a
+    central difference is analytically exact — any residual is pure float rounding), whose analytic gradient
+    is exactly si_c*Omega_k*(theta_k - theta_star_k) == _si_penalty_grads(). aux_loc on by default so SI is
+    validated COMPOSING with the emergent place head. Checks every SI-tracked param, incl. the recurrent
+    core (W_h/W_e/W_a/W_d/b_h). THIS IS THE GATE for the SI backward."""
+    cfg = PCSConfig(n_hidden=7, feat_dim=6, n_latent=4, n_actions=3, n_drive=2, tbptt_T=5,
+                    units=units, var_lambda=0.5, encoder="learned_ema", seed=3,
+                    aux_loc_weight=aux_loc_weight, si=True, si_c=0.1, si_xi=1e-3)
+    sub = PredictiveContinualSubstrate(cfg)
+    rng = np.random.default_rng(11)
+    # simulate mid-training: strictly-positive consolidated importance Omega and an anchor offset from theta.
+    for k in sub.P:
+        shp = np.asarray(to_host(sub.P[k])).shape
+        sub._si_omega[k] = from_host((np.abs(rng.standard_normal(shp)) + 0.1).astype(np.float32))
+        sub._si_theta_star[k] = from_host(
+            (np.asarray(to_host(sub.P[k]), dtype=np.float64) + 0.1 * rng.standard_normal(shp)).astype(np.float32))
+    P = sub.P
+    ana = sub._si_penalty_grads()
+    eps = 1e-4
+    max_rel = 0.0
+    worst = None
+    checked = 0
+    for name in ["W_h", "W_e", "W_a", "W_d", "b_h", "W_pred", "W_pred_a", "b_pred", "w_r", "b_r",
+                 "W_loc", "b_loc", "W_enc", "b_enc"]:
+        if name not in P:
+            continue
+        arr = np.asarray(to_host(P[name]), dtype=np.float64)
+        flat = arr.ravel()
+        gflat = np.asarray(to_host(ana[name]), dtype=np.float64).ravel()
+        idxs = np.linspace(0, flat.size - 1, min(6, flat.size)).astype(int)
+        for i in idxs:
+            orig = flat[i]
+            flat[i] = orig + eps
+            P[name] = from_host(flat.reshape(arr.shape).astype(np.float32))
+            lp = sub._si_penalty_loss(P)
+            flat[i] = orig - eps
+            P[name] = from_host(flat.reshape(arr.shape).astype(np.float32))
+            lm = sub._si_penalty_loss(P)
+            flat[i] = orig
+            P[name] = from_host(flat.reshape(arr.shape).astype(np.float32))
+            num = (lp - lm) / (2 * eps)
+            a = gflat[i]
+            denom = max(1.0, abs(num), abs(a))
+            rel = abs(num - a) / denom
+            checked += 1
+            if rel > max_rel:
+                max_rel = rel
+                worst = (name, int(i), float(num), float(a))
+    ok = max_rel < tol
+    print(f"[si_gradcheck units={units} aux_loc_weight={aux_loc_weight}] checked={checked} "
+          f"max_rel_err={max_rel:.2e} {'OK' if ok else 'FAIL'}  worst={worst}")
+    return ok
+
+
+def si_selftest():
+    """SI mechanics + byte-identical-OFF, no world needed. (1) si=False allocates NO SI state. (2) the fold
+    cadence fires and the consolidated importance Omega GROWS over training. (3) si=True + si_c=0.0 leaves the
+    param trajectory byte-identical to si=False (the penalty is inert at zero strength -> the OFF/zero path is
+    provably the same weights), and si=True + si_c>0 actually changes it (the anchor is load-bearing)."""
+    xp_to = to_host
+
+    def _run(si, si_c, steps=240, consolidate_every=20, aux_loc=1.0):
+        cfg = PCSConfig(n_hidden=16, feat_dim=12, n_latent=8, n_actions=4, n_drive=4, tbptt_T=8,
+                        seed=42, aux_loc_weight=aux_loc, si=si, si_c=si_c,
+                        si_consolidate_every=consolidate_every)
+        sub = PredictiveContinualSubstrate(cfg)
+        rng = np.random.default_rng(123)
+        a_prev = -1
+        for t in range(steps):
+            v1 = rng.standard_normal(cfg.feat_dim).astype(np.float32)
+            d = rng.standard_normal(cfg.n_drive).astype(np.float32)
+            pos = rng.standard_normal(2).astype(np.float32)
+            h = sub.observe(v1, a_prev, d, pos_target=pos)
+            a = sub.act(h)
+            sub.learn(float(rng.standard_normal()))
+            a_prev = a
+        return sub
+
+    off = _run(si=False, si_c=0.1)
+    no_state = (off._si_omega is None and off._si_w is None and off._si_theta_star is None)
+
+    zero = _run(si=True, si_c=0.0)
+    on = _run(si=True, si_c=0.1)
+    # OFF vs si_c=0 must be byte-identical weights; OFF vs si_c>0 must differ (anchor is load-bearing).
+    identical_zero = (off.weight_hash() == zero.weight_hash())
+    differs_on = (off.weight_hash() != on.weight_hash())
+    folds_fired = on.n_si_folds > 0
+    sum_omega = sum(float(np.asarray(xp_to(v)).sum()) for v in on._si_omega.values())
+    omega_grows = sum_omega > 0.0
+
+    ok = no_state and identical_zero and differs_on and folds_fired and omega_grows
+    print(f"[si_selftest] off_no_state={no_state} off==si_c0={identical_zero} off!=si_on={differs_on} "
+          f"folds={on.n_si_folds}(fired={folds_fired}) sum_Omega={sum_omega:.4g}(grows={omega_grows}) "
+          f"{'OK' if ok else 'FAIL'}")
+    return ok
+
+
 if __name__ == "__main__":
     ap = argparse.ArgumentParser(description="PCS substrate self-checks")
     ap.add_argument("--gradcheck", action="store_true")
     ap.add_argument("--selftest", action="store_true")
+    ap.add_argument("--si-selftest", action="store_true")
     args = ap.parse_args()
     all_ok = True
-    if args.selftest or not (args.gradcheck or args.selftest):
+    _no_flag = not (args.gradcheck or args.selftest or args.si_selftest)
+    if args.selftest or _no_flag:
         all_ok &= selftest()
-    if args.gradcheck or not (args.gradcheck or args.selftest):
+    if args.si_selftest or _no_flag:
+        all_ok &= si_selftest()
+    if args.gradcheck or _no_flag:
         all_ok &= gradcheck("rate")
         all_ok &= gradcheck("spike", tol=5e-2)
         # multi-horizon (2nd move) backward — validate the k-ahead JEPA grads (tbptt_T=5 -> horizons {1,3})
@@ -1186,4 +1385,8 @@ if __name__ == "__main__":
         all_ok &= gradcheck("spike", tol=5e-2, aux_loc_weight=1.0)
         # all moves combined (k-ahead JEPA + value head + SR head + aux-loc head together)
         all_ok &= gradcheck("rate", pred_horizon=3, value_weight=1.0, sr_weight=1.0, aux_loc_weight=1.0)
+        # SYNAPTIC INTELLIGENCE (anti-forgetting) backward — validate the anchor-penalty gradient (Omega
+        # non-zero, anchor offset = mid-training) against FD, composing with the aux-loc place head. THE GATE.
+        all_ok &= si_gradcheck("rate")
+        all_ok &= si_gradcheck("spike")
     raise SystemExit(0 if all_ok else 1)
