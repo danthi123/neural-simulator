@@ -474,6 +474,17 @@ def run_seed(seed, units="rate", encoder="learned_ema", n_hidden=512, n_latent=6
     # ---- 7. RATE MAPS (per-unit mean activation binned by (x,y)); store a compact summary ----
     ratemap = _rate_map_summary(H, POS, wcfg.grid_size)
 
+    # ---- 7b. SPATIAL-INFORMATION place-cell metric (FLOOR-INDEPENDENT; ADDITIVE diagnostic only) ----
+    # Reported ALONGSIDE the linear-decode place metric (presence["place"]) so the two can be compared on
+    # the aux-loc runs; the pre-registered GO gate is UNCHANGED. Computed on the SAME probe trajectory for
+    # the TRAINED core (H) and the UNTRAINED reservoir (H_un — the inflated-floor control, replayed on the
+    # identical input sequence so its rows align 1:1 with POS). The demonstration: the untrained reservoir
+    # has HIGH linear-decode R^2 (presence["place"]["floor_untrained"]) but LOW SI / few significant place
+    # cells, whereas a genuine emergent place code raises SI >> its shuffle null. This RE-MEASURES place
+    # floor-independently without touching the gate.
+    place_si_trained = _place_cell_metrics(H, POS, wcfg.grid_size, seed)
+    place_si_untrained = _place_cell_metrics(H_un, POS, wcfg.grid_size, seed)
+
     # ---- seed verdict ----
     n_cleared_lb = sum(1 for f in PRESENCE_BAR if cleared[f] and behav.get(f, {}).get("load_bearing", False))
     cleared_names = [f for f in PRESENCE_BAR if cleared[f]]
@@ -502,6 +513,10 @@ def run_seed(seed, units="rate", encoder="learned_ema", n_hidden=512, n_latent=6
         "core_lesion_collapses_all": bool(core_collapses),
         "coverage": {k2: _f(v2) if isinstance(v2, (int, float)) else v2 for k2, v2 in coverage.items()},
         "rate_map_summary": ratemap,
+        # FLOOR-INDEPENDENT place metric (additive diagnostic) — trained core vs the untrained reservoir,
+        # side-by-side with the linear-decode place metric in presence["place"] (r2 vs floor_untrained).
+        "place_cell_si": place_si_trained,
+        "place_cell_si_untrained": place_si_untrained,
         "train_loss_curve": train_out.get("loss_curve", []),
         "intact_behavior": {k2: _f(v2) for k2, v2 in intact.items() if isinstance(v2, (int, float))},
         "SEED_GO": bool(seed_go),
@@ -533,6 +548,15 @@ def run_seed(seed, units="rate", encoder="learned_ema", n_hidden=512, n_latent=6
                 if lesion_mode == "both":
                     line += f"  jaccard={overlap.get(f)}"
             print(line)
+        # FLOOR-INDEPENDENT place metric — trained vs untrained reservoir, side by side (the dissociation)
+        pt, pu = place_si_trained, place_si_untrained
+        print(f"    place[SI]  trained: decodeR2={_f(presence['place']['r2'])} "
+              f"SI={pt.get('mean_si')} (shuf={pt.get('mean_si_shuffle')}, x{pt.get('si_real_over_shuffle_ratio')}) "
+              f"place_cells={pt.get('n_place_cells')}/{pt.get('n_units')} stab={pt.get('mean_stability')}")
+        print(f"    place[SI]  UNTRAINED: decodeR2={_f(presence['place']['floor_untrained'])} "
+              f"SI={pu.get('mean_si')} (shuf={pu.get('mean_si_shuffle')}, x{pu.get('si_real_over_shuffle_ratio')}) "
+              f"place_cells={pu.get('n_place_cells')}/{pu.get('n_units')} stab={pu.get('mean_stability')}  "
+              f"<- HIGH decode, LOW SI = the inflated floor")
     return result
 
 
@@ -640,6 +664,141 @@ def _rate_map_summary(H, POS, grid_size):
 
 
 # ─────────────────────────────────────────────────────────────────────────────
+# SPATIAL-INFORMATION place-cell metric (FLOOR-INDEPENDENT, additive diagnostic)
+# ─────────────────────────────────────────────────────────────────────────────
+PLACE_SI_SHUFFLES = 100           # shuffle-null draws for the SI significance test
+PLACE_SI_STABILITY_THRESH = 0.30  # split-half rate-map correlation a place cell must exceed
+
+
+def _place_cell_metrics(H, POS, grid_size, seed, n_shuffle=PLACE_SI_SHUFFLES,
+                        stab_thresh=PLACE_SI_STABILITY_THRESH):
+    """FLOOR-INDEPENDENT place metric: Skaggs spatial information + rate-map stability + a shuffle-null
+    significance test, computed per hidden unit from H (states) and POS (true (x,y)).
+
+    WHY THIS EXISTS (the floor-scaling finding). The pre-registered place metric is LINEAR-DECODE R^2 of
+    (x,y) from h_t, and that metric is a CAPACITY ARTIFACT: a big UNTRAINED random reservoir linearly-
+    decodes position well (its floor R^2 rises with n_hidden, ~0.49@128 -> ~0.72@2048) WITHOUT any single
+    unit being place-tuned, because a linear head over many random features approximates position
+    (Schoyen 2023: decodability != tuning). At n_hidden=512 a genuine emergent place code (decode ~0.6-0.7)
+    is masked because it sits at/below the inflated floor. Skaggs SI + stability are SINGLE-UNIT tuning
+    measures — a random reservoir scores near its OWN shuffle null on them even while its population decode
+    is high — so this metric credits a genuine place code and does NOT credit the reservoir. It is reported
+    ALONGSIDE (never replacing) the linear-decode place metric + the pre-registered GO gate.
+
+    RATE PROXY. Firing rates are non-negative, so the unit "rate" is the RECTIFIED activation max(0, h):
+    rate units are tanh in [-1,1] (the negative lobe is treated as no firing, as a real cell's sub-threshold
+    drive is); spike units carry a non-negative low-pass trace, so rectification is ~inert there. The SAME
+    transform is applied to the trained core and the untrained reservoir, so the comparison is fair.
+
+    SKAGGS bits-per-activation:   SI_u = Sum_i p_i (lam_i / lam) log2(lam_i / lam)
+      p_i   = occupancy of spatial bin i (fraction of steps whose (x,y) fell in bin i)
+      lam_i = mean rectified activation of unit u over the steps in bin i
+      lam   = overall mean rectified activation of unit u  ( = Sum_i p_i lam_i )
+    Bins with lam_i = 0 contribute 0 (0*log0 := 0). This is a KL divergence KL(q||p), q_i = p_i lam_i/lam,
+    so SI >= 0 always. It is MAGNITUDE-NORMALIZED (bits per activation): a unit that merely fires MORE is
+    not rewarded — only spatial CONCENTRATION of firing raises SI. (This is the property the linear decode
+    lacks and why the metric is floor-independent.)
+
+    STABILITY. Split the rollout into first/second temporal halves, build a rate map for each, and
+    Pearson-correlate the two per unit over bins occupied in BOTH halves. Place cells are stable; a random
+    unit's two half-maps are uncorrelated.
+
+    SIGNIFICANCE. Shuffle the POS<->state correspondence n_shuffle times (occupancy p_i and overall lam are
+    permutation-invariant; only lam_i changes), recompute SI -> a per-unit null distribution. A unit is a
+    'place cell' iff its real SI exceeds its OWN shuffle 95th percentile AND its stability > stab_thresh.
+
+    Returns population summaries (mean/median/max SI, #/frac significant place cells, mean stability) plus
+    the pooled shuffle-null level and the real/shuffle SI ratio, so trained vs untrained read side-by-side.
+    HONESTY: this is a functional tuning read-out; it asserts nothing about felt spatial experience.
+    """
+    H = np.asarray(H, dtype=np.float64)
+    POS = np.asarray(POS, dtype=np.float64)
+    if H.ndim != 2 or len(H) < 50:
+        return {"note": "too few probe steps", "n_steps": int(len(H))}
+    T, U = H.shape
+    R = np.maximum(0.0, H)                         # non-negative rate proxy (rectified activation)
+    xs = np.clip(POS[:, 0].astype(int), 0, grid_size - 1)
+    ys = np.clip(POS[:, 1].astype(int), 0, grid_size - 1)
+    bin_idx = xs * grid_size + ys                 # (T,) flat spatial bin per step
+    n_bins = grid_size * grid_size
+    counts = np.bincount(bin_idx, minlength=n_bins).astype(np.float64)   # (n_bins,) occupancy count
+    occ = counts > 0
+    n_occ = int(occ.sum())
+    if n_occ < 3:
+        return {"note": "too few occupied bins", "n_occupied_bins": n_occ, "n_steps": int(T)}
+    p_i = counts / counts.sum()                   # (n_bins,) occupancy probability
+
+    # one-hot bin matrix B (n_bins x T): sum_R = B @ R gives per-bin summed rate (n_bins x U). Permuting R's
+    # rows realizes the shuffle null cheaply via BLAS (occupancy/overall-mean stay invariant, only lam_i moves).
+    B = np.zeros((n_bins, T), dtype=np.float64)
+    B[bin_idx, np.arange(T)] = 1.0
+    lam = R.mean(axis=0)                           # (U,) overall mean rate ( = Sum_i p_i lam_i )
+    live = lam > 1e-9                              # dead (all-nonpositive) units -> SI := 0
+
+    def _si_from_sumR(sum_R):
+        lam_i = np.zeros_like(sum_R)               # (n_bins x U)
+        lam_i[occ] = sum_R[occ] / counts[occ, None]
+        lam_safe = np.where(live, lam, 1.0)        # avoid /0 for dead units (masked out below)
+        ratio = lam_i / lam_safe[None, :]
+        with np.errstate(divide="ignore", invalid="ignore"):
+            contrib = p_i[:, None] * ratio * np.log2(ratio)
+        contrib[~np.isfinite(contrib)] = 0.0       # lam_i=0 bins (0*log0) + unoccupied bins -> 0
+        si = contrib.sum(axis=0)
+        si[~live] = 0.0
+        return si
+
+    si_real = _si_from_sumR(B @ R)                 # (U,) real spatial information per unit
+
+    rng = np.random.default_rng(seed + 4242)
+    si_shuf = np.empty((n_shuffle, U), dtype=np.float64)
+    for s in range(n_shuffle):
+        si_shuf[s] = _si_from_sumR(B @ R[rng.permutation(T)])
+    thresh_u = np.percentile(si_shuf, 95, axis=0)  # (U,) per-unit 95th-pct shuffle null
+
+    # split-half rate-map stability per unit over co-occupied bins
+    def _ratemap(sl):
+        bi = bin_idx[sl]
+        c = np.bincount(bi, minlength=n_bins).astype(np.float64)
+        Bh = np.zeros((n_bins, len(bi))); Bh[bi, np.arange(len(bi))] = 1.0
+        o = c > 0
+        rm = np.full((n_bins, U), np.nan)
+        rm[o] = (Bh @ R[sl])[o] / c[o, None]
+        return rm, o
+
+    half = T // 2
+    rm1, o1 = _ratemap(slice(0, half))
+    rm2, o2 = _ratemap(slice(half, T))
+    both = o1 & o2
+    stability = np.full(U, np.nan)
+    if int(both.sum()) >= 3:
+        a = rm1[both]; b = rm2[both]               # (n_both x U)
+        am = a - a.mean(0); bm = b - b.mean(0)
+        denom = np.sqrt((am * am).sum(0) * (bm * bm).sum(0)) + 1e-12
+        stability = (am * bm).sum(0) / denom
+        stability[~live] = np.nan
+
+    is_place = live & (si_real > thresh_u) & (np.nan_to_num(stability, nan=-1.0) > stab_thresh)
+    n_place = int(is_place.sum())
+    live_any = bool(live.any())
+    mean_si_live = float(np.nanmean(si_real[live])) if live_any else float("nan")
+    return {
+        "n_steps": int(T), "n_units": int(U), "n_live_units": int(live.sum()),
+        "n_occupied_bins": n_occ, "n_shuffle": int(n_shuffle), "stability_thresh": stab_thresh,
+        "mean_si": _f(mean_si_live) if live_any else None,
+        "median_si": _f(np.nanmedian(si_real[live])) if live_any else None,
+        "max_si": _f(np.nanmax(si_real[live])) if live_any else None,
+        "mean_si_shuffle": _f(float(si_shuf.mean())),
+        "si_95_shuffle_pooled": _f(float(np.percentile(si_shuf, 95))),
+        "si_real_over_shuffle_ratio": _f(mean_si_live / (float(si_shuf.mean()) + 1e-9)) if live_any else None,
+        "mean_stability": _f(float(np.nanmean(stability))) if np.isfinite(stability).any() else None,
+        "n_place_cells": n_place,
+        "frac_place_cells": _f(n_place / U),
+        "mean_si_place_cells": _f(float(np.nanmean(si_real[is_place]))) if n_place > 0 else None,
+        "mean_stability_place_cells": _f(float(np.nanmean(stability[is_place]))) if n_place > 0 else None,
+    }
+
+
+# ─────────────────────────────────────────────────────────────────────────────
 # aggregate + main
 # ─────────────────────────────────────────────────────────────────────────────
 def aggregate(per_seed):
@@ -649,9 +808,30 @@ def aggregate(per_seed):
     faculty_lb_counts = {f: sum(1 for r in per_seed if r["behavioral_dependency"].get(f, {}).get("load_bearing"))
                          for f in PRESENCE_BAR}
     emergence_go = (n_go >= int(np.ceil(SEEDS_REQUIRED_FRAC * n))) and (n_cov >= int(np.ceil(SEEDS_REQUIRED_FRAC * n)))
+
+    # FLOOR-INDEPENDENT place metric summary (additive diagnostic; NOT part of the GO gate). Mean across
+    # seeds of the linear-decode place metric vs the spatial-information metric, trained core vs untrained
+    # reservoir — the side-by-side that shows the untrained floor is high-decode-but-low-SI.
+    def _col(getter):
+        vals = [getter(r) for r in per_seed]
+        vals = [float(v) for v in vals if isinstance(v, (int, float))]
+        return _f(float(np.mean(vals))) if vals else None
+    place_cell_si_summary = {
+        "trained_place_decode_r2": _col(lambda r: r["presence"]["place"].get("r2")),
+        "untrained_place_decode_r2": _col(lambda r: r["presence"]["place"].get("floor_untrained")),
+        "trained_mean_si": _col(lambda r: r["place_cell_si"].get("mean_si")),
+        "untrained_mean_si": _col(lambda r: r["place_cell_si_untrained"].get("mean_si")),
+        "trained_si_over_shuffle_ratio": _col(lambda r: r["place_cell_si"].get("si_real_over_shuffle_ratio")),
+        "untrained_si_over_shuffle_ratio": _col(lambda r: r["place_cell_si_untrained"].get("si_real_over_shuffle_ratio")),
+        "trained_frac_place_cells": _col(lambda r: r["place_cell_si"].get("frac_place_cells")),
+        "untrained_frac_place_cells": _col(lambda r: r["place_cell_si_untrained"].get("frac_place_cells")),
+        "trained_mean_stability": _col(lambda r: r["place_cell_si"].get("mean_stability")),
+        "untrained_mean_stability": _col(lambda r: r["place_cell_si_untrained"].get("mean_stability")),
+    }
     return {"n_seeds": n, "n_seed_go": n_go, "n_coverage_pass": n_cov,
             "faculty_load_bearing_counts": faculty_lb_counts,
             "seeds_required": int(np.ceil(SEEDS_REQUIRED_FRAC * n)),
+            "place_cell_si_summary": place_cell_si_summary,
             "EMERGENCE_GO": bool(emergence_go)}
 
 
