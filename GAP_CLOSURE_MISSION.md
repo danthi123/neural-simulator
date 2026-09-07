@@ -21,9 +21,15 @@ unlike SR) and **place decode-LB 3/6 (best of any mechanism**; base 2, SR 0). Th
 masks it (place decode 0.59-0.70 sits at/below floor) — exactly the capacity-artifact (smoke at n_hidden=256 showed
 +0.044). **→ the QUEUED n_hidden=128 run (floor ~0.49) is the decisive test: does aux-loc + low floor make place
 CLEAR + load-bearing?** Result: `sim-agi-fork/research/findings/raw/_fork_pcs_auxloc10_6seed.json` (rc=0 01:49).
-**⚡ Owner gaming (GPU PAUSED for no contention) but TOKENS PLENTIFUL for dev work.** GPU-free dev in flight: an
-INSTRUMENT FIX (floor-independent place metric — rate-map spatial-information, since the linear-decode-vs-reservoir
-metric is capacity-artifact-flawed) + heartbeat re-armed. GPU sweep resumes after gaming (`gpu_queue.sh resume`).
+**⚡⚡ INSTRUMENT-FIX LANDED (`e6fff9be` on agi-fork) — REFRAMES the fork's place negatives as PARTLY an artifact.**
+Floor-independent Skaggs-SI place-cell metric added (additive diagnostic; GO gate unchanged). Validation (seed42,
+25k): trained aux-loc core vs untrained reservoir — linear-decode R² 0.650 vs 0.631 (FAILS to separate, floor masks)
+but **SI real/shuffle 3.06 vs 1.71, frac-place-cells 0.928 vs 0.516, stability 0.672 vs 0.394 (ALL separate)**; and
+across n_hidden 128→1024 the decode floor inflates +0.20 while SI stays FLAT (capacity-invariant). ⇒ **aux-loc creates
+a GENUINE place code the old linear-decode metric was HIDING behind the reservoir floor.** The SI metric now rides
+EVERY run; the resumed aux-loc sweep (n_hidden 128/256/512/1024 × magnitudes) gives the decisive floor-independent
+6-seed read. Re-queued auxloc10@512 for its SI. Owner GAMING (GPU paused, no contention); TOKENS PLENTIFUL → writing
+the fork consolidating finding next. Resume the sweep after gaming: `bash tools/gpu_queue.sh resume`.
 
 **🌙 OVERNIGHT (owner: prior low-budget plan → run headless, HARVEST AFTER; now UPDATED: tokens plentiful, GPU paused for gaming).**
 - **MONITORS DELIBERATELY STOPPED** (heartbeat b5kjwer7j + fork-DONE br0cyaqmx) so nothing re-invokes the session
