@@ -13,7 +13,41 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ---
 
-## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-06 ~14:30 (AGI-FORK STARTED + AWS mouth training; READ FIRST; LATEST anchor)
+## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-06 ~21:15 (FORK 4th move launched + research-at-wall; READ FIRST; LATEST anchor)
+
+**Owner (this session): pursue the AGI fork with local usage; "GO HARD on tokens/workflows" (48% weekly budget left,
+resets in ~14h → burn it). Proceed autonomously.** All lanes below are LIVE background work — do not double-launch.
+
+- **FORK 4th MOVE — potential-based approach SHAPING (make homing LEARNABLE).** The 3rd move (nav-required) failed
+  only because reward was too SPARSE (larder reached ~0.1-0.5% of steps → REINFORCE never learned to home →
+  the position-requirement never bound). Fix: `--nav-shaping` PBS `r += ns*(γΦ(s')−Φ(s))`, Φ=−dist/dnorm, on the
+  PRE-teleport post-move pos (Φ(larder)=0). **Committed `b94e6a57` (agi-fork, pushed both); substrate UNTOUCHED
+  (byte-identical when ns=0).** CPU mechanics verified (approach rewarded, retreat penalized, OFF byte-identical).
+- **SMOKE (ns=2.0, seed42) — direction RIGHT, magnitude-dependent:** eats 235→**1514** (6.4×), reward_rate
+  0.0008→0.025, place R² **0.532 vs untrained-floor 0.515** (moved from BELOW→slightly ABOVE floor) — but 0/4
+  load-bearing (place not yet LB; consistent w/ reactive gradient-following, not a robust place code).
+- **GPU SWEEP RUNNING** (`gpu_queue`, Monitor **bjcjvs97t** catches DONE lines): 6-seed × nav_shaping
+  **{1.0, 2.0, 4.0, 8.0}** → `_fork_pcs_shaping_ns{10,20,40,80}_6seed.json` (~2h). NB research predicts 8.0 may
+  overshoot into hovering/local-optima (Φ dominating the sparse reward).
+- **RESEARCH AT THE WALL (3 fork negatives → DR gate): 4 agents, 2 DONE, strong convergence.** Root cause =
+  a single-step JEPA objective does NOT REQUIRE persistent position (primacy-bias + representational drift → the
+  code fades BELOW baseline; exactly our symptom). **Top fix = make position load-bearing ON THE OBJECTIVE; #1
+  mechanism = SUCCESSOR-REPRESENTATION predictive target** (Stachenfeld 2017 "hippocampus = predictive/successor
+  map" — the deep biology of place cells; Banino 2018 grid cells; Vijayabaskaran 2026 place code persists when
+  policy-load-bearing; Mirowski 2017 aux self-localization loss). Shaping VALIDATED sound + NOT a goal-compass
+  cheat (a reward term, unlike an observation, still needs internalized rel-position) + terminal-potential bug
+  AVOIDED. Pending: path-integration/grid-cells agent + drift/anti-forgetting agent.
+- **BUILD AGENT RUNNING (worktree, CPU):** `_fork_pcs_floor_scaling.py` — is "place below untrained floor" partly a
+  CAPACITY ARTIFACT (does the untrained-reservoir floor RISE with n_hidden)?
+- **NEXT ACTIONS:** (1) harvest the shaping sweep → magnitude curve + honest read on whether ANY magnitude makes
+  place load-bearing; (2) with full research in, BUILD the **SR objective** (vector successor-feature head modeled
+  on the existing value head's within-window discounted-MC target + analytic grad + **gradcheck**, additive/
+  default-off) as the principled "retain position" mechanism; (3) SR 6-seed after the sweep. Compose SR + shaping.
+- **AWS mouth batch-64 running (~Sep 8):** `research/queue/.aws_gpu` (i-046d3211935253398, us-east-1); harvest the
+  d192×2B wt103 verdict (crosses fair trigram?), then `bash tools/aws_gpu.sh terminate` (billing while up).
+- Honesty boundary kept throughout: functional read-outs only; a fork negative is a first-class deliverable (FORK.md).
+
+## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-06 ~14:30 (AGI-FORK STARTED + AWS mouth training; earlier anchor)
 
 **🍴 AGI-FORK STARTED (owner pushed to start it, lots of local usage before reset).** Separate from `main`
 (strict biology path, untouched). Live state:
