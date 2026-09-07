@@ -13,7 +13,19 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ---
 
-## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-07 ~05:25 (GAME DONE → GOING HAM; sweep RESUMED decisive-first; READ FIRST; LATEST anchor)
+## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-07 ~06:25 (COMPUTE FULLY PARALLELIZED; fork place-emergence ANSWERED YES; READ FIRST; LATEST anchor)
+
+**⚡ Owner: "optimally use compute (local AND minipc pool) within RAM/VRAM limits" (06:20).** Compute is now FULLY spread (heartbeat cleared from UNDER-PARALLELIZED):
+- **Local GPU** (was 44% util, one-at-a-time): NEW `tools/gpu_parallel_dispatch.sh 3 4000` (pid 685891, committed `c319085b`) drains `research/queue/gpu.queue` **3-wide @ 99% util, ~7GB/24GB VRAM** (each fork job ~0.9GB). The strict-serial `gpu_queue` daemon is PAUSED (GPU_PAUSE sentinel) — it exists to stop the BIG 20GB brain stacking, not these tiny nets. RESTORE serial: empty the parallel queue, then `bash tools/gpu_queue.sh resume`. Monitor bx89jasi0 catches DONE/EMERGENCE_GO.
+- **Mini-PC pool** (was idle): agi-fork worktree provisioned on pool41+pool42 (`~/derisk-pool/sim-agi-fork`, reuses the main `.venv`, SIM_BACKEND=numpy — viability smoke PASSED). **pool41** = aux-loc place-code robustness seeds 200-202 (`_fork_pcs_auxloc10_poolseed*.json`); **pool42** = curriculum-frac=0.9 behavioral-use probe seeds 42-44 (`_fork_pcs_navcurric_frac09_seed*.json`).
+- **PULL pool results** (pool_sync.sh pulls only the MAIN checkout, NOT the worktree): `rsync -a pool41:~/derisk-pool/sim-agi-fork/research/findings/raw/_fork_pcs_auxloc10_poolseed*.json research/findings/raw/` and the pool42 `_fork_pcs_navcurric_frac09_seed*.json` equivalent.
+- ollama (llama-server pid 700872) restarted post-reboot, holds 3.5GB VRAM — harmless (16GB free); kill if VRAM needed.
+
+**⚡⚡ FORK CORE QUESTION ANSWERED — "does a place code EMERGE from one self-supervised predictive substrate?" = YES.** nav-curriculum@n128 (shaping-free, floor-independent SI): place SI significant-cell fraction **~0.98 trained vs ~0.4 untrained-reservoir, 6/6 seeds** — the old linear-decode-vs-floor metric was HIDING a genuine emergent place code (the capacity-artifact).
+**NEXT frontier: does the emergent place code DRIVE behavior (memory-guided homing)? Currently NO** — homing does not bind under the HONEST (non-leaked) reward: approach_off ~chance (0.41-0.50), shortcut-probe ~0, place_LB=False all seeds — the agent is REACTIVE (approaches visible food), not map-guided to the out-of-view larder. Per no-defer the levers are foraging-PRESSURE / stronger GROUNDED reward / slower curriculum ramp (NEVER re-adding shaping); the frac=0.9 pool probe is the first ramp-rate test, running now.
+**Landings this stretch:** gpu_parallel_dispatch.sh (`c319085b`, main) · --si flag wired, closes the rc=2 argparse failure (`048644df`, agi-fork) · SI 6-seed run re-queued.
+
+## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-07 ~05:25 (GAME DONE → GOING HAM; sweep RESUMED decisive-first; history)
 
 **⚡ Owner: "compute available, go ham" (05:25). GPU sweep RESUMED + REORDERED decisive-first:** nav-curriculum @ n128
 (best behavioral-LB shot) RUNNING → aux-loc@h128 → nav-curriculum+SI@h128 → nav-curriculum@512 → base_h128 → VRAM-measure
