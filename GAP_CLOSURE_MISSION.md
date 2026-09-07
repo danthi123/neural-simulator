@@ -13,7 +13,16 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ---
 
-## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-07 ~07:20 (FORK RE-ANCHORED to the MAIN GOALS: affect + self-awareness on the predictive substrate; READ FIRST; LATEST anchor)
+## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-07 ~13:00 (FORK COMPLETE → REFOCUS ON THE MOUTH, the critical path; READ FIRST; LATEST anchor)
+
+**⚡ FORK DELIVERED ITS VERDICT (emergence-gradient finding `d4efc2d6`): place emerges STRONG / familiarity WEAK (2-3/6) / affect NONE (0/6, 4 configs) — faculties emerge in proportion to inherence-in-prediction; validates the main project's dedicated-affect-ORGAN approach.** Fork is now DORMANT (delivered its meta-result; not grinding marginal refinements). Vikunja #210 updated, plain-language.
+
+**RECOMMENDATION (Claude, owner asked "where next" — owner not yet confirmed): REFOCUS on the MOUTH — the critical path to genuine conversation, unblocking ~48/64 integrated-brain ledger rows.** State verified 2026-09-07 ~13:00:
+- The decisive test is ALREADY RUNNING: AWS g6.8xlarge `i-046d3211935253398` training `run_d192_2b` (FineWeb-Edu 2B tokens at the ALREADY-DEPLOYED d_model=192 size) — GPU 54%, actively training (NOT idle-billing), verdict ~Sep 8. FineWeb-Edu direction was STRONG-positive single-seed (~7x the +0.03 bar, improving with depth); this scales it.
+- DEPLOYABILITY is SETTLED (d192 is the deployed size) → the AWS run is a PURE FLUENCY test. If it crosses the bar → retire the Qwen scaffold (default-off flag already de-risked, 2026-09-04). If not → next data-scale lever (bigger corpus).
+- KEY PENDING ACTIONS: (1) harvest the AWS verdict when it lands; (2) `bash tools/aws_gpu.sh stop` the instance after (cost). No local work is un-blocked by that verdict, so local GPU/pool are legitimately idle (the lever is the cloud run; deployability settled) — NOT a manufactured-parallelism gap.
+
+## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-07 ~07:20 (FORK RE-ANCHORED to the MAIN GOALS: affect + self-awareness on the predictive substrate; history)
 
 **⚡ OWNER STEER (07:15): the AGI fork's purpose is to ADVANCE THE MAIN PROJECT GOALS (genuine conversation · affective world-model · emotion · self-awareness · curiosity) with LOOSER biological-strictness (rate substrate not strict-spiking; tractable-function not bit-exact) — NOT to explore tangential faculties. Navigation/homing was a measurability-driven VALIDATION of the substrate, now CLOSED. Re-aim at the north-star.**
 
