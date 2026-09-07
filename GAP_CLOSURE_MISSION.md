@@ -23,6 +23,12 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 **⚡⚡ FORK CORE QUESTION ANSWERED — "does a place code EMERGE from one self-supervised predictive substrate?" = YES.** nav-curriculum@n128 (shaping-free, floor-independent SI): place SI significant-cell fraction **~0.98 trained vs ~0.4 untrained-reservoir, 6/6 seeds** — the old linear-decode-vs-floor metric was HIDING a genuine emergent place code (the capacity-artifact).
 **NEXT frontier: does the emergent place code DRIVE behavior (memory-guided homing)? Currently NO** — homing does not bind under the HONEST (non-leaked) reward: approach_off ~chance (0.41-0.50), shortcut-probe ~0, place_LB=False all seeds — the agent is REACTIVE (approaches visible food), not map-guided to the out-of-view larder. Per no-defer the levers are foraging-PRESSURE / stronger GROUNDED reward / slower curriculum ramp (NEVER re-adding shaping); the frac=0.9 pool probe is the first ramp-rate test, running now.
+**UPDATE 06:40 — harvested:**
+- place-emergence now ROCK-SOLID at **12 seeds** (6 GPU + 6 pool aux-loc 200-205: SI frac ~0.98-1.0 trained vs ~0.3-0.5 reservoir).
+- frac=0.9 behavioral 6-seed DONE = **1/6 load-bearing** (s44: shortcut-probe 0.54, place_LB=True, eats 8926; s43/s101 weak-partial; 3/6 fail) — behavioral-use ACHIEVABLE but inconsistent (frac=0.5 was 0/6).
+- NOW running on pool: **frac=0.9 + n_train=400k** training-duration test (`_fork_pcs_navcurric_frac09_t400k_seed{42,43,44,100,101,102}.json`; pool41=42-44, pool42=100-102) — does 2x training make it consistent?
+- RAG: prior finding `2026-06-19-limbic-core-load-bearing-hidden-goal-diagnostic.md` = hidden-goal load-bearing is genuinely hard (spiking-limbic got a NEGATIVE, structural bias dominated); the fork already SURPASSED it on s44 (place-lesion collapses homing = genuine). Next lever after 400k: stronger GROUNDED reward / exploration if duration alone doesn't fix consistency.
+- ollama holds ~11GB VRAM (2 llama-server instances, likely Hermes loop) — LEFT ALONE (fork jobs ~1GB, 5.5GB free, dispatcher 4GB-gated = no OOM).
 **Landings this stretch:** gpu_parallel_dispatch.sh (`c319085b`, main) · --si flag wired, closes the rc=2 argparse failure (`048644df`, agi-fork) · SI 6-seed run re-queued.
 
 ## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-07 ~05:25 (GAME DONE → GOING HAM; sweep RESUMED decisive-first; history)
