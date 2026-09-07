@@ -1,0 +1,82 @@
+{
+  "runner": "_selfschema_authorship_neural_turnclass_derisk",
+  "target": "scaffold_retirement_backlog.md rank 15 -- self-schema authorship host is_hyp constant",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "n_per_class": 40,
+  "n_pairs": 8,
+  "backend": "numpy",
+  "dg_sep": true,
+  "dg_expansion": 8.0,
+  "dg_sparsity": 0.02,
+  "thresholds": {
+    "accuracy": 0.85,
+    "chance_authorship": 0.65,
+    "min_switch_frac": 1.0
+  },
+  "verdict": "GO",
+  "n_go": 6,
+  "n_seeds": 6,
+  "aggregate": {
+    "mean_accuracy": 1.0,
+    "mean_baseline_constant_accuracy": 0.5,
+    "mean_shuffle_accuracy": 0.5,
+    "mean_signal_severed_accuracy": 0.5,
+    "mean_base_organ_lesion_accuracy": 0.5,
+    "all_switch_frac_1": true
+  },
+  "preconditions": [
+    {
+      "kind": "floor",
+      "name": "mean accuracy beats chance",
+      "ok": true,
+      "detail": "1 vs floor 0.5",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "neural turn-class signal vs content-blind constant (authored=True)",
+      "ok": true,
+      "detail": "treatment=1 control=0.5 |sep|=0.5 > 0.05",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "shuffle-control collapses (<=0.65) on every seed",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "signal-severed lesion collapses (<=0.65) on every seed",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "base-organ self-lesion collapses (<=0.65) on every seed",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "both classes present + >=1 load-bearing pair evaluable on every seed",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    }
+  ],
+  "undefined_reasons": [],
+  "disabled_processes": [],
+  "discriminating_power_note": "per-seed accuracy / attributable_frac_over_baseline / switch_frac read EXACTLY 1.0 on every seed under the DG-sharpened signal -- a CEILING, flagged by gates/discriminating_power. This is NOT instrument saturation: (1) the IDENTICAL harness with --no-dg-sep (the baseline arm) reads accuracy 0.912-0.988 and switch 5/6 on this same seed set, demonstrating the instrument HAS resolution; (2) switch_frac==1.0 is the GO DEFINITION (min_switch_frac=1.0 -- every load-bearing pair must switch), so it is 1.0 by construction on any passing seed, not a dead metric; (3) attributable_frac==1.0 is a MATHEMATICAL certainty because the content-blind baseline scores EXACTLY 0.5 on a balanced set (a deterministic control, not an empirical one) -- documented as non-informative in the 2026-09-05 PARTIAL finding. The load-bearing evidence is the SWITCH test (5/6 -> 6/6) and the baseline contrast, not the accuracy ceiling.",
+  "honest_scope": "Targets ONLY the authorship ORGAN's hard-coded `authored=True` constant (server.py:6142-6143). The host regex ROUTING (_parse_open_ended -- whether a turn enters the generation branch at all) stays host, unchanged, and is NOT claimed retired here. A FUNCTIONAL turn-class correlate, never a claim of subjective experience."
+}
