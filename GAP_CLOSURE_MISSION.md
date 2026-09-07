@@ -39,6 +39,12 @@ background work — do not double-launch.
 - **BOTH FRONTS live:** MAIN-path = Rank-6 substrate-store query-cost 6-seed running LOCALLY (bg bm329nwms, CPU nice'd)
   + Rank-15 self-schema 5/6→6/6 fix (opus build agent, worktree) + AWS mouth. Instrument-fix (behavioral-lesion,
   opus agent) also in flight on the fork. Scoping agent found the clean ship-a-GO bucket largely EXHAUSTED (09-05).
+- **✅ RANK-6 DONE = GO (`c013ab206`): synaptic fact-store parity 6/6, query-time ~= numpy, ~4.7GB RAM. Owner
+  APPROVED the production-default FLIP.** Flip WORKFLOW `wv43sdc6m` running (locate → flip+CPU-verify → 3 adversarial
+  skeptics → LAND/QUEUE-GPU/HOLD rec; NEVER touches the GPU). Retires the STORAGE shortcut (numpy-kb→synaptic), NOT
+  the host-computed BINDING idealization (2026-08-08 note). On its rec: merge+push+sync, or queue the GPU 6-seed.
+- **Rank-15 agent DORMANT mid-validation-sweep (exp16/32/64 robustness)** — built the pattern-separation fix; will
+  harvest from worktree agent-aaeb4d21802d9932a if it doesn't self-resume (secondary, main-path).
 
 - **FORK 4th MOVE — potential-based approach SHAPING (make homing LEARNABLE).** The 3rd move (nav-required) failed
   only because reward was too SPARSE (larder reached ~0.1-0.5% of steps → REINFORCE never learned to home →
