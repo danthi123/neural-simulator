@@ -13,7 +13,25 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ---
 
-## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-07 ~01:40 (OVERNIGHT HEADLESS QUEUE — harvest after; READ FIRST; LATEST anchor)
+## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-07 ~04:40 (GPU-free dev while owner games; READ FIRST; LATEST anchor)
+
+**⚡ Owner gaming (local GPU paused, sweep waits); tokens plentiful → GPU-free dev. Done this stretch:** Vikunja
+board synced (#210 fork, #211 rank-6 synaptic-store; stamped `0f96da0d`) · fork consolidating finding banked
+(`f85e50e0` — mechanism sweep + the 2 instrument findings) · mouth next-token-scale launch plan banked
+(`docs/plans/2026-09-07-mouth-next-token-scale-launch-plan.md` — both d192×2B verdict branches, deployability CLEAR,
+data-prep is AWS-only; ready ~Sep 8).
+**⚡⚡ FORK behavioral-load-bearing RESEARCH — DECISIVE + caught a CONFOUND in our own approach:** the distance
+reward-shaping (`--nav-shaping`, Φ=−dist) is a LEAKED POSITION CUE — the agent hill-climbs it REACTIVELY without
+memory (structurally the hand-the-(x,y) cheat), so shaping made homing learnable but REMOVED the memory requirement
+→ that is WHY place stayed non-load-bearing, and the QUEUED composed aux-loc+nav+**shaping** run is CONFOUNDED for
+behavioral-LB. FIX (Florensa 2017 reverse-curriculum; Andrychowicz 2017 HER; Banino 2018 shortcut-test): make homing
+learnable via a START-DISTANCE CURRICULUM (no leaked gradient) + a NOVEL-SHORTCUT probe a reactive policy CANNOT
+pass. **BUILDING now (agent a44caf97, worktree, GPU-free): `--nav-curriculum` + the shortcut load-bearing probe.**
+When it lands + GPU frees: queue aux-loc + nav + curriculum + probe (NO shaping) = the decisive behavioral-LB test.
+Also flagged: re-check whether a DIFFERENT population (not the labeled aux-loc units) carries the causal weight
+(Schøyen dissociation). Research citations in the agent outputs (banked).
+
+## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-07 ~01:40 (OVERNIGHT HEADLESS QUEUE — earlier detail)
 
 **⚡ AUX-LOC-ALONE (n_hidden=512, 200k) DONE — PROMISING (best mechanism yet, but floor-masked):** EMERGENCE_GO=false
 0/6, BUT place margin **−0.037** (≈ base −0.04; FAR better than SR −0.11/−0.14 — aux-loc does NOT suppress place,
