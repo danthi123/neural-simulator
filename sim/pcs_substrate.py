@@ -427,6 +427,10 @@ class PredictiveContinualSubstrate:
         self._last_rhat = None        # rhat = reward-head prediction at act() time (for the valence RPE read-out)
         self.last_valence_rpe = None  # AFFECT signal A: reward - rhat (better/worse than expected; dopamine-RPE sign)
         self.last_valence_adv = 0.0   # AFFECT signal B: actor-critic advantage (value_weight>0 only)
+        self.last_pred_error = None   # SELF-AWARENESS (familiarity) signal: realized one-step JEPA latent
+        #                               prediction error for the transition (t-1)->t, read out live in observe()
+        #                               (byte-identical bookkeeping; no new param/loss). Low=familiar/in-dist,
+        #                               high=novel/out-of-dist. None until the first prediction is possible.
         self._baseline = 0.0
         # learning-progress (LP) EMAs of the predictive loss
         self._loss_fast = None
@@ -557,6 +561,9 @@ class PredictiveContinualSubstrate:
                      and every downstream loss/grad are byte-identical to the pre-change substrate.
         """
         xp = self.xp
+        # SELF-AWARENESS read-out guard: a one-step prediction error is only defined once a PRIOR step has
+        # established h_{t-1} and an efference a_{t-1}. Capture BEFORE n_steps is advanced below.
+        had_prev = self.n_steps > 0
         # backend-agnostic input coercion. Avoid a device->host->device round-trip when the
         # world already hands us a backend array (the GPU path); only marshal host inputs.
         def _to_backend(a):
@@ -602,6 +609,23 @@ class PredictiveContinualSubstrate:
         if pos_target is not None:
             step["pos_target"] = _to_backend(pos_target)
         self._tape.append(step)
+
+        # ── SELF-AWARENESS / familiarity read-out (byte-identical; mirrors Part A's last_valence_rpe) ──
+        # The substrate's OWN horizon-1 JEPA training residual (see _window_forward lines 764-770), checked
+        # LIVE at the moment of prediction-violation: from the PREVIOUS masked state h_{t-1} and efference
+        # a_{t-1} (both already in scope here as h_prev_masked / a_prev), predict THIS view's latent and
+        # compare to the stop-grad EMA encoding z_t of the current view. Mean over latent dims (matches the
+        # objective's per-term (diff*diff) up to the 1/n_latent normalization). Pure read — no new param, no
+        # gradient, no RNG draw, no state mutation — so weights AND training dynamics stay byte-identical.
+        # Low = the view was predictable (FAMILIAR / in-distribution); high = mispredicted (NOVEL / OOD). A
+        # TRAINED core separates the two; an UNTRAINED reservoir predicts everything badly (no separation) —
+        # which is exactly what makes this signal genuinely trained-emergent. FUNCTIONAL read-out only; it
+        # asserts nothing about felt/phenomenal familiarity.
+        if had_prev:
+            z_now = xp.tanh(self.W_enc_ema @ v1feat + self.b_enc_ema)          # stop-grad encode of current view
+            ehat_prev = self.P["W_pred"] @ h_prev_masked + self.P["W_pred_a"] @ a_prev + self.P["b_pred"]
+            diff = ehat_prev - z_now
+            self.last_pred_error = float(to_host((diff * diff).mean()))
         return h_t
 
     def act(self, h_t=None, greedy: bool = False, explore_eps: float = 0.0) -> int:
