@@ -155,8 +155,9 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--bundle", default=DEFAULT_BUNDLE)
     ap.add_argument("--out", default="research/findings/raw/_rank1_composer_rebuild/verify.json")
-    ap.add_argument("--out-bundle", default=None,
-                    help="write the rebuilt onebrain bundle here (default: alongside --out)")
+    ap.add_argument("--out-bundle", default="bridges/developed/rebuilt_scale787_onebrain",
+                    help="write the rebuilt onebrain bundle here (a bundle, not a result artifact -> keep it OUT of "
+                         "research/findings/raw so the result-provenance gates do not scan its verbatim copied files)")
     ap.add_argument("--moat-n", type=int, default=80, help="out-of-store cue probes")
     ap.add_argument("--limit-facts", type=int, default=0, help="cap facts (smoke); 0 = all")
     args = ap.parse_args()
@@ -403,6 +404,9 @@ def main():
                      "yesno_moat_safe": go_yn_safe},
         "verdict": "GO" if go else "NO-GO",
         "verdict_block": verdict_block,
+        # surface the preconditions at top level so gates/verdict_preconditions sees the verdict travel with what
+        # earned it (Verdict.to_dict() nests them under verdict_block; the gate reads the top-level key).
+        "preconditions": (verdict_block.get("preconditions") if isinstance(verdict_block, dict) else []) or [],
     }
     os.makedirs(os.path.dirname(args.out) or ".", exist_ok=True)
     with open(args.out, "w", encoding="utf-8") as fh:
