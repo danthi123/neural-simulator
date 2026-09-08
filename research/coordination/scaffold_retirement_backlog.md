@@ -152,16 +152,23 @@ re-cited from a finding's own headline.** Corrections to the ranked list (lines 
 NOW are recorded here, append-only, per the section's own convention.
 
 - **Rank 1 (composer bundle pinned to rf) — DE-RISKED GO (2026-09-08); the literal rebuild is DONE + verified on the
-  REAL bundle; production flip gated on 2 characterized items.** The spiking DG-CA3 `onebrain` composer rebuilt the
-  REAL deployed 404-fact `scale787/day_33` bundle (seed 42, fact-shard retrieval ON) and matched the host `rf`
-  closed-form: `query_patient`/`query_agent` strict parity 1.0, recall rf==ob==0.99; `ask_yes_no` unambiguous 0.994;
-  moat 0 confab (100/100 abstain out-of-store); scramble recall 0.99→0.0, attribution 1.0. Finding
+  REAL bundle; flip gate (1) CLOSED same-day, flip gate (2) remains the named UX rung.** The spiking DG-CA3 `onebrain`
+  composer rebuilt the REAL deployed 404-fact `scale787/day_33` bundle (seed 42, fact-shard retrieval ON) and matched
+  the host `rf` closed-form: `query_patient`/`query_agent` strict parity 1.0, recall rf==ob==0.99; `ask_yes_no`
+  unambiguous 0.994; moat 0 confab (100/100 abstain out-of-store); scramble recall 0.99→0.0, attribution 1.0. Finding
   `research/findings/2026-09-08-rank1-composer-rebuild-rf-to-onebrain-real-bundle-parity-GO.md`, artifact
   `research/findings/raw/_rank1_composer_rebuild/verify_404.json`, merge `8a2a435a0`. The DG-CA3 sharded retrieval
   sub-blocker was already resolved (`2026-09-05-onebrain-fact-shard-wirein-production-composer.md`). **NOT flipped
-  (`composer_kind` default stays `'rf'`).** Flip gates: (1) HARD/correctness — `load_developed_brain` hardcodes
-  `onebrain_k_max=None→32`, so a >32-fact onebrain bundle reloads TRUNCATED; thread `onebrain_k_max` through
-  `load_developed_brain` + `webapp/server.py`'s loader, sized to `n_facts` (additive) ← next build; (2) UX — the
+  (`composer_kind` default stays `'rf'`).** Flip gate (1) HARD/correctness — CLOSED: `onebrain_k_max` is now threaded
+  through `load_developed_brain` (auto-sized `len(facts)+16` when the resolved `composer_kind=='onebrain'`),
+  `MultiTurnAgent` (previously dropped it entirely — the actual reason the seam was unreachable from
+  `load_developed_brain(use_multiturn=True)`/`webapp/server.py`, the ONLY path either ever uses), and
+  `webapp/server.py` (`BRAIN_ONEBRAIN_K_MAX` override). Verified on the SAME 404-fact bundle: reload restores all 404
+  facts (`k_max` auto-sized to 420) where the pre-fix code CRASHED (`OneBrainComposer store full: k_max=32 reached`,
+  worse than "truncated" — no composite fast-path exists for an onebrain rebuild); the `'rf'` path is proven
+  BYTE-IDENTICAL by hash (`kb_sha256` identical at `HEAD~1` vs `HEAD`, not just code-inspection). Commits `78e46e129`
+  (the thread) + `1e364214f` (the verify), finding
+  `research/findings/2026-09-08-onebrain-kmax-loadpath-thread-GO.md`. Flip gate (2) UX still open — the
   ambiguous-`ask_yes_no` under-recall (onebrain returns 'unknown' on 29 same-(agent,action) cues where rf guesses
   'yes'; moat-safe, `ob_no_on_stored=0`; the per-(agent,action) multi-block check is the named rung).
 - **Rank 2 (integrated_loop thread) — Part A GO (wired default-OFF), Part B UNDEFINED at production scale, the

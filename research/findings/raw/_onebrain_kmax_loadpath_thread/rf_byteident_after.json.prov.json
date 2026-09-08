@@ -1,0 +1,29 @@
+{
+ "run_id": "1788886265-638696",
+ "runner": "research/runners/_onebrain_kmax_rf_byteident_check.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-a29361f6d5456bbbe/research/runners/_onebrain_kmax_rf_byteident_check.py",
+  "--tag",
+  "after_fix",
+  "--out",
+  "research/findings/raw/_onebrain_kmax_loadpath_thread/rf_byteident_after.json"
+ ],
+ "git_sha": "78e46e129",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-08T12:51:05",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_onebrain_kmax_loadpath_thread/rf_byteident_after.json"
+}

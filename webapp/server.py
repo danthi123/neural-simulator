@@ -3746,6 +3746,22 @@ def _ltm_decode_escalation_on() -> bool:
     return env.strip().lower() in ("1", "true", "on", "yes")
 
 
+def _onebrain_k_max_override():
+    """Optional int override for `load_developed_brain`'s `onebrain_k_max` (rank-1 composer-rebuild load-path
+    thread, 2026-09-08). Unset (the default) -> None -> `load_developed_brain` AUTO-SIZES it from THIS bundle's
+    own fact count when the resolved composer_kind is 'onebrain' (`len(facts) + 16`); a no-op for every other
+    composer_kind, so an 'rf' bundle (the production default) reloads BYTE-IDENTICAL to before this existed.
+    BRAIN_ONEBRAIN_K_MAX=<int> pins an explicit value instead (e.g. to pre-provision headroom for facts taught
+    after load, mirroring `vocab_headroom`'s intent one level up). See
+    research/findings/2026-09-08-rank1-composer-rebuild-rf-to-onebrain-real-bundle-parity-GO.md's named blocker
+    ("load_developed_brain must thread onebrain_k_max >= n_facts") and `developed_brain_io.load_developed_brain`'s
+    own `onebrain_k_max` doc for the auto-sizing this override sits in front of."""
+    env = os.environ.get("BRAIN_ONEBRAIN_K_MAX")
+    if env is None or not env.strip():
+        return None
+    return int(env.strip())
+
+
 def _resolve_ltm_bundle():
     """Resolve the cortical LTM bundle path (returns a dir string, or None for the byte-identical no-LTM path).
       * BRAIN_LTM_BUNDLE=<path>                      -> that bundle (explicit override, unchanged).
@@ -3926,13 +3942,18 @@ def _build_chat_brain(brain: str, renderer: str):
         # BrainConversationalAgent only reads integrated_loop on the 'onebrain' branch); threaded here so a bundle
         # whose OWN manifest composer_kind is (or becomes, e.g. after a rank-1 bundle rebuild) 'onebrain' picks it
         # up with no further code change.
+        # onebrain_k_max (rank-1 composer-rebuild load-path thread, 2026-09-08): None (unset) -> load_developed_
+        # brain auto-sizes it from THIS bundle's own fact count whenever the resolved composer_kind is 'onebrain'
+        # (byte-identical no-op for 'rf'/'rate'/'slotbinder', i.e. every bundle on disk today) -- see
+        # _onebrain_k_max_override()'s docstring + the finding it closes.
         agent, manifest = load_developed_brain(bundle, use_multiturn=True,
                                                enable_neural_render=False,
                                                composer_kind=_composer_kind_override,
                                                integrated_loop=_integrated_loop_enabled(),
                                                ltm_bundle=_ltm_bundle,
                                                enable_codebook_cache=_ltm_codebook_cache_on(),
-                                               enable_decode_escalation=_ltm_decode_escalation_on())
+                                               enable_decode_escalation=_ltm_decode_escalation_on(),
+                                               onebrain_k_max=_onebrain_k_max_override())
         aliases = set(manifest.get("self_aliases") or []) | set(DEFAULT_SELF_ALIASES)
         source = f"developed-brain:{brain}" + (" +LTM" if _ltm_bundle else "")
     else:

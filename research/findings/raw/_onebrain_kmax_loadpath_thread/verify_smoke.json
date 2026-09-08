@@ -1,0 +1,87 @@
+{
+  "runner": "_onebrain_kmax_loadpath_verify",
+  "sim_backend": "numpy",
+  "bundle": "/home/dant123/Projects/sim/bridges/developed/rebuilt_scale787_onebrain",
+  "manifest_composer_kind": "onebrain",
+  "manifest_n_facts": 404,
+  "actual_facts_json_len": 404,
+  "after_fix": {
+    "load_s": 154.30782961845398,
+    "composer_class": "OneBrainComposer",
+    "k_max": 420,
+    "n_recalled": 404
+  },
+  "before_fix_forced_32": {
+    "crashed": true,
+    "error": "RuntimeError('OneBrainComposer store full: k_max=32 reached (shard or raise k_max)')"
+  },
+  "rf_bundle": {
+    "bundle": "/home/dant123/Projects/sim/bridges/developed/scale787/day_33",
+    "manifest_composer_kind": "rf",
+    "composer_class": "RFPhasorComposer",
+    "manifest_n_facts": 404,
+    "n_recalled": 404,
+    "load_s": 0.04580426216125488,
+    "has_k_max_attr": false
+  },
+  "go_flags": {
+    "after_fix_full_recall_no_truncation": true,
+    "before_fix_repro_crashed_at_kmax32": true,
+    "rf_bundle_unaffected": true
+  },
+  "verdict": "GO",
+  "verdict_block": {
+    "label": "onebrain_k_max load-path thread: no truncation, prior default still crashes, rf untouched",
+    "status": "GO",
+    "go": true,
+    "undefined_reasons": [],
+    "preconditions": [
+      {
+        "kind": "require",
+        "name": "after-fix reload restores ALL stored facts (no truncation)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "before-fix repro (k_max=32 forced) still crashes on the SAME bundle (fix is load-bearing)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "'rf' production bundle unaffected (same composer/class family, full recall, no k_max)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      }
+    ],
+    "disabled_processes": [],
+    "chance": null
+  },
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "after-fix reload restores ALL stored facts (no truncation)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "before-fix repro (k_max=32 forced) still crashes on the SAME bundle (fix is load-bearing)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "'rf' production bundle unaffected (same composer/class family, full recall, no k_max)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    }
+  ]
+}
