@@ -404,6 +404,32 @@ def test_rf_phasor_composer_batched_substrate_scan_parity(seed):
     for i, (_f, h) in enumerate(cb.kb):
         assert np.array_equal(comps_b[i], cb._retrieve_substrate(h))        # byte-identical per block
 
+    # OP-COUNT: the batched path retrieves ALL K composites in ONE resonate (`_retrieve_all_substrate`), not O(K)
+    # per-fact `_retrieve_substrate` calls -- a MISS (unknown agent) scans every fact, the worst case for the loop.
+    cb_c = RFPhasorComposer(seed=seed, D=128, period=200, enable_substrate_store=True,
+                            enable_batched_substrate_scan=True)
+    for a, v, p in facts:
+        cb_c.store(a, v, p)
+    calls = {"per_fact": 0, "batched": 0}
+    orig_rs, orig_ras = cb_c._retrieve_substrate, cb_c._retrieve_all_substrate
+    cb_c._retrieve_substrate = lambda *a, **k: (calls.__setitem__("per_fact", calls["per_fact"] + 1), orig_rs(*a, **k))[1]
+    cb_c._retrieve_all_substrate = lambda *a, **k: (calls.__setitem__("batched", calls["batched"] + 1), orig_ras(*a, **k))[1]
+    assert cb_c.query_patient("nobody", "go") is None                      # unknown agent -> full scan + abstain
+    assert calls["per_fact"] == 0 and calls["batched"] == 1                # O(1) batched retrieve, not O(K) per-fact
+
+    # LOAD-BEARING lesion: zero one fact's stored substrate weights (cache cold) -> its batched recall COLLAPSES
+    # (abstains) while neighbours are intact -> the answer comes FROM the substrate weights via firing.
+    import scipy.sparse as _sp
+    cl = RFPhasorComposer(seed=seed, D=128, period=200, enable_substrate_store=True,
+                          enable_batched_substrate_scan=True)
+    for a, v, p in facts:
+        cl.store(a, v, p)
+    h0 = cl.kb[0][1]; nn = h0.core_config.num_neurons
+    h0.cp_rf_w_re = _sp.csr_matrix((nn, nn)); h0.cp_rf_w_im = _sp.csr_matrix((nn, nn))   # lesion fact0
+    assert np.allclose(np.asarray(cl._read_store_phasor(h0)), 0.0)         # lesion holds at measurement
+    assert cl.query_patient(*facts[0][:2]) is None                         # lesioned fact collapsed
+    assert cl.query_patient(*facts[1][:2]) == facts[1][2]                  # neighbour intact
+
 
 @pytest.mark.parametrize("seed", [42, 43, 44])
 def test_rf_phasor_composer_grounded_codes_interface(seed):
