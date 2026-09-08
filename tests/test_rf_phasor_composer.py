@@ -367,6 +367,45 @@ def test_rf_phasor_composer_substrate_store_parity(seed):
 
 
 @pytest.mark.parametrize("seed", [42, 43, 44])
+def test_rf_phasor_composer_batched_substrate_scan_parity(seed):
+    """rank-6/#211 batched substrate recall (opt-in): with `enable_substrate_store=True` the recall scan today
+    falls back to a per-fact loop (one rf_kick+rf_resonate per candidate fact -> O(K) resonates/query).
+    `enable_batched_substrate_scan=True` routes it through the SAME batched scan the numpy-kb path uses -- ONE
+    block-diagonal resonate retrieves ALL K composites (`_retrieve_all_substrate`, each block an exact copy of
+    `_retrieve_substrate`'s wiring -> byte-identical per block), then the batched `_scan_first_match` runs. It must
+    give the SAME answers as BOTH the per-fact substrate loop AND the numpy-kb default, and preserve the moat.
+    Op-count: the substrate resonate count drops from O(K) (per-fact) to O(1)+O(cue-roles) (batched)."""
+    facts = [("dog", "go", "north"), ("cat", "run", "south"), ("river", "look", "apple"),
+             ("bird", "come", "east"), ("fish", "stop", "west"), ("wolf", "go", "cold")]
+    cn = RFPhasorComposer(seed=seed, D=128, period=200, enable_substrate_store=False)
+    cs = RFPhasorComposer(seed=seed, D=128, period=200, enable_substrate_store=True)     # per-fact loop (shipped)
+    cb = RFPhasorComposer(seed=seed, D=128, period=200, enable_substrate_store=True,
+                          enable_batched_substrate_scan=True)                            # batched (new)
+    for a, v, p in facts:
+        cn.store(a, v, p); cs.store(a, v, p); cb.store(a, v, p)
+    # explicit polarity-tagged facts so yes/no has a defined answer (a bare fact binds no polarity role)
+    for c in (cn, cs, cb):
+        c.store("dog", "like", "cat", polarity="AFFIRM"); c.store("cat", "like", "dog", polarity="NEGATE")
+    assert cs._can_batch_scan() is False       # flag OFF on the substrate store -> per-fact loop (byte-identical)
+    assert cb._can_batch_scan() is True        # flag ON -> batched
+    for a, v, p in facts:
+        assert cb.query_patient(a, v) == cs.query_patient(a, v) == cn.query_patient(a, v) == p
+        assert cb.query_agent(v, p) == cs.query_agent(v, p) == cn.query_agent(v, p) == a
+    assert cb.ask_yes_no("dog", "like", "cat") == cs.ask_yes_no("dog", "like", "cat") == cn.ask_yes_no("dog", "like", "cat") == "yes"
+    assert cb.ask_yes_no("cat", "like", "dog") == cs.ask_yes_no("cat", "like", "dog") == cn.ask_yes_no("cat", "like", "dog") == "no"
+    # no-confab moat: unknown agent / no-such-fact cues abstain on the batched path exactly as on the others
+    assert cb.query_patient("zebra", "go") is cs.query_patient("zebra", "go") is None
+    assert cb.query_agent("go", "river") is cs.query_agent("go", "river") is None
+    assert cb.ask_yes_no("zebra", "go", "north") == cs.ask_yes_no("zebra", "go", "north") == "unknown"
+    # substrate read is load-bearing: a batched query fires the readout neurons (not angle(weight)); verify the
+    # batched-retrieved composite equals the per-fact retrieve exactly (block-diagonal parity).
+    import numpy as np
+    comps_b = cb._retrieve_all_substrate([h for _f, h in cb.kb])
+    for i, (_f, h) in enumerate(cb.kb):
+        assert np.array_equal(comps_b[i], cb._retrieve_substrate(h))        # byte-identical per block
+
+
+@pytest.mark.parametrize("seed", [42, 43, 44])
 def test_rf_phasor_composer_grounded_codes_interface(seed):
     """Cheat-A conversion (opt-in INTERFACE): grounded_codes={word: phases[D]} overrides the random rng.uniform codes
     for those words. The composer must USE the provided codes and still do who/what Q&A + abstention. This guards the

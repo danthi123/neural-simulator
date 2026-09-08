@@ -70,7 +70,8 @@ class RFPhasorComposer:
                  sparse_index_c=8, sparse_index_conf_floor=0.5,
                  enable_codebook_cache=False,
                  enable_decode_escalation=False, decode_escalate_margin=0.008,
-                 decode_escalate_period=2000, spiking_recall_margin=False):
+                 decode_escalate_period=2000, spiking_recall_margin=False,
+                 enable_batched_substrate_scan=False):
         self.seed = int(seed)
         self.D = int(D)
         self.period = int(period)
@@ -166,6 +167,25 @@ class RFPhasorComposer:
         # (cheat-C conversion, opt-in) hold each fact's bound composite in the SUBSTRATE (per-fact trigger->readout
         # complex weights) instead of a numpy array in self.kb; retrieve via firing. Default OFF: numpy kb fast path.
         self.enable_substrate_store = bool(enable_substrate_store)
+        # (rank-6/#211 batched substrate recall, opt-in, DEFAULT-OFF = byte-identical) With the substrate store ON,
+        # the recall scan today CANNOT batch (`_can_batch_scan` returns False), so it falls back to the per-fact loop
+        # (`_iter_facts` -> `_retrieve_substrate`: one rf_kick+rf_resonate GPU op PER candidate fact -> O(K)
+        # resonates/query, ~65ms/fact). This flag routes the substrate store through the SAME batched scan the
+        # numpy-kb fast path uses: ONE block-diagonal resonate retrieves ALL K composites at once
+        # (`_retrieve_all_substrate` -- each block an EXACT copy of `_retrieve_substrate`'s trigger->readout wiring,
+        # so it is byte-identical per block: verified numpy 5/5 blocks bit-identical, max abs diff 0.0), then the
+        # existing `_scan_first_match` (`_unbind_all_phases` + `_cleanup_all`) does the unbind+cleanup batched. The
+        # per-query resonate count drops O(K)->O(1) (retrieve-all) + O(cue-roles) (unbind-all), a CONSTANT
+        # independent of the shard's ~200 facts. Answer-identical to the per-fact loop AND the substrate read stays
+        # load-bearing: the composites are reconstructed by FIRING the consolidated readout neurons (the phase
+        # readout through the magnitude floor), NOT read as angle(weight) -- lesioning the weights collapses the
+        # answer. Env BRAIN_BATCHED_SUBSTRATE_SCAN=1 flips it on without a code change (the owner reviews any
+        # default-on flip separately; leave OFF here). NUMPY-verified; cupy wall-time speedup is a DEFERRED GPU run.
+        self.enable_batched_substrate_scan = bool(enable_batched_substrate_scan) or (
+            os.environ.get("BRAIN_BATCHED_SUBSTRATE_SCAN", "").strip().lower() in ("1", "true", "on", "yes"))
+        self._scan_comps_cache = None        # comps from the last batched `_scan_first_match` (winner reuse; per-query)
+        self._substrate_scan_bridge = None   # cached consolidated block-diagonal retrieve bridge (rebuilt on kb change)
+        self._substrate_scan_key = None      # handle-identity key the cached bridge was built for (invalidation)
         # (cheat-B conversion, opt-in) route _cleanup through the fully-on-bridge spiking cleanup (matched filter on
         # the complex synapse + Izhikevich WTA). Default OFF: numpy argmax stays the fast path (the rate composer's
         # NEF-cleanup opt-in pattern). Validated == numpy multi-seed.
@@ -1064,9 +1084,99 @@ class RFPhasorComposer:
 
     # --- batched query fast-path (the O(K) store-scan -> ONE launch; perf, answer-identical) ---
     def _can_batch_scan(self):
-        """Batched scan applies on the numpy-kb fast path (no substrate-store) with the numpy matched-filter
-        cleanup (no spiking-cleanup). Otherwise the per-fact loop is used (answer-identical either way)."""
-        return bool(self.kb) and not self.enable_substrate_store and not self.enable_spiking_cleanup
+        """Batched scan applies on the numpy-kb fast path with the numpy matched-filter cleanup (no
+        spiking-cleanup). The SUBSTRATE store also batches when `enable_batched_substrate_scan` is on (rank-6/#211):
+        one block-diagonal resonate retrieves all K composites (`_retrieve_all_substrate`), then the same batched
+        `_scan_first_match` runs -- answer-identical to the per-fact loop. Otherwise the per-fact loop is used."""
+        if not self.kb or self.enable_spiking_cleanup:
+            return False
+        if self.enable_substrate_store:
+            return self.enable_batched_substrate_scan
+        return True
+
+    def _read_store_phasor(self, b):
+        """Read a fact's stored composite phasor (g*exp(2pi i comp)) back out of its substrate bridge's PERSISTENT
+        trigger->readout complex weights (cp_rf_w_re/im). `_store_substrate` installed conns [(1+k, 0, g*zc[k])],
+        so the phasor lives in column 0, rows 1..D of the weight matrix. Used ONLY to WIRE the consolidated
+        batched-retrieve bridge (relocating stored synaptic weights, the engram-consolidation motif) -- the
+        recovered composite is still produced by FIRING that bridge's readout neurons in `_retrieve_all_substrate`,
+        so the substrate read stays load-bearing (this is not the answer, only the wiring source)."""
+        D = self.D
+        wre = np.asarray(to_host(b.cp_rf_w_re.toarray()))
+        wim = np.asarray(to_host(b.cp_rf_w_im.toarray()))
+        return wre[1:1 + D, 0] + 1j * wim[1:1 + D, 0]
+
+    def _retrieve_all_substrate(self, handles):
+        """Batched substrate retrieve (rank-6/#211): reconstruct ALL K stored composites in ONE resonate over a
+        block-diagonal bridge of K isolated (1+D)-neuron blocks -- each block an EXACT copy of
+        `_retrieve_substrate`'s trigger->readout wiring (no cross-block coupling), so the per-block phase readout
+        equals K separate `_retrieve_substrate` calls EXACTLY. Parity holds because the RF resonate is a pure
+        function of (weights, kick, period, lam, floor): `_rf_advance_one` (sim/bridge.py) reads NO per-neuron
+        heterogeneity, so block count/placement cannot perturb a block's result (verified numpy: 5/5 blocks
+        bit-identical, max abs diff 0.0). Pays the ~(period+8)-step launch overhead ONCE instead of K times -- the
+        same "batch many tiny ops into one launch" fix `_unbind_all_phases` uses for the numpy-kb scan. Returns the
+        K composites as a list of D-vectors.
+
+        The consolidated bridge is CACHED (keyed on the facts' handle identities) so its weights are assembled once
+        per kb state; every subsequent query only re-kicks + resonates (weights persist across rf_kick). `store()`
+        appends a new handle and `update_on_mismatch()` replaces one -> the key changes -> the cache rebuilds.
+
+        Parity fallback for the opt-in READ-NOISE de-risk knob (`_retrieve_noise > 0`): that path draws a STATEFUL
+        per-fact RNG and reads each block's own readout magnitude, so it retrieves per-fact to preserve byte-identical
+        draw order (correctness over the batch speedup for that knob). The default -- noise off, the production LTM
+        retrieve -- takes the batched resonate."""
+        D = self.D
+        K = len(handles)
+        if K == 0:
+            return []
+        if self._retrieve_noise > 0.0:
+            return [self._retrieve_substrate(h) for h in handles]   # stateful-RNG parity: keep per-fact draw order
+        key = tuple(id(h) for h in handles)
+        b = self._substrate_scan_bridge
+        n = K * (1 + D)
+        if b is None or self._substrate_scan_key != key:
+            conns = []
+            for i, h in enumerate(handles):
+                off = i * (1 + D)
+                zc = self._read_store_phasor(h)                     # the fact's stored composite phasor [D]
+                conns.extend((off + 1 + k, off, zc[k]) for k in range(D))
+            b = _build_rf_bridge(n, self.seed)
+            b.core_config.enable_rf_cudagraph = self._enable_rf_cudagraph
+            b.rf_set_complex_weights(conns)
+            self._substrate_scan_bridge = b
+            self._substrate_scan_key = key
+        kick = np.zeros(n, dtype=np.complex128)
+        for i in range(K):
+            kick[i * (1 + D)] = complex(self._retrieve_kick_mag)   # fire each block's trigger (a unit phasor)
+        b.rf_kick(kick, period=self.period, lam=self._retrieve_lam, floor=self._retrieve_floor)
+        b.rf_resonate_steps(self.period + 8)
+        phases = np.asarray(b.rf_read_phases())
+        return [phases[i * (1 + D) + 1: i * (1 + D) + 1 + D] for i in range(K)]
+
+    def _scan_comps(self):
+        """The K stored composites the batched scan matches over. Numpy-kb: the arrays live in kb directly.
+        Substrate store: ONE batched resonate reconstructs all K (`_retrieve_all_substrate`) instead of the
+        per-fact `_iter_facts` loop. The result is cached on `_scan_comps_cache` so the matched winner is not
+        re-fired (`_matched_comp`)."""
+        if self.enable_substrate_store:
+            comps = self._retrieve_all_substrate([h for _f, h in self.kb])
+        else:
+            comps = [comp for _f, comp in self.kb]
+        self._scan_comps_cache = comps
+        return comps
+
+    def _matched_comp(self, i):
+        """The composite ARRAY for matched kb index `i` (batched-scan paths call this instead of reading
+        `self.kb[i][1]`, which is a substrate bridge HANDLE, not a composite, when the substrate store is on).
+        Numpy-kb: the stored array (byte-identical to the old `self.kb[i][1]`). Substrate: reuse the batched-scan
+        retrieve cache so the winner is not re-fired; fall back to a single `_retrieve_substrate` if the cache is
+        absent/stale (byte-identical either way -- the batched block equals the per-fact retrieve)."""
+        if not self.enable_substrate_store:
+            return self.kb[i][1]
+        cache = self._scan_comps_cache
+        if cache is not None and 0 <= i < len(cache):
+            return cache[i]
+        return self._retrieve_substrate(self.kb[i][1])
 
     def _unbind_all_phases(self, comps, role):
         """Batched substrate unbind: unbind `role` from ALL K stored composites in ONE resonate over a
@@ -1150,7 +1260,7 @@ class RFPhasorComposer:
         runner-up is re-examined at a finer resonate period before being dropped -- the confidence-gated
         "effortful second look" that recovers a genuinely-stored fact the coarse phase readout mis-argmaxed. See
         the `enable_decode_escalation` note in __init__ (root cause: the 1/period phase-readout quantization)."""
-        comps = [comp for _f, comp in self.kb]
+        comps = self._scan_comps()   # numpy-kb arrays, OR ONE batched substrate retrieve (rank-6/#211)
         mask = np.ones(len(comps), dtype=bool)
         for role, val in cue_roles.items():
             rec = self._unbind_all_phases(comps, role)
@@ -1333,13 +1443,12 @@ class RFPhasorComposer:
         made visible). Stored on self.last_trace; never affects the return value."""
         if not self.trace:
             return
-        comps = [comp for _f, comp in self.kb]
-        n_scanned = len(comps)
+        n_scanned = len(self.kb)
         roles_out = []
         # the cue roles first (what the question asserted -> their decoded match over the matched block, if any)
         cue_decoded = {}
         if idx is not None:
-            comp = comps[idx]
+            comp = self._matched_comp(idx)   # numpy array OR batched-scan-retrieved composite (substrate store)
             for role in cue_roles:
                 rec = self._unbind_phases(comp, role)
                 stats = self._cleanup_all_score_stats(np.asarray(rec)[None, :])
@@ -1512,11 +1621,11 @@ class RFPhasorComposer:
             self.last_trace = None
         if self._can_batch_scan():
             i = self._scan_first_match(action=action, patient=patient)
-            ans = self.unbind(self.kb[i][1], "agent") if i is not None else None
+            ans = self.unbind(self._matched_comp(i), "agent") if i is not None else None
             if self.trace:
                 ans_roles = {}
                 if i is not None:
-                    rec = self._unbind_phases(self.kb[i][1], "agent")
+                    rec = self._unbind_phases(self._matched_comp(i), "agent")
                     stats = self._cleanup_all_score_stats(np.asarray(rec)[None, :])
                     ans_roles = {"agent": stats[0] if stats else {"word": ans, "confidence": None}}
                 self._trace_scan({"action": action, "patient": patient}, i,
@@ -1542,7 +1651,8 @@ class RFPhasorComposer:
                 if self.trace:
                     self._trace_scan({"agent": agent, "action": action}, None, {})
                 return None
-            fact, comp = self.kb[i]
+            fact = self.kb[i][0]
+            comp = self._matched_comp(i)   # numpy array OR batched-scan-retrieved composite (substrate store)
             noun = self._render(comp, "patient", fact["patient"], order_fn=order_fn)
             adjs = [self.unbind(comp, r) for r in ("attribute", "attribute2") if r in fact]
             ans = " ".join(adjs + [noun]) if adjs else noun
@@ -1659,9 +1769,9 @@ class RFPhasorComposer:
                 if self.trace:
                     self._trace_scan({"agent": agent, "action": action, "patient": patient}, None, {})
                 return "unknown"
-            pol = self.unbind(self.kb[i][1], "polarity", self.pol_words)
+            pol = self.unbind(self._matched_comp(i), "polarity", self.pol_words)
             if self.trace:
-                rec = self._unbind_phases(self.kb[i][1], "polarity")
+                rec = self._unbind_phases(self._matched_comp(i), "polarity")
                 stats = self._cleanup_all_score_stats(np.asarray(rec)[None, :], words=self.pol_words)
                 self._trace_scan({"agent": agent, "action": action, "patient": patient}, i,
                                  {"polarity": stats[0] if stats else {"word": pol, "confidence": None}})
