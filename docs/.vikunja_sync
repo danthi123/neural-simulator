@@ -28,3 +28,6 @@ Emergence-gradient finding landed (d4efc2d6): place STRONG / familiarity WEAK (2
 
 ## 2026-09-08  rank-1 composer de-risk + AWS teardown
 Rank-1 (host 'rf' composer → spiking DG-CA3 'onebrain') DE-RISKED GO on the REAL 404-fact scale787/day_33 bundle (parity 1.0, recall 0.99, moat 0 confab; finding 2026-09-08-...-parity-GO, merge 8a2a435a0). NOT flipped — gates: load_developed_brain onebrain_k_max=32 truncation plumbing + ambiguous ask_yes_no rung. #209 description updated (plain-language). AWS instance terminated + EBS volume deleted (owner directive) — zero cost.
+
+## 2026-09-08  rank-1 BOTH flip gates CLOSED (production flip READY)
+Gate (1) k_max load-path (merge 9bd0d749) + gate (2) ask_yes_no multi-block scan (4feff352a) both CLOSED/GO — the spiking onebrain composer is now at FULL parity with host rf (recall 0.99, ask_yes_no strict_parity 1.0, moat 0 confab), zero residual gap (the 1 unknown is a shared rf/ob source-data duplicate). Rank-1 production flip READY (composer_kind 'rf'→'onebrain'), pending a live e2e /api/brain-chat round-trip + the flip mechanism. #209 batch description + the flip itself deferred to the flip landing (the DONE-worthy board milestone).

@@ -152,7 +152,7 @@ re-cited from a finding's own headline.** Corrections to the ranked list (lines 
 NOW are recorded here, append-only, per the section's own convention.
 
 - **Rank 1 (composer bundle pinned to rf) — DE-RISKED GO (2026-09-08); the literal rebuild is DONE + verified on the
-  REAL bundle; flip gate (1) CLOSED same-day, flip gate (2) remains the named UX rung.** The spiking DG-CA3 `onebrain`
+  REAL bundle; flip gate (1) CLOSED same-day; flip gate (2) CLOSED 2026-09-08 → BOTH gates GO, production flip READY.** The spiking DG-CA3 `onebrain`
   composer rebuilt the REAL deployed 404-fact `scale787/day_33` bundle (seed 42, fact-shard retrieval ON) and matched
   the host `rf` closed-form: `query_patient`/`query_agent` strict parity 1.0, recall rf==ob==0.99; `ask_yes_no`
   unambiguous 0.994; moat 0 confab (100/100 abstain out-of-store); scramble recall 0.99→0.0, attribution 1.0. Finding
@@ -168,9 +168,13 @@ NOW are recorded here, append-only, per the section's own convention.
   worse than "truncated" — no composite fast-path exists for an onebrain rebuild); the `'rf'` path is proven
   BYTE-IDENTICAL by hash (`kb_sha256` identical at `HEAD~1` vs `HEAD`, not just code-inspection). Commits `78e46e129`
   (the thread) + `1e364214f` (the verify), finding
-  `research/findings/2026-09-08-onebrain-kmax-loadpath-thread-GO.md`. Flip gate (2) UX still open — the
-  ambiguous-`ask_yes_no` under-recall (onebrain returns 'unknown' on 29 same-(agent,action) cues where rf guesses
-  'yes'; moat-safe, `ob_no_on_stored=0`; the per-(agent,action) multi-block check is the named rung).
+  `research/findings/2026-09-08-onebrain-kmax-loadpath-thread-GO.md`. Flip gate (2) — CLOSED (`4feff352a`, finding
+  `research/findings/2026-09-08-rank1-yesno-multiblock-rung-GO.md`): `ask_yes_no` now scans ALL (agent,action)
+  blocks (`_fact_shard_yesno_match`/`_host_yesno_match`) → strict_parity 0.72→1.0, ob_yes_rate 0.716→0.9962 (== rf),
+  moat intact (`ob_no_on_stored=0`), no regression on recall/unambiguous/scramble; the 1 residual 'unknown'
+  (`atom,share,electron`) is a source-data duplicate-fact artifact (rf ALSO returns unknown) → ZERO onebrain gap vs
+  rf. **BOTH gates GO; remaining pre-flip: a live e2e `/api/brain-chat` round-trip on an onebrain bundle + the flip
+  mechanism (deployed `scale787/day_33` manifest pins `'rf'`).**
 - **Rank 2 (integrated_loop thread) — Part A GO (wired default-OFF), Part B UNDEFINED at production scale, the
   named next step is now UNBLOCKED.** Threading `integrated_loop=True` through `webapp/server.py ->
   brain_chat_tui/MultiTurnAgent -> BrainConversationalAgent -> OneBrainComposer` is GO (6/6 checks, default-OFF)

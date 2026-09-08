@@ -7,6 +7,13 @@ the [project handoff](HANDOFF.md), and the live state in
 board, when checked out, was `research/coordination/workboard.json` (⚠️ now ~a month
 stale — the live board is [GAP_CLOSURE_MISSION.md](GAP_CLOSURE_MISSION.md) CURRENT STATE; workboard.json is being retired).
 
+## 2026-09-08 — the brain's fact-memory moved onto its own spiking cells (shortcut retirement, ready to switch on)
+
+- **A major hand-written shortcut is now ready to retire.** The way the brain binds and recalls facts (who-did-what-to-whom) had run on a fast mathematical formula (a host "composer") rather than on the brain's own cells. This session rebuilt that whole store-and-recall path on the brain's own spiking cells (a hippocampus-like DG-CA3 circuit) and proved, on the real deployed 404-fact knowledge bundle, that it matches the old formula exactly: identical recall, identical yes/no answers about stored facts, and the same never-make-things-up guard (it says "unknown" rather than guessing).
+- Two blockers were found and fixed: the load path used to cap such a bundle at 32 facts (it actually crashed — now auto-sizes to the bundle); and yes/no questions about facts with an ambiguous subject used to miss some genuinely-stored answers (now it scans all the candidate memories, closing the gap completely).
+- The old formula path is proven bit-for-bit unchanged when left on, so switching over is safe and reversible. Remaining before it is on by default: a live end-to-end chat check through the real chat handler, plus the switch itself. Findings: the rebuild parity + the load-path fix + the yes/no fix (all 2026-09-08).
+- **Broad-topic fluency stays on the training-data path (owner call).** The decisive large-scale training run for the brain's own voice on arbitrary topics did not beat the simple baseline at the deployable size, so the outside language model (Qwen) remains an accepted stand-in for broad open-topic replies for now — the brain's own voice already leads on simple text. A crutch to remove eventually, not a blocker on the rest of the work.
+
 ## 2026-09-06 — vLLM Sleep Mode pilot: infra-only, no wall/gap status change
 
 - **Not a faculty/wall update** — this is a serving-infrastructure pilot (how the LOCAL scaffold model is
