@@ -1709,24 +1709,67 @@ class OneBrainComposer:
 
     def ask_yes_no(self, agent, action, patient):
         """yes / no / unknown: the first fact matching the full SVO answers by its polarity tag (AFFIRM -> yes,
-        NEGATE -> no); no matching fact -> 'unknown' (the no-confab moat). The (agent, action) cue-match-and-first-match
-        SELECTION routes through `_seq_block` (the spiking K-way sequencer when integrated_loop, else the host first-
-        match -- byte-identical); the patient equality + polarity are the body read over the selected block (identical
-        on both paths). NOTE: the host first-match scans for the first block matching the FULL SVO, whereas the
-        sequencer matches (agent, action) then checks patient on the selected block -- equivalent for the production
-        unique-(agent, action) store (each (agent, action) selects one block, and the patient check then decides
-        yes/no/unknown); a degenerate same-(agent, action) different-patient pair is outside the production regime.
-        When `enable_fact_shard` (default-off), the (agent, action) selection routes through the DG-CA3 fact-block
-        shard (O(shard) not O(k_max)); the patient-equality + polarity tail is identical -> answer-identical."""
+        NEGATE -> no); no matching fact -> 'unknown' (the no-confab moat). == the rf composer's semantics (rf_phasor_
+        composer.py `ask_yes_no`: scans for the first block matching the FULL (agent, action, patient), not just
+        (agent, action)). RECALL-COMPLETENESS FIX (2026-09-08, rank-1 last-gate): the (agent, action) cue can be
+        AMBIGUOUS -- multiple stored blocks share the same (agent, action) with different patients (the real deployed
+        404-fact bundle has 113 such cues) -- so selecting a SINGLE (agent, action) block (`_seq_block`'s first-match)
+        and checking only ITS patient missed a genuinely-stored fact whose patient lived in a LATER same-(agent,
+        action) block (75/264 ambiguous SVOs read 'unknown' where rf correctly reads 'yes'; see research/findings/
+        2026-09-08-rank1-composer-rebuild-rf-to-onebrain-real-bundle-parity-GO.md). The fix scans EVERY candidate
+        block matching (agent, action) for the asserted patient -- `_fact_shard_yesno_match` (the default-on DG-CA3
+        fact-shard fast path) or `_host_yesno_match` (the full host scan when the fast path is off) -- both mirror
+        rf's full-SVO first-match, just restricted to the routed candidate set on the fast path. MOAT-SAFE by
+        construction: 'no' is still asserted ONLY when a full-SVO match is found and its polarity is NEGATE (never
+        invented for an absent fact); a cue with no full-SVO match among ANY candidate still reads 'unknown', exactly
+        as before. The opt-in `integrated_loop` spiking K-way sequencer (default OFF, not the production path) is
+        UNCHANGED -- it returns one on-substrate decision per (agent, action) with no multi-candidate enumeration
+        mechanism, the docstring's long-standing "degenerate same-(agent, action) different-patient pair is outside
+        the production regime" note stays true THERE (this fix targets the two paths actually served by default:
+        the fact-shard fast path and the host first-match full path)."""
         if self.trace:
             self.last_trace = None
-        if self._fact_shard_active():                          # FACT-COUNT-axis sublinear fast path (default-off)
-            idx, got = self._fact_shard_first_match({"agent": agent, "action": action})
+        if self._fact_shard_active():                          # FACT-COUNT-axis sublinear fast path (default-on)
+            idx, got = self._fact_shard_yesno_match(agent, action, patient)
             if idx is not _FS_ESCALATE:
                 return self._finish_ask_yes_no(agent, action, patient, idx, got)
-        idx = self._seq_block(agent, action)                   # full path (byte-identical when the fast path is off)
+        if not self.integrated_loop:                           # host full-SVO multi-block scan (byte-identical rf semantics)
+            idx, got = self._host_yesno_match(agent, action, patient)
+            return self._finish_ask_yes_no(agent, action, patient, idx, got)
+        idx = self._seq_block(agent, action)                   # opt-in spiking sequencer (unchanged; single-block decision)
         got = self._read_blocks()[idx] if idx is not None else None
         return self._finish_ask_yes_no(agent, action, patient, idx, got)
+
+    def _fact_shard_yesno_match(self, agent, action, patient):
+        """ask_yes_no's shard-fast-path candidate scan (2026-09-08 recall-completeness fix): unlike
+        `_fact_shard_first_match` (which stops at the FIRST candidate matching only (agent, action) -- correct for
+        query_patient/query_agent's single-answer semantics, but WRONG for yes/no under ambiguity), this scans EVERY
+        shard candidate matching (agent, action) for the ASSERTED patient before concluding. Returns (idx, got) for
+        the first candidate whose FULL SVO matches (yes/no then reads off its polarity in `_finish_ask_yes_no`);
+        (None, None) when no candidate's patient matches the asserted one (the moat: 'unknown', NEVER a false 'no' --
+        the SVO literally was not found among the routed candidates); the sentinel (_FS_ESCALATE, None) when the cue
+        cannot be routed -> the caller falls back to `_host_yesno_match`. Same candidate SET as
+        `_fact_shard_first_match` (the shard is a superset of the true matches by construction, so no real match is
+        ever outside it) -- only the STOPPING RULE changes (full-SVO match instead of (agent, action)-only)."""
+        shard = self._fact_shard_candidates({"agent": agent, "action": action})
+        if shard is None:
+            return _FS_ESCALATE, None
+        for i in shard:
+            got = self._read_one_block(i)
+            if got.get("agent") == agent and got.get("action") == action and got.get("patient") == patient:
+                return i, got
+        return None, None
+
+    def _host_yesno_match(self, agent, action, patient):
+        """ask_yes_no's host-scan counterpart to `_fact_shard_yesno_match`, used when the fact-shard fast path is
+        off (or escalates): scan ALL stored blocks (not just the first (agent, action) match `_seq_block` returns)
+        for the first block matching the FULL SVO, ascending -- exactly rf's `ask_yes_no` semantics. Returns
+        (idx, got) for that block, or (None, None) when no block's full SVO matches (moat-safe 'unknown', read by
+        `_finish_ask_yes_no`)."""
+        for i, got in enumerate(self._read_blocks()):
+            if got.get("agent") == agent and got.get("action") == action and got.get("patient") == patient:
+                return i, got
+        return None, None
 
     def _finish_ask_yes_no(self, agent, action, patient, idx, got):
         """Shared tail for `ask_yes_no`: patient-equality + polarity read over the already-selected (idx, got).
