@@ -68,7 +68,7 @@ class MultiTurnAgent:
                  speak_value_Q=None, D=128, focus_bias_source=None, event_register=None,
                  feat_compat_source=None,
                  slotbinder_fanout=None, slotbinder_prewire_facts=None, slotbinder_max_facts=None,
-                 slotbinder_max_clauses=None):
+                 slotbinder_max_clauses=None, onebrain_k_max=None):
         self.seed = int(seed)
         # composer_kind passes through to the inner agent: "rf" (default) or "onebrain" (the integrated one-brain
         # composer -- the cleanup arc validates multi-turn anaphora + cued multi-hop on it).
@@ -88,6 +88,15 @@ class MultiTurnAgent:
         # inner agent, which itself only forwards them to SlotBinderComposer when composer_kind=='slotbinder'
         # (see BrainConversationalAgent.__init__'s docstring). Lets load_developed_brain size/prewire a
         # SlotBinderComposer through the SAME MultiTurnAgent path the webapp's developed-brain loader always uses.
+        # onebrain_k_max (rank-1 composer-rebuild load-path thread, 2026-09-08, default None = byte-identical):
+        # pass-through to the inner BrainConversationalAgent, which itself only reads it when
+        # composer_kind=='onebrain' (None there resolves to the composer's own hardcoded 32 -- see
+        # BrainConversationalAgent.__init__'s docstring). Without this thread, `load_developed_brain`'s
+        # use_multiturn=True path (the ONLY path webapp/server.py's _build_chat_brain uses) had NO way to raise
+        # k_max for an onebrain bundle at all -- MultiTurnAgent silently dropped the caller's sizing on the floor,
+        # so a >32-fact onebrain bundle crashed on reload with "OneBrainComposer store full: k_max=32 reached"
+        # (research/findings/2026-09-08-rank1-composer-rebuild-rf-to-onebrain-real-bundle-parity-GO.md's named
+        # blocker). A no-op for every other composer_kind.
         # integrated_loop (scaffold-retirement backlog rank-2, default OFF = byte-identical): pass-through to the
         # inner BrainConversationalAgent, which itself only reads it when composer_kind=='onebrain' (the spiking
         # K-way sequencer routing the (agent, action) cue-match SELECTION, replacing the host first-match `_scan`
@@ -107,7 +116,8 @@ class MultiTurnAgent:
                                               slotbinder_fanout=slotbinder_fanout,
                                               slotbinder_prewire_facts=slotbinder_prewire_facts,
                                               slotbinder_max_facts=slotbinder_max_facts,
-                                              slotbinder_max_clauses=slotbinder_max_clauses)
+                                              slotbinder_max_clauses=slotbinder_max_clauses,
+                                              onebrain_k_max=onebrain_k_max)
         self.referents = list(referent_concepts)
         # BRAIN-LOAD SPEEDUP (defer_planner, default OFF = byte-identical): the persistent discourse working-memory
         # loop (a SpikingLoopContextBuffer holding one attractor per referent) is the dominant LOAD cost -- building

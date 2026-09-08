@@ -389,7 +389,7 @@ def load_developed_brain(path, *, seed=None, use_multiturn=False, enable_neural_
                          ltm_bundle=None, ltm_n_shards=None, ltm_seed=None, ltm_D=128,
                          ltm_composer_kwargs=None, enable_codebook_cache=False,
                          enable_decode_escalation=False, decode_escalate_margin=None,
-                         integrated_loop=False):
+                         integrated_loop=False, onebrain_k_max=None):
     """Reconstruct the EXACT developed brain from a `save_developed_brain` bundle at `path`.
 
     Returns (agent, manifest). `agent` is a `BrainConversationalAgent` (or a `MultiTurnAgent` wrapper if
@@ -426,6 +426,22 @@ def load_developed_brain(path, *, seed=None, use_multiturn=False, enable_neural_
             this bundle's own saved default, 'rf') ignores it exactly like `BrainConversationalAgent.__init__`
             does. This is the seam webapp/server.py's BRAIN_INTEGRATED_LOOP env flag threads through
             (_build_chat_brain -> here -> MultiTurnAgent/BrainConversationalAgent -> OneBrainComposer).
+        onebrain_k_max (scaffold-retirement backlog rank-1 load-path thread, 2026-09-08, default None): the number
+            of co-resident fact blocks the OneBrainComposer sizes its store for (see
+            `BrainConversationalAgent.__init__`'s own `onebrain_k_max` doc). A no-op unless the (possibly-
+            overridden) `composer_kind` resolves to 'onebrain' -- every other composer_kind (including this
+            bundle's own saved default, 'rf') ignores it, exactly like `BrainConversationalAgent.__init__` does,
+            so an 'rf' bundle reload is BYTE-IDENTICAL to before this parameter existed. When `None` AND the
+            resolved composer_kind is 'onebrain', it is derived from THIS bundle's own fact count
+            (`len(facts) + 16`, matching `_rank1_composer_rebuild_onebrain_verify.py`'s convention) instead of
+            falling through to the composer's hardcoded default of 32 -- the fix for the rank-1 GO finding's named
+            blocker (research/findings/2026-09-08-rank1-composer-rebuild-rf-to-onebrain-real-bundle-parity-
+            GO.md): an onebrain bundle with >32 facts previously crashed on reload with "OneBrainComposer store
+            full: k_max=32 reached" (or, with a persisted kb_composites fast-path, silently direct-set only the
+            first 32 blocks) because NEITHER this function NOR `MultiTurnAgent` threaded the caller's sizing
+            through at all -- the constructor's own None-default (32) was the only value that ever reached the
+            composer. Pass an explicit int to override the auto-sizing (e.g. to pre-provision headroom for
+            facts taught after load).
     """
     manifest = _read_manifest(path)
     if manifest is None:
@@ -469,6 +485,17 @@ def load_developed_brain(path, *, seed=None, use_multiturn=False, enable_neural_
             slotbinder_max_facts=max(len(facts), 1),
             slotbinder_prewire_facts=(None if _sb_has_clause else list(facts)),
         )
+    # rank-1 composer-rebuild load-path thread (2026-09-08): size the OneBrainComposer's k_max from THIS bundle's
+    # own fact count when the (possibly-overridden) composer_kind resolves to 'onebrain' and the caller did not
+    # pass an explicit override -- otherwise `BrainConversationalAgent`/`MultiTurnAgent`'s own None-default (32,
+    # the composer's original hardcoded cap) is the only value that ever reaches the composer, and a >32-fact
+    # onebrain bundle crashes on reload ("OneBrainComposer store full: k_max=32 reached") instead of restoring
+    # every saved fact. `+16` matches `_rank1_composer_rebuild_onebrain_verify.py`'s own sizing convention (a
+    # small headroom margin over the exact fact count). BYTE-IDENTICAL for every other composer_kind (including
+    # this bundle's own saved default, 'rf') -- onebrain_k_max stays None and is never read outside the onebrain
+    # branch, exactly like every other onebrain-only kwarg here (slotbinder_*, integrated_loop).
+    if composer_kind == "onebrain" and onebrain_k_max is None:
+        onebrain_k_max = len(facts) + 16
     composites = _load_kb_composites(path)   # (option 1) {fact_index -> comp[D]} -> skip the per-fact resonate
     speak_value_Q = _load_speak_value_Q(path)   # (Stage B) the persisted learned-talkativeness Q (seeds CommunicableTurn)
     # the vocab must cover every grounded code + every fact word (so the composer can encode them)
@@ -505,7 +532,8 @@ def load_developed_brain(path, *, seed=None, use_multiturn=False, enable_neural_
                                enable_biased_competition=_bc_enabled(), defer_parser=defer_parser,
                                defer_planner=defer_parser,
                                communicable_mode=communicable_mode, communicable_draw=communicable_draw,
-                               speak_value_Q=(speak_value_Q or None), **_slotbinder_kwargs)
+                               speak_value_Q=(speak_value_Q or None), onebrain_k_max=onebrain_k_max,
+                               **_slotbinder_kwargs)
     else:
         agent = BrainConversationalAgent(seed=seed, concepts=concepts,
                                          grounded_codes=codes if codes else None,
@@ -514,7 +542,8 @@ def load_developed_brain(path, *, seed=None, use_multiturn=False, enable_neural_
                                          enable_neural_render=enable_neural_render,
                                          defer_parser=defer_parser,
                                          communicable_mode=communicable_mode, communicable_draw=communicable_draw,
-                                         speak_value_Q=(speak_value_Q or None), **_slotbinder_kwargs)
+                                         speak_value_Q=(speak_value_Q or None), onebrain_k_max=onebrain_k_max,
+                                         **_slotbinder_kwargs)
     _restore_facts(agent, facts, composites=composites, composer_kind_changed=_composer_kind_changed)
 
     # (KNOWLEDGE-SCALE, opt-in, DEFAULT-OFF = byte-identical) install a cortical LONG-TERM store so the brain can
