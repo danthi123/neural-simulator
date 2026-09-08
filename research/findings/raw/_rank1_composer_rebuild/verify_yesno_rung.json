@@ -1,0 +1,177 @@
+{
+  "runner": "_rank1_composer_rebuild_onebrain_verify",
+  "bundle": "/home/dant123/Projects/sim/bridges/developed/scale787/day_33",
+  "manifest_composer_kind": "rf",
+  "sim_backend": "numpy",
+  "fact_shard_retrieval": "1",
+  "composer_merge": "0",
+  "seed": 42,
+  "D": 128,
+  "n_facts": 404,
+  "skipped_non_flat": 0,
+  "vocab": 788,
+  "rf_composer": "RFPhasorComposer",
+  "ob_composer": "OneBrainComposer",
+  "timings_s": {
+    "rf_load": 0.05574989318847656,
+    "ob_build": 147.64376950263977,
+    "ob_store": 106.44976210594177
+  },
+  "query_patient": {
+    "n_cues": 190,
+    "n_ambiguous": 29,
+    "strict_parity": 1.0,
+    "valid_recall_rf": 0.9947368421052631,
+    "valid_recall_ob": 0.9947368421052631,
+    "ambiguous_strict_parity": 1.0,
+    "ambiguous_valid_recall_ob": 1.0,
+    "unambiguous_strict_parity": 1.0,
+    "mismatches_sample": []
+  },
+  "query_agent": {
+    "n_cues": 208,
+    "strict_parity": 1.0,
+    "valid_recall_rf": 0.9951923076923077,
+    "valid_recall_ob": 0.9951923076923077,
+    "mismatches_sample": []
+  },
+  "ask_yes_no": {
+    "n_svo": 264,
+    "rf_yes_rate": 0.9962121212121212,
+    "ob_yes_rate": 0.9962121212121212,
+    "strict_parity": 1.0,
+    "ob_unknown_on_stored": 1,
+    "ob_no_on_stored (CONFAB if>0)": 0,
+    "unambiguous_ob_yes_rate": 0.9937888198757764,
+    "unambiguous_n": 161,
+    "mismatches_sample": []
+  },
+  "moat": {
+    "probes": 80,
+    "rf_abstain": 80,
+    "ob_abstain": 80,
+    "rf_confab": 0,
+    "ob_confab": 0
+  },
+  "scramble_control": {
+    "n": 120,
+    "valid_recall_scrambled": 0.0,
+    "valid_recall_ob_same_cues": 0.9916666666666667,
+    "recall_attribution": 1.0
+  },
+  "rebuilt_bundle": {
+    "path": "bridges/developed/rebuilt_scale787_onebrain",
+    "composer_kind": "onebrain",
+    "n_facts": 404,
+    "files": [
+      "brain.json",
+      "facts.json",
+      "grounded_codes.npz"
+    ]
+  },
+  "go_flags": {
+    "qp_recall": true,
+    "qp_unambiguous_parity": true,
+    "qa_recall": true,
+    "moat": true,
+    "scramble": true,
+    "yesno_moat_safe": true
+  },
+  "verdict": "GO",
+  "verdict_block": {
+    "label": "rank-1 rf->onebrain composer rebuild parity+recall on the real deployed bundle",
+    "status": "GO",
+    "go": true,
+    "undefined_reasons": [],
+    "preconditions": [
+      {
+        "kind": "require",
+        "name": "query_patient valid recall onebrain >= rf",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "query_patient unambiguous strict parity ~1.0",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "query_agent valid recall onebrain >= rf",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "moat: onebrain 0 out-of-store confab",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "control",
+        "name": "scramble collapses recall",
+        "ok": true,
+        "detail": "treatment=0.991667 control=0 |sep|=0.991667 > 0",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "ask_yes_no never asserts 'no' for a stored fact (moat-safe)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      }
+    ],
+    "disabled_processes": [],
+    "chance": null
+  },
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "query_patient valid recall onebrain >= rf",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "query_patient unambiguous strict parity ~1.0",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "query_agent valid recall onebrain >= rf",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "moat: onebrain 0 out-of-store confab",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "scramble collapses recall",
+      "ok": true,
+      "detail": "treatment=0.991667 control=0 |sep|=0.991667 > 0",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "ask_yes_no never asserts 'no' for a stored fact (moat-safe)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    }
+  ]
+}
