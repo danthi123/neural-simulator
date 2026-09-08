@@ -151,15 +151,19 @@ being re-verified.
 re-cited from a finding's own headline.** Corrections to the ranked list (lines above) and to READY TO BUILD
 NOW are recorded here, append-only, per the section's own convention.
 
-- **Rank 1 (composer bundle pinned to rf) — SUB-BLOCKER RESOLVED, the literal rebuild STILL NOT done.** Verified
-  in the current checkout: `BrainConversationalAgent.__init__`'s default is still `composer_kind="rf"`
-  (`research/runners/brain_conversational_agent.py:175`), and `webapp/server.py`'s own comment still describes
-  the scale787 bundle's persisted manifest as `'rf'` (`webapp/server.py:3925`). What HAS landed: the DG-CA3
-  sparse-index sharded retrieval — the mechanism that makes an onebrain-scale bundle's O(k_max) recall scan
-  tractable — is now wired into `OneBrainComposer` itself and reachable from `/api/brain-chat` (additive,
-  default-OFF via `BRAIN_FACT_SHARD_RETRIEVAL`). See
-  `research/findings/2026-09-05-onebrain-fact-shard-wirein-production-composer.md`. Do not re-derive "is onebrain
-  fast enough to be the production bundle" — it now is; the remaining work is the rebuild itself.
+- **Rank 1 (composer bundle pinned to rf) — DE-RISKED GO (2026-09-08); the literal rebuild is DONE + verified on the
+  REAL bundle; production flip gated on 2 characterized items.** The spiking DG-CA3 `onebrain` composer rebuilt the
+  REAL deployed 404-fact `scale787/day_33` bundle (seed 42, fact-shard retrieval ON) and matched the host `rf`
+  closed-form: `query_patient`/`query_agent` strict parity 1.0, recall rf==ob==0.99; `ask_yes_no` unambiguous 0.994;
+  moat 0 confab (100/100 abstain out-of-store); scramble recall 0.99→0.0, attribution 1.0. Finding
+  `research/findings/2026-09-08-rank1-composer-rebuild-rf-to-onebrain-real-bundle-parity-GO.md`, artifact
+  `research/findings/raw/_rank1_composer_rebuild/verify_404.json`, merge `8a2a435a0`. The DG-CA3 sharded retrieval
+  sub-blocker was already resolved (`2026-09-05-onebrain-fact-shard-wirein-production-composer.md`). **NOT flipped
+  (`composer_kind` default stays `'rf'`).** Flip gates: (1) HARD/correctness — `load_developed_brain` hardcodes
+  `onebrain_k_max=None→32`, so a >32-fact onebrain bundle reloads TRUNCATED; thread `onebrain_k_max` through
+  `load_developed_brain` + `webapp/server.py`'s loader, sized to `n_facts` (additive) ← next build; (2) UX — the
+  ambiguous-`ask_yes_no` under-recall (onebrain returns 'unknown' on 29 same-(agent,action) cues where rf guesses
+  'yes'; moat-safe, `ob_no_on_stored=0`; the per-(agent,action) multi-block check is the named rung).
 - **Rank 2 (integrated_loop thread) — Part A GO (wired default-OFF), Part B UNDEFINED at production scale, the
   named next step is now UNBLOCKED.** Threading `integrated_loop=True` through `webapp/server.py ->
   brain_chat_tui/MultiTurnAgent -> BrainConversationalAgent -> OneBrainComposer` is GO (6/6 checks, default-OFF)

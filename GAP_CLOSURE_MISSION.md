@@ -13,7 +13,19 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ---
 
-## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-07 ~13:00 (FORK COMPLETE → REFOCUS ON THE MOUTH, the critical path; READ FIRST; LATEST anchor)
+## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-08 ~12:30 (RANK-1 composer scaffold DE-RISKED GO on the REAL bundle; AWS torn down; READ FIRST; LATEST anchor)
+
+**RANK-1 (host-'rf' → spiking DG-CA3 'onebrain' composer) — DE-RISKED GO, landed on `main` (merge `8a2a435a0`, finding `research/findings/2026-09-08-rank1-composer-rebuild-rf-to-onebrain-real-bundle-parity-GO.md`, artifact `research/findings/raw/_rank1_composer_rebuild/verify_404.json`).** The spiking composer rebuilt the REAL deployed 404-fact `scale787/day_33` bundle and matched the host closed-form: `query_patient`/`query_agent` strict parity 1.0, recall rf==ob==0.99; `ask_yes_no` unambiguous 0.994; moat 0 confab (100/100 abstain out-of-store); scramble control recall 0.99→0.0, attribution 1.0. <!--derived: all values read from verify_404.json cited above-->
+
+**One characterized boundary (moat-SAFE, not a failure):** on the 29 genuinely-ambiguous (same agent+action, different patient) `ask_yes_no` cues, onebrain returns 'unknown' (75 cases) where rf scans the full SVO and says 'yes' — `ob_no_on_stored=0` (NEVER a false 'no'/confab), mechanistic + seed-independent. Named next rung: a per-(agent,action) multi-block yes/no check. Does NOT block the content-recall retirement.
+
+**NOT flipped to production (DE-RISKED ≠ DONE).** Two characterized gates for the flip: (1) HARD/correctness — `load_developed_brain` hardcodes `onebrain_k_max=None→32`, so a >32-fact onebrain bundle reloads TRUNCATED; the flip needs `onebrain_k_max` threaded through `load_developed_brain` + `webapp/server.py`'s loader, sized to the bundle's `n_facts` (additive plumbing, the same seam the `BrainConversationalAgent(onebrain_k_max=...)` wire-in opened) ← the next build; (2) UX/not-safety — the ambiguous-`ask_yes_no` under-recall above.
+
+**AWS: FULLY TORN DOWN (owner directive 2026-09-08).** Instance `i-046d3211935253398` TERMINATED + 100GB EBS volume DELETED (`InvalidVolume.NotFound`) → zero ongoing AWS cost. The mouth verdict JSON was recovered before teardown (NO-GO, banked). No leak; the GPU 99% seen mid-session was the owner's own ollama/brave/steam, not our runs.
+
+**NEXT (frontier — owner 2026-09-04 scaffold-retirement priority):** (1) the `onebrain_k_max` load-path plumbing (unblocks the rank-1 flip); (2) then the flip decision (accept the moat-safe ambiguous-abstention, or build the ambiguous-yesno rung first); (3) continue the 24-item scaffold-retirement backlog (rank-2 host cue-match for-loop, rank-5 Gate-B appraisal, …) + wire the ~50 de-risked faculties. Mouth broad-domain = accepted Qwen crutch (non-blocking); no more AWS spend.
+
+## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-07 ~13:00 (FORK COMPLETE → REFOCUS ON THE MOUTH, the critical path; history)
 
 **⚡ FORK DELIVERED ITS VERDICT (emergence-gradient finding `d4efc2d6`): place emerges STRONG / familiarity WEAK (2-3/6) / affect NONE (0/6, 4 configs) — faculties emerge in proportion to inherence-in-prediction; validates the main project's dedicated-affect-ORGAN approach.** Fork is now DORMANT (delivered its meta-result; not grinding marginal refinements). Vikunja #210 updated, plain-language.
 
