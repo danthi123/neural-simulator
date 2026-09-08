@@ -3695,6 +3695,27 @@ def _ltm_ship_default_on() -> bool:
 _COMPOSER_KIND_DEFAULT = "onebrain"
 _CONTINUOUS_DRIVES_DEFAULT = "1"
 
+# _DEVELOPED_COMPOSER_KIND_DEFAULT_OVERRIDE (scaffold-retirement RANK-1 production flip, staged 2026-09-08):
+#   distinct from _COMPOSER_KIND_DEFAULT above, which only governs the tiny-demo FIXTURE brain -- this is the flip
+#   point for a DEVELOPED BUNDLE (a real knowledge brain loaded via load_developed_brain, e.g. the deployed
+#   bridges/developed/scale787/day_33). None (the shipped default, UNCHANGED by this commit) -> _build_chat_brain's
+#   developed-bundle branch falls through to the bundle's OWN persisted manifest composer_kind, BYTE-IDENTICAL to
+#   before this constant existed (scale787/day_33's manifest is 'rf', so a developed-bundle chat still recalls on
+#   the host closed-form RFPhasorComposer today). Both rank-1 flip gates are GO (2026-09-08 findings: full strict
+#   parity 1.0 vs rf on query_patient/query_agent/ask_yes_no over the REAL 404-fact deployed bundle, incl. all 29
+#   genuinely-ambiguous cues, 0 confabulation) -- set this to "onebrain" to make EVERY developed-bundle load
+#   resolve to the spiking OneBrainComposer regardless of what the bundle's own saved manifest says. Safe even
+#   against an 'rf'-saved bundle: `load_developed_brain`'s `_composer_kind_changed` guard (developed_brain_io.py)
+#   unconditionally forces a full re-`store()` from facts.json whenever the resolved composer_kind differs from
+#   the bundle's own -- the SAME mechanism `_rank1_composer_rebuild_onebrain_verify.py` used to produce the GO
+#   findings, not a new code path. THE ONE-LINE PRODUCTION FLIP the owner merges to make onebrain the hard default
+#   for developed bundles is changing this constant from None to "onebrain" (mirrors _COMPOSER_KIND_DEFAULT's own
+#   convention for the tiny-demo path). BRAIN_COMPOSER_KIND=<value> (env, read below) still overrides this per-
+#   process without any code change -- 'onebrain' to verify/opt in now; 'rf' is the byte-identical escape back to
+#   manifest-driven behavior even AFTER the flip lands (reverting a bad flip needs only an env var, never a second
+#   code change).
+_DEVELOPED_COMPOSER_KIND_DEFAULT_OVERRIDE = None
+
 # _INTEGRATED_LOOP_DEFAULT_ON (scaffold-retirement backlog rank-2, DE-RISK ONLY — kept False, NOT flipped by this
 # change): when True, OneBrainComposer's spiking K-way SEQUENCER decides the (agent, action) cue-match SELECTION
 # (which stored fact answers a who/what query, and answer-vs-abstain) instead of the host first-match `_scan`
@@ -3924,24 +3945,31 @@ def _build_chat_brain(brain: str, renderer: str):
         # bundle's own facts.json -- see load_developed_brain's own slotbinder_* wiring) for readiness testing.
         # Default (unset) -> composer_kind=None -> load_developed_brain falls through to the manifest's own
         # composer_kind, BYTE-IDENTICAL to before this flag existed. Does NOT flip the production default.
-        # NARROWED to 'slotbinder' ONLY (an adversarial skeptic finding, same session): forwarding an ARBITRARY
-        # BRAIN_COMPOSER_KIND value here (as a first draft of this change did) is a genuinely different, larger
-        # risk than intended -- e.g. 'rate' against an 'rf'-saved bundle hits developed_brain_io._restore_facts's
-        # composite fast-path with a composer (CoreSimComposer) whose `.kb` entries are a DIFFERENT, incompatible
-        # shape (an (ON,OFF) tuple vs RF's flat array), silently corrupting recall rather than crashing --
-        # data_io.py's own `composer_kind_changed` guard now also defends against this generically, but this
-        # call site has no reason to expose 'rate'/'onebrain' overrides here at all (only 'slotbinder' was ever
-        # the intent), so it is explicitly allowlisted rather than passed through.
+        # ALLOWLIST (an adversarial skeptic finding, 2026-09-05; EXTENDED 2026-09-08 for rank-1): forwarding an
+        # ARBITRARY BRAIN_COMPOSER_KIND value here is a genuinely different, larger risk than intended -- e.g.
+        # 'rate' against an 'rf'-saved bundle hits developed_brain_io._restore_facts's composite fast-path with a
+        # composer (CoreSimComposer) whose `.kb` entries are a DIFFERENT, incompatible shape (an (ON,OFF) tuple vs
+        # RF's flat array), silently corrupting recall rather than crashing -- data_io.py's own
+        # `composer_kind_changed` guard defends against this generically (it forces a full re-store whenever the
+        # resolved composer_kind differs from the bundle's own), but this call site still only exposes the values
+        # a rank has actually de-risked end-to-end: 'slotbinder' (L2 sparse-fanout de-risk GO) and, as of rank-1's
+        # two flip-gate GOs (2026-09-08, see _DEVELOPED_COMPOSER_KIND_DEFAULT_OVERRIDE above), 'onebrain'. 'rate'
+        # stays excluded (never de-risked at this call site). 'rf' is explicitly allowed too, as the always-safe
+        # manifest-matching value (a no-op for an 'rf'-saved bundle, and the revert-to-host escape for one whose
+        # manifest is NOT 'rf', e.g. after the rank-1 default flip below lands).
+        # Unset/invalid env falls through to _DEVELOPED_COMPOSER_KIND_DEFAULT_OVERRIDE (None today) -> None ->
+        # load_developed_brain resolves the bundle's OWN manifest composer_kind, BYTE-IDENTICAL to before this
+        # change for every bundle currently on disk (all manifest-'rf' or -'slotbinder').
         _composer_kind_override = os.environ.get("BRAIN_COMPOSER_KIND")
-        if _composer_kind_override != "slotbinder":
-            _composer_kind_override = None
+        if _composer_kind_override not in ("slotbinder", "onebrain", "rf"):
+            _composer_kind_override = _DEVELOPED_COMPOSER_KIND_DEFAULT_OVERRIDE
         # integrated_loop (scaffold-retirement backlog rank-2, default OFF): the SAME BRAIN_INTEGRATED_LOOP knob
-        # the tiny-demo branch reads above. A no-op TODAY for every bundle on disk (this branch's composer_kind
-        # override stays narrowed to 'slotbinder' only, per the comment above, so a developed bundle currently
-        # reloads under its OWN saved manifest composer_kind -- e.g. scale787's day_33 is 'rf' -- and
-        # BrainConversationalAgent only reads integrated_loop on the 'onebrain' branch); threaded here so a bundle
-        # whose OWN manifest composer_kind is (or becomes, e.g. after a rank-1 bundle rebuild) 'onebrain' picks it
-        # up with no further code change.
+        # the tiny-demo branch reads above. Byte-identical no-op for the SHIPPED default (unset env + the
+        # _DEVELOPED_COMPOSER_KIND_DEFAULT_OVERRIDE constant still None -> every bundle on disk reloads under its
+        # OWN saved manifest composer_kind -- e.g. scale787's day_33 is 'rf' -- and BrainConversationalAgent only
+        # reads integrated_loop on the 'onebrain' branch); threaded here so a bundle whose (possibly-overridden)
+        # composer_kind is 'onebrain' -- its own manifest, a rank-1 bundle rebuild, BRAIN_COMPOSER_KIND=onebrain,
+        # or the default-flip constant above -- picks it up with no further code change.
         # onebrain_k_max (rank-1 composer-rebuild load-path thread, 2026-09-08): None (unset) -> load_developed_
         # brain auto-sizes it from THIS bundle's own fact count whenever the resolved composer_kind is 'onebrain'
         # (byte-identical no-op for 'rf'/'rate'/'slotbinder', i.e. every bundle on disk today) -- see
