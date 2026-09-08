@@ -13,7 +13,15 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ---
 
-## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-08 ~12:30 (RANK-1 composer scaffold DE-RISKED GO on the REAL bundle; AWS torn down; READ FIRST; LATEST anchor)
+## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-08 ~17:40 (BOTH scaffold-retirement flip-fixes BUILT+LANDED opt-in; flips pending cupy confirm; OpenHands migrated; READ FIRST; LATEST anchor)
+
+**Both rank-1 (composer) + rank-6 (#211 substrate-store) flips now have their fixes BUILT + LANDED on `main`, opt-in/default-off/byte-identical — the flips themselves are the last step, gated only on a cupy confirmation:**
+- **RANK-1 composer flip:** mechanism landed (`bb7a2357`, `_DEVELOPED_COMPOSER_KIND_DEFAULT_OVERRIDE` None→"onebrain" = the flip) + BOTH gates GO (k_max load-path, ask_yes_no multi-block) + **fast-load sidecar landed (`f8a6ce5eb`, opt-in)** — persists the onebrain deterministic composite so reload SKIPS the ~416-step/fact re-resonate (was the ~20-min-startup blocker). Fast-load parity is sound-by-construction; its numpy verify was KILLED (pathologically slow). FLIP PENDING: cupy fast-load parity+timing + a composer cupy e2e.
+- **RANK-6 #211 substrate-store flip:** VRAM GO (~2.5 GiB) + function GO 6/6 + **batched-recall fix landed (`2de6ab27a`, opt-in `BRAIN_BATCHED_SUBSTRATE_SCAN`)** — O(200)→O(≈3) resonates/query (~100x), numpy parity+moat+LESION GO. FLIP PENDING: cupy wall-time near the 1.2s baseline (un-fixed was ~10s).
+- **CUPY CONFIRMATIONS DEFERRED (both flips) — NOT urgent (fixes landed opt-in).** Local GPU contended (a 2nd Claude session on it, owner-flagged ~17:15). Do them when the local GPU frees (free) OR a deliberate AWS batch (owner offered AWS "at your discretion" — held as billable fallback; do the teardown carefully, verify no leak). THEN flip both defaults.
+- **OpenHands migration DONE** (`e7969e852`): local dev-agent fallback = openhands-sdk (one persisted conversation), `tools/openhands_takeover.sh` + `docs/OPENHANDS_TAKEOVER.md`; VRAM auto-unload/reload PRESERVED via driver-agnostic `qwen_supervisor.sh`; Hermes superseded-but-intact. Owner req IN FLIGHT (agent `ad731e2a`): a single interactive command (`tools/openhands.sh`) with in-session stop. Live GPU smoke deferred (local-GPU-clear).
+
+## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-08 ~12:30 (RANK-1 composer scaffold DE-RISKED GO on the REAL bundle; AWS torn down; history)
 
 **RANK-1 (host-'rf' → spiking DG-CA3 'onebrain' composer) — DE-RISKED GO, landed on `main` (merge `8a2a435a0`, finding `research/findings/2026-09-08-rank1-composer-rebuild-rf-to-onebrain-real-bundle-parity-GO.md`, artifact `research/findings/raw/_rank1_composer_rebuild/verify_404.json`).** The spiking composer rebuilt the REAL deployed 404-fact `scale787/day_33` bundle and matched the host closed-form: `query_patient`/`query_agent` strict parity 1.0, recall rf==ob==0.99; `ask_yes_no` unambiguous 0.994; moat 0 confab (100/100 abstain out-of-store); scramble control recall 0.99→0.0, attribution 1.0. <!--derived: all values read from verify_404.json cited above-->
 
