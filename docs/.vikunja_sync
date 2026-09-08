@@ -31,3 +31,6 @@ Rank-1 (host 'rf' composer → spiking DG-CA3 'onebrain') DE-RISKED GO on the RE
 
 ## 2026-09-08  rank-1 BOTH flip gates CLOSED (production flip READY)
 Gate (1) k_max load-path (merge 9bd0d749) + gate (2) ask_yes_no multi-block scan (4feff352a) both CLOSED/GO — the spiking onebrain composer is now at FULL parity with host rf (recall 0.99, ask_yes_no strict_parity 1.0, moat 0 confab), zero residual gap (the 1 unknown is a shared rf/ob source-data duplicate). Rank-1 production flip READY (composer_kind 'rf'→'onebrain'), pending a live e2e /api/brain-chat round-trip + the flip mechanism. #209 batch description + the flip itself deferred to the flip landing (the DONE-worthy board milestone).
+
+## 2026-09-08  rank-6 #211 VRAM GO reconcile
+Rank-6 substrate-store cupy VRAM measured GO (~2.5 GiB at 78,857-fact scale, ~20 GiB free; finding 2026-09-08-rank6-substrate-store-cupy-vram-measured-GO, commit 966b606a). #211 description updated plain-language — the "fits on a 24GB card" check is DONE; the flip (merging research/substrate-store-flip, enable_substrate_store=True) stays the owner's call so #211 remains open (de-risked, not done).
