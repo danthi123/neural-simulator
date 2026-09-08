@@ -1,18 +1,30 @@
 #!/usr/bin/env bash
-# qwen_supervisor.sh — VRAM-aware load/unload of the local Qwen (Hermes' brain) around LOCAL gpu_queue jobs.
+# qwen_supervisor.sh — VRAM-aware load/unload of the local Qwen (the local dev-agent's brain) around LOCAL
+# gpu_queue jobs. Driver-agnostic (2026-09-08): shared by BOTH tools/hermes_takeover.sh (Hermes) and
+# tools/openhands_takeover.sh (OpenHands) — see driver_active() below. Only ONE driver should be active at a
+# time (each takeover script's own etiquette warning); this file does not itself enforce mutual exclusion.
 #
 # THE INVARIANT: a LOCAL GPU job and the Qwen server never co-reside — the supervisor unloads Qwen before a job
-# can run and reloads it (then nudges Hermes to check results) once the local queue is idle. POOL (mini-PC) runs
-# are remote and NEVER affect Qwen. The whole thing is INERT unless HERMES_ACTIVE is set — so while Claude drives,
-# Qwen stays down and the GPU is untouched. GAME_MODE (owner gaming/testing) overrides everything: Qwen stays down.
+# can run and reloads it once the local queue is idle. POOL (mini-PC) runs are remote and NEVER affect Qwen. The
+# whole thing is INERT unless a driver sentinel (HERMES_ACTIVE or OPENHANDS_ACTIVE) is set — so while Claude
+# drives, Qwen stays down and the GPU is untouched. GAME_MODE (owner gaming/testing) overrides everything: Qwen
+# stays down regardless of which driver sentinel is set.
 #
-#   bash tools/qwen_supervisor.sh __daemon    # the poll loop (run by the systemd user service / hermes_takeover)
+# Turn-continuation nudging (fire_hermes_continue) stays HERMES-SPECIFIC: it fires a fresh Hermes
+# webui/headless turn because Hermes' fresh-session-per-turn design has no other way to resume. OpenHands does
+# NOT need this — tools/openhands_proto/openhands_loop.py is a standing while-loop that polls qwen_up()/
+# gpu_busy() itself and fires its own next turn on the ONE persisted conversation, so when only OPENHANDS_ACTIVE
+# is set this supervisor just loads/unloads Qwen and otherwise stays out of the way (see the idle branch below).
+#
+#   bash tools/qwen_supervisor.sh __daemon    # the poll loop (run by the systemd user service / a takeover script)
 #   bash tools/qwen_supervisor.sh status      # one-shot: what would it do right now
 set -uo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 STATE="$ROOT/research/queue"
-ACTIVE="$STATE/HERMES_ACTIVE"       # master switch: Hermes is the driver (Claude usage out)
+ACTIVE="$STATE/HERMES_ACTIVE"       # driver sentinel: Hermes is the driver (Claude usage out)
+ACTIVE_OH="$STATE/OPENHANDS_ACTIVE" # driver sentinel: OpenHands is the driver (Claude usage out)
 GAME="$STATE/GAME_MODE"            # owner wants the GPU (gaming/test) — absolute priority
+driver_active(){ [ -f "$ACTIVE" ] || [ -f "$ACTIVE_OH" ]; }   # true iff ANY local driver claims the GPU/Qwen
 QUEUE="$STATE/gpu.queue"           # local GPU jobs waiting
 RUNNING="$STATE/gpu.running"       # local GPU job in flight
 JOBRAN="$STATE/.qwen_jobran"       # marker: Qwen was unloaded for a job -> on reload, notify Hermes
@@ -83,8 +95,8 @@ daemon(){
   local last_state="" hb=0
   while :; do
     local state up; up=$(qwen_up && echo up || echo down)
-    if [ ! -f "$ACTIVE" ] || [ -f "$GAME" ]; then     # Claude drives OR owner gaming -> Qwen down, GPU untouched
-      state="hold"; [ "$up" = up ] && { log "hold ($([ -f "$GAME" ] && echo GAME_MODE || echo HERMES_ACTIVE-off)) -> unloading Qwen"; down_qwen; }
+    if ! driver_active || [ -f "$GAME" ]; then     # Claude drives OR owner gaming -> Qwen down, GPU untouched
+      state="hold"; [ "$up" = up ] && { log "hold ($([ -f "$GAME" ] && echo GAME_MODE || echo no-driver-active)) -> unloading Qwen"; down_qwen; }
     elif local_gpu_busy; then                          # a LOCAL job needs the full GPU -> Qwen out of the way
       if [ "$up" = down ]; then state="job"            # Qwen already unloaded, the run has the GPU
       elif [ -f "$RUNNING" ]; then state="job"; log "run active but Qwen still up -> unloading"; down_qwen; touch "$JOBRAN"
@@ -96,13 +108,17 @@ daemon(){
       # Loading Qwen: after it comes up, DEFER the next fire (set LASTFIRE=now) so a turn isn't fired
       # into a model that's up on /health but not yet generation-ready (caused '503 Loading model' /
       # 'Connection error' turns). The FIRE_COOLDOWN then gives it time to settle before firing.
-      [ "$up" = down ] && { log "idle -> loading Qwen for Hermes"; up_qwen; up=$(qwen_up && echo up || echo down); echo "$(date +%s)" > "$LASTFIRE"; }
+      [ "$up" = down ] && { log "idle -> loading Qwen for the active driver"; up_qwen; up=$(qwen_up && echo up || echo down); echo "$(date +%s)" > "$LASTFIRE"; }
       if [ "$up" = up ]; then
-        now=$(date +%s); lastf=$(cat "$LASTFIRE" 2>/dev/null || echo 0)
-        if [ -f "$JOBRAN" ]; then                       # a run just finished -> harvest turn now
-          rm -f "$JOBRAN"; log "run(s) done + Qwen ready -> firing Hermes turn"; fire_hermes_continue; echo "$now" > "$LASTFIRE"
-        elif [ $(( now - ${lastf:-0} )) -ge "$FIRE_COOLDOWN" ] 2>/dev/null; then   # cognitive continuation (409-skips if a turn is live)
-          log "idle -> firing Hermes turn (cognitive continuation)"; fire_hermes_continue; echo "$now" > "$LASTFIRE"
+        if [ -f "$ACTIVE" ]; then    # HERMES-SPECIFIC: fresh-session-per-turn needs an external nudge to continue
+          now=$(date +%s); lastf=$(cat "$LASTFIRE" 2>/dev/null || echo 0)
+          if [ -f "$JOBRAN" ]; then                       # a run just finished -> harvest turn now
+            rm -f "$JOBRAN"; log "run(s) done + Qwen ready -> firing Hermes turn"; fire_hermes_continue; echo "$now" > "$LASTFIRE"
+          elif [ $(( now - ${lastf:-0} )) -ge "$FIRE_COOLDOWN" ] 2>/dev/null; then   # cognitive continuation (409-skips if a turn is live)
+            log "idle -> firing Hermes turn (cognitive continuation)"; fire_hermes_continue; echo "$now" > "$LASTFIRE"
+          fi
+        else                          # OpenHands (or any non-Hermes driver): its own loop polls qwen_up()/
+          rm -f "$JOBRAN"              # gpu_busy() and fires its own next turn — just clear the marker, no nudge.
         fi
       fi
     fi
@@ -120,12 +136,13 @@ daemon(){
 case "${1:-status}" in
   __daemon) daemon ;;
   status)
-    echo "HERMES_ACTIVE: $([ -f "$ACTIVE" ] && echo ON || echo off) | GAME_MODE: $([ -f "$GAME" ] && echo ON || echo off)"
+    echo "HERMES_ACTIVE: $([ -f "$ACTIVE" ] && echo ON || echo off) | OPENHANDS_ACTIVE: $([ -f "$ACTIVE_OH" ] && echo ON || echo off) | GAME_MODE: $([ -f "$GAME" ] && echo ON || echo off)"
     echo "local_gpu_busy: $(local_gpu_busy && echo yes || echo no) (queue=$(wc -l <"$QUEUE" 2>/dev/null || echo 0), running=$([ -f "$RUNNING" ] && echo yes || echo no))"
     echo "qwen: $(qwen_running && echo UP || echo down)"
-    if [ ! -f "$ACTIVE" ]; then echo "verdict: inert (Claude drives) -> keep Qwen down"
+    if ! driver_active; then echo "verdict: inert (Claude drives) -> keep Qwen down"
     elif [ -f "$GAME" ]; then echo "verdict: GAME_MODE -> keep Qwen down"
     elif local_gpu_busy; then echo "verdict: local job -> Qwen down"
-    else echo "verdict: idle -> Qwen up (+ nudge Hermes if a job just finished)"; fi ;;
+    elif [ -f "$ACTIVE" ]; then echo "verdict: idle -> Qwen up (+ nudge Hermes if a job just finished)"
+    else echo "verdict: idle -> Qwen up (OpenHands' own loop fires its next turn, no nudge needed)"; fi ;;
   *) echo "usage: bash tools/qwen_supervisor.sh {__daemon|status}"; exit 2 ;;
 esac

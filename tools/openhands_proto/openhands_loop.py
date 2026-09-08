@@ -1,30 +1,36 @@
 #!/usr/bin/env python3
-"""openhands_loop.py — offload-aware continuous-session driver for the OpenHands prototype.
+"""openhands_loop.py — continuous-session driver for OpenHands, run by tools/openhands_takeover.sh.
 
-PROTOTYPE / DESIGN ARTIFACT, NOT A LIVE SERVICE. This is deliberately NOT installed as a systemd
-unit and does not touch any Hermes state (`research/queue/HERMES_ACTIVE`, `.hermes/`, the
-`hermes-loop`/`hermes-webui` units). It uses its OWN sentinel + turn-count files under
-`tools/openhands_proto/state/` so it can never be mistaken for, or race, the live Hermes loop.
+PRODUCTIONIZED 2026-09-08 (was a prototype-only design artifact as of 2026-09-06 — see
+docs/2026-09-06-openhands-harness-prototype.md for the evaluation that validated this live). Started/
+stopped by `tools/openhands_takeover.sh {on,off}`, which also sets the shared driver sentinel this
+loop reads (`research/queue/OPENHANDS_ACTIVE`) and starts `tools/qwen_supervisor.sh __daemon` — see
+below for why VRAM load/unload itself is NOT done here.
 
-⛔ DO NOT RUN THIS AT THE SAME TIME AS `hermes-loop` (or any other driver) if it also calls
-`tools/qwen_serve.sh up/down` — both `tools/qwen_serve.sh` and `tools/gpu_queue.sh` are SINGLETON,
-shared-repo resources (see their own headers). Two independent processes both deciding when to
-load/unload the one local model is exactly the double-load race `tools/qwen_serve.sh`'s own guard
-comments warn about (M7: never launch a second server while one is loading). Pick ONE lane: while
-evaluating this prototype, keep the real `hermes-loop` systemd unit as the sole driver and run this
-script only manually, for short supervised windows, with `hermes-loop` stopped
-(`systemctl --user stop hermes-loop`) — never both.
+⛔ SINGLE ACTIVE DRIVER. Do not run this at the same time as `hermes-loop` (or any other local
+driver) — `tools/openhands_takeover.sh on` and `tools/hermes_takeover.sh on` must never both be
+active; hand back the current driver first (`... off`) before switching.
 
-DESIGN — ported from tools/hermes/loop.py's proven gpu-handoff functions (gpu_busy/_running_job/
-ensure_dispatcher/vram_handoff/qwen_up/qwen_down_cmd/qwen_up_cmd), because that logic is already
-hardened against real incidents (stale gpu.running, dispatcher death mid-job, a hung nvidia-smi
-during a GPU-crash — see gpu_queue.sh's and loop.py's own comments) and there is no reason to
-re-derive it. The ONLY structural difference from Hermes' loop: instead of firing a brand-new
-webui/gateway session per turn (loop.py's fire_turn()/poll_run()), each iteration calls
-`conversation.send_message() + conversation.run()` on the ONE persisted OpenHands Conversation
-(agent_config.build_conversation(), fixed conversation_id) — so the session survives every offload
-cycle instead of restarting cold. That persistence is the entire point of this prototype (see
-agent_config.py's docstring and the write-up doc).
+VRAM LIFECYCLE IS OWNED BY tools/qwen_supervisor.sh, NOT THIS LOOP (2026-09-08 change from the
+2026-09-06 prototype, which called `tools/qwen_serve.sh up/down` itself — that duplicated the exact
+unload/reload decision `qwen_supervisor.sh` already makes for Hermes, which is the double-load race
+its own header warns about if two independent deciders ever ran together). By default this loop only
+READS state (`qwen_up()`, `gpu_busy()`) and never calls `qwen_serve.sh` itself — it waits for the
+shared supervisor daemon to bring Qwen up/down, exactly mirroring how a Hermes turn never calls
+`qwen_serve.sh` directly either. Set `OPENHANDS_LOOP_MANAGE_QWEN=1` to restore the old
+self-contained 2026-09-06 behavior (calls `qwen_serve.sh up/down` itself) for standalone testing
+without the supervisor running — do not set it while `qwen_supervisor.sh __daemon` is also active.
+
+DESIGN — the read-only GPU-queue introspection (gpu_busy/_running_job/dispatcher_alive) is ported
+from tools/hermes/loop.py's proven functions, because that logic is already hardened against real
+incidents (stale gpu.running, dispatcher death mid-job, a hung nvidia-smi during a GPU-crash — see
+gpu_queue.sh's and loop.py's own comments) and there is no reason to re-derive it. The structural
+difference from Hermes' loop remains: instead of firing a brand-new webui/gateway session per turn
+(loop.py's fire_turn()/poll_run()), each iteration calls `conversation.send_message() +
+conversation.run()` on the ONE persisted OpenHands Conversation (agent_config.build_conversation(),
+fixed conversation_id) — so the session survives every offload cycle instead of restarting cold.
+That persistence is the entire point of this harness (see agent_config.py's docstring and the
+write-up doc).
 """
 from __future__ import annotations
 
@@ -36,6 +42,7 @@ import time
 import agent_config as cfg
 
 REPO = cfg.DEFAULT_WORKSPACE
+MANAGE_QWEN = os.environ.get("OPENHANDS_LOOP_MANAGE_QWEN", "0") == "1"
 
 
 def _shared_queue_root(repo):
@@ -63,7 +70,13 @@ def _shared_queue_root(repo):
 SHARED_ROOT = _shared_queue_root(REPO)
 STATE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "state")
 os.makedirs(STATE, exist_ok=True)
-ACTIVE_SENTINEL = os.path.join(STATE, "OPENHANDS_LOOP_ACTIVE")   # touch this file to allow the loop to run
+GPU_QUEUE_STATE = os.path.join(SHARED_ROOT, "research", "queue")  # shared ground truth
+# The driver sentinel is the SAME file tools/qwen_supervisor.sh and tools/openhands_takeover.sh use
+# (research/queue/OPENHANDS_ACTIVE) — a single source of truth alongside Hermes' HERMES_ACTIVE, not a
+# private tools/openhands_proto/state/ file (that was the 2026-09-06 prototype's own sentinel, kept
+# private on purpose while unvetted; now that openhands_takeover.sh drives this loop, sharing the
+# sentinel with the supervisor is what lets `openhands_takeover.sh off` stop BOTH cleanly).
+ACTIVE_SENTINEL = os.path.join(GPU_QUEUE_STATE, "OPENHANDS_ACTIVE")
 LOG = os.path.join(STATE, "openhands_loop.log")
 GPU_QUEUE = os.path.join(SHARED_ROOT, "tools", "gpu_queue.sh")
 # NOTE: unlike gpu_queue.sh, tools/qwen_serve.sh has NO singleton-across-worktrees resolution of its
@@ -72,7 +85,6 @@ GPU_QUEUE = os.path.join(SHARED_ROOT, "tools", "gpu_queue.sh")
 # checkout's Hermes loop uses, a real double-launch risk. So always invoke the SHARED_ROOT's copy,
 # even if this loop script itself is run from a worktree (see the write-up doc's "gap found" note).
 SERVE = os.path.join(SHARED_ROOT, "tools", "qwen_serve.sh")
-GPU_QUEUE_STATE = os.path.join(SHARED_ROOT, "research", "queue")  # shared ground truth — READ ONLY, never written by this script
 
 IDLE_SLEEP = int(os.environ.get("OPENHANDS_LOOP_IDLE_SLEEP", "8"))
 QWEN_UP_TIMEOUT = int(os.environ.get("OPENHANDS_LOOP_QWEN_UP_TIMEOUT", "1800"))
@@ -154,11 +166,16 @@ def qwen_up_cmd():
 
 
 def vram_handoff():
-    """A GPU job is queued/running -> unload qwen, wait for the queue to drain, reload. Identical
-    invariant to tools/hermes/loop.py: qwen is NEVER reloaded while a GPU job still holds the card."""
-    off_log_lines = None
-    log("GPU job present -> unloading qwen for the run")
-    qwen_down_cmd()
+    """A GPU job is queued/running. Default (MANAGE_QWEN=False): tools/qwen_supervisor.sh already owns
+    the unload/reload decision (it polls the same gpu.queue/gpu.running this loop reads) — just wait
+    for the queue to drain. MANAGE_QWEN=True (opt-in standalone mode, no supervisor running): unload
+    qwen ourselves, the 2026-09-06 prototype's original self-contained behavior. Either way qwen is
+    NEVER reloaded BY THIS LOOP while a GPU job still holds the card — identical invariant to
+    tools/hermes/loop.py and to qwen_supervisor.sh itself."""
+    log("GPU job present -> %s" % ("unloading qwen for the run (MANAGE_QWEN=1)" if MANAGE_QWEN else
+                                    "waiting for it to drain (tools/qwen_supervisor.sh owns qwen up/down)"))
+    if MANAGE_QWEN:
+        qwen_down_cmd()
     t0 = last_hb = time.time()
     while gpu_busy():
         if not loop_active():
@@ -168,9 +185,10 @@ def vram_handoff():
             log("GPU job still running (%dm) -> qwen stays DOWN" % ((now - t0) // 60))
             last_hb = now
         time.sleep(IDLE_SLEEP)
-    time.sleep(3)
-    log("GPU queue drained -> reloading qwen")
-    qwen_up_cmd()
+    if MANAGE_QWEN:
+        time.sleep(3)
+        log("GPU queue drained -> reloading qwen")
+        qwen_up_cmd()
     return "gpu_ok"
 
 
@@ -184,7 +202,9 @@ def run_one_turn(conversation):
 
 
 def main():
-    log("openhands_loop prototype up (touch %s to run; rm it to stop)" % ACTIVE_SENTINEL)
+    mode = "self-managed VRAM (OPENHANDS_LOOP_MANAGE_QWEN=1)" if MANAGE_QWEN else \
+        "supervisor-managed VRAM (default — tools/qwen_supervisor.sh owns qwen up/down)"
+    log("openhands_loop up [%s] (sentinel: %s)" % (mode, ACTIVE_SENTINEL))
     conversation = None
     while True:
         try:
@@ -195,7 +215,11 @@ def main():
                 vram_handoff()
                 continue
             if not cfg.qwen_up():
-                log("qwen down + no GPU job -> loading qwen")
+                if not MANAGE_QWEN:
+                    # tools/qwen_supervisor.sh's daemon owns bringing qwen up; just wait for it.
+                    time.sleep(IDLE_SLEEP)
+                    continue
+                log("qwen down + no GPU job -> loading qwen (MANAGE_QWEN=1)")
                 qwen_up_cmd()
                 if not cfg.qwen_up():
                     log("qwen failed to come up -> backing off 60s")

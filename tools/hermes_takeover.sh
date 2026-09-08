@@ -1,4 +1,11 @@
 #!/usr/bin/env bash
+# ⛔ SUPERSEDED (2026-09-08): the recommended local Claude-usage-exhausted fallback is now OpenHands —
+# see docs/OPENHANDS_TAKEOVER.md + tools/openhands_takeover.sh (one continuous, resumable conversation,
+# vs. this script's fresh-session-per-turn Hermes design). KEPT WORKING and NOT deleted — Hermes stays
+# available until OpenHands is live-verified end-to-end (docs/OPENHANDS_TAKEOVER.md "Status"). Nothing
+# below was changed by that migration; tools/qwen_supervisor.sh (which this script starts) was
+# generalized to ALSO serve OpenHands but is fully backward-compatible with everything here.
+#
 # hermes_takeover.sh — THE owner's one-command handoff between Claude (this repo's usual driver) and
 # Hermes (local Qwen, for when Claude usage is exhausted). Run ONE driver at a time.
 #
