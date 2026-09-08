@@ -1,6 +1,13 @@
 #!/usr/bin/env python3
 """Hermes visible autonomous research loop — v2 orchestrator (single owner of the loop).
 
+⛔ SUPERSEDED (2026-09-08): the recommended local Claude-usage-exhausted fallback is now OpenHands —
+see docs/OPENHANDS_TAKEOVER.md + tools/openhands_takeover.sh + tools/openhands_proto/openhands_loop.py
+(one continuous, resumable conversation, vs. this file's fresh-session-per-turn design). This file is
+KEPT WORKING and NOT deleted — Hermes remains an available fallback until OpenHands is live-verified
+end-to-end on the productized path (see docs/OPENHANDS_TAKEOVER.md "Status"). Nothing below was
+changed by that migration.
+
 Design: docs/plans/2026-08-30-hermes-visible-loop-v2-design.md. Replaces the v1 supervisor firing.
 
 Each iteration = ONE fresh, short webui-visible session re-anchored from durable state (live_state.md),
