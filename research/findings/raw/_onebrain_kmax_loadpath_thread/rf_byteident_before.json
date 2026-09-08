@@ -1,0 +1,10 @@
+{
+  "runner": "_onebrain_kmax_rf_byteident_check",
+  "tag": "before_fix",
+  "bundle": "/home/dant123/Projects/sim/bridges/developed/scale787/day_33",
+  "composer_class": "Pool1BoundComposer",
+  "manifest_composer_kind": "rf",
+  "manifest_n_facts": 404,
+  "n_recalled": 404,
+  "kb_sha256": "53ceff752c294ff39ebdbbd41e434e5c978062091d9a0e939793e77418e0713b"
+}
