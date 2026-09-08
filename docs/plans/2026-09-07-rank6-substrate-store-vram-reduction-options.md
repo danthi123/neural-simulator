@@ -1,9 +1,16 @@
 # Rank-6 synaptic fact-store — VRAM-reduction options (fallback if the flip's VRAM verdict is tight)
 
-**Context:** the owner-APPROVED production flip (`enable_substrate_store=True` default-ON, branch
-`research/substrate-store-flip`) is gated on a GPU VRAM measurement (queued). If the substrate-store's ~3.8-5GB
-(estimated) VRAM at 78,857-fact scale is too tight alongside the spiking mouth + the rest of the brain on the 24GB
-3090, these CONCRETE code-grounded options let the flip land anyway. (Code-grounded research 2026-09-07.)
+**⭐ UPDATE 2026-09-08: the queued measurement below landed, and it is NOT tight — GO, no fallback needed.**
+`research/findings/2026-09-08-rank6-substrate-store-cupy-vram-measured-GO.md` measured the actual cupy VRAM cost
+(not the estimate this doc used): ~33 KB/fact, ~2.5 GiB at the full 78,857-fact scale, ~20 GiB still free on the
+24GB budget under worst-case brain accounting. The options below are kept for reference (a useful ranked
+engineering-efficiency roadmap for the per-fact footprint generally) but are NOT required to land the flip.
+
+**Context (original, 2026-09-07):** the owner-APPROVED production flip (`enable_substrate_store=True` default-ON,
+branch `research/substrate-store-flip`) is gated on a GPU VRAM measurement (queued). If the substrate-store's
+~3.8-5GB (estimated) VRAM at 78,857-fact scale is too tight alongside the spiking mouth + the rest of the brain
+on the 24GB 3090, these CONCRETE code-grounded options let the flip land anyway. (Code-grounded research
+2026-09-07.)
 
 **Root cause:** `_store_substrate` builds a full `SimulationBridge` PER FACT (`_build_rf_bridge(1+D)`,
 `rf_phasor_composer.py:40-59,1461`); `ShardedPhasorStore` (n_shards=4) does NOT pool them — each shard holds its

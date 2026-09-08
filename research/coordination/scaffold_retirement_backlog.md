@@ -93,6 +93,16 @@ HEADLINE overclaims corrected by the adversarial-verify (`w3qhweujd`) — see th
 being re-verified.
 
 ## STATUS UPDATES (per-rank, append-only — keep terse; do not rewrite the ranked list above)
+- **Rank 6 (78k-fact knowledge-core WRITE) — CUPY VRAM GATE MEASURED = GO (2026-09-08), #211 unblocked.** The
+  substrate-store's actual GPU VRAM at the real 78,857-fact `wikidata_100k` scale is measured via cupy memory-pool
+  accounting (whole-device `nvidia-smi` was too noisy on this shared box — external GB-scale churn contaminated
+  it): **~33 KB/fact → ~2.5 GiB**, well under the plan doc's 3.8-5 GB *estimate*, leaving **~20 GiB of the 24 GB
+  budget free** under worst-case brain accounting — NONE of the reduction fallbacks (lazy-shard / numpy-worker)
+  are needed. CORRECTS the 2026-09-05 rank-6 entry below: its "3.78 GB affordable" was HOST RSS (numpy runner), a
+  DIFFERENT resource from the flip's VRAM gate (never measured on cupy before). The pickle save gap is already
+  fixed (`fede9d596`). Finding `research/findings/2026-09-08-rank6-substrate-store-cupy-vram-measured-GO.md`,
+  runner `research/runners/_rank6_substrate_store_cupy_vram_derisk.py`. Still default-off on `main`; merging
+  `research/substrate-store-flip` (`enable_substrate_store=True`) is the owner's call (#211).
 - **Rank 6 (78k-fact knowledge-core WRITE, closed-form host) — CHARACTERIZED (mixed), 2026-09-05.** Premise
   confirmed WITH CORRECTION: the per-fact VSA bind is already genuinely neural (RF resonate-and-fire, `fast:
   false` in `curation_report.json`, confirmed for both the shipped 15k default and the ~78,857-fact

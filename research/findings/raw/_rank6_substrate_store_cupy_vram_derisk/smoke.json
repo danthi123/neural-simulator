@@ -1,0 +1,103 @@
+{
+  "bundle": "/home/dant123/Projects/sim-data/knowledge_bundles/wikidata_100k",
+  "target_n": 78857,
+  "seed": 42,
+  "cost_points": [
+    10,
+    30,
+    60
+  ],
+  "device_used_mib_before": 2741,
+  "cost": [
+    {
+      "n": 10,
+      "substrate": false,
+      "elapsed_s": 3.748,
+      "used0_mib": 2735,
+      "used_post_construct_mib": 2735,
+      "used_mib_at_checkpoint": 3044,
+      "marginal_vs_construct_mib": 309,
+      "cupy_pool_used_mib": 1.105,
+      "cupy_pool_total_mib": 1.176,
+      "nvidia_smi_peak_mib_so_far": 3044
+    },
+    {
+      "n": 30,
+      "substrate": false,
+      "elapsed_s": 10.211,
+      "used0_mib": 2735,
+      "used_post_construct_mib": 2735,
+      "used_mib_at_checkpoint": 3003,
+      "marginal_vs_construct_mib": 268,
+      "cupy_pool_used_mib": 1.658,
+      "cupy_pool_total_mib": 1.749,
+      "nvidia_smi_peak_mib_so_far": 3046
+    },
+    {
+      "n": 60,
+      "substrate": false,
+      "elapsed_s": 19.556,
+      "used0_mib": 2735,
+      "used_post_construct_mib": 2735,
+      "used_mib_at_checkpoint": 2992,
+      "marginal_vs_construct_mib": 257,
+      "cupy_pool_used_mib": 1.796,
+      "cupy_pool_total_mib": 1.891,
+      "nvidia_smi_peak_mib_so_far": 3046,
+      "nvidia_smi_peak_mib_final": 3046
+    },
+    {
+      "n": 10,
+      "substrate": true,
+      "elapsed_s": 3.568,
+      "used0_mib": 2773,
+      "used_post_construct_mib": 2773,
+      "used_mib_at_checkpoint": 3015,
+      "marginal_vs_construct_mib": 242,
+      "cupy_pool_used_mib": 1.428,
+      "cupy_pool_total_mib": 1.457,
+      "nvidia_smi_peak_mib_so_far": 3040
+    },
+    {
+      "n": 30,
+      "substrate": true,
+      "elapsed_s": 10.238,
+      "used0_mib": 2773,
+      "used_post_construct_mib": 2773,
+      "used_mib_at_checkpoint": 3005,
+      "marginal_vs_construct_mib": 232,
+      "cupy_pool_used_mib": 2.625,
+      "cupy_pool_total_mib": 2.661,
+      "nvidia_smi_peak_mib_so_far": 3040
+    },
+    {
+      "n": 60,
+      "substrate": true,
+      "elapsed_s": 20.155,
+      "used0_mib": 2773,
+      "used_post_construct_mib": 2773,
+      "used_mib_at_checkpoint": 3004,
+      "marginal_vs_construct_mib": 231,
+      "cupy_pool_used_mib": 3.73,
+      "cupy_pool_total_mib": 3.778,
+      "nvidia_smi_peak_mib_so_far": 3040,
+      "nvidia_smi_peak_mib_final": 3040
+    }
+  ],
+  "projection": {
+    "label": "wikidata_100k(78857 facts)",
+    "target_n": 78857,
+    "nvidia_smi": {
+      "substrate_slope_mib_per_fact": -0.22,
+      "proj_gib": -16.9419,
+      "numpy_kb_slope_mib_per_fact": -1.04,
+      "numpy_kb_proj_gib": -80.0891
+    },
+    "cupy_pool": {
+      "substrate_slope_mib_per_fact": 0.046419999999999996,
+      "proj_gib": 3.5747,
+      "numpy_kb_slope_mib_per_fact": 0.014300000000000002,
+      "numpy_kb_proj_gib": 1.1012
+    }
+  }
+}
