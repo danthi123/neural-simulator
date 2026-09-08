@@ -135,6 +135,48 @@ def extract_kb_composites(agent) -> dict[str, np.ndarray]:
     return out
 
 
+def extract_onebrain_substrate(agent) -> dict[str, np.ndarray]:
+    """BRAIN-LOAD SPEEDUP (option 1, ONEBRAIN): the onebrain analog of `extract_kb_composites` -- closes the gap that
+    function's own docstring names (a None `kb` handle is skipped there -> every onebrain fact re-`store()`s, i.e.
+    re-resonates, on every load; ~416 RF-resonate steps/fact via `_compose_phases`, board 2026-09-08 "onebrain
+    re-resonate" blocker, `research/findings/2026-09-08-rank1-composer-rebuild-rf-to-onebrain-real-bundle-parity-
+    GO.md`).
+
+    `OneBrainComposer` never caches the bound composite in `.kb` (kb is `(fact, None)`, the vector lives
+    ON-SUBSTRATE) -- but the composite is NOT lost: `_write_block(i, zc)` (one_brain_composer.py:757-777) turns the
+    `[D]` complex resonate output `zc` into `D` host-side connection tuples `(post, pre, g*zc[k])` appended
+    block-major into `self.store_conns` (block i occupies `store_conns[i*D:(i+1)*D]`; `post`/`pre` are deterministic
+    functions of `(i, D, store_base, block)` -- fixed once the composer is constructed with the same layout params,
+    which `load_developed_brain` already reproduces for a reload). So the WEIGHT column of that slice (`w[k] = g *
+    zc[k]`) is exactly the same deterministic-resonate-output payload `extract_kb_composites` persists for rf/rate,
+    just addressed through `store_conns` instead of `kb[i][1]`.
+
+    Returns {fact_index(str): w[D] complex128}, keyed like `extract_kb_composites` (aligned to `extract_facts`
+    order). A no-op ({}) unless `comp` structurally looks like `OneBrainComposer` (has `store_conns` + `D`) -- an
+    rf/rate bundle's facts stay on `extract_kb_composites` only, so the two never both fire for one bundle (kb
+    holds numpy arrays there, never None). Indices whose `store_conns` slice is short (should not happen for a
+    fact actually in `kb`, but guarded) are simply absent -- a partial map round-trips exactly like
+    `extract_kb_composites`'s (present -> direct-set, absent -> re-`store()`)."""
+    comp = _inner_agent(agent).composer
+    D = getattr(comp, "D", None)
+    store_conns = getattr(comp, "store_conns", None)
+    if D is None or store_conns is None:
+        return {}                                      # not onebrain-shaped (rf/rate has no store_conns) -> no-op
+    out: dict[str, np.ndarray] = {}
+    for i, (_fact, handle) in enumerate(comp.kb):
+        if handle is not None:
+            continue                                   # onebrain's own kb shape is always (fact, None); a numpy
+                                                        # handle here means this is NOT the onebrain on-substrate
+                                                        # case (already covered by extract_kb_composites) -> skip
+        lo, hi = i * D, (i + 1) * D
+        if hi <= len(store_conns):
+            # store_conns is block-major: slice [lo:hi] is block i's D readout connections, each a
+            # (post, pre, weight) tuple in k-order 0..D-1 (see _write_block) -> the weight column IS w[k].
+            w = np.array([store_conns[lo + k][2] for k in range(D)], dtype=np.complex128)
+            out[str(i)] = w
+    return out
+
+
 # ============================================================================================================
 # SAVE.
 # ============================================================================================================
@@ -197,6 +239,15 @@ def save_developed_brain(agent, path, *, seed=42, D=None, composer_kind="rf",
     if kb_composites:
         np.savez_compressed(str(root / "kb_composites.npz"), **kb_composites)
 
+    # --- (BRAIN-LOAD SPEEDUP, option 1, ONEBRAIN) the on-substrate composite weights -> onebrain_substrate.npz
+    #     ({fact_index -> w[D] complex128}) -- the onebrain analog of kb_composites.npz above (see
+    #     extract_onebrain_substrate's docstring): closes the gap that composer family left open (kb=(fact,None) ->
+    #     nothing to persist there), so an onebrain bundle ALSO skips the per-fact resonate on reload. Empty on the
+    #     rf/rate path (no store_conns) -> the file is just absent (byte-identical to before this existed). ---
+    onebrain_substrate = extract_onebrain_substrate(agent)
+    if onebrain_substrate:
+        np.savez_compressed(str(root / "onebrain_substrate.npz"), **onebrain_substrate)
+
     # --- the BridgeLineage (DevelopState payload + metadata) -- the project's standard persistent-state machinery.
     #     If a DevelopState is supplied, persist its payload so the develop loop can RESUME from this bundle. ---
     lineage = BridgeLineage(lineage_name, root=root / "lineage")
@@ -226,12 +277,14 @@ def save_developed_brain(agent, path, *, seed=42, D=None, composer_kind="rf",
         "n_facts": len(facts),
         "n_grounded_codes": len(codes),
         "n_kb_composites": len(kb_composites),     # (option 1) persisted composites -> per-fact resonate skipped on load
+        "n_onebrain_substrate": len(onebrain_substrate),  # (option 1, onebrain) ditto, via store_conns not kb
         "n_speak_value_Q": len(speak_value_Q),     # (Stage B) persisted learned-talkativeness Q entries (0 if not communicable)
         "vocab": list(vocab),
         "self_aliases": sorted(self_aliases) if self_aliases else None,
         "lineage_name": lineage_name,
         "files": {"codes": "grounded_codes.npz", "facts": "facts.json", "lineage": "lineage",
                   **({"kb_composites": "kb_composites.npz"} if kb_composites else {}),
+                  **({"onebrain_substrate": "onebrain_substrate.npz"} if onebrain_substrate else {}),
                   **({"speak_value_Q": "speak_value_Q.json"} if speak_value_Q else {})},
     }
     if extra_metadata:
@@ -293,6 +346,18 @@ def _load_kb_composites(path) -> dict[int, np.ndarray]:
         return {int(k): np.array(data[k]) for k in data.files}
 
 
+def _load_onebrain_substrate(path) -> dict[int, np.ndarray]:
+    """(BRAIN-LOAD SPEEDUP, option 1, ONEBRAIN) Load onebrain_substrate.npz -> {fact_index(int) -> w[D] complex128}.
+    Absent file (an rf/rate bundle, or a pre-speedup onebrain bundle) -> {} (then _restore_facts re-`store()`s every
+    fact, the original -- and only -- onebrain behavior, byte-unchanged)."""
+    p = Path(path) / "onebrain_substrate.npz"
+    if not p.exists():
+        return {}
+    with np.load(str(p)) as data:
+        # complex128 native dtype (matches store_conns' weight dtype) -> the direct-set restore is BIT-EXACT.
+        return {int(k): np.asarray(data[k], dtype=np.complex128) for k in data.files}
+
+
 def _store_fact_dict_from_operand(a, v, p, polarity):
     """Build the EXACT fact dict that `RFPhasorComposer.store(a, v, p, polarity)` appends -- WITHOUT the expensive
     `_encode` resonate. Mirrors the composer's `store` dict-build (rf_phasor_composer.store): a Clause patient stays a
@@ -318,7 +383,7 @@ def _store_fact_dict_from_operand(a, v, p, polarity):
     return fact
 
 
-def _restore_facts(agent, facts, composites=None, composer_kind_changed=False):
+def _restore_facts(agent, facts, composites=None, onebrain_substrate=None, composer_kind_changed=False):
     """Re-store the saved facts into the agent's composer (so composer.kb matches the developed state). Handles a
     clause patient (the tagged dict) by reconstructing a Clause. Uses the bound polarity tag when present.
 
@@ -329,6 +394,18 @@ def _restore_facts(agent, facts, composites=None, composer_kind_changed=False):
     output, so recall is byte-identical. A fact with no persisted composite (absent index, onebrain on-substrate, or a
     substrate-store composer) falls back to `comp.store()` (re-resonate), so the path is always correct -- the speedup
     is applied only where it is provably byte-identical.
+
+    BRAIN-LOAD SPEEDUP (option 1, ONEBRAIN): when `onebrain_substrate` is a {fact_index -> w[D] complex128} map (from
+    onebrain_substrate.npz, see `extract_onebrain_substrate`) AND the composer is onebrain-shaped (`store_conns` +
+    `D`), the fact's block is set DIRECTLY via `comp._write_block(i, w)` -- SKIPPING `_compose_phases`'s ~416-step
+    RF resonate. `_write_block` still runs (so its dirty-flag/cache-invalidation side effects -- `_store_dirty`,
+    `_persistent_dirty`, `integrated_loop`'s `_seq_dirty`/`_fused_dirty` -- fire exactly as a real store would; only
+    the expensive resonate that PRODUCES `w` is skipped). This is byte-identical ONLY when the reload composer's own
+    `encoding_gain_fn is None` (the production default: `complex(1.0) * w[k] == w[k]` bit-for-bit, so `_write_block`
+    re-applying a g=1.0 gain to an already-gain-baked `w` is an identity op) -- when a caller has wired a non-None
+    `encoding_gain_fn` onto the reload composer (dynamic DA-gated writes), this path is skipped (falls to
+    `comp.store()`) rather than risk double-applying / mismatching a historical gain. A fact with no persisted
+    weight vector (absent index, or a non-onebrain composer) falls back to `comp.store()` unchanged.
 
     `composer_kind_changed`: True when the CALLER's resolved `composer_kind` differs from the bundle's OWN saved
     `manifest['composer_kind']` (an explicit cross-family override -- see `load_developed_brain`). ROOT-CAUSE FIX
@@ -346,6 +423,7 @@ def _restore_facts(agent, facts, composites=None, composer_kind_changed=False):
     inner = _inner_agent(agent)
     comp = inner.composer
     composites = composites or {}
+    onebrain_substrate = onebrain_substrate or {}
     # the fast direct-set path applies only when (a) composer_kind was NOT changed from what this bundle's own
     # composites were saved under (the root-cause guard above), AND (b) the composer caches a NUMPY composite in
     # kb (rf/rate, no substrate store) -- a substrate-store composer's handle is a bridge (not the composite), so
@@ -355,6 +433,15 @@ def _restore_facts(agent, facts, composites=None, composer_kind_changed=False):
     # raise AttributeError. `enable_substrate_store` alone does not catch either case.
     can_direct = ((not composer_kind_changed) and hasattr(comp, "kb")
                  and not bool(getattr(comp, "enable_substrate_store", False)))
+    # the onebrain direct-set path (see this function's ONEBRAIN docstring paragraph): the composer must be
+    # onebrain-shaped (has `store_conns` + `D` + the private `_write_block` this reuses -- SlotBinderComposer/rf/
+    # rate composers have none of these, so this is family-safe the same way `hasattr(comp,"kb")` guards the rf
+    # path above) AND not a cross-family override AND its `encoding_gain_fn` must be the byte-identical None
+    # default (the guard this function's docstring names -- a non-None gain-fn makes `_write_block`'s g-multiply
+    # NOT an identity op on an already-gain-baked persisted weight).
+    can_direct_onebrain = ((not composer_kind_changed) and hasattr(comp, "store_conns")
+                          and hasattr(comp, "_write_block") and getattr(comp, "D", None) is not None
+                          and getattr(comp, "encoding_gain_fn", None) is None)
     try:
         from research.runners.core_sim_composition import Clause
     except Exception:
@@ -373,11 +460,21 @@ def _restore_facts(agent, facts, composites=None, composer_kind_changed=False):
             adjs = [attr] + ([attr2] if attr2 is not None else [])
             p = (adjs, p)
         comp_arr = composites.get(i)
+        ob_w = onebrain_substrate.get(i)
         if can_direct and comp_arr is not None:
             # DIRECT SET (skip the resonate): the persisted composite is store()'s deterministic _encode output, kept
             # in its native dtype so the kb array is BIT-EXACT to the re-resonated one.
             fact_dict = _store_fact_dict_from_operand(a, v, p, polarity)
             comp.kb.append((fact_dict, comp_arr))
+        elif can_direct_onebrain and ob_w is not None:
+            # DIRECT SET (skip the resonate), onebrain: `_write_block` reuses the composer's OWN dirty-flag/cache-
+            # invalidation logic (see this function's docstring) -- `i` MUST be `len(comp.kb)` at call time (the
+            # same invariant `_store_composite` upholds) so the block lands at the SAME store_conns slice / trigger
+            # index the original store used; the kb append happens AFTER, exactly like store()'s own
+            # `_store_fact` (resonate) -> `kb.append` order.
+            fact_dict = _store_fact_dict_from_operand(a, v, p, polarity)
+            comp._write_block(len(comp.kb), ob_w)
+            comp.kb.append((fact_dict, None))
         else:
             comp.store(a, v, p, polarity=polarity)   # re-resonate (no persisted composite, or a substrate-store composer)
 
@@ -396,16 +493,20 @@ def load_developed_brain(path, *, seed=None, use_multiturn=False, enable_neural_
     `use_multiturn`), built over the saved vocab with the saved grounded codes, with every saved fact re-stored.
 
     BRAIN-LOAD SPEEDUP (default-ON for the load path -- three options): the per-fact RF resonate is SKIPPED when
-    kb_composites.npz is present (option 1 -- the persisted composite is set directly into composer.kb); the
-    comprehension parser's ~75K-step Hebbian training is DEFERRED (option 2 -- `defer_parser=True`: the parser builds
-    lazily on the FIRST runtime teach); and (option 3, MultiTurnAgent only) the persistent discourse WORKING-MEMORY
-    loop is DEFERRED (`defer_planner`, tied to `defer_parser` here) -- the WM loop's ~2*len(referents) attractor
-    pathways into the merged ~10M-synapse bridge are the dominant load cost (~681s on the SK brain; see the load
-    profile), and a pure Q&A / rich-answer session never introduces a multi-turn referent, so it never needs the WM
-    loop. All three are byte-identical to the eager path for any Q&A. A loaded brain that then TEACHES a new fact pays
-    the one-time parser training on the first teach; one that introduces a multi-turn referent pays the one-time WM
-    build on the first referent write -- both identical to a never-deferred agent. Pass `defer_parser=False` to force
-    the eager parser AND eager planner (e.g. if you want them warm immediately).
+    kb_composites.npz is present (option 1 -- the persisted composite is set directly into composer.kb; ONEBRAIN
+    bundles get the same skip via a sibling sidecar, onebrain_substrate.npz -- see `extract_onebrain_substrate` /
+    `_restore_facts`'s ONEBRAIN paragraph -- since onebrain's composite lives on-substrate in `store_conns`, not in
+    `kb`, so it needed its own extractor; both are ABSENT/reload-unchanged on a bundle saved before this existed, or
+    on the composer family the sidecar doesn't apply to); the comprehension parser's ~75K-step Hebbian training is
+    DEFERRED (option 2 -- `defer_parser=True`: the parser builds lazily on the FIRST runtime teach); and (option 3,
+    MultiTurnAgent only) the persistent discourse WORKING-MEMORY loop is DEFERRED (`defer_planner`, tied to
+    `defer_parser` here) -- the WM loop's ~2*len(referents) attractor pathways into the merged ~10M-synapse bridge
+    are the dominant load cost (~681s on the SK brain; see the load profile), and a pure Q&A / rich-answer session
+    never introduces a multi-turn referent, so it never needs the WM loop. All three are byte-identical to the eager
+    path for any Q&A. A loaded brain that then TEACHES a new fact pays the one-time parser training on the first
+    teach; one that introduces a multi-turn referent pays the one-time WM build on the first referent write -- both
+    identical to a never-deferred agent. Pass `defer_parser=False` to force the eager parser AND eager planner (e.g.
+    if you want them warm immediately).
 
     Args:
         path: the developed-brain directory (must contain brain.json + grounded_codes.npz + facts.json; optionally
@@ -497,6 +598,7 @@ def load_developed_brain(path, *, seed=None, use_multiturn=False, enable_neural_
     if composer_kind == "onebrain" and onebrain_k_max is None:
         onebrain_k_max = len(facts) + 16
     composites = _load_kb_composites(path)   # (option 1) {fact_index -> comp[D]} -> skip the per-fact resonate
+    onebrain_substrate = _load_onebrain_substrate(path)  # (option 1, onebrain) ditto, via store_conns not kb
     speak_value_Q = _load_speak_value_Q(path)   # (Stage B) the persisted learned-talkativeness Q (seeds CommunicableTurn)
     # the vocab must cover every grounded code + every fact word (so the composer can encode them)
     vocab_set = set(vocab) | set(codes.keys())
@@ -544,7 +646,8 @@ def load_developed_brain(path, *, seed=None, use_multiturn=False, enable_neural_
                                          communicable_mode=communicable_mode, communicable_draw=communicable_draw,
                                          speak_value_Q=(speak_value_Q or None), onebrain_k_max=onebrain_k_max,
                                          **_slotbinder_kwargs)
-    _restore_facts(agent, facts, composites=composites, composer_kind_changed=_composer_kind_changed)
+    _restore_facts(agent, facts, composites=composites, onebrain_substrate=onebrain_substrate,
+                   composer_kind_changed=_composer_kind_changed)
 
     # (KNOWLEDGE-SCALE, opt-in, DEFAULT-OFF = byte-identical) install a cortical LONG-TERM store so the brain can
     # hold + query bulk KNOWLEDGE (100k-1M facts) beyond the small conversation working-set (the k_max=32 co-resident
