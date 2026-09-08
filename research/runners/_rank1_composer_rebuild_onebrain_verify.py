@@ -62,8 +62,7 @@ if _REPO not in sys.path:
     sys.path.insert(0, _REPO)
 
 from research.runners.developed_brain_io import (  # noqa: E402
-    _read_manifest, _load_codes_npz, _load_facts_json, _restore_facts, load_developed_brain,
-    save_developed_brain,
+    _read_manifest, _load_codes_npz, _load_facts_json, load_developed_brain,
 )
 from research.runners.brain_conversational_agent import BrainConversationalAgent  # noqa: E402
 
@@ -98,19 +97,11 @@ def build_answer_maps(flat):
     return patient_set, agent_set, svo
 
 
-def build_onebrain(seed, vocab, codes, flat, k_max, scramble=False):
-    """Build the production onebrain agent and re-store the real facts on-substrate. `scramble` permutes the
-    grounded codes across words (the anti-cheat control -> the stored bindings no longer correspond to the cues)."""
-    codes_use = dict(codes)
-    if scramble:
-        rng = np.random.default_rng(seed * 131 + 7)
-        keys = list(codes_use.keys())
-        vals = [codes_use[k] for k in keys]
-        perm = rng.permutation(len(vals))
-        codes_use = {keys[i]: vals[perm[i]] for i in range(len(keys))}
+def build_onebrain(seed, vocab, codes, flat, k_max):
+    """Build the production onebrain agent and re-store the real facts on-substrate (the spiking store)."""
     concepts = {w: None for w in vocab}
     agent = BrainConversationalAgent(seed=seed, concepts=concepts,
-                                     grounded_codes=codes_use if codes_use else None,
+                                     grounded_codes=codes if codes else None,
                                      composer_kind="onebrain", onebrain_k_max=k_max,
                                      enable_neural_render=False, defer_parser=True)
     t0 = time.time()
@@ -118,6 +109,46 @@ def build_onebrain(seed, vocab, codes, flat, k_max, scramble=False):
         agent.composer.store(a, v, p, polarity=pol)
     store_s = time.time() - t0
     return agent, store_s
+
+
+def _scramble_patients(flat, seed):
+    """The SCRAMBLE control (anti-cheat): permute the PATIENT assignments across facts, breaking the (cue ->
+    answer) binding while leaving the codebook (concept codes) intact. A composer that stores THIS and is then
+    queried against the TRUE answer-set must collapse to ~chance -- proving recall is the LEARNED binding, not the
+    harness. (A global relabel of ALL codes is an isomorphism and preserves recall, so it is NOT a valid control.)"""
+    rng = np.random.default_rng(seed * 131 + 7)
+    pats = [p for _a, _v, p, _pol in flat]
+    perm = rng.permutation(len(pats))
+    return [(a, v, pats[perm[i]], pol) for i, (a, v, p, pol) in enumerate(flat)]
+
+
+def write_onebrain_bundle(out_bundle, src_bundle, manifest, flat):
+    """Write the LITERAL rf->onebrain rebuilt bundle: the SAME grounded codes + facts as the source, a manifest
+    with composer_kind='onebrain', and NO kb_composites.npz (onebrain composites live on-substrate, so a reload
+    re-stores every fact on the spiking composer). This IS the file-level rebuild the backlog's rank-1 names."""
+    import shutil
+    os.makedirs(out_bundle, exist_ok=True)
+    # copy the codes + facts verbatim (byte-for-byte the developed brain's own learned codes + knowledge)
+    for fn in ("grounded_codes.npz", "facts.json"):
+        src = os.path.join(src_bundle, fn)
+        if os.path.exists(src):
+            shutil.copy2(src, os.path.join(out_bundle, fn))
+    rb = dict(manifest)
+    rb["composer_kind"] = "onebrain"
+    rb.pop("n_kb_composites", None)            # onebrain: composites on-substrate, not persisted
+    files = dict(rb.get("files") or {})
+    files.pop("kb_composites", None)
+    rb["files"] = files
+    rb["metadata"] = dict(rb.get("metadata") or {})
+    rb["metadata"]["rebuilt_from"] = src_bundle
+    rb["metadata"]["rebuild_note"] = ("rank-1 rf->onebrain literal rebuild (de-risk in isolation): same codes+facts, "
+                                      "manifest flipped to onebrain, kb_composites dropped; reload re-stores on the "
+                                      "spiking substrate. NOTE: load_developed_brain must thread onebrain_k_max>=n_facts "
+                                      "for a >32-fact onebrain bundle to reload without truncation (default k_max=32).")
+    with open(os.path.join(out_bundle, "brain.json"), "w", encoding="utf-8") as fh:
+        json.dump(rb, fh, indent=2, ensure_ascii=False)
+    return {"path": out_bundle, "composer_kind": "onebrain", "n_facts": rb.get("n_facts"),
+            "files": sorted(os.listdir(out_bundle))}
 
 
 def main():
@@ -293,14 +324,15 @@ def main():
           f"ob_confab={ob_confab}", flush=True)
 
     # ================= SCRAMBLE control (anti-cheat) =================
-    print("[rank1] scramble control ...", flush=True)
-    agent_scr, _ = build_onebrain(seed, vocab, codes, flat, k_max=len(flat) + 16, scramble=True)
+    print("[rank1] scramble control (shuffled cue->answer binding) ...", flush=True)
+    flat_scr = _scramble_patients(flat, seed)
+    agent_scr, _ = build_onebrain(seed, vocab, codes, flat_scr, k_max=len(flat) + 16)
     scr = agent_scr.composer
     scr_valid = 0
     scr_n = min(120, len(distinct_qp))
     for (a, v) in distinct_qp[:scr_n]:
         o = scr.query_patient(a, v)
-        scr_valid += o in patient_set[(a, v)]
+        scr_valid += o in patient_set[(a, v)]   # measured against the TRUE answer-set -> must collapse
     ob_same = sum(ob.query_patient(a, v) in patient_set[(a, v)] for (a, v) in distinct_qp[:scr_n]) / scr_n
     scr_recall = scr_valid / scr_n if scr_n else None
     # attribution: what fraction of the onebrain recall is NOT present in the code-scrambled control (i.e. is
@@ -315,11 +347,7 @@ def main():
     out_bundle = args.out_bundle or os.path.join(os.path.dirname(args.out), "rebuilt_onebrain_bundle")
     os.makedirs(os.path.dirname(out_bundle) or ".", exist_ok=True)
     try:
-        rb_manifest = save_developed_brain(agent_ob, out_bundle, seed=seed, D=D, composer_kind="onebrain",
-                                           extra_metadata={"rebuilt_from": args.bundle,
-                                                           "note": "rank-1 rf->onebrain rebuild (de-risk in isolation)"})
-        rebuilt = {"path": out_bundle, "composer_kind": rb_manifest.get("composer_kind"),
-                   "n_facts": rb_manifest.get("n_facts"), "n_kb_composites": rb_manifest.get("n_kb_composites")}
+        rebuilt = write_onebrain_bundle(out_bundle, args.bundle, manifest, flat)
     except Exception as e:
         rebuilt = {"path": out_bundle, "error": repr(e)}
     print(f"[rank1] rebuilt bundle: {rebuilt}", flush=True)
