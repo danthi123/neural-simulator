@@ -9,6 +9,40 @@ fallback of its own.
 **Run ONE driver at a time: Claude, Hermes, or OpenHands.** Hand the current one back before starting
 another.
 
+## THE single command (2026-09-08)
+
+```bash
+bash tools/openhands.sh
+```
+
+That's it — one command, start to finish. It does the full takeover (guards against a conflicting
+Hermes driver, sets the driver sentinel, starts the shared VRAM supervisor, launches
+`openhands_loop.py`), then drops you straight into an interactive prompt:
+
+```
+openhands> fix the failing test in tests/test_foo.py
+```
+
+Type a task and press Enter to run one turn against the **same persisted conversation** every time —
+its scrollable transcript (tool calls, file edits, shell output) prints right there, then you get the
+prompt back for the next task. Meanwhile `openhands_loop.py` (started for you) keeps driving the same
+conversation on its own cadence for unattended work in between your turns.
+
+**To end the session and hand back to Claude**, type `/stop` (or `/quit`) — **or just Ctrl-C, or
+Ctrl-D.** All four paths, plus a crash or startup error, run the exact same teardown before exiting:
+stop `openhands_loop.py`, unload Qwen, clear the driver sentinel — so the GPU/driver seat always comes
+back to Claude, with nothing stranded. (The one thing that can't be caught: `kill -9` bypasses cleanup
+for any process, not just this one.)
+
+Running it again while a session is already active safely attaches instead of double-starting; running
+it from a second terminal while one is already attached refuses with a clear message instead of racing
+the first session over the same conversation.
+
+The rest of this document (starting at "0. One-time build" below) is the **advanced, scriptable
+primitive** `tools/openhands_takeover.sh {on|off|status}` that `tools/openhands.sh` is built on top of
+— reach for it directly only when scripting/automating around the takeover rather than driving it by
+hand.
+
 ## What "OpenHands" actually means here
 
 The OpenHands *brand* today points most people at either a deprecated CLI or "Agent Canvas" (a
@@ -34,6 +68,13 @@ uv pip install --python .venv/bin/python -U openhands-sdk openhands-tools
 
 Takes under a minute; ~485 MB on disk. `tools/openhands_takeover.sh on` checks for this and tells you
 to run it if missing.
+
+## Advanced: the scriptable primitive
+
+Everything from here down documents `tools/openhands_takeover.sh {on|off|status}` directly — the
+building block `tools/openhands.sh` above is built on. Use this path for scripting/automation (e.g. a
+systemd unit, another tool's driver switch); a human at a keyboard should use `bash tools/openhands.sh`
+instead.
 
 ## 1. Start: hand the project to OpenHands
 
@@ -119,6 +160,7 @@ runs. The supervisor daemon is left running (harmless — it goes inert with no 
 | Qwen never loads after `on` | The local GPU queue never goes idle, or you ran `on` from a worktree (see §1) | `bash tools/qwen_supervisor.sh status` to see the live verdict; re-run `on` from `/home/dant123/Projects/sim` |
 | `openhands_loop.py` isn't running per `status` | It crashed on start | `tail -40 tools/openhands_proto/state/openhands_loop.log` |
 | Two drivers seem to be fighting over Qwen | Both `hermes_takeover.sh on` and `openhands_takeover.sh on` were run | Run `off` on both, then start only the one you want |
+| `openhands.sh` refuses with "another session is already attached" | A second terminal tried `openhands.sh` while one is already running the REPL | Use the first terminal, or if it's genuinely gone: `rm -f research/queue/openhands_repl.pid` |
 
 ## Status (2026-09-08) — what is verified vs. what is deferred
 
@@ -128,11 +170,27 @@ runs. The supervisor daemon is left running (harmless — it goes inert with no 
   [`docs/2026-09-06-local-agent-stack-review.md`](2026-09-06-local-agent-stack-review.md).
   Verified offline (no GPU/network), 2026-09-08: `tools/openhands_proto/validate_offline.py`, 9/9,
   rebuilt venv (`openhands-sdk`/`openhands-tools` 1.45.0).
-- **Deferred to the next GPU-clear moment**: a live smoke of the *productized* pieces built this
-  session — `tools/openhands_takeover.sh on`, the generalized `tools/qwen_supervisor.sh` (now watching
-  `OPENHANDS_ACTIVE`), and `openhands_loop.py`'s new supervisor-managed (non-self-managing) VRAM mode.
+- **`tools/openhands.sh` (the single-command wrapper), verified offline 2026-09-08**: the REPL and its
+  teardown were dry-tested against a stubbed takeover primitive + a stubbed `run_turn.py` (env-var
+  override seams, `OPENHANDS_SH_TAKEOVER`/`OPENHANDS_SH_VENV_PY`, used for testing only — never set
+  these for real use) so nothing touched the GPU. Confirmed: `/stop` tears down; EOF (Ctrl-D) tears
+  down; a REAL pty-delivered Ctrl-C (not `kill -INT`, which bash ignores for a backgrounded job and
+  would have been a false pass) tears down both at the idle prompt and mid-task; `SIGTERM` tears down;
+  a second concurrent `openhands.sh` refuses without double-calling `on`/`off`; a stale lock file (dead
+  pid) does not block a fresh session. Also ran against the REAL `openhands_takeover.sh` with the venv
+  deliberately absent (this worktree never built one) — `on` refused cleanly, `openhands.sh` still ran
+  its teardown (calling the real `off`, which is a safe no-op with nothing started), and
+  `bash tools/qwen_serve.sh status` plus a process scan confirmed `qwen: down` and no `llama-server`
+  from our stack throughout. **Not yet done**: an actual task typed at the prompt against a live Qwen +
+  the real `run_turn.py` — see the deferred live smoke below, which now also covers `openhands.sh`.
+- **Deferred to the next GPU-clear moment**: a live smoke of the *productized* pieces — the underlying
+  `tools/openhands_takeover.sh on`, the generalized `tools/qwen_supervisor.sh` (now watching
+  `OPENHANDS_ACTIVE`), `openhands_loop.py`'s supervisor-managed (non-self-managing) VRAM mode, and now
+  `tools/openhands.sh` typing a real task at the prompt against a live Qwen + the real `run_turn.py`.
   These were only dry-tested (read-only status checks + isolated sentinel-file logic, no GPU/network
-  calls) — see the exact commands below. Do this from the canonical checkout when the GPU is free:
+  calls) — see the exact commands below. Do this from the canonical checkout when the GPU is free (the
+  simplest version of this smoke is just `bash tools/openhands.sh`, then typing a real task, then
+  `/stop`; the numbered steps below are the lower-level equivalent, useful for isolating a failure):
 
 ```bash
 # 1. Confirm nothing local is running, and the venv is built:
