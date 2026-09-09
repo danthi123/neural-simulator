@@ -1,0 +1,37 @@
+{
+ "run_id": "1788989013-691106",
+ "runner": "research/runners/_spiking_habituation_novelty_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-af5406b21b8edb70b/research/runners/_spiking_habituation_novelty_derisk.py",
+  "--seeds",
+  "42",
+  "43",
+  "44",
+  "100",
+  "101",
+  "102",
+  "--n-trials",
+  "30",
+  "--out",
+  "research/findings/raw/_spiking_habituation_novelty/decisive_6seed.json"
+ ],
+ "git_sha": "921948a6b",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-09T17:23:33",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 1575.8,
+ "corpus_check_query": "value-choice host recency-ratio engagement scalar retirement (spiking STP facilitation replacement)",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_spiking_habituation_novelty/decisive_6seed.json"
+}
