@@ -405,7 +405,16 @@ case "${1:-}" in
     for rpid in $(gpu_resident_brain_pids); do
       if [ "$rpid" != "$rp" ] && ! pgrep -P "$rp" 2>/dev/null | grep -qx "$rpid"; then untracked="$untracked $rpid"; fi
     done
-    [ -n "$untracked" ] && echo "⛔ UNTRACKED GPU-resident brain process(es), not covered by gpu.running:$untracked  -- pause --now (or game.sh on) will still stop these." ;;
+    # `if` (not `test && echo`) deliberately: the healthy/common case (untracked empty) must exit 0, not fall
+    # through to the LAST command's own exit status. `[ -n "$untracked" ] && echo ...` returns the TEST's
+    # failure (1) whenever there is nothing to warn about, so `gpu_queue.sh status` reported rc=1 on every
+    # healthy call -- a read-only diagnostic that could never signal success via its own exit code (caught
+    # 2026-09-09 by `tools/tool_health.py` marking gpu-queue permanently ROTTED although the printed status
+    # was fine; `tests/test_gpu_queue_status_exit.py::test_status_healthy_exits_zero` pins this).
+    if [ -n "$untracked" ]; then
+      echo "⛔ UNTRACKED GPU-resident brain process(es), not covered by gpu.running:$untracked  -- pause --now (or game.sh on) will still stop these."
+    fi
+    exit 0 ;;
   stop) [ -f "$DPID" ] && kill "$(cat "$DPID")" 2>/dev/null && rm -f "$DPID" && echo "dispatcher stopped" || echo "not running" ;;
   --selftest) selftest; exit $? ;;
   *) grep '^#' "$0" | sed 's/^# \{0,1\}//' | head -20 ;;

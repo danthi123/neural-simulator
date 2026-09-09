@@ -1,0 +1,57 @@
+{
+  "rows": [
+    {
+      "seed": 42,
+      "n_trials": 4,
+      "immediate_habituation_ratio": 0.387,
+      "monotonic_spearman": -1.0,
+      "short_gap_recovery": 0.3232,
+      "long_gap_recovery": 1.011,
+      "control_specificity_ratio": 0.888,
+      "G1_habituation_real": true,
+      "G2_monotonic": true,
+      "G3_recovery_surpass": true,
+      "G4_specificity": true,
+      "lesioned_habituation_ratio": 0.8865,
+      "G5_lesion_collapses": true,
+      "attribution_to_stp": 0.8148,
+      "GO": true
+    }
+  ],
+  "n_go": 1,
+  "n_seeds": 1,
+  "G6_no_host_membership": true,
+  "verdict": "UNDEFINED",
+  "label": "spiking-habituation-novelty board (>=5/6 of the 6 project-standard seeds)",
+  "status": "UNDEFINED",
+  "go": false,
+  "undefined_reasons": [
+    "unmet: all 6 project-standard seeds present (measured=False expect=True)",
+    "unmet: seed-GO count (1 vs floor 4.5)"
+  ],
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "all 6 project-standard seeds present",
+      "ok": false,
+      "detail": "measured=False expect=True",
+      "note": "seeds run: 1"
+    },
+    {
+      "kind": "require",
+      "name": "structural G6 (no host set/dict membership in the score path)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "floor",
+      "name": "seed-GO count",
+      "ok": false,
+      "detail": "1 vs floor 4.5",
+      "note": "board bar is >=5/6 -> floor=4.5 excludes 4/6"
+    }
+  ],
+  "disabled_processes": [],
+  "chance": null
+}
