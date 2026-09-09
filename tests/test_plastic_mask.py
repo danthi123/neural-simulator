@@ -4,161 +4,79 @@ Strategy: build two small networks that are identical except one has all
 synapses plastic, the other has all fixed. Drive both with identical Poisson
 stimulus so STDP fires in both. Compare weight deltas. If the mask works,
 the plastic net moves weights while the fixed net keeps them stable.
+
+2026-09-08 (Vikunja #203 follow-up): the drive-and-measure logic used to live
+inline here and build its two `SimulationBridge`s IN-PROCESS. That is fragile
+in a way that produced a real, reproducible false failure: `sim/bridge.py`
+resolves numpy-vs-cupy ONCE at module level, on its first-ever import in the
+process (`cp, _backend_name = get_backend()`, sim/bridge.py:44) -- so whichever
+test file happens to import `sim.bridge` first in a pytest session (often
+`test_enforce_plastic_mask.py`, which is collected alphabetically before this
+file and forces `SIM_BACKEND=numpy` for its own unrelated purpose) permanently
+pins the WHOLE process to that backend, no matter what this file's own
+`import cupy as cp` or any later env-var change asks for. Under the numpy
+backend this exact tiny seeded network produces ZERO spikes over 500 steps
+(verified), so the old in-process test silently degraded into "did the bridge
+fire at all" and failed with a "plastic weights didn't move" message that read
+like an STDP plastic-mask regression but was actually a cross-backend
+firing-activity difference (same class as the 2026-06-09 N9 CuPy-vs-numpy
+divergence finding) -- FAILURE_LOG.md's row citing this test as evidence the
+"STDP-update path is NOT covered [by the mask]" was a mischaracterization; the
+STDP kernel already applies `cp_synapse_plastic_mask` unconditionally
+(sim/bridge.py:10241, matching BDSP/BTSP), confirmed by direct code read.
+
+The fix: run the dynamics in `tests/_plastic_mask_stdp_scenario.py`, in its OWN
+subprocess with `SIM_BACKEND=cupy` set in that subprocess's environment before
+`sim.bridge` is ever imported there -- immune to whatever any sibling test did
+earlier in the parent process.
 """
+import json
+import os
+import subprocess
+import sys
+
 import numpy as np
 import pytest
 
+_REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 
-def _build_tiny_net(seed, all_plastic):
-    pytest.importorskip("cupy")
-    import cupy as cp
 
-    from sim import SimulationBridge, VisualizationConfig, RuntimeState, GPUConfig
-    from sim.config import (CoreSimConfig, StimulusPattern, StimulusChannel,
-                            NeuronGroup, ExperimentConfig, ExperimentPhase,
-                            ReadoutConfig)
-    from sim.enums import (NeuronModel, StimulusPatternType,
-                           ExperimentPhaseType, NeuronGroupRole)
-    from experiment import ExperimentEngine
-
-    cfg = CoreSimConfig()
-    cfg.num_neurons = 10   # 5 pre, 5 post
-    cfg.neuron_model_type = NeuronModel.IZHIKEVICH.name
-    cfg.neural_profile_name = "GENERIC_UNSTRUCTURED"
-    cfg.seed = seed
-    cfg.dt_ms = 1.0
-    cfg.connections_per_neuron = 0
-    cfg.num_traits = 1
-    cfg.inhibitory_trait_indices = []
-    cfg.enable_stdp = True
-    cfg.enable_hebbian_learning = False
-    cfg.enable_short_term_plasticity = False
-    cfg.enable_structural_plasticity = False
-    cfg.enable_homeostasis = False
-    cfg.enable_reward_modulation = False
-    cfg.enable_watts_strogatz = False
-    cfg.stdp_a_plus = 0.05
-    cfg.stdp_a_minus = 0.04
-    cfg.stdp_w_min = 0.0
-    cfg.stdp_w_max = 2.0
-    cfg.propagation_strength = 3.0
-    cfg.inhibitory_propagation_strength = 1.0
-    cfg.ou_std_current_pA = 0.0
-
-    bridge = SimulationBridge(
-        core_config=cfg, viz_config=VisualizationConfig(),
-        runtime_state=RuntimeState(), gpu_config=GPUConfig(),
-    )
-    bridge._initialize_simulation_data(called_from_playback_init=False)
-
-    pre_idx = list(range(5))
-    post_idx = list(range(5, 10))
-    # All-to-all pre->post
-    pre, post = [], []
-    for i in pre_idx:
-        for j in post_idx:
-            pre.append(i); post.append(j)
-    w = np.full(len(pre), 0.5, dtype=np.float32)
-
-    plan = {
-        "conn": {
-            "pre_indices": pre,
-            "post_indices": post,
-            "initial_weights": w,
-            "plastic": all_plastic,
-            "count": len(pre),
-        },
-    }
-    bridge.inject_explicit_wiring(plan)
-
-    if bridge.cp_external_input_current is not None:
-        bridge.cp_external_input_current[:] = 0.0
-
-    engine = ExperimentEngine(cfg.num_neurons, cfg.dt_ms)
-    ecfg = ExperimentConfig()
-    ecfg.neuron_groups = [
-        NeuronGroup(name="pre", role=NeuronGroupRole.INPUT.name, neuron_indices=pre_idx),
-        NeuronGroup(name="post", role=NeuronGroupRole.OUTPUT.name, neuron_indices=post_idx),
-    ]
-    ecfg.readout = ReadoutConfig(rate_window_ms=100, spike_count_window_ms=100,
-                                 rate_group_names=["pre", "post"])
-    ecfg.phases = [ExperimentPhase(name="x",
-                                   phase_type=ExperimentPhaseType.TRAINING.name,
-                                   duration_ms=1e9)]
-    engine.load_experiment(ecfg)
-    engine.initialize(cp_traits=bridge.cp_traits, cp_module=cp)
-    engine.is_experiment_running = True
-    bridge.experiment_engine = engine
-
-    # Poisson stimulus on both pre and post (drives both to fire reliably,
-    # ensuring STDP pair events).
-    rates_pre = [30.0] * len(pre_idx)
-    rates_post = [30.0] * len(post_idx)
-    pat_pre = StimulusPattern(
-        pattern_type=StimulusPatternType.RATE_VECTOR_POISSON.name,
-        spike_current_pA=1000.0, spike_duration_ms=2.0,
-        rate_vector_hz=rates_pre,
-    )
-    pat_post = StimulusPattern(
-        pattern_type=StimulusPatternType.RATE_VECTOR_POISSON.name,
-        spike_current_pA=1000.0, spike_duration_ms=2.0,
-        rate_vector_hz=rates_post,
-    )
-    ch_pre = StimulusChannel(name="c_pre", pattern=pat_pre,
-                             target_neuron_indices=pre_idx,
-                             onset_ms=0, duration_ms=2000, enabled=True)
-    ch_post = StimulusChannel(name="c_post", pattern=pat_post,
-                              target_neuron_indices=post_idx,
-                              onset_ms=0, duration_ms=2000, enabled=True)
-    engine.stimulus_manager.cleanup()
-    engine.stimulus_manager.initialize([ch_pre, ch_post], engine.group_manager, cp)
-    engine.phase_start_ms = 0.0
-
-    return bridge, cp
+def _run_scenario(seed, all_plastic):
+    env = dict(os.environ)
+    env["SIM_BACKEND"] = "cupy"
+    args = [sys.executable, "-m", "tests._plastic_mask_stdp_scenario", "--seed=%d" % seed]
+    if all_plastic:
+        args.append("--all-plastic")
+    out = subprocess.check_output(args, cwd=_REPO_ROOT, env=env, text=True)
+    line = [ln for ln in out.strip().splitlines() if ln.strip().startswith("{")][-1]
+    return json.loads(line)
 
 
 def test_plastic_mask_freezes_fixed_synapses():
     pytest.importorskip("cupy")
-    import cupy as cp
 
-    bridge_fixed, _ = _build_tiny_net(seed=7, all_plastic=False)
-    bridge_plastic, _ = _build_tiny_net(seed=7, all_plastic=True)
+    fixed = _run_scenario(seed=7, all_plastic=False)
+    plastic = _run_scenario(seed=7, all_plastic=True)
 
-    w0_fixed = cp.asnumpy(bridge_fixed.cp_connections.data).copy()
-    w0_plastic = cp.asnumpy(bridge_plastic.cp_connections.data).copy()
-    assert np.allclose(w0_fixed, 0.5)
-    assert np.allclose(w0_plastic, 0.5)
+    assert fixed["w0_allclose_0p5"] and plastic["w0_allclose_0p5"]
 
     # Mask presence
-    assert bridge_fixed.cp_synapse_plastic_mask is not None
-    assert bridge_plastic.cp_synapse_plastic_mask is None
+    assert fixed["mask_present"], "expected a plastic mask on the all-fixed net"
+    assert not plastic["mask_present"], "expected no plastic mask on the all-plastic net"
 
-    # Drive both sims for 500 ms so STDP pairs occur many times.
-    for step in range(500):
-        bridge_fixed._run_one_simulation_step()
-        bridge_fixed.runtime_state.current_time_step += 1
-        bridge_fixed.runtime_state.current_time_ms = (
-            bridge_fixed.runtime_state.current_time_step * 1.0
-        )
-        bridge_plastic._run_one_simulation_step()
-        bridge_plastic.runtime_state.current_time_step += 1
-        bridge_plastic.runtime_state.current_time_ms = (
-            bridge_plastic.runtime_state.current_time_step * 1.0
-        )
-
-    w1_fixed = cp.asnumpy(bridge_fixed.cp_connections.data)
-    w1_plastic = cp.asnumpy(bridge_plastic.cp_connections.data)
+    # Both nets must actually have fired -- otherwise this test proves nothing
+    # about STDP (the exact failure mode this file's docstring documents).
+    assert fixed["fired_any"], "fixed-net scenario had zero spikes; test setup is wrong"
+    assert plastic["fired_any"], "plastic-net scenario had zero spikes; test setup is wrong"
 
     # Fixed: every weight exactly unchanged.
-    assert np.allclose(w1_fixed, 0.5, atol=1e-6), (
-        f"Fixed weights changed: max diff = "
-        f"{np.abs(w1_fixed - 0.5).max():.6f}"
+    assert fixed["w1_allclose_w0"], (
+        f"Fixed weights changed: max diff = {fixed['max_change']:.6f}"
     )
 
     # Plastic: at least some weight moved meaningfully.
-    max_change = float(np.abs(w1_plastic - 0.5).max())
-    assert max_change > 0.01, (
-        f"Plastic weights didn't move (max |dW|={max_change:.6f}); "
+    assert plastic["max_change"] > 0.01, (
+        f"Plastic weights didn't move (max |dW|={plastic['max_change']:.6f}); "
         f"test setup is wrong"
     )
 

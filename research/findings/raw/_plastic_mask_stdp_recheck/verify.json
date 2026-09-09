@@ -1,0 +1,62 @@
+{
+  "runner": "tests/_plastic_mask_stdp_scenario.py",
+  "backend": "mixed: cupy for the real scenario measurements (scenario_under_forced_cupy, pytest_after_fix); numpy forced deliberately for the diagnostic reproduction of the ORIGINAL bug (same_scenario_under_forced_numpy_same_seed) -- see the per-section notes.",
+  "purpose": "Vikunja #203 follow-up: characterize why tests/test_plastic_mask.py::test_plastic_mask_freezes_fixed_synapses failed under certain pytest collection orders, and verify the fix (a hermetic subprocess forcing SIM_BACKEND=cupy).",
+  "git_sha": "bb1cbd6c6211d776cc57a9416ce925db09a42c2e",
+  "seeds": [
+    7
+  ],
+  "scenario_under_forced_cupy": {
+    "all_plastic_False (mask should freeze)": {
+      "fired_any": true,
+      "mask_present": true,
+      "w0_allclose_0p5": true,
+      "w1_allclose_w0": true,
+      "max_change": 0.0
+    },
+    "all_plastic_True (mask should allow drift)": {
+      "fired_any": true,
+      "mask_present": false,
+      "w0_allclose_0p5": true,
+      "w1_allclose_w0": false,
+      "max_change": 0.21426844596862793
+    }
+  },
+  "same_scenario_under_forced_numpy_same_seed": {
+    "note": "Reproduces the ORIGINAL failure mode directly: under the numpy backend, this exact tiny seeded network (10 Izhikevich neurons, seed=7) never spikes at all in EITHER config over 500 steps -- fired_any=False both arms -- so the STDP plastic-mask comparison is undefined on this backend for this seed, NOT because the mask goes unenforced.",
+    "measured": {
+      "backend_name": "numpy",
+      "all_plastic_False": {
+        "fired_any": false,
+        "n_neurons_ever_spiked": 0,
+        "max_change": 0.0,
+        "mask_present": true
+      },
+      "all_plastic_True": {
+        "fired_any": false,
+        "n_neurons_ever_spiked": 0,
+        "max_change": 0.0,
+        "mask_present": false
+      }
+    }
+  },
+  "pytest_repro_before_fix_note": "Before the fix (in-process bridge construction, no forced backend), running `pytest tests/test_plastic_mask.py tests/test_enforce_plastic_mask.py` (either file order) reproducibly FAILED test_plastic_mask_freezes_fixed_synapses with 'Plastic weights didn't move (max |dW|=0.000000)' -- because sim/bridge.py resolves its cupy-vs-numpy backend ONCE at first module import in the process (`cp, _backend_name = get_backend()`, sim/bridge.py:44), and test_enforce_plastic_mask.py's own `os.environ.setdefault('SIM_BACKEND','numpy')' (line 30, for its own unrelated determinism purpose) wins that first import whenever both files are collected in one pytest session.",
+  "pytest_after_fix": {
+    "natural_alphabetical_order": {
+      "returncode": 0,
+      "summary": ".....                                                                    [100%]\n5 passed in 12.20s"
+    },
+    "reversed_order": {
+      "returncode": 0,
+      "summary": ".....                                                                    [100%]\n5 passed in 12.07s"
+    },
+    "reversed_order_with_explicit_SIM_BACKEND_numpy_poison": {
+      "returncode": 0,
+      "summary": ".....                                                                    [100%]\n5 passed in 11.96s"
+    }
+  },
+  "code_read_confirmation": {
+    "claim": "The STDP kernel already applies cp_synapse_plastic_mask UNCONDITIONALLY (sim/bridge.py:10238-10256), matching the documented BDSP/BTSP behavior -- it does not need (and was never gated behind) the Hebbian-only BRAIN_ENFORCE_PLASTIC_MASK flag from merge 509c7137b.",
+    "site": "sim/bridge.py:10241 (`if self.cp_synapse_plastic_mask is not None:` inside the non-branchless STDP update block)"
+  }
+}
