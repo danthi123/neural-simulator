@@ -1,7 +1,7 @@
 {
  "schema": "board-sync-v1",
  "_doc": "Audit trail of board mutations written by tools/vikunja.sh. gates/board_sync_on_status_change.py requires this file to GROW in the same commit that changes docs/PRODUCTION_INTEGRATION_LEDGER.yaml (a faculty-status change must sync the board). Seeded 2026-08-21.",
- "updated_at": "2026-09-09T00:24:48Z",
+ "updated_at": "2026-09-09T06:46:04Z",
  "entries": [
   {
    "at": "2026-08-22T02:19:31Z",
@@ -1250,6 +1250,30 @@
    "op": "append-desc",
    "args": "task=153",
    "head": "940088526"
+  },
+  {
+   "at": "2026-09-09T06:45:35Z",
+   "op": "create-task",
+   "args": "proj=2 title=The brain now stores facts in its own neural memory by default, not a separate database",
+   "head": "8335a6af0"
+  },
+  {
+   "at": "2026-09-09T06:46:04Z",
+   "op": "label-task",
+   "args": "task=212 label=3",
+   "head": "8335a6af0"
+  },
+  {
+   "at": "2026-09-09T06:46:04Z",
+   "op": "label-task",
+   "args": "task=212 label=6",
+   "head": "8335a6af0"
+  },
+  {
+   "at": "2026-09-09T06:46:04Z",
+   "op": "update-task",
+   "args": "task=212 done=true",
+   "head": "8335a6af0"
   }
  ]
 }

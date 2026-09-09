@@ -13,7 +13,25 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ---
 
-## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-08 ~21:35 (GAME PAUSE — owner gaming; GPU freed via game.sh on; READ FIRST; LATEST anchor)
+## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-09 ~02:40 (SCAFFOLD-RETIREMENT FLIPS + breadth LANDED + pushed; owner gaming → GPU-free work; READ FIRST; LATEST anchor)
+
+**✅ LANDED + pushed both remotes (main HEAD `8335a6af`):**
+- **Both scaffold-retirement flips `eca75a3f1`** (owner's 2026-09-04 priority): host **rf composer → spiking onebrain** (developed-brain default `_DEVELOPED_COMPOSER_KIND_DEFAULT_OVERRIDE="onebrain"`) + **numpy-KB LTM → substrate-store** (memory-in-weights, batched-scan default-on). No-regression GO: flip A recall 20/20 answer-identical to rf + yes/no + moat abstains + reversible; flip B 40/40 answer-identical to numpy-KB via the internal `query_patient` path (dodges the tinystories-parser confound on wikidata relations), ~497ms/query, reversible. Finding `2026-09-09-scaffold-retirement-flips-...-GO.md`.
+- **CAVEATS (honest):** verified on `wikidata_core_15k` (bounded proxy for the 100k default — valid, rank-6 latency flat to 78k) + an ISOLATED/bounded config (organs off, ~2k neurons); "answer-identical" not byte-identical (mechanism genuinely changed = the deliverable); single deployed seed 42. A full-organs full-scale no-regression confirmation is a good follow-up (item 4 below).
+- **C-self GNW congruence-spiking DEFAULT-ON `2ed015d0c`** — rank-8 6/6-GO congruence read now load-bearing on the live turn (drive-not-observe).
+- **B-curiosity production `--train-drive-scale` port `782e31024`** — rescued a stranded 6/6-GO fix + ported to the real wrapper (additive, default 1.0 byte-identical).
+- **Gate-hardening `17b7a3001`+`8335a6af0`** — parallel_audit under-count fix (missed workflow agents) + a BLOCKING `compute_idle_persistent` gate + GAME_MODE-awareness (excuses local-GPU-idle during a game, keeps pool/agent enforcement).
+
+**⏳ REMAINING — GPU-queued for after gaming (`tools/game.sh off` resumes the queue):**
+1. **RE-RUN the mouth token-scaling direction-test smoke** (decided frontier) — it CRASHED on 3-way VRAM contention (the on-disk `_emerge_wkv_lm_linattn_fineweb_evalwt103_s43.json` is a STALE 2026-09-06 file, NOT a fresh result). Re-add to gpu_queue FRONT, single-tenant. Bar: deep-margin ≥ +0.03 over -0.286; on lift → AWS Stage-A grid (§5b of `2026-09-06-mouth-token-scaling-fineweb-pipeline-and-grid-spec.md`). Command:
+```bash
+SIM_BACKEND=cupy .venv/bin/python -u -m research.runners._emerge_wkv_lm_derisk --recurrence linattn --uniform-decay --batch 128 --tokenizer bpe --bpe-path bridges/wkv_ckpt/wkv_bpe8k.json --corpus data/corpus/fineweb_edu.txt --eval-corpus data/corpus/wikitext103.txt --contiguous --max-len 40 --max-eval-sents 4000 --epochs 4 --tok-cache --n-layers 2 --d-model 192 --n-sentences 3000000 --max-train-sents 2500000 --seeds 43 --json research/findings/raw/_emerge_wkv_lm_linattn_fineweb_evalwt103_s43.json
+```
+2. **F-gap#4 dendritic read-SNR decisive 6-seed** — already queued on gpu_queue (the decisive gap#4 de-risk; few-spike READ regime; GO-gate pre-registered). On GO → adversarial verify + bank; on NO-GO → next lever (P-independent ensembles / burst-multiplexed credit).
+3. **B-curiosity 6-seed production validation** — running on the POOL now; on GO → the `_XEDGE_CD6_DEFAULT_ON` default-on flip decision (owner's call).
+4. **Full-deployed-config flip no-regression** — the flip was verified on an isolated/bounded config; a full-organs full-scale confirmation is the honest follow-up (queue when GPU frees).
+
+## (HISTORY — the checklist below was the pre-landing resume plan; all its flip + merge items are now DONE, see the LANDED summary above) STATE OF THE PROJECT — 2026-09-08 ~21:35 (GAME PAUSE — owner gaming; GPU freed via game.sh on)
 
 **🎮 GAME PAUSE (21:35, owner gaming on the 3090).** `tools/game.sh on` set → gpu_queue PAUSED (develop-loop re-queued at front), GAME_MODE sentinel on, Qwen down. Pool + CPU workflow smokes keep running (CPU-only, don't touch the GPU). **RESUME = `tools/game.sh off`**, then the ordered checklist below. Post-game resume actions (in order):
 1. `tools/game.sh off` → gpu_queue resumes (re-runs the re-queued develop-loop + the 4 queued incl. the mouth smoke that must be RE-ADDED — see #3).

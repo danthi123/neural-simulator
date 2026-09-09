@@ -37,3 +37,9 @@ Rank-6 substrate-store cupy VRAM measured GO (~2.5 GiB at 78,857-fact scale, ~20
 
 ## 2026-09-08  board #130 next-rung CHARACTERIZED NO-GO (v9 true-sparsity scale-up)
 Appended a plain-language update to #130 -- v8's real-scale port (GO 6/6, unchanged) was already landed but never synced onto the Vikunja task; the further-sparsity rung was tried (region 2x, ratio 33%->17%) and came back NO-GO 0/6, but the underlying order-STDP mechanism is intact (causal attribution 1.0, physical trace stronger on all 6 seeds) -- what fails is a fixed pass/fail threshold that never transferred to the new density. Root cause + two named fixes recorded on the task. Finding 2026-09-08-order-consolidation-v9-true-sparsity-scaleup-NO-GO-readout-threshold-not-mechanism, commit 877a07ef9. Task stays OPEN (not production-wired either way).
+
+## 2026-09-09  scaffold-retirement flips + breadth merges
+- #212 CREATED+DONE: substrate-store LTM (memory-in-weights) + onebrain composer default-on (flips eca75a3f1); recall-op still a shortcut (follow-up).
+- C-self GNW congruence-spiking DEFAULT-ON (2ed015d0c) — sub-rung of the one-brain organs; B-curiosity --train-drive-scale production port (782e31024), 6-seed validation queued on pool.
+- Gate-hardening (17b7a3001/8335a6af0): parallel_audit under-count fix + blocking compute_idle gate + GAME_MODE-awareness.
+- Deferred lighter reconcile: recall-speed #192 / VRAM #206 / curiosity #197 touched by the flip but left open (sub-rungs).
