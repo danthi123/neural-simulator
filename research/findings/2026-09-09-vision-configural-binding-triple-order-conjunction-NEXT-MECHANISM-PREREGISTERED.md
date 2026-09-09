@@ -1,126 +1,140 @@
 ---
 type: finding
-status: design
+status: partial
 claim_check: synthesis
 date: 2026-09-09
 mechanism: THIRD-ORDER (triple) S2.5 configural-binding conjunction units (a,b,c;Delta1,Delta2), --conj-order triple in _vision_lindiscrim_readout_derisk.py -- built as a cascade of two applications of the established pairwise coincidence-binding primitive, targeting the diagnosed representational ceiling of the pairwise PARTIAL landing
 lane: vision (identity readout, D-perception configural binding)
-seeds: [42]
-verdict: MECHANISM BUILT + PRE-REGISTERED GATE + single-seed tiny-scale SMOKE ONLY (deterministic, runs end-to-end, anti-cheats compute) -- NO capability claim made at this scale. Decisive 6-seed eval QUEUED (tools/gpu_queue.sh), verdict PENDING.
+seeds: [42, 43, 44, 100, 101, 102]
+verdict: PRE-REGISTERED GATE + decisive 6-seed run landed LINDISCRIM-READOUT-PARTIAL-beat0/6-lb2/6 -- WORSE than the pairwise arm it was meant to surpass (lb dropped 4/6->2/6, RATE_lin_ceiling_held dropped 0.3403->0.2917). Diagnosed cause: at matched unit budget (conj_n=1152), third-order sampling dilutes combinatorial coverage far more than it raises per-unit specificity. This lever is a NO-GO at matched budget; a width-compensated follow-up (conj_n=4608) is QUEUED to test whether the diagnosed cause is correctable by scale.
 artifacts:
   - research/findings/raw/lanes/perception/conjbind_bindarm_n1152_heldoutpos_scramblenull_6seed.json
+  - research/findings/raw/lanes/perception/conjbind_triple_n1152_heldoutpos_scramblenull_6seed.json
   - research/findings/raw/lanes/perception/vlin_triple_smoke.json
-seed-waiver: single-seed tiny-scale smoke only, no capability verdict drawn from it; the decisive claim is deferred to a queued-but-not-yet-produced 6-seed run (path named in prose below, does not exist yet -- not listed as an artifact here for that reason)
 ---
 
-# Third-order conjunction units — the next mechanism after the pairwise-binding PARTIAL, pre-registered before the decisive run
+# Third-order conjunction units — a pre-registered lever that landed WORSE than the pairwise PARTIAL it targeted
 
-**Status:** this is a BUILD + PRE-REGISTRATION note, not yet a capability result. It picks up the named residual
-from the PARTIAL landing (`conjbind_bindarm_n1152_heldoutpos_scramblenull_6seed.json`, verdict
-`LINDISCRIM-READOUT-PARTIAL-beat0/6-lb4/6`, committed `c390e372e`): the FF-inhibition + temporal-integration
-signed-linear-discriminant readout makes learning load-bearing on 4/6 seeds but does not clear the crossing floor
-on any seed. The board's own next-mechanism note (`GAP_CLOSURE_MISSION.md`, same commit) named this residual as
-"not yet attempted." Verified before building: `git log --all --grep=conjbind\|configural\|bindarm` and a
-directory listing show no floor-clearing finding has landed since — this is genuinely the next lever, not a
-re-derivation.
+**Status:** mechanism built, GO gate pre-registered BEFORE the decisive run, decisive 6-seed run landed (fast —
+148s on CPU) DURING this same build session. Reporting the actual result, not the anticipated one: this specific
+lever (fixed-random third-order conjunctions at the SAME 1152-unit budget as the pairwise arm) is a NO-GO — it
+underperforms the pairwise PARTIAL it was built to surpass, not just fails to clear the floor. A follow-up lever
+(width compensation) is diagnosed and queued below; closure is not deferred.
 
-## The diagnosis that motivates THIS specific lever (not another readout retune)
+## Why this lever was tried (the diagnosis from the pairwise PARTIAL)
 
 <!--derived-->
-From the PARTIAL artifact's own `reframe_means`/`headroom`, averaged over its 6 seeds:
+From the pairwise PARTIAL artifact's own `reframe_means`/`headroom`, averaged over its 6 seeds:
 
 <!--derived-->
 | quantity | value | reading |
 |---|---|---|
 | `learned_spkwta_held` (the fully-spiking signed-discriminant readout) | 0.3281 | at, not above, the floor |
 | `config_c_nogo_floor` | 0.34 | the #72/#75 fully-spiking NO-GO |
-| `rate_lin_ceiling_held` (idealized non-spiking linear readout, SAME features) | 0.3403 | **the best possible LINEAR read of this front end sits AT the floor, not above it** |
-| `headroom.learned_minus_nogo_floor` | -0.0119 | negative: the fully-spiking readout is not even leaving headroom relative to the rate ceiling |
-| `spkport_cost` (rate-vs-spike gap attributable to the spike port itself) | 0.0017 | negligible -- the spike port is NOT the bottleneck |
+| `rate_lin_ceiling_held` (idealized non-spiking linear readout, SAME features) | 0.3403 | the best possible LINEAR read of the PAIRWISE front end sits AT the floor, not above it |
+| `spkport_cost` (rate-vs-spike gap attributable to the spike port itself) | 0.0017 | negligible — the spike port is NOT the bottleneck |
 
 <!--derived-->
-The load-bearing readout class (FF-inhibition + temporal integration, already the fix for the two earlier
-dead-ends: config-C centroid and R-STDP block-sum) is confirmed NOT the residual — its own ceiling (an idealized
-non-spiking linear discriminant on the identical C2 features) is *already* at the floor. Width sweeps
-(conj_n 1024→2304, 2026-09-03 finding "a fragile peak, not a plateau") and normalization sweeps (satdiv/alpha/z,
-2026-09-01) were both exhausted at this same representational layer. **The wall-reframe question the project
-requires ("what companion process did we replace with a constant?") points at the FRONT-END REPRESENTATION, not
-the readout**: the frozen-random PAIRWISE conjunction bank's own linear-decodable content is capped, so no
-readout-side lever (spiking or not) can lift it further.
+The load-bearing readout class (FF-inhibition + temporal integration) was confirmed NOT the residual — its own
+ceiling on the pairwise features was already at the floor, and width/normalization sweeps of that SAME pairwise
+layer were separately exhausted (2026-09-01/2026-09-03 findings). The wall-reframe question ("what companion
+process did we replace with a constant?") pointed at the FRONT-END REPRESENTATION: this task's objects have
+`n_slots=3` (`_vision_hmax_hierarchy_derisk.py:131-174`, each class a distinct permutation of 3 oriented strokes
+across 3 slots), and a pairwise unit `AND(a@p, b@p+Delta)` can specify at most 2 of the 3 slots per unit — so a
+unit ANDing all THREE slot-relevant templates in one place looked like a strictly higher-SNR feature, motivating
+`--conj-order triple` (built as a cascade of two applications of the SAME established pairwise coincidence-
+binding primitive, `research/biology/coincidence-binding.md` — no new biology claim; the two-layer branch-then-
+soma dendritic correlate is Poirazi, Brannon & Mel 2003, Neuron 37:989, and Brincat & Connor 2004, Nat. Neurosci.
+7:880 independently report IT neurons conjunctively encoding multi-part shape arrangements).
 
-## The mechanism: third-order (triple) conjunction units
+## Pre-registered GO gate (fixed BEFORE the decisive run — unchanged, quoted verbatim for the record)
 
-This task's objects have `n_slots=3` (`_vision_hmax_hierarchy_derisk.py:131-174`): each of the 4 (of 3!=6)
-classes is a distinct PERMUTATION of 3 oriented strokes across 3 relative slots. A pairwise unit
-`AND(a@p, b@p+Delta)` can specify at most 2 of the 3 slots per unit. Two permutations of 3 elements that agree on
-2 fixed positions are identical, so pairwise conjunctions are in principle *sufficient* — but the fixed-random
-bank samples (a,b,Delta) uniformly from a combinatorial space of ~74k triples (n_s2=96, 8 offsets) while
-allocating only ~1.1k units, so correct-pair coverage is thin and most units combine uninformative templates. A
-unit that ANDs all THREE slot-relevant templates in one place is a strictly higher-SNR feature for this task's
-structure — it fires only for its own fully-specified configuration, which a *linear* readout can exploit far
-more directly than reconstructing the same specificity from several partial pairwise indicators (a linear
-combination of pairwise-AND features cannot implement the AND of two independent pairwise events without already
-having the conjoined feature as an input — the same reason XOR needs a hidden unit).
+- **task GO**: `beats_config_c_nogo` (per-seed `learn_spkwta_held >= 0.34 + 0.10`) **AND**
+  `learning_load_bearing` (`learned - random >= 0.10`), each at **>=5/6 seeds**, under
+  `--heldout-position --scramble-null`.
+- **Verdict bands, fixed in advance:** `beat>=5/6 & lb>=5/6` = GO. Some (>0) beats/lb short of 5/6 = PARTIAL.
+  `beat0 & lb0` = NO-GO for this lever — bank it and take the next mechanism; closure is not deferred either way.
+- This band scheme did not anticipate a THIRD outcome that in fact occurred — a PARTIAL that is *worse* than the
+  PARTIAL it was meant to improve on. Read honestly below rather than reported under the letter of the band.
 
-**Built as:** `_make_conjunction_bank_triple` + `_bind_conjunctions_triple`
-(`research/runners/_vision_lindiscrim_readout_derisk.py`), wired via a new `--conj-order {pair,triple}` flag
-(default `pair` = the exact prior code path, provably unchanged — the dispatch is
-`bind_fn = _bind_conjunctions_triple if conj_order=="triple" else _bind_conjunctions`, an identical call to the
-pre-existing one when `pair`). `triple` samples `(a,b,c,Delta1,Delta2)` quadruples once per seed from a stream
-independent of the pairwise bank's, and computes `MAX_p AND(drive[p,a], drive[p+Delta1,b], drive[p+Delta2,c])`.
+## The decisive result — WORSE than the pairwise arm, not better
 
-**Brain-based grounding — no new primitive claimed.** The triple AND is a CASCADE of two applications of the
-SAME established pairwise primitive `research/biology/coincidence-binding.md` already grounds ("two signals in,
-a supralinear conjunction out," Kandel PNS-6e NMDA-receptor Mg2+-block supralinearity) — `AND(AND(a,b),c)`, which
-for both `min` and `prod` combination modes is associative and identical to a direct three-way AND. The
-biological correlate is two dendritic branches each performing a local pairwise coincidence check, converging on
-a shared integrative compartment for a second check (Poirazi, Brannon & Mel 2003, Neuron 37:989 — the two-layer
-branch-then-soma dendritic model), with independent support that IT neurons conjunctively encode multi-part
-shape arrangements rather than isolated pairs (Brincat & Connor 2004, Nat. Neurosci. 7:880). No new
-`research/biology/` entry is registered because no claim beyond the existing established one is being made.
+<!--derived-->
+6 seeds (42/43/44/100/101/102), `conjbind_triple_n1152_heldoutpos_scramblenull_6seed.json`, same op-point as the
+pairwise PARTIAL (`conj_n=1152`, `n_s2=96`, `--heldout-position --scramble-null`), only `--conj-order triple`
+added:
 
-## Pre-registered GO gate (fixed BEFORE the decisive run; identical anti-cheats to the PARTIAL)
+<!--derived-->
+| quantity | pairwise PARTIAL (prior) | triple (this run) | direction |
+|---|---|---|---|
+| `overall_verdict` | `PARTIAL-beat0/6-lb4/6` | `PARTIAL-beat0/6-lb2/6` | **worse** |
+| `learned_spkwta_held` | 0.3281 | 0.3212 | flat/worse |
+| `RATE_lin_ceiling_held` (idealized linear ceiling, no spike port) | 0.3403 | 0.2917 | **worse — the predicted lift did not happen; the ceiling FELL** |
+| `learning_load_bearing` (>=5/6 needed) | 4/6 | 2/6 | **worse** |
+| `beats_config_c_nogo` (>=5/6 needed) | 0/6 | 0/6 | unchanged (still 0) |
+| `scramble_null_pass` | 6/6 | 6/6 | unchanged (anti-cheat still intact — this is not an instrument failure) |
 
-Everything downstream of the S2.5 stage is unchanged — same FF-inhibition signed-discriminant readout, same
-temporal integration, same anti-cheats. Only the conjunction order changes.
+<!--derived-->
+The prediction was that a genuinely higher-order feature would raise the front end's own linear ceiling. Instead
+the ceiling FELL (0.3403 -> 0.2917) and the readout's already-thin load-bearing margin shrank (4/6 -> 2/6). The
+anti-cheats stayed intact (scramble-null still 6/6, so this is a real measurement, not a broken instrument) — the
+lever itself is what failed.
 
-- **task GO** (unchanged formula, `_summarize`): `beats_config_c_nogo` (per-seed
-  `learn_spkwta_held >= nogo_floor(0.34) + beat_margin(0.10)`) **AND** `learning_load_bearing`
-  (`learned - random >= beat_margin`), **each at >=5/6 seeds**, under `--heldout-position --scramble-null`
-  (contiguous-block held-position extrapolation + the learned-readout pixel-scramble null, anti-cheats 5-6).
-- **per-seed `capability_go`** additionally requires clearing the V1-direct/flat-pool floors, position pooled out
-  of the class-population code, and label-shuffle-null at chance (unchanged `run_seed` formula).
-- **Verdict bands, fixed in advance:** `beat>=5/6 & lb>=5/6` = GO. Anything with SOME (>0) beats/lb but short of
-  5/6 = PARTIAL (an improvement over the pairwise arm's `beat0/6-lb4/6` is a partial win, still not a GO). `beat0
-  & lb0` = NO-GO for this lever — bank it and take the next mechanism (recurrent binding stage, or an
-  attention-gated readout, are the next named candidates); closure is not deferred either way.
-- **Decisive command** (same op-point as the PARTIAL landing's own `conj_bind=fixed conj_n=1152` run, only
-  `--conj-order triple` added), **QUEUED**, not yet run:
-  ```
-  OUTDIR=research/findings/raw/lanes/perception
-  OUTFILE=conjbind_triple_n1152_heldoutpos_scramblenull_6seed.json    # does not exist yet -- QUEUED, not run
-  SIM_BACKEND=numpy /home/dant123/Projects/sim/.venv/bin/python -u -m research.runners._vision_lindiscrim_readout_derisk \
-      --ridge 0.5 --conj-bind fixed --conj-order triple --conj-n 1152 --conj-offset-max 4 \
-      --n-s2 96 --heldout-position --scramble-null --seeds 42 43 44 100 101 102 \
-      --out "$OUTDIR/$OUTFILE"
-  ```
-  Queued via `tools/gpu_queue.sh add` (0 Claude tokens, sequential/VRAM-safe), running against this worktree
-  (`.claude/worktrees/agent-ac8628a960479d44e`, branch `worktree-agent-ac8628a960479d44e`) since the mechanism is
-  not yet on `main` — the artifact lands under that worktree's `research/findings/raw/lanes/perception/` and
-  needs to be picked up (copied/committed) once the run completes, alongside the verdict write-up.
+## Diagnosed cause: combinatorial dilution dominates the specificity gain, at matched unit budget
 
-## What the smoke shows (sanity only — NOT a capability measurement)
+The pairwise bank samples `(a,b,Delta)` from a space of `n_s2^2 * |offsets| = 96^2 * 8 ~= 74k` possible triples
+into 1152 units (~1.6% coverage). The triple bank samples `(a,b,c,Delta1,Delta2)` from
+`n_s2^3 * |offsets|^2 = 96^3 * 64 ~= 56.6M` possible quadruples into the SAME 1152 units (~2e-5 coverage) — **~800x
+sparser coverage of a combinatorial space that grew ~760x**, for the same unit budget. Two compounding effects
+follow: (1) the chance any unit lands near a behaviourally-relevant triple is far lower than for a relevant pair;
+(2) `min`/`prod` of THREE independent-ish sub-1 nonnegative quantities is smaller in expectation than of two,
+shrinking the per-unit drive relative to the LIF firing threshold and the ridge readout's noise floor — visible
+directly in the RATE (non-spiking) ceiling falling, which isolates this from anything about the spike port. The
+theoretical argument for higher specificity per unit was correct in isolation; it was outweighed by the
+combinatorial cost of reaching that unit at all, at a budget that was never re-scaled for the larger space.
+
+## No-defer: the follow-up this diagnosis names, QUEUED not yet run
+
+If combinatorial dilution is the dominant effect, width should partially compensate it — the pairwise arm's own
+history validated exactly this style of lever (`conjbind_prod_n1024..n2304_6seed.json` width sweeps). A
+**4x-wider triple bank (`conj_n=4608`)** is the direct, cheap test of that hypothesis, queued as a follow-up (same
+0-token GPU-queue lane, ~4x the compute of this run, well under 10 minutes):
+
+```bash
+OUTDIR=research/findings/raw/lanes/perception
+OUTFILE=conjbind_triple_n4608_heldoutpos_scramblenull_6seed.json    # queued, does not exist yet as of this commit
+SIM_BACKEND=numpy .venv/bin/python -u -m research.runners._vision_lindiscrim_readout_derisk \
+    --ridge 0.5 --conj-bind fixed --conj-order triple --conj-n 4608 --conj-offset-max 4 \
+    --n-s2 96 --heldout-position --scramble-null --seeds 42 43 44 100 101 102 \
+    --out "$OUTDIR/$OUTFILE"
+```
+
+**Pre-registered read of THAT run** (fixed now, before it lands): if `RATE_lin_ceiling_held` recovers to at or
+above the pairwise arm's 0.3403 and `learning_load_bearing` recovers to >=4/6, combinatorial dilution is the full
+explanation and further width sweeps (matching the pairwise arm's own history) are the next rung. If it does NOT
+recover even at 4x width, the higher-order lever is banked as a NO-GO regardless of width, and the next mechanism
+is one of the two NOT-yet-attempted candidates named by the original task scoping: a recurrent/competitive binding
+stage among conjunction units (rather than a purely feedforward fixed-random bank), or an attention-gated readout
+that reweights which units the class populations listen to per-trial. Either way, per the project's standing law,
+this is a verdict on a METHOD (fixed-random third-order sampling at a given budget), not a license to abandon the
+CAPABILITY — the pairwise PARTIAL (`lb4/6`) remains the best load-bearing result in this lane and is not
+retracted by this lever's failure to beat it.
+
+**Queued command lands in this worktree** (`.claude/worktrees/agent-ac8628a960479d44e`,
+branch `worktree-agent-ac8628a960479d44e`) since the mechanism is not yet on `main`; the resulting artifact needs
+to be picked up (copied/committed, or the branch merged) once the run completes and its verdict written up.
+
+## What the smoke showed (sanity only, run before the decisive eval — unaffected by the above)
 
 <!--derived-->
 `vlin_triple_smoke.json`, seed 42 only, tiny scale (`n_s2=24, conj_n=96, n_pos_total=4, n_ex=2, n_glimpses=1`, far
 below the decisive op-point): `LEARNED_spkwta_held=0.3125`, `RANDOM_spkwta_held=0.25`,
 `RATE_lin_ceiling_held=0.1875`, `scramble_null_pass=True`, elapsed 1.7s. Re-run byte-for-byte identical (checked
-by diffing two independent invocations, only `--out` and `elapsed_seconds` differ) — the new code path is
-deterministic under the file's existing seeding contract. This confirms the mechanism parses, runs end-to-end
-through the FULL pipeline (spiking C1 → triple-bound S2.5 → LIF class-population readout → all 6 anti-cheats),
-and the pairwise (`--conj-order pair`, default) path is unchanged. **No conclusion about whether triple
-conjunctions clear the floor can be drawn from this tiny single-seed run** — the decisive claim is the queued
-6-seed run above.
+by diffing two independent invocations; only `--out` and `elapsed_seconds` differed), confirming the new code
+path is deterministic and the pairwise (`--conj-order pair`, default) path is provably unchanged (the dispatch
+`bind_fn = _bind_conjunctions_triple if conj_order=="triple" else _bind_conjunctions` is an identical call to the
+pre-existing one when `pair`). This smoke only ever confirmed the mechanism runs correctly end-to-end; it made no
+capability claim, so it is not contradicted by the decisive result above.
 
 ## Reproduce
 
@@ -131,11 +145,9 @@ SIM_BACKEND=numpy .venv/bin/python -u -m research.runners._vision_lindiscrim_rea
     --n-pos-total 4 --n-ex 2 --n-glimpses 1 --heldout-position --scramble-null \
     --out research/findings/raw/lanes/perception/vlin_triple_smoke.json
 
-# decisive 6-seed (queued, not yet executed inline; does not exist yet):
-OUTDIR=research/findings/raw/lanes/perception
-OUTFILE=conjbind_triple_n1152_heldoutpos_scramblenull_6seed.json
+# the decisive 6-seed run reported above (matched budget, conj_n=1152):
 SIM_BACKEND=numpy .venv/bin/python -u -m research.runners._vision_lindiscrim_readout_derisk \
     --ridge 0.5 --conj-bind fixed --conj-order triple --conj-n 1152 --conj-offset-max 4 \
     --n-s2 96 --heldout-position --scramble-null --seeds 42 43 44 100 101 102 \
-    --out "$OUTDIR/$OUTFILE"
+    --out research/findings/raw/lanes/perception/conjbind_triple_n1152_heldoutpos_scramblenull_6seed.json
 ```
