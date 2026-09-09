@@ -1,0 +1,5 @@
+# TERMINATED 2026-09-09 ~15:30 EDT — d192x2B was a re-derivation of the Sep-8 -0.408 NO-GO (see GAP_CLOSURE item 1).
+# No live AWS instance. vol-06ef43c3ebfbda815 DeleteOnTermination=true. Re-launch only for a GENUINELY-NEW cell.
+instance=
+region=us-east-1
+key=/home/dant123/.ssh/aws-train/claude-gpu-1785524741.pem

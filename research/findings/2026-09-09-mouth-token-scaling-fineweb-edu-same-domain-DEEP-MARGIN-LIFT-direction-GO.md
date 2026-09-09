@@ -64,3 +64,14 @@ The direction is GO, so escalate token supply + capacity to push the deep margin
 runs locally. HONEST BOUND: this is 1 seed at 1 capacity/token-point — the grid is the decisive multi-cell
 confirmation. Qwen remains the declared open-prose scaffold until the mouth crosses the trigram at deep context
 on the broad domain. Functional read-out only; not a phenomenal claim.
+
+## ⛔ CORRECTION 2026-09-09 (re-derivation caught): the d192×2B cell above was ALREADY RUN — do NOT re-run it
+The `d192 × 2B` Stage-A cell is NOT unrun: it was executed clean on Sep-8 (AWS `i-046…`, artifact
+`research/findings/raw/_emerge_wkv_lm_linattn_fineweb_evalwt103_d192_2B_s43.json`, `n_train=12,499,999`, V=8001,
+4 epochs) and returned **NO-GO -0.408 at depth 10-99** — a REGRESSION vs this 0.4B cell (-0.082). More same-domain
+FineWeb-Edu tokens at d192 make the OUT-OF-DOMAIN wt103 deep margin WORSE (domain specialization), so the
+"escalate 0.4B→2B and it keeps lifting" hypothesis is FALSIFIED at d192. A 2026-09-09 re-launch of the identical
+cell was terminated as a re-derivation (see `GAP_CLOSURE_MISSION.md` item 1). Genuinely-new levers if token-scaling
+is re-opened: a broader/mixed corpus (not single-domain), fewer epochs / early-stop against the specialization
+regression, or larger capacity (not directly deployable at the d192 production size). Absent a new lever the owner's
+2026-09-08 accept-Qwen-fallback decision stands.
