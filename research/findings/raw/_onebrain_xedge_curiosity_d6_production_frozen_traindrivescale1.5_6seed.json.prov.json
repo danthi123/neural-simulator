@@ -1,0 +1,34 @@
+{
+ "run_id": "1788947810-1427380",
+ "runner": "research/runners/onebrain_xedge_curiosity_d6_production.py",
+ "argv": [
+  "/home/node/derisk-pool/sim/research/runners/onebrain_xedge_curiosity_d6_production.py",
+  "--grow",
+  "--semantic-drop",
+  "--seeds",
+  "42,43,44,100,101,102",
+  "--train-drive-scale",
+  "1.5",
+  "--out",
+  "research/findings/raw/_onebrain_xedge_curiosity_d6_production_frozen_traindrivescale1.5_6seed.json"
+ ],
+ "git_sha": "65c5a334",
+ "git_dirty": true,
+ "source_kind": "git_archive",
+ "source_manifest_sha256": "c4ea0c349d4cdab2c3c878e285ef907fee71f2f58c29811a1145926068930a5f",
+ "source_manifest_verified_at_start": true,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": true,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-09T05:56:50",
+ "env": {
+  "POOL_CHECKED_REASON": "B-curiosity 6-seed (re-stock after infra death during memory crisis); on GO -> _XEDGE_CD6_DEFAULT_ON flip decision",
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_onebrain_xedge_curiosity_d6_production_frozen_traindrivescale1.5_6seed.json"
+}
