@@ -7,6 +7,16 @@ the [project handoff](HANDOFF.md), and the live state in
 board, when checked out, was `research/coordination/workboard.json` (⚠️ now ~a month
 stale — the live board is [GAP_CLOSURE_MISSION.md](GAP_CLOSURE_MISSION.md) CURRENT STATE; workboard.json is being retired).
 
+## 2026-09-09 (overnight) — the brain's own-voice data-scale bet is CONFIRMED, both host-shortcut retirements switched ON, and the memory-order scale-up wall fell
+
+- **The brain's own voice: the "it's a data-scale problem" diagnosis is now CONFIRMED, and encouragingly so.** The decisive same-domain test ran — train the from-scratch spiking voice on a large web-education corpus (FineWeb-Edu, ~the same difficulty as the eval), keeping the exact same yardstick. Result: its deep-context skill jumped by a wide, consistent margin at every depth (about +0.2, roughly seven times the bar) versus the old baseline. So *more of the right kind of reading material genuinely makes the voice better* — the earlier "adding simpler text slightly hurt" result was a mismatched-material artifact, not a dead end.
+  The voice is still a bit behind the simple baseline at the deepest context (climbing toward it, not past it yet), so the outside language model stays a stand-in for now — but the path to retiring it is now a concrete scale-up (more same-kind reading + more capacity), not an open question. **Next: a staged cloud (AWS) grid that scales the reading material and the model size to push the voice past the baseline.**
+- **Two host shortcuts switched ON by default (the owner's #1 priority).** The brain now (1) words its answers with its OWN spiking meaning-composer instead of a math shortcut, and (2) stores long-term facts in its own connection weights (memory-in-weights) instead of a separate database — both verified to give the same answers as the old machinery, both live by default.
+- **The memory "keep facts in the right order at a sparser, more brain-like scale" wall fell.** The earlier no-go at the larger scale turned out to be a diluted-readout artifact of a fixed wiring constant; the fix the finding itself named (a wiring rule that scales with region growth) cleared it cleanly on all six test seeds, with the underlying mechanism provably intact.
+- **The brain's curiosity now genuinely steers its working memory (confirmed on the live path, 6/6).** Holding a curious/craving state measurably shifts which referent the brain drops from working memory — through the exact function the live chat uses. Switching this on by default is the next small decision (needs one no-regression check first).
+- **Vision "binding" honest result:** under strict controls, the improved readout makes *learning* matter (4/6) but doesn't yet clear the task floor — a real partial, with the next mechanism named.
+- **Process note:** a burst of parallel background jobs briefly overran memory and nearly interrupted the long voice-training run; it was caught and the run preserved. Lesson banked: keep such fan-outs on the separate mini-PCs, not the main machine, while a big run is live.
+
 ## 2026-09-08 (Memory lane) — the "replay memories in the right order" mechanism was already ported to real scale (a doc-sync catch), and the next scale-up step is now understood
 
 - **Correcting a stale record:** this roadmap's 2026-08-25 entry below said board #130's order-sensitive replay

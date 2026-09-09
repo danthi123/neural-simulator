@@ -83,6 +83,6 @@
       }
     }
   },
-  "elapsed_s": 17330.3,
+  "elapsed_s": 17347.1,
   "eval_corpus": "data/corpus/wikitext103.txt"
 }
