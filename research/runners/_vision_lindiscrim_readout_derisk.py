@@ -178,6 +178,54 @@ competitive the only change; route via tools/pool_queue.sh / tools/gpu_queue.sh,
       --conj-select-kwta-frac 0.1 --conj-n 1152 --conj-offset-max 4 \
       --n-s2 96 --heldout-position --scramble-null --seeds 42 43 44 100 101 102 \
       --out research/findings/raw/lanes/perception/conjbind_competitive_n1152_heldoutpos_scramblenull_6seed.json
+
+ATTENTION-GATED READOUT (2026-09-09, this de-risk; --readout attention-gated; NEXT MECHANISM after the
+competitive-selection operating-point sweep landed EXHAUSTED -- research/findings/2026-09-09-vision-
+configural-binding-competitive-selection-NEXT-MECHANISM-PREREGISTERED.md's own closing line: "the
+operating-point lever is EXHAUSTED...the NEXT MECHANISM (no-defer, not yet attempted) is now the
+attention-gated readout (reweight which conjunction units each class population listens to per-trial),
+NOT another selection-tuning sweep"). A DIFFERENT axis from every conjunction-bank lever so far: `--conj-
+order`/`--conj-select` change which conjunction units EXIST (structure, fixed once per seed, shared by
+every class); this changes which of the EXISTING units each class's decision listens to on a GIVEN TRIAL
+(read-time attention, per class, per trial) -- see `_attention_gated_class_read` for the full mechanism and
+`research/biology/attention-gated-readout.md` for the grounding (Kandel PNS-6e feature-based/top-down
+attention; the SAME Foldiak 1991/Kohonen 1982 k-WTA competitive primitive already established twice in
+this file, `_bcm_learn_s2_templates`'s `competitive_frac` and `_select_conjunctions_competitive`'s per-
+presentation k-WTA, reused a third time at READ time instead of weight-update or bank-selection time).
+`--readout linear` (default) is the EXACT existing `_spiking_class_read` path, byte-identical to every
+prior run of this file. `--readout attention-gated` inserts a per-class, per-trial biased-competition gate
+(top-down template x bottom-up drive, then k-WTA) before the SAME excitatory/inhibitory sign-split read;
+`--attn-kwta-frac >= 1.0` makes the gate a no-op (mathematically identical to `linear`, proven below).
+PRE-REGISTERED GO GATE (identical criteria + anti-cheats to every prior lever in this file -- only the
+READOUT changes, stacked on the lane-best `--conj-select competitive` at its proven sweet-spot operating
+point, `--conj-select-overcomplete 4 --conj-select-kwta-frac 0.1`): task GO = beats_config_c_nogo
+(learn_spkwta_held >= nogo_floor+beat_margin) AND learning_load_bearing (learned - random >= beat_margin),
+each at >=5/6 seeds, under --heldout-position --scramble-null. capability_go additionally requires clearing
+V1-direct/flat-pool floors + the position-pooled-out and label-shuffle-null anti-cheats (unchanged
+formulas, see run_seed). Verdict bands (fixed in advance, identical to every prior lever): beat>=5/6 &
+lb>=5/6 = GO; some (>0) beats/lb short of 5/6 = PARTIAL; beat0 & lb0 = NO-GO. The number to beat is the
+merged competitive-selection default's own `beat4/6-lb6/6` (RATE_lin_ceiling_held 0.4288) -- a PARTIAL at
+or below that is a disappointment even if technically a PARTIAL by the letter of the bands.
+Byte-identical-off proof (both required, run before the decisive eval):
+  (a) --readout linear (default, omitted) reproduces vlin_competitive_smoke.json's own recipe exactly (the
+      new `readout`/`attn_kwta_frac` argparse fields are the only diff, as expected for any new default).
+  (b) --readout attention-gated --attn-kwta-frac 1.0 reproduces the SAME numbers as (a) to the last digit
+      (the k-WTA gate keeps every unit -> gated_r == r for every class -> mathematically identical to
+      _spiking_class_read's E = r @ wp.T / I = r @ wm.T).
+Tiny smoke (confirms the flag parses + runs + the anti-cheats compute, seconds not minutes):
+  SIM_BACKEND=numpy python -u -m research.runners._vision_lindiscrim_readout_derisk \
+      --seeds 42 --n-s2 24 --conj-bind fixed --conj-select competitive --conj-select-overcomplete 4 \
+      --conj-select-kwta-frac 0.1 --conj-n 96 --conj-offset-max 2 --readout attention-gated \
+      --attn-kwta-frac 0.5 --n-pos-total 4 --n-ex 2 --n-glimpses 1 --heldout-position --scramble-null \
+      --out research/findings/raw/lanes/perception/vlin_attngated_smoke.json
+DECISIVE 6-seed eval (same scale/op-point as the competitive-selection decisive run, --readout
+attention-gated the only change; local single-tenant numpy job, ~88s, per this lane's own RAM-safe
+envelope -- do NOT route through a brain-loading battery):
+  SIM_BACKEND=numpy .venv/bin/python -u -m research.runners._vision_lindiscrim_readout_derisk \
+      --ridge 0.5 --conj-bind fixed --conj-select competitive --conj-select-overcomplete 4 \
+      --conj-select-kwta-frac 0.1 --conj-n 1152 --conj-offset-max 4 --readout attention-gated \
+      --attn-kwta-frac 0.5 --n-s2 96 --heldout-position --scramble-null --seeds 42 43 44 100 101 102 \
+      --out research/findings/raw/lanes/perception/conjbind_attngated_n1152_heldoutpos_scramblenull_6seed.json
 """
 from __future__ import annotations
 
@@ -832,6 +880,111 @@ def _spiking_class_read(r, V, b, mu, sd, a, code, base_seed):
     return pred, sp.astype(np.float32)
 
 
+def _attention_gated_class_read(r, V, b, mu, sd, a, code, base_seed):
+    """ATTENTION-GATED READOUT (2026-09-09 NEXT MECHANISM, `--readout attention-gated`) -- pre-registered
+    after the competitive-selection operating-point sweep landed EXHAUSTED (research/findings/2026-09-09-
+    vision-configural-binding-competitive-selection-NEXT-MECHANISM-PREREGISTERED.md's own closing line:
+    "the NEXT MECHANISM...is now the attention-gated readout (reweight which conjunction units each class
+    population listens to per-trial), NOT another selection-tuning sweep"). See
+    research/biology/attention-gated-readout.md for the full grounding.
+
+    WHY A DIFFERENT MECHANISM THAN SELECTION. `--conj-select {fixed,competitive}` decides which conjunction
+    units EXIST in the bank -- a one-time, training-time, population-wide decision, frozen thereafter and
+    shared identically by every class. This is orthogonal: for a GIVEN fixed bank, a per-CLASS, per-TRIAL
+    competitive gate decides which of the bank's units THIS trial's evidence for THIS class actually
+    listens to. Desimone & Duncan's biased-competition framing draws exactly this line between which units
+    exist in a population and which of them win the competition for read-out on a given presentation.
+
+    THE MECHANISM (biased competition: a top-down attentional template combines with bottom-up drive, then
+    a winner-take-all competition decides who gets read):
+      1. TOP-DOWN ATTENTIONAL TEMPLATE, per class, from the ALREADY-FITTED discriminant (zero new
+         learning -- this is a pure read-time/inference-time gate on top of the SAME V/b/mu/sd this file's
+         standard `_train_linreadout` already produces): A_c = |w_c| / mean(|w_c|), the class's own signed
+         weight MAGNITUDE, normalized to mean 1. This is "attend to the units this class's own
+         discriminant already finds informative" -- Kandel PNS-6e's feature-based attention (attending to
+         a FEATURE, not a spatial location: "a second kind of attention, feature attention: In your
+         search, you ignore [irrelevant items] and attend only to [task-relevant ones]") realized as a
+         per-class gain TEMPLATE over conjunction units instead of over colors/orientations, and "top-down"
+         in Kandel's sense of a goal/task-driven modulation of which inputs get processed ("Another
+         top-down influence is perceptual task").
+      2. BIASED DRIVE, per trial: bd[n,c,j] = r[n,j] * A_c[j] -- the SAME "combine bottom-up drive with a
+         gain/bias field" primitive this file already uses (`_apply_s2_norm`'s alpha/satdiv forms,
+         `_select_conjunctions_competitive`'s candidate drive), here multiplying stimulus drive by the
+         top-down template instead of a population statistic.
+      3. COMPETE, per (trial, class): k-WTA keeps only the top `--attn-kwta-frac` fraction of units by
+         bd[n,c,:] and ZEROES the rest -- the IDENTICAL top-k-by-current-drive competitive primitive
+         already established TWICE in this file (`_bcm_learn_s2_templates`'s `competitive_frac`;
+         `_select_conjunctions_competitive`'s per-presentation k-WTA), reused a THIRD time, now at READ
+         time instead of weight-update or bank-selection time (Foldiak 1991 / Kohonen 1982).
+      4. READ: gated_r[n,c,j] = r[n,j] * win_mask[n,c,j] / k_eff_frac -- the RAW (not attention-reweighted)
+         drive of the SURVIVING units only (losers contribute exactly zero, not merely a smaller weight),
+         rescaled by the ACTUAL realized surviving fraction so the readout's overall drive magnitude stays
+         comparable across `--attn-kwta-frac` settings without re-tuning `--read-gain` for each one (a
+         homeostatic gain-renormalization companion process, the same "keep scale comparable regardless of
+         how many units survived competition" role `_bcm_learn_s2_templates`'s renorm and `_apply_s2_norm`
+         play elsewhere in this file). Then the SAME Dale's-law E/I sign-split (`_spiking_class_read`'s
+         `w = w+ - w-`) is applied to the gated code instead of the raw one; the LIF class-population port
+         and spiking WTA downstream are UNCHANGED.
+
+    `--attn-kwta-frac >= 1.0` -> win_mask is all-ones, k_eff_frac == 1.0 -> gated_r == r for every class ->
+    mathematically IDENTICAL to `_spiking_class_read`'s `E = r @ wp.T` / `I = r @ wm.T` (the byte-identical-
+    at-the-disabling-value proof this file's every other lever also carries; verified by direct comparison,
+    not just by construction, before the decisive run -- see the module docstring's "Byte-identical-off
+    proof").
+
+    NOT SHARED with `_spiking_class_read` (duplicated instead, the SAME discipline
+    `_select_conjunctions_competitive` follows relative to `_c2_rate_code`'s drive computation): keeps
+    `--readout linear` (default) provably untouched -- zero risk to byte-identical behaviour when this
+    readout mode is off. Returns pred (N,), class_spikes (N, n_classes) -- identical contract to
+    `_spiking_class_read`."""
+    n_classes, D = V.shape
+    w = (V / sd).astype(np.float32)
+    const = (b - (w * mu).sum(axis=1)).astype(np.float32)
+    wp = np.clip(w, 0.0, None)
+    wm = np.clip(-w, 0.0, None)
+
+    absw = np.abs(w)
+    A = absw / (absw.mean(axis=1, keepdims=True) + 1e-9)          # (n_classes, D) top-down template, mean 1
+
+    N = r.shape[0]
+    frac = float(getattr(a, "attn_kwta_frac", 1.0))
+    k = D if frac >= 1.0 or frac <= 0.0 else max(1, int(round(frac * D)))
+    k_eff_frac = k / D
+
+    E = np.zeros((N, n_classes), dtype=np.float32)
+    I = np.zeros((N, n_classes), dtype=np.float32)
+    for c in range(n_classes):
+        bd = r * A[c][None, :]                                    # (N, D) biased (attended) drive, per trial
+        if k < D:
+            thr = np.partition(bd, D - k, axis=1)[:, D - k][:, None]
+            win = bd >= thr                                       # per-trial k-WTA winners for this class
+        else:
+            win = np.ones_like(bd, dtype=bool)
+        gated = (r * win) / k_eff_frac                             # RAW drive of survivors, gain-renormalized
+        E[:, c] = gated @ wp[c]
+        I[:, c] = gated @ wm[c]
+    net = (E - I) + const[None, :]
+    net = net - net.mean(axis=1, keepdims=True)
+    net = net * a.read_gain + a.read_bias
+    M = max(1, a.class_pop)
+    tiled = np.repeat(net, M, axis=1)
+    counts, first = lif_spike_read(np.clip(tiled, 0.0, None), a.T_read, base_seed + 7,
+                                   tau=a.tau, v_thresh=a.v_thresh, t_ref=a.t_ref,
+                                   noise=a.noise, gain=1.0)
+    sp = spike_code(counts, first, a.T_read, code).reshape(N, n_classes, M).sum(axis=2)
+    pred = sp.argmax(axis=1).astype(np.int64)
+    return pred, sp.astype(np.float32)
+
+
+def _class_read(r, V, b, mu, sd, a, code, base_seed):
+    """Dispatcher: routes to the ATTENTION-GATED readout when `--readout attention-gated`, else the
+    existing `_spiking_class_read` (the exact prior behaviour). `--readout` defaults to `linear` ->
+    every call site is byte-identical to every prior run of this file until this flag is explicitly set."""
+    if getattr(a, "readout", "linear") == "attention-gated":
+        return _attention_gated_class_read(r, V, b, mu, sd, a, code, base_seed)
+    return _spiking_class_read(r, V, b, mu, sd, a, code, base_seed)
+
+
 def _lin_score_pred(r, V, b, mu, sd):
     """The non-spiking signed linear SCORE prediction (argmax V.r, no LIF port). Isolates the cost of
     the SPIKE PORT of the decision layer."""
@@ -932,8 +1085,8 @@ def run_seed(seed, a, code):
 
     # ---- LEARNED signed linear readout on the SPIKE C2 code ----
     V, b, mu, sd = _train_linreadout(r_tr, tr_cls, a.n_classes, a, seed)
-    pred_he_spk, sp_he = _spiking_class_read(r_he, V, b, mu, sd, a, code, seed * 773 + 11)
-    pred_tr_spk, _ = _spiking_class_read(r_tr, V, b, mu, sd, a, code, seed * 773 + 12)
+    pred_he_spk, sp_he = _class_read(r_he, V, b, mu, sd, a, code, seed * 773 + 11)
+    pred_tr_spk, _ = _class_read(r_tr, V, b, mu, sd, a, code, seed * 773 + 12)
     learn_spkwta_held = float((pred_he_spk == he_cls).mean())
     learn_spkwta_train = float((pred_tr_spk == tr_cls).mean())
     learn_linscore_held = float((_lin_score_pred(r_he, V, b, mu, sd) == he_cls).mean())
@@ -942,7 +1095,7 @@ def run_seed(seed, a, code):
     # below) evaluated on PIXEL-SCRAMBLED held images -- must collapse to chance. sc_c1/r_sc are already
     # built from he_imgs (same labels he_cls), so this is a like-for-like readout-vs-readout comparison.
     # Always computed (free diagnostic); only GATES capability_go when --scramble-null is set.
-    pred_sc_spk, _ = _spiking_class_read(r_sc, V, b, mu, sd, a, code, seed * 773 + 41)
+    pred_sc_spk, _ = _class_read(r_sc, V, b, mu, sd, a, code, seed * 773 + 41)
     scramble_learned_held = float((pred_sc_spk == he_cls).mean())
 
     # ---- RANDOM control: identical spike-ported architecture, V untrained (random signed) ----
@@ -953,7 +1106,7 @@ def run_seed(seed, a, code):
     # off, since V.shape[1] == a.n_s2 there exactly as before).
     Vr = (rngV.standard_normal((a.n_classes, V.shape[1])).astype(np.float32) * float(np.abs(V).mean() + 1e-6))
     br = np.zeros(a.n_classes, dtype=np.float32)
-    pred_he_rnd, _ = _spiking_class_read(r_he, Vr, br, mu, sd, a, code, seed * 773 + 21)
+    pred_he_rnd, _ = _class_read(r_he, Vr, br, mu, sd, a, code, seed * 773 + 21)
     rnd_spkwta_held = float((pred_he_rnd == he_cls).mean())
 
     # ---- CEILING: signed linear on the RATE C2 features ----
@@ -972,7 +1125,7 @@ def run_seed(seed, a, code):
     # ---- anti-cheat: label-shuffle null (retrain the readout on shuffled labels -> must be chance) ----
     lbl_shuf = np.random.default_rng(seed * 41 + 21).permutation(tr_cls)
     Vs, bs, mus, sds = _train_linreadout(r_tr, lbl_shuf, a.n_classes, a, seed)
-    pred_shuf, _ = _spiking_class_read(r_he, Vs, bs, mus, sds, a, code, seed * 773 + 31)
+    pred_shuf, _ = _class_read(r_he, Vs, bs, mus, sds, a, code, seed * 773 + 31)
     lbl_shuffle_null = float((pred_shuf == he_cls).mean())
 
     # ---- anti-cheat 6 verdict: the LEARNED readout itself must fall to chance on scrambled images ----
@@ -1290,6 +1443,29 @@ def main():
                         "must VANISH -- proves it is the RELATIVE arrangement, not just 'AND of two "
                         "features anywhere'. Fixed per seed (see _bind_conjunctions docstring) so the "
                         "lesion is internally consistent across the train/held/scramble splits.")
+    # ATTENTION-GATED READOUT (2026-09-09, this de-risk; --readout attention-gated; NEXT MECHANISM after
+    # the competitive-selection operating-point sweep landed EXHAUSTED). 'linear' (default) is the exact
+    # existing _spiking_class_read path -> byte-identical to every prior run of this file.
+    p.add_argument("--readout", choices=["linear", "attention-gated"], default="linear",
+                   help="2026-09-09 NEXT MECHANISM (pre-registered after the competitive-selection "
+                        "operating-point sweep landed EXHAUSTED -- research/findings/2026-09-09-vision-"
+                        "configural-binding-competitive-selection-NEXT-MECHANISM-PREREGISTERED.md). "
+                        "'linear' (default) is the exact existing _spiking_class_read path, byte-identical "
+                        "to every prior run of this file. 'attention-gated' inserts a per-class, per-trial "
+                        "biased-competition gate (top-down attentional template x bottom-up drive, then "
+                        "k-WTA) BEFORE the same excitatory/inhibitory sign-split read -- see "
+                        "_attention_gated_class_read and research/biology/attention-gated-readout.md. "
+                        "Structure (which units EXIST, --conj-select) is untouched; this changes which "
+                        "units each class's read LISTENS TO on a given trial.")
+    p.add_argument("--attn-kwta-frac", type=float, default=0.5,
+                   help="'attention-gated' mode only: per-(trial,class) k-WTA fraction of the D "
+                        "conjunction units kept active after combining bottom-up drive with the class's "
+                        "top-down attentional template (biased competition; Foldiak 1991/Kohonen 1982 -- "
+                        "the SAME primitive already gating _bcm_learn_s2_templates's competitive_frac and "
+                        "_select_conjunctions_competitive's per-presentation k-WTA). The survivors' raw "
+                        "drive is gain-renormalized by the realized surviving fraction (see "
+                        "_attention_gated_class_read). >=1.0 (or <=0.0) disables the gate -- mathematically "
+                        "identical to --readout linear (byte-identical, verified before the decisive run).")
     p.add_argument("--T1", type=int, default=64)
     p.add_argument("--T2", type=int, default=48)
     p.add_argument("--tau", type=float, default=8.0)
