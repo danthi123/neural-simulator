@@ -272,6 +272,27 @@ def crossedge_w0_shift(pool: "XedgeCuriosityD6ProductionPool", ask_held: bool) -
         return {"on": True, "error": f"{type(e).__name__}: {e}"}
 
 
+# 2026-09-08 COMPETITIVE-ALLOCATION CONFOUND, CLOSED (research/FAILURE_LOG.md 2026-09-02 row; finding
+# 2026-09-08-onebrain-curiosity-d6-semantic-drop-competitive-allocation-confound-CLOSED.md). The
+# 2026-09-01 calibration (`-1500pA`/`buf.clear_steps`=200) was measured under `BRAIN_MULTIREF_COMPETITIVE=0`
+# (role-by-position). Under the LATER, now-CURRENT-default `BRAIN_MULTIREF_COMPETITIVE=1` (competitive
+# free-slot-wins allocation, commit `96ebbffc8`), `load()` runs an EXTRA `probe_occupancy()` read (a genuine
+# zero-input hold span) before each write -- register 0's bump has strictly MORE idle/held time behind it by
+# the time this erase fires, and on seed 44 alone the fixed 200-step pull no longer clears it (5/6, not 6/6;
+# reproduced directly against the real production path, not a toy probe). A bisection (steps 200/220/.../400,
+# same -1500pA magnitude, seed 44) found the true margin is thin -- 220 steps already clears it -- and that
+# MAGNITUDE is not the right lever: -3000pA (2x) at the original 200 steps still FAILS at seed 44 while
+# -2000pA succeeds, a non-monotonic response consistent with this module's own already-documented finding that
+# this substrate's response to a drive on this bump is non-monotonic (there, for excitatory pulses; here, an
+# adjacent instance of the same substrate property for inhibitory ones) -- so DURATION, not a stronger pull, is
+# the genuine fix. `_SEMANTIC_DROP_CLEAR_STEPS=300` (50% margin over the empirical 220-step threshold) verified
+# 12/12 (6 seeds x {competitive True, False}) via the real `MultiReferentWMOrgan.load(xedge_drop_current=...)`
+# path, closing the confound at the CURRENT default without touching `MultiSlotHold.clear_steps` (the SHARED
+# constant `write()`'s own overwrite-clear protocol still relies on, at its own already-verified 200 -- a
+# dedicated constant here means this fix cannot perturb that unrelated consumer).
+_SEMANTIC_DROP_CLEAR_STEPS = 300
+
+
 def semantic_drop_current(pool: "XedgeCuriosityD6ProductionPool", d6org) -> tuple | None:
     """SEMANTIC-DROP rung (2026-09-01): the MAGNITUDE (and duration) of a genuine hyperpolarizing erase to apply
     to THIS SESSION's own physical `w0` register (`d6org.buf`, register 0 -- the same register the ask->w0
@@ -281,12 +302,16 @@ def semantic_drop_current(pool: "XedgeCuriosityD6ProductionPool", d6org) -> tupl
     RIDES THE CROSS-EDGE'S OWN MEASURED WEIGHT, not a fixed constant: `scale = clip(pool.cross_weight, 0, 1)` --
     the frozen edge grows to ~1.7-2.1 (clamps to the FULL scale=1.0), and `pool.lesion_cross()` zeroes
     `cross_weight` (clamps to scale=0.0 -> this function returns None -> NO drive is ever injected). The
-    magnitude itself reuses `d6org.buf`'s OWN `clear_gain`/`clear_steps` -- the SAME clear-strength constants
-    `MultiSlotHold.write()`'s overwrite-clear protocol already trusts to erase a held bump (no new magic number
-    introduced here) -- scaled by the cross-edge weight and made hyperpolarizing (negative). Empirically
-    validated (this rung's own de-risk probe, seeds 42/43/44/100/101/102, numpy CPU): a -1500pA/200-step pull on
-    a register's own band collapses that register's `read()` to (-1, 0.0) on all 6 seeds while a co-held,
-    undriven register is untouched; forward (excitatory) drive at the same magnitude was tried FIRST and found
+    MAGNITUDE reuses `d6org.buf`'s OWN `clear_gain` -- the SAME clear-strength constant `MultiSlotHold.write()`'s
+    overwrite-clear protocol already trusts to erase a held bump (no new magic number introduced for the
+    magnitude) -- scaled by the cross-edge weight and made hyperpolarizing (negative). The DURATION uses this
+    module's own dedicated `_SEMANTIC_DROP_CLEAR_STEPS` (300, not `buf.clear_steps`=200) -- see the constant's
+    own comment for why a fixed 200-step pull, calibrated under role-by-position allocation, has an
+    insufficient margin once competitive allocation (the current production default) adds extra pre-erase hold
+    time on some seeds. Empirically validated (this rung's own de-risk probe, seeds 42/43/44/100/101/102,
+    numpy CPU, BOTH allocation configs): the resulting -1500pA/300-step pull on a register's own band collapses
+    that register's `read()` to (-1, 0.0) on all 6 seeds under both configs while a co-held, undriven register
+    is untouched; forward (excitatory) drive at the original magnitude was tried FIRST and found
     non-monotonic/seed-inconsistent (see the module docstring's honest residual) -- the hyperpolarizing direction
     is the one this function uses.
 
@@ -304,7 +329,7 @@ def semantic_drop_current(pool: "XedgeCuriosityD6ProductionPool", d6org) -> tupl
         if scale <= 0.0:
             return None
         erase_pa = -abs(float(buf.clear_gain)) * scale
-        return (erase_pa, int(buf.clear_steps))
+        return (erase_pa, _SEMANTIC_DROP_CLEAR_STEPS)
     except Exception:
         return None
 
