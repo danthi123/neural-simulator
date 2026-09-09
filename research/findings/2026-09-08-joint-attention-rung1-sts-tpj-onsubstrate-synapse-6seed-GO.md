@@ -113,9 +113,11 @@ gaze-driven signal.
 independent single-unit noise/heterogeneity (Averbeck, Latham & Pouget, *Nat Rev Neurosci* 7:358-366, 2006, on how
 population averaging over independent neuronal variability recovers a cleaner population signal than any one
 unit carries) applied to the object side of this schema, mirroring what the gaze ring already does with its own
-`n_dir`-neuron population code for direction. Sweeping pool size confirmed the effect: direct argmax accuracy at
-seed 42 rose from ~0.70 (1 neuron) to 0.87 (`n_pool=24`) to 0.90 (`n_pool=32`) at matched gain/settle; the
-6-seed GO above uses `n_pool=48`. This is a genuine mechanism finding, not a tuning footnote: a labeled-line
+`n_dir`-neuron population code for direction. Sweeping ONLY pool size, with gain=6000, w_scale=20, sharpness=4.0
+and settle=100 held fixed at seed 42, direct argmax accuracy (bypassing the spotlight organ) rose from ~0.70
+(`n_pool=1`) to 0.87 (`n_pool=24`) to 0.90 (`n_pool=32`); `n_pool=48` (with settle raised to 150 through the full
+spotlight pipeline) is the value that cleared the 6-seed GO bar above, not a further-optimized point on this same
+sweep. This is a genuine mechanism finding, not a tuning footnote: a labeled-line
 single-cell code for a small identity set is fragile to this framework's own per-neuron heterogeneity in a way a
 population code is not.
 
@@ -141,8 +143,8 @@ population code is not.
   exactly, but land ~0.3% below the committed artifact's own `align_acc` <!--derived--> — a small pre-existing
   run-to-run non-determinism in this environment unrelated to this rung's change (confirmed present on the
   unmodified file too), far inside every gate's margin, not investigated further here.
-- Does not claim `n_pool=48` is a minimal or optimal pool size — it is the first size tested that cleared the GO
-  bar with margin at 6 seeds; a smaller pool may suffice.
+- Does not claim `n_pool=48` is the smallest pool size that would clear the GO bar — it is simply the first size
+  tested that did, at 6 seeds; a smaller pool was not swept to a floor.
 - Does not claim the population-pool fix generalizes to every small-K labeled-line construction in this codebase;
   it is verified here for this schema only.
 
