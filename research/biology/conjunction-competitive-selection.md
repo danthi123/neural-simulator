@@ -5,7 +5,7 @@ mechanism: An overcomplete population of candidate coincidence-binding (conjunct
 status: de-risking
 last_verified: 2026-09-09
 current_finding: research/findings/2026-09-09-vision-configural-binding-competitive-selection-NEXT-MECHANISM-PREREGISTERED.md
-current_status: "BUILT (--conj-select competitive in _vision_lindiscrim_readout_derisk.py), pre-registered GO gate fixed BEFORE the decisive run; decisive 6-seed result pending (queued, 0-token pool/GPU lane -- see the finding for the landed verdict). Additive + default-OFF: --conj-select fixed (default) is byte-identical to every prior run of this file."
+current_status: "BUILT + decisive 6-seed run LANDED (--conj-select competitive in _vision_lindiscrim_readout_derisk.py): LINDISCRIM-READOUT-PARTIAL-beat4/6-lb6/6, the lane's best result to date (RATE_lin_ceiling_held 0.4288 vs the pairwise arm's 0.3403; learning_load_bearing PERFECT 6/6 vs the pairwise arm's 4/6) but not yet a task GO (needs beat>=5/6, landed 4/6 -- one seed missed the margin by 0.0025, one seed is a clear miss). Read as PROGRESS at this mechanism's default operating point, not a banked NO-GO; the named next rung is sweeping --conj-select-overcomplete/--conj-select-kwta-frac, not a new mechanism. Additive + default-OFF: --conj-select fixed (default) is byte-identical to every prior run of this file (verified by re-running the triple-order smoke and diffing every computed field)."
 sources:
   - path: ~/Projects/sim-catalog/references/textbooks/kandel-pns-6e/full-book.txt
     anchor: "pattern separation results from the divergence"

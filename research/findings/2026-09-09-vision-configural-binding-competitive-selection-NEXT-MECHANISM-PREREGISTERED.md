@@ -6,8 +6,9 @@ date: 2026-09-09
 mechanism: RECURRENT/COMPETITIVE S2.5 configural-binding UNIT SELECTION (--conj-select competitive in _vision_lindiscrim_readout_derisk.py) -- an overcomplete candidate bank of fixed-random (a,b,Delta) conjunction units competes via lateral-inhibition/k-WTA on TRAINING data only, and the final bank keeps the candidates with the highest cumulative post-inhibition (surviving) drive; grounded in research/biology/conjunction-competitive-selection.md
 lane: vision (identity readout, D-perception configural binding)
 seeds: [42, 43, 44, 100, 101, 102]
-verdict: PRE-REGISTERED (mechanism built + smoke-verified this session; decisive 6-seed run QUEUED, not yet landed -- this doc records the mechanism, the gate, and the byte-identical-off proof; the decisive verdict is appended when the queued run returns, per the no-defer law)
+verdict: DECISIVE 6-seed run LANDED -- LINDISCRIM-READOUT-PARTIAL-beat4/6-lb6/6, the LANE'S BEST RESULT TO DATE by a wide margin (RATE_lin_ceiling_held 0.4288, vs the pairwise arm's 0.3403 and the triple-order arm's 0.2917-0.3403; learning_load_bearing PERFECT 6/6, vs pairwise 4/6 and triple-order 2/6). Not yet a task GO (needs beat>=5/6, landed 4/6 -- one seed, 44, missed the beat-margin by 0.0025 raw fraction; one seed, 100, is a clear miss at 0.32). Per the pre-registered read, this is PROGRESS (lb>=4/6 and ceiling above the pairwise arm's), not a banked NO-GO -- the next rung is tuning --conj-select-overcomplete/--conj-select-kwta-frac, not a new mechanism.
 artifacts:
+  - research/findings/raw/lanes/perception/conjbind_competitive_n1152_heldoutpos_scramblenull_6seed.json
   - research/findings/raw/lanes/perception/vlin_competitive_smoke.json
   - research/findings/raw/lanes/perception/conjbind_triple_n1152_heldoutpos_scramblenull_6seed.json
   - research/findings/raw/lanes/perception/conjbind_triple_n4608_heldoutpos_scramblenull_6seed.json
@@ -16,11 +17,12 @@ artifacts:
 
 # The conjunction bank now competes for its own membership, instead of freezing a random draw
 
-**Status: mechanism BUILT, GO gate PRE-REGISTERED, byte-identical-off PROVEN, tiny smoke runs end-to-end. The
-decisive 6-seed run is QUEUED (0-token pool/GPU lane) and its result is not yet in — reporting the mechanism and
-the gate now, per the no-defer law (closure cannot wait on the run to be convenient); the verdict lands as an
-addendum to this same file the moment the queued run returns, exactly as the triple-order finding's own
-width-compensation follow-up did.**
+**Status: mechanism BUILT, GO gate PRE-REGISTERED before the run, byte-identical-off PROVEN, and the decisive
+6-seed run has LANDED (run as a single local numpy job, ~88s, immediately after the mechanism build in this same
+session -- not queued after all, since the queue's own argparse-validity gate checks the CANONICAL (unmerged)
+checkout and correctly refused a flag that does not exist there yet; see "Why local, not queued" below).**
+**Result: `LINDISCRIM-READOUT-PARTIAL-beat4/6-lb6/6` — the lane's best result to date, a large step up from every
+prior lever, but not yet a task GO.**
 
 ## Why this lever, not another width/order sweep (the diagnosis carried forward)
 
@@ -104,32 +106,79 @@ method changes, so any result is attributable to selection, not to a different g
   "PARTIAL". The comparison that matters is against `conjbind_bindarm_n1152_heldoutpos_scramblenull_6seed.json`
   (`lb4/6`, `RATE_lin_ceiling_held=0.3403`), the lane's best result to date, not just against the NO-GO floor.
 
-## The decisive run (queued, not yet landed)
+## Why local, not queued through `tools/pool_queue.sh`
+
+<!--derived-->
+`tools/pool_queue.sh add` validates a candidate command by running the CANONICAL (main-branch) checkout's copy
+of the runner with `--help` and checking every flag in the command resolves against it — a real seam-closing
+check (a 2026-07-31 finding: a runner queued from a branch the pool nodes cannot see dispatches and dies
+silently). This build lives on a topic branch inside an isolated worktree; the canonical checkout's working
+tree does not yet have `--conj-select`/`--conj-select-overcomplete`/`--conj-select-kwta-frac` (they land on
+`main` when this branch merges), so the queue correctly REFUSED the job (`does not accept: --conj-select
+--conj-select-kwta-frac --conj-select-overcomplete`) rather than silently staging a job that would die on the
+pool nodes. Per the task's own explicit fallback ("run it as a single local numpy job"), the decisive run was
+executed directly instead — a single LIGHT numpy job (88.2s measured, well under the ~1GB / ~150s envelope
+named for this lane), no GPU, no brain-loading process, nothing else running concurrently.
+
+## The decisive result — the lane's best PARTIAL by a wide margin, not yet a GO
 
 <!--derived-->
 Same scale/op-point as the pairwise PARTIAL and both triple-order runs (`conj_n=1152`, `n_s2=96`,
-`--heldout-position --scramble-null`), `--conj-select competitive` the only mechanism change (default
-`--conj-select-overcomplete 4 --conj-select-kwta-frac 0.1`):
+`--heldout-position --scramble-null`, `--ridge 0.5`), `--conj-select competitive` (default
+`--conj-select-overcomplete 4 --conj-select-kwta-frac 0.1`) the only mechanism change:
 
-```bash
-OUTDIR=research/findings/raw/lanes/perception
-OUTFILE=conjbind_competitive_n1152_heldoutpos_scramblenull_6seed.json    # queued, does not exist yet as of this commit
-SIM_BACKEND=numpy .venv/bin/python -u -m research.runners._vision_lindiscrim_readout_derisk \
-    --ridge 0.5 --conj-bind fixed --conj-select competitive --conj-select-overcomplete 4 \
-    --conj-select-kwta-frac 0.1 --conj-n 1152 --conj-offset-max 4 \
-    --n-s2 96 --heldout-position --scramble-null --seeds 42 43 44 100 101 102 \
-    --out "$OUTDIR/$OUTFILE"
-```
+<!--derived-->
+| quantity | pairwise PARTIAL (prior best) | triple n1152 (NO-GO) | triple n4608 (NO-GO) | **competitive (this run)** |
+|---|---|---|---|---|
+| `overall_verdict` | `PARTIAL-beat0/6-lb4/6` | `PARTIAL-beat0/6-lb2/6` | `PARTIAL-beat0/6-lb2/6` | **`PARTIAL-beat4/6-lb6/6`** |
+| `LEARNED_spkwta_held` | 0.3281 | 0.3212 | (identical to n1152) | **0.4549** |
+| `RANDOM_spkwta_held` | (n/a, not tabulated here) | -- | -- | 0.2535 |
+| `RATE_lin_ceiling_held` | 0.3403 | 0.2917 | 0.2917 | **0.4288** |
+| `learning_load_bearing` (>=5/6) | 4/6 | 2/6 | 2/6 | **6/6 (perfect)** |
+| `beats_config_c_nogo` (>=5/6) | 0/6 | 0/6 | 0/6 | **4/6** |
+| `beats_config_c_nogo_raw` (>0.34, no margin) | -- | -- | -- | 5/6 |
+| `scramble_null_pass` | 6/6 | 6/6 | 6/6 | **6/6** |
 
-This is a LIGHT numpy job (~1GB RSS, ~150s wall at this scale per the pairwise/triple-order runs' own measured
-elapsed times) — routed via `tools/pool_queue.sh add` (0 Claude tokens, remote) so it does not compete with any
-brain-loading GPU process. **Pre-registered read of that run:** if `beat>=5/6 & lb>=5/6`, this is a GO and the
-lane's configural-binding wall is closed by this mechanism. If it PARTIALs at or above `lb4/6` with
-`RATE_lin_ceiling_held` above 0.3403 (the pairwise ceiling), competitive selection is progress and the next rung
-is tuning `--conj-select-overcomplete`/`--conj-select-kwta-frac`. If it lands at or below `beat0/6-lb2/6` (the
-triple-order floor), competitive selection at this operating point is banked as a NO-GO and the next mechanism
-is the attention-gated readout named by the triple-order finding — a verdict on this METHOD, never a license to
-abandon the CAPABILITY.
+<!--derived-->
+Per-seed (`LEARNED_spkwta_held` / `RATE_lin_ceiling_held` / beats-margin / load-bearing): seed 42: 0.4479 /
+0.4062 / **beat** / lb; seed 43: 0.4688 / 0.4688 / **beat** / lb (also full `capability_go`); seed 44: 0.4375 /
+0.4167 / miss (needs >=0.44, landed 0.4375 — short by 0.0025) / lb; seed 100: 0.3229 / 0.2917 / miss (the clear
+outlier — below even the raw 0.34 floor) / lb; seed 101: 0.5729 / 0.5312 / **beat** / lb; seed 102: 0.4792 /
+0.4583 / **beat** / lb (also full `capability_go`). Every seed's `conj_select` diagnostic shows
+`candidate_n=4608`, `k_sel_per_presentation=461`, `frac_selected_never_won=0.0` (every one of the 1152 selected
+units won at least one competition somewhere in training — no degenerate collapse to a handful of units).
+
+<!--derived-->
+**Determinism verified**: seed 42 alone was re-run independently and its full per-seed row byte-compared equal
+to the 6-seed run's seed-42 row (every decode/reframe/dissociation/verdict/conj_select field identical).
+
+## Reading this honestly — progress, not yet closure
+
+<!--derived-->
+Per the pre-registered read fixed in the "decisive run" section originally: `learning_load_bearing` landed at
+6/6 (>= the 4/6 recovery bar) and `RATE_lin_ceiling_held` (0.4288) landed well above the pairwise arm's 0.3403 —
+both trigger the "competitive selection is progress" branch, not the "banked NO-GO, take the attention-gated
+readout" branch. This is NOT a task GO: `beats_config_c_nogo` needs `>=5/6` and landed at `4/6` (seed 44 missed
+the `+0.10` margin by a hair — `0.4375` vs `0.44` needed; seed 100 is a genuine miss at `0.32`, well below even
+the raw `0.34` floor). The next rung, named by the pre-registered read, is tuning
+`--conj-select-overcomplete`/`--conj-select-kwta-frac` (this run's untuned defaults, 4x/0.1, were never swept) —
+seed 100's shortfall in particular is worth checking against a wider candidate pool or a softer competition
+before concluding the operating point is exhausted. This is a verdict on the DEFAULT operating point of this
+mechanism, not on the mechanism itself, which is already the best lever this lane has produced.
+
+## An honest risk this result carries (named, not hidden)
+
+<!--derived-->
+The competitive selection step reads `tr_c1` — the SAME small training-image set (6 examples/class) the
+downstream readout is then fit on — so the informativeness criterion used to choose which conjunctions survive
+and the criterion used to fit the linear readout share one thin data source. This is the identical "honest
+thin-data risk" `_bcm_learn_s2_templates`'s own docstring already names for S2 template learning, not a new
+concern this mechanism introduces. It is NOT label leakage (selection reads images only, never `tr_cls`), and
+the held-out-position (contiguous-block spatial extrapolation, never bracketed by training neighbours) and
+scramble-null (the LEARNED readout itself must collapse to chance on pixel-scrambled held images) anti-cheats
+are both intact at 6/6 — a readout that had merely memorized train-specific statistics through this shared data
+path would not be expected to survive spatial extrapolation or collapse cleanly under scrambling, so this is
+evidence against pure overfitting, though not a formal proof of its absence.
 
 ## Reproduce
 
@@ -141,5 +190,10 @@ SIM_BACKEND=numpy .venv/bin/python -u -m research.runners._vision_lindiscrim_rea
     --n-pos-total 4 --n-ex 2 --n-glimpses 1 --heldout-position --scramble-null \
     --out research/findings/raw/lanes/perception/vlin_competitive_smoke.json
 
-# the decisive 6-seed run (queued, see above; not yet run as of this commit)
+# the decisive 6-seed run reported above:
+SIM_BACKEND=numpy .venv/bin/python -u -m research.runners._vision_lindiscrim_readout_derisk \
+    --ridge 0.5 --conj-bind fixed --conj-select competitive --conj-select-overcomplete 4 \
+    --conj-select-kwta-frac 0.1 --conj-n 1152 --conj-offset-max 4 \
+    --n-s2 96 --heldout-position --scramble-null --seeds 42 43 44 100 101 102 \
+    --out research/findings/raw/lanes/perception/conjbind_competitive_n1152_heldoutpos_scramblenull_6seed.json
 ```
