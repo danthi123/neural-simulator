@@ -22,6 +22,11 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 - **B-curiosity production `--train-drive-scale` port `782e31024`** — rescued a stranded 6/6-GO fix + ported to the real wrapper (additive, default 1.0 byte-identical).
 - **Gate-hardening `17b7a3001`+`8335a6af0`** — parallel_audit under-count fix (missed workflow agents) + a BLOCKING `compute_idle_persistent` gate + GAME_MODE-awareness (excuses local-GPU-idle during a game, keeps pool/agent enforcement).
 
+**⚡⚡ LIVE IN-FLIGHT 2026-09-09 ~15:45 (post-AWS-reconciliation frontier fan-out — do NOT double-launch after compaction):**
+- **3 build agents (sonnet, worktree-isolated, commit-before-verify, verify-first, don't-touch-shared-docs — parent merges + doc-syncs on landing):** (A) B-curiosity `_XEDGE_CD6` default-ON flip + bespoke no-regression gate (builds on df56bb8d 6-seed prod GO); (B) D-perception configural-binding FLOOR-CLEARING next mechanism (builds on the `conjbind_bindarm...` LINDISCRIM-PARTIAL beat0/6-lb4/6); (C) webapp-pool-routing fix (so webapp-importing runners like C-ARM3 `onebrain_regression_battery` can pool-route). Each writes its own finding + pushes its branch to both remotes; ON LANDING harvest → merge chain → doc/board sync.
+- **Pool (remote, 0 tokens, depth 2):** Touchpoint-A one-brain robustness seeds 43 + 100 (lane E; `_touchpoint_a_fact_clause_derisk --n-known 4`; record-verified not-done). Dispatcher pid 1110 alive; pool40 down (2/3 nodes).
+- **GPU:** four-day-queue running (`_longitudinal_develop_loop_gpu --n-days 60 --seed 2882` + persistent-living + vision-rstdp queued). Untouched.
+
 **⏳ REMAINING — GPU-queued for after gaming (`tools/game.sh off` resumes the queue):**
 1. **MOUTH token-scaling — direction test GO at 0.4B; but the 2B cell is ALREADY a CONCLUDED NO-GO (re-derivation caught + AWS terminated 2026-09-09 ~15:30).**
    - The 0.4B DIRECTION GO stands (`196b5fab`, finding `...-direction-GO`): FineWeb-Edu same-domain lifts deep `margin_vs_trigram` **+0.204 → -0.082 absolute at depth 10-99** vs the -0.286 domain-mix baseline; STEP-1's -0.312 was a domain-MIX artifact. Real, but still SUB-trigram at deep context.
