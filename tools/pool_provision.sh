@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 # Provision the mini-PC pool (pool40/41/42) for numpy-backend sim runs, from the LOCAL box over the LAN.
 # The nodes have python3 + internet but NO pip/numpy/repo (reimaged). This is IDEMPOTENT — safe to re-run.
-#   1. rsync the code (sim/ + research/ + experiment/ + tests support) over ssh (repos are private → no clone).
-#   2. create a venv (python3 -m venv) and pip-install numpy + scipy (scipy REQUIRED for SIM_BACKEND=numpy sparse).
+#   1. rsync the code (sim/ + webapp/ + research/ + experiment/ + tests support) over ssh (repos are private → no clone).
+#   2. create a venv (python3 -m venv) and pip-install numpy + scipy (scipy REQUIRED for SIM_BACKEND=numpy sparse)
+#      + fastapi/pydantic (REQUIRED by any runner that imports webapp.server, e.g. onebrain_regression_battery.py).
 # Usage:  bash tools/pool_provision.sh [--revision <commit>] [--isolated] [pool40 pool41 pool42]
 set -euo pipefail
 cd "$(dirname "$0")/.."
@@ -71,7 +72,7 @@ MANIFEST=$(mktemp)
 REVISION=$(mktemp)
 FAILED_NODES=()
 trap 'rm -rf "$STAGE"; rm -f "$MANIFEST" "$REVISION"' EXIT
-git archive "$SOURCE_SHA" sim research/__init__.py research/runners research/specs research/fixtures \
+git archive "$SOURCE_SHA" sim webapp research/__init__.py research/runners research/specs research/fixtures \
   research/findings ':(exclude)research/findings/raw' experiment tools tests \
   docs CLAUDE.md GAP_CLOSURE_MISSION.md README.md ROADMAP.md requirements.txt requirements-dev.txt \
   | tar -x -C "$STAGE"
@@ -87,13 +88,14 @@ rm -f "$MANIFEST"
 python3 "$STAGE/tools/pool/provisioning/source_manifest.py" create \
   --root "$STAGE" --output "$MANIFEST" >/dev/null
 MANIFEST_SHA=$(sha256sum "$MANIFEST" | awk '{print $1}')
-EXCLUDED_DIRTY=$(git status --porcelain -- sim research/runners experiment tools 2>/dev/null | wc -l)
+EXCLUDED_DIRTY=$(git status --porcelain -- sim webapp research/runners experiment tools 2>/dev/null | wc -l)
 printf 'git_sha=%s\nsource_kind=git_archive\nsource_manifest_sha256=%s\nsource_ancestry_sha256=%s\nexcluded_worktree_paths=%s\ncreated_utc=%s\n' \
   "$SOURCE_SHA" "$MANIFEST_SHA" "$ANCESTRY_SHA" "$EXCLUDED_DIRTY" "$(date -u +%FT%TZ)" > "$REVISION"
 for h in "${NODES[@]}"; do
   echo "=== provisioning $h:$REMOTE_ROOT ==="
   ssh -o ConnectTimeout=10 "$h" "mkdir -p \
     ~/$REMOTE_ROOT/sim \
+    ~/$REMOTE_ROOT/webapp \
     ~/$REMOTE_ROOT/research/runners \
     ~/$REMOTE_ROOT/research/specs \
     ~/$REMOTE_ROOT/research/fixtures \
@@ -110,8 +112,16 @@ for h in "${NODES[@]}"; do
   rsync -az --delete \
     --exclude='.git' --exclude='__pycache__' --exclude='*.pyc' --exclude='.venv*' \
     --exclude='bridges/' --exclude='simulation_recordings_h5/' --exclude='simulation_checkpoints_h5/' \
-    --exclude='research/findings/raw/' --exclude='webapp/' --exclude='node_modules/' --exclude='.venv-rag/' \
+    --exclude='research/findings/raw/' --exclude='node_modules/' --exclude='.venv-rag/' \
     "$STAGE/sim/" "$h:~/$REMOTE_ROOT/sim/"
+  # webapp/ (2026-09-09 fix): many research/runners/* import `webapp.server` (brain_chat / BrainChatRequest) --
+  # the cross-faculty regression battery (onebrain_regression_battery.py) among them. It was previously excluded
+  # from the archive entirely, so any runner that imports it could not be pool-routed and was forced to run
+  # locally, competing with GPU work for RAM. webapp/ is small (~1.7MB incl. static/) so this does not meaningfully
+  # widen the payload; static/ must ship too because `app.mount(..., StaticFiles(directory=STATIC_DIR))` at
+  # webapp/server.py module-import time raises RuntimeError if that directory does not exist on disk.
+  rsync -az --delete --exclude='__pycache__' --exclude='*.pyc' \
+    "$STAGE/webapp/" "$h:~/$REMOTE_ROOT/webapp/"
   rsync -az --delete --exclude='__pycache__' --exclude='*.pyc' --exclude='findings/raw/' \
     "$STAGE/research/runners/" "$h:~/$REMOTE_ROOT/research/runners/"
   rsync -az --delete "$STAGE/research/specs/" "$h:~/$REMOTE_ROOT/research/specs/"
@@ -143,10 +153,12 @@ for h in "${NODES[@]}"; do
       { rm -rf .venv; python3 -m venv .venv; }; } && \
     .venv/bin/python -m pip -q install --upgrade pip >/dev/null 2>&1; \
     .venv/bin/python -m pip -q install \
-      numpy==2.2.6 scipy==1.15.3 h5py==3.16.0 pillow==12.0.0 pyyaml==6.0.3 pytest==8.4.1 2>&1 | tail -1; \
+      numpy==2.2.6 scipy==1.15.3 h5py==3.16.0 pillow==12.0.0 pyyaml==6.0.3 pytest==8.4.1 \
+      fastapi==0.139.1 pydantic==2.13.4 2>&1 | tail -1; \
     echo -n '  numpy/scipy=' ; .venv/bin/python -c 'import numpy,scipy; print(numpy.__version__, scipy.__version__)' 2>&1 | tail -1; \
-    echo -n '  sim imports=' ; SIM_BACKEND=numpy .venv/bin/python -c 'import sys; sys.path.insert(0,\".\"); from sim.backend import get_backend; print(get_backend()[1])' 2>&1 | tail -1"
-  ssh "$h" "cd ~/$REMOTE_ROOT && .venv/bin/python -c 'import json,sys,numpy,scipy,h5py,PIL,yaml; json.dump({\"python_major_minor\":\"%s.%s\" % sys.version_info[:2],\"numpy\":numpy.__version__,\"scipy\":scipy.__version__,\"h5py\":h5py.__version__,\"pillow\":PIL.__version__,\"pyyaml\":yaml.__version__},open(\".pool_environment.json\",\"w\"),sort_keys=True,separators=(\",\",\":\"))'"
+    echo -n '  sim imports=' ; SIM_BACKEND=numpy .venv/bin/python -c 'import sys; sys.path.insert(0,\".\"); from sim.backend import get_backend; print(get_backend()[1])' 2>&1 | tail -1; \
+    echo -n '  webapp imports=' ; SIM_BACKEND=numpy .venv/bin/python -c 'import sys; sys.path.insert(0,\".\"); from webapp.server import brain_chat, BrainChatRequest; print(\"ok\")' 2>&1 | tail -1"
+  ssh "$h" "cd ~/$REMOTE_ROOT && .venv/bin/python -c 'import json,sys,numpy,scipy,h5py,PIL,yaml,fastapi,pydantic; json.dump({\"python_major_minor\":\"%s.%s\" % sys.version_info[:2],\"numpy\":numpy.__version__,\"scipy\":scipy.__version__,\"h5py\":h5py.__version__,\"pillow\":PIL.__version__,\"pyyaml\":yaml.__version__,\"fastapi\":fastapi.__version__,\"pydantic\":pydantic.VERSION},open(\".pool_environment.json\",\"w\"),sort_keys=True,separators=(\",\",\":\"))'"
   REMOTE_MANIFEST=$(ssh "$h" "cd ~/$REMOTE_ROOT && sha256sum .source_manifest.sha256 | awk '{print \$1}'")
   if [ "$REMOTE_MANIFEST" != "$MANIFEST_SHA" ]; then
     echo "  MANIFEST FAIL local=$MANIFEST_SHA remote=$REMOTE_MANIFEST" >&2
