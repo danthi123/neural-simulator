@@ -43,3 +43,6 @@ Appended a plain-language update to #130 -- v8's real-scale port (GO 6/6, unchan
 - C-self GNW congruence-spiking DEFAULT-ON (2ed015d0c) — sub-rung of the one-brain organs; B-curiosity --train-drive-scale production port (782e31024), 6-seed validation queued on pool.
 - Gate-hardening (17b7a3001/8335a6af0): parallel_audit under-count fix + blocking compute_idle gate + GAME_MODE-awareness.
 - Deferred lighter reconcile: recall-speed #192 / VRAM #206 / curiosity #197 touched by the flip but left open (sub-rungs).
+
+## 2026-09-09b  memory #130 v10 in-degree law 6-seed GO
+- #130 labeled de-risked: v10 region-growth in-degree law = 6/6 GO (12e1ac34); v9 NO-GO was a diluted-readout artifact of a fixed constant at a grown scale, its own named fix resolves it. Residual: 17% assembly:region (toward 1-5% bio target), future sparsity rungs.
