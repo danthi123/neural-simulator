@@ -13,11 +13,13 @@ current_finding: research/findings/raw/_spiking_habituation_novelty/decisive_6se
 current_status: "Focused mechanism de-risk BUILT (research/runners/_spiking_habituation_novelty_derisk.py, no
   sim/ edit): a block-diagonal per-word input->readout circuit realizes graded, monotonic, recoverable habituation
   on a real SimulationBridge. A smoke run (1 seed, numpy) passed the pre-registered gate shape before the decisive
-  6-seed battery was queued (research/queue/pool.queue) -- see the finding for the seed-by-seed verdict. NOT wired
-  to production this session: `webapp/da_mode_drives_chat.py::engagement_of()` still computes novelty via the host
-  `set` (`sum(1 for t in tokens if t not in seen) / len(tokens)`); wiring an open-vocabulary (recruit-on-demand,
-  matching `VocabAgnosticSpikingSampler`'s existing pattern) version of this circuit into that function is the
-  named next rung."
+  6-seed battery was queued (research/queue/pool.queue) -- see the finding for the seed-by-seed verdict (6/6 GO).
+  WIRED to production 2026-09-09 (commit 58f7c12c, DEFAULT-OFF): `webapp/da_mode_drives_chat.py::engagement_of()`
+  now routes novelty through the open-vocabulary (recruit-on-demand, `VocabAgnosticSpikingSampler`-pattern)
+  `SpikingNoveltyHabituationOrgan` behind flag `BRAIN_SPIKING_NOVELTY` -- byte-identical when off (max|diff|=0.0),
+  load-bearing 5/6 when on. The host `set` path remains the default. FLIP to default-ON is GATED on the integrated
+  /api/brain-chat no-regression soak (SIM_BACKEND=cupy) — RAM-blocked locally, deferred to an AWS-CPU batch;
+  scaffold_retired stays NO until that flip."
 sources:
   - path: ~/Projects/sim-catalog/references/textbooks/kandel-pns-6e/full-book.txt
     anchor: "decreases despite no change in the presynaptic action potential"
