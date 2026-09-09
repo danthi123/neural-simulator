@@ -13,6 +13,17 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ---
 
+## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-08 ~20:35 (FRONTIER RE-BROADENED to 5 lanes; both flips confirmed-safe, pending the running composer cupy job; READ FIRST; LATEST anchor)
+
+**⚡ Monoculture FIXED (owner-flagged 20:0x that the whole session served ONE unclassified arc while 8 lanes + the pool sat idle).** A 6-lane fan-out (workflow `weirtibmh`) served the unserved roadmap lanes + LANDED 5 on main (merge chain → `06c6f51b`): Memory #130 (v9 true-sparsity NO-GO, traced + 2 next mechanisms), Self/Workspace #203 (residual CORRECTED — was a test-infra backend-caching bug, not a real gap), Perception (vision de-risk), Affect (BOUNDARY → embodiment-reframe next), Language/WM (MultiReferentWM de-risk). The mini-PC pool is now engaged (was idle ~2 days). Curiosity lane = the one loose end (its seed battery was still running at fan-out close; no commits — pick it up).
+
+**⚠️ GATE BUG found (partial answer to "are the gates broken"): `tools/parallel_audit.py` UNDER-COUNTS workflow-spawned agents** (reports `agents=0` while N are running) — so a workflow fan-out doesn't register + it keeps flagging UNDER-PARALLELIZED falsely. The audit is also ADVISORY (prints to heartbeat, can't block) — I read it past all session (the passive-signal failure). Fix pending: make it detect workflow agents + escalate at checkpoints.
+
+**BOTH scaffold-retirement flips now CONFIRMED-SAFE, pending one running cupy job:**
+- **RANK-6 #211 substrate-store — latency GO (decisive):** the batched-recall fix (`2de6ab27`) → cupy recall ~505-600ms at production ~200 facts/shard, FASTER than the 1189ms numpy-kb baseline (un-fixed was ~10s); flat in shard-count so it holds at 78k. + function GO 6/6 + VRAM GO (~2.5 GiB). Flip = `enable_substrate_store=True` + `BRAIN_BATCHED_SUBSTRATE_SCAN=1` default-on (re-apply the stale `research/substrate-store-flip` onto main + no-regression).
+- **RANK-1 composer — fast-load sidecar landed (`f8a6ce5e`, opt-in);** cupy fast-load parity+timing + e2e = the RUNNING gpu_queue job (pid 1923267 + 1 queued). On their GO → flip `_DEVELOPED_COMPOSER_KIND_DEFAULT_OVERRIDE` None→"onebrain".
+- **NEXT:** composer confirmations land → do BOTH flips (retire the host rf composer + numpy-KB LTM shortcut — the owner 2026-09-04 priority).
+
 ## ⭐ H · Memory lane — 2026-09-08 ~20:20 (board #130 next-rung CHARACTERIZED NO-GO; mechanism intact; separate arc, does not touch rank-1/rank-6/mouth below)
 
 **Board #130's own named next rung — a further region-scale-up toward true CA1 sparsity (v8's residual: assembly:region
