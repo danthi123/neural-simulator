@@ -1,0 +1,290 @@
+{
+  "A_byte_identical_off": {
+    "A1_default_is_off": true,
+    "A2_tui_byte_identical_off": true,
+    "A2_tui_mismatch": 0,
+    "A3_agent_byte_identical_off": true,
+    "A3_agent_mismatch": 0,
+    "A_all_pass": true,
+    "n_tokens": 21,
+    "rows": [
+      {
+        "token": "it",
+        "tui_ref": true,
+        "tui_got": true,
+        "agent_ref": true,
+        "agent_got": true
+      },
+      {
+        "token": "that",
+        "tui_ref": true,
+        "tui_got": true,
+        "agent_ref": true,
+        "agent_got": true
+      },
+      {
+        "token": "they",
+        "tui_ref": true,
+        "tui_got": true,
+        "agent_ref": true,
+        "agent_got": true
+      },
+      {
+        "token": "them",
+        "tui_ref": true,
+        "tui_got": true,
+        "agent_ref": true,
+        "agent_got": true
+      },
+      {
+        "token": "this",
+        "tui_ref": true,
+        "tui_got": true,
+        "agent_ref": true,
+        "agent_got": true
+      },
+      {
+        "token": "cat",
+        "tui_ref": false,
+        "tui_got": false,
+        "agent_ref": false,
+        "agent_got": false
+      },
+      {
+        "token": "dog",
+        "tui_ref": false,
+        "tui_got": false,
+        "agent_ref": false,
+        "agent_got": false
+      },
+      {
+        "token": "fish",
+        "tui_ref": false,
+        "tui_got": false,
+        "agent_ref": false,
+        "agent_got": false
+      },
+      {
+        "token": "hello",
+        "tui_ref": false,
+        "tui_got": false,
+        "agent_ref": false,
+        "agent_got": false
+      },
+      {
+        "token": "the",
+        "tui_ref": false,
+        "tui_got": false,
+        "agent_ref": false,
+        "agent_got": false
+      },
+      {
+        "token": "what",
+        "tui_ref": false,
+        "tui_got": false,
+        "agent_ref": false,
+        "agent_got": false
+      },
+      {
+        "token": "then",
+        "tui_ref": false,
+        "tui_got": false,
+        "agent_ref": false,
+        "agent_got": false
+      },
+      {
+        "token": "than",
+        "tui_ref": false,
+        "tui_got": false,
+        "agent_ref": false,
+        "agent_got": false
+      },
+      {
+        "token": "his",
+        "tui_ref": false,
+        "tui_got": false,
+        "agent_ref": false,
+        "agent_got": false
+      },
+      {
+        "token": "running",
+        "tui_ref": false,
+        "tui_got": false,
+        "agent_ref": false,
+        "agent_got": false
+      },
+      {
+        "token": "water",
+        "tui_ref": false,
+        "tui_got": false,
+        "agent_ref": false,
+        "agent_got": false
+      },
+      {
+        "token": "",
+        "tui_ref": false,
+        "tui_got": false,
+        "agent_ref": false,
+        "agent_got": false
+      },
+      {
+        "token": "IT",
+        "tui_ref": true,
+        "tui_got": true,
+        "agent_ref": true,
+        "agent_got": true
+      },
+      {
+        "token": "That?",
+        "tui_ref": true,
+        "tui_got": true,
+        "agent_ref": false,
+        "agent_got": false
+      },
+      {
+        "token": "Them.",
+        "tui_ref": true,
+        "tui_got": true,
+        "agent_ref": false,
+        "agent_got": false
+      },
+      {
+        "token": "  it ",
+        "tui_ref": false,
+        "tui_got": false,
+        "agent_ref": false,
+        "agent_got": false
+      }
+    ]
+  },
+  "B_load_bearing_rows": [
+    {
+      "seed": 42,
+      "clean_detect_intact": 1.0,
+      "false_positive_rate": 0.0,
+      "corrupted_recovery_intact": 0.9333,
+      "clean_detect_lesion": 0.0,
+      "corrupted_recovery_lesion": 0.0,
+      "intact_combined": 0.9667,
+      "lesion_combined": 0.0,
+      "attribution_to_attractor": 1.0,
+      "L1_clean_detect": true,
+      "L2_specificity": true,
+      "L3_corrupted_surpass": true,
+      "L4_lesion_reverts": true,
+      "GO": true
+    },
+    {
+      "seed": 43,
+      "clean_detect_intact": 1.0,
+      "false_positive_rate": 0.0,
+      "corrupted_recovery_intact": 0.8667,
+      "clean_detect_lesion": 0.0,
+      "corrupted_recovery_lesion": 0.0,
+      "intact_combined": 0.9333,
+      "lesion_combined": 0.0,
+      "attribution_to_attractor": 1.0,
+      "L1_clean_detect": true,
+      "L2_specificity": true,
+      "L3_corrupted_surpass": true,
+      "L4_lesion_reverts": true,
+      "GO": true
+    },
+    {
+      "seed": 44,
+      "clean_detect_intact": 1.0,
+      "false_positive_rate": 0.0,
+      "corrupted_recovery_intact": 1.0,
+      "clean_detect_lesion": 0.0,
+      "corrupted_recovery_lesion": 0.0,
+      "intact_combined": 1.0,
+      "lesion_combined": 0.0,
+      "attribution_to_attractor": 1.0,
+      "L1_clean_detect": true,
+      "L2_specificity": true,
+      "L3_corrupted_surpass": true,
+      "L4_lesion_reverts": true,
+      "GO": true
+    },
+    {
+      "seed": 100,
+      "clean_detect_intact": 1.0,
+      "false_positive_rate": 0.0,
+      "corrupted_recovery_intact": 1.0,
+      "clean_detect_lesion": 0.0,
+      "corrupted_recovery_lesion": 0.0,
+      "intact_combined": 1.0,
+      "lesion_combined": 0.0,
+      "attribution_to_attractor": 1.0,
+      "L1_clean_detect": true,
+      "L2_specificity": true,
+      "L3_corrupted_surpass": true,
+      "L4_lesion_reverts": true,
+      "GO": true
+    },
+    {
+      "seed": 101,
+      "clean_detect_intact": 1.0,
+      "false_positive_rate": 0.0,
+      "corrupted_recovery_intact": 1.0,
+      "clean_detect_lesion": 0.0,
+      "corrupted_recovery_lesion": 0.0,
+      "intact_combined": 1.0,
+      "lesion_combined": 0.0,
+      "attribution_to_attractor": 1.0,
+      "L1_clean_detect": true,
+      "L2_specificity": true,
+      "L3_corrupted_surpass": true,
+      "L4_lesion_reverts": true,
+      "GO": true
+    },
+    {
+      "seed": 102,
+      "clean_detect_intact": 1.0,
+      "false_positive_rate": 0.0,
+      "corrupted_recovery_intact": 1.0,
+      "clean_detect_lesion": 0.0,
+      "corrupted_recovery_lesion": 0.0,
+      "intact_combined": 1.0,
+      "lesion_combined": 0.0,
+      "attribution_to_attractor": 1.0,
+      "L1_clean_detect": true,
+      "L2_specificity": true,
+      "L3_corrupted_surpass": true,
+      "L4_lesion_reverts": true,
+      "GO": true
+    }
+  ],
+  "n_go_B": 6,
+  "n_seeds": 6,
+  "verdict": "GO",
+  "label": "spiking-anaphor-detection wire-in (A byte-identical-off AND >=5/6 seeds load-bearing-on)",
+  "status": "GO",
+  "go": true,
+  "undefined_reasons": [],
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "A: byte-identical when off (all A checks pass)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "all 6 project-standard seeds present for (B)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "seeds run: 6"
+    },
+    {
+      "kind": "floor",
+      "name": "seed-GO count (B)",
+      "ok": true,
+      "detail": "6 vs floor 4.5",
+      "note": "board bar >=5/6 -> floor=4.5 excludes 4/6"
+    }
+  ],
+  "disabled_processes": [],
+  "chance": null
+}
