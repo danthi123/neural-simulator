@@ -84,7 +84,12 @@ def _waiver_reason():
 
 
 def _decide(state, now_ts, waiver, persist_s=PERSIST_S):
-    """Pure decision (testable without files/clock/waiver disk state)."""
+    """Pure decision (testable without files/clock/waiver disk state).
+
+    GAME_MODE is handled UPSTREAM in parallel_audit.py (it excludes the local GPU from `under_compute` during a
+    game, so the persisted signal this gate reads already reflects pool-only idle) — the mini-PC pool stays
+    enforced during a game on purpose (the owner's game-time plan is to keep it busy), so this gate needs no
+    game-mode branch of its own."""
     if not parallel_state.is_fresh(state, now_ts):
         return []                       # no signal: absent/stale state never blocks (see module docstring)
     since = state.get("since_under_compute")

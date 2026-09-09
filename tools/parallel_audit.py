@@ -143,6 +143,11 @@ def main():
 
     total_lanes = lanes_local + lanes_pool + agents
     gpu_free = (0 <= gpu < 30) and not gpu_queue_busy()   # low util is NOT idle when the queue is draining a backlog
+    # GAME PAUSE (tools/game.sh on → GAME_MODE): the local GPU is the owner's game, NOT spare capacity — exclude it
+    # from every idle-capacity signal so it cannot trip under-parallelization. The mini-PC POOL + build/research
+    # AGENTS are separate hardware / GPU-free and stay enforced (the owner's own game-time plan keeps those busy).
+    game_paused = os.path.exists(os.path.join(ROOT, "research", "queue", "GAME_MODE"))
+    gpu_free = gpu_free and not game_paused
     # idle CAPACITY worth filling, for the informative message: >6 local cores, idle pool cores (>10), or a free GPU.
     cap = []
     if idle_local > 6: cap.append("%d local cores" % idle_local)
@@ -184,6 +189,9 @@ def main():
     print("─ PARALLEL AUDIT ─ lanes=%d (local %d + pool %d + agents %d) | GPU=%s | open-tasks=%s"
           % (total_lanes, lanes_local, lanes_pool, agents, ("%d%%" % gpu if gpu >= 0 else "n/a"),
              (str(n_open) if n_open is not None else "?")))
+    if game_paused:
+        print("🎮 GAME PAUSE (GAME_MODE set) — the local GPU is the owner's game (excused from idle-parallelization); "
+              "the mini-PC pool + build/research agents are separate/GPU-free and STILL enforced below.")
     if under:
         why = []
         if under_agents:
