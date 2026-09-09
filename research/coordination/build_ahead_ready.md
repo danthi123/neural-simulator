@@ -7,7 +7,8 @@ this is the concrete queue commands behind it. Fire order below is by readiness,
 
 ## READY NOW (no upstream dependency — fire when the lane frees)
 
-**1. affect→neural default-on validation** — lane A·Affect (pool). Validates promoting `BRAIN_WKV_MOUTH_AFFECT_NEURAL`
+**1. affect→neural default-on validation** — ✅ **DONE / RETIRED 2026-09-08** (was stale-"READY"): the full fan-out ran + landed `7e5836a56` (harness `a9c29d10e`, correction `5efa0d62b`); verdict **NOT-READY to promote** (`BRAIN_WKV_MOUTH_AFFECT_NEURAL` stays default-OFF — negative direction only reaches 6/6 at neg_pa_scale≥2.5 where output loops; two objectives in tension on one knob). Finding `2026-09-04-affect-neural-default-on-negpa-sweep-NOT-READY.md`. NEXT MECHANISM (a METHOD verdict, not a capability closure): convert the congruence source from a host fixed-lexicon lookup into a LEARNED word-identity↔valence association driving the neuromodulator (recruits varied negative words, should clear the naturalness ceiling without forced gain). — original stale text below —
+~~lane A·Affect (pool). Validates promoting `BRAIN_WKV_MOUTH_AFFECT_NEURAL`
 to default-on + tests a `neg_pa_scale` fix for the negative-mood undershoot (finding `87631edf` PARTIAL). GO =
 ≥5/6 seeds BOTH directions (strict) + moat + byte-identical-off. Runner `_wkv_mouth_affect_neural_promote_validate.py`
 (runner-side only, no sim/webapp edit). Fan-out = 12 directional + 6 characterize + 1 moat + 6 byte-identical, then
