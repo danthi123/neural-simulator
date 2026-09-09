@@ -75,6 +75,11 @@ from research.runners.developed_brain_io import (  # noqa: E402
 # key (hunts/hunt/hunted -> "hunt") -- see research/runners/lexical_lemma.py + the 2026-08-25 reasoning-frontier
 # finding. Used in `ChatBrain._maybe_acquire` (store-write) and `ChatBrain._substrate_recall` (query fallback).
 from research.runners.lexical_lemma import lemma_verb  # noqa: E402
+# SPIKING CA3 pattern-completion anaphor DETECTION (scaffold-retirement, 2026-09-09, 6/6-seed mechanism de-risk GO
+# 1a8152a8a; research/runners/spiking_anaphor_detection_organ.py) -- default-OFF (BRAIN_SPIKING_ANAPHOR). Retires
+# `_resolve_anaphora`'s host `anaphors = {"it",...}; tl in anaphors` DETECTION test at its root; see
+# `ChatBrain._is_anaphor_token` below.
+import research.runners.spiking_anaphor_detection_organ as _ANAPH  # noqa: E402
 
 # default self-knowledge artifacts (so `--self-knowledge` works with no path)
 _SK_CODES = os.path.join(_REPO, "research", "findings", "raw", "_self_knowledge_grounded_codes.json")
@@ -684,6 +689,7 @@ class ChatBrain:
         self.agent = agent
         self.inner = getattr(agent, "agent", agent)             # the BrainConversationalAgent
         self.is_multiturn = hasattr(agent, "held_referent")     # MultiTurnAgent exposes this
+        self._anaphor_organ = None    # spiking CA3 anaphor-detection organ (lazy; only when BRAIN_SPIKING_ANAPHOR on)
         self.router = QuestionRouter(self_aliases=self_aliases)
         self.renderer = renderer
         self.verbose_thinking = verbose_thinking
@@ -976,6 +982,25 @@ class ChatBrain:
             return HypothesisSVO([a, ac, p])
         return None
 
+    def _is_anaphor_token(self, tl, anaphors):
+        """Is `tl` (an already-lowercased/stripped token) an anaphoric pronoun? DEFAULT (BRAIN_SPIKING_ANAPHOR off):
+        `tl in anaphors` -- BYTE-IDENTICAL to the original host `set` test. ON: move the DETECTION DECISION onto the
+        spiking substrate via the CA3 pattern-completion organ (lazily built once per session, RNG-isolated) -- on clean
+        typed text it recognises exactly the host set's tokens, but through the substrate's ignition (lesion-reverts),
+        and the organ carries the de-risked pattern-completion surpass (recovering a corrupted cue an exact `set` cannot;
+        available for a noisy-perception path). Host `set` fallback on ANY error so a wiring failure never changes the
+        turn's contract or crashes it (scaffold-retirement 2026-09-09)."""
+        if not _ANAPH.spiking_anaphor_enabled():
+            return tl in anaphors                                  # DEFAULT -> byte-identical to pre-wiring
+        try:
+            if self._anaphor_organ is None:
+                seed = int(getattr(self.agent, "seed", getattr(self.inner, "seed", 42)))
+                self._anaphor_organ = _ANAPH.SpikingAnaphorDetectorOrgan(
+                    seed=seed, lesion=_ANAPH.spiking_anaphor_lesioned())
+            return bool(self._anaphor_organ.is_anaphor(tl))
+        except Exception:
+            return tl in anaphors                                  # never let detection crash a turn -> host fallback
+
     def _resolve_anaphora(self, question):
         """If the question's first content token is a pronoun and the discourse WM holds a referent, substitute it
         (multi-turn anaphora). Only the MultiTurnAgent has a WM loop; otherwise pass the question through."""
@@ -985,7 +1010,7 @@ class ChatBrain:
         toks = question.split()
         for i, t in enumerate(toks):
             tl = t.lower().strip(".,!?")
-            if tl in anaphors:
+            if self._is_anaphor_token(tl, anaphors):
                 ref = self.agent.held_referent()[0]
                 if ref is not None:
                     toks[i] = ref
