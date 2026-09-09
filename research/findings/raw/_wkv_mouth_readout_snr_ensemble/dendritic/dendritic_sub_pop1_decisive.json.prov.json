@@ -1,0 +1,36 @@
+{
+ "run_id": "1788955982-3649879",
+ "runner": "research/runners/_wkv_mouth_readout_eprop_batched_substrate_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/research/runners/_wkv_mouth_readout_eprop_batched_substrate_derisk.py",
+  "--forward",
+  "substrate",
+  "--sub-pop",
+  "1",
+  "--seeds",
+  "42,43,44,100,101,102",
+  "--json",
+  "research/findings/raw/_wkv_mouth_readout_snr_ensemble/dendritic/dendritic_sub_pop1_decisive.json",
+  "--dendritic"
+ ],
+ "git_sha": "c390e372e",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-09T08:13:02",
+ "env": {
+  "SIM_BACKEND": "cupy",
+  "SIM_RUN_ID": "1788955982-3649844"
+ },
+ "sim_backend": "cupy",
+ "sim_backend_requested": "cupy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 64969.7,
+ "corpus_check_query": "self-schema production onebrain_xedge_selfschema_production current 6-seed GO currency re-check",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_wkv_mouth_readout_snr_ensemble/dendritic/dendritic_sub_pop1_decisive.json"
+}

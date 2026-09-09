@@ -1,0 +1,34 @@
+{
+ "run_id": "1788955982-3649844",
+ "runner": "research/runners/_wkv_mouth_readout_snr_ensemble_dendritic_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/research/runners/_wkv_mouth_readout_snr_ensemble_dendritic_derisk.py",
+  "--lever",
+  "dendritic",
+  "--coverage",
+  "decisive",
+  "--seeds",
+  "42,43,44,100,101,102",
+  "--out-dir",
+  "research/findings/raw/_wkv_mouth_readout_snr_ensemble/dendritic"
+ ],
+ "git_sha": "c390e372e",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-09T08:13:02",
+ "env": {
+  "SIM_BACKEND": "cupy"
+ },
+ "sim_backend": "cupy",
+ "sim_backend_requested": "cupy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 64970.4,
+ "corpus_check_query": "self-schema production onebrain_xedge_selfschema_production current 6-seed GO currency re-check",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_wkv_mouth_readout_snr_ensemble/dendritic/aggregate_dendritic_decisive.json"
+}

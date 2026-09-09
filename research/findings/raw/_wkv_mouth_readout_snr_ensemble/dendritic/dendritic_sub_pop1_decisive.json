@@ -1,0 +1,721 @@
+{
+  "results": [
+    {
+      "seed": 42,
+      "V": 1000,
+      "D": 128,
+      "chance_1_over_v": 0.001,
+      "B": 48,
+      "n_train_pos": 9600,
+      "n_eval_pos": 800,
+      "n_sub_demo": 250,
+      "n_grad_steps": 1600,
+      "n_grad_steps_shuffle": 544,
+      "substrate_reads": 3755,
+      "main_substrate_reads": 1600,
+      "forward_read_matches_grad_steps": true,
+      "lr": 0.5,
+      "epochs": 8,
+      "weight_decay": 0.0008,
+      "w_target": 40.0,
+      "gain": 9.796298,
+      "gain_substrate_vs_linear_corr": 0.9422,
+      "forward_mode": "substrate",
+      "eval_every_epochs": 0,
+      "recovery_trajectory": [],
+      "sub_read_window": 120,
+      "sub_hid_pop": 4,
+      "sub_pop": 1,
+      "w_hat_norm": 32.72,
+      "head_w_norm": 37.53,
+      "learn_secs": 1470.6,
+      "shuffle_secs": 491.1,
+      "host_matmul_on_learning_forward": 0,
+      "forward_source": "batched_substrate_graded_conductance_read",
+      "verify_first_ok": true,
+      "verify_first_ce": [
+        6.597,
+        0.0259
+      ],
+      "verify_first_argerr": [
+        0.9583,
+        0.0
+      ],
+      "hostlinear_recov_argmax": 0.4756,
+      "hostlinear_argmax_agree": 0.3063,
+      "hostlinear_anticheat_recov": {
+        "frozen": 0.047,
+        "lesion_err": 0.0421,
+        "shuffle_teach": 0.012
+      },
+      "hostlinear_floor_recov": 0.047,
+      "weight_cosine_to_head_diag": 0.1376,
+      "weight_cosine_anticheat": {
+        "frozen": -0.0023,
+        "lesion_err": -0.0023,
+        "shuffle_teach": 0.1185
+      },
+      "weight_cosine_floor": 0.1185,
+      "sub_learned": {
+        "argmax_agree": 0.264,
+        "silent_frac": 0.0,
+        "recov_argmax": 0.4495,
+        "host_rng_draws": 0
+      },
+      "sub_copied": {
+        "argmax_agree": 0.82,
+        "silent_frac": 0.0,
+        "recov_argmax": 0.9721,
+        "host_rng_draws": 0
+      },
+      "sub_shuffle": {
+        "argmax_agree": 0.0,
+        "silent_frac": 0.0,
+        "recov_argmax": 0.0003,
+        "host_rng_draws": 0
+      },
+      "sub_recov_ratio_learned_over_copied": 0.4624,
+      "integrated_bar_0.85xcopied": 0.8263,
+      "host_rng_draws_on_read_path": 0,
+      "no_transport": true,
+      "no_host_grad": true,
+      "forward_is_substrate": true,
+      "anticheats_collapse": false,
+      "integrated_go": false,
+      "parity_recovery": false,
+      "dendritic": true,
+      "main_apical_reads": 1600,
+      "apical_reads_match_grad_steps": true,
+      "apical_cal": {
+        "m_target": -48.2183,
+        "m_nontarget": -63.7826,
+        "center": -56.0004,
+        "scale": 0.513998
+      },
+      "sub_freeze_apical": {
+        "argmax_agree": 0.0,
+        "silent_frac": 0.0,
+        "recov_argmax": 0.0,
+        "host_rng_draws": 0
+      },
+      "sub_freeze_apical_recov": 0.0,
+      "dendritic_anticheats_ok": true,
+      "dendritic_lift_go": false,
+      "go": false,
+      "seed_hash_check": {
+        "seed": 42,
+        "thr_hash_1": "1d90c97348ccaf4a",
+        "thr_hash_2": "1d90c97348ccaf4a",
+        "seeded": true
+      }
+    },
+    {
+      "seed": 43,
+      "V": 1000,
+      "D": 128,
+      "chance_1_over_v": 0.001,
+      "B": 48,
+      "n_train_pos": 9600,
+      "n_eval_pos": 800,
+      "n_sub_demo": 250,
+      "n_grad_steps": 1600,
+      "n_grad_steps_shuffle": 544,
+      "substrate_reads": 3755,
+      "main_substrate_reads": 1600,
+      "forward_read_matches_grad_steps": true,
+      "lr": 0.5,
+      "epochs": 8,
+      "weight_decay": 0.0008,
+      "w_target": 40.0,
+      "gain": 9.771975,
+      "gain_substrate_vs_linear_corr": 0.9407,
+      "forward_mode": "substrate",
+      "eval_every_epochs": 0,
+      "recovery_trajectory": [],
+      "sub_read_window": 120,
+      "sub_hid_pop": 4,
+      "sub_pop": 1,
+      "w_hat_norm": 29.22,
+      "head_w_norm": 37.52,
+      "learn_secs": 1457.6,
+      "shuffle_secs": 496.1,
+      "host_matmul_on_learning_forward": 0,
+      "forward_source": "batched_substrate_graded_conductance_read",
+      "verify_first_ok": true,
+      "verify_first_ce": [
+        6.4903,
+        0.0202
+      ],
+      "verify_first_argerr": [
+        0.9583,
+        0.0
+      ],
+      "hostlinear_recov_argmax": 0.3935,
+      "hostlinear_argmax_agree": 0.2387,
+      "hostlinear_anticheat_recov": {
+        "frozen": 0.0439,
+        "lesion_err": 0.0405,
+        "shuffle_teach": 0.0052
+      },
+      "hostlinear_floor_recov": 0.0439,
+      "weight_cosine_to_head_diag": 0.1491,
+      "weight_cosine_anticheat": {
+        "frozen": 0.0017,
+        "lesion_err": 0.0017,
+        "shuffle_teach": 0.1227
+      },
+      "weight_cosine_floor": 0.1227,
+      "sub_learned": {
+        "argmax_agree": 0.184,
+        "silent_frac": 0.0,
+        "recov_argmax": 0.311,
+        "host_rng_draws": 0
+      },
+      "sub_copied": {
+        "argmax_agree": 0.832,
+        "silent_frac": 0.0,
+        "recov_argmax": 0.9715,
+        "host_rng_draws": 0
+      },
+      "sub_shuffle": {
+        "argmax_agree": 0.004,
+        "silent_frac": 0.0,
+        "recov_argmax": 0.0053,
+        "host_rng_draws": 0
+      },
+      "sub_recov_ratio_learned_over_copied": 0.3201,
+      "integrated_bar_0.85xcopied": 0.8258,
+      "host_rng_draws_on_read_path": 0,
+      "no_transport": true,
+      "no_host_grad": true,
+      "forward_is_substrate": true,
+      "anticheats_collapse": false,
+      "integrated_go": false,
+      "parity_recovery": false,
+      "dendritic": true,
+      "main_apical_reads": 1600,
+      "apical_reads_match_grad_steps": true,
+      "apical_cal": {
+        "m_target": -48.5224,
+        "m_nontarget": -64.0248,
+        "center": -56.2736,
+        "scale": 0.516051
+      },
+      "sub_freeze_apical": {
+        "argmax_agree": 0.0,
+        "silent_frac": 0.0,
+        "recov_argmax": 0.0,
+        "host_rng_draws": 0
+      },
+      "sub_freeze_apical_recov": 0.0,
+      "dendritic_anticheats_ok": true,
+      "dendritic_lift_go": false,
+      "go": false,
+      "seed_hash_check": {
+        "seed": 42,
+        "thr_hash_1": "1d90c97348ccaf4a",
+        "thr_hash_2": "1d90c97348ccaf4a",
+        "seeded": true
+      }
+    },
+    {
+      "seed": 44,
+      "V": 1000,
+      "D": 128,
+      "chance_1_over_v": 0.001,
+      "B": 48,
+      "n_train_pos": 9600,
+      "n_eval_pos": 800,
+      "n_sub_demo": 250,
+      "n_grad_steps": 1600,
+      "n_grad_steps_shuffle": 544,
+      "substrate_reads": 3755,
+      "main_substrate_reads": 1600,
+      "forward_read_matches_grad_steps": true,
+      "lr": 0.5,
+      "epochs": 8,
+      "weight_decay": 0.0008,
+      "w_target": 40.0,
+      "gain": 10.145581,
+      "gain_substrate_vs_linear_corr": 0.9414,
+      "forward_mode": "substrate",
+      "eval_every_epochs": 0,
+      "recovery_trajectory": [],
+      "sub_read_window": 120,
+      "sub_hid_pop": 4,
+      "sub_pop": 1,
+      "w_hat_norm": 31.79,
+      "head_w_norm": 37.6,
+      "learn_secs": 1459.2,
+      "shuffle_secs": 496.0,
+      "host_matmul_on_learning_forward": 0,
+      "forward_source": "batched_substrate_graded_conductance_read",
+      "verify_first_ok": true,
+      "verify_first_ce": [
+        6.6675,
+        0.0266
+      ],
+      "verify_first_argerr": [
+        0.9792,
+        0.0
+      ],
+      "hostlinear_recov_argmax": 0.4064,
+      "hostlinear_argmax_agree": 0.2562,
+      "hostlinear_anticheat_recov": {
+        "frozen": 0.035,
+        "lesion_err": 0.0537,
+        "shuffle_teach": 0.0024
+      },
+      "hostlinear_floor_recov": 0.0537,
+      "weight_cosine_to_head_diag": 0.1523,
+      "weight_cosine_anticheat": {
+        "frozen": 0.0006,
+        "lesion_err": 0.0006,
+        "shuffle_teach": 0.1293
+      },
+      "weight_cosine_floor": 0.1293,
+      "sub_learned": {
+        "argmax_agree": 0.228,
+        "silent_frac": 0.0,
+        "recov_argmax": 0.3512,
+        "host_rng_draws": 0
+      },
+      "sub_copied": {
+        "argmax_agree": 0.828,
+        "silent_frac": 0.0,
+        "recov_argmax": 0.9765,
+        "host_rng_draws": 0
+      },
+      "sub_shuffle": {
+        "argmax_agree": 0.0,
+        "silent_frac": 0.0,
+        "recov_argmax": 0.0001,
+        "host_rng_draws": 0
+      },
+      "sub_recov_ratio_learned_over_copied": 0.3597,
+      "integrated_bar_0.85xcopied": 0.83,
+      "host_rng_draws_on_read_path": 0,
+      "no_transport": true,
+      "no_host_grad": true,
+      "forward_is_substrate": true,
+      "anticheats_collapse": false,
+      "integrated_go": false,
+      "parity_recovery": false,
+      "dendritic": true,
+      "main_apical_reads": 1600,
+      "apical_reads_match_grad_steps": true,
+      "apical_cal": {
+        "m_target": -47.316,
+        "m_nontarget": -63.1189,
+        "center": -55.2174,
+        "scale": 0.506236
+      },
+      "sub_freeze_apical": {
+        "argmax_agree": 0.0,
+        "silent_frac": 0.0,
+        "recov_argmax": 0.0,
+        "host_rng_draws": 0
+      },
+      "sub_freeze_apical_recov": 0.0,
+      "dendritic_anticheats_ok": true,
+      "dendritic_lift_go": false,
+      "go": false,
+      "seed_hash_check": {
+        "seed": 42,
+        "thr_hash_1": "1d90c97348ccaf4a",
+        "thr_hash_2": "1d90c97348ccaf4a",
+        "seeded": true
+      }
+    },
+    {
+      "seed": 100,
+      "V": 1000,
+      "D": 128,
+      "chance_1_over_v": 0.001,
+      "B": 48,
+      "n_train_pos": 9600,
+      "n_eval_pos": 800,
+      "n_sub_demo": 250,
+      "n_grad_steps": 1600,
+      "n_grad_steps_shuffle": 544,
+      "substrate_reads": 3755,
+      "main_substrate_reads": 1600,
+      "forward_read_matches_grad_steps": true,
+      "lr": 0.5,
+      "epochs": 8,
+      "weight_decay": 0.0008,
+      "w_target": 40.0,
+      "gain": 10.162465,
+      "gain_substrate_vs_linear_corr": 0.9437,
+      "forward_mode": "substrate",
+      "eval_every_epochs": 0,
+      "recovery_trajectory": [],
+      "sub_read_window": 120,
+      "sub_hid_pop": 4,
+      "sub_pop": 1,
+      "w_hat_norm": 36.71,
+      "head_w_norm": 37.48,
+      "learn_secs": 1361.5,
+      "shuffle_secs": 498.1,
+      "host_matmul_on_learning_forward": 0,
+      "forward_source": "batched_substrate_graded_conductance_read",
+      "verify_first_ok": true,
+      "verify_first_ce": [
+        6.5939,
+        0.0282
+      ],
+      "verify_first_argerr": [
+        0.9583,
+        0.0
+      ],
+      "hostlinear_recov_argmax": 0.5514,
+      "hostlinear_argmax_agree": 0.3887,
+      "hostlinear_anticheat_recov": {
+        "frozen": 0.0562,
+        "lesion_err": 0.0515,
+        "shuffle_teach": 0.0005
+      },
+      "hostlinear_floor_recov": 0.0562,
+      "weight_cosine_to_head_diag": 0.133,
+      "weight_cosine_anticheat": {
+        "frozen": -0.0002,
+        "lesion_err": -0.0002,
+        "shuffle_teach": 0.1146
+      },
+      "weight_cosine_floor": 0.1146,
+      "sub_learned": {
+        "argmax_agree": 0.368,
+        "silent_frac": 0.0,
+        "recov_argmax": 0.558,
+        "host_rng_draws": 0
+      },
+      "sub_copied": {
+        "argmax_agree": 0.8,
+        "silent_frac": 0.0,
+        "recov_argmax": 0.974,
+        "host_rng_draws": 0
+      },
+      "sub_shuffle": {
+        "argmax_agree": 0.0,
+        "silent_frac": 0.0,
+        "recov_argmax": 0.0001,
+        "host_rng_draws": 0
+      },
+      "sub_recov_ratio_learned_over_copied": 0.5729,
+      "integrated_bar_0.85xcopied": 0.8279,
+      "host_rng_draws_on_read_path": 0,
+      "no_transport": true,
+      "no_host_grad": true,
+      "forward_is_substrate": true,
+      "anticheats_collapse": false,
+      "integrated_go": false,
+      "parity_recovery": false,
+      "dendritic": true,
+      "main_apical_reads": 1600,
+      "apical_reads_match_grad_steps": true,
+      "apical_cal": {
+        "m_target": -48.4934,
+        "m_nontarget": -64.4646,
+        "center": -56.479,
+        "scale": 0.500901
+      },
+      "sub_freeze_apical": {
+        "argmax_agree": 0.0,
+        "silent_frac": 0.0,
+        "recov_argmax": 0.0007,
+        "host_rng_draws": 0
+      },
+      "sub_freeze_apical_recov": 0.0007,
+      "dendritic_anticheats_ok": true,
+      "dendritic_lift_go": true,
+      "go": false,
+      "seed_hash_check": {
+        "seed": 42,
+        "thr_hash_1": "1d90c97348ccaf4a",
+        "thr_hash_2": "1d90c97348ccaf4a",
+        "seeded": true
+      }
+    },
+    {
+      "seed": 101,
+      "V": 1000,
+      "D": 128,
+      "chance_1_over_v": 0.001,
+      "B": 48,
+      "n_train_pos": 9600,
+      "n_eval_pos": 800,
+      "n_sub_demo": 250,
+      "n_grad_steps": 1600,
+      "n_grad_steps_shuffle": 544,
+      "substrate_reads": 3755,
+      "main_substrate_reads": 1600,
+      "forward_read_matches_grad_steps": true,
+      "lr": 0.5,
+      "epochs": 8,
+      "weight_decay": 0.0008,
+      "w_target": 40.0,
+      "gain": 9.860276,
+      "gain_substrate_vs_linear_corr": 0.9545,
+      "forward_mode": "substrate",
+      "eval_every_epochs": 0,
+      "recovery_trajectory": [],
+      "sub_read_window": 120,
+      "sub_hid_pop": 4,
+      "sub_pop": 1,
+      "w_hat_norm": 31.07,
+      "head_w_norm": 37.46,
+      "learn_secs": 1451.9,
+      "shuffle_secs": 493.6,
+      "host_matmul_on_learning_forward": 0,
+      "forward_source": "batched_substrate_graded_conductance_read",
+      "verify_first_ok": true,
+      "verify_first_ce": [
+        6.5988,
+        0.0239
+      ],
+      "verify_first_argerr": [
+        0.9792,
+        0.0
+      ],
+      "hostlinear_recov_argmax": 0.3986,
+      "hostlinear_argmax_agree": 0.2487,
+      "hostlinear_anticheat_recov": {
+        "frozen": 0.0562,
+        "lesion_err": 0.0505,
+        "shuffle_teach": 0.0022
+      },
+      "hostlinear_floor_recov": 0.0562,
+      "weight_cosine_to_head_diag": 0.1402,
+      "weight_cosine_anticheat": {
+        "frozen": 0.0007,
+        "lesion_err": 0.0007,
+        "shuffle_teach": 0.1293
+      },
+      "weight_cosine_floor": 0.1293,
+      "sub_learned": {
+        "argmax_agree": 0.192,
+        "silent_frac": 0.0,
+        "recov_argmax": 0.3092,
+        "host_rng_draws": 0
+      },
+      "sub_copied": {
+        "argmax_agree": 0.844,
+        "silent_frac": 0.0,
+        "recov_argmax": 0.9806,
+        "host_rng_draws": 0
+      },
+      "sub_shuffle": {
+        "argmax_agree": 0.0,
+        "silent_frac": 0.0,
+        "recov_argmax": 0.0004,
+        "host_rng_draws": 0
+      },
+      "sub_recov_ratio_learned_over_copied": 0.3153,
+      "integrated_bar_0.85xcopied": 0.8335,
+      "host_rng_draws_on_read_path": 0,
+      "no_transport": true,
+      "no_host_grad": true,
+      "forward_is_substrate": true,
+      "anticheats_collapse": false,
+      "integrated_go": false,
+      "parity_recovery": false,
+      "dendritic": true,
+      "main_apical_reads": 1600,
+      "apical_reads_match_grad_steps": true,
+      "apical_cal": {
+        "m_target": -50.0085,
+        "m_nontarget": -65.4312,
+        "center": -57.7198,
+        "scale": 0.518714
+      },
+      "sub_freeze_apical": {
+        "argmax_agree": 0.0,
+        "silent_frac": 0.0,
+        "recov_argmax": 0.0,
+        "host_rng_draws": 0
+      },
+      "sub_freeze_apical_recov": 0.0,
+      "dendritic_anticheats_ok": true,
+      "dendritic_lift_go": false,
+      "go": false,
+      "seed_hash_check": {
+        "seed": 42,
+        "thr_hash_1": "1d90c97348ccaf4a",
+        "thr_hash_2": "1d90c97348ccaf4a",
+        "seeded": true
+      }
+    },
+    {
+      "seed": 102,
+      "V": 1000,
+      "D": 128,
+      "chance_1_over_v": 0.001,
+      "B": 48,
+      "n_train_pos": 9600,
+      "n_eval_pos": 800,
+      "n_sub_demo": 250,
+      "n_grad_steps": 1600,
+      "n_grad_steps_shuffle": 544,
+      "substrate_reads": 3755,
+      "main_substrate_reads": 1600,
+      "forward_read_matches_grad_steps": true,
+      "lr": 0.5,
+      "epochs": 8,
+      "weight_decay": 0.0008,
+      "w_target": 40.0,
+      "gain": 9.617507,
+      "gain_substrate_vs_linear_corr": 0.94,
+      "forward_mode": "substrate",
+      "eval_every_epochs": 0,
+      "recovery_trajectory": [],
+      "sub_read_window": 120,
+      "sub_hid_pop": 4,
+      "sub_pop": 1,
+      "w_hat_norm": 27.54,
+      "head_w_norm": 37.52,
+      "learn_secs": 1487.9,
+      "shuffle_secs": 497.0,
+      "host_matmul_on_learning_forward": 0,
+      "forward_source": "batched_substrate_graded_conductance_read",
+      "verify_first_ok": true,
+      "verify_first_ce": [
+        6.6731,
+        0.0228
+      ],
+      "verify_first_argerr": [
+        0.9792,
+        0.0
+      ],
+      "hostlinear_recov_argmax": 0.4054,
+      "hostlinear_argmax_agree": 0.27,
+      "hostlinear_anticheat_recov": {
+        "frozen": 0.044,
+        "lesion_err": 0.0433,
+        "shuffle_teach": 0.0006
+      },
+      "hostlinear_floor_recov": 0.044,
+      "weight_cosine_to_head_diag": 0.1523,
+      "weight_cosine_anticheat": {
+        "frozen": 0.0003,
+        "lesion_err": 0.0003,
+        "shuffle_teach": 0.124
+      },
+      "weight_cosine_floor": 0.124,
+      "sub_learned": {
+        "argmax_agree": 0.288,
+        "silent_frac": 0.0,
+        "recov_argmax": 0.4278,
+        "host_rng_draws": 0
+      },
+      "sub_copied": {
+        "argmax_agree": 0.84,
+        "silent_frac": 0.0,
+        "recov_argmax": 0.9776,
+        "host_rng_draws": 0
+      },
+      "sub_shuffle": {
+        "argmax_agree": 0.0,
+        "silent_frac": 0.0,
+        "recov_argmax": 0.0001,
+        "host_rng_draws": 0
+      },
+      "sub_recov_ratio_learned_over_copied": 0.4376,
+      "integrated_bar_0.85xcopied": 0.831,
+      "host_rng_draws_on_read_path": 0,
+      "no_transport": true,
+      "no_host_grad": true,
+      "forward_is_substrate": true,
+      "anticheats_collapse": false,
+      "integrated_go": false,
+      "parity_recovery": false,
+      "dendritic": true,
+      "main_apical_reads": 1600,
+      "apical_reads_match_grad_steps": true,
+      "apical_cal": {
+        "m_target": -48.609,
+        "m_nontarget": -64.1567,
+        "center": -56.3828,
+        "scale": 0.514546
+      },
+      "sub_freeze_apical": {
+        "argmax_agree": 0.0,
+        "silent_frac": 0.0,
+        "recov_argmax": 0.0013,
+        "host_rng_draws": 0
+      },
+      "sub_freeze_apical_recov": 0.0013,
+      "dendritic_anticheats_ok": true,
+      "dendritic_lift_go": false,
+      "go": false,
+      "seed_hash_check": {
+        "seed": 42,
+        "thr_hash_1": "1d90c97348ccaf4a",
+        "thr_hash_2": "1d90c97348ccaf4a",
+        "seeded": true
+      }
+    }
+  ],
+  "summary": {
+    "n_seeds": 6,
+    "go_count": 0,
+    "go_5of6": false,
+    "integrated_go_count": 0,
+    "parity_recovery_count": 0,
+    "anticheats_collapse_count": 0,
+    "forward_is_substrate_all": true,
+    "host_matmul_on_forward_max": 0,
+    "verify_first_all_ok": true,
+    "sub_learned_recov_mean": 0.4011,
+    "sub_copied_recov_mean": 0.9754,
+    "sub_shuffle_recov_mean": 0.0011,
+    "sub_recov_ratio_mean": 0.4113,
+    "sub_recov_ratio_min": 0.3153,
+    "hostlinear_recov_mean": 0.4385,
+    "hostlinear_floor_recov_max": 0.0562,
+    "weight_cosine_mean": 0.1441,
+    "weight_cosine_floor_max": 0.1293,
+    "dendritic": true,
+    "sub_freeze_apical_recov_mean": 0.0003,
+    "apical_reads_match_all": true,
+    "dendritic_anticheats_ok_count": 6
+  },
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "no_transport": true,
+  "no_host_grad": true,
+  "forward_during_learning": "batched_substrate_graded_conductance_read",
+  "gain_per_seed": {
+    "42": 9.796298,
+    "43": 9.771975,
+    "44": 10.145581,
+    "100": 10.162465,
+    "101": 9.860276,
+    "102": 9.617507
+  },
+  "seed_hash_check": {
+    "seed": 42,
+    "thr_hash_1": "1d90c97348ccaf4a",
+    "thr_hash_2": "1d90c97348ccaf4a",
+    "seeded": true
+  },
+  "backend": "cupy",
+  "elapsed_s": 21911.8,
+  "argv": [
+    "/home/dant123/Projects/sim/research/runners/_wkv_mouth_readout_eprop_batched_substrate_derisk.py",
+    "--forward",
+    "substrate",
+    "--sub-pop",
+    "1",
+    "--seeds",
+    "42,43,44,100,101,102",
+    "--json",
+    "research/findings/raw/_wkv_mouth_readout_snr_ensemble/dendritic/dendritic_sub_pop1_decisive.json",
+    "--dendritic"
+  ]
+}
