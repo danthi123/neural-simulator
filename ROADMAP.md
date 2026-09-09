@@ -7,6 +7,26 @@ the [project handoff](HANDOFF.md), and the live state in
 board, when checked out, was `research/coordination/workboard.json` (⚠️ now ~a month
 stale — the live board is [GAP_CLOSURE_MISSION.md](GAP_CLOSURE_MISSION.md) CURRENT STATE; workboard.json is being retired).
 
+## 2026-09-08 (Memory lane) — the "replay memories in the right order" mechanism was already ported to real scale (a doc-sync catch), and the next scale-up step is now understood
+
+- **Correcting a stale record:** this roadmap's 2026-08-25 entry below said board #130's order-sensitive replay
+  mechanism was proven only "on a toy consolidation network," not yet ported to a real-scale hippocampal circuit.
+  That was already out of date — it WAS ported, the same week, to a network 25x bigger in every population
+  dimension with genuinely sparse (not fully-connected) wiring, and it passed unchanged (finding
+  `2026-08-25-order-consolidation-v8-real-scale-ca1-port-6seed-GO.md`). This entry catches that up.
+- **This session went one step further: does the mechanism survive when the surrounding brain region is grown
+  MUCH bigger than the small group of cells actually holding a memory** (the real brain's cells are ~1-5% active
+  at a time, not the ~33% this project's networks had been using)? Tested at a first step toward that (roughly
+  half as dense): **no, not yet** — but productively so. The underlying "replay in order strengthens the memory
+  trace" mechanism itself works exactly as before (its causal fingerprint is fully intact on every test seed);
+  what breaks is a behavioral pass/fail threshold that was tuned for the smaller, denser network and was never
+  re-checked at the new size. Traced to a specific cause: one general-purpose wiring pathway keeps the same fixed
+  number of connections per cell while the pool it draws from grows, which dilutes the signal it carries. Two
+  concrete fixes are named for the next attempt (finding
+  `2026-09-08-order-consolidation-v9-true-sparsity-scaleup-NO-GO-readout-threshold-not-mechanism.md`).
+- Board #130's real-scale result itself is unchanged by this; only the further-sparsity follow-on step moved
+  from "proposed" to "tried once, understood why it didn't pass, with the fix identified."
+
 ## 2026-09-08 — the brain's fact-memory moved onto its own spiking cells (shortcut retirement, ready to switch on)
 
 - **A major hand-written shortcut is now ready to retire.** The way the brain binds and recalls facts (who-did-what-to-whom) had run on a fast mathematical formula (a host "composer") rather than on the brain's own cells. This session rebuilt that whole store-and-recall path on the brain's own spiking cells (a hippocampus-like DG-CA3 circuit) and proved, on the real deployed 404-fact knowledge bundle, that it matches the old formula exactly: identical recall, identical yes/no answers about stored facts, and the same never-make-things-up guard (it says "unknown" rather than guessing).

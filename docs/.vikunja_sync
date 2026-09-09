@@ -34,3 +34,6 @@ Gate (1) k_max load-path (merge 9bd0d749) + gate (2) ask_yes_no multi-block scan
 
 ## 2026-09-08  rank-6 #211 VRAM GO reconcile
 Rank-6 substrate-store cupy VRAM measured GO (~2.5 GiB at 78,857-fact scale, ~20 GiB free; finding 2026-09-08-rank6-substrate-store-cupy-vram-measured-GO, commit 966b606a). #211 description updated plain-language — the "fits on a 24GB card" check is DONE; the flip (merging research/substrate-store-flip, enable_substrate_store=True) stays the owner's call so #211 remains open (de-risked, not done).
+
+## 2026-09-08  board #130 next-rung CHARACTERIZED NO-GO (v9 true-sparsity scale-up)
+Appended a plain-language update to #130 -- v8's real-scale port (GO 6/6, unchanged) was already landed but never synced onto the Vikunja task; the further-sparsity rung was tried (region 2x, ratio 33%->17%) and came back NO-GO 0/6, but the underlying order-STDP mechanism is intact (causal attribution 1.0, physical trace stronger on all 6 seeds) -- what fails is a fixed pass/fail threshold that never transferred to the new density. Root cause + two named fixes recorded on the task. Finding 2026-09-08-order-consolidation-v9-true-sparsity-scaleup-NO-GO-readout-threshold-not-mechanism, commit 877a07ef9. Task stays OPEN (not production-wired either way).
