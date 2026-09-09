@@ -1,0 +1,270 @@
+{
+  "phase": "OFF",
+  "composer_kind_resolved": "rf",
+  "backend": "cupy",
+  "bundle": "bridges/developed/scale787/day_33",
+  "n_facts": 404,
+  "probes": [
+    [
+      "bird",
+      "come",
+      "tree"
+    ],
+    [
+      "story",
+      "take",
+      "place"
+    ],
+    [
+      "cat",
+      "stick",
+      "tree"
+    ],
+    [
+      "ball",
+      "stick",
+      "tree"
+    ],
+    [
+      "bird",
+      "stick",
+      "tree"
+    ],
+    [
+      "mom",
+      "go",
+      "store"
+    ],
+    [
+      "cat",
+      "jump",
+      "table"
+    ],
+    [
+      "squirrel",
+      "climb",
+      "tree"
+    ],
+    [
+      "cat",
+      "see",
+      "table"
+    ],
+    [
+      "mom",
+      "put",
+      "table"
+    ],
+    [
+      "butterfly",
+      "fly",
+      "sky"
+    ],
+    [
+      "fox",
+      "go",
+      "walk"
+    ],
+    [
+      "sister",
+      "come",
+      "room"
+    ],
+    [
+      "ball",
+      "hit",
+      "tree"
+    ],
+    [
+      "cake",
+      "fall",
+      "floor"
+    ],
+    [
+      "dog",
+      "win",
+      "race"
+    ],
+    [
+      "boy",
+      "come",
+      "shop"
+    ],
+    [
+      "elephant",
+      "go",
+      "walk"
+    ],
+    [
+      "dog",
+      "come",
+      "shop"
+    ],
+    [
+      "truck",
+      "come",
+      "street"
+    ]
+  ],
+  "load_s": 1.7,
+  "composer_type": "Pool1BoundComposer",
+  "recall_wall_s": 7.74,
+  "recalls": [
+    {
+      "a": "bird",
+      "v": "come",
+      "expected": "tree",
+      "answer": "tree",
+      "hit": true
+    },
+    {
+      "a": "story",
+      "v": "take",
+      "expected": "place",
+      "answer": "place",
+      "hit": true
+    },
+    {
+      "a": "cat",
+      "v": "stick",
+      "expected": "tree",
+      "answer": "tree",
+      "hit": true
+    },
+    {
+      "a": "ball",
+      "v": "stick",
+      "expected": "tree",
+      "answer": "tree",
+      "hit": true
+    },
+    {
+      "a": "bird",
+      "v": "stick",
+      "expected": "tree",
+      "answer": "tree",
+      "hit": true
+    },
+    {
+      "a": "mom",
+      "v": "go",
+      "expected": "store",
+      "answer": "store",
+      "hit": true
+    },
+    {
+      "a": "cat",
+      "v": "jump",
+      "expected": "table",
+      "answer": "table",
+      "hit": true
+    },
+    {
+      "a": "squirrel",
+      "v": "climb",
+      "expected": "tree",
+      "answer": "tree",
+      "hit": true
+    },
+    {
+      "a": "cat",
+      "v": "see",
+      "expected": "table",
+      "answer": "table",
+      "hit": true
+    },
+    {
+      "a": "mom",
+      "v": "put",
+      "expected": "table",
+      "answer": "table",
+      "hit": true
+    },
+    {
+      "a": "butterfly",
+      "v": "fly",
+      "expected": "sky",
+      "answer": "sky",
+      "hit": true
+    },
+    {
+      "a": "fox",
+      "v": "go",
+      "expected": "walk",
+      "answer": "walk",
+      "hit": true
+    },
+    {
+      "a": "sister",
+      "v": "come",
+      "expected": "room",
+      "answer": "room",
+      "hit": true
+    },
+    {
+      "a": "ball",
+      "v": "hit",
+      "expected": "tree",
+      "answer": "tree",
+      "hit": true
+    },
+    {
+      "a": "cake",
+      "v": "fall",
+      "expected": "floor",
+      "answer": "floor",
+      "hit": true
+    },
+    {
+      "a": "dog",
+      "v": "win",
+      "expected": "race",
+      "answer": "race",
+      "hit": true
+    },
+    {
+      "a": "boy",
+      "v": "come",
+      "expected": "shop",
+      "answer": "shop",
+      "hit": true
+    },
+    {
+      "a": "elephant",
+      "v": "go",
+      "expected": "walk",
+      "answer": "walk",
+      "hit": true
+    },
+    {
+      "a": "dog",
+      "v": "come",
+      "expected": "shop",
+      "answer": "shop",
+      "hit": true
+    },
+    {
+      "a": "truck",
+      "v": "come",
+      "expected": "street",
+      "answer": "street",
+      "hit": true
+    }
+  ],
+  "recall_hits": 20,
+  "yesno_stored": {
+    "q": "is_it_true(bird,come,tree)",
+    "answer": "yes"
+  },
+  "yesno_wrong": {
+    "q": "is_it_true(bird,come,zzz_wrong_patient)",
+    "answer": "unknown"
+  },
+  "moat": {
+    "what_does": null,
+    "abstains": true,
+    "is_it_true": "unknown",
+    "yesno_unknown": true
+  },
+  "OK": true
+}

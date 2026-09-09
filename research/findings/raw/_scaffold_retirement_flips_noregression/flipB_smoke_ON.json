@@ -1,0 +1,299 @@
+{
+  "phase": "ON",
+  "ltm_dir": "/home/dant123/Projects/sim-data/knowledge_bundles/wikidata_core_15k",
+  "n_probe": 40,
+  "n_facts": 15000,
+  "n_unique_probes": 40,
+  "load_s": 69.8,
+  "shard0_substrate_store": true,
+  "shard0_batched_scan": true,
+  "query_wall_s": 19.9,
+  "recalls": [
+    {
+      "a": "frank_lincoln_wright",
+      "v": "instance_of",
+      "expected": "human_specie",
+      "answer": "human_specie",
+      "hit": true
+    },
+    {
+      "a": "harold_clayton_lloyd",
+      "v": "instance_of",
+      "expected": "human_specie",
+      "answer": "human_specie",
+      "hit": true
+    },
+    {
+      "a": "walker_glockenhammer",
+      "v": "instance_of",
+      "expected": "human_specie",
+      "answer": "human_specie",
+      "hit": true
+    },
+    {
+      "a": "atlantic_jazz",
+      "v": "country",
+      "expected": "u_s_of_a",
+      "answer": "u_s_of_a",
+      "hit": true
+    },
+    {
+      "a": "x_cell_records",
+      "v": "country",
+      "expected": "u_s_of_a",
+      "answer": "u_s_of_a",
+      "hit": true
+    },
+    {
+      "a": "standard_urdu",
+      "v": "country",
+      "expected": "u_s_of_a",
+      "answer": "u_s_of_a",
+      "hit": true
+    },
+    {
+      "a": "miami_of_florida",
+      "v": "country",
+      "expected": "u_s_of_a",
+      "answer": "u_s_of_a",
+      "hit": true
+    },
+    {
+      "a": "la_laker",
+      "v": "country",
+      "expected": "u_s_of_a",
+      "answer": "u_s_of_a",
+      "hit": true
+    },
+    {
+      "a": "the_razorback_yearbook",
+      "v": "country",
+      "expected": "u_s_of_a",
+      "answer": "u_s_of_a",
+      "hit": true
+    },
+    {
+      "a": "lightning_third_jersey",
+      "v": "country",
+      "expected": "u_s_of_a",
+      "answer": "u_s_of_a",
+      "hit": true
+    },
+    {
+      "a": "palomar_mountain_observatory",
+      "v": "country",
+      "expected": "u_s_of_a",
+      "answer": "u_s_of_a",
+      "hit": true
+    },
+    {
+      "a": "st_petersburg_florida",
+      "v": "country",
+      "expected": "u_s_of_a",
+      "answer": "u_s_of_a",
+      "hit": true
+    },
+    {
+      "a": "uw_law_school",
+      "v": "country",
+      "expected": "u_s_of_a",
+      "answer": "u_s_of_a",
+      "hit": true
+    },
+    {
+      "a": "california_department_of_transportation",
+      "v": "country",
+      "expected": "u_s_of_a",
+      "answer": "u_s_of_a",
+      "hit": true
+    },
+    {
+      "a": "american_national_book_award",
+      "v": "country",
+      "expected": "u_s_of_a",
+      "answer": "u_s_of_a",
+      "hit": true
+    },
+    {
+      "a": "frank_lincoln_wright",
+      "v": "country_of_citizenship",
+      "expected": "u_s_of_a",
+      "answer": "u_s_of_a",
+      "hit": true
+    },
+    {
+      "a": "malibu_ca",
+      "v": "country",
+      "expected": "u_s_of_a",
+      "answer": "u_s_of_a",
+      "hit": true
+    },
+    {
+      "a": "colby_coll",
+      "v": "country",
+      "expected": "u_s_of_a",
+      "answer": "u_s_of_a",
+      "hit": true
+    },
+    {
+      "a": "live_in_a_dive",
+      "v": "country",
+      "expected": "u_s_of_a",
+      "answer": "u_s_of_a",
+      "hit": true
+    },
+    {
+      "a": "harold_clayton_lloyd",
+      "v": "country_of_citizenship",
+      "expected": "u_s_of_a",
+      "answer": "u_s_of_a",
+      "hit": true
+    },
+    {
+      "a": "oak_park_il",
+      "v": "country",
+      "expected": "u_s_of_a",
+      "answer": "u_s_of_a",
+      "hit": true
+    },
+    {
+      "a": "man_city",
+      "v": "country",
+      "expected": "united_kingom",
+      "answer": "united_kingom",
+      "hit": true
+    },
+    {
+      "a": "pompey_fc",
+      "v": "country",
+      "expected": "united_kingom",
+      "answer": "united_kingom",
+      "hit": true
+    },
+    {
+      "a": "chelsea_fc",
+      "v": "country",
+      "expected": "united_kingom",
+      "answer": "united_kingom",
+      "hit": true
+    },
+    {
+      "a": "doctor_who_series",
+      "v": "country",
+      "expected": "united_kingom",
+      "answer": "united_kingom",
+      "hit": true
+    },
+    {
+      "a": "northampton_northamptonshire",
+      "v": "country",
+      "expected": "united_kingom",
+      "answer": "united_kingom",
+      "hit": true
+    },
+    {
+      "a": "the_university_of_southampton",
+      "v": "country",
+      "expected": "united_kingom",
+      "answer": "united_kingom",
+      "hit": true
+    },
+    {
+      "a": "4ad_record_label",
+      "v": "country",
+      "expected": "united_kingom",
+      "answer": "united_kingom",
+      "hit": true
+    },
+    {
+      "a": "crawley_town_fc",
+      "v": "country",
+      "expected": "united_kingom",
+      "answer": "united_kingom",
+      "hit": true
+    },
+    {
+      "a": "cheltenham_school",
+      "v": "country",
+      "expected": "united_kingom",
+      "answer": "united_kingom",
+      "hit": true
+    },
+    {
+      "a": "bbc_publishing",
+      "v": "country",
+      "expected": "united_kingom",
+      "answer": "united_kingom",
+      "hit": true
+    },
+    {
+      "a": "walker_glockenhammer",
+      "v": "country_of_citizenship",
+      "expected": "united_kingom",
+      "answer": "united_kingom",
+      "hit": true
+    },
+    {
+      "a": "cha",
+      "v": "language_of_work_or_name",
+      "expected": "number_of_english_words",
+      "answer": "number_of_english_words",
+      "hit": true
+    },
+    {
+      "a": "steve_given_name",
+      "v": "language_of_work_or_name",
+      "expected": "number_of_english_words",
+      "answer": "number_of_english_words",
+      "hit": true
+    },
+    {
+      "a": "doctor_who_series",
+      "v": "original_language_of_film_or_tv_show",
+      "expected": "number_of_english_words",
+      "answer": "number_of_english_words",
+      "hit": true
+    },
+    {
+      "a": "frank_lincoln_wright",
+      "v": "languages_spoken_written_or_signed",
+      "expected": "number_of_english_words",
+      "answer": "number_of_english_words",
+      "hit": true
+    },
+    {
+      "a": "samantha",
+      "v": "language_of_work_or_name",
+      "expected": "number_of_english_words",
+      "answer": "number_of_english_words",
+      "hit": true
+    },
+    {
+      "a": "harold_clayton_lloyd",
+      "v": "languages_spoken_written_or_signed",
+      "expected": "number_of_english_words",
+      "answer": "number_of_english_words",
+      "hit": true
+    },
+    {
+      "a": "walker_glockenhammer",
+      "v": "languages_spoken_written_or_signed",
+      "expected": "number_of_english_words",
+      "answer": "number_of_english_words",
+      "hit": true
+    },
+    {
+      "a": "man_city",
+      "v": "sport",
+      "expected": "association_football_club",
+      "answer": "association_football_club",
+      "hit": true
+    }
+  ],
+  "recall_hits": 40,
+  "moat": {
+    "answer": null,
+    "abstains": true
+  },
+  "OK": true
+}

@@ -1,0 +1,18 @@
+{
+ "run_id": "1788934629-manual",
+ "runner": "scaffold-retirement-flips-noregression-gate (scratchpad harness)",
+ "argv": [
+  "final_driver.py"
+ ],
+ "git_sha": "5edca8a71",
+ "git_dirty": true,
+ "source_kind": "developed-brain+LTM",
+ "started": "2026-09-09T02:17:09-04:00",
+ "env": {
+  "SIM_BACKEND": "cupy"
+ },
+ "sim_backend": "cupy",
+ "sim_backend_requested": "cupy",
+ "description": "combined no-regression VERDICT over both flips (17 checks)",
+ "artifact": "research/findings/raw/_scaffold_retirement_flips_noregression/gate_final.json"
+}

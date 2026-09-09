@@ -3714,7 +3714,15 @@ _CONTINUOUS_DRIVES_DEFAULT = "1"
 #   process without any code change -- 'onebrain' to verify/opt in now; 'rf' is the byte-identical escape back to
 #   manifest-driven behavior even AFTER the flip lands (reverting a bad flip needs only an env var, never a second
 #   code change).
-_DEVELOPED_COMPOSER_KIND_DEFAULT_OVERRIDE = None
+# FLIPPED 2026-09-08 (scaffold-retirement RANK-1, owner 2026-09-04 priority): None -> "onebrain". Every developed
+# bundle now resolves to the spiking DG-CA3 OneBrainComposer regardless of its saved manifest composer_kind,
+# retiring the host closed-form RFPhasorComposer for developed-bundle recall. Landed after both flip gates GO
+# (full strict parity 1.0 vs rf on the REAL 404-fact scale787/day_33, incl. all 29 ambiguous cues, 0 confab --
+# 2026-09-08-rank1-composer-rebuild-...GO / -yesno-multiblock-rung-GO / -kmax-loadpath-thread-GO), the fast-load
+# sidecar (f8a6ce5eb, skips the ~416-step/fact re-resonate on reload), and a no-regression gate through the real
+# brain_chat handler on cupy (recall/yes-no/moat + latency + reversibility). BRAIN_COMPOSER_KIND=rf is the
+# byte-identical env revert (no code change needed to roll back).
+_DEVELOPED_COMPOSER_KIND_DEFAULT_OVERRIDE = "onebrain"
 
 # _INTEGRATED_LOOP_DEFAULT_ON (scaffold-retirement backlog rank-2, DE-RISK ONLY — kept False, NOT flipped by this
 # change): when True, OneBrainComposer's spiking K-way SEQUENCER decides the (agent, action) cue-match SELECTION
@@ -3828,6 +3836,17 @@ def _load_or_build_ltm_store(ltm_bundle: str, seed: int = 42, n_shards=None, D: 
             mani = {}
         if isinstance(mani, dict) and "n_shards" in mani:
             extra_kwargs = {}
+            # scaffold-retirement RANK-6/#211 (FLIPPED DEFAULT-ON 2026-09-08): the cortical LTM holds each fact in
+            # the SUBSTRATE (memory-in-weights) instead of a numpy-kb composite; the developed-brain path applies
+            # the identical flip in developed_brain_io.load_developed_brain -- reuse its env resolvers here so the
+            # tiny-demo +LTM path stays consistent. BRAIN_LTM_SUBSTRATE_STORE=0 / BRAIN_BATCHED_SUBSTRATE_SCAN=0
+            # are the byte-identical reverts (both read here + in the composer itself).
+            from research.runners.developed_brain_io import (
+                _ltm_substrate_store_on, _ltm_batched_substrate_scan_on)
+            if _ltm_substrate_store_on():
+                extra_kwargs["enable_substrate_store"] = True
+                if _ltm_batched_substrate_scan_on():
+                    extra_kwargs["enable_batched_substrate_scan"] = True
             if enable_codebook_cache:
                 extra_kwargs["enable_codebook_cache"] = True
             if enable_decode_escalation:
@@ -3840,6 +3859,12 @@ def _load_or_build_ltm_store(ltm_bundle: str, seed: int = 42, n_shards=None, D: 
         return None
     ns = int(n_shards) if n_shards is not None else auto_n_shards(len(ltm_facts))
     cb_kwargs = {}
+    from research.runners.developed_brain_io import (
+        _ltm_substrate_store_on, _ltm_batched_substrate_scan_on)
+    if _ltm_substrate_store_on():   # RANK-6/#211 flip (see the load path above)
+        cb_kwargs["enable_substrate_store"] = True
+        if _ltm_batched_substrate_scan_on():
+            cb_kwargs["enable_batched_substrate_scan"] = True
     if enable_codebook_cache:
         cb_kwargs["enable_codebook_cache"] = True
     if enable_decode_escalation:

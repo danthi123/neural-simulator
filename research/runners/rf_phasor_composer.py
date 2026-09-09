@@ -179,10 +179,17 @@ class RFPhasorComposer:
         # independent of the shard's ~200 facts. Answer-identical to the per-fact loop AND the substrate read stays
         # load-bearing: the composites are reconstructed by FIRING the consolidated readout neurons (the phase
         # readout through the magnitude floor), NOT read as angle(weight) -- lesioning the weights collapses the
-        # answer. Env BRAIN_BATCHED_SUBSTRATE_SCAN=1 flips it on without a code change (the owner reviews any
-        # default-on flip separately; leave OFF here). NUMPY-verified; cupy wall-time speedup is a DEFERRED GPU run.
-        self.enable_batched_substrate_scan = bool(enable_batched_substrate_scan) or (
-            os.environ.get("BRAIN_BATCHED_SUBSTRATE_SCAN", "").strip().lower() in ("1", "true", "on", "yes"))
+        # answer. Env BRAIN_BATCHED_SUBSTRATE_SCAN AUTHORITATIVELY overrides the kwarg in BOTH directions when
+        # explicitly set (rank-6 flip 2026-09-08 -- the developed-brain LTM path now passes the kwarg True by
+        # default via developed_brain_io._ltm_batched_substrate_scan_on, so `=0`/`off` MUST be able to force the
+        # per-fact loop back for the byte-identical reversibility escape; `=1`/`on` still opts in on any composer
+        # whose kwarg is the shipped False). Unset -> the constructor kwarg (default False, byte-identical for
+        # every non-LTM composer). NUMPY-verified answer-parity; cupy wall-time GO (~505ms < 1189ms baseline).
+        _bss_env = os.environ.get("BRAIN_BATCHED_SUBSTRATE_SCAN")
+        if _bss_env is not None and _bss_env.strip() != "":
+            self.enable_batched_substrate_scan = _bss_env.strip().lower() in ("1", "true", "on", "yes")
+        else:
+            self.enable_batched_substrate_scan = bool(enable_batched_substrate_scan)
         self._scan_comps_cache = None        # comps from the last batched `_scan_first_match` (winner reuse; per-query)
         self._substrate_scan_bridge = None   # cached consolidated block-diagonal retrieve bridge (rebuilt on kb change)
         self._substrate_scan_key = None      # handle-identity key the cached bridge was built for (invalidation)

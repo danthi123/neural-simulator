@@ -1,0 +1,74 @@
+{
+  "ltm_bound": "wikidata_core_15k (15000 facts) -- bounded proxy for the deployed wikidata_100k default; rank-6 latency GO already proved recall FLAT in shard-count out to 78,857",
+  "flipA": {
+    "n_day_probes": 20,
+    "ON_composer": "Pool1BoundOneBrainComposer",
+    "OFF_composer": "Pool1BoundComposer",
+    "ON_load_s": 269.48,
+    "OFF_load_s": 1.7,
+    "ON_recall_hits": 20,
+    "OFF_recall_hits": 20,
+    "ON_recall_wall_s": 23.6,
+    "ON_yesno_stored": {
+      "q": "is_it_true(bird,come,tree)",
+      "answer": "yes"
+    },
+    "ON_yesno_wrong": {
+      "q": "is_it_true(bird,come,zzz_wrong_patient)",
+      "answer": "unknown"
+    },
+    "ON_moat": {
+      "what_does": null,
+      "abstains": true,
+      "is_it_true": "unknown",
+      "yesno_unknown": true
+    },
+    "recall_mismatches": []
+  },
+  "flipB": {
+    "n_probes": 40,
+    "n_facts": 15000,
+    "ON_hits": 40,
+    "OFF_hits": 40,
+    "ON_flags_[substrate,batched]": [
+      true,
+      true
+    ],
+    "OFF_flags_[substrate,batched]": [
+      false,
+      false
+    ],
+    "ON_load_s": 69.8,
+    "ON_query_wall_s": 19.9,
+    "per_query_ms_est": 497.5,
+    "ON_moat": {
+      "answer": null,
+      "abstains": true
+    },
+    "OFF_moat": {
+      "answer": null,
+      "abstains": true
+    },
+    "answer_mismatches": []
+  },
+  "checks": {
+    "A1_onebrain_recalls_all": true,
+    "A2_recall_parity_onebrain_vs_rf": true,
+    "A3_yesno_stored_yes": true,
+    "A3_yesno_wrong_unknown": true,
+    "A4_moat_abstains": true,
+    "A5_composer_onebrain_ON": true,
+    "A5_composer_not_onebrain_OFF": true,
+    "B1_substrate_recalls_all": true,
+    "B2_substrate_eq_numpykb": true,
+    "B3_internal_moat_abstains": true,
+    "B4_flags_on": true,
+    "B4_flags_off": true,
+    "REV_off_day33_recalls_all": true,
+    "REV_off_yesno_ok": true,
+    "REV_off_moat_holds": true,
+    "REV_off_ltm_recalls_all": true,
+    "REV_off_ltm_moat_holds": true
+  },
+  "VERDICT": "GO"
+}

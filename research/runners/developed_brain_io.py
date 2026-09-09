@@ -479,6 +479,43 @@ def _restore_facts(agent, facts, composites=None, onebrain_substrate=None, compo
             comp.store(a, v, p, polarity=polarity)   # re-resonate (no persisted composite, or a substrate-store composer)
 
 
+# (scaffold-retirement RANK-6/#211, FLIPPED DEFAULT-ON 2026-09-08 -- semantic-recall STORAGE shortcut retired).
+# The cortical LTM now holds each fact's bound composite in the SUBSTRATE (per-fact trigger->readout complex
+# synaptic weights, read back by FIRING -- RFPhasorComposer._store_substrate/_retrieve_substrate) instead of a
+# numpy composite array cached in `shard.kb`, making the knowledge-core recall genuinely synaptic
+# (memory-in-weights, the Crawford/Eliasmith weight store) and retiring the numpy-KB list host storage shortcut.
+# Flipped after: function GO 6/6 + VRAM GO (~2.5 GiB at 78,857 facts, ~20 GiB free -- 2026-09-08-rank6-substrate-
+# store-cupy-vram-measured-GO) + cupy batched-recall latency GO (~505ms < 1189ms numpy-kb baseline, the
+# 2de6ab27a batched fix that turned the ~10s/query per-fact loop into O(1)). MUST run WITH the batched scan
+# (_ltm_batched_substrate_scan_on below) -- substrate-store WITHOUT batched recall is the ~10s/query per-fact
+# loop. Scope: retires the STORAGE shortcut ONLY -- the VSA exact-inverse BINDING is still host arithmetic (the
+# synapse only HOLDS the composite), the store-WRITE is one-time host (not brain plasticity), and which facts
+# exist is still host curation. Read INSIDE the loader (not an arg) so the exact production call
+# load_developed_brain(ltm_bundle=...) picks it up with no signature change. BRAIN_LTM_SUBSTRATE_STORE=0 (or
+# off/false/no/none) is the byte-identical rollback to the numpy-KB fast path.
+def _ltm_substrate_store_on() -> bool:
+    env = os.environ.get("BRAIN_LTM_SUBSTRATE_STORE")
+    if env is None:
+        return True
+    return env.strip().lower() in ("1", "true", "on", "yes")
+
+
+# (scaffold-retirement RANK-6/#211 companion, FLIPPED DEFAULT-ON 2026-09-08). The substrate-store recall scan is
+# routed through the SAME batched block-diagonal resonate the numpy-kb fast path uses (ONE resonate retrieves all
+# K composites, `_retrieve_all_substrate`), dropping the per-query resonate count O(K)->O(1) -- WITHOUT this the
+# substrate store falls back to the per-fact loop (~10s/query at ~200 facts/shard). Answer-identical to the
+# per-fact loop and still substrate-load-bearing (composites reconstructed by FIRING; lesioning the weights
+# collapses the answer -- gated by tests/test_rf_phasor_composer.py). Kept as its OWN knob (mirrors the composer's
+# own BRAIN_BATCHED_SUBSTRATE_SCAN env) so the two can be toggled independently for an A/B. Passed to the LTM
+# composers ONLY when substrate store is on (it is a no-op on the numpy-kb path, `_can_batch_scan`).
+# BRAIN_BATCHED_SUBSTRATE_SCAN=0 (or off/false/no/none) forces the per-fact loop back (the reversibility escape).
+def _ltm_batched_substrate_scan_on() -> bool:
+    env = os.environ.get("BRAIN_BATCHED_SUBSTRATE_SCAN")
+    if env is None:
+        return True
+    return env.strip().lower() in ("1", "true", "on", "yes")
+
+
 def load_developed_brain(path, *, seed=None, use_multiturn=False, enable_neural_render=False,
                          referent_nouns=None, wm_n=600, wm_pattern_size=40, composer_kind=None,
                          grounded_codes_override=None, defer_parser=True,
@@ -668,6 +705,14 @@ def load_developed_brain(path, *, seed=None, use_multiturn=False, enable_neural_
                 mani = {}
             if isinstance(mani, dict) and "n_shards" in mani:
                 ltm_kwargs = {}
+                if _ltm_substrate_store_on():
+                    # substrate-store default-ON (see _ltm_substrate_store_on above): ShardedPhasorStore.load
+                    # re-imprints each fact via _store_substrate, so the LTM shards hold synaptic handles read by
+                    # firing (memory-in-weights) rather than numpy composites cached in kb.
+                    ltm_kwargs["enable_substrate_store"] = True
+                    if _ltm_batched_substrate_scan_on():
+                        # keep recall O(1) (the ~505ms batched path) instead of the ~10s/query per-fact loop.
+                        ltm_kwargs["enable_batched_substrate_scan"] = True
                 if enable_codebook_cache:
                     ltm_kwargs["enable_codebook_cache"] = True
                 if enable_decode_escalation:
@@ -683,6 +728,12 @@ def load_developed_brain(path, *, seed=None, use_multiturn=False, enable_neural_
             if ltm_facts:
                 ns = int(ltm_n_shards) if ltm_n_shards is not None else auto_n_shards(len(ltm_facts))
                 cb_kwargs = dict(ltm_composer_kwargs or {})
+                if _ltm_substrate_store_on():
+                    # substrate-store default-ON: build_ltm_from_facts here defaults fast=False, so store() runs
+                    # per-fact and _store_substrate holds each composite in synaptic weights.
+                    cb_kwargs["enable_substrate_store"] = True
+                    if _ltm_batched_substrate_scan_on():
+                        cb_kwargs["enable_batched_substrate_scan"] = True
                 if enable_codebook_cache:
                     cb_kwargs["enable_codebook_cache"] = True
                 if enable_decode_escalation:
