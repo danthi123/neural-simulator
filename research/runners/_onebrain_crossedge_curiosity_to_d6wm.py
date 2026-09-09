@@ -254,12 +254,12 @@ class AskToW0Pool:
         return float(np.asarray(to_host(self.b.cp_connections.data))[self.masks["ask_to_w0"]].mean())
 
     # ---- emergence: grow the cross-edge from experience (a host tonic co-drive of ask + w0) ----
-    def train(self, n_episodes=N_EPISODES):
+    def train(self, n_episodes=N_EPISODES, ask_drive_pa=ASK_DRIVE_PA, load_pa=LOAD_PA):
         ix = self.ix
         traj = [dict(ep=0, w=round(self._wmean(), 4))]
         for ep in range(n_episodes):
             self._hard_reset()
-            self._drive([(ix["ask"], ASK_DRIVE_PA), (ix["w0"], LOAD_PA)], TRAIN_STEPS, learn=True)
+            self._drive([(ix["ask"], ask_drive_pa), (ix["w0"], load_pa)], TRAIN_STEPS, learn=True)
             if (ep + 1) % 5 == 0 or ep == n_episodes - 1:
                 traj.append(dict(ep=ep + 1, w=round(self._wmean(), 4)))
         self.b.core_config.enable_hebbian_learning = False
@@ -317,14 +317,39 @@ def _noedge_bridge(seed):
     return pool.bridge
 
 
-def run_seed(seed):
+def run_seed(seed, n_episodes=N_EPISODES, train_drive_scale=1.0):
     t0 = time.time()
     pool = AskToW0Pool(seed)
-    gate = run_gate(pool, GATE_SPEC)                       # trains + emergence + interaction (lesions the pool)
+    spec = GATE_SPEC
+    if n_episodes != N_EPISODES or train_drive_scale != 1.0:
+        # RE-TUNING LEVER (2026-09-08, next rung named by
+        # 2026-09-02-onebrain-crossedge-curiosity-to-d6wm-read-isolation-fix-corrects-GO-to-NOGO-3-6.md §6:
+        # "the mechanism may need re-tuning against the now-trustworthy read ... that re-tuning is not attempted
+        # here"). SCOUTED (this session): N_EPISODES alone is NOT the lever — seeds 43/101/102 were re-run at
+        # n_episodes=300 (3x) and grown weight barely moved (1.589->1.615, 1.622->1.648, 1.661->1.761) with
+        # delta_intact essentially FLAT — these 3 seeds' Hebbian trajectory is genuinely PLATEAUING near a
+        # seed-specific fixed point well below HMAX=6.0, not merely under-trained (banked as a NEGATIVE for this
+        # lever; do not re-attempt raw episode-count scaling). The lever that DOES work: `train_drive_scale`
+        # multiplies ONLY the TRAINING-time `ask` co-drive (`ask_drive_pa` fed to `train()`; `load_pa` is left AT
+        # ITS ORIGINAL VALUE, unscaled), leaving the scored READ's condition currents (the module's fixed
+        # ASK_DRIVE_PA=600 for 'novel', 0 for 'familiar') untouched too — i.e. "practice/induction intensity" is
+        # decoupled from "production/read intensity", the same decoupling the substrate already uses elsewhere
+        # (a stronger LTP-induction protocol produces a synapse that a normal-strength signal later reads out).
+        # A quick per-seed scout (train_drive_scale=1.5, load_pa UNSCALED) moved all 3 marginal seeds'
+        # delta_intact from -0.0035/-0.0055/-0.0020 (all below the 0.008 floor) to -0.0130/-0.0150/-0.0095 (all
+        # comfortably above it) while grown weight rose 1.6->2.8-3.3, still well under HMAX=6.0 — consistent with
+        # these seeds needing a stronger induction co-drive on `ask` specifically to reach a comparably robust
+        # synapse, not a different mechanism.
+        import dataclasses
+        spec = dataclasses.replace(
+            GATE_SPEC,
+            train_fn=lambda p: p.train(n_episodes=n_episodes,
+                                        ask_drive_pa=ASK_DRIVE_PA * train_drive_scale))
+    gate = run_gate(pool, spec)                       # trains + emergence + interaction (lesions the pool)
 
     bridge_with = AskToW0Pool(seed).b
     bridge_without = _noedge_bridge(seed)
-    byte_off = verify_byte_off(bridge_with, bridge_without, GATE_SPEC)
+    byte_off = verify_byte_off(bridge_with, bridge_without, spec)
 
     go = bool(gate["emergence"]["PASS"] and gate["interaction"]["PASS"] and byte_off["PASS"])
     return {"seed": int(seed), "GO": go, "elapsed_s": round(time.time() - t0, 1),
@@ -357,6 +382,13 @@ def main():
     ap.add_argument("--smoke", action="store_true", help="1 seed indicator")
     ap.add_argument("--selftest", action="store_true",
                      help="read-isolation fails-in-failing-direction guard only (no train/6-seed run)")
+    ap.add_argument("--n-episodes", type=int, default=N_EPISODES,
+                     help="re-tuning lever (SCOUTED NEGATIVE, kept for provenance/reproduction only): raw "
+                          "episode count. 3x at the default drive did not move the 3 marginal seeds off their "
+                          "plateau — see run_seed()'s own comment.")
+    ap.add_argument("--train-drive-scale", type=float, default=1.0,
+                     help="re-tuning lever (SCOUTED POSITIVE): multiplies ONLY the training-time `ask` co-drive "
+                          "(read-time currents untouched) — see run_seed()'s own comment for the scout numbers")
     ap.add_argument("--out", default=None)
     args = ap.parse_args()
 
@@ -369,7 +401,7 @@ def main():
 
     runs = []
     for s in seeds:
-        r = run_seed(s)
+        r = run_seed(s, n_episodes=args.n_episodes, train_drive_scale=args.train_drive_scale)
         runs.append(r)
         emg, itn, bo = r["emergence"], r["interaction"], r["byte_off"]
         nov = itn["per_condition"]["novel"]
@@ -414,6 +446,7 @@ def main():
     payload = {"probe": "onebrain_crossedge_curiosity_to_d6wm", "verdict": verdict, "GO": all_go,
                "n_go": n_go, "n_seeds": len(seeds), "seeds": seeds,
                "backend": os.environ.get("SIM_BACKEND", "numpy"), "cost_acknowledged": True,
+               "n_episodes": args.n_episodes, "train_drive_scale": args.train_drive_scale,
                "preconditions": preconditions,
                "gate_spec": {"name": GATE_SPEC.name, "correct_edges": GATE_SPEC.correct_edges,
                             "conditions": GATE_SPEC.condition_order, "control": GATE_SPEC.control,
