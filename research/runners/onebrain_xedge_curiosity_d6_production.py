@@ -157,6 +157,26 @@ def xedge_curiosity_d6_lesioned() -> bool:
     return v.strip().lower() in ("1", "true", "yes", "on")
 
 
+def xedge_curiosity_d6_train_drive_scale() -> float:
+    """`BRAIN_ONEBRAIN_XEDGE_CURIOSITY_D6_TRAIN_DRIVE_SCALE` (float, default 1.0 -> byte-identical to the
+    original `p.train()` call) -- PORTS the isolated de-risk runner's 2026-09-08 re-tune
+    (`research/findings/2026-09-08-onebrain-crossedge-curiosity-to-d6wm-retuned-6-6-GO-via-training-drive-not-
+    episode-count.md`) onto THIS module's own production pool, so the base rung's real NO-GO 3/6 (the
+    read-isolation-corrected verdict `_XEDGE_CD6_DEFAULT_ON=False` responds to) can be re-verified through the
+    ACTUAL production wrapper's own self-test, not just the isolated runner. Scales ONLY the training-time `ask`
+    co-drive (`AskToW0Pool.train()`'s new `ask_drive_pa` param); the scored READ's condition currents are
+    untouched, matching the isolated runner's own decoupling. Unset/1.0 reproduces the exact pre-existing
+    behaviour (no production default is touched by this helper existing -- `_XEDGE_CD6_DEFAULT_ON` above is a
+    separate, owner-flagged flag this does not set)."""
+    v = os.environ.get("BRAIN_ONEBRAIN_XEDGE_CURIOSITY_D6_TRAIN_DRIVE_SCALE")
+    if v is None:
+        return 1.0
+    try:
+        return float(v)
+    except ValueError:
+        return 1.0
+
+
 class XedgeCuriosityD6ProductionPool:
     """Process-shared holder of the [curiosity + d6_multiref_wm] `MergedPool` (via `AskToW0Pool`, reused by
     import) with the FROZEN pre-grown `ask -> w0` cross-edge. Exposes `.read_w0(condition)` (the runner-level
@@ -193,9 +213,16 @@ class XedgeCuriosityD6ProductionPool:
         # injects the near-zero cross-edge as the SOLE plastic synapse (`apply_cross_edge_freeze`, already run
         # inside `__init__`), and exposes `.train()` / `.read_w0(condition)` — the SAME functions the runner-level
         # 6-seed GO validated. Nothing here is reimplemented.
-        from research.runners._onebrain_crossedge_curiosity_to_d6wm import AskToW0Pool
+        from research.runners._onebrain_crossedge_curiosity_to_d6wm import AskToW0Pool, ASK_DRIVE_PA
         p = AskToW0Pool(self.seed)
-        self.grow_traj = p.train()      # GROWS the cross-edge by the substrate's own Hebbian rule (0.05 -> ~1.7-2.1)
+        scale = xedge_curiosity_d6_train_drive_scale()
+        if scale == 1.0:
+            self.grow_traj = p.train()  # GROWS the cross-edge by the substrate's own Hebbian rule (0.05 -> ~1.7-2.1)
+        else:
+            # 2026-09-08 re-tune port (see `xedge_curiosity_d6_train_drive_scale`'s own docstring): only the
+            # TRAINING-time `ask` co-drive is scaled; `load_pa` and every read-time current are left at the
+            # module's original values.
+            self.grow_traj = p.train(ask_drive_pa=ASK_DRIVE_PA * scale)
         p.b.core_config.enable_hebbian_learning = False   # train() already leaves this False; explicit for parity
         self._ask_pool = p
         self.bridge = p.b
@@ -453,9 +480,15 @@ def main():
     ap.add_argument("--semantic-drop", action="store_true",
                     help="also self-verify the SEMANTIC-DROP rung (register-0 genuine erase)")
     ap.add_argument("--seeds", default="42")
+    ap.add_argument("--train-drive-scale", type=float, default=1.0,
+                     help="port of the isolated de-risk runner's 2026-09-08 re-tune lever onto THIS module's own "
+                          "production pool (see xedge_curiosity_d6_train_drive_scale's docstring); 1.0 = "
+                          "byte-identical to the pre-existing behaviour")
     ap.add_argument("--out", default=None)
     args = ap.parse_args()
     seeds = [int(s) for s in args.seeds.split(",") if s.strip()]
+    if args.train_drive_scale != 1.0:
+        os.environ["BRAIN_ONEBRAIN_XEDGE_CURIOSITY_D6_TRAIN_DRIVE_SCALE"] = str(args.train_drive_scale)
 
     sd_results = []
     if args.semantic_drop:
@@ -488,6 +521,7 @@ def main():
     n_go = sum(r["GO"] for r in results)
     payload = {"probe": "onebrain_xedge_curiosity_d6_production_frozen", "seeds": seeds,
                "backend": os.environ.get("SIM_BACKEND", "numpy"),
+               "train_drive_scale": args.train_drive_scale,
                "n_go": n_go, "n_seeds": len(results),
                "results": results,
                "semantic_drop": ({"n_go": sum(r["GO"] for r in sd_results), "n_seeds": len(sd_results),
