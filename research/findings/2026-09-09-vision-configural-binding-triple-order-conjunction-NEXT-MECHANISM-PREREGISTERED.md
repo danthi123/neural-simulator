@@ -6,7 +6,7 @@ date: 2026-09-09
 mechanism: THIRD-ORDER (triple) S2.5 configural-binding conjunction units (a,b,c;Delta1,Delta2), --conj-order triple in _vision_lindiscrim_readout_derisk.py -- built as a cascade of two applications of the established pairwise coincidence-binding primitive, targeting the diagnosed representational ceiling of the pairwise PARTIAL landing
 lane: vision (identity readout, D-perception configural binding)
 seeds: [42, 43, 44, 100, 101, 102]
-verdict: PRE-REGISTERED GATE + decisive 6-seed run landed LINDISCRIM-READOUT-PARTIAL-beat0/6-lb2/6 -- WORSE than the pairwise arm it was meant to surpass (lb dropped 4/6->2/6, RATE_lin_ceiling_held dropped 0.3403->0.2917). Diagnosed cause: at matched unit budget (conj_n=1152), third-order sampling dilutes combinatorial coverage far more than it raises per-unit specificity. This lever is a NO-GO at matched budget; a width-compensated follow-up (conj_n=4608) is QUEUED to test whether the diagnosed cause is correctable by scale.
+verdict: PRE-REGISTERED GATE + decisive 6-seed run landed LINDISCRIM-READOUT-PARTIAL-beat0/6-lb2/6 -- WORSE than the pairwise arm it was meant to surpass (lb dropped 4/6->2/6, RATE_lin_ceiling_held dropped 0.3403->0.2917). Diagnosed cause: at matched unit budget (conj_n=1152), third-order sampling dilutes combinatorial coverage far more than it raises per-unit specificity. This lever is a NO-GO at matched budget; the width-compensated follow-up (conj_n=4608, 4x) LANDED IDENTICAL (beat0/6-lb2/6) — width does NOT correct it, so the third-order fixed-random bank is a NO-GO regardless of budget. Next mechanism (not deferred): recurrent/competitive binding stage, then attention-gated readout.
 artifacts:
   - research/findings/raw/lanes/perception/conjbind_bindarm_n1152_heldoutpos_scramblenull_6seed.json
   - research/findings/raw/lanes/perception/conjbind_triple_n1152_heldoutpos_scramblenull_6seed.json
@@ -93,7 +93,7 @@ directly in the RATE (non-spiking) ceiling falling, which isolates this from any
 theoretical argument for higher specificity per unit was correct in isolation; it was outweighed by the
 combinatorial cost of reaching that unit at all, at a budget that was never re-scaled for the larger space.
 
-## No-defer: the follow-up this diagnosis names, QUEUED not yet run
+## No-defer: the width-compensated follow-up — ✅ LANDED, width does NOT recover it (NO-GO confirmed regardless of budget)
 
 If combinatorial dilution is the dominant effect, width should partially compensate it — the pairwise arm's own
 history validated exactly this style of lever (`conjbind_prod_n1024..n2304_6seed.json` width sweeps). A
@@ -120,9 +120,16 @@ this is a verdict on a METHOD (fixed-random third-order sampling at a given budg
 CAPABILITY — the pairwise PARTIAL (`lb4/6`) remains the best load-bearing result in this lane and is not
 retracted by this lever's failure to beat it.
 
-**Queued command lands in this worktree** (`.claude/worktrees/agent-ac8628a960479d44e`,
-branch `worktree-agent-ac8628a960479d44e`) since the mechanism is not yet on `main`; the resulting artifact needs
-to be picked up (copied/committed, or the branch merged) once the run completes and its verdict written up.
+**LANDED RESULT (`conjbind_triple_n4608_heldoutpos_scramblenull_6seed.json`, harvested to main): `LINDISCRIM-READOUT-PARTIAL-beat0/6-lb2/6` — IDENTICAL to the matched-budget (n1152) verdict.** 4x width did NOT
+recover `RATE_lin_ceiling_held` to the pairwise 0.3403, and `learning_load_bearing` stayed at 2/6 (not >=4/6). Per
+the pre-registered read above, the higher-order (third-order fixed-random conjunction) lever is therefore a
+**NO-GO regardless of budget** — combinatorial dilution is not the correctable bottleneck; the fixed-random
+third-order bank itself is the wrong mechanism at this op-point. **NEXT MECHANISM (no-defer, not yet attempted):**
+a **recurrent/competitive binding stage** among conjunction units (lateral inhibition / k-WTA so the bank
+self-selects the informative conjunctions instead of sampling them fixed-random), then — if that also stalls — an
+**attention-gated readout** that reweights which units each class population listens to per-trial. The pairwise
+PARTIAL (`lb4/6`) remains the best load-bearing result in this lane and is not retracted. This is a verdict on the
+METHOD (fixed-random higher-order sampling), never the CAPABILITY.
 
 ## What the smoke showed (sanity only, run before the decisive eval — unaffected by the above)
 
