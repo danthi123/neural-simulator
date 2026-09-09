@@ -156,21 +156,142 @@ def make_layout(rng, K, min_sep):
 def sts_scores(rates, phi, sharpness=2.0):
     """OTHER-ATTENTION-SCHEMA (STS-TPJ object cells): s[k] = sum_i W_obj[k,i] * rates[i], with the direction-tuned
     synapse W_obj[k,i] = relu(cos(theta_i - phi_k))**sharpness onto object k's CURRENT angular position phi_k.
-    A dendritic sum of gaze-ring SPIKES -> high for the object along the gaze direction. n_dir inferred from rates."""
+    A dendritic sum of gaze-ring SPIKES -> high for the object along the gaze direction. n_dir inferred from rates.
+
+    HONESTY BOUNDARY (2026-08-26 finding): this is a HOST synaptic-sum (`W @ rates` in numpy), not a synapse.
+    `sts_scores_spiking()` below is rung-1 of the finding's named next steps: the SAME W_obj tuning, but the
+    weighted sum is computed by the simulator's OWN conductance/current integration over real cross-region
+    synapses, not host arithmetic."""
     n_dir = len(rates)
     theta = np.linspace(0.0, 2.0 * np.pi, num=n_dir, endpoint=False)
     W = np.maximum(np.cos(theta[None, :] - phi[:, None]), 0.0) ** sharpness   # [K, n_dir] direction-tuned synapses
     return W @ rates
 
 
+# ---------------------------------------------------------------------------------------------------------------
+# RUNG-1 (no-defer): the STS-TPJ object-cell read as REAL cross-region synapses, not a host dot product.
+# ---------------------------------------------------------------------------------------------------------------
+def build_sts_object_bridge(seed, n_dir=48, K=6, n_pool=16):
+    """ONE bridge with TWO regions: 'ring' (the same STS gaze-direction population as build_gaze_ring_bridge) and
+    'obj' (K object-selective POOLS of n_pool cells each -- a population code, not a single labeled neuron per
+    object; see the pool-size honesty note below). A dense ring->obj RegionPathway is allocated at weight_mean=0.0
+    (the same 'functionally-inert pathway forces real synapse allocation' trick used by build_gaze_ring_bridge's
+    self-pathway) so every one of the n_dir*K*n_pool (pre,post) pairs gets a REAL synapse entry in
+    `sb.cp_connections` that `set_sts_object_weights()` below can overwrite per trial. Each object pool then
+    integrates its OWN synaptic current from the ring's spikes via the simulator's normal step update -- the
+    weighted sum that `sts_scores()` computes in host numpy is here computed BY THE SUBSTRATE. NO `sim/` edit.
+
+    WHY A POOL, NOT ONE CELL PER OBJECT (found empirically, 2026-09-08): a single labeled neuron per object
+    inherits this framework's per-neuron parameter HETEROGENEITY (`cfg.enable_brain_region_framework` applies
+    heterogeneous Izhikevich a/b/c/d + firing-threshold draws per neuron -- itself a real, desired biological
+    feature, not a bug). With exactly one cell standing for one object identity across every trial of a seed, that
+    cell's idiosyncratic excitability is a FIXED per-identity bias that does not average out and can outweigh the
+    actual gaze-driven signal (verified: one object cell's threshold sat ~18mV closer to rest than its siblings'
+    and won on trials where its object was ~2 radians from the true gaze direction). A POOL of independently
+    heterogeneous cells reading out by MEAN firing rate averages this bias toward zero across the pool -- the same
+    population-coding principle already used for the ring's own n_dir-neuron direction code, just applied to the
+    object side too."""
+    from sim.config import CoreSimConfig, VisualizationConfig, RuntimeState, GPUConfig
+    from sim.bridge import SimulationBridge
+    from sim.regions import BrainRegion, RegionPathway
+    from sim.enums import NeuronModel
+    cfg = CoreSimConfig(); cfg.num_neurons = 0
+    cfg.neuron_model_type = NeuronModel.IZHIKEVICH.name; cfg.neural_profile_name = "GENERIC_UNSTRUCTURED"
+    cfg.dt_ms = 1.0; cfg.seed = int(seed); cfg.enable_brain_region_framework = True; cfg.ou_std_current_pA = 0.0
+    for flag in ("enable_short_term_plasticity", "enable_hebbian_learning", "enable_homeostasis",
+                 "enable_structural_plasticity", "enable_reward_modulation", "enable_stdp",
+                 "enable_input_divisive_norm"):
+        setattr(cfg, flag, False)
+    n_pool = int(n_pool)
+    cfg.brain_regions = [
+        BrainRegion(name="ring", n_neurons=int(n_dir), exc_fraction=1.0, internal_density=0.0,
+                    exc_weight_mean=0.0, inh_weight_mean=0.0, weight_jitter=0.0, plastic_internal=False),
+        BrainRegion(name="obj", n_neurons=int(K) * n_pool, exc_fraction=1.0, internal_density=0.0,
+                    exc_weight_mean=0.0, inh_weight_mean=0.0, weight_jitter=0.0, plastic_internal=False),
+    ]
+    cfg.region_pathways = [RegionPathway(from_region="ring", to_region="obj", density=1.0,
+                                         weight_mean=0.0, weight_jitter=0.0, plastic=False)]
+    sb = SimulationBridge(core_config=cfg, viz_config=VisualizationConfig(), runtime_state=RuntimeState(),
+                          gpu_config=GPUConfig())
+    sb.runtime_state.max_delay_steps = int(cfg.max_synaptic_delay_ms / cfg.dt_ms)
+    sb._initialize_simulation_data(called_from_playback_init=False)
+    ridx = np.asarray(list(sb.region_manager.indices("ring")), dtype=int)
+    obj_flat = np.asarray(list(sb.region_manager.indices("obj")), dtype=int)
+    oidx = obj_flat.reshape(int(K), n_pool)     # oidx[k] = the n_pool global indices of object k's pool
+    pref = np.linspace(0.0, 2.0 * np.pi, num=int(n_dir), endpoint=False)
+    # Sanity: every (ring, obj) pair must already be a real synapse entry (dense allocation at weight 0.0), so
+    # `set_sts_object_weights` only ever OVERWRITES existing entries -- it never has to grow the sparsity pattern.
+    dense0 = np.asarray(sb.cp_connections.toarray())
+    block0 = dense0[np.ix_(ridx, obj_flat)]   # row=pre(ring), col=post(obj) -- convention: sim/bridge.py:4386
+    assert block0.shape == (int(n_dir), int(K) * n_pool), "ring->obj block shape mismatch"
+    # weight_mean=0.0/weight_jitter=0.0 leaves a tiny (~0.01) init floor, not exactly 0.0 -- the structural
+    # allocation is what matters here (every pair is a REAL pre-existing synapse `set_sts_object_weights`
+    # overwrites each trial), not the placeholder value, so this only guards against a materially-large surprise.
+    assert float(np.abs(block0).max()) < 1.0, "ring->obj synapses should start near-zero (functionally inert)"
+    return sb, ridx, oidx, pref
+
+
+def set_sts_object_weights(sb, ridx, oidx, phi, pref, sharpness=2.0, w_scale=6.0):
+    """Overwrite the REAL ring->obj synapse block with this trial's direction-tuned weights
+    W_obj[k,i] = w_scale * relu(cos(theta_i - phi_k))**sharpness -- identical tuning to `sts_scores`, but written
+    via the sanctioned `SimulationBridge.set_pathway_weights` edge-editing API (row=pre/col=post per
+    `sim/bridge.py`'s own "Build CSR in (pre -> post) layout" docstring at the CSR-construction site) so the
+    simulator's per-step current integration performs the weighted sum, not host numpy. Every ring neuron in
+    object k's pool gets the IDENTICAL weight W_obj[k,i] (the pool differs only in its neurons' innate
+    heterogeneity, not in what it's wired to hear). All n_dir*K*n_pool (ring,obj) pairs already exist as real
+    (zero-weight) synapses from the dense density=1.0 pathway declared in `build_sts_object_bridge`, so
+    `add_missing=False` (no CSR-structure growth, only a data-array edit) on every trial."""
+    n_dir = len(ridx); K, n_pool = oidx.shape
+    W = w_scale * np.maximum(np.cos(pref[None, :] - phi[:, None]), 0.0) ** sharpness   # [K, n_dir], W[k, i]
+    pre = np.repeat(ridx, K * n_pool)                       # ridx[i] repeated K*n_pool times, for each i in order
+    post = np.tile(oidx.reshape(-1), n_dir)                 # oidx flat (k-major, pool-minor) repeated n_dir times
+    weights = np.repeat(W.T, n_pool, axis=1).reshape(-1)    # W.T[i,k] repeated n_pool times -> matches post's layout
+    sb.set_pathway_weights("ring_to_obj", pre, post, weights, add_missing=False)
+
+
+def sts_scores_spiking(sb, ridx, oidx, pref, gaze_angle, phi, gain=900.0, sharpness=2.0, w_scale=6.0, settle=25):
+    """The spiking replacement for `sts_scores`: rewrite this trial's ring->obj synapses, drive the ring with the
+    SAME cos-tuned current as `gaze_ring_rates`, step the UNIFIED bridge (ring spikes propagate to obj through the
+    real synapses just written), and read s[k] = object pool k's MEAN firing rate over the settle window (a
+    population read-out, per the pool-averaging note in `build_sts_object_bridge`). Returns s[K] -- this IS the
+    dendritic sum, computed on-substrate."""
+    from sim.backend import to_host, from_host
+    set_sts_object_weights(sb, ridx, oidx, phi, pref, sharpness=sharpness, w_scale=w_scale)
+    if getattr(sb, "cp_izh_c_reset", None) is not None:
+        sb.cp_membrane_potential_v[:] = sb.cp_izh_c_reset
+    else:
+        sb.cp_membrane_potential_v[:] = -65.0
+    sb.cp_recovery_variable_u[:] = 0.0
+    if getattr(sb, "cp_firing_states", None) is not None:
+        sb.cp_firing_states[:] = False
+    tuning = np.maximum(np.cos(pref - gaze_angle), 0.0) ** 2.0
+    cur = np.zeros(sb.core_config.num_neurons, dtype=np.float64)
+    cur[ridx] = gain * tuning          # external drive ONLY on the ring -- obj cells get ONLY synaptic input
+    cur_dev = from_host(cur)
+    K = oidx.shape[0]
+    acc = np.zeros(K)
+    for _ in range(settle):
+        sb.cp_external_input_current[:] = cur_dev
+        sb._run_one_simulation_step()
+        fir = np.asarray(to_host(sb.cp_firing_states)).astype(float)
+        for k in range(K):
+            acc[k] += fir[oidx[k]].mean()
+    sb.cp_external_input_current[:] = 0.0
+    return acc / float(settle)
+
+
 def run_seed(seed, n_trials=60, K=6, n_dir=48, gaze_noise=0.10, min_sep_frac=0.55,
-             gain=1400.0, ring_settle=25, fs_inh=9.0, fs_settle=25, input_gain=1200.0):
+             gain=1400.0, ring_settle=25, fs_inh=9.0, fs_settle=25, input_gain=1200.0,
+             spiking_sts=False, sts_gain=6000.0, sts_w_scale=20.0, sts_settle=150, sts_n_pool=48):
     rng = np.random.RandomState(seed)
     min_sep = (2.0 * np.pi / K) * min_sep_frac
     chance = 1.0 / K
 
     sb_ring, ridx, pref = build_gaze_ring_bridge(seed=seed, n_dir=n_dir)
     sb_spot = build_fswta_score_bridge(seed=seed, K=K, fs_to_exc=fs_inh)   # reused spiking one-of-K spotlight
+    sb_sts = so_ridx = so_oidx = so_pref = None
+    if spiking_sts:
+        sb_sts, so_ridx, so_oidx, so_pref = build_sts_object_bridge(seed=seed, n_dir=n_dir, K=K, n_pool=sts_n_pool)
 
     # pre-draw a per-trial random permutation for the SCRAMBLE control (partner gaze shuffled across trials)
     trials = []
@@ -185,13 +306,21 @@ def run_seed(seed, n_trials=60, K=6, n_dir=48, gaze_noise=0.10, min_sep_frac=0.5
         _, acc = fswta_drive(sb_spot, K, scores, input_gain=input_gain, settle=fs_settle)
         return int(np.argmax(acc)) if acc.max() > 0 else -1
 
+    def sts_read(gaze_angle, phi):
+        """Dispatch to the host dot-product (default, byte-identical) or the on-substrate synaptic read
+        (--spiking-sts), matched treatment for both the intact and scramble arms."""
+        if spiking_sts:
+            return sts_scores_spiking(sb_sts, so_ridx, so_oidx, so_pref, gaze_angle, phi,
+                                       gain=sts_gain, w_scale=sts_w_scale, settle=sts_settle)
+        rates = gaze_ring_rates(sb_ring, ridx, pref, gaze_angle, gain=gain, settle=ring_settle)
+        return sts_scores(rates, phi)
+
     ok = ok_les = ok_scr = ok_blind = 0
     for n, tr in enumerate(trials):
         phi, t_star, gaze = tr["phi"], tr["t_star"], tr["gaze"]
 
         # (a) INTACT joint attention
-        rates = gaze_ring_rates(sb_ring, ridx, pref, gaze, gain=gain, settle=ring_settle)
-        s = sts_scores(rates, phi)
+        s = sts_read(gaze, phi)
         ok += int(spotlight_winner(s) == t_star)
 
         # (b) LESION the other-attention-schema OUTPUT (STS-TPJ read severed) -> uniform drive -> chance
@@ -200,8 +329,7 @@ def run_seed(seed, n_trials=60, K=6, n_dir=48, gaze_noise=0.10, min_sep_frac=0.5
 
         # (c) SCRAMBLE the partner gaze (use another trial's gaze angle), score vs THIS trial's true t_star
         gaze_scr = trials[perm[n]]["gaze"]
-        rates_scr = gaze_ring_rates(sb_ring, ridx, pref, gaze_scr, gain=gain, settle=ring_settle)
-        s_scr = sts_scores(rates_scr, phi)
+        s_scr = sts_read(gaze_scr, phi)
         ok_scr += int(spotlight_winner(s_scr) == t_star)
 
         # (d) NOT-A-COPY: layout-blind decode -- pick the object index by a FIXED angular bin of the gaze
@@ -211,6 +339,7 @@ def run_seed(seed, n_trials=60, K=6, n_dir=48, gaze_noise=0.10, min_sep_frac=0.5
 
     return {
         "seed": int(seed), "K": int(K), "n_trials": int(n_trials), "chance": round(chance, 3),
+        "spiking_sts": bool(spiking_sts),
         "align_acc": round(ok / n_trials, 3),
         "align_acc_lesion": round(ok_les / n_trials, 3),
         "align_acc_scramble": round(ok_scr / n_trials, 3),
@@ -238,6 +367,16 @@ def main():
     ap.add_argument("--K", type=int, default=6)
     ap.add_argument("--n-dir", type=int, default=48)
     ap.add_argument("--smoke", action="store_true", help="1-seed reduced trials (fast numpy foreground smoke)")
+    ap.add_argument("--spiking-sts", action="store_true",
+                     help="rung-1 (no-defer): compute the STS-TPJ object-cell read via REAL cross-region synapses "
+                          "(the simulator's own current integration) instead of a host numpy dot product. "
+                          "Default off = byte-identical to the committed 6-seed GO.")
+    ap.add_argument("--sts-gain", type=float, default=6000.0)
+    ap.add_argument("--sts-w-scale", type=float, default=20.0)
+    ap.add_argument("--sts-settle", type=int, default=150)
+    ap.add_argument("--sts-n-pool", type=int, default=48,
+                     help="neurons per object-cell POOL (population read-out that averages out per-neuron "
+                          "excitability heterogeneity -- see build_sts_object_bridge's honesty note)")
     ap.add_argument("--json", type=str, default=None)
     a = ap.parse_args()
 
@@ -249,11 +388,13 @@ def main():
         seeds = [seeds[0]]
 
     print(f"[JOINT ATTENTION] STS-TPJ other-attention-schema -> spiking one-of-K spotlight (reused FS-WTA organ) | "
-          f"K={a.K} n_dir={a.n_dir} n_trials={n_trials} seeds={seeds}", flush=True)
+          f"K={a.K} n_dir={a.n_dir} n_trials={n_trials} seeds={seeds} spiking_sts={a.spiking_sts}", flush=True)
     t0 = time.time()
     rows = []
     for s in seeds:
-        r = run_seed(s, n_trials=n_trials, K=a.K, n_dir=a.n_dir)
+        r = run_seed(s, n_trials=n_trials, K=a.K, n_dir=a.n_dir, spiking_sts=a.spiking_sts,
+                     sts_gain=a.sts_gain, sts_w_scale=a.sts_w_scale, sts_settle=a.sts_settle,
+                     sts_n_pool=a.sts_n_pool)
         rows.append(r)
         print(f"  seed {s}: align={r['align_acc']:.3f}  lesion={r['align_acc_lesion']:.3f}  "
               f"scramble={r['align_acc_scramble']:.3f}  blind={r['align_acc_blind']:.3f}  (chance={r['chance']:.3f})",
@@ -313,7 +454,9 @@ def main():
                "undefined_reasons": decided["undefined_reasons"],
                "disabled_processes": decided["disabled_processes"], "chance": round(1.0 / a.K, 3),
                "attribution": attribution,
-               "K": a.K, "n_dir": a.n_dir, "n_trials": n_trials, "seeds": seeds}
+               "K": a.K, "n_dir": a.n_dir, "n_trials": n_trials, "seeds": seeds,
+               "spiking_sts": bool(a.spiking_sts), "sts_gain": a.sts_gain, "sts_w_scale": a.sts_w_scale,
+               "sts_settle": a.sts_settle, "sts_n_pool": a.sts_n_pool}
         Path(a.json).parent.mkdir(parents=True, exist_ok=True)
         Path(a.json).write_text(json.dumps(out, indent=2))
         print(f"  wrote {a.json}", flush=True)
