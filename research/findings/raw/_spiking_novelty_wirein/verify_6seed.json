@@ -1,0 +1,201 @@
+{
+  "A_byte_identical_off": {
+    "A1_default_is_off": true,
+    "A2_byte_identical_off": true,
+    "A2_max_abs_diff": 0.0,
+    "A3_override_none_matches_default": true,
+    "A_all_pass": true,
+    "rows": [
+      {
+        "msg": "the quantum harmonic oscillator resonates strongly",
+        "n_content": 5,
+        "reference": 0.85,
+        "engagement_of": 0.85,
+        "engagement_of_override_none": 0.85
+      },
+      {
+        "msg": "the quantum oscillator resonates again here now",
+        "n_content": 5,
+        "reference": 0.49,
+        "engagement_of": 0.49,
+        "engagement_of_override_none": 0.49
+      },
+      {
+        "msg": "photosynthesis converts sunlight into chemical energy",
+        "n_content": 5,
+        "reference": 0.85,
+        "engagement_of": 0.85,
+        "engagement_of_override_none": 0.85
+      },
+      {
+        "msg": "tell me more about photosynthesis and sunlight",
+        "n_content": 4,
+        "reference": 0.5,
+        "engagement_of": 0.5,
+        "engagement_of_override_none": 0.5
+      },
+      {
+        "msg": "",
+        "n_content": 0,
+        "reference": 0.0,
+        "engagement_of": 0.0,
+        "engagement_of_override_none": 0.0
+      },
+      {
+        "msg": "a b the is are",
+        "n_content": 0,
+        "reference": 0.0,
+        "engagement_of": 0.0,
+        "engagement_of_override_none": 0.0
+      }
+    ]
+  },
+  "B_load_bearing_rows": [
+    {
+      "seed": 42,
+      "nov_first": 0.8707,
+      "nov_rep": 0.431,
+      "nov_newfresh": 0.8621,
+      "ratio_intact": 0.495,
+      "lesion_nov_first": 0.9599,
+      "lesion_nov_rep": 0.9475,
+      "ratio_lesion": 0.9871,
+      "attribution_to_stp": 0.9745,
+      "engagement_high": 0.7224,
+      "engagement_low": 0.4586,
+      "L1_novel_fresh": true,
+      "L2_habituates": true,
+      "L3_recruit_fresh": true,
+      "L4_engagement_tracks": true,
+      "L5_lesion_reverts": true,
+      "GO": true
+    },
+    {
+      "seed": 43,
+      "nov_first": 0.9375,
+      "nov_rep": 0.3385,
+      "nov_newfresh": 0.9688,
+      "ratio_intact": 0.3611,
+      "lesion_nov_first": 1.0,
+      "lesion_nov_rep": 1.0,
+      "ratio_lesion": 1.0,
+      "attribution_to_stp": 1.0,
+      "engagement_high": 0.7625,
+      "engagement_low": 0.4031,
+      "L1_novel_fresh": true,
+      "L2_habituates": true,
+      "L3_recruit_fresh": true,
+      "L4_engagement_tracks": true,
+      "L5_lesion_reverts": true,
+      "GO": true
+    },
+    {
+      "seed": 44,
+      "nov_first": 0.9565,
+      "nov_rep": 0.2989,
+      "nov_newfresh": 1.0,
+      "ratio_intact": 0.3125,
+      "lesion_nov_first": 0.9638,
+      "lesion_nov_rep": 0.9583,
+      "ratio_lesion": 0.9944,
+      "attribution_to_stp": 0.9918,
+      "engagement_high": 0.7739,
+      "engagement_low": 0.3793,
+      "L1_novel_fresh": true,
+      "L2_habituates": true,
+      "L3_recruit_fresh": true,
+      "L4_engagement_tracks": true,
+      "L5_lesion_reverts": true,
+      "GO": true
+    },
+    {
+      "seed": 100,
+      "nov_first": 0.6742,
+      "nov_rep": 0.2159,
+      "nov_newfresh": 0.7652,
+      "ratio_intact": 0.3202,
+      "lesion_nov_first": 0.8524,
+      "lesion_nov_rep": 0.8102,
+      "ratio_lesion": 0.9505,
+      "attribution_to_stp": 0.9272,
+      "engagement_high": 0.6045,
+      "engagement_low": 0.3295,
+      "L1_novel_fresh": false,
+      "L2_habituates": true,
+      "L3_recruit_fresh": true,
+      "L4_engagement_tracks": true,
+      "L5_lesion_reverts": true,
+      "GO": false
+    },
+    {
+      "seed": 101,
+      "nov_first": 0.8621,
+      "nov_rep": 0.25,
+      "nov_newfresh": 0.9052,
+      "ratio_intact": 0.29,
+      "lesion_nov_first": 0.9932,
+      "lesion_nov_rep": 0.9611,
+      "ratio_lesion": 0.9677,
+      "attribution_to_stp": 0.9545,
+      "engagement_high": 0.7172,
+      "engagement_low": 0.35,
+      "L1_novel_fresh": true,
+      "L2_habituates": true,
+      "L3_recruit_fresh": true,
+      "L4_engagement_tracks": true,
+      "L5_lesion_reverts": true,
+      "GO": true
+    },
+    {
+      "seed": 102,
+      "nov_first": 0.85,
+      "nov_rep": 0.3375,
+      "nov_newfresh": 0.7917,
+      "ratio_intact": 0.3971,
+      "lesion_nov_first": 0.8427,
+      "lesion_nov_rep": 0.8315,
+      "ratio_lesion": 0.9867,
+      "attribution_to_stp": 0.9779,
+      "engagement_high": 0.71,
+      "engagement_low": 0.4025,
+      "L1_novel_fresh": true,
+      "L2_habituates": true,
+      "L3_recruit_fresh": true,
+      "L4_engagement_tracks": true,
+      "L5_lesion_reverts": true,
+      "GO": true
+    }
+  ],
+  "n_go_B": 5,
+  "n_seeds": 6,
+  "verdict": "GO",
+  "label": "spiking-novelty wire-in (A byte-identical-off AND >=5/6 seeds load-bearing-on)",
+  "status": "GO",
+  "go": true,
+  "undefined_reasons": [],
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "A: byte-identical when off (all A checks pass)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "all 6 project-standard seeds present for (B)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "seeds run: 6"
+    },
+    {
+      "kind": "floor",
+      "name": "seed-GO count (B)",
+      "ok": true,
+      "detail": "5 vs floor 4.5",
+      "note": "board bar >=5/6 -> floor=4.5 excludes 4/6"
+    }
+  ],
+  "disabled_processes": [],
+  "chance": null
+}
