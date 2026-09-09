@@ -1,72 +1,18 @@
 {
  "schema": "tool-health-v1",
  "generator": "tools/tool_health.py",
- "generated_at": "2026-09-09T00:15:19Z",
- "any_rotted": true,
+ "generated_at": "2026-09-09T21:59:49Z",
+ "any_rotted": false,
  "results": [
-  {
-   "tool": "experiment-engine",
-   "lane": "experiment",
-   "status": "ready",
-   "why": "built 4 current presets; swept basic_stimulus_response [[100.0, 4221], [200.0, 4221]] on cupy",
-   "checked": "build 4 presets + step basic_stimulus_response x2",
-   "at": "2026-09-09T00:14:19Z"
-  },
-  {
-   "tool": "auto-tune",
-   "lane": "experiment",
-   "status": "ready",
-   "why": "quick tuning sweep completed (rc=0)",
-   "checked": "neural-simulator.py --auto-tune --quick",
-   "at": "2026-09-09T00:15:11Z"
-  },
   {
    "tool": "gpu-queue",
    "lane": "gpu",
-   "status": "ROTTED",
-   "why": "status rc=1: g\ncurrent: cd /home/dant123/Projects/sim/.claude/worktrees/agent-a563a7c4a9cc705c6 && SIM_BACKEND=cupy /home/da (pid 1923267)\nqueued: 1 | VRAM free: 20033MiB (min_free 3000)\ndispatcher: up (pid 2189)\n",
-   "checked": "gpu_queue.sh status",
-   "at": "2026-09-09T00:15:11Z"
-  },
-  {
-   "tool": "pool",
-   "lane": "pool",
    "status": "ready",
-   "why": "2/3 nodes healthy",
-   "checked": "tools.pool_health --json + a trivial dispatch check",
-   "at": "2026-09-09T00:15:15Z"
-  },
-  {
-   "tool": "pool-checkout",
-   "lane": "pool",
-   "status": "ready",
-   "why": "2 nodes: code present + venv imports numpy/scipy",
-   "checked": "code present + venv import",
-   "at": "2026-09-09T00:15:19Z"
-  },
-  {
-   "tool": "cloud-aws",
-   "lane": "cloud",
-   "status": "unknown",
-   "why": "no AWS instance recorded \u2014 nothing to describe (no spend); provision via tools/aws_gpu.sh only when a run justifies it",
-   "checked": "aws_gpu.sh status",
-   "at": "2026-09-09T00:15:19Z"
+   "why": "status ok (1 dispatcher). == gpu_queue == shared queue: /home/dant123/Projects/sim/research/queue state: running current: cd /home/dant123/Projects/sim/.claude/worktrees/agent-aba5add516df73bd8 && SIM_BACKEND=cupy /home/da (pi",
+   "checked": "gpu_queue.sh status + singleton",
+   "at": "2026-09-09T21:59:49Z"
   }
  ],
- "backlog_items": [
-  {
-   "id": "toolrot-gpu-queue",
-   "what": "Repair rotted tool 'gpu-queue' \u2014 status rc=1: g\ncurrent: cd /home/dant123/Projects/sim/.claude/worktrees/agent-a563a7c4a9cc705c6 && SIM_BACKEND=cupy /home/da (pid 1923267)\nqueued: 1 | VRAM free",
-   "source": "tools/tool_health.py",
-   "anchor": "gpu-queue",
-   "files": "tools/gpu_queue.sh",
-   "verify_cmd": "python tools/tool_health.py --only gpu-queue",
-   "dependencies": [],
-   "lane": "agent",
-   "priority": 3,
-   "rough_start": "2026-09-08",
-   "rough_target": "2026-09-08"
-  }
- ],
+ "backlog_items": [],
  "_doc": "STEP B2 coordination surface: the backlog generator reads backlog_items (one repair item per ROTTED tool). Do NOT edit tools/backlog.py \u2014 add a scanner there that reads THIS file."
 }
