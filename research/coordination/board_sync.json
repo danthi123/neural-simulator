@@ -1192,9 +1192,51 @@
    "head": "47683c90a"
   },
   {
+   "at": "2026-09-06T11:29:41Z",
+   "op": "append-desc",
+   "args": "task=193",
+   "head": "b88d37cc9"
+  },
+  {
+   "at": "2026-09-07T08:34:04Z",
+   "op": "set-desc",
+   "args": "task=210",
+   "head": "ac933b03d"
+  },
+  {
+   "at": "2026-09-07T08:34:04Z",
+   "op": "create-task",
+   "args": "proj=2 title=Store the brain's knowledge as real synaptic weights \u2014 proven, approved, pending a fits-on-the-card check",
+   "head": "ac933b03d"
+  },
+  {
+   "at": "2026-09-07T08:34:19Z",
+   "op": "label-task",
+   "args": "task=211 label=3",
+   "head": "ac933b03d"
+  },
+  {
+   "at": "2026-09-07T08:34:19Z",
+   "op": "label-task",
+   "args": "task=211 label=10",
+   "head": "ac933b03d"
+  },
+  {
+   "at": "2026-09-07T13:54:44Z",
+   "op": "set-desc",
+   "args": "task=210",
+   "head": "ae3342385"
+  },
+  {
    "at": "2026-09-09T00:09:42Z",
    "op": "append-desc",
    "args": "task=197",
+   "head": "bb1cbd6c6"
+  },
+  {
+   "at": "2026-09-09T00:21:19Z",
+   "op": "append-desc",
+   "args": "task=203",
    "head": "bb1cbd6c6"
   },
   {
