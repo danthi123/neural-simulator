@@ -13,6 +13,32 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ---
 
+## ⭐ H · Memory lane — 2026-09-08 ~20:20 (board #130 next-rung CHARACTERIZED NO-GO; mechanism intact; separate arc, does not touch rank-1/rank-6/mouth below)
+
+**Board #130's own named next rung — a further region-scale-up toward true CA1 sparsity (v8's residual: assembly:region
+ratio ~33-67%, biological target ~1-5%) — is NO-GO 0/6 at a first (2x region, ratio 33%→17%) step, but the underlying
+order-STDP consolidation mechanism is NOT what fails.** Runner `research/runners/_replay_cortical_consolidation_gate_v9_true_sparsity.py`,
+finding `2026-09-08-order-consolidation-v9-true-sparsity-scaleup-NO-GO-readout-threshold-not-mechanism.md`, commit
+`877a07ef9`, 6-seed numpy (`research/findings/raw/order_recalib/v9_true_sparsity_decisive_numpy.json`).
+- **Mechanism intact on all 6 seeds:** `order_stdp_attribution=1.0`, `stdp_off_order_margin=0.0000` (exact collapse),
+  `ordered_trace_stronger=true` (the probe-independent physical sleep-time cortical weight delta). **What fails,
+  identically on all 6 seeds:** a battery of FIXED additive-margin behavioral thresholds (`both_memories_recovered>=0.015`
+  + four `load_bearing` checks) in the shared v5 `_calibration_verdict` gate, because one full-region non-assembly-scoped
+  wiring pathway (`cortical_association`) keeps a FIXED absolute in-degree while its candidate pool doubles, diluting
+  the driven-cue signal — the project's own "wall reframe" (a constant standing in for a missing companion process).
+- **NEXT (no-defer, named, not yet attempted): (1)** a region-growth-compensating in-degree law for `cortical_association`
+  specifically; **(2)** re-derive the fixed 0.015/0.03 thresholds as a function of the substrate's own operating point
+  at the new scale rather than an absolute constant. Board #130's real-scale result (v8, GO 6/6, unchanged) is not
+  affected — only this further-sparsity sub-rung moves from "proposed" to "characterized."
+- **Doc-sync catch (same cycle):** the master roadmap §7 row + `ROADMAP.md`'s 2026-08-25 entry both still described
+  #130 as stuck on "the toy consolidation network, not yet ported" even though v8 (2026-08-25,
+  `97358dac8`/`34c117dfb`) already ported it to real-scale CA1 (n_ca3=1800) with an unchanged 6/6 GO — both corrected
+  this cycle (`docs/plans/2026-07-23-MASTER-DEVELOPMENT-ROADMAP.md` row "compositional consolidation (A1)"; a new
+  `ROADMAP.md` 2026-09-08 entry). Vikunja #130 also updated.
+- **Isolated worktree, does NOT touch rank-1/rank-6/mouth/composer/LTM files** (a different concurrent arc owns
+  `rf_phasor_composer.py`/`one_brain_composer.py`/`developed_brain_io.py`/`webapp/server.py` composer paths — see
+  the header immediately below, unaffected by this landing).
+
 ## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-08 ~17:40 (BOTH scaffold-retirement flip-fixes BUILT+LANDED opt-in; flips pending cupy confirm; OpenHands migrated; READ FIRST; LATEST anchor)
 
 **Both rank-1 (composer) + rank-6 (#211 substrate-store) flips now have their fixes BUILT + LANDED on `main`, opt-in/default-off/byte-identical — the flips themselves are the last step, gated only on a cupy confirmation:**
