@@ -1,0 +1,925 @@
+{
+  "runner": "_rank14_question_route_selection_derisk",
+  "mode": "6seed",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "backend": "numpy",
+  "battery_health": {
+    "counts": {
+      "GENERIC": 8,
+      "DEFCOP": 6,
+      "RELFRONT": 7,
+      "KBREL": 45
+    },
+    "ambiguous_evidence": {
+      "GENERIC": 1.0,
+      "DEFCOP": 0.0,
+      "RELFRONT": 1.0,
+      "KBREL": 1.0,
+      "content_len": 3
+    },
+    "dual_matching": true,
+    "n_battery": 66,
+    "ok": true
+  },
+  "all_go": true,
+  "n_go": 6,
+  "n_seeds": 6,
+  "any_undefined": false,
+  "per_seed": [
+    {
+      "seed": 42,
+      "verdict": "GO",
+      "seed_go": true,
+      "n_battery": 66,
+      "n_exception_qs": 58,
+      "n_generic_qs": 8,
+      "parity_rate": 1.0,
+      "n_match": 66,
+      "ambiguous": {
+        "winner": "RELFRONT",
+        "host": "RELFRONT",
+        "ok": true,
+        "rates": [
+          0.0,
+          0.0,
+          0.1486111111111111,
+          0.0
+        ]
+      },
+      "full_lesion": {
+        "all_generic": true,
+        "parity_rate": 0.12121212121212122
+      },
+      "attribution_exception_subset_intact_vs_lesioned": 1.0,
+      "per_pathway": {
+        "RELFRONT": {
+          "n": 7,
+          "rate": 1.0,
+          "ok": true
+        },
+        "KBREL": {
+          "n": 45,
+          "rate": 1.0,
+          "ok": true
+        },
+        "DEFCOP": {
+          "n": 6,
+          "rate": 1.0,
+          "ok": true
+        }
+      },
+      "per_pathway_independent": true,
+      "sweep": [
+        {
+          "gain": 0.0,
+          "rate_generic": 0.10069444444444445,
+          "rate_relfront": 0.0
+        },
+        {
+          "gain": 0.25,
+          "rate_generic": 0.0638888888888889,
+          "rate_relfront": 0.016666666666666666
+        },
+        {
+          "gain": 0.5,
+          "rate_generic": 0.0020833333333333333,
+          "rate_relfront": 0.0875
+        },
+        {
+          "gain": 0.75,
+          "rate_generic": 0.0,
+          "rate_relfront": 0.14930555555555555
+        },
+        {
+          "gain": 1.0,
+          "rate_generic": 0.0,
+          "rate_relfront": 0.17569444444444443
+        }
+      ],
+      "sweep_flips": true,
+      "sweep_monotone": true,
+      "seed_deterministic": true,
+      "threshold_hash": "6d3d27817c86c35482ebb239e4d03792d187747031775abd29eb2aeb4d980a57",
+      "preconditions": [
+        {
+          "kind": "require",
+          "name": "real generic-labeled subset non-empty",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "real exception-labeled subset non-empty",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "PARITY with host_route_type >= 0.95 over the full battery",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "ambiguous RELFRONT/KBREL overlap item resolves to RELFRONT (host priority)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "FULL exception lesion routes EVERY item to GENERIC (100%)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "EACH exception pathway independently sufficient (>=90% on its own subset, others lesioned)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "graded RELFRONT-evidence sweep FLIPS the winner from GENERIC to RELFRONT",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "determinism: cfg.seed seeds the substrate (build-twice hash)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "knob",
+          "name": "GENERIC_BASELINE_PA / EXCEPTION_ON_PA / OFF_PA",
+          "ok": true,
+          "detail": "requested=(700.0, 1350.0, 150.0) applied=(700.0, 1350.0, 150.0)",
+          "note": ""
+        }
+      ],
+      "disabled_processes": [
+        {
+          "process": "homeostasis/stdp/hebbian/short-term-plasticity/structural-plasticity",
+          "why": "frozen cross-inhibition weights; a pure feedforward-driven competitive read, no learning"
+        }
+      ],
+      "undefined_reasons": [],
+      "mismatches": []
+    },
+    {
+      "seed": 43,
+      "verdict": "GO",
+      "seed_go": true,
+      "n_battery": 66,
+      "n_exception_qs": 58,
+      "n_generic_qs": 8,
+      "parity_rate": 1.0,
+      "n_match": 66,
+      "ambiguous": {
+        "winner": "RELFRONT",
+        "host": "RELFRONT",
+        "ok": true,
+        "rates": [
+          0.0,
+          0.0,
+          0.15,
+          0.0
+        ]
+      },
+      "full_lesion": {
+        "all_generic": true,
+        "parity_rate": 0.12121212121212122
+      },
+      "attribution_exception_subset_intact_vs_lesioned": 1.0,
+      "per_pathway": {
+        "RELFRONT": {
+          "n": 7,
+          "rate": 1.0,
+          "ok": true
+        },
+        "KBREL": {
+          "n": 45,
+          "rate": 1.0,
+          "ok": true
+        },
+        "DEFCOP": {
+          "n": 6,
+          "rate": 1.0,
+          "ok": true
+        }
+      },
+      "per_pathway_independent": true,
+      "sweep": [
+        {
+          "gain": 0.0,
+          "rate_generic": 0.09861111111111112,
+          "rate_relfront": 0.0
+        },
+        {
+          "gain": 0.25,
+          "rate_generic": 0.10277777777777779,
+          "rate_relfront": 0.0006944444444444444
+        },
+        {
+          "gain": 0.5,
+          "rate_generic": 0.0013888888888888887,
+          "rate_relfront": 0.08125
+        },
+        {
+          "gain": 0.75,
+          "rate_generic": 0.0,
+          "rate_relfront": 0.14930555555555555
+        },
+        {
+          "gain": 1.0,
+          "rate_generic": 0.0,
+          "rate_relfront": 0.1763888888888889
+        }
+      ],
+      "sweep_flips": true,
+      "sweep_monotone": true,
+      "seed_deterministic": true,
+      "threshold_hash": "aafa79bc51e32b4ba0f97e1bc80fb76ba87b9e8b49939b45a0d08cb4735facd0",
+      "preconditions": [
+        {
+          "kind": "require",
+          "name": "real generic-labeled subset non-empty",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "real exception-labeled subset non-empty",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "PARITY with host_route_type >= 0.95 over the full battery",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "ambiguous RELFRONT/KBREL overlap item resolves to RELFRONT (host priority)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "FULL exception lesion routes EVERY item to GENERIC (100%)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "EACH exception pathway independently sufficient (>=90% on its own subset, others lesioned)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "graded RELFRONT-evidence sweep FLIPS the winner from GENERIC to RELFRONT",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "determinism: cfg.seed seeds the substrate (build-twice hash)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "knob",
+          "name": "GENERIC_BASELINE_PA / EXCEPTION_ON_PA / OFF_PA",
+          "ok": true,
+          "detail": "requested=(700.0, 1350.0, 150.0) applied=(700.0, 1350.0, 150.0)",
+          "note": ""
+        }
+      ],
+      "disabled_processes": [
+        {
+          "process": "homeostasis/stdp/hebbian/short-term-plasticity/structural-plasticity",
+          "why": "frozen cross-inhibition weights; a pure feedforward-driven competitive read, no learning"
+        }
+      ],
+      "undefined_reasons": [],
+      "mismatches": []
+    },
+    {
+      "seed": 44,
+      "verdict": "GO",
+      "seed_go": true,
+      "n_battery": 66,
+      "n_exception_qs": 58,
+      "n_generic_qs": 8,
+      "parity_rate": 1.0,
+      "n_match": 66,
+      "ambiguous": {
+        "winner": "RELFRONT",
+        "host": "RELFRONT",
+        "ok": true,
+        "rates": [
+          0.0,
+          0.0,
+          0.12291666666666666,
+          0.0
+        ]
+      },
+      "full_lesion": {
+        "all_generic": true,
+        "parity_rate": 0.12121212121212122
+      },
+      "attribution_exception_subset_intact_vs_lesioned": 1.0,
+      "per_pathway": {
+        "RELFRONT": {
+          "n": 7,
+          "rate": 1.0,
+          "ok": true
+        },
+        "KBREL": {
+          "n": 45,
+          "rate": 1.0,
+          "ok": true
+        },
+        "DEFCOP": {
+          "n": 6,
+          "rate": 1.0,
+          "ok": true
+        }
+      },
+      "per_pathway_independent": true,
+      "sweep": [
+        {
+          "gain": 0.0,
+          "rate_generic": 0.09513888888888888,
+          "rate_relfront": 0.0
+        },
+        {
+          "gain": 0.25,
+          "rate_generic": 0.09652777777777778,
+          "rate_relfront": 0.0020833333333333333
+        },
+        {
+          "gain": 0.5,
+          "rate_generic": 0.0,
+          "rate_relfront": 0.10833333333333334
+        },
+        {
+          "gain": 0.75,
+          "rate_generic": 0.0,
+          "rate_relfront": 0.1388888888888889
+        },
+        {
+          "gain": 1.0,
+          "rate_generic": 0.0,
+          "rate_relfront": 0.16180555555555556
+        }
+      ],
+      "sweep_flips": true,
+      "sweep_monotone": true,
+      "seed_deterministic": true,
+      "threshold_hash": "2445c4dd580bc724f00f6a44f81faa7342fccb28d2ae7269f6a6a94a0e3c18a7",
+      "preconditions": [
+        {
+          "kind": "require",
+          "name": "real generic-labeled subset non-empty",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "real exception-labeled subset non-empty",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "PARITY with host_route_type >= 0.95 over the full battery",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "ambiguous RELFRONT/KBREL overlap item resolves to RELFRONT (host priority)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "FULL exception lesion routes EVERY item to GENERIC (100%)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "EACH exception pathway independently sufficient (>=90% on its own subset, others lesioned)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "graded RELFRONT-evidence sweep FLIPS the winner from GENERIC to RELFRONT",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "determinism: cfg.seed seeds the substrate (build-twice hash)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "knob",
+          "name": "GENERIC_BASELINE_PA / EXCEPTION_ON_PA / OFF_PA",
+          "ok": true,
+          "detail": "requested=(700.0, 1350.0, 150.0) applied=(700.0, 1350.0, 150.0)",
+          "note": ""
+        }
+      ],
+      "disabled_processes": [
+        {
+          "process": "homeostasis/stdp/hebbian/short-term-plasticity/structural-plasticity",
+          "why": "frozen cross-inhibition weights; a pure feedforward-driven competitive read, no learning"
+        }
+      ],
+      "undefined_reasons": [],
+      "mismatches": []
+    },
+    {
+      "seed": 100,
+      "verdict": "GO",
+      "seed_go": true,
+      "n_battery": 66,
+      "n_exception_qs": 58,
+      "n_generic_qs": 8,
+      "parity_rate": 1.0,
+      "n_match": 66,
+      "ambiguous": {
+        "winner": "RELFRONT",
+        "host": "RELFRONT",
+        "ok": true,
+        "rates": [
+          0.0,
+          0.0,
+          0.15,
+          0.0
+        ]
+      },
+      "full_lesion": {
+        "all_generic": true,
+        "parity_rate": 0.12121212121212122
+      },
+      "attribution_exception_subset_intact_vs_lesioned": 1.0,
+      "per_pathway": {
+        "RELFRONT": {
+          "n": 7,
+          "rate": 1.0,
+          "ok": true
+        },
+        "KBREL": {
+          "n": 45,
+          "rate": 1.0,
+          "ok": true
+        },
+        "DEFCOP": {
+          "n": 6,
+          "rate": 1.0,
+          "ok": true
+        }
+      },
+      "per_pathway_independent": true,
+      "sweep": [
+        {
+          "gain": 0.0,
+          "rate_generic": 0.09930555555555555,
+          "rate_relfront": 0.0
+        },
+        {
+          "gain": 0.25,
+          "rate_generic": 0.09166666666666666,
+          "rate_relfront": 0.004166666666666667
+        },
+        {
+          "gain": 0.5,
+          "rate_generic": 0.0027777777777777775,
+          "rate_relfront": 0.10347222222222222
+        },
+        {
+          "gain": 0.75,
+          "rate_generic": 0.0,
+          "rate_relfront": 0.14722222222222223
+        },
+        {
+          "gain": 1.0,
+          "rate_generic": 0.0,
+          "rate_relfront": 0.17152777777777778
+        }
+      ],
+      "sweep_flips": true,
+      "sweep_monotone": true,
+      "seed_deterministic": true,
+      "threshold_hash": "e9642fc4d1019e752a64accfb3fe46fd2cb83b5a88d64880091f6e711747d680",
+      "preconditions": [
+        {
+          "kind": "require",
+          "name": "real generic-labeled subset non-empty",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "real exception-labeled subset non-empty",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "PARITY with host_route_type >= 0.95 over the full battery",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "ambiguous RELFRONT/KBREL overlap item resolves to RELFRONT (host priority)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "FULL exception lesion routes EVERY item to GENERIC (100%)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "EACH exception pathway independently sufficient (>=90% on its own subset, others lesioned)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "graded RELFRONT-evidence sweep FLIPS the winner from GENERIC to RELFRONT",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "determinism: cfg.seed seeds the substrate (build-twice hash)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "knob",
+          "name": "GENERIC_BASELINE_PA / EXCEPTION_ON_PA / OFF_PA",
+          "ok": true,
+          "detail": "requested=(700.0, 1350.0, 150.0) applied=(700.0, 1350.0, 150.0)",
+          "note": ""
+        }
+      ],
+      "disabled_processes": [
+        {
+          "process": "homeostasis/stdp/hebbian/short-term-plasticity/structural-plasticity",
+          "why": "frozen cross-inhibition weights; a pure feedforward-driven competitive read, no learning"
+        }
+      ],
+      "undefined_reasons": [],
+      "mismatches": []
+    },
+    {
+      "seed": 101,
+      "verdict": "GO",
+      "seed_go": true,
+      "n_battery": 66,
+      "n_exception_qs": 58,
+      "n_generic_qs": 8,
+      "parity_rate": 1.0,
+      "n_match": 66,
+      "ambiguous": {
+        "winner": "RELFRONT",
+        "host": "RELFRONT",
+        "ok": true,
+        "rates": [
+          0.0,
+          0.0,
+          0.15208333333333332,
+          0.0
+        ]
+      },
+      "full_lesion": {
+        "all_generic": true,
+        "parity_rate": 0.12121212121212122
+      },
+      "attribution_exception_subset_intact_vs_lesioned": 1.0,
+      "per_pathway": {
+        "RELFRONT": {
+          "n": 7,
+          "rate": 1.0,
+          "ok": true
+        },
+        "KBREL": {
+          "n": 45,
+          "rate": 1.0,
+          "ok": true
+        },
+        "DEFCOP": {
+          "n": 6,
+          "rate": 1.0,
+          "ok": true
+        }
+      },
+      "per_pathway_independent": true,
+      "sweep": [
+        {
+          "gain": 0.0,
+          "rate_generic": 0.09930555555555555,
+          "rate_relfront": 0.0
+        },
+        {
+          "gain": 0.25,
+          "rate_generic": 0.10138888888888889,
+          "rate_relfront": 0.0027777777777777775
+        },
+        {
+          "gain": 0.5,
+          "rate_generic": 0.0027777777777777775,
+          "rate_relfront": 0.10069444444444445
+        },
+        {
+          "gain": 0.75,
+          "rate_generic": 0.0,
+          "rate_relfront": 0.15069444444444444
+        },
+        {
+          "gain": 1.0,
+          "rate_generic": 0.0,
+          "rate_relfront": 0.17777777777777776
+        }
+      ],
+      "sweep_flips": true,
+      "sweep_monotone": true,
+      "seed_deterministic": true,
+      "threshold_hash": "5ef6ec95a9ab13a1c9e0a26408cf78e4a63ea67f70412c614bc65388478720f6",
+      "preconditions": [
+        {
+          "kind": "require",
+          "name": "real generic-labeled subset non-empty",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "real exception-labeled subset non-empty",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "PARITY with host_route_type >= 0.95 over the full battery",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "ambiguous RELFRONT/KBREL overlap item resolves to RELFRONT (host priority)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "FULL exception lesion routes EVERY item to GENERIC (100%)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "EACH exception pathway independently sufficient (>=90% on its own subset, others lesioned)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "graded RELFRONT-evidence sweep FLIPS the winner from GENERIC to RELFRONT",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "determinism: cfg.seed seeds the substrate (build-twice hash)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "knob",
+          "name": "GENERIC_BASELINE_PA / EXCEPTION_ON_PA / OFF_PA",
+          "ok": true,
+          "detail": "requested=(700.0, 1350.0, 150.0) applied=(700.0, 1350.0, 150.0)",
+          "note": ""
+        }
+      ],
+      "disabled_processes": [
+        {
+          "process": "homeostasis/stdp/hebbian/short-term-plasticity/structural-plasticity",
+          "why": "frozen cross-inhibition weights; a pure feedforward-driven competitive read, no learning"
+        }
+      ],
+      "undefined_reasons": [],
+      "mismatches": []
+    },
+    {
+      "seed": 102,
+      "verdict": "GO",
+      "seed_go": true,
+      "n_battery": 66,
+      "n_exception_qs": 58,
+      "n_generic_qs": 8,
+      "parity_rate": 1.0,
+      "n_match": 66,
+      "ambiguous": {
+        "winner": "RELFRONT",
+        "host": "RELFRONT",
+        "ok": true,
+        "rates": [
+          0.0,
+          0.0,
+          0.14652777777777776,
+          0.0
+        ]
+      },
+      "full_lesion": {
+        "all_generic": true,
+        "parity_rate": 0.12121212121212122
+      },
+      "attribution_exception_subset_intact_vs_lesioned": 1.0,
+      "per_pathway": {
+        "RELFRONT": {
+          "n": 7,
+          "rate": 1.0,
+          "ok": true
+        },
+        "KBREL": {
+          "n": 45,
+          "rate": 1.0,
+          "ok": true
+        },
+        "DEFCOP": {
+          "n": 6,
+          "rate": 1.0,
+          "ok": true
+        }
+      },
+      "per_pathway_independent": true,
+      "sweep": [
+        {
+          "gain": 0.0,
+          "rate_generic": 0.09375,
+          "rate_relfront": 0.0
+        },
+        {
+          "gain": 0.25,
+          "rate_generic": 0.06111111111111111,
+          "rate_relfront": 0.01111111111111111
+        },
+        {
+          "gain": 0.5,
+          "rate_generic": 0.00625,
+          "rate_relfront": 0.07986111111111112
+        },
+        {
+          "gain": 0.75,
+          "rate_generic": 0.0,
+          "rate_relfront": 0.1451388888888889
+        },
+        {
+          "gain": 1.0,
+          "rate_generic": 0.0,
+          "rate_relfront": 0.16875
+        }
+      ],
+      "sweep_flips": true,
+      "sweep_monotone": true,
+      "seed_deterministic": true,
+      "threshold_hash": "17155399fa34e227d56921d09f69cf0d24f1f932c2898eeee25d810ea2fb3849",
+      "preconditions": [
+        {
+          "kind": "require",
+          "name": "real generic-labeled subset non-empty",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "real exception-labeled subset non-empty",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "PARITY with host_route_type >= 0.95 over the full battery",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "ambiguous RELFRONT/KBREL overlap item resolves to RELFRONT (host priority)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "FULL exception lesion routes EVERY item to GENERIC (100%)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "EACH exception pathway independently sufficient (>=90% on its own subset, others lesioned)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "graded RELFRONT-evidence sweep FLIPS the winner from GENERIC to RELFRONT",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "determinism: cfg.seed seeds the substrate (build-twice hash)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "knob",
+          "name": "GENERIC_BASELINE_PA / EXCEPTION_ON_PA / OFF_PA",
+          "ok": true,
+          "detail": "requested=(700.0, 1350.0, 150.0) applied=(700.0, 1350.0, 150.0)",
+          "note": ""
+        }
+      ],
+      "disabled_processes": [
+        {
+          "process": "homeostasis/stdp/hebbian/short-term-plasticity/structural-plasticity",
+          "why": "frozen cross-inhibition weights; a pure feedforward-driven competitive read, no learning"
+        }
+      ],
+      "undefined_reasons": [],
+      "mismatches": []
+    }
+  ]
+}
