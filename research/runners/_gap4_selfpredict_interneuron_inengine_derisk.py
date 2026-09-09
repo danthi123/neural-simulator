@@ -113,7 +113,11 @@ class Gap4InEngineNet(Gap4OnBridgeNet):
         cols = (np.arange(n_pool) // K)
         scatter = np.zeros((self.n_total, H), dtype=np.float32)
         scatter[rows, cols] = 1.0
-        # the ENGINE flag + arrays (self.cfg IS the bridge's core_config; the block reads getattr(cfg, ...) each step).
+        # the ENGINE flags + arrays (self.cfg IS the bridge's core_config; the block reads getattr(cfg, ...) each step).
+        # enable_bdsp_microcircuit MUST be on so the existing block SUBTRACTS int_drive from the apical -- the parent
+        # __init__ resolves "micro_inengine" through the sibling module's _ARM_RULE, which lacks it, so rule defaults
+        # to plain_fa (=> enable_bdsp_microcircuit False). Set it here or the engine forms int_drive but it is inert.
+        self.cfg.enable_bdsp_microcircuit = True
         self.cfg.enable_selfpredicting_interneuron = True
         self.cfg.spi_lr = float(self.wpi_lr)
         self.br.cp_spi_wpi = xp.asarray(self.W_PI.astype(np.float64))   # PLASTIC in-engine weight (noisy or fixedpoint init)
@@ -408,6 +412,9 @@ def construct_smoke(args):
                 rec["cp_spi_wpi_learned_in_engine"] = bool(float(np.abs(wpi1 - wpi0).sum()) > 1e-9)
                 rec["selfpred_cos_before_after"] = [round(cos0, 4), round(cos1, 4)]
                 rec["int_drive_formed_by_engine"] = bool(net.br.cp_bdsp_int_drive is not None)
+                # both engine flags MUST be on, else the existing block never SUBTRACTS int_drive (cancellation inert).
+                rec["microcircuit_flag_on"] = bool(getattr(net.cfg, "enable_bdsp_microcircuit", False))
+                rec["selfpredict_flag_on"] = bool(getattr(net.cfg, "enable_selfpredicting_interneuron", False))
                 sil = net.inengine_apical_silent_stats(Xte, yte)
                 rec["apical_silent_read"] = {kk: (round(vv, 4) if isinstance(vv, float) and not np.isnan(vv) else vv)
                                              for kk, vv in sil.items()}
@@ -425,7 +432,8 @@ def construct_smoke(args):
 
     ast_ok = bool(_ast_no_forward_W(Gap4InEngineNet))
     ie = results.get("micro_inengine", {})
-    mech_ok = bool(ie.get("cp_spi_wpi_learned_in_engine") and ie.get("int_drive_formed_by_engine"))
+    mech_ok = bool(ie.get("cp_spi_wpi_learned_in_engine") and ie.get("int_drive_formed_by_engine")
+                   and ie.get("microcircuit_flag_on") and ie.get("selfpredict_flag_on"))
     ceiling_ok = (results.get("transport_ceiling", {}).get("no_weight_transport") is False)
     all_ok = (all(r["built"] and r["stepped"] and r["error"] is None for r in results.values())
               and seed_ok and ast_ok and off_clean and mech_ok and ceiling_ok)
