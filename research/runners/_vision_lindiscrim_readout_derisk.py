@@ -121,6 +121,32 @@ This tiny smoke instead only confirms the flags parse + run a single fast seed e
   SIM_BACKEND=numpy python -u -m research.runners._vision_lindiscrim_readout_derisk \
       --seeds 42 --n-s2 24 --n-pos-total 4 --n-ex 2 --n-glimpses 1 --heldout-position --scramble-null \
       --out research/findings/raw/lanes/perception/vlin_heldoutpos_scramblenull_smoke.json
+
+TRIPLE-ORDER CONJUNCTION smoke + decisive recipe (2026-09-09, this de-risk; --conj-order triple; NEXT
+MECHANISM after the PARTIAL landing conjbind_bindarm_n1152_heldoutpos_scramblenull_6seed.json --
+LINDISCRIM-READOUT-PARTIAL-beat0/6-lb4/6, whose RATE_lin_ceiling_held (0.3403) sat AT the NO-GO floor
+(0.34), diagnosing the residual as REPRESENTATIONAL -- the pairwise conjunction code's own linear
+ceiling, not the spike port or the readout class -- see _make_conjunction_bank_triple for the full
+reasoning). --conj-order pair (default) is byte-identical to every prior run; --conj-order triple
+switches to third-order (a,b,c;Delta1,Delta2) conjunction units.
+PRE-REGISTERED GO GATE (identical criteria + anti-cheats to the PARTIAL landing -- only the front-end
+representation changes): task GO = beats_config_c_nogo (learn_spkwta_held >= nogo_floor+beat_margin)
+AND learning_load_bearing (learned - random >= beat_margin), each at >=5/6 seeds, under
+--heldout-position --scramble-null. capability_go additionally requires clearing V1-direct/flat-pool
+floors + the position-pooled-out and label-shuffle-null anti-cheats (unchanged formulas, see
+run_seed). A PARTIAL (some but not >=5/6) is a partial win, not a GO; a result at or below the prior
+PARTIAL's beat0/6-lb4/6 is a NO-GO for this lever (bank the method, next lever is NOT deferred).
+Tiny smoke (confirms triple-order parses + runs + the anti-cheats compute, seconds not minutes):
+  SIM_BACKEND=numpy python -u -m research.runners._vision_lindiscrim_readout_derisk \
+      --seeds 42 --n-s2 24 --conj-bind fixed --conj-order triple --conj-n 96 --conj-offset-max 2 \
+      --n-pos-total 4 --n-ex 2 --n-glimpses 1 --heldout-position --scramble-null \
+      --out research/findings/raw/lanes/perception/vlin_triple_smoke.json
+DECISIVE 6-seed eval (same scale/op-point as the PARTIAL landing's own conj_bind=fixed conj_n=1152
+run, --conj-order triple the only change; route via tools/gpu_queue.sh, do not run inline):
+  SIM_BACKEND=numpy .venv/bin/python -u -m research.runners._vision_lindiscrim_readout_derisk \
+      --ridge 0.5 --conj-bind fixed --conj-order triple --conj-n 1152 --conj-offset-max 4 \
+      --n-s2 96 --heldout-position --scramble-null --seeds 42 43 44 100 101 102 \
+      --out research/findings/raw/lanes/perception/conjbind_triple_n1152_heldoutpos_scramblenull_6seed.json
 """
 from __future__ import annotations
 
@@ -340,6 +366,115 @@ def _bind_conjunctions(drive, pairs, offsets, mode, shuffle_seed=None):
     return out.reshape(N, g * g, n_conj)
 
 
+def _make_conjunction_bank_triple(n_s2, conj_n, offset_max, delta0_only, seed):
+    """2026-09-09 NEXT MECHANISM (this de-risk) -- sample (template_a, template_b, template_c,
+    Delta1, Delta2) quadruples for a THIRD-ORDER S2.5 conjunctive layer: the natural extension of
+    `_make_conjunction_bank`'s PAIRWISE AND to a THREE-WAY coincidence, chosen because it targets
+    the diagnosed residual directly. THE DIAGNOSIS (from the PARTIAL landing this builds on,
+    conjbind_bindarm_n1152_heldoutpos_scramblenull_6seed.json): RATE_lin_ceiling_held -- the best
+    possible LINEAR readout of the (frozen, random) PAIRWISE conjunction code -- averages 0.3403,
+    i.e. it sits AT the #72/#75 NO-GO floor (0.34), not above it (headroom
+    learned_minus_nogo_floor = -0.0119). Width sweeps (conj_n 1024->2304) and normalization sweeps
+    already plateaued (2026-09-03 finding: 'a fragile peak, not a plateau'). Since the READOUT is
+    LINEAR (ridge / three-factor delta) and its own ceiling is capped, the residual cannot be a
+    readout-class problem (already fixed by the FF-inhibition signed discriminant, 4/6 seeds
+    learning-load-bearing) -- it must be that the PAIRWISE conjunction features themselves do not
+    carry enough configural information for a linear combination to reconstruct.
+
+    WHY THIRD ORDER SPECIFICALLY: this task's objects have n_slots=3 (`_object_classes`/
+    `_render_object` -- each class is a distinct PERMUTATION of 3 oriented strokes across 3
+    relative slots; research/runners/_vision_hmax_hierarchy_derisk.py:131-174). A pairwise unit
+    AND(a@p, b@p+Delta) can specify at most 2 of the 3 slots at once. Two permutations of 3
+    elements that share any 2 fixed positions are IDENTICAL (a permutation of 3 is determined by
+    2 of its images), so pairwise conjunctions ARE in principle sufficient IF the exact
+    discriminating pair is sampled with enough redundancy -- but the fixed-random bank draws
+    (a,b,Delta) uniformly from a huge combinatorial space (n_s2^2 x |offsets| ~= 74k triples at
+    n_s2=96) while allocating only ~1-2k units, so correct-pair coverage is thin and most units
+    combine uninformative templates. A unit that ANDs all THREE slot-relevant templates in ONE
+    place is a strictly higher-SNR feature for this task's structure: it fires ONLY for its own
+    fully-specified triple, never partially, so a linear readout needs far less redundant coverage
+    per discriminating configuration than reconstructing the same specificity by linearly
+    combining several partial pairwise indicators (a linear combination of pairwise-AND features
+    cannot implement a logical AND of two independent pairwise events without already having the
+    conjoined feature as one of its inputs -- the same reason XOR needs a hidden unit).
+
+    BRAIN-BASED, and STILL THE SAME established biology, not a new primitive: this is NOT a novel
+    three-input primitive -- `research/biology/coincidence-binding.md` (status: established)
+    already grounds "two signals in, a supralinear conjunction out" (Kandel PNS-6e, NMDA-receptor
+    Mg2+-block supralinearity). The triple AND here is built as a CASCADE of two applications of
+    that SAME pairwise primitive (`_bind_conjunctions_triple` computes AND(AND(a,b),c), which for
+    both 'min' and 'prod' is associative and identical to a direct three-way AND) -- the biological
+    correlate is two dendritic branches each performing a local pairwise coincidence check, with
+    their outputs converging on a shared integrative compartment for a second coincidence check
+    (Poirazi, Brannon & Mel 2003, Neuron 37:989, the two-layer branch-then-soma dendritic model);
+    IT neurons are independently reported to conjunctively encode multi-part shape ARRANGEMENTS,
+    not isolated pairs (Brincat & Connor 2004, Nat. Neurosci. 7:880). No new `research/biology/`
+    entry is registered because no new claim beyond the existing established one is being made.
+
+    Returns triples (conj_n,3) int64 (S2 template indices for a,b,c) and offsets (conj_n,2) int64
+    (relative x-displacements Delta1 for b, Delta2 for c, both re. a's location; same sampling
+    contract as `_make_conjunction_bank`'s single Delta -- nonzero unless delta0_only, which zeros
+    BOTH, the analogous degenerate same-location-AND control). Sampled ONCE PER SEED from a stream
+    (`seed*953+41`) DISTINCT from the pairwise bank's (`seed*641+17`) so 'pair' and 'triple' arms
+    never share correlated random draws."""
+    rng = np.random.default_rng(seed * 953 + 41)
+    triples = rng.integers(0, n_s2, size=(conj_n, 3))
+    if delta0_only:
+        offsets = np.zeros((conj_n, 2), dtype=np.int64)
+    else:
+        off_set = np.array([d for d in range(-offset_max, offset_max + 1) if d != 0])
+        offsets = rng.choice(off_set, size=(conj_n, 2))
+    return triples.astype(np.int64), offsets.astype(np.int64)
+
+
+def _bind_conjunctions_triple(drive, triples, offsets, mode, shuffle_seed=None):
+    """THIRD-ORDER analogue of `_bind_conjunctions` (see `_make_conjunction_bank_triple` for the
+    design rationale): conj_response_c(image) = MAX over absolute location p of
+    AND(drive[p,a], drive[p+Delta1,b], drive[p+Delta2,c]) -- a cascade of two pairwise supralinear
+    coincidence detections (AND(AND(a,b),c)), the SAME established primitive
+    `_bind_conjunctions` uses, applied twice. Same wrap-around-drop / shuffle-lesion / Delta=0
+    degenerate-control semantics as the pairwise version, applied independently to each of the two
+    offset afferents (b at Delta1, c at Delta2); the offset-shuffle lesion draws an INDEPENDENT
+    permutation for b and for c (both derived from the same per-call `shuffle_seed`-seeded
+    Generator, so still fully reproducible across the train/held/scramble splits of one seed).
+
+    drive (N, n_loc, n_S2) post-`_apply_s2_norm`/post-`_kwta_over_templates`. Returns
+    (N, n_loc, n_conj) -- MAX-pooled over n_loc unchanged by the caller, identical to the pairwise
+    contract."""
+    N, n_loc, n_S2 = drive.shape
+    g = int(round(n_loc ** 0.5))
+    if g * g != n_loc:
+        raise ValueError(f"_bind_conjunctions_triple assumes a square C1 location grid; got n_loc={n_loc}")
+    da = drive.reshape(N, g, g, n_S2)
+    n_conj = triples.shape[0]
+    srng = np.random.default_rng(shuffle_seed) if shuffle_seed is not None else None
+
+    def _afferent(idx, d):
+        if srng is not None:
+            return da[:, :, srng.permutation(g), idx]          # LESION: unrelated location
+        if d == 0:
+            return da[:, :, :, idx]                            # Delta=0 degenerate control
+        r = np.roll(da[:, :, :, idx], -d, axis=2).copy()
+        if d > 0:
+            r[:, :, g - d:] = 0.0                               # drop wrap-around, keep binding local
+        else:
+            r[:, :, :-d] = 0.0
+        return r
+
+    out = np.zeros((N, g, g, n_conj), dtype=np.float32)
+    for c in range(n_conj):
+        a_idx, b_idx, c_idx = int(triples[c, 0]), int(triples[c, 1]), int(triples[c, 2])
+        d1, d2 = int(offsets[c, 0]), int(offsets[c, 1])
+        aresp = da[:, :, :, a_idx]
+        bresp = _afferent(b_idx, d1)
+        cresp = _afferent(c_idx, d2)
+        if mode == "prod":
+            out[:, :, :, c] = aresp * bresp * cresp
+        else:
+            out[:, :, :, c] = np.minimum(np.minimum(aresp, bresp), cresp)
+    return out.reshape(N, g * g, n_conj)
+
+
 def _bcm_learn_s2_templates(patches_flat, W0, gain, theta_alpha, pre_floor, epochs, renorm,
                              competitive_frac, seed):
     """Activity-dependent BCM (Bienenstock, Cooper & Munro 1982) learning of the S2 template bank --
@@ -461,13 +596,15 @@ def _bcm_learn_s2_templates(patches_flat, W0, gain, theta_alpha, pre_floor, epoc
 
 
 def _c2_spike_code(c1, W0, a, code, base_seed, n_glimpses, conj_pairs=None, conj_offsets=None,
-                    conj_shuffle_seed=None):
+                    conj_shuffle_seed=None, conj_order="pair"):
     """c1 (N, n_orient, g, g) spiking C1 -> convolutional S2 cosine match -> S2 lateral inhibition
     (winner-relative contrast) -> [S2.5 CONFIGURAL-BINDING conjunctions, --conj-bind != none, design
-    2026-09-03] -> LIF S2 coincidence spikes -> C2 per-template MAX over locations (position-invariant).
-    Averaged over `n_glimpses` INDEPENDENT LIF draws (temporal evidence integration; G=1 reproduces the
-    config-C single-glimpse read). `conj_pairs`/`conj_offsets`/`conj_shuffle_seed` default None ->
-    `_bind_conjunctions` is never called -> BYTE-IDENTICAL to every prior run of this file. Returns
+    2026-09-03; --conj-order triple, 2026-09-09] -> LIF S2 coincidence spikes -> C2 per-template MAX
+    over locations (position-invariant). Averaged over `n_glimpses` INDEPENDENT LIF draws (temporal
+    evidence integration; G=1 reproduces the config-C single-glimpse read). `conj_pairs`/
+    `conj_offsets`/`conj_shuffle_seed` default None -> no binding call at all -> BYTE-IDENTICAL to
+    every prior run of this file. `conj_order` ('pair', default, or 'triple') selects which binding
+    primitive is applied when binding IS on -- 'pair' reproduces the exact prior behaviour. Returns
     r (N, n_S2) when off, r (N, n_conj) when the binding stage is on (D flows through via array shape)."""
     patches = _extract_patches(c1, a.s2_p)                     # (N, n_loc, D)
     N, n_loc, D = patches.shape
@@ -477,7 +614,8 @@ def _c2_spike_code(c1, W0, a, code, base_seed, n_glimpses, conj_pairs=None, conj
     drive = _kwta_over_templates(drive, getattr(a, "s2_kwta_frac", 0.0))
     s2_gain = a.s2_gain
     if conj_pairs is not None:
-        drive = _bind_conjunctions(drive, conj_pairs, conj_offsets, a.conj_mode, conj_shuffle_seed)
+        bind_fn = _bind_conjunctions_triple if conj_order == "triple" else _bind_conjunctions
+        drive = bind_fn(drive, conj_pairs, conj_offsets, a.conj_mode, conj_shuffle_seed)
         if a.conj_mode == "coincidence":
             # the spiking arm's predicted-positive: raise the LIF gain (~a raised firing threshold for
             # the coincidence-detector soma) so the class-population read only responds to genuinely
@@ -496,7 +634,7 @@ def _c2_spike_code(c1, W0, a, code, base_seed, n_glimpses, conj_pairs=None, conj
     return (acc / G).astype(np.float32)
 
 
-def _c2_rate_code(c1, W0, a, conj_pairs=None, conj_offsets=None, conj_shuffle_seed=None):
+def _c2_rate_code(c1, W0, a, conj_pairs=None, conj_offsets=None, conj_shuffle_seed=None, conj_order="pair"):
     """The RATE C2 features (cosine match + z lateral inhibition + [S2.5 binding] + MAX over locations,
     NO LIF): the ceiling reference for a signed linear readout. Binding args default None -> byte-
     identical (see `_c2_spike_code`)."""
@@ -507,7 +645,8 @@ def _c2_rate_code(c1, W0, a, conj_pairs=None, conj_offsets=None, conj_shuffle_se
     drive = _apply_s2_norm(drive, a)
     drive = _kwta_over_templates(drive, getattr(a, "s2_kwta_frac", 0.0))
     if conj_pairs is not None:
-        drive = _bind_conjunctions(drive, conj_pairs, conj_offsets, a.conj_mode, conj_shuffle_seed)
+        bind_fn = _bind_conjunctions_triple if conj_order == "triple" else _bind_conjunctions
+        drive = bind_fn(drive, conj_pairs, conj_offsets, a.conj_mode, conj_shuffle_seed)
     return drive.max(axis=1).astype(np.float32)                # (N, n_S2 or n_conj)
 
 
@@ -647,22 +786,24 @@ def run_seed(seed, a, code):
     # like W0 above -- a conjunction unit's index must mean the SAME (a,b,Delta) triple on every split.
     conj_pairs = conj_offsets = None
     conj_shuffle_seed = None
+    conj_order = getattr(a, "conj_order", "pair")
     if getattr(a, "conj_bind", "none") != "none":
-        conj_pairs, conj_offsets = _make_conjunction_bank(
+        bank_fn = _make_conjunction_bank_triple if conj_order == "triple" else _make_conjunction_bank
+        conj_pairs, conj_offsets = bank_fn(
             W0.shape[0], a.conj_n, a.conj_offset_max, bool(getattr(a, "conj_delta0", False)), seed)
         if getattr(a, "conj_shuffle", False):
             conj_shuffle_seed = seed * 823 + 29
 
     # ---- C2 spike code (SAME features config C reads), averaged over G glimpses (temporal integration) ----
     r_tr = _c2_spike_code(tr_c1, W0, a, code, seed * 991 + 100, a.n_glimpses,
-                          conj_pairs, conj_offsets, conj_shuffle_seed)
+                          conj_pairs, conj_offsets, conj_shuffle_seed, conj_order)
     r_he = _c2_spike_code(he_c1, W0, a, code, seed * 991 + 200, a.n_glimpses,
-                          conj_pairs, conj_offsets, conj_shuffle_seed)
+                          conj_pairs, conj_offsets, conj_shuffle_seed, conj_order)
     r_sc = _c2_spike_code(sc_c1, W0, a, code, seed * 991 + 300, a.n_glimpses,
-                          conj_pairs, conj_offsets, conj_shuffle_seed)
+                          conj_pairs, conj_offsets, conj_shuffle_seed, conj_order)
     # RATE C2 features (ceiling reference)
-    rr_tr = _c2_rate_code(tr_c1, W0, a, conj_pairs, conj_offsets, conj_shuffle_seed)
-    rr_he = _c2_rate_code(he_c1, W0, a, conj_pairs, conj_offsets, conj_shuffle_seed)
+    rr_tr = _c2_rate_code(tr_c1, W0, a, conj_pairs, conj_offsets, conj_shuffle_seed, conj_order)
+    rr_he = _c2_rate_code(he_c1, W0, a, conj_pairs, conj_offsets, conj_shuffle_seed, conj_order)
 
     # ---- LEARNED signed linear readout on the SPIKE C2 code ----
     V, b, mu, sd = _train_linreadout(r_tr, tr_cls, a.n_classes, a, seed)
@@ -972,6 +1113,15 @@ def main():
                    help="'fixed' mode only: number of conjunctive units. --n-s2 192 with --conj-bind "
                         "none is the WIDTH-MATCHED FLAT CONTROL (anti-cheat 1, the ELM/Huang-Zhu-Siew "
                         "2006 capacity confound) -- same feature count, no binding, must NOT clear GO.")
+    p.add_argument("--conj-order", choices=["pair", "triple"], default="pair",
+                   help="2026-09-09 NEXT MECHANISM (post-PARTIAL, no-defer): 'pair' (default) is the "
+                        "exact prior behaviour, byte-identical. 'triple' switches to THIRD-ORDER "
+                        "conjunction units (a,b,c;Delta1,Delta2) -- see _make_conjunction_bank_triple "
+                        "-- built as a cascade of two applications of the SAME established pairwise "
+                        "coincidence-binding primitive (research/biology/coincidence-binding.md), "
+                        "targeting the diagnosed residual: the PARTIAL landing's RATE_lin_ceiling_held "
+                        "(the best possible LINEAR read of the pairwise code) sits AT the NO-GO floor "
+                        "(0.3403 vs 0.34), so the bottleneck is representational, not the readout class.")
     p.add_argument("--conj-offset-max", type=int, default=4,
                    help="'fixed' mode only: sample Delta (afferent b's relative x-displacement) from "
                         "+-1..+-this value (location units). Ignored when --conj-delta0-only is set.")
