@@ -52,3 +52,6 @@ Appended a plain-language update to #130 -- v8's real-scale port (GO 6/6, unchan
 
 ## 2026-09-09  mouth-2B-noGO-correction
 Corrected board #193: the d192x2B AWS scale-up NEXT was a concluded NO-GO (re-derivation caught + instance terminated); Qwen broad-domain crutch stands per owner 2026-09-08. Frontier = other scaffold-retirements.
+
+## 2026-09-09  scaffold-retire-novelty-habituation
+Added de-risked task for the host set-membership novelty -> spiking short-term-depression habituation de-risk (6/6 GO, commit 3cf6bc52, owner #1 priority). D-vision competitive-select lane-best (ebaba694) + sweep-exhausted noted in GAP_CLOSURE; AWS re-derivation + B-park + pool-restore reconciled this session.
