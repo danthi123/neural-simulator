@@ -1,0 +1,12 @@
+{
+ "schema": "parallel-audit-state-v1",
+ "generated_at": 1788915469.2018645,
+ "under_agents": false,
+ "under_compute": true,
+ "since_under_agents": null,
+ "since_under_compute": 1788913868.000299,
+ "agents": 3,
+ "idle_pool": 23,
+ "gpu_free": false,
+ "n_open": 44
+}

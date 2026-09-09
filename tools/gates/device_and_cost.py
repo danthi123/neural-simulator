@@ -56,10 +56,11 @@ def _is_structural_record(obj):
     # deliberately records lanes, agents, and resource observations separately;
     # forcing it to pretend it has a completed backend/cost receipt would make
     # the provenance gate less precise, not more protective.
-    if schema in ("sim-autonomous-workboard-v1", "board-sync-v1", "tool-health-v1"):
-        # board-sync-v1 (tools/vikunja.sh receipt) + tool-health-v1 (tools/tool_health.py smoke) are
-        # coordination/state files under research/coordination/, not scientific runs; a backend/cost receipt
-        # would be meaningless for them (the same rationale as the workboard above).
+    if schema in ("sim-autonomous-workboard-v1", "board-sync-v1", "tool-health-v1", "parallel-audit-state-v1"):
+        # board-sync-v1 (tools/vikunja.sh receipt) + tool-health-v1 (tools/tool_health.py smoke) +
+        # parallel-audit-state-v1 (tools/parallel_state.py's persistence record for the under-parallelization
+        # gates, 2026-09-08) are coordination/state files under research/coordination/, not scientific runs;
+        # a backend/cost receipt would be meaningless for them (the same rationale as the workboard above).
         return True
     if obj.get("execution") == "not_executed" and isinstance(obj.get("argv"), list):
         return True
@@ -199,4 +200,8 @@ def selftest():
         if _check_one(w("tool_health.json", {"schema": "tool-health-v1", "results": []}),
                       "research/coordination/tool_health.json"):
             bad.append("FALSE POSITIVE: treated the tool-health smoke as a completed result")
+        # 11c. NEGATIVE CONTROL — the parallel-audit persistence record (2026-09-08) is coordination state.
+        if _check_one(w("parallel_audit_state.json", {"schema": "parallel-audit-state-v1", "under_agents": True}),
+                      "research/coordination/parallel_audit_state.json"):
+            bad.append("FALSE POSITIVE: treated the parallel-audit persistence record as a completed result")
     return bad

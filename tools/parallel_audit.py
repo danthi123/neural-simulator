@@ -12,12 +12,30 @@ UNDER-PARALLELIZED, holding IS a stall — launch the listed work (independent l
 build/research, pool for CPU de-risks, GPU for the big run) BEFORE holding.
 
 Output is one heartbeat-friendly block. Exit 0 always (advisory-to-the-shell, blocking-to-me).
+
+2026-09-08 (owner-caught: a whole session under-parallelized while this printed correctly every cycle and
+was read past — "past fixes failed being manual/advisory/passive"). Printing to a 15-minute heartbeat is
+ADVISORY on its own; this script now also PERSISTS its verdict (`tools/parallel_state.py`, one record per
+cycle in `research/coordination/parallel_audit_state.json`, tracking how long each condition has read true
+CONTINUOUSLY) so `tools/gates/compute_idle_persistent.py` can BLOCK a commit once dedicated compute (a pool
+node / the GPU) has sat idle with ready work for too long — the same enforcement shape `gates/lane_starvation`
+already uses for idle CPU lanes, just fed by this script's own idle-dedicated-compute signal instead. The
+agent-floor signal (fewer than AGENT_FLOOR concurrent agents) is reported persistently too
+(`gates/agent_floor_persistent`, non-blocking) but NOT escalated to a hard block here — see that gate's
+docstring for why forcing a minimum agent count to commit is a judgement call left for owner review.
 """
-import json, os, re, subprocess, sys
+import json, os, re, subprocess, sys, time
+
+import parallel_state
 
 ROOT = "/home/dant123/Projects/sim"
 POOL = ["pool40", "pool41", "pool42"]
 VIK = os.path.join(ROOT, "tools", "vikunja.sh")
+# Every subagent (however it was spawned) gets a transcript at <session>/subagents/**/agent-<id>.jsonl.
+# A standalone Agent-tool call's transcript sits directly under subagents/; a Workflow's agent() call
+# (a .claude/workflows/*.js fan-out, or an ad-hoc workflow script) writes its transcript one level deeper,
+# under subagents/workflows/wf_<run-id>/. See active_agents() below for why this matters.
+CLAUDE_PROJECTS_DIR = "/home/dant123/.claude/projects/-home-dant123-Projects-sim"
 
 
 def sh(cmd, timeout=10):
@@ -71,16 +89,29 @@ def pool_idle():
     return idle, lanes, up
 
 
-def active_agents():
-    # Count in-flight Claude subagents by their transcript activity. Agent .output files are SYMLINKS to
-    # the growing JSONL transcript; backgrounded bash/monitor .output files are REGULAR files. So: count
-    # only symlinks (agents, not bash tasks) whose TARGET was written in the last ~15 min — `find -L`
-    # follows the link so mtime is the agent's REAL activity, not the symlink's creation time. The old
-    # `-mmin -12` on the symlink itself undercounted every agent running longer than 12 min (the symlink
-    # is stamped once at launch and never re-touched), so a live 1-2 agent hold read as 0 — an audit that
-    # cries "0 agents / STALL" while agents are genuinely building trains the reader to ignore it.
-    out = sh(r"""c=0; for f in /tmp/claude-1000/-home-dant123-Projects-sim/*/tasks/*.output; do """
-             r"""[ -L "$f" ] && [ -n "$(find -L "$f" -mmin -15 2>/dev/null)" ] && c=$((c+1)); done; echo $c""")
+def active_agents(base=None):
+    # Count in-flight Claude subagents by their transcript activity. Agent .output files under a session's
+    # tasks/ dir are SYMLINKS to the growing JSONL transcript; backgrounded bash/monitor .output files are
+    # REGULAR files. The original version counted only those symlinks (agents, not bash tasks) whose TARGET
+    # was written in the last ~15 min — `find -L` follows the link so mtime is the agent's REAL activity,
+    # not the symlink's creation time (a prior `-mmin -12` bug on the symlink ITSELF undercounted every
+    # agent running longer than 12 min, since the symlink is stamped once at launch and never re-touched).
+    #
+    # 2026-09-08 BUG (owner-caught): that symlink walk sees ONLY standalone Agent-tool calls. A Workflow
+    # fan-out (agent() calls inside a .claude/workflows/*.js script, or an ad-hoc workflow script) NEVER
+    # gets a tasks/*.output symlink for its agents — each agent() spawns a transcript one level deeper, at
+    # <session>/subagents/workflows/wf_<run-id>/agent-<id>.jsonl, which nothing in tasks/ ever points to.
+    # So a live 6-agent workflow fan-out read as agents=0 here, printing UNDER-PARALLELIZED (false positive)
+    # for the exact activity the gate exists to reward — the false alarm this session was built to fix.
+    #
+    # FIX: stop walking the /tmp symlink layer (an indirection that only covers one spawn path) and count
+    # the transcripts directly. EVERY subagent, standalone or workflow-spawned, writes an appended
+    # subagents/**/agent-<id>.jsonl (agent-<id>.jsonl at the top level for a standalone call, one directory
+    # deeper under subagents/workflows/wf_<run-id>/ for a workflow's agent()); both are written/appended
+    # identically while the agent runs, so recent mtime is real activity in both cases. `find` recurses by
+    # default, so one glob (subagents/*, no depth limit) catches both shapes without special-casing either.
+    root = base if base is not None else CLAUDE_PROJECTS_DIR
+    out = sh(r"""find %s/*/subagents -name 'agent-*.jsonl' -mmin -15 2>/dev/null | wc -l""" % root, timeout=15)
     try:
         return int(out)
     except Exception:
@@ -137,17 +168,35 @@ def main():
     under_compute = have_ready and dedicated_idle            # a dedicated lane idle with ready work
     under = under_agents or under_compute
 
+    # PERSIST the verdict (2026-09-08 fix for Defect 2: "past fixes failed being manual/advisory/passive").
+    # A printed line is read past; a record on disk lets a commit-time gate ask "how long has this been
+    # true, continuously" and BLOCK past a budget instead of relying on someone re-reading the heartbeat.
+    # Best-effort only (never raises, never changes this script's exit code — see tools/parallel_state.py).
+    now_ts = time.time()
+    state = parallel_state.persist(now_ts, under_agents=under_agents, under_compute=under_compute,
+                                    agents=agents, idle_pool=idle_pool, gpu_free=gpu_free,
+                                    n_open=(n_open if n_open is not None else 0))
+    streak_c = state.get("since_under_compute")
+    streak_a = state.get("since_under_agents")
+    streak_c_min = int((now_ts - streak_c) / 60) if streak_c is not None else 0
+    streak_a_min = int((now_ts - streak_a) / 60) if streak_a is not None else 0
+
     print("─ PARALLEL AUDIT ─ lanes=%d (local %d + pool %d + agents %d) | GPU=%s | open-tasks=%s"
           % (total_lanes, lanes_local, lanes_pool, agents, ("%d%%" % gpu if gpu >= 0 else "n/a"),
              (str(n_open) if n_open is not None else "?")))
     if under:
         why = []
         if under_agents:
-            why.append("only %d build/research agent(s) running (floor %d) — agent work is NOT compute-limited, FAN OUT MORE"
-                       % (agents, AGENT_FLOOR))
+            why.append("only %d build/research agent(s) running (floor %d, %d min straight) — agent work is "
+                       "NOT compute-limited, FAN OUT MORE" % (agents, AGENT_FLOOR, streak_a_min))
         if under_compute:
-            why.append("idle %s ; %d ready tasks vs %d lanes" % (", ".join(cap), n_open, total_lanes))
+            why.append("idle %s ; %d ready tasks vs %d lanes (%d min straight)"
+                       % (", ".join(cap), n_open, total_lanes, streak_c_min))
         print("⛔ UNDER-PARALLELIZED (a STALL, not a hold) — %s." % " ; ".join(why))
+        if under_compute and streak_c_min >= 30:
+            print("   ⏱  dedicated compute has read idle-with-ready-work for %d min straight — past the "
+                  "point `gates/compute_idle_persistent` blocks a commit on (mirrors gates/lane_starvation)."
+                  % streak_c_min)
         print("   The parallelizable backlog is ALWAYS bigger than the board — roadmap de-risks, pending 6-seed")
         print("   validations, faculty wirings, consolidations. LAUNCH concurrent agents/workflows now (pool for CPU,")
         print("   GPU for the big run). Board frontier rows for anchors:")
@@ -180,10 +229,98 @@ def _under_decision(have_ready, dedicated_idle, agents, n_open, total_lanes, age
     return under_agents or under_compute
 
 
+def _selftest_agent_detection():
+    """FAILING DIRECTION FIRST (2026-09-08 fix). Before this fix, active_agents() walked ONLY
+    tasks/*.output symlinks, which a Workflow fan-out's agent() calls never get (their transcripts land
+    one directory deeper, at subagents/workflows/wf_<run-id>/agent-<id>.jsonl). A fixture holding ONLY a
+    workflow-nested transcript reproduces that exact bug: the old logic would read agents=0 here. Also
+    checks a standalone (top-level) transcript is still counted, and that a stale (>15min) transcript and
+    a non-agent file are correctly excluded — so the fix doesn't just widen the glob into a false positive.
+    """
+    import shutil, tempfile, time as _time
+    bad = []
+
+    tmp = tempfile.mkdtemp(prefix="parallel_audit_selftest_")
+    try:
+        sess = os.path.join(tmp, "sess1", "subagents")
+        wf = os.path.join(sess, "workflows", "wf_fake123")
+        os.makedirs(sess)
+        os.makedirs(wf)
+        standalone = os.path.join(sess, "agent-standaloneFAKE.jsonl")
+        workflow_agent = os.path.join(wf, "agent-workflowFAKE.jsonl")
+        stale = os.path.join(sess, "agent-staleFAKE.jsonl")
+        not_agent = os.path.join(sess, "notes.jsonl")  # must NOT match agent-*.jsonl
+        for p in (standalone, workflow_agent, stale, not_agent):
+            open(p, "w").close()
+        old = _time.time() - 30 * 60  # 30 min ago -> outside the 15-min recency window
+        os.utime(stale, (old, old))
+        got = active_agents(base=tmp)
+        if got != 2:
+            bad.append("expected 2 recent transcripts (1 standalone + 1 workflow-nested), got %d over a "
+                       "fixture with a stale transcript + a non-agent file present (must exclude both)" % got)
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+
+    # THE REGRESSION IN ISOLATION: a fan-out with agents running but NO standalone agent at all -- this is
+    # what a pure Workflow run looks like, and it is exactly the case that read as 0 this session.
+    tmp2 = tempfile.mkdtemp(prefix="parallel_audit_selftest2_")
+    try:
+        wf2 = os.path.join(tmp2, "sess1", "subagents", "workflows", "wf_onlyme")
+        os.makedirs(wf2)
+        open(os.path.join(wf2, "agent-onlyworkflow.jsonl"), "w").close()
+        got2 = active_agents(base=tmp2)
+        if got2 != 1:
+            bad.append("REGRESSION: a workflow-ONLY fan-out (no standalone agent) counted as %d, expected "
+                       "1 -- this is the exact false 'agents=0' bug a live workflow fan-out hit" % got2)
+    finally:
+        shutil.rmtree(tmp2, ignore_errors=True)
+
+    return bad
+
+
+def _selftest_persist_state():
+    """FAILING DIRECTION FIRST (2026-09-08, Defect 2). A condition true on two CONSECUTIVE cycles must keep
+    reporting the streak's ORIGINAL start, not reset it each cycle — a reset-every-cycle bug would make
+    "how long has this read true, continuously" always ~0 and the persistence-based gate unable to ever
+    fire, the exact "check that cannot fail" failure class (docs/FAILURE_GATE_MATRIX.md class 3)."""
+    bad = []
+    t0 = 1_000_000.0
+    s1 = parallel_state.next_state(None, t0, under_agents=True, under_compute=False,
+                                    agents=1, idle_pool=0, gpu_free=False, n_open=5)
+    if s1["since_under_agents"] != t0:
+        bad.append("first cycle true -> since_under_agents must equal now (%r), got %r" % (t0, s1["since_under_agents"]))
+    t1 = t0 + 900.0  # 15 min later, STILL true
+    s2 = parallel_state.next_state(s1, t1, under_agents=True, under_compute=False,
+                                    agents=1, idle_pool=0, gpu_free=False, n_open=5)
+    if s2["since_under_agents"] != t0:
+        bad.append("REGRESSION: a condition true on two consecutive cycles reset its streak start (got %r, "
+                   "expected the ORIGINAL %r) -- this would make persistence-duration always ~0" % (s2["since_under_agents"], t0))
+    t2 = t1 + 900.0  # now healthy
+    s3 = parallel_state.next_state(s2, t2, under_agents=False, under_compute=False,
+                                    agents=5, idle_pool=0, gpu_free=False, n_open=5)
+    if s3["since_under_agents"] is not None:
+        bad.append("FALSE POSITIVE: streak start was not cleared once the condition read healthy")
+    t3 = t2 + 60.0  # re-triggers after a healthy gap
+    s4 = parallel_state.next_state(s3, t3, under_agents=True, under_compute=False,
+                                    agents=1, idle_pool=0, gpu_free=False, n_open=5)
+    if s4["since_under_agents"] != t3:
+        bad.append("a condition that RE-TRIGGERS after a healthy gap must start a NEW streak at the "
+                   "current time (%r), not resurrect the old one (got %r)" % (t3, s4["since_under_agents"]))
+    # freshness: absent/old state must read as NO SIGNAL, never as "still under-parallelized".
+    if parallel_state.is_fresh(None, t3):
+        bad.append("FALSE POSITIVE: an absent state was treated as fresh")
+    stale_state = {"generated_at": t3 - parallel_state.STALE_S - 1}
+    if parallel_state.is_fresh(stale_state, t3):
+        bad.append("FALSE POSITIVE: a state older than STALE_S was treated as fresh")
+    return bad
+
+
 def _selftest():
     """The 2026-08-26 root cause was that this check had shipped UNABLE TO FIRE (the old bar needed idle compute
     AND a board-count that was structurally ~1). A check that cannot fail is the bug. This selftest asserts the
-    fixed decision FIRES in its failing direction (few agents / idle dedicated lane) and stays quiet when saturated."""
+    fixed decision FIRES in its failing direction (few agents / idle dedicated lane) and stays quiet when saturated.
+    It also runs _selftest_agent_detection() (2026-09-08 workflow-undercount fix) and _selftest_persist_state()
+    (2026-09-08 persistence-record fix, Defect 2)."""
     # (have_ready, dedicated_idle, agents, n_open, total_lanes) -> expected_under
     cases = [
         (True,  False, 1, 1, 13, True),   # THE REGRESSION: 1 agent, tiny board count, no idle lane -> agent-floor fires
@@ -196,12 +333,20 @@ def _selftest():
         (True,  True,  5, 20, 8, True),   # idle dedicated lane + backlog -> fires (compute branch)
     ]
     bad = [(c, _under_decision(*c[:5])) for c in cases if _under_decision(*c[:5]) != c[5]]
-    if bad:
+    agent_bad = _selftest_agent_detection()
+    persist_bad = _selftest_persist_state()
+    if bad or agent_bad or persist_bad:
         print("PARALLEL_AUDIT SELFTEST FAILED (the check is unable to fire correctly):")
         for c, got in bad:
             print("   case %s -> got under=%s, expected %s" % (c[:5], got, c[5]))
+        for msg in agent_bad:
+            print("   active_agents(): %s" % msg)
+        for msg in persist_bad:
+            print("   parallel_state: %s" % msg)
         sys.exit(1)
-    print("parallel_audit selftest OK — fires on agents<floor OR an idle dedicated lane with ready work; quiet when saturated.")
+    print("parallel_audit selftest OK — decision fires on agents<floor OR an idle dedicated lane with ready "
+          "work (quiet when saturated); active_agents() counts standalone AND workflow-nested transcripts; "
+          "parallel_state tracks continuous-streak duration correctly.")
     sys.exit(0)
 
 
