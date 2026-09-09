@@ -147,6 +147,37 @@ run, --conj-order triple the only change; route via tools/gpu_queue.sh, do not r
       --ridge 0.5 --conj-bind fixed --conj-order triple --conj-n 1152 --conj-offset-max 4 \
       --n-s2 96 --heldout-position --scramble-null --seeds 42 43 44 100 101 102 \
       --out research/findings/raw/lanes/perception/conjbind_triple_n1152_heldoutpos_scramblenull_6seed.json
+
+RECURRENT/COMPETITIVE BINDING SELECTION (2026-09-09, this de-risk; --conj-select competitive; NEXT
+MECHANISM after the triple-order fixed-random lever landed a NO-GO regardless of budget -- matched-budget
+n1152 AND 4x-width n4608 both landed IDENTICAL beat0/6-lb2/6, ruling out combinatorial dilution as the
+correctable bottleneck; see _select_conjunctions_competitive for the full mechanism and
+research/biology/conjunction-competitive-selection.md for the grounding). --conj-select fixed (default) is
+byte-identical to every prior run of this file; --conj-select competitive samples an overcomplete candidate
+bank and lets it SELF-SELECT the final --conj-n units by lateral-inhibition/k-WTA competition on TRAINING
+data (no labels used).
+PRE-REGISTERED GO GATE (identical criteria + anti-cheats to the triple-order/pairwise levers -- only the
+conjunction-bank SELECTION method changes): task GO = beats_config_c_nogo (learn_spkwta_held >=
+nogo_floor+beat_margin) AND learning_load_bearing (learned - random >= beat_margin), each at >=5/6 seeds,
+under --heldout-position --scramble-null. capability_go additionally requires clearing V1-direct/flat-pool
+floors + the position-pooled-out and label-shuffle-null anti-cheats (unchanged formulas, see run_seed).
+Verdict bands (fixed in advance, identical to the triple-order finding): beat>=5/6 & lb>=5/6 = GO; some
+(>0) beats/lb short of 5/6 = PARTIAL; beat0 & lb0 = NO-GO for this lever. A result at or below the prior
+best (the pairwise PARTIAL, beat0/6-lb4/6) is a disappointment even if technically a PARTIAL by the letter
+of the bands -- read the actual numbers, not just the band, exactly as the triple-order finding did.
+Tiny smoke (confirms the flag parses + runs + the anti-cheats compute, seconds not minutes):
+  SIM_BACKEND=numpy python -u -m research.runners._vision_lindiscrim_readout_derisk \
+      --seeds 42 --n-s2 24 --conj-bind fixed --conj-select competitive --conj-select-overcomplete 4 \
+      --conj-select-kwta-frac 0.1 --conj-n 96 --conj-offset-max 2 \
+      --n-pos-total 4 --n-ex 2 --n-glimpses 1 --heldout-position --scramble-null \
+      --out research/findings/raw/lanes/perception/vlin_competitive_smoke.json
+DECISIVE 6-seed eval (same scale/op-point as the pairwise PARTIAL and the triple-order lever, --conj-select
+competitive the only change; route via tools/pool_queue.sh / tools/gpu_queue.sh, do not run inline):
+  SIM_BACKEND=numpy .venv/bin/python -u -m research.runners._vision_lindiscrim_readout_derisk \
+      --ridge 0.5 --conj-bind fixed --conj-select competitive --conj-select-overcomplete 4 \
+      --conj-select-kwta-frac 0.1 --conj-n 1152 --conj-offset-max 4 \
+      --n-s2 96 --heldout-position --scramble-null --seeds 42 43 44 100 101 102 \
+      --out research/findings/raw/lanes/perception/conjbind_competitive_n1152_heldoutpos_scramblenull_6seed.json
 """
 from __future__ import annotations
 
@@ -475,6 +506,91 @@ def _bind_conjunctions_triple(drive, triples, offsets, mode, shuffle_seed=None):
     return out.reshape(N, g * g, n_conj)
 
 
+def _select_conjunctions_competitive(tr_c1, W0, a, seed, conj_order):
+    """2026-09-09 NEXT MECHANISM (--conj-select competitive), pre-registered after the triple-order fixed-
+    random lever landed a NO-GO regardless of budget (research/findings/2026-09-09-vision-configural-
+    binding-triple-order-conjunction-NEXT-MECHANISM-PREREGISTERED.md: matched-budget n1152 AND 4x-width
+    n4608 both landed IDENTICAL beat0/6-lb2/6 -- combinatorial dilution is not the correctable bottleneck,
+    the fixed-random draw itself is). See research/biology/conjunction-competitive-selection.md for the
+    full grounding; summary here:
+
+    THE DIAGNOSIS THIS TARGETS. `_make_conjunction_bank`/`_make_conjunction_bank_triple` draw `(a,b,Delta)`
+    triples UNIFORMLY AT RANDOM from a combinatorial space and freeze them for the whole run. Nothing in
+    that scheme lets the informative triples be preferred -- widening the draw (this de-risk's own 4x
+    width sweep) samples MORE random units, not a higher FRACTION of informative ones. The missing
+    companion process (the wall-reframe question: "what does the real system run alongside this that we
+    replaced with a constant?") is COMPETITION: a real population of candidate synapses does not get
+    fixed once and frozen -- it fights over which members actually fire usefully on real input, and the
+    losers are suppressed.
+
+    THE MECHANISM (a DG-style expand-then-select, research/biology/dg-ca3-sparse-index.md's structural
+    motif -- "pattern separation results from the divergence of entorhinal inputs onto a LARGER number of
+    granule cells", i.e. expand FIRST, then sparsify -- applied here to a sensory feature population
+    instead of an LTM routing index):
+      1. Sample a CANDIDATE bank `--conj-select-overcomplete`x larger than the final `--conj-n`, with the
+         SAME established fixed-random sampler (`_make_conjunction_bank`/`_make_conjunction_bank_triple`,
+         UNCHANGED) -- just asked for more units.
+      2. Drive every candidate on the TRAINING patches ONLY (tr_c1; never held/scramble -- the same anti-
+         leakage discipline `_bcm_learn_s2_templates` follows for S2 template learning). No labels are
+         used (this reads images, not `tr_cls`).
+      3. LATERAL INHIBITION / k-WTA competition ACROSS candidate units, per (image,location) presentation:
+         only the top `--conj-select-kwta-frac` fraction of candidates survive each presentation, the rest
+         are zeroed -- the IDENTICAL top-k-by-current-drive competitive-learning gate already established
+         one function up in this file (`_bcm_learn_s2_templates`'s `competitive_frac`, Foldiak 1991 /
+         Kohonen 1982-style winner-relative competitive-learning gate composed with BCM), reused here to
+         SELECT structure instead of gate a weight update.
+      4. The final `--conj-n` bank = the candidates with the highest CUMULATIVE SURVIVING (post-inhibition)
+         drive summed over every training presentation -- the population SELF-SELECTS which conjunctions
+         are informative for this task's actual images, instead of a seed drawing them blind.
+
+    Returns (sel_units, sel_offsets, diag): sel_units/sel_offsets have the SAME shape contract as
+    `_make_conjunction_bank`/`_make_conjunction_bank_triple` (pairs (conj_n,2)/offsets (conj_n,) for
+    'pair'; triples (conj_n,3)/offsets (conj_n,2) for 'triple') -- a straight row-subset of the candidate
+    bank, so every downstream consumer (`_bind_conjunctions`/`_bind_conjunctions_triple`,
+    `_c2_spike_code`/`_c2_rate_code`) is UNCHANGED. diag reports candidate_n, the per-presentation k, and
+    the win-score distribution so a degenerate all-one-winner collapse (mirroring the plain-BCM collapse
+    `_bcm_learn_s2_templates` diagnoses) is visible, not silently absorbed.
+
+    NOT SHARED with `_c2_rate_code`'s drive computation (duplicated instead): this keeps the existing
+    `--conj-select fixed` (default) path provably untouched by this addition -- no refactor of the
+    established rate/spike drive helpers, zero risk to byte-identical behaviour when this is off."""
+    bank_fn = _make_conjunction_bank_triple if conj_order == "triple" else _make_conjunction_bank
+    cand_n = max(int(a.conj_n), int(round(a.conj_n * a.conj_select_overcomplete)))
+    cand_units, cand_offsets = bank_fn(
+        W0.shape[0], cand_n, a.conj_offset_max, bool(getattr(a, "conj_delta0", False)), seed)
+
+    # SAME S2 drive _c2_rate_code computes (patches -> L2-norm -> cosine match -> S2 norm -> k-WTA),
+    # duplicated on purpose (see docstring) -- TRAIN patches only, never held/scramble.
+    patches = _extract_patches(tr_c1, a.s2_p)
+    pn = _l2n(patches, axis=2)
+    drive = np.clip(pn @ W0.T, 0.0, None)
+    drive = _apply_s2_norm(drive, a)
+    drive = _kwta_over_templates(drive, getattr(a, "s2_kwta_frac", 0.0))
+
+    bind_fn = _bind_conjunctions_triple if conj_order == "triple" else _bind_conjunctions
+    cand_drive = bind_fn(drive, cand_units, cand_offsets, a.conj_mode)   # (N, n_loc, cand_n)
+    flat = cand_drive.reshape(-1, cand_n)                                # one row per (image, location)
+
+    k_sel = max(1, int(round(a.conj_select_kwta_frac * cand_n)))
+    if k_sel < cand_n:
+        thr = np.partition(flat, cand_n - k_sel, axis=1)[:, cand_n - k_sel][:, None]
+        winners = flat >= thr                                            # lateral-inhibition k-WTA mask
+    else:
+        winners = np.ones_like(flat, dtype=bool)
+    win_score = np.where(winners, flat, 0.0).sum(axis=0)                 # cumulative surviving drive/unit
+
+    order_idx = np.argsort(-win_score)
+    sel_idx = order_idx[: int(a.conj_n)]
+    diag = {
+        "candidate_n": int(cand_n), "k_sel_per_presentation": int(k_sel),
+        "win_score_mean": float(win_score.mean()), "win_score_std": float(win_score.std()),
+        "frac_selected_never_won": float(np.mean(win_score[sel_idx] <= 0.0)),
+        "selected_win_score_min": float(win_score[sel_idx].min()),
+        "selected_win_score_max": float(win_score[sel_idx].max()),
+    }
+    return cand_units[sel_idx], cand_offsets[sel_idx], diag
+
+
 def _bcm_learn_s2_templates(patches_flat, W0, gain, theta_alpha, pre_floor, epochs, renorm,
                              competitive_frac, seed):
     """Activity-dependent BCM (Bienenstock, Cooper & Munro 1982) learning of the S2 template bank --
@@ -787,10 +903,19 @@ def run_seed(seed, a, code):
     conj_pairs = conj_offsets = None
     conj_shuffle_seed = None
     conj_order = getattr(a, "conj_order", "pair")
+    conj_select_diag = None
     if getattr(a, "conj_bind", "none") != "none":
-        bank_fn = _make_conjunction_bank_triple if conj_order == "triple" else _make_conjunction_bank
-        conj_pairs, conj_offsets = bank_fn(
-            W0.shape[0], a.conj_n, a.conj_offset_max, bool(getattr(a, "conj_delta0", False)), seed)
+        conj_select = getattr(a, "conj_select", "fixed")
+        if conj_select == "competitive":
+            # 2026-09-09 NEXT MECHANISM (--conj-select competitive): the bank SELF-SELECTS its members by
+            # lateral-inhibition/k-WTA competition on training data, instead of a blind fixed-random draw
+            # -- see _select_conjunctions_competitive + research/biology/conjunction-competitive-selection.md.
+            conj_pairs, conj_offsets, conj_select_diag = _select_conjunctions_competitive(
+                tr_c1, W0, a, seed, conj_order)
+        else:
+            bank_fn = _make_conjunction_bank_triple if conj_order == "triple" else _make_conjunction_bank
+            conj_pairs, conj_offsets = bank_fn(
+                W0.shape[0], a.conj_n, a.conj_offset_max, bool(getattr(a, "conj_delta0", False)), seed)
         if getattr(a, "conj_shuffle", False):
             conj_shuffle_seed = seed * 823 + 29
 
@@ -911,6 +1036,8 @@ def run_seed(seed, a, code):
     }
     if bcm_diag is not None:
         row["bcm"] = bcm_diag  # only present when --s2-learn bcm; keeps the default path byte-identical
+    if conj_select_diag is not None:
+        row["conj_select"] = conj_select_diag  # only present when --conj-select competitive
     return row
 
 
@@ -1122,6 +1249,28 @@ def main():
                         "targeting the diagnosed residual: the PARTIAL landing's RATE_lin_ceiling_held "
                         "(the best possible LINEAR read of the pairwise code) sits AT the NO-GO floor "
                         "(0.3403 vs 0.34), so the bottleneck is representational, not the readout class.")
+    p.add_argument("--conj-select", choices=["fixed", "competitive"], default="fixed",
+                   help="2026-09-09+ NEXT MECHANISM (post triple-order NO-GO regardless of budget -- "
+                        "research/findings/2026-09-09-vision-configural-binding-triple-order-conjunction-"
+                        "NEXT-MECHANISM-PREREGISTERED.md). 'fixed' (default) draws exactly --conj-n "
+                        "(a,b,Delta) units once per seed and freezes them -- byte-identical to every prior "
+                        "run of this file. 'competitive' instead samples an OVERCOMPLETE candidate bank "
+                        "(--conj-select-overcomplete x --conj-n), drives every candidate on the TRAINING "
+                        "patches only, and runs a lateral-inhibition/k-WTA COMPETITION across candidates "
+                        "per (image,location) presentation (--conj-select-kwta-frac); the final --conj-n "
+                        "bank is the candidates with the highest cumulative SURVIVING (post-inhibition) "
+                        "drive -- the population SELF-SELECTS informative conjunctions instead of a blind "
+                        "fixed-random draw. See _select_conjunctions_competitive and "
+                        "research/biology/conjunction-competitive-selection.md.")
+    p.add_argument("--conj-select-overcomplete", type=float, default=4.0,
+                   help="'competitive' mode only: candidate bank size = this x --conj-n (a DG-style "
+                        "expand-then-sparsify; research/biology/dg-ca3-sparse-index.md). 4x matches the "
+                        "width-compensation follow-up already run for the triple-order lever.")
+    p.add_argument("--conj-select-kwta-frac", type=float, default=0.1,
+                   help="'competitive' mode only: per-presentation k-WTA fraction of the CANDIDATE bank "
+                        "kept active (lateral inhibition zeroes the rest) when tallying which candidates "
+                        "win -- Foldiak 1991/Kohonen 1982 competitive learning, the SAME primitive already "
+                        "gating _bcm_learn_s2_templates's competitive_frac and _kwta_over_templates.")
     p.add_argument("--conj-offset-max", type=int, default=4,
                    help="'fixed' mode only: sample Delta (afferent b's relative x-displacement) from "
                         "+-1..+-this value (location units). Ignored when --conj-delta0-only is set.")
