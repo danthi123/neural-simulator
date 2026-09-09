@@ -1,0 +1,37 @@
+{
+ "run_id": "1788912806-1925892",
+ "runner": "research/runners/_joint_attention_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/wf_3264f465-4ae-4/research/runners/_joint_attention_derisk.py",
+  "--seeds",
+  "42",
+  "43",
+  "44",
+  "100",
+  "101",
+  "102",
+  "--n-trials",
+  "60",
+  "--spiking-sts",
+  "--json",
+  "research/findings/raw/_joint_attention/summary_6seed_spiking_sts.json"
+ ],
+ "git_sha": "bb1cbd6c6",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-08T20:13:26",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_joint_attention/summary_6seed_spiking_sts.json"
+}
