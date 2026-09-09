@@ -47,6 +47,10 @@ from research.runners.biased_competition_buffer import (
 # reused by import here (single source of truth, NO reimplementation). Default OFF = the fixed-bias path verbatim.
 from research.runners._phaseB_biased_competition_graded_derisk import graded_bias_pA
 from research.runners.content_selection_spiking import SpikingLoopContextBuffer
+# SPIKING CA3 pattern-completion anaphor DETECTION (scaffold-retirement, 2026-09-09, 6/6-seed mechanism de-risk GO
+# 1a8152a8a; research/runners/spiking_anaphor_detection_organ.py) -- default-OFF (BRAIN_SPIKING_ANAPHOR). Retires
+# `_resolve`'s host `word.lower() in _ANAPHORS` DETECTION test at its root; see `MultiTurnAgent._anaphor_is` below.
+import research.runners.spiking_anaphor_detection_organ as _ANAPH
 
 _ANAPHORS = {"it", "that", "them", "they", "this"}
 
@@ -70,6 +74,7 @@ class MultiTurnAgent:
                  slotbinder_fanout=None, slotbinder_prewire_facts=None, slotbinder_max_facts=None,
                  slotbinder_max_clauses=None, onebrain_k_max=None):
         self.seed = int(seed)
+        self._anaphor_organ = None    # spiking CA3 anaphor-detection organ (lazy; only when BRAIN_SPIKING_ANAPHOR on)
         # composer_kind passes through to the inner agent: "rf" (default) or "onebrain" (the integrated one-brain
         # composer -- the cleanup arc validates multi-turn anaphora + cued multi-hop on it).
         # enable_learned_assoc gated on the onebrain production path (cheat-D): elaborate spreads over the substrate-
@@ -305,13 +310,31 @@ class MultiTurnAgent:
         self._feat_compat_source = SpikingFeatureCompat(seed=self.seed if seed is None else int(seed), corpus=facts)
         return True
 
+    def _anaphor_is(self, word):
+        """Is `word` an anaphoric pronoun? DEFAULT (BRAIN_SPIKING_ANAPHOR off): `word.lower() in _ANAPHORS` --
+        BYTE-IDENTICAL to the original host `set` test. ON: move the DETECTION DECISION onto the spiking substrate via
+        the CA3 pattern-completion organ (lazily built once per session on this agent's seed, RNG-isolated) -- on clean
+        typed text it recognises exactly the host set's tokens, but through the substrate's ignition (lesion-reverts),
+        and the organ carries the de-risked pattern-completion surpass (recovering a corrupted cue an exact `set`
+        cannot). Host `set` fallback on ANY error so a wiring failure never changes resolution's contract or crashes it
+        (scaffold-retirement 2026-09-09)."""
+        if not _ANAPH.spiking_anaphor_enabled():
+            return word.lower() in _ANAPHORS                       # DEFAULT -> byte-identical to pre-wiring
+        try:
+            if self._anaphor_organ is None:
+                self._anaphor_organ = _ANAPH.SpikingAnaphorDetectorOrgan(
+                    seed=self.seed, lesion=_ANAPH.spiking_anaphor_lesioned())
+            return bool(self._anaphor_organ.is_anaphor(word))
+        except Exception:
+            return word.lower() in _ANAPHORS                       # never let detection crash resolution -> host fallback
+
     def _resolve(self, word, query_verb=None):
         """If `word` is an anaphor, resolve it from the held WM referent (None if unresolved); else return `word`.
 
         When biased competition is enabled AND a query verb is available AND >=2 referents are held, route the
         resolution through the WTA biased competition (content-steered) instead of the single-attractor read.
         Default (flag OFF, or no verb, or <2 held) -> the plain held_referent path, byte-identical to before."""
-        if not (isinstance(word, str) and word.lower() in _ANAPHORS):
+        if not (isinstance(word, str) and self._anaphor_is(word)):
             return word
         if self.enable_biased_competition and query_verb is not None and len(self._held_set()) >= 2:
             return self._resolve_biased(query_verb)
