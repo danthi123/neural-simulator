@@ -55,3 +55,6 @@ Corrected board #193: the d192x2B AWS scale-up NEXT was a concluded NO-GO (re-de
 
 ## 2026-09-09  scaffold-retire-novelty-habituation
 Added de-risked task for the host set-membership novelty -> spiking short-term-depression habituation de-risk (6/6 GO, commit 3cf6bc52, owner #1 priority). D-vision competitive-select lane-best (ebaba694) + sweep-exhausted noted in GAP_CLOSURE; AWS re-derivation + B-park + pool-restore reconciled this session.
+
+## 2026-09-09  scaffold-retire-x2 (anaphor + question-route)
+Added de-risked tasks #214 (anaphor->CA3 pattern-completion, 1a8152a8a) + #215 (question-route->4-way WTA, d63a39ce8); both 6/6 GO de-risks on the #1 scaffold-retirement priority, not yet wired. Three scaffold-retirement de-risks this session total (novelty #213 + these two).
