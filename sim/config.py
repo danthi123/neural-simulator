@@ -720,6 +720,24 @@ class CoreSimConfig:
     # is None, the microcircuit branch is unreached, and the block is BYTE-IDENTICAL to the Burstprop path (which is
     # itself byte-identical to today when enable_bdsp is False). See the microcircuit section of the D1 build spec.
     enable_bdsp_microcircuit: bool = False
+    # LEARNED-IN-ENGINE self-predicting interneuron (gap#4 RANK-1, 2026-09-09; Sacramento-Senn 2018 Eq.9). The
+    # enable_bdsp_microcircuit path ABOVE takes the interneuron cancellation cp_bdsp_int_drive from the RUNNER
+    # (host-computed W^PI @ phi(u^I) each phase); the 2026-09-09 read-side dendritic NO-GO
+    # (2026-09-09-gap4-dendritic-urbanczik-senn-read-snr-clean-NO-GO) isolated the genuine residual to the FROZEN
+    # fixed-random feedback SIGNAL that never zeroes when the net is already correct, and named "LEARN the
+    # cancellation IN-ENGINE" as the untested RANK-1 lever (vs the runner-supplied cancellation, which was tested).
+    # When True (needs enable_bdsp + enable_bdsp_microcircuit AND the runner-installed cp_spi_* arrays), the ENGINE
+    # itself, inside _run_one_simulation_step, (a) forms cp_bdsp_int_drive by projecting the interneuron rate
+    # cp_spi_int_rate through the PLASTIC in-engine weight cp_spi_wpi (scattered to neurons via cp_spi_scatter, gated
+    # by the per-neuron surrogate factor cp_spi_phi), and (b) UPDATES cp_spi_wpi by the local Sacramento
+    # self-prediction rule (selfpredicting_interneuron_update in sim/dendritic_plasticity.py) against the free-phase
+    # residual apical toward the fixed feedback cp_spi_Y -- so the apical is SILENT when the net is already correct
+    # (silence EARNED by in-engine learning on the substrate, NOT supplied by the runner). TRANSPORT-FREE: the update
+    # reads only the interneuron rate (an activity), cp_spi_wpi and cp_spi_Y -- never a forward weight. Default False
+    # => cp_spi_* stay None => the guarded block is unreached => cp_bdsp_int_drive is left exactly as the runner set
+    # it (byte-identical to the runner-supplied microcircuit path, itself byte-identical to today when the flags off).
+    enable_selfpredicting_interneuron: bool = False
+    spi_lr: float = 0.2                            # in-engine W^PI self-prediction learning rate (per gated update)
     # BDSP GRADED (clean-error) credit (2026-07-12, additive/default-off/byte-identical-when-off). The committed FF rule
     # credits with the MEASURED burst deviation (B - Pbar*E) -- a noisy, sparse, quantized realized-burst count. Payeur/
     # Sacramento-Senn: the graded burst PROBABILITY P (already computed as sigmoid(beta*scale*apical)) IS the clean,
