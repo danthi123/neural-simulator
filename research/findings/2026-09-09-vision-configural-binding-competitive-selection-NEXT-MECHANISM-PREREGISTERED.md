@@ -166,6 +166,25 @@ seed 100's shortfall in particular is worth checking against a wider candidate p
 before concluding the operating point is exhausted. This is a verdict on the DEFAULT operating point of this
 mechanism, not on the mechanism itself, which is already the best lever this lane has produced.
 
+## ⛔ SWEEP RESULT (LANDED 2026-09-09) — the operating-point tuning does NOT help; the default IS the sweet spot; take the attention-gated readout next
+The pre-registered next rung (sweep `--conj-select-overcomplete`/`--conj-select-kwta-frac`) landed — 3 grid points, run locally single-tenant (the pool was serving stale code):
+
+<!--derived-->
+| config | overall_verdict |
+|---|---|
+| oc4 / kf0.10 (default, merged) | `beat4/6-lb6/6` (lane-best) |
+| oc8 / kf0.10 | `beat2/6-lb3/6` |
+| oc8 / kf0.05 | `beat1/6-lb4/6` |
+| oc6 / kf0.15 | `beat0/6-lb4/6` |
+
+Every swept variant is WORSE than the default — a MORE-overcomplete candidate bank DILUTES the competition (the
+same dilution the triple-order lever hit), and the untuned default (4x / 0.1) is already the sweet spot. So the
+operating-point lever is EXHAUSTED: the competitive-selection mechanism's best is the merged `beat4/6-lb6/6`, and
+tuning it does not reach task-GO (≥5/6). Per the pre-registration, the NEXT MECHANISM (no-defer, not yet
+attempted) is now the **attention-gated readout** (reweight which conjunction units each class population listens
+to per-trial), NOT another selection-tuning sweep. The competitive-selection mechanism itself remains the lane's
+best and is not retracted.
+
 ## An honest risk this result carries (named, not hidden)
 
 <!--derived-->
