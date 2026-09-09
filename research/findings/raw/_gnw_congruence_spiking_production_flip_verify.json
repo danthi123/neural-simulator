@@ -1,0 +1,166 @@
+{
+  "runner": "_gnw_congruence_spiking_production_flip_verify",
+  "verdict": "GO",
+  "flip_go": true,
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "the flag's default genuinely resolves ON when unset (asserted in the data), all seeds",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "explicit opt-out (=0) still reproduces the frozen original host `==` byte-for-byte, all seeds",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "bare-unset default byte-identical to explicit ON on real queries, all seeds",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "bus_combine intact matches the host verdict on a manufactured mismatch AT THE SHIPPED DEFAULT, all seeds",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "bus_combine lesion-via-flag WRONGLY commits on the SAME mismatch AT THE SHIPPED DEFAULT (the load-bearing collapse), all seeds",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    }
+  ],
+  "disabled_processes": [
+    {
+      "process": "regression_battery",
+      "why": "--no-battery smoke run: the one-shot cross-faculty check was skipped"
+    }
+  ],
+  "undefined_reasons": [],
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "flag": "BRAIN_GNW_CONGRUENCE_SPIKING",
+  "lesion_flag": "BRAIN_GNW_CONGRUENCE_LESION",
+  "arm1_per_seed": [
+    {
+      "seed": 42,
+      "arm1_ok": true,
+      "flip_is_on_when_unset": true,
+      "off_arm_byte_identical": true,
+      "default_matches_explicit_on": true
+    },
+    {
+      "seed": 43,
+      "arm1_ok": true,
+      "flip_is_on_when_unset": true,
+      "off_arm_byte_identical": true,
+      "default_matches_explicit_on": true
+    },
+    {
+      "seed": 44,
+      "arm1_ok": true,
+      "flip_is_on_when_unset": true,
+      "off_arm_byte_identical": true,
+      "default_matches_explicit_on": true
+    },
+    {
+      "seed": 100,
+      "arm1_ok": true,
+      "flip_is_on_when_unset": true,
+      "off_arm_byte_identical": true,
+      "default_matches_explicit_on": true
+    },
+    {
+      "seed": 101,
+      "arm1_ok": true,
+      "flip_is_on_when_unset": true,
+      "off_arm_byte_identical": true,
+      "default_matches_explicit_on": true
+    },
+    {
+      "seed": 102,
+      "arm1_ok": true,
+      "flip_is_on_when_unset": true,
+      "off_arm_byte_identical": true,
+      "default_matches_explicit_on": true
+    }
+  ],
+  "arm2_per_seed": [
+    {
+      "seed": 42,
+      "arm2_ok": true,
+      "host_committed": null,
+      "intact_committed": null,
+      "lesioned_committed": "cat",
+      "intact_matches_host": true,
+      "lesion_wrongly_commits": true,
+      "attribution": 1.0
+    },
+    {
+      "seed": 43,
+      "arm2_ok": true,
+      "host_committed": null,
+      "intact_committed": null,
+      "lesioned_committed": "cat",
+      "intact_matches_host": true,
+      "lesion_wrongly_commits": true,
+      "attribution": 1.0
+    },
+    {
+      "seed": 44,
+      "arm2_ok": true,
+      "host_committed": null,
+      "intact_committed": null,
+      "lesioned_committed": "cat",
+      "intact_matches_host": true,
+      "lesion_wrongly_commits": true,
+      "attribution": 1.0
+    },
+    {
+      "seed": 100,
+      "arm2_ok": true,
+      "host_committed": null,
+      "intact_committed": null,
+      "lesioned_committed": "cat",
+      "intact_matches_host": true,
+      "lesion_wrongly_commits": true,
+      "attribution": 1.0
+    },
+    {
+      "seed": 101,
+      "arm2_ok": true,
+      "host_committed": null,
+      "intact_committed": null,
+      "lesioned_committed": "cat",
+      "intact_matches_host": true,
+      "lesion_wrongly_commits": true,
+      "attribution": 1.0
+    },
+    {
+      "seed": 102,
+      "arm2_ok": true,
+      "host_committed": null,
+      "intact_committed": null,
+      "lesioned_committed": "cat",
+      "intact_matches_host": true,
+      "lesion_wrongly_commits": true,
+      "attribution": 1.0
+    }
+  ],
+  "regression_battery": null
+}

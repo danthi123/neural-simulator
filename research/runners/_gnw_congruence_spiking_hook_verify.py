@@ -8,10 +8,16 @@ battery. It does NOT exercise the ACTUAL production entry point (`webapp.gnw_bus
 does that, on the SAME `CHAINS` fixture, calling `_organ_reads`/`bus_combine` DIRECTLY (no `sim/` edit; no fake
 `ChatBrain` needed — both functions take a bare `composer`).
 
+UPDATED 2026-09-08 (production-flip): `BRAIN_GNW_CONGRUENCE_SPIKING` is now DEFAULT-ON (see
+`research/findings/2026-09-08-gnw-congruence-spiking-PRODUCTION-FLIP-GO.md` and the sibling
+`_gnw_congruence_spiking_production_flip_verify.py`). This file's own "flag-off" arm now sets the flag EXPLICITLY
+to `"0"` (never `os.environ.pop`, per `gates/flip_offarm_staleness`) so it keeps testing the genuine escape-hatch
+arm rather than silently colliding with the new ON default.
+
 THREE CLAIMS, EACH CHECKED SEPARATELY:
-  1. FLAG-OFF BYTE-IDENTICAL. `BRAIN_GNW_CONGRUENCE_SPIKING` unset -> `_organ_reads`'s output is compared, per
-     query, against a FROZEN literal copy of the PRE-EDIT host `==` logic (`_frozen_original_organ_reads`, embedded
-     in this file's data, never imported by production) — a tuple compare, not an inferred diff-read.
+  1. FLAG-OFF BYTE-IDENTICAL. `BRAIN_GNW_CONGRUENCE_SPIKING="0"` (explicit) -> `_organ_reads`'s output is compared,
+     per query, against a FROZEN literal copy of the PRE-EDIT host `==` logic (`_frozen_original_organ_reads`,
+     embedded in this file's data, never imported by production) — a tuple compare, not an inferred diff-read.
   2. FLAG-ON REAL-MATCH PARITY. On the fixture's genuine (agent, action) queries (organ B/C's real reads DO match
      organ A's — this composer's unpermuted facts never disagree naturally), the flag-ON (spiking) triple must
      equal the flag-OFF (host) triple: the retirement changes the MECHANISM, not genuine-match behaviour.
@@ -120,7 +126,9 @@ def _all_concepts(composer):
 
 
 def evaluate_seed(seed: int, verbose: bool = True):
-    os.environ.pop("BRAIN_GNW_CONGRUENCE_SPIKING", None)
+    # explicit "0", never pop: BRAIN_GNW_CONGRUENCE_SPIKING is DEFAULT-ON since the 2026-09-08 production-flip, so
+    # an unset env var no longer means "off" (gates/flip_offarm_staleness's own lesson).
+    os.environ["BRAIN_GNW_CONGRUENCE_SPIKING"] = "0"
     os.environ.pop("BRAIN_GNW_CONGRUENCE_LESION", None)
     composer = _build_composer(seed)
     all_concepts = _all_concepts(composer)
@@ -146,7 +154,7 @@ def evaluate_seed(seed: int, verbose: bool = True):
         parity_rows.append({"agent": agent, "action": action, "flag_on": triple_on,
                             "flag_off": ref_row["new"], "same": same})
     real_match_parity = bool(parity_rows and all(r["same"] for r in parity_rows))
-    os.environ.pop("BRAIN_GNW_CONGRUENCE_SPIKING", None)
+    os.environ["BRAIN_GNW_CONGRUENCE_SPIKING"] = "0"
 
     # ── CLAIM 3: lesion-via-flag reverts, on a MANUFACTURED mismatch (this fixture never disagrees naturally) ────
     agent0, action0 = queries[0]
@@ -186,10 +194,10 @@ def evaluate_seed(seed: int, verbose: bool = True):
     wrap_c4 = _ForceWrongSecondRead(composer, wrong_agent_on_call=1, wrong_agent=wrong_agent)
     os.environ["BRAIN_GNW_CONGRUENCE_LESION"] = "1"
     info_lesioned = bus_combine(wrap_c4, agent0, action0, all_concepts, seed=seed, lesion=False)
-    os.environ.pop("BRAIN_GNW_CONGRUENCE_SPIKING", None)
+    os.environ["BRAIN_GNW_CONGRUENCE_SPIKING"] = "0"
     os.environ.pop("BRAIN_GNW_CONGRUENCE_LESION", None)
 
-    # the host (flag-off) reference verdict on the SAME manufactured mismatch, for comparison.
+    # the host (flag EXPLICIT-off) reference verdict on the SAME manufactured mismatch, for comparison.
     wrap_c_host = _ForceWrongSecondRead(composer, wrong_agent_on_call=1, wrong_agent=wrong_agent)
     info_host = bus_combine(wrap_c_host, agent0, action0, all_concepts, seed=seed, lesion=False)
 

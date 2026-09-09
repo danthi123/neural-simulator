@@ -1,4 +1,5 @@
-"""GNW CONGRUENCE spiking read — production glue for scaffold-retirement backlog rank-8, DEFAULT-OFF.
+"""GNW CONGRUENCE spiking read — production glue for scaffold-retirement backlog rank-8, DEFAULT-ON (2026-09-08
+production-flip, verified GO).
 
 WHAT THIS IS. `webapp/gnw_bus_shadow.py::_organ_reads` is the LIVE production organ-combination read (installed
 by default since the 2026-08-13 flip/retirement — `webapp/server.py::brain_reply` runs it on every turn). Two of
@@ -14,12 +15,14 @@ thought-swap decision — to read "does `proposed` match `held`" off spiking pop
 `==`. See that module's docstring for the full mechanism + the "ADDRESSING VS DECIDING" honesty note (a content->
 slot lookup is unavoidable wiring; the verdict itself is never a host comparison of the resulting indices).
 
-CONTRACT (additive, DEFAULT-OFF, reversible, mirrors `gnw_thought_swap.py` / `gnw_two_organ_bus.py`):
-  * `BRAIN_GNW_CONGRUENCE_SPIKING` unset/0/false/off/no (DEFAULT) -> `webapp.gnw_bus_shadow._organ_reads` never
-    even imports this module (the check is a cheap env-var read in `gnw_bus_shadow._congruence_spiking_enabled`);
-    organ B/C's congruence is decided by the ORIGINAL host `==` -> BYTE-IDENTICAL to today's production.
-  * `BRAIN_GNW_CONGRUENCE_SPIKING` truthy -> `_organ_reads` routes organ B/C's raw second read through
-    `spiking_congruent(held, proposed)` instead of `held == proposed`.
+CONTRACT (additive, DEFAULT-ON since 2026-09-08, reversible, mirrors `gnw_acc_bg_stop_trigger.py`'s own
+default-ON style):
+  * `BRAIN_GNW_CONGRUENCE_SPIKING` unset (DEFAULT) -> `webapp.gnw_bus_shadow._organ_reads` routes organ B/C's raw
+    second read through `spiking_congruent(held, proposed)` instead of `held == proposed` (the check is a cheap
+    env-var read in `gnw_bus_shadow._congruence_spiking_enabled`).
+  * `BRAIN_GNW_CONGRUENCE_SPIKING` explicit falsy (0/false/off/no/'') -> the escape hatch: organ B/C's congruence
+    is decided by the ORIGINAL host `==` -> BYTE-IDENTICAL to pre-2026-09-08 production; this module is never
+    imported by that code path.
   * `BRAIN_GNW_CONGRUENCE_LESION` truthy -> every congruence read runs with the reused circuit's own TRIGGER-LESION
     (mm's proposal drive silenced) -> MISMATCH can no longer be discriminated from MATCH (both read "congruent")
     -> organ B/C's corroboration is no longer selective -> the bus's answer-vs-abstain behaviour on a genuine
@@ -50,10 +53,12 @@ _READERS: dict = {}          # seed -> warm SpikingCongruenceReader, built lazil
 
 
 def congruence_spiking_enabled() -> bool:
-    """The master flag. `BRAIN_GNW_CONGRUENCE_SPIKING` in {1,true,on,yes} -> organ B/C's congruence check uses the
-    spiking `pred_k->mm_k` match-veto read. Default (unset/0/false/off/no) -> OFF; `_organ_reads` runs its
-    ORIGINAL host `==` logic and this module is never imported by the caller."""
-    return os.environ.get("BRAIN_GNW_CONGRUENCE_SPIKING", "").strip().lower() in ("1", "true", "on", "yes")
+    """The master flag (mirrors `gnw_bus_shadow._congruence_spiking_enabled`, the copy production actually calls —
+    kept in sync so this module's own name is never misleading). `BRAIN_GNW_CONGRUENCE_SPIKING` DEFAULT-ON: unset
+    -> organ B/C's congruence check uses the spiking `pred_k->mm_k` match-veto read. An explicit falsy
+    (0/false/off/no/'') -> OFF; `_organ_reads` runs its ORIGINAL host `==` logic."""
+    v = os.environ.get("BRAIN_GNW_CONGRUENCE_SPIKING")
+    return not (v is not None and v.strip().lower() in ("0", "false", "off", "no", ""))
 
 
 def congruence_lesion_on() -> bool:
