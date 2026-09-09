@@ -84,6 +84,28 @@ Run (the 6-seed spiking verify, GPU -- QUEUE this on gpu_queue.sh, never direct)
   SIM_BACKEND=cupy python -u -m research.runners._affect_onsubstrate_noise_robust_convergence_derisk --spiking \
       --seeds 42 43 44 100 101 102 \
       --out research/findings/raw/_affect_onsubstrate_noise_robust_convergence_6seed.json
+
+OPPONENT / COLUMNAR mode (2026-09-08 addition -- the shared-WTA BOUNDARY's own named surpass, NOT deferred).
+  `2026-09-05-affect-onsubstrate-noise-robust-convergence-spiking-port-built-mechanism-realized-strict-zeroFP-
+  structural-boundary-6seed-queued-BOUNDARY.md` measured WHY the shared-WTA assembly fails at strict zero-FP: the
+  ONE shared inhibitory pool makes the population code a MAGNITUDE code (which neurons fire hardest), and a
+  false-grounded neutral (noise crossing the relay floor) can fire that code as strongly as true affect -- the
+  shared-WTA collapses the comfort/discomfort SIGN structure the numpy rate+ridge idealization uses to tell them
+  apart. Its named surpass, verbatim: "an OPPONENT / columnar assembly with separate comfort- and
+  discomfort-selective sub-pools ... that PRESERVES the sign structure a zero-FP discrimination needs -- a
+  false-grounded neutral drives BOTH sub-pools, a true affect drives ONE." `--opponent` (opt-in, only meaningful
+  with --spiking) builds exactly that: TWO cross-inhibiting excitatory columns (assembly_vp / assembly_vm) instead
+  of one shared-FS assembly, reusing the SAME Namburi-Tye opponent cross-inhibition template
+  `_affect_appraisal_emotion_reappraisal_derisk.build_bridge` already uses for appr_vplus/appr_vminus (XINH_EXC_W /
+  XINH_INH_W / N_XINH imported verbatim, not re-tuned). Same total assembly neuron budget (M_ASSEMBLY split
+  M_HALF+M_HALF) as the shared-WTA variant -- a like-for-like comparison, not a bigger substrate. train_convergence /
+  read_spiking_code are UNCHANGED (asm = concat(vp_idx, vm_idx)); only the bridge topology differs.
+
+Run (opponent-columnar smoke, tiny, CPU):
+  SIM_BACKEND=numpy python -u -m research.runners._affect_onsubstrate_noise_robust_convergence_derisk --smoke --spiking --opponent
+Run (opponent-columnar, 1-seed FULL partition, CPU -- the honest evidence; a smoke slice is misleading under zero-FP):
+  SIM_BACKEND=numpy python -u -m research.runners._affect_onsubstrate_noise_robust_convergence_derisk --spiking --opponent \
+      --seeds 42 --out research/findings/raw/_affect_onsubstrate_opponent_columnar_1seed_full.json
 """
 from __future__ import annotations
 
@@ -128,6 +150,11 @@ from research.runners._affect_noise_robust_homeostatic_convergence_derisk import
 from research.runners._affect_grounded_experience_stream_hebbian_derisk import (  # noqa: E402
     CEIL_GO_BAR, RHO_REAL, SIGMA_REAL, ATTRIB_MARGIN, TEXT_CEIL_MAX, HELDOUT_FRAC, M_ASSEMBLY,
 )
+# reuse-by-import: the Namburi-Tye opponent cross-inhibition template (appr_vplus/appr_vminus) -- the named surpass
+# for the shared-WTA structural boundary reuses this EXACT wiring pattern + constants, not a re-tuned invention.
+from research.runners._affect_appraisal_emotion_reappraisal_derisk import (  # noqa: E402
+    N_XINH, XINH_EXC_W, XINH_INH_W,
+)
 from tools.lab import void_if, undefined_if_empty, attributable_to  # noqa: E402
 from tools.verdict import Verdict  # noqa: E402
 
@@ -159,6 +186,10 @@ READ_STEPS = 60          # steps to accumulate the assembly SPIKE code per conce
 SETTLE_STEPS = 120       # settle to a clean quiescent baseline before reads (snapshot -> restore-isolate each concept)
 
 FP_TOLS = (0.0, 0.05, 0.10)
+
+# opponent-columnar operating point (M_ASSEMBLY split evenly across two cross-inhibiting columns -- same total
+# neuron budget as the shared-WTA variant; XINH_* imported verbatim from the appraisal-deepen opponent template)
+M_HALF = M_ASSEMBLY // 2
 
 
 # ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════
@@ -222,6 +253,84 @@ def build_convergence_bridge(din, m, seed, a):
     bridge._initialize_simulation_data()
     ci = np.asarray(bridge.region_manager.indices("code_in"))
     asm = np.asarray(bridge.region_manager.indices("assembly"))
+    xp = bridge._cp if hasattr(bridge, "_cp") else None
+    return bridge, xp, ci, asm
+
+
+def build_opponent_convergence_bridge(din, m_half, seed, a):
+    """OPPONENT / COLUMNAR variant -- the shared-WTA structural boundary's own NAMED SURPASS (2026-09-05 finding,
+    not deferred). Instead of ONE shared-FS assembly (whose single competitive pool collapses the comfort/discomfort
+    SIGN structure into an undifferentiated magnitude code -- the measured cause of the strict-zero-FP failure),
+    build TWO excitatory columns (assembly_vp / assembly_vm) that cross-inhibit via their OWN FS relays -- the SAME
+    Namburi-Tye opponent template `_affect_appraisal_emotion_reappraisal_derisk.build_bridge` already uses for
+    appr_vplus/appr_vminus (XINH_EXC_W/XINH_INH_W/N_XINH imported verbatim). Each column gets its OWN plastic
+    rate-Hebbian FF from code_in (symmetric init + independent jitter draws -> competitive specialization pressure);
+    the ONLY competitive force is the cross-column inhibition (no shared/self WTA within a column), so which column
+    wins is a SIGN the population code retains, not just how hard a magnitude the winner fires. Returns
+    (bridge, xp, ci, asm) with asm = concat(vp_idx, vm_idx) so train_convergence / read_spiking_code run UNCHANGED,
+    and the total assembly neuron budget (2*m_half) matches M_ASSEMBLY -- a like-for-like comparison."""
+    from sim import SimulationBridge, VisualizationConfig, RuntimeState, GPUConfig
+    from sim.config import CoreSimConfig
+    from sim.enums import NeuronModel
+    from sim.regions import BrainRegion, RegionPathway
+
+    cfg = CoreSimConfig()
+    cfg.enable_brain_region_framework = True
+    cfg.brain_regions = [
+        BrainRegion(name="code_in", n_neurons=din, exc_fraction=1.0, internal_density=0.0, izh_neuron_type=RS),
+        BrainRegion(name="assembly_vp", n_neurons=m_half, exc_fraction=1.0, internal_density=0.0, izh_neuron_type=RS,
+                    enable_nmda=True),
+        BrainRegion(name="assembly_vm", n_neurons=m_half, exc_fraction=1.0, internal_density=0.0, izh_neuron_type=RS,
+                    enable_nmda=True),
+        BrainRegion(name="xinh_vp", n_neurons=a.n_xinh, exc_fraction=0.0, internal_density=0.0, izh_neuron_type=FS),
+        BrainRegion(name="xinh_vm", n_neurons=a.n_xinh, exc_fraction=0.0, internal_density=0.0, izh_neuron_type=FS),
+    ]
+    cfg.region_pathways = [
+        # the CONVERGENCE each column LEARNS (rate-Hebbian; independent jitter draws per column so the two columns
+        # do not start identical -- symmetry-breaking is what lets cross-inhibition specialize them).
+        RegionPathway(from_region="code_in", to_region="assembly_vp", density=1.0,
+                      weight_mean=a.ff_init, weight_jitter=a.ff_jitter, plastic=True),
+        RegionPathway(from_region="code_in", to_region="assembly_vm", density=1.0,
+                      weight_mean=a.ff_init, weight_jitter=a.ff_jitter, plastic=True),
+        # Namburi-Tye opponent cross-inhibition (reused verbatim: each column drives its OWN FS, which inhibits the
+        # OTHER column -- density/weights match the appraisal-deepen template exactly, not re-tuned here).
+        RegionPathway(from_region="assembly_vp", to_region="xinh_vp", density=0.6, weight_mean=a.xinh_exc_w,
+                      weight_jitter=0.1, plastic=False),
+        RegionPathway(from_region="xinh_vp", to_region="assembly_vm", density=0.7, weight_mean=a.xinh_inh_w,
+                      weight_jitter=0.1, plastic=False, receptor="gaba_a"),
+        RegionPathway(from_region="assembly_vm", to_region="xinh_vm", density=0.6, weight_mean=a.xinh_exc_w,
+                      weight_jitter=0.1, plastic=False),
+        RegionPathway(from_region="xinh_vm", to_region="assembly_vp", density=0.7, weight_mean=a.xinh_inh_w,
+                      weight_jitter=0.1, plastic=False, receptor="gaba_a"),
+    ]
+    cfg.dt_ms = 1.0
+    cfg.neuron_model_type = NeuronModel.IZHIKEVICH.name
+    cfg.seed = cfg.ou_seed = cfg.heterogeneity_seed = int(seed)
+    cfg.enable_inhibitory_neurons = True
+    cfg.enable_ou_process = False
+    cfg.enable_parameter_heterogeneity = False           # quiescent at rest; fire ONLY when driven (clean controls)
+    cfg.enable_stdp = False
+    cfg.enable_hebbian_learning = True
+    cfg.hebbian_learning_rate = a.hebb_rate
+    cfg.hebbian_max_weight = a.hebb_max
+    cfg.hebbian_min_weight = 0.0
+    cfg.hebbian_weight_decay = 0.00001
+    cfg.enable_homeostasis = bool(a.homeo)
+    cfg.enable_synaptic_scaling = bool(a.homeo)
+    if a.homeo:
+        cfg.homeostasis_target_rate = 0.15
+        cfg.synaptic_scaling_rate = 0.005
+    cfg.enable_nmda = True
+    cfg.nmda_ratio = a.nmda_ratio
+
+    rt = RuntimeState(); rt.actual_seed_used = int(seed)
+    bridge = SimulationBridge(core_config=cfg, viz_config=VisualizationConfig(), runtime_state=rt,
+                              gpu_config=GPUConfig())
+    bridge._initialize_simulation_data()
+    ci = np.asarray(bridge.region_manager.indices("code_in"))
+    vp = np.asarray(bridge.region_manager.indices("assembly_vp"))
+    vm = np.asarray(bridge.region_manager.indices("assembly_vm"))
+    asm = np.concatenate([vp, vm])
     xp = bridge._cp if hasattr(bridge, "_cp") else None
     return bridge, xp, ci, asm
 
@@ -355,8 +464,11 @@ def spiking_learned_code_ceiling(text_codes, X_relay, raw_gate, seed, a, k_mad=K
     X_in, din = build_spiking_input(text_codes, cleaned, a)
     us = eligibility_gate(cleaned) if gated else None                 # companion 3 (three-factor US gate)
     n = len(raw_gate)
+    opp = bool(getattr(a, "opponent", False))
+    _build = (lambda: build_opponent_convergence_bridge(din, M_HALF, seed, a)) if opp \
+        else (lambda: build_convergence_bridge(din, M_ASSEMBLY, seed, a))
     if not heldout:
-        bridge, xp, ci, asm = build_convergence_bridge(din, M_ASSEMBLY, seed, a)
+        bridge, xp, ci, asm = _build()
         diag = train_convergence(bridge, xp, ci, asm, X_in, seed, a, us_gate=us)
         code, spk = read_spiking_code(bridge, xp, ci, asm, X_in, a)
         del bridge
@@ -369,7 +481,7 @@ def spiking_learned_code_ceiling(text_codes, X_relay, raw_gate, seed, a, k_mad=K
     tr = ~ho
     if raw_gate[ho].sum() == 0 or (~raw_gate[ho]).sum() == 0:
         return 0.0
-    bridge, xp, ci, asm = build_convergence_bridge(din, M_ASSEMBLY, seed, a)
+    bridge, xp, ci, asm = _build()
     us_tr = us[tr] if us is not None else None
     train_convergence(bridge, xp, ci, asm, X_in[tr], seed, a, us_gate=us_tr)     # never sees held-out concepts
     code_all, _ = read_spiking_code(bridge, xp, ci, asm, X_in, a)                # read ALL, then slice held-out
@@ -476,6 +588,14 @@ def main():
     ap.add_argument("--spiking", action="store_true",
                     help="OPT-IN: run the on-substrate convergence (read off cp_firing_states). OFF (default) "
                          "delegates to the imported numpy GO verbatim (byte-identical).")
+    ap.add_argument("--opponent", action="store_true",
+                    help="OPT-IN (only meaningful with --spiking): the shared-WTA boundary's named surpass -- two "
+                         "cross-inhibiting columns (assembly_vp/assembly_vm) instead of one shared-FS assembly, "
+                         "preserving the comfort/discomfort SIGN structure the shared-WTA magnitude code collapses.")
+    ap.add_argument("--n-xinh", type=int, default=N_XINH,
+                    help="opponent-columnar cross-inhibition FS pool size per column (imported default)")
+    ap.add_argument("--xinh-exc-w", type=float, default=XINH_EXC_W)
+    ap.add_argument("--xinh-inh-w", type=float, default=XINH_INH_W)
     ap.add_argument("--smoke", action="store_true", help="1 seed, tiny corpus -- proves it RUNS + byte-identical-off")
     ap.add_argument("--max-stories", type=int, default=60000)
     ap.add_argument("--resample-frac", type=float, default=0.8)
@@ -516,10 +636,10 @@ def main():
         a.settle_steps = min(a.settle_steps, 60)
 
     t0 = time.time()
-    print(f"[onsubstrate-noise-robust-convergence] spiking={a.spiking} seeds={a.seeds} smoke={a.smoke} "
-          f"n_hub={a.n_hub} M={M_ASSEMBLY} n_fs={a.n_fs} ff_init={a.ff_init} perc_scale={a.perc_scale} "
-          f"nmda={a.nmda_ratio} epochs={a.epochs} scene={a.scene_steps} read={a.read_steps} homeo={a.homeo} "
-          f"backend={os.environ.get('SIM_BACKEND')}", flush=True)
+    print(f"[onsubstrate-noise-robust-convergence] spiking={a.spiking} opponent={a.opponent} seeds={a.seeds} "
+          f"smoke={a.smoke} n_hub={a.n_hub} M={M_ASSEMBLY} n_fs={a.n_fs} n_xinh={a.n_xinh} ff_init={a.ff_init} "
+          f"perc_scale={a.perc_scale} nmda={a.nmda_ratio} epochs={a.epochs} scene={a.scene_steps} "
+          f"read={a.read_steps} homeo={a.homeo} backend={os.environ.get('SIM_BACKEND')}", flush=True)
     _smoke_byte_identical(a)
     if a.smoke and not a.spiking:
         print("  [smoke] byte-identical-off path verified; pass --spiking to smoke the substrate build.", flush=True)
@@ -585,7 +705,8 @@ def main():
     attributable_to("spiking noisy-point ceiling (vs the no-grounding LESION)", real_mean, lesion_worst)
     attributable_to("spiking noisy-point ceiling (vs the shuffle-binding control)", real_mean, shuffle_worst)
 
-    tag = ("SPIKING " if a.spiking else "numpy-delegate ") + (f"{len(a.seeds)}-seed" if not a.smoke else "SMOKE(1-seed)")
+    tag = (("SPIKING-OPPONENT " if a.opponent else "SPIKING ") if a.spiking else "numpy-delegate ") + \
+          (f"{len(a.seeds)}-seed" if not a.smoke else "SMOKE(1-seed)")
     lift_line = (f"{'SPIKING' if a.spiking else 'numpy'}@realistic(rho={RHO_REAL},sigma={SIGMA_REAL})={real_worst:.3f} "
                  f"worst ({real_mean:.3f} mean) vs numpy-GO {base_real_worst:.3f} vs text {text_worst:.3f}; "
                  f"clean/full={clean_worst:.3f}; mid(sig.5)={mid_worst:.3f}; lesion={lesion_worst:.3f}; "
@@ -634,8 +755,10 @@ def main():
 
     summary = {
         "probe": "affect_onsubstrate_noise_robust_convergence_derisk (the noise-robust grounded affect convergence on "
-                 "a real spiking SimulationBridge; the concept code read OFF cp_firing_states)",
-        "verdict": verdict, "GO": go, "spiking": bool(a.spiking),
+                 "a real spiking SimulationBridge; the concept code read OFF cp_firing_states"
+                 + (" -- OPPONENT/COLUMNAR variant, the shared-WTA boundary's named surpass" if a.opponent else "")
+                 + ")",
+        "verdict": verdict, "GO": go, "spiking": bool(a.spiking), "opponent": bool(a.opponent),
         "G0_it_spikes": g0, "G1_spiking_lift": g1, "G2_load_bearing": g2, "G2b_generalizes": g2b, "G3_instrument": g3,
         "text_ceiling_worst": text_worst, "text_ceiling_mean": text_mean,
         "numpy_go_realistic_worst": base_real_worst,
@@ -652,19 +775,31 @@ def main():
         "per_seed": rows,
         "preconditions": verdict_earned["preconditions"], "verdict_earned_status": verdict_earned["status"],
         "verdict_undefined_reasons": verdict_earned["undefined_reasons"],
-        "config": {"spiking": a.spiking, "seeds": a.seeds, "smoke": a.smoke, "max_stories": a.max_stories,
+        "config": {"spiking": a.spiking, "opponent": a.opponent, "seeds": a.seeds, "smoke": a.smoke,
+                   "max_stories": a.max_stories,
                    "resample_frac": a.resample_frac, "n_hub": a.n_hub, "window": a.window, "min_count": a.min_count,
-                   "m_assembly": M_ASSEMBLY, "n_fs": a.n_fs, "ff_init": a.ff_init, "perc_scale": a.perc_scale,
+                   "m_assembly": M_ASSEMBLY, "m_half": M_HALF, "n_fs": a.n_fs, "ff_init": a.ff_init,
+                   "perc_scale": a.perc_scale,
                    "nmda_ratio": a.nmda_ratio, "hebb_rate": a.hebb_rate, "hebb_max": a.hebb_max, "epochs": a.epochs,
                    "scene_steps": a.scene_steps, "read_steps": a.read_steps, "settle_steps": a.settle_steps,
                    "text_gain": a.text_gain, "intero_gain": a.intero_gain, "pop": a.pop, "ff_jitter": a.ff_jitter,
                    "to_fs_w": a.to_fs_w, "fs_inh_w": a.fs_inh_w,
+                   "n_xinh": a.n_xinh, "xinh_exc_w": a.xinh_exc_w, "xinh_inh_w": a.xinh_inh_w,
                    "homeo": a.homeo, "n_relay_robust": N_RELAY_ROBUST, "k_mad": K_MAD,
                    "backend": os.environ.get("SIM_BACKEND")},
         "mechanism": "The numpy-GO noise-robust grounded affect convergence, with the CONVERGENCE realized on a real "
-                     "SimulationBridge: code_in (Din graded per-neuron current) -> plastic rate-Hebbian FF -> assembly "
-                     "(M excitatory NMDA neurons) <-> assembly_fs (FS shared inhibitory pool = Wong-Wang/Grossberg "
-                     "soft-WTA competition + divisive normalization). Homeostatic synaptic scaling (Turrigiano, "
+                     "SimulationBridge: code_in (Din graded per-neuron current) -> plastic rate-Hebbian FF -> "
+                     + (
+                         "TWO cross-inhibiting excitatory columns assembly_vp/assembly_vm (each M_HALF NMDA neurons, "
+                         "its OWN plastic FF from code_in) with a Namburi-Tye opponent cross-inhibition (each "
+                         "column's FS relay inhibits the OTHER column, reused verbatim from the appraisal-deepen "
+                         "opponent template) -- the named surpass for the shared-WTA structural boundary, preserving "
+                         "the comfort/discomfort SIGN structure a single shared-WTA magnitude code collapses. "
+                         if a.opponent else
+                         "assembly (M excitatory NMDA neurons) <-> assembly_fs (FS shared inhibitory pool = "
+                         "Wong-Wang/Grossberg soft-WTA competition + divisive normalization). "
+                     )
+                     + "Homeostatic synaptic scaling (Turrigiano, "
                      "enable_homeostasis + enable_synaptic_scaling) keeps assemblies selective (companion 4). The "
                      "three-factor US gate (companion 3) scales each concept's code_in drive by the label-free "
                      "eligibility (cleaned-arousal salience). Companions 1+2 (relay population pooling + the "

@@ -93,6 +93,22 @@ HEADLINE overclaims corrected by the adversarial-verify (`w3qhweujd`) — see th
 being re-verified.
 
 ## STATUS UPDATES (per-rank, append-only — keep terse; do not rewrite the ranked list above)
+- **Rank 7 (Warriner affect gate, opponent/columnar sub-rung) — LAUNCHED + 6-seed measured, still BOUNDARY
+  (2026-09-08).** The 2026-09-05 on-substrate shared-WTA boundary's own named surpass (`task_71610b88`,
+  "banked, NOT launched") — two cross-inhibiting columns replacing the one shared-FS assembly, reusing the
+  Namburi-Tye opponent template verbatim — is now BUILT (`--opponent` opt-in on
+  `_affect_onsubstrate_noise_robust_convergence_derisk.py`) and measured on CPU (no GPU needed; the earlier
+  GPU-priority deferral was not load-bearing). 6-seed worst-case recall@FP0 = 0.010, UNCHANGED from the
+  shared-WTA's single-seed floor (2/6 seeds show a real lift with strong held-out generalization 0.43-0.75;
+  3/6 sit at the floor) — the strict zero-FP bar still does not clear. A standalone seed-42 anecdote read an
+  apparent 7x lift that shrank 3x once measured jointly with the other 5 seeds — reported as the seed-cherry-
+  pick artifact 6-seed validation exists to catch, not a headline. Deep-research logged (Kang/Watanabe/Pu 2024
+  PNAS: competitive-Hebbian specialization reliability = competition STRENGTH, not topology). Named next rung:
+  retune `XINH_EXC_W`/`XINH_INH_W` (imported from a ridge-fit template, not tuned for this convergence) — a gain
+  sweep, not a further topology change. See `research/findings/2026-09-08-affect-opponent-columnar-spiking-
+  worst-case-unchanged-BOUNDARY.md` (commit `608a06304`). Production `_STRONG_MARGIN` gate unchanged; the
+  embodiment reframe (needs a non-textual experienced US) remains a separate, still-open residual on the
+  source side.
 - **Rank 6 (78k-fact knowledge-core WRITE) — CUPY VRAM GATE MEASURED = GO (2026-09-08), #211 unblocked.** The
   substrate-store's actual GPU VRAM at the real 78,857-fact `wikidata_100k` scale is measured via cupy memory-pool
   accounting (whole-device `nvidia-smi` was too noisy on this shared box — external GB-scale churn contaminated
