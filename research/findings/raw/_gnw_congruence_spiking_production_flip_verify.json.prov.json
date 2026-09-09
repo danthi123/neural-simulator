@@ -1,8 +1,8 @@
 {
- "run_id": "1788918141-2176636",
- "runner": "research/runners/_gnw_congruence_spiking_hook_verify.py",
+ "run_id": "1788917979-2170275",
+ "runner": "research/runners/_gnw_congruence_spiking_production_flip_verify.py",
  "argv": [
-  "/home/dant123/Projects/sim/.claude/worktrees/wf_b6701091-7fa-3/research/runners/_gnw_congruence_spiking_hook_verify.py",
+  "/home/dant123/Projects/sim/.claude/worktrees/wf_b6701091-7fa-3/research/runners/_gnw_congruence_spiking_production_flip_verify.py",
   "--seeds",
   "42",
   "43",
@@ -10,8 +10,9 @@
   "100",
   "101",
   "102",
+  "--no-battery",
   "--json",
-  "research/findings/raw/_gnw_congruence_spiking_hook_verify.json"
+  "research/findings/raw/_gnw_congruence_spiking_production_flip_verify.json"
  ],
  "git_sha": "5edca8a71",
  "git_dirty": true,
@@ -21,7 +22,7 @@
  "source_manifest_start_error": null,
  "source_manifest_verified_at_exit": null,
  "source_manifest_exit_error": null,
- "started": "2026-09-08T21:42:21",
+ "started": "2026-09-08T21:39:39",
  "env": {
   "SIM_BACKEND": "numpy"
  },
@@ -30,5 +31,5 @@
  "sim_backend_cupy_importable": true,
  "corpus_check_age_s": null,
  "corpus_check_query": null,
- "artifact": "research/findings/raw/_gnw_congruence_spiking_hook_verify.json"
+ "artifact": "research/findings/raw/_gnw_congruence_spiking_production_flip_verify.json"
 }

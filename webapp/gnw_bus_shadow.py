@@ -109,9 +109,14 @@ def _extract_query(question: str, agents_set, actions_set):
 
 
 def _congruence_spiking_enabled() -> bool:
-    """rank-8 scaffold-retirement flag (env read only — NO import of `webapp.gnw_congruence_spiking` unless truthy,
-    so the default-off path costs nothing). See that module's docstring for the mechanism/contract."""
-    return os.environ.get("BRAIN_GNW_CONGRUENCE_SPIKING", "").strip().lower() in ("1", "true", "on", "yes")
+    """rank-8 scaffold-retirement flag. `BRAIN_GNW_CONGRUENCE_SPIKING` DEFAULT-ON (2026-09-08 production-flip,
+    verified GO — `research/findings/2026-09-08-gnw-congruence-spiking-PRODUCTION-FLIP-GO.md`): unset -> True
+    (organ B/C's congruence check routes through the spiking `pred_k->mm_k` match-veto read). An explicit falsy
+    (0/false/off/no/'') -> False, the escape hatch, verified byte-identical to the pre-flip host `==` logic on
+    every seed. Mirrors `gnw_acc_bg_stop_trigger.stop_trigger_spiking_enabled()`'s own default-ON style exactly.
+    See `webapp/gnw_congruence_spiking.py`'s docstring for the mechanism/contract."""
+    v = os.environ.get("BRAIN_GNW_CONGRUENCE_SPIKING")
+    return not (v is not None and v.strip().lower() in ("0", "false", "off", "no", ""))
 
 
 def _spiking_congruent(held, proposed, *, seed: int) -> bool:
@@ -128,12 +133,13 @@ def _organ_reads(composer, agent, action, *, seed: int = 42):
       organ C — reverse-binding VERIFY:     cand iff query_agent(action, cand)==agent  (distinct substrate read)
     Returns (cand_A, [A, B, C]). When the forward recall misses, A is None -> the moat abstains (primary organ miss).
 
-    RANK-8 SCAFFOLD-RETIREMENT (additive, DEFAULT-OFF; see `webapp/gnw_congruence_spiking.py`). Organs B/C's `==`
-    congruence check above is the host string-id shortcut rank-8 targets: a genuinely spiking `pred_k->mm_k`
-    match-veto circuit (reusing the SAME ignition-workspace populations already load-bearing on the neural
-    thought-swap decision, 6/6-seed GO) can read "does this second read match the first" off neural competition
-    instead. `BRAIN_GNW_CONGRUENCE_SPIKING` unset/off (DEFAULT) -> the two `==` checks below run EXACTLY as
-    written -> byte-identical to pre-flip production; this module never imports `gnw_congruence_spiking`."""
+    RANK-8 SCAFFOLD-RETIREMENT (additive, DEFAULT-ON since 2026-09-08; see `webapp/gnw_congruence_spiking.py`).
+    Organs B/C's `==` congruence check above is the host string-id shortcut rank-8 targets: a genuinely spiking
+    `pred_k->mm_k` match-veto circuit (reusing the SAME ignition-workspace populations already load-bearing on the
+    neural thought-swap decision, 6/6-seed GO) reads "does this second read match the first" off neural
+    competition instead. `BRAIN_GNW_CONGRUENCE_SPIKING` unset (DEFAULT) -> the spiking read runs; an explicit
+    falsy value is the escape hatch -> the two `==` checks below run EXACTLY as written -> byte-identical to
+    pre-flip (pre-2026-09-08) production."""
     try:
         cand_A = composer.query_patient(agent, action)
     except Exception:
