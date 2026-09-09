@@ -39,3 +39,28 @@ def urbanczik_senn_update(pre_rate, soma_rate, v_basal,
         mismatch = np.asarray(apical_signal, float) * soma * (1.0 - soma)
     dw = np.outer(pre, lr * gate * mismatch)
     return dw
+
+
+def selfpredicting_interneuron_update(int_rate, wpi, y_fixed, lr=1.0, xp=np):
+    """Sacramento-Senn (2018) Eq.9 LOCAL self-prediction update for the SST-like
+    interneuron's PLASTIC apical-cancellation weight W^PI (gap#4 RANK-1).
+
+    int_rate (k,) = the interneuron drive (the network's own prediction / rate);
+    wpi (k, H) = the plastic interneuron->apical weight the interneuron LEARNS;
+    y_fixed (k, H) = the FIXED top-down feedback the interneuron learns to predict
+    and cancel. The free-phase residual apical is v_free = int_rate @ (y_fixed -
+    wpi) (H,), and the update is dW^PI = lr * outer(int_rate, v_free), which drives
+    W^PI toward the self-predicting fixed point where int_rate @ wpi == int_rate @
+    y_fixed -- i.e. the interneuron's cancellation matches the top-down and the
+    RESIDUAL apical is SILENT when the network is already correct (Sacramento-Senn
+    'apical silent when correct'). This is the in-engine analogue of the runner's
+    former host-side W^PI update: the SAME local rule, now carried on the substrate
+    arrays inside _run_one_simulation_step. TRANSPORT-FREE + LOCAL: reads ONLY
+    int_rate (an activity), wpi and y_fixed -- NEVER a forward weight. Backend
+    argument xp selects numpy (default) or the caller's cupy module so the update
+    runs on whichever arrays the substrate holds. Returns dW^PI (k, H)."""
+    r = xp.atleast_2d(int_rate)                   # (m, k), m>=1
+    v_free = r @ (y_fixed - wpi)                  # (m, H) free-phase residual apical
+    m = max(1, int(r.shape[0]))
+    dwpi = lr * (r.T @ v_free) / float(m)         # (k, H) == wpi.shape
+    return dwpi

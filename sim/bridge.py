@@ -494,6 +494,19 @@ class SimulationBridge:
         self.cp_bdsp_Pbar = None
         self.cp_bdsp_apical_drive = None
         self.cp_bdsp_int_drive = None
+        # LEARNED-IN-ENGINE self-predicting interneuron (gap#4 RANK-1, 2026-09-09; enable_selfpredicting_interneuron).
+        # All None unless the runner installs them, so the guarded block below is unreached and cp_bdsp_int_drive is
+        # left exactly as the runner set it (byte-identical). cp_spi_wpi = the PLASTIC (k x H) interneuron->apical
+        # weight the ENGINE learns in-step; cp_spi_Y = the FIXED (k x H) top-down feedback the interneuron predicts;
+        # cp_spi_scatter = the (n_neurons x H) 0/1 structural map from logical apical units to neuron indices
+        # (runner-owned, like connectivity); cp_spi_int_rate = the (k,) interneuron drive (the net's own prediction)
+        # the runner writes per example; cp_spi_phi = the per-neuron surrogate-derivative gate for this example.
+        self.cp_spi_wpi = None
+        self.cp_spi_Y = None
+        self.cp_spi_scatter = None
+        self.cp_spi_int_rate = None
+        self.cp_spi_phi = None
+        self._spi_learn = True                              # runner toggles False to freeze cp_spi_wpi (the anti-cheat)
         self._bdsp_step_counter = 0                         # monotone step index for burst-ISI detection (BDSP only)
         self.cp_btsp_pre_elig = None                        # gap#4 BTSP seconds-long per-neuron presynaptic eligibility (None unless enable_btsp)
         self.cp_btsp_pre_elig_slow = None                   # gap#4 Rank-2: SLOW companion trace (None unless btsp_dog_a_dep>0)
@@ -10352,6 +10365,32 @@ class SimulationBridge:
                 # fixed point W^PI==-W^PP the residual == the backprop delta (closed-form; NO settling loop). Default
                 # path: cp_bdsp_int_drive is None OR the flag is False => this branch is unreached => the Burstprop
                 # integration below is byte-identical (itself byte-identical to today when enable_bdsp is False).
+                # LEARNED-IN-ENGINE self-predicting interneuron (gap#4 RANK-1, 2026-09-09; Sacramento-Senn Eq.9).
+                # When enabled and the runner has installed the (small, logical) cp_spi_* arrays, the ENGINE forms the
+                # interneuron cancellation cp_bdsp_int_drive HERE -- a PLASTIC projection of the interneuron rate
+                # through cp_spi_wpi, scattered to neurons (cp_spi_scatter) and gated by the per-neuron surrogate
+                # factor (cp_spi_phi) -- and LEARNS cp_spi_wpi by the local self-prediction rule toward the fixed
+                # feedback cp_spi_Y, so the microcircuit's cancellation is learned IN-ENGINE on the substrate, NOT
+                # supplied per-phase by the runner. Guarded: default flag off OR cp_spi_wpi None => unreached =>
+                # cp_bdsp_int_drive is left exactly as the runner set it (byte-identical to the runner-supplied path).
+                if getattr(cfg, "enable_selfpredicting_interneuron", False) and self.cp_spi_wpi is not None \
+                        and self.cp_spi_int_rate is not None and self.cp_spi_scatter is not None:
+                    _spi_r = self.cp_spi_int_rate                              # (k,) interneuron drive (an activity)
+                    _spi_logical = _spi_r @ self.cp_spi_wpi                    # (H,) logical cancellation projection
+                    _spi_neuron = self.cp_spi_scatter @ _spi_logical          # (n_neurons,) broadcast to neurons
+                    if self.cp_spi_phi is not None:
+                        _spi_neuron = _spi_neuron * self.cp_spi_phi           # per-neuron surrogate-derivative gate
+                    self.cp_bdsp_int_drive = _spi_neuron.astype(cp.float32)
+                    # LOCAL Sacramento self-prediction update (transport-free; reads only the rate, wpi and Y):
+                    # drives cp_spi_wpi -> the fixed point int_rate @ wpi == int_rate @ Y (apical SILENT when correct).
+                    # Gated by _spi_learn so the runner can freeze it (the anti-cheat) and apply exactly one update per
+                    # example (toggle off after the first credit step).
+                    if getattr(self, "_spi_learn", True) and self.cp_spi_Y is not None:
+                        from sim.dendritic_plasticity import selfpredicting_interneuron_update
+                        _dwpi = selfpredicting_interneuron_update(
+                            _spi_r, self.cp_spi_wpi, self.cp_spi_Y,
+                            lr=float(getattr(cfg, "spi_lr", 0.2)), xp=cp)
+                        self.cp_spi_wpi = self.cp_spi_wpi + _dwpi.astype(self.cp_spi_wpi.dtype)
                 _bdsp_raw_apical = None
                 if getattr(cfg, "enable_bdsp_microcircuit", False) and self.cp_bdsp_int_drive is not None \
                         and self.cp_bdsp_apical_drive is not None:
