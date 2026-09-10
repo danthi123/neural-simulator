@@ -1,8 +1,10 @@
-2026-09-09 ~19:58 — GAME MODE (owner gaming, game.sh on). The local GPU is deliberately freed for the owner's
+2026-09-09 ~20:00 — GAME MODE (owner gaming, game.sh on). The local GPU is deliberately freed for the owner's
 game (excused upstream by parallel_audit). The mini-PC pool is idle only because no PRE-BUILT valuable pool
-command exists right now — the ready next-levers (question-route wire-in, next scaffold-retirement de-risks,
-D-vision graded-attention) all require a build first, and the owner asked to keep the LOCAL footprint minimal
-during their game. I am feeding the pool via a light pool-ROUTED de-risk agent (light local build, remote 6-seed
-run) launched this turn; full GPU+pool saturation resumes at `tools/game.sh off` (overnight): gap#4 is queued
-(depth 1) and the AWS-CPU wiring-verify batch is planned. This is an operational build-lag + owner-directed
-constraint, not a priority/focus rationalization. Auto-expires 6h (covers the gaming window).
+command exists right now: the ready next-levers (question-route wire-in, next scaffold-retirement de-risks,
+D-vision graded-attention) each require a BUILD before anything is pool-runnable, and a fresh de-risk's decisive
+run is pool-runnable only AFTER its runner is merged to main. During the owner's game I am keeping to LIGHT LOCAL
+work only per their explicit request ("keep working, no heavy local compute") — specifically the question-route
+production wire-in, whose focused checks are sub-second and whose heavy integrated verify is DEFERRED to the
+AWS-CPU batch (not run locally). Full GPU+pool saturation resumes at `tools/game.sh off` (overnight): gap#4 is
+queued (depth 1) and the AWS-CPU wiring-verify batch is planned. This is an operational build-lag + an
+owner-directed gaming constraint, NOT a priority/focus/momentum rationalization. Auto-expires 6h.
