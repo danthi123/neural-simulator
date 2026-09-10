@@ -13,7 +13,31 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ---
 
-## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-09 ~02:40 (SCAFFOLD-RETIREMENT FLIPS + breadth LANDED + pushed; owner gaming → GPU-free work; READ FIRST; LATEST anchor)
+## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-10 ~06:40 (OWNER-OPERATED 5-DAY RESEARCH QUEUE staged for the Claude-usage break; READ FIRST; LATEST anchor)
+
+Claude weekly usage is the scarce resource (~20% left ~3 days after reset; next reset Tue ~11:00). Staged a deep,
+pause-safe queue of ZERO-Claude compute the OWNER starts/pauses/stops via `tools/game.sh` — owner's explicit ask:
+Claude does NOT start it. Built so a gaming pause loses <= ONE self-contained unit (single seed / one seed's curve).
+GPU lane (36 cells, PAUSED for owner-start): 6x gap#4 single-seed splits (decisive, first) + 30x mouth TOKEN-SCALING
+per-seed curves (owner #1 mouth fork; fineweb_edu 4.3GB + wt103 both already-LOCAL, pushed into the large-token
+"does the curve bend" regime the flat prior d96/4k-48k run never reached). POOL lane (42 cells, ALREADY RUNNING on
+the mini-PCs, independent of local GPU/gaming): Rank-7 affect-opponent competition-strength gain sweep. Stocker
+`tools/stock_research_queue.sh` is re-derivation-guarded + queue-aware (safe to re-run to top up). Owner controls +
+science summary: `research/queue/QUEUE_GUIDE.md`. Tooling committed; GAME_MODE still ON (the paused state).
+
+**PRE-DECIDED NEXT ACTIONS:**
+1. OWNER starts the GPU lane when ready: `bash tools/gpu_queue.sh start && bash tools/game.sh off` (pause for gaming = `bash tools/game.sh on`; resume = off). Claude does NOT auto-start it.
+2. On the next Claude session / owner return: aggregate per-cell artifacts — gap#4 `research/findings/raw/gap4/selfpredict_inengine_s*.json`; token-scaling `research/findings/raw/_gencortex_scaling/{fineweb,wt103}_d*_s*.json` (reconstruct the 6-seed scaling curve vs the flat d96 prior); affect `research/findings/raw/_affect_gain_sweep/opp_to*_fs*_s*.json`. Write findings + sync board/Vikunja.
+3. gap#4 verdict may be UNDEFINED under the interpretability gate — a valid deliverable, not a NO-GO.
+4. Re-arm a state-checking heartbeat when a Claude session resumes active work (none live during the owner-controlled break).
+
+**Superseded note:** the 2026-09-09 GAME MODE / overnight-AWS-flip-batch anchor below is HISTORY. The AWS-CPU
+wiring-verify batch (novelty/anaphor/qroute + B integrated no-regression → flip) is still a valid pending Claude-session
+arc for when usage budget resumes, but it is NOT part of this owner-operated compute queue.
+
+---
+
+## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-09 ~02:40 (SCAFFOLD-RETIREMENT FLIPS + breadth LANDED + pushed; owner gaming → GPU-free work; earlier anchor)
 
 **✅ LANDED + pushed both remotes (main HEAD `8335a6af`):**
 - **Both scaffold-retirement flips `eca75a3f1`** (owner's 2026-09-04 priority): host **rf composer → spiking onebrain** (developed-brain default `_DEVELOPED_COMPOSER_KIND_DEFAULT_OVERRIDE="onebrain"`) + **numpy-KB LTM → substrate-store** (memory-in-weights, batched-scan default-on). No-regression GO: flip A recall 20/20 answer-identical to rf + yes/no + moat abstains + reversible; flip B 40/40 answer-identical to numpy-KB via the internal `query_patient` path (dodges the tinystories-parser confound on wikidata relations), ~497ms/query, reversible. Finding `2026-09-09-scaffold-retirement-flips-...-GO.md`.
