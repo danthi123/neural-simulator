@@ -50,6 +50,18 @@ bash tools/stock_research_queue.sh   # re-stage; skips every cell already run (s
 
 If a pool node is unreachable after a reboot, re-provision it once: `bash tools/pool_provision.sh` (then top up).
 
+## Durability (safe to leave unattended for days)
+
+Nothing here depends on a Claude session being open. All three pieces are systemd services that keep running on
+their own and **survive a reboot**:
+- `gpu-queue-dispatch.service` — the GPU dispatcher; on boot it resumes `gpu.queue` (and stays paused if you left it
+  paused — the pause + GAME_MODE flags survive reboot too).
+- `pool-dispatch.service` — feeds staged jobs to the mini-PC pool.
+- `pool-sync.service` — automatically pulls finished pool results back into `research/findings/raw/` here.
+
+So if you reboot mid-break: a paused queue stays paused (run `game.sh off` to resume); a running queue picks back up on
+its own. If `gpu_queue.sh status` ever shows `dispatcher: DOWN`, run `bash tools/gpu_queue.sh start`.
+
 ## Fully stop (end of the week)
 
 ```bash
