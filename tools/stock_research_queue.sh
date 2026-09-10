@@ -103,19 +103,19 @@ stage_scaling "$WT103"   "wt103"   192 "192000 384000 768000"
 # convergence; Kang/Watanabe/Pu 2024 PNAS = specialization reliability tracks competition STRENGTH, not topology.
 # ---------------------------------------------------------------------------------------------------------------
 AFFECT_RUNNER="research.runners._affect_onsubstrate_noise_robust_convergence_derisk"
-REASON='Rank-7 affect-opponent BOUNDARY (608a06304, 2026-09-08): 6-seed worst-case recall@FP0 UNCHANGED at DEFAULT gains (TO_FS_W=18/FS_INH_W=15, imported from a ridge-fit template, never tuned for this convergence). The finding names its OWN next rung as a competition-STRENGTH gain sweep (Kang/Watanabe/Pu 2024 PNAS: reliability=competition strength, not topology). Verified no artifact at this (to_fs,fs_inh,seed) tuple exists under raw/_affect_gain_sweep. CPU/pool (no GPU needed per the finding). Default center (18,15) excluded — already the BOUNDARY artifact.'
+REASON='Rank-7 affect-opponent BOUNDARY (608a06304, 2026-09-08): 6-seed worst-case recall@FP0 UNCHANGED at DEFAULT gains (TO_FS_W=18/FS_INH_W=15, imported from a ridge-fit template, never tuned for this convergence). The finding names its OWN next rung as a competition-STRENGTH gain sweep (Kang/Watanabe/Pu 2024 PNAS: reliability=competition strength, not topology). Verified no artifact at this (to_fs,fs_inh,seed) tuple exists under raw/_affect_gain_sweep. ON-SUBSTRATE (--spiking) sweep = the actual boundary; runner localizes it to FS_INH_W competition strength + neutral-firing floor, which this grid targets. CPU/pool. Default center (18,15) excluded — already the BOUNDARY artifact.'
 # Primary axis: FS_INH_W = the competition strength (source comment), swept off default 15 at default drive TO_FS_W=18.
 for FS in 8 12 18 22 27; do
   for S in $SEEDS; do
     REL="research/findings/raw/_affect_gain_sweep/opp_to18_fs${FS}_s${S}.json"   # relative: pool runs from ~/derisk-pool/sim
-    pool_add "CUDA_VISIBLE_DEVICES=\"\" SIM_BACKEND=numpy .venv/bin/python -u -m $AFFECT_RUNNER --opponent --to-fs-w 18 --fs-inh-w $FS --seeds $S --out $REL" "$RAW/_affect_gain_sweep/opp_to18_fs${FS}_s${S}.json" "$REASON"
+    pool_add "CUDA_VISIBLE_DEVICES=\"\" SIM_BACKEND=numpy .venv/bin/python -u -m $AFFECT_RUNNER --opponent --spiking --to-fs-w 18 --fs-inh-w $FS --seeds $S --out $REL" "$RAW/_affect_gain_sweep/opp_to18_fs${FS}_s${S}.json" "$REASON"
   done
 done
 # Secondary axis: TO_FS_W = drive strength, swept off default 18 at default competition FS_INH_W=15.
 for TO in 12 27; do
   for S in $SEEDS; do
     REL="research/findings/raw/_affect_gain_sweep/opp_to${TO}_fs15_s${S}.json"
-    pool_add "CUDA_VISIBLE_DEVICES=\"\" SIM_BACKEND=numpy .venv/bin/python -u -m $AFFECT_RUNNER --opponent --to-fs-w $TO --fs-inh-w 15 --seeds $S --out $REL" "$RAW/_affect_gain_sweep/opp_to${TO}_fs15_s${S}.json" "$REASON"
+    pool_add "CUDA_VISIBLE_DEVICES=\"\" SIM_BACKEND=numpy .venv/bin/python -u -m $AFFECT_RUNNER --opponent --spiking --to-fs-w $TO --fs-inh-w 15 --seeds $S --out $REL" "$RAW/_affect_gain_sweep/opp_to${TO}_fs15_s${S}.json" "$REASON"
   done
 done
 
