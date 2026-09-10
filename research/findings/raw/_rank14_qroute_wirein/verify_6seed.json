@@ -1,0 +1,374 @@
+{
+  "runner": "_rank14_qroute_wirein_verify",
+  "backend": "numpy",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "all_pass": true,
+  "n_checks": 28,
+  "n_fail": 0,
+  "checks": [
+    {
+      "name": "select(True, False, False) -> RELFRONT",
+      "ok": true,
+      "detail": "winner=RELFRONT margin=0.179"
+    },
+    {
+      "name": "select(False, True, False) -> KBREL",
+      "ok": true,
+      "detail": "winner=KBREL margin=0.163"
+    },
+    {
+      "name": "select(False, False, True) -> DEFCOP",
+      "ok": true,
+      "detail": "winner=DEFCOP margin=0.167"
+    },
+    {
+      "name": "select(False, False, False) -> GENERIC",
+      "ok": true,
+      "detail": "winner=GENERIC margin=0.097"
+    },
+    {
+      "name": "select(True, True, False) -> RELFRONT",
+      "ok": true,
+      "detail": "winner=RELFRONT margin=0.141"
+    },
+    {
+      "name": "lesioned select(True, False, False) -> GENERIC",
+      "ok": true,
+      "detail": "winner=GENERIC"
+    },
+    {
+      "name": "lesioned select(False, True, False) -> GENERIC",
+      "ok": true,
+      "detail": "winner=GENERIC"
+    },
+    {
+      "name": "lesioned select(False, False, True) -> GENERIC",
+      "ok": true,
+      "detail": "winner=GENERIC"
+    },
+    {
+      "name": "lesioned select(False, False, False) -> GENERIC",
+      "ok": true,
+      "detail": "winner=GENERIC"
+    },
+    {
+      "name": "lesioned select(True, True, False) -> GENERIC",
+      "ok": true,
+      "detail": "winner=GENERIC"
+    },
+    {
+      "name": "attribution(intact vs full-lesion) >= 0.5",
+      "ok": true,
+      "detail": "attribution=1.0 intact_exc_rate=1.0 lesion_exc_rate=0.0"
+    },
+    {
+      "name": "seed 42 ambiguous -> RELFRONT",
+      "ok": true,
+      "detail": "margin=0.141"
+    },
+    {
+      "name": "seed 43 ambiguous -> RELFRONT",
+      "ok": true,
+      "detail": "margin=0.133"
+    },
+    {
+      "name": "seed 44 ambiguous -> RELFRONT",
+      "ok": true,
+      "detail": "margin=0.089"
+    },
+    {
+      "name": "seed 100 ambiguous -> RELFRONT",
+      "ok": true,
+      "detail": "margin=0.072"
+    },
+    {
+      "name": "seed 101 ambiguous -> RELFRONT",
+      "ok": true,
+      "detail": "margin=0.084"
+    },
+    {
+      "name": "seed 102 ambiguous -> RELFRONT",
+      "ok": true,
+      "detail": "margin=0.081"
+    },
+    {
+      "name": "OFF 'what country is chelsea fc from' -> host priority",
+      "ok": true,
+      "detail": "out=['country', 'chelsea_fc'] decision_calls=0"
+    },
+    {
+      "name": "OFF 'where was entity_x born' -> host priority",
+      "ok": true,
+      "detail": "out=['entity_x', 'place_of_birth'] decision_calls=0"
+    },
+    {
+      "name": "OFF 'what is canada' -> host priority",
+      "ok": true,
+      "detail": "out=['canada', 'isa'] decision_calls=0"
+    },
+    {
+      "name": "OFF 'what does the wolf hunt' -> host priority",
+      "ok": true,
+      "detail": "out=['wolf', 'hunt'] decision_calls=0"
+    },
+    {
+      "name": "OFF 'what country is entity_x a citizen of' -> host priority",
+      "ok": true,
+      "detail": "out=['country', 'chelsea_fc'] decision_calls=0"
+    },
+    {
+      "name": "ON 'what country is chelsea fc from' -> RELFRONT",
+      "ok": true,
+      "detail": "out=['country', 'chelsea_fc']"
+    },
+    {
+      "name": "ON 'where was entity_x born' -> KBREL",
+      "ok": true,
+      "detail": "out=['entity_x', 'place_of_birth']"
+    },
+    {
+      "name": "ON 'what is canada' -> DEFCOP",
+      "ok": true,
+      "detail": "out=['canada', 'isa']"
+    },
+    {
+      "name": "ON 'what does the wolf hunt' -> GENERIC",
+      "ok": true,
+      "detail": "out=['wolf', 'hunt']"
+    },
+    {
+      "name": "ON 'what country is entity_x a citizen of' -> RELFRONT",
+      "ok": true,
+      "detail": "out=['country', 'chelsea_fc']"
+    },
+    {
+      "name": "ON+LESION relf question -> generic heuristic (route retired to GENERIC)",
+      "ok": true,
+      "detail": "out=['country', 'chelsea']"
+    }
+  ],
+  "attribution_intact_vs_lesion": 1.0,
+  "intact_exc_rate": 1.0,
+  "lesion_exc_rate": 0.0,
+  "verdict": "WIRED-DEFAULT-OFF (focused verify GO)",
+  "status": "GO",
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "select(True, False, False) -> RELFRONT",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "select(False, True, False) -> KBREL",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "select(False, False, True) -> DEFCOP",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "select(False, False, False) -> GENERIC",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "select(True, True, False) -> RELFRONT",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "lesioned select(True, False, False) -> GENERIC",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "lesioned select(False, True, False) -> GENERIC",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "lesioned select(False, False, True) -> GENERIC",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "lesioned select(False, False, False) -> GENERIC",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "lesioned select(True, True, False) -> GENERIC",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "attribution(intact vs full-lesion) >= 0.5",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed 42 ambiguous -> RELFRONT",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed 43 ambiguous -> RELFRONT",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed 44 ambiguous -> RELFRONT",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed 100 ambiguous -> RELFRONT",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed 101 ambiguous -> RELFRONT",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed 102 ambiguous -> RELFRONT",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "OFF 'what country is chelsea fc from' -> host priority",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "OFF 'where was entity_x born' -> host priority",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "OFF 'what is canada' -> host priority",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "OFF 'what does the wolf hunt' -> host priority",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "OFF 'what country is entity_x a citizen of' -> host priority",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "ON 'what country is chelsea fc from' -> RELFRONT",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "ON 'where was entity_x born' -> KBREL",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "ON 'what is canada' -> DEFCOP",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "ON 'what does the wolf hunt' -> GENERIC",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "ON 'what country is entity_x a citizen of' -> RELFRONT",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "ON+LESION relf question -> generic heuristic (route retired to GENERIC)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "knob",
+      "name": "BRAIN_SPIKING_QROUTE (default OFF) / BRAIN_SPIKING_QROUTE_LESION",
+      "ok": true,
+      "detail": "requested=('off', 'off') applied=('off', 'off')",
+      "note": ""
+    }
+  ],
+  "disabled_processes": [
+    {
+      "process": "homeostasis/stdp/hebbian/short-term-plasticity/structural-plasticity",
+      "why": "frozen cross-inhibition weights; a pure feedforward-driven competitive read, no learning"
+    }
+  ],
+  "undefined_reasons": []
+}
