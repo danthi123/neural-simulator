@@ -1,0 +1,25 @@
+{
+ "run_id": "1788999717-1159173",
+ "runner": "research/runners/_rank14_qroute_wirein_verify.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-ad34f400ac5a4b8cf/research/runners/_rank14_qroute_wirein_verify.py",
+  "--json",
+  "research/findings/raw/_rank14_qroute_wirein/verify_6seed.json"
+ ],
+ "git_sha": "e850b5962",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-09T20:21:57",
+ "env": {},
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_rank14_qroute_wirein/verify_6seed.json"
+}

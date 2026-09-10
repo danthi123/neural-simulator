@@ -21,6 +21,12 @@ current_status: >
   BUILT + decisive 6-seed run LANDED (`_rank14_question_route_selection_derisk.py`, reusing
   `_affect_marker_wta_derisk.py`'s `_build_bridge`/`_pool_rates` N-pool cross-inhibition primitive verbatim, N=4
   route channels). See the current_finding for the measured parity/lesion/attribution/sweep numbers and verdict.
+  PRODUCTION WIRE-IN LANDED default-OFF (2026-09-09, `spiking_qroute_selection_organ.py` +
+  `brain_chat_tui.ChatBrain._extract_route`/`_spiking_route_decision`, flag `BRAIN_SPIKING_QROUTE`): focused verify
+  GO (byte-identical-off; load-bearing-on incl. ambiguous + lesion, 6 seeds). The wire-in builds a FRESH bridge per
+  decision (not one reused bridge) -- the tight ambiguous margin is sensitive to Izhikevich adaptation carryover
+  across arbitrary question sequences (measured 0.14->0.009 on reuse). The FLIP to default-ON awaits an integrated
+  AWS-CPU no-regression soak. Still `status: de-risking` (not production-ON).
 sources:
   - path: /home/dant123/Projects/sim-catalog/references/textbooks/kandel-pns-6e/full-book.txt
     anchor: "becomes went rather than goed and break becomes broke"
@@ -53,8 +59,11 @@ sources:
       has one source of truth.
 implemented_by:
   - research/runners/_rank14_question_route_selection_derisk.py
+  - research/runners/spiking_qroute_selection_organ.py
+  - research/runners/_rank14_qroute_wirein_verify.py
 findings:
   - research/findings/2026-09-09-rank14-question-route-selection-wta-derisk-GO.md
+  - research/findings/2026-09-09-rank14-question-route-selection-wta-wirein-default-off.md
 ---
 
 # Which question-comprehension route wins is a spiking competition, not a Python if/elif cascade
