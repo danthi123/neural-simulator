@@ -26,8 +26,13 @@ passages (~9.2M tokens) — the training pool is `0.85*n_sentences` and the stoc
 are INERT in `--opponent` mode (that path uses XINH_EXC_W/XINH_INH_W). So the run reproduced the 608a06304 BOUNDARY
 at 6 seeds (recall@FP0 ~0.032 worst << 0.5 bar at default XINH) but did NOT test the named lever. Finding
 `2026-09-15-rank7-affect-opponent-gain-sweep-mistargeted-boundary-reproduced-6seed.md`.
-**(3) gap#4 4/6 (GO=False so far) — still running** (s102 in flight, s100 re-queued; the 2 expensive in-engine seeds
-kept getting SIGTERM'd by gaming pauses — per-seed unit is coarse for a ~10h run). Finalize the finding at 6/6.
+**(3) gap#4 — FINALIZED: UNDEFINED (interpretability-foreclosed), 5/6 seeds.** The learned in-engine
+self-predicting-interneuron microcircuit never beats fixed_fa (0/5) AND the transport_ceiling oracle never clears
+chance (0/5) — the read-regime forecloses the instrument, so per the runner's pre-registered gate the verdict is
+UNDEFINED (a valid deliverable, NOT a NO-GO). Seed 100 STOPPED as compute-foreclosed (GO needs >=5/6, was 0/5 -> max
+1/6; ~hours of GPU redirected to the token _n2M sweep). Finding
+`2026-09-15-gap4-inengine-selfpredict-interneuron-UNDEFINED-transport-ceiling-foreclosed.md`. Next lever: a
+read-regime where the oracle clears chance (`n_fa_wall` was only 0-1/seed), THEN re-compare.
 
 **CORRECTED SWEEPS RE-QUEUED (no-defer, 0 Claude tokens):** GPU lane — 18 token-scaling cells at `--n-sentences
 2000000` (pool 1.7M >= 1.536M-passage point, reaching ~74M tokens; fineweb d96/d192 + wt103 d96, `_n2M_` paths) = the
@@ -36,7 +41,7 @@ actual bend/no-bend test. POOL lane — 36 affect cells sweeping `--xinh-exc-w/-
 bumped to 2000000 for future correctness.
 
 **PRE-DECIDED NEXT ACTIONS:**
-1. Let the corrected sweeps run (GPU: gap#4 s102/s100 finish, then 18 token `_n2M` cells; POOL: 36 XINH affect cells). 0 Claude tokens.
+1. Let the corrected sweeps run (GPU: 18 token `_n2M` cells now running — gap#4 done/foreclosed; POOL: 36 XINH affect cells). 0 Claude tokens.
 2. Next harvest: aggregate `_gencortex_scaling/*_n2M_s*.json` (does the curve BEND at ~74M tokens?) + `_affect_gain_sweep/opp_xinh_e*_i*_s*.json` (does competition strength lift recall@FP0 off the ~0.032 floor?) + finalize gap#4 at 6/6 (NO-GO vs UNDEFINED per the transport-ceiling interpretability gate).
 3. LESSON banked (queue tooling): a swept flag must be LIVE in the target code path (affect) AND the token cap must match the top point (`n_sentences >= top_point/0.85`) — verify knob-non-inertness + point-coverage on cell 1 of any sweep.
 4. Re-arm a state-checking heartbeat while the corrected sweeps run.

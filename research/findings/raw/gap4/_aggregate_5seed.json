@@ -1,0 +1,70 @@
+{
+  "note": "gap#4 in-engine self-predicting-interneuron microcircuit \u2014 per-seed arm means over research/findings/raw/gap4/selfpredict_inengine_s{seed}.json. GO rule = micro_inengine>fixed_fa on >=5/6 seeds in the FA-wall regime + transport_ceiling must clear chance (else UNDEFINED).",
+  "chance": 0.16666666666666666,
+  "go_bar_seeds": 5,
+  "n_seeds_completed": 5,
+  "per_seed": {
+    "101": {
+      "fixed_fa": 0.0926,
+      "micro_inengine": 0.037,
+      "transport_ceiling": 0.1667,
+      "micro_inengine_gt_fixed_fa": false,
+      "transport_ceiling_clears_chance": false,
+      "n_fa_wall": 1,
+      "GO": false
+    },
+    "102": {
+      "fixed_fa": 0.0741,
+      "micro_inengine": 0.0741,
+      "transport_ceiling": 0.1111,
+      "micro_inengine_gt_fixed_fa": false,
+      "transport_ceiling_clears_chance": false,
+      "n_fa_wall": 1,
+      "GO": false
+    },
+    "42": {
+      "fixed_fa": 0.1481,
+      "micro_inengine": 0.0741,
+      "transport_ceiling": 0.0926,
+      "micro_inengine_gt_fixed_fa": false,
+      "transport_ceiling_clears_chance": false,
+      "n_fa_wall": 0,
+      "GO": false
+    },
+    "43": {
+      "fixed_fa": 0.0926,
+      "micro_inengine": 0.0556,
+      "transport_ceiling": 0.1481,
+      "micro_inengine_gt_fixed_fa": false,
+      "transport_ceiling_clears_chance": false,
+      "n_fa_wall": 1,
+      "GO": false
+    },
+    "44": {
+      "fixed_fa": 0.0926,
+      "micro_inengine": 0.0926,
+      "transport_ceiling": 0.0926,
+      "micro_inengine_gt_fixed_fa": false,
+      "transport_ceiling_clears_chance": false,
+      "n_fa_wall": 0,
+      "GO": false
+    }
+  },
+  "provenance": {
+    "runner": "gap4-harvest-aggregation-2026-09-15",
+    "run_id": "gap4agg-1789515285",
+    "sim_backend": "cupy (GPU; source _gap4_selfpredict_interneuron_inengine_derisk runs). Host-side aggregation; per-run device in each cited per-seed artifact.",
+    "seeds": [
+      42,
+      43,
+      44,
+      101,
+      102
+    ],
+    "generated_by": "claude harvest 2026-09-15"
+  },
+  "n_seeds_micro_inengine_gt_fixed_fa": 0,
+  "n_seeds_transport_ceiling_clears_chance": 0,
+  "max_achievable_go_seeds_if_s100_passes": 1,
+  "verdict_foreclosed": true
+}
