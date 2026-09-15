@@ -1,0 +1,95 @@
+{
+  "runner": "_gen_cortex_token_supply_scaling_derisk",
+  "corpus": "/home/dant123/Projects/sim/data/corpus/fineweb_edu.txt",
+  "d_model": 192,
+  "vocab_cap": 2000,
+  "epochs": 6,
+  "max_len": 48,
+  "token_points": [
+    96000,
+    192000,
+    384000,
+    768000
+  ],
+  "seeds": [
+    42
+  ],
+  "per_seed": {
+    "42": {
+      "V": 2000,
+      "active_params": 918224,
+      "eval_ids_sha": "d3103a1ef5bb",
+      "vocab_sha": "fcee17517b3a",
+      "n_eval": 2000,
+      "points": [
+        {
+          "max_train_sents": 96000,
+          "n_train_passages": 96000,
+          "n_tokens": 4608000,
+          "tok_per_active_param": 5.018,
+          "wkv_deep_nll": 3.9571,
+          "trigram_deep_nll": 4.3097,
+          "bigram_deep_nll": 4.5112,
+          "margin_vs_trigram": 0.3526,
+          "perm_collapse": 1.6978,
+          "mless_collapse": 0.2234,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 3.936,
+          "overfit_gap": 0.0211,
+          "n_deep": 76000,
+          "elapsed_s": 105.1
+        },
+        {
+          "max_train_sents": 192000,
+          "n_train_passages": 192000,
+          "n_tokens": 9216000,
+          "tok_per_active_param": 10.037,
+          "wkv_deep_nll": 3.9224,
+          "trigram_deep_nll": 4.2111,
+          "bigram_deep_nll": 4.4026,
+          "margin_vs_trigram": 0.2887,
+          "perm_collapse": 1.727,
+          "mless_collapse": 0.2422,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 3.9345,
+          "overfit_gap": -0.012,
+          "n_deep": 76000,
+          "elapsed_s": 171.0
+        }
+      ],
+      "gen_samples_top_point": [
+        "the <unk> <unk> was <unk> with <unk> of <unk> <unk> during the <unk> of <unk> <unk> in the late summer of the early and early th century <unk> in ancient <unk> and in the <unk> <unk> <unk> of their <unk> during",
+        "in the way that their <unk> and <unk> with <unk> the planet made by the us <unk> <unk> and <unk> <unk> <unk> <unk> <unk> <unk> <unk> for a <unk> <unk> the difference in their <unk> and <unk> a <unk> <unk> <unk> <unk>",
+        "he was the first time of the time <unk> of the <unk> <unk> and <unk> in science <unk> <unk> there is no way to remove <unk> <unk> <unk> from the <unk> <unk> he <unk> from <unk> and <unk> <unk> about <unk> the",
+        "it is a <unk> of a <unk> of <unk> and <unk> <unk> <unk> <unk> is from the <unk> of <unk> <unk> <unk> <unk> of <unk> <unk> <unk> the <unk> <unk> of the <unk> km <unk> national park <unk> is <unk> <unk> a <unk>"
+      ],
+      "delta_nll_min_to_max_tokens": 0.0347,
+      "top_segment_slope": 0.0347,
+      "margin_grows_with_tokens": false,
+      "uses_tokens": false,
+      "still_descending_at_top": true,
+      "uses_context_at_top": true,
+      "beats_trigram_at_top": true
+    }
+  },
+  "verdict": {
+    "verdict": "NO-GO-CAPACITY-SATURATED",
+    "n_seeds": 1,
+    "n_uses_tokens": 0,
+    "n_still_descending_at_top": 1,
+    "n_uses_context_at_top": 1,
+    "n_beats_trigram_at_top": 1,
+    "n_margin_grows_with_tokens": 0,
+    "mean_delta_nll_min_to_max_tokens": 0.0347,
+    "mean_top_point_wkv_deep_nll": 3.9224,
+    "max_tok_per_active_param_reached": 10.037,
+    "fluency_target_nll_band": [
+      3.0,
+      3.69
+    ],
+    "residual_top_nll_above_fluency_band_hi": 0.2324
+  },
+  "elapsed_s": 294.1
+}

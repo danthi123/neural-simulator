@@ -88,7 +88,7 @@ stage_scaling() {  # $1=corpus_path  $2=corpus_tag  $3=d_model  $4="token points
   [ -f "$corpus" ] || { echo "  (skip $tag d$d — corpus missing: $corpus)"; return 0; }
   for S in $SEEDS; do
     OUT="$RAW/_gencortex_scaling/${tag}_d${d}_s${S}.json"
-    gpu_add "SIM_BACKEND=cupy $PY -u -m research.runners._gen_cortex_token_supply_scaling_derisk --seeds $S --token-points $pts --corpus $corpus --d-model $d --vocab 2000 --epochs 6 --max-len 48 --n-sentences 400000 --json $OUT" "$OUT"
+    gpu_add "SIM_BACKEND=cupy $PY -u -m research.runners._gen_cortex_token_supply_scaling_derisk --seeds $S --token-points $pts --corpus $corpus --d-model $d --vocab 2000 --epochs 6 --max-len 48 --n-sentences 2000000 --json $OUT" "$OUT"
   done
 }
 stage_scaling "$FINEWEB" "fineweb" 96  "48000 96000 192000 384000 768000 1536000"

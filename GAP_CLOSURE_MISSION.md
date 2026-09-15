@@ -13,7 +13,39 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ---
 
-## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-10 ~06:40 (OWNER-OPERATED 5-DAY RESEARCH QUEUE staged for the Claude-usage break; READ FIRST; LATEST anchor)
+## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-15 ~18:40 (HARVEST of the 5-day owner-operated queue; corrected sweeps re-queued; READ FIRST; LATEST anchor)
+
+The owner ran the 2026-09-10 queue through the break (fresh weekly usage now). Harvest, all 0-Claude-token compute:
+**(1) TOKEN-SCALING 30/30 (owner #1 fork) — LEVER CONFIRMED, regime NOT reached.** WKV deep-context NLL keeps
+descending 6/6 at every model size (d96/d192/d384) x corpus (fineweb/wt103), beats trigram at every point; d96
+hit tok/param~21.8 (Chinchilla-optimal) still descending = genuinely token-limited. BUT the sweep capped at 192k
+passages (~9.2M tokens) — the training pool is `0.85*n_sentences` and the stocker set n_sentences=400000, so points
+>=384k were silently skipped. Instrument cap, not a science wall. Finding
+`2026-09-15-token-supply-scaling-6seed-lever-confirmed-descending-load-cap-found.md`.
+**(2) AFFECT gain sweep 42/42 (Rank-7) — MIS-TARGETED knobs.** All 42 cells byte-identical: `--to-fs-w/--fs-inh-w`
+are INERT in `--opponent` mode (that path uses XINH_EXC_W/XINH_INH_W). So the run reproduced the 608a06304 BOUNDARY
+at 6 seeds (recall@FP0 ~0.032 worst << 0.5 bar at default XINH) but did NOT test the named lever. Finding
+`2026-09-15-rank7-affect-opponent-gain-sweep-mistargeted-boundary-reproduced-6seed.md`.
+**(3) gap#4 4/6 (GO=False so far) — still running** (s102 in flight, s100 re-queued; the 2 expensive in-engine seeds
+kept getting SIGTERM'd by gaming pauses — per-seed unit is coarse for a ~10h run). Finalize the finding at 6/6.
+
+**CORRECTED SWEEPS RE-QUEUED (no-defer, 0 Claude tokens):** GPU lane — 18 token-scaling cells at `--n-sentences
+2000000` (pool 1.7M >= 1.536M-passage point, reaching ~74M tokens; fineweb d96/d192 + wt103 d96, `_n2M_` paths) = the
+actual bend/no-bend test. POOL lane — 36 affect cells sweeping `--xinh-exc-w/--xinh-inh-w` around defaults 8.0/12.0
+(`opp_xinh_e*_i*` paths) = the actual Rank-7 competition-strength rung. `tools/stock_research_queue.sh` n_sentences
+bumped to 2000000 for future correctness.
+
+**PRE-DECIDED NEXT ACTIONS:**
+1. Let the corrected sweeps run (GPU: gap#4 s102/s100 finish, then 18 token `_n2M` cells; POOL: 36 XINH affect cells). 0 Claude tokens.
+2. Next harvest: aggregate `_gencortex_scaling/*_n2M_s*.json` (does the curve BEND at ~74M tokens?) + `_affect_gain_sweep/opp_xinh_e*_i*_s*.json` (does competition strength lift recall@FP0 off the ~0.032 floor?) + finalize gap#4 at 6/6 (NO-GO vs UNDEFINED per the transport-ceiling interpretability gate).
+3. LESSON banked (queue tooling): a swept flag must be LIVE in the target code path (affect) AND the token cap must match the top point (`n_sentences >= top_point/0.85`) — verify knob-non-inertness + point-coverage on cell 1 of any sweep.
+4. Re-arm a state-checking heartbeat while the corrected sweeps run.
+
+**Superseded:** the 2026-09-10 anchor below (queue staged) is now HISTORY — the queue ran and is harvested here.
+
+---
+
+## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-10 ~06:40 (OWNER-OPERATED 5-DAY RESEARCH QUEUE staged for the Claude-usage break; earlier anchor)
 
 Claude weekly usage is the scarce resource (~20% left ~3 days after reset; next reset Tue ~11:00). Staged a deep,
 pause-safe queue of ZERO-Claude compute the OWNER starts/pauses/stops via `tools/game.sh` — owner's explicit ask:

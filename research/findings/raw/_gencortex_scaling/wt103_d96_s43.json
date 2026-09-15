@@ -1,0 +1,95 @@
+{
+  "runner": "_gen_cortex_token_supply_scaling_derisk",
+  "corpus": "/home/dant123/Projects/sim/data/corpus/wikitext103.txt",
+  "d_model": 96,
+  "vocab_cap": 2000,
+  "epochs": 6,
+  "max_len": 48,
+  "token_points": [
+    96000,
+    192000,
+    384000,
+    768000
+  ],
+  "seeds": [
+    43
+  ],
+  "per_seed": {
+    "43": {
+      "V": 2000,
+      "active_params": 423248,
+      "eval_ids_sha": "35789a40d64e",
+      "vocab_sha": "bc9632c9e041",
+      "n_eval": 2000,
+      "points": [
+        {
+          "max_train_sents": 96000,
+          "n_train_passages": 96000,
+          "n_tokens": 4608000,
+          "tok_per_active_param": 10.887,
+          "wkv_deep_nll": 3.8262,
+          "trigram_deep_nll": 4.0782,
+          "bigram_deep_nll": 4.3566,
+          "margin_vs_trigram": 0.252,
+          "perm_collapse": 1.7394,
+          "mless_collapse": 0.2241,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 3.7807,
+          "overfit_gap": 0.0455,
+          "n_deep": 76000,
+          "elapsed_s": 103.2
+        },
+        {
+          "max_train_sents": 192000,
+          "n_train_passages": 192000,
+          "n_tokens": 9216000,
+          "tok_per_active_param": 21.774,
+          "wkv_deep_nll": 3.7803,
+          "trigram_deep_nll": 3.9817,
+          "bigram_deep_nll": 4.2456,
+          "margin_vs_trigram": 0.2015,
+          "perm_collapse": 1.8083,
+          "mless_collapse": 0.25,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 3.753,
+          "overfit_gap": 0.0273,
+          "n_deep": 76000,
+          "elapsed_s": 168.0
+        }
+      ],
+      "gen_samples_top_point": [
+        "the <unk> of <unk> <unk> or by <unk> <unk> <unk> for a <unk> <unk> of the <unk> <unk> <unk> <unk> <unk> <unk> from <unk> the <unk> 's <unk> <unk> <unk> <unk> of <unk> of <unk> and the <unk> of the <unk>",
+        "in the <unk> of the <unk> of <unk> <unk> <unk> all of the <unk> are <unk> it is <unk> that <unk> the <unk> <unk> <unk> is to be <unk> by <unk> with <unk> who <unk> the <unk> of <unk> the <unk> the",
+        "he was also <unk> into the island of <unk> and <unk> in <unk> <unk> during the <unk> <unk> in the <unk> of the main <unk> system was <unk> and the <unk> of it became part of the united states in july <unk>",
+        "it is a <unk> part of a <unk> <unk> which can be less <unk> with <unk> and the <unk> <unk> <unk> are <unk> <unk> black <unk> and mainly males <unk> <unk> is <unk> by <unk> or they may be known as <unk> <unk>"
+      ],
+      "delta_nll_min_to_max_tokens": 0.0459,
+      "top_segment_slope": 0.0459,
+      "margin_grows_with_tokens": false,
+      "uses_tokens": false,
+      "still_descending_at_top": true,
+      "uses_context_at_top": true,
+      "beats_trigram_at_top": true
+    }
+  },
+  "verdict": {
+    "verdict": "NO-GO-CAPACITY-SATURATED",
+    "n_seeds": 1,
+    "n_uses_tokens": 0,
+    "n_still_descending_at_top": 1,
+    "n_uses_context_at_top": 1,
+    "n_beats_trigram_at_top": 1,
+    "n_margin_grows_with_tokens": 0,
+    "mean_delta_nll_min_to_max_tokens": 0.0459,
+    "mean_top_point_wkv_deep_nll": 3.7803,
+    "max_tok_per_active_param_reached": 21.774,
+    "fluency_target_nll_band": [
+      3.0,
+      3.69
+    ],
+    "residual_top_nll_above_fluency_band_hi": 0.0903
+  },
+  "elapsed_s": 288.8
+}

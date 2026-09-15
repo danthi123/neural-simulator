@@ -1,0 +1,72 @@
+{
+  "note": "6-seed means over research/findings/raw/_affect_gain_sweep/opp_to{TO}_fs{FS}_s{seed}.json; --to-fs-w/--fs-inh-w INERT in --opponent mode (all combos identical)",
+  "bar": 0.5,
+  "combos": {
+    "to12_fs15": {
+      "n_seeds": 6,
+      "realistic_worst_mean": 0.0318,
+      "clean_worst_mean": 0.201,
+      "go": 0,
+      "text_ceiling": 0.019
+    },
+    "to18_fs12": {
+      "n_seeds": 6,
+      "realistic_worst_mean": 0.0318,
+      "clean_worst_mean": 0.201,
+      "go": 0,
+      "text_ceiling": 0.019
+    },
+    "to18_fs18": {
+      "n_seeds": 6,
+      "realistic_worst_mean": 0.0318,
+      "clean_worst_mean": 0.201,
+      "go": 0,
+      "text_ceiling": 0.019
+    },
+    "to18_fs22": {
+      "n_seeds": 6,
+      "realistic_worst_mean": 0.0318,
+      "clean_worst_mean": 0.201,
+      "go": 0,
+      "text_ceiling": 0.019
+    },
+    "to18_fs27": {
+      "n_seeds": 6,
+      "realistic_worst_mean": 0.0318,
+      "clean_worst_mean": 0.201,
+      "go": 0,
+      "text_ceiling": 0.019
+    },
+    "to18_fs8": {
+      "n_seeds": 6,
+      "realistic_worst_mean": 0.0318,
+      "clean_worst_mean": 0.201,
+      "go": 0,
+      "text_ceiling": 0.019
+    },
+    "to27_fs15": {
+      "n_seeds": 6,
+      "realistic_worst_mean": 0.0318,
+      "clean_worst_mean": 0.201,
+      "go": 0,
+      "text_ceiling": 0.019
+    }
+  },
+  "all_combos_identical": true,
+  "realistic_worst_mean_overall": 0.0318,
+  "provenance": {
+    "script": "scratchpad aggregation over the cited per-cell artifacts (means over seeds)",
+    "runner": "harvest-aggregation-2026-09-15",
+    "run_id": "agg-1789512575",
+    "generated_by": "claude harvest session 2026-09-15; derived from the sibling per-cell *.json in this directory",
+    "seeds": [
+      42,
+      43,
+      44,
+      100,
+      101,
+      102
+    ],
+    "sim_backend": "numpy (CPU/pool; source affect runs). This file is a host-side aggregation; per-run device is in each cited per-cell artifact."
+  }
+}

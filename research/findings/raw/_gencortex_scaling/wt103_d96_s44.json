@@ -1,0 +1,95 @@
+{
+  "runner": "_gen_cortex_token_supply_scaling_derisk",
+  "corpus": "/home/dant123/Projects/sim/data/corpus/wikitext103.txt",
+  "d_model": 96,
+  "vocab_cap": 2000,
+  "epochs": 6,
+  "max_len": 48,
+  "token_points": [
+    96000,
+    192000,
+    384000,
+    768000
+  ],
+  "seeds": [
+    44
+  ],
+  "per_seed": {
+    "44": {
+      "V": 2000,
+      "active_params": 423248,
+      "eval_ids_sha": "17e30c6121e8",
+      "vocab_sha": "0df2996ea0af",
+      "n_eval": 2000,
+      "points": [
+        {
+          "max_train_sents": 96000,
+          "n_train_passages": 96000,
+          "n_tokens": 4608000,
+          "tok_per_active_param": 10.887,
+          "wkv_deep_nll": 3.8279,
+          "trigram_deep_nll": 4.0903,
+          "bigram_deep_nll": 4.3627,
+          "margin_vs_trigram": 0.2624,
+          "perm_collapse": 1.7698,
+          "mless_collapse": 0.2218,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 3.7871,
+          "overfit_gap": 0.0409,
+          "n_deep": 76000,
+          "elapsed_s": 103.2
+        },
+        {
+          "max_train_sents": 192000,
+          "n_train_passages": 192000,
+          "n_tokens": 9216000,
+          "tok_per_active_param": 21.774,
+          "wkv_deep_nll": 3.7868,
+          "trigram_deep_nll": 3.9933,
+          "bigram_deep_nll": 4.2522,
+          "margin_vs_trigram": 0.2065,
+          "perm_collapse": 1.7853,
+          "mless_collapse": 0.2414,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 3.7665,
+          "overfit_gap": 0.0202,
+          "n_deep": 76000,
+          "elapsed_s": 167.5
+        }
+      ],
+      "gen_samples_top_point": [
+        "the first two was released in the engine which is the only <unk> power to <unk> the <unk> <unk> <unk> to <unk> the <unk> <unk> the <unk> <unk> of <unk> and <unk> the <unk> <unk> queen 's who has been laid",
+        "in the <unk> smaller <unk> and <unk> <unk> the <unk> <unk> of the <unk> <unk> that this <unk> <unk> these <unk> and observed the <unk> for several weeks <unk> the <unk> was eventually <unk> <unk> in <unk> to the <unk> <unk> <unk>",
+        "he was the first <unk> in the us <unk> <unk> him and <unk> a large special <unk> for a <unk> <unk> to <unk> <unk> while his wife <unk> <unk> now to <unk> 's <unk> <unk> <unk> <unk> <unk> <unk> such as <unk>",
+        "it is a <unk> <unk> about the <unk> <unk> called <unk> or <unk> the <unk> of <unk> was also <unk> by the <unk> point of <unk> and function <unk> <unk> <unk> <unk> in the church 's <unk> <unk> <unk> <unk> through and other"
+      ],
+      "delta_nll_min_to_max_tokens": 0.0411,
+      "top_segment_slope": 0.0411,
+      "margin_grows_with_tokens": false,
+      "uses_tokens": false,
+      "still_descending_at_top": true,
+      "uses_context_at_top": true,
+      "beats_trigram_at_top": true
+    }
+  },
+  "verdict": {
+    "verdict": "NO-GO-CAPACITY-SATURATED",
+    "n_seeds": 1,
+    "n_uses_tokens": 0,
+    "n_still_descending_at_top": 1,
+    "n_uses_context_at_top": 1,
+    "n_beats_trigram_at_top": 1,
+    "n_margin_grows_with_tokens": 0,
+    "mean_delta_nll_min_to_max_tokens": 0.0411,
+    "mean_top_point_wkv_deep_nll": 3.7868,
+    "max_tok_per_active_param_reached": 21.774,
+    "fluency_target_nll_band": [
+      3.0,
+      3.69
+    ],
+    "residual_top_nll_above_fluency_band_hi": 0.0968
+  },
+  "elapsed_s": 288.5
+}

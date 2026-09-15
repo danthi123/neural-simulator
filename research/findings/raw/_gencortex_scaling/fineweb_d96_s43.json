@@ -1,0 +1,115 @@
+{
+  "runner": "_gen_cortex_token_supply_scaling_derisk",
+  "corpus": "/home/dant123/Projects/sim/data/corpus/fineweb_edu.txt",
+  "d_model": 96,
+  "vocab_cap": 2000,
+  "epochs": 6,
+  "max_len": 48,
+  "token_points": [
+    48000,
+    96000,
+    192000,
+    384000,
+    768000,
+    1536000
+  ],
+  "seeds": [
+    43
+  ],
+  "per_seed": {
+    "43": {
+      "V": 2000,
+      "active_params": 423248,
+      "eval_ids_sha": "51e71577b893",
+      "vocab_sha": "e84c789e108e",
+      "n_eval": 2000,
+      "points": [
+        {
+          "max_train_sents": 48000,
+          "n_train_passages": 48000,
+          "n_tokens": 2304000,
+          "tok_per_active_param": 5.444,
+          "wkv_deep_nll": 4.1179,
+          "trigram_deep_nll": 4.4238,
+          "bigram_deep_nll": 4.6373,
+          "margin_vs_trigram": 0.3059,
+          "perm_collapse": 1.5492,
+          "mless_collapse": 0.1416,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 4.0477,
+          "overfit_gap": 0.0702,
+          "n_deep": 76000,
+          "elapsed_s": 71.7
+        },
+        {
+          "max_train_sents": 96000,
+          "n_train_passages": 96000,
+          "n_tokens": 4608000,
+          "tok_per_active_param": 10.887,
+          "wkv_deep_nll": 4.0101,
+          "trigram_deep_nll": 4.3112,
+          "bigram_deep_nll": 4.4988,
+          "margin_vs_trigram": 0.3011,
+          "perm_collapse": 1.6257,
+          "mless_collapse": 0.2018,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 3.9751,
+          "overfit_gap": 0.0351,
+          "n_deep": 76000,
+          "elapsed_s": 100.1
+        },
+        {
+          "max_train_sents": 192000,
+          "n_train_passages": 192000,
+          "n_tokens": 9216000,
+          "tok_per_active_param": 21.774,
+          "wkv_deep_nll": 3.9628,
+          "trigram_deep_nll": 4.2114,
+          "bigram_deep_nll": 4.3905,
+          "margin_vs_trigram": 0.2485,
+          "perm_collapse": 1.7048,
+          "mless_collapse": 0.2217,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 3.9439,
+          "overfit_gap": 0.0189,
+          "n_deep": 76000,
+          "elapsed_s": 165.7
+        }
+      ],
+      "gen_samples_top_point": [
+        "the <unk> of <unk> <unk> upon the <unk> for <unk> is a <unk> either a person which might <unk> return to want to <unk> the <unk> is a <unk> part of the <unk> of these three year it is also working",
+        "in the <unk> of the <unk> of <unk> <unk> <unk> <unk> <unk> with men and <unk> <unk> <unk> <unk> <unk> <unk> of <unk> <unk> <unk> <unk> and <unk> <unk> <unk> <unk> stories <unk> aid <unk> and <unk> of <unk> the <unk> the",
+        "he was in <unk> <unk> and was an <unk> of <unk> and <unk> <unk> de <unk> <unk> <unk> views of <unk> and made of <unk> <unk> <unk> <unk> of the <unk> in his <unk> <unk> <unk> the church was seen as <unk>",
+        "it is a <unk> that <unk> <unk> <unk> <unk> can lead to the <unk> and <unk> the way from <unk> <unk> into the <unk> <unk> we have in the <unk> <unk> as we join that it in all levels of life however <unk>"
+      ],
+      "delta_nll_min_to_max_tokens": 0.1551,
+      "top_segment_slope": 0.0473,
+      "margin_grows_with_tokens": false,
+      "uses_tokens": true,
+      "still_descending_at_top": true,
+      "uses_context_at_top": true,
+      "beats_trigram_at_top": true
+    }
+  },
+  "verdict": {
+    "verdict": "GO-TOKEN-LEVER",
+    "n_seeds": 1,
+    "n_uses_tokens": 1,
+    "n_still_descending_at_top": 1,
+    "n_uses_context_at_top": 1,
+    "n_beats_trigram_at_top": 1,
+    "n_margin_grows_with_tokens": 0,
+    "mean_delta_nll_min_to_max_tokens": 0.1551,
+    "mean_top_point_wkv_deep_nll": 3.9628,
+    "max_tok_per_active_param_reached": 21.774,
+    "fluency_target_nll_band": [
+      3.0,
+      3.69
+    ],
+    "residual_top_nll_above_fluency_band_hi": 0.2728
+  },
+  "elapsed_s": 359.1
+}

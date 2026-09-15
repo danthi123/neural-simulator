@@ -1,0 +1,95 @@
+{
+  "runner": "_gen_cortex_token_supply_scaling_derisk",
+  "corpus": "/home/dant123/Projects/sim/data/corpus/wikitext103.txt",
+  "d_model": 96,
+  "vocab_cap": 2000,
+  "epochs": 6,
+  "max_len": 48,
+  "token_points": [
+    96000,
+    192000,
+    384000,
+    768000
+  ],
+  "seeds": [
+    102
+  ],
+  "per_seed": {
+    "102": {
+      "V": 2000,
+      "active_params": 423248,
+      "eval_ids_sha": "3d1f1174e29f",
+      "vocab_sha": "90064c08ff12",
+      "n_eval": 2000,
+      "points": [
+        {
+          "max_train_sents": 96000,
+          "n_train_passages": 96000,
+          "n_tokens": 4608000,
+          "tok_per_active_param": 10.887,
+          "wkv_deep_nll": 3.8189,
+          "trigram_deep_nll": 4.0717,
+          "bigram_deep_nll": 4.3466,
+          "margin_vs_trigram": 0.2529,
+          "perm_collapse": 1.7401,
+          "mless_collapse": 0.2268,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 3.8018,
+          "overfit_gap": 0.0171,
+          "n_deep": 76000,
+          "elapsed_s": 99.8
+        },
+        {
+          "max_train_sents": 192000,
+          "n_train_passages": 192000,
+          "n_tokens": 9216000,
+          "tok_per_active_param": 21.774,
+          "wkv_deep_nll": 3.7696,
+          "trigram_deep_nll": 3.9809,
+          "bigram_deep_nll": 4.2375,
+          "margin_vs_trigram": 0.2114,
+          "perm_collapse": 1.7658,
+          "mless_collapse": 0.2499,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 3.7761,
+          "overfit_gap": -0.0065,
+          "n_deep": 76000,
+          "elapsed_s": 163.9
+        }
+      ],
+      "gen_samples_top_point": [
+        "the <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> station <unk> is <unk> and added about miles the <unk> <unk> of <unk> is available it is the last five <unk> <unk> <unk> <unk> <unk> have",
+        "in the <unk> <unk> <unk> from the <unk> <unk> thus only on the <unk> of <unk> <unk> is <unk> <unk> <unk> <unk> has <unk> <unk> <unk> of in the <unk> <unk> this one was a poor <unk> <unk> of new <unk> <unk>",
+        "he was appointed as a <unk> of the city to <unk> <unk> became the <unk> 's first to <unk> fish to <unk> county the <unk> of <unk> down a <unk> to the <unk> 's lands <unk> <unk> moved to <unk> from <unk>",
+        "it is a <unk> in the north west of the <unk> is known to <unk> <unk> <unk> <unk> <unk> <unk> <unk> and <unk> <unk> <unk> <unk> in the <unk> the <unk> was first in the <unk> <unk> it was a <unk> by <unk>"
+      ],
+      "delta_nll_min_to_max_tokens": 0.0493,
+      "top_segment_slope": 0.0493,
+      "margin_grows_with_tokens": false,
+      "uses_tokens": false,
+      "still_descending_at_top": true,
+      "uses_context_at_top": true,
+      "beats_trigram_at_top": true
+    }
+  },
+  "verdict": {
+    "verdict": "NO-GO-CAPACITY-SATURATED",
+    "n_seeds": 1,
+    "n_uses_tokens": 0,
+    "n_still_descending_at_top": 1,
+    "n_uses_context_at_top": 1,
+    "n_beats_trigram_at_top": 1,
+    "n_margin_grows_with_tokens": 0,
+    "mean_delta_nll_min_to_max_tokens": 0.0493,
+    "mean_top_point_wkv_deep_nll": 3.7696,
+    "max_tok_per_active_param_reached": 21.774,
+    "fluency_target_nll_band": [
+      3.0,
+      3.69
+    ],
+    "residual_top_nll_above_fluency_band_hi": 0.0796
+  },
+  "elapsed_s": 280.8
+}

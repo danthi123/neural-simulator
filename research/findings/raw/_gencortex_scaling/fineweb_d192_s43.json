@@ -1,0 +1,95 @@
+{
+  "runner": "_gen_cortex_token_supply_scaling_derisk",
+  "corpus": "/home/dant123/Projects/sim/data/corpus/fineweb_edu.txt",
+  "d_model": 192,
+  "vocab_cap": 2000,
+  "epochs": 6,
+  "max_len": 48,
+  "token_points": [
+    96000,
+    192000,
+    384000,
+    768000
+  ],
+  "seeds": [
+    43
+  ],
+  "per_seed": {
+    "43": {
+      "V": 2000,
+      "active_params": 918224,
+      "eval_ids_sha": "51e71577b893",
+      "vocab_sha": "e84c789e108e",
+      "n_eval": 2000,
+      "points": [
+        {
+          "max_train_sents": 96000,
+          "n_train_passages": 96000,
+          "n_tokens": 4608000,
+          "tok_per_active_param": 5.018,
+          "wkv_deep_nll": 3.9515,
+          "trigram_deep_nll": 4.3112,
+          "bigram_deep_nll": 4.4988,
+          "margin_vs_trigram": 0.3597,
+          "perm_collapse": 1.6919,
+          "mless_collapse": 0.2236,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 3.8884,
+          "overfit_gap": 0.0632,
+          "n_deep": 76000,
+          "elapsed_s": 103.9
+        },
+        {
+          "max_train_sents": 192000,
+          "n_train_passages": 192000,
+          "n_tokens": 9216000,
+          "tok_per_active_param": 10.037,
+          "wkv_deep_nll": 3.9134,
+          "trigram_deep_nll": 4.2114,
+          "bigram_deep_nll": 4.3905,
+          "margin_vs_trigram": 0.298,
+          "perm_collapse": 1.7461,
+          "mless_collapse": 0.2459,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 3.8859,
+          "overfit_gap": 0.0275,
+          "n_deep": 76000,
+          "elapsed_s": 169.5
+        }
+      ],
+      "gen_samples_top_point": [
+        "the <unk> of <unk> <unk> these new <unk> several <unk> on the <unk> day of the <unk> <unk> <unk> <unk> <unk> <unk> may <unk> the <unk> and lower <unk> rate <unk> of <unk> of <unk> and of the main <unk> on",
+        "in the <unk> and the <unk> of <unk> <unk> <unk> about his seven <unk> on <unk> <unk> <unk> <unk> <unk> <unk> of <unk> <unk> <unk> <unk> and <unk> <unk> <unk> <unk> how <unk> people who are <unk> and <unk> the <unk> the",
+        "he was a <unk> <unk> and a <unk> for the <unk> of <unk> <unk> out it was <unk> in the <unk> of the entire <unk> came in <unk> the same view of the <unk> <unk> <unk> of the <unk> that <unk> <unk>",
+        "it is a <unk> for <unk> <unk> <unk> <unk> growth <unk> <unk> and <unk> where <unk> and the <unk> <unk> <unk> has two <unk> <unk> well in the similar <unk> methods and <unk> <unk> <unk> from the <unk> <unk> of the <unk> <unk>"
+      ],
+      "delta_nll_min_to_max_tokens": 0.0381,
+      "top_segment_slope": 0.0381,
+      "margin_grows_with_tokens": false,
+      "uses_tokens": false,
+      "still_descending_at_top": true,
+      "uses_context_at_top": true,
+      "beats_trigram_at_top": true
+    }
+  },
+  "verdict": {
+    "verdict": "NO-GO-CAPACITY-SATURATED",
+    "n_seeds": 1,
+    "n_uses_tokens": 0,
+    "n_still_descending_at_top": 1,
+    "n_uses_context_at_top": 1,
+    "n_beats_trigram_at_top": 1,
+    "n_margin_grows_with_tokens": 0,
+    "mean_delta_nll_min_to_max_tokens": 0.0381,
+    "mean_top_point_wkv_deep_nll": 3.9134,
+    "max_tok_per_active_param_reached": 10.037,
+    "fluency_target_nll_band": [
+      3.0,
+      3.69
+    ],
+    "residual_top_nll_above_fluency_band_hi": 0.2234
+  },
+  "elapsed_s": 291.0
+}

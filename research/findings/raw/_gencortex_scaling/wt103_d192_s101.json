@@ -1,0 +1,69 @@
+{
+  "runner": "_gen_cortex_token_supply_scaling_derisk",
+  "corpus": "/home/dant123/Projects/sim/data/corpus/wikitext103.txt",
+  "d_model": 192,
+  "vocab_cap": 2000,
+  "epochs": 6,
+  "max_len": 48,
+  "token_points": [
+    192000,
+    384000,
+    768000
+  ],
+  "seeds": [
+    101
+  ],
+  "per_seed": {
+    "101": {
+      "V": 2000,
+      "active_params": 918224,
+      "eval_ids_sha": "100f012962d2",
+      "vocab_sha": "c20aa2a11dc8",
+      "n_eval": 2000,
+      "points": [
+        {
+          "max_train_sents": 192000,
+          "n_train_passages": 192000,
+          "n_tokens": 9216000,
+          "tok_per_active_param": 10.037,
+          "wkv_deep_nll": 3.7238,
+          "trigram_deep_nll": 3.9795,
+          "bigram_deep_nll": 4.234,
+          "margin_vs_trigram": 0.2558,
+          "perm_collapse": 1.8388,
+          "mless_collapse": 0.2671,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 3.7228,
+          "overfit_gap": 0.001,
+          "n_deep": 76000,
+          "elapsed_s": 170.0
+        }
+      ],
+      "gen_samples_top_point": [
+        "the first by <unk> was the <unk> <unk> <unk> <unk> of <unk> <unk> <unk> road takes place in the s during which the <unk> of <unk> of <unk> <unk> <unk> and <unk> in the late th century and has also been",
+        "in the english <unk> <unk> and was the <unk> of <unk> and the <unk> <unk> of <unk> who died of <unk> was <unk> in the fall of <unk> english <unk> and was <unk> to <unk> in his <unk> come to <unk> at",
+        "he was <unk> to <unk> <unk> <unk> <unk> for <unk> <unk> and <unk> <unk> <unk> are <unk> in greater <unk> as <unk> <unk> <unk> <unk> <unk> <unk> <unk> life <unk> for the <unk> <unk> <unk> <unk> wall <unk> <unk> <unk> <unk> <unk>",
+        "it is a <unk> <unk> <unk> in which <unk> that <unk> and <unk> <unk> is the highest <unk> at the <unk> in the <unk> since the <unk> days in the <unk> <unk> of the <unk> <unk> to <unk> in addition to the <unk>"
+      ]
+    }
+  },
+  "verdict": {
+    "verdict": "NO-GO-CAPACITY-SATURATED",
+    "n_seeds": 1,
+    "n_uses_tokens": 0,
+    "n_still_descending_at_top": 0,
+    "n_uses_context_at_top": 0,
+    "n_beats_trigram_at_top": 0,
+    "n_margin_grows_with_tokens": 0,
+    "mean_delta_nll_min_to_max_tokens": null,
+    "mean_top_point_wkv_deep_nll": 3.7238,
+    "max_tok_per_active_param_reached": 10.037,
+    "fluency_target_nll_band": [
+      3.0,
+      3.69
+    ],
+    "residual_top_nll_above_fluency_band_hi": 0.0338
+  },
+  "elapsed_s": 182.5
+}

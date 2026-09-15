@@ -1,0 +1,115 @@
+{
+  "runner": "_gen_cortex_token_supply_scaling_derisk",
+  "corpus": "/home/dant123/Projects/sim/data/corpus/fineweb_edu.txt",
+  "d_model": 96,
+  "vocab_cap": 2000,
+  "epochs": 6,
+  "max_len": 48,
+  "token_points": [
+    48000,
+    96000,
+    192000,
+    384000,
+    768000,
+    1536000
+  ],
+  "seeds": [
+    102
+  ],
+  "per_seed": {
+    "102": {
+      "V": 2000,
+      "active_params": 423248,
+      "eval_ids_sha": "9955acc09904",
+      "vocab_sha": "2b376ae74508",
+      "n_eval": 2000,
+      "points": [
+        {
+          "max_train_sents": 48000,
+          "n_train_passages": 48000,
+          "n_tokens": 2304000,
+          "tok_per_active_param": 5.444,
+          "wkv_deep_nll": 4.1358,
+          "trigram_deep_nll": 4.4468,
+          "bigram_deep_nll": 4.6614,
+          "margin_vs_trigram": 0.311,
+          "perm_collapse": 1.5353,
+          "mless_collapse": 0.1428,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 4.1076,
+          "overfit_gap": 0.0282,
+          "n_deep": 76000,
+          "elapsed_s": 71.8
+        },
+        {
+          "max_train_sents": 96000,
+          "n_train_passages": 96000,
+          "n_tokens": 4608000,
+          "tok_per_active_param": 10.887,
+          "wkv_deep_nll": 4.0243,
+          "trigram_deep_nll": 4.3321,
+          "bigram_deep_nll": 4.5223,
+          "margin_vs_trigram": 0.3078,
+          "perm_collapse": 1.6225,
+          "mless_collapse": 0.2033,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 4.0228,
+          "overfit_gap": 0.0015,
+          "n_deep": 76000,
+          "elapsed_s": 101.8
+        },
+        {
+          "max_train_sents": 192000,
+          "n_train_passages": 192000,
+          "n_tokens": 9216000,
+          "tok_per_active_param": 21.774,
+          "wkv_deep_nll": 3.9788,
+          "trigram_deep_nll": 4.2317,
+          "bigram_deep_nll": 4.4142,
+          "margin_vs_trigram": 0.2528,
+          "perm_collapse": 1.6731,
+          "mless_collapse": 0.2268,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 4.0079,
+          "overfit_gap": -0.0291,
+          "n_deep": 76000,
+          "elapsed_s": 167.3
+        }
+      ],
+      "gen_samples_top_point": [
+        "the <unk> campaign agency <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> and <unk> <unk> <unk> the <unk> <unk> of <unk> <unk> <unk> <unk> are the greatest <unk> for <unk> <unk> <unk> <unk> like",
+        "in the <unk> <unk> <unk> from the <unk> <unk> de <unk> <unk> for <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> free <unk> and <unk> <unk> <unk> <unk> and <unk> in <unk> <unk> and <unk> <unk> <unk>",
+        "he was simply told that his people with the <unk> would <unk> he was <unk> for the first <unk> had been <unk> by the <unk> of <unk> had no <unk> in the <unk> in the <unk> <unk> did not <unk> as <unk>",
+        "it is a <unk> to a large <unk> of <unk> <unk> and <unk> to <unk> <unk> <unk> <unk> <unk> <unk> <unk> and <unk> <unk> <unk> <unk> to the <unk> the <unk> of the world the <unk> <unk> which is the <unk> and <unk>"
+      ],
+      "delta_nll_min_to_max_tokens": 0.157,
+      "top_segment_slope": 0.0455,
+      "margin_grows_with_tokens": false,
+      "uses_tokens": true,
+      "still_descending_at_top": true,
+      "uses_context_at_top": true,
+      "beats_trigram_at_top": true
+    }
+  },
+  "verdict": {
+    "verdict": "GO-TOKEN-LEVER",
+    "n_seeds": 1,
+    "n_uses_tokens": 1,
+    "n_still_descending_at_top": 1,
+    "n_uses_context_at_top": 1,
+    "n_beats_trigram_at_top": 1,
+    "n_margin_grows_with_tokens": 0,
+    "mean_delta_nll_min_to_max_tokens": 0.157,
+    "mean_top_point_wkv_deep_nll": 3.9788,
+    "max_tok_per_active_param_reached": 21.774,
+    "fluency_target_nll_band": [
+      3.0,
+      3.69
+    ],
+    "residual_top_nll_above_fluency_band_hi": 0.2888
+  },
+  "elapsed_s": 363.0
+}

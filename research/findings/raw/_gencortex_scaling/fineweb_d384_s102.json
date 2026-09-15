@@ -1,0 +1,95 @@
+{
+  "runner": "_gen_cortex_token_supply_scaling_derisk",
+  "corpus": "/home/dant123/Projects/sim/data/corpus/fineweb_edu.txt",
+  "d_model": 384,
+  "vocab_cap": 2000,
+  "epochs": 6,
+  "max_len": 48,
+  "token_points": [
+    96000,
+    192000,
+    384000,
+    768000
+  ],
+  "seeds": [
+    102
+  ],
+  "per_seed": {
+    "102": {
+      "V": 2000,
+      "active_params": 2129360,
+      "eval_ids_sha": "9955acc09904",
+      "vocab_sha": "2b376ae74508",
+      "n_eval": 2000,
+      "points": [
+        {
+          "max_train_sents": 96000,
+          "n_train_passages": 96000,
+          "n_tokens": 4608000,
+          "tok_per_active_param": 2.164,
+          "wkv_deep_nll": 3.9448,
+          "trigram_deep_nll": 4.3321,
+          "bigram_deep_nll": 4.5223,
+          "margin_vs_trigram": 0.3873,
+          "perm_collapse": 1.6989,
+          "mless_collapse": 0.2468,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 3.9166,
+          "overfit_gap": 0.0282,
+          "n_deep": 76000,
+          "elapsed_s": 130.5
+        },
+        {
+          "max_train_sents": 192000,
+          "n_train_passages": 192000,
+          "n_tokens": 9216000,
+          "tok_per_active_param": 4.328,
+          "wkv_deep_nll": 3.9083,
+          "trigram_deep_nll": 4.2317,
+          "bigram_deep_nll": 4.4142,
+          "margin_vs_trigram": 0.3234,
+          "perm_collapse": 1.7091,
+          "mless_collapse": 0.2578,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 3.926,
+          "overfit_gap": -0.0177,
+          "n_deep": 76000,
+          "elapsed_s": 221.6
+        }
+      ],
+      "gen_samples_top_point": [
+        "the <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> and <unk> <unk> <unk> the <unk> <unk> and <unk> himself on <unk> a new <unk> at <unk> <unk> <unk> <unk> <unk> <unk>",
+        "in the <unk> <unk> <unk> at the top calcium <unk> in the body parts of calcium <unk> are <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> and <unk> a <unk> <unk> etc can be made to <unk> <unk> and <unk> <unk> <unk>",
+        "he was due to the <unk> of the civil society this <unk> <unk> the <unk> for the most <unk> <unk> from to <unk> the <unk> of <unk> <unk> people i want to join and just <unk> studies have been <unk> for <unk>",
+        "it is a <unk> in the process of how so called is that the <unk> <unk> <unk> <unk> <unk> <unk> <unk> of <unk> <unk> <unk> <unk> and <unk> <unk> the <unk> of the us the <unk> <unk> will be there another reason for"
+      ],
+      "delta_nll_min_to_max_tokens": 0.0365,
+      "top_segment_slope": 0.0365,
+      "margin_grows_with_tokens": false,
+      "uses_tokens": false,
+      "still_descending_at_top": true,
+      "uses_context_at_top": true,
+      "beats_trigram_at_top": true
+    }
+  },
+  "verdict": {
+    "verdict": "NO-GO-CAPACITY-SATURATED",
+    "n_seeds": 1,
+    "n_uses_tokens": 0,
+    "n_still_descending_at_top": 1,
+    "n_uses_context_at_top": 1,
+    "n_beats_trigram_at_top": 1,
+    "n_margin_grows_with_tokens": 0,
+    "mean_delta_nll_min_to_max_tokens": 0.0365,
+    "mean_top_point_wkv_deep_nll": 3.9083,
+    "max_tok_per_active_param_reached": 4.328,
+    "fluency_target_nll_band": [
+      3.0,
+      3.69
+    ],
+    "residual_top_nll_above_fluency_band_hi": 0.2183
+  },
+  "elapsed_s": 370.7
+}

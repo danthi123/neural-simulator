@@ -1,0 +1,95 @@
+{
+  "runner": "_gen_cortex_token_supply_scaling_derisk",
+  "corpus": "/home/dant123/Projects/sim/data/corpus/wikitext103.txt",
+  "d_model": 96,
+  "vocab_cap": 2000,
+  "epochs": 6,
+  "max_len": 48,
+  "token_points": [
+    96000,
+    192000,
+    384000,
+    768000
+  ],
+  "seeds": [
+    101
+  ],
+  "per_seed": {
+    "101": {
+      "V": 2000,
+      "active_params": 423248,
+      "eval_ids_sha": "100f012962d2",
+      "vocab_sha": "c20aa2a11dc8",
+      "n_eval": 2000,
+      "points": [
+        {
+          "max_train_sents": 96000,
+          "n_train_passages": 96000,
+          "n_tokens": 4608000,
+          "tok_per_active_param": 10.887,
+          "wkv_deep_nll": 3.8212,
+          "trigram_deep_nll": 4.0718,
+          "bigram_deep_nll": 4.3439,
+          "margin_vs_trigram": 0.2506,
+          "perm_collapse": 1.7342,
+          "mless_collapse": 0.2223,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 3.814,
+          "overfit_gap": 0.0073,
+          "n_deep": 76000,
+          "elapsed_s": 101.3
+        },
+        {
+          "max_train_sents": 192000,
+          "n_train_passages": 192000,
+          "n_tokens": 9216000,
+          "tok_per_active_param": 21.774,
+          "wkv_deep_nll": 3.7804,
+          "trigram_deep_nll": 3.9795,
+          "bigram_deep_nll": 4.234,
+          "margin_vs_trigram": 0.1992,
+          "perm_collapse": 1.7955,
+          "mless_collapse": 0.2446,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 3.7878,
+          "overfit_gap": -0.0075,
+          "n_deep": 76000,
+          "elapsed_s": 163.6
+        }
+      ],
+      "gen_samples_top_point": [
+        "the first two <unk> in the <unk> <unk> <unk> <unk> the <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> and <unk> <unk> are <unk> and <unk> of <unk> <unk> <unk> in <unk> and <unk> are actually <unk> to <unk> that the",
+        "in the fourth quarter rate of this and they were <unk> in the area were not <unk> to <unk> the <unk> and <unk> of the <unk> <unk> <unk> also <unk> the idea of a <unk> for draft <unk> which was <unk> on",
+        "he was <unk> to <unk> <unk> <unk> <unk> for <unk> <unk> and <unk> <unk> <unk> up at the <unk> <unk> on <unk> <unk> <unk> <unk> <unk> <unk> <unk> 's <unk> was white 's <unk> <unk> <unk> during his <unk> during <unk> s",
+        "it is a <unk> <unk> <unk> in k <unk> ' <unk> and <unk> <unk> ' of a <unk> <unk> is <unk> as the <unk> one of the <unk> <unk> being <unk> by the <unk> <unk> <unk> in <unk> that <unk> this is being"
+      ],
+      "delta_nll_min_to_max_tokens": 0.0408,
+      "top_segment_slope": 0.0408,
+      "margin_grows_with_tokens": false,
+      "uses_tokens": false,
+      "still_descending_at_top": true,
+      "uses_context_at_top": true,
+      "beats_trigram_at_top": true
+    }
+  },
+  "verdict": {
+    "verdict": "NO-GO-CAPACITY-SATURATED",
+    "n_seeds": 1,
+    "n_uses_tokens": 0,
+    "n_still_descending_at_top": 1,
+    "n_uses_context_at_top": 1,
+    "n_beats_trigram_at_top": 1,
+    "n_margin_grows_with_tokens": 0,
+    "mean_delta_nll_min_to_max_tokens": 0.0408,
+    "mean_top_point_wkv_deep_nll": 3.7804,
+    "max_tok_per_active_param_reached": 21.774,
+    "fluency_target_nll_band": [
+      3.0,
+      3.69
+    ],
+    "residual_top_nll_above_fluency_band_hi": 0.0904
+  },
+  "elapsed_s": 282.1
+}

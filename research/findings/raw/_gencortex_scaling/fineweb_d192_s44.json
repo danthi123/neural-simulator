@@ -1,0 +1,95 @@
+{
+  "runner": "_gen_cortex_token_supply_scaling_derisk",
+  "corpus": "/home/dant123/Projects/sim/data/corpus/fineweb_edu.txt",
+  "d_model": 192,
+  "vocab_cap": 2000,
+  "epochs": 6,
+  "max_len": 48,
+  "token_points": [
+    96000,
+    192000,
+    384000,
+    768000
+  ],
+  "seeds": [
+    44
+  ],
+  "per_seed": {
+    "44": {
+      "V": 2000,
+      "active_params": 918224,
+      "eval_ids_sha": "9e6c37623f8c",
+      "vocab_sha": "91cb39e1f8db",
+      "n_eval": 2000,
+      "points": [
+        {
+          "max_train_sents": 96000,
+          "n_train_passages": 96000,
+          "n_tokens": 4608000,
+          "tok_per_active_param": 5.018,
+          "wkv_deep_nll": 3.9721,
+          "trigram_deep_nll": 4.3277,
+          "bigram_deep_nll": 4.5216,
+          "margin_vs_trigram": 0.3556,
+          "perm_collapse": 1.6716,
+          "mless_collapse": 0.2264,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 3.9173,
+          "overfit_gap": 0.0548,
+          "n_deep": 76000,
+          "elapsed_s": 105.3
+        },
+        {
+          "max_train_sents": 192000,
+          "n_train_passages": 192000,
+          "n_tokens": 9216000,
+          "tok_per_active_param": 10.037,
+          "wkv_deep_nll": 3.9371,
+          "trigram_deep_nll": 4.2253,
+          "bigram_deep_nll": 4.4124,
+          "margin_vs_trigram": 0.2882,
+          "perm_collapse": 1.7045,
+          "mless_collapse": 0.2422,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 3.9158,
+          "overfit_gap": 0.0213,
+          "n_deep": 76000,
+          "elapsed_s": 170.2
+        }
+      ],
+      "gen_samples_top_point": [
+        "the people of the <unk> is a <unk> in the long term <unk> what is a <unk> sign during <unk> and <unk> a <unk> <unk> the <unk> <unk> of <unk> and <unk> the <unk> <unk> are some of the <unk> or",
+        "in the <unk> explore <unk> and <unk> <unk> the <unk> <unk> of the <unk> <unk> is a <unk> <unk> if you are going to be able to <unk> <unk> the <unk> of the <unk> <unk> in <unk> it is important for them",
+        "he was the real <unk> of the <unk> <unk> <unk> known to <unk> of the mass of the <unk> <unk> <unk> in the <unk> <unk> in the <unk> <unk> will be <unk> for <unk> <unk> <unk> <unk> <unk> <unk> <unk> may <unk>",
+        "it is a <unk> <unk> as the <unk> <unk> however <unk> is a high <unk> of <unk> in the <unk> <unk> of a <unk> <unk> <unk> of the <unk> <unk> <unk> <unk> and the <unk> <unk> at once there <unk> on the <unk>"
+      ],
+      "delta_nll_min_to_max_tokens": 0.035,
+      "top_segment_slope": 0.035,
+      "margin_grows_with_tokens": false,
+      "uses_tokens": false,
+      "still_descending_at_top": true,
+      "uses_context_at_top": true,
+      "beats_trigram_at_top": true
+    }
+  },
+  "verdict": {
+    "verdict": "NO-GO-CAPACITY-SATURATED",
+    "n_seeds": 1,
+    "n_uses_tokens": 0,
+    "n_still_descending_at_top": 1,
+    "n_uses_context_at_top": 1,
+    "n_beats_trigram_at_top": 1,
+    "n_margin_grows_with_tokens": 0,
+    "mean_delta_nll_min_to_max_tokens": 0.035,
+    "mean_top_point_wkv_deep_nll": 3.9371,
+    "max_tok_per_active_param_reached": 10.037,
+    "fluency_target_nll_band": [
+      3.0,
+      3.69
+    ],
+    "residual_top_nll_above_fluency_band_hi": 0.2471
+  },
+  "elapsed_s": 293.4
+}

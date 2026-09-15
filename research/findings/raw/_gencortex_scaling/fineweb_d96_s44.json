@@ -1,0 +1,115 @@
+{
+  "runner": "_gen_cortex_token_supply_scaling_derisk",
+  "corpus": "/home/dant123/Projects/sim/data/corpus/fineweb_edu.txt",
+  "d_model": 96,
+  "vocab_cap": 2000,
+  "epochs": 6,
+  "max_len": 48,
+  "token_points": [
+    48000,
+    96000,
+    192000,
+    384000,
+    768000,
+    1536000
+  ],
+  "seeds": [
+    44
+  ],
+  "per_seed": {
+    "44": {
+      "V": 2000,
+      "active_params": 423248,
+      "eval_ids_sha": "9e6c37623f8c",
+      "vocab_sha": "91cb39e1f8db",
+      "n_eval": 2000,
+      "points": [
+        {
+          "max_train_sents": 48000,
+          "n_train_passages": 48000,
+          "n_tokens": 2304000,
+          "tok_per_active_param": 5.444,
+          "wkv_deep_nll": 4.1345,
+          "trigram_deep_nll": 4.4451,
+          "bigram_deep_nll": 4.6604,
+          "margin_vs_trigram": 0.3106,
+          "perm_collapse": 1.5433,
+          "mless_collapse": 0.1515,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 4.0632,
+          "overfit_gap": 0.0712,
+          "n_deep": 76000,
+          "elapsed_s": 71.2
+        },
+        {
+          "max_train_sents": 96000,
+          "n_train_passages": 96000,
+          "n_tokens": 4608000,
+          "tok_per_active_param": 10.887,
+          "wkv_deep_nll": 4.0301,
+          "trigram_deep_nll": 4.3277,
+          "bigram_deep_nll": 4.5216,
+          "margin_vs_trigram": 0.2976,
+          "perm_collapse": 1.6185,
+          "mless_collapse": 0.2011,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 3.9957,
+          "overfit_gap": 0.0345,
+          "n_deep": 76000,
+          "elapsed_s": 101.3
+        },
+        {
+          "max_train_sents": 192000,
+          "n_train_passages": 192000,
+          "n_tokens": 9216000,
+          "tok_per_active_param": 21.774,
+          "wkv_deep_nll": 3.9888,
+          "trigram_deep_nll": 4.2253,
+          "bigram_deep_nll": 4.4124,
+          "margin_vs_trigram": 0.2365,
+          "perm_collapse": 1.6567,
+          "mless_collapse": 0.2214,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 3.9775,
+          "overfit_gap": 0.0112,
+          "n_deep": 76000,
+          "elapsed_s": 167.0
+        }
+      ],
+      "gen_samples_top_point": [
+        "the time the long lived in the <unk> in the world of <unk> indian forces so that it would <unk> and <unk> to <unk> <unk> the <unk> <unk> of <unk> and some of the <unk> new york in the <unk> this",
+        "in the <unk> room <unk> and <unk> <unk> the <unk> <unk> the <unk> for <unk> in the <unk> <unk> true <unk> of the performance of the <unk> <unk> <unk> the <unk> of the <unk> <unk> to <unk> of the <unk> <unk> <unk>",
+        "he was the good <unk> and a <unk> <unk> <unk> who was <unk> to the man was still <unk> though his kingdom was <unk> by the german <unk> under the german <unk> was <unk> from <unk> official <unk> <unk> from the <unk>",
+        "it is a <unk> <unk> on the <unk> <unk> there are some specific problems <unk> and <unk> in the <unk> <unk> of a <unk> <unk> <unk> of the <unk> <unk> <unk> <unk> and the authors must be <unk> or <unk> or <unk> to"
+      ],
+      "delta_nll_min_to_max_tokens": 0.1457,
+      "top_segment_slope": 0.0413,
+      "margin_grows_with_tokens": false,
+      "uses_tokens": true,
+      "still_descending_at_top": true,
+      "uses_context_at_top": true,
+      "beats_trigram_at_top": true
+    }
+  },
+  "verdict": {
+    "verdict": "GO-TOKEN-LEVER",
+    "n_seeds": 1,
+    "n_uses_tokens": 1,
+    "n_still_descending_at_top": 1,
+    "n_uses_context_at_top": 1,
+    "n_beats_trigram_at_top": 1,
+    "n_margin_grows_with_tokens": 0,
+    "mean_delta_nll_min_to_max_tokens": 0.1457,
+    "mean_top_point_wkv_deep_nll": 3.9888,
+    "max_tok_per_active_param_reached": 21.774,
+    "fluency_target_nll_band": [
+      3.0,
+      3.69
+    ],
+    "residual_top_nll_above_fluency_band_hi": 0.2988
+  },
+  "elapsed_s": 361.3
+}

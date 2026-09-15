@@ -1,0 +1,95 @@
+{
+  "runner": "_gen_cortex_token_supply_scaling_derisk",
+  "corpus": "/home/dant123/Projects/sim/data/corpus/fineweb_edu.txt",
+  "d_model": 384,
+  "vocab_cap": 2000,
+  "epochs": 6,
+  "max_len": 48,
+  "token_points": [
+    96000,
+    192000,
+    384000,
+    768000
+  ],
+  "seeds": [
+    100
+  ],
+  "per_seed": {
+    "100": {
+      "V": 2000,
+      "active_params": 2129360,
+      "eval_ids_sha": "02dd1403311c",
+      "vocab_sha": "c976006d4774",
+      "n_eval": 2000,
+      "points": [
+        {
+          "max_train_sents": 96000,
+          "n_train_passages": 96000,
+          "n_tokens": 4608000,
+          "tok_per_active_param": 2.164,
+          "wkv_deep_nll": 3.9427,
+          "trigram_deep_nll": 4.3205,
+          "bigram_deep_nll": 4.5157,
+          "margin_vs_trigram": 0.3778,
+          "perm_collapse": 1.6969,
+          "mless_collapse": 0.2391,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 3.8731,
+          "overfit_gap": 0.0696,
+          "n_deep": 76000,
+          "elapsed_s": 130.0
+        },
+        {
+          "max_train_sents": 192000,
+          "n_train_passages": 192000,
+          "n_tokens": 9216000,
+          "tok_per_active_param": 4.328,
+          "wkv_deep_nll": 3.9076,
+          "trigram_deep_nll": 4.222,
+          "bigram_deep_nll": 4.4057,
+          "margin_vs_trigram": 0.3144,
+          "perm_collapse": 1.6965,
+          "mless_collapse": 0.2533,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 3.8808,
+          "overfit_gap": 0.0268,
+          "n_deep": 76000,
+          "elapsed_s": 222.0
+        }
+      ],
+      "gen_samples_top_point": [
+        "the <unk> as a <unk> you can be <unk> or you can <unk> why you will be <unk> to <unk> <unk> at <unk> <unk> can make you feel more <unk> to <unk> if one <unk> <unk> was <unk> it is about",
+        "in the middle and <unk> it can t be even but it is much less <unk> for the <unk> <unk> of the <unk> for <unk> <unk> for on the body making a <unk> <unk> <unk> a <unk> as <unk> and <unk> will",
+        "he was also to be <unk> from <unk> and <unk> <unk> one <unk> <unk> a second <unk> to a <unk> consider the big <unk> at the east where the <unk> and his great <unk> <unk> him to <unk> until this new <unk>",
+        "it is a <unk> <unk> <unk> of <unk> note <unk> a series of limited options in the <unk> <unk> <unk> has been <unk> on the status of the <unk> of <unk> <unk> <unk> of growth by <unk> with its principles <unk> a <unk>"
+      ],
+      "delta_nll_min_to_max_tokens": 0.0351,
+      "top_segment_slope": 0.0351,
+      "margin_grows_with_tokens": false,
+      "uses_tokens": false,
+      "still_descending_at_top": true,
+      "uses_context_at_top": true,
+      "beats_trigram_at_top": true
+    }
+  },
+  "verdict": {
+    "verdict": "NO-GO-CAPACITY-SATURATED",
+    "n_seeds": 1,
+    "n_uses_tokens": 0,
+    "n_still_descending_at_top": 1,
+    "n_uses_context_at_top": 1,
+    "n_beats_trigram_at_top": 1,
+    "n_margin_grows_with_tokens": 0,
+    "mean_delta_nll_min_to_max_tokens": 0.0351,
+    "mean_top_point_wkv_deep_nll": 3.9076,
+    "max_tok_per_active_param_reached": 4.328,
+    "fluency_target_nll_band": [
+      3.0,
+      3.69
+    ],
+    "residual_top_nll_above_fluency_band_hi": 0.2176
+  },
+  "elapsed_s": 369.7
+}

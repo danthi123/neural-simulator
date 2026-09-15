@@ -1,0 +1,95 @@
+{
+  "runner": "_gen_cortex_token_supply_scaling_derisk",
+  "corpus": "/home/dant123/Projects/sim/data/corpus/fineweb_edu.txt",
+  "d_model": 384,
+  "vocab_cap": 2000,
+  "epochs": 6,
+  "max_len": 48,
+  "token_points": [
+    96000,
+    192000,
+    384000,
+    768000
+  ],
+  "seeds": [
+    43
+  ],
+  "per_seed": {
+    "43": {
+      "V": 2000,
+      "active_params": 2129360,
+      "eval_ids_sha": "51e71577b893",
+      "vocab_sha": "e84c789e108e",
+      "n_eval": 2000,
+      "points": [
+        {
+          "max_train_sents": 96000,
+          "n_train_passages": 96000,
+          "n_tokens": 4608000,
+          "tok_per_active_param": 2.164,
+          "wkv_deep_nll": 3.9346,
+          "trigram_deep_nll": 4.3112,
+          "bigram_deep_nll": 4.4988,
+          "margin_vs_trigram": 0.3766,
+          "perm_collapse": 1.6955,
+          "mless_collapse": 0.2375,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 3.8606,
+          "overfit_gap": 0.074,
+          "n_deep": 76000,
+          "elapsed_s": 129.8
+        },
+        {
+          "max_train_sents": 192000,
+          "n_train_passages": 192000,
+          "n_tokens": 9216000,
+          "tok_per_active_param": 4.328,
+          "wkv_deep_nll": 3.8937,
+          "trigram_deep_nll": 4.2114,
+          "bigram_deep_nll": 4.3905,
+          "margin_vs_trigram": 0.3177,
+          "perm_collapse": 1.7557,
+          "mless_collapse": 0.2528,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 3.859,
+          "overfit_gap": 0.0347,
+          "n_deep": 76000,
+          "elapsed_s": 221.4
+        }
+      ],
+      "gen_samples_top_point": [
+        "the <unk> of <unk> <unk> doi <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> w p <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> a <unk> <unk> m <unk> <unk> <unk> s <unk> a <unk> with the <unk> of a <unk>",
+        "in the <unk> and the <unk> of <unk> <unk> <unk> <unk> <unk> is not considered <unk> work but these <unk> are the <unk> <unk> <unk> or the <unk> <unk> building <unk> with <unk> features have a <unk> and <unk> the <unk> the",
+        "he was in <unk> <unk> and their maximum frequency of <unk> and <unk> <unk> frequency <unk> <unk> <unk> said that <unk> the company was <unk> by a <unk> of the <unk> that <unk> changes in <unk> of the <unk> are <unk> <unk>",
+        "it is a <unk> with <unk> <unk> <unk> <unk> <unk> <unk> <unk> and <unk> making <unk> and more <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> for long term <unk> <unk> l <unk> <unk> <unk> <unk> and <unk> <unk> and <unk> <unk> <unk>"
+      ],
+      "delta_nll_min_to_max_tokens": 0.0409,
+      "top_segment_slope": 0.0409,
+      "margin_grows_with_tokens": false,
+      "uses_tokens": false,
+      "still_descending_at_top": true,
+      "uses_context_at_top": true,
+      "beats_trigram_at_top": true
+    }
+  },
+  "verdict": {
+    "verdict": "NO-GO-CAPACITY-SATURATED",
+    "n_seeds": 1,
+    "n_uses_tokens": 0,
+    "n_still_descending_at_top": 1,
+    "n_uses_context_at_top": 1,
+    "n_beats_trigram_at_top": 1,
+    "n_margin_grows_with_tokens": 0,
+    "mean_delta_nll_min_to_max_tokens": 0.0409,
+    "mean_top_point_wkv_deep_nll": 3.8937,
+    "max_tok_per_active_param_reached": 4.328,
+    "fluency_target_nll_band": [
+      3.0,
+      3.69
+    ],
+    "residual_top_nll_above_fluency_band_hi": 0.2037
+  },
+  "elapsed_s": 369.3
+}

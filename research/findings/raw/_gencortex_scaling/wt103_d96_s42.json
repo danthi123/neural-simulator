@@ -1,0 +1,95 @@
+{
+  "runner": "_gen_cortex_token_supply_scaling_derisk",
+  "corpus": "/home/dant123/Projects/sim/data/corpus/wikitext103.txt",
+  "d_model": 96,
+  "vocab_cap": 2000,
+  "epochs": 6,
+  "max_len": 48,
+  "token_points": [
+    96000,
+    192000,
+    384000,
+    768000
+  ],
+  "seeds": [
+    42
+  ],
+  "per_seed": {
+    "42": {
+      "V": 2000,
+      "active_params": 423248,
+      "eval_ids_sha": "3f880f43c20f",
+      "vocab_sha": "ada75d9d47e4",
+      "n_eval": 2000,
+      "points": [
+        {
+          "max_train_sents": 96000,
+          "n_train_passages": 96000,
+          "n_tokens": 4608000,
+          "tok_per_active_param": 10.887,
+          "wkv_deep_nll": 3.8366,
+          "trigram_deep_nll": 4.0843,
+          "bigram_deep_nll": 4.3524,
+          "margin_vs_trigram": 0.2478,
+          "perm_collapse": 1.7267,
+          "mless_collapse": 0.2192,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 3.8072,
+          "overfit_gap": 0.0294,
+          "n_deep": 76000,
+          "elapsed_s": 102.9
+        },
+        {
+          "max_train_sents": 192000,
+          "n_train_passages": 192000,
+          "n_tokens": 9216000,
+          "tok_per_active_param": 21.774,
+          "wkv_deep_nll": 3.7915,
+          "trigram_deep_nll": 3.9961,
+          "bigram_deep_nll": 4.2422,
+          "margin_vs_trigram": 0.2046,
+          "perm_collapse": 1.759,
+          "mless_collapse": 0.2389,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 3.7827,
+          "overfit_gap": 0.0088,
+          "n_deep": 76000,
+          "elapsed_s": 166.6
+        }
+      ],
+      "gen_samples_top_point": [
+        "the <unk> <unk> were <unk> with <unk> and <unk> <unk> <unk> <unk> <unk> to <unk> <unk> in the <unk> <unk> and with the first <unk> in <unk> <unk> and <unk> <unk> and was named when here <unk> a <unk> <unk> <unk>",
+        "in the united states on la <unk> <unk> was <unk> the only <unk> and the only <unk> <unk> in the <unk> <unk> art <unk> <unk> <unk> a <unk> <unk> <unk> the society of <unk> <unk> and <unk> was <unk> by <unk> <unk>",
+        "he was the first team of the new <unk> and the <unk> <unk> in north america while <unk> <unk> had to <unk> the <unk> at <unk> <unk> <unk> on the <unk> <unk> he <unk> two <unk> in and <unk> <unk> <unk> the",
+        "it is a <unk> of a <unk> of <unk> and <unk> <unk> <unk> <unk> is one of the most <unk> <unk> <unk> <unk> of <unk> <unk> <unk> the <unk> western <unk> of the <unk> <unk> is a <unk> of <unk> <unk> and <unk>"
+      ],
+      "delta_nll_min_to_max_tokens": 0.0451,
+      "top_segment_slope": 0.0451,
+      "margin_grows_with_tokens": false,
+      "uses_tokens": false,
+      "still_descending_at_top": true,
+      "uses_context_at_top": true,
+      "beats_trigram_at_top": true
+    }
+  },
+  "verdict": {
+    "verdict": "NO-GO-CAPACITY-SATURATED",
+    "n_seeds": 1,
+    "n_uses_tokens": 0,
+    "n_still_descending_at_top": 1,
+    "n_uses_context_at_top": 1,
+    "n_beats_trigram_at_top": 1,
+    "n_margin_grows_with_tokens": 0,
+    "mean_delta_nll_min_to_max_tokens": 0.0451,
+    "mean_top_point_wkv_deep_nll": 3.7915,
+    "max_tok_per_active_param_reached": 21.774,
+    "fluency_target_nll_band": [
+      3.0,
+      3.69
+    ],
+    "residual_top_nll_above_fluency_band_hi": 0.1015
+  },
+  "elapsed_s": 286.7
+}

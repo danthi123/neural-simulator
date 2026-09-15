@@ -1,0 +1,80 @@
+{
+  "note": "6-seed means over research/findings/raw/_gencortex_scaling/{corpus}_d{d}_s{seed}.json (capped n_sentences=400000 run)",
+  "configs": {
+    "fineweb_edu_d192": {
+      "n_seeds": 6,
+      "first_nll": 3.9639,
+      "top_nll": 3.9275,
+      "top_sents": 192000,
+      "top_tokens": 9216000,
+      "top_tok_per_param": 10.037,
+      "still_descending": 6,
+      "beats_trigram": 6,
+      "top_slope_mean": 0.0364,
+      "active_params": 918224
+    },
+    "fineweb_edu_d384": {
+      "n_seeds": 6,
+      "first_nll": 3.9446,
+      "top_nll": 3.9062,
+      "top_sents": 192000,
+      "top_tokens": 9216000,
+      "top_tok_per_param": 4.328,
+      "still_descending": 6,
+      "beats_trigram": 6,
+      "top_slope_mean": 0.0384,
+      "active_params": 2129360
+    },
+    "fineweb_edu_d96": {
+      "n_seeds": 6,
+      "first_nll": 4.1276,
+      "top_nll": 3.9761,
+      "top_sents": 192000,
+      "top_tokens": 9216000,
+      "top_tok_per_param": 21.774,
+      "still_descending": 6,
+      "beats_trigram": 6,
+      "top_slope_mean": 0.0447,
+      "active_params": 423248
+    },
+    "wikitext103_d192": {
+      "n_seeds": 6,
+      "first_nll": 3.7264,
+      "top_nll": 3.7264,
+      "top_sents": 192000,
+      "top_tokens": 9216000,
+      "top_tok_per_param": 10.037,
+      "still_descending": 0,
+      "beats_trigram": 0,
+      "top_slope_mean": 0.0,
+      "active_params": 918224
+    },
+    "wikitext103_d96": {
+      "n_seeds": 6,
+      "first_nll": 3.8297,
+      "top_nll": 3.7845,
+      "top_sents": 192000,
+      "top_tokens": 9216000,
+      "top_tok_per_param": 21.774,
+      "still_descending": 6,
+      "beats_trigram": 6,
+      "top_slope_mean": 0.0452,
+      "active_params": 423248
+    }
+  },
+  "provenance": {
+    "script": "scratchpad aggregation over the cited per-cell artifacts (means over seeds)",
+    "runner": "harvest-aggregation-2026-09-15",
+    "run_id": "agg-1789512575",
+    "generated_by": "claude harvest session 2026-09-15; derived from the sibling per-cell *.json in this directory",
+    "seeds": [
+      42,
+      43,
+      44,
+      100,
+      101,
+      102
+    ],
+    "sim_backend": "cupy (GPU; source token-scaling runs). This file is a host-side aggregation over those runs; per-run device is in each cited per-cell artifact."
+  }
+}

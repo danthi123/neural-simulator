@@ -1,0 +1,69 @@
+{
+  "runner": "_gen_cortex_token_supply_scaling_derisk",
+  "corpus": "/home/dant123/Projects/sim/data/corpus/wikitext103.txt",
+  "d_model": 192,
+  "vocab_cap": 2000,
+  "epochs": 6,
+  "max_len": 48,
+  "token_points": [
+    192000,
+    384000,
+    768000
+  ],
+  "seeds": [
+    44
+  ],
+  "per_seed": {
+    "44": {
+      "V": 2000,
+      "active_params": 918224,
+      "eval_ids_sha": "17e30c6121e8",
+      "vocab_sha": "0df2996ea0af",
+      "n_eval": 2000,
+      "points": [
+        {
+          "max_train_sents": 192000,
+          "n_train_passages": 192000,
+          "n_tokens": 9216000,
+          "tok_per_active_param": 10.037,
+          "wkv_deep_nll": 3.728,
+          "trigram_deep_nll": 3.9933,
+          "bigram_deep_nll": 4.2522,
+          "margin_vs_trigram": 0.2652,
+          "perm_collapse": 1.8271,
+          "mless_collapse": 0.2724,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 3.7004,
+          "overfit_gap": 0.0277,
+          "n_deep": 76000,
+          "elapsed_s": 168.9
+        }
+      ],
+      "gen_samples_top_point": [
+        "the first to a <unk> at the <unk> near the end of <unk> atlantic on october the <unk> <unk> <unk> was <unk> to <unk> <unk> the <unk> <unk> of <unk> and <unk> the <unk> <unk> had a similar <unk> to the",
+        "in the <unk> weather <unk> and <unk> <unk> the <unk> <unk> of the <unk> <unk> that they <unk> <unk> during the s and to turn to produce as <unk> the <unk> and <unk> <unk> <unk> to <unk> the <unk> channel <unk> <unk>",
+        "he was the first <unk> in the department as <unk> appointed the <unk> of the british empire to master <unk> <unk> in this <unk> they had a <unk> against the king sir <unk> <unk> <unk> <unk> <unk> <unk> <unk> henry <unk> <unk>",
+        "it is a <unk> <unk> small and <unk> <unk> combined <unk> that are in <unk> and <unk> in the <unk> <unk> of <unk> walter <unk> <unk> and <unk> <unk> <unk> <unk> <unk> a common yellow <unk> <unk> <unk> <unk> <unk> <unk> <unk> is"
+      ]
+    }
+  },
+  "verdict": {
+    "verdict": "NO-GO-CAPACITY-SATURATED",
+    "n_seeds": 1,
+    "n_uses_tokens": 0,
+    "n_still_descending_at_top": 0,
+    "n_uses_context_at_top": 0,
+    "n_beats_trigram_at_top": 0,
+    "n_margin_grows_with_tokens": 0,
+    "mean_delta_nll_min_to_max_tokens": null,
+    "mean_top_point_wkv_deep_nll": 3.728,
+    "max_tok_per_active_param_reached": 10.037,
+    "fluency_target_nll_band": [
+      3.0,
+      3.69
+    ],
+    "residual_top_nll_above_fluency_band_hi": 0.038
+  },
+  "elapsed_s": 181.0
+}

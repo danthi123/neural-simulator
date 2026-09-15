@@ -1,0 +1,95 @@
+{
+  "runner": "_gen_cortex_token_supply_scaling_derisk",
+  "corpus": "/home/dant123/Projects/sim/data/corpus/wikitext103.txt",
+  "d_model": 96,
+  "vocab_cap": 2000,
+  "epochs": 6,
+  "max_len": 48,
+  "token_points": [
+    96000,
+    192000,
+    384000,
+    768000
+  ],
+  "seeds": [
+    100
+  ],
+  "per_seed": {
+    "100": {
+      "V": 2000,
+      "active_params": 423248,
+      "eval_ids_sha": "4e8a74750a44",
+      "vocab_sha": "ff04b6d17096",
+      "n_eval": 2000,
+      "points": [
+        {
+          "max_train_sents": 96000,
+          "n_train_passages": 96000,
+          "n_tokens": 4608000,
+          "tok_per_active_param": 10.887,
+          "wkv_deep_nll": 3.8472,
+          "trigram_deep_nll": 4.0949,
+          "bigram_deep_nll": 4.3687,
+          "margin_vs_trigram": 0.2478,
+          "perm_collapse": 1.7529,
+          "mless_collapse": 0.2249,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 3.8096,
+          "overfit_gap": 0.0375,
+          "n_deep": 76000,
+          "elapsed_s": 103.0
+        },
+        {
+          "max_train_sents": 192000,
+          "n_train_passages": 192000,
+          "n_tokens": 9216000,
+          "tok_per_active_param": 21.774,
+          "wkv_deep_nll": 3.7982,
+          "trigram_deep_nll": 4.0033,
+          "bigram_deep_nll": 4.2584,
+          "margin_vs_trigram": 0.2051,
+          "perm_collapse": 1.7961,
+          "mless_collapse": 0.2557,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 3.7849,
+          "overfit_gap": 0.0133,
+          "n_deep": 76000,
+          "elapsed_s": 168.4
+        }
+      ],
+      "gen_samples_top_point": [
+        "the <unk> had been <unk> to the high <unk> for the rock <unk> <unk> into the northern <unk> of <unk> <unk> from <unk> <unk> to <unk> non <unk> lived after the <unk> affected <unk> <unk> <unk> <unk> <unk> after the invasion",
+        "in the player 's <unk> game <unk> <unk> in the second season the league he scored a career at yards in and while he scored seconds against the <unk> and <unk> a <unk> <unk> <unk> on the side behind the <unk> cup",
+        "he was born in the early th century and <unk> <unk> were <unk> by the national <unk> of england in his career and <unk> son later became known as the age of the <unk> <unk> <unk> and <unk> <unk> history of his",
+        "it is a <unk> <unk> <unk> of <unk> <unk> <unk> and very <unk> and much of the <unk> <unk> <unk> has been <unk> with little <unk> <unk> of the previous <unk> <unk> <unk> of a <unk> <unk> with new <unk> <unk> has been"
+      ],
+      "delta_nll_min_to_max_tokens": 0.049,
+      "top_segment_slope": 0.049,
+      "margin_grows_with_tokens": false,
+      "uses_tokens": false,
+      "still_descending_at_top": true,
+      "uses_context_at_top": true,
+      "beats_trigram_at_top": true
+    }
+  },
+  "verdict": {
+    "verdict": "NO-GO-CAPACITY-SATURATED",
+    "n_seeds": 1,
+    "n_uses_tokens": 0,
+    "n_still_descending_at_top": 1,
+    "n_uses_context_at_top": 1,
+    "n_beats_trigram_at_top": 1,
+    "n_margin_grows_with_tokens": 0,
+    "mean_delta_nll_min_to_max_tokens": 0.049,
+    "mean_top_point_wkv_deep_nll": 3.7982,
+    "max_tok_per_active_param_reached": 21.774,
+    "fluency_target_nll_band": [
+      3.0,
+      3.69
+    ],
+    "residual_top_nll_above_fluency_band_hi": 0.1082
+  },
+  "elapsed_s": 288.6
+}

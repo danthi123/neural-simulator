@@ -1,0 +1,95 @@
+{
+  "runner": "_gen_cortex_token_supply_scaling_derisk",
+  "corpus": "/home/dant123/Projects/sim/data/corpus/fineweb_edu.txt",
+  "d_model": 192,
+  "vocab_cap": 2000,
+  "epochs": 6,
+  "max_len": 48,
+  "token_points": [
+    96000,
+    192000,
+    384000,
+    768000
+  ],
+  "seeds": [
+    100
+  ],
+  "per_seed": {
+    "100": {
+      "V": 2000,
+      "active_params": 918224,
+      "eval_ids_sha": "02dd1403311c",
+      "vocab_sha": "c976006d4774",
+      "n_eval": 2000,
+      "points": [
+        {
+          "max_train_sents": 96000,
+          "n_train_passages": 96000,
+          "n_tokens": 4608000,
+          "tok_per_active_param": 5.018,
+          "wkv_deep_nll": 3.9649,
+          "trigram_deep_nll": 4.3205,
+          "bigram_deep_nll": 4.5157,
+          "margin_vs_trigram": 0.3556,
+          "perm_collapse": 1.695,
+          "mless_collapse": 0.2255,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 3.9055,
+          "overfit_gap": 0.0594,
+          "n_deep": 76000,
+          "elapsed_s": 104.5
+        },
+        {
+          "max_train_sents": 192000,
+          "n_train_passages": 192000,
+          "n_tokens": 9216000,
+          "tok_per_active_param": 10.037,
+          "wkv_deep_nll": 3.9311,
+          "trigram_deep_nll": 4.222,
+          "bigram_deep_nll": 4.4057,
+          "margin_vs_trigram": 0.2909,
+          "perm_collapse": 1.6911,
+          "mless_collapse": 0.2392,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 3.9056,
+          "overfit_gap": 0.0255,
+          "n_deep": 76000,
+          "elapsed_s": 169.8
+        }
+      ],
+      "gen_samples_top_point": [
+        "the <unk> for the <unk> and the national <unk> but the increasing <unk> required to ensure the <unk> of <unk> <unk> by <unk> <unk> or <unk> <unk> <unk> on simply a <unk> <unk> <unk> <unk> <unk> <unk> <unk> devices to address",
+        "in the dark sea <unk> by <unk> <unk> and while the <unk> of canada have <unk> or <unk> it can be seen as a <unk> <unk> as a <unk> of <unk> to <unk> <unk> <unk> to and understand <unk> and <unk> what",
+        "he was also a great <unk> who <unk> the <unk> <unk> was <unk> at the end of the month of his <unk> and <unk> him to his <unk> and he was also the <unk> <unk> o their <unk> <unk> he was forced",
+        "it is a <unk> <unk> <unk> of <unk> campaign <unk> and to <unk> the values of the <unk> <unk> so that the <unk> are meant to take the current skin <unk> <unk> <unk> and <unk> <unk> <unk> that are usually <unk> in the"
+      ],
+      "delta_nll_min_to_max_tokens": 0.0338,
+      "top_segment_slope": 0.0338,
+      "margin_grows_with_tokens": false,
+      "uses_tokens": false,
+      "still_descending_at_top": true,
+      "uses_context_at_top": true,
+      "beats_trigram_at_top": true
+    }
+  },
+  "verdict": {
+    "verdict": "NO-GO-CAPACITY-SATURATED",
+    "n_seeds": 1,
+    "n_uses_tokens": 0,
+    "n_still_descending_at_top": 1,
+    "n_uses_context_at_top": 1,
+    "n_beats_trigram_at_top": 1,
+    "n_margin_grows_with_tokens": 0,
+    "mean_delta_nll_min_to_max_tokens": 0.0338,
+    "mean_top_point_wkv_deep_nll": 3.9311,
+    "max_tok_per_active_param_reached": 10.037,
+    "fluency_target_nll_band": [
+      3.0,
+      3.69
+    ],
+    "residual_top_nll_above_fluency_band_hi": 0.2411
+  },
+  "elapsed_s": 292.3
+}

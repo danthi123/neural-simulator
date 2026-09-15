@@ -1,0 +1,115 @@
+{
+  "runner": "_gen_cortex_token_supply_scaling_derisk",
+  "corpus": "/home/dant123/Projects/sim/data/corpus/fineweb_edu.txt",
+  "d_model": 96,
+  "vocab_cap": 2000,
+  "epochs": 6,
+  "max_len": 48,
+  "token_points": [
+    48000,
+    96000,
+    192000,
+    384000,
+    768000,
+    1536000
+  ],
+  "seeds": [
+    42
+  ],
+  "per_seed": {
+    "42": {
+      "V": 2000,
+      "active_params": 423248,
+      "eval_ids_sha": "d3103a1ef5bb",
+      "vocab_sha": "fcee17517b3a",
+      "n_eval": 2000,
+      "points": [
+        {
+          "max_train_sents": 48000,
+          "n_train_passages": 48000,
+          "n_tokens": 2304000,
+          "tok_per_active_param": 5.444,
+          "wkv_deep_nll": 4.1274,
+          "trigram_deep_nll": 4.4233,
+          "bigram_deep_nll": 4.6492,
+          "margin_vs_trigram": 0.2959,
+          "perm_collapse": 1.5732,
+          "mless_collapse": 0.1396,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 4.0894,
+          "overfit_gap": 0.038,
+          "n_deep": 76000,
+          "elapsed_s": 71.7
+        },
+        {
+          "max_train_sents": 96000,
+          "n_train_passages": 96000,
+          "n_tokens": 4608000,
+          "tok_per_active_param": 10.887,
+          "wkv_deep_nll": 4.0145,
+          "trigram_deep_nll": 4.3097,
+          "bigram_deep_nll": 4.5112,
+          "margin_vs_trigram": 0.2952,
+          "perm_collapse": 1.6692,
+          "mless_collapse": 0.1985,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 4.0161,
+          "overfit_gap": -0.0015,
+          "n_deep": 76000,
+          "elapsed_s": 102.4
+        },
+        {
+          "max_train_sents": 192000,
+          "n_train_passages": 192000,
+          "n_tokens": 9216000,
+          "tok_per_active_param": 21.774,
+          "wkv_deep_nll": 3.9668,
+          "trigram_deep_nll": 4.2111,
+          "bigram_deep_nll": 4.4026,
+          "margin_vs_trigram": 0.2443,
+          "perm_collapse": 1.6935,
+          "mless_collapse": 0.2231,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 3.989,
+          "overfit_gap": -0.0222,
+          "n_deep": 76000,
+          "elapsed_s": 167.2
+        }
+      ],
+      "gen_samples_top_point": [
+        "the <unk> <unk> on <unk> committee <unk> the <unk> <unk> <unk> <unk> <unk> in <unk> <unk> for the <unk> <unk> and <unk> of the <unk> community <unk> <unk> to <unk> <unk> of the <unk> <unk> <unk> <unk> and <unk> while now",
+        "in the form of <unk> <unk> and <unk> are <unk> the average <unk> of the long <unk> <unk> to be <unk> <unk> however both <unk> <unk> and <unk> loss has the symptoms of <unk> blood and <unk> that <unk> blood <unk> <unk>",
+        "he was the first to be found the <unk> of the <unk> <unk> and <unk> that later <unk> <unk> was the <unk> of <unk> who looked like <unk> it is <unk> but not <unk> but <unk> to answer women s <unk> the",
+        "it is a <unk> of the <unk> of <unk> and <unk> <unk> <unk> <unk> is an <unk> <unk> and <unk> rules on <unk> the <unk> <unk> <unk> the <unk> <unk> and side of the <unk> great <unk> <unk> and <unk> <unk> to <unk>"
+      ],
+      "delta_nll_min_to_max_tokens": 0.1606,
+      "top_segment_slope": 0.0477,
+      "margin_grows_with_tokens": false,
+      "uses_tokens": true,
+      "still_descending_at_top": true,
+      "uses_context_at_top": true,
+      "beats_trigram_at_top": true
+    }
+  },
+  "verdict": {
+    "verdict": "GO-TOKEN-LEVER",
+    "n_seeds": 1,
+    "n_uses_tokens": 1,
+    "n_still_descending_at_top": 1,
+    "n_uses_context_at_top": 1,
+    "n_beats_trigram_at_top": 1,
+    "n_margin_grows_with_tokens": 0,
+    "mean_delta_nll_min_to_max_tokens": 0.1606,
+    "mean_top_point_wkv_deep_nll": 3.9668,
+    "max_tok_per_active_param_reached": 21.774,
+    "fluency_target_nll_band": [
+      3.0,
+      3.69
+    ],
+    "residual_top_nll_above_fluency_band_hi": 0.2768
+  },
+  "elapsed_s": 363.8
+}

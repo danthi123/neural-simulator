@@ -1,0 +1,69 @@
+{
+  "runner": "_gen_cortex_token_supply_scaling_derisk",
+  "corpus": "/home/dant123/Projects/sim/data/corpus/wikitext103.txt",
+  "d_model": 192,
+  "vocab_cap": 2000,
+  "epochs": 6,
+  "max_len": 48,
+  "token_points": [
+    192000,
+    384000,
+    768000
+  ],
+  "seeds": [
+    102
+  ],
+  "per_seed": {
+    "102": {
+      "V": 2000,
+      "active_params": 918224,
+      "eval_ids_sha": "3d1f1174e29f",
+      "vocab_sha": "90064c08ff12",
+      "n_eval": 2000,
+      "points": [
+        {
+          "max_train_sents": 192000,
+          "n_train_passages": 192000,
+          "n_tokens": 9216000,
+          "tok_per_active_param": 10.037,
+          "wkv_deep_nll": 3.7149,
+          "trigram_deep_nll": 3.9809,
+          "bigram_deep_nll": 4.2375,
+          "margin_vs_trigram": 0.2661,
+          "perm_collapse": 1.8253,
+          "mless_collapse": 0.2782,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 3.7109,
+          "overfit_gap": 0.0039,
+          "n_deep": 76000,
+          "elapsed_s": 168.9
+        }
+      ],
+      "gen_samples_top_point": [
+        "the <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> has <unk> the <unk> <unk> <unk> the <unk> <unk> of <unk> has been <unk> to the <unk> of <unk> <unk> boy <unk> <unk> december",
+        "in the <unk> <unk> <unk> it is one of the most popular church houses and <unk> <unk> it <unk> numerous <unk> <unk> by <unk> <unk> <unk> and <unk> and <unk> <unk> black <unk> and white house <unk> <unk> and <unk> <unk> <unk>",
+        "he was appointed as the <unk> of the national defense association <unk> committee of <unk> said the two <unk> report was <unk> by the imperial government <unk> by their <unk> in the <unk> and that <unk> cannot be agreed that the <unk>",
+        "it is a <unk> in the long term that species might be <unk> and <unk> <unk> <unk> <unk> <unk> <unk> <unk> and <unk> <unk> <unk> <unk> by the <unk> the <unk> in the s the <unk> <unk> used in the <unk> area is"
+      ]
+    }
+  },
+  "verdict": {
+    "verdict": "NO-GO-CAPACITY-SATURATED",
+    "n_seeds": 1,
+    "n_uses_tokens": 0,
+    "n_still_descending_at_top": 0,
+    "n_uses_context_at_top": 0,
+    "n_beats_trigram_at_top": 0,
+    "n_margin_grows_with_tokens": 0,
+    "mean_delta_nll_min_to_max_tokens": null,
+    "mean_top_point_wkv_deep_nll": 3.7149,
+    "max_tok_per_active_param_reached": 10.037,
+    "fluency_target_nll_band": [
+      3.0,
+      3.69
+    ],
+    "residual_top_nll_above_fluency_band_hi": 0.0249
+  },
+  "elapsed_s": 181.7
+}

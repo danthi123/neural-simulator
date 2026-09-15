@@ -1,0 +1,115 @@
+{
+  "runner": "_gen_cortex_token_supply_scaling_derisk",
+  "corpus": "/home/dant123/Projects/sim/data/corpus/fineweb_edu.txt",
+  "d_model": 96,
+  "vocab_cap": 2000,
+  "epochs": 6,
+  "max_len": 48,
+  "token_points": [
+    48000,
+    96000,
+    192000,
+    384000,
+    768000,
+    1536000
+  ],
+  "seeds": [
+    101
+  ],
+  "per_seed": {
+    "101": {
+      "V": 2000,
+      "active_params": 423248,
+      "eval_ids_sha": "299ef8700ee5",
+      "vocab_sha": "6c7bdc1149e6",
+      "n_eval": 2000,
+      "points": [
+        {
+          "max_train_sents": 48000,
+          "n_train_passages": 48000,
+          "n_tokens": 2304000,
+          "tok_per_active_param": 5.444,
+          "wkv_deep_nll": 4.1286,
+          "trigram_deep_nll": 4.4411,
+          "bigram_deep_nll": 4.6586,
+          "margin_vs_trigram": 0.3125,
+          "perm_collapse": 1.524,
+          "mless_collapse": 0.1403,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 4.0851,
+          "overfit_gap": 0.0435,
+          "n_deep": 76000,
+          "elapsed_s": 71.0
+        },
+        {
+          "max_train_sents": 96000,
+          "n_train_passages": 96000,
+          "n_tokens": 4608000,
+          "tok_per_active_param": 10.887,
+          "wkv_deep_nll": 4.0239,
+          "trigram_deep_nll": 4.3244,
+          "bigram_deep_nll": 4.5201,
+          "margin_vs_trigram": 0.3005,
+          "perm_collapse": 1.6172,
+          "mless_collapse": 0.2015,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 4.0211,
+          "overfit_gap": 0.0028,
+          "n_deep": 76000,
+          "elapsed_s": 101.2
+        },
+        {
+          "max_train_sents": 192000,
+          "n_train_passages": 192000,
+          "n_tokens": 9216000,
+          "tok_per_active_param": 21.774,
+          "wkv_deep_nll": 3.9817,
+          "trigram_deep_nll": 4.2226,
+          "bigram_deep_nll": 4.4104,
+          "margin_vs_trigram": 0.2409,
+          "perm_collapse": 1.6634,
+          "mless_collapse": 0.2244,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 3.9919,
+          "overfit_gap": -0.0102,
+          "n_deep": 76000,
+          "elapsed_s": 167.0
+        }
+      ],
+      "gen_samples_top_point": [
+        "the most important <unk> of the <unk> <unk> <unk> <unk> the <unk> <unk> <unk> no <unk> <unk> they could be <unk> onto the <unk> of <unk> the <unk> <unk> <unk> and <unk> to do it has been created that it is",
+        "in the video <unk> <unk> is a new <unk> of <unk> and the <unk> <unk> of <unk> state <unk> and <unk> on the times of a <unk> <unk> also <unk> the gender <unk> and <unk> to play disorders which is exactly that",
+        "he was <unk> in <unk> <unk> <unk> <unk> historical <unk> <unk> and <unk> <unk> <unk> <unk> <unk> s <unk> <unk> modern <unk> <unk> <unk> <unk> <unk> <unk> <unk> j <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk>",
+        "it is a <unk> said <unk> as more <unk> it s a <unk> <unk> that the <unk> is present in an <unk> of <unk> so the <unk> number of <unk> <unk> after the morning being <unk> to <unk> of <unk> if the <unk>"
+      ],
+      "delta_nll_min_to_max_tokens": 0.1469,
+      "top_segment_slope": 0.0422,
+      "margin_grows_with_tokens": false,
+      "uses_tokens": true,
+      "still_descending_at_top": true,
+      "uses_context_at_top": true,
+      "beats_trigram_at_top": true
+    }
+  },
+  "verdict": {
+    "verdict": "GO-TOKEN-LEVER",
+    "n_seeds": 1,
+    "n_uses_tokens": 1,
+    "n_still_descending_at_top": 1,
+    "n_uses_context_at_top": 1,
+    "n_beats_trigram_at_top": 1,
+    "n_margin_grows_with_tokens": 0,
+    "mean_delta_nll_min_to_max_tokens": 0.1469,
+    "mean_top_point_wkv_deep_nll": 3.9817,
+    "max_tok_per_active_param_reached": 21.774,
+    "fluency_target_nll_band": [
+      3.0,
+      3.69
+    ],
+    "residual_top_nll_above_fluency_band_hi": 0.2917
+  },
+  "elapsed_s": 361.4
+}

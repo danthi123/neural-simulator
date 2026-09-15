@@ -1,0 +1,69 @@
+{
+  "runner": "_gen_cortex_token_supply_scaling_derisk",
+  "corpus": "/home/dant123/Projects/sim/data/corpus/wikitext103.txt",
+  "d_model": 192,
+  "vocab_cap": 2000,
+  "epochs": 6,
+  "max_len": 48,
+  "token_points": [
+    192000,
+    384000,
+    768000
+  ],
+  "seeds": [
+    43
+  ],
+  "per_seed": {
+    "43": {
+      "V": 2000,
+      "active_params": 918224,
+      "eval_ids_sha": "35789a40d64e",
+      "vocab_sha": "bc9632c9e041",
+      "n_eval": 2000,
+      "points": [
+        {
+          "max_train_sents": 192000,
+          "n_train_passages": 192000,
+          "n_tokens": 9216000,
+          "tok_per_active_param": 10.037,
+          "wkv_deep_nll": 3.7173,
+          "trigram_deep_nll": 3.9817,
+          "bigram_deep_nll": 4.2456,
+          "margin_vs_trigram": 0.2644,
+          "perm_collapse": 1.8386,
+          "mless_collapse": 0.2811,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 3.6839,
+          "overfit_gap": 0.0334,
+          "n_deep": 76000,
+          "elapsed_s": 169.1
+        }
+      ],
+      "gen_samples_top_point": [
+        "the <unk> of <unk> <unk> just to <unk> it <unk> to the <unk> between the two <unk> <unk> <unk> <unk> <unk> <unk> on <unk> the <unk> who were <unk> by <unk> and <unk> the <unk> of the republican party in to",
+        "in the <unk> in the <unk> of <unk> <unk> <unk> praised the game 's <unk> <unk> <unk> <unk> <unk> praised the game 's <unk> <unk> found the game 's <unk> <unk> for <unk> that game in t to <unk> the <unk> the",
+        "he was also <unk> her with the publication of the <unk> of <unk> <unk> <unk> <unk> <unk> <unk> that he felt was a good <unk> about her <unk> of the <unk> was <unk> by <unk> <unk> and his brothers on her <unk>",
+        "it is a <unk> point now <unk> <unk> <unk> it is slightly often <unk> as <unk> and the <unk> <unk> <unk> over the <unk> <unk> though the <unk> is <unk> it is mostly <unk> with a large <unk> <unk> of <unk> <unk> <unk>"
+      ]
+    }
+  },
+  "verdict": {
+    "verdict": "NO-GO-CAPACITY-SATURATED",
+    "n_seeds": 1,
+    "n_uses_tokens": 0,
+    "n_still_descending_at_top": 0,
+    "n_uses_context_at_top": 0,
+    "n_beats_trigram_at_top": 0,
+    "n_margin_grows_with_tokens": 0,
+    "mean_delta_nll_min_to_max_tokens": null,
+    "mean_top_point_wkv_deep_nll": 3.7173,
+    "max_tok_per_active_param_reached": 10.037,
+    "fluency_target_nll_band": [
+      3.0,
+      3.69
+    ],
+    "residual_top_nll_above_fluency_band_hi": 0.0273
+  },
+  "elapsed_s": 181.4
+}

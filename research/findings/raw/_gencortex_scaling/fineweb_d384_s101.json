@@ -1,0 +1,95 @@
+{
+  "runner": "_gen_cortex_token_supply_scaling_derisk",
+  "corpus": "/home/dant123/Projects/sim/data/corpus/fineweb_edu.txt",
+  "d_model": 384,
+  "vocab_cap": 2000,
+  "epochs": 6,
+  "max_len": 48,
+  "token_points": [
+    96000,
+    192000,
+    384000,
+    768000
+  ],
+  "seeds": [
+    101
+  ],
+  "per_seed": {
+    "101": {
+      "V": 2000,
+      "active_params": 2129360,
+      "eval_ids_sha": "299ef8700ee5",
+      "vocab_sha": "6c7bdc1149e6",
+      "n_eval": 2000,
+      "points": [
+        {
+          "max_train_sents": 96000,
+          "n_train_passages": 96000,
+          "n_tokens": 4608000,
+          "tok_per_active_param": 2.164,
+          "wkv_deep_nll": 3.9505,
+          "trigram_deep_nll": 4.3244,
+          "bigram_deep_nll": 4.5201,
+          "margin_vs_trigram": 0.374,
+          "perm_collapse": 1.6824,
+          "mless_collapse": 0.2373,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 3.9124,
+          "overfit_gap": 0.0381,
+          "n_deep": 76000,
+          "elapsed_s": 131.0
+        },
+        {
+          "max_train_sents": 192000,
+          "n_train_passages": 192000,
+          "n_tokens": 9216000,
+          "tok_per_active_param": 4.328,
+          "wkv_deep_nll": 3.9122,
+          "trigram_deep_nll": 4.2226,
+          "bigram_deep_nll": 4.4104,
+          "margin_vs_trigram": 0.3104,
+          "perm_collapse": 1.7229,
+          "mless_collapse": 0.2549,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 3.9117,
+          "overfit_gap": 0.0005,
+          "n_deep": 76000,
+          "elapsed_s": 222.9
+        }
+      ],
+      "gen_samples_top_point": [
+        "the most important <unk> of the <unk> <unk> <unk> <unk> the <unk> <unk> <unk> away at <unk> <unk> <unk> of <unk> <unk> which <unk> the <unk> of <unk> <unk> <unk> to <unk> the <unk> of the <unk> is track of the",
+        "in the press <unk> <unk> and <unk> the <unk> of <unk> and the <unk> <unk> of <unk> <unk> <unk> in <unk> medicine <unk> in the earlier <unk> <unk> according to the american <unk> in this case it will also be <unk> in",
+        "he was <unk> in <unk> <unk> <unk> <unk> county <unk> <unk> in a <unk> <unk> william <unk> has no <unk> who <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk>",
+        "it is a <unk> but after the <unk> <unk> a <unk> of <unk> <unk> for the <unk> of time in british <unk> the <unk> law of <unk> <unk> law on <unk> <unk> of the <unk> <unk> of <unk> while <unk> <unk> of <unk>"
+      ],
+      "delta_nll_min_to_max_tokens": 0.0383,
+      "top_segment_slope": 0.0383,
+      "margin_grows_with_tokens": false,
+      "uses_tokens": false,
+      "still_descending_at_top": true,
+      "uses_context_at_top": true,
+      "beats_trigram_at_top": true
+    }
+  },
+  "verdict": {
+    "verdict": "NO-GO-CAPACITY-SATURATED",
+    "n_seeds": 1,
+    "n_uses_tokens": 0,
+    "n_still_descending_at_top": 1,
+    "n_uses_context_at_top": 1,
+    "n_beats_trigram_at_top": 1,
+    "n_margin_grows_with_tokens": 0,
+    "mean_delta_nll_min_to_max_tokens": 0.0383,
+    "mean_top_point_wkv_deep_nll": 3.9122,
+    "max_tok_per_active_param_reached": 4.328,
+    "fluency_target_nll_band": [
+      3.0,
+      3.69
+    ],
+    "residual_top_nll_above_fluency_band_hi": 0.2222
+  },
+  "elapsed_s": 371.9
+}

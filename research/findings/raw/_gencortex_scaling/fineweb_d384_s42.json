@@ -1,0 +1,95 @@
+{
+  "runner": "_gen_cortex_token_supply_scaling_derisk",
+  "corpus": "/home/dant123/Projects/sim/data/corpus/fineweb_edu.txt",
+  "d_model": 384,
+  "vocab_cap": 2000,
+  "epochs": 6,
+  "max_len": 48,
+  "token_points": [
+    96000,
+    192000,
+    384000,
+    768000
+  ],
+  "seeds": [
+    42
+  ],
+  "per_seed": {
+    "42": {
+      "V": 2000,
+      "active_params": 2129360,
+      "eval_ids_sha": "d3103a1ef5bb",
+      "vocab_sha": "fcee17517b3a",
+      "n_eval": 2000,
+      "points": [
+        {
+          "max_train_sents": 96000,
+          "n_train_passages": 96000,
+          "n_tokens": 4608000,
+          "tok_per_active_param": 2.164,
+          "wkv_deep_nll": 3.942,
+          "trigram_deep_nll": 4.3097,
+          "bigram_deep_nll": 4.5112,
+          "margin_vs_trigram": 0.3677,
+          "perm_collapse": 1.74,
+          "mless_collapse": 0.2418,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 3.9087,
+          "overfit_gap": 0.0332,
+          "n_deep": 76000,
+          "elapsed_s": 130.4
+        },
+        {
+          "max_train_sents": 192000,
+          "n_train_passages": 192000,
+          "n_tokens": 9216000,
+          "tok_per_active_param": 4.328,
+          "wkv_deep_nll": 3.8991,
+          "trigram_deep_nll": 4.2111,
+          "bigram_deep_nll": 4.4026,
+          "margin_vs_trigram": 0.312,
+          "perm_collapse": 1.7366,
+          "mless_collapse": 0.2541,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 3.9049,
+          "overfit_gap": -0.0058,
+          "n_deep": 76000,
+          "elapsed_s": 222.6
+        }
+      ],
+      "gen_samples_top_point": [
+        "the <unk> <unk> can result in <unk> the <unk> <unk> <unk> <unk> <unk> a <unk> <unk> in the <unk> <unk> in the english the <unk> has <unk> <unk> to <unk> <unk> and a <unk> <unk> <unk> <unk> and <unk> people by",
+        "in the th century but <unk> to <unk> a <unk> of to <unk> a very long <unk> <unk> to be <unk> <unk> s <unk> <unk> <unk> as a <unk> <unk> the french and <unk> <unk> of trade in <unk> <unk> <unk> <unk>",
+        "he was the first time the theory of <unk> and the <unk> <unk> of <unk> was <unk> <unk> <unk> from the <unk> of <unk> <unk> <unk> <unk> <unk> de la <unk> <unk> <unk> <unk> <unk> <unk> l <unk> <unk> <unk> <unk> of",
+        "it is a <unk> of more than a <unk> of <unk> <unk> <unk> <unk> for example in <unk> or <unk> <unk> <unk> <unk> and <unk> <unk> <unk> the <unk> <unk> and because of the <unk> by a <unk> of <unk> <unk> to <unk>"
+      ],
+      "delta_nll_min_to_max_tokens": 0.0429,
+      "top_segment_slope": 0.0429,
+      "margin_grows_with_tokens": false,
+      "uses_tokens": false,
+      "still_descending_at_top": true,
+      "uses_context_at_top": true,
+      "beats_trigram_at_top": true
+    }
+  },
+  "verdict": {
+    "verdict": "NO-GO-CAPACITY-SATURATED",
+    "n_seeds": 1,
+    "n_uses_tokens": 0,
+    "n_still_descending_at_top": 1,
+    "n_uses_context_at_top": 1,
+    "n_beats_trigram_at_top": 1,
+    "n_margin_grows_with_tokens": 0,
+    "mean_delta_nll_min_to_max_tokens": 0.0429,
+    "mean_top_point_wkv_deep_nll": 3.8991,
+    "max_tok_per_active_param_reached": 4.328,
+    "fluency_target_nll_band": [
+      3.0,
+      3.69
+    ],
+    "residual_top_nll_above_fluency_band_hi": 0.2091
+  },
+  "elapsed_s": 370.9
+}
