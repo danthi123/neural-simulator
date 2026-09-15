@@ -58,3 +58,6 @@ Added de-risked task for the host set-membership novelty -> spiking short-term-d
 
 ## 2026-09-09  scaffold-retire-x2 (anaphor + question-route)
 Added de-risked tasks #214 (anaphor->CA3 pattern-completion, 1a8152a8a) + #215 (question-route->4-way WTA, d63a39ce8); both 6/6 GO de-risks on the #1 scaffold-retirement priority, not yet wired. Three scaffold-retirement de-risks this session total (novelty #213 + these two).
+
+## 2026-09-15  harvest
+- #193 (own-voice/mouth fork): appended the 6-seed local token-scaling harvest — lever re-confirmed descending, run capped at ~9M words (memory-setting instrument cap), corrected ~74M-word sweep queued LOCALLY (superseded the stale AWS-grid NEXT — fineweb is local). Affect Rank-7 finding = boundary-reproduction + instrument-correction, no capability-status change -> no board row (anti-noise line).
