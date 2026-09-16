@@ -13,7 +13,7 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ---
 
-## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-16 ~12:10 (4 WIRING FLIPS LANDED default-ON incl. B-curiosity; HOST-REMOVAL in integrated AWS verify → RETIRED; token sweep PAUSED for gaming at 9/18; READ FIRST; LATEST anchor)
+## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-16 ~13:15 (3 HOST PATHS RETIRED — scaffold_retired 1→4, owner's #1 metric moved; 4 wiring flips + B-curiosity default-ON; token sweep PAUSED for gaming at 9/18; READ FIRST; LATEST anchor)
 
 ✅ **4 WIRING FLIPS LANDED default-ON (owner's #1 priority — FINISH over de-risk).** The integrated `/api/brain-chat`
 no-regression battery (AWS r7i, 128GB numpy) returned all_pass (0/38 faculties regress) for all four flags. FLIPPED
@@ -24,12 +24,15 @@ opt-out; ledger rows RETIRABLE_NOW 2026-09-16, on_by_default:YES. **B-curiosity 
 retune (re-verified 6/6 GO through the production wrapper's OWN self-test) and flipping it default-ON is
 answer-preserving (integrated battery all_pass, 0/38); ledger on_by_default PARTIAL→YES. Finding
 `2026-09-16-onebrain-xedge-curiosity-d6-base-rung-DEFAULT-ON-flip-GO.md`.
-🔄 **HOST-REMOVAL (the RETIRED step, owner's #1 metric) in integrated verify NOW.** Branch `worktree-agent-a7b55dca…`
-(commit af002543c) DELETES the novelty/anaphor/qroute host fallback paths so spiking is the SOLE path; merged onto
-current main (clean, disjoint files → merge c29c72bb). AWS differential verify running (bg `bebqfhbt2`): branch-default
-vs main-default across the 26 probes, isolating the one flagged ripple (qroute `_extract_route` dead-margin TIE →
-GENERIC instead of host-cascade). If clean → merge to main + set the 3 ledger rows scaffold_retired:YES/RETIRED
-(scaffold_retired 1→4), then terminate the AWS instance + delete SG. AWS instance i-0086c96333348ba32 STILL UP + BILLING.
+✅ **HOST-REMOVAL LANDED — 3 host paths RETIRED (the owner's #1 metric moved 1→4).** The novelty/anaphor/qroute host
+fallback paths (the `seen` set / anaphor word-list / qroute if-elif cascade + their `spiking_*_enabled()` gates +
+`BRAIN_SPIKING_*` flags) are DELETED (merge 15ec47eb); spiking is the SOLE path for all three (LESION controls kept).
+Integrated differential verify GO: branch-default vs main-default /api/brain-chat answers BYTE-IDENTICAL across all 26
+probes (md5 eba9e3b5, 0 differ — the qroute tie→GENERIC ripple is unreachable by any real probe) + branch battery
+all_pass 0/38. Ledger 3 rows scaffold_retired:YES / retire_status:RETIRED; headline scaffold_retired 1→4. Finding
+`2026-09-16-host-removal-novelty-anaphor-qroute-RETIRED-byte-identical-differential-GO.md`; board #216 closed.
+Follow-on: `multi_turn_agent_v2.py` has a SEPARATE un-retired host-anaphor scaffold. **AWS instance being terminated
+(no billing leak).**
 
 **Honest metric note:** these are `on_by_default:YES` (the brain does them by default now) but NOT yet strict
 `scaffold_retired` (host paths retained as `=0` opt-outs; RETIRABLE_NOW ages out in 14d → the forcing function to
@@ -79,11 +82,11 @@ actual bend/no-bend test. POOL lane — 36 affect cells sweeping `--xinh-exc-w/-
 bumped to 2000000 for future correctness.
 
 **PRE-DECIDED NEXT ACTIONS:**
-1. ⭐ FINISH the retirement (the owner's #1 metric): host-removal branch (merge c29c72bb, DELETES the novelty/anaphor/qroute host paths → spiking sole) is in AWS differential verify NOW (bg `bebqfhbt2`, branch-default vs main-default over the 26 probes, checking the qroute TIE→GENERIC ripple). When it returns: if clean → merge to main + set the 3 ledger rows scaffold_retired:NO→YES + retire_status:RETIRED (scaffold_retired 1→4) + Vikunja sync, THEN terminate AWS i-0086c96333348ba32 + delete SG (stop billing); else revert. Follow-on: `multi_turn_agent_v2.py` has a SEPARATE un-retired host-anaphor scaffold. RETIRABLE_NOW ages out 2026-09-30.
-2. Token `_n2M` bend-test sweep PAUSED at 9/18 (owner gaming — local GPU idle, verified paused 12:08). Resume `bash tools/game.sh off` when gaming ends; harvest at 18/18: does the NLL curve BEND at ~74M tokens? (owner #1 mouth fork).
-3. Vikunja full freshness pass (owner-requested 2026-09-16): board-audit agent running (read-only, `af606b46`) → apply its per-task reconcile (close delivered, fix stale descriptions, add missing frontier tasks, fix timeline) when it returns. Resolve by CONTENT, never a `board:N` number.
-4. Affect Rank-7 PARKED (grounding/embodiment arc, owner's multimodal steer); gap#4 done (UNDEFINED-foreclosed). Pool idle (batch done) → stock a fresh CPU de-risk through gaming (vision n_glimpses temporal-evidence lever = the scope-workflow's named next-lever to push vision capability_go past 2/6).
-5. Heartbeat `b7vshehm6` live (verified 12:08: gpu/mem/token/pool state + OOM/off-bus/stall).
+1. ⭐ CONTINUE scaffold-retirement (owner's #1 metric, now 4): scan the ledger for the next RETIRABLE_NOW rows and the un-retired host scaffolds — the named follow-on is `multi_turn_agent_v2.py`'s SEPARATE host-anaphor scaffold; the B-curiosity row's retirement frontier is neural-render (retire the host qualifier template). Verify-first (grep the log for each capability) before scoping.
+2. Token `_n2M` bend-test sweep PAUSED at 9/18 (owner gaming — local GPU idle, verified paused). Resume `bash tools/game.sh off` when gaming ends; harvest at 18/18: does the deep-context NLL curve BEND at ~74M tokens? (owner #1 mouth fork).
+3. Frontier de-risks (build-then-run): vision configural-binding next lever = a richer S2/C2 code (n_glimpses saturated at 4/6; board #217); gap#4 next lever = a read-regime where the transport-ceiling oracle clears chance, THEN re-compare (UNDEFINED-parked); affect grounding/embodiment (Rank-7 parked, board #218). Pool idle → stock a CPU de-risk once one of these is built.
+4. DONE this session: 4 flips + B-curiosity default-ON; 3 host paths RETIRED (scaffold_retired 1→4); Vikunja full freshness pass (15 closed / 10 updated / 3 added); vision n_glimpses + affect-XINH-exhausted harvests. Optional remaining doc-sync: README user-facing prose refresh (`refresh-user-facing-docs`).
+5. Heartbeat `b7vshehm6` live (gpu/mem/token/pool state + OOM/off-bus/stall).
 
 **Superseded:** the 2026-09-10 anchor below (queue staged) is now HISTORY — the queue ran and is harvested here.
 

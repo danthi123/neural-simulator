@@ -1,0 +1,34 @@
+{
+ "probe": "hostrm_differential_branch_vs_main_default",
+ "main_arm_on_md5": "eba9e3b5e320c952c389345ee60fcfa0",
+ "branch_arm_on_md5": "eba9e3b5e320c952c389345ee60fcfa0",
+ "byte_identical": true,
+ "n_probes": 26,
+ "n_probes_differ": 0,
+ "probes_differ": [],
+ "branch_battery_all_pass": true,
+ "note": "host-removal (novelty/anaphor/qroute host fallback DELETED) is answer-preserving: branch DEFAULT answers byte-identical to main DEFAULT across all probes; the qroute dead-margin tie->GENERIC ripple is unreachable by any probe.",
+ "backend": "numpy",
+ "provenance": {
+  "runner": "research.runners.onebrain_regression_battery",
+  "backend": "numpy",
+  "device": "cpu",
+  "host": "AWS r7i.4xlarge (128GB RAM, numpy CPU path, scipy present -> no cupy fallback)",
+  "flag": "BRAIN_ONEBRAIN_XEDGE_CURIOSITY_D6",
+  "seeds": [
+   42,
+   43,
+   44,
+   100,
+   101,
+   102
+  ],
+  "argv": [
+   "-m",
+   "research.runners.onebrain_regression_battery",
+   "--flag",
+   "BRAIN_ONEBRAIN_XEDGE_CURIOSITY_D6"
+  ],
+  "context": "host-removal RETIRED differential verify \u2014 merged branch worktree-agent-a7b55dca412a448a8 (merge 15ec47eb) vs main; SIM_BACKEND=numpy CUDA_VISIBLE_DEVICES=''"
+ }
+}
