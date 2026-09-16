@@ -29,7 +29,12 @@ byte-identical → flip passers. **Affect Rank-7 PARKED** (corrected XINH sweep 
 lever EXHAUSTED — recall@FP0 pinned at 0.032 across the whole grid; the real fix is grounding/embodiment, a separate
 arc, per the owner's multimodal steer). **Token-scaling `_n2M` keeps running** as the GPU-lane background (owner #1
 mouth fork; foundational characterization, informs the mouth invest decision but doesn't retire Qwen soon).
-Also open (owner-approved 09-06, unpursued): the time-boxed AGI-fork experiment (`docs/plans/2026-09-06-agi-first-fork-proposal.md`).
+AGI-fork: **COMPLETE (2026-09-07, corrected 2026-09-15 — a prior survey wrongly called it "unpursued").** The
+relaxed-fidelity predictive-substrate experiment (branch `agi-fork`) ran to a verdict: an emergence GRADIENT tracking
+task-inherence — place STRONG (6/6, forced by prediction), familiarity WEAK (2-3/6), affect NONE (0/6, 4 configs;
+valence is external to prediction). It VALIDATED the main path's choice to build affect as a dedicated organ, then
+REFOCUSED on the mouth (commit f4b31716e). Finding `2026-09-07-fork-emergence-gradient-place-familiarity-affect.md`.
+Banked, not an open arc.
 
 The owner ran the 2026-09-10 queue through the break (fresh weekly usage now). Harvest, all 0-Claude-token compute:
 **(1) TOKEN-SCALING 30/30 (owner #1 fork) — LEVER CONFIRMED, regime NOT reached.** WKV deep-context NLL keeps
