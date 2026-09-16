@@ -759,6 +759,42 @@ def _bcm_learn_s2_templates(patches_flat, W0, gain, theta_alpha, pre_floor, epoc
     return W.astype(np.float32), theta.astype(np.float32), diag
 
 
+def _c2_pool(x, k_extra):
+    """C2 pooling over the LOCATION axis (axis=1): (N, n_loc, D) -> (N, D) when `k_extra<=0` (the
+    UNCHANGED Riesenhuber & Poggio 1999 hard-MAX complex-cell pool -- byte-identical to every prior run
+    of this file), or (N, 2*D) when `k_extra>0`: the SAME hard MAX, CONCATENATED with an ADDITIONAL
+    graded statistic per channel -- the mean of the `k_extra` BEST-matching locations for that channel.
+
+    2026-09-16 richer-S2/C2-code lever (`--c2-graded-k`), the NAMED next lever from both exhausted
+    satdiv-arc findings (research/findings/2026-09-16-vision-nglimpses-temporal-evidence-integration-
+    lifts-capability-2of6-to-4of6.md; research/findings/2026-09-16-pool-harvest-vision-satdiv-ridge-
+    lifts-off-borderline-touchpointa-multiseed.md): "raising the ~0.62 rate-ceiling itself -- a richer
+    S2/C2 spike code -- NOT more glimpses." A hard MAX collapses every template's whole spatial response
+    map to ONE winning value, discarding how PEAKED vs DISTRIBUTED that map is: one sharply-tuned
+    location and several moderately-active locations can produce the IDENTICAL max, yet very different
+    topk-mean -- a magnitude/graded distinction a single max cannot express (Kouh & Poggio 2008, "A
+    canonical neural circuit for cortical nonlinear operations," *Neural Comput.* 20:1427-1451: the same
+    normalized-summation circuit realizes an entire family of Lp-like pooling operations spanning mean
+    (p=1) to max (p->inf) via a single gain parameter, i.e. biological complex-cell pooling is not
+    restricted to hard max -- a graded intermediate statistic is the SAME circuit family, not a
+    different one). ADDITIVE (concatenates a NEW statistic; never removes or alters the existing MAX
+    feature) and, like MAX, a symmetric statistic over locations, so it stays POSITION-INVARIANT (it
+    encodes how many/how-strongly locations agreed, never WHICH location won).
+
+    x: (N, n_loc, D) drive (rate code) or one glimpse's spike code. k_extra<=0 (default) -> byte-
+    identical `x.max(axis=1)`. k_extra>0 -> np.concatenate([max, topk_mean], axis=-1), shape (N, 2D)."""
+    mx = x.max(axis=1)
+    if k_extra is None or k_extra <= 0:
+        return mx.astype(np.float32)
+    n_loc = x.shape[1]
+    k = max(1, min(int(k_extra), n_loc))
+    # mean of the k largest values per (image, channel) along the location axis -- a graded/soft-WTA
+    # statistic the hard MAX above discards; np.partition avoids a full sort (cheap, exact for "top-k").
+    part = np.partition(x, n_loc - k, axis=1)[:, n_loc - k:, :]
+    topk_mean = part.mean(axis=1)
+    return np.concatenate([mx, topk_mean], axis=-1).astype(np.float32)
+
+
 def _c2_spike_code(c1, W0, a, code, base_seed, n_glimpses, conj_pairs=None, conj_offsets=None,
                     conj_shuffle_seed=None, conj_order="pair"):
     """c1 (N, n_orient, g, g) spiking C1 -> convolutional S2 cosine match -> S2 lateral inhibition
@@ -793,7 +829,9 @@ def _c2_spike_code(c1, W0, a, code, base_seed, n_glimpses, conj_pairs=None, conj
                                        tau=a.tau, v_thresh=a.v_thresh, t_ref=a.t_ref,
                                        noise=a.noise, gain=s2_gain)
         s2 = spike_code(counts, first, a.T2, code).reshape(N, n_loc, -1)  # (N, n_loc, n_S2 or n_conj)
-        r = s2.max(axis=1).astype(np.float32)                  # C2 MAX over locations (position-invariant)
+        # C2 pool over locations (position-invariant): hard MAX, or MAX+graded-topk-mean when
+        # --c2-graded-k > 0 (see _c2_pool docstring; default 0 -> byte-identical to the prior hard MAX).
+        r = _c2_pool(s2, getattr(a, "c2_graded_k", 0))
         acc = r if acc is None else acc + r
     return (acc / G).astype(np.float32)
 
@@ -811,7 +849,7 @@ def _c2_rate_code(c1, W0, a, conj_pairs=None, conj_offsets=None, conj_shuffle_se
     if conj_pairs is not None:
         bind_fn = _bind_conjunctions_triple if conj_order == "triple" else _bind_conjunctions
         drive = bind_fn(drive, conj_pairs, conj_offsets, a.conj_mode, conj_shuffle_seed)
-    return drive.max(axis=1).astype(np.float32)                # (N, n_S2 or n_conj)
+    return _c2_pool(drive, getattr(a, "c2_graded_k", 0))        # (N, n_S2 or n_conj [* 2 if graded])
 
 
 # ============================================================================================
@@ -1377,6 +1415,15 @@ def main():
                         "top frac fraction of templates' responses, zero the rest (Foldiak 1991 lateral "
                         "inhibition / a hard-threshold LCA, Rozell et al. 2008). Applied AFTER --s2-norm. "
                         "0.0 (default) disables -> byte-identical to every prior run of this file.")
+    p.add_argument("--c2-graded-k", type=int, default=0,
+                   help="2026-09-16 richer-S2/C2-code lever (the satdiv+n_glimpses findings' named next "
+                        "lever: raise the ~0.62 rate-ceiling itself, not more glimpses). C2 pooling over "
+                        "locations CONCATENATES the existing hard MAX with an additional graded statistic "
+                        "per channel -- the mean of the top-k best-matching locations (Kouh & Poggio 2008 "
+                        "canonical Lp-like pooling circuit; a soft-WTA that keeps magnitude/peakedness "
+                        "structure a hard MAX collapses), doubling the C2 feature count. Applied in BOTH "
+                        "the rate and spike C2 codes, after --conj-bind if it is on. 0 (default) disables "
+                        "-> byte-identical to every prior run of this file (see _c2_pool).")
     # S2.5 CONFIGURAL-BINDING conjunctive layer (2026-09-03 design; board #135/#75). Applied AFTER
     # --s2-norm/--s2-kwta-frac, BEFORE the C2 max-over-locations pool, in BOTH the rate and spike C2
     # codes. `none` (default) never calls `_bind_conjunctions` -> byte-identical to every prior run.
