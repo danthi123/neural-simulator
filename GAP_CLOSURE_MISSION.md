@@ -13,7 +13,23 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ---
 
-## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-15 ~18:40 (HARVEST of the 5-day owner-operated queue; corrected sweeps re-queued; READ FIRST; LATEST anchor)
+## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-15 ~20:15 (REPRIORITIZED after a strategic review → FINISH the wiring flips; ⚠️ LIVE AWS instance; READ FIRST; LATEST anchor)
+
+⚠️ **LIVE AWS INSTANCE (billing): `i-01169dadcac3ae904` (r7i.4xlarge, us-east-1), SG `sg-0334edada8f0554cd`.**
+TERMINATE when done: `tools/aws_gpu.sh terminate` THEN `aws ec2 delete-security-group --group-id sg-0334edada8f0554cd --region us-east-1`. State in `research/queue/.aws_gpu`.
+
+**STRATEGIC REVIEW (owner-requested 2026-09-15) → decision: FINISH the wiring flips (via AWS r7i, owner-chosen).**
+The key fact: `scaffold_retired = 1/66` despite 60 faculties on-by-default — the project is strong at de-risking
+(64/66) + wiring (63/66) but slow at FINISHING (the owner's #1 metric). The nearest-done retirements — the 3 spiking
+wire-ins (novelty→habituation `BRAIN_SPIKING_NOVELTY`, anaphor→CA3 `BRAIN_SPIKING_ANAPHOR`, question-route→WTA
+`BRAIN_SPIKING_QROUTE`) + B-curiosity `_XEDGE_CD6` — are built/de-risked/byte-identical-off, ONE integrated
+`/api/brain-chat` no-regression verify from flipping default-ON (each = scaffold_retired++). That batch was RAM-blocked
++ parked since 09-09; now running on AWS r7i (128GB, numpy) — `onebrain_regression_battery --flag <FLAG>` ON-vs-OFF,
+byte-identical → flip passers. **Affect Rank-7 PARKED** (corrected XINH sweep proved the competition-strength gain
+lever EXHAUSTED — recall@FP0 pinned at 0.032 across the whole grid; the real fix is grounding/embodiment, a separate
+arc, per the owner's multimodal steer). **Token-scaling `_n2M` keeps running** as the GPU-lane background (owner #1
+mouth fork; foundational characterization, informs the mouth invest decision but doesn't retire Qwen soon).
+Also open (owner-approved 09-06, unpursued): the time-boxed AGI-fork experiment (`docs/plans/2026-09-06-agi-first-fork-proposal.md`).
 
 The owner ran the 2026-09-10 queue through the break (fresh weekly usage now). Harvest, all 0-Claude-token compute:
 **(1) TOKEN-SCALING 30/30 (owner #1 fork) — LEVER CONFIRMED, regime NOT reached.** WKV deep-context NLL keeps
