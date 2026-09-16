@@ -118,10 +118,11 @@ import research.runners._perturb_and_measure_derisk as _PM
 # docstring below for the coupling this retires at its root (da-mode-drives-response + da-gated-encoding +
 # da-gated-curiosity all read the SAME chat._last_da_drives["da_level"] this module produces).
 import research.runners.shared_salience_afferent as _SHARED
-# reuse-by-import the spiking short-term-depression HABITUATION novelty organ (scaffold-retirement, 2026-09-09,
-# research/runners/spiking_novelty_habituation_organ.py; 6/6-seed mechanism de-risk GO 3cf6bc52/755c17290) --
-# default-OFF (BRAIN_SPIKING_NOVELTY). Retires engagement_of()'s host `set`-membership novelty term at its root;
-# see engagement_of()'s `novelty_override` param + observe()'s spiking-novelty block below.
+# reuse-by-import the spiking short-term-depression HABITUATION novelty organ (scaffold-retirement, 2026-09-09
+# mechanism de-risk GO 3cf6bc52/755c17290, flipped default-ON 2026-09-16; research/runners/
+# spiking_novelty_habituation_organ.py). Now the SOLE novelty path: engagement_of()'s host `set`-membership novelty
+# term has been RETIRED (host fallback DELETED 2026-09-16); see engagement_of()'s `novelty_override` param +
+# observe()'s spiking-novelty block below.
 import research.runners.spiking_novelty_habituation_organ as _NOV
 
 _DEFAULT_SEED = 42
@@ -200,10 +201,10 @@ def _content_tokens(message: str) -> list:
     return [t for t in toks if len(t) >= _MIN_CONTENT_LEN and t not in _STOPWORDS]
 
 
-def engagement_of(tokens: list, seen: set, novelty_override: Optional[float] = None) -> float:
-    """The per-turn ENGAGEMENT scalar in [0,1] (the environmental reward/context signal): novelty (fraction of
-    content tokens NOT seen this session -- the dopaminergic novelty/reward response) + richness (content-word
-    count, saturating). This is the HOST boundary; the DA LEVEL it induces is the neural part.
+def engagement_of(tokens: list, novelty_override: float) -> float:
+    """The per-turn ENGAGEMENT scalar in [0,1] (the environmental reward/context signal): novelty (the fraction the
+    spiking short-term-depression HABITUATION organ reports as fresh -- the dopaminergic novelty/reward response) +
+    richness (content-word count, saturating). This is the HOST boundary; the DA LEVEL it induces is the neural part.
 
     Until the shared-afferent wiring (2026-09-05, `BRAIN_SHARED_SALIENCE`) this raw scalar was fed DIRECTLY to the
     SNc afferent (zero neurons mediating message -> pA). When the flag is on, `DaModeDrivesWorkspace.observe()`
@@ -211,19 +212,14 @@ def engagement_of(tokens: list, seen: set, novelty_override: Optional[float] = N
     salience`) before it reaches the EMA/afferent map below -- this function's OUTPUT is unchanged (still the host
     sensory/comprehension boundary read), only what happens to it downstream changes.
 
-    NOVELTY RETIREMENT (2026-09-09, `BRAIN_SPIKING_NOVELTY`, DEFAULT-OFF). `novelty_override` (default None) is the
-    hook that retires the host `set`-membership novelty term at its root: when None (the DEFAULT, flag off) the
-    novelty is computed by the pre-existing host `set` arithmetic below, BYTE-IDENTICAL to pre-wiring; when a float
-    is supplied (the flag on, `observe()` reads it from the spiking short-term-depression HABITUATION organ,
-    `spiking_novelty_habituation_organ.SpikingNoveltyHabituationOrgan`) that value REPLACES the host novelty term
-    while `richness` (a legitimate host token-count boundary) is unchanged. So `seen` is only touched on the host
-    path, and the two paths differ ONLY in how the novelty fraction is produced."""
+    NOVELTY (spiking, SOLE path; the host `set`-membership novelty term RETIRED 2026-09-16). `novelty_override` is the
+    per-turn novelty fraction `observe()` reads from the spiking short-term-depression HABITUATION organ
+    (`spiking_novelty_habituation_organ.SpikingNoveltyHabituationOrgan`); it is REQUIRED -- the host `set` arithmetic
+    that once produced it (and its permanent `seen`-set memory) are DELETED. `richness` (a legitimate host token-count
+    boundary) is unchanged."""
     if not tokens:
         return 0.0
-    if novelty_override is None:
-        novelty = sum(1 for t in tokens if t not in seen) / float(len(tokens))   # host `set` path (default; byte-identical)
-    else:
-        novelty = float(np.clip(novelty_override, 0.0, 1.0))                      # spiking habituation path (BRAIN_SPIKING_NOVELTY)
+    novelty = float(np.clip(novelty_override, 0.0, 1.0))                          # spiking habituation novelty (SOLE path)
     richness = min(len(tokens) / float(_RICHNESS_FULL), 1.0)
     return float(np.clip(_W_NOVELTY * novelty + (1.0 - _W_NOVELTY) * richness, 0.0, 1.0))
 
@@ -250,7 +246,7 @@ def mode_suffix(mode: str) -> str:
 
 class DaModeDrivesWorkspace:
     """A per-session DA-mode workspace: a persistent #76 BG substrate (built once, full dynamic-state snapshot so
-    each read is history-independent) + a persistent EMA engagement scalar + the session's seen-token set.
+    each read is history-independent) + a persistent EMA engagement scalar + the spiking habituation novelty organ.
     `observe(message)` folds the message engagement into the EMA (a neutral turn HOLDS it), maps it to the SNc
     reward/context afferent, runs one neural SNc->DA read, and returns the self-produced DA level + the mode + the
     engagement suffix. The build + read run on the workspace's PRIVATE RNG timeline (host process-global RNG
@@ -263,8 +259,7 @@ class DaModeDrivesWorkspace:
         self._snapshot = None       # full post-build cp_* dynamic state -> history-independent reads
         self._lock = threading.Lock()
         self.ema_engagement = 0.0    # persistent engagement (cross-turn); a neutral turn holds it
-        self.seen = set()            # content tokens seen this session (HOST novelty read; default path)
-        self._novelty_organ = None   # spiking habituation novelty organ (lazy; only when BRAIN_SPIKING_NOVELTY on)
+        self._novelty_organ = None   # spiking habituation novelty organ (lazy; the SOLE novelty path)
         self.n_turns = 0
         self._rng_state = None       # the workspace's PRIVATE RNG timeline (host process-global RNG never advanced)
 
@@ -351,23 +346,19 @@ class DaModeDrivesWorkspace:
             getattr(self._sb, k)[:] = v
 
     def _spiking_novelty(self, tokens: list) -> dict:
-        """Read the per-word NOVELTY off the spiking short-term-depression habituation organ (BRAIN_SPIKING_NOVELTY),
-        lazily building it once per session on this workspace's PRIVATE RNG timeline so enabling it leaves the host
-        process-global RNG byte-untouched (the #77 footgun -- the SAME `_isolated` isolation the #76 DA substrate
-        uses). Unlike the DA substrate this organ is STATEFUL across turns (per-word synaptic depression persists and
-        recovers), so it is NOT snapshot-restored between reads -- that persistent state IS the novelty memory. Never
-        raises out: on any wiring failure returns {"novelty": None, ...} so `engagement_of()` degrades to its host
-        `set` novelty path for that turn (a graceful, non-crashing fallback, never a changed downstream contract)."""
-        try:
-            if self._novelty_organ is None:
-                self._novelty_organ = _NOV.SpikingNoveltyHabituationOrgan(
-                    seed=self.seed, lesion=_NOV.spiking_novelty_lesioned())
-            info = self._isolated(lambda: self._novelty_organ.novelty_of(list(tokens)))
-            info["on"] = True
-            return info
-        except Exception as e:   # never let the novelty read crash a turn (host `set` fallback via novelty=None)
-            return {"novelty": None, "on": True, "lesioned": _NOV.spiking_novelty_lesioned(),
-                    "error": f"{type(e).__name__}: {e}"}
+        """Read the per-word NOVELTY off the spiking short-term-depression habituation organ -- the SOLE novelty path
+        (the host `set` novelty RETIRED 2026-09-16). Lazily built once per session on this workspace's PRIVATE RNG
+        timeline so building it leaves the host process-global RNG byte-untouched (the #77 footgun -- the SAME
+        `_isolated` isolation the #76 DA substrate uses). Unlike the DA substrate this organ is STATEFUL across turns
+        (per-word synaptic depression persists and recovers), so it is NOT snapshot-restored between reads -- that
+        persistent state IS the novelty memory. A substrate/wiring error PROPAGATES -- no host fallback (host fallback
+        DELETED 2026-09-16)."""
+        if self._novelty_organ is None:
+            self._novelty_organ = _NOV.SpikingNoveltyHabituationOrgan(
+                seed=self.seed, lesion=_NOV.spiking_novelty_lesioned())
+        info = self._isolated(lambda: self._novelty_organ.novelty_of(list(tokens)))
+        info["on"] = True
+        return info
 
     def _read_da_level(self, afferent_pa: float, lesion: bool) -> tuple:
         """One neural read: restore the post-build substrate state, make a fresh `dopamine_mode` manager (so the DA
@@ -397,19 +388,13 @@ class DaModeDrivesWorkspace:
                 turn_e = None
             else:
                 if tokens:
-                    # ── spiking habituation NOVELTY (scaffold-retirement, DEFAULT-OFF BRAIN_SPIKING_NOVELTY) ─────
-                    # Retire engagement_of()'s host `set`-membership novelty term at its root: replace the
-                    # permanent-memory `sum(1 for t in tokens if t not in seen)/len` fraction with the spiking
-                    # short-term-depression HABITUATION read (per-word synaptic depression that RECOVERS over a
-                    # multi-second gap -- a strictly more faithful novelty than a `set` that never forgets;
-                    # 6/6-seed mechanism de-risk GO 3cf6bc52). OFF (the default) -> novelty_override stays None ->
-                    # engagement_of takes its pre-existing host path -> BYTE-IDENTICAL (organ never built, RNG
-                    # untouched, `seen` still updated below exactly as before).
-                    novelty_override = None
-                    if _NOV.spiking_novelty_enabled():
-                        nov_info = self._spiking_novelty(tokens)
-                        novelty_override = nov_info.get("novelty")
-                    turn_e = engagement_of(tokens, self.seen, novelty_override=novelty_override)
+                    # ── spiking habituation NOVELTY (scaffold-retirement; the SOLE novelty path, host `set` RETIRED
+                    # 2026-09-16). The per-turn novelty is the spiking short-term-depression HABITUATION read (per-word
+                    # synaptic depression that RECOVERS over a multi-second gap -- a strictly more faithful novelty than
+                    # a `set` that never forgets; 6/6-seed mechanism de-risk GO 3cf6bc52). The permanent-memory host
+                    # `set`/`seen` novelty term that once produced this fraction is DELETED.
+                    nov_info = self._spiking_novelty(tokens)
+                    turn_e = engagement_of(tokens, novelty_override=nov_info["novelty"])
                     # ── shared spiking novelty/salience afferent (rank-4, default-ON) ─────────────────────────
                     # Route the SAME raw host engagement scalar through the shared ASK-pool spiking transduction
                     # BEFORE it folds into the EMA, instead of using the raw host arithmetic directly. `engagement_
@@ -423,9 +408,6 @@ class DaModeDrivesWorkspace:
                 else:
                     turn_e = None      # content-free turn -> HOLD the prior engagement (cross-turn persistence)
                 afferent = float(np.clip(self.ema_engagement, 0.0, 1.0)) * _MAX_AFFERENT_PA
-            # update the session vocabulary AFTER computing novelty (so this turn's tokens are novel this turn).
-            for t in tokens:
-                self.seen.add(t)
 
             info = {"acted": False, "turn": self.n_turns, "lesioned": bool(lesion),
                     "turn_engagement": (None if turn_e is None else float(turn_e)),

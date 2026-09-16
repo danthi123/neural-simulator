@@ -75,15 +75,15 @@ from research.runners.developed_brain_io import (  # noqa: E402
 # key (hunts/hunt/hunted -> "hunt") -- see research/runners/lexical_lemma.py + the 2026-08-25 reasoning-frontier
 # finding. Used in `ChatBrain._maybe_acquire` (store-write) and `ChatBrain._substrate_recall` (query fallback).
 from research.runners.lexical_lemma import lemma_verb  # noqa: E402
-# SPIKING CA3 pattern-completion anaphor DETECTION (scaffold-retirement, 2026-09-09, 6/6-seed mechanism de-risk GO
-# 1a8152a8a; research/runners/spiking_anaphor_detection_organ.py) -- default-OFF (BRAIN_SPIKING_ANAPHOR). Retires
-# `_resolve_anaphora`'s host `anaphors = {"it",...}; tl in anaphors` DETECTION test at its root; see
-# `ChatBrain._is_anaphor_token` below.
+# SPIKING CA3 pattern-completion anaphor DETECTION (scaffold-retirement, 2026-09-09 mechanism de-risk GO 1a8152a8a,
+# flipped default-ON 2026-09-16; research/runners/spiking_anaphor_detection_organ.py). Now the SOLE anaphor DETECTION
+# path: `_resolve_anaphora`'s host `anaphors = {"it",...}; tl in anaphors` set test has been RETIRED (host fallback
+# DELETED 2026-09-16); see `ChatBrain._is_anaphor_token` below.
 import research.runners.spiking_anaphor_detection_organ as _ANAPH  # noqa: E402
-# SPIKING 4-WAY LATERAL-INHIBITION WTA question-ROUTE SELECTION (scaffold-retirement, 2026-09-09, 6/6-seed mechanism
-# de-risk GO d63a39ce8; research/runners/spiking_qroute_selection_organ.py) -- default-OFF (BRAIN_SPIKING_QROUTE).
-# Retires `_extract_route`'s host `if`/`elif` priority cascade DISPATCH among the four comprehension routes (the
-# regex feature-extractors STAY host code); see `ChatBrain._extract_route` below.
+# SPIKING 4-WAY LATERAL-INHIBITION WTA question-ROUTE SELECTION (scaffold-retirement, 2026-09-09 mechanism de-risk GO
+# d63a39ce8, flipped default-ON 2026-09-16; research/runners/spiking_qroute_selection_organ.py). Now the SOLE route
+# DISPATCH: `_extract_route`'s host `if`/`elif` priority cascade among the four comprehension routes has been RETIRED
+# (host fallback DELETED 2026-09-16; the regex feature-extractors STAY host code); see `ChatBrain._extract_route` below.
 import research.runners.spiking_qroute_selection_organ as _QROUTE  # noqa: E402
 
 # default self-knowledge artifacts (so `--self-knowledge` works with no path)
@@ -694,8 +694,8 @@ class ChatBrain:
         self.agent = agent
         self.inner = getattr(agent, "agent", agent)             # the BrainConversationalAgent
         self.is_multiturn = hasattr(agent, "held_referent")     # MultiTurnAgent exposes this
-        self._anaphor_organ = None    # spiking CA3 anaphor-detection organ (lazy; only when BRAIN_SPIKING_ANAPHOR on)
-        self._qroute_organ = None     # spiking 4-way WTA route selector (lazy; only when BRAIN_SPIKING_QROUTE on)
+        self._anaphor_organ = None    # spiking CA3 anaphor-detection organ (lazy; the SOLE detection path)
+        self._qroute_organ = None     # spiking 4-way WTA route selector (lazy; the SOLE route dispatch)
         self.router = QuestionRouter(self_aliases=self_aliases)
         self.renderer = renderer
         self.verbose_thinking = verbose_thinking
@@ -988,53 +988,43 @@ class ChatBrain:
             return HypothesisSVO([a, ac, p])
         return None
 
-    def _is_anaphor_token(self, tl, anaphors):
-        """Is `tl` (an already-lowercased/stripped token) an anaphoric pronoun? DEFAULT (BRAIN_SPIKING_ANAPHOR off):
-        `tl in anaphors` -- BYTE-IDENTICAL to the original host `set` test. ON: move the DETECTION DECISION onto the
-        spiking substrate via the CA3 pattern-completion organ (lazily built once per session, RNG-isolated) -- on clean
-        typed text it recognises exactly the host set's tokens, but through the substrate's ignition (lesion-reverts),
-        and the organ carries the de-risked pattern-completion surpass (recovering a corrupted cue an exact `set` cannot;
-        available for a noisy-perception path). Host `set` fallback on ANY error so a wiring failure never changes the
-        turn's contract or crashes it (scaffold-retirement 2026-09-09)."""
-        if not _ANAPH.spiking_anaphor_enabled():
-            return tl in anaphors                                  # DEFAULT -> byte-identical to pre-wiring
-        try:
-            if self._anaphor_organ is None:
-                seed = int(getattr(self.agent, "seed", getattr(self.inner, "seed", 42)))
-                self._anaphor_organ = _ANAPH.SpikingAnaphorDetectorOrgan(
-                    seed=seed, lesion=_ANAPH.spiking_anaphor_lesioned())
-            return bool(self._anaphor_organ.is_anaphor(tl))
-        except Exception:
-            return tl in anaphors                                  # never let detection crash a turn -> host fallback
+    def _is_anaphor_token(self, tl):
+        """Is `tl` (an already-lowercased/stripped token) an anaphoric pronoun? The DETECTION DECISION is on the spiking
+        substrate via the CA3 pattern-completion organ (lazily built once per session, RNG-isolated) -- the SOLE path
+        (the host `tl in {...}` set test RETIRED 2026-09-16). On clean typed text it recognises exactly the old host
+        set's tokens, but through the substrate's ignition (lesion-reverts), and the organ carries the de-risked
+        pattern-completion surpass (recovering a corrupted cue an exact `set` cannot; available for a noisy-perception
+        path). A substrate error PROPAGATES -- no host fallback (scaffold-retirement, host fallback DELETED
+        2026-09-16)."""
+        if self._anaphor_organ is None:
+            seed = int(getattr(self.agent, "seed", getattr(self.inner, "seed", 42)))
+            self._anaphor_organ = _ANAPH.SpikingAnaphorDetectorOrgan(
+                seed=seed, lesion=_ANAPH.spiking_anaphor_lesioned())
+        return bool(self._anaphor_organ.is_anaphor(tl))
 
     def _spiking_route_decision(self, relf_on, kbrel_on, defcop_on):
         """Which comprehension route wins, decided by the spiking 4-way lateral-inhibition WTA organ (lazily built once
-        per session, RNG-isolated) instead of `_extract_route`'s host `if`/`elif` priority cascade. Takes the three
-        booleans the host feature-extractors already produced (the regexes STAY host code; only the DISPATCH moves onto
-        the substrate) and returns the winning ROUTE name ('RELFRONT'/'KBREL'/'DEFCOP'/'GENERIC') or None on a
-        dead-margin tie / any organ error -> the caller then uses the exact host priority order (byte-identical
-        fallback). ONLY reached when BRAIN_SPIKING_QROUTE is on (see `_extract_route`); returns None on ANY error so a
-        wiring/substrate failure never changes the turn's contract or crashes it (scaffold-retirement rank-14,
-        2026-09-09)."""
-        try:
-            if self._qroute_organ is None:
-                seed = int(getattr(self.agent, "seed", getattr(self.inner, "seed", 42)))
-                self._qroute_organ = _QROUTE.SpikingQRouteSelectorOrgan(
-                    seed=seed, lesion=_QROUTE.spiking_qroute_lesioned())
-            return self._qroute_organ.select(bool(relf_on), bool(kbrel_on), bool(defcop_on))
-        except Exception:
-            return None                                            # never let the organ crash a turn -> host cascade
+        per session, RNG-isolated) -- the SOLE route DISPATCH (the host `if`/`elif` priority cascade RETIRED
+        2026-09-16). Takes the three booleans the host feature-extractors already produced (the regexes STAY host code;
+        only the DISPATCH is on the substrate) and returns the winning ROUTE name
+        ('RELFRONT'/'KBREL'/'DEFCOP'/'GENERIC'), or None on a dead-margin tie -> the caller then falls through to the
+        substrate's GENERIC default case. A substrate/wiring error PROPAGATES -- no host fallback (scaffold-retirement
+        rank-14, host fallback DELETED 2026-09-16)."""
+        if self._qroute_organ is None:
+            seed = int(getattr(self.agent, "seed", getattr(self.inner, "seed", 42)))
+            self._qroute_organ = _QROUTE.SpikingQRouteSelectorOrgan(
+                seed=seed, lesion=_QROUTE.spiking_qroute_lesioned())
+        return self._qroute_organ.select(bool(relf_on), bool(kbrel_on), bool(defcop_on))
 
     def _resolve_anaphora(self, question):
         """If the question's first content token is a pronoun and the discourse WM holds a referent, substitute it
         (multi-turn anaphora). Only the MultiTurnAgent has a WM loop; otherwise pass the question through."""
         if not self.is_multiturn:
             return question
-        anaphors = {"it", "that", "they", "them", "this"}
         toks = question.split()
         for i, t in enumerate(toks):
             tl = t.lower().strip(".,!?")
-            if self._is_anaphor_token(tl, anaphors):
+            if self._is_anaphor_token(tl):
                 ref = self.agent.held_referent()[0]
                 if ref is not None:
                     toks[i] = ref
@@ -1330,57 +1320,33 @@ class ChatBrain:
             composer = getattr(self.inner, "composer", None)
             known = self.agents_set | self.actions_set | self.patients_set
             content = _ground_content_words(composer, content, known_words=known)
-        # ── ROUTE DISPATCH (scaffold-retirement rank-14, BRAIN_SPIKING_QROUTE, default OFF). Which of the four
-        # comprehension routes handles this question -- RELATION-FRONTED ('what country is chelsea fc from?',
-        # Vikunja #142; a Wikidata-style question that fronts the relation noun before the copula, which the generic
-        # (agent, action)=(content[0], content[1]) positional SVO parse below would mis-assign), KB-RELATION ('what
-        # is X's country of citizenship?', 'where was X born?'; a real wikidata_core_15k UNDERSCORED multi-word
-        # relation `_relation_fronted_route` cannot reach), DEFINITIONAL-COPULA ('what is X?' -> the instance-of
-        # relation 'isa', valid only when the copula strip left <=1 content word so the generic parse has no verb),
-        # or the GENERIC already-neural SVO parse. Each route's regex/shape feature-extractor STAYS host code (a
-        # legitimate matched-filter read of the surface string; see each method's docstring + the biology binding's
-        # Honesty boundary); the DECISION among them is what moves onto the substrate. DEFAULT (flag OFF): the host
-        # `if`/`elif` priority cascade below, byte-identical to pre-wiring -- lazy short-circuit preserved (a lower-
-        # priority extractor is not even called once a higher-priority one matched, and each returns None -> falls
-        # straight through, byte-identical for every other question). ON: all three candidates are computed and a
-        # spiking 4-way lateral-inhibition WTA (`_spiking_route_decision`) picks the winner by DRIVE STRENGTH
-        # (resolving the ambiguous RELFRONT/KBREL overlap to RELFRONT via a genuine drive tilt, not the fixed
-        # textual order); the exact host priority cascade is the fallback on ANY organ error or a dead-margin tie,
-        # so the substrate can never change the turn's contract or crash it.
-        if not _QROUTE.spiking_qroute_enabled():
-            _relf = self._relation_fronted_route(question)
-            if _relf is not None:
-                return _relf
-            _kbrel = self._kb_relation_question_route(question)
-            if _kbrel is not None:
-                return _kbrel
-            if len(content) <= 1:
-                _defo = self._definitional_copula_route(question)
-                if _defo is not None:
-                    return _defo
-        else:
-            # ON: run all three host feature-extractors (read-only comprehension; no state mutation), then let the
-            # spiking WTA dispatch among the routes whose candidate is genuinely available.
-            _relf = self._relation_fronted_route(question)
-            _kbrel = self._kb_relation_question_route(question)
-            _defo = self._definitional_copula_route(question) if len(content) <= 1 else None
-            decision = self._spiking_route_decision(_relf is not None, _kbrel is not None, _defo is not None)
-            if decision == "RELFRONT" and _relf is not None:
-                return _relf
-            if decision == "KBREL" and _kbrel is not None:
-                return _kbrel
-            if decision == "DEFCOP" and _defo is not None:
-                return _defo
-            if decision is None:
-                # organ error / dead-margin tie -> the EXACT host priority cascade (byte-identical fallback order).
-                if _relf is not None:
-                    return _relf
-                if _kbrel is not None:
-                    return _kbrel
-                if _defo is not None:
-                    return _defo
-            # decision == "GENERIC" (or an exception route the WTA named whose candidate is None) -> fall through to
-            # the generic-SVO branch below (the substrate's own "elsewhere" default case).
+        # ── ROUTE DISPATCH (scaffold-retirement rank-14; the spiking 4-way WTA is the SOLE dispatcher, host cascade
+        # RETIRED 2026-09-16). Which of the four comprehension routes handles this question -- RELATION-FRONTED ('what
+        # country is chelsea fc from?', Vikunja #142; a Wikidata-style question that fronts the relation noun before the
+        # copula, which the generic (agent, action)=(content[0], content[1]) positional SVO parse below would
+        # mis-assign), KB-RELATION ('what is X's country of citizenship?', 'where was X born?'; a real wikidata_core_15k
+        # UNDERSCORED multi-word relation `_relation_fronted_route` cannot reach), DEFINITIONAL-COPULA ('what is X?' ->
+        # the instance-of relation 'isa', valid only when the copula strip left <=1 content word so the generic parse
+        # has no verb), or the GENERIC already-neural SVO parse. Each route's regex/shape feature-extractor STAYS host
+        # code (a legitimate matched-filter read of the surface string; see each method's docstring + the biology
+        # binding's Honesty boundary); the DECISION among them is on the substrate. All three candidates are computed
+        # (read-only comprehension; no state mutation) and a spiking 4-way lateral-inhibition WTA
+        # (`_spiking_route_decision`) picks the winner by DRIVE STRENGTH (resolving the ambiguous RELFRONT/KBREL overlap
+        # to RELFRONT via a genuine drive tilt, not a fixed textual order). A substrate error PROPAGATES (no host
+        # fallback); a dead-margin tie (decision is None) or a GENERIC win falls through to the generic-SVO branch below
+        # (the substrate's own "elsewhere" default case).
+        _relf = self._relation_fronted_route(question)
+        _kbrel = self._kb_relation_question_route(question)
+        _defo = self._definitional_copula_route(question) if len(content) <= 1 else None
+        decision = self._spiking_route_decision(_relf is not None, _kbrel is not None, _defo is not None)
+        if decision == "RELFRONT" and _relf is not None:
+            return _relf
+        if decision == "KBREL" and _kbrel is not None:
+            return _kbrel
+        if decision == "DEFCOP" and _defo is not None:
+            return _defo
+        # decision == "GENERIC", a dead-margin tie (None), or an exception route the WTA named whose candidate is None
+        # -> fall through to the generic-SVO branch below (the substrate's own "elsewhere" default case).
         # CHOOSE (#1): the on-brain parser OWNS a factual-SVO-shaped question (>=2 content words, none a self-alias).
         # When it comprehends -> (agent, action) on FIRING neurons; when it DECLINES on such a question -> "__DECLINE__"
         # (do NOT fall to the host router's role-blind keyword confab). This makes the comprehension genuinely on the

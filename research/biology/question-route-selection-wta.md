@@ -60,7 +60,7 @@ sources:
 implemented_by:
   - research/runners/_rank14_question_route_selection_derisk.py
   - research/runners/spiking_qroute_selection_organ.py
-  - research/runners/_rank14_qroute_wirein_verify.py
+  - research/runners/brain_chat_tui.py
 findings:
   - research/findings/2026-09-09-rank14-question-route-selection-wta-derisk-GO.md
   - research/findings/2026-09-09-rank14-question-route-selection-wta-wirein-default-off.md

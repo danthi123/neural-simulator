@@ -1,14 +1,15 @@
 """SPIKING CA3 PATTERN-COMPLETION anaphor DETECTION as a per-session organ — the PRODUCTION WIRE-IN of the 6/6-seed-GO
 mechanism de-risk (`research/runners/_spiking_anaphor_detection_derisk.py`, finding
 `2026-09-09-spiking-anaphor-detection-CA3-pattern-completion-6seed-GO.md`, biology binding
-`research/biology/spiking-closed-class-pattern-completion.md`), behind a DEFAULT-OFF flag.
+`research/biology/spiking-closed-class-pattern-completion.md`), now the SOLE detection path (host fallback RETIRED
+2026-09-16).
 
 WHAT THIS RETIRES. Two call sites gate the ALREADY-SPIKING referent resolution (`held_referent()` / the WTA
 biased-competition read) on a bare host Python `set`-membership DETECTION step — "is the current token one of my known
 closed-class pronouns at all?":
 
     anaphors = {"it","that","they","them","this"}; ... if tl in anaphors:      # brain_chat_tui.ChatBrain._resolve_anaphora
-    if not (isinstance(word, str) and word.lower() in _ANAPHORS): return word  # multi_turn_agent.MultiTurnAgent._resolve
+    if not (isinstance(word, str) and word.lower() in {"it","that",...}): return word  # multi_turn_agent.MultiTurnAgent._resolve
 
 Per CLAUDE.md's brain-based-only standard this is a shortcut: a functional judgment ("do I know this closed-class
 word?") computed by host bookkeeping, deciding whether the spiking substrate is consulted at all. The de-risk moved that
@@ -47,11 +48,11 @@ substrate's ignition decision rather than a Python `in`; the DELIVERABLE is that
 `x in {...}` cannot — is the de-risked, proven capability that justifies the substrate detector and is exercised here
 through `probe_corrupted_cue` (the same G2/G4 the de-risk gated on) and available for a future noisy-perception path.
 
-CONTRACT (additive, reversible, DEFAULT-OFF). `BRAIN_SPIKING_ANAPHOR` truthy (1/true/on/yes) ARMS the spiking detection
-at both call sites; UNSET or in {0,false,no,off,''} (the DEFAULT) leaves each call site's pre-existing host `set` test
-UNCHANGED and this organ NEVER BUILT -> byte-identical to pre-wiring. Both call sites also fall back to the host `set`
-test on ANY organ error (never raises out). The flip to default-ON is a SEPARATE step, gated on an integrated
-`/api/brain-chat` no-regression soak (this wire-in lands default-OFF; see the finding).
+CONTRACT (SOLE detection path since 2026-09-16). This organ's spiking CA3 detection is the SOLE anaphor test at both
+call sites; each site's pre-existing host `set` membership test has been RETIRED (host fallback DELETED 2026-09-16). A
+wiring/substrate error PROPAGATES -- there is no host fallback. (History: wired default-OFF (env flag) 2026-09-09,
+flipped default-ON 2026-09-16 after the integrated no-regression soak, then the env flag + host fallbacks were removed;
+see the finding.)
 
 LESION (the load-bearing proof). `BRAIN_SPIKING_ANAPHOR_LESION=1` builds every buffer with `attractor_weight=0.0` (the
 de-risk's OWN G4 untrained-network lesion): with no recurrent CA3 completion a driven cue cannot self-sustain through the
@@ -76,15 +77,6 @@ import threading
 from typing import List, Optional
 
 import numpy as np
-
-
-def spiking_anaphor_enabled() -> bool:
-    """The master flag, DEFAULT-OFF. `BRAIN_SPIKING_ANAPHOR` truthy (1/true/on/yes) arms the spiking CA3
-    pattern-completion anaphor DETECTION at both call sites; UNSET (the default) or in {0,false,no,off,''} leaves each
-    call site's pre-existing host `set` membership test unchanged and this organ never built -> byte-identical to
-    pre-wiring. Mirrors `spiking_novelty_habituation_organ.spiking_novelty_enabled()`'s default-off semantics (a NEW
-    retirement landing default-OFF; the flip to default-ON rides a separate integrated no-regression soak)."""
-    return os.environ.get("BRAIN_SPIKING_ANAPHOR", "1").strip().lower() in ("1", "true", "on", "yes")
 
 
 def spiking_anaphor_lesioned() -> bool:
