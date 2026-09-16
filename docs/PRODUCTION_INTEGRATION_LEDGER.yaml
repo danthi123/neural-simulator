@@ -855,10 +855,16 @@ rows:
     scaffold_retired: NO        # 2026-09-16 UPDATE: the content-bias SCORING host residual (content_bias_target + animacy/verb lexicons) is now DEMOTED — the learned spiking feature-compatibility map (SpikingFeatureCompat, gap#3 A1) is the production default (BRAIN_BIASED_COMPETITION_LEARNED_BIAS flipped default-ON, verified: 6-seed soak GO [off_byte_identical+on_matches_host+lesion_diverges all 6] + integrated /api/brain-chat no-regression all_pass 0/38, AWS r7i). The host lexicon is now reached ONLY in the <40-heard-fact fallback (never hit in the ≥40-fact production KB) -> RETIRABLE_NOW. scaffold_retired stays NO until content_bias_target is DELETED + the <40-fact degrade handled (a reviewed follow-on).
     # retire_status (2026-09-02 scaffold-retirement taxonomy, Check D): BLOCKED: host animacy/verb lexicon derives the per-referent content_bias_target -> a neural content-bias derivation not GO. (Lexicon = seed; the WTA race is spiking.)
     retire_status: "RETIRABLE_NOW 2026-09-16"
-    # retire_status (2026-09-16): the sole host-COGNITION residual (the animacy/verb lexicon deriving content_bias_target)
-    # is DEMOTED — the learned spiking feature-compat is the production default (flip verified). Only the <40-fact
-    # fallback + the lexicon symbol remain -> RETIRABLE_NOW (delete content_bias_target + handle the <40-fact degrade
-    # -> RETIRED). Ages out 2026-09-30.
+    # retire_status (2026-09-16): the host-COGNITION residual (the animacy/verb lexicon deriving content_bias_target)
+    # is DEMOTED in PRODUCTION — the learned spiking feature-compat is the production default (flip verified, integrated
+    # 0/38). RETIRABLE_NOW, but the full DELETE -> RETIRED is BLOCKED by a second consumer discovered on the delete
+    # attempt (worktree agent-a7e411ea, NOT merged): the GRADED-bias RESEARCH mechanism (test_multireferent_graded_bias
+    # _agent + _phaseB_biased_competition_graded_derisk, default-OFF `graded_bias` knob, de-risked GO 6/6) DEPENDS on the
+    # content_bias_target FALLBACK path in _resolve_biased. Deleting that path makes the hard seed-100 case ABSTAIN
+    # (moat-preserving, fine for production) but the graded-bias mechanism NO LONGER CLOSES its designed case (returns
+    # None with graded ON too) — verified. So a clean delete would REGRESS a de-risked capability (NO-DEFER: can't
+    # abandon it). RETIRED requires FIRST re-engineering the graded-bias mechanism onto the learned-map path (a research
+    # follow-on), THEN deleting content_bias_target. Ages out 2026-09-30.
     host_scaffold_in_default: "DEMOTED 2026-09-16: the per-referent content bias is now authored by the learned spiking feature-compatibility map (SpikingFeatureCompat, default-ON); the host animacy/verb lexicon (content_bias_target) is reached ONLY in the <40-heard-fact fallback (never in the ≥40-fact production KB). The WTA race + lateral inhibition it biases is spiking (lesion-proven). Residual to delete for RETIRED: content_bias_target + its lexicons."
     default_anchor:
       - file: research/runners/biased_competition_prod.py
