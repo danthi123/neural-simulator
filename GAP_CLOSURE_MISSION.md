@@ -13,10 +13,21 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ---
 
-## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-15 ~20:15 (REPRIORITIZED after a strategic review → FINISH the wiring flips; ⚠️ LIVE AWS instance; READ FIRST; LATEST anchor)
+## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-16 ~00:40 (3 WIRING FLIPS LANDED default-ON; AWS batch done + terminated; READ FIRST; LATEST anchor)
 
-⚠️ **LIVE AWS INSTANCE (billing): `i-01169dadcac3ae904` (r7i.4xlarge, us-east-1), SG `sg-0334edada8f0554cd`.**
-TERMINATE when done: `tools/aws_gpu.sh terminate` THEN `aws ec2 delete-security-group --group-id sg-0334edada8f0554cd --region us-east-1`. State in `research/queue/.aws_gpu`.
+✅ **WIRING FLIPS LANDED (owner's #1 priority — FINISH over de-risk).** The 2026-09-09 arc completed: the integrated
+`/api/brain-chat` no-regression battery ran on AWS r7i (128GB numpy) and returned all_pass (0/38 faculties regress)
+for all four flags. FLIPPED default-ON (commit 1f444173): `BRAIN_SPIKING_NOVELTY` (novelty→synaptic habituation),
+`BRAIN_SPIKING_ANAPHOR` (it/that/they→CA3 pattern-completion), `BRAIN_SPIKING_QROUTE` (question-route→4-way WTA) —
+each keeps a byte-identical `=0` opt-out; ledger rows added (RETIRABLE_NOW 2026-09-16, on_by_default:YES). **B-curiosity
+`_XEDGE_CD6` DEFERRED** — its no-regression passed but at the NO-GO `train_drive_scale=1.0` default; the GO calibration
+1.5 isn't main's default, so flipping now would ship the NO-GO config (next rung: port 1.5 + re-verify).
+✅ **AWS instance TERMINATED + SG deleted; `.aws_gpu` cleared — no billing leak.** Finding
+`2026-09-16-wiring-flips-novelty-anaphor-qroute-DEFAULT-ON-integrated-no-regression-GO.md`.
+
+**Honest metric note:** these are `on_by_default:YES` (the brain does them by default now) but NOT yet strict
+`scaffold_retired` (host paths retained as `=0` opt-outs; RETIRABLE_NOW ages out in 14d → the forcing function to
+DELETE the host paths and reach RETIRED, which is what increments the owner's #1 counter, still at 1).
 
 **STRATEGIC REVIEW (owner-requested 2026-09-15) → decision: FINISH the wiring flips (via AWS r7i, owner-chosen).**
 The key fact: `scaffold_retired = 1/66` despite 60 faculties on-by-default — the project is strong at de-risking
@@ -62,10 +73,11 @@ actual bend/no-bend test. POOL lane — 36 affect cells sweeping `--xinh-exc-w/-
 bumped to 2000000 for future correctness.
 
 **PRE-DECIDED NEXT ACTIONS:**
-1. Let the corrected sweeps run (GPU: 18 token `_n2M` cells now running — gap#4 done/foreclosed; POOL: 36 XINH affect cells). 0 Claude tokens.
-2. Next harvest: aggregate `_gencortex_scaling/*_n2M_s*.json` (does the curve BEND at ~74M tokens?) + `_affect_gain_sweep/opp_xinh_e*_i*_s*.json` (does competition strength lift recall@FP0 off the ~0.032 floor?) + finalize gap#4 at 6/6 (NO-GO vs UNDEFINED per the transport-ceiling interpretability gate).
-3. LESSON banked (queue tooling): a swept flag must be LIVE in the target code path (affect) AND the token cap must match the top point (`n_sentences >= top_point/0.85`) — verify knob-non-inertness + point-coverage on cell 1 of any sweep.
-4. Re-arm a state-checking heartbeat while the corrected sweeps run.
+1. ⭐ FINISH the retirement (the owner's #1 metric): now that novelty/anaphor/qroute spiking are default-ON + integrated-verified, DELETE the 3 host paths (the `seen` set / anaphor word-list / qroute if-elif) so RETIRABLE_NOW→RETIRED (scaffold_retired 1→4). RETIRABLE_NOW ages out 2026-09-30 (the forcing function). Each: remove the host branch, keep the spiking as the sole path, re-run its `onebrain_regression_battery --flag X` to confirm still-clean, update the ledger row scaffold_retired:NO→YES + retire_status:RETIRED.
+2. Token `_n2M` bend-test sweep still running on the LOCAL GPU (~11h; owner may `game.sh on` anytime, loses ≤1 cell ~43min). Next harvest: does the NLL curve BEND at ~74M tokens? (owner #1 mouth fork).
+3. B-curiosity `_XEDGE_CD6`: no-regression passed but at the NO-GO `train_drive_scale=1.0` default — port the GO'd 1.5 to the module default + re-verify (no-regression + load-bearing at 1.5), THEN flip.
+4. Affect Rank-7 PARKED (corrected XINH sweep: gain lever exhausted, recall@FP0 pinned at 0.032; the real fix is grounding/embodiment — a separate arc, owner's multimodal steer). gap#4 done (UNDEFINED-foreclosed). Pool idle → re-stock CPU lanes with fresh scaffold-retirement de-risks.
+5. Re-arm a state-checking heartbeat while runs are live.
 
 **Superseded:** the 2026-09-10 anchor below (queue staged) is now HISTORY — the queue ran and is harvested here.
 

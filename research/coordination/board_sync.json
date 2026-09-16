@@ -1,7 +1,7 @@
 {
  "schema": "board-sync-v1",
  "_doc": "Audit trail of board mutations written by tools/vikunja.sh. gates/board_sync_on_status_change.py requires this file to GROW in the same commit that changes docs/PRODUCTION_INTEGRATION_LEDGER.yaml (a faculty-status change must sync the board). Seeded 2026-08-21.",
- "updated_at": "2026-09-09T12:22:19Z",
+ "updated_at": "2026-09-16T05:11:35Z",
  "entries": [
   {
    "at": "2026-08-22T02:19:31Z",
@@ -1286,6 +1286,90 @@
    "op": "set-desc",
    "args": "task=193",
    "head": "196b5fab5"
+  },
+  {
+   "at": "2026-09-09T19:43:09Z",
+   "op": "set-desc",
+   "args": "task=193",
+   "head": "3619df44c"
+  },
+  {
+   "at": "2026-09-09T21:28:23Z",
+   "op": "create-task",
+   "args": "proj=2 title=The brain judges word-novelty with its own neurons (and familiarity fades back over time)",
+   "head": "3cf6bc522"
+  },
+  {
+   "at": "2026-09-09T21:28:23Z",
+   "op": "label-task",
+   "args": "task=213 label=1",
+   "head": "3cf6bc522"
+  },
+  {
+   "at": "2026-09-09T21:28:23Z",
+   "op": "label-task",
+   "args": "task=213 label=10",
+   "head": "3cf6bc522"
+  },
+  {
+   "at": "2026-09-09T22:45:43Z",
+   "op": "create-task",
+   "args": "proj=2 title=The brain spots pronouns (it/that/they) with its own neurons instead of a fixed word-list",
+   "head": "5323a7f2f"
+  },
+  {
+   "at": "2026-09-09T22:45:43Z",
+   "op": "label-task",
+   "args": "task=214 label=2",
+   "head": "5323a7f2f"
+  },
+  {
+   "at": "2026-09-09T22:45:43Z",
+   "op": "label-task",
+   "args": "task=214 label=10",
+   "head": "5323a7f2f"
+  },
+  {
+   "at": "2026-09-09T22:45:43Z",
+   "op": "create-task",
+   "args": "proj=2 title=The brain picks how to understand a question by neurons competing, not a fixed priority list",
+   "head": "5323a7f2f"
+  },
+  {
+   "at": "2026-09-09T22:45:43Z",
+   "op": "label-task",
+   "args": "task=215 label=2",
+   "head": "5323a7f2f"
+  },
+  {
+   "at": "2026-09-09T22:45:43Z",
+   "op": "label-task",
+   "args": "task=215 label=10",
+   "head": "5323a7f2f"
+  },
+  {
+   "at": "2026-09-15T22:52:57Z",
+   "op": "set-desc",
+   "args": "task=193",
+   "head": "8808705d4"
+  },
+  {
+   "at": "2026-09-16T05:11:34Z",
+   "op": "set-desc",
+   "args": "task=213",
+   "head": "1f4441737"
+  },
+  {
+   "at": "2026-09-16T05:11:35Z",
+   "op": "set-desc",
+   "args": "task=214",
+   "head": "1f4441737"
+  },
+  {
+   "at": "2026-09-16T05:11:35Z",
+   "op": "set-desc",
+   "args": "task=215",
+   "head": "1f4441737"
   }
  ]
 }

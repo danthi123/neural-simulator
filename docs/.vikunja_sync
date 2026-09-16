@@ -61,3 +61,6 @@ Added de-risked tasks #214 (anaphor->CA3 pattern-completion, 1a8152a8a) + #215 (
 
 ## 2026-09-15  harvest
 - #193 (own-voice/mouth fork): appended the 6-seed local token-scaling harvest — lever re-confirmed descending, run capped at ~9M words (memory-setting instrument cap), corrected ~74M-word sweep queued LOCALLY (superseded the stale AWS-grid NEXT — fineweb is local). Affect Rank-7 finding = boundary-reproduction + instrument-correction, no capability-status change -> no board row (anti-noise line).
+
+## 2026-09-16  wiring-flips
+- #213/#214/#215 (novelty/anaphor/qroute): FLIPPED DEFAULT-ON (integrated no-regression GO on AWS r7i, 0/38 regress). Ledger +3 rows RETIRABLE_NOW, on_by_default:YES, scaffold_retired:NO (host kept as =0 opt-out; delete host -> RETIRED). Next: remove host paths to reach RETIRED (owner #1 metric, ages out 2026-09-30).
