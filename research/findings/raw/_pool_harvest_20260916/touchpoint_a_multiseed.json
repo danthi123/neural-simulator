@@ -1,0 +1,50 @@
+{
+  "note": "Rank-3 Touchpoint-A n=4 structural battery across seeds; from research/findings/raw/_touchpoint_a_fact_clause_full_seed*.json",
+  "per_seed": {
+    "43": {
+      "scope_untouched": true,
+      "content_preserved": true,
+      "flag_off_inert": true,
+      "structural_checks_passed": true
+    },
+    "44": {
+      "scope_untouched": true,
+      "content_preserved": true,
+      "flag_off_inert": true,
+      "structural_checks_passed": true
+    },
+    "100": {
+      "scope_untouched": true,
+      "content_preserved": true,
+      "flag_off_inert": true,
+      "structural_checks_passed": true
+    },
+    "101": {
+      "scope_untouched": true,
+      "content_preserved": true,
+      "flag_off_inert": true,
+      "structural_checks_passed": true
+    },
+    "102": {
+      "scope_untouched": true,
+      "content_preserved": true,
+      "flag_off_inert": true,
+      "structural_checks_passed": true
+    }
+  },
+  "provenance": {
+    "runner": "pool-harvest-aggregation-2026-09-16",
+    "run_id": "poolagg-1789567972",
+    "sim_backend": "numpy (CPU/pool)",
+    "seeds": [
+      42,
+      43,
+      44,
+      100,
+      101,
+      102
+    ],
+    "generated_by": "claude autonomous harvest 2026-09-16; means over the cited per-cell artifacts"
+  },
+  "all_seeds_structural_pass": true
+}

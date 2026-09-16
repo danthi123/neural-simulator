@@ -1,0 +1,86 @@
+{
+  "note": "D-vision satdiv divisive-norm FINER grid harvest; verdict per (sigma,scale,ridge) from research/findings/raw/lanes/perception/satdiv_refine_*.json",
+  "frontier_prior": "sig8/sc760/ridge0.5 = BORDERLINE, capability_go 0/6, first single-seed True",
+  "cells": {
+    "sig10_sc760_r0.5": {
+      "verdict": "LINDISCRIM-READOUT-NOGO",
+      "capability_go_ct": 0,
+      "beats_nogo_ct": 0,
+      "lb_ct": 0
+    },
+    "sig6_sc760_r0.5": {
+      "verdict": "LINDISCRIM-READOUT-NOGO",
+      "capability_go_ct": 0,
+      "beats_nogo_ct": 0,
+      "lb_ct": 0
+    },
+    "sig7_sc760_r0.5": {
+      "verdict": "LINDISCRIM-READOUT-PARTIAL-beat4/6-lb4/6",
+      "capability_go_ct": 1,
+      "beats_nogo_ct": 4,
+      "lb_ct": 4
+    },
+    "sig8_sc700_r0.5": {
+      "verdict": "LINDISCRIM-READOUT-PARTIAL-beat1/6-lb4/6",
+      "capability_go_ct": 0,
+      "beats_nogo_ct": 1,
+      "lb_ct": 4
+    },
+    "sig8_sc740_r0.5": {
+      "verdict": "LINDISCRIM-READOUT-PARTIAL-beat2/6-lb6/6",
+      "capability_go_ct": 0,
+      "beats_nogo_ct": 2,
+      "lb_ct": 6
+    },
+    "sig8_sc760_r0.2": {
+      "verdict": "LINDISCRIM-READOUT-PARTIAL-beat4/6-lb6/6",
+      "capability_go_ct": 2,
+      "beats_nogo_ct": 4,
+      "lb_ct": 6
+    },
+    "sig8_sc760_r1.0": {
+      "verdict": "LINDISCRIM-READOUT-GO",
+      "capability_go_ct": 2,
+      "beats_nogo_ct": 5,
+      "lb_ct": 6
+    },
+    "sig8_sc780_r0.5": {
+      "verdict": "LINDISCRIM-READOUT-PARTIAL-beat4/6-lb6/6",
+      "capability_go_ct": 2,
+      "beats_nogo_ct": 4,
+      "lb_ct": 6
+    },
+    "sig8_sc820_r0.5": {
+      "verdict": "LINDISCRIM-READOUT-PARTIAL-beat2/6-lb6/6",
+      "capability_go_ct": 1,
+      "beats_nogo_ct": 2,
+      "lb_ct": 6
+    },
+    "sig8_sc850_r0.5": {
+      "verdict": "LINDISCRIM-READOUT-PARTIAL-beat2/6-lb6/6",
+      "capability_go_ct": 0,
+      "beats_nogo_ct": 2,
+      "lb_ct": 6
+    },
+    "sig9_sc760_r0.5": {
+      "verdict": "LINDISCRIM-READOUT-PARTIAL-beat0/6-lb2/6",
+      "capability_go_ct": 0,
+      "beats_nogo_ct": 0,
+      "lb_ct": 2
+    }
+  },
+  "provenance": {
+    "runner": "pool-harvest-aggregation-2026-09-16",
+    "run_id": "poolagg-1789567972",
+    "sim_backend": "numpy (CPU/pool; source vision runs)",
+    "seeds": [
+      42,
+      43,
+      44,
+      100,
+      101,
+      102
+    ],
+    "generated_by": "claude autonomous harvest 2026-09-16; means over the cited per-cell artifacts"
+  }
+}
