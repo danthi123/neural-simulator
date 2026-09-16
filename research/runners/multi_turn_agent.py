@@ -47,12 +47,11 @@ from research.runners.biased_competition_buffer import (
 # reused by import here (single source of truth, NO reimplementation). Default OFF = the fixed-bias path verbatim.
 from research.runners._phaseB_biased_competition_graded_derisk import graded_bias_pA
 from research.runners.content_selection_spiking import SpikingLoopContextBuffer
-# SPIKING CA3 pattern-completion anaphor DETECTION (scaffold-retirement, 2026-09-09, 6/6-seed mechanism de-risk GO
-# 1a8152a8a; research/runners/spiking_anaphor_detection_organ.py) -- default-OFF (BRAIN_SPIKING_ANAPHOR). Retires
-# `_resolve`'s host `word.lower() in _ANAPHORS` DETECTION test at its root; see `MultiTurnAgent._anaphor_is` below.
+# SPIKING CA3 pattern-completion anaphor DETECTION (scaffold-retirement, 2026-09-09 mechanism de-risk GO 1a8152a8a,
+# flipped default-ON 2026-09-16; research/runners/spiking_anaphor_detection_organ.py). This is now the SOLE anaphor
+# DETECTION path: the host `word.lower() in {"it","that",...}` set test that `_resolve` used has been RETIRED (host fallback
+# DELETED 2026-09-16); see `MultiTurnAgent._anaphor_is` below.
 import research.runners.spiking_anaphor_detection_organ as _ANAPH
-
-_ANAPHORS = {"it", "that", "them", "they", "this"}
 
 
 class MultiTurnAgent:
@@ -74,7 +73,7 @@ class MultiTurnAgent:
                  slotbinder_fanout=None, slotbinder_prewire_facts=None, slotbinder_max_facts=None,
                  slotbinder_max_clauses=None, onebrain_k_max=None):
         self.seed = int(seed)
-        self._anaphor_organ = None    # spiking CA3 anaphor-detection organ (lazy; only when BRAIN_SPIKING_ANAPHOR on)
+        self._anaphor_organ = None    # spiking CA3 anaphor-detection organ (lazy; the SOLE detection path)
         # composer_kind passes through to the inner agent: "rf" (default) or "onebrain" (the integrated one-brain
         # composer -- the cleanup arc validates multi-turn anaphora + cued multi-hop on it).
         # enable_learned_assoc gated on the onebrain production path (cheat-D): elaborate spreads over the substrate-
@@ -311,22 +310,16 @@ class MultiTurnAgent:
         return True
 
     def _anaphor_is(self, word):
-        """Is `word` an anaphoric pronoun? DEFAULT (BRAIN_SPIKING_ANAPHOR off): `word.lower() in _ANAPHORS` --
-        BYTE-IDENTICAL to the original host `set` test. ON: move the DETECTION DECISION onto the spiking substrate via
-        the CA3 pattern-completion organ (lazily built once per session on this agent's seed, RNG-isolated) -- on clean
-        typed text it recognises exactly the host set's tokens, but through the substrate's ignition (lesion-reverts),
-        and the organ carries the de-risked pattern-completion surpass (recovering a corrupted cue an exact `set`
-        cannot). Host `set` fallback on ANY error so a wiring failure never changes resolution's contract or crashes it
-        (scaffold-retirement 2026-09-09)."""
-        if not _ANAPH.spiking_anaphor_enabled():
-            return word.lower() in _ANAPHORS                       # DEFAULT -> byte-identical to pre-wiring
-        try:
-            if self._anaphor_organ is None:
-                self._anaphor_organ = _ANAPH.SpikingAnaphorDetectorOrgan(
-                    seed=self.seed, lesion=_ANAPH.spiking_anaphor_lesioned())
-            return bool(self._anaphor_organ.is_anaphor(word))
-        except Exception:
-            return word.lower() in _ANAPHORS                       # never let detection crash resolution -> host fallback
+        """Is `word` an anaphoric pronoun? The DETECTION DECISION is on the spiking substrate via the CA3
+        pattern-completion organ (lazily built once per session on this agent's seed, RNG-isolated) -- the SOLE path
+        (the host `word.lower() in {"it","that",...}` set test RETIRED 2026-09-16). On clean typed text it recognises exactly
+        the old host set's tokens, but through the substrate's ignition (lesion-reverts), and the organ carries the
+        de-risked pattern-completion surpass (recovering a corrupted cue an exact `set` cannot). A substrate error
+        PROPAGATES -- no host fallback (scaffold-retirement, host fallback DELETED 2026-09-16)."""
+        if self._anaphor_organ is None:
+            self._anaphor_organ = _ANAPH.SpikingAnaphorDetectorOrgan(
+                seed=self.seed, lesion=_ANAPH.spiking_anaphor_lesioned())
+        return bool(self._anaphor_organ.is_anaphor(word))
 
     def _resolve(self, word, query_verb=None):
         """If `word` is an anaphor, resolve it from the held WM referent (None if unresolved); else return `word`.

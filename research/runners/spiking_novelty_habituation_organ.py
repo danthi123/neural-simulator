@@ -37,10 +37,11 @@ STP reset — the recovery mechanism and the LRU policy align. (Honest residual:
 than `stp_tau_d`, a reused channel can inherit residual depression — a bounded-capacity INTERFERENCE that is itself
 biologically realistic, not a correctness bug; the default bank is sized so eviction is rare in a normal turn.)
 
-CONTRACT (additive, reversible, DEFAULT-OFF). `BRAIN_SPIKING_NOVELTY` truthy (1/true/on/yes) ARMS the spiking novelty
-read at `engagement_of()`; UNSET or in {0,false,no,off,''} (the DEFAULT) leaves `engagement_of()`'s host `set` novelty
-path UNCHANGED and this organ NEVER BUILT -> byte-identical to pre-wiring. The flip to default-ON is a SEPARATE step,
-gated on an integrated `/api/brain-chat` no-regression soak (this wire-in lands default-OFF; see the finding).
+CONTRACT (SOLE novelty path since 2026-09-16). This organ's spiking habituation read is the SOLE per-turn novelty at
+`engagement_of()`; the host `set`-membership novelty path (and its permanent `seen`-set memory) has been RETIRED (host
+fallback DELETED 2026-09-16). A wiring/substrate error PROPAGATES -- there is no host fallback. (History: wired
+default-OFF (env flag) 2026-09-09, flipped default-ON 2026-09-16 after the integrated no-regression soak,
+then the env flag + host fallback were removed.) See the finding for the wire-in + flip history.
 
 LESION (the load-bearing proof). `BRAIN_SPIKING_NOVELTY_LESION=1` builds the bank with `enable_short_term_plasticity=
 False` (the de-risk's OWN G5 lesion): with no synaptic depression, every present reads ~fresh regardless of repetition
@@ -76,15 +77,6 @@ PATHWAY_WEIGHT_MEAN = 45.0
 PATHWAY_WEIGHT_JITTER = 5.0
 _DEFAULT_N_CHANNELS = 64      # the fixed word-channel bank (recruit-on-demand); sized so eviction is rare per turn
 _DEFAULT_SEED = 42
-
-
-def spiking_novelty_enabled() -> bool:
-    """The master flag, DEFAULT-OFF. `BRAIN_SPIKING_NOVELTY` truthy (1/true/on/yes) arms the spiking habituation
-    novelty read inside `engagement_of()`; UNSET (the default) or in {0,false,no,off,''} leaves the host `set` novelty
-    path unchanged and this organ never built -> byte-identical to pre-wiring. Mirrors `da_drives_enabled()`'s
-    default-off semantics (this is a NEW retirement landing default-OFF; the flip to default-ON rides a separate
-    integrated no-regression soak)."""
-    return os.environ.get("BRAIN_SPIKING_NOVELTY", "1").strip().lower() in ("1", "true", "on", "yes")
 
 
 def spiking_novelty_lesioned() -> bool:

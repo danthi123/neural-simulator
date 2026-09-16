@@ -56,12 +56,11 @@ scope). So on every question the ON path recognises exactly the routes the host 
 among them now lives on the neurons (retiring the host `if`/`elif`), with the substrate's drive-strength resolution of
 the ambiguous overlap case the de-risked surpass.
 
-CONTRACT (additive, reversible, DEFAULT-OFF). `BRAIN_SPIKING_QROUTE` truthy (1/true/on/yes) ARMS the spiking route
-DISPATCH in `_extract_route`; UNSET or in {0,false,no,off,''} (the DEFAULT) leaves the pre-existing host `if`/`elif`
-priority cascade UNCHANGED and this organ NEVER BUILT -> `_extract_route` is byte-identical to pre-wiring. The call site
-also falls back to the exact host priority cascade on ANY organ error (never raises out). The flip to default-ON is a
-SEPARATE step, gated on an integrated `/api/brain-chat` no-regression soak (this wire-in lands default-OFF; see the
-finding).
+CONTRACT (SOLE route DISPATCH since 2026-09-16). This organ's spiking 4-way WTA is the SOLE route DISPATCH in
+`_extract_route`; the pre-existing host `if`/`elif` priority cascade has been RETIRED (host fallback DELETED
+2026-09-16). A wiring/substrate error PROPAGATES -- there is no host fallback; a dead-margin tie falls through to the
+GENERIC default case. (History: wired default-OFF (env flag) 2026-09-09, flipped default-ON 2026-09-16 after the
+integrated no-regression soak, then the env flag + host fallback were removed; see the finding.)
 
 LESION (the load-bearing proof). `BRAIN_SPIKING_QROUTE_LESION=1` forces every exception pathway's evidence-driven gain
 to OFF (the de-risk's OWN G3 full-exception lesion, `lesion_relf=lesion_kbrel=lesion_defcop=True`): with only GENERIC's
@@ -83,15 +82,6 @@ import os
 import threading
 
 import numpy as np
-
-
-def spiking_qroute_enabled() -> bool:
-    """The master flag, DEFAULT-OFF. `BRAIN_SPIKING_QROUTE` truthy (1/true/on/yes) arms the spiking 4-way WTA route
-    DISPATCH in `_extract_route`; UNSET (the default) or in {0,false,no,off,''} leaves the pre-existing host `if`/`elif`
-    priority cascade unchanged and this organ never built -> `_extract_route` byte-identical to pre-wiring. Mirrors
-    `spiking_anaphor_detection_organ.spiking_anaphor_enabled()`'s default-off semantics (a NEW retirement landing
-    default-OFF; the flip to default-ON rides a separate integrated no-regression soak)."""
-    return os.environ.get("BRAIN_SPIKING_QROUTE", "1").strip().lower() in ("1", "true", "on", "yes")
 
 
 def spiking_qroute_lesioned() -> bool:
