@@ -11,21 +11,21 @@
     102
   ],
   "n_seeds": 6,
-  "GO": true,
-  "status": "GO",
+  "GO": false,
+  "status": "UNDEFINED",
   "preconditions": [
     {
       "kind": "require",
       "name": "byte_identical_off",
-      "ok": true,
-      "detail": "measured=True expect=True",
+      "ok": false,
+      "detail": "measured=False expect=True",
       "note": "holds on all 6 seeds"
     },
     {
       "kind": "require",
       "name": "load_bearing",
-      "ok": true,
-      "detail": "measured=True expect=True",
+      "ok": false,
+      "detail": "measured=False expect=True",
       "note": "holds on all 6 seeds"
     },
     {
@@ -38,8 +38,8 @@
     {
       "kind": "require",
       "name": "lesion_reverts",
-      "ok": true,
-      "detail": "measured=True expect=True",
+      "ok": false,
+      "detail": "measured=False expect=True",
       "note": "holds on all 6 seeds"
     },
     {
@@ -52,39 +52,75 @@
     {
       "kind": "require",
       "name": "confidence_cap_engages",
-      "ok": true,
-      "detail": "measured=True expect=True",
+      "ok": false,
+      "detail": "measured=False expect=True",
       "note": "holds on all 6 seeds"
     }
   ],
-  "undefined_reasons": [],
+  "undefined_reasons": [
+    "unmet: byte_identical_off (measured=False expect=True)",
+    "unmet: load_bearing (measured=False expect=True)",
+    "unmet: lesion_reverts (measured=False expect=True)",
+    "unmet: confidence_cap_engages (measured=False expect=True)"
+  ],
   "per_check_all_seeds": {
-    "byte_identical_off": true,
-    "load_bearing": true,
+    "byte_identical_off": false,
+    "load_bearing": false,
     "varying_shard_changes_elaboration": true,
-    "lesion_reverts": true,
+    "lesion_reverts": false,
     "moat": true,
-    "confidence_cap_engages": true
+    "confidence_cap_engages": false
   },
   "per_seed": [
     {
       "seed": 42,
-      "GO": true,
+      "GO": false,
       "checks": {
-        "byte_identical_off": true,
-        "load_bearing": true,
+        "byte_identical_off": false,
+        "load_bearing": false,
         "varying_shard_changes_elaboration": true,
-        "lesion_reverts": true,
+        "lesion_reverts": false,
         "moat": true,
-        "confidence_cap_engages": true
+        "confidence_cap_engages": false
       },
       "detail": {
         "byte_identical_off": {
-          "ok": true,
+          "ok": false,
           "noLTM_tier_flag_is_noop": true,
-          "off_accessors_are_buffer_only": true,
-          "on_toggle_draws_ltm": true,
-          "facts_about_canada_off": [],
+          "off_accessors_are_buffer_only": false,
+          "on_toggle_draws_ltm": false,
+          "facts_about_canada_off": [
+            [
+              "canada",
+              "border",
+              "usa"
+            ],
+            [
+              "canada",
+              "has",
+              "provinces"
+            ],
+            [
+              "canada",
+              "speak",
+              "english"
+            ],
+            [
+              "canada",
+              "export",
+              "oil"
+            ],
+            [
+              "canada",
+              "contain",
+              "ontario"
+            ],
+            [
+              "canada",
+              "border",
+              "arctic"
+            ]
+          ],
           "facts_about_canada_on": [
             [
               "canada",
@@ -119,8 +155,8 @@
           ]
         },
         "load_bearing": {
-          "ok": true,
-          "host_off_n": 2,
+          "ok": false,
+          "host_off_n": 4,
           "host_on_n": 4,
           "host_off": [
             [
@@ -132,6 +168,16 @@
               "usa",
               "border",
               "mexico"
+            ],
+            [
+              "canada",
+              "has",
+              "provinces"
+            ],
+            [
+              "canada",
+              "speak",
+              "english"
             ]
           ],
           "host_on": [
@@ -156,20 +202,9 @@
               "english"
             ]
           ],
-          "extra_facts": [
-            [
-              "canada",
-              "has",
-              "provinces"
-            ],
-            [
-              "canada",
-              "speak",
-              "english"
-            ]
-          ],
+          "extra_facts": [],
           "extra_all_from_ltm": true,
-          "neural_off_n": 2,
+          "neural_off_n": 4,
           "neural_on_n": 4
         },
         "varying_shard_changes_elaboration": {
@@ -220,7 +255,7 @@
           ]
         },
         "lesion_reverts": {
-          "ok": true,
+          "ok": false,
           "lesioned_gather": [
             [
               "canada",
@@ -231,6 +266,16 @@
               "usa",
               "border",
               "mexico"
+            ],
+            [
+              "canada",
+              "has",
+              "provinces"
+            ],
+            [
+              "canada",
+              "speak",
+              "english"
             ]
           ],
           "intact_gather": [
@@ -264,48 +309,79 @@
           "unknown_answer": "I don't know about that."
         },
         "confidence_cap_engages": {
-          "ok": true,
+          "ok": false,
           "floor": 4,
           "reach": 5,
           "on_reach_facts": 5,
-          "off_reach_facts": 2,
+          "off_reach_facts": 5,
           "on_low_reason": "low_confidence_capped",
           "on_low_kept": 4,
           "on_high_reason": "high_confidence",
           "on_high_granted": true,
-          "off_reason": "nothing_to_cap"
+          "off_reason": "low_confidence_capped"
         }
       },
       "summary": {
-        "host_off_n": 2,
+        "host_off_n": 4,
         "host_on_n": 4,
-        "neural_off_n": 2,
+        "neural_off_n": 4,
         "neural_on_n": 4,
         "reach_on_facts": 5,
         "floor": 4,
         "on_low_reason": "low_confidence_capped",
         "on_high_reason": "high_confidence",
-        "off_reason": "nothing_to_cap"
+        "off_reason": "low_confidence_capped"
       }
     },
     {
       "seed": 43,
-      "GO": true,
+      "GO": false,
       "checks": {
-        "byte_identical_off": true,
-        "load_bearing": true,
+        "byte_identical_off": false,
+        "load_bearing": false,
         "varying_shard_changes_elaboration": true,
-        "lesion_reverts": true,
+        "lesion_reverts": false,
         "moat": true,
-        "confidence_cap_engages": true
+        "confidence_cap_engages": false
       },
       "detail": {
         "byte_identical_off": {
-          "ok": true,
+          "ok": false,
           "noLTM_tier_flag_is_noop": true,
-          "off_accessors_are_buffer_only": true,
-          "on_toggle_draws_ltm": true,
-          "facts_about_canada_off": [],
+          "off_accessors_are_buffer_only": false,
+          "on_toggle_draws_ltm": false,
+          "facts_about_canada_off": [
+            [
+              "canada",
+              "border",
+              "usa"
+            ],
+            [
+              "canada",
+              "has",
+              "provinces"
+            ],
+            [
+              "canada",
+              "speak",
+              "english"
+            ],
+            [
+              "canada",
+              "export",
+              "oil"
+            ],
+            [
+              "canada",
+              "contain",
+              "ontario"
+            ],
+            [
+              "canada",
+              "border",
+              "arctic"
+            ]
+          ],
           "facts_about_canada_on": [
             [
               "canada",
@@ -340,8 +416,8 @@
           ]
         },
         "load_bearing": {
-          "ok": true,
-          "host_off_n": 2,
+          "ok": false,
+          "host_off_n": 4,
           "host_on_n": 4,
           "host_off": [
             [
@@ -353,6 +429,16 @@
               "usa",
               "border",
               "mexico"
+            ],
+            [
+              "canada",
+              "has",
+              "provinces"
+            ],
+            [
+              "canada",
+              "speak",
+              "english"
             ]
           ],
           "host_on": [
@@ -377,20 +463,9 @@
               "english"
             ]
           ],
-          "extra_facts": [
-            [
-              "canada",
-              "has",
-              "provinces"
-            ],
-            [
-              "canada",
-              "speak",
-              "english"
-            ]
-          ],
+          "extra_facts": [],
           "extra_all_from_ltm": true,
-          "neural_off_n": 2,
+          "neural_off_n": 4,
           "neural_on_n": 4
         },
         "varying_shard_changes_elaboration": {
@@ -441,7 +516,7 @@
           ]
         },
         "lesion_reverts": {
-          "ok": true,
+          "ok": false,
           "lesioned_gather": [
             [
               "canada",
@@ -452,6 +527,16 @@
               "usa",
               "border",
               "mexico"
+            ],
+            [
+              "canada",
+              "has",
+              "provinces"
+            ],
+            [
+              "canada",
+              "speak",
+              "english"
             ]
           ],
           "intact_gather": [
@@ -485,48 +570,79 @@
           "unknown_answer": "I don't know about that."
         },
         "confidence_cap_engages": {
-          "ok": true,
+          "ok": false,
           "floor": 4,
           "reach": 5,
           "on_reach_facts": 5,
-          "off_reach_facts": 2,
+          "off_reach_facts": 5,
           "on_low_reason": "low_confidence_capped",
           "on_low_kept": 4,
           "on_high_reason": "high_confidence",
           "on_high_granted": true,
-          "off_reason": "nothing_to_cap"
+          "off_reason": "low_confidence_capped"
         }
       },
       "summary": {
-        "host_off_n": 2,
+        "host_off_n": 4,
         "host_on_n": 4,
-        "neural_off_n": 2,
+        "neural_off_n": 4,
         "neural_on_n": 4,
         "reach_on_facts": 5,
         "floor": 4,
         "on_low_reason": "low_confidence_capped",
         "on_high_reason": "high_confidence",
-        "off_reason": "nothing_to_cap"
+        "off_reason": "low_confidence_capped"
       }
     },
     {
       "seed": 44,
-      "GO": true,
+      "GO": false,
       "checks": {
-        "byte_identical_off": true,
-        "load_bearing": true,
+        "byte_identical_off": false,
+        "load_bearing": false,
         "varying_shard_changes_elaboration": true,
-        "lesion_reverts": true,
+        "lesion_reverts": false,
         "moat": true,
-        "confidence_cap_engages": true
+        "confidence_cap_engages": false
       },
       "detail": {
         "byte_identical_off": {
-          "ok": true,
+          "ok": false,
           "noLTM_tier_flag_is_noop": true,
-          "off_accessors_are_buffer_only": true,
-          "on_toggle_draws_ltm": true,
-          "facts_about_canada_off": [],
+          "off_accessors_are_buffer_only": false,
+          "on_toggle_draws_ltm": false,
+          "facts_about_canada_off": [
+            [
+              "canada",
+              "border",
+              "usa"
+            ],
+            [
+              "canada",
+              "has",
+              "provinces"
+            ],
+            [
+              "canada",
+              "speak",
+              "english"
+            ],
+            [
+              "canada",
+              "export",
+              "oil"
+            ],
+            [
+              "canada",
+              "contain",
+              "ontario"
+            ],
+            [
+              "canada",
+              "border",
+              "arctic"
+            ]
+          ],
           "facts_about_canada_on": [
             [
               "canada",
@@ -561,8 +677,8 @@
           ]
         },
         "load_bearing": {
-          "ok": true,
-          "host_off_n": 2,
+          "ok": false,
+          "host_off_n": 4,
           "host_on_n": 4,
           "host_off": [
             [
@@ -574,6 +690,16 @@
               "usa",
               "border",
               "mexico"
+            ],
+            [
+              "canada",
+              "has",
+              "provinces"
+            ],
+            [
+              "canada",
+              "speak",
+              "english"
             ]
           ],
           "host_on": [
@@ -598,20 +724,9 @@
               "english"
             ]
           ],
-          "extra_facts": [
-            [
-              "canada",
-              "has",
-              "provinces"
-            ],
-            [
-              "canada",
-              "speak",
-              "english"
-            ]
-          ],
+          "extra_facts": [],
           "extra_all_from_ltm": true,
-          "neural_off_n": 2,
+          "neural_off_n": 4,
           "neural_on_n": 4
         },
         "varying_shard_changes_elaboration": {
@@ -662,7 +777,7 @@
           ]
         },
         "lesion_reverts": {
-          "ok": true,
+          "ok": false,
           "lesioned_gather": [
             [
               "canada",
@@ -673,6 +788,16 @@
               "usa",
               "border",
               "mexico"
+            ],
+            [
+              "canada",
+              "has",
+              "provinces"
+            ],
+            [
+              "canada",
+              "speak",
+              "english"
             ]
           ],
           "intact_gather": [
@@ -706,48 +831,79 @@
           "unknown_answer": "I don't know about that."
         },
         "confidence_cap_engages": {
-          "ok": true,
+          "ok": false,
           "floor": 4,
           "reach": 5,
           "on_reach_facts": 5,
-          "off_reach_facts": 2,
+          "off_reach_facts": 5,
           "on_low_reason": "low_confidence_capped",
           "on_low_kept": 4,
           "on_high_reason": "high_confidence",
           "on_high_granted": true,
-          "off_reason": "nothing_to_cap"
+          "off_reason": "low_confidence_capped"
         }
       },
       "summary": {
-        "host_off_n": 2,
+        "host_off_n": 4,
         "host_on_n": 4,
-        "neural_off_n": 2,
+        "neural_off_n": 4,
         "neural_on_n": 4,
         "reach_on_facts": 5,
         "floor": 4,
         "on_low_reason": "low_confidence_capped",
         "on_high_reason": "high_confidence",
-        "off_reason": "nothing_to_cap"
+        "off_reason": "low_confidence_capped"
       }
     },
     {
       "seed": 100,
-      "GO": true,
+      "GO": false,
       "checks": {
-        "byte_identical_off": true,
-        "load_bearing": true,
+        "byte_identical_off": false,
+        "load_bearing": false,
         "varying_shard_changes_elaboration": true,
-        "lesion_reverts": true,
+        "lesion_reverts": false,
         "moat": true,
-        "confidence_cap_engages": true
+        "confidence_cap_engages": false
       },
       "detail": {
         "byte_identical_off": {
-          "ok": true,
+          "ok": false,
           "noLTM_tier_flag_is_noop": true,
-          "off_accessors_are_buffer_only": true,
-          "on_toggle_draws_ltm": true,
-          "facts_about_canada_off": [],
+          "off_accessors_are_buffer_only": false,
+          "on_toggle_draws_ltm": false,
+          "facts_about_canada_off": [
+            [
+              "canada",
+              "border",
+              "usa"
+            ],
+            [
+              "canada",
+              "has",
+              "provinces"
+            ],
+            [
+              "canada",
+              "speak",
+              "english"
+            ],
+            [
+              "canada",
+              "export",
+              "oil"
+            ],
+            [
+              "canada",
+              "contain",
+              "ontario"
+            ],
+            [
+              "canada",
+              "border",
+              "arctic"
+            ]
+          ],
           "facts_about_canada_on": [
             [
               "canada",
@@ -782,8 +938,8 @@
           ]
         },
         "load_bearing": {
-          "ok": true,
-          "host_off_n": 2,
+          "ok": false,
+          "host_off_n": 4,
           "host_on_n": 4,
           "host_off": [
             [
@@ -795,6 +951,16 @@
               "usa",
               "border",
               "mexico"
+            ],
+            [
+              "canada",
+              "has",
+              "provinces"
+            ],
+            [
+              "canada",
+              "speak",
+              "english"
             ]
           ],
           "host_on": [
@@ -819,20 +985,9 @@
               "english"
             ]
           ],
-          "extra_facts": [
-            [
-              "canada",
-              "has",
-              "provinces"
-            ],
-            [
-              "canada",
-              "speak",
-              "english"
-            ]
-          ],
+          "extra_facts": [],
           "extra_all_from_ltm": true,
-          "neural_off_n": 2,
+          "neural_off_n": 4,
           "neural_on_n": 4
         },
         "varying_shard_changes_elaboration": {
@@ -883,7 +1038,7 @@
           ]
         },
         "lesion_reverts": {
-          "ok": true,
+          "ok": false,
           "lesioned_gather": [
             [
               "canada",
@@ -894,6 +1049,16 @@
               "usa",
               "border",
               "mexico"
+            ],
+            [
+              "canada",
+              "has",
+              "provinces"
+            ],
+            [
+              "canada",
+              "speak",
+              "english"
             ]
           ],
           "intact_gather": [
@@ -927,48 +1092,79 @@
           "unknown_answer": "I don't know about that."
         },
         "confidence_cap_engages": {
-          "ok": true,
+          "ok": false,
           "floor": 4,
           "reach": 5,
           "on_reach_facts": 5,
-          "off_reach_facts": 2,
+          "off_reach_facts": 5,
           "on_low_reason": "low_confidence_capped",
           "on_low_kept": 4,
           "on_high_reason": "high_confidence",
           "on_high_granted": true,
-          "off_reason": "nothing_to_cap"
+          "off_reason": "low_confidence_capped"
         }
       },
       "summary": {
-        "host_off_n": 2,
+        "host_off_n": 4,
         "host_on_n": 4,
-        "neural_off_n": 2,
+        "neural_off_n": 4,
         "neural_on_n": 4,
         "reach_on_facts": 5,
         "floor": 4,
         "on_low_reason": "low_confidence_capped",
         "on_high_reason": "high_confidence",
-        "off_reason": "nothing_to_cap"
+        "off_reason": "low_confidence_capped"
       }
     },
     {
       "seed": 101,
-      "GO": true,
+      "GO": false,
       "checks": {
-        "byte_identical_off": true,
-        "load_bearing": true,
+        "byte_identical_off": false,
+        "load_bearing": false,
         "varying_shard_changes_elaboration": true,
-        "lesion_reverts": true,
+        "lesion_reverts": false,
         "moat": true,
-        "confidence_cap_engages": true
+        "confidence_cap_engages": false
       },
       "detail": {
         "byte_identical_off": {
-          "ok": true,
+          "ok": false,
           "noLTM_tier_flag_is_noop": true,
-          "off_accessors_are_buffer_only": true,
-          "on_toggle_draws_ltm": true,
-          "facts_about_canada_off": [],
+          "off_accessors_are_buffer_only": false,
+          "on_toggle_draws_ltm": false,
+          "facts_about_canada_off": [
+            [
+              "canada",
+              "border",
+              "usa"
+            ],
+            [
+              "canada",
+              "has",
+              "provinces"
+            ],
+            [
+              "canada",
+              "speak",
+              "english"
+            ],
+            [
+              "canada",
+              "export",
+              "oil"
+            ],
+            [
+              "canada",
+              "contain",
+              "ontario"
+            ],
+            [
+              "canada",
+              "border",
+              "arctic"
+            ]
+          ],
           "facts_about_canada_on": [
             [
               "canada",
@@ -1003,8 +1199,8 @@
           ]
         },
         "load_bearing": {
-          "ok": true,
-          "host_off_n": 2,
+          "ok": false,
+          "host_off_n": 4,
           "host_on_n": 4,
           "host_off": [
             [
@@ -1016,6 +1212,16 @@
               "usa",
               "border",
               "mexico"
+            ],
+            [
+              "canada",
+              "has",
+              "provinces"
+            ],
+            [
+              "canada",
+              "speak",
+              "english"
             ]
           ],
           "host_on": [
@@ -1040,20 +1246,9 @@
               "english"
             ]
           ],
-          "extra_facts": [
-            [
-              "canada",
-              "has",
-              "provinces"
-            ],
-            [
-              "canada",
-              "speak",
-              "english"
-            ]
-          ],
+          "extra_facts": [],
           "extra_all_from_ltm": true,
-          "neural_off_n": 2,
+          "neural_off_n": 4,
           "neural_on_n": 4
         },
         "varying_shard_changes_elaboration": {
@@ -1104,7 +1299,7 @@
           ]
         },
         "lesion_reverts": {
-          "ok": true,
+          "ok": false,
           "lesioned_gather": [
             [
               "canada",
@@ -1115,6 +1310,16 @@
               "usa",
               "border",
               "mexico"
+            ],
+            [
+              "canada",
+              "has",
+              "provinces"
+            ],
+            [
+              "canada",
+              "speak",
+              "english"
             ]
           ],
           "intact_gather": [
@@ -1148,48 +1353,79 @@
           "unknown_answer": "I don't know about that."
         },
         "confidence_cap_engages": {
-          "ok": true,
+          "ok": false,
           "floor": 4,
           "reach": 5,
           "on_reach_facts": 5,
-          "off_reach_facts": 2,
+          "off_reach_facts": 5,
           "on_low_reason": "low_confidence_capped",
           "on_low_kept": 4,
           "on_high_reason": "high_confidence",
           "on_high_granted": true,
-          "off_reason": "nothing_to_cap"
+          "off_reason": "low_confidence_capped"
         }
       },
       "summary": {
-        "host_off_n": 2,
+        "host_off_n": 4,
         "host_on_n": 4,
-        "neural_off_n": 2,
+        "neural_off_n": 4,
         "neural_on_n": 4,
         "reach_on_facts": 5,
         "floor": 4,
         "on_low_reason": "low_confidence_capped",
         "on_high_reason": "high_confidence",
-        "off_reason": "nothing_to_cap"
+        "off_reason": "low_confidence_capped"
       }
     },
     {
       "seed": 102,
-      "GO": true,
+      "GO": false,
       "checks": {
-        "byte_identical_off": true,
-        "load_bearing": true,
+        "byte_identical_off": false,
+        "load_bearing": false,
         "varying_shard_changes_elaboration": true,
-        "lesion_reverts": true,
+        "lesion_reverts": false,
         "moat": true,
-        "confidence_cap_engages": true
+        "confidence_cap_engages": false
       },
       "detail": {
         "byte_identical_off": {
-          "ok": true,
+          "ok": false,
           "noLTM_tier_flag_is_noop": true,
-          "off_accessors_are_buffer_only": true,
-          "on_toggle_draws_ltm": true,
-          "facts_about_canada_off": [],
+          "off_accessors_are_buffer_only": false,
+          "on_toggle_draws_ltm": false,
+          "facts_about_canada_off": [
+            [
+              "canada",
+              "border",
+              "usa"
+            ],
+            [
+              "canada",
+              "has",
+              "provinces"
+            ],
+            [
+              "canada",
+              "speak",
+              "english"
+            ],
+            [
+              "canada",
+              "export",
+              "oil"
+            ],
+            [
+              "canada",
+              "contain",
+              "ontario"
+            ],
+            [
+              "canada",
+              "border",
+              "arctic"
+            ]
+          ],
           "facts_about_canada_on": [
             [
               "canada",
@@ -1224,8 +1460,8 @@
           ]
         },
         "load_bearing": {
-          "ok": true,
-          "host_off_n": 2,
+          "ok": false,
+          "host_off_n": 4,
           "host_on_n": 4,
           "host_off": [
             [
@@ -1237,6 +1473,16 @@
               "usa",
               "border",
               "mexico"
+            ],
+            [
+              "canada",
+              "has",
+              "provinces"
+            ],
+            [
+              "canada",
+              "speak",
+              "english"
             ]
           ],
           "host_on": [
@@ -1261,20 +1507,9 @@
               "english"
             ]
           ],
-          "extra_facts": [
-            [
-              "canada",
-              "has",
-              "provinces"
-            ],
-            [
-              "canada",
-              "speak",
-              "english"
-            ]
-          ],
+          "extra_facts": [],
           "extra_all_from_ltm": true,
-          "neural_off_n": 2,
+          "neural_off_n": 4,
           "neural_on_n": 4
         },
         "varying_shard_changes_elaboration": {
@@ -1325,7 +1560,7 @@
           ]
         },
         "lesion_reverts": {
-          "ok": true,
+          "ok": false,
           "lesioned_gather": [
             [
               "canada",
@@ -1336,6 +1571,16 @@
               "usa",
               "border",
               "mexico"
+            ],
+            [
+              "canada",
+              "has",
+              "provinces"
+            ],
+            [
+              "canada",
+              "speak",
+              "english"
             ]
           ],
           "intact_gather": [
@@ -1369,28 +1614,28 @@
           "unknown_answer": "I don't know about that."
         },
         "confidence_cap_engages": {
-          "ok": true,
+          "ok": false,
           "floor": 4,
           "reach": 5,
           "on_reach_facts": 5,
-          "off_reach_facts": 2,
+          "off_reach_facts": 5,
           "on_low_reason": "low_confidence_capped",
           "on_low_kept": 4,
           "on_high_reason": "high_confidence",
           "on_high_granted": true,
-          "off_reason": "nothing_to_cap"
+          "off_reason": "low_confidence_capped"
         }
       },
       "summary": {
-        "host_off_n": 2,
+        "host_off_n": 4,
         "host_on_n": 4,
-        "neural_off_n": 2,
+        "neural_off_n": 4,
         "neural_on_n": 4,
         "reach_on_facts": 5,
         "floor": 4,
         "on_low_reason": "low_confidence_capped",
         "on_high_reason": "high_confidence",
-        "off_reason": "nothing_to_cap"
+        "off_reason": "low_confidence_capped"
       }
     }
   ]
