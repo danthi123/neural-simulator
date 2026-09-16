@@ -1,0 +1,3640 @@
+{
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "sigmas": [
+    0.3,
+    0.9,
+    1.5,
+    2.0,
+    2.5,
+    3.0,
+    4.0
+  ],
+  "query": "what does the brain use",
+  "42": {
+    "build_seconds": 161.11305618286133,
+    "source_label": "tiny-demo",
+    "n_turns": 9,
+    "turns": [
+      {
+        "label": "clean",
+        "sigma": null,
+        "abstained": false,
+        "recalled_svo": [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        "answer_stripped": "the brain uses the spikes the brain stores the memory the brain learns the words \u2014 worth going further here.",
+        "answer_had_hedge": false,
+        "n_roles": 5,
+        "n_roles_with_margin_spiking": 5,
+        "real_ON_confident": true,
+        "real_ON_balance": 0.08564659007052086,
+        "real_ON_mean_role_conf": 0.6463333410713588,
+        "cf_OFF_confident": true,
+        "cf_OFF_balance": 0.08564659007052086,
+        "cf_OFF_mean_role_conf": 0.6080886903614127,
+        "other_faculties": {
+          "affect": {
+            "present_in_schema": true,
+            "non_null": true,
+            "errored": false
+          },
+          "worldmodel": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "surprise": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "comprehension": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "curiosity": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "multiref": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          }
+        },
+        "confidence_forthcoming": {
+          "on": true,
+          "floor_sentences": 4,
+          "requested_sentences": 3,
+          "confident": true,
+          "granted": false,
+          "kept_sentences": 3,
+          "elaborations_dropped": 0,
+          "reason": "high_confidence"
+        }
+      },
+      {
+        "label": "sigma0.3",
+        "sigma": 0.3,
+        "abstained": false,
+        "recalled_svo": [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        "answer_stripped": "the brain uses the spikes the brain stores the memory the brain learns the words",
+        "answer_had_hedge": false,
+        "n_roles": 5,
+        "n_roles_with_margin_spiking": 5,
+        "real_ON_confident": true,
+        "real_ON_balance": 0.08564659007052086,
+        "real_ON_mean_role_conf": 0.6102337190937602,
+        "cf_OFF_confident": true,
+        "cf_OFF_balance": 0.08564659007052086,
+        "cf_OFF_mean_role_conf": 0.6100971437476744,
+        "other_faculties": {
+          "affect": {
+            "present_in_schema": true,
+            "non_null": true,
+            "errored": false
+          },
+          "worldmodel": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "surprise": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "comprehension": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "curiosity": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "multiref": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          }
+        },
+        "confidence_forthcoming": {
+          "on": true,
+          "floor_sentences": 4,
+          "requested_sentences": 3,
+          "confident": true,
+          "granted": false,
+          "kept_sentences": 3,
+          "elaborations_dropped": 0,
+          "reason": "high_confidence"
+        }
+      },
+      {
+        "label": "sigma0.9",
+        "sigma": 0.9,
+        "abstained": false,
+        "recalled_svo": [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        "answer_stripped": "the brain uses the spikes the brain stores the memory the brain learns the words",
+        "answer_had_hedge": true,
+        "n_roles": 5,
+        "n_roles_with_margin_spiking": 5,
+        "real_ON_confident": false,
+        "real_ON_balance": 0.052463871059586734,
+        "real_ON_mean_role_conf": 0.38009862898224445,
+        "cf_OFF_confident": false,
+        "cf_OFF_balance": 0.03487398995287653,
+        "cf_OFF_mean_role_conf": 0.33325791671266625,
+        "other_faculties": {
+          "affect": {
+            "present_in_schema": true,
+            "non_null": true,
+            "errored": false
+          },
+          "worldmodel": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "surprise": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "comprehension": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "curiosity": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "multiref": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          }
+        },
+        "confidence_forthcoming": {
+          "on": true,
+          "floor_sentences": 4,
+          "requested_sentences": 3,
+          "confident": false,
+          "granted": false,
+          "kept_sentences": 3,
+          "elaborations_dropped": 0,
+          "reason": "nothing_to_cap"
+        }
+      },
+      {
+        "label": "sigma1.5",
+        "sigma": 1.5,
+        "abstained": false,
+        "recalled_svo": [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        "answer_stripped": "the brain uses the spikes the brain stores the memory the brain learns the words",
+        "answer_had_hedge": false,
+        "n_roles": 5,
+        "n_roles_with_margin_spiking": 5,
+        "real_ON_confident": true,
+        "real_ON_balance": 0.06598837723122891,
+        "real_ON_mean_role_conf": 0.45036396462288836,
+        "cf_OFF_confident": false,
+        "cf_OFF_balance": 0.03760231323705553,
+        "cf_OFF_mean_role_conf": 0.3364338922526553,
+        "other_faculties": {
+          "affect": {
+            "present_in_schema": true,
+            "non_null": true,
+            "errored": false
+          },
+          "worldmodel": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "surprise": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "comprehension": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "curiosity": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "multiref": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          }
+        },
+        "confidence_forthcoming": {
+          "on": true,
+          "floor_sentences": 4,
+          "requested_sentences": 3,
+          "confident": true,
+          "granted": false,
+          "kept_sentences": 3,
+          "elaborations_dropped": 0,
+          "reason": "high_confidence"
+        }
+      },
+      {
+        "label": "sigma2.0",
+        "sigma": 2.0,
+        "abstained": false,
+        "recalled_svo": [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        "answer_stripped": "the brain uses the spikes the brain stores the memory the brain learns the words",
+        "answer_had_hedge": true,
+        "n_roles": 5,
+        "n_roles_with_margin_spiking": 5,
+        "real_ON_confident": false,
+        "real_ON_balance": 0.01807477725971096,
+        "real_ON_mean_role_conf": 0.2978000860220374,
+        "cf_OFF_confident": false,
+        "cf_OFF_balance": 0.01807477725971096,
+        "cf_OFF_mean_role_conf": 0.23811393851792023,
+        "other_faculties": {
+          "affect": {
+            "present_in_schema": true,
+            "non_null": true,
+            "errored": false
+          },
+          "worldmodel": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "surprise": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "comprehension": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "curiosity": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "multiref": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          }
+        },
+        "confidence_forthcoming": {
+          "on": true,
+          "floor_sentences": 4,
+          "requested_sentences": 3,
+          "confident": false,
+          "granted": false,
+          "kept_sentences": 3,
+          "elaborations_dropped": 0,
+          "reason": "nothing_to_cap"
+        }
+      },
+      {
+        "label": "sigma2.5",
+        "sigma": 2.5,
+        "abstained": false,
+        "recalled_svo": [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        "answer_stripped": "the brain uses the spikes the brain stores the memory the brain learns the words",
+        "answer_had_hedge": true,
+        "n_roles": 5,
+        "n_roles_with_margin_spiking": 5,
+        "real_ON_confident": false,
+        "real_ON_balance": 0.01807477725971096,
+        "real_ON_mean_role_conf": 0.2870561509068046,
+        "cf_OFF_confident": false,
+        "cf_OFF_balance": 0.01799772271860527,
+        "cf_OFF_mean_role_conf": 0.30005321515895905,
+        "other_faculties": {
+          "affect": {
+            "present_in_schema": true,
+            "non_null": true,
+            "errored": false
+          },
+          "worldmodel": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "surprise": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "comprehension": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "curiosity": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "multiref": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          }
+        },
+        "confidence_forthcoming": {
+          "on": true,
+          "floor_sentences": 4,
+          "requested_sentences": 3,
+          "confident": false,
+          "granted": false,
+          "kept_sentences": 3,
+          "elaborations_dropped": 0,
+          "reason": "nothing_to_cap"
+        }
+      },
+      {
+        "label": "sigma3.0",
+        "sigma": 3.0,
+        "abstained": false,
+        "recalled_svo": [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        "answer_stripped": "the brain uses the spikes the brain stores the memory the brain learns the words",
+        "answer_had_hedge": true,
+        "n_roles": 5,
+        "n_roles_with_margin_spiking": 5,
+        "real_ON_confident": false,
+        "real_ON_balance": 0.046003429235574614,
+        "real_ON_mean_role_conf": 0.36441248372036494,
+        "cf_OFF_confident": false,
+        "cf_OFF_balance": 0.01807477725971096,
+        "cf_OFF_mean_role_conf": 0.2670091933991882,
+        "other_faculties": {
+          "affect": {
+            "present_in_schema": true,
+            "non_null": true,
+            "errored": false
+          },
+          "worldmodel": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "surprise": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "comprehension": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "curiosity": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "multiref": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          }
+        },
+        "confidence_forthcoming": {
+          "on": true,
+          "floor_sentences": 4,
+          "requested_sentences": 3,
+          "confident": false,
+          "granted": false,
+          "kept_sentences": 3,
+          "elaborations_dropped": 0,
+          "reason": "nothing_to_cap"
+        }
+      },
+      {
+        "label": "sigma4.0",
+        "sigma": 4.0,
+        "abstained": false,
+        "recalled_svo": [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        "answer_stripped": "the brain uses the spikes the brain stores the memory the brain learns the words",
+        "answer_had_hedge": true,
+        "n_roles": 5,
+        "n_roles_with_margin_spiking": 5,
+        "real_ON_confident": false,
+        "real_ON_balance": 0.01807477725971096,
+        "real_ON_mean_role_conf": 0.19250952191531812,
+        "cf_OFF_confident": false,
+        "cf_OFF_balance": 0.01807477725971096,
+        "cf_OFF_mean_role_conf": 0.13474519196217752,
+        "other_faculties": {
+          "affect": {
+            "present_in_schema": true,
+            "non_null": true,
+            "errored": false
+          },
+          "worldmodel": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "surprise": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "comprehension": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "curiosity": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "multiref": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          }
+        },
+        "confidence_forthcoming": {
+          "on": true,
+          "floor_sentences": 4,
+          "requested_sentences": 3,
+          "confident": false,
+          "granted": false,
+          "kept_sentences": 3,
+          "elaborations_dropped": 0,
+          "reason": "nothing_to_cap"
+        }
+      },
+      {
+        "label": "clean_LESIONED",
+        "sigma": null,
+        "abstained": false,
+        "recalled_svo": [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        "answer_stripped": "the brain uses the spikes the brain stores the memory the brain learns the words",
+        "answer_had_hedge": true,
+        "n_roles": 5,
+        "n_roles_with_margin_spiking": 5,
+        "real_ON_confident": false,
+        "real_ON_balance": 0.01807477725971096,
+        "real_ON_mean_role_conf": 0.08077259674160794,
+        "cf_OFF_confident": true,
+        "cf_OFF_balance": 0.08564659007052086,
+        "cf_OFF_mean_role_conf": 0.6080886903614127,
+        "other_faculties": {
+          "affect": {
+            "present_in_schema": true,
+            "non_null": true,
+            "errored": false
+          },
+          "worldmodel": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "surprise": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "comprehension": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "curiosity": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "multiref": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          }
+        },
+        "confidence_forthcoming": {
+          "on": true,
+          "floor_sentences": 4,
+          "requested_sentences": 3,
+          "confident": false,
+          "granted": false,
+          "kept_sentences": 3,
+          "elaborations_dropped": 0,
+          "reason": "nothing_to_cap"
+        }
+      }
+    ],
+    "n_evaluable_turns": 9,
+    "n_abstained_or_unevaluable": 0,
+    "lesion_check": {
+      "clean_real_ON_confident": true,
+      "lesioned_real_ON_confident": false,
+      "collapsed_to_hedge": true,
+      "recalled_svo_unchanged": true,
+      "clean_balance": 0.08564659007052086,
+      "lesioned_balance": 0.01807477725971096
+    },
+    "on_vs_off_disagreement_turns": [
+      "sigma1.5",
+      "clean_LESIONED"
+    ],
+    "false_confidence_direction_turns": [
+      "sigma1.5"
+    ],
+    "extra_hedge_direction_turns": [
+      "clean_LESIONED"
+    ],
+    "content_check": {
+      "clean_recalled_svo": [
+        "brain",
+        "use",
+        "spikes"
+      ],
+      "clean_answer_stripped": "the brain uses the spikes the brain stores the memory the brain learns the words \u2014 worth going further here."
+    }
+  },
+  "43": {
+    "build_seconds": 152.61308431625366,
+    "source_label": "tiny-demo",
+    "n_turns": 9,
+    "turns": [
+      {
+        "label": "clean",
+        "sigma": null,
+        "abstained": false,
+        "recalled_svo": [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        "answer_stripped": "the brain uses the spikes the brain stores the memory the brain learns the words \u2014 worth going further here.",
+        "answer_had_hedge": false,
+        "n_roles": 5,
+        "n_roles_with_margin_spiking": 5,
+        "real_ON_confident": true,
+        "real_ON_balance": 0.08564659007052086,
+        "real_ON_mean_role_conf": 0.6291430448934328,
+        "cf_OFF_confident": true,
+        "cf_OFF_balance": 0.08564659007052086,
+        "cf_OFF_mean_role_conf": 0.5920041131337972,
+        "other_faculties": {
+          "affect": {
+            "present_in_schema": true,
+            "non_null": true,
+            "errored": false
+          },
+          "worldmodel": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "surprise": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "comprehension": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "curiosity": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "multiref": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          }
+        },
+        "confidence_forthcoming": {
+          "on": true,
+          "floor_sentences": 4,
+          "requested_sentences": 3,
+          "confident": true,
+          "granted": false,
+          "kept_sentences": 3,
+          "elaborations_dropped": 0,
+          "reason": "high_confidence"
+        }
+      },
+      {
+        "label": "sigma0.3",
+        "sigma": 0.3,
+        "abstained": false,
+        "recalled_svo": [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        "answer_stripped": "the brain uses the spikes the brain stores the memory the brain learns the words",
+        "answer_had_hedge": false,
+        "n_roles": 5,
+        "n_roles_with_margin_spiking": 5,
+        "real_ON_confident": true,
+        "real_ON_balance": 0.08564659007052086,
+        "real_ON_mean_role_conf": 0.5629604046001658,
+        "cf_OFF_confident": true,
+        "cf_OFF_balance": 0.08564659007052086,
+        "cf_OFF_mean_role_conf": 0.6087674751444782,
+        "other_faculties": {
+          "affect": {
+            "present_in_schema": true,
+            "non_null": true,
+            "errored": false
+          },
+          "worldmodel": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "surprise": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "comprehension": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "curiosity": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "multiref": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          }
+        },
+        "confidence_forthcoming": {
+          "on": true,
+          "floor_sentences": 4,
+          "requested_sentences": 3,
+          "confident": true,
+          "granted": false,
+          "kept_sentences": 3,
+          "elaborations_dropped": 0,
+          "reason": "high_confidence"
+        }
+      },
+      {
+        "label": "sigma0.9",
+        "sigma": 0.9,
+        "abstained": false,
+        "recalled_svo": [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        "answer_stripped": "the brain uses the spikes the brain stores the memory the brain learns the words",
+        "answer_had_hedge": false,
+        "n_roles": 5,
+        "n_roles_with_margin_spiking": 5,
+        "real_ON_confident": true,
+        "real_ON_balance": 0.08564659007052086,
+        "real_ON_mean_role_conf": 0.5178358771285435,
+        "cf_OFF_confident": true,
+        "cf_OFF_balance": 0.06928313115973278,
+        "cf_OFF_mean_role_conf": 0.4633217822536319,
+        "other_faculties": {
+          "affect": {
+            "present_in_schema": true,
+            "non_null": true,
+            "errored": false
+          },
+          "worldmodel": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "surprise": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "comprehension": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "curiosity": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "multiref": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          }
+        },
+        "confidence_forthcoming": {
+          "on": true,
+          "floor_sentences": 4,
+          "requested_sentences": 3,
+          "confident": true,
+          "granted": false,
+          "kept_sentences": 3,
+          "elaborations_dropped": 0,
+          "reason": "high_confidence"
+        }
+      },
+      {
+        "label": "sigma1.5",
+        "sigma": 1.5,
+        "abstained": false,
+        "recalled_svo": [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        "answer_stripped": "the brain uses the spikes the brain stores the memory the brain learns the words",
+        "answer_had_hedge": true,
+        "n_roles": 5,
+        "n_roles_with_margin_spiking": 5,
+        "real_ON_confident": false,
+        "real_ON_balance": 0.02866016317825232,
+        "real_ON_mean_role_conf": 0.3158498970078284,
+        "cf_OFF_confident": false,
+        "cf_OFF_balance": 0.01807477725971096,
+        "cf_OFF_mean_role_conf": 0.20151931144294855,
+        "other_faculties": {
+          "affect": {
+            "present_in_schema": true,
+            "non_null": true,
+            "errored": false
+          },
+          "worldmodel": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "surprise": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "comprehension": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "curiosity": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "multiref": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          }
+        },
+        "confidence_forthcoming": {
+          "on": true,
+          "floor_sentences": 4,
+          "requested_sentences": 3,
+          "confident": false,
+          "granted": false,
+          "kept_sentences": 3,
+          "elaborations_dropped": 0,
+          "reason": "nothing_to_cap"
+        }
+      },
+      {
+        "label": "sigma2.0",
+        "sigma": 2.0,
+        "abstained": false,
+        "recalled_svo": [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        "answer_stripped": "the brain uses the spikes the brain stores the memory the brain learns the words",
+        "answer_had_hedge": true,
+        "n_roles": 5,
+        "n_roles_with_margin_spiking": 5,
+        "real_ON_confident": false,
+        "real_ON_balance": 0.04280680441832117,
+        "real_ON_mean_role_conf": 0.357966122653374,
+        "cf_OFF_confident": false,
+        "cf_OFF_balance": 0.02579200994745299,
+        "cf_OFF_mean_role_conf": 0.3133118983103082,
+        "other_faculties": {
+          "affect": {
+            "present_in_schema": true,
+            "non_null": true,
+            "errored": false
+          },
+          "worldmodel": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "surprise": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "comprehension": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "curiosity": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "multiref": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          }
+        },
+        "confidence_forthcoming": {
+          "on": true,
+          "floor_sentences": 4,
+          "requested_sentences": 3,
+          "confident": false,
+          "granted": false,
+          "kept_sentences": 3,
+          "elaborations_dropped": 0,
+          "reason": "nothing_to_cap"
+        }
+      },
+      {
+        "label": "sigma2.5",
+        "sigma": 2.5,
+        "abstained": false,
+        "recalled_svo": [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        "answer_stripped": "the brain uses the spikes the brain stores the memory the brain learns the words",
+        "answer_had_hedge": true,
+        "n_roles": 5,
+        "n_roles_with_margin_spiking": 5,
+        "real_ON_confident": false,
+        "real_ON_balance": 0.01807477725971096,
+        "real_ON_mean_role_conf": 0.26879146121735514,
+        "cf_OFF_confident": false,
+        "cf_OFF_balance": 0.01807477725971096,
+        "cf_OFF_mean_role_conf": 0.1501061079431955,
+        "other_faculties": {
+          "affect": {
+            "present_in_schema": true,
+            "non_null": true,
+            "errored": false
+          },
+          "worldmodel": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "surprise": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "comprehension": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "curiosity": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "multiref": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          }
+        },
+        "confidence_forthcoming": {
+          "on": true,
+          "floor_sentences": 4,
+          "requested_sentences": 3,
+          "confident": false,
+          "granted": false,
+          "kept_sentences": 3,
+          "elaborations_dropped": 0,
+          "reason": "nothing_to_cap"
+        }
+      },
+      {
+        "label": "sigma3.0",
+        "sigma": 3.0,
+        "abstained": false,
+        "recalled_svo": [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        "answer_stripped": "the brain uses the spikes the brain stores the memory the brain learns the words",
+        "answer_had_hedge": true,
+        "n_roles": 5,
+        "n_roles_with_margin_spiking": 5,
+        "real_ON_confident": false,
+        "real_ON_balance": 0.024732763130616175,
+        "real_ON_mean_role_conf": 0.30832914242985143,
+        "cf_OFF_confident": false,
+        "cf_OFF_balance": 0.01807477725971096,
+        "cf_OFF_mean_role_conf": 0.20738182523849433,
+        "other_faculties": {
+          "affect": {
+            "present_in_schema": true,
+            "non_null": true,
+            "errored": false
+          },
+          "worldmodel": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "surprise": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "comprehension": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "curiosity": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "multiref": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          }
+        },
+        "confidence_forthcoming": {
+          "on": true,
+          "floor_sentences": 4,
+          "requested_sentences": 3,
+          "confident": false,
+          "granted": false,
+          "kept_sentences": 3,
+          "elaborations_dropped": 0,
+          "reason": "nothing_to_cap"
+        }
+      },
+      {
+        "label": "sigma4.0",
+        "sigma": 4.0,
+        "abstained": false,
+        "recalled_svo": [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        "answer_stripped": "the brain uses the spikes the brain stores the memory the brain learns the words",
+        "answer_had_hedge": true,
+        "n_roles": 5,
+        "n_roles_with_margin_spiking": 5,
+        "real_ON_confident": false,
+        "real_ON_balance": 0.038455222395326026,
+        "real_ON_mean_role_conf": 0.3472221875381412,
+        "cf_OFF_confident": false,
+        "cf_OFF_balance": 0.01807477725971096,
+        "cf_OFF_mean_role_conf": 0.28686478658773645,
+        "other_faculties": {
+          "affect": {
+            "present_in_schema": true,
+            "non_null": true,
+            "errored": false
+          },
+          "worldmodel": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "surprise": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "comprehension": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "curiosity": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "multiref": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          }
+        },
+        "confidence_forthcoming": {
+          "on": true,
+          "floor_sentences": 4,
+          "requested_sentences": 3,
+          "confident": false,
+          "granted": false,
+          "kept_sentences": 3,
+          "elaborations_dropped": 0,
+          "reason": "nothing_to_cap"
+        }
+      },
+      {
+        "label": "clean_LESIONED",
+        "sigma": null,
+        "abstained": false,
+        "recalled_svo": [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        "answer_stripped": "the brain uses the spikes the brain stores the memory the brain learns the words",
+        "answer_had_hedge": true,
+        "n_roles": 5,
+        "n_roles_with_margin_spiking": 5,
+        "real_ON_confident": false,
+        "real_ON_balance": 0.01807477725971096,
+        "real_ON_mean_role_conf": 0.11085561505727626,
+        "cf_OFF_confident": true,
+        "cf_OFF_balance": 0.08564659007052086,
+        "cf_OFF_mean_role_conf": 0.5920041131337972,
+        "other_faculties": {
+          "affect": {
+            "present_in_schema": true,
+            "non_null": true,
+            "errored": false
+          },
+          "worldmodel": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "surprise": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "comprehension": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "curiosity": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "multiref": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          }
+        },
+        "confidence_forthcoming": {
+          "on": true,
+          "floor_sentences": 4,
+          "requested_sentences": 3,
+          "confident": false,
+          "granted": false,
+          "kept_sentences": 3,
+          "elaborations_dropped": 0,
+          "reason": "nothing_to_cap"
+        }
+      }
+    ],
+    "n_evaluable_turns": 9,
+    "n_abstained_or_unevaluable": 0,
+    "lesion_check": {
+      "clean_real_ON_confident": true,
+      "lesioned_real_ON_confident": false,
+      "collapsed_to_hedge": true,
+      "recalled_svo_unchanged": true,
+      "clean_balance": 0.08564659007052086,
+      "lesioned_balance": 0.01807477725971096
+    },
+    "on_vs_off_disagreement_turns": [
+      "clean_LESIONED"
+    ],
+    "false_confidence_direction_turns": [],
+    "extra_hedge_direction_turns": [
+      "clean_LESIONED"
+    ],
+    "content_check": {
+      "clean_recalled_svo": [
+        "brain",
+        "use",
+        "spikes"
+      ],
+      "clean_answer_stripped": "the brain uses the spikes the brain stores the memory the brain learns the words \u2014 worth going further here."
+    }
+  },
+  "44": {
+    "build_seconds": 120.64513874053955,
+    "source_label": "tiny-demo",
+    "n_turns": 9,
+    "turns": [
+      {
+        "label": "clean",
+        "sigma": null,
+        "abstained": false,
+        "recalled_svo": [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        "answer_stripped": "the brain uses the spikes the brain stores the memory the brain learns the words \u2014 worth going further here.",
+        "answer_had_hedge": false,
+        "n_roles": 5,
+        "n_roles_with_margin_spiking": 5,
+        "real_ON_confident": true,
+        "real_ON_balance": 0.08564659007052086,
+        "real_ON_mean_role_conf": 0.6850115074802877,
+        "cf_OFF_confident": true,
+        "cf_OFF_balance": 0.08564659007052086,
+        "cf_OFF_mean_role_conf": 0.6423380377837669,
+        "other_faculties": {
+          "affect": {
+            "present_in_schema": true,
+            "non_null": true,
+            "errored": false
+          },
+          "worldmodel": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "surprise": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "comprehension": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "curiosity": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "multiref": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          }
+        },
+        "confidence_forthcoming": {
+          "on": true,
+          "floor_sentences": 4,
+          "requested_sentences": 3,
+          "confident": true,
+          "granted": false,
+          "kept_sentences": 3,
+          "elaborations_dropped": 0,
+          "reason": "high_confidence"
+        }
+      },
+      {
+        "label": "sigma0.3",
+        "sigma": 0.3,
+        "abstained": false,
+        "recalled_svo": [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        "answer_stripped": "the brain uses the spikes the brain stores the memory the brain learns the words",
+        "answer_had_hedge": false,
+        "n_roles": 5,
+        "n_roles_with_margin_spiking": 5,
+        "real_ON_confident": true,
+        "real_ON_balance": 0.08564659007052086,
+        "real_ON_mean_role_conf": 0.6549284891646195,
+        "cf_OFF_confident": true,
+        "cf_OFF_balance": 0.08564659007052086,
+        "cf_OFF_mean_role_conf": 0.6438418619817796,
+        "other_faculties": {
+          "affect": {
+            "present_in_schema": true,
+            "non_null": true,
+            "errored": false
+          },
+          "worldmodel": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "surprise": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "comprehension": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "curiosity": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "multiref": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          }
+        },
+        "confidence_forthcoming": {
+          "on": true,
+          "floor_sentences": 4,
+          "requested_sentences": 3,
+          "confident": true,
+          "granted": false,
+          "kept_sentences": 3,
+          "elaborations_dropped": 0,
+          "reason": "high_confidence"
+        }
+      },
+      {
+        "label": "sigma0.9",
+        "sigma": 0.9,
+        "abstained": false,
+        "recalled_svo": [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        "answer_stripped": "the brain uses the spikes the brain stores the memory the brain learns the words",
+        "answer_had_hedge": false,
+        "n_roles": 5,
+        "n_roles_with_margin_spiking": 5,
+        "real_ON_confident": true,
+        "real_ON_balance": 0.059830117157312165,
+        "real_ON_mean_role_conf": 0.4134048278314081,
+        "cf_OFF_confident": false,
+        "cf_OFF_balance": 0.057311350907997355,
+        "cf_OFF_mean_role_conf": 0.4020300006691718,
+        "other_faculties": {
+          "affect": {
+            "present_in_schema": true,
+            "non_null": true,
+            "errored": false
+          },
+          "worldmodel": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "surprise": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "comprehension": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "curiosity": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "multiref": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          }
+        },
+        "confidence_forthcoming": {
+          "on": true,
+          "floor_sentences": 4,
+          "requested_sentences": 3,
+          "confident": true,
+          "granted": false,
+          "kept_sentences": 3,
+          "elaborations_dropped": 0,
+          "reason": "high_confidence"
+        }
+      },
+      {
+        "label": "sigma1.5",
+        "sigma": 1.5,
+        "abstained": false,
+        "recalled_svo": [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        "answer_stripped": "the brain uses the spikes the brain stores the memory the brain learns the words",
+        "answer_had_hedge": true,
+        "n_roles": 5,
+        "n_roles_with_margin_spiking": 5,
+        "real_ON_confident": false,
+        "real_ON_balance": 0.0391946515556302,
+        "real_ON_mean_role_conf": 0.3429246134936597,
+        "cf_OFF_confident": false,
+        "cf_OFF_balance": 0.01807477725971096,
+        "cf_OFF_mean_role_conf": 0.29517751561953276,
+        "other_faculties": {
+          "affect": {
+            "present_in_schema": true,
+            "non_null": true,
+            "errored": false
+          },
+          "worldmodel": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "surprise": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "comprehension": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "curiosity": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "multiref": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          }
+        },
+        "confidence_forthcoming": {
+          "on": true,
+          "floor_sentences": 4,
+          "requested_sentences": 3,
+          "confident": false,
+          "granted": false,
+          "kept_sentences": 3,
+          "elaborations_dropped": 0,
+          "reason": "nothing_to_cap"
+        }
+      },
+      {
+        "label": "sigma2.0",
+        "sigma": 2.0,
+        "abstained": false,
+        "recalled_svo": [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        "answer_stripped": "the brain uses the spikes the brain stores the memory the brain learns the words",
+        "answer_had_hedge": false,
+        "n_roles": 5,
+        "n_roles_with_margin_spiking": 5,
+        "real_ON_confident": true,
+        "real_ON_balance": 0.06297410915215201,
+        "real_ON_mean_role_conf": 0.4198511889021594,
+        "cf_OFF_confident": true,
+        "cf_OFF_balance": 0.06775001466965691,
+        "cf_OFF_mean_role_conf": 0.4217196656650265,
+        "other_faculties": {
+          "affect": {
+            "present_in_schema": true,
+            "non_null": true,
+            "errored": false
+          },
+          "worldmodel": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "surprise": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "comprehension": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "curiosity": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "multiref": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          }
+        },
+        "confidence_forthcoming": {
+          "on": true,
+          "floor_sentences": 4,
+          "requested_sentences": 3,
+          "confident": true,
+          "granted": false,
+          "kept_sentences": 3,
+          "elaborations_dropped": 0,
+          "reason": "high_confidence"
+        }
+      },
+      {
+        "label": "sigma2.5",
+        "sigma": 2.5,
+        "abstained": false,
+        "recalled_svo": [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        "answer_stripped": "the brain uses the spikes the brain stores the memory the brain learns the words",
+        "answer_had_hedge": true,
+        "n_roles": 5,
+        "n_roles_with_margin_spiking": 5,
+        "real_ON_confident": false,
+        "real_ON_balance": 0.01807477725971096,
+        "real_ON_mean_role_conf": 0.22259254023098643,
+        "cf_OFF_confident": false,
+        "cf_OFF_balance": 0.01807477725971096,
+        "cf_OFF_mean_role_conf": 0.21329791351308414,
+        "other_faculties": {
+          "affect": {
+            "present_in_schema": true,
+            "non_null": true,
+            "errored": false
+          },
+          "worldmodel": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "surprise": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "comprehension": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "curiosity": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "multiref": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          }
+        },
+        "confidence_forthcoming": {
+          "on": true,
+          "floor_sentences": 4,
+          "requested_sentences": 3,
+          "confident": false,
+          "granted": false,
+          "kept_sentences": 3,
+          "elaborations_dropped": 0,
+          "reason": "nothing_to_cap"
+        }
+      },
+      {
+        "label": "sigma3.0",
+        "sigma": 3.0,
+        "abstained": false,
+        "recalled_svo": [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        "answer_stripped": "the brain uses the spikes the brain stores the memory the brain learns the words",
+        "answer_had_hedge": true,
+        "n_roles": 5,
+        "n_roles_with_margin_spiking": 5,
+        "real_ON_confident": false,
+        "real_ON_balance": 0.01807477725971096,
+        "real_ON_mean_role_conf": 0.2913537249550465,
+        "cf_OFF_confident": false,
+        "cf_OFF_balance": 0.01807477725971096,
+        "cf_OFF_mean_role_conf": 0.21519065398572082,
+        "other_faculties": {
+          "affect": {
+            "present_in_schema": true,
+            "non_null": true,
+            "errored": false
+          },
+          "worldmodel": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "surprise": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "comprehension": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "curiosity": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "multiref": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          }
+        },
+        "confidence_forthcoming": {
+          "on": true,
+          "floor_sentences": 4,
+          "requested_sentences": 3,
+          "confident": false,
+          "granted": false,
+          "kept_sentences": 3,
+          "elaborations_dropped": 0,
+          "reason": "nothing_to_cap"
+        }
+      },
+      {
+        "label": "sigma4.0",
+        "sigma": 4.0,
+        "abstained": false,
+        "recalled_svo": [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        "answer_stripped": "the brain uses the spikes the brain stores the memory the brain learns the words",
+        "answer_had_hedge": true,
+        "n_roles": 5,
+        "n_roles_with_margin_spiking": 5,
+        "real_ON_confident": false,
+        "real_ON_balance": 0.026907932618031843,
+        "real_ON_mean_role_conf": 0.3139159886889774,
+        "cf_OFF_confident": false,
+        "cf_OFF_balance": 0.01807477725971096,
+        "cf_OFF_mean_role_conf": 0.25826198304097303,
+        "other_faculties": {
+          "affect": {
+            "present_in_schema": true,
+            "non_null": true,
+            "errored": false
+          },
+          "worldmodel": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "surprise": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "comprehension": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "curiosity": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "multiref": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          }
+        },
+        "confidence_forthcoming": {
+          "on": true,
+          "floor_sentences": 4,
+          "requested_sentences": 3,
+          "confident": false,
+          "granted": false,
+          "kept_sentences": 3,
+          "elaborations_dropped": 0,
+          "reason": "nothing_to_cap"
+        }
+      },
+      {
+        "label": "clean_LESIONED",
+        "sigma": null,
+        "abstained": false,
+        "recalled_svo": [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        "answer_stripped": "the brain uses the spikes the brain stores the memory the brain learns the words",
+        "answer_had_hedge": true,
+        "n_roles": 5,
+        "n_roles_with_margin_spiking": 5,
+        "real_ON_confident": false,
+        "real_ON_balance": 0.01807477725971096,
+        "real_ON_mean_role_conf": 0.2571684768771244,
+        "cf_OFF_confident": true,
+        "cf_OFF_balance": 0.08564659007052086,
+        "cf_OFF_mean_role_conf": 0.6423380377837669,
+        "other_faculties": {
+          "affect": {
+            "present_in_schema": true,
+            "non_null": true,
+            "errored": false
+          },
+          "worldmodel": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "surprise": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "comprehension": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "curiosity": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "multiref": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          }
+        },
+        "confidence_forthcoming": {
+          "on": true,
+          "floor_sentences": 4,
+          "requested_sentences": 3,
+          "confident": false,
+          "granted": false,
+          "kept_sentences": 3,
+          "elaborations_dropped": 0,
+          "reason": "nothing_to_cap"
+        }
+      }
+    ],
+    "n_evaluable_turns": 9,
+    "n_abstained_or_unevaluable": 0,
+    "lesion_check": {
+      "clean_real_ON_confident": true,
+      "lesioned_real_ON_confident": false,
+      "collapsed_to_hedge": true,
+      "recalled_svo_unchanged": true,
+      "clean_balance": 0.08564659007052086,
+      "lesioned_balance": 0.01807477725971096
+    },
+    "on_vs_off_disagreement_turns": [
+      "sigma0.9",
+      "clean_LESIONED"
+    ],
+    "false_confidence_direction_turns": [
+      "sigma0.9"
+    ],
+    "extra_hedge_direction_turns": [
+      "clean_LESIONED"
+    ],
+    "content_check": {
+      "clean_recalled_svo": [
+        "brain",
+        "use",
+        "spikes"
+      ],
+      "clean_answer_stripped": "the brain uses the spikes the brain stores the memory the brain learns the words \u2014 worth going further here."
+    }
+  },
+  "100": {
+    "build_seconds": 124.27492070198059,
+    "source_label": "tiny-demo",
+    "n_turns": 9,
+    "turns": [
+      {
+        "label": "clean",
+        "sigma": null,
+        "abstained": false,
+        "recalled_svo": [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        "answer_stripped": "the brain uses the spikes the brain learns the words the brain stores the memory \u2014 worth going further here.",
+        "answer_had_hedge": false,
+        "n_roles": 5,
+        "n_roles_with_margin_spiking": 5,
+        "real_ON_confident": true,
+        "real_ON_balance": 0.08564659007052086,
+        "real_ON_mean_role_conf": 0.706069620296668,
+        "cf_OFF_confident": true,
+        "cf_OFF_balance": 0.08564659007052086,
+        "cf_OFF_mean_role_conf": 0.5897461855842077,
+        "other_faculties": {
+          "affect": {
+            "present_in_schema": true,
+            "non_null": true,
+            "errored": false
+          },
+          "worldmodel": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "surprise": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "comprehension": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "curiosity": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "multiref": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          }
+        },
+        "confidence_forthcoming": {
+          "on": true,
+          "floor_sentences": 4,
+          "requested_sentences": 3,
+          "confident": true,
+          "granted": false,
+          "kept_sentences": 3,
+          "elaborations_dropped": 0,
+          "reason": "high_confidence"
+        }
+      },
+      {
+        "label": "sigma0.3",
+        "sigma": 0.3,
+        "abstained": false,
+        "recalled_svo": [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        "answer_stripped": "the brain uses the spikes the brain learns the words the brain stores the memory",
+        "answer_had_hedge": false,
+        "n_roles": 5,
+        "n_roles_with_margin_spiking": 5,
+        "real_ON_confident": true,
+        "real_ON_balance": 0.08564659007052086,
+        "real_ON_mean_role_conf": 0.6985488657186909,
+        "cf_OFF_confident": true,
+        "cf_OFF_balance": 0.08564659007052086,
+        "cf_OFF_mean_role_conf": 0.5525529857699149,
+        "other_faculties": {
+          "affect": {
+            "present_in_schema": true,
+            "non_null": true,
+            "errored": false
+          },
+          "worldmodel": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "surprise": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "comprehension": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "curiosity": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "multiref": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          }
+        },
+        "confidence_forthcoming": {
+          "on": true,
+          "floor_sentences": 4,
+          "requested_sentences": 3,
+          "confident": true,
+          "granted": false,
+          "kept_sentences": 3,
+          "elaborations_dropped": 0,
+          "reason": "high_confidence"
+        }
+      },
+      {
+        "label": "sigma0.9",
+        "sigma": 0.9,
+        "abstained": false,
+        "recalled_svo": [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        "answer_stripped": "the brain uses the spikes the brain learns the words the brain stores the memory",
+        "answer_had_hedge": false,
+        "n_roles": 5,
+        "n_roles_with_margin_spiking": 5,
+        "real_ON_confident": true,
+        "real_ON_balance": 0.06553485271069505,
+        "real_ON_mean_role_conf": 0.44176881651834654,
+        "cf_OFF_confident": false,
+        "cf_OFF_balance": 0.05343772468350168,
+        "cf_OFF_mean_role_conf": 0.3959523133944015,
+        "other_faculties": {
+          "affect": {
+            "present_in_schema": true,
+            "non_null": true,
+            "errored": false
+          },
+          "worldmodel": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "surprise": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "comprehension": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "curiosity": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "multiref": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          }
+        },
+        "confidence_forthcoming": {
+          "on": true,
+          "floor_sentences": 4,
+          "requested_sentences": 3,
+          "confident": true,
+          "granted": false,
+          "kept_sentences": 3,
+          "elaborations_dropped": 0,
+          "reason": "high_confidence"
+        }
+      },
+      {
+        "label": "sigma1.5",
+        "sigma": 1.5,
+        "abstained": false,
+        "recalled_svo": [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        "answer_stripped": "the brain uses the spikes the brain learns the words the brain stores the memory",
+        "answer_had_hedge": true,
+        "n_roles": 5,
+        "n_roles_with_margin_spiking": 5,
+        "real_ON_confident": false,
+        "real_ON_balance": 0.01807477725971096,
+        "real_ON_mean_role_conf": 0.25912191961740605,
+        "cf_OFF_confident": false,
+        "cf_OFF_balance": 0.01807477725971096,
+        "cf_OFF_mean_role_conf": 0.19995937146287507,
+        "other_faculties": {
+          "affect": {
+            "present_in_schema": true,
+            "non_null": true,
+            "errored": false
+          },
+          "worldmodel": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "surprise": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "comprehension": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "curiosity": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "multiref": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          }
+        },
+        "confidence_forthcoming": {
+          "on": true,
+          "floor_sentences": 4,
+          "requested_sentences": 3,
+          "confident": false,
+          "granted": false,
+          "kept_sentences": 3,
+          "elaborations_dropped": 0,
+          "reason": "nothing_to_cap"
+        }
+      },
+      {
+        "label": "sigma2.0",
+        "sigma": 2.0,
+        "abstained": false,
+        "recalled_svo": [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        "answer_stripped": "the brain uses the spikes the brain learns the words the brain stores the memory",
+        "answer_had_hedge": false,
+        "n_roles": 5,
+        "n_roles_with_margin_spiking": 5,
+        "real_ON_confident": true,
+        "real_ON_balance": 0.07849434375156236,
+        "real_ON_mean_role_conf": 0.4815213764382616,
+        "cf_OFF_confident": false,
+        "cf_OFF_balance": 0.046515563593184775,
+        "cf_OFF_mean_role_conf": 0.3684416137505512,
+        "other_faculties": {
+          "affect": {
+            "present_in_schema": true,
+            "non_null": true,
+            "errored": false
+          },
+          "worldmodel": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "surprise": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "comprehension": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "curiosity": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "multiref": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          }
+        },
+        "confidence_forthcoming": {
+          "on": true,
+          "floor_sentences": 4,
+          "requested_sentences": 3,
+          "confident": true,
+          "granted": false,
+          "kept_sentences": 3,
+          "elaborations_dropped": 0,
+          "reason": "high_confidence"
+        }
+      },
+      {
+        "label": "sigma2.5",
+        "sigma": 2.5,
+        "abstained": false,
+        "recalled_svo": [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        "answer_stripped": "the brain uses the spikes the brain learns the words the brain stores the memory",
+        "answer_had_hedge": true,
+        "n_roles": 5,
+        "n_roles_with_margin_spiking": 5,
+        "real_ON_confident": false,
+        "real_ON_balance": 0.025998136565505748,
+        "real_ON_mean_role_conf": 0.31069280815977957,
+        "cf_OFF_confident": false,
+        "cf_OFF_balance": 0.01807477725971096,
+        "cf_OFF_mean_role_conf": 0.20904720265057017,
+        "other_faculties": {
+          "affect": {
+            "present_in_schema": true,
+            "non_null": true,
+            "errored": false
+          },
+          "worldmodel": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "surprise": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "comprehension": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "curiosity": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "multiref": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          }
+        },
+        "confidence_forthcoming": {
+          "on": true,
+          "floor_sentences": 4,
+          "requested_sentences": 3,
+          "confident": false,
+          "granted": false,
+          "kept_sentences": 3,
+          "elaborations_dropped": 0,
+          "reason": "nothing_to_cap"
+        }
+      },
+      {
+        "label": "sigma3.0",
+        "sigma": 3.0,
+        "abstained": false,
+        "recalled_svo": [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        "answer_stripped": "the brain uses the spikes the brain learns the words the brain stores the memory",
+        "answer_had_hedge": true,
+        "n_roles": 5,
+        "n_roles_with_margin_spiking": 5,
+        "real_ON_confident": false,
+        "real_ON_balance": 0.01807477725971096,
+        "real_ON_mean_role_conf": 0.2612707066205763,
+        "cf_OFF_confident": false,
+        "cf_OFF_balance": 0.01807477725971096,
+        "cf_OFF_mean_role_conf": 0.2755685333287035,
+        "other_faculties": {
+          "affect": {
+            "present_in_schema": true,
+            "non_null": true,
+            "errored": false
+          },
+          "worldmodel": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "surprise": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "comprehension": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "curiosity": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "multiref": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          }
+        },
+        "confidence_forthcoming": {
+          "on": true,
+          "floor_sentences": 4,
+          "requested_sentences": 3,
+          "confident": false,
+          "granted": false,
+          "kept_sentences": 3,
+          "elaborations_dropped": 0,
+          "reason": "nothing_to_cap"
+        }
+      },
+      {
+        "label": "sigma4.0",
+        "sigma": 4.0,
+        "abstained": false,
+        "recalled_svo": [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        "answer_stripped": "the brain uses the spikes the brain learns the words the brain stores the memory",
+        "answer_had_hedge": true,
+        "n_roles": 5,
+        "n_roles_with_margin_spiking": 5,
+        "real_ON_confident": false,
+        "real_ON_balance": 0.01807477725971096,
+        "real_ON_mean_role_conf": 0.17746801275936416,
+        "cf_OFF_confident": false,
+        "cf_OFF_balance": 0.01807477725971096,
+        "cf_OFF_mean_role_conf": 0.15795660158569325,
+        "other_faculties": {
+          "affect": {
+            "present_in_schema": true,
+            "non_null": true,
+            "errored": false
+          },
+          "worldmodel": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "surprise": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "comprehension": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "curiosity": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "multiref": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          }
+        },
+        "confidence_forthcoming": {
+          "on": true,
+          "floor_sentences": 4,
+          "requested_sentences": 3,
+          "confident": false,
+          "granted": false,
+          "kept_sentences": 3,
+          "elaborations_dropped": 0,
+          "reason": "nothing_to_cap"
+        }
+      },
+      {
+        "label": "clean_LESIONED",
+        "sigma": null,
+        "abstained": false,
+        "recalled_svo": [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        "answer_stripped": "the brain uses the spikes the brain learns the words the brain stores the memory",
+        "answer_had_hedge": true,
+        "n_roles": 5,
+        "n_roles_with_margin_spiking": 5,
+        "real_ON_confident": false,
+        "real_ON_balance": 0.01807477725971096,
+        "real_ON_mean_role_conf": 0.2303281735175855,
+        "cf_OFF_confident": true,
+        "cf_OFF_balance": 0.08564659007052086,
+        "cf_OFF_mean_role_conf": 0.5897461855842077,
+        "other_faculties": {
+          "affect": {
+            "present_in_schema": true,
+            "non_null": true,
+            "errored": false
+          },
+          "worldmodel": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "surprise": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "comprehension": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "curiosity": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "multiref": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          }
+        },
+        "confidence_forthcoming": {
+          "on": true,
+          "floor_sentences": 4,
+          "requested_sentences": 3,
+          "confident": false,
+          "granted": false,
+          "kept_sentences": 3,
+          "elaborations_dropped": 0,
+          "reason": "nothing_to_cap"
+        }
+      }
+    ],
+    "n_evaluable_turns": 9,
+    "n_abstained_or_unevaluable": 0,
+    "lesion_check": {
+      "clean_real_ON_confident": true,
+      "lesioned_real_ON_confident": false,
+      "collapsed_to_hedge": true,
+      "recalled_svo_unchanged": true,
+      "clean_balance": 0.08564659007052086,
+      "lesioned_balance": 0.01807477725971096
+    },
+    "on_vs_off_disagreement_turns": [
+      "sigma0.9",
+      "sigma2.0",
+      "clean_LESIONED"
+    ],
+    "false_confidence_direction_turns": [
+      "sigma0.9",
+      "sigma2.0"
+    ],
+    "extra_hedge_direction_turns": [
+      "clean_LESIONED"
+    ],
+    "content_check": {
+      "clean_recalled_svo": [
+        "brain",
+        "use",
+        "spikes"
+      ],
+      "clean_answer_stripped": "the brain uses the spikes the brain learns the words the brain stores the memory \u2014 worth going further here."
+    }
+  },
+  "101": {
+    "build_seconds": 114.08755397796631,
+    "source_label": "tiny-demo",
+    "n_turns": 9,
+    "turns": [
+      {
+        "label": "clean",
+        "sigma": null,
+        "abstained": false,
+        "recalled_svo": [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        "answer_stripped": "the brain uses the spikes the brain learns the words the brain stores the memory \u2014 worth going further here.",
+        "answer_had_hedge": false,
+        "n_roles": 5,
+        "n_roles_with_margin_spiking": 5,
+        "real_ON_confident": true,
+        "real_ON_balance": 0.08564659007052086,
+        "real_ON_mean_role_conf": 0.6231264412481339,
+        "cf_OFF_confident": true,
+        "cf_OFF_balance": 0.08564659007052086,
+        "cf_OFF_mean_role_conf": 0.5853582264572168,
+        "other_faculties": {
+          "affect": {
+            "present_in_schema": true,
+            "non_null": true,
+            "errored": false
+          },
+          "worldmodel": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "surprise": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "comprehension": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "curiosity": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "multiref": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          }
+        },
+        "confidence_forthcoming": {
+          "on": true,
+          "floor_sentences": 4,
+          "requested_sentences": 3,
+          "confident": true,
+          "granted": false,
+          "kept_sentences": 3,
+          "elaborations_dropped": 0,
+          "reason": "high_confidence"
+        }
+      },
+      {
+        "label": "sigma0.3",
+        "sigma": 0.3,
+        "abstained": false,
+        "recalled_svo": [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        "answer_stripped": "the brain uses the spikes the brain learns the words the brain stores the memory",
+        "answer_had_hedge": false,
+        "n_roles": 5,
+        "n_roles_with_margin_spiking": 5,
+        "real_ON_confident": true,
+        "real_ON_balance": 0.08564659007052086,
+        "real_ON_mean_role_conf": 0.5792911859863429,
+        "cf_OFF_confident": true,
+        "cf_OFF_balance": 0.08564659007052086,
+        "cf_OFF_mean_role_conf": 0.5757099284739592,
+        "other_faculties": {
+          "affect": {
+            "present_in_schema": true,
+            "non_null": true,
+            "errored": false
+          },
+          "worldmodel": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "surprise": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "comprehension": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "curiosity": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "multiref": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          }
+        },
+        "confidence_forthcoming": {
+          "on": true,
+          "floor_sentences": 4,
+          "requested_sentences": 3,
+          "confident": true,
+          "granted": false,
+          "kept_sentences": 3,
+          "elaborations_dropped": 0,
+          "reason": "high_confidence"
+        }
+      },
+      {
+        "label": "sigma0.9",
+        "sigma": 0.9,
+        "abstained": false,
+        "recalled_svo": [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        "answer_stripped": "the brain uses the spikes the brain learns the words the brain stores the memory",
+        "answer_had_hedge": false,
+        "n_roles": 5,
+        "n_roles_with_margin_spiking": 5,
+        "real_ON_confident": true,
+        "real_ON_balance": 0.0688855854333996,
+        "real_ON_mean_role_conf": 0.43854563600795055,
+        "cf_OFF_confident": true,
+        "cf_OFF_balance": 0.06985572452062024,
+        "cf_OFF_mean_role_conf": 0.45717181181752214,
+        "other_faculties": {
+          "affect": {
+            "present_in_schema": true,
+            "non_null": true,
+            "errored": false
+          },
+          "worldmodel": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "surprise": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "comprehension": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "curiosity": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "multiref": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          }
+        },
+        "confidence_forthcoming": {
+          "on": true,
+          "floor_sentences": 4,
+          "requested_sentences": 3,
+          "confident": true,
+          "granted": false,
+          "kept_sentences": 3,
+          "elaborations_dropped": 0,
+          "reason": "high_confidence"
+        }
+      },
+      {
+        "label": "sigma1.5",
+        "sigma": 1.5,
+        "abstained": false,
+        "recalled_svo": [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        "answer_stripped": "the brain uses the spikes the brain learns the words the brain stores the memory",
+        "answer_had_hedge": true,
+        "n_roles": 5,
+        "n_roles_with_margin_spiking": 5,
+        "real_ON_confident": false,
+        "real_ON_balance": 0.01807477725971096,
+        "real_ON_mean_role_conf": 0.29672569251481173,
+        "cf_OFF_confident": false,
+        "cf_OFF_balance": 0.01807477725971096,
+        "cf_OFF_mean_role_conf": 0.277917878159362,
+        "other_faculties": {
+          "affect": {
+            "present_in_schema": true,
+            "non_null": true,
+            "errored": false
+          },
+          "worldmodel": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "surprise": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "comprehension": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "curiosity": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "multiref": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          }
+        },
+        "confidence_forthcoming": {
+          "on": true,
+          "floor_sentences": 4,
+          "requested_sentences": 3,
+          "confident": false,
+          "granted": false,
+          "kept_sentences": 3,
+          "elaborations_dropped": 0,
+          "reason": "nothing_to_cap"
+        }
+      },
+      {
+        "label": "sigma2.0",
+        "sigma": 2.0,
+        "abstained": false,
+        "recalled_svo": [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        "answer_stripped": "the brain uses the spikes the brain learns the words the brain stores the memory",
+        "answer_had_hedge": true,
+        "n_roles": 5,
+        "n_roles_with_margin_spiking": 5,
+        "real_ON_confident": false,
+        "real_ON_balance": 0.01807477725971096,
+        "real_ON_mean_role_conf": 0.2687914612211155,
+        "cf_OFF_confident": false,
+        "cf_OFF_balance": 0.01807477725971096,
+        "cf_OFF_mean_role_conf": 0.1957353532361176,
+        "other_faculties": {
+          "affect": {
+            "present_in_schema": true,
+            "non_null": true,
+            "errored": false
+          },
+          "worldmodel": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "surprise": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "comprehension": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "curiosity": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "multiref": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          }
+        },
+        "confidence_forthcoming": {
+          "on": true,
+          "floor_sentences": 4,
+          "requested_sentences": 3,
+          "confident": false,
+          "granted": false,
+          "kept_sentences": 3,
+          "elaborations_dropped": 0,
+          "reason": "nothing_to_cap"
+        }
+      },
+      {
+        "label": "sigma2.5",
+        "sigma": 2.5,
+        "abstained": false,
+        "recalled_svo": [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        "answer_stripped": "the brain uses the spikes the brain learns the words the brain stores the memory",
+        "answer_had_hedge": true,
+        "n_roles": 5,
+        "n_roles_with_margin_spiking": 5,
+        "real_ON_confident": false,
+        "real_ON_balance": 0.01807477725971096,
+        "real_ON_mean_role_conf": 0.1624265035996498,
+        "cf_OFF_confident": false,
+        "cf_OFF_balance": 0.01807477725971096,
+        "cf_OFF_mean_role_conf": 0.14921341436301921,
+        "other_faculties": {
+          "affect": {
+            "present_in_schema": true,
+            "non_null": true,
+            "errored": false
+          },
+          "worldmodel": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "surprise": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "comprehension": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "curiosity": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "multiref": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          }
+        },
+        "confidence_forthcoming": {
+          "on": true,
+          "floor_sentences": 4,
+          "requested_sentences": 3,
+          "confident": false,
+          "granted": false,
+          "kept_sentences": 3,
+          "elaborations_dropped": 0,
+          "reason": "nothing_to_cap"
+        }
+      },
+      {
+        "label": "sigma3.0",
+        "sigma": 3.0,
+        "abstained": false,
+        "recalled_svo": [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        "answer_stripped": "the brain uses the spikes the brain learns the words the brain stores memory the",
+        "answer_had_hedge": true,
+        "n_roles": 5,
+        "n_roles_with_margin_spiking": 5,
+        "real_ON_confident": false,
+        "real_ON_balance": 0.04768334193088171,
+        "real_ON_mean_role_conf": 0.3690681889403581,
+        "cf_OFF_confident": false,
+        "cf_OFF_balance": 0.037128931808697696,
+        "cf_OFF_mean_role_conf": 0.34172637896649366,
+        "other_faculties": {
+          "affect": {
+            "present_in_schema": true,
+            "non_null": true,
+            "errored": false
+          },
+          "worldmodel": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "surprise": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "comprehension": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "curiosity": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "multiref": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          }
+        },
+        "confidence_forthcoming": {
+          "on": true,
+          "floor_sentences": 4,
+          "requested_sentences": 3,
+          "confident": false,
+          "granted": false,
+          "kept_sentences": 3,
+          "elaborations_dropped": 0,
+          "reason": "nothing_to_cap"
+        }
+      },
+      {
+        "label": "sigma4.0",
+        "sigma": 4.0,
+        "abstained": false,
+        "recalled_svo": [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        "answer_stripped": "the brain uses the spikes the brain learns the words the brain stores the memory",
+        "answer_had_hedge": true,
+        "n_roles": 5,
+        "n_roles_with_margin_spiking": 5,
+        "real_ON_confident": false,
+        "real_ON_balance": 0.05536186016223643,
+        "real_ON_mean_role_conf": 0.3940657446421033,
+        "cf_OFF_confident": false,
+        "cf_OFF_balance": 0.01807477725971096,
+        "cf_OFF_mean_role_conf": 0.29508147285180736,
+        "other_faculties": {
+          "affect": {
+            "present_in_schema": true,
+            "non_null": true,
+            "errored": false
+          },
+          "worldmodel": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "surprise": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "comprehension": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "curiosity": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "multiref": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          }
+        },
+        "confidence_forthcoming": {
+          "on": true,
+          "floor_sentences": 4,
+          "requested_sentences": 3,
+          "confident": false,
+          "granted": false,
+          "kept_sentences": 3,
+          "elaborations_dropped": 0,
+          "reason": "nothing_to_cap"
+        }
+      },
+      {
+        "label": "clean_LESIONED",
+        "sigma": null,
+        "abstained": false,
+        "recalled_svo": [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        "answer_stripped": "the brain uses the spikes the brain learns the words the brain stores the memory",
+        "answer_had_hedge": true,
+        "n_roles": 5,
+        "n_roles_with_margin_spiking": 5,
+        "real_ON_confident": false,
+        "real_ON_balance": 0.01807477725971096,
+        "real_ON_mean_role_conf": 0.1915328005470575,
+        "cf_OFF_confident": true,
+        "cf_OFF_balance": 0.08564659007052086,
+        "cf_OFF_mean_role_conf": 0.5853582264572168,
+        "other_faculties": {
+          "affect": {
+            "present_in_schema": true,
+            "non_null": true,
+            "errored": false
+          },
+          "worldmodel": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "surprise": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "comprehension": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "curiosity": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "multiref": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          }
+        },
+        "confidence_forthcoming": {
+          "on": true,
+          "floor_sentences": 4,
+          "requested_sentences": 3,
+          "confident": false,
+          "granted": false,
+          "kept_sentences": 3,
+          "elaborations_dropped": 0,
+          "reason": "nothing_to_cap"
+        }
+      }
+    ],
+    "n_evaluable_turns": 9,
+    "n_abstained_or_unevaluable": 0,
+    "lesion_check": {
+      "clean_real_ON_confident": true,
+      "lesioned_real_ON_confident": false,
+      "collapsed_to_hedge": true,
+      "recalled_svo_unchanged": true,
+      "clean_balance": 0.08564659007052086,
+      "lesioned_balance": 0.01807477725971096
+    },
+    "on_vs_off_disagreement_turns": [
+      "clean_LESIONED"
+    ],
+    "false_confidence_direction_turns": [],
+    "extra_hedge_direction_turns": [
+      "clean_LESIONED"
+    ],
+    "content_check": {
+      "clean_recalled_svo": [
+        "brain",
+        "use",
+        "spikes"
+      ],
+      "clean_answer_stripped": "the brain uses the spikes the brain learns the words the brain stores the memory \u2014 worth going further here."
+    }
+  },
+  "102": {
+    "build_seconds": 171.08209681510925,
+    "source_label": "tiny-demo",
+    "n_turns": 9,
+    "turns": [
+      {
+        "label": "clean",
+        "sigma": null,
+        "abstained": false,
+        "recalled_svo": [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        "answer_stripped": "the brain uses the spikes the brain stores the memory the brain learns the words \u2014 worth going further here.",
+        "answer_had_hedge": false,
+        "n_roles": 5,
+        "n_roles_with_margin_spiking": 5,
+        "real_ON_confident": true,
+        "real_ON_balance": 0.08564659007052086,
+        "real_ON_mean_role_conf": 0.5732745823033545,
+        "cf_OFF_confident": true,
+        "cf_OFF_balance": 0.08671330548758312,
+        "cf_OFF_mean_role_conf": 0.4981290223047366,
+        "other_faculties": {
+          "affect": {
+            "present_in_schema": true,
+            "non_null": true,
+            "errored": false
+          },
+          "worldmodel": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "surprise": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "comprehension": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "curiosity": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "multiref": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          }
+        },
+        "confidence_forthcoming": {
+          "on": true,
+          "floor_sentences": 4,
+          "requested_sentences": 3,
+          "confident": true,
+          "granted": false,
+          "kept_sentences": 3,
+          "elaborations_dropped": 0,
+          "reason": "high_confidence"
+        }
+      },
+      {
+        "label": "sigma0.3",
+        "sigma": 0.3,
+        "abstained": false,
+        "recalled_svo": [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        "answer_stripped": "the brain uses the spikes the brain stores the memory the brain learns the words",
+        "answer_had_hedge": false,
+        "n_roles": 5,
+        "n_roles_with_margin_spiking": 5,
+        "real_ON_confident": true,
+        "real_ON_balance": 0.08564659007052086,
+        "real_ON_mean_role_conf": 0.5732745823033545,
+        "cf_OFF_confident": true,
+        "cf_OFF_balance": 0.08564659007052086,
+        "cf_OFF_mean_role_conf": 0.5142322643989734,
+        "other_faculties": {
+          "affect": {
+            "present_in_schema": true,
+            "non_null": true,
+            "errored": false
+          },
+          "worldmodel": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "surprise": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "comprehension": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "curiosity": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "multiref": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          }
+        },
+        "confidence_forthcoming": {
+          "on": true,
+          "floor_sentences": 4,
+          "requested_sentences": 3,
+          "confident": true,
+          "granted": false,
+          "kept_sentences": 3,
+          "elaborations_dropped": 0,
+          "reason": "high_confidence"
+        }
+      },
+      {
+        "label": "sigma0.9",
+        "sigma": 0.9,
+        "abstained": false,
+        "recalled_svo": [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        "answer_stripped": "the brain uses the spikes the brain stores the memory the brain learns the words",
+        "answer_had_hedge": true,
+        "n_roles": 5,
+        "n_roles_with_margin_spiking": 5,
+        "real_ON_confident": false,
+        "real_ON_balance": 0.049255168179671155,
+        "real_ON_mean_role_conf": 0.38181765860399086,
+        "cf_OFF_confident": false,
+        "cf_OFF_balance": 0.03069166057394304,
+        "cf_OFF_mean_role_conf": 0.3204745904618481,
+        "other_faculties": {
+          "affect": {
+            "present_in_schema": true,
+            "non_null": true,
+            "errored": false
+          },
+          "worldmodel": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "surprise": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "comprehension": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "curiosity": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "multiref": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          }
+        },
+        "confidence_forthcoming": {
+          "on": true,
+          "floor_sentences": 4,
+          "requested_sentences": 3,
+          "confident": false,
+          "granted": false,
+          "kept_sentences": 3,
+          "elaborations_dropped": 0,
+          "reason": "nothing_to_cap"
+        }
+      },
+      {
+        "label": "sigma1.5",
+        "sigma": 1.5,
+        "abstained": false,
+        "recalled_svo": [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        "answer_stripped": "the brain uses the spikes the brain stores the memory the brain learns the words",
+        "answer_had_hedge": true,
+        "n_roles": 5,
+        "n_roles_with_margin_spiking": 5,
+        "real_ON_confident": false,
+        "real_ON_balance": 0.04689290778135261,
+        "real_ON_mean_role_conf": 0.36505711983058803,
+        "cf_OFF_confident": false,
+        "cf_OFF_balance": 0.028872982704293268,
+        "cf_OFF_mean_role_conf": 0.31918650606421145,
+        "other_faculties": {
+          "affect": {
+            "present_in_schema": true,
+            "non_null": true,
+            "errored": false
+          },
+          "worldmodel": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "surprise": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "comprehension": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "curiosity": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "multiref": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          }
+        },
+        "confidence_forthcoming": {
+          "on": true,
+          "floor_sentences": 4,
+          "requested_sentences": 3,
+          "confident": false,
+          "granted": false,
+          "kept_sentences": 3,
+          "elaborations_dropped": 0,
+          "reason": "nothing_to_cap"
+        }
+      },
+      {
+        "label": "sigma2.0",
+        "sigma": 2.0,
+        "abstained": false,
+        "recalled_svo": [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        "answer_stripped": "the brain uses the spikes the brain stores the memory the brain learns the words",
+        "answer_had_hedge": true,
+        "n_roles": 5,
+        "n_roles_with_margin_spiking": 5,
+        "real_ON_confident": false,
+        "real_ON_balance": 0.038455222395326026,
+        "real_ON_mean_role_conf": 0.3472221875424388,
+        "cf_OFF_confident": false,
+        "cf_OFF_balance": 0.01807477725971096,
+        "cf_OFF_mean_role_conf": 0.2862204309690924,
+        "other_faculties": {
+          "affect": {
+            "present_in_schema": true,
+            "non_null": true,
+            "errored": false
+          },
+          "worldmodel": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "surprise": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "comprehension": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "curiosity": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "multiref": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          }
+        },
+        "confidence_forthcoming": {
+          "on": true,
+          "floor_sentences": 4,
+          "requested_sentences": 3,
+          "confident": false,
+          "granted": false,
+          "kept_sentences": 3,
+          "elaborations_dropped": 0,
+          "reason": "nothing_to_cap"
+        }
+      },
+      {
+        "label": "sigma2.5",
+        "sigma": 2.5,
+        "abstained": false,
+        "recalled_svo": [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        "answer_stripped": "the brain uses the spikes the brain stores the memory the brain learns the words",
+        "answer_had_hedge": true,
+        "n_roles": 5,
+        "n_roles_with_margin_spiking": 5,
+        "real_ON_confident": false,
+        "real_ON_balance": 0.01807477725971096,
+        "real_ON_mean_role_conf": 0.15812892955516827,
+        "cf_OFF_confident": false,
+        "cf_OFF_balance": 0.01807477725971096,
+        "cf_OFF_mean_role_conf": 0.1610189239250594,
+        "other_faculties": {
+          "affect": {
+            "present_in_schema": true,
+            "non_null": true,
+            "errored": false
+          },
+          "worldmodel": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "surprise": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "comprehension": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "curiosity": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "multiref": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          }
+        },
+        "confidence_forthcoming": {
+          "on": true,
+          "floor_sentences": 4,
+          "requested_sentences": 3,
+          "confident": false,
+          "granted": false,
+          "kept_sentences": 3,
+          "elaborations_dropped": 0,
+          "reason": "nothing_to_cap"
+        }
+      },
+      {
+        "label": "sigma3.0",
+        "sigma": 3.0,
+        "abstained": false,
+        "recalled_svo": [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        "answer_stripped": "the brain uses the spikes the brain stores the memory the brain learns the words",
+        "answer_had_hedge": true,
+        "n_roles": 5,
+        "n_roles_with_margin_spiking": 5,
+        "real_ON_confident": false,
+        "real_ON_balance": 0.026988397854201863,
+        "real_ON_mean_role_conf": 0.31284159518228893,
+        "cf_OFF_confident": false,
+        "cf_OFF_balance": 0.01807477725971096,
+        "cf_OFF_mean_role_conf": 0.256954844599151,
+        "other_faculties": {
+          "affect": {
+            "present_in_schema": true,
+            "non_null": true,
+            "errored": false
+          },
+          "worldmodel": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "surprise": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "comprehension": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "curiosity": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "multiref": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          }
+        },
+        "confidence_forthcoming": {
+          "on": true,
+          "floor_sentences": 4,
+          "requested_sentences": 3,
+          "confident": false,
+          "granted": false,
+          "kept_sentences": 3,
+          "elaborations_dropped": 0,
+          "reason": "nothing_to_cap"
+        }
+      },
+      {
+        "label": "sigma4.0",
+        "sigma": 4.0,
+        "abstained": false,
+        "recalled_svo": [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        "answer_stripped": "the brain uses the spikes the brain stores the memory the brain learns the words",
+        "answer_had_hedge": true,
+        "n_roles": 5,
+        "n_roles_with_margin_spiking": 5,
+        "real_ON_confident": false,
+        "real_ON_balance": 0.036948199869661094,
+        "real_ON_mean_role_conf": 0.34077582647544785,
+        "cf_OFF_confident": false,
+        "cf_OFF_balance": 0.024129180882709322,
+        "cf_OFF_mean_role_conf": 0.30749284416438416,
+        "other_faculties": {
+          "affect": {
+            "present_in_schema": true,
+            "non_null": true,
+            "errored": false
+          },
+          "worldmodel": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "surprise": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "comprehension": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "curiosity": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "multiref": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          }
+        },
+        "confidence_forthcoming": {
+          "on": true,
+          "floor_sentences": 4,
+          "requested_sentences": 3,
+          "confident": false,
+          "granted": false,
+          "kept_sentences": 3,
+          "elaborations_dropped": 0,
+          "reason": "nothing_to_cap"
+        }
+      },
+      {
+        "label": "clean_LESIONED",
+        "sigma": null,
+        "abstained": false,
+        "recalled_svo": [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        "answer_stripped": "the brain uses the spikes the brain stores the memory the brain learns the words",
+        "answer_had_hedge": true,
+        "n_roles": 5,
+        "n_roles_with_margin_spiking": 5,
+        "real_ON_confident": false,
+        "real_ON_balance": 0.01807477725971096,
+        "real_ON_mean_role_conf": 0.08077259674160794,
+        "cf_OFF_confident": true,
+        "cf_OFF_balance": 0.08671330548758312,
+        "cf_OFF_mean_role_conf": 0.4981290223047366,
+        "other_faculties": {
+          "affect": {
+            "present_in_schema": true,
+            "non_null": true,
+            "errored": false
+          },
+          "worldmodel": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "surprise": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "comprehension": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "curiosity": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          },
+          "multiref": {
+            "present_in_schema": true,
+            "non_null": false,
+            "errored": false
+          }
+        },
+        "confidence_forthcoming": {
+          "on": true,
+          "floor_sentences": 4,
+          "requested_sentences": 3,
+          "confident": false,
+          "granted": false,
+          "kept_sentences": 3,
+          "elaborations_dropped": 0,
+          "reason": "nothing_to_cap"
+        }
+      }
+    ],
+    "n_evaluable_turns": 9,
+    "n_abstained_or_unevaluable": 0,
+    "lesion_check": {
+      "clean_real_ON_confident": true,
+      "lesioned_real_ON_confident": false,
+      "collapsed_to_hedge": true,
+      "recalled_svo_unchanged": true,
+      "clean_balance": 0.08564659007052086,
+      "lesioned_balance": 0.01807477725971096
+    },
+    "on_vs_off_disagreement_turns": [
+      "clean_LESIONED"
+    ],
+    "false_confidence_direction_turns": [],
+    "extra_hedge_direction_turns": [
+      "clean_LESIONED"
+    ],
+    "content_check": {
+      "clean_recalled_svo": [
+        "brain",
+        "use",
+        "spikes"
+      ],
+      "clean_answer_stripped": "the brain uses the spikes the brain stores the memory the brain learns the words \u2014 worth going further here."
+    }
+  },
+  "_seed42_fresh_build_crosscheck": {
+    "OFF": {
+      "returncode": 0,
+      "parsed": {
+        "answer": "the brain uses the spikes the brain stores the memory the brain learns the words \u2014 worth going further here.",
+        "recalled_svo": [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        "metacog": {
+          "on": true,
+          "lesioned": false,
+          "evidence": 1.0,
+          "balance": 0.08564659007052086,
+          "threshold": 0.057845546432234586,
+          "confident": true,
+          "calib": {
+            "mean_hi": 0.07254469906489278,
+            "min_hi": 0.06324435069078038,
+            "mean_lo": 0.03623807287266029,
+            "max_lo": 0.05244674217368879,
+            "clean_gap": true,
+            "read_reps": 8,
+            "role_conf_lo": 0.3,
+            "role_conf_hi": 0.5,
+            "confidence_read": "nmda_norm"
+          },
+          "mean_role_conf": 0.6080886903614127
+        },
+        "abstained": false
+      },
+      "stderr_tail": null
+    },
+    "ON": {
+      "returncode": 0,
+      "parsed": {
+        "answer": "the brain uses the spikes the brain stores the memory the brain learns the words \u2014 worth going further here.",
+        "recalled_svo": [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        "metacog": {
+          "on": true,
+          "lesioned": false,
+          "evidence": 1.0,
+          "balance": 0.08564659007052086,
+          "threshold": 0.057845546432234586,
+          "confident": true,
+          "calib": {
+            "mean_hi": 0.07254469906489278,
+            "min_hi": 0.06324435069078038,
+            "mean_lo": 0.03623807287266029,
+            "max_lo": 0.05244674217368879,
+            "clean_gap": true,
+            "read_reps": 8,
+            "role_conf_lo": 0.3,
+            "role_conf_hi": 0.5,
+            "confidence_read": "nmda_norm"
+          },
+          "mean_role_conf": 0.6463333410713588
+        },
+        "abstained": false
+      },
+      "stderr_tail": null
+    },
+    "content_preserved_across_literal_builds": true
+  }
+}

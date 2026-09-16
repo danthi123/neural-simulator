@@ -189,7 +189,23 @@ def spiking_recall_margin_enabled() -> bool:
     `margin_snr` chain. Reads the SAME env var the composer constructors check (`RFPhasorComposer.
     spiking_recall_margin`) -- this accessor exists for callers (the de-risk runner, a lesion test) that want to
     confirm the flag's state without constructing a composer. See research/runners/rf_phasor_composer.py and
-    research/findings/2026-09-05-metacog-spiking-recall-margin-derisk*.md."""
+    research/findings/2026-09-05-metacog-spiking-recall-margin-derisk*.md.
+
+    ⛔ PRODUCTION-FLIP ALREADY TRIED, VERDICT NO-GO (2026-09-05) -- READ BEFORE RE-ATTEMPTING DEFAULT-ON.
+    An INTEGRATED 6-seed verification through the real `webapp.server.brain_chat` handler (not the
+    composer-in-isolation the PARTIAL de-risk above used) found the mechanism genuinely load-bearing (6/6
+    lesion-collapse) and content-preserving (recalled_svo byte-identical every turn) -- but on 3 of 6 seeds a
+    real degraded-recall turn read CONFIDENT under the flag-ON evidence while the shipped host evidence
+    correctly HEDGED the identical turn (4 such instances / 42 natural noise-sweep opportunities, 0 in the
+    reverse/safer direction) -- a one-directional overconfidence regression on the honesty-hedge's own content.
+    Flag stays default-OFF. This verification lived only on an UNMERGED branch
+    (`research/metacog-spiking-margin-prodflip-verify`, commit 09153561d) and was rescued onto `main` 2026-09-16
+    as `research/findings/2026-09-05-metacog-spiking-margin-prodflip-verify-NOGO.md` (+ its runner,
+    `research/runners/_metacog_spiking_margin_prodflip_verify.py`, + raw artifact) specifically so this exact
+    re-derivation could not recur. NOTE: that verification predates
+    `eca75a3f1` (\"retire host rf composer + numpy-KB LTM -> onebrain composer + substrate-store default-on\"),
+    so its composer landscape is not guaranteed current -- a re-run against present `main` is the right next
+    step before trusting the verdict further, not a fresh from-scratch re-characterization."""
     v = os.environ.get("BRAIN_METACOG_SPIKING_MARGIN", "")
     return v.strip().lower() in ("1", "true", "on", "yes")
 
