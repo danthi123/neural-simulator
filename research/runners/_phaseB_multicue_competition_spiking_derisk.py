@@ -45,10 +45,11 @@ from dataclasses import dataclass
 import numpy as np
 
 # ---------------------------------------------------------------------------
-# Feature lexicons -- REUSED verbatim from the numpy de-risk (which itself reuses the buffer's ANIMACY with a
-# drift assertion). HOST scaffold: supplies each cue's VALUE, not the role decision.
+# Feature lexicons -- REUSED verbatim from the numpy de-risk (which itself reuses the ground-truth ANIMACY with a
+# drift assertion; RELOCATED 2026-09-16 to `_gap3_learned_feature_compat_derisk` when the runtime fallback in
+# `biased_competition_buffer.py` was RETIRED). HOST scaffold: supplies each cue's VALUE, not the role decision.
 # ---------------------------------------------------------------------------
-from research.runners.biased_competition_buffer import ANIMACY as _BUF_ANIMACY  # noqa: E402
+from research.runners._gap3_learned_feature_compat_derisk import ANIMACY as _BUF_ANIMACY  # noqa: E402
 
 ANIMACY = dict(_BUF_ANIMACY)
 ANIMACY.update({

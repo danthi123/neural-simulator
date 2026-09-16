@@ -20,12 +20,21 @@ What this asserts (CPU/numpy-runnable):
 
 The buffer is built over the EXACT 2-referent {cat, ball} registry the de-risk uses (n=600, pattern_size=40 = the
 MultiTurnAgent defaults), so the agent-path competition dynamics match the validated de-risk.
+
+CONTENT-BIAS SOURCE (2026-09-16 update): as in `test_multireferent_biased_competition.py`, `_agent()` now wires
+`feat_compat_source=SpikingFeatureCompat(seed=SEED)` explicitly -- the host `content_bias_target` lexicon this file
+used to fall back to by default was RETIRED alongside the fixed/graded WTA bias mechanism becoming the SOLE
+production content-bias consumer of the LEARNED spiking chooser. Verified empirically that
+`SpikingFeatureCompat(seed=100).bias_target(["cat","ball"], "roll") == "ball"` (matches the ground-truth
+`content_bias_target`, `_gap3_learned_feature_compat_derisk.py`) -- i.e. seed 100's mis-resolve is a property of
+the WTA competition dynamics under the FIXED bias magnitude, not of which chooser supplies `fav`.
 """
 import os
 
 os.environ.setdefault("SIM_BACKEND", "numpy")
 
 from research.runners.multi_turn_agent import MultiTurnAgent
+from research.runners._gap3_spiking_feature_compat_derisk import SpikingFeatureCompat
 
 # The de-risk's exact 2-referent setup: cat (animate) vs ball (inanimate); 'eat' selects animate, 'roll' inanimate.
 NOUNS = ["cat", "ball"]
@@ -35,11 +44,13 @@ SEED = 100  # the pre-registered extreme-intrinsic-asymmetry miss (ball ~0 sel v
 
 
 def _agent(graded_bias):
-    """A 2-referent MultiTurnAgent with biased competition ON; `graded_bias` toggles the deficit-scaled magnitude.
-    Both cat and ball get a 'roll' fact, so the turn's answer is decided by WHICH referent resolves (resolving
-    wrongly returns a different non-None answer), not by fact availability."""
+    """A 2-referent MultiTurnAgent with biased competition ON, wired to the SOLE production content-bias source
+    (the learned spiking feature-compatibility chooser); `graded_bias` toggles the deficit-scaled magnitude. Both
+    cat and ball get a 'roll' fact, so the turn's answer is decided by WHICH referent resolves (resolving wrongly
+    returns a different non-None answer), not by fact availability."""
     a = MultiTurnAgent(referent_concepts=NOUNS, concepts={w: None for w in VOCAB}, seed=SEED,
-                       enable_biased_competition=True, graded_bias=graded_bias)
+                       enable_biased_competition=True, graded_bias=graded_bias,
+                       feat_compat_source=SpikingFeatureCompat(seed=SEED))
     a.agent.composer.store("ball", "roll", "river")   # if 'it'->ball (correct for 'roll'), answer = river
     a.agent.composer.store("cat", "roll", "worm")     # if 'it'->cat (wrong for 'roll'), answer = worm
     return a

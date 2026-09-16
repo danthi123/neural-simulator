@@ -17,8 +17,12 @@ _REPO = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 if _REPO not in sys.path:
     sys.path.insert(0, _REPO)
 
-from research.runners.biased_competition_buffer import ANIMACY, VERB_SELECTS, content_bias_target
-from research.runners._gap3_learned_feature_compat_derisk import make_corpus, learn_features, CONCEPTS, ANIMATE, INANIM, VERBS
+# ANIMACY/VERB_SELECTS/content_bias_target are the GROUND-TRUTH lexicon this mechanism's OWN learned map is
+# validated against (never consulted by the live per-turn resolution -- see `SpikingFeatureCompat` below). RELOCATED
+# 2026-09-16 to `_gap3_learned_feature_compat_derisk` (its canonical home) when the host runtime FALLBACK that used
+# to live in `biased_competition_buffer.py` was RETIRED.
+from research.runners._gap3_learned_feature_compat_derisk import (
+    ANIMACY, VERB_SELECTS, content_bias_target, make_corpus, learn_features, CONCEPTS, ANIMATE, INANIM, VERBS)
 
 
 def _build(seed, n_feat=40):

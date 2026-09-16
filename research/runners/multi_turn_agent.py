@@ -40,7 +40,6 @@ import numpy as np
 from research.runners.brain_conversational_agent import BrainConversationalAgent
 from research.runners.biased_competition_buffer import (
     BiasedCompetitionContextBuffer,
-    content_bias_target,
     resolve_referent,
 )
 # CONTENT-GRADED bias (opt-in; de-risk GO 6/6) — the deficit-scaled magnitude lives in the de-risk runner and is
@@ -143,15 +142,18 @@ class MultiTurnAgent:
         # are co-present). Appended in _write_referent; mirrors exactly what is written into the WM loop(s).
         self._referent_history = []
         # PRODUCTION WIRE-IN HOOK (default None = byte-identical): a callable (held_referents, query_verb) -> the favored
-        # referent, used by _resolve_biased in place of the HOST `content_bias_target` shortcut. This is where a D3
-        # discourse-CENTER tracker (Centering Cb over the heard SVO facts, `_d3_centering_focus_derisk`) plugs in so the
-        # pronoun binds to the BRAIN-BASED composed focus rather than a host feature-lookup. None -> content_bias_target.
+        # referent. This is where a D3 discourse-CENTER tracker (Centering Cb over the heard SVO facts,
+        # `_d3_centering_focus_derisk`) plugs in so the pronoun binds to the BRAIN-BASED composed focus. Tried in
+        # `_resolve_biased` AFTER `_feat_compat_source` (below); None -> no discourse-center fallback (abstain if
+        # `_feat_compat_source` is also None/silent -- the host `content_bias_target` fallback was RETIRED 2026-09-16).
         self._focus_bias_source = focus_bias_source
-        # A1 WIRE-IN HOOK (default None = byte-identical): a callable (held_referents, query_verb) -> the favored referent,
+        # A1 WIRE-IN HOOK (default None until installed): a callable (held_referents, query_verb) -> the favored referent,
         # computed by the SPIKING learned feature-compatibility (`_gap3_spiking_feature_compat_derisk.SpikingFeatureCompat`)
-        # in place of the HOST `content_bias_target` lexicon lookup -- the emergence-bar close of gap #3 residual A1 (the
-        # animacy x verb-selection compatibility LEARNED from corpus co-occurrence + computed by feature-detector spikes).
-        # Tried AFTER the D3 focus, BEFORE the host fallback. None -> content_bias_target (byte-identical).
+        # -- the emergence-bar close of gap #3 residual A1 (the animacy x verb-selection compatibility LEARNED from corpus
+        # co-occurrence + computed by feature-detector spikes). This is the SOLE production content-bias source
+        # (`_resolve_biased` tried it FIRST, before `_focus_bias_source`): the host `content_bias_target` lexicon lookup
+        # it replaced has been RETIRED 2026-09-16 (deleted from `biased_competition_buffer.py`) -- when this is None (or
+        # returns None), resolution falls through to `_focus_bias_source` if wired, else abstains (no host fallback left).
         self._feat_compat_source = feat_compat_source
         # RUNNING-EVENT REGISTER HOOK (default None = byte-identical): an object with observe(subject_word, agent, patient)
         # + who_agent()/who_patient(), maintaining a running FACTORED (agent, patient) EVENT across the heard discourse via
@@ -251,23 +253,21 @@ class MultiTurnAgent:
         held = self._held_set()
         if len(held) < 2 or self.bcw is None:
             return None  # <2 held -> let the plain single-attractor path decide (no competition needed)
-        # the favored referent: the D3 composed-focus source if wired (brain-based Centering Cb), else the HOST
-        # content_bias_target feature-lookup (default). The composed focus binds the pronoun to the discourse center
-        # rather than mere feature-compatibility -- the production wire-in of the D3 anaphora integration.
-        # Resolution cue-combination (Bates-MacWhinney): CONTENT feature-compatibility decides the clear cases; on a
-        # feature-SILENT TIE (both candidates compatible -> content abstains, gap #3 residual A2) the DISCOURSE-SALIENCE
-        # center (D3 Cb) breaks it. Order: feature-compat (or host) first; if it abstains AND a focus source is wired,
-        # fall back to the Cb salience. (A focus source alone, no feat-compat, stays focus-first = the prior D3 behavior.)
+        # the favored referent: the LEARNED spiking feature-compatibility chooser (`_feat_compat_source`, the SOLE
+        # content-bias source since the host `content_bias_target` lexicon fallback was RETIRED 2026-09-16), and/or
+        # the D3 composed-focus source (brain-based Centering Cb) if wired. Resolution cue-combination
+        # (Bates-MacWhinney): CONTENT feature-compatibility decides the clear cases; on a feature-SILENT TIE (both
+        # candidates compatible -> content abstains, gap #3 residual A2) the DISCOURSE-SALIENCE center (D3 Cb)
+        # breaks it. Order: feature-compat first; if it abstains (or is not installed -- e.g. the <40-heard-fact
+        # case) AND a focus source is wired, fall back to the Cb salience; otherwise there is NO content bias and
+        # the caller abstains (moat) -- there is no host lexicon left to fall through to.
+        fav = None
         if self._feat_compat_source is not None:
             fav = self._feat_compat_source(held, query_verb)
-            if fav is None and self._focus_bias_source is not None:
-                fav = self._focus_bias_source(held, query_verb)          # A2: feature-silent tie -> discourse center
-        elif self._focus_bias_source is not None:
-            fav = self._focus_bias_source(held, query_verb)
-        else:
-            fav = content_bias_target(held, query_verb)
+        if fav is None and self._focus_bias_source is not None:
+            fav = self._focus_bias_source(held, query_verb)          # A2: feature-silent/unset -> discourse center
         if fav is None:
-            return None  # content silent -> abstain (moat)
+            return None  # content silent (or no content-bias source installed) -> abstain (moat)
         if not self._graded_bias:
             # FIXED bias (default) -- byte-identical to the prior behavior.
             rates = self.bcw.read(window=self._bc_window, bias_concept=fav, bias_pA=self._bc_bias_pA)

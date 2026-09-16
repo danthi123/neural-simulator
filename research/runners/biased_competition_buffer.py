@@ -30,13 +30,18 @@ plus a bias(concept, pA) injector that adds a SMALL feed-forward current into th
 competitive read window. The held attractors + the holding update() are reused verbatim from
 SpikingLoopContextBuffer.
 
->>> HOST-SCAFFOLD SHORTCUT (FLAGGED for conversion, BRAIN-BASED-ONLY) <<<
-`content_bias_target` (+ the ANIMACY / VERB_SELECTS feature lexicons) is HOST-SIDE: given the pronoun's features and
-the query verb's selectional restriction, it returns WHICH held referent receives the bias current. The WIN is
-brain-based (spiking competition + suppression + the recurrence amplifying the small content asymmetry); the content
-SCORING is host in this scaffold. The follow-on neuralizes it into a LEARNED SYNAPTIC FEATURE-COMPATIBILITY MAP
-(pronoun-feature population x candidate-feature population -> bias current), so the bias itself is computed by
-neurons/synapses. See `2026-06-19-multireferent-integration-multiturnagent.md` for the boundaries.
+>>> HOST-SCAFFOLD SHORTCUT — RETIRED 2026-09-16 <<<
+This module used to also define `content_bias_target` (+ the ANIMACY / VERB_SELECTS feature lexicons): a HOST-SIDE
+lookup that, given the pronoun's features and the query verb's selectional restriction, returned WHICH held referent
+receives the bias current. The WIN was already brain-based (spiking competition + suppression + the recurrence
+amplifying the small content asymmetry); the content SCORING was host. That shortcut has now been converted: the
+LEARNED SYNAPTIC FEATURE-COMPATIBILITY chooser (`_gap3_spiking_feature_compat_derisk.SpikingFeatureCompat`, wired as
+`MultiTurnAgent(feat_compat_source=...)` / installed by default via `biased_competition_prod.
+maybe_install_learned_referent_bias`) is the SOLE production content-bias source — `MultiTurnAgent._resolve_biased`
+no longer has a host-lexicon fallback branch at all. `content_bias_target`/`ANIMACY`/`VERB_SELECTS` are GONE from
+this file; the ground-truth copies used to TRAIN/EVALUATE the learned chooser now live in
+`_gap3_learned_feature_compat_derisk.py` (never consulted at resolution time). See
+`2026-06-19-multireferent-integration-multiturnagent.md` for the original boundaries this retires.
 
 Two substrate facts found + handled in the original build (both diagnosed against `sim/bridge.py`, not assumed):
   1. The synapse E/I sign is the PRE-neuron's inhibitory trait (NOT the weight sign) -> the FS pools are
@@ -55,39 +60,9 @@ from research.runners.content_selection_spiking import SpikingLoopContextBuffer
 
 
 # ---------------------------------------------------------------------------
-# Content-bias helper (HOST scaffold — flagged for conversion to a learned
-# synaptic feature-compatibility map per BRAIN-BASED-ONLY; see module docstring).
-# A bare pronoun's features filter candidate antecedents; the query verb's
-# selectional restriction biases toward the compatible referent. Both CONTENT
-# signals, not position (recency) or magnitude (boost).
-# ---------------------------------------------------------------------------
-ANIMACY = {  # per-concept feature tag (the small-world feature lexicon)
-    "cat": "animate", "dog": "animate", "bird": "animate", "fox": "animate",
-    "fish": "animate", "worm": "animate",
-    "ball": "inanimate", "apple": "inanimate", "river": "inanimate",
-    "rock": "inanimate", "book": "inanimate",
-}
-# selectional restriction: which animacy a verb's THEME/argument prefers as an antecedent for "it".
-VERB_SELECTS = {
-    "eat": "animate",     # "what does it eat?" -> the eater is animate
-    "chase": "animate",   # an agentive verb -> animate
-    "roll": "inanimate",  # "where did it roll?" -> the roller is the ball (inanimate)
-    "float": "inanimate", # "did it float?" -> inanimate theme
-}
-
-
-def content_bias_target(candidates, query_verb):
-    """Return the single held referent that the pronoun+verb content selects for, or None if the content
-    does not disambiguate (no match, or >1 equally-compatible candidate -> a TIE the moat must abstain on)."""
-    want = VERB_SELECTS.get(query_verb)
-    if want is None:
-        return None
-    matches = [c for c in candidates if ANIMACY.get(c) == want]
-    if len(matches) == 1:
-        return matches[0]
-    return None  # 0 matches or a tie -> content is silent; abstain
-
-
+# (The host content-bias helper -- `content_bias_target` + the ANIMACY / VERB_SELECTS feature lexicons -- lived
+# here and has been RETIRED 2026-09-16; see the module docstring's "HOST-SCAFFOLD SHORTCUT — RETIRED" note. The
+# learned spiking feature-compatibility chooser is now the sole content-bias source consulted at resolution time.)
 # ---------------------------------------------------------------------------
 # The biased-competition buffer: the held referents as COMPETING assemblies
 # with mutual inhibition (per-referent FS pool) + a small content bias injector.

@@ -146,13 +146,20 @@ def test_combined_attribute_and_clause_interaction(seed):
 def test_combined_biased_competition_multireferent(seed):
     """enable_biased_competition WORKS: a pronoun over >=2 held referents of opposing content features resolves to
     the content-favored one; the moat abstains on empty WM / content-silent verb. (MultiTurnAgent also turns the
-    inner BrainConversationalAgent's neural_render on, so this exercises render + biased competition together.)"""
+    inner BrainConversationalAgent's neural_render on, so this exercises render + biased competition together.)
+
+    CONTENT-BIAS SOURCE (2026-09-16 update): wires `feat_compat_source=SpikingFeatureCompat(seed=seed)` explicitly
+    -- the host `content_bias_target` lexicon this test used to fall back to by default was RETIRED when the
+    learned spiking chooser became the SOLE production content-bias source (verified to match the ground-truth
+    disambiguation at all of SEEDS 42/43/44 for 'eat'->'cat')."""
     from research.runners.multi_turn_agent import MultiTurnAgent
+    from research.runners._gap3_spiking_feature_compat_derisk import SpikingFeatureCompat
     bc_nouns = ["dog", "cat", "fish", "bird", "worm", "ball"]
     bc_vocab = bc_nouns + ["chase", "eat"]
     try:
         a = MultiTurnAgent(referent_concepts=bc_nouns, concepts={w: None for w in bc_vocab}, seed=seed,
-                           enable_biased_competition=True, enable_neural_render=True)
+                           enable_biased_competition=True, enable_neural_render=True,
+                           feat_compat_source=SpikingFeatureCompat(seed=seed))
     except (FileNotFoundError, KeyError) as e:
         pytest.skip(f"concept-code cache / vocab unavailable: {e}")
     a.agent.composer.store("cat", "eat", "fish")           # if 'it'->cat (correct for 'eat'), answer = fish
@@ -162,7 +169,8 @@ def test_combined_biased_competition_multireferent(seed):
     assert a.what_does("it", "eat") == "fish", "the turn answers via the content-resolved referent"
     # HARD gate -- the moat:
     b = MultiTurnAgent(referent_concepts=bc_nouns, concepts={w: None for w in bc_vocab}, seed=seed,
-                       enable_biased_competition=True, enable_neural_render=True)
+                       enable_biased_competition=True, enable_neural_render=True,
+                       feat_compat_source=SpikingFeatureCompat(seed=seed))
     assert b._resolve_biased("eat") is None, "moat: empty WM -> abstain"
 
 
