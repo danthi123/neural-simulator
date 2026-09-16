@@ -91,7 +91,7 @@ claims refuted on adversarial verify). **5 small-de-risk targets NOT mouth-gated
 already-validated spiking mechanism): (1) **selective-attention-biased-competition** [HIGH — wire the 6/6-GO+CI-pinned
 SpikingFeatureCompat into the 4 MultiTurnAgent build sites; BUILD AGENT LAUNCHED]; (2) **gnw-global-stop** [wire the
 already-computed upstream spiking conflict magnitude into the boost-scaling; BUILD AGENT LAUNCHED]; (3)
-**metacog-monitor** [wire the 6/6-GO _spiking_margin; caveat: ambiguous-band partially open]; (4) **semantic-recall**
+**metacog-monitor** [⛔ RULED OUT as a retirement — verify-first 2026-09-16 found the audit premise stale: BRAIN_METACOG_SPIKING_MARGIN is ALREADY wired + an INTEGRATED prod-flip verify already returned NO-GO (one-directional overconfidence, 09153561d, rescued to main 1e303b3cd); stays safely wired-default-OFF, pool re-verify vs current main stocked]; (4) **semantic-recall**
 [ledger STALE + wire the already-default-True spiking unbind/cleanup flags into the sharded LTM path]; (5)
 **da-write-gain-spiking** [judgment: small write-event detector OR re-adjudicate 2 constants vs the LEGITIMATE
 precedent — not a clean freebie]. Each de-risks to wired-default-off, then the flip+integrated-verify+delete follow-on

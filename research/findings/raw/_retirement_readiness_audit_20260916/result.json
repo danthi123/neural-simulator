@@ -33,10 +33,10 @@
   },
   {
    "key": "metacog-monitor",
-   "confidence": "medium",
+   "confidence": "n/a (refuted)",
    "residual": "host stretch-normalization of role-decode confidence (ROLE_CONF_LO/HI); an already-6/6-GO spiking replacement (_spiking_margin, BRAIN_METACOG_SPIKING_MARGIN) exists unwired",
    "action": "check prod traffic hits the ambiguous band, wire + flip behind no-regression; CAVEAT: ambiguous-band precision is a partially-open sub-problem (AUC 0.53-0.63)",
-   "status": "PLANNED"
+   "status": "RULED OUT 2026-09-16 (verify-first): premise stale \u2014 already wired + an integrated prod-flip verify already returned NO-GO (one-directional overconfidence, 09153561d, rescued to main); stays wired-default-OFF, not a retirement"
   },
   {
    "key": "semantic-recall",
