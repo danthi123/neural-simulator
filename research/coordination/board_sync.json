@@ -1,7 +1,7 @@
 {
  "schema": "board-sync-v1",
  "_doc": "Audit trail of board mutations written by tools/vikunja.sh. gates/board_sync_on_status_change.py requires this file to GROW in the same commit that changes docs/PRODUCTION_INTEGRATION_LEDGER.yaml (a faculty-status change must sync the board). Seeded 2026-08-21.",
- "updated_at": "2026-09-16T15:59:09Z",
+ "updated_at": "2026-09-16T16:26:35Z",
  "entries": [
   {
    "at": "2026-08-22T02:19:31Z",
@@ -1376,6 +1376,300 @@
    "op": "update-task",
    "args": "task=197 done=true",
    "head": "633790b56"
+  },
+  {
+   "at": "2026-09-16T16:24:50Z",
+   "op": "append-desc",
+   "args": "task=213",
+   "head": "22753bc92"
+  },
+  {
+   "at": "2026-09-16T16:24:51Z",
+   "op": "update-task",
+   "args": "task=213 done=true",
+   "head": "22753bc92"
+  },
+  {
+   "at": "2026-09-16T16:25:37Z",
+   "op": "append-desc",
+   "args": "task=214",
+   "head": "22753bc92"
+  },
+  {
+   "at": "2026-09-16T16:25:37Z",
+   "op": "update-task",
+   "args": "task=214 done=true",
+   "head": "22753bc92"
+  },
+  {
+   "at": "2026-09-16T16:25:37Z",
+   "op": "append-desc",
+   "args": "task=215",
+   "head": "22753bc92"
+  },
+  {
+   "at": "2026-09-16T16:25:37Z",
+   "op": "update-task",
+   "args": "task=215 done=true",
+   "head": "22753bc92"
+  },
+  {
+   "at": "2026-09-16T16:25:37Z",
+   "op": "append-desc",
+   "args": "task=197",
+   "head": "22753bc92"
+  },
+  {
+   "at": "2026-09-16T16:25:37Z",
+   "op": "update-task",
+   "args": "task=197 done=true",
+   "head": "22753bc92"
+  },
+  {
+   "at": "2026-09-16T16:25:37Z",
+   "op": "append-desc",
+   "args": "task=200",
+   "head": "22753bc92"
+  },
+  {
+   "at": "2026-09-16T16:25:38Z",
+   "op": "update-task",
+   "args": "task=200 done=true",
+   "head": "22753bc92"
+  },
+  {
+   "at": "2026-09-16T16:25:38Z",
+   "op": "append-desc",
+   "args": "task=171",
+   "head": "22753bc92"
+  },
+  {
+   "at": "2026-09-16T16:25:38Z",
+   "op": "update-task",
+   "args": "task=171 done=true",
+   "head": "22753bc92"
+  },
+  {
+   "at": "2026-09-16T16:25:38Z",
+   "op": "append-desc",
+   "args": "task=201",
+   "head": "22753bc92"
+  },
+  {
+   "at": "2026-09-16T16:25:38Z",
+   "op": "update-task",
+   "args": "task=201 done=true",
+   "head": "22753bc92"
+  },
+  {
+   "at": "2026-09-16T16:25:38Z",
+   "op": "append-desc",
+   "args": "task=210",
+   "head": "22753bc92"
+  },
+  {
+   "at": "2026-09-16T16:25:39Z",
+   "op": "update-task",
+   "args": "task=210 done=true",
+   "head": "22753bc92"
+  },
+  {
+   "at": "2026-09-16T16:25:39Z",
+   "op": "append-desc",
+   "args": "task=192",
+   "head": "22753bc92"
+  },
+  {
+   "at": "2026-09-16T16:25:39Z",
+   "op": "update-task",
+   "args": "task=192 done=true",
+   "head": "22753bc92"
+  },
+  {
+   "at": "2026-09-16T16:25:39Z",
+   "op": "append-desc",
+   "args": "task=208",
+   "head": "22753bc92"
+  },
+  {
+   "at": "2026-09-16T16:25:39Z",
+   "op": "update-task",
+   "args": "task=208 done=true",
+   "head": "22753bc92"
+  },
+  {
+   "at": "2026-09-16T16:25:39Z",
+   "op": "append-desc",
+   "args": "task=211",
+   "head": "22753bc92"
+  },
+  {
+   "at": "2026-09-16T16:25:40Z",
+   "op": "update-task",
+   "args": "task=211 done=true",
+   "head": "22753bc92"
+  },
+  {
+   "at": "2026-09-16T16:25:40Z",
+   "op": "append-desc",
+   "args": "task=209",
+   "head": "22753bc92"
+  },
+  {
+   "at": "2026-09-16T16:25:40Z",
+   "op": "update-task",
+   "args": "task=209 done=true",
+   "head": "22753bc92"
+  },
+  {
+   "at": "2026-09-16T16:25:40Z",
+   "op": "append-desc",
+   "args": "task=37",
+   "head": "22753bc92"
+  },
+  {
+   "at": "2026-09-16T16:25:40Z",
+   "op": "update-task",
+   "args": "task=37 done=true",
+   "head": "22753bc92"
+  },
+  {
+   "at": "2026-09-16T16:25:40Z",
+   "op": "append-desc",
+   "args": "task=80",
+   "head": "22753bc92"
+  },
+  {
+   "at": "2026-09-16T16:25:41Z",
+   "op": "update-task",
+   "args": "task=80 done=true",
+   "head": "22753bc92"
+  },
+  {
+   "at": "2026-09-16T16:25:41Z",
+   "op": "append-desc",
+   "args": "task=99",
+   "head": "22753bc92"
+  },
+  {
+   "at": "2026-09-16T16:25:41Z",
+   "op": "update-task",
+   "args": "task=99 done=true",
+   "head": "22753bc92"
+  },
+  {
+   "at": "2026-09-16T16:26:06Z",
+   "op": "append-desc",
+   "args": "task=193",
+   "head": "22753bc92"
+  },
+  {
+   "at": "2026-09-16T16:26:06Z",
+   "op": "append-desc",
+   "args": "task=154",
+   "head": "22753bc92"
+  },
+  {
+   "at": "2026-09-16T16:26:07Z",
+   "op": "append-desc",
+   "args": "task=106",
+   "head": "22753bc92"
+  },
+  {
+   "at": "2026-09-16T16:26:07Z",
+   "op": "append-desc",
+   "args": "task=130",
+   "head": "22753bc92"
+  },
+  {
+   "at": "2026-09-16T16:26:07Z",
+   "op": "append-desc",
+   "args": "task=88",
+   "head": "22753bc92"
+  },
+  {
+   "at": "2026-09-16T16:26:07Z",
+   "op": "append-desc",
+   "args": "task=75",
+   "head": "22753bc92"
+  },
+  {
+   "at": "2026-09-16T16:26:07Z",
+   "op": "append-desc",
+   "args": "task=109",
+   "head": "22753bc92"
+  },
+  {
+   "at": "2026-09-16T16:26:07Z",
+   "op": "append-desc",
+   "args": "task=150",
+   "head": "22753bc92"
+  },
+  {
+   "at": "2026-09-16T16:26:08Z",
+   "op": "append-desc",
+   "args": "task=54",
+   "head": "22753bc92"
+  },
+  {
+   "at": "2026-09-16T16:26:08Z",
+   "op": "append-desc",
+   "args": "task=128",
+   "head": "22753bc92"
+  },
+  {
+   "at": "2026-09-16T16:26:08Z",
+   "op": "set-priority",
+   "args": "task=150 prio=2",
+   "head": "22753bc92"
+  },
+  {
+   "at": "2026-09-16T16:26:08Z",
+   "op": "set-due-date",
+   "args": "task=54 due=2026-12-31",
+   "head": "22753bc92"
+  },
+  {
+   "at": "2026-09-16T16:26:08Z",
+   "op": "set-due-date",
+   "args": "task=58 due=2026-12-31",
+   "head": "22753bc92"
+  },
+  {
+   "at": "2026-09-16T16:26:34Z",
+   "op": "create-task",
+   "args": "proj=2 title=Delete the old shortcut code now the neural versions are proven safe (word-novelty, pronoun-spotting, question-routing)",
+   "head": "22753bc92"
+  },
+  {
+   "at": "2026-09-16T16:26:34Z",
+   "op": "label-task",
+   "args": "task=216 label=2",
+   "head": "22753bc92"
+  },
+  {
+   "at": "2026-09-16T16:26:34Z",
+   "op": "create-task",
+   "args": "proj=2 title=Recognize an object made of several combined features at once (configural binding)",
+   "head": "22753bc92"
+  },
+  {
+   "at": "2026-09-16T16:26:34Z",
+   "op": "label-task",
+   "args": "task=217 label=4",
+   "head": "22753bc92"
+  },
+  {
+   "at": "2026-09-16T16:26:35Z",
+   "op": "create-task",
+   "args": "proj=2 title=Redirect emotion-word detection from text tricks to grounding/embodiment",
+   "head": "22753bc92"
+  },
+  {
+   "at": "2026-09-16T16:26:35Z",
+   "op": "label-task",
+   "args": "task=218 label=5",
+   "head": "22753bc92"
   }
  ]
 }
