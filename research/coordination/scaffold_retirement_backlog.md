@@ -306,3 +306,11 @@ NOW are recorded here, append-only, per the section's own convention.
   library-level `enable_spiking_sc` default was tried, found to introduce a real no-regression problem, and
   REVERTED — see
   `research/findings/2026-09-05-enable-spiking-sc-split-verdict-organ-flag-GO-library-default-reverted.md`.
+
+## RANK-15 CORRECTION (2026-09-16, drift-#12 catch by the scope-idle-lanes workflow)
+- **Rank 15 (self-schema authorship neural-turn-class) — CLOSED GO 6/6, NOT "PARTIAL 5/6".** The "READY TO BUILD
+  NOW" line above ("now PARTIAL 5/6, residual characterized") is STALE — it was never synced after the 2026-09-06 fix.
+  Actual state: commit `b0d3c916a` fixed the seed-100 miss via DG pattern separation (catalog D.12), switch-test 6/6,
+  accuracy 1.000, all anti-cheats collapse to chance, robust operating-point PLATEAU, re-verified at full --n-pairs.
+  Finding `2026-09-05-selfschema-authorship-neural-turnclass-derisk-PARTIAL.md` front-matter was flipped partial->go
+  same-day. Do NOT re-scope rank-15 as build-ahead — it is a closed GO de-risk (default-OFF, not wired).
