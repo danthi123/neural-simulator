@@ -91,7 +91,7 @@ def spiking_qroute_enabled() -> bool:
     priority cascade unchanged and this organ never built -> `_extract_route` byte-identical to pre-wiring. Mirrors
     `spiking_anaphor_detection_organ.spiking_anaphor_enabled()`'s default-off semantics (a NEW retirement landing
     default-OFF; the flip to default-ON rides a separate integrated no-regression soak)."""
-    return os.environ.get("BRAIN_SPIKING_QROUTE", "0").strip().lower() in ("1", "true", "on", "yes")
+    return os.environ.get("BRAIN_SPIKING_QROUTE", "1").strip().lower() in ("1", "true", "on", "yes")
 
 
 def spiking_qroute_lesioned() -> bool:

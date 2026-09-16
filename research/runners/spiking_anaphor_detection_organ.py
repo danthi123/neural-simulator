@@ -84,7 +84,7 @@ def spiking_anaphor_enabled() -> bool:
     call site's pre-existing host `set` membership test unchanged and this organ never built -> byte-identical to
     pre-wiring. Mirrors `spiking_novelty_habituation_organ.spiking_novelty_enabled()`'s default-off semantics (a NEW
     retirement landing default-OFF; the flip to default-ON rides a separate integrated no-regression soak)."""
-    return os.environ.get("BRAIN_SPIKING_ANAPHOR", "0").strip().lower() in ("1", "true", "on", "yes")
+    return os.environ.get("BRAIN_SPIKING_ANAPHOR", "1").strip().lower() in ("1", "true", "on", "yes")
 
 
 def spiking_anaphor_lesioned() -> bool:

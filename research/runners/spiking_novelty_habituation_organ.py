@@ -84,7 +84,7 @@ def spiking_novelty_enabled() -> bool:
     path unchanged and this organ never built -> byte-identical to pre-wiring. Mirrors `da_drives_enabled()`'s
     default-off semantics (this is a NEW retirement landing default-OFF; the flip to default-ON rides a separate
     integrated no-regression soak)."""
-    return os.environ.get("BRAIN_SPIKING_NOVELTY", "0").strip().lower() in ("1", "true", "on", "yes")
+    return os.environ.get("BRAIN_SPIKING_NOVELTY", "1").strip().lower() in ("1", "true", "on", "yes")
 
 
 def spiking_novelty_lesioned() -> bool:
