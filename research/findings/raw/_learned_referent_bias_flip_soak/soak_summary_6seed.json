@@ -1,0 +1,207 @@
+{
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "n_go": 6,
+  "go": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+  ],
+  "results": {
+    "42": {
+      "seed": 42,
+      "host": "cat",
+      "GO": true,
+      "off_byte_identical": true,
+      "on_installed": true,
+      "on_matches_host": true,
+      "lesion_diverges": true,
+      "off": {
+        "installed": false,
+        "feat_compat_is_none": true,
+        "held_ok": true,
+        "resolved": "cat",
+        "n_heard_facts": 120
+      },
+      "on": {
+        "installed": true,
+        "feat_compat_is_none": false,
+        "held_ok": true,
+        "resolved": "cat",
+        "n_heard_facts": 120
+      },
+      "lesion": {
+        "installed": true,
+        "feat_compat_is_none": false,
+        "held_ok": true,
+        "resolved": null,
+        "n_heard_facts": 120
+      },
+      "elapsed_s": 75.7
+    },
+    "43": {
+      "seed": 43,
+      "host": "cat",
+      "GO": true,
+      "off_byte_identical": true,
+      "on_installed": true,
+      "on_matches_host": true,
+      "lesion_diverges": true,
+      "off": {
+        "installed": false,
+        "feat_compat_is_none": true,
+        "held_ok": true,
+        "resolved": "cat",
+        "n_heard_facts": 120
+      },
+      "on": {
+        "installed": true,
+        "feat_compat_is_none": false,
+        "held_ok": true,
+        "resolved": "cat",
+        "n_heard_facts": 120
+      },
+      "lesion": {
+        "installed": true,
+        "feat_compat_is_none": false,
+        "held_ok": true,
+        "resolved": null,
+        "n_heard_facts": 120
+      },
+      "elapsed_s": 75.1
+    },
+    "44": {
+      "seed": 44,
+      "host": "cat",
+      "GO": true,
+      "off_byte_identical": true,
+      "on_installed": true,
+      "on_matches_host": true,
+      "lesion_diverges": true,
+      "off": {
+        "installed": false,
+        "feat_compat_is_none": true,
+        "held_ok": true,
+        "resolved": "cat",
+        "n_heard_facts": 120
+      },
+      "on": {
+        "installed": true,
+        "feat_compat_is_none": false,
+        "held_ok": true,
+        "resolved": "cat",
+        "n_heard_facts": 120
+      },
+      "lesion": {
+        "installed": true,
+        "feat_compat_is_none": false,
+        "held_ok": true,
+        "resolved": null,
+        "n_heard_facts": 120
+      },
+      "elapsed_s": 75.4
+    },
+    "100": {
+      "seed": 100,
+      "host": "cat",
+      "GO": true,
+      "off_byte_identical": true,
+      "on_installed": true,
+      "on_matches_host": true,
+      "lesion_diverges": true,
+      "off": {
+        "installed": false,
+        "feat_compat_is_none": true,
+        "held_ok": true,
+        "resolved": "cat",
+        "n_heard_facts": 120
+      },
+      "on": {
+        "installed": true,
+        "feat_compat_is_none": false,
+        "held_ok": true,
+        "resolved": "cat",
+        "n_heard_facts": 120
+      },
+      "lesion": {
+        "installed": true,
+        "feat_compat_is_none": false,
+        "held_ok": true,
+        "resolved": null,
+        "n_heard_facts": 120
+      },
+      "elapsed_s": 75.2
+    },
+    "101": {
+      "seed": 101,
+      "host": "cat",
+      "GO": true,
+      "off_byte_identical": true,
+      "on_installed": true,
+      "on_matches_host": true,
+      "lesion_diverges": true,
+      "off": {
+        "installed": false,
+        "feat_compat_is_none": true,
+        "held_ok": true,
+        "resolved": "cat",
+        "n_heard_facts": 120
+      },
+      "on": {
+        "installed": true,
+        "feat_compat_is_none": false,
+        "held_ok": true,
+        "resolved": "cat",
+        "n_heard_facts": 120
+      },
+      "lesion": {
+        "installed": true,
+        "feat_compat_is_none": false,
+        "held_ok": true,
+        "resolved": null,
+        "n_heard_facts": 120
+      },
+      "elapsed_s": 75.3
+    },
+    "102": {
+      "seed": 102,
+      "host": "cat",
+      "GO": true,
+      "off_byte_identical": true,
+      "on_installed": true,
+      "on_matches_host": true,
+      "lesion_diverges": true,
+      "off": {
+        "installed": false,
+        "feat_compat_is_none": true,
+        "held_ok": true,
+        "resolved": "cat",
+        "n_heard_facts": 120
+      },
+      "on": {
+        "installed": true,
+        "feat_compat_is_none": false,
+        "held_ok": true,
+        "resolved": "cat",
+        "n_heard_facts": 120
+      },
+      "lesion": {
+        "installed": true,
+        "feat_compat_is_none": false,
+        "held_ok": true,
+        "resolved": null,
+        "n_heard_facts": 120
+      },
+      "elapsed_s": 75.1
+    }
+  }
+}

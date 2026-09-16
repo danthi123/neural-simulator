@@ -111,7 +111,7 @@ def biased_competition_enabled(env=None) -> bool:
 # (>= 2 held referents), same as the host lexicon it replaces — turning this ON with the WTA OFF is inert.
 BRAIN_BIASED_COMPETITION_LEARNED_BIAS_ENV = "BRAIN_BIASED_COMPETITION_LEARNED_BIAS"
 
-_LEARNED_BIAS_DEFAULT_ON = False  # default OFF -- the flip+delete of the host lexicon is a reviewed follow-on
+_LEARNED_BIAS_DEFAULT_ON = True   # 2026-09-16 FLIPPED default-ON: the learned spiking feature-compatibility referent-bias is the production default (host content_bias_target lexicon demoted to the <40-facts / WTA-off fallback, never reached in the ≥40-fact production KB). VERIFIED: 6-seed flip-soak GO (off_byte_identical + on_matches_host + lesion_diverges all 6) + integrated /api/brain-chat no-regression all_pass 0/38 (AWS r7i). BRAIN_BIASED_COMPETITION_LEARNED_BIAS=0 opts out. RETIRABLE_NOW -> RETIRED needs deleting content_bias_target + handling the <40-fact degrade (a reviewed follow-on).
 
 
 def learned_bias_enabled(env=None) -> bool:

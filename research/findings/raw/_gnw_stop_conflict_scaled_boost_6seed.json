@@ -1,0 +1,273 @@
+{
+  "runner": "_gnw_stop_conflict_scaled_boost_derisk",
+  "verdict": "GO",
+  "go": true,
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "byte-identical-off (no new info keys; flag-off reproducible)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "HIGH-severity upstream conflict still clears on >=5/6 seeds",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "lesion still wins regardless of conflict_scale (all seeds)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "swap-only fallback unchanged (no upstream conflict -> fixed BOOST_GAIN) (all seeds)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "determinism (build-twice identical n_post) (all seeds)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    }
+  ],
+  "disabled_processes": [
+    {
+      "process": "native_short_term_plasticity",
+      "why": "STD targets the workspace recurrence in-runner; native STP off"
+    }
+  ],
+  "undefined_reasons": [],
+  "n_seeds": 6,
+  "n_seed_go": 6,
+  "n_high_severity_cleared": 6,
+  "n_moderate_severity_cleared_characterized": 5,
+  "all_byte_identical_off": true,
+  "all_lesion_holds": true,
+  "all_swap_fallback_unchanged": true,
+  "all_determinism": true,
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "per_seed": [
+    {
+      "seed": 42,
+      "seed_go": true,
+      "byte_identical_off": {
+        "no_new_keys": true,
+        "reproducible": true,
+        "cleared": true,
+        "n_post": 0,
+        "lead_nonempty": true
+      },
+      "high_severity_scaled": {
+        "conf": 0.05,
+        "scale": 0.95,
+        "scaled_flag": true,
+        "cleared": true,
+        "lead_nonempty": true
+      },
+      "moderate_severity_characterized": {
+        "conf": 0.5,
+        "cleared": true,
+        "boost": 0.07083333333333333
+      },
+      "lesion_still_wins": {
+        "holds": true,
+        "lead_empty": true
+      },
+      "swap_only_fallback": {
+        "no_new_keys": true,
+        "unchanged": true,
+        "lead_on": "Setting the held thread aside \u2014 ",
+        "lead_off": "Setting the held thread aside \u2014 "
+      },
+      "determinism": true
+    },
+    {
+      "seed": 43,
+      "seed_go": true,
+      "byte_identical_off": {
+        "no_new_keys": true,
+        "reproducible": true,
+        "cleared": true,
+        "n_post": 0,
+        "lead_nonempty": true
+      },
+      "high_severity_scaled": {
+        "conf": 0.05,
+        "scale": 0.95,
+        "scaled_flag": true,
+        "cleared": true,
+        "lead_nonempty": true
+      },
+      "moderate_severity_characterized": {
+        "conf": 0.5,
+        "cleared": true,
+        "boost": 0.07083333333333333
+      },
+      "lesion_still_wins": {
+        "holds": true,
+        "lead_empty": true
+      },
+      "swap_only_fallback": {
+        "no_new_keys": true,
+        "unchanged": true,
+        "lead_on": "Setting the held thread aside \u2014 ",
+        "lead_off": "Setting the held thread aside \u2014 "
+      },
+      "determinism": true
+    },
+    {
+      "seed": 44,
+      "seed_go": true,
+      "byte_identical_off": {
+        "no_new_keys": true,
+        "reproducible": true,
+        "cleared": true,
+        "n_post": 0,
+        "lead_nonempty": true
+      },
+      "high_severity_scaled": {
+        "conf": 0.05,
+        "scale": 0.95,
+        "scaled_flag": true,
+        "cleared": true,
+        "lead_nonempty": true
+      },
+      "moderate_severity_characterized": {
+        "conf": 0.5,
+        "cleared": true,
+        "boost": 0.07083333333333333
+      },
+      "lesion_still_wins": {
+        "holds": true,
+        "lead_empty": true
+      },
+      "swap_only_fallback": {
+        "no_new_keys": true,
+        "unchanged": true,
+        "lead_on": "Setting the held thread aside \u2014 ",
+        "lead_off": "Setting the held thread aside \u2014 "
+      },
+      "determinism": true
+    },
+    {
+      "seed": 100,
+      "seed_go": true,
+      "byte_identical_off": {
+        "no_new_keys": true,
+        "reproducible": true,
+        "cleared": true,
+        "n_post": 0,
+        "lead_nonempty": true
+      },
+      "high_severity_scaled": {
+        "conf": 0.05,
+        "scale": 0.95,
+        "scaled_flag": true,
+        "cleared": true,
+        "lead_nonempty": true
+      },
+      "moderate_severity_characterized": {
+        "conf": 0.5,
+        "cleared": true,
+        "boost": 0.07083333333333333
+      },
+      "lesion_still_wins": {
+        "holds": true,
+        "lead_empty": true
+      },
+      "swap_only_fallback": {
+        "no_new_keys": true,
+        "unchanged": true,
+        "lead_on": "Setting the held thread aside \u2014 ",
+        "lead_off": "Setting the held thread aside \u2014 "
+      },
+      "determinism": true
+    },
+    {
+      "seed": 101,
+      "seed_go": true,
+      "byte_identical_off": {
+        "no_new_keys": true,
+        "reproducible": true,
+        "cleared": true,
+        "n_post": 0,
+        "lead_nonempty": true
+      },
+      "high_severity_scaled": {
+        "conf": 0.05,
+        "scale": 0.95,
+        "scaled_flag": true,
+        "cleared": true,
+        "lead_nonempty": true
+      },
+      "moderate_severity_characterized": {
+        "conf": 0.5,
+        "cleared": true,
+        "boost": 0.07083333333333333
+      },
+      "lesion_still_wins": {
+        "holds": true,
+        "lead_empty": true
+      },
+      "swap_only_fallback": {
+        "no_new_keys": true,
+        "unchanged": true,
+        "lead_on": "Setting the held thread aside \u2014 ",
+        "lead_off": "Setting the held thread aside \u2014 "
+      },
+      "determinism": true
+    },
+    {
+      "seed": 102,
+      "seed_go": true,
+      "byte_identical_off": {
+        "no_new_keys": true,
+        "reproducible": true,
+        "cleared": true,
+        "n_post": 0,
+        "lead_nonempty": true
+      },
+      "high_severity_scaled": {
+        "conf": 0.05,
+        "scale": 0.95,
+        "scaled_flag": true,
+        "cleared": true,
+        "lead_nonempty": true
+      },
+      "moderate_severity_characterized": {
+        "conf": 0.5,
+        "cleared": false,
+        "boost": 0.07083333333333333
+      },
+      "lesion_still_wins": {
+        "holds": true,
+        "lead_empty": true
+      },
+      "swap_only_fallback": {
+        "no_new_keys": true,
+        "unchanged": true,
+        "lead_on": "Setting the held thread aside \u2014 ",
+        "lead_off": "Setting the held thread aside \u2014 "
+      },
+      "determinism": true
+    }
+  ],
+  "flag": "BRAIN_GNW_STOP_CONFLICT_SCALED (default-OFF; this de-risk is the pre-flip evidence)",
+  "lesion_lever": "BRAIN_GNW_STOP_LESION (zeroes the shared-resource-depression boost gain unconditionally, even with conflict_scale set)"
+}

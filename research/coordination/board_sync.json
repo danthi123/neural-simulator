@@ -1,7 +1,7 @@
 {
  "schema": "board-sync-v1",
  "_doc": "Audit trail of board mutations written by tools/vikunja.sh. gates/board_sync_on_status_change.py requires this file to GROW in the same commit that changes docs/PRODUCTION_INTEGRATION_LEDGER.yaml (a faculty-status change must sync the board). Seeded 2026-08-21.",
- "updated_at": "2026-09-16T17:15:12Z",
+ "updated_at": "2026-09-16T22:31:56Z",
  "entries": [
   {
    "at": "2026-08-22T02:19:31Z",
@@ -1688,6 +1688,24 @@
    "op": "append-desc",
    "args": "task=216",
    "head": "15ec47eb1"
+  },
+  {
+   "at": "2026-09-16T17:35:54Z",
+   "op": "append-desc",
+   "args": "task=217",
+   "head": "e7939dc50"
+  },
+  {
+   "at": "2026-09-16T22:31:56Z",
+   "op": "create-task",
+   "args": "proj=2 title=Retire two more hand-written shortcuts by wiring the brain's own neurons (attention-bias + thought-stop strength)",
+   "head": "080614a00"
+  },
+  {
+   "at": "2026-09-16T22:31:56Z",
+   "op": "label-task",
+   "args": "task=219 label=1",
+   "head": "080614a00"
   }
  ]
 }

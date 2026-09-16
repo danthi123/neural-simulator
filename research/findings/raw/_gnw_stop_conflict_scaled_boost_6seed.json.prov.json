@@ -1,0 +1,35 @@
+{
+ "run_id": "1789582940-2335033",
+ "runner": "research/runners/_gnw_stop_conflict_scaled_boost_derisk.py",
+ "argv": [
+  "/home/node/derisk-pool/sim/research/runners/_gnw_stop_conflict_scaled_boost_derisk.py",
+  "--seeds",
+  "42",
+  "43",
+  "44",
+  "100",
+  "101",
+  "102",
+  "--json",
+  "research/findings/raw/_gnw_stop_conflict_scaled_boost_6seed.json"
+ ],
+ "git_sha": "65c5a334",
+ "git_dirty": true,
+ "source_kind": "git_archive",
+ "source_manifest_sha256": "1579a2df20c60d94c51f6d7ea2fa6149e3384fa8d63693f523e2efbd47e08414",
+ "source_manifest_verified_at_start": true,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": true,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-16T14:22:20",
+ "env": {
+  "POOL_CHECKED_REASON": "verify-first (this session): webapp/gnw_global_stop.py:_StopWorkspace.run() passes fixed BOOST_GAIN/MARGIN_REF into run_conflict_stop (confirmed at source); detect_trigger() already reads chat._last_gnw_delib[n_ignited] and gnw_deliberation.py populates chat._last_gnw_delib[conf] at the SAME call site (confirmed reachable); BRAIN_GNW_STOP_LESION zeroing boost_gain->0 is the shipped load-bearing proof (2026-08-26-gnw-global-workspace-stop-production-wirein-GO.md). RAG: no prior lever against THIS constant found; the only related precedent is 2026-09-04-gnw-lc-ne-adaptive-gain-swap-eviction-GO.md, a DIFFERENT module (gnw_thought_swap BOOST_GAIN) via a NEW lc population -- this lever is smaller (reuse-only, no new circuitry). New flag BRAIN_GNW_STOP_CONFLICT_SCALED default-off, wiring verified locally via mocked bridge (zero neuron compute); this queues the REAL spiking 6-seed verification.",
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_gnw_stop_conflict_scaled_boost_6seed.json"
+}

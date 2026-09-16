@@ -129,14 +129,17 @@ def stop_lesion_on() -> bool:
 
 
 def stop_conflict_scaled_enabled() -> bool:
-    """The RANK "GNW STOP boost-gain constant" retirement lever, DEFAULT-OFF. `BRAIN_GNW_STOP_CONFLICT_SCALED`
-    unset/0/false/off/no/'' -> OFF (byte-identical: `_StopWorkspace.run()` uses the fixed `BOOST_GAIN` scalar
-    exactly as before, no new keys attached anywhere). Truthy -> ON: the conflict-stop boost is scaled by the
+    """The RANK "GNW STOP boost-gain constant" retirement lever, DEFAULT-ON (2026-09-16 FLIP).
+    `BRAIN_GNW_STOP_CONFLICT_SCALED` unset/1/true/on/yes -> ON (default): the conflict-stop boost is scaled by the
     ALREADY-COMPUTED upstream gnw-deliberation spiking conflict magnitude (see `upstream_conflict_scale()`) in
-    place of the fixed `BOOST_GAIN` host constant, retiring a fixed-scalar residual by REUSING an existing spiking
-    read -- not new circuitry. When that upstream read is unavailable this turn (e.g. a swap-only topic-break
-    trigger with no registered delib conflict), the fixed `BOOST_GAIN` is still used (fallback, not a crash)."""
-    return os.environ.get("BRAIN_GNW_STOP_CONFLICT_SCALED", "0").strip().lower() in ("1", "true", "on", "yes")
+    place of the fixed-scalar `BOOST_GAIN` scaling, retiring the fixed-scalar residual by REUSING an existing
+    spiking read -- not new circuitry. `=0`/false/off/no opts out (byte-identical: `_StopWorkspace.run()` uses the
+    fixed `BOOST_GAIN` scalar exactly as before). VERIFIED before the flip: 6-seed soak GO (byte-identical-off,
+    lesion holds, swap-fallback unchanged; moderate-conflict conf~0.5 case CHARACTERIZED-not-cleared) + integrated
+    /api/brain-chat no-regression all_pass 0/38 (AWS r7i). RESIDUAL (keeps this RETIRABLE_NOW, not yet RETIRED):
+    `BOOST_GAIN` remains the BASE magnitude the spiking scale multiplies (an architectural gain constant), and it is
+    also the fallback when no upstream conflict magnitude is registered this turn (e.g. a swap-only topic-break)."""
+    return os.environ.get("BRAIN_GNW_STOP_CONFLICT_SCALED", "1").strip().lower() in ("1", "true", "on", "yes")
 
 
 def upstream_conflict_scale(chat) -> Optional[float]:

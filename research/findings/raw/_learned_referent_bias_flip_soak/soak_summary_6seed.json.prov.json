@@ -1,0 +1,36 @@
+{
+ "run_id": "1789585701-2339101",
+ "runner": "research/runners/_learned_referent_bias_flip_soak.py",
+ "argv": [
+  "/home/node/derisk-pool/sim/research/runners/_learned_referent_bias_flip_soak.py",
+  "--seeds",
+  "42",
+  "43",
+  "44",
+  "100",
+  "101",
+  "102",
+  "--out",
+  "research/findings/raw/_learned_referent_bias_flip_soak/soak_summary_6seed.json"
+ ],
+ "git_sha": "65c5a334",
+ "git_dirty": true,
+ "source_kind": "git_archive",
+ "source_manifest_sha256": "1579a2df20c60d94c51f6d7ea2fa6149e3384fa8d63693f523e2efbd47e08414",
+ "source_manifest_verified_at_start": true,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": true,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-16T15:08:21",
+ "env": {
+  "POOL_CHECKED_REASON": "gap#3 A1 biased-competition wire-in 6-seed flip-soak RE-DISPATCH: the 14:01 dispatch exited 1 as a dispatch-before-provision race (runner rsync'd to nodes only at 14:18); reproduced clean on pool41 15:06 (builds + runs). Confirms answer-preservation vs host lexicon + lesion-load-bearing across 6 seeds -> gates the flip. CPU/pool, through gaming.",
+  "SIM_BACKEND": "numpy",
+  "CUDA_VISIBLE_DEVICES": ""
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_learned_referent_bias_flip_soak/soak_summary_6seed.json"
+}
