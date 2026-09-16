@@ -81,6 +81,22 @@ actual bend/no-bend test. POOL lane — 36 affect cells sweeping `--xinh-exc-w/-
 (`opp_xinh_e*_i*` paths) = the actual Rank-7 competition-strength rung. `tools/stock_research_queue.sh` n_sentences
 bumped to 2000000 for future correctness.
 
+**⭐ RETIREMENT ROADMAP (from the 2026-09-16 readiness audit — 12-agent source-verified fan-out over the 54
+BLOCKED-but-default-on rows; `research/findings/raw/_retirement_readiness_audit_20260916/result.json`).** Key
+finding: scaffold-retirement is NOT 54 independent walls — **45/54 are truly blocked, the great majority on
+`neural-render` (the own-voice spiking mouth): their ONLY host residual is the reply-TEXT render.** So FINISHING THE
+OWN-VOICE MOUTH is the mass-retirement unlock (already the owner's #1 mouth fork / token-scaling arc — this reframes
+it from a fluency nicety to the single highest-leverage retirement lever). 0 free quick wins (all 4 hidden-retirable
+claims refuted on adversarial verify). **5 small-de-risk targets NOT mouth-gated** (each a wire-in of an
+already-validated spiking mechanism): (1) **selective-attention-biased-competition** [HIGH — wire the 6/6-GO+CI-pinned
+SpikingFeatureCompat into the 4 MultiTurnAgent build sites; BUILD AGENT LAUNCHED]; (2) **gnw-global-stop** [wire the
+already-computed upstream spiking conflict magnitude into the boost-scaling; BUILD AGENT LAUNCHED]; (3)
+**metacog-monitor** [wire the 6/6-GO _spiking_margin; caveat: ambiguous-band partially open]; (4) **semantic-recall**
+[ledger STALE + wire the already-default-True spiking unbind/cleanup flags into the sharded LTM path]; (5)
+**da-write-gain-spiking** [judgment: small write-event detector OR re-adjudicate 2 constants vs the LEGITIMATE
+precedent — not a clean freebie]. Each de-risks to wired-default-off, then the flip+integrated-verify+delete follow-on
+(today's playbook) reaches RETIRED.
+
 **PRE-DECIDED NEXT ACTIONS:**
 1. ⭐ CONTINUE scaffold-retirement (owner's #1 metric, now 4): scan the ledger for the next RETIRABLE_NOW rows and the un-retired host scaffolds — the named follow-on is `multi_turn_agent_v2.py`'s SEPARATE host-anaphor scaffold; the B-curiosity row's retirement frontier is neural-render (retire the host qualifier template). Verify-first (grep the log for each capability) before scoping.
 2. Token `_n2M` bend-test sweep PAUSED at 9/18 (owner gaming — local GPU idle, verified paused). Resume `bash tools/game.sh off` when gaming ends; harvest at 18/18: does the deep-context NLL curve BEND at ~74M tokens? (owner #1 mouth fork).

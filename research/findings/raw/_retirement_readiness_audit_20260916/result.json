@@ -1,0 +1,56 @@
+{
+ "probe": "scaffold_retirement_readiness_audit",
+ "backend": "n/a (source-audit workflow, 12 agents over 54 BLOCKED-but-default-on ledger rows)",
+ "provenance": {
+  "runner": "Workflow scaffold-retirement-readiness-audit (run wf_95f63d5c-7f7)",
+  "method": "per-row verify-first vs production source + adversarial verify of hidden-retirable claims",
+  "date": "2026-09-16",
+  "journal": ".claude/projects/-home-dant123-Projects-sim/87891831-e642-4a2f-abeb-50ea0867609b/subagents/workflows/wf_95f63d5c-7f7/journal.jsonl"
+ },
+ "summary": {
+  "total_assessed": 54,
+  "hidden_retirable_claimed": 4,
+  "hidden_retirable_verified": 0,
+  "small_derisk_away": 5,
+  "truly_blocked": 45,
+  "reply_text_only_on_neural_render": 2
+ },
+ "keystone_finding": "45 of 54 candidate rows are truly blocked, the great majority on neural-render (the own-voice spiking mouth): their ONLY host residual is the reply-TEXT render. Finishing the mouth is the mass-retirement unlock. 0 free quick wins (all 4 hidden-retirable claims refuted on adversarial verify).",
+ "small_derisk_targets": [
+  {
+   "key": "selective-attention-biased-competition",
+   "confidence": "high",
+   "residual": "host ANIMACY/VERB_SELECTS lexicon + content_bias_target() still the sole production WTA-bias path; the 4 MultiTurnAgent build sites never pass feat_compat_source",
+   "action": "wire the already-6/6-GO + CI-pinned SpikingFeatureCompat (feat_compat_source kwarg) into the build sites, flip-soak, delete host lexicon",
+   "status": "BUILD AGENT LAUNCHED 2026-09-16"
+  },
+  {
+   "key": "gnw-global-stop",
+   "confidence": "medium",
+   "residual": "fixed host BOOST_GAIN/MARGIN_REF scalars scale the conflict-stop; the upstream spiking conflict magnitude (n_ignited/nmda_norm) is already computed + consulted to fire the stop but not to scale it",
+   "action": "feed the existing spiking magnitude into _StopWorkspace.run() boost-scaling (reuse, no new circuitry)",
+   "status": "BUILD AGENT LAUNCHED 2026-09-16"
+  },
+  {
+   "key": "metacog-monitor",
+   "confidence": "medium",
+   "residual": "host stretch-normalization of role-decode confidence (ROLE_CONF_LO/HI); an already-6/6-GO spiking replacement (_spiking_margin, BRAIN_METACOG_SPIKING_MARGIN) exists unwired",
+   "action": "check prod traffic hits the ambiguous band, wire + flip behind no-regression; CAVEAT: ambiguous-band precision is a partially-open sub-problem (AUC 0.53-0.63)",
+   "status": "PLANNED"
+  },
+  {
+   "key": "semantic-recall",
+   "confidence": "medium",
+   "residual": "LEDGER STALE (cites enable_substrate_store default False, already default-True since eca75a3f1). True residual: the bulk sharded LTM never passes local_reciprocal_unbind/enable_spiking_cleanup (both already default-True on OneBrainComposer), so it runs host np.conj unbind + host numpy argmax cleanup",
+   "action": "wire the already-default-True spiking unbind/cleanup flags into the ShardedPhasorStore build path + fix the stale ledger row",
+   "status": "PLANNED (verify-first the sharded path)"
+  },
+  {
+   "key": "da-write-gain-spiking",
+   "confidence": "medium",
+   "residual": "host Hz->gain affine rescale + a fixed 260pA write-event background current (source self-labels the latter 'host-legitimate boundary trigger')",
+   "action": "either build a small is-this-a-write-event neural detector, OR re-adjudicate the constants against the LEGITIMATE precedent (continuous-state-engine). Judgment call \u2014 NOT a clean freebie (the Hz->gain rescale is real host arithmetic)",
+   "status": "PLANNED (owner/main-session judgment)"
+  }
+ ]
+}
