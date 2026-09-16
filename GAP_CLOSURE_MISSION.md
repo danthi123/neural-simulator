@@ -96,10 +96,18 @@ verified 6-seed soak GO + integrated no-regression 0/38 → **RETIRABLE_NOW**; d
 STAYS **BLOCKED:neural-render** because its clearing-STRING template needs the own-voice mouth — a concrete case of
 the mouth being the keystone]; (3)
 **metacog-monitor** [⛔ RULED OUT as a retirement — verify-first 2026-09-16 found the audit premise stale: BRAIN_METACOG_SPIKING_MARGIN is ALREADY wired + an INTEGRATED prod-flip verify already returned NO-GO (one-directional overconfidence, 09153561d, rescued to main 1e303b3cd); stays safely wired-default-OFF, pool re-verify vs current main stocked]; (4) **semantic-recall**
-[ledger STALE + wire the already-default-True spiking unbind/cleanup flags into the sharded LTM path]; (5)
-**da-write-gain-spiking** [judgment: small write-event detector OR re-adjudicate 2 constants vs the LEGITIMATE
-precedent — not a clean freebie]. Each de-risks to wired-default-off, then the flip+integrated-verify+delete follow-on
-(today's playbook) reaches RETIRED.
+[⛔ NOT retirable now — verify-first 2026-09-16 (agent) established the audit claim was too optimistic: the production
+bulk LTM (TieredFactStore→ShardedPhasorStore, 78,857 facts) runs host np.conj unbind + host argmax cleanup by default,
+and the spiking replacements (local_reciprocal_unbind / enable_spiking_cleanup) are validated ONLY at TOY scale
+(5-10 facts, unsharded; local_reciprocal_unbind has NO 6-seed finding). Ledger row corrected (fbc0b32b). This IS
+board #188 (retire the host VSA math). Next rung: wire the 2 flags into ShardedPhasorStore (additive/default-off) +
+a real 6-seed soak at PRODUCTION scale — GPU-BOUND (O(vocab) spiking cleanup intractable on the CPU pool), so gated
+on the local GPU (paused for gaming) or an AWS-GPU]; (5) **da-write-gain-spiking** [judgment: small write-event
+detector OR re-adjudicate 2 constants vs the LEGITIMATE precedent — not a clean freebie, weakest target, held].
+ARC OUTCOME (2026-09-16): audit → 2 flipped default-ON verified (biased-competition RETIRABLE_NOW, gnw conflict-boost
+retired but mouth-blocked), metacog + semantic-recall ruled-not-retirable-now by verify-first (2 stale audit premises
+caught + ledger corrected), da-write-gain held. scaffold_retired stays 4 (the deletes + production validations are the
+follow-ons). The keystone confirmed twice over: the own-voice MOUTH (neural-render) is the mass-retirement unlock.
 
 **PRE-DECIDED NEXT ACTIONS:**
 1. ⭐ CONTINUE scaffold-retirement (owner's #1 metric, now 4): scan the ledger for the next RETIRABLE_NOW rows and the un-retired host scaffolds — the named follow-on is `multi_turn_agent_v2.py`'s SEPARATE host-anaphor scaffold; the B-curiosity row's retirement frontier is neural-render (retire the host qualifier template). Verify-first (grep the log for each capability) before scoping.
