@@ -13,17 +13,23 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ---
 
-## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-16 ~00:40 (3 WIRING FLIPS LANDED default-ON; AWS batch done + terminated; READ FIRST; LATEST anchor)
+## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-16 ~12:10 (4 WIRING FLIPS LANDED default-ON incl. B-curiosity; HOST-REMOVAL in integrated AWS verify → RETIRED; token sweep PAUSED for gaming at 9/18; READ FIRST; LATEST anchor)
 
-✅ **WIRING FLIPS LANDED (owner's #1 priority — FINISH over de-risk).** The 2026-09-09 arc completed: the integrated
-`/api/brain-chat` no-regression battery ran on AWS r7i (128GB numpy) and returned all_pass (0/38 faculties regress)
-for all four flags. FLIPPED default-ON (commit 1f444173): `BRAIN_SPIKING_NOVELTY` (novelty→synaptic habituation),
-`BRAIN_SPIKING_ANAPHOR` (it/that/they→CA3 pattern-completion), `BRAIN_SPIKING_QROUTE` (question-route→4-way WTA) —
-each keeps a byte-identical `=0` opt-out; ledger rows added (RETIRABLE_NOW 2026-09-16, on_by_default:YES). **B-curiosity
-`_XEDGE_CD6` DEFERRED** — its no-regression passed but at the NO-GO `train_drive_scale=1.0` default; the GO calibration
-1.5 isn't main's default, so flipping now would ship the NO-GO config (next rung: port 1.5 + re-verify).
-✅ **AWS instance TERMINATED + SG deleted; `.aws_gpu` cleared — no billing leak.** Finding
-`2026-09-16-wiring-flips-novelty-anaphor-qroute-DEFAULT-ON-integrated-no-regression-GO.md`.
+✅ **4 WIRING FLIPS LANDED default-ON (owner's #1 priority — FINISH over de-risk).** The integrated `/api/brain-chat`
+no-regression battery (AWS r7i, 128GB numpy) returned all_pass (0/38 faculties regress) for all four flags. FLIPPED
+default-ON: `BRAIN_SPIKING_NOVELTY` (novelty→synaptic habituation), `BRAIN_SPIKING_ANAPHOR` (it/that/they→CA3
+pattern-completion), `BRAIN_SPIKING_QROUTE` (question-route→4-way WTA) — commit 1f444173, each a byte-identical `=0`
+opt-out; ledger rows RETIRABLE_NOW 2026-09-16, on_by_default:YES. **B-curiosity `_XEDGE_CD6` NOW LANDED too** (commit
+46e83fca, delivers board #197): the read-isolation NO-GO 3/6 is genuinely CLOSED by the `train_drive_scale=1.5`
+retune (re-verified 6/6 GO through the production wrapper's OWN self-test) and flipping it default-ON is
+answer-preserving (integrated battery all_pass, 0/38); ledger on_by_default PARTIAL→YES. Finding
+`2026-09-16-onebrain-xedge-curiosity-d6-base-rung-DEFAULT-ON-flip-GO.md`.
+🔄 **HOST-REMOVAL (the RETIRED step, owner's #1 metric) in integrated verify NOW.** Branch `worktree-agent-a7b55dca…`
+(commit af002543c) DELETES the novelty/anaphor/qroute host fallback paths so spiking is the SOLE path; merged onto
+current main (clean, disjoint files → merge c29c72bb). AWS differential verify running (bg `bebqfhbt2`): branch-default
+vs main-default across the 26 probes, isolating the one flagged ripple (qroute `_extract_route` dead-margin TIE →
+GENERIC instead of host-cascade). If clean → merge to main + set the 3 ledger rows scaffold_retired:YES/RETIRED
+(scaffold_retired 1→4), then terminate the AWS instance + delete SG. AWS instance i-0086c96333348ba32 STILL UP + BILLING.
 
 **Honest metric note:** these are `on_by_default:YES` (the brain does them by default now) but NOT yet strict
 `scaffold_retired` (host paths retained as `=0` opt-outs; RETIRABLE_NOW ages out in 14d → the forcing function to
@@ -73,11 +79,11 @@ actual bend/no-bend test. POOL lane — 36 affect cells sweeping `--xinh-exc-w/-
 bumped to 2000000 for future correctness.
 
 **PRE-DECIDED NEXT ACTIONS:**
-1. ⭐ FINISH the retirement (the owner's #1 metric): now that novelty/anaphor/qroute spiking are default-ON + integrated-verified, DELETE the 3 host paths (the `seen` set / anaphor word-list / qroute if-elif) so RETIRABLE_NOW→RETIRED (scaffold_retired 1→4). RETIRABLE_NOW ages out 2026-09-30 (the forcing function). Each: remove the host branch, keep the spiking as the sole path, re-run its `onebrain_regression_battery --flag X` to confirm still-clean, update the ledger row scaffold_retired:NO→YES + retire_status:RETIRED.
-2. Token `_n2M` bend-test sweep still running on the LOCAL GPU (~11h; owner may `game.sh on` anytime, loses ≤1 cell ~43min). Next harvest: does the NLL curve BEND at ~74M tokens? (owner #1 mouth fork).
-3. B-curiosity `_XEDGE_CD6`: no-regression passed but at the NO-GO `train_drive_scale=1.0` default — port the GO'd 1.5 to the module default + re-verify (no-regression + load-bearing at 1.5), THEN flip.
-4. Affect Rank-7 PARKED (corrected XINH sweep: gain lever exhausted, recall@FP0 pinned at 0.032; the real fix is grounding/embodiment — a separate arc, owner's multimodal steer). gap#4 done (UNDEFINED-foreclosed). Pool idle → re-stock CPU lanes with fresh scaffold-retirement de-risks.
-5. Re-arm a state-checking heartbeat while runs are live.
+1. ⭐ FINISH the retirement (the owner's #1 metric): host-removal branch (merge c29c72bb, DELETES the novelty/anaphor/qroute host paths → spiking sole) is in AWS differential verify NOW (bg `bebqfhbt2`, branch-default vs main-default over the 26 probes, checking the qroute TIE→GENERIC ripple). When it returns: if clean → merge to main + set the 3 ledger rows scaffold_retired:NO→YES + retire_status:RETIRED (scaffold_retired 1→4) + Vikunja sync, THEN terminate AWS i-0086c96333348ba32 + delete SG (stop billing); else revert. Follow-on: `multi_turn_agent_v2.py` has a SEPARATE un-retired host-anaphor scaffold. RETIRABLE_NOW ages out 2026-09-30.
+2. Token `_n2M` bend-test sweep PAUSED at 9/18 (owner gaming — local GPU idle, verified paused 12:08). Resume `bash tools/game.sh off` when gaming ends; harvest at 18/18: does the NLL curve BEND at ~74M tokens? (owner #1 mouth fork).
+3. Vikunja full freshness pass (owner-requested 2026-09-16): board-audit agent running (read-only, `af606b46`) → apply its per-task reconcile (close delivered, fix stale descriptions, add missing frontier tasks, fix timeline) when it returns. Resolve by CONTENT, never a `board:N` number.
+4. Affect Rank-7 PARKED (grounding/embodiment arc, owner's multimodal steer); gap#4 done (UNDEFINED-foreclosed). Pool idle (batch done) → stock a fresh CPU de-risk through gaming (vision n_glimpses temporal-evidence lever = the scope-workflow's named next-lever to push vision capability_go past 2/6).
+5. Heartbeat `b7vshehm6` live (verified 12:08: gpu/mem/token/pool state + OOM/off-bus/stall).
 
 **Superseded:** the 2026-09-10 anchor below (queue staged) is now HISTORY — the queue ran and is harvested here.
 

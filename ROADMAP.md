@@ -7,6 +7,13 @@ the [project handoff](HANDOFF.md), and the live state in
 board, when checked out, was `research/coordination/workboard.json` (⚠️ now ~a month
 stale — the live board is [GAP_CLOSURE_MISSION.md](GAP_CLOSURE_MISSION.md) CURRENT STATE; workboard.json is being retired).
 
+## 2026-09-16 — four hand-written shortcuts are now switched ON by default, the last one's block cleared, and deleting the old code is in its final safety check
+
+The owner's #1 metric is retiring hand-written shortcuts so the brain does the work on its own neurons. Big step this session:
+- **Four shortcut-replacements are now ON by default** (they run on every chat turn, with the old code kept only as a one-switch escape hatch): judging word-novelty, spotting pronouns, and picking how to read a question (the three de-risked last week), plus **the brain's curiosity now genuinely nudging its working memory**. That fourth one had been held back since early September because an over-strict measurement had scored it a fail; that turned out to be fixable by feeding the circuit a bit more practice signal during training — with that fix it passes cleanly on all six test seeds through the real chat path, and switching it on changes none of the brain's other 38 checked abilities. (Delivers board #197.)
+- **Deleting the old shortcut code (the actual "retirement") is in its final safety check now.** Turning the neural versions on is one thing; removing the dead hand-written fallbacks so the neural path is the *only* path is what actually counts on the #1 metric. That deletion is done on a branch and is running a whole-brain before/after comparison on a rented high-memory machine to confirm it changes no answers (the one behavior it *could* change — how a perfectly-tied question-routing decision breaks — is exactly what the check is watching). If clean, it merges and three more shortcuts move to fully-retired.
+- **Vision "binding" got another genuine nudge (still partial).** Giving the recognizer more brief looks at the scene and averaging them (temporal evidence integration) roughly doubled how often it clears the strict per-seed bar (from 2-of-6 to 4-of-6 seeds), peaking at six looks and then leveling off — a real step, but still not a solved binding task; the next lever is a richer underlying code, not more looks. Zero assistant-usage compute (ran on the mini-PCs while the owner gamed).
+
 ## 2026-09-15 — harvest of the 5-day self-serve compute queue: the voice's data-scale bet holds (but the test needs to reach further), and an emotion sweep that tuned the wrong dial
 
 Over the break the machine ran a queue of background jobs the owner started and paused at will — zero assistant usage. Catching up on the results:
