@@ -112,7 +112,7 @@ import os
 # fix (the read is now fixed; the residual 3/6 is a genuine mechanism weakness, a NO-DEFER next-lever). The
 # original GO + production-wire findings are retracted (docs/RETRACTED.md). `BRAIN_ONEBRAIN_XEDGE_CURIOSITY_D6=1`
 # still forces it on for A/B / the mechanism re-work.
-_XEDGE_CD6_DEFAULT_ON = False
+_XEDGE_CD6_DEFAULT_ON = True   # 2026-09-16 FLIP (VERIFIED): the base rung is re-tuned to 6/6 GO at train_drive_scale=1.5 (this module's own --grow --semantic-drop --train-drive-scale 1.5 6-seed self-test: research/findings/raw/_onebrain_xedge_curiosity_d6_production_frozen_traindrivescale1.5_6seed.json, n_go=6, every seed lesion_attributable+clears_floor+frac_attr~1.0), and flipping it default-ON is answer-preserving in the integrated /api/brain-chat no-regression battery (research/findings/raw/_regression_battery/battery_BRAIN_ONEBRAIN_XEDGE_CURIOSITY_D6.json, all_pass, 0/38 faculties regress, AWS r7i numpy). The cross-edge curiosity->d6.w0 is default-ON; BRAIN_ONEBRAIN_XEDGE_CURIOSITY_D6=0 opts out (reproduces the read-isolation-corrected calibration for an A/B)
 
 
 def xedge_curiosity_d6_enabled() -> bool:
@@ -170,11 +170,11 @@ def xedge_curiosity_d6_train_drive_scale() -> float:
     separate, owner-flagged flag this does not set)."""
     v = os.environ.get("BRAIN_ONEBRAIN_XEDGE_CURIOSITY_D6_TRAIN_DRIVE_SCALE")
     if v is None:
-        return 1.0
+        return 1.5   # 2026-09-16: default ported to the 6/6-GO retune (df56bb8d8); =1.0 opt-out reproduces the pre-retune NO-GO calibration for an explicit A/B
     try:
         return float(v)
     except ValueError:
-        return 1.0
+        return 1.5
 
 
 class XedgeCuriosityD6ProductionPool:
