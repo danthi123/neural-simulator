@@ -1,0 +1,37 @@
+{
+ "run_id": "1789512121-2197469",
+ "runner": "research/runners/_affect_onsubstrate_noise_robust_convergence_derisk.py",
+ "argv": [
+  "/home/node/derisk-pool/sim/research/runners/_affect_onsubstrate_noise_robust_convergence_derisk.py",
+  "--opponent",
+  "--spiking",
+  "--xinh-exc-w",
+  "8",
+  "--xinh-inh-w",
+  "6",
+  "--seeds",
+  "43",
+  "--out",
+  "research/findings/raw/_affect_gain_sweep/opp_xinh_e8_i6_s43.json"
+ ],
+ "git_sha": "65c5a334",
+ "git_dirty": true,
+ "source_kind": "git_archive",
+ "source_manifest_sha256": "cfe2d86f8bb58634f5247c32b3ceaa051fd06375742494ec9d9f0b3f26b101d4",
+ "source_manifest_verified_at_start": true,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": true,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-15T18:42:01",
+ "env": {
+  "POOL_CHECKED_REASON": "Rank-7 CORRECTED opponent gain sweep (2026-09-15): the 09-10/11 sweep sweeping --to-fs-w/--fs-inh-w was INERT in --opponent mode (all 42 cells byte-identical: those knobs drive the shared-FS path, not the opponent cross-inhibition). The --opponent path (build_opponent_convergence_bridge) uses XINH_EXC_W/XINH_INH_W (defaults 8.0/12.0) \u2014 the EXACT knobs Rank-7 (608a06304) named as its next rung (imported from a ridge-fit template, never tuned for this convergence; Kang/Watanabe/Pu 2024 PNAS: specialization reliability tracks competition STRENGTH). On-substrate (--spiking) recall@FP0 at default XINH = ~0.032 worst (below 0.5 bar), 6-seed. Verified no artifact at this (xinh_exc,xinh_inh,seed) tuple exists. CPU/pool.",
+  "SIM_BACKEND": "numpy",
+  "CUDA_VISIBLE_DEVICES": ""
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_affect_gain_sweep/opp_xinh_e8_i6_s43.json"
+}
