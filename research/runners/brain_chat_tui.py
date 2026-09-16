@@ -1917,6 +1917,9 @@ def _load_self_knowledge(codes_path, curriculum_path, seed, use_multiturn, enabl
     for a, v, p in facts:
         inner.hear(f"{a} {v} {p}", polarity="AFFIRM")
         n += 1
+    # gap #3 residual A1 retirement (env-gated, default OFF = byte-identical) -- see biased_competition_prod.py.
+    from research.runners.biased_competition_prod import maybe_install_learned_referent_bias as _maybe_learned_bias
+    _maybe_learned_bias(agent, seed=seed)
     aliases = set(cur.get("self_reference", {}).get("agent_aliases", [])) | DEFAULT_SELF_ALIASES
     return agent, aliases, n
 
@@ -1983,6 +1986,11 @@ def _build_tiny_demo(seed, use_multiturn, enable_neural_render, composer_kind="r
     inner = getattr(agent, "agent", agent)
     for a, v, p in facts:
         inner.hear(f"{a} {v} {p}", polarity="AFFIRM")
+    # gap #3 residual A1 retirement (env-gated, default OFF = byte-identical) -- see biased_competition_prod.py.
+    # (this tiny fixture's 5 facts are below build_referent_bias_from_experience's min_facts floor, so even ON
+    # this is a no-op here -- kept for consistency with the other 3 production build sites.)
+    from research.runners.biased_competition_prod import maybe_install_learned_referent_bias as _maybe_learned_bias
+    _maybe_learned_bias(agent, seed=seed)
     return agent, DEFAULT_SELF_ALIASES, len(facts)
 
 

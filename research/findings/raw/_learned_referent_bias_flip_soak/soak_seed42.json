@@ -1,0 +1,42 @@
+{
+  "seeds": [
+    42
+  ],
+  "n_go": 1,
+  "go": [
+    true
+  ],
+  "results": {
+    "42": {
+      "seed": 42,
+      "host": "cat",
+      "GO": true,
+      "off_byte_identical": true,
+      "on_installed": true,
+      "on_matches_host": true,
+      "lesion_diverges": true,
+      "off": {
+        "installed": false,
+        "feat_compat_is_none": true,
+        "held_ok": true,
+        "resolved": "cat",
+        "n_heard_facts": 120
+      },
+      "on": {
+        "installed": true,
+        "feat_compat_is_none": false,
+        "held_ok": true,
+        "resolved": "cat",
+        "n_heard_facts": 120
+      },
+      "lesion": {
+        "installed": true,
+        "feat_compat_is_none": false,
+        "held_ok": true,
+        "resolved": null,
+        "n_heard_facts": 120
+      },
+      "elapsed_s": 55.6
+    }
+  }
+}

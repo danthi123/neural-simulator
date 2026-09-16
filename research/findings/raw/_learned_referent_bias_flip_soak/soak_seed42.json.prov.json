@@ -1,0 +1,27 @@
+{
+ "run_id": "1789581359-3626895",
+ "runner": "research/runners/_learned_referent_bias_flip_soak.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-af04c5334f893e4b0/research/runners/_learned_referent_bias_flip_soak.py",
+  "--seed",
+  "42"
+ ],
+ "git_sha": "e7939dc50",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-16T13:55:59",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_learned_referent_bias_flip_soak/soak_seed42.json"
+}
