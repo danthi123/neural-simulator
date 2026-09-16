@@ -78,3 +78,79 @@ def biased_competition_enabled(env=None) -> bool:
             return True
         return str(raw).strip().lower() not in _FALSY
     return str(raw if raw is not None else "").strip().lower() in _TRUTHY
+
+
+# ---------------------------------------------------------------------------------------------------------------
+# GAP #3 RESIDUAL A1 RETIREMENT (2026-09-16 wire-in de-risk) — the referent-bias FEATURE-COMPATIBILITY chooser.
+#
+# `biased_competition_enabled()` above gates whether the WTA itself is built at all. Independently of that, once the
+# WTA IS active, `MultiTurnAgent._resolve_biased` still asks the HOST `content_bias_target` lexicon
+# (`biased_competition_buffer.ANIMACY` / `VERB_SELECTS`) which held referent gets the content bias current — a host
+# lookup, not a brain-based decision (BRAIN-BASED-ONLY standard, CLAUDE.md). An already-6-seed-GO, already-CI-pinned
+# (`tests/test_gap3_spiking_feature_compat.py`) spiking replacement exists —
+# `research/runners/_gap3_spiking_feature_compat_derisk.SpikingFeatureCompat`, exposed as
+# `MultiTurnAgent(feat_compat_source=...)` — plus a DEPLOYMENT helper,
+# `MultiTurnAgent.build_referent_bias_from_experience()`, that LEARNS the concept-animacy / verb-selection
+# compatibility map from the agent's OWN heard SVO facts (its conversational experience), then installs the
+# resulting `SpikingFeatureCompat` as `_feat_compat_source`. Finding:
+# `research/findings/2026-07-18-gap3-A1-learned-feature-compatibility-cheap-first-GO.md`.
+#
+# THIS FLAG (default OFF — this wire-in's own de-risk scope, NOT yet flipped default-on): every live build site
+# constructs the agent, teaches/restores its facts, then calls `maybe_install_learned_referent_bias(agent)` below.
+# Flag OFF (unset, or any FALSY spelling) -> the call is a byte-identical no-op (`learned_bias_enabled()` returns
+# False -> the helper returns False immediately without touching `agent` at all) -> `_feat_compat_source` stays
+# `None` -> `_resolve_biased` keeps asking the host `content_bias_target` lexicon, EXACTLY as before this flag
+# existed. Flag ON -> the helper calls `agent.build_referent_bias_from_experience()`, which itself no-ops (returns
+# False, host lexicon keeps answering) unless the agent has heard >= `min_facts` SVO facts — so even ON, a
+# freshly-built agent with few facts is unaffected until it has accumulated enough conversational experience.
+#
+#     BRAIN_BIASED_COMPETITION_LEARNED_BIAS   unset / "0"/"false"/"off"/"no"/""   -> OFF (default; host lexicon)
+#                                              "1"/"true"/"on"/"yes"              -> ON  (learn from own experience)
+#
+# Independent of `BRAIN_BIASED_COMPETITION`: the learned-bias chooser only matters once the WTA itself is active
+# (>= 2 held referents), same as the host lexicon it replaces — turning this ON with the WTA OFF is inert.
+BRAIN_BIASED_COMPETITION_LEARNED_BIAS_ENV = "BRAIN_BIASED_COMPETITION_LEARNED_BIAS"
+
+_LEARNED_BIAS_DEFAULT_ON = False  # default OFF -- the flip+delete of the host lexicon is a reviewed follow-on
+
+
+def learned_bias_enabled(env=None) -> bool:
+    """Return True iff the LEARNED spiking feature-compatibility referent-bias chooser (gap #3 residual A1) should
+    be installed in place of the host `content_bias_target` lexicon lookup. Default OFF: unset or any of
+    {0,false,off,no,''} -> False (byte-identical to before this flag existed); any other value -> True. Mirrors
+    `biased_competition_enabled`'s spelling rules but with the OPPOSITE (OFF) default anchor -- this capability has
+    not yet earned its own production flip."""
+    src = os.environ if env is None else env
+    raw = src.get(BRAIN_BIASED_COMPETITION_LEARNED_BIAS_ENV)
+    if _LEARNED_BIAS_DEFAULT_ON:
+        if raw is None:
+            return True
+        return str(raw).strip().lower() not in _FALSY
+    return str(raw if raw is not None else "").strip().lower() in _TRUTHY
+
+
+def maybe_install_learned_referent_bias(agent, min_facts=40, seed=None, env=None) -> bool:
+    """If `learned_bias_enabled()`, try to LEARN the referent-bias feature-compatibility from `agent`'s own heard
+    facts and install it as `agent._feat_compat_source` (gap #3 residual A1 deployment), replacing the host
+    `content_bias_target` lexicon lookup for THIS agent's pronoun resolution. Call once, AFTER the agent's facts have
+    been taught/restored (so `agent.heard_facts()` sees them), at every production build site.
+
+    Returns True iff the learned chooser was installed. Every non-installing path is a documented no-op that leaves
+    the host lexicon (or whatever `feat_compat_source` the caller already passed) answering exactly as before:
+      - flag OFF (default)                                   -> returns False, `agent` untouched.
+      - `agent` has no `build_referent_bias_from_experience`  -> returns False (e.g. a plain `BrainConversationalAgent`
+        build site, which some callers use when `use_multiturn=False`; this helper is safe to call unconditionally).
+      - fewer than `min_facts` heard SVO facts                -> `build_referent_bias_from_experience` itself
+        returns False (its own documented floor); this helper propagates that.
+      - any exception while learning (a malformed/degenerate heard-fact corpus) -> caught, returns False, so a
+        production build never crashes because the learned-bias experiment misbehaves on real conversational data.
+    """
+    if not learned_bias_enabled(env):
+        return False
+    fn = getattr(agent, "build_referent_bias_from_experience", None)
+    if fn is None:
+        return False
+    try:
+        return bool(fn(min_facts=min_facts, seed=seed))
+    except Exception:
+        return False
