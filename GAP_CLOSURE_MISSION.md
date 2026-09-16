@@ -88,9 +88,13 @@ finding: scaffold-retirement is NOT 54 independent walls — **45/54 are truly b
 OWN-VOICE MOUTH is the mass-retirement unlock (already the owner's #1 mouth fork / token-scaling arc — this reframes
 it from a fluency nicety to the single highest-leverage retirement lever). 0 free quick wins (all 4 hidden-retirable
 claims refuted on adversarial verify). **5 small-de-risk targets NOT mouth-gated** (each a wire-in of an
-already-validated spiking mechanism): (1) **selective-attention-biased-competition** [HIGH — wire the 6/6-GO+CI-pinned
-SpikingFeatureCompat into the 4 MultiTurnAgent build sites; BUILD AGENT LAUNCHED]; (2) **gnw-global-stop** [wire the
-already-computed upstream spiking conflict magnitude into the boost-scaling; BUILD AGENT LAUNCHED]; (3)
+already-validated spiking mechanism): (1) **selective-attention-biased-competition** [✅ FLIPPED default-ON
+2026-09-16 (BRAIN_BIASED_COMPETITION_LEARNED_BIAS) — learned spiking feature-compat replaces the host lexicon;
+verified 6-seed soak GO + integrated no-regression 0/38 → **RETIRABLE_NOW**; delete content_bias_target + handle the
+<40-fact degrade → RETIRED]; (2) **gnw-global-stop** [✅ FLIPPED default-ON 2026-09-16 (BRAIN_GNW_STOP_CONFLICT_SCALED)
+— the conflict-boost is now scaled by the brain's own spiking conflict magnitude; that residual RETIRED, but the row
+STAYS **BLOCKED:neural-render** because its clearing-STRING template needs the own-voice mouth — a concrete case of
+the mouth being the keystone]; (3)
 **metacog-monitor** [⛔ RULED OUT as a retirement — verify-first 2026-09-16 found the audit premise stale: BRAIN_METACOG_SPIKING_MARGIN is ALREADY wired + an INTEGRATED prod-flip verify already returned NO-GO (one-directional overconfidence, 09153561d, rescued to main 1e303b3cd); stays safely wired-default-OFF, pool re-verify vs current main stocked]; (4) **semantic-recall**
 [ledger STALE + wire the already-default-True spiking unbind/cleanup flags into the sharded LTM path]; (5)
 **da-write-gain-spiking** [judgment: small write-event detector OR re-adjudicate 2 constants vs the LEGITIMATE
