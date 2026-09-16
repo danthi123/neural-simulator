@@ -236,12 +236,24 @@ NOW are recorded here, append-only, per the section's own convention.
   (`research/findings/2026-09-05-gateB-appraisal-interoceptive-production-flip-GO.md`). Verified in the current
   checkout: `affect_production_organ.py::appraisal_interoceptive_enabled()` returns `True` when
   `BRAIN_AFFECT_APPRAISAL_INTEROCEPTIVE` is unset. Do not re-list this as build-ahead fodder.
-- **Rank 9 (metacog confidence host formula) — moved from "fresh" (unattempted) to de-risked PARTIAL,
-  default-OFF.** A spiking winner-vs-runner-up recall-margin (reusing the existing Izhikevich cleanup
-  competition) tracks the host confidence formula (Pearson r=0.959) and is load-bearing by lesion on 6/6 seeds;
-  the honestly-characterized residual is precision in the ambiguous middle band (~50% agreement there), not an
-  unexamined gap. See `research/findings/2026-09-05-metacog-spiking-recall-margin-derisk-PARTIAL.md`. Not wired
-  into production; `mean_role_confidence`'s host formula stays the default.
+- **Rank 9 (metacog confidence host formula) — CORRECTED 2026-09-16: already WIRED (flag-gated, default-OFF),
+  and the production-default flip is already integration-verified NO-GO, not an open "ready to flip" item.**
+  The prior wording below ("Not wired into production") was misread by a later session as "the code path does
+  not exist," when it meant only "not the default" — the flag (`BRAIN_METACOG_SPIKING_MARGIN`) has been wired
+  end-to-end since the PARTIAL de-risk commit (`2ca5370e8`, on `main`). A follow-on INTEGRATED 6-seed
+  verification through the real `webapp.server.brain_chat` handler (not the composer-in-isolation the PARTIAL
+  de-risk used) found the flip unsafe: load-bearing + content-preserving, but on 3/6 seeds a real
+  degraded-recall turn read CONFIDENT under the flag while the shipped host evidence correctly hedged the
+  identical turn (4/42 natural noise-sweep opportunities, 0 in the reverse direction) — a one-directional
+  overconfidence regression on the honesty-hedge's own content. This verification lived only on an unmerged
+  branch (`research/metacog-spiking-margin-prodflip-verify`, commit `09153561d`) until rescued onto `main`
+  2026-09-16; see `research/findings/2026-09-05-metacog-spiking-margin-prodflip-verify-NOGO.md` (its ADDENDUM
+  records the rescue + flags that the verification predates the `eca75a3f1` onebrain-composer-default flip, so
+  a re-run against present `main` is queued rather than trusted as-is). Original PARTIAL characterization:
+  `research/findings/2026-09-05-metacog-spiking-recall-margin-derisk-PARTIAL.md` (Pearson r=0.959 vs. the host
+  formula, load-bearing 6/6, ambiguous-middle-band residual ~50% agreement). `mean_role_confidence`'s host
+  formula stays the production default; do not re-schedule this as build-ahead fodder without reading the NO-GO
+  finding first.
 - **Rank 10 (curiosity novelty binary host constant) — moved from "de-risked start" to a full 6/6-seed GO
   de-risk, default-OFF.** `TopicNoveltyGate` reads a graded [0,1] novelty for the SPECIFIC topic off the same
   Bogacz-Brown anti-Hebbian familiarity projector already validated for the v320 familiarity gate, retiring the

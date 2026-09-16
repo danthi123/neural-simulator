@@ -216,6 +216,16 @@ class RFPhasorComposer:
         # change at any construction call site (the `enable_sparse_index` precedent) -- the owner reviews any
         # default-on flip separately; leave OFF here. See
         # research/findings/2026-09-05-metacog-spiking-recall-margin-derisk*.md.
+        #
+        # ⛔ DO NOT re-attempt a default-ON flip without reading
+        # research/findings/2026-09-05-metacog-spiking-margin-prodflip-verify-NOGO.md first (rescued 2026-09-16
+        # from an unmerged branch, commit 09153561d). An INTEGRATED 6-seed verification through the real
+        # `webapp.server.brain_chat` handler already found this NO-GO: load-bearing + content-preserving, but on
+        # 3/6 seeds a real degraded-recall turn read CONFIDENT under the flag while the shipped host evidence
+        # correctly hedged the identical turn (4/42 natural noise-sweep opportunities, 0 in the reverse
+        # direction) -- a one-directional overconfidence regression on the honesty-hedge's own content. That
+        # verification predates the onebrain-composer-default flip (`eca75a3f1`); treat it as needing a re-run
+        # against present `main`, not as stale/ignorable.
         self.spiking_recall_margin = bool(spiking_recall_margin) or (
             os.environ.get("BRAIN_METACOG_SPIKING_MARGIN", "").strip().lower() in ("1", "true", "on", "yes"))
         # `_margin_drive_pA` (measured 2026-09-05, NOT `_cleanup_drive_pA`): the winner-PICK's 60pA settles this
