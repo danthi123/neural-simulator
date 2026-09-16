@@ -56,6 +56,10 @@ CONTRACT (additive, reversible, byte-identical-off). 2026-08-26 FLIPPED DEFAULT-
     perturb the downstream RNG-dependent organs, so the OTHER response fields stay byte-identical.
   * The workspace build (~0.12s) is lazy on the first interrupt turn and kept warm; each subsequent interrupt turn
     runs one ~0.1s stop decision.
+  * `stop_conflict_scaled_enabled()` (`BRAIN_GNW_STOP_CONFLICT_SCALED`, DEFAULT-OFF): unset/0/false/off/no/'' ->
+    OFF, `_StopWorkspace.run()` takes the exact pre-existing `boost_gain = BOOST_GAIN` branch and `observe_turn()`
+    attaches NO new `gnw_stop` key -> BYTE-IDENTICAL. Truthy -> the boost is scaled by the upstream
+    gnw-deliberation spiking conflict magnitude when one registered this turn (see `upstream_conflict_scale()`).
 
 REUSE-BY-IMPORT (NO `sim/` edit). The divisively-normalized distributed workspace build, the Tsodyks-Markram shared-
 recurrence depression (the STOP effector) and the conflict-triggered stop protocol come STRAIGHT from the de-risk
@@ -72,7 +76,15 @@ HONEST RESIDUALS (named, not claimed closed).
      load-bearing on the surface, which the lesion proves -- zero the depression term and the lead collapses).
   3. The conflict boost is a host-read margin scaling a neuromodulatory enhancement of the STD (a faithful
      conflict->neuromodulator effector), host-side until an ACC/BG circuit computes it from synaptic inputs -- the
-     named next rung (inherited from the de-risk's remaining-scaffold #2).
+     named next rung (inherited from the de-risk's remaining-scaffold #2). PARTIAL RETIREMENT (additive,
+     default-OFF): `BRAIN_GNW_STOP_CONFLICT_SCALED` substitutes the fixed `BOOST_GAIN` scalar with the
+     ALREADY-COMPUTED upstream gnw-deliberation spiking conflict magnitude (`chat._last_gnw_delib['conf']`, the
+     SAME per-turn read `detect_trigger()` below already consults for `n_ignited>=2`) -- see
+     `upstream_conflict_scale()` / `stop_conflict_scaled_enabled()`. This reuses an existing spiking read in place
+     of the constant; it does NOT yet close the residual (an ACC/BG circuit still does not COMPUTE the boost from
+     synaptic inputs directly -- it reads a host dict populated by another organ's spiking readout), and it only
+     changes the boost magnitude, not the `margin_ref` calibration constant (left untouched -- that calibrates the
+     STOP's OWN local sensor, not the upstream substitution).
 """
 from __future__ import annotations
 
@@ -114,6 +126,49 @@ def stop_lesion_on() -> bool:
     the two-content workspace STAYS >=2 co-ignited (the stale content bleeds) -> the clean-stop condition fails -> the
     clearing lead VANISHES (proving the SPIKING depression of the shared recurrence does the clearing, not a host if)."""
     return os.environ.get("BRAIN_GNW_STOP_LESION", "0").strip().lower() in ("1", "true", "on", "yes")
+
+
+def stop_conflict_scaled_enabled() -> bool:
+    """The RANK "GNW STOP boost-gain constant" retirement lever, DEFAULT-OFF. `BRAIN_GNW_STOP_CONFLICT_SCALED`
+    unset/0/false/off/no/'' -> OFF (byte-identical: `_StopWorkspace.run()` uses the fixed `BOOST_GAIN` scalar
+    exactly as before, no new keys attached anywhere). Truthy -> ON: the conflict-stop boost is scaled by the
+    ALREADY-COMPUTED upstream gnw-deliberation spiking conflict magnitude (see `upstream_conflict_scale()`) in
+    place of the fixed `BOOST_GAIN` host constant, retiring a fixed-scalar residual by REUSING an existing spiking
+    read -- not new circuitry. When that upstream read is unavailable this turn (e.g. a swap-only topic-break
+    trigger with no registered delib conflict), the fixed `BOOST_GAIN` is still used (fallback, not a crash)."""
+    return os.environ.get("BRAIN_GNW_STOP_CONFLICT_SCALED", "0").strip().lower() in ("1", "true", "on", "yes")
+
+
+def upstream_conflict_scale(chat) -> Optional[float]:
+    """Read the ALREADY-COMPUTED upstream gnw-deliberation spiking conflict magnitude off `chat._last_gnw_delib`
+    -- the SAME per-turn dict `detect_trigger()` above already consults for `n_ignited>=2` to decide WHETHER to
+    fire the stop -- and normalize it to a [0, 1] conflict-severity scale for the boost-gain substitution:
+
+        conf = |g_win - g_runnerup| / (g_win + g_runnerup + eps)   (webapp/gnw_deliberation.py's `_conf_from_nmda`,
+        the divisive-normalized NMDA-conductance winner-vs-runnerup margin off `cp_conductance_g_nmda`)
+
+    conf~1 = a clean single winner (no upstream conflict); conf~0 = two co-ignited slots (high conflict). This
+    returns `1 - clip(conf, 0, 1)` -- 0 when the upstream read is confident/resolved, ->1 as the upstream
+    conflict sharpens -- so a HARDER upstream conflict scales the boost UP instead of the flat fixed constant.
+
+    Returns None (the caller then falls back to the fixed BOOST_GAIN, unchanged behavior) when the delib read is
+    absent/inactive/didn't register a genuine multi-candidate conflict THIS turn (info is None, not a dict,
+    `n_ignited` missing or < 2, or `conf` missing) -- e.g. a swap-only topic-break trigger with no delib conflict
+    this turn, so that path keeps its existing (unscaled) clearing strength. Read-only; never raises."""
+    try:
+        delib = getattr(chat, "_last_gnw_delib", None)
+        if not isinstance(delib, dict):
+            return None
+        n_ign = delib.get("n_ignited")
+        if not isinstance(n_ign, (int, float)) or int(n_ign) < 2:
+            return None      # no genuine upstream conflict registered this turn -> fall back to the fixed constant
+        conf = delib.get("conf")
+        if not isinstance(conf, (int, float)):
+            return None
+        c = max(0.0, min(1.0, float(conf)))
+        return 1.0 - c
+    except Exception:
+        return None
 
 
 class _StopWorkspace:
@@ -189,16 +244,26 @@ class _StopWorkspace:
             self._std = WorkspaceDepression(bridge, xp, ws_used)
         return self._built, self._std
 
-    def run(self, n_held: int, *, lesion: bool):
+    def run(self, n_held: int, *, lesion: bool, conflict_scale: Optional[float] = None):
         """Drive `n_held` (clamped to [2, N_PATTERNS]) held contents into the workspace (a stale incumbent + the
         newcomer == a co-ignited conflict) and apply the conflict-triggered depression STOP. lesion=True zeroes the
-        shared-resource-depression term (boost_gain=0). Returns (n_pre, n_post, boost, cleared). Runs on the private
-        RNG timeline; the host RNG is restored on exit."""
+        shared-resource-depression term (boost_gain=0) UNCONDITIONALLY (the lesion always wins). Otherwise:
+        `conflict_scale` (from `upstream_conflict_scale()`, only non-None when the caller has both opted in via
+        `stop_conflict_scaled_enabled()` and the upstream gnw-deliberation read registered a genuine conflict this
+        turn) substitutes `boost_gain = BOOST_GAIN * conflict_scale` for the fixed `BOOST_GAIN` scalar;
+        `conflict_scale=None` (the default, and every caller when the flag is off) leaves `boost_gain = BOOST_GAIN`
+        exactly as before -- byte-identical. Returns (n_pre, n_post, boost, cleared). Runs on the private RNG
+        timeline; the host RNG is restored on exit."""
         def _do():
             (bridge, xp, pats, privs, thal_dev, _ws_used, snap, handles), std = self._ensure()
             n = max(2, min(int(n_held), int(N_PATTERNS)))
             contents = tuple(range(n))
-            boost_gain = 0.0 if lesion else BOOST_GAIN
+            if lesion:
+                boost_gain = 0.0
+            elif conflict_scale is not None:
+                boost_gain = BOOST_GAIN * float(conflict_scale)
+            else:
+                boost_gain = BOOST_GAIN
             r = run_conflict_stop(bridge, xp, pats, privs, thal_dev, snap, std, handles["thal_tonic_pA"],
                                   do_stop=True, isolate=True, contents=contents,
                                   boost_gain=boost_gain, boost_scale=BOOST_SCALE, margin_ref=MARGIN_REF,
@@ -307,9 +372,12 @@ def observe_turn(chat, message: str = "", *, seed: int = _DEFAULT_SEED) -> Optio
         chat._last_gnw_stop = None
         return None
     lesion = stop_lesion_on()
+    # RANK "GNW STOP boost-gain constant" retirement (default-OFF; see stop_conflict_scaled_enabled()'s docstring).
+    # OFF -> conflict_scale stays None -> ws.run() takes the unchanged BOOST_GAIN branch -> no new info key below.
+    conflict_scale = upstream_conflict_scale(chat) if stop_conflict_scaled_enabled() else None
     try:
         ws = _get_workspace(seed)
-        n_pre, n_post, boost, cleared = ws.run(n_held, lesion=lesion)
+        n_pre, n_post, boost, cleared = ws.run(n_held, lesion=lesion, conflict_scale=conflict_scale)
         lead = stop_lead(cleared)
         info = {
             "on": True, "acted": True, "reason": reason, "n_held": int(n_held),
@@ -318,6 +386,9 @@ def observe_turn(chat, message: str = "", *, seed: int = _DEFAULT_SEED) -> Optio
             "reason_lead": ("clean_global_stop" if lead else
                             ("lesion_stale_bleed" if lesion else "stop_incomplete")),
         }
+        if conflict_scale is not None:   # additive; absent entirely when the flag is off or no upstream read fired
+            info["conflict_scaled"] = True
+            info["conflict_scale"] = float(conflict_scale)
     except Exception as e:   # never let the stop coupling crash / change a turn -> inert no-lead info
         info = {"on": True, "acted": False, "reason": reason, "error": f"{type(e).__name__}: {e}",
                 "lead": "", "cleared": False, "lesioned": lesion}
