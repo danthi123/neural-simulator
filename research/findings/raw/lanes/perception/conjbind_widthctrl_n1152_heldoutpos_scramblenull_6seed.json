@@ -160,7 +160,7 @@
           "learned_minus_flat_held": 0.1302,
           "rate_ceiling_minus_learned_spk": -0.0018
         },
-        "elapsed_seconds": 163.2
+        "elapsed_seconds": 113.3
       },
       "per_seed": [
         {
@@ -396,5 +396,5 @@
   },
   "mechanism": "FIXED config-B spiking front end (LIF S1->C1, fixed random S2 bank) -> C2 per-template MAX over locations spike code, AVERAGED over G independent LIF glimpses (temporal evidence integration). Readout: a LEARNED SIGNED linear discriminant (supervised three-factor delta = multinomial logistic) SPIKE-PORTED as a POPULATION of LIF class somata driven by EXCITATORY (w+ . r) MINUS FEEDFORWARD-INHIBITORY (w- . r, an interneuron carrying the common mode) drive; spiking WTA over class populations = the fully-spiking prediction. RANDOM arm = identical port, V untrained. Sources: Fremaux & Gerstner 2016; Maass et al. 2002; Brunel et al. 2004; Pouget et al. 2000; Carandini & Heeger 2012.",
   "reframe_test": "The config-C NO-GO (0.34) and R-STDP dead-end used readouts that CANNOT subtract the common mode (centroid / non-negative block-sum). A SIGNED linear discriminant with FF-inhibition + temporal integration is predicted to clear the floor AND make learning load-bearing (learned >> random). learning_load_bearing = (learned - random spiking-WTA held) >= beat_margin, per seed. GO (task) = clears NO-GO floor AND beats random at >=5/6.",
-  "elapsed_seconds": 163.2
+  "elapsed_seconds": 113.3
 }

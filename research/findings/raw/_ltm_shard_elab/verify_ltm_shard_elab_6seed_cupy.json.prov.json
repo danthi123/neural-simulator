@@ -1,5 +1,5 @@
 {
- "run_id": "1787938858-4049645",
+ "run_id": "1788610827-13814",
  "runner": "research/findings/raw/_ltm_shard_elab/verify_ltm_shard_elab.py",
  "argv": [
   "research/findings/raw/_ltm_shard_elab/verify_ltm_shard_elab.py",
@@ -13,7 +13,7 @@
   "--out",
   "research/findings/raw/_ltm_shard_elab/verify_ltm_shard_elab_6seed_cupy.json"
  ],
- "git_sha": "a9a7edc22",
+ "git_sha": "22b5afc86",
  "git_dirty": true,
  "source_kind": null,
  "source_manifest_sha256": null,
@@ -21,15 +21,15 @@
  "source_manifest_start_error": null,
  "source_manifest_verified_at_exit": null,
  "source_manifest_exit_error": null,
- "started": "2026-08-28T13:40:58",
+ "started": "2026-09-05T08:20:27",
  "env": {
   "SIM_BACKEND": "cupy"
  },
  "sim_backend": "cupy",
  "sim_backend_requested": "cupy",
  "sim_backend_cupy_importable": true,
- "corpus_check_age_s": 3239.3,
- "corpus_check_query": "read-fidelity biological read opponent push-pull dendritic-nonlinear readout distributed pattern",
+ "corpus_check_age_s": 16955.5,
+ "corpus_check_query": "curiosity novelty binary host constant spiking familiarity",
  "corpus_check_fresh": true,
  "artifact": "research/findings/raw/_ltm_shard_elab/verify_ltm_shard_elab_6seed_cupy.json"
 }

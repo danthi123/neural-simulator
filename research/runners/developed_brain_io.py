@@ -685,6 +685,12 @@ def load_developed_brain(path, *, seed=None, use_multiturn=False, enable_neural_
                                          **_slotbinder_kwargs)
     _restore_facts(agent, facts, composites=composites, onebrain_substrate=onebrain_substrate,
                    composer_kind_changed=_composer_kind_changed)
+    # gap #3 residual A1 retirement (env-gated, default OFF = byte-identical): after the saved facts are restored
+    # (so agent.heard_facts() sees this brain's own conversational experience), try to LEARN the referent-bias
+    # feature-compatibility and install it in place of the host content_bias_target lexicon lookup. A no-op
+    # (agent untouched) unless BRAIN_BIASED_COMPETITION_LEARNED_BIAS is ON -- see biased_competition_prod.py.
+    from research.runners.biased_competition_prod import maybe_install_learned_referent_bias as _maybe_learned_bias
+    _maybe_learned_bias(agent, seed=seed)
 
     # (KNOWLEDGE-SCALE, opt-in, DEFAULT-OFF = byte-identical) install a cortical LONG-TERM store so the brain can
     # hold + query bulk KNOWLEDGE (100k-1M facts) beyond the small conversation working-set (the k_max=32 co-resident

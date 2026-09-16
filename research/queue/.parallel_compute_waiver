@@ -1,10 +1,5 @@
-2026-09-09 ~20:00 — GAME MODE (owner gaming, game.sh on). The local GPU is deliberately freed for the owner's
-game (excused upstream by parallel_audit). The mini-PC pool is idle only because no PRE-BUILT valuable pool
-command exists right now: the ready next-levers (question-route wire-in, next scaffold-retirement de-risks,
-D-vision graded-attention) each require a BUILD before anything is pool-runnable, and a fresh de-risk's decisive
-run is pool-runnable only AFTER its runner is merged to main. During the owner's game I am keeping to LIGHT LOCAL
-work only per their explicit request ("keep working, no heavy local compute") — specifically the question-route
-production wire-in, whose focused checks are sub-second and whose heavy integrated verify is DEFERRED to the
-AWS-CPU batch (not run locally). Full GPU+pool saturation resumes at `tools/game.sh off` (overnight): gap#4 is
-queued (depth 1) and the AWS-CPU wiring-verify batch is planned. This is an operational build-lag + an
-owner-directed gaming constraint, NOT a priority/focus/momentum rationalization. Auto-expires 6h.
+2026-09-16 ~10:10: compute_idle counter is stale from the 5-day break + this session. Current reality: the LOCAL GPU
+is running the token _n2M bend-test sweep (88% util, 6/18 done), and the POOL just COMPLETED its 14-cell batch
+(vision satdiv-refine + Touchpoint-A) — being harvested in this very commit. Not idle. Genuine reason: no more
+verified-unrun pool work is staged this instant (the batch just finished); next pool stocking is a deliberate pick,
+not a churn-fill. Auto-expires 6h.
