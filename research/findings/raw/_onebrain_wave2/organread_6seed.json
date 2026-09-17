@@ -1,5 +1,5 @@
 {
-  "mode": "onebrain_wave1_organread",
+  "mode": "onebrain_wave2_organread",
   "seeds": [
     42,
     43,
@@ -11,7 +11,7 @@
   "per_seed": [
     {
       "seed": 42,
-      "n_all_neurons": 3418,
+      "n_all_neurons": 4658,
       "gate_a_coresidence_byte_identical": true,
       "coresident": {
         "surprise": {
@@ -55,6 +55,27 @@
           "missing": [],
           "byte_identical": true,
           "answer_same": true
+        },
+        "self_schema": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        },
+        "curiosity": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        },
+        "causal_whatif": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
         }
       },
       "gate_b_faculty_alive": true,
@@ -65,10 +86,13 @@
         "pragmatic": true,
         "comprehension": true,
         "source_provenance": true,
+        "self_schema": true,
+        "curiosity": true,
+        "causal_whatif": true,
         "surprise_sep": 103.42857142857143
       },
       "gate_c_answer_preserved": true,
-      "shipped_read_byte_identical": false,
+      "wave1_carried_read_byte_identical": true,
       "shipped": {
         "surprise": {
           "maxdelta": 0.0,
@@ -103,32 +127,56 @@
           "strict": true
         },
         "comprehension": {
-          "maxdelta": 0.1284722222222222,
-          "worst_key": "lean_margin",
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
+          "answer_same": true,
+          "strict": true
+        },
+        "source_provenance": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
+          "answer_same": true,
+          "strict": true
+        },
+        "self_schema": {
+          "maxdelta": 0.001515151515151525,
+          "worst_key": "author_rate_self",
           "missing": [],
           "read_byte_identical": false,
           "answer_same": true,
           "strict": false
         },
-        "source_provenance": {
-          "maxdelta": 0.1643630311499582,
-          "worst_key": "d_true_7",
+        "curiosity": {
+          "maxdelta": 113.71527777777777,
+          "worst_key": "want_novel_hz",
           "missing": [],
           "read_byte_identical": false,
+          "answer_same": true,
+          "strict": false
+        },
+        "causal_whatif": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
           "answer_same": true,
           "strict": false
         }
       },
       "gain0_freeze_holds": true,
       "gain0_freeze_delta": 0.0,
-      "n_frozen_edges": 26321,
+      "n_frozen_edges": 64592,
       "legacy_diverges": true,
       "legacy_delta": 24.55974578857422,
       "GO": true
     },
     {
       "seed": 43,
-      "n_all_neurons": 3418,
+      "n_all_neurons": 4658,
       "gate_a_coresidence_byte_identical": true,
       "coresident": {
         "surprise": {
@@ -172,6 +220,27 @@
           "missing": [],
           "byte_identical": true,
           "answer_same": true
+        },
+        "self_schema": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        },
+        "curiosity": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        },
+        "causal_whatif": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
         }
       },
       "gate_b_faculty_alive": true,
@@ -182,10 +251,13 @@
         "pragmatic": true,
         "comprehension": true,
         "source_provenance": true,
+        "self_schema": true,
+        "curiosity": true,
+        "causal_whatif": true,
         "surprise_sep": 103.28571428571429
       },
       "gate_c_answer_preserved": true,
-      "shipped_read_byte_identical": false,
+      "wave1_carried_read_byte_identical": true,
       "shipped": {
         "surprise": {
           "maxdelta": 0.0,
@@ -220,32 +292,56 @@
           "strict": true
         },
         "comprehension": {
-          "maxdelta": 0.13472222222222222,
-          "worst_key": "lean_margin",
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
+          "answer_same": true,
+          "strict": true
+        },
+        "source_provenance": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
+          "answer_same": true,
+          "strict": true
+        },
+        "self_schema": {
+          "maxdelta": 0.004040404040404039,
+          "worst_key": "author_rate_self",
           "missing": [],
           "read_byte_identical": false,
           "answer_same": true,
           "strict": false
         },
-        "source_provenance": {
-          "maxdelta": 0.17599619292174973,
-          "worst_key": "d_true_5",
+        "curiosity": {
+          "maxdelta": 126.90972222222221,
+          "worst_key": "want_novel_hz",
           "missing": [],
           "read_byte_identical": false,
+          "answer_same": true,
+          "strict": false
+        },
+        "causal_whatif": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
           "answer_same": true,
           "strict": false
         }
       },
       "gain0_freeze_holds": true,
       "gain0_freeze_delta": 0.0,
-      "n_frozen_edges": 26442,
+      "n_frozen_edges": 64599,
       "legacy_diverges": true,
-      "legacy_delta": 24.628597259521484,
+      "legacy_delta": 24.78581428527832,
       "GO": true
     },
     {
       "seed": 44,
-      "n_all_neurons": 3418,
+      "n_all_neurons": 4658,
       "gate_a_coresidence_byte_identical": true,
       "coresident": {
         "surprise": {
@@ -289,6 +385,27 @@
           "missing": [],
           "byte_identical": true,
           "answer_same": true
+        },
+        "self_schema": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        },
+        "curiosity": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        },
+        "causal_whatif": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
         }
       },
       "gate_b_faculty_alive": true,
@@ -299,10 +416,13 @@
         "pragmatic": true,
         "comprehension": true,
         "source_provenance": true,
+        "self_schema": true,
+        "curiosity": true,
+        "causal_whatif": true,
         "surprise_sep": 54.92307692307691
       },
       "gate_c_answer_preserved": true,
-      "shipped_read_byte_identical": false,
+      "wave1_carried_read_byte_identical": true,
       "shipped": {
         "surprise": {
           "maxdelta": 0.0,
@@ -337,32 +457,56 @@
           "strict": true
         },
         "comprehension": {
-          "maxdelta": 0.12777777777777777,
-          "worst_key": "lean_margin",
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
+          "answer_same": true,
+          "strict": true
+        },
+        "source_provenance": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
+          "answer_same": true,
+          "strict": true
+        },
+        "self_schema": {
+          "maxdelta": 0.0020202020202020193,
+          "worst_key": "author_rate_self",
           "missing": [],
           "read_byte_identical": false,
           "answer_same": true,
           "strict": false
         },
-        "source_provenance": {
-          "maxdelta": 0.24610801196749643,
-          "worst_key": "d_true_0",
+        "curiosity": {
+          "maxdelta": 121.00694444444441,
+          "worst_key": "want_novel_hz",
           "missing": [],
           "read_byte_identical": false,
+          "answer_same": true,
+          "strict": false
+        },
+        "causal_whatif": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
           "answer_same": true,
           "strict": false
         }
       },
       "gain0_freeze_holds": true,
       "gain0_freeze_delta": 0.0,
-      "n_frozen_edges": 26448,
+      "n_frozen_edges": 64802,
       "legacy_diverges": true,
       "legacy_delta": 24.57798957824707,
       "GO": true
     },
     {
       "seed": 100,
-      "n_all_neurons": 3418,
+      "n_all_neurons": 4658,
       "gate_a_coresidence_byte_identical": true,
       "coresident": {
         "surprise": {
@@ -406,6 +550,27 @@
           "missing": [],
           "byte_identical": true,
           "answer_same": true
+        },
+        "self_schema": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        },
+        "curiosity": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        },
+        "causal_whatif": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
         }
       },
       "gate_b_faculty_alive": true,
@@ -416,10 +581,13 @@
         "pragmatic": true,
         "comprehension": true,
         "source_provenance": true,
+        "self_schema": true,
+        "curiosity": true,
+        "causal_whatif": true,
         "surprise_sep": 47.13333333333333
       },
       "gate_c_answer_preserved": true,
-      "shipped_read_byte_identical": false,
+      "wave1_carried_read_byte_identical": true,
       "shipped": {
         "surprise": {
           "maxdelta": 0.0,
@@ -454,32 +622,56 @@
           "strict": true
         },
         "comprehension": {
-          "maxdelta": 0.12708333333333333,
-          "worst_key": "margin_2",
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
+          "answer_same": true,
+          "strict": true
+        },
+        "source_provenance": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
+          "answer_same": true,
+          "strict": true
+        },
+        "self_schema": {
+          "maxdelta": 0.0025252525252525276,
+          "worst_key": "author_rate_self",
           "missing": [],
           "read_byte_identical": false,
           "answer_same": true,
           "strict": false
         },
-        "source_provenance": {
-          "maxdelta": 0.3328824483803473,
-          "worst_key": "d_true_3",
+        "curiosity": {
+          "maxdelta": 131.77083333333334,
+          "worst_key": "want_novel_hz",
           "missing": [],
           "read_byte_identical": false,
+          "answer_same": true,
+          "strict": false
+        },
+        "causal_whatif": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
           "answer_same": true,
           "strict": false
         }
       },
       "gain0_freeze_holds": true,
       "gain0_freeze_delta": 0.0,
-      "n_frozen_edges": 26496,
+      "n_frozen_edges": 64597,
       "legacy_diverges": true,
       "legacy_delta": 24.837873458862305,
       "GO": true
     },
     {
       "seed": 101,
-      "n_all_neurons": 3418,
+      "n_all_neurons": 4658,
       "gate_a_coresidence_byte_identical": true,
       "coresident": {
         "surprise": {
@@ -523,6 +715,27 @@
           "missing": [],
           "byte_identical": true,
           "answer_same": true
+        },
+        "self_schema": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        },
+        "curiosity": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        },
+        "causal_whatif": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
         }
       },
       "gate_b_faculty_alive": true,
@@ -533,10 +746,13 @@
         "pragmatic": true,
         "comprehension": true,
         "source_provenance": true,
+        "self_schema": true,
+        "curiosity": true,
+        "causal_whatif": true,
         "surprise_sep": 146.4
       },
       "gate_c_answer_preserved": true,
-      "shipped_read_byte_identical": false,
+      "wave1_carried_read_byte_identical": true,
       "shipped": {
         "surprise": {
           "maxdelta": 0.0,
@@ -571,32 +787,56 @@
           "strict": true
         },
         "comprehension": {
-          "maxdelta": 0.12708333333333333,
-          "worst_key": "margin_2",
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
+          "answer_same": true,
+          "strict": true
+        },
+        "source_provenance": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
+          "answer_same": true,
+          "strict": true
+        },
+        "self_schema": {
+          "maxdelta": 0.0025252525252525276,
+          "worst_key": "author_rate_self",
           "missing": [],
           "read_byte_identical": false,
           "answer_same": true,
           "strict": false
         },
-        "source_provenance": {
-          "maxdelta": 0.255425160950678,
-          "worst_key": "d_true_2",
+        "curiosity": {
+          "maxdelta": 101.7361111111111,
+          "worst_key": "want_novel_hz",
           "missing": [],
           "read_byte_identical": false,
+          "answer_same": true,
+          "strict": false
+        },
+        "causal_whatif": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
           "answer_same": true,
           "strict": false
         }
       },
       "gain0_freeze_holds": true,
       "gain0_freeze_delta": 0.0,
-      "n_frozen_edges": 26293,
+      "n_frozen_edges": 64760,
       "legacy_diverges": true,
-      "legacy_delta": 24.659215927124023,
+      "legacy_delta": 24.82974624633789,
       "GO": true
     },
     {
       "seed": 102,
-      "n_all_neurons": 3418,
+      "n_all_neurons": 4658,
       "gate_a_coresidence_byte_identical": true,
       "coresident": {
         "surprise": {
@@ -640,6 +880,27 @@
           "missing": [],
           "byte_identical": true,
           "answer_same": true
+        },
+        "self_schema": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        },
+        "curiosity": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        },
+        "causal_whatif": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
         }
       },
       "gate_b_faculty_alive": true,
@@ -650,10 +911,13 @@
         "pragmatic": true,
         "comprehension": true,
         "source_provenance": true,
+        "self_schema": true,
+        "curiosity": true,
+        "causal_whatif": true,
         "surprise_sep": 38.736842105263165
       },
       "gate_c_answer_preserved": true,
-      "shipped_read_byte_identical": false,
+      "wave1_carried_read_byte_identical": true,
       "shipped": {
         "surprise": {
           "maxdelta": 0.0,
@@ -688,25 +952,49 @@
           "strict": true
         },
         "comprehension": {
-          "maxdelta": 0.13402777777777777,
-          "worst_key": "margin_2",
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
+          "answer_same": true,
+          "strict": true
+        },
+        "source_provenance": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
+          "answer_same": true,
+          "strict": true
+        },
+        "self_schema": {
+          "maxdelta": 0.0025252525252525276,
+          "worst_key": "author_rate_self",
           "missing": [],
           "read_byte_identical": false,
           "answer_same": true,
           "strict": false
         },
-        "source_provenance": {
-          "maxdelta": 0.23845366421330128,
-          "worst_key": "d_true_6",
+        "curiosity": {
+          "maxdelta": 113.02083333333331,
+          "worst_key": "want_novel_hz",
           "missing": [],
           "read_byte_identical": false,
+          "answer_same": true,
+          "strict": false
+        },
+        "causal_whatif": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
           "answer_same": true,
           "strict": false
         }
       },
       "gain0_freeze_holds": true,
       "gain0_freeze_delta": 0.0,
-      "n_frozen_edges": 26489,
+      "n_frozen_edges": 64622,
       "legacy_diverges": true,
       "legacy_delta": 24.352602005004883,
       "GO": true
@@ -717,7 +1005,7 @@
     "n_gate_a": 6,
     "n_gate_b": 6,
     "n_gate_c": 6,
-    "n_shipped_read_byte_identical": 0,
+    "n_wave1_carried_read_byte_identical": 6,
     "n_gain0_freeze": 6,
     "n_legacy_diverges": 6,
     "n_go": 6
@@ -757,23 +1045,47 @@
     },
     "comprehension": {
       "n_coresidence_byte_identical": 6,
-      "n_shipped_read_byte_identical": 0,
+      "n_shipped_read_byte_identical": 6,
       "n_answer_same": 6,
       "n_alive": 6,
       "max_coresidence_delta": 0.0,
-      "max_shipped_delta": 0.13472222222222222
+      "max_shipped_delta": 0.0
     },
     "source_provenance": {
+      "n_coresidence_byte_identical": 6,
+      "n_shipped_read_byte_identical": 6,
+      "n_answer_same": 6,
+      "n_alive": 6,
+      "max_coresidence_delta": 0.0,
+      "max_shipped_delta": 0.0
+    },
+    "self_schema": {
       "n_coresidence_byte_identical": 6,
       "n_shipped_read_byte_identical": 0,
       "n_answer_same": 6,
       "n_alive": 6,
       "max_coresidence_delta": 0.0,
-      "max_shipped_delta": 0.3328824483803473
+      "max_shipped_delta": 0.004040404040404039
+    },
+    "curiosity": {
+      "n_coresidence_byte_identical": 6,
+      "n_shipped_read_byte_identical": 0,
+      "n_answer_same": 6,
+      "n_alive": 6,
+      "max_coresidence_delta": 0.0,
+      "max_shipped_delta": 131.77083333333334
+    },
+    "causal_whatif": {
+      "n_coresidence_byte_identical": 6,
+      "n_shipped_read_byte_identical": 6,
+      "n_answer_same": 6,
+      "n_alive": 6,
+      "max_coresidence_delta": 0.0,
+      "max_shipped_delta": 0.0
     }
   },
   "all_go": true,
-  "label": "one-brain Wave-1 organ-read (comprehension + source_provenance folded onto the single pool, N~3418)",
+  "label": "one-brain Wave-2 organ-read (self_schema + curiosity + causal_whatif folded onto the wave-1 pool, N~4658)",
   "status": "GO",
   "go": true,
   "undefined_reasons": [],
@@ -787,7 +1099,7 @@
     },
     {
       "kind": "require",
-      "name": "(b) faculty-alive \u2014 every organ produces its live verdict on the wave1 pool, every seed",
+      "name": "(b) faculty-alive \u2014 every organ produces its live verdict on the wave2 pool, every seed",
       "ok": true,
       "detail": "measured=6 expect=6",
       "note": ""
@@ -801,7 +1113,7 @@
     },
     {
       "kind": "require",
-      "name": "gain-0 freeze holds metacog/pragmatic/comprehension/source_provenance internal edges bit-frozen across the train+read lifecycle, every seed",
+      "name": "gain-0 freeze holds self_schema/curiosity/causal_whatif internal edges bit-frozen across the train+read lifecycle, every seed",
       "ok": true,
       "detail": "measured=6 expect=6",
       "note": ""
@@ -817,11 +1129,11 @@
   "disabled_processes": [
     {
       "process": "cross-region interaction (the one-brain INTEGRATION goal)",
-      "why": "MIGRATION gate: byte-identity-in-isolation forbids cross-synapses BY DEFINITION (DESIGN \u00a74)"
+      "why": "MIGRATION gate: byte-identity-in-isolation forbids cross-synapses BY DEFINITION"
     },
     {
       "process": "live-chat production wiring (get_organ() dispatch)",
-      "why": "deliberately deferred to a separate, later commit \u2014 mirrors the base-4 single pool's own sequencing (organ-read GO landed before its production wiring commit)"
+      "why": "deliberately deferred to a separate, later commit \u2014 mirrors the wave-1 pool's own sequencing (organ-read GO landed before its production wiring commit)"
     }
   ],
   "chance": null,

@@ -1,0 +1,16 @@
+{
+  "backend": "numpy",
+  "device": "cpu",
+  "runner": "research.runners._onebrain_wave1_organread_verify",
+  "command": "SIM_BACKEND=numpy .venv/bin/python -m research.runners._onebrain_wave1_organread_verify --seeds 42,43,44,100,101,102",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "node": "pool41 (derisk-pool)",
+  "note": "pulled from pool node (rsync-back per-node-flaky); backend=numpy from the queued command"
+}
