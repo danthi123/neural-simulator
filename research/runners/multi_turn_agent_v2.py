@@ -26,17 +26,35 @@ the `cleanup_separated` placement), NOT the de-risk's marginal frozen 0.15.
 
 Reuse-by-import; NO `sim/` edit. The single-referent production path is preserved (one referent -> the most-recent
 slot is that referent -> resolves), so V2 is a strict superset of V1's anaphora capability.
+
+SCAFFOLD-RETIREMENT (2026-09-16 follow-on to `multi_turn_agent.MultiTurnAgent`'s host-list retirement). V2 carried
+its OWN separate host closed-class word-list (`_ANAPHORS = {"it","that","them","they","this"}`) for the identical
+"is this token an anaphor?" DETECTION decision V1 already moved onto the spiking CA3 pattern-completion organ
+(`spiking_anaphor_detection_organ.SpikingAnaphorDetectorOrgan`, de-risk GO
+`2026-09-09-spiking-anaphor-detection-CA3-pattern-completion-6seed-GO.md`, V1 host fallback DELETED 2026-09-16 --
+`2026-09-16-host-removal-novelty-anaphor-qroute-RETIRED-byte-identical-differential-GO.md`, which named V2's
+list as the un-retired follow-on). `_resolve` below now uses the SAME organ (the SOLE detection path, mirrored
+verbatim from `MultiTurnAgent._anaphor_is`); the host `_ANAPHORS` set is RETIRED (no fallback -- a substrate error
+propagates, exactly like V1). Byte-identical differential verified in
+`research/runners/_v2_anaphor_retire_verify.py`: the organ's `ANAPHORS` list is IDENTICAL to the deleted host set,
+so on clean typed anaphors + non-anaphor content words the spiking decision agrees with the retired host test on
+every probed token, across seeds.
 """
 from __future__ import annotations
 
 from research.runners.brain_conversational_agent import BrainConversationalAgent
 from research.runners.ordered_position_wm import OrderedPositionWM
+# SPIKING CA3 pattern-completion anaphor DETECTION (scaffold-retirement follow-on, see module docstring above).
+# This is the SOLE anaphor-detection path for V2 -- the host `word.lower() in {"it","that",...}` set test has been
+# RETIRED (host fallback DELETED); see `MultiTurnAgentV2._anaphor_is` below. Verbatim reuse of the same organ V1
+# already runs in production (default-ON since 2026-09-16).
+import research.runners.spiking_anaphor_detection_organ as _ANAPH
 
-_ANAPHORS = {"it", "that", "them", "they", "this"}
 _CORRECTION_MARKERS = {"actually", "no", "wait", "correction"}   # optional leading cue for a reconsolidation turn
 
-# Surface pronoun emitted for a recurring (singular) subject in narrate(). The matching anaphor "it" is in
-# _ANAPHORS, so the emitted pronoun is the same token the agent resolves on the substrate.
+# Surface pronoun emitted for a recurring (singular) subject in narrate(). "it" is one of the spiking detector's
+# trained anaphors (`spiking_anaphor_detection_organ`'s ANAPHORS list), so the emitted pronoun is the same token
+# the agent resolves on the substrate.
 _NARRATE_PRONOUN = "it"
 
 
@@ -59,6 +77,7 @@ class MultiTurnAgentV2:
     def __init__(self, referent_concepts, concepts=None, grounded_codes=None, seed=42,
                  wm_n_slots=7, enable_neural_render=True, composer_kind="rf"):
         self.seed = int(seed)
+        self._anaphor_organ = None    # spiking CA3 anaphor-detection organ (lazy; the SOLE detection path)
         # composer_kind passes through to the inner agent: "rf" (default, the production numpy composer) or
         # "onebrain" (the integrated one-brain composer -- the cleanup arc validates correction + anaphora on it).
         self.agent = BrainConversationalAgent(seed=seed, concepts=concepts, grounded_codes=grounded_codes,
@@ -110,10 +129,21 @@ class MultiTurnAgentV2:
             return None
         return self.wm.read_slot(self._composite, f"pos{slot}", gate=True)[0]
 
+    def _anaphor_is(self, word):
+        """Is `word` an anaphoric pronoun? The DETECTION DECISION is on the spiking substrate via the CA3
+        pattern-completion organ (lazily built once per session on this agent's seed, RNG-isolated) -- the SOLE path
+        (the host `word.lower() in {"it","that",...}` set test RETIRED). Verbatim mirror of
+        `MultiTurnAgent._anaphor_is` (research/runners/multi_turn_agent.py): a substrate error PROPAGATES -- no host
+        fallback (scaffold-retirement follow-on, see module docstring)."""
+        if self._anaphor_organ is None:
+            self._anaphor_organ = _ANAPH.SpikingAnaphorDetectorOrgan(
+                seed=self.seed, lesion=_ANAPH.spiking_anaphor_lesioned())
+        return bool(self._anaphor_organ.is_anaphor(word))
+
     def _resolve(self, word):
         """If ``word`` is an anaphor, resolve it from the most-recent discourse referent (None if unresolved);
         else return ``word`` unchanged."""
-        if isinstance(word, str) and word.lower() in _ANAPHORS:
+        if isinstance(word, str) and self._anaphor_is(word):
             return self.most_recent_referent()
         return word
 
