@@ -226,6 +226,51 @@ envelope -- do NOT route through a brain-loading battery):
       --conj-select-kwta-frac 0.1 --conj-n 1152 --conj-offset-max 4 --readout attention-gated \
       --attn-kwta-frac 0.5 --n-s2 96 --heldout-position --scramble-null --seeds 42 43 44 100 101 102 \
       --out research/findings/raw/lanes/perception/conjbind_attngated_n1152_heldoutpos_scramblenull_6seed.json
+
+SOFT/GRADED ATTENTION-GAIN READOUT (2026-09-16, this de-risk; --readout attention-gated-soft; the NAMED
+NEXT RUNG after the hard-k-WTA `--readout attention-gated` landed a REGRESSION -- research/findings/2026-09-
+09-vision-configural-binding-attention-gated-readout-NEXT-MECHANISM-PREREGISTERED.md's own closing section,
+externally confirmed there by Reynolds & Heeger (2009) Neuron 61:168: a single operation -- multiply drive by
+a GRADED attentional gain field, THEN divisive normalization -- reproduces the full spectrum of measured
+attentional effects with NO hard elimination step). Same top-down template A_c = |w_c|/mean(|w_c|) as
+`--readout attention-gated`; the ONLY change is the combination rule: `gated_r = r * (A_c **
+--attn-gain-exponent)` (continuous multiplicative gain, no k-WTA, no zeroing), then bounded via the file's
+OWN `_apply_s2_norm` satdiv primitive REUSED (not re-derived) one level up -- the same Carandini & Heeger
+semi-saturating ratio this file already applies to the S2 template population, now applied to the per-
+(trial,class) biased drive treated as a size-D population at one 'location'. This REPLACES the hard version's
+ad hoc `/k_eff_frac` renormalization with an actual divisive-normalization pool -- see
+`_attention_gated_soft_class_read` for the full mechanism. `--attn-gain-exponent <= 0` disables the gate
+ENTIRELY (both the gain multiply AND the satdiv step are skipped -- `gated_r == r` exactly, not merely
+`A_c**0==1` composed with a normalization that would otherwise still rescale `r`), so `--readout
+attention-gated-soft --attn-gain-exponent 0` reproduces `--readout linear` byte-for-byte (proven below).
+Byte-identical-off proof (both required, run before any decisive eval):
+  (a) --readout linear (default, omitted) reproduces vlin_competitive_smoke.json's own recipe exactly (the
+      new `attn_gain_exponent` argparse field is the only diff, as expected for any new default).
+  (b) --readout attention-gated-soft --attn-gain-exponent 0 reproduces the SAME numbers as (a) to the last
+      digit (the gate short-circuits to `gated = r` for every class before any drive/normalization formula
+      is ever evaluated -> mathematically identical to _spiking_class_read's E = r @ wp.T / I = r @ wm.T).
+Tiny smoke (confirms the flag parses + runs + produces a non-degenerate, non-flat readout, seconds not
+minutes):
+  SIM_BACKEND=numpy python -u -m research.runners._vision_lindiscrim_readout_derisk \
+      --seeds 42 --n-s2 24 --conj-bind fixed --conj-select competitive --conj-select-overcomplete 4 \
+      --conj-select-kwta-frac 0.1 --conj-n 96 --conj-offset-max 2 --readout attention-gated-soft \
+      --attn-gain-exponent 1.0 --n-pos-total 4 --n-ex 2 --n-glimpses 1 --heldout-position --scramble-null \
+      --out research/findings/raw/lanes/perception/vlin_attngatedsoft_smoke.json
+DECISIVE 6-seed eval (same scale/op-point as the hard-attention-gated decisive run, --readout
+attention-gated-soft the only change; local single-tenant numpy job, ~88s, per this lane's own RAM-safe
+envelope -- do NOT route through a brain-loading battery). PRE-REGISTERED GO GATE identical to the hard-
+gated lever's own (only the readout combination rule changed, stacked on the SAME lane-best `--conj-select
+competitive` bank at the SAME proven sweet-spot operating point, so any result is attributable to the gain
+form, not a different bank): task GO = beats_config_c_nogo AND learning_load_bearing, each at >=5/6 seeds,
+under --heldout-position --scramble-null. Verdict bands (fixed in advance, identical to every prior lever in
+this file): beat>=5/6 & lb>=5/6 = GO; some (>0) beats/lb short of 5/6 = PARTIAL; beat0 & lb0 = NO-GO. The
+number to beat is the competitive-selection default's own beat4/6-lb6/6 (RATE_lin_ceiling_held 0.4288) -- a
+PARTIAL at or below that is a disappointment even if technically a PARTIAL by the letter of the bands.
+  SIM_BACKEND=numpy .venv/bin/python -u -m research.runners._vision_lindiscrim_readout_derisk \
+      --ridge 0.5 --conj-bind fixed --conj-select competitive --conj-select-overcomplete 4 \
+      --conj-select-kwta-frac 0.1 --conj-n 1152 --conj-offset-max 4 --readout attention-gated-soft \
+      --attn-gain-exponent 1.0 --n-s2 96 --heldout-position --scramble-null --seeds 42 43 44 100 101 102 \
+      --out research/findings/raw/lanes/perception/conjbind_attngatedsoft_n1152_heldoutpos_scramblenull_6seed.json
 """
 from __future__ import annotations
 
@@ -283,7 +328,7 @@ OUT = Path("research/findings/raw/lanes/perception/vision_lindiscrim_readout.jso
 # ============================================================================================
 # FIXED spiking front end -> the C2 spike code (SAME features config C reads), averaged over G glimpses.
 # ============================================================================================
-def _apply_s2_norm(drive, a):
+def _apply_s2_norm(drive, a, mode=None, satdiv_n=None, satdiv_sigma=None, satdiv_scale=None):
     """The pre-readout S2 lateral normalization, factored out of the two call sites (spike + rate) so the
     2026-09-01 board-#135 opsweep finding's named next lever can be added ONCE, identically for both.
 
@@ -314,22 +359,39 @@ def _apply_s2_norm(drive, a):
     unbounded rescale-then-clip of 'z'/'alpha'. This is the actual companion process behind the citation
     both #75 and #135 already invoke for the FF-inhibition read (Carandini & Heeger) but had NOT yet
     implemented in its own (ratio, not affine) form.
+
+    `mode` (2026-09-16, additive): overrides `a.s2_norm` for THIS call only, so a DIFFERENT population
+    (e.g. `_attention_gated_soft_class_read`'s per-(trial,class) biased drive) can REUSE this exact
+    primitive -- unaffected front-end normalization choice -- without re-deriving the formula or coupling
+    the two populations' hyperparameters to the same CLI flag. `mode=None` (every existing call site) is
+    byte-identical to the prior behaviour (falls through to `a.s2_norm` exactly as before this parameter
+    existed).
+
+    `satdiv_n`/`satdiv_sigma`/`satdiv_scale` (2026-09-16, additive, 'satdiv' mode only): explicit overrides
+    for the semi-saturation exponent/constant/output-scale, so a caller normalizing a DIFFERENT population
+    (with a different natural drive magnitude than the S2 front end's bounded cosine-similarity drive that
+    `s2_satdiv_sigma`'s absolute default of 0.5 was calibrated for) can pass its OWN, population-appropriate
+    values -- e.g. an array `satdiv_sigma` broadcastable against `drive` (a per-trial, data-driven
+    semi-saturation constant) rather than a single global constant. `None` (every existing call site) falls
+    through to `a.s2_satdiv_*` exactly as before this parameter existed -- byte-identical.
     """
-    if a.s2_norm == "submean":
+    mode = a.s2_norm if mode is None else mode
+    if mode == "submean":
         return np.clip(drive - drive.mean(axis=2, keepdims=True), 0.0, None)
-    elif a.s2_norm == "z":
+    elif mode == "z":
         mu = drive.mean(axis=2, keepdims=True)
         sd = drive.std(axis=2, keepdims=True)
         return np.clip((drive - mu) / (sd + 1e-6), 0.0, None)
-    elif a.s2_norm == "alpha":
+    elif mode == "alpha":
         sd = drive.std(axis=2, keepdims=True)
         alpha = float(getattr(a, "s2_norm_alpha", 0.5))
         sigma0 = float(getattr(a, "s2_norm_sigma0", 1e-3))
         return np.clip(drive / (sigma0 + alpha * sd), 0.0, None)
-    elif a.s2_norm == "satdiv":
-        n = float(getattr(a, "s2_satdiv_n", 2.0))
-        sigma = float(getattr(a, "s2_satdiv_sigma", 0.5))
-        scale = float(getattr(a, "s2_satdiv_scale", 1.0))
+    elif mode == "satdiv":
+        n = float(getattr(a, "s2_satdiv_n", 2.0)) if satdiv_n is None else satdiv_n
+        sigma = (float(getattr(a, "s2_satdiv_sigma", 0.5)) if satdiv_sigma is None
+                 else satdiv_sigma)  # scalar OR an array broadcastable against `drive` (per-trial sigma)
+        scale = (float(getattr(a, "s2_satdiv_scale", 1.0)) if satdiv_scale is None else satdiv_scale)
         dp = np.power(np.clip(drive, 0.0, None), n)
         pool = dp.sum(axis=2, keepdims=True)  # local population's pooled suppressive drive (same axis as z/alpha)
         return scale * dp / ((sigma ** n) + pool + 1e-12)
@@ -1014,12 +1076,126 @@ def _attention_gated_class_read(r, V, b, mu, sd, a, code, base_seed):
     return pred, sp.astype(np.float32)
 
 
+def _attention_gated_soft_class_read(r, V, b, mu, sd, a, code, base_seed):
+    """SOFT/GRADED ATTENTION-GAIN READOUT (2026-09-16 next rung, `--readout attention-gated-soft`) --
+    the NAMED next rung after the hard k-WTA `_attention_gated_class_read` landed a REGRESSION
+    (research/findings/2026-09-09-vision-configural-binding-attention-gated-readout-NEXT-MECHANISM-
+    PREREGISTERED.md). That finding's own diagnosis: this lane's C2 code is a fine DISTRIBUTED cosine
+    modulation (module docstring), and zeroing half the population per (trial, class) discards exactly
+    the kind of small, broadly-distributed contribution that code is made of -- 4/6 seeds got WORSE than
+    the identical bank's plain-linear read. External verification (deep-research-at-wall gate, that
+    finding's own closing section): Reynolds & Heeger (2009), "The Normalization Model of Attention,"
+    Neuron 61:168 -- a single operation, multiplying stimulus drive by a GRADED attentional gain field
+    THEN divisive normalization, reproduces the full spectrum of measured attentional effects (including
+    WTA-like suppression of unattended units) WITHOUT any hard elimination step; WTA-like behaviour
+    EMERGES from graded gain + normalization, it is not implemented as a binary keep/discard competition.
+    See research/biology/attention-gated-readout.md's "next rung" note for the same grounding.
+
+    THE MECHANISM (SAME top-down template as `_attention_gated_class_read`, a DIFFERENT combination rule
+    downstream of it -- no k-WTA, no zeroing, anywhere in this function):
+      1. TOP-DOWN ATTENTIONAL TEMPLATE, per class, IDENTICAL to `_attention_gated_class_read`'s:
+         A_c = |w_c| / mean(|w_c|), read straight off the already-fitted discriminant (zero new
+         learning -- this is a pure read-time gate on top of the same V/b/mu/sd every other arm in this
+         file already produces).
+      2. CONTINUOUS MULTIPLICATIVE GAIN, per trial, per class (Reynolds & Heeger's `response = drive *
+         attention_gain`, no threshold, no competition): bd[n,c,j] = r[n,j] * A_c[j]**gain_exponent.
+         `--attn-gain-exponent <= 0` disables the WHOLE gate (see byte-identical-off below);
+         `--attn-gain-exponent 1` (the untuned default) is Reynolds & Heeger's own linear-in-gain form.
+      3. DIVISIVE NORMALIZATION, REUSING (not re-deriving) this file's OWN `_apply_s2_norm` satdiv
+         primitive one level up (Carandini & Heeger 2012 semi-saturating ratio drive^n/(sigma^n+pool)) --
+         the SAME bounded, semi-saturating ratio this file already applies to the S2 template population,
+         now applied to the per-(trial,class) biased drive `bd`, treated as a size-D population at one
+         'location' (reshape (N,D) -> (N,1,D) so `_apply_s2_norm`'s axis=2 pool-sum is exactly the D
+         conjunction units this class's trial is reading, then reshape the (N,1,D) result back to (N,D)).
+         The semi-saturation constant `sigma` is DATA-DRIVEN, NOT the S2 front end's own fixed absolute
+         default (`--s2-satdiv-sigma 0.5`, calibrated for ITS bounded [0,~1] cosine-similarity drive --
+         reusing that literal constant unchanged for THIS population, whose natural magnitude depends on
+         `r`'s own scale (spike counts / rate code, not a cosine similarity), was verified BY DIRECT
+         MEASUREMENT to saturate the ratio toward a near-constant ~1/D fraction regardless of the
+         per-trial signal, making `const` (the trial-INDEPENDENT class bias) dominate `net` and collapsing
+         every trial's prediction to a single class -- exactly the OPPOSITE of what a per-trial gate is
+         for): `sigma[n] = attn_satdiv_sigma_frac * mean_j(bd[n,j])`, i.e. a per-TRIAL semi-saturation
+         constant proportional to that trial's own biased-drive scale (the same self-calibrating spirit
+         `z`/`alpha` already use via `drive.std()`/`drive.mean()` -- 'satdiv' was the one mode in this file
+         that had NOT yet been made self-calibrating to an arbitrary population's scale). `satdiv_scale` is
+         set to `attn_satdiv_scale_mult * D` -- this IS the actual replacement for the hard version's ad
+         hoc `/k_eff_frac` gain-renormalization: instead of a fixed rescale by "how many units survived
+         competition", the semi-saturating ratio (which sums to an O(1/D)-per-unit fraction as pool grows,
+         a structural property of ANY population divisive normalization, not a bug) is rescaled back to a
+         magnitude comparable to a single raw unit's own drive by the population size D, so the readout
+         weights `w` (fit on the RAW, un-normalized `r` scale) see a comparably-scaled input regardless of
+         `--attn-gain-exponent`. Reynolds & Heeger's "gain then normalize" two-step, with NO unit ever
+         forced to exactly zero (only down-weighted), unlike the k-WTA `win_mask` this mode replaces.
+      4. READ: the SAME Dale's-law E/I sign-split (`_spiking_class_read`'s `w = w+ - w-`) applied to the
+         gated+normalized code instead of the raw one; the LIF class-population port + spiking WTA
+         downstream are UNCHANGED -- identical contract to `_attention_gated_class_read`/
+         `_spiking_class_read`.
+
+    BYTE-IDENTICAL-OFF: `--attn-gain-exponent <= 0` short-circuits to `gated = r` for every class BEFORE
+    either the gain-multiply or the satdiv-normalize formula is ever evaluated (not merely `A_c**0==1`
+    composed with a normalization step that would otherwise still rescale `r` by its own pooled-sum
+    divisor) -- so `--readout attention-gated-soft --attn-gain-exponent 0` reproduces
+    `_spiking_class_read`/`--readout linear` bit-for-bit, verified by direct comparison, not just by
+    construction, in the module docstring's "Byte-identical-off proof".
+
+    NOT SHARED with `_spiking_class_read`/`_attention_gated_class_read` (duplicated instead, the SAME
+    discipline `_select_conjunctions_competitive` follows relative to `_c2_rate_code`'s drive computation):
+    keeps `--readout linear` (default) and `--readout attention-gated` provably untouched -- zero risk to
+    either mode's byte-identical behaviour when this THIRD mode is off (or unused). Returns pred (N,),
+    class_spikes (N, n_classes) -- identical contract to `_spiking_class_read`."""
+    n_classes, D = V.shape
+    w = (V / sd).astype(np.float32)
+    const = (b - (w * mu).sum(axis=1)).astype(np.float32)
+    wp = np.clip(w, 0.0, None)
+    wm = np.clip(-w, 0.0, None)
+
+    absw = np.abs(w)
+    A = absw / (absw.mean(axis=1, keepdims=True) + 1e-9)          # (n_classes, D) top-down template, mean 1
+
+    N = r.shape[0]
+    exponent = float(getattr(a, "attn_gain_exponent", 1.0))
+    disabled = exponent <= 0.0
+    satdiv_n = float(getattr(a, "attn_satdiv_n", 2.0))
+    sigma_frac = float(getattr(a, "attn_satdiv_sigma_frac", 0.25))
+    scale_mult = float(getattr(a, "attn_satdiv_scale_mult", 1.0))
+
+    E = np.zeros((N, n_classes), dtype=np.float32)
+    I = np.zeros((N, n_classes), dtype=np.float32)
+    for c in range(n_classes):
+        if disabled:
+            gated = r
+        else:
+            bd = (r * np.power(A[c][None, :], exponent)).astype(np.float32)   # (N, D) continuous gain
+            bd3 = bd.reshape(N, 1, D)
+            sigma = sigma_frac * (bd3.mean(axis=2, keepdims=True) + 1e-6)     # per-trial, data-driven
+            normed = _apply_s2_norm(bd3, a, mode="satdiv", satdiv_n=satdiv_n, satdiv_sigma=sigma,
+                                     satdiv_scale=scale_mult * D)             # bounded semi-saturating gain
+            gated = normed.reshape(N, D)
+        E[:, c] = gated @ wp[c]
+        I[:, c] = gated @ wm[c]
+    net = (E - I) + const[None, :]
+    net = net - net.mean(axis=1, keepdims=True)
+    net = net * a.read_gain + a.read_bias
+    M = max(1, a.class_pop)
+    tiled = np.repeat(net, M, axis=1)
+    counts, first = lif_spike_read(np.clip(tiled, 0.0, None), a.T_read, base_seed + 7,
+                                   tau=a.tau, v_thresh=a.v_thresh, t_ref=a.t_ref,
+                                   noise=a.noise, gain=1.0)
+    sp = spike_code(counts, first, a.T_read, code).reshape(N, n_classes, M).sum(axis=2)
+    pred = sp.argmax(axis=1).astype(np.int64)
+    return pred, sp.astype(np.float32)
+
+
 def _class_read(r, V, b, mu, sd, a, code, base_seed):
-    """Dispatcher: routes to the ATTENTION-GATED readout when `--readout attention-gated`, else the
-    existing `_spiking_class_read` (the exact prior behaviour). `--readout` defaults to `linear` ->
-    every call site is byte-identical to every prior run of this file until this flag is explicitly set."""
-    if getattr(a, "readout", "linear") == "attention-gated":
+    """Dispatcher: routes to the ATTENTION-GATED (hard k-WTA) or ATTENTION-GATED-SOFT (graded gain)
+    readout per `--readout`, else the existing `_spiking_class_read` (the exact prior behaviour).
+    `--readout` defaults to `linear` -> every call site is byte-identical to every prior run of this
+    file until this flag is explicitly set."""
+    mode = getattr(a, "readout", "linear")
+    if mode == "attention-gated":
         return _attention_gated_class_read(r, V, b, mu, sd, a, code, base_seed)
+    if mode == "attention-gated-soft":
+        return _attention_gated_soft_class_read(r, V, b, mu, sd, a, code, base_seed)
     return _spiking_class_read(r, V, b, mu, sd, a, code, base_seed)
 
 
@@ -1493,17 +1669,24 @@ def main():
     # ATTENTION-GATED READOUT (2026-09-09, this de-risk; --readout attention-gated; NEXT MECHANISM after
     # the competitive-selection operating-point sweep landed EXHAUSTED). 'linear' (default) is the exact
     # existing _spiking_class_read path -> byte-identical to every prior run of this file.
-    p.add_argument("--readout", choices=["linear", "attention-gated"], default="linear",
+    p.add_argument("--readout", choices=["linear", "attention-gated", "attention-gated-soft"],
+                   default="linear",
                    help="2026-09-09 NEXT MECHANISM (pre-registered after the competitive-selection "
                         "operating-point sweep landed EXHAUSTED -- research/findings/2026-09-09-vision-"
                         "configural-binding-competitive-selection-NEXT-MECHANISM-PREREGISTERED.md). "
                         "'linear' (default) is the exact existing _spiking_class_read path, byte-identical "
                         "to every prior run of this file. 'attention-gated' inserts a per-class, per-trial "
                         "biased-competition gate (top-down attentional template x bottom-up drive, then "
-                        "k-WTA) BEFORE the same excitatory/inhibitory sign-split read -- see "
-                        "_attention_gated_class_read and research/biology/attention-gated-readout.md. "
-                        "Structure (which units EXIST, --conj-select) is untouched; this changes which "
-                        "units each class's read LISTENS TO on a given trial.")
+                        "HARD k-WTA) BEFORE the same excitatory/inhibitory sign-split read -- see "
+                        "_attention_gated_class_read and research/biology/attention-gated-readout.md; "
+                        "this landed a REGRESSION (PARTIAL-beat2/6-lb3/6), banked at that operating point. "
+                        "'attention-gated-soft' (2026-09-16, the named next rung) is the SAME top-down "
+                        "template combined with a CONTINUOUS multiplicative gain (--attn-gain-exponent, no "
+                        "hard zeroing) then bounded via this file's own _apply_s2_norm satdiv primitive "
+                        "REUSED one level up -- see _attention_gated_soft_class_read (Reynolds & Heeger "
+                        "2009 normalization-model-of-attention form). Structure (which units EXIST, "
+                        "--conj-select) is untouched by either gated mode; both change which units each "
+                        "class's read LISTENS TO (and how much) on a given trial.")
     p.add_argument("--attn-kwta-frac", type=float, default=0.5,
                    help="'attention-gated' mode only: per-(trial,class) k-WTA fraction of the D "
                         "conjunction units kept active after combining bottom-up drive with the class's "
@@ -1513,6 +1696,34 @@ def main():
                         "drive is gain-renormalized by the realized surviving fraction (see "
                         "_attention_gated_class_read). >=1.0 (or <=0.0) disables the gate -- mathematically "
                         "identical to --readout linear (byte-identical, verified before the decisive run).")
+    p.add_argument("--attn-gain-exponent", type=float, default=1.0,
+                   help="'attention-gated-soft' mode only: the exponent on the per-class top-down "
+                        "attentional template A_c in the continuous gain gated_r = r * (A_c ** "
+                        "attn_gain_exponent), bounded afterward via this file's own _apply_s2_norm satdiv "
+                        "primitive REUSED for the per-(trial,class) biased-drive population (Reynolds & "
+                        "Heeger 2009 'gain then normalize', no hard k-WTA anywhere -- see "
+                        "_attention_gated_soft_class_read). 1.0 is the untuned default (Reynolds & Heeger's "
+                        "own linear-in-gain form). <=0.0 disables the gate ENTIRELY -- gated_r == r exactly "
+                        "(the gain multiply AND the satdiv step are both skipped, not merely A_c**0==1) -- "
+                        "mathematically identical to --readout linear (byte-identical, proven below).")
+    p.add_argument("--attn-satdiv-n", type=float, default=2.0,
+                   help="'attention-gated-soft' mode only: the satdiv exponent n in drive^n/(sigma^n+pool) "
+                        "applied to the biased drive (see --attn-gain-exponent). Separate from --s2-satdiv-n "
+                        "(the S2 front end's own knob) so the two populations tune independently.")
+    p.add_argument("--attn-satdiv-sigma-frac", type=float, default=0.25,
+                   help="'attention-gated-soft' mode only: the satdiv semi-saturation constant sigma, "
+                        "computed PER TRIAL as this fraction of that trial's own mean biased drive (data-"
+                        "driven, NOT the S2 front end's fixed absolute --s2-satdiv-sigma 0.5, which was "
+                        "calibrated for a bounded [0,~1] cosine-similarity population and was measured to "
+                        "saturate/collapse the readout to a trial-independent prediction on this file's "
+                        "own spike-count-scaled population -- see _attention_gated_soft_class_read).")
+    p.add_argument("--attn-satdiv-scale-mult", type=float, default=1.0,
+                   help="'attention-gated-soft' mode only: the satdiv output-scale multiplier, applied as "
+                        "attn_satdiv_scale_mult * D (D = the conjunction-unit population size) -- restores "
+                        "the semi-saturating ratio (which sums to an O(1/D)-per-unit fraction as pool "
+                        "grows, a structural property of population divisive normalization) to a magnitude "
+                        "comparable to a single raw unit's own drive, the actual replacement for the hard "
+                        "k-WTA version's ad hoc /k_eff_frac gain-renormalization.")
     p.add_argument("--T1", type=int, default=64)
     p.add_argument("--T2", type=int, default=48)
     p.add_argument("--tau", type=float, default=8.0)
