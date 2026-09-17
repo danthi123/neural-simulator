@@ -13,7 +13,23 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ---
 
-## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-16 ~13:15 (3 HOST PATHS RETIRED — scaffold_retired 1→4, owner's #1 metric moved; 4 wiring flips + B-curiosity default-ON; token sweep PAUSED for gaming at 9/18; READ FIRST; LATEST anchor)
+## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-16 ~21:15 (biased-competition RETIRED — scaffold_retired 4→5, owner's #1 metric; graded-bias regression root-caused+FIXED; token sweep PAUSED for gaming; READ FIRST; LATEST anchor)
+
+✅ **BIASED-COMPETITION content_bias_target host lexicon RETIRED (scaffold_retired 4→5) + the pre-existing graded-bias
+regression root-caused AND fixed.** This was the LAST RETIRABLE_NOW row. Sequence (all CPU-only, GPU untouched during
+the owner's game): (1) **root-caused** the RED graded-bias CI tests via git bisect → e7f009a37 correctly removed random
+inhibitory-trait leakage the WTA rival-suppression had been leaning on (a proxy/artifact carried the result);
+(2) **fixed** it — the DESIGNED sel_FS→sel_Y cross-inhibition `fs_to_sel_weight` 5.0→7.0 (basin-centered {6,7,8},
+principled mechanism re-tune, NOT tune-to-seed-100) → de-risk 2-ref GO-arm 3/6→6/6, lesion+moat 6/6, tests green
+(graded 5/5, production 5/5, byte-identity 3/3), commit 98ffa402f on main; a 3-referent scaling residual documented
+NOT-GATEABLE; (3) **DELETED** content_bias_target + ANIMACY/VERB_SELECTS from biased_competition_buffer.py (learned
+SpikingFeatureCompat is the sole content-bias source; `_resolve_biased` has no host fallback), integrated onto main atop
+the fix. Verified: bc branch-vs-main /api/brain-chat DEFAULT differential BYTE-IDENTICAL (bc_a+bc_b, the only faculty
+the delete+fs7 touch — code-isolated; the D3 focus source answer-preservingly covers the <40-fact case). Findings
+`2026-09-16-graded-bias-regression-FIXED-...-fs7.md` + `2026-09-16-biased-competition-content-bias-target-RETIRED.md`;
+board #219 updated. **CPU-doable RETIRABLE_NOW retirement is now EXHAUSTED** — the remaining BLOCKED rows are 49 on the
+own-voice mouth (neural-render, GPU/token-sweep, paused for gaming), 6 on self-model-reward-residual, 2 on
+gnw-thought-swap. Next retirement mass unlocks on `game.sh off` → resume the token _n2M sweep → finish the mouth.
 
 ✅ **4 WIRING FLIPS LANDED default-ON (owner's #1 priority — FINISH over de-risk).** The integrated `/api/brain-chat`
 no-regression battery (AWS r7i, 128GB numpy) returned all_pass (0/38 faculties regress) for all four flags. FLIPPED
