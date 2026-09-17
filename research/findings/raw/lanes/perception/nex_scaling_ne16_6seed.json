@@ -1,0 +1,426 @@
+{
+  "probe": "vision_lindiscrim_readout",
+  "primary_code": "count",
+  "overall_verdict": "LINDISCRIM-READOUT-GO",
+  "config": {
+    "seeds": [
+      42,
+      43,
+      44,
+      100,
+      101,
+      102
+    ],
+    "code": "count",
+    "c1_code": "count",
+    "n_classes": 4,
+    "n_slots": 3,
+    "n_pos_total": 8,
+    "pos_span": 8.0,
+    "n_ex": 16,
+    "image_size": 56,
+    "slot_offset": 10.0,
+    "stroke_len": 7.0,
+    "stroke_tk": 1.8,
+    "pixel_noise": 0.03,
+    "n_orientations": 8,
+    "n_frequencies": 2,
+    "n_pos": 24,
+    "rf_radius": 3,
+    "orient_norm": "z",
+    "c1_gate": 0.15,
+    "c1_win": 6,
+    "c1_stride": 3,
+    "s2_p": 3,
+    "n_s2": 96,
+    "s2_learn": "none",
+    "s2_bcm_gain": 200.0,
+    "s2_bcm_theta_alpha": 0.02,
+    "s2_bcm_pre_floor": 0.02,
+    "s2_bcm_epochs": 5,
+    "s2_bcm_renorm": 1,
+    "s2_bcm_competitive_frac": 0.25,
+    "s2_sail_alpha_w": 0.02,
+    "s2_sail_alpha_l": 0.02,
+    "s2_sail_alpha_theta": 0.02,
+    "s2_sail_target_p": 0.1,
+    "s2_sail_competitive_frac": 0.1,
+    "s2_sail_lca_iters": 10,
+    "s2_sail_epochs": 5,
+    "s2_sail_renorm": 1,
+    "s2_rstdp_gain": 0.05,
+    "s2_rstdp_epochs": 5,
+    "s2_rstdp_competitive_frac": 0.1,
+    "s2_rstdp_depress_scale": 1.0,
+    "s2_rstdp_renorm": 1,
+    "ridge": 1.0,
+    "n_glimpses": 6,
+    "class_pop": 24,
+    "read_gain": 2.5,
+    "read_bias": 1.0,
+    "T_read": 48,
+    "s1_mode": "spiking",
+    "s2_norm": "satdiv",
+    "s2_norm_alpha": 0.5,
+    "s2_norm_sigma0": 0.001,
+    "s2_satdiv_n": 2.0,
+    "s2_satdiv_sigma": 8.0,
+    "s2_satdiv_scale": 760.0,
+    "s2_kwta_frac": 0.0,
+    "c2_graded_k": 0,
+    "c2_basis": "pooled",
+    "c2_topo_win": 6,
+    "conj_bind": "none",
+    "conj_n": 192,
+    "conj_order": "pair",
+    "conj_select": "fixed",
+    "conj_select_overcomplete": 4.0,
+    "conj_select_kwta_frac": 0.1,
+    "conj_offset_max": 4,
+    "conj_mode": "min",
+    "conj_delta0": false,
+    "conj_shuffle": false,
+    "readout": "linear",
+    "attn_kwta_frac": 0.5,
+    "attn_gain_exponent": 1.0,
+    "attn_satdiv_n": 2.0,
+    "attn_satdiv_sigma_frac": 0.25,
+    "attn_satdiv_scale_mult": 1.0,
+    "T1": 64,
+    "T2": 48,
+    "tau": 8.0,
+    "v_thresh": 1.0,
+    "t_ref": 2,
+    "noise": 0.06,
+    "s1_gain": 1.2,
+    "s2_gain": 2.0,
+    "kwta_frac": 0.15,
+    "heldout_position": true,
+    "scramble_null": true,
+    "decode_margin": 0.15,
+    "beat_margin": 0.1,
+    "pos_decode_margin": 0.15,
+    "nogo_floor": 0.34,
+    "out": "research/findings/raw/lanes/perception/nex_scaling_ne16_6seed.json"
+  },
+  "by_code": {
+    "count": {
+      "summary": {
+        "probe": "vision_lindiscrim_readout",
+        "code": "count",
+        "overall_verdict": "LINDISCRIM-READOUT-GO",
+        "seeds": [
+          42,
+          43,
+          44,
+          100,
+          101,
+          102
+        ],
+        "n_seeds": 6,
+        "chance_object": 0.25,
+        "config_c_nogo_floor": 0.34,
+        "task_go_5of6_beat_and_lb": true,
+        "per_seed_capability_go": [
+          false,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "per_seed_learning_load_bearing": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "per_seed_beats_nogo": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "decode_means": {
+          "A_v1_direct_held": 0.2337,
+          "H_flat_pool_held": 0.252,
+          "LEARNED_spkwta_train": 0.8867,
+          "LEARNED_spkwta_held": 0.5429,
+          "LEARNED_linscore_held": 0.5397,
+          "RANDOM_spkwta_held": 0.2513,
+          "RATE_lin_ceiling_held": 0.6204,
+          "centroid_spk_held_NOGO_repro": 0.4818,
+          "scramble_centroid_held": 0.2545,
+          "scramble_learned_held": 0.2604
+        },
+        "reframe_means": {
+          "learned_spkwta_held": 0.5429,
+          "random_spkwta_held": 0.2513,
+          "learned_minus_random_spkwta": 0.2917,
+          "rate_lin_ceiling_held": 0.6204,
+          "centroid_spk_NOGO_repro": 0.4818,
+          "spkport_cost": -0.0032,
+          "quantization_gap_rate_minus_spk": 0.0807
+        },
+        "dissociation_means": {
+          "object_decode_heldsplit": 0.5573,
+          "position_decode_heldsplit": 0.2878,
+          "label_shuffle_null": 0.2253
+        },
+        "verdict_fracs": {
+          "capability_go": 0.8333,
+          "beats_config_c_nogo": 1.0,
+          "beats_config_c_nogo_raw": 1.0,
+          "learning_load_bearing": 1.0,
+          "architecture_load_bearing": 1.0,
+          "scramble_null_pass": 1.0
+        },
+        "headroom": {
+          "learned_minus_random_spkwta": 0.2916,
+          "learned_minus_nogo_floor": 0.2029,
+          "learned_minus_v1_held": 0.3092,
+          "learned_minus_flat_held": 0.2909,
+          "rate_ceiling_minus_learned_spk": 0.0775
+        },
+        "elapsed_seconds": 110.9
+      },
+      "per_seed": [
+        {
+          "seed": 42,
+          "code": "count",
+          "chance_object": 0.25,
+          "chance_position": 0.25,
+          "decode": {
+            "A_v1_direct_held": 0.2148,
+            "H_flat_pool_held": 0.2539,
+            "LEARNED_spkwta_train": 0.8828,
+            "LEARNED_spkwta_held": 0.6328,
+            "LEARNED_linscore_held": 0.6172,
+            "RANDOM_spkwta_held": 0.168,
+            "RATE_lin_ceiling_held": 0.6797,
+            "centroid_spk_held_NOGO_repro": 0.5547,
+            "scramble_centroid_held": 0.25,
+            "scramble_learned_held": 0.2539
+          },
+          "reframe": {
+            "learned_minus_random_spkwta": 0.4648,
+            "spkport_cost_linscore_minus_spkwta": -0.0156,
+            "quantization_gap_rate_minus_spk": 0.0625,
+            "learning_load_bearing": true
+          },
+          "dissociation": {
+            "object_decode_heldsplit": 0.5703,
+            "position_decode_heldsplit": 0.4062,
+            "label_shuffle_null": 0.2461,
+            "position_pooled_out": false
+          },
+          "verdicts": {
+            "capability_go": false,
+            "beats_config_c_nogo": true,
+            "beats_config_c_nogo_raw": true,
+            "learning_load_bearing": true,
+            "architecture_load_bearing": true,
+            "scramble_null_pass": true
+          }
+        },
+        {
+          "seed": 43,
+          "code": "count",
+          "chance_object": 0.25,
+          "chance_position": 0.25,
+          "decode": {
+            "A_v1_direct_held": 0.207,
+            "H_flat_pool_held": 0.2461,
+            "LEARNED_spkwta_train": 0.8867,
+            "LEARNED_spkwta_held": 0.5273,
+            "LEARNED_linscore_held": 0.5352,
+            "RANDOM_spkwta_held": 0.2852,
+            "RATE_lin_ceiling_held": 0.6211,
+            "centroid_spk_held_NOGO_repro": 0.4922,
+            "scramble_centroid_held": 0.2461,
+            "scramble_learned_held": 0.2578
+          },
+          "reframe": {
+            "learned_minus_random_spkwta": 0.2422,
+            "spkport_cost_linscore_minus_spkwta": 0.0078,
+            "quantization_gap_rate_minus_spk": 0.0859,
+            "learning_load_bearing": true
+          },
+          "dissociation": {
+            "object_decode_heldsplit": 0.5859,
+            "position_decode_heldsplit": 0.25,
+            "label_shuffle_null": 0.2227,
+            "position_pooled_out": true
+          },
+          "verdicts": {
+            "capability_go": true,
+            "beats_config_c_nogo": true,
+            "beats_config_c_nogo_raw": true,
+            "learning_load_bearing": true,
+            "architecture_load_bearing": true,
+            "scramble_null_pass": true
+          }
+        },
+        {
+          "seed": 44,
+          "code": "count",
+          "chance_object": 0.25,
+          "chance_position": 0.25,
+          "decode": {
+            "A_v1_direct_held": 0.2656,
+            "H_flat_pool_held": 0.2578,
+            "LEARNED_spkwta_train": 0.8789,
+            "LEARNED_spkwta_held": 0.5625,
+            "LEARNED_linscore_held": 0.5586,
+            "RANDOM_spkwta_held": 0.2852,
+            "RATE_lin_ceiling_held": 0.6133,
+            "centroid_spk_held_NOGO_repro": 0.4766,
+            "scramble_centroid_held": 0.2461,
+            "scramble_learned_held": 0.2227
+          },
+          "reframe": {
+            "learned_minus_random_spkwta": 0.2773,
+            "spkport_cost_linscore_minus_spkwta": -0.0039,
+            "quantization_gap_rate_minus_spk": 0.0547,
+            "learning_load_bearing": true
+          },
+          "dissociation": {
+            "object_decode_heldsplit": 0.5547,
+            "position_decode_heldsplit": 0.3281,
+            "label_shuffle_null": 0.1992,
+            "position_pooled_out": true
+          },
+          "verdicts": {
+            "capability_go": true,
+            "beats_config_c_nogo": true,
+            "beats_config_c_nogo_raw": true,
+            "learning_load_bearing": true,
+            "architecture_load_bearing": true,
+            "scramble_null_pass": true
+          }
+        },
+        {
+          "seed": 100,
+          "code": "count",
+          "chance_object": 0.25,
+          "chance_position": 0.25,
+          "decode": {
+            "A_v1_direct_held": 0.2266,
+            "H_flat_pool_held": 0.2383,
+            "LEARNED_spkwta_train": 0.8789,
+            "LEARNED_spkwta_held": 0.5156,
+            "LEARNED_linscore_held": 0.5078,
+            "RANDOM_spkwta_held": 0.2539,
+            "RATE_lin_ceiling_held": 0.6328,
+            "centroid_spk_held_NOGO_repro": 0.4336,
+            "scramble_centroid_held": 0.2578,
+            "scramble_learned_held": 0.25
+          },
+          "reframe": {
+            "learned_minus_random_spkwta": 0.2617,
+            "spkport_cost_linscore_minus_spkwta": -0.0078,
+            "quantization_gap_rate_minus_spk": 0.125,
+            "learning_load_bearing": true
+          },
+          "dissociation": {
+            "object_decode_heldsplit": 0.5391,
+            "position_decode_heldsplit": 0.2031,
+            "label_shuffle_null": 0.2734,
+            "position_pooled_out": true
+          },
+          "verdicts": {
+            "capability_go": true,
+            "beats_config_c_nogo": true,
+            "beats_config_c_nogo_raw": true,
+            "learning_load_bearing": true,
+            "architecture_load_bearing": true,
+            "scramble_null_pass": true
+          }
+        },
+        {
+          "seed": 101,
+          "code": "count",
+          "chance_object": 0.25,
+          "chance_position": 0.25,
+          "decode": {
+            "A_v1_direct_held": 0.2539,
+            "H_flat_pool_held": 0.2695,
+            "LEARNED_spkwta_train": 0.9219,
+            "LEARNED_spkwta_held": 0.5234,
+            "LEARNED_linscore_held": 0.5117,
+            "RANDOM_spkwta_held": 0.2734,
+            "RATE_lin_ceiling_held": 0.5859,
+            "centroid_spk_held_NOGO_repro": 0.4336,
+            "scramble_centroid_held": 0.2773,
+            "scramble_learned_held": 0.3086
+          },
+          "reframe": {
+            "learned_minus_random_spkwta": 0.25,
+            "spkport_cost_linscore_minus_spkwta": -0.0117,
+            "quantization_gap_rate_minus_spk": 0.0742,
+            "learning_load_bearing": true
+          },
+          "dissociation": {
+            "object_decode_heldsplit": 0.5703,
+            "position_decode_heldsplit": 0.2344,
+            "label_shuffle_null": 0.2227,
+            "position_pooled_out": true
+          },
+          "verdicts": {
+            "capability_go": true,
+            "beats_config_c_nogo": true,
+            "beats_config_c_nogo_raw": true,
+            "learning_load_bearing": true,
+            "architecture_load_bearing": true,
+            "scramble_null_pass": true
+          }
+        },
+        {
+          "seed": 102,
+          "code": "count",
+          "chance_object": 0.25,
+          "chance_position": 0.25,
+          "decode": {
+            "A_v1_direct_held": 0.2344,
+            "H_flat_pool_held": 0.2461,
+            "LEARNED_spkwta_train": 0.8711,
+            "LEARNED_spkwta_held": 0.4961,
+            "LEARNED_linscore_held": 0.5078,
+            "RANDOM_spkwta_held": 0.2422,
+            "RATE_lin_ceiling_held": 0.5898,
+            "centroid_spk_held_NOGO_repro": 0.5,
+            "scramble_centroid_held": 0.25,
+            "scramble_learned_held": 0.2695
+          },
+          "reframe": {
+            "learned_minus_random_spkwta": 0.2539,
+            "spkport_cost_linscore_minus_spkwta": 0.0117,
+            "quantization_gap_rate_minus_spk": 0.082,
+            "learning_load_bearing": true
+          },
+          "dissociation": {
+            "object_decode_heldsplit": 0.5234,
+            "position_decode_heldsplit": 0.3047,
+            "label_shuffle_null": 0.1875,
+            "position_pooled_out": true
+          },
+          "verdicts": {
+            "capability_go": true,
+            "beats_config_c_nogo": true,
+            "beats_config_c_nogo_raw": true,
+            "learning_load_bearing": true,
+            "architecture_load_bearing": true,
+            "scramble_null_pass": true
+          }
+        }
+      ]
+    }
+  },
+  "mechanism": "FIXED config-B spiking front end (LIF S1->C1, fixed random S2 bank) -> C2 per-template MAX over locations spike code, AVERAGED over G independent LIF glimpses (temporal evidence integration). Readout: a LEARNED SIGNED linear discriminant (supervised three-factor delta = multinomial logistic) SPIKE-PORTED as a POPULATION of LIF class somata driven by EXCITATORY (w+ . r) MINUS FEEDFORWARD-INHIBITORY (w- . r, an interneuron carrying the common mode) drive; spiking WTA over class populations = the fully-spiking prediction. RANDOM arm = identical port, V untrained. Sources: Fremaux & Gerstner 2016; Maass et al. 2002; Brunel et al. 2004; Pouget et al. 2000; Carandini & Heeger 2012.",
+  "reframe_test": "The config-C NO-GO (0.34) and R-STDP dead-end used readouts that CANNOT subtract the common mode (centroid / non-negative block-sum). A SIGNED linear discriminant with FF-inhibition + temporal integration is predicted to clear the floor AND make learning load-bearing (learned >> random). learning_load_bearing = (learned - random spiking-WTA held) >= beat_margin, per seed. GO (task) = clears NO-GO floor AND beats random at >=5/6.",
+  "elapsed_seconds": 110.9
+}
