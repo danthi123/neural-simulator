@@ -75,6 +75,13 @@ topologies):
 A width-matched flat pool matches or beats every binding topology, so the position-invariant signal the 2026-09-03
 finding attributed to configural binding is genuine but NOT binding-specific.
 
+## Robustness (independent seeds 200-205)
+<!--derived-->
+From research/findings/raw/lanes/perception/satdiv_sig8_sc760_r1p0_nglim6_heldoutpos_scramblenull_seeds200-205.json —
+the satdiv GO arm re-run on six fresh held-out seeds (200-205) is capability-GO 6/6, learning-load-bearing 6/6,
+scramble-null 6/6 (LINDISCRIM-READOUT-GO). So the position-invariant readout GO holds on 11 of 12 seeds across the two
+independent seed sets — the divisive-normalization lever is robust, not a seed-42-102 artifact.
+
 ## What it means
 
 The fully-spiking position-invariant object readout is real and GO under held-out-position + scramble-null anti-cheats,
