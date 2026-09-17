@@ -68,6 +68,41 @@ runs on this organ's OWN private continuous timeline, and restores the host RNG 
 
 FUNCTIONAL CORRELATE, NOT phenomenal. This reads + reports a spiking recognition CORRELATE; it makes no claim of
 subjective familiarity or experience.
+
+CAPABILITY EXTENSION (2026-09-17, additive + opt-in): he/she/him/her, via the SAME mechanism. The 5-token
+ANAPHORS list above is the de-risk's OWN frozen constant (unedited) so that module's pre-registered 6/6-seed GO
+stays exactly reproducible. This organ's constructor now accepts `extra_anaphors` (default `None` -> the
+production 5-token behavior, UNCHANGED): when passed `EXTRA_ANAPHORS = ("he","she","him","her")`, `_ensure()`
+builds its scratch buffer over `list(ANAPHORS) + list(extra_anaphors)` instead of `ANAPHORS` alone -- one MORE
+`SpikingLoopContextBuffer(word_list, ...)` call, same class, same `ATTRACTOR_WEIGHT` Hebbian-outer-product
+install, same CA3 pattern-completion decision (`decide_pronoun` on `cp_firing_states`); four new disjoint
+`PATTERN_SIZE`-neuron assemblies are simply recruited from the buffer's own permutation allocation
+(9*50=450 <= N_NEURONS=600, still leaves an unused/content-word pool).
+
+WHY THE ORIGINAL 5 STAY BYTE-IDENTICAL. `SpikingLoopContextBuffer.__init__` builds its base cortico-PFC bridge
+from (n, density, loop_weight, loop_density, seed, enable_ou) alone -- NOT from the concept list -- so the
+substrate BEFORE any attractor is installed is identical regardless of how many concepts follow. Pattern
+allocation is `perm = rng.permutation(n)` (seed+n only) sliced by LIST POSITION,
+`perm[i*pattern_size:(i+1)*pattern_size]`; appending he/she/him/her AFTER the original 5 (never reordering them)
+leaves positions 0..4 mapped to the SAME neuron slices as before. Each concept's Hebbian c2d/d2c attractor
+edges connect ONLY within its own disjoint slice-pair (`cpat = cidx[p]`, `dpat = didx[p]` for that concept's own
+`p`), and `set_pathway_weights` is a plain per-(pre,post) CSR write (`sim/bridge.py:4994`, no cross-edge
+normalization) -- so the 4 new attractors' edges live entirely on neurons the original 5 never touch. With
+`plastic_internal=False`, `enable_hebbian_learning=False`, `enable_structural_plasticity=False` (this buffer's
+own build config), nothing reshapes those weights during a probe either. Net effect: extending the word list is
+adding independent attractor loops on top of an unchanged substrate, not perturbing the existing ones. Verified
+empirically, not just argued, by `_spiking_anaphor_gendered_extension_derisk.py` below (byte-identical
+differential + the 4 new tokens' own G1-G4 battery).
+
+NOT YET DEFAULT-ON. The three production call sites (`multi_turn_agent.py`, `multi_turn_agent_v2.py`,
+`brain_chat_tui.py`) construct `SpikingAnaphorDetectorOrgan(seed=..., lesion=...)` with no `extra_anaphors`, so
+production `is_anaphor()` is UNCHANGED (still exactly the 5-token set) until a future commit passes
+`EXTRA_ANAPHORS` there. This IS a deliberate de-risk-then-wire split, not an oversight: DETECTION alone was
+verified here; whether the downstream held-referent / biased-competition RESOLUTION correctly handles a
+gendered antecedent (number/gender agreement across turns) is untouched by this change and unverified --
+flipping detection on without that check would let "he" pass detection and then resolve to whatever the
+existing WTA happens to hold, with no agreement check at all. See this file's own docstring below for the
+recommended next rung.
 """
 from __future__ import annotations
 
@@ -77,6 +112,11 @@ import threading
 from typing import List, Optional
 
 import numpy as np
+
+# The 4-token capability extension (additive, opt-in -- see the module docstring above). Order matters: these
+# are meant to be APPENDED after the de-risk's own frozen `ANAPHORS` list, never interleaved or reordered, so
+# the original 5 tokens' permutation-allocated neuron slices never shift.
+EXTRA_ANAPHORS = ("he", "she", "him", "her")
 
 
 def spiking_anaphor_lesioned() -> bool:
@@ -99,15 +139,22 @@ class SpikingAnaphorDetectorOrgan:
     deterministic pattern allocation of the de-risked circuit (each anaphor's stored assembly + the unused-neuron pool);
     `is_anaphor(word)` maps the token to a CUE (declared host encoding shortcut) and, when the cue could plausibly match
     a known anaphor, builds a FRESH buffer, drives the cue, and returns whether it COMPLETES to an ignited assembly
-    above threshold (the substrate decision). Fresh-per-decision because the NMDA-bistable assemblies latch."""
+    above threshold (the substrate decision). Fresh-per-decision because the NMDA-bistable assemblies latch.
 
-    def __init__(self, seed: int = 42, lesion: bool = False):
+    `extra_anaphors` (default `None`): additive, opt-in capability extension (see module docstring) -- pass
+    `EXTRA_ANAPHORS = ("he","she","him","her")` to recruit 4 more CA3 attractor assemblies via the SAME
+    mechanism, appended after the de-risk's own frozen 5-token `ANAPHORS`. Every production call site omits this
+    kwarg, so `is_anaphor()` there is byte-identical to before this extension existed."""
+
+    def __init__(self, seed: int = 42, lesion: bool = False, extra_anaphors: Optional[List[str]] = None):
         self.seed = int(seed)
         self.lesion = bool(lesion)
+        self._extra_anaphors: List[str] = [str(w) for w in extra_anaphors] if extra_anaphors else []
         self._built = False
         self._full_patterns: dict = {}       # anaphor -> its stored assembly's GLOBAL cortex_ctx neuron ids
         self._unused_global = None            # GLOBAL cortex_ctx neuron ids no assembly ever claims (content-word pool)
         self._anaphors: List[str] = []
+        self._word_list: List[str] = []       # ANAPHORS + extra_anaphors, in that order (the buffer's own concept list)
         self._rng_state = None                # this organ's PRIVATE RNG timeline (host process-global RNG untouched)
         self._lock = threading.Lock()
 
@@ -176,18 +223,25 @@ class SpikingAnaphorDetectorOrgan:
         from research.runners._spiking_anaphor_detection_derisk import (
             ANAPHORS, ATTRACTOR_WEIGHT, BUF_KW, SpikingLoopContextBuffer, _cortex_local_index, _unused_pool)
 
+        # Append (never reorder/interleave) any extra anaphors after the de-risk's own frozen ANAPHORS list, so
+        # the original 5 concepts keep list positions 0..4 -> the SAME perm-sliced neuron assemblies (see module
+        # docstring "WHY THE ORIGINAL 5 STAY BYTE-IDENTICAL"). Defensive dedupe: an extra word already present
+        # in ANAPHORS is dropped rather than double-installed.
+        word_list = list(ANAPHORS) + [w for w in self._extra_anaphors if w not in ANAPHORS]
+
         def _build():
             aw = 0.0 if self.lesion else ATTRACTOR_WEIGHT
-            scratch = SpikingLoopContextBuffer(ANAPHORS, attractor_weight=aw, seed=self.seed, **BUF_KW)
+            scratch = SpikingLoopContextBuffer(word_list, attractor_weight=aw, seed=self.seed, **BUF_KW)
             cidx = _cortex_local_index(scratch)                       # GLOBAL cortex_ctx neuron ids, local-index order
-            unused_local = _unused_pool(self.seed)                    # LOCAL positions no assembly claims
+            unused_local = _unused_pool(self.seed, k=len(word_list))  # LOCAL positions no assembly claims
             unused_global = cidx[unused_local]
-            assemblies = {c: np.asarray(scratch.B.to_host(scratch._cpat[c]), dtype=np.int64) for c in ANAPHORS}
+            assemblies = {c: np.asarray(scratch.B.to_host(scratch._cpat[c]), dtype=np.int64) for c in word_list}
             del scratch
             return assemblies, unused_global
 
         assemblies, unused_global = self._isolated(_build)
-        self._anaphors = list(ANAPHORS)
+        self._anaphors = list(word_list)
+        self._word_list = list(word_list)
         self._full_patterns = assemblies
         self._unused_global = unused_global
         self._built = True
@@ -207,10 +261,22 @@ class SpikingAnaphorDetectorOrgan:
 
     def _probe(self, cue) -> tuple:
         """Build a FRESH quiescent buffer (attractor_weight=0 under lesion, else the de-risked ATTRACTOR_WEIGHT), drive
-        `cue`, and return the de-risk's own `decide_pronoun` verdict (winner_concept | None, peak_rate). RNG-isolated."""
-        from research.runners._spiking_anaphor_detection_derisk import ATTRACTOR_WEIGHT, _fresh_probe
+        `cue`, and return the de-risk's own `decide_pronoun` verdict (winner_concept | None, peak_rate). RNG-isolated.
+
+        Uses `self._word_list` (ANAPHORS, plus any `extra_anaphors`) rather than importing the de-risk's own
+        `_fresh_probe` directly, because that helper hardcodes the de-risk module's frozen ANAPHORS constant.
+        When no `extra_anaphors` were passed, `self._word_list == list(ANAPHORS)` and this reproduces
+        `_fresh_probe` byte-for-byte (same buffer class, same kwargs, same decision function)."""
+        from research.runners._spiking_anaphor_detection_derisk import ATTRACTOR_WEIGHT, BUF_KW, \
+            SpikingLoopContextBuffer, _drive_and_read, decide_pronoun
         aw = 0.0 if self.lesion else ATTRACTOR_WEIGHT
-        return self._isolated(lambda: _fresh_probe(self.seed, aw, np.asarray(cue, dtype=np.int64)))
+
+        def _run():
+            buf = SpikingLoopContextBuffer(self._word_list, attractor_weight=aw, seed=self.seed, **BUF_KW)
+            rates = _drive_and_read(buf, np.asarray(cue, dtype=np.int64))
+            return decide_pronoun(rates)
+
+        return self._isolated(_run)
 
     # ── the read both call sites use ────────────────────────────────────────────────────────────────────────────────
     def detect(self, word: str) -> dict:

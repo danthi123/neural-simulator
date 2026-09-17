@@ -1,0 +1,38 @@
+{
+ "run_id": "1789632343-56194",
+ "runner": "research/runners/_spiking_anaphor_gendered_extension_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/wf_f60e34e8-14f-2/research/runners/_spiking_anaphor_gendered_extension_derisk.py",
+  "--seeds",
+  "42",
+  "43",
+  "44",
+  "100",
+  "101",
+  "102",
+  "--n-noisy-repeats",
+  "4",
+  "--n-content",
+  "10",
+  "--out",
+  "research/findings/raw/_spiking_anaphor_gendered_extension/decisive_6seed.json"
+ ],
+ "git_sha": "b02c4eaee",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-17T04:05:43",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_spiking_anaphor_gendered_extension/decisive_6seed.json"
+}
