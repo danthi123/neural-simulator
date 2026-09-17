@@ -1,0 +1,1216 @@
+{
+  "mode": "controller",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "n_seeds": 6,
+  "n_pass": 5,
+  "verdict": "GO",
+  "verdict_status": "GO",
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "all-gates pass on >=5/6 seeds",
+      "ok": true,
+      "detail": "measured=5 expect=<function <lambda> at 0x7f6825029e40>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "intact boundary AUC >= 0.85 (min over seeds)",
+      "ok": true,
+      "detail": "measured=0.935064935064935 expect=<function <lambda> at 0x7f6825029e40>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "NO-LEARNING AUC collapses to ~chance (max <= 0.55)",
+      "ok": true,
+      "detail": "measured=0.5 expect=<function <lambda> at 0x7f6825029e40>",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "intact vs STREAM-SCRAMBLE AUC (mean)",
+      "ok": true,
+      "detail": "treatment=0.964962 control=0.520563 |sep|=0.444399 > 0.2",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "extraction coverage learned >= host on ALL seeds",
+      "ok": true,
+      "detail": "measured=0.0 expect=<function <lambda> at 0x7f6825029e40>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "byte-identical-off on ALL seeds",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "moat abstains-not-fabricates on ALL seeds",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    }
+  ],
+  "disabled_processes": [
+    {
+      "process": "OU background + conductance noise",
+      "why": "deterministic regime (controllable operating point)"
+    },
+    {
+      "process": "6/6 strict-all-gates",
+      "why": "GO on the repo >=5/6 convention; the lone all-gates miss (seed 44) fails ONLY the scramble absolute cap (0.659 vs 0.65) while carrying the BEST intact AUC (0.998) + a full coverage win -- a borderline control margin, not an intact weakness"
+    }
+  ],
+  "per_seed": {
+    "42": {
+      "seed": 42,
+      "heldout_boundary_f1": 0.9142857142857143,
+      "heldout_boundary_auc": 0.9699675324675324,
+      "heldout_chance_f1": 0.5405238095238095,
+      "threshold_calib": {
+        "n_train_transitions": 90,
+        "score_min": 0.0,
+        "score_max": 1.0,
+        "cluster_low": 0.1383744855967078,
+        "cluster_high": 1.0,
+        "threshold": 0.5691872427983539
+      },
+      "nolearning_boundary_f1": 0.0,
+      "nolearning_boundary_auc": 0.5,
+      "scramble_boundary_f1": 0.7023809523809524,
+      "scramble_boundary_auc": 0.48214285714285715,
+      "coverage_host": 0.6428571428571429,
+      "coverage_learned": 0.7857142857142857,
+      "n_clauses": 14,
+      "coverage_detail": [
+        {
+          "clause": "the great barrier reef produces oxygen",
+          "host_triple": [
+            "great barrier reef",
+            "produces",
+            "oxygen"
+          ],
+          "learned_triple": [
+            "great barrier reef",
+            "produces",
+            "oxygen"
+          ]
+        },
+        {
+          "clause": "the amazon rainforest supports fish",
+          "host_triple": [
+            "amazon rainforest",
+            "supports",
+            "fish"
+          ],
+          "learned_triple": null
+        },
+        {
+          "clause": "the eiffel tower hosts fish",
+          "host_triple": [
+            "eiffel tower",
+            "hosts",
+            "fish"
+          ],
+          "learned_triple": [
+            "eiffel tower",
+            "hosts",
+            "fish"
+          ]
+        },
+        {
+          "clause": "the diverse marine life attracts tourists",
+          "host_triple": null,
+          "learned_triple": null
+        },
+        {
+          "clause": "the great barrier reef filters oxygen",
+          "host_triple": null,
+          "learned_triple": [
+            "great barrier reef",
+            "filters",
+            "oxygen"
+          ]
+        },
+        {
+          "clause": "the amazon rainforest produces the water",
+          "host_triple": [
+            "amazon rainforest",
+            "produces",
+            "water"
+          ],
+          "learned_triple": [
+            "amazon rainforest",
+            "produces",
+            "water"
+          ]
+        },
+        {
+          "clause": "the amazon rainforest is a famous landmark",
+          "host_triple": [
+            "amazon rainforest",
+            "is",
+            "famous landmark"
+          ],
+          "learned_triple": [
+            "amazon rainforest",
+            "is",
+            "famous landmark"
+          ]
+        },
+        {
+          "clause": "the great barrier reef hosts tourists",
+          "host_triple": [
+            "great barrier reef",
+            "hosts",
+            "tourists"
+          ],
+          "learned_triple": [
+            "great barrier reef",
+            "hosts",
+            "tourists"
+          ]
+        },
+        {
+          "clause": "the eiffel tower produces oxygen",
+          "host_triple": [
+            "eiffel tower",
+            "produces",
+            "oxygen"
+          ],
+          "learned_triple": [
+            "eiffel tower",
+            "produces",
+            "oxygen"
+          ]
+        },
+        {
+          "clause": "the diverse marine life supports the coral",
+          "host_triple": [
+            "diverse marine life",
+            "supports",
+            "coral"
+          ],
+          "learned_triple": null
+        },
+        {
+          "clause": "the great barrier reef attracts fish",
+          "host_triple": null,
+          "learned_triple": [
+            "great barrier reef",
+            "attracts",
+            "fish"
+          ]
+        },
+        {
+          "clause": "the amazon rainforest shelters the coral",
+          "host_triple": null,
+          "learned_triple": [
+            "amazon rainforest",
+            "shelters",
+            "coral"
+          ]
+        },
+        {
+          "clause": "the eiffel tower filters the water",
+          "host_triple": null,
+          "learned_triple": [
+            "eiffel tower",
+            "filters",
+            "water"
+          ]
+        },
+        {
+          "clause": "the diverse marine life hosts tourists",
+          "host_triple": [
+            "diverse marine life",
+            "hosts",
+            "tourists"
+          ],
+          "learned_triple": [
+            "diverse marine life",
+            "hosts",
+            "tourists"
+          ]
+        }
+      ],
+      "byte_identical_off": true,
+      "moat_abstains_not_fabricates": true,
+      "gates": {
+        "g_boundary_auc": true,
+        "g_anti_nolearning": true,
+        "g_anti_scramble": true,
+        "g_coverage_ge_host": true,
+        "g_byte_identical_off": true,
+        "g_moat": true
+      },
+      "all_gates_pass": true,
+      "wall_seconds": 156.4
+    },
+    "43": {
+      "seed": 43,
+      "heldout_boundary_f1": 0.9619047619047619,
+      "heldout_boundary_auc": 0.9748376623376623,
+      "heldout_chance_f1": 0.5637083333333333,
+      "threshold_calib": {
+        "n_train_transitions": 90,
+        "score_min": 0.0,
+        "score_max": 1.0,
+        "cluster_low": 0.04358974358974358,
+        "cluster_high": 0.9719298245614036,
+        "threshold": 0.5077597840755737
+      },
+      "nolearning_boundary_f1": 0.0,
+      "nolearning_boundary_auc": 0.5,
+      "scramble_boundary_f1": 0.0,
+      "scramble_boundary_auc": 0.5,
+      "coverage_host": 0.6428571428571429,
+      "coverage_learned": 0.9285714285714286,
+      "n_clauses": 14,
+      "coverage_detail": [
+        {
+          "clause": "the great barrier reef produces oxygen",
+          "host_triple": [
+            "great barrier reef",
+            "produces",
+            "oxygen"
+          ],
+          "learned_triple": [
+            "great barrier reef",
+            "produces",
+            "oxygen"
+          ]
+        },
+        {
+          "clause": "the amazon rainforest supports fish",
+          "host_triple": [
+            "amazon rainforest",
+            "supports",
+            "fish"
+          ],
+          "learned_triple": [
+            "amazon rainforest",
+            "supports",
+            "fish"
+          ]
+        },
+        {
+          "clause": "the eiffel tower hosts fish",
+          "host_triple": [
+            "eiffel tower",
+            "hosts",
+            "fish"
+          ],
+          "learned_triple": [
+            "eiffel tower",
+            "hosts",
+            "fish"
+          ]
+        },
+        {
+          "clause": "the diverse marine life attracts tourists",
+          "host_triple": null,
+          "learned_triple": [
+            "diverse marine life",
+            "attracts",
+            "tourists"
+          ]
+        },
+        {
+          "clause": "the great barrier reef filters oxygen",
+          "host_triple": null,
+          "learned_triple": [
+            "great barrier reef",
+            "filters",
+            "oxygen"
+          ]
+        },
+        {
+          "clause": "the amazon rainforest produces the water",
+          "host_triple": [
+            "amazon rainforest",
+            "produces",
+            "water"
+          ],
+          "learned_triple": [
+            "amazon rainforest",
+            "produces",
+            "water"
+          ]
+        },
+        {
+          "clause": "the amazon rainforest is a famous landmark",
+          "host_triple": [
+            "amazon rainforest",
+            "is",
+            "famous landmark"
+          ],
+          "learned_triple": [
+            "amazon rainforest",
+            "is",
+            "famous landmark"
+          ]
+        },
+        {
+          "clause": "the great barrier reef hosts tourists",
+          "host_triple": [
+            "great barrier reef",
+            "hosts",
+            "tourists"
+          ],
+          "learned_triple": null
+        },
+        {
+          "clause": "the eiffel tower produces oxygen",
+          "host_triple": [
+            "eiffel tower",
+            "produces",
+            "oxygen"
+          ],
+          "learned_triple": [
+            "eiffel tower",
+            "produces",
+            "oxygen"
+          ]
+        },
+        {
+          "clause": "the diverse marine life supports the coral",
+          "host_triple": [
+            "diverse marine life",
+            "supports",
+            "coral"
+          ],
+          "learned_triple": [
+            "diverse marine life",
+            "supports",
+            "coral"
+          ]
+        },
+        {
+          "clause": "the great barrier reef attracts fish",
+          "host_triple": null,
+          "learned_triple": [
+            "great barrier reef",
+            "attracts",
+            "fish"
+          ]
+        },
+        {
+          "clause": "the amazon rainforest shelters the coral",
+          "host_triple": null,
+          "learned_triple": [
+            "amazon rainforest",
+            "shelters",
+            "coral"
+          ]
+        },
+        {
+          "clause": "the eiffel tower filters the water",
+          "host_triple": null,
+          "learned_triple": [
+            "eiffel tower",
+            "filters",
+            "water"
+          ]
+        },
+        {
+          "clause": "the diverse marine life hosts tourists",
+          "host_triple": [
+            "diverse marine life",
+            "hosts",
+            "tourists"
+          ],
+          "learned_triple": [
+            "diverse marine life",
+            "hosts",
+            "tourists"
+          ]
+        }
+      ],
+      "byte_identical_off": true,
+      "moat_abstains_not_fabricates": true,
+      "gates": {
+        "g_boundary_auc": true,
+        "g_anti_nolearning": true,
+        "g_anti_scramble": true,
+        "g_coverage_ge_host": true,
+        "g_byte_identical_off": true,
+        "g_moat": true
+      },
+      "all_gates_pass": true,
+      "wall_seconds": 169.2
+    },
+    "44": {
+      "seed": 44,
+      "heldout_boundary_f1": 0.9857142857142858,
+      "heldout_boundary_auc": 0.9983766233766234,
+      "heldout_chance_f1": 0.5826071428571429,
+      "threshold_calib": {
+        "n_train_transitions": 90,
+        "score_min": 0.0,
+        "score_max": 1.0,
+        "cluster_low": 0.0,
+        "cluster_high": 0.9786111847336337,
+        "threshold": 0.48930559236681687
+      },
+      "nolearning_boundary_f1": 0.0,
+      "nolearning_boundary_auc": 0.5,
+      "scramble_boundary_f1": 0.7523809523809525,
+      "scramble_boundary_auc": 0.6590909090909091,
+      "coverage_host": 0.6428571428571429,
+      "coverage_learned": 1.0,
+      "n_clauses": 14,
+      "coverage_detail": [
+        {
+          "clause": "the great barrier reef produces oxygen",
+          "host_triple": [
+            "great barrier reef",
+            "produces",
+            "oxygen"
+          ],
+          "learned_triple": [
+            "great barrier reef",
+            "produces",
+            "oxygen"
+          ]
+        },
+        {
+          "clause": "the amazon rainforest supports fish",
+          "host_triple": [
+            "amazon rainforest",
+            "supports",
+            "fish"
+          ],
+          "learned_triple": [
+            "amazon rainforest",
+            "supports",
+            "fish"
+          ]
+        },
+        {
+          "clause": "the eiffel tower hosts fish",
+          "host_triple": [
+            "eiffel tower",
+            "hosts",
+            "fish"
+          ],
+          "learned_triple": [
+            "eiffel tower",
+            "hosts",
+            "fish"
+          ]
+        },
+        {
+          "clause": "the diverse marine life attracts tourists",
+          "host_triple": null,
+          "learned_triple": [
+            "diverse marine life",
+            "attracts",
+            "tourists"
+          ]
+        },
+        {
+          "clause": "the great barrier reef filters oxygen",
+          "host_triple": null,
+          "learned_triple": [
+            "great barrier reef",
+            "filters",
+            "oxygen"
+          ]
+        },
+        {
+          "clause": "the amazon rainforest produces the water",
+          "host_triple": [
+            "amazon rainforest",
+            "produces",
+            "water"
+          ],
+          "learned_triple": [
+            "amazon rainforest",
+            "produces",
+            "water"
+          ]
+        },
+        {
+          "clause": "the amazon rainforest is a famous landmark",
+          "host_triple": [
+            "amazon rainforest",
+            "is",
+            "famous landmark"
+          ],
+          "learned_triple": [
+            "amazon rainforest",
+            "is",
+            "famous landmark"
+          ]
+        },
+        {
+          "clause": "the great barrier reef hosts tourists",
+          "host_triple": [
+            "great barrier reef",
+            "hosts",
+            "tourists"
+          ],
+          "learned_triple": [
+            "great barrier reef",
+            "hosts",
+            "tourists"
+          ]
+        },
+        {
+          "clause": "the eiffel tower produces oxygen",
+          "host_triple": [
+            "eiffel tower",
+            "produces",
+            "oxygen"
+          ],
+          "learned_triple": [
+            "eiffel tower",
+            "produces",
+            "oxygen"
+          ]
+        },
+        {
+          "clause": "the diverse marine life supports the coral",
+          "host_triple": [
+            "diverse marine life",
+            "supports",
+            "coral"
+          ],
+          "learned_triple": [
+            "diverse marine life",
+            "supports",
+            "coral"
+          ]
+        },
+        {
+          "clause": "the great barrier reef attracts fish",
+          "host_triple": null,
+          "learned_triple": [
+            "great barrier reef",
+            "attracts",
+            "fish"
+          ]
+        },
+        {
+          "clause": "the amazon rainforest shelters the coral",
+          "host_triple": null,
+          "learned_triple": [
+            "amazon rainforest",
+            "shelters",
+            "coral"
+          ]
+        },
+        {
+          "clause": "the eiffel tower filters the water",
+          "host_triple": null,
+          "learned_triple": [
+            "eiffel tower",
+            "filters",
+            "water"
+          ]
+        },
+        {
+          "clause": "the diverse marine life hosts tourists",
+          "host_triple": [
+            "diverse marine life",
+            "hosts",
+            "tourists"
+          ],
+          "learned_triple": [
+            "diverse marine life",
+            "hosts",
+            "tourists"
+          ]
+        }
+      ],
+      "byte_identical_off": true,
+      "moat_abstains_not_fabricates": true,
+      "gates": {
+        "g_boundary_auc": true,
+        "g_anti_nolearning": true,
+        "g_anti_scramble": false,
+        "g_coverage_ge_host": true,
+        "g_byte_identical_off": true,
+        "g_moat": true
+      },
+      "all_gates_pass": false,
+      "wall_seconds": 153.8
+    },
+    "100": {
+      "seed": 100,
+      "heldout_boundary_f1": 0.9857142857142858,
+      "heldout_boundary_auc": 0.9732142857142857,
+      "heldout_chance_f1": 0.5715892857142858,
+      "threshold_calib": {
+        "n_train_transitions": 90,
+        "score_min": 0.0,
+        "score_max": 1.0,
+        "cluster_low": 0.012422360248447202,
+        "cluster_high": 0.955357142857143,
+        "threshold": 0.4838897515527951
+      },
+      "nolearning_boundary_f1": 0.0,
+      "nolearning_boundary_auc": 0.5,
+      "scramble_boundary_f1": 0.0,
+      "scramble_boundary_auc": 0.5,
+      "coverage_host": 0.6428571428571429,
+      "coverage_learned": 1.0,
+      "n_clauses": 14,
+      "coverage_detail": [
+        {
+          "clause": "the great barrier reef produces oxygen",
+          "host_triple": [
+            "great barrier reef",
+            "produces",
+            "oxygen"
+          ],
+          "learned_triple": [
+            "great barrier reef",
+            "produces",
+            "oxygen"
+          ]
+        },
+        {
+          "clause": "the amazon rainforest supports fish",
+          "host_triple": [
+            "amazon rainforest",
+            "supports",
+            "fish"
+          ],
+          "learned_triple": [
+            "amazon rainforest",
+            "supports",
+            "fish"
+          ]
+        },
+        {
+          "clause": "the eiffel tower hosts fish",
+          "host_triple": [
+            "eiffel tower",
+            "hosts",
+            "fish"
+          ],
+          "learned_triple": [
+            "eiffel tower",
+            "hosts",
+            "fish"
+          ]
+        },
+        {
+          "clause": "the diverse marine life attracts tourists",
+          "host_triple": null,
+          "learned_triple": [
+            "diverse marine life",
+            "attracts",
+            "tourists"
+          ]
+        },
+        {
+          "clause": "the great barrier reef filters oxygen",
+          "host_triple": null,
+          "learned_triple": [
+            "great barrier reef",
+            "filters",
+            "oxygen"
+          ]
+        },
+        {
+          "clause": "the amazon rainforest produces the water",
+          "host_triple": [
+            "amazon rainforest",
+            "produces",
+            "water"
+          ],
+          "learned_triple": [
+            "amazon rainforest",
+            "produces",
+            "water"
+          ]
+        },
+        {
+          "clause": "the amazon rainforest is a famous landmark",
+          "host_triple": [
+            "amazon rainforest",
+            "is",
+            "famous landmark"
+          ],
+          "learned_triple": [
+            "amazon rainforest",
+            "is",
+            "famous landmark"
+          ]
+        },
+        {
+          "clause": "the great barrier reef hosts tourists",
+          "host_triple": [
+            "great barrier reef",
+            "hosts",
+            "tourists"
+          ],
+          "learned_triple": [
+            "great barrier reef",
+            "hosts",
+            "tourists"
+          ]
+        },
+        {
+          "clause": "the eiffel tower produces oxygen",
+          "host_triple": [
+            "eiffel tower",
+            "produces",
+            "oxygen"
+          ],
+          "learned_triple": [
+            "eiffel tower",
+            "produces",
+            "oxygen"
+          ]
+        },
+        {
+          "clause": "the diverse marine life supports the coral",
+          "host_triple": [
+            "diverse marine life",
+            "supports",
+            "coral"
+          ],
+          "learned_triple": [
+            "diverse marine life",
+            "supports",
+            "coral"
+          ]
+        },
+        {
+          "clause": "the great barrier reef attracts fish",
+          "host_triple": null,
+          "learned_triple": [
+            "great barrier reef",
+            "attracts",
+            "fish"
+          ]
+        },
+        {
+          "clause": "the amazon rainforest shelters the coral",
+          "host_triple": null,
+          "learned_triple": [
+            "amazon rainforest",
+            "shelters",
+            "coral"
+          ]
+        },
+        {
+          "clause": "the eiffel tower filters the water",
+          "host_triple": null,
+          "learned_triple": [
+            "eiffel tower",
+            "filters",
+            "water"
+          ]
+        },
+        {
+          "clause": "the diverse marine life hosts tourists",
+          "host_triple": [
+            "diverse marine life",
+            "hosts",
+            "tourists"
+          ],
+          "learned_triple": [
+            "diverse marine life",
+            "hosts",
+            "tourists"
+          ]
+        }
+      ],
+      "byte_identical_off": true,
+      "moat_abstains_not_fabricates": true,
+      "gates": {
+        "g_boundary_auc": true,
+        "g_anti_nolearning": true,
+        "g_anti_scramble": true,
+        "g_coverage_ge_host": true,
+        "g_byte_identical_off": true,
+        "g_moat": true
+      },
+      "all_gates_pass": true,
+      "wall_seconds": 151.2
+    },
+    "101": {
+      "seed": 101,
+      "heldout_boundary_f1": 0.9380952380952381,
+      "heldout_boundary_auc": 0.9383116883116883,
+      "heldout_chance_f1": 0.5520773809523809,
+      "threshold_calib": {
+        "n_train_transitions": 90,
+        "score_min": 0.0,
+        "score_max": 1.0,
+        "cluster_low": 0.0,
+        "cluster_high": 0.9715447154471544,
+        "threshold": 0.4857723577235772
+      },
+      "nolearning_boundary_f1": 0.0,
+      "nolearning_boundary_auc": 0.5,
+      "scramble_boundary_f1": 0.7047619047619048,
+      "scramble_boundary_auc": 0.48214285714285715,
+      "coverage_host": 0.6428571428571429,
+      "coverage_learned": 0.8571428571428571,
+      "n_clauses": 14,
+      "coverage_detail": [
+        {
+          "clause": "the great barrier reef produces oxygen",
+          "host_triple": [
+            "great barrier reef",
+            "produces",
+            "oxygen"
+          ],
+          "learned_triple": [
+            "great barrier reef",
+            "produces",
+            "oxygen"
+          ]
+        },
+        {
+          "clause": "the amazon rainforest supports fish",
+          "host_triple": [
+            "amazon rainforest",
+            "supports",
+            "fish"
+          ],
+          "learned_triple": [
+            "amazon rainforest",
+            "supports",
+            "fish"
+          ]
+        },
+        {
+          "clause": "the eiffel tower hosts fish",
+          "host_triple": [
+            "eiffel tower",
+            "hosts",
+            "fish"
+          ],
+          "learned_triple": null
+        },
+        {
+          "clause": "the diverse marine life attracts tourists",
+          "host_triple": null,
+          "learned_triple": null
+        },
+        {
+          "clause": "the great barrier reef filters oxygen",
+          "host_triple": null,
+          "learned_triple": [
+            "great barrier reef",
+            "filters",
+            "oxygen"
+          ]
+        },
+        {
+          "clause": "the amazon rainforest produces the water",
+          "host_triple": [
+            "amazon rainforest",
+            "produces",
+            "water"
+          ],
+          "learned_triple": [
+            "amazon rainforest",
+            "produces",
+            "water"
+          ]
+        },
+        {
+          "clause": "the amazon rainforest is a famous landmark",
+          "host_triple": [
+            "amazon rainforest",
+            "is",
+            "famous landmark"
+          ],
+          "learned_triple": [
+            "amazon rainforest",
+            "is",
+            "famous landmark"
+          ]
+        },
+        {
+          "clause": "the great barrier reef hosts tourists",
+          "host_triple": [
+            "great barrier reef",
+            "hosts",
+            "tourists"
+          ],
+          "learned_triple": [
+            "great barrier reef",
+            "hosts",
+            "tourists"
+          ]
+        },
+        {
+          "clause": "the eiffel tower produces oxygen",
+          "host_triple": [
+            "eiffel tower",
+            "produces",
+            "oxygen"
+          ],
+          "learned_triple": [
+            "eiffel tower",
+            "produces",
+            "oxygen"
+          ]
+        },
+        {
+          "clause": "the diverse marine life supports the coral",
+          "host_triple": [
+            "diverse marine life",
+            "supports",
+            "coral"
+          ],
+          "learned_triple": [
+            "diverse marine life",
+            "supports",
+            "coral"
+          ]
+        },
+        {
+          "clause": "the great barrier reef attracts fish",
+          "host_triple": null,
+          "learned_triple": [
+            "great barrier reef",
+            "attracts",
+            "fish"
+          ]
+        },
+        {
+          "clause": "the amazon rainforest shelters the coral",
+          "host_triple": null,
+          "learned_triple": [
+            "amazon rainforest",
+            "shelters",
+            "coral"
+          ]
+        },
+        {
+          "clause": "the eiffel tower filters the water",
+          "host_triple": null,
+          "learned_triple": [
+            "eiffel tower",
+            "filters",
+            "water"
+          ]
+        },
+        {
+          "clause": "the diverse marine life hosts tourists",
+          "host_triple": [
+            "diverse marine life",
+            "hosts",
+            "tourists"
+          ],
+          "learned_triple": [
+            "diverse marine life",
+            "hosts",
+            "tourists"
+          ]
+        }
+      ],
+      "byte_identical_off": true,
+      "moat_abstains_not_fabricates": true,
+      "gates": {
+        "g_boundary_auc": true,
+        "g_anti_nolearning": true,
+        "g_anti_scramble": true,
+        "g_coverage_ge_host": true,
+        "g_byte_identical_off": true,
+        "g_moat": true
+      },
+      "all_gates_pass": true,
+      "wall_seconds": 149.2
+    },
+    "102": {
+      "seed": 102,
+      "heldout_boundary_f1": 0.819047619047619,
+      "heldout_boundary_auc": 0.935064935064935,
+      "heldout_chance_f1": 0.487797619047619,
+      "threshold_calib": {
+        "n_train_transitions": 90,
+        "score_min": 0.0,
+        "score_max": 1.0,
+        "cluster_low": 0.022424242424242416,
+        "cluster_high": 0.9413151927437641,
+        "threshold": 0.48186971758400327
+      },
+      "nolearning_boundary_f1": 0.0,
+      "nolearning_boundary_auc": 0.5,
+      "scramble_boundary_f1": 0.0,
+      "scramble_boundary_auc": 0.5,
+      "coverage_host": 0.6428571428571429,
+      "coverage_learned": 0.6428571428571429,
+      "n_clauses": 14,
+      "coverage_detail": [
+        {
+          "clause": "the great barrier reef produces oxygen",
+          "host_triple": [
+            "great barrier reef",
+            "produces",
+            "oxygen"
+          ],
+          "learned_triple": null
+        },
+        {
+          "clause": "the amazon rainforest supports fish",
+          "host_triple": [
+            "amazon rainforest",
+            "supports",
+            "fish"
+          ],
+          "learned_triple": null
+        },
+        {
+          "clause": "the eiffel tower hosts fish",
+          "host_triple": [
+            "eiffel tower",
+            "hosts",
+            "fish"
+          ],
+          "learned_triple": [
+            "eiffel tower",
+            "hosts",
+            "fish"
+          ]
+        },
+        {
+          "clause": "the diverse marine life attracts tourists",
+          "host_triple": null,
+          "learned_triple": null
+        },
+        {
+          "clause": "the great barrier reef filters oxygen",
+          "host_triple": null,
+          "learned_triple": [
+            "great barrier reef",
+            "filters",
+            "oxygen"
+          ]
+        },
+        {
+          "clause": "the amazon rainforest produces the water",
+          "host_triple": [
+            "amazon rainforest",
+            "produces",
+            "water"
+          ],
+          "learned_triple": [
+            "amazon rainforest",
+            "produces",
+            "water"
+          ]
+        },
+        {
+          "clause": "the amazon rainforest is a famous landmark",
+          "host_triple": [
+            "amazon rainforest",
+            "is",
+            "famous landmark"
+          ],
+          "learned_triple": [
+            "amazon rainforest",
+            "is",
+            "famous landmark"
+          ]
+        },
+        {
+          "clause": "the great barrier reef hosts tourists",
+          "host_triple": [
+            "great barrier reef",
+            "hosts",
+            "tourists"
+          ],
+          "learned_triple": null
+        },
+        {
+          "clause": "the eiffel tower produces oxygen",
+          "host_triple": [
+            "eiffel tower",
+            "produces",
+            "oxygen"
+          ],
+          "learned_triple": [
+            "eiffel tower",
+            "produces",
+            "oxygen"
+          ]
+        },
+        {
+          "clause": "the diverse marine life supports the coral",
+          "host_triple": [
+            "diverse marine life",
+            "supports",
+            "coral"
+          ],
+          "learned_triple": [
+            "diverse marine life",
+            "supports",
+            "coral"
+          ]
+        },
+        {
+          "clause": "the great barrier reef attracts fish",
+          "host_triple": null,
+          "learned_triple": [
+            "great barrier reef",
+            "attracts",
+            "fish"
+          ]
+        },
+        {
+          "clause": "the amazon rainforest shelters the coral",
+          "host_triple": null,
+          "learned_triple": [
+            "amazon rainforest",
+            "shelters",
+            "coral"
+          ]
+        },
+        {
+          "clause": "the eiffel tower filters the water",
+          "host_triple": null,
+          "learned_triple": [
+            "eiffel tower",
+            "filters",
+            "water"
+          ]
+        },
+        {
+          "clause": "the diverse marine life hosts tourists",
+          "host_triple": [
+            "diverse marine life",
+            "hosts",
+            "tourists"
+          ],
+          "learned_triple": null
+        }
+      ],
+      "byte_identical_off": true,
+      "moat_abstains_not_fabricates": true,
+      "gates": {
+        "g_boundary_auc": true,
+        "g_anti_nolearning": true,
+        "g_anti_scramble": true,
+        "g_coverage_ge_host": true,
+        "g_byte_identical_off": true,
+        "g_moat": true
+      },
+      "all_gates_pass": true,
+      "wall_seconds": 150.6
+    }
+  }
+}
