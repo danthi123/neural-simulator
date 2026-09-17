@@ -80,3 +80,6 @@ updated #221: all 11 cortical organs de-risk-validated on one shared spiking poo
 
 ## 2026-09-17  overnight harvest — anaphor + vision + affect
 Reconciled: #217 (configural-binding REFRAMED — binding not the lever, divisive-norm is; vision GO 96ac8b3a) advanced de-risked; #218 (emotion grounding — affect-300k confirms noise-robustness not data-scale); #222 created (gendered-pronoun detection de-risked GO 3863cde0, default-off, pending agreement-check wiring). Findings landed: anaphor-gendered, vision-satdiv-decisive, affect-300k-PARTIAL.
+
+## 2026-09-17  frontier harvest (later) — segmentation + affect-mechanism + culmination
+Added: segmentation de-risk task (learned phrase-boundary, GO 5/6, #223). Updated #218 (affect noise-robustness fix mechanism found + validated, strict-bar partial). onebrain 11-organ default-on flip: answer-preservation GO 6/6, integrated no-regression battery running (culmination). Findings: learned-segmentation GO, affect-multicue mechanism-validated, (+ anaphor-gendered/vision-satdiv/affect-300k earlier this cycle).

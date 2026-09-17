@@ -1,0 +1,43 @@
+{
+ "run_id": "1789640387-234275",
+ "runner": "research/runners/_affect_multicue_convergence_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-a6762f7b4250a71da/research/runners/_affect_multicue_convergence_derisk.py",
+  "--multicue",
+  "--n-cues",
+  "4",
+  "--rho",
+  "0.8",
+  "--sigma",
+  "2.0",
+  "--total-budget",
+  "32",
+  "--seeds",
+  "42",
+  "43",
+  "44",
+  "100",
+  "101",
+  "102",
+  "--out",
+  "research/findings/raw/_affect_multicue_convergence_6seed.json"
+ ],
+ "git_sha": "fd1eab8f0",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-17T06:19:47",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_affect_multicue_convergence_6seed.json"
+}

@@ -20,6 +20,21 @@ host-formula circularity closed (GO); affect grounded-stream 300k PARTIAL (noise
 multimodal-grounding wall); gap#5 forward-band + reverse-edge NO-GOs (weight side exhausted). NEXT: the one-brain flip
 (integrated battery); vision task-GO bar; the mouth token-supply sweep (GPU keystone, running).
 
+**⭐ 2026-09-17 LATER (deep-research-grounded frontier harvest — the owner flagged deep-research; two source-grounded
+design agents delivered SPECs, both builds carry the read-the-sources mandate):** (1) **learned spiking constituent-
+boundary segmentation GO 5/6** — STDP predictive-coding-by-inhibition discovers boundaries from the stream; de-risks
+retiring the LAST host piece of the comprehension path (`segment_clause`), the irreducible residual behind the
+self-model-reward/value-choice/gnw-swap ledger rows (finding 2026-09-17-learned-spiking-constituent-boundary-...-GO;
+BRAIN_LEARNED_SEGMENT default-off). (2) **affect noise-robustness MECHANISM validated** (strict bar PARTIAL 5/6) —
+multi-cue learned-inverse-variance reliability fusion decisively isolated (G4a beats single-wide AND uniform-multi;
+weights track truth); the grounding-fusion surpass of the affect-300k data-scale wall (finding
+2026-09-17-affect-noise-robustness-multicue-...-PARTIAL). (3) **gendered anaphora GO 6/6** (he/she/him/her, default-off).
+(4) **vision: divisive-normalization is the DECISIVE lever** (single-var isolation collapses the GO with satdiv off;
+conjunctive binding banked as not-the-lever; GO on 11/12 seeds). (5) **onebrain 11-organ default-on flip:
+answer-preservation + one-brain-coherence GO 6/6; integrated /api/brain-chat 38-faculty no-regression battery RUNNING**
+= the culmination gate. NEXT: land the flip on the integrated verdict; then wire+retire segment_clause; agreement-check
+before wiring gendered anaphora.
+
 **⭐ 2026-09-01 CONNECTOME-GROWTH ADDENDUM (scoped sync — one arc, not a full resync of the landings below):**
 `onebrain_crossedge_gate.py`'s GENERIC declarative functional gate landed (`4380e42d1`, `2026-09-01-declarative-
 cross-edge-functional-gate-...GO.md`): adding a learned cross-region edge is now a `CrossEdge` data row +

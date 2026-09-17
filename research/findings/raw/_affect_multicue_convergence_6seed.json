@@ -1,0 +1,439 @@
+{
+  "probe": "affect_multicue_convergence_derisk (PRIMARY: heterogeneous-reliability cues + LEARNED unsupervised inverse-variance weighting, raw pre-threshold fusion -- the 2026-09-17 3rd iteration; the 2nd iteration's homogeneous-cue uniform-weight arm and the 1st iteration's per-cue-threshold-THEN-AND/OR arms are retained as reported lineage comparisons)",
+  "verdict": "PARTIAL/BOUNDARY (6-seed, build-informative) -- heterogeneous-cue + LEARNED-reliability fusion does NOT clear the strict bar at the decisive noisy point. DECISIVE(rho=0.8,sigma=2.0): HETERO+LEARNED(primary)=0.431 worst (0.585 mean) || THREE-WAY G4a (SAME cue draw): (a) single-wide-channel=0.225 worst (0.306 mean) [delta_a=+0.186 worst, +0.279 mean]; (b) uniform-weight multi-cue=0.225 worst (0.306 mean) [delta_b=+0.186 worst, +0.279 mean] || WEIGHT<->TRUTH: pooled corr(learned weight, true inverse-variance)=0.893, rank-matches-truth 6/6 seeds || anti-cheats: shared-noise=0.324 worst; lesion=0.088; shuffle=0.059; held-out(clean)=1.000; synth-instrument=1.000; text=0.059 || LINEAGE (reported): ORIGINAL-homog-matched=0.451 worst (0.598 mean); 2026-09-05 AND=0.010, sum/OR=0.000 (worst-case); 1st-raw-iteration homog-uniform=0.539, homog-learned(sanity)=0.520 (worst-case); ungated(N=4)=0.044 mean || SECONDARY(rho=0.6,sigma=1.0): hetero+learned=0.598 vs orig-homog-matched=0.598. FAILED: ['G1_noise_robust_lift']. See the three-way G4a numbers + the weight<->truth correlation for exactly where the isolation of the LEARNED-weighting lever falls short. The fixed _STRONG_MARGIN gate in affect_production_organ.py is UNCHANGED (this file wires nothing).",
+  "GO": false,
+  "multicue_requested": true,
+  "primary_fuse_mode": "raw_sum_learned",
+  "primary_cue_construction": "heterogeneous (0.5x-2.5x sigma ramp)",
+  "G1_noise_robust_lift": false,
+  "G2_load_bearing": true,
+  "G2b_generalizes": true,
+  "G3_instrument": true,
+  "G4a_learned_isolated": true,
+  "G4b_shared_noise": true,
+  "G4_anti_cheat": true,
+  "decisive_rho": 0.8,
+  "decisive_sigma": 2.0,
+  "k_cues": 4,
+  "per_cue_relay_lineage": 6,
+  "matched_n_relay_lineage": 24,
+  "total_budget_primary": 32,
+  "per_cue_relay_primary": 8,
+  "matched_n_relay_primary": 32,
+  "text_ceiling_worst": 0.058823529411764705,
+  "text_ceiling_mean": 0.0196078431372549,
+  "multicue_decisive_worst": 0.43137254901960786,
+  "multicue_decisive_mean": 0.5849673202614379,
+  "g4a_control_a_single_wide_worst": 0.22549019607843138,
+  "g4a_control_a_single_wide_mean": 0.3055555555555556,
+  "g4a_control_b_uniform_hetero_worst": 0.22549019607843138,
+  "g4a_control_b_uniform_hetero_mean": 0.3055555555555556,
+  "g4a_delta_vs_single_wide_worst": 0.18627450980392157,
+  "g4a_delta_vs_single_wide_mean": 0.27941176470588236,
+  "g4a_delta_vs_uniform_worst": 0.18627450980392157,
+  "g4a_delta_vs_uniform_mean": 0.27941176470588236,
+  "weight_true_ivar_correlation_pooled": 0.8930949244167146,
+  "weight_true_ivar_correlation_mean_per_seed": 0.8939300149849899,
+  "weight_rank_matches_truth_all_seeds": true,
+  "weight_rank_matches_truth_count": 6,
+  "original_homogeneous_matched_worst": 0.45098039215686275,
+  "original_homogeneous_matched_mean": 0.5980392156862745,
+  "shared_noise_decisive_worst": 0.3235294117647059,
+  "shared_noise_decisive_mean": 0.1977124183006536,
+  "lesion_decisive_worst": 0.08823529411764706,
+  "shuffle_decisive_worst": 0.058823529411764705,
+  "and_lineage_decisive_worst": 0.00980392156862745,
+  "and_lineage_decisive_mean": 0.024509803921568627,
+  "sum_fuse_decisive_worst": 0.0,
+  "sum_fuse_decisive_mean": 0.2434640522875817,
+  "homogeneous_uniform_worst": 0.5392156862745098,
+  "homogeneous_uniform_mean": 0.5882352941176471,
+  "learned_reliability_homogeneous_worst": 0.5196078431372549,
+  "learned_reliability_homogeneous_mean": 0.5833333333333334,
+  "ungated_n4_decisive_mean": 0.04411764705882353,
+  "multicue_secondary_worst": 0.5980392156862745,
+  "matched_secondary_worst": 0.5980392156862745,
+  "multicue_clean_worst": 1.0,
+  "heldout_clean_worst": 1.0,
+  "heldout_clean_mean": 1.0,
+  "lesion_clean_worst": 0.049019607843137254,
+  "synthetic_instrument_ceiling_worst": 1.0,
+  "ceiling_go_bar": 0.5,
+  "attrib_margin": 0.15,
+  "text_ceil_max": 0.2,
+  "heldout_frac": 0.3,
+  "g4a_margin": 0.15,
+  "k_dose_response_sweep": [
+    {
+      "k_cues": 1,
+      "per_cue_relay": 24,
+      "worst": 0.5196078431372549,
+      "mean": 0.5898692810457516,
+      "and_lineage_worst": 0.5196078431372549,
+      "and_lineage_mean": 0.5898692810457516
+    },
+    {
+      "k_cues": 2,
+      "per_cue_relay": 12,
+      "worst": 0.5098039215686274,
+      "mean": 0.5718954248366012,
+      "and_lineage_worst": 0.1568627450980392,
+      "and_lineage_mean": 0.2026143790849673
+    },
+    {
+      "k_cues": 3,
+      "per_cue_relay": 8,
+      "worst": 0.37254901960784315,
+      "mean": 0.5212418300653595,
+      "and_lineage_worst": 0.0196078431372549,
+      "and_lineage_mean": 0.039215686274509796
+    },
+    {
+      "k_cues": 4,
+      "per_cue_relay": 6,
+      "worst": 0.5392156862745098,
+      "mean": 0.5882352941176471,
+      "and_lineage_worst": 0.00980392156862745,
+      "and_lineage_mean": 0.024509803921568627
+    },
+    {
+      "k_cues": 6,
+      "per_cue_relay": 4,
+      "worst": 0.45098039215686275,
+      "mean": 0.545751633986928,
+      "and_lineage_worst": 0.00980392156862745,
+      "and_lineage_mean": 0.026143790849673203
+    },
+    {
+      "k_cues": 8,
+      "per_cue_relay": 3,
+      "worst": 0.38235294117647056,
+      "mean": 0.5637254901960784,
+      "and_lineage_worst": 0.00980392156862745,
+      "and_lineage_mean": 0.026143790849673203
+    }
+  ],
+  "sigma_snr_sweep": [
+    {
+      "sigma": 0.5,
+      "multicue_worst": 0.803921568627451,
+      "multicue_mean": 0.80718954248366,
+      "matched_worst": 0.803921568627451,
+      "matched_mean": 0.80718954248366
+    },
+    {
+      "sigma": 1.0,
+      "multicue_worst": 0.803921568627451,
+      "multicue_mean": 0.80718954248366,
+      "matched_worst": 0.7745098039215687,
+      "matched_mean": 0.7990196078431372
+    },
+    {
+      "sigma": 1.5,
+      "multicue_worst": 0.6862745098039216,
+      "multicue_mean": 0.75,
+      "matched_worst": 0.7352941176470589,
+      "matched_mean": 0.7696078431372548
+    },
+    {
+      "sigma": 2.0,
+      "multicue_worst": 0.5392156862745098,
+      "multicue_mean": 0.5882352941176471,
+      "matched_worst": 0.45098039215686275,
+      "matched_mean": 0.5980392156862745
+    },
+    {
+      "sigma": 3.0,
+      "multicue_worst": 0.23529411764705882,
+      "multicue_mean": 0.27450980392156865,
+      "matched_worst": 0.22549019607843138,
+      "matched_mean": 0.3006535947712418
+    }
+  ],
+  "n_pos_raw_gated": 102,
+  "n_neg_raw_excluded": 62,
+  "n_partition_words": 164,
+  "per_seed": [
+    {
+      "seed": 42,
+      "code_dim": 64,
+      "text_ceiling": 0.058823529411764705,
+      "multicue_decisive": 0.5980392156862745,
+      "single_wide_decisive": 0.27450980392156865,
+      "uniform_hetero_decisive": 0.27450980392156865,
+      "matched_decisive": 0.5490196078431373,
+      "weight_true_ivar_corr": 0.8683164503117414,
+      "weight_rank_matches_truth": true,
+      "learned_weights_decisive": [
+        0.41627242050370505,
+        0.31225039624146866,
+        0.15695821818450217,
+        0.11451896507032426
+      ],
+      "true_inv_var": [
+        4.0,
+        0.7346938775510207,
+        0.2975206611570248,
+        0.16
+      ],
+      "shared_noise_decisive": 0.23529411764705882,
+      "lesion_decisive": 0.0,
+      "shuffle_decisive": 0.0196078431372549,
+      "and_lineage_decisive": 0.0196078431372549,
+      "sum_fuse_decisive": 0.24509803921568626,
+      "homog_uniform_decisive": 0.6862745098039216,
+      "learned_decisive": 0.6862745098039216,
+      "ungated_n4_decisive": 0.00980392156862745,
+      "heldout_clean": 1.0,
+      "synth_code_ceiling": 1.0
+    },
+    {
+      "seed": 43,
+      "code_dim": 64,
+      "text_ceiling": 0.0196078431372549,
+      "multicue_decisive": 0.6176470588235294,
+      "single_wide_decisive": 0.27450980392156865,
+      "uniform_hetero_decisive": 0.27450980392156865,
+      "matched_decisive": 0.5882352941176471,
+      "weight_true_ivar_corr": 0.9063673598890791,
+      "weight_rank_matches_truth": true,
+      "learned_weights_decisive": [
+        0.419010436562651,
+        0.28986347897223574,
+        0.1754380829048955,
+        0.11568800156021795
+      ],
+      "true_inv_var": [
+        4.0,
+        0.7346938775510207,
+        0.2975206611570248,
+        0.16
+      ],
+      "shared_noise_decisive": 0.3235294117647059,
+      "lesion_decisive": 0.08823529411764706,
+      "shuffle_decisive": 0.058823529411764705,
+      "and_lineage_decisive": 0.049019607843137254,
+      "sum_fuse_decisive": 0.0,
+      "homog_uniform_decisive": 0.5392156862745098,
+      "learned_decisive": 0.5490196078431373,
+      "ungated_n4_decisive": 0.09803921568627451,
+      "heldout_clean": 1.0,
+      "synth_code_ceiling": 1.0
+    },
+    {
+      "seed": 44,
+      "code_dim": 64,
+      "text_ceiling": 0.0,
+      "multicue_decisive": 0.43137254901960786,
+      "single_wide_decisive": 0.23529411764705882,
+      "uniform_hetero_decisive": 0.23529411764705882,
+      "matched_decisive": 0.6372549019607843,
+      "weight_true_ivar_corr": 0.8802812086736238,
+      "weight_rank_matches_truth": true,
+      "learned_weights_decisive": [
+        0.3985009005207801,
+        0.2964914490360907,
+        0.18179305907585122,
+        0.12321459136727791
+      ],
+      "true_inv_var": [
+        4.0,
+        0.7346938775510207,
+        0.2975206611570248,
+        0.16
+      ],
+      "shared_noise_decisive": 0.1568627450980392,
+      "lesion_decisive": 0.0,
+      "shuffle_decisive": 0.0196078431372549,
+      "and_lineage_decisive": 0.00980392156862745,
+      "sum_fuse_decisive": 0.29411764705882354,
+      "homog_uniform_decisive": 0.5784313725490197,
+      "learned_decisive": 0.5882352941176471,
+      "ungated_n4_decisive": 0.06862745098039216,
+      "heldout_clean": 1.0,
+      "synth_code_ceiling": 1.0
+    },
+    {
+      "seed": 100,
+      "code_dim": 64,
+      "text_ceiling": 0.00980392156862745,
+      "multicue_decisive": 0.6176470588235294,
+      "single_wide_decisive": 0.22549019607843138,
+      "uniform_hetero_decisive": 0.22549019607843138,
+      "matched_decisive": 0.45098039215686275,
+      "weight_true_ivar_corr": 0.8841489464314175,
+      "weight_rank_matches_truth": true,
+      "learned_weights_decisive": [
+        0.41818810923606525,
+        0.29872360982111806,
+        0.17828326859333005,
+        0.10480501234948658
+      ],
+      "true_inv_var": [
+        4.0,
+        0.7346938775510207,
+        0.2975206611570248,
+        0.16
+      ],
+      "shared_noise_decisive": 0.14705882352941177,
+      "lesion_decisive": 0.06862745098039216,
+      "shuffle_decisive": 0.0,
+      "and_lineage_decisive": 0.029411764705882353,
+      "sum_fuse_decisive": 0.3627450980392157,
+      "homog_uniform_decisive": 0.5882352941176471,
+      "learned_decisive": 0.5882352941176471,
+      "ungated_n4_decisive": 0.0,
+      "heldout_clean": 1.0,
+      "synth_code_ceiling": 1.0
+    },
+    {
+      "seed": 101,
+      "code_dim": 64,
+      "text_ceiling": 0.0196078431372549,
+      "multicue_decisive": 0.6176470588235294,
+      "single_wide_decisive": 0.43137254901960786,
+      "uniform_hetero_decisive": 0.43137254901960786,
+      "matched_decisive": 0.696078431372549,
+      "weight_true_ivar_corr": 0.8915759229224678,
+      "weight_rank_matches_truth": true,
+      "learned_weights_decisive": [
+        0.41005010101019995,
+        0.2907286928006518,
+        0.1872322269657659,
+        0.11198897922338238
+      ],
+      "true_inv_var": [
+        4.0,
+        0.7346938775510207,
+        0.2975206611570248,
+        0.16
+      ],
+      "shared_noise_decisive": 0.09803921568627451,
+      "lesion_decisive": 0.0392156862745098,
+      "shuffle_decisive": 0.0,
+      "and_lineage_decisive": 0.029411764705882353,
+      "sum_fuse_decisive": 0.4411764705882353,
+      "homog_uniform_decisive": 0.5686274509803921,
+      "learned_decisive": 0.5686274509803921,
+      "ungated_n4_decisive": 0.049019607843137254,
+      "heldout_clean": 1.0,
+      "synth_code_ceiling": 1.0
+    },
+    {
+      "seed": 102,
+      "code_dim": 64,
+      "text_ceiling": 0.00980392156862745,
+      "multicue_decisive": 0.6274509803921569,
+      "single_wide_decisive": 0.39215686274509803,
+      "uniform_hetero_decisive": 0.39215686274509803,
+      "matched_decisive": 0.6666666666666666,
+      "weight_true_ivar_corr": 0.9328902016816103,
+      "weight_rank_matches_truth": true,
+      "learned_weights_decisive": [
+        0.42618908886112356,
+        0.276015701192869,
+        0.1779004491813653,
+        0.11989476076464212
+      ],
+      "true_inv_var": [
+        4.0,
+        0.7346938775510207,
+        0.2975206611570248,
+        0.16
+      ],
+      "shared_noise_decisive": 0.22549019607843138,
+      "lesion_decisive": 0.0,
+      "shuffle_decisive": 0.0,
+      "and_lineage_decisive": 0.00980392156862745,
+      "sum_fuse_decisive": 0.11764705882352941,
+      "homog_uniform_decisive": 0.5686274509803921,
+      "learned_decisive": 0.5196078431372549,
+      "ungated_n4_decisive": 0.0392156862745098,
+      "heldout_clean": 1.0,
+      "synth_code_ceiling": 1.0
+    }
+  ],
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "partition non-degenerate (affect + neutral both present)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "the ceiling INSTRUMENT discriminates (synthetic clean >=0.5, text <0.2)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "grounding is LOAD-BEARING at clean/full (multicue code separates; the no-grounding LESION does not)",
+      "ok": true,
+      "detail": "treatment=1 control=0.0490196 |sep|=0.95098 > 0.2",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "the code is TAUGHT not HANDED (held-out concepts separate; the shuffle-binding control does not)",
+      "ok": true,
+      "detail": "treatment=1 control=0.0588235 |sep|=0.941176 > 0.2",
+      "note": ""
+    }
+  ],
+  "verdict_earned_status": "NO-GO",
+  "verdict_undefined_reasons": [],
+  "config": {
+    "seeds": [
+      42,
+      43,
+      44,
+      100,
+      101,
+      102
+    ],
+    "smoke": false,
+    "multicue": true,
+    "max_stories": 60000,
+    "resample_frac": 0.8,
+    "n_hub": 64,
+    "window": 4,
+    "min_count": 5,
+    "m_assembly": 48,
+    "epochs": 40,
+    "k_mad": 3.0,
+    "n_relay_robust_reference": 24,
+    "total_budget_lineage": 24,
+    "total_budget_primary": 32,
+    "k_dose_sweep": [
+      1,
+      2,
+      3,
+      4,
+      6,
+      8
+    ],
+    "sigma_snr_sweep": [
+      0.5,
+      1.0,
+      1.5,
+      2.0,
+      3.0
+    ],
+    "backend": "numpy"
+  },
+  "mechanism": "PRIMARY (2026-09-17, 3rd iteration, owner-directed): HETEROGENEOUS-RELIABILITY CUES + LEARNED INVERSE-VARIANCE FUSION. multicue_relay_population delivers the SAME grounding decision + true sign/magnitude (one core-affect latent, Craig 2002/2009) into K SMALL pooled relay populations, each with its OWN independent noise stream AND its own designated noise scale (sigma_per_cue = a FIXED 0.5x-2.5x ramp x the operating point's sigma -- a physiologically-motivated stand-in for distinct afferent pathways of differing reliability, e.g. vagal vs vestibular). learn_reliability_weights estimates each cue's reliability UNSUPERVISED (inverse of its own empirical variance across concepts -- Kramer & Manoonpong 2022 crossmodal Hebbian reliability learning; the closed-form fixed point of an online precision-learning rule); multicue_raw_fusion then combines the K cues' RAW (pre-threshold) pooled evidence by this LEARNED weighted sum, and ONE homeostatic threshold (_homeostatic_threshold) is applied to the fused evidence. THE G4a THREE-WAY ANTI-CHEAT reuses the IDENTICAL cue draw (bit-identical, not just matched-distribution) to compute (a) _pool_raw_concat -- collapse all K cues into ONE undifferentiated wide channel (same total afferents + noise power, no per-cue structure) and (b) multicue_raw_fusion with UNIFORM weights on the SAME heterogeneous cues -- so a pass isolates the LEARNED WEIGHTING, not heterogeneity or extra afferents. THE WEIGHT<->TRUTH CHECK compares learn_reliability_weights' output against the TRUE inverse variance (1/sigma_per_cue^2, known to the experiment designer, never given to the mechanism) via Pearson correlation + rank match. LINEAGE (reported, not gated): the 2026-09-05 per-cue-threshold-THEN-AND/OR arms (multicue_coincidence_fuse / _sum_fuse over pool_and_adapt'd cues) collapsed catastrophically at the decisive point; the 2026-09-17 1st iteration's homogeneous-cue UNIFORM-weight raw-sum arm recovered from that collapse but only reached a statistical TIE with a single matched channel (expected: averaging K per-cue means before thresholding, at EQUAL reliability, is mathematically the SAME variance reduction pooling them in one channel gets). ALL arms feed the IDENTICAL three-factor-gated, homeostatically-scaled Hebbian convergence (train_convergence_robust / eligibility_gate / _blocks_robust / convergence_readout / code_separability_ceiling -- ALL reused-by-import verbatim from the noise-robust rung). G4b: shared-noise cues now share ONE random PATTERN scaled per-cue by their OWN designated sigma (preserving heterogeneity while destroying conditional independence) -- perfectly correlated cues cannot be averaged apart by ANY weighting.",
+  "sources": [
+    "Ernst & Banks (2002, Nature, doi:10.1038/415429a) 'Humans integrate visual and haptic information in a statistically optimal fashion' -- combined precision = SUM of per-cue precisions; the ADVANTAGE over a single pooled channel requires UNEQUAL per-cue reliabilities exploited by the combination weights, which this iteration tests directly (equal-reliability raw-sum ~ties the matched arm; unequal-reliability + learned weights is where the theorem predicts a genuine lift).",
+    "Kramer & Manoonpong et al. (2022, Front. Neural Circuits, doi:10.3389/fncir.2022.921453) -- crossmodal Hebbian plasticity LEARNS inverse-variance reliability weights across independent sensory channels UNSUPERVISED (the emergence bar: combination is TAUGHT from the signal's own statistics, not hand-tuned to the labels) -- realized here as learn_reliability_weights, validated against the true (experiment-known) precision via the weight<->truth correlation.",
+    "Craig (2002, Nat Rev Neurosci; 2009, Curr Opin Neurobiol) -- interoception is inherently multi-afferent (lamina I spinothalamocortical + vagal + vestibular channels converging on one core-affect representation) and these channels genuinely DIFFER in reliability -- the biological basis for the heterogeneous-sigma ramp construction (not a synthetic convenience).",
+    "Evrard (2019, Front Neuroanat); Barrett (2017, Soc Cogn Affect Neurosci) -- core affect is CONSTRUCTED by integrating interoceptive + exteroceptive + contextual signals, not read off one channel; the theoretical grounding for multi-cue (not single-channel-pooled) affect grounding.",
+    "2026-09-17 (tonight, this session), owner-directed 3-step iteration on the SAME wall: (1) per-cue-threshold-THEN-AND/OR measured a well-characterized NO-GO (0.010 worst-case vs matched 0.696); (2) RAW pre-threshold uniform-weight fusion recovered to 0.539 worst-case but only TIED the matched arm (mean delta -0.010), diagnosed as the mathematically-expected outcome at EQUAL cue reliability; (3) heterogeneous cues + LEARNED inverse-variance weights, gated here, tests whether exploiting UNEQUAL reliability is where the real lift lives.",
+    "_affect_noise_robust_homeostatic_convergence_derisk.py (2026-09-05 GO, this session's sibling) -- the ORIGINAL homogeneous matched-budget single-channel arm, reproduced here via the SAME imported pipeline as a lineage reference (rho=0.8,sigma=2.0 -> 0.451 worst-case / 0.598 mean, MIN-aggregated to match how that reference number was itself computed)."
+  ],
+  "production_wiring": "NONE -- affect_production_organ.py and wkv_mouth_generator.py are byte-unchanged (sha256-pinned + asserted in --smoke); _STRONG_MARGIN==2.0 asserted; reuse-by-import only.",
+  "HONEST_RESIDUALS": "(1) the body-state US remains the declared ORACLE STAND-IN for a grounded world that does not exist for the TinyStories vocabulary (the SAME stand-in the prior rungs used). (2) the heterogeneous-sigma ramp is a SYNTHETIC stand-in for physiologically distinct afferent modalities (vagal/vestibular/proprioceptive) -- grounding each cue in an ACTUALLY DISTINCT bodily signal (not a scaled copy of one scalar Warriner latent) is the named next rung. (3) the raw-sum-then-threshold fusion is a host weighted-sum + one elementwise threshold (an idealized stand-in for dendritic current summation + an NMDA-receptor voltage threshold); a fully-spiking coincidence-detector convergence (build_propagation_bridge, GPU-queued) is the named next rung, not deferred. (4) learn_reliability_weights is a CLOSED-FORM inverse-variance estimate (the fixed point of an online Hebbian rule), not itself an online/trial-by-trial Hebbian learning process -- validated here only by its OUTPUT tracking the true precision, not by observing it converge over trials; the online rule itself is the named next rung. (5) rate-Hebbian (numpy-CPU) convergence, unchanged from the prior rung. (6) the ceiling is a linear supervised upper bound. (7) the 164-word closed partition is inherited from the prior boundaries. (8) TOTAL_BUDGET/K_CUES/the 0.5x-2.5x hetero ramp are documented OPERATING POINTS, not fit to the labels, but the ramp's specific shape is a design choice, not independently derived.",
+  "elapsed_seconds": 38.4
+}
