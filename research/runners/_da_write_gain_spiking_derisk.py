@@ -42,9 +42,17 @@ produced from SNc firing via `from_region_firing_signed`'s own linear rate->conc
 `da_mode_drives_chat._MAX_AFFERENT_PA`'s docstring calibrates "0pA->DA~0.05 (rest), ..., 1300pA->1.24
 (arousal)" the same way. The DECISION-BEARING step -- how much the write gain moves for a given DA change --
 is now the population's own f-I response to a DA-modulated current, not a chosen slope constant; the two
-calibration anchors are pinned to the SAME `da_to_encoding_gain`(reused-by-import, unclipped) values at the
-SAME two DA reference points `da_mode_drives_chat.py` already established (0.05 rest-floor, 1.24 arousal-
-ceiling), so the calibration is not inventing new operating points either.
+calibration anchors (rate_lo, rate_hi) are READ at the SAME two DA reference points `da_mode_drives_chat.py`
+already established (0.05 rest-floor, 1.24 arousal-ceiling) -- shared ANCHOR LOCATIONS, not a shared gain
+SCALE -- and the measured (rate_lo, rate_hi) span is mapped onto the CALLER's own (g_min, g_max) write-
+strength interface bounds (`_rate_to_gain`), never onto the host formula's raw output. `da_to_encoding_gain`
+at those same two DA points is retained ONLY as a reported-parity comparator (`g_host` / `_G_HOST_RAW_LO/HI`,
+for a human to eyeball ordering agreement) -- it is never read INSIDE `_rate_to_gain`, so the population's OWN
+measured rate range, not the host formula, sets the gain SCALE. This closes a circularity fixed 2026-09-17:
+the write-gain's output scale used to be silently pinned to `da_to_encoding_gain`'s raw values at K_DA_REF=2.0
+(`_RAW_G_LO`/`_RAW_G_HI`), which made the "spiking" mechanism dependent on the very host formula it was meant
+to replace -- not inventing new operating points either, now for a genuinely different reason (the operating
+points are the caller's interface contract, g_min/g_max, not a re-derivation of the host's line).
 
 LESION (this mechanism's OWN, distinct from `da_encoding_lesioned()`/`da_drives_lesioned()`). `lesion=True`
 builds the write_gain population with the excitability_drive target's sensitivity pinned to 0.0 -- the DA
@@ -117,8 +125,13 @@ _K_DA_REF = 2.0                   # == da_encoding_drives_chat._K_DA (the host f
 _DA_CAL_LO = 0.05                 # == da_mode_drives_chat's own "0pA -> DA~0.05 (rest)" calibration anchor
 _DA_CAL_HI = 1.24                 # == da_mode_drives_chat's own "1300pA -> DA~1.24 (arousal)" calibration anchor
 
-_RAW_G_LO = da_to_encoding_gain(_DA_CAL_LO, _DA_TONIC_BASELINE, _K_DA_REF, g_min=-1e9, g_max=1e9)   # == 0.10
-_RAW_G_HI = da_to_encoding_gain(_DA_CAL_HI, _DA_TONIC_BASELINE, _K_DA_REF, g_min=-1e9, g_max=1e9)   # == 2.48
+# REPORTING-ONLY host-parity comparator (fixed 2026-09-17): the host formula's own raw (unclipped) gain at the
+# SAME two DA calibration anchors, kept ONLY so `evaluate_seed`/the output JSON can report how the spiking
+# mechanism's gain ordering compares to the host formula's -- NEVER read inside `_rate_to_gain` (that used to
+# be the circularity: the "spiking" gain's SCALE was silently pinned to these host values at K_DA_REF=2.0,
+# instead of the population's own measured rate range mapped onto the caller's (g_min, g_max) interface).
+_G_HOST_RAW_LO = da_to_encoding_gain(_DA_CAL_LO, _DA_TONIC_BASELINE, _K_DA_REF, g_min=-1e9, g_max=1e9)   # == 0.10
+_G_HOST_RAW_HI = da_to_encoding_gain(_DA_CAL_HI, _DA_TONIC_BASELINE, _K_DA_REF, g_min=-1e9, g_max=1e9)   # == 2.48
 
 
 # ============================================================================
@@ -241,17 +254,24 @@ _MIN_DISCRIMINABLE_HZ = 3.0   # below this, rate_hi-rate_lo cannot be trusted as
 
 
 def _rate_to_gain(rate, rate_lo, rate_hi, g_min, g_max):
-    """Two-point affine calibration (the ONLY host arithmetic left): map a MEASURED write_gain firing rate
-    onto the SAME raw-gain line the host formula draws at the two shared calibration DA points (_DA_CAL_LO/HI),
-    then clip to the caller's (g_min, g_max) -- identical clip semantics to `da_to_encoding_gain`. Guards
-    against the OU-noise degenerate case (rate_hi-rate_lo too small to be a real DA-driven separation), not just
-    an exact-zero denominator -- a small noise-sized gap would otherwise AMPLIFY a single noisy read into a
-    wild extrapolated gain (earned: da=0.05 under a 1e-9 epsilon read g=2.18 off a noise-only rate_hi-rate_lo)."""
+    """Two-point affine calibration (the ONLY host arithmetic left): map a MEASURED write_gain firing rate onto
+    the CALLER's own (g_min, g_max) write-strength interface bounds -- rate_lo (read at _DA_CAL_LO) -> g_min,
+    rate_hi (read at _DA_CAL_HI) -> g_max, linear between -- so the mechanism's output SCALE is set by the
+    population's OWN measured rate range and the caller's interface contract, never by the host formula's raw
+    gain values (that was the circularity fixed 2026-09-17: this line used to interpolate between
+    `_RAW_G_LO`/`_RAW_G_HI`, i.e. `da_to_encoding_gain`'s own raw output at K_DA_REF=2.0, so the "spiking"
+    mechanism's range was silently pinned to the host formula it was meant to replace). The trailing
+    min(g_max, max(g_min, raw_g)) is now a PURE safety clamp for extrapolation beyond the calibration span (a
+    rate outside [rate_lo, rate_hi]), not a rescale -- for rate within that span raw_g already lies in
+    [g_min, g_max]. Guards against the OU-noise degenerate case (rate_hi-rate_lo too small to be a real
+    DA-driven separation), not just an exact-zero denominator -- a small noise-sized gap would otherwise
+    AMPLIFY a single noisy read into a wild extrapolated gain (earned: da=0.05 under a 1e-9 epsilon read
+    g=2.18 off a noise-only rate_hi-rate_lo)."""
     if abs(rate_hi - rate_lo) < _MIN_DISCRIMINABLE_HZ:
         raw_g = 1.0   # degenerate calibration (population did not discriminate) -> neutral fallback, never NaN
     else:
         frac = (rate - rate_lo) / (rate_hi - rate_lo)
-        raw_g = _RAW_G_LO + frac * (_RAW_G_HI - _RAW_G_LO)
+        raw_g = g_min + frac * (g_max - g_min)
     return float(min(g_max, max(g_min, raw_g)))
 
 
@@ -438,7 +458,8 @@ def main():
         "mechanism": "DA (already-neural) -> write_gain population (IZH2007_HIPPO_PYRAMIDAL, D1/D5-like "
                      "excitability_drive) -> firing rate -> calibrated write-magnitude gain",
         "constants": {"n_write_gain": N_WRITE_GAIN, "bg_current_pa": BG_CURRENT_PA, "k_gain_pa": K_GAIN_PA,
-                     "da_cal_lo": _DA_CAL_LO, "da_cal_hi": _DA_CAL_HI, "raw_g_lo": _RAW_G_LO, "raw_g_hi": _RAW_G_HI},
+                     "da_cal_lo": _DA_CAL_LO, "da_cal_hi": _DA_CAL_HI,
+                     "g_host_raw_lo_REPORTING_ONLY": _G_HOST_RAW_LO, "g_host_raw_hi_REPORTING_ONLY": _G_HOST_RAW_HI},
         "per_seed": results,
         "verdict": {
             "GO": go,
