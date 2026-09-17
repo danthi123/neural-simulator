@@ -132,3 +132,18 @@ at both sites; also report frac over LIVE units (n_place/n_live) to remove the l
 GATE: not-gateable-yet (metric-correctness, needs a synthetic-null unit test) -> NOT-GATEABLE: a
 statistical-validity check on a research metric is a targeted unit test (planned as pivot infra), not a
 generic pre-commit gate; tracked here + in the pivot's measurement-infra step.
+
+## 2026-09-16 — graded-bias production path ~2% short of its moat (pre-existing, CI test RED on main)
+`tests/test_multireferent_graded_bias_agent.py::{test_fixed_bias_default_mis_resolves_seed100_roll,
+test_graded_bias_closes_seed100_roll}` FAIL on clean committed main (verified CPU/numpy): the content-graded
+bias (de-risked GO 6/6 on the isolated `_phaseB_biased_competition_graded_derisk.run_seed` runner) does NOT
+reproduce in the production `MultiTurnAgent.bcw` path at the extreme seed-100 case — the graded bias DOES lift
+ball to win (0.01->0.5, over cat 0.395) but the 1.27x margin is just under the 1.3x specificity moat
+(`spec_threshold`), so `resolve_referent` abstains (None). Deployed graded params == de-risk defaults
+(base_pA=2500/gain=1.0/ref=0.20/spec=1.3): NO config drift — it is a de-risk-runner-vs-production-path gap.
+PRE-EXISTING (independent of the 2026-09-16 biased-competition delete attempt, which I first wrongly blamed in
+ledger note c6df454d2, since corrected). Blocks biased-competition's content_bias_target delete -> RETIRED
+(needs green tests). FIX: reconcile the production bcw path with the de-risk runner OR re-calibrate the graded
+params so seed-100 clears the moat, then re-verify 6-seed (NOT tune-to-pass). GATE: the existing CI test IS the
+guard (currently RED) -> NOT-GATEABLE (no NEW pre-commit gate needed; the failing test already catches it, the
+task is to fix the mechanism so it goes green; tracked here + the biased-competition ledger row + board #219).

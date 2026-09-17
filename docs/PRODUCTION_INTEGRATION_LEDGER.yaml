@@ -857,14 +857,18 @@ rows:
     retire_status: "RETIRABLE_NOW 2026-09-16"
     # retire_status (2026-09-16): the host-COGNITION residual (the animacy/verb lexicon deriving content_bias_target)
     # is DEMOTED in PRODUCTION — the learned spiking feature-compat is the production default (flip verified, integrated
-    # 0/38). RETIRABLE_NOW, but the full DELETE -> RETIRED is BLOCKED by a second consumer discovered on the delete
-    # attempt (worktree agent-a7e411ea, NOT merged): the GRADED-bias RESEARCH mechanism (test_multireferent_graded_bias
-    # _agent + _phaseB_biased_competition_graded_derisk, default-OFF `graded_bias` knob, de-risked GO 6/6) DEPENDS on the
-    # content_bias_target FALLBACK path in _resolve_biased. Deleting that path makes the hard seed-100 case ABSTAIN
-    # (moat-preserving, fine for production) but the graded-bias mechanism NO LONGER CLOSES its designed case (returns
-    # None with graded ON too) — verified. So a clean delete would REGRESS a de-risked capability (NO-DEFER: can't
-    # abandon it). RETIRED requires FIRST re-engineering the graded-bias mechanism onto the learned-map path (a research
-    # follow-on), THEN deleting content_bias_target. Ages out 2026-09-30.
+    # 0/38). RETIRABLE_NOW. ⛔ CORRECTION (2026-09-16, supersedes the c6df454d2 note): the delete attempt (worktree
+    # agent-a7e411ea, NOT merged) left 2 graded-bias tests failing, and I FIRST wrongly blamed the delete. VERIFIED
+    # otherwise: the ORIGINAL, UNMODIFIED test_multireferent_graded_bias_agent.py FAILS on clean committed main too
+    # (2 failed, `graded->None`), so it is a PRE-EXISTING regression INDEPENDENT of the delete — the delete does NOT
+    # break or block graded-bias. ROOT CAUSE (clean instrument): with the exact de-risked config (base_pA=2500,
+    # gain=1.0, ref=0.20, spec_threshold=1.3 -- deployed == de-risk defaults, NO drift), the graded bias DOES lift the
+    # extreme seed-100 case (ball 0.01->0.5, over cat 0.395) but the 1.27x margin is JUST under the 1.3x specificity
+    # moat -> resolve_referent abstains. It is a de-risk-runner-vs-production-path gap: the GO 6/6 was on the isolated
+    # `run_seed` runner; the production `MultiTurnAgent.bcw` path lands ~2% short. So biased-competition's delete is
+    # ACTUALLY clean re: graded-bias (already broken), but landing it needs green tests -> FIX the pre-existing
+    # graded-bias regression first (re-calibrate the production path to clear the moat + re-verify 6-seed, NOT
+    # tune-to-pass). Logged in research/FAILURE_LOG.md. Ages out 2026-09-30.
     host_scaffold_in_default: "DEMOTED 2026-09-16: the per-referent content bias is now authored by the learned spiking feature-compatibility map (SpikingFeatureCompat, default-ON); the host animacy/verb lexicon (content_bias_target) is reached ONLY in the <40-heard-fact fallback (never in the ≥40-fact production KB). The WTA race + lateral inhibition it biases is spiking (lesion-proven). Residual to delete for RETIRED: content_bias_target + its lexicons."
     default_anchor:
       - file: research/runners/biased_competition_prod.py
