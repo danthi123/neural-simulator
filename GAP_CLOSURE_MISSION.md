@@ -13,7 +13,11 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ---
 
-## ⭐⭐⭐ IN-FLIGHT — 2026-09-17 ~05:05 ALL-NIGHT AUTONOMOUS (owner asleep; deep-research course-correction APPLIED — see below)
+## ⭐⭐⭐ IN-FLIGHT — 2026-09-17 ~06:10 ALL-NIGHT AUTONOMOUS (owner asleep; deep-research course-correction APPLIED — see below)
+
+⚡ **CULMINATION IN PROGRESS (~06:10):** the onebrain 11-organ default-on flip **answer-preservation + one-brain-coherence 6-seed battery PASSED GO 6/6** (every wired organ's live chat answer preserved ON-vs-OFF; all 8 organs on ONE 11-organ pool; `=0` escape reverts — all 6/6; artifact in worktree wf_f60e34e8-14f-1 at research/findings/raw/_onebrain_11organ_pool_flip_6seed.json). NOW running the **integrated /api/brain-chat 38-faculty no-regression battery** (pid 218330, numpy/CPU, local, watcher brwybbop6) = the established default-ON bar (the 4-flip 2026-09-16 precedent).
+ON LANDING: if 0-regression → cherry-pick flip-prep (branch research/onebrain-11organ-pool-flip-prep, a56f31c1d) to main with `_WAVE3_POOL_DEFAULT_ON=True` = the culmination flip; if regression → land default-OFF + document + keep the byte-identical escape. NOT yet landed — do NOT double-launch the battery. Affect agent a6762f7b iterating the SURPASS (pre-threshold fusion recovered the collapse 50×, G1 passed; now gating heterogeneous-cue+learned-reliability, ~2.5× measured). Segmentation agent a87b71002cf72a601 iterating its NO-GO(4/6).
+
 
 **Owner asked (mid-session): am I doing proper deep research (online + RAG + reading the actual source material)?**
 Honest answer given: RAG verify-first was consistent, but this session had been thin on external-lit + source-reading
