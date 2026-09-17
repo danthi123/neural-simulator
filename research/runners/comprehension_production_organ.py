@@ -820,23 +820,33 @@ _ORGAN: ComprehensionProductionOrgan | None = None
 
 
 def get_organ(seed: int = 42) -> ComprehensionProductionOrgan:
-    """The process-shared comprehension organ (built once on first use). When the ONE-BRAIN CROSS-EDGE flag is ON
-    (`BRAIN_ONEBRAIN_XEDGE`) this returns the cross-edge-grown comprehension organ that co-inhabits the shared
-    [d6_multiref_wm + comprehension + da_credit] xedge pool (the frozen w{k}->sel cross-edge lets a HELD WM pool
-    drive its role competition); OFF (default) or on any build failure -> its own standalone bridge exactly as
-    before (byte-identical). Mirrors the metacog pool-#2 shared-attach template."""
+    """The process-shared comprehension organ (built once on first use). ONE-BRAIN WAVE-1 POOL (opt-in,
+    `BRAIN_ONEBRAIN_WAVE1_POOL`, default-OFF) WINS when on: comprehension co-inhabits the 6-organ Wave-1
+    `merge_organs` pool (surprise + world-model + metacog + pragmatic + comprehension + source_provenance,
+    `onebrain_wave1_pool_production.get_wave1_pool` — organ-read GO 6/6,
+    `_onebrain_wave1_organread_verify.py`), exactly mirroring the shipped `single_pool_enabled()` "WINS when
+    on, layered ABOVE the pre-existing mechanism" convention (`surprise_production_organ.get_organ` et al.).
+    OFF (the common case) -> falls through to the pre-existing ONE-BRAIN CROSS-EDGE flag
+    (`BRAIN_ONEBRAIN_XEDGE`) unchanged: ON returns the cross-edge-grown comprehension organ that co-inhabits
+    the shared [d6_multiref_wm + comprehension + da_credit] xedge pool (the frozen w{k}->sel cross-edge lets a
+    HELD WM pool drive its role competition); OFF (default) or on any build failure -> its own standalone
+    bridge exactly as before (byte-identical). Mirrors the metacog pool-#2 shared-attach template."""
     global _ORGAN
     if _ORGAN is None:
-        try:
-            from research.runners.onebrain_xedge_production import xedge_enabled, get_xedge_pool
-            if xedge_enabled():
-                xp = get_xedge_pool(seed)
-                if xp is not None and getattr(xp, "comp_organ", None) is not None:
-                    _ORGAN = xp.comp_organ
-        except Exception:
-            _ORGAN = None
-        if _ORGAN is None:
-            _ORGAN = ComprehensionProductionOrgan(seed=seed)
+        from research.runners.onebrain_wave1_pool_production import wave1_pool_enabled, get_wave1_pool
+        if wave1_pool_enabled():
+            _ORGAN = ComprehensionProductionOrgan(seed=seed, shared=get_wave1_pool(seed))
+        else:
+            try:
+                from research.runners.onebrain_xedge_production import xedge_enabled, get_xedge_pool
+                if xedge_enabled():
+                    xp = get_xedge_pool(seed)
+                    if xp is not None and getattr(xp, "comp_organ", None) is not None:
+                        _ORGAN = xp.comp_organ
+            except Exception:
+                _ORGAN = None
+            if _ORGAN is None:
+                _ORGAN = ComprehensionProductionOrgan(seed=seed)
     return _ORGAN
 
 

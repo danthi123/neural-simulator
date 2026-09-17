@@ -77,7 +77,31 @@ def source_provenance_lesioned() -> bool:
 
 def get_organ(seed: int = 42, *, lesion: bool = False) -> SourceProvenanceHonestyMonitor:
     """The process-shared #129 spiking opponent-comparator provenance monitor (built once per (seed, lesion)
-    pair; rebuilt if the lesion flag changes, e.g. between a normal request and a lesion-verification probe)."""
+    pair; rebuilt if the lesion flag changes, e.g. between a normal request and a lesion-verification probe).
+
+    NOT wired to `onebrain_wave1_pool_production.get_wave1_pool()` (2026-09-16, verify-first check before the
+    Wave-1 production wire-in landed on `comprehension_production_organ.get_organ` — see that module's
+    mirrored branch): DOCUMENTED PREREQUISITE FAILURE, not an oversight. Two independent, structural mismatches
+    between this production wrapper and the wave1 pool's validated "source_provenance" participant:
+      (1) API SHAPE — the wave1 pool's organ-read gate validates `onebrain_merge_framework._SourceProvReadOrgan`
+          (a `shared=`-aware wrapper around `ProvenanceBrain` that does ONE build-time batch encode of a FIXED
+          8-item calibration battery, then only frozen recalls). `SourceProvenanceHonestyMonitor` — THIS class,
+          the one every caller here actually holds (`webapp/server.py` calls `.encode_fact()` / `.judge_fact()`
+          live, per-turn, for arbitrary NEW facts as the conversation reveals them) — has NO `shared=` parameter
+          at all (`self._brain = ProvenanceBrain(self.seed)`, hardcoded) and is a fundamentally different
+          incremental-online usage pattern, not merely missing a constructor arg.
+      (2) SILENT-NO-OP RISK — `_wave1_descriptors()` sets `freeze_regions=tuple(sprov.regions)` on the
+          source_provenance descriptor, so `merge_organs` holds every one of its internal edges at
+          `cp_plasticity_rate_gain=0` for the pool's ENTIRE lifetime as blanket protection from co-resident
+          organs' live global Hebbian training; `_SourceProvReadOrgan.ensure_built()` only ever re-opens that
+          gain, temporarily, for its OWN one-shot build-time encode via a direct array write bypassing the
+          gate system. `SourceProvenanceHonestyMonitor.encode_fact()` has no equivalent re-open — wiring it to
+          the wave1 pool as-is would make every live `encode_fact()` call a SILENT no-op (no exception, no
+          discrimination learned), corrupting the production honesty read without any signal that it broke.
+    Closing this needs a NEW, separately de-risked mechanism (an online per-call gain re-open + read-isolation
+    guard for `SourceProvenanceHonestyMonitor` itself, analogous to but distinct from `_SourceProvReadOrgan`'s
+    build-time-only dance) — out of scope for a same-pattern wiring rung; see the sibling Wave-1 build's report
+    for the full verify-first trace. Left UNCHANGED (byte-identical) until that mechanism exists and is GO'd."""
     global _ORGAN, _ORGAN_KEY
     key = (int(seed), bool(lesion))
     if _ORGAN is None or _ORGAN_KEY != key:
