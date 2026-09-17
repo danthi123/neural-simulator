@@ -121,12 +121,15 @@ def _disp(read):
     return {c: round(v, 4) for c, v in read.items()}
 
 
-def run_seed(seed, base_pA, spec_threshold, window, gain, ref, cap_pA, verbose=False):
+def run_seed(seed, base_pA, spec_threshold, window, gain, ref, cap_pA, verbose=False,
+             competition_mode="pairwise", shared_fs_weight=12.0):
     cat, ball = PAIR
 
     def buf(concepts):
         return BiasedCompetitionContextBuffer(concepts, n=600, pattern_size=40, seed=seed,
-                                              enable_ou=False, competition=True, verbose=verbose)
+                                              enable_ou=False, competition=True, verbose=verbose,
+                                              competition_mode=competition_mode,
+                                              shared_fs_to_sel_weight=shared_fs_weight)
 
     out = {"seed": seed}
 
@@ -195,6 +198,13 @@ def main():
                     help="cap on the graded bias (stay within a safe envelope; never an unbounded turn-up).")
     ap.add_argument("--spec-threshold", type=float, default=1.3)
     ap.add_argument("--window", type=int, default=20)
+    ap.add_argument("--competition-mode", default="pairwise", choices=["pairwise", "shared_pool"],
+                    help="N-way competition topology in the underlying BiasedCompetitionContextBuffer. 'pairwise' "
+                         "(default) = the validated per-referent cross-inhibition (byte-identical); 'shared_pool' = "
+                         "the Wang-2002 common inhibitory population that scales to 3+ rivals (divisive norm).")
+    ap.add_argument("--shared-fs-weight", type=float, default=12.0,
+                    help="shared_pool mode only: sel_FS_shared -> sel_X inhibitory weight (stable basin [7,20], "
+                         "default 12.0 = basin centre). Ignored in pairwise mode.")
     ap.add_argument("--out", default="research/findings/raw/_phaseB_biased_competition_graded.json")
     ap.add_argument("--verbose", action="store_true")
     a = ap.parse_args()
@@ -207,7 +217,8 @@ def main():
 
     results = []
     for seed in a.seeds:
-        r = run_seed(seed, a.base_pA, a.spec_threshold, a.window, a.gain, a.ref, a.cap_pA, verbose=a.verbose)
+        r = run_seed(seed, a.base_pA, a.spec_threshold, a.window, a.gain, a.ref, a.cap_pA, verbose=a.verbose,
+                     competition_mode=a.competition_mode, shared_fs_weight=a.shared_fs_weight)
         r["baselines"] = run_baselines_on_pair(seed, a.window, a.spec_threshold)
         results.append(r)
         ea = r["bc_cat_first_eat"]; eb = r["bc_ball_first_eat"]
@@ -241,7 +252,9 @@ def main():
             "lesion_breaks_seeds": lesion_seeds, "moat_intact_seeds": moat_seeds,
             "three_ref_seeds": three_seeds, "recency_fail_seeds": recency_fail,
             "salience_fail_seeds": salience_fail, "base_pA": a.base_pA, "gain": a.gain,
-            "ref": a.ref, "cap_pA": a.cap_pA, "spec_threshold": a.spec_threshold}}, fh, indent=2, default=str)
+            "ref": a.ref, "cap_pA": a.cap_pA, "spec_threshold": a.spec_threshold,
+            "competition_mode": a.competition_mode, "shared_fs_weight": a.shared_fs_weight}},
+            fh, indent=2, default=str)
 
     print(f"\n{'='*100}", flush=True)
     print(f"  GO-arm (favored wins both orders + feature-flip): {go_seeds}/{n}", flush=True)

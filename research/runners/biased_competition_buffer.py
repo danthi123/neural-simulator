@@ -51,6 +51,22 @@ Two substrate facts found + handled in the original build (both diagnosed agains
      competitors (a retrieval cue gently re-drives their assemblies — the biology of biased competition, where the
      competing stimuli are simultaneously present). The moat reads the held assembly (a winner must be
      re-presentable above a floor) + abstains when the content is silent.
+
+N-WAY SCALING (competition_mode, added 2026-09-16; additive + DEFAULT "pairwise" == byte-identical to the validated
+2-ref circuit). The pairwise topology (each referent's FS pool cross-inhibits every OTHER referent) does not scale to
+3+ rivals on ONE scalar: the fs_to_sel_weight that lands the 2-ref pair case (7.0, the stable basin centre) leaves a
+saturated biased winner unable to pull the 1.3x margin over a STRONG rival at N=3 (the winner hits the sel-pool firing
+ceiling ~0.5 while the strongest rival resists pairwise suppression at ~0.40 > 0.5/1.3) -- the graded-bias regression
+finding's honest 4/6 residual. `competition_mode="shared_pool"` is a genuinely DIFFERENT topology (a star, not a
+complete graph): ONE common inhibitory population (Wang 2002 / Wong-Wang 2006 shared inhibitory pool; Carandini-Heeger
+divisive normalization) driven by ALL sel accumulators and inhibiting ALL of them, so the pooled suppression
+SELF-SCALES with the live competitor count -- an added rival raises the common inhibition it itself receives -- while
+the biased winner's large content-bias current keeps it above the pool. This is the same lateral-inhibition/pooled-FSI
+motif `research/biology/affective-marker-lateral-inhibition-wta.md` generalizes to N channels, applied here to the
+disjoint per-referent accumulators (NOT the shared-cell pattern-separation regime where a self-inclusive pool was
+anti-divisive -- 2026-08-06-source-monitor-fair-inhibition...NO-GO; here the pools are disjoint BrainRegions and the
+winner is driven far above threshold, so that failure mode does not apply). Selected via
+`competition_mode="shared_pool", shared_fs_to_sel_weight=<w>`; the pairwise default draws + wires byte-identically.
 """
 from __future__ import annotations
 
@@ -88,7 +104,8 @@ class BiasedCompetitionContextBuffer:
     def __init__(self, concepts, n=600, pattern_size=40, attractor_weight=50.0,
                  n_sel=20, n_sel_fs=10, ref_to_sel_weight=12.0, sel_recurrent_weight=0.35,
                  sel_recurrent_density=0.5, sel_to_fs_weight=20.0, fs_to_sel_weight=7.0,
-                 seed=42, enable_ou=False, competition=True, verbose=False):
+                 seed=42, enable_ou=False, competition=True, verbose=False,
+                 competition_mode="pairwise", shared_fs_to_sel_weight=12.0):
         import sim.backend as B
         from sim.config import CoreSimConfig, VisualizationConfig, RuntimeState, GPUConfig
         from sim.bridge import SimulationBridge
@@ -98,6 +115,16 @@ class BiasedCompetitionContextBuffer:
         self.xp, _ = B.get_backend()
         self.concepts = list(concepts)
         self.competition = bool(competition)
+        # N-WAY COMPETITION TOPOLOGY (additive; default "pairwise" == byte-identical to the validated 2-ref
+        # circuit). "shared_pool" swaps the per-referent FS pools for ONE common inhibitory population
+        # (Wang 2002 / Wong-Wang 2006 shared inhibitory pool; Carandini-Heeger divisive normalization) that ALL
+        # sel accumulators drive and that inhibits ALL of them -- so the pooled suppression SELF-SCALES with the
+        # number of live competitors (2 rivals -> moderate pooled inhibition; 3 rivals -> stronger), letting a
+        # saturated biased winner still pull the required margin over a STRONG rival at N>=3 without the pairwise
+        # weight retune that destabilises the 2-ref pair case. See the module docstring's "N-WAY SCALING" note.
+        if competition_mode not in ("pairwise", "shared_pool"):
+            raise ValueError(f"competition_mode must be 'pairwise' or 'shared_pool', got {competition_mode!r}")
+        self.competition_mode = competition_mode
         self._psize = pattern_size
         self._held = []   # discourse-referent registry (which referents were introduced via update())
 
@@ -117,9 +144,19 @@ class BiasedCompetitionContextBuffer:
                     internal_density=sel_recurrent_density, exc_weight_mean=sel_recurrent_weight,
                     inh_weight_mean=0.0, weight_jitter=0.2, plastic_internal=False, enable_nmda=True,
                     izh_neuron_type=NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name))
-                # Selective inhibitory interneuron: driven only by sel_X, inhibits only sel_Y!=X (Rutishauser).
+                if self.competition_mode == "pairwise":
+                    # Selective inhibitory interneuron: driven only by sel_X, inhibits only sel_Y!=X (Rutishauser).
+                    regions.append(BrainRegion(
+                        name=f"sel_FS_{c}", n_neurons=n_sel_fs, exc_fraction=0.0,
+                        internal_density=0.0, exc_weight_mean=0.0, inh_weight_mean=0.0, weight_jitter=0.0,
+                        plastic_internal=False,
+                        izh_neuron_type=NeuronType.IZH2007_FS_CORTICAL_INTERNEURON.name))
+            if self.competition_mode == "shared_pool":
+                # ONE common inhibitory population (Wang 2002 / Wong-Wang 2006): driven by ALL sel accumulators,
+                # inhibits ALL of them -> divisive normalization whose total pooled suppression self-scales with
+                # the number of live competitors. Same FS interneuron type + size as a per-referent pool.
                 regions.append(BrainRegion(
-                    name=f"sel_FS_{c}", n_neurons=n_sel_fs, exc_fraction=0.0,
+                    name="sel_FS_shared", n_neurons=n_sel_fs, exc_fraction=0.0,
                     internal_density=0.0, exc_weight_mean=0.0, inh_weight_mean=0.0, weight_jitter=0.0,
                     plastic_internal=False,
                     izh_neuron_type=NeuronType.IZH2007_FS_CORTICAL_INTERNEURON.name))
@@ -135,7 +172,7 @@ class BiasedCompetitionContextBuffer:
             RegionPathway(from_region="dlpfc_wm", to_region="cortex_ctx", density=0.05,
                           weight_mean=0.0, weight_jitter=0.2, plastic=False),
         ]
-        if self.competition:
+        if self.competition and self.competition_mode == "pairwise":
             # sel_X -> sel_FS_X (exc: the winning accumulator recruits its interneuron).
             for c in self.concepts:
                 pathways.append(RegionPathway(from_region=f"sel_{c}", to_region=f"sel_FS_{c}",
@@ -156,6 +193,27 @@ class BiasedCompetitionContextBuffer:
                     pathways.append(RegionPathway(from_region=f"sel_FS_{X}", to_region=f"sel_{Y}",
                                                   density=1.0, weight_mean=fs_to_sel_weight, weight_jitter=0.2,
                                                   plastic=False))
+        elif self.competition and self.competition_mode == "shared_pool":
+            # ALL sel_X -> sel_FS_shared (exc: the common pool integrates TOTAL competition; its drive -- hence
+            # its inhibitory output -- rises with the number of live, active competitors). Reuses sel_to_fs_weight.
+            for c in self.concepts:
+                pathways.append(RegionPathway(from_region=f"sel_{c}", to_region="sel_FS_shared",
+                                              density=1.0, weight_mean=sel_to_fs_weight, weight_jitter=0.2,
+                                              plastic=False))
+            # sel_FS_shared -> ALL sel_X (inh: self-inclusive divisive normalization). The pooled suppression hits
+            # every accumulator; the biased winner's large content-bias current keeps it above the pool while the
+            # UN-biased strong rival -- which at N>=3 also feeds the pool and so raises the common suppression it
+            # itself receives -- is driven below the winner/spec margin. shared_fs_to_sel_weight is a DISTINCT
+            # mechanism param (NOT the pairwise fs_to_sel_weight) so the two topologies tune independently.
+            # A structural sweep (numpy-CPU, seeds 42/43/44/100/101/102) found a WIDE stable basin: BOTH the 2-ref
+            # graded GO-arm AND the 3-referent scale probe are 6/6 for shared_fs_to_sel_weight in [7, 20] (fails at
+            # 6 = under-suppressed, and at 28 = the winner starts over-suppressed) -- far wider than the pairwise
+            # scalar's {6,7,8} basin, because the winner is protected by its bias while rivals are divided down.
+            # The 12.0 default is a confirmed 6/6+6/6 point near the [7,20] centre (basin-centred, NOT seed-tuned).
+            for c in self.concepts:
+                pathways.append(RegionPathway(from_region="sel_FS_shared", to_region=f"sel_{c}",
+                                              density=1.0, weight_mean=shared_fs_to_sel_weight, weight_jitter=0.2,
+                                              plastic=False))
         cfg.region_pathways = pathways
         cfg.dt_ms = 0.5
         cfg.seed = seed
