@@ -160,3 +160,18 @@ NEW method (NO-DEFER research arc — the extreme intrinsic-asymmetry case), or 
 order-dependent boundary behavior. Both are real work on a default-OFF RESEARCH mechanism; NEITHER is a quick delete
 enabler. Consequence for scaffold-retirement: biased-competition's content_bias_target delete -> RETIRED is genuinely
 blocked by these pre-existing boundary-case test failures — low-leverage to force vs the mouth (neural-render) keystone.
+
+### 2026-09-16 ROOT-CAUSED (graded-bias regression) — git bisect -> e7f009a37
+Automated git bisect (good=c5f70a9ef where the test was added + passed, bad=main) pinpointed the first-bad commit:
+**e7f009a37 "feat: add neural vocal action selector gate" (2026-08-03)**, whose sim/bridge.py change (the
+`test_ou_current_scope.py` companion) CORRECTLY fixed the trait-init so `set_pathway_weights(output_inhibitory_
+indices=...)` resets nominally-excitatory regions to PURELY excitatory (before: the generic profile left "a fraction
+of every nominally excitatory region transmit inhibition" — random inhibitory-trait leakage). The biased-competition
+WTA's rival-suppression was INADVERTENTLY RELYING on that leakage: with it removed, the DESIGNED sel_FS->sel_Y
+cross-inhibition alone suppresses the rival to only ~0.395 (was ~0.1175 in the de-risk), so at the extreme seed-100
+asymmetry the favored referent wins by 1.27x, just under the 1.3x moat -> abstain. So the graded-bias GO 6/6 (and the
+biased-competition de-risk) were partly resting on a trait-init ARTIFACT (the CLAUDE.md "proxy/artifact carried the
+result" class). e7f009a37 is CORRECT — do NOT revert it. FIX: make the DESIGNED cross-inhibition carry the suppression
+itself (strengthen the sel_FS->sel_Y weight in biased_competition_buffer.py, or add explicit sel-pool inhibition),
+then re-verify 6-seed on the de-risk runner + the production tests (NOT tune-to-seed-100). Unblocks biased-competition
+content_bias_target delete -> RETIRED.
