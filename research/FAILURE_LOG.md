@@ -175,3 +175,23 @@ result" class). e7f009a37 is CORRECT — do NOT revert it. FIX: make the DESIGNE
 itself (strengthen the sel_FS->sel_Y weight in biased_competition_buffer.py, or add explicit sel-pool inhibition),
 then re-verify 6-seed on the de-risk runner + the production tests (NOT tune-to-seed-100). Unblocks biased-competition
 content_bias_target delete -> RETIRED.
+
+### 2026-09-16 FIXED (graded-bias regression) — designed cross-inhibition strengthened 5.0 -> 7.0
+Confirmed the root cause + landed the principled fix. A structural sweep of the DESIGNED cross-inhibition weight
+`fs_to_sel_weight` (sel_FS_X -> sel_Y!=X) across 6 seeds found a stable basin {6,7,8} all giving 2-ref GO-arm 6/6
+(current 5.0 -> 3/6; >=9 destabilises the marginal seed-102 roll = the code's "symmetric over-inhibition is
+unstable" regime), centred at **7.0**. This is a MECHANISM re-tune (restoring the designed interneuron circuit that
+e7f009a37 under-powered by removing the leakage it co-existed with), NOT the bias-magnitude config search the runner
+warns against (base_pA/gain/ref/cap unchanged). Verified CPU/numpy at the new 7.0 default: the two failing tests now
+PASS (`test_multireferent_graded_bias_agent.py` 5/5), production `test_multireferent_biased_competition.py` stays 5/5,
+byte-identity `test_multi_turn_agent.py` stays 3/3; de-risk runner 2-ref GO-arm 6/6 (was 3/6), lesion 6/6, moat 6/6
+(`research/findings/raw/_biased_competition_graded_fs7_fix_6seed.json`). At seed-100 spec=1.3 the fixed-vs-graded
+contrast is preserved (FIXED->cat mis-resolve, GRADED->ball). Fix: `research/runners/biased_competition_buffer.py`
+default 5.0->7.0 + rationale comment. Unblocks the biased-competition content_bias_target delete -> RETIRED.
+RESIDUAL (noticed, NOT gateable — a scaling honest-negative, no CI test covers 3-referent graded resolution):
+e7f009a37 also degraded the de-risk's 3-REFERENT scale probe ({cat,ball,river} eat->cat) from 6/6 to 4/6 (seeds
+42,44 abstain against TWO rivals); fs 5->7 leaves it 4/6 (orthogonal to fs in the stable basin). The 2-ref mechanism
+(what the tests, production path, and the delete depend on) is fully restored; the 3-ref scaling weakness is a
+separate deeper residual for a follow-on (harder competition needs more than the pairwise cross-inhibition tune) --
+NOT-GATEABLE (no 3-ref CI guard exists; the de-risk runner's own GO bar already flags it, printing NEGATIVE on the
+three_ref check). A wall defers a METHOD, not the capability.

@@ -1,0 +1,1207 @@
+{
+  "results": [
+    {
+      "seed": 42,
+      "bc_cat_first_eat": {
+        "order": [
+          "cat",
+          "ball"
+        ],
+        "verb": "eat",
+        "favored": "cat",
+        "rates": {
+          "cat": [
+            0.5,
+            0.34
+          ],
+          "ball": [
+            0.3475,
+            0.3337
+          ]
+        },
+        "bias_pA": 7500.0,
+        "resolved": "cat",
+        "correct": true
+      },
+      "bc_ball_first_eat": {
+        "order": [
+          "ball",
+          "cat"
+        ],
+        "verb": "eat",
+        "favored": "cat",
+        "rates": {
+          "cat": [
+            0.5,
+            0.3438
+          ],
+          "ball": [
+            0.315,
+            0.3337
+          ]
+        },
+        "bias_pA": 4656.25,
+        "resolved": "cat",
+        "correct": true
+      },
+      "bc_cat_first_roll": {
+        "order": [
+          "cat",
+          "ball"
+        ],
+        "verb": "roll",
+        "favored": "ball",
+        "rates": {
+          "cat": [
+            0.11,
+            0.34
+          ],
+          "ball": [
+            0.5,
+            0.3337
+          ]
+        },
+        "bias_pA": 2500.0,
+        "resolved": "ball",
+        "correct": true
+      },
+      "bc_ball_first_roll": {
+        "order": [
+          "ball",
+          "cat"
+        ],
+        "verb": "roll",
+        "favored": "ball",
+        "rates": {
+          "cat": [
+            0.08,
+            0.3438
+          ],
+          "ball": [
+            0.5,
+            0.3337
+          ]
+        },
+        "bias_pA": 2500.0,
+        "resolved": "ball",
+        "correct": true
+      },
+      "go_arm": true,
+      "seed100_roll_closes": true,
+      "lesion_eat": {
+        "order": [
+          "cat",
+          "ball"
+        ],
+        "verb": "eat",
+        "favored": "cat",
+        "rates": {
+          "cat": [
+            0.0825,
+            0.3287
+          ],
+          "ball": [
+            0.4825,
+            0.3337
+          ]
+        },
+        "bias_pA": 0.0,
+        "resolved": "ball",
+        "correct": false
+      },
+      "lesion_roll": {
+        "order": [
+          "cat",
+          "ball"
+        ],
+        "verb": "roll",
+        "favored": "ball",
+        "rates": {
+          "cat": [
+            0.0825,
+            0.3287
+          ],
+          "ball": [
+            0.4825,
+            0.3337
+          ]
+        },
+        "bias_pA": 0.0,
+        "resolved": "ball",
+        "correct": true
+      },
+      "lesion_breaks": true,
+      "moat_empty": {
+        "rates": {
+          "cat": [
+            0.48,
+            0.0
+          ],
+          "ball": [
+            0.0,
+            0.0
+          ]
+        },
+        "resolved": null
+      },
+      "moat_silent": {
+        "rates": {},
+        "resolved": null,
+        "favored": null
+      },
+      "moat_intact": true,
+      "three_ref": {
+        "favored": "cat",
+        "rates": {
+          "cat": [
+            0.5,
+            0.325
+          ],
+          "ball": [
+            0.395,
+            0.3275
+          ],
+          "river": [
+            0.145,
+            0.3337
+          ]
+        },
+        "resolved": null,
+        "correct": false
+      },
+      "baselines": {
+        "recency": {
+          "natural_resolved": null,
+          "order_resolved": null,
+          "nat_rates": {
+            "cat": 0.3463,
+            "ball": 0.34
+          },
+          "ord_rates": {
+            "cat": 0.34,
+            "ball": 0.3375
+          },
+          "resolves": false
+        },
+        "salience_4x": {
+          "natural_resolved": null,
+          "order_resolved": null,
+          "nat_rates": {
+            "cat": 0.3463,
+            "ball": 0.3463
+          },
+          "ord_rates": {
+            "cat": 0.3212,
+            "ball": 0.3375
+          },
+          "resolves": false
+        }
+      }
+    },
+    {
+      "seed": 43,
+      "bc_cat_first_eat": {
+        "order": [
+          "cat",
+          "ball"
+        ],
+        "verb": "eat",
+        "favored": "cat",
+        "rates": {
+          "cat": [
+            0.5,
+            0.35
+          ],
+          "ball": [
+            0.155,
+            0.3325
+          ]
+        },
+        "bias_pA": 6062.5,
+        "resolved": "cat",
+        "correct": true
+      },
+      "bc_ball_first_eat": {
+        "order": [
+          "ball",
+          "cat"
+        ],
+        "verb": "eat",
+        "favored": "cat",
+        "rates": {
+          "cat": [
+            0.5,
+            0.3275
+          ],
+          "ball": [
+            0.1125,
+            0.3337
+          ]
+        },
+        "bias_pA": 2500.0,
+        "resolved": "cat",
+        "correct": true
+      },
+      "bc_cat_first_roll": {
+        "order": [
+          "cat",
+          "ball"
+        ],
+        "verb": "roll",
+        "favored": "ball",
+        "rates": {
+          "cat": [
+            0.145,
+            0.35
+          ],
+          "ball": [
+            0.5,
+            0.3325
+          ]
+        },
+        "bias_pA": 2500.0,
+        "resolved": "ball",
+        "correct": true
+      },
+      "bc_ball_first_roll": {
+        "order": [
+          "ball",
+          "cat"
+        ],
+        "verb": "roll",
+        "favored": "ball",
+        "rates": {
+          "cat": [
+            0.2475,
+            0.3275
+          ],
+          "ball": [
+            0.5,
+            0.3337
+          ]
+        },
+        "bias_pA": 6593.75,
+        "resolved": "ball",
+        "correct": true
+      },
+      "go_arm": true,
+      "seed100_roll_closes": true,
+      "lesion_eat": {
+        "order": [
+          "cat",
+          "ball"
+        ],
+        "verb": "eat",
+        "favored": "cat",
+        "rates": {
+          "cat": [
+            0.1025,
+            0.3237
+          ],
+          "ball": [
+            0.3875,
+            0.335
+          ]
+        },
+        "bias_pA": 0.0,
+        "resolved": "ball",
+        "correct": false
+      },
+      "lesion_roll": {
+        "order": [
+          "cat",
+          "ball"
+        ],
+        "verb": "roll",
+        "favored": "ball",
+        "rates": {
+          "cat": [
+            0.1025,
+            0.3237
+          ],
+          "ball": [
+            0.3875,
+            0.335
+          ]
+        },
+        "bias_pA": 0.0,
+        "resolved": "ball",
+        "correct": true
+      },
+      "lesion_breaks": true,
+      "moat_empty": {
+        "rates": {
+          "cat": [
+            0.4925,
+            0.0
+          ],
+          "ball": [
+            0.0,
+            0.0
+          ]
+        },
+        "resolved": null
+      },
+      "moat_silent": {
+        "rates": {},
+        "resolved": null,
+        "favored": null
+      },
+      "moat_intact": true,
+      "three_ref": {
+        "favored": "cat",
+        "rates": {
+          "cat": [
+            0.5,
+            0.33
+          ],
+          "ball": [
+            0.275,
+            0.3375
+          ],
+          "river": [
+            0.0775,
+            0.3375
+          ]
+        },
+        "resolved": "cat",
+        "correct": true
+      },
+      "baselines": {
+        "recency": {
+          "natural_resolved": null,
+          "order_resolved": null,
+          "nat_rates": {
+            "cat": 0.325,
+            "ball": 0.325
+          },
+          "ord_rates": {
+            "cat": 0.3475,
+            "ball": 0.3275
+          },
+          "resolves": false
+        },
+        "salience_4x": {
+          "natural_resolved": null,
+          "order_resolved": null,
+          "nat_rates": {
+            "cat": 0.3225,
+            "ball": 0.3362
+          },
+          "ord_rates": {
+            "cat": 0.34,
+            "ball": 0.3275
+          },
+          "resolves": false
+        }
+      }
+    },
+    {
+      "seed": 44,
+      "bc_cat_first_eat": {
+        "order": [
+          "cat",
+          "ball"
+        ],
+        "verb": "eat",
+        "favored": "cat",
+        "rates": {
+          "cat": [
+            0.5,
+            0.34
+          ],
+          "ball": [
+            0.23,
+            0.335
+          ]
+        },
+        "bias_pA": 6937.500000000001,
+        "resolved": "cat",
+        "correct": true
+      },
+      "bc_ball_first_eat": {
+        "order": [
+          "ball",
+          "cat"
+        ],
+        "verb": "eat",
+        "favored": "cat",
+        "rates": {
+          "cat": [
+            0.5,
+            0.3488
+          ],
+          "ball": [
+            0.225,
+            0.3412
+          ]
+        },
+        "bias_pA": 5031.249999999999,
+        "resolved": "cat",
+        "correct": true
+      },
+      "bc_cat_first_roll": {
+        "order": [
+          "cat",
+          "ball"
+        ],
+        "verb": "roll",
+        "favored": "ball",
+        "rates": {
+          "cat": [
+            0.05,
+            0.34
+          ],
+          "ball": [
+            0.5,
+            0.335
+          ]
+        },
+        "bias_pA": 2500.0,
+        "resolved": "ball",
+        "correct": true
+      },
+      "bc_ball_first_roll": {
+        "order": [
+          "ball",
+          "cat"
+        ],
+        "verb": "roll",
+        "favored": "ball",
+        "rates": {
+          "cat": [
+            0.0225,
+            0.3488
+          ],
+          "ball": [
+            0.5,
+            0.3412
+          ]
+        },
+        "bias_pA": 2500.0,
+        "resolved": "ball",
+        "correct": true
+      },
+      "go_arm": true,
+      "seed100_roll_closes": true,
+      "lesion_eat": {
+        "order": [
+          "cat",
+          "ball"
+        ],
+        "verb": "eat",
+        "favored": "cat",
+        "rates": {
+          "cat": [
+            0.0375,
+            0.3325
+          ],
+          "ball": [
+            0.3925,
+            0.345
+          ]
+        },
+        "bias_pA": 0.0,
+        "resolved": "ball",
+        "correct": false
+      },
+      "lesion_roll": {
+        "order": [
+          "cat",
+          "ball"
+        ],
+        "verb": "roll",
+        "favored": "ball",
+        "rates": {
+          "cat": [
+            0.0375,
+            0.3325
+          ],
+          "ball": [
+            0.3925,
+            0.345
+          ]
+        },
+        "bias_pA": 0.0,
+        "resolved": "ball",
+        "correct": true
+      },
+      "lesion_breaks": true,
+      "moat_empty": {
+        "rates": {
+          "cat": [
+            0.465,
+            0.0
+          ],
+          "ball": [
+            0.0,
+            0.0
+          ]
+        },
+        "resolved": null
+      },
+      "moat_silent": {
+        "rates": {},
+        "resolved": null,
+        "favored": null
+      },
+      "moat_intact": true,
+      "three_ref": {
+        "favored": "cat",
+        "rates": {
+          "cat": [
+            0.5,
+            0.3463
+          ],
+          "ball": [
+            0.405,
+            0.3387
+          ],
+          "river": [
+            0.0075,
+            0.335
+          ]
+        },
+        "resolved": null,
+        "correct": false
+      },
+      "baselines": {
+        "recency": {
+          "natural_resolved": null,
+          "order_resolved": null,
+          "nat_rates": {
+            "cat": 0.3463,
+            "ball": 0.3237
+          },
+          "ord_rates": {
+            "cat": 0.3387,
+            "ball": 0.335
+          },
+          "resolves": false
+        },
+        "salience_4x": {
+          "natural_resolved": null,
+          "order_resolved": null,
+          "nat_rates": {
+            "cat": 0.3463,
+            "ball": 0.33
+          },
+          "ord_rates": {
+            "cat": 0.3237,
+            "ball": 0.335
+          },
+          "resolves": false
+        }
+      }
+    },
+    {
+      "seed": 100,
+      "bc_cat_first_eat": {
+        "order": [
+          "cat",
+          "ball"
+        ],
+        "verb": "eat",
+        "favored": "cat",
+        "rates": {
+          "cat": [
+            0.5,
+            0.3325
+          ],
+          "ball": [
+            0.005,
+            0.3488
+          ]
+        },
+        "bias_pA": 2500.0,
+        "resolved": "cat",
+        "correct": true
+      },
+      "bc_ball_first_eat": {
+        "order": [
+          "ball",
+          "cat"
+        ],
+        "verb": "eat",
+        "favored": "cat",
+        "rates": {
+          "cat": [
+            0.5,
+            0.33
+          ],
+          "ball": [
+            0.015,
+            0.3412
+          ]
+        },
+        "bias_pA": 2500.0,
+        "resolved": "cat",
+        "correct": true
+      },
+      "bc_cat_first_roll": {
+        "order": [
+          "cat",
+          "ball"
+        ],
+        "verb": "roll",
+        "favored": "ball",
+        "rates": {
+          "cat": [
+            0.3575,
+            0.3325
+          ],
+          "ball": [
+            0.5,
+            0.3488
+          ]
+        },
+        "bias_pA": 8000.0,
+        "resolved": "ball",
+        "correct": true
+      },
+      "bc_ball_first_roll": {
+        "order": [
+          "ball",
+          "cat"
+        ],
+        "verb": "roll",
+        "favored": "ball",
+        "rates": {
+          "cat": [
+            0.3325,
+            0.33
+          ],
+          "ball": [
+            0.5,
+            0.3412
+          ]
+        },
+        "bias_pA": 7906.249999999999,
+        "resolved": "ball",
+        "correct": true
+      },
+      "go_arm": true,
+      "seed100_roll_closes": true,
+      "lesion_eat": {
+        "order": [
+          "cat",
+          "ball"
+        ],
+        "verb": "eat",
+        "favored": "cat",
+        "rates": {
+          "cat": [
+            0.46,
+            0.3387
+          ],
+          "ball": [
+            0.0,
+            0.3538
+          ]
+        },
+        "bias_pA": 0.0,
+        "resolved": "cat",
+        "correct": true
+      },
+      "lesion_roll": {
+        "order": [
+          "cat",
+          "ball"
+        ],
+        "verb": "roll",
+        "favored": "ball",
+        "rates": {
+          "cat": [
+            0.46,
+            0.3387
+          ],
+          "ball": [
+            0.0,
+            0.3538
+          ]
+        },
+        "bias_pA": 0.0,
+        "resolved": "cat",
+        "correct": false
+      },
+      "lesion_breaks": true,
+      "moat_empty": {
+        "rates": {
+          "cat": [
+            0.48,
+            0.0
+          ],
+          "ball": [
+            0.0,
+            0.0
+          ]
+        },
+        "resolved": null
+      },
+      "moat_silent": {
+        "rates": {},
+        "resolved": null,
+        "favored": null
+      },
+      "moat_intact": true,
+      "three_ref": {
+        "favored": "cat",
+        "rates": {
+          "cat": [
+            0.5,
+            0.3312
+          ],
+          "ball": [
+            0.0175,
+            0.3412
+          ],
+          "river": [
+            0.055,
+            0.3412
+          ]
+        },
+        "resolved": "cat",
+        "correct": true
+      },
+      "baselines": {
+        "recency": {
+          "natural_resolved": null,
+          "order_resolved": null,
+          "nat_rates": {
+            "cat": 0.3325,
+            "ball": 0.3362
+          },
+          "ord_rates": {
+            "cat": 0.32,
+            "ball": 0.3412
+          },
+          "resolves": false
+        },
+        "salience_4x": {
+          "natural_resolved": null,
+          "order_resolved": null,
+          "nat_rates": {
+            "cat": 0.3287,
+            "ball": 0.3362
+          },
+          "ord_rates": {
+            "cat": 0.3362,
+            "ball": 0.3412
+          },
+          "resolves": false
+        }
+      }
+    },
+    {
+      "seed": 101,
+      "bc_cat_first_eat": {
+        "order": [
+          "cat",
+          "ball"
+        ],
+        "verb": "eat",
+        "favored": "cat",
+        "rates": {
+          "cat": [
+            0.5,
+            0.3262
+          ],
+          "ball": [
+            0.0075,
+            0.3438
+          ]
+        },
+        "bias_pA": 2500.0,
+        "resolved": "cat",
+        "correct": true
+      },
+      "bc_ball_first_eat": {
+        "order": [
+          "ball",
+          "cat"
+        ],
+        "verb": "eat",
+        "favored": "cat",
+        "rates": {
+          "cat": [
+            0.495,
+            0.3463
+          ],
+          "ball": [
+            0.075,
+            0.3262
+          ]
+        },
+        "bias_pA": 2937.5,
+        "resolved": "cat",
+        "correct": true
+      },
+      "bc_cat_first_roll": {
+        "order": [
+          "cat",
+          "ball"
+        ],
+        "verb": "roll",
+        "favored": "ball",
+        "rates": {
+          "cat": [
+            0.08,
+            0.3262
+          ],
+          "ball": [
+            0.5,
+            0.3438
+          ]
+        },
+        "bias_pA": 3687.4999999999995,
+        "resolved": "ball",
+        "correct": true
+      },
+      "bc_ball_first_roll": {
+        "order": [
+          "ball",
+          "cat"
+        ],
+        "verb": "roll",
+        "favored": "ball",
+        "rates": {
+          "cat": [
+            0.0,
+            0.3463
+          ],
+          "ball": [
+            0.5,
+            0.3262
+          ]
+        },
+        "bias_pA": 2500.0,
+        "resolved": "ball",
+        "correct": true
+      },
+      "go_arm": true,
+      "seed100_roll_closes": true,
+      "lesion_eat": {
+        "order": [
+          "cat",
+          "ball"
+        ],
+        "verb": "eat",
+        "favored": "cat",
+        "rates": {
+          "cat": [
+            0.175,
+            0.3325
+          ],
+          "ball": [
+            0.08,
+            0.3225
+          ]
+        },
+        "bias_pA": 0.0,
+        "resolved": "cat",
+        "correct": true
+      },
+      "lesion_roll": {
+        "order": [
+          "cat",
+          "ball"
+        ],
+        "verb": "roll",
+        "favored": "ball",
+        "rates": {
+          "cat": [
+            0.175,
+            0.3325
+          ],
+          "ball": [
+            0.08,
+            0.3225
+          ]
+        },
+        "bias_pA": 0.0,
+        "resolved": "cat",
+        "correct": false
+      },
+      "lesion_breaks": true,
+      "moat_empty": {
+        "rates": {
+          "cat": [
+            0.48,
+            0.0
+          ],
+          "ball": [
+            0.0,
+            0.0
+          ]
+        },
+        "resolved": null
+      },
+      "moat_silent": {
+        "rates": {},
+        "resolved": null,
+        "favored": null
+      },
+      "moat_intact": true,
+      "three_ref": {
+        "favored": "cat",
+        "rates": {
+          "cat": [
+            0.5,
+            0.3325
+          ],
+          "ball": [
+            0.0275,
+            0.325
+          ],
+          "river": [
+            0.335,
+            0.3362
+          ]
+        },
+        "resolved": "cat",
+        "correct": true
+      },
+      "baselines": {
+        "recency": {
+          "natural_resolved": null,
+          "order_resolved": null,
+          "nat_rates": {
+            "cat": 0.335,
+            "ball": 0.3425
+          },
+          "ord_rates": {
+            "cat": 0.335,
+            "ball": 0.3375
+          },
+          "resolves": false
+        },
+        "salience_4x": {
+          "natural_resolved": null,
+          "order_resolved": null,
+          "nat_rates": {
+            "cat": 0.335,
+            "ball": 0.325
+          },
+          "ord_rates": {
+            "cat": 0.3262,
+            "ball": 0.3337
+          },
+          "resolves": false
+        }
+      }
+    },
+    {
+      "seed": 102,
+      "bc_cat_first_eat": {
+        "order": [
+          "cat",
+          "ball"
+        ],
+        "verb": "eat",
+        "favored": "cat",
+        "rates": {
+          "cat": [
+            0.5,
+            0.3362
+          ],
+          "ball": [
+            0.295,
+            0.3438
+          ]
+        },
+        "bias_pA": 4062.5,
+        "resolved": "cat",
+        "correct": true
+      },
+      "bc_ball_first_eat": {
+        "order": [
+          "ball",
+          "cat"
+        ],
+        "verb": "eat",
+        "favored": "cat",
+        "rates": {
+          "cat": [
+            0.5,
+            0.3287
+          ],
+          "ball": [
+            0.29,
+            0.3275
+          ]
+        },
+        "bias_pA": 2500.0,
+        "resolved": "cat",
+        "correct": true
+      },
+      "bc_cat_first_roll": {
+        "order": [
+          "cat",
+          "ball"
+        ],
+        "verb": "roll",
+        "favored": "ball",
+        "rates": {
+          "cat": [
+            0.33,
+            0.3362
+          ],
+          "ball": [
+            0.5,
+            0.3438
+          ]
+        },
+        "bias_pA": 2500.0,
+        "resolved": "ball",
+        "correct": true
+      },
+      "bc_ball_first_roll": {
+        "order": [
+          "ball",
+          "cat"
+        ],
+        "verb": "roll",
+        "favored": "ball",
+        "rates": {
+          "cat": [
+            0.345,
+            0.3287
+          ],
+          "ball": [
+            0.5,
+            0.3275
+          ]
+        },
+        "bias_pA": 5593.75,
+        "resolved": "ball",
+        "correct": true
+      },
+      "go_arm": true,
+      "seed100_roll_closes": true,
+      "lesion_eat": {
+        "order": [
+          "cat",
+          "ball"
+        ],
+        "verb": "eat",
+        "favored": "cat",
+        "rates": {
+          "cat": [
+            0.26,
+            0.3375
+          ],
+          "ball": [
+            0.385,
+            0.3325
+          ]
+        },
+        "bias_pA": 0.0,
+        "resolved": "ball",
+        "correct": false
+      },
+      "lesion_roll": {
+        "order": [
+          "cat",
+          "ball"
+        ],
+        "verb": "roll",
+        "favored": "ball",
+        "rates": {
+          "cat": [
+            0.26,
+            0.3375
+          ],
+          "ball": [
+            0.385,
+            0.3325
+          ]
+        },
+        "bias_pA": 0.0,
+        "resolved": "ball",
+        "correct": true
+      },
+      "lesion_breaks": true,
+      "moat_empty": {
+        "rates": {
+          "cat": [
+            0.49,
+            0.0
+          ],
+          "ball": [
+            0.0,
+            0.0
+          ]
+        },
+        "resolved": null
+      },
+      "moat_silent": {
+        "rates": {},
+        "resolved": null,
+        "favored": null
+      },
+      "moat_intact": true,
+      "three_ref": {
+        "favored": "cat",
+        "rates": {
+          "cat": [
+            0.5,
+            0.3438
+          ],
+          "ball": [
+            0.2125,
+            0.3287
+          ],
+          "river": [
+            0.1125,
+            0.3387
+          ]
+        },
+        "resolved": "cat",
+        "correct": true
+      },
+      "baselines": {
+        "recency": {
+          "natural_resolved": null,
+          "order_resolved": null,
+          "nat_rates": {
+            "cat": 0.3362,
+            "ball": 0.3412
+          },
+          "ord_rates": {
+            "cat": 0.3387,
+            "ball": 0.3412
+          },
+          "resolves": false
+        },
+        "salience_4x": {
+          "natural_resolved": null,
+          "order_resolved": null,
+          "nat_rates": {
+            "cat": 0.3287,
+            "ball": 0.3362
+          },
+          "ord_rates": {
+            "cat": 0.3212,
+            "ball": 0.3375
+          },
+          "resolves": false
+        }
+      }
+    }
+  ],
+  "summary": {
+    "n": 6,
+    "go_arm_seeds": 6,
+    "seed100_roll_closes_seeds": 6,
+    "lesion_breaks_seeds": 6,
+    "moat_intact_seeds": 6,
+    "three_ref_seeds": 4,
+    "recency_fail_seeds": 6,
+    "salience_fail_seeds": 6,
+    "base_pA": 2500.0,
+    "gain": 1.0,
+    "ref": 0.2,
+    "cap_pA": 8000.0,
+    "spec_threshold": 1.3
+  }
+}

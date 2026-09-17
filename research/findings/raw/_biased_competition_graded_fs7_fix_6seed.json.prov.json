@@ -1,0 +1,36 @@
+{
+ "run_id": "1789605751-4092009",
+ "runner": "research/runners/_phaseB_biased_competition_graded_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/research/runners/_phaseB_biased_competition_graded_derisk.py",
+  "--seeds",
+  "42",
+  "43",
+  "44",
+  "100",
+  "101",
+  "102",
+  "--out",
+  "research/findings/raw/_biased_competition_graded_fs7_fix_6seed.json"
+ ],
+ "git_sha": "1324c6357",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-16T20:42:31",
+ "env": {
+  "CUDA_VISIBLE_DEVICES": "",
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 1429.7,
+ "corpus_check_query": "extreme intrinsic-asymmetry referent competition: graded bias cannot lift the dominated referent past the specificity moat (seed-100 boundary)",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_biased_competition_graded_fs7_fix_6seed.json"
+}

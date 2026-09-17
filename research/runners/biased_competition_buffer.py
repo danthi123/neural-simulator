@@ -112,7 +112,7 @@ class BiasedCompetitionContextBuffer:
 
     def __init__(self, concepts, n=600, pattern_size=40, attractor_weight=50.0,
                  n_sel=20, n_sel_fs=10, ref_to_sel_weight=12.0, sel_recurrent_weight=0.35,
-                 sel_recurrent_density=0.5, sel_to_fs_weight=20.0, fs_to_sel_weight=5.0,
+                 sel_recurrent_density=0.5, sel_to_fs_weight=20.0, fs_to_sel_weight=7.0,
                  seed=42, enable_ou=False, competition=True, verbose=False):
         import sim.backend as B
         from sim.config import CoreSimConfig, VisualizationConfig, RuntimeState, GPUConfig
@@ -166,7 +166,14 @@ class BiasedCompetitionContextBuffer:
                 pathways.append(RegionPathway(from_region=f"sel_{c}", to_region=f"sel_FS_{c}",
                                               density=1.0, weight_mean=sel_to_fs_weight, weight_jitter=0.2,
                                               plastic=False))
-            # sel_FS_X -> sel_Y!=X (inh: gentle cross-pool suppression; symmetric over-inhibition is unstable).
+            # sel_FS_X -> sel_Y!=X (inh: cross-pool suppression; symmetric OVER-inhibition (>=9) destabilises the
+            # marginal seed-102 roll case, so the weight sits in the stable basin {6,7,8}, centred at the 7.0
+            # default). Strengthened 5.0->7.0 (2026-09-16): commit e7f009a37 correctly removed the random
+            # inhibitory-trait leakage that every nominally-excitatory region used to transmit; the WTA rival-
+            # suppression had been co-tuned to LEAN on that leakage, so at 5.0 the designed circuit alone lands the
+            # extreme-asymmetry cases just under the 1.3x moat (abstain). 7.0 makes the DESIGNED interneuron circuit
+            # carry the suppression itself -> de-risk GO-arm 6/6 (was 3/6) with lesion+moat 6/6 intact, production
+            # + byte-identity tests unchanged. Root cause: research/FAILURE_LOG.md 2026-09-16.
             for X in self.concepts:
                 for Y in self.concepts:
                     if X == Y:
