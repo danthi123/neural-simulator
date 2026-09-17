@@ -86,3 +86,6 @@ Added: segmentation de-risk task (learned phrase-boundary, GO 5/6, #223). Update
 
 ## 2026-09-17  onebrain 11-organ flip RESOLVED (held default-off)
 Updated #221: integrated 38-faculty battery caught a da-mode engagement regression under the flip (5 flagged, 1 root cause); held default-off, escape intact, AWS terminated. Also this cycle: mouth capacity-saturated finding (#193 updated), vision S2-SAIL learning SPEC banked (post-gaming build). Findings: onebrain-flip-held, mouth-capacity-saturated.
+
+## 2026-09-17  onebrain flip correction — downgraded to suspected RNG/build-ordering confound
+#221 re-synced: the flagged engagement diff is a constant offset (build-ordering/seed-trap suspected), not a confirmed regression; decisive next = RNG-controlled re-run.
