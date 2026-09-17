@@ -1,0 +1,31 @@
+{
+ "run_id": "1789606148-4100344",
+ "runner": "research/runners/lm_train_run.py",
+ "argv": [
+  "/home/dant123/Projects/sim/research/runners/lm_train_run.py",
+  "start",
+  "--root",
+  "bridges/lmtrain/run3",
+  "--compile",
+  "1",
+  "--compile-mode",
+  "max-autotune"
+ ],
+ "git_sha": "98ffa402f",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-16T20:49:08",
+ "env": {},
+ "sim_backend": "numpy",
+ "sim_backend_requested": "(unset -> runner default)",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 3890.8,
+ "corpus_check_query": "extreme intrinsic-asymmetry referent competition: graded bias cannot lift the dominated referent past the specificity moat (seed-100 boundary)",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_biased_competition_retire_verify/differential_result.json"
+}

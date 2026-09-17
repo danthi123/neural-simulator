@@ -13,6 +13,16 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ---
 
+## ⭐⭐⭐ IN-FLIGHT — 2026-09-16 ~22:30 ALL-NIGHT AUTONOMOUS RUN (owner: "local compute free for the night, parallelize all night, no waiting, end-to-end")
+
+GPU FREED (gaming done). Lanes launched + saturated (harvest these on any continuation):
+- **GPU (gpu_queue, running):** the mouth token-supply scaling sweep RESUMED — 8 jobs `_gen_cortex_token_supply_scaling_derisk` (fineweb_edu + wt103, d96/d192, seeds 100/101/102) → `research/findings/raw/_gencortex_scaling/`. The keystone (mouth blocks ~49 retirements). Runs sequentially all night. pid rotates; `bash tools/gpu_queue.sh status`.
+- **Pool (pool41/42, running):** [A] gap#5 LTU forward-band homeostatic 6-seed (mult 2.0) → `research/findings/raw/gap5_ecker_adex/forward_band_homeostatic_scaling_ltu_mult2p0_6seed.json`; [B] memory-separator ring-screen confirmatory, 8 configs (77 95 91 87 73 93 1 85) × 6 seeds → `research/findings/raw/_consol_ring_confirm/`. HARVEST + land findings when done.
+- **Agents (Workflow w0et2sfau, 6 worktree builds):** onebrain Wave-1/2/3 pool wiring (comprehension+provenance / self_schema+curiosity+causal_whatif / pmem+d6wm — completes the one-brain organ merge); retire multi_turn_agent_v2 host-anaphor (RETIREMENT); biased-competition 3-rival divisive-norm (the fs7 3-ref residual); vision soft attention-gain readout. Each commits its worktree branch + a full-verify cmd → I run 6-seed verifies on the pool + land GO ones.
+- WAVE-2 queued (launch after wave-1 lands): [9] self-model-reward-residual staleness audit (unblocks ≤5 rows), [12] he/she/him/her CA3 anaphor extension, [16] Rank-7 affect output homeostatic floor, [17] vision C2 spike-decode, [10] DG→answer heteroassoc write (#82), [15] correct stale onebrain-merge-organs ledger row.
+- Scout artifact: `/tmp/.../scratchpad/scout_items.json` (22 verified frontier items, value-sorted).
+- Heartbeat b7vshehm6 live (gpu/mem/pool/token + parallel_audit).
+
 ## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-16 ~21:15 (biased-competition RETIRED — scaffold_retired 4→5, owner's #1 metric; graded-bias regression root-caused+FIXED; token sweep PAUSED for gaming; READ FIRST; LATEST anchor)
 
 ✅ **BIASED-COMPETITION content_bias_target host lexicon RETIRED (scaffold_retired 4→5) + the pre-existing graded-bias
