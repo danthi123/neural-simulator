@@ -1,0 +1,6 @@
+{
+  "backend": "numpy",
+  "device": "cpu",
+  "node": "pool41 (derisk-pool)",
+  "note": "pulled from pool node; backend from queued command"
+}

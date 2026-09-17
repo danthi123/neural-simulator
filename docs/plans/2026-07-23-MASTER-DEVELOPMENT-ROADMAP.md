@@ -7,6 +7,19 @@ date: 2026-07-23
 # MASTER DEVELOPMENT ROADMAP — toward a genuinely-conversing, feeling, self-aware sim-brain
 
 **Status:** LIVING master plan. Created 2026-07-23; **last synced 2026-09-05** (2026-08-19 **STRATEGIC REFRAME** — the ⭐⭐ block immediately below the header supersedes the near-term sequencing where they disagree: Qwen-as-form + state-fidelity honesty + the "make the brain continuous" primary arc; the long-term onebrain/crutch-burndown north-star is unchanged. Prior 2026-08-18 GNW-keystone + integration wave and the 2026-08-12/13 production-wiring + faculty-audit wave landed; **read the ⭐⭐ reframe, then §0**). Update it as results/walls land.
+**⭐ 2026-09-17 OVERNIGHT ADDENDUM (scoped sync — the autonomous run's landings, not a full resync):** ONE-BRAIN
+organ-merge de-risk COMPLETE — all 11 cortical organs (surprise/worldmodel/metacog/pragmatic + comprehension/
+source_provenance/self_schema/curiosity/causal_whatif/prospective_memory/d6_multiref_wm) validated GO 6/6 on a SINGLE
+shared spiking pool (organread byte-identical co-residence + answer-preserving + faculty-alive; findings 2026-09-17-
+onebrain-wave1-wave2-...-GO + -wave3-...-11-organs-...-GO); wirings default-off, the DEFAULT-ON flip (retire the
+per-organ bridges) is the next reviewed rung. Also: scaffold_retired 4->5 (biased-competition content_bias_target
+DELETED) + graded-bias regression fixed; biascomp shared-pool N-way divisive GO (3-referent residual closed); vision
+satdiv+n_glimpses lift survives held-out-position/scramble-null anti-cheats (GO); gap#5 read-noise-floor instrument GO
+(the LTU lane is read-noise-dominated — its weight-lever NO-GOs were under-sampled, need ~18 reads/arm); da-write-gain
+host-formula circularity closed (GO); affect grounded-stream 300k PARTIAL (noise-robustness, not data-scale — the
+multimodal-grounding wall); gap#5 forward-band + reverse-edge NO-GOs (weight side exhausted). NEXT: the one-brain flip
+(integrated battery); vision task-GO bar; the mouth token-supply sweep (GPU keystone, running).
+
 **⭐ 2026-09-01 CONNECTOME-GROWTH ADDENDUM (scoped sync — one arc, not a full resync of the landings below):**
 `onebrain_crossedge_gate.py`'s GENERIC declarative functional gate landed (`4380e42d1`, `2026-09-01-declarative-
 cross-edge-functional-gate-...GO.md`): adding a learned cross-region edge is now a `CrossEdge` data row +

@@ -7,6 +7,15 @@ the [project handoff](HANDOFF.md), and the live state in
 board, when checked out, was `research/coordination/workboard.json` (⚠️ now ~a month
 stale — the live board is [GAP_CLOSURE_MISSION.md](GAP_CLOSURE_MISSION.md) CURRENT STATE; workboard.json is being retired).
 
+## 2026-09-17 (overnight, autonomous) — the brain's thinking parts merged onto ONE shared substrate, plus a batch of de-risks
+
+The biggest step: **all eleven of the brain's cortical "organs" now compute on a SINGLE shared spiking substrate** (validated, off by default) — the substrate side of the true one-brain goal, proven identical-answer + every organ still working at the 6-, 9-, and 11-organ steps. Turning it on by default (retiring the separate per-organ substrates) is the next reviewed step. Also this session, all on the mini-PC pool / rented compute (the owner's GPU ran the voice-scaling work, untouched):
+- **Pronoun disambiguation now scales to 3+ things at once** — a new "shared inhibition pool" design fixes a case the old pairwise design couldn't, without breaking the 2-thing case (a residual found + closed).
+- **Vision object-binding lift holds up under the strict fairness checks.** Tonight's best vision configuration (saturating normalization + more brief looks) was re-tested with the held-out-position + scrambled-control anti-cheats it had never faced — and it still passes. A coordinate-frame "re-centering" alternative did NOT beat it (honest negative).
+- **A memory-lane mystery explained:** two recent memory-consolidation "no improvement" results turned out to be measurement noise, not dead mechanisms — a new read-fidelity instrument shows the test needs ~18 repeated reads to see the effect it was looking for. Re-scopes how that lane must measure.
+- **A hidden shortcut inside a "brain-based" mechanism closed:** the dopamine write-strength signal was secretly borrowing a hand-written formula's scale; it now derives its own from the neurons' firing.
+- **Emotion grounding: more data isn't the fix.** Feeding the affect learner 5x more grounded stories didn't clear its real-world-noise robustness gap — confirming the direction that emotion needs other senses (body, voice, face), not more text.
+
 ## 2026-09-16 (later) — a fifth hand-written shortcut fully retired, and a lurking bug found and fixed on the way
 
 - **The "which thing does 'it' refer to" word-list is now DELETED — shortcuts-fully-retired moved from 4 to 5.** The brain picks what a pronoun refers to using a learned neural feature-map; the old hand-written animacy/verb word-list it used to fall back on is gone from the code entirely. A whole-brain before/after check confirmed the live chat gives byte-for-byte identical answers (this is the only ability the change can touch), and it turns out the brain's discourse-focus tracker already covers the thin-data case the word-list used to handle — so nothing was lost. This was the **last of the easy shortcut-removals**; the remaining ~57 all wait on finishing the brain's own voice (paused for the owner's game) or two deeper problems.
