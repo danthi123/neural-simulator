@@ -147,3 +147,16 @@ ledger note c6df454d2, since corrected). Blocks biased-competition's content_bia
 params so seed-100 clears the moat, then re-verify 6-seed (NOT tune-to-pass). GATE: the existing CI test IS the
 guard (currently RED) -> NOT-GATEABLE (no NEW pre-commit gate needed; the failing test already catches it, the
 task is to fix the mechanism so it goes green; tracked here + the biased-competition ledger row + board #219).
+
+### 2026-09-16 REFINED (same graded-bias issue, deeper root cause)
+Ran the isolated de-risk runner `_phaseB_biased_competition_graded_derisk --seeds 100` at the exact GO config: it
+ITSELF reports go_arm=False for seed-100 — `roll(cat-1st)->None` (abstains at the 8000pA cap), `roll(ball-1st)->ball`
+(order-dependent) — and its OWN output states "seed-100 stays the documented extreme-asymmetry boundary; do NOT
+escalate into a config search." So the earlier "~2% short / re-calibrate / reconcile bcw" framing is superseded: it is
+NOT a production-path gap and NOT a config-tuning target — seed-100 is a genuine, documented extreme-asymmetry
+BOUNDARY that the graded bias closes only order-dependently. The 2 CI tests over-assert it (they pin a clean close /
+clean mis-resolve on the boundary case). HONEST RESOLUTION (not tune-to-pass): either (a) surpass the boundary with a
+NEW method (NO-DEFER research arc — the extreme intrinsic-asymmetry case), or (b) make the 2 tests reflect the actual
+order-dependent boundary behavior. Both are real work on a default-OFF RESEARCH mechanism; NEITHER is a quick delete
+enabler. Consequence for scaffold-retirement: biased-competition's content_bias_target delete -> RETIRED is genuinely
+blocked by these pre-existing boundary-case test failures — low-leverage to force vs the mouth (neural-render) keystone.
