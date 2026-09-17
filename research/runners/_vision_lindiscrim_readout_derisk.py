@@ -857,6 +857,66 @@ def _c2_pool(x, k_extra):
     return np.concatenate([mx, topk_mean], axis=-1).astype(np.float32)
 
 
+def _c2_pool_topo(x, win):
+    """SALIENCE-RECENTERED LOCAL TOPOGRAPHIC C2 (`--c2-basis topo`) -- a COORDINATE-FRAME change, not
+    a new pooling STATISTIC (distinct from `_c2_pool` above's max / graded-top-k, and from BCM template
+    learning -- all three of which plateaued per the 2026-09-16 findings this file's docstrings cite).
+
+    Every basis in this file so far still ENDS by collapsing the location axis to one position-
+    invariant value per channel -- exactly what Treisman & Gelade's 1980 Feature Integration Theory
+    (Cognit. Psychol. 12:97-136) diagnoses as insufficient for BINDING: pooling without regard to
+    location can only report which templates fired ANYWHERE, never which fired TOGETHER AT A PLACE
+    (illusory conjunctions) -- the same residual this de-risk's pairwise/triple conjunction arcs bank
+    as exhausted for a purely statistical fix. FIT's answer is a serial spatial "spotlight" that
+    INDEXES one location so features found there can be conjoined in a location-tagged frame.
+
+    The spotlight's index here is a saliency-map winner-take-all (Itti & Koch 1998/2000; Zhaoping
+    2005's V1 saliency-hypothesis review): a topographic map of bottom-up conspicuity built from the
+    network's OWN activity (no ground-truth position anywhere), with a single WTA peak marking the
+    most active site -- the same role this repo's SPIKING `sc_orienting_production_organ.py` plays for
+    the nav agent (a retinotopic Mexican-hat WTA sheet whose winning site drives the read-out); this
+    numpy stand-in scaffolds toward that same spiking-superior-colliculus mechanism, never toward a
+    hand-coded coordinate. `_c2_pool_topo` forms a coarse retinotopic energy map from the S2/
+    conjunction drive ITSELF, finds its WTA peak, and RE-CENTERS the retinotopic frame on that peak --
+    then, UNLIKE every basis above, KEEPS the local spatial layout around that centre instead of
+    pooling it away, so WHICH template fired WHERE RELATIVE TO THE ATTENDED SITE survives into the
+    linear readout.
+
+    x: (N, n_loc, D) -- one glimpse's per-location drive (rate) or spike code, same input `_c2_pool`
+    takes. n_loc MUST be a perfect square g*g (mirrors `_bind_conjunctions`'s guard: `_extract_patches`
+    enumerates locations row-major over a g x g grid, so `x.reshape(N,g,g,D)` recovers it exactly, row
+    axis=1 / column axis=2 -- the SAME convention `_bind_conjunctions` rolls over).
+    win: number of COLUMNS kept around the re-centered peak (all g ROWS are always kept -- only the
+    column extent is windowed, matching the column-only salience/shift below); clamped to [1, g].
+
+    sal = x.reshape(N,g,g,D).sum(3).sum(1) -> (N,g): per-column energy, summed over channels then rows
+    -- the network's own activity, not a ground-truth column. peak_col = sal.argmax(1) is the WTA
+    winner (the SC-WTA stand-in). shift = (g//2) - peak_col re-centers that column onto the grid's
+    middle; `np.roll` rolls each image's OWN columns by its OWN shift (a per-image loop over the eval
+    batch -- not a hot inner loop like the LIF stepper). The window of `win` columns centred on the
+    re-centered grid's middle is then kept WHOLE (rows x window-columns x channels, flattened) -- the
+    local topographic code, never global-pooled.
+
+    Returns (N, g*win*D) float32 -- a DIFFERENT feature count than `_c2_pool` by design (a coordinate-
+    frame change is expected to change dimensionality; the downstream ridge/logistic readout reads D
+    from the array shape everywhere in this file, so this is a drop-in swap at both call sites)."""
+    N, n_loc, D = x.shape
+    g = int(round(n_loc ** 0.5))
+    if g * g != n_loc:
+        raise ValueError(f"_c2_pool_topo assumes a square C1 location grid; got n_loc={n_loc}")
+    xg = x.reshape(N, g, g, D)                                  # (N, row, col, D) -- _bind_conjunctions' layout
+    sal = xg.sum(3).sum(1)                                      # (N, g) per-column energy, own activity only
+    peak_col = sal.argmax(1)                                    # (N,) WTA winner -- the SC-WTA stand-in
+    shift = (g // 2) - peak_col                                 # (N,) per-image re-centering shift
+    recentered = np.empty_like(xg)
+    for i in range(N):
+        recentered[i] = np.roll(xg[i], int(shift[i]), axis=1)   # roll THIS image's columns by ITS shift
+    w = max(1, min(int(win), g))
+    lo = (g - w) // 2
+    local = recentered[:, :, lo:lo + w, :]                      # (N, g, w, D) -- kept, not pooled away
+    return local.reshape(N, g * w * D).astype(np.float32)
+
+
 def _c2_spike_code(c1, W0, a, code, base_seed, n_glimpses, conj_pairs=None, conj_offsets=None,
                     conj_shuffle_seed=None, conj_order="pair"):
     """c1 (N, n_orient, g, g) spiking C1 -> convolutional S2 cosine match -> S2 lateral inhibition
@@ -891,9 +951,14 @@ def _c2_spike_code(c1, W0, a, code, base_seed, n_glimpses, conj_pairs=None, conj
                                        tau=a.tau, v_thresh=a.v_thresh, t_ref=a.t_ref,
                                        noise=a.noise, gain=s2_gain)
         s2 = spike_code(counts, first, a.T2, code).reshape(N, n_loc, -1)  # (N, n_loc, n_S2 or n_conj)
-        # C2 pool over locations (position-invariant): hard MAX, or MAX+graded-topk-mean when
-        # --c2-graded-k > 0 (see _c2_pool docstring; default 0 -> byte-identical to the prior hard MAX).
-        r = _c2_pool(s2, getattr(a, "c2_graded_k", 0))
+        # C2 basis: 'pooled' (default) -- hard MAX, or MAX+graded-topk-mean when --c2-graded-k > 0 (see
+        # _c2_pool docstring; default 0 -> byte-identical to the prior hard MAX) -- or 'topo' (--c2-basis
+        # topo), the salience-recentered local topographic code (see _c2_pool_topo docstring); the two
+        # are mutually exclusive coordinate-frame choices, not composable statistics.
+        if getattr(a, "c2_basis", "pooled") == "topo":
+            r = _c2_pool_topo(s2, getattr(a, "c2_topo_win", 6))
+        else:
+            r = _c2_pool(s2, getattr(a, "c2_graded_k", 0))
         acc = r if acc is None else acc + r
     return (acc / G).astype(np.float32)
 
@@ -911,6 +976,9 @@ def _c2_rate_code(c1, W0, a, conj_pairs=None, conj_offsets=None, conj_shuffle_se
     if conj_pairs is not None:
         bind_fn = _bind_conjunctions_triple if conj_order == "triple" else _bind_conjunctions
         drive = bind_fn(drive, conj_pairs, conj_offsets, a.conj_mode, conj_shuffle_seed)
+    # C2 basis: see the matching branch + comment in _c2_spike_code (kept identical here).
+    if getattr(a, "c2_basis", "pooled") == "topo":
+        return _c2_pool_topo(drive, getattr(a, "c2_topo_win", 6))
     return _c2_pool(drive, getattr(a, "c2_graded_k", 0))        # (N, n_S2 or n_conj [* 2 if graded])
 
 
@@ -1600,6 +1668,24 @@ def main():
                         "structure a hard MAX collapses), doubling the C2 feature count. Applied in BOTH "
                         "the rate and spike C2 codes, after --conj-bind if it is on. 0 (default) disables "
                         "-> byte-identical to every prior run of this file (see _c2_pool).")
+    p.add_argument("--c2-basis", choices=["pooled", "topo"], default="pooled",
+                   help="2026-09-17 NEW C2 REPRESENTATIONAL BASIS: a COORDINATE-FRAME change, not a "
+                        "pooling-statistic or learning-rule lever (distinct from --c2-graded-k / "
+                        "--s2-learn bcm, both plateaued). 'pooled' (default) = the existing "
+                        "_c2_pool path (hard MAX / MAX+graded-top-k), BYTE-IDENTICAL to every prior run "
+                        "of this file. 'topo' = 'salience-recentered local topographic C2' "
+                        "(_c2_pool_topo): a WTA over the network's OWN per-column activity (the "
+                        "in-repo spiking sc_orienting_production_organ.py's saliency-map role; "
+                        "Itti & Koch 1998/2000, Zhaoping 2005) re-centers the retinotopic frame on the "
+                        "salient column, then KEEPS the local spatial layout instead of pooling it away "
+                        "-- Treisman & Gelade 1980 Feature Integration Theory's location-tagged binding, "
+                        "grounded in _c2_pool_topo's docstring. Applied in BOTH the rate and spike C2 "
+                        "codes, after --conj-bind if it is on; mutually exclusive with --c2-graded-k "
+                        "(ignored when --c2-basis topo).")
+    p.add_argument("--c2-topo-win", type=int, default=6,
+                   help="'topo' basis only: number of COLUMNS of the re-centered retinotopic grid kept "
+                        "around the middle (all ROWS are always kept -- see _c2_pool_topo docstring). "
+                        "Mirrors --c1-win's default. No effect when --c2-basis pooled (default).")
     # S2.5 CONFIGURAL-BINDING conjunctive layer (2026-09-03 design; board #135/#75). Applied AFTER
     # --s2-norm/--s2-kwta-frac, BEFORE the C2 max-over-locations pool, in BOTH the rate and spike C2
     # codes. `none` (default) never calls `_bind_conjunctions` -> byte-identical to every prior run.
