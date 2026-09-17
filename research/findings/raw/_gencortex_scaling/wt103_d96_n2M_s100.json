@@ -1,0 +1,132 @@
+{
+  "runner": "_gen_cortex_token_supply_scaling_derisk",
+  "corpus": "/home/dant123/Projects/sim/data/corpus/wikitext103.txt",
+  "d_model": 96,
+  "vocab_cap": 2000,
+  "epochs": 6,
+  "max_len": 48,
+  "token_points": [
+    96000,
+    192000,
+    384000,
+    768000,
+    1536000
+  ],
+  "seeds": [
+    100
+  ],
+  "per_seed": {
+    "100": {
+      "V": 2000,
+      "active_params": 423248,
+      "eval_ids_sha": "e98e22f18049",
+      "vocab_sha": "a66dc10a32f2",
+      "n_eval": 2000,
+      "points": [
+        {
+          "max_train_sents": 96000,
+          "n_train_passages": 96000,
+          "n_tokens": 4608000,
+          "tok_per_active_param": 10.887,
+          "wkv_deep_nll": 3.8257,
+          "trigram_deep_nll": 4.0823,
+          "bigram_deep_nll": 4.3501,
+          "margin_vs_trigram": 0.2566,
+          "perm_collapse": 1.7541,
+          "mless_collapse": 0.2196,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 3.7703,
+          "overfit_gap": 0.0554,
+          "n_deep": 76000,
+          "elapsed_s": 115.0
+        },
+        {
+          "max_train_sents": 192000,
+          "n_train_passages": 192000,
+          "n_tokens": 9216000,
+          "tok_per_active_param": 21.774,
+          "wkv_deep_nll": 3.7795,
+          "trigram_deep_nll": 3.9976,
+          "bigram_deep_nll": 4.241,
+          "margin_vs_trigram": 0.2181,
+          "perm_collapse": 1.7834,
+          "mless_collapse": 0.2429,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 3.7422,
+          "overfit_gap": 0.0373,
+          "n_deep": 76000,
+          "elapsed_s": 190.2
+        },
+        {
+          "max_train_sents": 384000,
+          "n_train_passages": 384000,
+          "n_tokens": 18432000,
+          "tok_per_active_param": 43.549,
+          "wkv_deep_nll": 3.7546,
+          "trigram_deep_nll": 3.9232,
+          "bigram_deep_nll": 4.1612,
+          "margin_vs_trigram": 0.1686,
+          "perm_collapse": 1.8367,
+          "mless_collapse": 0.2513,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 3.7342,
+          "overfit_gap": 0.0204,
+          "n_deep": 76000,
+          "elapsed_s": 380.9
+        },
+        {
+          "max_train_sents": 768000,
+          "n_train_passages": 768000,
+          "n_tokens": 36863970,
+          "tok_per_active_param": 87.098,
+          "wkv_deep_nll": 3.7473,
+          "trigram_deep_nll": 3.8637,
+          "bigram_deep_nll": 4.1084,
+          "margin_vs_trigram": 0.1163,
+          "perm_collapse": 1.8034,
+          "mless_collapse": 0.2546,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 3.7351,
+          "overfit_gap": 0.0123,
+          "n_deep": 76000,
+          "elapsed_s": 632.9
+        }
+      ],
+      "gen_samples_top_point": [
+        "the <unk> are usually <unk> as the main <unk> are all of four <unk> <unk> to the <unk> and <unk> <unk> meet <unk> <unk> road <unk> <unk> <unk> johnson <unk> a <unk> <unk> <unk> <unk> <unk> <unk> <unk> bay to <unk>",
+        "in the <unk> and <unk> next to <unk> the <unk> and <unk> the <unk> <unk> <unk> after the <unk> <unk> of the <unk> he <unk> <unk> a <unk> from the <unk> and <unk> <unk> <unk> to create a <unk> a <unk> <unk>",
+        "he was named the th infantry brigade which was <unk> from the <unk> valley and the <unk> and the <unk> area of the <unk> brigade was captured by the th century the th <unk> <unk> battalion of <unk> <unk> from the brigade",
+        "it is a <unk> <unk> <unk> of <unk> park <unk> and a <unk> with a <unk> and a <unk> <unk> running world tour with him to <unk> the evening a <unk> <unk> <unk> and <unk> <unk> <unk> for the <unk> <unk> ' <unk>"
+      ],
+      "delta_nll_min_to_max_tokens": 0.0784,
+      "top_segment_slope": 0.0073,
+      "margin_grows_with_tokens": false,
+      "uses_tokens": false,
+      "still_descending_at_top": false,
+      "uses_context_at_top": true,
+      "beats_trigram_at_top": true
+    }
+  },
+  "verdict": {
+    "verdict": "NO-GO-CAPACITY-SATURATED",
+    "n_seeds": 1,
+    "n_uses_tokens": 0,
+    "n_still_descending_at_top": 0,
+    "n_uses_context_at_top": 1,
+    "n_beats_trigram_at_top": 1,
+    "n_margin_grows_with_tokens": 0,
+    "mean_delta_nll_min_to_max_tokens": 0.0784,
+    "mean_top_point_wkv_deep_nll": 3.7473,
+    "max_tok_per_active_param_reached": 87.098,
+    "fluency_target_nll_band": [
+      3.0,
+      3.69
+    ],
+    "residual_top_nll_above_fluency_band_hi": 0.0573
+  },
+  "elapsed_s": 1426.4
+}

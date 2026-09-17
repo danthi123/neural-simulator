@@ -1,0 +1,150 @@
+{
+  "runner": "_gen_cortex_token_supply_scaling_derisk",
+  "corpus": "/home/dant123/Projects/sim/data/corpus/fineweb_edu.txt",
+  "d_model": 192,
+  "vocab_cap": 2000,
+  "epochs": 6,
+  "max_len": 48,
+  "token_points": [
+    96000,
+    192000,
+    384000,
+    768000,
+    1536000
+  ],
+  "seeds": [
+    100
+  ],
+  "per_seed": {
+    "100": {
+      "V": 2000,
+      "active_params": 918224,
+      "eval_ids_sha": "8f8cca0537ce",
+      "vocab_sha": "362841fefa51",
+      "n_eval": 2000,
+      "points": [
+        {
+          "max_train_sents": 96000,
+          "n_train_passages": 96000,
+          "n_tokens": 4608000,
+          "tok_per_active_param": 5.018,
+          "wkv_deep_nll": 3.9761,
+          "trigram_deep_nll": 4.3431,
+          "bigram_deep_nll": 4.5209,
+          "margin_vs_trigram": 0.367,
+          "perm_collapse": 1.6692,
+          "mless_collapse": 0.2226,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 3.9502,
+          "overfit_gap": 0.0259,
+          "n_deep": 76000,
+          "elapsed_s": 110.1
+        },
+        {
+          "max_train_sents": 192000,
+          "n_train_passages": 192000,
+          "n_tokens": 9216000,
+          "tok_per_active_param": 10.037,
+          "wkv_deep_nll": 3.9375,
+          "trigram_deep_nll": 4.2488,
+          "bigram_deep_nll": 4.4132,
+          "margin_vs_trigram": 0.3113,
+          "perm_collapse": 1.686,
+          "mless_collapse": 0.2424,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 3.933,
+          "overfit_gap": 0.0045,
+          "n_deep": 76000,
+          "elapsed_s": 181.9
+        },
+        {
+          "max_train_sents": 384000,
+          "n_train_passages": 384000,
+          "n_tokens": 18432000,
+          "tok_per_active_param": 20.074,
+          "wkv_deep_nll": 3.9227,
+          "trigram_deep_nll": 4.1721,
+          "bigram_deep_nll": 4.3361,
+          "margin_vs_trigram": 0.2494,
+          "perm_collapse": 1.7285,
+          "mless_collapse": 0.2481,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 3.9459,
+          "overfit_gap": -0.0231,
+          "n_deep": 76000,
+          "elapsed_s": 324.8
+        },
+        {
+          "max_train_sents": 768000,
+          "n_train_passages": 768000,
+          "n_tokens": 36864000,
+          "tok_per_active_param": 40.147,
+          "wkv_deep_nll": 3.9127,
+          "trigram_deep_nll": 4.1084,
+          "bigram_deep_nll": 4.2862,
+          "margin_vs_trigram": 0.1957,
+          "perm_collapse": 1.7284,
+          "mless_collapse": 0.2517,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 3.9502,
+          "overfit_gap": -0.0374,
+          "n_deep": 76000,
+          "elapsed_s": 597.2
+        },
+        {
+          "max_train_sents": 1536000,
+          "n_train_passages": 1536000,
+          "n_tokens": 73728000,
+          "tok_per_active_param": 80.294,
+          "wkv_deep_nll": 3.9097,
+          "trigram_deep_nll": 4.056,
+          "bigram_deep_nll": 4.2563,
+          "margin_vs_trigram": 0.1463,
+          "perm_collapse": 1.7314,
+          "mless_collapse": 0.2545,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 3.9466,
+          "overfit_gap": -0.0369,
+          "n_deep": 76000,
+          "elapsed_s": 1314.9
+        }
+      ],
+      "gen_samples_top_point": [
+        "the <unk> d <unk> <unk> <unk> in the <unk> <unk> and the <unk> <unk> <unk> or lines <unk> for <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk>",
+        "in the <unk> of <unk> work was <unk> to have an <unk> of <unk> <unk> <unk> with a <unk> <unk> and two <unk> who <unk> <unk> that s <unk> and <unk> in <unk> <unk> <unk> in the soldiers <unk> of <unk> <unk>",
+        "he was not the most <unk> <unk> <unk> and <unk> <unk> charles <unk> <unk> have also <unk> to take in a collection of <unk> becoming a perfect town of <unk> and no more than <unk> <unk> and <unk> <unk> <unk> in a",
+        "it is a matter of <unk> and <unk> now <unk> the light was not a standard of <unk> <unk> gas based <unk> oil <unk> gold <unk> <unk> and died in <unk> <unk> <unk> and <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk>"
+      ],
+      "delta_nll_min_to_max_tokens": 0.0664,
+      "top_segment_slope": 0.003,
+      "margin_grows_with_tokens": false,
+      "uses_tokens": false,
+      "still_descending_at_top": false,
+      "uses_context_at_top": true,
+      "beats_trigram_at_top": true
+    }
+  },
+  "verdict": {
+    "verdict": "NO-GO-CAPACITY-SATURATED",
+    "n_seeds": 1,
+    "n_uses_tokens": 0,
+    "n_still_descending_at_top": 0,
+    "n_uses_context_at_top": 1,
+    "n_beats_trigram_at_top": 1,
+    "n_margin_grows_with_tokens": 0,
+    "mean_delta_nll_min_to_max_tokens": 0.0664,
+    "mean_top_point_wkv_deep_nll": 3.9097,
+    "max_tok_per_active_param_reached": 80.294,
+    "fluency_target_nll_band": [
+      3.0,
+      3.69
+    ],
+    "residual_top_nll_above_fluency_band_hi": 0.2197
+  },
+  "elapsed_s": 2700.8
+}
