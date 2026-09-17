@@ -1,0 +1,28 @@
+{
+  "probe": "biased_competition_content_bias_target_delete_branch_vs_main_default",
+  "byte_identical": true,
+  "probes": {
+    "bc_a": {
+      "branch": "the cat balls the walked \u2014 worth going further here.",
+      "main": "the cat balls the walked \u2014 worth going further here."
+    },
+    "bc_b": {
+      "branch": "the cat eats the fish \u2014 worth going further here.",
+      "main": "the cat eats the fish \u2014 worth going further here."
+    }
+  },
+  "note": "content_bias_target DELETE is production-preserving on the biased-competition faculty (the ONLY faculty the delete+fs7 touch; code-isolated). bc branch (delete, D3 focus source) == main (host lexicon) on both probes. fs_to_sel 5.0->7.0 fix on both arms. CPU/numpy, tiny-demo brain via webapp.server.brain_chat.",
+  "backend": "numpy",
+  "provenance": {
+    "runner": "research.runners.onebrain_regression_battery --worker",
+    "command": "CUDA_VISIBLE_DEVICES='' SIM_BACKEND=numpy .venv/bin/python -m research.runners.onebrain_regression_battery --worker --env {} --turns bc_a,bc_b (run on branch research/retire-content-bias-target @4b4d004b8 AND on main @98ffa402f; answers compared)",
+    "backend": "numpy",
+    "seeds": [
+      100
+    ],
+    "method": "branch-default vs main-default /api/brain-chat differential over the biased-competition probes (bc_a,bc_b); the only faculty the content_bias_target delete + fs_to_sel 5.0->7.0 can touch (code-isolated)",
+    "git_branch": "research/retire-content-bias-target",
+    "git_sha_branch": "4b4d004b8",
+    "git_sha_main": "98ffa402f"
+  }
+}

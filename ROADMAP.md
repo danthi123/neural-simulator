@@ -7,6 +7,12 @@ the [project handoff](HANDOFF.md), and the live state in
 board, when checked out, was `research/coordination/workboard.json` (⚠️ now ~a month
 stale — the live board is [GAP_CLOSURE_MISSION.md](GAP_CLOSURE_MISSION.md) CURRENT STATE; workboard.json is being retired).
 
+## 2026-09-16 (later) — a fifth hand-written shortcut fully retired, and a lurking bug found and fixed on the way
+
+- **The "which thing does 'it' refer to" word-list is now DELETED — shortcuts-fully-retired moved from 4 to 5.** The brain picks what a pronoun refers to using a learned neural feature-map; the old hand-written animacy/verb word-list it used to fall back on is gone from the code entirely. A whole-brain before/after check confirmed the live chat gives byte-for-byte identical answers (this is the only ability the change can touch), and it turns out the brain's discourse-focus tracker already covers the thin-data case the word-list used to handle — so nothing was lost. This was the **last of the easy shortcut-removals**; the remaining ~57 all wait on finishing the brain's own voice (paused for the owner's game) or two deeper problems.
+- **Found and fixed a lurking regression along the way.** While preparing the deletion, a pair of long-standing failing tests turned out NOT to be caused by the deletion — they'd been quietly failing on the main line since early August. Tracked it down (via automated bisection) to a *correct* cleanup commit that had removed some incidental background inhibition the pronoun-competition circuit had been unknowingly leaning on. The principled fix: strengthen the circuit's own designed inhibition so it stands on its own (a modest, safe amount, chosen to sit in the stable middle of the working range — not tuned to just barely pass). All the affected tests pass now, and the fix is documented honestly, including one harder multi-item case it doesn't fully solve.
+  All CPU-only — the owner's game was undisturbed.
+
 ## 2026-09-16 — four hand-written shortcuts are now switched ON by default, the last one's block cleared, and deleting the old code is in its final safety check
 
 The owner's #1 metric is retiring hand-written shortcuts so the brain does the work on its own neurons. Big step this session:

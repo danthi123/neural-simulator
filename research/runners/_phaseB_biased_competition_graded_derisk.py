@@ -62,9 +62,14 @@ if _REPO not in sys.path:
 from research.runners.content_selection_spiking import SpikingLoopContextBuffer
 from research.runners.biased_competition_buffer import (
     BiasedCompetitionContextBuffer,
-    content_bias_target,
     resolve_referent,
 )
+# content_bias_target (the host content-bias helper this historical de-risk's OWN `resolve_pronoun_graded` used)
+# RELOCATED 2026-09-16 to `_gap3_learned_feature_compat_derisk` (its canonical ground-truth home) when the runtime
+# fallback in `biased_competition_buffer.py` was RETIRED. NOTE: `graded_bias_pA` (the function production
+# `multi_turn_agent.py` actually imports from this module) never used `content_bias_target` -- only this file's own
+# `resolve_pronoun_graded`/`run_seed` standalone-validation helpers below do.
+from research.runners._gap3_learned_feature_compat_derisk import content_bias_target
 # Re-use the validated baseline battery (recency + salience-4x on the identical {cat, ball} setup) VERBATIM, so the
 # control arms are byte-faithful to the GO de-risk and any difference is attributable solely to the graded bias.
 from research.runners._phaseB_biased_competition_derisk import run_baselines_on_pair, PAIR, DISTRACTORS

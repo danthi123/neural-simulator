@@ -18,12 +18,24 @@ What this asserts (CPU/numpy-runnable):
 
 These are the validated 2-referent decisive case. The seed-100 extreme-intrinsic-asymmetry case ABSTAINS (moat-
 preserving, NOT a clean win) and the all-compatible-referent case are the two named follow-ons (see the finding).
+
+CONTENT-BIAS SOURCE (2026-09-16 update): the host `content_bias_target` lexicon this file used to rely on (by
+default, with no `feat_compat_source` wired) was RETIRED — deleted from `biased_competition_buffer.py` — when the
+LEARNED spiking feature-compatibility chooser (`SpikingFeatureCompat`, gap #3 residual A1) became the SOLE
+production content-bias source (`research/findings/2026-09-16-wirein-flips-biased-competition-gnw-stop-conflict-
+scaled-DEFAULT-ON-GO.md`). `_bc_agent()` below now wires `feat_compat_source=SpikingFeatureCompat(seed=SEED)`
+explicitly — the same production mechanism `MultiTurnAgent.build_referent_bias_from_experience()` installs once an
+agent has heard >=40 SVO facts — so this file keeps testing the WTA/biased-competition CAPABILITY end-to-end
+through the real (now-sole) content-bias source rather than the retired host lookup.
+`tests/test_gap3_spiking_feature_compat.py::test_feat_compat_default_off_graceful_no_content_bias` covers the
+complementary NO-content-bias-source case (the <40-heard-fact production path): resolution gracefully abstains.
 """
 import os
 
 os.environ.setdefault("SIM_BACKEND", "numpy")
 
 from research.runners.multi_turn_agent import MultiTurnAgent
+from research.runners._gap3_spiking_feature_compat_derisk import SpikingFeatureCompat
 
 # Opposing-feature referents: cat (animate) vs ball (inanimate). 'eat' selects animate, 'roll' selects inanimate.
 NOUNS = ["dog", "cat", "fish", "bird", "worm", "ball"]
@@ -32,11 +44,13 @@ SEED = 42  # the validated GO seed (the de-risk's clean 3/3 on 42/43/44)
 
 
 def _bc_agent():
-    """A MultiTurnAgent with biased competition ON. BOTH cat and ball get an 'eat' fact, so the turn's answer is
-    decided by WHICH referent the content bias resolves to (resolving wrongly returns a different non-None
-    answer), not by fact availability — a stronger anti-cheat than a single-fact setup."""
+    """A MultiTurnAgent with biased competition ON, wired to the SOLE production content-bias source (the learned
+    spiking feature-compatibility chooser -- see the module docstring's 2026-09-16 update). BOTH cat and ball get
+    an 'eat' fact, so the turn's answer is decided by WHICH referent the content bias resolves to (resolving
+    wrongly returns a different non-None answer), not by fact availability — a stronger anti-cheat than a
+    single-fact setup."""
     a = MultiTurnAgent(referent_concepts=NOUNS, concepts={w: None for w in VOCAB}, seed=SEED,
-                       enable_biased_competition=True)
+                       enable_biased_competition=True, feat_compat_source=SpikingFeatureCompat(seed=SEED))
     a.agent.composer.store("cat", "eat", "fish")     # if 'it'->cat (correct for 'eat'), answer = fish
     a.agent.composer.store("ball", "eat", "worm")    # if 'it'->ball (wrong for 'eat'), answer = worm
     return a

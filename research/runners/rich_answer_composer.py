@@ -1105,7 +1105,7 @@ def _build_smoke_chat(seed, use_multiturn):
         inner = agent
     for a, v, p in _SMOKE_FACTS:
         inner.hear(f"{a} {v} {p}", polarity="AFFIRM")
-    # gap #3 residual A1 retirement (env-gated, default OFF = byte-identical) -- see biased_competition_prod.py.
+    # gap #3 residual A1 (RETIRED-STAGE, unconditional) -- see biased_competition_prod.py.
     from research.runners.biased_competition_prod import maybe_install_learned_referent_bias as _maybe_learned_bias
     _maybe_learned_bias(agent, seed=seed)
     chat = ChatBrain(agent, self_aliases=DEFAULT_SELF_ALIASES, renderer=StubRenderer())
