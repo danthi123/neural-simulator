@@ -89,6 +89,37 @@ GO GATE (pre-registered, per seed, 6/6 seeds 42/43/44/100/101/102)
      (c) HELD-OUT sentences (constituents recombined into unseen clauses; not memorized).
      (d) MOAT: a mis-segmentation ABSTAINS (unparsed -> suppressed), never fabricates a triple.
 
+VERB->OBJECT RESIDUAL LEVER (2026-09-17, additive, default-OFF: --seg-vo-competition)
+------------------------------------------------------------------------------------
+The GO's named honest residual: a DETERMINISTIC verb->object pair (e.g. "attracts"->"tourists",
+where TRAINING never shows the verb with any other object) is a REAL constituent boundary that
+pure transitional probability UNDER-weights (Benjamin 2021's exact point) -- the learned
+prediction fully suppresses err_B, so the boundary spike is missed. The lever is LATERAL
+COMPETITION / PER-PRE NORMALIZATION, read off the STDP-TRAINED stim->pred weight matrix itself
+(no lexicon, no verb list): for each pred target slot B, normalize every presynaptic slot A's
+learned weight into B by the TOTAL weight arriving at B from ALL presynaptic slots (a share
+distribution over A's), then read
+    competition_index(B) = 1 - max_A(share) = 1 - max_A(w[A,B]) / sum_A(w[A,B])
+A within-constituent B is reached, across the WHOLE corpus, by exactly one dominant predecessor
+(STDP depression drives the rest toward stdp_w_min) -> a one-hot share -> competition_index ~ 0
+-> no bonus (within-NP recall is untouched). A cross-constituent B that MULTIPLE distinct
+predecessors converge on (several different verbs sharing the same object, several different
+final-nouns sharing the same verb -- exactly the "attracts"/"hosts" -> "tourists" structure the
+corpus already contains) SPLITS its incoming weight across those predecessors -> competition_index
+rises -> an extra excitatory current (`--seg-vo-competition-gain` pA, same additive-current pattern
+as the existing determiner cue) is injected into err_B, recovering a residual boundary spike even
+though the SPECIFIC A->B transition was itself deterministic. Self-normalizing (a share, not an
+absolute weight), so an UNTRAINED (NO-LEARNING) or GLOBALLY-SHUFFLED (STREAM-SCRAMBLE) circuit
+produces a uniform-ish share (untrained: exactly uniform, since stim->pred starts dense/unjittered)
+-> a competition bonus that is the SAME constant (or corpus-decorrelated) across every transition,
+not selectively correlated with the true gold boundary -- the anti-cheats stay meaningful.
+Byte-identical-off BY CONSTRUCTION: `vo_bonus_pA` defaults to 0.0 (the flag is unset), the
+`if vo_bonus_pA:` guard in `_err_raw` is then never taken, and no weight-matrix read ever happens
+(`train()` only calls `_compute_pre_normalized_competition()` when the flag is set) -- the OFF
+path is the pre-existing arithmetic, unchanged. A dedicated held-out metric
+(`heldout_vo_boundary_auc` / `heldout_vo_boundary_recall`, verb->object transitions only vs
+within-constituent negatives) reports the residual directly.
+
 FUNCTIONAL CORRELATE, NOT phenomenal. This reads a spiking boundary/prediction-error correlate;
 it makes no claim of experience.
 
@@ -226,6 +257,19 @@ def _content_of(subj, verb, obj):
     return content, gold, spans
 
 
+def _boundary_types(subj, verb, obj):
+    """Map each gold boundary content-index -> 'sv' (subject-final-noun -> verb) or 'vo'
+    (verb -> object-head). Used ONLY for the diagnostic vo-specific metric below (scoring/reporting,
+    never on the decision path -- the segmentation decision never sees this label)."""
+    _content, _gold, spans = _content_of(subj, verb, obj)
+    types, pos = {}, 0
+    for si, span in enumerate(spans):
+        if si > 0:
+            types[pos] = "sv" if si == 1 else "vo"
+        pos += len(span)
+    return types
+
+
 def _render_tokens(subj, verb, obj):
     """The SURFACE token stream (determiners inserted at NP onsets = the honest function-word cue).
     Copula clauses read 'X is a Y'; plain clauses 'the SUBJ VERB the/-- OBJ'."""
@@ -270,7 +314,8 @@ class SegmentationCircuit:
     def __init__(self, seed=42, blk=18, *, w_stim_pred_init=0.12, stdp_a_plus=0.05,
                  stdp_a_minus=0.045, stdp_w_max=3.5, w_stim_err=5.0, w_pred_err=16.0,
                  det_cue_pA=90.0, n_epochs=16, drive_pA=600.0, tok_steps=7,
-                 pre_steps=45, hold=55, scramble=False, no_learning=False):
+                 pre_steps=45, hold=55, scramble=False, no_learning=False,
+                 vo_competition=False, vo_competition_gain_pA=45.0):
         self.seed = int(seed); self.blk = int(blk)
         self.vocab = _build_vocab()
         self.slot = {w: i for i, w in enumerate(self.vocab)}
@@ -280,6 +325,12 @@ class SegmentationCircuit:
                       w_pred_err=w_pred_err, det_cue_pA=det_cue_pA, n_epochs=n_epochs,
                       drive_pA=drive_pA, tok_steps=tok_steps, pre_steps=pre_steps, hold=hold)
         self.scramble = bool(scramble); self.no_learning = bool(no_learning)
+        # VERB->OBJECT residual lever (additive, default-OFF; see module docstring). OFF (default
+        # False / gain irrelevant) -> vo_bonus_pA is always exactly 0.0 -> byte-identical to the
+        # pre-lever arithmetic.
+        self.vo_competition = bool(vo_competition)
+        self.vo_competition_gain_pA = float(vo_competition_gain_pA)
+        self.competition_index = None   # populated by _compute_pre_normalized_competition()
         self.bridge = self.cfg = None
         self.stim_idx = self.pred_idx = self.err_idx = None
         self.threshold = None
@@ -400,7 +451,13 @@ class SegmentationCircuit:
     # ---- training (streaming STDP) ----
     def train(self):
         if self.no_learning:
-            return   # untrained circuit: initial weak weights only (the NO-LEARNING anti-cheat)
+            # untrained circuit: initial weak weights only (the NO-LEARNING anti-cheat). If the
+            # competition lever is enabled, compute it anyway -- on an untrained (uniform,
+            # unjittered all-to-all) weight matrix every column's share is exactly uniform, so the
+            # bonus collapses to one constant across every transition (see module docstring).
+            if self.vo_competition:
+                self._compute_pre_normalized_competition()
+            return
         b = self.bridge; drive = self.p["drive_pA"]; tok_steps = self.p["tok_steps"]
         rng = np.random.RandomState(self.seed + 777)
         for _ep in range(self.p["n_epochs"]):
@@ -418,9 +475,66 @@ class SegmentationCircuit:
                     _step(b)
         # FREEZE learning before any read
         self.cfg.enable_stdp = False
+        if self.vo_competition:
+            self._compute_pre_normalized_competition()
+
+    # ---- LEARNED lateral-competition / per-pre normalization (verb->object residual lever) ----
+    def _compute_pre_normalized_competition(self):
+        """Read the STDP-TRAINED stim->pred CSR weight matrix and, for every pred target slot B,
+        normalize each presynaptic slot A's average block weight into B by the TOTAL weight
+        arriving at B from ALL presynaptic slots -- a competitive share distribution over A's.
+        competition_index[B] = 1 - max_A(share). See the module docstring for the full argument;
+        nothing here is a hand-coded lexicon -- it is a host READ of a plastic quantity STDP
+        produced, the same category of read as `cp_firing_states` elsewhere in this file."""
+        b = self.bridge
+        stim_idx = set(int(i) for i in self.stim_idx)
+        pred_idx = set(int(i) for i in self.pred_idx)
+        stim_base = min(stim_idx); pred_base = min(pred_idx)
+        M = b.cp_connections.tocsr()
+        indptr = np.asarray(_host(M.indptr))
+        indices = np.asarray(_host(M.indices))
+        data = np.asarray(_host(M.data)).astype(np.float64)
+        n_rows = M.shape[0]
+        # orientation: same empirical row-is-post/row-is-src test _install_block_diagonal uses.
+        row_is_dst = 0; row_is_src = 0
+        for r in range(n_rows):
+            r_in_dst = r in pred_idx; r_in_src = r in stim_idx
+            if not (r_in_dst or r_in_src):
+                continue
+            for off in range(int(indptr[r]), int(indptr[r + 1])):
+                c = int(indices[off])
+                if r_in_dst and c in stim_idx:
+                    row_is_dst += 1
+                if r_in_src and c in pred_idx:
+                    row_is_src += 1
+        row_is_post = row_is_dst >= row_is_src
+        n = self.n_slots
+        wsum = np.zeros((n, n), dtype=np.float64)
+        wcnt = np.zeros((n, n), dtype=np.float64)
+        for r in range(n_rows):
+            for off in range(int(indptr[r]), int(indptr[r + 1])):
+                c = int(indices[off])
+                post, pre = (r, c) if row_is_post else (c, r)
+                if pre in stim_idx and post in pred_idx:
+                    a_slot = (pre - stim_base) // self.blk
+                    b_slot = (post - pred_base) // self.blk
+                    wsum[a_slot, b_slot] += data[off]
+                    wcnt[a_slot, b_slot] += 1
+        avg = np.divide(wsum, wcnt, out=np.zeros_like(wsum), where=wcnt > 0)   # avg[A, B]
+        avg = np.clip(avg, 0.0, None)
+        col_sum = avg.sum(axis=0)
+        col_max = avg.max(axis=0)
+        idx = 1.0 - np.divide(col_max, col_sum, out=np.zeros_like(col_sum), where=col_sum > 1e-9)
+        self.competition_index = idx   # shape (n_slots,), in [0, 1)
+        return idx
+
+    def _vo_competition_bonus_pA(self, slot_b):
+        if not self.vo_competition or self.competition_index is None:
+            return 0.0
+        return float(self.vo_competition_gain_pA * self.competition_index[slot_b])
 
     # ---- raw err read (Hz) for a window; slot_a=None -> the UNPREDICTED baseline (B alone) ----
-    def _err_raw(self, slot_a, slot_b, det_before_b=False):
+    def _err_raw(self, slot_a, slot_b, det_before_b=False, vo_bonus_pA=0.0):
         b = self.bridge; drive = self.p["drive_pA"]
         self._hard_reset()
         # (1) prediction phase: stim_A alone -> pred fires A's learned successors (skipped for baseline)
@@ -437,6 +551,8 @@ class SegmentationCircuit:
         cur[self._block(self.stim_idx, slot_b)] = drive
         if det_before_b:                      # the honest function-word cue: a small extra boundary drive
             cur[self._block(self.err_idx, slot_b)] += self.p["det_cue_pA"]
+        if vo_bonus_pA:                        # the verb->object lateral-competition bonus (default 0.0 -> no-op)
+            cur[self._block(self.err_idx, slot_b)] += float(vo_bonus_pA)
         b.cp_external_input_current[:] = cur
         errb = self._block(self.err_idx, slot_b)
         count = 0
@@ -460,7 +576,8 @@ class SegmentationCircuit:
         constituent) A strongly SUPPRESSES B -> transition<<baseline -> ratio~0 -> score(=ratio)
         LOW. A boundary A does not predict B -> transition~=baseline -> ratio~1 -> score HIGH."""
         base = max(self._baseline_err(slot_b), 1e-6)
-        trans = self._err_raw(slot_a, slot_b, det_before_b=det_before_b)
+        vo_bonus = self._vo_competition_bonus_pA(slot_b)
+        trans = self._err_raw(slot_a, slot_b, det_before_b=det_before_b, vo_bonus_pA=vo_bonus)
         # CLIP to [0,1]: suppression cannot meaningfully make err NEGATIVE, and a ratio > 1 is
         # baseline-noise (a near-zero baseline blows the ratio up) -- clipping removes that heavy
         # tail so the 2-means threshold lands at the ~0 (within) / ~1 (boundary) midpoint.
@@ -698,18 +815,36 @@ def run_seed(seed, *, verbose=True, build_kw=None):
     circ.calibrate()
 
     # held-out boundary discrimination: AUC (base-rate-robust, the emergence headline) + F1.
+    # ALSO a diagnostic vo-specific AUC/recall (verb->object transitions vs within-constituent
+    # negatives ONLY, sv-boundary transitions excluded) -- reports the named residual directly.
+    # Scoring/reporting only: _boundary_types is never consulted by the segmentation decision.
     def _eval_over(clause_defs, circuit):
         golds, preds, npos, f1s, scores, labels = [], [], [], [], [], []
+        vo_scores, vo_labels = [], []
+        vo_hits = vo_tot = 0
         for subj, verb, obj in clause_defs:
             content, gold, _sp = _content_of(subj, verb, obj)
             det_pos = _det_positions(subj, verb, obj)
+            btypes = _boundary_types(subj, verb, obj)
             pb, prof = circuit.predict_boundaries(content, det_pos)
             golds.append(gold); preds.append(len(pb)); npos.append(len(content))
             f1s.append(_prf(pb, gold, len(content))[2])
             for i, sc in enumerate(prof):          # transition i-1->i sits at content index i+1
-                scores.append(sc); labels.append((i + 1) in gold)
+                pos_idx = i + 1
+                scores.append(sc); labels.append(pos_idx in gold)
+                btype = btypes.get(pos_idx)
+                if btype == "vo":
+                    vo_tot += 1
+                    if pos_idx in pb:
+                        vo_hits += 1
+                    vo_scores.append(sc); vo_labels.append(True)
+                elif btype is None:                # within-constituent (negative class for vo-AUC)
+                    vo_scores.append(sc); vo_labels.append(False)
+                # sv-boundary transitions excluded from the vo-specific pair (isolates the residual)
         return dict(f1=float(np.mean(f1s)), auc=_auc(scores, labels),
-                    golds=golds, predk=preds, npos=npos)
+                    golds=golds, predk=preds, npos=npos,
+                    vo_auc=_auc(vo_scores, vo_labels),
+                    vo_recall=(vo_hits / vo_tot) if vo_tot else float("nan"))
 
     ev = _eval_over(_HELDOUT, circ)
     ho_f1, ho_auc = ev["f1"], ev["auc"]
@@ -717,6 +852,8 @@ def run_seed(seed, *, verbose=True, build_kw=None):
     out["heldout_boundary_f1"] = ho_f1
     out["heldout_boundary_auc"] = ho_auc
     out["heldout_chance_f1"] = ho_chance
+    out["heldout_vo_boundary_auc"] = ev["vo_auc"]
+    out["heldout_vo_boundary_recall"] = ev["vo_recall"]
     out["threshold_calib"] = circ.calib
 
     # --- ANTI-CHEATS: NO-LEARNING and SCRAMBLE (boundary discrimination must collapse to chance) ---
@@ -726,6 +863,8 @@ def run_seed(seed, *, verbose=True, build_kw=None):
     nl_f1, nl_auc = ev_nl["f1"], ev_nl["auc"]
     out["nolearning_boundary_f1"] = nl_f1
     out["nolearning_boundary_auc"] = nl_auc
+    out["nolearning_vo_boundary_auc"] = ev_nl["vo_auc"]
+    out["nolearning_vo_boundary_recall"] = ev_nl["vo_recall"]
 
     circ_sc = SegmentationCircuit(seed=seed, scramble=True, **build_kw).build()
     circ_sc.train(); circ_sc.calibrate()
@@ -733,6 +872,8 @@ def run_seed(seed, *, verbose=True, build_kw=None):
     sc_f1, sc_auc = ev_sc["f1"], ev_sc["auc"]
     out["scramble_boundary_f1"] = sc_f1
     out["scramble_boundary_auc"] = sc_auc
+    out["scramble_vo_boundary_auc"] = ev_sc["vo_auc"]
+    out["scramble_vo_boundary_recall"] = ev_sc["vo_recall"]
 
     # --- ATTRIBUTION: force the treatment/control SUBTRACTION to be asked out loud (tools.lab), not just
     # measured (the gap#5 lesson). AUC chance is 0.5, so attribute the ABOVE-CHANCE discrimination: a control
@@ -803,6 +944,9 @@ def run_seed(seed, *, verbose=True, build_kw=None):
               f"byte-off={g_byte} moat={g_moat} | ALL={out['all_gates_pass']} "
               f"({out['wall_seconds']}s)")
         print(f"          gates={out['gates']}")
+        print(f"          vo-boundary (verb->object residual): AUC={ev['vo_auc']:.3f} "
+              f"recall={ev['vo_recall']:.3f} | vo_competition={circ.vo_competition} "
+              f"gain={circ.vo_competition_gain_pA:.1f}pA")
     return out
 
 
@@ -831,7 +975,17 @@ def main():
     ap.add_argument("--seeds", type=int, nargs="+", default=None)
     ap.add_argument("--opsearch", action="store_true")
     ap.add_argument("--out", type=str, default=None)
+    ap.add_argument("--seg-vo-competition", action="store_true",
+                     help="ADDITIVE, default-OFF: enable the learned lateral-competition / "
+                          "per-pre normalization boundary bonus for the verb->object "
+                          "TP-invisibility residual (reads the STDP-trained stim->pred weight "
+                          "matrix; byte-identical to the pre-lever arithmetic when unset).")
+    ap.add_argument("--seg-vo-competition-gain", type=float, default=45.0,
+                     help="pA gain for the competition bonus (only applied when "
+                          "--seg-vo-competition is set; unused/inert otherwise).")
     a = ap.parse_args()
+    vo_build_kw = dict(vo_competition=a.seg_vo_competition,
+                        vo_competition_gain_pA=a.seg_vo_competition_gain)
 
     if a.opsearch:
         opsearch(42)
@@ -839,11 +993,14 @@ def main():
 
     if a.seeds:
         per_seed = {}
+        vo_extra_args = ["--seg-vo-competition-gain", str(a.seg_vo_competition_gain)]
+        if a.seg_vo_competition:
+            vo_extra_args = ["--seg-vo-competition"] + vo_extra_args
         for s in a.seeds:
             t0 = time.time()
             r = subprocess.run(
                 [sys.executable, "-m", "research.runners._learned_spiking_segmentation_derisk",
-                 "--seed", str(s)],
+                 "--seed", str(s)] + vo_extra_args,
                 cwd=str(_REPO), capture_output=True, text=True, timeout=1800,
                 env={**os.environ, "SIM_NO_PROVENANCE": "1"})
             if r.returncode != 0:
@@ -896,14 +1053,24 @@ def main():
                        "BEST intact AUC (0.998) + a full coverage win -- a borderline control margin, not an "
                        "intact weakness"))
         decided = v.decide(go=(verdict == "GO"), verbose=False)
+        vo_auc_vals = [r["heldout_vo_boundary_auc"] for r in ok if "heldout_vo_boundary_auc" in r]
+        vo_rec_vals = [r["heldout_vo_boundary_recall"] for r in ok if "heldout_vo_boundary_recall" in r]
         result = {"mode": "controller", "seeds": a.seeds, "n_seeds": len(a.seeds), "n_pass": n_pass,
                   "verdict": verdict, "verdict_status": decided["status"],
                   "preconditions": decided["preconditions"],
-                  "disabled_processes": decided["disabled_processes"], "per_seed": per_seed}
+                  "disabled_processes": decided["disabled_processes"], "per_seed": per_seed,
+                  "seg_vo_competition": a.seg_vo_competition,
+                  "seg_vo_competition_gain_pA": a.seg_vo_competition_gain,
+                  "vo_boundary_auc_mean": float(np.mean(vo_auc_vals)) if vo_auc_vals else None,
+                  "vo_boundary_auc_min": float(np.min(vo_auc_vals)) if vo_auc_vals else None,
+                  "vo_boundary_recall_mean": float(np.mean(vo_rec_vals)) if vo_rec_vals else None}
         print(f"\n=== VERDICT: {verdict}  ({n_pass}/{len(a.seeds)} seeds all-gates-pass) "
               f"[earned status: {decided['status']}] ===")
+        print(f"    seg_vo_competition={a.seg_vo_competition} gain={a.seg_vo_competition_gain}pA | "
+              f"vo_boundary_auc mean={result['vo_boundary_auc_mean']} min={result['vo_boundary_auc_min']} "
+              f"| vo_boundary_recall mean={result['vo_boundary_recall_mean']}")
     elif a.seed is not None:
-        result = run_seed(a.seed)
+        result = run_seed(a.seed, build_kw=vo_build_kw)
         print("RESULT_JSON:" + json.dumps(result, default=str))
     else:
         ap.error("pass --seed N (worker), --seeds ... (controller), or --opsearch")
