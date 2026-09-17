@@ -1,0 +1,1355 @@
+{
+  "mode": "onebrain_wave3_organread",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "per_seed": [
+    {
+      "seed": 42,
+      "n_all_neurons": 7002,
+      "gate_a_coresidence_byte_identical": true,
+      "coresident": {
+        "surprise": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        },
+        "worldmodel": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        },
+        "metacog": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        },
+        "pragmatic": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        },
+        "comprehension": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        },
+        "source_provenance": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        },
+        "self_schema": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        },
+        "curiosity": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        },
+        "causal_whatif": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        },
+        "prospective_memory": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        },
+        "d6_multiref_wm": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        }
+      },
+      "gate_b_faculty_alive": true,
+      "faculty_alive": {
+        "surprise": true,
+        "worldmodel": true,
+        "metacog": true,
+        "pragmatic": true,
+        "comprehension": true,
+        "source_provenance": true,
+        "self_schema": true,
+        "curiosity": true,
+        "causal_whatif": true,
+        "prospective_memory": true,
+        "d6_multiref_wm": true,
+        "surprise_sep": 103.42857142857143
+      },
+      "gate_c_answer_preserved": true,
+      "wave2_carried_read_byte_identical": true,
+      "shipped": {
+        "surprise": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
+          "answer_same": true,
+          "strict": true
+        },
+        "worldmodel": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
+          "answer_same": true,
+          "strict": true
+        },
+        "metacog": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
+          "answer_same": true,
+          "strict": true
+        },
+        "pragmatic": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
+          "answer_same": true,
+          "strict": true
+        },
+        "comprehension": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
+          "answer_same": true,
+          "strict": true
+        },
+        "source_provenance": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
+          "answer_same": true,
+          "strict": true
+        },
+        "self_schema": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
+          "answer_same": true,
+          "strict": true
+        },
+        "curiosity": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
+          "answer_same": true,
+          "strict": true
+        },
+        "causal_whatif": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
+          "answer_same": true,
+          "strict": true
+        },
+        "prospective_memory": {
+          "maxdelta": 0.29500000000000004,
+          "worst_key": "fire_A_on_cueA",
+          "missing": [],
+          "read_byte_identical": false,
+          "answer_same": true,
+          "strict": false
+        },
+        "d6_multiref_wm": {
+          "maxdelta": 0.027777777777777762,
+          "worst_key": "hold_alive_min",
+          "missing": [],
+          "read_byte_identical": false,
+          "answer_same": true,
+          "strict": false
+        }
+      },
+      "gain0_freeze_holds": true,
+      "gain0_freeze_delta": 0.0,
+      "n_frozen_edges": 127552,
+      "max_frozen_weight": 300.010009765625,
+      "legacy_diverges": true,
+      "legacy_delta": 24.887386322021484,
+      "GO": true
+    },
+    {
+      "seed": 43,
+      "n_all_neurons": 7002,
+      "gate_a_coresidence_byte_identical": true,
+      "coresident": {
+        "surprise": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        },
+        "worldmodel": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        },
+        "metacog": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        },
+        "pragmatic": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        },
+        "comprehension": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        },
+        "source_provenance": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        },
+        "self_schema": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        },
+        "curiosity": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        },
+        "causal_whatif": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        },
+        "prospective_memory": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        },
+        "d6_multiref_wm": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        }
+      },
+      "gate_b_faculty_alive": true,
+      "faculty_alive": {
+        "surprise": true,
+        "worldmodel": true,
+        "metacog": true,
+        "pragmatic": true,
+        "comprehension": true,
+        "source_provenance": true,
+        "self_schema": true,
+        "curiosity": true,
+        "causal_whatif": true,
+        "prospective_memory": true,
+        "d6_multiref_wm": true,
+        "surprise_sep": 103.28571428571429
+      },
+      "gate_c_answer_preserved": true,
+      "wave2_carried_read_byte_identical": true,
+      "shipped": {
+        "surprise": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
+          "answer_same": true,
+          "strict": true
+        },
+        "worldmodel": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
+          "answer_same": true,
+          "strict": true
+        },
+        "metacog": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
+          "answer_same": true,
+          "strict": true
+        },
+        "pragmatic": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
+          "answer_same": true,
+          "strict": true
+        },
+        "comprehension": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
+          "answer_same": true,
+          "strict": true
+        },
+        "source_provenance": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
+          "answer_same": true,
+          "strict": true
+        },
+        "self_schema": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
+          "answer_same": true,
+          "strict": true
+        },
+        "curiosity": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
+          "answer_same": true,
+          "strict": true
+        },
+        "causal_whatif": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
+          "answer_same": true,
+          "strict": true
+        },
+        "prospective_memory": {
+          "maxdelta": 0.23333333333333336,
+          "worst_key": "fire_A_on_cueA",
+          "missing": [],
+          "read_byte_identical": false,
+          "answer_same": true,
+          "strict": false
+        },
+        "d6_multiref_wm": {
+          "maxdelta": 0.024999999999999994,
+          "worst_key": "hold_alive_min",
+          "missing": [],
+          "read_byte_identical": false,
+          "answer_same": true,
+          "strict": false
+        }
+      },
+      "gain0_freeze_holds": true,
+      "gain0_freeze_delta": 0.0,
+      "n_frozen_edges": 127955,
+      "max_frozen_weight": 300.010009765625,
+      "legacy_diverges": true,
+      "legacy_delta": 24.78581428527832,
+      "GO": true
+    },
+    {
+      "seed": 44,
+      "n_all_neurons": 7002,
+      "gate_a_coresidence_byte_identical": true,
+      "coresident": {
+        "surprise": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        },
+        "worldmodel": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        },
+        "metacog": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        },
+        "pragmatic": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        },
+        "comprehension": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        },
+        "source_provenance": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        },
+        "self_schema": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        },
+        "curiosity": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        },
+        "causal_whatif": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        },
+        "prospective_memory": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        },
+        "d6_multiref_wm": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        }
+      },
+      "gate_b_faculty_alive": true,
+      "faculty_alive": {
+        "surprise": true,
+        "worldmodel": true,
+        "metacog": true,
+        "pragmatic": true,
+        "comprehension": true,
+        "source_provenance": true,
+        "self_schema": true,
+        "curiosity": true,
+        "causal_whatif": true,
+        "prospective_memory": true,
+        "d6_multiref_wm": true,
+        "surprise_sep": 54.92307692307691
+      },
+      "gate_c_answer_preserved": true,
+      "wave2_carried_read_byte_identical": true,
+      "shipped": {
+        "surprise": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
+          "answer_same": true,
+          "strict": true
+        },
+        "worldmodel": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
+          "answer_same": true,
+          "strict": true
+        },
+        "metacog": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
+          "answer_same": true,
+          "strict": true
+        },
+        "pragmatic": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
+          "answer_same": true,
+          "strict": true
+        },
+        "comprehension": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
+          "answer_same": true,
+          "strict": true
+        },
+        "source_provenance": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
+          "answer_same": true,
+          "strict": true
+        },
+        "self_schema": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
+          "answer_same": true,
+          "strict": true
+        },
+        "curiosity": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
+          "answer_same": true,
+          "strict": true
+        },
+        "causal_whatif": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
+          "answer_same": true,
+          "strict": true
+        },
+        "prospective_memory": {
+          "maxdelta": 0.18444444444444444,
+          "worst_key": "fire_A_on_cueA",
+          "missing": [],
+          "read_byte_identical": false,
+          "answer_same": true,
+          "strict": false
+        },
+        "d6_multiref_wm": {
+          "maxdelta": 0.03333333333333333,
+          "worst_key": "hold_alive_min",
+          "missing": [],
+          "read_byte_identical": false,
+          "answer_same": true,
+          "strict": false
+        }
+      },
+      "gain0_freeze_holds": true,
+      "gain0_freeze_delta": 0.0,
+      "n_frozen_edges": 127727,
+      "max_frozen_weight": 300.010009765625,
+      "legacy_diverges": true,
+      "legacy_delta": 24.57798957824707,
+      "GO": true
+    },
+    {
+      "seed": 100,
+      "n_all_neurons": 7002,
+      "gate_a_coresidence_byte_identical": true,
+      "coresident": {
+        "surprise": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        },
+        "worldmodel": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        },
+        "metacog": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        },
+        "pragmatic": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        },
+        "comprehension": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        },
+        "source_provenance": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        },
+        "self_schema": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        },
+        "curiosity": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        },
+        "causal_whatif": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        },
+        "prospective_memory": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        },
+        "d6_multiref_wm": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        }
+      },
+      "gate_b_faculty_alive": true,
+      "faculty_alive": {
+        "surprise": true,
+        "worldmodel": true,
+        "metacog": true,
+        "pragmatic": true,
+        "comprehension": true,
+        "source_provenance": true,
+        "self_schema": true,
+        "curiosity": true,
+        "causal_whatif": true,
+        "prospective_memory": true,
+        "d6_multiref_wm": true,
+        "surprise_sep": 47.13333333333333
+      },
+      "gate_c_answer_preserved": true,
+      "wave2_carried_read_byte_identical": true,
+      "shipped": {
+        "surprise": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
+          "answer_same": true,
+          "strict": true
+        },
+        "worldmodel": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
+          "answer_same": true,
+          "strict": true
+        },
+        "metacog": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
+          "answer_same": true,
+          "strict": true
+        },
+        "pragmatic": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
+          "answer_same": true,
+          "strict": true
+        },
+        "comprehension": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
+          "answer_same": true,
+          "strict": true
+        },
+        "source_provenance": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
+          "answer_same": true,
+          "strict": true
+        },
+        "self_schema": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
+          "answer_same": true,
+          "strict": true
+        },
+        "curiosity": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
+          "answer_same": true,
+          "strict": true
+        },
+        "causal_whatif": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
+          "answer_same": true,
+          "strict": true
+        },
+        "prospective_memory": {
+          "maxdelta": 0.2144444444444444,
+          "worst_key": "fire_A_on_cueA",
+          "missing": [],
+          "read_byte_identical": false,
+          "answer_same": true,
+          "strict": false
+        },
+        "d6_multiref_wm": {
+          "maxdelta": 0.030555555555555565,
+          "worst_key": "hold_alive_min",
+          "missing": [],
+          "read_byte_identical": false,
+          "answer_same": true,
+          "strict": false
+        }
+      },
+      "gain0_freeze_holds": true,
+      "gain0_freeze_delta": 0.0,
+      "n_frozen_edges": 127549,
+      "max_frozen_weight": 300.010009765625,
+      "legacy_diverges": true,
+      "legacy_delta": 24.837873458862305,
+      "GO": true
+    },
+    {
+      "seed": 101,
+      "n_all_neurons": 7002,
+      "gate_a_coresidence_byte_identical": true,
+      "coresident": {
+        "surprise": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        },
+        "worldmodel": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        },
+        "metacog": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        },
+        "pragmatic": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        },
+        "comprehension": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        },
+        "source_provenance": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        },
+        "self_schema": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        },
+        "curiosity": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        },
+        "causal_whatif": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        },
+        "prospective_memory": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        },
+        "d6_multiref_wm": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        }
+      },
+      "gate_b_faculty_alive": true,
+      "faculty_alive": {
+        "surprise": true,
+        "worldmodel": true,
+        "metacog": true,
+        "pragmatic": true,
+        "comprehension": true,
+        "source_provenance": true,
+        "self_schema": true,
+        "curiosity": true,
+        "causal_whatif": true,
+        "prospective_memory": true,
+        "d6_multiref_wm": true,
+        "surprise_sep": 146.4
+      },
+      "gate_c_answer_preserved": true,
+      "wave2_carried_read_byte_identical": true,
+      "shipped": {
+        "surprise": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
+          "answer_same": true,
+          "strict": true
+        },
+        "worldmodel": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
+          "answer_same": true,
+          "strict": true
+        },
+        "metacog": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
+          "answer_same": true,
+          "strict": true
+        },
+        "pragmatic": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
+          "answer_same": true,
+          "strict": true
+        },
+        "comprehension": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
+          "answer_same": true,
+          "strict": true
+        },
+        "source_provenance": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
+          "answer_same": true,
+          "strict": true
+        },
+        "self_schema": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
+          "answer_same": true,
+          "strict": true
+        },
+        "curiosity": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
+          "answer_same": true,
+          "strict": true
+        },
+        "causal_whatif": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
+          "answer_same": true,
+          "strict": true
+        },
+        "prospective_memory": {
+          "maxdelta": 0.2461111111111111,
+          "worst_key": "fire_A_on_cueA",
+          "missing": [],
+          "read_byte_identical": false,
+          "answer_same": true,
+          "strict": false
+        },
+        "d6_multiref_wm": {
+          "maxdelta": 0.011111111111111127,
+          "worst_key": "hold_alive_min",
+          "missing": [],
+          "read_byte_identical": false,
+          "answer_same": true,
+          "strict": false
+        }
+      },
+      "gain0_freeze_holds": true,
+      "gain0_freeze_delta": 0.0,
+      "n_frozen_edges": 127949,
+      "max_frozen_weight": 300.010009765625,
+      "legacy_diverges": true,
+      "legacy_delta": 24.82974624633789,
+      "GO": true
+    },
+    {
+      "seed": 102,
+      "n_all_neurons": 7002,
+      "gate_a_coresidence_byte_identical": true,
+      "coresident": {
+        "surprise": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        },
+        "worldmodel": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        },
+        "metacog": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        },
+        "pragmatic": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        },
+        "comprehension": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        },
+        "source_provenance": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        },
+        "self_schema": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        },
+        "curiosity": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        },
+        "causal_whatif": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        },
+        "prospective_memory": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        },
+        "d6_multiref_wm": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        }
+      },
+      "gate_b_faculty_alive": true,
+      "faculty_alive": {
+        "surprise": true,
+        "worldmodel": true,
+        "metacog": true,
+        "pragmatic": true,
+        "comprehension": true,
+        "source_provenance": true,
+        "self_schema": true,
+        "curiosity": true,
+        "causal_whatif": true,
+        "prospective_memory": true,
+        "d6_multiref_wm": true,
+        "surprise_sep": 38.736842105263165
+      },
+      "gate_c_answer_preserved": true,
+      "wave2_carried_read_byte_identical": true,
+      "shipped": {
+        "surprise": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
+          "answer_same": true,
+          "strict": true
+        },
+        "worldmodel": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
+          "answer_same": true,
+          "strict": true
+        },
+        "metacog": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
+          "answer_same": true,
+          "strict": true
+        },
+        "pragmatic": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
+          "answer_same": true,
+          "strict": true
+        },
+        "comprehension": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
+          "answer_same": true,
+          "strict": true
+        },
+        "source_provenance": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
+          "answer_same": true,
+          "strict": true
+        },
+        "self_schema": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
+          "answer_same": true,
+          "strict": true
+        },
+        "curiosity": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
+          "answer_same": true,
+          "strict": true
+        },
+        "causal_whatif": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
+          "answer_same": true,
+          "strict": true
+        },
+        "prospective_memory": {
+          "maxdelta": 0.21555555555555556,
+          "worst_key": "fire_A_on_cueA",
+          "missing": [],
+          "read_byte_identical": false,
+          "answer_same": true,
+          "strict": false
+        },
+        "d6_multiref_wm": {
+          "maxdelta": 0.013888888888888909,
+          "worst_key": "hold_alive_min",
+          "missing": [],
+          "read_byte_identical": false,
+          "answer_same": true,
+          "strict": false
+        }
+      },
+      "gain0_freeze_holds": true,
+      "gain0_freeze_delta": 0.0,
+      "n_frozen_edges": 127917,
+      "max_frozen_weight": 300.010009765625,
+      "legacy_diverges": true,
+      "legacy_delta": 24.873374938964844,
+      "GO": true
+    }
+  ],
+  "aggregate": {
+    "n_seeds": 6,
+    "n_gate_a": 6,
+    "n_gate_b": 6,
+    "n_gate_c": 6,
+    "n_wave2_carried_read_byte_identical": 6,
+    "n_gain0_freeze": 6,
+    "n_legacy_diverges": 6,
+    "n_go": 6
+  },
+  "per_organ": {
+    "surprise": {
+      "n_coresidence_byte_identical": 6,
+      "n_shipped_read_byte_identical": 6,
+      "n_answer_same": 6,
+      "n_alive": 6,
+      "max_coresidence_delta": 0.0,
+      "max_shipped_delta": 0.0
+    },
+    "worldmodel": {
+      "n_coresidence_byte_identical": 6,
+      "n_shipped_read_byte_identical": 6,
+      "n_answer_same": 6,
+      "n_alive": 6,
+      "max_coresidence_delta": 0.0,
+      "max_shipped_delta": 0.0
+    },
+    "metacog": {
+      "n_coresidence_byte_identical": 6,
+      "n_shipped_read_byte_identical": 6,
+      "n_answer_same": 6,
+      "n_alive": 6,
+      "max_coresidence_delta": 0.0,
+      "max_shipped_delta": 0.0
+    },
+    "pragmatic": {
+      "n_coresidence_byte_identical": 6,
+      "n_shipped_read_byte_identical": 6,
+      "n_answer_same": 6,
+      "n_alive": 6,
+      "max_coresidence_delta": 0.0,
+      "max_shipped_delta": 0.0
+    },
+    "comprehension": {
+      "n_coresidence_byte_identical": 6,
+      "n_shipped_read_byte_identical": 6,
+      "n_answer_same": 6,
+      "n_alive": 6,
+      "max_coresidence_delta": 0.0,
+      "max_shipped_delta": 0.0
+    },
+    "source_provenance": {
+      "n_coresidence_byte_identical": 6,
+      "n_shipped_read_byte_identical": 6,
+      "n_answer_same": 6,
+      "n_alive": 6,
+      "max_coresidence_delta": 0.0,
+      "max_shipped_delta": 0.0
+    },
+    "self_schema": {
+      "n_coresidence_byte_identical": 6,
+      "n_shipped_read_byte_identical": 6,
+      "n_answer_same": 6,
+      "n_alive": 6,
+      "max_coresidence_delta": 0.0,
+      "max_shipped_delta": 0.0
+    },
+    "curiosity": {
+      "n_coresidence_byte_identical": 6,
+      "n_shipped_read_byte_identical": 6,
+      "n_answer_same": 6,
+      "n_alive": 6,
+      "max_coresidence_delta": 0.0,
+      "max_shipped_delta": 0.0
+    },
+    "causal_whatif": {
+      "n_coresidence_byte_identical": 6,
+      "n_shipped_read_byte_identical": 6,
+      "n_answer_same": 6,
+      "n_alive": 6,
+      "max_coresidence_delta": 0.0,
+      "max_shipped_delta": 0.0
+    },
+    "prospective_memory": {
+      "n_coresidence_byte_identical": 6,
+      "n_shipped_read_byte_identical": 0,
+      "n_answer_same": 6,
+      "n_alive": 6,
+      "max_coresidence_delta": 0.0,
+      "max_shipped_delta": 0.29500000000000004
+    },
+    "d6_multiref_wm": {
+      "n_coresidence_byte_identical": 6,
+      "n_shipped_read_byte_identical": 0,
+      "n_answer_same": 6,
+      "n_alive": 6,
+      "max_coresidence_delta": 0.0,
+      "max_shipped_delta": 0.03333333333333333
+    }
+  },
+  "all_go": true,
+  "label": "one-brain Wave-3 (FINAL) organ-read (d6_multiref_wm + prospective_memory folded onto the wave-2 pool, N~7002)",
+  "status": "GO",
+  "go": true,
+  "undefined_reasons": [],
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "(a) organ-read byte-identity \u2014 every organ's read co-residence-invariant, every seed",
+      "ok": true,
+      "detail": "measured=6 expect=6",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "(b) faculty-alive \u2014 every organ produces its live verdict on the wave3 pool, every seed",
+      "ok": true,
+      "detail": "measured=6 expect=6",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "(c) answer-preservation \u2014 every organ's rendered answer == its shipped/standalone baseline, every seed",
+      "ok": true,
+      "detail": "measured=6 expect=6",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "gain-0 freeze holds prospective_memory/d6_multiref_wm internal edges bit-frozen across the train+read lifecycle (incl. pmem's 300-weight attractor surviving unclipped vs the pool's 45 ceiling), every seed",
+      "ok": true,
+      "detail": "measured=6 expect=6",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "legacy discriminator diverges (byte-identity NOT vacuous), every seed",
+      "ok": true,
+      "detail": "measured=6 expect=6",
+      "note": ""
+    }
+  ],
+  "disabled_processes": [
+    {
+      "process": "cross-region interaction (the one-brain INTEGRATION goal)",
+      "why": "MIGRATION gate: byte-identity-in-isolation forbids cross-synapses BY DEFINITION"
+    },
+    {
+      "process": "live-chat production wiring (get_organ() dispatch)",
+      "why": "deliberately deferred to a separate, later commit \u2014 mirrors the wave-1/wave-2 pools' own sequencing (organ-read GO landed before its production wiring commit)"
+    }
+  ],
+  "chance": null,
+  "backend": "numpy"
+}
