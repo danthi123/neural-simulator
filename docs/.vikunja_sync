@@ -77,3 +77,6 @@ reconciled: added one-brain 9-organ merge task (wave1+2 organread GO 6/6); biase
 
 ## 2026-09-17  onebrain 11-organ merge complete
 updated #221: all 11 cortical organs de-risk-validated on one shared spiking pool (wave1/2/3 organread all_go 6/6); flip pending. ledger onebrain-merge-organs de_risked note extended.
+
+## 2026-09-17  overnight harvest — anaphor + vision + affect
+Reconciled: #217 (configural-binding REFRAMED — binding not the lever, divisive-norm is; vision GO 96ac8b3a) advanced de-risked; #218 (emotion grounding — affect-300k confirms noise-robustness not data-scale); #222 created (gendered-pronoun detection de-risked GO 3863cde0, default-off, pending agreement-check wiring). Findings landed: anaphor-gendered, vision-satdiv-decisive, affect-300k-PARTIAL.
