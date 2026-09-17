@@ -15,16 +15,17 @@ verdict: NOT READY for default-on — HELD default-OFF. The per-organ gate PASSE
   flagged regressed, which collapse to ONE root cause — under the flip the da-mode ENGAGEMENT signal computes
   neutral/low_engagement where the OFF arm computes focus/engaged, and that single shift cascades into 4 identical
   answer-text diffs (the engaged-mode "worth going further here" suffix is dropped on content-selection,
-  in-loop-learning, moat-verify, open-ended-generation). CORRECTION (same-day, verify-first — see the body): on reading
-  all 19 probes the ON-vs-OFF engagement difference is a NEAR-CONSTANT ~0.16 additive offset (content-independent), and
-  the novelty organ that feeds engagement is NOT one of the 11 pooled organs — so a BUILD-ORDERING / RNG-STATE confound
-  (the seed trap: the merged-pool build advances the global RNG differently than separate organ builds) is the LEADING
-  cause, NOT a demonstrated functional regression of the pooled cognition. So the "5-faculty regression" is DOWNGRADED
-  to "an uncontrolled build-ordering offset, cause not yet isolated." The flip stays DEFAULT-OFF (correct conservative
-  call, byte-identical escape intact) but is NOT confirmed-bad. DECISIVE NEXT TEST: re-run the integrated battery with
-  the engagement path's RNG state CONTROLLED (seed the novelty/SNc read independently of pool-build order) — if the
-  ~0.16 offset vanishes, the flip is answer-preserving and LANDABLE; if it persists, it is a real residual. A wall
-  defers a METHOD, never the capability (one shared cortical substrate).
+  in-loop-learning, moat-verify, open-ended-generation). ROOT CAUSE ISOLATED (verify-first, data-confirmed — see body):
+  the 5 collapse to ONE constant ~0.16 engagement offset whose entire cause is a CURIOSITY-organ CALIBRATION mismatch.
+  Engagement (default-ON `shared_salience_afferent`) reads the curiosity organ, which IS pooled (min_wave=2); its
+  calibration uses `per_neuron_ou_seed=True` on the pooled read path but the legacy default False on the standalone
+  build path -> ~8x responsiveness split (want_novel_hz 15.45 ON vs 126.56 OFF, confirmed from the arm artifacts) ->
+  the 0.165 offset (turn_engagement == shared_salience.normalized bit-for-bit). It is NOT the novelty organ (properly
+  RNG-isolated) and NOT a generic seed-trap. Gate (A) was blind because its curiosity probe points (0.95, 0.0) are
+  exactly the calibration anchors. So this is a NARROW, NAMED config mismatch — the flip is very likely LANDABLE once
+  curiosity calibrates identically on both paths. FIX: pass `per_neuron_ou_seed=True` + matching OU config to curiosity's
+  standalone build path (`curiosity_production_organ._build_one`/`build_curiosity_bridge`), then re-run the battery.
+  Flip stays DEFAULT-OFF (escape intact) until that re-test reads all_pass. A wall defers a METHOD, never the capability.
 runner: research/runners/onebrain_regression_battery.py (--flag BRAIN_ONEBRAIN_WAVE3_POOL) + _onebrain_11organ_pool_flip_regression.py
 artifacts:
   - research/findings/raw/_regression_battery/battery_BRAIN_ONEBRAIN_WAVE3_POOL.json
@@ -35,7 +36,7 @@ builds_on:
   - research/findings/raw/_onebrain_11organ_pool_flip_6seed.json
 ---
 
-# One-brain 11-organ default-on flip — a da-mode engagement OFFSET (build-ordering confound suspected); HELD default-off pending an RNG-controlled re-test
+# One-brain 11-organ default-on flip — a curiosity-organ calibration mismatch shifts da-mode engagement; HELD default-off pending a one-line fix + re-test
 
 The 11-organ default-on flip (all 8 wired cortical organs onto ONE shared spiking pool) is the one-brain culmination.
 It passed its per-organ gate; this is the integrated gate that decides the production default-on flip.
@@ -60,40 +61,47 @@ So the pool flip shifts the da-mode ENGAGEMENT computation (focus->neutral) on t
 into the four answer-suffix diffs. The flip preserves each organ's isolated read but changes the cross-faculty
 engagement signal (engagement = novelty + richness), which only the full-pipeline battery exercises.
 
-## CORRECTION (same-day, verify-first): the offset is CONSTANT — a build-ordering/RNG confound is the leading cause, NOT a demonstrated functional regression
+## ROOT CAUSE ISOLATED (verify-first, data-confirmed — supersedes the two earlier hypotheses)
 <!--derived-->
-Reading the two arms' `da_drives.turn_engagement` across ALL 19 probe turns (arm_on/arm_off) shows the ON-vs-OFF
-difference is a NEAR-CONSTANT additive offset, not a content-specific break: OFF-minus-ON is ~0.13-0.19 on every probe
-(well 0.165, question 0.173, unknown 0.182, held 0.185, chase 0.133, emo 0.153, bc_b 0.160, ...). Engagement itself DOES
-vary by content within each arm (0.38-0.69), so the mechanism works — the flip just subtracts a fixed ~0.16 baseline.
-Two facts make a BUILD-ORDERING / RNG-STATE confound (the CLAUDE.md seed trap: each build advances the global RNG, and
-a merged pool build advances it differently than separate organ builds) the leading hypothesis over a functional
-regression: (1) the offset is content-independent (a baseline shift, not a per-message-novelty change); (2) the novelty
-organ that feeds engagement (SpikingNoveltyHabituationOrgan) is NOT one of the 11 pooled organs, so the pool cannot
-change its computation directly — only the global RNG state at its build/read point can differ between the merged-build
-(ON) and separate-build (OFF) arms. So this is most likely the same class of confound that once cost the deep-credit arc
-months (different neurons at the same seed from a different build order), surfacing here as a shifted engagement
-baseline. It is therefore NOT yet established as a real regression of the pooled cognition.
+The ON-vs-OFF `turn_engagement` difference is a NEAR-CONSTANT additive offset (OFF-minus-ON ~0.13-0.19 on every one of
+19 probes: well 0.165, question 0.173, held 0.185, chase 0.133, emo 0.153, ...), while engagement itself varies by
+content within each arm (0.38-0.69) — so the mechanism works and the flip just subtracts a fixed ~0.16 baseline. My
+first-pass hypotheses were BOTH wrong about the mechanism and are retired: it is neither a generic build-ordering
+seed-trap nor the novelty organ (SpikingNoveltyHabituationOrgan is properly RNG-isolated via
+`DaModeDrivesWorkspace._isolated()`, and is not pooled). The actual, data-confirmed cause:
 
-DECISIVE NEXT TEST (before calling it either way): re-run the integrated battery with the engagement path's RNG state
-CONTROLLED — e.g. seed the novelty organ / SNc-afferent read independently of the pool-build order (the same fix pattern
-as tests/test_determinism.py::TestSubstrateActuallySeeded), or build the pool but read engagement from a fixed-seed
-fresh substrate. If the ~0.16 offset VANISHES under RNG control, the flip is answer-preserving after all and is
-LANDABLE; if it persists, it is a real residual to close. Until that test runs, the flip stays default-OFF (correct
-conservative call) but the "5-faculty regression" is DOWNGRADED to "an uncontrolled build-ordering offset, cause not yet
-isolated."
+- The engagement path (`webapp/da_mode_drives_chat.py:396-405`) takes the isolated novelty read, then — because
+  `shared_salience_enabled()` is default-ON — OVERWRITES it with `shared_salience_afferent.read_salience(...)`, which
+  reads the CURIOSITY organ (`curiosity_production_organ.get_organ`, a process-global singleton). `turn_engagement`
+  equals `shared_salience.normalized` bit-for-bit on all 19 probes.
+- Curiosity IS one of the 8 wave3-pooled organs (on the flip-prep branch its `get_organ` resolves through
+  `get_merged_cortical_pool(min_wave=2)`). Its calibration (`want_novel_hz`/`want_familiar_hz`) uses a DIFFERENT recipe
+  when pooled (`_read_want_shared`, which sets `per_neuron_ou_seed=True`) vs standalone
+  (`_build_one`->`build_curiosity_bridge`, which leaves `per_neuron_ou_seed` at its legacy default False).
+- Confirmed from the committed arm artifacts (no compute): ON calib {want_novel_hz 15.45, want_familiar_hz 0.0} vs OFF
+  {126.56, 5.21} — an ~8x responsiveness split + a different transduction SHAPE, mapping the same raw 0.734 to
+  normalized 0.483 (ON) vs 0.648 (OFF) = the exact 0.165 offset. The whole offset is this ONE calibration divergence.
+- Why gate (A) was blind: `_onebrain_11organ_pool_flip_regression`'s curiosity probe uses `(0.95, 0.0)` — EXACTLY the
+  calibration anchor points, where `normalized` is tautologically ~1/~0 in both arms, so a mid-range curve-shape
+  difference cannot show.
+
+So this is NOT an unfixable crowding artifact and NOT a generic seed-trap — it is a narrow, named config mismatch
+(`per_neuron_ou_seed` set on the pooled read path but not the standalone build path), so the flip is very likely
+LANDABLE once the two paths calibrate curiosity identically.
 
 ## What it means, and the residual to close
 
 The one-brain substrate is de-risk-validated (all 11 organs co-reside answer-preservingly, GO 6/6). The production
 default-on flip is HELD default-OFF (byte-identical `BRAIN_ONEBRAIN_WAVE3_POOL=0` escape intact; flip-prep stays on its
 branch research/onebrain-11organ-pool-flip-prep, NOT merged) — but per the CORRECTION above, it is NOT confirmed to have
-a real functional regression. The ordered next steps are: (1) RUN THE RNG-CONTROLLED RE-TEST — seed the engagement path
-(novelty organ / SNc afferent) independently of the pool-build order and re-run gate (B); this decides whether the
-~0.16 engagement offset is a build-ordering artifact (=> flip is LANDABLE) or a real residual. (2) Only if it persists:
-isolate and close the real engagement perturbation. The methodological lesson stands regardless: an ON-vs-OFF
-integration battery that rebuilds the substrate differently per arm must control the global-RNG build order, or a pure
-seed-trap offset masquerades as a regression (this is why the per-organ A/B, which the seed trap also governs but
-symmetrically, read GO while the pipeline battery flagged a diff). Two faculties
-(wm-binding-advanced, value-driven-choice) were not exercised by the probe set and need coverage before the next
-adjudication. A wall defers a METHOD (flip-as-built), never the capability (one shared cortical pool).
+a real functional regression — the ROOT CAUSE section isolates it to the curiosity-organ calibration recipe. The
+ordered next steps (post-gaming; the fix edits + re-test run the sim, which contends with the owner's game): (1) FIX —
+pass `per_neuron_ou_seed=True` + matching OU config (`ou_std_current_pA`/`ou_mean_current_pA`/`ou_tau_ms`) to curiosity's
+standalone build path so both the pooled read and the standalone build calibrate under the same OU regime; (2) CHEAP
+CONFIRM (sub-second numpy) — `get_organ(seed=42).ensure_built()` under BRAIN_ONEBRAIN_WAVE3_POOL=1 vs =0 and compare
+`calib` + `salience_of()` at raw 0.3/0.5/0.65/0.734/0.84: the ON/OFF curves should now agree within ~0.02; (3) DECISIVE
+— re-run `onebrain_regression_battery --flag BRAIN_ONEBRAIN_WAVE3_POOL`; on all_pass the flip is LANDABLE (cherry-pick
+research/onebrain-11organ-pool-flip-prep, `_WAVE3_POOL_DEFAULT_ON=True`); (4) also extend gate (A)'s curiosity probe to
+assert `salience_of()` at intermediate raw points (not just the anchors) so this class of divergence can't ship again.
+Two faculties (wm-binding-advanced, value-driven-choice) were not exercised by the probe set and need coverage. A wall
+defers a METHOD (flip-as-built), never the capability (one shared cortical pool).
