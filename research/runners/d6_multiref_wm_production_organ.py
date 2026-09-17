@@ -399,10 +399,21 @@ _ORGAN: MultiReferentWMOrgan | None = None
 
 
 def get_organ(seed: int = 42) -> MultiReferentWMOrgan:
-    """The process-shared multi-referent WM organ (built once on first use)."""
+    """The process-shared multi-referent WM organ (built once on first use). When the ONE-BRAIN WAVE-3 pool flag is
+    ON (`BRAIN_ONEBRAIN_WAVE3_POOL`, default-OFF) this organ's R_MAX banks + shared FS co-inhabit the process-shared
+    11-organ Wave-3 `merge_organs` pool (`research/runners/onebrain_wave3_pool_production.py`) instead of its own
+    private bridge; OFF (default) -> `shared=None`, byte-identical to today. NOTE (honest scope): this module-level
+    singleton is NOT what production actually calls -- `webapp/server.py::_get_multiref_organ` builds one
+    `MultiReferentWMOrgan` PER SESSION (cache_key-isolated: this organ's held referents are one conversation's, and
+    a process singleton would leak one session's referents into another's read-back) with its OWN `shared` resolution
+    (currently the xedge pool). So flipping `BRAIN_ONEBRAIN_WAVE3_POOL` has ZERO effect on production today, exactly
+    like the other 9 organs' `get_organ()`s the Wave-3 pool module's own docstring already declares -- this wiring
+    only readies the DEAD (uncalled) process-shared accessor for a future, separate per-session-safe landing."""
     global _ORGAN
     if _ORGAN is None:
-        _ORGAN = MultiReferentWMOrgan(seed=seed)
+        from research.runners.onebrain_wave3_pool_production import wave3_pool_enabled, get_wave3_pool
+        shared = get_wave3_pool(seed) if wave3_pool_enabled() else None
+        _ORGAN = MultiReferentWMOrgan(seed=seed, shared=shared)
     return _ORGAN
 
 
