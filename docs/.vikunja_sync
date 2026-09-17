@@ -89,3 +89,6 @@ Updated #221: integrated 38-faculty battery caught a da-mode engagement regressi
 
 ## 2026-09-17  onebrain flip correction — downgraded to suspected RNG/build-ordering confound
 #221 re-synced: the flagged engagement diff is a constant offset (build-ordering/seed-trap suspected), not a confirmed regression; decisive next = RNG-controlled re-run.
+
+## 2026-09-17  onebrain flip ROOT CAUSE isolated (curiosity calibration)
+#221 re-synced: engagement offset fully root-caused to curiosity-organ per_neuron_ou_seed calibration mismatch (named fix); flip very likely landable post-fix. NOT a deep regression.
