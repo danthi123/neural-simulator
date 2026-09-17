@@ -1,0 +1,30 @@
+{
+ "run_id": "1789635105-111320",
+ "runner": "research/runners/_onebrain_11organ_pool_flip_regression.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/wf_f60e34e8-14f-1/research/runners/_onebrain_11organ_pool_flip_regression.py",
+  "--seeds",
+  "42,43,44,100,101,102",
+  "--out",
+  "research/findings/raw/_onebrain_11organ_pool_flip_6seed.json"
+ ],
+ "git_sha": "a56f31c1d",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-17T04:51:45",
+ "env": {
+  "SIM_BACKEND": "numpy",
+  "CUDA_VISIBLE_DEVICES": ""
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_onebrain_11organ_pool_flip_6seed.json"
+}

@@ -1,0 +1,1 @@
+{"backend": "numpy", "device": "cpu", "host": "aws-r7i.4xlarge (i-048a998be21a65079, terminated)", "runner": "research.runners.onebrain_regression_battery", "flag": "BRAIN_ONEBRAIN_WAVE3_POOL", "note": "integrated /api/brain-chat 38-faculty no-regression battery, CPU numpy on AWS; culmination default-on gate for the 11-organ pool flip"}

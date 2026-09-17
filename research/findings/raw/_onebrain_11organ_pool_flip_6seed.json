@@ -1,0 +1,968 @@
+{
+  "mode": "onebrain_11organ_pool_flip_regression",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "per_seed": [
+    {
+      "seed": 42,
+      "per_key": {
+        "surprise": {
+          "on": [
+            false,
+            true,
+            true,
+            false
+          ],
+          "off": [
+            false,
+            true,
+            true,
+            false
+          ],
+          "same": true
+        },
+        "worldmodel_pred": {
+          "on": [
+            1,
+            -1
+          ],
+          "off": [
+            1,
+            -1
+          ],
+          "same": true
+        },
+        "worldmodel_surprised": {
+          "on": [
+            false,
+            true,
+            false,
+            true
+          ],
+          "off": [
+            false,
+            true,
+            false,
+            true
+          ],
+          "same": true
+        },
+        "metacog": {
+          "on": [
+            false,
+            false,
+            true
+          ],
+          "off": [
+            false,
+            false,
+            true
+          ],
+          "same": true
+        },
+        "pragmatic": {
+          "on": [
+            "some but not all",
+            "undetermined (implicature collapsed)",
+            "undetermined (implicature collapsed)"
+          ],
+          "off": [
+            "some but not all",
+            "undetermined (implicature collapsed)",
+            "undetermined (implicature collapsed)"
+          ],
+          "same": true
+        },
+        "comprehension": {
+          "on": [
+            [
+              true,
+              false
+            ],
+            [
+              true,
+              false
+            ],
+            [
+              true,
+              false
+            ]
+          ],
+          "off": [
+            [
+              true,
+              false
+            ],
+            [
+              true,
+              false
+            ],
+            [
+              true,
+              false
+            ]
+          ],
+          "same": true
+        },
+        "self_schema": {
+          "on": [
+            "self",
+            "heard"
+          ],
+          "off": [
+            "self",
+            "heard"
+          ],
+          "same": true
+        },
+        "curiosity": {
+          "on": [
+            true,
+            false
+          ],
+          "off": [
+            true,
+            false
+          ],
+          "same": true
+        }
+      },
+      "organ_answer_preserved": {
+        "surprise": true,
+        "worldmodel": true,
+        "metacog": true,
+        "pragmatic": true,
+        "comprehension": true,
+        "self_schema": true,
+        "curiosity": true
+      },
+      "A_answer_preserved": true,
+      "B_one_brain_on": true,
+      "C_escape_off": true,
+      "on_pool": {
+        "n_distinct_pools": 1,
+        "n_on_wave3": 8,
+        "n_standalone": 0,
+        "wave3_enabled": true
+      },
+      "off_pool": {
+        "n_on_wave3": 0,
+        "n_base4_distinct": 1,
+        "n_standalone": 3,
+        "wave3_enabled": false
+      },
+      "GO": true
+    },
+    {
+      "seed": 43,
+      "per_key": {
+        "surprise": {
+          "on": [
+            false,
+            true,
+            true,
+            false
+          ],
+          "off": [
+            false,
+            true,
+            true,
+            false
+          ],
+          "same": true
+        },
+        "worldmodel_pred": {
+          "on": [
+            1,
+            -1
+          ],
+          "off": [
+            1,
+            -1
+          ],
+          "same": true
+        },
+        "worldmodel_surprised": {
+          "on": [
+            false,
+            true,
+            false,
+            true
+          ],
+          "off": [
+            false,
+            true,
+            false,
+            true
+          ],
+          "same": true
+        },
+        "metacog": {
+          "on": [
+            false,
+            false,
+            true
+          ],
+          "off": [
+            false,
+            false,
+            true
+          ],
+          "same": true
+        },
+        "pragmatic": {
+          "on": [
+            "some but not all",
+            "undetermined (implicature collapsed)",
+            "undetermined (implicature collapsed)"
+          ],
+          "off": [
+            "some but not all",
+            "undetermined (implicature collapsed)",
+            "undetermined (implicature collapsed)"
+          ],
+          "same": true
+        },
+        "comprehension": {
+          "on": [
+            [
+              true,
+              false
+            ],
+            [
+              true,
+              false
+            ],
+            [
+              true,
+              false
+            ]
+          ],
+          "off": [
+            [
+              true,
+              false
+            ],
+            [
+              true,
+              false
+            ],
+            [
+              true,
+              false
+            ]
+          ],
+          "same": true
+        },
+        "self_schema": {
+          "on": [
+            "self",
+            "heard"
+          ],
+          "off": [
+            "self",
+            "heard"
+          ],
+          "same": true
+        },
+        "curiosity": {
+          "on": [
+            true,
+            false
+          ],
+          "off": [
+            true,
+            false
+          ],
+          "same": true
+        }
+      },
+      "organ_answer_preserved": {
+        "surprise": true,
+        "worldmodel": true,
+        "metacog": true,
+        "pragmatic": true,
+        "comprehension": true,
+        "self_schema": true,
+        "curiosity": true
+      },
+      "A_answer_preserved": true,
+      "B_one_brain_on": true,
+      "C_escape_off": true,
+      "on_pool": {
+        "n_distinct_pools": 1,
+        "n_on_wave3": 8,
+        "n_standalone": 0,
+        "wave3_enabled": true
+      },
+      "off_pool": {
+        "n_on_wave3": 0,
+        "n_base4_distinct": 1,
+        "n_standalone": 3,
+        "wave3_enabled": false
+      },
+      "GO": true
+    },
+    {
+      "seed": 44,
+      "per_key": {
+        "surprise": {
+          "on": [
+            false,
+            true,
+            true,
+            false
+          ],
+          "off": [
+            false,
+            true,
+            true,
+            false
+          ],
+          "same": true
+        },
+        "worldmodel_pred": {
+          "on": [
+            1,
+            -1
+          ],
+          "off": [
+            1,
+            -1
+          ],
+          "same": true
+        },
+        "worldmodel_surprised": {
+          "on": [
+            false,
+            true,
+            false,
+            true
+          ],
+          "off": [
+            false,
+            true,
+            false,
+            true
+          ],
+          "same": true
+        },
+        "metacog": {
+          "on": [
+            false,
+            false,
+            true
+          ],
+          "off": [
+            false,
+            false,
+            true
+          ],
+          "same": true
+        },
+        "pragmatic": {
+          "on": [
+            "some but not all",
+            "undetermined (implicature collapsed)",
+            "undetermined (implicature collapsed)"
+          ],
+          "off": [
+            "some but not all",
+            "undetermined (implicature collapsed)",
+            "undetermined (implicature collapsed)"
+          ],
+          "same": true
+        },
+        "comprehension": {
+          "on": [
+            [
+              true,
+              false
+            ],
+            [
+              true,
+              false
+            ],
+            [
+              true,
+              false
+            ]
+          ],
+          "off": [
+            [
+              true,
+              false
+            ],
+            [
+              true,
+              false
+            ],
+            [
+              true,
+              false
+            ]
+          ],
+          "same": true
+        },
+        "self_schema": {
+          "on": [
+            "self",
+            "heard"
+          ],
+          "off": [
+            "self",
+            "heard"
+          ],
+          "same": true
+        },
+        "curiosity": {
+          "on": [
+            true,
+            false
+          ],
+          "off": [
+            true,
+            false
+          ],
+          "same": true
+        }
+      },
+      "organ_answer_preserved": {
+        "surprise": true,
+        "worldmodel": true,
+        "metacog": true,
+        "pragmatic": true,
+        "comprehension": true,
+        "self_schema": true,
+        "curiosity": true
+      },
+      "A_answer_preserved": true,
+      "B_one_brain_on": true,
+      "C_escape_off": true,
+      "on_pool": {
+        "n_distinct_pools": 1,
+        "n_on_wave3": 8,
+        "n_standalone": 0,
+        "wave3_enabled": true
+      },
+      "off_pool": {
+        "n_on_wave3": 0,
+        "n_base4_distinct": 1,
+        "n_standalone": 3,
+        "wave3_enabled": false
+      },
+      "GO": true
+    },
+    {
+      "seed": 100,
+      "per_key": {
+        "surprise": {
+          "on": [
+            false,
+            true,
+            true,
+            false
+          ],
+          "off": [
+            false,
+            true,
+            true,
+            false
+          ],
+          "same": true
+        },
+        "worldmodel_pred": {
+          "on": [
+            1,
+            -1
+          ],
+          "off": [
+            1,
+            -1
+          ],
+          "same": true
+        },
+        "worldmodel_surprised": {
+          "on": [
+            false,
+            true,
+            false,
+            true
+          ],
+          "off": [
+            false,
+            true,
+            false,
+            true
+          ],
+          "same": true
+        },
+        "metacog": {
+          "on": [
+            false,
+            false,
+            true
+          ],
+          "off": [
+            false,
+            false,
+            true
+          ],
+          "same": true
+        },
+        "pragmatic": {
+          "on": [
+            "some but not all",
+            "undetermined (implicature collapsed)",
+            "undetermined (implicature collapsed)"
+          ],
+          "off": [
+            "some but not all",
+            "undetermined (implicature collapsed)",
+            "undetermined (implicature collapsed)"
+          ],
+          "same": true
+        },
+        "comprehension": {
+          "on": [
+            [
+              true,
+              false
+            ],
+            [
+              true,
+              false
+            ],
+            [
+              true,
+              false
+            ]
+          ],
+          "off": [
+            [
+              true,
+              false
+            ],
+            [
+              true,
+              false
+            ],
+            [
+              true,
+              false
+            ]
+          ],
+          "same": true
+        },
+        "self_schema": {
+          "on": [
+            "self",
+            "heard"
+          ],
+          "off": [
+            "self",
+            "heard"
+          ],
+          "same": true
+        },
+        "curiosity": {
+          "on": [
+            true,
+            false
+          ],
+          "off": [
+            true,
+            false
+          ],
+          "same": true
+        }
+      },
+      "organ_answer_preserved": {
+        "surprise": true,
+        "worldmodel": true,
+        "metacog": true,
+        "pragmatic": true,
+        "comprehension": true,
+        "self_schema": true,
+        "curiosity": true
+      },
+      "A_answer_preserved": true,
+      "B_one_brain_on": true,
+      "C_escape_off": true,
+      "on_pool": {
+        "n_distinct_pools": 1,
+        "n_on_wave3": 8,
+        "n_standalone": 0,
+        "wave3_enabled": true
+      },
+      "off_pool": {
+        "n_on_wave3": 0,
+        "n_base4_distinct": 1,
+        "n_standalone": 3,
+        "wave3_enabled": false
+      },
+      "GO": true
+    },
+    {
+      "seed": 101,
+      "per_key": {
+        "surprise": {
+          "on": [
+            false,
+            true,
+            true,
+            false
+          ],
+          "off": [
+            false,
+            true,
+            true,
+            false
+          ],
+          "same": true
+        },
+        "worldmodel_pred": {
+          "on": [
+            1,
+            -1
+          ],
+          "off": [
+            1,
+            -1
+          ],
+          "same": true
+        },
+        "worldmodel_surprised": {
+          "on": [
+            false,
+            true,
+            false,
+            true
+          ],
+          "off": [
+            false,
+            true,
+            false,
+            true
+          ],
+          "same": true
+        },
+        "metacog": {
+          "on": [
+            false,
+            false,
+            true
+          ],
+          "off": [
+            false,
+            false,
+            true
+          ],
+          "same": true
+        },
+        "pragmatic": {
+          "on": [
+            "some but not all",
+            "undetermined (implicature collapsed)",
+            "undetermined (implicature collapsed)"
+          ],
+          "off": [
+            "some but not all",
+            "undetermined (implicature collapsed)",
+            "undetermined (implicature collapsed)"
+          ],
+          "same": true
+        },
+        "comprehension": {
+          "on": [
+            [
+              true,
+              false
+            ],
+            [
+              true,
+              false
+            ],
+            [
+              true,
+              false
+            ]
+          ],
+          "off": [
+            [
+              true,
+              false
+            ],
+            [
+              true,
+              false
+            ],
+            [
+              true,
+              false
+            ]
+          ],
+          "same": true
+        },
+        "self_schema": {
+          "on": [
+            "self",
+            "heard"
+          ],
+          "off": [
+            "self",
+            "heard"
+          ],
+          "same": true
+        },
+        "curiosity": {
+          "on": [
+            true,
+            false
+          ],
+          "off": [
+            true,
+            false
+          ],
+          "same": true
+        }
+      },
+      "organ_answer_preserved": {
+        "surprise": true,
+        "worldmodel": true,
+        "metacog": true,
+        "pragmatic": true,
+        "comprehension": true,
+        "self_schema": true,
+        "curiosity": true
+      },
+      "A_answer_preserved": true,
+      "B_one_brain_on": true,
+      "C_escape_off": true,
+      "on_pool": {
+        "n_distinct_pools": 1,
+        "n_on_wave3": 8,
+        "n_standalone": 0,
+        "wave3_enabled": true
+      },
+      "off_pool": {
+        "n_on_wave3": 0,
+        "n_base4_distinct": 1,
+        "n_standalone": 3,
+        "wave3_enabled": false
+      },
+      "GO": true
+    },
+    {
+      "seed": 102,
+      "per_key": {
+        "surprise": {
+          "on": [
+            false,
+            true,
+            true,
+            false
+          ],
+          "off": [
+            false,
+            true,
+            true,
+            false
+          ],
+          "same": true
+        },
+        "worldmodel_pred": {
+          "on": [
+            1,
+            -1
+          ],
+          "off": [
+            1,
+            -1
+          ],
+          "same": true
+        },
+        "worldmodel_surprised": {
+          "on": [
+            false,
+            true,
+            false,
+            true
+          ],
+          "off": [
+            false,
+            true,
+            false,
+            true
+          ],
+          "same": true
+        },
+        "metacog": {
+          "on": [
+            false,
+            false,
+            true
+          ],
+          "off": [
+            false,
+            false,
+            true
+          ],
+          "same": true
+        },
+        "pragmatic": {
+          "on": [
+            "some but not all",
+            "undetermined (implicature collapsed)",
+            "undetermined (implicature collapsed)"
+          ],
+          "off": [
+            "some but not all",
+            "undetermined (implicature collapsed)",
+            "undetermined (implicature collapsed)"
+          ],
+          "same": true
+        },
+        "comprehension": {
+          "on": [
+            [
+              true,
+              false
+            ],
+            [
+              true,
+              false
+            ],
+            [
+              true,
+              false
+            ]
+          ],
+          "off": [
+            [
+              true,
+              false
+            ],
+            [
+              true,
+              false
+            ],
+            [
+              true,
+              false
+            ]
+          ],
+          "same": true
+        },
+        "self_schema": {
+          "on": [
+            "self",
+            "heard"
+          ],
+          "off": [
+            "self",
+            "heard"
+          ],
+          "same": true
+        },
+        "curiosity": {
+          "on": [
+            true,
+            false
+          ],
+          "off": [
+            true,
+            false
+          ],
+          "same": true
+        }
+      },
+      "organ_answer_preserved": {
+        "surprise": true,
+        "worldmodel": true,
+        "metacog": true,
+        "pragmatic": true,
+        "comprehension": true,
+        "self_schema": true,
+        "curiosity": true
+      },
+      "A_answer_preserved": true,
+      "B_one_brain_on": true,
+      "C_escape_off": true,
+      "on_pool": {
+        "n_distinct_pools": 1,
+        "n_on_wave3": 8,
+        "n_standalone": 0,
+        "wave3_enabled": true
+      },
+      "off_pool": {
+        "n_on_wave3": 0,
+        "n_base4_distinct": 1,
+        "n_standalone": 3,
+        "wave3_enabled": false
+      },
+      "GO": true
+    }
+  ],
+  "per_organ": {
+    "surprise": 6,
+    "worldmodel": 6,
+    "metacog": 6,
+    "pragmatic": 6,
+    "comprehension": 6,
+    "self_schema": 6,
+    "curiosity": 6
+  },
+  "n_A_answer": 6,
+  "n_B_one_brain": 6,
+  "n_C_escape": 6,
+  "n_go": 6,
+  "n_seeds": 6,
+  "all_go": true,
+  "excluded_organs": [
+    "source_provenance",
+    "prospective_memory",
+    "d6_multiref_wm"
+  ],
+  "backend": "numpy",
+  "label": "one-brain 11-ORGAN POOL flip \u2014 brain-chat answer-preservation + one-brain coherence",
+  "status": "GO",
+  "go": true,
+  "undefined_reasons": [],
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "every wired organ's live chat answer preserved under the pool flip, every seed",
+      "ok": true,
+      "detail": "measured=6 expect=6",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "ON arm: all 8 wired organs on ONE pool object (the 11-organ wave3 pool), every seed",
+      "ok": true,
+      "detail": "measured=6 expect=6",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "OFF arm: escape reverts (no organ on the wave3 pool), every seed",
+      "ok": true,
+      "detail": "measured=6 expect=6",
+      "note": ""
+    }
+  ],
+  "disabled_processes": [
+    {
+      "process": "source_provenance / prospective_memory / d6_multiref_wm pool wiring",
+      "why": "documented exclusions (incremental wrapper API / scope-reduced / per-session in webapp)"
+    }
+  ],
+  "chance": null
+}
