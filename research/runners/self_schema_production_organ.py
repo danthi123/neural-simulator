@@ -169,10 +169,19 @@ _ORGAN: SelfSchemaAuthorshipOrgan | None = None
 def get_organ(seed: int = 42) -> SelfSchemaAuthorshipOrgan:
     """The process-shared DR-3 self-schema authorship organ (built once on first use). The read-time `lesion`
     flag is passed per-read (no rebuild needed — the authorship self-lesion is a read-time `schema_access=False`),
-    so the SAME organ serves a normal request and a lesion-verification probe."""
+    so the SAME organ serves a normal request and a lesion-verification probe.
+
+    ONE-BRAIN WAVE-2 SINGLE-POOL (opt-in, `BRAIN_ONEBRAIN_WAVE2_POOL`, default-OFF) WINS when on: the organ's
+    workspace + shared inhibition + self_schema regions are this organ's SLICE of the shared 9-organ Wave-2
+    `merge_organs` pool (`onebrain_wave2_pool_production.get_wave2_pool`) it co-inhabits with surprise/world-model/
+    metacog/pragmatic/comprehension/source_provenance/curiosity/causal_whatif. OFF (default) -> its own standalone
+    bridge exactly as today (byte-identical) — mirrors the surprise/world-model/metacog/pragmatic single_pool
+    branch (`onebrain_single_pool_production.single_pool_enabled`)."""
     global _ORGAN
     if _ORGAN is None:
-        _ORGAN = SelfSchemaAuthorshipOrgan(seed=seed)
+        from research.runners.onebrain_wave2_pool_production import wave2_pool_enabled, get_wave2_pool
+        shared = get_wave2_pool(seed) if wave2_pool_enabled() else None
+        _ORGAN = SelfSchemaAuthorshipOrgan(seed=seed, shared=shared)
     return _ORGAN
 
 

@@ -296,17 +296,29 @@ class CuriosityProductionOrgan:
     """A process-shared spiking curiosity (crave) organ. Built ONCE (lazily): the DR-1 curiosity bridge (the
     `from_novelty` -> ASK-pool excitability drive), plus a build-time calibration of the curious-vs-incurious
     ASK-pool firing threshold from a NOVEL vs FAMILIAR novelty battery. Each read maps the topic's novelty scalar
-    to the from_novelty drive, settles the ASK pool, and reads the wanting off `cp_firing_states[ask]`."""
+    to the from_novelty drive, settles the ASK pool, and reads the wanting off `cp_firing_states[ask]`.
 
-    def __init__(self, seed: int = 42):
+    ONE-BRAIN WAVE-2 SINGLE-POOL (opt-in, byte-identical when `shared` is None): when a Wave-2 `MergedPool` is
+    injected, the ASK pool is this organ's `cur_cue`/`ask`-family SLICE of the SHARED spiking bridge instead of
+    its own standalone bridge. Because the shared bridge is CO-RESIDENT with 8 other organs, the curiosity
+    `from_novelty` neuromodulator + the per-neuron OU drive it needs cannot be installed once and left running
+    (a bridge-wide subsystem would perturb every co-resident organ's determinism) — so a SHARED read installs
+    them LOCALLY for the duration of that one read only (`_read_want_shared`, mirroring the organ-read verify's
+    `_CuriosityReadOrgan._build_shared`), inside `pool.sequence_isolation()`, and tears them down before
+    returning. Heavier per-call than the standalone cached-snapshot read, but co-residence-safe. `shared=None`
+    (default) -> the existing own-bridge path, byte-identical."""
+
+    def __init__(self, seed: int = 42, shared=None):
         self.seed = int(seed)
+        # ONE-BRAIN MERGE (opt-in, byte-identical when None): see class docstring.
+        self._shared = shared
         self._built = False
         self.bridge = self.cfg = self.xp = None
         self.idx_ask = None
         self.snap0 = None
         self.threshold = None
         self.calib = None
-        self.les = None            # lazily-built lesioned twin (drive pathway removed)
+        self.les = None            # lazily-built lesioned twin (drive pathway removed; ALWAYS standalone)
 
     def _build_one(self, lesion: bool = False):
         from sim.backend import get_backend
@@ -323,12 +335,23 @@ class CuriosityProductionOrgan:
     def ensure_built(self):
         if self._built:
             return
-        self.bridge, self.cfg, self.xp, self.idx_ask, self.snap0 = self._build_one(lesion=False)
-        # CALIBRATE the curious/incurious threshold from a NOVEL vs FAMILIAR want battery (the same ASK-pool read
-        # the production turn uses). Place the threshold in the gap, biased toward the familiar side so a clearly
-        # novel topic reliably reads curious; fall back to the de-risk's WANT_FLOOR_HZ if the two do not separate.
-        want_novel = self._read_want_raw(NOVEL_SIGNAL, self.bridge, self.xp, self.idx_ask, self.snap0)
-        want_fam = self._read_want_raw(FAMILIAR_SIGNAL, self.bridge, self.xp, self.idx_ask, self.snap0)
+        if self._shared is not None:
+            # ONE-BRAIN WAVE-2 MERGE: adopt the shared pool's bridge; no own-bridge build. Each calibration read
+            # (and every later live `judge()`/`salience_of()` read) installs its OWN transient OU+neuromod on the
+            # shared bridge (`_read_want_shared`) so no co-resident organ is perturbed between reads.
+            self._shared.ensure_built()
+            self.bridge, self.xp = self._shared.bridge, self._shared.xp
+            self.cfg = self.bridge.core_config
+            want_novel = self._read_want_shared(NOVEL_SIGNAL)
+            want_fam = self._read_want_shared(FAMILIAR_SIGNAL)
+        else:
+            self.bridge, self.cfg, self.xp, self.idx_ask, self.snap0 = self._build_one(lesion=False)
+            # CALIBRATE the curious/incurious threshold from a NOVEL vs FAMILIAR want battery (the same ASK-pool
+            # read the production turn uses). Place the threshold in the gap, biased toward the familiar side so a
+            # clearly novel topic reliably reads curious; fall back to the de-risk's WANT_FLOOR_HZ if the two do
+            # not separate.
+            want_novel = self._read_want_raw(NOVEL_SIGNAL, self.bridge, self.xp, self.idx_ask, self.snap0)
+            want_fam = self._read_want_raw(FAMILIAR_SIGNAL, self.bridge, self.xp, self.idx_ask, self.snap0)
         if want_novel > want_fam + 1.0:
             self.threshold = float(0.5 * (want_novel + want_fam))
         else:
@@ -366,14 +389,82 @@ class CuriosityProductionOrgan:
         _restore_state(bridge, snap0)
         return float(_np.mean(vals))
 
+    def _read_want_shared(self, novelty: float) -> float:
+        """SHARED WAVE-2 POOL read: the curiosity `from_novelty` neuromodulator + the per-neuron OU drive it needs
+        cannot live PERMANENTLY on the shared bridge — it is co-resident with 8 other organs, and a bridge-wide
+        subsystem install would perturb every one of their reads (`read_isolation`'s per-neuron snapshot/restore
+        does not cover a config-level subsystem toggle). So EACH call installs them LOCALLY, settles, reads the
+        ASK-pool want at `novelty` over N_READ_REPS drift-free reps (identical protocol to `_read_want_raw`), then
+        TEARS DOWN the install + restores every touched cfg key before returning — heavier per-call than the
+        standalone cached-snapshot read, but co-residence-safe across the organ's WHOLE session lifetime (not just
+        the two build-time calibration anchors). Mirrors `onebrain_merge_framework._CuriosityReadOrgan._build_shared`
+        (the organ-read verify's own local-install-then-teardown recipe), generalized to run per live read."""
+        import numpy as _np
+        from sim.neuromodulators import NeuromodulatorManager
+        pool = self._shared
+        pool.ensure_built()
+        b = pool.bridge
+        cfg = b.core_config
+        xp = pool.xp
+        idx_ask = xp.asarray(_idx(b, "ask"))
+        n_ask = int(len(_idx(b, "ask")))
+        n = int(b.cp_membrane_potential_v.shape[0])
+        with pool.sequence_isolation():
+            saved = {k: getattr(cfg, k, None) for k in (
+                "enable_ou_process", "per_neuron_ou_seed", "ou_seed", "ou_std_current_pA",
+                "ou_mean_current_pA", "ou_tau_ms", "enable_neuromodulator_subsystem",
+                "neuromodulators", "reward_learning_rate", "current_novelty_signal")}
+            saved_nm = b.neuromodulator_manager
+            try:
+                cfg.enable_ou_process = True
+                cfg.per_neuron_ou_seed = True
+                cfg.ou_seed = int(self.seed)
+                cfg.ou_std_current_pA = 100.0
+                cfg.ou_mean_current_pA = 0.0
+                cfg.ou_tau_ms = 15.0
+                b._initialize_ou_process_state(cfg, n)
+                cfg.enable_neuromodulator_subsystem = True
+                cfg.neuromodulators = [_curiosity_modulator_cfg()]
+                b.neuromodulator_manager = NeuromodulatorManager(cfg.neuromodulators, cfg.dt_ms)
+                b.neuromodulator_manager.initialize(n, xp)
+                if b.region_manager is not None:
+                    b.neuromodulator_manager.set_group_indices(b.region_manager.region_indices_dict())
+                cfg.reward_learning_rate = 0.0
+                _settle(b, W_SETTLE)
+                snap0 = _snapshot_state(b)
+                vals = []
+                for _ in range(N_READ_REPS):
+                    _restore_state(b, snap0)
+                    cfg.current_novelty_signal = float(novelty)
+                    cfg.reward_learning_rate = 0.0
+                    spk = 0
+                    for _ in range(W_WANT):
+                        _advance(b)
+                        spk += int(b.cp_firing_states[idx_ask].sum())
+                    vals.append(spk / max(n_ask, 1) / (W_WANT * 1e-3))
+                _restore_state(b, snap0)
+                return float(_np.mean(vals))
+            finally:
+                b.neuromodulator_manager = saved_nm
+                b.cp_ou_current = None
+                b._region_ou_streams = None
+                b._ou_neuron_key_idx = None
+                b._ou_neuron_keys = None
+                b._ou_pn_step = 0
+                for k, v in saved.items():
+                    setattr(cfg, k, v)
+
     def judge(self, novelty: float = NOVEL_SIGNAL, lesion: bool = False) -> dict:
         """Read whether the brain is CURIOUS about a topic whose epistemic gap is `novelty`. Returns the spiking
         ASK-pool wanting (Hz), the calibrated threshold, and `curious` (want >= threshold). A HIGH want -> the honest
-        follow-up. `lesion` reads the drive-removed twin (want collapses -> not curious)."""
+        follow-up. `lesion` reads the drive-removed twin (want collapses -> not curious); ALWAYS its own standalone
+        bridge (a lesion is a diagnostic, never run on the shared pool)."""
         self.ensure_built()
         if lesion:
             st = self._ensure_les()
             want = self._read_want_raw(novelty, st["bridge"], st["xp"], st["idx_ask"], st["snap0"])
+        elif self._shared is not None:
+            want = self._read_want_shared(novelty)
         else:
             want = self._read_want_raw(novelty, self.bridge, self.xp, self.idx_ask, self.snap0)
         return {"on": True, "lesioned": bool(lesion), "novelty": float(novelty),
@@ -405,6 +496,8 @@ class CuriosityProductionOrgan:
         if lesion:
             st = self._ensure_les()
             want = self._read_want_raw(r, st["bridge"], st["xp"], st["idx_ask"], st["snap0"])
+        elif self._shared is not None:
+            want = self._read_want_shared(r)
         else:
             want = self._read_want_raw(r, self.bridge, self.xp, self.idx_ask, self.snap0)
         span = float(self.calib["want_novel_hz"] - self.calib["want_familiar_hz"])
@@ -413,14 +506,36 @@ class CuriosityProductionOrgan:
                 "calib": self.calib}
 
 
+def _curiosity_modulator_cfg():
+    """The single `curiosity` neuromodulator (from_novelty -> excitability_drive on group:ask), reused
+    verbatim from `build_curiosity_bridge`'s own registration -- reconstructed here so a SHARED-pool read
+    (`_read_want_shared`) can install it LOCALLY on the pool bridge without a standalone `build_curiosity_bridge`
+    call. Mirrors `onebrain_merge_framework._curiosity_modulator_cfg` (the organ-read verify's identical helper);
+    kept as its own small definition here so this file's shared-mode path has no import-time dependency on the
+    verify/merge-framework module."""
+    from sim.neuromodulators import NeuromodulatorConfig, ModulatorTarget, ProductionRule
+    return NeuromodulatorConfig(
+        name="curiosity", baseline=0.0, decay_tau_ms=50.0,
+        concentration_min=0.0, concentration_max=5.0,
+        targets=[ModulatorTarget(target_type="excitability_drive", scope="group:ask", sensitivity=320.0)],
+        production_rules=[ProductionRule(rule_type="from_novelty", sensitivity=0.10)])
+
+
 _ORGAN: CuriosityProductionOrgan | None = None
 
 
 def get_organ(seed: int = 42) -> CuriosityProductionOrgan:
-    """The process-shared curiosity organ (built once on first use)."""
+    """The process-shared curiosity organ (built once on first use).
+
+    ONE-BRAIN WAVE-2 SINGLE-POOL (opt-in, `BRAIN_ONEBRAIN_WAVE2_POOL`, default-OFF) WINS when on: the organ's ASK
+    pool is this organ's SLICE of the shared 9-organ Wave-2 `merge_organs` pool
+    (`onebrain_wave2_pool_production.get_wave2_pool`). OFF (default) -> its own standalone bridge exactly as
+    today (byte-identical) — mirrors the surprise/world-model/metacog/pragmatic single_pool branch."""
     global _ORGAN
     if _ORGAN is None:
-        _ORGAN = CuriosityProductionOrgan(seed=seed)
+        from research.runners.onebrain_wave2_pool_production import wave2_pool_enabled, get_wave2_pool
+        shared = get_wave2_pool(seed) if wave2_pool_enabled() else None
+        _ORGAN = CuriosityProductionOrgan(seed=seed, shared=shared)
     return _ORGAN
 
 

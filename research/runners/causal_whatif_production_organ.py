@@ -71,7 +71,7 @@ import re
 # 6/6-GO grounded de-risk assembles; NO reimplementation.
 from research.runners._causal_forward_model_derisk import (  # noqa: E402
     build_forward_model, train, unseen_consequence, do_intervention,
-    _lesion_xblock, _xblock_weight, OBS_EPISODES, EVENT_NAMES,
+    _lesion_xblock, _xblock_weight, OBS_EPISODES, EVENT_NAMES, N_EVENTS,
 )
 # Reuse the grounded de-risk's canonical real-fact world + composer-grounding bindings (event set derived from
 # the composer, recall-gated curriculum, moat-confirmed answers, the spiking DO-probe "why" read).
@@ -184,29 +184,157 @@ class CausalWhatIfProductionOrgan:
     Built ONCE per composer (lazily): the ~180-neuron directed forward-model bridge, curriculum GATED by the
     composer's moat recall, TRAINED (temporal-order STDP + phasic-DA three-factor) then FROZEN + matured. Each
     turn: `what_if(composer)` rolls the substrate forward + moat-confirms the consequence; `why(composer)` reads
-    the DO-surviving directed cause + moat-confirms it. A lesioned twin (forward edges zeroed) is built lazily."""
+    the DO-surviving directed cause + moat-confirms it. A lesioned twin (forward edges zeroed) is built lazily.
 
-    def __init__(self, seed: int = 42, obs_reps: int = 30, interv_reps: int = 30, read_prop: float = 0.50):
+    ONE-BRAIN WAVE-2 SINGLE-POOL (opt-in, byte-identical when `shared` is None): when a Wave-2 `MergedPool` is
+    injected, the "evt" causal population is this organ's SLICE of the shared 9-organ spiking bridge instead of
+    its own standalone bridge (the declared next rung named in this file's own docstring: "rides on the one-brain
+    merge, burn-down #1"). The RECALL-GATED curriculum (bindings 1+2) is UNCHANGED — only the substrate the evt
+    slice trains on changes. Two co-residence hazards, both handled: (1) TRAINING briefly needs
+    `cp_plasticity_rate_gain=1` on evt-internal edges (`_freeze_non_evt`) — restored to the pool's own frozen
+    array immediately after, so every OTHER organ's plasticity gate is untouched; (2) a LIVE `what_if`/`why` read
+    needs `propagation_strength` raised to the organ's read-operating-point, but that is a GLOBAL bridge-wide
+    scalar (`sim/bridge.py`'s per-spike conductance gain) — leaving it raised would rescale every co-resident
+    organ's synaptic transmission, so `_shared_read_guard` raises it ONLY for the duration of one read, under
+    `pool.read_isolation("causal_whatif")`, and restores the pool's baseline value immediately after. The lesion
+    twin ALWAYS builds its own standalone bridge (never the shared pool — a diagnostic, not the production path).
+    HONEST RESIDUAL: the shared pool is memoized PER SEED (not per composer/key), so two DIFFERENT composer
+    sessions sharing one seed would retrain the SAME physical evt slice sequentially (the second overwrites the
+    first's learned weights) — a genuine cross-session collision the standalone (default) path does not have;
+    declared here, not solved (single-composer-per-seed is the smoke-verified operating point)."""
+
+    def __init__(self, seed: int = 42, obs_reps: int = 30, interv_reps: int = 30, read_prop: float = 0.50,
+                shared=None):
         self.seed = int(seed)
         self.obs_reps = int(obs_reps)
         self.interv_reps = int(interv_reps)
         self.read_prop = float(read_prop)
+        # ONE-BRAIN MERGE (opt-in, byte-identical when None): see class docstring.
+        self._shared = shared
         self._built = False
         self._st = None            # intact circuit state
-        self._les = None           # lazily-built edge-lesioned twin
+        self._les = None           # lazily-built edge-lesioned twin (ALWAYS standalone, never shared)
         self._composer = None
         self.recall_status = None
         self.recalled_events = None
         self.battery_fa = None
+
+    @staticmethod
+    def _freeze_non_evt(b, evt_arr, xp):
+        """Universal gain-0 freeze of every edge that is NOT evt-internal (both endpoints in evt), for the
+        DURATION of this organ's own build-time train only (restored to the pool's own frozen array right after
+        by the caller). Mirrors `onebrain_merge_framework._CausalReadOrgan._freeze_non_evt` exactly — tocoo()
+        preserves `cp_connections.data` order, so the mask aligns with `cp_plasticity_rate_gain`."""
+        import numpy as np
+        from research.runners._spiking_expectation_rpe_derisk import _host
+        coo = b.cp_connections.tocoo()
+        row = np.asarray(_host(coo.row)); col = np.asarray(_host(coo.col))
+        row_in = np.isin(row, evt_arr); col_in = np.isin(col, evt_arr)
+        both = row_in & col_in
+        ng = np.zeros(row.shape[0], dtype=np.float32)
+        ng[both] = 1.0
+        b.cp_plasticity_rate_gain = xp.asarray(ng, dtype=xp.float32)
+
+    def _build_shared(self, episodes, do_interv, recall_status, recalled_events, xp) -> dict:
+        """The evt slice's build+train on the SHARED Wave-2 pool bridge (see class docstring for the two
+        co-residence hazards this handles). Returns the same `dict` shape `_build_one` returns (plus
+        `shared=True`) so `what_if`/`why` need only branch on that one key."""
+        import numpy as np
+        pool = self._shared
+        pool.ensure_built()
+        b = pool.bridge
+        cc = b.core_config
+        blk, n_events = 30, N_EVENTS
+        evt = np.asarray(b.region_manager.indices("evt"), dtype=np.int64)
+        blocks = [evt[e * blk:(e + 1) * blk] for e in range(n_events)]
+        b._blocks = blocks
+        b._blk = blk
+        snap = pool.snap or {}
+        b._rest_v = (snap["cp_membrane_potential_v"].copy()
+                    if "cp_membrane_potential_v" in snap else b.cp_membrane_potential_v.copy())
+        b._rest_u = (snap["cp_recovery_variable_u"].copy()
+                    if "cp_recovery_variable_u" in snap else b.cp_recovery_variable_u.copy())
+        meta = dict(n_events=n_events, blk=blk)
+
+        _cfg_keys = ("enable_stdp", "stdp_a_plus", "stdp_a_minus", "stdp_tau_plus_ms", "stdp_tau_minus_ms",
+                    "stdp_w_max", "stdp_w_min", "enable_reward_modulation", "reward_defer_stdp_weight_update",
+                    "reward_learning_rate", "reward_eligibility_tau_ms", "reward_baseline",
+                    "current_reward_signal", "reward_aversive_scale", "propagation_strength")
+        saved = {k: getattr(cc, k) for k in _cfg_keys}
+        saved_tstep = b.runtime_state.current_time_step
+        saved_tms = b.runtime_state.current_time_ms
+        g0 = getattr(b, "cp_plasticity_rate_gain", None)
+        saved_gain = g0.copy() if g0 is not None else None
+        saved_elig = getattr(b, "cp_eligibility_trace", None)
+        saved_lst = getattr(b, "cp_last_spike_time", None)
+        nnz = int(b.cp_connections.nnz)
+        n_all = int(b.cp_membrane_potential_v.shape[0])
+        w_AD = None
+        with pool.read_isolation("causal_whatif"):
+            try:
+                cc.enable_stdp = True
+                cc.stdp_a_plus = 0.02; cc.stdp_a_minus = 0.010
+                cc.stdp_tau_plus_ms = 12.0; cc.stdp_tau_minus_ms = 12.0
+                cc.stdp_w_max = 24.0; cc.stdp_w_min = 0.0
+                cc.enable_reward_modulation = True
+                cc.reward_defer_stdp_weight_update = True
+                cc.reward_learning_rate = 0.18; cc.reward_eligibility_tau_ms = 150.0
+                cc.reward_baseline = 0.0; cc.current_reward_signal = 0.0
+                cc.reward_aversive_scale = 1.0; cc.propagation_strength = 0.05
+                if saved_elig is None:
+                    b.cp_eligibility_trace = xp.zeros(nnz, dtype=xp.float32)
+                if saved_lst is None:
+                    b.cp_last_spike_time = xp.full(n_all, -1000.0, dtype=xp.float32)
+                self._freeze_non_evt(b, evt, xp)
+                train(b, cc, meta, xp, episodes, obs_reps=self.obs_reps, interv_reps=self.interv_reps,
+                     do_intervention=do_interv, prune_src=X)
+                w_AD = _xblock_weight(b, A, D)   # the direct A->D edge must stay unlearned (unseen-consequence guard)
+            finally:
+                for k, v in saved.items():
+                    setattr(cc, k, v)
+                b.runtime_state.current_time_step = saved_tstep
+                b.runtime_state.current_time_ms = saved_tms
+                if saved_gain is not None:
+                    b.cp_plasticity_rate_gain[:] = saved_gain
+                b.cp_eligibility_trace = saved_elig
+                b.cp_last_spike_time = saved_lst
+        return {"bridge": b, "cfg": cc, "meta": meta, "xp": xp, "w_AD": w_AD,
+                "recall_status": recall_status, "recalled_events": recalled_events, "shared": True}
+
+    def _shared_read_guard(self, st):
+        """A LIVE `what_if`/`why` read needs `propagation_strength` raised to `self.read_prop` (the organ's
+        maturation-gain read operating point), but on the SHARED pool that is a GLOBAL bridge-wide scalar (every
+        co-resident organ's synaptic transmission is scaled by it) — so raise it ONLY for the duration of this one
+        read, under `read_isolation`, and restore the pool's baseline immediately after. A no-op (nullcontext) for
+        the standalone (non-shared) path, where the organ already parked `propagation_strength` at `read_prop`
+        permanently at build (its own bridge; nothing else co-resides on it)."""
+        import contextlib
+        if not st.get("shared"):
+            return contextlib.nullcontext()
+        pool = self._shared
+        cc = st["cfg"]
+
+        @contextlib.contextmanager
+        def _guard():
+            with pool.read_isolation("causal_whatif"):
+                saved_prop = cc.propagation_strength
+                cc.propagation_strength = float(self.read_prop)
+                try:
+                    yield
+                finally:
+                    cc.propagation_strength = saved_prop
+        return _guard()
 
     def _build_one(self, composer, lesion: bool = False) -> dict:
         from sim.backend import get_backend
         xp, _ = get_backend()
         # binding (1)+(2): enumerate events + gate the causal curriculum by the composer's moat recall.
         recalled_events, recall_status = enumerate_events(composer)
-        bridge, cfg, meta = build_forward_model(self.seed)
         episodes = [ep for ep in OBS_EPISODES if all(recall_status[e] for e in ep)]
         do_interv = bool(recall_status.get(X, False) and recall_status.get(Y, False))
+        if self._shared is not None and not lesion:
+            return self._build_shared(episodes, do_interv, recall_status, recalled_events, xp)
+        bridge, cfg, meta = build_forward_model(self.seed)
         train(bridge, cfg, meta, xp, episodes, obs_reps=self.obs_reps, interv_reps=self.interv_reps,
               do_intervention=do_interv, prune_src=X)
         # freeze the learned structure + apply the uniform maturation gain (the gap#5 protocol; preserves ratios).
@@ -218,7 +346,7 @@ class CausalWhatIfProductionOrgan:
         if lesion:
             _lesion_xblock(bridge)                   # LOAD-BEARING: zero the learned forward edges
         return {"bridge": bridge, "cfg": cfg, "meta": meta, "xp": xp, "w_AD": w_AD,
-                "recall_status": recall_status, "recalled_events": recalled_events}
+                "recall_status": recall_status, "recalled_events": recalled_events, "shared": False}
 
     def ensure_built(self, composer):
         if self._built:
@@ -243,7 +371,8 @@ class CausalWhatIfProductionOrgan:
         st = self._ensure_les(composer) if lesion else self._st
         b, xp, meta = st["bridge"], st["xp"], st["meta"]
         label_map = {e: e for e in range(meta["n_events"])}
-        unseen = unseen_consequence(b, meta, xp, label_map=label_map, w_AD=st["w_AD"])
+        with self._shared_read_guard(st):
+            unseen = unseen_consequence(b, meta, xp, label_map=label_map, w_AD=st["w_AD"])
         # binding (3): the consequence is a fact ONLY if the composer moat-confirms it.
         confirmed = bool(unseen["predicts_D"] and _recalled(composer, D))
         confab = bool(unseen["predicts_D"] and not _recalled(composer, D))   # predicted but NOT a real fact -> reject
@@ -263,8 +392,9 @@ class CausalWhatIfProductionOrgan:
         st = self._ensure_les(composer) if lesion else self._st
         b, xp, meta = st["bridge"], st["xp"], st["meta"]
         label_map = {e: e for e in range(meta["n_events"])}
-        cause_evt, cause_rates = why_cause(b, xp, Y)
-        doi = do_intervention(b, meta, xp, label_map=label_map)
+        with self._shared_read_guard(st):
+            cause_evt, cause_rates = why_cause(b, xp, Y)
+            doi = do_intervention(b, meta, xp, label_map=label_map)
         why_is_C = bool(cause_evt == C)
         # binding (3) + the DO-probe: the cause must be C, moat-confirmed, AND survive the DO-intervention.
         confirmed = bool(why_is_C and _recalled(composer, C) and doi["X_not_cause_of_Y"])
@@ -285,10 +415,19 @@ _ORGANS: dict = {}
 
 def get_organ(key=None, seed: int = 42) -> CausalWhatIfProductionOrgan:
     """The causal organ for `key` (the ChatBrain cache key). Built once per key; grounded READ-ONLY against the
-    live composer on `ensure_built`. Keyed (not a global singleton) because the grounding is per-brain composer."""
+    live composer on `ensure_built`. Keyed (not a global singleton) because the grounding is per-brain composer.
+
+    ONE-BRAIN WAVE-2 SINGLE-POOL (opt-in, `BRAIN_ONEBRAIN_WAVE2_POOL`, default-OFF) WINS when on: the organ's
+    "evt" causal population is this organ's SLICE of the shared 9-organ Wave-2 `merge_organs` pool
+    (`onebrain_wave2_pool_production.get_wave2_pool`). OFF (default) -> its own standalone bridge exactly as
+    today (byte-identical) — mirrors the surprise/world-model/metacog/pragmatic single_pool branch. See the class
+    docstring's declared residual: the pool is memoized per SEED, not per `key`, so multiple composer sessions at
+    one seed would retrain the same shared evt slice sequentially."""
     org = _ORGANS.get(key)
     if org is None:
-        org = CausalWhatIfProductionOrgan(seed=seed)
+        from research.runners.onebrain_wave2_pool_production import wave2_pool_enabled, get_wave2_pool
+        shared = get_wave2_pool(seed) if wave2_pool_enabled() else None
+        org = CausalWhatIfProductionOrgan(seed=seed, shared=shared)
         _ORGANS[key] = org
     return org
 
