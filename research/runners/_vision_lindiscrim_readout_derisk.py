@@ -108,6 +108,16 @@ BCM S2-TEMPLATE-LEARNING smoke (2026-09-01, this de-risk; --s2-learn none is the
       --s2-bcm-epochs 5 --s2-bcm-competitive-frac 0.25 \
       --out research/findings/raw/lanes/perception/vlin_bcm_smoke.json
 
+SAIL S2-TEMPLATE EXPLICIT-DECORRELATION smoke (2026-09-17, this de-risk; --s2-learn none is still the
+byte-identical default -- see _sail_learn_s2_templates for why this supersedes 'bcm' as the residual's
+named next mechanism, and --s2-learn's help for the one-line diagnosis):
+  SIM_BACKEND=numpy python -u -m research.runners._vision_lindiscrim_readout_derisk \
+      --seeds 42 --n-s2 96 --s2-norm satdiv --s2-satdiv-n 2.0 --s2-satdiv-sigma 8.0 \
+      --s2-satdiv-scale 760.0 --ridge 1.0 --n-glimpses 6 --heldout-position --scramble-null \
+      --s2-learn sail --s2-sail-alpha-w 0.02 --s2-sail-alpha-l 0.02 --s2-sail-alpha-theta 0.02 \
+      --s2-sail-target-p 0.1 --s2-sail-competitive-frac 0.1 --s2-sail-lca-iters 10 --s2-sail-epochs 5 \
+      --out research/findings/raw/lanes/perception/vlin_sail_smoke.json
+
 HELD-OUT-POSITION + SCRAMBLE-NULL robustness smoke (2026-09-04, this de-risk; anti-cheats 5-6 above; both
 flags default OFF -> byte-identical to every prior run of this file when omitted). The DECISIVE full-scale
 robustness re-run is the flat-capacity width-matched control the open Q1 names (n_s2=1152, no binding) vs
@@ -821,6 +831,183 @@ def _bcm_learn_s2_templates(patches_flat, W0, gain, theta_alpha, pre_floor, epoc
     return W.astype(np.float32), theta.astype(np.float32), diag
 
 
+def _mean_pairwise_cosine_abs(W):
+    """Mean |cosine similarity| over all OFF-DIAGONAL template-pair directions (n_S2 choose 2) -- the
+    DIVERSITY metric the whole SAIL lever targets (2026-09-17 shared-pool-BCM residual: redundant
+    templates, no dataset-wide decorrelation). Rows are L2-normalised defensively (both the frozen-
+    random init and BCM/SAIL renorm already keep them unit-norm, but this makes the metric a pure ANGLE
+    regardless of magnitude even if renorm is off). Returns 0.0 for a degenerate <2-template bank."""
+    Wn = _l2n(np.asarray(W, dtype=np.float64), axis=1)
+    n = Wn.shape[0]
+    if n < 2:
+        return 0.0
+    sim = Wn @ Wn.T
+    iu = np.triu_indices(n, k=1)
+    return float(np.mean(np.abs(sim[iu])))
+
+
+# Dale's-law-style physiological bounds on the LEARNED lateral matrix / threshold (see the "STABILIZATION"
+# note in _sail_learn_s2_templates's docstring) -- generous relative to the ~[0,1] cosine-match drive
+# scale, tight enough to rule out the unbounded runaway measured on unconstrained synthetic probes.
+_SAIL_L_CAP = 1.0
+_SAIL_THETA_CAP = 2.0
+
+
+def _sail_learn_s2_templates(W0, patches_flat, alpha_w, alpha_l, alpha_theta, target_p,
+                              competitive_frac, lca_iters, epochs, renorm, seed):
+    """SAILnet (Sparse And Independent Local network; Zylberberg, Murphy & DeWeese 2011, PLoS Comput.
+    Biol. 7:e1002250) EXPLICIT-decorrelation learning of the S2 template bank -- the mechanism this
+    de-risk's own 2026-09-17 finding names next after plain competitive BCM (`_bcm_learn_s2_templates`)
+    plateaued with a REDUNDANT bank: BCM's `competitive_frac` k-WTA gate on the WEIGHT UPDATE stops any
+    ONE presentation from driving every template at once, but has NO term that ever penalises two
+    DIFFERENT templates for reliably firing TOGETHER across the WHOLE training set -- so several near-
+    duplicate-direction templates can coexist indefinitely as long as each still wins its own share of
+    individual presentations (measured: `mean_pairwise_cosine_abs` over the BCM-learned bank did not
+    fall below the frozen-random baseline). THE FIX: SAILnet adds a THIRD, EXPLICIT weight matrix absent
+    from BCM -- a LEARNED LATERAL (inhibitory) matrix L, trained by its OWN anti-Hebbian rule specifically
+    to punish pairwise co-activity, composed with LCA (Locally Competitive Algorithm; Rozell, Johnson,
+    Baraniuk & Olshausen 2008, Neural Comput. 20:2526) relaxation that actually USES L to suppress
+    redundant co-firing BEFORE either the feedforward Hebbian update or the sparse code itself is read
+    out. Foldiak (1990, Biol. Cybern. 64:165) is the origin of learning a feedforward AND a lateral
+    anti-Hebbian matrix TOGETHER for decorrelated sparse coding; SAILnet is the natural-image-patch
+    instantiation of that same two-matrix architecture; Diehl & Cook (2015, Front. Comput. Neurosci.
+    9:99) is the spiking precedent for exactly this excitatory-feedforward + lateral-inhibitory-anti-
+    Hebbian pairing driving unsupervised receptive-field diversity.
+
+    THREE LOCAL (synapse/unit-local) RULES, applied ONLINE, one presented patch x at a time (theta and L
+    are running statistics, so -- exactly like `_bcm_learn_s2_templates` -- this MUST be sequential, not
+    a closed-form/batch solve):
+      y = ReLU(W @ x)                                     feedforward drive (same role as BCM's y)
+      r = y; repeat lca_iters times: r = ReLU(y - L @ r - theta)   LCA lateral-inhibition relaxation --
+          each iteration lets the CURRENT lateral-inhibited estimate r suppress itself via the learned L
+          and subtract the per-unit adaptive threshold theta, converging toward a sparser, decorrelated
+          steady-state code (Rozell et al. 2008 eq 2's discrete-time relaxation).
+      a = top-k(r, frac=competitive_frac)   binary "spiked" indicator -- the SAME top-k-by-current-drive
+          competitive gate `_bcm_learn_s2_templates`'s `competitive_frac` already established in this
+          file (Foldiak 1991/Kohonen 1982-style winner-relative competition), applied here to the
+          LCA-RELAXED r (not the raw feedforward y) so the binary code already reflects lateral
+          decorrelation, not just the feedforward match.
+      dW[j] = alpha_W * a[j] * (x - r[j]*W[j])            Oja (1982) normalised Hebbian feedforward:
+          potentiate toward x, self-decayed by the unit's OWN current relaxed drive r[j] -- the same
+          self-limiting form that bounds a unit's weight vector without relying solely on the post-hoc
+          renorm below (renorm is an ADDITIONAL safety net, mirroring BCM's).
+      dL[j,k] = alpha_L * (a[j]*a[k] - target_p**2), j!=k, clipped >=0   ANTI-HEBBIAN lateral
+          decorrelation (Foldiak 1990 eq 5 / Zylberberg et al. 2011 eq 3): grows the inhibitory
+          connection between EVERY pair of units that co-spike MORE OFTEN than the target_p**2 baseline
+          chance-coincidence rate two INDEPENDENT target_p-sparse units would show -- and this L then
+          feeds back into the NEXT presentation's LCA relaxation, suppressing exactly that redundant pair
+          going forward. THIS is the explicit dataset-wide decorrelation term plain competitive BCM
+          lacks. Clipped >=0 because L is a population of Dale's-law INHIBITORY lateral synapses -- only
+          ever more inhibitory, never excitatory (L can still shrink back toward 0 if a pair's co-activity
+          later drops below the target_p**2 baseline -- it is a coincidence STATISTIC, not a one-way
+          ratchet).
+      dtheta[j] = alpha_theta * (a[j] - target_p)          homeostatic intrinsic-excitability threshold
+          (Foldiak 1990 eq 4 / Zylberberg et al. 2011 eq 4): pushes EVERY unit's own long-run spiking
+          probability toward target_p regardless of whether it won THIS presentation's top-k -- an
+          activity statistic the unit tracks unconditionally, matching `_bcm_learn_s2_templates`'s theta
+          update semantics (updates every presentation; the weight branches are separately gated).
+
+    target_p vs. competitive_frac -- WHY BOTH, not one knob: `competitive_frac` is the RUNTIME top-k
+    fraction that operationally turns the continuous LCA output r into the binary code a each
+    presentation (same operational role as BCM's `competitive_frac`); `target_p` is SAILnet's own
+    homeostatic SET-POINT that the anti-Hebbian (dL) and threshold (dtheta) rules push the network's
+    ACTUAL long-run firing probability toward, independent of the instantaneous top-k count. Conflating
+    the two into one number is exactly the "operating point is implicit in the animal, tuning optimises
+    whatever the metric rewards" trap this project's wall-reframe warns against -- keeping them separate
+    lets the runtime sparsity and the homeostatic target be explored independently. Defaults set them
+    EQUAL so the out-of-the-box behaviour matches the textbook single-parameter SAILnet reading; the
+    flags are exposed separately for exploration.
+
+    renorm: identical rationale + mechanism to `_bcm_learn_s2_templates`'s -- rescale each W row to unit
+    L2 norm after every update, keeping 'drive' on the frozen-random baseline's cosine-similarity scale
+    so any lift is attributable to LEARNED template information, not magnitude growth. L is NEVER
+    renormalised (it is a coincidence-probability statistic, not a drive-scale quantity).
+
+    Returns W (n_S2, D) learned templates (float32), L (n_S2, n_S2) learned lateral matrix (float32,
+    diagonal forced 0), theta (n_S2,) final thresholds (float32), and a diagnostics dict -- including
+    `mean_pairwise_cosine_abs` (final bank) and `mean_pairwise_cosine_abs_init` (the frozen-random start
+    point), the diversity metric this whole lever is about -- reported so a plateau/collapse is VISIBLE,
+    not silently absorbed, exactly like BCM's `theta_final_std`/`frac_theta_near_zero`.
+
+    STABILIZATION (found necessary during THIS de-risk's own exploration, not pre-registered, mirroring
+    the note on `competitive_frac` above): the raw additive dL/dtheta updates, run online with a fixed
+    learning rate, have NO self-limiting term (unlike dW's own Oja decay) -- left completely unbounded,
+    L and theta grow without bound whenever a pair/unit's activity statistic sits persistently on one
+    side of its target (measured: L_max > 100 and a still-diverging theta within a few thousand
+    presentations on synthetic probes), which then destabilises the LCA relaxation itself (a lateral
+    matrix with unbounded entries makes `y - L@r` swing wildly between iterations instead of settling).
+    Real inhibitory (L) and excitability (theta) synapses/channels are PHYSIOLOGICALLY bounded -- the
+    same Dale's-law-rectified-maximum-conductance rationale `_bcm_learn_s2_templates`'s renorm already
+    invokes for W, applied here to L and theta: both are hard-clipped every presentation to
+    `_SAIL_L_CAP`/`+-_SAIL_THETA_CAP` (chosen an order of magnitude above the ~[0,1] cosine-match drive
+    scale -- generous enough not to constrain normal operation, tight enough to rule out runaway)."""
+    W = W0.copy().astype(np.float64)
+    n_S2, D = W.shape
+    L = np.zeros((n_S2, n_S2), dtype=np.float64)
+    theta = np.zeros(n_S2, dtype=np.float64)
+    rng = np.random.default_rng(seed)
+    N = patches_flat.shape[0]
+    X = patches_flat.astype(np.float64)
+    tp2 = float(target_p) ** 2
+
+    if competitive_frac and 0.0 < competitive_frac < 1.0:
+        k_a = max(1, int(round(competitive_frac * n_S2)))
+    else:
+        k_a = n_S2  # disables competition: every unit counts as "active" (the degenerate ablation case)
+
+    n_seen = 0
+    active_frac_sum = 0.0
+    for _ep in range(max(1, int(epochs))):
+        order = rng.permutation(N)
+        for idx in order:
+            x = X[idx]
+            y = np.clip(W @ x, 0.0, None)
+            r = y
+            for _ in range(max(1, int(lca_iters))):
+                r = np.clip(y - L @ r - theta, 0.0, None)
+            if k_a < n_S2:
+                winners = np.argsort(-r, kind="stable")[:k_a]
+                a = np.zeros(n_S2, dtype=np.float64)
+                a[winners] = 1.0
+            else:
+                a = np.ones(n_S2, dtype=np.float64)
+
+            dW = (alpha_w * a)[:, None] * (x[None, :] - r[:, None] * W)
+            W = W + dW
+
+            dL = alpha_l * (np.outer(a, a) - tp2)
+            np.fill_diagonal(dL, 0.0)
+            L = np.clip(L + dL, 0.0, _SAIL_L_CAP)
+            np.fill_diagonal(L, 0.0)
+
+            theta = np.clip(theta + alpha_theta * (a - target_p), -_SAIL_THETA_CAP, _SAIL_THETA_CAP)
+
+            if renorm:
+                norms = np.linalg.norm(W, axis=1, keepdims=True)
+                W = W / np.where(norms < 1e-9, 1.0, norms)
+
+            active_frac_sum += float(a.mean())
+            n_seen += 1
+
+    n_pairs = max(1, n_S2 * (n_S2 - 1))
+    diag = {
+        "n_presentations": int(n_seen),
+        "target_p": float(target_p),
+        "competitive_frac": float(competitive_frac),
+        "lca_iters": int(lca_iters),
+        "mean_active_frac": float(active_frac_sum / max(1, n_seen)),
+        "theta_final_mean": float(theta.mean()),
+        "theta_final_std": float(theta.std()),
+        "L_mean": float(L.mean()),
+        "L_max": float(L.max()),
+        "L_frac_nonzero_offdiag": float(np.count_nonzero(L > 1e-12) / n_pairs),
+        "template_drift_from_init_mean": float(np.mean(np.linalg.norm(W - W0.astype(np.float64), axis=1))),
+        "mean_pairwise_cosine_abs_init": float(_mean_pairwise_cosine_abs(W0)),
+        "mean_pairwise_cosine_abs": float(_mean_pairwise_cosine_abs(W)),
+    }
+    return W.astype(np.float32), L.astype(np.float32), theta.astype(np.float32), diag
+
+
 def _c2_pool(x, k_extra):
     """C2 pooling over the LOCATION axis (axis=1): (N, n_loc, D) -> (N, D) when `k_extra<=0` (the
     UNCHANGED Riesenhuber & Poggio 1999 hard-MAX complex-cell pool -- byte-identical to every prior run
@@ -1317,10 +1504,11 @@ def run_seed(seed, a, code):
     H_held = _centroid_decode(_hist_oracle(tr_c1, a.n_orientations), tr_cls,
                               _hist_oracle(he_c1, a.n_orientations), he_cls)
 
-    # ---- S2 template bank: FIXED random (default) or BCM-LEARNED from the training patches ----
+    # ---- S2 template bank: FIXED random (default), BCM-LEARNED, or SAIL-LEARNED from train patches ----
     dim = a.n_orientations * a.s2_p * a.s2_p
     W0 = _init_templates(dim, a.n_s2, seed * 29 + 13)
     bcm_diag = None
+    sail_diag = None
     if getattr(a, "s2_learn", "none") == "bcm":
         # SAME random init as the frozen-random baseline above (like-for-like: only whether learning
         # happens afterward differs) -- presynaptic patches are the FIXED spiking C1 front end's
@@ -1331,6 +1519,15 @@ def run_seed(seed, a, code):
             pre_floor=a.s2_bcm_pre_floor, epochs=a.s2_bcm_epochs,
             renorm=bool(a.s2_bcm_renorm), competitive_frac=a.s2_bcm_competitive_frac,
             seed=seed * 733 + 5)
+    elif a.s2_learn == "sail":
+        # SAME hook point + SAME train-patch pool as 'bcm' (like-for-like: only the learning RULE
+        # differs) -- see _sail_learn_s2_templates for the explicit-decorrelation mechanism this adds.
+        tr_patches = _l2n(_extract_patches(tr_c1, a.s2_p), axis=2).reshape(-1, dim)
+        W0, _sail_L, _sail_theta, sail_diag = _sail_learn_s2_templates(
+            W0, tr_patches, alpha_w=a.s2_sail_alpha_w, alpha_l=a.s2_sail_alpha_l,
+            alpha_theta=a.s2_sail_alpha_theta, target_p=a.s2_sail_target_p,
+            competitive_frac=a.s2_sail_competitive_frac, lca_iters=a.s2_sail_lca_iters,
+            epochs=a.s2_sail_epochs, renorm=bool(a.s2_sail_renorm), seed=seed * 733 + 7)
 
     # ---- S2.5 CONFIGURAL-BINDING conjunction bank (--conj-bind != none; design 2026-09-03) ----
     # Sampled ONCE PER SEED (design Part 2b) and reused UNCHANGED across train/held/scramble, exactly
@@ -1471,6 +1668,8 @@ def run_seed(seed, a, code):
     }
     if bcm_diag is not None:
         row["bcm"] = bcm_diag  # only present when --s2-learn bcm; keeps the default path byte-identical
+    if sail_diag is not None:
+        row["sail"] = sail_diag  # only present when --s2-learn sail; keeps the default path byte-identical
     if conj_select_diag is not None:
         row["conj_select"] = conj_select_diag  # only present when --conj-select competitive
     return row
@@ -1575,14 +1774,20 @@ def main():
     p.add_argument("--n-s2", type=int, default=96,
                    help="fixed random S2 template-bank size (round-robin over classes irrelevant here; "
                         "the READOUT is learned over the full bank)")
-    p.add_argument("--s2-learn", choices=["none", "bcm"], default="none",
+    p.add_argument("--s2-learn", choices=["none", "bcm", "sail"], default="none",
                    help="2026-09-01 decisive next mechanism (satdiv/ridge/k-WTA all plateau; the finding's "
                         "NO-DEFER handoff: the residual is the frozen random S2 bank's INFORMATION content, "
                         "not its normalization/threshold). 'bcm' LEARNS the S2 templates from the S1/C1 "
                         "training patches by the Bienenstock-Cooper-Munro (1982) sliding-threshold rule, "
                         "ALREADY validated on this substrate (sim/config.py hebbian_bcm; the 2026-08-26 "
                         "finding broke the identical common-mode boundary 62x on V1 orientation self-org) "
-                        "-- see _bcm_learn_s2_templates(). 'none' (default) keeps the frozen random bank -> "
+                        "-- see _bcm_learn_s2_templates(). 2026-09-17: plain competitive BCM plateaued with "
+                        "a REDUNDANT bank (mean_pairwise_cosine_abs did not fall below the frozen-random "
+                        "baseline -- no term ever penalises two templates for co-firing across the whole "
+                        "dataset). 'sail' replaces it with Zylberberg/Murphy/DeWeese (2011) SAILnet: an "
+                        "EXPLICIT anti-Hebbian LATERAL matrix (Foldiak 1990) composed with LCA relaxation "
+                        "(Rozell et al. 2008) that directly decorrelates the bank -- see "
+                        "_sail_learn_s2_templates(). 'none' (default) keeps the frozen random bank -> "
                         "byte-identical to every prior run of this file.")
     p.add_argument("--s2-bcm-gain", type=float, default=200.0,
                    help="'bcm' mode only: BCM gain (multiplies phi=x*y*(y-theta_M)); same role as "
@@ -1618,6 +1823,53 @@ def main():
                         "toward one shared direction (measured: theta_std -> 0, RATE-ceiling WORSE than "
                         "random). 0.0 (or >=1.0) disables competition -- the ORIGINAL single-cell-only "
                         "port, kept for the ablation.")
+    # S2 SAIL (Sparse And Independent Local network) -- explicit-decorrelation successor to plain BCM
+    # (2026-09-17; see --s2-learn help + _sail_learn_s2_templates docstring for the full mechanism).
+    p.add_argument("--s2-sail-alpha-w", type=float, default=0.02,
+                   help="'sail' mode only: feedforward Oja/Hebbian learning rate (dW gain). Same role as "
+                        "--s2-bcm-gain but Oja-normalised (self-decayed by r[j]*W[j], not a free-running "
+                        "BCM cubic), so a much smaller magnitude than --s2-bcm-gain's O(1-200) is correct.")
+    p.add_argument("--s2-sail-alpha-l", type=float, default=0.02,
+                   help="'sail' mode only: anti-Hebbian LATERAL learning rate (dL gain) -- the NEW "
+                        "explicit decorrelation term BCM lacks (Foldiak 1990 / SAILnet eq 3). SAME order "
+                        "of magnitude as --s2-sail-alpha-w (this de-risk's own synthetic-probe exploration: "
+                        "an order-of-magnitude-SMALLER alpha_l never accumulates enough L to break a "
+                        "redundant pair's co-firing before the feedforward Hebbian term has already pulled "
+                        "them together; matched rates let the lateral term act BEFORE convergence, not "
+                        "after).")
+    p.add_argument("--s2-sail-alpha-theta", type=float, default=0.02,
+                   help="'sail' mode only: homeostatic threshold learning rate (dtheta gain; Foldiak 1990 "
+                        "/ SAILnet eq 4), pushing every unit's own firing probability toward --s2-sail-"
+                        "target-p regardless of whether it won a given presentation's top-k.")
+    p.add_argument("--s2-sail-target-p", type=float, default=0.1,
+                   help="'sail' mode only: SAILnet's target firing probability p -- the homeostatic SET-"
+                        "POINT the anti-Hebbian (dL) and threshold (dtheta) rules push the network's "
+                        "long-run activity toward (a_j*a_k - p**2 in dL; a_j - p in dtheta). Independent "
+                        "of --s2-sail-competitive-frac's RUNTIME top-k fraction -- see the docstring's "
+                        "'target_p vs. competitive_frac' note for why the two are kept separate.")
+    p.add_argument("--s2-sail-competitive-frac", type=float, default=0.1,
+                   help="'sail' mode only: fraction of the n_S2 bank kept as the binary 'spiked' "
+                        "indicator a = top-k(r, frac=this) each presentation (the SAME top-k-by-current-"
+                        "drive competitive gate --s2-bcm-competitive-frac already established for BCM, "
+                        "applied here to the LCA-relaxed r). Defaults equal to --s2-sail-target-p so the "
+                        "textbook single-parameter SAILnet reading is the out-of-the-box behaviour; "
+                        "0.0 (or >=1.0) disables competition (every unit counts as active).")
+    p.add_argument("--s2-sail-lca-iters", type=int, default=10,
+                   help="'sail' mode only: number of LCA (Rozell et al. 2008) lateral-inhibition "
+                        "relaxation iterations r <- ReLU(y - L@r - theta) per presentation before the "
+                        "binary code a is read out. More iterations let a slowly-growing L exert its full "
+                        "suppressive effect within a single presentation (this de-risk's synthetic-probe "
+                        "exploration found 5 iterations under-relaxes once L is non-trivial; 10 is the "
+                        "smallest value that gave a stable, converged r within one presentation there).")
+    p.add_argument("--s2-sail-epochs", type=int, default=5,
+                   help="'sail' mode only: passes over the (seeded-shuffled) training patches -- same "
+                        "role + same default as --s2-bcm-epochs.")
+    p.add_argument("--s2-sail-renorm", type=int, choices=[0, 1], default=1,
+                   help="'sail' mode only: 1 (default) renormalizes each learned template row to unit L2 "
+                        "norm after every update -- identical rationale to --s2-bcm-renorm (keeps 'drive' "
+                        "on the frozen-random baseline's cosine-similarity scale). 0 disables, for "
+                        "comparison. The lateral matrix L is NEVER renormalised (a coincidence-"
+                        "probability statistic, not a drive-scale quantity).")
     # signed linear readout (ridge-regularised least squares = the Maass reservoir readout)
     p.add_argument("--ridge", type=float, default=0.5,
                    help="ridge lambda (homeostatic regulariser = synaptic scaling): large -> centroid "
