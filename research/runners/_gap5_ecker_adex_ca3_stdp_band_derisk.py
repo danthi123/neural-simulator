@@ -228,17 +228,23 @@ def encode(store, seed, *, n_laps, enc_step, enc_dwell, enc_gap, cue_pa, cue_fra
 # REST + non-specific-seeded discrete SWR replay (STDP OFF -> weights frozen). Injects ONLY external current
 # (NUMPY-REFERENCE guard). seed_on=False = NO-SEED control.
 # ----------------------------------------------------------------------------------------------------------------------
-def rest_and_replay(store, rest_steps, seed, *, swr_period, cue_pa, cue_steps, cue_frac, seed_on=True):
+def rest_and_replay(store, rest_steps, seed, *, swr_period, cue_pa, cue_steps, cue_frac, seed_on=True,
+                     read_trial_seed=None):
+    """read_trial_seed (2026-09-17, additive/default-off): keys ONLY the read-trial cue-cell subsample + which-
+    memory-replays RNGs (cell_rng/choice_rng). None (default) -> rt==seed -> IDENTICAL RNG streams to every prior
+    caller (byte-identical-off). The store build + OU/membrane-noise seed stay pinned to `seed` regardless -- this
+    param varies ONLY the read side, isolating population-read noise from substrate/encoding variance."""
     cp = store["cp"]; bridge = store["bridge"]; pc = store["pc"]; asm_local = store["asm_local"]; m = store["m_asm"]
     n_pc = len(pc)
-    cell_rng = np.random.default_rng(int(seed) * 314159 + 17)
+    rt = int(seed) if read_trial_seed is None else int(read_trial_seed)
+    cell_rng = np.random.default_rng(rt * 314159 + 17)
     asm_size = store["asm_size"]
     k_cells = max(1, int(round(float(cue_frac) * asm_size)))
     cue_cells_dev = []
     for a_loc in asm_local:
         sub = np.sort(cell_rng.choice(a_loc, min(k_cells, len(a_loc)), replace=False))
         cue_cells_dev.append(cp.asarray(pc[sub], dtype=cp.int64))
-    choice_rng = np.random.default_rng(int(seed) * 271828 + 23)
+    choice_rng = np.random.default_rng(rt * 271828 + 23)
 
     w_before = np.asarray(to_host(bridge.cp_connections.data)).copy()
     F = np.zeros((rest_steps, n_pc), dtype=bool)
