@@ -1,16 +1,56 @@
 {
  "schema": "tool-health-v1",
  "generator": "tools/tool_health.py",
- "generated_at": "2026-09-09T21:59:49Z",
+ "generated_at": "2026-09-17T07:45:44Z",
  "any_rotted": false,
  "results": [
+  {
+   "tool": "experiment-engine",
+   "lane": "experiment",
+   "status": "ready",
+   "why": "built 4 current presets; swept basic_stimulus_response [[100.0, 4221], [200.0, 4221]] on cupy",
+   "checked": "build 4 presets + step basic_stimulus_response x2",
+   "at": "2026-09-17T07:45:27Z"
+  },
+  {
+   "tool": "auto-tune",
+   "lane": "experiment",
+   "status": "ready",
+   "why": "quick tuning sweep completed (rc=0)",
+   "checked": "neural-simulator.py --auto-tune --quick",
+   "at": "2026-09-17T07:45:35Z"
+  },
   {
    "tool": "gpu-queue",
    "lane": "gpu",
    "status": "ready",
-   "why": "status ok (1 dispatcher). == gpu_queue == shared queue: /home/dant123/Projects/sim/research/queue state: running current: cd /home/dant123/Projects/sim/.claude/worktrees/agent-aba5add516df73bd8 && SIM_BACKEND=cupy /home/da (pi",
+   "why": "status ok (1 dispatcher). == gpu_queue == shared queue: /home/dant123/Projects/sim/research/queue state: PAUSED current: SIM_BACKEND=cupy /home/dant123/Projects/sim/.venv/bin/python -u -m research.runners._gen_cortex_toke (pid",
    "checked": "gpu_queue.sh status + singleton",
-   "at": "2026-09-09T21:59:49Z"
+   "at": "2026-09-17T07:45:35Z"
+  },
+  {
+   "tool": "pool",
+   "lane": "pool",
+   "status": "ready",
+   "why": "2/3 nodes healthy",
+   "checked": "tools.pool_health --json + a trivial dispatch check",
+   "at": "2026-09-17T07:45:39Z"
+  },
+  {
+   "tool": "pool-checkout",
+   "lane": "pool",
+   "status": "ready",
+   "why": "2 nodes: code present + venv imports numpy/scipy",
+   "checked": "code present + venv import",
+   "at": "2026-09-17T07:45:44Z"
+  },
+  {
+   "tool": "cloud-aws",
+   "lane": "cloud",
+   "status": "unknown",
+   "why": "rc=254 \n\naws: [error]: an error occurred (missingparameter) when calling the describeinstances operation: the request must contain the parameter instanceid\n",
+   "checked": "aws_gpu.sh status",
+   "at": "2026-09-17T07:45:44Z"
   }
  ],
  "backlog_items": [],
