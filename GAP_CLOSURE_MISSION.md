@@ -13,18 +13,21 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ---
 
-## ⭐⭐⭐ IN-FLIGHT — 2026-09-16 ~22:30 ALL-NIGHT AUTONOMOUS RUN (owner: "local compute free for the night, parallelize all night, no waiting, end-to-end")
+## ⭐⭐⭐ IN-FLIGHT — 2026-09-17 ~03:50 ALL-NIGHT AUTONOMOUS (owner asleep: "full autonomous + parallelized"; gaming DONE; a reboot 7.2.3→7.2.5 cleared /tmp scratchpad — scripts reconstructed)
 
-GPU FREED (gaming done). Lanes launched + saturated (harvest these on any continuation):
-- **GPU (gpu_queue, PAUSED 22:11 — owner resumed gaming):** the mouth token-supply scaling sweep was RESUMED then RE-PAUSED for gaming (`pause --now`; the running job re-queued at front, 7 jobs `_gen_cortex_token_supply_scaling_derisk` → `research/findings/raw/_gencortex_scaling/`). RESUME on gaming-end: `bash tools/gpu_queue.sh resume`. The keystone (mouth blocks ~49 retirements). While gaming: GPU + heavy LOCAL compute paused; POOL (remote mini-PCs) + off-machine work continue.
-- **Pool (pool41/42, running):** [A] gap#5 LTU forward-band homeostatic 6-seed (mult 2.0) → `research/findings/raw/gap5_ecker_adex/forward_band_homeostatic_scaling_ltu_mult2p0_6seed.json`; [B] memory-separator ring-screen confirmatory, 8 configs (77 95 91 87 73 93 1 85) × 6 seeds → `research/findings/raw/_consol_ring_confirm/`. HARVEST + land findings when done.
-- **WAVE-1 builds (w0et2sfau) — all 6 CHERRY-PICKED to main (default-off, byte-identical-off proven), PENDING pool verify to FLIP:** onebrain Wave-1 comprehension wiring (223ed3995; source_provenance genuinely BLOCKED — API mismatch, needs separate build, not forced); Wave-2 self_schema+curiosity+causal_whatif (acab6f4b2); Wave-3 d6_multiref_wm (5d29d6a70; pmem scope-reduced; determinism prereq does NOT apply on numpy); biased-competition shared_pool N-way divisive-norm (fae67ca7d); vision --readout attention-gated-soft (b7108ca04); retire multi_turn_agent_v2 host-anaphor (661901a9a, RETIREMENT, research-only). Pushed b7108ca0/661901a9a.
-- **Pool verifies HARVEST:** ✅ biascomp shared_pool GO 6/6 (closes the fs7 3-ref residual) + ✅ v2-anaphor byte-identical GO RETIRED → findings landed (04467e50). ✅ **onebrain Wave-1 (6 organs) + Wave-2 (9 organs) organread all_go 6/6** → finding landed (384178e2) + board #221 + .vikunja_sync stamped. ⏳ PENDING (still running, slow): **Wave-3 organread (N=7002, 11 organs — ~100min+ on pool41)** + **vision attn-soft** (both nodes). Monitor bow525xbe watches the NODES. ⚠️ RSYNC-BACK per-node-flaky — PULL manually via `scp pool41:~/derisk-pool/sim/research/findings/raw/<path> <path>` when the node file appears.
-  ON Wave-3 GO: append to the onebrain finding + ledger (11 organs). ON vision GO/NO-GO: land. The default-on FLIP of the onebrain merge is the follow-on (integrated battery, post-gaming).
-- ⚠️ ring-screen (8×6) produced 0 output files — runner WORKS (slow, >40s/run) but outputs did NOT rsync back; INVESTIGATE the pool rsync-back for _consol_ring_confirm (gap5 DID rsync back fine, so it's specific — maybe --out is a dir the runner mishandles).
-- WAVE-2 designed + scripted (`scratchpad/build_wave2.js`), HELD during gaming (worktree builds = LOCAL compute): read-side noise-floor INSTRUMENT, vision C2 "salience-recentered topo" basis, da-write-gain calibration fix. Launch on gaming-end. Also queued: [12] he/she/him CA3 anaphor, [16] Rank-7 affect output floor, DG→answer #82 board-hygiene.
-- Scout artifact: `/tmp/.../scratchpad/scout_items.json` (22 verified frontier items, value-sorted).
-- Heartbeat b7vshehm6 live (gpu/mem/pool/token + parallel_audit).
+LANES (all running; harvest on any continuation):
+- **GPU (gpu_queue, RUNNING):** mouth token-supply sweep RESUMED (pid rotates, 8 jobs `_gen_cortex_token_supply_scaling_derisk` → `research/findings/raw/_gencortex_scaling/`). The keystone (~49 retirements). GAME_MODE cleared (`game.sh off`). Check `gpu_queue.sh status`.
+- **Pool (pool41/42, re-provisioned to b02c4eaee):** read-noise-floor 6-seed + da-write-gain calib 6-seed running → `gap5_ecker_adex/read_noise_floor_6seed.json`, `_da_write_gain_spiking/6seed_ginterface_calib.json`. ⚠️ RSYNC-BACK per-node-flaky: PULL via `scp pool41:~/derisk-pool/sim/research/findings/raw/<path> <path>` when the node file appears. Pool-feeder scout (agent a4dec887) returning more run-ready de-risks to queue.
+- **Local:** vision C2-topo verify (`--c2-basis topo`) running → `lanes/perception/conjbind_competitive_..._c2basistopo_6seed.json`.
+- **Agents (Workflow wblxod1ik):** onebrain 11-organ FLIP **PREP** (build the wave-pool default-on + flip-regression, worktree, DO NOT merge unverified) + he/she/him/her CA3 anaphor extension + Rank-7 affect output-homeostatic-floor. Cherry-pick + verify + land the GO ones.
+
+LANDED tonight (pushed): biased-competition RETIRED (scaffold_retired **4→5**) + graded-bias fix; gap#5 forward-band NO-GO; **biascomp shared-pool GO 6/6 (3-ref residual closed)**; v2-anaphor RETIRED; **onebrain organ-merge GO 6/6 at 6/9/11 organs** (wave1+2 finding 384178e2, wave3 finding 4a0bb2b2 — ALL 11 cortical organs on ONE shared spiking pool, de-risk validated); wave-2 builds cherry-picked default-off (read-noise 4be44ee92, vision-c2-topo 2761eec6d, da-write b02c4eaee); ledger+board #221 synced (d78484b9).
+
+NEXT / FOLLOW-ONS:
+- ⭐ **onebrain 11-organ FLIP** (default-on, retire per-organ bridges) = the one-brain culmination. De-risk GO; prep in wave-3; needs the integrated /api/brain-chat battery (cupy-GPU-solo — after the mouth sweep — or AWS 128GB). Review before landing (big production change).
+- vision attn-soft = NO-GO (LINDISCRIM-READOUT-NOGO) — bank a finding batched with c2-topo's verdict.
+- ring-screen (`_consol_ring_confirm`) produced 0 output (failed on the pool, gap5 fine) — clean re-run + investigate.
+- Heartbeat blk591ejg armed (15-min, gpu/mem/pool + parallel_audit). Monitors from the pre-reboot session were stopped.
 
 ## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-16 ~21:15 (biased-competition RETIRED — scaffold_retired 4→5, owner's #1 metric; graded-bias regression root-caused+FIXED; token sweep PAUSED for gaming; READ FIRST; LATEST anchor)
 
