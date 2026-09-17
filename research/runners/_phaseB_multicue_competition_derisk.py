@@ -49,10 +49,11 @@ import numpy as np
 # Extended with disjoint TRAIN vs HELD-OUT filler/verb pools so role correctness is vocab-agnostic.
 # ---------------------------------------------------------------------------
 
-# Animacy lexicon -- REUSE-BY-IMPORT: start from the buffer's ANIMACY (the production referent-disambiguation
-# lexicon) and EXTEND it with disjoint train/held-out fillers. The assertion pins reuse fidelity (the overlap
-# must agree, else a silent drift would corrupt the cue values).
-from research.runners.biased_competition_buffer import ANIMACY as _BUF_ANIMACY  # noqa: E402
+# Animacy lexicon -- REUSE-BY-IMPORT: start from the ground-truth ANIMACY (RELOCATED 2026-09-16 to
+# `_gap3_learned_feature_compat_derisk` when the runtime fallback in `biased_competition_buffer.py` was RETIRED)
+# and EXTEND it with disjoint train/held-out fillers. The assertion pins reuse fidelity (the overlap must agree,
+# else a silent drift would corrupt the cue values).
+from research.runners._gap3_learned_feature_compat_derisk import ANIMACY as _BUF_ANIMACY  # noqa: E402
 
 ANIMACY = dict(_BUF_ANIMACY)
 ANIMACY.update({

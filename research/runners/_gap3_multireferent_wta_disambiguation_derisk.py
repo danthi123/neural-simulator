@@ -67,15 +67,15 @@ if _REPO not in sys.path:
     sys.path.insert(0, _REPO)
 
 # reuse-by-import: the plain WM loop (the documented-NEGATIVE substrate) + the composer's referent-attractor
-# WTA (the biased-competition buffer + content-bias helper + resolver + feature lexicons).
+# WTA (the biased-competition buffer + resolver). ANIMACY/VERB_SELECTS/content_bias_target (the ground-truth
+# feature lexicons this historical derisk's host content-bias helper used) RELOCATED 2026-09-16 to
+# `_gap3_learned_feature_compat_derisk` when the runtime fallback in `biased_competition_buffer.py` was RETIRED.
 from research.runners.content_selection_spiking import SpikingLoopContextBuffer
 from research.runners.biased_competition_buffer import (
-    ANIMACY,
-    VERB_SELECTS,
     BiasedCompetitionContextBuffer,
-    content_bias_target,
     resolve_referent,
 )
+from research.runners._gap3_learned_feature_compat_derisk import ANIMACY, VERB_SELECTS, content_bias_target
 
 # --------------------------------------------------------------------------------------------------------
 # PRE-REGISTERED / FROZEN GO thresholds (the verdict reads these; they are recorded into the output JSON).

@@ -17,10 +17,44 @@ _REPO = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 if _REPO not in sys.path:
     sys.path.insert(0, _REPO)
 
-from research.runners.biased_competition_buffer import ANIMACY, VERB_SELECTS, content_bias_target  # ground truth only
+# GROUND-TRUTH lexicon for corpus generation + eval (the LEARNED path below never reads these -- see the module
+# docstring). Formerly imported from `research.runners.biased_competition_buffer` (the host `content_bias_target`
+# runtime fallback); RELOCATED here 2026-09-16 when that fallback was RETIRED (scaffold-retirement --
+# `MultiTurnAgent._resolve_biased` no longer falls back to a host lexicon; the learned `SpikingFeatureCompat`
+# chooser this module trains, via `learn_features` below, is now the SOLE production content-bias source). This
+# module is the canonical home from here on: purely a GROUND-TRUTH / eval reference for validating the learned
+# mechanism against, never consulted by the live per-turn resolution path.
+ANIMACY = {  # per-concept feature tag (the small-world feature lexicon)
+    "cat": "animate", "dog": "animate", "bird": "animate", "fox": "animate",
+    "fish": "animate", "worm": "animate",
+    "ball": "inanimate", "apple": "inanimate", "river": "inanimate",
+    "rock": "inanimate", "book": "inanimate",
+}
+# selectional restriction: which animacy a verb's THEME/argument prefers as an antecedent for "it".
+VERB_SELECTS = {
+    "eat": "animate",     # "what does it eat?" -> the eater is animate
+    "chase": "animate",   # an agentive verb -> animate
+    "roll": "inanimate",  # "where did it roll?" -> the roller is the ball (inanimate)
+    "float": "inanimate", # "did it float?" -> inanimate theme
+}
 
-# A small SVO world: animate + inanimate concepts, verbs whose THEME selects one animacy (from the host GT, used ONLY
-# to GENERATE a realistic corpus + as the eval ground truth -- the LEARNED path never reads ANIMACY/VERB_SELECTS).
+
+def content_bias_target(candidates, query_verb):
+    """GROUND-TRUTH / eval-only reference (RETIRED as a live runtime fallback 2026-09-16 -- see module docstring
+    above). Return the single candidate that the pronoun+verb content selects for, or None if the content does
+    not disambiguate (no match, or >1 equally-compatible candidate -> a TIE)."""
+    want = VERB_SELECTS.get(query_verb)
+    if want is None:
+        return None
+    matches = [c for c in candidates if ANIMACY.get(c) == want]
+    if len(matches) == 1:
+        return matches[0]
+    return None  # 0 matches or a tie -> content is silent
+
+
+# A small SVO world: animate + inanimate concepts, verbs whose THEME selects one animacy (from the ground-truth
+# lexicon above, used ONLY to GENERATE a realistic corpus + as the eval ground truth -- the LEARNED path never
+# reads ANIMACY/VERB_SELECTS).
 CONCEPTS = [c for c in ANIMACY]
 ANIMATE = [c for c in CONCEPTS if ANIMACY[c] == "animate"]
 INANIM = [c for c in CONCEPTS if ANIMACY[c] == "inanimate"]

@@ -20,12 +20,28 @@ What this asserts (CPU/numpy-runnable):
 
 The buffer is built over the EXACT 2-referent {cat, ball} registry the de-risk uses (n=600, pattern_size=40 = the
 MultiTurnAgent defaults), so the agent-path competition dynamics match the validated de-risk.
+
+CONTENT-BIAS SOURCE (2026-09-16 update): the host `content_bias_target` lexicon was RETIRED from the PRODUCTION
+resolution path (deleted from biased_competition_buffer.py; the learned spiking `SpikingFeatureCompat` is now the
+SOLE production content-bias source -- see test_multireferent_biased_competition.py). This GRADED-bias file is a
+RESEARCH mechanism (the default-OFF `graded_bias` knob, NOT wired into /api/brain-chat); it tests the deficit-scaled
+WTA DYNAMICS, which are orthogonal to WHICH chooser supplies the content target. So `_agent()` wires the deterministic
+ground-truth `content_bias_target` ORACLE (kept in `_gap3_learned_feature_compat_derisk.py` for train/eval) as the
+content source -- this preserves the pre-registered seed-100 calibration below. (The learned map shifts the seed-100
+WTA resolution and so cannot pin this exact fixed-vs-graded calibration; it is the production path's concern, verified
+separately.)
 """
 import os
 
 os.environ.setdefault("SIM_BACKEND", "numpy")
 
 from research.runners.multi_turn_agent import MultiTurnAgent
+# The GRADED-bias RESEARCH mechanism (not a production faculty) is orthogonal to WHICH chooser supplies the content
+# target -- it tests the deficit-scaled WTA DYNAMICS. Wire the deterministic ground-truth `content_bias_target`
+# oracle (the retired-from-production host lexicon, kept for train/eval in _gap3_learned_feature_compat_derisk) so
+# the seed-100 calibration is preserved; the LEARNED spiking map (SpikingFeatureCompat) shifts the seed-100 WTA
+# resolution and is the PRODUCTION content-bias source (tested in test_multireferent_biased_competition.py).
+from research.runners._gap3_learned_feature_compat_derisk import content_bias_target
 
 # The de-risk's exact 2-referent setup: cat (animate) vs ball (inanimate); 'eat' selects animate, 'roll' inanimate.
 NOUNS = ["cat", "ball"]
@@ -35,11 +51,14 @@ SEED = 100  # the pre-registered extreme-intrinsic-asymmetry miss (ball ~0 sel v
 
 
 def _agent(graded_bias):
-    """A 2-referent MultiTurnAgent with biased competition ON; `graded_bias` toggles the deficit-scaled magnitude.
-    Both cat and ball get a 'roll' fact, so the turn's answer is decided by WHICH referent resolves (resolving
-    wrongly returns a different non-None answer), not by fact availability."""
+    """A 2-referent MultiTurnAgent with biased competition ON, wired to the deterministic ground-truth
+    `content_bias_target` ORACLE (see the module docstring -- this RESEARCH mechanism tests the graded-WTA dynamics,
+    not the content source); `graded_bias` toggles the deficit-scaled magnitude. Both cat and ball get a 'roll' fact,
+    so the turn's answer is decided by WHICH referent resolves (resolving wrongly returns a different non-None
+    answer), not by fact availability."""
     a = MultiTurnAgent(referent_concepts=NOUNS, concepts={w: None for w in VOCAB}, seed=SEED,
-                       enable_biased_competition=True, graded_bias=graded_bias)
+                       enable_biased_competition=True, graded_bias=graded_bias,
+                       feat_compat_source=content_bias_target)
     a.agent.composer.store("ball", "roll", "river")   # if 'it'->ball (correct for 'roll'), answer = river
     a.agent.composer.store("cat", "roll", "worm")     # if 'it'->cat (wrong for 'roll'), answer = worm
     return a

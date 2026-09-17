@@ -54,14 +54,18 @@ if _REPO not in sys.path:
     sys.path.insert(0, _REPO)
 
 from research.runners.content_selection_spiking import SpikingLoopContextBuffer
-# The mechanism (the buffer + the content-bias helper + the feature lexicons + resolve_referent) lives in the
-# production module now; this de-risk imports it verbatim (single source of truth — the runner stays unchanged).
-from research.runners.biased_competition_buffer import (  # noqa: F401  (ANIMACY/VERB_SELECTS re-exported for parity)
+# The mechanism (the buffer + resolve_referent) lives in the production module now; this de-risk imports it verbatim
+# (single source of truth — the runner stays unchanged). ANIMACY/VERB_SELECTS/content_bias_target (the host
+# content-bias helper this historical de-risk validated) RELOCATED 2026-09-16 to `_gap3_learned_feature_compat_derisk`
+# (its canonical ground-truth home) when the runtime fallback in `biased_competition_buffer.py` was RETIRED.
+from research.runners.biased_competition_buffer import (
+    BiasedCompetitionContextBuffer,
+    resolve_referent,
+)
+from research.runners._gap3_learned_feature_compat_derisk import (  # noqa: F401  (ANIMACY/VERB_SELECTS re-exported for parity)
     ANIMACY,
     VERB_SELECTS,
-    BiasedCompetitionContextBuffer,
     content_bias_target,
-    resolve_referent,
 )
 
 
