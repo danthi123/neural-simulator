@@ -118,6 +118,20 @@ named next mechanism, and --s2-learn's help for the one-line diagnosis):
       --s2-sail-target-p 0.1 --s2-sail-competitive-frac 0.1 --s2-sail-lca-iters 10 --s2-sail-epochs 5 \
       --out research/findings/raw/lanes/perception/vlin_sail_smoke.json
 
+SUPERVISED R-STDP S2-TEMPLATE SHAPING smoke (2026-09-17, this de-risk; --s2-learn none is still the
+byte-identical default -- see _rstdp_learn_s2_templates for why this is the OPEN mechanism named after
+BOTH unsupervised-local rules (bcm, sail) NO-GO'd -- a frozen unbiased random (Johnson-Lindenstrauss)
+projection preserves the rare configural directions the readout needs, and any task-BLIND local rule
+moves templates OFF that projection; only a rule that SEES the label (Mozafari et al. 2017/2018 R-STDP:
+correct->potentiate, incorrect->depress) can prefer a DIAGNOSTIC feature over one that merely repeats.
+See --s2-learn's help for the one-line diagnosis):
+  SIM_BACKEND=numpy python -u -m research.runners._vision_lindiscrim_readout_derisk \
+      --seeds 42 --n-s2 96 --s2-norm satdiv --s2-satdiv-n 2.0 --s2-satdiv-sigma 8.0 \
+      --s2-satdiv-scale 760.0 --ridge 1.0 --n-glimpses 6 --heldout-position --scramble-null \
+      --s2-learn rstdp --s2-rstdp-gain 0.05 --s2-rstdp-epochs 5 --s2-rstdp-competitive-frac 0.1 \
+      --s2-rstdp-depress-scale 1.0 \
+      --out research/findings/raw/lanes/perception/vlin_rstdp_smoke.json
+
 HELD-OUT-POSITION + SCRAMBLE-NULL robustness smoke (2026-09-04, this de-risk; anti-cheats 5-6 above; both
 flags default OFF -> byte-identical to every prior run of this file when omitted). The DECISIVE full-scale
 robustness re-run is the flat-capacity width-matched control the open Q1 names (n_s2=1152, no binding) vs
@@ -1008,6 +1022,163 @@ def _sail_learn_s2_templates(W0, patches_flat, alpha_w, alpha_l, alpha_theta, ta
     return W.astype(np.float32), L.astype(np.float32), theta.astype(np.float32), diag
 
 
+# Per-update row-norm cap (same Dale's-law-rectified-max-conductance rationale as _SAIL_L_CAP/
+# _SAIL_THETA_CAP above) -- generous relative to the ~[0,1] cosine-match drive scale, tight enough to
+# rule out an unbounded runaway on a near-zero-norm row's depress step (found necessary during this
+# build's own synthetic sanity check, mirroring the note on _SAIL_L_CAP/_SAIL_THETA_CAP).
+_RSTDP_UPDATE_CAP = 1.0
+
+
+def _rstdp_learn_s2_templates(W0, patches_flat, patch_labels, n_classes, *, gain, epochs,
+                               competitive_frac, depress_scale, renorm, seed):
+    """SUPERVISED reward-modulated STDP (R-STDP; Mozafari, Kheradpisheh, Masquelier, Nowzari-Dalini &
+    Ganjtabesh 2017 IEEE TNNLS 29:6178 and Mozafari, Ganjtabesh, Nowzari-Dalini, Thorpe & Masquelier 2018
+    Pattern Recognition 94:87) learning of the S2 template bank -- the OPEN mechanism named after BOTH
+    UNSUPERVISED-LOCAL rules (`_bcm_learn_s2_templates`, `_sail_learn_s2_templates`) NO-GO'd: a frozen
+    unbiased random (Johnson-Lindenstrauss) projection preserves the rare configural directions the
+    readout needs, and any task-BLIND local rule (BCM's sliding threshold, SAILnet's explicit anti-
+    Hebbian decorrelation) moves templates OFF that projection toward whatever direction the *unlabeled*
+    input statistics favour -- neither rule can prefer a template that helps DISCRIMINATE classes over
+    one that merely repeats. Mozafari et al.'s own diagnosis of exactly this distinction: "R-STDP
+    extracts features DIAGNOSTIC for the task, whereas unsupervised STDP extracts any feature that
+    repeats" -- this is the first S2-template rule in this file that SEES the label.
+
+    NOT a repeat of `research/runners/_vision_rstdp_readout_derisk.py` (NO-GO'd 2026-08-26 across its
+    entire operating-point sweep): that runner trained a sparse SPIKING READOUT (argmax over a fixed
+    non-negative round-robin class-block-sum of spike counts) and failed on SPIKE QUANTIZATION -- the
+    fine cosine modulation this file's top-of-file design docstring diagnoses as sub-quantization-floor.
+    THIS lever instead reshapes the S2 TEMPLATES (same hook point as BCM/SAIL) and is read out through
+    the existing RATE satdiv+ridge / signed-linear-discriminant path (`_train_linreadout`, `_class_read`),
+    which never quantizes the template-shaping signal -- a different mechanism at a different stage, not
+    a retry of the mapped dead-end.
+
+    THE RULE, applied ONLINE one labeled patch (x, c_p) at a time (sequential, exactly like BCM/SAIL --
+    the competitive winner-selection is a function of the CURRENT bank state, so this cannot be a
+    closed-form/batch solve):
+      1. Each of the n_S2 templates is ASSIGNED to one of n_classes by round-robin,
+         `template_class = arange(n_S2) % n_classes` (~n_S2/n_classes templates per class, fixed for the
+         whole run -- an innate/developmental wiring convention, the same status as BCM/SAIL's random
+         INIT: an arbitrary label is needed before any class-selective learning can begin).
+      2. y = clip(W @ x, 0, None) -- the SAME cosine-match drive `_bcm_learn_s2_templates` computes (W
+         rows and x both unit-L2-norm by construction -- W via `renorm`/init, x via the caller's
+         `_l2n(_extract_patches(...))`, IDENTICAL to the BCM/SAIL call site -- so W @ x IS cosine
+         similarity, clipped non-negative to match this bank's non-negative sign convention (W0 from
+         `_init_templates`, imported non-negative random init -- see the sign-convention note below).
+      3. Competitive top-`competitive_frac` selection over y picks the WINNERS for this presentation --
+         the IDENTICAL Foldiak 1991/Kohonen 1982 winner-relative gate `_bcm_learn_s2_templates`'s
+         `competitive_frac` already established (reused, not re-derived): only templates that actually
+         responded to this patch are eligible to update at all.
+      4. Among the winners, the THIRD FACTOR (label match) sets the sign (three-factor plasticity;
+         Fremaux & Gerstner 2016 Front. Neural Circuits; Izhikevich 2007 Cereb. Cortex 17:2443's DA-
+         modulated STDP is the same eligibility-trace x reward-sign composition, collapsed here to one
+         presentation since there is no temporal eligibility trace to bridge a delayed reward):
+           winner template_class[j] == c_p (CORRECT)   -> POTENTIATE (STDP):    W[j] += gain*(x - W[j])
+           winner template_class[j] != c_p (INCORRECT) -> DEPRESS (anti-STDP):  W[j] -= gain*depress_scale*(x - W[j])
+         Both move ALONG the same (x - W[j]) direction the input actually points in -- pulling a
+         correct-class winner's row TOWARD this patch, pushing an incorrect-class winner's row AWAY from
+         it -- rather than an arbitrary sign flip, so a repeatedly-incorrect-winning template is steered
+         toward directions where it stops competing for patches outside its assigned class. Non-winning
+         templates this presentation receive NO update -- exactly BCM's competitive-gate semantics.
+      5. Per-update magnitude cap `_RSTDP_UPDATE_CAP` (see the module-level constant's docstring, mirroring
+         `_SAIL_L_CAP`/`_SAIL_THETA_CAP`'s stabilization note): each row's dW is scaled DOWN (never up) so
+         ||dW|| <= cap before being applied.
+      6. If `renorm` (default on, identical rationale to BCM/SAIL): every UPDATED row is rescaled to unit
+         L2 norm immediately after its update, keeping 'drive' on the frozen-random baseline's cosine-
+         similarity scale so any lift is attributable to LEARNED discriminability, not magnitude growth.
+
+    SIGN CONVENTION: matches BCM/SAIL's own choice exactly -- neither of those functions clips W's
+    entries back to non-negative after an update (only the READ side, y = clip(W@x,0,None), is clipped);
+    only `renorm` bounds magnitude, never sign. This function does the same (no post-hoc `np.clip(W, 0,
+    None)`) so all three S2-learning rules share one convention and remain directly comparable.
+
+    `epochs` passes over a seeded-shuffled presentation order of ALL (image, location) training patches,
+    identical role to `--s2-bcm-epochs`/`--s2-sail-epochs`.
+
+    patches_flat: (N_patches, D) already L2-normalised (the caller's `_l2n(_extract_patches(tr_c1,
+    a.s2_p), axis=2).reshape(-1, dim)`, IDENTICAL call to the bcm/sail dispatch branches).
+    patch_labels: (N_patches,) int, the source image's integer class for each patch, AT THE SAME INDEX as
+    patches_flat (built by the dispatch branch as `np.repeat(tr_cls, n_loc)`, since `_extract_patches`
+    followed by `.reshape(-1, dim)` keeps each image's n_loc patches contiguous in image order -- the
+    same alignment this function asserts defensively below).
+
+    Returns W (n_S2, D) learned templates (float32) and a diagnostics dict: `template_class_counts` (the
+    fixed round-robin assignment's per-class counts), `n_potentiate_events`/`n_depress_events` (total
+    winner-update events by sign), `update_norm_mean`/`update_norm_max` (applied, post-cap),
+    `template_drift_from_init_mean` and `mean_pairwise_cosine_abs`/`_init` (the SAME diversity metric
+    BCM/SAIL report), so a degenerate collapse (e.g. every template pulled toward one class's mean patch)
+    is VISIBLE, not silently absorbed -- identical discipline to BCM's theta stats / SAIL's L stats."""
+    W = W0.copy().astype(np.float64)
+    n_S2, D = W.shape
+    rng = np.random.default_rng(seed)
+    N = patches_flat.shape[0]
+    X = patches_flat.astype(np.float64)
+    labels = np.asarray(patch_labels).astype(np.int64)
+    if labels.shape[0] != N:
+        raise ValueError(
+            f"_rstdp_learn_s2_templates: patch_labels length {labels.shape[0]} != patches_flat length "
+            f"{N} (alignment bug -- see the docstring's 'patch_labels' contract)")
+    n_classes = max(1, int(n_classes))
+    template_class = np.arange(n_S2, dtype=np.int64) % n_classes
+
+    k_win = None
+    if competitive_frac and 0.0 < competitive_frac < 1.0:
+        k_win = max(1, int(round(competitive_frac * n_S2)))
+
+    n_seen = 0
+    n_potentiate = 0
+    n_depress = 0
+    upd_norms = []
+    for _ep in range(max(1, int(epochs))):
+        order = rng.permutation(N)
+        for idx in order:
+            x = X[idx]
+            c_p = int(labels[idx])
+            y = np.clip(W @ x, 0.0, None)
+            if k_win is not None and k_win < n_S2:
+                thr = np.partition(y, n_S2 - k_win)[n_S2 - k_win]  # kth-largest drive this presentation
+                winner = y >= thr
+            else:
+                winner = np.ones(n_S2, dtype=bool)
+            correct = winner & (template_class == c_p)
+            incorrect = winner & (template_class != c_p)
+            n_seen += 1
+            if not (correct.any() or incorrect.any()):
+                continue
+            delta = x[None, :] - W                                       # (n_S2, D) toward-input direction
+            dW = np.zeros_like(W)
+            dW[correct] = gain * delta[correct]                          # STDP: potentiate toward the patch
+            dW[incorrect] = -gain * float(depress_scale) * delta[incorrect]  # anti-STDP: depress away
+            row_norm = np.linalg.norm(dW, axis=1, keepdims=True)
+            cap_scale = np.minimum(1.0, _RSTDP_UPDATE_CAP / np.where(row_norm < 1e-12, 1.0, row_norm))
+            dW = dW * cap_scale
+            W = W + dW
+            if renorm:
+                norms = np.linalg.norm(W, axis=1, keepdims=True)
+                W = W / np.where(norms < 1e-9, 1.0, norms)
+            n_potentiate += int(correct.sum())
+            n_depress += int(incorrect.sum())
+            nz = row_norm[row_norm > 0]
+            if nz.size:
+                upd_norms.append(float(nz.mean()))
+
+    class_counts = np.bincount(template_class, minlength=n_classes)
+    diag = {
+        "n_presentations": int(n_seen),
+        "competitive_frac": float(competitive_frac),
+        "gain": float(gain),
+        "depress_scale": float(depress_scale),
+        "template_class_counts": [int(c) for c in class_counts],
+        "n_potentiate_events": int(n_potentiate),
+        "n_depress_events": int(n_depress),
+        "update_norm_mean": float(np.mean(upd_norms)) if upd_norms else 0.0,
+        "update_norm_max": float(np.max(upd_norms)) if upd_norms else 0.0,
+        "template_drift_from_init_mean": float(np.mean(np.linalg.norm(W - W0.astype(np.float64), axis=1))),
+        "mean_pairwise_cosine_abs_init": float(_mean_pairwise_cosine_abs(W0)),
+        "mean_pairwise_cosine_abs": float(_mean_pairwise_cosine_abs(W)),
+    }
+    return W.astype(np.float32), diag
+
+
 def _c2_pool(x, k_extra):
     """C2 pooling over the LOCATION axis (axis=1): (N, n_loc, D) -> (N, D) when `k_extra<=0` (the
     UNCHANGED Riesenhuber & Poggio 1999 hard-MAX complex-cell pool -- byte-identical to every prior run
@@ -1509,6 +1680,7 @@ def run_seed(seed, a, code):
     W0 = _init_templates(dim, a.n_s2, seed * 29 + 13)
     bcm_diag = None
     sail_diag = None
+    rstdp_diag = None
     if getattr(a, "s2_learn", "none") == "bcm":
         # SAME random init as the frozen-random baseline above (like-for-like: only whether learning
         # happens afterward differs) -- presynaptic patches are the FIXED spiking C1 front end's
@@ -1528,6 +1700,22 @@ def run_seed(seed, a, code):
             alpha_theta=a.s2_sail_alpha_theta, target_p=a.s2_sail_target_p,
             competitive_frac=a.s2_sail_competitive_frac, lca_iters=a.s2_sail_lca_iters,
             epochs=a.s2_sail_epochs, renorm=bool(a.s2_sail_renorm), seed=seed * 733 + 7)
+    elif a.s2_learn == "rstdp":
+        # SUPERVISED (sees tr_cls) -- the OPEN mechanism named after both unsupervised-local rules
+        # (bcm, sail) NO-GO'd; see _rstdp_learn_s2_templates for the full mechanism. SAME hook point +
+        # SAME train-patch pool as 'bcm'/'sail' (like-for-like: only the learning RULE + its use of the
+        # label differ). patch_labels is built HERE (not inside the learner) so the alignment with
+        # patches_flat is explicit at the one call site that knows both the patch-extraction shape and
+        # tr_cls -- each image's n_loc patches are contiguous after `_extract_patches(...).reshape(-1,
+        # dim)` (row-major over (image, location)), so `np.repeat(tr_cls, n_loc)` reproduces the SAME
+        # per-patch label order (the learner itself asserts the lengths match as a defensive check).
+        patches_3d = _extract_patches(tr_c1, a.s2_p)                       # (N, n_loc, D)
+        tr_patches = _l2n(patches_3d, axis=2).reshape(-1, dim)
+        patch_labels = np.repeat(tr_cls, patches_3d.shape[1])
+        W0, rstdp_diag = _rstdp_learn_s2_templates(
+            W0, tr_patches, patch_labels, a.n_classes, gain=a.s2_rstdp_gain, epochs=a.s2_rstdp_epochs,
+            competitive_frac=a.s2_rstdp_competitive_frac, depress_scale=a.s2_rstdp_depress_scale,
+            renorm=bool(a.s2_rstdp_renorm), seed=seed * 733 + 11)
 
     # ---- S2.5 CONFIGURAL-BINDING conjunction bank (--conj-bind != none; design 2026-09-03) ----
     # Sampled ONCE PER SEED (design Part 2b) and reused UNCHANGED across train/held/scramble, exactly
@@ -1670,6 +1858,8 @@ def run_seed(seed, a, code):
         row["bcm"] = bcm_diag  # only present when --s2-learn bcm; keeps the default path byte-identical
     if sail_diag is not None:
         row["sail"] = sail_diag  # only present when --s2-learn sail; keeps the default path byte-identical
+    if rstdp_diag is not None:
+        row["rstdp"] = rstdp_diag  # only present when --s2-learn rstdp; keeps the default path byte-identical
     if conj_select_diag is not None:
         row["conj_select"] = conj_select_diag  # only present when --conj-select competitive
     return row
@@ -1774,7 +1964,7 @@ def main():
     p.add_argument("--n-s2", type=int, default=96,
                    help="fixed random S2 template-bank size (round-robin over classes irrelevant here; "
                         "the READOUT is learned over the full bank)")
-    p.add_argument("--s2-learn", choices=["none", "bcm", "sail"], default="none",
+    p.add_argument("--s2-learn", choices=["none", "bcm", "sail", "rstdp"], default="none",
                    help="2026-09-01 decisive next mechanism (satdiv/ridge/k-WTA all plateau; the finding's "
                         "NO-DEFER handoff: the residual is the frozen random S2 bank's INFORMATION content, "
                         "not its normalization/threshold). 'bcm' LEARNS the S2 templates from the S1/C1 "
@@ -1787,8 +1977,15 @@ def main():
                         "dataset). 'sail' replaces it with Zylberberg/Murphy/DeWeese (2011) SAILnet: an "
                         "EXPLICIT anti-Hebbian LATERAL matrix (Foldiak 1990) composed with LCA relaxation "
                         "(Rozell et al. 2008) that directly decorrelates the bank -- see "
-                        "_sail_learn_s2_templates(). 'none' (default) keeps the frozen random bank -> "
-                        "byte-identical to every prior run of this file.")
+                        "_sail_learn_s2_templates(). BOTH bcm and sail are UNSUPERVISED-LOCAL and NO-GO'd "
+                        "for the SAME reason: a frozen unbiased random (Johnson-Lindenstrauss) projection "
+                        "preserves the rare configural directions the readout needs, and any task-BLIND "
+                        "local rule moves templates OFF that projection instead of toward what's task-"
+                        "DIAGNOSTIC. 'rstdp' is the remaining OPEN mechanism: SUPERVISED reward-modulated "
+                        "STDP (Mozafari et al. 2017 IEEE TNNLS / 2018 Pattern Recognition) that SEES the "
+                        "label -- correct-class winners potentiate (STDP), incorrect-class winners depress "
+                        "(anti-STDP) -- see _rstdp_learn_s2_templates(). 'none' (default) keeps the frozen "
+                        "random bank -> byte-identical to every prior run of this file.")
     p.add_argument("--s2-bcm-gain", type=float, default=200.0,
                    help="'bcm' mode only: BCM gain (multiplies phi=x*y*(y-theta_M)); same role as "
                         "sim/config.py's hebbian_bcm (default order-of-magnitude carried from the "
@@ -1870,6 +2067,34 @@ def main():
                         "on the frozen-random baseline's cosine-similarity scale). 0 disables, for "
                         "comparison. The lateral matrix L is NEVER renormalised (a coincidence-"
                         "probability statistic, not a drive-scale quantity).")
+    # S2 R-STDP (reward-modulated STDP) -- SUPERVISED successor to unsupervised bcm/sail (2026-09-17;
+    # see --s2-learn help + _rstdp_learn_s2_templates docstring for the full mechanism).
+    p.add_argument("--s2-rstdp-gain", type=float, default=0.05,
+                   help="'rstdp' mode only: STDP/anti-STDP learning rate (multiplies the (x - W[j]) "
+                        "toward/away-from-input step). Small relative to --s2-bcm-gain's O(1-200) because "
+                        "this rule moves a winner's WHOLE row a fraction of the way toward/away from the "
+                        "current patch every presentation (an Oja-like bounded step), not a free-running "
+                        "BCM cubic -- same order of magnitude as --s2-sail-alpha-w for the same reason.")
+    p.add_argument("--s2-rstdp-epochs", type=int, default=5,
+                   help="'rstdp' mode only: passes over the (seeded-shuffled) training patches -- same "
+                        "role + same default as --s2-bcm-epochs/--s2-sail-epochs.")
+    p.add_argument("--s2-rstdp-competitive-frac", type=float, default=0.1,
+                   help="'rstdp' mode only: fraction of the n_S2 bank eligible to update each presentation "
+                        "-- the SAME top-k-by-current-drive competitive gate --s2-bcm-competitive-frac/ "
+                        "--s2-sail-competitive-frac already established (Foldiak 1991/Kohonen 1982), "
+                        "reused here so only templates that actually RESPONDED to a patch are pushed by "
+                        "its label. Defaults to --s2-sail-competitive-frac's op point. 0.0 (or >=1.0) "
+                        "disables competition -- every template updates on every presentation.")
+    p.add_argument("--s2-rstdp-depress-scale", type=float, default=1.0,
+                   help="'rstdp' mode only: multiplies the anti-STDP (incorrect-class winner) step "
+                        "relative to the STDP (correct-class winner) potentiation step -- the R-STDP "
+                        "correct/incorrect asymmetry knob (Mozafari et al. 2017/2018 tune reward vs. "
+                        "punishment separately). 1.0 (default) = symmetric potentiate/depress magnitude.")
+    p.add_argument("--s2-rstdp-renorm", type=int, choices=[0, 1], default=1,
+                   help="'rstdp' mode only: 1 (default) renormalizes each learned template row to unit L2 "
+                        "norm after every update -- identical rationale to --s2-bcm-renorm/--s2-sail-"
+                        "renorm (keeps 'drive' on the frozen-random baseline's cosine-similarity scale). "
+                        "0 disables, for comparison.")
     # signed linear readout (ridge-regularised least squares = the Maass reservoir readout)
     p.add_argument("--ridge", type=float, default=0.5,
                    help="ridge lambda (homeostatic regulariser = synaptic scaling): large -> centroid "
