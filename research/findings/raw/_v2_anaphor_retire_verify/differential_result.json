@@ -1,0 +1,253 @@
+{
+  "all_scenario_identical": true,
+  "all_token_level_identical": true,
+  "byte_identical": true,
+  "mechanism": "multi_turn_agent_v2-host-anaphor-list-retirement",
+  "per_seed": {
+    "100": {
+      "new_scenario": {
+        "describe_it": null,
+        "is_it_true_it_eat_fish": "yes",
+        "moat_empty_is_it_true": "unknown",
+        "moat_empty_most_recent": null,
+        "moat_empty_what_does": null,
+        "most_recent_after_hear": "cat",
+        "narrate_surface": "cat eat fish. dog eat worm. then it eat worm.",
+        "passthrough_content_word": "worm",
+        "reason_chain_it_eat_eat": "worm",
+        "what_does_it_eat": "fish",
+        "who_eats_it": null
+      },
+      "old_scenario": {
+        "describe_it": null,
+        "is_it_true_it_eat_fish": "yes",
+        "moat_empty_is_it_true": "unknown",
+        "moat_empty_most_recent": null,
+        "moat_empty_what_does": null,
+        "most_recent_after_hear": "cat",
+        "narrate_surface": "cat eat fish. dog eat worm. then it eat worm.",
+        "passthrough_content_word": "worm",
+        "reason_chain_it_eat_eat": "worm",
+        "what_does_it_eat": "fish",
+        "who_eats_it": null
+      },
+      "scenario_identical": true,
+      "token_level_identical": true,
+      "token_mismatches": []
+    },
+    "101": {
+      "new_scenario": {
+        "describe_it": null,
+        "is_it_true_it_eat_fish": "yes",
+        "moat_empty_is_it_true": "unknown",
+        "moat_empty_most_recent": null,
+        "moat_empty_what_does": null,
+        "most_recent_after_hear": "cat",
+        "narrate_surface": "cat eat fish. dog eat worm. then it eat worm.",
+        "passthrough_content_word": "worm",
+        "reason_chain_it_eat_eat": "worm",
+        "what_does_it_eat": "fish",
+        "who_eats_it": null
+      },
+      "old_scenario": {
+        "describe_it": null,
+        "is_it_true_it_eat_fish": "yes",
+        "moat_empty_is_it_true": "unknown",
+        "moat_empty_most_recent": null,
+        "moat_empty_what_does": null,
+        "most_recent_after_hear": "cat",
+        "narrate_surface": "cat eat fish. dog eat worm. then it eat worm.",
+        "passthrough_content_word": "worm",
+        "reason_chain_it_eat_eat": "worm",
+        "what_does_it_eat": "fish",
+        "who_eats_it": null
+      },
+      "scenario_identical": true,
+      "token_level_identical": true,
+      "token_mismatches": []
+    },
+    "102": {
+      "new_scenario": {
+        "describe_it": null,
+        "is_it_true_it_eat_fish": "no",
+        "moat_empty_is_it_true": "unknown",
+        "moat_empty_most_recent": null,
+        "moat_empty_what_does": null,
+        "most_recent_after_hear": "cat",
+        "narrate_surface": "cat eat fish. dog eat worm. then it eat worm.",
+        "passthrough_content_word": "worm",
+        "reason_chain_it_eat_eat": "worm",
+        "what_does_it_eat": "fish",
+        "who_eats_it": null
+      },
+      "old_scenario": {
+        "describe_it": null,
+        "is_it_true_it_eat_fish": "no",
+        "moat_empty_is_it_true": "unknown",
+        "moat_empty_most_recent": null,
+        "moat_empty_what_does": null,
+        "most_recent_after_hear": "cat",
+        "narrate_surface": "cat eat fish. dog eat worm. then it eat worm.",
+        "passthrough_content_word": "worm",
+        "reason_chain_it_eat_eat": "worm",
+        "what_does_it_eat": "fish",
+        "who_eats_it": null
+      },
+      "scenario_identical": true,
+      "token_level_identical": true,
+      "token_mismatches": []
+    },
+    "42": {
+      "new_scenario": {
+        "describe_it": null,
+        "is_it_true_it_eat_fish": "yes",
+        "moat_empty_is_it_true": "unknown",
+        "moat_empty_most_recent": null,
+        "moat_empty_what_does": null,
+        "most_recent_after_hear": "cat",
+        "narrate_surface": "cat eat fish. dog eat worm. then it eat worm.",
+        "passthrough_content_word": "worm",
+        "reason_chain_it_eat_eat": "worm",
+        "what_does_it_eat": "fish",
+        "who_eats_it": null
+      },
+      "old_scenario": {
+        "describe_it": null,
+        "is_it_true_it_eat_fish": "yes",
+        "moat_empty_is_it_true": "unknown",
+        "moat_empty_most_recent": null,
+        "moat_empty_what_does": null,
+        "most_recent_after_hear": "cat",
+        "narrate_surface": "cat eat fish. dog eat worm. then it eat worm.",
+        "passthrough_content_word": "worm",
+        "reason_chain_it_eat_eat": "worm",
+        "what_does_it_eat": "fish",
+        "who_eats_it": null
+      },
+      "scenario_identical": true,
+      "token_level_identical": true,
+      "token_mismatches": []
+    },
+    "43": {
+      "new_scenario": {
+        "describe_it": null,
+        "is_it_true_it_eat_fish": "yes",
+        "moat_empty_is_it_true": "unknown",
+        "moat_empty_most_recent": null,
+        "moat_empty_what_does": null,
+        "most_recent_after_hear": "cat",
+        "narrate_surface": "cat eat fish. dog eat worm. then it eat worm.",
+        "passthrough_content_word": "worm",
+        "reason_chain_it_eat_eat": "worm",
+        "what_does_it_eat": "fish",
+        "who_eats_it": null
+      },
+      "old_scenario": {
+        "describe_it": null,
+        "is_it_true_it_eat_fish": "yes",
+        "moat_empty_is_it_true": "unknown",
+        "moat_empty_most_recent": null,
+        "moat_empty_what_does": null,
+        "most_recent_after_hear": "cat",
+        "narrate_surface": "cat eat fish. dog eat worm. then it eat worm.",
+        "passthrough_content_word": "worm",
+        "reason_chain_it_eat_eat": "worm",
+        "what_does_it_eat": "fish",
+        "who_eats_it": null
+      },
+      "scenario_identical": true,
+      "token_level_identical": true,
+      "token_mismatches": []
+    },
+    "44": {
+      "new_scenario": {
+        "describe_it": null,
+        "is_it_true_it_eat_fish": "no",
+        "moat_empty_is_it_true": "unknown",
+        "moat_empty_most_recent": null,
+        "moat_empty_what_does": null,
+        "most_recent_after_hear": "cat",
+        "narrate_surface": "cat eat fish. dog eat worm. then it eat worm.",
+        "passthrough_content_word": "worm",
+        "reason_chain_it_eat_eat": "worm",
+        "what_does_it_eat": "fish",
+        "who_eats_it": null
+      },
+      "old_scenario": {
+        "describe_it": null,
+        "is_it_true_it_eat_fish": "no",
+        "moat_empty_is_it_true": "unknown",
+        "moat_empty_most_recent": null,
+        "moat_empty_what_does": null,
+        "most_recent_after_hear": "cat",
+        "narrate_surface": "cat eat fish. dog eat worm. then it eat worm.",
+        "passthrough_content_word": "worm",
+        "reason_chain_it_eat_eat": "worm",
+        "what_does_it_eat": "fish",
+        "who_eats_it": null
+      },
+      "scenario_identical": true,
+      "token_level_identical": true,
+      "token_mismatches": []
+    }
+  },
+  "probe_tokens": [
+    "it",
+    "that",
+    "them",
+    "they",
+    "this",
+    "It",
+    "THAT",
+    "They",
+    "This",
+    "Them",
+    "dog",
+    "cat",
+    "fish",
+    "bird",
+    "worm",
+    "ball",
+    "chase",
+    "eat",
+    "see",
+    "the",
+    "a",
+    "he",
+    "she",
+    "there",
+    "then"
+  ],
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "verdict": "GO",
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "all_scenario_identical",
+      "ok": true,
+      "detail": "host-list vs spiking-organ narrate()/resolve() identical at scenario level across all seeds",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "all_token_level_identical",
+      "ok": true,
+      "detail": "identical at token level across all seeds",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "byte_identical",
+      "ok": true,
+      "detail": "combined byte-identical differential (retirement is answer-preserving)",
+      "note": ""
+    }
+  ]
+}

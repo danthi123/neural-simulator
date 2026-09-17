@@ -1,0 +1,28 @@
+{
+ "run_id": "1789617949-2396830",
+ "runner": "research/runners/_v2_anaphor_retire_verify.py",
+ "argv": [
+  "/home/node/derisk-pool/sim/research/runners/_v2_anaphor_retire_verify.py",
+  "--out",
+  "research/findings/raw/_v2_anaphor_retire_verify/differential_result.json"
+ ],
+ "git_sha": "65c5a334",
+ "git_dirty": true,
+ "source_kind": "git_archive",
+ "source_manifest_sha256": "dd101da43a1670a7d45cf58671ebb84707e76e21b7f45366e1ff9a2dd4252756",
+ "source_manifest_verified_at_start": true,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": true,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-17T00:05:49",
+ "env": {
+  "POOL_CHECKED_REASON": "verify-first: v2 host _ANAPHORS deleted; spiking organ sole path (research-only); byte-identical differential host-vs-spiking across seeds. (post-provision)",
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_v2_anaphor_retire_verify/differential_result.json"
+}
