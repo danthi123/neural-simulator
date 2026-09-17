@@ -1,5 +1,11 @@
-2026-09-16 ~10:10: compute_idle counter is stale from the 5-day break + this session. Current reality: the LOCAL GPU
-is running the token _n2M bend-test sweep (88% util, 6/18 done), and the POOL just COMPLETED its 14-cell batch
-(vision satdiv-refine + Touchpoint-A) — being harvested in this very commit. Not idle. Genuine reason: no more
-verified-unrun pool work is staged this instant (the batch just finished); next pool stocking is a deliberate pick,
-not a churn-fill. Auto-expires 6h.
+NO-READY-WORK (honest, 2026-09-17 ~19:40; owner GAMING → GPU paused, CPU-pool-only allowed).
+The ready non-contending CPU levers are EXHAUSTED this gaming window: the vision S2-template-learning
+arc CLOSED this window (3 findings landed — verb->object NO-GO f1daee58, R-STDP lever 6c90aef1,
+arc-close 6c009ec6; the pool ran ~19 genuine jobs: R-STDP explore/6-seed + n_ex data-scaling).
+Every REMAINING frontier is either GPU-gated (post-gaming queue: d384 mouth capacity sweep; the
+onebrain 11-organ flip curiosity per_neuron_ou_seed fix + battery; supervised-S2 is now closed) or
+needs a fresh deep-research round before a lever is defensible (the affect-opponent V+/V- spiking
+population is boundary-laden — 2026-08-13 self-organized-opponent-weights BOUNDARY). Queueing a CPU
+job now would re-derive banked work (e.g. n_s2-capacity, already mapped 2026-09-03) rather than add
+signal. Holding the pool until game.sh off (resume the GPU post-gaming queue) or a new deep-research
+arc is scoped. Not a priority/focus deferral — there is no ready non-re-deriving CPU lever to stage.
