@@ -1,0 +1,36 @@
+{
+ "run_id": "1789682727-2624121",
+ "runner": "research/runners/_learned_spiking_segmentation_derisk.py",
+ "argv": [
+  "/home/node/derisk-pool/sim/research/runners/_learned_spiking_segmentation_derisk.py",
+  "--seeds",
+  "42",
+  "43",
+  "44",
+  "100",
+  "101",
+  "102",
+  "--out",
+  "research/findings/raw/_learned_spiking_segmentation/verify_6seed_vo_baseline.json"
+ ],
+ "git_sha": "65c5a334",
+ "git_dirty": true,
+ "source_kind": "git_archive",
+ "source_manifest_sha256": "1af32174dd17006a83c02d3831c3325538ded8c6146b473affef8d3a5ffc47d3",
+ "source_manifest_verified_at_start": true,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": true,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-17T18:05:27",
+ "env": {
+  "POOL_CHECKED_REASON": "size the verb->object boundary residual across 6 seeds (baseline OFF, with the new vo diagnostics) \u2014 the seed-42 lever explore showed the lateral-competition lever HURTS AUC and the OFF baseline vo_auc is already 0.976, so this checks whether verb->object is genuinely under-weighted on ANY seed or the GO finding overstated it; runner on pool via provision f6e43581",
+  "SIM_BACKEND": "numpy",
+  "CUDA_VISIBLE_DEVICES": ""
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_learned_spiking_segmentation/verify_6seed_vo_baseline.json"
+}
