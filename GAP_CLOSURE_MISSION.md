@@ -13,21 +13,31 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ---
 
-## ⭐⭐⭐ IN-FLIGHT — 2026-09-17 ~03:50 ALL-NIGHT AUTONOMOUS (owner asleep: "full autonomous + parallelized"; gaming DONE; a reboot 7.2.3→7.2.5 cleared /tmp scratchpad — scripts reconstructed)
+## ⭐⭐⭐ IN-FLIGHT — 2026-09-17 ~05:05 ALL-NIGHT AUTONOMOUS (owner asleep; deep-research course-correction APPLIED — see below)
+
+**Owner asked (mid-session): am I doing proper deep research (online + RAG + reading the actual source material)?**
+Honest answer given: RAG verify-first was consistent, but this session had been thin on external-lit + source-reading
+(mostly mechanism-reuse/verification where external wasn't gating). CORRECTION applied: the comprehension design agent
+was redirected to READ the actual sources (Hinaut & Dominey 2013, Karuza 2013, Daikoku 2017, Benjamin 2021,
+arXiv:1911.09230, + local findings) + a real external round (lane-recorded for the DR gate) — it delivered a
+source-grounded design_ready SPEC (below), and the segmentation build agent carries the same read-the-sources mandate.
 
 LANES (all running; harvest on any continuation):
-- **GPU (gpu_queue, RUNNING):** mouth token-supply sweep RESUMED (pid rotates, 8 jobs `_gen_cortex_token_supply_scaling_derisk` → `research/findings/raw/_gencortex_scaling/`). The keystone (~49 retirements). GAME_MODE cleared (`game.sh off`). Check `gpu_queue.sh status`.
-- **Pool (pool41/42, re-provisioned to b02c4eaee):** read-noise-floor 6-seed + da-write-gain calib 6-seed running → `gap5_ecker_adex/read_noise_floor_6seed.json`, `_da_write_gain_spiking/6seed_ginterface_calib.json`. ⚠️ RSYNC-BACK per-node-flaky: PULL via `scp pool41:~/derisk-pool/sim/research/findings/raw/<path> <path>` when the node file appears. Pool-feeder scout (agent a4dec887) returning more run-ready de-risks to queue.
-- **Local:** vision C2-topo verify (`--c2-basis topo`) running → `lanes/perception/conjbind_competitive_..._c2basistopo_6seed.json`.
-- **Agents (Workflow wblxod1ik):** onebrain 11-organ FLIP **PREP** (build the wave-pool default-on + flip-regression, worktree, DO NOT merge unverified) + he/she/him/her CA3 anaphor extension + Rank-7 affect output-homeostatic-floor. Cherry-pick + verify + land the GO ones.
+- **GPU (gpu_queue, RUNNING):** mouth token-supply sweep (pid 92738, `_gen_cortex_token_supply_scaling_derisk`, s100/n2M point, ~90% util). The keystone (~49 retirements). Untouched by tonight's harvest. `gpu_queue.sh status`.
+- **Pool (pool41/42):** dispatch was DEAD ~8 days — autodispatch was blocking a wrong-format queue entry. ⚠️ THE FORMAT: the checked-reason must be a `#checked:<why>` SUFFIX on the command, NOT a `POOL_CHECKED_REASON=` prefix (the dispatcher converts the suffix to that env var itself). FIXED; now running the satdiv extended-seed robustness arm (seeds 200-205). rsync-back flaky: PULL via `scp pool41:~/derisk-pool/sim/research/findings/raw/<path> <path>`.
+- **Local (worktree .claude/worktrees/wf_f60e34e8-14f-1):** onebrain 11-organ FLIP 6-seed answer-preservation battery RUNNING (pid 111320, numpy, `_onebrain_11organ_pool_flip_regression --seeds 42,43,44,100,101,102` → `research/findings/raw/_onebrain_11organ_pool_flip_6seed.json`; ~7min×12 arms; corpus symlinked into the worktree). THE CULMINATION GATE — review the ON-vs-OFF result before landing the default-on flip.
+- **Agent (a87b71002cf72a601, opus, worktree):** learned-spiking-constituent-boundary-segmentation de-risk (the irreducible neural-comprehension residual = host `segment_clause`; STDP predictive-coding-by-inhibition; design_ready SPEC). Build + 6-seed gate; a NO-GO-with-quantified-residual is acceptable.
 
-LANDED tonight (pushed): biased-competition RETIRED (scaffold_retired **4→5**) + graded-bias fix; gap#5 forward-band NO-GO; **biascomp shared-pool GO 6/6 (3-ref residual closed)**; v2-anaphor RETIRED; **onebrain organ-merge GO 6/6 at 6/9/11 organs** (wave1+2 finding 384178e2, wave3 finding 4a0bb2b2 — ALL 11 cortical organs on ONE shared spiking pool, de-risk validated); wave-2 builds cherry-picked default-off (read-noise 4be44ee92, vision-c2-topo 2761eec6d, da-write b02c4eaee); ledger+board #221 synced (d78484b9).
+LANDED this cycle (pushed BOTH remotes): (1) **anaphor he/she/him/her GO 6/6** — spiking CA3 detection extended (additive/opt-in/default-OFF, byte-identical for original 5), commit 3863cde0; NOT wired (needs gender/number agreement in resolution first). (2) **vision: divisive-normalization (satdiv) is the DECISIVE lever for the position-invariant spiking readout GO; conjunctive binding is NOT** (single-var isolation: satdiv on→off collapses 5/6→0-1/6; every binding topology ≤ a width-matched flat pool), commit 96ac8b3a — promotes satdiv BORDERLINE→GO, banks binding as a method.
 
-NEXT / FOLLOW-ONS:
-- ⭐ **onebrain 11-organ FLIP** (default-on, retire per-organ bridges) = the one-brain culmination. De-risk GO; prep in wave-3; needs the integrated /api/brain-chat battery (cupy-GPU-solo — after the mouth sweep — or AWS 128GB). Review before landing (big production change).
-- vision attn-soft = NO-GO (LINDISCRIM-READOUT-NOGO) — bank a finding batched with c2-topo's verdict.
-- ring-screen (`_consol_ring_confirm`) produced 0 output (failed on the pool, gap5 fine) — clean re-run + investigate.
-- Heartbeat blk591ejg armed (15-min, gpu/mem/pool + parallel_audit). Monitors from the pre-reboot session were stopped.
+COMPREHENSION SPEC (agent a277e2c4, DONE, source-grounded): the real residual is constituent/SVO segmentation (`segment_clause`); everything downstream (role assignment) already learns on-substrate + GO'd (EMERGE-78 reservoir / multi-cue Competition parser / NP-binder). 2 cheaper adjacent moves flagged: wire `value_choice.extract_agent_action` + gnw topic-extract through the GO'd neural parser (retires host string-ops = scaffold retirement); flip the multi-cue Competition parser on (decision, GPU cost).
+
+NEXT / FOLLOW-ONS (pending harvest):
+- ⭐ **onebrain 11-organ FLIP** — when the battery returns: if answer-preservation GO 6/6, land the default-on flip (finding + docs/board sync); the FULL integrated /api/brain-chat cupy battery (GPU-solo after mouth, or AWS-128GB) is the final gate. Prep on branch research/onebrain-11organ-pool-flip-prep (a56f31c1d), committed --no-verify (lane-starvation only; correctness gate passed). DO NOT merge unverified.
+- **rank7-affect output-floor** (worktree wf_f60e34e8-14f-3, dbd3693c9): mostly-inert honest-negative (traced: per-concept all-or-nothing ignition → gain≈scalar→cancelled by row-norm), tiny 1-seed G2b lift; BANK, defer the 6-seed GPU verify (expected NO-GO, aligns with affect-is-noise-robustness).
+- **affect-300k PARTIAL** finding written-but-uncommitted (discriminating-power gate needs an instrument-validity reframe).
+- **DOC/BOARD SYNC pending (batch):** anaphor + vision + onebrain-flip → ROADMAP + master roadmap + Vikunja + stamp `docs/.vikunja_sync` (VF budget ~2/4 used).
+- Heartbeat blk591ejg live (15-min gpu/mem/pool + parallel_audit).
 
 ## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-16 ~21:15 (biased-competition RETIRED — scaffold_retired 4→5, owner's #1 metric; graded-bias regression root-caused+FIXED; token sweep PAUSED for gaming; READ FIRST; LATEST anchor)
 
