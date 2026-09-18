@@ -84,6 +84,12 @@ above passing AND the biological-deployability check.
 
 - Resume the GPU queue; re-run the onebrain flip battery → land the flip on all_pass.
 - Run the decisive extended-d384 token test (existing 3090) + the biological-readout-at-deployable-vocab confirm.
-- Stand up the data-curation pipeline design (quality-first curriculum) in parallel on the pool.
+- Stand up the data-curation pipeline design (quality-first curriculum) in parallel on the pool. **NOTE
+  (2026-09-18): this is a GAP-ANALYSIS on EXISTING infra, not greenfield — the record already has
+  `corpus_stream.py`, `_corpus_develop_curriculum.py`, `build_distill_corpus.py`, `_knowledge_core_curate.py`,
+  a `_curriculum_*` family, and a `data/corpus/.tokcache/` disk-backed pre-tokenized `.npz` mechanism (up to
+  681M). Design = what quality-first staged curation is MISSING atop these, not a rebuild. Best sequenced AFTER
+  the memory-efficient loader lands (know the loading mechanism) + the decisive test result is in hand (it sizes
+  the data need) — designing it before both risks re-derivation + designing on incomplete information.**
 - Harvest the queued semantic-recall prodscale 6-seed + the #203 freeze-tests.
 - On the scaling test's result, finalize the hardware decision and update this plan.
