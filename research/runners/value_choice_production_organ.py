@@ -38,6 +38,11 @@ pre-flip abstain/first-match oracle):
                                 value gradient vanishes -> the organ DECLINES -> the turn reverts to abstain.
   BRAIN_VALUE_CHOICE_UNTRAINED  in {1,true,yes,on} -> G_UNTRAINED: score with the UNTRAINED critic (no value-train)
                                 -> the trained engagement-advantage vanishes (proves the LEARNING is load-bearing).
+  BRAIN_NEURAL_EXTRACT          scaffold-retirement cleanup (unrelated to the value-critic GO above): routes THIS
+                                organ's OWN (agent, action) comprehension (`extract_agent_action`) through the
+                                already-production on-brain BridgeParser read (`ChatBrain._neural_question_parse`)
+                                instead of duplicating the host string-op heuristic. unset/0/false/off/no -> OFF
+                                (byte-identical, the default). See `neural_extract_enabled`.
 """
 from __future__ import annotations
 
@@ -281,14 +286,61 @@ _STOP = {"what", "who", "whom", "does", "do", "did", "is", "are", "was", "were",
          "to", "it", "that", "this", "they", "them", "of", "about"}
 
 
+def neural_extract_enabled() -> bool:
+    """`BRAIN_NEURAL_EXTRACT` truthy (1/true/on/yes) -> `extract_agent_action` (below) and
+    `webapp.gnw_thought_swap._extract_topic` route their comprehension through the SAME on-brain BridgeParser read
+    the live gate's factual-SVO CHOOSE(#1) integration uses (`ChatBrain._neural_question_parse` ->
+    `BridgeParser.role_of`; finding 2026-08-12-INTEGRATION-1-CHOOSE-neural-question-parse), instead of each
+    duplicating the host membership/positional heuristic. Unset/0/false/off/no -> DISABLED (byte-identical to
+    today's host extraction — the default)."""
+    return os.environ.get("BRAIN_NEURAL_EXTRACT", "0").strip().lower() in ("1", "true", "on", "yes")
+
+
+def _neural_extract_agent_action(content: list, chat):
+    """The flag-gated neural comprehension read for `extract_agent_action`. Mirrors
+    `ChatBrain._extract_route`'s OWN eligibility gate exactly (research/runners/brain_chat_tui.py): >=2 content
+    words, the on-brain parser reachable, no self-alias among them. On eligibility, reuses
+    `chat._neural_question_parse` (the SAME BridgeParser.role_of read the live gate's factual comprehension uses)
+    instead of the host membership/positional heuristic below. Returns (a, v) on a confident parse, or None on
+    ANY ineligibility / decline / lesion / exception — unlike the live gate's own CHOOSE(#1) contract (which
+    ABSTAINS on decline), this organ's wrapper (`install_value_choice`) already promises the INNER gate result
+    VERBATIM on any decline, so a neural decline here must degrade to the pre-existing host heuristic, never a
+    new abstain."""
+    neural_parse = getattr(chat, "_neural_question_parse", None)
+    if not callable(neural_parse) or len(content) < 2:
+        return None
+    self_aliases = getattr(getattr(chat, "router", None), "self_aliases", set()) or set()
+    if any(t in self_aliases for t in content):
+        return None
+    try:
+        nq = neural_parse(content)
+    except Exception:
+        return None
+    if nq is None:
+        return None
+    a, v = nq
+    if not (a and v) or a == v or a in self_aliases or v in self_aliases:
+        return None
+    return a, v
+
+
 def extract_agent_action(question: str, chat):
     """Resolve (agent, action) from a free-text question the SAME way ChatBrain._substrate_recall does — prefer a
     KNOWN agent/action, else structural position. Returns (a, v) or None. A self/identity query is left to the host
-    router (returns None), exactly as the substrate recall does, so the value-choice never hijacks a self question."""
+    router (returns None), exactly as the substrate recall does, so the value-choice never hijacks a self question.
+
+    NEURAL COMPREHENSION READ (flag-gated, `BRAIN_NEURAL_EXTRACT`, default OFF -- see `neural_extract_enabled`):
+    when ON, this first tries the SAME on-brain BridgeParser read the live gate's CHOOSE(#1) factual comprehension
+    uses (`_neural_extract_agent_action`); only on ineligibility/decline does it fall through to the UNCHANGED host
+    membership/positional heuristic below -- so OFF (or ON-but-declined) is exactly today's behavior."""
     toks = [t.lower().strip(".,!?") for t in str(question).split()]
     content = [t for t in toks if t and t not in _STOP]
     agents_set = getattr(chat, "agents_set", set())
     actions_set = getattr(chat, "actions_set", set())
+    if neural_extract_enabled():
+        neural = _neural_extract_agent_action(content, chat)
+        if neural is not None:
+            return neural
     a = next((t for t in content if t in agents_set), None) or (content[0] if content else None)
     v = next((t for t in content if t in actions_set), None) or (content[1] if len(content) > 1 else None)
     if not (a and v) or a == v:

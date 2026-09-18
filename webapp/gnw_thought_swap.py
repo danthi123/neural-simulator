@@ -40,6 +40,11 @@ CONTRACT (additive, DEFAULT-OFF, reversible).
     are answer-unchanged with it enabled; only the additive key appears. This mirrors how `gnw_bus` is attached.
   * The workspace build (0.8s) is lazy on the first grounded-topic turn per session and kept warm; each subsequent
     topic turn runs one ~0.3s swap decision.
+  * SCAFFOLD-RETIREMENT (unrelated to `BRAIN_GNW_SWAP` above): `_extract_topic`'s regex-tokenize + first-known-
+    concept scan is a HOST string-op duplicate of the CHOOSE(#1) on-brain comprehension
+    (`ChatBrain._neural_question_parse` -> `BridgeParser.role_of`, finding 2026-08-12-INTEGRATION-1). `BRAIN_NEURAL_
+    EXTRACT` truthy routes it through that SAME neural read instead (falling back to the unchanged host scan on any
+    ineligibility/decline); unset/0/false/off/no -> OFF (byte-identical, the default). See `_neural_extract_enabled`.
 
 REUSE-BY-IMPORT (NO `sim/` edit). The swap substrate build, the `MultiLoopSTD` eviction effector, the neural vacancy
 gate, the mismatch/salience detector and `run_intention_swap` come STRAIGHT from
@@ -131,13 +136,62 @@ def _known_concepts(composer) -> set:
     return out
 
 
-def _extract_topic(message: str, composer) -> Optional[str]:
+def _neural_extract_enabled() -> bool:
+    """`BRAIN_NEURAL_EXTRACT` truthy (1/true/on/yes) -> `_extract_topic` (below) and
+    `research.runners.value_choice_production_organ.extract_agent_action` route their comprehension through the
+    SAME on-brain BridgeParser read the live gate's factual-SVO CHOOSE(#1) integration uses
+    (`ChatBrain._neural_question_parse` -> `BridgeParser.role_of`; finding
+    2026-08-12-INTEGRATION-1-CHOOSE-neural-question-parse), instead of each duplicating a host string-op
+    extractor. Unset/0/false/off/no -> DISABLED (byte-identical to today's host extraction — the default). A
+    scaffold-retirement cleanup, unrelated to this module's own `BRAIN_GNW_SWAP` faculty flag."""
+    return os.environ.get("BRAIN_NEURAL_EXTRACT", "0").strip().lower() in ("1", "true", "on", "yes")
+
+
+def _neural_extract_topic(message: str, known: set, chat) -> Optional[str]:
+    """The flag-gated neural topic read for `_extract_topic`. Presents the message's stopword-stripped content
+    words to `chat._neural_question_parse` (mirrors its own >=2-content-word eligibility gate; the SAME BridgeParser
+    role_of read the live gate's factual comprehension uses) and takes whichever of the two role-tagged words
+    (agent, action) is itself a GROUNDED concept as the topic -- preserving `_extract_topic`'s own 'topic must be a
+    known concept' contract exactly (this can only narrow to an already-known word, never invent one). Returns
+    None on ANY ineligibility / decline / lesion / exception (no `known`, no reachable parser, <2 content words,
+    or neither role-word grounded), so the caller falls through to the UNCHANGED host scan."""
+    neural_parse = getattr(chat, "_neural_question_parse", None)
+    if not callable(neural_parse) or not known:
+        return None
+    toks = [t for t in re.findall(r"[a-zA-Z']+", message.lower()) if t not in _STOP]
+    if len(toks) < 2:
+        return None
+    try:
+        nq = neural_parse(toks)
+    except Exception:
+        return None
+    if nq is None:
+        return None
+    a, v = nq
+    if a in known:
+        return a
+    if v in known:
+        return v
+    return None
+
+
+def _extract_topic(message: str, composer, chat=None) -> Optional[str]:
     """Host comprehension of the world/teacher input (the declared boundary). The topic of the user's message = the
     FIRST GROUNDED concept token (a known agent/patient) in message order. No grounded concept (an anaphoric or
-    no-new-topic follow-up: "what does it chase?", "tell me more") -> None -> the held thought persists. Read-only."""
+    no-new-topic follow-up: "what does it chase?", "tell me more") -> None -> the held thought persists. Read-only.
+
+    NEURAL COMPREHENSION READ (flag-gated, `BRAIN_NEURAL_EXTRACT`, default OFF -- see `_neural_extract_enabled`):
+    when ON and `chat` is supplied, this first tries the SAME on-brain BridgeParser read the live gate's CHOOSE(#1)
+    factual comprehension uses (`_neural_extract_topic`); only on ineligibility/decline does it fall through to the
+    UNCHANGED regex-tokenize + first-known-concept scan below -- so OFF (or ON-but-declined, or `chat` omitted, as
+    the pre-existing `common_ground_drives_chat` call site still does) is exactly today's behavior."""
     if not isinstance(message, str) or not message.strip():
         return None
     known = _known_concepts(composer)
+    if _neural_extract_enabled() and chat is not None:
+        neural_topic = _neural_extract_topic(message, known, chat)
+        if neural_topic is not None:
+            return neural_topic
     toks = re.findall(r"[a-zA-Z']+", message.lower())
     if known:
         for t in toks:
@@ -332,7 +386,7 @@ def observe_turn(chat, message: str, *, seed: int = _DEFAULT_SEED, lesion: bool 
     swap; default False -> byte-identical to the #77 observer."""
     try:
         composer = getattr(getattr(chat, "inner", None), "composer", None)
-        topic = _extract_topic(message, composer)
+        topic = _extract_topic(message, composer, chat=chat)
         ws = get_swap_workspace(chat, seed=seed)
         info = ws.observe(topic, lesion=bool(lesion))
     except Exception as e:  # never let the swap tracker crash / change a turn
