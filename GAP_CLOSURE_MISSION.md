@@ -13,19 +13,38 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ---
 
-## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-18 ~09:30 (RESUME HERE; owner gaming, all local compute PAUSED, pool OK)
+## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-18 ~11:00 (RESUME HERE; owner resumed → decisive d384 training RUNNING on GPU; onebrain-flip re-calibration in flight on CPU)
 
 **North-star:** a genuinely-conversing, affective, self-aware ONE-brain via faithful biological emulation. **Owner strategic decisions this session (verbatim intent):** faithfulness-vs-tractability relaxation APPROVED (honesty-conditioned; invariants KEPT) · scaling gated on deep research → DONE, verdict = lever is DATA not raw scale, DON'T buy hardware yet (finding 9cf34f95, plan da146e4e) · continuous-learning-as-default AGREED · decisive scaling test approved to plan+implement, "just pause before starting the training."
 
 **DONE this session (all landed on main, both remotes):**
 - ✅ Checkpoint-resume for the token-supply LM trainer (`4ede4181`, bit-exact) — pause/resume wastes ≤1 interval.
 - ✅ Memory-efficient memmap corpus loader (`53496357` merge) — `load_stories_memmap` (streamed read + disk-backed int32 memmap + lazy passage views, ~few-hundred-MB peak RAM regardless of token count) is now the DEFAULT in the scaling runner (`--legacy-loader` forces old path). **VERIFIED byte-identical** (research/runners/_verify_memmap_loader_byte_identity.py — 10 chunk sizes incl chunk_chars=1, token_cap, 10 size/cap/tail/empty cases + cache-hit). Verify-first found+fixed 2 edge bugs (empty-corpus mmap crash, token_cap≤0 off-by-one). This UNBLOCKS the decisive 370M-token test (old loader would OOM ~35GB on a 46GB box).
-- ✅ Decisive extended-d384 scaling test STAGED on the PAUSED gpu_queue (depth 4, item 4): `_gen_cortex_token_supply_scaling_derisk --corpus data/corpus/fineweb_edu.txt --d-model 384 --vocab 2000 --epochs 12 --max-len 48 --batch 256 --n-sentences 9200000 --token-points 960000 1920000 3840000 7680000 --seeds 42 --json research/findings/raw/_gen_cortex_token_supply_extended_d384_s42.json`. LEAN 1-seed decisive-first (~4-5h, 4 cells × ~2.5h; 369M unique tokens at top point). Config verified vs the finding + prior grid protocol. Will NOT start until owner runs `game.sh off`.
+- 🟢 Decisive extended-d384 scaling test RUNNING (owner ran `game.sh off` ~09:54; pid 205926, seed 42). The memmap
+  loader BUILT all 9.2M passages / 441.6M tokens in 148.7s at ~6-8GB RSS — **loader VALIDATED in production, no OOM**
+  (old loader would have needed ~35GB). Checkpoint-resume active. Cmd: `_gen_cortex_token_supply_scaling_derisk
+  --d-model 384 --vocab 2000 --epochs 12 --max-len 48 --batch 256 --n-sentences 9200000 --token-points 960000 1920000
+  3840000 7680000 --seeds 42 --corpus data/corpus/fineweb_edu.txt --json raw/_gen_cortex_token_supply_extended_d384_s42.json`.
+  ~4-5h. Monitored (Monitor bds5t29an: per-token-point held-NLL + failures + completion). ON COMPLETION: if the seed-42
+  curve BENDS toward the ~3.69 fluency band → queue the 5 remaining seeds (43/44/100/101/102) for the clean fit; if NOT
+  → deployable-form data-lever needs rethink (plan §2 honest fork). Then bio-readout-at-deployable-vocab (≥16k) confirm.
+  Queue behind it: #203 freeze pytest, Rank2 integrated_loop re-verify, semantic-recall prodscale 6-seed.
 
-**⭐ POST-GAME SEQUENCE (on `game.sh off`; I orchestrate live — the heartbeat fires when queue→RUNNING):**
-1. **Onebrain 11-organ flip (the culmination, critical-path #1).** The CORRECT root-cause fix is READY on worktree sim-worktrees/onebrain-flip-fix, branch `research/onebrain-flip-curiosity-fix` @ `b4aa0b02`: the ON/OFF da-mode engagement split is (a) a HETEROGENEITY seed-trap (pooled name-keyed per-region draw vs standalone global RNG draw, ~24mV threshold delta) + (b) a HOMEOSTASIS config split (_POOL1_CONFIG homeostasis-free vs standalone default-ON → ~8x want_novel gap). Fix = two additive, default-safe opt-in kwargs on build_curiosity_bridge (`per_region_heterogeneity`, `enable_homeostasis`), verified byte-identical-off.
-   **This SUPERSEDES + CORRECTS the disproven `per_neuron_ou_seed` cause below (49eedb78 / a24ceb4e).** Post-game: cherry-pick to main → run `onebrain_regression_battery --flag BRAIN_ONEBRAIN_WAVE3_POOL` (38-faculty) → on all_pass LAND the flip (`_WAVE3_POOL_DEFAULT_ON=True`).
-2. **Decisive scaling test** (staged above): if seed-42 curve BENDS toward the ~3.69 fluency band → queue the 5 remaining seeds (43/44/100/101/102) for the clean fit; if NOT → the deployable-form data-lever question needs rethink (see plan §2 honest fork). Then the biological-readout-at-deployable-vocab (≥16k) confirm.
+**⭐ IN-FLIGHT / NEXT (training holds the GPU; the flip work is CPU-parallel, no GPU):**
+1. **Onebrain 11-organ flip (culmination) — fix CORRECTED; do NOT land b4aa0b02 as-is.** Verify-first (agent a7b36ca98)
+   found the b4aa0b02 fix MOVES THE BASELINE: its `enable_homeostasis=False` is INCIDENTALLY inherited from co-resident
+   frozen organs (NOT a designed pool regime — the fix's `_POOL1_CONFIG` claim is factually wrong), it is UNCONDITIONAL
+   (breaks the flag-off byte-identical escape + changes SHIPPED production affect), and the regime was never 6-seed-GO
+   validated (want_novel ~15Hz sits below the organ's WANT_FLOOR 18). It ALSO corrects the 2026-09-17 finding: the real
+   ~9x lever is HOMEOSTASIS (126→14Hz toggled alone, numpy A/B), NOT per_neuron_ou_seed. KEEP the legit parts
+   (per_neuron_ou_seed + per_region_heterogeneity = substrate alignment). **OWNER DECISION 2026-09-18: FAITHFUL/CALMER**
+   — adopt the physiological homeostasis-free regime, deliberately calibrated on-spec (ABOVE the 18Hz floor) + re-validated
+   (the ~125Hz 'engaged' is a characterized non-biological artifact: a homeostat over-reacting to a 40ms settle).
+   Re-calibration agent a7b36ca98 IN FLIGHT (keep OU+het; calibrate the pooled organ to an on-spec physiological
+   engagement; consistent ON/OFF; cheap-confirm at intermediate salience raw points). THEN, sequenced: (a) 6-seed DR-1
+   GO re-validation under the new regime (GPU — queue behind the training); (b) the CORRECTLY-designed flip battery =
+   pooled-ON vs the TRUE SHIPPED baseline (NOT the fixed standalone — that comparison is vacuous); (c) LAND on all_pass
+   (`_WAVE3_POOL_DEFAULT_ON=True`). SUPERSEDES the disproven per_neuron_ou_seed cause below (49eedb78 / a24ceb4e / b4aa0b02).
 3. **Harvest the 3 pre-existing queued items** (#203 plastic-mask freeze pytest, Rank2 integrated_loop re-verify, semantic-recall prodscale 6-seed) → verify GO gate → land/finding.
 4. Data-curation pipeline = a GAP-ANALYSIS on existing infra (corpus_stream/_corpus_develop_curriculum/tokcache), NOT greenfield; sequence AFTER the loader + decisive-test result (plan §5 note).
 
