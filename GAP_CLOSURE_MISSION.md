@@ -13,6 +13,28 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ---
 
+## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-18 ~09:30 (RESUME HERE; owner gaming, all local compute PAUSED, pool OK)
+
+**North-star:** a genuinely-conversing, affective, self-aware ONE-brain via faithful biological emulation. **Owner strategic decisions this session (verbatim intent):** faithfulness-vs-tractability relaxation APPROVED (honesty-conditioned; invariants KEPT) · scaling gated on deep research → DONE, verdict = lever is DATA not raw scale, DON'T buy hardware yet (finding 9cf34f95, plan da146e4e) · continuous-learning-as-default AGREED · decisive scaling test approved to plan+implement, "just pause before starting the training."
+
+**DONE this session (all landed on main, both remotes):**
+- ✅ Checkpoint-resume for the token-supply LM trainer (`4ede4181`, bit-exact) — pause/resume wastes ≤1 interval.
+- ✅ Memory-efficient memmap corpus loader (`53496357` merge) — `load_stories_memmap` (streamed read + disk-backed int32 memmap + lazy passage views, ~few-hundred-MB peak RAM regardless of token count) is now the DEFAULT in the scaling runner (`--legacy-loader` forces old path). **VERIFIED byte-identical** (research/runners/_verify_memmap_loader_byte_identity.py — 10 chunk sizes incl chunk_chars=1, token_cap, 10 size/cap/tail/empty cases + cache-hit). Verify-first found+fixed 2 edge bugs (empty-corpus mmap crash, token_cap≤0 off-by-one). This UNBLOCKS the decisive 370M-token test (old loader would OOM ~35GB on a 46GB box).
+- ✅ Decisive extended-d384 scaling test STAGED on the PAUSED gpu_queue (depth 4, item 4): `_gen_cortex_token_supply_scaling_derisk --corpus data/corpus/fineweb_edu.txt --d-model 384 --vocab 2000 --epochs 12 --max-len 48 --batch 256 --n-sentences 9200000 --token-points 960000 1920000 3840000 7680000 --seeds 42 --json research/findings/raw/_gen_cortex_token_supply_extended_d384_s42.json`. LEAN 1-seed decisive-first (~4-5h, 4 cells × ~2.5h; 369M unique tokens at top point). Config verified vs the finding + prior grid protocol. Will NOT start until owner runs `game.sh off`.
+
+**⭐ POST-GAME SEQUENCE (on `game.sh off`; I orchestrate live — the heartbeat fires when queue→RUNNING):**
+1. **Onebrain 11-organ flip (the culmination, critical-path #1).** The CORRECT root-cause fix is READY on worktree sim-worktrees/onebrain-flip-fix, branch `research/onebrain-flip-curiosity-fix` @ `b4aa0b02`: the ON/OFF da-mode engagement split is (a) a HETEROGENEITY seed-trap (pooled name-keyed per-region draw vs standalone global RNG draw, ~24mV threshold delta) + (b) a HOMEOSTASIS config split (_POOL1_CONFIG homeostasis-free vs standalone default-ON → ~8x want_novel gap). Fix = two additive, default-safe opt-in kwargs on build_curiosity_bridge (`per_region_heterogeneity`, `enable_homeostasis`), verified byte-identical-off.
+   **This SUPERSEDES + CORRECTS the disproven `per_neuron_ou_seed` cause below (49eedb78 / a24ceb4e).** Post-game: cherry-pick to main → run `onebrain_regression_battery --flag BRAIN_ONEBRAIN_WAVE3_POOL` (38-faculty) → on all_pass LAND the flip (`_WAVE3_POOL_DEFAULT_ON=True`).
+2. **Decisive scaling test** (staged above): if seed-42 curve BENDS toward the ~3.69 fluency band → queue the 5 remaining seeds (43/44/100/101/102) for the clean fit; if NOT → the deployable-form data-lever question needs rethink (see plan §2 honest fork). Then the biological-readout-at-deployable-vocab (≥16k) confirm.
+3. **Harvest the 3 pre-existing queued items** (#203 plastic-mask freeze pytest, Rank2 integrated_loop re-verify, semantic-recall prodscale 6-seed) → verify GO gate → land/finding.
+4. Data-curation pipeline = a GAP-ANALYSIS on existing infra (corpus_stream/_corpus_develop_curriculum/tokcache), NOT greenfield; sequence AFTER the loader + decisive-test result (plan §5 note).
+
+**Heartbeat:** `bhr8pw4tc` live (game-aware: alarms on gpu_queue≠PAUSED, python-GPU>2GB, RAM-thrash). live_state.md auto-regenerates (don't hand-edit — this board is the durable anchor).
+
+*Everything below is HISTORY (pre-2026-09-18-09:30), kept for context; the disproven onebrain per_neuron_ou_seed cause is SUPERSEDED by item 1 above.*
+
+---
+
 ## ⭐⭐⭐ IN-FLIGHT — 2026-09-17 ~06:10 ALL-NIGHT AUTONOMOUS (owner asleep; deep-research course-correction APPLIED — see below)
 
 ⚡ **RESUMED 2026-09-17 ~13:50 after a MEMORY-OUTAGE FORCE-STOP (~06:40).** All committed work SAFE (HEAD 72caa92c; 6 findings this cycle + roadmap/board synced). The OOM was CONCURRENCY (heavy integrated numpy battery + GPU mouth sweep + a build agent + the desktop app) — NOT baloo (baloo is DISABLED; my precautionary `balooctl6 suspend` was a no-op — memory corrected). CURRENT:
