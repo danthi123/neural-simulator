@@ -25,7 +25,7 @@ Run (scale): python -m research.runners._emerge_wkv_lm_derisk --seeds 42 43 44 1
 from __future__ import annotations
 import os
 os.environ.setdefault("SIM_BACKEND", "numpy")
-import argparse, hashlib, json, math, time
+import argparse, hashlib, json, math, re, time
 from pathlib import Path
 from collections import defaultdict
 import numpy as np
@@ -142,6 +142,209 @@ def load_stories(path, max_stories, max_len=48):
     toks = re.findall(r"[a-z']+", txt.lower())                       # ONE contiguous token stream (the corpus is 1 line)
     stories = [toks[i:i + max_len] for i in range(0, min(len(toks), max_stories * max_len), max_len)]
     return [s for s in stories if len(s) >= 8][:max_stories]         # contiguous max_len-token passages (cross-sentence)
+
+
+# ------------------------------------------------------------ MEMORY-EFFICIENT contiguous-passage loader (byte-identical)
+# THE PROBLEM this solves: load_stories() above does ONE .read(max_stories*max_len*8) then re.findall, materialising the
+# ENTIRE token stream as a Python list of str objects. At the extended-d384 token-supply scale (max_stories ~ 9.2M,
+# max_len 48 -> ~440M tokens) that intermediate list is ~30-35GB of distinct short-str objects and OOMs a 46GB box.
+# load_stories_memmap() produces the SAME contiguous max_len-token passages -- byte-identical: same tokenization
+# (lowercased [a-z']+), same contiguous chunking into max_len, same <8-token tail drop, same max_stories cap, same order
+# -- but (a) STREAMS the read in bounded chunks (never a 3.5GB .read()), (b) tokenizes ONCE to a disk-backed int32
+# token-id array + a small id->word table (content-addressed cache reused across seeds AND processes; mirrors the
+# TOKCACHE_DIR concat+offsets pattern above), and (c) returns a lazy Sequence whose passages are reconstructed on
+# __getitem__ as slices into the memmap. Loader peak RAM = O(id->word vocab + one chunk + the offsets array) ~ a few
+# hundred MB, independent of the corpus/token count. load_stories() itself is UNTOUCHED, so every OTHER caller stays
+# byte-identical; the scaling runner opts in (it uses only len()/[i]).
+PASSAGE_MEMMAP_SUBDIR = ".passage_memmap"               # cache dir, created next to the corpus file
+_PASSAGE_TOKENIZER_VERSION = "lc-apostrophe-word-v1"    # bump if the tokenization/lowering rule ever changes
+_LC_WORD_RE = re.compile(r"[a-z']+")
+
+
+def _stream_lc_word_tokens(path, char_cap, token_cap=None, chunk_chars=1 << 22):
+    """Yield lowercased [a-z']+ word tokens from the first `char_cap` CHARACTERS of `path` (utf-8, errors='ignore'),
+    BYTE-IDENTICAL to `re.findall(r"[a-z']+", open(path, encoding='utf-8', errors='ignore').read(char_cap).lower())`,
+    but streaming (peak RAM O(chunk_chars), not O(file)). Stops after `token_cap` tokens if given.
+
+    Equivalence argument: (1) text-mode reads decode the SAME character stream whether taken in one .read(char_cap) or
+    in successive .read(k) calls -- TextIOWrapper carries incremental-decoder state across reads and errors='ignore'
+    drops the same bytes either way. (2) A token straddling a read boundary is carried forward (the final match touching
+    the buffer end is held until the next chunk), so no token is split. (3) str.lower() differs across a boundary ONLY
+    for the context-dependent Greek final-sigma (Σ->σ/ς), which never yields an ASCII [a-z] character and so cannot change
+    which [a-z']+ tokens are found; every [a-z]-PRODUCING lowering (A-Z->a-z, U+0130->i, U+212A->k) is context-free per
+    code point. Hence lowering each chunk independently and concatenating yields the identical [a-z']+ match sequence."""
+    remaining = int(char_cap)
+    produced = 0
+    carry = ""                                   # lowered trailing chars that may begin/continue a boundary-spanning token
+    with open(path, encoding="utf-8", errors="ignore") as f:
+        while True:
+            chunk = f.read(min(chunk_chars, remaining)) if remaining > 0 else ""
+            if chunk:
+                remaining -= len(chunk)
+            more = bool(chunk)                   # data was actually read this iteration
+            buf = carry + (chunk.lower() if chunk else "")
+            carry = ""
+            if not buf:
+                break
+            prev = None
+            for m in _LC_WORD_RE.finditer(buf):
+                if prev is not None:
+                    yield prev.group()
+                    produced += 1
+                    if token_cap is not None and produced >= token_cap:
+                        return
+                prev = m
+            if prev is not None:
+                # hold the final match ONLY if it touches the buffer end AND more data may still arrive
+                if prev.end() == len(buf) and more and remaining > 0:
+                    carry = buf[prev.start():]
+                else:
+                    yield prev.group()
+                    produced += 1
+                    if token_cap is not None and produced >= token_cap:
+                        return
+            if not more:
+                break
+
+
+class MemmapPassages:
+    """Lazy, list-like view of contiguous max_len-token passages backed by an on-disk int32 token-id memmap + a small
+    id->word table. Implements exactly what the consumers use: len(), integer / numpy-integer / slice indexing, and
+    iteration. Each passage is reconstructed on access as a fresh list[str] whose strings == the original tokens
+    (byte-identical), so no giant token list is ever resident."""
+
+    def __init__(self, ids_path, offsets, i2w, max_len):
+        self._ids_path = str(ids_path)
+        self._ids = np.memmap(ids_path, dtype=np.int32, mode="r")
+        self._offsets = offsets                  # np.int64 [n_passages + 1]
+        self._i2w = i2w                          # list[str]
+        self.max_len = int(max_len)
+        self.n = int(len(offsets) - 1)
+
+    def __len__(self):
+        return self.n
+
+    def _passage(self, i):
+        a = int(self._offsets[i]); b = int(self._offsets[i + 1])
+        i2w = self._i2w
+        return [i2w[t] for t in self._ids[a:b].tolist()]
+
+    def __getitem__(self, i):
+        if isinstance(i, slice):
+            return [self._passage(j) for j in range(*i.indices(self.n))]
+        j = int(i)
+        if j < 0:
+            j += self.n
+        if not (0 <= j < self.n):
+            raise IndexError(j)
+        return self._passage(j)
+
+    def __iter__(self):
+        for j in range(self.n):
+            yield self._passage(j)
+
+
+def _passage_cache_key(path, max_stories, max_len):
+    """Content-addressed key: everything that changes the resulting passages MUST be in it, or a stale disk cache
+    silently poisons the run. The read cap (char count) scales with max_stories, so max_stories is part of the key."""
+    p = Path(path)
+    try:
+        st = p.stat(); size, mtime = int(st.st_size), int(st.st_mtime)
+    except OSError:
+        size, mtime = -1, -1
+    key_obj = {
+        "corpus": str(p.resolve()), "size": size, "mtime": mtime,
+        "max_stories": int(max_stories), "max_len": int(max_len),
+        "tok": _PASSAGE_TOKENIZER_VERSION,
+    }
+    return hashlib.sha256(json.dumps(key_obj, sort_keys=True).encode()).hexdigest()[:24]
+
+
+def build_or_load_passages(path, max_stories, max_len=48, cache_dir=None, verbose=True):
+    """Return a MemmapPassages equivalent to load_stories(path, max_stories, max_len). Tokenises ONCE to a disk cache
+    (int32 ids + int64 offsets + id->word vocab), then reuses it across seeds and processes. Atomic publish (temp files
+    + os.replace) so a killed build never leaves a partial cache for the next run to load."""
+    key = _passage_cache_key(path, max_stories, max_len)
+    cdir = Path(cache_dir) if cache_dir is not None else (Path(path).resolve().parent / PASSAGE_MEMMAP_SUBDIR)
+    ids_path = cdir / f"{key}.ids.i32"
+    meta_path = cdir / f"{key}.meta.npz"
+    vocab_path = cdir / f"{key}.vocab.txt"
+    # ---- cache HIT --------------------------------------------------------------------------------------------------
+    if ids_path.exists() and meta_path.exists() and vocab_path.exists():
+        try:
+            with np.load(meta_path, allow_pickle=False) as d:
+                offsets = np.ascontiguousarray(d["offsets"], dtype=np.int64)
+                ml = int(d["max_len"][0]) if "max_len" in d else max_len
+            i2w = vocab_path.read_text(encoding="utf-8").split("\n")
+            if i2w and i2w[-1] == "" and len(i2w) > 1:      # guard a stray terminal newline
+                i2w = i2w[:-1]
+            mp = MemmapPassages(ids_path, offsets, i2w, ml)
+            if verbose:
+                print(f"    [passage-cache] HIT {key}  n_passages={len(mp)}  vocab={len(i2w)}  "
+                      f"tokens={ids_path.stat().st_size // 4}", flush=True)
+            return mp
+        except Exception as e:
+            if verbose:
+                print(f"    [passage-cache] load failed ({e!r}) -- rebuilding", flush=True)
+    # ---- cache MISS: stream-tokenise once to disk -------------------------------------------------------------------
+    cdir.mkdir(parents=True, exist_ok=True)
+    char_cap = int(max_stories) * int(max_len) * 8       # SAME character read bound as load_stories
+    token_cap = int(max_stories) * int(max_len)          # chunk range end (a multiple of max_len => no overflow)
+    w2i = {}; i2w = []
+    offsets = np.zeros(int(max_stories) + 1, dtype=np.int64)
+    n_passages = 0; total_ids = 0
+    cur = []                                             # ids of the in-progress passage (<= max_len)
+    flush = []                                           # completed-passage ids awaiting a batched disk write
+    FLUSH_AT = 1 << 20                                   # ~1M ids (~4MB) per write
+    pid = os.getpid()
+    tmp_ids = cdir / f".tmp.{key}.{pid}.ids.i32"
+    t0 = time.time()
+    with open(tmp_ids, "wb") as fout:
+        for tok in _stream_lc_word_tokens(path, char_cap, token_cap=token_cap):
+            wid = w2i.get(tok)
+            if wid is None:
+                wid = len(i2w); w2i[tok] = wid; i2w.append(tok)
+            cur.append(wid)
+            if len(cur) == max_len:                      # a full passage completes -> always kept (len == max_len >= 8)
+                flush.extend(cur); total_ids += max_len
+                offsets[n_passages + 1] = total_ids; n_passages += 1
+                cur.clear()
+                if len(flush) >= FLUSH_AT:
+                    np.asarray(flush, dtype=np.int32).tofile(fout); flush.clear()
+                if n_passages >= max_stories:            # exactly max_stories full passages -> stop (matches the cap)
+                    break
+        # final partial passage: kept iff it has >= 8 tokens AND we did not already reach the cap (mirrors old filter)
+        if cur and n_passages < max_stories and len(cur) >= 8:
+            flush.extend(cur); total_ids += len(cur)
+            offsets[n_passages + 1] = total_ids; n_passages += 1
+        if flush:
+            np.asarray(flush, dtype=np.int32).tofile(fout); flush.clear()
+    offsets = offsets[:n_passages + 1].copy()
+    # ---- atomic publish (ids first, meta LAST so a torn write reads as a miss) --------------------------------------
+    os.replace(tmp_ids, ids_path)
+    tmp_vocab = cdir / f".tmp.{key}.{pid}.vocab.txt"
+    tmp_vocab.write_text("\n".join(i2w), encoding="utf-8")
+    os.replace(tmp_vocab, vocab_path)
+    tmp_meta = cdir / f".tmp.{key}.{pid}.meta.npz"
+    np.savez(str(tmp_meta), offsets=offsets, max_len=np.array([max_len], dtype=np.int64),
+             n_passages=np.array([n_passages], dtype=np.int64))
+    os.replace(tmp_meta, meta_path)
+    if verbose:
+        print(f"    [passage-cache] BUILT {key}  n_passages={n_passages}  vocab={len(i2w)}  "
+              f"tokens={total_ids}  ({time.time() - t0:.1f}s)", flush=True)
+    return MemmapPassages(ids_path, offsets, i2w, max_len)
+
+
+def load_stories_memmap(path, max_stories, max_len=48, cache_dir=None, verbose=True):
+    """Memory-efficient, BYTE-IDENTICAL drop-in for load_stories (see build_or_load_passages). Returns a lazy
+    MemmapPassages view. On ANY failure it falls back to the original in-RAM load_stories, so a caller can never be
+    worse off than before this addition."""
+    try:
+        return build_or_load_passages(path, max_stories, max_len=max_len, cache_dir=cache_dir, verbose=verbose)
+    except Exception as e:
+        print(f"    [passage-cache] build_or_load_passages failed ({e!r}) -- falling back to in-RAM load_stories",
+              flush=True)
+        return load_stories(path, max_stories, max_len=max_len)
 
 
 # ------------------------------------------------------------------ FAIR interpolated trigram (the KEY control) --------

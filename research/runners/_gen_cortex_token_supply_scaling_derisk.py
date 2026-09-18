@@ -68,7 +68,7 @@ from types import SimpleNamespace
 import numpy as np
 
 from research.runners._emerge_wkv_lm_derisk import (
-    build_and_train_wkv, eval_perdepth, load_stories, fit_interp_trigram,
+    build_and_train_wkv, eval_perdepth, load_stories, load_stories_memmap, fit_interp_trigram,
 )
 from research.runners._emerge_reservoir_lm_derisk import Vocab, fit_bigram
 from research.runners._emerge_reservoir_lm_context_depth_derisk import BUCKETS, _bucket
@@ -303,6 +303,11 @@ def main():
                          "pre-checkpoint runner. Existing behavior on demand.")
     ap.add_argument("--fresh", dest="fresh", action="store_true",
                     help="ignore + delete any existing progress sidecar / intra-cell checkpoints and start clean.")
+    ap.add_argument("--legacy-loader", dest="legacy_loader", action="store_true",
+                    help="force the original in-RAM load_stories() instead of the memory-efficient memmap loader. The "
+                         "memmap loader is BYTE-IDENTICAL (same passages/order/count) but streams the read + caches a "
+                         "disk-backed int32 token-id array, so a ~9.2M-passage corpus no longer OOMs a 46GB box. Use "
+                         "this flag only to reproduce the exact pre-change load path.")
     args = ap.parse_args()
 
     if args.smoke:
@@ -318,7 +323,12 @@ def main():
 
     print(f"[gen-cortex token-supply] corpus={args.corpus} d={args.d_model} V<={args.vocab} epochs={args.epochs} "
           f"max_len={args.max_len} points={args.token_points} seeds={args.seeds}", flush=True)
-    sents = load_stories(args.corpus, args.n_sentences, max_len=args.max_len)   # contiguous passages (clean token count)
+    # Memory-efficient contiguous-passage loader (byte-identical to load_stories; streams the read + disk-backed int32
+    # memmap so ~9.2M passages fit a 46GB box). --legacy-loader forces the original in-RAM path.
+    if getattr(args, "legacy_loader", False):
+        sents = load_stories(args.corpus, args.n_sentences, max_len=args.max_len)
+    else:
+        sents = load_stories_memmap(args.corpus, args.n_sentences, max_len=args.max_len)
     print(f"[gen-cortex] loaded {len(sents)} contiguous passages from {args.corpus}", flush=True)
 
     # ---- CHECKPOINT-RESUME setup (correctness-critical; see research/runners/_ckpt_resume.py) ----------------------
