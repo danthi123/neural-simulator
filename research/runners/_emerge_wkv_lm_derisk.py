@@ -173,6 +173,8 @@ def _stream_lc_word_tokens(path, char_cap, token_cap=None, chunk_chars=1 << 22):
     for the context-dependent Greek final-sigma (Σ->σ/ς), which never yields an ASCII [a-z] character and so cannot change
     which [a-z']+ tokens are found; every [a-z]-PRODUCING lowering (A-Z->a-z, U+0130->i, U+212A->k) is context-free per
     code point. Hence lowering each chunk independently and concatenating yields the identical [a-z']+ match sequence."""
+    if token_cap is not None and token_cap <= 0:      # a cap of 0 means "at most 0 tokens" -> yield nothing
+        return
     remaining = int(char_cap)
     produced = 0
     carry = ""                                   # lowered trailing chars that may begin/continue a boundary-spanning token
@@ -215,7 +217,10 @@ class MemmapPassages:
 
     def __init__(self, ids_path, offsets, i2w, max_len):
         self._ids_path = str(ids_path)
-        self._ids = np.memmap(ids_path, dtype=np.int32, mode="r")
+        # np.memmap cannot map a 0-byte file; an empty corpus (0 passages) is a valid, byte-identical result
+        # (load_stories returns []), so map only when ids exist -- else an empty in-RAM array (costs nothing).
+        self._ids = (np.memmap(ids_path, dtype=np.int32, mode="r")
+                     if os.path.getsize(ids_path) > 0 else np.empty(0, dtype=np.int32))
         self._offsets = offsets                  # np.int64 [n_passages + 1]
         self._i2w = i2w                          # list[str]
         self.max_len = int(max_len)
