@@ -72,6 +72,9 @@ from research.runners._emerge_wkv_lm_derisk import (
 )
 from research.runners._emerge_reservoir_lm_derisk import Vocab, fit_bigram
 from research.runners._emerge_reservoir_lm_context_depth_derisk import BUCKETS, _bucket
+from research.runners._ckpt_resume import (
+    IntraCellCheckpoint, RunProgress, install_term_handlers, config_hash,
+)
 
 OUT = Path("research/findings/raw/_gen_cortex_token_supply_scaling.json")
 DEEP = "10-99"                                # the deep-context bucket = the long-range generation regime
@@ -119,7 +122,7 @@ def _generate(net, vocab, V, device, seed, n=40, temp=0.8):
     return outs
 
 
-def run_seed(seed, sents, args, capture_gen=False):
+def run_seed(seed, sents, args, capture_gen=False, progress=None, ckpt_settings=None):
     rng = np.random.default_rng(seed)
     idx = rng.permutation(len(sents)); cut = int(0.85 * len(sents))
     pool = [sents[i] for i in idx[:cut]]                        # FIXED train pool (nested prefixes drawn from here)
@@ -135,11 +138,32 @@ def run_seed(seed, sents, args, capture_gen=False):
     device = "cuda" if torch.cuda.is_available() else "cpu"
     wkv_args = _mk_args(args.d_model, args.epochs, args.vocab, args.batch)
 
+    # top token point actually reachable for this seed's pool (used for cell-skip + gen-sample capture below)
+    top_k = max((p for p in args.token_points if p <= len(pool)), default=None)
+    # CELL-RESUME stale-pool guard: if a stored seed entry was built from a DIFFERENT eval set (pool changed under the
+    # same global config-hash), its cells are not comparable -> drop it and recompute this seed cleanly.
+    if progress is not None:
+        _se = progress.seed_entry(seed)
+        if _se is not None and _se.get("eval_ids_sha") not in (None, ev_sha):
+            print(f"  [seed {seed}] progress eval_ids_sha mismatch -> dropping stale stored cells for this seed", flush=True)
+            progress.drop_seed(seed)
+
     seed_gen = None
     points = []
     for k in args.token_points:
         if k > len(pool):
             continue
+        # CELL-LEVEL SKIP (resume): a cell whose result is already durably recorded is not recomputed.
+        if progress is not None:
+            _done = progress.cell_done(seed, k)
+            if _done is not None:
+                points.append(_done)
+                if capture_gen and k == top_k:
+                    _se = progress.seed_entry(seed)
+                    if _se is not None and _se.get("gen_samples_top_point") is not None:
+                        seed_gen = _se["gen_samples_top_point"]
+                print(f"  [seed {seed}] k={k:>6} SKIP (cell already complete in progress sidecar)", flush=True)
+                continue
         tr = pool[:k]                                          # NESTED prefix = the ONLY thing that changes
         tr_ids = [vocab.ids(s) for s in tr]
         n_tok = int(sum(len(t) for t in tr_ids))
@@ -149,8 +173,19 @@ def run_seed(seed, sents, args, capture_gen=False):
         tri, lambdas = fit_interp_trigram(tr_ids, V, dev_ids)
 
         t0 = time.time()
-        net, WKV_cls = build_and_train_wkv(tr_ids, V, seed, wkv_args, device, init_emb=None)
-        is_top_point = (k == max(p for p in args.token_points if p <= len(pool)))
+        # INTRA-CELL CHECKPOINT (pause/resume the ~2.5h cell). None => build_and_train_wkv runs its byte-identical
+        # original path. Keyed by (seed, token_point, d_model) + a per-cell config hash so a resume only ever
+        # continues a byte-for-byte identical cell.
+        cell_ckpt = None
+        if ckpt_settings is not None and ckpt_settings["enabled"]:
+            _cell_cfg = dict(ckpt_settings["global_cfg"])
+            _cell_cfg.update({"seed": seed, "token_point": k, "n_tokens": n_tok})
+            cell_ckpt = IntraCellCheckpoint(
+                ckpt_settings["ckpt_dir"], seed, k, args.d_model, config_hash(_cell_cfg),
+                every_steps=ckpt_settings["every_steps"], every_seconds=ckpt_settings["every_seconds"],
+                enabled=True, fresh=ckpt_settings["fresh"])
+        net, WKV_cls = build_and_train_wkv(tr_ids, V, seed, wkv_args, device, init_emb=None, ckpt=cell_ckpt)
+        is_top_point = (k == top_k)
         if capture_gen and is_top_point:
             seed_gen = _generate(net, vocab, V, device, seed)
         # final train loss (overfit disclosure) — one teacher-forced pass over a bounded train sample
@@ -209,6 +244,16 @@ def run_seed(seed, sents, args, capture_gen=False):
               f"| ctx={'ok' if uses_context else 'NO'} tri={'beat' if beats_trigram else 'lose'} "
               f"({points[-1]['elapsed_s']}s)", flush=True)
 
+        # CELL COMPLETE: record the result durably (sidecar write) BEFORE clearing the intra-cell checkpoint, so a
+        # kill between the two leaves the cell recoverable (marked done) rather than orphaning it.
+        if progress is not None:
+            _seed_meta = {"V": V, "active_params": active_params, "eval_ids_sha": ev_sha,
+                          "vocab_sha": vocab_sha, "n_eval": len(ev_ids)}
+            _gen = seed_gen if (capture_gen and k == top_k) else None
+            progress.record_cell(seed, k, points[-1], seed_meta=_seed_meta, gen_samples=_gen)
+        if cell_ckpt is not None:
+            cell_ckpt.clear()
+
     # per-seed lever signals
     seed_out = {"V": V, "active_params": active_params, "eval_ids_sha": ev_sha, "vocab_sha": vocab_sha,
                 "n_eval": len(ev_ids), "points": points}
@@ -243,6 +288,21 @@ def main():
                     default=[4000, 8000, 16000, 32000, 64000])
     ap.add_argument("--smoke", action="store_true", help="fast 1-seed 2-point sanity check")
     ap.add_argument("--json", type=str, default=str(OUT))
+    # ---- CHECKPOINT-RESUME (default-ON safety; existing callers behave identically except for the resume safety) ----
+    ap.add_argument("--checkpoint-every-steps", dest="checkpoint_every_steps", type=int, default=500,
+                    help="intra-cell checkpoint cadence in optimizer steps (0 disables the step trigger). Default 500 "
+                         "-> ~a few minutes at this runner's launch-bound sequential-recurrence throughput.")
+    ap.add_argument("--checkpoint-every-seconds", dest="checkpoint_every_seconds", type=float, default=300.0,
+                    help="additional wall-clock checkpoint cadence in seconds (0 disables). Belt-and-suspenders so a "
+                         "slow-step cell still checkpoints within a few minutes regardless of step throughput.")
+    ap.add_argument("--ckpt-dir", dest="ckpt_dir", type=str, default="",
+                    help="directory for intra-cell checkpoints (default: alongside --json, '<json-stem>_ckpt'). The "
+                         "cell-progress sidecar is always '<json>.progress.json'.")
+    ap.add_argument("--no-checkpoint", dest="no_checkpoint", action="store_true",
+                    help="disable ALL resume machinery (no sidecar, no intra-cell checkpoints) -> byte-identical to the "
+                         "pre-checkpoint runner. Existing behavior on demand.")
+    ap.add_argument("--fresh", dest="fresh", action="store_true",
+                    help="ignore + delete any existing progress sidecar / intra-cell checkpoints and start clean.")
     args = ap.parse_args()
 
     if args.smoke:
@@ -261,9 +321,43 @@ def main():
     sents = load_stories(args.corpus, args.n_sentences, max_len=args.max_len)   # contiguous passages (clean token count)
     print(f"[gen-cortex] loaded {len(sents)} contiguous passages from {args.corpus}", flush=True)
 
+    # ---- CHECKPOINT-RESUME setup (correctness-critical; see research/runners/_ckpt_resume.py) ----------------------
+    # A GLOBAL config hash covers everything that would invalidate ALL cells (NOT the seeds/token_points lists, so a
+    # subset/superset rerun still reuses matching cells). The wkv training hyperparams come from _mk_args, the single
+    # source of truth used inside run_seed. Auto-resume is ON by default (safe: a checkpoint only ever resumes an
+    # identical config); --no-checkpoint restores the pre-checkpoint behavior exactly, --fresh forces a clean start.
+    install_term_handlers()
+    _wa = _mk_args(args.d_model, args.epochs, args.vocab, args.batch)
+    _global_cfg = {
+        "runner": "_gen_cortex_token_supply_scaling_derisk", "ckpt_schema": 1,
+        "corpus": str(Path(args.corpus).resolve()), "d_model": args.d_model, "vocab": args.vocab,
+        "epochs": args.epochs, "batch": args.batch, "max_len": args.max_len, "n_sentences": args.n_sentences,
+        "max_eval_sents": args.max_eval_sents,
+        "lr": _wa.lr, "weight_decay": _wa.weight_decay, "n_layers": _wa.n_layers,
+        "recurrence": _wa.recurrence, "input": _wa.input, "uniform_decay": _wa.uniform_decay,
+        "freeze_emb": _wa.freeze_emb,
+    }
+    _global_hash = config_hash(_global_cfg)
+    _enabled = not args.no_checkpoint
+    _ckpt_dir = args.ckpt_dir or (str(Path(args.json).with_suffix("")) + "_ckpt")
+    _sidecar = str(args.json) + ".progress.json"
+    progress = RunProgress(_sidecar, _global_hash, enabled=_enabled, fresh=args.fresh)
+    ckpt_settings = {
+        "ckpt_dir": _ckpt_dir, "every_steps": args.checkpoint_every_steps,
+        "every_seconds": args.checkpoint_every_seconds, "enabled": _enabled, "fresh": args.fresh,
+        "global_cfg": _global_cfg,
+    }
+    if _enabled:
+        print(f"[ckpt] resume ON  sidecar={_sidecar}  ckpt_dir={_ckpt_dir}  "
+              f"every_steps={args.checkpoint_every_steps} every_seconds={args.checkpoint_every_seconds}"
+              f"{'  (FRESH: cleared prior state)' if args.fresh else ''}", flush=True)
+    else:
+        print("[ckpt] resume DISABLED (--no-checkpoint): byte-identical to the pre-checkpoint runner", flush=True)
+
     t0 = time.time(); per_seed = {}
     for si, seed in enumerate(args.seeds):
-        per_seed[str(seed)] = run_seed(seed, sents, args, capture_gen=(si == 0))
+        per_seed[str(seed)] = run_seed(seed, sents, args, capture_gen=(si == 0),
+                                       progress=progress, ckpt_settings=ckpt_settings)
 
     # ---- 6-seed aggregate verdict ----
     def agg(key):

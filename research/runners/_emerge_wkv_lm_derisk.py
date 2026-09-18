@@ -212,7 +212,11 @@ def build_ppmi_codes(tr_ids, V, d, window=5):
 
 
 # ------------------------------------------------------------------ the WKV LM (torch) --------------------------------
-def build_and_train_wkv(tr_ids, V, seed, args, device, init_emb=None):
+def build_and_train_wkv(tr_ids, V, seed, args, device, init_emb=None, ckpt=None):
+    # ckpt: optional research.runners._ckpt_resume.IntraCellCheckpoint for PAUSE/RESUME of a long training cell.
+    # When ckpt is None (the default, every existing caller) the training path below is BYTE-IDENTICAL to before this
+    # addition -- every ckpt branch is guarded by `if ckpt is not None`, and the loop bounds/init collapse to the
+    # original expressions (start_ep=0, start_i=0, plain rng.permutation each epoch). See _ckpt_resume.py.
     import torch, torch.nn as nn
     torch.manual_seed(seed)
     D = args.d_model
@@ -1628,10 +1632,38 @@ def build_and_train_wkv(tr_ids, V, seed, args, device, init_emb=None):
         fwd = torch.compile(net, mode="reduce-overhead")
         print(f"    [compile] torch.compile(reduce-overhead) ON  fixed_T={fixed_T}  batch={args.batch}  (static shape)", flush=True)
 
-    for ep in range(args.epochs):
-        order = rng.permutation(len(seqs))
-        _ep_loss = torch.zeros((), device=device); _ep_n = 0   # on-device accum -> ONE .item() sync per epoch (was per step)
-        for i in range(0, len(seqs), args.batch):
+    # ---- CHECKPOINT-RESUME wiring (additive; ckpt=None => the loop below is byte-identical to the original) ----------
+    # Restores model/optimizer/RNG/data-position from an intra-cell checkpoint so a paused (SIGTERM'd) long training
+    # cell CONTINUES from its last saved step instead of restarting. The load-bearing RNG is `rng` (drives the per-epoch
+    # `order`); it is restored to the state it held AFTER generating the interrupted epoch's order, and that epoch's
+    # `order` array is saved+reused verbatim, so every subsequent epoch's permutation matches an uninterrupted run.
+    _start_ep, _start_i, _resume_order = 0, 0, None
+    _resume_ep_loss, _resume_ep_n, _global_step = None, 0, 0
+    if ckpt is not None:
+        from research.runners._ckpt_resume import capture_rng, restore_rng
+        ckpt.bind(device, rng)
+        _st = ckpt.load()
+        if _st is not None:
+            net.load_state_dict(_st["model"]); opt.load_state_dict(_st["opt"])
+            restore_rng(_st["rng"], device, rng)
+            _start_ep = int(_st["ep"]); _start_i = int(_st["i"])
+            _resume_order = _st.get("order")
+            _resume_ep_loss = _st.get("ep_loss"); _resume_ep_n = int(_st.get("ep_n", 0) or 0)
+            _global_step = int(_st.get("global_step", 0) or 0)
+            print(f"    [ckpt] RESUME cell from ep={_start_ep} batch_i={_start_i} global_step={_global_step} "
+                  f"(skipping {_global_step} already-done optimizer steps)", flush=True)
+
+    for ep in range(_start_ep, args.epochs):
+        if ckpt is not None and ep == _start_ep and _resume_order is not None:
+            order = np.asarray(_resume_order)              # reuse the EXACT data order of the interrupted epoch
+        else:
+            order = rng.permutation(len(seqs))
+        if ckpt is not None and ep == _start_ep and _resume_ep_loss is not None:
+            _ep_loss = torch.tensor(float(_resume_ep_loss), device=device); _ep_n = int(_resume_ep_n)
+        else:
+            _ep_loss = torch.zeros((), device=device); _ep_n = 0   # on-device accum -> ONE .item() sync per epoch (was per step)
+        _i0 = _start_i if (ckpt is not None and ep == _start_ep) else 0
+        for i in range(_i0, len(seqs), args.batch):
             idx_b = order[i:i+args.batch]
             if use_compile:
                 # gather a STATIC (batch, fixed_T) block; pad the final partial batch to a full `batch` with all-masked
@@ -1679,6 +1711,25 @@ def build_and_train_wkv(tr_ids, V, seed, args, device, init_emb=None):
             opt.zero_grad(); loss.backward(); opt.step()
             _ep_loss += causal_loss.detach(); _ep_n += 1      # reported mean_train_loss stays the CAUSAL
                                                                 # component only, for fair cross-config comparison
+            if ckpt is not None:
+                _global_step += 1
+                if ckpt.should_save(_global_step):
+                    # Save AFTER opt.step() (state is consistent) the position of the NEXT batch to run. Normalise an
+                    # end-of-epoch save to (ep+1, 0) so resume starts the next epoch with a fresh order (rng is already
+                    # past this epoch's permutation); otherwise save (ep, next_i) + this epoch's order + running loss.
+                    _next_i = i + args.batch
+                    if _next_i < len(seqs):
+                        _save = {"ep": ep, "i": _next_i, "order": order.tolist(),
+                                 "ep_loss": float(_ep_loss.detach().item()), "ep_n": _ep_n}
+                    else:
+                        _save = {"ep": ep + 1, "i": 0, "order": None, "ep_loss": 0.0, "ep_n": 0}
+                    _save.update({"model": net.state_dict(), "opt": opt.state_dict(),
+                                  "rng": capture_rng(device, rng), "global_step": _global_step})
+                    ckpt.save(_save, _global_step)
+                    if ckpt.term_requested_now():
+                        print(f"    [ckpt] SIGTERM/SIGINT -> saved cell checkpoint at ep={_save['ep']} i={_save['i']} "
+                              f"global_step={_global_step}; exiting cleanly for pause/resume", flush=True)
+                        ckpt.raise_exit()
         print(f"    [train] epoch {ep+1}/{args.epochs} mean_train_loss={(_ep_loss/max(1,_ep_n)).item():.4f}", flush=True)
     return net, WKV
 
