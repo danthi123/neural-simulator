@@ -19,8 +19,10 @@ echo "$cmd" | grep -qE '\bssh\b[^|;&]*(ubuntu|ec2-user|root)@' && exit 0
 # Must be an actual python execution...
 echo "$cmd" | grep -qE '(^|[^a-zA-Z_])(python[0-9.]*|\.venv/bin/python)([[:space:]]|$)' || exit 0
 
-# ...of a heavy full-brain runner in a LAUNCH form (module path, script path, or brain_chat call).
-HEAVY_LAUNCH='(-m[[:space:]]+research\.runners\.(onebrain_regression_battery|_onebrain_11organ_pool_flip_regression|load_bearing_fraction)|-m[[:space:]]+webapp\.server|onebrain_regression_battery\.py|_onebrain_11organ_pool_flip_regression\.py|load_bearing_fraction\.py|_rank2_integrated_loop[a-z_]*|brain_chat[[:space:]]*\()'
+# ...of a heavy full-brain runner in a MODULE-LAUNCH form (`-m research.runners.X` / `-m webapp.server` /
+# a brain_chat( call in python -c). Deliberately NOT the bare `X.py` path or a bare name, so grepping/reading
+# the runner FILE never trips this (the false-positive that kept blocking read-only inspection).
+HEAVY_LAUNCH='(-m[[:space:]]+research\.runners\.(onebrain_regression_battery|_onebrain_11organ_pool_flip_regression|load_bearing_fraction|_rank2_integrated_loop[a-z_]*)|-m[[:space:]]+webapp\.server|brain_chat[[:space:]]*\()'
 if echo "$cmd" | grep -qE "$HEAVY_LAUNCH"; then
   if ! echo "$cmd" | grep -q 'memcap\.sh'; then
     echo "⛔ memcap_guard: this LAUNCHES a memory-heavy full-brain runner WITHOUT a cap." >&2
