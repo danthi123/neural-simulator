@@ -92,3 +92,5 @@ Updated #221: integrated 38-faculty battery caught a da-mode engagement regressi
 
 ## 2026-09-17  onebrain flip ROOT CAUSE isolated (curiosity calibration)
 #221 re-synced: engagement offset fully root-caused to curiosity-organ per_neuron_ou_seed calibration mismatch (named fix); flip very likely landable post-fix. NOT a deep regression.
+## 2026-09-19  new-arc pivot
+reconciled: created new-arc task (keep LLM mouth + load-bearing-fraction #1 metric + 11-organ flip LANDED 8ee5e6817); de-prioritized #193 (spiking-mouth-fluency arc closed/superseded).
