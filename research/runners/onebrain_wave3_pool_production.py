@@ -55,7 +55,9 @@ from __future__ import annotations
 
 import os
 
-_WAVE3_POOL_DEFAULT_ON = True
+_WAVE3_POOL_DEFAULT_ON = False   # HELD 2026-09-19: flip was accidentally committed default-ON (69a92c0f5) before the
+                                 # cross-faculty no-regression battery passed (it OOM'd). Reverted to OFF pending the
+                                 # AWS battery; flip back to True only on all_pass. DR-1 6/6 + engagement-exact already hold.
 
 
 def wave3_pool_enabled() -> bool:
