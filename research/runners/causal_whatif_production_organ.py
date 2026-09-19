@@ -425,8 +425,12 @@ def get_organ(key=None, seed: int = 42) -> CausalWhatIfProductionOrgan:
     one seed would retrain the same shared evt slice sequentially."""
     org = _ORGANS.get(key)
     if org is None:
-        from research.runners.onebrain_wave2_pool_production import wave2_pool_enabled, get_wave2_pool
-        shared = get_wave2_pool(seed) if wave2_pool_enabled() else None
+        # ONE-BRAIN 11-ORGAN POOL (production default, `BRAIN_ONEBRAIN_WAVE3_POOL`) via the single routing point
+        # `get_merged_cortical_pool`: causal_whatif is first introduced in Wave 2 -> min_wave=2 (never the wave1 pool,
+        # which lacks its descriptors). None (all pool flags off, the escape) -> its own standalone bridge -> byte-
+        # identical to before the flip.
+        from research.runners.onebrain_wave3_pool_production import get_merged_cortical_pool
+        shared = get_merged_cortical_pool(seed, min_wave=2)
         org = CausalWhatIfProductionOrgan(seed=seed, shared=shared)
         _ORGANS[key] = org
     return org

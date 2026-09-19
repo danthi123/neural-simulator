@@ -833,9 +833,14 @@ def get_organ(seed: int = 42) -> ComprehensionProductionOrgan:
     bridge exactly as before (byte-identical). Mirrors the metacog pool-#2 shared-attach template."""
     global _ORGAN
     if _ORGAN is None:
-        from research.runners.onebrain_wave1_pool_production import wave1_pool_enabled, get_wave1_pool
-        if wave1_pool_enabled():
-            _ORGAN = ComprehensionProductionOrgan(seed=seed, shared=get_wave1_pool(seed))
+        # ONE-BRAIN 11-ORGAN POOL (production default, `BRAIN_ONEBRAIN_WAVE3_POOL`) WINS via the single routing point
+        # `get_merged_cortical_pool` (comprehension is in every pool -> min_wave=1): comprehension co-inhabits the ONE
+        # shared merged pool with every other wired cortical organ. None (wave3=0, the escape) -> fall through to the
+        # pre-existing ONE-BRAIN CROSS-EDGE path, then its own standalone bridge -> byte-identical to before the flip.
+        from research.runners.onebrain_wave3_pool_production import get_merged_cortical_pool
+        _pool = get_merged_cortical_pool(seed, min_wave=1)
+        if _pool is not None:
+            _ORGAN = ComprehensionProductionOrgan(seed=seed, shared=_pool)
         else:
             try:
                 from research.runners.onebrain_xedge_production import xedge_enabled, get_xedge_pool

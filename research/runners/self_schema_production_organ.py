@@ -179,8 +179,12 @@ def get_organ(seed: int = 42) -> SelfSchemaAuthorshipOrgan:
     branch (`onebrain_single_pool_production.single_pool_enabled`)."""
     global _ORGAN
     if _ORGAN is None:
-        from research.runners.onebrain_wave2_pool_production import wave2_pool_enabled, get_wave2_pool
-        shared = get_wave2_pool(seed) if wave2_pool_enabled() else None
+        # ONE-BRAIN 11-ORGAN POOL (production default, `BRAIN_ONEBRAIN_WAVE3_POOL`) via the single routing point
+        # `get_merged_cortical_pool`: self_schema is first introduced in Wave 2 -> min_wave=2 (never the wave1 pool,
+        # which lacks its descriptors). None (all pool flags off, the escape) -> its own standalone bridge -> byte-
+        # identical to before the flip.
+        from research.runners.onebrain_wave3_pool_production import get_merged_cortical_pool
+        shared = get_merged_cortical_pool(seed, min_wave=2)
         _ORGAN = SelfSchemaAuthorshipOrgan(seed=seed, shared=shared)
     return _ORGAN
 

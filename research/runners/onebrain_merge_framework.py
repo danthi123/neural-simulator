@@ -2061,10 +2061,14 @@ def _curiosity_modulator_cfg():
     """The single `curiosity` neuromodulator: from_novelty -> excitability_drive on group:ask (exactly the DR-1
     fill build_curiosity_bridge registers; rebuilt here so the read owns it locally on the pool bridge)."""
     from sim.neuromodulators import NeuromodulatorConfig, ModulatorTarget, ProductionRule
+    from research.runners._curiosity_seek_learn_onbridge_derisk import PROD_CURIOSITY_EXCIT_SENSITIVITY
     return NeuromodulatorConfig(
         name="curiosity", baseline=0.0, decay_tau_ms=50.0,
         concentration_min=0.0, concentration_max=5.0,
-        targets=[ModulatorTarget(target_type="excitability_drive", scope="group:ask", sensitivity=320.0)],
+        # PROD drive (2026-09-18 FAITHFUL/CALMER calibration): the pooled organ-read must use the SAME ASK
+        # drive as the standalone build, or the ON-vs-OFF engagement salience curve re-diverges.
+        targets=[ModulatorTarget(target_type="excitability_drive", scope="group:ask",
+                                 sensitivity=PROD_CURIOSITY_EXCIT_SENSITIVITY)],
         production_rules=[ProductionRule(rule_type="from_novelty", sensitivity=0.10)])
 
 

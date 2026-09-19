@@ -253,14 +253,19 @@ def get_organ(seed: int = 42) -> WorldModelProductionOrgan:
     co-inhabits with the surprise organ (ONE spiking bridge); OFF -> its own bridge exactly as today."""
     global _ORGAN
     if _ORGAN is None:
-        # ONE-BRAIN SINGLE-POOL merge (opt-in, `BRAIN_ONEBRAIN_SINGLE_POOL`, default-OFF) WINS when on: all 4 core
-        # organs co-inhabit ONE merge_organs pool. OFF -> the current pool-#1 pairwise path, byte-identical.
-        from research.runners.onebrain_single_pool_production import single_pool_enabled, get_single_pool
-        if single_pool_enabled():
-            shared = get_single_pool(seed)
-        else:
-            from research.runners.onebrain_merge_production import merge_enabled, get_merged_substrate
-            shared = get_merged_substrate(seed) if merge_enabled() else None
+        # ONE-BRAIN 11-ORGAN POOL (production default, `BRAIN_ONEBRAIN_WAVE3_POOL`) WINS: this organ co-inhabits the
+        # ONE shared merged pool with every other wired cortical organ (`get_merged_cortical_pool`, the single routing
+        # point). None (wave3=0, the escape) -> fall back to the SINGLE-POOL merge (default-ON) -> the pool-#1 pairwise
+        # path -> byte-identical to before the flip. world-model is in every pool -> min_wave=1.
+        from research.runners.onebrain_wave3_pool_production import get_merged_cortical_pool
+        shared = get_merged_cortical_pool(seed, min_wave=1)
+        if shared is None:
+            from research.runners.onebrain_single_pool_production import single_pool_enabled, get_single_pool
+            if single_pool_enabled():
+                shared = get_single_pool(seed)
+            else:
+                from research.runners.onebrain_merge_production import merge_enabled, get_merged_substrate
+                shared = get_merged_substrate(seed) if merge_enabled() else None
         _ORGAN = WorldModelProductionOrgan(seed=seed, shared=shared)
     return _ORGAN
 

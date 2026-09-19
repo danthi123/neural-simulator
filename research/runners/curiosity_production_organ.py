@@ -72,6 +72,7 @@ from research.runners._curiosity_seek_learn_onbridge_derisk import (
     W_WANT,
     W_SETTLE,
     WANT_FLOOR_HZ,
+    PROD_CURIOSITY_EXCIT_SENSITIVITY,
 )
 # reuse-by-import (scaffold-retirement backlog rank-10, 2026-09-05): the SAME Bogacz-Brown anti-Hebbian
 # familiarity projector (catalog D.04) the v320 gate (2026-06-11-familiarity-gate-v320-GO.md) and INTEGRATION
@@ -85,7 +86,31 @@ from research.runners.spiking_phasor_fhrr import phases_to_spikes, spikes_to_pha
 NOVEL_SIGNAL = 0.95     # an ABSTAIN: the brain holds NO answer -> a maximal epistemic gap (novel)
 FAMILIAR_SIGNAL = 0.0   # a held concept: no gap (the calibration low anchor)
 N_CONCEPTS = 4          # a tiny ASK organ (only the ASK pool's crave read is load-bearing here)
-N_READ_REPS = 4         # average the ASK-pool want over N reads (denoises the OU jitter; the read is drift-free)
+N_READ_REPS = 4         # reps per want-read (see _reset_ou_read_state: the OU is reset each rep, so reps are a
+#                         cheap robustness margin, not a denoiser -- the read is deterministic + drift-free)
+
+
+def _reset_ou_read_state(bridge):
+    """Reset the per-neuron OU stream to a DETERMINISTIC, co-residence-invariant clean start before a want-read.
+
+    The per-neuron OU draw (cfg.per_neuron_ou_seed) is `f(neuron_key, _ou_pn_step)` with neuron keys keyed on
+    (region NAME, within-region rank) -- co-residence-INVARIANT. But `_ou_pn_step` is a continuous counter, so the
+    OU realization during a want-read depends on HOW MANY steps the substrate was stepped before it (the settle
+    length + any prior reads), which DIFFERS between the standalone bridge (~370 neurons) and the merged pool
+    (~6000 neurons). That was the residual source of the ON(pooled)-vs-OFF(standalone) engagement-curve gap at the
+    intermediate raw points (want_novel matched byte-exactly, but the steep mid-curve diverged ~0.02-0.05). By
+    zeroing `_ou_pn_step` AND `cp_ou_current` at the start of each read rep, step k of the read uses OU draw
+    f(neuron_key, k) from a zero start -- a deterministic function of the ASK substrate + novelty ONLY, IDENTICAL
+    standalone-vs-pooled. This is consistent with the existing drift-free wash-out read (which already restores the
+    clean post-init neuron state + resets neuromodulator concentrations each rep); it extends that determinism to
+    the OU. Safe when OU/per-neuron-OU is not installed (the guards no-op). 2026-09-18 FAITHFUL/CALMER landing."""
+    try:
+        bridge._ou_pn_step = 0
+    except Exception:
+        pass
+    ou = getattr(bridge, "cp_ou_current", None)
+    if ou is not None:
+        ou[:] = 0.0
 
 # words stripped to expose the salient TOPIC the brain is curious about (a host language scaffold, like the
 # surprise organ's assertion extractor; the DECISION to ask is the spiking read, not this).
@@ -323,10 +348,34 @@ class CuriosityProductionOrgan:
     def _build_one(self, lesion: bool = False):
         from sim.backend import get_backend
         xp, _ = get_backend()
-        bk = {}
+        # ONE-BRAIN FLIP — FAITHFUL/CALMER curiosity calibration (2026-09-18, owner-approved). The STANDALONE
+        # build must (a) calibrate curiosity on an ASK pool whose per-neuron substrate + dynamic regime are
+        # IDENTICAL to the same organ's ASK slice inside the merged pool (so the ON-pooled vs OFF-standalone
+        # da-mode ENGAGEMENT signal `salience_of(raw).normalized` agrees at the INTERMEDIATE raw points, not
+        # just the calibration anchors), AND (b) sit at a DELIBERATE, physiological, on-spec operating point.
+        #   (1) per_neuron_ou_seed=True — aligns the OU background drive (co-residence-invariant, keyed on
+        #       (region, within-region rank)); the 2026-09-17 fix. Necessary, not sufficient.
+        #   (2) per_region_heterogeneity=True — aligns the SUBSTRATE: the pooled ASK slice is built under the
+        #       merge framework's name-keyed het seams, so its per-neuron firing thresholds + Izhikevich
+        #       param-het key on the region NAME "ask". This makes the standalone "ask" init arrays
+        #       BYTE-IDENTICAL to the pooled slice (thresholds/izh_a/b/C/d delta==0), so the normalized
+        #       engagement CURVE agrees ON-vs-OFF. (1)+(2) are genuine co-residence-alignment fixes.
+        #   (3) enable_homeostasis=False — adopt the PHYSIOLOGICAL homeostasis-free regime for the ASK pool
+        #       (the homeostasis-ON default gave want_novel ~125 Hz, a settle-homeostat ARTIFACT). The
+        #       reward-critic regions keep their validated homeostatic regime (build_curiosity_bridge masks
+        #       homeostasis onto the non-ASK regions only). The raw homeostasis-free rate (~15 Hz) is an
+        #       inherited accident BELOW the organ's WANT_FLOOR_HZ=18, so:
+        #   (4) curiosity_excit_sensitivity=PROD_CURIOSITY_EXCIT_SENSITIVITY — DELIBERATELY re-calibrate the ASK
+        #       drive so want_novel lands on-spec (~42 Hz: physiological, >2x the 18 Hz floor, ~240x the
+        #       familiar baseline). This is the owner's FAITHFUL/CALMER regime: neither the ~125 Hz artifact
+        #       nor the ~15 Hz accident, but a validated physiological operating point. Same value is used by
+        #       the pooled read (`_read_want_shared`) so ON==OFF holds by construction.
+        # The pooled read installs this SAME drive locally, so both arms calibrate identically.
+        bk = {"curiosity_excit_sensitivity": PROD_CURIOSITY_EXCIT_SENSITIVITY}
         if lesion:
             bk["curiosity_excit_sensitivity"] = 0.0   # remove the from_novelty -> ASK drive (load-bearing lesion)
-        bridge, cfg = build_curiosity_bridge(self.seed, N_CONCEPTS, **bk)
+        bridge, cfg = build_curiosity_bridge(self.seed, N_CONCEPTS, per_neuron_ou_seed=True,
+                                             per_region_heterogeneity=True, enable_homeostasis=False, **bk)
         idx_map = {n: xp.asarray(_idx(bridge, n)) for n in drives_regions}
         _settle(bridge, W_SETTLE)                      # clean post-init dynamic state (EMERGE-61 wash-out)
         snap0 = _snapshot_state(bridge)
@@ -378,6 +427,7 @@ class CuriosityProductionOrgan:
         vals = []
         for _ in range(N_READ_REPS):
             _restore_state(bridge, snap0)
+            _reset_ou_read_state(bridge)   # deterministic, co-residence-invariant OU (see helper docstring)
             bridge.core_config.current_novelty_signal = float(novelty)
             bridge.core_config.reward_learning_rate = 0.0
             spk = 0
@@ -435,6 +485,7 @@ class CuriosityProductionOrgan:
                 vals = []
                 for _ in range(N_READ_REPS):
                     _restore_state(b, snap0)
+                    _reset_ou_read_state(b)   # deterministic, co-residence-invariant OU (see helper docstring)
                     cfg.current_novelty_signal = float(novelty)
                     cfg.reward_learning_rate = 0.0
                     spk = 0
@@ -517,7 +568,10 @@ def _curiosity_modulator_cfg():
     return NeuromodulatorConfig(
         name="curiosity", baseline=0.0, decay_tau_ms=50.0,
         concentration_min=0.0, concentration_max=5.0,
-        targets=[ModulatorTarget(target_type="excitability_drive", scope="group:ask", sensitivity=320.0)],
+        # PROD drive (2026-09-18 FAITHFUL/CALMER calibration): the pooled read must use the SAME ASK drive as
+        # the standalone `_build_one` (`PROD_CURIOSITY_EXCIT_SENSITIVITY`) or ON-vs-OFF engagement re-diverges.
+        targets=[ModulatorTarget(target_type="excitability_drive", scope="group:ask",
+                                 sensitivity=PROD_CURIOSITY_EXCIT_SENSITIVITY)],
         production_rules=[ProductionRule(rule_type="from_novelty", sensitivity=0.10)])
 
 
@@ -533,8 +587,12 @@ def get_organ(seed: int = 42) -> CuriosityProductionOrgan:
     today (byte-identical) — mirrors the surprise/world-model/metacog/pragmatic single_pool branch."""
     global _ORGAN
     if _ORGAN is None:
-        from research.runners.onebrain_wave2_pool_production import wave2_pool_enabled, get_wave2_pool
-        shared = get_wave2_pool(seed) if wave2_pool_enabled() else None
+        # ONE-BRAIN 11-ORGAN POOL (production default, `BRAIN_ONEBRAIN_WAVE3_POOL`) via the single routing point
+        # `get_merged_cortical_pool`: curiosity is first introduced in Wave 2 -> min_wave=2 (never the wave1 pool,
+        # which lacks its descriptors). None (all pool flags off, the escape) -> its own standalone bridge -> byte-
+        # identical to before the flip.
+        from research.runners.onebrain_wave3_pool_production import get_merged_cortical_pool
+        shared = get_merged_cortical_pool(seed, min_wave=2)
         _ORGAN = CuriosityProductionOrgan(seed=seed, shared=shared)
     return _ORGAN
 

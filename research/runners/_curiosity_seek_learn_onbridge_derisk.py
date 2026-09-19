@@ -101,7 +101,9 @@ def build_curiosity_bridge(seed, n_concepts, *, n_per_cue=40, n_strio=60, n_rewa
                            gabab_prop=0.22, gabab_tau_decay=150.0, reward_learning_rate=0.30,
                            curiosity_prod_sensitivity=0.10,
                            curiosity_excit_sensitivity=320.0, curiosity_decay_tau=50.0,
-                           enable_heterogeneity=True, per_neuron_ou_seed=False):
+                           enable_heterogeneity=True, per_neuron_ou_seed=False,
+                           per_region_heterogeneity=False, enable_homeostasis=True,
+                           reward_critic_homeostasis=True):
     """One SimulationBridge holding BOTH the spiking-SNc RPE value critic (reward_us->snc<-striosome(GABA_B),
     cue->striosome PLASTIC) AND the ASK/curiosity pool driven by the `curiosity` neuromodulator (from_novelty
     -> excitability_drive on group:ask). Per-concept `cue` slices give disjoint credit assignment.
@@ -129,6 +131,37 @@ def build_curiosity_bridge(seed, n_concepts, *, n_per_cue=40, n_strio=60, n_rewa
     # (each ask neuron keyed on (region, within-region rank), not its absolute pool
     # index), which is what lets curiosity's organ-read close in a merged pool.
     cfg.per_neuron_ou_seed = bool(per_neuron_ou_seed)
+    # PER-REGION NAME-KEYED HETEROGENEITY (opt-in; default OFF -> byte-identical to the legacy
+    # global-RNG-order draw). ON -> the ASK pool's per-neuron firing thresholds + Izhikevich
+    # param-het (a/b/C/d) key on the region NAME (crc32) + within-region rank, exactly as the
+    # merge framework's `_base_config` seams do (per_region_threshold_heterogeneity +
+    # per_region_parameter_heterogeneity, global enable_parameter_heterogeneity OFF + the region's
+    # own enable_heterogeneity mask). This makes the ASK pool's threshold/dynamics distribution
+    # BUILD-PATH invariant: the standalone bridge's "ask" slice becomes byte-identical to the same
+    # organ's "ask" slice inside the merged pool (which uses these seams), NOT just co-residence-
+    # invariant. Without it, the standalone global draw and the pooled name-keyed draw give
+    # DIFFERENT per-neuron thresholds (max delta ~24 mV) -> a different novelty->firing sigmoid
+    # -> the ON-vs-OFF da-mode engagement offset the per_neuron_ou_seed fix alone did NOT close
+    # (finding 2026-09-18: OU was aligned but heterogeneity was not).
+    self_per_region_het = bool(per_region_heterogeneity)
+    # ENABLE_HOMEOSTASIS (opt-out; default True -> byte-identical to the legacy build / the DR-1 GO's
+    # original regime). Background: the ASK pool's threshold homeostat, running during the silent
+    # `_settle`, drove the ASK thresholds DOWN (idle neurons read as under-active) -> hyper-excitable ->
+    # want_novel ~125 Hz -- a settle-homeostat ARTIFACT, supraphysiological for an RS pyramidal (verified
+    # numpy A/B: enable_homeostasis toggles the ~8x, 126.56 -> ~14 Hz, conductance-noise inert). The
+    # merged pool inherits homeostasis-OFF from its frozen-forward co-residents (NOT a designed choice),
+    # which yields want_novel ~15 Hz -- physiological, but an inherited accident and BELOW the organ's own
+    # WANT_FLOOR_HZ=18 candidate floor.
+    #   enable_homeostasis=False (the FAITHFUL/CALMER production regime, owner-approved 2026-09-18): the
+    #   ASK pool ships homeostasis-FREE (physiological), with the ASK drive DELIBERATELY re-calibrated
+    #   (`PROD_CURIOSITY_EXCIT_SENSITIVITY`) so want_novel is on-spec (~42 Hz > the 18 Hz floor, ~240x the
+    #   familiar baseline). The reward-critic regions (cue/striosome_value/reward_us/snc) KEEP their
+    #   validated homeostatic regime, so the SNc-RPE value critic is unchanged -- only the engagement-
+    #   bearing ASK pool's regime is changed. Engine masking: global cfg.enable_homeostasis WINS when True
+    #   (all neurons homeostat; the per-region mask is ignored), so running ONLY the ASK pool homeostasis-
+    #   free requires global OFF + opting every NON-ASK region into the mask (done after brain_regions,
+    #   below). See finding 2026-09-18 (the calibrated-regime landing).
+    cfg.enable_homeostasis = bool(enable_homeostasis)
     cfg.dt_ms = 1.0
     cfg.num_traits = 1
     cfg.neuron_model_type = NeuronModel.IZHIKEVICH.name
@@ -141,6 +174,13 @@ def build_curiosity_bridge(seed, n_concepts, *, n_per_cue=40, n_strio=60, n_rewa
     cfg.enable_short_term_plasticity = False
     cfg.enable_structural_plasticity = False
     cfg.enable_parameter_heterogeneity = bool(enable_heterogeneity)
+    if self_per_region_het:
+        # match the merge framework's `_base_config`: global param-het OFF, per-region name-keyed
+        # threshold + param-het ON (the mask below opts every region in). Byte-identical to the
+        # pooled ASK slice, whose seams are exactly these.
+        cfg.enable_parameter_heterogeneity = False
+        cfg.per_region_threshold_heterogeneity = True
+        cfg.per_region_parameter_heterogeneity = True
     cfg.reward_learning_rate = float(reward_learning_rate)
     cfg.current_reward_signal = 0.0
     cfg.reward_baseline = 0.0
@@ -211,6 +251,22 @@ def build_curiosity_bridge(seed, n_concepts, *, n_per_cue=40, n_strio=60, n_rewa
             production_rules=[ProductionRule(rule_type="from_novelty",
                                              sensitivity=float(curiosity_prod_sensitivity))]),
     ]
+    if self_per_region_het:
+        # opt every region into the per-region name-keyed het mask (mirrors the merge framework
+        # setting rg.enable_heterogeneity=True on a param_het organ's regions). The name-keyed
+        # draw then applies to these regions ONLY (global flag is OFF), keyed on region NAME.
+        for _rg in cfg.brain_regions:
+            _rg.enable_heterogeneity = True
+    if not enable_homeostasis and reward_critic_homeostasis:
+        # FAITHFUL/CALMER regime (reward_critic_homeostasis=True, default): the ASK pool ships homeostasis-FREE,
+        # but the reward-critic regions KEEP their validated homeostatic regime. Because global
+        # cfg.enable_homeostasis is OFF (set above), the engine builds a per-region homeostasis mask from
+        # regions with enable_homeostasis=True; opting in every NON-ASK region masks homeostasis ONTO the reward
+        # critic and OFF the ASK pool. (reward_critic_homeostasis=False -> leave global OFF for ALL regions,
+        # exactly matching the merged pool's global homeostasis-off config.)
+        for _rg in cfg.brain_regions:
+            if _rg.name != "ask":
+                _rg.enable_homeostasis = True
     bridge = SimulationBridge(core_config=cfg, viz_config=VisualizationConfig(),
                               runtime_state=RuntimeState(), gpu_config=GPUConfig())
     bridge.runtime_state.max_delay_steps = int(cfg.max_synaptic_delay_ms / cfg.dt_ms)
@@ -336,7 +392,46 @@ ASK_BUDGET = 30
 NOVEL_THRESH = 0.35
 EPS = 0.10
 OBS_NOISE = 0.70
-WANT_FLOOR_HZ = 18.0         # a concept is drive-active (candidate) iff its spiking wanting exceeds this
+WANT_FLOOR_HZ = 18.0         # legacy ABSOLUTE candidate floor (kept for the production organ's degenerate
+#                              fallback + as the FRAC derivation anchor); run()'s candidate gate uses the
+#                              REGIME-INVARIANT floor below instead.
+# ── REGIME-INVARIANT candidate floor (2026-09-18) ────────────────────────────────────────────────────────────
+# THE BUG the absolute 18 Hz hid (found re-validating the FAITHFUL/CALMER regime): "a concept is drive-active
+# (candidate) iff its want exceeds the floor" is a statement RELATIVE to the ASK pool's own want dynamic range,
+# but 18 Hz implicitly encoded the homeostasis-ON operating point (want_fam~5.2, want_novel~126.6 -> 18 is 10.5%
+# of that span). In the homeostasis-FREE production regime the want range is compressed (want_fam~0,
+# want_novel~40), so a HALF-LEARNED concept (true gap~0.5) reads want~8 Hz -> BELOW an absolute 18 -> real never
+# re-asks it -> it stalls at conf~0.47 (just under the 0.5 mastery line) -> real masters 0/8 and the yoked-
+# collapse gate (real>>yoked) fails, NOT because reward-dependence broke (SNc-RPE/veto pass 6/6) but because the
+# floor was mis-scaled. Fix: scale the floor to the SAME want span the organ calibrates on, as a fraction of
+# (want_novel - want_familiar). FRAC = 0.105 reproduces the historical 18 Hz at the homeostasis-ON anchors
+# ((18-5.2)/(126.6-5.2)=0.105) and gives ~4 Hz in the homeostasis-free regime -> real re-asks half-learned
+# concepts and masters 8/8, while a mastered concept (gap<0.5, want~2) still falls below it. Regime-invariant by
+# construction, so the default (homeostasis-ON) DR-1 GO is unchanged and the production regime is fixed.
+WANT_FLOOR_FRAC = 0.105
+# Minimum drive-induced INCREMENT above the familiar baseline (2026-09-18): the fractional term is span-relative,
+# so in the LESION control (curiosity drive = 0 -> no drive at ANY novelty -> span ~0) it vanishes, and a
+# candidate must still be required to exceed its OWN un-driven baseline by a clear margin or a silent pool asks
+# on OU noise alone (lesion must ask NOTHING). It is an INCREMENT (added to wf, the max is INSIDE), so it works
+# even when the baseline itself is high (homeostasis-ON lowers thresholds -> a high silent-pool rate). Measured:
+# the increment between two silent-pool reads is OU noise ~<=3 Hz; a once-asked half-learned concept drives ~+8
+# Hz above baseline. 5 Hz (~2x the noise) binds ONLY when the span degenerates (lesion); a driven regime's
+# fractional increment dominates (~12 homeostasis-ON, ~4-5 homeostasis-free).
+WANT_FLOOR_MIN_HZ = 5.0
+# ── PRODUCTION curiosity ASK calibration (2026-09-18, FAITHFUL/CALMER regime; owner-approved) ────────────────
+# The production curiosity organ ships the ASK pool homeostasis-FREE (physiological; the homeostasis-ON default
+# gave want_novel ~125 Hz -- a settle-homeostat artifact, supraphysiological for an RS pyramidal). Under the
+# homeostasis-free regime the raw drive (320) gives want_novel ~15 Hz -- physiological but BELOW WANT_FLOOR_HZ.
+# So the ASK drive is DELIBERATELY re-calibrated to place want_novel at an on-spec operating point: ~42 Hz --
+# physiological for an engaged RS pyramidal pool, ~2.3x above the 18 Hz candidate floor (robust margin), and
+# ~240x above the ~0.17 Hz familiar baseline (unambiguous, noise-robust curious/incurious decision). Chosen by
+# numpy calibration sweep (sens 320->15.5, 500->42.0, 650->57.3, ...). The FORK "re-tune floor vs raise drive"
+# was resolved toward RAISING THE DRIVE: the floor (18) is the organ's validated decision criterion (lowering it
+# to fit ~15 Hz leaves near-zero margin over the familiar baseline -> fragile); the DRIVE is the substantive
+# coupling gain, and the homeostasis-ON regime's apparent-high drive was itself the artifact, so restoring a
+# physiological drive is the principled compensation. Single source of truth for all three curiosity-drive sites
+# (standalone `_build_one`, pooled `_read_want_shared`, merge-verify `_curiosity_modulator_cfg`).
+PROD_CURIOSITY_EXCIT_SENSITIVITY = 500.0
 SNC_TONIC_PA = 220.0
 CUE_DRIVE_PA = 600.0
 US_GAIN_PA = 2400.0          # reward_us drive per unit learning-progress (LP in [0, ~1])
@@ -373,7 +468,7 @@ BETA_STRIO = 0.55            # TD rate low-passing the spiking striosome value r
 
 
 def run(seed, mode, *, n_learn=N_LEARN, n_noisy=N_NOISY, n_turns=N_TURNS, ask_budget=ASK_BUDGET,
-        d=D, verbose=False, spiking_veto=False, **build_kw):
+        d=D, verbose=False, spiking_veto=False, want_floor=None, **build_kw):
     from sim.backend import get_backend
     xp, _ = get_backend()
     rng = np.random.default_rng(seed * 101 + 5)
@@ -436,6 +531,24 @@ def run(seed, mode, *, n_learn=N_LEARN, n_noisy=N_NOISY, n_turns=N_TURNS, ask_bu
             spk += int(bridge.cp_firing_states[ask_idx].sum())
         cfg.reward_learning_rate = saved
         return spk / max(n_ask, 1) / (W_WANT * 1e-3)
+
+    # REGIME-INVARIANT candidate floor (2026-09-18): scale WANT_FLOOR to THIS bridge's own want span (a fraction
+    # of novel-vs-familiar), so a half-learned concept stays a candidate whether the ASK pool runs homeostasis-ON
+    # (want span ~5..126) or homeostasis-FREE (~0..40). read_want ignores its concept arg (the ASK pool is shared,
+    # driven only by current_novelty_signal), so 0 is a placeholder. See WANT_FLOOR_FRAC.
+    if want_floor is None:
+        # REGIME-INVARIANT candidate floor: familiar baseline PLUS a minimum drive-induced increment (a fraction
+        # of the novel-vs-familiar span, or a small absolute margin). Computed from THIS bridge's DRIVEN anchors,
+        # so it scales to the regime (~18 homeostasis-ON with want span ~5..126, ~6-7 homeostasis-free ~0..40).
+        _wf_anchor = read_want(0, 0.0)          # familiar (baseline / un-driven ASK firing)
+        _wn_anchor = read_want(0, 0.95)         # novel (maximal epistemic-gap drive)
+        want_floor = float(_wf_anchor + max(WANT_FLOOR_FRAC * max(_wn_anchor - _wf_anchor, 0.0), WANT_FLOOR_MIN_HZ))
+    else:
+        # A caller (evaluate, for the LESION control) supplies the DRIVEN floor: with the curiosity drive removed
+        # (sensitivity=0) this bridge's own anchors are BOTH the silent baseline (span ~0) -> a self-computed floor
+        # would sit at that baseline and, as the homeostat drifts the silent pool up, admit spurious candidates.
+        # Using the real arm's driven floor makes the lesion arm ask NOTHING (its silent want stays below it).
+        want_floor = float(want_floor)
 
     snc_idx = idx_map["snc"]; n_snc = len(_host(snc_idx))
 
@@ -520,7 +633,7 @@ def run(seed, mode, *, n_learn=N_LEARN, n_noisy=N_NOISY, n_turns=N_TURNS, ask_bu
         not_vetoed = ((lambda c: Vstrio[c] > strio_veto_floor) if spiking_veto
                       else (lambda c: ELP[c] > VALUE_THRESH))
         cands = [c for c in concepts
-                 if gate_gap[c] > NOVEL_THRESH and want[c] > WANT_FLOOR_HZ and not_vetoed(c)]
+                 if gate_gap[c] > NOVEL_THRESH and want[c] > want_floor and not_vetoed(c)]
         if not cands:
             continue
 
@@ -629,12 +742,15 @@ def run(seed, mode, *, n_learn=N_LEARN, n_noisy=N_NOISY, n_turns=N_TURNS, ask_bu
         "late_learnable_frac": late_learnable_frac, "learnable_mastered": learnable_mastered,
         "mean_LP_learn": mean_LP_learn, "mean_LP_noisy": mean_LP_noisy,
         "snc_learn_hz": snc_learn_hz, "snc_noisy_hz": snc_noisy_hz, "moat_ok": bool(moat_ok),
+        "want_floor": float(want_floor),
     }
 
 
 def evaluate(seed, *, spiking_veto=False, **kw):
     real = run(seed, "real", spiking_veto=spiking_veto, **kw)
-    lesion = run(seed, "lesion", spiking_veto=spiking_veto, **kw)
+    # the LESION control removes the drive -> its own want anchors degenerate to the silent baseline; gate its
+    # candidates with the REAL arm's DRIVEN floor so a genuinely silent pool asks nothing (2026-09-18).
+    lesion = run(seed, "lesion", spiking_veto=spiking_veto, want_floor=real["want_floor"], **kw)
     yoked = run(seed, "yoked", spiking_veto=spiking_veto, **kw)
     permuted = run(seed, "permuted", spiking_veto=spiking_veto, **kw)
 
@@ -679,11 +795,17 @@ def main():
     ap.add_argument("--spiking-veto", action="store_true",
                     help="convert the noisy-veto from the host ELP tracker to the SPIKING striosome value read; "
                          "adds the critic-lesion-COLLAPSES-veto dissociation to the GO (2026-08-01, additive)")
+    ap.add_argument("--production-regime", action="store_true",
+                    help="re-validate the SHIPPED FAITHFUL/CALMER curiosity calibration (2026-09-18): the ASK pool "
+                         "runs homeostasis-FREE (reward critic keeps its validated homeostatic regime) + "
+                         "per_region_heterogeneity + per_neuron_ou_seed + the calibrated ASK drive "
+                         "(PROD_CURIOSITY_EXCIT_SENSITIVITY). This is the regime production actually ships, so a GO "
+                         "here validates what ships (the legacy default regime is homeostasis-ON, drive 320).")
     ap.add_argument("--out", default=None)
     a = ap.parse_args()
     if a.out is None:
-        a.out = ("research/findings/raw/_curiosity_seek_learn_onbridge_spikingveto.json" if a.spiking_veto
-                 else "research/findings/raw/_curiosity_seek_learn_onbridge.json")
+        _suffix = ("_spikingveto" if a.spiking_veto else "") + ("_prodregime" if a.production_regime else "")
+        a.out = f"research/findings/raw/_curiosity_seek_learn_onbridge{_suffix}.json"
     try:
         sys.stdout.reconfigure(encoding="utf-8", errors="replace")
     except Exception:
@@ -692,6 +814,11 @@ def main():
     kw = {}
     if a.smoke:
         kw = dict(n_learn=3, n_noisy=2, n_turns=90, ask_budget=14, d=512)
+    if a.production_regime:
+        # the exact shipped ASK regime (single source of truth: PROD_CURIOSITY_EXCIT_SENSITIVITY + the
+        # homeostasis-free/per-region/per-neuron-OU seams `curiosity_production_organ._build_one` passes).
+        kw.update(per_neuron_ou_seed=True, per_region_heterogeneity=True, enable_homeostasis=False,
+                  curiosity_excit_sensitivity=PROD_CURIOSITY_EXCIT_SENSITIVITY)
 
     from sim.backend import get_backend
     _, backend = get_backend()
