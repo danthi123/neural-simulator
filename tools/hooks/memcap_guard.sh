@@ -13,6 +13,9 @@ set -uo pipefail
 cmd=$(jq -r '.tool_input.command // ""' 2>/dev/null || echo "")
 [ -z "$cmd" ] && exit 0
 
+# Remote execution (ssh to a cloud instance) runs on the REMOTE box, not this one -> no local OOM -> exempt.
+echo "$cmd" | grep -qE '\bssh\b[^|;&]*(ubuntu|ec2-user|root)@' && exit 0
+
 # Must be an actual python execution...
 echo "$cmd" | grep -qE '(^|[^a-zA-Z_])(python[0-9.]*|\.venv/bin/python)([[:space:]]|$)' || exit 0
 
