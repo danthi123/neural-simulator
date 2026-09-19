@@ -110,7 +110,12 @@ the capability (fluent grounded honest conversation). **The moment the brain's f
 the reply, the LLM becomes the cognizer and we are an LLM-plausible-text system wearing a brain — the exact thing
 the project was founded to reject.** That is why §4's metric is load-bearing, and why §5.4 is a hard gate.
 
-## 7. Owner ratifications needed
-- ⚖️ **Accept Qwen as the permanent conditioned-articulation mouth** (close the spiking-mouth-fluency arc), or keep
-  it open as a long-shot.
-- ⚖️ **Adopt "load-bearing fraction" as the new #1 metric** in place of "% scaffold_retired."
+## 7. Owner ratifications — BOTH RATIFIED 2026-09-19
+- ✅ **RATIFIED: Qwen is the permanent conditioned-articulation mouth** — the spiking-mouth-to-fluency arc is CLOSED
+  as falsified (banked method, not abandoned capability).
+- ✅ **RATIFIED: "load-bearing fraction" is the new #1 metric** in place of "% scaffold_retired."
+
+This is now the ACTIVE arc. Immediate build order: (a) build the load-bearing-fraction instrument (lesion-verified,
+reusing the regression-battery per-faculty probe infra); (b) re-instrument the ledger (ACCEPTED vs real-work split);
+(c) close the two faculty-drive gaps (affect-hollow-live + the curiosity-calibration flip, validating this session)
+as the HARD GATE. Heavy runs go via tools/memcap.sh; no long local runs while the owner games.

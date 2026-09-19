@@ -13,7 +13,41 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ---
 
-## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-18 ~11:00 (RESUME HERE; owner resumed → decisive d384 training RUNNING on GPU; onebrain-flip re-calibration in flight on CPU)
+## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-19 (RESUME HERE) — NEW ARC: PERMANENT LLM MOUTH + LOAD-BEARING METRIC
+
+**OWNER-RATIFIED 2026-09-19 (both):** (1) **Qwen = PERMANENT conditioned-articulation mouth** — the
+spiking-mouth-to-fluency arc is CLOSED as falsified (decisive extended-d384 = NO-GO-CAPACITY-SATURATED; raw
+scale + architecture + data all falsified). The mouth was NEVER the bottleneck. (2) **NEW #1 METRIC =
+lesion-verified LOAD-BEARING FRACTION** (% of production faculties where lesioning the brain provably changes the
+reply), REPLACING "% scaffold_retired". Full roadmap: docs/plans/2026-09-19-roadmap-with-a-permanent-llm-mouth.md.
+Memory: project_2026_09_19_permanent_llm_mouth_loadbearing_metric.
+
+**ACTIVE BUILD ORDER (the new arc):**
+1. Build the **load-bearing-fraction instrument** (lesion each faculty's brain contribution + check the reply
+   changes; reuse the regression-battery per-faculty probe infra). Agent in flight.
+2. Re-instrument the ledger: split BLOCKED:neural-render rows into "content brain-driven → ACCEPTED" vs "content
+   still host → real work."
+3. **HARD GATE:** close the two faculty-drive gaps — affect-hollow-on-live-mouth (2026-09-04 NO-GO) + the
+   curiosity-calibration flip (validated DR-1 6/6 this session, needs the no-regression battery to LAND under
+   memcap). Until these pass lesion tests, the concession isn't "principled" yet.
+4. MID: retention architecture (heterosynaptic-depression arm + spiking CA3 replacing host np.mean replay);
+   breadth = curation. LONG (owner-gated): off-diagonal/dendritic-lateral decorrelation; the 3 unbuilt organs.
+STOP (falsified — do not re-attempt): scaling a spiking mouth to fluency · buying HW for fluency · prompt-only
+honesty · pure-potentiation BTSP.
+
+**OPS (2026-09-18 OOM fix, ENFORCED):** heavy/full-brain jobs run via `tools/memcap.sh <gb> --` (kernel cgroup
+cap) after `tools/mem_ok.sh <need>`; a PreToolUse guard (memcap_guard) BLOCKS uncapped full-brain runners. NEVER
+stack a heavy RAM job onto tight RAM. Landed 7c88f1091. Memory: feedback_memory_enforcement_memcap_no_oom.
+
+**IN-FLIGHT / PENDING (deferred to a non-gaming window — owner gaming soon, no long local runs):**
+- Flip no-regression battery UNDER memcap → LAND the flip (validated; the OOM'd run is why it's pending). Branch
+  research/onebrain-flip-land @ 4214d7900 (cherry-picked clean off main); flip changes staged in main's worktree.
+- 6-seed confirm of the decisive scaling NO-GO (was 1 seed) — via chunked-scan/TF32 speedup, AWS optional.
+- Chunked-scan+TF32 speedup landed on branch research/wkv-chunked-scan @ 21ab886b8 (verified byte-identical).
+
+*Everything below is prior-arc HISTORY.*
+
+## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-18 ~11:00 (owner resumed → decisive d384 training RUNNING on GPU; onebrain-flip re-calibration in flight on CPU)
 
 **North-star:** a genuinely-conversing, affective, self-aware ONE-brain via faithful biological emulation. **Owner strategic decisions this session (verbatim intent):** faithfulness-vs-tractability relaxation APPROVED (honesty-conditioned; invariants KEPT) · scaling gated on deep research → DONE, verdict = lever is DATA not raw scale, DON'T buy hardware yet (finding 9cf34f95, plan da146e4e) · continuous-learning-as-default AGREED · decisive scaling test approved to plan+implement, "just pause before starting the training."
 
