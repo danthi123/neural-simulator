@@ -55,9 +55,10 @@ from __future__ import annotations
 
 import os
 
-_WAVE3_POOL_DEFAULT_ON = False   # HELD 2026-09-19: flip was accidentally committed default-ON (69a92c0f5) before the
-                                 # cross-faculty no-regression battery passed (it OOM'd). Reverted to OFF pending the
-                                 # AWS battery; flip back to True only on all_pass. DR-1 6/6 + engagement-exact already hold.
+_WAVE3_POOL_DEFAULT_ON = True    # LANDED 2026-09-19: the 11-organ pool flip is validated at 3 levels — DR-1 6/6 under the
+                                 # faithful/calmer curiosity regime, engagement ON==OFF EXACT (salience max|Δ|=0.0000 at
+                                 # intermediate raw points), and the 38-faculty cross-faculty no-regression battery all_pass
+                                 # (0 regressed, run on AWS r7i to avoid the local OOM). This is the one-brain culmination.
 
 
 def wave3_pool_enabled() -> bool:
