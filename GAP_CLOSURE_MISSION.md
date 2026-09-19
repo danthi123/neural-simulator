@@ -39,9 +39,19 @@ honesty · pure-potentiation BTSP.
 cap) after `tools/mem_ok.sh <need>`; a PreToolUse guard (memcap_guard) BLOCKS uncapped full-brain runners. NEVER
 stack a heavy RAM job onto tight RAM. Landed 7c88f1091. Memory: feedback_memory_enforcement_memcap_no_oom.
 
-**IN-FLIGHT / PENDING (deferred to a non-gaming window — owner gaming soon, no long local runs):**
-- Flip no-regression battery UNDER memcap → LAND the flip (validated; the OOM'd run is why it's pending). Branch
-  research/onebrain-flip-land @ 4214d7900 (cherry-picked clean off main); flip changes staged in main's worktree.
+**✅ CULMINATION LANDED 2026-09-19 (8ee5e6817):** the 11-organ pool flip is DEFAULT-ON, validated 3 ways — DR-1
+curiosity 6/6 (faithful regime), engagement ON==OFF EXACT (0.0000), and the 38-faculty no-regression battery
+all_pass (0 regressed) run on AWS r7i (the local run OOM'd; AWS avoided it). Biggest single scaffold-retirement.
+NOTE: it was briefly accidentally committed default-ON (69a92c0f5, swept staged files) → reverted to OFF
+(15a8d347) → properly re-landed on all_pass. The MID hard-gate curiosity-flip item is now CLOSED; affect-hollow
+remains.
+
+**IN-FLIGHT / PENDING:**
+- Load-bearing-fraction instrument: BUILT but uncommitted in worktree (agent stopped mid-smoke when owner started
+  gaming); finalize + commit + run the full measurement (AWS or memcap) post-game.
+- 6-seed confirm of the decisive scaling NO-GO (lower priority now — owner ratified the verdict).
+- Chunked-scan+TF32 speedup on branch research/wkv-chunked-scan @ 21ab886b8 (verified byte-identical).
+- AWS: instance terminated; leftover SG sg-0d12677b1c8fc55be (free) to delete once termination completes.
 - 6-seed confirm of the decisive scaling NO-GO (was 1 seed) — via chunked-scan/TF32 speedup, AWS optional.
 - Chunked-scan+TF32 speedup landed on branch research/wkv-chunked-scan @ 21ab886b8 (verified byte-identical).
 
