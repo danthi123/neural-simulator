@@ -89,7 +89,7 @@ from research.runners.onebrain_regression_battery import (
     PROBE_TURNS,
     _TURN_BY_LABEL,
     FACULTY_PROBES,
-    _spawn_arm,
+    _spawn_arm as _spawn_arm_raw,
     compare,
     faculty_list,
 )
@@ -99,6 +99,22 @@ from research.runners.onebrain_regression_battery import (
 # REBUILD (same env, rebuilt). With the harness deterministic the null is 0 -> 100% of the change is the lesion; a
 # non-zero null means the "change" is partly run-to-run noise and the load-bearing verdict is NOT clean.
 from tools.lab import attributable_to
+
+# RESUME-SKIP (opt-in, env-gated; default OFF -> byte-identical to a fresh run). When LB_RESUME_SKIP_EXISTING is set,
+# an arm whose output file already exists AND parses as valid JSON is LOADED instead of rebuilt -- correct because
+# _spawn_arm_raw's return value IS `json.load(open(out_path))`, so a loaded arm is identical to a freshly-built one.
+# This makes a killed run resumable: the expensive per-faculty brain-builds are reused off disk; only missing or
+# truncated arms rebuild. A file truncated by a mid-write kill fails json.load -> falls through to a real rebuild.
+_LB_RESUME = os.environ.get("LB_RESUME_SKIP_EXISTING", "").strip().lower() in ("1", "true", "yes", "on")
+
+
+def _spawn_arm(env, turn_labels, out_path):
+    if _LB_RESUME and os.path.exists(out_path):
+        try:
+            return json.load(open(out_path))
+        except Exception:
+            pass  # truncated/corrupt (e.g. killed mid-write) -> rebuild
+    return _spawn_arm_raw(env, turn_labels, out_path)
 
 # A sentinel env var NOTHING reads — the null lesion. Setting it changes no brain behavior; used by the self-test to
 # confirm the instrument does NOT report a change when the "lesion" is a no-op (guards against a false-positive harness).
