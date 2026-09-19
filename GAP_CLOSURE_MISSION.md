@@ -22,14 +22,21 @@ lesion-verified LOAD-BEARING FRACTION** (% of production faculties where lesioni
 reply), REPLACING "% scaffold_retired". Full roadmap: docs/plans/2026-09-19-roadmap-with-a-permanent-llm-mouth.md.
 Memory: project_2026_09_19_permanent_llm_mouth_loadbearing_metric.
 
+**⭐ LATEST 2026-09-19 (late): LOAD-BEARING BASELINE LANDED — 16/26 = 0.615** (finding 2f16c88bc; artifact
+raw/_load_bearing/load_bearing_baseline.json). Deterministic, 28/28 null-controls clean (single seed 42;
+6-seed next for an error bar). 16 load-bearing; **10 HOLLOW (the actionable target set): episodic-memory,
+prospective-memory, surprise-monitor, discourse-register, open-ended-generation, common-ground,
+noncontradiction-gate, affect-coloring, da-gated-encoding, bg-action-selection** — memory first. 3-seed
+scaling confirm still running (GPU). Affect-hollow re-run deferred/serialized (worktree affect-loadbearing).
+
 **ACTIVE BUILD ORDER (the new arc):**
-1. Build the **load-bearing-fraction instrument** (lesion each faculty's brain contribution + check the reply
-   changes; reuse the regression-battery per-faculty probe infra). Agent in flight.
-2. Re-instrument the ledger: split BLOCKED:neural-render rows into "content brain-driven → ACCEPTED" vs "content
-   still host → real work."
-3. **HARD GATE:** close the two faculty-drive gaps — affect-hollow-on-live-mouth (2026-09-04 NO-GO) + the
-   curiosity-calibration flip (validated DR-1 6/6 this session, needs the no-regression battery to LAND under
-   memcap). Until these pass lesion tests, the concession isn't "principled" yet.
+1. ✅ DONE — load-bearing-fraction instrument BUILT (4cc764bde) + resumable (391a055d) + **BASELINE MEASURED
+   2026-09-19: 16/26 = 0.615** (see LATEST above). 6-seed for an error bar is the remaining rung.
+2. ⭐ NOW — Re-instrument the ledger to carry each faculty's load-bearing verdict (replace "% scaffold_retired"
+   as the headline); the 16/10 split above is the input.
+3. **HARD GATE:** close the faculty-drive gaps in the HOLLOW set — memory first (episodic + prospective are
+   hollow), then affect-coloring (affect-drives-response + affect-marker ALREADY load-bearing), then the rest.
+   Until a hollow faculty passes its lesion test, it isn't yet driving the reply.
 4. MID: retention architecture (heterosynaptic-depression arm + spiking CA3 replacing host np.mean replay);
    breadth = curation. LONG (owner-gated): off-diagonal/dendritic-lateral decorrelation; the 3 unbuilt organs.
 STOP (falsified — do not re-attempt): scaling a spiking mouth to fluency · buying HW for fluency · prompt-only
