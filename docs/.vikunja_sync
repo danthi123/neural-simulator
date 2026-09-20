@@ -97,3 +97,6 @@ reconciled: created new-arc task (keep LLM mouth + load-bearing-fraction #1 metr
 
 ## 2026-09-19  load-bearing baseline landed
 finding 2f16c88bc (16/26 = 0.615, first reading of the #1 metric). Created #225 (attack the 10 hollow faculties, memory first) labeled Memory; #224 epic stays open (measuring-first-reading rung done).
+
+## 2026-09-20  6-seed load-bearing landed
+6-seed (42/43/44/100/101/102) = mean 0.5897 std 0.0181; robust core 14, +2 borderline (affect-marker, source-provenance). Ledger headline.load_bearing_integrated updated; #225 refined. Finding 2026-09-20-load-bearing-fraction-6seed-0.59-robust-core-14.

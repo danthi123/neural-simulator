@@ -1,0 +1,77 @@
+{
+  "metric": "load_bearing_fraction_6seed",
+  "backend": "numpy",
+  "device": "cpu",
+  "host": "AWS r7i.4xlarge (us-east-1)",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "mean": 0.5897,
+  "std": 0.0181,
+  "min": 0.5769230769230769,
+  "max": 0.6153846153846154,
+  "per_seed": {
+    "42": {
+      "fraction": 0.5769230769230769,
+      "n_load_bearing": 15,
+      "n_exercised": 26,
+      "deterministic": true
+    },
+    "43": {
+      "fraction": 0.5769230769230769,
+      "n_load_bearing": 15,
+      "n_exercised": 26,
+      "deterministic": true
+    },
+    "44": {
+      "fraction": 0.5769230769230769,
+      "n_load_bearing": 15,
+      "n_exercised": 26,
+      "deterministic": true
+    },
+    "100": {
+      "fraction": 0.6153846153846154,
+      "n_load_bearing": 16,
+      "n_exercised": 26,
+      "deterministic": true
+    },
+    "101": {
+      "fraction": 0.6153846153846154,
+      "n_load_bearing": 16,
+      "n_exercised": 26,
+      "deterministic": true
+    },
+    "102": {
+      "fraction": 0.5769230769230769,
+      "n_load_bearing": 15,
+      "n_exercised": 26,
+      "deterministic": true
+    }
+  },
+  "robust_core_count": 14,
+  "robust_core": [
+    "affect-drives-response",
+    "comprehension-learned-animacy-cue",
+    "comprehension-learned-verb-selects",
+    "comprehension-monitor",
+    "confidence-forthcomingness",
+    "curiosity-followup",
+    "da-mode-drives-response",
+    "gnw-multistep-deliberation",
+    "metacog-monitor",
+    "pragmatic-implicature",
+    "reconsolidation",
+    "self-initiated-utterance",
+    "vision-identity-spiking-hmax",
+    "worldmodel-forward"
+  ],
+  "borderline_seed_dependent": [
+    "affect-marker-spiking-wta",
+    "source-provenance-honesty"
+  ]
+}

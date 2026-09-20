@@ -1,0 +1,13 @@
+6-SEED RESUME START Sun Sep 20 08:05:18 UTC 2026 (BLAS=2/proc, resume-skip ON, keeps prior progress)
+6-SEED DONE Sun Sep 20 14:31:06 UTC 2026
+== PER-SEED ==
+  seed 42: frac=0.5769  15/26  det=True
+  seed 43: frac=0.5769  15/26  det=True
+  seed 44: frac=0.5769  15/26  det=True
+  seed 100: frac=0.6154  16/26  det=True
+  seed 101: frac=0.6154  16/26  det=True
+  seed 102: frac=0.5769  15/26  det=True
+== AGGREGATE: n=6 mean=0.5897 std=0.0181 min=0.5769 max=0.6154
+  load-bearing in ALL 6 seeds (14): ['affect-drives-response', 'comprehension-learned-animacy-cue', 'comprehension-learned-verb-selects', 'comprehension-monitor', 'confidence-forthcomingness', 'curiosity-followup', 'da-mode-drives-response', 'gnw-multistep-deliberation', 'metacog-monitor', 'pragmatic-implicature', 'reconsolidation', 'self-initiated-utterance', 'vision-identity-spiking-hmax', 'worldmodel-forward']
+  seed-dependent (2): ['affect-marker-spiking-wta', 'source-provenance-honesty']
+6-SEED RESUME END Sun Sep 20 14:31:06 UTC 2026
