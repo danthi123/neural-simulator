@@ -76,6 +76,12 @@ the forced BTSP write is ~seconds not ~510s/store):
   SIM_BACKEND=cupy LB_EPISODIC_DRIVE_PROBE=1 tools/memcap.sh 24 -- .venv/bin/python \
       -m research.runners.load_bearing_fraction --only episodic-memory --repeats 2 \
       --out research/findings/raw/_load_bearing/episodic_drive.json     # expect load-bearing=1, null-control clean
+Verify the COMMON-GROUND DRIVING fix (default-off; flips common-ground-drives hollow->load-bearing; numpy is fine --
+the ledger self-pins SIM_BACKEND=numpy, so no cupy/forced-write is needed):
+  LB_CG_DRIVE_PROBE=1 tools/memcap.sh 24 -- .venv/bin/python \
+      -m research.runners.load_bearing_fraction --only common-ground-drives --repeats 2 \
+      --out research/findings/raw/_load_bearing/cg_drive.json     # expect load-bearing=1, null-control clean,
+      # common_ground_drives.decision reduce(intact) vs introduce(lesion) on the re-mention turn
 Run (full measurement, capped; defer to a non-gaming window):
   tools/memcap.sh 24 -- .venv/bin/python -m research.runners.load_bearing_fraction \
       --out research/findings/raw/_load_bearing/load_bearing.json
@@ -131,6 +137,29 @@ _LB_RESUME = os.environ.get("LB_RESUME_SKIP_EXISTING", "").strip().lower() in ("
 LB_EPISODIC_DRIVE = os.environ.get("LB_EPISODIC_DRIVE_PROBE", "").strip().lower() in ("1", "true", "yes", "on")
 _EPISODIC_DRIVE_TURN = "epi_recall"      # the referential RECALL turn (its group is store->recall, same session)
 _EPISODIC_DRIVE_ENV = {"BRAIN_EPISODIC_STORE": "1"}   # force the BTSP write to execute on the probe backend
+
+# ── COMMON-GROUND DRIVING PROBE (opt-in, env-gated; default OFF -> byte-identical to the 2026-09-19 hollow baseline) ─
+# WHY (diagnosis, finding 2026-09-20-hollow-common-ground-drives-drive): common-ground-drives is isolated-lesion-load-
+# bearing (its own lesion_note: BRAIN_CG_DRIVES_LESION builds the ledger recurrence at weight 0 -> a re-mentioned
+# referent can no longer read grounded -> the reduced-reference lead VANISHES) yet reads INTEGRATED-HOLLOW on the
+# default probe for a PROBE reason, not a wiring reason. Its default probe turn `well` ("the wolf bites the apple")
+# runs on a FRESH session, and 'wolf'/'bites'/'apple' are NOT build-time KB concepts, so gnw_thought_swap._extract_topic
+# returns None (no grounded token) -> common_ground_ledger_production_organ.observe_turn takes its `if not topic:
+# return {..., "decision": None, ...}` branch IDENTICALLY on the intact AND lesion arms (decision=None==None) -> hollow.
+# Even with a grounded first-mention token, the load-bearing divergence only appears on a RE-MENTION of an already-
+# grounded referent (intact reads REDUCE via the held NMDA bump; the lesioned recurrence=0 ledger cannot hold it and
+# stays INTRODUCE) -- a single fresh first-mention turn can never construct that fork. This flag makes the instrument
+# CONSTRUCT the driving condition: remap the common-ground probe to the mention->re-mention pair (battery turns
+# `cg_mention1`->`cg_mention2`, session 'cg2') over 'dog' (a build-time KB agent, found by _extract_topic with no
+# gate-ordering/OOV issue). Then the INTACT ledger holds the grounded slot (decision=reduce) while the lesioned ledger
+# collapses it (decision=introduce) -> the decision field `common_ground_drives.decision` FLIPS -> LOAD-BEARING. No
+# forced-write / backend flag is needed: common_ground_ledger_production_organ pins SIM_BACKEND=numpy for its own
+# bridge unconditionally, so the driving pair works on the default numpy probe backend (base_env stays {}). OFF
+# (default) -> common-ground-drives is measured on the lone `well` turn exactly as the baseline did (hollow), and no
+# other faculty is touched.
+LB_CG_DRIVE = os.environ.get("LB_CG_DRIVE_PROBE", "").strip().lower() in ("1", "true", "yes", "on")
+_CG_DRIVE_TURN = "cg_mention2"           # the RE-MENTION turn (its group is mention1->mention2, same session 'cg2')
+_CG_DRIVE_ENV: dict = {}                 # no forced write / backend flag needed (the ledger pins SIM_BACKEND=numpy)
 
 
 def _spawn_arm(env, turn_labels, out_path):
@@ -348,6 +377,20 @@ def measure_faculty(key, out_dir, repeats=1, intact_cache=None):
         res["turn"] = _EPISODIC_DRIVE_TURN
         res["note"] = "LB_EPISODIC_DRIVE_PROBE: store->recall on session 'epi2' + BRAIN_EPISODIC_STORE=1. " + res["note"]
 
+    # COMMON-GROUND DRIVING remap (default-off; see LB_CG_DRIVE). Make the common-ground probe exercise its
+    # load-bearing audience-design path: remap to the mention->re-mention turn (its group is derived below as
+    # ['cg_mention1','cg_mention2'] because both are in session 'cg2', declared mention-first) so the RE-MENTION reads
+    # an ALREADY-grounded referent. base_env stays {} (both intact arms + the lesion arm; the ledger self-pins numpy),
+    # so the NULL control also re-mentions -> both intact arms read decision=reduce -> clean null; only the lesion (its
+    # recurrence built at weight 0) collapses the held slot to decision=introduce. Every OTHER faculty keeps base_env={}
+    # -> byte-identical. The compared field narrows to `common_ground_drives.decision` (the reduce/introduce flip); `.on`
+    # is True on both arms and `.reason` is absent on a topic'd turn, so neither could discriminate.
+    if LB_CG_DRIVE and key == "common-ground-drives":
+        row = ("common-ground-drives", _CG_DRIVE_TURN, ["common_ground_drives.decision"], False)
+        base_env = dict(_CG_DRIVE_ENV)
+        res["turn"] = _CG_DRIVE_TURN
+        res["note"] = "LB_CG_DRIVE_PROBE: mention->re-mention on session 'cg2' ('dog'); intact reduce vs lesion introduce. " + res["note"]
+
     grp = turn_group(row[1])
     # cache key includes base_env so a stored (BRAIN_EPISODIC_STORE) intact arm never aliases a plain-{} arm on a
     # shared turn-group (the driving group is unique anyway, but keep the key honest).
@@ -497,6 +540,12 @@ def selftest(out_path=None):
         "episodic-drive turns exist": all(l in _TURN_BY_LABEL for l in (_EPISODIC_DRIVE_TURN, "epi_store")),
         "episodic-drive group is store->recall": turn_group(_EPISODIC_DRIVE_TURN) == ["epi_store", _EPISODIC_DRIVE_TURN],
         "episodic-drive forces the BTSP write": _flag_resolves("BRAIN_EPISODIC_STORE") and "1" in _EPISODIC_DRIVE_ENV.values(),
+        # common-ground-driving remap (LB_CG_DRIVE_PROBE): the mention->re-mention pair exists and its group is
+        # mention-first, the lesion knob is real, and no forced-write/backend env is needed (the ledger self-pins numpy).
+        "cg-drive turns exist": all(l in _TURN_BY_LABEL for l in (_CG_DRIVE_TURN, "cg_mention1")),
+        "cg-drive group is mention->re-mention": turn_group(_CG_DRIVE_TURN) == ["cg_mention1", _CG_DRIVE_TURN],
+        "cg-drive lesion knob resolves": _flag_resolves("BRAIN_CG_DRIVES_LESION"),
+        "cg-drive needs no forced env": _CG_DRIVE_ENV == {},
         "every FACULTY_LESIONS key is a real battery faculty":
             all(k in faculty_list() for k in FACULTY_LESIONS),
         "every battery faculty is mapped": all(k in FACULTY_LESIONS for k in faculty_list()),
@@ -520,6 +569,8 @@ def selftest(out_path=None):
                "n_probe_turns_default_roster": len(PROBE_TURNS),
                "episodic_drive_group": turn_group(_EPISODIC_DRIVE_TURN),
                "episodic_drive_env": _EPISODIC_DRIVE_ENV,
+               "cg_drive_group": turn_group(_CG_DRIVE_TURN),
+               "cg_drive_env": _CG_DRIVE_ENV,
                "lesion_map_coverage": dict(kinds)}
         os.makedirs(os.path.dirname(os.path.abspath(out_path)), exist_ok=True)
         json.dump(art, open(out_path, "w"), indent=2, default=str)
