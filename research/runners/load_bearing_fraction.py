@@ -567,7 +567,7 @@ def selftest(out_path=None):
         # teach-first ending at the rich ask turn, the lesion knob resolves, and the production draw honors the lesion.
         "open-ended-drive turns exist": all(l in _TURN_BY_LABEL for l in (_OPEN_ENDED_DRIVE_TURN, "oe_t1")),
         "open-ended-drive group is teach->ask": turn_group(_OPEN_ENDED_DRIVE_TURN) == [
-            "oe_t1", "oe_t2", "oe_t3", "oe_t4", "oe_t5", "oe_t6", _OPEN_ENDED_DRIVE_TURN],
+            "oe_t1", "oe_t2", "oe_t3", "oe_t4", "oe_t5", "oe_t6", "oe_t7", "oe_t8", "oe_t9", _OPEN_ENDED_DRIVE_TURN],
         "open-ended-drive lesion knob resolves": _flag_resolves("BRAIN_SPIKING_DRAW_LESION"),
         "open-ended-drive lesion bites the production draw (draw_from_weights honors ablate_likelihood)":
             _draw_from_weights_honors_ablate(),

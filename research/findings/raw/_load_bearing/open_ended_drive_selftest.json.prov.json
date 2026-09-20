@@ -1,12 +1,12 @@
 {
- "run_id": "1789934704-3738097",
+ "run_id": "1789935463-3753850",
  "runner": "research/runners/load_bearing_fraction.py",
  "argv": [
   "/home/dant123/Projects/sim/.claude/worktrees/wf_02ca59c7-949-18/research/runners/load_bearing_fraction.py",
   "--selftest-out",
   "research/findings/raw/_load_bearing/open_ended_drive_selftest.json"
  ],
- "git_sha": "3cfd2c795",
+ "git_sha": "a210ec9ca",
  "git_dirty": true,
  "source_kind": null,
  "source_manifest_sha256": null,
@@ -14,7 +14,7 @@
  "source_manifest_start_error": null,
  "source_manifest_verified_at_exit": null,
  "source_manifest_exit_error": null,
- "started": "2026-09-20T16:05:04",
+ "started": "2026-09-20T16:17:43",
  "env": {},
  "sim_backend": "numpy",
  "sim_backend_requested": "(unset -> runner default)",
