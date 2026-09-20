@@ -1,7 +1,7 @@
 {
  "schema": "board-sync-v1",
  "_doc": "Audit trail of board mutations written by tools/vikunja.sh. gates/board_sync_on_status_change.py requires this file to GROW in the same commit that changes docs/PRODUCTION_INTEGRATION_LEDGER.yaml (a faculty-status change must sync the board). Seeded 2026-08-21.",
- "updated_at": "2026-09-17T07:46:18Z",
+ "updated_at": "2026-09-20T00:53:36Z",
  "entries": [
   {
    "at": "2026-08-22T02:19:31Z",
@@ -1748,6 +1748,132 @@
    "op": "set-priority",
    "args": "task=221 prio=3",
    "head": "4a0bb2b21"
+  },
+  {
+   "at": "2026-09-17T09:09:14Z",
+   "op": "set-desc",
+   "args": "task=217",
+   "head": "06dc882ec"
+  },
+  {
+   "at": "2026-09-17T09:09:14Z",
+   "op": "set-desc",
+   "args": "task=218",
+   "head": "06dc882ec"
+  },
+  {
+   "at": "2026-09-17T09:09:14Z",
+   "op": "create-task",
+   "args": "proj=2 title=The brain can spot gendered pronouns (he/she/him/her), not just it/that/they",
+   "head": "06dc882ec"
+  },
+  {
+   "at": "2026-09-17T09:09:27Z",
+   "op": "label-task",
+   "args": "task=222 label=2",
+   "head": "06dc882ec"
+  },
+  {
+   "at": "2026-09-17T09:09:27Z",
+   "op": "label-task",
+   "args": "task=222 label=10",
+   "head": "06dc882ec"
+  },
+  {
+   "at": "2026-09-17T09:09:27Z",
+   "op": "label-task",
+   "args": "task=217 label=10",
+   "head": "06dc882ec"
+  },
+  {
+   "at": "2026-09-17T09:09:27Z",
+   "op": "set-priority",
+   "args": "task=222 prio=2",
+   "head": "06dc882ec"
+  },
+  {
+   "at": "2026-09-17T10:28:05Z",
+   "op": "create-task",
+   "args": "proj=2 title=The brain learns where each phrase begins and ends, instead of a hand-written rule",
+   "head": "8c56a1e91"
+  },
+  {
+   "at": "2026-09-17T10:28:06Z",
+   "op": "label-task",
+   "args": "task=223 label=2",
+   "head": "8c56a1e91"
+  },
+  {
+   "at": "2026-09-17T10:28:06Z",
+   "op": "label-task",
+   "args": "task=223 label=10",
+   "head": "8c56a1e91"
+  },
+  {
+   "at": "2026-09-17T10:28:07Z",
+   "op": "set-desc",
+   "args": "task=218",
+   "head": "8c56a1e91"
+  },
+  {
+   "at": "2026-09-17T18:05:15Z",
+   "op": "set-desc",
+   "args": "task=193",
+   "head": "912fb065b"
+  },
+  {
+   "at": "2026-09-17T19:37:41Z",
+   "op": "set-desc",
+   "args": "task=221",
+   "head": "b7d810444"
+  },
+  {
+   "at": "2026-09-17T19:50:22Z",
+   "op": "set-desc",
+   "args": "task=221",
+   "head": "5b602612a"
+  },
+  {
+   "at": "2026-09-17T20:17:52Z",
+   "op": "set-desc",
+   "args": "task=221",
+   "head": "49eedb785"
+  },
+  {
+   "at": "2026-09-19T08:51:04Z",
+   "op": "create-task",
+   "args": "proj=2 title=New direction: keep the language-model 'mouth', and prove the brain itself drives every reply",
+   "head": "4cc764bde"
+  },
+  {
+   "at": "2026-09-19T08:51:05Z",
+   "op": "set-priority",
+   "args": "task=193 prio=1",
+   "head": "4cc764bde"
+  },
+  {
+   "at": "2026-09-19T08:51:25Z",
+   "op": "label-task",
+   "args": "task=224 label=8",
+   "head": "4cc764bde"
+  },
+  {
+   "at": "2026-09-19T22:56:03Z",
+   "op": "create-task",
+   "args": "proj=2 title=Make the brain's 10 'silent' abilities actually change its replies (memory first)",
+   "head": "2f16c88bc"
+  },
+  {
+   "at": "2026-09-19T22:56:11Z",
+   "op": "label-task",
+   "args": "task=225 label=3",
+   "head": "2f16c88bc"
+  },
+  {
+   "at": "2026-09-20T00:53:36Z",
+   "op": "set-desc",
+   "args": "task=225",
+   "head": "14ea35648"
   }
  ]
 }

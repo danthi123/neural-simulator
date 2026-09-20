@@ -32,8 +32,10 @@ scaling confirm still running (GPU). Affect-hollow re-run deferred/serialized (w
 **ACTIVE BUILD ORDER (the new arc):**
 1. ✅ DONE — load-bearing-fraction instrument BUILT (4cc764bde) + resumable (391a055d) + **BASELINE MEASURED
    2026-09-19: 16/26 = 0.615** (see LATEST above). 6-seed for an error bar is the remaining rung.
-2. ⭐ NOW — Re-instrument the ledger to carry each faculty's load-bearing verdict (replace "% scaffold_retired"
-   as the headline); the 16/10 split above is the input.
+2. ✅ HEADLINE DONE — ledger `headline.load_bearing_integrated` now carries the integrated fraction (16/26=0.615)
+   as the #1 metric, replacing scaffold_retired as the headline; names the isolated-vs-integrated distinction
+   (episodic-memory: isolated lesion_note=LOAD-BEARING but integrated-HOLLOW = the actionable gap). Per-row
+   integrated verdicts DEFERRED (need the isolated-vs-integrated framing; already durable in the finding/artifact).
 3. **HARD GATE:** close the faculty-drive gaps in the HOLLOW set — memory first (episodic + prospective are
    hollow), then affect-coloring (affect-drives-response + affect-marker ALREADY load-bearing), then the rest.
    Until a hollow faculty passes its lesion test, it isn't yet driving the reply.
