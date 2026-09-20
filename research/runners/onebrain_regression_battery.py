@@ -89,6 +89,22 @@ PROBE_TURNS = [
 ]
 _TURN_BY_LABEL = {t[0]: t for t in PROBE_TURNS}
 
+# ── EXTRA turns reachable BY LABEL ONLY, deliberately NOT in the default PROBE_TURNS roster ───────────────────────
+# Rationale: the full roster is iterated by run_regression_battery + every flip-verify harness that imports it, so a
+# turn added to PROBE_TURNS runs (and on cupy would BTSP-write) in ALL of them. These turns are needed only by the
+# load_bearing runner's episodic-driving remap (LB_EPISODIC_DRIVE_PROBE), so they live here — merged into
+# _TURN_BY_LABEL (the worker resolves turns by label from it) but OUT of PROBE_TURNS -> the default roster, the
+# regression battery, and every flip-verify harness are BYTE-IDENTICAL. The EPISODIC DRIVING PAIR: a STORE turn then
+# a RECALL turn in ONE isolated session ('epi2', declared store-first), so the referential recall has a memory to
+# COMPLETE (intact in_memory=True -> disclosure; lesion in_memory=False -> "I don't recall") — the load-bearing recall
+# path the lone-fresh-session `episodic` turn can NEVER exercise (nothing stored -> intact reads not-in-memory,
+# identical to the lesion). See research/runners/load_bearing_fraction.py.
+_EXTRA_TURNS = [
+    ("epi_store", "the dog chase the cat",    "epi2", True,  None,   False),  # stores 'dog' (Hook B verified-SVO BTSP write; needs BRAIN_EPISODIC_STORE=1 or a cupy backend to execute)
+    ("epi_recall","did we discuss the dog",   "epi2", False, None,   False),  # recalls 'dog' (Hook A dendritic-dAP completion) in the SAME session -> in_memory True intact / False lesion
+]
+_TURN_BY_LABEL.update({t[0]: t for t in _EXTRA_TURNS})
+
 # ── continuous fields to NEVER compare (a background process advances between builds; decisions are stable, not these)
 _NOISE_FIELDS = {
     "rate_perceived", "rate_generated", "neg_rate", "pos_rate", "vminus_rate", "vplus_rate", "mood", "differential",
