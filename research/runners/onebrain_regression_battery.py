@@ -99,9 +99,22 @@ _TURN_BY_LABEL = {t[0]: t for t in PROBE_TURNS}
 # COMPLETE (intact in_memory=True -> disclosure; lesion in_memory=False -> "I don't recall") — the load-bearing recall
 # path the lone-fresh-session `episodic` turn can NEVER exercise (nothing stored -> intact reads not-in-memory,
 # identical to the lesion). See research/runners/load_bearing_fraction.py.
+#
+# The PROSPECTIVE-MEMORY DRIVING PAIR (2026-09-20, same shape): a FORMATION turn then a CUE turn in ONE isolated
+# session ('pmem2', declared form-first), so the cue-monitor has a HELD intention to fire against. The lone
+# formation-only `pmem_form` probe compares `prospective.held`, a compile-time literal set unconditionally in
+# form_intention() regardless of BRAIN_PMEM_LESION -> zero diff (hollow). The later CUE turn instead reads the
+# SPIKING held x cue coincidence: intact latch fires (prospective.fired=True); the BRAIN_PMEM_LESION latch collapses
+# at formation so the SAME cue stays silent (prospective.fired=False). Cue clause 'the bird sings' reduces to
+# ['bird','sings'] (per prospective_memory_production_organ._cue_keywords) and the cue turn reuses that identical
+# clause, so cue_present() matches; the cue is a 2-content-token intransitive -> extract_transitive()=None ->
+# comprehension.judge()=None, so no disjoint short-circuit drops the prospective read before it attaches to the reply.
+# See research/runners/load_bearing_fraction.py (LB_PMEM_DRIVE_PROBE).
 _EXTRA_TURNS = [
     ("epi_store", "the dog chase the cat",    "epi2", True,  None,   False),  # stores 'dog' (Hook B verified-SVO BTSP write; needs BRAIN_EPISODIC_STORE=1 or a cupy backend to execute)
     ("epi_recall","did we discuss the dog",   "epi2", False, None,   False),  # recalls 'dog' (Hook A dendritic-dAP completion) in the SAME session -> in_memory True intact / False lesion
+    ("pmem_form2","remind me to feed the dog when the bird sings", "pmem2", True,  None, False),  # FORMS + one-shot-Hebbian-binds the intention (latch held); disjoint acknowledgement turn class
+    ("pmem_cue",  "the bird sings",           "pmem2", False, None,   False),  # the CUE turn in the SAME session -> spiking held x cue coincidence: fired True intact / False under BRAIN_PMEM_LESION
 ]
 _TURN_BY_LABEL.update({t[0]: t for t in _EXTRA_TURNS})
 
