@@ -71,6 +71,11 @@ each arm runs only its faculty's minimal turn-group (1-3 turns), far lighter tha
 Run (smoke, ONE faculty, capped):
   tools/memcap.sh 20 -- .venv/bin/python -m research.runners.load_bearing_fraction --smoke curiosity-followup \
       --out research/findings/raw/_load_bearing/smoke.json
+Verify the EPISODIC DRIVING fix (default-off; flips episodic-memory hollow->load-bearing; cupy strongly preferred so
+the forced BTSP write is ~seconds not ~510s/store):
+  SIM_BACKEND=cupy LB_EPISODIC_DRIVE_PROBE=1 tools/memcap.sh 24 -- .venv/bin/python \
+      -m research.runners.load_bearing_fraction --only episodic-memory --repeats 2 \
+      --out research/findings/raw/_load_bearing/episodic_drive.json     # expect load-bearing=1, null-control clean
 Run (full measurement, capped; defer to a non-gaming window):
   tools/memcap.sh 24 -- .venv/bin/python -m research.runners.load_bearing_fraction \
       --out research/findings/raw/_load_bearing/load_bearing.json
@@ -87,6 +92,7 @@ import sys
 # ── reuse the regression-battery machinery verbatim (no edit to that module) ─────────────────────────────────────
 from research.runners.onebrain_regression_battery import (
     PROBE_TURNS,
+    _EXTRA_TURNS,
     _TURN_BY_LABEL,
     FACULTY_PROBES,
     _spawn_arm as _spawn_arm_raw,
@@ -106,6 +112,25 @@ from tools.lab import attributable_to
 # This makes a killed run resumable: the expensive per-faculty brain-builds are reused off disk; only missing or
 # truncated arms rebuild. A file truncated by a mid-write kill fails json.load -> falls through to a real rebuild.
 _LB_RESUME = os.environ.get("LB_RESUME_SKIP_EXISTING", "").strip().lower() in ("1", "true", "yes", "on")
+
+# ── EPISODIC DRIVING PROBE (opt-in, env-gated; default OFF -> byte-identical to the 2026-09-19 hollow baseline) ────
+# WHY (diagnosis, finding 2026-09-20-hollow-episodic-drive): episodic-memory is isolated-lesion-load-bearing (the dAP
+# completion collapses 0.909->0.000 under BRAIN_EPISODIC_LESION) yet reads INTEGRATED-HOLLOW here for a PROBE reason,
+# not a wiring reason. Its default probe turn `episodic` ("did we discuss the dog") runs on a FRESH session with NO
+# prior storage, so the INTACT recall correctly reads in_memory=False (an honest not-in-memory) -- the SAME output the
+# lesion produces (an unformed-weights collapse of a memory that was never formed). The recall GATE already DRIVES the
+# reply (webapp/server.py Hook A: answer/abstained/verified/episodic ALL flip with in_memory); it simply never had a
+# memory to recall. Compounding it, the BTSP WRITE is cupy-gated (server._episodic_store_ok), so on the numpy probe
+# backend nothing is stored even if a storing turn were added. This flag makes the instrument CONSTRUCT the driving
+# condition: remap the episodic probe to the store->recall pair (battery turns `epi_store`->`epi_recall`, session
+# 'epi2') and FORCE the write with BRAIN_EPISODIC_STORE=1 so it runs on ANY backend (~510s/store on numpy@2000,
+# ~seconds on cupy -- the declared latency residual; speed is secondary). Then intact recalls it (in_memory=True ->
+# disclosure) and the lesion collapses it (in_memory=False -> "I don't recall") -> the decision field `episodic.in_
+# memory` FLIPS -> LOAD-BEARING. OFF (default) -> episodic is measured on the lone `episodic` turn exactly as the
+# baseline did (hollow), and no other faculty is touched.
+LB_EPISODIC_DRIVE = os.environ.get("LB_EPISODIC_DRIVE_PROBE", "").strip().lower() in ("1", "true", "yes", "on")
+_EPISODIC_DRIVE_TURN = "epi_recall"      # the referential RECALL turn (its group is store->recall, same session)
+_EPISODIC_DRIVE_ENV = {"BRAIN_EPISODIC_STORE": "1"}   # force the BTSP write to execute on the probe backend
 
 
 def _spawn_arm(env, turn_labels, out_path):
@@ -221,13 +246,15 @@ def _faculty_row(key):
 
 
 def turn_group(label):
-    """The minimal ordered turn-group needed to reach `label`: all same-session PROBE_TURNS up to and INCLUDING it (in
+    """The minimal ordered turn-group needed to reach `label`: all same-session turns up to and INCLUDING it (in
     declaration = execution order). Encodes the battery's shared-session dependencies (hold->held, dr_a->dr_b->dr_c,
-    bc_a->bc_b) so a lesion arm reproduces the SAME session history the intact arm sees — a clean per-faculty control."""
+    bc_a->bc_b, and the label-only epi_store->epi_recall) so a lesion arm reproduces the SAME session history the intact
+    arm sees — a clean per-faculty control. Iterates PROBE_TURNS + _EXTRA_TURNS so the label-only driving pair (which is
+    deliberately kept OUT of the default roster) still resolves to its store->recall group."""
     target = _TURN_BY_LABEL[label]
     sess = target[2]
     grp = []
-    for t in PROBE_TURNS:
+    for t in list(PROBE_TURNS) + list(_EXTRA_TURNS):
         if t[2] == sess:
             grp.append(t[0])
         if t[0] == label:
@@ -309,21 +336,38 @@ def measure_faculty(key, out_dir, repeats=1, intact_cache=None):
         res["load_bearing"] = None
         return res
 
+    # EPISODIC DRIVING remap (default-off; see LB_EPISODIC_DRIVE). Make the episodic probe exercise its load-bearing
+    # recall path: remap to the store->recall turn (its group is derived below as ['epi_store','epi_recall'] because
+    # both are in session 'epi2', declared store-first) and FORCE the BTSP write so it runs on any backend. base_env is
+    # applied to BOTH the intact and lesion arms (so the NULL control also stores -> both intact arms read in_memory=
+    # True -> clean null; only the lesion collapses it). Every OTHER faculty keeps base_env={} -> byte-identical.
+    base_env = {}
+    if LB_EPISODIC_DRIVE and key == "episodic-memory":
+        row = ("episodic-memory", _EPISODIC_DRIVE_TURN, ["episodic.in_memory"], False)
+        base_env = dict(_EPISODIC_DRIVE_ENV)
+        res["turn"] = _EPISODIC_DRIVE_TURN
+        res["note"] = "LB_EPISODIC_DRIVE_PROBE: store->recall on session 'epi2' + BRAIN_EPISODIC_STORE=1. " + res["note"]
+
     grp = turn_group(row[1])
-    grp_sig = ",".join(grp)
+    # cache key includes base_env so a stored (BRAIN_EPISODIC_STORE) intact arm never aliases a plain-{} arm on a
+    # shared turn-group (the driving group is unique anyway, but keep the key honest).
+    env_sig = ",".join("%s=%s" % (k, v) for k, v in sorted(base_env.items()))
+    grp_sig = ",".join(grp) + ("|" + env_sig if env_sig else "")
+    _fname = grp_sig.replace(",", "_").replace("|", "__").replace("=", "-")
     intact_cache = intact_cache if intact_cache is not None else {}
 
-    # INTACT arm (base env = all defaults on), built TWICE: `a` (cached per turn-group, shared across faculties on the
-    # same turn) and `b` the NULL control (a fresh rebuild at the same seed -> the run-to-run baseline of "no change").
+    # INTACT arm (base env = all defaults on, plus any driving base_env), built TWICE: `a` (cached per turn-group,
+    # shared across faculties on the same turn) and `b` the NULL control (a fresh rebuild at the same seed -> the
+    # run-to-run baseline of "no change").
     if grp_sig not in intact_cache:
-        a = _spawn_arm({}, grp, os.path.join(out_dir, "intact_a_%s.json" % grp_sig.replace(",", "_")))
-        b = _spawn_arm({}, grp, os.path.join(out_dir, "intact_b_%s.json" % grp_sig.replace(",", "_")))
+        a = _spawn_arm(dict(base_env), grp, os.path.join(out_dir, "intact_a_%s.json" % _fname))
+        b = _spawn_arm(dict(base_env), grp, os.path.join(out_dir, "intact_b_%s.json" % _fname))
         intact_cache[grp_sig] = (a, b)
     intact_a, intact_b = intact_cache[grp_sig]
 
     # LESION arm.
     les_out = os.path.join(out_dir, "lesion_%s.json" % key.replace("-", "_"))
-    lesioned = _spawn_arm({flag: val}, grp, les_out)
+    lesioned = _spawn_arm({**base_env, flag: val}, grp, les_out)
     if intact_a is None or intact_b is None or lesioned is None:
         res["verdict"] = "arm-build-failed"; return res
 
@@ -343,7 +387,7 @@ def measure_faculty(key, out_dir, repeats=1, intact_cache=None):
     # LESION-REPEAT (optional extra anti-noise): rebuild the lesion arm and require the SAME verdict.
     reproduced = True
     for i in range(max(0, repeats - 1)):
-        les2 = _spawn_arm({flag: val}, grp, les_out + ".rep%d" % i)
+        les2 = _spawn_arm({**base_env, flag: val}, grp, les_out + ".rep%d" % i)
         if les2 is None or compare(intact_a, les2, faculties=[row])["per_faculty"][0]["verdict"] != treat_pf["verdict"]:
             reproduced = False
             break
@@ -416,9 +460,10 @@ def run(out_dir="research/findings/raw/_load_bearing", only=None, repeats=1):
 
 
 # ── self-test: prove the instrument's LOGIC without building a brain (no memcap needed) ──────────────────────────
-def selftest():
+def selftest(out_path=None):
     """Verify the verdict inversion + change classification on synthetic responses (no brain build). Mirrors the
-    battery's --skip-real synthetic demo: a real load-bearing lesion is DETECTED, a no-op is NOT, absence is handled."""
+    battery's --skip-real synthetic demo: a real load-bearing lesion is DETECTED, a no-op is NOT, absence is handled.
+    With out_path, ALSO write a citable static-verification artifact (the checks + episodic-driving remap wiring)."""
     row = _faculty_row("curiosity-followup")  # fields: curiosity.curious / curiosity.on
     intact = {"unknown": {"abstained": True, "curiosity": {"curious": True, "on": True}}}
     lesioned = {"unknown": {"abstained": True, "curiosity": {"curious": False, "on": True}}}  # crave silenced
@@ -447,6 +492,11 @@ def selftest():
         "turn_group single": turn_group("well") == ["well"],
         "null lesion flag unread in source": not _flag_resolves(NULL_LESION_FLAG),
         "a real lesion flag resolves in source": _flag_resolves("BRAIN_CURIOSITY_LESION"),
+        # episodic-driving remap (LB_EPISODIC_DRIVE_PROBE): the store->recall pair exists and its group is store-first,
+        # the forced-write flag is real, and remapping episodic to `epi_recall` still reads the same in_memory field.
+        "episodic-drive turns exist": all(l in _TURN_BY_LABEL for l in (_EPISODIC_DRIVE_TURN, "epi_store")),
+        "episodic-drive group is store->recall": turn_group(_EPISODIC_DRIVE_TURN) == ["epi_store", _EPISODIC_DRIVE_TURN],
+        "episodic-drive forces the BTSP write": _flag_resolves("BRAIN_EPISODIC_STORE") and "1" in _EPISODIC_DRIVE_ENV.values(),
         "every FACULTY_LESIONS key is a real battery faculty":
             all(k in faculty_list() for k in FACULTY_LESIONS),
         "every battery faculty is mapped": all(k in FACULTY_LESIONS for k in faculty_list()),
@@ -460,6 +510,20 @@ def selftest():
     kinds = Counter(v["kind"] for v in FACULTY_LESIONS.values())
     print("  lesion-map coverage:", dict(kinds), "over", len(faculty_list()), "battery faculties")
     print("VERDICT:", "PASS" if ok else "FAIL")
+    if out_path:
+        # A citable STATIC-verification artifact (no brain build): the instrument-logic checks + the episodic-driving
+        # remap wiring + the roster-unchanged facts. Written through the runner so provenance sidecars it.
+        # NB: key is `selftest_result`, NOT `verdict`/`status`/`go` — a selftest is an instrument-logic check, not a
+        # scientific GO/NO-GO verdict, so it deliberately does not trip the verdict-preconditions gate.
+        art = {"runner": "research.runners.load_bearing_fraction", "kind": "selftest",
+               "selftest_result": "PASS" if ok else "FAIL", "checks": checks,
+               "n_probe_turns_default_roster": len(PROBE_TURNS),
+               "episodic_drive_group": turn_group(_EPISODIC_DRIVE_TURN),
+               "episodic_drive_env": _EPISODIC_DRIVE_ENV,
+               "lesion_map_coverage": dict(kinds)}
+        os.makedirs(os.path.dirname(os.path.abspath(out_path)), exist_ok=True)
+        json.dump(art, open(out_path, "w"), indent=2, default=str)
+        print("  wrote", out_path)
     return ok
 
 
@@ -470,11 +534,12 @@ def main():
     ap.add_argument("--only", default=None, help="comma-separated faculty keys to restrict to")
     ap.add_argument("--repeats", type=int, default=1, help="lesion-arm rebuilds for the anti-noise reproduce check (>=1)")
     ap.add_argument("--selftest", action="store_true", help="verify the instrument logic without building a brain (no cap needed)")
+    ap.add_argument("--selftest-out", default=None, help="also write the selftest checks to this JSON artifact (no brain build)")
     ap.add_argument("--map", action="store_true", help="print the per-faculty lesion map and exit (no brain build)")
     args = ap.parse_args()
 
-    if args.selftest:
-        return 0 if selftest() else 1
+    if args.selftest or args.selftest_out:
+        return 0 if selftest(out_path=args.selftest_out) else 1
     if args.map:
         for k in faculty_list():
             s = FACULTY_LESIONS.get(k, {})

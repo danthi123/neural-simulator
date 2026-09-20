@@ -1,0 +1,26 @@
+{
+ "run_id": "1789880188-2688399",
+ "runner": "research/runners/load_bearing_fraction.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-a27da2e4973905006/research/runners/load_bearing_fraction.py",
+  "--selftest-out",
+  "research/findings/raw/_load_bearing/episodic_drive_selftest.json"
+ ],
+ "git_sha": "365a3f119",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-20T00:56:28",
+ "env": {},
+ "sim_backend": "numpy",
+ "sim_backend_requested": "(unset -> runner default)",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 796.5,
+ "corpus_check_query": "episodic memory integrated-hollow does not drive reply load-bearing probe never stores",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_load_bearing/episodic_drive_selftest.json"
+}
