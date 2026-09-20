@@ -76,6 +76,11 @@ the forced BTSP write is ~seconds not ~510s/store):
   SIM_BACKEND=cupy LB_EPISODIC_DRIVE_PROBE=1 tools/memcap.sh 24 -- .venv/bin/python \
       -m research.runners.load_bearing_fraction --only episodic-memory --repeats 2 \
       --out research/findings/raw/_load_bearing/episodic_drive.json     # expect load-bearing=1, null-control clean
+Verify the DISCOURSE-REGISTER DRIVING fix (default-off; flips discourse-register hollow->load-bearing; no forced env —
+the register defaults spiking=True on any backend, so numpy CPU is fine, cupy only faster):
+  LB_DISCOURSE_REGISTER_DRIVE_PROBE=1 tools/memcap.sh 24 -- .venv/bin/python \
+      -m research.runners.load_bearing_fraction --only discourse-register --repeats 2 \
+      --out research/findings/raw/_load_bearing/discourse_register_drive.json  # expect load-bearing=1, agent bird/dog, null clean
 Run (full measurement, capped; defer to a non-gaming window):
   tools/memcap.sh 24 -- .venv/bin/python -m research.runners.load_bearing_fraction \
       --out research/findings/raw/_load_bearing/load_bearing.json
@@ -131,6 +136,32 @@ _LB_RESUME = os.environ.get("LB_RESUME_SKIP_EXISTING", "").strip().lower() in ("
 LB_EPISODIC_DRIVE = os.environ.get("LB_EPISODIC_DRIVE_PROBE", "").strip().lower() in ("1", "true", "yes", "on")
 _EPISODIC_DRIVE_TURN = "epi_recall"      # the referential RECALL turn (its group is store->recall, same session)
 _EPISODIC_DRIVE_ENV = {"BRAIN_EPISODIC_STORE": "1"}   # force the BTSP write to execute on the probe backend
+
+# ── DISCOURSE-REGISTER DRIVING PROBE (opt-in, env-gated; default OFF -> byte-identical to the 2026-09-19 hollow baseline)
+# WHY (diagnosis, finding 2026-09-20-hollow-discourse-register-drive): discourse-register is isolated-lesion-load-bearing
+# (the who-was-before read collapses when the prev spiking slots are silenced) yet reads INTEGRATED-HOLLOW here for a
+# PROBE reason, not a wiring reason. Its default probe `dr_c` ('dog chase cat' -> 'then bird chase worm' -> 'who was
+# doing it before') has its correct before-agent be 'dog', which is referents[0] — and referents[0] is EXACTLY the
+# register's identity index (ident=0, _d3_event_connective_derisk.make_connective_task). The LESION
+# (_PrevSilencePairRegister.observe, d3_discourse_event_register_production_organ.py) collapses the held prev slots by
+# FORCING them to that same identity index -> forced 'dog'. So the INTACT read ('dog', via the learned RNN shift +
+# FS-WTA re-discretization) and the LESION read ('dog', via forced-identity) are the IDENTICAL agent: an index
+# collision, not a failure of the read to reach the reply (it demonstrably does — webapp/server.py's before/now
+# short-circuit early-returns a JSONResponse carrying discourse_register straight from answer_before). Compared fields
+# discourse_register.agent/.abstained therefore see zero diff -> hollow. This flag remaps the probe to the 'dr2' triple
+# ('bird chase worm' -> 'then dog chase cat' -> 'who was doing it before'), which SWAPS the roles so the correct
+# before-agent is 'bird' = referents[3] != identity 0: intact reads the held prev agent 'bird', the lesion still forces
+# 'dog' -> discourse_register.agent FLIPS 'bird' vs 'dog' -> LOAD-BEARING. No base_env needed (the register defaults
+# spiking=True on ANY backend, unlike episodic's cupy-gated BTSP write). OFF (default) -> discourse-register is measured
+# on the lone `dr_c` turn exactly as the baseline did (hollow), and no other faculty is touched.
+LB_DISCOURSE_REGISTER_DRIVE = os.environ.get("LB_DISCOURSE_REGISTER_DRIVE_PROBE", "").strip().lower() in ("1", "true", "yes", "on")
+_DISCOURSE_DRIVE_TURN = "dr2_c"          # the before-query turn (its group is bird/worm -> shift dog/cat -> before?)
+# Static-verification anchors for the ident-collision guard (see selftest). MUST mirror the production register build
+# site (brain_chat_tui.py: make_discourse_register(["dog","cat","fish","bird","worm","ball"])) and the identity index
+# (_d3_event_connective_derisk.make_connective_task: ident = 0). The whole point of the remap is that the correct
+# before-agent index is NOT this identity index (which the lesion forces the held prev slot to).
+_DR2_PROD_REFERENTS = ["dog", "cat", "fish", "bird", "worm", "ball"]
+_DR2_IDENT = 0
 
 
 def _spawn_arm(env, turn_labels, out_path):
@@ -348,6 +379,19 @@ def measure_faculty(key, out_dir, repeats=1, intact_cache=None):
         res["turn"] = _EPISODIC_DRIVE_TURN
         res["note"] = "LB_EPISODIC_DRIVE_PROBE: store->recall on session 'epi2' + BRAIN_EPISODIC_STORE=1. " + res["note"]
 
+    # DISCOURSE-REGISTER DRIVING remap (default-off; see LB_DISCOURSE_REGISTER_DRIVE). Make the discourse probe exercise
+    # its load-bearing prev-slot read on a turn whose correct before-agent is NOT the register's identity index (which
+    # the lesion forces the held prev slot to). Remap to the 'dr2' triple ('bird chase worm' -> 'then dog chase cat' ->
+    # before?), whose group is derived below as ['dr2_a','dr2_b','dr2_c'] (all session 'dr2', declared clause-first) so
+    # the lesion arm reproduces the SAME clause history. NO base_env: the register defaults spiking=True on any backend,
+    # so nothing needs forcing (unlike episodic's cupy-gated BTSP write) -> every OTHER faculty stays byte-identical.
+    if LB_DISCOURSE_REGISTER_DRIVE and key == "discourse-register":
+        row = ("discourse-register", _DISCOURSE_DRIVE_TURN, ["discourse_register.abstained", "discourse_register.agent"], False)
+        res["turn"] = _DISCOURSE_DRIVE_TURN
+        res["note"] = ("LB_DISCOURSE_REGISTER_DRIVE_PROBE: before-agent is referents[3]='bird', not referents[0]='dog'"
+                       "==ident, so the lesion's forced-identity fallback is distinguishable from the correct answer. "
+                       + res["note"])
+
     grp = turn_group(row[1])
     # cache key includes base_env so a stored (BRAIN_EPISODIC_STORE) intact arm never aliases a plain-{} arm on a
     # shared turn-group (the driving group is unique anyway, but keep the key honest).
@@ -497,6 +541,19 @@ def selftest(out_path=None):
         "episodic-drive turns exist": all(l in _TURN_BY_LABEL for l in (_EPISODIC_DRIVE_TURN, "epi_store")),
         "episodic-drive group is store->recall": turn_group(_EPISODIC_DRIVE_TURN) == ["epi_store", _EPISODIC_DRIVE_TURN],
         "episodic-drive forces the BTSP write": _flag_resolves("BRAIN_EPISODIC_STORE") and "1" in _EPISODIC_DRIVE_ENV.values(),
+        # discourse-register-driving remap (LB_DISCOURSE_REGISTER_DRIVE_PROBE): the dr2 clause->shift->before triple
+        # exists, its group is the 3-clause 'dr2' chain, and the correct before-agent ('bird' = dr2_a's subject) maps to
+        # a referent index that is NOT the register's identity index 0 (which the lesion forces the held prev slot to).
+        # This is the guard against the exact index collision the lone `dr_c` probe fell into (correct-before 'dog' ==
+        # referents[0] == ident, so intact and lesion returned the identical agent).
+        "discourse-drive turns exist": all(l in _TURN_BY_LABEL for l in (_DISCOURSE_DRIVE_TURN, "dr2_a", "dr2_b")),
+        "discourse-drive group is the dr2 chain": turn_group(_DISCOURSE_DRIVE_TURN) == ["dr2_a", "dr2_b", _DISCOURSE_DRIVE_TURN],
+        "discourse-drive before-agent avoids the ident collision (bird=3 != dog=0)": (
+            _TURN_BY_LABEL["dr2_a"][1].split()[0] in _DR2_PROD_REFERENTS
+            and _DR2_PROD_REFERENTS.index(_TURN_BY_LABEL["dr2_a"][1].split()[0]) == 3
+            and 3 != _DR2_IDENT
+            and _DR2_PROD_REFERENTS[_DR2_IDENT] == "dog"),
+        "discourse-drive lesion knob resolves": _flag_resolves("BRAIN_DISCOURSE_REGISTER_LESION"),
         "every FACULTY_LESIONS key is a real battery faculty":
             all(k in faculty_list() for k in FACULTY_LESIONS),
         "every battery faculty is mapped": all(k in FACULTY_LESIONS for k in faculty_list()),
@@ -520,6 +577,9 @@ def selftest(out_path=None):
                "n_probe_turns_default_roster": len(PROBE_TURNS),
                "episodic_drive_group": turn_group(_EPISODIC_DRIVE_TURN),
                "episodic_drive_env": _EPISODIC_DRIVE_ENV,
+               "discourse_drive_group": turn_group(_DISCOURSE_DRIVE_TURN),
+               "discourse_drive_before_agent": _TURN_BY_LABEL["dr2_a"][1].split()[0],
+               "discourse_drive_env": {},
                "lesion_map_coverage": dict(kinds)}
         os.makedirs(os.path.dirname(os.path.abspath(out_path)), exist_ok=True)
         json.dump(art, open(out_path, "w"), indent=2, default=str)

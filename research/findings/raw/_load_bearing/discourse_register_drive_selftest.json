@@ -1,0 +1,53 @@
+{
+  "runner": "research.runners.load_bearing_fraction",
+  "kind": "selftest",
+  "selftest_result": "PASS",
+  "checks": {
+    "load_bearing_detected (regressed on a real lesion)": true,
+    "change_kind value": true,
+    "attribution clean-null == 1.0": true,
+    "attribution dirty-null == 0.0": true,
+    "attribution both-null UNDEFINED": true,
+    "not_load_bearing (pass on a no-op lesion)": true,
+    "not_exercised (fields absent both arms)": true,
+    "structural change classified": true,
+    "turn_group hold->held": true,
+    "turn_group dr chain": true,
+    "turn_group bc pair": true,
+    "turn_group single": true,
+    "null lesion flag unread in source": true,
+    "a real lesion flag resolves in source": true,
+    "episodic-drive turns exist": true,
+    "episodic-drive group is store->recall": true,
+    "episodic-drive forces the BTSP write": true,
+    "discourse-drive turns exist": true,
+    "discourse-drive group is the dr2 chain": true,
+    "discourse-drive before-agent avoids the ident collision (bird=3 != dog=0)": true,
+    "discourse-drive lesion knob resolves": true,
+    "every FACULTY_LESIONS key is a real battery faculty": true,
+    "every battery faculty is mapped": true
+  },
+  "n_probe_turns_default_roster": 26,
+  "episodic_drive_group": [
+    "epi_store",
+    "epi_recall"
+  ],
+  "episodic_drive_env": {
+    "BRAIN_EPISODIC_STORE": "1"
+  },
+  "discourse_drive_group": [
+    "dr2_a",
+    "dr2_b",
+    "dr2_c"
+  ],
+  "discourse_drive_before_agent": "bird",
+  "discourse_drive_env": {},
+  "lesion_map_coverage": {
+    "in-process": 4,
+    "mechanism-only": 1,
+    "neural-lesion": 27,
+    "thin": 2,
+    "whether-disable": 1,
+    "proposed": 3
+  }
+}
