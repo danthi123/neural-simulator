@@ -102,6 +102,26 @@ _TURN_BY_LABEL = {t[0]: t for t in PROBE_TURNS}
 _EXTRA_TURNS = [
     ("epi_store", "the dog chase the cat",    "epi2", True,  None,   False),  # stores 'dog' (Hook B verified-SVO BTSP write; needs BRAIN_EPISODIC_STORE=1 or a cupy backend to execute)
     ("epi_recall","did we discuss the dog",   "epi2", False, None,   False),  # recalls 'dog' (Hook A dendritic-dAP completion) in the SAME session -> in_memory True intact / False lesion
+    # ── OPEN-ENDED-GENERATION DRIVING GROUP (load_bearing_fraction's LB_OPEN_ENDED_DRIVE_PROBE) ──────────────────
+    # WHY (finding 2026-09-20-hollow-open-ended-generation-drive): the default open-ended-generation probe (`rich_open`
+    # = "what might a dog chase" on a FRESH tiny-demo brain) is integrated-HOLLOW because the tiny KB has exactly ONE
+    # 'chase' fact -- (dog,chase,cat) -- and it is already stored, so the ONLY reachable (dog,chase,?) patient is
+    # excluded by the novelty check -> _generate_hypothesis returns None (abstain) in BOTH the intact and lesion arms.
+    # This group TEACHES several NEW 'chase' facts in one isolated session ('oe2', declared teach-first) so genuine
+    # NOVEL+plausible patients {rabbit,deer,mouse,frog,duck} exist for (dog,chase,?) beyond the single already-known
+    # 'cat'; the final turn asks the SAME open-ended prompt with rich=True (the composer branch that emits
+    # resp['hypothesis']/resp['hypothesis_svo']). 'rabbit' is taught TWICE so the INTACT likelihood-weighted draw
+    # peaks it (deterministic intact reference), while the LESION's uniform draw (BRAIN_SPIKING_DRAW_LESION -> the
+    # honored ablate on draw_from_weights) selects among all novel candidates -> a hypothesis_svo/answer VALUE diff
+    # the lone-fresh-session `rich_open` turn can NEVER construct. See research/runners/load_bearing_fraction.py. Kept
+    # OUT of PROBE_TURNS (label-only) -> the default roster + every flip-verify harness are BYTE-IDENTICAL.
+    ("oe_t1",  "the wolf chase the rabbit",  "oe2", True,  None,   False),   # teach: rabbit (chase-cooc #1)
+    ("oe_t2",  "the fox chase the rabbit",   "oe2", False, None,   False),   # teach: rabbit again -> the intact draw's peak novel patient
+    ("oe_t3",  "the lion chase the deer",    "oe2", False, None,   False),   # teach: deer
+    ("oe_t4",  "the bear chase the mouse",   "oe2", False, None,   False),   # teach: mouse
+    ("oe_t5",  "the hawk chase the frog",    "oe2", False, None,   False),   # teach: frog
+    ("oe_t6",  "the owl chase the duck",     "oe2", False, None,   False),   # teach: duck
+    ("oe_ask", "what might a dog chase",     "oe2", False, None,   True),    # rich=True -> the generation branch (resp['hypothesis']); draws (dog,chase,?) over the now-rich chase graph
 ]
 _TURN_BY_LABEL.update({t[0]: t for t in _EXTRA_TURNS})
 

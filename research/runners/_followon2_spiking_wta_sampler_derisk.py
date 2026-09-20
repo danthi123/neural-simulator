@@ -272,9 +272,20 @@ class SpikingWTASampler:
         distribution. Returns the winning candidate (a word). On a SILENT competition (no spike in the window -- rare
         at the calibrated operating point, measured 0/300), retries the window a few times, then falls back to
         argmax-over-DRIVE (still a spiking-derived quantity: the most-driven pool, deterministic), so the production
-        caller always gets a concrete sample (the host `_sample_weighted` contract). NEVER a host categorical draw."""
+        caller always gets a concrete sample (the host `_sample_weighted` contract). NEVER a host categorical draw.
+
+        LESION (`ablate_likelihood`, set by `BRAIN_SPIKING_DRAW_LESION`): this is the PRODUCTION wire-in draw, and it
+        takes the CALLER's already-computed weights -- so the likelihood ablation that `_weights()` applies on the
+        seed-word path (`_draw`/`draw_svo`, used by the de-risk's LESION verify) NEVER reached this method. The lesion
+        was therefore INERT on the production `_generate_hypothesis` draw (a sampler built with ablate_likelihood=True
+        drew IDENTICALLY to the intact one here). Honor it here too so the lesion actually cuts the likelihood off the
+        production draw: replace the caller's weights with a UNIFORM vector (no likelihood signal -- the EXACT
+        `_weights` ablation semantics, `np.ones`). ablate_likelihood=False (default / not lesioned) -> untouched ->
+        byte-identical to the pre-fix path. Earned by the open-ended-generation load-bearing wiring gap (2026-09-20)."""
         weights = np.asarray(weights, dtype=np.float64)
         V = len(candidates)
+        if self.ablate_likelihood:
+            weights = np.ones(V, dtype=np.float64)      # lesion: uniform drive, no likelihood signal (== _weights ablation)
         drive = self.drive_from_weights(weights)
         for _ in range(max(1, int(max_retries))):
             fv = self._compete(drive, V)

@@ -76,6 +76,12 @@ the forced BTSP write is ~seconds not ~510s/store):
   SIM_BACKEND=cupy LB_EPISODIC_DRIVE_PROBE=1 tools/memcap.sh 24 -- .venv/bin/python \
       -m research.runners.load_bearing_fraction --only episodic-memory --repeats 2 \
       --out research/findings/raw/_load_bearing/episodic_drive.json     # expect load-bearing=1, null-control clean
+Verify the OPEN-ENDED-GENERATION DRIVING fix (default-off; flips open-ended-generation hollow->load-bearing; teaches
+'chase' facts so genuine novel candidates exist, then the intact likelihood-weighted draw vs the lesion's uniform draw
+select different (dog,chase,?) patients -> a hypothesis_svo/answer value-diff):
+  LB_OPEN_ENDED_DRIVE_PROBE=1 tools/memcap.sh 24 -- .venv/bin/python \
+      -m research.runners.load_bearing_fraction --only open-ended-generation --repeats 2 \
+      --out research/findings/raw/_load_bearing/open_ended_drive.json   # expect load-bearing=1, null-control clean
 Run (full measurement, capped; defer to a non-gaming window):
   tools/memcap.sh 24 -- .venv/bin/python -m research.runners.load_bearing_fraction \
       --out research/findings/raw/_load_bearing/load_bearing.json
@@ -131,6 +137,27 @@ _LB_RESUME = os.environ.get("LB_RESUME_SKIP_EXISTING", "").strip().lower() in ("
 LB_EPISODIC_DRIVE = os.environ.get("LB_EPISODIC_DRIVE_PROBE", "").strip().lower() in ("1", "true", "yes", "on")
 _EPISODIC_DRIVE_TURN = "epi_recall"      # the referential RECALL turn (its group is store->recall, same session)
 _EPISODIC_DRIVE_ENV = {"BRAIN_EPISODIC_STORE": "1"}   # force the BTSP write to execute on the probe backend
+
+# ── OPEN-ENDED-GENERATION DRIVING PROBE (opt-in, env-gated; default OFF -> byte-identical to the 2026-09-19 baseline) ─
+# WHY (diagnosis, finding 2026-09-20-hollow-open-ended-generation-drive): open-ended-generation is hollow for TWO
+# reasons, both proven statically. (1) PROBE: the default `rich_open` turn ("what might a dog chase") runs on a FRESH
+# tiny-demo brain whose fixed KB has exactly ONE 'chase' fact -- (dog,chase,cat) -- already stored, so the ONLY
+# reachable (dog,chase,?) patient is excluded by the novelty check and `_generate_hypothesis` returns None (abstain) in
+# BOTH arms (intact == lesion == abstain). (2) WIRING: even WITH a novel candidate, the lesion could not bite -- the
+# production draw goes through `SpikingWTASampler.draw_from_weights` (the caller's `_weight_partner` weights), which did
+# NOT consult `ablate_likelihood` (only the de-risk's `_weights`/`_draw` path did), so a lesioned sampler drew
+# IDENTICALLY to the intact one. This flag CLOSES both: it remaps the probe to a TEACH->ASK group (battery turns
+# oe_t1..oe_t6 -> oe_ask, session 'oe2') that teaches several NEW 'chase' facts so genuine novel+plausible patients
+# exist, then asks the SAME prompt rich=True; and the WIRING fix (draw_from_weights now honors ablate_likelihood ->
+# uniform drive when lesioned) makes the lesion actually cut the likelihood off the production draw. Then the INTACT
+# likelihood-weighted draw peaks the twice-taught 'rabbit' while the LESION's uniform draw selects among all novel
+# candidates -> the decision field `hypothesis_svo` (and the rendered `answer`) FLIPS -> LOAD-BEARING. OFF (default) ->
+# open-ended-generation is measured on the lone `rich_open` turn exactly as the baseline did (hollow), no faculty
+# touched, and the wiring fix is byte-identical (its ablate branch is reached only under BRAIN_SPIKING_DRAW_LESION).
+LB_OPEN_ENDED_DRIVE = os.environ.get("LB_OPEN_ENDED_DRIVE_PROBE", "").strip().lower() in ("1", "true", "yes", "on")
+_OPEN_ENDED_DRIVE_TURN = "oe_ask"        # the rich=True generation ASK turn (its group is teach->...->ask, same session)
+_OPEN_ENDED_DRIVE_FIELDS = ["hypothesis_svo", "answer"]   # the drawn (dog,chase,?) triple + the prose that asserts it
+_OPEN_ENDED_DRIVE_ENV = {}               # generation channel + spiking draw are default-ON; the lesion is applied by the arm
 
 
 def _spawn_arm(env, turn_labels, out_path):
@@ -285,6 +312,33 @@ def _flag_resolves(flag):
     return False
 
 
+def _draw_from_weights_honors_ablate():
+    """CODE-LEVEL static check (no brain / no WTA-bank build): the production wire-in draw
+    (`SpikingWTASampler.draw_from_weights`) must consult `ablate_likelihood`, else the open-ended-generation lesion is
+    INERT on the production draw (the wiring gap this arc closes). Reads the source and confirms `ablate_likelihood`
+    appears in the `draw_from_weights` method body -- a necessary condition against a silently-inert lesion, verified
+    without running the Izhikevich bank (the hard rule forbids local brain builds)."""
+    # __file__ = <repo>/research/runners/load_bearing_fraction.py -> three dirnames to the repo root
+    repo = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    src = os.path.join(repo, "research", "runners", "_followon2_spiking_wta_sampler_derisk.py")
+    try:
+        lines = open(src).read().splitlines()
+    except Exception:
+        return False
+    body, in_fn, base_indent = [], False, None
+    for ln in lines:
+        stripped = ln.strip()
+        if stripped.startswith("def draw_from_weights("):
+            in_fn = True
+            base_indent = len(ln) - len(ln.lstrip())
+            continue
+        if in_fn:
+            if stripped and (len(ln) - len(ln.lstrip())) <= base_indent and stripped.startswith("def "):
+                break                                   # next method -> stop
+            body.append(ln)
+    return any("ablate_likelihood" in ln for ln in body)
+
+
 def _classify_diffs(diffs):
     """structural = a field goes present<->absent/null (organ output gated off); value = both present, value flips."""
     kinds = set()
@@ -347,6 +401,18 @@ def measure_faculty(key, out_dir, repeats=1, intact_cache=None):
         base_env = dict(_EPISODIC_DRIVE_ENV)
         res["turn"] = _EPISODIC_DRIVE_TURN
         res["note"] = "LB_EPISODIC_DRIVE_PROBE: store->recall on session 'epi2' + BRAIN_EPISODIC_STORE=1. " + res["note"]
+
+    # OPEN-ENDED-GENERATION DRIVING remap (default-off; see LB_OPEN_ENDED_DRIVE). Remap the open-ended probe to the
+    # teach->ask group (derived below as ['oe_t1',...,'oe_t6','oe_ask'] -- all session 'oe2', teach-first) so genuine
+    # novel+plausible (dog,chase,?) candidates exist for the draw, and compare the drawn `hypothesis_svo` (+ the
+    # rendered `answer`). No base_env is needed (the generate channel + spiking draw are default-ON; the lesion
+    # BRAIN_SPIKING_DRAW_LESION is applied by the arm from FACULTY_LESIONS). Every OTHER faculty keeps base_env={} and
+    # its original row -> byte-identical.
+    if LB_OPEN_ENDED_DRIVE and key == "open-ended-generation":
+        row = ("open-ended-generation", _OPEN_ENDED_DRIVE_TURN, list(_OPEN_ENDED_DRIVE_FIELDS), False)
+        res["turn"] = _OPEN_ENDED_DRIVE_TURN
+        res["note"] = ("LB_OPEN_ENDED_DRIVE_PROBE: teach 'chase' facts -> ask 'what might a dog chase' (rich=True) on "
+                       "session 'oe2'; compares hypothesis_svo/answer. " + res["note"])
 
     grp = turn_group(row[1])
     # cache key includes base_env so a stored (BRAIN_EPISODIC_STORE) intact arm never aliases a plain-{} arm on a
@@ -497,6 +563,14 @@ def selftest(out_path=None):
         "episodic-drive turns exist": all(l in _TURN_BY_LABEL for l in (_EPISODIC_DRIVE_TURN, "epi_store")),
         "episodic-drive group is store->recall": turn_group(_EPISODIC_DRIVE_TURN) == ["epi_store", _EPISODIC_DRIVE_TURN],
         "episodic-drive forces the BTSP write": _flag_resolves("BRAIN_EPISODIC_STORE") and "1" in _EPISODIC_DRIVE_ENV.values(),
+        # open-ended-generation driving remap (LB_OPEN_ENDED_DRIVE_PROBE): the teach->ask pair exists, its group is
+        # teach-first ending at the rich ask turn, the lesion knob resolves, and the production draw honors the lesion.
+        "open-ended-drive turns exist": all(l in _TURN_BY_LABEL for l in (_OPEN_ENDED_DRIVE_TURN, "oe_t1")),
+        "open-ended-drive group is teach->ask": turn_group(_OPEN_ENDED_DRIVE_TURN) == [
+            "oe_t1", "oe_t2", "oe_t3", "oe_t4", "oe_t5", "oe_t6", _OPEN_ENDED_DRIVE_TURN],
+        "open-ended-drive lesion knob resolves": _flag_resolves("BRAIN_SPIKING_DRAW_LESION"),
+        "open-ended-drive lesion bites the production draw (draw_from_weights honors ablate_likelihood)":
+            _draw_from_weights_honors_ablate(),
         "every FACULTY_LESIONS key is a real battery faculty":
             all(k in faculty_list() for k in FACULTY_LESIONS),
         "every battery faculty is mapped": all(k in FACULTY_LESIONS for k in faculty_list()),
@@ -520,6 +594,10 @@ def selftest(out_path=None):
                "n_probe_turns_default_roster": len(PROBE_TURNS),
                "episodic_drive_group": turn_group(_EPISODIC_DRIVE_TURN),
                "episodic_drive_env": _EPISODIC_DRIVE_ENV,
+               "open_ended_drive_group": turn_group(_OPEN_ENDED_DRIVE_TURN),
+               "open_ended_drive_fields": _OPEN_ENDED_DRIVE_FIELDS,
+               "open_ended_drive_env": _OPEN_ENDED_DRIVE_ENV,
+               "open_ended_lesion_bites_production_draw": _draw_from_weights_honors_ablate(),
                "lesion_map_coverage": dict(kinds)}
         os.makedirs(os.path.dirname(os.path.abspath(out_path)), exist_ok=True)
         json.dump(art, open(out_path, "w"), indent=2, default=str)
