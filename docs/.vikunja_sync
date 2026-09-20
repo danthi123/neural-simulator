@@ -100,3 +100,6 @@ finding 2f16c88bc (16/26 = 0.615, first reading of the #1 metric). Created #225 
 
 ## 2026-09-20  6-seed load-bearing landed
 6-seed (42/43/44/100/101/102) = mean 0.5897 std 0.0181; robust core 14, +2 borderline (affect-marker, source-provenance). Ledger headline.load_bearing_integrated updated; #225 refined. Finding 2026-09-20-load-bearing-fraction-6seed-0.59-robust-core-14.
+
+## 2026-09-20  episodic-drive verified + merged
+episodic-memory VERIFIED load-bearing with store->recall probe (LB_EPISODIC_DRIVE_PROBE, default-off, merged 60b6fb89) — the "hollow" was a probe artifact; true hollow set 9 not 10. Ledger episodic_correction added; #225 updated.

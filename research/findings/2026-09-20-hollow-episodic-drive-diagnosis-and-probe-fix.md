@@ -1,13 +1,13 @@
 ---
 type: finding
-status: contributing
+status: live
 lane: load-bearing
 date: 2026-09-20
 ---
 
 # Episodic-memory is integrated-HOLLOW for a PROBE reason, not a wiring reason — diagnosis + a default-off driving-probe fix (2026-09-20)
 
-Follow-on to the baseline [`2026-09-19-load-bearing-fraction-baseline-16of26-first-reading.md`](2026-09-19-load-bearing-fraction-baseline-16of26-first-reading.md) (its own cited `_load_bearing` baseline artifact), which recorded episodic-memory as the starkest HOLLOW faculty: isolated-lesion-load-bearing (its ledger `lesion_note` quotes the dAP completion collapsing 0.909->0.000 under `BRAIN_EPISODIC_LESION`) yet integrated-HOLLOW (lesioning it does not change the reply). This finding pins WHY and lands a minimal, honest, default-off instrument fix. Verification of the flip itself is a brain build and is deferred to the controller (owner gaming this machine) — so this is filed `contributing`, not a GO. <!--derived-->
+Follow-on to the baseline [`2026-09-19-load-bearing-fraction-baseline-16of26-first-reading.md`](2026-09-19-load-bearing-fraction-baseline-16of26-first-reading.md) (its own cited `_load_bearing` baseline artifact), which recorded episodic-memory as the starkest HOLLOW faculty: isolated-lesion-load-bearing (its ledger `lesion_note` quotes the dAP completion collapsing 0.909->0.000 under `BRAIN_EPISODIC_LESION`) yet integrated-HOLLOW (lesioning it does not change the reply). This finding pins WHY and lands a minimal, honest, default-off instrument fix. **VERIFIED 2026-09-20 on AWS (numpy CPU):** with `LB_EPISODIC_DRIVE_PROBE=1` the store->recall probe makes episodic-memory **load-bearing** — verdict=regressed, treatment_diff=1, control_diff=0, null-control clean (artifact `research/findings/raw/_load_bearing/episodic_drive.json`). So the "hollow" was a probe artifact, not a wiring gap: episodic recall genuinely drives the reply once a memory exists to recall.
 
 (Those two isolated-collapse values above are QUOTED from the episodic-memory ledger `lesion_note` + the 2026-08-12 isolated-organ verify, not measured here — the line carries the derived marker accordingly.)
 
