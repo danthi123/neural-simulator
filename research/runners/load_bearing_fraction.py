@@ -76,6 +76,11 @@ the forced BTSP write is ~seconds not ~510s/store):
   SIM_BACKEND=cupy LB_EPISODIC_DRIVE_PROBE=1 tools/memcap.sh 24 -- .venv/bin/python \
       -m research.runners.load_bearing_fraction --only episodic-memory --repeats 2 \
       --out research/findings/raw/_load_bearing/episodic_drive.json     # expect load-bearing=1, null-control clean
+Verify the BG-ACTION-SELECTION DRIVING fix (default-off; flips bg-action-selection hollow->load-bearing by comparing the
+structural `bg_select.on` field instead of the confounded top-level `abstained`; numpy is fine — no forced write):
+  LB_BG_SELECT_DRIVE_PROBE=1 tools/memcap.sh 20 -- .venv/bin/python \
+      -m research.runners.load_bearing_fraction --only bg-action-selection --repeats 2 \
+      --out research/findings/raw/_load_bearing/bg_select_drive.json    # expect load-bearing=1, change_kind=structural
 Run (full measurement, capped; defer to a non-gaming window):
   tools/memcap.sh 24 -- .venv/bin/python -m research.runners.load_bearing_fraction \
       --out research/findings/raw/_load_bearing/load_bearing.json
@@ -131,6 +136,29 @@ _LB_RESUME = os.environ.get("LB_RESUME_SKIP_EXISTING", "").strip().lower() in ("
 LB_EPISODIC_DRIVE = os.environ.get("LB_EPISODIC_DRIVE_PROBE", "").strip().lower() in ("1", "true", "yes", "on")
 _EPISODIC_DRIVE_TURN = "epi_recall"      # the referential RECALL turn (its group is store->recall, same session)
 _EPISODIC_DRIVE_ENV = {"BRAIN_EPISODIC_STORE": "1"}   # force the BTSP write to execute on the probe backend
+
+# ── BG-ACTION-SELECTION DRIVING PROBE (opt-in, env-gated; default OFF -> byte-identical to the 2026-09-19 hollow
+# baseline) ───────────────────────────────────────────────────────────────────────────────────────────────────────
+# WHY (diagnosis, finding 2026-09-20-hollow-bg-action-selection-drive): bg-action-selection genuinely DRIVES the reply
+# on the `bgdots` probe ('...') — the two-channel spiking basal-ganglia race commits STAY_SILENT and the turn short-
+# circuits with a HOLD line (webapp/server.py:4714-4723, which is the ONLY place the `bg_select` key is written). But
+# the ONE field the battery row compares is the top-level `abstained` (onebrain_regression_battery.py:272), which is
+# CONFOUNDED: the lesion `BRAIN_BG_SELECT_LESION=1` maps to `arousal` (organ:120-121), which skips the entire salience-
+# bias barrage (organ:162-177) so the race never commits, `decide_action` returns None, and the turn FALLS THROUGH past
+# the BG block to the single-fact path, where a punctuation-only '...' has no comprehensible content -> `answer,
+# abstained, verified = "I don't know about that.", True, False`. So BOTH arms read `abstained=True` — the intact arm
+# via the BG HOLD short-circuit, the lesion arm via a completely independent no-content abstain -> compare()="pass" ->
+# NOT load-bearing, even though the answer TEXT (HOLD_TEXT vs "I don't know about that.") AND the `bg_select` block's
+# presence differ. This flag remaps the compared field from the confounded `abstained` to `bg_select.on` — present+True
+# only when the BG block's own short-circuit fired (intact), absent on the lesioned fallback -> compare() sees a field
+# present intact / absent lesioned -> `regressed`, change_kind `structural` (the gold-standard robust diff). No new turn
+# or session is needed (the default `bgdots` turn already puts the race in its designed STAY_SILENT-favored regime); OFF
+# (default) -> bg-action-selection is measured on `abstained` exactly as the baseline did (hollow), no other faculty
+# touched. Same class of fix as LB_EPISODIC_DRIVE_PROBE: the mechanism is load-bearing on the reply, the instrument's
+# (turn, compared-field) pair simply could not see it — here because the field collided with an unrelated abstain path.
+LB_BG_SELECT_DRIVE = os.environ.get("LB_BG_SELECT_DRIVE_PROBE", "").strip().lower() in ("1", "true", "yes", "on")
+_BG_SELECT_DRIVE_TURN = "bgdots"                 # the content-empty turn that puts the BG race in its STAY_SILENT regime
+_BG_SELECT_DRIVE_FIELDS = ["bg_select.on"]       # the structural field the independent no-content fallback never sets
 
 
 def _spawn_arm(env, turn_labels, out_path):
@@ -348,6 +376,18 @@ def measure_faculty(key, out_dir, repeats=1, intact_cache=None):
         res["turn"] = _EPISODIC_DRIVE_TURN
         res["note"] = "LB_EPISODIC_DRIVE_PROBE: store->recall on session 'epi2' + BRAIN_EPISODIC_STORE=1. " + res["note"]
 
+    # BG-ACTION-SELECTION DRIVING remap (default-off; see LB_BG_SELECT_DRIVE). SAME turn ('bgdots'), SAME session,
+    # SAME env (base_env stays {}) -> turn_group + both arm builds are byte-identical to the baseline; ONLY the field
+    # list changes, from the confounded top-level `abstained` (True in BOTH arms — intact via the BG HOLD short-circuit,
+    # lesion via the independent no-content abstain) to `bg_select.on` (present+True only on the intact short-circuit,
+    # absent on the lesioned fallback) -> a structural intact-vs-lesion diff. The NULL control (intact vs intact-rebuild)
+    # is unaffected: both intact arms fire the short-circuit -> both set bg_select.on=True -> 0 control diffs.
+    if LB_BG_SELECT_DRIVE and key == "bg-action-selection":
+        row = ("bg-action-selection", _BG_SELECT_DRIVE_TURN, list(_BG_SELECT_DRIVE_FIELDS), False)
+        res["turn"] = _BG_SELECT_DRIVE_TURN
+        res["note"] = ("LB_BG_SELECT_DRIVE_PROBE: compare bg_select.on (structural) instead of the confounded top-level "
+                       "abstained (True in both arms). " + res["note"])
+
     grp = turn_group(row[1])
     # cache key includes base_env so a stored (BRAIN_EPISODIC_STORE) intact arm never aliases a plain-{} arm on a
     # shared turn-group (the driving group is unique anyway, but keep the key honest).
@@ -497,6 +537,23 @@ def selftest(out_path=None):
         "episodic-drive turns exist": all(l in _TURN_BY_LABEL for l in (_EPISODIC_DRIVE_TURN, "epi_store")),
         "episodic-drive group is store->recall": turn_group(_EPISODIC_DRIVE_TURN) == ["epi_store", _EPISODIC_DRIVE_TURN],
         "episodic-drive forces the BTSP write": _flag_resolves("BRAIN_EPISODIC_STORE") and "1" in _EPISODIC_DRIVE_ENV.values(),
+        # bg-select-driving remap (LB_BG_SELECT_DRIVE_PROBE): the driving turn is already in the default roster (no
+        # _EXTRA_TURNS needed) and is a single-turn group; the CONFOUNDED `abstained` field reads pass on both arms
+        # (True intact via the BG HOLD short-circuit, True lesion via the independent no-content abstain) while the
+        # remapped `bg_select.on` field is a structural regressed diff (present+True intact, absent lesioned).
+        "bg-select turn in default roster": _BG_SELECT_DRIVE_TURN in {t[0] for t in PROBE_TURNS},
+        "bg-select group is single bgdots": turn_group(_BG_SELECT_DRIVE_TURN) == [_BG_SELECT_DRIVE_TURN],
+        "bg-select confounded field passes (the bug)": compare(
+            {_BG_SELECT_DRIVE_TURN: {"abstained": True, "bg_select": {"on": True}}},
+            {_BG_SELECT_DRIVE_TURN: {"abstained": True}},
+            faculties=[("bg-action-selection", _BG_SELECT_DRIVE_TURN, ["abstained"], False)]
+        )["per_faculty"][0]["verdict"] == "pass",
+        "bg-select remapped field is structural regressed (the fix)": (lambda pf: pf["verdict"] == "regressed"
+            and _classify_diffs(pf["diffs"]) == "structural")(compare(
+            {_BG_SELECT_DRIVE_TURN: {"abstained": True, "bg_select": {"on": True}}},
+            {_BG_SELECT_DRIVE_TURN: {"abstained": True}},
+            faculties=[("bg-action-selection", _BG_SELECT_DRIVE_TURN, list(_BG_SELECT_DRIVE_FIELDS), False)]
+        )["per_faculty"][0]),
         "every FACULTY_LESIONS key is a real battery faculty":
             all(k in faculty_list() for k in FACULTY_LESIONS),
         "every battery faculty is mapped": all(k in FACULTY_LESIONS for k in faculty_list()),
@@ -520,6 +577,8 @@ def selftest(out_path=None):
                "n_probe_turns_default_roster": len(PROBE_TURNS),
                "episodic_drive_group": turn_group(_EPISODIC_DRIVE_TURN),
                "episodic_drive_env": _EPISODIC_DRIVE_ENV,
+               "bg_select_drive_group": turn_group(_BG_SELECT_DRIVE_TURN),
+               "bg_select_drive_fields": _BG_SELECT_DRIVE_FIELDS,
                "lesion_map_coverage": dict(kinds)}
         os.makedirs(os.path.dirname(os.path.abspath(out_path)), exist_ok=True)
         json.dump(art, open(out_path, "w"), indent=2, default=str)
