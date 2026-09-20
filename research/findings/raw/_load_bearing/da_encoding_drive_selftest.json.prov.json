@@ -1,0 +1,25 @@
+{
+ "run_id": "1789935099-3745818",
+ "runner": "research/runners/load_bearing_fraction.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/wf_02ca59c7-949-17/research/runners/load_bearing_fraction.py",
+  "--selftest-out",
+  "research/findings/raw/_load_bearing/da_encoding_drive_selftest.json"
+ ],
+ "git_sha": "3cfd2c795",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-20T16:11:39",
+ "env": {},
+ "sim_backend": "numpy",
+ "sim_backend_requested": "(unset -> runner default)",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_load_bearing/da_encoding_drive_selftest.json"
+}

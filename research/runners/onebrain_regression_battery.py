@@ -102,6 +102,25 @@ _TURN_BY_LABEL = {t[0]: t for t in PROBE_TURNS}
 _EXTRA_TURNS = [
     ("epi_store", "the dog chase the cat",    "epi2", True,  None,   False),  # stores 'dog' (Hook B verified-SVO BTSP write; needs BRAIN_EPISODIC_STORE=1 or a cupy backend to execute)
     ("epi_recall","did we discuss the dog",   "epi2", False, None,   False),  # recalls 'dog' (Hook A dendritic-dAP completion) in the SAME session -> in_memory True intact / False lesion
+    # ── DA-GATED ENCODING driving pair (LB_DA_ENCODING_DRIVE_PROBE; load_bearing_fraction.py) ─────────────────────
+    # da-gated-encoding is isolated-load-bearing (its stored |w| rides the self-produced DA at store time) yet reads
+    # INTEGRATED-HOLLOW on the default `well` probe for TWO reasons: (1) the checked field `da_encoding.on` is a
+    # wiring-presence constant True in BOTH the intact and lesion arms (webapp/server.py builds it True whenever the
+    # coupling is wired; the lesion gates `da_encoding_lesioned()`, which pins g=1.0 but never touches `on`); and (2)
+    # the effect is DEFERRED -- an encoding gain only changes a STORED trace's magnitude, and a CLEAN read is
+    # magnitude-invariant (the RF read is a phase read), so it can only surface on a STRESS-tested LATER recall
+    # (_da_encoding_leansoak: sigma=0 -> zero regression). This pair constructs the driving condition the `well` turn
+    # never can: a STORE turn (a novel non-colliding SVO taught under HIGH induced DA -> intact g>1 boosts the stored
+    # |w|; lesion pins g=1.0) then a RECALL turn (the (agent,action) wh-query) in ONE isolated session ('dae2',
+    # declared store-first). The load_bearing runner reads the recall under the VALIDATED I-7-b read damage (the
+    # composer's default-off BRAIN_ONEBRAIN_RETRIEVE_DAMAGE_SIGMA): the DA-boosted intact trace survives the RF floor
+    # -> recalls (recalled_svo=[bird,chase,worm]); the unit lesion trace degrades below it -> abstains (recalled_svo=
+    # None) -> the categorical recall field FLIPS -> LOAD-BEARING. bird/chase/worm are all in the tiny-demo vocab and
+    # (bird,chase) is NOT a build-time cue (build KB: dog-chase-cat, cat-eat-fish, brain-{use,learn,store}-*), so the
+    # recall depends ONLY on this turn-stored trace. Kept OUT of PROBE_TURNS (byte-identical default roster). See
+    # research/runners/load_bearing_fraction.py.
+    ("dae_store", "the bird chase the worm",  "dae2", True,  None,   False),  # stores (bird,chase,worm) at the live DA-gated write gain (intact g>1 under high induced DA; lesion g=1.0)
+    ("dae_recall","what does the bird chase", "dae2", False, None,   False),  # recalls (bird,chase)->worm under read damage: intact survives, lesion degrades -> recalled_svo flips
 ]
 _TURN_BY_LABEL.update({t[0]: t for t in _EXTRA_TURNS})
 

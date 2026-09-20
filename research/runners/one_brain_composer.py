@@ -27,6 +27,8 @@ trains on the bridge); numpy is the test oracle.
 """
 from __future__ import annotations
 
+import contextlib
+
 import numpy as np
 
 from sim import SimulationBridge, VisualizationConfig, RuntimeState, GPUConfig
@@ -363,6 +365,25 @@ class OneBrainComposer:
         # frame selection + position x frame -> role, both neural) so `hear_multiframe(sentence, verbs)` comprehends a
         # sentence in an AUTO-SELECTED word-order frame (SVO/VSO/OSV). The default `hear` (the on-bridge SVO/passive
         # BridgeParser) is untouched. Lazily built on first use to keep construction byte-identical when unused.
+        # ── RETRIEVE-DAMAGE (opt-in, env-gated; DEFAULT 0.0 = OFF = BYTE-IDENTICAL) ───────────────────────────────
+        # A DEFAULT-OFF read-time trace-degradation knob: when BRAIN_ONEBRAIN_RETRIEVE_DAMAGE_SIGMA > 0, a recall
+        # (query_patient / query_agent / query_role / ask_yes_no) reads through store_conns perturbed by common
+        # additive complex jitter (sigma), reusing the VALIDATED I-7-b operator `_damage_store_conns` VERBATIM
+        # (research/runners/_burndown_I7_dopamine_encoding_deploy_derisk.py, +6/12 within-fact lift GO). This is the
+        # biologically-faithful trace degradation the DA-gated write gain rides (Kandel D.16 / Lisman-Grace): a
+        # DA-boosted (higher-|w|) engram has higher per-neuron SNR -> survives the RF read floor, while a unit-|w|
+        # engram degrades below it -> mis-recall/abstain. It is the read-stress that makes the DA-gated write gain
+        # LOAD-BEARING on recall -- a CLEAN read is magnitude-invariant, so the gain is inert there (_da_encoding_
+        # leansoak: sigma=0 -> zero regression). The jitter RNG is seeded deterministically (BRAIN_ONEBRAIN_RETRIEVE_
+        # DAMAGE_SEED, default = cfg.seed) so two builds at one seed draw MATCHED damage -> the ONLY inter-arm
+        # difference is the write gain (clean load-bearing attribution) + a clean null control. OFF (unset / <=0): the
+        # context manager yields immediately, NOTHING is imported, store_conns is untouched -> byte-identical to
+        # before this existed. Used ONLY by load_bearing_fraction.py's LB_DA_ENCODING_DRIVE_PROBE. NO sim/ edit.
+        _dmg = _os.environ.get("BRAIN_ONEBRAIN_RETRIEVE_DAMAGE_SIGMA")
+        self._retrieve_damage_sigma = float(_dmg) if _dmg not in (None, "") else 0.0
+        _dseed = _os.environ.get("BRAIN_ONEBRAIN_RETRIEVE_DAMAGE_SEED")
+        self._retrieve_damage_seed = int(_dseed) if _dseed not in (None, "") else int(seed)
+        self._in_read_damage = False       # re-entrancy guard (a nested query must not double-damage)
         self.enable_multiframe = bool(enable_multiframe)
         self._frame_parser = None
         self.enable_batched = bool(enable_batched)       # A5 lever 1: read ALL blocks in 3 windows (7.3x); per-block=oracle
@@ -653,6 +674,40 @@ class OneBrainComposer:
         self.kb.append((f, None))
         return f
 
+    @contextlib.contextmanager
+    def _maybe_read_damage(self):
+        """DEFAULT-OFF read-time trace degradation (see __init__ BRAIN_ONEBRAIN_RETRIEVE_DAMAGE_SIGMA). When armed,
+        temporarily perturb store_conns with the VALIDATED I-7-b `_damage_store_conns` jitter for the duration of one
+        recall, then restore the clean weights + bust the read caches -- exactly the I-7-b `_query_under_damage`
+        operator, moved in-class as a default-off wrapper so the SAME proven read-damage runs on the production
+        recall path. sigma<=0 -> a no-op yield (byte-identical; nothing imported). Re-entrant-safe: a nested query
+        inside an already-damaged scope does not re-damage (the guard keeps the damage draw a single per-recall
+        perturbation). The store WRITE is never touched (only the read scope), so the DA-gated stored magnitude is
+        intact -- the boosted (higher-|w|) engram survives the RF floor where the unit engram degrades."""
+        if self._retrieve_damage_sigma <= 0.0 or self._in_read_damage:
+            yield
+            return
+        from research.runners._burndown_I7_dopamine_encoding_deploy_derisk import _damage_store_conns
+        clean = self.store_conns
+        rng = np.random.default_rng(self._retrieve_damage_seed)
+        self._in_read_damage = True
+        try:
+            self.store_conns = _damage_store_conns(clean, self._retrieve_damage_sigma, rng)
+            self._store_dirty = True
+            self._store_csr = None
+            self._persistent_dirty = True
+            if getattr(self, "_csr_cache", None) is not None:
+                self._csr_cache = {}
+            yield
+        finally:
+            self.store_conns = clean
+            self._store_dirty = True
+            self._store_csr = None
+            self._persistent_dirty = True
+            if getattr(self, "_csr_cache", None) is not None:
+                self._csr_cache = {}
+            self._in_read_damage = False
+
     def query_role(self, role, **cue_roles):
         """Recall the filler of `role` (any typed role, agent/action/patient too) from the FIRST stored fact whose cue
         roles ALL match; None = abstain (the no-confab moat). The on-bridge spiking read (`_read_blocks`) reconstructs
@@ -661,14 +716,15 @@ class OneBrainComposer:
         ANY typed role. == ArgStructureComposer.query_role; the SELECTION + decode are on FIRING NEURONS (the substrate
         store + the resonate scan/unbind/cleanup). An unanswerable role (None decoded / not in any matching fact's
         bound roles) abstains."""
-        for i, got in enumerate(self._read_blocks()):
-            if all(got.get(cr) == cv for cr, cv in cue_roles.items()):
-                # the role the caller wants -- but only if THIS fact actually bound it (else its decoded word is the
-                # unbind of an unbound role = noise -> abstain, never confabulate a role the fact does not have).
-                if role in self.bind_roles and (i >= len(self.kb) or role in self.kb[i][0]):
-                    return got.get(role)
-                return None
-        return None
+        with self._maybe_read_damage():
+            for i, got in enumerate(self._read_blocks()):
+                if all(got.get(cr) == cv for cr, cv in cue_roles.items()):
+                    # the role the caller wants -- but only if THIS fact actually bound it (else its decoded word is the
+                    # unbind of an unbound role = noise -> abstain, never confabulate a role the fact does not have).
+                    if role in self.bind_roles and (i >= len(self.kb) or role in self.kb[i][0]):
+                        return got.get(role)
+                    return None
+            return None
 
     def _composite_for_typed(self, fact):
         """The kb index of the stored fact whose agent (+ action) matches `fact` -- for render(). The composite itself
@@ -1656,15 +1712,16 @@ class OneBrainComposer:
         the SAME block on both paths (only WHICH block is selected moves from host to spikes). When
         `enable_fact_shard` (default-off), the (agent, action) selection routes through the DG-CA3 fact-block shard
         (O(shard) blocks decoded, not O(k_max)); the SAME tail runs on the selected block -> answer-identical."""
-        if self.trace:
-            self.last_trace = None
-        if self._fact_shard_active():                          # FACT-COUNT-axis sublinear fast path (default-off)
-            idx, got = self._fact_shard_first_match({"agent": agent, "action": action})
-            if idx is not _FS_ESCALATE:
-                return self._finish_query_patient(agent, action, idx, got, order_fn)
-        idx = self._seq_block(agent, action)                   # full path (byte-identical when the fast path is off)
-        got = self._read_blocks()[idx] if idx is not None else None
-        return self._finish_query_patient(agent, action, idx, got, order_fn)
+        with self._maybe_read_damage():
+            if self.trace:
+                self.last_trace = None
+            if self._fact_shard_active():                          # FACT-COUNT-axis sublinear fast path (default-off)
+                idx, got = self._fact_shard_first_match({"agent": agent, "action": action})
+                if idx is not _FS_ESCALATE:
+                    return self._finish_query_patient(agent, action, idx, got, order_fn)
+            idx = self._seq_block(agent, action)                   # full path (byte-identical when the fast path is off)
+            got = self._read_blocks()[idx] if idx is not None else None
+            return self._finish_query_patient(agent, action, idx, got, order_fn)
 
     def _finish_query_patient(self, agent, action, idx, got, order_fn):
         """Shared tail for `query_patient`: patient-type routing (embedded-clause / attributed / plain word) + trace,
@@ -1688,24 +1745,25 @@ class OneBrainComposer:
         return ans
 
     def query_agent(self, action, patient):
-        if self.trace:
-            self.last_trace = None
-        if self._fact_shard_active():                          # FACT-COUNT-axis sublinear fast path (default-off)
-            idx, got = self._fact_shard_first_match({"action": action, "patient": patient})
-            if idx is not _FS_ESCALATE:                        # reverse lookup: cue = (action, patient) -> agent
-                ans = got.get("agent") if idx is not None else None
-                if self.trace:
-                    self._trace_query({"action": action, "patient": patient}, idx)
-                return ans
-        ans = self._scan({"action": action, "patient": patient}, "agent")
-        if self.trace:
-            # find the block index (the first matching), for the trace's matched-engram line
-            idx = None
-            for i, got in enumerate(self._read_blocks()):
-                if got.get("action") == action and got.get("patient") == patient:
-                    idx = i; break
-            self._trace_query({"action": action, "patient": patient}, idx)
-        return ans
+        with self._maybe_read_damage():
+            if self.trace:
+                self.last_trace = None
+            if self._fact_shard_active():                          # FACT-COUNT-axis sublinear fast path (default-off)
+                idx, got = self._fact_shard_first_match({"action": action, "patient": patient})
+                if idx is not _FS_ESCALATE:                        # reverse lookup: cue = (action, patient) -> agent
+                    ans = got.get("agent") if idx is not None else None
+                    if self.trace:
+                        self._trace_query({"action": action, "patient": patient}, idx)
+                    return ans
+            ans = self._scan({"action": action, "patient": patient}, "agent")
+            if self.trace:
+                # find the block index (the first matching), for the trace's matched-engram line
+                idx = None
+                for i, got in enumerate(self._read_blocks()):
+                    if got.get("action") == action and got.get("patient") == patient:
+                        idx = i; break
+                self._trace_query({"action": action, "patient": patient}, idx)
+            return ans
 
     def ask_yes_no(self, agent, action, patient):
         """yes / no / unknown: the first fact matching the full SVO answers by its polarity tag (AFFIRM -> yes,
@@ -1727,18 +1785,19 @@ class OneBrainComposer:
         mechanism, the docstring's long-standing "degenerate same-(agent, action) different-patient pair is outside
         the production regime" note stays true THERE (this fix targets the two paths actually served by default:
         the fact-shard fast path and the host first-match full path)."""
-        if self.trace:
-            self.last_trace = None
-        if self._fact_shard_active():                          # FACT-COUNT-axis sublinear fast path (default-on)
-            idx, got = self._fact_shard_yesno_match(agent, action, patient)
-            if idx is not _FS_ESCALATE:
+        with self._maybe_read_damage():
+            if self.trace:
+                self.last_trace = None
+            if self._fact_shard_active():                          # FACT-COUNT-axis sublinear fast path (default-on)
+                idx, got = self._fact_shard_yesno_match(agent, action, patient)
+                if idx is not _FS_ESCALATE:
+                    return self._finish_ask_yes_no(agent, action, patient, idx, got)
+            if not self.integrated_loop:                           # host full-SVO multi-block scan (byte-identical rf semantics)
+                idx, got = self._host_yesno_match(agent, action, patient)
                 return self._finish_ask_yes_no(agent, action, patient, idx, got)
-        if not self.integrated_loop:                           # host full-SVO multi-block scan (byte-identical rf semantics)
-            idx, got = self._host_yesno_match(agent, action, patient)
+            idx = self._seq_block(agent, action)                   # opt-in spiking sequencer (unchanged; single-block decision)
+            got = self._read_blocks()[idx] if idx is not None else None
             return self._finish_ask_yes_no(agent, action, patient, idx, got)
-        idx = self._seq_block(agent, action)                   # opt-in spiking sequencer (unchanged; single-block decision)
-        got = self._read_blocks()[idx] if idx is not None else None
-        return self._finish_ask_yes_no(agent, action, patient, idx, got)
 
     def _fact_shard_yesno_match(self, agent, action, patient):
         """ask_yes_no's shard-fast-path candidate scan (2026-09-08 recall-completeness fix): unlike

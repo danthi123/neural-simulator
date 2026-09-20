@@ -76,6 +76,13 @@ the forced BTSP write is ~seconds not ~510s/store):
   SIM_BACKEND=cupy LB_EPISODIC_DRIVE_PROBE=1 tools/memcap.sh 24 -- .venv/bin/python \
       -m research.runners.load_bearing_fraction --only episodic-memory --repeats 2 \
       --out research/findings/raw/_load_bearing/episodic_drive.json     # expect load-bearing=1, null-control clean
+Verify the DA-GATED-ENCODING DRIVING fix (default-off; flips da-gated-encoding hollow->load-bearing; cupy strongly
+preferred so the OneBrainComposer builds are ~seconds; the probe teaches under high induced DA then reads the recall
+under the VALIDATED I-7-b read damage swept over the knee -> the DA-boosted intact trace recalls, the unit lesion
+trace abstains -> recalled_svo flips):
+  SIM_BACKEND=cupy LB_DA_ENCODING_DRIVE_PROBE=1 tools/memcap.sh 24 -- .venv/bin/python \
+      -m research.runners.load_bearing_fraction --only da-gated-encoding --repeats 2 \
+      --out research/findings/raw/_load_bearing/da_encoding_drive.json   # expect load-bearing=1, null-control clean, a knee_sigma
 Run (full measurement, capped; defer to a non-gaming window):
   tools/memcap.sh 24 -- .venv/bin/python -m research.runners.load_bearing_fraction \
       --out research/findings/raw/_load_bearing/load_bearing.json
@@ -94,6 +101,7 @@ from research.runners.onebrain_regression_battery import (
     PROBE_TURNS,
     _EXTRA_TURNS,
     _TURN_BY_LABEL,
+    _NOISE_FIELDS,
     FACULTY_PROBES,
     _spawn_arm as _spawn_arm_raw,
     compare,
@@ -131,6 +139,50 @@ _LB_RESUME = os.environ.get("LB_RESUME_SKIP_EXISTING", "").strip().lower() in ("
 LB_EPISODIC_DRIVE = os.environ.get("LB_EPISODIC_DRIVE_PROBE", "").strip().lower() in ("1", "true", "yes", "on")
 _EPISODIC_DRIVE_TURN = "epi_recall"      # the referential RECALL turn (its group is store->recall, same session)
 _EPISODIC_DRIVE_ENV = {"BRAIN_EPISODIC_STORE": "1"}   # force the BTSP write to execute on the probe backend
+
+# ── DA-GATED ENCODING DRIVING PROBE (opt-in, env-gated; default OFF -> byte-identical to the hollow baseline) ──────
+# WHY (triage PROBE_ARTIFACT verdict; finding 2026-09-20-hollow-da-gated-encoding-drive): da-gated-encoding is
+# isolated-load-bearing (its stored |w| rides the brain's self-produced tonic DA at store time -- Lisman-Grace/Kandel
+# D.16) yet reads INTEGRATED-HOLLOW here for TWO reasons. (1) The checked field `da_encoding.on` is a WIRING-PRESENCE
+# CONSTANT: webapp/server.py builds it literal True whenever the coupling is wired, in BOTH the intact and lesion
+# arms; the lesion knob (BRAIN_DA_ENCODING_LESION) gates `da_encoding_lesioned()`, which pins the gain g=1.0 but never
+# touches `on` -> `on` can NEVER detect the lesion. (Compounding it, the mechanically-correct field `da_encoding.g` is
+# a continuous measurement, excluded from compare() by _NOISE_FIELDS.) (2) The effect is DEFERRED: an encoding gain
+# only changes a STORED trace's MAGNITUDE, and a CLEAN RF read is phase-based / magnitude-INVARIANT (_da_encoding_
+# leansoak: sigma=0 -> zero regression), so it can only surface on a STRESS-tested LATER recall -- never on the
+# store-only `well` teach turn's own reply fields. This flag CONSTRUCTS the driving condition: remap the probe to a
+# STORE->RECALL pair (battery turns `dae_store`->`dae_recall`, session 'dae2') taught under HIGH induced DA (intact
+# g>1 boosts the stored |w|; the lesion pins g=1.0), and read the recall under the VALIDATED I-7-b READ DAMAGE (the
+# composer's default-off BRAIN_ONEBRAIN_RETRIEVE_DAMAGE_SIGMA, reusing `_damage_store_conns` verbatim). The DA-boosted
+# intact trace has higher per-neuron SNR -> survives the RF read floor -> recalls (recalled_svo=[bird,chase,worm]);
+# the unit lesion trace degrades below the floor -> abstains (recalled_svo=None) -> the categorical recall field FLIPS
+# -> LOAD-BEARING. The field is remapped from the hollow `da_encoding.on` to `recalled_svo` (categorical, OUTSIDE
+# _NOISE_FIELDS). Read damage is swept ASCENDING across the I-7-b knee (~0.75..4.0): the differential exists only in
+# the knee window (below it both traces recall; above it both degrade), so the FIRST sigma with a clean differential
+# is the knee. OFF (default) -> da-gated-encoding is measured on the lone `well` turn exactly as the hollow baseline
+# did, and no other faculty is touched.
+LB_DA_ENCODING_DRIVE = os.environ.get("LB_DA_ENCODING_DRIVE_PROBE", "").strip().lower() in ("1", "true", "yes", "on")
+_DA_ENCODING_DRIVE_TURN = "dae_recall"       # the (agent,action) wh-query RECALL turn (group = store->recall, session 'dae2')
+_DA_ENCODING_SIGMA_ENV = "BRAIN_ONEBRAIN_RETRIEVE_DAMAGE_SIGMA"   # the composer's default-off read-damage knob
+# Applied to BOTH arms: HIGH induced DA on the store (intact g>1; the LESION pins g=1.0), and quiet the between-turn
+# idle-tick consolidation so the DA boost is not homeostatically down-regulated before the recall. BRAIN_DA_DRIVES
+# stays default-ON so INDUCE sets the SNc-driven DA LEVEL; the encoding coupling + its substrate homeostat + spiking
+# gain stay at their production defaults (only the store MAGNITUDE differs between arms).
+_DA_ENCODING_DRIVE_BASE_ENV = {
+    "BRAIN_DA_DRIVES_INDUCE": "1300",        # arousal -> DA ~1.24 (reused from _da_encoding_wired_verify) -> the write gain rides it
+    "BRAIN_CONTINUOUS": "0",                 # no idle-tick consolidation between store+recall (would regulate the boost toward unit)
+    "BRAIN_CONTINUOUS_DRIVES": "0",
+}
+
+
+def _da_encoding_sigmas():
+    """The read-damage knee grid (I-7-b behavioral differential knee ~0.75..4.0; _da_encoding_leansoak swept 0..6),
+    env-overridable via LB_DA_ENCODING_DRIVE_SIGMAS (comma-separated). Swept ascending; the sweep STOPS at the first
+    sigma that is genuinely load-bearing (early-exit -> fewer builds)."""
+    raw = os.environ.get("LB_DA_ENCODING_DRIVE_SIGMAS", "").strip()
+    if raw:
+        return [float(x) for x in raw.split(",") if x.strip()]
+    return [0.75, 1.0, 1.5, 2.0, 3.0, 4.0]
 
 
 def _spawn_arm(env, turn_labels, out_path):
@@ -306,6 +358,37 @@ def _n_decision_diffs(row, arm_a, arm_b):
     return len(compare(arm_a, arm_b, faculties=[row])["per_faculty"][0]["diffs"])
 
 
+def _i7_damage_operator_resolves():
+    """True iff the DA-encoding driving probe's read damage reuses the VALIDATED I-7-b `_damage_store_conns` operator:
+    the operator is importable AND the composer source both imports it and reads the damage-sigma env (a necessary
+    static condition against a stale/renamed reuse -- the SAME 'a check that cannot fail' discipline `_flag_resolves`
+    applies)."""
+    try:
+        from research.runners._burndown_I7_dopamine_encoding_deploy_derisk import _damage_store_conns  # noqa: F401
+    except Exception:
+        return False
+    proj = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    try:
+        with open(os.path.join(proj, "research", "runners", "one_brain_composer.py")) as f:
+            txt = f.read()
+    except Exception:
+        return False
+    return ("_damage_store_conns" in txt) and (_DA_ENCODING_SIGMA_ENV in txt)
+
+
+def _da_on_is_wiring_constant():
+    """A static witness that the remap is justified: webapp/server.py builds `da_encoding` with `"on": True` as a
+    wiring-presence CONSTANT (the triage diagnosis -- True in BOTH the intact and lesion arms, so it can never detect
+    the lesion). Confirms the hollow field really is a constant, not a decision, before we remap off it."""
+    proj = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    try:
+        with open(os.path.join(proj, "webapp", "server.py")) as f:
+            txt = f.read()
+    except Exception:
+        return False
+    return ('"on": True' in txt) and ("da_encoding_info" in txt)
+
+
 def measure_faculty(key, out_dir, repeats=1, intact_cache=None):
     """Build the INTACT arm TWICE (a, cached per turn-group; b, the NULL control) and the LESION arm for `key`, then
     make the explicit attribution call: TREATMENT = decision fields changed intact-vs-lesion; CONTROL = decision fields
@@ -336,77 +419,121 @@ def measure_faculty(key, out_dir, repeats=1, intact_cache=None):
         res["load_bearing"] = None
         return res
 
-    # EPISODIC DRIVING remap (default-off; see LB_EPISODIC_DRIVE). Make the episodic probe exercise its load-bearing
-    # recall path: remap to the store->recall turn (its group is derived below as ['epi_store','epi_recall'] because
-    # both are in session 'epi2', declared store-first) and FORCE the BTSP write so it runs on any backend. base_env is
-    # applied to BOTH the intact and lesion arms (so the NULL control also stores -> both intact arms read in_memory=
-    # True -> clean null; only the lesion collapses it). Every OTHER faculty keeps base_env={} -> byte-identical.
+    # DRIVING REMAPS (default-off). Each makes the faculty EXERCISE its load-bearing path; base_env is applied to BOTH
+    # the intact and lesion arms so the ONLY inter-arm difference is the lesion (clean attribution + a clean null).
+    # Every OTHER faculty keeps base_env={} and sigma_grid=None -> byte-identical to the hollow baseline.
+    # EPISODIC (see LB_EPISODIC_DRIVE): remap to the store->recall turn (group ['epi_store','epi_recall'], session
+    # 'epi2', store-first) + FORCE the BTSP write so it runs on any backend (both intact arms store -> clean null;
+    # only the lesion collapses in_memory).
     base_env = {}
+    sigma_grid = None
     if LB_EPISODIC_DRIVE and key == "episodic-memory":
         row = ("episodic-memory", _EPISODIC_DRIVE_TURN, ["episodic.in_memory"], False)
         base_env = dict(_EPISODIC_DRIVE_ENV)
         res["turn"] = _EPISODIC_DRIVE_TURN
         res["note"] = "LB_EPISODIC_DRIVE_PROBE: store->recall on session 'epi2' + BRAIN_EPISODIC_STORE=1. " + res["note"]
+    # DA-GATED ENCODING (see LB_DA_ENCODING_DRIVE): remap the hollow wiring-presence `da_encoding.on` to the RECALL
+    # turn's genuinely-categorical `recalled_svo` (outside _NOISE_FIELDS). Teach the SAME fact under HIGH induced DA
+    # (intact g>1; the lesion pins g=1.0), then read the recall under the VALIDATED I-7-b read damage swept ACROSS the
+    # knee: the DA-boosted intact trace survives the RF floor -> recalls; the unit lesion trace degrades -> abstains ->
+    # recalled_svo FLIPS. base_env forces the deterministic high-DA store + quiets the between-turn consolidation so
+    # the boost survives; the per-sigma read damage is added in the sweep below.
+    if LB_DA_ENCODING_DRIVE and key == "da-gated-encoding":
+        row = ("da-gated-encoding", _DA_ENCODING_DRIVE_TURN, ["recalled_svo"], False)
+        base_env = dict(_DA_ENCODING_DRIVE_BASE_ENV)
+        sigma_grid = _da_encoding_sigmas()
+        res["turn"] = _DA_ENCODING_DRIVE_TURN
+        res["note"] = ("LB_DA_ENCODING_DRIVE_PROBE: store->recall on session 'dae2' + BRAIN_DA_DRIVES_INDUCE (high-DA "
+                       "store) + I-7-b read damage swept over the knee; field remapped da_encoding.on->recalled_svo. "
+                       + res["note"])
 
-    grp = turn_group(row[1])
-    # cache key includes base_env so a stored (BRAIN_EPISODIC_STORE) intact arm never aliases a plain-{} arm on a
-    # shared turn-group (the driving group is unique anyway, but keep the key honest).
-    env_sig = ",".join("%s=%s" % (k, v) for k, v in sorted(base_env.items()))
-    grp_sig = ",".join(grp) + ("|" + env_sig if env_sig else "")
-    _fname = grp_sig.replace(",", "_").replace("|", "__").replace("=", "-")
     intact_cache = intact_cache if intact_cache is not None else {}
 
-    # INTACT arm (base env = all defaults on, plus any driving base_env), built TWICE: `a` (cached per turn-group,
-    # shared across faculties on the same turn) and `b` the NULL control (a fresh rebuild at the same seed -> the
-    # run-to-run baseline of "no change").
-    if grp_sig not in intact_cache:
-        a = _spawn_arm(dict(base_env), grp, os.path.join(out_dir, "intact_a_%s.json" % _fname))
-        b = _spawn_arm(dict(base_env), grp, os.path.join(out_dir, "intact_b_%s.json" % _fname))
-        intact_cache[grp_sig] = (a, b)
-    intact_a, intact_b = intact_cache[grp_sig]
+    def _run_arms(cur_env):
+        """Build the INTACT arm TWICE (a; b the NULL control) and the LESION arm under `cur_env`, then make the
+        attribution + null-control + reproduce decision. Returns the per-arm verdict fields (merged into `res`).
+        ONLY the arm env differs across calls (the sweep varies the read-damage sigma). The cache key includes the
+        env so a driving arm never aliases a plain-{} arm on a shared turn-group."""
+        grp = turn_group(row[1])
+        env_sig = ",".join("%s=%s" % (k, v) for k, v in sorted(cur_env.items()))
+        grp_sig = ",".join(grp) + ("|" + env_sig if env_sig else "")
+        _fname = grp_sig.replace(",", "_").replace("|", "__").replace("=", "-").replace("/", "-")
+        if grp_sig not in intact_cache:
+            a = _spawn_arm(dict(cur_env), grp, os.path.join(out_dir, "intact_a_%s.json" % _fname))
+            b = _spawn_arm(dict(cur_env), grp, os.path.join(out_dir, "intact_b_%s.json" % _fname))
+            intact_cache[grp_sig] = (a, b)
+        intact_a, intact_b = intact_cache[grp_sig]
+        _lname = key.replace("-", "_") + (("__" + env_sig.replace("=", "-").replace(",", "_").replace("/", "-"))
+                                          if env_sig else "")
+        les_out = os.path.join(out_dir, "lesion_%s.json" % _lname)
+        lesioned = _spawn_arm({**cur_env, flag: val}, grp, les_out)
+        out = {}
+        if intact_a is None or intact_b is None or lesioned is None:
+            out["verdict"] = "arm-build-failed"
+            return out
+        treat_pf = compare(intact_a, lesioned, faculties=[row])["per_faculty"][0]
+        out["verdict"] = treat_pf["verdict"]        # "regressed" (=changed) / "pass" (=identical) / "not-exercised"
+        out["diffs"] = treat_pf["diffs"]
+        out["change_kind"] = _classify_diffs(treat_pf["diffs"]) if treat_pf["diffs"] else "none"
+        treatment_diffs = len(treat_pf["diffs"])
+        control_diffs = _n_decision_diffs(row, intact_a, intact_b)   # the NULL: must be 0 on a deterministic harness
+        out["treatment_diffs"] = treatment_diffs
+        out["control_diffs"] = control_diffs
+        out["null_control_clean"] = (control_diffs == 0)
+        # THE ATTRIBUTION CALL (tools.lab): what fraction of the observed change is the lesion vs the null control.
+        out["attributable_fraction"] = attributable_to("load-bearing[%s]" % key, treatment_diffs, control_diffs)
+        # LESION-REPEAT (optional extra anti-noise): rebuild the lesion arm and require the SAME verdict.
+        reproduced = True
+        for i in range(max(0, repeats - 1)):
+            les2 = _spawn_arm({**cur_env, flag: val}, grp, les_out + ".rep%d" % i)
+            if les2 is None or compare(intact_a, les2, faculties=[row])["per_faculty"][0]["verdict"] != treat_pf["verdict"]:
+                reproduced = False
+                break
+        out["lesion_reproduced"] = reproduced
+        # Load-bearing iff: the decision CHANGED under lesion, the change is NOT in the null control (clean
+        # attribution -> the change is the lesion's, not noise), and it reproduces.
+        if treat_pf["verdict"] == "not-exercised":
+            out["load_bearing"] = None
+        elif treat_pf["verdict"] == "pass":
+            out["load_bearing"] = False
+        elif not out["null_control_clean"]:
+            out["load_bearing"] = None
+            out["verdict"] = "noisy-null-control"   # the intact arm itself changed run-to-run -> verdict untrustworthy
+        elif not reproduced:
+            out["load_bearing"] = None
+            out["verdict"] = "noisy"
+        else:
+            out["load_bearing"] = True              # changed, attributable to the lesion, reproduced
+        return out
 
-    # LESION arm.
-    les_out = os.path.join(out_dir, "lesion_%s.json" % key.replace("-", "_"))
-    lesioned = _spawn_arm({**base_env, flag: val}, grp, les_out)
-    if intact_a is None or intact_b is None or lesioned is None:
-        res["verdict"] = "arm-build-failed"; return res
+    if sigma_grid is None:
+        res.update(_run_arms(base_env))
+        return res
 
-    treat_pf = compare(intact_a, lesioned, faculties=[row])["per_faculty"][0]
-    res["verdict"] = treat_pf["verdict"]        # "regressed" (=changed) / "pass" (=identical) / "not-exercised"
-    res["diffs"] = treat_pf["diffs"]
-    res["change_kind"] = _classify_diffs(treat_pf["diffs"]) if treat_pf["diffs"] else "none"
-    treatment_diffs = len(treat_pf["diffs"])
-    control_diffs = _n_decision_diffs(row, intact_a, intact_b)   # the NULL: must be 0 on a deterministic harness
-    res["treatment_diffs"] = treatment_diffs
-    res["control_diffs"] = control_diffs
-    res["null_control_clean"] = (control_diffs == 0)
-
-    # THE ATTRIBUTION CALL (tools.lab): what fraction of the observed decision change is the lesion vs the null control.
-    res["attributable_fraction"] = attributable_to("load-bearing[%s]" % key, treatment_diffs, control_diffs)
-
-    # LESION-REPEAT (optional extra anti-noise): rebuild the lesion arm and require the SAME verdict.
-    reproduced = True
-    for i in range(max(0, repeats - 1)):
-        les2 = _spawn_arm({**base_env, flag: val}, grp, les_out + ".rep%d" % i)
-        if les2 is None or compare(intact_a, les2, faculties=[row])["per_faculty"][0]["verdict"] != treat_pf["verdict"]:
-            reproduced = False
+    # READ-DAMAGE KNEE SWEEP (da-gated-encoding only). The DA-write-gain differential surfaces ONLY inside the knee
+    # window: below it both the boosted and unit traces recall (pass); above it both degrade together (pass/abstain).
+    # Sweep ascending and take the FIRST sigma that is genuinely LOAD-BEARING (regressed, null clean, reproduced) ->
+    # that sigma IS the knee; else report the last attempt (an honest not-load-bearing / characterized result, never a
+    # fake pass). The per-sigma outcomes are recorded so the controller sees WHERE (or that) the gain became load-bearing.
+    swept, chosen, last = [], None, None
+    for sigma in sigma_grid:
+        cur = dict(base_env)
+        cur[_DA_ENCODING_SIGMA_ENV] = str(float(sigma))
+        last = _run_arms(cur)
+        swept.append({"sigma": float(sigma), "verdict": last.get("verdict"),
+                      "load_bearing": last.get("load_bearing"),
+                      "treatment_diffs": last.get("treatment_diffs"),
+                      "null_control_clean": last.get("null_control_clean")})
+        if last.get("load_bearing") is True:
+            chosen = last
+            res["knee_sigma"] = float(sigma)
             break
-    res["lesion_reproduced"] = reproduced
-
-    # Load-bearing iff: the decision CHANGED under lesion, the change is NOT present in the null control (clean
-    # attribution -> the change is the lesion's, not noise), and it reproduces.
-    if treat_pf["verdict"] == "not-exercised":
-        res["load_bearing"] = None
-    elif treat_pf["verdict"] == "pass":
-        res["load_bearing"] = False
-    elif not res["null_control_clean"]:
-        res["load_bearing"] = None
-        res["verdict"] = "noisy-null-control"       # the intact arm itself changed run-to-run -> verdict untrustworthy
-    elif not reproduced:
-        res["load_bearing"] = None
-        res["verdict"] = "noisy"
-    else:
-        res["load_bearing"] = True                  # changed, attributable to the lesion, reproduced
+        if last.get("verdict") == "arm-build-failed":
+            chosen = last
+            break
+    res.update(chosen if chosen is not None else last)
+    res["sigma_sweep"] = swept
+    res["sigma_grid"] = [float(s) for s in sigma_grid]
     return res
 
 
@@ -497,6 +624,19 @@ def selftest(out_path=None):
         "episodic-drive turns exist": all(l in _TURN_BY_LABEL for l in (_EPISODIC_DRIVE_TURN, "epi_store")),
         "episodic-drive group is store->recall": turn_group(_EPISODIC_DRIVE_TURN) == ["epi_store", _EPISODIC_DRIVE_TURN],
         "episodic-drive forces the BTSP write": _flag_resolves("BRAIN_EPISODIC_STORE") and "1" in _EPISODIC_DRIVE_ENV.values(),
+        # da-encoding-driving remap (LB_DA_ENCODING_DRIVE_PROBE): the store->recall pair exists + is store-first, the
+        # read-damage knob resolves in an ORGAN source (the composer, not this runner), the damage reuses the VALIDATED
+        # I-7-b `_damage_store_conns` operator, the remapped field is CATEGORICAL (outside _NOISE_FIELDS -> compare()
+        # will not silently drop it, unlike the mechanically-correct-but-continuous da_encoding.g), and the high-DA
+        # store env is armed.
+        "da-encoding-drive turns exist": all(l in _TURN_BY_LABEL for l in (_DA_ENCODING_DRIVE_TURN, "dae_store")),
+        "da-encoding-drive group is store->recall": turn_group(_DA_ENCODING_DRIVE_TURN) == ["dae_store", _DA_ENCODING_DRIVE_TURN],
+        "da-encoding read-damage knob resolves in composer": _flag_resolves(_DA_ENCODING_SIGMA_ENV),
+        "da-encoding damage reuses the validated I-7-b operator": _i7_damage_operator_resolves(),
+        "da-encoding remapped field is categorical (outside _NOISE_FIELDS)": "recalled_svo" not in _NOISE_FIELDS,
+        "da-encoding hollow field IS the excluded/constant one": ("on" not in _NOISE_FIELDS) and _da_on_is_wiring_constant(),
+        "da-encoding-drive arms the high-DA store": "BRAIN_DA_DRIVES_INDUCE" in _DA_ENCODING_DRIVE_BASE_ENV,
+        "da-encoding sigma grid spans the I-7-b knee (0.75..4.0)": (min(_da_encoding_sigmas()) <= 1.0 <= max(_da_encoding_sigmas())),
         "every FACULTY_LESIONS key is a real battery faculty":
             all(k in faculty_list() for k in FACULTY_LESIONS),
         "every battery faculty is mapped": all(k in FACULTY_LESIONS for k in faculty_list()),
@@ -520,6 +660,11 @@ def selftest(out_path=None):
                "n_probe_turns_default_roster": len(PROBE_TURNS),
                "episodic_drive_group": turn_group(_EPISODIC_DRIVE_TURN),
                "episodic_drive_env": _EPISODIC_DRIVE_ENV,
+               "da_encoding_drive_group": turn_group(_DA_ENCODING_DRIVE_TURN),
+               "da_encoding_drive_base_env": _DA_ENCODING_DRIVE_BASE_ENV,
+               "da_encoding_drive_field": "recalled_svo",
+               "da_encoding_sigma_grid": _da_encoding_sigmas(),
+               "da_encoding_read_damage_env": _DA_ENCODING_SIGMA_ENV,
                "lesion_map_coverage": dict(kinds)}
         os.makedirs(os.path.dirname(os.path.abspath(out_path)), exist_ok=True)
         json.dump(art, open(out_path, "w"), indent=2, default=str)

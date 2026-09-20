@@ -1,0 +1,69 @@
+{
+  "runner": "research.runners.load_bearing_fraction",
+  "kind": "selftest",
+  "selftest_result": "PASS",
+  "checks": {
+    "load_bearing_detected (regressed on a real lesion)": true,
+    "change_kind value": true,
+    "attribution clean-null == 1.0": true,
+    "attribution dirty-null == 0.0": true,
+    "attribution both-null UNDEFINED": true,
+    "not_load_bearing (pass on a no-op lesion)": true,
+    "not_exercised (fields absent both arms)": true,
+    "structural change classified": true,
+    "turn_group hold->held": true,
+    "turn_group dr chain": true,
+    "turn_group bc pair": true,
+    "turn_group single": true,
+    "null lesion flag unread in source": true,
+    "a real lesion flag resolves in source": true,
+    "episodic-drive turns exist": true,
+    "episodic-drive group is store->recall": true,
+    "episodic-drive forces the BTSP write": true,
+    "da-encoding-drive turns exist": true,
+    "da-encoding-drive group is store->recall": true,
+    "da-encoding read-damage knob resolves in composer": true,
+    "da-encoding damage reuses the validated I-7-b operator": true,
+    "da-encoding remapped field is categorical (outside _NOISE_FIELDS)": true,
+    "da-encoding hollow field IS the excluded/constant one": true,
+    "da-encoding-drive arms the high-DA store": true,
+    "da-encoding sigma grid spans the I-7-b knee (0.75..4.0)": true,
+    "every FACULTY_LESIONS key is a real battery faculty": true,
+    "every battery faculty is mapped": true
+  },
+  "n_probe_turns_default_roster": 26,
+  "episodic_drive_group": [
+    "epi_store",
+    "epi_recall"
+  ],
+  "episodic_drive_env": {
+    "BRAIN_EPISODIC_STORE": "1"
+  },
+  "da_encoding_drive_group": [
+    "dae_store",
+    "dae_recall"
+  ],
+  "da_encoding_drive_base_env": {
+    "BRAIN_DA_DRIVES_INDUCE": "1300",
+    "BRAIN_CONTINUOUS": "0",
+    "BRAIN_CONTINUOUS_DRIVES": "0"
+  },
+  "da_encoding_drive_field": "recalled_svo",
+  "da_encoding_sigma_grid": [
+    0.75,
+    1.0,
+    1.5,
+    2.0,
+    3.0,
+    4.0
+  ],
+  "da_encoding_read_damage_env": "BRAIN_ONEBRAIN_RETRIEVE_DAMAGE_SIGMA",
+  "lesion_map_coverage": {
+    "in-process": 4,
+    "mechanism-only": 1,
+    "neural-lesion": 27,
+    "thin": 2,
+    "whether-disable": 1,
+    "proposed": 3
+  }
+}
