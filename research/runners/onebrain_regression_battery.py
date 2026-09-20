@@ -92,16 +92,25 @@ _TURN_BY_LABEL = {t[0]: t for t in PROBE_TURNS}
 # ── EXTRA turns reachable BY LABEL ONLY, deliberately NOT in the default PROBE_TURNS roster ───────────────────────
 # Rationale: the full roster is iterated by run_regression_battery + every flip-verify harness that imports it, so a
 # turn added to PROBE_TURNS runs (and on cupy would BTSP-write) in ALL of them. These turns are needed only by the
-# load_bearing runner's episodic-driving remap (LB_EPISODIC_DRIVE_PROBE), so they live here — merged into
-# _TURN_BY_LABEL (the worker resolves turns by label from it) but OUT of PROBE_TURNS -> the default roster, the
-# regression battery, and every flip-verify harness are BYTE-IDENTICAL. The EPISODIC DRIVING PAIR: a STORE turn then
-# a RECALL turn in ONE isolated session ('epi2', declared store-first), so the referential recall has a memory to
-# COMPLETE (intact in_memory=True -> disclosure; lesion in_memory=False -> "I don't recall") — the load-bearing recall
-# path the lone-fresh-session `episodic` turn can NEVER exercise (nothing stored -> intact reads not-in-memory,
-# identical to the lesion). See research/runners/load_bearing_fraction.py.
+# load_bearing runner's DRIVING remaps (LB_EPISODIC_DRIVE_PROBE / LB_NONCONTRADICTION_DRIVE_PROBE), so they live here
+# — merged into _TURN_BY_LABEL (the worker resolves turns by label from it) but OUT of PROBE_TURNS -> the default
+# roster, the regression battery, and every flip-verify harness are BYTE-IDENTICAL.
+#   EPISODIC DRIVING PAIR: a STORE turn then a RECALL turn in ONE isolated session ('epi2', declared store-first), so
+# the referential recall has a memory to COMPLETE (intact in_memory=True -> disclosure; lesion in_memory=False -> "I
+# don't recall") — the load-bearing recall path the lone-fresh-session `episodic` turn can NEVER exercise (nothing
+# stored -> intact reads not-in-memory, identical to the lesion).
+#   NON-CONTRADICTION DRIVING turn: a single fresh-session turn that ASSERTS the NEGATED form of a fact the tiny-demo
+# brain already holds AFFIRM at BUILD time ((dog,chase,cat), brain_chat_tui `_build*` hear-loop; a build-time store,
+# not a cupy-gated BTSP write, so it is present on ANY backend with no forced-write flag needed). The default
+# `noncontradiction-gate` probe rides the `well` teach turn ("the wolf bites the apple" = brand-new vocab), whose
+# recall is "unknown" on the INTACT substrate too — identical to the lesion's forced-"unknown" — so the gate reads
+# integrated-HOLLOW there for a PROBE reason, not a wiring reason. This turn constructs the driving condition: intact
+# recalls "yes"/AFFIRM -> stored != asserted -> REJECT; lesion forces "unknown" -> ACCEPT — so reject / recalled_yn /
+# stored_polarity all diverge. See research/runners/load_bearing_fraction.py.
 _EXTRA_TURNS = [
     ("epi_store", "the dog chase the cat",    "epi2", True,  None,   False),  # stores 'dog' (Hook B verified-SVO BTSP write; needs BRAIN_EPISODIC_STORE=1 or a cupy backend to execute)
     ("epi_recall","did we discuss the dog",   "epi2", False, None,   False),  # recalls 'dog' (Hook A dendritic-dAP completion) in the SAME session -> in_memory True intact / False lesion
+    ("noncontra_neg", "the dog does not chase the cat", "ncontra", True, None, False),  # NEGATE assertion of the AFFIRM boot fact (dog,chase,cat) -> intact reject=True (recall 'yes'); lesion accept (forced 'unknown')
 ]
 _TURN_BY_LABEL.update({t[0]: t for t in _EXTRA_TURNS})
 

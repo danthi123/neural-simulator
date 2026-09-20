@@ -76,6 +76,11 @@ the forced BTSP write is ~seconds not ~510s/store):
   SIM_BACKEND=cupy LB_EPISODIC_DRIVE_PROBE=1 tools/memcap.sh 24 -- .venv/bin/python \
       -m research.runners.load_bearing_fraction --only episodic-memory --repeats 2 \
       --out research/findings/raw/_load_bearing/episodic_drive.json     # expect load-bearing=1, null-control clean
+Verify the NON-CONTRADICTION DRIVING fix (default-off; flips noncontradiction-gate hollow->load-bearing; NO forced-
+write env needed, the boot fact (dog,chase,cat)=AFFIRM is stored on any backend, so numpy is fine):
+  LB_NONCONTRADICTION_DRIVE_PROBE=1 tools/memcap.sh 24 -- .venv/bin/python \
+      -m research.runners.load_bearing_fraction --only noncontradiction-gate --repeats 2 \
+      --out research/findings/raw/_load_bearing/noncontradiction_drive.json  # expect load-bearing=1, null-control clean
 Run (full measurement, capped; defer to a non-gaming window):
   tools/memcap.sh 24 -- .venv/bin/python -m research.runners.load_bearing_fraction \
       --out research/findings/raw/_load_bearing/load_bearing.json
@@ -131,6 +136,46 @@ _LB_RESUME = os.environ.get("LB_RESUME_SKIP_EXISTING", "").strip().lower() in ("
 LB_EPISODIC_DRIVE = os.environ.get("LB_EPISODIC_DRIVE_PROBE", "").strip().lower() in ("1", "true", "yes", "on")
 _EPISODIC_DRIVE_TURN = "epi_recall"      # the referential RECALL turn (its group is store->recall, same session)
 _EPISODIC_DRIVE_ENV = {"BRAIN_EPISODIC_STORE": "1"}   # force the BTSP write to execute on the probe backend
+
+# ── NON-CONTRADICTION DRIVING PROBE (opt-in, env-gated; default OFF -> byte-identical to the 2026-09-19 hollow baseline)
+# WHY (diagnosis, finding 2026-09-20-hollow-noncontradiction-gate-drive): noncontradiction-gate is isolated-lesion-
+# load-bearing (the 6-seed B3 GO: disabling negation storage flips 0->18 false-accepts, the canonical negation reads
+# "yes" on the substrate) yet reads INTEGRATED-HOLLOW here for a PROBE reason, not a wiring reason. Its default probe
+# turn is `well` ("the wolf bites the apple") — a fresh TEACH of BRAND-NEW vocabulary (the battery's own comment,
+# onebrain_regression_battery.py:176: "wolf/bite/apple are new vocabulary"). So `ask_yes_no("wolf","bite","apple")`
+# has NO stored belief and legitimately reads "unknown" on the INTACT substrate too — the SAME value the lesioned
+# _RecallShim forces — so on/reject/recalled_yn/asserted_polarity are byte-identical intact vs lesion (accept /
+# reject=False / "unknown"). The gate GENUINELY drives the reply (webapp/server.py:5943-5954: reject=True early-returns
+# the rejection message + the noncontradiction block; reject=False falls through to the normal reply, block still
+# attached), and is genuinely wired to a real recallable belief — the tiny-demo brain stores (dog,chase,cat)=AFFIRM at
+# BUILD time (brain_chat_tui `_build*` hear-loop; a build-time store, present on ANY backend), which is exactly why the
+# battery's pre-existing `confirm`/`metacog` probes already recall "yes" on it. This flag remaps the noncontradiction
+# probe to a turn that ASSERTS the NEGATED form of that boot fact: intact recalls "yes" (stored AFFIRM) -> stored !=
+# asserted(NEGATE) -> REJECT (recalled_yn="yes", stored_polarity="AFFIRM"); the lesion forces "unknown" -> ACCEPT
+# (recalled_yn="unknown", stored_polarity=None) -> the decision fields FLIP -> LOAD-BEARING. UNLIKE episodic, NO forced-
+# write env is needed (the fact is stored unconditionally at boot on every backend), so base_env stays {} in both arms
+# -> the NULL control is a plain rebuild and is byte-identical. OFF (default) -> noncontradiction is measured on the
+# lone `well` teach turn exactly as the baseline did (hollow), and no other faculty is touched.
+LB_NONCONTRADICTION_DRIVE = os.environ.get("LB_NONCONTRADICTION_DRIVE_PROBE", "").strip().lower() in ("1", "true", "yes", "on")
+_NONCONTRA_DRIVE_TURN = "noncontra_neg"   # a single fresh-session turn: assert NEGATE of the AFFIRM boot fact (dog,chase,cat)
+_NONCONTRA_DRIVE_FIELDS = ["noncontradiction.on", "noncontradiction.reject", "noncontradiction.recalled_yn",
+                           "noncontradiction.asserted_polarity", "noncontradiction.stored_polarity"]
+
+
+def _noncontra_probe_parses_negated_boot_fact():
+    """STATIC check (no brain build): the driving turn's TEXT parses, through the SAME production organ front-end the
+    webapp uses, to the NEGATED form of the AFFIRM boot fact -> (agent,action,patient,polarity)==(dog,chase,cat,NEGATE).
+    This is the load-bearing static claim: intact will recall "yes" on (dog,chase,cat) and REJECT a NEGATE assertion,
+    while the lesion forces "unknown" and ACCEPTS -> the decision fields diverge. Import is lazy (parse-only; no brain)."""
+    try:
+        from research.runners.b3_noncontradiction_production_organ import extract_polar_assertion
+        turn = _TURN_BY_LABEL.get(_NONCONTRA_DRIVE_TURN)
+        if not turn:
+            return False
+        parsed = extract_polar_assertion(turn[1])   # turn = (label, message, session, reset, percept, rich)
+        return parsed == ("dog", "chase", "cat", "NEGATE")
+    except Exception:
+        return False
 
 
 def _spawn_arm(env, turn_labels, out_path):
@@ -347,6 +392,16 @@ def measure_faculty(key, out_dir, repeats=1, intact_cache=None):
         base_env = dict(_EPISODIC_DRIVE_ENV)
         res["turn"] = _EPISODIC_DRIVE_TURN
         res["note"] = "LB_EPISODIC_DRIVE_PROBE: store->recall on session 'epi2' + BRAIN_EPISODIC_STORE=1. " + res["note"]
+    # NON-CONTRADICTION DRIVING remap (default-off; see LB_NONCONTRADICTION_DRIVE). Remap the noncontradiction probe to
+    # a fresh-session turn that ASSERTS the NEGATED form of the AFFIRM boot fact (dog,chase,cat): intact recalls "yes"
+    # -> REJECT; lesion forces "unknown" -> ACCEPT -> reject/recalled_yn/stored_polarity diverge. NO forced-write env is
+    # needed (the boot fact is stored on any backend), so base_env stays {} -> the NULL control is a plain rebuild
+    # (byte-identical). Every OTHER faculty keeps base_env={} -> byte-identical.
+    if LB_NONCONTRADICTION_DRIVE and key == "noncontradiction-gate":
+        row = ("noncontradiction-gate", _NONCONTRA_DRIVE_TURN, list(_NONCONTRA_DRIVE_FIELDS), False)
+        res["turn"] = _NONCONTRA_DRIVE_TURN
+        res["note"] = ("LB_NONCONTRADICTION_DRIVE_PROBE: assert NEGATE of the AFFIRM boot fact (dog,chase,cat) on a "
+                       "fresh session 'ncontra'; no forced-write env (boot-stored on any backend). " + res["note"])
 
     grp = turn_group(row[1])
     # cache key includes base_env so a stored (BRAIN_EPISODIC_STORE) intact arm never aliases a plain-{} arm on a
@@ -497,6 +552,14 @@ def selftest(out_path=None):
         "episodic-drive turns exist": all(l in _TURN_BY_LABEL for l in (_EPISODIC_DRIVE_TURN, "epi_store")),
         "episodic-drive group is store->recall": turn_group(_EPISODIC_DRIVE_TURN) == ["epi_store", _EPISODIC_DRIVE_TURN],
         "episodic-drive forces the BTSP write": _flag_resolves("BRAIN_EPISODIC_STORE") and "1" in _EPISODIC_DRIVE_ENV.values(),
+        # noncontradiction-driving remap (LB_NONCONTRADICTION_DRIVE_PROBE): the driving turn exists, is a SINGLE-turn
+        # group (the boot fact dog/chase/cat=AFFIRM is present at every tiny-demo build -> no store turn needed), the
+        # lesion knob resolves in source, and the probe text parses to the NEGATED form of that boot fact (so intact
+        # recalls "yes"/AFFIRM -> REJECT, lesion forces "unknown" -> ACCEPT: reject/recalled_yn/stored_polarity flip).
+        "noncontradiction-drive turn exists": _NONCONTRA_DRIVE_TURN in _TURN_BY_LABEL,
+        "noncontradiction-drive group is single": turn_group(_NONCONTRA_DRIVE_TURN) == [_NONCONTRA_DRIVE_TURN],
+        "noncontradiction-drive lesion knob resolves": _flag_resolves("BRAIN_NONCONTRADICTION_LESION"),
+        "noncontradiction-drive probe negates the dog/chase/cat boot fact": _noncontra_probe_parses_negated_boot_fact(),
         "every FACULTY_LESIONS key is a real battery faculty":
             all(k in faculty_list() for k in FACULTY_LESIONS),
         "every battery faculty is mapped": all(k in FACULTY_LESIONS for k in faculty_list()),
@@ -520,6 +583,8 @@ def selftest(out_path=None):
                "n_probe_turns_default_roster": len(PROBE_TURNS),
                "episodic_drive_group": turn_group(_EPISODIC_DRIVE_TURN),
                "episodic_drive_env": _EPISODIC_DRIVE_ENV,
+               "noncontradiction_drive_group": turn_group(_NONCONTRA_DRIVE_TURN),
+               "noncontradiction_drive_env": {},   # no forced-write env: the boot fact is present on any backend
                "lesion_map_coverage": dict(kinds)}
         os.makedirs(os.path.dirname(os.path.abspath(out_path)), exist_ok=True)
         json.dump(art, open(out_path, "w"), indent=2, default=str)
