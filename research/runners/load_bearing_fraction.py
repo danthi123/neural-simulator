@@ -120,6 +120,16 @@ def _spawn_arm(env, turn_labels, out_path):
 # confirm the instrument does NOT report a change when the "lesion" is a no-op (guards against a false-positive harness).
 NULL_LESION_FLAG = "BRAIN_LOAD_BEARING_NULL_LESION"
 
+# SEED THREADING (research/seed-threading-lbf, 2026-09-20): every arm build already reads the substrate seed off
+# `BRAIN_CHAT_SEED` (webapp/server.py._brain_chat_seed + each per-organ workspace's own `_DEFAULT_SEED`, all
+# reading the SAME env var) — see main()/run() below, which set it once for the whole invocation. `_seed_suffix`
+# namespaces every per-arm output FILENAME by seed so LB_RESUME_SKIP_EXISTING and the in-memory intact_cache never
+# false-skip/collide across a multi-seed sweep sharing one --out directory. seed=42 (the pre-existing hardcoded
+# value) keeps the ORIGINAL, un-suffixed filenames — BYTE-IDENTICAL to every existing on-disk artifact and to the
+# pre-this-change resume behavior; only a non-42 seed adds the `_s<seed>` tag.
+def _seed_suffix(seed: int) -> str:
+    return "" if int(seed) == 42 else "_s%d" % int(seed)
+
 
 # ── the PER-FACULTY LESION MAP ───────────────────────────────────────────────────────────────────────────────────
 # faculty_key -> {flag, value, kind, note}. `kind` is one of: neural-lesion / whether-disable / in-process / thin /
@@ -279,12 +289,18 @@ def _n_decision_diffs(row, arm_a, arm_b):
     return len(compare(arm_a, arm_b, faculties=[row])["per_faculty"][0]["diffs"])
 
 
-def measure_faculty(key, out_dir, repeats=1, intact_cache=None):
+def measure_faculty(key, out_dir, repeats=1, intact_cache=None, seed=42):
     """Build the INTACT arm TWICE (a, cached per turn-group; b, the NULL control) and the LESION arm for `key`, then
     make the explicit attribution call: TREATMENT = decision fields changed intact-vs-lesion; CONTROL = decision fields
     changed intact-vs-intact-rebuild. load-bearing requires a treatment change (attributed to the lesion) AND a clean
     null control (0 changes intact-vs-intact) — a change that also appears in the null is run-to-run noise, not the
-    lesion. Returns the per-faculty result dict."""
+    lesion. Returns the per-faculty result dict.
+
+    `seed` (default 42, byte-identical to before this param existed) is NOT passed to _spawn_arm as an env override
+    — the substrate seed is threaded via the process-wide BRAIN_CHAT_SEED env var set once by main()/run() for the
+    whole invocation, so every arm build (including this faculty's) already builds at that seed. `seed` here only
+    namespaces the OUTPUT FILENAMES (via `_seed_suffix`) so a multi-seed sweep sharing one --out dir cannot collide
+    or false-skip under LB_RESUME_SKIP_EXISTING."""
     spec = FACULTY_LESIONS.get(key)
     row = _faculty_row(key)
     res = {"faculty": key, "turn": (row[1] if row else None),
@@ -312,17 +328,18 @@ def measure_faculty(key, out_dir, repeats=1, intact_cache=None):
     grp = turn_group(row[1])
     grp_sig = ",".join(grp)
     intact_cache = intact_cache if intact_cache is not None else {}
+    _sfx = _seed_suffix(seed)
 
     # INTACT arm (base env = all defaults on), built TWICE: `a` (cached per turn-group, shared across faculties on the
     # same turn) and `b` the NULL control (a fresh rebuild at the same seed -> the run-to-run baseline of "no change").
     if grp_sig not in intact_cache:
-        a = _spawn_arm({}, grp, os.path.join(out_dir, "intact_a_%s.json" % grp_sig.replace(",", "_")))
-        b = _spawn_arm({}, grp, os.path.join(out_dir, "intact_b_%s.json" % grp_sig.replace(",", "_")))
+        a = _spawn_arm({}, grp, os.path.join(out_dir, "intact_a_%s%s.json" % (grp_sig.replace(",", "_"), _sfx)))
+        b = _spawn_arm({}, grp, os.path.join(out_dir, "intact_b_%s%s.json" % (grp_sig.replace(",", "_"), _sfx)))
         intact_cache[grp_sig] = (a, b)
     intact_a, intact_b = intact_cache[grp_sig]
 
     # LESION arm.
-    les_out = os.path.join(out_dir, "lesion_%s.json" % key.replace("-", "_"))
+    les_out = os.path.join(out_dir, "lesion_%s%s.json" % (key.replace("-", "_"), _sfx))
     lesioned = _spawn_arm({flag: val}, grp, les_out)
     if intact_a is None or intact_b is None or lesioned is None:
         res["verdict"] = "arm-build-failed"; return res
@@ -367,14 +384,18 @@ def measure_faculty(key, out_dir, repeats=1, intact_cache=None):
 
 
 # ── the full measurement ─────────────────────────────────────────────────────────────────────────────────────────
-def run(out_dir="research/findings/raw/_load_bearing", only=None, repeats=1):
+def run(out_dir="research/findings/raw/_load_bearing", only=None, repeats=1, seed=42):
+    """`seed` (default 42, byte-identical): the substrate seed for this WHOLE invocation. Callers (main() below) are
+    responsible for setting the process-wide BRAIN_CHAT_SEED env var to this same value BEFORE calling run() — this
+    function does not set it itself (it may be called directly, e.g. from a test, without the env side effect) —
+    `seed` here is threaded only to `measure_faculty` for output-filename namespacing (`_seed_suffix`)."""
     os.makedirs(out_dir, exist_ok=True)
     report = {"runner": "research.runners.load_bearing_fraction",
-              "metric": "load_bearing_fraction", "repeats": repeats}
+              "metric": "load_bearing_fraction", "repeats": repeats, "seed": seed}
 
     keys = only or faculty_list()
     intact_cache = {}
-    per = [measure_faculty(k, out_dir, repeats=repeats, intact_cache=intact_cache) for k in keys]
+    per = [measure_faculty(k, out_dir, repeats=repeats, intact_cache=intact_cache, seed=seed) for k in keys]
     report["per_faculty"] = per
 
     # DETERMINISM / NULL CONTROL, aggregated from every exercised faculty's intact-vs-intact-rebuild control. The
@@ -450,6 +471,13 @@ def selftest():
         "every FACULTY_LESIONS key is a real battery faculty":
             all(k in faculty_list() for k in FACULTY_LESIONS),
         "every battery faculty is mapped": all(k in FACULTY_LESIONS for k in faculty_list()),
+        # SEED THREADING (research/seed-threading-lbf, 2026-09-20): seed=42 (the pre-existing hardcoded value)
+        # keeps the ORIGINAL un-suffixed filenames -- byte-identical to every on-disk artifact from before --seed
+        # existed; only a non-42 seed adds the _s<seed> tag, so a 6-seed sweep sharing one --out dir never collides.
+        "seed_suffix default(42) is empty (byte-identical filenames)": _seed_suffix(42) == "",
+        "seed_suffix non-default namespaces the filename": _seed_suffix(43) == "_s43",
+        "seed_suffix accepts the full 6-seed roster": [_seed_suffix(s) for s in (42, 43, 44, 100, 101, 102)]
+            == ["", "_s43", "_s44", "_s100", "_s101", "_s102"],
     }
     ok = all(checks.values())
     print("=== LOAD-BEARING INSTRUMENT SELF-TEST ===")
@@ -469,6 +497,13 @@ def main():
     ap.add_argument("--smoke", default=None, help="measure ONE faculty (its key) intact-vs-lesion, for the tiny memcap smoke")
     ap.add_argument("--only", default=None, help="comma-separated faculty keys to restrict to")
     ap.add_argument("--repeats", type=int, default=1, help="lesion-arm rebuilds for the anti-noise reproduce check (>=1)")
+    ap.add_argument("--seed", type=int, default=42,
+                    help="substrate seed for every arm this invocation builds (research/seed-threading-lbf, "
+                         "2026-09-20): sets BRAIN_CHAT_SEED for the whole run + namespaces every per-arm output "
+                         "filename (_seed_suffix) so a multi-seed sweep sharing one --out dir cannot collide or "
+                         "false-skip under LB_RESUME_SKIP_EXISTING. Default 42 is BYTE-IDENTICAL to before this "
+                         "flag existed (unsuffixed filenames, BRAIN_CHAT_SEED=42 behaves exactly like unset). The "
+                         "mandated 6-seed validation is 42/43/44/100/101/102, one invocation per seed.")
     ap.add_argument("--selftest", action="store_true", help="verify the instrument logic without building a brain (no cap needed)")
     ap.add_argument("--map", action="store_true", help="print the per-faculty lesion map and exit (no brain build)")
     args = ap.parse_args()
@@ -482,16 +517,25 @@ def main():
                                             (("val=%s " % s["value"]) if s.get("value") else "")))
         return 0
 
+    # SEED THREADING: set the process-wide substrate seed ONCE, before any arm build. _spawn_arm_raw (reused
+    # verbatim from onebrain_regression_battery.py) passes `env=dict(os.environ)` to every arm subprocess, so this
+    # single assignment is what makes EVERY arm (intact + lesion, every faculty) build at args.seed. Unconditional
+    # even at the default (--seed unset -> 42): BRAIN_CHAT_SEED=42 reads identically to unset everywhere it is
+    # consumed (webapp/server.py._brain_chat_seed + every per-organ workspace's own _DEFAULT_SEED), so this is a
+    # byte-identical no-op for the shipped default.
+    os.environ["BRAIN_CHAT_SEED"] = str(args.seed)
+
     out_dir = os.path.dirname(os.path.abspath(args.out))
     os.makedirs(out_dir, exist_ok=True)
     if args.smoke:
-        report = run(out_dir=out_dir, only=[args.smoke], repeats=max(2, args.repeats))
+        report = run(out_dir=out_dir, only=[args.smoke], repeats=max(2, args.repeats), seed=args.seed)
     else:
         only = args.only.split(",") if args.only else None
-        report = run(out_dir=out_dir, only=only, repeats=args.repeats)
+        report = run(out_dir=out_dir, only=only, repeats=args.repeats, seed=args.seed)
 
     json.dump(report, open(args.out, "w"), indent=2, default=str)
     print("\n===== LOAD-BEARING FRACTION =====")
+    print("  seed=%d (BRAIN_CHAT_SEED=%s)" % (args.seed, os.environ.get("BRAIN_CHAT_SEED")))
     if "determinism" in report:
         d = report["determinism"]
         print("  determinism/null-control (intact vs intact-rebuild): deterministic=%s (checked=%s, dirty=%s)"

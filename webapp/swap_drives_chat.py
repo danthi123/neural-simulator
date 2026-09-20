@@ -88,7 +88,9 @@ from typing import Optional
 # register) -- which itself reuses the 6/6-seed-GO `_gnw_neural_swap_intention_derisk`. NO sim/ edit.
 from webapp import gnw_thought_swap as _GTS
 
-_DEFAULT_SEED = 42
+_DEFAULT_SEED = int(os.environ.get("BRAIN_CHAT_SEED", "42"))  # research/seed-threading-lbf, 2026-09-20: reads the
+# same env var as webapp/server.py._brain_chat_seed so this organ reseeds coherently with the rest of the tiny-
+# demo brain. Unset -> 42, BYTE-IDENTICAL to the pre-existing hardcoded value.
 
 
 def swap_drives_enabled() -> bool:
