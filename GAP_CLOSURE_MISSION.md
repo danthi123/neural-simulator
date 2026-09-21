@@ -89,8 +89,12 @@ remains.
   (`git diff --cached | grep '^+<<<<<<<'`) before every merge commit.
 - **ADEQUATE-PROBE 6-SEED IN FLIGHT on AWS** (7 verified drive-flags, numpy 6-parallel) → the ROBUST ~0.88 number.
 
-**IN-FLIGHT / PENDING (2026-09-21 ~05Z):**
-- AWS adequate-probe 6-seed (7 flags) — running (i-051464a1, IP 18.215.251.212); terminate + delete SG on completion.
+**IN-FLIGHT / PENDING (2026-09-21 ~11Z):**
+- AWS adequate-probe 6-seed (7 flags) — **3/6 DONE** (seeds 43=0.846 22/26, 44=0.808 21/26, 101=0.885 23/26;
+  3-seed robust core 20, borderline episodic/affect-marker/source-provenance); seeds 42/100/102 STILL grinding the
+  episodic BTSP long pole. Corrected completion watcher **bfwzxvzyv** armed. Terminate + delete SG on completion.
+  ⚠️ LESSON (bit twice): a `load_bearing_adequate_s*.json` glob ALSO matches the `.prov.json` sidecars → the first
+  watcher counted 3 results + 3 prov = 6 and FALSE-fired. Always exclude `.prov.json` (or test exact filenames).
 - LOCAL pmem-v2 6-seed (--only prospective-memory) — running throttled (2 seeds live + a memcap'd chain for the
   other 4, after a self-inflicted RAM spike from an uncapped 6-parallel launch — recovered, avail 23G).
 
