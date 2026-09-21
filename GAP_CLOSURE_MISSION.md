@@ -89,28 +89,35 @@ remains.
   (`git diff --cached | grep '^+<<<<<<<'`) before every merge commit.
 - **ADEQUATE-PROBE 6-SEED IN FLIGHT on AWS** (7 verified drive-flags, numpy 6-parallel) → the ROBUST ~0.88 number.
 
-**IN-FLIGHT / PENDING (2026-09-21 ~11Z):**
-- AWS adequate-probe 6-seed (7 flags) — **3/6 DONE** (seeds 43=0.846 22/26, 44=0.808 21/26, 101=0.885 23/26;
-  3-seed robust core 20, borderline episodic/affect-marker/source-provenance); seeds 42/100/102 STILL grinding the
-  episodic BTSP long pole. Corrected completion watcher **bfwzxvzyv** armed. Terminate + delete SG on completion.
-  ⚠️ LESSON (bit twice): a `load_bearing_adequate_s*.json` glob ALSO matches the `.prov.json` sidecars → the first
-  watcher counted 3 results + 3 prov = 6 and FALSE-fired. Always exclude `.prov.json` (or test exact filenames).
+**✅ CONSOLIDATION COMPLETE (2026-09-21 ~11:40Z) — the load-bearing arc's #1-metric is landed on main:**
+- **Robust adequate-probe 6-seed = 0.85 ± 0.03** (mean 0.8526, std 0.0264; robust core 20/26, union 23/26; 3
+  seed-dependent borderline: episodic-memory, affect-marker-spiking-wta, source-provenance-honesty). The 6-seed
+  TRIMMED the single-seed 0.88. Finding f9f21ee2, ledger headline.load_bearing_integrated.adequate_6seed (6d36f5b8).
+- **research/lb-consolidation MERGED to main @ 7582c063e** (all 9 drive-flags + seed-threading + open-ended wiring
+  fix; selftest PASS on main; default byte-identical; both remotes verified). All 3 gap agents resolved + folded.
+- **AWS torn down clean** (instance terminated + SG deleted, no billing leak). Vikunja #224/#225 synced.
+- LESSON banked (bit twice): a `*_s*.json` glob also matches `.prov.json` sidecars → false counts; test exact names.
+
+**IN-FLIGHT / PENDING (2026-09-21 ~11:40Z):** none — consolidation done. (A pre-session dirty citation-URL edit to
+the hollow-set finding sits uncommitted in the working tree + a safety stash `pre-merge operational churn`; both benign.)
 - LOCAL pmem-v2 6-seed (--only prospective-memory) — running throttled (2 seeds live + a memcap'd chain for the
   other 4, after a self-inflicted RAM spike from an uncapped 6-parallel launch — recovered, avail 23G).
 
 **PRE-DECIDED NEXT ACTIONS:**
-1. Harvest the AWS adequate-probe 6-seed → record the ROBUST adequate-probe load-bearing fraction (6-seed,
-   constraint-mandated); update ledger headline.load_bearing_integrated + the finding + the Vikunja board.
-2. ✅ DONE — LOCAL pmem-v2 6-seed = 5/6 (seed 44 exception, null-clean → seed-dependent-borderline). Fold into the
-   consolidation finding as a borderline flip (not robust core).
-3. Merge research/lb-consolidation @ bacd4e3c (= lb-integration ∪ pmem-v2 ∪ open-ended-v2, ALL folded) to main.
-   **DEFAULT-PATH NO-REGRESSION VERIFIED:** _brain_chat_seed() returns 42 unset / 43 set / 42 garbage; every
-   server.py change is a literal-42→_brain_chat_seed() swap, no other logic → BYTE-IDENTICAL default by construction.
-   Merge is de-risked + READY (all 9 flags default-OFF, seed-threading byte-identical default). Do it at AWS-land.
-4. Genuine forward build (consolidation): wire open-ended-generation's DISTRIBUTIONAL lesion metric as its
-   load-bearing ruler (the agent's own recommendation) — converts its honest-negative to a proper load-bearing read.
-5. Terminate AWS (i-051464a1) + delete SG when the 6-seed lands. Watch local RAM (avail<8G → serialize; precise
-   PID kills only, never a broad --worker pattern).
+1. ✅ DONE — robust adequate 6-seed 0.85 recorded (finding + ledger + board); ✅ pmem 5/6; ✅ 3 gap agents resolved;
+   ✅ lb-consolidation merged to main @ 7582c063e; ✅ AWS torn down. The overnight consolidation arc is CLOSED.
+2. ⭐ NEXT FRONTIER — wire open-ended-generation's DISTRIBUTIONAL lesion metric as its load-bearing ruler (the
+   open-ended agent's own recommendation; the no-defer step). Its contribution is a DISTRIBUTION of guesses
+   (draw_many plausible-frac 0.83→0.04 under lesion, already GO'd) that the single-turn decision-diff can't see —
+   build a flag-gated distributional-comparison mode in load_bearing_fraction with a CLEAN null (intact-vs-intact
+   distributional compare must be non-significant), brain-build verify, then 6-seed it. Would move open-ended from
+   single-turn-negative → proper load-bearing, lifting the adequate fraction.
+3. Production wiring: the adequate-probe flags are DEFAULT-OFF (shipped fraction stays 0.59). Deciding which verified
+   drive-probe fixes to flip ON by default (so the shipped brain actually drives more of the reply) is the owner-facing
+   next arc — the gap between 0.59 (shipped) and 0.85 (adequate) is now quantified 6-seed on both ends.
+4. The seed-dependent-borderline set (episodic, affect-marker, source-provenance, prospective-memory): each sits at an
+   operating-point threshold, not wired-hollow. The deeper faculty work is finding the companion process that would
+   stabilize each flip across seeds (the "what else runs alongside this that we replaced with a constant?" reframe).
 
 *Everything below is prior-arc HISTORY.*
 

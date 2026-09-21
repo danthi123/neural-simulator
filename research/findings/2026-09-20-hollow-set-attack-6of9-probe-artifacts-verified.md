@@ -61,7 +61,7 @@ FAILED prospective-memory fix specifically: PM retrieval is a dissociable multi-
 cue-triggered retrieval), and cue-driven spontaneous retrieval fires on an EXACT cue match — so a PM load-bearing
 probe must exercise the cue-retrieval phase with an exact-match cue held in a heightened state; our formation->cue
 probe read treat=0, implying the tiny-demo cue-detection did not trigger spontaneous retrieval on that turn.
-- McDaniel & Einstein 2000, *Appl. Cogn. Psychol.* — multiprocess framework (strategic monitoring vs spontaneous retrieval).
+- McDaniel & Einstein 2000, *Appl. Cogn. Psychol.* — multiprocess framework (strategic monitoring vs spontaneous retrieval). https://consensus.app/papers/details/e650e5e30f7b5a8fa424375d482de774/
 - Einstein et al. 2005, *JEP:General* — direct test of spontaneous retrieval; exact-cue sensitivity (Mullet et al. 2013, *Psych. & Aging*).
 - Cona et al., *Neurosci. Biobehav. Rev.* — AtoDI meta-analysis: dissociable neural bases for the maintenance vs retrieval phases.
 
