@@ -99,6 +99,11 @@ write env needed, the boot fact (dog,chase,cat)=AFFIRM is stored on any backend,
   LB_NONCONTRADICTION_DRIVE_PROBE=1 tools/memcap.sh 24 -- .venv/bin/python \
       -m research.runners.load_bearing_fraction --only noncontradiction-gate --repeats 2 \
       --out research/findings/raw/_load_bearing/noncontradiction_drive.json  # expect load-bearing=1, null-control clean
+Verify the AFFECT-COLORING DRIVING fix (default-off; flips affect-coloring hollow->load-bearing; the Gate-B ladder read
+runs on numpy for any turn -> NO cupy needed, NO env-forcing -- just remaps the probe to the strongly-affective 'emo' turn):
+  LB_AFFECT_DRIVE_PROBE=1 tools/memcap.sh 24 -- .venv/bin/python \
+      -m research.runners.load_bearing_fraction --only affect-coloring --repeats 2 \
+      --out research/findings/raw/_load_bearing/affect_drive.json       # expect load-bearing=1, null-control clean
 Run (full measurement, capped; defer to a non-gaming window):
   tools/memcap.sh 24 -- .venv/bin/python -m research.runners.load_bearing_fraction \
       --out research/findings/raw/_load_bearing/load_bearing.json
@@ -265,6 +270,27 @@ def _noncontra_probe_parses_negated_boot_fact():
         return parsed == ("dog", "chase", "cat", "NEGATE")
     except Exception:
         return False
+# ── AFFECT-COLORING DRIVING PROBE (opt-in, env-gated; default OFF -> byte-identical to the 2026-09-19 hollow baseline) ──
+# WHY (diagnosis, finding 2026-09-20-hollow-affect-coloring-drive): affect-coloring is isolated-lesion-load-bearing (the
+# `affect_out` transmission gate collapses the ladder differential to 0.0 under BRAIN_AFFECT_LESION -- the same class of
+# neural cut episodic uses) yet reads INTEGRATED-HOLLOW here for a PROBE reason, not a wiring reason. Its default probe
+# turn `well` ("the wolf bites the apple") is MOOD-NEUTRAL: appraise_text returns n_hits=0 (none of wolf/bites/apple/the
+# pass the Warriner _STRONG_MARGIN salience gate -- "wolf" is |3.9-5|<margin, the rest are not in WARRINER at all), so
+# webapp/server.py _update_session_mood HOLDS the prior mood (0.0) and read_differential injects a 0.0 appraisal through
+# settle/ramp/drive-off/read REGARDLESS of the lesion flag -- the affect_out gate only bites when there is a NONZERO
+# differential to clamp. So BOTH the intact and BRAIN_AFFECT_LESION arms read ~baseline (valence_sign="0", tone_token="")
+# -> IDENTICAL -> NOT load-bearing. The reply IS already colored by the ladder read (server.py: valence_sign / tone_token
+# / manner_template / _mood_tone_level ALL flow from the neural differential); the probe simply never gives the ladder
+# anything to color. This flag remaps the affect-coloring probe to the strongly-affective `emo` turn ("Wonderful! I am so
+# happy and delighted, this is fantastic and amazing!") -- ALREADY a self-contained turn in PROBE_TURNS (session 'emo',
+# reset=True, its own single-turn group), so NO new turn / dependency chain is added and NO env-forcing is needed (the
+# Gate-B ladder read runs on numpy for ANY turn, UNLIKE episodic's cupy-gated BTSP write -> base_env stays {}). On `emo`,
+# appraise_text hits n_hits=5 strongly-positive words -> the session mood goes non-neutral -> intact reads valence_sign=
+# "+" (a nonzero positive differential) while the lesion clamps affect_out=0 -> differential 0.0 -> valence_sign="0" ->
+# the decision fields `affect.valence_sign` + `affect.tone_token` FLIP -> LOAD-BEARING. OFF (default) -> affect-coloring
+# is measured on the lone `well` turn exactly as the baseline did (hollow), and no other faculty is touched.
+LB_AFFECT_DRIVE = os.environ.get("LB_AFFECT_DRIVE_PROBE", "").strip().lower() in ("1", "true", "yes", "on")
+_AFFECT_DRIVE_TURN = "emo"      # the strongly-affective turn (its group is ['emo'] -- its own isolated single-turn session)
 
 
 def _spawn_arm(env, turn_labels, out_path):
@@ -545,6 +571,18 @@ def measure_faculty(key, out_dir, repeats=1, intact_cache=None, seed=42):
         res["turn"] = _CG_DRIVE_TURN
         res["note"] = "LB_CG_DRIVE_PROBE: mention->re-mention on session 'cg2' ('dog'); intact reduce vs lesion introduce. " + res["note"]
 
+    # AFFECT-COLORING DRIVING remap (default-off; see LB_AFFECT_DRIVE). Make the affect-coloring probe exercise its
+    # load-bearing ladder read on a turn with a NONZERO mood to color: remap to the strongly-affective `emo` turn (its
+    # group is derived below as ['emo'] -- its own single-turn session). No env-forcing (base_env stays {}) -- UNLIKE
+    # episodic, the Gate-B ladder read runs on numpy for any turn, so no store or backend gate needs relaxing; the SAME
+    # BRAIN_AFFECT_LESION neural cut then collapses affect_out=0 -> a 0.0 differential -> valence_sign flips "+"->"0".
+    # Every OTHER faculty keeps base_env={} and its baseline row -> byte-identical.
+    if LB_AFFECT_DRIVE and key == "affect-coloring":
+        row = ("affect-coloring", _AFFECT_DRIVE_TURN, ["affect.on", "affect.valence_sign", "affect.tone_token"], False)
+        res["turn"] = _AFFECT_DRIVE_TURN
+        res["note"] = ("LB_AFFECT_DRIVE_PROBE: remap to the strongly-affective '%s' turn (no env-forcing). "
+                       % _AFFECT_DRIVE_TURN) + res["note"]
+
     grp = turn_group(row[1])
     # cache key includes base_env so a stored (BRAIN_EPISODIC_STORE) intact arm never aliases a plain-{} arm on a
     # shared turn-group (the driving group is unique anyway, but keep the key honest).
@@ -732,6 +770,12 @@ def selftest(out_path=None):
         "noncontradiction-drive group is single": turn_group(_NONCONTRA_DRIVE_TURN) == [_NONCONTRA_DRIVE_TURN],
         "noncontradiction-drive lesion knob resolves": _flag_resolves("BRAIN_NONCONTRADICTION_LESION"),
         "noncontradiction-drive probe negates the dog/chase/cat boot fact": _noncontra_probe_parses_negated_boot_fact(),
+        # affect-coloring-driving remap (LB_AFFECT_DRIVE_PROBE): the strongly-affective turn is ALREADY in the default
+        # roster (no _EXTRA_TURNS / no battery edit needed), its group is the lone self-contained turn (no dependency
+        # chain, no env-forcing), and the affect-coloring neural-cut lesion flag resolves so the remapped read can flip.
+        "affect-drive turn is in the default roster": _AFFECT_DRIVE_TURN in {t[0] for t in PROBE_TURNS},
+        "affect-drive group is the lone turn": turn_group(_AFFECT_DRIVE_TURN) == [_AFFECT_DRIVE_TURN],
+        "affect-drive lesion flag resolves": _flag_resolves(FACULTY_LESIONS["affect-coloring"]["flag"]),
         "every FACULTY_LESIONS key is a real battery faculty":
             all(k in faculty_list() for k in FACULTY_LESIONS),
         "every battery faculty is mapped": all(k in FACULTY_LESIONS for k in faculty_list()),
@@ -771,6 +815,9 @@ def selftest(out_path=None):
                "cg_drive_env": _CG_DRIVE_ENV,
                "noncontradiction_drive_group": turn_group(_NONCONTRA_DRIVE_TURN),
                "noncontradiction_drive_env": {},   # no forced-write env: the boot fact is present on any backend
+               "affect_drive_turn": _AFFECT_DRIVE_TURN,
+               "affect_drive_group": turn_group(_AFFECT_DRIVE_TURN),
+               "affect_drive_in_default_roster": _AFFECT_DRIVE_TURN in {t[0] for t in PROBE_TURNS},
                "lesion_map_coverage": dict(kinds)}
         os.makedirs(os.path.dirname(os.path.abspath(out_path)), exist_ok=True)
         json.dump(art, open(out_path, "w"), indent=2, default=str)
