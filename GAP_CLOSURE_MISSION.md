@@ -22,12 +22,24 @@ lesion-verified LOAD-BEARING FRACTION** (% of production faculties where lesioni
 reply), REPLACING "% scaffold_retired". Full roadmap: docs/plans/2026-09-19-roadmap-with-a-permanent-llm-mouth.md.
 Memory: project_2026_09_19_permanent_llm_mouth_loadbearing_metric.
 
-**⭐ LATEST 2026-09-19 (late): LOAD-BEARING BASELINE LANDED — 16/26 = 0.615** (finding 2f16c88bc; artifact
-raw/_load_bearing/load_bearing_baseline.json). Deterministic, 28/28 null-controls clean (single seed 42;
-6-seed next for an error bar). 16 load-bearing; **10 HOLLOW (the actionable target set): episodic-memory,
-prospective-memory, surprise-monitor, discourse-register, open-ended-generation, common-ground,
-noncontradiction-gate, affect-coloring, da-gated-encoding, bg-action-selection** — memory first. 3-seed
-scaling confirm still running (GPU). Affect-hollow re-run deferred/serialized (worktree affect-loadbearing).
+**⭐ LATEST 2026-09-21 (~01:xxZ) — LOAD-BEARING METRIC MATURED + SCALING ARC CLOSED (all landed+pushed):**
+- **6-seed load-bearing = 0.59 ± 0.02** (mean 0.5897 std 0.0181; robust core 14 + 2 borderline affect-marker/
+  source-provenance). Finding 2026-09-20-load-bearing-fraction-6seed-0.59-robust-core-14 (commit b10974e3).
+- **The "hollow" set was mostly a PROBE-COVERAGE artifact, not a hollow brain.** episodic + 6 of the 9 remaining
+  hollow faculties (surprise-monitor, discourse-register, common-ground-drives, noncontradiction-gate,
+  affect-coloring, bg-action-selection) are **verified load-bearing with adequate probes** → **adequate-probe
+  fraction ~0.88 (23/26)**, single-seed, default-OFF probe flags (shipped default stays 0.59). Findings
+  episodic (3cfd2c79) + hollow-set-attack-6of9 (be226852). **Methodology win: the fix-workflow claimed 9/9;
+  brain-build verify found only 6 — trusting static claims would have given a false 0.96.**
+- **3 GENUINE gaps remain** (the real actionable remainder): prospective-memory + open-ended-generation (probe
+  fixes did NOT flip them, treat=0) + da-gated-encoding (REJECTED — load-bearing only under a tuned swept
+  read-damage operating point). PM lit lead recorded (exact-cue spontaneous retrieval, McDaniel-Einstein 2000).
+- **Scaling arc CLOSED 3-seed:** raw-scale token-supply to fluency at d384 = NO-GO-CAPACITY-SATURATED (seeds
+  42/43/44; flat NLL, 173 tok/param). **Don't buy hardware for fluency.** Finding 111f7a30.
+- **IN FLIGHT:** integration-merge agent (6 verified fixes + seed-threading → branch research/lb-integration) →
+  then run the ADEQUATE-PROBE 6-seed (all LB_*_DRIVE_PROBE on + --seed) for the robust ~0.88 number, then merge.
+- AWS fully torn down (no leak). Local GPU free (scaling done). Ledger headline.load_bearing_integrated carries
+  all of the above (six_seed_mean, hollow_set_attack, episodic_correction).
 
 **ACTIVE BUILD ORDER (the new arc):**
 1. ✅ DONE — load-bearing-fraction instrument BUILT (4cc764bde) + resumable (391a055d) + **BASELINE MEASURED

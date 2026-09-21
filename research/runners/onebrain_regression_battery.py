@@ -139,6 +139,23 @@ _EXTRA_TURNS = [
     # recalls "yes"/AFFIRM -> stored != asserted -> REJECT; lesion forces "unknown" -> ACCEPT — so reject / recalled_yn /
     # stored_polarity all diverge. See research/runners/load_bearing_fraction.py.
     ("noncontra_neg", "the dog does not chase the cat", "ncontra", True, None, False),  # NEGATE assertion of the AFFIRM boot fact (dog,chase,cat) -> intact reject=True (recall 'yes'); lesion accept (forced 'unknown')
+    # ── PROSPECTIVE-MEMORY DRIVING GROUP (label-only; used only by load_bearing_fraction's LB_PMEM_DRIVE_PROBE) ──────
+    # Prospective memory is, by definition, an intention held ACROSS INTERVENING ACTIVITY and released at a LATER cue
+    # (McDaniel & Einstein 2000 multiprocess framework). The held-intention x cue coincidence in the SFA/NMDA substrate
+    # only reaches its operating point (rel_A crosses FIRE_THR=0.2) AFTER the hold has been advanced by intervening
+    # turns: measured organ-level, intact rel_A ramps 0.163(n=0)->0.221(n=1)->0.256(n=2)->0.340(n=3) while the
+    # BRAIN_PMEM_LESION arm stays ~0.04 at every n. A zero-delay formation->cue (n=0) does NOT fire even intact (0.163
+    # < 0.2) -> intact==lesion==not-fired -> HOLLOW: that is exactly why the prior 2-turn [pmem_form2,pmem_cue] driving
+    # group read treat=0. THREE intervening distractor turns (matching the validated isolated-verify + de-risk protocol,
+    # fire_on_cue 6/6) put the intact arm at rel_A~0.34 (70% over threshold) so it FIRES, while the lesioned latch stays
+    # silent -> `prospective.fired` FLIPS True/False. Session 'pmem2', declared formation-first; the distractors carry
+    # neither cue keyword ('bird'/'sings') nor a formation phrasing, and NONE is in PROBE_TURNS -> the default roster,
+    # the regression battery and every flip-verify harness stay BYTE-IDENTICAL. See research/runners/load_bearing_fraction.py.
+    ("pmem_form2","remind me to feed the dog when the bird sings", "pmem2", True,  None,   False),  # FORMATION: latch the deferred intention (one-shot Hebbian cue->action binding)
+    ("pmem_d0",   "what does the cat eat",     "pmem2", False, None,   False),  # intervening turn 1: advances the hold (real competing WM load), cue stays silent
+    ("pmem_d1",   "how is the weather today",  "pmem2", False, None,   False),  # intervening turn 2
+    ("pmem_d2",   "tell me about the sky",     "pmem2", False, None,   False),  # intervening turn 3 -> the held x cue coincidence is now at its operating point
+    ("pmem_cue",  "the bird sings",            "pmem2", False, None,   False),  # CUE: the held x cue coincidence fires (intact) / collapses silent (lesion)
 ]
 _TURN_BY_LABEL.update({t[0]: t for t in _EXTRA_TURNS})
 

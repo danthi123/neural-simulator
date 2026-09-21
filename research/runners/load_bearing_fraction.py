@@ -109,6 +109,12 @@ structural `bg_select.on` field instead of the confounded top-level `abstained`;
   LB_BG_SELECT_DRIVE_PROBE=1 tools/memcap.sh 20 -- .venv/bin/python \
       -m research.runners.load_bearing_fraction --only bg-action-selection --repeats 2 \
       --out research/findings/raw/_load_bearing/bg_select_drive.json    # expect load-bearing=1, change_kind=structural
+Verify the PROSPECTIVE-MEMORY DRIVING fix (default-off; flips prospective-memory hollow->load-bearing; runs on ANY
+backend -- no forced write, BRAIN_PMEM + BRAIN_PMEM_HEBBIAN are default-ON so the intact arm fires on the cue turn;
+the driving group is formation -> 3 intervening turns -> cue so the held x cue coincidence reaches its operating point):
+  SIM_BACKEND=numpy CUDA_VISIBLE_DEVICES='' LB_PMEM_DRIVE_PROBE=1 tools/memcap.sh 16 -- .venv/bin/python \
+      -m research.runners.load_bearing_fraction --only prospective-memory --repeats 2 \
+      --out research/findings/raw/_load_bearing/pmem_drive.json         # expect load-bearing=1, null-control clean
 Run (full measurement, capped; defer to a non-gaming window):
   tools/memcap.sh 24 -- .venv/bin/python -m research.runners.load_bearing_fraction \
       --out research/findings/raw/_load_bearing/load_bearing.json
@@ -318,6 +324,27 @@ _AFFECT_DRIVE_TURN = "emo"      # the strongly-affective turn (its group is ['em
 LB_BG_SELECT_DRIVE = os.environ.get("LB_BG_SELECT_DRIVE_PROBE", "").strip().lower() in ("1", "true", "yes", "on")
 _BG_SELECT_DRIVE_TURN = "bgdots"                 # the content-empty turn that puts the BG race in its STAY_SILENT regime
 _BG_SELECT_DRIVE_FIELDS = ["bg_select.on"]       # the structural field the independent no-content fallback never sets
+# ── PROSPECTIVE-MEMORY DRIVING PROBE (opt-in, env-gated; default OFF -> byte-identical to the hollow baseline) ─────
+# WHY (diagnosis, finding 2026-09-20-prospective-memory-drive-v2): prospective-memory is isolated-lesion-load-bearing
+# (research/runners/_prospective_memory_production_verify.py rows A/C: the intact latch fires on the cue turn,
+# BRAIN_PMEM_LESION collapses the held assembly -> the SAME cue stays silent) yet reads INTEGRATED-HOLLOW here for a
+# PROBE reason, not a wiring reason. Its default probe turn `pmem_form` compares field `prospective.held`, which
+# form_intention() sets to the compile-time literal True UNCONDITIONALLY (the lesion's real effect, `held_after_lesion`,
+# is a DIFFERENT field the probe never compares) -> intact True == lesion True -> `pass` -> hollow. But the FIRST fix
+# (a 2-turn formation->cue group comparing `prospective.fired`) ALSO read hollow (treat=0): brain-build-verified, the
+# intact arm did NOT fire either. ROOT CAUSE (measured organ-level): prospective memory is an intention held ACROSS
+# INTERVENING ACTIVITY and released at a LATER cue -- the SFA/NMDA held x cue coincidence only reaches its operating
+# point after the hold is advanced by intervening turns (intact rel_A 0.163@n=0 -> 0.221@n=1 -> 0.340@n=3; FIRE_THR=
+# 0.2), so a ZERO-DELAY formation->cue does not fire even intact (there is nothing "prospective" about an immediate
+# cue). This flag makes the instrument run the NATURAL prospective protocol: remap the prospective probe to the
+# formation -> 3 intervening turns -> cue group (battery turns `pmem_form2`..`pmem_cue`, session 'pmem2') and compare
+# `prospective.fired`. NO base_env forcing is needed: BRAIN_PMEM + BRAIN_PMEM_HEBBIAN are default-ON, so the ordinary
+# intact build learns the cue->action binding one-shot at formation, holds it across the 3 distractors, and fires on
+# the cue turn (fired=True); the BRAIN_PMEM_LESION arm collapses the latch at formation so the cue stays silent
+# (fired=False; rel_A ~0.04 at every n) -> the decision field `prospective.fired` FLIPS -> LOAD-BEARING. OFF (default)
+# -> prospective is measured on the lone `pmem_form` turn exactly as the baseline did (hollow), no other faculty touched.
+LB_PMEM_DRIVE = os.environ.get("LB_PMEM_DRIVE_PROBE", "").strip().lower() in ("1", "true", "yes", "on")
+_PMEM_DRIVE_TURN = "pmem_cue"            # the CUE turn (its group is formation -> 3 intervening turns -> cue, same session 'pmem2')
 
 
 def _spawn_arm(env, turn_labels, out_path):
@@ -622,6 +649,18 @@ def measure_faculty(key, out_dir, repeats=1, intact_cache=None, seed=42):
         res["note"] = ("LB_BG_SELECT_DRIVE_PROBE: compare bg_select.on (structural) instead of the confounded top-level "
                        "abstained (True in both arms). " + res["note"])
 
+    # PROSPECTIVE-MEMORY DRIVING remap (default-off; see LB_PMEM_DRIVE). Make the prospective probe run the NATURAL
+    # prospective protocol -- an intention held ACROSS intervening turns then released at a later cue: remap to the
+    # cue turn (its group is derived below as ['pmem_form2','pmem_d0','pmem_d1','pmem_d2','pmem_cue'] because all five
+    # are in session 'pmem2', declared formation-first) and compare `prospective.fired` instead of the compile-time-
+    # constant `prospective.held`. No base_env is forced: BRAIN_PMEM + BRAIN_PMEM_HEBBIAN are default-ON, so the intact
+    # arm learns the binding, holds it across the 3 intervening turns, and fires (fired=True); only the
+    # BRAIN_PMEM_LESION arm collapses the latch (fired=False). Every OTHER faculty keeps base_env={} -> byte-identical.
+    if LB_PMEM_DRIVE and key == "prospective-memory":
+        row = ("prospective-memory", _PMEM_DRIVE_TURN, ["prospective.fired"], False)
+        res["turn"] = _PMEM_DRIVE_TURN
+        res["note"] = "LB_PMEM_DRIVE_PROBE: formation -> 3 intervening turns -> cue on session 'pmem2'. " + res["note"]
+
     grp = turn_group(row[1])
     # cache key includes base_env so a stored (BRAIN_EPISODIC_STORE) intact arm never aliases a plain-{} arm on a
     # shared turn-group (the driving group is unique anyway, but keep the key honest).
@@ -832,6 +871,14 @@ def selftest(out_path=None):
             {_BG_SELECT_DRIVE_TURN: {"abstained": True}},
             faculties=[("bg-action-selection", _BG_SELECT_DRIVE_TURN, list(_BG_SELECT_DRIVE_FIELDS), False)]
         )["per_faculty"][0]),
+        # prospective-memory-driving remap (LB_PMEM_DRIVE_PROBE): the formation -> intervening -> cue chain exists and
+        # its group holds the intention across >=1 intervening turn (the operating-point condition -- a zero-delay
+        # formation->cue does not fire even intact), and remapping prospective to `pmem_cue` reads the load-bearing
+        # `prospective.fired` field (whose lesion flag BRAIN_PMEM_LESION resolves in source). No forced write.
+        "pmem-drive turns exist": all(l in _TURN_BY_LABEL for l in (_PMEM_DRIVE_TURN, "pmem_form2")),
+        "pmem-drive group is formation->intervening->cue": turn_group(_PMEM_DRIVE_TURN) == ["pmem_form2", "pmem_d0", "pmem_d1", "pmem_d2", _PMEM_DRIVE_TURN],
+        "pmem-drive holds across >=1 intervening turn": len(turn_group(_PMEM_DRIVE_TURN)) >= 3,
+        "pmem-drive lesion knob resolves": _flag_resolves("BRAIN_PMEM_LESION"),
         "every FACULTY_LESIONS key is a real battery faculty":
             all(k in faculty_list() for k in FACULTY_LESIONS),
         "every battery faculty is mapped": all(k in FACULTY_LESIONS for k in faculty_list()),
@@ -876,6 +923,7 @@ def selftest(out_path=None):
                "affect_drive_in_default_roster": _AFFECT_DRIVE_TURN in {t[0] for t in PROBE_TURNS},
                "bg_select_drive_group": turn_group(_BG_SELECT_DRIVE_TURN),
                "bg_select_drive_fields": _BG_SELECT_DRIVE_FIELDS,
+               "pmem_drive_group": turn_group(_PMEM_DRIVE_TURN),
                "lesion_map_coverage": dict(kinds)}
         os.makedirs(os.path.dirname(os.path.abspath(out_path)), exist_ok=True)
         json.dump(art, open(out_path, "w"), indent=2, default=str)
