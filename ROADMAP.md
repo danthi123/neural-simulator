@@ -7,6 +7,16 @@ the [project handoff](HANDOFF.md), and the live state in
 board, when checked out, was `research/coordination/workboard.json` (⚠️ now ~a month
 stale — the live board is [GAP_CLOSURE_MISSION.md](GAP_CLOSURE_MISSION.md) CURRENT STATE; workboard.json is being retired).
 
+## 2026-09-21 — "does the brain's open-ended guessing actually drive the reply?" — an honest no (on this test), traced all the way down, plus a real wiring fix
+
+One of the brain's abilities is **volunteering a novel, plausible guess** when asked an open question ("what might a dog chase?"). The #1-metric test asks: if we switch OFF the brain's guess-drawing, does the reply change? On the small demo brain the honest answer is **no — for three separate, measured reasons**, so this ability reads "not load-bearing" on that test (and that is the honest result, not a failure to try):
+- **The demo brain barely knows any "chase" facts**, so there's nothing new to guess — it just says "I don't know". We fixed this by first *teaching* it a handful of predator-prey chase facts.
+- **Even taught, the brain's own "is this plausible?" gate is too cautious on such a tiny vocabulary and rejects every fresh guess** — so it stays silent no matter what the guess-drawer does. (A companion process masks the thing we were trying to measure — exactly the trap the project warns about.)
+- **When we let the guesses through, the single guess it makes is dominated by neural noise**, so switching the "which guess" bias off lands on the *same* animal (rabbit) anyway — no change in the reply.
+- **We DID fix a genuine wiring bug the earlier attempt named:** the "switch off the guess bias" control was silently doing nothing on the real reply path; it now actually bites (off by default, provably unchanged when not used).
+
+The deeper point: the brain's guessing IS real and already proven where it counts — across *many* guesses its plausibility rate collapses when lesioned. The single-turn "did this one reply change?" test is simply the wrong ruler for an ability whose contribution is a *distribution* of guesses, not one sample. Recommendation recorded: score this ability by its distributional test, not the single-turn one. (Finding: `2026-09-21-open-ended-generation-single-turn-not-load-bearing-spiking-plausibility-gate-masks-draw`.)
+
 ## 2026-09-18 — a strategic decision, and an honest go/no-go on "just scale it up"
 Two things this session change direction, not just capability.
 - **Decision (owner): we may trade a little biological realism for speed — but only honestly, and only when it's free.** Basing the work strongly on biology stays a core value. We relax bit-exact realism ONLY when it buys a *significant* performance gain, costs *nothing* important to the end-goal capabilities, and every such trade is documented. The invariants stay: brain-based cognition, one brain, emergence, and the honesty boundary.

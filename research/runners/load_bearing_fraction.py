@@ -132,6 +132,32 @@ LB_EPISODIC_DRIVE = os.environ.get("LB_EPISODIC_DRIVE_PROBE", "").strip().lower(
 _EPISODIC_DRIVE_TURN = "epi_recall"      # the referential RECALL turn (its group is store->recall, same session)
 _EPISODIC_DRIVE_ENV = {"BRAIN_EPISODIC_STORE": "1"}   # force the BTSP write to execute on the probe backend
 
+# ── OPEN-ENDED-GENERATION DRIVING PROBE (opt-in, env-gated; default OFF -> byte-identical to the hollow baseline) ───
+# WHY (diagnosis, finding 2026-09-20-gap-open-ended-generation-v2): the default open-ended probe `rich_open` ("what
+# might a dog chase") is integrated-HOLLOW because the tiny KB has ONE 'chase' fact -- (dog,chase,cat) -- already
+# stored, so the only reachable (dog,chase,?) patient is novelty-excluded -> _generate_hypothesis abstains in BOTH
+# arms (intact == lesion). The v1 fix taught 9 chase facts but STILL read treat=0 on the real brain: the stored
+# 'cat' (co-occurrence weight 2 with (dog,chase)) TIED the twice-taught 'rabbit' and won the intact spiking-WTA
+# argmax, so the intact draw FIXATED on 'cat' (novelty-excluded) and dead-ended to abstain -- the likelihood
+# ablation had nothing to change. This flag remaps the measurement to a TEACH->ASK group ('oe_t1..oe_t9' -> 'oe_ask',
+# session 'oe2') that teaches a NATURAL predator-prey chase KB where 'rabbit' is chased by FOUR predators so its
+# (dog,chase,rabbit) weight (4) STRICTLY dominates the stored cat's (2): the INTACT likelihood-weighted spiking draw
+# then peaks the NOVEL 'rabbit' (volunteers it), while the LESION's uniform draw (BRAIN_SPIKING_DRAW_LESION -> the
+# now-honored ablate on draw_from_weights, this branch's wiring fix) has no likelihood bias and selects among all
+# novel plausible patients -> the decision field `hypothesis_svo` (+ the rendered `answer`) differs -> LOAD-BEARING.
+# OFF (default) -> open-ended is measured on the lone `rich_open` turn exactly as the baseline (hollow); no other
+# faculty touched.
+LB_OPEN_ENDED_DRIVE = os.environ.get("LB_OPEN_ENDED_DRIVE_PROBE", "").strip().lower() in ("1", "true", "yes", "on")
+_OPEN_ENDED_DRIVE_TURN = "oe_ask"        # the rich=True open-ended ASK turn (its group is oe_t1..oe_t9 -> oe_ask, one session)
+# BOTH arms admit candidates via the host #3E plausibility gate: on the tiny KB the DEFAULT-ON spiking plausibility
+# read is too conservative on the weak agent-action edge (_related(dog,chase), co-occurrence 1) to admit ANY novel
+# candidate, so _generate_hypothesis abstains in BOTH arms and the draw is MASKED (measured; the v2 diagnosis). This
+# base_env is applied to intact AND lesion identically, so the ONLY inter-arm difference remains the draw lesion --
+# it ISOLATES the draw's load-bearingness, it does not create it. (Under the default gate the integrated faculty
+# abstains -> the honest residual: a richer KB or a less-conservative gate operating point is needed to unmask the
+# draw under the default spiking gate.)
+_OPEN_ENDED_DRIVE_ENV = {"BRAIN_SPIKING_PLAUSIBILITY": "0"}
+
 
 def _spawn_arm(env, turn_labels, out_path):
     if _LB_RESUME and os.path.exists(out_path):
@@ -285,6 +311,20 @@ def _flag_resolves(flag):
     return False
 
 
+def _draw_from_weights_honors_ablate():
+    """Code-level check that the production wire-in draw `SpikingWTASampler.draw_from_weights` consults
+    `ablate_likelihood` (the v2 wiring fix), so the neural DRAW lesion (BRAIN_SPIKING_DRAW_LESION) actually bites the
+    production `_generate_hypothesis` draw and is not a silent no-op. Reads the method body -- a presence check, not
+    proof the lesion changes a given reply (the measurement decides that)."""
+    import inspect
+    try:
+        from research.runners._followon2_spiking_wta_sampler_derisk import SpikingWTASampler
+        src = inspect.getsource(SpikingWTASampler.draw_from_weights)
+    except Exception:
+        return False
+    return "ablate_likelihood" in src and "np.ones" in src
+
+
 def _classify_diffs(diffs):
     """structural = a field goes present<->absent/null (organ output gated off); value = both present, value flips."""
     kinds = set()
@@ -347,6 +387,20 @@ def measure_faculty(key, out_dir, repeats=1, intact_cache=None):
         base_env = dict(_EPISODIC_DRIVE_ENV)
         res["turn"] = _EPISODIC_DRIVE_TURN
         res["note"] = "LB_EPISODIC_DRIVE_PROBE: store->recall on session 'epi2' + BRAIN_EPISODIC_STORE=1. " + res["note"]
+    # OPEN-ENDED-GENERATION DRIVING remap (default-off; see LB_OPEN_ENDED_DRIVE). Remap the open-ended-generation
+    # measurement to the teach->ask group ('oe_t1..oe_t9' -> 'oe_ask', session 'oe2', derived below by turn_group)
+    # that teaches the predator-prey chase KB, and compare the generative decision fields (`hypothesis_svo` the drawn
+    # triple + the rendered `answer`). No base_env needed (the teach turns store via the standard in-loop acquire on
+    # any backend); every OTHER faculty keeps base_env={} -> byte-identical.
+    if LB_OPEN_ENDED_DRIVE and key == "open-ended-generation":
+        row = ("open-ended-generation", _OPEN_ENDED_DRIVE_TURN, ["hypothesis_svo", "answer"], False)
+        base_env = dict(_OPEN_ENDED_DRIVE_ENV)
+        res["turn"] = _OPEN_ENDED_DRIVE_TURN
+        res["note"] = ("LB_OPEN_ENDED_DRIVE_PROBE: teach->ask on session 'oe2' (predator-prey chase KB; novel "
+                       "'rabbit' strictly dominates the stored 'cat'); BRAIN_SPIKING_PLAUSIBILITY=0 on BOTH arms so "
+                       "the #3E gate admits the candidates (the default spiking gate masks the draw on the tiny KB); "
+                       "the draw lesion (BRAIN_SPIKING_DRAW_LESION) is the only inter-arm difference + the honored "
+                       "ablate on draw_from_weights. " + res["note"])
 
     grp = turn_group(row[1])
     # cache key includes base_env so a stored (BRAIN_EPISODIC_STORE) intact arm never aliases a plain-{} arm on a
@@ -413,8 +467,13 @@ def measure_faculty(key, out_dir, repeats=1, intact_cache=None):
 # ── the full measurement ─────────────────────────────────────────────────────────────────────────────────────────
 def run(out_dir="research/findings/raw/_load_bearing", only=None, repeats=1):
     os.makedirs(out_dir, exist_ok=True)
+    # DEVICE STAMP (device-and-cost gate): record the backend the arms actually built on. The battery worker inherits
+    # this process's SIM_BACKEND (it spawns with dict(os.environ)); default numpy via setdefault. Recorded so the
+    # result is auditable without a provenance sidecar (a CPU/GPU mix-up is a different experiment, not a slow run).
     report = {"runner": "research.runners.load_bearing_fraction",
-              "metric": "load_bearing_fraction", "repeats": repeats}
+              "metric": "load_bearing_fraction", "repeats": repeats,
+              "backend": os.environ.get("SIM_BACKEND", "numpy"),
+              "cuda_visible_devices": os.environ.get("CUDA_VISIBLE_DEVICES")}
 
     keys = only or faculty_list()
     intact_cache = {}
@@ -497,6 +556,14 @@ def selftest(out_path=None):
         "episodic-drive turns exist": all(l in _TURN_BY_LABEL for l in (_EPISODIC_DRIVE_TURN, "epi_store")),
         "episodic-drive group is store->recall": turn_group(_EPISODIC_DRIVE_TURN) == ["epi_store", _EPISODIC_DRIVE_TURN],
         "episodic-drive forces the BTSP write": _flag_resolves("BRAIN_EPISODIC_STORE") and "1" in _EPISODIC_DRIVE_ENV.values(),
+        # open-ended-generation driving remap (LB_OPEN_ENDED_DRIVE_PROBE): the teach->ask group exists, its group is
+        # the 9 teach turns then the ask, the lesion knob resolves, and draw_from_weights now HONORS ablate_likelihood
+        # (so the lesion bites the production draw -- the v1 wiring gap this v2 branch fixed).
+        "open-ended-drive turns exist": all(l in _TURN_BY_LABEL for l in (_OPEN_ENDED_DRIVE_TURN, "oe_t1")),
+        "open-ended-drive group is teach->ask": turn_group(_OPEN_ENDED_DRIVE_TURN) == [
+            "oe_t1", "oe_t2", "oe_t3", "oe_t4", "oe_t5", "oe_t6", "oe_t7", "oe_t8", "oe_t9", _OPEN_ENDED_DRIVE_TURN],
+        "open-ended lesion knob resolves": _flag_resolves("BRAIN_SPIKING_DRAW_LESION"),
+        "open-ended lesion bites production draw": _draw_from_weights_honors_ablate(),
         "every FACULTY_LESIONS key is a real battery faculty":
             all(k in faculty_list() for k in FACULTY_LESIONS),
         "every battery faculty is mapped": all(k in FACULTY_LESIONS for k in faculty_list()),
