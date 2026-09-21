@@ -92,7 +92,8 @@ _TURN_BY_LABEL = {t[0]: t for t in PROBE_TURNS}
 # ── EXTRA turns reachable BY LABEL ONLY, deliberately NOT in the default PROBE_TURNS roster ───────────────────────
 # Rationale: the full roster is iterated by run_regression_battery + every flip-verify harness that imports it, so a
 # turn added to PROBE_TURNS runs (and on cupy would BTSP-write) in ALL of them. These turns are needed only by the
-# load_bearing runner's driving remaps (LB_EPISODIC_DRIVE_PROBE / LB_DISCOURSE_REGISTER_DRIVE_PROBE), so they live
+# load_bearing runner's driving remaps (LB_EPISODIC_DRIVE_PROBE / LB_DISCOURSE_REGISTER_DRIVE_PROBE /
+# LB_NONCONTRADICTION_DRIVE_PROBE), so they live
 # here — merged into _TURN_BY_LABEL (the worker resolves turns by label from it) but OUT of PROBE_TURNS -> the default
 # roster, the regression battery, and every flip-verify harness are BYTE-IDENTICAL.
 #   EPISODIC DRIVING PAIR ('epi2'): a STORE turn then a RECALL turn in ONE isolated session (declared store-first), so
@@ -128,6 +129,16 @@ _EXTRA_TURNS = [
     # construct this (nothing grounded -> intact==lesion==introduce). See research/runners/load_bearing_fraction.py.
     ("cg_mention1", "the dog runs fast",  "cg2", True,  None, False),   # first mention of 'dog' -> introduce; grounds the slot
     ("cg_mention2", "the dog runs again", "cg2", False, None, False),   # re-mention SAME session -> intact reduce / lesion introduce
+    # ── NON-CONTRADICTION DRIVING turn (label-only; NOT in PROBE_TURNS) ──────────────────────────────────────────
+    # LB_NONCONTRADICTION_DRIVE_PROBE: a single fresh-session turn that ASSERTS the NEGATED form of a fact the tiny-demo
+    # brain already holds AFFIRM at BUILD time ((dog,chase,cat), brain_chat_tui `_build*` hear-loop; a build-time store,
+    # not a cupy-gated BTSP write, so it is present on ANY backend with no forced-write flag needed). The default
+    # `noncontradiction-gate` probe rides the `well` teach turn ("the wolf bites the apple" = brand-new vocab), whose
+    # recall is "unknown" on the INTACT substrate too — identical to the lesion's forced-"unknown" — so the gate reads
+    # integrated-HOLLOW there for a PROBE reason, not a wiring reason. This turn constructs the driving condition: intact
+    # recalls "yes"/AFFIRM -> stored != asserted -> REJECT; lesion forces "unknown" -> ACCEPT — so reject / recalled_yn /
+    # stored_polarity all diverge. See research/runners/load_bearing_fraction.py.
+    ("noncontra_neg", "the dog does not chase the cat", "ncontra", True, None, False),  # NEGATE assertion of the AFFIRM boot fact (dog,chase,cat) -> intact reject=True (recall 'yes'); lesion accept (forced 'unknown')
 ]
 _TURN_BY_LABEL.update({t[0]: t for t in _EXTRA_TURNS})
 
