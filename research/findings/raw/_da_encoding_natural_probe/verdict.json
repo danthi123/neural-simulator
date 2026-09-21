@@ -1,0 +1,222 @@
+{
+  "coupling": "DA-gated encoding (encoding_gain_fn <- live self-produced tonic DA), production-default onebrain store",
+  "question": "does DA-gated encoding change the produced reply on a NATURAL (clean, un-tuned) conversational recall?",
+  "backend": "numpy",
+  "test1_store_strength_clean_recall": {
+    "facts": [
+      [
+        "dog",
+        "chase",
+        "cat"
+      ],
+      [
+        "bird",
+        "eat",
+        "worm"
+      ]
+    ],
+    "gains": [
+      1.0,
+      1.5,
+      2.0,
+      3.0
+    ],
+    "arms": {
+      "g=1.0": {
+        "recall": {
+          "dog|chase|cat": {
+            "query_patient": "cat",
+            "query_agent": "dog",
+            "query_role": {
+              "agent": "dog",
+              "action": "chase",
+              "patient": "cat"
+            }
+          },
+          "bird|eat|worm": {
+            "query_patient": "worm",
+            "query_agent": "bird",
+            "query_role": {
+              "agent": "bird",
+              "action": "eat",
+              "patient": "worm"
+            }
+          }
+        },
+        "recall_hash": "fcb401495e484700",
+        "stored_mean_mag": [
+          1.0,
+          1.0
+        ]
+      },
+      "g=1.5": {
+        "recall": {
+          "dog|chase|cat": {
+            "query_patient": "cat",
+            "query_agent": "dog",
+            "query_role": {
+              "agent": "dog",
+              "action": "chase",
+              "patient": "cat"
+            }
+          },
+          "bird|eat|worm": {
+            "query_patient": "worm",
+            "query_agent": "bird",
+            "query_role": {
+              "agent": "bird",
+              "action": "eat",
+              "patient": "worm"
+            }
+          }
+        },
+        "recall_hash": "fcb401495e484700",
+        "stored_mean_mag": [
+          1.5,
+          1.5
+        ]
+      },
+      "g=2.0": {
+        "recall": {
+          "dog|chase|cat": {
+            "query_patient": "cat",
+            "query_agent": "dog",
+            "query_role": {
+              "agent": "dog",
+              "action": "chase",
+              "patient": "cat"
+            }
+          },
+          "bird|eat|worm": {
+            "query_patient": "worm",
+            "query_agent": "bird",
+            "query_role": {
+              "agent": "bird",
+              "action": "eat",
+              "patient": "worm"
+            }
+          }
+        },
+        "recall_hash": "fcb401495e484700",
+        "stored_mean_mag": [
+          2.0,
+          2.0
+        ]
+      },
+      "g=3.0": {
+        "recall": {
+          "dog|chase|cat": {
+            "query_patient": "cat",
+            "query_agent": "dog",
+            "query_role": {
+              "agent": "dog",
+              "action": "chase",
+              "patient": "cat"
+            }
+          },
+          "bird|eat|worm": {
+            "query_patient": "worm",
+            "query_agent": "bird",
+            "query_role": {
+              "agent": "bird",
+              "action": "eat",
+              "patient": "worm"
+            }
+          }
+        },
+        "recall_hash": "fcb401495e484700",
+        "stored_mean_mag": [
+          3.0,
+          3.0
+        ]
+      }
+    },
+    "clean_recall_identical_across_all_gains": true,
+    "write_mag_ratio_gmax_over_unit": 3.0,
+    "write_genuinely_differs": true,
+    "reply_divergence_salient_vs_unit": 0,
+    "reply_divergence_unit_vs_rebuild": 0,
+    "stored_mag_salient": 3.0,
+    "stored_mag_unit": 1.0
+  },
+  "test2_multifact_competition": {
+    "fact_salient": [
+      "dog",
+      "chase",
+      "cat"
+    ],
+    "fact_unit": [
+      "dog",
+      "chase",
+      "bird"
+    ],
+    "g_high": 3.0,
+    "winner_when_salient_stored_first": "cat",
+    "stored_mags_that_order": {
+      "block0": 1.0,
+      "block1": 3.0
+    },
+    "winner_when_unit_stored_first": "bird",
+    "recall_is_positional_first_match": true,
+    "recall_is_magnitude_arbitrated": false
+  },
+  "test3_end_to_end_handler_reply": {
+    "skipped": "opt-in via --handler (onebrain handler recall ~minutes/turn on numpy; run on cupy). TEST-1 g=1(lesion-pin) vs g>1(salient) clean recall on the production OneBrainComposer is the intact-vs-lesion comparison at the reply-determining layer; handler-level recall byte-identity is additionally the existing GO research/findings/2026-08-21-da-gated-encoding-wired-into-chat-GO.md."
+  },
+  "attribution": {
+    "store_magnitude_effect_fraction": 0.6666666666666666,
+    "clean_read_reply_effect_fraction": null
+  },
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "the write genuinely differs (mag ratio > 1.5) \u2014 the coupling is wired, not a dead knob",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "a negative from a vacuous no-op would be void; the store effect IS real (ratio 3.00)"
+    },
+    {
+      "kind": "require",
+      "name": "the read is CLEAN (no read-damage knob set)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "the rejected first fix needed a swept BRAIN_ONEBRAIN_RETRIEVE_DAMAGE_SIGMA; this probe sets none"
+    },
+    {
+      "kind": "require",
+      "name": "clean recall IDENTICAL across the whole natural gain range (invariance, not sweep-to-flip)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "multi-fact competition is POSITIONAL first-match (not magnitude-arbitrated)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "the reply-change null control reproduces (unit vs deterministic rebuild == 0)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    }
+  ],
+  "disabled_processes": [
+    {
+      "process": "read-damage sweep",
+      "why": "no BRAIN_ONEBRAIN_RETRIEVE_DAMAGE_SIGMA \u2014 the effect is measured on a CLEAN read"
+    },
+    {
+      "process": "induced-then-swept DA",
+      "why": "no DA sweep; store strength is set across the natural gain-map range directly"
+    }
+  ],
+  "verdict_status": "NO-GO",
+  "verdict": "HONEST-NEGATIVE",
+  "natural_flip_found": false,
+  "honest_negative": true,
+  "interpretation": "The write-side coupling is real (mean|w| of a salient block == g, ratio ~3.00 at g_max), but a CLEAN recall on the production-default magnitude-carrying OneBrainComposer is magnitude-invariant at every decision point (peak-normalized WTA, ratio margin, argmax, positional first-match), so store strength does not change the reply. da-gated-encoding is NOT load-bearing on a natural conversational probe: it is an encoding-magnitude effect invisible to a clean read; its bite requires a degraded/stress-gated recall (a read-damage knee) the natural path never constructs -- a genuine honest-negative."
+}
