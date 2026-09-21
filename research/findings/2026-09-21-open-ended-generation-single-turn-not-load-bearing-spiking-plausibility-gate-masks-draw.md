@@ -48,5 +48,24 @@ No single-turn flip is claimed (there is none — treat=0, honestly). Making the
 - `research/findings/raw/_load_bearing/_oeg_v2/oeg_verify_hostgate.json` — the required-verify output (host-gate probe): load_bearing=False, verdict=pass, treatment_diffs=0, control_diffs=0, null_control_clean=True, lesion_reproduced=True, deterministic=True.
 - `research/findings/raw/_load_bearing/_oeg_v2/oeg_debug_layers.txt` — the OEG_DEBUG draw histograms for layer 2 (default spiking gate, all-implausible-reject → abstain) and layer 3 (host gate, intact rabbit@draw2 / lesion rabbit@draw5), plus the draw operating-point constants.
 
+## Distributional 6-seed confirmation — GO (2026-09-21, the recommended ruler)
+
+The recommendation above (score open-ended by its DISTRIBUTIONAL lesion metric, not the single-turn decision-diff)
+is now robustly confirmed. The `_followon2_spiking_wta_sampler_derisk` distributional metric — draw-many, then
+plausible-fraction-of-novel — run 6-seed (42/43/44/100/101/102) on the merged main code lands **verdict = GO**.
+<!--derived-->
+Artifact: research/findings/raw/_load_bearing/_followon2_openended_distributional_6seed.json
+- PLAUSIBLE (across all 6 seeds): spiking plausible-frac ~0.337, advantage ~17.2x the random floor (>= 3.0x on
+  every seed), spiking/host quality mean ~1.03 (>= 0.7 on every seed) — the spiking draw matches host quality.
+- LESION collapses all seeds: True — ablating the likelihood collapses the plausible-frac (the load-bearing proof);
+  the SHUFFLED-graph control also collapses (True), so the effect is the real co-occurrence structure, not noise.
+- PROVENANCE + noise-ablation all seeds: True — the draw is genuinely the spiking winner read from
+  cp_firing_states (ou_std->0 collapses it to the deterministic argmax), i.e. brain-based, not a host rng.choice.
+
+So open-ended-generation IS load-bearing — measured by the right (distributional) ruler, 6-seed robust. The
+single-turn battery still reads it negative (correct for that instrument); the honest metric for this faculty is the
+distributional one. Wiring THAT verdict into the load_bearing_fraction battery's per-faculty counting is the
+remaining refinement (deferred; the science is settled here).
+
 ## Sources (external literature — DR gate for the load-bearing lane)
 The generate-then-select structure (a draw shaped by likelihood, then a selectional-preference plausibility gate) matches the hippocampal generative-replay compositional-inference account: Schwartenbeck et al. 2023 (Cell, PMID 37804832, https://pubmed.ncbi.nlm.nih.gov/37804832/) — replay assembles stored elements into compounds, each sequence "a hypothesis about a possible configuration"; Kurth-Nelson et al. 2022 (Neuron) — replay strings role-bound objects into novel compound statements. The load-bearing residual here is measurement, not mechanism: replay's contribution is over the DISTRIBUTION of generated hypotheses (which the draw_many plausible-frac captures), not a single sample's identity — consistent with replay being probabilistic sampling from a learned generative model, not a deterministic retrieval.
