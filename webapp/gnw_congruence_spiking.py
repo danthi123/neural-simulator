@@ -47,7 +47,10 @@ import numpy as np
 
 from research.runners._gnw_congruence_spiking_read_derisk import SpikingCongruenceReader
 
-_DEFAULT_SEED = 42
+_DEFAULT_SEED = int(os.environ.get("BRAIN_CHAT_SEED", "42"))  # research/seed-threading-lbf, 2026-09-20: single
+# source of truth for the tiny-demo chat brain's substrate seed (mirrors webapp/server.py._brain_chat_seed's
+# exact pattern -- no cross-import to avoid a cycle, just the shared env var). Unset -> 42, BYTE-IDENTICAL to the
+# pre-existing hardcoded value every caller of this module's `seed=_DEFAULT_SEED` defaults relied on.
 _LOCK = threading.Lock()
 _READERS: dict = {}          # seed -> warm SpikingCongruenceReader, built lazily on the first enabled turn
 

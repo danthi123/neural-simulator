@@ -76,6 +76,45 @@ the forced BTSP write is ~seconds not ~510s/store):
   SIM_BACKEND=cupy LB_EPISODIC_DRIVE_PROBE=1 tools/memcap.sh 24 -- .venv/bin/python \
       -m research.runners.load_bearing_fraction --only episodic-memory --repeats 2 \
       --out research/findings/raw/_load_bearing/episodic_drive.json     # expect load-bearing=1, null-control clean
+Verify the SURPRISE CONFIRM fix (default-off; flips surprise-monitor hollow->load-bearing by measuring the CONFIRM turn
+where the same-block lesion actually bites, instead of the contra CONTRADICT turn it never reaches; numpy is fine, the
+confirm read is ~seconds):
+  LB_SURPRISE_CONFIRM_PROBE=1 tools/memcap.sh 24 -- .venv/bin/python \
+      -m research.runners.load_bearing_fraction --only surprise-monitor --repeats 2 \
+      --out research/findings/raw/_load_bearing/surprise_confirm.json   # expect load-bearing=1, null-control clean,
+      # surprise.surprised False(intact) vs True(lesion)
+Verify the DISCOURSE-REGISTER DRIVING fix (default-off; flips discourse-register hollow->load-bearing; no forced env —
+the register defaults spiking=True on any backend, so numpy CPU is fine, cupy only faster):
+  LB_DISCOURSE_REGISTER_DRIVE_PROBE=1 tools/memcap.sh 24 -- .venv/bin/python \
+      -m research.runners.load_bearing_fraction --only discourse-register --repeats 2 \
+      --out research/findings/raw/_load_bearing/discourse_register_drive.json  # expect load-bearing=1, agent bird/dog, null clean
+Verify the COMMON-GROUND DRIVING fix (default-off; flips common-ground-drives hollow->load-bearing; numpy is fine --
+the ledger self-pins SIM_BACKEND=numpy, so no cupy/forced-write is needed):
+  LB_CG_DRIVE_PROBE=1 tools/memcap.sh 24 -- .venv/bin/python \
+      -m research.runners.load_bearing_fraction --only common-ground-drives --repeats 2 \
+      --out research/findings/raw/_load_bearing/cg_drive.json     # expect load-bearing=1, null-control clean,
+      # common_ground_drives.decision reduce(intact) vs introduce(lesion) on the re-mention turn
+Verify the NON-CONTRADICTION DRIVING fix (default-off; flips noncontradiction-gate hollow->load-bearing; NO forced-
+write env needed, the boot fact (dog,chase,cat)=AFFIRM is stored on any backend, so numpy is fine):
+  LB_NONCONTRADICTION_DRIVE_PROBE=1 tools/memcap.sh 24 -- .venv/bin/python \
+      -m research.runners.load_bearing_fraction --only noncontradiction-gate --repeats 2 \
+      --out research/findings/raw/_load_bearing/noncontradiction_drive.json  # expect load-bearing=1, null-control clean
+Verify the AFFECT-COLORING DRIVING fix (default-off; flips affect-coloring hollow->load-bearing; the Gate-B ladder read
+runs on numpy for any turn -> NO cupy needed, NO env-forcing -- just remaps the probe to the strongly-affective 'emo' turn):
+  LB_AFFECT_DRIVE_PROBE=1 tools/memcap.sh 24 -- .venv/bin/python \
+      -m research.runners.load_bearing_fraction --only affect-coloring --repeats 2 \
+      --out research/findings/raw/_load_bearing/affect_drive.json       # expect load-bearing=1, null-control clean
+Verify the BG-ACTION-SELECTION DRIVING fix (default-off; flips bg-action-selection hollow->load-bearing by comparing the
+structural `bg_select.on` field instead of the confounded top-level `abstained`; numpy is fine — no forced write):
+  LB_BG_SELECT_DRIVE_PROBE=1 tools/memcap.sh 20 -- .venv/bin/python \
+      -m research.runners.load_bearing_fraction --only bg-action-selection --repeats 2 \
+      --out research/findings/raw/_load_bearing/bg_select_drive.json    # expect load-bearing=1, change_kind=structural
+Verify the PROSPECTIVE-MEMORY DRIVING fix (default-off; flips prospective-memory hollow->load-bearing; runs on ANY
+backend -- no forced write, BRAIN_PMEM + BRAIN_PMEM_HEBBIAN are default-ON so the intact arm fires on the cue turn;
+the driving group is formation -> 3 intervening turns -> cue so the held x cue coincidence reaches its operating point):
+  SIM_BACKEND=numpy CUDA_VISIBLE_DEVICES='' LB_PMEM_DRIVE_PROBE=1 tools/memcap.sh 16 -- .venv/bin/python \
+      -m research.runners.load_bearing_fraction --only prospective-memory --repeats 2 \
+      --out research/findings/raw/_load_bearing/pmem_drive.json         # expect load-bearing=1, null-control clean
 Run (full measurement, capped; defer to a non-gaming window):
   tools/memcap.sh 24 -- .venv/bin/python -m research.runners.load_bearing_fraction \
       --out research/findings/raw/_load_bearing/load_bearing.json
@@ -132,6 +171,206 @@ LB_EPISODIC_DRIVE = os.environ.get("LB_EPISODIC_DRIVE_PROBE", "").strip().lower(
 _EPISODIC_DRIVE_TURN = "epi_recall"      # the referential RECALL turn (its group is store->recall, same session)
 _EPISODIC_DRIVE_ENV = {"BRAIN_EPISODIC_STORE": "1"}   # force the BTSP write to execute on the probe backend
 
+# ── SURPRISE CONFIRM PROBE (opt-in, env-gated; default OFF -> byte-identical to the 2026-09-19 hollow baseline) ────
+# WHY (diagnosis, finding 2026-09-20-hollow-surprise-monitor-confirm-probe): surprise-monitor is isolated-lesion-load-
+# bearing (BRAIN_SURPRISE_LESION zeroes the block-diagonal patient_expected->surprise prediction edges, collapsing the
+# 22.8x confirm/contradict separation) yet reads INTEGRATED-HOLLOW here for a PROBE reason, not a wiring reason. Its
+# default probe turn is `contra` ("the dog chase the fish") = a CONTRADICT trial: the asserted patient ('fish') lives in
+# a DIFFERENT circuit block than the stored one ('cat'), and the lesioned inhibition only ever reached the SAME (stored)
+# block -- so on CONTRADICT the surprise pool is un-inhibited INTACT too, and the lesion changes nothing (empirically
+# intact_a_contra surprised=true, lesion_surprise_monitor surprised=true -> compare() 'pass' -> not load-bearing). The
+# lesion only BITES on a CONFIRM trial (asserted==stored, SHARED block), where the intact prediction cancels excitation
+# on that block (surprised=False) and the lesion removes that cancellation (surprised=True). This flag remaps the
+# surprise probe to the CONFIRM turn (`confirm` = "the dog chase the cat", already in PROBE_TURNS for metacog-monitor,
+# session 'surp', single-turn group -> byte-identical roster, no new turn/session/forced-write env). Grounded in the
+# already-produced artifact intact_a_confirm.json: intact confirm surprised=false (surprise_hz 0.0 < threshold 2.629)
+# with calib.confirm_before_max=4.398 (the pre-homeostat, PARTIALLY-inhibited confirm rate) already ABOVE 2.629 -> fully
+# removing the inhibition (the lesion) fires confirm at >= that rate -> surprised flips False->True -> the decision field
+# `surprise.surprised` FLIPS -> LOAD-BEARING. The reply is genuinely driven by it: webapp/server.py gates surprise_prefix
+# ("That surprises me -- my mismatch monitor fired ...") on sj['surprised'] and splices it into the answer, so a CONFIRM-
+# turn lesion spuriously annotates a plain restatement -- a real user-visible diff the CONTRADICT probe can never expose
+# (both arms already carry the notice there). OFF (default) -> surprise is measured on the `contra` turn exactly as the
+# baseline did (hollow), and no other faculty is touched. No base_env: the confirm turn is deterministic (homeostat-
+# calibrated at build), so the null control is clean with no forced write.
+LB_SURPRISE_CONFIRM = os.environ.get("LB_SURPRISE_CONFIRM_PROBE", "").strip().lower() in ("1", "true", "yes", "on")
+_SURPRISE_CONFIRM_TURN = "confirm"       # the CONFIRM turn (asserted==stored, shared block) where the lesion bites
+
+# ── DISCOURSE-REGISTER DRIVING PROBE (opt-in, env-gated; default OFF -> byte-identical to the 2026-09-19 hollow baseline)
+# WHY (diagnosis, finding 2026-09-20-hollow-discourse-register-drive): discourse-register is isolated-lesion-load-bearing
+# (the who-was-before read collapses when the prev spiking slots are silenced) yet reads INTEGRATED-HOLLOW here for a
+# PROBE reason, not a wiring reason. Its default probe `dr_c` ('dog chase cat' -> 'then bird chase worm' -> 'who was
+# doing it before') has its correct before-agent be 'dog', which is referents[0] — and referents[0] is EXACTLY the
+# register's identity index (ident=0, _d3_event_connective_derisk.make_connective_task). The LESION
+# (_PrevSilencePairRegister.observe, d3_discourse_event_register_production_organ.py) collapses the held prev slots by
+# FORCING them to that same identity index -> forced 'dog'. So the INTACT read ('dog', via the learned RNN shift +
+# FS-WTA re-discretization) and the LESION read ('dog', via forced-identity) are the IDENTICAL agent: an index
+# collision, not a failure of the read to reach the reply (it demonstrably does — webapp/server.py's before/now
+# short-circuit early-returns a JSONResponse carrying discourse_register straight from answer_before). Compared fields
+# discourse_register.agent/.abstained therefore see zero diff -> hollow. This flag remaps the probe to the 'dr2' triple
+# ('bird chase worm' -> 'then dog chase cat' -> 'who was doing it before'), which SWAPS the roles so the correct
+# before-agent is 'bird' = referents[3] != identity 0: intact reads the held prev agent 'bird', the lesion still forces
+# 'dog' -> discourse_register.agent FLIPS 'bird' vs 'dog' -> LOAD-BEARING. No base_env needed (the register defaults
+# spiking=True on ANY backend, unlike episodic's cupy-gated BTSP write). OFF (default) -> discourse-register is measured
+# on the lone `dr_c` turn exactly as the baseline did (hollow), and no other faculty is touched.
+LB_DISCOURSE_REGISTER_DRIVE = os.environ.get("LB_DISCOURSE_REGISTER_DRIVE_PROBE", "").strip().lower() in ("1", "true", "yes", "on")
+_DISCOURSE_DRIVE_TURN = "dr2_c"          # the before-query turn (its group is bird/worm -> shift dog/cat -> before?)
+# Static-verification anchors for the ident-collision guard (see selftest). MUST mirror the production register build
+# site (brain_chat_tui.py: make_discourse_register(["dog","cat","fish","bird","worm","ball"])) and the identity index
+# (_d3_event_connective_derisk.make_connective_task: ident = 0). The whole point of the remap is that the correct
+# before-agent index is NOT this identity index (which the lesion forces the held prev slot to).
+_DR2_PROD_REFERENTS = ["dog", "cat", "fish", "bird", "worm", "ball"]
+_DR2_IDENT = 0
+# ── COMMON-GROUND DRIVING PROBE (opt-in, env-gated; default OFF -> byte-identical to the 2026-09-19 hollow baseline) ─
+# WHY (diagnosis, finding 2026-09-20-hollow-common-ground-drives-drive): common-ground-drives is isolated-lesion-load-
+# bearing (its own lesion_note: BRAIN_CG_DRIVES_LESION builds the ledger recurrence at weight 0 -> a re-mentioned
+# referent can no longer read grounded -> the reduced-reference lead VANISHES) yet reads INTEGRATED-HOLLOW on the
+# default probe for a PROBE reason, not a wiring reason. Its default probe turn `well` ("the wolf bites the apple")
+# runs on a FRESH session, and 'wolf'/'bites'/'apple' are NOT build-time KB concepts, so gnw_thought_swap._extract_topic
+# returns None (no grounded token) -> common_ground_ledger_production_organ.observe_turn takes its `if not topic:
+# return {..., "decision": None, ...}` branch IDENTICALLY on the intact AND lesion arms (decision=None==None) -> hollow.
+# Even with a grounded first-mention token, the load-bearing divergence only appears on a RE-MENTION of an already-
+# grounded referent (intact reads REDUCE via the held NMDA bump; the lesioned recurrence=0 ledger cannot hold it and
+# stays INTRODUCE) -- a single fresh first-mention turn can never construct that fork. This flag makes the instrument
+# CONSTRUCT the driving condition: remap the common-ground probe to the mention->re-mention pair (battery turns
+# `cg_mention1`->`cg_mention2`, session 'cg2') over 'dog' (a build-time KB agent, found by _extract_topic with no
+# gate-ordering/OOV issue). Then the INTACT ledger holds the grounded slot (decision=reduce) while the lesioned ledger
+# collapses it (decision=introduce) -> the decision field `common_ground_drives.decision` FLIPS -> LOAD-BEARING. No
+# forced-write / backend flag is needed: common_ground_ledger_production_organ pins SIM_BACKEND=numpy for its own
+# bridge unconditionally, so the driving pair works on the default numpy probe backend (base_env stays {}). OFF
+# (default) -> common-ground-drives is measured on the lone `well` turn exactly as the baseline did (hollow), and no
+# other faculty is touched.
+LB_CG_DRIVE = os.environ.get("LB_CG_DRIVE_PROBE", "").strip().lower() in ("1", "true", "yes", "on")
+_CG_DRIVE_TURN = "cg_mention2"           # the RE-MENTION turn (its group is mention1->mention2, same session 'cg2')
+_CG_DRIVE_ENV: dict = {}                 # no forced write / backend flag needed (the ledger pins SIM_BACKEND=numpy)
+# ── NON-CONTRADICTION DRIVING PROBE (opt-in, env-gated; default OFF -> byte-identical to the 2026-09-19 hollow baseline)
+# WHY (diagnosis, finding 2026-09-20-hollow-noncontradiction-gate-drive): noncontradiction-gate is isolated-lesion-
+# load-bearing (the 6-seed B3 GO: disabling negation storage flips 0->18 false-accepts, the canonical negation reads
+# "yes" on the substrate) yet reads INTEGRATED-HOLLOW here for a PROBE reason, not a wiring reason. Its default probe
+# turn is `well` ("the wolf bites the apple") — a fresh TEACH of BRAND-NEW vocabulary (the battery's own comment,
+# onebrain_regression_battery.py:176: "wolf/bite/apple are new vocabulary"). So `ask_yes_no("wolf","bite","apple")`
+# has NO stored belief and legitimately reads "unknown" on the INTACT substrate too — the SAME value the lesioned
+# _RecallShim forces — so on/reject/recalled_yn/asserted_polarity are byte-identical intact vs lesion (accept /
+# reject=False / "unknown"). The gate GENUINELY drives the reply (webapp/server.py:5943-5954: reject=True early-returns
+# the rejection message + the noncontradiction block; reject=False falls through to the normal reply, block still
+# attached), and is genuinely wired to a real recallable belief — the tiny-demo brain stores (dog,chase,cat)=AFFIRM at
+# BUILD time (brain_chat_tui `_build*` hear-loop; a build-time store, present on ANY backend), which is exactly why the
+# battery's pre-existing `confirm`/`metacog` probes already recall "yes" on it. This flag remaps the noncontradiction
+# probe to a turn that ASSERTS the NEGATED form of that boot fact: intact recalls "yes" (stored AFFIRM) -> stored !=
+# asserted(NEGATE) -> REJECT (recalled_yn="yes", stored_polarity="AFFIRM"); the lesion forces "unknown" -> ACCEPT
+# (recalled_yn="unknown", stored_polarity=None) -> the decision fields FLIP -> LOAD-BEARING. UNLIKE episodic, NO forced-
+# write env is needed (the fact is stored unconditionally at boot on every backend), so base_env stays {} in both arms
+# -> the NULL control is a plain rebuild and is byte-identical. OFF (default) -> noncontradiction is measured on the
+# lone `well` teach turn exactly as the baseline did (hollow), and no other faculty is touched.
+LB_NONCONTRADICTION_DRIVE = os.environ.get("LB_NONCONTRADICTION_DRIVE_PROBE", "").strip().lower() in ("1", "true", "yes", "on")
+_NONCONTRA_DRIVE_TURN = "noncontra_neg"   # a single fresh-session turn: assert NEGATE of the AFFIRM boot fact (dog,chase,cat)
+_NONCONTRA_DRIVE_FIELDS = ["noncontradiction.on", "noncontradiction.reject", "noncontradiction.recalled_yn",
+                           "noncontradiction.asserted_polarity", "noncontradiction.stored_polarity"]
+
+
+def _noncontra_probe_parses_negated_boot_fact():
+    """STATIC check (no brain build): the driving turn's TEXT parses, through the SAME production organ front-end the
+    webapp uses, to the NEGATED form of the AFFIRM boot fact -> (agent,action,patient,polarity)==(dog,chase,cat,NEGATE).
+    This is the load-bearing static claim: intact will recall "yes" on (dog,chase,cat) and REJECT a NEGATE assertion,
+    while the lesion forces "unknown" and ACCEPTS -> the decision fields diverge. Import is lazy (parse-only; no brain)."""
+    try:
+        from research.runners.b3_noncontradiction_production_organ import extract_polar_assertion
+        turn = _TURN_BY_LABEL.get(_NONCONTRA_DRIVE_TURN)
+        if not turn:
+            return False
+        parsed = extract_polar_assertion(turn[1])   # turn = (label, message, session, reset, percept, rich)
+        return parsed == ("dog", "chase", "cat", "NEGATE")
+    except Exception:
+        return False
+# ── AFFECT-COLORING DRIVING PROBE (opt-in, env-gated; default OFF -> byte-identical to the 2026-09-19 hollow baseline) ──
+# WHY (diagnosis, finding 2026-09-20-hollow-affect-coloring-drive): affect-coloring is isolated-lesion-load-bearing (the
+# `affect_out` transmission gate collapses the ladder differential to 0.0 under BRAIN_AFFECT_LESION -- the same class of
+# neural cut episodic uses) yet reads INTEGRATED-HOLLOW here for a PROBE reason, not a wiring reason. Its default probe
+# turn `well` ("the wolf bites the apple") is MOOD-NEUTRAL: appraise_text returns n_hits=0 (none of wolf/bites/apple/the
+# pass the Warriner _STRONG_MARGIN salience gate -- "wolf" is |3.9-5|<margin, the rest are not in WARRINER at all), so
+# webapp/server.py _update_session_mood HOLDS the prior mood (0.0) and read_differential injects a 0.0 appraisal through
+# settle/ramp/drive-off/read REGARDLESS of the lesion flag -- the affect_out gate only bites when there is a NONZERO
+# differential to clamp. So BOTH the intact and BRAIN_AFFECT_LESION arms read ~baseline (valence_sign="0", tone_token="")
+# -> IDENTICAL -> NOT load-bearing. The reply IS already colored by the ladder read (server.py: valence_sign / tone_token
+# / manner_template / _mood_tone_level ALL flow from the neural differential); the probe simply never gives the ladder
+# anything to color. This flag remaps the affect-coloring probe to the strongly-affective `emo` turn ("Wonderful! I am so
+# happy and delighted, this is fantastic and amazing!") -- ALREADY a self-contained turn in PROBE_TURNS (session 'emo',
+# reset=True, its own single-turn group), so NO new turn / dependency chain is added and NO env-forcing is needed (the
+# Gate-B ladder read runs on numpy for ANY turn, UNLIKE episodic's cupy-gated BTSP write -> base_env stays {}). On `emo`,
+# appraise_text hits n_hits=5 strongly-positive words -> the session mood goes non-neutral -> intact reads valence_sign=
+# "+" (a nonzero positive differential) while the lesion clamps affect_out=0 -> differential 0.0 -> valence_sign="0" ->
+# the decision fields `affect.valence_sign` + `affect.tone_token` FLIP -> LOAD-BEARING. OFF (default) -> affect-coloring
+# is measured on the lone `well` turn exactly as the baseline did (hollow), and no other faculty is touched.
+LB_AFFECT_DRIVE = os.environ.get("LB_AFFECT_DRIVE_PROBE", "").strip().lower() in ("1", "true", "yes", "on")
+_AFFECT_DRIVE_TURN = "emo"      # the strongly-affective turn (its group is ['emo'] -- its own isolated single-turn session)
+# ── BG-ACTION-SELECTION DRIVING PROBE (opt-in, env-gated; default OFF -> byte-identical to the 2026-09-19 hollow
+# baseline) ───────────────────────────────────────────────────────────────────────────────────────────────────────
+# WHY (diagnosis, finding 2026-09-20-hollow-bg-action-selection-drive): bg-action-selection genuinely DRIVES the reply
+# on the `bgdots` probe ('...') — the two-channel spiking basal-ganglia race commits STAY_SILENT and the turn short-
+# circuits with a HOLD line (webapp/server.py:4714-4723, which is the ONLY place the `bg_select` key is written). But
+# the ONE field the battery row compares is the top-level `abstained` (onebrain_regression_battery.py:272), which is
+# CONFOUNDED: the lesion `BRAIN_BG_SELECT_LESION=1` maps to `arousal` (organ:120-121), which skips the entire salience-
+# bias barrage (organ:162-177) so the race never commits, `decide_action` returns None, and the turn FALLS THROUGH past
+# the BG block to the single-fact path, where a punctuation-only '...' has no comprehensible content -> `answer,
+# abstained, verified = "I don't know about that.", True, False`. So BOTH arms read `abstained=True` — the intact arm
+# via the BG HOLD short-circuit, the lesion arm via a completely independent no-content abstain -> compare()="pass" ->
+# NOT load-bearing, even though the answer TEXT (HOLD_TEXT vs "I don't know about that.") AND the `bg_select` block's
+# presence differ. This flag remaps the compared field from the confounded `abstained` to `bg_select.on` — present+True
+# only when the BG block's own short-circuit fired (intact), absent on the lesioned fallback -> compare() sees a field
+# present intact / absent lesioned -> `regressed`, change_kind `structural` (the gold-standard robust diff). No new turn
+# or session is needed (the default `bgdots` turn already puts the race in its designed STAY_SILENT-favored regime); OFF
+# (default) -> bg-action-selection is measured on `abstained` exactly as the baseline did (hollow), no other faculty
+# touched. Same class of fix as LB_EPISODIC_DRIVE_PROBE: the mechanism is load-bearing on the reply, the instrument's
+# (turn, compared-field) pair simply could not see it — here because the field collided with an unrelated abstain path.
+LB_BG_SELECT_DRIVE = os.environ.get("LB_BG_SELECT_DRIVE_PROBE", "").strip().lower() in ("1", "true", "yes", "on")
+_BG_SELECT_DRIVE_TURN = "bgdots"                 # the content-empty turn that puts the BG race in its STAY_SILENT regime
+_BG_SELECT_DRIVE_FIELDS = ["bg_select.on"]       # the structural field the independent no-content fallback never sets
+# ── PROSPECTIVE-MEMORY DRIVING PROBE (opt-in, env-gated; default OFF -> byte-identical to the hollow baseline) ─────
+# WHY (diagnosis, finding 2026-09-20-prospective-memory-drive-v2): prospective-memory is isolated-lesion-load-bearing
+# (research/runners/_prospective_memory_production_verify.py rows A/C: the intact latch fires on the cue turn,
+# BRAIN_PMEM_LESION collapses the held assembly -> the SAME cue stays silent) yet reads INTEGRATED-HOLLOW here for a
+# PROBE reason, not a wiring reason. Its default probe turn `pmem_form` compares field `prospective.held`, which
+# form_intention() sets to the compile-time literal True UNCONDITIONALLY (the lesion's real effect, `held_after_lesion`,
+# is a DIFFERENT field the probe never compares) -> intact True == lesion True -> `pass` -> hollow. But the FIRST fix
+# (a 2-turn formation->cue group comparing `prospective.fired`) ALSO read hollow (treat=0): brain-build-verified, the
+# intact arm did NOT fire either. ROOT CAUSE (measured organ-level): prospective memory is an intention held ACROSS
+# INTERVENING ACTIVITY and released at a LATER cue -- the SFA/NMDA held x cue coincidence only reaches its operating
+# point after the hold is advanced by intervening turns (intact rel_A 0.163@n=0 -> 0.221@n=1 -> 0.340@n=3; FIRE_THR=
+# 0.2), so a ZERO-DELAY formation->cue does not fire even intact (there is nothing "prospective" about an immediate
+# cue). This flag makes the instrument run the NATURAL prospective protocol: remap the prospective probe to the
+# formation -> 3 intervening turns -> cue group (battery turns `pmem_form2`..`pmem_cue`, session 'pmem2') and compare
+# `prospective.fired`. NO base_env forcing is needed: BRAIN_PMEM + BRAIN_PMEM_HEBBIAN are default-ON, so the ordinary
+# intact build learns the cue->action binding one-shot at formation, holds it across the 3 distractors, and fires on
+# the cue turn (fired=True); the BRAIN_PMEM_LESION arm collapses the latch at formation so the cue stays silent
+# (fired=False; rel_A ~0.04 at every n) -> the decision field `prospective.fired` FLIPS -> LOAD-BEARING. OFF (default)
+# -> prospective is measured on the lone `pmem_form` turn exactly as the baseline did (hollow), no other faculty touched.
+LB_PMEM_DRIVE = os.environ.get("LB_PMEM_DRIVE_PROBE", "").strip().lower() in ("1", "true", "yes", "on")
+_PMEM_DRIVE_TURN = "pmem_cue"            # the CUE turn (its group is formation -> 3 intervening turns -> cue, same session 'pmem2')
+# ── OPEN-ENDED-GENERATION DRIVING PROBE (opt-in, env-gated; default OFF -> byte-identical to the hollow baseline) ───
+# WHY (diagnosis, finding 2026-09-20-gap-open-ended-generation-v2): the default open-ended probe `rich_open` ("what
+# might a dog chase") is integrated-HOLLOW because the tiny KB has ONE 'chase' fact -- (dog,chase,cat) -- already
+# stored, so the only reachable (dog,chase,?) patient is novelty-excluded -> _generate_hypothesis abstains in BOTH
+# arms (intact == lesion). The v1 fix taught 9 chase facts but STILL read treat=0 on the real brain: the stored
+# 'cat' (co-occurrence weight 2 with (dog,chase)) TIED the twice-taught 'rabbit' and won the intact spiking-WTA
+# argmax, so the intact draw FIXATED on 'cat' (novelty-excluded) and dead-ended to abstain -- the likelihood
+# ablation had nothing to change. This flag remaps the measurement to a TEACH->ASK group ('oe_t1..oe_t9' -> 'oe_ask',
+# session 'oe2') that teaches a NATURAL predator-prey chase KB where 'rabbit' is chased by FOUR predators so its
+# (dog,chase,rabbit) weight (4) STRICTLY dominates the stored cat's (2): the INTACT likelihood-weighted spiking draw
+# then peaks the NOVEL 'rabbit' (volunteers it), while the LESION's uniform draw (BRAIN_SPIKING_DRAW_LESION -> the
+# now-honored ablate on draw_from_weights, this branch's wiring fix) has no likelihood bias and selects among all
+# novel plausible patients -> the decision field `hypothesis_svo` (+ the rendered `answer`) differs -> LOAD-BEARING.
+# OFF (default) -> open-ended is measured on the lone `rich_open` turn exactly as the baseline (hollow); no other
+# faculty touched.
+LB_OPEN_ENDED_DRIVE = os.environ.get("LB_OPEN_ENDED_DRIVE_PROBE", "").strip().lower() in ("1", "true", "yes", "on")
+_OPEN_ENDED_DRIVE_TURN = "oe_ask"        # the rich=True open-ended ASK turn (its group is oe_t1..oe_t9 -> oe_ask, one session)
+# BOTH arms admit candidates via the host #3E plausibility gate: on the tiny KB the DEFAULT-ON spiking plausibility
+# read is too conservative on the weak agent-action edge (_related(dog,chase), co-occurrence 1) to admit ANY novel
+# candidate, so _generate_hypothesis abstains in BOTH arms and the draw is MASKED (measured; the v2 diagnosis). This
+# base_env is applied to intact AND lesion identically, so the ONLY inter-arm difference remains the draw lesion --
+# it ISOLATES the draw's load-bearingness, it does not create it. (Under the default gate the integrated faculty
+# abstains -> the honest residual: a richer KB or a less-conservative gate operating point is needed to unmask the
+# draw under the default spiking gate.)
+_OPEN_ENDED_DRIVE_ENV = {"BRAIN_SPIKING_PLAUSIBILITY": "0"}
+
 
 def _spawn_arm(env, turn_labels, out_path):
     if _LB_RESUME and os.path.exists(out_path):
@@ -144,6 +383,16 @@ def _spawn_arm(env, turn_labels, out_path):
 # A sentinel env var NOTHING reads — the null lesion. Setting it changes no brain behavior; used by the self-test to
 # confirm the instrument does NOT report a change when the "lesion" is a no-op (guards against a false-positive harness).
 NULL_LESION_FLAG = "BRAIN_LOAD_BEARING_NULL_LESION"
+
+# SEED THREADING (research/seed-threading-lbf, 2026-09-20): every arm build already reads the substrate seed off
+# `BRAIN_CHAT_SEED` (webapp/server.py._brain_chat_seed + each per-organ workspace's own `_DEFAULT_SEED`, all
+# reading the SAME env var) — see main()/run() below, which set it once for the whole invocation. `_seed_suffix`
+# namespaces every per-arm output FILENAME by seed so LB_RESUME_SKIP_EXISTING and the in-memory intact_cache never
+# false-skip/collide across a multi-seed sweep sharing one --out directory. seed=42 (the pre-existing hardcoded
+# value) keeps the ORIGINAL, un-suffixed filenames — BYTE-IDENTICAL to every existing on-disk artifact and to the
+# pre-this-change resume behavior; only a non-42 seed adds the `_s<seed>` tag.
+def _seed_suffix(seed: int) -> str:
+    return "" if int(seed) == 42 else "_s%d" % int(seed)
 
 
 # ── the PER-FACULTY LESION MAP ───────────────────────────────────────────────────────────────────────────────────
@@ -285,6 +534,20 @@ def _flag_resolves(flag):
     return False
 
 
+def _draw_from_weights_honors_ablate():
+    """Code-level check that the production wire-in draw `SpikingWTASampler.draw_from_weights` consults
+    `ablate_likelihood` (the v2 wiring fix), so the neural DRAW lesion (BRAIN_SPIKING_DRAW_LESION) actually bites the
+    production `_generate_hypothesis` draw and is not a silent no-op. Reads the method body -- a presence check, not
+    proof the lesion changes a given reply (the measurement decides that)."""
+    import inspect
+    try:
+        from research.runners._followon2_spiking_wta_sampler_derisk import SpikingWTASampler
+        src = inspect.getsource(SpikingWTASampler.draw_from_weights)
+    except Exception:
+        return False
+    return "ablate_likelihood" in src and "np.ones" in src
+
+
 def _classify_diffs(diffs):
     """structural = a field goes present<->absent/null (organ output gated off); value = both present, value flips."""
     kinds = set()
@@ -306,12 +569,18 @@ def _n_decision_diffs(row, arm_a, arm_b):
     return len(compare(arm_a, arm_b, faculties=[row])["per_faculty"][0]["diffs"])
 
 
-def measure_faculty(key, out_dir, repeats=1, intact_cache=None):
+def measure_faculty(key, out_dir, repeats=1, intact_cache=None, seed=42):
     """Build the INTACT arm TWICE (a, cached per turn-group; b, the NULL control) and the LESION arm for `key`, then
     make the explicit attribution call: TREATMENT = decision fields changed intact-vs-lesion; CONTROL = decision fields
     changed intact-vs-intact-rebuild. load-bearing requires a treatment change (attributed to the lesion) AND a clean
     null control (0 changes intact-vs-intact) — a change that also appears in the null is run-to-run noise, not the
-    lesion. Returns the per-faculty result dict."""
+    lesion. Returns the per-faculty result dict.
+
+    `seed` (default 42, byte-identical to before this param existed) is NOT passed to _spawn_arm as an env override
+    — the substrate seed is threaded via the process-wide BRAIN_CHAT_SEED env var set once by main()/run() for the
+    whole invocation, so every arm build (including this faculty's) already builds at that seed. `seed` here only
+    namespaces the OUTPUT FILENAMES (via `_seed_suffix`) so a multi-seed sweep sharing one --out dir cannot collide
+    or false-skip under LB_RESUME_SKIP_EXISTING."""
     spec = FACULTY_LESIONS.get(key)
     row = _faculty_row(key)
     res = {"faculty": key, "turn": (row[1] if row else None),
@@ -347,6 +616,103 @@ def measure_faculty(key, out_dir, repeats=1, intact_cache=None):
         base_env = dict(_EPISODIC_DRIVE_ENV)
         res["turn"] = _EPISODIC_DRIVE_TURN
         res["note"] = "LB_EPISODIC_DRIVE_PROBE: store->recall on session 'epi2' + BRAIN_EPISODIC_STORE=1. " + res["note"]
+    # NON-CONTRADICTION DRIVING remap (default-off; see LB_NONCONTRADICTION_DRIVE). Remap the noncontradiction probe to
+    # a fresh-session turn that ASSERTS the NEGATED form of the AFFIRM boot fact (dog,chase,cat): intact recalls "yes"
+    # -> REJECT; lesion forces "unknown" -> ACCEPT -> reject/recalled_yn/stored_polarity diverge. NO forced-write env is
+    # needed (the boot fact is stored on any backend), so base_env stays {} -> the NULL control is a plain rebuild
+    # (byte-identical). Every OTHER faculty keeps base_env={} -> byte-identical.
+    if LB_NONCONTRADICTION_DRIVE and key == "noncontradiction-gate":
+        row = ("noncontradiction-gate", _NONCONTRA_DRIVE_TURN, list(_NONCONTRA_DRIVE_FIELDS), False)
+        res["turn"] = _NONCONTRA_DRIVE_TURN
+        res["note"] = ("LB_NONCONTRADICTION_DRIVE_PROBE: assert NEGATE of the AFFIRM boot fact (dog,chase,cat) on a "
+                       "fresh session 'ncontra'; no forced-write env (boot-stored on any backend). " + res["note"])
+
+    # SURPRISE CONFIRM remap (default-off; see LB_SURPRISE_CONFIRM). Make the surprise probe exercise its load-bearing
+    # inhibition path: remap from the `contra` turn (a CONTRADICT trial the same-block lesion never touches) to the
+    # `confirm` turn (asserted==stored, SHARED block), where the intact prediction cancels the excitation (surprised=
+    # False) and the lesion removes that cancellation (surprised=True) -> the decision field `surprise.surprised` FLIPS.
+    # No base_env is needed (unlike episodic): the confirm turn is already in PROBE_TURNS and deterministic, so both
+    # intact arms read surprised=False -> clean null, only the lesion flips it. Every OTHER faculty keeps base_env={}.
+    if LB_SURPRISE_CONFIRM and key == "surprise-monitor":
+        row = ("surprise-monitor", _SURPRISE_CONFIRM_TURN, ["surprise.surprised"], False)
+        res["turn"] = _SURPRISE_CONFIRM_TURN
+        res["note"] = "LB_SURPRISE_CONFIRM_PROBE: measured on the CONFIRM turn 'confirm' (asserted==stored, shared block) where the same-block lesion bites; contra is a different-block CONTRADICT the lesion never reaches. " + res["note"]
+
+    # DISCOURSE-REGISTER DRIVING remap (default-off; see LB_DISCOURSE_REGISTER_DRIVE). Make the discourse probe exercise
+    # its load-bearing prev-slot read on a turn whose correct before-agent is NOT the register's identity index (which
+    # the lesion forces the held prev slot to). Remap to the 'dr2' triple ('bird chase worm' -> 'then dog chase cat' ->
+    # before?), whose group is derived below as ['dr2_a','dr2_b','dr2_c'] (all session 'dr2', declared clause-first) so
+    # the lesion arm reproduces the SAME clause history. NO base_env: the register defaults spiking=True on any backend,
+    # so nothing needs forcing (unlike episodic's cupy-gated BTSP write) -> every OTHER faculty stays byte-identical.
+    if LB_DISCOURSE_REGISTER_DRIVE and key == "discourse-register":
+        row = ("discourse-register", _DISCOURSE_DRIVE_TURN, ["discourse_register.abstained", "discourse_register.agent"], False)
+        res["turn"] = _DISCOURSE_DRIVE_TURN
+        res["note"] = ("LB_DISCOURSE_REGISTER_DRIVE_PROBE: before-agent is referents[3]='bird', not referents[0]='dog'"
+                       "==ident, so the lesion's forced-identity fallback is distinguishable from the correct answer. "
+                       + res["note"])
+    # COMMON-GROUND DRIVING remap (default-off; see LB_CG_DRIVE). Make the common-ground probe exercise its
+    # load-bearing audience-design path: remap to the mention->re-mention turn (its group is derived below as
+    # ['cg_mention1','cg_mention2'] because both are in session 'cg2', declared mention-first) so the RE-MENTION reads
+    # an ALREADY-grounded referent. base_env stays {} (both intact arms + the lesion arm; the ledger self-pins numpy),
+    # so the NULL control also re-mentions -> both intact arms read decision=reduce -> clean null; only the lesion (its
+    # recurrence built at weight 0) collapses the held slot to decision=introduce. Every OTHER faculty keeps base_env={}
+    # -> byte-identical. The compared field narrows to `common_ground_drives.decision` (the reduce/introduce flip); `.on`
+    # is True on both arms and `.reason` is absent on a topic'd turn, so neither could discriminate.
+    if LB_CG_DRIVE and key == "common-ground-drives":
+        row = ("common-ground-drives", _CG_DRIVE_TURN, ["common_ground_drives.decision"], False)
+        base_env = dict(_CG_DRIVE_ENV)
+        res["turn"] = _CG_DRIVE_TURN
+        res["note"] = "LB_CG_DRIVE_PROBE: mention->re-mention on session 'cg2' ('dog'); intact reduce vs lesion introduce. " + res["note"]
+
+    # AFFECT-COLORING DRIVING remap (default-off; see LB_AFFECT_DRIVE). Make the affect-coloring probe exercise its
+    # load-bearing ladder read on a turn with a NONZERO mood to color: remap to the strongly-affective `emo` turn (its
+    # group is derived below as ['emo'] -- its own single-turn session). No env-forcing (base_env stays {}) -- UNLIKE
+    # episodic, the Gate-B ladder read runs on numpy for any turn, so no store or backend gate needs relaxing; the SAME
+    # BRAIN_AFFECT_LESION neural cut then collapses affect_out=0 -> a 0.0 differential -> valence_sign flips "+"->"0".
+    # Every OTHER faculty keeps base_env={} and its baseline row -> byte-identical.
+    if LB_AFFECT_DRIVE and key == "affect-coloring":
+        row = ("affect-coloring", _AFFECT_DRIVE_TURN, ["affect.on", "affect.valence_sign", "affect.tone_token"], False)
+        res["turn"] = _AFFECT_DRIVE_TURN
+        res["note"] = ("LB_AFFECT_DRIVE_PROBE: remap to the strongly-affective '%s' turn (no env-forcing). "
+                       % _AFFECT_DRIVE_TURN) + res["note"]
+
+    # BG-ACTION-SELECTION DRIVING remap (default-off; see LB_BG_SELECT_DRIVE). SAME turn ('bgdots'), SAME session,
+    # SAME env (base_env stays {}) -> turn_group + both arm builds are byte-identical to the baseline; ONLY the field
+    # list changes, from the confounded top-level `abstained` (True in BOTH arms — intact via the BG HOLD short-circuit,
+    # lesion via the independent no-content abstain) to `bg_select.on` (present+True only on the intact short-circuit,
+    # absent on the lesioned fallback) -> a structural intact-vs-lesion diff. The NULL control (intact vs intact-rebuild)
+    # is unaffected: both intact arms fire the short-circuit -> both set bg_select.on=True -> 0 control diffs.
+    if LB_BG_SELECT_DRIVE and key == "bg-action-selection":
+        row = ("bg-action-selection", _BG_SELECT_DRIVE_TURN, list(_BG_SELECT_DRIVE_FIELDS), False)
+        res["turn"] = _BG_SELECT_DRIVE_TURN
+        res["note"] = ("LB_BG_SELECT_DRIVE_PROBE: compare bg_select.on (structural) instead of the confounded top-level "
+                       "abstained (True in both arms). " + res["note"])
+
+    # PROSPECTIVE-MEMORY DRIVING remap (default-off; see LB_PMEM_DRIVE). Make the prospective probe run the NATURAL
+    # prospective protocol -- an intention held ACROSS intervening turns then released at a later cue: remap to the
+    # cue turn (its group is derived below as ['pmem_form2','pmem_d0','pmem_d1','pmem_d2','pmem_cue'] because all five
+    # are in session 'pmem2', declared formation-first) and compare `prospective.fired` instead of the compile-time-
+    # constant `prospective.held`. No base_env is forced: BRAIN_PMEM + BRAIN_PMEM_HEBBIAN are default-ON, so the intact
+    # arm learns the binding, holds it across the 3 intervening turns, and fires (fired=True); only the
+    # BRAIN_PMEM_LESION arm collapses the latch (fired=False). Every OTHER faculty keeps base_env={} -> byte-identical.
+    if LB_PMEM_DRIVE and key == "prospective-memory":
+        row = ("prospective-memory", _PMEM_DRIVE_TURN, ["prospective.fired"], False)
+        res["turn"] = _PMEM_DRIVE_TURN
+        res["note"] = "LB_PMEM_DRIVE_PROBE: formation -> 3 intervening turns -> cue on session 'pmem2'. " + res["note"]
+    # OPEN-ENDED-GENERATION DRIVING remap (default-off; see LB_OPEN_ENDED_DRIVE). Remap the open-ended-generation
+    # measurement to the teach->ask group ('oe_t1..oe_t9' -> 'oe_ask', session 'oe2', derived below by turn_group)
+    # that teaches the predator-prey chase KB, and compare the generative decision fields (`hypothesis_svo` the drawn
+    # triple + the rendered `answer`). No base_env needed (the teach turns store via the standard in-loop acquire on
+    # any backend); every OTHER faculty keeps base_env={} -> byte-identical.
+    if LB_OPEN_ENDED_DRIVE and key == "open-ended-generation":
+        row = ("open-ended-generation", _OPEN_ENDED_DRIVE_TURN, ["hypothesis_svo", "answer"], False)
+        base_env = dict(_OPEN_ENDED_DRIVE_ENV)
+        res["turn"] = _OPEN_ENDED_DRIVE_TURN
+        res["note"] = ("LB_OPEN_ENDED_DRIVE_PROBE: teach->ask on session 'oe2' (predator-prey chase KB; novel "
+                       "'rabbit' strictly dominates the stored 'cat'); BRAIN_SPIKING_PLAUSIBILITY=0 on BOTH arms so "
+                       "the #3E gate admits the candidates (the default spiking gate masks the draw on the tiny KB); "
+                       "the draw lesion (BRAIN_SPIKING_DRAW_LESION) is the only inter-arm difference + the honored "
+                       "ablate on draw_from_weights. " + res["note"])
 
     grp = turn_group(row[1])
     # cache key includes base_env so a stored (BRAIN_EPISODIC_STORE) intact arm never aliases a plain-{} arm on a
@@ -355,18 +721,20 @@ def measure_faculty(key, out_dir, repeats=1, intact_cache=None):
     grp_sig = ",".join(grp) + ("|" + env_sig if env_sig else "")
     _fname = grp_sig.replace(",", "_").replace("|", "__").replace("=", "-")
     intact_cache = intact_cache if intact_cache is not None else {}
+    _sfx = _seed_suffix(seed)
 
     # INTACT arm (base env = all defaults on, plus any driving base_env), built TWICE: `a` (cached per turn-group,
     # shared across faculties on the same turn) and `b` the NULL control (a fresh rebuild at the same seed -> the
     # run-to-run baseline of "no change").
     if grp_sig not in intact_cache:
-        a = _spawn_arm(dict(base_env), grp, os.path.join(out_dir, "intact_a_%s.json" % _fname))
-        b = _spawn_arm(dict(base_env), grp, os.path.join(out_dir, "intact_b_%s.json" % _fname))
+        # union: base_env carries the driving-probe env (episodic + hollow drives); _sfx threads the per-seed suffix.
+        a = _spawn_arm(dict(base_env), grp, os.path.join(out_dir, "intact_a_%s%s.json" % (_fname, _sfx)))
+        b = _spawn_arm(dict(base_env), grp, os.path.join(out_dir, "intact_b_%s%s.json" % (_fname, _sfx)))
         intact_cache[grp_sig] = (a, b)
     intact_a, intact_b = intact_cache[grp_sig]
 
-    # LESION arm.
-    les_out = os.path.join(out_dir, "lesion_%s.json" % key.replace("-", "_"))
+    # LESION arm. union: _sfx threads the per-seed suffix; base_env carries the driving-probe env (both arms share it).
+    les_out = os.path.join(out_dir, "lesion_%s%s.json" % (key.replace("-", "_"), _sfx))
     lesioned = _spawn_arm({**base_env, flag: val}, grp, les_out)
     if intact_a is None or intact_b is None or lesioned is None:
         res["verdict"] = "arm-build-failed"; return res
@@ -411,14 +779,23 @@ def measure_faculty(key, out_dir, repeats=1, intact_cache=None):
 
 
 # ── the full measurement ─────────────────────────────────────────────────────────────────────────────────────────
-def run(out_dir="research/findings/raw/_load_bearing", only=None, repeats=1):
+def run(out_dir="research/findings/raw/_load_bearing", only=None, repeats=1, seed=42):
+    """`seed` (default 42, byte-identical): the substrate seed for this WHOLE invocation. Callers (main() below) are
+    responsible for setting the process-wide BRAIN_CHAT_SEED env var to this same value BEFORE calling run() — this
+    function does not set it itself (it may be called directly, e.g. from a test, without the env side effect) —
+    `seed` here is threaded only to `measure_faculty` for output-filename namespacing (`_seed_suffix`)."""
     os.makedirs(out_dir, exist_ok=True)
+    # DEVICE STAMP (device-and-cost gate): record the backend the arms actually built on. The battery worker inherits
+    # this process's SIM_BACKEND (it spawns with dict(os.environ)); default numpy via setdefault. Recorded so the
+    # result is auditable without a provenance sidecar (a CPU/GPU mix-up is a different experiment, not a slow run).
     report = {"runner": "research.runners.load_bearing_fraction",
-              "metric": "load_bearing_fraction", "repeats": repeats}
+              "metric": "load_bearing_fraction", "repeats": repeats, "seed": seed,
+              "backend": os.environ.get("SIM_BACKEND", "numpy"),
+              "cuda_visible_devices": os.environ.get("CUDA_VISIBLE_DEVICES")}
 
     keys = only or faculty_list()
     intact_cache = {}
-    per = [measure_faculty(k, out_dir, repeats=repeats, intact_cache=intact_cache) for k in keys]
+    per = [measure_faculty(k, out_dir, repeats=repeats, intact_cache=intact_cache, seed=seed) for k in keys]
     report["per_faculty"] = per
 
     # DETERMINISM / NULL CONTROL, aggregated from every exercised faculty's intact-vs-intact-rebuild control. The
@@ -497,9 +874,87 @@ def selftest(out_path=None):
         "episodic-drive turns exist": all(l in _TURN_BY_LABEL for l in (_EPISODIC_DRIVE_TURN, "epi_store")),
         "episodic-drive group is store->recall": turn_group(_EPISODIC_DRIVE_TURN) == ["epi_store", _EPISODIC_DRIVE_TURN],
         "episodic-drive forces the BTSP write": _flag_resolves("BRAIN_EPISODIC_STORE") and "1" in _EPISODIC_DRIVE_ENV.values(),
+        # surprise-confirm remap (LB_SURPRISE_CONFIRM_PROBE): the CONFIRM turn is already in the default roster (no new
+        # turn/session), its group is the single confirm turn, and the surprise neural-cut lesion flag resolves in source.
+        "surprise-confirm turn is in the default roster": _SURPRISE_CONFIRM_TURN in {t[0] for t in PROBE_TURNS},
+        "surprise-confirm group is the single confirm turn": turn_group(_SURPRISE_CONFIRM_TURN) == [_SURPRISE_CONFIRM_TURN],
+        "surprise lesion flag resolves in source": _flag_resolves("BRAIN_SURPRISE_LESION"),
+        # discourse-register-driving remap (LB_DISCOURSE_REGISTER_DRIVE_PROBE): the dr2 clause->shift->before triple
+        # exists, its group is the 3-clause 'dr2' chain, and the correct before-agent ('bird' = dr2_a's subject) maps to
+        # a referent index that is NOT the register's identity index 0 (which the lesion forces the held prev slot to).
+        # This is the guard against the exact index collision the lone `dr_c` probe fell into (correct-before 'dog' ==
+        # referents[0] == ident, so intact and lesion returned the identical agent).
+        "discourse-drive turns exist": all(l in _TURN_BY_LABEL for l in (_DISCOURSE_DRIVE_TURN, "dr2_a", "dr2_b")),
+        "discourse-drive group is the dr2 chain": turn_group(_DISCOURSE_DRIVE_TURN) == ["dr2_a", "dr2_b", _DISCOURSE_DRIVE_TURN],
+        "discourse-drive before-agent avoids the ident collision (bird=3 != dog=0)": (
+            _TURN_BY_LABEL["dr2_a"][1].split()[0] in _DR2_PROD_REFERENTS
+            and _DR2_PROD_REFERENTS.index(_TURN_BY_LABEL["dr2_a"][1].split()[0]) == 3
+            and 3 != _DR2_IDENT
+            and _DR2_PROD_REFERENTS[_DR2_IDENT] == "dog"),
+        "discourse-drive lesion knob resolves": _flag_resolves("BRAIN_DISCOURSE_REGISTER_LESION"),
+        # common-ground-driving remap (LB_CG_DRIVE_PROBE): the mention->re-mention pair exists and its group is
+        # mention-first, the lesion knob is real, and no forced-write/backend env is needed (the ledger self-pins numpy).
+        "cg-drive turns exist": all(l in _TURN_BY_LABEL for l in (_CG_DRIVE_TURN, "cg_mention1")),
+        "cg-drive group is mention->re-mention": turn_group(_CG_DRIVE_TURN) == ["cg_mention1", _CG_DRIVE_TURN],
+        "cg-drive lesion knob resolves": _flag_resolves("BRAIN_CG_DRIVES_LESION"),
+        "cg-drive needs no forced env": _CG_DRIVE_ENV == {},
+        # noncontradiction-driving remap (LB_NONCONTRADICTION_DRIVE_PROBE): the driving turn exists, is a SINGLE-turn
+        # group (the boot fact dog/chase/cat=AFFIRM is present at every tiny-demo build -> no store turn needed), the
+        # lesion knob resolves in source, and the probe text parses to the NEGATED form of that boot fact (so intact
+        # recalls "yes"/AFFIRM -> REJECT, lesion forces "unknown" -> ACCEPT: reject/recalled_yn/stored_polarity flip).
+        "noncontradiction-drive turn exists": _NONCONTRA_DRIVE_TURN in _TURN_BY_LABEL,
+        "noncontradiction-drive group is single": turn_group(_NONCONTRA_DRIVE_TURN) == [_NONCONTRA_DRIVE_TURN],
+        "noncontradiction-drive lesion knob resolves": _flag_resolves("BRAIN_NONCONTRADICTION_LESION"),
+        "noncontradiction-drive probe negates the dog/chase/cat boot fact": _noncontra_probe_parses_negated_boot_fact(),
+        # affect-coloring-driving remap (LB_AFFECT_DRIVE_PROBE): the strongly-affective turn is ALREADY in the default
+        # roster (no _EXTRA_TURNS / no battery edit needed), its group is the lone self-contained turn (no dependency
+        # chain, no env-forcing), and the affect-coloring neural-cut lesion flag resolves so the remapped read can flip.
+        "affect-drive turn is in the default roster": _AFFECT_DRIVE_TURN in {t[0] for t in PROBE_TURNS},
+        "affect-drive group is the lone turn": turn_group(_AFFECT_DRIVE_TURN) == [_AFFECT_DRIVE_TURN],
+        "affect-drive lesion flag resolves": _flag_resolves(FACULTY_LESIONS["affect-coloring"]["flag"]),
+        # bg-select-driving remap (LB_BG_SELECT_DRIVE_PROBE): the driving turn is already in the default roster (no
+        # _EXTRA_TURNS needed) and is a single-turn group; the CONFOUNDED `abstained` field reads pass on both arms
+        # (True intact via the BG HOLD short-circuit, True lesion via the independent no-content abstain) while the
+        # remapped `bg_select.on` field is a structural regressed diff (present+True intact, absent lesioned).
+        "bg-select turn in default roster": _BG_SELECT_DRIVE_TURN in {t[0] for t in PROBE_TURNS},
+        "bg-select group is single bgdots": turn_group(_BG_SELECT_DRIVE_TURN) == [_BG_SELECT_DRIVE_TURN],
+        "bg-select confounded field passes (the bug)": compare(
+            {_BG_SELECT_DRIVE_TURN: {"abstained": True, "bg_select": {"on": True}}},
+            {_BG_SELECT_DRIVE_TURN: {"abstained": True}},
+            faculties=[("bg-action-selection", _BG_SELECT_DRIVE_TURN, ["abstained"], False)]
+        )["per_faculty"][0]["verdict"] == "pass",
+        "bg-select remapped field is structural regressed (the fix)": (lambda pf: pf["verdict"] == "regressed"
+            and _classify_diffs(pf["diffs"]) == "structural")(compare(
+            {_BG_SELECT_DRIVE_TURN: {"abstained": True, "bg_select": {"on": True}}},
+            {_BG_SELECT_DRIVE_TURN: {"abstained": True}},
+            faculties=[("bg-action-selection", _BG_SELECT_DRIVE_TURN, list(_BG_SELECT_DRIVE_FIELDS), False)]
+        )["per_faculty"][0]),
+        # prospective-memory-driving remap (LB_PMEM_DRIVE_PROBE): the formation -> intervening -> cue chain exists and
+        # its group holds the intention across >=1 intervening turn (the operating-point condition -- a zero-delay
+        # formation->cue does not fire even intact), and remapping prospective to `pmem_cue` reads the load-bearing
+        # `prospective.fired` field (whose lesion flag BRAIN_PMEM_LESION resolves in source). No forced write.
+        "pmem-drive turns exist": all(l in _TURN_BY_LABEL for l in (_PMEM_DRIVE_TURN, "pmem_form2")),
+        "pmem-drive group is formation->intervening->cue": turn_group(_PMEM_DRIVE_TURN) == ["pmem_form2", "pmem_d0", "pmem_d1", "pmem_d2", _PMEM_DRIVE_TURN],
+        "pmem-drive holds across >=1 intervening turn": len(turn_group(_PMEM_DRIVE_TURN)) >= 3,
+        "pmem-drive lesion knob resolves": _flag_resolves("BRAIN_PMEM_LESION"),
+        # open-ended-generation driving remap (LB_OPEN_ENDED_DRIVE_PROBE): the teach->ask group exists, its group is
+        # the 9 teach turns then the ask, the lesion knob resolves, and draw_from_weights now HONORS ablate_likelihood
+        # (so the lesion bites the production draw -- the v1 wiring gap this v2 branch fixed).
+        "open-ended-drive turns exist": all(l in _TURN_BY_LABEL for l in (_OPEN_ENDED_DRIVE_TURN, "oe_t1")),
+        "open-ended-drive group is teach->ask": turn_group(_OPEN_ENDED_DRIVE_TURN) == [
+            "oe_t1", "oe_t2", "oe_t3", "oe_t4", "oe_t5", "oe_t6", "oe_t7", "oe_t8", "oe_t9", _OPEN_ENDED_DRIVE_TURN],
+        "open-ended lesion knob resolves": _flag_resolves("BRAIN_SPIKING_DRAW_LESION"),
+        "open-ended lesion bites production draw": _draw_from_weights_honors_ablate(),
         "every FACULTY_LESIONS key is a real battery faculty":
             all(k in faculty_list() for k in FACULTY_LESIONS),
         "every battery faculty is mapped": all(k in FACULTY_LESIONS for k in faculty_list()),
+        # SEED THREADING (research/seed-threading-lbf, 2026-09-20): seed=42 (the pre-existing hardcoded value)
+        # keeps the ORIGINAL un-suffixed filenames -- byte-identical to every on-disk artifact from before --seed
+        # existed; only a non-42 seed adds the _s<seed> tag, so a 6-seed sweep sharing one --out dir never collides.
+        "seed_suffix default(42) is empty (byte-identical filenames)": _seed_suffix(42) == "",
+        "seed_suffix non-default namespaces the filename": _seed_suffix(43) == "_s43",
+        "seed_suffix accepts the full 6-seed roster": [_seed_suffix(s) for s in (42, 43, 44, 100, 101, 102)]
+            == ["", "_s43", "_s44", "_s100", "_s101", "_s102"],
     }
     ok = all(checks.values())
     print("=== LOAD-BEARING INSTRUMENT SELF-TEST ===")
@@ -520,6 +975,21 @@ def selftest(out_path=None):
                "n_probe_turns_default_roster": len(PROBE_TURNS),
                "episodic_drive_group": turn_group(_EPISODIC_DRIVE_TURN),
                "episodic_drive_env": _EPISODIC_DRIVE_ENV,
+               "surprise_confirm_turn": _SURPRISE_CONFIRM_TURN,
+               "surprise_confirm_group": turn_group(_SURPRISE_CONFIRM_TURN),
+               "discourse_drive_group": turn_group(_DISCOURSE_DRIVE_TURN),
+               "discourse_drive_before_agent": _TURN_BY_LABEL["dr2_a"][1].split()[0],
+               "discourse_drive_env": {},
+               "cg_drive_group": turn_group(_CG_DRIVE_TURN),
+               "cg_drive_env": _CG_DRIVE_ENV,
+               "noncontradiction_drive_group": turn_group(_NONCONTRA_DRIVE_TURN),
+               "noncontradiction_drive_env": {},   # no forced-write env: the boot fact is present on any backend
+               "affect_drive_turn": _AFFECT_DRIVE_TURN,
+               "affect_drive_group": turn_group(_AFFECT_DRIVE_TURN),
+               "affect_drive_in_default_roster": _AFFECT_DRIVE_TURN in {t[0] for t in PROBE_TURNS},
+               "bg_select_drive_group": turn_group(_BG_SELECT_DRIVE_TURN),
+               "bg_select_drive_fields": _BG_SELECT_DRIVE_FIELDS,
+               "pmem_drive_group": turn_group(_PMEM_DRIVE_TURN),
                "lesion_map_coverage": dict(kinds)}
         os.makedirs(os.path.dirname(os.path.abspath(out_path)), exist_ok=True)
         json.dump(art, open(out_path, "w"), indent=2, default=str)
@@ -533,6 +1003,13 @@ def main():
     ap.add_argument("--smoke", default=None, help="measure ONE faculty (its key) intact-vs-lesion, for the tiny memcap smoke")
     ap.add_argument("--only", default=None, help="comma-separated faculty keys to restrict to")
     ap.add_argument("--repeats", type=int, default=1, help="lesion-arm rebuilds for the anti-noise reproduce check (>=1)")
+    ap.add_argument("--seed", type=int, default=42,
+                    help="substrate seed for every arm this invocation builds (research/seed-threading-lbf, "
+                         "2026-09-20): sets BRAIN_CHAT_SEED for the whole run + namespaces every per-arm output "
+                         "filename (_seed_suffix) so a multi-seed sweep sharing one --out dir cannot collide or "
+                         "false-skip under LB_RESUME_SKIP_EXISTING. Default 42 is BYTE-IDENTICAL to before this "
+                         "flag existed (unsuffixed filenames, BRAIN_CHAT_SEED=42 behaves exactly like unset). The "
+                         "mandated 6-seed validation is 42/43/44/100/101/102, one invocation per seed.")
     ap.add_argument("--selftest", action="store_true", help="verify the instrument logic without building a brain (no cap needed)")
     ap.add_argument("--selftest-out", default=None, help="also write the selftest checks to this JSON artifact (no brain build)")
     ap.add_argument("--map", action="store_true", help="print the per-faculty lesion map and exit (no brain build)")
@@ -547,16 +1024,25 @@ def main():
                                             (("val=%s " % s["value"]) if s.get("value") else "")))
         return 0
 
+    # SEED THREADING: set the process-wide substrate seed ONCE, before any arm build. _spawn_arm_raw (reused
+    # verbatim from onebrain_regression_battery.py) passes `env=dict(os.environ)` to every arm subprocess, so this
+    # single assignment is what makes EVERY arm (intact + lesion, every faculty) build at args.seed. Unconditional
+    # even at the default (--seed unset -> 42): BRAIN_CHAT_SEED=42 reads identically to unset everywhere it is
+    # consumed (webapp/server.py._brain_chat_seed + every per-organ workspace's own _DEFAULT_SEED), so this is a
+    # byte-identical no-op for the shipped default.
+    os.environ["BRAIN_CHAT_SEED"] = str(args.seed)
+
     out_dir = os.path.dirname(os.path.abspath(args.out))
     os.makedirs(out_dir, exist_ok=True)
     if args.smoke:
-        report = run(out_dir=out_dir, only=[args.smoke], repeats=max(2, args.repeats))
+        report = run(out_dir=out_dir, only=[args.smoke], repeats=max(2, args.repeats), seed=args.seed)
     else:
         only = args.only.split(",") if args.only else None
-        report = run(out_dir=out_dir, only=only, repeats=args.repeats)
+        report = run(out_dir=out_dir, only=only, repeats=args.repeats, seed=args.seed)
 
     json.dump(report, open(args.out, "w"), indent=2, default=str)
     print("\n===== LOAD-BEARING FRACTION =====")
+    print("  seed=%d (BRAIN_CHAT_SEED=%s)" % (args.seed, os.environ.get("BRAIN_CHAT_SEED")))
     if "determinism" in report:
         d = report["determinism"]
         print("  determinism/null-control (intact vs intact-rebuild): deterministic=%s (checked=%s, dirty=%s)"

@@ -60,7 +60,9 @@ from research.runners._gnw_acc_bg_stop_trigger_derisk import (
     build_stop_trigger_bridge, run_trigger_trial, GPI_TRIGGER_THRESH,
 )
 
-_DEFAULT_SEED = 42
+_DEFAULT_SEED = int(os.environ.get("BRAIN_CHAT_SEED", "42"))  # research/seed-threading-lbf, 2026-09-20: reads the
+# same env var as webapp/server.py._brain_chat_seed so this organ reseeds coherently with the rest of the tiny-
+# demo brain. Unset -> 42, BYTE-IDENTICAL to the pre-existing hardcoded value.
 
 _CIRCUIT_CACHE: dict = {}
 _LOCK = threading.Lock()

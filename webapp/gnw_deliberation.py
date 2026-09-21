@@ -66,7 +66,9 @@ _THETA_CACHE: dict = {}
 _LOCK = threading.Lock()
 
 # The default seed for the deliberation workspace (matches the bus's default warm-bridge seed).
-_DEFAULT_SEED = 42
+_DEFAULT_SEED = int(os.environ.get("BRAIN_CHAT_SEED", "42"))  # research/seed-threading-lbf, 2026-09-20: reads the
+# same env var as webapp/server.py._brain_chat_seed so this organ reseeds coherently with the rest of the tiny-
+# demo brain. Unset -> 42, BYTE-IDENTICAL to the pre-existing hardcoded value.
 
 
 def deliberate_enabled() -> bool:

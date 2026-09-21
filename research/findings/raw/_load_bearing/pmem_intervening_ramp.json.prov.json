@@ -1,0 +1,28 @@
+{
+ "run_id": "1789961695-42457",
+ "runner": "research/runners/_pmem_intervening_ramp_probe.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-a7d8781ca4b6f7551/research/runners/_pmem_intervening_ramp_probe.py",
+  "--out",
+  "research/findings/raw/_load_bearing/pmem_intervening_ramp.json"
+ ],
+ "git_sha": "b1dc471cd",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-20T23:34:55",
+ "env": {
+  "SIM_BACKEND": "numpy",
+  "CUDA_VISIBLE_DEVICES": ""
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_load_bearing/pmem_intervening_ramp.json"
+}

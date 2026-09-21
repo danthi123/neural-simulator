@@ -1937,7 +1937,7 @@ async def _warm_chat_brain() -> None:
                 from research.runners.value_choice_production_organ import (
                     value_choice_enabled as _vc_enabled, get_value_choice_organ as _get_vc_organ)
                 if _vc_enabled():
-                    _get_vc_organ(seed=42, untrained=False).ensure_built()
+                    _get_vc_organ(seed=_brain_chat_seed(), untrained=False).ensure_built()
                     print("[webapp] startup: value-choice organ (learned striosome_value critic + spiking WTA) WARM",
                           flush=True)
             except Exception as _vce:
@@ -3018,50 +3018,50 @@ _SESSION_WORLDVIEW: dict[tuple[str, str, str], dict] = {}
 def _get_affect_organ():
     """The process-shared spiking affect organ (built once, ~1s on the process backend)."""
     from research.runners.affect_production_organ import get_organ
-    return get_organ(seed=42)
+    return get_organ(seed=_brain_chat_seed())
 
 
 def _get_comprehension_organ():
     """The process-shared spiking comprehension monitor (built once; the co-resident SpikingRoleCompetition)."""
     from research.runners.comprehension_production_organ import get_organ
-    return get_organ(seed=42)
+    return get_organ(seed=_brain_chat_seed())
 
 
 def _get_surprise_organ():
     """The process-shared spiking expectation-violation organ (built once; the co-resident mismatch circuit)."""
     from research.runners.surprise_production_organ import get_organ
-    return get_organ(seed=42)
+    return get_organ(seed=_brain_chat_seed())
 
 
 def _get_metacog_organ():
     """The process-shared spiking metacognition organ (built once; the co-resident balance-of-evidence monitor)."""
     from research.runners.metacog_production_organ import get_organ
-    return get_organ(seed=42)
+    return get_organ(seed=_brain_chat_seed())
 
 
 def _get_worldmodel_organ():
     """The process-shared spiking affective world-model organ (built once; the co-resident valence forward model)."""
     from research.runners.worldmodel_production_organ import get_organ
-    return get_organ(seed=42)
+    return get_organ(seed=_brain_chat_seed())
 
 
 def _get_curiosity_organ():
     """The process-shared spiking curiosity organ (built once; the co-resident from_novelty -> ASK-pool drive)."""
     from research.runners.curiosity_production_organ import get_organ
-    return get_organ(seed=42)
+    return get_organ(seed=_brain_chat_seed())
 
 
 def _get_source_provenance_organ():
     """The process-shared #129 spiking source-provenance opponent-comparator monitor (built once; rebuilt if the
     lesion flag flips). See research/runners/source_provenance_production_organ.py."""
     from research.runners.source_provenance_production_organ import get_organ, source_provenance_lesioned
-    return get_organ(seed=42, lesion=source_provenance_lesioned())
+    return get_organ(seed=_brain_chat_seed(), lesion=source_provenance_lesioned())
 
 
 def _get_pragmatic_organ():
     """The process-shared spiking scalar-implicature organ (built once; the W4 depth-2 graded RSA listener-belief)."""
     from research.runners.pragmatic_production_organ import get_organ
-    return get_organ(seed=42)
+    return get_organ(seed=_brain_chat_seed())
 
 
 def _get_self_schema_organ():
@@ -3070,7 +3070,7 @@ def _get_self_schema_organ():
     per-read (schema_access=False), so the SAME organ serves a normal request and a lesion-verification probe.
     See research/runners/self_schema_production_organ.py."""
     from research.runners.self_schema_production_organ import get_organ
-    return get_organ(seed=42)
+    return get_organ(seed=_brain_chat_seed())
 
 
 # ─── MULTI-REFERENT WORKING MEMORY (Gate-B, D6): a spiking multi-register discourse buffer that HOLDS >=2 referents
@@ -3357,7 +3357,7 @@ def _get_selfinit_organ(cache_key):
     org = _SESSION_SELFINIT.get(cache_key)
     if org is None:
         from research.runners.self_initiated_production_organ import SelfInitiationOrgan
-        org = SelfInitiationOrgan(seed=42)
+        org = SelfInitiationOrgan(seed=_brain_chat_seed())
         _SESSION_SELFINIT[cache_key] = org
     return org
 
@@ -3392,7 +3392,7 @@ def _reload_persisted_learning(cache_key, chat) -> None:
         if not persist_learning_enabled():
             return
         topics = getattr(chat, "agents_set", None) or _brain_vocab(chat)
-        reload_session_learning(cache_key, chat, 42, topics)
+        reload_session_learning(cache_key, chat, _brain_chat_seed(), topics)
     except Exception:
         pass
 
@@ -3413,11 +3413,11 @@ def _get_multiref_organ(cache_key):
         try:
             from research.runners.onebrain_xedge_production import xedge_enabled, get_xedge_pool
             if xedge_enabled():
-                _xp = get_xedge_pool(42)
+                _xp = get_xedge_pool(_brain_chat_seed())
                 shared = _xp.pool if _xp is not None else None
         except Exception:
             shared = None
-        org = MultiReferentWMOrgan(seed=42, shared=shared)
+        org = MultiReferentWMOrgan(seed=_brain_chat_seed(), shared=shared)
         _SESSION_MULTIREF[cache_key] = org
     return org
 
@@ -3430,7 +3430,7 @@ def _get_silent_wm_organ(cache_key):
     org = _SESSION_SILENT_WM.get(cache_key)
     if org is None:
         from research.runners.activity_silent_wm_production_organ import ActivitySilentWMOrgan
-        org = ActivitySilentWMOrgan(seed=42)
+        org = ActivitySilentWMOrgan(seed=_brain_chat_seed())
         _SESSION_SILENT_WM[cache_key] = org
     return org
 
@@ -3439,7 +3439,7 @@ def _get_reconsolidation_organ():
     """The process-shared reconsolidation (belief-revision) organ. Its D2 window gate IS the shared surprise organ,
     so warming surprise warms it (built once on first use). See research/runners/reconsolidation_production_organ.py."""
     from research.runners.reconsolidation_production_organ import get_organ
-    return get_organ(seed=42)
+    return get_organ(seed=_brain_chat_seed())
 
 
 def _get_causal_organ(cache_key):
@@ -3448,14 +3448,14 @@ def _get_causal_organ(cache_key):
     composer (its event set + causal curriculum are gated by that composer's moat recall), so a per-brain organ
     keeps one brain's grounding out of another's. Cleared on reset. See research/runners/causal_whatif_production_organ.py."""
     from research.runners.causal_whatif_production_organ import get_organ
-    return get_organ(cache_key, seed=42)
+    return get_organ(cache_key, seed=_brain_chat_seed())
 
 
 def _get_noncontradiction_organ():
     """The process-shared non-contradiction assertion-gate organ (stateless; reads the ONE production recall composer
     directly — no co-resident bridge added). See research/runners/b3_noncontradiction_production_organ.py."""
     from research.runners.b3_noncontradiction_production_organ import get_organ
-    return get_organ(seed=42)
+    return get_organ(seed=_brain_chat_seed())
 
 
 def _get_pmem_organ(cache_key):
@@ -3466,7 +3466,7 @@ def _get_pmem_organ(cache_key):
     org = _SESSION_PMEM.get(cache_key)
     if org is None:
         from research.runners.prospective_memory_production_organ import ProspectiveMemoryOrgan
-        org = ProspectiveMemoryOrgan(seed=42)
+        org = ProspectiveMemoryOrgan(seed=_brain_chat_seed())
         _SESSION_PMEM[cache_key] = org
     return org
 
@@ -3629,7 +3629,7 @@ def _get_warm_qwen_renderer():
     with _WARM_QWEN_LOCK:
         if _WARM_QWEN_RENDERER is None:   # double-checked: another thread may have built it
             from research.runners.brain_chat_tui import QwenRenderer
-            _WARM_QWEN_RENDERER = QwenRenderer(seed=42)   # the heavy model load (paid once)
+            _WARM_QWEN_RENDERER = QwenRenderer(seed=_brain_chat_seed())   # the heavy model load (paid once)
         return _WARM_QWEN_RENDERER
 
 
@@ -3742,6 +3742,32 @@ def _integrated_loop_enabled() -> bool:
     if env is None:
         return _INTEGRATED_LOOP_DEFAULT_ON
     return env.strip().lower() in ("1", "true", "on", "yes")
+
+
+def _brain_chat_seed() -> int:
+    """THE single substrate-seed source of truth for the tiny-demo chat brain (research/seed-threading-lbf,
+    2026-09-20 -- built so the load-bearing-fraction instrument, research/runners/load_bearing_fraction.py, can
+    run the mandated 6-seed validation (42/43/44/100/101/102) instead of being pinned to a hardcoded 42).
+
+    Unset BRAIN_CHAT_SEED -> 42, the exact literal every call site below carried before this function existed:
+    BYTE-IDENTICAL to the pre-existing shipped behavior. Set BRAIN_CHAT_SEED to reseed the tiny-demo substrate
+    build (`_build_tiny_demo`) AND every process-shared / per-session organ this module builds with its own
+    `seed=42` (previously independent, silently-identical literals -- see the call sites this function replaces)
+    so a --seed flip is coherent across the WHOLE brain rather than reseeding only the primary composer while
+    every co-resident organ stays pinned to 42. A malformed value degrades to 42 rather than crashing chat build.
+
+    Per-organ workspaces that live in OTHER webapp/*.py modules (affect_drives_chat.py, da_mode_drives_chat.py,
+    gnw_*.py, common_ground_drives_chat.py, swap_drives_chat.py, np_entailment_moat_gate.py, ...) read the SAME
+    BRAIN_CHAT_SEED env var independently via their own `_DEFAULT_SEED` module constant (each computed once at
+    import time exactly like this function) -- there is no cross-module call into this function, only the shared
+    env var, because those modules must not import webapp.server (import-cycle risk: server.py imports them)."""
+    v = os.environ.get("BRAIN_CHAT_SEED")
+    if v is None:
+        return 42
+    try:
+        return int(v)
+    except (TypeError, ValueError):
+        return 42
 
 # LTM-STORE DECODE LEVERS (board #108 cluster, 2026-09-02): the #66 seed-44 recall-hole arc
 # (research/FAILURE_LOG.md row 93, finding 2026-09-01-seed44-recall-hole-ROOT-CAUSED-phase-quantization-
@@ -3920,7 +3946,7 @@ def _build_chat_brain(brain: str, renderer: str):
         # the SAME code path also serves a real (large-vocab) brain, not because flipping it for tiny-demo itself
         # is expected to help.
         _il = _integrated_loop_enabled()
-        agent, aliases, _n = _build_tiny_demo(42, use_multiturn=True,
+        agent, aliases, _n = _build_tiny_demo(_brain_chat_seed(), use_multiturn=True,
                                               enable_neural_render=False, composer_kind=_ck,
                                               integrated_loop=_il)
         source = "tiny-demo"
@@ -3940,7 +3966,7 @@ def _build_chat_brain(brain: str, renderer: str):
             try:
                 from research.runners.developed_brain_io import _inner_agent
                 from research.runners.tiered_fact_store import TieredFactStore
-                _tiny_ltm = _load_or_build_ltm_store(_tiny_ltm_bundle, seed=42)
+                _tiny_ltm = _load_or_build_ltm_store(_tiny_ltm_bundle, seed=_brain_chat_seed())
                 if _tiny_ltm is not None:
                     _tiny_inner = _inner_agent(agent)
                     _tiny_inner.composer = TieredFactStore(_tiny_inner.composer, _tiny_ltm)
@@ -4883,7 +4909,7 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
             import research.runners.d5_episodic_production_organ as _OE_EP
             if _OE_EP.episodic_enabled() and _oe.get("known") and _oe.get("facts") and _episodic_store_ok():
                 _oe_ep_topics = getattr(chat, "agents_set", None) or _brain_vocab(chat)
-                _OE_EP.get_episodic_organ(cache_key, 42, _oe_ep_topics).note_topic(_oe["facts"][0][0])
+                _OE_EP.get_episodic_organ(cache_key, _brain_chat_seed(), _oe_ep_topics).note_topic(_oe["facts"][0][0])
         except Exception:
             pass  # never let the episodic write crash an open-ended turn -- degrade to the un-noted turn
         # ── R1 RUNG-2 (2026-09-02): the open-ended turn now ALSO runs the shared pipeline's per-turn SESSION-STATE
@@ -5255,7 +5281,7 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
             _ep_topics = getattr(chat, "agents_set", None) or _brain_vocab(chat)
             ref = _EP.extract_referent(msg, _ep_topics)
             if ref is not None:
-                eorg = _EP.get_episodic_organ(cache_key, 42, _ep_topics)
+                eorg = _EP.get_episodic_organ(cache_key, _brain_chat_seed(), _ep_topics)
                 rec = eorg.recall(ref, lesion=_EP.episodic_lesioned())
                 episodic_info = dict(rec)
                 # D5 LEARN-THROUGH-USE (continuous engine, DEFAULT-ON since 2026-08-21, BRAIN_D5_CONSOLIDATE=0 is the
@@ -5465,7 +5491,7 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
                     if xedge_curiosity_d6_enabled():
                         from research.runners._onebrain_crossedge_curiosity_to_d6wm import (
                             INTACT_FLOOR as _CD6_FLOOR)
-                        _cd6_pool = get_xedge_curiosity_d6_pool(42)
+                        _cd6_pool = get_xedge_curiosity_d6_pool(_brain_chat_seed())
                         _cd6_ask_held = bool(getattr(d6org, "_xedge_curiosity_recent_crave", False))
                         _cd6_read = crossedge_w0_shift(_cd6_pool, _cd6_ask_held)
                         _cd6_crave_suppresses = bool(
@@ -5910,7 +5936,7 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
             from research.runners.onebrain_xedge_surprise_episodic_production import (
                 xedge_surprise_episodic_enabled, get_xedge_surprise_episodic_pool, crossedge_provenance_shift_129)
             if xedge_surprise_episodic_enabled():
-                _xse_pool = get_xedge_surprise_episodic_pool(42)
+                _xse_pool = get_xedge_surprise_episodic_pool(_brain_chat_seed())
                 _xse_held = bool(surprise_info.get("surprised", False))
                 _xse_read = crossedge_provenance_shift_129(_xse_pool, _xse_held)
                 if _xse_read is not None:
@@ -6174,7 +6200,7 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
         if _episodic_on and (not r["abstained"]) and facts and not _rich_derived and _episodic_store_ok():
             try:
                 _ep_topics = getattr(chat, "agents_set", None) or _brain_vocab(chat)
-                _EP.get_episodic_organ(cache_key, 42, _ep_topics).note_topic(facts[0][0])
+                _EP.get_episodic_organ(cache_key, _brain_chat_seed(), _ep_topics).note_topic(facts[0][0])
             except Exception:
                 pass
         # OPEN-ENDED GENERATION (#3E): a generated HYPOTHESIS turn returns NO supporting facts (a guess is not a
@@ -6294,7 +6320,7 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
                 from research.runners.onebrain_xedge_selfschema_production import (
                     xedge_selfschema_enabled, get_xedge_selfschema_pool, crossedge_provenance_shift)
                 if xedge_selfschema_enabled():
-                    _xsp_pool = get_xedge_selfschema_pool(42)
+                    _xsp_pool = get_xedge_selfschema_pool(_brain_chat_seed())
                     _xsp_is_self = bool((resp.get("authorship") or {}).get("is_self", False))
                     _xsp_read = crossedge_provenance_shift(_xsp_pool, _xsp_is_self)
                     if _xsp_read is not None:
@@ -6542,7 +6568,7 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
     if _episodic_on and gate_svo is not None and not _is_chain_route and _episodic_store_ok():
         try:
             _ep_topics = getattr(chat, "agents_set", None) or _brain_vocab(chat)
-            _EP.get_episodic_organ(cache_key, 42, _ep_topics).note_topic(gate_svo[0])
+            _EP.get_episodic_organ(cache_key, _brain_chat_seed(), _ep_topics).note_topic(gate_svo[0])
         except Exception:
             pass
 

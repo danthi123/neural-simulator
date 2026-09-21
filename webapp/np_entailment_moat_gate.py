@@ -163,6 +163,10 @@ _LOCK = threading.Lock()
 _PARSER = None
 _NP_BINDER = None
 
+_DEFAULT_SEED = int(os.environ.get("BRAIN_CHAT_SEED", "42"))  # research/seed-threading-lbf, 2026-09-20: reads the
+# same env var as webapp/server.py._brain_chat_seed so this organ reseeds coherently with the rest of the tiny-
+# demo brain. Unset -> 42, BYTE-IDENTICAL to the pre-existing hardcoded `seed: int = 42` default below.
+
 # ---------------------------------------------------------------------------------------------
 # WIDENED COVERAGE (flag-gated, additive-only) -- see module docstring for the full rationale.
 # ---------------------------------------------------------------------------------------------
@@ -434,7 +438,7 @@ def _pronoun_wide_extract(sent: str):
     return predicate_text
 
 
-def _get_spiking_pair(seed: int = 42):
+def _get_spiking_pair(seed: int = _DEFAULT_SEED):
     """Process-shared (BridgeParser, NPHeadBinder), built ONCE under a lock -- mirrors
     `webapp.open_ended_chat.get_generator`'s one-shared-object pattern. Both classes are reused
     UNCHANGED by import; nothing here re-implements or retrains either spiking mechanism."""

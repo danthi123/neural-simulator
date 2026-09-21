@@ -1,0 +1,69 @@
+{
+  "runner": "research.runners._pmem_intervening_ramp_probe",
+  "kind": "diagnostic",
+  "form": "remind me to feed the dog when the bird sings",
+  "cue": "the bird sings",
+  "cue_keywords": [
+    "bird",
+    "sings"
+  ],
+  "fire_thr": 0.2,
+  "first_firing_n": 1,
+  "fire_attribution": 0.8954416688127737,
+  "ramp": [
+    {
+      "n_intervening": 0,
+      "intact_rel": 0.1633,
+      "intact_fired": false,
+      "lesion_rel": 0.0428,
+      "lesion_fired": false,
+      "flip": false,
+      "threshold": 0.2
+    },
+    {
+      "n_intervening": 1,
+      "intact_rel": 0.2206,
+      "intact_fired": true,
+      "lesion_rel": 0.0417,
+      "lesion_fired": false,
+      "flip": true,
+      "threshold": 0.2
+    },
+    {
+      "n_intervening": 2,
+      "intact_rel": 0.2561,
+      "intact_fired": true,
+      "lesion_rel": 0.0411,
+      "lesion_fired": false,
+      "flip": true,
+      "threshold": 0.2
+    },
+    {
+      "n_intervening": 3,
+      "intact_rel": 0.34,
+      "intact_fired": true,
+      "lesion_rel": 0.0406,
+      "lesion_fired": false,
+      "flip": true,
+      "threshold": 0.2
+    },
+    {
+      "n_intervening": 4,
+      "intact_rel": 0.3644,
+      "intact_fired": true,
+      "lesion_rel": 0.0406,
+      "lesion_fired": false,
+      "flip": true,
+      "threshold": 0.2
+    },
+    {
+      "n_intervening": 5,
+      "intact_rel": 0.3883,
+      "intact_fired": true,
+      "lesion_rel": 0.0406,
+      "lesion_fired": false,
+      "flip": true,
+      "threshold": 0.2
+    }
+  ]
+}

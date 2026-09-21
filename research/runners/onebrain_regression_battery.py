@@ -92,16 +92,103 @@ _TURN_BY_LABEL = {t[0]: t for t in PROBE_TURNS}
 # ── EXTRA turns reachable BY LABEL ONLY, deliberately NOT in the default PROBE_TURNS roster ───────────────────────
 # Rationale: the full roster is iterated by run_regression_battery + every flip-verify harness that imports it, so a
 # turn added to PROBE_TURNS runs (and on cupy would BTSP-write) in ALL of them. These turns are needed only by the
-# load_bearing runner's episodic-driving remap (LB_EPISODIC_DRIVE_PROBE), so they live here — merged into
-# _TURN_BY_LABEL (the worker resolves turns by label from it) but OUT of PROBE_TURNS -> the default roster, the
-# regression battery, and every flip-verify harness are BYTE-IDENTICAL. The EPISODIC DRIVING PAIR: a STORE turn then
-# a RECALL turn in ONE isolated session ('epi2', declared store-first), so the referential recall has a memory to
-# COMPLETE (intact in_memory=True -> disclosure; lesion in_memory=False -> "I don't recall") — the load-bearing recall
-# path the lone-fresh-session `episodic` turn can NEVER exercise (nothing stored -> intact reads not-in-memory,
-# identical to the lesion). See research/runners/load_bearing_fraction.py.
+# load_bearing runner's driving remaps (LB_EPISODIC_DRIVE_PROBE / LB_DISCOURSE_REGISTER_DRIVE_PROBE /
+# LB_NONCONTRADICTION_DRIVE_PROBE), so they live
+# here — merged into _TURN_BY_LABEL (the worker resolves turns by label from it) but OUT of PROBE_TURNS -> the default
+# roster, the regression battery, and every flip-verify harness are BYTE-IDENTICAL.
+#   EPISODIC DRIVING PAIR ('epi2'): a STORE turn then a RECALL turn in ONE isolated session (declared store-first), so
+#   the referential recall has a memory to COMPLETE (intact in_memory=True -> disclosure; lesion in_memory=False ->
+#   "I don't recall") — the load-bearing recall path the lone-fresh-session `episodic` turn can NEVER exercise
+#   (nothing stored -> intact reads not-in-memory, identical to the lesion).
+#   DISCOURSE-REGISTER DRIVING TRIPLE ('dr2'): the default `dr_c` probe ('dog chase cat' -> 'then bird chase worm' ->
+#   before?) has its correct before-agent be 'dog' = referents[0] = the register's identity index (0). The LESION
+#   (_PrevSilencePairRegister.observe) forces the held prev slots to that SAME identity index, so intact ('dog' via the
+#   learned RNN shift) and lesion ('dog' via forced-identity) return the IDENTICAL agent -> zero diff -> hollow, purely
+#   an index collision. This triple SWAPS the roles so the correct before-agent is 'bird' = referents[3] != identity:
+#   'bird chase worm' (bare clause -> CURRENT event) -> 'then dog chase cat' (connective -> SHIFT: bird/worm to prev,
+#   dog/cat current) -> 'who was doing it before' -> intact reads the held PREV agent 'bird', lesion still forces 'dog'
+#   -> discourse_register.agent FLIPS 'bird' vs 'dog' -> LOAD-BEARING. No forced env needed (the register defaults
+#   spiking=True on any backend). See research/runners/load_bearing_fraction.py.
 _EXTRA_TURNS = [
     ("epi_store", "the dog chase the cat",    "epi2", True,  None,   False),  # stores 'dog' (Hook B verified-SVO BTSP write; needs BRAIN_EPISODIC_STORE=1 or a cupy backend to execute)
     ("epi_recall","did we discuss the dog",   "epi2", False, None,   False),  # recalls 'dog' (Hook A dendritic-dAP completion) in the SAME session -> in_memory True intact / False lesion
+    ("dr2_a",     "bird chase worm",          "dr2",  True,  None,   False),  # D3 fold #1 (bare clause, no connective) -> CURRENT event agent=bird (referents[3])
+    ("dr2_b",     "then dog chase cat",       "dr2",  False, None,   False),  # D3 fold #2 (connective-led) -> SHIFT: bird/worm -> prev slots, dog/cat -> current
+    ("dr2_c",     "who was doing it before",  "dr2",  False, None,   False),  # D3 before-query -> held PREV agent = 'bird' (index 3 != identity 0); lesion forces 'dog' (identity 0)
+    # ── COMMON-GROUND DRIVING PAIR (label-only; NOT in PROBE_TURNS) ──────────────────────────────────────────────
+    # The load_bearing runner's LB_CG_DRIVE_PROBE remap uses these so common-ground-drives exercises its actual
+    # load-bearing axis: a REDUCE-vs-INTRODUCE flip on the RE-MENTION of an already-grounded referent. 'dog' is a
+    # BUILD-TIME KB agent (brain_chat_tui.py facts: dog->chase->cat), so gnw_thought_swap._extract_topic finds it as
+    # the grounded topic immediately -- no gate()-ordering / OOV problem (unlike 'wolf' in the lone default 'well'
+    # probe). mention1 (first mention this session) -> intact & lesion both read UNGROUNDED -> decision=introduce, and
+    # the organ then GROUNDS the slot (ignite + NMDA self-sustain). mention2 (same session 'cg2', re-mention) ->
+    # was_grounded=True: the INTACT ledger's self-sustaining recurrence still holds the slot -> substrate reads
+    # grounded -> decision=REDUCE; the BRAIN_CG_DRIVES_LESION=1 ledger built its recurrence at weight 0 (common_ground_
+    # drives_chat.cg_drives_lesioned) so the slot decayed by read-time -> decision stays INTRODUCE -- a genuine
+    # categorical flip on `common_ground_drives.decision`. The lone fresh-session first-mention 'well' probe can NEVER
+    # construct this (nothing grounded -> intact==lesion==introduce). See research/runners/load_bearing_fraction.py.
+    ("cg_mention1", "the dog runs fast",  "cg2", True,  None, False),   # first mention of 'dog' -> introduce; grounds the slot
+    ("cg_mention2", "the dog runs again", "cg2", False, None, False),   # re-mention SAME session -> intact reduce / lesion introduce
+    # ── NON-CONTRADICTION DRIVING turn (label-only; NOT in PROBE_TURNS) ──────────────────────────────────────────
+    # LB_NONCONTRADICTION_DRIVE_PROBE: a single fresh-session turn that ASSERTS the NEGATED form of a fact the tiny-demo
+    # brain already holds AFFIRM at BUILD time ((dog,chase,cat), brain_chat_tui `_build*` hear-loop; a build-time store,
+    # not a cupy-gated BTSP write, so it is present on ANY backend with no forced-write flag needed). The default
+    # `noncontradiction-gate` probe rides the `well` teach turn ("the wolf bites the apple" = brand-new vocab), whose
+    # recall is "unknown" on the INTACT substrate too — identical to the lesion's forced-"unknown" — so the gate reads
+    # integrated-HOLLOW there for a PROBE reason, not a wiring reason. This turn constructs the driving condition: intact
+    # recalls "yes"/AFFIRM -> stored != asserted -> REJECT; lesion forces "unknown" -> ACCEPT — so reject / recalled_yn /
+    # stored_polarity all diverge. See research/runners/load_bearing_fraction.py.
+    ("noncontra_neg", "the dog does not chase the cat", "ncontra", True, None, False),  # NEGATE assertion of the AFFIRM boot fact (dog,chase,cat) -> intact reject=True (recall 'yes'); lesion accept (forced 'unknown')
+    # ── PROSPECTIVE-MEMORY DRIVING GROUP (label-only; used only by load_bearing_fraction's LB_PMEM_DRIVE_PROBE) ──────
+    # Prospective memory is, by definition, an intention held ACROSS INTERVENING ACTIVITY and released at a LATER cue
+    # (McDaniel & Einstein 2000 multiprocess framework). The held-intention x cue coincidence in the SFA/NMDA substrate
+    # only reaches its operating point (rel_A crosses FIRE_THR=0.2) AFTER the hold has been advanced by intervening
+    # turns: measured organ-level, intact rel_A ramps 0.163(n=0)->0.221(n=1)->0.256(n=2)->0.340(n=3) while the
+    # BRAIN_PMEM_LESION arm stays ~0.04 at every n. A zero-delay formation->cue (n=0) does NOT fire even intact (0.163
+    # < 0.2) -> intact==lesion==not-fired -> HOLLOW: that is exactly why the prior 2-turn [pmem_form2,pmem_cue] driving
+    # group read treat=0. THREE intervening distractor turns (matching the validated isolated-verify + de-risk protocol,
+    # fire_on_cue 6/6) put the intact arm at rel_A~0.34 (70% over threshold) so it FIRES, while the lesioned latch stays
+    # silent -> `prospective.fired` FLIPS True/False. Session 'pmem2', declared formation-first; the distractors carry
+    # neither cue keyword ('bird'/'sings') nor a formation phrasing, and NONE is in PROBE_TURNS -> the default roster,
+    # the regression battery and every flip-verify harness stay BYTE-IDENTICAL. See research/runners/load_bearing_fraction.py.
+    ("pmem_form2","remind me to feed the dog when the bird sings", "pmem2", True,  None,   False),  # FORMATION: latch the deferred intention (one-shot Hebbian cue->action binding)
+    ("pmem_d0",   "what does the cat eat",     "pmem2", False, None,   False),  # intervening turn 1: advances the hold (real competing WM load), cue stays silent
+    ("pmem_d1",   "how is the weather today",  "pmem2", False, None,   False),  # intervening turn 2
+    ("pmem_d2",   "tell me about the sky",     "pmem2", False, None,   False),  # intervening turn 3 -> the held x cue coincidence is now at its operating point
+    ("pmem_cue",  "the bird sings",            "pmem2", False, None,   False),  # CUE: the held x cue coincidence fires (intact) / collapses silent (lesion)
+    # ── OPEN-ENDED-GENERATION DRIVING GROUP v2 (load_bearing_fraction's LB_OPEN_ENDED_DRIVE_PROBE) ────────────────
+    # WHY (finding 2026-09-20-gap-open-ended-generation-v2): the default open-ended probe (`rich_open` = "what might a
+    # dog chase" on a FRESH tiny-demo brain) is integrated-HOLLOW: the tiny KB has ONE 'chase' fact -- (dog,chase,cat)
+    # -- already stored, so the ONLY reachable (dog,chase,?) patient is novelty-excluded -> _generate_hypothesis
+    # abstains in BOTH arms. The v1 fix (branch hollow-open-ended-generation-drive) taught 9 chase facts but read
+    # treat=0 on the real brain for a MECHANISM reason this v2 diagnosed: the stored 'cat' has co-occurrence weight 2
+    # with (dog,chase) and, tied with the twice-taught 'rabbit', WON the intact spiking-WTA argmax -> the intact draw
+    # FIXATED on 'cat' (novelty-excluded) and dead-ended to abstain, so the likelihood ablation could not show. This
+    # v2 group teaches a NATURAL predator-prey chase KB where 'rabbit' is chased by FOUR predators (wolf/fox/hawk/
+    # eagle) -> chase~rabbit co-occurrence 4 -> weight(dog,chase,rabbit)=4 STRICTLY dominates the stored cat's 2, so
+    # the INTACT likelihood-weighted draw peaks the NOVEL 'rabbit' (volunteers "a dog might chase a rabbit"); the
+    # LESION's UNIFORM draw (BRAIN_SPIKING_DRAW_LESION -> the honored ablate on draw_from_weights) has no likelihood
+    # bias and selects among ALL novel plausible patients {rabbit,deer,boar,mouse,minnow,beetle} -> a hypothesis_svo/
+    # answer diff. Kept OUT of PROBE_TURNS (label-only) -> the default roster + every flip-verify harness stay
+    # BYTE-IDENTICAL. See research/runners/load_bearing_fraction.py.
+    # NATURAL predator-prey chase KB: 'rabbit' is chased by FOUR predators (wolf/fox/hawk/eagle) so chase~rabbit
+    # co-occurrence = 4 -> weight(dog,chase,rabbit) STRICTLY dominates the stored cat's 2 -> the INTACT likelihood-
+    # weighted spiking draw peaks the NOVEL 'rabbit'; five other predator->prey singletons give novel plausible
+    # ALTERNATIVES the LESION's uniform draw selects among. NB: the measurement (load_bearing_fraction) applies
+    # base_env BRAIN_SPIKING_PLAUSIBILITY=0 to BOTH arms so the (co-occurrence-1) #3E gate admits the candidates --
+    # WITHOUT that the default-ON spiking plausibility read is too conservative on the tiny KB's weak agent-action
+    # edge to admit ANY, and both arms abstain (the v2 masking finding); the ONLY inter-arm difference stays the draw
+    # lesion, so the treat diff is attributable to the draw.
+    ("oe_t1",  "the wolf chase the rabbit",   "oe2", True,  None,   False),   # NOVEL: rabbit (chase-cooc #1)
+    ("oe_t2",  "the fox chase the rabbit",    "oe2", False, None,   False),   # rabbit (chase-cooc #2)
+    ("oe_t3",  "the hawk chase the rabbit",   "oe2", False, None,   False),   # rabbit (chase-cooc #3)
+    ("oe_t4",  "the eagle chase the rabbit",  "oe2", False, None,   False),   # rabbit (chase-cooc #4) -> STRICT intact likelihood peak
+    ("oe_t5",  "the lion chase the deer",     "oe2", False, None,   False),   # NOVEL alternative: deer
+    ("oe_t6",  "the bear chase the mouse",    "oe2", False, None,   False),   # NOVEL alternative: mouse
+    ("oe_t7",  "the owl chase the beetle",    "oe2", False, None,   False),   # NOVEL alternative: beetle
+    ("oe_t8",  "the pike chase the minnow",   "oe2", False, None,   False),   # NOVEL alternative: minnow
+    ("oe_t9",  "the crow chase the boar",     "oe2", False, None,   False),   # NOVEL alternative: boar
+    ("oe_ask", "what might a dog chase",      "oe2", False, None,   True),    # rich=True -> the generation branch (resp['hypothesis_svo']); draws (dog,chase,?) over the now-rich chase graph
 ]
 _TURN_BY_LABEL.update({t[0]: t for t in _EXTRA_TURNS})
 
