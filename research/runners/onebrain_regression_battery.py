@@ -156,6 +156,39 @@ _EXTRA_TURNS = [
     ("pmem_d1",   "how is the weather today",  "pmem2", False, None,   False),  # intervening turn 2
     ("pmem_d2",   "tell me about the sky",     "pmem2", False, None,   False),  # intervening turn 3 -> the held x cue coincidence is now at its operating point
     ("pmem_cue",  "the bird sings",            "pmem2", False, None,   False),  # CUE: the held x cue coincidence fires (intact) / collapses silent (lesion)
+    # ── OPEN-ENDED-GENERATION DRIVING GROUP v2 (load_bearing_fraction's LB_OPEN_ENDED_DRIVE_PROBE) ────────────────
+    # WHY (finding 2026-09-20-gap-open-ended-generation-v2): the default open-ended probe (`rich_open` = "what might a
+    # dog chase" on a FRESH tiny-demo brain) is integrated-HOLLOW: the tiny KB has ONE 'chase' fact -- (dog,chase,cat)
+    # -- already stored, so the ONLY reachable (dog,chase,?) patient is novelty-excluded -> _generate_hypothesis
+    # abstains in BOTH arms. The v1 fix (branch hollow-open-ended-generation-drive) taught 9 chase facts but read
+    # treat=0 on the real brain for a MECHANISM reason this v2 diagnosed: the stored 'cat' has co-occurrence weight 2
+    # with (dog,chase) and, tied with the twice-taught 'rabbit', WON the intact spiking-WTA argmax -> the intact draw
+    # FIXATED on 'cat' (novelty-excluded) and dead-ended to abstain, so the likelihood ablation could not show. This
+    # v2 group teaches a NATURAL predator-prey chase KB where 'rabbit' is chased by FOUR predators (wolf/fox/hawk/
+    # eagle) -> chase~rabbit co-occurrence 4 -> weight(dog,chase,rabbit)=4 STRICTLY dominates the stored cat's 2, so
+    # the INTACT likelihood-weighted draw peaks the NOVEL 'rabbit' (volunteers "a dog might chase a rabbit"); the
+    # LESION's UNIFORM draw (BRAIN_SPIKING_DRAW_LESION -> the honored ablate on draw_from_weights) has no likelihood
+    # bias and selects among ALL novel plausible patients {rabbit,deer,boar,mouse,minnow,beetle} -> a hypothesis_svo/
+    # answer diff. Kept OUT of PROBE_TURNS (label-only) -> the default roster + every flip-verify harness stay
+    # BYTE-IDENTICAL. See research/runners/load_bearing_fraction.py.
+    # NATURAL predator-prey chase KB: 'rabbit' is chased by FOUR predators (wolf/fox/hawk/eagle) so chase~rabbit
+    # co-occurrence = 4 -> weight(dog,chase,rabbit) STRICTLY dominates the stored cat's 2 -> the INTACT likelihood-
+    # weighted spiking draw peaks the NOVEL 'rabbit'; five other predator->prey singletons give novel plausible
+    # ALTERNATIVES the LESION's uniform draw selects among. NB: the measurement (load_bearing_fraction) applies
+    # base_env BRAIN_SPIKING_PLAUSIBILITY=0 to BOTH arms so the (co-occurrence-1) #3E gate admits the candidates --
+    # WITHOUT that the default-ON spiking plausibility read is too conservative on the tiny KB's weak agent-action
+    # edge to admit ANY, and both arms abstain (the v2 masking finding); the ONLY inter-arm difference stays the draw
+    # lesion, so the treat diff is attributable to the draw.
+    ("oe_t1",  "the wolf chase the rabbit",   "oe2", True,  None,   False),   # NOVEL: rabbit (chase-cooc #1)
+    ("oe_t2",  "the fox chase the rabbit",    "oe2", False, None,   False),   # rabbit (chase-cooc #2)
+    ("oe_t3",  "the hawk chase the rabbit",   "oe2", False, None,   False),   # rabbit (chase-cooc #3)
+    ("oe_t4",  "the eagle chase the rabbit",  "oe2", False, None,   False),   # rabbit (chase-cooc #4) -> STRICT intact likelihood peak
+    ("oe_t5",  "the lion chase the deer",     "oe2", False, None,   False),   # NOVEL alternative: deer
+    ("oe_t6",  "the bear chase the mouse",    "oe2", False, None,   False),   # NOVEL alternative: mouse
+    ("oe_t7",  "the owl chase the beetle",    "oe2", False, None,   False),   # NOVEL alternative: beetle
+    ("oe_t8",  "the pike chase the minnow",   "oe2", False, None,   False),   # NOVEL alternative: minnow
+    ("oe_t9",  "the crow chase the boar",     "oe2", False, None,   False),   # NOVEL alternative: boar
+    ("oe_ask", "what might a dog chase",      "oe2", False, None,   True),    # rich=True -> the generation branch (resp['hypothesis_svo']); draws (dog,chase,?) over the now-rich chase graph
 ]
 _TURN_BY_LABEL.update({t[0]: t for t in _EXTRA_TURNS})
 

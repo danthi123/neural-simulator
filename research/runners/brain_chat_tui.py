@@ -969,23 +969,36 @@ class ChatBrain:
         n = int(self._gen_n_attempts if n_attempts is None else n_attempts)
         rng = prop.rng
         seen = set()
+        _dbg = os.environ.get("OEG_DEBUG")
+        _dbg_hist = {} if _dbg else None
+        _dbg_rej = {} if _dbg else None
         for _ in range(n):
             a = agents[0] if len(agents) == 1 else agents[int(rng.integers(len(agents)))]
             ac = action if action is not None else prop._sample_weighted(
                 prop.actions, prop._weight_partner((a,), prop.actions))
             p = prop._sample_weighted(prop.patients, prop._weight_partner((a, ac), prop.patients))
+            if _dbg is not None:
+                _dbg_hist[p] = _dbg_hist.get(p, 0) + 1
             triple = (a, ac, p)
             if a == p or triple in seen or triple in prop.all_stored:
+                if _dbg is not None: _dbg_rej["novelty:%s" % p] = _dbg_rej.get("novelty:%s" % p, 0) + 1
                 continue                               # degenerate / repeat / a stored fact (only NOVEL counts)
             seen.add(triple)
             if not prop._plausible(a, ac, p):          # b2 selectional-preference plausibility gate (reused)
+                if _dbg is not None: _dbg_rej["implausible:%s" % p] = _dbg_rej.get("implausible:%s" % p, 0) + 1
                 continue
             if prop._contradicts(a, ac, p):            # b2 non-contradiction gate (reads the composer's ask_yes_no)
+                if _dbg is not None: _dbg_rej["contradicts:%s" % p] = _dbg_rej.get("contradicts:%s" % p, 0) + 1
                 continue
             # MOAT VERIFY (the #3E hypothesis-not-known guarantee): a HYPOTHESIS never passes as a known fact.
             if self.inner.what_does(a, ac) == p or self.inner.is_it_true(a, ac, p) != "unknown":
+                if _dbg is not None: _dbg_rej["moat:%s" % p] = _dbg_rej.get("moat:%s" % p, 0) + 1
                 continue
+            if _dbg is not None:
+                sys.stderr.write("[OEG_DEBUG] ACCEPT %s | hist=%s | rej=%s\n" % (triple, _dbg_hist, _dbg_rej)); sys.stderr.flush()
             return HypothesisSVO([a, ac, p])
+        if _dbg is not None:
+            sys.stderr.write("[OEG_DEBUG] ABSTAIN after %d | hist=%s | rej=%s\n" % (n, _dbg_hist, _dbg_rej)); sys.stderr.flush()
         return None
 
     def _is_anaphor_token(self, tl):

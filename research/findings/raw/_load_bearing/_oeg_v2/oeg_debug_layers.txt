@@ -1,0 +1,31 @@
+OEG open-ended-generation draw diagnosis — brain-build OEG_DEBUG traces (numpy CPU, seed 42)
+Branch: research/gap-open-ended-generation-v2
+Probe KB (session oe2): wolf/fox/hawk/eagle chase rabbit; lion->deer bear->mouse owl->beetle pike->minnow crow->boar
+Query turn oe_ask: "what might a dog chase" (rich=True) -> _generate_hypothesis("dog","chase")
+
+Each line is stderr from research/runners/brain_chat_tui.py _generate_hypothesis under OEG_DEBUG=1,
+run via `onebrain_regression_battery --worker` (the SAME full-webapp path the load_bearing harness uses).
+hist = per-patient draw counts over the 400-attempt loop; rej = per-reason rejection counts.
+
+# ---- LAYER 2: DEFAULT spiking plausibility gate (env {}), intact arm ----
+# Every novel candidate rejected `implausible` on its FIRST draw (spiking _related does not fire on the
+# weak agent-action edge), then `seen` thereafter -> ABSTAIN. mouse/minnow never drawn in 400 attempts.
+[OEG_DEBUG] ABSTAIN after 400 | hist={'cat': 109, 'rabbit': 164, 'deer': 27, 'beetle': 56, 'boar': 44} | rej={'novelty:cat': 109, 'implausible:rabbit': 1, 'implausible:deer': 1, 'novelty:rabbit': 163, 'implausible:beetle': 1, 'novelty:beetle': 55, 'implausible:boar': 1, 'novelty:deer': 26, 'novelty:boar': 43}
+
+# ---- LAYER 3: HOST plausibility gate (env {"BRAIN_SPIKING_PLAUSIBILITY":"0"}), INTACT arm ----
+# The gate now admits candidates; the likelihood-weighted draw peaks rabbit (weight 4) -> ACCEPT at draw 2.
+[OEG_DEBUG] ACCEPT ('dog', 'chase', 'rabbit') | hist={'cat': 1, 'rabbit': 1} | rej={'novelty:cat': 1}
+
+# ---- LAYER 3: HOST plausibility gate + BRAIN_SPIKING_DRAW_LESION=1, LESION arm ----
+# Uniform draw (likelihood ablated). Wanders through implausible/stored (words,memory,cat,memory) then
+# ALSO accepts rabbit at draw 5 -> SAME decision as intact -> treat=0 (OU noise dominates the single draw).
+[OEG_DEBUG] ACCEPT ('dog', 'chase', 'rabbit') | hist={'words': 1, 'memory': 2, 'cat': 1, 'rabbit': 1} | rej={'implausible:words': 1, 'implausible:memory': 1, 'novelty:cat': 1, 'novelty:memory': 1}
+
+# ---- Cross-check: HOST gate confirms _plausible(dog,chase,p) admits 6 novel patients (diag_gates) ----
+# what_does(dog,chase)='cat'; ACCEPT set = {rabbit, beetle, boar, deer, minnow, mouse}; cat excluded (stored);
+# fish/memory/spikes/words excluded (implausible: no chase co-occurrence). Moat does NOT reject rabbit
+# (is_it_true(dog,chase,rabbit)='unknown').
+
+# Draw operating point (research/runners/vocab_agnostic_spiking_generation_production_organ.py):
+#   base_pA=110, gain_pA=160, ou_std_current_pA=200, read_window=120.
+#   drive = active*(base + gain*(w/peak)); rabbit(w=4)->270, a weight-1 patient->150; OU noise std 200 > spread 120.
