@@ -7,6 +7,13 @@ the [project handoff](HANDOFF.md), and the live state in
 board, when checked out, was `research/coordination/workboard.json` (⚠️ now ~a month
 stale — the live board is [GAP_CLOSURE_MISSION.md](GAP_CLOSURE_MISSION.md) CURRENT STATE; workboard.json is being retired).
 
+## 2026-09-20 — prospective memory ("remind me to X when Y") proven to genuinely drive the reply
+
+On the project's #1 metric (a faculty is real only when lesioning the brain's part of it *changes the reply*), prospective memory had been reading as "hollow" — the test could not make it matter. This session found why and fixed the **test**, not by tuning anything in the brain.
+- **The diagnosis:** prospective memory is, by definition, an intention held *across intervening activity* and released at a *later* cue. The test was firing the cue *immediately* after the intention was formed, with nothing in between — and in that zero-delay case the brain's held-intention circuit hasn't ramped to its firing point yet, so it doesn't fire *even when intact*. Intact and lesioned both stayed silent, so the test saw "no difference" and called it hollow. (An earlier fix attempt that kept the zero-delay setup failed for exactly this reason.) Measured directly: the release signal climbs 0.16 → 0.22 → 0.34 as 0 → 1 → 3 unrelated turns are held in between; the firing threshold is 0.20, so one or more in-between turns is what's needed.
+- **The fix (off by default, no change to the brain):** the test now runs the natural scenario — form the intention, have three ordinary in-between exchanges, *then* mention the cue. That is the real prospective-memory situation, not a tuned knob.
+- **Verified on a real brain build:** with the corrected test, the intact brain fires the reminder and prepends it to the reply ("Reminder — you asked me to feed the dog when the bird sings came up…"); lesioning the held-intention latch makes the reminder vanish. The change is 100%-attributable to the lesion, reproduces, and the control (intact vs intact) shows no difference — so prospective memory is now **provably load-bearing**. Finding: `2026-09-20-prospective-memory-drive-v2-intervening-turns-flip`.
+
 ## 2026-09-18 — a strategic decision, and an honest go/no-go on "just scale it up"
 Two things this session change direction, not just capability.
 - **Decision (owner): we may trade a little biological realism for speed — but only honestly, and only when it's free.** Basing the work strongly on biology stays a core value. We relax bit-exact realism ONLY when it buys a *significant* performance gain, costs *nothing* important to the end-goal capabilities, and every such trade is documented. The invariants stay: brain-based cognition, one brain, emergence, and the honesty boundary.

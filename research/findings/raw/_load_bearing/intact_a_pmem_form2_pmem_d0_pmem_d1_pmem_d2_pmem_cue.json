@@ -1,0 +1,968 @@
+{
+  "pmem_form2": {
+    "answer": "Okay \u2014 I'll hold onto that and remind you to feed the dog when the bird sings comes up.",
+    "abstained": false,
+    "recalled_svo": null,
+    "verified": true,
+    "renderer": "template-stub (GPU-free)",
+    "brain": "tiny-demo",
+    "source": "tiny-demo +LTM",
+    "rich": false,
+    "activity": null,
+    "affect": {
+      "on": true,
+      "lesioned": false,
+      "composer": "onebrain",
+      "differential": 0.0,
+      "valence_sign": "0",
+      "tone_level": 0,
+      "tone_token": "",
+      "forthcomingness": {
+        "max_sentences": 4,
+        "max_elaborations": 2
+      },
+      "manner_template": "",
+      "appraisal_valence": 0.0,
+      "appraisal_arousal": 0.0,
+      "appraisal_hits": [],
+      "pos_rate": 0.0,
+      "neg_rate": 0.0
+    },
+    "prospective": {
+      "held": true,
+      "action": "feed the dog",
+      "cue_clause": "the bird sings",
+      "cue_keywords": [
+        "bird",
+        "sings"
+      ],
+      "lesioned": false,
+      "held_after_lesion": null,
+      "calib": {
+        "bias_pA": {
+          "A": -983.3,
+          "B": -900.0
+        },
+        "plateau_diag": {
+          "A": {
+            "g_single_cue": 36.683,
+            "g_single_held": 126.876,
+            "g_coinc": 165.478,
+            "theta": 133.22,
+            "coinc_over_theta": true,
+            "coinc_margin": 32.259
+          },
+          "B": {
+            "g_single_cue": 31.761,
+            "g_single_held": 130.747,
+            "g_coinc": 164.317,
+            "theta": 137.284,
+            "coinc_over_theta": true,
+            "coinc_margin": 27.032
+          }
+        },
+        "fire_thr": 0.2,
+        "silent_max": 0.06
+      },
+      "hebbian": true,
+      "hebbian_lesioned": false,
+      "binding_learned": {
+        "pre_act_rate": 0.4433,
+        "pre_cue_rate": 0.4567,
+        "post_rel_rate": 0.2556,
+        "learned_norm": 17760.0,
+        "canonical_norm_per_action": 17760.0
+      },
+      "kind": "formation"
+    },
+    "inner_state_readout": true
+  },
+  "pmem_d0": {
+    "answer": "Setting the held thread aside \u2014 On cat, then \u2014 the cat eats the fish \u2014 worth going further here.",
+    "abstained": false,
+    "recalled_svo": [
+      "cat",
+      "eat",
+      "fish"
+    ],
+    "derived": false,
+    "derived_from": null,
+    "verified": true,
+    "renderer": "template-stub (GPU-free)",
+    "brain": "tiny-demo",
+    "source": "tiny-demo +LTM",
+    "rich": false,
+    "activity": {
+      "roles": [
+        {
+          "role": "agent",
+          "word": "cat",
+          "confidence": 1.0,
+          "margin": 0.6033254334339793,
+          "margin_spiking": null,
+          "cue": true,
+          "asserted": "cat"
+        },
+        {
+          "role": "action",
+          "word": "eat",
+          "confidence": 1.0,
+          "margin": 0.5985857722080797,
+          "margin_spiking": null,
+          "cue": true,
+          "asserted": "eat"
+        },
+        {
+          "role": "patient",
+          "word": "fish",
+          "confidence": 1.0,
+          "margin": 0.6286733171898224,
+          "margin_spiking": null,
+          "cue": false
+        },
+        {
+          "role": "attribute",
+          "word": null,
+          "confidence": 1.0,
+          "margin": 0.004438519963832671,
+          "margin_spiking": null,
+          "cue": false
+        },
+        {
+          "role": "polarity",
+          "word": "AFFIRM",
+          "confidence": 1.0,
+          "margin": 0.9999999999999997,
+          "margin_spiking": null,
+          "cue": false
+        }
+      ],
+      "matched_fact_index": 4,
+      "n_facts_scanned": 5,
+      "abstained": false,
+      "rf": {
+        "n_readout_neurons": 6880,
+        "frac_fired": 0.11177325581395349,
+        "mean_magnitude": 40773.27460901552
+      },
+      "composer": "onebrain"
+    },
+    "provenance": {
+      "known": true,
+      "label": "perceived",
+      "d": 0.999999990857143,
+      "rate_perceived": 0.109375,
+      "rate_generated": 0.0,
+      "encoded_as": "perceived",
+      "agrees_with_encoded": true
+    },
+    "affect": {
+      "on": true,
+      "lesioned": false,
+      "composer": "onebrain",
+      "differential": 0.0,
+      "valence_sign": "0",
+      "tone_level": 0,
+      "tone_token": "",
+      "forthcomingness": {
+        "max_sentences": 4,
+        "max_elaborations": 2
+      },
+      "manner_template": "",
+      "appraisal_valence": 0.0,
+      "appraisal_arousal": 0.0,
+      "appraisal_hits": [],
+      "pos_rate": 0.0,
+      "neg_rate": 0.0
+    },
+    "comprehension": null,
+    "surprise": null,
+    "metacog": {
+      "on": true,
+      "lesioned": false,
+      "evidence": 1.0,
+      "balance": 0.08564659007052086,
+      "threshold": 0.057845546432234586,
+      "confident": true,
+      "calib": {
+        "mean_hi": 0.07254469906489278,
+        "min_hi": 0.06324435069078038,
+        "mean_lo": 0.03623807287266029,
+        "max_lo": 0.05244674217368879,
+        "clean_gap": true,
+        "read_reps": 8,
+        "role_conf_lo": 0.3,
+        "role_conf_hi": 0.5,
+        "confidence_read": "nmda_norm"
+      },
+      "mean_role_conf": 0.5670046085591427
+    },
+    "worldmodel": null,
+    "curiosity": null,
+    "multiref": null,
+    "noncontradiction": null,
+    "reconsolidation": null,
+    "pragmatic": null,
+    "episodic": null,
+    "prospective": {
+      "is_cue": false,
+      "fired": false,
+      "rel": 0.0,
+      "held": 0.34375,
+      "threshold": 0.2,
+      "silent_max": 0.06,
+      "lesioned": false,
+      "cue_clause": "the bird sings",
+      "action": "feed the dog",
+      "kind": "monitor"
+    },
+    "affect_drives": {
+      "acted": true,
+      "turn": 2,
+      "lesioned": false,
+      "ema_valence": 0.0,
+      "ema_arousal": 0.0,
+      "body_h": 0.5,
+      "body_a": 0.0,
+      "mood": -0.003375000000000003,
+      "felt_arousal": 0.0,
+      "level": 0,
+      "high_arousal": false,
+      "lead": "",
+      "reason": "neutral_hold",
+      "seed": 42,
+      "vplus_rate": 0.03679166666666667,
+      "vminus_rate": 0.04016666666666667
+    },
+    "swap_drives": {
+      "acted": true,
+      "turn": 2,
+      "topic": "cat",
+      "swapped": true,
+      "held_topic_before": "dog",
+      "held_topic": "cat",
+      "evicted_topic": "dog",
+      "reason": "topic_change_swap",
+      "seed": 42,
+      "lesioned": false,
+      "proposed_slot": 1,
+      "held_slot": 1,
+      "incumbent_slot": 0,
+      "winner_slot": 1,
+      "n_ignited_post": 1,
+      "old_residual_post": 0.0,
+      "new_rate_post": 0.3333333333333333,
+      "mm_peak": 0.3055555555555556,
+      "boost_max": 0.16,
+      "on": true,
+      "lead": "On cat, then \u2014 ",
+      "new_topic": "cat",
+      "reason_lead": "topic_transition"
+    },
+    "common_ground_drives": {
+      "on": true,
+      "topic": "cat",
+      "slot": 1,
+      "decision": "introduce",
+      "in_common_ground": false,
+      "first_mention": true,
+      "reduce_rate": 0.0,
+      "introduce_rate": 0.04666666666666667,
+      "evidence_rate": 0.0,
+      "margin": -0.04666666666666667,
+      "lesioned": false,
+      "lead": "",
+      "reason_lead": "introduce"
+    },
+    "da_drives": {
+      "acted": true,
+      "turn": 2,
+      "lesioned": false,
+      "turn_engagement": 0.3818181818181818,
+      "ema_engagement": 0.408,
+      "afferent_pA": 571.1999999999999,
+      "da_level": 0.6876315051381814,
+      "snc_firing": 0.10583333333333321,
+      "mode": "focus",
+      "lead": " \u2014 worth going further here.",
+      "reason": "engaged",
+      "seed": 42,
+      "shared_salience": {
+        "raw": 0.6759999999999999,
+        "want_hz": 14.583333333333332,
+        "normalized": 0.3818181818181818,
+        "lesioned": false,
+        "calib": {
+          "want_novel_hz": 38.19444444444444,
+          "want_familiar_hz": 0.0,
+          "threshold_hz": 19.09722222222222,
+          "novel_signal": 0.95,
+          "familiar_signal": 0.0,
+          "read_reps": 4
+        },
+        "on": true
+      },
+      "spiking_novelty": {
+        "novelty": 0.96,
+        "n_tokens": 2,
+        "per_word_freshness": [
+          0.92,
+          1.0
+        ],
+        "fresh_ref": 25.0,
+        "n_channels": 64,
+        "lesioned": false,
+        "on": true
+      },
+      "on": true
+    },
+    "da_encoding": {
+      "on": true,
+      "g": 2.108041440552541,
+      "da_level": 0.6876315051381814,
+      "lesioned": false
+    },
+    "gnw_stop": {
+      "on": true,
+      "acted": true,
+      "reason": "spiking_accbg",
+      "n_held": 2,
+      "newcomer_topic": "cat",
+      "n_ignited_pre": 2,
+      "n_ignited_post": 0,
+      "boost": 0.14166666666666666,
+      "cleared": true,
+      "lesioned": false,
+      "lead": "Setting the held thread aside \u2014 ",
+      "reason_lead": "clean_global_stop"
+    }
+  },
+  "pmem_d1": {
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about weather yet: what can you tell me about weather? \u2014 worth going further here.",
+    "abstained": true,
+    "recalled_svo": null,
+    "derived": false,
+    "derived_from": null,
+    "verified": false,
+    "renderer": "template-stub (GPU-free)",
+    "brain": "tiny-demo",
+    "source": "tiny-demo +LTM",
+    "rich": false,
+    "activity": {
+      "roles": [
+        {
+          "role": "agent",
+          "word": "how",
+          "confidence": null,
+          "margin": null,
+          "margin_spiking": null,
+          "cue": true,
+          "asserted": "how"
+        },
+        {
+          "role": "action",
+          "word": "weather",
+          "confidence": null,
+          "margin": null,
+          "margin_spiking": null,
+          "cue": true,
+          "asserted": "weather"
+        }
+      ],
+      "matched_fact_index": null,
+      "n_facts_scanned": 5,
+      "abstained": true,
+      "rf": {
+        "n_readout_neurons": 6880,
+        "frac_fired": 0.11177325581395349,
+        "mean_magnitude": 40774.9153029476
+      },
+      "composer": "onebrain"
+    },
+    "provenance": null,
+    "affect": {
+      "on": true,
+      "lesioned": false,
+      "composer": "onebrain",
+      "differential": 0.0,
+      "valence_sign": "0",
+      "tone_level": 0,
+      "tone_token": "",
+      "forthcomingness": {
+        "max_sentences": 4,
+        "max_elaborations": 2
+      },
+      "manner_template": "",
+      "appraisal_valence": 0.0,
+      "appraisal_arousal": 0.0,
+      "appraisal_hits": [],
+      "pos_rate": 0.0,
+      "neg_rate": 0.0
+    },
+    "comprehension": null,
+    "surprise": null,
+    "metacog": null,
+    "worldmodel": null,
+    "curiosity": {
+      "on": true,
+      "lesioned": false,
+      "novelty": 0.993424591815872,
+      "want_hz": 38.88888888888888,
+      "threshold": 19.09722222222222,
+      "curious": true,
+      "calib": {
+        "want_novel_hz": 38.19444444444444,
+        "want_familiar_hz": 0.0,
+        "threshold_hz": 19.09722222222222,
+        "novel_signal": 0.95,
+        "familiar_signal": 0.0,
+        "read_reps": 4
+      },
+      "topic": "weather",
+      "graded_novelty": {
+        "on": true,
+        "value": 0.993424591815872,
+        "lesioned": false
+      },
+      "curiosity_da": {
+        "on": true,
+        "lesioned": false,
+        "da_level": 0.7052786080424821,
+        "da_tonic": 0.5,
+        "k_da": 1.5,
+        "da_crave_gain": 1.3079179120637232,
+        "base_threshold": 19.09722222222222,
+        "eff_threshold": 14.601239149702678,
+        "want_hz": 38.88888888888888,
+        "want_eff_hz": 50.86347435803367,
+        "curious": true
+      }
+    },
+    "multiref": null,
+    "noncontradiction": null,
+    "reconsolidation": null,
+    "pragmatic": null,
+    "episodic": null,
+    "prospective": {
+      "is_cue": false,
+      "fired": false,
+      "rel": 0.0,
+      "held": 0.34375,
+      "threshold": 0.2,
+      "silent_max": 0.06,
+      "lesioned": false,
+      "cue_clause": "the bird sings",
+      "action": "feed the dog",
+      "kind": "monitor"
+    },
+    "affect_drives": {
+      "acted": true,
+      "turn": 3,
+      "lesioned": false,
+      "ema_valence": 0.0,
+      "ema_arousal": 0.0,
+      "body_h": 0.5,
+      "body_a": 0.0,
+      "mood": -0.003375000000000003,
+      "felt_arousal": 0.0,
+      "level": 0,
+      "high_arousal": false,
+      "lead": "",
+      "reason": "neutral_hold",
+      "seed": 42,
+      "vplus_rate": 0.03679166666666667,
+      "vminus_rate": 0.04016666666666667
+    },
+    "swap_drives": {
+      "acted": false,
+      "turn": 3,
+      "topic": null,
+      "swapped": false,
+      "held_topic_before": "cat",
+      "held_topic": "cat",
+      "evicted_topic": null,
+      "reason": "no_topic_hold",
+      "seed": 42,
+      "lesioned": false,
+      "on": true,
+      "lead": "",
+      "new_topic": null,
+      "reason_lead": "no_topic_hold"
+    },
+    "common_ground_drives": {
+      "on": true,
+      "topic": null,
+      "decision": null,
+      "reason": "no_grounded_topic",
+      "lead": "",
+      "lesioned": false,
+      "reason_lead": "no_referent"
+    },
+    "da_drives": {
+      "acted": true,
+      "turn": 3,
+      "lesioned": false,
+      "turn_engagement": 0.43636363636363634,
+      "ema_engagement": 0.4250181818181818,
+      "afferent_pA": 595.0254545454545,
+      "da_level": 0.7052786080424821,
+      "snc_firing": 0.10916666666666663,
+      "mode": "focus",
+      "lead": " \u2014 worth going further here.",
+      "reason": "engaged",
+      "seed": 42,
+      "shared_salience": {
+        "raw": 0.7,
+        "want_hz": 16.666666666666664,
+        "normalized": 0.43636363636363634,
+        "lesioned": false,
+        "calib": {
+          "want_novel_hz": 38.19444444444444,
+          "want_familiar_hz": 0.0,
+          "threshold_hz": 19.09722222222222,
+          "novel_signal": 0.95,
+          "familiar_signal": 0.0,
+          "read_reps": 4
+        },
+        "on": true
+      },
+      "spiking_novelty": {
+        "novelty": 1.0,
+        "n_tokens": 2,
+        "per_word_freshness": [
+          1.0,
+          1.0
+        ],
+        "fresh_ref": 25.0,
+        "n_channels": 64,
+        "lesioned": false,
+        "on": true
+      },
+      "on": true
+    },
+    "da_encoding": {
+      "on": true,
+      "g": 2.125801677355698,
+      "da_level": 0.7052786080424821,
+      "lesioned": false
+    }
+  },
+  "pmem_d2": {
+    "answer": "the tell abouts the sky \u2014 worth going further here.",
+    "abstained": false,
+    "recalled_svo": [
+      "tell",
+      "about",
+      "sky"
+    ],
+    "derived": false,
+    "derived_from": null,
+    "verified": true,
+    "renderer": "template-stub (GPU-free)",
+    "brain": "tiny-demo",
+    "source": "tiny-demo +LTM",
+    "rich": false,
+    "activity": {
+      "roles": [
+        {
+          "word": "tell",
+          "confidence": null,
+          "role": "agent",
+          "cue": true,
+          "asserted": "tell"
+        },
+        {
+          "word": "about",
+          "confidence": null,
+          "role": "action",
+          "cue": true,
+          "asserted": "about"
+        },
+        {
+          "word": "sky",
+          "confidence": null,
+          "role": "patient",
+          "cue": true,
+          "asserted": "sky"
+        }
+      ],
+      "matched_fact_index": null,
+      "n_facts_scanned": 214,
+      "abstained": true,
+      "rf": {
+        "n_readout_neurons": 54784,
+        "frac_fired": 1.0,
+        "mean_magnitude": 104.49940671385713
+      },
+      "composer": "rf"
+    },
+    "provenance": {
+      "known": true,
+      "label": "perceived",
+      "d": 0.9999999910614527,
+      "rate_perceived": 0.111875,
+      "rate_generated": 0.0,
+      "encoded_as": "perceived",
+      "agrees_with_encoded": true
+    },
+    "affect": {
+      "on": true,
+      "lesioned": false,
+      "composer": "onebrain",
+      "differential": 0.0,
+      "valence_sign": "0",
+      "tone_level": 0,
+      "tone_token": "",
+      "forthcomingness": {
+        "max_sentences": 4,
+        "max_elaborations": 2
+      },
+      "manner_template": "",
+      "appraisal_valence": 0.0,
+      "appraisal_arousal": 0.0,
+      "appraisal_hits": [],
+      "pos_rate": 0.0,
+      "neg_rate": 0.0
+    },
+    "comprehension": {
+      "on": true,
+      "error": "FileNotFoundError: [Errno 2] No such file or directory: '/home/dant123/Projects/sim/.claude/worktrees/agent-a7d8781ca4b6f7551/data/corpus/tinystories.txt'"
+    },
+    "surprise": null,
+    "metacog": null,
+    "worldmodel": null,
+    "curiosity": null,
+    "multiref": null,
+    "noncontradiction": {
+      "on": true,
+      "lesioned": false,
+      "in_scope": true,
+      "svo": [
+        "tell",
+        "about",
+        "sky"
+      ],
+      "recall_action": "about",
+      "asserted_polarity": "AFFIRM",
+      "recalled_yn": "unknown",
+      "stored_polarity": null,
+      "reject": false
+    },
+    "reconsolidation": null,
+    "pragmatic": null,
+    "episodic": null,
+    "prospective": {
+      "is_cue": false,
+      "fired": false,
+      "rel": 0.004166666666666667,
+      "held": 0.34375,
+      "threshold": 0.2,
+      "silent_max": 0.06,
+      "lesioned": false,
+      "cue_clause": "the bird sings",
+      "action": "feed the dog",
+      "kind": "monitor"
+    },
+    "affect_drives": {
+      "acted": true,
+      "turn": 4,
+      "lesioned": false,
+      "ema_valence": 0.0,
+      "ema_arousal": 0.0,
+      "body_h": 0.5,
+      "body_a": 0.0,
+      "mood": -0.003375000000000003,
+      "felt_arousal": 0.0,
+      "level": 0,
+      "high_arousal": false,
+      "lead": "",
+      "reason": "neutral_hold",
+      "seed": 42,
+      "vplus_rate": 0.03679166666666667,
+      "vminus_rate": 0.04016666666666667
+    },
+    "swap_drives": {
+      "acted": false,
+      "turn": 4,
+      "topic": null,
+      "swapped": false,
+      "held_topic_before": "cat",
+      "held_topic": "cat",
+      "evicted_topic": null,
+      "reason": "no_topic_hold",
+      "seed": 42,
+      "lesioned": false,
+      "on": true,
+      "lead": "",
+      "new_topic": null,
+      "reason_lead": "no_topic_hold"
+    },
+    "common_ground_drives": {
+      "on": true,
+      "topic": null,
+      "decision": null,
+      "reason": "no_grounded_topic",
+      "lead": "",
+      "lesioned": false,
+      "reason_lead": "no_referent"
+    },
+    "da_drives": {
+      "acted": true,
+      "turn": 4,
+      "lesioned": false,
+      "turn_engagement": 0.41818181818181815,
+      "ema_engagement": 0.4209163636363636,
+      "afferent_pA": 589.282909090909,
+      "da_level": 0.7013206864311337,
+      "snc_firing": 0.10833333333333323,
+      "mode": "focus",
+      "lead": " \u2014 worth going further here.",
+      "reason": "engaged",
+      "seed": 42,
+      "shared_salience": {
+        "raw": 0.688,
+        "want_hz": 15.97222222222222,
+        "normalized": 0.41818181818181815,
+        "lesioned": false,
+        "calib": {
+          "want_novel_hz": 38.19444444444444,
+          "want_familiar_hz": 0.0,
+          "threshold_hz": 19.09722222222222,
+          "novel_signal": 0.95,
+          "familiar_signal": 0.0,
+          "read_reps": 4
+        },
+        "on": true
+      },
+      "spiking_novelty": {
+        "novelty": 0.98,
+        "n_tokens": 2,
+        "per_word_freshness": [
+          0.96,
+          1.0
+        ],
+        "fresh_ref": 25.0,
+        "n_channels": 64,
+        "lesioned": false,
+        "on": true
+      },
+      "on": true
+    },
+    "da_encoding": {
+      "on": true,
+      "g": 2.116921558954119,
+      "da_level": 0.7013206864311337,
+      "lesioned": false
+    }
+  },
+  "pmem_cue": {
+    "answer": "(Reminder \u2014 you asked me to feed the dog when the bird sings came up, and the bird sings just came up.) I don't know about that. My curiosity is piqued \u2014 I haven't learned about bird yet: what can you tell me about bird?",
+    "abstained": true,
+    "recalled_svo": null,
+    "derived": false,
+    "derived_from": null,
+    "verified": false,
+    "renderer": "template-stub (GPU-free)",
+    "brain": "tiny-demo",
+    "source": "tiny-demo +LTM",
+    "rich": false,
+    "activity": {
+      "roles": [
+        {
+          "role": "agent",
+          "word": "bird",
+          "confidence": null,
+          "margin": null,
+          "margin_spiking": null,
+          "cue": true,
+          "asserted": "bird"
+        },
+        {
+          "role": "action",
+          "word": "sings",
+          "confidence": null,
+          "margin": null,
+          "margin_spiking": null,
+          "cue": true,
+          "asserted": "sings"
+        }
+      ],
+      "matched_fact_index": null,
+      "n_facts_scanned": 6,
+      "abstained": true,
+      "rf": {
+        "n_readout_neurons": 6880,
+        "frac_fired": 0.16744186046511628,
+        "mean_magnitude": 1481.5642601095096
+      },
+      "composer": "onebrain"
+    },
+    "provenance": null,
+    "affect": {
+      "on": true,
+      "lesioned": false,
+      "composer": "onebrain",
+      "differential": 0.0,
+      "valence_sign": "0",
+      "tone_level": 0,
+      "tone_token": "",
+      "forthcomingness": {
+        "max_sentences": 4,
+        "max_elaborations": 2
+      },
+      "manner_template": "",
+      "appraisal_valence": 0.0,
+      "appraisal_arousal": 0.0,
+      "appraisal_hits": [],
+      "pos_rate": 0.0,
+      "neg_rate": 0.0
+    },
+    "comprehension": null,
+    "surprise": null,
+    "metacog": null,
+    "worldmodel": null,
+    "curiosity": {
+      "on": true,
+      "lesioned": false,
+      "novelty": 0.9557551769241297,
+      "want_hz": 38.19444444444444,
+      "threshold": 19.09722222222222,
+      "curious": true,
+      "calib": {
+        "want_novel_hz": 38.19444444444444,
+        "want_familiar_hz": 0.0,
+        "threshold_hz": 19.09722222222222,
+        "novel_signal": 0.95,
+        "familiar_signal": 0.0,
+        "read_reps": 4
+      },
+      "topic": "bird",
+      "graded_novelty": {
+        "on": true,
+        "value": 0.9557551769241297,
+        "lesioned": false
+      },
+      "curiosity_da": {
+        "on": true,
+        "lesioned": false,
+        "da_level": 0.5582501489821307,
+        "da_tonic": 0.5,
+        "k_da": 1.5,
+        "da_crave_gain": 1.087375223473196,
+        "base_threshold": 19.09722222222222,
+        "eff_threshold": 17.56267920214661,
+        "want_hz": 38.19444444444444,
+        "want_eff_hz": 41.531692563212346,
+        "curious": true
+      }
+    },
+    "multiref": null,
+    "noncontradiction": null,
+    "reconsolidation": null,
+    "pragmatic": null,
+    "episodic": null,
+    "prospective": {
+      "is_cue": true,
+      "fired": true,
+      "rel": 0.34055555555555556,
+      "held": 0.3333333333333333,
+      "threshold": 0.2,
+      "silent_max": 0.06,
+      "lesioned": false,
+      "cue_clause": "the bird sings",
+      "action": "feed the dog",
+      "kind": "monitor"
+    },
+    "affect_drives": {
+      "acted": true,
+      "turn": 5,
+      "lesioned": false,
+      "ema_valence": 0.0,
+      "ema_arousal": 0.0,
+      "body_h": 0.5,
+      "body_a": 0.0,
+      "mood": -0.003375000000000003,
+      "felt_arousal": 0.0,
+      "level": 0,
+      "high_arousal": false,
+      "lead": "",
+      "reason": "neutral_hold",
+      "seed": 42,
+      "vplus_rate": 0.03679166666666667,
+      "vminus_rate": 0.04016666666666667
+    },
+    "swap_drives": {
+      "acted": false,
+      "turn": 5,
+      "topic": null,
+      "swapped": false,
+      "held_topic_before": "cat",
+      "held_topic": "cat",
+      "evicted_topic": null,
+      "reason": "no_topic_hold",
+      "seed": 42,
+      "lesioned": false,
+      "on": true,
+      "lead": "",
+      "new_topic": null,
+      "reason_lead": "no_topic_hold"
+    },
+    "common_ground_drives": {
+      "on": true,
+      "topic": null,
+      "decision": null,
+      "reason": "no_grounded_topic",
+      "lead": "",
+      "lesioned": false,
+      "reason_lead": "no_referent"
+    },
+    "da_drives": {
+      "acted": true,
+      "turn": 5,
+      "lesioned": false,
+      "turn_engagement": 0.23636363636363636,
+      "ema_engagement": 0.3101847272727273,
+      "afferent_pA": 434.2586181818182,
+      "da_level": 0.5582501489821307,
+      "snc_firing": 0.08333333333333325,
+      "mode": "neutral",
+      "lead": "",
+      "reason": "low_engagement",
+      "seed": 42,
+      "shared_salience": {
+        "raw": 0.58,
+        "want_hz": 9.027777777777777,
+        "normalized": 0.23636363636363636,
+        "lesioned": false,
+        "calib": {
+          "want_novel_hz": 38.19444444444444,
+          "want_familiar_hz": 0.0,
+          "threshold_hz": 19.09722222222222,
+          "novel_signal": 0.95,
+          "familiar_signal": 0.0,
+          "read_reps": 4
+        },
+        "on": true
+      },
+      "spiking_novelty": {
+        "novelty": 0.8,
+        "n_tokens": 2,
+        "per_word_freshness": [
+          0.84,
+          0.76
+        ],
+        "fresh_ref": 25.0,
+        "n_channels": 64,
+        "lesioned": false,
+        "on": true
+      },
+      "on": true
+    },
+    "da_encoding": {
+      "on": true,
+      "g": 1.9156388751850024,
+      "da_level": 0.5582501489821307,
+      "lesioned": false
+    }
+  }
+}
