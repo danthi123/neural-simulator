@@ -1,0 +1,27 @@
+{
+  "runner": "research/runners/load_bearing_fraction.py",
+  "argv": [
+    "-m",
+    "research.runners.load_bearing_fraction",
+    "--only",
+    "prospective-memory",
+    "--seed",
+    "42",
+    "--repeats",
+    "2",
+    "--out",
+    "research/findings/raw/_load_bearing/_pmem_v2_6seed/pmem_v2_s42.json"
+  ],
+  "git_sha": "b436130fd",
+  "git_dirty": true,
+  "started": "2026-09-21T06:51:33",
+  "env": {
+    "LB_PMEM_DRIVE_PROBE": "1"
+  },
+  "sim_backend": "numpy",
+  "sim_backend_requested": "numpy",
+  "device": "cpu",
+  "cuda_visible_devices": "",
+  "note": "pmem-v2 6-seed on research/lb-consolidation @179c3c566 (lb-integration U pmem-v2); numpy CPU, thread-capped BLAS=2.",
+  "artifact": "research/findings/raw/_load_bearing/_pmem_v2_6seed/pmem_v2_s42.json"
+}

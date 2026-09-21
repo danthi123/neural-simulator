@@ -69,9 +69,12 @@ remains.
 
 **⭐ LATEST 2026-09-21 ~05Z (all-night autonomous, owner asleep) — THE 3 GENUINE GAPS RESOLVED + ADEQUATE 6-SEED IN FLIGHT:**
 - **All 3 gap agents DONE** (honest, NO tuning — HARD RULE 2 held):
-  - **prospective-memory → FLIPS load-bearing** (v2: the driving probe needed 3 intervening turns so the held×cue
-    coincidence reaches its operating point; brain-build verified seed 42). Branch research/gap-prospective-memory-v2
-    @ a38dd98. 6-seed IN FLIGHT locally.
+  - **prospective-memory → FLIPS load-bearing in 5/6 seeds** (v2: the driving probe needed 3 intervening turns so
+    the held×cue coincidence reaches its operating point; brain-build verified). **6-SEED DONE (2026-09-21 ~06:50Z):
+    42/43/100/101/102 load-bearing, seed 44 does NOT flip** (null_control_clean=True, lesion_reproduced=True,
+    treatment_diffs=0 → genuine seed-dependence: seed-44 heterogeneity puts the coincidence just below FIRE_THR, NOT
+    an artifact). So pmem is a SEED-DEPENDENT-BORDERLINE flip (like affect-marker/source-provenance), not robust-6/6.
+    Branch research/gap-prospective-memory-v2 @ a38dd98; artifacts research/findings/raw/_load_bearing/_pmem_v2_6seed/.
   - **open-ended-generation → single-turn NOT load-bearing, but DISTRIBUTIONALLY load-bearing** (the single-turn
     decision-diff is the WRONG RULER; draw_many plausible-frac 0.83→0.04 under lesion, already GO'd). Honest negative
     + a genuine banked wiring fix (the neural draw-lesion was a silent no-op). Recommends scoring it by its
@@ -90,7 +93,8 @@ remains.
 **PRE-DECIDED NEXT ACTIONS:**
 1. Harvest the AWS adequate-probe 6-seed → record the ROBUST adequate-probe load-bearing fraction (6-seed,
    constraint-mandated); update ledger headline.load_bearing_integrated + the finding + the Vikunja board.
-2. Harvest the LOCAL pmem-v2 6-seed → if 6/6 load-bearing the flip is robust; fold it into the picture.
+2. ✅ DONE — LOCAL pmem-v2 6-seed = 5/6 (seed 44 exception, null-clean → seed-dependent-borderline). Fold into the
+   consolidation finding as a borderline flip (not robust core).
 3. Merge the verified branches to main: research/lb-consolidation (lb-integration ∪ pmem-v2) — seed-threading
    touches production server.py, so run a DEFAULT-PATH no-regression BEFORE merging; then open-ended's wiring fix.
 4. Genuine forward build (consolidation): wire open-ended-generation's DISTRIBUTIONAL lesion metric as its
