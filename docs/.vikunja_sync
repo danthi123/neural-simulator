@@ -103,3 +103,6 @@ finding 2f16c88bc (16/26 = 0.615, first reading of the #1 metric). Created #225 
 
 ## 2026-09-20  episodic-drive verified + merged
 episodic-memory VERIFIED load-bearing with store->recall probe (LB_EPISODIC_DRIVE_PROBE, default-off, merged 60b6fb89) — the "hollow" was a probe artifact; true hollow set 9 not 10. Ledger episodic_correction added; #225 updated.
+
+## 2026-09-20  hollow-set attack verified (6 of 9)
+brain-build verify: 6 of 9 hollow faculties were probe artifacts (surprise/discourse-register/common-ground/noncontradiction/affect-coloring/bg-action-selection, now load-bearing); 2 fixes failed (prospective, open-ended); 1 rejected as tuned (da-gated-encoding). Adequate-probe fraction ~0.88 vs 0.59 floor. Ledger hollow_set_attack + finding landed. #225 updated.

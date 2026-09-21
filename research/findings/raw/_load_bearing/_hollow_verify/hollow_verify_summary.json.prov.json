@@ -1,0 +1,1 @@
+{"backend":"numpy","device":"cpu","host":"AWS r7i.4xlarge","runner":"load_bearing_fraction --only <faculty> --repeats 2 (per fix branch, default-off flag)","seed":42}

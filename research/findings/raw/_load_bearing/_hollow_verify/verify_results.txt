@@ -1,0 +1,10 @@
+VERIFY START Sun Sep 20 08:50:38 PM UTC 2026
+prospective-memory [LB_PMEM_DRIVE_PROBE]: load_bearing=False verdict=pass treat=0 ctrl=0 null_clean=True
+surprise-monitor [LB_SURPRISE_CONFIRM_PROBE]: load_bearing=True verdict=regressed treat=1 ctrl=0 null_clean=True
+discourse-register [LB_DISCOURSE_REGISTER_DRIVE_PROBE]: load_bearing=True verdict=regressed treat=1 ctrl=0 null_clean=True
+open-ended-generation [LB_OPEN_ENDED_DRIVE_PROBE]: load_bearing=False verdict=pass treat=0 ctrl=0 null_clean=True
+common-ground-drives [LB_CG_DRIVE_PROBE]: load_bearing=True verdict=regressed treat=1 ctrl=0 null_clean=True
+noncontradiction-gate [LB_NONCONTRADICTION_DRIVE_PROBE]: load_bearing=True verdict=regressed treat=3 ctrl=0 null_clean=True
+affect-coloring [LB_AFFECT_DRIVE_PROBE]: load_bearing=True verdict=regressed treat=2 ctrl=0 null_clean=True
+bg-action-selection [LB_BG_SELECT_DRIVE_PROBE]: load_bearing=True verdict=regressed treat=1 ctrl=0 null_clean=True
+VERIFY END Sun Sep 20 11:13:38 PM UTC 2026

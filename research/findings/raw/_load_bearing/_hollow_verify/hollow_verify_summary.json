@@ -1,0 +1,5 @@
+{"metric":"hollow_set_attack_verify","backend":"numpy","device":"cpu","host":"AWS r7i.4xlarge us-east-1","seed":42,"note":"per-faculty --only load_bearing_fraction with each fix's default-off probe flag",
+ "verified_load_bearing":{"surprise-monitor":{"load_bearing":true,"treat":1},"discourse-register":{"load_bearing":true,"treat":1},"common-ground-drives":{"load_bearing":true,"treat":1},"noncontradiction-gate":{"load_bearing":true,"treat":3},"affect-coloring":{"load_bearing":true,"treat":2},"bg-action-selection":{"load_bearing":true,"treat":1}},
+ "not_load_bearing":{"prospective-memory":{"load_bearing":false,"treat":0},"open-ended-generation":{"load_bearing":false,"treat":0}},
+ "rejected_tuned":{"da-gated-encoding":"load-bearing only under swept read-damage operating point; not a natural probe"},
+ "n_verified":6,"n_failed":2,"n_rejected":1}
