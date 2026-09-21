@@ -114,6 +114,20 @@ _EXTRA_TURNS = [
     ("dr2_a",     "bird chase worm",          "dr2",  True,  None,   False),  # D3 fold #1 (bare clause, no connective) -> CURRENT event agent=bird (referents[3])
     ("dr2_b",     "then dog chase cat",       "dr2",  False, None,   False),  # D3 fold #2 (connective-led) -> SHIFT: bird/worm -> prev slots, dog/cat -> current
     ("dr2_c",     "who was doing it before",  "dr2",  False, None,   False),  # D3 before-query -> held PREV agent = 'bird' (index 3 != identity 0); lesion forces 'dog' (identity 0)
+    # ── COMMON-GROUND DRIVING PAIR (label-only; NOT in PROBE_TURNS) ──────────────────────────────────────────────
+    # The load_bearing runner's LB_CG_DRIVE_PROBE remap uses these so common-ground-drives exercises its actual
+    # load-bearing axis: a REDUCE-vs-INTRODUCE flip on the RE-MENTION of an already-grounded referent. 'dog' is a
+    # BUILD-TIME KB agent (brain_chat_tui.py facts: dog->chase->cat), so gnw_thought_swap._extract_topic finds it as
+    # the grounded topic immediately -- no gate()-ordering / OOV problem (unlike 'wolf' in the lone default 'well'
+    # probe). mention1 (first mention this session) -> intact & lesion both read UNGROUNDED -> decision=introduce, and
+    # the organ then GROUNDS the slot (ignite + NMDA self-sustain). mention2 (same session 'cg2', re-mention) ->
+    # was_grounded=True: the INTACT ledger's self-sustaining recurrence still holds the slot -> substrate reads
+    # grounded -> decision=REDUCE; the BRAIN_CG_DRIVES_LESION=1 ledger built its recurrence at weight 0 (common_ground_
+    # drives_chat.cg_drives_lesioned) so the slot decayed by read-time -> decision stays INTRODUCE -- a genuine
+    # categorical flip on `common_ground_drives.decision`. The lone fresh-session first-mention 'well' probe can NEVER
+    # construct this (nothing grounded -> intact==lesion==introduce). See research/runners/load_bearing_fraction.py.
+    ("cg_mention1", "the dog runs fast",  "cg2", True,  None, False),   # first mention of 'dog' -> introduce; grounds the slot
+    ("cg_mention2", "the dog runs again", "cg2", False, None, False),   # re-mention SAME session -> intact reduce / lesion introduce
 ]
 _TURN_BY_LABEL.update({t[0]: t for t in _EXTRA_TURNS})
 
