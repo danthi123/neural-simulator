@@ -69,6 +69,10 @@ from research.runners.brain_chat_tui import _neural_selfid_enabled, _neural_anap
 _BRIDGE_CACHE: dict = {}
 _BRIDGE_LOCK = threading.Lock()
 
+_DEFAULT_SEED = int(os.environ.get("BRAIN_CHAT_SEED", "42"))  # research/seed-threading-lbf, 2026-09-20: reads the
+# same env var as webapp/server.py._brain_chat_seed so this organ reseeds coherently with the rest of the tiny-
+# demo brain. Unset -> 42, BYTE-IDENTICAL to the pre-existing hardcoded `seed: int = 42` defaults below.
+
 # the shared stopword set for the abstain-case (agent, action) extraction — mirrors `ChatBrain._substrate_recall`
 # so the SHADOW derives the same query the host gate did (only used to route the abstain probe; it can never change
 # the host answer). Divergence here can only UNDER-state agreement, never manufacture it.
@@ -126,7 +130,7 @@ def _spiking_congruent(held, proposed, *, seed: int) -> bool:
     return spiking_congruent(held, proposed, seed=seed)
 
 
-def _organ_reads(composer, agent, action, *, seed: int = 42):
+def _organ_reads(composer, agent, action, *, seed: int = _DEFAULT_SEED):
     """The THREE REAL production organ reads `gate()` conceptually combines, all voting on the recalled PATIENT:
       organ A — spiking RECALL (forward):   query_patient(agent, action)          -> cand           [gate organ 1]
       organ B — VERIFY re-check:            cand iff query_patient(agent,action)==cand              [gate organ 3]
@@ -175,7 +179,7 @@ def _organ_reads(composer, agent, action, *, seed: int = 42):
     return cand_A, [cand_A, cand_B, cand_C], trace_A
 
 
-def bus_combine(composer, agent: str, action: str, all_concepts, *, seed: int = 42,
+def bus_combine(composer, agent: str, action: str, all_concepts, *, seed: int = _DEFAULT_SEED,
                 lesion: bool = False, d_sub: Optional[float] = None, surface_forward_trace: bool = False) -> dict:
     """Route the 3 real organ reads for (agent, action) through the spiking ignition bus and return the SUBSTRATE's
     committed decision. `committed` is the ignited patient (or None = abstain). NO host `if/else` selects it — the
@@ -206,7 +210,7 @@ def bus_combine(composer, agent: str, action: str, all_concepts, *, seed: int = 
                 pass
 
 
-def _bus_combine_inner(composer, agent: str, action: str, all_concepts, *, seed: int = 42,
+def _bus_combine_inner(composer, agent: str, action: str, all_concepts, *, seed: int = _DEFAULT_SEED,
                        lesion: bool = False, d_sub: Optional[float] = None) -> dict:
     cand_A, candidates, trace_A = _organ_reads(composer, agent, action, seed=seed)
     # `_forward_trace` is popped by `bus_combine` before returning (never surfaces in the JSON info block); it carries
@@ -229,7 +233,7 @@ def _bus_combine_inner(composer, agent: str, action: str, all_concepts, *, seed:
     return info
 
 
-def shadow_report(chat, question: str, host_gate_svo, *, seed: int = 42) -> dict:
+def shadow_report(chat, question: str, host_gate_svo, *, seed: int = _DEFAULT_SEED) -> dict:
     """Compute the per-turn shadow verification block: route the live organ reads through the bus and COMPARE the
     substrate's committed decision to the host `gate()` decision. Returns a JSON-safe `gnw_bus` info dict. Read-only;
     NEVER changes the host answer (called only when `BRAIN_GNW_BUS` is on; the caller attaches the returned block)."""
@@ -320,7 +324,7 @@ def _chat_concepts(chat):
     return agents_set, actions_set, all_concepts
 
 
-def bus_authored_svo(chat, question: str, host_svo, *, seed: int = 42, lesion: bool = False):
+def bus_authored_svo(chat, question: str, host_svo, *, seed: int = _DEFAULT_SEED, lesion: bool = False):
     """Re-AUTHOR the gate combination with the SUBSTRATE ignition bus (not host `if recalled == p`). `host_svo` is the
     ORIGINAL host `gate()` result (already computed — its extraction/acquisition/anaphora side effects have run).
     Returns (bus_svo, info): `bus_svo` is the substrate-authored SVO ([agent, action, committed]) or None (abstain);
@@ -369,7 +373,7 @@ def bus_authored_svo(chat, question: str, host_svo, *, seed: int = 42, lesion: b
     return bus_svo, info
 
 
-def gate_via_bus(chat, question: str, *, seed: int = 42, lesion: bool = False):
+def gate_via_bus(chat, question: str, *, seed: int = _DEFAULT_SEED, lesion: bool = False):
     """AUTHOR the gate combination with the SUBSTRATE ignition bus WITHOUT ever computing the host `if recalled == p`
     combination on the covered class — the scaffold-retirement follow-on to `bus_authored_svo` (which computed the host
     verdict first, then overrode it). Runs `chat.gate_extract` (extraction + acquisition/anaphora/open-ended side
@@ -486,7 +490,7 @@ def gate_via_bus(chat, question: str, *, seed: int = 42, lesion: bool = False):
                  "host_combination_computed": True, "host_svo": _l, "bus_svo": _l}
 
 
-def install_bus_gate(chat, *, seed: int = 42) -> bool:
+def install_bus_gate(chat, *, seed: int = _DEFAULT_SEED) -> bool:
     """Idempotently wrap `chat.gate` so the SUBSTRATE ignition bus AUTHORS the organ-combination by DEFAULT and the
     host `if recalled == p` combination is RETIRED on the covered class (the 2026-08-13 scaffold-retirement). The
     wrapper runs `chat.gate_extract` (extraction + acquisition/open-ended/anaphora side effects — all unchanged) via

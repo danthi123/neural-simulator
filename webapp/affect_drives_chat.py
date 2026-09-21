@@ -95,7 +95,9 @@ from research.runners._graded_affect_attractor_derisk import (
     I_BODY_PA as _I_BODY_PA,
 )
 
-_DEFAULT_SEED = 42
+_DEFAULT_SEED = int(os.environ.get("BRAIN_CHAT_SEED", "42"))  # research/seed-threading-lbf, 2026-09-20: reads the
+# same env var as webapp/server.py._brain_chat_seed so this organ reseeds coherently with the rest of the tiny-
+# demo brain. Unset -> 42, BYTE-IDENTICAL to the pre-existing hardcoded value.
 
 # ── read windows (calibrated on the #81 ladder: (40,140,80) preserves the graded monotone mood(h) staircase at
 #    ~0.13s/read vs the runner's (60,250,120)@0.16s -- the NMDA latches settle fast, so the shorter window is faithful).

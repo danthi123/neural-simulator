@@ -88,6 +88,10 @@ from research.runners._gnw_two_distinct_organs_derisk import (
 from research.runners._p1_2_workspace_deliberation_loop_derisk import build_workspace_bridge
 from research.runners._gnw_coincidence_integrator_derisk import _pick_decoy, D_SUB_DEFAULT
 
+_DEFAULT_SEED = int(os.environ.get("BRAIN_CHAT_SEED", "42"))  # research/seed-threading-lbf, 2026-09-20: reads the
+# same env var as webapp/server.py._brain_chat_seed so this organ reseeds coherently with the rest of the tiny-
+# demo brain. Unset -> 42, BYTE-IDENTICAL to the pre-existing hardcoded `seed: int = 42` defaults below.
+
 
 # ── flags (all DEFAULT-OFF) ─────────────────────────────────────────────────────────────────────────────────────
 def two_organ_enabled() -> bool:
@@ -247,7 +251,7 @@ def _organ_a_recall(composer, agent: str, action: str, *, ltm_exempt: bool):
         return None, None
 
 
-def two_organ_combine(chat, agent: str, action: str, *, seed: int = 42,
+def two_organ_combine(chat, agent: str, action: str, *, seed: int = _DEFAULT_SEED,
                       ws_lesion: bool = False, organb_lesion: bool = False,
                       organb_ltm_exempt: bool = False) -> dict:
     """Route (agent, action) through the TWO-DISTINCT-ORGANS spiking coincidence and return the SUBSTRATE's committed
@@ -318,7 +322,7 @@ def two_organ_combine(chat, agent: str, action: str, *, seed: int = 42,
     return info
 
 
-def two_organ_gate_via(chat, question: str, *, seed: int = 42,
+def two_organ_gate_via(chat, question: str, *, seed: int = _DEFAULT_SEED,
                        ws_lesion: bool = False, organb_lesion: bool = False,
                        organb_ltm_exempt: bool = False):
     """AUTHOR the gate combination with the TWO-DISTINCT-ORGANS spiking coincidence for the COVERED routable class,
@@ -387,7 +391,7 @@ def two_organ_gate_via(chat, question: str, *, seed: int = 42,
                  "host_combination_computed": True, "bus_svo": _l}
 
 
-def install_two_organ_gate(chat, *, seed: int = 42) -> bool:
+def install_two_organ_gate(chat, *, seed: int = _DEFAULT_SEED) -> bool:
     """Idempotently wrap `chat.gate` so the TWO-DISTINCT-ORGANS spiking coincidence AUTHORS the organ-combination on
     the covered routable class. Installs ONLY when `BRAIN_GNW_2ORGAN` is truthy AND the organ discriminates on this
     backend (`_organ_discriminates()`: numpy always; cupy iff the organ is built backend-neutral, INIT on); otherwise

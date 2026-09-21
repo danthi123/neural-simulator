@@ -101,7 +101,9 @@ from research.runners._gnw_distributed_overwrite_workspace_derisk import (
     BOOST_GAIN, BOOST_SCALE, MARGIN_REF, PULSE_DURATION, N_PATTERNS,
 )
 
-_DEFAULT_SEED = 42
+_DEFAULT_SEED = int(os.environ.get("BRAIN_CHAT_SEED", "42"))  # research/seed-threading-lbf, 2026-09-20: reads the
+# same env var as webapp/server.py._brain_chat_seed so this organ reseeds coherently with the rest of the tiny-
+# demo brain. Unset -> 42, BYTE-IDENTICAL to the pre-existing hardcoded value.
 
 # The clearing EXPRESSION for a clean neural stop (the conditioned-articulation scaffold; DRIVEN by the stop verdict).
 _STOP_LEAD = "Setting the held thread aside — "
