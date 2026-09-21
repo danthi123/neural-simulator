@@ -115,6 +115,21 @@ the driving group is formation -> 3 intervening turns -> cue so the held x cue c
   SIM_BACKEND=numpy CUDA_VISIBLE_DEVICES='' LB_PMEM_DRIVE_PROBE=1 tools/memcap.sh 16 -- .venv/bin/python \
       -m research.runners.load_bearing_fraction --only prospective-memory --repeats 2 \
       --out research/findings/raw/_load_bearing/pmem_drive.json         # expect load-bearing=1, null-control clean
+Verify the OPEN-ENDED-GENERATION DISTRIBUTIONAL probe (default-off; the RULER swap, not a new lesion). Finding
+2026-09-21-open-ended-generation-single-turn-not-load-bearing-spiking-plausibility-gate-masks-draw.md: this faculty
+reads NOT load-bearing on the single-turn field-diff (a noise-dominated single soft-WTA draw -- the wrong ruler) but
+IS robustly load-bearing DISTRIBUTIONALLY (6-seed GO, research/findings/raw/_load_bearing/_followon2_openended_
+distributional_6seed.json): ablating the draw's likelihood collapses the plausible-fraction-of-novel-generated-
+hypotheses ~0.337->~0.01. This flag reuses that GO'd _followon2 machinery (SpikingWTASampler / _gate_and_collect /
+build_world, UNCHANGED) as the ruler for 'open-ended-generation' instead of the webapp brain_chat single-turn path
+-- it NEVER calls _spawn_arm / never builds the tiny-demo brain; the "brain build" here is _followon2's own small
+unwired WTA bank (still memcap'd per discipline):
+  SIM_BACKEND=numpy CUDA_VISIBLE_DEVICES='' LB_OPEN_ENDED_DISTRIB_PROBE=1 tools/memcap.sh 10 -- .venv/bin/python \
+      -m research.runners.load_bearing_fraction --only open-ended-generation \
+      --out research/findings/raw/_load_bearing/oeg_distributional_verify.json
+      # expect load_bearing=True, verdict=regressed, null_control_clean=True (intact_a==intact_b, an independent
+      # REBUILD at the identical seed -- the substrate's cfg.seed determinism, not a statistical closeness bar),
+      # treatment_diffs (|intact-lesion| plausible-fraction gap) >> control_diffs (0)
 Run (full measurement, capped; defer to a non-gaming window):
   tools/memcap.sh 24 -- .venv/bin/python -m research.runners.load_bearing_fraction \
       --out research/findings/raw/_load_bearing/load_bearing.json
@@ -371,6 +386,174 @@ _OPEN_ENDED_DRIVE_TURN = "oe_ask"        # the rich=True open-ended ASK turn (it
 # draw under the default spiking gate.)
 _OPEN_ENDED_DRIVE_ENV = {"BRAIN_SPIKING_PLAUSIBILITY": "0"}
 
+# ── OPEN-ENDED-GENERATION DISTRIBUTIONAL PROBE (opt-in, env-gated; default OFF -> byte-identical) ──────────────────
+# WHY (finding 2026-09-21-open-ended-generation-single-turn-not-load-bearing-spiking-plausibility-gate-masks-draw):
+# even the LB_OPEN_ENDED_DRIVE_PROBE remap above (the best single-turn instrument can do) reads treat=0 on the real
+# brain -- the single soft-WTA draw is OU-noise-dominated for the WHICH-patient choice at this operating point, so
+# ablating the likelihood does not reliably flip ONE turn's volunteered patient. This is an INSTRUMENT mismatch, not
+# an inert mechanism: the SAME draw's lesion collapses the aggregate plausible-fraction-of-novel-generated-
+# hypotheses 0.337->~0.01 in the _followon2_spiking_wta_sampler_derisk distributional metric (6-seed GO, research/
+# findings/raw/_load_bearing/_followon2_openended_distributional_6seed.json), with a SHUFFLED-graph null already
+# proving the effect is the real co-occurrence structure, not noise ("the instrument is part of the emulation",
+# CLAUDE.md's wall-reframe). THIS flag swaps the RULER for 'open-ended-generation' ONLY: instead of a webapp
+# brain_chat single-turn field-diff, it reuses the _followon2 machinery UNCHANGED (SpikingWTASampler /
+# _gate_and_collect / build_world -- no re-derivation) to build the SHARED world once, then draw from THREE
+# independent samplers at the IDENTICAL seed: intact_a (measured), intact_b (the NULL control -- an independent
+# REBUILD at the identical seed/params; per CLAUDE.md's cfg.seed determinism guarantee ("build twice at one seed ...
+# identical -> seeded") this must read EXACTLY equal, not merely close), and lesion (ablate_likelihood=True, the
+# SpikingWTASampler knob the 6-seed GO already lesions). load-bearing iff the null is CLEAN (0 diff -- a
+# determinism claim, not a statistical threshold) AND the lesion's plausible-fraction differs from intact_a's --
+# exactly the null-control discipline every OTHER driving probe in this file applies (rebuild-vs-rebuild must
+# match; lesion-vs-intact must not), just measured on a DISTRIBUTIONAL fraction instead of a categorical decision
+# field. If the null is NOT clean, this is reported honestly (verdict=noisy-null-control, load_bearing=None) --
+# never tuned to force a result. OFF (default) -> open-ended-generation is measured on whichever single-turn path
+# is active (the baseline `rich_open` turn, or LB_OPEN_ENDED_DRIVE_PROBE's teach->ask remap) exactly as before; this
+# path NEVER calls _spawn_arm and NEVER builds the webapp tiny-demo brain, so every other faculty + the battery's
+# PROBE_TURNS/roster is untouched.
+LB_OPEN_ENDED_DISTRIB = os.environ.get("LB_OPEN_ENDED_DISTRIB_PROBE", "").strip().lower() in ("1", "true", "yes", "on")
+# The _followon2 GO's own validated operating point (n_attempts_spiking default); overridable for a faster/slower
+# verify without touching the shipped default. Read once at import time, like every other env-gated knob here.
+_OED_N_ATTEMPTS = int(os.environ.get("LB_OPEN_ENDED_DISTRIB_N_ATTEMPTS", "800"))
+_OED_MIN_EFFECT = 1e-9   # a clean (deterministic) null makes ANY nonzero lesion effect real, not sampling noise
+
+
+def _oed_build_shared_world(seed):
+    """Build the _followon2 shared world ONCE at `seed` (taxonomy vocab + the real TinyStories co-occurrence corpus
+    + the PPMI plausibility graph P/row/tau + the RF composer store of AFFIRM/NEGATE facts) -- lazy import so this
+    module carries no import-time dependency on the followon2 de-risk unless LB_OPEN_ENDED_DISTRIB_PROBE is actually
+    exercised (byte-identical import graph otherwise). Mirrors _followon2_spiking_wta_sampler_derisk.main()'s own
+    world-build call (the SAME `a` defaults: D=64, n_facts=24, n_negated=12, tau_pct=50.0), minus the argparse
+    layer. Returns (build_world(...)'s 7-tuple, the `a` namespace)."""
+    import argparse as _ap
+    from research.runners._followon2_spiking_wta_sampler_derisk import build_world
+    from research.runners.option_c_real_cooccurrence_derisk import (
+        TAXONOMY_8x8, taxonomy_to_vocab_categories, build_real_cooccurrence)
+    a = _ap.Namespace(D=64, n_facts=24, n_negated=12, tau_pct=50.0)
+    vocab, cat_ids, _cat_names = taxonomy_to_vocab_categories(TAXONOMY_8x8)
+    proj = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    corpus_path = os.path.join(proj, "data", "corpus", "tinystories.txt")
+    if not os.path.exists(corpus_path):
+        raise FileNotFoundError(
+            "%s missing -- symlink data/corpus/*.txt into this worktree from the main checkout's data/corpus/ "
+            "(CLAUDE.md discipline: without the real corpus this organ degrades to standalone, a false negative)."
+            % corpus_path)
+    corpus = build_real_cooccurrence(corpus_path, vocab, cat_ids, window=5, repeat_cap=40, seed=42,
+                                     max_bytes=4_000_000, freq_floor=30, min_facts_per_category=20, verbose=False)
+    return build_world(seed, vocab, corpus, a), a
+
+
+def _oed_plausible_fraction(P, row, tau, proposer, all_stored, seed, ablate, n_attempts):
+    """ONE arm of the distributional measurement: build a FRESH SpikingWTASampler (a REBUILD -- a brand-new
+    Izhikevich WTA bank, reseeded from `seed`) and run `n_attempts` spiking generative draws, gated through the
+    brain's UNCHANGED plausibility/non-contradiction gates (`_gate_and_collect`, verbatim from _followon2). Returns
+    (plausible_fraction_of_novel, n_accepted, n_novel_attempts) -- the SAME distributional ruler the 6-seed GO used."""
+    from research.runners._followon2_spiking_wta_sampler_derisk import SpikingWTASampler, _gate_and_collect
+    sampler = SpikingWTASampler(P, row, tau, seed=seed, ablate_likelihood=ablate)
+    raw = sampler.draw(n_attempts)
+    rep = _gate_and_collect(raw, proposer, all_stored)
+    return rep["plausible_fraction_of_novel"], len(rep["accepted"]), rep["n_novel_attempts"]
+
+
+def _oed_score(intact_a_frac, intact_b_frac, lesion_frac, min_effect=_OED_MIN_EFFECT):
+    """PURE decision logic (no brain build) for the distributional probe, factored out so the selftest can exercise
+    the exact decision procedure on synthetic numbers -- mirrors _classify_diffs()/compare() being pure functions
+    the selftest already calls directly. TREATMENT = |intact_a - lesion|; CONTROL (the null) = |intact_a - intact_b|
+    (an independent rebuild at the identical seed/params). Returns (control_diff, treatment_diff, null_clean,
+    load_bearing, verdict). load_bearing is None (never False) when the null is not clean -- an unclean null makes
+    the treatment reading untrustworthy, not evidence of absence (the same "noisy-null-control" semantics every
+    other faculty's null check already uses)."""
+    control_diff = abs(intact_a_frac - intact_b_frac)
+    treatment_diff = abs(intact_a_frac - lesion_frac)
+    null_clean = control_diff <= 1e-9
+    if not null_clean:
+        return control_diff, treatment_diff, null_clean, None, "noisy-null-control"
+    if treatment_diff <= max(1e-9, min_effect):
+        return control_diff, treatment_diff, null_clean, False, "pass"
+    return control_diff, treatment_diff, null_clean, True, "regressed"
+
+
+def measure_open_ended_distributional(out_dir, seed=42, repeats=1, n_attempts=None):
+    """The DISTRIBUTIONAL load-bearing measurement for 'open-ended-generation' (LB_OPEN_ENDED_DISTRIB_PROBE).
+    Reuses the _followon2 machinery UNCHANGED instead of the webapp brain_chat single-turn path; NEVER calls
+    _spawn_arm, so no other faculty's code path is touched and this never builds the tiny-demo brain. Returns a
+    result dict shaped like measure_faculty()'s row (the same top-level keys) so run()'s counting/denominator logic
+    needs no special-casing -- only the MEANING of diffs/treatment_diffs/control_diffs changes: a distributional
+    fraction, not a categorical field-diff count."""
+    n_attempts = _OED_N_ATTEMPTS if n_attempts is None else int(n_attempts)
+    res = {"faculty": "open-ended-generation", "turn": "oe_distributional (_followon2 world, no webapp turn)",
+           "kind": "neural-lesion", "flag": "ablate_likelihood(SpikingWTASampler)",
+           # DEVICE STAMP (device-and-cost gate discipline, matches run()'s own report): this side-artifact is
+           # written from inside a measurement, not as a runner's direct --out target, so it carries its own
+           # backend/device record rather than relying on a provenance sidecar that would not exist for it.
+           "backend": os.environ.get("SIM_BACKEND", "numpy"), "cuda_visible_devices": os.environ.get("CUDA_VISIBLE_DEVICES"),
+           "load_bearing": None, "verdict": None, "change_kind": None, "diffs": [],
+           "treatment_diffs": None, "control_diffs": None, "attributable_fraction": None,
+           "null_control_clean": None, "lesion_reproduced": None, "flag_resolves": None,
+           "measurement_ruler": "distributional",
+           "note": "LB_OPEN_ENDED_DISTRIB_PROBE: scored by the _followon2 draw-many plausible-fraction-of-novel "
+                   "lesion (6-seed GO), NOT the single-turn field-diff -- the single-turn instrument is the wrong "
+                   "ruler for this faculty (finding 2026-09-21-open-ended-generation-single-turn-not-load-bearing)."}
+    try:
+        (comp, affirmed, negated, P, row, tau, _universe), a = _oed_build_shared_world(seed)
+        from research.runners._genfrontier_b2_generative_replay_derisk import GenerativeReplayProposer
+        import numpy as np
+        all_stored = set(affirmed) | set(negated)
+        proposer = GenerativeReplayProposer(comp, affirmed, negated, P, row, tau,
+                                            np.random.default_rng(seed * 7 + 1), use_spiking_sampler=False)
+        res["flag_resolves"] = True   # the class + its ablate_likelihood knob imported + built successfully
+    except Exception as e:
+        res["verdict"] = "arm-build-failed"
+        res["flag_resolves"] = False
+        res["note"] += "  world-build failed: %r" % (e,)
+        return res
+
+    intact_a_frac, intact_a_n, intact_a_novel = _oed_plausible_fraction(
+        P, row, tau, proposer, all_stored, seed, False, n_attempts)
+    intact_b_frac, intact_b_n, intact_b_novel = _oed_plausible_fraction(   # the NULL: an independent REBUILD
+        P, row, tau, proposer, all_stored, seed, False, n_attempts)
+    lesion_frac, lesion_n, lesion_novel = _oed_plausible_fraction(
+        P, row, tau, proposer, all_stored, seed, True, n_attempts)
+
+    control_diff, treatment_diff, null_clean, load_bearing, verdict = _oed_score(
+        intact_a_frac, intact_b_frac, lesion_frac)
+    res["control_diffs"] = control_diff
+    res["treatment_diffs"] = treatment_diff
+    res["null_control_clean"] = null_clean
+    res["distributional"] = {
+        "intact_a_plausible_fraction": intact_a_frac, "intact_a_n_accepted": intact_a_n,
+        "intact_a_n_novel": intact_a_novel,
+        "intact_b_plausible_fraction": intact_b_frac, "intact_b_n_accepted": intact_b_n,
+        "intact_b_n_novel": intact_b_novel,
+        "lesion_plausible_fraction": lesion_frac, "lesion_n_accepted": lesion_n, "lesion_n_novel": lesion_novel,
+        "n_attempts": n_attempts, "seed": seed,
+    }
+    res["diffs"] = [{"field": "open_ended.plausible_fraction_of_novel", "on": intact_a_frac, "off": lesion_frac}]
+    res["change_kind"] = "distributional" if treatment_diff > _OED_MIN_EFFECT else "none"
+    res["attributable_fraction"] = attributable_to(
+        "load-bearing[open-ended-generation:distributional]", treatment_diff, control_diff)
+
+    # LESION-REPEAT (the same anti-noise discipline as the categorical arms): rebuild the lesion arm and require
+    # the SAME sign of effect (a repeat that reads NO change while the first read a real one is non-reproducing).
+    reproduced = True
+    for i in range(max(0, repeats - 1)):
+        les2_frac, _, _ = _oed_plausible_fraction(P, row, tau, proposer, all_stored, seed, True, n_attempts)
+        if load_bearing and abs(intact_a_frac - les2_frac) <= _OED_MIN_EFFECT:
+            reproduced = False
+            break
+    res["lesion_reproduced"] = reproduced
+    if null_clean and load_bearing and not reproduced:
+        res["load_bearing"], res["verdict"] = None, "noisy"
+    else:
+        res["load_bearing"], res["verdict"] = load_bearing, verdict
+
+    _sfx = _seed_suffix(seed)
+    try:
+        os.makedirs(out_dir, exist_ok=True)
+        json.dump(res, open(os.path.join(out_dir, "oed_distributional%s.json" % _sfx), "w"), indent=2, default=str)
+    except Exception:
+        pass   # provenance convenience only -- never fail the measurement over a write error
+    return res
+
 
 def _spawn_arm(env, turn_labels, out_path):
     if _LB_RESUME and os.path.exists(out_path):
@@ -581,6 +764,11 @@ def measure_faculty(key, out_dir, repeats=1, intact_cache=None, seed=42):
     whole invocation, so every arm build (including this faculty's) already builds at that seed. `seed` here only
     namespaces the OUTPUT FILENAMES (via `_seed_suffix`) so a multi-seed sweep sharing one --out dir cannot collide
     or false-skip under LB_RESUME_SKIP_EXISTING."""
+    # OPEN-ENDED-GENERATION DISTRIBUTIONAL RULER (LB_OPEN_ENDED_DISTRIB_PROBE, default OFF): an early return BEFORE
+    # any FACULTY_LESIONS lookup / _spawn_arm call -- this path never touches the webapp brain_chat machinery, so
+    # every other faculty (and open-ended-generation itself when the flag is off) is byte-identical to before.
+    if LB_OPEN_ENDED_DISTRIB and key == "open-ended-generation":
+        return measure_open_ended_distributional(out_dir, seed=seed, repeats=repeats)
     spec = FACULTY_LESIONS.get(key)
     row = _faculty_row(key)
     res = {"faculty": key, "turn": (row[1] if row else None),
@@ -945,6 +1133,38 @@ def selftest(out_path=None):
             "oe_t1", "oe_t2", "oe_t3", "oe_t4", "oe_t5", "oe_t6", "oe_t7", "oe_t8", "oe_t9", _OPEN_ENDED_DRIVE_TURN],
         "open-ended lesion knob resolves": _flag_resolves("BRAIN_SPIKING_DRAW_LESION"),
         "open-ended lesion bites production draw": _draw_from_weights_honors_ablate(),
+        # open-ended-generation DISTRIBUTIONAL ruler (LB_OPEN_ENDED_DISTRIB_PROBE): pure decision-logic checks (NO
+        # brain build -- `_oed_score` takes already-measured numbers) + static wiring checks (source inspection /
+        # import + signature only, no SimulationBridge construction), mirroring how _classify_diffs()/compare() are
+        # tested directly on synthetic values above.
+        "oed-score: clean null + a real effect -> load-bearing":
+            _oed_score(0.337, 0.337, 0.01) == (0.0, abs(0.337 - 0.01), True, True, "regressed"),
+        "oed-score: clean null + no effect -> NOT load-bearing":
+            _oed_score(0.337, 0.337, 0.337) == (0.0, 0.0, True, False, "pass"),
+        "oed-score: dirty null -> UNDEFINED (never a positive OR a negative)":
+            _oed_score(0.337, 0.20, 0.01)[2:4] == (False, None)
+            and _oed_score(0.337, 0.20, 0.01)[4] == "noisy-null-control",
+        "oed-score: a dirty null with NO lesion effect is STILL reported unclean, not silently 'pass'":
+            _oed_score(0.20, 0.10, 0.20)[2] is False,
+        "the distributional branch precedes every _spawn_arm call (never touches the webapp brain_chat path)": (
+            lambda src: ("LB_OPEN_ENDED_DISTRIB" in src) and ("_spawn_arm(" in src)
+            and src.find("LB_OPEN_ENDED_DISTRIB") < src.find("_spawn_arm(")
+        )(__import__("inspect").getsource(measure_faculty)),
+        # co_names (the compiled function's referenced globals/attrs) -- NOT raw source text, which would false-
+        # positive on the docstring's own prose naming what it does NOT call (the exact pitfall _followon2's own
+        # `_code_only` docstring-stripping helper works around).
+        "measure_open_ended_distributional's CODE never references _spawn_arm / onebrain_regression_battery":
+            "_spawn_arm" not in measure_open_ended_distributional.__code__.co_names
+            and "onebrain_regression_battery" not in measure_open_ended_distributional.__code__.co_names,
+        "SpikingWTASampler exposes the ablate_likelihood knob the distributional lesion uses": (
+            "ablate_likelihood" in __import__("inspect").signature(
+                __import__("research.runners._followon2_spiking_wta_sampler_derisk",
+                           fromlist=["SpikingWTASampler"]).SpikingWTASampler.__init__).parameters
+        ),
+        "open-ended distributional flag parses to a real bool (env-string parsing didn't degrade to truthy-string)":
+            isinstance(LB_OPEN_ENDED_DISTRIB, bool),
+        "oed n-attempts knob is a positive int (the _followon2 GO's 800 unless explicitly overridden)":
+            isinstance(_OED_N_ATTEMPTS, int) and _OED_N_ATTEMPTS > 0,
         "every FACULTY_LESIONS key is a real battery faculty":
             all(k in faculty_list() for k in FACULTY_LESIONS),
         "every battery faculty is mapped": all(k in FACULTY_LESIONS for k in faculty_list()),
