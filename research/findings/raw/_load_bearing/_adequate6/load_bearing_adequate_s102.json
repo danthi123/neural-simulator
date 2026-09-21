@@ -1,0 +1,860 @@
+{
+  "runner": "research.runners.load_bearing_fraction",
+  "metric": "load_bearing_fraction",
+  "repeats": 2,
+  "seed": 102,
+  "per_faculty": [
+    {
+      "faculty": "content-selection",
+      "turn": "well",
+      "kind": "in-process",
+      "flag": null,
+      "load_bearing": null,
+      "verdict": "not-covered:in-process",
+      "change_kind": null,
+      "diffs": [],
+      "treatment_diffs": null,
+      "control_diffs": null,
+      "attributable_fraction": null,
+      "null_control_clean": null,
+      "lesion_reproduced": null,
+      "flag_resolves": null,
+      "note": "lesioned in-process by parser.role_of (junk role -> factual questions ABSTAIN) in _production_lesion_probe CHOOSE; no env knob. Minimal env lesion to add: BRAIN_SUBSTRATE_PARSE_LESION."
+    },
+    {
+      "faculty": "semantic-recall",
+      "turn": "well",
+      "kind": "in-process",
+      "flag": null,
+      "load_bearing": null,
+      "verdict": "not-covered:in-process",
+      "change_kind": null,
+      "diffs": [],
+      "treatment_diffs": null,
+      "control_diffs": null,
+      "attributable_fraction": null,
+      "null_control_clean": null,
+      "lesion_reproduced": null,
+      "flag_resolves": null,
+      "note": "lesioned in-process by composer.query_patient (the battery module's own spiking_recall_lesion demo / _production_lesion_probe); no env knob. Minimal env lesion to add: BRAIN_COMPOSER_RECALL_LESION."
+    },
+    {
+      "faculty": "one-brain-substrate",
+      "turn": "well",
+      "kind": "mechanism-only",
+      "flag": "BRAIN_COMPOSER_KIND",
+      "load_bearing": null,
+      "verdict": "not-covered:mechanism-only",
+      "change_kind": null,
+      "diffs": [],
+      "treatment_diffs": null,
+      "control_diffs": null,
+      "attributable_fraction": null,
+      "null_control_clean": null,
+      "lesion_reproduced": null,
+      "flag_resolves": true,
+      "note": "onebrain vs rf give the SAME answers BY DESIGN (ledger lesion_note) \u2014 a MECHANISM claim (recall on firing neurons), not an answer change. activity.composer label flips but that is cosmetic; NOT answer-load-bearing by construction. Excluded from the fraction."
+    },
+    {
+      "faculty": "moat-verify",
+      "turn": "unknown",
+      "kind": "in-process",
+      "flag": null,
+      "load_bearing": null,
+      "verdict": "not-covered:in-process",
+      "change_kind": null,
+      "diffs": [],
+      "treatment_diffs": null,
+      "control_diffs": null,
+      "attributable_fraction": null,
+      "null_control_clean": null,
+      "lesion_reproduced": null,
+      "flag_resolves": null,
+      "note": "the no-confab moat: lesioned in-process by chat._substrate_recall (lesion -> the abstain flips to a keyword confab), _production_lesion_probe CHOOSE. No env knob; minimal add: BRAIN_SUBSTRATE_RECALL_LESION."
+    },
+    {
+      "faculty": "in-loop-learning",
+      "turn": "well",
+      "kind": "in-process",
+      "flag": null,
+      "load_bearing": null,
+      "verdict": "not-covered:in-process",
+      "change_kind": null,
+      "diffs": [],
+      "treatment_diffs": null,
+      "control_diffs": null,
+      "attributable_fraction": null,
+      "null_control_clean": null,
+      "lesion_reproduced": null,
+      "flag_resolves": null,
+      "note": "lesioned in-process by chat._substrate_recall (a fact taught this turn disappears), _production_lesion_probe LEARN. No env knob; minimal add: BRAIN_SUBSTRATE_RECALL_LESION."
+    },
+    {
+      "faculty": "comprehension-monitor",
+      "turn": "well",
+      "kind": "neural-lesion",
+      "flag": "BRAIN_COMPREHENSION_LESION",
+      "load_bearing": true,
+      "verdict": "regressed",
+      "change_kind": "structural",
+      "diffs": [
+        {
+          "field": "comprehension.comprehended",
+          "on": true,
+          "off": null
+        }
+      ],
+      "treatment_diffs": 1,
+      "control_diffs": 0,
+      "attributable_fraction": 1.0,
+      "null_control_clean": true,
+      "lesion_reproduced": true,
+      "flag_resolves": true,
+      "note": ""
+    },
+    {
+      "faculty": "comprehension-learned-animacy-cue",
+      "turn": "animacy",
+      "kind": "neural-lesion",
+      "flag": "BRAIN_LEARNED_ANIMACY_LESION",
+      "load_bearing": true,
+      "verdict": "regressed",
+      "change_kind": "structural",
+      "diffs": [
+        {
+          "field": "comprehension.on",
+          "on": true,
+          "off": null
+        }
+      ],
+      "treatment_diffs": 1,
+      "control_diffs": 0,
+      "attributable_fraction": 1.0,
+      "null_control_clean": true,
+      "lesion_reproduced": true,
+      "flag_resolves": true,
+      "note": "cuts the learned animacy cue; on a hand-table-OOV noun ('monkey') comprehension.on swings present/absent."
+    },
+    {
+      "faculty": "comprehension-learned-verb-selects",
+      "turn": "verbsel",
+      "kind": "neural-lesion",
+      "flag": "BRAIN_LEARNED_VERB_SELECTS_LESION",
+      "load_bearing": true,
+      "verdict": "regressed",
+      "change_kind": "structural",
+      "diffs": [
+        {
+          "field": "comprehension.on",
+          "on": true,
+          "off": null
+        }
+      ],
+      "treatment_diffs": 1,
+      "control_diffs": 0,
+      "attributable_fraction": 1.0,
+      "null_control_clean": true,
+      "lesion_reproduced": true,
+      "flag_resolves": true,
+      "note": "cuts the learned verb-selects cue; on a hand-table-OOV verb ('clean') comprehension.on swings."
+    },
+    {
+      "faculty": "noncontradiction-gate",
+      "turn": "noncontra_neg",
+      "kind": "neural-lesion",
+      "flag": "BRAIN_NONCONTRADICTION_LESION",
+      "load_bearing": true,
+      "verdict": "regressed",
+      "change_kind": "structural",
+      "diffs": [
+        {
+          "field": "noncontradiction.reject",
+          "on": true,
+          "off": false
+        },
+        {
+          "field": "noncontradiction.recalled_yn",
+          "on": "yes",
+          "off": "unknown"
+        },
+        {
+          "field": "noncontradiction.stored_polarity",
+          "on": "AFFIRM",
+          "off": null
+        }
+      ],
+      "treatment_diffs": 3,
+      "control_diffs": 0,
+      "attributable_fraction": 1.0,
+      "null_control_clean": true,
+      "lesion_reproduced": true,
+      "flag_resolves": true,
+      "note": "LB_NONCONTRADICTION_DRIVE_PROBE: assert NEGATE of the AFFIRM boot fact (dog,chase,cat) on a fresh session 'ncontra'; no forced-write env (boot-stored on any backend). "
+    },
+    {
+      "faculty": "affect-coloring",
+      "turn": "emo",
+      "kind": "neural-lesion",
+      "flag": "BRAIN_AFFECT_LESION",
+      "load_bearing": true,
+      "verdict": "regressed",
+      "change_kind": "value",
+      "diffs": [
+        {
+          "field": "affect.valence_sign",
+          "on": "+",
+          "off": "0"
+        },
+        {
+          "field": "affect.tone_token",
+          "on": "gladly",
+          "off": ""
+        }
+      ],
+      "treatment_diffs": 2,
+      "control_diffs": 0,
+      "attributable_fraction": 1.0,
+      "null_control_clean": true,
+      "lesion_reproduced": true,
+      "flag_resolves": true,
+      "note": "LB_AFFECT_DRIVE_PROBE: remap to the strongly-affective 'emo' turn (no env-forcing). affect_production_organ.py:242 BRAIN_AFFECT_LESION cuts the Gate-B ladder read."
+    },
+    {
+      "faculty": "affect-drives-response",
+      "turn": "well",
+      "kind": "neural-lesion",
+      "flag": "BRAIN_AFFECT_DRIVES_LESION",
+      "load_bearing": true,
+      "verdict": "regressed",
+      "change_kind": "value",
+      "diffs": [
+        {
+          "field": "affect_drives.reason",
+          "on": "neutral_hold",
+          "off": "lesion_collapsed"
+        }
+      ],
+      "treatment_diffs": 1,
+      "control_diffs": 0,
+      "attributable_fraction": 1.0,
+      "null_control_clean": true,
+      "lesion_reproduced": true,
+      "flag_resolves": true,
+      "note": "cuts the interoceptive->ladder synapses -> felt mood collapses -> the affective lead vanishes. NOTE the 'well' turn is mood-neutral (level 0) intact too, so the acted decision may be unchanged there; the change shows on an affective turn \u2014 a lower-confidence row on the neutral probe."
+    },
+    {
+      "faculty": "affect-marker-spiking-wta",
+      "turn": "emo",
+      "kind": "neural-lesion",
+      "flag": "BRAIN_AFFECT_MARKER_SPIKING_LESION",
+      "load_bearing": true,
+      "verdict": "regressed",
+      "change_kind": "value",
+      "diffs": [
+        {
+          "field": "affect_drives.lead",
+          "on": "Gladly! ",
+          "off": ""
+        }
+      ],
+      "treatment_diffs": 1,
+      "control_diffs": 0,
+      "attributable_fraction": 1.0,
+      "null_control_clean": true,
+      "lesion_reproduced": true,
+      "flag_resolves": true,
+      "note": "cuts the felt-state->marker WTA selection; measured on the strongly-affective 'emo' turn (level>0)."
+    },
+    {
+      "faculty": "da-mode-drives-response",
+      "turn": "well",
+      "kind": "neural-lesion",
+      "flag": "BRAIN_DA_DRIVES_LESION",
+      "load_bearing": true,
+      "verdict": "regressed",
+      "change_kind": "value",
+      "diffs": [
+        {
+          "field": "da_drives.reason",
+          "on": "low_engagement",
+          "off": "lesion_collapsed"
+        }
+      ],
+      "treatment_diffs": 1,
+      "control_diffs": 0,
+      "attributable_fraction": 1.0,
+      "null_control_clean": true,
+      "lesion_reproduced": true,
+      "flag_resolves": true,
+      "note": ""
+    },
+    {
+      "faculty": "da-gated-encoding",
+      "turn": "well",
+      "kind": "neural-lesion",
+      "flag": "BRAIN_DA_ENCODING_LESION",
+      "load_bearing": false,
+      "verdict": "pass",
+      "change_kind": "none",
+      "diffs": [],
+      "treatment_diffs": 0,
+      "control_diffs": 0,
+      "attributable_fraction": null,
+      "null_control_clean": true,
+      "lesion_reproduced": true,
+      "flag_resolves": true,
+      "note": ""
+    },
+    {
+      "faculty": "source-provenance-honesty",
+      "turn": "well",
+      "kind": "neural-lesion",
+      "flag": "BRAIN_SOURCE_PROVENANCE_HONESTY_LESION",
+      "load_bearing": false,
+      "verdict": "pass",
+      "change_kind": "none",
+      "diffs": [],
+      "treatment_diffs": 0,
+      "control_diffs": 0,
+      "attributable_fraction": null,
+      "null_control_clean": true,
+      "lesion_reproduced": true,
+      "flag_resolves": true,
+      "note": "server.py get_organ(lesion=source_provenance_lesioned())."
+    },
+    {
+      "faculty": "common-ground-drives",
+      "turn": "cg_mention2",
+      "kind": "neural-lesion",
+      "flag": "BRAIN_CG_DRIVES_LESION",
+      "load_bearing": true,
+      "verdict": "regressed",
+      "change_kind": "value",
+      "diffs": [
+        {
+          "field": "common_ground_drives.decision",
+          "on": "reduce",
+          "off": "introduce"
+        }
+      ],
+      "treatment_diffs": 1,
+      "control_diffs": 0,
+      "attributable_fraction": 1.0,
+      "null_control_clean": true,
+      "lesion_reproduced": true,
+      "flag_resolves": true,
+      "note": "LB_CG_DRIVE_PROBE: mention->re-mention on session 'cg2' ('dog'); intact reduce vs lesion introduce. "
+    },
+    {
+      "faculty": "confidence-forthcomingness",
+      "turn": "rich_well",
+      "kind": "whether-disable",
+      "flag": "BRAIN_CONFIDENCE_FORTHCOMING",
+      "load_bearing": true,
+      "verdict": "regressed",
+      "change_kind": "structural",
+      "diffs": [
+        {
+          "field": "confidence_forthcoming.granted",
+          "on": false,
+          "off": null
+        },
+        {
+          "field": "confidence_forthcoming.reason",
+          "on": "high_confidence",
+          "off": null
+        }
+      ],
+      "treatment_diffs": 2,
+      "control_diffs": 0,
+      "attributable_fraction": 1.0,
+      "null_control_clean": true,
+      "lesion_reproduced": true,
+      "flag_resolves": true,
+      "note": "no BRAIN_*_LESION knob; BRAIN_CONFIDENCE_FORTHCOMING=0 removes the organ -> the confidence_forthcoming key swings present/absent (a structural change, but a disable not a neural cut). Minimal neural lesion to add: BRAIN_CONFIDENCE_FORTHCOMING_LESION cutting the balance-of-evidence read while leaving the granted/reason trace attached."
+    },
+    {
+      "faculty": "swap-drives-response",
+      "turn": "held",
+      "kind": "neural-lesion",
+      "flag": "BRAIN_SWAP_DRIVES_LESION",
+      "load_bearing": null,
+      "verdict": "not-exercised",
+      "change_kind": "none",
+      "diffs": [],
+      "treatment_diffs": 0,
+      "control_diffs": 0,
+      "attributable_fraction": null,
+      "null_control_clean": true,
+      "lesion_reproduced": true,
+      "flag_resolves": true,
+      "note": ""
+    },
+    {
+      "faculty": "anaphora-wm",
+      "turn": "held",
+      "kind": "proposed",
+      "flag": null,
+      "load_bearing": null,
+      "verdict": "not-covered:proposed",
+      "change_kind": null,
+      "diffs": [],
+      "treatment_diffs": null,
+      "control_diffs": null,
+      "attributable_fraction": null,
+      "null_control_clean": null,
+      "lesion_reproduced": null,
+      "flag_resolves": null,
+      "note": "the compared field activity.roles is the parser's role binding on a DIRECT SVO ('the wolf watches the owl'), not anaphora resolution; the closest lesion is content-selection's in-process parser.role_of. No clean env lesion drives activity.roles. Minimal add: BRAIN_SUBSTRATE_PARSE_LESION (shared with content-selection)."
+    },
+    {
+      "faculty": "wm-binding-advanced",
+      "turn": "held",
+      "kind": "neural-lesion",
+      "flag": "BRAIN_MULTIREF_LESION",
+      "load_bearing": null,
+      "verdict": "not-exercised",
+      "change_kind": "none",
+      "diffs": [],
+      "treatment_diffs": 0,
+      "control_diffs": 0,
+      "attributable_fraction": null,
+      "null_control_clean": true,
+      "lesion_reproduced": true,
+      "flag_resolves": true,
+      "note": ""
+    },
+    {
+      "faculty": "prospective-memory",
+      "turn": "pmem_form",
+      "kind": "neural-lesion",
+      "flag": "BRAIN_PMEM_LESION",
+      "load_bearing": false,
+      "verdict": "pass",
+      "change_kind": "none",
+      "diffs": [],
+      "treatment_diffs": 0,
+      "control_diffs": 0,
+      "attributable_fraction": null,
+      "null_control_clean": true,
+      "lesion_reproduced": true,
+      "flag_resolves": true,
+      "note": ""
+    },
+    {
+      "faculty": "pragmatic-implicature",
+      "turn": "scalar",
+      "kind": "neural-lesion",
+      "flag": "BRAIN_PRAGMATIC_LESION",
+      "load_bearing": true,
+      "verdict": "regressed",
+      "change_kind": "value",
+      "diffs": [
+        {
+          "field": "pragmatic.enriched_interpretation",
+          "on": "some but not all",
+          "off": "undetermined (implicature collapsed)"
+        }
+      ],
+      "treatment_diffs": 1,
+      "control_diffs": 0,
+      "attributable_fraction": 1.0,
+      "null_control_clean": true,
+      "lesion_reproduced": true,
+      "flag_resolves": true,
+      "note": ""
+    },
+    {
+      "faculty": "surprise-monitor",
+      "turn": "confirm",
+      "kind": "neural-lesion",
+      "flag": "BRAIN_SURPRISE_LESION",
+      "load_bearing": true,
+      "verdict": "regressed",
+      "change_kind": "value",
+      "diffs": [
+        {
+          "field": "surprise.surprised",
+          "on": false,
+          "off": true
+        }
+      ],
+      "treatment_diffs": 1,
+      "control_diffs": 0,
+      "attributable_fraction": 1.0,
+      "null_control_clean": true,
+      "lesion_reproduced": true,
+      "flag_resolves": true,
+      "note": "LB_SURPRISE_CONFIRM_PROBE: measured on the CONFIRM turn 'confirm' (asserted==stored, shared block) where the same-block lesion bites; contra is a different-block CONTRADICT the lesion never reaches. "
+    },
+    {
+      "faculty": "metacog-monitor",
+      "turn": "confirm",
+      "kind": "neural-lesion",
+      "flag": "BRAIN_METACOG_LESION",
+      "load_bearing": true,
+      "verdict": "regressed",
+      "change_kind": "value",
+      "diffs": [
+        {
+          "field": "metacog.confident",
+          "on": true,
+          "off": false
+        }
+      ],
+      "treatment_diffs": 1,
+      "control_diffs": 0,
+      "attributable_fraction": 1.0,
+      "null_control_clean": true,
+      "lesion_reproduced": true,
+      "flag_resolves": true,
+      "note": ""
+    },
+    {
+      "faculty": "worldmodel-forward",
+      "turn": "expect_q",
+      "kind": "neural-lesion",
+      "flag": "BRAIN_WORLDMODEL_LESION",
+      "load_bearing": true,
+      "verdict": "regressed",
+      "change_kind": "value",
+      "diffs": [
+        {
+          "field": "worldmodel.pred_sign",
+          "on": 1,
+          "off": -1
+        }
+      ],
+      "treatment_diffs": 1,
+      "control_diffs": 0,
+      "attributable_fraction": 1.0,
+      "null_control_clean": true,
+      "lesion_reproduced": true,
+      "flag_resolves": true,
+      "note": ""
+    },
+    {
+      "faculty": "curiosity-followup",
+      "turn": "unknown",
+      "kind": "neural-lesion",
+      "flag": "BRAIN_CURIOSITY_LESION",
+      "load_bearing": true,
+      "verdict": "regressed",
+      "change_kind": "value",
+      "diffs": [
+        {
+          "field": "curiosity.curious",
+          "on": true,
+          "off": false
+        }
+      ],
+      "treatment_diffs": 1,
+      "control_diffs": 0,
+      "attributable_fraction": 1.0,
+      "null_control_clean": true,
+      "lesion_reproduced": true,
+      "flag_resolves": true,
+      "note": "removes the spiking ASK-pool crave drive -> the novel-abstain follow-up is silenced (DR-1 GO's own lesion arm). curiosity.curious flips True->False on the 'unknown' abstain turn."
+    },
+    {
+      "faculty": "reconsolidation",
+      "turn": "contra",
+      "kind": "neural-lesion",
+      "flag": "BRAIN_RECONSOLIDATION_LESION",
+      "load_bearing": true,
+      "verdict": "regressed",
+      "change_kind": "value",
+      "diffs": [
+        {
+          "field": "reconsolidation.action",
+          "on": "rewrite",
+          "off": "lesioned_nowrite"
+        }
+      ],
+      "treatment_diffs": 1,
+      "control_diffs": 0,
+      "attributable_fraction": 1.0,
+      "null_control_clean": true,
+      "lesion_reproduced": true,
+      "flag_resolves": true,
+      "note": ""
+    },
+    {
+      "faculty": "episodic-memory",
+      "turn": "epi_recall",
+      "kind": "neural-lesion",
+      "flag": "BRAIN_EPISODIC_LESION",
+      "load_bearing": true,
+      "verdict": "regressed",
+      "change_kind": "value",
+      "diffs": [
+        {
+          "field": "episodic.in_memory",
+          "on": true,
+          "off": false
+        }
+      ],
+      "treatment_diffs": 1,
+      "control_diffs": 0,
+      "attributable_fraction": 1.0,
+      "null_control_clean": true,
+      "lesion_reproduced": true,
+      "flag_resolves": true,
+      "note": "LB_EPISODIC_DRIVE_PROBE: store->recall on session 'epi2' + BRAIN_EPISODIC_STORE=1. "
+    },
+    {
+      "faculty": "discourse-register",
+      "turn": "dr2_c",
+      "kind": "neural-lesion",
+      "flag": "BRAIN_DISCOURSE_REGISTER_LESION",
+      "load_bearing": true,
+      "verdict": "regressed",
+      "change_kind": "value",
+      "diffs": [
+        {
+          "field": "discourse_register.agent",
+          "on": "bird",
+          "off": "dog"
+        }
+      ],
+      "treatment_diffs": 1,
+      "control_diffs": 0,
+      "attributable_fraction": 1.0,
+      "null_control_clean": true,
+      "lesion_reproduced": true,
+      "flag_resolves": true,
+      "note": "LB_DISCOURSE_REGISTER_DRIVE_PROBE: before-agent is referents[3]='bird', not referents[0]='dog'==ident, so the lesion's forced-identity fallback is distinguishable from the correct answer. "
+    },
+    {
+      "faculty": "open-ended-generation",
+      "turn": "rich_open",
+      "kind": "neural-lesion",
+      "flag": "BRAIN_SPIKING_DRAW_LESION",
+      "load_bearing": false,
+      "verdict": "pass",
+      "change_kind": "none",
+      "diffs": [],
+      "treatment_diffs": 0,
+      "control_diffs": 0,
+      "attributable_fraction": null,
+      "null_control_clean": true,
+      "lesion_reproduced": true,
+      "flag_resolves": true,
+      "note": "cuts the vocab-agnostic spiking DRAW off cp_firing_states -> the generated hypothesis collapses (plausible-frac ~0.83->~0.04 in the B1 verify). Measured on the rich_open turn."
+    },
+    {
+      "faculty": "discourse-planner",
+      "turn": "rich_well",
+      "kind": "proposed",
+      "flag": null,
+      "load_bearing": null,
+      "verdict": "not-covered:proposed",
+      "change_kind": null,
+      "diffs": [],
+      "treatment_diffs": null,
+      "control_diffs": null,
+      "attributable_fraction": null,
+      "null_control_clean": null,
+      "lesion_reproduced": null,
+      "flag_resolves": null,
+      "note": "the rich multi-sentence plan (fields rich/n_sentences) has a neural_planner master switch but no neural-cut lesion. Minimal add: BRAIN_DISCOURSE_PLANNER_LESION cutting the plan's spiking sentence-count read."
+    },
+    {
+      "faculty": "gnw-deliberation",
+      "turn": "well",
+      "kind": "thin",
+      "flag": "BRAIN_GNW_DELIBERATE_LESION",
+      "load_bearing": null,
+      "verdict": "not-covered:thin",
+      "change_kind": null,
+      "diffs": [],
+      "treatment_diffs": null,
+      "control_diffs": null,
+      "attributable_fraction": null,
+      "null_control_clean": null,
+      "lesion_reproduced": null,
+      "flag_resolves": true,
+      "note": "lesion knob exists but the >=2-distinct-patient (agent,action) conflict is unconstructible via brain_chat (reconsolidation rewrites in place); the battery marks this probe thin. Not exercised by this harness."
+    },
+    {
+      "faculty": "gnw-multistep-deliberation",
+      "turn": "chase",
+      "kind": "neural-lesion",
+      "flag": "BRAIN_GNW_MULTISTEP_LESION",
+      "load_bearing": true,
+      "verdict": "regressed",
+      "change_kind": "structural",
+      "diffs": [
+        {
+          "field": "recalled_svo",
+          "on": [
+            "dog",
+            "chase",
+            "cat"
+          ],
+          "off": null
+        }
+      ],
+      "treatment_diffs": 1,
+      "control_diffs": 0,
+      "attributable_fraction": 1.0,
+      "null_control_clean": true,
+      "lesion_reproduced": true,
+      "flag_resolves": true,
+      "note": ""
+    },
+    {
+      "faculty": "self-initiated-utterance",
+      "turn": "selfinit",
+      "kind": "neural-lesion",
+      "flag": "BRAIN_SELF_INITIATE_LESION",
+      "load_bearing": true,
+      "verdict": "regressed",
+      "change_kind": "value",
+      "diffs": [
+        {
+          "field": "abstained",
+          "on": false,
+          "off": true
+        }
+      ],
+      "treatment_diffs": 1,
+      "control_diffs": 0,
+      "attributable_fraction": 1.0,
+      "null_control_clean": true,
+      "lesion_reproduced": true,
+      "flag_resolves": true,
+      "note": ""
+    },
+    {
+      "faculty": "vision-identity-spiking-hmax",
+      "turn": "vision",
+      "kind": "neural-lesion",
+      "flag": "BRAIN_VISION_IDENTITY_LESION",
+      "load_bearing": true,
+      "verdict": "regressed",
+      "change_kind": "structural",
+      "diffs": [
+        {
+          "field": "vision_identity.recognized_category",
+          "on": 0,
+          "off": null
+        }
+      ],
+      "treatment_diffs": 1,
+      "control_diffs": 0,
+      "attributable_fraction": 1.0,
+      "null_control_clean": true,
+      "lesion_reproduced": true,
+      "flag_resolves": true,
+      "note": ""
+    },
+    {
+      "faculty": "value-driven-choice",
+      "turn": "well",
+      "kind": "thin",
+      "flag": "BRAIN_VALUE_CHOICE_LESION",
+      "load_bearing": null,
+      "verdict": "not-covered:thin",
+      "change_kind": null,
+      "diffs": [],
+      "treatment_diffs": null,
+      "control_diffs": null,
+      "attributable_fraction": null,
+      "null_control_clean": null,
+      "lesion_reproduced": null,
+      "flag_resolves": true,
+      "note": "same root cause as gnw-deliberation: no 2-candidate conflict is constructible via brain_chat teaching."
+    },
+    {
+      "faculty": "bg-action-selection",
+      "turn": "bgdots",
+      "kind": "neural-lesion",
+      "flag": "BRAIN_BG_SELECT_LESION",
+      "load_bearing": true,
+      "verdict": "regressed",
+      "change_kind": "structural",
+      "diffs": [
+        {
+          "field": "bg_select.on",
+          "on": true,
+          "off": null
+        }
+      ],
+      "treatment_diffs": 1,
+      "control_diffs": 0,
+      "attributable_fraction": 1.0,
+      "null_control_clean": true,
+      "lesion_reproduced": true,
+      "flag_resolves": true,
+      "note": "LB_BG_SELECT_DRIVE_PROBE: compare bg_select.on (structural) instead of the confounded top-level abstained (True in both arms). "
+    },
+    {
+      "faculty": "selective-attention-biased-competition",
+      "turn": "bc_b",
+      "kind": "proposed",
+      "flag": null,
+      "load_bearing": null,
+      "verdict": "not-covered:proposed",
+      "change_kind": null,
+      "diffs": [],
+      "treatment_diffs": null,
+      "control_diffs": null,
+      "attributable_fraction": null,
+      "null_control_clean": null,
+      "lesion_reproduced": null,
+      "flag_resolves": null,
+      "note": "the host content_bias lexicon was DELETED (ledger scaffold_retired:YES; learned SpikingFeatureCompat is the sole source), lesioned in-process by SpikingFeatureCompat.lesion(). No env knob. Minimal add: BRAIN_BIASED_COMPETITION_LESION reading the weights-cleared twin."
+    }
+  ],
+  "determinism": {
+    "deterministic": true,
+    "n_null_controls_checked": 28,
+    "dirty_null_controls": []
+  },
+  "counts": {
+    "n_faculties_total": 38,
+    "n_coverable_env_lesion": 28,
+    "n_exercised": 26,
+    "n_load_bearing": 22,
+    "n_not_load_bearing": 4,
+    "n_not_exercised": 2,
+    "n_noisy": 0,
+    "n_lesion_knob_missing": 0,
+    "n_in_process": 4,
+    "n_thin": 2,
+    "n_mechanism_only": 1,
+    "n_proposed": 3
+  },
+  "load_bearing_fraction": 0.8461538461538461,
+  "load_bearing_faculties": [
+    "comprehension-monitor",
+    "comprehension-learned-animacy-cue",
+    "comprehension-learned-verb-selects",
+    "noncontradiction-gate",
+    "affect-coloring",
+    "affect-drives-response",
+    "affect-marker-spiking-wta",
+    "da-mode-drives-response",
+    "common-ground-drives",
+    "confidence-forthcomingness",
+    "pragmatic-implicature",
+    "surprise-monitor",
+    "metacog-monitor",
+    "worldmodel-forward",
+    "curiosity-followup",
+    "reconsolidation",
+    "episodic-memory",
+    "discourse-register",
+    "gnw-multistep-deliberation",
+    "self-initiated-utterance",
+    "vision-identity-spiking-hmax",
+    "bg-action-selection"
+  ],
+  "not_load_bearing_faculties": [
+    "da-gated-encoding",
+    "source-provenance-honesty",
+    "prospective-memory",
+    "open-ended-generation"
+  ]
+}

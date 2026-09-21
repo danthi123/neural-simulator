@@ -7,6 +7,12 @@ the [project handoff](HANDOFF.md), and the live state in
 board, when checked out, was `research/coordination/workboard.json` (⚠️ now ~a month
 stale — the live board is [GAP_CLOSURE_MISSION.md](GAP_CLOSURE_MISSION.md) CURRENT STATE; workboard.json is being retired).
 
+## 2026-09-21 — the #1 metric now has a robust, honest number (6-seed)
+- **How much of the reply does the brain actually drive?** The #1 metric — the fraction of the brain's faculties where cutting the brain's contribution provably changes what it says — now has a 6-seed (statistically honest) number under *adequate* probes: **0.85 ± 0.03**, with **20 faculties robustly load-bearing across all six seeds** (23 when you count faculties that flip in only some seeds). The shipped-by-default number (probes off) stays 0.59; the gap between the two is a *measurement* gap — thin probes that never exercised a faculty's driving condition — not a hollow brain.
+- **The 6-seed rule earned its keep:** a single lucky seed had read 0.88 (23 faculties); running all six revealed that 3 of those (episodic memory, an affect marker, source-provenance honesty) are *seed-dependent* — they sit right at a firing threshold and flip in some seeds but not others. Honest count: 20 robust, not 23.
+- **The last three open faculties are resolved honestly:** prospective memory ("remind me to X when Y") drives the reply in 5 of 6 seeds; open-ended guessing drives it *distributionally* (the single-reply test was the wrong ruler) and a real wiring bug was fixed along the way; dopamine-gated encoding is an honest negative — "load-bearing" only under a tuned knob, which we rejected.
+- All of the above is off-by-default research instrumentation; the shipped brain is unchanged. Next: fold these into production and give open-ended guessing its proper distributional ruler.
+
 ## 2026-09-18 — a strategic decision, and an honest go/no-go on "just scale it up"
 Two things this session change direction, not just capability.
 - **Decision (owner): we may trade a little biological realism for speed — but only honestly, and only when it's free.** Basing the work strongly on biology stays a core value. We relax bit-exact realism ONLY when it buys a *significant* performance gain, costs *nothing* important to the end-goal capabilities, and every such trade is documented. The invariants stay: brain-based cognition, one brain, emergence, and the honesty boundary.
