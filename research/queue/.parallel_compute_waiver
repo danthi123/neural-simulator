@@ -1,12 +1,16 @@
-NO-READY-WORK (honest, 2026-09-17 ~19:40; owner GAMING → GPU paused, CPU-pool-only allowed).
-The ready non-contending CPU levers are EXHAUSTED this gaming window: the vision S2-template-learning
-arc CLOSED this window (3 findings landed — verb->object NO-GO f1daee58, R-STDP lever 6c90aef1,
-arc-close 6c009ec6; the pool ran ~19 genuine jobs: R-STDP explore/6-seed + n_ex data-scaling).
-Every REMAINING frontier is GPU-gated (post-gaming queue: d384 mouth capacity sweep; the onebrain
-11-organ flip curiosity per_neuron_ou_seed fix + battery) — the CPU-corpus levers are VERIFIED CLOSED
-this window (verify-first, git-log+findings): vision S2-template-learning CLOSED (all 3 classes NO-GO,
-6c009ec6); affect graded-valence-STRENGTH CLOSED as a CPU-corpus problem (d7ec3d3b0 graded-DA BOUNDARY
-+ 93ecfee9f "CLOSES the CPU-corpus method space, PROVES the embodiment requirement" → redirect is
-EMBODIMENT/interoception, a multimodal arc, not a gaming-window CPU job); OOV closed via subword
-(retrain GPU-queued). Queueing a CPU job now would re-derive banked/closed work rather than add signal. Holding the pool until game.sh off (resume the GPU post-gaming queue) or a new deep-research
-arc is scoped. Not a priority/focus deferral — there is no ready non-re-deriving CPU lever to stage.
+FRONTIER COMPUTE-COVERED (2026-09-21 ~04:58 UTC, autonomous overnight) — the owner-ratified #1 metric
+(lesion-verified LOAD-BEARING FRACTION) is being computed on TWO genuine 6-seed lanes in flight:
+  1. AWS r7i.4xlarge: adequate-probe 6-seed, 7 verified drive-flags, numpy 6-parallel (the ROBUST headline fraction).
+  2. LOCAL (19 cores): prospective-memory-v2 6-seed, --only prospective-memory (makes the verified single-seed flip
+     robust per the 6-seed constraint; consolidation branch research/lb-consolidation @ 179c3c566).
+POOL (pool41/42 idle) + local GPU idle have NO genuine ready job — VERIFIED, not assumed:
+  - The queued pool job (GNW stop-conflict scaled-boost 6-seed) is ALREADY COMPLETE: verdict=GO, n_seeds=6
+    (research/findings/raw/_gnw_stop_conflict_scaled_boost_6seed.json, 2026-09-17) -> stale entry, cleared.
+  - The named vision next-lever (conjbind heldout-position 6-seed) is ALREADY DONE + the arc CONCLUDED:
+    "divisive normalization is the decisive lever; conjunctive binding is NOT (GO 6/6)" (96ac8b3aa, 2026-09-17).
+  - The load-bearing arc does not need GPU (small brains; numpy parallel + BLAS-cap is the proven backend;
+    cupy per-build overhead crawls for this setup-bound battery -- 2026-09-20 finding).
+Genuine forward build queued for the consolidation (NOT make-work now, to respect the token-leak flag):
+  wire open-ended-generation's DISTRIBUTIONAL lesion metric (draw_many plausible-frac 0.83->0.04, already GO'd)
+  as its load-bearing ruler -- the open-ended agent's own recommendation (finding 2026-09-21, commit 41575dc86).
+Holding pool/GPU is EARNED here: no ready job exists for them, and the frontier metric is fully covered.

@@ -67,14 +67,36 @@ NOTE: it was briefly accidentally committed default-ON (69a92c0f5, swept staged 
 (15a8d347) → properly re-landed on all_pass. The MID hard-gate curiosity-flip item is now CLOSED; affect-hollow
 remains.
 
-**IN-FLIGHT / PENDING:**
-- Load-bearing-fraction instrument: BUILT but uncommitted in worktree (agent stopped mid-smoke when owner started
-  gaming); finalize + commit + run the full measurement (AWS or memcap) post-game.
-- 6-seed confirm of the decisive scaling NO-GO (lower priority now — owner ratified the verdict).
-- Chunked-scan+TF32 speedup on branch research/wkv-chunked-scan @ 21ab886b8 (verified byte-identical).
-- AWS: instance terminated; leftover SG sg-0d12677b1c8fc55be (free) to delete once termination completes.
-- 6-seed confirm of the decisive scaling NO-GO (was 1 seed) — via chunked-scan/TF32 speedup, AWS optional.
-- Chunked-scan+TF32 speedup landed on branch research/wkv-chunked-scan @ 21ab886b8 (verified byte-identical).
+**⭐ LATEST 2026-09-21 ~05Z (all-night autonomous, owner asleep) — THE 3 GENUINE GAPS RESOLVED + ADEQUATE 6-SEED IN FLIGHT:**
+- **All 3 gap agents DONE** (honest, NO tuning — HARD RULE 2 held):
+  - **prospective-memory → FLIPS load-bearing** (v2: the driving probe needed 3 intervening turns so the held×cue
+    coincidence reaches its operating point; brain-build verified seed 42). Branch research/gap-prospective-memory-v2
+    @ a38dd98. 6-seed IN FLIGHT locally.
+  - **open-ended-generation → single-turn NOT load-bearing, but DISTRIBUTIONALLY load-bearing** (the single-turn
+    decision-diff is the WRONG RULER; draw_many plausible-frac 0.83→0.04 under lesion, already GO'd). Honest negative
+    + a genuine banked wiring fix (the neural draw-lesion was a silent no-op). Recommends scoring it by its
+    distributional metric. Branch research/gap-open-ended-generation-v2 @ 41575dc86.
+  - **da-gated-encoding → honest-negative CONFIRMED** (not load-bearing on a natural probe; the tuned flip rejected).
+    Branch @ 9c814ab10.
+- **CONSOLIDATION branch research/lb-consolidation @ 179c3c566** = lb-integration ∪ pmem-v2 (union-merged; selftest
+  PASS incl. pmem-drive + seed-threading coexisting, byte-identical-default, PROBE_TURNS=26).
+- **ADEQUATE-PROBE 6-SEED IN FLIGHT on AWS** (7 verified drive-flags, numpy 6-parallel) → the ROBUST ~0.88 number.
+
+**IN-FLIGHT / PENDING (2026-09-21 ~05Z):**
+- AWS adequate-probe 6-seed (7 flags) — running (i-051464a1, IP 18.215.251.212); terminate + delete SG on completion.
+- LOCAL pmem-v2 6-seed (--only prospective-memory) — running throttled (2 seeds live + a memcap'd chain for the
+  other 4, after a self-inflicted RAM spike from an uncapped 6-parallel launch — recovered, avail 23G).
+
+**PRE-DECIDED NEXT ACTIONS:**
+1. Harvest the AWS adequate-probe 6-seed → record the ROBUST adequate-probe load-bearing fraction (6-seed,
+   constraint-mandated); update ledger headline.load_bearing_integrated + the finding + the Vikunja board.
+2. Harvest the LOCAL pmem-v2 6-seed → if 6/6 load-bearing the flip is robust; fold it into the picture.
+3. Merge the verified branches to main: research/lb-consolidation (lb-integration ∪ pmem-v2) — seed-threading
+   touches production server.py, so run a DEFAULT-PATH no-regression BEFORE merging; then open-ended's wiring fix.
+4. Genuine forward build (consolidation): wire open-ended-generation's DISTRIBUTIONAL lesion metric as its
+   load-bearing ruler (the agent's own recommendation) — converts its honest-negative to a proper load-bearing read.
+5. Terminate AWS (i-051464a1) + delete SG when the 6-seed lands. Watch local RAM (avail<8G → serialize; precise
+   PID kills only, never a broad --worker pattern).
 
 *Everything below is prior-arc HISTORY.*
 
