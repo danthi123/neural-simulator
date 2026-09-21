@@ -92,16 +92,28 @@ _TURN_BY_LABEL = {t[0]: t for t in PROBE_TURNS}
 # ── EXTRA turns reachable BY LABEL ONLY, deliberately NOT in the default PROBE_TURNS roster ───────────────────────
 # Rationale: the full roster is iterated by run_regression_battery + every flip-verify harness that imports it, so a
 # turn added to PROBE_TURNS runs (and on cupy would BTSP-write) in ALL of them. These turns are needed only by the
-# load_bearing runner's episodic-driving remap (LB_EPISODIC_DRIVE_PROBE), so they live here — merged into
-# _TURN_BY_LABEL (the worker resolves turns by label from it) but OUT of PROBE_TURNS -> the default roster, the
-# regression battery, and every flip-verify harness are BYTE-IDENTICAL. The EPISODIC DRIVING PAIR: a STORE turn then
-# a RECALL turn in ONE isolated session ('epi2', declared store-first), so the referential recall has a memory to
-# COMPLETE (intact in_memory=True -> disclosure; lesion in_memory=False -> "I don't recall") — the load-bearing recall
-# path the lone-fresh-session `episodic` turn can NEVER exercise (nothing stored -> intact reads not-in-memory,
-# identical to the lesion). See research/runners/load_bearing_fraction.py.
+# load_bearing runner's driving remaps (LB_EPISODIC_DRIVE_PROBE / LB_DISCOURSE_REGISTER_DRIVE_PROBE), so they live
+# here — merged into _TURN_BY_LABEL (the worker resolves turns by label from it) but OUT of PROBE_TURNS -> the default
+# roster, the regression battery, and every flip-verify harness are BYTE-IDENTICAL.
+#   EPISODIC DRIVING PAIR ('epi2'): a STORE turn then a RECALL turn in ONE isolated session (declared store-first), so
+#   the referential recall has a memory to COMPLETE (intact in_memory=True -> disclosure; lesion in_memory=False ->
+#   "I don't recall") — the load-bearing recall path the lone-fresh-session `episodic` turn can NEVER exercise
+#   (nothing stored -> intact reads not-in-memory, identical to the lesion).
+#   DISCOURSE-REGISTER DRIVING TRIPLE ('dr2'): the default `dr_c` probe ('dog chase cat' -> 'then bird chase worm' ->
+#   before?) has its correct before-agent be 'dog' = referents[0] = the register's identity index (0). The LESION
+#   (_PrevSilencePairRegister.observe) forces the held prev slots to that SAME identity index, so intact ('dog' via the
+#   learned RNN shift) and lesion ('dog' via forced-identity) return the IDENTICAL agent -> zero diff -> hollow, purely
+#   an index collision. This triple SWAPS the roles so the correct before-agent is 'bird' = referents[3] != identity:
+#   'bird chase worm' (bare clause -> CURRENT event) -> 'then dog chase cat' (connective -> SHIFT: bird/worm to prev,
+#   dog/cat current) -> 'who was doing it before' -> intact reads the held PREV agent 'bird', lesion still forces 'dog'
+#   -> discourse_register.agent FLIPS 'bird' vs 'dog' -> LOAD-BEARING. No forced env needed (the register defaults
+#   spiking=True on any backend). See research/runners/load_bearing_fraction.py.
 _EXTRA_TURNS = [
     ("epi_store", "the dog chase the cat",    "epi2", True,  None,   False),  # stores 'dog' (Hook B verified-SVO BTSP write; needs BRAIN_EPISODIC_STORE=1 or a cupy backend to execute)
     ("epi_recall","did we discuss the dog",   "epi2", False, None,   False),  # recalls 'dog' (Hook A dendritic-dAP completion) in the SAME session -> in_memory True intact / False lesion
+    ("dr2_a",     "bird chase worm",          "dr2",  True,  None,   False),  # D3 fold #1 (bare clause, no connective) -> CURRENT event agent=bird (referents[3])
+    ("dr2_b",     "then dog chase cat",       "dr2",  False, None,   False),  # D3 fold #2 (connective-led) -> SHIFT: bird/worm -> prev slots, dog/cat -> current
+    ("dr2_c",     "who was doing it before",  "dr2",  False, None,   False),  # D3 before-query -> held PREV agent = 'bird' (index 3 != identity 0); lesion forces 'dog' (identity 0)
 ]
 _TURN_BY_LABEL.update({t[0]: t for t in _EXTRA_TURNS})
 
