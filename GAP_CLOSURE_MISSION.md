@@ -81,8 +81,12 @@ remains.
     distributional metric. Branch research/gap-open-ended-generation-v2 @ 41575dc86.
   - **da-gated-encoding → honest-negative CONFIRMED** (not load-bearing on a natural probe; the tuned flip rejected).
     Branch @ 9c814ab10.
-- **CONSOLIDATION branch research/lb-consolidation @ 179c3c566** = lb-integration ∪ pmem-v2 (union-merged; selftest
-  PASS incl. pmem-drive + seed-threading coexisting, byte-identical-default, PROBE_TURNS=26).
+- **CONSOLIDATION branch research/lb-consolidation @ bacd4e3c** = lb-integration ∪ pmem-v2 ∪ open-ended-v2 (all 9
+  drive-flags + seed-threading + the open-ended wiring fix; union-merged, selftest PASS, zero markers, byte-identical
+  default, PROBE_TURNS=26; default-path no-regression VERIFIED). Pushed both remotes. **Merge-hygiene lesson banked:**
+  the pmem merge's `git add -A` swept an unresolved ROADMAP.md (git-merge output was tail-truncated so the union
+  resolver missed it) → committed stray markers; fixed (cbec8653). Now: narrow add + a staged-content marker guard
+  (`git diff --cached | grep '^+<<<<<<<'`) before every merge commit.
 - **ADEQUATE-PROBE 6-SEED IN FLIGHT on AWS** (7 verified drive-flags, numpy 6-parallel) → the ROBUST ~0.88 number.
 
 **IN-FLIGHT / PENDING (2026-09-21 ~05Z):**
@@ -95,8 +99,10 @@ remains.
    constraint-mandated); update ledger headline.load_bearing_integrated + the finding + the Vikunja board.
 2. ✅ DONE — LOCAL pmem-v2 6-seed = 5/6 (seed 44 exception, null-clean → seed-dependent-borderline). Fold into the
    consolidation finding as a borderline flip (not robust core).
-3. Merge the verified branches to main: research/lb-consolidation (lb-integration ∪ pmem-v2) — seed-threading
-   touches production server.py, so run a DEFAULT-PATH no-regression BEFORE merging; then open-ended's wiring fix.
+3. Merge research/lb-consolidation @ bacd4e3c (= lb-integration ∪ pmem-v2 ∪ open-ended-v2, ALL folded) to main.
+   **DEFAULT-PATH NO-REGRESSION VERIFIED:** _brain_chat_seed() returns 42 unset / 43 set / 42 garbage; every
+   server.py change is a literal-42→_brain_chat_seed() swap, no other logic → BYTE-IDENTICAL default by construction.
+   Merge is de-risked + READY (all 9 flags default-OFF, seed-threading byte-identical default). Do it at AWS-land.
 4. Genuine forward build (consolidation): wire open-ended-generation's DISTRIBUTIONAL lesion metric as its
    load-bearing ruler (the agent's own recommendation) — converts its honest-negative to a proper load-bearing read.
 5. Terminate AWS (i-051464a1) + delete SG when the 6-seed lands. Watch local RAM (avail<8G → serialize; precise
