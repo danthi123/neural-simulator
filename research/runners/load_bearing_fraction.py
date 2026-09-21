@@ -76,6 +76,13 @@ the forced BTSP write is ~seconds not ~510s/store):
   SIM_BACKEND=cupy LB_EPISODIC_DRIVE_PROBE=1 tools/memcap.sh 24 -- .venv/bin/python \
       -m research.runners.load_bearing_fraction --only episodic-memory --repeats 2 \
       --out research/findings/raw/_load_bearing/episodic_drive.json     # expect load-bearing=1, null-control clean
+Verify the SURPRISE CONFIRM fix (default-off; flips surprise-monitor hollow->load-bearing by measuring the CONFIRM turn
+where the same-block lesion actually bites, instead of the contra CONTRADICT turn it never reaches; numpy is fine, the
+confirm read is ~seconds):
+  LB_SURPRISE_CONFIRM_PROBE=1 tools/memcap.sh 24 -- .venv/bin/python \
+      -m research.runners.load_bearing_fraction --only surprise-monitor --repeats 2 \
+      --out research/findings/raw/_load_bearing/surprise_confirm.json   # expect load-bearing=1, null-control clean,
+      # surprise.surprised False(intact) vs True(lesion)
 Run (full measurement, capped; defer to a non-gaming window):
   tools/memcap.sh 24 -- .venv/bin/python -m research.runners.load_bearing_fraction \
       --out research/findings/raw/_load_bearing/load_bearing.json
@@ -131,6 +138,30 @@ _LB_RESUME = os.environ.get("LB_RESUME_SKIP_EXISTING", "").strip().lower() in ("
 LB_EPISODIC_DRIVE = os.environ.get("LB_EPISODIC_DRIVE_PROBE", "").strip().lower() in ("1", "true", "yes", "on")
 _EPISODIC_DRIVE_TURN = "epi_recall"      # the referential RECALL turn (its group is store->recall, same session)
 _EPISODIC_DRIVE_ENV = {"BRAIN_EPISODIC_STORE": "1"}   # force the BTSP write to execute on the probe backend
+
+# ── SURPRISE CONFIRM PROBE (opt-in, env-gated; default OFF -> byte-identical to the 2026-09-19 hollow baseline) ────
+# WHY (diagnosis, finding 2026-09-20-hollow-surprise-monitor-confirm-probe): surprise-monitor is isolated-lesion-load-
+# bearing (BRAIN_SURPRISE_LESION zeroes the block-diagonal patient_expected->surprise prediction edges, collapsing the
+# 22.8x confirm/contradict separation) yet reads INTEGRATED-HOLLOW here for a PROBE reason, not a wiring reason. Its
+# default probe turn is `contra` ("the dog chase the fish") = a CONTRADICT trial: the asserted patient ('fish') lives in
+# a DIFFERENT circuit block than the stored one ('cat'), and the lesioned inhibition only ever reached the SAME (stored)
+# block -- so on CONTRADICT the surprise pool is un-inhibited INTACT too, and the lesion changes nothing (empirically
+# intact_a_contra surprised=true, lesion_surprise_monitor surprised=true -> compare() 'pass' -> not load-bearing). The
+# lesion only BITES on a CONFIRM trial (asserted==stored, SHARED block), where the intact prediction cancels excitation
+# on that block (surprised=False) and the lesion removes that cancellation (surprised=True). This flag remaps the
+# surprise probe to the CONFIRM turn (`confirm` = "the dog chase the cat", already in PROBE_TURNS for metacog-monitor,
+# session 'surp', single-turn group -> byte-identical roster, no new turn/session/forced-write env). Grounded in the
+# already-produced artifact intact_a_confirm.json: intact confirm surprised=false (surprise_hz 0.0 < threshold 2.629)
+# with calib.confirm_before_max=4.398 (the pre-homeostat, PARTIALLY-inhibited confirm rate) already ABOVE 2.629 -> fully
+# removing the inhibition (the lesion) fires confirm at >= that rate -> surprised flips False->True -> the decision field
+# `surprise.surprised` FLIPS -> LOAD-BEARING. The reply is genuinely driven by it: webapp/server.py gates surprise_prefix
+# ("That surprises me -- my mismatch monitor fired ...") on sj['surprised'] and splices it into the answer, so a CONFIRM-
+# turn lesion spuriously annotates a plain restatement -- a real user-visible diff the CONTRADICT probe can never expose
+# (both arms already carry the notice there). OFF (default) -> surprise is measured on the `contra` turn exactly as the
+# baseline did (hollow), and no other faculty is touched. No base_env: the confirm turn is deterministic (homeostat-
+# calibrated at build), so the null control is clean with no forced write.
+LB_SURPRISE_CONFIRM = os.environ.get("LB_SURPRISE_CONFIRM_PROBE", "").strip().lower() in ("1", "true", "yes", "on")
+_SURPRISE_CONFIRM_TURN = "confirm"       # the CONFIRM turn (asserted==stored, shared block) where the lesion bites
 
 
 def _spawn_arm(env, turn_labels, out_path):
@@ -364,6 +395,17 @@ def measure_faculty(key, out_dir, repeats=1, intact_cache=None, seed=42):
         res["turn"] = _EPISODIC_DRIVE_TURN
         res["note"] = "LB_EPISODIC_DRIVE_PROBE: store->recall on session 'epi2' + BRAIN_EPISODIC_STORE=1. " + res["note"]
 
+    # SURPRISE CONFIRM remap (default-off; see LB_SURPRISE_CONFIRM). Make the surprise probe exercise its load-bearing
+    # inhibition path: remap from the `contra` turn (a CONTRADICT trial the same-block lesion never touches) to the
+    # `confirm` turn (asserted==stored, SHARED block), where the intact prediction cancels the excitation (surprised=
+    # False) and the lesion removes that cancellation (surprised=True) -> the decision field `surprise.surprised` FLIPS.
+    # No base_env is needed (unlike episodic): the confirm turn is already in PROBE_TURNS and deterministic, so both
+    # intact arms read surprised=False -> clean null, only the lesion flips it. Every OTHER faculty keeps base_env={}.
+    if LB_SURPRISE_CONFIRM and key == "surprise-monitor":
+        row = ("surprise-monitor", _SURPRISE_CONFIRM_TURN, ["surprise.surprised"], False)
+        res["turn"] = _SURPRISE_CONFIRM_TURN
+        res["note"] = "LB_SURPRISE_CONFIRM_PROBE: measured on the CONFIRM turn 'confirm' (asserted==stored, shared block) where the same-block lesion bites; contra is a different-block CONTRADICT the lesion never reaches. " + res["note"]
+
     grp = turn_group(row[1])
     # cache key includes base_env so a stored (BRAIN_EPISODIC_STORE) intact arm never aliases a plain-{} arm on a
     # shared turn-group (the driving group is unique anyway, but keep the key honest).
@@ -519,6 +561,11 @@ def selftest(out_path=None):
         "episodic-drive turns exist": all(l in _TURN_BY_LABEL for l in (_EPISODIC_DRIVE_TURN, "epi_store")),
         "episodic-drive group is store->recall": turn_group(_EPISODIC_DRIVE_TURN) == ["epi_store", _EPISODIC_DRIVE_TURN],
         "episodic-drive forces the BTSP write": _flag_resolves("BRAIN_EPISODIC_STORE") and "1" in _EPISODIC_DRIVE_ENV.values(),
+        # surprise-confirm remap (LB_SURPRISE_CONFIRM_PROBE): the CONFIRM turn is already in the default roster (no new
+        # turn/session), its group is the single confirm turn, and the surprise neural-cut lesion flag resolves in source.
+        "surprise-confirm turn is in the default roster": _SURPRISE_CONFIRM_TURN in {t[0] for t in PROBE_TURNS},
+        "surprise-confirm group is the single confirm turn": turn_group(_SURPRISE_CONFIRM_TURN) == [_SURPRISE_CONFIRM_TURN],
+        "surprise lesion flag resolves in source": _flag_resolves("BRAIN_SURPRISE_LESION"),
         "every FACULTY_LESIONS key is a real battery faculty":
             all(k in faculty_list() for k in FACULTY_LESIONS),
         "every battery faculty is mapped": all(k in FACULTY_LESIONS for k in faculty_list()),
@@ -549,6 +596,8 @@ def selftest(out_path=None):
                "n_probe_turns_default_roster": len(PROBE_TURNS),
                "episodic_drive_group": turn_group(_EPISODIC_DRIVE_TURN),
                "episodic_drive_env": _EPISODIC_DRIVE_ENV,
+               "surprise_confirm_turn": _SURPRISE_CONFIRM_TURN,
+               "surprise_confirm_group": turn_group(_SURPRISE_CONFIRM_TURN),
                "lesion_map_coverage": dict(kinds)}
         os.makedirs(os.path.dirname(os.path.abspath(out_path)), exist_ok=True)
         json.dump(art, open(out_path, "w"), indent=2, default=str)

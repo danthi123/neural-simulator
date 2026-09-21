@@ -7,6 +7,10 @@ the [project handoff](HANDOFF.md), and the live state in
 board, when checked out, was `research/coordination/workboard.json` (⚠️ now ~a month
 stale — the live board is [GAP_CLOSURE_MISSION.md](GAP_CLOSURE_MISSION.md) CURRENT STATE; workboard.json is being retired).
 
+## 2026-09-20 — load-bearing probe-fixes + per-seed threading integrated on one branch (PENDING 6-seed verification)
+- The load-bearing-fraction instrument (the tool that measures the #1 metric — how many faculties provably change the reply when the brain's contribution is cut) had several faculties reading "hollow" for a PROBE reason, not a wiring reason: the probe never exercised the path where the lesion would bite. Six independent probe-fixes — surprise-monitor, discourse-register, common-ground, non-contradiction, affect-coloring, and basal-ganglia action-selection — plus a seed-threading feature (run the whole measurement at a chosen seed, with per-seed output filenames) are now merged onto a single integration branch (`research/lb-integration`). Each fix is default-OFF: with no flags set the instrument is byte-identical to the prior baseline.
+- NOT YET VERIFIED — this is the integration only. The 6-seed no-regression + load-bearing run that would confirm these fixes actually flip the faculties from hollow to load-bearing is the controller's next step; this entry will be updated with the measured result when it lands. Do not quote a load-bearing-fraction number from this entry.
+
 ## 2026-09-18 — a strategic decision, and an honest go/no-go on "just scale it up"
 Two things this session change direction, not just capability.
 - **Decision (owner): we may trade a little biological realism for speed — but only honestly, and only when it's free.** Basing the work strongly on biology stays a core value. We relax bit-exact realism ONLY when it buys a *significant* performance gain, costs *nothing* important to the end-goal capabilities, and every such trade is documented. The invariants stay: brain-based cognition, one brain, emergence, and the honesty boundary.
