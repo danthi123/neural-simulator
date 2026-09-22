@@ -1,0 +1,196 @@
+{
+  "runner": "unit-level direct SourceProvenanceHonestyMonitor probe (not the full webapp.brain_chat pipeline)",
+  "note": "Reuses the SAME production classes (SourceProvenanceHonestyMonitor.judge_fact, _laneC_source_provenance_opponent_derisk._judge) the production organ calls; corroborating evidence alongside the full-pipeline load_bearing_fraction runs for s42/s43/s44 in this same directory. Backend numpy CPU.",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "rows": [
+    {
+      "seed": 42,
+      "flag": null,
+      "intact": {
+        "d": 0.9999999905325445,
+        "label": "perceived",
+        "agrees_with_encoded": true
+      },
+      "lesion": {
+        "d": 0.0,
+        "label": "generated",
+        "agrees_with_encoded": false
+      },
+      "load_bearing_by_this_unit_probe": true
+    },
+    {
+      "seed": 42,
+      "flag": "1",
+      "intact": {
+        "d": 0.9999999905325445,
+        "label": "perceived",
+        "agrees_with_encoded": true
+      },
+      "lesion": {
+        "d": 0.0,
+        "label": null,
+        "agrees_with_encoded": false
+      },
+      "load_bearing_by_this_unit_probe": true
+    },
+    {
+      "seed": 43,
+      "flag": null,
+      "intact": {
+        "d": 0.9999999898089174,
+        "label": "perceived",
+        "agrees_with_encoded": true
+      },
+      "lesion": {
+        "d": 0.0,
+        "label": "generated",
+        "agrees_with_encoded": false
+      },
+      "load_bearing_by_this_unit_probe": true
+    },
+    {
+      "seed": 43,
+      "flag": "1",
+      "intact": {
+        "d": 0.9999999898089174,
+        "label": "perceived",
+        "agrees_with_encoded": true
+      },
+      "lesion": {
+        "d": 0.0,
+        "label": null,
+        "agrees_with_encoded": false
+      },
+      "load_bearing_by_this_unit_probe": true
+    },
+    {
+      "seed": 44,
+      "flag": null,
+      "intact": {
+        "d": 0.9999999910863511,
+        "label": "perceived",
+        "agrees_with_encoded": true
+      },
+      "lesion": {
+        "d": 0.0,
+        "label": "perceived",
+        "agrees_with_encoded": true
+      },
+      "load_bearing_by_this_unit_probe": false
+    },
+    {
+      "seed": 44,
+      "flag": "1",
+      "intact": {
+        "d": 0.9999999910863511,
+        "label": "perceived",
+        "agrees_with_encoded": true
+      },
+      "lesion": {
+        "d": 0.0,
+        "label": null,
+        "agrees_with_encoded": false
+      },
+      "load_bearing_by_this_unit_probe": true
+    },
+    {
+      "seed": 100,
+      "flag": null,
+      "intact": {
+        "d": 0.9999999901538462,
+        "label": "perceived",
+        "agrees_with_encoded": true
+      },
+      "lesion": {
+        "d": 0.0,
+        "label": "generated",
+        "agrees_with_encoded": false
+      },
+      "load_bearing_by_this_unit_probe": true
+    },
+    {
+      "seed": 100,
+      "flag": "1",
+      "intact": {
+        "d": 0.9999999901538462,
+        "label": "perceived",
+        "agrees_with_encoded": true
+      },
+      "lesion": {
+        "d": 0.0,
+        "label": null,
+        "agrees_with_encoded": false
+      },
+      "load_bearing_by_this_unit_probe": true
+    },
+    {
+      "seed": 101,
+      "flag": null,
+      "intact": {
+        "d": 0.9999999904191618,
+        "label": "perceived",
+        "agrees_with_encoded": true
+      },
+      "lesion": {
+        "d": 0.0,
+        "label": "generated",
+        "agrees_with_encoded": false
+      },
+      "load_bearing_by_this_unit_probe": true
+    },
+    {
+      "seed": 101,
+      "flag": "1",
+      "intact": {
+        "d": 0.9999999904191618,
+        "label": "perceived",
+        "agrees_with_encoded": true
+      },
+      "lesion": {
+        "d": 0.0,
+        "label": null,
+        "agrees_with_encoded": false
+      },
+      "load_bearing_by_this_unit_probe": true
+    },
+    {
+      "seed": 102,
+      "flag": null,
+      "intact": {
+        "d": 0.9999999906432749,
+        "label": "perceived",
+        "agrees_with_encoded": true
+      },
+      "lesion": {
+        "d": 0.0,
+        "label": "perceived",
+        "agrees_with_encoded": true
+      },
+      "load_bearing_by_this_unit_probe": false
+    },
+    {
+      "seed": 102,
+      "flag": "1",
+      "intact": {
+        "d": 0.9999999906432749,
+        "label": "perceived",
+        "agrees_with_encoded": true
+      },
+      "lesion": {
+        "d": 0.0,
+        "label": null,
+        "agrees_with_encoded": false
+      },
+      "load_bearing_by_this_unit_probe": true
+    }
+  ],
+  "n_on_load_bearing_by_this_probe": 6,
+  "n_off_load_bearing_by_this_probe": 4
+}
