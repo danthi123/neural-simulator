@@ -1,0 +1,80 @@
+{
+  "arm": "lesion",
+  "base_pa": 300.0,
+  "build_seconds": 1.9534661769866943,
+  "confidence_read": "nmda_norm",
+  "elapsed_seconds": 3.023030996322632,
+  "organ_calib_2band": {
+    "clean_gap": true,
+    "confidence_read": "nmda_norm",
+    "max_lo": 0.052970631583143565,
+    "mean_hi": 0.07711825871493624,
+    "mean_lo": 0.0366349603412728,
+    "min_hi": 0.06420451407329936,
+    "read_reps": 8,
+    "role_conf_hi": 0.5,
+    "role_conf_lo": 0.3
+  },
+  "organ_threshold_2band": 0.05858757282822146,
+  "read_reps": 8,
+  "repeat": "x",
+  "seed": 101,
+  "sig_hi_pa": 260.0,
+  "sig_lo_pa": 40.0,
+  "sweep": [
+    {
+      "confident_2band": false,
+      "evidence": 0.0,
+      "margin": 0.002646212982646611,
+      "threshold_2band": 0.05858757282822146
+    },
+    {
+      "confident_2band": false,
+      "evidence": 0.125,
+      "margin": 0.002646212982646611,
+      "threshold_2band": 0.05858757282822146
+    },
+    {
+      "confident_2band": false,
+      "evidence": 0.25,
+      "margin": 0.002646212982646611,
+      "threshold_2band": 0.05858757282822146
+    },
+    {
+      "confident_2band": false,
+      "evidence": 0.375,
+      "margin": 0.002646212982646611,
+      "threshold_2band": 0.05858757282822146
+    },
+    {
+      "confident_2band": false,
+      "evidence": 0.5,
+      "margin": 0.002646212982646611,
+      "threshold_2band": 0.05858757282822146
+    },
+    {
+      "confident_2band": false,
+      "evidence": 0.625,
+      "margin": 0.002646212982646611,
+      "threshold_2band": 0.05858757282822146
+    },
+    {
+      "confident_2band": false,
+      "evidence": 0.75,
+      "margin": 0.002646212982646611,
+      "threshold_2band": 0.05858757282822146
+    },
+    {
+      "confident_2band": false,
+      "evidence": 0.875,
+      "margin": 0.002646212982646611,
+      "threshold_2band": 0.05858757282822146
+    },
+    {
+      "confident_2band": false,
+      "evidence": 1.0,
+      "margin": 0.002646212982646611,
+      "threshold_2band": 0.05858757282822146
+    }
+  ]
+}

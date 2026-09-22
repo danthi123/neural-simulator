@@ -1,0 +1,80 @@
+{
+  "arm": "lesion",
+  "base_pa": 300.0,
+  "build_seconds": 1.9625182151794434,
+  "confidence_read": "nmda_norm",
+  "elapsed_seconds": 3.11885404586792,
+  "organ_calib_2band": {
+    "clean_gap": true,
+    "confidence_read": "nmda_norm",
+    "max_lo": 0.03752800876825077,
+    "mean_hi": 0.05591370777383284,
+    "mean_lo": 0.022504073149129188,
+    "min_hi": 0.04419297513445343,
+    "read_reps": 8,
+    "role_conf_hi": 0.5,
+    "role_conf_lo": 0.3
+  },
+  "organ_threshold_2band": 0.0408604919513521,
+  "read_reps": 8,
+  "repeat": "x",
+  "seed": 102,
+  "sig_hi_pa": 260.0,
+  "sig_lo_pa": 40.0,
+  "sweep": [
+    {
+      "confident_2band": false,
+      "evidence": 0.0,
+      "margin": 0.010941907510411904,
+      "threshold_2band": 0.0408604919513521
+    },
+    {
+      "confident_2band": false,
+      "evidence": 0.125,
+      "margin": 0.010941907510411904,
+      "threshold_2band": 0.0408604919513521
+    },
+    {
+      "confident_2band": false,
+      "evidence": 0.25,
+      "margin": 0.010941907510411904,
+      "threshold_2band": 0.0408604919513521
+    },
+    {
+      "confident_2band": false,
+      "evidence": 0.375,
+      "margin": 0.010941907510411904,
+      "threshold_2band": 0.0408604919513521
+    },
+    {
+      "confident_2band": false,
+      "evidence": 0.5,
+      "margin": 0.010941907510411904,
+      "threshold_2band": 0.0408604919513521
+    },
+    {
+      "confident_2band": false,
+      "evidence": 0.625,
+      "margin": 0.010941907510411904,
+      "threshold_2band": 0.0408604919513521
+    },
+    {
+      "confident_2band": false,
+      "evidence": 0.75,
+      "margin": 0.010941907510411904,
+      "threshold_2band": 0.0408604919513521
+    },
+    {
+      "confident_2band": false,
+      "evidence": 0.875,
+      "margin": 0.010941907510411904,
+      "threshold_2band": 0.0408604919513521
+    },
+    {
+      "confident_2band": false,
+      "evidence": 1.0,
+      "margin": 0.010941907510411904,
+      "threshold_2band": 0.0408604919513521
+    }
+  ]
+}

@@ -1,0 +1,80 @@
+{
+  "arm": "lesion",
+  "base_pa": 300.0,
+  "build_seconds": 1.947232723236084,
+  "confidence_read": "nmda_norm",
+  "elapsed_seconds": 3.0065371990203857,
+  "organ_calib_2band": {
+    "clean_gap": true,
+    "confidence_read": "nmda_norm",
+    "max_lo": 0.05585473364676948,
+    "mean_hi": 0.08338421519381395,
+    "mean_lo": 0.04024896748934768,
+    "min_hi": 0.06791818701044258,
+    "read_reps": 8,
+    "role_conf_hi": 0.5,
+    "role_conf_lo": 0.3
+  },
+  "organ_threshold_2band": 0.061886460328606036,
+  "read_reps": 8,
+  "repeat": "x",
+  "seed": 42,
+  "sig_hi_pa": 260.0,
+  "sig_lo_pa": 40.0,
+  "sweep": [
+    {
+      "confident_2band": false,
+      "evidence": 0.0,
+      "margin": 0.0028956722864838507,
+      "threshold_2band": 0.061886460328606036
+    },
+    {
+      "confident_2band": false,
+      "evidence": 0.125,
+      "margin": 0.0028956722864838507,
+      "threshold_2band": 0.061886460328606036
+    },
+    {
+      "confident_2band": false,
+      "evidence": 0.25,
+      "margin": 0.0028956722864838507,
+      "threshold_2band": 0.061886460328606036
+    },
+    {
+      "confident_2band": false,
+      "evidence": 0.375,
+      "margin": 0.0028956722864838507,
+      "threshold_2band": 0.061886460328606036
+    },
+    {
+      "confident_2band": false,
+      "evidence": 0.5,
+      "margin": 0.0028956722864838507,
+      "threshold_2band": 0.061886460328606036
+    },
+    {
+      "confident_2band": false,
+      "evidence": 0.625,
+      "margin": 0.0028956722864838507,
+      "threshold_2band": 0.061886460328606036
+    },
+    {
+      "confident_2band": false,
+      "evidence": 0.75,
+      "margin": 0.0028956722864838507,
+      "threshold_2band": 0.061886460328606036
+    },
+    {
+      "confident_2band": false,
+      "evidence": 0.875,
+      "margin": 0.0028956722864838507,
+      "threshold_2band": 0.061886460328606036
+    },
+    {
+      "confident_2band": false,
+      "evidence": 1.0,
+      "margin": 0.0028956722864838507,
+      "threshold_2band": 0.061886460328606036
+    }
+  ]
+}

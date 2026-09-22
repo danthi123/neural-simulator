@@ -1,0 +1,167 @@
+{
+  "arm": "intact",
+  "base_pa": 300.0,
+  "build_seconds": 2.067657232284546,
+  "calibration": {
+    "auc_lo_med": 1.0,
+    "auc_med_hi": 1.0,
+    "boundary_lo_med": 0.049646339163638364,
+    "boundary_med_hi": 0.07504800540134922,
+    "clean_gap_lo_med": true,
+    "clean_gap_med_hi": true,
+    "high_evidence_levels": [
+      0.75,
+      0.8,
+      0.85,
+      0.9,
+      0.95,
+      1.0
+    ],
+    "high_margins": [
+      0.0792107511335108,
+      0.08266539040383093,
+      0.08882512548901983,
+      0.09229190642631407,
+      0.0951088141094206,
+      0.09948140892129004
+    ],
+    "lo_med_detail": {
+      "boundary": 0.049646339163638364,
+      "clean_gap": true,
+      "max_lower": 0.04406408037686496,
+      "mean_lower": 0.034312869542878634,
+      "mean_upper": 0.062317214517525976,
+      "min_upper": 0.05522859795041176
+    },
+    "low_evidence_levels": [
+      0.0,
+      0.05,
+      0.1,
+      0.15000000000000002,
+      0.2,
+      0.25
+    ],
+    "low_margins": [
+      0.02121987511038006,
+      0.0289102070053054,
+      0.03412107249902107,
+      0.03578052388774114,
+      0.04178145837795916,
+      0.04406408037686496
+    ],
+    "med_evidence_levels": [
+      0.375,
+      0.425,
+      0.475,
+      0.525,
+      0.575,
+      0.625
+    ],
+    "med_hi_detail": {
+      "boundary": 0.07504800540134922,
+      "clean_gap": true,
+      "max_lower": 0.07088525966918764,
+      "mean_lower": 0.062317214517525976,
+      "mean_upper": 0.08959723274723104,
+      "min_upper": 0.0792107511335108
+    },
+    "med_margins": [
+      0.05522859795041176,
+      0.057944909925873776,
+      0.0595372424136101,
+      0.06264732132759611,
+      0.0676599558184765,
+      0.07088525966918764
+    ],
+    "median_gap_lo_med": 0.026141483677221994,
+    "median_gap_med_hi": 0.02946623408706385,
+    "ordinal_separable_lo_med": true,
+    "ordinal_separable_med_hi": true,
+    "spread_lo_med": 0.0076775863503523905,
+    "spread_med_hi": 0.0069744930782662095
+  },
+  "confidence_read": "nmda_norm",
+  "elapsed_seconds": 5.449347734451294,
+  "organ_calib_2band": {
+    "clean_gap": true,
+    "confidence_read": "nmda_norm",
+    "max_lo": 0.05585473364676948,
+    "mean_hi": 0.08338421519381395,
+    "mean_lo": 0.04024896748934768,
+    "min_hi": 0.06791818701044258,
+    "read_reps": 8,
+    "role_conf_hi": 0.5,
+    "role_conf_lo": 0.3
+  },
+  "organ_threshold_2band": 0.061886460328606036,
+  "read_reps": 8,
+  "repeat": "a",
+  "seed": 42,
+  "sig_hi_pa": 260.0,
+  "sig_lo_pa": 40.0,
+  "sweep": [
+    {
+      "band": "SPECULATE",
+      "confident_2band": false,
+      "evidence": 0.0,
+      "margin": 0.02121987511038006,
+      "threshold_2band": 0.061886460328606036
+    },
+    {
+      "band": "SPECULATE",
+      "confident_2band": false,
+      "evidence": 0.125,
+      "margin": 0.03671979842717614,
+      "threshold_2band": 0.061886460328606036
+    },
+    {
+      "band": "SPECULATE",
+      "confident_2band": false,
+      "evidence": 0.25,
+      "margin": 0.04406408037686496,
+      "threshold_2band": 0.061886460328606036
+    },
+    {
+      "band": "HEDGE",
+      "confident_2band": false,
+      "evidence": 0.375,
+      "margin": 0.05522859795041176,
+      "threshold_2band": 0.061886460328606036
+    },
+    {
+      "band": "HEDGE",
+      "confident_2band": true,
+      "evidence": 0.5,
+      "margin": 0.06259414642123984,
+      "threshold_2band": 0.061886460328606036
+    },
+    {
+      "band": "HEDGE",
+      "confident_2band": true,
+      "evidence": 0.625,
+      "margin": 0.07088525966918764,
+      "threshold_2band": 0.061886460328606036
+    },
+    {
+      "band": "ASSERT",
+      "confident_2band": true,
+      "evidence": 0.75,
+      "margin": 0.0792107511335108,
+      "threshold_2band": 0.061886460328606036
+    },
+    {
+      "band": "ASSERT",
+      "confident_2band": true,
+      "evidence": 0.875,
+      "margin": 0.08841094118766815,
+      "threshold_2band": 0.061886460328606036
+    },
+    {
+      "band": "ASSERT",
+      "confident_2band": true,
+      "evidence": 1.0,
+      "margin": 0.09948140892129004,
+      "threshold_2band": 0.061886460328606036
+    }
+  ]
+}
