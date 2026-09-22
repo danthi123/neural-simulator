@@ -1,0 +1,30 @@
+{
+ "run_id": "1790098528-2650790",
+ "runner": "research/runners/_lbf_fix_episodic_store_verdict.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/wf_321dec2f-e35-3/research/runners/_lbf_fix_episodic_store_verdict.py",
+  "--sweep-dir",
+  "/tmp/claude-1000/-home-dant123-Projects-sim/87891831-e642-4a2f-abeb-50ea0867609b/scratchpad/fix_sweep2",
+  "--out",
+  "research/findings/raw/_lbf_fix_episodic_store/verdict.json"
+ ],
+ "git_sha": "65c6fdccf",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-22T13:35:28",
+ "env": {
+  "SIM_BACKEND": "numpy",
+  "CUDA_VISIBLE_DEVICES": ""
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_lbf_fix_episodic_store/verdict.json"
+}
