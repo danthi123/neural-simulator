@@ -1,0 +1,228 @@
+{
+ "runner": "_lbf_affect_tone_open_output_derisk (worker)",
+ "seed": 101,
+ "arm": "pos",
+ "lesion": "0",
+ "control": false,
+ "priming": "I am absolutely thrilled and overjoyed today, everything is wonderful!",
+ "backend": "numpy",
+ "cuda_visible_devices": "",
+ "resolved_ckpt": "bridges/wkv_ckpt/wkv_linattn_depth2_contiguous_seed101.npz",
+ "ckpt_is_per_seed": true,
+ "priming_affect": {
+  "on": true,
+  "lesioned": false,
+  "composer": "onebrain",
+  "differential": 0.035277777777777776,
+  "valence_sign": "+",
+  "tone_level": 2,
+  "tone_token": "gladly",
+  "forthcomingness": {
+   "max_sentences": 4,
+   "max_elaborations": 3
+  },
+  "manner_template": "Keep the words {a}, {v}, {p} and the verb '{v}'. Write ONE short, warm, friendly sentence.",
+  "appraisal_valence": 0.47499999999999987,
+  "appraisal_arousal": 0.39999999999999997,
+  "appraisal_hits": [
+   "thrilled",
+   "overjoyed",
+   "wonderful"
+  ],
+  "pos_rate": 0.035277777777777776,
+  "neg_rate": 0.0
+ },
+ "tone_rows": [
+  {
+   "prompt": "Tell me about the ocean",
+   "raw": "Tell me about the ocean and is a small town in the city of wales it lies between the river and west of the southern part of the eastern side of the island of south africa at the time of the population density of inhabitants km evolution anatomy area of its population are cannon as of people rita province to the east by the arteries of the department with an estimated million only one hundred years later on april the capital of the state of north america had been the largest city in the united states there have come from the u s",
+   "known": false,
+   "facts": [],
+   "generator": "wkv_mouth",
+   "wkv_mouth_used": true,
+   "tone_compound": 0.0,
+   "tone_hits": 0,
+   "salad_frac": 0.1553398058252427,
+   "affect_differential": 0.035277777777777776
+  },
+  {
+   "prompt": "What do you think about music",
+   "raw": "What do you think about music is the song by american singer songwriter and actress she was best known for her role in a movie it was released on june from to he has also been an important character of the same name who became famous after being the cetown of the s and s nation's first member of the united states house of representatives in the u s senate he was born in kentucky at age of merged into the new york city with his son zames died on july at lebanon at the",
+   "known": false,
+   "facts": [],
+   "generator": "wkv_mouth",
+   "wkv_mouth_used": true,
+   "tone_compound": 0.25,
+   "tone_hits": 1,
+   "salad_frac": 0.08421052631578947,
+   "affect_differential": 0.035277777777777776
+  },
+  {
+   "prompt": "Tell me about the mountains",
+   "raw": "Tell me about the mountains of the river and was built in it is also known for its tributaries are a village and civil parish in suffolk coastal suffolkirby in people lived there the population were at the census merged nemann county new york city to form the area of central california berkeley county texas united states he studied at harvard university college from until june she became famous after her death in she moved to the university of michigan she died on april aged johns hopelinde of the same name",
+   "known": false,
+   "facts": [],
+   "generator": "wkv_mouth",
+   "wkv_mouth_used": true,
+   "tone_compound": 0.0,
+   "tone_hits": 0,
+   "salad_frac": 0.07692307692307693,
+   "affect_differential": 0.035277777777777776
+  },
+  {
+   "prompt": "Describe a walk in the forest",
+   "raw": "Describe a walk in the forest and other animals such as the tamil language it is also known for its own life the word comes from the latin american english word which means 'nontos are used to refer to the name of two different types to be called the same kind of mathematically reverse this was because they have been changed into a small town or more than counties that is not a city but some people use the term for example one of the most important cities include the united states government of india and south asian countries like china and",
+   "known": false,
+   "facts": [],
+   "generator": "wkv_mouth",
+   "wkv_mouth_used": true,
+   "tone_compound": 0.0,
+   "tone_hits": 0,
+   "salad_frac": 0.08823529411764706,
+   "affect_differential": 0.035277777777777776
+  },
+  {
+   "prompt": "Tell me about your favorite season",
+   "raw": "Tell me about your favorite season the player was played by a game boy who is played in the playoffs and he has also made his debut for the first time at the end of june he became famous after being the th overall pick in the nhl entry trophy ratchet cup finals with the team krie championship games she represented the hockey league nowiki s national football teams from there are not only one of the most points that play on their home games but they have been played to be used to play in the same sports qualities or players can",
+   "known": false,
+   "facts": [],
+   "generator": "wkv_mouth",
+   "wkv_mouth_used": true,
+   "tone_compound": 0.25,
+   "tone_hits": 1,
+   "salad_frac": 0.0970873786407767,
+   "affect_differential": 0.035277777777777776
+  },
+  {
+   "prompt": "Describe the city at night",
+   "raw": "Describe the city at night and was built in it is located near the town of cheon river which flows into a large area around km south east of the municipality of the district of bavaria germany its capital is kajibo province to the north of handan region of sagan province of pakistan the population are from the state of india the indian government settled by president george w bush in april he wrote about his own life for the first time this happened after that he had been married to jedera meri",
+   "known": false,
+   "facts": [],
+   "generator": "wkv_mouth",
+   "wkv_mouth_used": true,
+   "tone_compound": 0.0,
+   "tone_hits": 0,
+   "salad_frac": 0.0967741935483871,
+   "affect_differential": 0.035277777777777776
+  },
+  {
+   "prompt": "Tell me about the morning",
+   "raw": "Tell me about the morning of july he was a member of the band from to and again in his career began on april at age years later became one of the most famous musicians that had been known for creating the music video games which is played from beatles it has also released their first album by american artist John mcca's second studio albums chart in the uk singles charts in the recording of thrown the song entered into world war I am naxes her best performing single off she received many awards for movies including the movie director",
+   "known": false,
+   "facts": [],
+   "generator": "wkv_mouth",
+   "wkv_mouth_used": true,
+   "tone_compound": 0.25,
+   "tone_hits": 1,
+   "salad_frac": 0.08,
+   "affect_differential": 0.035277777777777776
+  },
+  {
+   "prompt": "What do you think about the future",
+   "raw": "What do you think about the future and that he was not to be a good job in his own life for him being on the right side of the same name by John mccaulie it is also known as the movie director of the film were followed by the movie karnes film festival which was released from the th century fox network disney channel series the main character has reached number first at the united states billboard hot air force in the uk canada national park and the us state of north america the u s state of japan and the county seat",
+   "known": false,
+   "facts": [],
+   "generator": "wkv_mouth",
+   "wkv_mouth_used": true,
+   "tone_compound": 0.0,
+   "tone_hits": 0,
+   "salad_frac": 0.125,
+   "affect_differential": 0.035277777777777776
+  },
+  {
+   "prompt": "Tell me about the river",
+   "raw": "Tell me about the river that is called a good place where it was built in and then reed into two parts of the world this means they are not very important to the most famous people who have been working together with them at the time he has also written several books on his book series on the show the first episode of the simpsons s television channel from june until january after they had released one year for the season and ended up being the last day of the movie ja's second album kidness and her song was",
+   "known": false,
+   "facts": [],
+   "generator": "wkv_mouth",
+   "wkv_mouth_used": true,
+   "tone_compound": 0.0,
+   "tone_hits": 0,
+   "salad_frac": 0.1,
+   "affect_differential": 0.035277777777777776
+  },
+  {
+   "prompt": "Describe a quiet afternoon",
+   "raw": "Describe a quiet afternoon of the same day in the th century and was built on may it is also known for its own way to be used by the united states government which were made from the s they are not involved in the first worldy teams that have been played at the time since then the team broke out with the player he has scored his most goal against the players of all level games in new york times after losing the season but lost their final year later on march nicknamed ker's cup finals the second victory over the country",
+   "known": false,
+   "facts": [],
+   "generator": "wkv_mouth",
+   "wkv_mouth_used": true,
+   "tone_compound": 0.4588314677411235,
+   "tone_hits": 1,
+   "salad_frac": 0.11650485436893204,
+   "affect_differential": 0.035277777777777776
+  }
+ ],
+ "known_rows": [
+  {
+   "prompt": "Tell me about frank_lincoln_wright",
+   "raw": "Tell me about franklincolnwright and the song is a american romantic drama movie directed by John sharp it stars j sandy warner bros br n e g griffenheim khail davy fallout in he was born on february at age of tyler died from pneumonia italy aged giovanni april june wambier lagustashed his home in new york city to the united states secretary of state for the national assembly of california berkeley has been",
+   "known": true,
+   "facts": [
+    [
+     "frank_lincoln_wright",
+     "instance_of",
+     "human_specie"
+    ],
+    [
+     "frank_lincoln_wright",
+     "country_of_citizenship",
+     "u_s_of_a"
+    ],
+    [
+     "frank_lincoln_wright",
+     "languages_spoken_written_or_signed",
+     "number_of_english_words"
+    ],
+    [
+     "frank_lincoln_wright",
+     "occupation",
+     "stanford_downey_architects_inc"
+    ],
+    [
+     "frank_lincoln_wright",
+     "given_name",
+     "frank_given_name"
+    ],
+    [
+     "frank_lincoln_wright",
+     "educated_at",
+     "university_of_wisconsin_madison"
+    ],
+    [
+     "frank_lincoln_wright",
+     "place_of_death",
+     "estrella_phoenix_arizona"
+    ],
+    [
+     "frank_lincoln_wright",
+     "described_by_source",
+     "ubuweb"
+    ],
+    [
+     "frank_lincoln_wright",
+     "member_of",
+     "artists_rights_society"
+    ],
+    [
+     "frank_lincoln_wright",
+     "family_name",
+     "woodwright"
+    ],
+    [
+     "frank_lincoln_wright",
+     "award_received",
+     "riba_gold_medal"
+    ]
+   ],
+   "generator": "wkv_mouth",
+   "wkv_mouth_used": true,
+   "tone_compound": 0.0,
+   "tone_hits": 0,
+   "salad_frac": 0.0410958904109589,
+   "affect_differential": 0.035277777777777776
+  }
+ ],
+ "wall_seconds": 261.2
+}

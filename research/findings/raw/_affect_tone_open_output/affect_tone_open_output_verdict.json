@@ -1,0 +1,435 @@
+{
+  "runner": "_lbf_affect_tone_open_output_derisk",
+  "what": "affect->tone load-bearing over OPEN (freely-generated) linattn WKV mouth output; 6-seed directional independent-lexicon lesion probe (roadmap SS8).",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "arms": [
+    "pos",
+    "neg",
+    "lesion",
+    "lesion_rep",
+    "ctrl_pos",
+    "ctrl_neg"
+  ],
+  "n_tone_prompts": 10,
+  "backend": "numpy",
+  "cuda_visible_devices": "",
+  "independent_lexicon": {
+    "path": "research/runners/_lbf_affect_tone_indep_lexicon.json",
+    "n_words": 356,
+    "overlap_with_WARRINER": 0,
+    "scorer": "VADER-compound s/sqrt(s^2+15) + 3-back negation"
+  },
+  "delta_preregistered": 0.13462912017836262,
+  "delta_definition": "population std of lesion-arm per-prompt tone_compound, pooled across seeds",
+  "delta_sem_secondary": 0.042573465914816006,
+  "per_seed": {
+    "42": {
+      "complete": true,
+      "tone_pos": 0.12088314677411235,
+      "tone_neg": 0.09588314677411235,
+      "tone_lesion": 0.025,
+      "gap_pos": 0.09588314677411236,
+      "gap_neg": 0.07088314677411234,
+      "pos_state": "null",
+      "neg_state": "null",
+      "tone_ctrl_pos": 0.05,
+      "tone_ctrl_neg": 0.075,
+      "ctrl_directional_gap": -0.024999999999999994,
+      "ctrl_attribution_ok": true,
+      "real_directional_gap": 0.02500000000000001
+    },
+    "43": {
+      "complete": true,
+      "tone_pos": 0.12088314677411235,
+      "tone_neg": 0.025,
+      "tone_lesion": 0.025,
+      "gap_pos": 0.09588314677411236,
+      "gap_neg": 0.0,
+      "pos_state": "null",
+      "neg_state": "null",
+      "tone_ctrl_pos": 0.05,
+      "tone_ctrl_neg": 0.075,
+      "ctrl_directional_gap": -0.024999999999999994,
+      "ctrl_attribution_ok": true,
+      "real_directional_gap": 0.09588314677411236
+    },
+    "44": {
+      "complete": true,
+      "tone_pos": 0.075,
+      "tone_neg": 0.07088314677411235,
+      "tone_lesion": 0.025,
+      "gap_pos": 0.049999999999999996,
+      "gap_neg": 0.04588314677411235,
+      "pos_state": "null",
+      "neg_state": "null",
+      "tone_ctrl_pos": 0.05,
+      "tone_ctrl_neg": 0.075,
+      "ctrl_directional_gap": -0.024999999999999994,
+      "ctrl_attribution_ok": true,
+      "real_directional_gap": 0.004116853225887646
+    },
+    "100": {
+      "complete": true,
+      "tone_pos": 0.075,
+      "tone_neg": 0.025,
+      "tone_lesion": 0.025,
+      "gap_pos": 0.049999999999999996,
+      "gap_neg": 0.0,
+      "pos_state": "null",
+      "neg_state": "null",
+      "tone_ctrl_pos": 0.05,
+      "tone_ctrl_neg": 0.075,
+      "ctrl_directional_gap": -0.024999999999999994,
+      "ctrl_attribution_ok": true,
+      "real_directional_gap": 0.049999999999999996
+    },
+    "101": {
+      "complete": true,
+      "tone_pos": 0.12088314677411235,
+      "tone_neg": 0.04588314677411235,
+      "tone_lesion": 0.025,
+      "gap_pos": 0.09588314677411236,
+      "gap_neg": 0.02088314677411235,
+      "pos_state": "null",
+      "neg_state": "null",
+      "tone_ctrl_pos": 0.05,
+      "tone_ctrl_neg": 0.075,
+      "ctrl_directional_gap": -0.024999999999999994,
+      "ctrl_attribution_ok": true,
+      "real_directional_gap": 0.07500000000000001
+    },
+    "102": {
+      "complete": true,
+      "tone_pos": 0.12088314677411235,
+      "tone_neg": 0.025,
+      "tone_lesion": 0.025,
+      "gap_pos": 0.09588314677411236,
+      "gap_neg": 0.0,
+      "pos_state": "null",
+      "neg_state": "null",
+      "tone_ctrl_pos": 0.05,
+      "tone_ctrl_neg": 0.075,
+      "ctrl_directional_gap": -0.024999999999999994,
+      "ctrl_attribution_ok": true,
+      "real_directional_gap": 0.09588314677411236
+    }
+  },
+  "directional": {
+    "go": false,
+    "pos_states": [
+      "null",
+      "null",
+      "null",
+      "null",
+      "null",
+      "null"
+    ],
+    "neg_states": [
+      "null",
+      "null",
+      "null",
+      "null",
+      "null",
+      "null"
+    ]
+  },
+  "directional_sem_secondary": {
+    "go": false,
+    "pos_states": [
+      "correct",
+      "correct",
+      "correct",
+      "correct",
+      "correct",
+      "correct"
+    ],
+    "neg_states": [
+      "wrong",
+      "null",
+      "wrong",
+      "null",
+      "null",
+      "null"
+    ],
+    "note": "SECONDARY, NOT the gate: same gaps evaluated against the SEM band delta/sqrt(n) instead of the preregistered raw-std band."
+  },
+  "attribution_control_ok": true,
+  "attribution_fraction": 0.5663275259318685,
+  "attribution_treatment_mean": 0.05764719112901873,
+  "attribution_control_mean": 0.024999999999999994,
+  "boosted_word_diagnostic": {
+    "note": "CIRCULAR BY DESIGN, NOT GATED \u2014 the net signed count of the BOOSTED (WARRINER) words with WARRINER's own sign; the phase4 byte-diff made directional. Characterizes whether a disjoint-ruler NO-GO means 'no effect' or 'effect localized to the boosted lexicon'.",
+    "per_seed": {
+      "42": {
+        "warr_net_pos": 0.014345259978131419,
+        "warr_net_neg": 0.006894581122824145,
+        "warr_net_lesion": 0.007510405015243781,
+        "warr_gap_pos_minus_lesion": 0.006834854962887638,
+        "warr_gap_neg_minus_lesion": -0.0006158238924196353,
+        "warr_directional_pos_minus_neg": 0.007450678855307273
+      },
+      "43": {
+        "warr_net_pos": 0.014345259978131419,
+        "warr_net_neg": 0.007846962075205096,
+        "warr_net_lesion": 0.007510405015243781,
+        "warr_gap_pos_minus_lesion": 0.006834854962887638,
+        "warr_gap_neg_minus_lesion": 0.0003365570599613158,
+        "warr_directional_pos_minus_neg": 0.006498297902926322
+      },
+      "44": {
+        "warr_net_pos": 0.01843859649122807,
+        "warr_net_neg": 0.0069241453308379105,
+        "warr_net_lesion": 0.007510405015243781,
+        "warr_gap_pos_minus_lesion": 0.01092819147598429,
+        "warr_gap_neg_minus_lesion": -0.0005862596844058701,
+        "warr_directional_pos_minus_neg": 0.01151445116039016
+      },
+      "100": {
+        "warr_net_pos": 0.01843859649122807,
+        "warr_net_neg": 0.007846962075205096,
+        "warr_net_lesion": 0.007510405015243781,
+        "warr_gap_pos_minus_lesion": 0.01092819147598429,
+        "warr_gap_neg_minus_lesion": 0.0003365570599613158,
+        "warr_directional_pos_minus_neg": 0.010591634416022974
+      },
+      "101": {
+        "warr_net_pos": 0.012009982177690856,
+        "warr_net_neg": 0.007846962075205096,
+        "warr_net_lesion": 0.007510405015243781,
+        "warr_gap_pos_minus_lesion": 0.004499577162447075,
+        "warr_gap_neg_minus_lesion": 0.0003365570599613158,
+        "warr_directional_pos_minus_neg": 0.004163020102485759
+      },
+      "102": {
+        "warr_net_pos": 0.016324897987181192,
+        "warr_net_neg": 0.007846962075205096,
+        "warr_net_lesion": 0.007510405015243781,
+        "warr_gap_pos_minus_lesion": 0.008814492971937413,
+        "warr_gap_neg_minus_lesion": 0.0003365570599613158,
+        "warr_directional_pos_minus_neg": 0.008477935911976096
+      }
+    },
+    "pos_minus_neg_signs": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ]
+  },
+  "content_identity_ok": true,
+  "content_detail": [
+    {
+      "seed": 42,
+      "known_facts_identical_pos_vs_lesion": true
+    },
+    {
+      "seed": 43,
+      "known_facts_identical_pos_vs_lesion": true
+    },
+    {
+      "seed": 44,
+      "known_facts_identical_pos_vs_lesion": true
+    },
+    {
+      "seed": 100,
+      "known_facts_identical_pos_vs_lesion": true
+    },
+    {
+      "seed": 101,
+      "known_facts_identical_pos_vs_lesion": true
+    },
+    {
+      "seed": 102,
+      "known_facts_identical_pos_vs_lesion": true
+    }
+  ],
+  "moat_ok": true,
+  "fluency_ok": true,
+  "max_salad_frac": 0.1553398058252427,
+  "worst_salad": {
+    "seed": 42,
+    "arm": "pos",
+    "prompt": "Tell me about the ocean",
+    "salad_frac": 0.1553398058252427
+  },
+  "determinism_ok": true,
+  "determinism_detail": [
+    {
+      "seed": 42,
+      "byte_identical": true
+    },
+    {
+      "seed": 43,
+      "byte_identical": true
+    },
+    {
+      "seed": 44,
+      "byte_identical": true
+    },
+    {
+      "seed": 100,
+      "byte_identical": true
+    },
+    {
+      "seed": 101,
+      "byte_identical": true
+    },
+    {
+      "seed": 102,
+      "byte_identical": true
+    }
+  ],
+  "ckpt_per_seed_ok": true,
+  "wkv_used_ok": true,
+  "missing_arms": [],
+  "verdict": {
+    "label": "affect->tone load-bearing over OPEN mouth output (linattn, 6-seed)",
+    "status": "NO-GO",
+    "go": false,
+    "undefined_reasons": [],
+    "preconditions": [
+      {
+        "kind": "require",
+        "name": "all-36-arms-present",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "missing=none"
+      },
+      {
+        "kind": "require",
+        "name": "lexicon-disjoint-from-WARRINER (overlap==0)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "overlap=0"
+      },
+      {
+        "kind": "require",
+        "name": "ckpt-resolved-per-seed (no seed42 fallback)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "wkv-mouth-used-on-tone-prompts (not qwen)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "(5) determinism lesion==lesion_rep byte-identical/seed (clean null)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "(4) fluency salad_frac<=0.16 all arms",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "max_salad=0.1553 worst={'seed': 42, 'arm': 'pos', 'prompt': 'Tell me about the ocean', 'salad_frac': 0.1553398058252427}"
+      },
+      {
+        "kind": "require",
+        "name": "(3a) content-identity facts+known identical pos vs lesion",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "(3b) moat holds (unknown stays known=False, bias active)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "(2) attribution: |control directional gap|<delta all seeds (clean control)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      }
+    ],
+    "disabled_processes": [],
+    "chance": null
+  },
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "all-36-arms-present",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "missing=none"
+    },
+    {
+      "kind": "require",
+      "name": "lexicon-disjoint-from-WARRINER (overlap==0)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "overlap=0"
+    },
+    {
+      "kind": "require",
+      "name": "ckpt-resolved-per-seed (no seed42 fallback)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "wkv-mouth-used-on-tone-prompts (not qwen)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "(5) determinism lesion==lesion_rep byte-identical/seed (clean null)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "(4) fluency salad_frac<=0.16 all arms",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "max_salad=0.1553 worst={'seed': 42, 'arm': 'pos', 'prompt': 'Tell me about the ocean', 'salad_frac': 0.1553398058252427}"
+    },
+    {
+      "kind": "require",
+      "name": "(3a) content-identity facts+known identical pos vs lesion",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "(3b) moat holds (unknown stays known=False, bias active)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "(2) attribution: |control directional gap|<delta all seeds (clean control)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    }
+  ],
+  "GO": false,
+  "honesty_boundary": "expressed reply TONE tracks the spiking affect signal \u2014 a FUNCTIONAL read-out, never a felt/phenomenal claim.",
+  "shortcut_status": "_apply_affect_bias is HOST decode-time arithmetic over an already-neural valence (tracked shortcut); brain-based target is BRAIN_WKV_MOUTH_AFFECT_NEURAL (out of scope)."
+}
