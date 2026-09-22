@@ -1,0 +1,34 @@
+{
+ "run_id": "1790091633-2508711",
+ "runner": "research/runners/onebrain_regression_battery.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/wf_321dec2f-e35-2/research/runners/onebrain_regression_battery.py",
+  "--worker",
+  "--env",
+  "{}",
+  "--turns",
+  "well",
+  "--out",
+  "/home/dant123/Projects/sim/.claude/worktrees/wf_321dec2f-e35-2/research/findings/raw/_lbf_fix_source_prov_abstain/intact_b_well_s44.json"
+ ],
+ "git_sha": "7bebcd394",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-22T11:40:33",
+ "env": {
+  "SIM_BACKEND": "numpy",
+  "CUDA_VISIBLE_DEVICES": "",
+  "SIM_RUN_ID": "1790091295-2500831"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_lbf_fix_source_prov_abstain/intact_b_well_s44.json"
+}

@@ -31,6 +31,7 @@ Everything here is OFF unless a caller explicitly builds a `SourceProvenanceHone
 from __future__ import annotations
 
 import hashlib
+import os
 from typing import Any, Mapping
 
 import numpy as np
@@ -45,6 +46,45 @@ from research.runners._laneC_source_provenance_opponent_derisk import (
 PROVENANCE_PERCEIVED = "perceived"
 PROVENANCE_GENERATED = "generated"
 PROVENANCES = (PROVENANCE_PERCEIVED, PROVENANCE_GENERATED)
+
+# 2026-09-22 #5 STABILIZER FIX (research/lbf-fix-source-provenance-abstain; LOCATED by
+# research/findings/2026-09-22-borderline-separability-stabilizer-is-buildable.md): source-provenance's opponent
+# read `d` separates PERFECTLY intact-vs-lesion on every seed (min-intact 1.000, max-lesion 0.000 -- see the
+# finding's separability table), yet the production battery reads it load-bearing only 4/6 seeds (off@s44,s102).
+# The fragile step is NOT the read -- it is `_judge()`'s HOST TIE-BREAK: at the lesion's genuine no-signal
+# collapse (both provenance pools silent, `rate_perceived == rate_generated`, `d == 0.0`), `_judge()` coin-flips
+# `winner` from a per-monitor RNG seeded off `seed` (`_laneC_source_provenance_opponent_derisk._judge`, kept
+# UNCHANGED -- it is the validated 6-seed-GO de-risk primitive and its own docstring is explicit that the coin-flip
+# is deliberate, "so a no-signal control ... is GENUINE chance, not a degenerate constant"). That per-seed coin
+# lands the lesion's label on the SAME side as the intact arm's confident "perceived" on 2 of 6 seeds (s44, s102),
+# masking the lesion there while correctly exposing it elsewhere (s100) -- seed-dependence in the INTEGRATION
+# step that reads the (perfectly-separated) opponent output, not in the substrate's own discrimination.
+#
+# FIX, gated behind BRAIN_SOURCE_PROV_ABSTAIN_AT_TIE (default OFF -- unset/0/false/no/off/"" all read as off,
+# byte-identical to pre-fix): when the judged |d| falls below TIE_D_EPS -- i.e. the opponent produced NO signal,
+# not merely a close call -- `judge_fact()` reports `label=None` DETERMINISTICALLY instead of forwarding the
+# coin-flipped `winner`. `label=None` is not a new sentinel invented for this fix: it is the EXACT value
+# `judge_fact()` already returns for a never-encoded key (`known=False`), and `provenance_framed_text()`'s own
+# docstring already names this branch ("label is None ... the judgment ties/is undecided -> UNCHANGED") though
+# `_judge()` never actually produced it before now -- the mapping existed as a documented intent, unwired. This
+# is an HONEST functional read-out (a collapsed opponent genuinely cannot report "I saw this" or "I inferred
+# this" -- abstaining is the truthful state, not a coin flip dressed as a judgment), not tuning: TIE_D_EPS is set
+# from the SAME float-exact-tie floor `_judge()` itself already uses on the raw margin (1e-9), nothing was fit to
+# any seed's count, and the intact arm's `d` (1.000 on every observed seed, per the finding) sits nowhere near
+# this epsilon, so the fix only ever engages on the already-degenerate no-signal state -- it can never turn a
+# confident intact read into an abstain.
+TIE_D_EPS = 1e-6
+
+
+def source_prov_abstain_at_tie_enabled() -> bool:
+    """`BRAIN_SOURCE_PROV_ABSTAIN_AT_TIE` in {1,true,on,yes} -> `judge_fact()` reports a deterministic abstain
+    (`label=None`) at a genuine opponent no-signal collapse (`|d| < TIE_D_EPS`) instead of forwarding `_judge()`'s
+    host coin-flip. Mirrors the enabled()/lesioned() env-flag convention used by the sibling production organ
+    (`source_provenance_production_organ.source_provenance_enabled` / `.source_provenance_lesioned`)."""
+    v = os.environ.get("BRAIN_SOURCE_PROV_ABSTAIN_AT_TIE")
+    if v is None:
+        return False
+    return v.strip().lower() in ("1", "true", "on", "yes")
 
 
 def _stable_pattern(key: Any, seed: int, *, ep: int = EP_PATTERN, n_episode: int = N_EPISODE) -> np.ndarray:
@@ -99,21 +139,29 @@ class SourceProvenanceHonestyMonitor:
         """Recall `key` from CONTENT ALONE (the encoding-context lines are silent, exactly as at recall in the
         de-risk) and read the opponent sign. `known=False` (label=None) for a key never encoded here -- this
         monitor never fabricates a provenance judgment for content it was never shown (the de-risk's anti-cheat
-        (3): 'a never-encoded pattern must leave both prov pools ~silent')."""
+        (3): 'a never-encoded pattern must leave both prov pools ~silent').
+
+        `BRAIN_SOURCE_PROV_ABSTAIN_AT_TIE` (default OFF, `source_prov_abstain_at_tie_enabled()`): at a genuine
+        opponent no-signal collapse (`|d| < TIE_D_EPS`) the label reads a deterministic abstain (`None`) rather
+        than `_judge()`'s seed-dependent host coin-flip -- see the module-level note above `TIE_D_EPS`. OFF, this
+        method is byte-identical to its pre-fix behavior (`label` is always `_judge()`'s raw `winner`)."""
         pattern = self._patterns.get(key)
         if pattern is None:
             return {"known": False, "label": None, "d": None, "encoded_as": None, "agrees_with_encoded": None}
         rec = self._brain.recall(pattern)
         winner, d = _judge(rec, self._rng)
+        label = winner
+        if source_prov_abstain_at_tie_enabled() and abs(d) < TIE_D_EPS:
+            label = None   # honest "no clean provenance signal" -- not a coin-flipped perceived/generated guess
         encoded_as = self._encoded_as.get(key)
         return {
             "known": True,
-            "label": winner,
+            "label": label,
             "d": float(d),
             "rate_perceived": float(rec["rate_perceived"]),
             "rate_generated": float(rec["rate_generated"]),
             "encoded_as": encoded_as,
-            "agrees_with_encoded": bool(winner == encoded_as),
+            "agrees_with_encoded": bool(label == encoded_as),
         }
 
 

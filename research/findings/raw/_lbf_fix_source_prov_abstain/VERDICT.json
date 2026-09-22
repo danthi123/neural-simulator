@@ -1,0 +1,246 @@
+{
+  "label": "source-provenance-honesty abstain-at-tie fix: load-bearing 6/6 with the flag ON",
+  "status": "GO",
+  "go": true,
+  "undefined_reasons": [],
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "flag=1 seed=42: flag actually reached the build (BRAIN_SOURCE_PROV_ABSTAIN_AT_TIE=1 read back)",
+      "ok": true,
+      "detail": "measured=1 expect=1",
+      "note": "artifact-stamped env readback, not a claim"
+    },
+    {
+      "kind": "require",
+      "name": "flag=1 seed=42: arms built + the harness's own null control is clean",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "flag=1 seed=42: load_bearing",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "flag=1 seed=42: treatment_diffs > control_diffs (attributable to the lesion, not noise)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "flag=1 seed=43: flag actually reached the build (BRAIN_SOURCE_PROV_ABSTAIN_AT_TIE=1 read back)",
+      "ok": true,
+      "detail": "measured=1 expect=1",
+      "note": "artifact-stamped env readback, not a claim"
+    },
+    {
+      "kind": "require",
+      "name": "flag=1 seed=43: arms built + the harness's own null control is clean",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "flag=1 seed=43: load_bearing",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "flag=1 seed=43: treatment_diffs > control_diffs (attributable to the lesion, not noise)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "flag=1 seed=44: flag actually reached the build (BRAIN_SOURCE_PROV_ABSTAIN_AT_TIE=1 read back)",
+      "ok": true,
+      "detail": "measured=1 expect=1",
+      "note": "artifact-stamped env readback, not a claim"
+    },
+    {
+      "kind": "require",
+      "name": "flag=1 seed=44: arms built + the harness's own null control is clean",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "flag=1 seed=44: load_bearing",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "flag=1 seed=44: treatment_diffs > control_diffs (attributable to the lesion, not noise)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "flag=1 seed=100: flag actually reached the build (BRAIN_SOURCE_PROV_ABSTAIN_AT_TIE=1 read back)",
+      "ok": true,
+      "detail": "measured=1 expect=1",
+      "note": "artifact-stamped env readback, not a claim"
+    },
+    {
+      "kind": "require",
+      "name": "flag=1 seed=100: arms built + the harness's own null control is clean",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "flag=1 seed=100: load_bearing",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "flag=1 seed=100: treatment_diffs > control_diffs (attributable to the lesion, not noise)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "flag=1 seed=101: flag actually reached the build (BRAIN_SOURCE_PROV_ABSTAIN_AT_TIE=1 read back)",
+      "ok": true,
+      "detail": "measured=1 expect=1",
+      "note": "artifact-stamped env readback, not a claim"
+    },
+    {
+      "kind": "require",
+      "name": "flag=1 seed=101: arms built + the harness's own null control is clean",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "flag=1 seed=101: load_bearing",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "flag=1 seed=101: treatment_diffs > control_diffs (attributable to the lesion, not noise)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "flag=1 seed=102: flag actually reached the build (BRAIN_SOURCE_PROV_ABSTAIN_AT_TIE=1 read back)",
+      "ok": true,
+      "detail": "measured=1 expect=1",
+      "note": "artifact-stamped env readback, not a claim"
+    },
+    {
+      "kind": "require",
+      "name": "flag=1 seed=102: arms built + the harness's own null control is clean",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "flag=1 seed=102: load_bearing",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "flag=1 seed=102: treatment_diffs > control_diffs (attributable to the lesion, not noise)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "flag=0 seed=44: env readback confirms the flag was actually UNSET for this build (not '1')",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "artifact-stamped env readback (None) -- guards against a leaked/inherited flag from the parent shell"
+    },
+    {
+      "kind": "require",
+      "name": "flag=0 seed=44: byte-identical to the pre-fix finding (NOT load-bearing off@this seed)",
+      "ok": true,
+      "detail": "measured=False expect=False",
+      "note": "reproduces research/findings/2026-09-22-borderline-separability-stabilizer-is-buildable.md's pre-fix off@s44/s102 result; the flag defaulting off must not change it"
+    },
+    {
+      "kind": "reads",
+      "name": "treatment_diffs_s44",
+      "ok": true,
+      "detail": "used=0  artifact reports=0",
+      "note": "vs the pre-fix research/findings/raw/_load_bearing/_adequate6/load_bearing_adequate_s44.json"
+    },
+    {
+      "kind": "reads",
+      "name": "control_diffs_s44",
+      "ok": true,
+      "detail": "used=0  artifact reports=0",
+      "note": "vs the pre-fix research/findings/raw/_load_bearing/_adequate6/load_bearing_adequate_s44.json"
+    },
+    {
+      "kind": "require",
+      "name": "flag=0 seed=102: env readback confirms the flag was actually UNSET for this build (not '1')",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "artifact-stamped env readback (None) -- guards against a leaked/inherited flag from the parent shell"
+    },
+    {
+      "kind": "require",
+      "name": "flag=0 seed=102: byte-identical to the pre-fix finding (NOT load-bearing off@this seed)",
+      "ok": true,
+      "detail": "measured=False expect=False",
+      "note": "reproduces research/findings/2026-09-22-borderline-separability-stabilizer-is-buildable.md's pre-fix off@s44/s102 result; the flag defaulting off must not change it"
+    },
+    {
+      "kind": "reads",
+      "name": "treatment_diffs_s102",
+      "ok": true,
+      "detail": "used=0  artifact reports=0",
+      "note": "vs the pre-fix research/findings/raw/_load_bearing/_adequate6/load_bearing_adequate_s102.json"
+    },
+    {
+      "kind": "reads",
+      "name": "control_diffs_s102",
+      "ok": true,
+      "detail": "used=0  artifact reports=0",
+      "note": "vs the pre-fix research/findings/raw/_load_bearing/_adequate6/load_bearing_adequate_s102.json"
+    }
+  ],
+  "disabled_processes": [],
+  "chance": null,
+  "n_on_load_bearing": 6,
+  "n_seeds": 6,
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "flag": "BRAIN_SOURCE_PROV_ABSTAIN_AT_TIE",
+  "artifact_dir": "research/findings/raw/_lbf_fix_source_prov_abstain"
+}

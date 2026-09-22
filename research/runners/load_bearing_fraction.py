@@ -979,7 +979,12 @@ def run(out_dir="research/findings/raw/_load_bearing", only=None, repeats=1, see
     report = {"runner": "research.runners.load_bearing_fraction",
               "metric": "load_bearing_fraction", "repeats": repeats, "seed": seed,
               "backend": os.environ.get("SIM_BACKEND", "numpy"),
-              "cuda_visible_devices": os.environ.get("CUDA_VISIBLE_DEVICES")}
+              "cuda_visible_devices": os.environ.get("CUDA_VISIBLE_DEVICES"),
+              # ENV-KNOB READBACK (tools.verdict.Verdict.knob discipline: a flag PASSED is not the same claim as
+              # a flag that REACHED the arm builds -- 2026-09-22, research/lbf-fix-source-provenance-abstain's own
+              # verify script reads this back rather than trusting its own invocation command line). Additive-only
+              # (a new report key); every existing consumer of this report is unaffected.
+              "source_prov_abstain_at_tie_env": os.environ.get("BRAIN_SOURCE_PROV_ABSTAIN_AT_TIE")}
 
     keys = only or faculty_list()
     intact_cache = {}

@@ -1,0 +1,25 @@
+{
+ "run_id": "1790094336-2569360",
+ "runner": "research/runners/_lbf_fix_source_prov_abstain_verify.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/wf_321dec2f-e35-2/research/runners/_lbf_fix_source_prov_abstain_verify.py",
+  "research/findings/raw/_lbf_fix_source_prov_abstain",
+  "research/findings/raw/_lbf_fix_source_prov_abstain/VERDICT.json"
+ ],
+ "git_sha": "7bebcd394",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-22T12:25:36",
+ "env": {},
+ "sim_backend": "numpy",
+ "sim_backend_requested": "(unset -> runner default)",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_lbf_fix_source_prov_abstain/VERDICT.json"
+}

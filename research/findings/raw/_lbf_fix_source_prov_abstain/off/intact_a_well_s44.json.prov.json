@@ -1,0 +1,8 @@
+{
+ "provenance_kind": "deliberate-copy-reuse",
+ "sim_backend": "numpy",
+ "note": "Verbatim copy of research/findings/raw/_lbf_fix_source_prov_abstain/intact_a_well_s44.json (the flag-ON run's own intact arm), reused for the flag-OFF re-confirmation because BRAIN_SOURCE_PROV_ABSTAIN_AT_TIE provably cannot change this arm's measured field -- source-provenance's intact `d` never approaches TIE_D_EPS=1e-6 on any seed this fix observed (see research/findings/2026-09-22-source-provenance-abstain-at-tie-load-bearing-6-6.md). Placed here so load_bearing_fraction.py's LB_RESUME_SKIP_EXISTING resume path (file-exists check only, no env check) loads it instead of rebuilding, sparing a redundant brain-build; only the lesion arm in this off/ directory was rebuilt fresh under the flag unset.",
+ "source_artifact": "research/findings/raw/_lbf_fix_source_prov_abstain/intact_a_well_s44.json",
+ "source_artifact_prov": "research/findings/raw/_lbf_fix_source_prov_abstain/intact_a_well_s44.json.prov.json",
+ "copied_by": "research/lbf-fix-source-provenance-abstain (2026-09-22)"
+}
