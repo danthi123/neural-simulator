@@ -106,18 +106,25 @@ the hollow-set finding sits uncommitted in the working tree + a safety stash `pr
 **PRE-DECIDED NEXT ACTIONS:**
 1. ✅ DONE — robust adequate 6-seed 0.85 recorded (finding + ledger + board); ✅ pmem 5/6; ✅ 3 gap agents resolved;
    ✅ lb-consolidation merged to main @ 7582c063e; ✅ AWS torn down. The overnight consolidation arc is CLOSED.
-2. ⭐ NEXT FRONTIER — wire open-ended-generation's DISTRIBUTIONAL lesion metric as its load-bearing ruler (the
-   open-ended agent's own recommendation; the no-defer step). Its contribution is a DISTRIBUTION of guesses
-   (draw_many plausible-frac 0.83→0.04 under lesion, already GO'd) that the single-turn decision-diff can't see —
-   build a flag-gated distributional-comparison mode in load_bearing_fraction with a CLEAN null (intact-vs-intact
-   distributional compare must be non-significant), brain-build verify, then 6-seed it. Would move open-ended from
-   single-turn-negative → proper load-bearing, lifting the adequate fraction.
-3. Production wiring: the adequate-probe flags are DEFAULT-OFF (shipped fraction stays 0.59). Deciding which verified
-   drive-probe fixes to flip ON by default (so the shipped brain actually drives more of the reply) is the owner-facing
-   next arc — the gap between 0.59 (shipped) and 0.85 (adequate) is now quantified 6-seed on both ends.
-4. The seed-dependent-borderline set (episodic, affect-marker, source-provenance, prospective-memory): each sits at an
-   operating-point threshold, not wired-hollow. The deeper faculty work is finding the companion process that would
-   stabilize each flip across seeds (the "what else runs alongside this that we replaced with a constant?" reframe).
+2. ✅ DONE (2026-09-21, workflow lb-frontier-builds, both adversarially verified, merged to main @ 34a5becb) —
+   open-ended's DISTRIBUTIONAL ruler INTEGRATED into load_bearing_fraction (flag LB_OPEN_ENDED_DISTRIB_PROBE,
+   default-OFF, byte-identical default: selftest PASS + PROBE_TURNS=26 + flag defaults False): GO, clean null 0.0
+   exact, load_bearing=True 100%-attributed to the lesion, NO tuning. The battery can now count open-ended
+   load-bearing by its distributional metric. Finding raw/_load_bearing/_oed_distrib_verify/.
+4-DONE (same workflow) — the 4 BORDERLINE faculties' OPERATING-POINT DIAGNOSED (finding
+   2026-09-21-load-bearing-borderline-operating-point-diagnosis.md; GO, 7/7 preconditions). Each borderline decision
+   is a CONTINUOUS spiking read crossing a FIXED host CONSTANT; per-seed margin-to-threshold measured (raw/_lbf_
+   borderline/op_s*.json). NO principled biology stabilizer was clearly earned in the timebox → none forced (honest).
+   CAVEAT: affect-marker-spiking-wta's per-seed labels are HARDWARE/build-context-dependent (its WTA OU-noise RNG is
+   non-isolated across the intact/lesion read pair) — not portable substrate facts (disclosed in the finding).
+
+**LIVE FRONTIER (ordered):**
+3. ⭐ OWNER-FACING — production wiring: the adequate-probe flags are DEFAULT-OFF (shipped fraction stays 0.59).
+   WHICH verified drive-probe fixes to flip ON by default (so the shipped brain drives more of the reply) is an owner
+   decision — the 0.59 (shipped) → 0.85 (adequate) gap is now quantified 6-seed on both ends.
+5. DEEPER — build the principled OPERATING-POINT STABILIZER per borderline faculty (the companion/homeostatic process
+   the diagnosis says each replaced with a constant), to make the borderline flips robust-6/6. NOT tuning — a
+   biology-grounded regulator; honest-negative if none exists. (First fix affect-marker's non-isolated WTA RNG.)
 
 *Everything below is prior-arc HISTORY.*
 
