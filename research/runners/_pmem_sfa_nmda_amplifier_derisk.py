@@ -196,6 +196,12 @@ class SFANmdaProspectiveMemory(homeo.HomeostaticProspectiveMemory):
                     if self._plateau_cap > 0:
                         boost = min(boost, self._plateau_cap)
                     cur[idx] = cur[idx] + np.float32(boost)
+        # (3) SHORT-TERM FACILITATION of the held->rel projection (default OFF -> BYTE-IDENTICAL when off; the
+        # guard reads a getattr default, so a plain SFANmda/Hebbian build that never sets `_facilitation_on` skips
+        # this entirely). The mechanism lives in the FacilitatedProspectiveMemory subclass (_pmem_facilitation_derisk):
+        # a Tsodyks-Markram facilitation variable on the maintained-assembly drive, potentiated turn-over-turn.
+        if getattr(self, "_facilitation_on", False):
+            self._apply_facilitation_current(cur)
         self.bridge._run_one_simulation_step()
         # update SFA state with THIS step's spikes (normalized low-pass -> steady-state == firing rate)
         if self._sfa_on:
@@ -205,6 +211,9 @@ class SFANmdaProspectiveMemory(homeo.HomeostaticProspectiveMemory):
                 fired = self.B.to_host(fs[self._rel_idx_dev[a]]).astype(np.float32)
                 self._sfa_a[a] = (self._sfa_decay * self._sfa_a[a]
                                   + (1.0 - self._sfa_decay) * fired).astype(np.float32)
+        # update the short-term facilitation state from THIS step's maintained-assembly spikes (default OFF).
+        if getattr(self, "_facilitation_on", False):
+            self._update_facilitation_state()
 
     # ---- stage-2 plateau-threshold calibration (label-free) ----
     def _peak_pool_gnmda(self, action, run_steps):
