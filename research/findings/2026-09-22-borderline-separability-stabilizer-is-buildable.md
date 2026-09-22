@@ -73,6 +73,24 @@ research/findings/raw/_lbf_borderline_isolated/op_s42.json … op_s102.json + re
   prospective-memory are. HONEST consequence for the #1 metric: the earlier 23/26 union count was partly inflated by
   affect-marker's RNG-confounded flips; the robust core 20/26 is unaffected (affect-marker was never in it).
 
+## Localized: source-provenance's seed-fragile integration step (2026-09-22, the fix target FOUND)
+Cheap cross-check of the committed adequate 6-seed arm outputs (research/findings/raw/_load_bearing/_adequate6/
+load_bearing_adequate_s44.json, s102.json vs s100.json) pinpoints WHERE source-provenance's 4/6 comes from, given its
+READ `d` separates perfectly (intact 1.0 vs lesion 0.0) on ALL six seeds:
+<!--derived-->
+- **s100 (ON):** the lesion flips the decision fields — `provenance.label` perceived→generated and
+  `provenance.agrees_with_encoded` True→False (treatment_diffs=2) → load-bearing.
+- **s44 / s102 (OFF):** the lesion IS applied (lesion_reproduced=True, null clean) but the decision fields are
+  IDENTICAL between arms (treatment_diffs=0) → not load-bearing.
+- The read `d` is the SAME on every seed (intact 1.0, lesion 0.0). So the same lesion-collapsed read (`d`≈0, a
+  perceived/generated TIE) maps to `provenance.label`="generated" on some seeds (→ differs from intact "perceived" →
+  load-bearing) but "perceived" on others (→ same as intact → not). **The fragile step is the d→label DISCRETIZER's
+  seed-dependent tie-break at the lesion's `d`≈0 collapse**, not the read's operating point. THE FIX DIRECTION (for #5,
+  principled not tuned): at a d≈0 tie the label should DETERMINISTICALLY read "no clean provenance / abstain" (the
+  honest read-out of no opponent signal) rather than a seed-dependent perceived/generated coin-flip — then the lesion
+  reliably differs from intact's confident "perceived" on all seeds. (Confirming the exact discretizer line is a
+  quick follow-on: read the source-provenance organ's label mapping; this cross-check already names the step.)
+
 ## Next — the #5 stabilizer build, DECOMPOSED (it is two different problems, not one)
 The full harvest shows the three genuinely-separable faculties split by WHERE the seed-dependence actually lives, and
 they need DIFFERENT fixes. Attacking them all as "operating-point stabilizers" would waste effort on two of them.
