@@ -1,0 +1,592 @@
+{
+  "runner": "research.runners._lbf_borderline_diagnosis_summary",
+  "kind": "diagnosis-summary",
+  "faculties": [
+    "episodic-memory",
+    "prospective-memory",
+    "affect-marker-spiking-wta",
+    "source-provenance-honesty"
+  ],
+  "seeds": [
+    "42",
+    "43",
+    "44",
+    "100",
+    "101",
+    "102"
+  ],
+  "thresholds": {
+    "COMPLETE_MIN": 0.2,
+    "FIRE_THR": 0.2,
+    "DEAD_MARGIN": 0.05
+  },
+  "per_faculty_per_seed": {
+    "episodic-memory": {
+      "42": {
+        "margin_to_threshold": 0.8,
+        "predicted_load_bearing": true,
+        "aws_load_bearing": true,
+        "intact": {
+          "apical_cue": 1.0,
+          "apical_perm": 0.0,
+          "apical_nocue": 0.0,
+          "in_memory": true
+        },
+        "lesion": {
+          "apical_cue": 0.0,
+          "in_memory": false
+        },
+        "ladder": null
+      },
+      "43": {
+        "margin_to_threshold": 0.3,
+        "predicted_load_bearing": true,
+        "aws_load_bearing": true,
+        "intact": {
+          "apical_cue": 0.5,
+          "apical_perm": 0.0,
+          "apical_nocue": 0.0,
+          "in_memory": true
+        },
+        "lesion": {
+          "apical_cue": 0.0,
+          "in_memory": false
+        },
+        "ladder": null
+      },
+      "44": {
+        "margin_to_threshold": 0.6888888888888889,
+        "predicted_load_bearing": true,
+        "aws_load_bearing": false,
+        "intact": {
+          "apical_cue": 0.8888888888888888,
+          "apical_perm": 0.0,
+          "apical_nocue": 0.0,
+          "in_memory": true
+        },
+        "lesion": {
+          "apical_cue": 0.0,
+          "in_memory": false
+        },
+        "ladder": null
+      },
+      "100": {
+        "margin_to_threshold": 0.6888888888888889,
+        "predicted_load_bearing": true,
+        "aws_load_bearing": true,
+        "intact": {
+          "apical_cue": 0.8888888888888888,
+          "apical_perm": 0.0,
+          "apical_nocue": 0.0,
+          "in_memory": true
+        },
+        "lesion": {
+          "apical_cue": 0.0,
+          "in_memory": false
+        },
+        "ladder": null
+      },
+      "101": {
+        "margin_to_threshold": 0.8,
+        "predicted_load_bearing": true,
+        "aws_load_bearing": true,
+        "intact": {
+          "apical_cue": 1.0,
+          "apical_perm": 0.0,
+          "apical_nocue": 0.0,
+          "in_memory": true
+        },
+        "lesion": {
+          "apical_cue": 0.0,
+          "in_memory": false
+        },
+        "ladder": null
+      },
+      "102": {
+        "margin_to_threshold": 0.5777777777777777,
+        "predicted_load_bearing": true,
+        "aws_load_bearing": true,
+        "intact": {
+          "apical_cue": 0.7777777777777778,
+          "apical_perm": 0.0,
+          "apical_nocue": 0.0,
+          "in_memory": true
+        },
+        "lesion": {
+          "apical_cue": 0.0,
+          "in_memory": false
+        },
+        "ladder": null
+      }
+    },
+    "prospective-memory": {
+      "42": {
+        "margin_to_threshold": 0.14055555555555554,
+        "predicted_load_bearing": true,
+        "aws_load_bearing": true,
+        "intact": {
+          "rel": 0.34055555555555556,
+          "fired": true,
+          "is_cue": true,
+          "threshold": 0.2
+        },
+        "lesion": {
+          "rel": 0.04055555555555555,
+          "fired": false,
+          "is_cue": true,
+          "threshold": 0.2
+        },
+        "ladder": null
+      },
+      "43": {
+        "margin_to_threshold": 0.12722222222222224,
+        "predicted_load_bearing": true,
+        "aws_load_bearing": true,
+        "intact": {
+          "rel": 0.32722222222222225,
+          "fired": true,
+          "is_cue": true,
+          "threshold": 0.2
+        },
+        "lesion": {
+          "rel": 0.03777777777777778,
+          "fired": false,
+          "is_cue": true,
+          "threshold": 0.2
+        },
+        "ladder": null
+      },
+      "44": {
+        "margin_to_threshold": -0.01611111111111113,
+        "predicted_load_bearing": false,
+        "aws_load_bearing": false,
+        "intact": {
+          "rel": 0.18388888888888888,
+          "fired": false,
+          "is_cue": true,
+          "threshold": 0.2
+        },
+        "lesion": {
+          "rel": 0.0,
+          "fired": false,
+          "is_cue": true,
+          "threshold": 0.2
+        },
+        "ladder": null
+      },
+      "100": {
+        "margin_to_threshold": 0.06611111111111112,
+        "predicted_load_bearing": true,
+        "aws_load_bearing": true,
+        "intact": {
+          "rel": 0.26611111111111113,
+          "fired": true,
+          "is_cue": true,
+          "threshold": 0.2
+        },
+        "lesion": {
+          "rel": 0.03888888888888889,
+          "fired": false,
+          "is_cue": true,
+          "threshold": 0.2
+        },
+        "ladder": null
+      },
+      "101": {
+        "margin_to_threshold": 0.07388888888888889,
+        "predicted_load_bearing": true,
+        "aws_load_bearing": true,
+        "intact": {
+          "rel": 0.2738888888888889,
+          "fired": true,
+          "is_cue": true,
+          "threshold": 0.2
+        },
+        "lesion": {
+          "rel": 0.01611111111111111,
+          "fired": false,
+          "is_cue": true,
+          "threshold": 0.2
+        },
+        "ladder": null
+      },
+      "102": {
+        "margin_to_threshold": 0.10333333333333333,
+        "predicted_load_bearing": true,
+        "aws_load_bearing": true,
+        "intact": {
+          "rel": 0.30333333333333334,
+          "fired": true,
+          "is_cue": true,
+          "threshold": 0.2
+        },
+        "lesion": {
+          "rel": 0.03833333333333333,
+          "fired": false,
+          "is_cue": true,
+          "threshold": 0.2
+        },
+        "ladder": null
+      }
+    },
+    "affect-marker-spiking-wta": {
+      "42": {
+        "margin_to_threshold": -0.005555555555555564,
+        "predicted_load_bearing": false,
+        "aws_load_bearing": false,
+        "intact": {
+          "lead": "",
+          "sel_level": null,
+          "margin": 0.04444444444444444
+        },
+        "lesion": {
+          "lead": "",
+          "sel_level": null,
+          "margin": 0.0006944444444444444
+        },
+        "ladder": {
+          "mood": 0.06820833333333333,
+          "felt_arousal": 0.04804166666666667,
+          "level": 2
+        }
+      },
+      "43": {
+        "margin_to_threshold": -0.017361111111111105,
+        "predicted_load_bearing": false,
+        "aws_load_bearing": false,
+        "intact": {
+          "lead": "",
+          "sel_level": null,
+          "margin": 0.0326388888888889
+        },
+        "lesion": {
+          "lead": "",
+          "sel_level": null,
+          "margin": 0.0
+        },
+        "ladder": {
+          "mood": 0.071,
+          "felt_arousal": 0.050583333333333334,
+          "level": 3
+        }
+      },
+      "44": {
+        "margin_to_threshold": -0.009722222222222222,
+        "predicted_load_bearing": false,
+        "aws_load_bearing": true,
+        "intact": {
+          "lead": "",
+          "sel_level": null,
+          "margin": 0.04027777777777778
+        },
+        "lesion": {
+          "lead": "",
+          "sel_level": null,
+          "margin": 0.0
+        },
+        "ladder": {
+          "mood": 0.07029166666666667,
+          "felt_arousal": 0.044958333333333336,
+          "level": 3
+        }
+      },
+      "100": {
+        "margin_to_threshold": 0.10972222222222223,
+        "predicted_load_bearing": true,
+        "aws_load_bearing": true,
+        "intact": {
+          "lead": "Gladly! ",
+          "sel_level": 2,
+          "margin": 0.15972222222222224
+        },
+        "lesion": {
+          "lead": "",
+          "sel_level": null,
+          "margin": 0.0
+        },
+        "ladder": {
+          "mood": 0.06391666666666666,
+          "felt_arousal": 0.04641666666666667,
+          "level": 2
+        }
+      },
+      "101": {
+        "margin_to_threshold": -0.012499999999999997,
+        "predicted_load_bearing": false,
+        "aws_load_bearing": true,
+        "intact": {
+          "lead": "",
+          "sel_level": null,
+          "margin": 0.037500000000000006
+        },
+        "lesion": {
+          "lead": "",
+          "sel_level": null,
+          "margin": 0.0
+        },
+        "ladder": {
+          "mood": 0.06845833333333333,
+          "felt_arousal": 0.04541666666666667,
+          "level": 2
+        }
+      },
+      "102": {
+        "margin_to_threshold": -0.010416666666666671,
+        "predicted_load_bearing": false,
+        "aws_load_bearing": true,
+        "intact": {
+          "lead": "",
+          "sel_level": null,
+          "margin": 0.03958333333333333
+        },
+        "lesion": {
+          "lead": "",
+          "sel_level": null,
+          "margin": 0.0
+        },
+        "ladder": {
+          "mood": 0.06908333333333333,
+          "felt_arousal": 0.046,
+          "level": 2
+        }
+      }
+    },
+    "source-provenance-honesty": {
+      "42": {
+        "margin_to_threshold": 0.9999999912087912,
+        "predicted_load_bearing": true,
+        "aws_load_bearing": true,
+        "intact": {
+          "known": true,
+          "label": "perceived",
+          "d": 0.9999999912087912,
+          "rate_perceived": 0.11375,
+          "rate_generated": 0.0,
+          "agrees_with_encoded": true,
+          "encoded_as": "perceived"
+        },
+        "lesion": {
+          "known": true,
+          "label": "generated",
+          "d": 0.0,
+          "rate_perceived": 0.0,
+          "rate_generated": 0.0,
+          "agrees_with_encoded": false,
+          "encoded_as": "perceived"
+        },
+        "ladder": null
+      },
+      "43": {
+        "margin_to_threshold": 0.9999999903323263,
+        "predicted_load_bearing": true,
+        "aws_load_bearing": true,
+        "intact": {
+          "known": true,
+          "label": "perceived",
+          "d": 0.9999999903323263,
+          "rate_perceived": 0.1034375,
+          "rate_generated": 0.0,
+          "agrees_with_encoded": true,
+          "encoded_as": "perceived"
+        },
+        "lesion": {
+          "known": true,
+          "label": "generated",
+          "d": 0.0,
+          "rate_perceived": 0.0,
+          "rate_generated": 0.0,
+          "agrees_with_encoded": false,
+          "encoded_as": "perceived"
+        },
+        "ladder": null
+      },
+      "44": {
+        "margin_to_threshold": 0.999999990909091,
+        "predicted_load_bearing": false,
+        "aws_load_bearing": false,
+        "intact": {
+          "known": true,
+          "label": "perceived",
+          "d": 0.999999990909091,
+          "rate_perceived": 0.11,
+          "rate_generated": 0.0,
+          "agrees_with_encoded": true,
+          "encoded_as": "perceived"
+        },
+        "lesion": {
+          "known": true,
+          "label": "perceived",
+          "d": 0.0,
+          "rate_perceived": 0.0,
+          "rate_generated": 0.0,
+          "agrees_with_encoded": true,
+          "encoded_as": "perceived"
+        },
+        "ladder": null
+      },
+      "100": {
+        "margin_to_threshold": 0.999999989644013,
+        "predicted_load_bearing": true,
+        "aws_load_bearing": true,
+        "intact": {
+          "known": true,
+          "label": "perceived",
+          "d": 0.999999989644013,
+          "rate_perceived": 0.0965625,
+          "rate_generated": 0.0,
+          "agrees_with_encoded": true,
+          "encoded_as": "perceived"
+        },
+        "lesion": {
+          "known": true,
+          "label": "generated",
+          "d": 0.0,
+          "rate_perceived": 0.0,
+          "rate_generated": 0.0,
+          "agrees_with_encoded": false,
+          "encoded_as": "perceived"
+        },
+        "ladder": null
+      },
+      "101": {
+        "margin_to_threshold": 0.999999990883191,
+        "predicted_load_bearing": true,
+        "aws_load_bearing": true,
+        "intact": {
+          "known": true,
+          "label": "perceived",
+          "d": 0.999999990883191,
+          "rate_perceived": 0.1096875,
+          "rate_generated": 0.0,
+          "agrees_with_encoded": true,
+          "encoded_as": "perceived"
+        },
+        "lesion": {
+          "known": true,
+          "label": "generated",
+          "d": 0.0,
+          "rate_perceived": 0.0,
+          "rate_generated": 0.0,
+          "agrees_with_encoded": false,
+          "encoded_as": "perceived"
+        },
+        "ladder": null
+      },
+      "102": {
+        "margin_to_threshold": 0.999999990857143,
+        "predicted_load_bearing": false,
+        "aws_load_bearing": false,
+        "intact": {
+          "known": true,
+          "label": "perceived",
+          "d": 0.999999990857143,
+          "rate_perceived": 0.109375,
+          "rate_generated": 0.0,
+          "agrees_with_encoded": true,
+          "encoded_as": "perceived"
+        },
+        "lesion": {
+          "known": true,
+          "label": "perceived",
+          "d": 0.0,
+          "rate_perceived": 0.0,
+          "rate_generated": 0.0,
+          "agrees_with_encoded": true,
+          "encoded_as": "perceived"
+        },
+        "ladder": null
+      }
+    }
+  },
+  "stats": {
+    "n_errors": 0,
+    "pmem_agreement_6seed": 6,
+    "pmem_margin_brackets_thr": true,
+    "pmem_margins": [
+      0.14055555555555554,
+      0.12722222222222224,
+      -0.01611111111111113,
+      0.06611111111111112,
+      0.07388888888888889,
+      0.10333333333333333
+    ],
+    "min_intact_prov_d": 0.999999989644013,
+    "max_lesion_prov_d": 0.0,
+    "affect_near_threshold_count": 5,
+    "affect_margins_to_thr": [
+      -0.005555555555555564,
+      -0.017361111111111105,
+      -0.009722222222222222,
+      0.10972222222222223,
+      -0.012499999999999997,
+      -0.010416666666666671
+    ],
+    "min_epi_recall_margin": 0.3,
+    "epi_intact_apical_cue": [
+      1.0,
+      0.5,
+      0.8888888888888888,
+      0.8888888888888888,
+      1.0,
+      0.7777777777777778
+    ],
+    "provenance_d_attributable_to_lesioned_pathway": 1.0
+  },
+  "label": "lbf-borderline-operating-point-diagnosis",
+  "status": "GO",
+  "go": true,
+  "undefined_reasons": [],
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "24 organ-reads complete (0 errors across 4 faculties x 6 seeds)",
+      "ok": true,
+      "detail": "measured=0 expect=0",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "prospective-memory margin-sign predicts the AWS verdict 6/6 (a GENUINE near-threshold fragility)",
+      "ok": true,
+      "detail": "measured=6 expect=6",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "prospective-memory operating point BRACKETS FIRE_THR (min margin <0 < max margin -> the flip is a threshold crossing, not wiring)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "source-provenance intact opponent read is ROBUST at every seed (min intact d >= 0.99) -> its borderline is NOT a brain operating point",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "source-provenance lesion is a DEGENERATE control (lesion d == 0 at every seed) -> the seed-dependence is the tie-break coin-flip on the discretized label (an INSTRUMENT artifact)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "affect-marker WTA winner margin sits AT DEAD_MARGIN (|margin - 0.05| < 0.02) at >= 5/6 seeds -> the verdict flips with seed/build-context/hardware",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "episodic RECALL margin is robust at every seed (min apical_cue - COMPLETE_MIN > 0.2) -> the fragile step is the STORE (assembly formation), not the recall read",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    }
+  ],
+  "disabled_processes": [],
+  "chance": null
+}
