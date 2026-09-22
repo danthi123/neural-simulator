@@ -1,0 +1,34 @@
+{
+ "run_id": "1790098920-2658717",
+ "runner": "research/runners/load_bearing_fraction.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/wf_321dec2f-e35-1/research/runners/load_bearing_fraction.py",
+  "--only",
+  "prospective-memory",
+  "--repeats",
+  "2",
+  "--seed",
+  "100",
+  "--out",
+  "research/findings/raw/_load_bearing/pmem_facil_drive_s100.json"
+ ],
+ "git_sha": "49a165eb8",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-22T13:42:00",
+ "env": {
+  "SIM_BACKEND": "numpy",
+  "CUDA_VISIBLE_DEVICES": ""
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_load_bearing/pmem_facil_drive_s100.json"
+}

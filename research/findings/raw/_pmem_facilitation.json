@@ -1,0 +1,868 @@
+{
+  "probe": "pmem_facilitation",
+  "verdict": "GO -- SHORT-TERM FACILITATION of the maintained intention-assembly drive makes prospective-memory load-bearing on ALL 6 seeds (was 5/6, off@s44). A Tsodyks-Markram facilitation variable on the act_X->rel_X projection (residual-Ca2+ release-probability increase, driven by the maintained assembly's OWN sustained firing) potentiates the held drive turn-over-turn, so at the cue the held x cue coincidence clears FIRE_THR on every seed -- the narrow seed-44 read (0.1839 -> 0.2111) crosses 0.20 WITH margin. The lesion arm stays silent (max lesion rel 0.0278 < 0.2) because facilitation is gated by the maintained-assembly firing the lesion COLLAPSES, and every frozen-gate silence clause STAYS 6/6 (the facilitated current is NMDA Mg2+-block voltage-gated -> coincidence-preferential by the receptor's own biology, and the operating point is calibrated WITH facilitation). Identical F-dynamics params for all seeds (fac_g=6000.0, fac_U=0.18, tau_F=2000.0); the lift is stable across a ~2x fac_g range -- a mechanism, not a per-seed tune. All reads cp_firing_states; NO sim/ edit.",
+  "go": true,
+  "task": "prospective-memory READ-LEVEL fix: short-term (Tsodyks-Markram) facilitation of the maintained act_X->rel_X projection, driven by the held assembly's own sustained firing, potentiates the held drive turn-over-turn so the held x cue coincidence clears FIRE_THR at the N=3 production protocol on all seeds (esp. s44). ON vs OFF (the SFA+plateau GO substrate). All reads cp_firing_states; NO sim/ edit; reuse-by-import.",
+  "gate": {
+    "FIRE_THR": 0.2,
+    "SILENT_MAX": 0.06,
+    "HOLD_FLOOR": 0.05,
+    "LESION_HELD_MAX": 0.02,
+    "SEP_RATIO": 2.5,
+    "GO_MIN_SEEDS_FRAC": 0.8333333333333334
+  },
+  "facilitation": {
+    "fac_g": 6000.0,
+    "fac_U": 0.18,
+    "fac_tau_F_steps": 2000.0,
+    "fac_F_max": 1.0
+  },
+  "N_frozen": 5,
+  "n_distractors": 4,
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "n3_load_bearing_ON": 6,
+  "n3_load_bearing_OFF": 5,
+  "n3_per_seed_ON": [
+    {
+      "seed": 42,
+      "intact_rel": 0.3439,
+      "intact_fired": true,
+      "lesion_rel": 0.0278,
+      "lesion_fired": false,
+      "load_bearing": true,
+      "peak_F": 0.992
+    },
+    {
+      "seed": 43,
+      "intact_rel": 0.3361,
+      "intact_fired": true,
+      "lesion_rel": 0.0206,
+      "lesion_fired": false,
+      "load_bearing": true,
+      "peak_F": 0.9923
+    },
+    {
+      "seed": 44,
+      "intact_rel": 0.2111,
+      "intact_fired": true,
+      "lesion_rel": 0.0,
+      "lesion_fired": false,
+      "load_bearing": true,
+      "peak_F": 0.992
+    },
+    {
+      "seed": 100,
+      "intact_rel": 0.2839,
+      "intact_fired": true,
+      "lesion_rel": 0.0256,
+      "lesion_fired": false,
+      "load_bearing": true,
+      "peak_F": 0.9925
+    },
+    {
+      "seed": 101,
+      "intact_rel": 0.2761,
+      "intact_fired": true,
+      "lesion_rel": 0.0,
+      "lesion_fired": false,
+      "load_bearing": true,
+      "peak_F": 0.9921
+    },
+    {
+      "seed": 102,
+      "intact_rel": 0.3133,
+      "intact_fired": true,
+      "lesion_rel": 0.0211,
+      "lesion_fired": false,
+      "load_bearing": true,
+      "peak_F": 0.9924
+    }
+  ],
+  "n3_per_seed_OFF": [
+    {
+      "seed": 42,
+      "intact_rel": 0.3406,
+      "intact_fired": true,
+      "lesion_rel": 0.0422,
+      "lesion_fired": false,
+      "load_bearing": true,
+      "peak_F": 0.0
+    },
+    {
+      "seed": 43,
+      "intact_rel": 0.3272,
+      "intact_fired": true,
+      "lesion_rel": 0.0389,
+      "lesion_fired": false,
+      "load_bearing": true,
+      "peak_F": 0.0
+    },
+    {
+      "seed": 44,
+      "intact_rel": 0.1839,
+      "intact_fired": false,
+      "lesion_rel": 0.0,
+      "lesion_fired": false,
+      "load_bearing": false,
+      "peak_F": 0.0
+    },
+    {
+      "seed": 100,
+      "intact_rel": 0.2661,
+      "intact_fired": true,
+      "lesion_rel": 0.0411,
+      "lesion_fired": false,
+      "load_bearing": true,
+      "peak_F": 0.0
+    },
+    {
+      "seed": 101,
+      "intact_rel": 0.2739,
+      "intact_fired": true,
+      "lesion_rel": 0.0161,
+      "lesion_fired": false,
+      "load_bearing": true,
+      "peak_F": 0.0
+    },
+    {
+      "seed": 102,
+      "intact_rel": 0.3033,
+      "intact_fired": true,
+      "lesion_rel": 0.0394,
+      "lesion_fired": false,
+      "load_bearing": true,
+      "peak_F": 0.0
+    }
+  ],
+  "mean_intact_rel_ON": 0.2941,
+  "mean_intact_rel_OFF": 0.2825,
+  "mean_lesion_rel_ON": 0.0158,
+  "intact_lift_attributable_to_facilitation": 0.03933348447064177,
+  "frozen_silence_agg_ON": {
+    "fire_on_cue": 6,
+    "persistence": 6,
+    "no_fire_before": 6,
+    "no_fire_wrongcue": 6,
+    "no_intention_silent": 6,
+    "lesion_holds": 6,
+    "lesion_forgets": 6,
+    "separation": 6
+  },
+  "frozen_silence_regressed": [],
+  "frozen_per_seed_ON": [
+    {
+      "seed": 42,
+      "N": 5,
+      "passed": true,
+      "clauses": {
+        "fire_on_cue": true,
+        "persistence": true,
+        "no_fire_before": true,
+        "no_fire_wrongcue": true,
+        "no_intention_silent": true,
+        "lesion_holds": true,
+        "lesion_forgets": true,
+        "separation": true
+      },
+      "max_silent": 0.04722222222222222,
+      "fire_min": 0.38055555555555554,
+      "held_min": 0.34375,
+      "fireA": {
+        "rel_A_on_cueA": 0.39611111111111114,
+        "rel_B_on_cueA": 0.0,
+        "held_A_trace": [
+          0.34375,
+          0.34375,
+          0.34375,
+          0.34375,
+          0.34375
+        ],
+        "rel_A_before_trace": [
+          0.0,
+          0.03166666666666667,
+          0.025833333333333333,
+          0.045,
+          0.04
+        ]
+      },
+      "fireB": {
+        "rel_B_on_cueB": 0.38055555555555554,
+        "rel_A_on_cueB": 0.0
+      },
+      "wrongcue": {
+        "rel_A_on_cueB": 0.04722222222222222,
+        "rel_B_on_cueB": 0.0
+      },
+      "noint": {
+        "rel_A_on_cueA_no_intention": 0.027777777777777776
+      },
+      "lesion": {
+        "held_A_pre_lesion": 0.33375,
+        "held_A_post_lesion": 0.0,
+        "rel_A_on_cueA_lesioned": 0.030555555555555555
+      }
+    },
+    {
+      "seed": 43,
+      "N": 5,
+      "passed": true,
+      "clauses": {
+        "fire_on_cue": true,
+        "persistence": true,
+        "no_fire_before": true,
+        "no_fire_wrongcue": true,
+        "no_intention_silent": true,
+        "lesion_holds": true,
+        "lesion_forgets": true,
+        "separation": true
+      },
+      "max_silent": 0.041666666666666664,
+      "fire_min": 0.38555555555555554,
+      "held_min": 0.325,
+      "fireA": {
+        "rel_A_on_cueA": 0.38555555555555554,
+        "rel_B_on_cueA": 0.0,
+        "held_A_trace": [
+          0.3325,
+          0.325,
+          0.325,
+          0.325,
+          0.325
+        ],
+        "rel_A_before_trace": [
+          0.0075,
+          0.02,
+          0.0275,
+          0.041666666666666664,
+          0.04
+        ]
+      },
+      "fireB": {
+        "rel_B_on_cueB": 0.3894444444444444,
+        "rel_A_on_cueB": 0.0
+      },
+      "wrongcue": {
+        "rel_A_on_cueB": 0.03666666666666667,
+        "rel_B_on_cueB": 0.04055555555555555
+      },
+      "noint": {
+        "rel_A_on_cueA_no_intention": 0.02
+      },
+      "lesion": {
+        "held_A_pre_lesion": 0.335,
+        "held_A_post_lesion": 0.0,
+        "rel_A_on_cueA_lesioned": 0.02277777777777778
+      }
+    },
+    {
+      "seed": 44,
+      "N": 5,
+      "passed": true,
+      "clauses": {
+        "fire_on_cue": true,
+        "persistence": true,
+        "no_fire_before": true,
+        "no_fire_wrongcue": true,
+        "no_intention_silent": true,
+        "lesion_holds": true,
+        "lesion_forgets": true,
+        "separation": true
+      },
+      "max_silent": 0.041666666666666664,
+      "fire_min": 0.345,
+      "held_min": 0.32625,
+      "fireA": {
+        "rel_A_on_cueA": 0.345,
+        "rel_B_on_cueA": 0.0,
+        "held_A_trace": [
+          0.33,
+          0.32625,
+          0.32625,
+          0.32625,
+          0.32625
+        ],
+        "rel_A_before_trace": [
+          0.0,
+          0.03,
+          0.021666666666666667,
+          0.028333333333333332,
+          0.03833333333333333
+        ]
+      },
+      "fireB": {
+        "rel_B_on_cueB": 0.34944444444444445,
+        "rel_A_on_cueB": 0.0
+      },
+      "wrongcue": {
+        "rel_A_on_cueB": 0.041666666666666664,
+        "rel_B_on_cueB": 0.0
+      },
+      "noint": {
+        "rel_A_on_cueA_no_intention": 0.0
+      },
+      "lesion": {
+        "held_A_pre_lesion": 0.32125,
+        "held_A_post_lesion": 0.0,
+        "rel_A_on_cueA_lesioned": 0.0
+      }
+    },
+    {
+      "seed": 100,
+      "N": 5,
+      "passed": true,
+      "clauses": {
+        "fire_on_cue": true,
+        "persistence": true,
+        "no_fire_before": true,
+        "no_fire_wrongcue": true,
+        "no_intention_silent": true,
+        "lesion_holds": true,
+        "lesion_forgets": true,
+        "separation": true
+      },
+      "max_silent": 0.04416666666666667,
+      "fire_min": 0.35777777777777775,
+      "held_min": 0.32875,
+      "fireA": {
+        "rel_A_on_cueA": 0.3761111111111111,
+        "rel_B_on_cueA": 0.0,
+        "held_A_trace": [
+          0.3375,
+          0.335,
+          0.32875,
+          0.32875,
+          0.32875
+        ],
+        "rel_A_before_trace": [
+          0.010833333333333334,
+          0.028333333333333332,
+          0.041666666666666664,
+          0.04083333333333333,
+          0.04416666666666667
+        ]
+      },
+      "fireB": {
+        "rel_B_on_cueB": 0.35777777777777775,
+        "rel_A_on_cueB": 0.0
+      },
+      "wrongcue": {
+        "rel_A_on_cueB": 0.03722222222222222,
+        "rel_B_on_cueB": 0.042777777777777776
+      },
+      "noint": {
+        "rel_A_on_cueA_no_intention": 0.025
+      },
+      "lesion": {
+        "held_A_pre_lesion": 0.34,
+        "held_A_post_lesion": 0.0,
+        "rel_A_on_cueA_lesioned": 0.02722222222222222
+      }
+    },
+    {
+      "seed": 101,
+      "N": 5,
+      "passed": true,
+      "clauses": {
+        "fire_on_cue": true,
+        "persistence": true,
+        "no_fire_before": true,
+        "no_fire_wrongcue": true,
+        "no_intention_silent": true,
+        "lesion_holds": true,
+        "lesion_forgets": true,
+        "separation": true
+      },
+      "max_silent": 0.05,
+      "fire_min": 0.3655555555555556,
+      "held_min": 0.34625,
+      "fireA": {
+        "rel_A_on_cueA": 0.3655555555555556,
+        "rel_B_on_cueA": 0.0,
+        "held_A_trace": [
+          0.3475,
+          0.34625,
+          0.34625,
+          0.34625,
+          0.34625
+        ],
+        "rel_A_before_trace": [
+          0.0,
+          0.025833333333333333,
+          0.034166666666666665,
+          0.030833333333333334,
+          0.05
+        ]
+      },
+      "fireB": {
+        "rel_B_on_cueB": 0.3861111111111111,
+        "rel_A_on_cueB": 0.0
+      },
+      "wrongcue": {
+        "rel_A_on_cueB": 0.042777777777777776,
+        "rel_B_on_cueB": 0.0005555555555555556
+      },
+      "noint": {
+        "rel_A_on_cueA_no_intention": 0.0
+      },
+      "lesion": {
+        "held_A_pre_lesion": 0.3275,
+        "held_A_post_lesion": 0.0,
+        "rel_A_on_cueA_lesioned": 0.0
+      }
+    },
+    {
+      "seed": 102,
+      "N": 5,
+      "passed": true,
+      "clauses": {
+        "fire_on_cue": true,
+        "persistence": true,
+        "no_fire_before": true,
+        "no_fire_wrongcue": true,
+        "no_intention_silent": true,
+        "lesion_holds": true,
+        "lesion_forgets": true,
+        "separation": true
+      },
+      "max_silent": 0.03916666666666667,
+      "fire_min": 0.3811111111111111,
+      "held_min": 0.315,
+      "fireA": {
+        "rel_A_on_cueA": 0.3811111111111111,
+        "rel_B_on_cueA": 0.0,
+        "held_A_trace": [
+          0.315,
+          0.33125,
+          0.33125,
+          0.33125,
+          0.33125
+        ],
+        "rel_A_before_trace": [
+          0.011666666666666667,
+          0.016666666666666666,
+          0.023333333333333334,
+          0.034166666666666665,
+          0.03916666666666667
+        ]
+      },
+      "fireB": {
+        "rel_B_on_cueB": 0.405,
+        "rel_A_on_cueB": 0.0
+      },
+      "wrongcue": {
+        "rel_A_on_cueB": 0.03666666666666667,
+        "rel_B_on_cueB": 0.03611111111111111
+      },
+      "noint": {
+        "rel_A_on_cueA_no_intention": 0.02
+      },
+      "lesion": {
+        "held_A_pre_lesion": 0.32,
+        "held_A_post_lesion": 0.0,
+        "rel_A_on_cueA_lesioned": 0.02388888888888889
+      }
+    }
+  ],
+  "frozen_per_seed_OFF": [
+    {
+      "seed": 42,
+      "N": 5,
+      "passed": true,
+      "clauses": {
+        "fire_on_cue": true,
+        "persistence": true,
+        "no_fire_before": true,
+        "no_fire_wrongcue": true,
+        "no_intention_silent": true,
+        "lesion_holds": true,
+        "lesion_forgets": true,
+        "separation": true
+      },
+      "max_silent": 0.042777777777777776,
+      "fire_min": 0.38222222222222224,
+      "held_min": 0.34375,
+      "fireA": {
+        "rel_A_on_cueA": 0.395,
+        "rel_B_on_cueA": 0.0,
+        "held_A_trace": [
+          0.34375,
+          0.34375,
+          0.34375,
+          0.34375,
+          0.34375
+        ],
+        "rel_A_before_trace": [
+          0.0,
+          0.0,
+          0.004166666666666667,
+          0.020833333333333332,
+          0.020833333333333332
+        ]
+      },
+      "fireB": {
+        "rel_B_on_cueB": 0.38222222222222224,
+        "rel_A_on_cueB": 0.0
+      },
+      "wrongcue": {
+        "rel_A_on_cueB": 0.025,
+        "rel_B_on_cueB": 0.008333333333333333
+      },
+      "noint": {
+        "rel_A_on_cueA_no_intention": 0.04055555555555555
+      },
+      "lesion": {
+        "held_A_pre_lesion": 0.33375,
+        "held_A_post_lesion": 0.0,
+        "rel_A_on_cueA_lesioned": 0.042777777777777776
+      }
+    },
+    {
+      "seed": 43,
+      "N": 5,
+      "passed": true,
+      "clauses": {
+        "fire_on_cue": true,
+        "persistence": true,
+        "no_fire_before": true,
+        "no_fire_wrongcue": true,
+        "no_intention_silent": true,
+        "lesion_holds": true,
+        "lesion_forgets": true,
+        "separation": true
+      },
+      "max_silent": 0.042222222222222223,
+      "fire_min": 0.37277777777777776,
+      "held_min": 0.325,
+      "fireA": {
+        "rel_A_on_cueA": 0.38222222222222224,
+        "rel_B_on_cueA": 0.0,
+        "held_A_trace": [
+          0.3325,
+          0.325,
+          0.325,
+          0.325,
+          0.325
+        ],
+        "rel_A_before_trace": [
+          0.0,
+          0.005833333333333334,
+          0.03,
+          0.035,
+          0.03166666666666667
+        ]
+      },
+      "fireB": {
+        "rel_B_on_cueB": 0.37277777777777776,
+        "rel_A_on_cueB": 0.0
+      },
+      "wrongcue": {
+        "rel_A_on_cueB": 0.023333333333333334,
+        "rel_B_on_cueB": 0.04055555555555555
+      },
+      "noint": {
+        "rel_A_on_cueA_no_intention": 0.03777777777777778
+      },
+      "lesion": {
+        "held_A_pre_lesion": 0.335,
+        "held_A_post_lesion": 0.0,
+        "rel_A_on_cueA_lesioned": 0.042222222222222223
+      }
+    },
+    {
+      "seed": 44,
+      "N": 5,
+      "passed": true,
+      "clauses": {
+        "fire_on_cue": true,
+        "persistence": true,
+        "no_fire_before": true,
+        "no_fire_wrongcue": true,
+        "no_intention_silent": true,
+        "lesion_holds": true,
+        "lesion_forgets": true,
+        "separation": true
+      },
+      "max_silent": 0.04666666666666667,
+      "fire_min": 0.33444444444444443,
+      "held_min": 0.32625,
+      "fireA": {
+        "rel_A_on_cueA": 0.33444444444444443,
+        "rel_B_on_cueA": 0.0,
+        "held_A_trace": [
+          0.33,
+          0.32625,
+          0.32625,
+          0.32625,
+          0.32625
+        ],
+        "rel_A_before_trace": [
+          0.0,
+          0.005833333333333334,
+          0.03,
+          0.0425,
+          0.04666666666666667
+        ]
+      },
+      "fireB": {
+        "rel_B_on_cueB": 0.35777777777777775,
+        "rel_A_on_cueB": 0.0
+      },
+      "wrongcue": {
+        "rel_A_on_cueB": 0.04388888888888889,
+        "rel_B_on_cueB": 0.0
+      },
+      "noint": {
+        "rel_A_on_cueA_no_intention": 0.0
+      },
+      "lesion": {
+        "held_A_pre_lesion": 0.32125,
+        "held_A_post_lesion": 0.0,
+        "rel_A_on_cueA_lesioned": 0.0
+      }
+    },
+    {
+      "seed": 100,
+      "N": 5,
+      "passed": true,
+      "clauses": {
+        "fire_on_cue": true,
+        "persistence": true,
+        "no_fire_before": true,
+        "no_fire_wrongcue": true,
+        "no_intention_silent": true,
+        "lesion_holds": true,
+        "lesion_forgets": true,
+        "separation": true
+      },
+      "max_silent": 0.04388888888888889,
+      "fire_min": 0.34,
+      "held_min": 0.32875,
+      "fireA": {
+        "rel_A_on_cueA": 0.37166666666666665,
+        "rel_B_on_cueA": 0.0,
+        "held_A_trace": [
+          0.3375,
+          0.335,
+          0.32875,
+          0.32875,
+          0.32875
+        ],
+        "rel_A_before_trace": [
+          0.0075,
+          0.005,
+          0.010833333333333334,
+          0.023333333333333334,
+          0.025833333333333333
+        ]
+      },
+      "fireB": {
+        "rel_B_on_cueB": 0.34,
+        "rel_A_on_cueB": 0.0
+      },
+      "wrongcue": {
+        "rel_A_on_cueB": 0.02,
+        "rel_B_on_cueB": 0.042777777777777776
+      },
+      "noint": {
+        "rel_A_on_cueA_no_intention": 0.03888888888888889
+      },
+      "lesion": {
+        "held_A_pre_lesion": 0.34,
+        "held_A_post_lesion": 0.0,
+        "rel_A_on_cueA_lesioned": 0.04388888888888889
+      }
+    },
+    {
+      "seed": 101,
+      "N": 5,
+      "passed": true,
+      "clauses": {
+        "fire_on_cue": true,
+        "persistence": true,
+        "no_fire_before": true,
+        "no_fire_wrongcue": true,
+        "no_intention_silent": true,
+        "lesion_holds": true,
+        "lesion_forgets": true,
+        "separation": true
+      },
+      "max_silent": 0.05,
+      "fire_min": 0.36444444444444446,
+      "held_min": 0.34625,
+      "fireA": {
+        "rel_A_on_cueA": 0.36444444444444446,
+        "rel_B_on_cueA": 0.0,
+        "held_A_trace": [
+          0.3475,
+          0.34625,
+          0.34625,
+          0.34625,
+          0.34625
+        ],
+        "rel_A_before_trace": [
+          0.0175,
+          0.0225,
+          0.041666666666666664,
+          0.035833333333333335,
+          0.05
+        ]
+      },
+      "fireB": {
+        "rel_B_on_cueB": 0.385,
+        "rel_A_on_cueB": 0.0
+      },
+      "wrongcue": {
+        "rel_A_on_cueB": 0.035555555555555556,
+        "rel_B_on_cueB": 0.023333333333333334
+      },
+      "noint": {
+        "rel_A_on_cueA_no_intention": 0.015555555555555555
+      },
+      "lesion": {
+        "held_A_pre_lesion": 0.3275,
+        "held_A_post_lesion": 0.0,
+        "rel_A_on_cueA_lesioned": 0.021111111111111112
+      }
+    },
+    {
+      "seed": 102,
+      "N": 5,
+      "passed": true,
+      "clauses": {
+        "fire_on_cue": true,
+        "persistence": true,
+        "no_fire_before": true,
+        "no_fire_wrongcue": true,
+        "no_intention_silent": true,
+        "lesion_holds": true,
+        "lesion_forgets": true,
+        "separation": true
+      },
+      "max_silent": 0.043333333333333335,
+      "fire_min": 0.3811111111111111,
+      "held_min": 0.315,
+      "fireA": {
+        "rel_A_on_cueA": 0.3811111111111111,
+        "rel_B_on_cueA": 0.0,
+        "held_A_trace": [
+          0.315,
+          0.33125,
+          0.33125,
+          0.33125,
+          0.33125
+        ],
+        "rel_A_before_trace": [
+          0.0,
+          0.0016666666666666668,
+          0.0175,
+          0.019166666666666665,
+          0.02666666666666667
+        ]
+      },
+      "fireB": {
+        "rel_B_on_cueB": 0.3983333333333333,
+        "rel_A_on_cueB": 0.0
+      },
+      "wrongcue": {
+        "rel_A_on_cueB": 0.027777777777777776,
+        "rel_B_on_cueB": 0.035
+      },
+      "noint": {
+        "rel_A_on_cueA_no_intention": 0.03888888888888889
+      },
+      "lesion": {
+        "held_A_pre_lesion": 0.32,
+        "held_A_post_lesion": 0.0,
+        "rel_A_on_cueA_lesioned": 0.043333333333333335
+      }
+    }
+  ],
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "N=3 load-bearing on ALL seeds under facilitation (per-seed count)",
+      "ok": true,
+      "detail": "measured=6 expect=<function _derisk.<locals>.<lambda> at 0x7f8d4b1cb2e0>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "frozen-gate silence held under facilitation: no_fire_before (per-seed count)",
+      "ok": true,
+      "detail": "measured=6 expect=<function _derisk.<locals>.<lambda> at 0x7f8d4b1cb2e0>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "frozen-gate silence held under facilitation: no_fire_wrongcue (per-seed count)",
+      "ok": true,
+      "detail": "measured=6 expect=<function _derisk.<locals>.<lambda> at 0x7f8d4b1cb2e0>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "frozen-gate silence held under facilitation: no_intention_silent (per-seed count)",
+      "ok": true,
+      "detail": "measured=6 expect=<function _derisk.<locals>.<lambda> at 0x7f8d4b1cb2e0>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "frozen-gate silence held under facilitation: lesion_holds (per-seed count)",
+      "ok": true,
+      "detail": "measured=6 expect=<function _derisk.<locals>.<lambda> at 0x7f8d4b1cb2e0>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "frozen-gate silence held under facilitation: lesion_forgets (per-seed count)",
+      "ok": true,
+      "detail": "measured=6 expect=<function _derisk.<locals>.<lambda> at 0x7f8d4b1cb2e0>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "frozen-gate silence held under facilitation: persistence (per-seed count)",
+      "ok": true,
+      "detail": "measured=6 expect=<function _derisk.<locals>.<lambda> at 0x7f8d4b1cb2e0>",
+      "note": ""
+    },
+    {
+      "kind": "reaches",
+      "name": "N=3 load-bearing count: OFF baseline -> facilitation ON",
+      "ok": true,
+      "detail": "before=5 after=6 moved=True",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "N=3 intact coincidence rel: facilitation ON vs OFF",
+      "ok": true,
+      "detail": "treatment=0.294067 control=0.2825 |sep|=0.0115667 > 0",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "lesion arm stays silent under facilitation (max lesion rel < FIRE_THR)",
+      "ok": true,
+      "detail": "measured=0.0278 expect=<function _derisk.<locals>.<lambda> at 0x7f8d4b1cb2e0>",
+      "note": ""
+    }
+  ],
+  "disabled_processes": [
+    {
+      "process": "STDP / long-term Hebbian LTP / OU-noise",
+      "why": "clean-hold WM config unchanged; the added mechanism is a Tsodyks-Markram SHORT-TERM facilitation variable on the maintained act->rel NMDA projection (residual-Ca2+ release-probability increase), whose expressed current is Mg2+-block voltage-gated (coincidence-preferential), on top of the SFA + NMDA-plateau + per-pool homeostat GO substrate. Facilitation ACTIVE during calibration (fac_calib -- the operating point is set against the actual facilitated drive)."
+    }
+  ],
+  "verdict_status": "GO",
+  "elapsed_seconds": 883.8,
+  "BIOLOGY": "Short-term synaptic facilitation at facilitating synapses: Tsodyks & Markram 1997 (dynamic synapse model, facilitation variable u); Zucker & Regehr 2002 (residual presynaptic Ca2+ raises release probability); Wang et al. 2006 (recurrent PFC pyramidal synapses are strongly facilitating, tau_F ~ 1-2 s). NMDA-mediated expression / coincidence gate: Jahr & Stevens 1990 (the Mg2+-block voltage-dependence B(V)=1/(1+[Mg]/3.57*exp(-0.062V)), the same form the engine uses). Realized as a per-action facilitation variable F driven by the maintained assembly's own firing (cp_firing_states) that scales an Mg-block-gated current-injection proxy for the augmented act->rel NMDA release -- same flagged current-injection-proxy class as the parent SFA K-adaptation current and NMDA-plateau boost; the coincidence-specificity is the NMDA receptor's own voltage-dependence, and the operating point is calibrated WITH facilitation active."
+}

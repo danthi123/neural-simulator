@@ -1,0 +1,29 @@
+{
+ "run_id": "1790096383-2610840",
+ "runner": "research/runners/_pmem_facilitation_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/wf_321dec2f-e35-1/research/runners/_pmem_facilitation_derisk.py",
+  "--derisk",
+  "--fac-g",
+  "6000"
+ ],
+ "git_sha": "49a165eb8",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-22T12:59:43",
+ "env": {
+  "SIM_BACKEND": "numpy",
+  "CUDA_VISIBLE_DEVICES": ""
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_pmem_facilitation.json"
+}
