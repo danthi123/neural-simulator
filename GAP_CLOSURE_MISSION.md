@@ -132,10 +132,13 @@ the hollow-set finding sits uncommitted in the working tree + a safety stash `pr
    → the stabilizer is BUILDABLE (not honest-negative) for those 3. Build a biology-grounded regulator (e.g.
    Turrigiano-style scaling toward the separable gap) per faculty; for episodic target the store→recall INTEGRATION
    path (its read separates but the s44 miss is integration-level); for pmem lift the near-threshold held×cue read.
-   NOT tuning; honest-negative if a principled regulator fails 6-seed. **affect-marker: RNG-isolation bug FIXED
-   @419baeab** (fresh reader per arm) → isolated 6-seed re-run RUNNING (pid launched 2026-09-22 ~06:55Z, serial/
-   memcap/numpy) → **HARVEST research/findings/raw/_lbf_borderline_isolated_run.out** (+ _lbf_borderline_isolated/
-   op_s*.json) for affect-marker's now-assessable separability, then include it in the stabilizer build.
+   NOT tuning; honest-negative if a principled regulator fails 6-seed. **affect-marker: RESOLVED (RNG fix @419baeab
+   + isolated 6-seed HARVESTED 2026-09-22):** isolated affect-marker is load-bearing in only **1/6** seeds (down from
+   the pre-fix 4/6 — the extra flips were RNG-confounded). Its intact WTA margin clears DEAD_MARGIN only 1/6; on 5/6
+   the intact read itself sits in the dead-zone (no clean winner even intact) → NOT a stabilizer candidate (its issue
+   is the WTA not committing, not operating-point placement) → essentially NOT-load-bearing under a fair read. So the
+   stabilizer build targets only the THREE separable faculties (episodic / source-provenance / prospective-memory);
+   affect-marker's earlier borderline status was largely an RNG artifact (robust core 20/26 unaffected).
 
 *Everything below is prior-arc HISTORY.*
 

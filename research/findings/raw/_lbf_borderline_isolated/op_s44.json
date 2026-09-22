@@ -1,0 +1,100 @@
+{
+  "runner": "research.runners._lbf_borderline_operating_point",
+  "kind": "operating-point-diagnosis",
+  "seed": 44,
+  "backend": "numpy",
+  "cuda_visible_devices": "",
+  "per_faculty": {
+    "episodic-memory": {
+      "quantity": "apical_cue (dendritic dAP UP-fraction, held cue)",
+      "threshold_name": "COMPLETE_MIN",
+      "threshold": 0.2,
+      "intact": {
+        "apical_cue": 0.8888888888888888,
+        "apical_perm": 0.0,
+        "apical_nocue": 0.0,
+        "in_memory": true
+      },
+      "lesion": {
+        "apical_cue": 0.0,
+        "in_memory": false
+      },
+      "margin_to_threshold": 0.6888888888888889,
+      "cue_over_ctrl": 888888.8888888889,
+      "cue_over_ctrl_required": 3.0,
+      "lesion_attributable_fraction": 1.0,
+      "predicted_load_bearing": true
+    },
+    "prospective-memory": {
+      "quantity": "rel (cue-monitor relative firing rate off cp_firing_states)",
+      "threshold_name": "FIRE_THR",
+      "threshold": 0.2,
+      "intact": {
+        "rel": 0.18388888888888888,
+        "fired": false,
+        "is_cue": true,
+        "threshold": 0.2
+      },
+      "lesion": {
+        "rel": 0.0,
+        "fired": false,
+        "is_cue": true,
+        "threshold": 0.2
+      },
+      "margin_to_threshold": -0.01611111111111113,
+      "lesion_attributable_fraction": 1.0,
+      "predicted_load_bearing": false
+    },
+    "affect-marker-spiking-wta": {
+      "quantity": "WTA winner-minus-runner-up rate margin (rates[top]-rates[second])",
+      "threshold_name": "DEAD_MARGIN",
+      "threshold": 0.05,
+      "ladder": {
+        "mood": 0.07029166666666667,
+        "felt_arousal": 0.044958333333333336,
+        "level": 3
+      },
+      "intact": {
+        "lead": "",
+        "sel_level": null,
+        "margin": 0.04027777777777778
+      },
+      "lesion": {
+        "lead": "",
+        "sel_level": null,
+        "margin": 0.0
+      },
+      "margin_to_threshold": -0.009722222222222222,
+      "lesion_margin_to_threshold": -0.05,
+      "lesion_attributable_fraction": 1.0,
+      "predicted_load_bearing": false
+    },
+    "source-provenance-honesty": {
+      "quantity": "d = (rate_perceived - rate_generated)/(rp+rg)  [SIGN discretized to label]",
+      "threshold_name": "sign(0) + coin-flip tie-break when |margin|<1e-9 (lesion arm)",
+      "threshold": 0.0,
+      "intact": {
+        "known": true,
+        "label": "perceived",
+        "d": 0.999999990909091,
+        "rate_perceived": 0.11,
+        "rate_generated": 0.0,
+        "agrees_with_encoded": true,
+        "encoded_as": "perceived"
+      },
+      "lesion": {
+        "known": true,
+        "label": "perceived",
+        "d": 0.0,
+        "rate_perceived": 0.0,
+        "rate_generated": 0.0,
+        "agrees_with_encoded": true,
+        "encoded_as": "perceived"
+      },
+      "margin_to_threshold": 0.999999990909091,
+      "lesion_attributable_fraction": 1.0,
+      "compared_fields_differ": false,
+      "predicted_load_bearing": false
+    }
+  }
+}
