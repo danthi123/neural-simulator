@@ -67,6 +67,49 @@ CUE_OVER_CTRL = 3.0        # held_cue >= 3 * (perm|nocue)
 CTRL_MAX = 0.10            # held_nocue <= 0.10
 
 
+# ────────────────────────────────────────────────────────────────────────────────────────────────────────────
+# STORE-VERIFY (ENCODE→VERIFY→RE-ENCODE) — env-gated, DEFAULT-OFF -> byte-identical single-shot store.
+# ────────────────────────────────────────────────────────────────────────────────────────────────────────────
+# WHY (load-bearing #1 metric, finding 2026-09-22-borderline-separability-stabilizer-is-buildable):
+# episodic-memory is load-bearing on 5/6 seeds; at s44 the INTACT store->recall sometimes fails to read the memory
+# back (`in_memory=False` == the lesion -> a 0-diff, not load-bearing). The failure is FLAKY across build contexts:
+# the emergent DG-selected 'dog' ensemble is drawn ONCE at organ-build time (`emergent_assemblies`) and is subject to
+# GPU firing-threshold non-determinism (FMA/summation reorder, per this module's kt=8 note) — most draws form a
+# completable attractor (a strong cue read ~0.86), but an occasional draw is degenerate and does NOT complete. A
+# single-shot store banks whatever draw it got.
+#
+# THE MECHANISM (biology, not a tuned constant): a memory whose FIRST encoding did not form a completable attractor is
+# RE-ENCODED. In hippocampus, BTSP place-field induction is PROBABILISTIC per dendritic plateau (Bittner/Milstein/
+# Magee, Science 2017; Grienberger & Magee 2022) and a stable field is established over repeated plateaus/laps, each
+# re-recruiting a (stochastically) different sparse ensemble; immediate post-encoding sharp-wave-ripple replay
+# re-instates and strengthens a labile trace until it reactivates (Girardeau/Zugaro; Roux et al. 2017). The natural
+# stopping condition is the circuit's OWN read-back — does the memory reactivate from a PARTIAL cue — i.e. the exact
+# dendritic-dAP completion gate the recall uses. So the store runs ENCODE→VERIFY→RE-ENCODE: encode, drive the partial
+# cue and read the completion (the recall gate), and if it does not read back, RE-RECRUIT a fresh DG-selected ensemble
+# (an independent emergent draw on the SAME CA3 microcircuit) and encode again — until the substrate's own completion
+# gate confirms the trace, bounded by a safety lap cap. It is EMERGENT (the loop exits on the substrate's own read,
+# never on a target count) and applies uniformly to every topic/seed. OFF (default) -> single-shot -> byte-identical.
+def _store_verify_enabled() -> bool:
+    """`BRAIN_EPISODIC_STORE_VERIFY` in {1,true,yes,on} -> the store runs the ENCODE→VERIFY→RE-ENCODE loop (make the
+    intact store read back reliably across seeds). Default (unset/anything else) -> single-shot store, byte-identical
+    to HEAD."""
+    v = os.environ.get("BRAIN_EPISODIC_STORE_VERIFY")
+    if v is None:
+        return False
+    return v.strip().lower() in ("1", "true", "yes", "on")
+
+
+def _store_verify_max_laps() -> int:
+    """Safety bound on re-encoding laps. The loop EXITS on the FIRST successful read-back, so this only caps a
+    persistently-failing encode (it never forces extra laps on a memory that already completed). Env override
+    `BRAIN_EPISODIC_STORE_VERIFY_MAX_LAPS`; default 8 (with per-draw success ~0.8, 8 independent re-recruitments miss
+    with probability ~1e-5)."""
+    try:
+        return max(1, int(os.environ.get("BRAIN_EPISODIC_STORE_VERIFY_MAX_LAPS", "8")))
+    except Exception:
+        return 8
+
+
 class EpisodicDapMemory:
     """Per-topic spiking episodic-dialogue store on a CA3 dendritic-dAP readout bridge.
 
@@ -128,11 +171,13 @@ class EpisodicDapMemory:
             print(f"[episodic-dap] n_ca3={self.n_ca3} slots={self.topic_slot} sizes={self.assembly_sizes} "
                   f"sep_bias={self.sep_bias} backend={self.backend}", flush=True)
 
-    # ---- STORE (episodic WRITE): a spoken topic BTSP-forms its assembly on the readout bridge -------------------
-    def store(self, topic):
-        slot = self.topic_slot.get(topic)
-        if slot is None or slot in self.formed:
-            return False
+    # ---- one BTSP encoding episode (a 'lap'): form slot on a FRESH isolated bridge + copy within-slot weights -----
+    def _form_slot_onto_readout(self, slot):
+        """Encode assembly `slot` once: BTSP-form it on a fresh, isolated formation bridge (only that assembly driven,
+        so cross-assembly dW==0 by construction) and copy its WITHIN-assembly potentiated weights onto the readout
+        self.R. Extracted VERBATIM from the original store() body so the default (verify-OFF) path is byte-identical.
+        Rebuilds the formation readout from self._read_kwargs, whose `assemblies_ext` is a live reference to
+        self.assemblies -> a re-recruited ensemble (see _reselect_slot) is picked up here automatically."""
         bi = _formation_build_bridge(self.seed, **self._form_build_kwargs)
         Ri = make_readout(bi, self.seed, **self._read_kwargs)
         _form_one_assembly(bi, Ri, slot, btsp_w_max=self.p["wmax"], btsp_lr=self.p["btsp_lr"],
@@ -141,11 +186,81 @@ class EpisodicDapMemory:
                            reset_steps=self.p["reset_steps"], plateau=True)
         m = Ri.withinA_masks[slot]
         self.R.C.data[m] = bi.cp_connections.data[m]      # copy ONLY the within-slot BTSP-formed weights
-        self.formed.add(slot); self.store_log.append(topic)
-        w_within = float(self.cp.mean(self.R.C.data[self.R.withinA_masks[slot]]))
         del bi, Ri
+
+    def _geom_for_slot(self, A):
+        """The (held_pos, cue, perm) geometry for a single assembly A on self.R — mirrors `_held_cue_perm` exactly
+        (same seed*131+se[0] permutation, same cue_frac split, same non-member perm draw), for one re-recruited slot."""
+        R = self.R
+        se = np.asarray(A, dtype=np.int64)
+        r = np.random.default_rng(self.seed * 131 + int(se[0]))
+        se = se[r.permutation(len(se))]
+        n_cue = max(2, int(R._cue_frac * len(se)))
+        cue, held = se[:n_cue], se[n_cue:]
+        held_pos = [R.ca3_pos[int(g)] for g in held]
+        member = set(int(g) for g in se)
+        nonA = np.asarray([g for g in R.ca3_idx if int(g) not in member], dtype=np.int64)
+        perm_cue = r.choice(nonA, size=len(cue), replace=False)
+        return held_pos, cue, perm_cue
+
+    def _reselect_slot(self, slot, lap):
+        """RE-RECRUIT the memory's sparse ensemble: on the SAME CA3 microcircuit (self.seed — so the ensemble's
+        cells are the seed's own recurrently-connected cells, a completable attractor on self.R), drive a FRESH DG
+        pattern to co-activate a DIFFERENT sparse ensemble, return the prior ensemble's within-connections to the
+        UNFORMED baseline (no lingering stale trace), and rebuild this slot's within-mask + cue/held/perm geometry.
+        The subsequent _form_slot_onto_readout encodes the new ensemble. Biology: a memory whose first encoding did
+        not form a completable attractor is re-encoded by the DG pattern-separator recruiting a stochastically
+        different sparse ensemble across plateau laps (Bittner/Magee 2017; post-encoding SWR re-instatement). The DG
+        pattern is varied (NOT the network seed): re-drawing on a DIFFERENT network would select cells that are not
+        recurrently connected in this readout, so the trace would not complete."""
+        cp = self.cp
+        R = self.R
+        n_slots = max(len(self.topics), 1)
+        # A FRESH co-active ensemble on the SAME seed network: request one extra DG pattern beyond the per-topic
+        # patterns (each pattern m uses a distinct drive seed self.seed*100+m) and take it. Each lap advances to a new
+        # pattern; the verify loop keeps going until one forms a completable attractor.
+        asm, _r1 = emergent_assemblies(self.seed, n_patterns=n_slots + lap + 1)
+        new_A = np.asarray(asm[n_slots + lap], dtype=np.int64)
+        # 1) return the OLD slot's within-connections to the unformed baseline
+        old_m = R.withinA_masks[slot]
+        R.C.data[old_m] = self.baseline_weights[old_m]
+        # 2) install the fresh ensemble + recompute this slot's within-mask and the union across all slots
+        self.assemblies[slot] = new_A
+        R.assemblies[slot] = new_A
+        self.assembly_sizes[slot] = int(len(new_A))
+        is_A = cp.zeros(R.n, dtype=cp.bool_)
+        if len(new_A) > 0:
+            is_A[cp.asarray(new_A)] = True
+        R.withinA_masks[slot] = is_A[R.rows] & is_A[R.cols]
+        wu = cp.zeros(len(R.rows), dtype=cp.bool_)
+        for mm in R.withinA_masks:
+            wu |= mm
+        R.within_union = wu
+        # 3) recompute this slot's cue/held/perm geometry for the fresh ensemble
+        self.held_pos_by_asm[slot], self.cue_by_asm[slot], self.perm_by_asm[slot] = self._geom_for_slot(new_A)
+
+    # ---- STORE (episodic WRITE): a spoken topic BTSP-forms its assembly on the readout bridge -------------------
+    def store(self, topic):
+        slot = self.topic_slot.get(topic)
+        if slot is None or slot in self.formed:
+            return False
+        self._form_slot_onto_readout(slot)
+        self.formed.add(slot); self.store_log.append(topic)
+        # ENCODE→VERIFY→RE-ENCODE (BRAIN_EPISODIC_STORE_VERIFY, default-OFF -> byte-identical single-shot store above).
+        # Verify the trace reads back from its OWN partial cue (the recall completion gate); if not, re-recruit a fresh
+        # DG ensemble and re-encode, until the substrate's own read-back confirms it (or the safety lap cap is hit).
+        n_laps = 0
+        if _store_verify_enabled():
+            for lap in range(_store_verify_max_laps()):
+                if bool(self.recall(topic).get("in_memory")):
+                    break
+                self._reselect_slot(slot, lap)
+                self._form_slot_onto_readout(slot)
+                n_laps = lap + 1
+        w_within = float(self.cp.mean(self.R.C.data[self.R.withinA_masks[slot]]))
         if self.verbose:
-            print(f"[episodic-dap] STORE topic={topic!r} slot={slot} w_within={w_within:.1f}", flush=True)
+            _extra = f" reencode_laps={n_laps}" if _store_verify_enabled() else ""
+            print(f"[episodic-dap] STORE topic={topic!r} slot={slot} w_within={w_within:.1f}{_extra}", flush=True)
         return True
 
     # ---- RECALL (episodic READ): drive the topic-slot cue, read the dendritic dAP apical completion -------------
