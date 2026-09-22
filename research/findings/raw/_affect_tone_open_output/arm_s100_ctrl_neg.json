@@ -1,0 +1,229 @@
+{
+ "runner": "_lbf_affect_tone_open_output_derisk (worker)",
+ "seed": 100,
+ "arm": "ctrl_neg",
+ "lesion": "0",
+ "control": true,
+ "priming": "I feel absolutely miserable and devastated today, everything is terrible and hopeless.",
+ "backend": "numpy",
+ "cuda_visible_devices": "",
+ "resolved_ckpt": "bridges/wkv_ckpt/wkv_linattn_depth2_contiguous_seed100.npz",
+ "ckpt_is_per_seed": true,
+ "priming_affect": {
+  "on": true,
+  "lesioned": false,
+  "composer": "onebrain",
+  "differential": -0.018333333333333333,
+  "valence_sign": "0",
+  "tone_level": 0,
+  "tone_token": "",
+  "forthcomingness": {
+   "max_sentences": 4,
+   "max_elaborations": 2
+  },
+  "manner_template": "",
+  "appraisal_valence": -0.4725,
+  "appraisal_arousal": 0.301875,
+  "appraisal_hits": [
+   "miserable",
+   "devastated",
+   "terrible",
+   "hopeless"
+  ],
+  "pos_rate": 0.0,
+  "neg_rate": 0.018333333333333333
+ },
+ "tone_rows": [
+  {
+   "prompt": "Tell me about the ocean",
+   "raw": "Tell me about the ocean and is a very small town in the city of wales it lies between the river with its population density of inhabitants km east of the arrondissement of saint hilde department to the west by the roman authorities in france on january he became part of the french revolution at the time of his own life after being inducted into the s and s for the year old man who had come from the th century fox network she died on july as an american television series and movie director scureenwriter and",
+   "known": false,
+   "facts": [],
+   "generator": "wkv_mouth",
+   "wkv_mouth_used": true,
+   "tone_compound": 0.0,
+   "tone_hits": 0,
+   "salad_frac": 0.1134020618556701,
+   "affect_differential": -0.018333333333333333
+  },
+  {
+   "prompt": "What do you think about music",
+   "raw": "What do you think about music is the song by american singer songwriter and actress she was best known for her role in a movie it was released on june from to he has also been an important character of the same name who became famous after being the cetown of the s and s nation's first member of the united states house of representatives in the u s senate he was born in kentucky at age of merged into the new york city with his son zames died on july at lebanon at the",
+   "known": false,
+   "facts": [],
+   "generator": "wkv_mouth",
+   "wkv_mouth_used": true,
+   "tone_compound": 0.25,
+   "tone_hits": 1,
+   "salad_frac": 0.08421052631578947,
+   "affect_differential": -0.018333333333333333
+  },
+  {
+   "prompt": "Tell me about the mountains",
+   "raw": "Tell me about the mountains of love and they were a small town in the city of kirk it is named after him he has been married to jayuan from until his death in she became famous for her roles as mary s o nzig I n e br b rhine at the age of merged into the new municipality of the district eurolinary division and the county community of chenburg in the canton of berne in switzerland on january the former districts siegfritz",
+   "known": false,
+   "facts": [],
+   "generator": "wkv_mouth",
+   "wkv_mouth_used": true,
+   "tone_compound": 0.0,
+   "tone_hits": 0,
+   "salad_frac": 0.09523809523809523,
+   "affect_differential": -0.018333333333333333
+  },
+  {
+   "prompt": "Describe a walk in the forest",
+   "raw": "Describe a walk in the forest and other animals such as the tamil language it is also known for its own life the word comes from the latin american english word which means 'nontos are used to refer to the name of two different types to be called the same kind of mathematically being built on the island of karyoshi were made by the time of vagina faso and the first people to use the term 'bacteria or phoenix they are usually shown at the end",
+   "known": false,
+   "facts": [],
+   "generator": "wkv_mouth",
+   "wkv_mouth_used": true,
+   "tone_compound": 0.0,
+   "tone_hits": 0,
+   "salad_frac": 0.12790697674418605,
+   "affect_differential": -0.018333333333333333
+  },
+  {
+   "prompt": "Tell me about your favorite season",
+   "raw": "Tell me about your favorite season the player was played by a play in the game and is played for the playoffs he has also been made to be one of the most popular players who have played on the same name they are not known as the player called goodor with them from their own games but they can be used to make sure that it does not exist at all other countries like american iri langs are often shown in the world this means that there are many different types of people living alone in the country some people think these things",
+   "known": false,
+   "facts": [],
+   "generator": "wkv_mouth",
+   "wkv_mouth_used": true,
+   "tone_compound": 0.25,
+   "tone_hits": 1,
+   "salad_frac": 0.07692307692307693,
+   "affect_differential": -0.018333333333333333
+  },
+  {
+   "prompt": "Describe the city at night",
+   "raw": "Describe the city at night and was built in it is located near the town of cheon river which flows into a large area around km south east of the municipality of the district of bavaria germany its capital is kajibo province to the north of handan region of sagan province of pakistan the population are from the state of india the indian government settled by president george w bush in april he wrote about his own life for the first time this happened after that he had been married to jedera meri",
+   "known": false,
+   "facts": [],
+   "generator": "wkv_mouth",
+   "wkv_mouth_used": true,
+   "tone_compound": 0.0,
+   "tone_hits": 0,
+   "salad_frac": 0.0967741935483871,
+   "affect_differential": -0.018333333333333333
+  },
+  {
+   "prompt": "Tell me about the morning",
+   "raw": "Tell me about the morning of july he was a member of the band from to and again in his career began on april at age years later became one of the most famous musicians that had been known for creating the music video games which is played from beatles it has also released their first album by american singers including the song sandstone s songs such as the song I am br fran aj m nn kentrey mcmahler born june is an english singer songwriter she performed with her best living artist and actress she",
+   "known": false,
+   "facts": [],
+   "generator": "wkv_mouth",
+   "wkv_mouth_used": true,
+   "tone_compound": 0.25,
+   "tone_hits": 1,
+   "salad_frac": 0.0625,
+   "affect_differential": -0.018333333333333333
+  },
+  {
+   "prompt": "What do you think about the future",
+   "raw": "What do you think about the future and that he was not to be a member of the band from new york city in california when they are called the same name by John mccoe it is also known for his roles on the television series lars as an american movie directed by robert bumb har r ni kashmidland fascists and stars sitcom alai gri lah ba's first novel were published in the s and s wrote several books including the book of writing stories about her life",
+   "known": false,
+   "facts": [],
+   "generator": "wkv_mouth",
+   "wkv_mouth_used": true,
+   "tone_compound": 0.0,
+   "tone_hits": 0,
+   "salad_frac": 0.06818181818181818,
+   "affect_differential": -0.018333333333333333
+  },
+  {
+   "prompt": "Tell me about the river",
+   "raw": "Tell me about the river that is called a woman and her mother she has been married to her first marriage she was in his own life she died on may at age of ker's disease aged jaye born june is an american singer jokidnapper he studied at harvard jerry ozames heidelberg s br n j rdez luxembourgy l schizophonist who became famous for creating the world it was made by the german empire during",
+   "known": false,
+   "facts": [],
+   "generator": "wkv_mouth",
+   "wkv_mouth_used": true,
+   "tone_compound": 0.0,
+   "tone_hits": 0,
+   "salad_frac": 0.04,
+   "affect_differential": -0.018333333333333333
+  },
+  {
+   "prompt": "Describe a quiet afternoon",
+   "raw": "Describe a quiet afternoon of the same day in the th century and was built on may it is also known for its own kind of merchant nayonne and the first time to be called the calvados department in early days after the french revolution he became famous at the end of saxophonist who had been a member of the order of the pazubi empire during this period they made his debut with the most important part of the country but later moved into the world before being killed by the soviet",
+   "known": false,
+   "facts": [],
+   "generator": "wkv_mouth",
+   "wkv_mouth_used": true,
+   "tone_compound": 0.0,
+   "tone_hits": 0,
+   "salad_frac": 0.13043478260869565,
+   "affect_differential": -0.018333333333333333
+  }
+ ],
+ "known_rows": [
+  {
+   "prompt": "Tell me about frank_lincoln_wright",
+   "raw": "Tell me about franklincolnwright and the song is a american romantic drama movie directed by John sharp it stars j sandy warner bros br n e g griffenheim khail davy fallout in he was born on february at age of tyler died from pneumonia italy aged giovanni april june wambier lagustashed his home in new york city to the united states secretary of state for the national assembly of california berkeley has been",
+   "known": true,
+   "facts": [
+    [
+     "frank_lincoln_wright",
+     "instance_of",
+     "human_specie"
+    ],
+    [
+     "frank_lincoln_wright",
+     "country_of_citizenship",
+     "u_s_of_a"
+    ],
+    [
+     "frank_lincoln_wright",
+     "languages_spoken_written_or_signed",
+     "number_of_english_words"
+    ],
+    [
+     "frank_lincoln_wright",
+     "occupation",
+     "stanford_downey_architects_inc"
+    ],
+    [
+     "frank_lincoln_wright",
+     "given_name",
+     "frank_given_name"
+    ],
+    [
+     "frank_lincoln_wright",
+     "educated_at",
+     "university_of_wisconsin_madison"
+    ],
+    [
+     "frank_lincoln_wright",
+     "place_of_death",
+     "estrella_phoenix_arizona"
+    ],
+    [
+     "frank_lincoln_wright",
+     "described_by_source",
+     "ubuweb"
+    ],
+    [
+     "frank_lincoln_wright",
+     "member_of",
+     "artists_rights_society"
+    ],
+    [
+     "frank_lincoln_wright",
+     "family_name",
+     "woodwright"
+    ],
+    [
+     "frank_lincoln_wright",
+     "award_received",
+     "riba_gold_medal"
+    ]
+   ],
+   "generator": "wkv_mouth",
+   "wkv_mouth_used": true,
+   "tone_compound": 0.0,
+   "tone_hits": 0,
+   "salad_frac": 0.0410958904109589,
+   "affect_differential": -0.018333333333333333
+  }
+ ],
+ "wall_seconds": 266.6
+}

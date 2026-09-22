@@ -158,6 +158,31 @@ def tone_compound(text, lex):
     return compound, n_hits
 
 
+def warriner_directional(text):
+    """DIAGNOSTIC ONLY (NOT the anti-cheat ruler, NOT gated): net signed count of the BOOSTED words themselves —
+    the WARRINER words the decode bias acts on, scored with WARRINER's OWN sign. This is CIRCULAR BY DESIGN
+    (counting the very words the bias boosts, with the very sign it boosts them by) — it is the phase4 byte-diff
+    made directional, reported to CHARACTERIZE whether the bias places more mood-congruent boosted words, i.e.
+    whether a NO-GO on the disjoint ruler means 'no effect' or 'effect localized to the boosted lexicon'. Returns
+    (pos_hits, neg_hits, net_per_token)."""
+    try:
+        from research.runners._affect_distributional_tag_derisk import WARRINER, STOP
+    except Exception:
+        return 0, 0, 0.0
+    toks = _TOK_RE.findall((text or "").lower())
+    pos = neg = 0
+    for t in toks:
+        if t in STOP or t not in WARRINER:
+            continue
+        v9 = WARRINER[t][0]  # 1..9 valence norm; >5 positive, <5 negative
+        if v9 > 5.5:
+            pos += 1
+        elif v9 < 4.5:
+            neg += 1
+    net = (pos - neg) / len(toks) if toks else 0.0
+    return pos, neg, net
+
+
 def salad_frac(text):
     toks = (text or "").split()
     if not toks:
@@ -398,6 +423,11 @@ def score_and_gate(out_dir, write_artifact=True):
         if (s, "lesion") in arms:
             lesion_prompt_tones += [r["tone_compound"] for r in arms[(s, "lesion")]["tone_rows"]]
     delta = preregister_delta(lesion_prompt_tones)
+    # SECONDARY (reported, NOT the gate): a SEM-based band = delta/sqrt(n_tone_prompts). The preregistered gate uses
+    # the raw per-prompt std (conservative: it tests the MEAN gap against a single prompt's tone spread); a SEM band
+    # is the natural noise scale for a mean. Reported so the finding shows the result under both bands without any
+    # post-hoc tuning of the preregistered gate (HARD RULE 2 -- the headline stays `delta`).
+    delta_sem = delta / math.sqrt(len(TONE_PROMPTS)) if TONE_PROMPTS else delta
 
     # ---- (1) directional + (2) attribution, per seed ----
     per_seed = {}
@@ -424,6 +454,33 @@ def score_and_gate(out_dir, write_artifact=True):
                        "ctrl_directional_gap": ctrl_directional, "ctrl_attribution_ok": ctrl_ok,
                        "real_directional_gap": tp - tn}
     dir_go, pos_states, neg_states = directional_go(seed_states)
+    # SECONDARY directional read under the SEM band (reported, NOT gated)
+    seed_states_sem = []
+    for s in SEEDS:
+        e = per_seed.get(s, {})
+        if e.get("complete"):
+            seed_states_sem.append(directional_seed_verdict(e["gap_pos"], e["gap_neg"], delta_sem))
+        else:
+            seed_states_sem.append(("null", "null"))
+    dir_go_sem, pos_states_sem, neg_states_sem = directional_go(seed_states_sem)
+
+    # BOOSTED-WORD DIAGNOSTIC (circular by design, NOT gated): does the bias place more mood-congruent WARRINER
+    # words in the pos vs neg reply? Characterizes whether a disjoint-ruler NO-GO means "no effect" or "effect
+    # localized to the boosted lexicon". Re-scores the stored raw replies (no re-run).
+    def warr_net_mean(s, a):
+        rows = arms[(s, a)]["tone_rows"]
+        nets = [warriner_directional(r["raw"])[2] for r in rows]
+        return sum(nets) / len(nets) if nets else 0.0
+    boosted_diag = {}
+    for s in SEEDS:
+        if (s, "pos") in arms and (s, "neg") in arms and (s, "lesion") in arms:
+            wp, wn, wl = warr_net_mean(s, "pos"), warr_net_mean(s, "neg"), warr_net_mean(s, "lesion")
+            boosted_diag[s] = {"warr_net_pos": wp, "warr_net_neg": wn, "warr_net_lesion": wl,
+                               "warr_gap_pos_minus_lesion": wp - wl, "warr_gap_neg_minus_lesion": wn - wl,
+                               "warr_directional_pos_minus_neg": wp - wn}
+    boosted_pos_minus_neg_signs = [1 if d["warr_directional_pos_minus_neg"] > 0 else
+                                   (-1 if d["warr_directional_pos_minus_neg"] < 0 else 0)
+                                   for d in boosted_diag.values()]
 
     # EXPLICIT ATTRIBUTION (tools.lab.attributable_to): whose is the directional tone gap? TREATMENT = the mean
     # intact mood-driven directional gap |pos-neg|; CONTROL = the mean mood-DECOUPLED-valence control gap. A high
@@ -489,6 +546,13 @@ def score_and_gate(out_dir, write_artifact=True):
 
     complete = (not missing)
 
+    # THE VERDICT SEMANTICS: the require() checks are INSTRUMENT-VALIDITY preconditions -- the conditions under
+    # which the directional reading can be TRUSTED (a clean null, a clean control, the right device/ckpt/lexicon,
+    # form-not-content preserved). If any is unmet -> UNDEFINED (the measurement cannot be trusted, never a
+    # negative). The DIRECTIONAL result is the FINDING itself (the `go` passed to decide), NOT a precondition:
+    # a TRUSTWORTHY measurement that shows no correct-sign directional tone effect is an honest NO-GO on THIS
+    # ruler, not UNDEFINED. (Sub-conditions (1)-(5) map: (1)=go, (2)=attribution, (3)=content+moat, (4)=fluency,
+    # (5)=determinism.)
     v = Verdict("affect->tone load-bearing over OPEN mouth output (linattn, 6-seed)")
     v.require("all-36-arms-present", not missing, True,
               "missing=%s" % (missing if missing else "none"))
@@ -496,16 +560,15 @@ def score_and_gate(out_dir, write_artifact=True):
               "overlap=%d" % overlap)
     v.require("ckpt-resolved-per-seed (no seed42 fallback)", ckpt_ok, True)
     v.require("wkv-mouth-used-on-tone-prompts (not qwen)", wkv_used_ok, True)
-    v.require("(5) determinism lesion==lesion_rep byte-identical/seed", determ_ok, True)
+    v.require("(5) determinism lesion==lesion_rep byte-identical/seed (clean null)", determ_ok, True)
     v.require("(4) fluency salad_frac<=0.16 all arms", fluency_ok, True,
               "max_salad=%.4f worst=%s" % (max_salad, worst))
     v.require("(3a) content-identity facts+known identical pos vs lesion", content_ok, True)
     v.require("(3b) moat holds (unknown stays known=False, bias active)", moat_ok, True)
-    v.require("(2) attribution: |control directional gap|<delta all seeds", ctrl_ok_all, True)
-    v.require("(1) directional correct-sign (6/6 or 5/6+null) both moods", dir_go, True,
-              "pos_states=%s neg_states=%s delta=%.5f" % (pos_states, neg_states, delta))
-    go = (complete and overlap == 0 and ckpt_ok and wkv_used_ok and determ_ok and fluency_ok
-          and content_ok and moat_ok and ctrl_ok_all and dir_go)
+    v.require("(2) attribution: |control directional gap|<delta all seeds (clean control)", ctrl_ok_all, True)
+    # (1) DIRECTIONAL is the finding, recorded as the `go` -> GO if it holds, NO-GO if it does not (given a
+    # trustworthy instrument). Its per-seed states are surfaced in the artifact's `directional` block.
+    go = bool(dir_go)
     decided = v.decide(go)
 
     artifact = {
@@ -519,16 +582,30 @@ def score_and_gate(out_dir, write_artifact=True):
                                 "scorer": "VADER-compound s/sqrt(s^2+15) + 3-back negation"},
         "delta_preregistered": delta,
         "delta_definition": "population std of lesion-arm per-prompt tone_compound, pooled across seeds",
+        "delta_sem_secondary": delta_sem,
         "per_seed": per_seed,
         "directional": {"go": dir_go, "pos_states": pos_states, "neg_states": neg_states},
+        "directional_sem_secondary": {"go": dir_go_sem, "pos_states": pos_states_sem,
+                                      "neg_states": neg_states_sem,
+                                      "note": "SECONDARY, NOT the gate: same gaps evaluated against the SEM band "
+                                              "delta/sqrt(n) instead of the preregistered raw-std band."},
         "attribution_control_ok": ctrl_ok_all,
         "attribution_fraction": attribution_fraction,
         "attribution_treatment_mean": treat_mean, "attribution_control_mean": ctrl_mean,
+        "boosted_word_diagnostic": {
+            "note": "CIRCULAR BY DESIGN, NOT GATED — the net signed count of the BOOSTED (WARRINER) words with "
+                    "WARRINER's own sign; the phase4 byte-diff made directional. Characterizes whether a "
+                    "disjoint-ruler NO-GO means 'no effect' or 'effect localized to the boosted lexicon'.",
+            "per_seed": boosted_diag,
+            "pos_minus_neg_signs": boosted_pos_minus_neg_signs},
         "content_identity_ok": content_ok, "content_detail": content_detail,
         "moat_ok": moat_ok, "fluency_ok": fluency_ok, "max_salad_frac": max_salad, "worst_salad": worst,
         "determinism_ok": determ_ok, "determinism_detail": determ_detail,
         "ckpt_per_seed_ok": ckpt_ok, "wkv_used_ok": wkv_used_ok, "missing_arms": missing,
         "verdict": decided,
+        # TOP-LEVEL preconditions (tools/gates/verdict_preconditions.py enforces PRESENCE at the top level): the
+        # same list the Verdict earned, surfaced beside the GO so the guard travels with the assertion.
+        "preconditions": decided["preconditions"],
         "GO": bool(decided["go"]),
         "honesty_boundary": "expressed reply TONE tracks the spiking affect signal — a FUNCTIONAL read-out, "
                             "never a felt/phenomenal claim.",

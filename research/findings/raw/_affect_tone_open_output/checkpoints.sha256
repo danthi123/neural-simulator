@@ -1,0 +1,8 @@
+# linattn WKV-mouth checkpoints used by the 6-seed affect-tone-open probe (2026-09-22)
+# copied byte-verified from .claude/worktrees/agent-a0525a3fd72b8ac31/bridges/wkv_ckpt/ (seed42 also == primary-tree tracked copy)
+1a333eda0568cd9cac85ff2b025e9af79ba921659c2cc838d3ba398747a97d2e  wkv_linattn_depth2_contiguous_seed42.npz
+78445a92412acf101dd3aa6d84de4259694a02e2d708b1b2928b00a06a0b96b2  wkv_linattn_depth2_contiguous_seed43.npz
+cb72c7a2b1e6fbc58cff5df2ca9942122f0071b517b3ba6bc7d2f899ea50fbfc  wkv_linattn_depth2_contiguous_seed44.npz
+797384126c47e39956b053f00c8be8c5b53adc064d5b88a6aeaf83ad80d13a96  wkv_linattn_depth2_contiguous_seed100.npz
+5aa291af39187cecd7e0c9cb8c3f7021a41e8045952a986b16869ba3e71bf722  wkv_linattn_depth2_contiguous_seed101.npz
+159e8abd1f8598c3a93d91656a25cda93b8d2d9439a129219bb38ba177774869  wkv_linattn_depth2_contiguous_seed102.npz

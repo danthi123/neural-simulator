@@ -1,0 +1,229 @@
+{
+ "runner": "_lbf_affect_tone_open_output_derisk (worker)",
+ "seed": 102,
+ "arm": "neg",
+ "lesion": "0",
+ "control": false,
+ "priming": "I feel absolutely miserable and devastated today, everything is terrible and hopeless.",
+ "backend": "numpy",
+ "cuda_visible_devices": "",
+ "resolved_ckpt": "bridges/wkv_ckpt/wkv_linattn_depth2_contiguous_seed102.npz",
+ "ckpt_is_per_seed": true,
+ "priming_affect": {
+  "on": true,
+  "lesioned": false,
+  "composer": "onebrain",
+  "differential": -0.01972222222222222,
+  "valence_sign": "0",
+  "tone_level": 0,
+  "tone_token": "",
+  "forthcomingness": {
+   "max_sentences": 4,
+   "max_elaborations": 2
+  },
+  "manner_template": "",
+  "appraisal_valence": -0.4725,
+  "appraisal_arousal": 0.301875,
+  "appraisal_hits": [
+   "miserable",
+   "devastated",
+   "terrible",
+   "hopeless"
+  ],
+  "pos_rate": 0.0,
+  "neg_rate": 0.01972222222222222
+ },
+ "tone_rows": [
+  {
+   "prompt": "Tell me about the ocean",
+   "raw": "Tell me about the ocean and is a very small town in the city of wales it lies between the river with its population density of inhabitants km east of the arrondissement of saint hilde department to the west by the roman authorities in france on january he became part of the french revolution at the time of his own life after being inducted into the s and s for the year old man who had come from the th century fox network she died on july as an american television series and movie director scureenwriter and",
+   "known": false,
+   "facts": [],
+   "generator": "wkv_mouth",
+   "wkv_mouth_used": true,
+   "tone_compound": 0.0,
+   "tone_hits": 0,
+   "salad_frac": 0.1134020618556701,
+   "affect_differential": -0.01972222222222222
+  },
+  {
+   "prompt": "What do you think about music",
+   "raw": "What do you think about music is the song by american singer songwriter and actress she was best known for her role in a movie it was released on june from to he has also been an important character of the same name who became famous after being the writer by pedro de la ville bagueria n e b d c snakes s fascist re april january th century fox he played for the national hockey league nhl he moved with his first season with the boston bruins at the end tamil ok",
+   "known": false,
+   "facts": [],
+   "generator": "wkv_mouth",
+   "wkv_mouth_used": true,
+   "tone_compound": 0.25,
+   "tone_hits": 1,
+   "salad_frac": 0.06451612903225806,
+   "affect_differential": -0.01972222222222222
+  },
+  {
+   "prompt": "Tell me about the mountains",
+   "raw": "Tell me about the mountains of the river and was built in it is also known for its tributaries are a village and civil parish in suffolk coastal suffolkirby in people lived there the population were at the census merged two area of km h rhine westphalia byaz has been part of the new york city to the west end of the last day when he wrote the song santos de la petrol on june his first album was released from the th november was an american",
+   "known": false,
+   "facts": [],
+   "generator": "wkv_mouth",
+   "wkv_mouth_used": true,
+   "tone_compound": 0.0,
+   "tone_hits": 0,
+   "salad_frac": 0.10344827586206896,
+   "affect_differential": -0.01972222222222222
+  },
+  {
+   "prompt": "Describe a walk in the forest",
+   "raw": "Describe a walk in the forest and other animals such as the tamil language it is also known for its own life the word comes from the latin american english word which means 'nontos are used to refer to the name of two different types called an alphabet or cryption that wire can be made by the end of the th century the first time this is because each yum has been found on the moon with a small number of people living there are many species of the genus homo they have a big fat and the",
+   "known": false,
+   "facts": [],
+   "generator": "wkv_mouth",
+   "wkv_mouth_used": true,
+   "tone_compound": 0.0,
+   "tone_hits": 0,
+   "salad_frac": 0.11224489795918367,
+   "affect_differential": -0.01972222222222222
+  },
+  {
+   "prompt": "Tell me about your favorite season",
+   "raw": "Tell me about your favorite season the player was played by a team of the same name it is also known for his role in the movie he has been married to kidnapps and her husband she died on may at age of merchu tah's son jaz born june is an american voice actor director producer composer singer songwriter and actress she began singing with the song cartorec from until she became famous as the first single from the album 'band' second studio album which were released on april the song was",
+   "known": false,
+   "facts": [],
+   "generator": "wkv_mouth",
+   "wkv_mouth_used": true,
+   "tone_compound": 0.25,
+   "tone_hits": 1,
+   "salad_frac": 0.07608695652173914,
+   "affect_differential": -0.01972222222222222
+  },
+  {
+   "prompt": "Describe the city at night",
+   "raw": "Describe the city at night and was built in it is located near the town of cheon river which flows into a large area around km south east of the municipality of the district of bavaria germany its capital is kajibo province to the north of handan region of sagan province of pakistan the population are from the state of india the indian government settled by laughs in india and other parts of india and the british empire the first people to use their own country for example the british headquarters are called the british",
+   "known": false,
+   "facts": [],
+   "generator": "wkv_mouth",
+   "wkv_mouth_used": true,
+   "tone_compound": 0.0,
+   "tone_hits": 0,
+   "salad_frac": 0.12631578947368421,
+   "affect_differential": -0.01972222222222222
+  },
+  {
+   "prompt": "Tell me about the morning",
+   "raw": "Tell me about the morning of july he was a member of the band from to and again in his career began on april at age years later became one of the most famous musicians that had been known for creating the music video games which is played out in the movie it has also released two movies including the song sandy warriors and were nominated by the bbc television series the first episode based on an emmy award winning drama series titled goodman died on february aged kidney failure caused by her death in she want to be born in",
+   "known": false,
+   "facts": [],
+   "generator": "wkv_mouth",
+   "wkv_mouth_used": true,
+   "tone_compound": -0.25,
+   "tone_hits": 1,
+   "salad_frac": 0.07920792079207921,
+   "affect_differential": -0.01972222222222222
+  },
+  {
+   "prompt": "What do you think about the future",
+   "raw": "What do you think about the future and that he was not to be a member of the band from new york city in california when they are called the same name by John mccoe it is also known for his roles on the television series lars as an american movie directed by robert bumb har r ni kashmidland fascists and stars sitcom alai gri lah ba's first novel were published in the s and s wrote several books including the book of writing stories about her life",
+   "known": false,
+   "facts": [],
+   "generator": "wkv_mouth",
+   "wkv_mouth_used": true,
+   "tone_compound": 0.0,
+   "tone_hits": 0,
+   "salad_frac": 0.06818181818181818,
+   "affect_differential": -0.01972222222222222
+  },
+  {
+   "prompt": "Tell me about the river",
+   "raw": "Tell me about the river that is called a woman and her mother she has been married to her first marriage she was in her own life she died on january at age of she studied at the university of california from until his death in he became famous pires de la loire de belfort department at the west he had an important role in the canton of ticino in switzerland rockton's disease aged alaska koli born june is a former brazilian football player he plays for brazil national team total giavuz silv",
+   "known": false,
+   "facts": [],
+   "generator": "wkv_mouth",
+   "wkv_mouth_used": true,
+   "tone_compound": 0.0,
+   "tone_hits": 0,
+   "salad_frac": 0.043010752688172046,
+   "affect_differential": -0.01972222222222222
+  },
+  {
+   "prompt": "Describe a quiet afternoon",
+   "raw": "Describe a quiet afternoon of the same day in the th century and was built on may it is also known for its own year old tumer's car manufacturing company he has been made to be an important part of the royal town hall which is now called st louis xvi stenburg boulez kaum nard s fr n marzedt born june is a former argentine football player he plays for brazil national team total pakheida sagar al guru de la v",
+   "known": false,
+   "facts": [],
+   "generator": "wkv_mouth",
+   "wkv_mouth_used": true,
+   "tone_compound": 0.0,
+   "tone_hits": 0,
+   "salad_frac": 0.037037037037037035,
+   "affect_differential": -0.01972222222222222
+  }
+ ],
+ "known_rows": [
+  {
+   "prompt": "Tell me about frank_lincoln_wright",
+   "raw": "Tell me about franklincolnwright and the song is a american romantic drama movie directed by John sharp it stars j sandy warner bros br n e g griffenheim khail davy fallout in he was born on february at age of tyler died from pneumonia italy aged giovanni april june wambier lagustashed his father abbreviated to her mother she studied law school for children who worked in new york city university",
+   "known": true,
+   "facts": [
+    [
+     "frank_lincoln_wright",
+     "instance_of",
+     "human_specie"
+    ],
+    [
+     "frank_lincoln_wright",
+     "country_of_citizenship",
+     "u_s_of_a"
+    ],
+    [
+     "frank_lincoln_wright",
+     "languages_spoken_written_or_signed",
+     "number_of_english_words"
+    ],
+    [
+     "frank_lincoln_wright",
+     "occupation",
+     "stanford_downey_architects_inc"
+    ],
+    [
+     "frank_lincoln_wright",
+     "given_name",
+     "frank_given_name"
+    ],
+    [
+     "frank_lincoln_wright",
+     "educated_at",
+     "university_of_wisconsin_madison"
+    ],
+    [
+     "frank_lincoln_wright",
+     "place_of_death",
+     "estrella_phoenix_arizona"
+    ],
+    [
+     "frank_lincoln_wright",
+     "described_by_source",
+     "ubuweb"
+    ],
+    [
+     "frank_lincoln_wright",
+     "member_of",
+     "artists_rights_society"
+    ],
+    [
+     "frank_lincoln_wright",
+     "family_name",
+     "woodwright"
+    ],
+    [
+     "frank_lincoln_wright",
+     "award_received",
+     "riba_gold_medal"
+    ]
+   ],
+   "generator": "wkv_mouth",
+   "wkv_mouth_used": true,
+   "tone_compound": 0.0,
+   "tone_hits": 0,
+   "salad_frac": 0.02857142857142857,
+   "affect_differential": -0.01972222222222222
+  }
+ ],
+ "wall_seconds": 259.5
+}
