@@ -123,9 +123,14 @@ def _affect_marker(seed: int) -> dict:
                       int(appr.get("n_hits", 0)), lesion=False)     # ladder INTACT (the WTA is the lesioned part)
     mood, felt, level = float(info["mood"]), float(info["felt_arousal"]), int(info["level"])
     high_arousal = bool(felt > 0.0)
-    reader = get_reader(seed=seed)
 
     def _lead(lesion: bool):
+        # RNG ISOLATION (2026-09-22 fix): build a FRESH reader per arm at the SAME seed, so both the intact and the
+        # lesion read start from an IDENTICAL OU-noise RNG state and the ONLY inter-arm difference is the lesion flag.
+        # The prior shared-reader form let the intact call advance the RNG before the lesion call, confounding the
+        # margin with a different noise draw -> affect-marker's per-seed load-bearing label was noise-dependent
+        # (the diagnosis caveat). With this, separability across seeds becomes assessable. (Re-run 6-seed is follow-on.)
+        reader = get_reader(seed=seed)
         sel_level, _rates, meta = reader.select_valence(mood, lesion=lesion)
         word = marker_from_level(sel_level)
         if not word:
