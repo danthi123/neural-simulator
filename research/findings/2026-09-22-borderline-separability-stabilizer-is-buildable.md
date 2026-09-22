@@ -73,8 +73,19 @@ research/findings/raw/_lbf_borderline_isolated/op_s42.json … op_s102.json + re
   prospective-memory are. HONEST consequence for the #1 metric: the earlier 23/26 union count was partly inflated by
   affect-marker's RNG-confounded flips; the robust core 20/26 is unaffected (affect-marker was never in it).
 
-## Next
-NEXT ACTION #5 is GO (not honest-negative) for 3 of 4: build the principled operating-point stabilizer for episodic /
-source-provenance / prospective-memory (regulator targeting the separable gap; for episodic, stabilize the store→recall
-integration path; for pmem, lift the near-threshold held×cue coincidence). affect-marker: fix the WTA RNG-isolation bug
-first, then re-assess separability. Each stays honest-negative if the principled regulator fails to hold 6-seed.
+## Next — the #5 stabilizer build, DECOMPOSED (it is two different problems, not one)
+The full harvest shows the three genuinely-separable faculties split by WHERE the seed-dependence actually lives, and
+they need DIFFERENT fixes. Attacking them all as "operating-point stabilizers" would waste effort on two of them.
+- **prospective-memory = READ-LEVEL (the one true operating-point case).** Its intact `rel` (held×cue coincidence)
+  sits just BELOW FIRE_THR=0.2 at s44 while clearing it on the other five. The fix is a biology-grounded short-term
+  FACILITATION of the held-intention assembly across the intervening turns (the SFA/NMDA facilitation the diagnosis
+  already named) that lifts `rel` to reliably clear FIRE_THR by the cue — a homeostatic regulator, NOT a moved constant.
+- **episodic-memory + source-provenance-honesty = INTEGRATION-LEVEL (NOT operating-point).** Their diagnosis READS
+  separate cleanly on ALL 6 seeds (episodic apical_cue vs 0; source-provenance `d` = a PERFECT 1-vs-0 split), yet the
+  battery called them 5/6 and 4/6. So the seed-dependence is NOT at the read's threshold — a stabilizer there fixes
+  nothing. It is DOWNSTREAM, in the integrated decision pipeline (episodic: the numpy store→recall/BTSP step at s44;
+  source-provenance: whatever discretizes/consumes the perfectly-separated `d` at s44/s102). The #5 work for these two
+  is to LOCATE the seed-fragile integration step (an investigation), not to regulate the read.
+- **affect-marker: DONE (not a candidate).** Isolated = 1/6; its intact WTA does not commit (dead-zone) on 5/6 — a fair
+  near-negative; no operating-point stabilizer applies.
+Each build stays honest-negative if the principled mechanism fails to hold 6-seed.
