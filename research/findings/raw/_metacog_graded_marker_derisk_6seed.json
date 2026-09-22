@@ -1,0 +1,2334 @@
+{
+  "gate_bars": {
+    "lesion_rho_bar": 0.3,
+    "lesion_speculate_frac": 0.85,
+    "min_seeds_pass": 5,
+    "ordinal_auc_bar": 0.75,
+    "shuffle_rho_bar": 0.3,
+    "spearman_bar": 0.8
+  },
+  "go": true,
+  "honesty_scan_clean": true,
+  "marker_phrases": {
+    "ASSERT": "",
+    "HEDGE": "I think \u2014 my decision-margin reads this as moderately confident, so take it as likely-but-not-certain: ",
+    "SPECULATE": "I'd only guess \u2014 my decision-margin reads this as low-confidence, so take it as a speculative guess, not an assertion: "
+  },
+  "n_both_pass": 6,
+  "n_cond1_pass": 6,
+  "n_cond2_pass": 6,
+  "n_determinism_ok": 6,
+  "n_lesion_collapses": 6,
+  "n_seeds": 6,
+  "n_shuffle_fails_to_track": 6,
+  "organ_file_baseline_hash": "803c5a28b926ec55094942a3dd7999986f48977e",
+  "organ_file_current_hash": "803c5a28b926ec55094942a3dd7999986f48977e",
+  "organ_file_unchanged": true,
+  "per_seed": {
+    "100": {
+      "both_conditions_pass": true,
+      "cond1": {
+        "monotone_non_decreasing": true,
+        "pass": true,
+        "spearman_rho": 1.0
+      },
+      "cond2": {
+        "auc_lo_med": 1.0,
+        "auc_med_hi": 1.0,
+        "median_gap_lo_med": 0.029226717707121888,
+        "median_gap_med_hi": 0.029225793554397403,
+        "ordinal_separable_lo_med": true,
+        "ordinal_separable_med_hi": true,
+        "pass": true,
+        "spread_lo_med": 0.006873232248775091,
+        "spread_med_hi": 0.007889271198698712
+      },
+      "determinism": {
+        "byte_identical": true,
+        "diffs": []
+      },
+      "intact_a": {
+        "arm": "intact",
+        "base_pa": 300.0,
+        "build_seconds": 2.0197083950042725,
+        "calibration": {
+          "auc_lo_med": 1.0,
+          "auc_med_hi": 1.0,
+          "boundary_lo_med": 0.053785958878608625,
+          "boundary_med_hi": 0.08296133049409515,
+          "clean_gap_lo_med": true,
+          "clean_gap_med_hi": true,
+          "high_evidence_levels": [
+            0.75,
+            0.8,
+            0.85,
+            0.9,
+            0.95,
+            1.0
+          ],
+          "high_margins": [
+            0.08824983420560986,
+            0.09370345521933449,
+            0.09562237918647629,
+            0.09920489468690596,
+            0.10651945118154944,
+            0.11172823295908788
+          ],
+          "lo_med_detail": {
+            "boundary": 0.053785958878608625,
+            "clean_gap": true,
+            "max_lower": 0.05000251435757043,
+            "mean_lower": 0.03949770480002027,
+            "mean_upper": 0.06847217783209225,
+            "min_upper": 0.05756940339964682
+          },
+          "low_evidence_levels": [
+            0.0,
+            0.05,
+            0.1,
+            0.15000000000000002,
+            0.2,
+            0.25
+          ],
+          "low_margins": [
+            0.029715000985259386,
+            0.034154025872361264,
+            0.037139564839253236,
+            0.040782686511090425,
+            0.045192436234586866,
+            0.05000251435757043
+          ],
+          "med_evidence_levels": [
+            0.375,
+            0.425,
+            0.475,
+            0.525,
+            0.575,
+            0.625
+          ],
+          "med_hi_detail": {
+            "boundary": 0.08296133049409515,
+            "clean_gap": true,
+            "max_lower": 0.07767282678258046,
+            "mean_lower": 0.06847217783209225,
+            "mean_upper": 0.09917137457316065,
+            "min_upper": 0.08824983420560986
+          },
+          "med_margins": [
+            0.05756940339964682,
+            0.0637485781305042,
+            0.06612267233019141,
+            0.07025301443439605,
+            0.07546657191523454,
+            0.07767282678258046
+          ],
+          "median_gap_lo_med": 0.029226717707121888,
+          "median_gap_med_hi": 0.029225793554397403,
+          "ordinal_separable_lo_med": true,
+          "ordinal_separable_med_hi": true,
+          "spread_lo_med": 0.006873232248775091,
+          "spread_med_hi": 0.007889271198698712
+        },
+        "confidence_read": "nmda_norm",
+        "elapsed_seconds": 5.470271587371826,
+        "organ_calib_2band": {
+          "clean_gap": true,
+          "confidence_read": "nmda_norm",
+          "max_lo": 0.06365116319569439,
+          "mean_hi": 0.09178129087827541,
+          "mean_lo": 0.04571761978523253,
+          "min_hi": 0.07673736001887424,
+          "read_reps": 8,
+          "role_conf_hi": 0.5,
+          "role_conf_lo": 0.3
+        },
+        "organ_threshold_2band": 0.07019426160728431,
+        "read_reps": 8,
+        "repeat": "a",
+        "seed": 100,
+        "sig_hi_pa": 260.0,
+        "sig_lo_pa": 40.0,
+        "sweep": [
+          {
+            "band": "SPECULATE",
+            "confident_2band": false,
+            "evidence": 0.0,
+            "margin": 0.029715000985259386,
+            "threshold_2band": 0.07019426160728431
+          },
+          {
+            "band": "SPECULATE",
+            "confident_2band": false,
+            "evidence": 0.125,
+            "margin": 0.03955477376277713,
+            "threshold_2band": 0.07019426160728431
+          },
+          {
+            "band": "SPECULATE",
+            "confident_2band": false,
+            "evidence": 0.25,
+            "margin": 0.05000251435757043,
+            "threshold_2band": 0.07019426160728431
+          },
+          {
+            "band": "HEDGE",
+            "confident_2band": false,
+            "evidence": 0.375,
+            "margin": 0.05756940339964682,
+            "threshold_2band": 0.07019426160728431
+          },
+          {
+            "band": "HEDGE",
+            "confident_2band": false,
+            "evidence": 0.5,
+            "margin": 0.06790741659645044,
+            "threshold_2band": 0.07019426160728431
+          },
+          {
+            "band": "HEDGE",
+            "confident_2band": true,
+            "evidence": 0.625,
+            "margin": 0.07767282678258046,
+            "threshold_2band": 0.07019426160728431
+          },
+          {
+            "band": "ASSERT",
+            "confident_2band": true,
+            "evidence": 0.75,
+            "margin": 0.08824983420560986,
+            "threshold_2band": 0.07019426160728431
+          },
+          {
+            "band": "ASSERT",
+            "confident_2band": true,
+            "evidence": 0.875,
+            "margin": 0.09710354507550595,
+            "threshold_2band": 0.07019426160728431
+          },
+          {
+            "band": "ASSERT",
+            "confident_2band": true,
+            "evidence": 1.0,
+            "margin": 0.11172823295908788,
+            "threshold_2band": 0.07019426160728431
+          }
+        ]
+      },
+      "intact_b_paths": "/home/dant123/Projects/sim/.claude/worktrees/wf_ced91b5c-6b4-1/research/findings/raw/_metacog_graded_marker_derisk/s100_intact_b.json",
+      "lesion": {
+        "arm": "lesion",
+        "base_pa": 300.0,
+        "build_seconds": 2.004572868347168,
+        "confidence_read": "nmda_norm",
+        "elapsed_seconds": 3.083629608154297,
+        "organ_calib_2band": {
+          "clean_gap": true,
+          "confidence_read": "nmda_norm",
+          "max_lo": 0.06365116319569439,
+          "mean_hi": 0.09178129087827541,
+          "mean_lo": 0.04571761978523253,
+          "min_hi": 0.07673736001887424,
+          "read_reps": 8,
+          "role_conf_hi": 0.5,
+          "role_conf_lo": 0.3
+        },
+        "organ_threshold_2band": 0.07019426160728431,
+        "read_reps": 8,
+        "repeat": "x",
+        "seed": 100,
+        "sig_hi_pa": 260.0,
+        "sig_lo_pa": 40.0,
+        "sweep": [
+          {
+            "confident_2band": false,
+            "evidence": 0.0,
+            "margin": 0.0036076160053973554,
+            "threshold_2band": 0.07019426160728431
+          },
+          {
+            "confident_2band": false,
+            "evidence": 0.125,
+            "margin": 0.0036076160053973554,
+            "threshold_2band": 0.07019426160728431
+          },
+          {
+            "confident_2band": false,
+            "evidence": 0.25,
+            "margin": 0.0036076160053973554,
+            "threshold_2band": 0.07019426160728431
+          },
+          {
+            "confident_2band": false,
+            "evidence": 0.375,
+            "margin": 0.0036076160053973554,
+            "threshold_2band": 0.07019426160728431
+          },
+          {
+            "confident_2band": false,
+            "evidence": 0.5,
+            "margin": 0.0036076160053973554,
+            "threshold_2band": 0.07019426160728431
+          },
+          {
+            "confident_2band": false,
+            "evidence": 0.625,
+            "margin": 0.0036076160053973554,
+            "threshold_2band": 0.07019426160728431
+          },
+          {
+            "confident_2band": false,
+            "evidence": 0.75,
+            "margin": 0.0036076160053973554,
+            "threshold_2band": 0.07019426160728431
+          },
+          {
+            "confident_2band": false,
+            "evidence": 0.875,
+            "margin": 0.0036076160053973554,
+            "threshold_2band": 0.07019426160728431
+          },
+          {
+            "confident_2band": false,
+            "evidence": 1.0,
+            "margin": 0.0036076160053973554,
+            "threshold_2band": 0.07019426160728431
+          }
+        ]
+      },
+      "lesion_control": {
+        "attribution_to_lesionable_differential": 1.0,
+        "collapses": true,
+        "frac_speculate_lesion": 1.0,
+        "lesion_bands": [
+          "SPECULATE",
+          "SPECULATE",
+          "SPECULATE",
+          "SPECULATE",
+          "SPECULATE",
+          "SPECULATE",
+          "SPECULATE",
+          "SPECULATE",
+          "SPECULATE"
+        ],
+        "lesion_margins": [
+          0.0036076160053973554,
+          0.0036076160053973554,
+          0.0036076160053973554,
+          0.0036076160053973554,
+          0.0036076160053973554,
+          0.0036076160053973554,
+          0.0036076160053973554,
+          0.0036076160053973554,
+          0.0036076160053973554
+        ],
+        "rho_intact": 1.0,
+        "rho_lesion": 0.0
+      },
+      "shuffle_control": {
+        "bands": [
+          "SPECULATE",
+          "HEDGE",
+          "ASSERT",
+          "SPECULATE",
+          "HEDGE",
+          "HEDGE",
+          "ASSERT",
+          "SPECULATE",
+          "ASSERT"
+        ],
+        "fails_to_track": true,
+        "monotone": false,
+        "rho": 0.45,
+        "shuffled_margins": [
+          0.029715000985259386,
+          0.05756940339964682,
+          0.09710354507550595,
+          0.03955477376277713,
+          0.06790741659645044,
+          0.07767282678258046,
+          0.11172823295908788,
+          0.05000251435757043,
+          0.08824983420560986
+        ]
+      }
+    },
+    "101": {
+      "both_conditions_pass": true,
+      "cond1": {
+        "monotone_non_decreasing": true,
+        "pass": true,
+        "spearman_rho": 1.0
+      },
+      "cond2": {
+        "auc_lo_med": 1.0,
+        "auc_med_hi": 1.0,
+        "median_gap_lo_med": 0.029807917998034575,
+        "median_gap_med_hi": 0.020170344141646285,
+        "ordinal_separable_lo_med": true,
+        "ordinal_separable_med_hi": true,
+        "pass": true,
+        "spread_lo_med": 0.006607787288177534,
+        "spread_med_hi": 0.006866612399535962
+      },
+      "determinism": {
+        "byte_identical": true,
+        "diffs": []
+      },
+      "intact_a": {
+        "arm": "intact",
+        "base_pa": 300.0,
+        "build_seconds": 1.9351530075073242,
+        "calibration": {
+          "auc_lo_med": 1.0,
+          "auc_med_hi": 1.0,
+          "boundary_lo_med": 0.043348097759303816,
+          "boundary_med_hi": 0.06989564520416558,
+          "clean_gap_lo_med": true,
+          "clean_gap_med_hi": true,
+          "high_evidence_levels": [
+            0.75,
+            0.8,
+            0.85,
+            0.9,
+            0.95,
+            1.0
+          ],
+          "high_margins": [
+            0.07293302991813261,
+            0.07491698220655321,
+            0.07813661469863448,
+            0.08274040378779016,
+            0.08723424502242254,
+            0.09247693799994047
+          ],
+          "lo_med_detail": {
+            "boundary": 0.043348097759303816,
+            "clean_gap": true,
+            "max_lower": 0.039852196655400934,
+            "mean_lower": 0.03073479806214229,
+            "mean_upper": 0.05833140293925112,
+            "min_upper": 0.0468439988632067
+          },
+          "low_evidence_levels": [
+            0.0,
+            0.05,
+            0.1,
+            0.15000000000000002,
+            0.2,
+            0.25
+          ],
+          "low_margins": [
+            0.021526882311817014,
+            0.025368273922424217,
+            0.02678999027751667,
+            0.034130503929546245,
+            0.03674094127614866,
+            0.039852196655400934
+          ],
+          "med_evidence_levels": [
+            0.375,
+            0.425,
+            0.475,
+            0.525,
+            0.575,
+            0.625
+          ],
+          "med_hi_detail": {
+            "boundary": 0.06989564520416558,
+            "clean_gap": true,
+            "max_lower": 0.06685826049019854,
+            "mean_lower": 0.05833140293925112,
+            "mean_upper": 0.08140636893891225,
+            "min_upper": 0.07293302991813261
+          },
+          "med_margins": [
+            0.0468439988632067,
+            0.05330300842998385,
+            0.05832062003251211,
+            0.06244681964898556,
+            0.06221571017061996,
+            0.06685826049019854
+          ],
+          "median_gap_lo_med": 0.029807917998034575,
+          "median_gap_med_hi": 0.020170344141646285,
+          "ordinal_separable_lo_med": true,
+          "ordinal_separable_med_hi": true,
+          "spread_lo_med": 0.006607787288177534,
+          "spread_med_hi": 0.006866612399535962
+        },
+        "confidence_read": "nmda_norm",
+        "elapsed_seconds": 5.105181455612183,
+        "organ_calib_2band": {
+          "clean_gap": true,
+          "confidence_read": "nmda_norm",
+          "max_lo": 0.052970631583143565,
+          "mean_hi": 0.07711825871493624,
+          "mean_lo": 0.0366349603412728,
+          "min_hi": 0.06420451407329936,
+          "read_reps": 8,
+          "role_conf_hi": 0.5,
+          "role_conf_lo": 0.3
+        },
+        "organ_threshold_2band": 0.05858757282822146,
+        "read_reps": 8,
+        "repeat": "a",
+        "seed": 101,
+        "sig_hi_pa": 260.0,
+        "sig_lo_pa": 40.0,
+        "sweep": [
+          {
+            "band": "SPECULATE",
+            "confident_2band": false,
+            "evidence": 0.0,
+            "margin": 0.021526882311817014,
+            "threshold_2band": 0.05858757282822146
+          },
+          {
+            "band": "SPECULATE",
+            "confident_2band": false,
+            "evidence": 0.125,
+            "margin": 0.03199101261126669,
+            "threshold_2band": 0.05858757282822146
+          },
+          {
+            "band": "SPECULATE",
+            "confident_2band": false,
+            "evidence": 0.25,
+            "margin": 0.039852196655400934,
+            "threshold_2band": 0.05858757282822146
+          },
+          {
+            "band": "HEDGE",
+            "confident_2band": false,
+            "evidence": 0.375,
+            "margin": 0.0468439988632067,
+            "threshold_2band": 0.05858757282822146
+          },
+          {
+            "band": "HEDGE",
+            "confident_2band": true,
+            "evidence": 0.5,
+            "margin": 0.06124529592081329,
+            "threshold_2band": 0.05858757282822146
+          },
+          {
+            "band": "HEDGE",
+            "confident_2band": true,
+            "evidence": 0.625,
+            "margin": 0.06685826049019854,
+            "threshold_2band": 0.05858757282822146
+          },
+          {
+            "band": "ASSERT",
+            "confident_2band": true,
+            "evidence": 0.75,
+            "margin": 0.07293302991813261,
+            "threshold_2band": 0.05858757282822146
+          },
+          {
+            "band": "ASSERT",
+            "confident_2band": true,
+            "evidence": 0.875,
+            "margin": 0.0813056818619029,
+            "threshold_2band": 0.05858757282822146
+          },
+          {
+            "band": "ASSERT",
+            "confident_2band": true,
+            "evidence": 1.0,
+            "margin": 0.09247693799994047,
+            "threshold_2band": 0.05858757282822146
+          }
+        ]
+      },
+      "intact_b_paths": "/home/dant123/Projects/sim/.claude/worktrees/wf_ced91b5c-6b4-1/research/findings/raw/_metacog_graded_marker_derisk/s101_intact_b.json",
+      "lesion": {
+        "arm": "lesion",
+        "base_pa": 300.0,
+        "build_seconds": 1.9534661769866943,
+        "confidence_read": "nmda_norm",
+        "elapsed_seconds": 3.023030996322632,
+        "organ_calib_2band": {
+          "clean_gap": true,
+          "confidence_read": "nmda_norm",
+          "max_lo": 0.052970631583143565,
+          "mean_hi": 0.07711825871493624,
+          "mean_lo": 0.0366349603412728,
+          "min_hi": 0.06420451407329936,
+          "read_reps": 8,
+          "role_conf_hi": 0.5,
+          "role_conf_lo": 0.3
+        },
+        "organ_threshold_2band": 0.05858757282822146,
+        "read_reps": 8,
+        "repeat": "x",
+        "seed": 101,
+        "sig_hi_pa": 260.0,
+        "sig_lo_pa": 40.0,
+        "sweep": [
+          {
+            "confident_2band": false,
+            "evidence": 0.0,
+            "margin": 0.002646212982646611,
+            "threshold_2band": 0.05858757282822146
+          },
+          {
+            "confident_2band": false,
+            "evidence": 0.125,
+            "margin": 0.002646212982646611,
+            "threshold_2band": 0.05858757282822146
+          },
+          {
+            "confident_2band": false,
+            "evidence": 0.25,
+            "margin": 0.002646212982646611,
+            "threshold_2band": 0.05858757282822146
+          },
+          {
+            "confident_2band": false,
+            "evidence": 0.375,
+            "margin": 0.002646212982646611,
+            "threshold_2band": 0.05858757282822146
+          },
+          {
+            "confident_2band": false,
+            "evidence": 0.5,
+            "margin": 0.002646212982646611,
+            "threshold_2band": 0.05858757282822146
+          },
+          {
+            "confident_2band": false,
+            "evidence": 0.625,
+            "margin": 0.002646212982646611,
+            "threshold_2band": 0.05858757282822146
+          },
+          {
+            "confident_2band": false,
+            "evidence": 0.75,
+            "margin": 0.002646212982646611,
+            "threshold_2band": 0.05858757282822146
+          },
+          {
+            "confident_2band": false,
+            "evidence": 0.875,
+            "margin": 0.002646212982646611,
+            "threshold_2band": 0.05858757282822146
+          },
+          {
+            "confident_2band": false,
+            "evidence": 1.0,
+            "margin": 0.002646212982646611,
+            "threshold_2band": 0.05858757282822146
+          }
+        ]
+      },
+      "lesion_control": {
+        "attribution_to_lesionable_differential": 1.0,
+        "collapses": true,
+        "frac_speculate_lesion": 1.0,
+        "lesion_bands": [
+          "SPECULATE",
+          "SPECULATE",
+          "SPECULATE",
+          "SPECULATE",
+          "SPECULATE",
+          "SPECULATE",
+          "SPECULATE",
+          "SPECULATE",
+          "SPECULATE"
+        ],
+        "lesion_margins": [
+          0.002646212982646611,
+          0.002646212982646611,
+          0.002646212982646611,
+          0.002646212982646611,
+          0.002646212982646611,
+          0.002646212982646611,
+          0.002646212982646611,
+          0.002646212982646611,
+          0.002646212982646611
+        ],
+        "rho_intact": 1.0,
+        "rho_lesion": 0.0
+      },
+      "shuffle_control": {
+        "bands": [
+          "ASSERT",
+          "HEDGE",
+          "ASSERT",
+          "SPECULATE",
+          "SPECULATE",
+          "SPECULATE",
+          "HEDGE",
+          "ASSERT",
+          "HEDGE"
+        ],
+        "fails_to_track": true,
+        "monotone": false,
+        "rho": -0.16666666666666666,
+        "shuffled_margins": [
+          0.0813056818619029,
+          0.06124529592081329,
+          0.09247693799994047,
+          0.021526882311817014,
+          0.03199101261126669,
+          0.039852196655400934,
+          0.0468439988632067,
+          0.07293302991813261,
+          0.06685826049019854
+        ]
+      }
+    },
+    "102": {
+      "both_conditions_pass": true,
+      "cond1": {
+        "monotone_non_decreasing": true,
+        "pass": true,
+        "spearman_rho": 1.0
+      },
+      "cond2": {
+        "auc_lo_med": 1.0,
+        "auc_med_hi": 1.0,
+        "median_gap_lo_med": 0.022546145702037182,
+        "median_gap_med_hi": 0.018017167206614622,
+        "ordinal_separable_lo_med": true,
+        "ordinal_separable_med_hi": true,
+        "pass": true,
+        "spread_lo_med": 0.006658444111667861,
+        "spread_med_hi": 0.0041744075918181064
+      },
+      "determinism": {
+        "byte_identical": true,
+        "diffs": []
+      },
+      "intact_a": {
+        "arm": "intact",
+        "base_pa": 300.0,
+        "build_seconds": 1.9727094173431396,
+        "calibration": {
+          "auc_lo_med": 1.0,
+          "auc_med_hi": 1.0,
+          "boundary_lo_med": 0.030607379276457167,
+          "boundary_med_hi": 0.05112360863966704,
+          "clean_gap_lo_med": true,
+          "clean_gap_med_hi": true,
+          "high_evidence_levels": [
+            0.75,
+            0.8,
+            0.85,
+            0.9,
+            0.95,
+            1.0
+          ],
+          "high_margins": [
+            0.05514994099968053,
+            0.05574202804436251,
+            0.057087506628812276,
+            0.060438156142057144,
+            0.06376893064698994,
+            0.0663542209452572
+          ],
+          "lo_med_detail": {
+            "boundary": 0.030607379276457167,
+            "clean_gap": true,
+            "max_lower": 0.025472011512859608,
+            "mean_lower": 0.016836954341589067,
+            "mean_upper": 0.04071895041081095,
+            "min_upper": 0.03574274704005473
+          },
+          "low_evidence_levels": [
+            0.0,
+            0.05,
+            0.1,
+            0.15000000000000002,
+            0.2,
+            0.25
+          ],
+          "low_margins": [
+            0.005522893923739267,
+            0.011520426339663077,
+            0.016842810540764003,
+            0.019556226412801817,
+            0.02210735731970663,
+            0.025472011512859608
+          ],
+          "med_evidence_levels": [
+            0.375,
+            0.425,
+            0.475,
+            0.525,
+            0.575,
+            0.625
+          ],
+          "med_hi_detail": {
+            "boundary": 0.05112360863966704,
+            "clean_gap": true,
+            "max_lower": 0.04709727627965356,
+            "mean_lower": 0.04071895041081095,
+            "mean_upper": 0.05975679723452659,
+            "min_upper": 0.05514994099968053
+          },
+          "med_margins": [
+            0.03574274704005473,
+            0.03620662722608103,
+            0.040685363438449376,
+            0.04080596491919081,
+            0.043775723561436226,
+            0.04709727627965356
+          ],
+          "median_gap_lo_med": 0.022546145702037182,
+          "median_gap_med_hi": 0.018017167206614622,
+          "ordinal_separable_lo_med": true,
+          "ordinal_separable_med_hi": true,
+          "spread_lo_med": 0.006658444111667861,
+          "spread_med_hi": 0.0041744075918181064
+        },
+        "confidence_read": "nmda_norm",
+        "elapsed_seconds": 5.200940370559692,
+        "organ_calib_2band": {
+          "clean_gap": true,
+          "confidence_read": "nmda_norm",
+          "max_lo": 0.03752800876825077,
+          "mean_hi": 0.05591370777383284,
+          "mean_lo": 0.022504073149129188,
+          "min_hi": 0.04419297513445343,
+          "read_reps": 8,
+          "role_conf_hi": 0.5,
+          "role_conf_lo": 0.3
+        },
+        "organ_threshold_2band": 0.0408604919513521,
+        "read_reps": 8,
+        "repeat": "a",
+        "seed": 102,
+        "sig_hi_pa": 260.0,
+        "sig_lo_pa": 40.0,
+        "sweep": [
+          {
+            "band": "SPECULATE",
+            "confident_2band": false,
+            "evidence": 0.0,
+            "margin": 0.005522893923739267,
+            "threshold_2band": 0.0408604919513521
+          },
+          {
+            "band": "SPECULATE",
+            "confident_2band": false,
+            "evidence": 0.125,
+            "margin": 0.01753122081503108,
+            "threshold_2band": 0.0408604919513521
+          },
+          {
+            "band": "SPECULATE",
+            "confident_2band": false,
+            "evidence": 0.25,
+            "margin": 0.025472011512859608,
+            "threshold_2band": 0.0408604919513521
+          },
+          {
+            "band": "HEDGE",
+            "confident_2band": false,
+            "evidence": 0.375,
+            "margin": 0.03574274704005473,
+            "threshold_2band": 0.0408604919513521
+          },
+          {
+            "band": "HEDGE",
+            "confident_2band": false,
+            "evidence": 0.5,
+            "margin": 0.040042034581808494,
+            "threshold_2band": 0.0408604919513521
+          },
+          {
+            "band": "HEDGE",
+            "confident_2band": true,
+            "evidence": 0.625,
+            "margin": 0.04709727627965356,
+            "threshold_2band": 0.0408604919513521
+          },
+          {
+            "band": "ASSERT",
+            "confident_2band": true,
+            "evidence": 0.75,
+            "margin": 0.05514994099968053,
+            "threshold_2band": 0.0408604919513521
+          },
+          {
+            "band": "ASSERT",
+            "confident_2band": true,
+            "evidence": 0.875,
+            "margin": 0.058704842920998854,
+            "threshold_2band": 0.0408604919513521
+          },
+          {
+            "band": "ASSERT",
+            "confident_2band": true,
+            "evidence": 1.0,
+            "margin": 0.0663542209452572,
+            "threshold_2band": 0.0408604919513521
+          }
+        ]
+      },
+      "intact_b_paths": "/home/dant123/Projects/sim/.claude/worktrees/wf_ced91b5c-6b4-1/research/findings/raw/_metacog_graded_marker_derisk/s102_intact_b.json",
+      "lesion": {
+        "arm": "lesion",
+        "base_pa": 300.0,
+        "build_seconds": 1.9625182151794434,
+        "confidence_read": "nmda_norm",
+        "elapsed_seconds": 3.11885404586792,
+        "organ_calib_2band": {
+          "clean_gap": true,
+          "confidence_read": "nmda_norm",
+          "max_lo": 0.03752800876825077,
+          "mean_hi": 0.05591370777383284,
+          "mean_lo": 0.022504073149129188,
+          "min_hi": 0.04419297513445343,
+          "read_reps": 8,
+          "role_conf_hi": 0.5,
+          "role_conf_lo": 0.3
+        },
+        "organ_threshold_2band": 0.0408604919513521,
+        "read_reps": 8,
+        "repeat": "x",
+        "seed": 102,
+        "sig_hi_pa": 260.0,
+        "sig_lo_pa": 40.0,
+        "sweep": [
+          {
+            "confident_2band": false,
+            "evidence": 0.0,
+            "margin": 0.010941907510411904,
+            "threshold_2band": 0.0408604919513521
+          },
+          {
+            "confident_2band": false,
+            "evidence": 0.125,
+            "margin": 0.010941907510411904,
+            "threshold_2band": 0.0408604919513521
+          },
+          {
+            "confident_2band": false,
+            "evidence": 0.25,
+            "margin": 0.010941907510411904,
+            "threshold_2band": 0.0408604919513521
+          },
+          {
+            "confident_2band": false,
+            "evidence": 0.375,
+            "margin": 0.010941907510411904,
+            "threshold_2band": 0.0408604919513521
+          },
+          {
+            "confident_2band": false,
+            "evidence": 0.5,
+            "margin": 0.010941907510411904,
+            "threshold_2band": 0.0408604919513521
+          },
+          {
+            "confident_2band": false,
+            "evidence": 0.625,
+            "margin": 0.010941907510411904,
+            "threshold_2band": 0.0408604919513521
+          },
+          {
+            "confident_2band": false,
+            "evidence": 0.75,
+            "margin": 0.010941907510411904,
+            "threshold_2band": 0.0408604919513521
+          },
+          {
+            "confident_2band": false,
+            "evidence": 0.875,
+            "margin": 0.010941907510411904,
+            "threshold_2band": 0.0408604919513521
+          },
+          {
+            "confident_2band": false,
+            "evidence": 1.0,
+            "margin": 0.010941907510411904,
+            "threshold_2band": 0.0408604919513521
+          }
+        ]
+      },
+      "lesion_control": {
+        "attribution_to_lesionable_differential": 1.0,
+        "collapses": true,
+        "frac_speculate_lesion": 1.0,
+        "lesion_bands": [
+          "SPECULATE",
+          "SPECULATE",
+          "SPECULATE",
+          "SPECULATE",
+          "SPECULATE",
+          "SPECULATE",
+          "SPECULATE",
+          "SPECULATE",
+          "SPECULATE"
+        ],
+        "lesion_margins": [
+          0.010941907510411904,
+          0.010941907510411904,
+          0.010941907510411904,
+          0.010941907510411904,
+          0.010941907510411904,
+          0.010941907510411904,
+          0.010941907510411904,
+          0.010941907510411904,
+          0.010941907510411904
+        ],
+        "rho_intact": 1.0,
+        "rho_lesion": 0.0
+      },
+      "shuffle_control": {
+        "bands": [
+          "ASSERT",
+          "SPECULATE",
+          "ASSERT",
+          "ASSERT",
+          "SPECULATE",
+          "HEDGE",
+          "SPECULATE",
+          "HEDGE",
+          "HEDGE"
+        ],
+        "fails_to_track": true,
+        "monotone": false,
+        "rho": -0.13333333333333333,
+        "shuffled_margins": [
+          0.05514994099968053,
+          0.005522893923739267,
+          0.058704842920998854,
+          0.0663542209452572,
+          0.01753122081503108,
+          0.03574274704005473,
+          0.025472011512859608,
+          0.04709727627965356,
+          0.040042034581808494
+        ]
+      }
+    },
+    "42": {
+      "both_conditions_pass": true,
+      "cond1": {
+        "monotone_non_decreasing": true,
+        "pass": true,
+        "spearman_rho": 1.0
+      },
+      "cond2": {
+        "auc_lo_med": 1.0,
+        "auc_med_hi": 1.0,
+        "median_gap_lo_med": 0.026141483677221994,
+        "median_gap_med_hi": 0.02946623408706385,
+        "ordinal_separable_lo_med": true,
+        "ordinal_separable_med_hi": true,
+        "pass": true,
+        "spread_lo_med": 0.0076775863503523905,
+        "spread_med_hi": 0.0069744930782662095
+      },
+      "determinism": {
+        "byte_identical": true,
+        "diffs": []
+      },
+      "intact_a": {
+        "arm": "intact",
+        "base_pa": 300.0,
+        "build_seconds": 2.067657232284546,
+        "calibration": {
+          "auc_lo_med": 1.0,
+          "auc_med_hi": 1.0,
+          "boundary_lo_med": 0.049646339163638364,
+          "boundary_med_hi": 0.07504800540134922,
+          "clean_gap_lo_med": true,
+          "clean_gap_med_hi": true,
+          "high_evidence_levels": [
+            0.75,
+            0.8,
+            0.85,
+            0.9,
+            0.95,
+            1.0
+          ],
+          "high_margins": [
+            0.0792107511335108,
+            0.08266539040383093,
+            0.08882512548901983,
+            0.09229190642631407,
+            0.0951088141094206,
+            0.09948140892129004
+          ],
+          "lo_med_detail": {
+            "boundary": 0.049646339163638364,
+            "clean_gap": true,
+            "max_lower": 0.04406408037686496,
+            "mean_lower": 0.034312869542878634,
+            "mean_upper": 0.062317214517525976,
+            "min_upper": 0.05522859795041176
+          },
+          "low_evidence_levels": [
+            0.0,
+            0.05,
+            0.1,
+            0.15000000000000002,
+            0.2,
+            0.25
+          ],
+          "low_margins": [
+            0.02121987511038006,
+            0.0289102070053054,
+            0.03412107249902107,
+            0.03578052388774114,
+            0.04178145837795916,
+            0.04406408037686496
+          ],
+          "med_evidence_levels": [
+            0.375,
+            0.425,
+            0.475,
+            0.525,
+            0.575,
+            0.625
+          ],
+          "med_hi_detail": {
+            "boundary": 0.07504800540134922,
+            "clean_gap": true,
+            "max_lower": 0.07088525966918764,
+            "mean_lower": 0.062317214517525976,
+            "mean_upper": 0.08959723274723104,
+            "min_upper": 0.0792107511335108
+          },
+          "med_margins": [
+            0.05522859795041176,
+            0.057944909925873776,
+            0.0595372424136101,
+            0.06264732132759611,
+            0.0676599558184765,
+            0.07088525966918764
+          ],
+          "median_gap_lo_med": 0.026141483677221994,
+          "median_gap_med_hi": 0.02946623408706385,
+          "ordinal_separable_lo_med": true,
+          "ordinal_separable_med_hi": true,
+          "spread_lo_med": 0.0076775863503523905,
+          "spread_med_hi": 0.0069744930782662095
+        },
+        "confidence_read": "nmda_norm",
+        "elapsed_seconds": 5.449347734451294,
+        "organ_calib_2band": {
+          "clean_gap": true,
+          "confidence_read": "nmda_norm",
+          "max_lo": 0.05585473364676948,
+          "mean_hi": 0.08338421519381395,
+          "mean_lo": 0.04024896748934768,
+          "min_hi": 0.06791818701044258,
+          "read_reps": 8,
+          "role_conf_hi": 0.5,
+          "role_conf_lo": 0.3
+        },
+        "organ_threshold_2band": 0.061886460328606036,
+        "read_reps": 8,
+        "repeat": "a",
+        "seed": 42,
+        "sig_hi_pa": 260.0,
+        "sig_lo_pa": 40.0,
+        "sweep": [
+          {
+            "band": "SPECULATE",
+            "confident_2band": false,
+            "evidence": 0.0,
+            "margin": 0.02121987511038006,
+            "threshold_2band": 0.061886460328606036
+          },
+          {
+            "band": "SPECULATE",
+            "confident_2band": false,
+            "evidence": 0.125,
+            "margin": 0.03671979842717614,
+            "threshold_2band": 0.061886460328606036
+          },
+          {
+            "band": "SPECULATE",
+            "confident_2band": false,
+            "evidence": 0.25,
+            "margin": 0.04406408037686496,
+            "threshold_2band": 0.061886460328606036
+          },
+          {
+            "band": "HEDGE",
+            "confident_2band": false,
+            "evidence": 0.375,
+            "margin": 0.05522859795041176,
+            "threshold_2band": 0.061886460328606036
+          },
+          {
+            "band": "HEDGE",
+            "confident_2band": true,
+            "evidence": 0.5,
+            "margin": 0.06259414642123984,
+            "threshold_2band": 0.061886460328606036
+          },
+          {
+            "band": "HEDGE",
+            "confident_2band": true,
+            "evidence": 0.625,
+            "margin": 0.07088525966918764,
+            "threshold_2band": 0.061886460328606036
+          },
+          {
+            "band": "ASSERT",
+            "confident_2band": true,
+            "evidence": 0.75,
+            "margin": 0.0792107511335108,
+            "threshold_2band": 0.061886460328606036
+          },
+          {
+            "band": "ASSERT",
+            "confident_2band": true,
+            "evidence": 0.875,
+            "margin": 0.08841094118766815,
+            "threshold_2band": 0.061886460328606036
+          },
+          {
+            "band": "ASSERT",
+            "confident_2band": true,
+            "evidence": 1.0,
+            "margin": 0.09948140892129004,
+            "threshold_2band": 0.061886460328606036
+          }
+        ]
+      },
+      "intact_b_paths": "/home/dant123/Projects/sim/.claude/worktrees/wf_ced91b5c-6b4-1/research/findings/raw/_metacog_graded_marker_derisk/s42_intact_b.json",
+      "lesion": {
+        "arm": "lesion",
+        "base_pa": 300.0,
+        "build_seconds": 1.947232723236084,
+        "confidence_read": "nmda_norm",
+        "elapsed_seconds": 3.0065371990203857,
+        "organ_calib_2band": {
+          "clean_gap": true,
+          "confidence_read": "nmda_norm",
+          "max_lo": 0.05585473364676948,
+          "mean_hi": 0.08338421519381395,
+          "mean_lo": 0.04024896748934768,
+          "min_hi": 0.06791818701044258,
+          "read_reps": 8,
+          "role_conf_hi": 0.5,
+          "role_conf_lo": 0.3
+        },
+        "organ_threshold_2band": 0.061886460328606036,
+        "read_reps": 8,
+        "repeat": "x",
+        "seed": 42,
+        "sig_hi_pa": 260.0,
+        "sig_lo_pa": 40.0,
+        "sweep": [
+          {
+            "confident_2band": false,
+            "evidence": 0.0,
+            "margin": 0.0028956722864838507,
+            "threshold_2band": 0.061886460328606036
+          },
+          {
+            "confident_2band": false,
+            "evidence": 0.125,
+            "margin": 0.0028956722864838507,
+            "threshold_2band": 0.061886460328606036
+          },
+          {
+            "confident_2band": false,
+            "evidence": 0.25,
+            "margin": 0.0028956722864838507,
+            "threshold_2band": 0.061886460328606036
+          },
+          {
+            "confident_2band": false,
+            "evidence": 0.375,
+            "margin": 0.0028956722864838507,
+            "threshold_2band": 0.061886460328606036
+          },
+          {
+            "confident_2band": false,
+            "evidence": 0.5,
+            "margin": 0.0028956722864838507,
+            "threshold_2band": 0.061886460328606036
+          },
+          {
+            "confident_2band": false,
+            "evidence": 0.625,
+            "margin": 0.0028956722864838507,
+            "threshold_2band": 0.061886460328606036
+          },
+          {
+            "confident_2band": false,
+            "evidence": 0.75,
+            "margin": 0.0028956722864838507,
+            "threshold_2band": 0.061886460328606036
+          },
+          {
+            "confident_2band": false,
+            "evidence": 0.875,
+            "margin": 0.0028956722864838507,
+            "threshold_2band": 0.061886460328606036
+          },
+          {
+            "confident_2band": false,
+            "evidence": 1.0,
+            "margin": 0.0028956722864838507,
+            "threshold_2band": 0.061886460328606036
+          }
+        ]
+      },
+      "lesion_control": {
+        "attribution_to_lesionable_differential": 1.0,
+        "collapses": true,
+        "frac_speculate_lesion": 1.0,
+        "lesion_bands": [
+          "SPECULATE",
+          "SPECULATE",
+          "SPECULATE",
+          "SPECULATE",
+          "SPECULATE",
+          "SPECULATE",
+          "SPECULATE",
+          "SPECULATE",
+          "SPECULATE"
+        ],
+        "lesion_margins": [
+          0.0028956722864838507,
+          0.0028956722864838507,
+          0.0028956722864838507,
+          0.0028956722864838507,
+          0.0028956722864838507,
+          0.0028956722864838507,
+          0.0028956722864838507,
+          0.0028956722864838507,
+          0.0028956722864838507
+        ],
+        "rho_intact": 1.0,
+        "rho_lesion": 0.0
+      },
+      "shuffle_control": {
+        "bands": [
+          "HEDGE",
+          "ASSERT",
+          "ASSERT",
+          "HEDGE",
+          "SPECULATE",
+          "SPECULATE",
+          "SPECULATE",
+          "HEDGE",
+          "ASSERT"
+        ],
+        "fails_to_track": true,
+        "monotone": false,
+        "rho": -0.4166666666666667,
+        "shuffled_margins": [
+          0.07088525966918764,
+          0.09948140892129004,
+          0.08841094118766815,
+          0.06259414642123984,
+          0.02121987511038006,
+          0.04406408037686496,
+          0.03671979842717614,
+          0.05522859795041176,
+          0.0792107511335108
+        ]
+      }
+    },
+    "43": {
+      "both_conditions_pass": true,
+      "cond1": {
+        "monotone_non_decreasing": true,
+        "pass": true,
+        "spearman_rho": 1.0
+      },
+      "cond2": {
+        "auc_lo_med": 1.0,
+        "auc_med_hi": 1.0,
+        "median_gap_lo_med": 0.028161570538165932,
+        "median_gap_med_hi": 0.028187980551068595,
+        "ordinal_separable_lo_med": true,
+        "ordinal_separable_med_hi": true,
+        "pass": true,
+        "spread_lo_med": 0.007299516607143593,
+        "spread_med_hi": 0.007674659322608963
+      },
+      "determinism": {
+        "byte_identical": true,
+        "diffs": []
+      },
+      "intact_a": {
+        "arm": "intact",
+        "base_pa": 300.0,
+        "build_seconds": 2.030306339263916,
+        "calibration": {
+          "auc_lo_med": 1.0,
+          "auc_med_hi": 1.0,
+          "boundary_lo_med": 0.047841781921787896,
+          "boundary_med_hi": 0.0730927000573317,
+          "clean_gap_lo_med": true,
+          "clean_gap_med_hi": true,
+          "high_evidence_levels": [
+            0.75,
+            0.8,
+            0.85,
+            0.9,
+            0.95,
+            1.0
+          ],
+          "high_margins": [
+            0.07772374184706472,
+            0.08457967592264526,
+            0.08822876172263547,
+            0.0925082883709721,
+            0.09639051323806172,
+            0.10109479905466257
+          ],
+          "lo_med_detail": {
+            "boundary": 0.047841781921787896,
+            "clean_gap": true,
+            "max_lower": 0.04484108529239969,
+            "mean_lower": 0.03457365269087851,
+            "mean_upper": 0.06067335410688173,
+            "min_upper": 0.0508424785511761
+          },
+          "low_evidence_levels": [
+            0.0,
+            0.05,
+            0.1,
+            0.15000000000000002,
+            0.2,
+            0.25
+          ],
+          "low_margins": [
+            0.024752491936161428,
+            0.02757499947817487,
+            0.03183682368006287,
+            0.036201124235075655,
+            0.042235391523396566,
+            0.04484108529239969
+          ],
+          "med_evidence_levels": [
+            0.375,
+            0.425,
+            0.475,
+            0.525,
+            0.575,
+            0.625
+          ],
+          "med_hi_detail": {
+            "boundary": 0.0730927000573317,
+            "clean_gap": true,
+            "max_lower": 0.0684616582675987,
+            "mean_lower": 0.06067335410688173,
+            "mean_upper": 0.09008763002600696,
+            "min_upper": 0.07772374184706472
+          },
+          "med_margins": [
+            0.0508424785511761,
+            0.05506718150835628,
+            0.060392468929493646,
+            0.06396862006197675,
+            0.06530771732268889,
+            0.0684616582675987
+          ],
+          "median_gap_lo_med": 0.028161570538165932,
+          "median_gap_med_hi": 0.028187980551068595,
+          "ordinal_separable_lo_med": true,
+          "ordinal_separable_med_hi": true,
+          "spread_lo_med": 0.007299516607143593,
+          "spread_med_hi": 0.007674659322608963
+        },
+        "confidence_read": "nmda_norm",
+        "elapsed_seconds": 5.202792644500732,
+        "organ_calib_2band": {
+          "clean_gap": true,
+          "confidence_read": "nmda_norm",
+          "max_lo": 0.05356282163136998,
+          "mean_hi": 0.08361539681330209,
+          "mean_lo": 0.040045132603547307,
+          "min_hi": 0.06774868699361289,
+          "read_reps": 8,
+          "role_conf_hi": 0.5,
+          "role_conf_lo": 0.3
+        },
+        "organ_threshold_2band": 0.060655754312491435,
+        "read_reps": 8,
+        "repeat": "a",
+        "seed": 43,
+        "sig_hi_pa": 260.0,
+        "sig_lo_pa": 40.0,
+        "sweep": [
+          {
+            "band": "SPECULATE",
+            "confident_2band": false,
+            "evidence": 0.0,
+            "margin": 0.024752491936161428,
+            "threshold_2band": 0.060655754312491435
+          },
+          {
+            "band": "SPECULATE",
+            "confident_2band": false,
+            "evidence": 0.125,
+            "margin": 0.036156462886518276,
+            "threshold_2band": 0.060655754312491435
+          },
+          {
+            "band": "SPECULATE",
+            "confident_2band": false,
+            "evidence": 0.25,
+            "margin": 0.04484108529239969,
+            "threshold_2band": 0.060655754312491435
+          },
+          {
+            "band": "HEDGE",
+            "confident_2band": false,
+            "evidence": 0.375,
+            "margin": 0.0508424785511761,
+            "threshold_2band": 0.060655754312491435
+          },
+          {
+            "band": "HEDGE",
+            "confident_2band": true,
+            "evidence": 0.5,
+            "margin": 0.06085859490602049,
+            "threshold_2band": 0.060655754312491435
+          },
+          {
+            "band": "HEDGE",
+            "confident_2band": true,
+            "evidence": 0.625,
+            "margin": 0.0684616582675987,
+            "threshold_2band": 0.060655754312491435
+          },
+          {
+            "band": "ASSERT",
+            "confident_2band": true,
+            "evidence": 0.75,
+            "margin": 0.07772374184706472,
+            "threshold_2band": 0.060655754312491435
+          },
+          {
+            "band": "ASSERT",
+            "confident_2band": true,
+            "evidence": 0.875,
+            "margin": 0.09323092340628686,
+            "threshold_2band": 0.060655754312491435
+          },
+          {
+            "band": "ASSERT",
+            "confident_2band": true,
+            "evidence": 1.0,
+            "margin": 0.10109479905466257,
+            "threshold_2band": 0.060655754312491435
+          }
+        ]
+      },
+      "intact_b_paths": "/home/dant123/Projects/sim/.claude/worktrees/wf_ced91b5c-6b4-1/research/findings/raw/_metacog_graded_marker_derisk/s43_intact_b.json",
+      "lesion": {
+        "arm": "lesion",
+        "base_pa": 300.0,
+        "build_seconds": 1.8543593883514404,
+        "confidence_read": "nmda_norm",
+        "elapsed_seconds": 2.938628911972046,
+        "organ_calib_2band": {
+          "clean_gap": true,
+          "confidence_read": "nmda_norm",
+          "max_lo": 0.05356282163136998,
+          "mean_hi": 0.08361539681330209,
+          "mean_lo": 0.040045132603547307,
+          "min_hi": 0.06774868699361289,
+          "read_reps": 8,
+          "role_conf_hi": 0.5,
+          "role_conf_lo": 0.3
+        },
+        "organ_threshold_2band": 0.060655754312491435,
+        "read_reps": 8,
+        "repeat": "x",
+        "seed": 43,
+        "sig_hi_pa": 260.0,
+        "sig_lo_pa": 40.0,
+        "sweep": [
+          {
+            "confident_2band": false,
+            "evidence": 0.0,
+            "margin": 0.00345136319285177,
+            "threshold_2band": 0.060655754312491435
+          },
+          {
+            "confident_2band": false,
+            "evidence": 0.125,
+            "margin": 0.00345136319285177,
+            "threshold_2band": 0.060655754312491435
+          },
+          {
+            "confident_2band": false,
+            "evidence": 0.25,
+            "margin": 0.00345136319285177,
+            "threshold_2band": 0.060655754312491435
+          },
+          {
+            "confident_2band": false,
+            "evidence": 0.375,
+            "margin": 0.00345136319285177,
+            "threshold_2band": 0.060655754312491435
+          },
+          {
+            "confident_2band": false,
+            "evidence": 0.5,
+            "margin": 0.00345136319285177,
+            "threshold_2band": 0.060655754312491435
+          },
+          {
+            "confident_2band": false,
+            "evidence": 0.625,
+            "margin": 0.00345136319285177,
+            "threshold_2band": 0.060655754312491435
+          },
+          {
+            "confident_2band": false,
+            "evidence": 0.75,
+            "margin": 0.00345136319285177,
+            "threshold_2band": 0.060655754312491435
+          },
+          {
+            "confident_2band": false,
+            "evidence": 0.875,
+            "margin": 0.00345136319285177,
+            "threshold_2band": 0.060655754312491435
+          },
+          {
+            "confident_2band": false,
+            "evidence": 1.0,
+            "margin": 0.00345136319285177,
+            "threshold_2band": 0.060655754312491435
+          }
+        ]
+      },
+      "lesion_control": {
+        "attribution_to_lesionable_differential": 1.0,
+        "collapses": true,
+        "frac_speculate_lesion": 1.0,
+        "lesion_bands": [
+          "SPECULATE",
+          "SPECULATE",
+          "SPECULATE",
+          "SPECULATE",
+          "SPECULATE",
+          "SPECULATE",
+          "SPECULATE",
+          "SPECULATE",
+          "SPECULATE"
+        ],
+        "lesion_margins": [
+          0.00345136319285177,
+          0.00345136319285177,
+          0.00345136319285177,
+          0.00345136319285177,
+          0.00345136319285177,
+          0.00345136319285177,
+          0.00345136319285177,
+          0.00345136319285177,
+          0.00345136319285177
+        ],
+        "rho_intact": 1.0,
+        "rho_lesion": 0.0
+      },
+      "shuffle_control": {
+        "bands": [
+          "HEDGE",
+          "SPECULATE",
+          "ASSERT",
+          "HEDGE",
+          "SPECULATE",
+          "ASSERT",
+          "HEDGE",
+          "ASSERT",
+          "SPECULATE"
+        ],
+        "fails_to_track": true,
+        "monotone": false,
+        "rho": -0.16666666666666666,
+        "shuffled_margins": [
+          0.06085859490602049,
+          0.04484108529239969,
+          0.10109479905466257,
+          0.0684616582675987,
+          0.036156462886518276,
+          0.07772374184706472,
+          0.0508424785511761,
+          0.09323092340628686,
+          0.024752491936161428
+        ]
+      }
+    },
+    "44": {
+      "both_conditions_pass": true,
+      "cond1": {
+        "monotone_non_decreasing": true,
+        "pass": true,
+        "spearman_rho": 1.0
+      },
+      "cond2": {
+        "auc_lo_med": 1.0,
+        "auc_med_hi": 1.0,
+        "median_gap_lo_med": 0.029298289652821895,
+        "median_gap_med_hi": 0.02211385798556828,
+        "ordinal_separable_lo_med": true,
+        "ordinal_separable_med_hi": true,
+        "pass": true,
+        "spread_lo_med": 0.006928594297424008,
+        "spread_med_hi": 0.005733695325813024
+      },
+      "determinism": {
+        "byte_identical": true,
+        "diffs": []
+      },
+      "intact_a": {
+        "arm": "intact",
+        "base_pa": 300.0,
+        "build_seconds": 1.942582368850708,
+        "calibration": {
+          "auc_lo_med": 1.0,
+          "auc_med_hi": 1.0,
+          "boundary_lo_med": 0.04285020268363573,
+          "boundary_med_hi": 0.06675623493570199,
+          "clean_gap_lo_med": true,
+          "clean_gap_med_hi": true,
+          "high_evidence_levels": [
+            0.75,
+            0.8,
+            0.85,
+            0.9,
+            0.95,
+            1.0
+          ],
+          "high_margins": [
+            0.07152354166002817,
+            0.07420693625648928,
+            0.07658930856756194,
+            0.0817168758396431,
+            0.08159909810693361,
+            0.08784586853826618
+          ],
+          "lo_med_detail": {
+            "boundary": 0.04285020268363573,
+            "clean_gap": true,
+            "max_lower": 0.03896098488911176,
+            "mean_lower": 0.028450841974523976,
+            "mean_upper": 0.05576199335818826,
+            "min_upper": 0.046739420478159696
+          },
+          "low_evidence_levels": [
+            0.0,
+            0.05,
+            0.1,
+            0.15000000000000002,
+            0.2,
+            0.25
+          ],
+          "low_margins": [
+            0.01808449316593745,
+            0.023388834241702378,
+            0.02678065129933655,
+            0.028583460098378644,
+            0.03490662815267706,
+            0.03896098488911176
+          ],
+          "med_evidence_levels": [
+            0.375,
+            0.425,
+            0.475,
+            0.525,
+            0.575,
+            0.625
+          ],
+          "med_hi_detail": {
+            "boundary": 0.06675623493570199,
+            "clean_gap": true,
+            "max_lower": 0.061988928211375804,
+            "mean_lower": 0.05576199335818826,
+            "mean_upper": 0.07891360482815372,
+            "min_upper": 0.07152354166002817
+          },
+          "med_margins": [
+            0.046739420478159696,
+            0.05013967207418224,
+            0.055147948224376186,
+            0.0588127424789828,
+            0.061743248682052804,
+            0.061988928211375804
+          ],
+          "median_gap_lo_med": 0.029298289652821895,
+          "median_gap_med_hi": 0.02211385798556828,
+          "ordinal_separable_lo_med": true,
+          "ordinal_separable_med_hi": true,
+          "spread_lo_med": 0.006928594297424008,
+          "spread_med_hi": 0.005733695325813024
+        },
+        "confidence_read": "nmda_norm",
+        "elapsed_seconds": 5.216500997543335,
+        "organ_calib_2band": {
+          "clean_gap": true,
+          "confidence_read": "nmda_norm",
+          "max_lo": 0.04804556817150647,
+          "mean_hi": 0.07448593468601426,
+          "mean_lo": 0.03364560213589725,
+          "min_hi": 0.06238757984128279,
+          "read_reps": 8,
+          "role_conf_hi": 0.5,
+          "role_conf_lo": 0.3
+        },
+        "organ_threshold_2band": 0.05521657400639463,
+        "read_reps": 8,
+        "repeat": "a",
+        "seed": 44,
+        "sig_hi_pa": 260.0,
+        "sig_lo_pa": 40.0,
+        "sweep": [
+          {
+            "band": "SPECULATE",
+            "confident_2band": false,
+            "evidence": 0.0,
+            "margin": 0.01808449316593745,
+            "threshold_2band": 0.05521657400639463
+          },
+          {
+            "band": "SPECULATE",
+            "confident_2band": false,
+            "evidence": 0.125,
+            "margin": 0.02700034041976455,
+            "threshold_2band": 0.05521657400639463
+          },
+          {
+            "band": "SPECULATE",
+            "confident_2band": false,
+            "evidence": 0.25,
+            "margin": 0.03896098488911176,
+            "threshold_2band": 0.05521657400639463
+          },
+          {
+            "band": "HEDGE",
+            "confident_2band": false,
+            "evidence": 0.375,
+            "margin": 0.046739420478159696,
+            "threshold_2band": 0.05521657400639463
+          },
+          {
+            "band": "HEDGE",
+            "confident_2band": true,
+            "evidence": 0.5,
+            "margin": 0.05939851603418425,
+            "threshold_2band": 0.05521657400639463
+          },
+          {
+            "band": "HEDGE",
+            "confident_2band": true,
+            "evidence": 0.625,
+            "margin": 0.061988928211375804,
+            "threshold_2band": 0.05521657400639463
+          },
+          {
+            "band": "ASSERT",
+            "confident_2band": true,
+            "evidence": 0.75,
+            "margin": 0.07152354166002817,
+            "threshold_2band": 0.05521657400639463
+          },
+          {
+            "band": "ASSERT",
+            "confident_2band": true,
+            "evidence": 0.875,
+            "margin": 0.08025830244452635,
+            "threshold_2band": 0.05521657400639463
+          },
+          {
+            "band": "ASSERT",
+            "confident_2band": true,
+            "evidence": 1.0,
+            "margin": 0.08784586853826618,
+            "threshold_2band": 0.05521657400639463
+          }
+        ]
+      },
+      "intact_b_paths": "/home/dant123/Projects/sim/.claude/worktrees/wf_ced91b5c-6b4-1/research/findings/raw/_metacog_graded_marker_derisk/s44_intact_b.json",
+      "lesion": {
+        "arm": "lesion",
+        "base_pa": 300.0,
+        "build_seconds": 1.9580838680267334,
+        "confidence_read": "nmda_norm",
+        "elapsed_seconds": 3.0404725074768066,
+        "organ_calib_2band": {
+          "clean_gap": true,
+          "confidence_read": "nmda_norm",
+          "max_lo": 0.04804556817150647,
+          "mean_hi": 0.07448593468601426,
+          "mean_lo": 0.03364560213589725,
+          "min_hi": 0.06238757984128279,
+          "read_reps": 8,
+          "role_conf_hi": 0.5,
+          "role_conf_lo": 0.3
+        },
+        "organ_threshold_2band": 0.05521657400639463,
+        "read_reps": 8,
+        "repeat": "x",
+        "seed": 44,
+        "sig_hi_pa": 260.0,
+        "sig_lo_pa": 40.0,
+        "sweep": [
+          {
+            "confident_2band": false,
+            "evidence": 0.0,
+            "margin": 0.005872791298083309,
+            "threshold_2band": 0.05521657400639463
+          },
+          {
+            "confident_2band": false,
+            "evidence": 0.125,
+            "margin": 0.005872791298083309,
+            "threshold_2band": 0.05521657400639463
+          },
+          {
+            "confident_2band": false,
+            "evidence": 0.25,
+            "margin": 0.005872791298083309,
+            "threshold_2band": 0.05521657400639463
+          },
+          {
+            "confident_2band": false,
+            "evidence": 0.375,
+            "margin": 0.005872791298083309,
+            "threshold_2band": 0.05521657400639463
+          },
+          {
+            "confident_2band": false,
+            "evidence": 0.5,
+            "margin": 0.005872791298083309,
+            "threshold_2band": 0.05521657400639463
+          },
+          {
+            "confident_2band": false,
+            "evidence": 0.625,
+            "margin": 0.005872791298083309,
+            "threshold_2band": 0.05521657400639463
+          },
+          {
+            "confident_2band": false,
+            "evidence": 0.75,
+            "margin": 0.005872791298083309,
+            "threshold_2band": 0.05521657400639463
+          },
+          {
+            "confident_2band": false,
+            "evidence": 0.875,
+            "margin": 0.005872791298083309,
+            "threshold_2band": 0.05521657400639463
+          },
+          {
+            "confident_2band": false,
+            "evidence": 1.0,
+            "margin": 0.005872791298083309,
+            "threshold_2band": 0.05521657400639463
+          }
+        ]
+      },
+      "lesion_control": {
+        "attribution_to_lesionable_differential": 1.0,
+        "collapses": true,
+        "frac_speculate_lesion": 1.0,
+        "lesion_bands": [
+          "SPECULATE",
+          "SPECULATE",
+          "SPECULATE",
+          "SPECULATE",
+          "SPECULATE",
+          "SPECULATE",
+          "SPECULATE",
+          "SPECULATE",
+          "SPECULATE"
+        ],
+        "lesion_margins": [
+          0.005872791298083309,
+          0.005872791298083309,
+          0.005872791298083309,
+          0.005872791298083309,
+          0.005872791298083309,
+          0.005872791298083309,
+          0.005872791298083309,
+          0.005872791298083309,
+          0.005872791298083309
+        ],
+        "rho_intact": 1.0,
+        "rho_lesion": 0.0
+      },
+      "shuffle_control": {
+        "bands": [
+          "ASSERT",
+          "SPECULATE",
+          "SPECULATE",
+          "HEDGE",
+          "SPECULATE",
+          "HEDGE",
+          "ASSERT",
+          "ASSERT",
+          "HEDGE"
+        ],
+        "fails_to_track": true,
+        "monotone": false,
+        "rho": 0.21666666666666667,
+        "shuffled_margins": [
+          0.08784586853826618,
+          0.02700034041976455,
+          0.03896098488911176,
+          0.05939851603418425,
+          0.01808449316593745,
+          0.046739420478159696,
+          0.07152354166002817,
+          0.08025830244452635,
+          0.061988928211375804
+        ]
+      }
+    }
+  },
+  "preconditions": [
+    {
+      "detail": "measured=6 expect=<function cmd_aggregate.<locals>.<lambda> at 0x7f5f9439b560>",
+      "kind": "require",
+      "name": "n_seeds cond1 (monotone AND rho>=0.80), need >=5/6",
+      "note": "",
+      "ok": true
+    },
+    {
+      "detail": "measured=6 expect=<function cmd_aggregate.<locals>.<lambda> at 0x7f5f9439b560>",
+      "kind": "require",
+      "name": "n_seeds cond2 (3-band ordinally separable), need >=5/6",
+      "note": "",
+      "ok": true
+    },
+    {
+      "detail": "measured=6 expect=<function cmd_aggregate.<locals>.<lambda> at 0x7f5f9439b560>",
+      "kind": "require",
+      "name": "n_seeds BOTH conditions, need >=5/6",
+      "note": "",
+      "ok": true
+    },
+    {
+      "detail": "measured=6 expect=<function cmd_aggregate.<locals>.<lambda> at 0x7f5f9439b560>",
+      "kind": "require",
+      "name": "shuffle/yoke control fails to track on all 6 seeds (anti-cheat 1)",
+      "note": "",
+      "ok": true
+    },
+    {
+      "detail": "measured=6 expect=<function cmd_aggregate.<locals>.<lambda> at 0x7f5f9439b560>",
+      "kind": "require",
+      "name": "lesion collapses to SPECULATE + rho~0 on all 6 seeds (anti-cheat 2)",
+      "note": "",
+      "ok": true
+    },
+    {
+      "detail": "measured=6 expect=<function cmd_aggregate.<locals>.<lambda> at 0x7f5f9439b560>",
+      "kind": "require",
+      "name": "intact-repeat byte-identical determinism on all 6 seeds (anti-cheat 4)",
+      "note": "",
+      "ok": true
+    },
+    {
+      "detail": "measured=True expect=True",
+      "kind": "require",
+      "name": "metacog_production_organ.py byte-identical to baseline hash (anti-cheat 5)",
+      "note": "",
+      "ok": true
+    },
+    {
+      "detail": "measured=True expect=True",
+      "kind": "require",
+      "name": "graded-marker phrasing carries no phenomenal/experiential word (anti-cheat 6)",
+      "note": "",
+      "ok": true
+    },
+    {
+      "detail": "treatment=1 control=0 |sep|=1 > 0.4",
+      "kind": "control",
+      "name": "seed 42: lesion collapses evidence-tracking (|rho| gap)",
+      "note": "",
+      "ok": true
+    },
+    {
+      "detail": "treatment=1 control=0 |sep|=1 > 0.4",
+      "kind": "control",
+      "name": "seed 43: lesion collapses evidence-tracking (|rho| gap)",
+      "note": "",
+      "ok": true
+    },
+    {
+      "detail": "treatment=1 control=0 |sep|=1 > 0.4",
+      "kind": "control",
+      "name": "seed 44: lesion collapses evidence-tracking (|rho| gap)",
+      "note": "",
+      "ok": true
+    },
+    {
+      "detail": "treatment=1 control=0 |sep|=1 > 0.4",
+      "kind": "control",
+      "name": "seed 100: lesion collapses evidence-tracking (|rho| gap)",
+      "note": "",
+      "ok": true
+    },
+    {
+      "detail": "treatment=1 control=0 |sep|=1 > 0.4",
+      "kind": "control",
+      "name": "seed 101: lesion collapses evidence-tracking (|rho| gap)",
+      "note": "",
+      "ok": true
+    },
+    {
+      "detail": "treatment=1 control=0 |sep|=1 > 0.4",
+      "kind": "control",
+      "name": "seed 102: lesion collapses evidence-tracking (|rho| gap)",
+      "note": "",
+      "ok": true
+    }
+  ],
+  "read_reps": 8,
+  "runner": "research/runners/_metacog_graded_marker_derisk.py",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "sig_hi_pa": 260.0,
+  "sig_lo_pa": 40.0,
+  "spawn_records": [
+    {
+      "arm": "intact",
+      "elapsed": 6.018622159957886,
+      "memcap_fallback_reason": null,
+      "memcap_wrapped": true,
+      "ok": true,
+      "out_path": "/home/dant123/Projects/sim/.claude/worktrees/wf_ced91b5c-6b4-1/research/findings/raw/_metacog_graded_marker_derisk/s42_intact_a.json",
+      "repeat": "a",
+      "returncode": 0,
+      "seed": 42,
+      "stderr_tail": ""
+    },
+    {
+      "arm": "intact",
+      "elapsed": 5.902268409729004,
+      "memcap_fallback_reason": null,
+      "memcap_wrapped": true,
+      "ok": true,
+      "out_path": "/home/dant123/Projects/sim/.claude/worktrees/wf_ced91b5c-6b4-1/research/findings/raw/_metacog_graded_marker_derisk/s42_intact_b.json",
+      "repeat": "b",
+      "returncode": 0,
+      "seed": 42,
+      "stderr_tail": ""
+    },
+    {
+      "arm": "lesion",
+      "elapsed": 3.531388521194458,
+      "memcap_fallback_reason": null,
+      "memcap_wrapped": true,
+      "ok": true,
+      "out_path": "/home/dant123/Projects/sim/.claude/worktrees/wf_ced91b5c-6b4-1/research/findings/raw/_metacog_graded_marker_derisk/s42_lesion.json",
+      "repeat": "x",
+      "returncode": 0,
+      "seed": 42,
+      "stderr_tail": ""
+    },
+    {
+      "arm": "intact",
+      "elapsed": 5.738273620605469,
+      "memcap_fallback_reason": null,
+      "memcap_wrapped": true,
+      "ok": true,
+      "out_path": "/home/dant123/Projects/sim/.claude/worktrees/wf_ced91b5c-6b4-1/research/findings/raw/_metacog_graded_marker_derisk/s43_intact_a.json",
+      "repeat": "a",
+      "returncode": 0,
+      "seed": 43,
+      "stderr_tail": ""
+    },
+    {
+      "arm": "intact",
+      "elapsed": 5.784446477890015,
+      "memcap_fallback_reason": null,
+      "memcap_wrapped": true,
+      "ok": true,
+      "out_path": "/home/dant123/Projects/sim/.claude/worktrees/wf_ced91b5c-6b4-1/research/findings/raw/_metacog_graded_marker_derisk/s43_intact_b.json",
+      "repeat": "b",
+      "returncode": 0,
+      "seed": 43,
+      "stderr_tail": ""
+    },
+    {
+      "arm": "lesion",
+      "elapsed": 3.582214117050171,
+      "memcap_fallback_reason": null,
+      "memcap_wrapped": true,
+      "ok": true,
+      "out_path": "/home/dant123/Projects/sim/.claude/worktrees/wf_ced91b5c-6b4-1/research/findings/raw/_metacog_graded_marker_derisk/s43_lesion.json",
+      "repeat": "x",
+      "returncode": 0,
+      "seed": 43,
+      "stderr_tail": ""
+    },
+    {
+      "arm": "intact",
+      "elapsed": 5.897060871124268,
+      "memcap_fallback_reason": null,
+      "memcap_wrapped": true,
+      "ok": true,
+      "out_path": "/home/dant123/Projects/sim/.claude/worktrees/wf_ced91b5c-6b4-1/research/findings/raw/_metacog_graded_marker_derisk/s44_intact_a.json",
+      "repeat": "a",
+      "returncode": 0,
+      "seed": 44,
+      "stderr_tail": ""
+    },
+    {
+      "arm": "intact",
+      "elapsed": 5.891936540603638,
+      "memcap_fallback_reason": null,
+      "memcap_wrapped": true,
+      "ok": true,
+      "out_path": "/home/dant123/Projects/sim/.claude/worktrees/wf_ced91b5c-6b4-1/research/findings/raw/_metacog_graded_marker_derisk/s44_intact_b.json",
+      "repeat": "b",
+      "returncode": 0,
+      "seed": 44,
+      "stderr_tail": ""
+    },
+    {
+      "arm": "lesion",
+      "elapsed": 3.7255516052246094,
+      "memcap_fallback_reason": null,
+      "memcap_wrapped": true,
+      "ok": true,
+      "out_path": "/home/dant123/Projects/sim/.claude/worktrees/wf_ced91b5c-6b4-1/research/findings/raw/_metacog_graded_marker_derisk/s44_lesion.json",
+      "repeat": "x",
+      "returncode": 0,
+      "seed": 44,
+      "stderr_tail": ""
+    },
+    {
+      "arm": "intact",
+      "elapsed": 6.187893867492676,
+      "memcap_fallback_reason": null,
+      "memcap_wrapped": true,
+      "ok": true,
+      "out_path": "/home/dant123/Projects/sim/.claude/worktrees/wf_ced91b5c-6b4-1/research/findings/raw/_metacog_graded_marker_derisk/s100_intact_a.json",
+      "repeat": "a",
+      "returncode": 0,
+      "seed": 100,
+      "stderr_tail": ""
+    },
+    {
+      "arm": "intact",
+      "elapsed": 6.184780120849609,
+      "memcap_fallback_reason": null,
+      "memcap_wrapped": true,
+      "ok": true,
+      "out_path": "/home/dant123/Projects/sim/.claude/worktrees/wf_ced91b5c-6b4-1/research/findings/raw/_metacog_graded_marker_derisk/s100_intact_b.json",
+      "repeat": "b",
+      "returncode": 0,
+      "seed": 100,
+      "stderr_tail": ""
+    },
+    {
+      "arm": "lesion",
+      "elapsed": 3.7292733192443848,
+      "memcap_fallback_reason": null,
+      "memcap_wrapped": true,
+      "ok": true,
+      "out_path": "/home/dant123/Projects/sim/.claude/worktrees/wf_ced91b5c-6b4-1/research/findings/raw/_metacog_graded_marker_derisk/s100_lesion.json",
+      "repeat": "x",
+      "returncode": 0,
+      "seed": 100,
+      "stderr_tail": ""
+    },
+    {
+      "arm": "intact",
+      "elapsed": 5.731420040130615,
+      "memcap_fallback_reason": null,
+      "memcap_wrapped": true,
+      "ok": true,
+      "out_path": "/home/dant123/Projects/sim/.claude/worktrees/wf_ced91b5c-6b4-1/research/findings/raw/_metacog_graded_marker_derisk/s101_intact_a.json",
+      "repeat": "a",
+      "returncode": 0,
+      "seed": 101,
+      "stderr_tail": ""
+    },
+    {
+      "arm": "intact",
+      "elapsed": 5.761820316314697,
+      "memcap_fallback_reason": null,
+      "memcap_wrapped": true,
+      "ok": true,
+      "out_path": "/home/dant123/Projects/sim/.claude/worktrees/wf_ced91b5c-6b4-1/research/findings/raw/_metacog_graded_marker_derisk/s101_intact_b.json",
+      "repeat": "b",
+      "returncode": 0,
+      "seed": 101,
+      "stderr_tail": ""
+    },
+    {
+      "arm": "lesion",
+      "elapsed": 3.692361831665039,
+      "memcap_fallback_reason": null,
+      "memcap_wrapped": true,
+      "ok": true,
+      "out_path": "/home/dant123/Projects/sim/.claude/worktrees/wf_ced91b5c-6b4-1/research/findings/raw/_metacog_graded_marker_derisk/s101_lesion.json",
+      "repeat": "x",
+      "returncode": 0,
+      "seed": 101,
+      "stderr_tail": ""
+    },
+    {
+      "arm": "intact",
+      "elapsed": 5.839094877243042,
+      "memcap_fallback_reason": null,
+      "memcap_wrapped": true,
+      "ok": true,
+      "out_path": "/home/dant123/Projects/sim/.claude/worktrees/wf_ced91b5c-6b4-1/research/findings/raw/_metacog_graded_marker_derisk/s102_intact_a.json",
+      "repeat": "a",
+      "returncode": 0,
+      "seed": 102,
+      "stderr_tail": ""
+    },
+    {
+      "arm": "intact",
+      "elapsed": 5.879621505737305,
+      "memcap_fallback_reason": null,
+      "memcap_wrapped": true,
+      "ok": true,
+      "out_path": "/home/dant123/Projects/sim/.claude/worktrees/wf_ced91b5c-6b4-1/research/findings/raw/_metacog_graded_marker_derisk/s102_intact_b.json",
+      "repeat": "b",
+      "returncode": 0,
+      "seed": 102,
+      "stderr_tail": ""
+    },
+    {
+      "arm": "lesion",
+      "elapsed": 3.6962878704071045,
+      "memcap_fallback_reason": null,
+      "memcap_wrapped": true,
+      "ok": true,
+      "out_path": "/home/dant123/Projects/sim/.claude/worktrees/wf_ced91b5c-6b4-1/research/findings/raw/_metacog_graded_marker_derisk/s102_lesion.json",
+      "repeat": "x",
+      "returncode": 0,
+      "seed": 102,
+      "stderr_tail": ""
+    }
+  ],
+  "sweep_evidence_levels": [
+    0.0,
+    0.125,
+    0.25,
+    0.375,
+    0.5,
+    0.625,
+    0.75,
+    0.875,
+    1.0
+  ],
+  "undefined_reasons": [],
+  "verdict": "GO"
+}

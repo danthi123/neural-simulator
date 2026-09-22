@@ -1,0 +1,38 @@
+{
+ "run_id": "1790116356-3029866",
+ "runner": "research/runners/_metacog_graded_marker_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/wf_ced91b5c-6b4-1/research/runners/_metacog_graded_marker_derisk.py",
+  "--mode",
+  "arm",
+  "--seed",
+  "43",
+  "--arm",
+  "intact",
+  "--repeat",
+  "b",
+  "--out",
+  "/home/dant123/Projects/sim/.claude/worktrees/wf_ced91b5c-6b4-1/research/findings/raw/_metacog_graded_marker_derisk/s43_intact_b.json"
+ ],
+ "git_sha": "13bd1f429",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-22T18:32:36",
+ "env": {
+  "SIM_BACKEND": "numpy",
+  "CUDA_VISIBLE_DEVICES": "",
+  "SIM_RUN_ID": "1790116334-3029374"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 723.2,
+ "corpus_check_query": "metacog graded confidence marker binary to 3-band ladder",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_metacog_graded_marker_derisk/s43_intact_b.json"
+}
