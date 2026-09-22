@@ -416,6 +416,22 @@ LB_OPEN_ENDED_DISTRIB = os.environ.get("LB_OPEN_ENDED_DISTRIB_PROBE", "").strip(
 _OED_N_ATTEMPTS = int(os.environ.get("LB_OPEN_ENDED_DISTRIB_N_ATTEMPTS", "800"))
 _OED_MIN_EFFECT = 1e-9   # a clean (deterministic) null makes ANY nonzero lesion effect real, not sampling noise
 
+# ── AFFECT->TONE OPEN-OUTPUT RULER (LB_AFFECT_TONE_OPEN_PROBE, default OFF) ─────────────────────────────────────
+# Swaps the `affect-coloring` faculty's ruler from the TEMPLATED single-turn decision field (affect.valence_sign /
+# affect.tone_token, read off the brain_chat return dict) to the DIRECTIONAL, INDEPENDENT-LEXICON, 6-seed OPEN-output
+# tone probe -- the right ruler for a faculty whose real job is steering the FREELY-GENERATED reply (roadmap SS8;
+# mirrors LB_OPEN_ENDED_DISTRIB_PROBE, which swapped the open-ended-generation ruler for the same reason). The heavy
+# measurement itself (36 fresh-subprocess full-webapp-brain arms on the linattn WKV mouth) lives in
+# research.runners._lbf_affect_tone_open_output_derisk -- far too heavy to inline in the battery -- so this ruler
+# READS that runner's canonical verdict artifact and surfaces the per-seed directional load-bearing signal into the
+# #1 metric's row (read-don't-derive, the verdict.reads discipline). OFF (default) -> affect-coloring is measured on
+# the templated field EXACTLY as before; this path builds NO brain and imports nothing new, so every other faculty
+# and the off battery are byte-identical.
+LB_AFFECT_TONE_OPEN = os.environ.get("LB_AFFECT_TONE_OPEN_PROBE", "").strip().lower() in ("1", "true", "yes", "on")
+_AFFECT_TONE_OPEN_ARTIFACT = os.environ.get(
+    "LB_AFFECT_TONE_OPEN_ARTIFACT",
+    "research/findings/raw/_affect_tone_open_output/affect_tone_open_output_verdict.json")
+
 
 def _oed_build_shared_world(seed):
     """Build the _followon2 shared world ONCE at `seed` (taxonomy vocab + the real TinyStories co-occurrence corpus
@@ -550,6 +566,95 @@ def measure_open_ended_distributional(out_dir, seed=42, repeats=1, n_attempts=No
     try:
         os.makedirs(out_dir, exist_ok=True)
         json.dump(res, open(os.path.join(out_dir, "oed_distributional%s.json" % _sfx), "w"), indent=2, default=str)
+    except Exception:
+        pass   # provenance convenience only -- never fail the measurement over a write error
+    return res
+
+
+def _affect_tone_open_row(seed_entry, delta):
+    """PURE translation (no brain build; selftest-exercisable) of ONE seed's open-output tone gaps into
+    (load_bearing, verdict, treatment_diff, control_diff, null_clean). TREATMENT = the intact pos-minus-neg tone
+    spread (the mood-driven tone effect on the free reply); CONTROL (the null) = the attribution control's own
+    directional gap (a mood-DECOUPLED valence must not reproduce it). load_bearing requires BOTH mood directions
+    correct-sign AND a clean control (|control| < delta). A wrong-sign direction -> load_bearing False verdict
+    'wrong-sign'; a within-band (null) direction with a clean control -> load_bearing False verdict 'pass' (not
+    load-bearing on this seed); an unclean control -> load_bearing None verdict 'noisy-null-control' (untrustworthy,
+    never evidence of absence -- the same semantics as _oed_score)."""
+    ps, ns = seed_entry.get("pos_state"), seed_entry.get("neg_state")
+    treatment = abs(float(seed_entry.get("real_directional_gap", 0.0) or 0.0))
+    control = abs(float(seed_entry.get("ctrl_directional_gap", 0.0) or 0.0))
+    null_clean = control < delta
+    if not null_clean:
+        return None, "noisy-null-control", treatment, control, null_clean
+    if ps == "wrong" or ns == "wrong":
+        return False, "wrong-sign", treatment, control, null_clean
+    lb = (ps == "correct" and ns == "correct")
+    return lb, ("load-bearing" if lb else "pass"), treatment, control, null_clean
+
+
+def measure_affect_tone_open_output(out_dir, seed=42, repeats=1):
+    """The OPEN-OUTPUT DIRECTIONAL load-bearing measurement for 'affect-coloring' (LB_AFFECT_TONE_OPEN_PROBE).
+    READS the canonical 6-seed verdict artifact produced by research.runners._lbf_affect_tone_open_output_derisk
+    (the heavy fresh-subprocess linattn-mouth probe) and surfaces THIS seed's directional tone load-bearing signal
+    as a faculty row shaped like measure_faculty()'s (same top-level keys), so run()'s counting/denominator logic
+    needs no special-casing -- only the MEANING of treatment/control changes: a directional tone gap on the FREE
+    reply, not a categorical decision-field diff. Reads-not-derives (the artifact is the instrument); NEVER builds
+    a brain and NEVER calls _spawn_arm, so the battery's other faculties are untouched."""
+    res = {"faculty": "affect-coloring",
+           "turn": "affect_tone_open (linattn WKV mouth FREE reply; _lbf_affect_tone_open_output_derisk artifact)",
+           "kind": "neural-lesion", "flag": "BRAIN_AFFECT_LESION",
+           "backend": os.environ.get("SIM_BACKEND", "numpy"),
+           "cuda_visible_devices": os.environ.get("CUDA_VISIBLE_DEVICES"),
+           "load_bearing": None, "verdict": None, "change_kind": None, "diffs": [],
+           "treatment_diffs": None, "control_diffs": None, "attributable_fraction": None,
+           "null_control_clean": None, "lesion_reproduced": None, "flag_resolves": None,
+           "measurement_ruler": "open-output-directional-independent-lexicon (6-seed)",
+           "note": "LB_AFFECT_TONE_OPEN_PROBE: affect-coloring scored by the DIRECTIONAL open-output tone ruler "
+                   "(research.runners._lbf_affect_tone_open_output_derisk), NOT the templated decision field -- "
+                   "the single-turn field-diff is the wrong ruler for a steering faculty (roadmap SS8)."}
+    apath = _AFFECT_TONE_OPEN_ARTIFACT
+    if not os.path.exists(apath):
+        proj = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+        apath = os.path.join(proj, _AFFECT_TONE_OPEN_ARTIFACT)
+    if not os.path.exists(apath):
+        res["verdict"] = "artifact-missing"
+        res["flag_resolves"] = True   # the flag + function exist; only the (heavy) precomputed artifact is absent
+        res["note"] += ("  artifact %r not found -- run `CUDA_VISIBLE_DEVICES='' SIM_BACKEND=numpy python -m "
+                        "research.runners._lbf_affect_tone_open_output_derisk --controller` first."
+                        % _AFFECT_TONE_OPEN_ARTIFACT)
+        return res
+    try:
+        art = json.load(open(apath))
+    except Exception as e:
+        res["verdict"] = "artifact-unreadable"; res["flag_resolves"] = True
+        res["note"] += "  artifact read failed: %r" % (e,)
+        return res
+    res["flag_resolves"] = True
+    delta = float(art.get("delta_preregistered", 0.0))
+    per_seed = art.get("per_seed", {})
+    entry = per_seed.get(str(seed)) or per_seed.get(seed)
+    if not entry or not entry.get("complete"):
+        res["verdict"] = "seed-missing-in-artifact"
+        res["note"] += "  seed %s not complete in the artifact." % seed
+        return res
+    lb, verdict, treatment, control, null_clean = _affect_tone_open_row(entry, delta)
+    res["treatment_diffs"] = treatment
+    res["control_diffs"] = control
+    res["null_control_clean"] = null_clean
+    res["change_kind"] = "directional-tone" if (null_clean and lb) else "none"
+    res["attributable_fraction"] = attributable_to(
+        "load-bearing[affect-coloring:open-output-tone]", treatment, control)
+    res["diffs"] = [{"field": "open_reply.tone_compound(intact_pos vs intact_neg)",
+                     "on": entry.get("tone_pos"), "off": entry.get("tone_neg")}]
+    res["lesion_reproduced"] = bool(art.get("determinism_ok"))
+    res["overall_6seed_go"] = bool(art.get("GO"))
+    res["delta_preregistered"] = delta
+    res["load_bearing"], res["verdict"] = lb, verdict
+
+    _sfx = _seed_suffix(seed)
+    try:
+        os.makedirs(out_dir, exist_ok=True)
+        json.dump(res, open(os.path.join(out_dir, "affect_tone_open%s.json" % _sfx), "w"), indent=2, default=str)
     except Exception:
         pass   # provenance convenience only -- never fail the measurement over a write error
     return res
@@ -769,6 +874,12 @@ def measure_faculty(key, out_dir, repeats=1, intact_cache=None, seed=42):
     # every other faculty (and open-ended-generation itself when the flag is off) is byte-identical to before.
     if LB_OPEN_ENDED_DISTRIB and key == "open-ended-generation":
         return measure_open_ended_distributional(out_dir, seed=seed, repeats=repeats)
+    # AFFECT->TONE OPEN-OUTPUT RULER (LB_AFFECT_TONE_OPEN_PROBE, default OFF): same early-return discipline --
+    # swaps affect-coloring's ruler to the 6-seed directional open-output tone probe (reads the runner artifact),
+    # never touching the webapp brain_chat machinery, so every other faculty (and affect-coloring itself when the
+    # flag is off) stays byte-identical.
+    if LB_AFFECT_TONE_OPEN and key == "affect-coloring":
+        return measure_affect_tone_open_output(out_dir, seed=seed, repeats=repeats)
     spec = FACULTY_LESIONS.get(key)
     row = _faculty_row(key)
     res = {"faculty": key, "turn": (row[1] if row else None),
@@ -1168,6 +1279,32 @@ def selftest(out_path=None):
         ),
         "open-ended distributional flag parses to a real bool (env-string parsing didn't degrade to truthy-string)":
             isinstance(LB_OPEN_ENDED_DISTRIB, bool),
+        # ── AFFECT->TONE OPEN-OUTPUT RULER (LB_AFFECT_TONE_OPEN_PROBE): pure decision-logic + static wiring checks ──
+        "affect-tone-open flag parses to a real bool":
+            isinstance(LB_AFFECT_TONE_OPEN, bool),
+        "affect-tone-open: correct/correct + clean control -> load-bearing":
+            _affect_tone_open_row({"pos_state": "correct", "neg_state": "correct",
+                                   "real_directional_gap": 0.30, "ctrl_directional_gap": 0.00}, 0.05)
+            == (True, "load-bearing", 0.30, 0.00, True),
+        "affect-tone-open: a wrong-sign direction -> NOT load-bearing (must fail closed)":
+            _affect_tone_open_row({"pos_state": "wrong", "neg_state": "correct",
+                                   "real_directional_gap": 0.30, "ctrl_directional_gap": 0.00}, 0.05)[:2]
+            == (False, "wrong-sign"),
+        "affect-tone-open: a null (within-band) direction -> pass (not load-bearing)":
+            _affect_tone_open_row({"pos_state": "null", "neg_state": "correct",
+                                   "real_directional_gap": 0.02, "ctrl_directional_gap": 0.00}, 0.05)[:2]
+            == (False, "pass"),
+        "affect-tone-open: an UNCLEAN control -> UNDEFINED (never a positive OR negative)":
+            _affect_tone_open_row({"pos_state": "correct", "neg_state": "correct",
+                                   "real_directional_gap": 0.30, "ctrl_directional_gap": 0.20}, 0.05)[:2]
+            == (None, "noisy-null-control"),
+        "the affect-tone-open branch precedes every _spawn_arm call (never touches the webapp brain_chat path)": (
+            lambda src: ("LB_AFFECT_TONE_OPEN" in src) and ("_spawn_arm(" in src)
+            and src.find("LB_AFFECT_TONE_OPEN") < src.find("_spawn_arm(")
+        )(__import__("inspect").getsource(measure_faculty)),
+        "measure_affect_tone_open_output's CODE never references _spawn_arm / onebrain_regression_battery":
+            "_spawn_arm" not in measure_affect_tone_open_output.__code__.co_names
+            and "onebrain_regression_battery" not in measure_affect_tone_open_output.__code__.co_names,
         "oed n-attempts knob is a positive int (the _followon2 GO's 800 unless explicitly overridden)":
             isinstance(_OED_N_ATTEMPTS, int) and _OED_N_ATTEMPTS > 0,
         "every FACULTY_LESIONS key is a real battery faculty":
