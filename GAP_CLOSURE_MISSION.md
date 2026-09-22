@@ -15,6 +15,17 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-19 (RESUME HERE) — NEW ARC: PERMANENT LLM MOUTH + LOAD-BEARING METRIC
 
+**⭐ LATEST 2026-09-22 (~20:20Z) — FULL-FORCE PARALLEL: 2 stabilizer fixes MERGED, 2 lanes IN FLIGHT, AWS abandoned:**
+- **#1-metric robust core 20 → 22**, both merged to main **@ 73d1a2cb, ORIGIN only** (gitea DOWN → catch-up retry pid 2812222):
+  - **source-provenance abstain-at-tie** — GO 6/6 CONFIRMED (was 4/6; deterministic "no clean provenance" when the opponent read d≈0 tie). → 21.
+  - **pmem facilitation** — GO 6/6 (short-term facilitation of the held intention; genuine mechanism, no per-seed branches). s44 margin THIN (crossing ~fac_g 5400; FAC_G=6000 ~11% above — the "stable across 2x" overclaim was CORRECTED). → 22.
+- **IN FLIGHT — do NOT double-launch; harvest when they land:**
+  - **episodic store-reliability** — branch `research/lbf-fix-episodic-store` (NOT merged); local GPU/cupy 5-seed in-situ verify RUNNING (build measured only 1/6, adversarial verify caught the overclaim → finishing the real 5), out `raw/_lbf_fix_episodic_store/_insitu5/`, watcher `epiwatch`. If 6/6 → merge → robust core →23.
+  - **§8 affect→tone-over-OPEN-output** — subagent `a6d0c319417b7a707`, branch `research/lbf-affect-tone-open-output`; built + 6-seed POOL verify RUNNING (seed42 decisive+determinism-clean, ~70min left; waiter `b9ss0zi2e`). Near-term-speech frontier: steering drives the free reply's TONE; independent VADER lexicon; directional 6-seed GO-gate. Resume via SendMessage to that agentId.
+- **AWS Phase 2 ABANDONED** — AWS env built a DEGENERATE 2-neuron/0-synapse brain (even with h5py/hdf5plugin) → exercised=0; instance terminated + SG cleanup armed. Phase 2 (updated adequate 6-seed → new robust fraction) must RE-RUN LOCALLY (local brain builds correctly). CONFIRMATORY only (fixes verified individually).
+- **#5 fix-target map** (finding `2026-09-22-borderline-separability-stabilizer-is-buildable`): pmem=facilitation ✅ · source-prov=abstain ✅ · episodic=store-reliability (verifying) · affect-marker = **1/6 RNG-isolated → NOT a candidate** (its 4/6 was an RNG artifact; honest near-negative). ON-DECK: §8 **honesty=STATE-fidelity** (scoped in workflow `wg2byo6dg` output).
+- **LESSONS:** adversarial-verify caught 2 overclaims (episodic 1/6-inferred, pmem fac_g-plateau) → count none on faith; AWS needs h5py+hdf5plugin AND STILL degenerates → **prefer local/pool for battery runs**; gitea can be down (origin-first + catch-up); narrow git-add + staged-`^+<<<<<<<` marker-guard before merges; **precise PID kills only** (never `pkill -f`).
+
 **OWNER-RATIFIED 2026-09-19 (both):** (1) **Qwen = PERMANENT conditioned-articulation mouth** — the
 spiking-mouth-to-fluency arc is CLOSED as falsified (decisive extended-d384 = NO-GO-CAPACITY-SATURATED; raw
 scale + architecture + data all falsified). The mouth was NEVER the bottleneck. (2) **NEW #1 METRIC =
@@ -104,8 +115,13 @@ the hollow-set finding sits uncommitted in the working tree + a safety stash `pr
   other 4, after a self-inflicted RAM spike from an uncapped 6-parallel launch — recovered, avail 23G).
 
 **PRE-DECIDED NEXT ACTIONS:**
-1. ✅ DONE — robust adequate 6-seed 0.85 recorded (finding + ledger + board); ✅ pmem 5/6; ✅ 3 gap agents resolved;
-   ✅ lb-consolidation merged to main @ 7582c063e; ✅ AWS torn down. The overnight consolidation arc is CLOSED.
+1. ⭐ NOW (2026-09-22): HARVEST the 2 IN-FLIGHT lanes → (a) episodic 5-seed in-situ (local cupy, watcher `epiwatch`,
+   out `_insitu5/`) — if 6/6, merge `research/lbf-fix-episodic-store` → robust core →23; (b) §8 affect→tone build
+   (subagent `a6d0c319417b7a707`, POOL, waiter `b9ss0zi2e`) — if 6-seed directional GO, merge
+   `research/lbf-affect-tone-open-output`. THEN: re-run Phase 2 (updated adequate 6-seed → new robust fraction)
+   LOCALLY (AWS env degenerates to a 2-neuron brain); confirm gitea catch-up synced (pid 2812222); launch §8
+   honesty=STATE-fidelity (on-deck, scoped in workflow `wg2byo6dg` output). Robust core 20→22 landed (source-prov
+   abstain + pmem facilitation) @ 73d1a2cb (origin; gitea pending).
 2. ✅ DONE (2026-09-21, workflow lb-frontier-builds, both adversarially verified, merged to main @ 34a5becb) —
    open-ended's DISTRIBUTIONAL ruler INTEGRATED into load_bearing_fraction (flag LB_OPEN_ENDED_DISTRIB_PROBE,
    default-OFF, byte-identical default: selftest PASS + PROBE_TURNS=26 + flag defaults False): GO, clean null 0.0
