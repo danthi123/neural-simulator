@@ -40,8 +40,10 @@ latch -> the held assembly COLLAPSES) has h_a ~ 0, so I_fac ~ 0 -> the lesioned 
 rel ~ 0). A facilitation that fired a single input would be a cheat; this cannot, because I_fac is gated by BOTH
 the maintained-assembly firing (h_a) AND the postsynaptic depolarization (the Mg block), and the calibrated
 operating point pins the facilitated held-alone sub-threshold. The frozen N=5 gate PROVES the silence clauses STAY
-6/6 (a regression => VOID). Identical F-dynamics params for ALL seeds; the lift is STABLE across a ~2x fac_g range
-(no per-seed tuning). A value that only holds with per-seed tuning would be an HONEST-NEGATIVE, not a GO.
+6/6 (a regression => VOID). Identical F-dynamics params for ALL seeds (no per-seed branches). At FAC_G=6000 s44's rel
+clears FIRE_THR (0.211 > 0.20); the crossing is ~fac_g 5400 (4000 and 5000 do NOT clear s44), so 6000 sits ~11% above
+it -- a MODEST margin (not a wide 2x plateau; the earlier "4000-8000 stable" claim was an overclaim, corrected). It is a
+uniformly-applied mechanism, not a per-seed tune, but the s44 robustness margin is thin -- an honest residual.
 
 BRAIN-BASED / FLAGGED (same scope as the parent SFA + plateau): F is driven by the assembly's OWN spiking
 (cp_firing_states); I_fac is a host-injected current-injection PROXY for the presynaptic release-probability
@@ -91,8 +93,10 @@ SILENCE_CLAUSES = homeo.SILENCE_CLAUSES
 FAC_U = 0.18            # release-probability facilitation increment per unit presynaptic activity (TM U; 0.1-0.3)
 FAC_TAU_F_STEPS = 2000.0  # facilitation decay time constant (steps; dt=0.5ms -> 1 s; PFC facilitating range 1-2 s)
 FAC_G = 6000.0         # facilitated NMDA-release current gain (pA at full Mg-unblock); one value across all seeds.
-                       # The lift is STABLE across a ~2x range (4000-8000 all clear s44 ~0.204-0.211) -- a mechanism,
-                       # not a knife-edge tune. Mg-block gating means the effective current is ~5-15x smaller than
+                       # s44's crossing is ~fac_g 5400 (4000/5000 do NOT clear s44; 6000 -> rel 0.211 > FIRE_THR 0.20),
+                       # so 6000 is ~11% above the crossing -- a MODEST margin, not a wide plateau (an earlier
+                       # "4000-8000 stable ~2x" comment was an overclaim, corrected). Uniform mechanism, not a per-seed
+                       # tune, but the s44 margin is thin. Mg-block gating means the effective current is ~5-15x smaller
                        # the nominal gain at the rel operating point, hence the larger nominal value than a raw current.
 FAC_F_MAX = 1.0        # facilitation saturation
 
@@ -354,8 +358,8 @@ def _derisk(seeds, N, n_distractors, smoke=False, fac_g=FAC_G, fac_U=FAC_U, fac_
             f"and every frozen-gate silence clause STAYS 6/6 (the facilitated current is NMDA Mg2+-block voltage-"
             f"gated -> coincidence-preferential by the receptor's own biology, and the operating point is calibrated "
             f"WITH facilitation). Identical F-dynamics params for all seeds (fac_g={fac_g}, fac_U={fac_U}, "
-            f"tau_F={fac_tau_F_steps}); the lift is stable across a ~2x fac_g range -- a mechanism, not a per-seed "
-            f"tune. All reads cp_firing_states; NO sim/ edit.")
+            f"tau_F={fac_tau_F_steps}); a uniformly-applied mechanism (not a per-seed tune), though s44's margin above "
+            f"the ~fac_g-5400 crossing is modest/thin. All reads cp_firing_states; NO sim/ edit.")
     else:
         verdict = (f"BOUNDARY / HONEST-NEGATIVE -- facilitation lifted N=3 load_bearing {n_lb_off}/{len(seeds)} -> "
                    f"{n_lb_on}/{len(seeds)} (need {len(seeds)}) with silence "

@@ -77,8 +77,11 @@ call; the deliverable is the buildable, verified, principled mechanism.
 - The frozen N=5 gate silence clauses STAY 6/6 with the flag on (max_silent 0.039-0.050 < SILENT_MAX=0.06); in the <!--derived-->
   production pipeline the intervening reads at s44 are 0.0/0.03/0.022 (silent). De-risk verdict: GO <!--derived-->
   (research/findings/raw/_pmem_facilitation.json, carries a tools.verdict.Verdict preconditions block).
-- Identical F-dynamics params for ALL seeds (fac_g=6000, fac_U=0.18, tau_F=2000); the s44 lift is STABLE across a ~2x
-  fac_g range (4000->0.204, 6000->0.211, 8000->0.210) -- a mechanism, not a per-seed tune. FUNCTIONAL correlate only; <!--derived-->
+- Identical F-dynamics params for ALL seeds (fac_g=6000, fac_U=0.18, tau_F=2000; no per-seed branches) -- so it is a
+  uniformly-applied mechanism, not a per-seed tune. HONEST MARGIN CORRECTION (adversarial re-run): the s44 crossing is
+  ~fac_g 5400 (4000->0.199 FAIL, 5000->0.198 FAIL, 5500->0.207 pass, 6000->0.211 pass), so FAC_G=6000 sits ~11% above
+  the crossing -- a MODEST margin, NOT the "stable across a ~2x range" a prior draft claimed; s44's robustness margin
+  is thin (an honest residual). FUNCTIONAL correlate only; <!--derived-->
   no claim of phenomenal experience.
 
 ## Files
