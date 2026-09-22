@@ -138,7 +138,8 @@ headline:
   # that does not yet DRIVE the reply). episodic-memory is the starkest case: its row lesion_note reads
   # LESION-LOAD-BEARING (isolated 2026-08-12) but it is integrated-HOLLOW here — that gap IS the actionable work.
   load_bearing_integrated:
-    fraction: "6-seed mean 0.5897 (std 0.0181), range 15-16/26"   # 2026-09-20 6-seed (42/43/44/100/101/102), all deterministic. The single-seed 0.615 was the HIGH end, not central.
+    reporting_standard: "OWNER DECISION 2026-09-21 (option C): report the #1 metric as a PAIR, never one cherry-picked number. HEADLINE = robust-core 20/26 (load-bearing in ALL 6 seeds under ADEQUATE probes); ALWAYS alongside it: the 0.59 default was thin-probe UNDER-measurement (instrument artifact, not a brain limit), and +3 are seed-dependent (23/26 union). The drive-probe flags are MEASUREMENT-ONLY (only in load_bearing_fraction.py + the battery, NOT webapp/server.py or sim/) -- they change how the metric PROBES, not the brain."
+    fraction: "PAIR (owner option C): headline robust-core 20/26 adequate-probe 6-seed; default-probe 6-seed mean 0.5897 (std 0.0181, robust core 14) is thin-probe under-measurement."   # 2026-09-20/21 6-seed (42/43/44/100/101/102), deterministic.
     six_seed_mean: 0.5897
     six_seed_std: 0.0181
     robust_core: 14        # faculties load-bearing in ALL 6 seeds

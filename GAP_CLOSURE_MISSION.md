@@ -119,9 +119,13 @@ the hollow-set finding sits uncommitted in the working tree + a safety stash `pr
    non-isolated across the intact/lesion read pair) — not portable substrate facts (disclosed in the finding).
 
 **LIVE FRONTIER (ordered):**
-3. ⭐ OWNER-FACING — production wiring: the adequate-probe flags are DEFAULT-OFF (shipped fraction stays 0.59).
-   WHICH verified drive-probe fixes to flip ON by default (so the shipped brain drives more of the reply) is an owner
-   decision — the 0.59 (shipped) → 0.85 (adequate) gap is now quantified 6-seed on both ends.
+3. ✅ RESOLVED (owner, 2026-09-21 — OPTION C): the #1-metric is REPORTED AS A PAIR, never a single cherry-picked
+   number. HEADLINE = **robust-core 20/26** (load-bearing in ALL 6 seeds under adequate probes); ALWAYS stated
+   alongside it: 0.59 was thin-probe UNDER-measurement (an instrument artifact, NOT a brain limit), and +3 more are
+   seed-dependent (→ 23/26 union). CORRECTION of an earlier imprecise note: the drive-probe flags are
+   MEASUREMENT-ONLY (verified — they live only in load_bearing_fraction.py + the battery, NOT in webapp/server.py or
+   sim/), so they change how the metric PROBES, NOT the brain; the brain is identical either way and there is no
+   "flip default-on to make the brain drive more". This PAIR is the standing reporting standard for the #1 metric.
 5. DEEPER — build the principled OPERATING-POINT STABILIZER per borderline faculty (the companion/homeostatic process
    the diagnosis says each replaced with a constant), to make the borderline flips robust-6/6. NOT tuning — a
    biology-grounded regulator; honest-negative if none exists. (First fix affect-marker's non-isolated WTA RNG.)
