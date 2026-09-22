@@ -126,9 +126,16 @@ the hollow-set finding sits uncommitted in the working tree + a safety stash `pr
    MEASUREMENT-ONLY (verified — they live only in load_bearing_fraction.py + the battery, NOT in webapp/server.py or
    sim/), so they change how the metric PROBES, NOT the brain; the brain is identical either way and there is no
    "flip default-on to make the brain drive more". This PAIR is the standing reporting standard for the #1 metric.
-5. DEEPER — build the principled OPERATING-POINT STABILIZER per borderline faculty (the companion/homeostatic process
-   the diagnosis says each replaced with a constant), to make the borderline flips robust-6/6. NOT tuning — a
-   biology-grounded regulator; honest-negative if none exists. (First fix affect-marker's non-isolated WTA RNG.)
+5. DEEPER — build the principled OPERATING-POINT STABILIZER per borderline faculty. **DE-RISKED 2026-09-22**
+   (finding 2026-09-22-borderline-separability-stabilizer-is-buildable.md): episodic / source-provenance /
+   prospective-memory have SEPARABLE intact-vs-lesion reads across all 6 seeds → a principled operating point EXISTS
+   → the stabilizer is BUILDABLE (not honest-negative) for those 3. Build a biology-grounded regulator (e.g.
+   Turrigiano-style scaling toward the separable gap) per faculty; for episodic target the store→recall INTEGRATION
+   path (its read separates but the s44 miss is integration-level); for pmem lift the near-threshold held×cue read.
+   NOT tuning; honest-negative if a principled regulator fails 6-seed. **affect-marker: RNG-isolation bug FIXED
+   @419baeab** (fresh reader per arm) → isolated 6-seed re-run RUNNING (pid launched 2026-09-22 ~06:55Z, serial/
+   memcap/numpy) → **HARVEST research/findings/raw/_lbf_borderline_isolated_run.out** (+ _lbf_borderline_isolated/
+   op_s*.json) for affect-marker's now-assessable separability, then include it in the stabilizer build.
 
 *Everything below is prior-arc HISTORY.*
 
