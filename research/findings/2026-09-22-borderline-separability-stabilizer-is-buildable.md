@@ -91,6 +91,26 @@ READ `d` separates perfectly (intact 1.0 vs lesion 0.0) on ALL six seeds:
   reliably differs from intact's confident "perceived" on all seeds. (Confirming the exact discretizer line is a
   quick follow-on: read the source-provenance organ's label mapping; this cross-check already names the step.)
 
+## Localized: episodic's seed-fragile integration step (2026-09-22)
+Same cross-check for episodic (load_bearing_adequate_s44.json vs s100.json):
+<!--derived-->
+- **s100 (ON):** the lesion flips `episodic.in_memory` True→False (treatment_diffs=1) → load-bearing.
+- **s44 (OFF):** the intact `episodic.in_memory` is already False — SAME as the lesion (treatment_diffs=0) → not
+  load-bearing. So at s44 the INTACT store→recall pipeline did not yield a recallable memory in the first place.
+- The fragile step is therefore the **store→recall pipeline** (the numpy BTSP write/recall the intact arm depends on),
+  which failed to produce `in_memory=True` at s44 — NOT the read's operating point. (The diagnosis's apical_cue read
+  separates, but on a different direct-organ path than the battery's store→recall.) FIX DIRECTION for #5: make the
+  intact store→recall RELIABLE across seeds — verify the BTSP write actually landed before the recall (or run episodic
+  on the fast cupy BTSP path, the declared numpy-latency residual), so the intact arm reliably recalls and the lesion's
+  collapse is a clean diff on all six seeds.
+
+## #5 fix targets — now NAMED for all three separable faculties
+| faculty | level | fragile step (located) | principled fix direction |
+|---|---|---|---|
+| prospective-memory | read | intact `rel` below FIRE_THR at s44 | short-term facilitation of the held intention across intervening turns |
+| source-provenance | integration | d→label discretizer tie-break at lesion's d≈0 | deterministic "no clean provenance/abstain" at the tie |
+| episodic-memory | integration | intact store→recall fails at s44 | guarantee the BTSP write landed before recall (or cupy fast path) |
+
 ## Next — the #5 stabilizer build, DECOMPOSED (it is two different problems, not one)
 The full harvest shows the three genuinely-separable faculties split by WHERE the seed-dependence actually lives, and
 they need DIFFERENT fixes. Attacking them all as "operating-point stabilizers" would waste effort on two of them.
