@@ -142,6 +142,21 @@ def pmem_hebbian_lesioned() -> bool:
     return v.strip().lower() in ("1", "true", "yes", "on")
 
 
+def pmem_facilitation_enabled() -> bool:
+    """Default-OFF. `BRAIN_PMEM_FACILITATION` in {1,true,yes,on} -> build the SHORT-TERM FACILITATION substrate
+    (`FacilitatedHebbianProspectiveMemory` / `FacilitatedProspectiveMemory`, _pmem_facilitation_derisk): a
+    Tsodyks-Markram facilitation variable (NMDA Mg-block voltage-gated -> coincidence-preferential) on the
+    maintained act_X->rel_X projection, potentiated turn-over-turn by the held assembly's own sustained firing, so
+    the held x cue coincidence read `rel` clears FIRE_THR at the N=3 production protocol on ALL 6 seeds (fixes the
+    seed-44 borderline: rel 0.1839 -> ~0.21, load-bearing 5/6 -> 6/6; finding
+    2026-09-22-borderline-separability-stabilizer-is-buildable). DEFAULT-OFF -> the shipped brain + the battery
+    default build the SAME class as before (byte-identical); the flag is purely additive."""
+    v = os.environ.get("BRAIN_PMEM_FACILITATION")
+    if v is None:
+        return False
+    return v.strip().lower() in ("1", "true", "yes", "on")
+
+
 def _cue_keywords(cue_clause: str) -> list[str]:
     """Reduce a cue clause to its salient content keyword(s) (a host language scaffold). Falls back to the raw
     tokens when everything is a stop-word (so a bare cue still has something to match)."""
@@ -192,6 +207,7 @@ class ProspectiveMemoryOrgan:
         self.seed = int(seed)
         self._pm = None                 # lazily-built prospective-memory substrate (the de-risked GO)
         self._hebbian = None            # is the cue->action binding LEARNED at formation (True) or installed (False)?
+        self._facilitation = None       # is short-term facilitation on the maintained drive active (BRAIN_PMEM_FACILITATION)?
         self.action_text = None         # the deferred action (host content: what to remind of)
         self.cue_clause = None          # the cue phrase (host content: the trigger, for the reminder wording)
         self.cue_keywords = None        # the salient cue keyword(s) matched against later turns (host sensory)
@@ -209,6 +225,7 @@ class ProspectiveMemoryOrgan:
     def _ensure_pm(self):
         if self._pm is None:
             self._hebbian = pmem_hebbian_enabled()
+            self._facilitation = pmem_facilitation_enabled()
             if self._hebbian:
                 # LEARN the cue->action binding at formation (de-risk GO 6/6): reuse-by-import the validated
                 # HebbianBindingProspectiveMemory subclass (LAZY import — keeps the de-risk runner's env
@@ -216,16 +233,32 @@ class ProspectiveMemoryOrgan:
                 # config is unchanged; the canonical binding is installed at build so the homeostat bias + plateau
                 # theta CALIBRATE against it (a developmental operating-point tuning), then it is ZEROED — none
                 # exists before the formation turn, and `form_intention` relearns it one-shot from real spikes.
-                from research.runners._pmem_hebbian_binding_derisk import HebbianBindingProspectiveMemory
-                self._pm = HebbianBindingProspectiveMemory(
-                    _ACTIONS, list(_DISTRACTORS), seed=self.seed,
-                    homeostat_on=True, sfa_on=True, plateau_on=True)   # the GO config (plateau owns the closure)
+                # BRAIN_PMEM_FACILITATION (default-OFF) swaps in the FACILITATION subclass (short-term facilitation
+                # of the maintained act->rel drive) so the N=3 coincidence read clears FIRE_THR on ALL 6 seeds
+                # (fixes s44 borderline); OFF → the SAME HebbianBindingProspectiveMemory as before (byte-identical).
+                if self._facilitation:
+                    from research.runners._pmem_facilitation_derisk import FacilitatedHebbianProspectiveMemory
+                    self._pm = FacilitatedHebbianProspectiveMemory(
+                        _ACTIONS, list(_DISTRACTORS), seed=self.seed,
+                        homeostat_on=True, sfa_on=True, plateau_on=True, fac_on=True)
+                else:
+                    from research.runners._pmem_hebbian_binding_derisk import HebbianBindingProspectiveMemory
+                    self._pm = HebbianBindingProspectiveMemory(
+                        _ACTIONS, list(_DISTRACTORS), seed=self.seed,
+                        homeostat_on=True, sfa_on=True, plateau_on=True)   # the GO config (plateau owns the closure)
             else:
                 # ESCAPE (`BRAIN_PMEM_HEBBIAN=0`): the cue->action binding is INSTALLED synaptically at build
-                # (byte-identical to the pre-wiring production organ — the retired scaffold).
-                self._pm = SFANmdaProspectiveMemory(
-                    _ACTIONS, list(_DISTRACTORS), seed=self.seed,
-                    homeostat_on=True, sfa_on=True, plateau_on=True)
+                # (byte-identical to the pre-wiring production organ — the retired scaffold). BRAIN_PMEM_FACILITATION
+                # (default-OFF) swaps in the facilitation variant of this build too.
+                if self._facilitation:
+                    from research.runners._pmem_facilitation_derisk import FacilitatedProspectiveMemory
+                    self._pm = FacilitatedProspectiveMemory(
+                        _ACTIONS, list(_DISTRACTORS), seed=self.seed,
+                        homeostat_on=True, sfa_on=True, plateau_on=True, fac_on=True)
+                else:
+                    self._pm = SFANmdaProspectiveMemory(
+                        _ACTIONS, list(_DISTRACTORS), seed=self.seed,
+                        homeostat_on=True, sfa_on=True, plateau_on=True)
             self.calib = {"bias_pA": dict(getattr(self._pm, "_bias_trace", {})),
                           "plateau_diag": dict(getattr(self._pm, "_diag", {})),
                           "fire_thr": float(FIRE_THR), "silent_max": float(SILENT_MAX)}
