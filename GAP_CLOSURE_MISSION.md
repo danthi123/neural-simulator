@@ -18,7 +18,9 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 **⭐ LATEST 2026-09-22 (~22:15Z) — post-compaction resume; gitea RECOVERED (both remotes @ current HEAD); 4 lanes parallel:**
 - **§8 affect→tone-over-OPEN-output — RESOLVED, MERGED @ 279b4ddf (both remotes).** VERDICT **NO-GO** (directional, 6-seed, TRUSTWORTHY — 9/9 instrument-validity preconditions clean: determinism 6/6, attribution 6/6, content-identity+moat 6/6, fluency 0.155≤0.16, lexicon-Warriner overlap=0). **Positive-asymmetric:** positive mood correct-signed 6/6, negative mood never negative. The affect ORGAN read correctly (pos +0.038/neg −0.038) — the ceiling is the **DECODE ROUTE** (additive top-margin logit bias only surfaces words already near top-1; negative words sit far from the margin in the wiki-descriptive free-gen). Per THE LAW: the METHOD (additive bias) is falsified, the CAPABILITY stays open.
   Delivered a new default-OFF open-output ruler `measure_affect_tone_open_output` (LB_AFFECT_TONE_OPEN_PROBE; byte-identical off → headline unchanged). **Banked next methods (biology-first):** neuromod `BRAIN_WKV_MOUTH_AFFECT_NEURAL`; a distribution-SHIFTING (not additive) coupling that lowers negative-word thresholds; affect-laden prompt domains; real-Qwen prompt-steered mouth. Finding `2026-09-22-affect-tone-open-output-directional-6seed-positive-asymmetric-NOGO`.
-- **IN FLIGHT (do NOT double-launch):** (a) **episodic 5-seed in-situ** — 4/5 pass so far (s42/43/100/101 ✅ load-bearing), s102 pending; branch `research/lbf-fix-episodic-store`; if 6/6 → merge → robust core **→23**. (b) **§8 honesty=STATE-fidelity metacog graded-marker** (sub-arc B) — workflow `wk5q8r3qh` (build sonnet→verify opus); FIRST build MISFIRED (agent produced a status report, "held off" the authorized build) → adversarial verify caught it NULL-INVALID → RE-LAUNCHED with explicit standing-authorization framing. (c) **Phase-2 local** (numpy CPU, throttled/memcap'd) — updated adequate 6-seed → new aggregate; confirmatory (AWS abandoned; local builds correctly).
+- **✅ DONE THIS CYCLE: §8 honesty=STATE-fidelity metacog graded-marker (sub-arc B) — GO 6/6, adversarially CONFIRMED, MERGED @ b994cf13** (both remotes). New default-OFF de-risk runner softens binary confident→3-band {SPECULATE/HEDGE/ASSERT} off the workspace's spiking NMDA margin (reuse-by-import, NO sim/ edit, byte-identical off). NARROW scope (honest): ρ=AUC=1.000 near-guaranteed BY CONSTRUCTION (margin is a smooth monotone fn of synthetic evidence) — establishes the margin RESOLVES a middle band on CLEAN evidence (vs the spike-count substrate's near-chance), a MEASUREMENT de-risk NOT a production wire-in.
+  Next rungs: real-traffic recalibration + default-off production wire-in. (First build MISFIRED — agent produced a status report + "held off" → verify caught NULL-INVALID → re-launched with explicit authorization; LESSON banked.)
+- **IN FLIGHT (do NOT double-launch):** (a) **episodic 5-seed in-situ** — s42 ✅ s43 ✅ **s100 ❌ (genuine cosmetic, exercised=1/LB=0)**, s101 running, s102 pending (+ s44 ✅ from build). Already NOT 6/6 → **honest-partial forming (≤5/6), will NOT merge as robust-core →23**; bank the method + characterize s100. (b) **Phase-2 local** (numpy CPU, throttled/memcap'd, pid 2987708) — updated adequate 6-seed → new aggregate; confirmatory (AWS abandoned; local builds correctly).
 - **Heartbeat armed** `bk9nzu8kt` (state-checking + parallel-audit each cycle). **LESSON (bank if recurs):** a workflow BUILD agent can conflate its task with the parent session's message and decline an authorized build → build-agent prompts need explicit "authorized autonomous build, not a status/confirmation request" framing.
 
 **⭐ LATEST 2026-09-22 (~20:20Z) — FULL-FORCE PARALLEL: 2 stabilizer fixes MERGED, 2 lanes IN FLIGHT, AWS abandoned:**
@@ -121,15 +123,15 @@ the hollow-set finding sits uncommitted in the working tree + a safety stash `pr
   other 4, after a self-inflicted RAM spike from an uncapped 6-parallel launch — recovered, avail 23G).
 
 **PRE-DECIDED NEXT ACTIONS:**
-1. ⭐ NOW (2026-09-22 ~22:15Z): HARVEST the 3 remaining IN-FLIGHT lanes → (a) **episodic 5-seed in-situ** — 4/5 pass
-   (s102 pending); out `_insitu5/`; if 6/6, merge `research/lbf-fix-episodic-store` → robust core **→23**. (b) **§8
-   metacog graded-marker** (honesty=STATE-fidelity, sub-arc B) — workflow `wk5q8r3qh` (build sonnet→verify opus,
-   RE-LAUNCHED after a build-agent misfire); if GO + adversarially CONFIRMED, merge `research/lbf-metacog-graded-marker`.
-   (c) **Phase-2 local** (numpy CPU, throttled/memcap'd, pid 2987708) — updated adequate 6-seed → new aggregate;
-   confirmatory. ✅ DONE this cycle: **§8 affect→tone-over-OPEN-output MERGED @ 279b4ddf** (both remotes) — NO-GO
-   (positive-asymmetric, method=additive-bias falsified, capability open, next methods banked; new default-OFF ruler
-   `measure_affect_tone_open_output`). ✅ gitea RECOVERED (both remotes synced). Robust core 20→22 landed (source-prov
-   abstain + pmem facilitation) @ 73d1a2cb, now both remotes. THEN: the deferred §8 steering faculties (metacog→hedging
+1. ⭐ NOW (2026-09-22 ~22:30Z): HARVEST the 2 remaining IN-FLIGHT lanes → (a) **episodic 5-seed in-situ** — s42/s43 ✅,
+   **s100 ❌ cosmetic**, s101 running, s102 pending; already NOT 6/6 → **honest-partial (≤5/6), do NOT merge as
+   robust-core →23**; write the partial finding + characterize s100 when the tail lands. (b) **Phase-2 local** (numpy
+   CPU, throttled/memcap'd, pid 2987708) — updated adequate 6-seed → new aggregate; confirmatory. ✅ DONE this cycle:
+   **§8 metacog graded-marker (sub-arc B) — GO 6/6 CONFIRMED, MERGED @ b994cf13** (de-risk; narrow synthetic-evidence
+   scope; next rungs = real-traffic recalibration + production wire-in). **§8 affect→tone-over-OPEN-output MERGED @
+   279b4ddf** — NO-GO (positive-asymmetric, additive-bias method falsified, capability open, next methods banked; new
+   default-OFF ruler). ✅ gitea RECOVERED. Robust core 20→22 landed @ 73d1a2cb, both remotes. THEN: the deferred §8
+   steering faculties (metacog→hedging
    wire-in, DA→engagement, curiosity→follow-up, swap→topic) — each needs its lead wired into the open path first
    (currently discarded at server.py:4933-5023), gated behind affect→tone (now characterized).
 2. ✅ DONE (2026-09-21, workflow lb-frontier-builds, both adversarially verified, merged to main @ 34a5becb) —
