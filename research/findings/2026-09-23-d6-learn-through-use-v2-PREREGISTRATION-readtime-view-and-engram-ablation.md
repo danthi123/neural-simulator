@@ -36,6 +36,12 @@ The v2 design removes the host deletion and adds a lesion that the write-time ch
   This covers `gnw_thought_swap._known_concepts`, `gnw_multistep_deliberation._all_concepts`, the episodic content
   lookup in `brain_reply`, and `ChatBrain._refresh_facts`, which now re-runs at the start of every turn. No kb record
   is ever deleted. The same host code runs in every arm; only the synapses differ.
+  [ERRATUM, fix round 3: both sentences above overclaim. "Every reader" is false: only these four readers are
+  routed, and `d6_hebbian_store.ENGRAM_READTIME_NOT_ROUTED` lists the host-kb readers that are not. "Only the synapses
+  differ" is false for ABL_H, which also runs the experimenter's cache invalidation and a re-read of every block. The
+  gate v2 criteria are unchanged. Gate v2 is superseded by gate v3
+  (`research/findings/2026-09-23-d6-learn-through-use-v3-PREREGISTRATION-capability-gate.md`), which MEASURES
+  host-record inertness in its NOREC_H arm.]
 - **ABL_H**: identical to USE_H. After the teach turn, the experimenter zeroes the taught block's synapses and leaves
   the kb record intact. If any reader still takes familiarity from the host list, ABL_H's probe reply keeps a use-trace
   that SHUF_H does not have.

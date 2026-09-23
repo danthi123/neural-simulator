@@ -54,7 +54,7 @@ def arms():
 def test_unset_vs_zero_same_branch_integrity_smoke(arms):
     """INTEGRITY SMOKE, not a byte-identical test: unset and '0' take the identical code path on this branch, so this
     cannot fail by construction. The real off-path check vs the pre-change code is
-    `test_off_is_byte_identical_vs_origin_main` below (2026-09-23 fix round)."""
+    `test_off_is_byte_identical_vs_pinned_pre_d6` below (2026-09-23 fix rounds 2-3)."""
     assert arms["unset"].store_conns == arms["off"].store_conns
 
 

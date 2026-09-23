@@ -179,7 +179,8 @@ scorer selftest shows the ack-only difference passes only under prune and a real
   same probe in this tree and in an exported copy of origin/main. It compares exact sha256 of store_conns, kb and
   recalls. Store mode is identical vs `c9b45a30e`
   (`research/findings/raw/_d6_learn_through_use/offpath_parity_store_vs_main.json`). A discriminating negative is
-  pinned in `tests/test_d6_hebbian_store.py::test_off_is_byte_identical_vs_origin_main`: the Hebbian write hashes
+  pinned in `tests/test_d6_hebbian_store.py::test_off_is_byte_identical_vs_pinned_pre_d6` (renamed in fix round 3
+  from `..._vs_origin_main`): the Hebbian write hashes
   differently. The chat-mode compare (a flag-off /api/brain-chat session, branch vs origin/main) is staged on the pool.
   [Corrected in fix round 3: comparing against origin/main is tautological once D6 merges. The reference is now the
   pinned SHA `PRE_D6_REF`, and a reference containing D6 reads UNDEFINED.]
