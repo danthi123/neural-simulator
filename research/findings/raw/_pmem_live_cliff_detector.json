@@ -1,0 +1,1473 @@
+{
+  "probe": "pmem_live_cliff_detector",
+  "verdict": "UNDEFINED (4/6) -- per the PRE-REGISTERED gate, 6/6 seeds hold a strictly positive canonical margin, 4/6 meet-or-beat the STATIC table's own margin, 6/6 stay load-bearing, 4/6 converge to the SAME canonical neighborhood from two different inits; silence-regressed=none; domain-bounded=True; discriminates=False. Seed(s) [44, 100, 101] moved off the shipped floor; seed(s) [42, 43, 102] settled back at it. Thinnest-margin seed in the static table (s44): static margin +0.0183 -> live-converged +0.0183. DOMAIN-BOUNDED: every probe stayed inside [6000, 11000] (the parent stabilizer's own already-validated grid domain); max fac_g visited across all seeds/inits/probes was 9500. The FINAL selected gain for every seed is always a directly-measured, non-collapsed point (canonical = running best), by construction.",
+  "go": false,
+  "task": "Replace the parent live-homeostat's SINGLE GLOBAL cliff-safety ceiling (G_CEILING=9000) with a LIVE, per-seed ceiling discovered from that seed's own measured coincidence trajectory -- a local-derivative + sustained-decline safety check that clamps the ceiling below a detected drop, live, per seed, with no per-seed constant anywhere in the control loop.",
+  "gate": {
+    "FIRE_THR": 0.2,
+    "REL_TARGET": 0.30000000000000004,
+    "G_FLOOR": 6000.0,
+    "G_CEILING_CAP": 11000.0,
+    "K_I": 20000.0,
+    "MAX_STEP": 500.0,
+    "G_TOL": 25.0,
+    "CONVERGE_STREAK": 3,
+    "MAX_ITERS": 24,
+    "SETPOINT_TOL": 750.0,
+    "DROP_THRESH": 0.0152,
+    "DECLINE_PATIENCE": 2,
+    "G_INIT_LOW": 6000.0,
+    "G_INIT_MID": 8000.0
+  },
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "per_seed": {
+    "42": {
+      "low_init": {
+        "seed": 42,
+        "g_init": 6000.0,
+        "climber": false,
+        "converged": true,
+        "reason": "pinned at floor (fac_g=6000)",
+        "n_iters": 4,
+        "final_fac_g": 6000.0,
+        "final_rel": 0.3439,
+        "raw_last_fac_g": 6000.0,
+        "raw_last_rel": 0.3439,
+        "live_ceiling": 11000.0,
+        "cliff_events": [],
+        "trajectory": [
+          {
+            "iter": 0,
+            "fac_g": 6000.0,
+            "rel": 0.3439,
+            "climber": false,
+            "climbing": false,
+            "decline_streak": 0,
+            "g_ceiling": 11000.0,
+            "g_best": 6000.0,
+            "rel_best": 0.3439
+          },
+          {
+            "iter": 1,
+            "fac_g": 6000.0,
+            "rel": 0.3439,
+            "climber": false,
+            "climbing": false,
+            "decline_streak": 0,
+            "g_ceiling": 11000.0,
+            "g_best": 6000.0,
+            "rel_best": 0.3439
+          },
+          {
+            "iter": 2,
+            "fac_g": 6000.0,
+            "rel": 0.3439,
+            "climber": false,
+            "climbing": false,
+            "decline_streak": 0,
+            "g_ceiling": 11000.0,
+            "g_best": 6000.0,
+            "rel_best": 0.3439
+          },
+          {
+            "iter": 3,
+            "fac_g": 6000.0,
+            "rel": 0.3439,
+            "climber": false,
+            "climbing": false,
+            "decline_streak": 0,
+            "g_ceiling": 11000.0,
+            "g_best": 6000.0,
+            "rel_best": 0.3439
+          }
+        ]
+      },
+      "mid_init": {
+        "seed": 42,
+        "g_init": 8000.0,
+        "climber": false,
+        "converged": true,
+        "reason": "pinned at floor (fac_g=6000)",
+        "n_iters": 8,
+        "final_fac_g": 6000.0,
+        "final_rel": 0.3439,
+        "raw_last_fac_g": 6000.0,
+        "raw_last_rel": 0.3439,
+        "live_ceiling": 11000.0,
+        "cliff_events": [],
+        "trajectory": [
+          {
+            "iter": 0,
+            "fac_g": 8000.0,
+            "rel": 0.345,
+            "climber": false,
+            "climbing": false,
+            "decline_streak": 0,
+            "g_ceiling": 11000.0,
+            "g_best": 8000.0,
+            "rel_best": 0.345
+          },
+          {
+            "iter": 1,
+            "fac_g": 7500.0,
+            "rel": 0.3456,
+            "climber": false,
+            "climbing": false,
+            "decline_streak": 0,
+            "g_ceiling": 11000.0,
+            "g_best": 8000.0,
+            "rel_best": 0.345
+          },
+          {
+            "iter": 2,
+            "fac_g": 7000.0,
+            "rel": 0.3439,
+            "climber": false,
+            "climbing": false,
+            "decline_streak": 0,
+            "g_ceiling": 11000.0,
+            "g_best": 8000.0,
+            "rel_best": 0.345
+          },
+          {
+            "iter": 3,
+            "fac_g": 6500.0,
+            "rel": 0.3439,
+            "climber": false,
+            "climbing": false,
+            "decline_streak": 0,
+            "g_ceiling": 11000.0,
+            "g_best": 8000.0,
+            "rel_best": 0.345
+          },
+          {
+            "iter": 4,
+            "fac_g": 6000.0,
+            "rel": 0.3439,
+            "climber": false,
+            "climbing": false,
+            "decline_streak": 0,
+            "g_ceiling": 11000.0,
+            "g_best": 8000.0,
+            "rel_best": 0.345
+          },
+          {
+            "iter": 5,
+            "fac_g": 6000.0,
+            "rel": 0.3439,
+            "climber": false,
+            "climbing": false,
+            "decline_streak": 0,
+            "g_ceiling": 11000.0,
+            "g_best": 8000.0,
+            "rel_best": 0.345
+          },
+          {
+            "iter": 6,
+            "fac_g": 6000.0,
+            "rel": 0.3439,
+            "climber": false,
+            "climbing": false,
+            "decline_streak": 0,
+            "g_ceiling": 11000.0,
+            "g_best": 8000.0,
+            "rel_best": 0.345
+          },
+          {
+            "iter": 7,
+            "fac_g": 6000.0,
+            "rel": 0.3439,
+            "climber": false,
+            "climbing": false,
+            "decline_streak": 0,
+            "g_ceiling": 11000.0,
+            "g_best": 8000.0,
+            "rel_best": 0.345
+          }
+        ]
+      },
+      "same_setpoint_within_tol": true,
+      "converged_fac_g": 6000.0,
+      "converged_rel": 0.3439,
+      "intact_rel": 0.3439,
+      "intact_fired": true,
+      "lesion_rel": 0.0278,
+      "lesion_fired": false,
+      "load_bearing": true,
+      "frozen_passed": true,
+      "frozen_max_silent": 0.0472,
+      "frozen_clause_fails": [],
+      "frozen_clauses": {
+        "fire_on_cue": true,
+        "persistence": true,
+        "no_fire_before": true,
+        "no_fire_wrongcue": true,
+        "no_intention_silent": true,
+        "lesion_holds": true,
+        "lesion_forgets": true,
+        "separation": true
+      },
+      "static_table_margin": 0.1439,
+      "converged_margin": 0.1439,
+      "margin_positive": true,
+      "margin_meets_static": true,
+      "lesion_attribution": 0.9191625472521082,
+      "cliff_events": []
+    },
+    "43": {
+      "low_init": {
+        "seed": 43,
+        "g_init": 6000.0,
+        "climber": false,
+        "converged": true,
+        "reason": "pinned at floor (fac_g=6000)",
+        "n_iters": 4,
+        "final_fac_g": 6000.0,
+        "final_rel": 0.3361,
+        "raw_last_fac_g": 6000.0,
+        "raw_last_rel": 0.3361,
+        "live_ceiling": 11000.0,
+        "cliff_events": [],
+        "trajectory": [
+          {
+            "iter": 0,
+            "fac_g": 6000.0,
+            "rel": 0.3361,
+            "climber": false,
+            "climbing": false,
+            "decline_streak": 0,
+            "g_ceiling": 11000.0,
+            "g_best": 6000.0,
+            "rel_best": 0.3361
+          },
+          {
+            "iter": 1,
+            "fac_g": 6000.0,
+            "rel": 0.3361,
+            "climber": false,
+            "climbing": false,
+            "decline_streak": 0,
+            "g_ceiling": 11000.0,
+            "g_best": 6000.0,
+            "rel_best": 0.3361
+          },
+          {
+            "iter": 2,
+            "fac_g": 6000.0,
+            "rel": 0.3361,
+            "climber": false,
+            "climbing": false,
+            "decline_streak": 0,
+            "g_ceiling": 11000.0,
+            "g_best": 6000.0,
+            "rel_best": 0.3361
+          },
+          {
+            "iter": 3,
+            "fac_g": 6000.0,
+            "rel": 0.3361,
+            "climber": false,
+            "climbing": false,
+            "decline_streak": 0,
+            "g_ceiling": 11000.0,
+            "g_best": 6000.0,
+            "rel_best": 0.3361
+          }
+        ]
+      },
+      "mid_init": {
+        "seed": 43,
+        "g_init": 8000.0,
+        "climber": false,
+        "converged": true,
+        "reason": "pinned at floor (fac_g=6000)",
+        "n_iters": 8,
+        "final_fac_g": 6000.0,
+        "final_rel": 0.3361,
+        "raw_last_fac_g": 6000.0,
+        "raw_last_rel": 0.3361,
+        "live_ceiling": 11000.0,
+        "cliff_events": [],
+        "trajectory": [
+          {
+            "iter": 0,
+            "fac_g": 8000.0,
+            "rel": 0.3406,
+            "climber": false,
+            "climbing": false,
+            "decline_streak": 0,
+            "g_ceiling": 11000.0,
+            "g_best": 8000.0,
+            "rel_best": 0.3406
+          },
+          {
+            "iter": 1,
+            "fac_g": 7500.0,
+            "rel": 0.34,
+            "climber": false,
+            "climbing": false,
+            "decline_streak": 0,
+            "g_ceiling": 11000.0,
+            "g_best": 8000.0,
+            "rel_best": 0.3406
+          },
+          {
+            "iter": 2,
+            "fac_g": 7000.0,
+            "rel": 0.3406,
+            "climber": false,
+            "climbing": false,
+            "decline_streak": 0,
+            "g_ceiling": 11000.0,
+            "g_best": 8000.0,
+            "rel_best": 0.3406
+          },
+          {
+            "iter": 3,
+            "fac_g": 6500.0,
+            "rel": 0.3417,
+            "climber": false,
+            "climbing": false,
+            "decline_streak": 0,
+            "g_ceiling": 11000.0,
+            "g_best": 8000.0,
+            "rel_best": 0.3406
+          },
+          {
+            "iter": 4,
+            "fac_g": 6000.0,
+            "rel": 0.3361,
+            "climber": false,
+            "climbing": false,
+            "decline_streak": 0,
+            "g_ceiling": 11000.0,
+            "g_best": 8000.0,
+            "rel_best": 0.3406
+          },
+          {
+            "iter": 5,
+            "fac_g": 6000.0,
+            "rel": 0.3361,
+            "climber": false,
+            "climbing": false,
+            "decline_streak": 0,
+            "g_ceiling": 11000.0,
+            "g_best": 8000.0,
+            "rel_best": 0.3406
+          },
+          {
+            "iter": 6,
+            "fac_g": 6000.0,
+            "rel": 0.3361,
+            "climber": false,
+            "climbing": false,
+            "decline_streak": 0,
+            "g_ceiling": 11000.0,
+            "g_best": 8000.0,
+            "rel_best": 0.3406
+          },
+          {
+            "iter": 7,
+            "fac_g": 6000.0,
+            "rel": 0.3361,
+            "climber": false,
+            "climbing": false,
+            "decline_streak": 0,
+            "g_ceiling": 11000.0,
+            "g_best": 8000.0,
+            "rel_best": 0.3406
+          }
+        ]
+      },
+      "same_setpoint_within_tol": true,
+      "converged_fac_g": 6000.0,
+      "converged_rel": 0.3361,
+      "intact_rel": 0.3361,
+      "intact_fired": true,
+      "lesion_rel": 0.0206,
+      "lesion_fired": false,
+      "load_bearing": true,
+      "frozen_passed": true,
+      "frozen_max_silent": 0.0483,
+      "frozen_clause_fails": [],
+      "frozen_clauses": {
+        "fire_on_cue": true,
+        "persistence": true,
+        "no_fire_before": true,
+        "no_fire_wrongcue": true,
+        "no_intention_silent": true,
+        "lesion_holds": true,
+        "lesion_forgets": true,
+        "separation": true
+      },
+      "static_table_margin": 0.1361,
+      "converged_margin": 0.1361,
+      "margin_positive": true,
+      "margin_meets_static": true,
+      "lesion_attribution": 0.9387087176435585,
+      "cliff_events": []
+    },
+    "44": {
+      "low_init": {
+        "seed": 44,
+        "g_init": 6000.0,
+        "climber": true,
+        "converged": true,
+        "reason": "cliff detected & clamped at fac_g=9000 (abrupt: step drop 0.0283 > DROP_THRESH 0.0152)",
+        "n_iters": 8,
+        "final_fac_g": 9000.0,
+        "final_rel": 0.2183,
+        "raw_last_fac_g": 9000.0,
+        "raw_last_rel": 0.2183,
+        "live_ceiling": 9000.0,
+        "cliff_events": [
+          {
+            "iter": 7,
+            "probed_fac_g": 9500.0,
+            "probed_rel": 0.19,
+            "kind": "abrupt: step drop 0.0283 > DROP_THRESH 0.0152",
+            "reverted_to_fac_g": 9000.0,
+            "reverted_to_rel": 0.2183,
+            "new_ceiling": 9000.0
+          }
+        ],
+        "trajectory": [
+          {
+            "iter": 0,
+            "fac_g": 6000.0,
+            "rel": 0.2111,
+            "climber": true,
+            "climbing": false,
+            "decline_streak": 0,
+            "g_ceiling": 11000.0,
+            "g_best": 6000.0,
+            "rel_best": 0.2111
+          },
+          {
+            "iter": 1,
+            "fac_g": 6500.0,
+            "rel": 0.215,
+            "climber": true,
+            "climbing": true,
+            "decline_streak": 0,
+            "g_ceiling": 11000.0,
+            "g_best": 6500.0,
+            "rel_best": 0.215
+          },
+          {
+            "iter": 2,
+            "fac_g": 7000.0,
+            "rel": 0.2078,
+            "climber": true,
+            "climbing": true,
+            "decline_streak": 1,
+            "g_ceiling": 11000.0,
+            "g_best": 6500.0,
+            "rel_best": 0.215
+          },
+          {
+            "iter": 3,
+            "fac_g": 7500.0,
+            "rel": 0.2089,
+            "climber": true,
+            "climbing": true,
+            "decline_streak": 0,
+            "g_ceiling": 11000.0,
+            "g_best": 6500.0,
+            "rel_best": 0.215
+          },
+          {
+            "iter": 4,
+            "fac_g": 8000.0,
+            "rel": 0.2139,
+            "climber": true,
+            "climbing": true,
+            "decline_streak": 0,
+            "g_ceiling": 11000.0,
+            "g_best": 6500.0,
+            "rel_best": 0.215
+          },
+          {
+            "iter": 5,
+            "fac_g": 8500.0,
+            "rel": 0.2172,
+            "climber": true,
+            "climbing": true,
+            "decline_streak": 0,
+            "g_ceiling": 11000.0,
+            "g_best": 8500.0,
+            "rel_best": 0.2172
+          },
+          {
+            "iter": 6,
+            "fac_g": 9000.0,
+            "rel": 0.2183,
+            "climber": true,
+            "climbing": true,
+            "decline_streak": 0,
+            "g_ceiling": 11000.0,
+            "g_best": 9000.0,
+            "rel_best": 0.2183
+          },
+          {
+            "iter": 7,
+            "fac_g": 9000.0,
+            "rel": 0.2183,
+            "climber": true,
+            "climbing": true,
+            "decline_streak": 1,
+            "g_ceiling": 11000.0,
+            "g_best": 9000.0,
+            "rel_best": 0.2183,
+            "reverted": true
+          }
+        ]
+      },
+      "mid_init": {
+        "seed": 44,
+        "g_init": 8000.0,
+        "climber": true,
+        "converged": true,
+        "reason": "cliff detected & clamped at fac_g=9000 (abrupt: step drop 0.0283 > DROP_THRESH 0.0152)",
+        "n_iters": 4,
+        "final_fac_g": 9000.0,
+        "final_rel": 0.2183,
+        "raw_last_fac_g": 9000.0,
+        "raw_last_rel": 0.2183,
+        "live_ceiling": 9000.0,
+        "cliff_events": [
+          {
+            "iter": 3,
+            "probed_fac_g": 9500.0,
+            "probed_rel": 0.19,
+            "kind": "abrupt: step drop 0.0283 > DROP_THRESH 0.0152",
+            "reverted_to_fac_g": 9000.0,
+            "reverted_to_rel": 0.2183,
+            "new_ceiling": 9000.0
+          }
+        ],
+        "trajectory": [
+          {
+            "iter": 0,
+            "fac_g": 8000.0,
+            "rel": 0.2139,
+            "climber": true,
+            "climbing": false,
+            "decline_streak": 0,
+            "g_ceiling": 11000.0,
+            "g_best": 8000.0,
+            "rel_best": 0.2139
+          },
+          {
+            "iter": 1,
+            "fac_g": 8500.0,
+            "rel": 0.2172,
+            "climber": true,
+            "climbing": true,
+            "decline_streak": 0,
+            "g_ceiling": 11000.0,
+            "g_best": 8500.0,
+            "rel_best": 0.2172
+          },
+          {
+            "iter": 2,
+            "fac_g": 9000.0,
+            "rel": 0.2183,
+            "climber": true,
+            "climbing": true,
+            "decline_streak": 0,
+            "g_ceiling": 11000.0,
+            "g_best": 9000.0,
+            "rel_best": 0.2183
+          },
+          {
+            "iter": 3,
+            "fac_g": 9000.0,
+            "rel": 0.2183,
+            "climber": true,
+            "climbing": true,
+            "decline_streak": 1,
+            "g_ceiling": 11000.0,
+            "g_best": 9000.0,
+            "rel_best": 0.2183,
+            "reverted": true
+          }
+        ]
+      },
+      "same_setpoint_within_tol": true,
+      "converged_fac_g": 9000.0,
+      "converged_rel": 0.2183,
+      "intact_rel": 0.2183,
+      "intact_fired": true,
+      "lesion_rel": 0.0,
+      "lesion_fired": false,
+      "load_bearing": true,
+      "frozen_passed": true,
+      "frozen_max_silent": 0.0467,
+      "frozen_clause_fails": [],
+      "frozen_clauses": {
+        "fire_on_cue": true,
+        "persistence": true,
+        "no_fire_before": true,
+        "no_fire_wrongcue": true,
+        "no_intention_silent": true,
+        "lesion_holds": true,
+        "lesion_forgets": true,
+        "separation": true
+      },
+      "static_table_margin": 0.0183,
+      "converged_margin": 0.0183,
+      "margin_positive": true,
+      "margin_meets_static": true,
+      "lesion_attribution": 1.0,
+      "cliff_events": [
+        {
+          "iter": 7,
+          "probed_fac_g": 9500.0,
+          "probed_rel": 0.19,
+          "kind": "abrupt: step drop 0.0283 > DROP_THRESH 0.0152",
+          "reverted_to_fac_g": 9000.0,
+          "reverted_to_rel": 0.2183,
+          "new_ceiling": 9000.0
+        }
+      ]
+    },
+    "100": {
+      "low_init": {
+        "seed": 100,
+        "g_init": 6000.0,
+        "climber": true,
+        "converged": true,
+        "reason": "cliff detected & clamped at fac_g=6322 (sustained: 2 consecutive climbing steps each below its immediate predecessor)",
+        "n_iters": 7,
+        "final_fac_g": 6322.0,
+        "final_rel": 0.2894,
+        "raw_last_fac_g": 6322.0,
+        "raw_last_rel": 0.2894,
+        "live_ceiling": 6322.0,
+        "cliff_events": [
+          {
+            "iter": 6,
+            "probed_fac_g": 7546.0,
+            "probed_rel": 0.2861,
+            "kind": "sustained: 2 consecutive climbing steps each below its immediate predecessor",
+            "reverted_to_fac_g": 6322.0,
+            "reverted_to_rel": 0.2894,
+            "new_ceiling": 6322.0
+          }
+        ],
+        "trajectory": [
+          {
+            "iter": 0,
+            "fac_g": 6000.0,
+            "rel": 0.2839,
+            "climber": true,
+            "climbing": false,
+            "decline_streak": 0,
+            "g_ceiling": 11000.0,
+            "g_best": 6000.0,
+            "rel_best": 0.2839
+          },
+          {
+            "iter": 1,
+            "fac_g": 6322.0,
+            "rel": 0.2894,
+            "climber": true,
+            "climbing": true,
+            "decline_streak": 0,
+            "g_ceiling": 11000.0,
+            "g_best": 6322.0,
+            "rel_best": 0.2894
+          },
+          {
+            "iter": 2,
+            "fac_g": 6534.0,
+            "rel": 0.2867,
+            "climber": true,
+            "climbing": true,
+            "decline_streak": 1,
+            "g_ceiling": 11000.0,
+            "g_best": 6322.0,
+            "rel_best": 0.2894
+          },
+          {
+            "iter": 3,
+            "fac_g": 6800.0,
+            "rel": 0.2872,
+            "climber": true,
+            "climbing": true,
+            "decline_streak": 0,
+            "g_ceiling": 11000.0,
+            "g_best": 6322.0,
+            "rel_best": 0.2894
+          },
+          {
+            "iter": 4,
+            "fac_g": 7056.0,
+            "rel": 0.2883,
+            "climber": true,
+            "climbing": true,
+            "decline_streak": 0,
+            "g_ceiling": 11000.0,
+            "g_best": 6322.0,
+            "rel_best": 0.2894
+          },
+          {
+            "iter": 5,
+            "fac_g": 7290.0,
+            "rel": 0.2872,
+            "climber": true,
+            "climbing": true,
+            "decline_streak": 1,
+            "g_ceiling": 11000.0,
+            "g_best": 6322.0,
+            "rel_best": 0.2894
+          },
+          {
+            "iter": 6,
+            "fac_g": 6322.0,
+            "rel": 0.2894,
+            "climber": true,
+            "climbing": true,
+            "decline_streak": 2,
+            "g_ceiling": 11000.0,
+            "g_best": 6322.0,
+            "rel_best": 0.2894,
+            "reverted": true
+          }
+        ]
+      },
+      "mid_init": {
+        "seed": 100,
+        "g_init": 8000.0,
+        "climber": true,
+        "converged": true,
+        "reason": "cliff detected & clamped at fac_g=8356 (sustained: 2 consecutive climbing steps each below its immediate predecessor)",
+        "n_iters": 5,
+        "final_fac_g": 8356.0,
+        "final_rel": 0.295,
+        "raw_last_fac_g": 8356.0,
+        "raw_last_rel": 0.295,
+        "live_ceiling": 8356.0,
+        "cliff_events": [
+          {
+            "iter": 4,
+            "probed_fac_g": 8568.0,
+            "probed_rel": 0.2911,
+            "kind": "sustained: 2 consecutive climbing steps each below its immediate predecessor",
+            "reverted_to_fac_g": 8356.0,
+            "reverted_to_rel": 0.295,
+            "new_ceiling": 8356.0
+          }
+        ],
+        "trajectory": [
+          {
+            "iter": 0,
+            "fac_g": 8000.0,
+            "rel": 0.2933,
+            "climber": true,
+            "climbing": false,
+            "decline_streak": 0,
+            "g_ceiling": 11000.0,
+            "g_best": 8000.0,
+            "rel_best": 0.2933
+          },
+          {
+            "iter": 1,
+            "fac_g": 8134.0,
+            "rel": 0.2889,
+            "climber": true,
+            "climbing": true,
+            "decline_streak": 1,
+            "g_ceiling": 11000.0,
+            "g_best": 8000.0,
+            "rel_best": 0.2933
+          },
+          {
+            "iter": 2,
+            "fac_g": 8356.0,
+            "rel": 0.295,
+            "climber": true,
+            "climbing": true,
+            "decline_streak": 0,
+            "g_ceiling": 11000.0,
+            "g_best": 8356.0,
+            "rel_best": 0.295
+          },
+          {
+            "iter": 3,
+            "fac_g": 8456.0,
+            "rel": 0.2944,
+            "climber": true,
+            "climbing": true,
+            "decline_streak": 1,
+            "g_ceiling": 11000.0,
+            "g_best": 8356.0,
+            "rel_best": 0.295
+          },
+          {
+            "iter": 4,
+            "fac_g": 8356.0,
+            "rel": 0.295,
+            "climber": true,
+            "climbing": true,
+            "decline_streak": 2,
+            "g_ceiling": 11000.0,
+            "g_best": 8356.0,
+            "rel_best": 0.295,
+            "reverted": true
+          }
+        ]
+      },
+      "same_setpoint_within_tol": false,
+      "converged_fac_g": 6322.0,
+      "converged_rel": 0.2894,
+      "intact_rel": 0.2894,
+      "intact_fired": true,
+      "lesion_rel": 0.0244,
+      "lesion_fired": false,
+      "load_bearing": true,
+      "frozen_passed": true,
+      "frozen_max_silent": 0.0428,
+      "frozen_clause_fails": [],
+      "frozen_clauses": {
+        "fire_on_cue": true,
+        "persistence": true,
+        "no_fire_before": true,
+        "no_fire_wrongcue": true,
+        "no_intention_silent": true,
+        "lesion_holds": true,
+        "lesion_forgets": true,
+        "separation": true
+      },
+      "static_table_margin": 0.0956,
+      "converged_margin": 0.0894,
+      "margin_positive": true,
+      "margin_meets_static": false,
+      "lesion_attribution": 0.9156876295784382,
+      "cliff_events": [
+        {
+          "iter": 6,
+          "probed_fac_g": 7546.0,
+          "probed_rel": 0.2861,
+          "kind": "sustained: 2 consecutive climbing steps each below its immediate predecessor",
+          "reverted_to_fac_g": 6322.0,
+          "reverted_to_rel": 0.2894,
+          "new_ceiling": 6322.0
+        }
+      ]
+    },
+    "101": {
+      "low_init": {
+        "seed": 101,
+        "g_init": 6000.0,
+        "climber": true,
+        "converged": true,
+        "reason": "cliff detected & clamped at fac_g=7200 (sustained: 2 consecutive climbing steps each below its immediate predecessor)",
+        "n_iters": 6,
+        "final_fac_g": 7200.0,
+        "final_rel": 0.2889,
+        "raw_last_fac_g": 7200.0,
+        "raw_last_rel": 0.2889,
+        "live_ceiling": 7200.0,
+        "cliff_events": [
+          {
+            "iter": 5,
+            "probed_fac_g": 7734.0,
+            "probed_rel": 0.2839,
+            "kind": "sustained: 2 consecutive climbing steps each below its immediate predecessor",
+            "reverted_to_fac_g": 7200.0,
+            "reverted_to_rel": 0.2889,
+            "new_ceiling": 7200.0
+          }
+        ],
+        "trajectory": [
+          {
+            "iter": 0,
+            "fac_g": 6000.0,
+            "rel": 0.2761,
+            "climber": true,
+            "climbing": false,
+            "decline_streak": 0,
+            "g_ceiling": 11000.0,
+            "g_best": 6000.0,
+            "rel_best": 0.2761
+          },
+          {
+            "iter": 1,
+            "fac_g": 6478.0,
+            "rel": 0.2789,
+            "climber": true,
+            "climbing": true,
+            "decline_streak": 0,
+            "g_ceiling": 11000.0,
+            "g_best": 6478.0,
+            "rel_best": 0.2789
+          },
+          {
+            "iter": 2,
+            "fac_g": 6900.0,
+            "rel": 0.285,
+            "climber": true,
+            "climbing": true,
+            "decline_streak": 0,
+            "g_ceiling": 11000.0,
+            "g_best": 6900.0,
+            "rel_best": 0.285
+          },
+          {
+            "iter": 3,
+            "fac_g": 7200.0,
+            "rel": 0.2889,
+            "climber": true,
+            "climbing": true,
+            "decline_streak": 0,
+            "g_ceiling": 11000.0,
+            "g_best": 7200.0,
+            "rel_best": 0.2889
+          },
+          {
+            "iter": 4,
+            "fac_g": 7422.0,
+            "rel": 0.2844,
+            "climber": true,
+            "climbing": true,
+            "decline_streak": 1,
+            "g_ceiling": 11000.0,
+            "g_best": 7200.0,
+            "rel_best": 0.2889
+          },
+          {
+            "iter": 5,
+            "fac_g": 7200.0,
+            "rel": 0.2889,
+            "climber": true,
+            "climbing": true,
+            "decline_streak": 2,
+            "g_ceiling": 11000.0,
+            "g_best": 7200.0,
+            "rel_best": 0.2889,
+            "reverted": true
+          }
+        ]
+      },
+      "mid_init": {
+        "seed": 101,
+        "g_init": 8000.0,
+        "climber": true,
+        "converged": true,
+        "reason": "cliff detected & clamped at fac_g=8222 (sustained: 2 consecutive climbing steps each below its immediate predecessor)",
+        "n_iters": 6,
+        "final_fac_g": 8222.0,
+        "final_rel": 0.29,
+        "raw_last_fac_g": 8222.0,
+        "raw_last_rel": 0.29,
+        "live_ceiling": 8222.0,
+        "cliff_events": [
+          {
+            "iter": 5,
+            "probed_fac_g": 9402.0,
+            "probed_rel": 0.2806,
+            "kind": "sustained: 2 consecutive climbing steps each below its immediate predecessor",
+            "reverted_to_fac_g": 8222.0,
+            "reverted_to_rel": 0.29,
+            "new_ceiling": 8222.0
+          }
+        ],
+        "trajectory": [
+          {
+            "iter": 0,
+            "fac_g": 8000.0,
+            "rel": 0.2889,
+            "climber": true,
+            "climbing": false,
+            "decline_streak": 0,
+            "g_ceiling": 11000.0,
+            "g_best": 8000.0,
+            "rel_best": 0.2889
+          },
+          {
+            "iter": 1,
+            "fac_g": 8222.0,
+            "rel": 0.29,
+            "climber": true,
+            "climbing": true,
+            "decline_streak": 0,
+            "g_ceiling": 11000.0,
+            "g_best": 8222.0,
+            "rel_best": 0.29
+          },
+          {
+            "iter": 2,
+            "fac_g": 8422.0,
+            "rel": 0.2794,
+            "climber": true,
+            "climbing": true,
+            "decline_streak": 1,
+            "g_ceiling": 11000.0,
+            "g_best": 8222.0,
+            "rel_best": 0.29
+          },
+          {
+            "iter": 3,
+            "fac_g": 8834.0,
+            "rel": 0.2872,
+            "climber": true,
+            "climbing": true,
+            "decline_streak": 0,
+            "g_ceiling": 11000.0,
+            "g_best": 8222.0,
+            "rel_best": 0.29
+          },
+          {
+            "iter": 4,
+            "fac_g": 9090.0,
+            "rel": 0.2844,
+            "climber": true,
+            "climbing": true,
+            "decline_streak": 1,
+            "g_ceiling": 11000.0,
+            "g_best": 8222.0,
+            "rel_best": 0.29
+          },
+          {
+            "iter": 5,
+            "fac_g": 8222.0,
+            "rel": 0.29,
+            "climber": true,
+            "climbing": true,
+            "decline_streak": 2,
+            "g_ceiling": 11000.0,
+            "g_best": 8222.0,
+            "rel_best": 0.29,
+            "reverted": true
+          }
+        ]
+      },
+      "same_setpoint_within_tol": false,
+      "converged_fac_g": 7200.0,
+      "converged_rel": 0.2889,
+      "intact_rel": 0.2889,
+      "intact_fired": true,
+      "lesion_rel": 0.0,
+      "lesion_fired": false,
+      "load_bearing": true,
+      "frozen_passed": true,
+      "frozen_max_silent": 0.0411,
+      "frozen_clause_fails": [],
+      "frozen_clauses": {
+        "fire_on_cue": true,
+        "persistence": true,
+        "no_fire_before": true,
+        "no_fire_wrongcue": true,
+        "no_intention_silent": true,
+        "lesion_holds": true,
+        "lesion_forgets": true,
+        "separation": true
+      },
+      "static_table_margin": 0.0922,
+      "converged_margin": 0.0889,
+      "margin_positive": true,
+      "margin_meets_static": false,
+      "lesion_attribution": 1.0,
+      "cliff_events": [
+        {
+          "iter": 5,
+          "probed_fac_g": 7734.0,
+          "probed_rel": 0.2839,
+          "kind": "sustained: 2 consecutive climbing steps each below its immediate predecessor",
+          "reverted_to_fac_g": 7200.0,
+          "reverted_to_rel": 0.2889,
+          "new_ceiling": 7200.0
+        }
+      ]
+    },
+    "102": {
+      "low_init": {
+        "seed": 102,
+        "g_init": 6000.0,
+        "climber": false,
+        "converged": true,
+        "reason": "pinned at floor (fac_g=6000)",
+        "n_iters": 4,
+        "final_fac_g": 6000.0,
+        "final_rel": 0.3133,
+        "raw_last_fac_g": 6000.0,
+        "raw_last_rel": 0.3133,
+        "live_ceiling": 11000.0,
+        "cliff_events": [],
+        "trajectory": [
+          {
+            "iter": 0,
+            "fac_g": 6000.0,
+            "rel": 0.3133,
+            "climber": false,
+            "climbing": false,
+            "decline_streak": 0,
+            "g_ceiling": 11000.0,
+            "g_best": 6000.0,
+            "rel_best": 0.3133
+          },
+          {
+            "iter": 1,
+            "fac_g": 6000.0,
+            "rel": 0.3133,
+            "climber": false,
+            "climbing": false,
+            "decline_streak": 0,
+            "g_ceiling": 11000.0,
+            "g_best": 6000.0,
+            "rel_best": 0.3133
+          },
+          {
+            "iter": 2,
+            "fac_g": 6000.0,
+            "rel": 0.3133,
+            "climber": false,
+            "climbing": false,
+            "decline_streak": 0,
+            "g_ceiling": 11000.0,
+            "g_best": 6000.0,
+            "rel_best": 0.3133
+          },
+          {
+            "iter": 3,
+            "fac_g": 6000.0,
+            "rel": 0.3133,
+            "climber": false,
+            "climbing": false,
+            "decline_streak": 0,
+            "g_ceiling": 11000.0,
+            "g_best": 6000.0,
+            "rel_best": 0.3133
+          }
+        ]
+      },
+      "mid_init": {
+        "seed": 102,
+        "g_init": 8000.0,
+        "climber": false,
+        "converged": true,
+        "reason": "pinned at floor (fac_g=6000)",
+        "n_iters": 12,
+        "final_fac_g": 6000.0,
+        "final_rel": 0.3133,
+        "raw_last_fac_g": 6000.0,
+        "raw_last_rel": 0.3133,
+        "live_ceiling": 11000.0,
+        "cliff_events": [],
+        "trajectory": [
+          {
+            "iter": 0,
+            "fac_g": 8000.0,
+            "rel": 0.3111,
+            "climber": false,
+            "climbing": false,
+            "decline_streak": 0,
+            "g_ceiling": 11000.0,
+            "g_best": 8000.0,
+            "rel_best": 0.3111
+          },
+          {
+            "iter": 1,
+            "fac_g": 7778.0,
+            "rel": 0.3128,
+            "climber": false,
+            "climbing": false,
+            "decline_streak": 0,
+            "g_ceiling": 11000.0,
+            "g_best": 8000.0,
+            "rel_best": 0.3111
+          },
+          {
+            "iter": 2,
+            "fac_g": 7522.0,
+            "rel": 0.3139,
+            "climber": false,
+            "climbing": false,
+            "decline_streak": 0,
+            "g_ceiling": 11000.0,
+            "g_best": 8000.0,
+            "rel_best": 0.3111
+          },
+          {
+            "iter": 3,
+            "fac_g": 7244.0,
+            "rel": 0.3111,
+            "climber": false,
+            "climbing": false,
+            "decline_streak": 0,
+            "g_ceiling": 11000.0,
+            "g_best": 8000.0,
+            "rel_best": 0.3111
+          },
+          {
+            "iter": 4,
+            "fac_g": 7022.0,
+            "rel": 0.3128,
+            "climber": false,
+            "climbing": false,
+            "decline_streak": 0,
+            "g_ceiling": 11000.0,
+            "g_best": 8000.0,
+            "rel_best": 0.3111
+          },
+          {
+            "iter": 5,
+            "fac_g": 6766.0,
+            "rel": 0.3139,
+            "climber": false,
+            "climbing": false,
+            "decline_streak": 0,
+            "g_ceiling": 11000.0,
+            "g_best": 8000.0,
+            "rel_best": 0.3111
+          },
+          {
+            "iter": 6,
+            "fac_g": 6488.0,
+            "rel": 0.3117,
+            "climber": false,
+            "climbing": false,
+            "decline_streak": 0,
+            "g_ceiling": 11000.0,
+            "g_best": 8000.0,
+            "rel_best": 0.3111
+          },
+          {
+            "iter": 7,
+            "fac_g": 6254.0,
+            "rel": 0.3144,
+            "climber": false,
+            "climbing": false,
+            "decline_streak": 0,
+            "g_ceiling": 11000.0,
+            "g_best": 8000.0,
+            "rel_best": 0.3111
+          },
+          {
+            "iter": 8,
+            "fac_g": 6000.0,
+            "rel": 0.3133,
+            "climber": false,
+            "climbing": false,
+            "decline_streak": 0,
+            "g_ceiling": 11000.0,
+            "g_best": 8000.0,
+            "rel_best": 0.3111
+          },
+          {
+            "iter": 9,
+            "fac_g": 6000.0,
+            "rel": 0.3133,
+            "climber": false,
+            "climbing": false,
+            "decline_streak": 0,
+            "g_ceiling": 11000.0,
+            "g_best": 8000.0,
+            "rel_best": 0.3111
+          },
+          {
+            "iter": 10,
+            "fac_g": 6000.0,
+            "rel": 0.3133,
+            "climber": false,
+            "climbing": false,
+            "decline_streak": 0,
+            "g_ceiling": 11000.0,
+            "g_best": 8000.0,
+            "rel_best": 0.3111
+          },
+          {
+            "iter": 11,
+            "fac_g": 6000.0,
+            "rel": 0.3133,
+            "climber": false,
+            "climbing": false,
+            "decline_streak": 0,
+            "g_ceiling": 11000.0,
+            "g_best": 8000.0,
+            "rel_best": 0.3111
+          }
+        ]
+      },
+      "same_setpoint_within_tol": true,
+      "converged_fac_g": 6000.0,
+      "converged_rel": 0.3133,
+      "intact_rel": 0.3133,
+      "intact_fired": true,
+      "lesion_rel": 0.0211,
+      "lesion_fired": false,
+      "load_bearing": true,
+      "frozen_passed": true,
+      "frozen_max_silent": 0.0408,
+      "frozen_clause_fails": [],
+      "frozen_clauses": {
+        "fire_on_cue": true,
+        "persistence": true,
+        "no_fire_before": true,
+        "no_fire_wrongcue": true,
+        "no_intention_silent": true,
+        "lesion_holds": true,
+        "lesion_forgets": true,
+        "separation": true
+      },
+      "static_table_margin": 0.1133,
+      "converged_margin": 0.1133,
+      "margin_positive": true,
+      "margin_meets_static": true,
+      "lesion_attribution": 0.9326524098308331,
+      "cliff_events": []
+    }
+  },
+  "n_positive": 6,
+  "n_meets_static": 4,
+  "n_load_bearing": 6,
+  "n_same_setpoint": 4,
+  "domain_bounded": true,
+  "max_fac_g_visited": 9500.0,
+  "silence_regressed": [],
+  "default_off_exact_compare": {
+    "ok": true,
+    "per_seed": {
+      "42": {
+        "this_run_iter0_rel": 0.3439,
+        "static_stabilizer_grid0_rel": 0.3439,
+        "exact_match": true
+      },
+      "43": {
+        "this_run_iter0_rel": 0.3361,
+        "static_stabilizer_grid0_rel": 0.3361,
+        "exact_match": true
+      },
+      "44": {
+        "this_run_iter0_rel": 0.2111,
+        "static_stabilizer_grid0_rel": 0.2111,
+        "exact_match": true
+      },
+      "100": {
+        "this_run_iter0_rel": 0.2839,
+        "static_stabilizer_grid0_rel": 0.2839,
+        "exact_match": true
+      },
+      "101": {
+        "this_run_iter0_rel": 0.2761,
+        "static_stabilizer_grid0_rel": 0.2761,
+        "exact_match": true
+      },
+      "102": {
+        "this_run_iter0_rel": 0.3133,
+        "static_stabilizer_grid0_rel": 0.3133,
+        "exact_match": true
+      }
+    },
+    "source": "research/findings/raw/_pmem_operating_point_stabilizer.json"
+  },
+  "prove_it_is_live": {
+    "seed": 44,
+    "no_table_import": true,
+    "rerun_identical_trajectory": true,
+    "rerun_identical_cliff_events": true
+  },
+  "prove_it_discriminates": {
+    "fires_on_seed44_low_mid": [
+      true,
+      true
+    ],
+    "fires_on_seed101_low_mid": [
+      true,
+      true
+    ],
+    "seed44_both_fire": true,
+    "seed101_neither_fires": false,
+    "discriminates": false
+  },
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "load-bearing preserved at the canonical converged gain (per-seed count)",
+      "ok": true,
+      "detail": "measured=6 expect=<function _derisk.<locals>.<lambda> at 0x7f739231ec00>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "two different inits converge to the SAME canonical neighborhood (per-seed count)",
+      "ok": false,
+      "detail": "measured=4 expect=<function _derisk.<locals>.<lambda> at 0x7f739231ec00>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "domain-bounded: no probe left [G_FLOOR, G_CEILING_CAP]",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "frozen-gate silence held at the canonical converged gain: no_fire_before",
+      "ok": true,
+      "detail": "measured=6 expect=<function _derisk.<locals>.<lambda> at 0x7f739231ec00>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "frozen-gate silence held at the canonical converged gain: no_fire_wrongcue",
+      "ok": true,
+      "detail": "measured=6 expect=<function _derisk.<locals>.<lambda> at 0x7f739231ec00>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "frozen-gate silence held at the canonical converged gain: no_intention_silent",
+      "ok": true,
+      "detail": "measured=6 expect=<function _derisk.<locals>.<lambda> at 0x7f739231ec00>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "frozen-gate silence held at the canonical converged gain: lesion_holds",
+      "ok": true,
+      "detail": "measured=6 expect=<function _derisk.<locals>.<lambda> at 0x7f739231ec00>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "frozen-gate silence held at the canonical converged gain: lesion_forgets",
+      "ok": true,
+      "detail": "measured=6 expect=<function _derisk.<locals>.<lambda> at 0x7f739231ec00>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "frozen-gate silence held at the canonical converged gain: persistence",
+      "ok": true,
+      "detail": "measured=6 expect=<function _derisk.<locals>.<lambda> at 0x7f739231ec00>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "the detector discriminates (fires on seed 44, not on seed 101)",
+      "ok": false,
+      "detail": "measured=False expect=True",
+      "note": ""
+    }
+  ],
+  "disabled_processes": [
+    {
+      "process": "STDP / long-term Hebbian LTP / OU-noise",
+      "why": "identical scope to the parent facilitation + live-homeostat de-risks; the only added mechanism is the live, per-seed cliff/decline detector replacing the parent's single global ceiling"
+    }
+  ],
+  "verdict_status": "UNDEFINED",
+  "elapsed_seconds": 2941.4,
+  "BIOLOGY": "Metaplasticity / BCM sliding threshold (Lee & Kirkwood 2019, Front Cell Neurosci 13:520, DOI:10.3389/fncel.2019.00520): a companion process that adjusts the threshold for plasticity from a unit's OWN recent activity history, rather than one fixed bound shared by every unit. Realized here as a per-seed LIVE safety ceiling discovered from that seed's own coincidence-output trajectory (a local-derivative abrupt-cliff check plus a sustained-decline check, both sized from the parent build's own already-measured dip/cliff magnitudes), generalizing the parent live homeostat's single global constant ceiling into a genuinely per-unit, activity-dependent bound."
+}
