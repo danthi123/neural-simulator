@@ -1188,6 +1188,13 @@ Perception/attention/WM, affect, curiosity, self/workspace/ToM, and language are
 
 ## 8. IMMEDIATE NEXT ACTIONS
 
+**2026-09-23 (da-gated-encoding, branch `research/da-encoding-natural-drive`, IN FLIGHT):** the natural-probe wall
+(DA write gain invisible to a clean read) traced to two constants: infinite E-LTP lifetime and a zero synaptic
+baseline. Built `webapp/da_tag_capture.py` (DA-gated tagging-and-capture, default OFF) plus a natural
+surprising-vs-expected conversation read as 24 h recall. v1 (D=64) seed 42 is UNDEFINED on its G2 precondition: the
+unit-gain lesion arm lost immediate recall. v2 at the production D=128 is pre-registered. NEXT: land the v1 + v2
+6-seed verdicts; if v2 G2 also fails, move DA's effect from write magnitude to capture only (Bethus 2010).
+
 **2026-09-18 (STRATEGIC — owner decision + scaling go/no-go; supersedes the raw-scale framing below):**
 - **Faithfulness-vs-tractability relaxation APPROVED (owner), honesty-conditioned** — trade bit-exact realism ONLY for a significant perf gain that loses nothing important to end-goal capabilities, and document every trade; biology-strong stays core; invariants kept (brain-based / one-brain / emergent / honesty). See memory `project_agi_first_fork_openness_2026_09_06`.
 - **SCALING GO/NO-GO = do NOT buy hardware yet** (finding `2026-09-18-scaling-go-no-go-raw-scale-falsified-lever-is-data-do-not-buy-hardware-yet.md`; 10-agent adversarially-verified workflow). RAW param/GPU scale is FALSIFIED as the fluency lever on the broad domain (token-supply capacity-saturated; the realistic large-token analog REGRESSED); the lever is DATA (token-throughput + curation atop a modest capacity floor), owner's skepticism vindicated. The mouth (neural-render) IS the keystone (~half the blocked rows) but the lever there is data, not a bigger GPU.
