@@ -104,7 +104,9 @@ def _check_off_path_gating():
     touched): webapp/server.py's open_ended_chat import stays nested under the unchanged BRAIN_OPEN_ENDED guard."""
     src = (_REPO / "webapp" / "server.py").read_text(encoding="utf-8")
     guard_re = re.compile(
-        r'if os\.environ\.get\("BRAIN_OPEN_ENDED", "0"\)\.strip\(\)\.lower\(\) in \("1", "true", "on", "yes"\):'
+        r'if \(?os\.environ\.get\("BRAIN_OPEN_ENDED", "0"\)\.strip\(\)\.lower\(\) in \("1", "true", "on", "yes"\)'
+        # 2026-09-23: also accept the BRAIN_OPEN_ENDED_GENERATE_ROUTE AND-clause (still gated on BRAIN_OPEN_ENDED)
+        r'(?:\s*\n\s*and not _open_ended_generate_route\(chat, msg\)\))?:'
         r'\s*\n\s*try:\s*\n\s*from webapp import open_ended_chat as _OE', re.M)
     gated = bool(guard_re.search(src))
     n_imports = len(re.findall(r'from webapp import open_ended_chat', src))
