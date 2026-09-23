@@ -93,6 +93,14 @@ Literal scoring command:
 
 ## Staged runs
 
+<!--derived from research/findings/raw/_affect_conditioned_mouth/smoke/smoke_s42_pos_resid.json -->
+Smoke (seed 42, pos arm, resid, 2 prompts, CPU Qwen float32): the whole path runs end to end. Qwen wrote both
+replies (generator=qwen). The hook registered and fired (c = 0.448, 96 and 67 hook calls). Replies were fluent
+(salad 0.073 / 0.086). Footprint: maxrss 9.5 GB, about 52 s per CPU generation. That is too slow for the pool.
+The pool also cannot host this run: its venv has no torch/transformers, it has no Qwen weights or
+data/corpus, and provisioning excludes research/findings/raw/, which holds the calibration and the NO-GO
+reference arms that (O) needs. So the run goes to the local box via gpu_queue, with Qwen on CUDA.
+
 One gpu_queue line per (mode, seed). Qwen runs on CUDA; the brain runs numpy, the same organ numerics as the
 NO-GOs. Arms run one after another inside each line, so only one brain is live at a time. Results go to
 `research/findings/raw/_affect_conditioned_mouth/{prompt,resid}/arm_s<seed>_<arm>.json`, and the verdict to
