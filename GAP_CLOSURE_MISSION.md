@@ -23,7 +23,9 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 - **✅ EPISODIC in-situ COMPLETE — 5/5 clean-deterministic LOAD-BEARING (s42/s43/s101/s102 ✅ + s44 build ✅); s100 = INSTRUMENT NON-DETERMINISM, NOT a capability failure.** s100's intact arm is non-deterministic (`determinism.deterministic=false`, dirty null-control, `UNRELIABLE` flag: "seed the substrate"), so its LB verdict is untrustworthy — an unseeded stochastic component in the episodic store→recall (seed-threading already builds arms at cfg.seed, so it's inside the store/recall OU/RNG, near-threshold amplifying it — same class as the affect-marker RNG artifact + pmem s44).
   REFINED DIAGNOSIS: the in-situ ran on **cupy (GPU)** whose reductions are non-deterministic; at s100's near-threshold episodic read that flips `in_memory` run-to-run (the other 4 read clear). The load-bearing metric's ACTUAL backend is **numpy (CPU, deterministic)** — that's what the 0.85 adequate 6-seed ran on. **DECISIVE TEST (cheap, NO code change): re-measure s100 episodic on NUMPY** (`SIM_BACKEND=numpy ... --only episodic-memory --seed 100`); if LB deterministically → episodic **6/6 → robust core 23**; if deterministically NOT-LB → genuine near-threshold residual → stabilizer (pmem-facilitation precedent). **DEFERRED by mem_ok (9G avail, needs 8G margin)** — launch the instant a lane frees (watchers: affect→tone wf `w130innob`, phase-2 `b2xgz7tn6`).
   Do NOT write s100 off as 5/6 — it is UNMEASURED, not failed. Branch `research/lbf-fix-episodic-store` holds the store-verify fix; final finding + merge after s100 resolves.
-- **IN FLIGHT:** **Phase-2 local** (numpy CPU, throttled/memcap'd, pid 2987708) — updated adequate 6-seed → new aggregate; confirmatory. **§8 affect→tone NEXT-METHOD** (workflow `w130innob`, build sonnet→verify opus) — diagnose decode-ceiling vs data-limit → build biology-faithful distribution-shift coupling OR document data-limit; branch `research/lbf-affect-tone-nextmethod`.
+- **✅ DONE: §8 affect→tone NEXT-METHOD Phase-1 — DECODE-CEILING diagnosis (6/6, adversarially CONFIRMED), MERGED @ f1a1eee6.** The positive-asymmetry NO-GO is the host additive-bias DECODE mechanism, NOT a training-data limit (pos/neg mass ratio 1.457 vs 50× data-limit bar; neg words reach top-64 ~8% of steps). This MANDATES a better decode path (NO-DEFER). **Phase-2A** (brain-based neural coupling via `BRAIN_WKV_MOUTH_AFFECT_NEURAL` spiking-competition path; brain-based-boundary verified CLEAN; reuses the 6-seed gate+anti-cheats) is BUILT+selftested but its 36-arm gate is **UNRUN** (killed 3× by shared-machine near-OOM) → NO verdict yet. RESUME queued (after RAM frees): `_lbf_affect_tone_neural_coupling_derisk --controller --parallel 1 --memcap-gb 8` then `--score-only`.
+- **⛔ RAM LESSON (this session): do NOT run 2 heavy brain-lanes concurrently** — running the episodic numpy 6-seed (3 brains ~23GB) WHILE the affect→tone workflow ran brain_chat starved Phase-2A into 3× near-OOM (avail hit 439MB). ONE heavy lane at a time; mem_ok is the gate.
+- **IN FLIGHT:** **episodic numpy 6-seed re-measure** (pid 3164579, watcher `b09djqr8u`) — the robust-core-23 decider (see above); slow numpy over 3.65M synapses. Phase-2 confirmatory KILLED (RAM/OOM prevention; re-runnable later when RAM idle).
 - **Heartbeat armed** `bk9nzu8kt` (state-checking + parallel-audit each cycle). **LESSON (bank if recurs):** a workflow BUILD agent can conflate its task with the parent session's message and decline an authorized build → build-agent prompts need explicit "authorized autonomous build, not a status/confirmation request" framing.
 
 **⭐ LATEST 2026-09-22 (~20:20Z) — FULL-FORCE PARALLEL: 2 stabilizer fixes MERGED, 2 lanes IN FLIGHT, AWS abandoned:**
@@ -126,12 +128,12 @@ the hollow-set finding sits uncommitted in the working tree + a safety stash `pr
   other 4, after a self-inflicted RAM spike from an uncapped 6-parallel launch — recovered, avail 23G).
 
 **PRE-DECIDED NEXT ACTIONS:**
-1. ⭐ NOW (2026-09-22 ~23:05Z): (a) **episodic s100 re-measure on NUMPY** (queued; mem_ok-deferred, 9G avail needs 8G
-   margin) — episodic is **5/5 clean-deterministic LOAD-BEARING**; s100 alone non-deterministic on CUPY (GPU-reduction
-   noise at a near-threshold read), UNMEASURED not failed. The metric's backend is numpy (deterministic) → re-measure
-   s100 on numpy (`--only episodic-memory --seed 100`); if LB → **6/6 → robust core 23**; else near-threshold
-   stabilizer. Launch when a lane frees (watchers `w130innob`/`b2xgz7tn6`). (b) harvest **§8 affect→tone next-method**
-   (`w130innob`) + **Phase-2 local** (pid 2987708) as they land. ✅ DONE this cycle:
+1. ⭐ NOW (2026-09-22 ~23:20Z): (a) **episodic numpy 6-seed re-measure RUNNING** (pid 3164579, watcher `b09djqr8u`) —
+   the robust-core-23 decider: episodic is 5/5 clean-det LOAD-BEARING; s100 was cupy-GPU-noise non-det, so re-measuring
+   all 6 on the deterministic numpy backend; if 6/6 det+LB → **robust core 23**; else s100 near-threshold stabilizer.
+   Slow (numpy/3.65M synapses). (b) THEN (one heavy lane at a time — RAM lesson): **resume §8 affect→tone Phase-2A**
+   neural-coupling 36-arm gate (`_lbf_affect_tone_neural_coupling_derisk --controller --parallel 1`) — the decode-ceiling
+   fix test; if directional 6-seed GO, the brain-based coupling flips the affect→tone negative-asymmetry. ✅ DONE this cycle:
    **§8 metacog graded-marker (sub-arc B) — GO 6/6 CONFIRMED, MERGED @ b994cf13** (de-risk; narrow synthetic-evidence
    scope; next rungs = real-traffic recalibration + production wire-in). **§8 affect→tone-over-OPEN-output MERGED @
    279b4ddf** — NO-GO (positive-asymmetric, additive-bias method falsified, capability open, next methods banked; new
