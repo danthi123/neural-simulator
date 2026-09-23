@@ -94,3 +94,73 @@ def test_baseline_seeded_and_identical_across_ledgers():
     b = TC.TagCaptureLedger(9)._baseline(2, 16)
     c = TC.TagCaptureLedger(10)._baseline(2, 16)
     assert np.array_equal(a, b) and not np.array_equal(a, c)
+
+
+# ── v3: SynapticTagCaptureLedger (DA acts through per-synapse tag / PRP / bistable late-phase state) ──────────────
+def _syn_ledger(gamma, **kw):
+    return TC.SynapticTagCaptureLedger(5, gamma=gamma, beta=1.0, **kw)
+
+
+def test_v3_calibration_recovers_its_operating_point():
+    for a in (0.1, 0.224, 0.4):
+        g = TC.calibrate_gamma(a)
+        assert TC.critical_activation(g) == pytest.approx(a, rel=1e-3)
+
+
+def test_v3_no_host_threshold_subboundary_drive_can_capture():
+    """The v2 compare (`da >= 0.62`) is gone: a D1 drive at HALF the Go-boundary activation captures if it lasts long
+    enough, and the Go-boundary level itself does not capture if it is brief. The time course decides."""
+    g = TC.calibrate_gamma(0.224)
+    assert TC.kernel_capture_single(0.112, g, dur_h=0.5) > 0.5
+    assert TC.kernel_capture_single(0.224, g, dur_h=1.0 / 60.0) < 0.5
+
+
+def test_v3_prp_before_the_write_captures_but_not_hours_before():
+    g = TC.calibrate_gamma(0.224)
+    comp = _FakeComp(n_blocks=2)
+    D = comp.D
+    full = list(comp.store_conns)
+    L = _syn_ledger(g)
+    L.observe_turn(0.0, 5.0 / 60.0, 0.9, a_override=0.6)     # a salient event, then two plain writes
+    comp.store_conns = full[:D]
+    L.on_store(comp, 0.5)                                    # 30 min after the event -> captured
+    comp.store_conns = comp.store_conns + full[D:]
+    L.on_store(comp, 6.0)                                    # 6 h after -> the PRP pool is gone
+    L.advance(comp, 30.0)
+    z = [float(np.mean(b["z"])) for b in L.blocks]
+    assert z[0] > 0.9 and z[1] < 0.1
+
+
+def test_v3_tag_strength_from_the_write_gain_matters():
+    """A DA-boosted write (|inc| = 2.5, a larger early-LTP tag) captures at a drive where a unit write does not."""
+    g = TC.calibrate_gamma(0.224)
+    comp1, comp2 = _FakeComp(n_blocks=1), _FakeComp(n_blocks=1)
+    comp2.store_conns = [(p, q, 2.5 * w) for (p, q, w) in comp2.store_conns]
+    out = []
+    for comp in (comp1, comp2):
+        L = _syn_ledger(g)
+        L.observe_turn(0.0, 5.0 / 60.0, 0.9, a_override=0.15)
+        L.on_store(comp, 0.0)
+        L.advance(comp, 24.0)
+        out.append(float(np.mean(L.blocks[0]["z"])))
+    assert out[0] < 0.1 and out[1] > 0.9
+
+
+def test_v3_lesions_act_on_the_edge(monkeypatch):
+    g = TC.calibrate_gamma(0.224)
+    monkeypatch.setenv("BRAIN_DA_CAPTURE_LESION", "1")
+    L = _syn_ledger(g)
+    assert L.observe_turn(0.0, 1.0, 1.2, a_override=0.9) == 0.0
+    comp = _FakeComp(n_blocks=1)
+    L.on_store(comp, 0.0)
+    L.advance(comp, 24.0)
+    assert L.p_max == 0.0 and float(np.max(L.blocks[0]["z"])) == 0.0
+
+
+def test_v3_uncaptured_block_reads_as_pure_baseline_at_24h():
+    comp = _FakeComp(n_blocks=1)
+    L = _syn_ledger(TC.calibrate_gamma(0.224))
+    L.on_store(comp, 0.0)
+    L.advance(comp, 24.0)
+    w = np.array([w for (_p, _q, w) in comp.store_conns])
+    assert np.allclose(w, L.blocks[0]["base"], atol=1e-6)
