@@ -301,3 +301,19 @@ def test_idle_stop_no_running_instances_is_a_noop(tmp_path):
     res = _run(AWS_IDLE_STOP, [], bin_dir, tmp_path=tmp_path)
     assert res.returncode == 0, res.stderr
     assert "ec2 stop-instances" not in aws_log.read_text()
+
+
+# --------------------------------------------------------------------------------------- guard timer ordering
+
+def test_guard_service_records_spend_before_idle_stop_can_act():
+    # 2026-09-23 review, item 7: `aws_budget.sh enforce` is what RECORDS this cycle's spend to the ledger. If
+    # aws_idle_stop.sh ran FIRST and stopped an instance, enforce would then observe it already stopped
+    # (hours_running_today -> 0) and silently lose up to this cycle's ~10 minutes of accrued compute. The
+    # ExecStart must run `aws_budget.sh enforce` before `aws_idle_stop.sh`.
+    service = (ROOT / "tools" / "systemd" / "aws-guard.service").read_text()
+    exec_line = next(ln for ln in service.splitlines() if ln.strip().startswith("ExecStart="))
+    enforce_pos = exec_line.find("aws_budget.sh enforce")
+    idle_stop_pos = exec_line.find("aws_idle_stop.sh")
+    assert enforce_pos != -1 and idle_stop_pos != -1, f"ExecStart is missing one of the two calls: {exec_line!r}"
+    assert enforce_pos < idle_stop_pos, (
+        f"aws_idle_stop.sh runs BEFORE aws_budget.sh enforce records this cycle's spend: {exec_line!r}")
