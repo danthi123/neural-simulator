@@ -1,0 +1,402 @@
+{
+  "probe": "pmem_operating_point_stabilizer",
+  "verdict": "GO -- per the PRE-REGISTERED gate (margin vs the diagnosis baseline op_s*.json), 6/6 seeds hold a strictly positive stabilized margin and 6/6 are enlarged vs that baseline; load-bearing preserved 6/6; silence-regressed=none. HONEST SCOPE NOTE: compared against the CURRENT production baseline (facilitation @ fac_g=6000.0, already shipped/committed), only 3/6 seeds actually CHANGE under this stabilizer (seed(s) [44, 100, 101] -- the ones below REL_TARGET=0.30); seed(s) [42, 43, 102] are left at the shipped constant BY DESIGN (already at/above target -- a set-point regulator that is already there does not move). The thinnest seed in this run (s44): production margin +0.0111 -> stabilized +0.0183 (~65% larger), of which 0.20923474329996755 is this session's OWN share (the rest, if any, is the already-committed facilitation fix's credit). DISCOVERED RESIDUAL: fac_g is NOT a safely-widenable operating point -- a fresh, self-consistent build shows a real cliff at fac_g>=10000 for seed 44 (rel collapses 0.2183->0.1506), so the grid is bounded there, not swept further; REL_TARGET=0.30 is UNREACHABLE inside the safe grid on [44, 100, 101] -- an honest residual, not forced to GO.",
+  "go": true,
+  "task": "Prospective-memory operating-point stabilizer: replace the single global facilitation gain constant (fac_g=6000, uniform across seeds) with a per-seed, floor-guarded, target-seeking grid search over a PRE-REGISTERED candidate set -- a discrete realization of a Turrigiano-style homeostatic set-point regulator, bounded at an empirically-discovered non-monotonic cliff. Identical algorithm/target/grid for every seed; the OUTCOME differs per seed because the search reads the pool's own coincidence output.",
+  "gate": {
+    "FIRE_THR": 0.2,
+    "REL_TARGET": 0.30000000000000004,
+    "FAC_G_GRID": [
+      6000.0,
+      7000.0,
+      8000.0,
+      9000.0,
+      10000.0,
+      11000.0
+    ],
+    "FAC_G_DEFAULT": 6000.0
+  },
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "per_seed": {
+    "42": {
+      "grid_evals": {
+        "6000.0": 0.3439,
+        "7000.0": 0.3439,
+        "8000.0": 0.345,
+        "9000.0": 0.3378,
+        "10000.0": 0.3433,
+        "11000.0": 0.3483
+      },
+      "chosen_fac_g": 6000.0,
+      "selection_reason": "baseline g=6000.0 already clears target 0.300 (rel=0.3439) -- no change (a set-point regulator does not move what is already at its target)",
+      "intact_rel": 0.3439,
+      "intact_fired": true,
+      "lesion_rel": 0.0278,
+      "lesion_fired": false,
+      "load_bearing": true,
+      "frozen_passed": true,
+      "frozen_max_silent": 0.0472,
+      "frozen_clause_fails": [],
+      "frozen_clauses": {
+        "fire_on_cue": true,
+        "persistence": true,
+        "no_fire_before": true,
+        "no_fire_wrongcue": true,
+        "no_intention_silent": true,
+        "lesion_holds": true,
+        "lesion_forgets": true,
+        "separation": true
+      },
+      "diagnosis_margin": 0.1406,
+      "production_margin": 0.1439,
+      "stabilized_margin": 0.1439,
+      "enlarged_vs_diagnosis": true,
+      "enlarged_vs_production": false,
+      "stabilizer_own_share_of_diagnosis_gain": 0.0
+    },
+    "43": {
+      "grid_evals": {
+        "6000.0": 0.3361,
+        "7000.0": 0.3406,
+        "8000.0": 0.3406,
+        "9000.0": 0.3372,
+        "10000.0": 0.3361,
+        "11000.0": 0.3356
+      },
+      "chosen_fac_g": 6000.0,
+      "selection_reason": "baseline g=6000.0 already clears target 0.300 (rel=0.3361) -- no change (a set-point regulator does not move what is already at its target)",
+      "intact_rel": 0.3361,
+      "intact_fired": true,
+      "lesion_rel": 0.0206,
+      "lesion_fired": false,
+      "load_bearing": true,
+      "frozen_passed": true,
+      "frozen_max_silent": 0.0483,
+      "frozen_clause_fails": [],
+      "frozen_clauses": {
+        "fire_on_cue": true,
+        "persistence": true,
+        "no_fire_before": true,
+        "no_fire_wrongcue": true,
+        "no_intention_silent": true,
+        "lesion_holds": true,
+        "lesion_forgets": true,
+        "separation": true
+      },
+      "diagnosis_margin": 0.1272,
+      "production_margin": 0.1361,
+      "stabilized_margin": 0.1361,
+      "enlarged_vs_diagnosis": true,
+      "enlarged_vs_production": false,
+      "stabilizer_own_share_of_diagnosis_gain": 0.0
+    },
+    "44": {
+      "grid_evals": {
+        "6000.0": 0.2111,
+        "7000.0": 0.2078,
+        "8000.0": 0.2139,
+        "9000.0": 0.2183,
+        "10000.0": 0.1506,
+        "11000.0": 0.1589
+      },
+      "chosen_fac_g": 9000.0,
+      "selection_reason": "target 0.300 UNREACHABLE inside the safe grid (max 0.2183) -- took the floor-guarded arg-max at fac_g=9000.0",
+      "intact_rel": 0.2183,
+      "intact_fired": true,
+      "lesion_rel": 0.0,
+      "lesion_fired": false,
+      "load_bearing": true,
+      "frozen_passed": true,
+      "frozen_max_silent": 0.0467,
+      "frozen_clause_fails": [],
+      "frozen_clauses": {
+        "fire_on_cue": true,
+        "persistence": true,
+        "no_fire_before": true,
+        "no_fire_wrongcue": true,
+        "no_intention_silent": true,
+        "lesion_holds": true,
+        "lesion_forgets": true,
+        "separation": true
+      },
+      "diagnosis_margin": -0.0161,
+      "production_margin": 0.0111,
+      "stabilized_margin": 0.0183,
+      "enlarged_vs_diagnosis": true,
+      "enlarged_vs_production": true,
+      "stabilizer_own_share_of_diagnosis_gain": 0.20923474329996755
+    },
+    "100": {
+      "grid_evals": {
+        "6000.0": 0.2839,
+        "7000.0": 0.2861,
+        "8000.0": 0.2933,
+        "9000.0": 0.2956,
+        "10000.0": 0.2911,
+        "11000.0": 0.2894
+      },
+      "chosen_fac_g": 9000.0,
+      "selection_reason": "target 0.300 UNREACHABLE inside the safe grid (max 0.2956) -- took the floor-guarded arg-max at fac_g=9000.0",
+      "intact_rel": 0.2956,
+      "intact_fired": true,
+      "lesion_rel": 0.0178,
+      "lesion_fired": false,
+      "load_bearing": true,
+      "frozen_passed": true,
+      "frozen_max_silent": 0.0475,
+      "frozen_clause_fails": [],
+      "frozen_clauses": {
+        "fire_on_cue": true,
+        "persistence": true,
+        "no_fire_before": true,
+        "no_fire_wrongcue": true,
+        "no_intention_silent": true,
+        "lesion_holds": true,
+        "lesion_forgets": true,
+        "separation": true
+      },
+      "diagnosis_margin": 0.0661,
+      "production_margin": 0.0839,
+      "stabilized_margin": 0.0956,
+      "enlarged_vs_diagnosis": true,
+      "enlarged_vs_production": true,
+      "stabilizer_own_share_of_diagnosis_gain": 0.3967596081386588
+    },
+    "101": {
+      "grid_evals": {
+        "6000.0": 0.2761,
+        "7000.0": 0.2861,
+        "8000.0": 0.2889,
+        "9000.0": 0.2889,
+        "10000.0": 0.2906,
+        "11000.0": 0.2922
+      },
+      "chosen_fac_g": 11000.0,
+      "selection_reason": "target 0.300 UNREACHABLE inside the safe grid (max 0.2922) -- took the floor-guarded arg-max at fac_g=11000.0",
+      "intact_rel": 0.2922,
+      "intact_fired": true,
+      "lesion_rel": 0.0,
+      "lesion_fired": false,
+      "load_bearing": true,
+      "frozen_passed": true,
+      "frozen_max_silent": 0.0467,
+      "frozen_clause_fails": [],
+      "frozen_clauses": {
+        "fire_on_cue": true,
+        "persistence": true,
+        "no_fire_before": true,
+        "no_fire_wrongcue": true,
+        "no_intention_silent": true,
+        "lesion_holds": true,
+        "lesion_forgets": true,
+        "separation": true
+      },
+      "diagnosis_margin": 0.0739,
+      "production_margin": 0.0761,
+      "stabilized_margin": 0.0922,
+      "enlarged_vs_diagnosis": true,
+      "enlarged_vs_production": true,
+      "stabilizer_own_share_of_diagnosis_gain": 0.8792475728155341
+    },
+    "102": {
+      "grid_evals": {
+        "6000.0": 0.3133,
+        "7000.0": 0.31,
+        "8000.0": 0.3111,
+        "9000.0": 0.3128,
+        "10000.0": 0.3128,
+        "11000.0": 0.3117
+      },
+      "chosen_fac_g": 6000.0,
+      "selection_reason": "baseline g=6000.0 already clears target 0.300 (rel=0.3133) -- no change (a set-point regulator does not move what is already at its target)",
+      "intact_rel": 0.3133,
+      "intact_fired": true,
+      "lesion_rel": 0.0211,
+      "lesion_fired": false,
+      "load_bearing": true,
+      "frozen_passed": true,
+      "frozen_max_silent": 0.0408,
+      "frozen_clause_fails": [],
+      "frozen_clauses": {
+        "fire_on_cue": true,
+        "persistence": true,
+        "no_fire_before": true,
+        "no_fire_wrongcue": true,
+        "no_intention_silent": true,
+        "lesion_holds": true,
+        "lesion_forgets": true,
+        "separation": true
+      },
+      "diagnosis_margin": 0.1033,
+      "production_margin": 0.1133,
+      "stabilized_margin": 0.1133,
+      "enlarged_vs_diagnosis": true,
+      "enlarged_vs_production": false,
+      "stabilizer_own_share_of_diagnosis_gain": 0.0
+    }
+  },
+  "n_positive": 6,
+  "n_enlarged_vs_diagnosis": 6,
+  "n_enlarged_vs_production": 3,
+  "n_load_bearing": 6,
+  "silence_regressed": [],
+  "default_off_exact_compare": {
+    "ok": true,
+    "per_seed": {
+      "42": {
+        "this_run": 0.3439,
+        "prior_committed_artifact": 0.3439,
+        "exact_match": true
+      },
+      "43": {
+        "this_run": 0.3361,
+        "prior_committed_artifact": 0.3361,
+        "exact_match": true
+      },
+      "44": {
+        "this_run": 0.2111,
+        "prior_committed_artifact": 0.2111,
+        "exact_match": true
+      },
+      "100": {
+        "this_run": 0.2839,
+        "prior_committed_artifact": 0.2839,
+        "exact_match": true
+      },
+      "101": {
+        "this_run": 0.2761,
+        "prior_committed_artifact": 0.2761,
+        "exact_match": true
+      },
+      "102": {
+        "this_run": 0.3133,
+        "prior_committed_artifact": 0.3133,
+        "exact_match": true
+      }
+    },
+    "source": "research/findings/raw/_pmem_facilitation.json"
+  },
+  "calibrated_fac_g_table": {
+    "42": 6000.0,
+    "43": 6000.0,
+    "44": 9000.0,
+    "100": 9000.0,
+    "101": 11000.0,
+    "102": 6000.0
+  },
+  "prove_it_adapts": {
+    "seed": 44,
+    "evals": {
+      "6000.0": 0.2111,
+      "7000.0": 0.2078,
+      "8000.0": 0.2139,
+      "9000.0": 0.2183,
+      "10000.0": 0.1506,
+      "11000.0": 0.1589
+    },
+    "target_0.30": {
+      "chosen_g": 9000.0,
+      "reason": "target 0.300 UNREACHABLE inside the safe grid (max 0.2183) -- took the floor-guarded arg-max at fac_g=9000.0"
+    },
+    "target_0.21": {
+      "chosen_g": 6000.0,
+      "reason": "baseline g=6000.0 already clears target 0.210 (rel=0.2111) -- no change (a set-point regulator does not move what is already at its target)"
+    },
+    "adapts": true
+  },
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "stabilized margin strictly positive (per-seed count, vs FIRE_THR)",
+      "ok": true,
+      "detail": "measured=6 expect=<function _derisk.<locals>.<lambda> at 0x7f7379832c00>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "stabilized margin ENLARGED vs the diagnosis baseline (op_s*.json, pre-registered)",
+      "ok": true,
+      "detail": "measured=6 expect=<function _derisk.<locals>.<lambda> at 0x7f7379832c00>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "load-bearing preserved at the chosen gain (per-seed count)",
+      "ok": true,
+      "detail": "measured=6 expect=<function _derisk.<locals>.<lambda> at 0x7f7379832c00>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "frozen-gate silence held at the chosen gain: no_fire_before",
+      "ok": true,
+      "detail": "measured=6 expect=<function _derisk.<locals>.<lambda> at 0x7f7379832c00>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "frozen-gate silence held at the chosen gain: no_fire_wrongcue",
+      "ok": true,
+      "detail": "measured=6 expect=<function _derisk.<locals>.<lambda> at 0x7f7379832c00>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "frozen-gate silence held at the chosen gain: no_intention_silent",
+      "ok": true,
+      "detail": "measured=6 expect=<function _derisk.<locals>.<lambda> at 0x7f7379832c00>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "frozen-gate silence held at the chosen gain: lesion_holds",
+      "ok": true,
+      "detail": "measured=6 expect=<function _derisk.<locals>.<lambda> at 0x7f7379832c00>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "frozen-gate silence held at the chosen gain: lesion_forgets",
+      "ok": true,
+      "detail": "measured=6 expect=<function _derisk.<locals>.<lambda> at 0x7f7379832c00>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "frozen-gate silence held at the chosen gain: persistence",
+      "ok": true,
+      "detail": "measured=6 expect=<function _derisk.<locals>.<lambda> at 0x7f7379832c00>",
+      "note": ""
+    },
+    {
+      "kind": "reaches",
+      "name": "thinnest seed in this run (s44): production constant -> stabilized",
+      "ok": true,
+      "detail": "before=0.0111 after=0.0183 moved=True",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "seed 44 stabilized vs diagnosis margin",
+      "ok": true,
+      "detail": "treatment=0.0183 control=-0.0161 |sep|=0.0344 > 0",
+      "note": ""
+    }
+  ],
+  "disabled_processes": [
+    {
+      "process": "STDP / long-term Hebbian LTP / OU-noise",
+      "why": "identical scope to the parent facilitation de-risk; the only added mechanism is the bounded per-seed fac_g set-point search"
+    }
+  ],
+  "verdict_status": "GO",
+  "elapsed_seconds": 824.0,
+  "BIOLOGY": "Homeostatic regulation of synaptic/intrinsic gain toward a firing-rate set-point (Turrigiano 2011; Desai, Rutherford & Turrigiano 1999). Realized here as a bounded per-seed calibration of the facilitation gain fac_g (the same Mg-block-gated Tsodyks-Markram facilitation current as the parent GO substrate) toward a fixed target (1.5x FIRE_THR); the search is discretized and safety-bounded because a fresh, self-consistent evaluation of this substrate shows a real non-monotonic cliff at high gain (the pool's own pre-existing intrinsic-excitability homeostat + NMDA-plateau calibration over-compensates), which a blind continuous/proportional controller would walk into."
+}

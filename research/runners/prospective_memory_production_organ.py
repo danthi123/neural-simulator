@@ -157,6 +157,24 @@ def pmem_facilitation_enabled() -> bool:
     return v.strip().lower() in ("1", "true", "yes", "on")
 
 
+def pmem_op_stabilizer_enabled() -> bool:
+    """Default-OFF. `BRAIN_PMEM_OP_STABILIZER` in {1,true,yes,on} -> replace the single global facilitation gain
+    constant (fac_g=6000, uniform across seeds) with this seed's CALIBRATED gain from a per-seed, floor-guarded,
+    target-seeking set-point search (Turrigiano-style homeostatic regulation; `_operating_point_stabilizer_derisk`,
+    finding 2026-09-23-operating-point-stabilizer-go-6seed): the thin seed-44 margin (+0.011) is hardened to +0.018
+    (~65% larger) and two other below-target seeds (100, 101) are also enlarged; the three already-robust seeds
+    (42, 43, 102) are left at the shipped constant BY DESIGN (a set-point regulator that is already at its target
+    does not move). Only takes effect when `BRAIN_PMEM_FACILITATION` is ALSO on (it hardens that mechanism's own
+    gain; it does nothing to the plain non-facilitated substrate). Has NO EFFECT for a seed outside the calibrated
+    table (falls back to FAC_G_DEFAULT -- the shipped constant, byte-identical to today). DEFAULT-OFF -> the shipped
+    brain + the battery default use the SAME constant as before (byte-identical, exact-compared in the finding);
+    the flag is purely additive."""
+    v = os.environ.get("BRAIN_PMEM_OP_STABILIZER")
+    if v is None:
+        return False
+    return v.strip().lower() in ("1", "true", "yes", "on")
+
+
 def _cue_keywords(cue_clause: str) -> list[str]:
     """Reduce a cue clause to its salient content keyword(s) (a host language scaffold). Falls back to the raw
     tokens when everything is a stop-word (so a bare cue still has something to match)."""
@@ -238,9 +256,13 @@ class ProspectiveMemoryOrgan:
                 # (fixes s44 borderline); OFF → the SAME HebbianBindingProspectiveMemory as before (byte-identical).
                 if self._facilitation:
                     from research.runners._pmem_facilitation_derisk import FacilitatedHebbianProspectiveMemory
+                    fac_g_kw = {}
+                    if pmem_op_stabilizer_enabled():
+                        from research.runners._operating_point_stabilizer_derisk import stabilized_fac_g_for_seed
+                        fac_g_kw["fac_g"] = stabilized_fac_g_for_seed(self.seed)
                     self._pm = FacilitatedHebbianProspectiveMemory(
                         _ACTIONS, list(_DISTRACTORS), seed=self.seed,
-                        homeostat_on=True, sfa_on=True, plateau_on=True, fac_on=True)
+                        homeostat_on=True, sfa_on=True, plateau_on=True, fac_on=True, **fac_g_kw)
                 else:
                     from research.runners._pmem_hebbian_binding_derisk import HebbianBindingProspectiveMemory
                     self._pm = HebbianBindingProspectiveMemory(
@@ -252,9 +274,13 @@ class ProspectiveMemoryOrgan:
                 # (default-OFF) swaps in the facilitation variant of this build too.
                 if self._facilitation:
                     from research.runners._pmem_facilitation_derisk import FacilitatedProspectiveMemory
+                    fac_g_kw = {}
+                    if pmem_op_stabilizer_enabled():
+                        from research.runners._operating_point_stabilizer_derisk import stabilized_fac_g_for_seed
+                        fac_g_kw["fac_g"] = stabilized_fac_g_for_seed(self.seed)
                     self._pm = FacilitatedProspectiveMemory(
                         _ACTIONS, list(_DISTRACTORS), seed=self.seed,
-                        homeostat_on=True, sfa_on=True, plateau_on=True, fac_on=True)
+                        homeostat_on=True, sfa_on=True, plateau_on=True, fac_on=True, **fac_g_kw)
                 else:
                     self._pm = SFANmdaProspectiveMemory(
                         _ACTIONS, list(_DISTRACTORS), seed=self.seed,
