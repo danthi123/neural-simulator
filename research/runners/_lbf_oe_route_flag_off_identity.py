@@ -136,8 +136,18 @@ def compare(a_path, b_path, out, a_sha=None, b_sha=None):
             per_raw = [(_canon(x, strip=False) == _canon(y, strip=False)) for x, y in zip(A["turns"], B["turns"])]
             paths = sorted({q for x, y in zip(A["turns"], B["turns"]) for q in _diff_paths(x, y)})
             n_err = sum(1 for t in A["turns"] + B["turns"] if "error" in t)
-            rec = {"verdict": "IDENTICAL" if (all(per) and same_len) else "DIFFERENT",
-                   "verdict_raw_including_wallclock": "IDENTICAL" if (all(per_raw) and same_len) else "DIFFERENT",
+            raw = "IDENTICAL" if (all(per_raw) and same_len) else "DIFFERENT"
+            content = "IDENTICAL" if (all(per) and same_len) else "DIFFERENT"
+            # AMENDMENT 3 (review 2026-09-23): `verdict` IS the PRE-REGISTERED criterion (amendment 2 item 9: exact
+            # compare of every full response body). The wall-clock-stripped comparison was added AFTER the first
+            # compare had failed raw, so it is reported beside it as a POST-HOC content verdict -- never as the
+            # headline. A reader of `verdict` must see the raw FAIL.
+            rec = {"verdict": raw, "verdict_preregistered_raw": raw,
+                   "verdict_content_wallclock_stripped_POSTHOC": content,
+                   "headline": ("%s raw (pre-registered criterion)%s; content %s with wall-clock keys %s stripped "
+                                "(post-hoc exclusion, added after the raw compare was seen)"
+                                % (raw, (" -- FAILED at " + ", ".join(paths)) if raw != "IDENTICAL" else "",
+                                   content, sorted(WALLCLOCK_KEYS))),
                    "wallclock_keys_excluded": sorted(WALLCLOCK_KEYS), "differing_paths_raw": paths,
                    "per_turn_equal": per, "n_turns": len(per), "n_error_turns_total": n_err,
                    "env_set": A["env_set"], "a_has_route_fn": A.get("has_route_fn"),
@@ -173,13 +183,20 @@ def selftest():
     for name, a, b, want in (("key order ignored -> IDENTICAL", "base", "same", "IDENTICAL"),
                              ("changed answer -> DIFFERENT", "base", "diff", "DIFFERENT"),
                              ("incomplete -> UNDEFINED", "base", "inc", "UNDEFINED"),
-                             ("wall-clock-only difference -> IDENTICAL (content)", "clk", "clk2", "IDENTICAL"),
+                             ("wall-clock-only difference -> headline verdict DIFFERENT (pre-registered raw)", "clk",
+                              "clk2", "DIFFERENT"),
                              ("nested content difference beside wall-clock -> DIFFERENT", "clk", "clk3",
                               "DIFFERENT")):
         compare(paths[a], paths[b], o)
         got = json.load(open(o))["verdict"]
         print(("PASS " if got == want else "FAIL ") + name)
         ok = ok and got == want
+    compare(paths["clk"], paths["clk2"], o)
+    r = json.load(open(o))
+    c = (r["verdict_content_wallclock_stripped_POSTHOC"] == "IDENTICAL" and "FAILED" in r["headline"]
+         and "post-hoc" in r["headline"])
+    print(("PASS " if c else "FAIL ") + "wall-clock-only: content IDENTICAL reported beside, headline says raw FAILED")
+    ok = ok and c
     compare(paths["base"], os.path.join(d, "nope.json"), o)
     got = json.load(open(o))["verdict"]
     print(("PASS " if got == "UNDEFINED" else "FAIL ") + "missing dump -> UNDEFINED")

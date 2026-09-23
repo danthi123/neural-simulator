@@ -38,6 +38,16 @@ STATISTIC (AMENDMENT 2, replaces the original within-session permutation p; see 
   randomization p on the D_s (n=6 -> min p = 1/64). GO for a mode iff 6 seeds, all DEFINED, sign-flip p < ALPHA.
   Reported beside it: the count of seeds whose modal reply changed, with its chance base rate.
 
+AMENDMENT 3 (review 2026-09-23) SUPERSEDES the amendment-2 statistic as the GO rule. The amendment-2 D_s is
+  DEGENERATE: each arm is a deterministic function of the seed, so under H0 D_s is exactly 0 and the 1/64 only relabels
+  "the modal changed on 6/6 seeds". Amendment 3 (`--a3-session` / `--a3-score`, see the block above `selftest`): per
+  seed, A3_SESSIONS independent fresh-process sessions per arm, each drawing on its OWN noise stream
+  (`_install_noise_stream`), K = A3_K asks each; session value = mean w(reply)/peak; Delta_s = intact - lesion mean;
+  the null is non-degenerate BY DESIGN and asserted IN DATA (`noise_live`); GO = 6 seeds DEFINED + exact sign test
+  over seeds p < ALPHA + mean Delta_s >= A3_DELTA. Seed 42's amendment-2 rows (intact 39/40 one patient, and the
+  UNIFORM-drive lesion ALSO 39/40 one patient) show the production draw noise was effectively frozen across asks, so
+  the amendment-2 "near-argmax / sharpening" reading is withdrawn (a uniform drive cannot be an argmax of w).
+
 MODES (which production reply path):
     default     -- BRAIN_OPEN_ENDED unset (today's production default turn: the rich/strict path -> chat.gate ->
                    `_generate_hypothesis` -> the spiking draw).
@@ -154,7 +164,40 @@ class _StubFaculty:
         raise RuntimeError("stub Qwen faculty used (%s) -- the probe expects no Qwen call" % name)
 
 
-def _worker(env, seed, k, out_path, rich=True, teach_env=None):
+def _install_noise_stream(noise_seed, F2):
+    """AMENDMENT 3: give the spiking draw its OWN stochastic source for this session.
+
+    Every `_compete` (the WTA kernel whose only randomness is the bank's OU noise, drawn from the backend's GLOBAL RNG)
+    runs with the global RNG swapped to a dedicated per-session stream seeded by `noise_seed`, then swapped back. So:
+      * sessions that differ only in `noise_seed` differ only in the OU-noise realization of the draw;
+      * the rest of the brain sees the SAME global-RNG trajectory whatever the draw consumes (in production the
+        lesion arm's ~10x more draws also shifted every later global-RNG consumer -- a confound this removes);
+      * the stream is NOT reset between asks (seed 42 under the production global RNG repeated ONE winner for 39 of
+        40 asks in BOTH the intact and the uniform-drive lesion arm -- the draw noise was effectively frozen per ask).
+    Declared INSTRUMENT (host): it chooses which noise realization the spiking bank sees; it computes no draw.
+    numpy backend only (the pool / probe backend); refuses otherwise."""
+    from sim.backend import get_backend, get_random_state, set_random_state
+    import numpy as np
+    if get_backend()[1] != "numpy":
+        raise SystemExit("REFUSED: the per-session noise stream is implemented for SIM_BACKEND=numpy only")
+    stream = {"state": np.random.RandomState(int(noise_seed)).get_state(), "n_competes": 0}
+    _orig = F2.SpikingWTASampler._compete
+
+    def _compete_on_session_stream(self, drive, V):
+        saved = get_random_state()
+        set_random_state(stream["state"])
+        try:
+            return _orig(self, drive, V)
+        finally:
+            stream["state"] = get_random_state()
+            set_random_state(saved)
+            stream["n_competes"] += 1
+
+    F2.SpikingWTASampler._compete = _compete_on_session_stream
+    return stream
+
+
+def _worker(env, seed, k, out_path, rich=True, teach_env=None, noise_seed=None):
     if not os.path.isfile(os.path.join("data", "corpus", "tinystories.txt")):
         # the untracked corpus is absent in a fresh worktree / git archive -> the one-brain XEDGE build fails and the
         # webapp silently degrades to standalone organs (not the production brain). Refuse (2026-09-23).
@@ -226,6 +269,9 @@ def _worker(env, seed, k, out_path, rich=True, teach_env=None):
         if key[0] == ASK_SESSION:
             chat = c
     stored = sorted(set(map(tuple, getattr(chat, "stored_facts", []) or []))) if chat is not None else []
+    # AMENDMENT 3: the ASK phase only runs on the session's own draw-noise stream (the teach phase is untouched, so
+    # every session of a seed learns the same facts from the same world).
+    stream = _install_noise_stream(noise_seed, _F2) if noise_seed is not None else None
     replies = []
     counter["n_sample_calls_teach"] = counter["n_sample_calls"]
     for j in range(int(k)):
@@ -254,7 +300,8 @@ def _worker(env, seed, k, out_path, rich=True, teach_env=None):
     out = {"env": env, "teach_env": teach_env, "seed": int(seed), "k": int(k), "rich": bool(rich), "teach": teach,
            "stored_facts": [list(f) for f in stored], "replies": replies, "draw_counter": counter,
            "likelihood_weight": weights, "t_teach_s": round(t_teach, 1), "t_total_s": round(time.time() - t0, 1),
-           "backend": os.environ.get("SIM_BACKEND")}
+           "backend": os.environ.get("SIM_BACKEND"), "noise_seed": noise_seed,
+           "noise_stream_competes": (stream["n_competes"] if stream is not None else None)}
     os.makedirs(os.path.dirname(os.path.abspath(out_path)), exist_ok=True)
     json.dump(out, open(out_path, "w"), indent=2, default=str)
     print("[oep worker] seed=%s env=%s k=%s draws=%s -> %s (%.0fs)" % (seed, env, k, counter, out_path,
@@ -552,6 +599,317 @@ def aggregate(paths, out, compare_dir=None):
     return rep
 
 
+# ── AMENDMENT 3 (review 2026-09-23): the GO statistic with a REAL null ──────────────────────────────────────────
+# The amendment-2 statistic was DEGENERATE: each arm is a deterministic function of the seed, so under H0 D_s is
+# exactly 0 (not a distribution), the sign-flip p = 1/64 only relabels "the modal changed on 6/6 seeds", and the
+# intact arm sat on one patient 39/40 so "toward likelihood" followed from which patient that was. Amendment 3:
+#   * per seed, M INDEPENDENT fresh-process sessions per arm; each session's draw runs on its own noise stream
+#     (`_install_noise_stream`, seed = `a3_noise_seed`, fixed before any run, independent of every outcome);
+#   * session value v = mean over the K asks of w(reply)/max(w) (ABSTAIN -> 0; w = the host weight vector);
+#   * Delta_s = mean(v | intact sessions) - mean(v | lesion sessions). Under H0 (the lesion does not change the
+#     reply distribution) the 2M sessions of a seed are iid, so Delta_s is SYMMETRIC about 0 with a non-degenerate
+#     distribution (the noise streams vary the reply -- asserted per seed, `noise_live`), P(Delta_s > 0) <= 1/2;
+#   * across the 6 seeds (independent substrates): exact one-sided SIGN TEST on Delta_s > 0 (6/6 -> p = 1/64);
+#   * GO = 6 seeds, all DEFINED, sign-test p < ALPHA, AND mean Delta_s >= A3_DELTA (pre-registered effect floor).
+#   * reported beside, not gating: the per-seed EXACT permutation p over all C(2M, M) label splits, the held-out
+#     (seeds != 42) sign test, per-arm reply histograms and abstain rates.
+A3_SEEDS = (42, 43, 44, 100, 101, 102)
+A3_SESSIONS = 4            # M sessions per arm per seed (C(8,4) = 70 label splits per seed)
+A3_K = 8                   # asks per session (the session is the unit; its asks are averaged, never counted)
+A3_DELTA = 0.10            # effect floor on mean Delta_s, in units of the peak host weight (see the PREREG)
+A3_ARMS = ("intact", "lesion", "intact_rebuild")
+
+
+def a3_noise_seed(seed, arm, j):
+    """Pre-registered, outcome-independent noise-stream seed. intact and lesion streams are DISJOINT; the rebuild
+    re-uses intact session 0's stream (the determinism check must reproduce it exactly)."""
+    off = {"intact": 0, "intact_rebuild": 0, "lesion": 500}[arm]
+    return int(seed) * 1000 + off + (0 if arm == "intact_rebuild" else int(j))
+
+
+def a3_path(out_dir, mode, seed, arm, j):
+    return os.path.join(out_dir, "%s_s%s_%s_n%d.json" % (mode, seed, arm, int(j)))
+
+
+def session_value(payload, w_ref):
+    """One session's value: mean over its asks of w(volunteered patient)/peak; ABSTAIN -> 0; a patient absent from
+    w_ref -> 0. None on any errored reply or no asks (UNDEFINED, never a score of 0)."""
+    reps = (payload or {}).get("replies") or []
+    peak = max([x for x in (w_ref or {}).values() if isinstance(x, (int, float))] or [0.0])
+    if not reps or peak <= 0:
+        return None
+    vals = []
+    for r in reps:
+        o = outcome(r)
+        if o == "ERROR":
+            return None
+        wv = (w_ref or {}).get(o, 0.0) if o != "ABSTAIN" else 0.0
+        vals.append((float(wv) if isinstance(wv, (int, float)) else 0.0) / peak)
+    return sum(vals) / len(vals)
+
+
+def exact_perm_p(a, b):
+    """EXACT one-sided permutation p over every split of the pooled session values into |a| / |b| (no RNG):
+    p = #{splits: mean(x) - mean(y) >= observed} / C(n, |a|). None if either side is empty or has a None."""
+    import itertools
+    if not a or not b or any(v is None for v in list(a) + list(b)):
+        return None
+    pooled = list(a) + list(b)
+    n, na = len(pooled), len(a)
+    obs = sum(a) / na - sum(b) / len(b)
+    ge = tot = 0
+    for idx in itertools.combinations(range(n), na):
+        s = set(idx)
+        x = [pooled[i] for i in idx]
+        y = [pooled[i] for i in range(n) if i not in s]
+        tot += 1
+        if sum(x) / len(x) - sum(y) / len(y) >= obs - 1e-12:
+            ge += 1
+    return ge / float(tot)
+
+
+def sign_test_p(ds):
+    """Exact one-sided sign test over seeds: P(Binomial(n, 1/2) >= #{D > 0}). Valid because, under H0, each seed's
+    Delta is symmetric about 0 (its 2M sessions are iid), so P(D > 0) <= 1/2 independently across seeds. None if
+    any seed is None (UNDEFINED is never a pass)."""
+    from math import comb
+    if not ds or any(d is None for d in ds):
+        return None
+    n = len(ds)
+    k = sum(1 for d in ds if d > 0)
+    return sum(comb(n, j) for j in range(k, n + 1)) / float(2 ** n)
+
+
+def score_seed_a3(intact, lesion, rebuild, m=A3_SESSIONS):
+    """Per-seed record (AMENDMENT 3). intact / lesion: lists of M session payloads; rebuild: one payload."""
+    res = {"verdict": None, "label": None, "reasons": [], "lesioned_edge": LESIONED_EDGE, "m": m}
+    if (rebuild is None or len(intact or []) != m or len(lesion or []) != m
+            or any(x is None for x in list(intact) + list(lesion))):
+        res["verdict"] = "ARM-FAILED"
+        res["reasons"].append("missing session payload(s)")
+        return res
+    outs_i = [[outcome(r) for r in p["replies"]] for p in intact]
+    outs_l = [[outcome(r) for r in p["replies"]] for p in lesion]
+    outs_r = [outcome(r) for r in rebuild["replies"]]
+    res["n_errors"] = sum(o.count("ERROR") for o in outs_i + outs_l + [outs_r])
+    if res["n_errors"]:
+        res["verdict"] = "ARM-FAILED"
+        res["reasons"].append("errored replies")
+        return res
+    res["deterministic"] = (outs_r == outs_i[0] and rebuild.get("stored_facts") == intact[0].get("stored_facts")
+                            and rebuild.get("noise_seed") == intact[0].get("noise_seed"))
+    if not res["deterministic"]:
+        res["verdict"] = "NONDETERMINISTIC"
+        res["reasons"].append("intact_rebuild did not reproduce intact session 0 on the same noise stream")
+        return res
+    w_ref = intact[0].get("likelihood_weight") or {}
+    res["host_weight_vector"] = w_ref
+    res["w_equal_across_sessions"] = all((p.get("likelihood_weight") or {}) == w_ref for p in intact + lesion)
+    res["stored_facts_equal_across_sessions"] = all(p.get("stored_facts") == intact[0].get("stored_facts")
+                                                    for p in intact + lesion)
+    res["noise_seeds"] = {"intact": [p.get("noise_seed") for p in intact],
+                          "lesion": [p.get("noise_seed") for p in lesion]}
+    res["noise_seeds_distinct"] = len(set(res["noise_seeds"]["intact"] + res["noise_seeds"]["lesion"])) == 2 * m
+    res["noise_stream_engaged"] = all((p.get("noise_stream_competes") or 0) > 0 for p in intact + lesion)
+    res["draws_intact"] = [p["draw_counter"]["n_calls"] for p in intact]
+    res["draws_lesion"] = [p["draw_counter"]["n_calls"] for p in lesion]
+    res["ablated_intact"] = [p["draw_counter"]["n_ablated_calls"] for p in intact]
+    res["ablated_lesion"] = [p["draw_counter"]["n_ablated_calls"] for p in lesion]
+    # NON-DEGENERATE NULL, asserted in data: the noise streams must actually vary the reply within an arm
+    res["n_distinct_sessions_intact"] = len({tuple(o) for o in outs_i})
+    res["n_distinct_sessions_lesion"] = len({tuple(o) for o in outs_l})
+    res["noise_live"] = res["n_distinct_sessions_intact"] > 1 or res["n_distinct_sessions_lesion"] > 1
+    res["hist_intact"] = hist([o for s in outs_i for o in s])
+    res["hist_lesion"] = hist([o for s in outs_l for o in s])
+    res["abstain_rate_intact"] = res["hist_intact"].get("ABSTAIN", 0) / float(sum(len(s) for s in outs_i) or 1)
+    res["abstain_rate_lesion"] = res["hist_lesion"].get("ABSTAIN", 0) / float(sum(len(s) for s in outs_l) or 1)
+    vi = [session_value(p, w_ref) for p in intact]
+    vl = [session_value(p, w_ref) for p in lesion]
+    res["v_intact"], res["v_lesion"] = vi, vl
+    checks = [
+        (not res["w_equal_across_sessions"], "host weight vector differs across sessions (no common scale)"),
+        (not res["noise_seeds_distinct"], "noise-stream seeds not distinct across the 2M sessions"),
+        (not res["noise_stream_engaged"], "a session never ran a draw on its noise stream"),
+        (any(d == 0 for d in res["draws_intact"] + res["draws_lesion"]), "the spiking draw was never reached"),
+        (any(a == 0 for a in res["ablated_lesion"]) or any(a != 0 for a in res["ablated_intact"]),
+         "the lesion did not reach the draw (ablated-call count wrong)"),
+        (sum(1 for s in outs_i for o in s if o != "ABSTAIN") == 0, "intact never volunteered (not exercised)"),
+        (any(v is None for v in vi + vl), "a session value is UNDEFINED"),
+        (not res["noise_live"], "noise streams never changed a reply within an arm -> the null is DEGENERATE"),
+    ]
+    for bad, why in checks:
+        if bad:
+            res["reasons"].append(why)
+    if res["reasons"]:
+        res["verdict"] = "UNDEFINED"
+        return res
+    res["verdict"] = "DEFINED"
+    res["delta"] = sum(vi) / m - sum(vl) / m
+    res["perm_p_exact_one_sided"] = exact_perm_p(vi, vl)
+    res["label"] = "TOWARD-LIKELIHOOD" if res["delta"] > 0 else ("AWAY" if res["delta"] < 0 else "NO-DIFFERENCE")
+    return res
+
+
+def aggregate_a3(per_seed, delta_floor=A3_DELTA, n_required=len(A3_SEEDS)):
+    """GO iff exactly n_required seeds, ALL DEFINED, sign-test p < ALPHA, and mean Delta >= delta_floor."""
+    seeds = sorted(per_seed, key=int)
+    defined = [s for s in seeds if (per_seed[s] or {}).get("verdict") == "DEFINED"]
+    ds = [per_seed[s]["delta"] for s in defined]
+    all_defined = len(defined) == len(seeds) == n_required
+    p = sign_test_p(ds) if all_defined else None
+    mean_d = (sum(ds) / len(ds)) if ds else None
+    held = [per_seed[s]["delta"] for s in defined if int(s) != IN_SAMPLE_SEED]
+    p_held = sign_test_p(held) if (all_defined and held) else None
+    go = bool(all_defined and p is not None and p < ALPHA and mean_d is not None and mean_d >= delta_floor)
+    return {"n_seeds": len(seeds), "n_defined": len(defined), "all_defined": all_defined,
+            "per_seed_verdict": {s: (per_seed[s] or {}).get("verdict") for s in seeds},
+            "per_seed_reasons": {s: (per_seed[s] or {}).get("reasons") for s in seeds},
+            "delta": {s: (per_seed[s] or {}).get("delta") for s in seeds},
+            "n_delta_positive": sum(1 for d in ds if d > 0),
+            "p_sign_test": p, "alpha": ALPHA, "mean_delta": mean_d, "delta_floor": delta_floor,
+            "p_sign_test_heldout_excl_seed42": p_held,
+            "GO_heldout_only": bool(all_defined and p_held is not None and p_held < ALPHA and held
+                                    and sum(held) / len(held) >= delta_floor),
+            "perm_p_exact_per_seed_descriptive": {s: (per_seed[s] or {}).get("perm_p_exact_one_sided")
+                                                  for s in seeds},
+            "noise_live": {s: (per_seed[s] or {}).get("noise_live") for s in seeds},
+            "abstain_rate": {s: ((per_seed[s] or {}).get("abstain_rate_intact"),
+                                 (per_seed[s] or {}).get("abstain_rate_lesion")) for s in seeds},
+            "GO": go}
+
+
+def run_a3_session(mode, seed, arm, j, k, out_dir):
+    """ONE amendment-3 session, in THIS process (one full brain). Idempotent: an existing output is kept."""
+    path = a3_path(out_dir, mode, seed, arm, j)
+    if os.path.exists(path) and _load(path) is not None:
+        print("[oep a3] exists, skipping: %s" % path, flush=True)
+        return 0
+    env = dict(MODES[mode])
+    env.update(ARMS[arm])
+    return _worker(env, seed, k, path, rich=True, teach_env=TEACH_ENV.get(mode), noise_seed=a3_noise_seed(seed, arm, j))
+
+
+def score_a3(mode, seeds, out_dir, m=A3_SESSIONS, aggregate_out=None, sha=None):
+    per_seed = {}
+    for s in seeds:
+        intact = [_load(a3_path(out_dir, mode, s, "intact", j)) for j in range(m)]
+        lesion = [_load(a3_path(out_dir, mode, s, "lesion", j)) for j in range(m)]
+        rebuild = _load(a3_path(out_dir, mode, s, "intact_rebuild", 0))
+        sc = score_seed_a3(intact, lesion, rebuild, m=m)
+        per_seed[str(s)] = sc
+        rep = {"runner": "research.runners._lbf_open_ended_production_turn_probe --a3-score",
+               "scorer": "amendment-3 (independent noise-stream sessions; seed = replication unit)", "mode": mode,
+               "seed": int(s), "m": m, "ask": ASK, "teach": TEACH, "lesioned_edge": LESIONED_EDGE,
+               "host_shortcuts": HOST_SHORTCUTS, "score": sc}
+        with open(os.path.join(out_dir, "%s_s%s_a3_verdict.json" % (mode, s)), "w") as fh:
+            json.dump(rep, fh, indent=2, default=str)
+        print("[oep a3] mode=%s seed=%s verdict=%s delta=%s perm_p=%s reasons=%s" % (
+            mode, s, sc["verdict"], sc.get("delta"), sc.get("perm_p_exact_one_sided"), sc.get("reasons")), flush=True)
+    agg = aggregate_a3(per_seed)
+    if aggregate_out:
+        os.makedirs(os.path.dirname(os.path.abspath(aggregate_out)), exist_ok=True)
+        with open(aggregate_out, "w") as fh:
+            json.dump({"runner": "research.runners._lbf_open_ended_production_turn_probe --a3-score",
+                       "scorer": "amendment-3", "mode": mode, "out_dir": out_dir, "code_sha_of_sessions": sha,
+                       "lesioned_edge": LESIONED_EDGE, "host_shortcuts": HOST_SHORTCUTS,
+                       "A3_SESSIONS": m, "A3_K": A3_K, "A3_DELTA": A3_DELTA, "summary": agg}, fh, indent=2, default=str)
+    print(json.dumps(agg, indent=2, default=str))
+    return agg
+
+
+W_S42 = {"beetle": 1.0, "cat": 2.0, "deer": 3.0, "dog": 2.0, "fish": 0.0, "minnow": 1.0, "rabbit": 2.0}
+
+
+def _mk_session(outs, abl, n, noise_seed, competes=None, w=None, facts=None):
+    return {"replies": [{"hypothesis_svo": (["dog", "chase", o] if o != "ABSTAIN" else None)} for o in outs],
+            "draw_counter": {"n_calls": n, "n_ablated_calls": abl}, "stored_facts": facts or [["wolf", "chase", "rabbit"]],
+            "likelihood_weight": dict(w or W_S42), "noise_seed": noise_seed,
+            "noise_stream_competes": n if competes is None else competes}
+
+
+def _mk_seed(seed, intact_outs, lesion_outs, m=A3_SESSIONS):
+    I = [_mk_session(intact_outs[j], 0, 10, a3_noise_seed(seed, "intact", j)) for j in range(m)]
+    L = [_mk_session(lesion_outs[j], 10, 10, a3_noise_seed(seed, "lesion", j)) for j in range(m)]
+    R = _mk_session(intact_outs[0], 0, 10, a3_noise_seed(seed, "intact_rebuild", 0))
+    return I, L, R
+
+
+def selftest_a3(chk):
+    """AMENDMENT-3 checks: each can FAIL, and the null is shown to be REAL (an A/A simulation must not GO)."""
+    import random
+    ok0 = [True]
+
+    def c(name, cond):
+        chk(name, cond)
+        ok0[0] = ok0[0] and bool(cond)
+
+    c("a3: rebuild re-uses intact session 0's stream; intact/lesion streams disjoint",
+      a3_noise_seed(42, "intact_rebuild", 3) == a3_noise_seed(42, "intact", 0)
+      and not ({a3_noise_seed(42, "intact", j) for j in range(8)} & {a3_noise_seed(42, "lesion", j) for j in range(8)}))
+    c("a3: session value = mean w/peak, ABSTAIN -> 0", abs(session_value(
+        _mk_session(["deer", "ABSTAIN", "rabbit", "beetle"], 0, 4, 1), W_S42) - (1 + 0 + 2 / 3. + 1 / 3.) / 4) < 1e-12)
+    c("a3: an errored reply -> session value None (UNDEFINED)", session_value({"replies": [{"error": "x"}]}, W_S42) is None)
+    c("a3: exact perm p, perfectly separated 2 vs 2 -> 1/6", abs(exact_perm_p([1, 1], [0, 0]) - 1 / 6.) < 1e-12)
+    c("a3: exact perm p, identical values -> 1.0", exact_perm_p([0.5] * 4, [0.5] * 4) == 1.0)
+    c("a3: sign test 6/6 -> 1/64; 5/6 -> 7/64; a zero is not positive",
+      abs(sign_test_p([1] * 6) - 1 / 64.) < 1e-12 and abs(sign_test_p([1] * 5 + [-1]) - 7 / 64.) < 1e-12
+      and abs(sign_test_p([1] * 5 + [0]) - 7 / 64.) < 1e-12)
+    c("a3: sign test with an UNDEFINED seed -> None", sign_test_p([1, None]) is None)
+    good_i = [["deer"] * 6 + ["rabbit", "cat"], ["deer"] * 7 + ["rabbit"], ["deer"] * 5 + ["cat"] * 3, ["deer"] * 8]
+    good_l = [["beetle", "minnow", "cat", "deer", "ABSTAIN", "rabbit", "beetle", "minnow"],
+              ["minnow"] * 4 + ["cat"] * 4, ["beetle", "ABSTAIN"] * 4, ["rabbit", "minnow"] * 4]
+    s1 = score_seed_a3(*_mk_seed(43, good_i, good_l))
+    c("a3: likelihood-tracking intact vs uniform-ish lesion -> DEFINED, delta > 0, perm p = 1/70",
+      s1["verdict"] == "DEFINED" and s1["delta"] > 0 and abs(s1["perm_p_exact_one_sided"] - 1 / 70.) < 1e-12)
+    same = [["deer"] * 8] * A3_SESSIONS
+    s2 = score_seed_a3(*_mk_seed(43, same, same))
+    c("a3: every session identical in both arms -> UNDEFINED (degenerate null), never a pass",
+      s2["verdict"] == "UNDEFINED" and any("DEGENERATE" in r for r in s2["reasons"]))
+    s3 = score_seed_a3(*_mk_seed(43, same, [["beetle"] * 8] * A3_SESSIONS))
+    c("a3: arms constant but different (noise inert: the old deterministic-arm case) -> UNDEFINED",
+      s3["verdict"] == "UNDEFINED")
+    I, L, R = _mk_seed(43, good_i, good_l)
+    R = _mk_session(["rabbit"] * 8, 0, 10, a3_noise_seed(43, "intact_rebuild", 0))
+    c("a3: rebuild does not reproduce intact session 0 -> NONDETERMINISTIC",
+      score_seed_a3(I, L, R)["verdict"] == "NONDETERMINISTIC")
+    I, L, R = _mk_seed(43, good_i, good_l)
+    L[1] = _mk_session(good_l[1], 0, 10, a3_noise_seed(43, "lesion", 1))
+    c("a3: a lesion session whose draw was not ablated -> UNDEFINED", score_seed_a3(I, L, R)["verdict"] == "UNDEFINED")
+    I, L, R = _mk_seed(43, good_i, good_l)
+    L[2] = _mk_session(good_l[2], 10, 10, a3_noise_seed(43, "lesion", 2), competes=0)
+    c("a3: a session that never drew on its noise stream -> UNDEFINED",
+      score_seed_a3(I, L, R)["verdict"] == "UNDEFINED")
+    I, L, R = _mk_seed(43, good_i, good_l)
+    L[0] = _mk_session(good_l[0], 10, 10, a3_noise_seed(43, "lesion", 0), w=dict(W_S42, deer=9.0))
+    c("a3: host weight vector differs across sessions -> UNDEFINED", score_seed_a3(I, L, R)["verdict"] == "UNDEFINED")
+    c("a3: missing session -> ARM-FAILED", score_seed_a3(I[:3], L, R)["verdict"] == "ARM-FAILED")
+    c("a3: reversed arms -> DEFINED, AWAY", score_seed_a3(*_mk_seed(43, good_l, good_i))["label"] == "AWAY")
+    rec = lambda d: {"verdict": "DEFINED", "delta": d}
+    six = {str(s): rec(0.3) for s in A3_SEEDS}
+    c("a3 aggregate: 6/6 positive, mean >= floor -> GO (p = 1/64)",
+      aggregate_a3(six)["GO"] and abs(aggregate_a3(six)["p_sign_test"] - 1 / 64.) < 1e-12)
+    c("a3 aggregate: 5 positive + 1 negative -> no GO (p = 7/64)",
+      not aggregate_a3(dict(six, **{"44": rec(-0.1)}))["GO"])
+    c("a3 aggregate: one UNDEFINED seed -> no GO",
+      not aggregate_a3(dict(six, **{"44": {"verdict": "UNDEFINED"}}))["GO"])
+    c("a3 aggregate: only 5 seeds -> no GO", not aggregate_a3({k: v for k, v in six.items() if k != "102"})["GO"])
+    c("a3 aggregate: 6/6 positive but mean below the effect floor -> no GO",
+      not aggregate_a3({str(s): rec(0.05) for s in A3_SEEDS})["GO"])
+    # THE NULL IS REAL: an A/A world (both arms iid from the SAME session-value distribution, the noise varying the
+    # value) must GO at most at the nominal rate. 4000 simulated 6-seed experiments, seeded.
+    rng = random.Random(20260923)
+    n_go = 0
+    for _ in range(4000):
+        per = {}
+        for s in A3_SEEDS:
+            vals = [rng.choice([1 / 3., 2 / 3., 2 / 3., 1.0, 0.0]) for _ in range(2 * A3_SESSIONS)]
+            d = sum(vals[:A3_SESSIONS]) / A3_SESSIONS - sum(vals[A3_SESSIONS:]) / A3_SESSIONS
+            per[str(s)] = rec(d)
+        n_go += aggregate_a3(per)["GO"]
+    c("a3 aggregate: A/A null world GOes at <= alpha (%d/4000)" % n_go, n_go / 4000. <= ALPHA)
+    return ok0[0]
+
+
 def selftest():
     """Pure checks -- no brain build. Each check must be able to FAIL."""
     ok = True
@@ -619,6 +977,7 @@ def selftest():
     chk("amendment 2: oe_routed_taught flagged NOT independent", "oe_routed_taught" in NOT_INDEPENDENT)
     chk("amendment 1: original modes carry NO teach override",
         all(m not in TEACH_ENV for m in ("default", "oe_unfixed", "oe_routed")))
+    ok = selftest_a3(chk) and ok
     print("SELFTEST", "PASS" if ok else "FAIL")
     return 0 if ok else 1
 
@@ -643,9 +1002,30 @@ def main(argv=None):
     ap.add_argument("--parallel", type=int, default=1, help="run up to N seeds concurrently (each spawns its workers)")
     ap.add_argument("--aggregate-out", default=None, help="after the seeds finish, aggregate this mode's verdicts here")
     ap.add_argument("--selftest", action="store_true")
+    # AMENDMENT 3 (the design with a real null): one session per invocation (pool job), then --a3-score locally
+    ap.add_argument("--a3-session", action="store_true",
+                    help="run ONE amendment-3 session in this process: --mode --seed --arm --session [--k --out-dir]")
+    ap.add_argument("--arm", default=None, choices=sorted(A3_ARMS))
+    ap.add_argument("--session", type=int, default=0, help="session index j (0..A3_SESSIONS-1)")
+    ap.add_argument("--a3-score", action="store_true", help="score amendment-3 sessions in --out-dir for --seeds")
+    ap.add_argument("--code-sha", default=None, help="commit the sessions ran at (recorded in the aggregate)")
     a = ap.parse_args(argv)
     if a.selftest:
         return selftest()
+    if a.a3_session:
+        if a.arm is None or not (0 <= a.session < A3_SESSIONS) or (a.arm == "intact_rebuild" and a.session != 0):
+            ap.error("--a3-session needs --arm and a --session in [0, %d) (the rebuild is session 0 only)"
+                     % A3_SESSIONS)
+        out_dir = a.out_dir or "research/findings/raw/_load_bearing/_oe_production_turn/a3/%s" % a.mode
+        k = a.k if a.k != 40 else A3_K
+        if k != A3_K:
+            ap.error("amendment 3 fixes K = %d asks per session" % A3_K)
+        return run_a3_session(a.mode, a.seed, a.arm, a.session, k, out_dir)
+    if a.a3_score:
+        seeds = [int(s) for s in a.seeds.split(",")] if a.seeds else list(A3_SEEDS)
+        out_dir = a.out_dir or "research/findings/raw/_load_bearing/_oe_production_turn/a3/%s" % a.mode
+        score_a3(a.mode, seeds, out_dir, aggregate_out=a.aggregate_out, sha=a.code_sha)
+        return 0
     if a.worker:
         return _worker(json.loads(a.env), a.seed, a.k, a.out, rich=not a.single_fact,
                        teach_env=json.loads(a.teach_env))
