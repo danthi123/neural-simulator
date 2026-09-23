@@ -53,7 +53,8 @@ builds_on:
     (same branch)
   - re-review of that branch (verdict: fix-required; prior_issues_resolved: false -- 5 issues, honored below,
     unchanged from the prior version of this finding)
-  - the prior (INCOMPLETE) version of this finding, which read S1/S3a/S3b/S4/S5/S7/S8 from the committed
+  - research/findings/2026-09-23-cpu-lane-harvest-language-lexicon-referent-v2-S2-pending.md (the prior
+    INCOMPLETE finding, now `status: superseded`), which read S1/S3a/S3b/S4/S5/S7/S8 from the committed
     `main_s*.json` artifacts before S2 had landed
 next_command: "none -- scored. To re-derive: check out research/language-lane-next HEAD 87bf35d1a into a
   scratch worktree (or point PYTHONPATH at it) and run: SIM_BACKEND=numpy python -m
@@ -114,7 +115,8 @@ above the 99th percentile of >= 1000 seed-label permutations ... on >= 5 of 6 se
 replica's balanced accuracy is identical across every permutation batch on every seed
 (`true_bacc_all_batches_identical`), the integrity smoke the scorer checks alongside S2 -- **passes on all
 6**. The true-label circuit's balanced accuracy sits above essentially the entire null distribution generated
-by retraining the same circuit from `W_INIT` on 40 independently-permuted label sets per seed: the learned
+by retraining the same circuit from `W_INIT` on 1000 independently-permuted label sets per seed (25 batches of
+40 permutations; each batch retrains `replicas=41` circuits, the 41st being the true-label replica): the learned
 FR->category synapses are not fitting noise.
 
 ## S1, S3a, S3b, S4, S5 and the competition-lesion readouts, read directly from `main_s{...}.json`
@@ -130,7 +132,7 @@ FR->category synapses are not fitting noise.
 | 101 | 0.8133 | 0.1184 | 0.6948 | 0.5664 | 0.2657 | 0.9731 | 0.7966 | 0.8341 |
 | 102 | 0.7939 | 0.1619 | 0.6320 | 0.5254 | 0.3232 | 0.9745 | 0.7839 | 0.8610 |
 | **mean** | **0.7904** | **0.1822** | **0.6081** | **0.4865** | min **0.2594** | min **0.9731** | **0.7718** | **0.8358** |
-| gate | mean≥0.75, min≥0.70 | mean≤0.55, **min drop≥0.20** | (this is the gated column) | ≤0.60 | every seed ≥0.25 | every seed ≥0.50 | (not gated) | (not gated) |
+| gate | mean≥0.75, min≥0.70 | mean≤0.55, **min drop≥0.20** | (this is the gated column) | ≤0.60 | every seed ≥0.25 | mean ≥0.50 (pre-registered on the mean; min 0.9731 also clears) | (not gated) | (not gated) |
 | result | **PASS** (min 0.7566) | **PASS** (lesioned mean 0.1822 ≤ 0.55) | **PASS on the gated quantity: min drop = 0.4561** (seed 42), well above the 0.20 bar — the mean drop of 0.6081 shown above is NOT what S3a gates on and is reported here only as descriptive context | **PASS** | **PASS** (narrowly, 0.2594) | **PASS** | see below | see below |
 
 S1, S3a, S3b, S5 pass cleanly on independent re-computation from the raw per-seed fields; **the S3a pass is
@@ -233,7 +235,9 @@ worth tracking if this organ is revisited.
 full-rebuild determinism, afferent-zero abstain, hand-table baseline, null true-replica stability) pass** on
 independent re-computation by the runner's own pre-registered `--score` entrypoint, run on this branch and
 committed as `research/findings/raw/_lexicon_spiking_referent/verdict.json`
-(`{"verdict": "GO", "complete_6seed": true, ...}`). This closes the gap the prior version of this finding left
+(`{"verdict": "GO", "complete_6seed": true, ...}`). Note: `verdict.json`'s `mechanism` field is `score()`'s fixed,
+pre-correction label ("coupled spiking WTA ... decides"); it is NOT this finding's description -- the competition
+is not decision-bearing (see the mechanism frontmatter and correction 1). This closes the gap the prior version of this finding left
 open: S2 (the permutation null) has landed for all 6 seeds and clears the 99th-percentile bar on 6 of 6
 (gate: >= 5 of 6). **Per `docs/TERMS.md` ("GO" = the gate's own verdict is positive), this v2 de-risk is a
 GO** — once the mechanism is correctly described (feedforward-Hebbian decision, host comparator read-out,
