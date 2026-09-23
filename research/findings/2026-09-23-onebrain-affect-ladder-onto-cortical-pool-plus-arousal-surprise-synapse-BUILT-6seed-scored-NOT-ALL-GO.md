@@ -1,6 +1,6 @@
 ---
 type: finding
-status: partial
+status: no-go
 date: 2026-09-23
 lane: one-brain/migration (charter D3)
 mechanism: the Gate-B affect ladder (the production affect organ) moved onto the shared cortical pool as a 12th organ,
@@ -18,24 +18,32 @@ artifacts:
   - research/findings/raw/_onebrain_affect_pool/verify_M_seed102.json
   - research/findings/raw/_onebrain_affect_pool/xv2/verify_X_seed42.json
   - research/findings/raw/_onebrain_affect_pool/xv2/verify_X_seed43.json
+  - research/findings/raw/_onebrain_affect_pool/xv2/verify_X_seed44.json
+  - research/findings/raw/_onebrain_affect_pool/xv2/verify_X_seed100.json
+  - research/findings/raw/_onebrain_affect_pool/xv2/verify_X_seed101.json
+  - research/findings/raw/_onebrain_affect_pool/xv2/verify_X_seed102.json
 builds_on:
   - research/findings/2026-09-17-onebrain-wave3-organ-merge-ALL-11-organs-one-pool-GO.md
   - research/findings/2026-08-13-per-region-ou-wiring-affect-GO.md
   - research/findings/2026-09-02-crossedge-arousal-surprise-derisk-PARTIAL-smoke-go.md
 ---
 
-# D3: the affect organ onto the shared cortical pool, with an arousal-to-surprise synapse. Built; ARM M scored 6/6 seeds, ARM X scored 2/6 seeds; SCORED NOT ALL-GO
+# D3: the affect organ onto the shared cortical pool, with an arousal-to-surprise synapse. Built; ARM M scored 6/6 seeds, ARM X scored 6/6 seeds; FINAL SCORED VERDICT: NOT ALL-GO, 3/6 gate seeds GO
 
-**Status: PARTIAL — SCORED, NOT ALL-GO (updated 2026-09-23, round-6 re-review; the "1-seed smoke, gate staged"
-wording below is stale and superseded by this line).** Both arms have moved past the 1-seed smoke: ARM M
-(answer-preservation) has landed and been scored on all 6 gate seeds — 5/6 pass M1-M7, seed 102 fails M3 (its
-graded tone level differs from the standalone production ladder). ARM X (the v2 production-operating-point
-instrument) has landed and been scored on 2 of 6 gate seeds committed to this branch, at revision `c6fdf7be7`: seed
-43 passes, seed 42 fails X1 (only 1 newly-flagged flip at S*, needs >= 2). Running the pre-registered `--aggregate`
-command over exactly the files landed on this branch gives `ALL-GO: False`, with only seed 43 fully GO across M+X
-(see the GO gate table and the "Correction" notes below for the full per-seed breakdown and for what artifacts
-exist where). Everything here is DEFAULT-OFF. It is not wired into production by default, and no default was
-flipped.
+**Status: NO-GO — FINAL SCORED VERDICT (updated 2026-09-23, round-7 re-review; both the "1-seed smoke, gate
+staged" wording AND the previous round's "2 of 6 arm-X seeds landed / mid-harvest, not a final verdict" wording
+below are stale and superseded by this line -- the filename above previously still said "6seed-staged", which was
+also stale; it is renamed with this fix).** Both arms are fully landed and scored on all 6 gate seeds. ARM M
+(answer-preservation) — 5/6 pass M1-M7, seed 102 fails M3 (its graded tone level differs from the standalone
+production ladder). ARM X (the v2 production-operating-point instrument, revision `c6fdf7be7`, all 6 seeds
+committed to this branch) — X1 passes on 4/6 seeds (43: 5 flips, 44: 2, 101: 4, 102: 2 of 8) and fails on 2/6
+(42 and 100: only 1 newly-flagged flip at S*, need >= 2); seed 102 is nonetheless not a GO seed because it fails M3.
+The 3/6 figure below is the count of seeds that are fully GO, not the X1 count. Running the pre-registered `--aggregate` command over the complete, 6-seed-per-arm file set
+(re-run 2026-09-23 in this fix round; per-seed table below) gives `ALL-GO: False`, **3/6 gate seeds fully GO (43,
+44, 101)** — this is the final scored verdict over the pre-registered gate, not a mid-harvest read. The two GO
+seeds beyond 43 sit at a thin margin: 44 and 102 (if 102 were not already disqualified by M3) both read exactly
+2/8 flips at S*, the pre-registered minimum, with no slack. Everything here is DEFAULT-OFF. It is not wired into
+production by default, and no default was flipped.
 
 **Fix round (2026-09-23, after the adversarial review of `7b46d761e`).** Four corrections, detailed in the section of
 that name below: the "gain-like, not a DC bias" claim is withdrawn; `XEDGE_W` = 0.05 is a hand-set constant, not a
@@ -260,34 +268,44 @@ ARM-M read opens and closes its own `local_ou()` context with nothing else touch
 **Conclusion: the ARM-M verdicts recorded in the six files above are NOT affected by `0f1f35ff1`**, but the
 parenthetical's literal wording was still false, and is corrected here rather than repeated.
 
-The v2 ARM X has landed and been committed to this branch on 2 of 6 gate seeds so far, at revision `c6fdf7be7`:
-`verify_X_seed42.json`, `verify_X_seed43.json` (under `research/findings/raw/_onebrain_affect_pool/xv2/`). Seeds 44,
-100, 101 and 102 have no arm-X file committed to this branch/finding yet. (As of this re-review, the primary
-checkout's local, uncommitted `research/findings/raw/_onebrain_affect_pool/xv2/` additionally holds
-`verify_X_seed44.json`, `verify_X_seed100.json`, `verify_X_seed101.json` and `verify_X_seed102.json`, provenance-tagged
-at the same revision `c6fdf7be7` — an in-progress mini-PC pool harvest. They are not part of this branch's history,
-are not scored below, and no verdict is claimed for them here; landing and scoring them is the natural next step,
-not done in this fix round.) `aggregate` ignores arm-X checks from any record without the v2 `x_instrument` tag. It
-re-scores records that carry the tag with gate v3 (`score_x_arm`).
+**Correction 3 (round-7 re-review, 2026-09-23): the previous "2 of 6 landed / mid-harvest / not a final verdict"
+framing directly below was FALSE at the time it was committed (`21225228c`, 18:04:46 EDT).** All six v2 ARM-X
+files (revision `c6fdf7be7`) had already been harvested to the primary checkout's local disk well before that
+commit -- by local filesystem birth time: seed 43 by 16:55:32, seed 42 by 17:11:06, seeds 44 and 101 by 17:42:03,
+and seeds 100 and 102 by 17:57:59, all EDT, all more than 6 minutes before the 18:04:46 commit. (Using local
+birth time rather than the files' preserved-from-remote mtime, per the lesson from a sibling lane's round-7 review
+that mtime can be mistaken for local arrival time.) The doc's own two paragraphs above already admitted seeds
+44/100/101/102 existed uncommitted in the primary checkout, which directly contradicted the "4 ... still
+outstanding" and "mid-harvest, not a final verdict" language that followed -- both are withdrawn here. All six
+files are now committed to this branch/finding, at `research/findings/raw/_onebrain_affect_pool/xv2/verify_X_seed{42,43,44,100,101,102}.json`
+(+ `.prov.json` sidecars, each carrying `git_sha=c6fdf7be7673b264316888615be64883f23f48cf`, `git_dirty=false`,
+`source_kind=git_archive`). `c6fdf7be7` remains an ancestor of this branch's HEAD with the scored battery
+functions AST-identical since (pinned by
+`tests/test_onebrain_affect_pool.py::test_x_instrument_code_unchanged_since_the_staged_v2_revision`; the three
+commits between `c6fdf7be7` and HEAD touch only `aggregate`'s scoring/counting and doc/path text, not the
+measurement). `aggregate` ignores arm-X checks from any record without the v2 `x_instrument` tag and re-scores
+records that carry the tag with gate v3 (`score_x_arm`).
 
 Running the pre-registered `--aggregate` command above (gate `v3-single-count-X1-X2-as-I8-attribution-2026-09-23`,
-after the fix-round-4 scorer repair) over exactly those files gives, per seed:
+after the fix-round-4 scorer repair) over the complete, committed 6-seeds-per-arm file set gives, per seed:
 
-| seed | ARM M | ARM X | GO | why not |
+| seed | ARM M | ARM X (X1 a=+1 flips @ S*, need >= 2) | GO | why not |
 |---|---|---|---|---|
-| 42 | pass (M1-M7) | landed, fails | False | `X1_functional_verdict_flip_at_marginal_strength`: only 1 newly-flagged flip at S* (need >= 2) |
-| 43 | pass (M1-M7) | landed, passes | **True** | — |
-| 44 | pass (M1-M7) | not landed | False | missing X0, X1, I1-I8 |
-| 100 | pass (M1-M7) | not landed | False | missing X0, X1, I1-I8 |
-| 101 | pass (M1-M7) | not landed | False | missing X0, X1, I1-I8 |
-| 102 | **fails** M3 | not landed | False | `M3_affect_tone_levels_equal_standalone`; also missing X0, X1, I1-I8 |
+| 42 | pass (M1-M7) | fails (1 flip) | False | `X1_functional_verdict_flip_at_marginal_strength`: only 1 newly-flagged flip at S* |
+| 43 | pass (M1-M7) | passes (5 flips) | **True** | — |
+| 44 | pass (M1-M7) | passes (2 flips, exactly the minimum) | **True** | — |
+| 100 | pass (M1-M7) | fails (1 flip) | False | `X1_functional_verdict_flip_at_marginal_strength`: only 1 newly-flagged flip at S* |
+| 101 | pass (M1-M7) | passes (4 flips) | **True** | — |
+| 102 | **fails** M3 | passes X1 (2 flips, exactly the minimum) but the seed is already disqualified by M3 | False | `M3_affect_tone_levels_equal_standalone` |
 
-`ALL-GO (6/6 GATE seeds only, every M1-M7 + X0-X1 + I1-I8): False` — 1/6 gate seeds (43) fully GO. GO needs every
-one of M1-M7, X0-X1 and I1-I8 to hold on all 6 seeds; a missing arm counts as not passed. This is a genuine
-mid-harvest read, not a final verdict: 4 of 6 arm-X jobs are still outstanding on the mini-PC pool, and seed 102's
-M3 failure (the graded tone level differs from the standalone production ladder on that seed) is the first actual
-ARM-M counterexample to the "M is unchanged and still part of GO" framing above — noted here, not yet triaged.
-Only X1 is evidence for the effect, and it is one test per seed. If X1 keeps failing once all 6 land, the next
-methods are:
+`ALL-GO (6/6 GATE seeds only, every M1-M7 + X0-X1 + I1-I8): False` — **3/6 gate seeds (43, 44, 101) fully GO. This
+is the final scored verdict over the complete, pre-registered, 6-seed-per-arm gate — not a mid-harvest read; no
+seed remains to land.** GO needs every one of M1-M7, X0-X1 and I1-I8 to hold; X1 fails outright on 2/6 seeds (42,
+100). Of the two fully-GO seeds beyond 43, seed 44 sits at the pre-registered minimum with no slack (exactly 2/8
+flips) while seed 101 has 4/8; seed 102 also reads exactly 2/8 on X1 but is disqualified by its M3 failure, which is the first actual
+ARM-M counterexample to the "M is unchanged and still part of GO" framing above). Only X1 is evidence for the
+effect, and it is one test per seed, replicated only across the 6 seeds -- of which 2/6 fail it outright and the
+passing margin on the rest is thin. The gate's own verdict is NOT ALL-GO; the next methods, should this mechanism
+be revisited, are:
 - a weight derived from the seed-7 diagnostic calibration (`calv2/`), committed before any gate re-run;
 - graded assertion evidence, so that the production strength is not saturated.
