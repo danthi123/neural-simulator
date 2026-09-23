@@ -1,0 +1,19 @@
+{
+  "backend": "cupy",
+  "sim_backend": "cupy",
+  "device": "cuda:0 (RTX 3090)",
+  "provenance_exempt": "derived byte-identity comparison: per-seed formed-weight sha256 measured by byte_identical_all.py {branch,head} (SIM_BACKEND=cupy, fresh process per module), transcribed and compared here; not a single-runner artifact",
+  "test": "byte-identical OFF: EpisodicDapMemory.store with BRAIN_EPISODIC_STORE_VERIFY unset (default) vs the pre-fix HEAD module (7bebcd394), fresh process per module, SIM_BACKEND=cupy, hash of the formed within-slot weights (round 4) + recall record",
+  "measured_by": "scratchpad/byte_identical_all.py branch|head",
+  "per_seed": [
+    {"seed": 42,  "branch_w_hash": "ac06ef315935d39e", "head_w_hash": "ac06ef315935d39e", "match": true, "n_within": 265, "in_memory": true, "cue": 0.9167, "size": 23},
+    {"seed": 43,  "branch_w_hash": "e44534e1503f8e3c", "head_w_hash": "e44534e1503f8e3c", "match": true, "n_within": 143, "in_memory": true, "cue": 0.8889, "size": 17},
+    {"seed": 44,  "branch_w_hash": "dc5558f55d4f2cd8", "head_w_hash": "dc5558f55d4f2cd8", "match": true, "n_within": 122, "in_memory": true, "cue": 0.875, "size": 16},
+    {"seed": 100, "branch_w_hash": "e9d327bcae4b6ed6", "head_w_hash": "e9d327bcae4b6ed6", "match": true, "n_within": 217, "in_memory": true, "cue": 0.7273, "size": 21},
+    {"seed": 101, "branch_w_hash": "a5817a27f2a4f8e9", "head_w_hash": "a5817a27f2a4f8e9", "match": true, "n_within": 233, "in_memory": true, "cue": 1.0, "size": 21},
+    {"seed": 102, "branch_w_hash": "eadc0addc7968d3a", "head_w_hash": "eadc0addc7968d3a", "match": true, "n_within": 189, "in_memory": true, "cue": 0.9, "size": 20}
+  ],
+  "n_seeds": 6,
+  "n_match": 6,
+  "all_match": true
+}
