@@ -1,4 +1,12 @@
-"""LEXICON — a corpus-LEARNED, spiking-realized open-vocabulary REFERENT (noun-category) detector (2026-09-23).
+"""LEXICON v1 — a corpus-LEARNED open-vocabulary REFERENT (noun-category) SCORE, host-computed, spike-RELAYED (2026-09-23).
+
+⛔ RELABELLED 2026-09-23 after adversarial review (see `_lexicon_learned_referent_derisk.py` AMENDMENT A1): the
+"two-pool WTA" below is a RELAY, not a winner-take-all. The pools of `_gap3_spiking_feature_compat_derisk._build`
+are uncoupled (internal_density 0, one weight-0 pathway) and `classify()` drives exactly one of them with a fixed
+current chosen by `np.sign(host label-spread score)`. The category is computed by host label-spreading; the spikes
+only carry its sign. The SPIKING decision (coupled WTA, graded drive through Hebbian-learned frame->category
+synapses) is v2: `research/runners/lexicon_spiking_frame_category.py`, which is what the production flag now uses.
+The seed curriculum is 38 hand nouns (not "40" as first written) + 37 non-nouns.
 
 WHY (language lane E, lexicon): the D6 multi-referent working-memory organ (`d6_multiref_wm_production_organ.py`)
 decides WHICH tokens of an utterance are discourse referents with a hand-typed 48-noun table (`_REFERENT_NOUNS`,
@@ -20,11 +28,10 @@ that mechanism, not a POS tagger:
      obvious verbs/adjectives (-1). The hand table becomes the initial-education SEED, not the SCOPE — every other
      word's category is inferred from real English usage (TinyStories), never labelled.
 
-SPIKING REALIZATION (same honest split the learned-animacy lexicon declares): the per-word continuous category score
-and its sign are the offline label-propagation scaffold. The DECISION "is this token a referent?" is read off two
-competing spiking pools on a real `SimulationBridge` (the gap#3-A1 two-pool coincidence bridge, 6-seed GO,
-`_gap3_spiking_feature_compat_derisk._build`): the sign drives ONE pool (REF = pool A, NON-REF = pool B) with a
-fixed current, the pools run `steps` ticks, and the winner by `cp_firing_states` rate is the answer. A word off
+SPIKE RELAY (NOT a spiking decision — see the relabel above): the per-word continuous category score and its sign
+are the offline label-propagation scaffold, and the sign IS the decision. It is relayed through two UNCOUPLED pools
+on a real `SimulationBridge` (`_gap3_spiking_feature_compat_derisk._build`): the sign drives ONE pool (REF = pool A,
+NON-REF = pool B) with a fixed current, the pools run `steps` ticks, and the pool that fired is read back. A word off
 the learned graph gets no drive -> tie -> ABSTAIN (not a referent: the no-confab default). LESION
 (`set_lesion(True)`) zeroes both pools' drive -> every word abstains -> the organ's referent scope reverts exactly
 to the hand table (byte-identical to the flag being off, for every word).
@@ -35,8 +42,8 @@ HONEST RESIDUALS (declared, not hidden):
     next rung.
   * NOUN-hood is learned, not REFERENT-hood: abstract nouns ("time", "idea") and plural/verb-ambiguous forms
     ("watches") can be admitted as referents. Concrete-vs-abstract needs grounding (the multimodal ATL hub).
-  * The seed labels are a small hand list (the initial-education curriculum): 40 nouns from the old table +
-    `NONNOUN_SEEDS` below.
+  * The seed labels are a small hand list (the initial-education curriculum): 38 common nouns from the old table
+    (`HAND_NOUN_SEEDS`; the table's 8 proper names are excluded) + 37 `NONNOUN_SEEDS` below.
   * Corpus is TinyStories (child-directed-like register), capped at `max_chars`.
 
 Run (numpy CPU, ~1 min to build the graph; each spiking read ~25 steps on an 80-neuron bridge):
@@ -131,8 +138,8 @@ def build_topical_graph(tokens, vocab, window=4):
 
 
 class LearnedReferentLexicon:
-    """Open-vocabulary referent (noun-category) detector: offline frame-graph label-spreading SCORE + a spiking
-    two-pool DECISION. See module docstring.
+    """v1 open-vocabulary referent (noun-category) detector: offline frame-graph label-spreading SCORE whose sign is
+    RELAYED through one of two uncoupled spiking pools (host-computed category, spike-relayed). See module docstring.
 
     DEPLOYMENT (`k_seed=None`): seeds with ALL `HAND_NOUN_SEEDS` / `NONNOUN_SEEDS` in the corpus vocab.
     CROSS-VALIDATION (`k_seed=int`): subsamples k seeds per class with rng(`cv_seed`); `label_permute=True` shuffles
@@ -233,7 +240,7 @@ class LearnedReferentLexicon:
         return bool(s > 0)
 
     def classify(self, word: str):
-        """True (referent) / False (non-referent) / None (abstain: off-graph or lesioned). Decision = spiking WTA."""
+        """True (referent) / False (non-referent) / None (abstain: off-graph or lesioned). Decision = the host sign, relayed."""
         key = (word, self._lesioned)
         if key in self._cache:
             return self._cache[key]

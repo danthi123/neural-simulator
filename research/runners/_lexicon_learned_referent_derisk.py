@@ -25,6 +25,29 @@ PRE-REGISTERED GO GATE (written BEFORE any 6-seed result; seeds 42 43 44 100 101
 ATTRIBUTION (reported, not gated): the TOPICAL window-4 PPMI graph (the learned-animacy mechanism, no position) —
 if positional frames carry noun-hood it should be below the frame graph.
 
+AMENDMENT LOG (the thresholds above are UNCHANGED; only the READING of gates and two added reports change)
+  A1 — 2026-09-23T09:45-04:00, after the adversarial review of 5b5ac30a8 (workflow wf_d8f8c85b).
+     SEEN at amendment time: ONLY the builder's single-seed-42 PIPELINE CHECK (reduced counts: 2 organ trials, 40
+     spiking words), as printed in the build report — learned 0.927, shuffled 0.497, freq-only 0.523, topical 0.462,
+     label-permuted 0.805, spiking agreement 1.0, lesion abstain 1.0, deterministic. NOT SEEN: the three 6-seed
+     artifacts lexicon_referent_s{42_43,44_100,101_102}.json (finished on pool41 09:25-09:26, not opened before this
+     amendment was committed).
+     (a) MECHANISM RELABEL: v1 = "host-computed category (label-spreading), spike-RELAYED". The two pools it reads
+         are uncoupled (internal_density 0, one weight-0 pathway) and one pool is driven by the host sign, so v1
+         makes NO spiking-decision claim. The spiking decision is v2 (`lexicon_spiking_frame_category.py`).
+     (b) G4, G5 and G7's hand-baseline + lesion arms are INTEGRITY SMOKES, not evidence: each passes by construction
+         (the relay drives exactly one pool from the host sign; the lesion zeroes that drive; held-out nouns are
+         defined to be off the hand table). They are still computed and must pass (a failure = a broken pipeline).
+     (c) EVIDENCE gates for v1 are G1, G2, G3 (the host label-spreading score) and G7's learned_recover_rate +
+         fp_in_scope_rate (the organ's use of that host score). G3 is reported EXACTLY as pre-registered: the
+         scorer's G3 = learned - max(shuffled, freq-only, label-permuted), gap >= 0.15, pass or fail.
+     (d) G6 as run in the v1 artifacts is PARTIAL (the rebuild reused the precomputed W_frame, so graph
+         construction was never re-run). From this amendment the runner's rebuild re-derives W_frame from the tokens;
+         the v1 artifacts' G6 is reported as "partial (graph not rebuilt)".
+     (e) ADDED, REPORT-ONLY (not a gate, because it is added after the pre-registration): a >=1000-permutation NULL
+         of the seed labels for the label-spreading score (`--v1-null`), reporting where the learned score falls
+         (percentile). A single fixed label shuffle (the pre-registered control) is a noisy control.
+
 Pool-friendly: self-contained (corpus path + committed fixture), numpy CPU, no production brain build.
     SIM_BACKEND=numpy OMP_NUM_THREADS=6 python -u -m research.runners._lexicon_learned_referent_derisk \
         --seeds 42 43 --corpus data/corpus/tinystories.txt \
@@ -181,8 +204,10 @@ def run_seed(seed, tokens, vocab, freq, pos_gt, W_frame, W_topic, n_pairs, spiki
     res["lesion_abstain_rate"] = sum(1 for w in words if les[w] is None) / max(len(words), 1)
     lever("spiking-drive lesion", res["bacc_spiking"], _bacc(les, {w: held[w] for w in words}), required=True)
 
-    # determinism: independent rebuild (new bridge) at the same seed
-    lex2 = LR.LearnedReferentLexicon(W=W_frame, **common)
+    # determinism: independent rebuild at the same seed — the frame graph is RE-DERIVED from the tokens (amendment A1(d));
+    # the v1 artifacts reused W_frame here, so their G6 is partial.
+    lex2 = LR.LearnedReferentLexicon(W=LR.build_frame_graph(tokens, vocab), **common)
+    res["g6_graph_rebuilt"] = True
     det_words = words[:100]
     h1 = hashlib.sha256(json.dumps([[w, lex.scores.get(w), lex.classify(w)] for w in det_words]).encode()).hexdigest()
     h2 = hashlib.sha256(json.dumps([[w, lex2.scores.get(w), lex2.classify(w)] for w in det_words]).encode()).hexdigest()
@@ -236,8 +261,19 @@ def score(paths):
     }
     complete = seeds == SEEDS6
     go = complete and all(ok for _, ok in checks.values())
+    # AMENDMENT A1: which checks are EVIDENCE and which are INTEGRITY SMOKES (pass by construction). Thresholds and
+    # the pass/fail of every check are unchanged; only the label changes.
+    integrity = {"G4_spiking_agree_min", "G4_spiking_bacc_mean", "G5_lesion_abstain_min", "G7_hand_in_scope_mean",
+                 "G7_lesion_in_scope_mean", "G6_deterministic_all"}
+    g6_partial = not all(r.get("g6_graph_rebuilt") for r in R)
     out = {"seeds": seeds, "complete_6seed": complete, "gate": GATE,
-           "checks": {k: {"value": v, "pass": bool(ok)} for k, (v, ok) in checks.items()},
+           "mechanism": "v1 = host-computed category (label-spreading), spike-RELAYED (amendment A1) — not a spiking "
+                        "decision",
+           "evidence_checks": sorted(k for k in checks if k not in integrity),
+           "integrity_smokes": sorted(integrity),
+           "g6_status": "partial (graph not rebuilt in these artifacts)" if g6_partial else "full (graph rebuilt)",
+           "checks": {k: {"value": v, "pass": bool(ok), "kind": "integrity" if k in integrity else "evidence"}
+                      for k, (v, ok) in checks.items()},
            "attribution_topical_bacc_mean": m("bacc_topical"),
            "means": {k: m(k) for k in ("bacc_learned", "bacc_shuffled", "bacc_label_permuted", "bacc_freq_only",
                                        "bacc_topical", "bacc_spiking", "spiking_agree", "lesion_abstain_rate")},
@@ -246,8 +282,40 @@ def score(paths):
     return out
 
 
+def v1_null(seed, tokens, vocab, pos_gt, W_frame, n_perm=1000):
+    """AMENDMENT A1(e), REPORT-ONLY: permutation null of the seed labels for the label-spreading score. The CV seed
+    words are exactly those of the learned arm (k=12/class, rng=seed); only which of them carries +1 vs -1 is
+    permuted, 1000 times (rng = seed*7919 + 17). Returns the learned bacc, the null quantiles, and its percentile."""
+    held = _held_out(vocab, pos_gt)
+    lex = LR.LearnedReferentLexicon(W=W_frame, seed=seed, k_seed=K_SEED, cv_seed=seed, tokens=tokens, vocab=vocab)
+    learned = _bacc({w: lex.offline_sign(w) for w in held}, held)
+    idx = {w: i for i, w in enumerate(vocab)}
+    words = lex.seed_words
+    lab = np.array([1.0 if w in LR.HAND_NOUN_SEEDS else -1.0 for w in words])
+    rng = np.random.default_rng(seed * 7919 + 17)
+    Y = np.zeros((len(vocab), n_perm))
+    for p in range(n_perm):
+        pl = rng.permutation(lab)
+        for w, s in zip(words, pl):
+            Y[idx[w], p] = s
+    F = LR.label_spread(W_frame, Y)                                # label_spread is linear in the seed matrix
+    hw = sorted(held)
+    hi = np.array([idx[w] for w in hw])
+    null = []
+    for p in range(n_perm):
+        f = F[hi, p]
+        pred = {w: (None if abs(v) < 1e-12 else bool(v > 0)) for w, v in zip(hw, f)}
+        null.append(_bacc(pred, held))
+    null = np.array(null)
+    pct = 100.0 * (np.sum(null < learned) + 0.5 * np.sum(null == learned)) / n_perm
+    return {"seed": seed, "learned_bacc": learned, "n_perm": n_perm, "percentile": float(pct),
+            "null_q50": float(np.quantile(null, 0.5)), "null_q95": float(np.quantile(null, 0.95)),
+            "null_q99": float(np.quantile(null, 0.99)), "null_max": float(null.max())}
+
+
 def main():
     ap = argparse.ArgumentParser()
+    ap.add_argument("--v1-null", type=int, default=0, help="AMENDMENT A1(e): n permutations of the seed labels")
     ap.add_argument("--seeds", type=int, nargs="+", default=SEEDS6)
     ap.add_argument("--corpus", default=os.path.join(_REPO, "data", "corpus", "tinystories.txt"))
     ap.add_argument("--max-chars", type=int, default=8_000_000)
@@ -280,6 +348,19 @@ def main():
     W_topic = LR.build_topical_graph(tokens, vocab)
     print(f"[lexicon-referent] tokens={len(tokens)} vocab={len(vocab)} fixture_cover={cover} "
           f"graphs {time.time() - t0:.1f}s", flush=True)
+    if a.v1_null:
+        rows = [v1_null(s, tokens, vocab, pos_gt, W_frame, n_perm=a.v1_null) for s in a.seeds]
+        for r in rows:
+            print(f"[v1-null seed {r['seed']}] learned={r['learned_bacc']:.3f} percentile={r['percentile']:.1f} "
+                  f"null q50={r['null_q50']:.3f} q99={r['null_q99']:.3f} max={r['null_max']:.3f}", flush=True)
+        out = {"runner": "_lexicon_learned_referent_derisk --v1-null", "report_only": True, "amendment": "A1(e)",
+               "per_seed": rows}
+        if a.json:
+            dst = a.json if os.path.isabs(a.json) else os.path.join(_REPO, a.json)
+            os.makedirs(os.path.dirname(dst), exist_ok=True)
+            json.dump(out, open(dst, "w"), indent=1)
+            print("wrote", dst)
+        return
     per = []
     for s in a.seeds:
         r = run_seed(s, tokens, vocab, freq, pos_gt, W_frame, W_topic, a.n_pairs, a.spiking_n)
