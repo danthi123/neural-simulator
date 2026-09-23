@@ -150,6 +150,31 @@ def hebbian_encode(comp, block_idx, fillers, roles, *, freeze=False, eta=ETA, w_
     return w, diag
 
 
+def engram_vocab_enabled() -> bool:
+    """`BRAIN_D6_ENGRAM_VOCAB` in {1,true,yes,on} -> the chat brain's KNOWN-FACT / known-word sets are derived from
+    the engrams that actually REACTIVATE on the substrate, not from the host `kb` bookkeeping list. Default OFF.
+
+    WHY (the 2026-09-23 D6 seed-42 smoke): with the fact WRITE frozen, the recall correctly abstained, but the reply
+    still carried a trace of use -- the taught word ('wolf') read FAMILIAR (curiosity novelty 0.0 vs 0.97 in the
+    shuffled control), was a GROUNDED common-ground topic, and triggered a thread swap -- because `hear()` appends
+    the heard fact to the host `kb` list whether or not any synapse changed, and `ChatBrain._refresh_facts` builds
+    `agents_set`/`actions_set`/`patients_set` (read by curiosity novelty, common ground, the thread swap) from that
+    list. That is a host record doing the brain's remembering. With this flag the sets come from the substrate."""
+    return os.environ.get("BRAIN_D6_ENGRAM_VOCAB", "").strip().lower() in _ON
+
+
+def engram_held(comp, block_idx) -> dict:
+    """Does fact block `block_idx` exist AS AN ENGRAM? Kick its trigger (context) cell, resonate one window, and read
+    the mean |Z| over its D readout cells off the membrane (`OneBrainComposer._measure_block_readout`, a genuine
+    neural read). The block is held iff that activity clears the substrate's own spike floor (`rf_kick`'s floor:
+    a readout below it can never cross -> the engram is physically unrecallable). A frozen (never-potentiated)
+    block reads exactly 0. The threshold is the read's own floor, not a tuned constant."""
+    a = float(comp._measure_block_readout(block_idx))
+    floor = float(getattr(comp.b, "_rf_floor", 1.0e-3))
+    comp._zero_rf_v_u()
+    return {"block": int(block_idx), "readout": a, "floor": floor, "held": bool(a > floor)}
+
+
 def comp_backend_xp(arr):
     """numpy or cupy module matching `arr` (the bridge's device arrays)."""
     try:

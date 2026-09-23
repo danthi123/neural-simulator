@@ -746,7 +746,16 @@ class ChatBrain:
 
     def _refresh_facts(self):
         comp = self.inner.composer
-        self.stored_facts = [(f.get("agent"), f.get("action"), f.get("patient")) for f, _ in comp.kb
+        # D6 (default-OFF, BRAIN_D6_ENGRAM_VOCAB): keep only the facts whose ENGRAM reactivates on the substrate
+        # (research/runners/d6_hebbian_store.engram_held) -- so "which facts/words does the brain hold" is read off
+        # neurons, not off the host kb list that records every heard fact whether or not a synapse changed.
+        _kb = comp.kb
+        if hasattr(comp, "_measure_block_readout"):
+            from research.runners import d6_hebbian_store as _d6h
+            if _d6h.engram_vocab_enabled():
+                self._d6_engram_reads = [_d6h.engram_held(comp, i) for i in range(len(comp.kb))]
+                _kb = [e for e, r in zip(comp.kb, self._d6_engram_reads) if r["held"]]
+        self.stored_facts = [(f.get("agent"), f.get("action"), f.get("patient")) for f, _ in _kb
                              if all(isinstance(f.get(r), str) for r in ("agent", "action", "patient"))]
         self.agents_set = {a for a, _, _ in self.stored_facts}
         self.actions_set = {v for _, v, _ in self.stored_facts}

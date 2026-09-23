@@ -93,6 +93,30 @@ ARMS = {
 }
 SEEDS6 = [42, 43, 44, 100, 101, 102]
 
+# VARIANT "engram" (pre-registered 2026-09-23 AFTER the v1 seed-42 smoke returned NO-GO on C3 and BEFORE any engram-
+# variant result existed). v1 s42: C1,C2,C4-C7 held; C3 failed ONLY on the `answer` text -- the frozen arm abstained
+# exactly like the shuffled control (abstained/recalled_svo identical) but the reply still treated the taught word as
+# FAMILIAR (curiosity novelty 0.0 vs 0.97, grounded common-ground topic, thread swap), because the host `kb` list
+# records every heard fact whether or not a synapse changed and `ChatBrain._refresh_facts` derives the known-word
+# sets from it. The engram variant adds BRAIN_D6_ENGRAM_VOCAB=1 to every HEBBIAN arm (the known-fact/word sets are
+# read off the engrams that reactivate on the substrate). USE_D stays the pure production path (all D6 flags 0), so
+# C7 now also checks that the full D6 configuration is decision-identical to production on teach/d2/probe/xprobe.
+# The GO gate is C1..C7 UNCHANGED (same thresholds, same fields, same 6 seeds). Arm dir: _d6_learn_through_use_engram.
+VARIANTS = {"base": {}, "engram": {"BRAIN_D6_ENGRAM_VOCAB": "1"}}
+
+
+def arms_for(variant):
+    extra = VARIANTS[variant]
+    out = {}
+    for name, (env, teach) in ARMS.items():
+        e = dict(env)
+        if name != "USE_D":
+            e.update(extra)
+        else:
+            e.update({k: "0" for k in extra})               # explicit OFF, never a pop
+        out[name] = (e, teach)
+    return out
+
 
 # ── worker: ONE fresh brain, the session's turns through the real handler, + the taught block's learned |w| ───────
 def _worker(env_json, teach, out_path):
@@ -234,11 +258,11 @@ def _arm_path(arm_dir, seed, name):
     return os.path.join(arm_dir, "s%d_%s.json" % (int(seed), name))
 
 
-def run(seeds, arm_dir, resume=True, score_only=False):
+def run(seeds, arm_dir, resume=True, score_only=False, variant="base"):
     per = {}
     for s in seeds:
         arms = {}
-        for name, (env, teach) in ARMS.items():
+        for name, (env, teach) in arms_for(variant).items():
             path = _arm_path(arm_dir, s, name)
             a = _load_arm(path) if (resume or score_only) and os.path.exists(path) else None
             if a is None and not score_only:
@@ -247,7 +271,7 @@ def run(seeds, arm_dir, resume=True, score_only=False):
             arms[name] = a
         per[str(s)] = score_seed(arms)
         print("[d6] seed %s -> %s" % (s, per[str(s)]["verdict"]), flush=True)
-    return {"runner": "research.runners.d6_learn_through_use_lb", "seeds": list(seeds), "arm_dir": arm_dir,
+    return {"runner": "research.runners.d6_learn_through_use_lb", "variant": variant, "seeds": list(seeds), "arm_dir": arm_dir,
             "per_seed": per, "aggregate": aggregate(per)}
 
 
@@ -301,12 +325,14 @@ def main():
     ap.add_argument("--no-resume", action="store_true")
     ap.add_argument("--score-only", action="store_true")
     ap.add_argument("--selftest", action="store_true")
+    ap.add_argument("--variant", choices=sorted(VARIANTS), default="base",
+                    help="base = the v1 pre-registered arms; engram = + BRAIN_D6_ENGRAM_VOCAB=1 on the Hebbian arms")
     a = ap.parse_args()
     if a.selftest:
         return selftest()
     if a.worker:
         return _worker(a.env, a.teach, a.out)
-    res = run(a.seeds, a.arm_dir, resume=not a.no_resume, score_only=a.score_only)
+    res = run(a.seeds, a.arm_dir, resume=not a.no_resume, score_only=a.score_only, variant=a.variant)
     print(json.dumps(res["aggregate"], indent=2))
     if a.json:
         os.makedirs(os.path.dirname(a.json) or ".", exist_ok=True)

@@ -72,6 +72,16 @@ def test_freeze_blocks_only_the_in_conversation_write(arms):
     assert f.query_patient("dog", "chase") == "cat"               # read path intact
 
 
+def test_engram_held_reads_the_substrate(arms):
+    from research.runners.d6_hebbian_store import engram_held
+    f, h = arms["frozen_conv"], arms["hebb"]
+    r_frozen, r_built = engram_held(f, 1), engram_held(f, 0)
+    assert r_frozen["held"] is False and r_frozen["readout"] == 0.0     # never-potentiated block: no engram
+    assert r_built["held"] is True and r_built["readout"] > 100 * r_built["floor"]
+    assert all(engram_held(h, i)["held"] for i in range(2))
+    assert f.query_patient("dog", "chase") == "cat"                     # the read left recall intact
+
+
 def test_freeze_without_conversation_context_does_not_freeze(arms):
     f = arms["frozen_no_ctx"]
     assert f.query_patient("wolf", "hunt") == "deer"
