@@ -18,9 +18,11 @@ artifacts:
 verification: |
   SIM_BACKEND=numpy OMP_NUM_THREADS=2 python -u -m research.runners._gnw_swap_continuous_recency_derisk --six-seed \
     --json research/findings/raw/_gnw_swap_continuous_recency_6seed.json
-  -> verdict=GO seed_go 6/6, swap 6/6, branch 6/6, carry 6/6, blind 6/6, no_regression 6/6, full_conv 6/6, det 6/6
+  -> verdict=GO seed_go 6/6, swap 6/6, branch 6/6, branch_hash 6/6 (now GATED, correctly timed -- see "2ND FIX
+     ROUND"), carry 6/6, blind 6/6, no_regression 6/6, full_conv 6/6, det 6/6
      [near-threshold dissociation 1/6, carryover_causal 0/6 -- RETRACTED as a mechanism, NOT gating]
-  .venv/bin/python -m pytest tests/test_gnw_swap_continuous_byte_identical.py -q  -> 4 passed
+  .venv/bin/python -m pytest tests/test_gnw_swap_continuous_byte_identical.py -q  -> 4 passed (now pinned to a fixed
+    pre-branch SHA, not a moving merge-base -- see "2ND FIX ROUND")
   Ran LOCALLY (CPU, ~3min total for the six-seed sweep after this fix round's extra arms, a 960-neuron toy substrate
   -- "unit test / tiny smoke", not a full-brain build; tools/mem_ok.sh not required per CLAUDE.md's own compute-lane
   rules). Pool cross-machine reproduction remains STAGED, NOT queued (see "Compute" below) -- an existing tooling
@@ -73,11 +75,48 @@ five are fixed or retracted here, not argued around:
    claim is RETRACTED, not merely downgraded to "not yet reproducible."**
 5. **Terminology.** `branch_identical` compared 4 scalar read-outs and was described as "byte-identical branch
    state" -- `docs/TERMS.md` requires a hash or exact compare for that word. A genuine hash check
-   (`branch_state_hash_match`, full STD-state-array SHA256) was added and is reported per-seed, but is **not
-   gated**: verified directly that it fails under this module's own documented `OMP_NUM_THREADS=2` recipe purely
-   from threaded-BLAS floating-point non-associativity (confirmed bit-identical, 6/6, under `OMP_NUM_THREADS=1`) --
-   gating on it would report a false NO-GO caused by thread count, not by the mechanism. `branch_identical` is now
-   described only as a floating-point-tolerance match, never byte-identical.
+   (`branch_state_hash_match`, full STD-state-array SHA256) was added. `branch_identical` is now described only as
+   a floating-point-tolerance match, never byte-identical. **⛔ This item's "fix" for `branch_state_hash_match` was
+   ITSELF wrong and was corrected in the 2ND FIX ROUND below — see there for what actually happened.**
+
+## 2026-09-23 2ND FIX ROUND (adversarial re-review verdict=fix-required; re-review reproduced the bug)
+
+The re-review found the 1st round's own hash-check fix was broken, plus the byte-identity test's reference becoming
+tautological after merge. Both are now fixed, verified by direct reproduction (not argued around):
+
+1. **`branch_state_hash_match` was computed AFTER the two arms had already diverged, so it could never match.** In
+   `evaluate_seed`, the hash line ran after `recent` (re-propose A on S1) and `fresh` (propose C on S2) had already
+   executed, isolate=False -- i.e. AFTER S1 and S2 had taken different steps. Comparing two states that have already
+   diverged is not a fork control; it is guaranteed to disagree. **The 1st round's stated root cause -- "threaded-
+   BLAS floating-point non-associativity under `OMP_NUM_THREADS=2`, confirmed bit-identical under
+   `OMP_NUM_THREADS=1`" -- was FALSE.** The re-review ran `evaluate_seed(42)` under `OMP/OPENBLAS/MKL_NUM_THREADS=1`
+   and reproduced `branch_state_hash_match=False` there too, at the same (wrong) hash point. **Fixed**: the hash
+   (`branch_hash_1`/`branch_hash_2`) is now taken immediately after `_fresh_branch` returns, BEFORE `recent`/`fresh`
+   run -- the true branch point. Verified directly (both this fix and the reproduction of the original bug, in one
+   script, same session): hashing at the true branch point gives IDENTICAL hashes (`f0b84eb9...`) under BOTH
+   `OMP_NUM_THREADS=1` and `OMP_NUM_THREADS=2` -- matching the re-review's own manual side-experiment hash exactly --
+   while hashing the SAME two builds AFTER they diverge gives two DIFFERENT hashes, regardless of thread count. This
+   also directly refutes the BLAS-thread-count explanation: thread count does not move the true-branch-point hash
+   at all; only the (wrong) hash *timing* did. `branch_state_hash_match` now GATES `seed_go`/`pooled_go`, 6/6.
+2. **The byte-identity regression test's reference becomes tautological after merge.** `git merge-base HEAD
+   origin/main` equals `HEAD` itself once this branch is merged into main, so the test would compare
+   `webapp/gnw_thought_swap.py` to itself and could never fail post-merge. **Fixed**: pinned to a fixed, non-moving
+   SHA (`5b718e73c`, the last commit to touch this file before this arc; verified an ancestor of both `HEAD` and
+   `origin/main`) instead of a branch-relative merge-base. All 4 tests still pass against the pinned reference.
+3. **`branch_identical`'s scalar comparison remains a weak, secondary check** (not the fork control) -- the docstring
+   and code comments now say this explicitly; `branch_state_hash_match` is the real fork control.
+4. **`no_regression_at_production_pa` mostly re-confirms `swaps_correct` at the saturating drive strength**
+   (`SALIENT_PA`): every arm swaps 6/6 and every arm's post-window rate plateaus at the same 0.3333, so this check
+   is weak evidence on its own. The runner's docstring, code comments, and `Verdict.require` messages now say
+   explicitly that `full_conversation_no_regression` (which exercises holds/lesion/LRU-reuse, non-saturating turn
+   shapes, through the real production glue) is the check that actually carries the safety weight.
+
+**Reproduction of both bugs (and the fixes), run this session:** a script builds two substrates from the same seed,
+hashes them at the true branch point (matches, `f0b84eb9...`, both thread counts) and then again AFTER letting the
+arms diverge (does not match, either thread count) -- proving the divergence-timing bug directly rather than
+inferring it from a comment. `tests/test_gnw_swap_continuous_byte_identical.py -q` -> 4 passed against the pinned
+SHA. `research/runners/_gnw_swap_continuous_recency_derisk.py --six-seed` -> `branch_state_hash_match` 6/6, now
+gated; `pooled_go` remains `True`.
 
 Separately (not one of the review's five, but relevant to why claim 4 is retracted rather than merely
 recalibrated): **the biological framing was never supported.** `STD_TAU_D=250ms`, and production advances ZERO
@@ -122,7 +161,10 @@ identical proposal, giving the no-regression check something real to compare aga
    and LRU slot reuse, reaches the identical verdict continuous-ON vs continuous-OFF, 6/6
    (`full_conversation_no_regression`, new this round).
 5. **Determinism** (build-twice Izhikevich hash) holds 6/6; the branch fork matches to floating-point tolerance
-   (1e-9) on the population-level decision scalars, 6/6 (`branch_identical`, no longer called byte-identical).
+   (1e-9) on the population-level decision scalars, 6/6 (`branch_identical`, no longer called byte-identical), AND
+   is now GENUINELY byte-identical at the true branch point (full-STD-state SHA256, `branch_state_hash_match`,
+   taken BEFORE either arm diverges), 6/6 -- see "2ND FIX ROUND" for the correction of the earlier mis-timed hash /
+   false BLAS-artifact diagnosis.
 
 This is what makes the new `BRAIN_GNW_SWAP_CONTINUOUS` flag (default-off, additive) a low-risk, VERIFIED-safe
 addition. **It ships as plumbing only — it carries no capability claim.**
@@ -141,8 +183,9 @@ remains in the runner for whichever future session investigates the actual seed-
 
 - **Controlled fork:** RECENT and FRESH are built from the SAME seed through the IDENTICAL establish+A→B sequence;
   `branch_identical` (6/6) confirms the two builds match at the decision-relevant scalars before the one proposal
-  that differs. A stricter full-state hash is reported (`branch_state_hash_match`) but not gated -- see fix #5
-  above for why gating it under this file's own recipe would be a false negative.
+  that differs. The real fork control is `branch_state_hash_match` (6/6, GATED) -- a full-STD-state SHA256 taken at
+  the true branch point, before either arm diverges (see "2ND FIX ROUND" for the correction of the earlier
+  mis-timed hash and its false BLAS-artifact diagnosis).
 - **The lever moved:** `x_A_at_branch < 1.0 - 0.05` is void-checked before anything downstream is interpreted.
 - **Restore-blindness is a code-level check:** exact float equality to 1.0 (1e-12), not "close to."
 - **The causal claim is REQUIRED to survive its own lesion, not merely reported alongside it** (fix #4) — this is

@@ -64,19 +64,25 @@ SAFETY ONLY (2026-09-23 fix round; see RETRACTION above -- no mechanism/recency 
   3. SAFE / NO REGRESSION AGAINST A REAL RESTORE-MODE ARM: at the shipped production drive strength, continuous
      mode's swap-vs-hold VERDICT on every turn (establish, evict, re-admit-recent, admit-fresh) is compared against
      an ACTUAL `isolate=True` run of the same proposal (`restore_recent`/`restore_fresh` -- not a hard-coded `True`
-     and not two continuous arms compared to each other) and matches it, 6/6.
-  4. SAFE ON UNTESTED TURN SHAPES TOO: a separate check runs the ACTUAL production glue
-     (`webapp.gnw_thought_swap.ThoughtSwapWorkspace`) through same-topic holds, the board-#85 mismatch-lesion path,
-     and LRU slot reuse past `N_PATTERNS=3` -- turns the original version of this runner never exercised -- and
-     confirms continuous-ON reaches the identical swap-vs-hold verdict as continuous-OFF on every one, 6/6
+     and not two continuous arms compared to each other) and matches it, 6/6. HONESTLY WEAK ON ITS OWN (2026-09-23
+     re-review, issue "minor, carried over"): at `SALIENT_PA` every arm swaps on 6/6 seeds and every arm's
+     post-window rate saturates at the same 0.3333 period-3 plateau, so this check mostly re-confirms
+     `swaps_correct` rather than discriminating continuous-vs-restore behavior. The check that actually carries the
+     safety weight is #4 below.
+  4. SAFE ON UNTESTED, NON-SATURATING TURN SHAPES TOO -- THE LOAD-BEARING SAFETY EVIDENCE: a separate check runs the
+     ACTUAL production glue (`webapp.gnw_thought_swap.ThoughtSwapWorkspace`) through same-topic holds, the board-#85
+     mismatch-lesion path, and LRU slot reuse past `N_PATTERNS=3` -- turns the original version of this runner never
+     exercised, and turns where the decision does NOT saturate the way swap-at-SALIENT_PA does -- and confirms
+     continuous-ON reaches the identical swap-vs-hold verdict as continuous-OFF on every one, 6/6
      (`full_conversation_no_regression`).
   5. DETERMINISM (build-twice Izhikevich-parameter hash) holds 6/6, and the two-arm fork's population-level
      decision scalars match to floating-point tolerance (1e-9) at the branch point, 6/6 (`branch_identical`, no
-     longer described as byte-identical -- docs/TERMS.md requires a hash or exact compare for that word). A
-     stricter full-STD-state-array hash (`branch_state_hash_match`) IS a genuine byte-identical check and is
-     reported per-seed, but is NOT gated: under this file's own OMP_NUM_THREADS=2 recipe it is confirmed to fail
-     purely from threaded-BLAS floating-point non-associativity (verified bit-identical under OMP_NUM_THREADS=1) --
-     gating on it would report a false NO-GO caused by thread count, not by the mechanism.
+     longer described as byte-identical -- docs/TERMS.md requires a hash or exact compare for that word). The
+     STRICTER, GENUINE fork control is a full-STD-state-array hash (`branch_state_hash_match`), taken at the true
+     branch point BEFORE either arm diverges (2ND RETRACTION above: the 1st fix round hashed it AFTER divergence,
+     which cannot match by construction, and misdiagnosed the resulting mismatch as a BLAS-thread-count artifact --
+     that diagnosis was FALSE and is withdrawn). Hashed at the correct point, it MATCHES 6/6 and now GATES
+     `seed_go`/`pooled_go`.
 
 HONEST RESIDUAL, NAMED AND QUANTIFIED, NOT CLAIMED CLOSED. The recency/mechanism claim above the SAFETY gate is
 BANKED AS NO-GO (see RETRACTION): `carryover_causal_at_near_threshold` = 0/6 -- lesioning ONLY the carryover never
@@ -98,9 +104,25 @@ Biology: the shipped #77/#85 eviction mechanism's own citation for Tsodyks-Markr
 (Mongillo, Barak & Tsodyks 2008, Science 319:1543) is UNCHANGED and still applies to that mechanism. It is NO LONGER
 cited here as support for a cross-turn "recency trace" (see RETRACTION: production advances zero simulated time
 between turns, so the ~1s real-time trace that citation describes does not apply to what this runner measures).
+⛔ 2ND RETRACTION (2026-09-23, 2nd fix round; adversarial re-review verdict=fix-required, reproduced the bug). The
+1ST fix round's `branch_state_hash_match` fix was ITSELF wrong: it hashed `std1`/`std2` AFTER `recent`/`fresh` had
+already run and mutated them, i.e. AFTER the two arms had already diverged -- so the hash compared two DIFFERENT
+post-divergence states and could never match, by construction. That failure was then misdiagnosed in this
+docstring, in code comments, and in the finding doc as "threaded-BLAS floating-point non-associativity under
+OMP_NUM_THREADS=2, confirmed bit-identical under OMP_NUM_THREADS=1" -- the re-review reproduced
+`branch_state_hash_match=False` under OMP_NUM_THREADS=1 too, at that same (wrong) post-divergence hash point, so the
+BLAS/thread-count explanation was FALSE and is RETRACTED along with the "reported, not gated" status it justified.
+FIXED: the hash (`branch_hash_1`/`branch_hash_2`) is now taken immediately after `_fresh_branch` returns, BEFORE
+`recent`/`fresh` run -- the true branch point -- and IS gated into `seed_go`/`pooled_go` (6/6, see GO GATE below).
+Separately, the byte-identity regression test (`tests/test_gnw_swap_continuous_byte_identical.py`) compared against
+`git merge-base HEAD origin/main`, which becomes HEAD itself (a no-op diff) once this branch is merged to main --
+fixed to compare against a FIXED pre-branch SHA (`5b718e73c`, the last commit to touch
+`webapp/gnw_thought_swap.py` before this arc, verified an ancestor of both `HEAD` and `origin/main`) instead of a
+moving ref.
+
 Corpus check (`before_you_build.sh "GNW continuous cross-turn ignition recency swap"` + rag_search) was run before
 writing this file; see the accompanying finding for the near-threshold calibration sweep transcript
-(pa in {5000,3000,2000,1500,1200,1000,800}) and this fix round's retraction record.
+(pa in {5000,3000,2000,1500,1200,1000,800}) and this file's two fix-round retraction records.
 
 Usage (CPU cheap-first; export OMP/OPENBLAS/MKL_NUM_THREADS=2):
   SIM_BACKEND=numpy python -u -m research.runners._gnw_swap_continuous_recency_derisk --smoke --seed 42 \\
@@ -153,6 +175,16 @@ def _fresh_branch(seed, w_rec, heterogeneity):
     return S, std, first, ab
 
 
+def _std_state_hash(std):
+    """Full per-neuron STD resource-variable array hash (docs/TERMS.md-compliant byte-identical check). MUST be
+    called at the true branch point -- before the two forked arms take their next (diverging) step -- or the
+    comparison is meaningless by construction (2026-09-23 2nd fix round: the previous version hashed AFTER
+    `recent`/`fresh` had already run, so it compared two POST-divergence states and could never match; that was
+    misdiagnosed as a BLAS-thread-count floating-point artifact, which is false -- see module docstring)."""
+    parts = [np.asarray(d.x, dtype=np.float64) for d in std.deps]
+    return hashlib.sha256(np.concatenate(parts).tobytes()).hexdigest()
+
+
 _SAFETY_TURNS = [  # a,b,c,d,e: 5 distinct topics against N_PATTERNS=3 -> forces LRU slot reuse; two same-topic
     # holds; a lesion turn (board-#85 path) immediately followed by its un-lesioned re-proposal.
     ("a", False), ("a", False), ("b", False), ("b", False), ("a", False),
@@ -199,10 +231,15 @@ def evaluate_seed(seed, *, w_rec=None, heterogeneity=True, near_threshold_pa=NEA
     # ── GATING ARMS (production operating point, SALIENT_PA -- what "safe to wire" is measured on) ────────────────
     S1, std1, first1, ab1 = _fresh_branch(seed, w_rec, heterogeneity)
     xA_at_branch = std1.x_mean(A)
+    # snapshot the fork-control hash HERE, at the true branch point, BEFORE `recent` takes S1's next (diverging)
+    # step (2026-09-23 2nd fix round: the prior version hashed after both arms had already diverged, so it compared
+    # two DIFFERENT post-divergence states by construction -- see `_std_state_hash`'s own docstring).
+    branch_hash_1 = _std_state_hash(std1)
     recent = run_intention_swap(S1, std1, incumbent=B, proposed=A, proposal_pa=SALIENT_PA, isolate=False)
 
     S2, std2, first2, ab2 = _fresh_branch(seed, w_rec, heterogeneity)
     xC_at_branch = std2.x_mean(C)
+    branch_hash_2 = _std_state_hash(std2)   # same branch point, second independent build (same seed)
     fresh = run_intention_swap(S2, std2, incumbent=B, proposed=C, proposal_pa=SALIENT_PA, isolate=False)
 
     # ── REAL RESTORE-MODE ARMS (2026-09-23 review fix: the gate previously compared two CONTINUOUS arms against a
@@ -226,24 +263,26 @@ def evaluate_seed(seed, *, w_rec=None, heterogeneity=True, near_threshold_pa=NEA
     # identical branch state" -- TERMS.md requires "byte-identical" to be a hash or exact array compare, not 4
     # floats, so that claim is DROPPED for `branch_identical` below (kept, renamed in wording only, as a
     # floating-point-TOLERANCE scalar match -- never described as byte-identical anywhere in this file anymore).
+    # `branch_identical`: a WEAKER, secondary sanity check on 4 population-level scalar read-outs at the branch
+    # point (floating-point tolerance, never claimed byte-identical -- docs/TERMS.md). Kept alongside the genuine
+    # hash check below because it is cheap and independently exercises the population-decision path, but it is NOT
+    # the fork control the branch relies on for "S1 and S2 are the same state up to the branch" -- that is
+    # `branch_state_hash_match`.
     branch_identical = bool(abs(ab1["new_rate_post"] - ab2["new_rate_post"]) < 1e-9
                              and abs(ab1["old_residual_post"] - ab2["old_residual_post"]) < 1e-9
                              and ab1["winner_post"] == ab2["winner_post"] and ab1["n_ignited_post"] == ab2["n_ignited_post"])
 
-    def _std_state_hash(std):
-        parts = [np.asarray(d.x, dtype=np.float64) for d in std.deps]
-        return hashlib.sha256(np.concatenate(parts).tobytes()).hexdigest()
-
-    # `branch_state_hash_match`: a GENUINE byte-identical check (full per-neuron STD resource-variable array hash,
-    # docs/TERMS.md-compliant) -- but measured here to be a NON-GATING diagnostic, not part of seed_go/pooled_go.
-    # Verified directly (see this fix round's notes): under OMP_NUM_THREADS=1 this hash MATCHES exactly on repeated
-    # builds at the same seed (bit-for-bit); under this module's own documented OMP_NUM_THREADS=2 recipe it does NOT
-    # match, because threaded BLAS reduction order is not deterministic across runs at the ~1e-15 level -- a
-    # floating-point non-associativity artifact of thread count, not a substantive divergence between S1 and S2
-    # (the population-level `branch_identical` scalars above, which is what the swap DECISION actually depends on,
-    # match to 1e-9 regardless of thread count). Gating on the hash under the recipe this file tells users to run
-    # would report a false NO-GO caused by BLAS threading, not by the mechanism -- so it is reported, not gated.
-    branch_state_hash_match = bool(_std_state_hash(std1) == _std_state_hash(std2))
+    # `branch_state_hash_match`: the GENUINE fork control -- a full per-neuron STD resource-variable array hash
+    # (docs/TERMS.md-compliant byte-identical check), taken at `branch_hash_1`/`branch_hash_2` above, BEFORE either
+    # arm takes its diverging step. 2ND FIX ROUND (2026-09-23, adversarial re-review, verdict=fix-required):
+    # the PRIOR version of this line hashed `std1`/`std2` down here, AFTER `recent` and `fresh` had already run and
+    # mutated them -- comparing two states that had ALREADY DIVERGED, which cannot match by construction. That was
+    # then misdiagnosed as "BLAS-thread-count floating-point non-associativity" and reported-but-not-gated. Both the
+    # diagnosis and the "confirmed bit-identical under OMP_NUM_THREADS=1" claim were FALSE (re-review reproduced
+    # branch_state_hash_match=False under OMP=1 too, at the old, post-divergence hash point) -- RETRACTED. Hashed at
+    # the correct (pre-divergence) point instead, this now GATES seed_go/pooled_go: it is the real byte-identical
+    # fork control the branch's safety claim depends on.
+    branch_state_hash_match = bool(branch_hash_1 == branch_hash_2)
 
     # restore-mode-blind: the EXACT operation isolate=True performs before every shipped-mode turn (std.reset(),
     # called on std1 -- which has JUST come out of a real continuous A->B swap and carries the 0.7x debt measured
@@ -310,10 +349,9 @@ def evaluate_seed(seed, *, w_rec=None, heterogeneity=True, near_threshold_pa=NEA
 
     lever("std_x_at_branch (A vs C, both start at 1.0)", 1.0, round(xA_at_branch, 4), continuous=xA_at_branch)
 
-    # NOTE: `branch_state_hash_match` is deliberately NOT in seed_go -- see its own comment above (BLAS-thread-count
-    # floating-point artifact under this module's own documented OMP_NUM_THREADS=2 recipe, confirmed bit-identical
-    # under OMP_NUM_THREADS=1). Gating on it here would fail this exact recipe for a reason unrelated to the mechanism.
-    seed_go = bool(swaps_correct and branch_identical and seed_deterministic
+    # `branch_state_hash_match` now GATES seed_go (2nd fix round) -- it is the real, correctly-timed byte-identical
+    # fork control; see its own comment above for the retraction of the earlier BLAS/OMP=1 misdiagnosis.
+    seed_go = bool(swaps_correct and branch_identical and branch_state_hash_match and seed_deterministic
                    and carryover_ok and restore_blind and no_regression_at_production_pa and full_conv_ok)
 
     return {
@@ -380,9 +418,11 @@ def run_six_seed(args):
     n_fullconv = sum(1 for r in per_seed if r["go_gate"]["full_conversation_no_regression"])
     n_dissoc = sum(1 for r in per_seed if r["near_threshold_diagnostic"]["dissociation"])
     n_causal = sum(1 for r in per_seed if r["near_threshold_diagnostic"]["carryover_causal"])
-    # n_branch_hash is reported, NOT gated (see per-seed comment: a BLAS-thread-count floating-point artifact under
-    # this module's own OMP_NUM_THREADS=2 recipe, confirmed bit-identical under OMP_NUM_THREADS=1).
-    pooled_go = bool(n_go == 6 and n_swap == 6 and n_branch == 6 and n_carry == 6
+    # `n_branch_hash` (the correctly-timed, pre-divergence full-STD-state hash) now GATES pooled_go too -- see the
+    # per-seed comment on `branch_state_hash_match` for the retraction of the earlier BLAS/OMP=1 misdiagnosis. It is
+    # already implied by `n_go == 6` (seed_go requires it per-seed) but named explicitly here so a future edit to
+    # seed_go's composition cannot silently drop this gate without also changing this line.
+    pooled_go = bool(n_go == 6 and n_swap == 6 and n_branch == 6 and n_branch_hash == 6 and n_carry == 6
                      and n_blind == 6 and n_noreg == 6 and n_det == 6 and n_fullconv == 6)
     verdict = "GO" if pooled_go else ("PARTIAL" if n_go >= 1 else "NO-GO")
 
@@ -400,12 +440,18 @@ def run_six_seed(args):
               bool(n_swap == 6), expect=True)
     v.require("the two-arm fork's scalar read-outs match (floating-point tolerance, NOT claimed byte-identical) at "
               "the branch point on 6/6", bool(n_branch == 6), expect=True)
+    v.require("the two-arm fork is byte-identical at the TRUE branch point (full-STD-state hash, taken BEFORE either "
+              "arm diverges) on 6/6 -- the real fork control; see 2nd-fix-round retraction of the earlier "
+              "post-divergence hash / BLAS-artifact misdiagnosis", bool(n_branch_hash == 6), expect=True)
     v.require("the STD carryover lever actually moved (x_A < 1 at branch) on 6/6", bool(n_carry == 6), expect=True)
     v.require("restore mode's own reset provably wipes the carryover to exactly 1.0 on 6/6", bool(n_blind == 6), expect=True)
-    v.require("continuous mode's verdict matches a REAL isolate=True restore-mode arm at production drive on 6/6",
-              bool(n_noreg == 6), expect=True)
-    v.require("continuous mode matches restore mode on hold/lesion/LRU-slot-reuse turns too (full-conversation glue), 6/6",
-              bool(n_fullconv == 6), expect=True)
+    v.require("continuous mode's verdict matches a REAL isolate=True restore-mode arm at production drive on 6/6 -- "
+              "WEAK evidence on its own (SALIENT_PA saturates every arm's swap decision AND its post-window rate at "
+              "the same 0.3333 plateau, so this mostly re-confirms swaps_correct); the discriminating safety check "
+              "is full_conversation_no_regression below, which is what actually toggles isolate=False per turn and "
+              "exercises non-saturating turn shapes (holds, lesion, LRU reuse)", bool(n_noreg == 6), expect=True)
+    v.require("continuous mode matches restore mode on hold/lesion/LRU-slot-reuse turns too (full-conversation glue, "
+              "the load-bearing safety evidence), 6/6", bool(n_fullconv == 6), expect=True)
     v.require("determinism (build-twice hash) on 6/6", bool(n_det == 6), expect=True)
     v.disabled("homeostasis", why="frozen base weights, inherited from the reused #77/#85 substrate build")
     v.disabled("recency-trace mechanism", why="RETRACTED: the lesion arm refutes causality on 6/6 seeds "

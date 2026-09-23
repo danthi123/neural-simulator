@@ -9,6 +9,11 @@ after the first gained a NEW `"continuous": False` key -- a default-path change,
 compare), never inferred from reading the code -- this test is that assertion, not a comment.
 
 Fix: the `continuous` key is now only added when `BRAIN_GNW_SWAP_CONTINUOUS` is truthy.
+
+2ND FIX ROUND (2026-09-23, adversarial re-review, verdict=fix-required): `test_default_conversation_byte_identical_
+to_pre_continuous_main` originally diffed against `git merge-base HEAD origin/main`, a MOVING reference that
+becomes a no-op self-diff once this branch merges into main (tautological, cannot fail post-merge). Fixed to diff
+against a FIXED pre-branch SHA instead -- see that test's own docstring.
 """
 import os
 
@@ -70,29 +75,41 @@ def test_continuous_key_present_when_flag_on():
 
 def test_default_conversation_byte_identical_to_pre_continuous_main():
     """The FULL default-path (flag unset) conversation must be byte-identical (exact dict equality on every field,
-    every turn) to the module as it existed on `origin/main` BEFORE this branch's `continuous_enabled()`/isolate=
-    thread-through was added -- not just "no continuous key". Loads that pre-branch source directly (frozen inline
-    below is unnecessary; instead this re-derives the claim from the live git object so it tracks main, not a
-    hand-copied snapshot) and compares turn-by-turn."""
+    every turn) to the module as it existed BEFORE this branch's `continuous_enabled()`/isolate= thread-through was
+    added -- not just "no continuous key". Loads that pre-branch source directly from a git object and compares
+    turn-by-turn.
+
+    2ND FIX ROUND (2026-09-23, adversarial re-review, verdict=fix-required): the PRIOR version of this test diffed
+    against `git merge-base HEAD origin/main`. That is a MOVING reference -- once this branch is merged into main,
+    `origin/main`'s merge-base with a checkout that already contains the merge commit IS that commit itself, so the
+    diff becomes `webapp/gnw_thought_swap.py` against ITSELF and can never fail (tautological). FIXED: pinned to
+    `_PRE_BRANCH_SHA` below, a FIXED (non-moving) commit -- the last commit to touch this file before this arc
+    started -- verified an ancestor of both `HEAD` and `origin/main` at the time of this fix (`git merge-base
+    --is-ancestor <sha> origin/main` / `HEAD`, both exit 0). A pinned SHA cannot become tautological on merge,
+    unlike a merge-base against a branch this very test's own commit will land on."""
     import hashlib
     import json
     import subprocess
 
+    # Fixed, non-moving reference: the commit immediately before `research/gnw-thought-swap-drive`'s first commit
+    # touched this file (`git log --oneline -- webapp/gnw_thought_swap.py` on this branch). Do NOT replace with a
+    # branch name / merge-base -- see the retraction above for why that becomes tautological after merge.
+    _PRE_BRANCH_SHA = "5b718e73c"
+
     repo_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     try:
-        merge_base = subprocess.run(
-            ["git", "-C", repo_root, "merge-base", "HEAD", "origin/main"],
+        verify = subprocess.run(
+            ["git", "-C", repo_root, "cat-file", "-e", f"{_PRE_BRANCH_SHA}^{{commit}}"],
             capture_output=True, text=True, timeout=10,
         )
-        base_sha = merge_base.stdout.strip() if merge_base.returncode == 0 else None
-        if not base_sha:
-            pytest.skip("no origin/main reachable in this checkout to diff against")
+        if verify.returncode != 0:
+            pytest.skip(f"pinned reference commit {_PRE_BRANCH_SHA} not reachable in this checkout (shallow clone?)")
         show = subprocess.run(
-            ["git", "-C", repo_root, "show", f"{base_sha}:webapp/gnw_thought_swap.py"],
+            ["git", "-C", repo_root, "show", f"{_PRE_BRANCH_SHA}:webapp/gnw_thought_swap.py"],
             capture_output=True, text=True, timeout=10,
         )
         if show.returncode != 0 or not show.stdout.strip():
-            pytest.skip("could not read webapp/gnw_thought_swap.py from origin/main's merge-base")
+            pytest.skip(f"could not read webapp/gnw_thought_swap.py from the pinned {_PRE_BRANCH_SHA}")
     except (FileNotFoundError, subprocess.SubprocessError):
         pytest.skip("git unavailable in this environment")
 
@@ -120,7 +137,7 @@ def test_default_conversation_byte_identical_to_pre_continuous_main():
 
     ref_out, branch_out = run(ref_mod), run(branch_mod)
     assert canon(ref_out) == canon(branch_out), (
-        "default-path (BRAIN_GNW_SWAP_CONTINUOUS unset) conversation diverged from origin/main's merge-base -- "
-        f"hash {hashlib.sha256(canon(ref_out).encode()).hexdigest()} vs "
+        f"default-path (BRAIN_GNW_SWAP_CONTINUOUS unset) conversation diverged from the pinned pre-branch reference "
+        f"{_PRE_BRANCH_SHA} -- hash {hashlib.sha256(canon(ref_out).encode()).hexdigest()} vs "
         f"{hashlib.sha256(canon(branch_out).encode()).hexdigest()}"
     )

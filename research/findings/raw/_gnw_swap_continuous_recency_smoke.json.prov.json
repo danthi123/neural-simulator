@@ -1,15 +1,15 @@
 {
- "run_id": "1790179491-1135060",
+ "run_id": "1790185293-1284819",
  "runner": "research/runners/_gnw_swap_continuous_recency_derisk.py",
  "argv": [
-  "/home/dant123/Projects/sim/.claude/worktrees/wf_500634cf-d18-5/research/runners/_gnw_swap_continuous_recency_derisk.py",
+  "/home/dant123/Projects/sim/.claude/worktrees/wf_49b416df-232-4/research/runners/_gnw_swap_continuous_recency_derisk.py",
   "--smoke",
   "--seed",
   "42",
   "--json",
   "research/findings/raw/_gnw_swap_continuous_recency_smoke.json"
  ],
- "git_sha": "922451111",
+ "git_sha": "ce4fe6b1e",
  "git_dirty": true,
  "source_kind": null,
  "source_manifest_sha256": null,
@@ -17,7 +17,7 @@
  "source_manifest_start_error": null,
  "source_manifest_verified_at_exit": null,
  "source_manifest_exit_error": null,
- "started": "2026-09-23T12:04:51",
+ "started": "2026-09-23T13:41:33",
  "env": {
   "SIM_BACKEND": "numpy"
  },

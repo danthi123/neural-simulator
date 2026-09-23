@@ -35,6 +35,13 @@
     },
     {
       "kind": "require",
+      "name": "the two-arm fork is byte-identical at the TRUE branch point (full-STD-state hash, taken BEFORE either arm diverges) on 6/6 -- the real fork control; see 2nd-fix-round retraction of the earlier post-divergence hash / BLAS-artifact misdiagnosis",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
       "name": "the STD carryover lever actually moved (x_A < 1 at branch) on 6/6",
       "ok": true,
       "detail": "measured=True expect=True",
@@ -49,14 +56,14 @@
     },
     {
       "kind": "require",
-      "name": "continuous mode's verdict matches a REAL isolate=True restore-mode arm at production drive on 6/6",
+      "name": "continuous mode's verdict matches a REAL isolate=True restore-mode arm at production drive on 6/6 -- WEAK evidence on its own (SALIENT_PA saturates every arm's swap decision AND its post-window rate at the same 0.3333 plateau, so this mostly re-confirms swaps_correct); the discriminating safety check is full_conversation_no_regression below, which is what actually toggles isolate=False per turn and exercises non-saturating turn shapes (holds, lesion, LRU reuse)",
       "ok": true,
       "detail": "measured=True expect=True",
       "note": ""
     },
     {
       "kind": "require",
-      "name": "continuous mode matches restore mode on hold/lesion/LRU-slot-reuse turns too (full-conversation glue), 6/6",
+      "name": "continuous mode matches restore mode on hold/lesion/LRU-slot-reuse turns too (full-conversation glue, the load-bearing safety evidence), 6/6",
       "ok": true,
       "detail": "measured=True expect=True",
       "note": ""
@@ -83,7 +90,7 @@
     "seed_go": 6,
     "swaps_correct": 6,
     "branch_identical": 6,
-    "branch_state_hash_match": 0,
+    "branch_state_hash_match": 6,
     "carryover_ok": 6,
     "restore_blind": 6,
     "no_regression_at_production_pa": 6,
@@ -103,7 +110,7 @@
       "xA_at_branch": 0.7624718351663978,
       "xC_at_branch": 0.9999929668055912,
       "branch_identical": true,
-      "branch_state_hash_match": false,
+      "branch_state_hash_match": true,
       "restore_blind": true,
       "recent": {
         "swapped": true,
@@ -174,7 +181,7 @@
       "go_gate": {
         "swaps_correct": true,
         "branch_identical": true,
-        "branch_state_hash_match": false,
+        "branch_state_hash_match": true,
         "carryover_ok": true,
         "restore_blind": true,
         "no_regression_at_production_pa": true,
@@ -193,7 +200,7 @@
       "xA_at_branch": 0.7356683718297853,
       "xC_at_branch": 0.9943712939199736,
       "branch_identical": true,
-      "branch_state_hash_match": false,
+      "branch_state_hash_match": true,
       "restore_blind": true,
       "recent": {
         "swapped": true,
@@ -264,7 +271,7 @@
       "go_gate": {
         "swaps_correct": true,
         "branch_identical": true,
-        "branch_state_hash_match": false,
+        "branch_state_hash_match": true,
         "carryover_ok": true,
         "restore_blind": true,
         "no_regression_at_production_pa": true,
@@ -283,7 +290,7 @@
       "xA_at_branch": 0.7669881086716367,
       "xC_at_branch": 1.0,
       "branch_identical": true,
-      "branch_state_hash_match": false,
+      "branch_state_hash_match": true,
       "restore_blind": true,
       "recent": {
         "swapped": true,
@@ -354,7 +361,7 @@
       "go_gate": {
         "swaps_correct": true,
         "branch_identical": true,
-        "branch_state_hash_match": false,
+        "branch_state_hash_match": true,
         "carryover_ok": true,
         "restore_blind": true,
         "no_regression_at_production_pa": true,
@@ -373,7 +380,7 @@
       "xA_at_branch": 0.7338373596116919,
       "xC_at_branch": 0.9999972674990054,
       "branch_identical": true,
-      "branch_state_hash_match": false,
+      "branch_state_hash_match": true,
       "restore_blind": true,
       "recent": {
         "swapped": true,
@@ -444,7 +451,7 @@
       "go_gate": {
         "swaps_correct": true,
         "branch_identical": true,
-        "branch_state_hash_match": false,
+        "branch_state_hash_match": true,
         "carryover_ok": true,
         "restore_blind": true,
         "no_regression_at_production_pa": true,
@@ -463,7 +470,7 @@
       "xA_at_branch": 0.7418017102937838,
       "xC_at_branch": 0.993507665318223,
       "branch_identical": true,
-      "branch_state_hash_match": false,
+      "branch_state_hash_match": true,
       "restore_blind": true,
       "recent": {
         "swapped": true,
@@ -534,7 +541,7 @@
       "go_gate": {
         "swaps_correct": true,
         "branch_identical": true,
-        "branch_state_hash_match": false,
+        "branch_state_hash_match": true,
         "carryover_ok": true,
         "restore_blind": true,
         "no_regression_at_production_pa": true,
@@ -553,7 +560,7 @@
       "xA_at_branch": 0.7773136777243563,
       "xC_at_branch": 0.9996404463778643,
       "branch_identical": true,
-      "branch_state_hash_match": false,
+      "branch_state_hash_match": true,
       "restore_blind": true,
       "recent": {
         "swapped": true,
@@ -624,7 +631,7 @@
       "go_gate": {
         "swaps_correct": true,
         "branch_identical": true,
-        "branch_state_hash_match": false,
+        "branch_state_hash_match": true,
         "carryover_ok": true,
         "restore_blind": true,
         "no_regression_at_production_pa": true,

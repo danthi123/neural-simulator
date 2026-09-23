@@ -7,7 +7,7 @@
     "xA_at_branch": 0.7624718351663978,
     "xC_at_branch": 0.9999929668055912,
     "branch_identical": true,
-    "branch_state_hash_match": false,
+    "branch_state_hash_match": true,
     "restore_blind": true,
     "recent": {
       "swapped": true,
@@ -78,7 +78,7 @@
     "go_gate": {
       "swaps_correct": true,
       "branch_identical": true,
-      "branch_state_hash_match": false,
+      "branch_state_hash_match": true,
       "carryover_ok": true,
       "restore_blind": true,
       "no_regression_at_production_pa": true,
