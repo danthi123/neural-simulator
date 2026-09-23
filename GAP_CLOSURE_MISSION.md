@@ -141,6 +141,10 @@ waiting on runs every day … I thought our heartbeats/gates were supposed to pr
   AWS2 tears down (controller `b9e3vhwh5`; the account's vCPU quota is 32 = two r7i.4xlarge — a 3rd launch was refused,
   orphan SG deleted, launch script now aborts cleanly). DA v3 is NOT in this battery (not wired into chat; no next-day
   turn). Aggregate: `.venv/bin/python tools/lb_shard.py aggregate --tag allfixes3settle`.
+- **18:00:** D6 learn-through-use (local spiking Hebbian store write; redesigned pre-registered gate; EXPO_H control
+  restored) re-review SOUND → **merged `@7d9f4bdc`** (default-off; its 6-seed verdict is staged). Open-ended a3: all 54
+  sessions finished on AWS2 (pulled to `_oe_production_turn/aws2_a3/`) → round 7 `wzhuy0py4` discloses the post-launch
+  scorer amendment and SCORES them; D3 cleanup (union-driver duplicate FAILURE_LOG rows, stale header) in the same round.
 - **⚠️ POOL/AWS BRAIN ASSETS:** pool nodes lack bridges/ (25G local) + most data/ (11G local) → production brain_chat
   runs there may DEGENERATE like AWS did. Do NOT trust a pool brain_chat result until the infra lane's sanity check passes.
 - **LESSONS (new):** never SendMessage a Workflow subagent (it resumes the agent as a duplicate in the same worktree;
