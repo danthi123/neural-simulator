@@ -296,3 +296,49 @@ def test_aggregate_rescores_current_instrument_x_from_raw_and_drops_v1(tmp_path)
         {"seed": s, "checks": {f"X{i}_x": True for i in range(1, 8)}} for s in seeds]}))
     assert V.aggregate([M, str(tmp_path / "v1.json")]) is False
     assert V.aggregate([M]) is False
+
+
+def _full_pass_record(seed):
+    """A single seed's per-seed dict that passes every _REQUIRED check (M and current-instrument X)."""
+    from research.runners import _onebrain_affect_pool_verify as V
+    return {"seed": seed, "checks": {f"M{i}_x": True for i in range(1, 8)},
+            "x_instrument": V.X_INSTRUMENT, "X": _raw()}
+
+
+def _write(tmp_path, name, records):
+    import json
+    (tmp_path / name).write_text(json.dumps({"mode": "verify", "per_seed": records}))
+    return str(tmp_path / name)
+
+
+def test_aggregate_go_count_is_restricted_to_exactly_the_registered_gate_seeds(tmp_path):
+    """Re-review issue (SCORER LOOPHOLE): a GO on a NON-gate seed (e.g. the diagnostic seed 7, whose verify-mode X
+    file matches the harvest glob) must never stand in for a failing GATE seed. Here seed 42 (a gate seed) fails
+    M1, but the non-gate seed 7 fully passes -- before the fix, n_go counted every seed in by_seed (7 seeds; 6 of
+    them GO: 43,44,100,101,102,7), so ALL-GO read True at exactly 6/6. After the fix, only the 6 registered gate
+    seeds are ever counted (5 of them GO, 42 fails) -> ALL-GO must be False."""
+    from research.runners import _onebrain_affect_pool_verify as V
+    recs = [_full_pass_record(s) for s in V.SEEDS]
+    recs[0]["checks"]["M1_x"] = False       # seed 42 (the first gate seed) fails
+    recs.append(_full_pass_record(7))       # non-gate diagnostic seed, fully passing
+    path = _write(tmp_path, "mixed.json", recs)
+    assert V.aggregate([path]) is False
+
+
+def test_aggregate_duplicate_record_for_one_seed_reads_undefined_not_last_wins(tmp_path):
+    """Re-review issue (duplicate records): more than one record contributing the SAME arm's checks for one seed
+    must never resolve via silent dict.update last-wins (an order-dependent selection lever a rerun/retry file
+    could exploit). Seed 42 gets TWO current-instrument X records -- a failing one, then (later in the merge
+    order) a fully passing one. Before the fix, the later file's all-True checks silently overwrite the failing
+    one and seed 42 reads GO. After the fix, a seed with >1 contributing record is DUPLICATE-RECORDS -> UNDEFINED,
+    never GO, regardless of file order."""
+    from research.runners import _onebrain_affect_pool_verify as V
+    good = [_full_pass_record(s) for s in V.SEEDS]
+    bad_42 = _full_pass_record(42)
+    bad_42["X"] = _raw(pos_flips=1, neg_flips=4)   # fails X1 outright
+    # Two records for seed 42 across two files; the LAST one processed is the fully-passing one.
+    path_a = _write(tmp_path, "a.json", [bad_42])
+    path_b = _write(tmp_path, "b.json", good)
+    assert V.aggregate([path_a, path_b]) is False
+    # Order reversed: still must not GO (order-independence is the point of the fix).
+    assert V.aggregate([path_b, path_a]) is False

@@ -116,6 +116,18 @@ AMENDMENT LOG
   RE-SCORES every current-instrument X record with it and ignores the checks the file stored. So the v2 X jobs
   (revision c6fdf7be7, whose battery code is identical -- pinned by a test) are scored by THIS rule, not v2's.
   No threshold, grid, S* rule, weight or battery changed. Arm M is unchanged.
+  2026-09-23 ~14:40 EDT -- `aggregate` COUNTING RULE amendment (SCORING only; no measurement, threshold, grid, S*
+  rule or weight changed). Committed after the re-review of dcaaa2f0f and BEFORE any xv2/verify_X_seed*.json result
+  is read (the xv2 dir does not exist yet at commit time; the only X reads so far remain the 2-organ seed-7 smoke
+  and the seed-42/43 v2 jobs dispatched-but-unread on pool41). Two holes in the ALL-GO count, found by re-review,
+  not by any seen result: (a) `n_go` counted every seed present in `by_seed`, including a NON-gate seed (e.g. the
+  diagnostic seed 7, whose verify-mode X file matches the harvest glob) -- so a passing non-gate seed could stand
+  in for a failing GATE seed and still read 6/6. Fixed: the GO count and the ALL-GO denominator are now restricted
+  to exactly `SEEDS`; a non-gate seed is reported, never counted. (b) more than one record contributing the same
+  arm's checks for one seed (M, or a current-instrument X) resolved through silent `dict.update` last-wins, an
+  order-dependent selection lever a rerun/retry file could exploit. Fixed: such a seed is flagged DUPLICATE-RECORDS
+  and reads UNDEFINED (never GO), not the last file's verdict. Neither change can turn an otherwise-failing gate
+  seed into a pass; both can only ever remove a false GO.
 
 COMPUTE: numpy CPU, ~7.7k-neuron pools (a few GB; the surprise organ's on-pool training dominates, ~11 min per
 pool build on one core). Pool nodes: one seed x one arm per queue line.
@@ -608,8 +620,17 @@ def aggregate(paths):
     Arm-X checks from a record WITHOUT the current `x_instrument` (the superseded v1 gate) are DROPPED, not scored.
     A current-instrument arm-X record is RE-SCORED from its raw batteries with `score_x_arm` (gate `X_GATE`); the
     checks the file stored are ignored, so a file written under an earlier scoring rule is judged by this one. A
-    current-instrument record missing any raw battery is UNSCORABLE (its X/I checks are then missing = not a pass)."""
+    current-instrument record missing any raw battery is UNSCORABLE (its X/I checks are then missing = not a pass).
+
+    GATE v3 AMENDMENT (fix round 4, pre-registered here BEFORE any xv2 harvest is read):
+    (a) ALL-GO counts ONLY the registered gate seeds (`SEEDS`), each required present exactly once. A seed not in
+        `SEEDS` (e.g. the non-gate diagnostic seed) can NEVER stand in for a missing or failing gate seed, however
+        many of its own checks pass; it is reported but excluded from both the numerator and the denominator.
+    (b) More than one record contributing the SAME arm's checks (M, or a current-instrument X) for one seed is
+        UNDEFINED, not last-wins: `dict.update` would otherwise let a rerun/retry file silently overwrite an
+        earlier verdict for that seed with no trace in the aggregate output. Such a seed is never GO."""
     by_seed, superseded, undefined, unscorable, flips = {}, [], {}, [], {}
+    m_records, x_records = {}, {}
     for p in paths:
         d = json.loads(Path(p).read_text())
         if d.get("mode") != "verify":
@@ -618,42 +639,63 @@ def aggregate(paths):
             s = int(r["seed"])
             chk = dict(r.get("checks", {}))
             stored_x = [k for k in chk if k[0] in "XI"]
-            chk = {k: v for k, v in chk.items() if k[0] not in "XI"}
+            chk_m = {k: v for k, v in chk.items() if k[0] not in "XI"}
+            if chk_m:
+                m_records.setdefault(s, []).append(p)
             if r.get("x_instrument") != X_INSTRUMENT:
                 if stored_x:
                     superseded.append((p, s, stored_x))
+                chk = chk_m
             else:
                 X = r.get("X") or {}
                 if all(k in X for k in _X_RAW_KEYS):
+                    x_records.setdefault(s, []).append(p)
                     xchk, xdet = score_x_arm(X)
-                    chk.update(xchk)
+                    chk = {**chk_m, **xchk}
                     flips[s] = (xdet["flips_at_Sstar"]["pos"], xdet["n_flip_required"])
                     if xdet["undefined_reason"]:
                         undefined[s] = xdet["undefined_reason"]
                 else:
                     unscorable.append((p, s, [k for k in _X_RAW_KEYS if k not in X]))
+                    chk = chk_m
             by_seed.setdefault(s, {}).update(chk)
     for p, s, dropped in superseded:
         print(f"  (superseded v1 arm-X checks IGNORED: {p} seed {s}: {len(dropped)} checks)")
     for p, s, miss in unscorable:
         print(f"  (UNSCORABLE arm-X record, raw batteries missing {miss}: {p} seed {s} -- X/I checks MISSING)")
+    dup_seeds = {s for s, ps in m_records.items() if len(ps) > 1} | {s for s, ps in x_records.items() if len(ps) > 1}
+    for s in sorted(dup_seeds):
+        srcs = m_records.get(s, []) + x_records.get(s, [])
+        print(f"  (DUPLICATE RECORDS for seed {s}, {len(srcs)} contributing files {srcs} -- seed reads UNDEFINED, "
+              f"never GO; last-wins is NOT the rule)")
     n_go = 0
+    non_gate_seeds = sorted(s for s in by_seed if s not in SEEDS)
+    if non_gate_seeds:
+        print(f"  (non-gate seeds present {non_gate_seeds}: reported only, EXCLUDED from the {len(SEEDS)}-seed "
+              f"GO count and denominator)")
     for s in sorted(by_seed):
         chk = by_seed[s]
         present = {k.split("_")[0] for k in chk}
         missing = [c for c in _REQUIRED if c not in present]
         failed = [k for k, v in chk.items() if not v]
-        go = not missing and not failed
-        n_go += go
+        is_dup = s in dup_seeds
+        go = not missing and not failed and not is_dup
+        if s in SEEDS:
+            n_go += go
         extra = f" X1 UNDEFINED: {undefined[s]}" if s in undefined else ""
         fl = f" X1 a=+1 flips@S*={flips[s][0]} (need {flips[s][1]})" if s in flips else ""
-        print(f"  seed {s}: GO={go} failed={failed} missing={missing}{fl}{extra}")
+        dup_note = " DUPLICATE-RECORDS(UNDEFINED)" if is_dup else ""
+        gate_note = "" if s in SEEDS else " (non-gate seed, not counted)"
+        print(f"  seed {s}: GO={go} failed={failed} missing={missing}{fl}{extra}{dup_note}{gate_note}")
     missing_seeds = sorted(set(SEEDS) - set(by_seed))
-    print(f"affect->one-brain-pool verify (arm-X gate {X_GATE}): {n_go}/{len(by_seed)} seeds GO; "
+    n_gate_seeds_present = len(set(SEEDS) & set(by_seed))
+    print(f"affect->one-brain-pool verify (arm-X gate {X_GATE}): {n_go}/{n_gate_seeds_present} gate seeds GO; "
           f"missing seeds {missing_seeds}")
-    undefined_if_empty("affect->pool 6-seed GO", len(by_seed), n_go, len(SEEDS))
-    all_go = bool(not missing_seeds and n_go == len(SEEDS))
-    print(f"ALL-GO (6/6, every M1-M7 + X0-X1 + I1-I8): {all_go}")
+    undefined_if_empty("affect->pool 6-seed GO", n_gate_seeds_present, n_go, len(SEEDS))
+    # ALL-GO requires: every registered gate seed present exactly once (no missing, no duplicate), and each of
+    # those gate seeds (never a non-gate seed) individually GO.
+    all_go = bool(not missing_seeds and n_go == len(SEEDS) and not (dup_seeds & set(SEEDS)))
+    print(f"ALL-GO (6/6 GATE seeds only, every M1-M7 + X0-X1 + I1-I8): {all_go}")
     return all_go
 
 
