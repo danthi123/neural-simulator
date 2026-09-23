@@ -25,17 +25,14 @@ the judgement half, and it stays with the human and with me.
 from __future__ import annotations
 
 import os
-import re
 import subprocess
+import sys
 import time
 
-# A waiver may excuse idle lanes only for a genuine BLOCKER, never for a PRIORITY/FOCUS rationalisation: the
-# five lanes are DISJOINT and cost nothing beside the crux, so "I'm focusing on the crux" can never justify
-# leaving them idle. Earned 2026-08-01: a false ".lane_waiver" reading "saturated with the gap#4 crux ...
-# deprioritized behind the crux, not starved by neglect" suppressed this gate for hours while 24 pool cores
-# sat free and lane_check screamed MONOCULTURE (5 lanes unserved 1187 min) — the exact abuse the waiver exists
-# to prevent, dressed as prioritisation. A waiver invoking this vocabulary is REJECTED.
-_RATIONALISATION = re.compile(r"crux|priorit|focus|deprioriti|momentum|behind the|saturated with", re.I)
+_ROOT_FOR_IMPORT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+if os.path.join(_ROOT_FOR_IMPORT, "tools") not in sys.path:
+    sys.path.insert(0, os.path.join(_ROOT_FOR_IMPORT, "tools"))
+import waiver_history as wh  # noqa: E402  (shared CLASS+budget escape hatch, see tools/waiver_history.py)
 
 NAME = "lane-starvation"
 CLASS_ID = "L"
@@ -122,17 +119,8 @@ def _work_lines():
     return lines
 
 
-def _waiver_active():
-    waiver = os.path.join(_queue_dir(), ".lane_waiver")
-    if not os.path.exists(waiver):
-        return None
-    age_h = (time.time() - os.path.getmtime(waiver)) / 3600.0
-    if age_h > LANE_WAIVER_MAX_H:
-        return None
-    try:
-        return open(waiver, errors="ignore").read().strip()[:120] or "(no reason given)"
-    except OSError:
-        return None
+def _waiver_file():
+    return os.path.join(_queue_dir(), ".lane_waiver")
 
 
 def _staged_files():
@@ -151,6 +139,32 @@ def _is_doc_only(staged):
     return bool(staged) and all(p.endswith(".md") for p in staged)
 
 
+def _idle_message(idle, verdict):
+    """Pure: the block message (or [] if excused) for a given idle-lane set + waiver_history.evaluate() verdict.
+    Factored out of check() so selftest() can exercise the waiver-honoring logic WITHOUT touching
+    research/queue/.lane_waiver on disk (a selftest that writes the real waiver file would itself be an
+    instance of the exact "gate that has side effects on every commit" failure shape this project avoids)."""
+    if verdict.get("active"):
+        if verdict.get("ok"):
+            return []                                           # a valid, in-budget waiver excuses it
+        return ["%d of %d disjoint CPU lanes UNSERVED: %s — and .lane_waiver is REJECTED: %s\n"
+                "        A valid waiver declares `CLASS: GAMING|OWNER-PAUSE|RAM-CONTENTION|NO-READY-WORK`\n"
+                "        naming the CURRENT resource constraint (RAM-CONTENTION needs avail_gb=, NO-READY-WORK\n"
+                "        needs checked=), never a plan or a priority claim. Queue one job per idle lane instead:\n"
+                "          bash tools/pool_queue.sh add '<cmd>' --checked '<what the record says>'"
+                % (len(idle), len(CPU_LANES), "; ".join(idle), verdict.get("reject_reason", ""))]
+    return ["%d of %d disjoint CPU lanes UNSERVED: %s.\n"
+            "        They are concurrent with GPU work and cost nothing beside it; leaving them unqueued is\n"
+            "        unused capacity, not prioritisation. Five sat idle 194 min on 2026-07-31 while the\n"
+            "        heartbeat alarmed correctly and was read past.\n"
+            "        FIX: stage one job per idle lane -\n"
+            "          bash tools/pool_queue.sh add '<cmd>' --checked '<what the record says>'\n"
+            "        Or waive (auto-expires in %dh, and the class/evidence is REQUIRED — free prose is no\n"
+            "        longer accepted, the 2026-09-23 promise-language loophole):\n"
+            "          printf 'CLASS: NO-READY-WORK\\nchecked=<what you searched>\\n' > research/queue/.lane_waiver"
+            % (len(idle), len(CPU_LANES), "; ".join(idle), LANE_WAIVER_MAX_H)]
+
+
 def check(paths=None):
     # DOC-ONLY EXEMPTION (2026-08-06; HARDENED 2026-08-07). A commit staging ONLY Markdown (board, roadmap,
     # findings, docs, RETRACTED) has no compute to parallelise, so idle CPU lanes cannot be its fault, and
@@ -164,28 +178,8 @@ def check(paths=None):
     idle = sorted(set(CPU_LANES) - _served(_work_lines()))
     if len(idle) < MAX_IDLE_LANES:
         return []
-    w = _waiver_active()
-    if w:
-        if _RATIONALISATION.search(w):
-            return ["%d of %d disjoint CPU lanes UNSERVED: %s — and the .lane_waiver justifies it by "
-                    "PRIORITY/FOCUS (\"%s\"), which is REJECTED.\n"
-                    "        The five lanes are DISJOINT and cost NOTHING beside the crux, so a priority can\n"
-                    "        NEVER excuse leaving them idle (2026-08-01: a false 'saturated with the crux' waiver\n"
-                    "        held this open for hours while 24 pool cores sat free). A valid waiver names a real\n"
-                    "        BLOCKER — no ready de-risk for the lane, or genuinely zero free CPU capacity — not\n"
-                    "        what you'd rather work on. Queue one job per idle lane instead:\n"
-                    "          bash tools/pool_queue.sh add '<cmd>' --checked '<what the record says>'"
-                    % (len(idle), len(CPU_LANES), "; ".join(idle), w)]
-        return []
-    return ["%d of %d disjoint CPU lanes UNSERVED: %s.\n"
-            "        They are concurrent with GPU work and cost nothing beside it; leaving them unqueued is\n"
-            "        unused capacity, not prioritisation. Five sat idle 194 min on 2026-07-31 while the\n"
-            "        heartbeat alarmed correctly and was read past.\n"
-            "        FIX: stage one job per idle lane -\n"
-            "          bash tools/pool_queue.sh add '<cmd>' --checked '<what the record says>'\n"
-            "        Or waive with a reason (auto-expires in %dh):\n"
-            "          echo 'why' > research/queue/.lane_waiver"
-            % (len(idle), len(CPU_LANES), "; ".join(idle), LANE_WAIVER_MAX_H)]
+    verdict = wh.evaluate(NAME, _waiver_file(), LANE_WAIVER_MAX_H, now_ts=time.time())
+    return _idle_message(idle, verdict)
 
 
 def selftest():
@@ -199,12 +193,22 @@ def selftest():
     full = ["_affect_x", "_curiosity_x", "self_schema_x", "_b1_v1_selforg_x", "construction_x"]
     if set(CPU_LANES) - _served(full):
         bad.append("FALSE POSITIVE: a job per lane still read as unserved")
-    # 2026-08-01: a waiver that justifies idle lanes by PRIORITY/FOCUS must be caught (the exact abuse); a
-    # waiver naming a genuine per-lane BLOCKER must NOT be flagged as a rationalisation.
-    if not _RATIONALISATION.search("saturated with the gap#4 crux; deprioritized behind the crux, not neglect"):
-        bad.append("did NOT detect the priority/focus rationalisation waiver -> the 2026-08-01 abuse would pass")
-    if _RATIONALISATION.search("no ready de-risk for these lanes: the stream-code cache is absent; blocked on its build"):
-        bad.append("FALSE POSITIVE: a genuine per-lane BLOCKER waiver was mis-flagged as a rationalisation")
+    # 2026-09-23: an INVALID waiver verdict (bad class, promise language, or budget-exhausted -- classification
+    # itself is `tools/waiver_history.py`'s job, see ITS selftest) must still BLOCK here; a valid, in-budget one
+    # must excuse it. Exercised via the pure `_idle_message` so this selftest never touches the real
+    # research/queue/.lane_waiver file (a selftest with disk side effects on every commit is its own failure
+    # shape).
+    idle5 = sorted(CPU_LANES)
+    rejected = {"active": True, "ok": False, "class": None,
+                "reject_reason": "promise/intent language 'will' detected -- REJECTED"}
+    if not _idle_message(idle5, rejected):
+        bad.append("did NOT block on a REJECTED waiver verdict (the 2026-09-23 promise-language loophole "
+                  "would pass)")
+    accepted = {"active": True, "ok": True, "class": "NO-READY-WORK", "age_h": 0.1, "budget_h": 1.0}
+    if _idle_message(idle5, accepted):
+        bad.append("FALSE POSITIVE: a valid in-budget waiver verdict was still blocked")
+    if not _idle_message(idle5, {"active": False}):
+        bad.append("did NOT block with no waiver at all")
     # DOC-ONLY EXEMPTION (2026-08-07): keys on the ACTUAL staged set (any status) via _is_doc_only.
     if not _is_doc_only(["GAP_CLOSURE_MISSION.md", "docs/RETRACTED.md"]):
         bad.append("a doc-only (.md) staged set was NOT recognised as exempt")

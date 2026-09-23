@@ -194,3 +194,6 @@ research/coordination/backlog.json
 research/coordination/ratchet_dispatched.jsonl
 _scratch/
 research/queue/.lane_waiver
+research/queue/.parallel_compute_waiver
+research/queue/.waiver_history.jsonl
+research/queue/.brain_build_reference.json
