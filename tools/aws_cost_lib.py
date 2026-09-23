@@ -13,15 +13,27 @@ SPEND MODEL (a documented approximation — NOT AWS Cost Explorer, which lags ~2
     hours_running_today (UTC calendar day, LaunchTime -> now, counted only while State in running/pending)
       x on-demand hourly price (PRICES below; us-east-1, approximate — edit to update)
     + EBS_DAILY_USD (a small flat constant for the attached root volume, added once per still-existing instance)
-  KNOWN LIMITATION: `describe-instances` only reports the CURRENT LaunchTime. If an instance stopped and was
-  restarted earlier the same UTC day, the hours it ran before that restart are not recoverable from this API
-  alone and are undercounted. This is a conservative, documented trade-off (see the module CLAUDE.md's stance
-  on `docs/TERMS.md` unchecked-term discipline) — not a silent bug. `enforce`'s job (stop running instances
-  once the cap is hit) is unaffected by it.
+  This LIVE-SNAPSHOT estimate (`estimate_spend`) has a documented blind spot: `describe-instances` only
+  reports the CURRENT LaunchTime, so if an instance stopped/restarted earlier the same UTC day, or was
+  terminated (and so no longer appears in a query filtered to pending/running/stopping/stopped at all), the
+  hours it ran before that transition are invisible to a live-only read.
+
+  FIXED 2026-09-23 (measured: two r7i.4xlarge instances ran ~$12 today; after one stopped+terminated,
+  `status` read $5.31): `estimate_spend_with_ledger` / `stop_candidates_with_ledger` are the callers
+  `tools/aws_budget.sh` actually uses for `status`/`check`/`enforce`. They combine this module's live snapshot
+  with the persistent, append-only, monotone-max ledger in `tools/aws_spend_ledger.py` — every observation is
+  recorded there, so a later, smaller (or absent) live reading of a stopped/terminated instance can never
+  erase spend it already accrued. `estimate_spend` itself is UNCHANGED and still only reflects the live
+  snapshot passed to it; it is the correct building block for the ledgered functions and for tests, not a fix
+  in itself.
 """
 import json
+import os
 import sys
 from datetime import datetime, timedelta, timezone
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import aws_spend_ledger as _ledger  # noqa: E402  (the persistent ledger this module's *_with_ledger callers use)
 
 # ---------------------------------------------------------------------------------------------------------
 # Tagging: how project instances are identified. New launches (tools/aws_cpu_launch.sh, tools/aws_gpu.sh
@@ -164,6 +176,66 @@ def stop_candidates(instances, cap, now=None):
 
 
 # ---------------------------------------------------------------------------------------------------------
+# Ledger-backed spend (the actual fix — see the module docstring's "FIXED 2026-09-23"). These are what
+# tools/aws_budget.sh's status/check/enforce call; `estimate_spend`/`stop_candidates` above stay pure
+# live-snapshot building blocks, unchanged, for tests and for anyone who wants the live-only number.
+
+def estimate_spend_with_ledger(instances, now=None, record_observations=True, ledger_file=None):
+    """Like `estimate_spend`, but a stopped/terminated project instance never loses spend it already accrued.
+    Every project instance in the live snapshot is recorded to the append-only spend ledger (see
+    tools/aws_spend_ledger.py), then the returned total/rows report, for every instance-id seen TODAY (the
+    live snapshot UNION today's ledger rows), the MAX of its live cost-right-now and its ledger's recorded
+    max. An instance no longer present in `instances` at all (terminated + fallen out of the describe-instances
+    filter, or just gone) still contributes its last-known ledger max, with a synthesized row (hours_today is
+    None; the caller can tell this happened via row["from_ledger"]).
+
+    `record_observations=False` is for read-only callers (a dry-run, or tests exercising only the merge logic)
+    that must not write to the ledger. `ledger_file` defaults to `aws_spend_ledger.LEDGER_FILE` — tests should
+    always pass an isolated path so a test run never writes into the SHARED production ledger."""
+    ledger_file = ledger_file if ledger_file is not None else _ledger.LEDGER_FILE
+    now = now or datetime.now(timezone.utc)
+    now_ts = now.timestamp()
+    live_total, live_rows = estimate_spend(instances, now=now)
+    if record_observations:
+        _ledger.record(live_rows, ts=now_ts, ledger_file=ledger_file)
+    live_by_id = {r["id"]: r for r in live_rows}
+    ledger_summary = _ledger.summary_today(day=_ledger.day_key(now_ts), ledger_file=ledger_file)
+
+    rows = []
+    total = 0.0
+    for iid in sorted(set(live_by_id) | set(ledger_summary)):
+        live = live_by_id.get(iid)
+        led = ledger_summary.get(iid)
+        live_cost = live["cost_today_usd"] if live else 0.0
+        led_cost = led["accrued_usd"] if led else 0.0
+        cost = max(live_cost, led_cost)
+        if live is not None:
+            row = dict(live)
+        else:
+            # Ledger-only: this instance no longer appears in the live snapshot at all (e.g. terminated and
+            # excluded by the describe-instances state filter). Reconstruct enough to display/act on it.
+            row = {"id": iid, "type": led.get("type") if led else None,
+                   "state": (led.get("state") if led else None) or "gone", "hours_today": None}
+        row["cost_today_usd"] = round(cost, 4)
+        row["from_ledger"] = led_cost > live_cost
+        rows.append(row)
+        total += cost
+    return round(total, 4), rows
+
+
+def stop_candidates_with_ledger(instances, cap, now=None, ledger_file=None):
+    """Ledger-aware `stop_candidates`: the cap comparison uses `estimate_spend_with_ledger`'s total (so a
+    launch cannot slip through just because an earlier instance already stopped/terminated), while the actual
+    stop list is still restricted to instances that are currently running/pending (nothing else CAN be
+    stopped)."""
+    total, rows = estimate_spend_with_ledger(instances, now=now, ledger_file=ledger_file)
+    if total < cap:
+        return [], total, rows
+    ids = [r["id"] for r in rows if r.get("state") in RUNNING_STATES]
+    return ids, total, rows
+
+
+# ---------------------------------------------------------------------------------------------------------
 # Idle-stop decision logic (tools/aws_idle_stop.sh). Split into small pure pieces so each signal is
 # independently testable: CPU-idle (from CloudWatch datapoints OR an SSH load-average fallback) AND
 # no-runner-active must BOTH be true before we call an instance idle. Any inconclusive signal -> not idle
@@ -247,18 +319,21 @@ def main(argv=None):
         instances = load_instances(_read_stdin())
 
     if cmd == "status":
-        total, rows = estimate_spend(instances)
+        total, rows = estimate_spend_with_ledger(instances)
         print(f"─ AWS BUDGET ─ cap=${opts['cap']:.2f}/day  spend_today≈${total:.2f}")
         if not rows:
             print(f"  (no project instances: Project={PROJECT_TAG_VALUE} tag, or legacy Name in "
                   f"{sorted(LEGACY_NAME_TAGS)})")
         for r in rows:
-            print(f"  {r['id']}  {r['type']:<14} {r['state']:<10} {r['hours_today']:>6.2f}h  "
-                  f"~${r['cost_today_usd']:.2f}")
+            hrs = r.get("hours_today")
+            hrs_s = f"{hrs:>6.2f}h" if hrs is not None else "     -"
+            tag = "  [ledger: no longer in live snapshot]" if r.get("from_ledger") and hrs is None else ""
+            print(f"  {r['id']}  {str(r.get('type') or '?'):<14} {str(r.get('state') or '?'):<10} {hrs_s}  "
+                  f"~${r['cost_today_usd']:.2f}{tag}")
         return 0
 
     if cmd == "check":
-        total, _rows = estimate_spend(instances)
+        total, _rows = estimate_spend_with_ledger(instances)
         extra = price_per_hour(opts["type"]) if opts["type"] else 0.0
         projected = total + extra
         if projected > opts["cap"]:
@@ -271,7 +346,7 @@ def main(argv=None):
         return 0
 
     if cmd == "enforce":
-        ids, _total, _rows = stop_candidates(instances, opts["cap"])
+        ids, _total, _rows = stop_candidates_with_ledger(instances, opts["cap"])
         for iid in ids:
             print(iid)
         return 0

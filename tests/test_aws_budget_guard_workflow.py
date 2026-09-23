@@ -21,6 +21,10 @@ ROOT = Path(__file__).resolve().parents[1]
 AWS_BUDGET = ROOT / "tools" / "aws_budget.sh"
 AWS_IDLE_STOP = ROOT / "tools" / "aws_idle_stop.sh"
 
+sys.path.insert(0, str(ROOT / "tools"))
+import aws_cost_lib as cost_lib  # noqa: E402  (computes EXPECTED spend dynamically for the ledger test below,
+# so that test's assertions never depend on what real-world time-of-day it happens to run at)
+
 
 def _describe_json(instances):
     return json.dumps({"Reservations": [{"Instances": instances}]})
@@ -126,6 +130,9 @@ def _run(script, args, bin_dir, extra_env=None, tmp_path=None):
         env.setdefault("AWS_BUDGET_LOG", str(tmp_path / "aws_budget.log"))
         env.setdefault("AWS_IDLE_STOP_LOG", str(tmp_path / "aws_idle_stop.log"))
         env.setdefault("AWS_GPU_STATE_FILE", str(tmp_path / "state" / ".aws_gpu"))
+        # aws_budget.sh's status/check/enforce now RECORD to the spend ledger (tools/aws_spend_ledger.py) --
+        # isolate it too, same reasoning as the three overrides above.
+        env.setdefault("AWS_SPEND_LEDGER", str(tmp_path / "aws_spend_ledger.jsonl"))
     if extra_env:
         env.update(extra_env)
     return subprocess.run(["bash", str(script), *args], cwd=ROOT, env=env,
@@ -182,6 +189,41 @@ def test_budget_enforce_does_not_stop_when_under_cap(tmp_path):
     res = _run(AWS_BUDGET, ["enforce"], bin_dir, {"AWS_DAILY_CAP_USD": "1000"}, tmp_path=tmp_path)
     assert res.returncode == 0, res.stderr
     assert "ec2 stop-instances" not in aws_log.read_text()
+
+
+def test_budget_check_refuses_after_earlier_instance_vanished_from_live_snapshot(tmp_path):
+    # Regression for the 2026-09-23 undercount: two SEPARATE `aws_budget.sh check` invocations (as real usage
+    # is -- once per launch attempt), sharing one ledger. The first sees TWO instances still live (mirrors the
+    # real report: two r7i.4xlarge running ~$12 combined); the second sees only the survivor (i-old has since
+    # terminated and dropped out of the describe-instances snapshot entirely). A live-only check would then
+    # see only the survivor's spend and wrongly allow a new launch past the cap.
+    #
+    # The cap is computed DYNAMICALLY from aws_cost_lib's own formula (rather than a number derived assuming a
+    # fixed hours-ago) so this test cannot go flaky depending on what time of day it happens to run -- an
+    # `hours_ago` near a UTC-midnight boundary would otherwise change the accrued cost out from under a fixed
+    # expected constant (this exact mistake was caught in review before this test was committed).
+    ledger_path = tmp_path / "aws_spend_ledger.jsonl"
+    call1 = tmp_path / "call1"; call1.mkdir()
+    call2 = tmp_path / "call2"; call2.mkdir()
+
+    hours_ago = 2
+    old = _instance("i-old", "r7i.4xlarge", "running", hours_ago=hours_ago)
+    keep = _instance("i-keep", "r7i.4xlarge", "running", hours_ago=hours_ago)
+    each_cost, _hrs = cost_lib.instance_cost_today(old)   # ground truth, from the same UTC-day-clamped formula
+    combined = 2 * each_cost
+    extra = cost_lib.price_per_hour("r7i.4xlarge")
+    cap = combined + extra / 2.0   # strictly between "combined" and "combined + a new instance's first hour"
+
+    bin_dir1, _aws_log1, _ = _make_stub_bin(call1, [old, keep])
+    res1 = _run(AWS_BUDGET, ["check"], bin_dir1,
+                {"AWS_DAILY_CAP_USD": f"{cap:.4f}", "AWS_SPEND_LEDGER": str(ledger_path)}, tmp_path=call1)
+    assert res1.returncode == 0, res1.stderr   # both still live, combined cost is under cap
+
+    bin_dir2, _aws_log2, _ = _make_stub_bin(call2, [keep])  # i-old is now gone -- terminated
+    res2 = _run(AWS_BUDGET, ["check", "r7i.4xlarge"], bin_dir2,
+                {"AWS_DAILY_CAP_USD": f"{cap:.4f}", "AWS_SPEND_LEDGER": str(ledger_path)}, tmp_path=call2)
+    assert res2.returncode == 1, res2.stderr
+    assert "refusing" in res2.stderr
 
 
 # --------------------------------------------------------------------------------- launch-path gate wiring

@@ -7,8 +7,10 @@ stubbed `aws`/`ssh` on PATH live in tests/test_aws_budget_guard_workflow.py.
 from __future__ import annotations
 
 import json
+import os
 import subprocess
 import sys
+import tempfile
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
@@ -16,6 +18,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "tools"))
 
 import aws_cost_lib as lib  # noqa: E402
+import aws_spend_ledger as ledger  # noqa: E402
 
 
 NOW = datetime(2026, 9, 23, 18, 0, 0, tzinfo=timezone.utc)
@@ -145,6 +148,104 @@ def test_stop_candidates_over_cap_lists_running_only():
     assert total >= 1.0
 
 
+# ------------------------------------------------------------------------------ ledger-backed spend (the fix)
+# Regression coverage for the 2026-09-23 undercount: `estimate_spend`'s live-only read loses an instance's
+# accrued cost the moment it stops or terminates. `estimate_spend_with_ledger` must not. Every test here
+# passes its OWN `ledger_file` (a pytest tmp_path file) so it never touches the shared production ledger.
+
+def test_ledger_five_hour_run_then_terminated_still_counts_its_spend(tmp_path):
+    lf = str(tmp_path / "ledger.jsonl")
+    # Observed once while running (5h in) -> ledger records ~5h x price + EBS.
+    running = _instance("i-aaa", "r7i.4xlarge", "running", NOW - timedelta(hours=5))
+    total1, rows1 = lib.estimate_spend_with_ledger([running], now=NOW, ledger_file=lf)
+    expected = 5.0 * lib.PRICES["r7i.4xlarge"] + lib.EBS_DAILY_USD
+    assert abs(total1 - round(expected, 4)) < 1e-3
+    assert abs(expected - 5.2355) < 1e-3   # "~$5.2", per the build brief's example
+
+    # Next observation: the instance is GONE from the live snapshot entirely (terminated + fallen out of the
+    # describe-instances filter) -- exactly what tools/aws_budget.sh's _fetch_instances does today.
+    total2, rows2 = lib.estimate_spend_with_ledger([], now=NOW + timedelta(minutes=10), ledger_file=lf)
+    assert abs(total2 - total1) < 1e-3, "spend vanished after the instance disappeared from the live snapshot"
+    row = next(r for r in rows2 if r["id"] == "i-aaa")
+    assert row["from_ledger"] is True
+    assert row["hours_today"] is None   # honestly reports "we don't know the live hours anymore"
+
+
+def test_ledger_stopped_instance_keeps_its_larger_recorded_spend():
+    import tempfile
+    with tempfile.TemporaryDirectory() as td:
+        path = os.path.join(td, "ledger.jsonl")
+        running = _instance("i-bbb", "g5.xlarge", "running", NOW - timedelta(hours=8))
+        total_running, _ = lib.estimate_spend_with_ledger([running], now=NOW, ledger_file=path)
+
+        # Now observed as `stopped` (current live cost recomputes to JUST the EBS constant, per
+        # `estimate_spend`'s stopped-instance rule) -- the ledger's earlier, larger max must win.
+        stopped = _instance("i-bbb", "g5.xlarge", "stopped", NOW - timedelta(hours=8))
+        total_stopped, rows_stopped = lib.estimate_spend_with_ledger(
+            [stopped], now=NOW + timedelta(minutes=5), ledger_file=path)
+        assert abs(total_stopped - total_running) < 1e-3
+        row = next(r for r in rows_stopped if r["id"] == "i-bbb")
+        assert row["from_ledger"] is True
+        assert row["cost_today_usd"] > lib.EBS_DAILY_USD + 1e-6   # not reset down to just the EBS constant
+
+
+def test_ledger_monotone_max_never_decreases_across_repeated_observations():
+    import tempfile
+    with tempfile.TemporaryDirectory() as td:
+        path = os.path.join(td, "ledger.jsonl")
+        totals = []
+        for hrs_ago, hrs_after in [(1, None), (3, None), (6, None)]:
+            inst = _instance("i-ccc", "r7i.4xlarge", "running", NOW - timedelta(hours=hrs_ago))
+            t, _ = lib.estimate_spend_with_ledger([inst], now=NOW, ledger_file=path)
+            totals.append(t)
+        assert totals == sorted(totals), f"spend must be non-decreasing as observed hours grow: {totals}"
+        # A final observation reporting a SMALLER cost-right-now (e.g. a clock/API hiccup) must not pull the
+        # recorded max back down.
+        tiny = _instance("i-ccc", "r7i.4xlarge", "running", NOW - timedelta(minutes=1))
+        t_final, rows_final = lib.estimate_spend_with_ledger([tiny], now=NOW, ledger_file=path)
+        assert t_final >= totals[-1] - 1e-9
+        row = next(r for r in rows_final if r["id"] == "i-ccc")
+        assert row["cost_today_usd"] >= totals[-1] - 1e-9
+
+
+def test_ledger_cap_refuses_launch_after_earlier_instance_terminated():
+    import tempfile
+    with tempfile.TemporaryDirectory() as td:
+        path = os.path.join(td, "ledger.jsonl")
+        # Mirrors the real 2026-09-23 report: two r7i.4xlarge instances running most of the day (~$12.5
+        # together: 6h x $1.0071 + $0.20 EBS, each), then one (i-old) terminates.
+        old = _instance("i-old", "r7i.4xlarge", "running", NOW - timedelta(hours=6))
+        keep = _instance("i-keep", "r7i.4xlarge", "running", NOW - timedelta(hours=6))
+        lib.estimate_spend_with_ledger([old, keep], now=NOW, ledger_file=path)
+
+        # i-old has since terminated (vanished from the live snapshot entirely); i-keep is still running. A
+        # naive live-only read now sees only i-keep's ~$6.24 -- the ledgered total must still reflect both.
+        total_after, _rows = lib.estimate_spend_with_ledger([keep], now=NOW + timedelta(minutes=1),
+                                                              ledger_file=path)
+        assert total_after > 12.0, "i-old's spend vanished once it dropped out of the live snapshot"
+
+        ids, total, _rows = lib.stop_candidates_with_ledger([keep], cap=13.0, now=NOW + timedelta(minutes=1),
+                                                              ledger_file=path)
+        # The cap math (what `aws_budget.sh check` uses) must see the TRUE total, which is what refuses the
+        # launch of a new ~$1/h instance that would cross the $13 cap -- a live-only read of just i-keep
+        # (~$6.24 + the new instance's first hour, well under $13) would wrongly allow it.
+        extra = lib.price_per_hour("r7i.4xlarge")
+        assert total + extra > 13.0, "the launch-time cap check would wrongly allow a launch past the cap"
+
+
+def test_ledger_seed_backfills_an_instance_that_ended_before_the_ledger_existed():
+    import tempfile
+    with tempfile.TemporaryDirectory() as td:
+        path = os.path.join(td, "ledger.jsonl")
+        day = ledger.day_key(NOW.timestamp())
+        ledger.seed("i-08992a81da0e7f4a6", 7.1652, day, itype="r7i.4xlarge", state="terminated",
+                    ledger_file=path)
+        total, rows = lib.estimate_spend_with_ledger([], now=NOW, ledger_file=path)
+        assert abs(total - 7.1652) < 1e-3
+        row = next(r for r in rows if r["id"] == "i-08992a81da0e7f4a6")
+        assert row["from_ledger"] is True
+
+
 # --------------------------------------------------------------------------------------------- idle decision
 
 def test_is_idle_by_cpu_samples_all_low():
@@ -185,11 +286,19 @@ def test_idle_decision_unknown_runner_state_defaults_to_keep():
 
 # --------------------------------------------------------------------------------------------------- CLI
 
-def _run_cli(args, stdin_text=""):
-    return subprocess.run(
-        [sys.executable, str(ROOT / "tools" / "aws_cost_lib.py"), *args],
-        input=stdin_text, capture_output=True, text=True, timeout=15,
-    )
+def _run_cli(args, stdin_text="", env=None):
+    # `check`/`status`/`enforce` all RECORD to the spend ledger now (see aws_cost_lib.estimate_spend_with_ledger)
+    # -- isolate every CLI test's ledger to a throwaway temp file so a test run never writes into the SHARED
+    # production research/queue/.aws_spend_ledger.jsonl (mirrors AWS_BUDGET_LOG's test-isolation purpose).
+    full_env = dict(os.environ)
+    with tempfile.TemporaryDirectory() as td:
+        full_env["AWS_SPEND_LEDGER"] = os.path.join(td, "ledger.jsonl")
+        if env:
+            full_env.update(env)
+        return subprocess.run(
+            [sys.executable, str(ROOT / "tools" / "aws_cost_lib.py"), *args],
+            input=stdin_text, capture_output=True, text=True, timeout=15, env=full_env,
+        )
 
 
 def _describe_json(instances):
@@ -227,6 +336,51 @@ def test_cli_enforce_empty_under_cap():
     res = _run_cli(["enforce", "--cap", "1000"], _describe_json([inst]))
     assert res.returncode == 0
     assert res.stdout.strip() == ""
+
+
+def test_cli_status_shows_ledger_only_row_for_vanished_instance(tmp_path):
+    # Two separate subprocess invocations sharing ONE ledger path -- proves the ledger really persists
+    # across process invocations (the real-world case: two separate `aws_budget.sh status` calls).
+    env = {"AWS_SPEND_LEDGER": str(tmp_path / "ledger.jsonl")}
+    inst = _instance("i-aaa", "r7i.4xlarge", "running", NOW - timedelta(hours=5))
+    res1 = _run_cli(["status", "--cap", "50"], _describe_json([inst]), env=env)
+    assert res1.returncode == 0, res1.stderr
+    assert "i-aaa" in res1.stdout
+
+    # Instance has now vanished from the live snapshot entirely (terminated, excluded by the
+    # describe-instances state filter) -- status must still show its spend, sourced from the ledger.
+    res2 = _run_cli(["status", "--cap", "50"], _describe_json([]), env=env)
+    assert res2.returncode == 0, res2.stderr
+    assert "i-aaa" in res2.stdout
+    assert "ledger" in res2.stdout.lower()
+
+
+def test_cli_check_refuses_after_instance_vanishes_from_live_snapshot(tmp_path):
+    # Mirrors the real 2026-09-23 report: two r7i.4xlarge instances running combined, then one (i-old)
+    # terminates -- a naive live-only check on just the survivor would wrongly allow another launch.
+    # The CLI's `now` is the REAL wall clock (no injection point), so the cap is computed DYNAMICALLY from
+    # aws_cost_lib's own formula rather than a number assuming a fixed hours-ago -- otherwise this test could
+    # go flaky if it happens to run near a UTC-midnight boundary (hours_running_today clamps to the UTC
+    # calendar day).
+    real_now = datetime.now(timezone.utc)
+    hours_ago = 2
+    old = _instance("i-old", "r7i.4xlarge", "running", real_now - timedelta(hours=hours_ago))
+    keep = _instance("i-keep", "r7i.4xlarge", "running", real_now - timedelta(hours=hours_ago))
+    each_cost, _hrs = lib.instance_cost_today(old, now=real_now)
+    combined = 2 * each_cost
+    extra = lib.price_per_hour("r7i.4xlarge")
+    cap = combined + extra / 2.0   # strictly between "combined" and "combined + a new instance's first hour"
+
+    env = {"AWS_SPEND_LEDGER": str(tmp_path / "ledger.jsonl")}
+    res1 = _run_cli(["check", "--cap", f"{cap:.4f}"], _describe_json([old, keep]), env=env)
+    assert res1.returncode == 0, res1.stderr   # both still live, combined cost is under cap
+
+    # i-old is now gone from the live snapshot (terminated); i-keep is still live and alone accrues only
+    # half the combined cost -- the ledgered check must still see both, and refuse the new instance's
+    # first-hour addition.
+    res2 = _run_cli(["check", "--cap", f"{cap:.4f}", "--type", "r7i.4xlarge"], _describe_json([keep]), env=env)
+    assert res2.returncode == 1, res2.stderr
+    assert "refusing" in res2.stderr
 
 
 def test_cli_project_ids_filters_non_project_and_non_running():
