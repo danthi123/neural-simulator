@@ -1037,6 +1037,13 @@ def measure_faculty(key, out_dir, repeats=1, intact_cache=None, seed=42):
     lesioned = _spawn_arm({**base_env, flag: val}, grp, les_out)
     if intact_a is None or intact_b is None or lesioned is None:
         res["verdict"] = "arm-build-failed"; return res
+    # A brain that FAILED TO LOAD returns per-turn {'_error': ...} dicts, not None -- which then compared as "fields
+    # absent in both arms" and read NOT-EXERCISED: a silent false negative (2026-09-23, an AWS run missing the
+    # `experiment` package read not-exercised on all 10 arms in seconds). Surface it as the build failure it is.
+    _arm_errs = [t.get("_error") for arm in (intact_a, intact_b, lesioned) if isinstance(arm, dict)
+                 for t in arm.values() if isinstance(t, dict) and t.get("_error")]
+    if _arm_errs:
+        res["verdict"] = "arm-build-failed"; res["arm_error"] = str(_arm_errs[0])[:300]; return res
 
     treat_pf = compare(intact_a, lesioned, faculties=[row])["per_faculty"][0]
     res["verdict"] = treat_pf["verdict"]        # "regressed" (=changed) / "pass" (=identical) / "not-exercised"
