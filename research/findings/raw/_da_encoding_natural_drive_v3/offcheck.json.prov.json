@@ -1,0 +1,32 @@
+{
+ "run_id": "1790186391-1325602",
+ "runner": "research/runners/_da_tag_capture_offcheck.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/wf_a686cbcd-9ff-3/research/runners/_da_tag_capture_offcheck.py",
+  "--compare",
+  "/tmp/claude-1000/-home-dant123-Projects-sim/87891831-e642-4a2f-abeb-50ea0867609b/scratchpad/off_pinned.json",
+  "/tmp/claude-1000/-home-dant123-Projects-sim/87891831-e642-4a2f-abeb-50ea0867609b/scratchpad/off_branch.json",
+  "--pinned-sha",
+  "5e1f0ec796b6be01c23af1b6095620240fc1972e",
+  "--branch-sha",
+  "492231df35d7e74119f7546c75bb704d63a0548b",
+  "--out",
+  "research/findings/raw/_da_encoding_natural_drive_v3/offcheck.json"
+ ],
+ "git_sha": "492231df3",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-23T13:59:51",
+ "env": {},
+ "sim_backend": "numpy",
+ "sim_backend_requested": "(unset -> runner default)",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_da_encoding_natural_drive_v3/offcheck.json"
+}

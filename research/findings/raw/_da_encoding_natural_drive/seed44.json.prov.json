@@ -1,0 +1,28 @@
+{
+ "run_id": "1790181376-1183112",
+ "runner": "research/runners/_da_encoding_natural_drive_persistence.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/wf_6cf1082d-b06-3/research/runners/_da_encoding_natural_drive_persistence.py",
+  "--seed",
+  "44",
+  "--out",
+  "research/findings/raw/_da_encoding_natural_drive/seed44.json"
+ ],
+ "git_sha": "a9786ec8f",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-23T12:36:16",
+ "env": {},
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 2795.3,
+ "corpus_check_query": "DA-gated encoding persistence decay synaptic tagging surprising salient memory recall",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_da_encoding_natural_drive/seed44.json"
+}

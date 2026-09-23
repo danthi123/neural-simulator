@@ -1,0 +1,132 @@
+{
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "rows": [
+    {
+      "seed": 100,
+      "verdict": "GO",
+      "G1_salient_fact_da_min": 0.8965045558416256,
+      "G1_neutral_all_da_max": 0.3352303767017953,
+      "salient_24h_intact": 4,
+      "salient_24h_lesion_da_encoding": 0,
+      "neutral_24h_intact": 0,
+      "salient_24h_lesion_capture": 0,
+      "salient_24h_companion_off": 4,
+      "neutral_24h_companion_off": 4,
+      "G3_exact_perm_p": 0.014285714285714285,
+      "confab_total_all_arms": 0,
+      "G8_robust": true
+    },
+    {
+      "seed": 101,
+      "verdict": "GO",
+      "G1_salient_fact_da_min": 0.8965045558416256,
+      "G1_neutral_all_da_max": 0.5730589721737079,
+      "salient_24h_intact": 4,
+      "salient_24h_lesion_da_encoding": 0,
+      "neutral_24h_intact": 0,
+      "salient_24h_lesion_capture": 0,
+      "salient_24h_companion_off": 4,
+      "neutral_24h_companion_off": 4,
+      "G3_exact_perm_p": 0.014285714285714285,
+      "confab_total_all_arms": 4,
+      "G8_robust": true
+    },
+    {
+      "seed": 102,
+      "verdict": "GO",
+      "G1_salient_fact_da_min": 0.7917991230857593,
+      "G1_neutral_all_da_max": 0.19583742041430205,
+      "salient_24h_intact": 4,
+      "salient_24h_lesion_da_encoding": 0,
+      "neutral_24h_intact": 0,
+      "salient_24h_lesion_capture": 0,
+      "salient_24h_companion_off": 4,
+      "neutral_24h_companion_off": 4,
+      "G3_exact_perm_p": 0.014285714285714285,
+      "confab_total_all_arms": 3,
+      "G8_robust": true
+    },
+    {
+      "seed": 42,
+      "verdict": "GO",
+      "G1_salient_fact_da_min": 0.8965045558416256,
+      "G1_neutral_all_da_max": 0.5488619574508105,
+      "salient_24h_intact": 4,
+      "salient_24h_lesion_da_encoding": 0,
+      "neutral_24h_intact": 0,
+      "salient_24h_lesion_capture": 0,
+      "salient_24h_companion_off": 4,
+      "neutral_24h_companion_off": 4,
+      "G3_exact_perm_p": 0.014285714285714285,
+      "confab_total_all_arms": 0,
+      "G8_robust": true
+    },
+    {
+      "seed": 43,
+      "verdict": "GO",
+      "G1_salient_fact_da_min": 0.7980108110666576,
+      "G1_neutral_all_da_max": 0.4114783623177975,
+      "salient_24h_intact": 4,
+      "salient_24h_lesion_da_encoding": 0,
+      "neutral_24h_intact": 0,
+      "salient_24h_lesion_capture": 0,
+      "salient_24h_companion_off": 4,
+      "neutral_24h_companion_off": 4,
+      "G3_exact_perm_p": 0.014285714285714285,
+      "confab_total_all_arms": 3,
+      "G8_robust": true
+    },
+    {
+      "seed": 44,
+      "verdict": "GO",
+      "G1_salient_fact_da_min": 0.8965045558416256,
+      "G1_neutral_all_da_max": 0.41252242513706866,
+      "salient_24h_intact": 4,
+      "salient_24h_lesion_da_encoding": 0,
+      "neutral_24h_intact": 0,
+      "salient_24h_lesion_capture": 0,
+      "salient_24h_companion_off": 4,
+      "neutral_24h_companion_off": 4,
+      "G3_exact_perm_p": 0.014285714285714285,
+      "confab_total_all_arms": 0,
+      "G8_robust": true
+    }
+  ],
+  "all_six_seeds_present": true,
+  "n_go": 6,
+  "pooled_effect_obs": 24,
+  "pooled_null_p": 0.0,
+  "pooled_null_q95": 6.0,
+  "status": "GO",
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "all six seeds present",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "no seed UNDEFINED",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "floor",
+      "name": "pooled intact-minus-lesion effect vs the permutation-null 95th percentile",
+      "ok": true,
+      "detail": "24 vs floor 6",
+      "note": ""
+    }
+  ],
+  "undefined_reasons": []
+}
