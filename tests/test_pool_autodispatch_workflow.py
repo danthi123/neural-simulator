@@ -38,6 +38,8 @@ def test_memory_reservations_expire_and_jobs_declare_size(tmp_path: Path) -> Non
     assert run_bash(DISPATCHER, "--peek-est-gb", env=env).stdout.strip() == "5"
     queue.write_text(f"{now}\tpython -m research.runners.x  #checked:reason\n")
     assert run_bash(DISPATCHER, "--peek-est-gb", env={**env, "POOL_JOB_EST_GB": "2"}).stdout.strip() == "2"
+    queue.write_text(f"{now}\tbash tools/memcap.sh 8 -- python -m research.runners.x  #checked:reason\n")
+    assert run_bash(DISPATCHER, "--peek-est-gb", env=env).stdout.strip() == "8"   # memcap cap is the fallback
 
 
 def test_remote_wrapper_records_multiline_job_as_one_v2_row(tmp_path: Path) -> None:

@@ -34,6 +34,8 @@ GROWTH_WINDOW_S="${POOL_GROWTH_WINDOW_S:-1200}"
 job_est_gb() {
   local h
   h=$(printf '%s' "$1" | grep -oE 'mem_gb=[0-9]+' | head -1 | cut -d= -f2)
+  # No hint but a memcap wrapper: its cap is the job's own declared ceiling (swap-probe LB lines, 2026-09-23).
+  [ -z "$h" ] && h=$(printf '%s' "$1" | grep -oE 'memcap\.sh [0-9]+' | head -1 | awk '{print $2}')
   echo "${h:-${POOL_JOB_EST_GB:-1}}"
 }
 
