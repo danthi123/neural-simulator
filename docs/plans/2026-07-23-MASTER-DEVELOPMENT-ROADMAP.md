@@ -1188,15 +1188,31 @@ Perception/attention/WM, affect, curiosity, self/workspace/ToM, and language are
 
 ## 8. IMMEDIATE NEXT ACTIONS
 
+**2026-09-23 (da-gated-encoding, branch `research/da-encoding-natural-drive`, IN FLIGHT):** the natural-probe wall
+(DA write gain invisible to a clean read) traced to two constants: infinite E-LTP lifetime and a zero synaptic
+baseline. Built `webapp/da_tag_capture.py` (DA-gated tagging-and-capture, default OFF) plus a natural
+surprising-vs-expected conversation read as 24 h recall. v1 (D=64) 6-seed = UNDEFINED (1 GO, 5 fail the G2
+immediate-recall precondition: low-gain writes misread, with confabulations, once a synaptic baseline exists), while
+every 24 h comparison went the predicted way on all 6 seeds. v2 at the production D=128 = 6/6 GO at RUNNER LEVEL
+(salient facts recalled next day 4/4, DA->encoding lesion 0/4, neutral 0/4, capture-only lesion 0/4, companion off
+4/4; no confabulation at the primary point). Review: v2's 24 h outcome was set by a HOST compare-and-decay rule
+(declared; not credited to the brain), its band could not fail, and its arms were run-order dependent. v3 (prereg
+014298f62): DA acts through synapses (spiking D1 pool -> PRP pool -> per-synapse tag + bistable late-phase state, no
+compare on the DA trace), fresh process per arm, a capture band that can fail = 6/6 GO at RUNNER LEVEL, seed sign-flip
+p = 1/64; margins wide (neutral flips only at gamma x3.2 on seed 42). NOT wired: the battery still reads
+da-gated-encoding hollow. NEXT: verify-go v3; wire the ledger + a battery "next day" probe pair; a harder neutral drive;
+add repetition/sleep-replay routes to L-LTP before any default flip.
+
 **2026-09-23 (D6 learn-through-use, branch `research/d6-learn-through-use`, NOT merged, default-OFF):**
 - The in-conversation fact write is now a local Hebbian rule on the substrate (`BRAIN_D6_HEBBIAN_STORE`), with a
-  write-only freeze lesion. Seed-42 smokes: base NO-GO on C3 (a host `kb` list carries familiarity); engram
-  variant NO-GO on C3 + C4. The prune variant is banked as an INVALID instrument: its lesion arm ran a host
-  retraction that the treatment arm never runs.
-- NEXT: the pre-registered gate v2 (`--variant readtime`: read-time engram view, no host deletion, plus an
-  ABL_H post-hoc ablation arm) is staged 6-seed on the pool. Finding:
-  `research/findings/2026-09-23-d6-learn-through-use-v2-PREREGISTRATION-readtime-view-and-engram-ablation.md`.
-  C4 (the teach-turn ack) is predicted to fail. C3/C3b decide whether the reply change is carried by synapses.
+  write-only freeze lesion. Gate v1 (base) is NO-GO on C3 at s42 and s43: a host `kb` list carries familiarity.
+  The engram variant was NO-GO; the prune variant is banked as an INVALID instrument. Gate v2 was registered to fail
+  (its own prereg predicted the teach-ack and word-exposure failures) and is superseded; it never ran.
+- Gate v3 (the capability gate: does the later reply depend on the synaptic write? USE_H vs FREEZE_H, same input and
+  host code; plus a post-hoc ablation arm and a host-record inertness arm) was pre-registered before any v3 arm. Seed
+  42 passes all seven criteria, INCOMPLETE 1/6. NEXT: the 5-seed pool fanout, then score. Findings:
+  `research/findings/2026-09-23-d6-learn-through-use-v3-PREREGISTRATION-capability-gate.md`,
+  `research/findings/2026-09-23-d6-learn-through-use-v3-s42-all-criteria-pass-INCOMPLETE-1of6-plus-v1-pool-banked.md`.
 
 **2026-09-18 (STRATEGIC — owner decision + scaling go/no-go; supersedes the raw-scale framing below):**
 - **Faithfulness-vs-tractability relaxation APPROVED (owner), honesty-conditioned** — trade bit-exact realism ONLY for a significant perf gain that loses nothing important to end-goal capabilities, and document every trade; biology-strong stays core; invariants kept (brain-based / one-brain / emergent / honesty). See memory `project_agi_first_fork_openness_2026_09_06`.

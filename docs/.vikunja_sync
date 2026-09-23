@@ -131,5 +131,8 @@ Robust core 23/26 adequate (episodic-memory load-bearing 6/6; s100 cupy 7/7 majo
 ## 2026-09-23  D1 operating-point stabilizer GO merged (@f48fce12)
 Hardens robust-core-23 borderline margins (pmem set-point regulator, default-off, adversarially confirmed) + found a substrate cliff. Hardens (does not grow) the count -> no capability-status flip -> no new board row per anti-noise rule; the pmem/#1-metric task already reflects load-bearing. Static-table->live-homeostat is a named follow-on.
 
+## 2026-09-23  da-gated-encoding natural drive: v2 D=128 6/6 GO at runner level (branch research/da-encoding-natural-drive)
+DA-gated tagging-and-capture companion (default-off) + natural surprising-vs-expected drive read as 24 h recall: salient 4/4, DA->encoding lesion 0/4, neutral 0/4; v1 D=64 UNDEFINED (G2). Not wired: #225 appended, next rung #227 created (wire into live chat store + battery next-day probe, L-LTP routes before any flip, verify-go).
+
 ## 2026-09-23  D6 learn-through-use fix round 3 (gate v3 prereg)
 Created #228 (Learning, p3): prove a taught fact is carried by the brain's own connection change. Gate v2 superseded (registered to fail); gate v3 capability gate pre-registered before any v3 arm. No shipped-capability change (everything default-off).

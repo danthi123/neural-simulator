@@ -47,7 +47,7 @@ DATA_DIRS = ["research/findings", "research/datasets", "research/measurements", 
 # modifies. A moving ref (origin/main) becomes TAUTOLOGICAL once D6 merges (the branch would be compared with itself),
 # so the default is this pinned SHA, and `compare` REFUSES any reference that already contains the D6 module (the
 # verdict is then UNDEFINED, never byte_identical=True). Re-pin deliberately when main is merged in again.
-PRE_D6_REF = "5e9a7955be3714b98a794c6d6af0f30c3357a33f"
+PRE_D6_REF = "e98b0b0463eaa7940aadf2ba74b83990e874a6e2"   # re-pinned at the fix-round-3 merge (was 5e9a7955b)
 D6_MARKER = "research/runners/d6_hebbian_store.py"
 
 
