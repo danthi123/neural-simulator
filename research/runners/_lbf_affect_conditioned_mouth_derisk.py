@@ -160,6 +160,50 @@ def calibrate_organ(seed):
     return out
 
 
+def summarize_calibration(write=True):
+    """Pure: fold the per-seed organ calibrations + the magnitude audit into one summary (values rounded to 3 dp,
+    the precision the finding quotes)."""
+    r3 = lambda x: round(float(x), 3)  # noqa: E731
+    per = {}
+    for s in SEEDS:
+        p = calib_path(s)
+        if not os.path.exists(p):
+            continue
+        c = json.load(open(p))
+        sw = {x["appraisal"]: x["differential"] for x in c["sweep"]}
+        per[s] = {"full_pos": r3(c["full_scale_pos_diff"]), "full_neg": r3(c["full_scale_neg_diff"]),
+                  "valence_fs": r3(c["valence_fs"]), "d_pos_0475": r3(sw[0.475]), "d_neg_0475": r3(sw[-0.475]),
+                  "d_neg_075": r3(sw[-0.75]), "d_neg_1": r3(sw[-1.0]),
+                  "d_at_pm025": [r3(sw[-0.25]), r3(sw[0.25])]}
+    aud = magnitude_audit(write=False)
+    live = {}
+    for row in aud["rows"]:
+        fs = per.get(row["seed"], {}).get("valence_fs")
+        live["%d_%s" % (row["seed"], row["arm"])] = {
+            "valence": r3(row["valence"]), "c": (r3(row["valence"] / fs) if fs else None),
+            "frac_of_full_scale": (r3(abs(row["valence"]) / fs) if fs else None)}
+    weak = [s for s in per if abs(per[s]["d_neg_0475"]) < 0.03]
+    out = {"per_seed": per, "live": live,
+           "full_pos_range": [min(v["full_pos"] for v in per.values()), max(v["full_pos"] for v in per.values())],
+           "full_neg_range": [min(v["full_neg"] for v in per.values()), max(v["full_neg"] for v in per.values())],
+           "valence_fs_range": [min(v["valence_fs"] for v in per.values()),
+                                max(v["valence_fs"] for v in per.values())],
+           "live_pos_valence_range": [r3(x) for x in aud["pos_valence_range"]],
+           "live_neg_valence_range": [r3(x) for x in aud["neg_valence_range"]],
+           "neg_0475_below_tol_seeds": weak,
+           "neg_0475_weak_range": [min(per[s]["d_neg_0475"] for s in weak), max(per[s]["d_neg_0475"] for s in weak)]
+           if weak else None,
+           "neg_075_to_1_weak_seeds_range": [min(min(per[s]["d_neg_075"], per[s]["d_neg_1"]) for s in weak),
+                                             max(max(per[s]["d_neg_075"], per[s]["d_neg_1"]) for s in weak)]
+           if weak else None,
+           "n_dead_zoned": aud["n_dead_zoned"], "n_rows": aud["n_rows"]}
+    if write:
+        ap = os.path.join(_REPO, OUT_ROOT, "calibration", "calibration_summary.json")
+        json.dump(out, open(ap, "w"), indent=2)
+        print("[calib-summary] wrote %s" % ap)
+    return out
+
+
 def valence_fs_for(seed):
     p = calib_path(seed)
     if os.path.exists(p):
@@ -458,6 +502,7 @@ if __name__ == "__main__":
     ap.add_argument("--selftest", action="store_true")
     ap.add_argument("--magnitude-audit", action="store_true")
     ap.add_argument("--calibrate-organ", action="store_true")
+    ap.add_argument("--calib-summary", action="store_true", help="pure: fold calibrations + audit into one summary")
     ap.add_argument("--worker", action="store_true")
     ap.add_argument("--controller", action="store_true")
     ap.add_argument("--score-only", action="store_true")
@@ -473,6 +518,8 @@ if __name__ == "__main__":
         sys.exit(0 if selftest() else 1)
     elif args.magnitude_audit:
         magnitude_audit()
+    elif args.calib_summary:
+        summarize_calibration()
     elif args.calibrate_organ:
         calibrate_organ(args.seed)
     elif args.smoke:
