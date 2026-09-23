@@ -96,6 +96,15 @@ waiting on runs every day … I thought our heartbeats/gates were supposed to pr
   its evidence runs** for RAM believing them superseded (FAILURE_LOG) → must be re-staged OFF the local box.
   Local RAM is the binding constraint now (GPU queue head-of-line blocked on a mem_ok wait) — `mem_ok` commitment term
   `@d2ddb58c`.
+- **16:20 fix round 3 `woffopk92` harvested:** ✅ **waiver loophole REPAIRED on main `@ad6ec857`** (episode-once
+  budget + 1h minimum per episode — I closed the last blocker (brief around-commit waivers) with a mutation-checked test;
+  GAMING/OWNER-PAUSE need the owner's GAME_MODE/GPU_PAUSE sentinel; infra exemption is an allow-list). D3 (scorer
+  loophole + pool_queue conflict) and D6 (dropped a pre-registered EXPO_H control; doc accuracy) → small fixes
+  `d3-d6-small-fixes` in flight. **GNW continuous held-topic lane PARKED** after 3 review rounds — each round's
+  verification claim was refuted (hash after divergence; saturated fork scalars; safety gate calls observe() 5x/turn);
+  next method (when resumed): verify the continuous mode against a genuinely branch-point state snapshot of ALL
+  cp_* arrays. D1 SETTLE contrast: s43-s102 moved from a serial pool41 flock queue (~10 h) to AWS1 (10 parallel);
+  s42 finishing on pool41. Battery allfixes2: 185/186 (episodic s102 on AWS1).
 - **⚠️ POOL/AWS BRAIN ASSETS:** pool nodes lack bridges/ (25G local) + most data/ (11G local) → production brain_chat
   runs there may DEGENERATE like AWS did. Do NOT trust a pool brain_chat result until the infra lane's sanity check passes.
 - **LESSONS (new):** never SendMessage a Workflow subagent (it resumes the agent as a duplicate in the same worktree;
