@@ -289,11 +289,11 @@ directory so it does not overwrite the amended scorer's committed verdicts). On 
 two give **the same aggregate summary and the same verdict, delta, reason and GO field on every one of the 6
 per-seed records — not byte-identical files.** `stored_facts_equal_across_sessions` reads `True` for all 6 seeds
 (no seed's sessions disagree on `stored_facts`), so the added check never fires and contributes no `reasons` entry
-either way, and the sign test, mean-Delta and `GO` outcome match exactly. Two things differ at the file level and
-do not affect this: the aggregate `summary` block's `abstain_rate` field serializes as a tuple under the amended
-scorer's in-memory run versus a list under the as-registered scorer's (both encode the same values once written
-as JSON), and each as-registered per-seed record lacks the `attributable_to_host_weight_drive` diagnostic field
-(a round-5 addition, descriptive only, not part of either scorer's GO rule). The governed verdict finding reports
+either way, and the sign test, mean-Delta and `GO` outcome match exactly. The written JSON `summary` blocks are
+exactly equal. The only file-level differences are that each as-registered per-seed record for the 5 DEFINED seeds
+lacks the `attributable_to_host_weight_drive` diagnostic field (a round-5 addition, descriptive only, not part of
+either scorer's GO rule; seed 100 lacks it under both), plus the aggregate's `out_dir`/`code_sha_of_sessions`
+metadata. The governed verdict finding reports
 the amended-scorer output as primary (it is the more complete check and is now disclosed here) and states this
 equivalence rather than reporting two different numbers.
 
@@ -308,9 +308,10 @@ preserves from the AWS box — it records when a file was WRITTEN THERE, not whe
 seconds before the commit" was never a measurement of local arrival time.
 
 The local arrival (birth, `stat %w`) times, re-measured directly against the same 54 files in the PRIMARY
-checkout, show the pull actually landed them in ten batches roughly every 5 minutes: 16:59:58, 17:05:01, 17:10:03,
+checkout, show the pull actually landed them in eleven batches roughly every 5 minutes: 16:59:58, 17:05:01, 17:10:03,
 17:15:04, 17:20:06, 17:25:08, 17:30:10, 17:35:11, 17:40:14, 17:45:15, and a final batch at 17:50:16. **50 of the 54
-files — every file for seeds 42, 43, 44, 100 and 101 — had landed on local disk between 2 and 47 minutes BEFORE
+files — all 45 files for seeds 42, 43, 44, 100 and 101, plus seed 102's `intact_n0`, `intact_n1`, `intact_n2`,
+`lesion_n0` and `lesion_n1` — had landed on local disk between 2 and 47 minutes BEFORE
 the `a9eda3d0a` commit at 17:47:20, not 9 seconds before it.** Only the last 4 files (seed 102's `intact_n3`,
 `intact_rebuild_n0`, `lesion_n2` and `lesion_n3`) landed at 17:50:16, roughly 3 minutes AFTER the commit. **The
 "timing is far too tight to have been read and reacted to" argument is WITHDRAWN**: it rested on the wrong
@@ -322,7 +323,8 @@ What still holds, from the same evidence as before: the files sat in a directory
 worktree, reachable only by deliberately fetching or otherwise reaching into the PRIMARY checkout's untracked
 staging path — not something an isolated worktree does by default; and
 `git log --all -- 'research/findings/raw/.../a3/default/*' 'research/findings/raw/.../a3_smoke/*'` over this
-lane's entire history returns **no commit, including `a9eda3d0a` itself** — the fixer never committed, cited, or
+lane's history returns **no commit up to and including `a9eda3d0a`** (the first commit touching them is the round-7
+verdict commit `4cf8c0237`, 18:12:39, which committed the harvested files) — the fixer never committed, cited, or
 referenced any a3 session or verdict artifact, which is what would be expected if it had never opened one. **Net:
 whether a3 results were read before `a9eda3d0a` is UNSETTLED by mtime evidence, and honestly more open than the
 original wording implied — the great majority of the harvest COULD have been read, since it sat available

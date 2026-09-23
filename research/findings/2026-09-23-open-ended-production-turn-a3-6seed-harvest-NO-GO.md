@@ -44,12 +44,14 @@ the `attributable_to_host_weight_drive` diagnostic used in the table below):
   UNDEFINED, so the 0.09375 mean over the 5 DEFINED seeds above is descriptive here, not a second registered
   precondition failing independently of `all_defined`. This is still a definite NO-GO on the rule as written, not
   an ambiguous or partial read: crediting seed 100 with its most generous possible reading, Delta = 0, instead of
-  UNDEFINED, still gives a 6-seed mean of ~0.078 and a sign test of 5-of-6-positive at p = 7/64 ≈ 0.109 (still under the 0.10 floor, still not < 0.05). <!--derived-->
-- **The registered prediction FAILED.** PREREG amendment 3 predicted GO from the honest power simulation
+  UNDEFINED, still gives a 6-seed mean of ~0.078 and a sign test of 5-of-6-positive at p = 7/64 ≈ 0.109 (the mean, ~0.078, is still under the 0.10 floor, and p is still not < 0.05). <!--derived-->
+- **The registered prediction FAILED.** The prediction registered at `eefdd666a` ("from the power simulation: GO")
+  rested on an UNCOMMITTED simulation (Delta 0.09-0.46, mean 0.25) that PREREG correction 1 later retracted as
+  untraced. The committed, honest re-simulation arrived only at `a9eda3d0a`, after the sessions were staged
   (`research/findings/raw/_load_bearing/_oe_production_turn/a3_power_simulation/power_sim.json`, `delta_mean`
-  0.19270833333333334 over 6 bank seeds, clearing the 0.10 floor by roughly 1.9x — mean Delta 0.193 rounded). <!--derived-->
-  The observed mean over the 5 DEFINED seeds is 0.09375 — under the 0.10 floor, and roughly half
-  the power simulation's predicted effect size.
+  0.19270833333333334 over 6 bank seeds) and also predicts GO — in retrospect. <!--derived-->
+  The observed mean over the 5 DEFINED seeds is 0.09375 — under the 0.10 floor; about 37% of the registered
+  prediction's 0.25 and about 49% of the retrospective 0.193. The prediction fails against both. <!--derived-->
 
 | seed | verdict | delta | perm p (descriptive) | attributable_to_host_weight_drive | reason if UNDEFINED |
 |---|---|---|---|---|---|
