@@ -1,0 +1,362 @@
+{
+  "seed": 7,
+  "note": "stimulus/instrument PILOT on a non-gate seed; not a gate artifact",
+  "traces": {
+    "neutral": [
+      {
+        "text": "the zebra is here",
+        "fact": null,
+        "da": 0.388101984071736,
+        "mode": "rest",
+        "novelty": 1.0,
+        "ema_engagement": 0.2
+      },
+      {
+        "text": "the violin is here",
+        "fact": null,
+        "da": 0.5163966973517853,
+        "mode": "neutral",
+        "novelty": 1.0,
+        "ema_engagement": 0.28
+      },
+      {
+        "text": "the zebra saw the violin",
+        "fact": null,
+        "da": 0.4803713884794378,
+        "mode": "neutral",
+        "novelty": 0.7435897435897436,
+        "ema_engagement": 0.2548571428571429
+      },
+      {
+        "text": "the zebra swallowed the violin",
+        "fact": 0,
+        "da": 0.36578986065695696,
+        "mode": "rest",
+        "novelty": 0.576923076923077,
+        "ema_engagement": 0.18765714285714286
+      },
+      {
+        "text": "the otter is here",
+        "fact": null,
+        "da": 0.4816987851375068,
+        "mode": "neutral",
+        "novelty": 0.9615384615384616,
+        "ema_engagement": 0.25601523809523813
+      },
+      {
+        "text": "the lantern is here",
+        "fact": null,
+        "da": 0.5459304995399628,
+        "mode": "neutral",
+        "novelty": 1.0,
+        "ema_engagement": 0.30240609523809525
+      },
+      {
+        "text": "the otter saw the lantern",
+        "fact": null,
+        "da": 0.47868957620864744,
+        "mode": "neutral",
+        "novelty": 0.717948717948718,
+        "ema_engagement": 0.2542957714285714
+      },
+      {
+        "text": "the otter stole the lantern",
+        "fact": 1,
+        "da": 0.3283120066149688,
+        "mode": "rest",
+        "novelty": 0.5128205128205128,
+        "ema_engagement": 0.16838497523809523
+      },
+      {
+        "text": "the goat is here",
+        "fact": null,
+        "da": 0.4981697964297495,
+        "mode": "neutral",
+        "novelty": 1.0,
+        "ema_engagement": 0.2673539900952381
+      },
+      {
+        "text": "the passport is here",
+        "fact": null,
+        "da": 0.4085165366702372,
+        "mode": "neutral",
+        "novelty": 0.8461538461538461,
+        "ema_engagement": 0.2117035008
+      },
+      {
+        "text": "the goat saw the passport",
+        "fact": null,
+        "da": 0.4349978113506658,
+        "mode": "neutral",
+        "novelty": 0.7435897435897436,
+        "ema_engagement": 0.22753854317714284
+      },
+      {
+        "text": "the goat ate the passport",
+        "fact": 2,
+        "da": 0.3444417874804353,
+        "mode": "rest",
+        "novelty": 0.5641025641025642,
+        "ema_engagement": 0.17672970298514284
+      },
+      {
+        "text": "the parrot is here",
+        "fact": null,
+        "da": 0.5026577466991432,
+        "mode": "neutral",
+        "novelty": 1.0,
+        "ema_engagement": 0.2706918811940572
+      },
+      {
+        "text": "the key is here",
+        "fact": null,
+        "da": 0.5538111969015438,
+        "mode": "neutral",
+        "novelty": 1.0,
+        "ema_engagement": 0.3082767524776229
+      },
+      {
+        "text": "the parrot saw the key",
+        "fact": null,
+        "da": 0.43562352276587685,
+        "mode": "neutral",
+        "novelty": 0.6923076923076922,
+        "ema_engagement": 0.2280726057529539
+      },
+      {
+        "text": "the parrot hid the key",
+        "fact": 3,
+        "da": 0.3449547805839367,
+        "mode": "rest",
+        "novelty": 0.5384615384615384,
+        "ema_engagement": 0.17694332801546725
+      }
+    ],
+    "salient": [
+      {
+        "text": "ok",
+        "fact": null,
+        "da": 0.04616293556102311,
+        "mode": "rest",
+        "novelty": null,
+        "ema_engagement": 0.0
+      },
+      {
+        "text": "oh",
+        "fact": null,
+        "da": 0.04616293556102311,
+        "mode": "rest",
+        "novelty": null,
+        "ema_engagement": 0.0
+      },
+      {
+        "text": "hm",
+        "fact": null,
+        "da": 0.04616293556102311,
+        "mode": "rest",
+        "novelty": null,
+        "ema_engagement": 0.0
+      },
+      {
+        "text": "Guess what, at the circus today the zebra swallowed the violin completely whole!",
+        "fact": 0,
+        "da": 0.8965045558416256,
+        "mode": "focus",
+        "novelty": 0.9615384615384616,
+        "ema_engagement": 0.6
+      },
+      {
+        "text": "ok",
+        "fact": null,
+        "da": 0.8965045558416256,
+        "mode": "focus",
+        "novelty": null,
+        "ema_engagement": 0.6
+      },
+      {
+        "text": "oh",
+        "fact": null,
+        "da": 0.8965045558416256,
+        "mode": "focus",
+        "novelty": null,
+        "ema_engagement": 0.6
+      },
+      {
+        "text": "hm",
+        "fact": null,
+        "da": 0.8965045558416256,
+        "mode": "focus",
+        "novelty": null,
+        "ema_engagement": 0.6
+      },
+      {
+        "text": "Unbelievable news from the harbor: the otter stole the lantern right off a fishing boat!",
+        "fact": 1,
+        "da": 1.0441058993724723,
+        "mode": "arousal",
+        "novelty": 0.9192307692307692,
+        "ema_engagement": 0.84
+      },
+      {
+        "text": "ok",
+        "fact": null,
+        "da": 1.0441058993724723,
+        "mode": "arousal",
+        "novelty": null,
+        "ema_engagement": 0.84
+      },
+      {
+        "text": "oh",
+        "fact": null,
+        "da": 1.0441058993724723,
+        "mode": "arousal",
+        "novelty": null,
+        "ema_engagement": 0.84
+      },
+      {
+        "text": "hm",
+        "fact": null,
+        "da": 1.0441058993724723,
+        "mode": "arousal",
+        "novelty": null,
+        "ema_engagement": 0.84
+      },
+      {
+        "text": "You won't believe it, at the airport the goat ate the passport of a traveling diplomat!",
+        "fact": 2,
+        "da": 1.2386777669861797,
+        "mode": "arousal",
+        "novelty": 0.9375,
+        "ema_engagement": 0.9359999999999999
+      },
+      {
+        "text": "ok",
+        "fact": null,
+        "da": 1.2386777669861797,
+        "mode": "arousal",
+        "novelty": null,
+        "ema_engagement": 0.9359999999999999
+      },
+      {
+        "text": "oh",
+        "fact": null,
+        "da": 1.2386777669861797,
+        "mode": "arousal",
+        "novelty": null,
+        "ema_engagement": 0.9359999999999999
+      },
+      {
+        "text": "hm",
+        "fact": null,
+        "da": 1.2386777669861797,
+        "mode": "arousal",
+        "novelty": null,
+        "ema_engagement": 0.9359999999999999
+      },
+      {
+        "text": "Crazy story: during the thunderstorm the parrot hid the key inside the grandfather clock!",
+        "fact": 3,
+        "da": 1.2386777669861797,
+        "mode": "arousal",
+        "novelty": 0.95,
+        "ema_engagement": 0.9743999999999999
+      }
+    ]
+  },
+  "smoke_salient_primary": [
+    {
+      "arm": "intact",
+      "write_gains": [
+        2.3744449925999023,
+        2.6852491366551563,
+        2.9486926492353227,
+        2.969412925505673
+      ],
+      "prp_events_h": [
+        0.025,
+        0.03333333333333333,
+        0.041666666666666664,
+        0.05,
+        0.058333333333333334,
+        0.06666666666666667,
+        0.075,
+        0.08333333333333333,
+        0.09166666666666666,
+        0.1,
+        0.10833333333333334,
+        0.11666666666666667,
+        0.125
+      ],
+      "immediate_counts": {
+        "correct": 4,
+        "abstain": 0,
+        "confab": 0
+      },
+      "delayed_counts": {
+        "correct": 4,
+        "abstain": 0,
+        "confab": 0
+      }
+    },
+    {
+      "arm": "lesion_da_encoding",
+      "write_gains": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "prp_events_h": [],
+      "immediate_counts": {
+        "correct": 4,
+        "abstain": 0,
+        "confab": 0
+      },
+      "delayed_counts": {
+        "correct": 0,
+        "abstain": 4,
+        "confab": 0
+      }
+    },
+    {
+      "arm": "lesion_capture",
+      "write_gains": [
+        2.344844597927973,
+        2.7977306364084846,
+        2.951652688702517,
+        2.9457326097681307
+      ],
+      "prp_events_h": [],
+      "immediate_counts": {
+        "correct": 4,
+        "abstain": 0,
+        "confab": 0
+      },
+      "delayed_counts": {
+        "correct": 0,
+        "abstain": 4,
+        "confab": 0
+      }
+    },
+    {
+      "arm": "companion_off",
+      "write_gains": [
+        2.344844597927973,
+        2.7977306364084846,
+        2.951652688702517,
+        2.9457326097681307
+      ],
+      "prp_events_h": null,
+      "immediate_counts": {
+        "correct": 4,
+        "abstain": 0,
+        "confab": 0
+      },
+      "delayed_counts": {
+        "correct": 4,
+        "abstain": 0,
+        "confab": 0
+      }
+    }
+  ]
+}

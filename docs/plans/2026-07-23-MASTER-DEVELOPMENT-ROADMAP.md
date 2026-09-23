@@ -1188,6 +1188,21 @@ Perception/attention/WM, affect, curiosity, self/workspace/ToM, and language are
 
 ## 8. IMMEDIATE NEXT ACTIONS
 
+**2026-09-23 (da-gated-encoding, branch `research/da-encoding-natural-drive`, IN FLIGHT):** the natural-probe wall
+(DA write gain invisible to a clean read) traced to two constants: infinite E-LTP lifetime and a zero synaptic
+baseline. Built `webapp/da_tag_capture.py` (DA-gated tagging-and-capture, default OFF) plus a natural
+surprising-vs-expected conversation read as 24 h recall. v1 (D=64) 6-seed = UNDEFINED (1 GO, 5 fail the G2
+immediate-recall precondition: low-gain writes misread, with confabulations, once a synaptic baseline exists), while
+every 24 h comparison went the predicted way on all 6 seeds. v2 at the production D=128 = 6/6 GO at RUNNER LEVEL
+(salient facts recalled next day 4/4, DA->encoding lesion 0/4, neutral 0/4, capture-only lesion 0/4, companion off
+4/4; no confabulation at the primary point). Review: v2's 24 h outcome was set by a HOST compare-and-decay rule
+(declared; not credited to the brain), its band could not fail, and its arms were run-order dependent. v3 (prereg
+014298f62): DA acts through synapses (spiking D1 pool -> PRP pool -> per-synapse tag + bistable late-phase state, no
+compare on the DA trace), fresh process per arm, a capture band that can fail = 6/6 GO at RUNNER LEVEL, seed sign-flip
+p = 1/64; margins wide (neutral flips only at gamma x3.2 on seed 42). NOT wired: the battery still reads
+da-gated-encoding hollow. NEXT: verify-go v3; wire the ledger + a battery "next day" probe pair; a harder neutral drive;
+add repetition/sleep-replay routes to L-LTP before any default flip.
+
 **2026-09-18 (STRATEGIC — owner decision + scaling go/no-go; supersedes the raw-scale framing below):**
 - **Faithfulness-vs-tractability relaxation APPROVED (owner), honesty-conditioned** — trade bit-exact realism ONLY for a significant perf gain that loses nothing important to end-goal capabilities, and document every trade; biology-strong stays core; invariants kept (brain-based / one-brain / emergent / honesty). See memory `project_agi_first_fork_openness_2026_09_06`.
 - **SCALING GO/NO-GO = do NOT buy hardware yet** (finding `2026-09-18-scaling-go-no-go-raw-scale-falsified-lever-is-data-do-not-buy-hardware-yet.md`; 10-agent adversarially-verified workflow). RAW param/GPU scale is FALSIFIED as the fluency lever on the broad domain (token-supply capacity-saturated; the realistic large-token analog REGRESSED); the lever is DATA (token-throughput + curation atop a modest capacity floor), owner's skepticism vindicated. The mouth (neural-render) IS the keystone (~half the blocked rows) but the lever there is data, not a bigger GPU.

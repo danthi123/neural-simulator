@@ -1,0 +1,48 @@
+{
+  "pinned": {
+    "root": "/tmp/claude-1000/-home-dant123-Projects-sim/87891831-e642-4a2f-abeb-50ea0867609b/scratchpad/pinned",
+    "store_sha256": "3fafa5e087d171bd90c8cb52b91719e9da64aceb48619ea716e9ec1d5dbcf7aa",
+    "n_store_conns": 512,
+    "replies": [
+      "violin",
+      "lantern",
+      "passport",
+      "key"
+    ],
+    "homeostasis_scales": [
+      0.8643842727958755,
+      0.8016137381187095,
+      0.842302363328547,
+      0.813031395750576
+    ],
+    "tag_module_present": false,
+    "maybe_ledger_is_none_flag_unset": null,
+    "store_sha256_companion_armed_sensitivity_control": null
+  },
+  "branch": {
+    "root": "/home/dant123/Projects/sim/.claude/worktrees/wf_a686cbcd-9ff-3",
+    "store_sha256": "3fafa5e087d171bd90c8cb52b91719e9da64aceb48619ea716e9ec1d5dbcf7aa",
+    "n_store_conns": 512,
+    "replies": [
+      "violin",
+      "lantern",
+      "passport",
+      "key"
+    ],
+    "homeostasis_scales": [
+      0.8643842727958755,
+      0.8016137381187095,
+      0.842302363328547,
+      0.813031395750576
+    ],
+    "tag_module_present": true,
+    "maybe_ledger_is_none_flag_unset": true,
+    "store_sha256_companion_armed_sensitivity_control": "29caa2f9f826151fc6ea91421fd24d247d6ff08e05fbc1cd0e7cb62610c37d04"
+  },
+  "pinned_sha": "5e1f0ec796b6be01c23af1b6095620240fc1972e",
+  "branch_sha": "492231df35d7e74119f7546c75bb704d63a0548b",
+  "byte_identical_store_and_replies": true,
+  "branch_flag_unset_constructs_no_ledger": true,
+  "sensitivity_control_hash_differs_when_armed": true,
+  "pass": true
+}

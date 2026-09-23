@@ -1,0 +1,155 @@
+{
+  "note": "EXPLORATORY, not pre-registered: gamma multiplier at which each seed's primary intact capture pattern would flip, replaying the kernel on the recorded D1 drive and tags",
+  "rows": [
+    {
+      "seed": 100,
+      "salient": {
+        "replay_captured": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "m_flip": 0.08894973634864498,
+        "recorded_24h_correct": 4,
+        "replay_matches_run": true
+      },
+      "neutral": {
+        "replay_captured": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "m_flip": null,
+        "recorded_24h_correct": 0,
+        "replay_matches_run": true
+      }
+    },
+    {
+      "seed": 101,
+      "salient": {
+        "replay_captured": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "m_flip": 0.09440741926708708,
+        "recorded_24h_correct": 4,
+        "replay_matches_run": true
+      },
+      "neutral": {
+        "replay_captured": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "m_flip": 39.80182548859878,
+        "recorded_24h_correct": 0,
+        "replay_matches_run": true
+      }
+    },
+    {
+      "seed": 102,
+      "salient": {
+        "replay_captured": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "m_flip": 0.11917424013083644,
+        "recorded_24h_correct": 4,
+        "replay_matches_run": true
+      },
+      "neutral": {
+        "replay_captured": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "m_flip": null,
+        "recorded_24h_correct": 0,
+        "replay_matches_run": true
+      }
+    },
+    {
+      "seed": 42,
+      "salient": {
+        "replay_captured": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "m_flip": 0.09106277441107077,
+        "recorded_24h_correct": 4,
+        "replay_matches_run": true
+      },
+      "neutral": {
+        "replay_captured": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "m_flip": 3.2442310833250554,
+        "recorded_24h_correct": 0,
+        "replay_matches_run": true
+      }
+    },
+    {
+      "seed": 43,
+      "salient": {
+        "replay_captured": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "m_flip": 0.10614444077792744,
+        "recorded_24h_correct": 4,
+        "replay_matches_run": true
+      },
+      "neutral": {
+        "replay_captured": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "m_flip": null,
+        "recorded_24h_correct": 0,
+        "replay_matches_run": true
+      }
+    },
+    {
+      "seed": 44,
+      "salient": {
+        "replay_captured": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "m_flip": 0.09214380922597974,
+        "recorded_24h_correct": 4,
+        "replay_matches_run": true
+      },
+      "neutral": {
+        "replay_captured": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "m_flip": null,
+        "recorded_24h_correct": 0,
+        "replay_matches_run": true
+      }
+    }
+  ]
+}
