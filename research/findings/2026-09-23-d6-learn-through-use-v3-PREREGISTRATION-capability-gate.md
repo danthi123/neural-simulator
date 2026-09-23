@@ -173,3 +173,42 @@ The selftest (`--selftest`) must print SELFTEST PASS. Its `gate_v3` block covers
   - the block-to-words map.
 - A v3 GO would show that this reply depends on this synaptic write, on this protocol. It would not show open-ended
   learning, and it would not flip a default.
+
+## ADDENDUM A6 — filed fix round 4, after the round-3 re-review of the s42 capability result above
+
+**EXPO_H was dropped from this gate without a word.** ADDENDUM A4 in the v2 prereg
+(`research/findings/2026-09-23-d6-learn-through-use-v2-PREREGISTRATION-readtime-view-and-engram-ablation.md`),
+filed before any `readtime` arm existed, committed: "the next registered gate (v3) would then use the
+exposure-matched control as the primary comparison, stated in advance." This v3 registration removes the
+FREEZE_H==SHUF_H equality for exactly the exposure reason A4 gave (see "Why gate v2 is superseded" above), but it
+never mentions EXPO_H, and the capability variant built no EXPO_H arm. K3's weaker replacement check (FREEZE_H does
+not recall 'deer', 'deer' is absent from its answer text, FREEZE_H != USE_H) can, with eta=0 forcing the weights to
+exactly 0, pass through a host leak of the fact text outside `composer.kb` that an EXPO_H comparison exists
+specifically to catch. **Seen when this addendum was filed:** the s42 result above (K1-K7 all pass, INCOMPLETE
+1/6) was already banked, and the round-3 re-review of the fix-round-3 commit named the omission.
+
+**Fix.** `research/runners/d6_learn_through_use_lb.py` AMENDMENT A6 restores EXPO_H into the `capability` variant's
+`arms_for` / `score_seed_v3`, on A4's own terms: SECONDARY, NON-SCORING. Two new checks are REPORTED, never scored
+(cannot move K1-K7 or `go`):
+- **K3e**: FREEZE_H.probe == EXPO_H.probe, and FREEZE_H does not recall 'deer';
+- **K4e**: ABL_H.probe == EXPO_H.probe, and ABL_H does not recall 'deer'.
+
+**Prediction, written before any capability-variant EXPO_H arm exists:** K3e and K4e PASS. The already-banked s42
+FREEZE_H/ABL_H probe reply ("I don't know about that. My curiosity is piqued -- I haven't learned about wolf yet:
+what can you tell me about wolf?") already reads as the unfamiliar-word reply an exposure-matched no-write control
+is expected to produce, unlike the base variant's pre-read-time-view reply to the same probe ("Setting the held
+thread aside -- On wolf, then -- I don't know about that."), which DID carry a familiarity trace. If K3e/K4e FAIL
+instead, that would mean K1-K7's PASS partly rode on word exposure rather than the write -- a real finding the
+scored gate does not currently detect on its own.
+
+**Reporting the gate BOTH ways, per this fix round:**
+- **Scored (K1-K7), unaffected:** the s42 verdict above still stands unchanged -- all seven criteria pass. EXPO_H
+  cannot move this verdict by construction (SECONDARY, NON-SCORING).
+- **Secondary (K3e/K4e), status:** wired and selftest-verified (`--selftest`:
+  `v3_missing_EXPO_is_secondary_only`, `v3_expo_secondary_can_fail_without_touching_go`; both use synthetic arms,
+  no live brain required), but **the s42 EXPO_H arm itself has not yet been run.** The local box was RAM-bound at
+  fix-round-4 time (under 1 GB free, 16+ GB already swapped) when this addendum was filed, and a new ~10-25
+  min/12 GB-memcapped local build was judged unsafe to stage alongside concurrent lanes on that box. This is the
+  next action on this lane, not a claimed result: read `research/findings/raw/_d6_learn_through_use_v3/s42_EXPO_H.json`
+  for the measured K3e/K4e outcome once it exists, and treat any such reading dated before that file exists as
+  unfounded.

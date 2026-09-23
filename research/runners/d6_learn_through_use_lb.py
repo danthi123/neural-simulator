@@ -139,6 +139,28 @@ SEEDS6 = [42, 43, 44, 100, 101, 102]
 #       in research/findings/2026-09-23-d6-learn-through-use-v3-PREREGISTRATION-capability-gate.md in its own commit.
 #       SEEN at this time: everything listed under A1-A4 + the prune s42 full smoke + base-variant pool arm files for
 #       s43/s100 (USE_H, USE_H_REP, SHUF_H; s43 FREEZE_H). The v2 scorer is kept unchanged for the record.
+#   A6. (fix round 4, after the round-3 re-review of A5's commit) EXPO_H DROPPED WITHOUT A WORD, then restored. A4
+#       committed, before any readtime arm existed, that "the next registered gate (v3) would then use the
+#       exposure-matched control as the primary comparison, stated in advance." The v3 prereg (A5) removed the
+#       FREEZE_H==SHUF_H equality for exactly the exposure reason A4 gave, but built no EXPO_H arm and never named
+#       the drop -- zero mentions in either v3 finding. SEEN at this time: the v3 s42 result already banked
+#       (research/findings/2026-09-23-d6-learn-through-use-v3-s42-all-criteria-pass-INCOMPLETE-1of6-plus-v1-pool-
+#       banked.md, K1-K7 all pass) and the round-3 re-review naming the gap. EXPO_H is restored into `arms_for` /
+#       `score_seed_v3` for the `capability` variant on A4's OWN terms: SECONDARY, NON-SCORING (K3e/K4e cannot move
+#       `go` or any of K1-K7). PREDICTION, written before any capability-variant EXPO_H arm exists: K3e and K4e PASS,
+#       because the already-banked s42 FREEZE_H/ABL_H probe ("I don't know about that. My curiosity is piqued --
+#       I haven't learned about wolf yet: what can you tell me about wolf?") already reads as the UNFAMILIAR-word
+#       reply the exposure-matched EXPO_H arm is expected to produce too (contrast the OLD host-list-leak reply this
+#       same probe gave under the base variant, "Setting the held thread aside -- On wolf, then -- I don't know
+#       about that.", which DID carry a familiarity trace) -- i.e. the read-time view that made K3/K4 pass on this
+#       protocol is predicted to leave no exposure-habituation residue left for K3e/K4e to catch here. If K3e/K4e
+#       FAIL instead, that would mean K3/K4's PASS partly rode on word exposure, not the write, which the scored
+#       gate does not currently detect. RUN ORDER: s42 EXPO_H is queued to run locally next (same worker discipline
+#       as the other v3 arms); it is NOT run in this fix-round commit because the box was RAM-bound at the time
+#       (free -h: <1 GB free, 16+ GB already swapped) -- staging a new ~10-25 min/12 GB-memcapped local build here
+#       would have competed with concurrent lanes. The code path is proven by `--selftest`
+#       (`v3_missing_EXPO_is_secondary_only`, `v3_expo_secondary_can_fail_without_touching_go`), which does not
+#       need a live brain; the actual s42 measurement is the next action on this lane.
 # ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 # VARIANT "readtime" (gate v2 -- see the PREREGISTRATION finding above). Flags on every Hebbian arm:
 # BRAIN_D6_ENGRAM_VOCAB=1 + BRAIN_D6_ENGRAM_READTIME=1 (NO prune: no host record is ever deleted; FOUR named kb readers
@@ -177,6 +199,10 @@ LESION_ARMS_V3 = ("FREEZE_H", ABL_ARM, NOREC_ARM)
 
 
 def arm_names(variant):
+    # NOTE: EXPO_H is deliberately NOT listed here for either variant -- it is SECONDARY/NON-SCORING (AMENDMENT A4)
+    # and is void-checked on its own inside score_seed/score_seed_v3, never through this generic per-arm void loop
+    # (which would incorrectly make a missing EXPO_H void the whole seed instead of leaving only the secondary
+    # UNDEFINED -- see selftest's `a4_missing_expo_secondary_undefined_only` / `v3_missing_EXPO_is_secondary_only`).
     if variant == CAP_VARIANT:
         return list(ARMS) + [ABL_ARM, NOREC_ARM]
     return list(ARMS) + ([ABL_ARM] if variant == "readtime" else [])
@@ -199,6 +225,10 @@ def arms_for(variant):
     if variant == CAP_VARIANT:
         out[ABL_ARM] = (dict(out["USE_H"][0]), TEACH_USE, "ablate")
         out[NOREC_ARM] = (dict(out["FREEZE_H"][0]), TEACH_USE, "norec")   # FREEZE_H + post-hoc host-record removal
+        # A6 (fix round 4): EXPO_H was committed by A4 as the exposure-matched control the next registered gate would
+        # use, but the capability build (A5) silently dropped it -- named by the round-3 re-review. Restored here on
+        # the SAME terms A4 stated: SECONDARY, NON-SCORING, cannot move K1-K7 or `go`. See score_seed_v3.
+        out[EXPO_ARM] = (dict(out["USE_H"][0]), TEACH_EXPO, None)
     return out
 
 
@@ -514,6 +544,25 @@ def score_seed_v3(arms):
     rec["homeostatic_calls_after_teach"] = {k: arms[k].get("homeostatic_calls_after_teach") for k in scored}
     rec["record_removal"] = NR.get("record_removal")
     rec["ablation"] = A.get("ablation")
+    # A6 (fix round 4): EXPO_H, the exposure-matched control AMENDMENT A4 committed to before any `readtime` arm
+    # existed ("the next registered gate (v3) would then use the exposure-matched control as the primary
+    # comparison, stated in advance") was silently absent from the capability build -- named by the round-3
+    # re-review, never mentioned in this prereg or the s42 finding. Restored on A4's own terms: SECONDARY,
+    # NON-SCORING -- it can never move `go`. EXPO_H = USE_H's flags, teach turn "the wolf and the deer" (the same
+    # content words, not an SVO assertion -> no acquisition, no write). If K3e/K4e hold, FREEZE_H/ABL_H's residual
+    # difference from USE_H is exposure habituation, not a leftover trace of the fact-write engram; if they fail,
+    # K3/K4 are partly measuring word exposure rather than the write.
+    E = arms.get(EXPO_ARM)
+    e_bad = E is None or any("_error" in (E.get("turns") or {}).get(lbl, {"_error": "missing"}) for lbl, _ in TURNS)
+    if e_bad:
+        rec["secondary_exposure_matched"] = {"verdict": "UNDEFINED (EXPO_H void)"}
+    else:
+        rec["secondary_exposure_matched"] = {
+            "EXPO_H_no_write": (E.get("store_writes_after_teach") == []
+                                and not (E.get("taught_block") or {}).get("found")),
+            "K3e_freeze_eq_exposure": (not _recalls(F, "probe", "deer")) and _dec(F, "probe") == _dec(E, "probe"),
+            "K4e_ablation_eq_exposure": (not _recalls(A, "probe", "deer")) and _dec(A, "probe") == _dec(E, "probe"),
+            "EXPO_H_probe": _dec(E, "probe"), "EXPO_H_teach": _dec(E, "teach")}
     rec["integrity"] = {"d6_ops": {k: (arms[k].get("d6_ops") or {}) for k in scored},
                         "turn_refresh_every_hebbian_arm": all(
                             (arms[k].get("d6_ops") or {}).get("turn_refreshes", 0) == len(TURNS) for k in scored)}
@@ -621,8 +670,12 @@ def _synthetic_v3():
     NR = _cp(F)
     NR["record_removal"] = {"removed": True, "block": 5}
     NR["taught_block_at_probe"] = {"found": False}
+    # A6: EXPO_H (secondary, non-scoring) -- exposure-matched, no write. probe/xprobe use the same t(None) as
+    # F/A's probe, so K3e/K4e hold by construction in the GO case.
+    EX = arm("wolf-and-deer", None, None, 0.0)
+    EX["taught_block"] = {"found": False}
     return {"USE_H": U, "USE_H_REP": _cp(U), "SHUF_H": arm("berry", None, "berry", 1.0), "FREEZE_H": F,
-            ABL_ARM: A, NOREC_ARM: NR, "USE_D": _cp(U)}
+            ABL_ARM: A, NOREC_ARM: NR, EXPO_ARM: EX, "USE_D": _cp(U)}
 
 
 def selftest_v3():
@@ -675,6 +728,16 @@ def selftest_v3():
     use_d_missing = sc(lambda s: s.pop("USE_D"))
     out["v3_missing_USE_D_is_secondary_only"] = (use_d_missing["go"] is True and
                                                  str(use_d_missing["secondary_C7_no_regression"]).startswith("UNDEFINED"))
+    # A6: EXPO_H is restored into the capability variant on A4's own terms -- SECONDARY, NON-SCORING. A missing
+    # EXPO_H must leave the seed DEFINED (go unaffected) with only the secondary reading UNDEFINED, and an EXPO_H
+    # that genuinely differs from FREEZE_H/ABL_H must fail K3e/K4e WITHOUT moving `go`.
+    no_expo = sc(lambda s: s.pop(EXPO_ARM))
+    out["v3_missing_EXPO_is_secondary_only"] = (no_expo["go"] is True and
+                                                str(no_expo["secondary_exposure_matched"]["verdict"]).startswith("UNDEFINED"))
+    ex_diff = sc(setp(EXPO_ARM, "probe", abstained=False, recalled_svo=["x", "y", "other"], answer="x y other."))
+    out["v3_expo_secondary_can_fail_without_touching_go"] = (
+        ex_diff["go"] is True and ex_diff["secondary_exposure_matched"]["K3e_freeze_eq_exposure"] is False
+        and ex_diff["secondary_exposure_matched"]["K4e_ablation_eq_exposure"] is False)
     out["v3_fails_in_failing_direction"] = fails
     return out, (all(v for k, v in out.items() if k != "v3_fails_in_failing_direction") and all(fails.values()))
 

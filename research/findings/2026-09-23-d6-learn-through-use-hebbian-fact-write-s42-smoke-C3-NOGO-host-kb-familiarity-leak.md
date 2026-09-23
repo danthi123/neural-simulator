@@ -59,6 +59,12 @@ turn still runs the same activity, and build-time facts and the read path are un
 - The rule is deterministic. Off-path identity: the original test compared unset vs '0' on the same branch (same
   code path, could not fail). It is now an exact sha256 compare against an exported origin/main
   (`research/findings/raw/_d6_learn_through_use/offpath_parity_store_vs_main.json`, store mode: identical).
+  [Corrected in fix round 3, moved inline in fix round 4 (docs/WRITING.md W1's marker-next-to-the-claim principle --
+  the original correction sat ~125 lines below, in "Fix round 2026-09-23", the far-away-marker pattern W1 warns
+  about): comparing against origin/main is tautological once D6 merges, since a reference containing D6 can no
+  longer discriminate. The reference is now the pinned SHA `PRE_D6_REF` (currently `e98b0b046`), and `compare()` /
+  `compare_trees()` return `byte_identical=None` for any reference that already contains `d6_hebbian_store.py`. See
+  "Fix round 2026-09-23" below for the full correction, kept there for the audit trail.]
 
 <!--derived-->
 An earlier version activated the context cell at rhythm counter 416 (2 cycles + 16 steps). That rotated
