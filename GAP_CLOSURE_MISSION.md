@@ -122,6 +122,13 @@ waiting on runs every day … I thought our heartbeats/gates were supposed to pr
   (12 parallel; results → `research/findings/raw/_load_bearing/_oe_production_turn/aws2_a3/`; loop `bi6gmlyw4` terminates
   AWS2 after these + the episodic s44 shard). Review fix-required: its a3 test fails under the cupy backend; power-sim
   numbers untraced; amendment-log inaccuracy.
+- **17:40 MERGED (both remotes `@dd14e2c2`):** D1 affect-marker SETTLE lane `@50cbd05c` (default-off; op-level GO;
+  full-brain contrast PARTIAL — LB 6/6 with SETTLE, attributable 2/6; merge review safe; I corrected 3 errors in my own
+  finding: prereg-timing claim, AWS rows' git_sha 'unknown' (git-archive deploy), boundary-seed attribution unverified)
+  + CPU-lane harvest findings (curiosity NO-GO 4/6·3/5 held-out; perception binding negative (fixed) / unconfirmed
+  (competitive); language INCOMPLETE — S2 null still running on the pool). Open-ended a3: re-review unsafe (power sim
+  biased toward the claim; selftest crashes on cupy) — its 55 AWS2 sessions run regardless (prereg committed first).
+  AWS spend ledger: re-review fix-required (restart undercount, fail-open check, bad-row crash) — agent fixing.
 - **⚠️ POOL/AWS BRAIN ASSETS:** pool nodes lack bridges/ (25G local) + most data/ (11G local) → production brain_chat
   runs there may DEGENERATE like AWS did. Do NOT trust a pool brain_chat result until the infra lane's sanity check passes.
 - **LESSONS (new):** never SendMessage a Workflow subagent (it resumes the agent as a duplicate in the same worktree;
