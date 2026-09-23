@@ -80,6 +80,13 @@ waiting on runs every day … I thought our heartbeats/gates were supposed to pr
   mergeable: waiver-fix-2 (budget off-by-one MOVED; ProtonVPN daemon matches the 'proton' game regex → GAMING exemption
   always on), D3, D6 (its v2 gate is registered to fail → its 6 queued pool jobs removed), GNW. **Fix round 3
   `woffopk92` IN FLIGHT** (waiver-fix-3 opus, D3, D6 redesign, GNW fix-or-bank).
+- **13:50 D1 residual lanes harvested (`w24snxp8f`, reviews wf_6cf1082d-b06) — all fix-required; fix round `wid8mdyl6`
+  IN FLIGHT.** Cliff detector (gate circular: reports arg-max of the eval metric; constants in-sample) · open-ended
+  production turn (REAL defect found: BRAIN_OPEN_ENDED's answer_turn never calls chat.gate → spiking draw bypassed;
+  default-off route fix; p-values pseudo-replicated; lesioned edge is a host PPMI vector) · DA natural drive (24 h outcome
+  set by a host decay/capture rule; arm order dependence). pool_queue isolated-revision probe fix taken to main
+  `@4c141b8e`. **Recurring review failures codified in `docs/BUILD_LANE_CHECKLIST.md`** — reference it in every
+  build-agent prompt (12/12 first-round builds were fix-required today).
 - **⚠️ POOL/AWS BRAIN ASSETS:** pool nodes lack bridges/ (25G local) + most data/ (11G local) → production brain_chat
   runs there may DEGENERATE like AWS did. Do NOT trust a pool brain_chat result until the infra lane's sanity check passes.
 - **LESSONS (new):** never SendMessage a Workflow subagent (it resumes the agent as a duplicate in the same worktree;
