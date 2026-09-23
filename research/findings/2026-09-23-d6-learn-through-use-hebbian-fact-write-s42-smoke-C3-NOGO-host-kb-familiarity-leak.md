@@ -167,6 +167,13 @@ scorer selftest shows the ack-only difference passes only under prune and a real
   figure is reported as `C4_parse_posthoc` and never enters a verdict. The amendment log in the runner lists the
   results seen when it was written. Re-scoring the banked s42 arms with the amended scorer gives the same verdicts:
   base NO-GO on C3, engram NO-GO on C3 and C4.
+- **Prune s42 smoke, scored under the original C4: NO-GO on C3 and C4**
+  (`research/findings/raw/_d6_learn_through_use_prune/d6_ltu_prune_s42_rescored_original_C4.json`).
+  - The retraction fired, and the thread-swap lead is gone.
+  - The FREEZE_H probe still lacks SHUF_H's DA-mode suffix. That traces to the spiking novelty organ's per-word
+    freshness of `wolf`: 0.84 in FREEZE_H, which heard the word, vs 1.0 in SHUF_H.
+  - So SHUF_H does not control for word exposure. This is recorded as prereg amendment A4, which adds an
+    exposure-matched EXPO_H arm as a secondary analysis.
 - **Off-path byte-identity is now measured against origin/main.** `research/runners/d6_offpath_parity.py` runs the
   same probe in this tree and in an exported copy of origin/main. It compares exact sha256 of store_conns, kb and
   recalls. Store mode is identical vs `c9b45a30e`
