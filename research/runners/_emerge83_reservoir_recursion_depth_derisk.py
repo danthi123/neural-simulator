@@ -185,11 +185,15 @@ def _derisk(seeds):
         beats_attraction = all(agg[d]["reservoir"] - agg[d]["nearest_number"] >= 0.20 for d in _TEST_DEPTHS if d >= 1)
         lesion_ok = (agg[2]["reservoir"] - lesion) >= 0.20 if 2 in agg else True
 
+        # Built OUTSIDE the f-string on purpose (Python <3.12 syntax error): a nested f-string cannot reuse its
+        # own quote character in an inner subscript (`f'...{agg[d]['reservoir']}...'`) -- collects under 3.14
+        # (PEP 701 relaxed the rule) but fails under the project's pinned 3.11 venv. Same content, precomputed.
+        _profile = lambda key: ", ".join("d%s=%.2f" % (d, agg[d][key]) for d in _TEST_DEPTHS)  # noqa: E731
         verdict = (
             f"CHARACTERIZATION -- the reservoir tracks the MATRIX subject's number across center-embedding to a recursion "
             f"DEPTH of {'>= ' + str(depth_star) + ' (held to the max tested depth ' + str(_TEST_DEPTHS[-1]) + ')' if held_full else 'd* = ' + str(depth_star) + ' (falls below 0.90 at deeper nesting)'} "
-            f"(profile: {', '.join(f'd{d}={agg[d]['reservoir']:.2f}' for d in _TEST_DEPTHS)}), beating the agreement-"
-            f"ATTRACTION baseline (predict the nearest/innermost number: {', '.join(f'd{d}={agg[d]['nearest_number']:.2f}' for d in _TEST_DEPTHS)}) "
+            f"(profile: {_profile('reservoir')}), beating the agreement-"
+            f"ATTRACTION baseline (predict the nearest/innermost number: {_profile('nearest_number')}) "
             f"where it is wrong (depth>=1 beats-attraction = {beats_attraction}). MARKERS discovered (no OOV) = {markers_ok}. "
             f"MATRIX-NUMBER-LESION collapses the answer to {lesion:.2f} (genuinely the matrix number). ==> a plain "
             f"reservoir handles BOUNDED center-embedding to depth ~{depth_star} amid distractors, then interference "

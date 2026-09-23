@@ -48,14 +48,15 @@ BLOCKING is left as a proposal for owner review rather than decided here.
 from __future__ import annotations
 
 import os
-import re
+import subprocess
 import sys
 import time
 
 _ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 if os.path.join(_ROOT, "tools") not in sys.path:
     sys.path.insert(0, os.path.join(_ROOT, "tools"))
-import parallel_state  # noqa: E402  (shared writer/reader schema, see tools/parallel_state.py)
+import parallel_state    # noqa: E402  (shared writer/reader schema, see tools/parallel_state.py)
+import waiver_history as wh  # noqa: E402  (shared CLASS+budget escape hatch, see tools/waiver_history.py)
 
 NAME = "compute-idle-persistent"
 CLASS_ID = "UC"
@@ -65,26 +66,10 @@ WAIVER_FILE = os.path.join(_ROOT, "research", "queue", ".parallel_compute_waiver
 PERSIST_S = 45 * 60     # under_compute must hold CONTINUOUSLY this long before it blocks
 WAIVER_MAX_H = 6
 
-# Reused verbatim from gates/lane_starvation.py's own hard-earned lesson (2026-08-01): a waiver that excuses
-# idle DEDICATED compute by priority/focus rather than a genuine blocker is the exact abuse to reject, and
-# pool/GPU idleness is exactly as zero-cost-to-fill as an idle CPU lane.
-_RATIONALISATION = re.compile(r"crux|priorit|focus|deprioriti|momentum|behind the|saturated with", re.I)
 
-
-def _waiver_reason():
-    if not os.path.exists(WAIVER_FILE):
-        return None
-    age_h = (time.time() - os.path.getmtime(WAIVER_FILE)) / 3600.0
-    if age_h > WAIVER_MAX_H:
-        return None
-    try:
-        return open(WAIVER_FILE, errors="ignore").read().strip()[:120] or "(no reason given)"
-    except OSError:
-        return None
-
-
-def _decide(state, now_ts, waiver, persist_s=PERSIST_S):
-    """Pure decision (testable without files/clock/waiver disk state).
+def _decide(state, now_ts, verdict, persist_s=PERSIST_S):
+    """Pure decision (testable without files/clock/waiver disk state). `verdict` is a
+    `waiver_history.evaluate(...)` result (or the caller's own dict of the same shape).
 
     GAME_MODE is handled UPSTREAM in parallel_audit.py (it excludes the local GPU from `under_compute` during a
     game, so the persisted signal this gate reads already reflects pool-only idle) — the mini-PC pool stays
@@ -96,26 +81,63 @@ def _decide(state, now_ts, waiver, persist_s=PERSIST_S):
     if not (state.get("under_compute") and since is not None and (now_ts - since) >= persist_s):
         return []
     mins = int((now_ts - since) / 60)
-    if waiver:
-        if _RATIONALISATION.search(waiver):
-            return ["DEDICATED compute (a pool node / the GPU) has read idle-with-ready-work for %d min "
-                    "straight, and research/queue/.parallel_compute_waiver excuses it by PRIORITY/FOCUS "
-                    "(\"%s\"), which is REJECTED (the same 2026-08-01 lane_starvation abuse, same shape: "
-                    "these lanes cost NOTHING beside whatever else is running). Queue something instead: "
-                    "`tools/sweep_pool.sh` / `tools/gpu_queue.sh add '<cmd>'`, or waive a REAL blocker."
-                    % (mins, waiver)]
-        return []
+    if verdict.get("active"):
+        if verdict.get("ok"):
+            return []                                              # a valid, in-budget waiver excuses it
+        return ["DEDICATED compute (a pool node / the GPU) has read idle-with-ready-work for %d min "
+                "straight, and research/queue/.parallel_compute_waiver is REJECTED: %s. Queue something "
+                "instead: `tools/sweep_pool.sh` / `tools/gpu_queue.sh add '<cmd>'`, or write a waiver in the "
+                "form `CLASS: GAMING|OWNER-PAUSE|RAM-CONTENTION|NO-READY-WORK` (+ avail_gb=/checked= as "
+                "required) naming the CURRENT resource constraint, never a plan."
+                % (mins, verdict.get("reject_reason", ""))]
     return ["DEDICATED compute (a pool node / the GPU) has read idle-with-ready-work for %d min straight "
             "(budget %d) — this is the same zero-marginal-cost waste `gates/lane_starvation` already blocks "
             "on for CPU lanes, just for GPU/pool idleness. FIX: queue one job — `tools/sweep_pool.sh` (CPU) "
             "or `tools/gpu_queue.sh add '<cmd>'` (GPU) — or waive a genuine blocker (auto-expires in %dh):\n"
-            "          echo 'why' > research/queue/.parallel_compute_waiver"
+            "          printf 'CLASS: RAM-CONTENTION\\navail_gb=%%d\\nreason: <why>\\n' \"$(free -g | "
+            "awk '/^Mem:/{print $7}')\" > research/queue/.parallel_compute_waiver\n"
+            "        (or CLASS: NO-READY-WORK with checked=<what you searched>, or CLASS: GAMING / "
+            "OWNER-PAUSE)"
             % (mins, persist_s // 60, WAIVER_MAX_H)]
+
+
+def _staged_files():
+    """The ACTUAL staged set, any status (mirrors gates/lane_starvation._staged_files -- the hook's own
+    --diff-filter=A passthrough misses MODIFY-only commits)."""
+    try:
+        return subprocess.run(["git", "diff", "--cached", "--name-only"], cwd=_ROOT,
+                              capture_output=True, text=True, timeout=10).stdout.split()
+    except Exception:
+        return []
+
+
+def _is_infra_only(staged):
+    """A non-empty staged set that touches ONLY tools/**, tests/** or **/*.md -- no research/runners, no
+    research/findings, no sim/. This gate blocks on a project-wide READY-RESEARCH-WORK signal (idle pool/GPU
+    next to a roadmap backlog); a commit that adds no research artifact and queues no research job has no
+    bearing on that allocation, exactly the reasoning `gates/lane_starvation._is_doc_only` already established
+    for markdown-only commits (2026-08-06/07) -- generalised here to the two other paths a compute-lane-neutral
+    commit lives in. Landed 2026-09-23 while closing the waiver loophole itself: this gate's OWN infra fix
+    tripped it (a live, GENUINE 14.5-day idle-compute signal, not a test artifact -- see the commit message),
+    which is exactly the false-positive shape this exemption removes without weakening the real check."""
+    if not staged:
+        return False
+    for p in staged:
+        if p.endswith(".md") or p == ".gitignore":
+            continue
+        if p.startswith("tools/") or p.startswith("tests/"):
+            continue
+        return False
+    return True
 
 
 def check(paths=None):
     del paths
-    return _decide(parallel_state.load(), time.time(), _waiver_reason())
+    if _is_infra_only(_staged_files()):
+        return []
+    now_ts = time.time()
+    verdict = wh.evaluate(NAME, WAIVER_FILE, WAIVER_MAX_H, now_ts=now_ts)
+    return _decide(parallel_state.load(), now_ts, verdict)
 
 
 def selftest():
@@ -123,28 +145,44 @@ def selftest():
     bad = []
     now = 2_000_000.0
     fresh_over = {"generated_at": now, "under_compute": True, "since_under_compute": now - PERSIST_S - 60}
-    if not _decide(fresh_over, now, None):
+    no_waiver = {"active": False}
+    if not _decide(fresh_over, now, no_waiver):
         bad.append("did NOT block a persisted-past-budget idle-compute reading with no waiver")
     # NEGATIVE — not yet past budget.
     fresh_under = {"generated_at": now, "under_compute": True, "since_under_compute": now - 60}
-    if _decide(fresh_under, now, None):
+    if _decide(fresh_under, now, no_waiver):
         bad.append("FALSE POSITIVE: blocked before the persistence budget was reached")
     # NEGATIVE — currently healthy.
     healthy = {"generated_at": now, "under_compute": False, "since_under_compute": None}
-    if _decide(healthy, now, None):
+    if _decide(healthy, now, no_waiver):
         bad.append("FALSE POSITIVE: blocked while under_compute currently reads healthy")
     # NEGATIVE — stale state (heartbeat not running recently) must pass SILENTLY, never block.
     stale = {"generated_at": now - parallel_state.STALE_S - 1, "under_compute": True,
              "since_under_compute": now - PERSIST_S - 3600}
-    if _decide(stale, now, None):
+    if _decide(stale, now, no_waiver):
         bad.append("FALSE POSITIVE: blocked on a STALE state (heartbeat may not be running)")
     # NEGATIVE — absent state.
-    if _decide(None, now, None):
+    if _decide(None, now, no_waiver):
         bad.append("FALSE POSITIVE: blocked with no state file at all")
-    # waiver: a genuine blocker excuses it.
-    if _decide(fresh_over, now, "no ready de-risk for the pool: the cache build is blocked on X"):
-        bad.append("FALSE POSITIVE: a genuine per-blocker waiver was still blocked")
-    # waiver: a priority/focus rationalisation must still block (the 2026-08-01 abuse).
-    if not _decide(fresh_over, now, "focused on the crux, deprioritized behind it"):
-        bad.append("did NOT reject a priority/focus rationalisation waiver (the 2026-08-01 abuse would pass)")
+    # waiver: a genuine classified+evidenced blocker, in budget, excuses it.
+    ok_verdict = {"active": True, "ok": True, "class": "NO-READY-WORK", "age_h": 0.1, "budget_h": 1.0}
+    if _decide(fresh_over, now, ok_verdict):
+        bad.append("FALSE POSITIVE: a genuine classified in-budget waiver was still blocked")
+    # waiver: an INVALID waiver (bad class, promise language, or budget-exhausted) must still block — this is
+    # the 2026-09-23 loophole close: `waiver_history.evaluate` is the sole judge of validity here, so this
+    # gate's own selftest only needs to prove it RESPECTS that verdict, not re-derive the classification logic
+    # (that is `tools/waiver_history.py`'s own selftest's job).
+    bad_verdict = {"active": True, "ok": False, "class": None,
+                   "reject_reason": "promise/intent language 'will' detected -- REJECTED"}
+    if not _decide(fresh_over, now, bad_verdict):
+        bad.append("did NOT reject an INVALID waiver verdict (the 2026-09-23 promise-language loophole "
+                   "would pass)")
+    # _is_infra_only: a tools/tests/docs/.gitignore-only staged set is exempt; research/sim changes are NOT.
+    if not _is_infra_only(["tools/waiver_history.py", "tests/test_waiver_history.py", "README.md",
+                           ".gitignore"]):
+        bad.append("a tools+tests+md+.gitignore staged set was NOT recognised as infra-only")
+    if _is_infra_only(["tools/waiver_history.py", "research/runners/some_derisk.py"]):
+        bad.append("BROKEN GUARD: a mixed tools+research staged set was treated as infra-only")
+    if _is_infra_only([]):
+        bad.append("BROKEN GUARD: an EMPTY staged set was treated as infra-only (would exempt every commit)")
     return bad

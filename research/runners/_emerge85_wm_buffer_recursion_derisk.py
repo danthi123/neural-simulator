@@ -164,17 +164,21 @@ def _derisk(seeds):
         go = bool(markers_ok and surpass and count_defeated and scramble_collapses)
 
         cap_depth = (cap // 2) - 1                               # deepest fully-buffered depth (2*(d+1) <= capacity)
+        # Built OUTSIDE the f-string on purpose (Python <3.12 syntax error): a nested f-string cannot reuse its
+        # own quote character in an inner subscript (`f'...{agg[d]['reservoir']}...'`) -- collects under 3.14
+        # (PEP 701 relaxed the rule) but fails under the project's pinned 3.11 venv. Same content, precomputed.
+        _profile = lambda key: ", ".join("d%s=%.2f" % (d, agg[d][key]) for d in _TEST_DEPTHS)  # noqa: E731
         if go:
             verdict = (
                 f"GO -- the RANK-3 theta-gamma multiplexed WM BUFFER SURPASSES the reservoir's stack-recursion boundary. "
                 f"On the SAME EMERGE-84 nested pair-matching grammaticality task, the plain reservoir's stack-depth is "
-                f"d*={res_dstar} (profile {', '.join(f'd{d}={agg[d]['reservoir']:.2f}' for d in _TEST_DEPTHS)}) while the "
+                f"d*={res_dstar} (profile {_profile('reservoir')}) while the "
                 f"WM-buffer-augmented read-out reaches d*={buf_dstar} (profile "
-                f"{', '.join(f'd{d}={agg[d]['wm_buffer']:.2f}' for d in _TEST_DEPTHS)}) -- STRICTLY DEEPER: the bounded "
+                f"{_profile('wm_buffer')}) -- STRICTLY DEEPER: the bounded "
                 f"buffer holds the whole nested number sequence in ORDERED slots (no fading) so the read-out matches every "
                 f"pair within capacity {cap}. The count-multiset shortcut stays DEFEATED "
-                f"({', '.join(f'd{d}={agg[d]['count_baseline']:.2f}' for d in _TEST_DEPTHS)} ~chance); a BUFFER-SLOT-"
-                f"SCRAMBLE collapses it ({', '.join(f'd{d}={agg[d]['buffer_slot_scramble']:.2f}' for d in _TEST_DEPTHS)} "
+                f"({_profile('count_baseline')} ~chance); a BUFFER-SLOT-"
+                f"SCRAMBLE collapses it ({_profile('buffer_slot_scramble')} "
                 f"-> the ORDERED slots are load-bearing = the STACK structure, not a bag). The buffer BOUNDARIES at its "
                 f"capacity (~depth {cap_depth}, {cap} number-slots) -- the biologically-faithful, BOUNDED recursion limit "
                 f"(the human ~2-3-center-embedding bound), NOT unbounded recursion. {len(seeds)} seeds. ==> the RANK-3 "
