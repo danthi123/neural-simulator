@@ -140,6 +140,20 @@ point (see the fix round), and at 600 pA every contradiction was already flagged
 
 The amended gate was committed in `cd5288018` before any v2 run, with an AMENDMENT LOG listing what had been seen.
 
+**v2 instrument smoke (not a gate run).** A 2-organ pool (surprise + affect + the edge) on non-gate seed 7, run by
+`research/probes/onebrain_affect_xv2_instrument_smoke.py`. Artifact:
+`research/findings/raw/_onebrain_affect_pool/xv2_instrument_smoke_2organ_seed7.json`. Readings:
+
+- **Operating point.** At a=0, every verdict at every grid strength equals the production read path, with max
+  |delta Hz| = 0.0.
+- **S*.** 350 pA. The a=0 brain flags 3 of 8 contradictions there, and all 8 at 600 pA.
+- **Flips.** At S*, a=+1 newly flags 2 of 8 contradictions and loses none. That is exactly the pre-registered
+  minimum of 2, so the margin is thin.
+- **Specificity.** No confirm false alarm at 600 pA.
+
+This shows the instrument runs and reads at the production operating point. It is not evidence for the 12-organ,
+6-seed gate.
+
 ## The GO gate (pre-registered in the runner docstring, not yet scored)
 
 The literal command is the `--aggregate` line in the runner's docstring. It runs over the per-seed `verify_M_seed*`
