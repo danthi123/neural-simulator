@@ -147,24 +147,152 @@ def test_marginal_strength_selection_and_flip_counting():
     assert V._n_flip_required(8) == 2 and V._n_flip_required(12) == 3
 
 
-def test_aggregate_ignores_superseded_v1_x_checks_and_requires_v2(tmp_path):
-    """A seed whose only arm-X record is the superseded v1 instrument is NOT GO (its X checks are dropped, so the
-    v2 checks are MISSING); the same seed with a v2 record passing everything is GO. Fails in the failing direction."""
+# ── gate v3 (fix round 3): synthetic raw batteries, so the SCORING RULE is tested without a 7.7k-neuron pool ──
+_SSTAR = 375.0
+_STAGED_V2_REV = "c6fdf7be7673b264316888615be64883f23f48cf"
+
+
+def _bat(pos_flips=0, arousal=0.0, conf_fa=0, lost_at_prod=0):
+    """A battery dict shaped like `arousal_surprise_battery`'s: a=0 flags every contradiction at >=400 pA and half
+    below (so S* = 375); `pos_flips` of the not-flagged S* trials are newly flagged; confirm at 600 pA is silent
+    except `conf_fa` false alarms; `lost_at_prod` 600 pA contradict detections are lost."""
+    from research.runners import _onebrain_affect_pool_verify as V
+    contra = {}
+    for S in V.ASSERT_GRID:
+        v = [True] * 8 if S >= 400 else [True] * 4 + [False] * 4
+        if S == _SSTAR:
+            v = [True] * 4 + [True] * pos_flips + [False] * (4 - pos_flips)
+        if S == V.PROD_ASSERT_PA and lost_at_prod:
+            v = [False] * lost_at_prod + [True] * (8 - lost_at_prod)
+        contra[f"{S:g}"] = _cond(v)
+    conf = {f"{V.PROD_ASSERT_PA:g}": _cond([True] * conf_fa + [False] * (8 - conf_fa))}
+    return {"n_trained": 8, "threshold": 1.0, "arousal_rung_hz": float(arousal), "contradict": contra,
+            "confirm": conf}
+
+
+def _raw(pos_flips=2, neg_flips=2, conf_fa_pos=0, lesion_flips=0, inull_flips=0, lost_at_prod=0):
+    return {"production_path": _bat(), "base": _bat(),
+            "pos": _bat(pos_flips, 5.0, conf_fa_pos, lost_at_prod), "neg": _bat(neg_flips, 5.0),
+            "pos_again": _bat(pos_flips, 5.0, conf_fa_pos, lost_at_prod),
+            "lesion": _bat(lesion_flips, 5.0), "intero_null": _bat(inull_flips), "noedge_base": _bat(),
+            "noedge_pos": _bat(0, 5.0), "ladder_scope_invariance": {"+1.0": [0.3, 0.3], "-1.0": [-0.3, -0.3]},
+            "x5_reads": {"affect": {"byte_identical": True, "same_answer": True}}}
+
+
+def test_x1_counts_a_plus1_once_and_a_minus1_is_reported_not_counted():
+    """Re-review issue 2: a=-1 is a construction duplicate of a=+1 (the arousal relay is driven by |appraisal|), so
+    X1 is ONE test. a=+1 at the threshold passes with a=-1 at zero; a=-1 cannot rescue a sub-threshold a=+1."""
+    from research.runners import _onebrain_affect_pool_verify as V
+    chk, det = V.score_x_arm(_raw(pos_flips=2, neg_flips=0))
+    assert det["s_star"] == _SSTAR and det["n_flip_required"] == 2
+    assert chk["X1_functional_verdict_flip_at_marginal_strength"] is True
+    assert det["flips_at_Sstar"]["neg_reported"] == 0
+    chk, _ = V.score_x_arm(_raw(pos_flips=1, neg_flips=4))
+    assert chk["X1_functional_verdict_flip_at_marginal_strength"] is False
+    _, det = V.score_x_arm(_raw(pos_flips=2, neg_flips=2))
+    assert det["neg_is_construction_duplicate_of_pos_at_Sstar"] is True
+
+
+def test_x2_is_relabelled_integrity_I8_and_can_still_fail():
+    """Re-review issue 3: v2's X2 was near-guaranteed at w=0.05 -> it is I8 (safety), not evidence. The evidential
+    set is exactly {X0, X1}; I8 still fails on a production-strength false alarm or a lost detection."""
+    from research.runners import _onebrain_affect_pool_verify as V
+    chk, _ = V.score_x_arm(_raw())
+    assert {k.split("_")[0] for k in chk if k[0] == "X"} == {"X0", "X1"}
+    assert {k.split("_")[0] for k in chk if k[0] == "I"} == {f"I{i}" for i in range(1, 9)}
+    assert all(chk.values())
+    chk, _ = V.score_x_arm(_raw(conf_fa_pos=1))
+    assert chk["I8_production_strength_safety"] is False
+    assert chk["X1_functional_verdict_flip_at_marginal_strength"] is True
+    chk, _ = V.score_x_arm(_raw(lost_at_prod=1))
+    assert chk["I8_production_strength_safety"] is False
+    assert "X2" not in V._REQUIRED and "I8" in V._REQUIRED and "X1" in V._REQUIRED
+
+
+def test_attribution_is_computed_on_the_x1_flips():
+    """Re-review issue 1 (behaviour): the lever + attributable_to calls run on the X1 flips vs each control."""
+    from research.runners import _onebrain_affect_pool_verify as V
+    chk, det = V.score_x_arm(_raw(pos_flips=4))
+    a = det["attribution"]
+    assert a["lever_moved"] is True and a["edge_lesion"] == 1.0 and a["intero_null"] == 1.0
+    assert a["no_edge_pool"] == 1.0
+    chk, det = V.score_x_arm(_raw(pos_flips=4, lesion_flips=4, inull_flips=4))
+    assert det["attribution"]["lever_moved"] is False and det["attribution"]["edge_lesion"] == 0.0
+    assert chk["I1_edge_lesion_verdicts_equal_baseline"] is False and chk["I3_intero_null_collapses"] is False
+
+
+def test_runner_passes_the_attribution_required_gate():
+    """Re-review issue 1 (the BLOCK): the runner computes lesion/null controls, so it must make a tools.lab
+    attribution call. The v2 rewrite dropped v1's `lever`/`attributable_to` and this gate went red."""
+    from tools.gates import attribution_required as g
+    assert g.check(["research/runners/_onebrain_affect_pool_verify.py"]) == []
+
+
+def _staged_v2_source():
+    import subprocess
+    try:
+        return subprocess.run(["git", "show", f"{_STAGED_V2_REV}:research/runners/_onebrain_affect_pool_verify.py"],
+                              capture_output=True, text=True, check=True).stdout
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        pytest.skip("staged revision not in this clone")
+
+
+def test_x_instrument_code_unchanged_since_the_staged_v2_revision():
+    """The v2 arm-X pool jobs run at revision c6fdf7be7 and are RE-SCORED by gate v3; that is valid only if the
+    MEASUREMENT code there is identical to HEAD's. Pinned at AST level (docstrings excluded)."""
+    import ast
+    import inspect
+    from research.runners import _onebrain_affect_pool_verify as V
+    old = _staged_v2_source()
+    new = inspect.getsource(V)
+
+    def fns(src):
+        out = {}
+        for n in ast.parse(src).body:
+            if isinstance(n, ast.FunctionDef):
+                if n.body and isinstance(n.body[0], ast.Expr) and isinstance(n.body[0].value, ast.Constant):
+                    n.body = n.body[1:]
+                out[n.name] = ast.dump(n)
+        return out
+
+    o, h = fns(old), fns(new)
+    for name in ("arousal_surprise_battery", "production_path_battery", "_surprise_trial", "_snap_held",
+                 "select_marginal_strength", "_newly", "_cond_summary", "_surprise_and_ladder",
+                 "_n_flip_required", "_verdicts_equal"):
+        assert o[name] == h[name], name
+
+    def calls(src):   # the battery CALLS inside verify_seed (pool build .. the scope read)
+        a = src.index("xpool = build_affect_pool(seed, xedge=True)")
+        return src[a:src.index("for a in (1.0, -1.0)}", a)]
+    assert calls(old) == calls(new)
+    for c in ("ASSERT_GRID", "MARGINAL_FRAC", "FLIP_FRAC", "MIN_FLIPS", "LESION_RATIO", "PRE_STEPS", "HOLD",
+              "PROD_ASSERT_PA", "CUE_PA", "X_INSTRUMENT"):
+        assert old.split(f"\n{c} = ")[1].split("\n")[0] == new.split(f"\n{c} = ")[1].split("\n")[0], c
+
+
+def test_aggregate_rescores_current_instrument_x_from_raw_and_drops_v1(tmp_path):
+    """The stored checks of a current-instrument arm-X record are IGNORED and re-scored from its raw batteries
+    (gate v3): all-True stored checks over a failing raw read are NOT GO; all-False stored checks over a passing raw
+    read ARE GO; a record missing a raw battery is UNSCORABLE (not a pass); v1 records' X checks are dropped."""
     import json
     from research.runners import _onebrain_affect_pool_verify as V
-    m = {f"M{i}_x": True for i in range(1, 8)}
-    v1 = {f"X{i}_x": True for i in range(1, 8)}
-    v2 = {**{f"X{i}_x": True for i in range(0, 3)}, **{f"I{i}_x": True for i in range(1, 8)}}
     seeds = list(V.SEEDS)
+    M = str(tmp_path / "M.json")
     (tmp_path / "M.json").write_text(json.dumps({"mode": "verify", "per_seed": [
-        {"seed": s, "checks": m} for s in seeds]}))
-    (tmp_path / "X1.json").write_text(json.dumps({"mode": "verify", "per_seed": [
-        {"seed": s, "checks": v1} for s in seeds]}))
-    assert V.aggregate([str(tmp_path / "M.json"), str(tmp_path / "X1.json")]) is False
-    (tmp_path / "X2.json").write_text(json.dumps({"mode": "verify", "per_seed": [
-        {"seed": s, "checks": v2, "x_instrument": V.X_INSTRUMENT} for s in seeds]}))
-    assert V.aggregate([str(tmp_path / "M.json"), str(tmp_path / "X2.json")]) is True
-    bad = dict(v2, X1_x=False)
-    (tmp_path / "X3.json").write_text(json.dumps({"mode": "verify", "per_seed": [
-        {"seed": s, "checks": bad, "x_instrument": V.X_INSTRUMENT} for s in seeds]}))
-    assert V.aggregate([str(tmp_path / "M.json"), str(tmp_path / "X3.json")]) is False
+        {"seed": s, "checks": {f"M{i}_x": True for i in range(1, 8)}} for s in seeds]}))
+    liar_true = {**{f"X{i}_x": True for i in range(0, 3)}, **{f"I{i}_x": True for i in range(1, 9)}}
+    liar_false = {k: False for k in liar_true}
+
+    def xfile(name, raw, stored):
+        (tmp_path / name).write_text(json.dumps({"mode": "verify", "per_seed": [
+            {"seed": s, "checks": stored, "x_instrument": V.X_INSTRUMENT, "X": raw} for s in seeds]}))
+        return str(tmp_path / name)
+
+    assert V.aggregate([M, xfile("good.json", _raw(), liar_false)]) is True
+    assert V.aggregate([M, xfile("thin.json", _raw(pos_flips=1, neg_flips=4), liar_true)]) is False
+    partial = {k: v for k, v in _raw().items() if k != "intero_null"}
+    assert V.aggregate([M, xfile("partial.json", partial, liar_true)]) is False
+    (tmp_path / "v1.json").write_text(json.dumps({"mode": "verify", "per_seed": [
+        {"seed": s, "checks": {f"X{i}_x": True for i in range(1, 8)}} for s in seeds]}))
+    assert V.aggregate([M, str(tmp_path / "v1.json")]) is False
+    assert V.aggregate([M]) is False

@@ -39,18 +39,24 @@ ARM X — INTEGRATION (the arousal->surprise synapse on the one pool; mechanism 
   Assertion strengths: ASSERT_GRID (600 pA = the production drive, down to 250 pA = weak / low-salience evidence).
   S* (selected on the a=0 read ONLY, before and independent of any arousal read): the LARGEST grid strength at which
   the a=0 brain flags <= MARGINAL_FRAC of the contradictions. No such strength -> X1 is UNDEFINED (= not passed).
-  EVIDENTIAL checks:
+  EVIDENTIAL checks (gate v3 -- see the AMENDMENT LOG; exactly TWO, and only X1 is evidence FOR the effect):
   X0 OPERATING POINT: at a=0, at EVERY grid strength, every contradict (and, at 600 pA, confirm) trial's verdict in
      this battery EQUALS the verdict of the organ's literal production read path (`read_isolation` + `_hard_reset`
      + `_drive_read`) for the same (cue, asserted) blocks on the same pool. The instrument must read what production
      reads before any arousal effect is scored.
-  X1 FUNCTIONAL VERDICT FLIP: at S*, the held arousal NEWLY flags (not-surprised at a=0 -> surprised) at least
-     max(MIN_FLIPS, ceil(FLIP_FRAC * n_trained)) contradict trials at a=+1 AND at a=-1. This replaces v1's 0.10 Hz
-     rate floor: it is a change of the organ's own verdict, not a rate shift.
-  X2 SPECIFICITY AT THE PRODUCTION STRENGTH: at 600 pA, arousal (a=+-1) adds NO confirm false alarm (confirm
-     surprised count == its a=0 count) and loses NO contradict detection.
+  X1 FUNCTIONAL VERDICT FLIP -- ONE test per seed: at S*, the held arousal at a=+1 NEWLY flags (not-surprised at
+     a=0 -> surprised) at least max(MIN_FLIPS, ceil(FLIP_FRAC * n_trained)) contradict trials. This replaces v1's
+     0.10 Hz rate floor: it is a change of the organ's own verdict, not a rate shift. a=-1 is NOT a second test:
+     the arousal relay is driven by |appraisal| (`PoolAffectLadder._drive_relays`) and the arousal rungs receive
+     no valence-rung input, so the a=-1 read is a CONSTRUCTION DUPLICATE of the a=+1 read. It is REPORTED (its
+     flips, and whether its per-trial Hz at S* equal a=+1's exactly), never counted. The only replication of X1
+     is ACROSS THE 6 SEEDS (all must pass). The per-seed threshold is unchanged from v2 (see the LOG for why).
+  ATTRIBUTION (tools.lab, reported per seed, not a separate verdict): `lever` on the a=+1 verdict vector at S*,
+     intact vs edge-lesion (continuous = mean Hz); `attributable_to` of X1's newly-flagged count against each
+     control that varies one term -- the edge lesion (the synapse), the intero-null (the ladder's latched arousal)
+     and the no-edge pool (the topology). I1-I3 are the gated forms of the same controls.
   INTEGRITY SMOKES (required, but they pass largely BY CONSTRUCTION of the topology -- the edge is the only
-  affect->surprise path -- so they are NOT evidence for the effect):
+  affect->surprise path -- or, for I8, by the physics of a weak additive drive; they are NOT evidence for the effect):
   I1 edge lesion (gate `affect_arousal_to_surprise`=0), a=+1: verdicts at S* and 600 == the a=0 verdicts.
   I2 no-edge pool (same 12 organs, no synapse): a=+1 verdicts == a=0 verdicts at S* and 600, and its a=0 verdicts ==
      the edge pool's a=0 verdicts.
@@ -63,12 +69,17 @@ ARM X — INTEGRATION (the arousal->surprise synapse on the one pool; mechanism 
   I6 determinism: the a=+1 battery at (S*, 600) read twice -> identical per-trial Hz.
   I7 scope invariance: the ladder's affect read at a=+-1 is identical with OU scope "affect" vs "all" (the mask
      changes only the non-affect neurons' noise, never the ladder).
+  I8 production-strength SAFETY (was v2's X2, relabelled in v3): at 600 pA, arousal (a=+-1) adds NO confirm false
+     alarm (confirm surprised count == its a=0 count) and loses NO contradict detection. NEAR-GUARANTEED at
+     w=0.05: at 600 pA the a=0 brain already flags every contradiction and arousal only ADDS excitation (so a lost
+     detection can barely occur), and confirm sits at a ~0 Hz floor that w=0.05 does not lift (the v1 sweep saw
+     confirm cross only at w=0.4). A safety check against a regression, not evidence of specificity.
   REPORTED, NOT GATED, NO CLAIM: mean contradict Hz per strength at a=0/+1/-1 (raw f-I data; whether the effect is
   a GAIN or an additive DC drive is NOT tested and NOT claimed), the production-strength (600 pA) contradict
-  verdict changes (typically none: the a=0 brain already flags every contradiction there), and newly-lost
-  detections at S*.
+  verdict changes (typically none: the a=0 brain already flags every contradiction there), newly-lost
+  detections at S*, the a=-1 construction duplicate, and the attribution fractions.
 
-GO = all of M1..M7 AND X0..X2 AND I1..I7 on every seed. `XEDGE_W` = 0.05 is a HAND-SET constant (see the
+GO = all of M1..M7 AND X0..X1 AND I1..I8 on every seed. `XEDGE_W` = 0.05 is a HAND-SET constant (see the
 provenance note in `onebrain_affect_pool.py`); `--calibrate` is now a DIAGNOSTIC on a NON-gate seed (default 7)
 and does not set it. Seeds: 42 43 44 100 101 102.
 
@@ -89,6 +100,22 @@ AMENDMENT LOG
     python -m research.runners._onebrain_affect_pool_verify --aggregate \
       'research/findings/raw/_onebrain_affect_pool/verify_M_seed*.json' \
       'research/findings/raw/_onebrain_affect_pool/xv2/verify_X_seed*.json'
+  2026-09-23 ~13:45 EDT -- GATE v3 (SCORING + ATTRIBUTION only; the MEASUREMENT is unchanged). Committed after the
+  re-review of 4708ebdee and BEFORE any 6-seed v2 arm-X result was read. What was known at this point: the same
+  2-organ seed-7 smoke as above (a=+1 newly flagged 2/8 at S*=350, exactly the minimum). The v1 X101/X102 jobs
+  finished on pool41 at 13:10/13:22 (superseded instrument; files NOT opened). The v2 X42/X43 jobs were dispatched
+  on pool41 at 13:38 before this entry; their outputs had not been written or read when it was committed.
+  Changes: (1) X1 counts a=+1 ONCE -- the "AND at a=-1" half is withdrawn as a construction duplicate (arousal
+  relay driven by |appraisal|); a=-1 is reported. The per-seed threshold max(2, ceil(n/4)) is NOT changed: raising
+  it now, knowing the only v2 read sits exactly at 2/8, would be choosing a threshold the seen data already
+  fails; lowering it is not warranted either. What changes is the claimed evidence -- ONE test per seed,
+  replicated only across seeds. (2) v2's X2 is relabelled I8 (safety, near-guaranteed at w=0.05), so the
+  evidential set is X0+X1. (3) The tools.lab `lever` + `attributable_to` calls that v1 made and the v2 rewrite
+  dropped (a BLOCK-class `attribution-required` regression) are restored on the X1 flips vs the three controls.
+  (4) Arm-X scoring now lives in ONE pure function, `score_x_arm`, over the recorded raw batteries; `aggregate`
+  RE-SCORES every current-instrument X record with it and ignores the checks the file stored. So the v2 X jobs
+  (revision c6fdf7be7, whose battery code is identical -- pinned by a test) are scored by THIS rule, not v2's.
+  No threshold, grid, S* rule, weight or battery changed. Arm M is unchanged.
 
 COMPUTE: numpy CPU, ~7.7k-neuron pools (a few GB; the surprise organ's on-pool training dominates, ~11 min per
 pool build on one core). Pool nodes: one seed x one arm per queue line.
@@ -122,10 +149,14 @@ _REPO = os.path.normpath(os.path.join(_HERE, "..", ".."))
 if _REPO not in sys.path:
     sys.path.insert(0, _REPO)
 
-from tools.lab import void_if, undefined_if_empty  # noqa: E402
+from tools.lab import void_if, undefined_if_empty, lever, attributable_to  # noqa: E402
 
 SEEDS = (42, 43, 44, 100, 101, 102)
 X_INSTRUMENT = "v2-production-operating-point-verdict-2026-09-23"   # arm-X files without this are superseded (v1)
+X_GATE = "v3-single-count-X1-X2-as-I8-attribution-2026-09-23"      # the SCORING rule (`score_x_arm`); see the LOG
+# the raw batteries a current-instrument arm-X record must carry for `score_x_arm` to (re-)score it
+_X_RAW_KEYS = ("production_path", "base", "pos", "neg", "pos_again", "lesion", "intero_null", "noedge_base",
+               "noedge_pos", "ladder_scope_invariance", "x5_reads")
 LESION_RATIO = 0.34          # I3: intero-null newly-flagged count <= floor(this x intact newly-flagged count)
 INTERO_COLLAPSE = 0.25       # M4: interoceptive-synapse lesion |diff| <= this x intact at +-1
 CAL_WEIGHTS = (0.02, 0.05, 0.1, 0.2, 0.4)   # the diagnostic calibration sweep (effective per-synapse weight)
@@ -313,6 +344,90 @@ def _verdicts_equal(a, b, strengths, kind="contradict"):
     return all(a[kind][f"{S:g}"]["surprised"] == b[kind][f"{S:g}"]["surprised"] for S in strengths)
 
 
+def score_x_arm(raw):
+    """THE arm-X verdict (gate v3), a pure function of the recorded raw batteries (`_X_RAW_KEYS`). Used by
+    `verify_seed` at run time AND by `aggregate`, which re-scores every current-instrument record with it, so a
+    file produced under an earlier scoring rule is judged by this one. Returns (checks, details)."""
+    base, prod, pos, neg = raw["base"], raw["production_path"], raw["pos"], raw["neg"]
+    les, inull, nb, npos = raw["lesion"], raw["intero_null"], raw["noedge_base"], raw["noedge_pos"]
+    pos_again, scope, x5 = raw["pos_again"], raw["ladder_scope_invariance"], raw["x5_reads"]
+    P = PROD_ASSERT_PA
+    kP = f"{P:g}"
+    s_star = select_marginal_strength(base)
+    probe = tuple(dict.fromkeys(s for s in (s_star, P) if s is not None))
+    need = _n_flip_required(int(base["n_trained"]))
+    checks = {}
+    void_x = void_if(pos["arousal_rung_hz"] == 0.0, "the arousal ladder never latched at a=+1 -- the "
+                                                      "cross-edge had no presynaptic activity to carry")
+    # X0 operating point
+    x0 = (_verdicts_equal(base, prod, ASSERT_GRID, "contradict") and _verdicts_equal(base, prod, (P,), "confirm"))
+    x0_maxdhz = max(abs(h1 - h2) for kind, grid in (("contradict", ASSERT_GRID), ("confirm", (P,)))
+                    for S in grid for h1, h2 in zip(base[kind][f"{S:g}"]["hz"], prod[kind][f"{S:g}"]["hz"]))
+    checks["X0_operating_point_verdicts_equal_production_read"] = bool(x0)
+    # X1 functional verdict flip at S*, a=+1 ONLY (a=-1 is a construction duplicate: reported, never counted)
+    attribution = {"lever_moved": None, "edge_lesion": None, "intero_null": None, "no_edge_pool": None}
+    if s_star is None:
+        flips = {"pos": None, "lost_pos": None, "neg_reported": None, "lost_neg_reported": None}
+        neg_dup = None
+        fi = fl = fne = None
+        x1 = False
+        undefined_reason = ("no grid strength at which the a=0 brain misses >= half of the contradictions -- "
+                            "S* undefined, X1 UNDEFINED (not a pass)")
+    else:
+        k = f"{s_star:g}"
+        fp, lp = _newly(base["contradict"][k], pos["contradict"][k])
+        fn, ln = _newly(base["contradict"][k], neg["contradict"][k])
+        flips = {"pos": fp, "lost_pos": lp, "neg_reported": fn, "lost_neg_reported": ln}
+        neg_dup = bool(neg["contradict"][k]["hz"] == pos["contradict"][k]["hz"])
+        fl = _newly(base["contradict"][k], les["contradict"][k])[0]
+        fi = _newly(base["contradict"][k], inull["contradict"][k])[0]
+        fne = _newly(nb["contradict"][k], npos["contradict"][k])[0]
+        x1 = bool(fp >= need) and not void_x
+        undefined_reason = None
+        # ATTRIBUTION (tools.lab): does the synapse move the verdict, and whose is X1's newly-flagged count?
+        attribution["lever_moved"] = lever(
+            "arousal->surprise synapse (a=+1 verdicts @S*, intact vs edge-lesion)",
+            tuple(pos["contradict"][k]["surprised"]), tuple(les["contradict"][k]["surprised"]), required=False,
+            continuous=(pos["contradict"][k]["mean_hz"], les["contradict"][k]["mean_hz"]))
+        attribution["edge_lesion"] = attributable_to("X1 flips @S*: the arousal->surprise synapse (vs edge lesion)",
+                                                     fp, fl)
+        attribution["intero_null"] = attributable_to("X1 flips @S*: the ladder's latched arousal (vs intero-null)",
+                                                     fp, fi)
+        attribution["no_edge_pool"] = attributable_to("X1 flips @S*: the edge topology (vs the no-edge pool)",
+                                                       fp, fne)
+    checks["X1_functional_verdict_flip_at_marginal_strength"] = bool(x1)
+    # integrity smokes
+    checks["I1_edge_lesion_verdicts_equal_baseline"] = _verdicts_equal(les, base, probe)
+    checks["I2_no_edge_pool_null"] = bool(_verdicts_equal(npos, nb, probe) and _verdicts_equal(nb, base, probe))
+    checks["I3_intero_null_collapses"] = bool(s_star is not None and flips["pos"] > 0
+                                              and fi <= int(np.floor(LESION_RATIO * flips["pos"])))
+    checks["I4_byte_off_inert_at_rest"] = bool(
+        base["contradict"][kP]["hz"] == nb["contradict"][kP]["hz"]
+        and base["confirm"][kP]["hz"] == nb["confirm"][kP]["hz"]
+        and all(v["byte_identical"] and v["same_answer"] for v in x5.values()))
+    checks["I5_held_arousal_carries"] = bool(pos["arousal_rung_hz"] > 0 and neg["arousal_rung_hz"] > 0
+                                             and base["arousal_rung_hz"] == 0.0)
+    checks["I6_deterministic"] = bool(all(pos_again["contradict"][f"{S:g}"]["hz"] == pos["contradict"][f"{S:g}"]["hz"]
+                                          for S in probe) and pos_again["confirm"][kP]["hz"] == pos["confirm"][kP]["hz"])
+    checks["I7_ladder_scope_invariant"] = all(a == b for a, b in scope.values())
+    c0 = base["confirm"][kP]["n_surprised"]
+    checks["I8_production_strength_safety"] = bool(
+        pos["confirm"][kP]["n_surprised"] == c0 and neg["confirm"][kP]["n_surprised"] == c0
+        and _newly(base["contradict"][kP], pos["contradict"][kP])[1] == 0
+        and _newly(base["contradict"][kP], neg["contradict"][kP])[1] == 0)
+    curve = {lab: {S: r["contradict"][S]["mean_hz"] for S in r["contradict"]}
+             for lab, r in (("a0", base), ("a+1", pos), ("a-1", neg))}
+    details = {"x_gate": X_GATE, "s_star": s_star, "n_flip_required": need, "flips_at_Sstar": flips,
+               "intero_null_flips": fi, "edge_lesion_flips": fl, "no_edge_pool_flips": fne,
+               "neg_is_construction_duplicate_of_pos_at_Sstar": neg_dup, "attribution": attribution,
+               "void_x": bool(void_x), "undefined_reason": undefined_reason, "x0_max_abs_dhz": float(x0_maxdhz),
+               "production_strength_contradict_newly_flagged": {
+                   "pos": _newly(base["contradict"][kP], pos["contradict"][kP])[0],
+                   "neg": _newly(base["contradict"][kP], neg["contradict"][kP])[0]},
+               "reported_contradict_mean_hz_curve_NO_GAIN_CLAIM": curve}
+    return checks, details
+
+
 def _surprise_and_ladder(pool, seed, organs=None):
     from research.runners.onebrain_affect_pool import PoolAffectLadder
     from research.runners.surprise_production_organ import SurpriseProductionOrgan
@@ -465,70 +580,16 @@ def verify_seed(seed, arms=("M", "X")):
         # I7 scope invariance of the ladder itself
         scope = {f"{a:+.1f}": (lx.read_differential(a, ou_scope="affect")["differential"],
                                lx.read_differential(a, ou_scope="all")["differential"]) for a in (1.0, -1.0)}
-        need = _n_flip_required(int(base["n_trained"]))
-        void_x = void_if(pos["arousal_rung_hz"] == 0.0, "the arousal ladder never latched at a=+1 -- the "
-                                                          "cross-edge had no presynaptic activity to carry")
-        # X0 operating point
-        x0 = (_verdicts_equal(base, prod, ASSERT_GRID, "contradict")
-              and _verdicts_equal(base, prod, (P,), "confirm"))
-        x0_maxdhz = max(abs(h1 - h2) for kind, grid in (("contradict", ASSERT_GRID), ("confirm", (P,)))
-                        for S in grid for h1, h2 in zip(base[kind][f"{S:g}"]["hz"], prod[kind][f"{S:g}"]["hz"]))
-        checks["X0_operating_point_verdicts_equal_production_read"] = bool(x0)
-        # X1 functional verdict flip at S*
-        if s_star is None:
-            flips = {"pos": None, "neg": None, "lost_pos": None, "lost_neg": None}
-            x1 = False
-            undefined_reason = ("no grid strength at which the a=0 brain misses >= half of the contradictions -- "
-                                "S* undefined, X1 UNDEFINED (not a pass)")
-        else:
-            k = f"{s_star:g}"
-            fp, lp = _newly(base["contradict"][k], pos["contradict"][k])
-            fn, ln = _newly(base["contradict"][k], neg["contradict"][k])
-            flips = {"pos": fp, "neg": fn, "lost_pos": lp, "lost_neg": ln}
-            x1 = bool(fp >= need and fn >= need) and not void_x
-            undefined_reason = None
-        checks["X1_functional_verdict_flip_at_marginal_strength"] = bool(x1)
-        # X2 specificity at the production strength
-        kP = f"{P:g}"
-        c0 = base["confirm"][kP]["n_surprised"]
-        x2 = (pos["confirm"][kP]["n_surprised"] == c0 and neg["confirm"][kP]["n_surprised"] == c0
-              and _newly(base["contradict"][kP], pos["contradict"][kP])[1] == 0
-              and _newly(base["contradict"][kP], neg["contradict"][kP])[1] == 0)
-        checks["X2_no_false_alarm_no_lost_detection_at_production_strength"] = bool(x2)
-        # integrity smokes
-        checks["I1_edge_lesion_verdicts_equal_baseline"] = _verdicts_equal(les, base, probe)
-        checks["I2_no_edge_pool_null"] = bool(_verdicts_equal(npos, nb, probe) and _verdicts_equal(nb, base, probe))
-        if s_star is not None and flips["pos"] is not None:
-            fi = _newly(base["contradict"][f"{s_star:g}"], inull["contradict"][f"{s_star:g}"])[0]
-            checks["I3_intero_null_collapses"] = bool(flips["pos"] > 0
-                                                       and fi <= int(np.floor(LESION_RATIO * flips["pos"])))
-        else:
-            fi = None
-            checks["I3_intero_null_collapses"] = False
-        checks["I4_byte_off_inert_at_rest"] = bool(
-            base["contradict"][kP]["hz"] == nb["contradict"][kP]["hz"]
-            and base["confirm"][kP]["hz"] == nb["confirm"][kP]["hz"]
-            and all(v["byte_identical"] and v["same_answer"] for v in x5_reads.values()))
-        checks["I5_held_arousal_carries"] = bool(pos["arousal_rung_hz"] > 0 and neg["arousal_rung_hz"] > 0
-                                                 and base["arousal_rung_hz"] == 0.0)
-        checks["I6_deterministic"] = all(pos_again["contradict"][f"{S:g}"]["hz"] == pos["contradict"][f"{S:g}"]["hz"]
-                                         for S in probe) and pos_again["confirm"][kP]["hz"] == pos["confirm"][kP]["hz"]
-        checks["I7_ladder_scope_invariant"] = all(a == b for a, b in scope.values())
-        curve = {lab: {S: r["contradict"][S]["mean_hz"] for S in r["contradict"]}
-                 for lab, r in (("a0", base), ("a+1", pos), ("a-1", neg))}
-        res["X"] = {"s_star": s_star, "n_flip_required": need, "flips_at_Sstar": flips, "intero_null_flips": fi,
-                    "undefined_reason": undefined_reason, "x0_max_abs_dhz": float(x0_maxdhz),
-                    "production_strength_contradict_newly_flagged": {
-                        "pos": _newly(base["contradict"][kP], pos["contradict"][kP])[0],
-                        "neg": _newly(base["contradict"][kP], neg["contradict"][kP])[0]},
-                    "reported_contradict_mean_hz_curve_NO_GAIN_CLAIM": curve,
-                    "production_path": prod, "base": base, "pos": pos, "neg": neg, "pos_again": pos_again,
-                    "lesion": les, "intero_null": inull, "noedge_base": nb, "noedge_pos": npos,
-                    "ladder_scope_invariance": scope, "x5_reads": x5_reads,
-                    "x_elapsed_s": round(time.time() - tx, 1)}
-        print(f"[seed {seed}] ARM X(v2): S*={s_star} need={need} flips={flips} intero-null={fi} "
-              f"x0_max|dHz|={x0_maxdhz:.4f} | " + " ".join(f"{k.split('_')[0]}={v}" for k, v in checks.items()
-                                                          if k[0] in "XI"), flush=True)
+        raw = {"production_path": prod, "base": base, "pos": pos, "neg": neg, "pos_again": pos_again,
+               "lesion": les, "intero_null": inull, "noedge_base": nb, "noedge_pos": npos,
+               "ladder_scope_invariance": scope, "x5_reads": x5_reads}
+        xchecks, xdet = score_x_arm(raw)
+        checks.update(xchecks)
+        res["X"] = {**xdet, **raw, "x_elapsed_s": round(time.time() - tx, 1)}
+        print(f"[seed {seed}] ARM X(gate {X_GATE}): S*={xdet['s_star']} need={xdet['n_flip_required']} "
+              f"flips={xdet['flips_at_Sstar']} intero-null={xdet['intero_null_flips']} "
+              f"attribution={xdet['attribution']} x0_max|dHz|={xdet['x0_max_abs_dhz']:.4f} | "
+              + " ".join(f"{k.split('_')[0]}={v}" for k, v in checks.items() if k[0] in "XI"), flush=True)
 
     res["checks"] = checks
     res["GO"] = bool(checks) and all(checks.values())
@@ -537,31 +598,45 @@ def verify_seed(seed, arms=("M", "X")):
     return res
 
 
-_REQUIRED = (tuple(f"M{i}" for i in range(1, 8)) + ("X0", "X1", "X2")
-             + tuple(f"I{i}" for i in range(1, 8)))
+_REQUIRED = (tuple(f"M{i}" for i in range(1, 8)) + ("X0", "X1")
+             + tuple(f"I{i}" for i in range(1, 9)))
 
 
 def aggregate(paths):
     """Merge per-arm files (verify_M_seed*.json + verify_X_seed*.json, or combined MX files) PER SEED: a seed is
-    GO only when every one of M1..M7, X0..X2 and I1..I7 is present AND true (a missing arm is NOT a pass).
-    Arm-X checks from a record WITHOUT the current `x_instrument` (the superseded v1 gate) are DROPPED, not scored."""
-    by_seed, superseded, undefined = {}, [], {}
+    GO only when every one of M1..M7, X0..X1 and I1..I8 is present AND true (a missing arm is NOT a pass).
+    Arm-X checks from a record WITHOUT the current `x_instrument` (the superseded v1 gate) are DROPPED, not scored.
+    A current-instrument arm-X record is RE-SCORED from its raw batteries with `score_x_arm` (gate `X_GATE`); the
+    checks the file stored are ignored, so a file written under an earlier scoring rule is judged by this one. A
+    current-instrument record missing any raw battery is UNSCORABLE (its X/I checks are then missing = not a pass)."""
+    by_seed, superseded, undefined, unscorable, flips = {}, [], {}, [], {}
     for p in paths:
         d = json.loads(Path(p).read_text())
         if d.get("mode") != "verify":
             continue
         for r in d.get("per_seed", []):
+            s = int(r["seed"])
             chk = dict(r.get("checks", {}))
+            stored_x = [k for k in chk if k[0] in "XI"]
+            chk = {k: v for k, v in chk.items() if k[0] not in "XI"}
             if r.get("x_instrument") != X_INSTRUMENT:
-                dropped = [k for k in chk if k[0] in "XI"]
-                if dropped:
-                    superseded.append((p, int(r["seed"]), dropped))
-                chk = {k: v for k, v in chk.items() if k[0] not in "XI"}
-            elif (r.get("X") or {}).get("undefined_reason"):
-                undefined[int(r["seed"])] = r["X"]["undefined_reason"]
-            by_seed.setdefault(int(r["seed"]), {}).update(chk)
+                if stored_x:
+                    superseded.append((p, s, stored_x))
+            else:
+                X = r.get("X") or {}
+                if all(k in X for k in _X_RAW_KEYS):
+                    xchk, xdet = score_x_arm(X)
+                    chk.update(xchk)
+                    flips[s] = (xdet["flips_at_Sstar"]["pos"], xdet["n_flip_required"])
+                    if xdet["undefined_reason"]:
+                        undefined[s] = xdet["undefined_reason"]
+                else:
+                    unscorable.append((p, s, [k for k in _X_RAW_KEYS if k not in X]))
+            by_seed.setdefault(s, {}).update(chk)
     for p, s, dropped in superseded:
         print(f"  (superseded v1 arm-X checks IGNORED: {p} seed {s}: {len(dropped)} checks)")
+    for p, s, miss in unscorable:
+        print(f"  (UNSCORABLE arm-X record, raw batteries missing {miss}: {p} seed {s} -- X/I checks MISSING)")
     n_go = 0
     for s in sorted(by_seed):
         chk = by_seed[s]
@@ -571,12 +646,14 @@ def aggregate(paths):
         go = not missing and not failed
         n_go += go
         extra = f" X1 UNDEFINED: {undefined[s]}" if s in undefined else ""
-        print(f"  seed {s}: GO={go} failed={failed} missing={missing}{extra}")
+        fl = f" X1 a=+1 flips@S*={flips[s][0]} (need {flips[s][1]})" if s in flips else ""
+        print(f"  seed {s}: GO={go} failed={failed} missing={missing}{fl}{extra}")
     missing_seeds = sorted(set(SEEDS) - set(by_seed))
-    print(f"affect->one-brain-pool verify: {n_go}/{len(by_seed)} seeds GO; missing seeds {missing_seeds}")
+    print(f"affect->one-brain-pool verify (arm-X gate {X_GATE}): {n_go}/{len(by_seed)} seeds GO; "
+          f"missing seeds {missing_seeds}")
     undefined_if_empty("affect->pool 6-seed GO", len(by_seed), n_go, len(SEEDS))
     all_go = bool(not missing_seeds and n_go == len(SEEDS))
-    print(f"ALL-GO (6/6, every M1-M7 + X0-X2 + I1-I7): {all_go}")
+    print(f"ALL-GO (6/6, every M1-M7 + X0-X1 + I1-I8): {all_go}")
     return all_go
 
 
@@ -601,7 +678,7 @@ def main():
     else:
         seeds = a.seeds or list(SEEDS)
         out = {"mode": "verify", "arms": a.arms, "per_seed": [verify_seed(s, arms=tuple(a.arms)) for s in seeds],
-               "preregistered": {"x_instrument": X_INSTRUMENT, "LESION_RATIO": LESION_RATIO,
+               "preregistered": {"x_instrument": X_INSTRUMENT, "x_gate": X_GATE, "LESION_RATIO": LESION_RATIO,
                                  "INTERO_COLLAPSE": INTERO_COLLAPSE, "ASSERT_GRID": list(ASSERT_GRID),
                                  "MARGINAL_FRAC": MARGINAL_FRAC, "FLIP_FRAC": FLIP_FRAC, "MIN_FLIPS": MIN_FLIPS}}
     if a.json:
