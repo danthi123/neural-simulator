@@ -105,6 +105,14 @@ waiting on runs every day … I thought our heartbeats/gates were supposed to pr
   next method (when resumed): verify the continuous mode against a genuinely branch-point state snapshot of ALL
   cp_* arrays. D1 SETTLE contrast: s43-s102 moved from a serial pool41 flock queue (~10 h) to AWS1 (10 parallel);
   s42 finishing on pool41. Battery allfixes2: 185/186 (episodic s102 on AWS1).
+- **16:50 D1 affect-marker SETTLE full-brain contrast — pre-registered verdict PARTIAL (NO-GO for the flag):** ON
+  load-bearing **6/6**, OFF 4/6 (s44/s100/s101/s102), SETTLE credited on s42+s43 only (the register-boundary seeds). The
+  op-level prediction (OFF 1/6) did not transfer — the full brain already drives the marker on 4/6. Descriptively: with
+  SETTLE opt-in the affect-marker is load-bearing 6/6 (this contrast; not yet inside a combined all-flags battery).
+  Verdict + rows staged on branch worktree `d1-verdict-harvest` (scratchpad d1score) — commit blocked by
+  summary_doc_freshness until the roadmap/ROADMAP.md sync (agent `research/doc-sync-2026-09-23`) lands; then merge main in
+  and commit. s43-s102 ran on AWS1 in ~20 min (vs ~10 h serial on pool41). **AWS budget guard UNDERCOUNTS** stopped/
+  terminated instances (spend dropped $12→$5.31 after AWS1 ended) → ledger fix agent `research/aws-spend-ledger` in flight.
 - **⚠️ POOL/AWS BRAIN ASSETS:** pool nodes lack bridges/ (25G local) + most data/ (11G local) → production brain_chat
   runs there may DEGENERATE like AWS did. Do NOT trust a pool brain_chat result until the infra lane's sanity check passes.
 - **LESSONS (new):** never SendMessage a Workflow subagent (it resumes the agent as a duplicate in the same worktree;
