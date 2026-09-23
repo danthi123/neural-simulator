@@ -1,0 +1,37 @@
+{
+ "run_id": "1790198113-15512",
+ "runner": "research/runners/_lbf_open_ended_production_turn_probe.py",
+ "argv": [
+  "/home/ubuntu/oerev/research/runners/_lbf_open_ended_production_turn_probe.py",
+  "--a3-session",
+  "--mode",
+  "default",
+  "--seed",
+  "100",
+  "--arm",
+  "intact",
+  "--session",
+  "2",
+  "--out-dir",
+  "research/findings/raw/_load_bearing/_oe_production_turn/a3/default"
+ ],
+ "git_sha": "unknown",
+ "git_dirty": null,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-23T21:15:13",
+ "env": {
+  "SIM_POOL_HOST": "aws2",
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": false,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_load_bearing/_oe_production_turn/a3/default/default_s100_intact_n2.json"
+}

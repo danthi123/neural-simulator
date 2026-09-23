@@ -1,0 +1,103 @@
+{
+  "runner": "research.runners._lbf_open_ended_production_turn_probe --a3-score",
+  "scorer": "amendment-3",
+  "mode": "default",
+  "out_dir": "research/findings/raw/_load_bearing/_oe_production_turn/a3/default",
+  "code_sha_of_sessions": "eefdd666a",
+  "lesioned_edge": "BRAIN_SPIKING_DRAW_LESION=1 replaces the HOST weight vector w = _weight_partner((dog, chase), patients) -- a sum over the HOST co-occurrence matrix P built by ChatBrain._build_generation_proposer from the stored facts -- with np.ones(V) before it is mapped (host affine map base_pA + gain_pA*w/peak) into drive for the spiking Izhikevich soft-WTA bank. What the lesion tests: whether that HOST likelihood vector, transmitted THROUGH the spiking WTA, changes the reply. It does NOT test whether the spiking part is load-bearing; the host_oracle arm (same w, host np.random.choice) measures that.",
+  "host_shortcuts": [
+    "teach KB + ask prompt (WORLD)",
+    "histogram / TV / sign-flip statistic (INSTRUMENT)",
+    "co-occurrence matrix P and the weight vector w = _weight_partner (HOST likelihood; the LESIONED input)",
+    "affine drive map base_pA + gain_pA*w/peak (HOST)",
+    "argmax over the bank's firing counts (HOST read-out of the spiking winner)",
+    "hypothesis role induction + SVO template (HOST)",
+    "prompt router _parse_open_ended + _is_acquisition_candidate (HOST regex / token rules)",
+    "RF-composer moat verify (HOST scaffold)",
+    "warm Qwen faculty stubbed in the oe_* modes (FORM not measured)"
+  ],
+  "A3_SESSIONS": 4,
+  "A3_K": 8,
+  "A3_DELTA": 0.1,
+  "summary": {
+    "n_seeds": 6,
+    "n_defined": 5,
+    "all_defined": false,
+    "per_seed_verdict": {
+      "42": "DEFINED",
+      "43": "DEFINED",
+      "44": "DEFINED",
+      "100": "UNDEFINED",
+      "101": "DEFINED",
+      "102": "DEFINED"
+    },
+    "per_seed_reasons": {
+      "42": [],
+      "43": [],
+      "44": [],
+      "100": [
+        "noise streams never changed a reply within an arm -> the null is DEGENERATE"
+      ],
+      "101": [],
+      "102": []
+    },
+    "delta": {
+      "42": 0.03125000000000011,
+      "43": 0.02083333333333337,
+      "44": 0.01041666666666663,
+      "100": null,
+      "101": 0.14583333333333326,
+      "102": 0.26041666666666663
+    },
+    "n_delta_positive": 5,
+    "p_sign_test": null,
+    "alpha": 0.05,
+    "mean_delta": 0.09375,
+    "delta_floor": 0.1,
+    "p_sign_test_heldout_excl_seed42": null,
+    "GO_heldout_only": false,
+    "perm_p_exact_per_seed_descriptive": {
+      "42": 0.2,
+      "43": 0.4142857142857143,
+      "44": 0.5,
+      "100": null,
+      "101": 0.02857142857142857,
+      "102": 0.014285714285714285
+    },
+    "noise_live": {
+      "42": true,
+      "43": true,
+      "44": true,
+      "100": false,
+      "101": true,
+      "102": true
+    },
+    "abstain_rate": {
+      "42": [
+        0.0,
+        0.0
+      ],
+      "43": [
+        0.0,
+        0.0
+      ],
+      "44": [
+        0.0,
+        0.0
+      ],
+      "100": [
+        0.0,
+        0.0
+      ],
+      "101": [
+        0.0,
+        0.0
+      ],
+      "102": [
+        0.0,
+        0.0
+      ]
+    },
+    "GO": false
+  }
+}
