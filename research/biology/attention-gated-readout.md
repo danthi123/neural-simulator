@@ -3,9 +3,9 @@ type: biology
 id: attention-gated-readout
 mechanism: A per-class, per-trial biased-competition gate on the readout -- a top-down attentional template (the class's own learned discriminant weight magnitude) combines multiplicatively with the bottom-up stimulus drive, then a winner-take-all competition zeroes the losing units before the excitatory/inhibitory sign-split read, so which conjunction units a class population's decision listens to varies both by CLASS (top-down template) and by TRIAL (which units the current stimulus actually drove), instead of every trial reading a single fixed linear combination over the whole population.
 status: de-risking
-last_verified: 2026-09-09
-current_finding: research/findings/2026-09-09-vision-configural-binding-attention-gated-readout-NEXT-MECHANISM-PREREGISTERED.md
-current_status: "BUILT (--readout attention-gated in _vision_lindiscrim_readout_derisk.py), byte-identical-off proven at --attn-kwta-frac 1.0, GO gate pre-registered BEFORE the decisive run. Decisive 6-seed run LANDED a REGRESSION versus the --conj-select competitive baseline it is stacked on: PARTIAL-beat2/6-lb3/6 (vs the baseline's beat4/6-lb6/6), not a task GO. Per-seed diagnosis against the ungated linear score on the identical trained discriminant + spike code: the hard k-WTA gate (--attn-kwta-frac 0.5) actively destroys accuracy in 4/6 seeds (RATE_lin_ceiling_held is bit-identical to the baseline, ruling out a front-end/bank confound) -- the lane's C2 code is a fine DISTRIBUTED cosine modulation, and hard elimination of half the population per trial discards exactly the kind of small broadly-distributed contribution that code is made of. BANKED at this operating point/functional form (hard k-WTA); the named next rung is a GRADED/soft attention gain (multiplicative reweighting, no hard elimination -- the Reynolds & Heeger 2009 normalization-model-of-attention form this file's own satdiv machinery already implements one level up for a different population), not a --attn-kwta-frac sweep of the same hard-competition form."
+last_verified: 2026-09-23
+current_finding: research/findings/2026-09-23-vision-configural-binding-attention-gated-soft-readout-PREREGISTERED.md
+current_status: "HARD k-WTA (--readout attention-gated) BANKED as a REGRESSION (PARTIAL-beat2/6-lb3/6 vs the competitive-selection baseline's beat4/6-lb6/6; research/findings/2026-09-09-vision-configural-binding-attention-gated-readout-NEXT-MECHANISM-PREREGISTERED.md). Its named next rung, the GRADED/soft attention-gain mode (--readout attention-gated-soft, built 2026-09-16, commit b7108ca04), is now PRE-REGISTERED (research/findings/2026-09-23-vision-configural-binding-attention-gated-soft-readout-PREREGISTERED.md) and its decisive 6-seed run is IN FLIGHT: seed 42 (AT the satdiv-GO front-end operating point, --s2-norm satdiv --s2-satdiv-sigma 8 --s2-satdiv-scale 760) landed LEARNED_spkwta_held=0.25 (chance) while LEARNED_linscore_held=0.5208 retained real signal -- a large spkport_cost (0.2708) suggesting --read-gain/--read-bias miscalibration for this NEW combined-satdiv operating point (not previously smoke-tested in combination), not a mechanism defect per se (the _apply_s2_norm override precedence was checked directly and is correct). n=1, not a verdict; 5 more seeds staged on the pool. A fresh automated selftest (tests/test_vision_attention_gated_soft_selftest.py) now pins byte-identical-off + non-degenerate-on + dispatcher-routing for this mode, closing the gap where the mechanism existed on main with only a manual docstring proof and no CI pin."
 sources:
   - path: ~/Projects/sim-catalog/references/textbooks/kandel-pns-6e/full-book.txt
     anchor: "a second kind of attention, feature attention"
@@ -23,6 +23,7 @@ implemented_by:
   - research/runners/_vision_lindiscrim_readout_derisk.py
 findings:
   - research/findings/2026-09-09-vision-configural-binding-attention-gated-readout-NEXT-MECHANISM-PREREGISTERED.md
+  - research/findings/2026-09-23-vision-configural-binding-attention-gated-soft-readout-PREREGISTERED.md
 ---
 
 # The class population's decision does not read the whole bank the same way on every trial
