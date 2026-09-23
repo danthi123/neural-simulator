@@ -1,0 +1,35 @@
+{
+ "run_id": "1790168536-489775",
+ "runner": "research/runners/load_bearing_fraction.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/wf_8bf19a04-cbd-1/research/runners/load_bearing_fraction.py",
+  "--only",
+  "affect-marker-spiking-wta",
+  "--seed",
+  "42",
+  "--repeats",
+  "2",
+  "--out",
+  "research/findings/raw/_affect_marker_settle/lbf/lbf_settle_s42.json"
+ ],
+ "git_sha": "95d9d39ce",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-23T09:02:16",
+ "env": {
+  "SIM_BACKEND": "numpy",
+  "CUDA_VISIBLE_DEVICES": ""
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 2661.5,
+ "corpus_check_query": "affect-marker spiking WTA not committing dead-zone load-bearing 1/6",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_affect_marker_settle/lbf/lbf_settle_s42.json"
+}

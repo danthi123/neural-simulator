@@ -1,0 +1,160 @@
+{
+  "mode": "verify",
+  "arms": "M",
+  "per_seed": [
+    {
+      "seed": 44,
+      "xedge_w": 0.05,
+      "n_all_neurons": 7692,
+      "M1": {
+        "maxdelta": 0.0,
+        "worst_key": null,
+        "missing": []
+      },
+      "M2": {
+        "surprise": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
+          "answer_same": true
+        },
+        "worldmodel": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
+          "answer_same": true
+        },
+        "metacog": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
+          "answer_same": true
+        },
+        "pragmatic": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
+          "answer_same": true
+        },
+        "comprehension": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
+          "answer_same": true
+        },
+        "source_provenance": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
+          "answer_same": true
+        },
+        "self_schema": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
+          "answer_same": true
+        },
+        "curiosity": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
+          "answer_same": true
+        },
+        "causal_whatif": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
+          "answer_same": true
+        },
+        "prospective_memory": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
+          "answer_same": true
+        },
+        "d6_multiref_wm": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
+          "answer_same": true
+        }
+      },
+      "M3": {
+        "sweep": [
+          -1.0,
+          -0.5,
+          0.0,
+          0.5,
+          1.0
+        ],
+        "pool_diffs": [
+          -0.08888888888888889,
+          -0.04055555555555555,
+          0.0,
+          0.036944444444444446,
+          0.08472222222222223
+        ],
+        "standalone_diffs": [
+          -0.09277777777777778,
+          -0.044444444444444446,
+          0.0,
+          0.03861111111111111,
+          0.0775
+        ],
+        "pool_levels": [
+          -3,
+          -2,
+          0,
+          2,
+          3
+        ],
+        "standalone_levels": [
+          -3,
+          -2,
+          0,
+          2,
+          3
+        ]
+      },
+      "M4": {
+        "signs": true,
+        "neutral": true,
+        "readout_lesion_zero": true,
+        "intero_lesion_collapses": true
+      },
+      "M5": {
+        "n_ladder_synapses": 30472
+      },
+      "M6": {
+        "legacy_maxerr": 24.246971130371094
+      },
+      "checks": {
+        "M1_affect_coresidence_byte_identical": true,
+        "M2_carried_11_read_byte_identical_and_answer_same": true,
+        "M3_affect_tone_levels_equal_standalone": true,
+        "M4_affect_alive_on_pool": true,
+        "M5_ladder_weights_frozen": true,
+        "M6_legacy_discriminator_diverges": true,
+        "M7_affect_read_deterministic": true
+      },
+      "GO": true,
+      "elapsed_s": 11383.7
+    }
+  ],
+  "preregistered": {
+    "SHIFT_FLOOR_HZ": 0.1,
+    "LESION_RATIO": 0.34,
+    "INTERO_COLLAPSE": 0.25
+  }
+}

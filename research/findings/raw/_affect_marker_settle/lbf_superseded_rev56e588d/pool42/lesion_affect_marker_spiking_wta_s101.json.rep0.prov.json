@@ -1,0 +1,33 @@
+{
+ "run_id": "1790170224-3236216",
+ "runner": "research/runners/onebrain_regression_battery.py",
+ "argv": [
+  "/home/node/derisk-pool/revisions/56e588d165d4a4c8d43b9f7accbccb0a2b9e7167/research/runners/onebrain_regression_battery.py",
+  "--worker",
+  "--env",
+  "{\"BRAIN_AFFECT_MARKER_SPIKING_LESION\": \"1\"}",
+  "--turns",
+  "emo",
+  "--out",
+  "/home/node/derisk-pool/revisions/56e588d165d4a4c8d43b9f7accbccb0a2b9e7167/research/findings/raw/_affect_marker_settle/lbf/lesion_affect_marker_spiking_wta_s101.json.rep0"
+ ],
+ "git_sha": "56e588d165d4a4c8d43b9f7accbccb0a2b9e7167",
+ "git_dirty": false,
+ "source_kind": "git_archive",
+ "source_manifest_sha256": "75698510be78cd2b0e8fb5e89313b837fb813034594d1eab18ee64c2d529069b",
+ "source_manifest_verified_at_start": true,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": true,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-23T09:30:24",
+ "env": {
+  "SIM_BACKEND": "numpy",
+  "SIM_RUN_ID": "1790168886-3209223"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": false,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_affect_marker_settle/lbf/lesion_affect_marker_spiking_wta_s101.json.rep0"
+}

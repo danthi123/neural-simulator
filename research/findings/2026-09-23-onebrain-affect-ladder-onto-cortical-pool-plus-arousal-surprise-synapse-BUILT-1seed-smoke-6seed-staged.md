@@ -5,11 +5,19 @@ date: 2026-09-23
 lane: one-brain/migration (charter D3)
 mechanism: the Gate-B affect ladder (the production affect organ) moved onto the shared cortical pool as a 12th organ,
   plus a fixed cross-region synapse from its own latched arousal rungs onto the D2 surprise pool
-seeds: [42]
+seeds: [42, 43, 44, 100, 101, 102]
 runner: research/runners/_onebrain_affect_pool_verify.py
 artifacts:
   - research/findings/raw/_onebrain_affect_pool/smoke_seed42.json
   - research/findings/raw/_onebrain_affect_pool/calibrate_seed42.json
+  - research/findings/raw/_onebrain_affect_pool/verify_M_seed42.json
+  - research/findings/raw/_onebrain_affect_pool/verify_M_seed43.json
+  - research/findings/raw/_onebrain_affect_pool/verify_M_seed44.json
+  - research/findings/raw/_onebrain_affect_pool/verify_M_seed100.json
+  - research/findings/raw/_onebrain_affect_pool/verify_M_seed101.json
+  - research/findings/raw/_onebrain_affect_pool/verify_M_seed102.json
+  - research/findings/raw/_onebrain_affect_pool/xv2/verify_X_seed42.json
+  - research/findings/raw/_onebrain_affect_pool/xv2/verify_X_seed43.json
 builds_on:
   - research/findings/2026-09-17-onebrain-wave3-organ-merge-ALL-11-organs-one-pool-GO.md
   - research/findings/2026-08-13-per-region-ou-wiring-affect-GO.md
@@ -196,7 +204,26 @@ measurement is unchanged. No 6-seed v2 arm-X result had been read when it was co
      13:38, before the amendment was committed. The other five were pulled out under the dispatcher's lock and
      re-queued unchanged, apart from a 4 GB virtual-memory cap (`ulimit -v`; the jobs measure about 0.8 GB VSZ).
 
-## The GO gate (pre-registered in the runner docstring, not yet scored)
+## Fix round 4 (2026-09-23, `fdd8263b6`): two scorer loopholes closed in `aggregate()`
+
+Re-review of `dcaaa2f0f` found two loopholes in `aggregate()` that would let it declare a false GO over the staged
+xv2 harvest. Both are scoring/counting fixes only — no threshold, grid, S* rule, weight or measurement changed.
+
+1. **SCORER LOOPHOLE.** `n_go` used to count every seed present in `by_seed`, including a non-gate seed (e.g. the
+   diagnostic seed 7, whose verify-mode X file matches the harvest glob). A passing non-gate seed could stand in
+   for a failing GATE seed and still read N/N GO. Fixed: the GO count and the ALL-GO denominator are now restricted
+   to exactly the 6 registered `SEEDS = (42, 43, 44, 100, 101, 102)`; a non-gate seed is reported (and printed) but
+   never counted, and ALL-GO additionally requires every gate seed present with no duplicate among them.
+2. **Duplicate records.** More than one record contributing the same arm's checks (M, or a current-instrument X)
+   for one seed used to resolve silently through `dict.update` last-wins — an order-dependent selection lever a
+   rerun/retry file could exploit to overwrite a failing verdict with a later passing one. Fixed: a seed with
+   duplicate records now reads `DUPLICATE-RECORDS -> UNDEFINED`, never GO, regardless of file order.
+
+Pre-registered as a gate v3 amendment in the module docstring's AMENDMENT LOG, committed before any xv2/`verify_X_seed*.json`
+result existed to be read. `tests/test_onebrain_affect_pool.py::test_aggregate_go_count_is_restricted_to_exactly_the_registered_gate_seeds`
+and `::test_aggregate_duplicate_record_for_one_seed_reads_undefined_not_last_wins` both fail on the pre-fix `aggregate()` and pass after.
+
+## The GO gate (pre-registered in the runner docstring) — SCORED 2026-09-23, NOT ALL-GO
 
 The literal command is the `--aggregate` line in the runner's docstring:
 
@@ -206,12 +233,33 @@ python -m research.runners._onebrain_affect_pool_verify --aggregate \
     'research/findings/raw/_onebrain_affect_pool/xv2/verify_X_seed*.json'
 ```
 
-Those files do not exist yet. ARM M runs at revision `bfc6978` (its code path is unchanged since). The v2 ARM X runs
-and the seed-7 diagnostic sweep (`calv2/`) run at revision `c6fdf7be7`. Both are in the mini-PC pool queue.
+**Correction (this doc previously said these files "do not exist yet" — stale as of the mini-PC pool harvest
+below).** ARM M has now landed on all 6 gate seeds, at revision `bfc6978` (its code path is unchanged since):
+`verify_M_seed42.json`, `verify_M_seed43.json`, `verify_M_seed44.json`, `verify_M_seed100.json`,
+`verify_M_seed101.json`, `verify_M_seed102.json` (all under `research/findings/raw/_onebrain_affect_pool/`). The v2
+ARM X has landed on 2 of 6 gate seeds so far, at revision `c6fdf7be7`: `verify_X_seed42.json`, `verify_X_seed43.json`
+(under `research/findings/raw/_onebrain_affect_pool/xv2/`). Seeds 44, 100, 101 and 102 have no arm-X file yet.
 `aggregate` ignores arm-X checks from any record without the v2 `x_instrument` tag. It re-scores records that carry
 the tag with gate v3 (`score_x_arm`).
 
-GO needs every one of M1-M7, X0-X1 and I1-I8 to hold on all 6 seeds. A missing arm counts as not passed. Only X1 is
-evidence for the effect, and it is one test per seed. If X1 fails, the next methods are:
+Running the pre-registered `--aggregate` command above (gate `v3-single-count-X1-X2-as-I8-attribution-2026-09-23`,
+after the fix-round-4 scorer repair) over exactly those files gives, per seed:
+
+| seed | ARM M | ARM X | GO | why not |
+|---|---|---|---|---|
+| 42 | pass (M1-M7) | landed, fails | False | `X1_functional_verdict_flip_at_marginal_strength`: only 1 newly-flagged flip at S* (need >= 2) |
+| 43 | pass (M1-M7) | landed, passes | **True** | — |
+| 44 | pass (M1-M7) | not landed | False | missing X0, X1, I1-I8 |
+| 100 | pass (M1-M7) | not landed | False | missing X0, X1, I1-I8 |
+| 101 | pass (M1-M7) | not landed | False | missing X0, X1, I1-I8 |
+| 102 | **fails** M3 | not landed | False | `M3_affect_tone_levels_equal_standalone`; also missing X0, X1, I1-I8 |
+
+`ALL-GO (6/6 GATE seeds only, every M1-M7 + X0-X1 + I1-I8): False` — 1/6 gate seeds (43) fully GO. GO needs every
+one of M1-M7, X0-X1 and I1-I8 to hold on all 6 seeds; a missing arm counts as not passed. This is a genuine
+mid-harvest read, not a final verdict: 4 of 6 arm-X jobs are still outstanding on the mini-PC pool, and seed 102's
+M3 failure (the graded tone level differs from the standalone production ladder on that seed) is the first actual
+ARM-M counterexample to the "M is unchanged and still part of GO" framing above — noted here, not yet triaged.
+Only X1 is evidence for the effect, and it is one test per seed. If X1 keeps failing once all 6 land, the next
+methods are:
 - a weight derived from the seed-7 diagnostic calibration (`calv2/`), committed before any gate re-run;
 - graded assertion evidence, so that the production strength is not saturated.
