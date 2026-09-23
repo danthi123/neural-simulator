@@ -1,0 +1,30 @@
+{
+ "run_id": "1790170506-613066",
+ "runner": "research/runners/_onebrain_affect_pool_smoke.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/wf_8bf19a04-cbd-3/research/runners/_onebrain_affect_pool_smoke.py",
+  "--seed",
+  "42",
+  "--json",
+  "research/findings/raw/_onebrain_affect_pool/smoke_seed42.json"
+ ],
+ "git_sha": "f77556dbc",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-23T09:35:06",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 3495.4,
+ "corpus_check_query": "move next faculty onto shared one-brain pool: prospective_memory / source_provenance / affect / episodic memory wrapper wiring onto wave3 merged pool",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_onebrain_affect_pool/smoke_seed42.json"
+}
