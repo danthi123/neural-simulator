@@ -1193,8 +1193,11 @@ Perception/attention/WM, affect, curiosity, self/workspace/ToM, and language are
 baseline. Built `webapp/da_tag_capture.py` (DA-gated tagging-and-capture, default OFF) plus a natural
 surprising-vs-expected conversation read as 24 h recall. v1 (D=64) 6-seed = UNDEFINED (1 GO, 5 fail the G2
 immediate-recall precondition: low-gain writes misread, with confabulations, once a synaptic baseline exists), while
-every 24 h comparison went the predicted way on all 6 seeds. v2 at the production D=128 is pre-registered and staged.
-NEXT: land v2; if its G2 also fails, move DA's effect from write magnitude to capture only (Bethus 2010).
+every 24 h comparison went the predicted way on all 6 seeds. v2 at the production D=128 = 6/6 GO at RUNNER LEVEL
+(salient facts recalled next day 4/4, DA->encoding lesion 0/4, neutral 0/4, capture-only lesion 0/4, companion off
+4/4; no confabulation at the primary point). NOT wired: the battery still reads da-gated-encoding hollow. NEXT: wire
+the ledger into the live chat store + a battery "next day" probe pair; add repetition/sleep-replay routes to L-LTP
+before any default flip; verify-go the v2 result.
 
 **2026-09-18 (STRATEGIC — owner decision + scaling go/no-go; supersedes the raw-scale framing below):**
 - **Faithfulness-vs-tractability relaxation APPROVED (owner), honesty-conditioned** — trade bit-exact realism ONLY for a significant perf gain that loses nothing important to end-goal capabilities, and document every trade; biology-strong stays core; invariants kept (brain-based / one-brain / emergent / honesty). See memory `project_agi_first_fork_openness_2026_09_06`.
