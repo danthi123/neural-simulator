@@ -101,6 +101,18 @@ def cmd_aggregate(a):
     out["incomplete_faculties"] = missing
     fracs = [v["load_bearing_fraction"] for v in out["per_seed"].values() if v["load_bearing_fraction"] is not None]
     out["mean_fraction"] = (sum(fracs) / len(fracs)) if fracs else None
+    out["sd_fraction"] = (sum((f - out["mean_fraction"]) ** 2 for f in fracs) / len(fracs)) ** 0.5 if fracs else None
+    out["mean_fraction_3dp"] = round(out["mean_fraction"], 3) if fracs else None
+    out["sd_fraction_3dp"] = round(out["sd_fraction"], 3) if fracs else None
+    # BACKEND, read from each shard's own provenance sidecar (not assumed): gates/device_and_cost requires the device.
+    backends = set()
+    for prov in glob.glob("%s/%s/s*/*/lb.json.prov.json" % (OUT_BASE, a.tag)):
+        try:
+            backends.add((json.load(open(prov)).get("env") or {}).get("SIM_BACKEND") or "unrecorded")
+        except Exception:
+            backends.add("unreadable")
+    out["backend"] = sorted(backends)[0] if len(backends) == 1 else "mixed:" + ",".join(sorted(backends))
+    out["backend_source"] = "per-shard provenance sidecars (lb.json.prov.json env.SIM_BACKEND)"
     dest = "%s/%s/aggregate.json" % (OUT_BASE, a.tag)
     os.makedirs(os.path.dirname(dest), exist_ok=True)
     json.dump(out, open(dest, "w"), indent=1, sort_keys=True)
