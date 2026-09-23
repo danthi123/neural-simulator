@@ -534,9 +534,15 @@ def aggregate(per_seed):
     agg = {"n_seeds": len(per_seed), "n_defined": len(defined), "n_go": n_go,
            "undefined_seeds": [s for s, r in per_seed.items() if r.get("go") is None]}
     agg["GO"] = (len(per_seed) == 6 and len(defined) == 6 and n_go == 6)
-    agg["verdict"] = ("GO 6/6" if agg["GO"] else
-                      ("UNDEFINED (%d/%d seeds defined)" % (len(defined), len(per_seed)) if len(defined) < len(per_seed)
-                       else "NO-GO %d/%d" % (n_go, len(defined))))
+    if agg["GO"]:
+        agg["verdict"] = "GO 6/6"
+    elif len(defined) < len(per_seed):
+        agg["verdict"] = "UNDEFINED (%d/%d seeds defined)" % (len(defined), len(per_seed))
+    elif len(per_seed) < 6 and n_go == len(defined):
+        # a partial seed set with every seed GO is NOT a NO-GO (fix round 3: a 1-seed run printed "NO-GO 1/1")
+        agg["verdict"] = "INCOMPLETE (%d/%d seeds GO; the gate needs all 6 -- not a verdict)" % (n_go, len(per_seed))
+    else:
+        agg["verdict"] = "NO-GO %d/%d" % (n_go, len(defined))
     return agg
 
 
@@ -719,6 +725,9 @@ def selftest():
     fails["a4_secondary_can_fail_without_touching_go"] = (r["go"] is True and
                                                          r["secondary_exposure_matched"]["C3e_freeze_eq_exposure"] is False)
     agg_undef = aggregate({"42": {"go": True}, "43": {"go": None}})["GO"] is False
+    one = aggregate({"42": {"go": True}})
+    agg_undef = agg_undef and one["GO"] is False and one["verdict"].startswith("INCOMPLETE")
+    agg_undef = agg_undef and aggregate({"42": {"go": False}})["verdict"].startswith("NO-GO")
     v3, v3_ok = selftest_v3()
     res = {"go_case_passes": ok, "go_case_passes_v2": ok_v2, "fails_in_failing_direction": fails,
            "partial_seed_set_not_go": agg_undef, "gate_v3": v3}

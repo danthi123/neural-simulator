@@ -1,0 +1,33 @@
+{
+ "run_id": "1790185098-3669153",
+ "runner": "research/runners/d6_offpath_parity.py",
+ "argv": [
+  "/home/node/derisk-pool/revisions/f97b339b2da352dcc2404913dd71a18a711b3596/research/runners/d6_offpath_parity.py",
+  "--mode",
+  "chat",
+  "--seed",
+  "42",
+  "--vs-tree",
+  "/home/node/derisk-pool/revisions/c9b45a30e764da8056608aadcc0dc5fbfd6f3666",
+  "--out",
+  "research/findings/raw/_d6_learn_through_use_parity/offpath_parity_chat_vs_main_s42.json"
+ ],
+ "git_sha": "f97b339b2da352dcc2404913dd71a18a711b3596",
+ "git_dirty": false,
+ "source_kind": "git_archive",
+ "source_manifest_sha256": "8730f5ca6550187843049606d543320f262db2ecdba2a680505cbee7f10238e0",
+ "source_manifest_verified_at_start": true,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": true,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-23T13:38:18",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": false,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_d6_learn_through_use_parity/offpath_parity_chat_vs_main_s42.json"
+}
