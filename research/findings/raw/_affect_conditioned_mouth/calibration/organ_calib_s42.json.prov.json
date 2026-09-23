@@ -1,0 +1,30 @@
+{
+ "run_id": "1790168072-472588",
+ "runner": "research/runners/_lbf_affect_conditioned_mouth_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/wf_8bf19a04-cbd-4/research/runners/_lbf_affect_conditioned_mouth_derisk.py",
+  "--calibrate-organ",
+  "--seed",
+  "42"
+ ],
+ "git_sha": "a542c1648",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-23T08:54:32",
+ "env": {
+  "SIM_BACKEND": "numpy",
+  "CUDA_VISIBLE_DEVICES": ""
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 527.6,
+ "corpus_check_query": "affect-conditioned generation of the Qwen mouth from spiking affect valence",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_affect_conditioned_mouth/calibration/organ_calib_s42.json"
+}
