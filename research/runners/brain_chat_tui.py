@@ -85,6 +85,9 @@ import research.runners.spiking_anaphor_detection_organ as _ANAPH  # noqa: E402
 # DISPATCH: `_extract_route`'s host `if`/`elif` priority cascade among the four comprehension routes has been RETIRED
 # (host fallback DELETED 2026-09-16; the regex feature-extractors STAY host code); see `ChatBrain._extract_route` below.
 import research.runners.spiking_qroute_selection_organ as _QROUTE  # noqa: E402
+# D6 LEARN-THROUGH-USE (default-OFF): marks `_maybe_acquire`'s writes as in-conversation so the plasticity-freeze
+# lesion (BRAIN_D6_HEBBIAN_FREEZE) targets learning-from-use only; a no-op unless BRAIN_D6_HEBBIAN_STORE is on.
+from research.runners.d6_hebbian_store import conversation_write as _d6_conversation_write  # noqa: E402
 
 # default self-knowledge artifacts (so `--self-knowledge` works with no path)
 _SK_CODES = os.path.join(_REPO, "research", "findings", "raw", "_self_knowledge_grounded_codes.json")
@@ -1119,7 +1122,10 @@ class ChatBrain:
             a, v, p, pol = parsed
             v = lemma_verb(v)
             try:
-                self.inner.hear("%s %s %s" % (a, v, p), polarity=pol)   # a heard NEGATION stores as NEGATE
+                # D6 (default-OFF): mark this as an IN-CONVERSATION write so BRAIN_D6_HEBBIAN_FREEZE targets only
+                # learning-from-use (a no-op context unless BRAIN_D6_HEBBIAN_STORE is on -> byte-identical).
+                with _d6_conversation_write(getattr(self.inner, "composer", None)):
+                    self.inner.hear("%s %s %s" % (a, v, p), polarity=pol)   # a heard NEGATION stores as NEGATE
             except Exception:
                 return None
             self._refresh_facts()
@@ -1131,7 +1137,8 @@ class ChatBrain:
         a, v, p = toks
         v = lemma_verb(v)
         try:
-            self.inner.hear("%s %s %s" % (a, v, p), polarity="AFFIRM")
+            with _d6_conversation_write(getattr(self.inner, "composer", None)):
+                self.inner.hear("%s %s %s" % (a, v, p), polarity="AFFIRM")
         except Exception:
             return None
         self._refresh_facts()                    # pick up the new fact -> agents_set/actions_set now include it

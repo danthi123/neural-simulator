@@ -127,7 +127,7 @@ def probe(seed=42):
             lesioned = _ask(chat, learn["q"])
         finally:
             chat._substrate_recall = orig
-        lesion_load_bearing = "bird" not in str(lesioned["answer"]).lower()
+        lesion_load_bearing = learn["answer_word"] not in str(lesioned["answer"]).lower()   # was "bird" (a check that could not fail; FAILURE_LOG 2026-09-23)
         after["lesioned_substrate_recall"] = lesioned["answer"]
     out["LEARN"] = {"in_loop": bool(learned and lesion_load_bearing is not False),
                     "recall_lesion_load_bearing": lesion_load_bearing,
