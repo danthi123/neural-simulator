@@ -72,6 +72,14 @@ waiting on runs every day … I thought our heartbeats/gates were supposed to pr
   da-gated-encoding under a NATURAL (untuned) drive — the 3 faculties outside the robust core / its hardening.
   **⚠️ LESSON: I merged the infra branch before its review → 3 blockers merged (waiver off-by-one, self-declarable
   GAMING/OWNER-PAUSE exemptions, .md-wide infra exemption) — repair in flight. Never merge before the review verdict.**
+- **13:40 charter fix round `wtfdwutve` harvested (re-reviews: wf_500634cf-d18 journal):** D5 affect-CONDITIONED mouth
+  re-review SOUND → **merged `@5e9a7955`** (default-off; 6-seed verdict pending on its staged run). D1 SETTLE: ON/OFF
+  re-staged in separate dirs + pre-registered ON-vs-OFF contrast scorer; I closed its remaining loophole (OFF exception
+  must be the REGISTERED s100 + row-seed identity) `@2b238b74` on the branch — score with
+  `.venv/bin/python -m research.runners._affect_marker_settle_derisk --score-fullbrain` after harvest. Still not
+  mergeable: waiver-fix-2 (budget off-by-one MOVED; ProtonVPN daemon matches the 'proton' game regex → GAMING exemption
+  always on), D3, D6 (its v2 gate is registered to fail → its 6 queued pool jobs removed), GNW. **Fix round 3
+  `woffopk92` IN FLIGHT** (waiver-fix-3 opus, D3, D6 redesign, GNW fix-or-bank).
 - **⚠️ POOL/AWS BRAIN ASSETS:** pool nodes lack bridges/ (25G local) + most data/ (11G local) → production brain_chat
   runs there may DEGENERATE like AWS did. Do NOT trust a pool brain_chat result until the infra lane's sanity check passes.
 - **LESSONS (new):** never SendMessage a Workflow subagent (it resumes the agent as a duplicate in the same worktree;
