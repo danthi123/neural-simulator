@@ -18,6 +18,12 @@ A2=research/findings/raw/_load_bearing/_oe_production_turn/a2
 LOG=$A2/logs
 ID=$A2/flag_off_identity
 mkdir -p "$LOG" "$ID" "$A2/default" "$A2/oe_routed_full"
+# REFUSE a degraded brain: data/corpus is untracked (not in a worktree checkout or a git archive). Without it the
+# one-brain XEDGE build fails and the webapp silently degrades to standalone organs, so these arms would not be
+# comparable to the original arms (whose worktree had data -> /home/dant123/Projects/sim/data). Caught 2026-09-23.
+for t in . "$PRE" "$POST"; do
+  [ -f "$t/data/corpus/tinystories.txt" ] || { echo "[stage_a2] REFUSED: $t has no data/corpus (symlink data -> the main checkout's data/)" >&2; exit 2; }
+done
 export XDG_RUNTIME_DIR=${XDG_RUNTIME_DIR:-/run/user/$(id -u)}
 # NOT readlink -f: resolving the venv's python symlink lands on the system /usr/bin/python3.11 and drops the venv
 # (first launch 2026-09-23: every identity dump died "No module named 'fastapi'"; the compares correctly read UNDEFINED).

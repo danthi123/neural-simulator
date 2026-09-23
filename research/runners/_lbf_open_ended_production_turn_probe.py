@@ -155,6 +155,10 @@ class _StubFaculty:
 
 
 def _worker(env, seed, k, out_path, rich=True, teach_env=None):
+    if not os.path.isfile(os.path.join("data", "corpus", "tinystories.txt")):
+        # the untracked corpus is absent in a fresh worktree / git archive -> the one-brain XEDGE build fails and the
+        # webapp silently degrades to standalone organs (not the production brain). Refuse (2026-09-23).
+        raise SystemExit("REFUSED: no data/corpus in %s (symlink data -> the main checkout's data/)" % os.getcwd())
     os.environ.setdefault("SIM_BACKEND", "numpy")
     os.environ.setdefault("BRAIN_CHAT_RENDERER", "stub")
     os.environ.setdefault("SIM_DISABLE_LLM", "1")

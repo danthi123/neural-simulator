@@ -49,6 +49,10 @@ class _StubFaculty:
 
 def dump(repo, env_set, out):
     repo = os.path.abspath(repo)
+    if not os.path.isfile(os.path.join(repo, "data", "corpus", "tinystories.txt")):
+        # untracked corpus missing -> the one-brain XEDGE build fails and the webapp degrades to standalone organs:
+        # not the production brain. Refuse rather than compare two degraded brains.
+        raise SystemExit("REFUSED: %s has no data/corpus (symlink data -> the main checkout's data/)" % repo)
     os.chdir(repo)
     sys.path.insert(0, repo)
     os.environ["SIM_BACKEND"] = "numpy"
