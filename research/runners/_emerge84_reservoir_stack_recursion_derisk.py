@@ -193,15 +193,19 @@ def _derisk(seeds):
         shuffle_ok = all(agg[d]["shuffle"] <= 0.65 for d in _TEST_DEPTHS)
         boundaries = (depth_star < _TEST_DEPTHS[-1])              # the reservoir falls below 0.90 at some tested depth
 
+        # Built OUTSIDE the f-string on purpose (Python <3.12 syntax error): a nested f-string cannot reuse its
+        # own quote character in an inner subscript (`f'...{agg[d]['reservoir']}...'`) -- collects under 3.14
+        # (PEP 701 relaxed the rule) but fails under the project's pinned 3.11 venv. Same content, precomputed.
+        _profile = lambda key: ", ".join("d%s=%.2f" % (d, agg[d][key]) for d in _TEST_DEPTHS)  # noqa: E731
         verdict = (
             f"CHARACTERIZATION -- genuine STACK-recursion (nested subject-verb pair-matching grammaticality) exposes the "
             f"reservoir's recursion LIMIT: it judges grammaticality to a STACK-DEPTH d* = {depth_star} (profile "
-            f"{', '.join(f'd{d}={agg[d]['reservoir']:.2f}' for d in _TEST_DEPTHS)}), then "
+            f"{_profile('reservoir')}), then "
             f"{'FALLS toward chance at deeper nesting -- the recursion BOUNDARY (a reservoir has fading memory, NOT a stack)' if boundaries else 'holds across the tested range (a wider reservoir / deeper sweep would find the limit)'}. "
             f"The COUNT-multiset shortcut is DEFEATED (baseline "
-            f"{', '.join(f'd{d}={agg[d]['count_baseline']:.2f}' for d in _TEST_DEPTHS)} ~chance -- the swap preserves the "
+            f"{_profile('count_baseline')} ~chance -- the swap preserves the "
             f"multiset, so the reservoir must do genuine PER-PAIR matching); POSITION-SHUFFLE collapses "
-            f"({', '.join(f'd{d}={agg[d]['shuffle']:.2f}' for d in _TEST_DEPTHS)} -> reads structure). markers discovered "
+            f"({_profile('shuffle')} -> reads structure). markers discovered "
             f"= {markers_ok}. ==> {'the plain reservoir BOUNDARIES on genuine stack-recursion at depth ' + str(depth_star + 1) + ' -- this is where the RANK-3 mechanism (theta-gamma multiplexed WM buffer, catalog N.15; assembly-calculus stack, Mitropolsky arXiv:2206.13217) becomes NECESSARY (a reservoir cannot hold a push/pop stack); the next de-risk ADDS that mechanism.' if boundaries else 'the reservoir handled the tested stack depths; extend the depth sweep / narrow the reservoir to find the limit, then add the RANK-3 stack.'} "
             f"Reuse-by-import; NO sim/ edit.")
         # GO here = the test is VALID (count defeated, shuffle collapses, markers ok) AND it either shows the mechanism at

@@ -7,6 +7,7 @@
 # Usage:  bash tools/pool_provision.sh [--revision <commit>] [--isolated] [pool40 pool41 pool42]
 set -euo pipefail
 cd "$(dirname "$0")/.."
+ROOT="$(pwd)"   # used by the local reference-brain sanity build below (was unbound under set -u, 2026-09-23)
 REVISION_REF=HEAD
 ISOLATED=0
 while (( $# )); do
@@ -91,6 +92,24 @@ MANIFEST_SHA=$(sha256sum "$MANIFEST" | awk '{print $1}')
 EXCLUDED_DIRTY=$(git status --porcelain -- sim webapp research/runners experiment tools 2>/dev/null | wc -l)
 printf 'git_sha=%s\nsource_kind=git_archive\nsource_manifest_sha256=%s\nsource_ancestry_sha256=%s\nexcluded_worktree_paths=%s\ncreated_utc=%s\n' \
   "$SOURCE_SHA" "$MANIFEST_SHA" "$ANCESTRY_SHA" "$EXCLUDED_DIRTY" "$(date -u +%FT%TZ)" > "$REVISION"
+# LOCAL REFERENCE BUILD (2026-09-23, closing the sibling gap to tools/aws_brain_sanity_check.sh -- the mini-PC
+# pool had NO non-degenerate build check at all). Build the SAME tiny-demo brain locally ONCE via
+# tools/brain_build_sanity.py (sums every SimulationBridge the process constructs; composer_kind='rf', the
+# fast numpy path -- this is a STRUCTURAL check, not a science run), then diff each node's own build against
+# it below. Guarded by mem_ok/memcap (shared box); a failed/unavailable local reference SKIPS the per-node
+# comparison rather than failing the whole provision (the code/asset sync above is still valuable on its own).
+LOCAL_ENGINE_PYTHON="${SIM_ENGINE_PYTHON:-$ROOT/.venv/bin/python}"
+LOCAL_SANITY_JSON=""
+if [ -x "$LOCAL_ENGINE_PYTHON" ] && bash "$ROOT/tools/mem_ok.sh" 8 >&2; then
+  LOCAL_SANITY_JSON=$(cd "$STAGE" && bash "$ROOT/tools/memcap.sh" 8 -- \
+    env SIM_BACKEND=numpy "$LOCAL_ENGINE_PYTHON" -m tools.brain_build_sanity 2>/dev/null | tail -1) || true
+fi
+if [ -n "$LOCAL_SANITY_JSON" ]; then
+  echo "  local reference brain: $LOCAL_SANITY_JSON"
+else
+  echo "  (no local reference brain build -- per-node non-degenerate comparison will be skipped below)" >&2
+fi
+
 for h in "${NODES[@]}"; do
   echo "=== provisioning $h:$REMOTE_ROOT ==="
   ssh -o ConnectTimeout=10 "$h" "mkdir -p \
@@ -130,6 +149,9 @@ for h in "${NODES[@]}"; do
     "$STAGE/research/findings/" "$h:~/$REMOTE_ROOT/research/findings/"
   rsync -az "$STAGE/research/__init__.py" "$h:~/$REMOTE_ROOT/research/__init__.py"
   ssh "$h" "mkdir -p ~/$REMOTE_ROOT/research/findings/raw"
+  # CORPUS (2026-09-23): the small corpus files corpus-LEARNED organs read (see load_bearing_fraction CORPUS GUARD).
+  ssh "$h" "mkdir -p ~/$REMOTE_ROOT/data/corpus"
+  ( cd "$ROOT/data/corpus" && rsync -aL tinystories.txt wikitext.txt simplewiki.txt websters1913.json run3_ra_grounded_frames.txt "$h:$REMOTE_ROOT/data/corpus/" ) || echo "  (warning: corpus sync to $h failed)" >&2
   rsync -az --delete --exclude='__pycache__' "$STAGE/experiment/" "$h:~/$REMOTE_ROOT/experiment/" 2>/dev/null
   rsync -az --delete --exclude='__pycache__' "$STAGE/tools/" "$h:~/$REMOTE_ROOT/tools/" 2>/dev/null
   rsync -az --delete --exclude='__pycache__' --exclude='*.pyc' \
@@ -142,6 +164,20 @@ for h in "${NODES[@]}"; do
   rsync -az "$MANIFEST" "$h:~/$REMOTE_ROOT/.source_manifest.sha256"
   rsync -az "$REVISION" "$h:~/$REMOTE_ROOT/.source_revision"
   rsync -az "$STAGE/.source_ancestry.json" "$h:~/$REMOTE_ROOT/.source_ancestry.json"
+  # LTM knowledge bundles (2026-09-23, ~105MB, NOT a multi-GB haul): _default_ltm_bundle_dir()
+  # (webapp/server.py) looks for sim-data/knowledge_bundles/{wikidata_100k,wikidata_core_15k} at
+  # $HOME/Projects/sim-data on whatever box is running -- a directory OUTSIDE this repo entirely, which no
+  # provisioner shipped before. Without it, every remote brain silently ships with 5 hardcoded facts and NO
+  # cortical long-term memory (source stays "tiny-demo", never "tiny-demo +LTM") -- see
+  # tools/pool_sync_assets.sh for the full writeup. Best-effort: a sync failure degrades the remote brain's
+  # KNOWLEDGE (still non-degenerate structurally), never crashes provisioning.
+  bash "$ROOT/tools/pool_sync_assets.sh" "$h" >&2 || echo "  (warning: LTM asset sync failed for $h -- remote brain will build with no LTM)" >&2
+  # research/ is synced PER-SUBDIR (above), so --delete never reaches research/ ROOT files or research/<subdir>s
+  # this script does not sync. A past full-tree sync left such files on pool41 (FAILURE_LOG.md, research/biology/*,
+  # ...) and the strict complete-source verify below then failed EVERY re-provision on "extra files" — which kept
+  # the node unusable for days (2026-09-23). Prune every research/ file the manifest does not carry, keeping run
+  # OUTPUTS exactly as source_manifest.py's verify ignores them (findings/raw/, experiment-runtime/, *.log, *.out).
+  ssh "$h" "cd ~/$REMOTE_ROOT && sed 's/^[0-9a-f]\\{64\\}  //' .source_manifest.sha256 | sort > /tmp/.prov_keep.\$\$ && find research -type f ! -path 'research/findings/raw/*' ! -path 'research/experiment-runtime/*' ! -path '*/__pycache__/*' ! -name '*.log' ! -name '*.out' | sort | comm -23 - /tmp/.prov_keep.\$\$ | while IFS= read -r p; do chmod u+w -- \"\$p\" 2>/dev/null; rm -f -- \"\$p\"; done; rm -f /tmp/.prov_keep.\$\$"
   # 2. ensurepip/venv are missing on these Ubuntu 22.04 nodes -> install via passwordless sudo (verified available)
   ssh "$h" "python3 -c 'import ensurepip' 2>/dev/null || { echo '  installing python3.10-venv+pip'; \
     sudo -n DEBIAN_FRONTEND=noninteractive apt-get install -y python3.10-venv python3-pip >/dev/null 2>&1 || \
@@ -181,6 +217,35 @@ for h in "${NODES[@]}"; do
     continue
   }
   echo "  source git=$SOURCE_SHA manifest=$MANIFEST_SHA ancestry=$ANCESTRY_SHA excluded_worktree_paths=$EXCLUDED_DIRTY"
+  # NON-DEGENERATE SANITY CHECK (2026-09-23): "does it import" (the checks above) cannot catch a degenerate
+  # build -- board note 2026-09-22's AWS "2-neuron/0-synapse" brain imported everything fine. Build the SAME
+  # tiny-demo brain on THIS node and compare its neuron/synapse totals to the local reference computed above.
+  # Advisory-only when no local reference exists (never blocks provisioning on a box that could not itself
+  # build one); a FAILED or MISMATCHED remote build marks the node failed.
+  REMOTE_SANITY_JSON=$(ssh "$h" "cd ~/$REMOTE_ROOT && SIM_BACKEND=numpy .venv/bin/python -m tools.brain_build_sanity" 2>/dev/null | tail -1) || true
+  if [ -z "$REMOTE_SANITY_JSON" ]; then
+    echo "  ⛔ SANITY CHECK FAILED (no output / brain build crashed) on $h" >&2
+    FAILED_NODES+=("$h:sanity-crash")
+    continue
+  fi
+  echo "  remote brain: $REMOTE_SANITY_JSON"
+  if ! echo "$REMOTE_SANITY_JSON" | python3 -c 'import json,sys; d=json.load(sys.stdin); sys.exit(0 if d.get("ok") else 1)' 2>/dev/null; then
+    echo "  ⛔ DEGENERATE/FAILED remote brain build on $h: $REMOTE_SANITY_JSON" >&2
+    FAILED_NODES+=("$h:sanity-degenerate")
+    continue
+  fi
+  if [ -n "$LOCAL_SANITY_JSON" ]; then
+    MATCH=$(python3 -c '
+import json, sys
+local = json.loads(sys.argv[1]); remote = json.loads(sys.argv[2])
+print("1" if (local.get("n_neurons") == remote.get("n_neurons") and local.get("n_synapses") == remote.get("n_synapses")) else "0")
+' "$LOCAL_SANITY_JSON" "$REMOTE_SANITY_JSON" 2>/dev/null) || MATCH="0"
+    if [ "$MATCH" != "1" ]; then
+      echo "  ⛔ MISMATCH vs local reference on $h: local=$LOCAL_SANITY_JSON remote=$REMOTE_SANITY_JSON" >&2
+      FAILED_NODES+=("$h:sanity-mismatch")
+      continue
+    fi
+  fi
   echo "  done $h"
 done
 if ((${#FAILED_NODES[@]})); then

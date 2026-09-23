@@ -33,12 +33,20 @@ node_is_idle() {
   # ssh command carrying it, the self-match that made an earlier check unable to ever fire.
   local out
   out=$(timeout 12 ssh -o BatchMode=yes -o ConnectTimeout=6 "$1" \
-        "echo \$(nproc) \$(cut -d' ' -f1 /proc/loadavg) \$(pgrep -fc '[r]esearch\.runners' 2>/dev/null | head -1)" 2>/dev/null) || return 1
+        "echo \$(nproc) \$(cut -d' ' -f1 /proc/loadavg) \$(pgrep -c -f '^[^ ]*/?python[0-9.]* .*-m [r]esearch\.runners' 2>/dev/null | head -1) \$(awk '/MemAvailable/{print int(\$2/1048576)}' /proc/meminfo) \$(ps -eo rss,args | awk '\$2 ~ /python/ && /-m [r]esearch\\.runners/ {if (\$1>m) m=\$1} END{print int((m+1048575)/1048576)}')" 2>/dev/null) || return 1
   set -- $out
-  local cores="${1:-0}" load="${2:-99}" procs="${3:-99}"
+  local cores="${1:-0}" load="${2:-99}" procs="${3:-99}" avail_gb="${4:-0}" max_job_gb="${5:-0}"
+  # COUNT ONLY PYTHON RUNNERS (2026-09-23). The old `pgrep -fc research.runners` also counted every `flock`
+  # waiter, `bash -c` wrapper and ssh line carrying the job text, so a node with 2 working jobs + 4 jobs queued
+  # behind a lab-chosen flock read 11/11 "full" at load ~5.6 on 12 cores while 13 jobs sat queued. Load stays
+  # the CPU gate; a MemAvailable floor (POOL_MIN_AVAIL_GB, default 3) now guards RAM (15 GB nodes).
   local cap="${POOL_JOBS_PER_NODE:-$(( cores > 2 ? cores - 1 : 1 ))}"   # single-threaded jobs: fill to cores-1
   [ "${procs:-99}" -lt "$cap" ] || return 1
-  awk -v l="$load" -v c="$cores" 'BEGIN{exit !(l < c)}'
+  [ "${avail_gb:-0}" -ge "${POOL_MIN_AVAIL_GB:-3}" ] || return 1
+  # Jobs GROW after dispatch (2026-09-23: three D6 workers reached 4-5 GB each and left pool41 with 167 MB free,
+  # load 29/12) -- so also require headroom for one more job the size of the largest one already running there.
+  [ "${avail_gb:-0}" -ge "${max_job_gb:-0}" ] || return 1
+  awk -v l="$load" -v c="$cores" 'BEGIN{exit !(l < c - 0.5)}'
 }
 
 remote_launch_command() {

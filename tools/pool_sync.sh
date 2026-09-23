@@ -40,5 +40,20 @@ for N in $NODES; do
   # files) and never reached pool42. `|| true` makes "nothing new to show" a normal outcome, not a crash.
   printf '%s\n' "$out" | grep -E '^>f' | grep -vE '\.prov\.json$' | awk '{print "      "$2}' | head -30 || true
   total=$((total+n))
+  # ISOLATED REVISIONS (2026-09-23). Branch jobs provisioned with `pool_provision.sh --isolated` write to
+  # ~/derisk-pool/revisions/<sha>/research/findings/raw/, which the pull above never reached -- every lane's
+  # branch verification would have stranded on the nodes. Pull each revision's raw/ into the same local tree
+  # (same -u newer-wins + exclusions; paths under raw/ are already lane-namespaced by the runners).
+  [ -n "${POOL_REMOTE_DIR:-}" ] && continue
+  revs=$(timeout 20 ssh -o BatchMode=yes -o ConnectTimeout=6 "$N" 'ls -d derisk-pool/revisions/*/research/findings/raw 2>/dev/null' || true)
+  for R in $revs; do
+    rout=$(timeout 180 rsync -au $DRY --itemize-changes \
+          --exclude='*.log' --exclude='_provenance/' \
+          -e "ssh -o BatchMode=yes -o ConnectTimeout=6" \
+          "$N:$R/" "$LOCAL_DIR" 2>/dev/null) || continue
+    rn=$(printf '%s\n' "$rout" | grep -cE '^>f' || true)
+    [ "$rn" -gt 0 ] && echo "  $N:${R#derisk-pool/revisions/}: ${DRY:+would pull }$rn file(s)"
+    total=$((total+rn))
+  done
 done
 echo "pool_sync: ${DRY:+(dry-run) }$total file(s) ${DRY:+would be }pulled from [$NODES]"

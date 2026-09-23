@@ -27,6 +27,7 @@ docstring for why forcing a minimum agent count to commit is a judgement call le
 import json, os, re, subprocess, sys, time
 
 import parallel_state
+import waiver_history
 
 ROOT = "/home/dant123/Projects/sim"
 POOL = ["pool40", "pool41", "pool42"]
@@ -192,6 +193,25 @@ def main():
     if game_paused:
         print("🎮 GAME PAUSE (GAME_MODE set) — the local GPU is the owner's game (excused from idle-parallelization); "
               "the mini-PC pool + build/research agents are separate/GPU-free and STILL enforced below.")
+
+    # WAIVER SURFACING (2026-09-23, closes the "printed correctly, read past" shape for the escape hatches
+    # THEMSELVES, not just the stall they excuse): a live .parallel_compute_waiver / .lane_waiver is easy to
+    # forget is even open once the printed UNDER-PARALLELIZED line goes quiet. Print its CLASS + age every
+    # cycle it is active, valid or not, so an open escape hatch stays visible on its own line.
+    # Mirrors gates/compute_idle_persistent.WAIVER_MAX_H and gates/lane_starvation.LANE_WAIVER_MAX_H (both 6h);
+    # not imported directly to avoid this heartbeat script depending on the gates package's own sys.path setup.
+    _WAIVER_MAX_H = 6
+    for _label, _path in (
+        ("compute", os.path.join(ROOT, "research", "queue", ".parallel_compute_waiver")),
+        ("lane", os.path.join(ROOT, "research", "queue", ".lane_waiver")),
+    ):
+        try:
+            _v = waiver_history.evaluate(_label, _path, _WAIVER_MAX_H, now_ts=now_ts)
+        except Exception:
+            _v = {"active": False}
+        _d = waiver_history.describe(_v)
+        if _d:
+            print("   🗒  %s waiver OPEN — %s" % (_label, _d))
     if under:
         why = []
         if under_agents:

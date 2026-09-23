@@ -28,6 +28,13 @@ if [ "${1:-}" = "--swap" ]; then SWAP_GB="${2:?--swap needs a value}"; shift 2; 
 [ "${1:-}" = "--" ] && shift
 [ -n "${1:-}" ] || { echo "memcap: no command given" >&2; exit 2; }
 
+# Daemons started outside the login session (the gpu_queue dispatcher runs from a boot-time unit) inherit no
+# XDG_RUNTIME_DIR, so `systemd-run --user` cannot find the user bus and every memcapped GPU-queue job died
+# instantly with rc=3 (2026-09-23: all 6 queued battery seeds failed in the same second). The user manager's
+# bus lives at the standard path whenever the user is lingering/logged in — point at it.
+if [ -z "${XDG_RUNTIME_DIR:-}" ] && [ -d "/run/user/$(id -u)" ]; then
+  export XDG_RUNTIME_DIR="/run/user/$(id -u)"
+fi
 # Fall back to running UNCAPPED with a loud warning only if systemd --user is unavailable, rather
 # than silently dropping the cap (a silent no-cap is exactly the failure mode we're closing).
 if ! systemctl --user is-system-running >/dev/null 2>&1 && ! systemd-run --user --scope --quiet true >/dev/null 2>&1; then
