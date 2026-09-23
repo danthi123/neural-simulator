@@ -36,6 +36,24 @@ rsync -az --delete -e "ssh -i $KEY -o StrictHostKeyChecking=no" \
   --exclude 'data' --exclude 'bridges' --exclude 'deploy' --exclude 'references' \
   --exclude '*.pyc' --exclude '__pycache__' --exclude '*.h5' --exclude '*.pkl' \
   ./ ubuntu@"$IP":~/sim/ || exit 1
+# LTM knowledge bundles (2026-09-23, ~105MB): see tools/aws_provision.sh's identical block / tools/
+# pool_sync_assets.sh for the full writeup -- _default_ltm_bundle_dir() (webapp/server.py) looks for
+# sim-data/knowledge_bundles/* at $HOME/Projects/sim-data, outside this repo, which the rsync above never
+# reaches. Best-effort: a sync failure degrades KNOWLEDGE only (still structurally non-degenerate), never
+# blocks provisioning.
+SIM_DATA_ROOT="${SIM_DATA_ROOT:-$HOME/Projects/sim-data}/knowledge_bundles"
+if [ -d "$SIM_DATA_ROOT" ]; then
+  echo "[aws-cpu] syncing LTM knowledge bundles…"
+  for b in wikidata_100k wikidata_core_15k; do
+    [ -d "$SIM_DATA_ROOT/$b" ] || continue
+    $SSH "mkdir -p ~/Projects/sim-data/knowledge_bundles/$b"
+    rsync -az --delete -e "ssh -i $KEY -o StrictHostKeyChecking=no" \
+      "$SIM_DATA_ROOT/$b/" "ubuntu@$IP:~/Projects/sim-data/knowledge_bundles/$b/" || \
+      echo "[aws-cpu] (warning: LTM bundle $b sync failed -- remote brain will build with no LTM)" >&2
+  done
+else
+  echo "[aws-cpu] (no local $SIM_DATA_ROOT -- skipping LTM sync; remote brain will build with no LTM)"
+fi
 echo "[aws-cpu] venv + numpy/scipy/fastapi/pydantic (CPU set, NO cupy)…"
 $SSH "cd ~/sim && python3 -m venv .venv && .venv/bin/pip -q install --upgrade pip >/dev/null 2>&1 && \
       .venv/bin/pip -q install numpy scipy 'fastapi>=0.115' 'uvicorn[standard]>=0.34' 'pydantic>=2.0' 'pyyaml>=6.0' psutil h5py hdf5plugin 2>&1 | tail -3"

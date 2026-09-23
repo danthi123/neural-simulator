@@ -43,6 +43,25 @@ rsync -az --delete -e "ssh -i $KEY -o StrictHostKeyChecking=no" \
   --exclude 'research/queue/*.log' --exclude '.venv' --exclude '.venv-rag' \
   --exclude 'data' --exclude 'bridges/lmtrain' --exclude 'deploy' --exclude 'references' --exclude '*.pt' \
   "$ROOT/" "ubuntu@$IP:~/sim/" || exit 1
+# LTM knowledge bundles (2026-09-23, ~105MB): _default_ltm_bundle_dir() (webapp/server.py) looks for
+# sim-data/knowledge_bundles/{wikidata_100k,wikidata_core_15k} at $HOME/Projects/sim-data -- a directory
+# OUTSIDE this repo entirely, which the rsync above never reaches. Without it the brain still builds to the
+# correct STRUCTURAL size (brain_build_sanity below still passes -- LTM attaches post-construction, see
+# webapp/server.py::_build_chat_brain's tiny-demo branch) but silently carries NO cortical long-term memory.
+# Best-effort: a sync failure degrades KNOWLEDGE only, never blocks provisioning. See tools/pool_sync_assets.sh.
+SIM_DATA_ROOT="${SIM_DATA_ROOT:-$HOME/Projects/sim-data}/knowledge_bundles"
+if [ -d "$SIM_DATA_ROOT" ]; then
+  echo "[aws] syncing LTM knowledge bundles…"
+  for b in wikidata_100k wikidata_core_15k; do
+    [ -d "$SIM_DATA_ROOT/$b" ] || continue
+    $SSH "mkdir -p ~/Projects/sim-data/knowledge_bundles/$b"
+    rsync -az --delete -e "ssh -i $KEY -o StrictHostKeyChecking=no" \
+      "$SIM_DATA_ROOT/$b/" "ubuntu@$IP:~/Projects/sim-data/knowledge_bundles/$b/" || \
+      echo "[aws] (warning: LTM bundle $b sync failed -- remote brain will build with no LTM)" >&2
+  done
+else
+  echo "[aws] (no local $SIM_DATA_ROOT -- skipping LTM sync; remote brain will build with no LTM)"
+fi
 $SSH "cd ~/sim && python3 -m venv .venv && .venv/bin/pip -q install --upgrade pip && \
       .venv/bin/pip -q install numpy scipy 'cupy-cuda12x' h5py hdf5plugin pyyaml \
         'fastapi>=0.115' 'uvicorn[standard]>=0.34' 'pydantic>=2.0' psutil 2>&1 | tail -2"
