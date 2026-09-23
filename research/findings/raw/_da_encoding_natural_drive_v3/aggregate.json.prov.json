@@ -1,0 +1,25 @@
+{
+ "run_id": "1790188195-1366478",
+ "runner": "research/runners/_da_encoding_natural_drive_synaptic.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/wf_a686cbcd-9ff-3/research/runners/_da_encoding_natural_drive_synaptic.py",
+  "--aggregate",
+  "research/findings/raw/_da_encoding_natural_drive_v3"
+ ],
+ "git_sha": "d40de0817",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-23T14:29:55",
+ "env": {},
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_da_encoding_natural_drive_v3/aggregate.json"
+}
