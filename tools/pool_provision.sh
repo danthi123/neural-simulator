@@ -142,6 +142,12 @@ for h in "${NODES[@]}"; do
   rsync -az "$MANIFEST" "$h:~/$REMOTE_ROOT/.source_manifest.sha256"
   rsync -az "$REVISION" "$h:~/$REMOTE_ROOT/.source_revision"
   rsync -az "$STAGE/.source_ancestry.json" "$h:~/$REMOTE_ROOT/.source_ancestry.json"
+  # research/ is synced PER-SUBDIR (above), so --delete never reaches research/ ROOT files or research/<subdir>s
+  # this script does not sync. A past full-tree sync left such files on pool41 (FAILURE_LOG.md, research/biology/*,
+  # ...) and the strict complete-source verify below then failed EVERY re-provision on "extra files" — which kept
+  # the node unusable for days (2026-09-23). Prune every research/ file the manifest does not carry, keeping run
+  # OUTPUTS exactly as source_manifest.py's verify ignores them (findings/raw/, experiment-runtime/, *.log, *.out).
+  ssh "$h" "cd ~/$REMOTE_ROOT && sed 's/^[0-9a-f]\\{64\\}  //' .source_manifest.sha256 | sort > /tmp/.prov_keep.\$\$ && find research -type f ! -path 'research/findings/raw/*' ! -path 'research/experiment-runtime/*' ! -path '*/__pycache__/*' ! -name '*.log' ! -name '*.out' | sort | comm -23 - /tmp/.prov_keep.\$\$ | while IFS= read -r p; do chmod u+w -- \"\$p\" 2>/dev/null; rm -f -- \"\$p\"; done; rm -f /tmp/.prov_keep.\$\$"
   # 2. ensurepip/venv are missing on these Ubuntu 22.04 nodes -> install via passwordless sudo (verified available)
   ssh "$h" "python3 -c 'import ensurepip' 2>/dev/null || { echo '  installing python3.10-venv+pip'; \
     sudo -n DEBIAN_FRONTEND=noninteractive apt-get install -y python3.10-venv python3-pip >/dev/null 2>&1 || \
