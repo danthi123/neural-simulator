@@ -96,6 +96,18 @@
       "deer": 0.42857142857142855,
       "minnow": 0.14285714285714285,
       "rabbit": 0.2857142857142857
-    }
+    },
+    "hist_host_oracle": {
+      "rabbit": 16,
+      "deer": 20,
+      "minnow": 4
+    },
+    "host_oracle_sample_calls": 76,
+    "host_oracle_spiking_calls": 0,
+    "tv_spiking_vs_host_oracle_descriptive": 0.475,
+    "modal_host_oracle": "deer",
+    "modal_frac_host_oracle": 0.5,
+    "host_oracle_stored_facts_equal": true,
+    "sharpening_modal_frac_spiking_minus_host": 0.475
   }
 }

@@ -1,0 +1,29 @@
+{
+ "verdict": "IDENTICAL",
+ "verdict_raw_including_wallclock": "IDENTICAL",
+ "wallclock_keys_excluded": [
+  "gen_seconds"
+ ],
+ "differing_paths_raw": [],
+ "per_turn_equal": [
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true
+ ],
+ "n_turns": 9,
+ "n_error_turns_total": 0,
+ "env_set": "default",
+ "a_has_route_fn": false,
+ "b_has_route_fn": true,
+ "a": "research/findings/raw/_load_bearing/_oe_production_turn/a2/flag_off_identity/pre_default.json",
+ "b": "research/findings/raw/_load_bearing/_oe_production_turn/a2/flag_off_identity/post_default.json",
+ "a_sha": "4c141b8e8",
+ "b_sha": "8c5d7b03a",
+ "compare": "json.dumps(turn, sort_keys=True) exact string equality, every turn"
+}

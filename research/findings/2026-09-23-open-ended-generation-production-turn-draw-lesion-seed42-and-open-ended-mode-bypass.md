@@ -63,11 +63,22 @@ JSONs beside it; the original-scorer verdicts stay at `_oe_production_turn/<mode
 The reply path is: host co-occurrence matrix P → host weight vector w → host affine map to drive
 (base 110 pA + gain 160 pA × w/peak) → Izhikevich soft-WTA bank with OU membrane noise → host argmax over firing
 counts → host plausibility / non-contradiction / moat gates. The lesion removes w, so it cannot isolate the
-spiking step. The staged `host_oracle` arm (`BRAIN_SPIKING_DRAW=0`: the same w drawn by host np.random.choice)
-does. Seed-42 prediction from the numbers above: the spiking bank sharpens toward the host argmax (deer 0.975
-under spiking vs about 0.43 predicted under p ∝ w). If that holds, the spiking bank's contribution at this operating
-point is a near-deterministic selection of the host-likelihood peak, and the loss of generative diversity is a
-defect to record, not a sampling property to credit.
+spiking step. The `host_oracle` arm (`BRAIN_SPIKING_DRAW=0`: the same w drawn by host np.random.choice) does.
+
+Seed 42, host_oracle arm (run under amendment 2; same stored facts as intact; 76 host draws, 0 spiking draws):
+
+| draw | deer | rabbit | minnow | beetle |
+|---|---|---|---|---|
+| spiking WTA (intact) | 39 | 1 | 0 | 0 |
+| host sampler, same w (host_oracle) | 20 | 16 | 4 | 0 |
+| p ∝ w over the admissible set (predicted mass) | 0.43 | 0.29 | 0.14 | 0.14 |
+
+Artifact: research/findings/raw/_load_bearing/_oe_production_turn/a2/default/default_s42_verdict.json
+(`hist_host_oracle`, `sharpening_modal_frac_spiking_minus_host` = +0.475, `tv_spiking_vs_host_oracle_descriptive` =
+0.475). So on this seed the spiking bank's contribution is to turn a graded host likelihood into a near-deterministic
+pick of its peak: it changes about half the replies relative to the host sampler, and it removes generative
+diversity. That is recorded as a defect of the operating point, not credited as sampling. One seed; the other five
+are staged.
 
 ## The defect found: the BRAIN_OPEN_ENDED reply never reached the generative draw
 
@@ -93,14 +104,29 @@ both routes. Every turn of this protocol then runs the ordinary pipeline, so its
 `default`'s; the harvest checks that exactly (`equals_default_replies`). If equal, the honest wording is: open-ended
 mode reaches the same default GENERATE path through the routes. That is not a second, independent mechanism.
 
-Flag-off identity: NOT yet asserted in data. The staged identity lane compares every full response body of a fixed
-9-turn chat at the pinned pre-change SHA `4c141b8e8` against the fix commit `8c5d7b03a`, env sets `default` and
-`oe_off`, with a pre-vs-pre control. Until it lands the wording is "expected unchanged (unverified)".
+**Flag-off identity, asserted in data** (`research/runners/_lbf_oe_route_flag_off_identity.py`). Each side is a clean
+`git archive` (with the untracked data/ corpus linked in) run through the real `brain_chat` on a fixed 9-turn script
+(4 assertions, 2 generation prompts, a recall, a free-talk turn, a late assertion), numpy, BRAIN_CHAT_SEED=42.
+Pinned pre-change SHA `4c141b8e8` (no route code) vs fix commit `8c5d7b03a` (the server / ChatBrain code is unchanged
+from there to this branch head). Verdicts in research/findings/raw/_load_bearing/_oe_production_turn/a2/flag_off_identity/:
+
+| env set | content verdict | raw verdict | differing paths |
+|---|---|---|---|
+| `default` (no BRAIN_OPEN_ENDED*) | IDENTICAL | IDENTICAL | none |
+| `oe_off` (BRAIN_OPEN_ENDED=1, route flags unset) | IDENTICAL | DIFFERENT | `.body.open_ended.gen_seconds` only |
+| control: pre vs pre, `default` | IDENTICAL | IDENTICAL | none |
+
+So with the flags off the default turn is byte-identical to the pre-change code (every full response body, exact
+compare). In open-ended mode every field is identical except `gen_seconds`, a `time.time()` duration from the mouth
+(webapp/open_ended_chat.py). That field was excluded AFTER the first compare showed it as the only difference; the
+raw verdict and the differing-path list are kept in the record so the exclusion can be audited. The control does not
+cover `gen_seconds` (the default path has no such field), so its wall-clock nature rests on the source line.
 
 ## What is NOT claimed
 
 - No multi-seed claim, and no significance: seed 42 is one observation (sign-flip p over one seed = 0.5).
-- Not that the spiking part is load-bearing: the lesioned input is a host vector.
+- Not that the lesion shows the spiking part is load-bearing: the lesioned input is a host vector. The spiking part's
+  own measured contribution (host_oracle arm, one seed) is sharpening toward the host peak.
 - Not distributional sampling: at this operating point the draw is near-argmax.
 - Nothing about BRAIN_OPEN_ENDED free-talk turns: only explicit generation prompts are routed.
 - No production default was flipped; no sim/ edit.
@@ -119,8 +145,10 @@ Flag-off identity: NOT yet asserted in data. The staged identity lane compares e
 ## Staged (amendment 2; local, numpy, memcapped, each lane started only when tools/mem_ok.sh passes)
 
 `bash research/runners/_lbf_open_ended_production_turn_stage_a2.sh <pre_tree> <post_tree>`, launched from worktree
-`/home/dant123/Projects/sim/.claude/worktrees/wf_a686cbcd-9ff-2`. Lanes: flag-off identity; `default` host_oracle arm
-(6 seeds); `oe_routed_full` (6 seeds, two lanes). The `default` and `oe_unfixed_taught` arms for seeds 43–102 come
+`/home/dant123/Projects/sim/.claude/worktrees/wf_a686cbcd-9ff-2`. Lanes: flag-off identity (done, above); `default`
+host_oracle arm (6 seeds); `oe_routed_full` (6 seeds, two lanes). The first launch was stopped: that worktree had no
+`data/` link, so the brain degraded to standalone organs ("ONEBRAIN XEDGE build FAILED"). The worker, identity dump and
+stage script now REFUSE to run without data/corpus, and every relaunched lane's log shows 0 XEDGE failures. The `default` and `oe_unfixed_taught` arms for seeds 43–102 come
 from the original staging in worktree `/home/dant123/Projects/sim/.claude/worktrees/wf_6cf1082d-b06-2` (unchanged
 worker protocol; the 5-seed `oe_routed_taught` run there was stopped as non-independent). Harvest (idempotent):
 `bash research/runners/_lbf_open_ended_production_turn_harvest_a2.sh`, writing
