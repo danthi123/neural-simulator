@@ -58,14 +58,22 @@ HONEST RESIDUAL (named, not claimed closed).
      turn; the between-turn persistence of "which coalition is held" is a host bookkeeping label (like "attending to
      A"), not the ignition literally surviving the HTTP gap.
      UPDATE 2026-09-23 (research/gnw-thought-swap-drive): a truly continuous mode now EXISTS, DEFAULT-OFF, behind
-     `BRAIN_GNW_SWAP_CONTINUOUS` (see `continuous_enabled()` below; de-risk 6/6-seed GO:
-     `research/runners/_gnw_swap_continuous_recency_derisk.py`). It is SAFE (does not regress the shipped swap-vs-
-     hold verdict, 6/6 seeds) and genuinely carries the substrate's own recurrence-depression state across the turn
-     boundary (a real, code-verified synaptic trace restore mode provably cannot carry) -- but that trace's reply-
-     level behavioral consequence is NOT YET reproducibly demonstrated (existence-only, 1/6 seeds, at a hand-swept
-     near-threshold operating point; see the de-risk docstring's 'HONEST RESIDUAL'). So residual #1 is PARTIALLY
-     addressed (the substrate CAN be continuous; it is not yet ON by default, and continuity's own downstream effect
-     is not yet load-bearing) -- named precisely, not claimed closed.
+     `BRAIN_GNW_SWAP_CONTINUOUS` (see `continuous_enabled()` below; de-risk 6/6-seed GO on SAFETY:
+     `research/runners/_gnw_swap_continuous_recency_derisk.py`). It is SAFE (matches a REAL isolate=True restore-mode
+     arm on every swap-vs-hold verdict at the shipped production drive, 6/6 seeds; ALSO matches on same-topic-hold,
+     the board-#85 mismatch-lesion path, and LRU slot reuse past N_PATTERNS=3, 6/6) and the substrate's own
+     recurrence-depression state DOES genuinely persist across the turn boundary (a raw computational fact -- x_A
+     measures 0.73-0.78 at the branch point instead of the 1.0 restore mode always produces). ⛔ RETRACTED
+     (2026-09-23 fix round, adversarial review): an earlier version of this residual called a near-threshold
+     dissociation an "existence proof" that this carryover causes a recency-driven swap failure. It does not --
+     the de-risk's own neural lesion (wiping ONLY the carryover back to 1.0 before re-proposing) FAILS to rescue the
+     swap on every seed tested, including the one with the dissociation, which refutes causality rather than merely
+     failing to reproduce it. Separately, production advances ZERO simulated time between HTTP turns while the
+     underlying STD time constant is 250ms, so framing the raw persistence above as a biological "recency trace"
+     (Mongillo-style working memory) is NOT supported and is dropped. So residual #1 remains OPEN: the substrate CAN
+     be made continuous, verified safe on every tested turn shape, but with NO capability claim beyond that --
+     see the de-risk module's own "RETRACTION" for the next method (find the real seed-42/102 confound, or model
+     real elapsed time as inter-turn free-run recovery before re-attempting any recency-trace claim).
   2. The mm->boost COUPLING is host arithmetic (`eff_boost = gain * mm_rate`), a neuromodulator-like linear read-out of
      the salience population's firing to the loop's release-probability U — there is no engine primitive for
      "presynaptic firing raises U of other synapses". The DECISION (whether/when there is any boost) is fully the mm
@@ -117,24 +125,27 @@ def swap_enabled() -> bool:
 
 def continuous_enabled() -> bool:
     """CONTINUOUS CROSS-TURN IGNITION (research/gnw-thought-swap-drive, 2026-09-23; de-risk:
-    `research/runners/_gnw_swap_continuous_recency_derisk.py`, 6/6-seed GO). `BRAIN_GNW_SWAP_CONTINUOUS` truthy
-    (1/true/on/yes) -> subsequent turns (there IS a held topic) run the swap decision with `isolate=False` -- the
-    substrate's OWN recurrence-depression state (`x`, the Tsodyks-Markram STD resource variable the shipped #77/#85
-    eviction already uses) carries across the HTTP turn boundary instead of being wiped back to a clean snapshot
-    every turn. Unset/0/false/off/no -> DISABLED (the pre-existing `isolate=True`-every-turn behavior, BYTE-IDENTICAL
-    to the shipped #77/#85 mechanism -- the default). Independent of, and requires, `BRAIN_GNW_SWAP`/`swap_enabled()`
-    (this flag only changes what happens ONCE the swap workspace block is already running).
+    `research/runners/_gnw_swap_continuous_recency_derisk.py`, 6/6-seed GO on SAFETY, retracted on mechanism -- see
+    the de-risk module's own "RETRACTION"). `BRAIN_GNW_SWAP_CONTINUOUS` truthy (1/true/on/yes) -> subsequent turns
+    (there IS a held topic) run the swap decision with `isolate=False` -- the substrate's OWN recurrence-depression
+    state (`x`, the Tsodyks-Markram STD resource variable the shipped #77/#85 eviction already uses) carries across
+    the HTTP turn boundary instead of being wiped back to a clean snapshot every turn. Unset/0/false/off/no ->
+    DISABLED (the pre-existing `isolate=True`-every-turn behavior, BYTE-IDENTICAL to the shipped #77/#85 mechanism --
+    the default, asserted via a hash compare of `ThoughtSwapWorkspace.observe()` output, not inferred from reading
+    the code). Independent of, and requires, `BRAIN_GNW_SWAP`/`swap_enabled()` (this flag only changes what happens
+    ONCE the swap workspace block is already running).
 
-    WHAT THIS ACTUALLY BUYS, HONESTLY (see the de-risk runner's own docstring 'GO GATE' + 'HONEST RESIDUAL' for the
-    full six-seed evidence): the carryover is REAL (a just-evicted topic's recurrent loop is measurably ~25% depleted
-    when re-proposed on the very next turn) and restore mode is PROVABLY (not just typically) blind to it (its own
-    reset call always wipes every pattern's resource variable to exactly 1.0). At the production swap-decision
-    operating point this flag does NOT change which turns swap (6/6-seed no-regression GO) -- the shipped mechanism
-    is deliberately supra-critical/robust, so enabling this is SAFE (no new failure mode) but its own reply-level
-    behavioral signature is NOT YET reproducibly demonstrated (an existence proof on 1/6 seeds at a hand-swept
-    near-threshold drive, not a reliable lever -- see the de-risk docstring). So: DEFAULT-OFF, safe-to-enable,
-    genuinely continuous, NOT YET claimed load-bearing on the reply. Do not describe this flag as closing honest
-    residual #1 below beyond that scope."""
+    WHAT THIS ACTUALLY BUYS, HONESTLY (see the de-risk runner's own docstring 'GO GATE' + 'RETRACTION' for the full
+    evidence): the carryover is REAL (a just-evicted topic's recurrent loop is measurably ~25% depleted when
+    re-proposed on the very next turn -- a raw computational fact, NOT validated as a biological recency trace,
+    since production advances zero simulated time between turns) and restore mode is PROVABLY blind to it (its own
+    reset call always wipes every pattern's resource variable to exactly 1.0). Enabling this does NOT change any
+    TESTED swap-vs-hold verdict -- at the production drive strength against a REAL restore-mode comparison arm
+    (6/6), AND on same-topic-hold / the board-#85 lesion path / LRU slot reuse past N_PATTERNS (6/6). A prior claim
+    that a near-threshold operating point produced a reply-relevant "recency-driven swap failure" is RETRACTED: the
+    de-risk's own neural lesion (wiping ONLY the carryover) does not rescue the swap on any seed, refuting causality.
+    So: DEFAULT-OFF, verified-safe PLUMBING ONLY -- it carries NO capability claim, does not close residual #1
+    beyond "the substrate CAN be continuous," and must not be described as a recency mechanism anywhere."""
     return os.environ.get("BRAIN_GNW_SWAP_CONTINUOUS", "0").strip().lower() in ("1", "true", "on", "yes")
 
 
@@ -400,10 +411,16 @@ class ThoughtSwapWorkspace:
                 "n_ignited_post": int(r["n_ignited_post"]),
                 "old_residual_post": float(r["old_residual_post"]), "new_rate_post": float(r["new_rate_post"]),
                 "mm_peak": float(r["mm_peak"]), "boost_max": float(r["boost_max"]),
-                "continuous": continuous_enabled(),
                 "reason": ("topic_change_swap" if swapped else
                            ("same_topic_hold" if slot == incumbent else "mismatch_held_no_swap")),
             })
+            # FIX (2026-09-23 review): the `continuous` key is itself additive-when-on, exactly like every other
+            # flag in this module -- it must NOT appear when BRAIN_GNW_SWAP_CONTINUOUS is unset, or the default
+            # /api/brain-chat response gains a new `resp["swap_drives"]["continuous"]` key on every turn after the
+            # first (swap_drives_chat.observe_turn does `out = dict(info)`, and the drives path is default-ON), which
+            # breaks byte-identity for the default path. Guard it behind the flag so OFF -> no key -> unchanged.
+            if continuous_enabled():
+                info["continuous"] = True
             return info
 
 

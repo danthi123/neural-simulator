@@ -7,6 +7,7 @@
     "xA_at_branch": 0.7624718351663978,
     "xC_at_branch": 0.9999929668055912,
     "branch_identical": true,
+    "branch_state_hash_match": false,
     "restore_blind": true,
     "recent": {
       "swapped": true,
@@ -20,21 +21,69 @@
       "old_residual_post": 0.0,
       "b_ignite_step": 194
     },
+    "restore_recent_swapped": true,
+    "restore_fresh_swapped": true,
     "seed_deterministic": true,
     "near_threshold_diagnostic": {
       "pa": 1500.0,
       "recent_swapped": false,
       "fresh_swapped": true,
       "recent_lesioned_swapped": false,
-      "dissociation": true
+      "dissociation": true,
+      "carryover_causal": false
+    },
+    "full_conversation_safety": {
+      "ok": true,
+      "turns": [
+        [
+          "a",
+          false
+        ],
+        [
+          "a",
+          false
+        ],
+        [
+          "b",
+          false
+        ],
+        [
+          "b",
+          false
+        ],
+        [
+          "a",
+          false
+        ],
+        [
+          "c",
+          false
+        ],
+        [
+          "d",
+          false
+        ],
+        [
+          "e",
+          true
+        ],
+        [
+          "e",
+          false
+        ]
+      ],
+      "off": null,
+      "on": null
     },
     "go_gate": {
       "swaps_correct": true,
       "branch_identical": true,
+      "branch_state_hash_match": false,
       "carryover_ok": true,
       "restore_blind": true,
       "no_regression_at_production_pa": true,
-      "seed_deterministic": true
+      "seed_deterministic": true,
+      "full_conversation_no_regression": true
     },
     "seed_go": true,
     "operating_point": {
