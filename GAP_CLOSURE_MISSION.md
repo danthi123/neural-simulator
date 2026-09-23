@@ -113,6 +113,15 @@ waiting on runs every day … I thought our heartbeats/gates were supposed to pr
   summary_doc_freshness until the roadmap/ROADMAP.md sync (agent `research/doc-sync-2026-09-23`) lands; then merge main in
   and commit. s43-s102 ran on AWS1 in ~20 min (vs ~10 h serial on pool41). **AWS budget guard UNDERCOUNTS** stopped/
   terminated instances (spend dropped $12→$5.31 after AWS1 ended) → ledger fix agent `research/aws-spend-ledger` in flight.
+- **17:10 round 4 `wuk8jpm4v` harvested (reviews wf_4066783a-f39):** CPU lanes — curiosity NO-GO (4/6 raw, 3/5 held-out),
+  perception BINDING-NEGATIVE (fixed) / POSITIVE-UNCONFIRMED (competitive), language INCOMPLETE (S2 null running) — on
+  branch `research/cpu-lane-harvest`, review fix-required (language finding compares bacc_spiking vs decided-accuracy;
+  S3a mean-vs-min; S7 not in the table). **Cliff detector PARKED** (4 rounds; re-review: prereg GO nearly unreachable →
+  likely UNDEFINED; its 6 light eval jobs left to finish). Open-ended a3 redesign (per-session noise streams, sign test
+  over seeds, UNDEFINED if noise never changes a reply) — **its 55 sessions moved from a serial pool flock queue to AWS2**
+  (12 parallel; results → `research/findings/raw/_load_bearing/_oe_production_turn/aws2_a3/`; loop `bi6gmlyw4` terminates
+  AWS2 after these + the episodic s44 shard). Review fix-required: its a3 test fails under the cupy backend; power-sim
+  numbers untraced; amendment-log inaccuracy.
 - **⚠️ POOL/AWS BRAIN ASSETS:** pool nodes lack bridges/ (25G local) + most data/ (11G local) → production brain_chat
   runs there may DEGENERATE like AWS did. Do NOT trust a pool brain_chat result until the infra lane's sanity check passes.
 - **LESSONS (new):** never SendMessage a Workflow subagent (it resumes the agent as a duplicate in the same worktree;
