@@ -1,0 +1,126 @@
+{
+  "runner": "research.runners.d6_learn_through_use_lb",
+  "seeds": [
+    42
+  ],
+  "arm_dir": "research/findings/raw/_d6_learn_through_use",
+  "per_seed": {
+    "42": {
+      "criteria": {
+        "C1_learns": true,
+        "C2_use_changes_reply": true,
+        "C3_freeze_removes": false,
+        "C4_write_only": true,
+        "C5_specific": true,
+        "C6_deterministic": true,
+        "C7_no_regression": true
+      },
+      "void_arms": [],
+      "go": false,
+      "attributable_to_use": 1.0,
+      "lever": {
+        "learned_mean_abs_w_plastic": 1.800197,
+        "learned_mean_abs_w_frozen": 0.0,
+        "moved": true,
+        "encode_plastic": {
+          "frozen": false,
+          "steps": 208,
+          "block": 5,
+          "phase_lock_steps": 184,
+          "n_saturated": 128,
+          "mean_abs_w": 1.0,
+          "min_abs_w": 0.9999999999999997
+        },
+        "encode_frozen": {
+          "frozen": true,
+          "steps": 208,
+          "block": 5,
+          "phase_lock_steps": 184,
+          "n_saturated": 0,
+          "mean_abs_w": 0.0,
+          "min_abs_w": 0.0
+        }
+      },
+      "null_diffs": 0,
+      "probe_decisions": {
+        "USE_H": {
+          "abstained": false,
+          "recalled_svo": [
+            "wolf",
+            "hunt",
+            "deer"
+          ],
+          "answer": "Setting the held thread aside \u2014 On wolf, then \u2014 the wolf hunts the deer"
+        },
+        "USE_H_REP": {
+          "abstained": false,
+          "recalled_svo": [
+            "wolf",
+            "hunt",
+            "deer"
+          ],
+          "answer": "Setting the held thread aside \u2014 On wolf, then \u2014 the wolf hunts the deer"
+        },
+        "SHUF_H": {
+          "abstained": true,
+          "recalled_svo": null,
+          "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about wolf yet: what can you tell me about wolf? \u2014 worth going further here."
+        },
+        "FREEZE_H": {
+          "abstained": true,
+          "recalled_svo": null,
+          "answer": "Setting the held thread aside \u2014 On wolf, then \u2014 I don't know about that."
+        },
+        "USE_D": {
+          "abstained": false,
+          "recalled_svo": [
+            "wolf",
+            "hunt",
+            "deer"
+          ],
+          "answer": "Setting the held thread aside \u2014 On wolf, then \u2014 the wolf hunts the deer"
+        }
+      },
+      "xprobe_decisions": {
+        "USE_H": {
+          "abstained": true,
+          "recalled_svo": null,
+          "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about fox yet: what can you tell me about fox?"
+        },
+        "USE_H_REP": {
+          "abstained": true,
+          "recalled_svo": null,
+          "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about fox yet: what can you tell me about fox?"
+        },
+        "SHUF_H": {
+          "abstained": false,
+          "recalled_svo": [
+            "fox",
+            "eat",
+            "berry"
+          ],
+          "answer": "Setting the held thread aside \u2014 On fox, then \u2014 the fox eats the berry"
+        },
+        "FREEZE_H": {
+          "abstained": true,
+          "recalled_svo": null,
+          "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about fox yet: what can you tell me about fox?"
+        },
+        "USE_D": {
+          "abstained": true,
+          "recalled_svo": null,
+          "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about fox yet: what can you tell me about fox?"
+        }
+      },
+      "verdict": "NO-GO (failed: C3_freeze_removes)"
+    }
+  },
+  "aggregate": {
+    "n_seeds": 1,
+    "n_defined": 1,
+    "n_go": 0,
+    "undefined_seeds": [],
+    "GO": false,
+    "verdict": "NO-GO 0/1"
+  }
+}

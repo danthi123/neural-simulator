@@ -4515,6 +4515,14 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
     except Exception:
         pass
 
+    # D6 LEARN-THROUGH-USE READ-TIME VIEW (default-OFF, BRAIN_D6_ENGRAM_READTIME): at the start of EVERY turn, re-read
+    # which facts the brain holds off the engrams as they are NOW (research/runners/d6_hebbian_store.readtime_refresh),
+    # so a later loss of an engram (a lesion, decay) is reflected in the known-word sets. Off -> only this env read.
+    # Not wrapped in try/except: with the flag on, a failure must surface, not silently fall back to the host list.
+    if os.environ.get("BRAIN_D6_ENGRAM_READTIME", "").strip().lower() in ("1", "true", "yes", "on"):
+        from research.runners.d6_hebbian_store import readtime_refresh as _d6_readtime_refresh
+        _d6_readtime_refresh(chat)
+
     # GNW TWO-GENUINELY-DISTINCT-ORGANS coincidence bus — DEFAULT-ON (2026-08-20). The N-organ bus above combines three
     # reads that ALL come from the composer (forward + VERIFY + reverse-binding); this layers the genuinely-distinct
     # SECOND SPIKING ORGAN the `_gnw_two_distinct_organs_derisk` 6-seed GO closes caveat #1 with — the production
@@ -5362,7 +5370,11 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
                 if rec.get("in_memory"):
                     try:
                         _comp = getattr(getattr(chat, "inner", None), "composer", None)
-                        for _f, _h in (getattr(_comp, "kb", []) or []):
+                        _kb_iter = getattr(_comp, "kb", []) or []
+                        if os.environ.get("BRAIN_D6_ENGRAM_READTIME", "").strip().lower() in ("1", "true", "yes", "on"):
+                            from research.runners.d6_hebbian_store import visible_kb as _d6_visible_kb
+                            _kb_iter = _d6_visible_kb(_comp) or []   # D6 (default-OFF): engram-held facts only
+                        for _f, _h in _kb_iter:
                             if (str(_f.get("agent", "")).lower() == ref
                                     and _f.get("action") and _f.get("patient")):
                                 content = chat.render([_f.get("agent"), _f.get("action"), _f.get("patient")])

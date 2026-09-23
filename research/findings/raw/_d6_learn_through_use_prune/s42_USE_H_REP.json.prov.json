@@ -1,0 +1,35 @@
+{
+ "run_id": "1790177914-1089493",
+ "runner": "research/runners/d6_learn_through_use_lb.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/wf_8bf19a04-cbd-2/research/runners/d6_learn_through_use_lb.py",
+  "--worker",
+  "--env",
+  "{\"BRAIN_D6_HEBBIAN_STORE\": \"1\", \"BRAIN_D6_HEBBIAN_FREEZE\": \"0\", \"BRAIN_D6_ENGRAM_VOCAB\": \"1\", \"BRAIN_D6_ENGRAM_PRUNE\": \"1\"}",
+  "--teach",
+  "the wolf hunts the deer",
+  "--out",
+  "research/findings/raw/_d6_learn_through_use_prune/s42_USE_H_REP.json"
+ ],
+ "git_sha": "b7f0b50f3",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-23T11:38:34",
+ "env": {
+  "SIM_BACKEND": "numpy",
+  "CUDA_VISIBLE_DEVICES": "",
+  "SIM_RUN_ID": "1790177914-1089457"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 10973.9,
+ "corpus_check_query": "continuous learning from use: turn-N plasticity write changes a later reply, lesion-verified",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_d6_learn_through_use_prune/s42_USE_H_REP.json"
+}

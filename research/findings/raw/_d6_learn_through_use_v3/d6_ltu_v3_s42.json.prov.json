@@ -1,0 +1,34 @@
+{
+ "run_id": "1790190832-1415520",
+ "runner": "research/runners/d6_learn_through_use_lb.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/wf_49b416df-232-3/research/runners/d6_learn_through_use_lb.py",
+  "--score-only",
+  "--variant",
+  "capability",
+  "--arm-dir",
+  "research/findings/raw/_d6_learn_through_use_v3",
+  "--seeds",
+  "42",
+  "--json",
+  "research/findings/raw/_d6_learn_through_use_v3/d6_ltu_v3_s42.json"
+ ],
+ "git_sha": "f0bdfd612",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-23T15:13:52",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_d6_learn_through_use_v3/d6_ltu_v3_s42.json"
+}
