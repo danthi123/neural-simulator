@@ -68,6 +68,8 @@ waiting on runs every day … I thought our heartbeats/gates were supposed to pr
   D5 affect-CONDITIONED Qwen mouth (prompt|resid; 9 GPU jobs queued, now memcapped) · D6 local Hebbian write replacing
   the host pattern copy · GNW continuous mode (default path changed → not mergeable as is).
   **Live homeostat: confirmed honest NO-GO 5/6, merged `@67b7fbc9`** — next controller: a per-seed LIVE CLIFF DETECTOR.
+  **+ workflow `w24snxp8f` (D1 residual lanes):** pmem live cliff detector · open-ended load-bearing on the PRODUCTION turn ·
+  da-gated-encoding under a NATURAL (untuned) drive — the 3 faculties outside the robust core / its hardening.
   **⚠️ LESSON: I merged the infra branch before its review → 3 blockers merged (waiver off-by-one, self-declarable
   GAMING/OWNER-PAUSE exemptions, .md-wide infra exemption) — repair in flight. Never merge before the review verdict.**
 - **⚠️ POOL/AWS BRAIN ASSETS:** pool nodes lack bridges/ (25G local) + most data/ (11G local) → production brain_chat
