@@ -151,13 +151,22 @@ for h in "${NODES[@]}"; do
   ssh "$h" "mkdir -p ~/$REMOTE_ROOT/research/findings/raw"
   # CORPUS (2026-09-23): the small corpus files corpus-LEARNED organs read (see load_bearing_fraction CORPUS GUARD).
   ssh "$h" "mkdir -p ~/$REMOTE_ROOT/data/corpus"
-  # data/corpus is UNTRACKED, so a git WORKTREE has none (2026-09-23: every worktree-run provision printed
-  # "corpus sync failed" and the LBF CORPUS GUARD then refused the jobs). Fall back to the PRIMARY checkout's copy.
-  CORPUS_SRC="$ROOT/data/corpus"
-  if [ ! -d "$CORPUS_SRC" ]; then
-    CORPUS_SRC="$(git -C "$ROOT" worktree list --porcelain 2>/dev/null | awk '/^worktree /{print $2; exit}')/data/corpus"
+  # data/corpus is git-excluded, so a git WORKTREE (every isolated agent) has none: fall back to the PRIMARY
+  # checkout's copy (the parent of the shared git dir). Sync only the files that exist (a missing optional file
+  # used to fail the whole rsync), and warn loudly when the core file is absent. (2026-09-23, D3 fix round.)
+  CORPUS_DIR="$ROOT/data/corpus"
+  if [ ! -f "$CORPUS_DIR/tinystories.txt" ]; then
+    _common=$(cd "$ROOT" && git rev-parse --path-format=absolute --git-common-dir 2>/dev/null || true)
+    [ -n "$_common" ] && [ -f "$(dirname "$_common")/data/corpus/tinystories.txt" ] && CORPUS_DIR="$(dirname "$_common")/data/corpus"
   fi
-  ( cd "$CORPUS_SRC" && rsync -aL tinystories.txt wikitext.txt simplewiki.txt websters1913.json run3_ra_grounded_frames.txt "$h:$REMOTE_ROOT/data/corpus/" ) || echo "  (warning: corpus sync to $h failed)" >&2
+  _cfiles=()
+  for _f in tinystories.txt wikitext.txt simplewiki.txt websters1913.json run3_ra_grounded_frames.txt; do
+    [ -e "$CORPUS_DIR/$_f" ] && _cfiles+=("$_f")
+  done
+  [ -e "$CORPUS_DIR/tinystories.txt" ] || echo "  ⛔ WARNING: no data/corpus/tinystories.txt in $ROOT or the primary checkout -- corpus-learned organs will fail on $h" >&2
+  if [ ${#_cfiles[@]} -gt 0 ]; then
+    ( cd "$CORPUS_DIR" && rsync -aL "${_cfiles[@]}" "$h:$REMOTE_ROOT/data/corpus/" ) || echo "  (warning: corpus sync to $h failed)" >&2
+  fi
   rsync -az --delete --exclude='__pycache__' "$STAGE/experiment/" "$h:~/$REMOTE_ROOT/experiment/" 2>/dev/null
   rsync -az --delete --exclude='__pycache__' "$STAGE/tools/" "$h:~/$REMOTE_ROOT/tools/" 2>/dev/null
   rsync -az --delete --exclude='__pycache__' --exclude='*.pyc' \
