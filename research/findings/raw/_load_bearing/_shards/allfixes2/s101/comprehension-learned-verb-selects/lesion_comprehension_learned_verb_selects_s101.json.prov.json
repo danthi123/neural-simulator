@@ -1,0 +1,34 @@
+{
+ "run_id": "1790178248-10905",
+ "runner": "research/runners/onebrain_regression_battery.py",
+ "argv": [
+  "/home/ubuntu/sim/research/runners/onebrain_regression_battery.py",
+  "--worker",
+  "--env",
+  "{\"BRAIN_LEARNED_VERB_SELECTS_LESION\": \"1\"}",
+  "--turns",
+  "verbsel",
+  "--out",
+  "/home/ubuntu/sim/research/findings/raw/_load_bearing/_shards/allfixes2/s101/comprehension-learned-verb-selects/lesion_comprehension_learned_verb_selects_s101.json"
+ ],
+ "git_sha": "unknown",
+ "git_dirty": null,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-23T15:44:08",
+ "env": {
+  "SIM_BACKEND": "numpy",
+  "SIM_RUN_ID": "1790177391-10193"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": false,
+ "corpus_check_age_s": 21145.1,
+ "corpus_check_query": "making a spiking brain's affect/emotion state load-bearing on a language model's free-generated reply TONE \u2014 beyond decode-time logit bias; how affect/valence conditions generation in neuroscience + N",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_load_bearing/_shards/allfixes2/s101/comprehension-learned-verb-selects/lesion_comprehension_learned_verb_selects_s101.json"
+}

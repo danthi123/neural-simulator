@@ -129,6 +129,18 @@ waiting on runs every day … I thought our heartbeats/gates were supposed to pr
   (competitive); language INCOMPLETE — S2 null still running on the pool). Open-ended a3: re-review unsafe (power sim
   biased toward the claim; selftest crashes on cupy) — its 55 AWS2 sessions run regardless (prereg committed first).
   AWS spend ledger: re-review fix-required (restart undercount, fail-open check, bad-row crash) — agent fixing.
+- **🎯 17:50 #1 METRIC — ONE CONSISTENT 6-SEED BATTERY ON MAIN (all 4 merged fixes + adequate probes): ROBUST CORE 24/26
+  exercised, mean load-bearing fraction 0.949 ± 0.018** (was 0.85 ± 0.03 / robust 20 on 09-21) — finding
+  `2026-09-23-allfixes-adequate-battery-6seed-robust-core-24` `@6c8da83e`. Non-robust: affect-marker 4/6 (SETTLE not on;
+  6/6 with SETTLE in its separate contrast), da-gated-encoding 0/6 (v3 not on); swap-drives + wm-binding not exercised.
+  Option-C pair: shipped thin default ~0.59 (09-20, not re-measured). NEXT MEASUREMENT: the same battery with SETTLE +
+  the DA-v3 flag on (both merged today). Also fixed: the pre-commit hook died on large commits (argv > 128 KB).
+- **17:50 COMBINED BATTERY RUNNING (tag `allfixes3settle` = allfixes2 flags + `BRAIN_AFFECT_MARKER_SETTLE=1`)** — does
+  affect-marker reach 6/6 inside the full battery without disturbing any other faculty (→ robust core 25)? Seeds 42-44 on
+  AWS instance B (.aws_cpu3, loop `bwsrk5ci6` terminates it); seeds 100-102 auto-launch on instance A (.aws_gpu) once
+  AWS2 tears down (controller `b9e3vhwh5`; the account's vCPU quota is 32 = two r7i.4xlarge — a 3rd launch was refused,
+  orphan SG deleted, launch script now aborts cleanly). DA v3 is NOT in this battery (not wired into chat; no next-day
+  turn). Aggregate: `.venv/bin/python tools/lb_shard.py aggregate --tag allfixes3settle`.
 - **⚠️ POOL/AWS BRAIN ASSETS:** pool nodes lack bridges/ (25G local) + most data/ (11G local) → production brain_chat
   runs there may DEGENERATE like AWS did. Do NOT trust a pool brain_chat result until the infra lane's sanity check passes.
 - **LESSONS (new):** never SendMessage a Workflow subagent (it resumes the agent as a duplicate in the same worktree;

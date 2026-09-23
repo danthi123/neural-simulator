@@ -46,7 +46,11 @@ def shard_out(tag, seed, fac):
 
 
 def cmd_jobs(a):
-    env = " ".join("%s=%s" % kv for kv in sorted(ENV.items()))
+    envd = dict(ENV)
+    for kv in (a.extra_env or []):
+        k, _, v = kv.partition("=")
+        envd[k] = v
+    env = " ".join("%s=%s" % kv for kv in sorted(envd.items()))
     keys = a.faculties or faculty_keys()
     for seed in a.seeds:
         for fac in keys:
@@ -101,6 +105,18 @@ def cmd_aggregate(a):
     out["incomplete_faculties"] = missing
     fracs = [v["load_bearing_fraction"] for v in out["per_seed"].values() if v["load_bearing_fraction"] is not None]
     out["mean_fraction"] = (sum(fracs) / len(fracs)) if fracs else None
+    out["sd_fraction"] = (sum((f - out["mean_fraction"]) ** 2 for f in fracs) / len(fracs)) ** 0.5 if fracs else None
+    out["mean_fraction_3dp"] = round(out["mean_fraction"], 3) if fracs else None
+    out["sd_fraction_3dp"] = round(out["sd_fraction"], 3) if fracs else None
+    # BACKEND, read from each shard's own provenance sidecar (not assumed): gates/device_and_cost requires the device.
+    backends = set()
+    for prov in glob.glob("%s/%s/s*/*/lb.json.prov.json" % (OUT_BASE, a.tag)):
+        try:
+            backends.add((json.load(open(prov)).get("env") or {}).get("SIM_BACKEND") or "unrecorded")
+        except Exception:
+            backends.add("unreadable")
+    out["backend"] = sorted(backends)[0] if len(backends) == 1 else "mixed:" + ",".join(sorted(backends))
+    out["backend_source"] = "per-shard provenance sidecars (lb.json.prov.json env.SIM_BACKEND)"
     dest = "%s/%s/aggregate.json" % (OUT_BASE, a.tag)
     os.makedirs(os.path.dirname(dest), exist_ok=True)
     json.dump(out, open(dest, "w"), indent=1, sort_keys=True)
@@ -117,6 +133,7 @@ def main():
     j.add_argument("--root", default=None, help="cd here first (e.g. a pool isolated-revision dir)")
     j.add_argument("--repeats", type=int, default=2)
     j.add_argument("--faculties", nargs="*", default=None)
+    j.add_argument("--extra-env", nargs="*", default=None, help="KEY=VAL flags added on top of ENV (e.g. a newly merged fix)")
     g = sub.add_parser("aggregate")
     g.add_argument("--tag", required=True)
     g.add_argument("--seeds", type=int, nargs="*", default=None)
