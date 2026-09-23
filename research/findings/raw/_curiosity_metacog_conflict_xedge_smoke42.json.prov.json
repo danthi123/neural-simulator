@@ -1,0 +1,27 @@
+{
+ "run_id": "1790171640-643024",
+ "runner": "research/runners/_curiosity_metacog_conflict_xedge_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/wf_69a14678-7c1-1/research/runners/_curiosity_metacog_conflict_xedge_derisk.py",
+  "--smoke",
+  "--out",
+  "research/findings/raw/_curiosity_metacog_conflict_xedge_smoke42.json"
+ ],
+ "git_sha": "747b2c658",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-23T09:54:00",
+ "env": {},
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 840.3,
+ "corpus_check_query": "curiosity driven by metacognition low-confidence spiking readout cross-organ synapse",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_curiosity_metacog_conflict_xedge_smoke42.json"
+}
