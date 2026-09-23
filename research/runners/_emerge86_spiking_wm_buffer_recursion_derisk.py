@@ -175,20 +175,24 @@ def _derisk(seeds):
         go = bool(surpass and count_defeated and scramble_collapses and lesion_collapses)
 
         cap_depth = (n_slots // 2) - 1
+        # Built OUTSIDE the f-string on purpose (Python <3.12 syntax error): a nested f-string cannot reuse its
+        # own quote character in an inner subscript (`f'...{agg[d]['spiking_wm']}...'`) -- collects under 3.14
+        # (PEP 701 relaxed the rule) but fails under the project's pinned 3.11 venv. Same content, precomputed.
+        _profile = lambda key: ", ".join("d%s=%.2f" % (d, agg[d][key]) for d in _TEST_DEPTHS)  # noqa: E731
         if go:
             verdict = (
                 f"GO -- the RANK-3 theta-gamma WM buffer + stack-match runs ON SPIKES and surpasses the reservoir's "
                 f"recursion boundary. Realized on the validated spiking RF ordered-WM (OrderedPositionWM; encode/unbind on "
                 f"resonate-and-fire neurons + complex synapses), with the mirror-pair stack-match a spiking PHASE-"
                 f"COINCIDENCE between two unbind reads (no host ==). The spiking WM reaches stack-depth d*={wm_dstar} "
-                f"(profile {', '.join(f'd{d}={agg[d]['spiking_wm']:.2f}' for d in _TEST_DEPTHS)}) -- PAST the plain "
+                f"(profile {_profile('spiking_wm')}) -- PAST the plain "
                 f"reservoir's d*=2 (EMERGE-84) -- then BOUNDARIES at the buffer capacity (depth 4 = 10 numbers > {n_slots} "
                 f"slots, acc {agg[4]['spiking_wm']:.2f}) -- the biologically-faithful BOUNDED recursion limit (the human "
                 f"~2-3-embedding bound), NOT unbounded. The count-multiset shortcut stays DEFEATED "
-                f"({', '.join(f'd{d}={agg[d]['count_baseline']:.2f}' for d in _TEST_DEPTHS)} ~chance); a SLOT-SCRAMBLE "
-                f"collapses it ({', '.join(f'd{d}={agg[d]['slot_scramble']:.2f}' for d in _TEST_DEPTHS)} -> the ordered "
+                f"({_profile('count_baseline')} ~chance); a SLOT-SCRAMBLE "
+                f"collapses it ({_profile('slot_scramble')} -> the ordered "
                 f"gamma-slots = the LIFO stack are load-bearing); an UNBIND-LESION (skip the spiking unbind) collapses it "
-                f"({', '.join(f'd{d}={agg[d]['unbind_lesion']:.2f}' for d in _TEST_DEPTHS)} -> the match is genuinely from "
+                f"({_profile('unbind_lesion')} -> the match is genuinely from "
                 f"the spiking slot recall). {len(seeds)} seeds. ==> bounded stack-recursion is resolved ON the project's "
                 f"spiking RF substrate (multiplex + storage + recall + coincidence all spiking) -- the fully-spiking-one-"
                 f"brain directive. RUNG 2 (a literal time-domain theta/gamma oscillator nesting the slots, catalog N.15) "
