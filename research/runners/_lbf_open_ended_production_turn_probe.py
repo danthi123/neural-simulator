@@ -23,7 +23,7 @@ ARMS (each a FRESH subprocess brain build at the identical BRAIN_CHAT_SEED, so e
                        spiking soft-WTA draw bank is replaced by a uniform drive (draw_from_weights honors it). Every
                        other faculty, gate and the moat are untouched.
 
-STATISTIC + NULL (pre-registered, see docs/plans/2026-09-23-open-ended-production-turn-lb-prereg.md).
+STATISTIC + NULL (pre-registered, see docs/plans/2026-09-23-open-ended-production-turn-lb-PREREG.md).
   T  = total-variation distance between the intact and lesion reply histograms (outcome = volunteered patient, or
        ABSTAIN). NULL DISTRIBUTION = a label-permutation null over the pooled 2K replies (B permutations, seeded);
        p = (1 + #{T_null >= T}) / (B + 1). A null DISTRIBUTION, not one shuffle.
@@ -79,7 +79,19 @@ MODES = {
                    "BRAIN_OPEN_ENDED_NO_QWEN_FALLBACK": "1"},
     "oe_routed": {"BRAIN_OPEN_ENDED": "1", "BRAIN_OPEN_ENDED_GENERATE_ROUTE": "1",
                   "BRAIN_OPEN_ENDED_NO_QWEN_FALLBACK": "1"},
+    # AMENDMENT 1 (2026-09-23, pre-registered before these ran): seed 42 showed the oe_* modes ALSO bypass in-loop
+    # ACQUISITION -- under BRAIN_OPEN_ENDED=1 a teach assertion goes to the free-talk path and is never learned
+    # (stored_facts stays at the 5 build-time facts), so the ask has nothing novel to volunteer. The *_taught modes
+    # run the TEACH turns with BRAIN_OPEN_ENDED=0 (the ordinary chat path, SAME session / SAME ChatBrain -- the cache
+    # key does not include the mode) and only the ASK turns in open-ended mode, isolating the ASK path's use of the
+    # draw from the (separate) teach-path bypass.
+    "oe_unfixed_taught": {"BRAIN_OPEN_ENDED": "1", "BRAIN_OPEN_ENDED_GENERATE_ROUTE": "0",
+                          "BRAIN_OPEN_ENDED_NO_QWEN_FALLBACK": "1"},
+    "oe_routed_taught": {"BRAIN_OPEN_ENDED": "1", "BRAIN_OPEN_ENDED_GENERATE_ROUTE": "1",
+                         "BRAIN_OPEN_ENDED_NO_QWEN_FALLBACK": "1"},
 }
+# env overrides applied ONLY during the TEACH phase (restored before the asks)
+TEACH_ENV = {"oe_unfixed_taught": {"BRAIN_OPEN_ENDED": "0"}, "oe_routed_taught": {"BRAIN_OPEN_ENDED": "0"}}
 ARMS = {
     "intact": {"BRAIN_SPIKING_DRAW_LESION": "0"},
     "intact_rebuild": {"BRAIN_SPIKING_DRAW_LESION": "0"},
@@ -95,7 +107,7 @@ class _StubFaculty:
         raise RuntimeError("stub Qwen faculty used (%s) -- the probe expects no Qwen call" % name)
 
 
-def _worker(env, seed, k, out_path, rich=True):
+def _worker(env, seed, k, out_path, rich=True, teach_env=None):
     os.environ.setdefault("SIM_BACKEND", "numpy")
     os.environ.setdefault("BRAIN_CHAT_RENDERER", "stub")
     os.environ.setdefault("SIM_DISABLE_LLM", "1")
@@ -120,12 +132,20 @@ def _worker(env, seed, k, out_path, rich=True):
     from webapp.server import brain_chat, BrainChatRequest
     t0 = time.time()
     teach = []
+    teach_env = dict(teach_env or {})
+    saved = {kk: os.environ.get(kk) for kk in teach_env}
+    os.environ.update(teach_env)                 # TEACH-phase-only overrides (AMENDMENT 1); {} -> no-op
     for i, msg in enumerate(TEACH):
         r = brain_chat(BrainChatRequest(session=ASK_SESSION, message=msg, brain="tiny-demo", renderer="stub",
                                         rich=False, reset=(i == 0)))
         b = json.loads(r.body)
         teach.append({"msg": msg, "answer": b.get("answer"), "recalled_svo": b.get("recalled_svo")})
     t_teach = time.time() - t0
+    for kk, vv in saved.items():                 # restore the ARM env for the asks
+        if vv is None:
+            os.environ.pop(kk, None)
+        else:
+            os.environ[kk] = vv
     chat = None
     for key, c in S._BRAIN_CHATS.items():
         if key[0] == ASK_SESSION:
@@ -155,7 +175,7 @@ def _worker(env, seed, k, out_path, rich=True):
             weights = {p: float(x) for p, x in zip(prop.patients, w)}
     except Exception as e:
         weights = {"_error": repr(e)}
-    out = {"env": env, "seed": int(seed), "k": int(k), "rich": bool(rich), "teach": teach,
+    out = {"env": env, "teach_env": teach_env, "seed": int(seed), "k": int(k), "rich": bool(rich), "teach": teach,
            "stored_facts": [list(f) for f in stored], "replies": replies, "draw_counter": counter,
            "likelihood_weight": weights, "t_teach_s": round(t_teach, 1), "t_total_s": round(time.time() - t0, 1),
            "backend": os.environ.get("SIM_BACKEND")}
@@ -166,9 +186,11 @@ def _worker(env, seed, k, out_path, rich=True):
     return 0
 
 
-def _spawn(env, seed, k, out_path, rich=True):
+def _spawn(env, seed, k, out_path, rich=True, teach_env=None):
     cmd = [sys.executable, "-u", "-m", "research.runners._lbf_open_ended_production_turn_probe", "--worker",
            "--env", json.dumps(env), "--seed", str(seed), "--k", str(k), "--out", out_path]
+    if teach_env:
+        cmd += ["--teach-env", json.dumps(teach_env)]
     if not rich:
         cmd.append("--single-fact")
     p = subprocess.run(cmd, env=dict(os.environ))
@@ -297,7 +319,8 @@ def run_seed(mode, seed, k, out_dir, rich=True):
     for arm, aenv in ARMS.items():
         env = dict(MODES[mode])
         env.update(aenv)
-        payload[arm] = _spawn(env, seed, k, os.path.join(out_dir, "%s_s%s_%s.json" % (mode, seed, arm)), rich=rich)
+        payload[arm] = _spawn(env, seed, k, os.path.join(out_dir, "%s_s%s_%s.json" % (mode, seed, arm)), rich=rich,
+                              teach_env=TEACH_ENV.get(mode))
     sc = score_seed(payload["intact"], payload["intact_rebuild"], payload["lesion"])
     rep = {"runner": "research.runners._lbf_open_ended_production_turn_probe", "mode": mode, "seed": int(seed),
            "k": int(k), "rich": bool(rich), "ask": ASK, "teach": TEACH, "alpha": ALPHA, "n_perm": N_PERM,
@@ -376,6 +399,11 @@ def selftest():
     chk("score: missing arm -> ARM-FAILED", score_seed(None, None, None)["verdict"] == "ARM-FAILED")
     chk("modes: oe_unfixed sets route OFF explicitly", MODES["oe_unfixed"]["BRAIN_OPEN_ENDED_GENERATE_ROUTE"] == "0")
     chk("arms: intact sets lesion OFF explicitly (never a pop)", ARMS["intact"]["BRAIN_SPIKING_DRAW_LESION"] == "0")
+    chk("amendment 1: *_taught modes teach with BRAIN_OPEN_ENDED=0, ask with =1",
+        all(TEACH_ENV[m]["BRAIN_OPEN_ENDED"] == "0" and MODES[m]["BRAIN_OPEN_ENDED"] == "1"
+            for m in ("oe_unfixed_taught", "oe_routed_taught")))
+    chk("amendment 1: original modes carry NO teach override",
+        all(m not in TEACH_ENV for m in ("default", "oe_unfixed", "oe_routed")))
     print("SELFTEST", "PASS" if ok else "FAIL")
     return 0 if ok else 1
 
@@ -384,6 +412,7 @@ def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     ap.add_argument("--worker", action="store_true")
     ap.add_argument("--env", default="{}")
+    ap.add_argument("--teach-env", default="{}", help="env overrides applied only during the TEACH phase")
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--seeds", default=None, help="comma list: run each seed sequentially")
     ap.add_argument("--k", type=int, default=40)
@@ -397,7 +426,8 @@ def main(argv=None):
     if a.selftest:
         return selftest()
     if a.worker:
-        return _worker(json.loads(a.env), a.seed, a.k, a.out, rich=not a.single_fact)
+        return _worker(json.loads(a.env), a.seed, a.k, a.out, rich=not a.single_fact,
+                       teach_env=json.loads(a.teach_env))
     if a.aggregate is not None:
         return 0 if aggregate(a.aggregate, a.out) else 1
     seeds = [int(s) for s in a.seeds.split(",")] if a.seeds else [a.seed]
