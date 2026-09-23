@@ -39,9 +39,17 @@ the `attributable_to_host_weight_drive` diagnostic used in the table below):
   the full registered set (`p_sign_test: null`; `all_defined: false` blocks it by the scorer's own construction),
   and the held-out sign test (excluding seed 42) is likewise blocked (`p_sign_test_heldout_excl_seed42: null`,
   `GO_heldout_only: false`) for the same reason.
-- **`"GO": false`** in the aggregate artifact — both preconditions fail independently (not-all-defined, and the
-  descriptive mean under the floor among the defined seeds), so this is a definite NO-GO on the rule as written,
-  not an ambiguous or partial read.
+- **`"GO": false`** in the aggregate artifact. `all_defined` is false (seed 100 UNDEFINED); the registered 0.10
+  floor is a comparison against the MEAN Delta over all 6 seeds, which cannot even be evaluated while one seed is
+  UNDEFINED, so the 0.09375 mean over the 5 DEFINED seeds above is descriptive here, not a second registered
+  precondition failing independently of `all_defined`. This is still a definite NO-GO on the rule as written, not
+  an ambiguous or partial read: crediting seed 100 with its most generous possible reading, Delta = 0, instead of
+  UNDEFINED, still gives a 6-seed mean of ~0.078 and a sign test of 5-of-6-positive at p = 7/64 ≈ 0.109 (still under the 0.10 floor, still not < 0.05). <!--derived-->
+- **The registered prediction FAILED.** PREREG amendment 3 predicted GO from the honest power simulation
+  (`research/findings/raw/_load_bearing/_oe_production_turn/a3_power_simulation/power_sim.json`, `delta_mean`
+  0.19270833333333334 over 6 bank seeds, clearing the 0.10 floor by roughly 1.9x — mean Delta 0.193 rounded). <!--derived-->
+  The observed mean over the 5 DEFINED seeds is 0.09375 — under the 0.10 floor, and roughly half
+  the power simulation's predicted effect size.
 
 | seed | verdict | delta | perm p (descriptive) | attributable_to_host_weight_drive | reason if UNDEFINED |
 |---|---|---|---|---|---|
@@ -67,8 +75,13 @@ read"). Here, empirically, on the actual 54-session harvest: `stored_facts_equal
 all 6 seeds (verified in each seed's own `default_s<seed>_a3_verdict.json`), so the added check never fires and
 changes no verdict. Re-scoring this same harvest with the scorer exactly as it stood at `eefdd666a` (extracted
 standalone and run against a scratch copy of the same 54 session files, output discarded rather than committed
-over the amended verdicts) gives a **byte-identical** `summary` block to the one above. **Both the as-registered
-and the amended scorer read this harvest as NO-GO, for the identical reasons.**
+over the amended verdicts) gives **the same aggregate `summary` block and the same verdict, delta, reason and GO
+field on every one of the 6 per-seed records — not a byte-identical file.** The `summary` block's `abstain_rate`
+field serializes as a tuple in the amended scorer's in-memory run versus a list in the as-registered scorer's
+(both encode to the same JSON values), and each as-registered per-seed record lacks the
+`attributable_to_host_weight_drive` diagnostic field (a round-5, descriptive-only addition, not part of either
+scorer's GO rule) — those are the only differences. **Both the as-registered and the amended scorer read this
+harvest as NO-GO, for the identical reasons.**
 
 ## Session validity (all 54 governed sessions + the seed-7 smoke)
 

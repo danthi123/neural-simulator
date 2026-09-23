@@ -286,28 +286,52 @@ manufacture support for one.
 `eefdd666a` (the commit this PREREG's amendment 3 itself names as "committed before this job" — the as-registered
 list, extracted from that commit and run standalone against the same session files, output discarded to a scratch
 directory so it does not overwrite the amended scorer's committed verdicts). On the actual 54-session harvest the
-two are **byte-identical**: `stored_facts_equal_across_sessions` reads `True` for all 6 seeds (no seed's sessions
-disagree on `stored_facts`), so the added check never fires and contributes no `reasons` entry either way. The
-governed verdict finding reports the amended-scorer output as primary (it is the more complete check and is now
-disclosed here) and states this equivalence rather than reporting two different numbers.
+two give **the same aggregate summary and the same verdict, delta, reason and GO field on every one of the 6
+per-seed records — not byte-identical files.** `stored_facts_equal_across_sessions` reads `True` for all 6 seeds
+(no seed's sessions disagree on `stored_facts`), so the added check never fires and contributes no `reasons` entry
+either way, and the sign test, mean-Delta and `GO` outcome match exactly. Two things differ at the file level and
+do not affect this: the aggregate `summary` block's `abstain_rate` field serializes as a tuple under the amended
+scorer's in-memory run versus a list under the as-registered scorer's (both encode the same values once written
+as JSON), and each as-registered per-seed record lacks the `attributable_to_host_weight_drive` diagnostic field
+(a round-5 addition, descriptive only, not part of either scorer's GO rule). The governed verdict finding reports
+the amended-scorer output as primary (it is the more complete check and is now disclosed here) and states this
+equivalence rather than reporting two different numbers.
 
-**Verifying "no a3 result had been read when it was made" against artifact mtimes.** The 54 governed session files
-(+ 54 `.prov.json` sidecars) were staged at
+**Verifying "no a3 result had been read when it was made" against artifact mtimes — CORRECTED (round-7 re-review,
+2026-09-23; the round-7 commit message and the original version of this paragraph both used the wrong
+timestamps).** The 54 governed session files (+ 54 `.prov.json` sidecars) were staged at
 `research/findings/raw/_load_bearing/_oe_production_turn/aws2_a3/a3/default/` in the PRIMARY checkout only — an
 untracked directory, never present in any git worktree (including the round-5 fixer's own worktree,
-`wf_6cf1082d-b06-2`) unless that worktree separately fetched it. Their filesystem mtimes range from
-**2026-09-23 16:58:22 -0400** (the first seed-42 file) to **17:47:11 -0400** (the last seed-102
-`intact_rebuild` file) — i.e. every file had already landed on the local machine's disk by 17:47:11, just **9
-seconds before** the `a9eda3d0a` commit at 17:47:20. This does not confirm the claim: it shows the data existed
-on disk (in a directory outside the fixer's own worktree) before the commit, so it was at least *physically
-possible* for an agent with primary-checkout filesystem access to have opened one, and the fixer's own worktree
-does not by itself prove isolation was respected. Two things support the claim rather than refute it: (1) the
-timing is far too tight (9 seconds) for the harvest to have been read in full and reacted to before that commit;
-and (2) `git log --all -- 'research/findings/raw/.../a3/default/*' 'research/findings/raw/.../a3_smoke/*'` over
-this lane's entire history returns **no commit, including `a9eda3d0a` itself** — the fixer never committed, cited,
-or referenced any a3 session or verdict artifact, which is what would be expected if it had never opened one.
-**Net: the claim is NOT FALSIFIED by mtimes, but it is also not provably true from mtimes alone** (I have no
-access to that session's own transcript); it is reported here as corroborated-but-unverified, not confirmed.
+`wf_6cf1082d-b06-2`) unless that worktree separately fetched it. The originally-cited range,
+**2026-09-23 16:58:22 -0400** to **17:47:11 -0400**, is each file's filesystem `mtime`, which the rsync pull
+preserves from the AWS box — it records when a file was WRITTEN THERE, not when it ARRIVED HERE, so "just 9
+seconds before the commit" was never a measurement of local arrival time.
+
+The local arrival (birth, `stat %w`) times, re-measured directly against the same 54 files in the PRIMARY
+checkout, show the pull actually landed them in ten batches roughly every 5 minutes: 16:59:58, 17:05:01, 17:10:03,
+17:15:04, 17:20:06, 17:25:08, 17:30:10, 17:35:11, 17:40:14, 17:45:15, and a final batch at 17:50:16. **50 of the 54
+files — every file for seeds 42, 43, 44, 100 and 101 — had landed on local disk between 2 and 47 minutes BEFORE
+the `a9eda3d0a` commit at 17:47:20, not 9 seconds before it.** Only the last 4 files (seed 102's `intact_n3`,
+`intact_rebuild_n0`, `lesion_n2` and `lesion_n3`) landed at 17:50:16, roughly 3 minutes AFTER the commit. **The
+"timing is far too tight to have been read and reacted to" argument is WITHDRAWN**: it rested on the wrong
+timestamp, and a window of up to 47 minutes, open on 5 of the 6 seeds' full session data, is not tight — so this
+argument no longer supports the claim, though it does not refute it either (a 47-minute window is not proof
+someone read the files, only that they could have).
+
+What still holds, from the same evidence as before: the files sat in a directory outside the fixer's own
+worktree, reachable only by deliberately fetching or otherwise reaching into the PRIMARY checkout's untracked
+staging path — not something an isolated worktree does by default; and
+`git log --all -- 'research/findings/raw/.../a3/default/*' 'research/findings/raw/.../a3_smoke/*'` over this
+lane's entire history returns **no commit, including `a9eda3d0a` itself** — the fixer never committed, cited, or
+referenced any a3 session or verdict artifact, which is what would be expected if it had never opened one. **Net:
+whether a3 results were read before `a9eda3d0a` is UNSETTLED by mtime evidence, and honestly more open than the
+original wording implied — the great majority of the harvest COULD have been read, since it sat available
+locally for up to 47 minutes; this correction does not claim it was not.** Critically, the verdict does not turn
+on settling this either way: the added check is UNDEFINED-only and strictly conservative (see "Direction" above)
+— it can only ever convert a would-be GO into a NO-GO, never manufacture support for one — and it did not fire on
+this harvest at all (`stored_facts_equal_across_sessions` reads `True` on all 6 seeds). Even a fixer who had read
+the harvest before adding the check could not have used it to produce a favorable result; that is the argument
+this disclosure actually rests on, not the timing.
 
 ### Why amendment 2's statistic is withdrawn as a GO rule
 
