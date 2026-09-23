@@ -18,8 +18,11 @@ discrimination anti-cheat FAILED) was rejected by adversarial review for four re
      `SEEDS_HELDOUT` never looked at before this run; the canonical six are reported as IN-SAMPLE.
   3. NO NULL. v2 tests the detector itself against a permutation null: on each seed's open-loop lattice scan,
      the detector's alarms are scored (+1 an alarm the scan never recovers from, -1 one it does recover from),
-     and the same detector is run on 1000 within-seed shuffles of the same scans. The unit of analysis is the
-     SEED (one scan per independent substrate), never serially dependent steps of one trajectory.
+     and the same detector is run on 1000 WITHIN-SCAN shuffles of the same scans. CORRECTED (v2 prereg
+     Amendment 1, before any calibration result was read): the exchangeable unit is a LATTICE POINT within one
+     seed's own scan (`rng.shuffle` permutes that scan's 11 `rel` values), not the seed -- the seed is only the
+     unit the per-scan scores are SUMMED over to form T. This tests within-scan gain-order structure, not
+     step-to-step measurement jitter; see Amendment 1 for the jitter-specific descriptive check.
   4. BYTE-IDENTICAL INFERRED. v2's `--default-off-compare` builds the PRODUCTION organ
      (`ProspectiveMemoryOrgan`) with the flag unset in this tree AND in a `git archive` extraction of the
      PINNED pre-change SHA `PINNED_PRE_CHANGE_SHA`, runs one scripted intention/hold/cue session in each, and
@@ -38,7 +41,12 @@ THE LAW (identical for every seed; no seed-keyed branch):
   when S_i > h: ALARM -> ceiling_{i} = the last gain at which S was 0 (Page's change-point estimate), S := 0,
                 and the SAME integral law continues under the lowered ceiling.
   Converged when |g_{i+1} - g_i| < G_TOL for CONVERGE_STREAK consecutive iterations.
-  REPORTED = (g_last, rel measured at g_last) -- the settled state a running homeostat would actually sit at.
+  REPORTED = (g_last, rel measured at g_last) -- the settled state the closed loop would actually sit at.
+  CORRECTED (v2 prereg Amendment 1): REL_TARGET=0.30 exceeds every seed's rel anywhere on record (max observed
+  0.2956), so for a climber (default_rel < REL_TARGET) this is NOT a set-point homeostat reaching an interior
+  equilibrium -- delta stays positive at every visited gain, so it is a BOUNDED MAX_STEP GAIN-CLIMBER whose only
+  stop short of G_CEILING_CAP is a CUSUM alarm. For a non-climber it holds at G_FLOOR. See Amendment 1 for the
+  full derivation and its consequence for what a per-seed GO on a climber actually tests.
 
   SIM_BACKEND=numpy .venv/bin/python -m research.runners._pmem_live_cliff_detector_derisk --selftest
   ... --calibrate --seed 7            # one calibration lattice scan (seeds 7..12 only)
@@ -171,10 +179,14 @@ def detector_statistic(scans, k: float, h: float) -> int:
 
 
 def null_test(scans, k: float, h: float, n_perm: int = NULL_PERMS, rng_seed: int = NULL_RNG_SEED) -> dict:
-    """Permutation null: the SAME detector on within-seed shuffles of the SAME open-loop scans. Each scan is one
-    independent substrate (a seed), so the seed is the exchangeable unit; steps within a scan are never treated
-    as independent samples. UNDEFINED (p=None) if the detector raises no alarm at all on the real scans -- a
-    detector that never fired has shown nothing, which is not the same as passing."""
+    """Permutation null: the SAME detector on WITHIN-SCAN shuffles of the SAME open-loop scans. CORRECTED (v2
+    prereg Amendment 1): `rng.shuffle(p)` permutes the 11 `rel` values of EACH SEED'S OWN scan, so the
+    exchangeable unit is a lattice point within one seed's scan, never the seed itself -- the seed is only the
+    unit the per-scan scores are SUMMED over to form T. H0 per scan: that seed's 11 `rel` values carry no
+    gain-order structure. This is a within-scan gain-order test, not a step-to-step jitter test (a jitter-only
+    scan's range sits below h, so a shuffle raises an alarm almost only when the scan already contains a real
+    drop). UNDEFINED (p=None) if the detector raises no alarm at all on the real scans -- a detector that never
+    fired has shown nothing, which is not the same as passing."""
     scans = [list(map(float, s)) for s in scans]
     dets = [detect_scan(s, k, h) for s in scans]
     n_alarm = sum(1 for d in dets if d["alarm"])
@@ -611,7 +623,7 @@ def job_pull(prefix: str) -> int:
         ls = subprocess.run(["ssh", "-o", "BatchMode=yes", n, f"ls {_REMOTE_V2}/ 2>/dev/null"],
                             capture_output=True, text=True, timeout=60).stdout.split()
         for f in ls:
-            if f.startswith(prefix) and f.endswith(".json"):
+            if f.startswith(prefix) and f.endswith(".json") and not f.endswith(".prov.json"):
                 p = os.path.join(V2_DIR, f)
                 if os.path.exists(p) and not os.path.exists(p + ".prov.json"):
                     _write_json(p + ".prov.json", {
