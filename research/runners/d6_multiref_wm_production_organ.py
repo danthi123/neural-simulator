@@ -65,10 +65,13 @@ HONEST RESIDUALS (declared; match the de-risk's named residuals + the task's nam
   * The referent EXTRACTION (which tokens are the discourse referents) is a host parse, bounded by a small referent
     lexicon + a coordinated-NP pattern — the same vocab-ceiling class the comprehension organ declares.
     OPT-IN CONVERSION (2026-09-23, `BRAIN_LEARNED_REFERENT_LEXICON`, default OFF): an off-table word is admitted iff
-    the corpus-LEARNED, spiking-realized referent (noun-category) detector calls it a referent
-    (`research/runners/lexicon_learned_referent.py`; de-risk `_lexicon_learned_referent_derisk.py`);
-    `BRAIN_LEARNED_REFERENT_LESION=1` zeroes its spiking drive -> scope reverts to the hand table. Also reaches the
-    activity-silent WM organ, which reuses `extract_referents`.
+    the v2 referent (noun-category) detector's coupled spiking WTA calls it a referent — graded drive through
+    Hebbian-learned frame->category synapses, reciprocal FSI lateral inhibition, host read-out of the winner
+    (`research/runners/lexicon_spiking_frame_category.py`; de-risk `_lexicon_spiking_referent_derisk.py`). The v1
+    label-spreading detector (`lexicon_learned_referent.py`) was host-computed + spike-RELAYED and is no longer used
+    here. `BRAIN_LEARNED_REFERENT_LESION=1` restores the learned frame->category synapses to their pre-learning
+    values (a lesion of that ONE learned edge; the circuit stays). Also reaches the activity-silent WM organ, which
+    reuses `extract_referents`.
   * The BIND (referent -> local slot) is the host-numpy RUNG6c binder; the register READ is a host argmax over the
     bank's firing rates (a read-out instrument). Capacity is binder-capped at _K=6 distinct referents (the de-risk's
     valid regime, ceiling k=5).
@@ -183,15 +186,17 @@ def is_hold_query(text: str) -> bool:
 
 def learned_referent_enabled() -> bool:
     """`BRAIN_LEARNED_REFERENT_LEXICON` in {1,true,yes,on} -> extend the referent scope beyond the hand
-    `_REFERENT_NOUNS` table to the corpus-LEARNED, spiking-realized open-vocab referent (noun-category) detector
-    (`research/runners/lexicon_learned_referent.py`). DEFAULT-OFF: unset -> byte-identical hand-table path."""
+    `_REFERENT_NOUNS` table to the corpus-learned open-vocab referent (noun-category) detector whose decision is a
+    coupled spiking WTA (`research/runners/lexicon_spiking_frame_category.py`). DEFAULT-OFF: unset -> byte-identical
+    hand-table path."""
     v = os.environ.get("BRAIN_LEARNED_REFERENT_LEXICON")
     return v is not None and v.strip().lower() in ("1", "true", "yes", "on")
 
 
 def learned_referent_lesioned() -> bool:
-    """`BRAIN_LEARNED_REFERENT_LESION` in {1,true,yes,on} -> zero the learned detector's spiking-pool drive: every
-    off-table word abstains, so the referent scope reverts exactly to the hand table (load-bearing lesion)."""
+    """`BRAIN_LEARNED_REFERENT_LESION` in {1,true,yes,on} -> restore the detector's Hebbian-learned frame->category
+    synapses to their pre-learning values (lesion of the learned edge; the WTA circuit and its drive stay). What the
+    scope then becomes is MEASURED by the de-risk, not assumed."""
     v = os.environ.get("BRAIN_LEARNED_REFERENT_LESION")
     return v is not None and v.strip().lower() in ("1", "true", "yes", "on")
 
@@ -200,9 +205,9 @@ def _flag_learned_referent_lexicon():
     """The process-shared deployment lexicon when the flag is on (lesion applied per call), else None."""
     if not learned_referent_enabled():
         return None
-    from research.runners.lexicon_learned_referent import get_lexicon
+    from research.runners.lexicon_spiking_frame_category import get_lexicon
     lex = get_lexicon()
-    lex.set_lesion(learned_referent_lesioned())
+    lex.set_lesion("learned_edge" if learned_referent_lesioned() else None)
     return lex
 
 
@@ -212,8 +217,8 @@ def extract_referents(text: str, max_refs: int = R_MAX, referent_lexicon=None):
     mention (role-by-position marker). Capped at max_refs and at the binder's _K distinct slots.
 
     `referent_lexicon` (default None -> read `BRAIN_LEARNED_REFERENT_LEXICON`; unset -> byte-identical hand path): an
-    object with `is_referent(word) -> bool` (the learned, spiking-realized open-vocab detector). A word the hand table
-    lacks is admitted iff the learned detector's spiking WTA calls it a referent; the hand table always wins first."""
+    object with `is_referent(word) -> bool` (the learned open-vocab detector). A word the hand table lacks is admitted
+    iff the learned detector calls it a referent; the hand table always wins first."""
     lexicon = referent_lexicon if referent_lexicon is not None else _flag_learned_referent_lexicon()
     raw = _WORD_RE.findall(text or "")
     refs: list[str] = []

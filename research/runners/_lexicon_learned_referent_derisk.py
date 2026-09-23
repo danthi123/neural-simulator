@@ -328,6 +328,7 @@ def main():
     if a.score:
         paths = sorted(glob.glob(os.path.join(a.score, "lexicon_referent_s*.json")) if os.path.isdir(a.score)
                        else glob.glob(a.score))
+        paths = [p for p in paths if not p.endswith(".prov.json")]      # provenance sidecars match the glob
         out = score(paths)
         print(json.dumps(out, indent=1))
         dst = os.path.join(a.score if os.path.isdir(a.score) else os.path.dirname(a.score), "verdict.json")
