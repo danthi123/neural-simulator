@@ -59,3 +59,18 @@ webapp/ edit (the coupling is the shipped default-off `BRAIN_WKV_MOUTH_AFFECT_NE
 `_lbf_affect_tone_neural_coupling_derisk`, already on main). This does NOT retire the additive-bias shortcut nor claim
 D5 "feel" DONE — affect-coloring stays load-bearing on the TEMPLATED decision field (the shipped #1-metric probe); it
 is the OPEN-output expression that is walled.
+
+## External research (DR-gate, 2026-09-23) — the proven mechanism is affect-CONDITIONED GENERATION, not decode-bias
+The deep-research-at-wall external half (recorded in `research/queue/.external_searches.jsonl`) found the proven
+class for making affect load-bearing on generated text: **Affect-LM (Ghosh, Chollet, Laksana, Morency, Scherer,
+ACL 2017)** conditions the LM GENERATION with a beta-gated affect-category energy term (NOT a post-hoc decode bias);
+continuous **VAD-conditioning** (Guo, Xu & Chua, arXiv:2111.04730 "Emotional Prosody Control"; EmotiCrafter
+arXiv:2501.05710) decouples affect from content by conditioning generation on a continuous valence-arousal embedding.
+This directly explains BOTH our NO-GOs: additive top-margin bias AND neuromodulator-at-decode are both DECODE-POINT
+interventions; the proven mechanism conditions the GENERATION REPRESENTATION. So the next affect method is an
+affect-CONDITIONED mouth — train-time affect conditioning of the mouth's generation, or the real-Qwen prompt-
+conditioned mouth (per the affect-is-multimodal owner steer: ground it, don't decode-clever it) — NOT another decode
+lever. This is a larger build with an owner-steer fork (train-time-conditioning vs Qwen-prompt-conditioning, and the
+affect-laden-data direction), flagged for the owner per the autonomous charter. Sources:
+[Affect-LM (ACL 2017)](https://www.researchgate.net/publication/318740920), [Emotional Prosody Control
+(arXiv:2111.04730)](https://arxiv.org/html/2111.04730).
