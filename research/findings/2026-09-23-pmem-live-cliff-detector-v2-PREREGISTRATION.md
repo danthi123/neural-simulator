@@ -251,3 +251,27 @@ not completed (5 of 6 calibration scans landed at commit time; `calib_s12` in fl
 multipliers and their calibration source), the default-off byte-identity method, the per-seed GATE criteria
 (read under the corrected §2 description), and the job order. No calibration or evaluation data has been read
 or used to write this amendment.
+
+## Harvest status (updated after Amendment 1 landed, before any eval result is read)
+
+All 6 calibration scans landed (commit `b5253b31c`) and were frozen (commit `325bb805a`: sigma=0.003336,
+k=0.001668, h=0.016679) and pushed sha-verified to both pool nodes (`--push-frozen`, both `sha_match=True`). All
+12 evaluation jobs are now queued/running on the isolated pool revision under these frozen constants: held-out
+200-205 launched first (running on pool42 at commit time); canonical 42/43/44/100/101/102 queued behind them
+(a `pool_queue.sh add` race against the live autodispatcher's own read-modify-write of the SAME queue file
+produced duplicate/apparently-missing entries when checked against the wrong path — resolved by checking the
+dispatcher's actual absolute queue path, `/home/dant123/Projects/sim/research/queue/pool.queue`, not this
+worktree's own tracked copy of that file, and de-duplicating under the same `flock` the dispatcher uses).
+
+**No evaluation result has been read.** Next commands, once all 12 `eval_s*.json` files exist on the pool nodes:
+
+```
+.venv/bin/python -m research.runners._pmem_live_cliff_detector_derisk --pull eval_s
+.venv/bin/python -m research.runners._pmem_live_cliff_detector_derisk --default-off-compare   # already done (06a152f9d); re-verify if desired
+.venv/bin/python -m research.runners._pmem_live_cliff_detector_derisk --aggregate
+.venv/bin/python -m pytest tests/test_pmem_live_cliff_detector.py -q   # test_committed_frozen_constants_reproduce_from_committed_calibration_scans should now run instead of skip
+```
+
+Then write the v2 finding from `verdict.json`, reading the GATE/GO criteria under this amendment's corrected
+description (bounded gain-climber with a CUSUM stop; within-scan gain-order null), and run `verify-go` before
+any board or roadmap status changes beyond the §8 pointer already updated.
