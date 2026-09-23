@@ -5,107 +5,124 @@ lane: load-bearing
 date: 2026-09-23
 ---
 
-# Open-ended generation on the PRODUCTION turn: the draw lesion changes the reply distribution (seed 42), and BRAIN_OPEN_ENDED mode bypassed the draw entirely (2026-09-23)
+# Open-ended generation on the PRODUCTION turn: removing the host likelihood vector from the spiking draw changes the reply (seed 42, one observation), and BRAIN_OPEN_ENDED mode bypassed the draw entirely (2026-09-23)
 
-seed-waiver: seed 42 was run in-session. Seeds 43/44/100/101/102 are staged (see "Staged"), so this is a labelled
-single-seed probe until the 6-seed aggregates land.
+seed-waiver: seed 42 was run in-session and is ONE observation. Seeds 43/44/100/101/102 are staged (see "Staged").
+No multi-seed claim is made here; under the amended rule a single seed cannot reach significance.
 
 Lane `research/open-ended-production-turn-lb` (charter D1). Pre-registration:
 [`docs/plans/2026-09-23-open-ended-production-turn-lb-PREREG.md`](../../docs/plans/2026-09-23-open-ended-production-turn-lb-PREREG.md)
-(committed `4edf6fc10`; amendment 1 `94b71d511`, both before the runs they govern). Instrument:
-`research/runners/_lbf_open_ended_production_turn_probe.py`.
+(committed `4edf6fc10`; amendment 1 `94b71d511`; amendment 2 `4f9cc6b3e`, each before the runs it governs).
+Instrument: `research/runners/_lbf_open_ended_production_turn_probe.py`.
 
-## What was missing
+## Correction after adversarial review (fix round, 2026-09-23)
 
-Earlier rulers both missed the production turn. The single-turn field-diff (finding
-2026-09-21-open-ended-generation-single-turn-not-load-bearing-spiking-plausibility-gate-masks-draw) reads one
-draw. The distributional ruler (`LB_OPEN_ENDED_DISTRIB_PROBE`) samples a synthetic taxonomy world and never runs
-`webapp.server.brain_chat`. This probe drives the real `brain_chat` and teaches a graded chase KB through 13 chat
-turns. It then asks "what might a dog chase" 40 times in the same session and records each reply. The arms are
-intact, intact_rebuild and lesion (`BRAIN_SPIKING_DRAW_LESION=1`), each a fresh process at `BRAIN_CHAT_SEED=42`.
-The statistic is the TV distance between the reply histograms, tested against a label-permutation null (B=10000).
+The first version of this finding overstated four things. Each is corrected below and pinned by a test that fails
+on the pre-fix runner `b34be3f2f` and passes after (11 of the 14 tests in `tests/test_lbf_open_ended_production_turn_probe.py`
+and `tests/test_open_ended_generate_route.py` fail on `b34be3f2f`; all 14 pass at `c07cb09d7`).
 
-## Result, seed 42 (numpy backend, K=40)
+1. **The p-value is withdrawn.** It treated the 40 asks of one session as 40 exchangeable samples and reported
+   p = 1e-4. The asks are serially dependent, and each arm is a deterministic function of the seed (intact and
+   rebuild give the same 40-reply sequence). Seed 42 is ONE observation. Amendment 2 makes the seed the unit: an
+   exact sign-flip test over the seeds' D_s, whose smallest value with one seed is 0.5.
+2. **What the lesion removes is a HOST vector.** `BRAIN_SPIKING_DRAW_LESION=1` replaces
+   w = `_weight_partner((dog, chase), patients)` with np.ones. w is a sum over the host co-occurrence matrix P that
+   `ChatBrain._build_generation_proposer` builds from the stored facts; it is not "the brain's own likelihood". The
+   supportable claim is: that host likelihood vector, transmitted through the spiking WTA, changes the reply.
+3. **The draw is near-argmax here, not a sampler.** The intact bank volunteered the peak (deer) 39/40 times. Drawing
+   p ∝ w over the admissible set would give deer about 3/7. The "distributional sampling" narrative is withdrawn.
+4. **`oe_routed_taught` is not evidence about open-ended mode.** Its teach phase ran with BRAIN_OPEN_ENDED=0 and
+   its routed ask falls through to the default pipeline, so its replies equal `default`'s by construction.
 
-| mode | verdict | intact replies | lesion replies | TV | perm p | null TV q95 | D | draws intact / lesion |
-|---|---|---|---|---|---|---|---|---|
-| `default` (production default turn) | LOAD-BEARING | deer 39, rabbit 1 | rabbit 39, deer 1 | 0.95 | 1e-4 (floor) | 0.20 | +0.95 | 41 / 432 |
-| `oe_unfixed` (BRAIN_OPEN_ENDED=1) | UNDEFINED | ABSTAIN 40 | ABSTAIN 40 | 0 | 1.0 | 0 | - | **0 / 0** |
-| `oe_routed` (+ route fix) | UNDEFINED | ABSTAIN 40 | ABSTAIN 40 | 0 | 1.0 | 0 | - | 16000 / 16000 |
-| `oe_unfixed_taught` (amendment 1) | UNDEFINED | ABSTAIN 40 | ABSTAIN 40 | 0 | 1.0 | 0 | - | **0 / 0** |
-| `oe_routed_taught` (amendment 1) | LOAD-BEARING | deer 39, rabbit 1 | rabbit 39, deer 1 | 0.95 | 1e-4 (floor) | 0.20 | +0.95 | 41 / 432 |
+## Result, seed 42, amendment-2 scoring (numpy, K=40)
 
-Artifacts: `research/findings/raw/_load_bearing/_oe_production_turn/<mode>/<mode>_s42_verdict.json`, for example
-research/findings/raw/_load_bearing/_oe_production_turn/default/default_s42_verdict.json,
-research/findings/raw/_load_bearing/_oe_production_turn/oe_routed_taught/oe_routed_taught_s42_verdict.json,
-research/findings/raw/_load_bearing/_oe_production_turn/oe_unfixed_taught/oe_unfixed_taught_s42_verdict.json and
-research/findings/raw/_load_bearing/_oe_production_turn/oe_routed/oe_routed_s42_verdict.json. Each has three
-per-arm worker JSONs beside it holding every reply, the stored facts, the draw counter and the likelihood weights.
-In every mode the intact and intact_rebuild reply sequences are identical, an exact list compare.
+Artifact: research/findings/raw/_load_bearing/_oe_production_turn/a2/default/default_s42_verdict.json (worker
+JSONs beside it; the original-scorer verdicts stay at `_oe_production_turn/<mode>/<mode>_s42_verdict.json`).
 
-Other details:
-- The lesion held at measurement: 432 of 432 lesion-arm draws went through the ablated sampler, and 0 intact draws
-  did.
-- `attributable_fraction` (TV vs the null-median TV of 0.05) = 0.9473684210526315.
-- The brain's own likelihood weights for (dog, chase, ·): deer 3, rabbit 2, beetle 1, minnow 1. Cat (2) is a
-  stored fact and is excluded as not novel.
-- The intact draw volunteers the likelihood peak (deer). The lesioned draw, with uniform drive, volunteers rabbit
-  instead. That choice comes from the bank's own neuron heterogeneity, not from the association graph.
-- D = mean likelihood weight volunteered, intact minus lesion = 2.975 − 2.025.
+| mode | per-seed verdict | intact replies | lesion replies | D_s | spiking draws intact / lesion |
+|---|---|---|---|---|---|
+| `default` (production default turn) | DEFINED, CHANGED-TOWARD-LIKELIHOOD | deer 39, rabbit 1 | rabbit 39, deer 1 | +0.95 | 41 / 432 |
+| `oe_unfixed` (BRAIN_OPEN_ENDED=1) | UNDEFINED | ABSTAIN 40 | ABSTAIN 40 | - | **0 / 0** |
+| `oe_routed` (+ generate route) | UNDEFINED | ABSTAIN 40 | ABSTAIN 40 | - | 16000 / 16000 |
+| `oe_unfixed_taught` (amendment 1) | UNDEFINED | ABSTAIN 40 | ABSTAIN 40 | - | **0 / 0** |
+| `oe_routed_taught` (amendment 1; NOT independent) | as `default` | deer 39, rabbit 1 | rabbit 39, deer 1 | +0.95 | 41 / 432 |
+
+- Host weight vector for (dog, chase, ·): deer 3, rabbit 2, cat 2 (a stored fact, not novel), beetle 1,
+  minnow 1. Approximate admissible set: beetle, deer, minnow, rabbit.
+- Chance base rate for this seed: a uniformly random lesion favourite would differ from the intact modal with
+  probability 0.75, and sit below the peak (D_s > 0) with probability 0.75. So one seed with D_s > 0 is weak
+  evidence on its own; the 6-seed sign-flip is the test.
+- The lesion held at measurement: 432 of 432 lesion-arm spiking draws were ablated, 0 intact draws were.
+- The user-visible reply changes ("perhaps the dog chases the deer" vs "... the rabbit").
+- The lesioned arm's favourite (rabbit) is set by the draw bank's own neuron heterogeneity under uniform drive.
+- The oe_unfixed_taught seed-43 control also reads UNDEFINED with 0 draws
+  (research/findings/raw/_load_bearing/_oe_production_turn/a2/oe_unfixed_taught/oe_unfixed_taught_s43_verdict.json).
+
+## What the spiking part contributes
+
+The reply path is: host co-occurrence matrix P → host weight vector w → host affine map to drive
+(base 110 pA + gain 160 pA × w/peak) → Izhikevich soft-WTA bank with OU membrane noise → host argmax over firing
+counts → host plausibility / non-contradiction / moat gates. The lesion removes w, so it cannot isolate the
+spiking step. The staged `host_oracle` arm (`BRAIN_SPIKING_DRAW=0`: the same w drawn by host np.random.choice)
+does. Seed-42 prediction from the numbers above: the spiking bank sharpens toward the host argmax (deer 0.975
+under spiking vs about 0.43 predicted under p ∝ w). If that holds, the spiking bank's contribution at this operating
+point is a near-deterministic selection of the host-likelihood peak, and the loss of generative diversity is a
+defect to record, not a sampling property to credit.
 
 ## The defect found: the BRAIN_OPEN_ENDED reply never reached the generative draw
 
-With `BRAIN_OPEN_ENDED=1` every turn is answered by `webapp/open_ended_chat.answer_turn`, and that function never
-calls `chat.gate`. `extract_topic("what might a dog chase")` returns the whole prompt, retrieval finds no facts,
-and the reply is the fixed "I'm not sure about ..." abstain. The data confirm this: the draw count is **0 in both
-arms**, and that holds even when the brain knows 13 facts (`oe_unfixed_taught`). In the mode the D4 conversation
-battery targets, the open-ended reply was lesion-invariant to the spiking draw by construction.
+With `BRAIN_OPEN_ENDED=1` every turn is answered by `webapp/open_ended_chat.answer_turn`, which never calls
+`chat.gate`. For "what might a dog chase", `extract_topic` returns the whole prompt, retrieval finds nothing, and the
+reply is the fixed abstain. The draw count is **0 in both arms**, even with 13 facts known (`oe_unfixed_taught`).
 
-**Fix (default-OFF): `BRAIN_OPEN_ENDED_GENERATE_ROUTE`**, in `webapp/server.py::_open_ended_generate_route`. An
-explicit generation prompt skips the free-talk block and falls through to the ordinary pipeline's GENERATE channel.
-The prompt test is the ChatBrain's own `_parse_open_ended`, the same conservative pattern set gate() uses. With the
-fix, `oe_routed_taught` reaches the draw (41 draws). Its replies are identical, as an exact list compare, to the
-`default` mode's replies, and it reads LOAD-BEARING on seed 42.
+**Fix 1 (default-OFF): `BRAIN_OPEN_ENDED_GENERATE_ROUTE`** (`webapp/server.py::_open_ended_generate_route`). An
+explicit generation prompt (the ChatBrain's own `_parse_open_ended`) skips the free-talk block and reaches the
+ordinary GENERATE channel.
 
-Flag-off behaviour: the function returns before touching `chat`. With BRAIN_OPEN_ENDED off it is never called,
-because the AND short-circuits. `tests/test_open_ended_generate_route.py` pins both cases. Byte-identity of the
-flag-off reply is NOT asserted in data; it was inferred from code, so it counts as unverified under docs/TERMS.md.
+**Second bypass: open-ended mode did not learn from being told.** The teach assertions also went to the free-talk
+path, so `stored_facts` stayed at the 5 build-time facts and `oe_routed` had nothing novel to volunteer.
 
-## A second bypass, not fixed here: open-ended mode does not learn from assertions
+**Fix 2 (default-OFF, this fix round): `BRAIN_OPEN_ENDED_ACQUIRE_ROUTE`**
+(`webapp/server.py::_open_ended_acquire_route`). A told SVO assertion reaches in-loop acquisition. The test is
+`ChatBrain._is_acquisition_candidate`, a side-effect-free mirror of `_maybe_acquire`'s accept predicate, pinned equal
+to it on 14 probe inputs with the B3 organ on and off. The caller now reads
+`BRAIN_OPEN_ENDED and not _open_ended_brain_route(chat, msg)`; with both route flags off, `chat` is never touched.
 
-With BRAIN_OPEN_ENDED=1 the 13 teach assertions also went to the free-talk path. The replies were of the form
-"I'm not sure about wolf chase the rabbit…", in-loop acquisition never ran, and `stored_facts` stayed at the 5
-build-time facts. As a result, `oe_routed` exercises the draw (16000 draws) but has nothing novel to volunteer, so
-it is UNDEFINED. Amendment 1 isolates the ASK path: the `*_taught` modes teach through the ordinary path. The
-teach-path bypass is a separate open defect: with BRAIN_OPEN_ENDED=1 the brain does not learn from being told.
-Next method: route `_maybe_acquire`-eligible SVO assertions the same way, default-OFF, and measure it with this
-probe's `oe_routed` mode.
+**The true open-ended configuration is staged:** mode `oe_routed_full` teaches AND asks under BRAIN_OPEN_ENDED=1 with
+both routes. Every turn of this protocol then runs the ordinary pipeline, so its replies are expected to equal
+`default`'s; the harvest checks that exactly (`equals_default_replies`). If equal, the honest wording is: open-ended
+mode reaches the same default GENERATE path through the routes. That is not a second, independent mechanism.
+
+Flag-off identity: NOT yet asserted in data. The staged identity lane compares every full response body of a fixed
+9-turn chat at the pinned pre-change SHA `4c141b8e8` against the fix commit `8c5d7b03a`, env sets `default` and
+`oe_off`, with a pre-vs-pre control. Until it lands the wording is "expected unchanged (unverified)".
 
 ## What is NOT claimed
 
-- No 6-seed claim. Seed 42 only; the gate for "load-bearing on the production turn" is 6/6 per mode.
-- Nothing about a single turn. This is a distributional claim over 40 asks.
-- The lesioned distribution is not "uniform". It is set by the bank's intrinsic heterogeneity. A seed whose
-  heterogeneity favourite coincides with the likelihood peak would read a small TV; the 6-seed run tests this
-  honestly.
-- No production default was flipped.
+- No multi-seed claim, and no significance: seed 42 is one observation (sign-flip p over one seed = 0.5).
+- Not that the spiking part is load-bearing: the lesioned input is a host vector.
+- Not distributional sampling: at this operating point the draw is near-argmax.
+- Nothing about BRAIN_OPEN_ENDED free-talk turns: only explicit generation prompts are routed.
+- No production default was flipped; no sim/ edit.
 
 ## Declared host shortcuts
 
-- The KB, the prompt and the permutation statistic are world and instrument.
-- In the oe modes the warm Qwen faculty is a stub, with BRAIN_OPEN_ENDED_NO_QWEN_FALLBACK=1. FORM is not measured
-  here.
-- The draw is a `cp_firing_states` read on an Izhikevich WTA bank.
-- The plausibility gate is the production default spiking associative read.
+- Teach KB + ask prompt (world); histogram / TV / sign-flip statistic (instrument).
+- Co-occurrence matrix P and the weight vector w (the lesioned input), and the affine drive map.
+- Argmax over the bank's firing counts (host read-out of the spiking winner).
+- Hypothesis role induction, the SVO template, the RF-composer moat verify.
+- Prompt routers: `_parse_open_ended` and `_is_acquisition_candidate` (host regex / token rules).
+- Warm Qwen faculty stubbed in the oe_* modes (FORM not measured).
+- Spiking: the Izhikevich + OU-noise WTA bank whose firing decides the winner; the production-default spiking
+  plausibility read.
 
-## Staged (6-seed, detached, memcapped, local numpy)
+## Staged (amendment 2; local, numpy, memcapped, each lane started only when tools/mem_ok.sh passes)
 
-`bash research/runners/_lbf_open_ended_production_turn_stage.sh <mode> <parallel>` was launched for these modes:
-- `default` (parallel 2)
-- `oe_routed_taught` (parallel 2)
-- `oe_unfixed_taught` (parallel 1)
-
-Each run covers seeds 43, 44, 100, 101 and 102. Per-mode aggregates land at
-`research/findings/raw/_load_bearing/_oe_production_turn/<mode>_6seed_aggregate.json`, and logs in `logs/`. The
-pool was not usable: `pool_queue.sh` validates modules against `~/derisk-pool/sim`, which lacks this runner, and
-pool42 provisioning timed out.
+`bash research/runners/_lbf_open_ended_production_turn_stage_a2.sh <pre_tree> <post_tree>`, launched from worktree
+`/home/dant123/Projects/sim/.claude/worktrees/wf_a686cbcd-9ff-2`. Lanes: flag-off identity; `default` host_oracle arm
+(6 seeds); `oe_routed_full` (6 seeds, two lanes). The `default` and `oe_unfixed_taught` arms for seeds 43–102 come
+from the original staging in worktree `/home/dant123/Projects/sim/.claude/worktrees/wf_6cf1082d-b06-2` (unchanged
+worker protocol; the 5-seed `oe_routed_taught` run there was stopped as non-independent). Harvest (idempotent):
+`bash research/runners/_lbf_open_ended_production_turn_harvest_a2.sh`, writing
+`research/findings/raw/_load_bearing/_oe_production_turn/a2/<mode>_aggregate.json`. GO per mode: 6 seeds, all
+DEFINED, sign-flip p < 0.05, with the held-out 5-seed p reported beside it (seed 42 is in-sample for amendment 2).
