@@ -1,0 +1,79 @@
+{
+  "tool": "research.runners.d6_offpath_parity",
+  "mode": "store",
+  "seed": 42,
+  "branch_head": "b2d6d8399b56bfa3aafc186305415bb48edcf51c",
+  "branch_worktree_dirty": true,
+  "ref": "e98b0b0463eaa7940aadf2ba74b83990e874a6e2",
+  "ref_sha": "e98b0b0463eaa7940aadf2ba74b83990e874a6e2",
+  "reference_is_pre_change": true,
+  "branch": {
+    "mode": "store",
+    "d6_module_present": true,
+    "store_conns_sha256": "a61db61e1fce8843e3e626e6e79d97bafef87752922126ac8fbde96eacbfa1a4",
+    "n_store_conns": 384,
+    "kb": [
+      {
+        "agent": "dog",
+        "action": "chase",
+        "patient": "cat",
+        "polarity": "AFFIRM"
+      },
+      {
+        "agent": "wolf",
+        "action": "hunt",
+        "patient": "deer",
+        "polarity": "AFFIRM"
+      },
+      {
+        "agent": "fox",
+        "action": "eat",
+        "patient": "berry",
+        "polarity": "AFFIRM"
+      }
+    ],
+    "recall": {
+      "dog/chase": "cat",
+      "wolf/hunt": "deer",
+      "fox/eat": "berry"
+    }
+  },
+  "reference": {
+    "mode": "store",
+    "d6_module_present": false,
+    "store_conns_sha256": "a61db61e1fce8843e3e626e6e79d97bafef87752922126ac8fbde96eacbfa1a4",
+    "n_store_conns": 384,
+    "kb": [
+      {
+        "agent": "dog",
+        "action": "chase",
+        "patient": "cat",
+        "polarity": "AFFIRM"
+      },
+      {
+        "agent": "wolf",
+        "action": "hunt",
+        "patient": "deer",
+        "polarity": "AFFIRM"
+      },
+      {
+        "agent": "fox",
+        "action": "eat",
+        "patient": "berry",
+        "polarity": "AFFIRM"
+      }
+    ],
+    "recall": {
+      "dog/chase": "cat",
+      "wolf/hunt": "deer",
+      "fox/eat": "berry"
+    }
+  },
+  "compared_keys": [
+    "store_conns_sha256",
+    "kb",
+    "recall"
+  ],
+  "diff_keys": [],
+  "byte_identical": true
+}
