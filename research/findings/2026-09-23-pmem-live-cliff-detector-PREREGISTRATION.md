@@ -90,16 +90,19 @@ cap and can only shrink, live, when THIS seed's own measurement says to:
      step is treated as having found the cliff edge immediately (no need to spend a second step confirming a
      collapse this large; the parent build's own pilot showed a comparable single-step collapse never recovers
      by higher gains).
-   - **Sustained-decline check:** else, if `rel_i < rel_best` (any decrease from the running best), increment a
-     `decline_streak`; if `decline_streak >= DECLINE_PATIENCE (2)` — i.e. TWO consecutive climbing steps that
-     fail to beat the running best — this is treated as a genuine, non-recovering decline (the parent's own
-     data shows its one known recoverable dip lasted exactly ONE step before recovering past the pre-dip value;
-     patience=2 tolerates that dip while still catching a decline that persists).
+   - **Sustained-decline check:** else, if `rel_i < rel_{i-1}` (a LOCAL decrease from the IMMEDIATELY
+     PRECEDING point — never from the running best; a step that is still below best but ABOVE the preceding
+     point is a RECOVERY, not a decline, and resets the streak), increment a `decline_streak`; if
+     `decline_streak >= DECLINE_PATIENCE (2)` — i.e. TWO consecutive local decreases in a row — this is treated
+     as a genuine, non-recovering decline (the parent's own data shows its one known recoverable dip lasted
+     exactly ONE local-decrease step before recovering past the pre-dip value; patience=2 tolerates that dip
+     while still catching a decline that persists, e.g. seed 100's mild but sustained fall past its own peak).
    - On EITHER trigger: **revert** the candidate `(g, rel)` to `(g_best, rel_best)`, **clamp this seed's live
      ceiling to `g_best`** (below the drop, per the task's own wording), record the event, and declare this
      seed CONVERGED at `g_best` (a pinned, live-detected safety boundary — the direct generalization of the
      parent build's fixed `G_CEILING=9000`, now discovered per seed instead of shipped as one number).
-   - If NEITHER triggers and `rel_i > rel_best`: update the running best and continue.
+   - If NEITHER triggers: update the running best if `rel_i > rel_best`, reset `decline_streak` to 0
+     otherwise (a flat or recovering step), and continue.
 5. **The canonical converged answer for a CLIMBING seed is always `(g_best, rel_best)`** — the best point this
    seed's own trajectory ever measured, whether reached by a cliff-triggered reversion or (for a seed like 101,
    which never declines inside the validated domain) by simply climbing to `G_CEILING_CAP` with the running

@@ -175,6 +175,24 @@ def pmem_live_homeostat_enabled() -> bool:
     return v.strip().lower() in ("1", "true", "yes", "on")
 
 
+def pmem_live_cliff_detector_enabled() -> bool:
+    """Default-OFF. `BRAIN_PMEM_LIVE_CLIFF_DETECTOR` in {1,true,yes,on} -> replace the parent live homeostat's
+    SINGLE GLOBAL cliff-safety ceiling with a genuine LIVE, PER-SEED ceiling discovered from that seed's own
+    measured coincidence trajectory (a local-derivative abrupt-cliff check + a sustained-decline check, both
+    sized from the parent build's own already-committed dip/cliff magnitudes; `_pmem_live_cliff_detector_derisk`,
+    finding `2026-09-23-pmem-live-cliff-detector-*`) -- the named next controller banked by the live homeostat's
+    own honest NO-GO (one uniform ceiling forbade the gain seed 101 needed). The converged gain is cached
+    per-seed WITHIN THIS PROCESS the first time it is needed (the SAME per-process calibration-caching pattern
+    the homeostat bias / plateau theta / live homeostat already use) -- nothing ships pre-computed. Takes
+    PRIORITY over BOTH `BRAIN_PMEM_LIVE_HOMEOSTAT` and `BRAIN_PMEM_OP_STABILIZER` when more than one is set (see
+    `_ensure_pm`). Only takes effect when `BRAIN_PMEM_FACILITATION` is ALSO on. DEFAULT-OFF -> the shipped brain
+    + the battery default use the SAME constant as before (byte-identical); the flag is purely additive."""
+    v = os.environ.get("BRAIN_PMEM_LIVE_CLIFF_DETECTOR")
+    if v is None:
+        return False
+    return v.strip().lower() in ("1", "true", "yes", "on")
+
+
 def pmem_op_stabilizer_enabled() -> bool:
     """Default-OFF. `BRAIN_PMEM_OP_STABILIZER` in {1,true,yes,on} -> replace the single global facilitation gain
     constant (fac_g=6000, uniform across seeds) with this seed's CALIBRATED gain from a per-seed, floor-guarded,
@@ -275,7 +293,10 @@ class ProspectiveMemoryOrgan:
                 if self._facilitation:
                     from research.runners._pmem_facilitation_derisk import FacilitatedHebbianProspectiveMemory
                     fac_g_kw = {}
-                    if pmem_live_homeostat_enabled():
+                    if pmem_live_cliff_detector_enabled():
+                        from research.runners._pmem_live_cliff_detector_derisk import live_cliff_fac_g_for_seed
+                        fac_g_kw["fac_g"] = live_cliff_fac_g_for_seed(self.seed)
+                    elif pmem_live_homeostat_enabled():
                         from research.runners._pmem_live_homeostat_derisk import live_fac_g_for_seed
                         fac_g_kw["fac_g"] = live_fac_g_for_seed(self.seed)
                     elif pmem_op_stabilizer_enabled():
@@ -296,7 +317,10 @@ class ProspectiveMemoryOrgan:
                 if self._facilitation:
                     from research.runners._pmem_facilitation_derisk import FacilitatedProspectiveMemory
                     fac_g_kw = {}
-                    if pmem_live_homeostat_enabled():
+                    if pmem_live_cliff_detector_enabled():
+                        from research.runners._pmem_live_cliff_detector_derisk import live_cliff_fac_g_for_seed
+                        fac_g_kw["fac_g"] = live_cliff_fac_g_for_seed(self.seed)
+                    elif pmem_live_homeostat_enabled():
                         from research.runners._pmem_live_homeostat_derisk import live_fac_g_for_seed
                         fac_g_kw["fac_g"] = live_fac_g_for_seed(self.seed)
                     elif pmem_op_stabilizer_enabled():
