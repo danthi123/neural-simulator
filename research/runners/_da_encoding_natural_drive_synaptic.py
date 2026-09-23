@@ -393,6 +393,81 @@ def aggregate(d):
     return out
 
 
+class _TinyComp:
+    """One synapse per block (D=1): enough to replay the ledger's kernel on a recorded drive."""
+
+    def __init__(self):
+        self.D = 1
+        self.store_conns = []
+
+
+def _replay_blocks(arm, gamma):
+    """Replay the v3 kernel on an arm's RECORDED D1 drive (turn_log a_eff) and recorded tags (tag0_mean), at a
+    different gamma. Returns the z of each block at +24 h. No brain run: the brain's contribution is the recorded
+    drive and the write gains; only gamma changes."""
+    from webapp.da_tag_capture import SynapticTagCaptureLedger
+    pt = arm["point_params"]
+    L = SynapticTagCaptureLedger(0, gamma=gamma, beta=0.0, tau_early_h=pt["tau_e"], tau_tag_h=pt["tau_tag"],
+                                 tau_p_h=pt["tau_p"], tau_z_h=pt["tau_z"])
+    comp = _TinyComp()
+    conv = conversation(arm["condition"])
+    fact_turns = [ti for ti, (_t, fi) in enumerate(conv) if fi is not None]
+    tags = [b["tag0_mean"] for b in arm["blocks"]]
+    with _env({"BRAIN_DA_CAPTURE_LESION": "0", "BRAIN_DA_ENCODING_LESION": "0"}):
+        for ti, rec in enumerate(arm["turn_log"]):
+            L.observe_turn(rec["t_h"], TURN_H, rec["da"], a_override=rec["a_eff"])
+            if ti in fact_turns:
+                k = fact_turns.index(ti)
+                comp.store_conns.append((k + 1, 0, complex(tags[k])))
+                L.on_store(comp, rec["t_h"])
+    L.advance(comp, len(conv) * TURN_H + DELAY_H)
+    return [float(b["z"][0]) for b in L.blocks]
+
+
+def gamma_flip_margins(arm):
+    """EXPLORATORY (not pre-registered): the gamma multiplier at which this arm's 24 h capture pattern would flip,
+    given its recorded drive. For a captured arm: the largest m < 1 at which some block is lost. For an uncaptured
+    arm: the smallest m > 1 at which some block is captured (None if even m = 1e4 cannot: zero drive)."""
+    g = arm["gamma"]
+    z1 = _replay_blocks(arm, g)
+    captured = [z > 0.5 for z in z1]
+
+    def flipped(m):
+        return [z > 0.5 for z in _replay_blocks(arm, g * m)] != captured
+
+    if any(captured):
+        lo, hi = 1e-4, 1.0
+        if not flipped(lo):
+            return {"replay_captured": captured, "m_flip": None}
+        for _ in range(30):
+            mid = (lo * hi) ** 0.5
+            lo, hi = (mid, hi) if flipped(mid) else (lo, mid)    # keep lo flipped, hi unflipped
+        return {"replay_captured": captured, "m_flip": lo}
+    lo, hi = 1.0, 1e4
+    if not flipped(hi):
+        return {"replay_captured": captured, "m_flip": None}
+    for _ in range(30):
+        mid = (lo * hi) ** 0.5
+        lo, hi = (mid, hi) if not flipped(mid) else (lo, mid)
+    return {"replay_captured": captured, "m_flip": hi}
+
+
+def margins(d):
+    rows = []
+    for p in sorted(x for x in glob.glob(os.path.join(d, "seed*.json")) if not x.endswith(".prov.json")):
+        r = json.load(open(p))
+        row = {"seed": r["seed"]}
+        for cond in ("salient", "neutral"):
+            a = _arm(r, cond, "intact")
+            m = gamma_flip_margins(a)
+            row[cond] = dict(m, recorded_24h_correct=a["delayed_counts"]["correct"],
+                             replay_matches_run=[z > 0.5 for z in _replay_blocks(a, a["gamma"])] ==
+                             [b["z_mean"] > 0.5 for b in a["blocks"]])
+        rows.append(row)
+    return {"note": "EXPLORATORY, not pre-registered: gamma multiplier at which each seed's primary intact capture "
+                    "pattern would flip, replaying the kernel on the recorded D1 drive and tags", "rows": rows}
+
+
 def selftest(seed=7):
     """Instrument checks (seed 7, not a gate seed):
       S1 exact pass-through: beta=0, read at the write time -> the composer's own write BIT-EXACT.
@@ -453,9 +528,15 @@ def main():
     ap.add_argument("--selftest", action="store_true")
     ap.add_argument("--aggregate", default=None)
     ap.add_argument("--arm-worker", nargs=2, metavar=("SPEC", "OUT"), default=None)
+    ap.add_argument("--margins", default=None, help="exploratory gamma-flip margins over a result directory")
     a = ap.parse_args()
     global COMPOSER_D
     COMPOSER_D = int(a.D)
+    if a.margins:
+        r = margins(a.margins)
+        json.dump(r, open(os.path.join(a.margins, "margins_exploratory.json"), "w"), indent=2, default=str)
+        print(json.dumps(r, indent=2, default=str))
+        return
     if a.arm_worker:
         spec = json.load(open(a.arm_worker[0]))
         r = run_arm(spec["seed"], spec["condition"], spec["arm"], spec["trace"], spec["point"])
