@@ -76,8 +76,36 @@ import subprocess
 import sys
 import time
 
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+from tools.lab import attributable_to  # noqa: E402 -- round-5 review fix (gates/attribution_required):
+# this file measures a lesion (treatment) against its intact/uniform-drive control in BOTH score_seed (amendment
+# 2) and score_seed_a3 (amendment 3); both now call attributable_to so the subtraction is asked out loud rather
+# than the two numbers sitting one key apart in the verdict JSON unattributed (the gap#5 shape this gate exists
+# to catch).
+
 ALPHA = 0.05
 IN_SAMPLE_SEED = 42        # amendment 2 was designed after seeing seed 42 (declared in-sample)
+# ROUND-5 REVIEW FIX (2026-09-23): "stale withdrawn-scorer artifacts with no withdrawn_by annotation" -- the
+# amendment-2 GO rule (the sign-flip p over per-seed D_s, `aggregate()` below) is withdrawn per Correction 2 item
+# 1 of research/findings/2026-09-23-open-ended-generation-production-turn-draw-lesion-seed42-and-open-ended-mode-
+# bypass.md (each arm is a deterministic function of the seed, so under H0 D_s is exactly 0, not a distribution --
+# the 6-seed sign-flip would only have said "the modal reply changed on six seeds"). Every `score_and_write`/
+# `aggregate` artifact now carries this status so a reader of the JSON alone (not just the finding prose) sees the
+# withdrawal. The per-seed D_s / label / histogram fields THEMSELVES are not withdrawn -- they stay valid
+# DESCRIPTION of seed 42 (Correction 2: "the amendment-2 rows stay as description of seed 42; they are not
+# evidence for a GO") -- only the cross-seed GO/p-value machinery built on top of them is.
+SCORER_STATUS_A2 = {
+    "withdrawn_as_go_rule": True,
+    "withdrawn_by": "research/findings/2026-09-23-open-ended-generation-production-turn-draw-lesion-seed42-and-"
+                    "open-ended-mode-bypass.md#correction-2-after-the-re-review-of-c807f869b-amendment-3",
+    "reason": "each arm is a deterministic function of the seed, so under H0 the per-seed D_s is exactly 0, not a "
+              "distribution symmetric about 0 -- the 6-seed sign-flip p=1/64 would only have meant 'the modal "
+              "reply changed on six seeds', not a real test",
+    "superseded_by": "amendment 3 (score_seed_a3/aggregate_a3 below): independent per-session noise streams make "
+                      "the null a real distribution, asserted in data via `noise_live`",
+    "still_valid": "the per-seed D_s, label, histograms and descriptive statistics remain valid DESCRIPTION of "
+                   "the scored seed(s); only the cross-seed sign-test GO/p-value built on top of them is withdrawn",
+}
 ASK = "what might a dog chase"
 ASK_SESSION = "oep"
 # NATURAL chase KB (the WORLD): prey chased by DIFFERENT numbers of predators, so the brain's own co-occurrence graph
@@ -473,6 +501,11 @@ def score_seed(intact, rebuild, lesion, host_oracle=None):
         res["verdict"] = "UNDEFINED"
         return res
     res["verdict"] = "DEFINED"
+    # ATTRIBUTION (round-5 review fix, gates/attribution_required): mi (intact) and ml (lesion) are a
+    # treatment/control pair -- ask what fraction of the intact mean host-weight is NOT also present in the
+    # uniform-drive lesion, instead of banking both numbers unattributed one key apart in the verdict JSON.
+    res["attributable_to_host_weight_drive"] = attributable_to(
+        "intact vs lesion mean host-likelihood weight (amendment-2, seed-level)", mi, ml)
     D, ch = res["direction_D"], res["modal_changed"]
     if D > 0:
         res["label"] = "CHANGED-TOWARD-LIKELIHOOD" if ch else "SHIFTED-TOWARD-LIKELIHOOD"
@@ -520,8 +553,8 @@ def score_and_write(mode, seed, k, out_dir, rich=True):
         return None
     sc = score_seed(arms["intact"], arms["intact_rebuild"], arms["lesion"], host_oracle=arms.get("host_oracle"))
     rep = {"runner": "research.runners._lbf_open_ended_production_turn_probe", "scorer": "amendment-2 (seed = unit)",
-           "mode": mode, "seed": int(seed), "k": int(k), "rich": bool(rich), "ask": ASK, "teach": TEACH,
-           "lesioned_edge": LESIONED_EDGE, "host_shortcuts": HOST_SHORTCUTS,
+           "scorer_status": SCORER_STATUS_A2, "mode": mode, "seed": int(seed), "k": int(k), "rich": bool(rich),
+           "ask": ASK, "teach": TEACH, "lesioned_edge": LESIONED_EDGE, "host_shortcuts": HOST_SHORTCUTS,
            "not_independent": NOT_INDEPENDENT.get(mode), "score": sc}
     path = os.path.join(out_dir, "%s_s%s_verdict.json" % (mode, seed))
     json.dump(rep, open(path, "w"), indent=2, default=str)
@@ -592,7 +625,8 @@ def aggregate(paths, out, compare_dir=None):
             m["equals_default_replies"] = eq
         summary[mode] = m
     rep = {"runner": "research.runners._lbf_open_ended_production_turn_probe --aggregate", "scorer": "amendment-2",
-           "inputs": paths, "lesioned_edge": LESIONED_EDGE, "host_shortcuts": HOST_SHORTCUTS, "summary": summary}
+           "scorer_status": SCORER_STATUS_A2, "inputs": paths, "lesioned_edge": LESIONED_EDGE,
+           "host_shortcuts": HOST_SHORTCUTS, "summary": summary}
     os.makedirs(os.path.dirname(os.path.abspath(out)), exist_ok=True)
     json.dump(rep, open(out, "w"), indent=2, default=str)
     print(json.dumps(summary, indent=2, default=str))
@@ -728,6 +762,13 @@ def score_seed_a3(intact, lesion, rebuild, m=A3_SESSIONS):
     res["v_intact"], res["v_lesion"] = vi, vl
     checks = [
         (not res["w_equal_across_sessions"], "host weight vector differs across sessions (no common scale)"),
+        # ROUND-5 REVIEW FIX (2026-09-23): this was COMPUTED (line above) but never gated -- a real gap, since a
+        # session that learned different `stored_facts` (e.g. a TEACH turn resolved differently, or in-loop
+        # acquisition picked up something new) is not the SAME world as `intact[0]`, whose likelihood_weight is
+        # `w_ref` for every session's scoring. Comparing session values against a reference world state a session
+        # did not actually have would misattribute a world-drift confound to the lesion manipulation.
+        (not res["stored_facts_equal_across_sessions"], "stored facts differ across sessions (worlds diverged; "
+         "w_ref no longer describes every session's actual world)"),
         (not res["noise_seeds_distinct"], "noise-stream seeds not distinct across the 2M sessions"),
         (not res["noise_stream_engaged"], "a session never ran a draw on its noise stream"),
         (any(d == 0 for d in res["draws_intact"] + res["draws_lesion"]), "the spiking draw was never reached"),
@@ -745,6 +786,11 @@ def score_seed_a3(intact, lesion, rebuild, m=A3_SESSIONS):
         return res
     res["verdict"] = "DEFINED"
     res["delta"] = sum(vi) / m - sum(vl) / m
+    # ATTRIBUTION (round-5 review fix, gates/attribution_required): the mean intact/lesion session values are a
+    # treatment/control pair scored against the SAME reference weight vector -- ask what fraction of the intact
+    # mean is not also present in the lesion, rather than reporting `delta` with nothing subtracted out loud.
+    res["attributable_to_host_weight_drive"] = attributable_to(
+        "intact vs lesion mean session value (amendment-3, per-seed)", sum(vi) / m, sum(vl) / m)
     res["perm_p_exact_one_sided"] = exact_perm_p(vi, vl)
     res["label"] = "TOWARD-LIKELIHOOD" if res["delta"] > 0 else ("AWAY" if res["delta"] < 0 else "NO-DIFFERENCE")
     return res
@@ -882,6 +928,15 @@ def selftest_a3(chk):
     I, L, R = _mk_seed(43, good_i, good_l)
     L[0] = _mk_session(good_l[0], 10, 10, a3_noise_seed(43, "lesion", 0), w=dict(W_S42, deer=9.0))
     c("a3: host weight vector differs across sessions -> UNDEFINED", score_seed_a3(I, L, R)["verdict"] == "UNDEFINED")
+    # ROUND-5 REVIEW FIX: `stored_facts_equal_across_sessions` was computed but never gated -- a session whose
+    # world diverged (different stored_facts) is not the same world `w_ref` describes, and this must be caught
+    # rather than silently scored as DEFINED.
+    I, L, R = _mk_seed(43, good_i, good_l)
+    L[0] = _mk_session(good_l[0], 10, 10, a3_noise_seed(43, "lesion", 0), facts=[["fox", "chase", "beetle"]])
+    s_facts = score_seed_a3(I, L, R)
+    c("a3: stored facts differ across sessions -> UNDEFINED (round-5 fix; was previously computed but not gated)",
+      s_facts["verdict"] == "UNDEFINED" and any("stored facts differ" in r for r in s_facts["reasons"])
+      and not s_facts["stored_facts_equal_across_sessions"])
     c("a3: missing session -> ARM-FAILED", score_seed_a3(I[:3], L, R)["verdict"] == "ARM-FAILED")
     c("a3: reversed arms -> DEFINED, AWAY", score_seed_a3(*_mk_seed(43, good_l, good_i))["label"] == "AWAY")
     rec = lambda d: {"verdict": "DEFINED", "delta": d}

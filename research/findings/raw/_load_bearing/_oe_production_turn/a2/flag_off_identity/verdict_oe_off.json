@@ -9,7 +9,18 @@
  "differing_paths_raw": [
   ".body.open_ended.gen_seconds"
  ],
- "per_turn_equal": [
+ "per_turn_equal_raw_PREREGISTERED": [
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false
+ ],
+ "per_turn_equal_content_wallclock_stripped_POSTHOC": [
   true,
   true,
   true,

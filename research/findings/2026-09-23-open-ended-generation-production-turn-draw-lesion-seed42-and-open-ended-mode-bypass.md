@@ -15,6 +15,24 @@ Lane `research/open-ended-production-turn-lb` (charter D1). Pre-registration:
 (committed `4edf6fc10`; amendment 1 `94b71d511`; amendment 2 `4f9cc6b3e`; amendment 3 `eefdd666a`; each before the
 runs it governs). Instrument: `research/runners/_lbf_open_ended_production_turn_probe.py`.
 
+## Correction 3, after the round-5 re-review of the amendment-3 power simulation (2026-09-23)
+
+1. **"No sim/ or webapp/ edit in this round" ("What is NOT claimed" below) is FALSE and withdrawn as written.**
+   The original line (`2a989c367`) read "no sim/ edit" -- true at the time, since only `webapp/server.py` had
+   changed. The `8c5d7b03a` commit widened the wording to "no sim/ or webapp/ edit in this round" WHILE, in that
+   SAME commit, editing `webapp/server.py` to add the default-OFF `BRAIN_OPEN_ENDED_ACQUIRE_ROUTE`. The bullet
+   below is corrected in place; the true, checked claim is: no `sim/` edit anywhere in this lane, and every
+   `webapp/server.py` edit (`BRAIN_OPEN_ENDED_GENERATE_ROUTE` in `dfcc72ce4`, `BRAIN_OPEN_ENDED_ACQUIRE_ROUTE` in
+   `8c5d7b03a`) is default-OFF and gated by `BRAIN_OPEN_ENDED` being truthy through a short-circuit `and` -- so no
+   PRODUCTION DEFAULT was flipped, which is the part of the original claim that stayed true throughout.
+2. **The amendment-3 power simulation (correction 1, item 1 in Correction 2's PREREG counterpart) was itself
+   biased toward the claim.** See the PREREG's "Amendment-log correction 2 (round-5 review)" for the full
+   disclosure: `draw_until_admissible` tested admissibility against the arm's own drive weights, which gave the
+   uniform-drive lesion arm a free pass the intact arm did not get. The symmetric, production-faithful fix (fixed
+   `n_cand_max=96` too) gives Delta 0.094-0.302, mean 0.193, 6/6 positive -- not the retracted 0.302-0.698, mean
+   0.517. This does not change the a3 governed design (M=4, K=8, floor=0.10) already run against the 55 staged
+   AWS sessions; see the PREREG for why it is disclosed rather than changed.
+
 ## Correction 2, after the re-review of `c807f869b` (amendment 3)
 
 1. **The amendment-2 GO statistic is withdrawn.** Each arm is a deterministic function of the seed. Under H0 the
@@ -153,7 +171,8 @@ wall-clock nature rests on the source line.
 - Not that the spiking bank sharpens or samples the likelihood: on seed 42 its noise was frozen across asks.
 - Nothing about BRAIN_OPEN_ENDED free-talk turns: only explicit generation prompts are routed.
 - Not that the open-ended-mode flag-off turn is byte-identical: it passes only after a post-hoc exclusion.
-- No production default was flipped; no sim/ or webapp/ edit in this round.
+- No production default was flipped (see Correction 3, item 1: this bullet previously and incorrectly also said
+  "no sim/ or webapp/ edit" -- `webapp/server.py` WAS edited, twice, both times default-OFF; no `sim/` edit).
 
 ## Declared host shortcuts
 

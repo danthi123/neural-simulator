@@ -13,7 +13,7 @@
     "k_asks_per_session": 8,
     "max_retries": 3,
     "admissible_attempts": 8,
-    "n_cand_max": 64,
+    "n_cand_max": 96,
     "weights_json": "research/findings/raw/_load_bearing/_oe_production_turn/a2/default/default_s42_intact.json",
     "candidates": [
       "beetle",
@@ -48,9 +48,9 @@
     }
   },
   "attribution": {
-    "mean_intact_all_seeds": 0.7708333333333334,
-    "mean_lesion_all_seeds": 0.2534722222222222,
-    "attributable_to_likelihood_drive": 0.6711711711711712
+    "mean_intact_all_seeds": 0.8090277777777777,
+    "mean_lesion_all_seeds": 0.6163194444444444,
+    "attributable_to_likelihood_drive": 0.2381974248927038
   },
   "per_bank_seed": [
     {
@@ -61,9 +61,9 @@
             "deer",
             "deer",
             "rabbit",
-            "rabbit",
-            "rabbit",
-            "rabbit",
+            "deer",
+            "beetle",
+            "cat",
             "dog",
             "deer"
           ],
@@ -74,591 +74,236 @@
             "deer",
             "deer",
             "deer",
+            "cat",
             "deer",
             "deer",
-            "rabbit",
-            "deer",
-            "deer"
+            "beetle",
+            "rabbit"
           ],
-          "session_value": 0.9583333333333333
+          "session_value": 0.8333333333333333
         },
         {
           "replies": [
-            "rabbit",
+            "dog",
             "deer",
             "deer",
+            "dog",
             "deer",
-            "deer",
-            "deer",
-            "rabbit",
-            "deer"
+            "cat",
+            "beetle",
+            "cat"
           ],
-          "session_value": 0.9166666666666666
+          "session_value": 0.75
         },
         {
           "replies": [
+            "dog",
+            "deer",
+            "deer",
+            "dog",
+            "deer",
             "rabbit",
-            "rabbit",
-            "deer",
-            "deer",
-            "deer",
-            "deer",
-            "deer",
-            "deer"
+            "beetle",
+            "cat"
           ],
-          "session_value": 0.9166666666666666
+          "session_value": 0.75
         }
       ],
       "lesion_sessions": [
         {
           "replies": [
             "deer",
-            "memory",
+            "beetle",
             "deer",
-            "words",
             "rabbit",
-            "rabbit",
-            "words",
+            "beetle",
+            "beetle",
+            "beetle",
+            "dog"
+          ],
+          "session_value": 0.5833333333333333
+        },
+        {
+          "replies": [
+            "beetle",
+            "cat",
+            "beetle",
+            "cat",
+            "cat",
+            "dog",
+            "cat",
+            "dog"
+          ],
+          "session_value": 0.5833333333333333
+        },
+        {
+          "replies": [
+            "minnow",
+            "beetle",
+            "deer",
+            "beetle",
+            "beetle",
+            "dog",
+            "deer",
             "deer"
           ],
-          "session_value": 0.5416666666666666
+          "session_value": 0.625
         },
         {
           "replies": [
-            "words",
-            "fish",
-            "words",
-            "memory",
-            "deer",
-            "deer",
-            "words",
-            "words"
-          ],
-          "session_value": 0.25
-        },
-        {
-          "replies": [
-            "rabbit",
-            "words",
-            "memory",
-            "words",
-            "memory",
-            "words",
-            "words",
+            "beetle",
+            "cat",
+            "cat",
+            "dog",
+            "dog",
+            "beetle",
+            "cat",
             "rabbit"
           ],
-          "session_value": 0.16666666666666666
-        },
-        {
-          "replies": [
-            "memory",
-            "words",
-            "words",
-            "rabbit",
-            "words",
-            "words",
-            "memory",
-            "beetle"
-          ],
-          "session_value": 0.125
+          "session_value": 0.5833333333333333
         }
       ],
-      "mean_intact": 0.8958333333333333,
-      "mean_lesion": 0.2708333333333333,
-      "delta": 0.625
+      "mean_intact": 0.78125,
+      "mean_lesion": 0.59375,
+      "delta": 0.1875
     },
     {
       "bank_seed": 302,
       "intact_sessions": [
         {
           "replies": [
-            "minnow",
+            "cat",
             "beetle",
-            "beetle",
+            "cat",
+            "cat",
+            "cat",
+            "dog",
+            "cat",
+            "cat"
+          ],
+          "session_value": 0.625
+        },
+        {
+          "replies": [
+            "cat",
+            "cat",
             "deer",
-            "beetle",
-            "beetle",
+            "deer",
             "cat",
-            "beetle"
+            "cat",
+            "cat",
+            "cat"
           ],
-          "session_value": 0.4583333333333333
+          "session_value": 0.75
         },
         {
           "replies": [
             "cat",
-            "beetle",
-            "beetle",
-            "beetle",
-            "beetle",
-            "minnow",
-            "beetle",
-            "rabbit"
-          ],
-          "session_value": 0.41666666666666663
-        },
-        {
-          "replies": [
+            "deer",
+            "deer",
+            "rabbit",
             "cat",
-            "beetle",
-            "rabbit",
-            "beetle",
-            "rabbit",
-            "rabbit",
-            "beetle",
+            "cat",
+            "cat",
             "deer"
           ],
-          "session_value": 0.5833333333333333
+          "session_value": 0.7916666666666666
         },
         {
           "replies": [
-            "rabbit",
+            "deer",
+            "cat",
+            "deer",
             "cat",
             "deer",
             "deer",
-            "rabbit",
-            "beetle",
-            "beetle",
-            "rabbit"
+            "deer",
+            "deer"
           ],
-          "session_value": 0.6666666666666666
+          "session_value": 0.9166666666666666
         }
       ],
       "lesion_sessions": [
         {
           "replies": [
-            "fish",
-            "fish",
-            "beetle",
-            "fish",
-            "rabbit",
-            "beetle",
-            "fish",
-            "fish"
-          ],
-          "session_value": 0.16666666666666666
-        },
-        {
-          "replies": [
-            "fish",
-            "beetle",
-            "fish",
-            "fish",
-            "beetle",
-            "beetle",
-            "beetle",
-            "beetle"
-          ],
-          "session_value": 0.20833333333333331
-        },
-        {
-          "replies": [
-            "fish",
-            "beetle",
-            "beetle",
-            "beetle",
-            "beetle",
-            "beetle",
-            "beetle",
-            "beetle"
-          ],
-          "session_value": 0.29166666666666663
-        },
-        {
-          "replies": [
-            "beetle",
-            "fish",
-            "beetle",
-            "beetle",
             "cat",
-            "beetle",
-            "fish",
-            "fish"
+            "cat",
+            "cat",
+            "cat",
+            "cat",
+            "cat",
+            "cat",
+            "cat"
           ],
-          "session_value": 0.25
+          "session_value": 0.6666666666666666
+        },
+        {
+          "replies": [
+            "cat",
+            "cat",
+            "cat",
+            "cat",
+            "deer",
+            "cat",
+            "cat",
+            "cat"
+          ],
+          "session_value": 0.7083333333333333
+        },
+        {
+          "replies": [
+            "cat",
+            "cat",
+            "cat",
+            "cat",
+            "cat",
+            "cat",
+            "cat",
+            "cat"
+          ],
+          "session_value": 0.6666666666666666
+        },
+        {
+          "replies": [
+            "cat",
+            "cat",
+            "cat",
+            "cat",
+            "cat",
+            "rabbit",
+            "rabbit",
+            "cat"
+          ],
+          "session_value": 0.6666666666666666
         }
       ],
-      "mean_intact": 0.53125,
-      "mean_lesion": 0.22916666666666666,
-      "delta": 0.30208333333333337
+      "mean_intact": 0.7708333333333333,
+      "mean_lesion": 0.6770833333333333,
+      "delta": 0.09375
     },
     {
       "bank_seed": 309,
       "intact_sessions": [
         {
           "replies": [
-            "cat",
             "dog",
-            "cat",
-            "deer",
-            "cat",
-            "deer",
-            "deer",
-            "deer"
-          ],
-          "session_value": 0.8333333333333333
-        },
-        {
-          "replies": [
-            "deer",
             "deer",
             "deer",
             "dog",
-            "cat",
-            "beetle",
-            "beetle",
-            "dog"
-          ],
-          "session_value": 0.7083333333333333
-        },
-        {
-          "replies": [
-            "beetle",
-            "cat",
-            "deer",
-            "cat",
-            "cat",
-            "cat",
-            "cat",
-            "cat"
-          ],
-          "session_value": 0.6666666666666666
-        },
-        {
-          "replies": [
-            "cat",
-            "cat",
-            "dog",
-            "cat",
-            "cat",
-            "cat",
-            "cat",
-            "cat"
-          ],
-          "session_value": 0.6666666666666666
-        }
-      ],
-      "lesion_sessions": [
-        {
-          "replies": [
-            "beetle",
-            "fish",
-            "fish",
-            "fish",
-            "fish",
-            "cat",
-            "cat",
-            "fish"
-          ],
-          "session_value": 0.20833333333333331
-        },
-        {
-          "replies": [
-            "cat",
-            "words",
-            "words",
-            "cat",
-            "words",
-            "deer",
-            "beetle",
-            "fish"
-          ],
-          "session_value": 0.3333333333333333
-        },
-        {
-          "replies": [
-            "fish",
-            "fish",
-            "words",
-            "fish",
-            "words",
-            "fish",
-            "words",
-            "fish"
-          ],
-          "session_value": 0.0
-        },
-        {
-          "replies": [
-            "words",
-            "cat",
-            "minnow",
-            "words",
-            "deer",
-            "cat",
-            "words",
-            "fish"
-          ],
-          "session_value": 0.3333333333333333
-        }
-      ],
-      "mean_intact": 0.7187499999999999,
-      "mean_lesion": 0.21875,
-      "delta": 0.4999999999999999
-    },
-    {
-      "bank_seed": 701,
-      "intact_sessions": [
-        {
-          "replies": [
-            "deer",
-            "deer",
-            "cat",
-            "deer",
-            "cat",
-            "beetle",
-            "minnow",
-            "cat"
-          ],
-          "session_value": 0.7083333333333333
-        },
-        {
-          "replies": [
-            "deer",
-            "deer",
-            "minnow",
-            "deer",
-            "deer",
-            "cat",
-            "cat",
-            "cat"
-          ],
-          "session_value": 0.7916666666666666
-        },
-        {
-          "replies": [
-            "deer",
-            "beetle",
-            "cat",
-            "cat",
             "deer",
             "cat",
             "deer",
             "deer"
           ],
-          "session_value": 0.7916666666666666
-        },
-        {
-          "replies": [
-            "deer",
-            "cat",
-            "cat",
-            "deer",
-            "cat",
-            "deer",
-            "deer",
-            "cat"
-          ],
-          "session_value": 0.8333333333333333
-        }
-      ],
-      "lesion_sessions": [
-        {
-          "replies": [
-            "memory",
-            "cat",
-            "cat",
-            "cat",
-            "words",
-            "memory",
-            "minnow",
-            "words"
-          ],
-          "session_value": 0.2916666666666667
-        },
-        {
-          "replies": [
-            "minnow",
-            "words",
-            "cat",
-            "cat",
-            "deer",
-            "cat",
-            "words",
-            "words"
-          ],
-          "session_value": 0.41666666666666663
-        },
-        {
-          "replies": [
-            "minnow",
-            "memory",
-            "deer",
-            "memory",
-            "words",
-            "cat",
-            "deer",
-            "beetle"
-          ],
-          "session_value": 0.41666666666666663
-        },
-        {
-          "replies": [
-            "memory",
-            "cat",
-            "cat",
-            "spikes",
-            "words",
-            "beetle",
-            "words",
-            "words"
-          ],
-          "session_value": 0.20833333333333331
-        }
-      ],
-      "mean_intact": 0.78125,
-      "mean_lesion": 0.3333333333333333,
-      "delta": 0.4479166666666667
-    },
-    {
-      "bank_seed": 708,
-      "intact_sessions": [
-        {
-          "replies": [
-            "cat",
-            "beetle",
-            "rabbit",
-            "deer",
-            "deer",
-            "deer",
-            "deer",
-            "deer"
-          ],
-          "session_value": 0.8333333333333333
-        },
-        {
-          "replies": [
-            "deer",
-            "deer",
-            "deer",
-            "deer",
-            "deer",
-            "deer",
-            "deer",
-            "deer"
-          ],
-          "session_value": 1.0
-        },
-        {
-          "replies": [
-            "deer",
-            "deer",
-            "deer",
-            "deer",
-            "deer",
-            "deer",
-            "beetle",
-            "beetle"
-          ],
-          "session_value": 0.8333333333333333
+          "session_value": 0.875
         },
         {
           "replies": [
             "deer",
             "deer",
             "rabbit",
-            "beetle",
-            "deer",
-            "deer",
-            "deer",
-            "dog"
-          ],
-          "session_value": 0.8333333333333333
-        }
-      ],
-      "lesion_sessions": [
-        {
-          "replies": [
-            "minnow",
-            "beetle",
-            "memory",
-            "dog",
-            "minnow",
-            "deer",
-            "memory",
-            "cat"
-          ],
-          "session_value": 0.41666666666666663
-        },
-        {
-          "replies": [
-            "deer",
             "cat",
-            "memory",
-            "minnow",
-            "beetle",
-            "memory",
-            "beetle",
-            "words"
-          ],
-          "session_value": 0.3333333333333333
-        },
-        {
-          "replies": [
-            "memory",
-            "deer",
-            "memory",
-            "memory",
-            "memory",
-            "minnow",
-            "minnow",
-            "memory"
-          ],
-          "session_value": 0.20833333333333331
-        },
-        {
-          "replies": [
-            "minnow",
             "cat",
-            "dog",
-            "deer",
-            "minnow",
-            "minnow",
-            "memory",
-            "memory"
-          ],
-          "session_value": 0.41666666666666663
-        }
-      ],
-      "mean_intact": 0.875,
-      "mean_lesion": 0.34375,
-      "delta": 0.53125
-    },
-    {
-      "bank_seed": 715,
-      "intact_sessions": [
-        {
-          "replies": [
-            "beetle",
-            "deer",
-            "dog",
-            "cat",
-            "deer",
-            "deer",
-            "deer",
-            "dog"
-          ],
-          "session_value": 0.7916666666666666
-        },
-        {
-          "replies": [
-            "dog",
-            "rabbit",
-            "deer",
-            "dog",
-            "deer",
-            "deer",
-            "dog",
-            "dog"
-          ],
-          "session_value": 0.7916666666666666
-        },
-        {
-          "replies": [
-            "dog",
-            "deer",
-            "deer",
-            "dog",
-            "rabbit",
             "cat",
             "dog",
             "dog"
@@ -667,14 +312,141 @@
         },
         {
           "replies": [
+            "cat",
+            "deer",
+            "deer",
+            "cat",
+            "cat",
+            "deer",
+            "dog",
+            "cat"
+          ],
+          "session_value": 0.7916666666666666
+        },
+        {
+          "replies": [
+            "dog",
+            "dog",
+            "dog",
             "deer",
             "deer",
             "deer",
-            "deer",
-            "deer",
-            "deer",
-            "deer",
+            "beetle",
             "dog"
+          ],
+          "session_value": 0.75
+        }
+      ],
+      "lesion_sessions": [
+        {
+          "replies": [
+            "dog",
+            "rabbit",
+            "minnow",
+            "dog",
+            "deer",
+            "deer",
+            "beetle",
+            "deer"
+          ],
+          "session_value": 0.7083333333333333
+        },
+        {
+          "replies": [
+            "rabbit",
+            "deer",
+            "deer",
+            "deer",
+            "beetle",
+            "minnow",
+            "dog",
+            "dog"
+          ],
+          "session_value": 0.7083333333333333
+        },
+        {
+          "replies": [
+            "deer",
+            "beetle",
+            "dog",
+            "dog",
+            "beetle",
+            "beetle",
+            "beetle",
+            "dog"
+          ],
+          "session_value": 0.5416666666666666
+        },
+        {
+          "replies": [
+            "beetle",
+            "dog",
+            "deer",
+            "dog",
+            "deer",
+            "dog",
+            "dog",
+            "dog"
+          ],
+          "session_value": 0.7083333333333333
+        }
+      ],
+      "mean_intact": 0.7916666666666666,
+      "mean_lesion": 0.6666666666666665,
+      "delta": 0.1250000000000001
+    },
+    {
+      "bank_seed": 701,
+      "intact_sessions": [
+        {
+          "replies": [
+            "deer",
+            "dog",
+            "deer",
+            "deer",
+            "beetle",
+            "cat",
+            "deer",
+            "deer"
+          ],
+          "session_value": 0.8333333333333333
+        },
+        {
+          "replies": [
+            "deer",
+            "deer",
+            "deer",
+            "deer",
+            "cat",
+            "deer",
+            "deer",
+            "deer"
+          ],
+          "session_value": 0.9583333333333333
+        },
+        {
+          "replies": [
+            "deer",
+            "deer",
+            "beetle",
+            "deer",
+            "deer",
+            "deer",
+            "cat",
+            "deer"
+          ],
+          "session_value": 0.875
+        },
+        {
+          "replies": [
+            "deer",
+            "dog",
+            "deer",
+            "deer",
+            "deer",
+            "deer",
+            "deer",
+            "deer"
           ],
           "session_value": 0.9583333333333333
         }
@@ -682,66 +454,294 @@
       "lesion_sessions": [
         {
           "replies": [
-            "dog",
             "deer",
-            "spikes",
-            "memory",
-            "spikes",
-            "spikes",
-            "memory",
-            "spikes"
-          ],
-          "session_value": 0.20833333333333331
-        },
-        {
-          "replies": [
-            "memory",
-            "fish",
-            "fish",
-            "memory",
-            "fish",
-            "fish",
-            "fish",
-            "fish"
-          ],
-          "session_value": 0.0
-        },
-        {
-          "replies": [
-            "fish",
-            "fish",
-            "fish",
-            "fish",
-            "spikes",
-            "dog",
-            "fish",
-            "fish"
-          ],
-          "session_value": 0.08333333333333333
-        },
-        {
-          "replies": [
-            "fish",
-            "fish",
-            "fish",
-            "fish",
             "deer",
-            "memory",
-            "fish",
-            "dog"
+            "deer",
+            "beetle",
+            "beetle",
+            "beetle",
+            "deer",
+            "deer"
           ],
-          "session_value": 0.20833333333333331
+          "session_value": 0.75
+        },
+        {
+          "replies": [
+            "beetle",
+            "deer",
+            "deer",
+            "deer",
+            "minnow",
+            "minnow",
+            "minnow",
+            "deer"
+          ],
+          "session_value": 0.6666666666666666
+        },
+        {
+          "replies": [
+            "dog",
+            "beetle",
+            "deer",
+            "deer",
+            "beetle",
+            "beetle",
+            "cat",
+            "cat"
+          ],
+          "session_value": 0.625
+        },
+        {
+          "replies": [
+            "deer",
+            "deer",
+            "cat",
+            "deer",
+            "deer",
+            "cat",
+            "cat",
+            "deer"
+          ],
+          "session_value": 0.875
         }
       ],
-      "mean_intact": 0.8229166666666665,
-      "mean_lesion": 0.12499999999999999,
-      "delta": 0.6979166666666665
+      "mean_intact": 0.90625,
+      "mean_lesion": 0.7291666666666666,
+      "delta": 0.17708333333333337
+    },
+    {
+      "bank_seed": 708,
+      "intact_sessions": [
+        {
+          "replies": [
+            "rabbit",
+            "deer",
+            "beetle",
+            "deer",
+            "deer",
+            "deer",
+            "deer",
+            "cat"
+          ],
+          "session_value": 0.8333333333333333
+        },
+        {
+          "replies": [
+            "deer",
+            "deer",
+            "deer",
+            "deer",
+            "deer",
+            "deer",
+            "deer",
+            "rabbit"
+          ],
+          "session_value": 0.9583333333333333
+        },
+        {
+          "replies": [
+            "deer",
+            "deer",
+            "cat",
+            "rabbit",
+            "deer",
+            "deer",
+            "deer",
+            "deer"
+          ],
+          "session_value": 0.9166666666666666
+        },
+        {
+          "replies": [
+            "rabbit",
+            "minnow",
+            "cat",
+            "deer",
+            "rabbit",
+            "deer",
+            "cat",
+            "deer"
+          ],
+          "session_value": 0.75
+        }
+      ],
+      "lesion_sessions": [
+        {
+          "replies": [
+            "minnow",
+            "cat",
+            "deer",
+            "minnow",
+            "beetle",
+            "cat",
+            "beetle",
+            "cat"
+          ],
+          "session_value": 0.5416666666666666
+        },
+        {
+          "replies": [
+            "minnow",
+            "memory",
+            "deer",
+            "beetle",
+            "cat",
+            "deer",
+            "minnow",
+            "deer"
+          ],
+          "session_value": 0.5833333333333333
+        },
+        {
+          "replies": [
+            "deer",
+            "minnow",
+            "minnow",
+            "cat",
+            "cat",
+            "minnow",
+            "minnow",
+            "cat"
+          ],
+          "session_value": 0.5416666666666666
+        },
+        {
+          "replies": [
+            "cat",
+            "deer",
+            "memory",
+            "cat",
+            "memory",
+            "deer",
+            "deer",
+            "minnow"
+          ],
+          "session_value": 0.5833333333333333
+        }
+      ],
+      "mean_intact": 0.8645833333333333,
+      "mean_lesion": 0.5625,
+      "delta": 0.30208333333333326
+    },
+    {
+      "bank_seed": 715,
+      "intact_sessions": [
+        {
+          "replies": [
+            "beetle",
+            "dog",
+            "deer",
+            "deer",
+            "deer",
+            "rabbit",
+            "deer",
+            "dog"
+          ],
+          "session_value": 0.7916666666666666
+        },
+        {
+          "replies": [
+            "dog",
+            "rabbit",
+            "deer",
+            "deer",
+            "rabbit",
+            "dog",
+            "dog",
+            "dog"
+          ],
+          "session_value": 0.75
+        },
+        {
+          "replies": [
+            "rabbit",
+            "rabbit",
+            "rabbit",
+            "rabbit",
+            "deer",
+            "cat",
+            "rabbit",
+            "dog"
+          ],
+          "session_value": 0.7083333333333333
+        },
+        {
+          "replies": [
+            "beetle",
+            "dog",
+            "rabbit",
+            "deer",
+            "minnow",
+            "dog",
+            "deer",
+            "deer"
+          ],
+          "session_value": 0.7083333333333333
+        }
+      ],
+      "lesion_sessions": [
+        {
+          "replies": [
+            "minnow",
+            "dog",
+            "beetle",
+            "dog",
+            "beetle",
+            "rabbit",
+            "beetle",
+            "dog"
+          ],
+          "session_value": 0.5
+        },
+        {
+          "replies": [
+            "rabbit",
+            "dog",
+            "minnow",
+            "dog",
+            "fish",
+            "dog",
+            "beetle",
+            "fish"
+          ],
+          "session_value": 0.41666666666666663
+        },
+        {
+          "replies": [
+            "beetle",
+            "rabbit",
+            "dog",
+            "beetle",
+            "dog",
+            "dog",
+            "fish",
+            "beetle"
+          ],
+          "session_value": 0.4583333333333333
+        },
+        {
+          "replies": [
+            "beetle",
+            "beetle",
+            "beetle",
+            "beetle",
+            "dog",
+            "rabbit",
+            "rabbit",
+            "dog"
+          ],
+          "session_value": 0.5
+        }
+      ],
+      "mean_intact": 0.7395833333333333,
+      "mean_lesion": 0.46875,
+      "delta": 0.27083333333333326
     }
   ],
   "aggregate": {
-    "delta_min": 0.30208333333333337,
-    "delta_max": 0.6979166666666665,
-    "delta_mean": 0.517361111111111,
+    "delta_min": 0.09375,
+    "delta_max": 0.30208333333333326,
+    "delta_mean": 0.19270833333333334,
     "n_positive": 6,
     "n_seeds": 6
   }

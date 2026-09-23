@@ -7,7 +7,18 @@
   "gen_seconds"
  ],
  "differing_paths_raw": [],
- "per_turn_equal": [
+ "per_turn_equal_raw_PREREGISTERED": [
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true
+ ],
+ "per_turn_equal_content_wallclock_stripped_POSTHOC": [
   true,
   true,
   true,

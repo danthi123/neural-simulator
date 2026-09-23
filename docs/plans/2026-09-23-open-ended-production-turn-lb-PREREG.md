@@ -174,9 +174,9 @@ the worker protocol that produces them is unchanged.
   its numbers could not be recovered, so they are RETRACTED as a citation; see the correction below.
 - NOT seen: any `default` output for seeds 43, 44, 100, 101, 102. None exists: the controllers were killed before
   writing one. I did not open the `oe_routed_full` F1/F2 files or the `oe_unfixed_taught` s43/s44 files.
-  **INACCURATE as written (round-4 review, 2026-09-23): see the correction below** — the `oe_unfixed_taught` s43
-  verdict (and s44's `intact` worker JSON) had already been committed, and the s43 verdict already cited in this
-  lane's finding, before this amendment log was written.
+  **INACCURATE as written (round-4 review, 2026-09-23): see the correction below** — the `oe_unfixed_taught`
+  s43 scored record (and s44's `intact` worker JSON) had already been committed, and the s43 record was already
+  cited by name in this lane's finding, before this amendment log was written.
 
 ### Amendment-log correction (round-4 review, 2026-09-23)
 
@@ -211,6 +211,45 @@ verbatim for the record):
    overstated for s44 (only a partial, unscored artifact existed). What was NOT seen, and remains true: no
    `oe_routed_full` F1/F2 file, and no `default` output for seeds 43, 44, 100, 101, 102 (the amendment-3 governed
    scope) — the s43/s44 `oe_unfixed_taught` control does not bear on that scope either way.
+
+### Amendment-log correction 2 (round-5 review, 2026-09-23)
+
+**The round-4 power-sim fix (correction 1, item 1 above) was itself biased toward the claim, and its numbers are
+retracted.** `research/runners/_lbf_oe_a3_power_simulation.py::draw_until_admissible` tested admissibility
+against the arm's own DRIVE weights: `drive_weights[idx] > 0`. For the intact arm the drive IS the real host
+weight vector, so this filtered its replies onto positive-weight words (4 of the 10 seed-42 candidates -- fish,
+memory, spikes, words -- have weight 0). For the lesion arm the drive is `np.ones_like` (uniform), which is
+NEVER zero, so every lesion reply was admissible on attempt 1 by construction -- the redraw-away-from-zero-weight
+cost was paid by the intact arm only. In production, the analogous redraw loop
+(`ChatBrain._generate_hypothesis`'s `_plausible`/`_contradicts` gate) sits downstream of the lesion and applies
+identically to both arms; `BRAIN_SPIKING_DRAW_LESION` only swaps the DRIVE weights inside
+`SpikingWTASampler.draw_from_weights`, not that gate. So the committed rule was not production-faithful, and it
+inflated Delta in the direction that supported the design choice it was cited to justify.
+
+**The fix: admissibility is now tested against the SHARED reference weight vector** (`score_weights`, always the
+real intact host w -- exactly `score_seed_a3`'s `w_ref`), for both arms alike. This is a symmetric rule: an
+"inadmissible" reply means the same thing regardless of which arm drew it. The script's `n_cand_max` default was
+also corrected from 64 to 96 in the same pass (a separate, previously undeclared mismatch against production's
+real bank-size floor, `VocabAgnosticSpikingDrawOrgan.build_sampler`'s `max(_MIN_BANK=96, len(nouns), len(verbs))`
+-- caught by the same review round). Re-running the corrected script on the same 6 bank seeds, same M=4/K=8,
+gives **Delta ranging 0.094 to 0.302, mean 0.193, 6/6 positive** -- committed at the same
+`research/findings/raw/_load_bearing/_oe_production_turn/a3_power_simulation/power_sim.json` path (deterministic;
+reproduced byte-for-byte across two independent reruns while fixing this). One bank seed (302) reads 0.094 --
+BELOW the 0.10 effect floor below.
+
+**Correction 1's "MORE conservative" conclusion is WRONG IN DIRECTION and is withdrawn.** The biased numbers
+(Delta 0.302-0.698, mean 0.517) were roughly 2.5-3x the honest ones; the true simulation is LESS conservative
+than correction 1 claimed, not more, and does not uniformly clear the 0.10 floor it was used to motivate.
+
+**Disclosed, not changed: the M=4 sessions/arm, K=8 asks/session and 0.10 Delta floor in "The design (fixed now)"
+below were chosen using the BIASED numbers (0.302-0.698, mean 0.517) from correction 1, not the honest ones in
+this correction.** By the time this bias was caught (round-5 review), 55 AWS sessions had already been staged
+and were running under that design. Per this lane's own rule (a pre-registered gate is not moved once run), the
+M/K/floor choice is **left exactly as registered** -- this correction is a disclosure of what informed that
+choice, not a retroactive redesign of it. The already-running sessions' results still fall to be read against
+the registered rule as written; a future lane should re-derive M/K/floor from the honest power simulation before
+staging new sessions, since the mean effect it now predicts (0.193, one seed under the floor) is barely inside
+the margin the registered design assumed.
 
 ### Why amendment 2's statistic is withdrawn as a GO rule
 

@@ -2,8 +2,13 @@
 # AMENDMENT-3 staging for the open-ended production-turn probe, on the MINI-PC POOL (never locally: the local box is
 # RAM-bound and each session is one full numpy brain). PREREG amendment 3 = commit eefdd666a.
 #   1. bash tools/pool_provision.sh --isolated --revision <SHA> pool41 pool42      (once)
-#   2. bash research/runners/_lbf_open_ended_production_turn_stage_a3_pool.sh <FULL_SHA> [--smoke]
-#   3. bash research/runners/_lbf_open_ended_production_turn_harvest_a3.sh <FULL_SHA>   (idempotent; re-run)
+#   2. bash research/runners/_lbf_open_ended_production_turn_stage_a3_pool.sh <FULL_SHA> --smoke
+#   3. wait for the smoke job to land, THEN: bash .../stage_a3_pool.sh <FULL_SHA>   (no 2nd arg: queues the 54
+#      governed jobs, but ONLY after checking the smoke output completed cleanly -- round-5 review fix,
+#      2026-09-23: this used to be advisory-only, so the 54 governed jobs (hours of pool time) could start
+#      before, or without, anyone checking the smoke. REFUSES (exit 3) if the smoke file is missing or looks
+#      incomplete/errored; `--skip-smoke-check` overrides for someone who already verified health another way.)
+#   4. bash research/runners/_lbf_open_ended_production_turn_harvest_a3.sh <FULL_SHA>   (idempotent; re-run)
 # One pool job = ONE session = one fresh full brain (build, 13 teach turns, K=8 asks) -> one worker JSON under
 #   research/findings/raw/_load_bearing/_oe_production_turn/a3/default/default_s<seed>_<arm>_n<j>.json
 # in the node's isolated revision dir. Jobs are idempotent (an existing output is kept), so a re-queue is harmless.
@@ -26,9 +31,39 @@ q() {  # $1 seed, $2 arm, $3 session, $4 out-dir
   bash tools/pool_queue.sh add "cd ~/derisk-pool/revisions/$SHA && $LOCKS $ENVS $RUN --seed $1 --arm $2 --session $3 --out-dir $4" \
     --checked "$CHECKED seed $1 $2 n$3." || echo "[stage_a3] QUEUE FAILED: seed $1 $2 n$3" >&2
 }
+SMOKE_OUT=research/findings/raw/_load_bearing/_oe_production_turn/a3_smoke/$MODE
+SMOKE_FILE="$SMOKE_OUT/${MODE}_s7_intact_n0.json"
 if [ "${2:-}" = "--smoke" ]; then
-  q 7 intact 0 research/findings/raw/_load_bearing/_oe_production_turn/a3_smoke/$MODE
+  q 7 intact 0 "$SMOKE_OUT"
   exit 0
+fi
+# ROUND-5 REVIEW FIX (2026-09-23): "the non-governed smoke (seed 7) was queued ahead of the 54 governed jobs but
+# does not gate them ... someone must check the smoke before the bulk burns hours." The smoke was advisory only --
+# nothing stopped queuing the 54 governed jobs (many hours of pool time) before it had even returned. This is now
+# a real gate: no smoke file (or one that never completed / errored) REFUSES the governed queue outright. This
+# checks completion and shape, NOT the scientific verdict (a smoke has no lesion arm to score) -- a slow-but-valid
+# smoke session should not be treated as a failure.
+if [ "${2:-}" != "--skip-smoke-check" ]; then
+  if [ ! -f "$SMOKE_FILE" ]; then
+    echo "[stage_a3] REFUSED: no smoke output at $SMOKE_FILE." >&2
+    echo "[stage_a3] Run '$0 $SHA --smoke' first, wait for it to land, then re-run this command (no 2nd arg)." >&2
+    echo "[stage_a3] Override only if you have already manually verified pipeline health another way:" >&2
+    echo "[stage_a3]   $0 $SHA --skip-smoke-check" >&2
+    exit 3
+  fi
+  if ! .venv/bin/python -c "
+import json, sys
+d = json.load(open('$SMOKE_FILE'))
+replies = d.get('replies') or []
+ok = bool(replies) and not any('error' in r for r in replies) and d.get('draw_counter', {}).get('n_calls', 0) > 0
+sys.exit(0 if ok else 1)
+" 2>/dev/null; then
+    echo "[stage_a3] REFUSED: smoke output at $SMOKE_FILE exists but did not complete cleanly (no replies, an" >&2
+    echo "[stage_a3] errored reply, or the draw was never reached). Inspect it before staging the 54 governed" >&2
+    echo "[stage_a3] jobs; do not assume the pipeline is healthy. Override: $0 $SHA --skip-smoke-check" >&2
+    exit 3
+  fi
+  echo "[stage_a3] smoke check OK ($SMOKE_FILE) -- staging the 54 governed jobs."
 fi
 OUT=research/findings/raw/_load_bearing/_oe_production_turn/a3/$MODE
 for s in 42 43 44 100 101 102; do

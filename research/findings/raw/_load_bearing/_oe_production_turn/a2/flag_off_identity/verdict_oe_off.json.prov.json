@@ -1,26 +1,36 @@
 {
- "run_id": "stage_a2-identity",
+ "run_id": "1790199446-1824266",
  "runner": "research/runners/_lbf_oe_route_flag_off_identity.py",
  "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/wf_59d3d98c-3bc-1/research/runners/_lbf_oe_route_flag_off_identity.py",
   "compare",
   "--a",
-  "pre_oe_off.json",
+  "research/findings/raw/_load_bearing/_oe_production_turn/a2/flag_off_identity/pre_oe_off.json",
   "--b",
-  "post_oe_off.json",
+  "research/findings/raw/_load_bearing/_oe_production_turn/a2/flag_off_identity/post_oe_off.json",
   "--a-sha",
   "4c141b8e8",
   "--b-sha",
-  "8c5d7b03a"
+  "8c5d7b03a",
+  "--out",
+  "research/findings/raw/_load_bearing/_oe_production_turn/a2/flag_off_identity/verdict_oe_off.json"
  ],
- "git_sha": "3a198c319 (compare code)",
- "launcher": "research/runners/_lbf_open_ended_production_turn_stage_a2.sh (lane I), launched 2026-09-23 ~14:11 from worktree wf_a686cbcd-9ff-2 at 53ad6938f",
+ "git_sha": "47f627cc9",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-23T17:37:26",
  "env": {
-  "SIM_BACKEND": "numpy",
-  "SIM_DISABLE_LLM": "1",
-  "BRAIN_CHAT_RENDERER": "stub",
-  "BRAIN_CHAT_SEED": "42",
-  "OMP_NUM_THREADS": "2"
+  "SIM_BACKEND": "numpy"
  },
- "artifact": "research/findings/raw/_load_bearing/_oe_production_turn/a2/flag_off_identity/verdict_oe_off.json",
- "note": "run as a FILE (not -m) against a clean git archive, so the provenance door in research/runners/__init__.py never ran; sidecar attached by hand from the stage script."
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_load_bearing/_oe_production_turn/a2/flag_off_identity/verdict_oe_off.json"
 }

@@ -17,11 +17,17 @@ this script's own numbers -- not the prose ones -- are the ones now traceable to
 amendment log correction in the PREREG for the exact wording.
 
 NOT a governed run and NOT the production turn (same declaration as the original power simulation): no webapp
-brain build, no corpus, no TEACH/ASK chat turns. It drives the PRODUCTION sampler class
-(`research.runners._followon2_spiking_wta_sampler_derisk.SpikingWTASampler.draw_from_weights`, the exact method
-`GenerativeReplayProposer._sample_weighted` calls in production) directly on a fixed weight vector, at the
-production operating point (base_pA=110, gain_pA=160, read_window=120, ou_std_current_pA=200, n_cand_max=64 --
-all defaults, none overridden here).
+brain build, no corpus, no TEACH/ASK chat turns. It drives the PARENT of the production sampler class,
+`research.runners._followon2_spiking_wta_sampler_derisk.SpikingWTASampler.draw_from_weights` -- the exact method
+`GenerativeReplayProposer._sample_weighted` calls in production, inherited UNCHANGED by the taxonomy-free
+`VocabAgnosticSpikingSampler` production actually installs (`vocab_agnostic_spiking_generation_production_organ
+.VocabAgnosticSpikingDrawOrgan.build_sampler`); the class difference does not touch the draw path this script
+exercises. **DECLARED (round-5 review, 2026-09-23): the bank size does.** Production sizes the WTA bank at
+`n_cand = max(_MIN_BANK=96, len(nouns), len(verbs))`; this script's default `n_cand_max=96` now matches that
+floor (it read 64 through round 4, an undeclared mismatch the round-5 review caught) -- a smaller bank means
+fewer, differently-heterogeneous neurons compete for the same candidates, so a bank built at 64 is not the same
+neuron realization production would build. Every other operating-point default (base_pA=110, gain_pA=160,
+read_window=120, ou_std_current_pA=200) is unchanged and matches production.
 
 DESIGN (mirrors the amendment-3 session protocol exactly, minus the brain/corpus):
   - The seed-42 HOST weight vector is the real one: `likelihood_weight` from the committed
@@ -48,10 +54,17 @@ DESIGN (mirrors the amendment-3 session protocol exactly, minus the brain/corpus
     amendment 3 does with a fresh subprocess per session; this script calls it many times in one process, so it
     swaps state directly to avoid a wrapper-chaining bug that would silently start running one session's draws on
     a PRIOR session's stream).
-  - K=8 asks per session. Each ask: a draw-until-admissible loop of up to 8 attempts (re-drawing while the reply
-    has zero host weight -- an "inadmissible" reply mirrors the probe's own `admissible_set` notion; the lesion
-    arm's uniform weights make every reply admissible on attempt 1 by construction). Each attempt is one
-    `draw_from_weights` call at the production default `max_retries=3`.
+  - K=8 asks per session. Each ask: a draw-until-admissible loop of up to 8 attempts. **Round-5 review fix
+    (2026-09-23): admissibility is tested against the SHARED reference weight vector (`score_weights`, always the
+    real intact host w), never against the arm's own drive weights.** The prior version tested `drive_weights[idx]
+    > 0`, which is IDENTICAL to the reference for the intact arm (so it filtered intact replies onto positive-w
+    words) but ALWAYS true for the lesion arm's `np.ones_like` drive (so the lesion arm was never filtered) --
+    an asymmetric admissibility rule that inflated Delta by rejecting the intact arm's low-weight draws while
+    keeping all of the lesion arm's. In production, the redraw loop is `ChatBrain._generate_hypothesis`'s
+    `_plausible`/`_contradicts` gate, which does not depend on the lesion and applies identically to BOTH arms
+    (`BRAIN_SPIKING_DRAW_LESION` only swaps the DRIVE weights inside `SpikingWTASampler.draw_from_weights`, not
+    the plausibility gate downstream of it) -- so testing against the shared reference is the production-faithful,
+    symmetric rule. Each attempt is one `draw_from_weights` call at the production default `max_retries=3`.
   - Session value v = mean over the K asks of w(reply) / max(w) (an ABSTAIN cannot occur here -- `draw_from_weights`
     always returns a candidate -- so this differs from the probe's ABSTAIN=0 convention only in that ABSTAIN never
     arises in this synthetic harness).
@@ -78,7 +91,9 @@ DEFAULT_M = 4                  # sessions per arm
 DEFAULT_K = 8                  # asks per session
 DEFAULT_MAX_RETRIES = 3        # production default of SpikingWTASampler.draw_from_weights
 DEFAULT_ADMISSIBLE_ATTEMPTS = 8
-DEFAULT_N_CAND_MAX = 64        # production default (max(64, len(candidates)) in _ensure_spiking_sampler)
+DEFAULT_N_CAND_MAX = 96        # round-5 fix: matches production's real floor, VocabAgnosticSpikingDrawOrgan
+                                # .build_sampler's `max(_MIN_BANK=96, len(nouns), len(verbs))` -- this read 64
+                                # through round 4 (an undeclared, non-production-faithful bank size)
 DEFAULT_WEIGHTS_JSON = os.path.join(
     "research", "findings", "raw", "_load_bearing", "_oe_production_turn",
     "a2", "default", "default_s42_intact.json")
@@ -116,16 +131,27 @@ def make_sampler(bank_seed, n_cand_max=DEFAULT_N_CAND_MAX):
     return SpikingWTASampler(P, row, tau, seed=int(bank_seed), n_cand_max=int(n_cand_max))
 
 
-def draw_until_admissible(sampler, drive_weights, candidates, max_attempts=DEFAULT_ADMISSIBLE_ATTEMPTS,
+def draw_until_admissible(sampler, drive_weights, score_weights, candidates, max_attempts=DEFAULT_ADMISSIBLE_ATTEMPTS,
                            max_retries=DEFAULT_MAX_RETRIES):
-    """Re-ask while the reply is INADMISSIBLE (zero DRIVE weight) -- mirrors the probe's `admissible_set` notion.
-    The lesion arm's uniform drive weights make attempt 1 always admissible. Gives up and returns the last draw
-    after `max_attempts` (never silently retries forever)."""
+    """Re-ask while the reply is INADMISSIBLE (zero SHARED-REFERENCE weight) -- mirrors the probe's
+    `admissible_set` notion. `drive_weights` feeds the draw (arm-specific: intact w, or uniform for the lesion
+    arm); `score_weights` (always the shared intact reference, exactly `score_seed_a3`'s `w_ref`) is what decides
+    admissibility, for BOTH arms alike.
+
+    ROUND-5 REVIEW FIX (2026-09-23): the prior version tested `drive_weights[idx] > 0` -- for the intact arm that
+    IS `score_weights` (so behaviourally unchanged), but the lesion arm's `np.ones_like` drive made every reply
+    admissible on attempt 1 by construction, so only the intact arm ever paid the redraw-away-from-zero-weight
+    cost. That asymmetry inflated Delta (confirmed by the round-5 re-review: re-running with the symmetric rule
+    below drops delta_mean from 0.517 to 0.181 on the same seeds). Testing `score_weights` for both arms makes an
+    "inadmissible" reply mean the same thing regardless of which arm drew it -- matching production, where the
+    plausibility/contradicts redraw gate downstream of the draw does not depend on the lesion.
+
+    Gives up and returns the last draw after `max_attempts` (never silently retries forever)."""
     reply = None
     for _ in range(max(1, int(max_attempts))):
         reply = sampler.draw_from_weights(drive_weights, candidates, max_retries=max_retries)
         idx = candidates.index(reply)
-        if drive_weights[idx] > 0:
+        if score_weights[idx] > 0:
             return reply
     return reply
 
@@ -145,8 +171,8 @@ def run_session(sampler, drive_weights, score_weights, candidates, noise_seed, k
     replies = []
     try:
         for _ in range(int(k)):
-            r = draw_until_admissible(sampler, drive_weights, candidates, max_attempts=admissible_attempts,
-                                       max_retries=max_retries)
+            r = draw_until_admissible(sampler, drive_weights, score_weights, candidates,
+                                       max_attempts=admissible_attempts, max_retries=max_retries)
             replies.append(r)
     finally:
         set_random_state(saved)
@@ -207,7 +233,35 @@ def run_power_simulation(bank_seeds=DEFAULT_BANK_SEEDS, m=DEFAULT_M, k=DEFAULT_K
 
 
 def selftest():
-    """Pure checks, no brain build -- each must be able to FAIL."""
+    """Pure checks, no brain build -- each must be able to FAIL.
+
+    BACKEND-PINNED (round-5 review fix, 2026-09-23): this used to crash with
+    `TypeError: Random state must be an instance of RandomState. Actual: tuple` whenever the ambient backend
+    resolved to cupy (any GPU box with SIM_BACKEND unset) -- run_session() saves/restores RNG state via
+    `sim.backend.get_random_state`/`set_random_state`, which dispatch to `cupy.random.set_random_state` on that
+    backend, but this selftest constructs states as bare `np.random.RandomState(...).get_state()` tuples. No
+    brain/bank is built here (FakeSampler only), so there is no fidelity reason to exercise cupy at all, and the
+    real governed a3 sessions this script re-derives already force SIM_BACKEND=numpy themselves (`_worker`'s
+    `os.environ.setdefault` before every session -- see the module docstring) -- the real run is numpy-only
+    regardless of what this process's ambient backend happens to be. SIM_BACKEND is force-set to "numpy" for the
+    duration of this function and the backend cache is reset before and after, so a caller's own backend choice
+    (e.g. a test suite already running under SIM_BACKEND=cupy) is left exactly as it found it.
+    """
+    import sim.backend as _backend
+    _prev_env = os.environ.get("SIM_BACKEND")
+    os.environ["SIM_BACKEND"] = "numpy"
+    _backend._reset_cache_for_tests()
+    try:
+        return _selftest_body()
+    finally:
+        if _prev_env is None:
+            os.environ.pop("SIM_BACKEND", None)
+        else:
+            os.environ["SIM_BACKEND"] = _prev_env
+        _backend._reset_cache_for_tests()
+
+
+def _selftest_body():
     ok = True
 
     def chk(name, cond):
@@ -226,20 +280,33 @@ def selftest():
     candidates = ["a", "b", "c", "d"]
     weights = np.array([0.0, 1.0, 2.0, 0.0])
     sampler = FakeSampler()
+    uniform = np.ones_like(weights)
 
-    # draw_until_admissible only ever returns a positive-weight candidate when one exists within max_attempts
+    # draw_until_admissible only ever returns a positive-REFERENCE candidate when one exists within max_attempts,
+    # for the intact-shaped drive (drive == reference, so this is unchanged by the round-5 fix)...
     np.random.seed(0)
     admissible_hits = 0
     for _ in range(200):
-        r = draw_until_admissible(sampler, weights, candidates, max_attempts=8, max_retries=1)
+        r = draw_until_admissible(sampler, weights, weights, candidates, max_attempts=8, max_retries=1)
         if weights[candidates.index(r)] > 0:
             admissible_hits += 1
-    chk("draw_until_admissible: lands on a positive-weight candidate almost always (>=190/200)",
-        admissible_hits >= 190)
+    chk("draw_until_admissible: intact-shaped drive lands on a positive-reference candidate almost always "
+        "(>=190/200)", admissible_hits >= 190)
 
-    uniform = np.ones_like(weights)
-    r_u = draw_until_admissible(sampler, uniform, candidates, max_attempts=8, max_retries=1)
-    chk("draw_until_admissible: uniform (lesion) weights -- every candidate admissible", uniform[candidates.index(r_u)] > 0)
+    # ...AND, ROUND-5 SYMMETRY FIX, for the lesion's UNIFORM drive too: admissibility is decided by score_weights
+    # (the shared reference), not drive_weights, so the lesion arm no longer gets a free pass on attempt 1. Under
+    # the OLD (biased) rule `drive_weights[idx] > 0` this would pass on attempt 1 for ANY reply (uniform is never
+    # zero) and admissible_hits_lesion would sit near chance (~50%, since FakeSampler ignores its weights argument
+    # and draws uniformly over 4 candidates, 2 of which are zero-reference) -- this check FAILS under that rule
+    # and PASSES only under the fixed one, so it is not vacuous.
+    admissible_hits_lesion = 0
+    for _ in range(200):
+        r = draw_until_admissible(sampler, uniform, weights, candidates, max_attempts=8, max_retries=1)
+        if weights[candidates.index(r)] > 0:
+            admissible_hits_lesion += 1
+    chk("draw_until_admissible: ROUND-5 FIX -- uniform (lesion) drive is ALSO filtered onto a positive-reference "
+        "candidate almost always (>=190/200), not accepted on attempt 1 by construction",
+        admissible_hits_lesion >= 190)
 
     # run_session: same noise_seed -> identical reply sequence (the rebuild check); a different one -> not
     s_a = run_session(sampler, weights, weights, candidates, noise_seed=1000, k=6)
@@ -255,13 +322,19 @@ def selftest():
     after = np.random.get_state()[1]
     chk("run_session: leaves the caller's global RNG state untouched", (before == after).all())
 
-    # A degenerate (A/A) world: identical weights in both "arms" must NOT be mistaken for a real effect by
-    # construction here (the harness itself does not compute deltas; this checks the ingredient it feeds
-    # run_bank_seed-style aggregation is sane: two sessions on the same weights but different streams still vary).
+    # A degenerate (A/A) world: identical weights in both "arms", but two INDEPENDENT sessions on different noise
+    # streams -- this must show real variation, not a no-op. ROUND-5 FIX: the prior condition
+    # (`replies differ OR values equal`) was a TAUTOLOGY -- deterministic replies->value means "replies equal"
+    # already implies "values equal", so the OR is true in EVERY case regardless of whether the noise stream did
+    # anything at all (proof: if replies_a == replies_b then session_value is the same deterministic function of
+    # the same input, so the right disjunct holds; if replies_a != replies_b the left disjunct holds -- no
+    # assignment of replies/values can make it false). Require the replies to actually differ instead, a
+    # condition the noise-stream-isolation bug this check exists to catch WOULD make fail.
     same_a = run_session(sampler, weights, weights, candidates, noise_seed=2000, k=8)
     same_b = run_session(sampler, weights, weights, candidates, noise_seed=2500, k=8)
-    chk("run_session: two independent sessions on the SAME weights need not be identical (real null exists)",
-        same_a["replies"] != same_b["replies"] or same_a["session_value"] == same_b["session_value"])
+    chk("run_session: two independent sessions on the SAME weights but different noise streams give different "
+        "reply sequences (real variability, not the prior tautological OR-check)",
+        same_a["replies"] != same_b["replies"])
 
     # THE SCORING FIX ITSELF: scoring must use score_weights (the shared reference), never the lesion's own
     # (uniform) drive weights -- a lesion arm scored against ITS OWN uniform weights is 1.0 by construction on

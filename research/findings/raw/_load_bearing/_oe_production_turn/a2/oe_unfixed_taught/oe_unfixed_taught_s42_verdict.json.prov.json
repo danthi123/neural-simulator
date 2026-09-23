@@ -1,17 +1,17 @@
 {
- "run_id": "1790186325-1323523",
+ "run_id": "1790199725-1832567",
  "runner": "research/runners/_lbf_open_ended_production_turn_probe.py",
  "argv": [
-  "/home/dant123/Projects/sim/.claude/worktrees/wf_a686cbcd-9ff-2/research/runners/_lbf_open_ended_production_turn_probe.py",
+  "/home/dant123/Projects/sim/.claude/worktrees/wf_59d3d98c-3bc-1/research/runners/_lbf_open_ended_production_turn_probe.py",
   "--rescore",
   "--mode",
   "oe_unfixed_taught",
   "--seeds",
-  "42,43,44,100,101,102",
+  "42,43",
   "--out-dir",
   "research/findings/raw/_load_bearing/_oe_production_turn/a2/oe_unfixed_taught"
  ],
- "git_sha": "c07cb09d7",
+ "git_sha": "47f627cc9",
  "git_dirty": true,
  "source_kind": null,
  "source_manifest_sha256": null,
@@ -19,7 +19,7 @@
  "source_manifest_start_error": null,
  "source_manifest_verified_at_exit": null,
  "source_manifest_exit_error": null,
- "started": "2026-09-23T13:58:45",
+ "started": "2026-09-23T17:42:05",
  "env": {
   "SIM_BACKEND": "numpy"
  },

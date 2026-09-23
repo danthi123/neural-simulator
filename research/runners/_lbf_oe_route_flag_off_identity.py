@@ -149,7 +149,15 @@ def compare(a_path, b_path, out, a_sha=None, b_sha=None):
                                 % (raw, (" -- FAILED at " + ", ".join(paths)) if raw != "IDENTICAL" else "",
                                    content, sorted(WALLCLOCK_KEYS))),
                    "wallclock_keys_excluded": sorted(WALLCLOCK_KEYS), "differing_paths_raw": paths,
-                   "per_turn_equal": per, "n_turns": len(per), "n_error_turns_total": n_err,
+                   # ROUND-5 REVIEW FIX (2026-09-23): the field used to be named `per_turn_equal` with no
+                   # qualifier, but it held `per` -- the POST-HOC wall-clock-stripped per-turn compare -- while
+                   # `per_raw`, the actual PRE-REGISTERED per-turn compare (amendment 2 item 9's exact-body
+                   # criterion), was computed and silently dropped. A reader could mistake the exposed field for
+                   # the pre-registered one, exactly the ambiguity `verdict` vs `verdict_content_..._POSTHOC`
+                   # already guards against at the aggregate level. Both are now named and exposed explicitly.
+                   "per_turn_equal_raw_PREREGISTERED": per_raw,
+                   "per_turn_equal_content_wallclock_stripped_POSTHOC": per,
+                   "n_turns": len(per), "n_error_turns_total": n_err,
                    "env_set": A["env_set"], "a_has_route_fn": A.get("has_route_fn"),
                    "b_has_route_fn": B.get("has_route_fn")}
     rec.update({"a": a_path, "b": b_path, "a_sha": a_sha, "b_sha": b_sha,
@@ -197,6 +205,14 @@ def selftest():
          and "post-hoc" in r["headline"])
     print(("PASS " if c else "FAIL ") + "wall-clock-only: content IDENTICAL reported beside, headline says raw FAILED")
     ok = ok and c
+    # ROUND-5 REVIEW FIX: per-turn fields must not be silently mislabelled -- the wall-clock-only turn is UNEQUAL
+    # under the raw (pre-registered) per-turn compare but EQUAL under the post-hoc stripped one; a field swap
+    # (or the old undifferentiated `per_turn_equal` name) would hide this.
+    per_ok = (r["per_turn_equal_raw_PREREGISTERED"] == [False]
+              and r["per_turn_equal_content_wallclock_stripped_POSTHOC"] == [True])
+    print(("PASS " if per_ok else "FAIL ") +
+          "per-turn fields: raw (pre-registered) is False, content (post-hoc stripped) is True -- distinct and correctly labelled")
+    ok = ok and per_ok
     compare(paths["base"], os.path.join(d, "nope.json"), o)
     got = json.load(open(o))["verdict"]
     print(("PASS " if got == "UNDEFINED" else "FAIL ") + "missing dump -> UNDEFINED")

@@ -1,6 +1,13 @@
 {
   "runner": "research.runners._lbf_open_ended_production_turn_probe",
   "scorer": "amendment-2 (seed = unit)",
+  "scorer_status": {
+    "withdrawn_as_go_rule": true,
+    "withdrawn_by": "research/findings/2026-09-23-open-ended-generation-production-turn-draw-lesion-seed42-and-open-ended-mode-bypass.md#correction-2-after-the-re-review-of-c807f869b-amendment-3",
+    "reason": "each arm is a deterministic function of the seed, so under H0 the per-seed D_s is exactly 0, not a distribution symmetric about 0 -- the 6-seed sign-flip p=1/64 would only have meant 'the modal reply changed on six seeds', not a real test",
+    "superseded_by": "amendment 3 (score_seed_a3/aggregate_a3 below): independent per-session noise streams make the null a real distribution, asserted in data via `noise_live`",
+    "still_valid": "the per-seed D_s, label, histograms and descriptive statistics remain valid DESCRIPTION of the scored seed(s); only the cross-seed sign-test GO/p-value built on top of them is withdrawn"
+  },
   "mode": "oe_unfixed_taught",
   "seed": 43,
   "k": 40,

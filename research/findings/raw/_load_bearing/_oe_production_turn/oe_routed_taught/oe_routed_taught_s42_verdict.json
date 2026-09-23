@@ -53,5 +53,11 @@
     "mean_w_intact": 2.975,
     "mean_w_lesion": 2.025,
     "direction_D": 0.9500000000000002
+  },
+  "scorer_status": {
+    "withdrawn_as_evidence": true,
+    "withdrawn_by": "research/findings/2026-09-23-open-ended-generation-production-turn-draw-lesion-seed42-and-open-ended-mode-bypass.md#correction-2-after-the-re-review-of-c807f869b-amendment-3 (and, before that, amendment 2's PREREG section 'What changes, and why', item 1)",
+    "reason": "this file's `score` object was produced by the ORIGINAL within-session label-permutation statistic (p_perm over the 40 pooled asks of ONE session) -- withdrawn because 40 serially dependent asks in one deterministic session are not exchangeable observations; amendment 2 replaced the unit with the seed (D_s), and amendment 2's own cross-seed GO rule was in turn withdrawn by Correction 2 (see amendment 3, score_seed_a3/aggregate_a3). A `verdict` of LOAD-BEARING/WRONG-DIRECTION/NOT-LOAD-BEARING in this file's `score` object is NOT evidence under either later scheme -- added 2026-09-23, round-5 review (\"stale withdrawn-scorer artifacts remain in committed data with a positive label\").",
+    "still_valid": "the raw histograms (hist_intact/hist_lesion/hist_rebuild), draw counts and mean_w_intact/mean_w_lesion are the actual measured session data and are not disputed; only the `verdict` and `p_perm`-based label built on top of them are withdrawn."
   }
 }
