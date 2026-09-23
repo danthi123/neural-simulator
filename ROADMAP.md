@@ -7,6 +7,35 @@ the [project handoff](HANDOFF.md), and the live state in
 board, when checked out, was `research/coordination/workboard.json` (⚠️ now ~a month
 stale — the live board is [GAP_CLOSURE_MISSION.md](GAP_CLOSURE_MISSION.md) CURRENT STATE; workboard.json is being retired).
 
+## 2026-09-22 — the mouth's mood coloring: why it only ever brightens, not darkens (diagnosed), and the next fix (built, not yet run)
+
+Follow-up to the "positive-only mood coloring" result below (the 6-seed NO-GO). Before building anything new, we
+first asked the cheap question the rules require: is the mouth's own vocabulary missing negative-mood words
+entirely, or does it know them but never surface them? **Answer, measured directly on the mouth's own raw word
+probabilities (no brain build needed, ~10 seconds): the mouth DOES carry real, comparable-sized probability on
+gloomy/negative words — they are just picked less often, not absent.** So the fix belongs on the picking
+mechanism (how mood nudges word choice), not on retraining the mouth with more sad stories.
+- **The next fix (already built and self-tested, not yet run to a result):** swap the current "give one favorite
+  word a nudge" mechanism for one already sitting in the codebase, unused for this purpose — a real spiking
+  competition where every mood-matching candidate word gets its own small neural nudge and the winner is decided
+  by noisy neuron firing, not a fixed formula. This is a straight swap (one setting flipped), reusing the exact
+  same 6-seed pass/fail test as the NO-GO below.
+- **Why it did not finish this session:** running it needs real compute time, and this session's shared machine
+  was under heavy, unrelated load from other work running at the same time — memory ran critically low three
+  times and had to be backed off each time to avoid crashing anything. The honest state is: built, launched,
+  no verdict yet — not a NO-GO, not a GO. Next session: re-launch when the machine has room; it resumes where it
+  left off. (Finding: `2026-09-22-affect-tone-decode-ceiling-diagnosis-distribution-shift-INPROGRESS`.)
+
+## 2026-09-22 — mood only ever brightens the mouth's tone, never darkens it (6-seed, honest negative on this mechanism)
+
+The mouth's free-talk replies DO pick up the speaker's mood — but only in one direction. Measured with a strict,
+independent word-list (sharing zero words with the one the mood mechanism itself uses, so it can't grade its own
+homework): a happy mood reliably makes the reply sound warmer on all 6 tries; a sad or angry mood NEVER makes it
+sound colder, on any of the 6 tries. The mechanism itself checks out clean (no shortcuts, no leaks, the neutral
+baseline is stable, fluency holds) — this is a real, trustworthy negative about THIS specific word-nudging
+method, not an instrument problem. Diagnosis and the built (not-yet-run) next attempt are directly above. (Finding:
+`2026-09-22-affect-tone-open-output-directional-6seed-positive-asymmetric-NOGO`.)
+
 ## 2026-09-21 — the #1 metric now has a robust, honest number (6-seed)
 - **How much of the reply does the brain actually drive?** The #1 metric — the fraction of the brain's faculties where cutting the brain's contribution provably changes what it says — now has a 6-seed (statistically honest) number under *adequate* probes: **0.85 ± 0.03**, with **20 faculties robustly load-bearing across all six seeds** (23 when you count faculties that flip in only some seeds). The shipped-by-default number (probes off) stays 0.59; the gap between the two is a *measurement* gap — thin probes that never exercised a faculty's driving condition — not a hollow brain.
 - **The 6-seed rule earned its keep:** a single lucky seed had read 0.88 (23 faculties); running all six revealed that 3 of those (episodic memory, an affect marker, source-provenance honesty) are *seed-dependent* — they sit right at a firing threshold and flip in some seeds but not others. Honest count: 20 robust, not 23.

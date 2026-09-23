@@ -1,0 +1,28 @@
+{
+ "run_id": "1790122033-3140929",
+ "runner": "research/runners/_lbf_affect_tone_decode_ceiling_diagnose.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/wf_02665910-81c-1/research/runners/_lbf_affect_tone_decode_ceiling_diagnose.py",
+  "--out",
+  "research/findings/raw/_affect_tone_decode_ceiling/diagnose_verdict.json"
+ ],
+ "git_sha": "35721557e",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-22T20:07:13",
+ "env": {
+  "SIM_BACKEND": "numpy",
+  "CUDA_VISIBLE_DEVICES": ""
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_affect_tone_decode_ceiling/diagnose_verdict.json"
+}
