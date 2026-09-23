@@ -26,8 +26,13 @@ echo "[aws-cpu] instance=$IID IP=$IP"
 
 $SSH "sudo apt-get -qq update && sudo apt-get -qq install -y python3-venv rsync >/dev/null 2>&1; mkdir -p ~/sim" || exit 1
 echo "[aws-cpu] rsync CODE ONLY (excludes bridges/data/deploy/references + raw + venvs — the disk-full lesson)…"
+# .claude/ (2026-09-23 addition): NEVER shipped anywhere -- it is where every worktree checkout + session state
+# lives (hundreds of GB locally), found while sizing the GPU-lane fix (tools/aws_provision.sh) for the SAME
+# board note this script's own header already cites. This script already excluded bridges/data/deploy/references
+# correctly; .claude/ was the one gap it shared with the GPU lane.
 rsync -az --delete -e "ssh -i $KEY -o StrictHostKeyChecking=no" \
-  --exclude '.git' --exclude 'research/findings/raw' --exclude '.venv' --exclude '.venv-rag' \
+  --exclude '.git' --exclude '.claude' --exclude 'research/findings/raw' --exclude 'research/queue/*.log' \
+  --exclude '.venv' --exclude '.venv-rag' \
   --exclude 'data' --exclude 'bridges' --exclude 'deploy' --exclude 'references' \
   --exclude '*.pyc' --exclude '__pycache__' --exclude '*.h5' --exclude '*.pkl' \
   ./ ubuntu@"$IP":~/sim/ || exit 1
@@ -40,4 +45,14 @@ import scipy.sparse, numpy
 import research.runners.onebrain_regression_battery as b
 print('  numpy', numpy.__version__, '| scipy ok | battery import ok | run_regression_battery:', hasattr(b,'run_regression_battery'))
 \"" || { echo '[aws-cpu] ⛔ verify failed — see above'; exit 1; }
-echo "[aws-cpu] READY. Dispatch integrated verifies, then: tools/aws_gpu.sh terminate (+ delete the SG from $STATE)."
+# The line above imports the MODULE, not `webapp.server` -- onebrain_regression_battery's
+# `from webapp.server import brain_chat, BrainChatRequest` is INSIDE `_collect_worker()`, so a module-level
+# import verify never exercises it (a broken webapp import would still pass the check above, then crash every
+# worker subprocess at battery-run time -- board note 2026-09-22, "exercised=0"). Test the REAL import directly.
+echo "[aws-cpu] VERIFY webapp.server (the battery's ACTUAL runtime import, not just the module-level one):"
+$SSH "cd ~/sim && SIM_BACKEND=numpy CUDA_VISIBLE_DEVICES='' .venv/bin/python -c \"
+from webapp.server import brain_chat, BrainChatRequest
+print('  webapp.server imports ok')
+\"" || { echo '[aws-cpu] ⛔ webapp.server import FAILED -- every faculty will read not-exercised; do NOT dispatch the battery here'; exit 1; }
+bash "$ROOT/tools/aws_brain_sanity_check.sh" "$SSH" numpy || exit 1
+echo "[aws-cpu] READY + brain-size-verified. Dispatch integrated verifies, then: tools/aws_gpu.sh terminate (+ delete the SG from $STATE)."
