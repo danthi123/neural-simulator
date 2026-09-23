@@ -593,6 +593,58 @@ def job_default_off_compare(seed: int = 44) -> int:
 
 
 # --------------------------------------------------------------------------------------------------------
+# pool plumbing (local-only helpers; the pool jobs themselves run --calibrate / --eval at POOL_REVISION)
+# --------------------------------------------------------------------------------------------------------
+POOL_REVISION = "2ba01783be41ff52f8d2af288899608b1a4c8058"   # the isolated revision provisioned for the v2 jobs
+POOL_NODES = ("pool41", "pool42")
+_REMOTE_V2 = f"derisk-pool/revisions/{POOL_REVISION}/research/findings/raw/_pmem_live_cliff_detector_v2"
+
+
+def job_pull(prefix: str) -> int:
+    """rsync `<prefix>*.json` back from every pool node into V2_DIR and attach a provenance sidecar naming the node
+    and the pinned revision (pool jobs never pass the local provenance door)."""
+    os.makedirs(V2_DIR, exist_ok=True)
+    got = []
+    for n in POOL_NODES:
+        subprocess.run(["rsync", "-a", "-e", "ssh -o BatchMode=yes -o ConnectTimeout=8",
+                        f"{n}:{_REMOTE_V2}/{prefix}*.json", V2_DIR + "/"], capture_output=True, timeout=120)
+        ls = subprocess.run(["ssh", "-o", "BatchMode=yes", n, f"ls {_REMOTE_V2}/ 2>/dev/null"],
+                            capture_output=True, text=True, timeout=60).stdout.split()
+        for f in ls:
+            if f.startswith(prefix) and f.endswith(".json"):
+                p = os.path.join(V2_DIR, f)
+                if os.path.exists(p) and not os.path.exists(p + ".prov.json"):
+                    _write_json(p + ".prov.json", {
+                        "run_id": "pool", "runner": "research/runners/_pmem_live_cliff_detector_derisk.py",
+                        "node": n, "git_sha": POOL_REVISION, "env": {"SIM_BACKEND": "numpy"},
+                        "argv": ["--calibrate" if prefix.startswith("calib") else "--eval", "--seed",
+                                 f.split("_s")[-1].split(".")[0]],
+                        "artifact": os.path.relpath(p, _REPO), "note": "pulled from the isolated pool revision"})
+                got.append(f)
+    print(f"[pull] {sorted(set(got))}", flush=True)
+    return 0
+
+
+def job_push_frozen() -> int:
+    """Copy the COMMITTED frozen constants (+ the static stabilizer artifact, read descriptively for the canonical
+    six) into the pinned pool revision, so eval jobs run the identical code on the frozen constants."""
+    load_frozen()
+    rc = 0
+    for n in POOL_NODES:
+        r1 = subprocess.run(["ssh", "-o", "BatchMode=yes", n, f"mkdir -p {_REMOTE_V2}"], timeout=60).returncode
+        r2 = subprocess.run(["scp", "-q", "-o", "BatchMode=yes", FROZEN, f"{n}:{_REMOTE_V2}/"], timeout=120).returncode
+        r3 = subprocess.run(["scp", "-q", "-o", "BatchMode=yes", STATIC_STABILIZER_ARTIFACT,
+                             f"{n}:derisk-pool/revisions/{POOL_REVISION}/research/findings/raw/"],
+                            timeout=120).returncode
+        chk = subprocess.run(["ssh", "-o", "BatchMode=yes", n, f"sha256sum {_REMOTE_V2}/frozen_constants.json"],
+                             capture_output=True, text=True, timeout=60).stdout.split()
+        ok = bool(chk) and chk[0] == _sha256_file(FROZEN)
+        print(f"[push-frozen] {n}: mkdir={r1} frozen={r2} static={r3} sha_match={ok}", flush=True)
+        rc |= 0 if (r1 == r2 == r3 == 0 and ok) else 1
+    return rc
+
+
+# --------------------------------------------------------------------------------------------------------
 # production entry point (default-OFF; wired into prospective_memory_production_organ.py)
 # --------------------------------------------------------------------------------------------------------
 def live_cliff_detector_enabled() -> bool:
@@ -675,8 +727,14 @@ def main():
     ap.add_argument("--no-determinism", action="store_true")
     ap.add_argument("--aggregate", action="store_true")
     ap.add_argument("--default-off-compare", action="store_true")
+    ap.add_argument("--pull", default=None, help="rsync <prefix>*.json back from the pool revision (calib_s|eval_s)")
+    ap.add_argument("--push-frozen", action="store_true")
     a = ap.parse_args()
     try:
+        if a.pull:
+            return job_pull(a.pull)
+        if a.push_frozen:
+            return job_push_frozen()
         if a.selftest:
             return 0 if selftest() else 1
         if a.calibrate:

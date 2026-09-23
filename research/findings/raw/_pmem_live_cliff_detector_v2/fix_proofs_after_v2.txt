@@ -1,0 +1,11 @@
+# tests/test_pmem_live_cliff_detector.py on the v2 branch (after): 8 pass; the frozen-constants reproduction test SKIPS until the calibration scans land and --freeze is committed (re-run at harvest).
+PASSED tests/test_pmem_live_cliff_detector.py::test_reported_state_is_the_settled_iterate_not_the_running_best
+PASSED tests/test_pmem_live_cliff_detector.py::test_detector_constants_are_sourced_outside_every_evaluation_seed
+PASSED tests/test_pmem_live_cliff_detector.py::test_freeze_is_robust_to_a_cliff_in_the_calibration_scans
+PASSED tests/test_pmem_live_cliff_detector.py::test_permutation_null_separates_real_cliffs_from_chance_and_is_undefined_without_alarms
+PASSED tests/test_pmem_live_cliff_detector.py::test_gate_goes_only_when_everything_holds_and_can_fail
+PASSED tests/test_pmem_live_cliff_detector.py::test_default_off_byte_identity_is_asserted_in_data_against_a_pinned_sha
+PASSED tests/test_pmem_live_cliff_detector.py::test_v2_preregistration_has_an_amendment_log_and_matches_the_code
+PASSED tests/test_pmem_live_cliff_detector.py::test_failure_log_records_the_pool_queue_isolated_revision_gap
+SKIPPED [1] tests/test_pmem_live_cliff_detector.py:67: constants not frozen yet (calibration scans still running)
+8 passed, 1 skipped in 0.12s
