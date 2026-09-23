@@ -1,0 +1,141 @@
+{
+  "runner": "_lbf_fix_episodic_store_verdict",
+  "faculty": "episodic-memory load-bearing robustness (BRAIN_EPISODIC_STORE_VERIFY), 6-seed",
+  "backend": "cupy",
+  "sim_backend": "cupy",
+  "device": "cuda:0 (RTX 3090)",
+  "provenance_exempt": "meta-verdict aggregating three cupy-measured legs (in-situ battery sweep, byte-identical, forced-degenerate recovery), each with its own provenance; this file only combines them",
+  "flag": "BRAIN_EPISODIC_STORE_VERIFY",
+  "default": "OFF",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "GO": true,
+  "verdict": "GO",
+  "n_load_bearing": 6,
+  "n_in_situ": 1,
+  "s44_fixed_in_situ": true,
+  "baseline_5_load_bearing": true,
+  "byte_identical_off": {
+    "all_match": true,
+    "n_match": 6
+  },
+  "recovery_6seed": {
+    "n_recovered": 6,
+    "n_seeds": 6
+  },
+  "attribution": {
+    "treatment_diffs_total": 1,
+    "control_diffs_total": 0,
+    "attributable_fraction": 1.0
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "in_situ_found": false,
+      "baseline_load_bearing": true,
+      "source": "baseline+byte-identical-covered",
+      "load_bearing": true,
+      "null_control_clean": true
+    },
+    {
+      "seed": 43,
+      "in_situ_found": false,
+      "baseline_load_bearing": true,
+      "source": "baseline+byte-identical-covered",
+      "load_bearing": true,
+      "null_control_clean": true
+    },
+    {
+      "seed": 44,
+      "in_situ_found": true,
+      "baseline_load_bearing": false,
+      "source": "in-situ-fix-on",
+      "load_bearing": true,
+      "verdict": "regressed",
+      "treatment_diffs": 1,
+      "control_diffs": 0,
+      "null_control_clean": true,
+      "lesion_reproduced": true,
+      "in_memory_intact_vs_lesion": [
+        true,
+        false
+      ]
+    },
+    {
+      "seed": 100,
+      "in_situ_found": false,
+      "baseline_load_bearing": true,
+      "source": "baseline+byte-identical-covered",
+      "load_bearing": true,
+      "null_control_clean": true
+    },
+    {
+      "seed": 101,
+      "in_situ_found": false,
+      "baseline_load_bearing": true,
+      "source": "baseline+byte-identical-covered",
+      "load_bearing": true,
+      "null_control_clean": true
+    },
+    {
+      "seed": 102,
+      "in_situ_found": false,
+      "baseline_load_bearing": true,
+      "source": "baseline+byte-identical-covered",
+      "load_bearing": true,
+      "null_control_clean": true
+    }
+  ],
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "byte-identical OFF: default-flag formed-weight hash == pre-fix HEAD on all 6 seeds",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "the shipped brain + the battery default are byte-identical when the flag is off"
+    },
+    {
+      "kind": "require",
+      "name": "recovery mechanism: forced-degenerate -> re-encode -> in_memory=True (lesion collapses) on all 6 seeds",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "the re-encode loop reliably recovers a non-completing ensemble on every seed's own network"
+    },
+    {
+      "kind": "require",
+      "name": "baseline: the OTHER 5 seeds (42/43/100/101/102) were already load-bearing WITHOUT the fix",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "committed adequate6; the fix is byte-identical to this baseline when the store's verify passes lap 0"
+    },
+    {
+      "kind": "require",
+      "name": "s44 (the only baseline-off seed) is FIXED and load-bearing IN-SITU with the fix ON",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "epi_store->epi_recall, episodic.in_memory intact True vs lesion False, on the real cupy brain"
+    },
+    {
+      "kind": "require",
+      "name": "every seed load-bearing under the fix (in-situ where run, else baseline+byte-identical-covered)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "s44 in-situ-fixed + 5 baseline-load-bearing (unchanged by the fix)"
+    },
+    {
+      "kind": "require",
+      "name": "null control clean on every in-situ seed",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "intact-vs-intact-rebuild = 0 decision diffs -> the flip is attributable to the lesion"
+    }
+  ],
+  "disabled_processes": [],
+  "undefined_reasons": []
+}
