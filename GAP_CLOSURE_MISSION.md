@@ -135,6 +135,12 @@ waiting on runs every day … I thought our heartbeats/gates were supposed to pr
   6/6 with SETTLE in its separate contrast), da-gated-encoding 0/6 (v3 not on); swap-drives + wm-binding not exercised.
   Option-C pair: shipped thin default ~0.59 (09-20, not re-measured). NEXT MEASUREMENT: the same battery with SETTLE +
   the DA-v3 flag on (both merged today). Also fixed: the pre-commit hook died on large commits (argv > 128 KB).
+- **17:50 COMBINED BATTERY RUNNING (tag `allfixes3settle` = allfixes2 flags + `BRAIN_AFFECT_MARKER_SETTLE=1`)** — does
+  affect-marker reach 6/6 inside the full battery without disturbing any other faculty (→ robust core 25)? Seeds 42-44 on
+  AWS instance B (.aws_cpu3, loop `bwsrk5ci6` terminates it); seeds 100-102 auto-launch on instance A (.aws_gpu) once
+  AWS2 tears down (controller `b9e3vhwh5`; the account's vCPU quota is 32 = two r7i.4xlarge — a 3rd launch was refused,
+  orphan SG deleted, launch script now aborts cleanly). DA v3 is NOT in this battery (not wired into chat; no next-day
+  turn). Aggregate: `.venv/bin/python tools/lb_shard.py aggregate --tag allfixes3settle`.
 - **⚠️ POOL/AWS BRAIN ASSETS:** pool nodes lack bridges/ (25G local) + most data/ (11G local) → production brain_chat
   runs there may DEGENERATE like AWS did. Do NOT trust a pool brain_chat result until the infra lane's sanity check passes.
 - **LESSONS (new):** never SendMessage a Workflow subagent (it resumes the agent as a duplicate in the same worktree;
