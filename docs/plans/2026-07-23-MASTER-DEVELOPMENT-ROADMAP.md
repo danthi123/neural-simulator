@@ -1190,8 +1190,23 @@ Perception/attention/WM, affect, curiosity, self/workspace/ToM, and language are
 
 **2026-09-23 (prospective-memory operating point, branch `research/pmem-live-cliff-detector`):**
 - **The v1 live cliff detector returned UNDEFINED and was rejected in review.** Its read-out was an arg-max of the evaluation metric, its constants were fit on the evaluation seeds, and it had no held-out seeds and no null. Artifact: `research/findings/raw/_pmem_live_cliff_detector.json`.
-- **The v2 redesign is pre-registered** (`research/findings/2026-09-23-pmem-live-cliff-detector-v2-PREREGISTRATION.md`). It reports the controller's settled state, freezes a CUSUM from calibration seeds 7-12, evaluates on held-out seeds 200-205 with a seed-unit permutation null, and exact-compares the organ against a pinned SHA.
+- **The v2 redesign is pre-registered** (`research/findings/2026-09-23-pmem-live-cliff-detector-v2-PREREGISTRATION.md`, AMENDMENT LOG entries 3-4 correct the null description and declare the set-point as unreachable-for-climbers). It reports the controller's settled state, freezes a CUSUM from calibration seeds 7-12, evaluates on held-out seeds 200-205 with a within-scan gain-order permutation null (seed is the unit the per-seed scores are summed over, not the exchangeable unit), and exact-compares the organ against a pinned SHA.
 - The controller is declared a host shortcut. If v2 is NO-GO on the held-out seeds, the named next method moves the regulator onto the substrate: activity-driven scaling of the facilitation gain.
+
+**2026-09-23 (da-gated-encoding, branch `research/da-encoding-natural-drive`, IN FLIGHT):** the natural-probe wall
+(DA write gain invisible to a clean read) traced to two constants: infinite E-LTP lifetime and a zero synaptic
+baseline. Built `webapp/da_tag_capture.py` (DA-gated tagging-and-capture, default OFF) plus a natural
+surprising-vs-expected conversation read as 24 h recall. v1 (D=64) 6-seed = UNDEFINED (1 GO, 5 fail the G2
+immediate-recall precondition: low-gain writes misread, with confabulations, once a synaptic baseline exists), while
+every 24 h comparison went the predicted way on all 6 seeds. v2 at the production D=128 = 6/6 GO at RUNNER LEVEL
+(salient facts recalled next day 4/4, DA->encoding lesion 0/4, neutral 0/4, capture-only lesion 0/4, companion off
+4/4; no confabulation at the primary point). Review: v2's 24 h outcome was set by a HOST compare-and-decay rule
+(declared; not credited to the brain), its band could not fail, and its arms were run-order dependent. v3 (prereg
+014298f62): DA acts through synapses (spiking D1 pool -> PRP pool -> per-synapse tag + bistable late-phase state, no
+compare on the DA trace), fresh process per arm, a capture band that can fail = 6/6 GO at RUNNER LEVEL, seed sign-flip
+p = 1/64; margins wide (neutral flips only at gamma x3.2 on seed 42). NOT wired: the battery still reads
+da-gated-encoding hollow. NEXT: verify-go v3; wire the ledger + a battery "next day" probe pair; a harder neutral drive;
+add repetition/sleep-replay routes to L-LTP before any default flip.
 
 **2026-09-18 (STRATEGIC — owner decision + scaling go/no-go; supersedes the raw-scale framing below):**
 - **Faithfulness-vs-tractability relaxation APPROVED (owner), honesty-conditioned** — trade bit-exact realism ONLY for a significant perf gain that loses nothing important to end-goal capabilities, and document every trade; biology-strong stays core; invariants kept (brain-based / one-brain / emergent / honesty). See memory `project_agi_first_fork_openness_2026_09_06`.

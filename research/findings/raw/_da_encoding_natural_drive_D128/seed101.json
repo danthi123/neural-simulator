@@ -1,0 +1,4278 @@
+{
+  "seed": 101,
+  "composer_D": 128,
+  "turn_h": 0.008333333333333333,
+  "delay_h": 24.0,
+  "vocab": [
+    "cat",
+    "dog",
+    "eat",
+    "goat",
+    "hide",
+    "key",
+    "lantern",
+    "otter",
+    "parrot",
+    "passport",
+    "see",
+    "steal",
+    "swallow",
+    "violin",
+    "zebra"
+  ],
+  "primary": [
+    1.0,
+    1.5
+  ],
+  "band": [
+    [
+      0.67,
+      1.5
+    ],
+    [
+      2.0,
+      1.5
+    ],
+    [
+      1.0,
+      1.0
+    ],
+    [
+      1.0,
+      3.0
+    ]
+  ],
+  "traces": {
+    "neutral": [
+      {
+        "text": "the zebra is here",
+        "fact": null,
+        "da": 0.41907686430139923,
+        "mode": "neutral",
+        "novelty": 1.0,
+        "ema_engagement": 0.22388059701492538
+      },
+      {
+        "text": "the violin is here",
+        "fact": null,
+        "da": 0.5410242136581408,
+        "mode": "neutral",
+        "novelty": 0.9615384615384616,
+        "ema_engagement": 0.30447761194029854
+      },
+      {
+        "text": "the zebra saw the violin",
+        "fact": null,
+        "da": 0.4424049216542885,
+        "mode": "neutral",
+        "novelty": 0.717948717948718,
+        "ema_engagement": 0.23820895522388058
+      },
+      {
+        "text": "the zebra swallowed the violin",
+        "fact": 0,
+        "da": 0.3147427118837156,
+        "mode": "rest",
+        "novelty": 0.5128205128205129,
+        "ema_engagement": 0.16692537313432834
+      },
+      {
+        "text": "the otter is here",
+        "fact": null,
+        "da": 0.34696916176371295,
+        "mode": "rest",
+        "novelty": 0.8846153846153846,
+        "ema_engagement": 0.18318805970149252
+      },
+      {
+        "text": "the lantern is here",
+        "fact": null,
+        "da": 0.5314156313388698,
+        "mode": "neutral",
+        "novelty": 1.0,
+        "ema_engagement": 0.2971558208955224
+      },
+      {
+        "text": "the otter saw the lantern",
+        "fact": null,
+        "da": 0.3941899351092701,
+        "mode": "rest",
+        "novelty": 0.6282051282051282,
+        "ema_engagement": 0.2084145671641791
+      },
+      {
+        "text": "the otter stole the lantern",
+        "fact": 1,
+        "da": 0.3274969472499682,
+        "mode": "rest",
+        "novelty": 0.6153846153846154,
+        "ema_engagement": 0.1729180656716418
+      },
+      {
+        "text": "the goat is here",
+        "fact": null,
+        "da": 0.526611794823819,
+        "mode": "neutral",
+        "novelty": 1.0,
+        "ema_engagement": 0.2930478232835821
+      },
+      {
+        "text": "the passport is here",
+        "fact": null,
+        "da": 0.39097730039326506,
+        "mode": "rest",
+        "novelty": 0.7307692307692307,
+        "ema_engagement": 0.206771368119403
+      },
+      {
+        "text": "the goat saw the passport",
+        "fact": null,
+        "da": 0.26660964755163835,
+        "mode": "rest",
+        "novelty": 0.5,
+        "ema_engagement": 0.1453951144119403
+      },
+      {
+        "text": "the goat ate the passport",
+        "fact": 2,
+        "da": 0.0812317415604047,
+        "mode": "rest",
+        "novelty": 0.44871794871794873,
+        "ema_engagement": 0.08502371740656717
+      },
+      {
+        "text": "the parrot is here",
+        "fact": null,
+        "da": 0.475711335263955,
+        "mode": "neutral",
+        "novelty": 1.0,
+        "ema_engagement": 0.25789008397755225
+      },
+      {
+        "text": "the key is here",
+        "fact": null,
+        "da": 0.5730589721737079,
+        "mode": "neutral",
+        "novelty": 1.0,
+        "ema_engagement": 0.3270366306059463
+      },
+      {
+        "text": "the parrot saw the key",
+        "fact": null,
+        "da": 0.39912359390679875,
+        "mode": "rest",
+        "novelty": 0.5384615384615384,
+        "ema_engagement": 0.21141166716775164
+      },
+      {
+        "text": "the parrot hid the key",
+        "fact": 3,
+        "da": 0.27151129824089865,
+        "mode": "rest",
+        "novelty": 0.48717948717948717,
+        "ema_engagement": 0.14725123403127977
+      }
+    ],
+    "neutral_novelty_lesion": [
+      {
+        "text": "the zebra is here",
+        "fact": null,
+        "da": 0.41907686430139923,
+        "mode": "neutral",
+        "novelty": 1.0,
+        "ema_engagement": 0.22388059701492538
+      },
+      {
+        "text": "the violin is here",
+        "fact": null,
+        "da": 0.4058802528339338,
+        "mode": "neutral",
+        "novelty": 0.8961038961038961,
+        "ema_engagement": 0.21492537313432838
+      },
+      {
+        "text": "the zebra saw the violin",
+        "fact": null,
+        "da": 0.6913925782401381,
+        "mode": "focus",
+        "novelty": 0.9523809523809522,
+        "ema_engagement": 0.41731343283582095
+      },
+      {
+        "text": "the zebra swallowed the violin",
+        "fact": 0,
+        "da": 0.7901346053995126,
+        "mode": "focus",
+        "novelty": 0.9567099567099566,
+        "ema_engagement": 0.507223880597015
+      },
+      {
+        "text": "the otter is here",
+        "fact": null,
+        "da": 0.7015480217465168,
+        "mode": "focus",
+        "novelty": 1.0,
+        "ema_engagement": 0.42677014925373136
+      },
+      {
+        "text": "the lantern is here",
+        "fact": null,
+        "da": 0.6528389740002354,
+        "mode": "focus",
+        "novelty": 1.0,
+        "ema_engagement": 0.39458865671641796
+      },
+      {
+        "text": "the otter saw the lantern",
+        "fact": null,
+        "da": 0.7901346053995126,
+        "mode": "focus",
+        "novelty": 0.9740259740259741,
+        "ema_engagement": 0.5070891940298508
+      },
+      {
+        "text": "the otter stole the lantern",
+        "fact": 1,
+        "da": 0.8186218087152943,
+        "mode": "focus",
+        "novelty": 0.9783549783549783,
+        "ema_engagement": 0.552089408955224
+      },
+      {
+        "text": "the goat is here",
+        "fact": null,
+        "da": 0.7105718041348688,
+        "mode": "focus",
+        "novelty": 1.0,
+        "ema_engagement": 0.44471636059701497
+      },
+      {
+        "text": "the passport is here",
+        "fact": null,
+        "da": 0.489987899738769,
+        "mode": "neutral",
+        "novelty": 0.8181818181818182,
+        "ema_engagement": 0.2674387830447762
+      },
+      {
+        "text": "the goat saw the passport",
+        "fact": null,
+        "da": 0.6448227644491313,
+        "mode": "focus",
+        "novelty": 0.8917748917748919,
+        "ema_engagement": 0.384587453516418
+      },
+      {
+        "text": "the goat ate the passport",
+        "fact": 2,
+        "da": 0.6859392599301359,
+        "mode": "focus",
+        "novelty": 0.8484848484848485,
+        "ema_engagement": 0.41353647394388066
+      },
+      {
+        "text": "the parrot is here",
+        "fact": null,
+        "da": 0.6469060551312166,
+        "mode": "focus",
+        "novelty": 1.0,
+        "ema_engagement": 0.38929518659247764
+      },
+      {
+        "text": "the key is here",
+        "fact": null,
+        "da": 0.6406293340536021,
+        "mode": "focus",
+        "novelty": 1.0,
+        "ema_engagement": 0.3795986716519164
+      },
+      {
+        "text": "the parrot saw the key",
+        "fact": null,
+        "da": 0.7908647185513825,
+        "mode": "focus",
+        "novelty": 0.9870129870129869,
+        "ema_engagement": 0.5190036477652442
+      },
+      {
+        "text": "the parrot hid the key",
+        "fact": 3,
+        "da": 0.854850201964452,
+        "mode": "focus",
+        "novelty": 0.9826839826839827,
+        "ema_engagement": 0.5658104143299784
+      }
+    ],
+    "salient": [
+      {
+        "text": "ok",
+        "fact": null,
+        "da": 0.04616293556102311,
+        "mode": "rest",
+        "novelty": null,
+        "ema_engagement": 0.0
+      },
+      {
+        "text": "oh",
+        "fact": null,
+        "da": 0.04616293556102311,
+        "mode": "rest",
+        "novelty": null,
+        "ema_engagement": 0.0
+      },
+      {
+        "text": "hm",
+        "fact": null,
+        "da": 0.04616293556102311,
+        "mode": "rest",
+        "novelty": null,
+        "ema_engagement": 0.0
+      },
+      {
+        "text": "Guess what, at the circus today the zebra swallowed the violin completely whole!",
+        "fact": 0,
+        "da": 0.8965045558416256,
+        "mode": "focus",
+        "novelty": 0.9615384615384616,
+        "ema_engagement": 0.6
+      },
+      {
+        "text": "ok",
+        "fact": null,
+        "da": 0.8965045558416256,
+        "mode": "focus",
+        "novelty": null,
+        "ema_engagement": 0.6
+      },
+      {
+        "text": "oh",
+        "fact": null,
+        "da": 0.8965045558416256,
+        "mode": "focus",
+        "novelty": null,
+        "ema_engagement": 0.6
+      },
+      {
+        "text": "hm",
+        "fact": null,
+        "da": 0.8965045558416256,
+        "mode": "focus",
+        "novelty": null,
+        "ema_engagement": 0.6
+      },
+      {
+        "text": "Unbelievable news from the harbor: the otter stole the lantern right off a fishing boat!",
+        "fact": 1,
+        "da": 1.0407838051678688,
+        "mode": "arousal",
+        "novelty": 0.8846153846153845,
+        "ema_engagement": 0.804179104477612
+      },
+      {
+        "text": "ok",
+        "fact": null,
+        "da": 1.0407838051678688,
+        "mode": "arousal",
+        "novelty": null,
+        "ema_engagement": 0.804179104477612
+      },
+      {
+        "text": "oh",
+        "fact": null,
+        "da": 1.0407838051678688,
+        "mode": "arousal",
+        "novelty": null,
+        "ema_engagement": 0.804179104477612
+      },
+      {
+        "text": "hm",
+        "fact": null,
+        "da": 1.0407838051678688,
+        "mode": "arousal",
+        "novelty": null,
+        "ema_engagement": 0.804179104477612
+      },
+      {
+        "text": "You won't believe it, at the airport the goat ate the passport of a traveling diplomat!",
+        "fact": 2,
+        "da": 1.1951755952244518,
+        "mode": "arousal",
+        "novelty": 0.9134615384615385,
+        "ema_engagement": 0.9037611940298508
+      },
+      {
+        "text": "ok",
+        "fact": null,
+        "da": 1.1951755952244518,
+        "mode": "arousal",
+        "novelty": null,
+        "ema_engagement": 0.9037611940298508
+      },
+      {
+        "text": "oh",
+        "fact": null,
+        "da": 1.1951755952244518,
+        "mode": "arousal",
+        "novelty": null,
+        "ema_engagement": 0.9037611940298508
+      },
+      {
+        "text": "hm",
+        "fact": null,
+        "da": 1.1951755952244518,
+        "mode": "arousal",
+        "novelty": null,
+        "ema_engagement": 0.9037611940298508
+      },
+      {
+        "text": "Crazy story: during the thunderstorm the parrot hid the key inside the grandfather clock!",
+        "fact": 3,
+        "da": 1.2386777669861797,
+        "mode": "arousal",
+        "novelty": 0.95,
+        "ema_engagement": 0.9615044776119404
+      }
+    ],
+    "salient_novelty_lesion": [
+      {
+        "text": "ok",
+        "fact": null,
+        "da": 0.04616293556102311,
+        "mode": "rest",
+        "novelty": null,
+        "ema_engagement": 0.0
+      },
+      {
+        "text": "oh",
+        "fact": null,
+        "da": 0.04616293556102311,
+        "mode": "rest",
+        "novelty": null,
+        "ema_engagement": 0.0
+      },
+      {
+        "text": "hm",
+        "fact": null,
+        "da": 0.04616293556102311,
+        "mode": "rest",
+        "novelty": null,
+        "ema_engagement": 0.0
+      },
+      {
+        "text": "Guess what, at the circus today the zebra swallowed the violin completely whole!",
+        "fact": 0,
+        "da": 0.8965045558416256,
+        "mode": "focus",
+        "novelty": 0.9837662337662337,
+        "ema_engagement": 0.6
+      },
+      {
+        "text": "ok",
+        "fact": null,
+        "da": 0.8965045558416256,
+        "mode": "focus",
+        "novelty": null,
+        "ema_engagement": 0.6
+      },
+      {
+        "text": "oh",
+        "fact": null,
+        "da": 0.8965045558416256,
+        "mode": "focus",
+        "novelty": null,
+        "ema_engagement": 0.6
+      },
+      {
+        "text": "hm",
+        "fact": null,
+        "da": 0.8965045558416256,
+        "mode": "focus",
+        "novelty": null,
+        "ema_engagement": 0.6
+      },
+      {
+        "text": "Unbelievable news from the harbor: the otter stole the lantern right off a fishing boat!",
+        "fact": 1,
+        "da": 1.0407838051678688,
+        "mode": "arousal",
+        "novelty": 0.887012987012987,
+        "ema_engagement": 0.804179104477612
+      },
+      {
+        "text": "ok",
+        "fact": null,
+        "da": 1.0407838051678688,
+        "mode": "arousal",
+        "novelty": null,
+        "ema_engagement": 0.804179104477612
+      },
+      {
+        "text": "oh",
+        "fact": null,
+        "da": 1.0407838051678688,
+        "mode": "arousal",
+        "novelty": null,
+        "ema_engagement": 0.804179104477612
+      },
+      {
+        "text": "hm",
+        "fact": null,
+        "da": 1.0407838051678688,
+        "mode": "arousal",
+        "novelty": null,
+        "ema_engagement": 0.804179104477612
+      },
+      {
+        "text": "You won't believe it, at the airport the goat ate the passport of a traveling diplomat!",
+        "fact": 2,
+        "da": 1.229726698591646,
+        "mode": "arousal",
+        "novelty": 0.9383116883116883,
+        "ema_engagement": 0.9216716417910448
+      },
+      {
+        "text": "ok",
+        "fact": null,
+        "da": 1.229726698591646,
+        "mode": "arousal",
+        "novelty": null,
+        "ema_engagement": 0.9216716417910448
+      },
+      {
+        "text": "oh",
+        "fact": null,
+        "da": 1.229726698591646,
+        "mode": "arousal",
+        "novelty": null,
+        "ema_engagement": 0.9216716417910448
+      },
+      {
+        "text": "hm",
+        "fact": null,
+        "da": 1.229726698591646,
+        "mode": "arousal",
+        "novelty": null,
+        "ema_engagement": 0.9216716417910448
+      },
+      {
+        "text": "Crazy story: during the thunderstorm the parrot hid the key inside the grandfather clock!",
+        "fact": 3,
+        "da": 1.2386777669861797,
+        "mode": "arousal",
+        "novelty": 0.9727272727272727,
+        "ema_engagement": 0.9686686567164179
+      }
+    ]
+  },
+  "arms": [
+    {
+      "arm": "intact",
+      "condition": "neutral",
+      "beta": 1.0,
+      "tau_e": 1.5,
+      "write_gains": [
+        1.4124321657622103,
+        1.4864331524420331,
+        1.0453872718302908,
+        1.3502713369511585
+      ],
+      "homeostasis_scales": [
+        0.9015015228813187,
+        0.8870708581074216,
+        0.9397973633458665,
+        0.922719447742941
+      ],
+      "prp_events_h": [],
+      "blocks": [
+        {
+          "block": 0,
+          "t_w": 0.025,
+          "captured_at": null,
+          "factor": 1.0469418898122031e-07,
+          "inc_mag": 1.2839836687510444,
+          "base_mag": 0.7690738762566904
+        },
+        {
+          "block": 1,
+          "t_w": 0.058333333333333334,
+          "captured_at": null,
+          "factor": 1.0704676948428807e-07,
+          "inc_mag": 1.3028169435549053,
+          "base_mag": 0.7601273945569305
+        },
+        {
+          "block": 2,
+          "t_w": 0.09166666666666666,
+          "captured_at": null,
+          "factor": 1.0945221476502183e-07,
+          "inc_mag": 0.9407246424414222,
+          "base_mag": 0.8255659350236648
+        },
+        {
+          "block": 3,
+          "t_w": 0.125,
+          "captured_at": null,
+          "factor": 1.1191171274651882e-07,
+          "inc_mag": 1.1148198951763506,
+          "base_mag": 0.8263430545998727
+        }
+      ],
+      "immediate": [
+        {
+          "cue": [
+            "zebra",
+            "swallow"
+          ],
+          "want": "violin",
+          "got": "violin",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "otter",
+            "steal"
+          ],
+          "want": "lantern",
+          "got": "lantern",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "goat",
+            "eat"
+          ],
+          "want": "passport",
+          "got": "passport",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "parrot",
+            "hide"
+          ],
+          "want": "key",
+          "got": "key",
+          "outcome": "correct"
+        }
+      ],
+      "immediate_counts": {
+        "correct": 4,
+        "abstain": 0,
+        "confab": 0
+      },
+      "delayed_24h": [
+        {
+          "cue": [
+            "zebra",
+            "swallow"
+          ],
+          "want": "violin",
+          "got": null,
+          "outcome": "abstain"
+        },
+        {
+          "cue": [
+            "otter",
+            "steal"
+          ],
+          "want": "lantern",
+          "got": null,
+          "outcome": "abstain"
+        },
+        {
+          "cue": [
+            "goat",
+            "eat"
+          ],
+          "want": "passport",
+          "got": null,
+          "outcome": "abstain"
+        },
+        {
+          "cue": [
+            "parrot",
+            "hide"
+          ],
+          "want": "key",
+          "got": null,
+          "outcome": "abstain"
+        }
+      ],
+      "delayed_counts": {
+        "correct": 0,
+        "abstain": 4,
+        "confab": 0
+      }
+    },
+    {
+      "arm": "lesion_da_encoding",
+      "condition": "neutral",
+      "beta": 1.0,
+      "tau_e": 1.5,
+      "write_gains": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "homeostasis_scales": null,
+      "prp_events_h": [],
+      "blocks": [
+        {
+          "block": 0,
+          "t_w": 0.025,
+          "captured_at": null,
+          "factor": 1.0469418898122031e-07,
+          "inc_mag": 1.0,
+          "base_mag": 0.8531032469014896
+        },
+        {
+          "block": 1,
+          "t_w": 0.058333333333333334,
+          "captured_at": null,
+          "factor": 1.0704676948428807e-07,
+          "inc_mag": 1.0,
+          "base_mag": 0.856895914920115
+        },
+        {
+          "block": 2,
+          "t_w": 0.09166666666666666,
+          "captured_at": null,
+          "factor": 1.0945221476502183e-07,
+          "inc_mag": 1.0,
+          "base_mag": 0.8784510014844955
+        },
+        {
+          "block": 3,
+          "t_w": 0.125,
+          "captured_at": null,
+          "factor": 1.1191171274651882e-07,
+          "inc_mag": 1.0,
+          "base_mag": 0.8955517916319916
+        }
+      ],
+      "immediate": [
+        {
+          "cue": [
+            "zebra",
+            "swallow"
+          ],
+          "want": "violin",
+          "got": "violin",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "otter",
+            "steal"
+          ],
+          "want": "lantern",
+          "got": "lantern",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "goat",
+            "eat"
+          ],
+          "want": "passport",
+          "got": "passport",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "parrot",
+            "hide"
+          ],
+          "want": "key",
+          "got": "key",
+          "outcome": "correct"
+        }
+      ],
+      "immediate_counts": {
+        "correct": 4,
+        "abstain": 0,
+        "confab": 0
+      },
+      "delayed_24h": [
+        {
+          "cue": [
+            "zebra",
+            "swallow"
+          ],
+          "want": "violin",
+          "got": null,
+          "outcome": "abstain"
+        },
+        {
+          "cue": [
+            "otter",
+            "steal"
+          ],
+          "want": "lantern",
+          "got": null,
+          "outcome": "abstain"
+        },
+        {
+          "cue": [
+            "goat",
+            "eat"
+          ],
+          "want": "passport",
+          "got": null,
+          "outcome": "abstain"
+        },
+        {
+          "cue": [
+            "parrot",
+            "hide"
+          ],
+          "want": "key",
+          "got": null,
+          "outcome": "abstain"
+        }
+      ],
+      "delayed_counts": {
+        "correct": 0,
+        "abstain": 4,
+        "confab": 0
+      }
+    },
+    {
+      "arm": "lesion_capture",
+      "condition": "neutral",
+      "beta": 1.0,
+      "tau_e": 1.5,
+      "write_gains": [
+        1.4509126788357174,
+        1.4449925999013318,
+        1.0572274296990627,
+        1.267390231869758
+      ],
+      "homeostasis_scales": [
+        0.909004965882533,
+        0.8824666076746794,
+        0.9399227135909147,
+        0.9018455354173807
+      ],
+      "prp_events_h": [],
+      "blocks": [
+        {
+          "block": 0,
+          "t_w": 0.025,
+          "captured_at": null,
+          "factor": 1.0469418898122031e-07,
+          "inc_mag": 1.235475422302111,
+          "base_mag": 0.7754750878439666
+        },
+        {
+          "block": 1,
+          "t_w": 0.058333333333333334,
+          "captured_at": null,
+          "factor": 1.0704676948428807e-07,
+          "inc_mag": 1.332624709468274,
+          "base_mag": 0.7561820311698446
+        },
+        {
+          "block": 2,
+          "t_w": 0.09166666666666666,
+          "captured_at": null,
+          "factor": 1.0945221476502183e-07,
+          "inc_mag": 0.939922713590915,
+          "base_mag": 0.8256760490719637
+        },
+        {
+          "block": 3,
+          "t_w": 0.125,
+          "captured_at": null,
+          "factor": 1.1191171274651882e-07,
+          "inc_mag": 1.2417616622347842,
+          "base_mag": 0.807649385018348
+        }
+      ],
+      "immediate": [
+        {
+          "cue": [
+            "zebra",
+            "swallow"
+          ],
+          "want": "violin",
+          "got": "violin",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "otter",
+            "steal"
+          ],
+          "want": "lantern",
+          "got": "lantern",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "goat",
+            "eat"
+          ],
+          "want": "passport",
+          "got": "passport",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "parrot",
+            "hide"
+          ],
+          "want": "key",
+          "got": "key",
+          "outcome": "correct"
+        }
+      ],
+      "immediate_counts": {
+        "correct": 4,
+        "abstain": 0,
+        "confab": 0
+      },
+      "delayed_24h": [
+        {
+          "cue": [
+            "zebra",
+            "swallow"
+          ],
+          "want": "violin",
+          "got": null,
+          "outcome": "abstain"
+        },
+        {
+          "cue": [
+            "otter",
+            "steal"
+          ],
+          "want": "lantern",
+          "got": null,
+          "outcome": "abstain"
+        },
+        {
+          "cue": [
+            "goat",
+            "eat"
+          ],
+          "want": "passport",
+          "got": null,
+          "outcome": "abstain"
+        },
+        {
+          "cue": [
+            "parrot",
+            "hide"
+          ],
+          "want": "key",
+          "got": null,
+          "outcome": "abstain"
+        }
+      ],
+      "delayed_counts": {
+        "correct": 0,
+        "abstain": 4,
+        "confab": 0
+      }
+    },
+    {
+      "arm": "companion_off",
+      "condition": "neutral",
+      "beta": 1.0,
+      "tau_e": 1.5,
+      "write_gains": [
+        1.4509126788357174,
+        1.4449925999013318,
+        1.0572274296990627,
+        1.267390231869758
+      ],
+      "homeostasis_scales": [
+        0.9261535900871306,
+        0.9020851980831055,
+        1.0000000104345703,
+        0.9231525264195435
+      ],
+      "prp_events_h": null,
+      "blocks": null,
+      "immediate": [
+        {
+          "cue": [
+            "zebra",
+            "swallow"
+          ],
+          "want": "violin",
+          "got": "violin",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "otter",
+            "steal"
+          ],
+          "want": "lantern",
+          "got": "lantern",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "goat",
+            "eat"
+          ],
+          "want": "passport",
+          "got": "passport",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "parrot",
+            "hide"
+          ],
+          "want": "key",
+          "got": "key",
+          "outcome": "correct"
+        }
+      ],
+      "immediate_counts": {
+        "correct": 4,
+        "abstain": 0,
+        "confab": 0
+      },
+      "delayed_24h": [
+        {
+          "cue": [
+            "zebra",
+            "swallow"
+          ],
+          "want": "violin",
+          "got": "violin",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "otter",
+            "steal"
+          ],
+          "want": "lantern",
+          "got": "lantern",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "goat",
+            "eat"
+          ],
+          "want": "passport",
+          "got": "passport",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "parrot",
+            "hide"
+          ],
+          "want": "key",
+          "got": "key",
+          "outcome": "correct"
+        }
+      ],
+      "delayed_counts": {
+        "correct": 4,
+        "abstain": 0,
+        "confab": 0
+      }
+    },
+    {
+      "arm": "lesion_novelty",
+      "condition": "neutral",
+      "beta": 1.0,
+      "tau_e": 1.5,
+      "write_gains": [
+        2.235323137641835,
+        2.256043413912186,
+        2.0251603354711403,
+        2.267883571780957
+      ],
+      "homeostasis_scales": [
+        0.8269150045163144,
+        0.8048618502087471,
+        0.8301405564678983,
+        0.8076554658224225
+      ],
+      "prp_events_h": [
+        0.016666666666666666,
+        0.025,
+        0.03333333333333333,
+        0.041666666666666664,
+        0.05,
+        0.058333333333333334,
+        0.06666666666666667,
+        0.08333333333333333,
+        0.09166666666666666,
+        0.1,
+        0.10833333333333334,
+        0.11666666666666667,
+        0.125
+      ],
+      "blocks": [
+        {
+          "block": 0,
+          "t_w": 0.025,
+          "captured_at": 0.025,
+          "factor": 0.9670705812296053,
+          "inc_mag": 1.8019159225202563,
+          "base_mag": 0.7054438752644276
+        },
+        {
+          "block": 1,
+          "t_w": 0.058333333333333334,
+          "captured_at": 0.058333333333333334,
+          "factor": 0.9671153540521733,
+          "inc_mag": 1.8848935386980372,
+          "base_mag": 0.6896828315189208
+        },
+        {
+          "block": 2,
+          "t_w": 0.09166666666666666,
+          "captured_at": 0.09166666666666666,
+          "factor": 0.9671601289476052,
+          "inc_mag": 1.6713387325828781,
+          "base_mag": 0.7292378032021216
+        },
+        {
+          "block": 3,
+          "t_w": 0.125,
+          "captured_at": 0.125,
+          "factor": 0.9672049059159967,
+          "inc_mag": 1.8747010195828795,
+          "base_mag": 0.7232972994386413
+        }
+      ],
+      "immediate": [
+        {
+          "cue": [
+            "zebra",
+            "swallow"
+          ],
+          "want": "violin",
+          "got": "violin",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "otter",
+            "steal"
+          ],
+          "want": "lantern",
+          "got": "lantern",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "goat",
+            "eat"
+          ],
+          "want": "passport",
+          "got": "passport",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "parrot",
+            "hide"
+          ],
+          "want": "key",
+          "got": "key",
+          "outcome": "correct"
+        }
+      ],
+      "immediate_counts": {
+        "correct": 4,
+        "abstain": 0,
+        "confab": 0
+      },
+      "delayed_24h": [
+        {
+          "cue": [
+            "zebra",
+            "swallow"
+          ],
+          "want": "violin",
+          "got": "violin",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "otter",
+            "steal"
+          ],
+          "want": "lantern",
+          "got": "lantern",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "goat",
+            "eat"
+          ],
+          "want": "passport",
+          "got": "passport",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "parrot",
+            "hide"
+          ],
+          "want": "key",
+          "got": "key",
+          "outcome": "correct"
+        }
+      ],
+      "delayed_counts": {
+        "correct": 4,
+        "abstain": 0,
+        "confab": 0
+      }
+    },
+    {
+      "arm": "intact",
+      "condition": "neutral",
+      "beta": 0.67,
+      "tau_e": 1.5,
+      "write_gains": [
+        1.4509126788357174,
+        1.4449925999013318,
+        1.0572274296990627,
+        1.267390231869758
+      ],
+      "homeostasis_scales": [
+        0.9284592095271949,
+        0.8972571017966086,
+        0.9743754784531258,
+        0.917875877264563
+      ],
+      "prp_events_h": [],
+      "blocks": [
+        {
+          "block": 0,
+          "t_w": 0.025,
+          "captured_at": null,
+          "factor": 1.0469418898122031e-07,
+          "inc_mag": 1.26191668586454,
+          "base_mag": 0.530687949396371
+        },
+        {
+          "block": 1,
+          "t_w": 0.058333333333333334,
+          "captured_at": null,
+          "factor": 1.0704676948428807e-07,
+          "inc_mag": 1.3549600338428303,
+          "base_mag": 0.5151334832589256
+        },
+        {
+          "block": 2,
+          "t_w": 0.09166666666666666,
+          "captured_at": null,
+          "factor": 1.0945221476502183e-07,
+          "inc_mag": 0.974375478453126,
+          "base_mag": 0.5734805469622857
+        },
+        {
+          "block": 3,
+          "t_w": 0.125,
+          "captured_at": null,
+          "factor": 1.1191171274651882e-07,
+          "inc_mag": 1.2638340273534254,
+          "base_mag": 0.5507436088746439
+        }
+      ],
+      "immediate": [
+        {
+          "cue": [
+            "zebra",
+            "swallow"
+          ],
+          "want": "violin",
+          "got": "violin",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "otter",
+            "steal"
+          ],
+          "want": "lantern",
+          "got": "lantern",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "goat",
+            "eat"
+          ],
+          "want": "passport",
+          "got": "passport",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "parrot",
+            "hide"
+          ],
+          "want": "key",
+          "got": "key",
+          "outcome": "correct"
+        }
+      ],
+      "immediate_counts": {
+        "correct": 4,
+        "abstain": 0,
+        "confab": 0
+      },
+      "delayed_24h": [
+        {
+          "cue": [
+            "zebra",
+            "swallow"
+          ],
+          "want": "violin",
+          "got": null,
+          "outcome": "abstain"
+        },
+        {
+          "cue": [
+            "otter",
+            "steal"
+          ],
+          "want": "lantern",
+          "got": null,
+          "outcome": "abstain"
+        },
+        {
+          "cue": [
+            "goat",
+            "eat"
+          ],
+          "want": "passport",
+          "got": null,
+          "outcome": "abstain"
+        },
+        {
+          "cue": [
+            "parrot",
+            "hide"
+          ],
+          "want": "key",
+          "got": null,
+          "outcome": "abstain"
+        }
+      ],
+      "delayed_counts": {
+        "correct": 0,
+        "abstain": 4,
+        "confab": 0
+      }
+    },
+    {
+      "arm": "lesion_da_encoding",
+      "condition": "neutral",
+      "beta": 0.67,
+      "tau_e": 1.5,
+      "write_gains": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "homeostasis_scales": null,
+      "prp_events_h": [],
+      "blocks": [
+        {
+          "block": 0,
+          "t_w": 0.025,
+          "captured_at": null,
+          "factor": 1.0469418898122031e-07,
+          "inc_mag": 1.0,
+          "base_mag": 0.571579175423998
+        },
+        {
+          "block": 1,
+          "t_w": 0.058333333333333334,
+          "captured_at": null,
+          "factor": 1.0704676948428807e-07,
+          "inc_mag": 1.0,
+          "base_mag": 0.574120262996477
+        },
+        {
+          "block": 2,
+          "t_w": 0.09166666666666666,
+          "captured_at": null,
+          "factor": 1.0945221476502183e-07,
+          "inc_mag": 1.0,
+          "base_mag": 0.588562170994612
+        },
+        {
+          "block": 3,
+          "t_w": 0.125,
+          "captured_at": null,
+          "factor": 1.1191171274651882e-07,
+          "inc_mag": 1.0,
+          "base_mag": 0.6000197003934344
+        }
+      ],
+      "immediate": [
+        {
+          "cue": [
+            "zebra",
+            "swallow"
+          ],
+          "want": "violin",
+          "got": "violin",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "otter",
+            "steal"
+          ],
+          "want": "lantern",
+          "got": "lantern",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "goat",
+            "eat"
+          ],
+          "want": "passport",
+          "got": "passport",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "parrot",
+            "hide"
+          ],
+          "want": "key",
+          "got": "key",
+          "outcome": "correct"
+        }
+      ],
+      "immediate_counts": {
+        "correct": 4,
+        "abstain": 0,
+        "confab": 0
+      },
+      "delayed_24h": [
+        {
+          "cue": [
+            "zebra",
+            "swallow"
+          ],
+          "want": "violin",
+          "got": null,
+          "outcome": "abstain"
+        },
+        {
+          "cue": [
+            "otter",
+            "steal"
+          ],
+          "want": "lantern",
+          "got": null,
+          "outcome": "abstain"
+        },
+        {
+          "cue": [
+            "goat",
+            "eat"
+          ],
+          "want": "passport",
+          "got": null,
+          "outcome": "abstain"
+        },
+        {
+          "cue": [
+            "parrot",
+            "hide"
+          ],
+          "want": "key",
+          "got": null,
+          "outcome": "abstain"
+        }
+      ],
+      "delayed_counts": {
+        "correct": 0,
+        "abstain": 4,
+        "confab": 0
+      }
+    },
+    {
+      "arm": "intact",
+      "condition": "neutral",
+      "beta": 2.0,
+      "tau_e": 1.5,
+      "write_gains": [
+        1.4509126788357174,
+        1.4449925999013318,
+        1.0572274296990627,
+        1.267390231869758
+      ],
+      "homeostasis_scales": [
+        0.8335151868754095,
+        0.822194130181647,
+        0.8435740593851241,
+        0.8294840481451835
+      ],
+      "prp_events_h": [],
+      "blocks": [
+        {
+          "block": 0,
+          "t_w": 0.025,
+          "captured_at": null,
+          "factor": 1.0469418898122031e-07,
+          "inc_mag": 1.1328733793003223,
+          "base_mag": 1.4221490245302273
+        },
+        {
+          "block": 1,
+          "t_w": 0.058333333333333334,
+          "captured_at": null,
+          "factor": 1.0704676948428807e-07,
+          "inc_mag": 1.241606429445496,
+          "base_mag": 1.409069582847901
+        },
+        {
+          "block": 2,
+          "t_w": 0.09166666666666666,
+          "captured_at": null,
+          "factor": 1.0945221476502183e-07,
+          "inc_mag": 0.8435740593851242,
+          "base_mag": 1.4820769545864074
+        },
+        {
+          "block": 3,
+          "t_w": 0.125,
+          "captured_at": null,
+          "factor": 1.1191171274651882e-07,
+          "inc_mag": 1.1421262843479063,
+          "base_mag": 1.4856918508931525
+        }
+      ],
+      "immediate": [
+        {
+          "cue": [
+            "zebra",
+            "swallow"
+          ],
+          "want": "violin",
+          "got": "violin",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "otter",
+            "steal"
+          ],
+          "want": "lantern",
+          "got": "lantern",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "goat",
+            "eat"
+          ],
+          "want": "passport",
+          "got": "passport",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "parrot",
+            "hide"
+          ],
+          "want": "key",
+          "got": "key",
+          "outcome": "correct"
+        }
+      ],
+      "immediate_counts": {
+        "correct": 4,
+        "abstain": 0,
+        "confab": 0
+      },
+      "delayed_24h": [
+        {
+          "cue": [
+            "zebra",
+            "swallow"
+          ],
+          "want": "violin",
+          "got": null,
+          "outcome": "abstain"
+        },
+        {
+          "cue": [
+            "otter",
+            "steal"
+          ],
+          "want": "lantern",
+          "got": null,
+          "outcome": "abstain"
+        },
+        {
+          "cue": [
+            "goat",
+            "eat"
+          ],
+          "want": "passport",
+          "got": null,
+          "outcome": "abstain"
+        },
+        {
+          "cue": [
+            "parrot",
+            "hide"
+          ],
+          "want": "key",
+          "got": null,
+          "outcome": "abstain"
+        }
+      ],
+      "delayed_counts": {
+        "correct": 0,
+        "abstain": 4,
+        "confab": 0
+      }
+    },
+    {
+      "arm": "lesion_da_encoding",
+      "condition": "neutral",
+      "beta": 2.0,
+      "tau_e": 1.5,
+      "write_gains": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "homeostasis_scales": null,
+      "prp_events_h": [],
+      "blocks": [
+        {
+          "block": 0,
+          "t_w": 0.025,
+          "captured_at": null,
+          "factor": 1.0469418898122031e-07,
+          "inc_mag": 1.0,
+          "base_mag": 1.7062064938029793
+        },
+        {
+          "block": 1,
+          "t_w": 0.058333333333333334,
+          "captured_at": null,
+          "factor": 1.0704676948428807e-07,
+          "inc_mag": 1.0,
+          "base_mag": 1.71379182984023
+        },
+        {
+          "block": 2,
+          "t_w": 0.09166666666666666,
+          "captured_at": null,
+          "factor": 1.0945221476502183e-07,
+          "inc_mag": 1.0,
+          "base_mag": 1.756902002968991
+        },
+        {
+          "block": 3,
+          "t_w": 0.125,
+          "captured_at": null,
+          "factor": 1.1191171274651882e-07,
+          "inc_mag": 1.0,
+          "base_mag": 1.7911035832639832
+        }
+      ],
+      "immediate": [
+        {
+          "cue": [
+            "zebra",
+            "swallow"
+          ],
+          "want": "violin",
+          "got": "steal",
+          "outcome": "confab"
+        },
+        {
+          "cue": [
+            "otter",
+            "steal"
+          ],
+          "want": "lantern",
+          "got": "lantern",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "goat",
+            "eat"
+          ],
+          "want": "passport",
+          "got": "passport",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "parrot",
+            "hide"
+          ],
+          "want": "key",
+          "got": "eat",
+          "outcome": "confab"
+        }
+      ],
+      "immediate_counts": {
+        "correct": 2,
+        "abstain": 0,
+        "confab": 2
+      },
+      "delayed_24h": [
+        {
+          "cue": [
+            "zebra",
+            "swallow"
+          ],
+          "want": "violin",
+          "got": null,
+          "outcome": "abstain"
+        },
+        {
+          "cue": [
+            "otter",
+            "steal"
+          ],
+          "want": "lantern",
+          "got": null,
+          "outcome": "abstain"
+        },
+        {
+          "cue": [
+            "goat",
+            "eat"
+          ],
+          "want": "passport",
+          "got": null,
+          "outcome": "abstain"
+        },
+        {
+          "cue": [
+            "parrot",
+            "hide"
+          ],
+          "want": "key",
+          "got": null,
+          "outcome": "abstain"
+        }
+      ],
+      "delayed_counts": {
+        "correct": 0,
+        "abstain": 4,
+        "confab": 0
+      }
+    },
+    {
+      "arm": "intact",
+      "condition": "neutral",
+      "beta": 1.0,
+      "tau_e": 1.0,
+      "write_gains": [
+        1.4509126788357174,
+        1.4449925999013318,
+        1.0572274296990627,
+        1.267390231869758
+      ],
+      "homeostasis_scales": [
+        0.914223141465547,
+        0.8861478958142709,
+        0.941328250615029,
+        0.9018455226578512
+      ],
+      "prp_events_h": [],
+      "blocks": [
+        {
+          "block": 0,
+          "t_w": 0.025,
+          "captured_at": null,
+          "factor": 3.387535580438602e-11,
+          "inc_mag": 1.2425677132400499,
+          "base_mag": 0.7799267303767379
+        },
+        {
+          "block": 1,
+          "t_w": 0.058333333333333334,
+          "captured_at": null,
+          "factor": 3.5023564834688454e-11,
+          "inc_mag": 1.3381838722681214,
+          "base_mag": 0.7593365119383044
+        },
+        {
+          "block": 2,
+          "t_w": 0.09166666666666666,
+          "captured_at": null,
+          "factor": 3.621069254041017e-11,
+          "inc_mag": 0.9413282506150292,
+          "base_mag": 0.8269107444784205
+        },
+        {
+          "block": 3,
+          "t_w": 0.125,
+          "captured_at": null,
+          "factor": 3.743805807447257e-11,
+          "inc_mag": 1.241761644666039,
+          "base_mag": 0.8076493735915286
+        }
+      ],
+      "immediate": [
+        {
+          "cue": [
+            "zebra",
+            "swallow"
+          ],
+          "want": "violin",
+          "got": "violin",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "otter",
+            "steal"
+          ],
+          "want": "lantern",
+          "got": "lantern",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "goat",
+            "eat"
+          ],
+          "want": "passport",
+          "got": "passport",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "parrot",
+            "hide"
+          ],
+          "want": "key",
+          "got": "key",
+          "outcome": "correct"
+        }
+      ],
+      "immediate_counts": {
+        "correct": 4,
+        "abstain": 0,
+        "confab": 0
+      },
+      "delayed_24h": [
+        {
+          "cue": [
+            "zebra",
+            "swallow"
+          ],
+          "want": "violin",
+          "got": null,
+          "outcome": "abstain"
+        },
+        {
+          "cue": [
+            "otter",
+            "steal"
+          ],
+          "want": "lantern",
+          "got": null,
+          "outcome": "abstain"
+        },
+        {
+          "cue": [
+            "goat",
+            "eat"
+          ],
+          "want": "passport",
+          "got": null,
+          "outcome": "abstain"
+        },
+        {
+          "cue": [
+            "parrot",
+            "hide"
+          ],
+          "want": "key",
+          "got": null,
+          "outcome": "abstain"
+        }
+      ],
+      "delayed_counts": {
+        "correct": 0,
+        "abstain": 4,
+        "confab": 0
+      }
+    },
+    {
+      "arm": "lesion_da_encoding",
+      "condition": "neutral",
+      "beta": 1.0,
+      "tau_e": 1.0,
+      "write_gains": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "homeostasis_scales": null,
+      "prp_events_h": [],
+      "blocks": [
+        {
+          "block": 0,
+          "t_w": 0.025,
+          "captured_at": null,
+          "factor": 3.387535580438602e-11,
+          "inc_mag": 1.0,
+          "base_mag": 0.8531032469014896
+        },
+        {
+          "block": 1,
+          "t_w": 0.058333333333333334,
+          "captured_at": null,
+          "factor": 3.5023564834688454e-11,
+          "inc_mag": 1.0,
+          "base_mag": 0.856895914920115
+        },
+        {
+          "block": 2,
+          "t_w": 0.09166666666666666,
+          "captured_at": null,
+          "factor": 3.621069254041017e-11,
+          "inc_mag": 1.0,
+          "base_mag": 0.8784510014844955
+        },
+        {
+          "block": 3,
+          "t_w": 0.125,
+          "captured_at": null,
+          "factor": 3.743805807447257e-11,
+          "inc_mag": 1.0,
+          "base_mag": 0.8955517916319916
+        }
+      ],
+      "immediate": [
+        {
+          "cue": [
+            "zebra",
+            "swallow"
+          ],
+          "want": "violin",
+          "got": "violin",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "otter",
+            "steal"
+          ],
+          "want": "lantern",
+          "got": "lantern",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "goat",
+            "eat"
+          ],
+          "want": "passport",
+          "got": "passport",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "parrot",
+            "hide"
+          ],
+          "want": "key",
+          "got": "key",
+          "outcome": "correct"
+        }
+      ],
+      "immediate_counts": {
+        "correct": 4,
+        "abstain": 0,
+        "confab": 0
+      },
+      "delayed_24h": [
+        {
+          "cue": [
+            "zebra",
+            "swallow"
+          ],
+          "want": "violin",
+          "got": null,
+          "outcome": "abstain"
+        },
+        {
+          "cue": [
+            "otter",
+            "steal"
+          ],
+          "want": "lantern",
+          "got": null,
+          "outcome": "abstain"
+        },
+        {
+          "cue": [
+            "goat",
+            "eat"
+          ],
+          "want": "passport",
+          "got": null,
+          "outcome": "abstain"
+        },
+        {
+          "cue": [
+            "parrot",
+            "hide"
+          ],
+          "want": "key",
+          "got": null,
+          "outcome": "abstain"
+        }
+      ],
+      "delayed_counts": {
+        "correct": 0,
+        "abstain": 4,
+        "confab": 0
+      }
+    },
+    {
+      "arm": "intact",
+      "condition": "neutral",
+      "beta": 1.0,
+      "tau_e": 3.0,
+      "write_gains": [
+        1.4509126788357174,
+        1.4449925999013318,
+        1.0572274296990627,
+        1.267390231869758
+      ],
+      "homeostasis_scales": [
+        0.9036808675428268,
+        0.8787482443367439,
+        0.9385046161644323,
+        0.901845528336084
+      ],
+      "prp_events_h": [],
+      "blocks": [
+        {
+          "block": 0,
+          "t_w": 0.025,
+          "captured_at": null,
+          "factor": 0.00032356481418908994,
+          "inc_mag": 1.2282391662952583,
+          "base_mag": 0.7709330822635403
+        },
+        {
+          "block": 1,
+          "t_w": 0.058333333333333334,
+          "captured_at": null,
+          "factor": 0.00032718002610839203,
+          "inc_mag": 1.327009558912073,
+          "base_mag": 0.7529957808153789
+        },
+        {
+          "block": 2,
+          "t_w": 0.09166666666666666,
+          "captured_at": null,
+          "factor": 0.0003308356310390733,
+          "inc_mag": 0.938504616164432,
+          "base_mag": 0.8244303199674676
+        },
+        {
+          "block": 3,
+          "t_w": 0.125,
+          "captured_at": null,
+          "factor": 0.00033453208029502764,
+          "inc_mag": 1.2417616524844641,
+          "base_mag": 0.8076493786766801
+        }
+      ],
+      "immediate": [
+        {
+          "cue": [
+            "zebra",
+            "swallow"
+          ],
+          "want": "violin",
+          "got": "violin",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "otter",
+            "steal"
+          ],
+          "want": "lantern",
+          "got": "lantern",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "goat",
+            "eat"
+          ],
+          "want": "passport",
+          "got": "passport",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "parrot",
+            "hide"
+          ],
+          "want": "key",
+          "got": "key",
+          "outcome": "correct"
+        }
+      ],
+      "immediate_counts": {
+        "correct": 4,
+        "abstain": 0,
+        "confab": 0
+      },
+      "delayed_24h": [
+        {
+          "cue": [
+            "zebra",
+            "swallow"
+          ],
+          "want": "violin",
+          "got": null,
+          "outcome": "abstain"
+        },
+        {
+          "cue": [
+            "otter",
+            "steal"
+          ],
+          "want": "lantern",
+          "got": null,
+          "outcome": "abstain"
+        },
+        {
+          "cue": [
+            "goat",
+            "eat"
+          ],
+          "want": "passport",
+          "got": null,
+          "outcome": "abstain"
+        },
+        {
+          "cue": [
+            "parrot",
+            "hide"
+          ],
+          "want": "key",
+          "got": null,
+          "outcome": "abstain"
+        }
+      ],
+      "delayed_counts": {
+        "correct": 0,
+        "abstain": 4,
+        "confab": 0
+      }
+    },
+    {
+      "arm": "lesion_da_encoding",
+      "condition": "neutral",
+      "beta": 1.0,
+      "tau_e": 3.0,
+      "write_gains": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "homeostasis_scales": null,
+      "prp_events_h": [],
+      "blocks": [
+        {
+          "block": 0,
+          "t_w": 0.025,
+          "captured_at": null,
+          "factor": 0.00032356481418908994,
+          "inc_mag": 1.0,
+          "base_mag": 0.8531032469014896
+        },
+        {
+          "block": 1,
+          "t_w": 0.058333333333333334,
+          "captured_at": null,
+          "factor": 0.00032718002610839203,
+          "inc_mag": 1.0,
+          "base_mag": 0.856895914920115
+        },
+        {
+          "block": 2,
+          "t_w": 0.09166666666666666,
+          "captured_at": null,
+          "factor": 0.0003308356310390733,
+          "inc_mag": 1.0,
+          "base_mag": 0.8784510014844955
+        },
+        {
+          "block": 3,
+          "t_w": 0.125,
+          "captured_at": null,
+          "factor": 0.00033453208029502764,
+          "inc_mag": 1.0,
+          "base_mag": 0.8955517916319916
+        }
+      ],
+      "immediate": [
+        {
+          "cue": [
+            "zebra",
+            "swallow"
+          ],
+          "want": "violin",
+          "got": "violin",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "otter",
+            "steal"
+          ],
+          "want": "lantern",
+          "got": "lantern",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "goat",
+            "eat"
+          ],
+          "want": "passport",
+          "got": "passport",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "parrot",
+            "hide"
+          ],
+          "want": "key",
+          "got": "key",
+          "outcome": "correct"
+        }
+      ],
+      "immediate_counts": {
+        "correct": 4,
+        "abstain": 0,
+        "confab": 0
+      },
+      "delayed_24h": [
+        {
+          "cue": [
+            "zebra",
+            "swallow"
+          ],
+          "want": "violin",
+          "got": null,
+          "outcome": "abstain"
+        },
+        {
+          "cue": [
+            "otter",
+            "steal"
+          ],
+          "want": "lantern",
+          "got": null,
+          "outcome": "abstain"
+        },
+        {
+          "cue": [
+            "goat",
+            "eat"
+          ],
+          "want": "passport",
+          "got": null,
+          "outcome": "abstain"
+        },
+        {
+          "cue": [
+            "parrot",
+            "hide"
+          ],
+          "want": "key",
+          "got": null,
+          "outcome": "abstain"
+        }
+      ],
+      "delayed_counts": {
+        "correct": 0,
+        "abstain": 4,
+        "confab": 0
+      }
+    },
+    {
+      "arm": "intact",
+      "condition": "salient",
+      "beta": 1.0,
+      "tau_e": 1.5,
+      "write_gains": [
+        2.427725703009373,
+        2.620128268376911,
+        2.9190922545633944,
+        2.874691662555501
+      ],
+      "homeostasis_scales": [
+        0.8136644568530035,
+        0.779654225991871,
+        0.766108057915283,
+        0.7599171557557532
+      ],
+      "prp_events_h": [
+        0.025,
+        0.03333333333333333,
+        0.041666666666666664,
+        0.05,
+        0.058333333333333334,
+        0.06666666666666667,
+        0.075,
+        0.08333333333333333,
+        0.09166666666666666,
+        0.1,
+        0.10833333333333334,
+        0.11666666666666667,
+        0.125
+      ],
+      "blocks": [
+        {
+          "block": 0,
+          "t_w": 0.025,
+          "captured_at": 0.025,
+          "factor": 0.9670705812296053,
+          "inc_mag": 1.9055082272724253,
+          "base_mag": 0.6941397900296342
+        },
+        {
+          "block": 1,
+          "t_w": 0.058333333333333334,
+          "captured_at": 0.058333333333333334,
+          "factor": 0.9671153540521733,
+          "inc_mag": 2.1004892590733135,
+          "base_mag": 0.6680825213026383
+        },
+        {
+          "block": 2,
+          "t_w": 0.09166666666666666,
+          "captured_at": 0.09166666666666666,
+          "factor": 0.9671601289476052,
+          "inc_mag": 2.2023244467056515,
+          "base_mag": 0.6729883907210223
+        },
+        {
+          "block": 3,
+          "t_w": 0.125,
+          "captured_at": 0.125,
+          "factor": 0.9672049059159967,
+          "inc_mag": 2.27975146726726,
+          "base_mag": 0.6805451703289521
+        }
+      ],
+      "immediate": [
+        {
+          "cue": [
+            "zebra",
+            "swallow"
+          ],
+          "want": "violin",
+          "got": "violin",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "otter",
+            "steal"
+          ],
+          "want": "lantern",
+          "got": "lantern",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "goat",
+            "eat"
+          ],
+          "want": "passport",
+          "got": "passport",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "parrot",
+            "hide"
+          ],
+          "want": "key",
+          "got": "key",
+          "outcome": "correct"
+        }
+      ],
+      "immediate_counts": {
+        "correct": 4,
+        "abstain": 0,
+        "confab": 0
+      },
+      "delayed_24h": [
+        {
+          "cue": [
+            "zebra",
+            "swallow"
+          ],
+          "want": "violin",
+          "got": "violin",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "otter",
+            "steal"
+          ],
+          "want": "lantern",
+          "got": "lantern",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "goat",
+            "eat"
+          ],
+          "want": "passport",
+          "got": "passport",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "parrot",
+            "hide"
+          ],
+          "want": "key",
+          "got": "key",
+          "outcome": "correct"
+        }
+      ],
+      "delayed_counts": {
+        "correct": 4,
+        "abstain": 0,
+        "confab": 0
+      }
+    },
+    {
+      "arm": "lesion_da_encoding",
+      "condition": "salient",
+      "beta": 1.0,
+      "tau_e": 1.5,
+      "write_gains": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "homeostasis_scales": null,
+      "prp_events_h": [],
+      "blocks": [
+        {
+          "block": 0,
+          "t_w": 0.025,
+          "captured_at": null,
+          "factor": 1.0469418898122031e-07,
+          "inc_mag": 1.0,
+          "base_mag": 0.8531032469014896
+        },
+        {
+          "block": 1,
+          "t_w": 0.058333333333333334,
+          "captured_at": null,
+          "factor": 1.0704676948428807e-07,
+          "inc_mag": 1.0,
+          "base_mag": 0.856895914920115
+        },
+        {
+          "block": 2,
+          "t_w": 0.09166666666666666,
+          "captured_at": null,
+          "factor": 1.0945221476502183e-07,
+          "inc_mag": 1.0,
+          "base_mag": 0.8784510014844955
+        },
+        {
+          "block": 3,
+          "t_w": 0.125,
+          "captured_at": null,
+          "factor": 1.1191171274651882e-07,
+          "inc_mag": 1.0,
+          "base_mag": 0.8955517916319916
+        }
+      ],
+      "immediate": [
+        {
+          "cue": [
+            "zebra",
+            "swallow"
+          ],
+          "want": "violin",
+          "got": "violin",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "otter",
+            "steal"
+          ],
+          "want": "lantern",
+          "got": "lantern",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "goat",
+            "eat"
+          ],
+          "want": "passport",
+          "got": "passport",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "parrot",
+            "hide"
+          ],
+          "want": "key",
+          "got": "key",
+          "outcome": "correct"
+        }
+      ],
+      "immediate_counts": {
+        "correct": 4,
+        "abstain": 0,
+        "confab": 0
+      },
+      "delayed_24h": [
+        {
+          "cue": [
+            "zebra",
+            "swallow"
+          ],
+          "want": "violin",
+          "got": null,
+          "outcome": "abstain"
+        },
+        {
+          "cue": [
+            "otter",
+            "steal"
+          ],
+          "want": "lantern",
+          "got": null,
+          "outcome": "abstain"
+        },
+        {
+          "cue": [
+            "goat",
+            "eat"
+          ],
+          "want": "passport",
+          "got": null,
+          "outcome": "abstain"
+        },
+        {
+          "cue": [
+            "parrot",
+            "hide"
+          ],
+          "want": "key",
+          "got": null,
+          "outcome": "abstain"
+        }
+      ],
+      "delayed_counts": {
+        "correct": 0,
+        "abstain": 4,
+        "confab": 0
+      }
+    },
+    {
+      "arm": "lesion_capture",
+      "condition": "salient",
+      "beta": 1.0,
+      "tau_e": 1.5,
+      "write_gains": [
+        2.427725703009373,
+        2.620128268376911,
+        2.9190922545633944,
+        2.874691662555501
+      ],
+      "homeostasis_scales": [
+        0.8136644568530035,
+        0.779654225991871,
+        0.766108057915283,
+        0.7599171557557532
+      ],
+      "prp_events_h": [],
+      "blocks": [
+        {
+          "block": 0,
+          "t_w": 0.025,
+          "captured_at": null,
+          "factor": 1.0469418898122031e-07,
+          "inc_mag": 1.9055082272724253,
+          "base_mag": 0.6941397900296342
+        },
+        {
+          "block": 1,
+          "t_w": 0.058333333333333334,
+          "captured_at": null,
+          "factor": 1.0704676948428807e-07,
+          "inc_mag": 2.1004892590733135,
+          "base_mag": 0.6680825213026383
+        },
+        {
+          "block": 2,
+          "t_w": 0.09166666666666666,
+          "captured_at": null,
+          "factor": 1.0945221476502183e-07,
+          "inc_mag": 2.2023244467056515,
+          "base_mag": 0.6729883907210223
+        },
+        {
+          "block": 3,
+          "t_w": 0.125,
+          "captured_at": null,
+          "factor": 1.1191171274651882e-07,
+          "inc_mag": 2.27975146726726,
+          "base_mag": 0.6805451703289521
+        }
+      ],
+      "immediate": [
+        {
+          "cue": [
+            "zebra",
+            "swallow"
+          ],
+          "want": "violin",
+          "got": "violin",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "otter",
+            "steal"
+          ],
+          "want": "lantern",
+          "got": "lantern",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "goat",
+            "eat"
+          ],
+          "want": "passport",
+          "got": "passport",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "parrot",
+            "hide"
+          ],
+          "want": "key",
+          "got": "key",
+          "outcome": "correct"
+        }
+      ],
+      "immediate_counts": {
+        "correct": 4,
+        "abstain": 0,
+        "confab": 0
+      },
+      "delayed_24h": [
+        {
+          "cue": [
+            "zebra",
+            "swallow"
+          ],
+          "want": "violin",
+          "got": null,
+          "outcome": "abstain"
+        },
+        {
+          "cue": [
+            "otter",
+            "steal"
+          ],
+          "want": "lantern",
+          "got": null,
+          "outcome": "abstain"
+        },
+        {
+          "cue": [
+            "goat",
+            "eat"
+          ],
+          "want": "passport",
+          "got": null,
+          "outcome": "abstain"
+        },
+        {
+          "cue": [
+            "parrot",
+            "hide"
+          ],
+          "want": "key",
+          "got": null,
+          "outcome": "abstain"
+        }
+      ],
+      "delayed_counts": {
+        "correct": 0,
+        "abstain": 4,
+        "confab": 0
+      }
+    },
+    {
+      "arm": "companion_off",
+      "condition": "salient",
+      "beta": 1.0,
+      "tau_e": 1.5,
+      "write_gains": [
+        2.427725703009373,
+        2.620128268376911,
+        2.9190922545633944,
+        2.874691662555501
+      ],
+      "homeostasis_scales": [
+        0.8083670784606453,
+        0.7805404393718751,
+        0.7679839189310157,
+        0.7598357394140265
+      ],
+      "prp_events_h": null,
+      "blocks": null,
+      "immediate": [
+        {
+          "cue": [
+            "zebra",
+            "swallow"
+          ],
+          "want": "violin",
+          "got": "violin",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "otter",
+            "steal"
+          ],
+          "want": "lantern",
+          "got": "lantern",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "goat",
+            "eat"
+          ],
+          "want": "passport",
+          "got": "passport",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "parrot",
+            "hide"
+          ],
+          "want": "key",
+          "got": "key",
+          "outcome": "correct"
+        }
+      ],
+      "immediate_counts": {
+        "correct": 4,
+        "abstain": 0,
+        "confab": 0
+      },
+      "delayed_24h": [
+        {
+          "cue": [
+            "zebra",
+            "swallow"
+          ],
+          "want": "violin",
+          "got": "violin",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "otter",
+            "steal"
+          ],
+          "want": "lantern",
+          "got": "lantern",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "goat",
+            "eat"
+          ],
+          "want": "passport",
+          "got": "passport",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "parrot",
+            "hide"
+          ],
+          "want": "key",
+          "got": "key",
+          "outcome": "correct"
+        }
+      ],
+      "delayed_counts": {
+        "correct": 4,
+        "abstain": 0,
+        "confab": 0
+      }
+    },
+    {
+      "arm": "lesion_novelty",
+      "condition": "salient",
+      "beta": 1.0,
+      "tau_e": 1.5,
+      "write_gains": [
+        2.427725703009373,
+        2.620128268376911,
+        2.975333004440059,
+        2.874691662555501
+      ],
+      "homeostasis_scales": [
+        0.8136644568530035,
+        0.779654225991871,
+        0.7630000059472006,
+        0.7599171557557532
+      ],
+      "prp_events_h": [
+        0.025,
+        0.03333333333333333,
+        0.041666666666666664,
+        0.05,
+        0.058333333333333334,
+        0.06666666666666667,
+        0.075,
+        0.08333333333333333,
+        0.09166666666666666,
+        0.1,
+        0.10833333333333334,
+        0.11666666666666667,
+        0.125
+      ],
+      "blocks": [
+        {
+          "block": 0,
+          "t_w": 0.025,
+          "captured_at": 0.025,
+          "factor": 0.9670705812296053,
+          "inc_mag": 1.9055082272724253,
+          "base_mag": 0.6941397900296342
+        },
+        {
+          "block": 1,
+          "t_w": 0.058333333333333334,
+          "captured_at": 0.058333333333333334,
+          "factor": 0.9671153540521733,
+          "inc_mag": 2.1004892590733135,
+          "base_mag": 0.6680825213026383
+        },
+        {
+          "block": 2,
+          "t_w": 0.09166666666666666,
+          "captured_at": 0.09166666666666666,
+          "factor": 0.9671601289476052,
+          "inc_mag": 2.231784427854442,
+          "base_mag": 0.6702581193569944
+        },
+        {
+          "block": 3,
+          "t_w": 0.125,
+          "captured_at": 0.125,
+          "factor": 0.9672049059159967,
+          "inc_mag": 2.27975146726726,
+          "base_mag": 0.6805451703289521
+        }
+      ],
+      "immediate": [
+        {
+          "cue": [
+            "zebra",
+            "swallow"
+          ],
+          "want": "violin",
+          "got": "violin",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "otter",
+            "steal"
+          ],
+          "want": "lantern",
+          "got": "lantern",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "goat",
+            "eat"
+          ],
+          "want": "passport",
+          "got": "passport",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "parrot",
+            "hide"
+          ],
+          "want": "key",
+          "got": "key",
+          "outcome": "correct"
+        }
+      ],
+      "immediate_counts": {
+        "correct": 4,
+        "abstain": 0,
+        "confab": 0
+      },
+      "delayed_24h": [
+        {
+          "cue": [
+            "zebra",
+            "swallow"
+          ],
+          "want": "violin",
+          "got": "violin",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "otter",
+            "steal"
+          ],
+          "want": "lantern",
+          "got": "lantern",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "goat",
+            "eat"
+          ],
+          "want": "passport",
+          "got": "passport",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "parrot",
+            "hide"
+          ],
+          "want": "key",
+          "got": "key",
+          "outcome": "correct"
+        }
+      ],
+      "delayed_counts": {
+        "correct": 4,
+        "abstain": 0,
+        "confab": 0
+      }
+    },
+    {
+      "arm": "intact",
+      "condition": "salient",
+      "beta": 0.67,
+      "tau_e": 1.5,
+      "write_gains": [
+        2.427725703009373,
+        2.620128268376911,
+        2.9190922545633944,
+        2.874691662555501
+      ],
+      "homeostasis_scales": [
+        0.8187943190949132,
+        0.7842456281379309,
+        0.7694307081615245,
+        0.7612249758417237
+      ],
+      "prp_events_h": [
+        0.025,
+        0.03333333333333333,
+        0.041666666666666664,
+        0.05,
+        0.058333333333333334,
+        0.06666666666666667,
+        0.075,
+        0.08333333333333333,
+        0.09166666666666666,
+        0.1,
+        0.10833333333333334,
+        0.11666666666666667,
+        0.125
+      ],
+      "blocks": [
+        {
+          "block": 0,
+          "t_w": 0.025,
+          "captured_at": 0.025,
+          "factor": 0.9670705812296053,
+          "inc_mag": 1.9175217724437847,
+          "base_mag": 0.4680057817501244
+        },
+        {
+          "block": 1,
+          "t_w": 0.058333333333333334,
+          "captured_at": 0.058333333333333334,
+          "factor": 0.9671153540521733,
+          "inc_mag": 2.1128590899167436,
+          "base_mag": 0.45025130628038623
+        },
+        {
+          "block": 2,
+          "t_w": 0.09166666666666666,
+          "captured_at": 0.09166666666666666,
+          "factor": 0.9671601289476052,
+          "inc_mag": 2.211876041666109,
+          "base_mag": 0.45285780802546866
+        },
+        {
+          "block": 3,
+          "t_w": 0.125,
+          "captured_at": 0.125,
+          "factor": 0.9672049059159967,
+          "inc_mag": 2.283674927525171,
+          "base_mag": 0.45674998193655036
+        }
+      ],
+      "immediate": [
+        {
+          "cue": [
+            "zebra",
+            "swallow"
+          ],
+          "want": "violin",
+          "got": "violin",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "otter",
+            "steal"
+          ],
+          "want": "lantern",
+          "got": "lantern",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "goat",
+            "eat"
+          ],
+          "want": "passport",
+          "got": "passport",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "parrot",
+            "hide"
+          ],
+          "want": "key",
+          "got": "key",
+          "outcome": "correct"
+        }
+      ],
+      "immediate_counts": {
+        "correct": 4,
+        "abstain": 0,
+        "confab": 0
+      },
+      "delayed_24h": [
+        {
+          "cue": [
+            "zebra",
+            "swallow"
+          ],
+          "want": "violin",
+          "got": "violin",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "otter",
+            "steal"
+          ],
+          "want": "lantern",
+          "got": "lantern",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "goat",
+            "eat"
+          ],
+          "want": "passport",
+          "got": "passport",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "parrot",
+            "hide"
+          ],
+          "want": "key",
+          "got": "key",
+          "outcome": "correct"
+        }
+      ],
+      "delayed_counts": {
+        "correct": 4,
+        "abstain": 0,
+        "confab": 0
+      }
+    },
+    {
+      "arm": "lesion_da_encoding",
+      "condition": "salient",
+      "beta": 0.67,
+      "tau_e": 1.5,
+      "write_gains": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "homeostasis_scales": null,
+      "prp_events_h": [],
+      "blocks": [
+        {
+          "block": 0,
+          "t_w": 0.025,
+          "captured_at": null,
+          "factor": 1.0469418898122031e-07,
+          "inc_mag": 1.0,
+          "base_mag": 0.571579175423998
+        },
+        {
+          "block": 1,
+          "t_w": 0.058333333333333334,
+          "captured_at": null,
+          "factor": 1.0704676948428807e-07,
+          "inc_mag": 1.0,
+          "base_mag": 0.574120262996477
+        },
+        {
+          "block": 2,
+          "t_w": 0.09166666666666666,
+          "captured_at": null,
+          "factor": 1.0945221476502183e-07,
+          "inc_mag": 1.0,
+          "base_mag": 0.588562170994612
+        },
+        {
+          "block": 3,
+          "t_w": 0.125,
+          "captured_at": null,
+          "factor": 1.1191171274651882e-07,
+          "inc_mag": 1.0,
+          "base_mag": 0.6000197003934344
+        }
+      ],
+      "immediate": [
+        {
+          "cue": [
+            "zebra",
+            "swallow"
+          ],
+          "want": "violin",
+          "got": "violin",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "otter",
+            "steal"
+          ],
+          "want": "lantern",
+          "got": "lantern",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "goat",
+            "eat"
+          ],
+          "want": "passport",
+          "got": "passport",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "parrot",
+            "hide"
+          ],
+          "want": "key",
+          "got": "key",
+          "outcome": "correct"
+        }
+      ],
+      "immediate_counts": {
+        "correct": 4,
+        "abstain": 0,
+        "confab": 0
+      },
+      "delayed_24h": [
+        {
+          "cue": [
+            "zebra",
+            "swallow"
+          ],
+          "want": "violin",
+          "got": null,
+          "outcome": "abstain"
+        },
+        {
+          "cue": [
+            "otter",
+            "steal"
+          ],
+          "want": "lantern",
+          "got": null,
+          "outcome": "abstain"
+        },
+        {
+          "cue": [
+            "goat",
+            "eat"
+          ],
+          "want": "passport",
+          "got": null,
+          "outcome": "abstain"
+        },
+        {
+          "cue": [
+            "parrot",
+            "hide"
+          ],
+          "want": "key",
+          "got": null,
+          "outcome": "abstain"
+        }
+      ],
+      "delayed_counts": {
+        "correct": 0,
+        "abstain": 4,
+        "confab": 0
+      }
+    },
+    {
+      "arm": "intact",
+      "condition": "salient",
+      "beta": 2.0,
+      "tau_e": 1.5,
+      "write_gains": [
+        2.427725703009373,
+        2.620128268376911,
+        2.9190922545633944,
+        2.874691662555501
+      ],
+      "homeostasis_scales": [
+        0.7832472735436323,
+        0.757691799392602,
+        0.7464401128124547,
+        0.7461641789603687
+      ],
+      "prp_events_h": [
+        0.025,
+        0.03333333333333333,
+        0.041666666666666664,
+        0.05,
+        0.058333333333333334,
+        0.06666666666666667,
+        0.075,
+        0.08333333333333333,
+        0.09166666666666666,
+        0.1,
+        0.10833333333333334,
+        0.11666666666666667,
+        0.125
+      ],
+      "blocks": [
+        {
+          "block": 0,
+          "t_w": 0.025,
+          "captured_at": 0.025,
+          "factor": 0.9670705812296053,
+          "inc_mag": 1.834274695368339,
+          "base_mag": 1.3363815843736238
+        },
+        {
+          "block": 1,
+          "t_w": 0.058333333333333334,
+          "captured_at": 0.058333333333333334,
+          "factor": 0.9671153540521733,
+          "inc_mag": 2.0413196430601874,
+          "base_mag": 1.2985260153359837
+        },
+        {
+          "block": 2,
+          "t_w": 0.09166666666666666,
+          "captured_at": 0.09166666666666666,
+          "factor": 0.9671601289476052,
+          "inc_mag": 2.145785168898951,
+          "base_mag": 1.3114221292966013
+        },
+        {
+          "block": 3,
+          "t_w": 0.125,
+          "captured_at": 0.125,
+          "factor": 0.9672049059159967,
+          "inc_mag": 2.2384925368811057,
+          "base_mag": 1.3364573346391444
+        }
+      ],
+      "immediate": [
+        {
+          "cue": [
+            "zebra",
+            "swallow"
+          ],
+          "want": "violin",
+          "got": "violin",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "otter",
+            "steal"
+          ],
+          "want": "lantern",
+          "got": "lantern",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "goat",
+            "eat"
+          ],
+          "want": "passport",
+          "got": "passport",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "parrot",
+            "hide"
+          ],
+          "want": "key",
+          "got": "key",
+          "outcome": "correct"
+        }
+      ],
+      "immediate_counts": {
+        "correct": 4,
+        "abstain": 0,
+        "confab": 0
+      },
+      "delayed_24h": [
+        {
+          "cue": [
+            "zebra",
+            "swallow"
+          ],
+          "want": "violin",
+          "got": "violin",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "otter",
+            "steal"
+          ],
+          "want": "lantern",
+          "got": "lantern",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "goat",
+            "eat"
+          ],
+          "want": "passport",
+          "got": "passport",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "parrot",
+            "hide"
+          ],
+          "want": "key",
+          "got": "key",
+          "outcome": "correct"
+        }
+      ],
+      "delayed_counts": {
+        "correct": 4,
+        "abstain": 0,
+        "confab": 0
+      }
+    },
+    {
+      "arm": "lesion_da_encoding",
+      "condition": "salient",
+      "beta": 2.0,
+      "tau_e": 1.5,
+      "write_gains": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "homeostasis_scales": null,
+      "prp_events_h": [],
+      "blocks": [
+        {
+          "block": 0,
+          "t_w": 0.025,
+          "captured_at": null,
+          "factor": 1.0469418898122031e-07,
+          "inc_mag": 1.0,
+          "base_mag": 1.7062064938029793
+        },
+        {
+          "block": 1,
+          "t_w": 0.058333333333333334,
+          "captured_at": null,
+          "factor": 1.0704676948428807e-07,
+          "inc_mag": 1.0,
+          "base_mag": 1.71379182984023
+        },
+        {
+          "block": 2,
+          "t_w": 0.09166666666666666,
+          "captured_at": null,
+          "factor": 1.0945221476502183e-07,
+          "inc_mag": 1.0,
+          "base_mag": 1.756902002968991
+        },
+        {
+          "block": 3,
+          "t_w": 0.125,
+          "captured_at": null,
+          "factor": 1.1191171274651882e-07,
+          "inc_mag": 1.0,
+          "base_mag": 1.7911035832639832
+        }
+      ],
+      "immediate": [
+        {
+          "cue": [
+            "zebra",
+            "swallow"
+          ],
+          "want": "violin",
+          "got": "steal",
+          "outcome": "confab"
+        },
+        {
+          "cue": [
+            "otter",
+            "steal"
+          ],
+          "want": "lantern",
+          "got": "lantern",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "goat",
+            "eat"
+          ],
+          "want": "passport",
+          "got": "passport",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "parrot",
+            "hide"
+          ],
+          "want": "key",
+          "got": "eat",
+          "outcome": "confab"
+        }
+      ],
+      "immediate_counts": {
+        "correct": 2,
+        "abstain": 0,
+        "confab": 2
+      },
+      "delayed_24h": [
+        {
+          "cue": [
+            "zebra",
+            "swallow"
+          ],
+          "want": "violin",
+          "got": null,
+          "outcome": "abstain"
+        },
+        {
+          "cue": [
+            "otter",
+            "steal"
+          ],
+          "want": "lantern",
+          "got": null,
+          "outcome": "abstain"
+        },
+        {
+          "cue": [
+            "goat",
+            "eat"
+          ],
+          "want": "passport",
+          "got": null,
+          "outcome": "abstain"
+        },
+        {
+          "cue": [
+            "parrot",
+            "hide"
+          ],
+          "want": "key",
+          "got": null,
+          "outcome": "abstain"
+        }
+      ],
+      "delayed_counts": {
+        "correct": 0,
+        "abstain": 4,
+        "confab": 0
+      }
+    },
+    {
+      "arm": "intact",
+      "condition": "salient",
+      "beta": 1.0,
+      "tau_e": 1.0,
+      "write_gains": [
+        2.427725703009373,
+        2.620128268376911,
+        2.9190922545633944,
+        2.874691662555501
+      ],
+      "homeostasis_scales": [
+        0.8197994986879226,
+        0.7836379790627791,
+        0.7681004791182559,
+        0.7599171551975967
+      ],
+      "prp_events_h": [
+        0.025,
+        0.03333333333333333,
+        0.041666666666666664,
+        0.05,
+        0.058333333333333334,
+        0.06666666666666667,
+        0.075,
+        0.08333333333333333,
+        0.09166666666666666,
+        0.1,
+        0.10833333333333334,
+        0.11666666666666667,
+        0.125
+      ],
+      "blocks": [
+        {
+          "block": 0,
+          "t_w": 0.025,
+          "captured_at": 0.025,
+          "factor": 0.9670705812296053,
+          "inc_mag": 1.9198757870111334,
+          "base_mag": 0.6993736141388802
+        },
+        {
+          "block": 1,
+          "t_w": 0.058333333333333334,
+          "captured_at": 0.058333333333333334,
+          "factor": 0.9671153540521733,
+          "inc_mag": 2.11122200476657,
+          "base_mag": 0.67149618303515
+        },
+        {
+          "block": 2,
+          "t_w": 0.09166666666666666,
+          "captured_at": 0.09166666666666666,
+          "factor": 0.9671601289476052,
+          "inc_mag": 2.208052043326135,
+          "base_mag": 0.6747386351221527
+        },
+        {
+          "block": 3,
+          "t_w": 0.125,
+          "captured_at": 0.125,
+          "factor": 0.9672049059159967,
+          "inc_mag": 2.27975146559279,
+          "base_mag": 0.680545169829094
+        }
+      ],
+      "immediate": [
+        {
+          "cue": [
+            "zebra",
+            "swallow"
+          ],
+          "want": "violin",
+          "got": "violin",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "otter",
+            "steal"
+          ],
+          "want": "lantern",
+          "got": "lantern",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "goat",
+            "eat"
+          ],
+          "want": "passport",
+          "got": "passport",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "parrot",
+            "hide"
+          ],
+          "want": "key",
+          "got": "key",
+          "outcome": "correct"
+        }
+      ],
+      "immediate_counts": {
+        "correct": 4,
+        "abstain": 0,
+        "confab": 0
+      },
+      "delayed_24h": [
+        {
+          "cue": [
+            "zebra",
+            "swallow"
+          ],
+          "want": "violin",
+          "got": "violin",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "otter",
+            "steal"
+          ],
+          "want": "lantern",
+          "got": "lantern",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "goat",
+            "eat"
+          ],
+          "want": "passport",
+          "got": "passport",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "parrot",
+            "hide"
+          ],
+          "want": "key",
+          "got": "key",
+          "outcome": "correct"
+        }
+      ],
+      "delayed_counts": {
+        "correct": 4,
+        "abstain": 0,
+        "confab": 0
+      }
+    },
+    {
+      "arm": "lesion_da_encoding",
+      "condition": "salient",
+      "beta": 1.0,
+      "tau_e": 1.0,
+      "write_gains": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "homeostasis_scales": null,
+      "prp_events_h": [],
+      "blocks": [
+        {
+          "block": 0,
+          "t_w": 0.025,
+          "captured_at": null,
+          "factor": 3.387535580438602e-11,
+          "inc_mag": 1.0,
+          "base_mag": 0.8531032469014896
+        },
+        {
+          "block": 1,
+          "t_w": 0.058333333333333334,
+          "captured_at": null,
+          "factor": 3.5023564834688454e-11,
+          "inc_mag": 1.0,
+          "base_mag": 0.856895914920115
+        },
+        {
+          "block": 2,
+          "t_w": 0.09166666666666666,
+          "captured_at": null,
+          "factor": 3.621069254041017e-11,
+          "inc_mag": 1.0,
+          "base_mag": 0.8784510014844955
+        },
+        {
+          "block": 3,
+          "t_w": 0.125,
+          "captured_at": null,
+          "factor": 3.743805807447257e-11,
+          "inc_mag": 1.0,
+          "base_mag": 0.8955517916319916
+        }
+      ],
+      "immediate": [
+        {
+          "cue": [
+            "zebra",
+            "swallow"
+          ],
+          "want": "violin",
+          "got": "violin",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "otter",
+            "steal"
+          ],
+          "want": "lantern",
+          "got": "lantern",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "goat",
+            "eat"
+          ],
+          "want": "passport",
+          "got": "passport",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "parrot",
+            "hide"
+          ],
+          "want": "key",
+          "got": "key",
+          "outcome": "correct"
+        }
+      ],
+      "immediate_counts": {
+        "correct": 4,
+        "abstain": 0,
+        "confab": 0
+      },
+      "delayed_24h": [
+        {
+          "cue": [
+            "zebra",
+            "swallow"
+          ],
+          "want": "violin",
+          "got": null,
+          "outcome": "abstain"
+        },
+        {
+          "cue": [
+            "otter",
+            "steal"
+          ],
+          "want": "lantern",
+          "got": null,
+          "outcome": "abstain"
+        },
+        {
+          "cue": [
+            "goat",
+            "eat"
+          ],
+          "want": "passport",
+          "got": null,
+          "outcome": "abstain"
+        },
+        {
+          "cue": [
+            "parrot",
+            "hide"
+          ],
+          "want": "key",
+          "got": null,
+          "outcome": "abstain"
+        }
+      ],
+      "delayed_counts": {
+        "correct": 0,
+        "abstain": 4,
+        "confab": 0
+      }
+    },
+    {
+      "arm": "intact",
+      "condition": "salient",
+      "beta": 1.0,
+      "tau_e": 3.0,
+      "write_gains": [
+        2.427725703009373,
+        2.620128268376911,
+        2.9190922545633944,
+        2.874691662555501
+      ],
+      "homeostasis_scales": [
+        0.8075266111328668,
+        0.7756774133197292,
+        0.7641174808555811,
+        0.7599171554426734
+      ],
+      "prp_events_h": [
+        0.025,
+        0.03333333333333333,
+        0.041666666666666664,
+        0.05,
+        0.058333333333333334,
+        0.06666666666666667,
+        0.075,
+        0.08333333333333333,
+        0.09166666666666666,
+        0.1,
+        0.10833333333333334,
+        0.11666666666666667,
+        0.125
+      ],
+      "blocks": [
+        {
+          "block": 0,
+          "t_w": 0.025,
+          "captured_at": 0.025,
+          "factor": 0.9670705812296053,
+          "inc_mag": 1.8911341011582228,
+          "base_mag": 0.6889035739168052
+        },
+        {
+          "block": 1,
+          "t_w": 0.058333333333333334,
+          "captured_at": 0.058333333333333334,
+          "factor": 0.9671153540521733,
+          "inc_mag": 2.089775211711416,
+          "base_mag": 0.6646748067694774
+        },
+        {
+          "block": 2,
+          "t_w": 0.09166666666666666,
+          "captured_at": 0.09166666666666666,
+          "factor": 0.9671601289476052,
+          "inc_mag": 2.1966021514284515,
+          "base_mag": 0.671239766309395
+        },
+        {
+          "block": 3,
+          "t_w": 0.125,
+          "captured_at": 0.125,
+          "factor": 0.9672049059159967,
+          "inc_mag": 2.27975146632802,
+          "base_mag": 0.6805451700485728
+        }
+      ],
+      "immediate": [
+        {
+          "cue": [
+            "zebra",
+            "swallow"
+          ],
+          "want": "violin",
+          "got": "violin",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "otter",
+            "steal"
+          ],
+          "want": "lantern",
+          "got": "lantern",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "goat",
+            "eat"
+          ],
+          "want": "passport",
+          "got": "passport",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "parrot",
+            "hide"
+          ],
+          "want": "key",
+          "got": "key",
+          "outcome": "correct"
+        }
+      ],
+      "immediate_counts": {
+        "correct": 4,
+        "abstain": 0,
+        "confab": 0
+      },
+      "delayed_24h": [
+        {
+          "cue": [
+            "zebra",
+            "swallow"
+          ],
+          "want": "violin",
+          "got": "violin",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "otter",
+            "steal"
+          ],
+          "want": "lantern",
+          "got": "lantern",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "goat",
+            "eat"
+          ],
+          "want": "passport",
+          "got": "passport",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "parrot",
+            "hide"
+          ],
+          "want": "key",
+          "got": "key",
+          "outcome": "correct"
+        }
+      ],
+      "delayed_counts": {
+        "correct": 4,
+        "abstain": 0,
+        "confab": 0
+      }
+    },
+    {
+      "arm": "lesion_da_encoding",
+      "condition": "salient",
+      "beta": 1.0,
+      "tau_e": 3.0,
+      "write_gains": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "homeostasis_scales": null,
+      "prp_events_h": [],
+      "blocks": [
+        {
+          "block": 0,
+          "t_w": 0.025,
+          "captured_at": null,
+          "factor": 0.00032356481418908994,
+          "inc_mag": 1.0,
+          "base_mag": 0.8531032469014896
+        },
+        {
+          "block": 1,
+          "t_w": 0.058333333333333334,
+          "captured_at": null,
+          "factor": 0.00032718002610839203,
+          "inc_mag": 1.0,
+          "base_mag": 0.856895914920115
+        },
+        {
+          "block": 2,
+          "t_w": 0.09166666666666666,
+          "captured_at": null,
+          "factor": 0.0003308356310390733,
+          "inc_mag": 1.0,
+          "base_mag": 0.8784510014844955
+        },
+        {
+          "block": 3,
+          "t_w": 0.125,
+          "captured_at": null,
+          "factor": 0.00033453208029502764,
+          "inc_mag": 1.0,
+          "base_mag": 0.8955517916319916
+        }
+      ],
+      "immediate": [
+        {
+          "cue": [
+            "zebra",
+            "swallow"
+          ],
+          "want": "violin",
+          "got": "violin",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "otter",
+            "steal"
+          ],
+          "want": "lantern",
+          "got": "lantern",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "goat",
+            "eat"
+          ],
+          "want": "passport",
+          "got": "passport",
+          "outcome": "correct"
+        },
+        {
+          "cue": [
+            "parrot",
+            "hide"
+          ],
+          "want": "key",
+          "got": "key",
+          "outcome": "correct"
+        }
+      ],
+      "immediate_counts": {
+        "correct": 4,
+        "abstain": 0,
+        "confab": 0
+      },
+      "delayed_24h": [
+        {
+          "cue": [
+            "zebra",
+            "swallow"
+          ],
+          "want": "violin",
+          "got": null,
+          "outcome": "abstain"
+        },
+        {
+          "cue": [
+            "otter",
+            "steal"
+          ],
+          "want": "lantern",
+          "got": null,
+          "outcome": "abstain"
+        },
+        {
+          "cue": [
+            "goat",
+            "eat"
+          ],
+          "want": "passport",
+          "got": null,
+          "outcome": "abstain"
+        },
+        {
+          "cue": [
+            "parrot",
+            "hide"
+          ],
+          "want": "key",
+          "got": null,
+          "outcome": "abstain"
+        }
+      ],
+      "delayed_counts": {
+        "correct": 0,
+        "abstain": 4,
+        "confab": 0
+      }
+    }
+  ],
+  "da_trace_repeat_identical": true,
+  "status": "GO",
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "G1 natural DA contrast (salient facts >= th+0.10, every neutral turn < th)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "G1b DA trace deterministic at this seed",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "G2 immediate recall intact in every arm (DA gates persistence, not encoding)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "reaches",
+      "name": "lesion reaches the write gain",
+      "ok": true,
+      "detail": "before=2.71041 after=1 moved=True",
+      "note": ""
+    },
+    {
+      "kind": "reaches",
+      "name": "lesion reaches the PRP read",
+      "ok": true,
+      "detail": "before=13 after=0 moved=True",
+      "note": ""
+    }
+  ],
+  "undefined_reasons": [],
+  "disabled_processes": [
+    {
+      "process": "recall-turn DA -> ledger",
+      "why": "the recall questions' DA is not fed to the capture ledger (no tag is live at 24 h; at +1 min it would be a testing-effect confound)"
+    }
+  ],
+  "gates": {
+    "threshold": 0.62,
+    "G1_salient_fact_da_min": 0.8965045558416256,
+    "G1_neutral_all_da_max": 0.5730589721737079,
+    "G1_natural_drive": true,
+    "G1_neutral_margin": 0.04694102782629206,
+    "G1b_da_trace_deterministic": true,
+    "G2_immediate_recall_intact_all_arms": true,
+    "salient_24h_intact": 4,
+    "salient_24h_lesion_da_encoding": 0,
+    "G3_load_bearing": true,
+    "G3_exact_perm_p": 0.014285714285714285,
+    "neutral_24h_intact": 0,
+    "G4_specific_to_surprise": true,
+    "salient_24h_lesion_capture": 0,
+    "G5_capture_subedge": true,
+    "salient_24h_companion_off": 4,
+    "neutral_24h_companion_off": 4,
+    "G6_production_default_null": true,
+    "null_diffs_intact_minus_lesion": {
+      "neutral": 0,
+      "companion_off_salient_vs_neutral": 0
+    },
+    "attributable_to_surprise_context": 1.0,
+    "confab_total_all_arms": 4,
+    "G8_band": {
+      "beta=0.67,tau_e=1.5": {
+        "immediate_ok": true,
+        "salient_intact": 4,
+        "salient_lesion": 0,
+        "neutral_intact": 0,
+        "holds": true
+      },
+      "beta=2.0,tau_e=1.5": {
+        "immediate_ok": false,
+        "salient_intact": 4,
+        "salient_lesion": 0,
+        "neutral_intact": 0,
+        "holds": true
+      },
+      "beta=1.0,tau_e=1.0": {
+        "immediate_ok": true,
+        "salient_intact": 4,
+        "salient_lesion": 0,
+        "neutral_intact": 0,
+        "holds": true
+      },
+      "beta=1.0,tau_e=3.0": {
+        "immediate_ok": true,
+        "salient_intact": 4,
+        "salient_lesion": 0,
+        "neutral_intact": 0,
+        "holds": true
+      }
+    },
+    "G8_robust": true,
+    "exploratory_lesion_novelty": {
+      "neutral": 4,
+      "salient": 4
+    },
+    "salient_write_gain_intact_mean": 2.710409472126295,
+    "salient_write_gain_lesion_mean": 1.0,
+    "salient_prp_events_intact": 13,
+    "salient_prp_events_lesion": 0,
+    "verdict": "GO"
+  },
+  "elapsed_s": 285.67486596107483
+}
