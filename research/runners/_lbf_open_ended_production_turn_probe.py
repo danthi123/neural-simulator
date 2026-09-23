@@ -67,6 +67,7 @@ import sys
 import time
 
 ALPHA = 0.05
+IN_SAMPLE_SEED = 42        # amendment 2 was designed after seeing seed 42 (declared in-sample)
 ASK = "what might a dog chase"
 ASK_SESSION = "oep"
 # NATURAL chase KB (the WORLD): prey chased by DIFFERENT numbers of predators, so the brain's own co-occurrence graph
@@ -489,7 +490,12 @@ def aggregate(paths, out, compare_dir=None):
         p = seed_level_signflip(ds) if defined else None
         all_defined = (len(defined) == len(rs))
         go = bool(len(rs) == 6 and all_defined and p is not None and p < ALPHA)
-        m = {"per_seed_verdict": {s: x.get("verdict") for s, x in sc.items()},
+        # seed 42 was IN-SAMPLE for amendment 2's design -> also report the held-out (43/44/100/101/102) sign-flip p
+        held = [sc[s].get("direction_D") for s in defined if s != str(IN_SAMPLE_SEED)]
+        p_held = seed_level_signflip(held) if held else None
+        m = {"p_signflip_heldout_excl_seed42": p_held, "n_heldout_defined": len(held),
+             "GO_heldout_only": bool(len(held) == 5 and all_defined and p_held is not None and p_held < ALPHA),
+             "per_seed_verdict": {s: x.get("verdict") for s, x in sc.items()},
              "per_seed_label": {s: x.get("label") for s, x in sc.items()},
              "n_seeds": len(rs), "n_defined": len(defined),
              "direction_D": {s: x.get("direction_D") for s, x in sc.items()},

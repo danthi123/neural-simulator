@@ -70,3 +70,32 @@ def test_true_open_ended_configuration_mode():
 
 def test_runner_selftest_passes():
     assert P.selftest() == 0
+
+
+def _verdicts(d, seeds, verdict_of, d_of):
+    import json
+    d.mkdir()
+    out = []
+    for s in seeds:
+        p = d / ("default_s%s_verdict.json" % s)
+        p.write_text(json.dumps({"mode": "default", "seed": s,
+                                 "score": {"verdict": verdict_of(s), "direction_D": d_of(s), "label": "x",
+                                           "modal_changed": True}}))
+        out.append(str(p))
+    return out
+
+
+def test_aggregate_gate_can_fail(tmp_path):
+    seeds = [42, 43, 44, 100, 101, 102]
+    ok = _verdicts(tmp_path / "a", seeds, lambda s: "DEFINED", lambda s: 0.9)
+    r = P.aggregate(ok, str(tmp_path / "agg.json"))["summary"]["default"]
+    assert r["GO"] is True and abs(r["p_signflip_over_seeds"] - 1 / 64.) < 1e-12
+    assert abs(r["p_signflip_heldout_excl_seed42"] - 1 / 32.) < 1e-12 and r["GO_heldout_only"] is True
+    one_undef = _verdicts(tmp_path / "b", seeds, lambda s: "UNDEFINED" if s == 101 else "DEFINED",
+                          lambda s: None if s == 101 else 0.9)
+    assert P.aggregate(one_undef, str(tmp_path / "agg2.json"))["summary"]["default"]["GO"] is False  # never a pass
+    five = _verdicts(tmp_path / "c", seeds[:5], lambda s: "DEFINED", lambda s: 0.9)
+    assert P.aggregate(five, str(tmp_path / "agg3.json"))["summary"]["default"]["GO"] is False
+    mixed = _verdicts(tmp_path / "d", seeds, lambda s: "DEFINED", lambda s: -0.9 if s == 44 else 0.9)
+    r = P.aggregate(mixed, str(tmp_path / "agg4.json"))["summary"]["default"]
+    assert r["GO"] is False and abs(r["p_signflip_over_seeds"] - 7 / 64.) < 1e-12
