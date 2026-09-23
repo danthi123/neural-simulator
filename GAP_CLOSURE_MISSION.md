@@ -55,7 +55,8 @@ waiting on runs every day … I thought our heartbeats/gates were supposed to pr
 - **🔬 CONFIRMATORY ALL-FIXES BATTERY — RUNNING as faculty×seed SHARDS (tag `allfixes2`, 186 shards):** `tools/lb_shard.py`
   (`@01d88fd6`); seeds 100/101/102 on AWS r7i.4xlarge (54.173.169.136, 15 parallel; local harvest loop pulls every 5 min
   and TERMINATES the instance + deletes its SG when `LB_SHARDS_DONE` appears — BILLING until then, guard caps $50/day);
-  seeds 42/43/44 on the pool (revision b36c6f4d). Aggregate: `.venv/bin/python tools/lb_shard.py aggregate --tag allfixes2`
+  seeds 42/43/44 moved to a SECOND AWS r7i.4xlarge (18.207.232.223, state `research/queue/.aws_cpu2`, own harvest+terminate
+  loop) because the pool was CPU/RAM-saturated by lane jobs (pool41 hit 167 MB free, load 29/12). Aggregate: `.venv/bin/python tools/lb_shard.py aggregate --tag allfixes2`
   → `research/findings/raw/_load_bearing/_shards/allfixes2/aggregate.json`. Tag `allfixes` is INVALID (ran without
   data/corpus → corpus-learned comprehension faculties read false NOT-load-bearing; local diag s100 read `regressed`
   treat=1 ctrl=0 with/without fixes) → corpus guard + corpus sync `@8c58f846`. The GPU cupy battery was CANCELLED
