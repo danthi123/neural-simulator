@@ -74,6 +74,22 @@ its cost. It produced no verdict. It showed three things:
 
 The protocol above is unchanged by the smoke.
 
+## Amendment 1 (committed before any run it governs)
+
+The seed-42 `oe_*` workers exposed a second bypass (their artifacts are in
+`research/findings/raw/_load_bearing/_oe_production_turn/`). With BRAIN_OPEN_ENDED=1 the TEACH assertions also go
+to the free-talk path, so in-loop acquisition never runs and `stored_facts` stays at the 5 build-time facts. The
+ask then has nothing novel to volunteer, so `oe_routed` cannot exercise the draw under the original protocol. The
+original `oe_unfixed` and `oe_routed` rows are kept and reported as run.
+
+Two new modes isolate the ASK path from this teach-path bypass:
+- `oe_unfixed_taught` and `oe_routed_taught` use the same env as `oe_unfixed` and `oe_routed`.
+- The only difference: they run the 13 TEACH turns with BRAIN_OPEN_ENDED=0 (the ordinary chat path) in the same
+  session and the same ChatBrain, then restore the arm env before the 40 asks.
+
+The statistic, null, alpha, K, KB and decision rule are unchanged, and so are the seeds. The teach-path bypass is
+a separate defect; this lane records it as a residual and does not fix it.
+
 ## Declared host shortcuts
 
 The KB, the prompt, and the permutation statistic are world and instrument. The plausibility gate stays at its
