@@ -169,9 +169,48 @@ the worker protocol that produces them is unchanged.
   draw-until-admissible loop of 8 attempts, M = 4 sessions per arm, K = 8 asks each, each session on its own noise
   stream, six bank seeds (295, 302, 309, 701, 708, 715). Delta ranged 0.09 to 0.46 (mean 0.25), 6/6 positive. It
   was used to choose M, K and the effect floor below. It does not include the plausibility gate, the moat or the
-  novelty filter.
+  novelty filter. **UNTRACED as written (round-4 review, 2026-09-23): no script and no output artifact for this
+  simulation was ever committed** (`git log -S` on these numbers finds them only in this prose). The script and
+  its numbers could not be recovered, so they are RETRACTED as a citation; see the correction below.
 - NOT seen: any `default` output for seeds 43, 44, 100, 101, 102. None exists: the controllers were killed before
   writing one. I did not open the `oe_routed_full` F1/F2 files or the `oe_unfixed_taught` s43/s44 files.
+  **INACCURATE as written (round-4 review, 2026-09-23): see the correction below** — the `oe_unfixed_taught` s43
+  verdict (and s44's `intact` worker JSON) had already been committed, and the s43 verdict already cited in this
+  lane's finding, before this amendment log was written.
+
+### Amendment-log correction (round-4 review, 2026-09-23)
+
+Both flagged items above, fixed here rather than silently rewritten in place (the original bullets are kept
+verbatim for the record):
+
+1. **The power simulation is re-derived, not recovered.** The original script and its output JSON were never
+   committed and could not be found by `git log -S` on any of its reported numbers (295/302/309/701/708/715,
+   0.09-0.46, 0.25) — they are UNTRACED and are retracted as evidence. This round commits a NEW script,
+   `research/runners/_lbf_oe_a3_power_simulation.py`, implementing the SAME design the bullet above describes
+   (same 6 bank seeds, M=4 sessions/arm, K=8 asks/session, each session on its own noise stream, the production
+   `SpikingWTASampler.draw_from_weights` at the production operating point, the real seed-42 host weight vector
+   read from the committed `a2/default/default_s42_intact.json`), scoring every session — intact AND lesion —
+   against the SAME intact reference weight vector (mirroring `score_seed_a3`'s `w_ref`; scoring the lesion arm
+   against its own uniform weights is degenerate at 1.0 by construction, a bug this script's own selftest pins).
+   Its output is committed at
+   `research/findings/raw/_load_bearing/_oe_production_turn/a3_power_simulation/power_sim.json`
+   (`python -m research.runners._lbf_oe_a3_power_simulation --out <path>`, deterministic — rerun and diffed
+   byte-for-byte on `aggregate` while fixing this). **Its own numbers, not the retracted ones above, are what
+   this amendment now cites**: Delta ranged **0.302 to 0.698 (mean 0.517), 6/6 positive** — a larger, not smaller,
+   margin over the 0.10 floor than originally claimed, so the M/K/floor choice below is, if anything, MORE
+   conservative than the (now-retracted) number that motivated it, not less.
+2. **The amendment log understated what had been seen.** `research/findings/raw/_load_bearing/_oe_production_turn/`
+   `a2/oe_unfixed_taught/oe_unfixed_taught_s43_verdict.json` (UNDEFINED, 0 draws — a control mode outside the a3
+   governed scope, so no governed decision is affected by this) and the s43 worker JSONs were committed in
+   `38be99e7e`, and that verdict was already cited by name in this lane's finding
+   (`research/findings/2026-09-23-open-ended-generation-production-turn-draw-lesion-seed42-and-open-ended-mode-`
+   `bypass.md`, "The oe_unfixed_taught seed-43 control also reads UNDEFINED with 0 draws") in the SAME commit —
+   both well before this amendment-3 log (`eefdd666a`) was written. `oe_unfixed_taught_s44_intact.json` (one
+   worker JSON only, no lesion/rebuild/verdict — an incomplete set) was also committed in `38be99e7e`. So "I did
+   not open ... the `oe_unfixed_taught` s43/s44 files" is wrong for s43 (its verdict was read and quoted) and
+   overstated for s44 (only a partial, unscored artifact existed). What was NOT seen, and remains true: no
+   `oe_routed_full` F1/F2 file, and no `default` output for seeds 43, 44, 100, 101, 102 (the amendment-3 governed
+   scope) — the s43/s44 `oe_unfixed_taught` control does not bear on that scope either way.
 
 ### Why amendment 2's statistic is withdrawn as a GO rule
 

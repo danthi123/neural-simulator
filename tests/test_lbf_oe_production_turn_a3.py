@@ -17,6 +17,7 @@ import numpy as np
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import research.runners._lbf_open_ended_production_turn_probe as P  # noqa: E402
+from sim.backend import _reset_cache_for_tests  # noqa: E402
 
 
 def test_deterministic_arms_are_undefined_not_a_pass():
@@ -52,7 +53,23 @@ def test_gate_can_fail_each_way():
     assert P.aggregate_a3(six)["p_sign_test_heldout_excl_seed42"] == 1 / 32.
 
 
-def test_noise_stream_varies_draws_and_leaves_global_rng_untouched():
+def test_noise_stream_varies_draws_and_leaves_global_rng_untouched(monkeypatch):
+    # `_install_noise_stream` REFUSES on any backend but numpy (its state save/restore is exercised against plain
+    # `np.random`, which only tracks the numpy backend's RNG -- see the function's own docstring). Pin it here:
+    # on a GPU box `get_backend()` resolves to cupy by default (round-4 review, 2026-09-23 -- measured 18 passed /
+    # 1 failed with no pin), and production is UNAFFECTED by pinning the test, because `_worker` (the only real
+    # caller, used by every governed a3 session) already does `os.environ.setdefault("SIM_BACKEND", "numpy")`
+    # before any run -- so a real a3 session always exercises this exact numpy path regardless of what this test
+    # pins. Reset the cached backend after too, so later tests are not left pinned to numpy by this one.
+    monkeypatch.setenv("SIM_BACKEND", "numpy")
+    _reset_cache_for_tests()
+    try:
+        _test_noise_stream_varies_draws_and_leaves_global_rng_untouched_body()
+    finally:
+        _reset_cache_for_tests()
+
+
+def _test_noise_stream_varies_draws_and_leaves_global_rng_untouched_body():
     class FakeSampler:
         def _compete(self, drive, V):
             return np.random.randn(V)                     # the bank's OU noise comes from the global RNG
