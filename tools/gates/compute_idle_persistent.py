@@ -62,7 +62,12 @@ NAME = "compute-idle-persistent"
 CLASS_ID = "UC"
 BLOCKING = True
 
-WAIVER_FILE = os.path.join(_ROOT, "research", "queue", ".parallel_compute_waiver")
+# REVIEW FIX (2026-09-23): pinned to `_ROOT` (this file's OWN worktree) it silently kept a SEPARATE waiver +
+# budget per worktree -- `gates/lane_starvation` already solved this for `.lane_waiver` via its own
+# `_shared_queue_root()`; `waiver_history.shared_root()` is the identical git-common-dir resolution, reused
+# here so `.parallel_compute_waiver` and the shared `.waiver_history.jsonl` both resolve to the SAME physical
+# path regardless of which worktree evaluates them.
+WAIVER_FILE = os.path.join(wh.shared_root(), "research", "queue", ".parallel_compute_waiver")
 PERSIST_S = 45 * 60     # under_compute must hold CONTINUOUSLY this long before it blocks
 WAIVER_MAX_H = 6
 

@@ -41,7 +41,37 @@ import subprocess
 import time
 
 _ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-HISTORY_FILE = os.path.join(_ROOT, "research", "queue", ".waiver_history.jsonl")
+
+
+def shared_root():
+    """The checkout whose persistent dispatchers/heartbeat actually consume the queues -- i.e. the repo's
+    git-common-dir-based root, NOT necessarily `_ROOT` (this file's own worktree). Mirrors
+    `gates/lane_starvation._shared_queue_root()` verbatim (SIM_QUEUE_ROOT override, then git-common-dir, then
+    `_ROOT` as a last resort) so both waiver files resolve the SAME physical path from every worktree.
+
+    REVIEW FIX (2026-09-23): `HISTORY_FILE` used to be pinned to `_ROOT` -- this module's OWN worktree -- so
+    the budget was silently per-worktree, not the "GLOBAL across every gate" the docstring already claimed:
+    an agent working in a fresh worktree read an empty history and got a fresh 6h budget every time, and two
+    concurrent worktrees each independently believed they owned the whole budget. All git worktrees of one
+    repo share ONE `.git` (git-common-dir) by design, so resolving through it gives every worktree the same
+    physical history file without needing a hardcoded absolute path (`tools/parallel_audit.py`'s ROOT is
+    hardcoded for this reason; this achieves the same result without hardcoding)."""
+    override = os.environ.get("SIM_QUEUE_ROOT")
+    if override:
+        return os.path.abspath(os.path.expanduser(override))
+    try:
+        common = subprocess.run(
+            ["git", "rev-parse", "--path-format=absolute", "--git-common-dir"],
+            cwd=_ROOT, capture_output=True, text=True, timeout=10, check=True,
+        ).stdout.strip()
+        if common:
+            return os.path.dirname(common)
+    except Exception:
+        pass
+    return _ROOT
+
+
+HISTORY_FILE = os.path.join(shared_root(), "research", "queue", ".waiver_history.jsonl")
 
 # GAMING / OWNER-PAUSE: the owner's pre-existing accepted risk (compute_idle_persistent's own GAME_MODE
 # carve-out is handled upstream in parallel_audit.py; this class exists for the cases the waiver FILE itself

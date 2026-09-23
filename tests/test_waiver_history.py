@@ -191,6 +191,35 @@ def test_unchanged_waiver_file_is_recorded_only_once():
             "repeated check() calls against an UNCHANGED waiver must not inflate the budget"
 
 
+# ── 2026-09-23 REVIEW FIX (additional, same bullet as fix 4): the budget must be GLOBAL across worktrees, not
+# silently per-worktree -- HISTORY_FILE / WAIVER_FILE must resolve through git-common-dir, like
+# gates/lane_starvation's own `_shared_queue_root()` already does for `.lane_waiver` ────────────────────────────
+
+def test_shared_root_resolves_via_git_common_dir_not_this_files_own_worktree():
+    """When run from a git WORKTREE, `shared_root()` must still resolve to the canonical checkout (the one
+    whose `.git` is the common dir) rather than to this worktree's own root -- otherwise two worktrees each
+    read/write a SEPARATE `.waiver_history.jsonl` and each believes it owns the whole 6h/24h budget."""
+    import subprocess
+    common = subprocess.run(["git", "rev-parse", "--path-format=absolute", "--git-common-dir"],
+                            cwd=ROOT, capture_output=True, text=True, timeout=10).stdout.strip()
+    if not common:
+        return  # not inside a git checkout in this environment; nothing to assert
+    expected_root = os.path.dirname(common)
+    assert wh.shared_root() == expected_root
+    assert wh.HISTORY_FILE == os.path.join(expected_root, "research", "queue", ".waiver_history.jsonl")
+
+
+def test_compute_idle_persistent_waiver_file_uses_the_shared_root_too():
+    from tools.gates import compute_idle_persistent as g
+    assert g.WAIVER_FILE == os.path.join(wh.shared_root(), "research", "queue", ".parallel_compute_waiver")
+
+
+def test_shared_root_respects_sim_queue_root_override(monkeypatch):
+    with tempfile.TemporaryDirectory() as td:
+        monkeypatch.setenv("SIM_QUEUE_ROOT", td)
+        assert wh.shared_root() == os.path.abspath(td)
+
+
 # ── the shared module's own selftest, plus both gates' selftests (the registry's own contract) ────────────
 
 def test_waiver_history_selftest_passes():
