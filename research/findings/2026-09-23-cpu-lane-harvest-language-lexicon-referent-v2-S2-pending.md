@@ -1,6 +1,7 @@
 ---
 type: finding
-status: partial
+status: superseded
+superseded_by: research/findings/2026-09-23-cpu-lane-harvest-language-lexicon-referent-v2-S2-scored-6seed-GO.md
 claim_check: synthesis
 date: 2026-09-23
 mechanism: Hebbian(Oja)-learned feedforward frame->category synapses (all-to-all FR->CN referent / FR->CX

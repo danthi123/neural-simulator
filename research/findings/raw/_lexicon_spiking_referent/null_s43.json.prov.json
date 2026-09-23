@@ -1,0 +1,33 @@
+{
+ "run_id": "1790184306-3655934",
+ "runner": "research/runners/_lexicon_spiking_referent_derisk.py",
+ "argv": [
+  "/home/node/derisk-pool/revisions/b9d0349404f3aa4e11172b2df668fa2a4797218b/research/runners/_lexicon_spiking_referent_derisk.py",
+  "--part",
+  "null",
+  "--seeds",
+  "43",
+  "--corpus",
+  "/home/node/derisk-pool/corpus/tinystories.txt",
+  "--json",
+  "research/findings/raw/_lexicon_spiking_referent/null_s43.json"
+ ],
+ "git_sha": "b9d0349404f3aa4e11172b2df668fa2a4797218b",
+ "git_dirty": false,
+ "source_kind": "git_archive",
+ "source_manifest_sha256": "8d0daa9b7f0a60f28f04d968703802d844b4d60af082202bcafb28fa7461ddba",
+ "source_manifest_verified_at_start": true,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": true,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-23T13:25:06",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": false,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_lexicon_spiking_referent/null_s43.json"
+}
