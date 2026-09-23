@@ -7,6 +7,7 @@
 # Usage:  bash tools/pool_provision.sh [--revision <commit>] [--isolated] [pool40 pool41 pool42]
 set -euo pipefail
 cd "$(dirname "$0")/.."
+ROOT="$(pwd)"   # used by the local reference-brain sanity build below (was unbound under set -u, 2026-09-23)
 REVISION_REF=HEAD
 ISOLATED=0
 while (( $# )); do
