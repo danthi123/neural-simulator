@@ -89,6 +89,13 @@ case "${1:-list}" in
          # staging on it is redundant AND fragile. Fix: probe reachability first, SKIP unreachable nodes
          # (dispatcher skips them too), and only refuse when a REACHABLE node lacks the runner (the real
          # integration-seam check, preserved) or when NO node is reachable at all.
+         # ISOLATED-REVISION PROBE (2026-09-23). A job staged as `cd ~/derisk-pool/revisions/<sha> && ...` (the
+         # `pool_provision.sh --isolated --revision` form) runs from THAT tree, not ~/derisk-pool/sim, so probing
+         # the shared tree refused a runner that existed only in the isolated revision it would actually run in.
+         # Probe the directory the job will run from.
+         PROBE_DIR="~/derisk-pool/sim"
+         REV_DIR=$(printf '%s' "$2" | grep -oE '^cd ~/derisk-pool/revisions/[0-9a-f]{7,40}' | sed 's/^cd //')
+         [ -n "$REV_DIR" ] && PROBE_DIR="$REV_DIR"
          if [ -n "$MOD" ]; then
            NODE_BAD=""; NODE_OK=""; NODE_UNREACH=""
            for n in pool40 pool41 pool42; do
@@ -96,7 +103,7 @@ case "${1:-list}" in
                NODE_UNREACH="$NODE_UNREACH $n"; continue
              fi
              if timeout 25 ssh -o BatchMode=yes -o ConnectTimeout=8 "$n" \
-                  "cd ~/derisk-pool/sim && SIM_NO_PROVENANCE=1 SIM_BACKEND=numpy .venv/bin/python -m $MOD --help" \
+                  "cd $PROBE_DIR && SIM_NO_PROVENANCE=1 SIM_BACKEND=numpy .venv/bin/python -m $MOD --help" \
                   >/dev/null 2>&1; then NODE_OK="$NODE_OK $n"; else NODE_BAD="$NODE_BAD $n"; fi
            done
            [ -n "$NODE_UNREACH" ] && echo "ℹ️  skipping unreachable node(s):$NODE_UNREACH (dispatcher health-checks + skips them too)" >&2
