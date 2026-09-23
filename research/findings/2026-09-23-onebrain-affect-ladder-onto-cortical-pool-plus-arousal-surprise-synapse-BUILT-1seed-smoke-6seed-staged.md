@@ -129,7 +129,8 @@ point (see the fix round), and at 600 pA every contradiction was already flagged
    read only. At S*, the held arousal must newly flag at least max(2, ceil(n/4)) contradictions at a=+1 and at
    a=-1. No S* means UNDEFINED, which is not a pass. X2 requires no confirm false alarm and no lost detection at the
    production 600 pA. Lesion, no-edge, intero-null, byte-off, held-arousal, determinism and OU-scope checks are
-   relabelled I1-I7 integrity smokes: required, but they pass largely by construction.
+   relabelled I1-I7 integrity smokes: required, but they pass largely by construction. (The "and at a=-1" half and
+   X2's evidential label are corrected in fix round 3 below.)
 5. **Order robustness** (issue 8). `local_ou` now saves and restores the prior OU state instead of setting it to
    None (unit test `test_local_ou_restores_prior_ou_state_and_scope_mask`).
 6. **Process** (issues 5-7). The shared `research/queue/.lane_waiver` written by the build agent was deleted. The
@@ -154,6 +155,47 @@ The amended gate was committed in `cd5288018` before any v2 run, with an AMENDME
 This shows the instrument runs and reads at the production operating point. It is not evidence for the 12-organ,
 6-seed gate.
 
+## Fix round 3 (2026-09-23, after the re-review of `4708ebdee`): arm-X gate v3
+
+The gate was amended again in `254608eba`. That commit changed only the scoring and the attribution calls; the
+measurement is unchanged. No 6-seed v2 arm-X result had been read when it was committed.
+
+1. **Attribution restored.** v1 called `tools.lab` `lever` and `attributable_to` on the edge-lesion pair. The v2
+   rewrite dropped both calls, and the BLOCK-class `attribution-required` gate went red on the runner. Both calls are
+   back, now on X1's newly-flagged count:
+   - `lever` compares the a=+1 verdicts at S* between the intact edge and the edge lesion.
+   - `attributable_to` tests that count against the edge lesion, the intero-null and the no-edge pool.
+
+   The results are reported per seed. The gate slipped through because pre-commit only passes ADDED files, so the
+   gate itself gained a regression mode in `f693fcdb8`: a staged, modified runner that passed before and fails
+   after is now blocked. `research/FAILURE_LOG.md` has a row for this.
+2. **X1 counts one test, not two.** The arousal relay is driven by |appraisal|, and the arousal rungs get no input
+   from the valence rungs. So the a=-1 read duplicates the a=+1 read by construction. X1 now requires the per-seed
+   minimum at a=+1 only. a=-1 is reported, together with a flag for whether its per-trial Hz at S* equal a=+1's
+   exactly, and is never counted.
+   - The per-seed threshold max(2, ceil(n/4)) is **unchanged**. Raising it now would pick a threshold that the only
+     v2 read (seed-7 smoke, 2/8) already fails. Nothing justifies lowering it.
+   - What changes is how much evidence is claimed. X1 is ONE test of about 8 trials per seed. Its only replication
+     is across the 6 seeds, and all 6 must pass.
+3. **v2's X2 is now I8, a safety check.** It can barely fail at w=0.05:
+   - At 600 pA the a=0 brain already flags every contradiction, and arousal only adds excitation.
+   - Confirm sits at about 0 Hz, and w=0.05 does not lift it. In the v1 sweep, confirm crossed threshold only at
+     w=0.4.
+
+   It stays required, as a guard against regressions, but it is not evidence. The evidential set is now X0
+   (operating point) plus X1 (function). Only X1 is evidence FOR the effect.
+4. **One scorer.** Arm-X scoring is the pure function `score_x_arm`. `aggregate` re-scores every current-instrument
+   record from its raw batteries with it and ignores the checks stored in the file. The v2 X jobs at revision
+   `c6fdf7be7` are therefore scored by gate v3. A test pins their battery code as AST-identical to HEAD
+   (`test_x_instrument_code_unchanged_since_the_staged_v2_revision`).
+5. **Pool.** State as checked at 13:3x, from `ps` on the nodes:
+   - No superseded v1 job is running. The v1 X101 and X102 on pool41 had already finished at 13:10 and 13:22; their
+     files are superseded and were not opened. pool42 runs only the arm-M jobs, whose code is unchanged. pool40 is
+     unreachable.
+   - The seven v2 X/calibration lines were still queued. Two of them, X42 and X43, were dispatched to pool41 at
+     13:38, before the amendment was committed. The other five were pulled out under the dispatcher's lock and
+     re-queued unchanged, apart from a 4 GB virtual-memory cap (`ulimit -v`; the jobs measure about 0.8 GB VSZ).
+
 ## The GO gate (pre-registered in the runner docstring, not yet scored)
 
 The literal command is the `--aggregate` line in the runner's docstring:
@@ -166,6 +208,10 @@ python -m research.runners._onebrain_affect_pool_verify --aggregate \
 
 Those files do not exist yet. ARM M runs at revision `bfc6978` (its code path is unchanged since). The v2 ARM X runs
 and the seed-7 diagnostic sweep (`calv2/`) run at revision `c6fdf7be7`. Both are in the mini-PC pool queue.
-`aggregate` ignores arm-X checks from any record without the v2 `x_instrument` tag.
+`aggregate` ignores arm-X checks from any record without the v2 `x_instrument` tag. It re-scores records that carry
+the tag with gate v3 (`score_x_arm`).
 
-GO needs every one of M1-M7, X0-X2 and I1-I7 to hold on all 6 seeds. A missing arm counts as not passed.
+GO needs every one of M1-M7, X0-X1 and I1-I8 to hold on all 6 seeds. A missing arm counts as not passed. Only X1 is
+evidence for the effect, and it is one test per seed. If X1 fails, the next methods are:
+- a weight derived from the seed-7 diagnostic calibration (`calv2/`), committed before any gate re-run;
+- graded assertion evidence, so that the production strength is not saturated.
