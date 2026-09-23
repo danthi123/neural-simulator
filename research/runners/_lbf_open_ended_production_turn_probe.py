@@ -191,6 +191,16 @@ def _worker(env, seed, k, out_path, rich=True, teach_env=None):
     # quiet the per-bank-build INFO lines (the review measured 100-230 MB logs per controller); WARNING+ still print.
     import logging
     logging.disable(logging.INFO)
+    # the bulk is SimulationBridge._log_console (a print per bank build, ~75 MB / 10 min): drop its info level only.
+    # Output-only: the method returns None and nothing reads its stdout.
+    import sim.bridge as _SB
+    _orig_log = _SB.SimulationBridge._log_console
+
+    def _quiet_log(self, message, level="info"):
+        if str(level).lower() != "info":
+            _orig_log(self, message, level)
+
+    _SB.SimulationBridge._log_console = _quiet_log
     import webapp.server as S
     if os.environ.get("BRAIN_OPEN_ENDED", "0").strip().lower() in ("1", "true", "on", "yes"):
         S._get_warm_qwen_renderer = lambda: type("R", (), {"_fac": _StubFaculty()})()
