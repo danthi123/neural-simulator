@@ -47,13 +47,16 @@ GO = all of M1..M7 and X1..X7 on every seed. The cross-edge weight `XEDGE_W` is 
 `--calibrate` on seed 42 only (declared calibration seed): the smallest weight in CAL_WEIGHTS whose X1 shift clears
 the floor with the mean CONFIRM rate still below the organ's threshold. Seeds: 42 43 44 100 101 102.
 
-COMPUTE: numpy CPU, one ~7.7k-neuron pool (a few GB). Pool nodes: one seed per queue line.
-  SIM_BACKEND=numpy python -u -m research.runners._onebrain_affect_pool_verify --seeds 42 \
-      --json research/findings/raw/_onebrain_affect_pool/verify_seed42.json
+COMPUTE: numpy CPU, ~7.7k-neuron pools (a few GB; the surprise organ's on-pool training dominates, ~11 min per
+pool build on one core). Pool nodes: one seed x one arm per queue line.
+  SIM_BACKEND=numpy python -u -m research.runners._onebrain_affect_pool_verify --arms M --seeds 42 \
+      --json research/findings/raw/_onebrain_affect_pool/verify_M_seed42.json
+  SIM_BACKEND=numpy python -u -m research.runners._onebrain_affect_pool_verify --arms X --seeds 42 \
+      --json research/findings/raw/_onebrain_affect_pool/verify_X_seed42.json
   SIM_BACKEND=numpy python -u -m research.runners._onebrain_affect_pool_verify --calibrate --seeds 42 \
       --json research/findings/raw/_onebrain_affect_pool/calibrate_seed42.json
-Aggregate (the literal GO-gate command):
-  python -m research.runners._onebrain_affect_pool_verify --aggregate research/findings/raw/_onebrain_affect_pool/verify_seed*.json
+Aggregate (the literal GO-gate command; a seed needs BOTH arms, a missing check is NOT a pass):
+  python -m research.runners._onebrain_affect_pool_verify --aggregate 'research/findings/raw/_onebrain_affect_pool/verify_*_seed*.json'
 """
 from __future__ import annotations
 
@@ -347,20 +350,32 @@ def verify_seed(seed, arms=("M", "X")):
     return res
 
 
+_REQUIRED = tuple(f"M{i}" for i in range(1, 8)) + tuple(f"X{i}" for i in range(1, 8))
+
+
 def aggregate(paths):
-    rows = []
+    """Merge per-arm files (verify_M_seed*.json + verify_X_seed*.json, or combined MX files) PER SEED: a seed is
+    GO only when every one of M1..M7 and X1..X7 is present AND true (a missing arm is NOT a pass)."""
+    by_seed = {}
     for p in paths:
         d = json.loads(Path(p).read_text())
-        rows.extend(d.get("per_seed", []))
-    seeds = sorted({r["seed"] for r in rows})
-    n_go = sum(1 for r in rows if r.get("GO"))
-    missing = sorted(set(SEEDS) - set(seeds))
-    print(f"affect->one-brain-pool verify: {n_go}/{len(rows)} seeds GO; seeds present {seeds}; missing {missing}")
-    for r in rows:
-        bad = [k for k, v in r.get("checks", {}).items() if not v]
-        print(f"  seed {r['seed']}: GO={r.get('GO')} failed={bad}")
-    undefined_if_empty("affect->pool 6-seed GO", len(rows), n_go, len(SEEDS))
-    all_go = bool(len(rows) == len(SEEDS) and not missing and n_go == len(SEEDS))
+        if d.get("mode") != "verify":
+            continue
+        for r in d.get("per_seed", []):
+            by_seed.setdefault(int(r["seed"]), {}).update(r.get("checks", {}))
+    n_go = 0
+    for s in sorted(by_seed):
+        chk = by_seed[s]
+        present = {k.split("_")[0] for k in chk}
+        missing = [c for c in _REQUIRED if c not in present]
+        failed = [k for k, v in chk.items() if not v]
+        go = not missing and not failed
+        n_go += go
+        print(f"  seed {s}: GO={go} failed={failed} missing={missing}")
+    missing_seeds = sorted(set(SEEDS) - set(by_seed))
+    print(f"affect->one-brain-pool verify: {n_go}/{len(by_seed)} seeds GO; missing seeds {missing_seeds}")
+    undefined_if_empty("affect->pool 6-seed GO", len(by_seed), n_go, len(SEEDS))
+    all_go = bool(not missing_seeds and n_go == len(SEEDS))
     print(f"ALL-GO (6/6, every M1-M7 + X1-X7): {all_go}")
     return all_go
 

@@ -89,6 +89,13 @@ case "${1:-list}" in
          # staging on it is redundant AND fragile. Fix: probe reachability first, SKIP unreachable nodes
          # (dispatcher skips them too), and only refuse when a REACHABLE node lacks the runner (the real
          # integration-seam check, preserved) or when NO node is reachable at all.
+         # ISOLATED-REVISION SEAM (2026-09-23). `pool_provision.sh --isolated --revision <sha>` installs the
+         # code at ~/derisk-pool/revisions/<sha> and the sanctioned command `cd`s there -- but this probe always
+         # ran the runner from ~/derisk-pool/sim, so a NEW runner on an isolated revision was REFUSED as "not
+         # runnable" although the node that will execute it has it (caught by the D3 affect-pool lane). Probe
+         # the SAME directory the command will run in; commands without that `cd` keep the old default.
+         REMOTE_DIR=$(printf '%s' "$2" | grep -oE 'cd +~/derisk-pool/revisions/[0-9a-f]+' | head -1 | awk '{print $2}')
+         [ -z "$REMOTE_DIR" ] && REMOTE_DIR="~/derisk-pool/sim"
          if [ -n "$MOD" ]; then
            NODE_BAD=""; NODE_OK=""; NODE_UNREACH=""
            for n in pool40 pool41 pool42; do
@@ -96,7 +103,7 @@ case "${1:-list}" in
                NODE_UNREACH="$NODE_UNREACH $n"; continue
              fi
              if timeout 25 ssh -o BatchMode=yes -o ConnectTimeout=8 "$n" \
-                  "cd ~/derisk-pool/sim && SIM_NO_PROVENANCE=1 SIM_BACKEND=numpy .venv/bin/python -m $MOD --help" \
+                  "cd $REMOTE_DIR && SIM_NO_PROVENANCE=1 SIM_BACKEND=numpy .venv/bin/python -m $MOD --help" \
                   >/dev/null 2>&1; then NODE_OK="$NODE_OK $n"; else NODE_BAD="$NODE_BAD $n"; fi
            done
            [ -n "$NODE_UNREACH" ] && echo "ℹ️  skipping unreachable node(s):$NODE_UNREACH (dispatcher health-checks + skips them too)" >&2
