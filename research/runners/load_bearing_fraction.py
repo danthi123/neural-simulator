@@ -1102,7 +1102,9 @@ def run(out_dir="research/findings/raw/_load_bearing", only=None, repeats=1, see
               # a flag that REACHED the arm builds -- 2026-09-22, research/lbf-fix-source-provenance-abstain's own
               # verify script reads this back rather than trusting its own invocation command line). Additive-only
               # (a new report key); every existing consumer of this report is unaffected.
-              "source_prov_abstain_at_tie_env": os.environ.get("BRAIN_SOURCE_PROV_ABSTAIN_AT_TIE")}
+              "source_prov_abstain_at_tie_env": os.environ.get("BRAIN_SOURCE_PROV_ABSTAIN_AT_TIE"),
+              # same readback for the affect-marker SETTLE companion processes (2026-09-23, D1 lane; additive key).
+              "affect_marker_settle_env": os.environ.get("BRAIN_AFFECT_MARKER_SETTLE")}
 
     keys = only or faculty_list()
     intact_cache = {}

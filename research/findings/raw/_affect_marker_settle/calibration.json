@@ -1,0 +1,1512 @@
+{
+ "probe": "affect_marker_settle_calibration",
+ "calibration_seeds": [
+  7,
+  8,
+  9,
+  10,
+  11
+ ],
+ "grid_ms": [
+  60,
+  100,
+  150,
+  200,
+  300,
+  500,
+  800
+ ],
+ "rest_ms": 1000,
+ "chosen_deliberation_ms": null,
+ "chosen_deliberation_ms_amended": 500,
+ "module_constant_DELIBERATION_MS": 500,
+ "constant_matches_calibration": true,
+ "amendment": "POST-HOC (disclosed): C1 as registered failed at every window; C1' drops the mood=0 midpoint (gated to neutral upstream, never reaches the circuit) and moves the arousal boundary to report-only (emphasis punctuation, not marker presence). See _calibrate_one.",
+ "criterion": "shortest grid window passing C1 boundary-commit, C2 center-fidelity, C3 spontaneous-silent, C4 repeatable on ALL calibration seeds (disjoint from the verification seeds)",
+ "table": {
+  "60": {
+   "all_pass": false,
+   "all_pass_amended": false,
+   "arousal_boundary_commit_count": 0,
+   "per_seed": {
+    "7": {
+     "C1_boundary_commit": false,
+     "C2_center_fidelity": true,
+     "C3_spontaneous_silent": true,
+     "C4_repeatable": true,
+     "detail": {
+      "c1_v": [
+       false,
+       true,
+       false,
+       false,
+       false
+      ],
+      "c1_a": false,
+      "c2_v": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ],
+      "c2_a": [
+       true,
+       true
+      ],
+      "c3_v": true,
+      "c3_a": true,
+      "c4_v": [
+       true,
+       true,
+       true,
+       true,
+       true
+      ],
+      "c4_a": true
+     },
+     "pass": false,
+     "C1prime_reachable_valence_boundary_commit": false,
+     "pass_amended": false
+    },
+    "8": {
+     "C1_boundary_commit": false,
+     "C2_center_fidelity": true,
+     "C3_spontaneous_silent": true,
+     "C4_repeatable": true,
+     "detail": {
+      "c1_v": [
+       false,
+       false,
+       false,
+       false,
+       false
+      ],
+      "c1_a": false,
+      "c2_v": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ],
+      "c2_a": [
+       true,
+       true
+      ],
+      "c3_v": true,
+      "c3_a": true,
+      "c4_v": [
+       true,
+       true,
+       true,
+       true,
+       true
+      ],
+      "c4_a": true
+     },
+     "pass": false,
+     "C1prime_reachable_valence_boundary_commit": false,
+     "pass_amended": false
+    },
+    "9": {
+     "C1_boundary_commit": false,
+     "C2_center_fidelity": true,
+     "C3_spontaneous_silent": true,
+     "C4_repeatable": true,
+     "detail": {
+      "c1_v": [
+       false,
+       false,
+       false,
+       false,
+       false
+      ],
+      "c1_a": false,
+      "c2_v": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ],
+      "c2_a": [
+       true,
+       true
+      ],
+      "c3_v": true,
+      "c3_a": true,
+      "c4_v": [
+       true,
+       true,
+       true,
+       true,
+       true
+      ],
+      "c4_a": true
+     },
+     "pass": false,
+     "C1prime_reachable_valence_boundary_commit": false,
+     "pass_amended": false
+    },
+    "10": {
+     "C1_boundary_commit": false,
+     "C2_center_fidelity": true,
+     "C3_spontaneous_silent": true,
+     "C4_repeatable": true,
+     "detail": {
+      "c1_v": [
+       false,
+       false,
+       false,
+       false,
+       false
+      ],
+      "c1_a": false,
+      "c2_v": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ],
+      "c2_a": [
+       true,
+       true
+      ],
+      "c3_v": true,
+      "c3_a": true,
+      "c4_v": [
+       true,
+       true,
+       true,
+       true,
+       true
+      ],
+      "c4_a": true
+     },
+     "pass": false,
+     "C1prime_reachable_valence_boundary_commit": false,
+     "pass_amended": false
+    },
+    "11": {
+     "C1_boundary_commit": false,
+     "C2_center_fidelity": true,
+     "C3_spontaneous_silent": true,
+     "C4_repeatable": true,
+     "detail": {
+      "c1_v": [
+       false,
+       false,
+       false,
+       false,
+       false
+      ],
+      "c1_a": false,
+      "c2_v": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ],
+      "c2_a": [
+       true,
+       true
+      ],
+      "c3_v": true,
+      "c3_a": true,
+      "c4_v": [
+       true,
+       true,
+       true,
+       true,
+       true
+      ],
+      "c4_a": true
+     },
+     "pass": false,
+     "C1prime_reachable_valence_boundary_commit": false,
+     "pass_amended": false
+    }
+   }
+  },
+  "100": {
+   "all_pass": false,
+   "all_pass_amended": false,
+   "arousal_boundary_commit_count": 0,
+   "per_seed": {
+    "7": {
+     "C1_boundary_commit": false,
+     "C2_center_fidelity": true,
+     "C3_spontaneous_silent": true,
+     "C4_repeatable": true,
+     "detail": {
+      "c1_v": [
+       false,
+       true,
+       false,
+       true,
+       true
+      ],
+      "c1_a": false,
+      "c2_v": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ],
+      "c2_a": [
+       true,
+       true
+      ],
+      "c3_v": true,
+      "c3_a": true,
+      "c4_v": [
+       true,
+       true,
+       true,
+       true,
+       true
+      ],
+      "c4_a": true
+     },
+     "pass": false,
+     "C1prime_reachable_valence_boundary_commit": false,
+     "pass_amended": false
+    },
+    "8": {
+     "C1_boundary_commit": false,
+     "C2_center_fidelity": true,
+     "C3_spontaneous_silent": true,
+     "C4_repeatable": true,
+     "detail": {
+      "c1_v": [
+       false,
+       false,
+       false,
+       false,
+       false
+      ],
+      "c1_a": false,
+      "c2_v": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ],
+      "c2_a": [
+       true,
+       true
+      ],
+      "c3_v": true,
+      "c3_a": true,
+      "c4_v": [
+       true,
+       true,
+       true,
+       true,
+       true
+      ],
+      "c4_a": true
+     },
+     "pass": false,
+     "C1prime_reachable_valence_boundary_commit": false,
+     "pass_amended": false
+    },
+    "9": {
+     "C1_boundary_commit": false,
+     "C2_center_fidelity": true,
+     "C3_spontaneous_silent": true,
+     "C4_repeatable": true,
+     "detail": {
+      "c1_v": [
+       false,
+       false,
+       false,
+       false,
+       false
+      ],
+      "c1_a": false,
+      "c2_v": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ],
+      "c2_a": [
+       true,
+       true
+      ],
+      "c3_v": true,
+      "c3_a": true,
+      "c4_v": [
+       true,
+       true,
+       true,
+       true,
+       true
+      ],
+      "c4_a": true
+     },
+     "pass": false,
+     "C1prime_reachable_valence_boundary_commit": false,
+     "pass_amended": false
+    },
+    "10": {
+     "C1_boundary_commit": false,
+     "C2_center_fidelity": true,
+     "C3_spontaneous_silent": true,
+     "C4_repeatable": true,
+     "detail": {
+      "c1_v": [
+       true,
+       false,
+       false,
+       false,
+       false
+      ],
+      "c1_a": false,
+      "c2_v": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ],
+      "c2_a": [
+       true,
+       true
+      ],
+      "c3_v": true,
+      "c3_a": true,
+      "c4_v": [
+       true,
+       true,
+       true,
+       true,
+       true
+      ],
+      "c4_a": true
+     },
+     "pass": false,
+     "C1prime_reachable_valence_boundary_commit": false,
+     "pass_amended": false
+    },
+    "11": {
+     "C1_boundary_commit": false,
+     "C2_center_fidelity": true,
+     "C3_spontaneous_silent": true,
+     "C4_repeatable": true,
+     "detail": {
+      "c1_v": [
+       true,
+       true,
+       false,
+       true,
+       true
+      ],
+      "c1_a": false,
+      "c2_v": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ],
+      "c2_a": [
+       true,
+       true
+      ],
+      "c3_v": true,
+      "c3_a": true,
+      "c4_v": [
+       true,
+       true,
+       true,
+       true,
+       true
+      ],
+      "c4_a": true
+     },
+     "pass": false,
+     "C1prime_reachable_valence_boundary_commit": true,
+     "pass_amended": true
+    }
+   }
+  },
+  "150": {
+   "all_pass": false,
+   "all_pass_amended": false,
+   "arousal_boundary_commit_count": 0,
+   "per_seed": {
+    "7": {
+     "C1_boundary_commit": false,
+     "C2_center_fidelity": true,
+     "C3_spontaneous_silent": true,
+     "C4_repeatable": true,
+     "detail": {
+      "c1_v": [
+       false,
+       true,
+       true,
+       true,
+       true
+      ],
+      "c1_a": false,
+      "c2_v": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ],
+      "c2_a": [
+       true,
+       true
+      ],
+      "c3_v": true,
+      "c3_a": true,
+      "c4_v": [
+       true,
+       true,
+       true,
+       true,
+       true
+      ],
+      "c4_a": true
+     },
+     "pass": false,
+     "C1prime_reachable_valence_boundary_commit": false,
+     "pass_amended": false
+    },
+    "8": {
+     "C1_boundary_commit": false,
+     "C2_center_fidelity": true,
+     "C3_spontaneous_silent": true,
+     "C4_repeatable": true,
+     "detail": {
+      "c1_v": [
+       false,
+       false,
+       false,
+       false,
+       true
+      ],
+      "c1_a": false,
+      "c2_v": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ],
+      "c2_a": [
+       true,
+       true
+      ],
+      "c3_v": true,
+      "c3_a": true,
+      "c4_v": [
+       true,
+       true,
+       true,
+       true,
+       true
+      ],
+      "c4_a": true
+     },
+     "pass": false,
+     "C1prime_reachable_valence_boundary_commit": false,
+     "pass_amended": false
+    },
+    "9": {
+     "C1_boundary_commit": false,
+     "C2_center_fidelity": true,
+     "C3_spontaneous_silent": true,
+     "C4_repeatable": true,
+     "detail": {
+      "c1_v": [
+       true,
+       false,
+       false,
+       false,
+       true
+      ],
+      "c1_a": false,
+      "c2_v": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ],
+      "c2_a": [
+       true,
+       true
+      ],
+      "c3_v": true,
+      "c3_a": true,
+      "c4_v": [
+       true,
+       true,
+       true,
+       true,
+       true
+      ],
+      "c4_a": true
+     },
+     "pass": false,
+     "C1prime_reachable_valence_boundary_commit": false,
+     "pass_amended": false
+    },
+    "10": {
+     "C1_boundary_commit": false,
+     "C2_center_fidelity": true,
+     "C3_spontaneous_silent": true,
+     "C4_repeatable": true,
+     "detail": {
+      "c1_v": [
+       true,
+       true,
+       false,
+       false,
+       true
+      ],
+      "c1_a": false,
+      "c2_v": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ],
+      "c2_a": [
+       true,
+       true
+      ],
+      "c3_v": true,
+      "c3_a": true,
+      "c4_v": [
+       true,
+       true,
+       true,
+       true,
+       true
+      ],
+      "c4_a": true
+     },
+     "pass": false,
+     "C1prime_reachable_valence_boundary_commit": false,
+     "pass_amended": false
+    },
+    "11": {
+     "C1_boundary_commit": false,
+     "C2_center_fidelity": true,
+     "C3_spontaneous_silent": true,
+     "C4_repeatable": true,
+     "detail": {
+      "c1_v": [
+       true,
+       true,
+       false,
+       true,
+       true
+      ],
+      "c1_a": false,
+      "c2_v": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ],
+      "c2_a": [
+       true,
+       true
+      ],
+      "c3_v": true,
+      "c3_a": true,
+      "c4_v": [
+       true,
+       true,
+       true,
+       true,
+       true
+      ],
+      "c4_a": true
+     },
+     "pass": false,
+     "C1prime_reachable_valence_boundary_commit": true,
+     "pass_amended": true
+    }
+   }
+  },
+  "200": {
+   "all_pass": false,
+   "all_pass_amended": false,
+   "arousal_boundary_commit_count": 0,
+   "per_seed": {
+    "7": {
+     "C1_boundary_commit": false,
+     "C2_center_fidelity": true,
+     "C3_spontaneous_silent": true,
+     "C4_repeatable": true,
+     "detail": {
+      "c1_v": [
+       false,
+       true,
+       true,
+       true,
+       true
+      ],
+      "c1_a": false,
+      "c2_v": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ],
+      "c2_a": [
+       true,
+       true
+      ],
+      "c3_v": true,
+      "c3_a": true,
+      "c4_v": [
+       true,
+       true,
+       true,
+       true,
+       true
+      ],
+      "c4_a": true
+     },
+     "pass": false,
+     "C1prime_reachable_valence_boundary_commit": false,
+     "pass_amended": false
+    },
+    "8": {
+     "C1_boundary_commit": false,
+     "C2_center_fidelity": true,
+     "C3_spontaneous_silent": true,
+     "C4_repeatable": true,
+     "detail": {
+      "c1_v": [
+       true,
+       false,
+       false,
+       true,
+       true
+      ],
+      "c1_a": false,
+      "c2_v": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ],
+      "c2_a": [
+       true,
+       true
+      ],
+      "c3_v": true,
+      "c3_a": true,
+      "c4_v": [
+       true,
+       true,
+       true,
+       true,
+       true
+      ],
+      "c4_a": true
+     },
+     "pass": false,
+     "C1prime_reachable_valence_boundary_commit": false,
+     "pass_amended": false
+    },
+    "9": {
+     "C1_boundary_commit": false,
+     "C2_center_fidelity": true,
+     "C3_spontaneous_silent": true,
+     "C4_repeatable": true,
+     "detail": {
+      "c1_v": [
+       true,
+       false,
+       false,
+       true,
+       true
+      ],
+      "c1_a": false,
+      "c2_v": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ],
+      "c2_a": [
+       true,
+       true
+      ],
+      "c3_v": true,
+      "c3_a": true,
+      "c4_v": [
+       true,
+       true,
+       true,
+       true,
+       true
+      ],
+      "c4_a": true
+     },
+     "pass": false,
+     "C1prime_reachable_valence_boundary_commit": false,
+     "pass_amended": false
+    },
+    "10": {
+     "C1_boundary_commit": false,
+     "C2_center_fidelity": true,
+     "C3_spontaneous_silent": true,
+     "C4_repeatable": true,
+     "detail": {
+      "c1_v": [
+       true,
+       true,
+       false,
+       false,
+       true
+      ],
+      "c1_a": false,
+      "c2_v": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ],
+      "c2_a": [
+       true,
+       true
+      ],
+      "c3_v": true,
+      "c3_a": true,
+      "c4_v": [
+       true,
+       true,
+       true,
+       true,
+       true
+      ],
+      "c4_a": true
+     },
+     "pass": false,
+     "C1prime_reachable_valence_boundary_commit": false,
+     "pass_amended": false
+    },
+    "11": {
+     "C1_boundary_commit": false,
+     "C2_center_fidelity": true,
+     "C3_spontaneous_silent": true,
+     "C4_repeatable": true,
+     "detail": {
+      "c1_v": [
+       true,
+       true,
+       false,
+       true,
+       true
+      ],
+      "c1_a": false,
+      "c2_v": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ],
+      "c2_a": [
+       true,
+       true
+      ],
+      "c3_v": true,
+      "c3_a": true,
+      "c4_v": [
+       true,
+       true,
+       true,
+       true,
+       true
+      ],
+      "c4_a": true
+     },
+     "pass": false,
+     "C1prime_reachable_valence_boundary_commit": true,
+     "pass_amended": true
+    }
+   }
+  },
+  "300": {
+   "all_pass": false,
+   "all_pass_amended": false,
+   "arousal_boundary_commit_count": 4,
+   "per_seed": {
+    "7": {
+     "C1_boundary_commit": true,
+     "C2_center_fidelity": true,
+     "C3_spontaneous_silent": true,
+     "C4_repeatable": true,
+     "detail": {
+      "c1_v": [
+       true,
+       true,
+       true,
+       true,
+       true
+      ],
+      "c1_a": true,
+      "c2_v": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ],
+      "c2_a": [
+       true,
+       true
+      ],
+      "c3_v": true,
+      "c3_a": true,
+      "c4_v": [
+       true,
+       true,
+       true,
+       true,
+       true
+      ],
+      "c4_a": true
+     },
+     "pass": true,
+     "C1prime_reachable_valence_boundary_commit": true,
+     "pass_amended": true
+    },
+    "8": {
+     "C1_boundary_commit": false,
+     "C2_center_fidelity": true,
+     "C3_spontaneous_silent": true,
+     "C4_repeatable": true,
+     "detail": {
+      "c1_v": [
+       true,
+       true,
+       false,
+       true,
+       true
+      ],
+      "c1_a": true,
+      "c2_v": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ],
+      "c2_a": [
+       true,
+       true
+      ],
+      "c3_v": true,
+      "c3_a": true,
+      "c4_v": [
+       true,
+       true,
+       true,
+       true,
+       true
+      ],
+      "c4_a": true
+     },
+     "pass": false,
+     "C1prime_reachable_valence_boundary_commit": true,
+     "pass_amended": true
+    },
+    "9": {
+     "C1_boundary_commit": false,
+     "C2_center_fidelity": true,
+     "C3_spontaneous_silent": true,
+     "C4_repeatable": true,
+     "detail": {
+      "c1_v": [
+       true,
+       false,
+       false,
+       true,
+       true
+      ],
+      "c1_a": true,
+      "c2_v": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ],
+      "c2_a": [
+       true,
+       true
+      ],
+      "c3_v": true,
+      "c3_a": true,
+      "c4_v": [
+       true,
+       true,
+       true,
+       true,
+       true
+      ],
+      "c4_a": true
+     },
+     "pass": false,
+     "C1prime_reachable_valence_boundary_commit": false,
+     "pass_amended": false
+    },
+    "10": {
+     "C1_boundary_commit": false,
+     "C2_center_fidelity": true,
+     "C3_spontaneous_silent": true,
+     "C4_repeatable": true,
+     "detail": {
+      "c1_v": [
+       true,
+       true,
+       false,
+       true,
+       true
+      ],
+      "c1_a": false,
+      "c2_v": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ],
+      "c2_a": [
+       true,
+       true
+      ],
+      "c3_v": true,
+      "c3_a": true,
+      "c4_v": [
+       true,
+       true,
+       true,
+       true,
+       true
+      ],
+      "c4_a": true
+     },
+     "pass": false,
+     "C1prime_reachable_valence_boundary_commit": true,
+     "pass_amended": true
+    },
+    "11": {
+     "C1_boundary_commit": false,
+     "C2_center_fidelity": true,
+     "C3_spontaneous_silent": true,
+     "C4_repeatable": true,
+     "detail": {
+      "c1_v": [
+       true,
+       true,
+       false,
+       true,
+       true
+      ],
+      "c1_a": true,
+      "c2_v": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ],
+      "c2_a": [
+       true,
+       true
+      ],
+      "c3_v": true,
+      "c3_a": true,
+      "c4_v": [
+       true,
+       true,
+       true,
+       true,
+       true
+      ],
+      "c4_a": true
+     },
+     "pass": false,
+     "C1prime_reachable_valence_boundary_commit": true,
+     "pass_amended": true
+    }
+   }
+  },
+  "500": {
+   "all_pass": false,
+   "all_pass_amended": true,
+   "arousal_boundary_commit_count": 4,
+   "per_seed": {
+    "7": {
+     "C1_boundary_commit": true,
+     "C2_center_fidelity": true,
+     "C3_spontaneous_silent": true,
+     "C4_repeatable": true,
+     "detail": {
+      "c1_v": [
+       true,
+       true,
+       true,
+       true,
+       true
+      ],
+      "c1_a": true,
+      "c2_v": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ],
+      "c2_a": [
+       true,
+       true
+      ],
+      "c3_v": true,
+      "c3_a": true,
+      "c4_v": [
+       true,
+       true,
+       true,
+       true,
+       true
+      ],
+      "c4_a": true
+     },
+     "pass": true,
+     "C1prime_reachable_valence_boundary_commit": true,
+     "pass_amended": true
+    },
+    "8": {
+     "C1_boundary_commit": false,
+     "C2_center_fidelity": true,
+     "C3_spontaneous_silent": true,
+     "C4_repeatable": true,
+     "detail": {
+      "c1_v": [
+       true,
+       true,
+       false,
+       true,
+       true
+      ],
+      "c1_a": true,
+      "c2_v": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ],
+      "c2_a": [
+       true,
+       true
+      ],
+      "c3_v": true,
+      "c3_a": true,
+      "c4_v": [
+       true,
+       true,
+       true,
+       true,
+       true
+      ],
+      "c4_a": true
+     },
+     "pass": false,
+     "C1prime_reachable_valence_boundary_commit": true,
+     "pass_amended": true
+    },
+    "9": {
+     "C1_boundary_commit": false,
+     "C2_center_fidelity": true,
+     "C3_spontaneous_silent": true,
+     "C4_repeatable": true,
+     "detail": {
+      "c1_v": [
+       true,
+       true,
+       false,
+       true,
+       true
+      ],
+      "c1_a": true,
+      "c2_v": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ],
+      "c2_a": [
+       true,
+       true
+      ],
+      "c3_v": true,
+      "c3_a": true,
+      "c4_v": [
+       true,
+       true,
+       true,
+       true,
+       true
+      ],
+      "c4_a": true
+     },
+     "pass": false,
+     "C1prime_reachable_valence_boundary_commit": true,
+     "pass_amended": true
+    },
+    "10": {
+     "C1_boundary_commit": false,
+     "C2_center_fidelity": true,
+     "C3_spontaneous_silent": true,
+     "C4_repeatable": true,
+     "detail": {
+      "c1_v": [
+       true,
+       true,
+       false,
+       true,
+       true
+      ],
+      "c1_a": false,
+      "c2_v": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ],
+      "c2_a": [
+       true,
+       true
+      ],
+      "c3_v": true,
+      "c3_a": true,
+      "c4_v": [
+       true,
+       true,
+       true,
+       true,
+       true
+      ],
+      "c4_a": true
+     },
+     "pass": false,
+     "C1prime_reachable_valence_boundary_commit": true,
+     "pass_amended": true
+    },
+    "11": {
+     "C1_boundary_commit": true,
+     "C2_center_fidelity": true,
+     "C3_spontaneous_silent": true,
+     "C4_repeatable": true,
+     "detail": {
+      "c1_v": [
+       true,
+       true,
+       true,
+       true,
+       true
+      ],
+      "c1_a": true,
+      "c2_v": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ],
+      "c2_a": [
+       true,
+       true
+      ],
+      "c3_v": true,
+      "c3_a": true,
+      "c4_v": [
+       true,
+       true,
+       true,
+       true,
+       true
+      ],
+      "c4_a": true
+     },
+     "pass": true,
+     "C1prime_reachable_valence_boundary_commit": true,
+     "pass_amended": true
+    }
+   }
+  },
+  "800": {
+   "all_pass": false,
+   "all_pass_amended": true,
+   "arousal_boundary_commit_count": 4,
+   "per_seed": {
+    "7": {
+     "C1_boundary_commit": true,
+     "C2_center_fidelity": true,
+     "C3_spontaneous_silent": true,
+     "C4_repeatable": true,
+     "detail": {
+      "c1_v": [
+       true,
+       true,
+       true,
+       true,
+       true
+      ],
+      "c1_a": true,
+      "c2_v": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ],
+      "c2_a": [
+       true,
+       true
+      ],
+      "c3_v": true,
+      "c3_a": true,
+      "c4_v": [
+       true,
+       true,
+       true,
+       true,
+       true
+      ],
+      "c4_a": true
+     },
+     "pass": true,
+     "C1prime_reachable_valence_boundary_commit": true,
+     "pass_amended": true
+    },
+    "8": {
+     "C1_boundary_commit": false,
+     "C2_center_fidelity": true,
+     "C3_spontaneous_silent": true,
+     "C4_repeatable": true,
+     "detail": {
+      "c1_v": [
+       true,
+       true,
+       false,
+       true,
+       true
+      ],
+      "c1_a": true,
+      "c2_v": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ],
+      "c2_a": [
+       true,
+       true
+      ],
+      "c3_v": true,
+      "c3_a": true,
+      "c4_v": [
+       true,
+       true,
+       true,
+       true,
+       true
+      ],
+      "c4_a": true
+     },
+     "pass": false,
+     "C1prime_reachable_valence_boundary_commit": true,
+     "pass_amended": true
+    },
+    "9": {
+     "C1_boundary_commit": false,
+     "C2_center_fidelity": true,
+     "C3_spontaneous_silent": true,
+     "C4_repeatable": true,
+     "detail": {
+      "c1_v": [
+       true,
+       true,
+       false,
+       true,
+       true
+      ],
+      "c1_a": true,
+      "c2_v": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ],
+      "c2_a": [
+       true,
+       true
+      ],
+      "c3_v": true,
+      "c3_a": true,
+      "c4_v": [
+       true,
+       true,
+       true,
+       true,
+       true
+      ],
+      "c4_a": true
+     },
+     "pass": false,
+     "C1prime_reachable_valence_boundary_commit": true,
+     "pass_amended": true
+    },
+    "10": {
+     "C1_boundary_commit": false,
+     "C2_center_fidelity": true,
+     "C3_spontaneous_silent": true,
+     "C4_repeatable": true,
+     "detail": {
+      "c1_v": [
+       true,
+       true,
+       false,
+       true,
+       true
+      ],
+      "c1_a": false,
+      "c2_v": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ],
+      "c2_a": [
+       true,
+       true
+      ],
+      "c3_v": true,
+      "c3_a": true,
+      "c4_v": [
+       true,
+       true,
+       true,
+       true,
+       true
+      ],
+      "c4_a": true
+     },
+     "pass": false,
+     "C1prime_reachable_valence_boundary_commit": true,
+     "pass_amended": true
+    },
+    "11": {
+     "C1_boundary_commit": true,
+     "C2_center_fidelity": true,
+     "C3_spontaneous_silent": true,
+     "C4_repeatable": true,
+     "detail": {
+      "c1_v": [
+       true,
+       true,
+       true,
+       true,
+       true
+      ],
+      "c1_a": true,
+      "c2_v": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ],
+      "c2_a": [
+       true,
+       true
+      ],
+      "c3_v": true,
+      "c3_a": true,
+      "c4_v": [
+       true,
+       true,
+       true,
+       true,
+       true
+      ],
+      "c4_a": true
+     },
+     "pass": true,
+     "C1prime_reachable_valence_boundary_commit": true,
+     "pass_amended": true
+    }
+   }
+  }
+ }
+}

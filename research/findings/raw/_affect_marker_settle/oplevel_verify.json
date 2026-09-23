@@ -1,0 +1,598 @@
+{
+ "probe": "affect_marker_settle_oplevel",
+ "seeds": [
+  42,
+  43,
+  44,
+  100,
+  101,
+  102
+ ],
+ "full_6seed": true,
+ "go": true,
+ "counts": {
+  "G1_on_load_bearing": 6,
+  "G2_on_lesion_silent": 6,
+  "G3_deterministic": 6,
+  "G4_shuffle_differs": 4,
+  "G5_off_matches_diagnosis": 6,
+  "off_load_bearing": 1,
+  "n": 6
+ },
+ "constants": {
+  "DELIBERATION_MS": 500,
+  "INTERTURN_REST_MS": 1000,
+  "WARMUP_STEPS": 60,
+  "WASHOUT_STEPS": 40,
+  "DEAD_MARGIN": 0.05
+ },
+ "per_seed": {
+  "42": {
+   "ladder": {
+    "mood": 0.06820833333333333,
+    "felt_arousal": 0.04804166666666667,
+    "level": 2
+   },
+   "off": {
+    "intact": {
+     "lead": "",
+     "sel_level": null,
+     "margin": 0.04444444444444444
+    },
+    "lesion": {
+     "lead": "",
+     "sel_level": null,
+     "margin": 0.0006944444444444444
+    },
+    "predicted_load_bearing": false
+   },
+   "on": {
+    "intact": {
+     "lead": "Gladly! ",
+     "sel_level": 2,
+     "margin": 0.14722222222222223
+    },
+    "lesion": {
+     "lead": "",
+     "sel_level": null,
+     "margin": 0.0
+    },
+    "predicted_load_bearing": true
+   },
+   "determinism": {
+    "lead_a": "Gladly! ",
+    "lead_b": "Gladly! ",
+    "identical": true
+   },
+   "shuffle": {
+    "intact_level": 2,
+    "shuffled_level": -3,
+    "differs": true
+   },
+   "attribution_arms": {
+    "neither(60,40)": {
+     "intact_lead": "",
+     "lesion_lead": "",
+     "intact_margin": 0.04444444444444444,
+     "load_bearing": false
+    },
+    "deliberation_only": {
+     "intact_lead": "Gladly! ",
+     "lesion_lead": "",
+     "intact_margin": 0.14652777777777776,
+     "load_bearing": true
+    },
+    "rest_only": {
+     "intact_lead": "Gladly! ",
+     "lesion_lead": "",
+     "intact_margin": 0.11388888888888889,
+     "load_bearing": true
+    },
+    "both": {
+     "intact_lead": "Gladly! ",
+     "lesion_lead": "",
+     "intact_margin": 0.14722222222222223,
+     "load_bearing": true
+    }
+   },
+   "diagnosis_predicted_load_bearing": false,
+   "diagnosis_reads": {
+    "intact": {
+     "lead": "",
+     "sel_level": null,
+     "margin": 0.04444444444444444
+    },
+    "lesion": {
+     "lead": "",
+     "sel_level": null,
+     "margin": 0.0006944444444444444
+    }
+   }
+  },
+  "43": {
+   "ladder": {
+    "mood": 0.071,
+    "felt_arousal": 0.050583333333333334,
+    "level": 3
+   },
+   "off": {
+    "intact": {
+     "lead": "",
+     "sel_level": null,
+     "margin": 0.0326388888888889
+    },
+    "lesion": {
+     "lead": "",
+     "sel_level": null,
+     "margin": 0.0
+    },
+    "predicted_load_bearing": false
+   },
+   "on": {
+    "intact": {
+     "lead": "Gladly! ",
+     "sel_level": 2,
+     "margin": 0.13680555555555557
+    },
+    "lesion": {
+     "lead": "",
+     "sel_level": null,
+     "margin": 0.0020833333333333346
+    },
+    "predicted_load_bearing": true
+   },
+   "determinism": {
+    "lead_a": "Gladly! ",
+    "lead_b": "Gladly! ",
+    "identical": true
+   },
+   "shuffle": {
+    "intact_level": 2,
+    "shuffled_level": -2,
+    "differs": true
+   },
+   "attribution_arms": {
+    "neither(60,40)": {
+     "intact_lead": "",
+     "lesion_lead": "",
+     "intact_margin": 0.0326388888888889,
+     "load_bearing": false
+    },
+    "deliberation_only": {
+     "intact_lead": "Wonderful! ",
+     "lesion_lead": "",
+     "intact_margin": 0.14027777777777778,
+     "load_bearing": true
+    },
+    "rest_only": {
+     "intact_lead": "",
+     "lesion_lead": "",
+     "intact_margin": 0.009722222222222219,
+     "load_bearing": false
+    },
+    "both": {
+     "intact_lead": "Gladly! ",
+     "lesion_lead": "",
+     "intact_margin": 0.13680555555555557,
+     "load_bearing": true
+    }
+   },
+   "diagnosis_predicted_load_bearing": false,
+   "diagnosis_reads": {
+    "intact": {
+     "lead": "",
+     "sel_level": null,
+     "margin": 0.0326388888888889
+    },
+    "lesion": {
+     "lead": "",
+     "sel_level": null,
+     "margin": 0.0
+    }
+   }
+  },
+  "44": {
+   "ladder": {
+    "mood": 0.07029166666666667,
+    "felt_arousal": 0.044958333333333336,
+    "level": 3
+   },
+   "off": {
+    "intact": {
+     "lead": "",
+     "sel_level": null,
+     "margin": 0.04027777777777778
+    },
+    "lesion": {
+     "lead": "",
+     "sel_level": null,
+     "margin": 0.0
+    },
+    "predicted_load_bearing": false
+   },
+   "on": {
+    "intact": {
+     "lead": "Gladly! ",
+     "sel_level": 2,
+     "margin": 0.1423611111111111
+    },
+    "lesion": {
+     "lead": "",
+     "sel_level": null,
+     "margin": 0.0
+    },
+    "predicted_load_bearing": true
+   },
+   "determinism": {
+    "lead_a": "Gladly! ",
+    "lead_b": "Gladly! ",
+    "identical": true
+   },
+   "shuffle": {
+    "intact_level": 2,
+    "shuffled_level": -1,
+    "differs": true
+   },
+   "attribution_arms": {
+    "neither(60,40)": {
+     "intact_lead": "",
+     "lesion_lead": "",
+     "intact_margin": 0.04027777777777778,
+     "load_bearing": false
+    },
+    "deliberation_only": {
+     "intact_lead": "Gladly! ",
+     "lesion_lead": "",
+     "intact_margin": 0.14097222222222222,
+     "load_bearing": true
+    },
+    "rest_only": {
+     "intact_lead": "Gladly! ",
+     "lesion_lead": "",
+     "intact_margin": 0.11944444444444445,
+     "load_bearing": true
+    },
+    "both": {
+     "intact_lead": "Gladly! ",
+     "lesion_lead": "",
+     "intact_margin": 0.1423611111111111,
+     "load_bearing": true
+    }
+   },
+   "diagnosis_predicted_load_bearing": false,
+   "diagnosis_reads": {
+    "intact": {
+     "lead": "",
+     "sel_level": null,
+     "margin": 0.04027777777777778
+    },
+    "lesion": {
+     "lead": "",
+     "sel_level": null,
+     "margin": 0.0
+    }
+   }
+  },
+  "100": {
+   "ladder": {
+    "mood": 0.06391666666666666,
+    "felt_arousal": 0.04641666666666667,
+    "level": 2
+   },
+   "off": {
+    "intact": {
+     "lead": "Gladly! ",
+     "sel_level": 2,
+     "margin": 0.15972222222222224
+    },
+    "lesion": {
+     "lead": "",
+     "sel_level": null,
+     "margin": 0.0
+    },
+    "predicted_load_bearing": true
+   },
+   "on": {
+    "intact": {
+     "lead": "Gladly! ",
+     "sel_level": 2,
+     "margin": 0.15833333333333333
+    },
+    "lesion": {
+     "lead": "",
+     "sel_level": null,
+     "margin": 0.0013888888888888892
+    },
+    "predicted_load_bearing": true
+   },
+   "determinism": {
+    "lead_a": "Gladly! ",
+    "lead_b": "Gladly! ",
+    "identical": true
+   },
+   "shuffle": {
+    "intact_level": 2,
+    "shuffled_level": 2,
+    "differs": false
+   },
+   "attribution_arms": {
+    "neither(60,40)": {
+     "intact_lead": "Gladly! ",
+     "lesion_lead": "",
+     "intact_margin": 0.15972222222222224,
+     "load_bearing": true
+    },
+    "deliberation_only": {
+     "intact_lead": "Gladly! ",
+     "lesion_lead": "",
+     "intact_margin": 0.1576388888888889,
+     "load_bearing": true
+    },
+    "rest_only": {
+     "intact_lead": "Gladly! ",
+     "lesion_lead": "",
+     "intact_margin": 0.16319444444444445,
+     "load_bearing": true
+    },
+    "both": {
+     "intact_lead": "Gladly! ",
+     "lesion_lead": "",
+     "intact_margin": 0.15833333333333333,
+     "load_bearing": true
+    }
+   },
+   "diagnosis_predicted_load_bearing": true,
+   "diagnosis_reads": {
+    "intact": {
+     "lead": "Gladly! ",
+     "sel_level": 2,
+     "margin": 0.15972222222222224
+    },
+    "lesion": {
+     "lead": "",
+     "sel_level": null,
+     "margin": 0.0
+    }
+   }
+  },
+  "101": {
+   "ladder": {
+    "mood": 0.06845833333333333,
+    "felt_arousal": 0.04541666666666667,
+    "level": 2
+   },
+   "off": {
+    "intact": {
+     "lead": "",
+     "sel_level": null,
+     "margin": 0.037500000000000006
+    },
+    "lesion": {
+     "lead": "",
+     "sel_level": null,
+     "margin": 0.0
+    },
+    "predicted_load_bearing": false
+   },
+   "on": {
+    "intact": {
+     "lead": "Gladly! ",
+     "sel_level": 2,
+     "margin": 0.13819444444444443
+    },
+    "lesion": {
+     "lead": "",
+     "sel_level": null,
+     "margin": 0.0020833333333333346
+    },
+    "predicted_load_bearing": true
+   },
+   "determinism": {
+    "lead_a": "Gladly! ",
+    "lead_b": "Gladly! ",
+    "identical": true
+   },
+   "shuffle": {
+    "intact_level": 2,
+    "shuffled_level": -1,
+    "differs": true
+   },
+   "attribution_arms": {
+    "neither(60,40)": {
+     "intact_lead": "",
+     "lesion_lead": "",
+     "intact_margin": 0.037500000000000006,
+     "load_bearing": false
+    },
+    "deliberation_only": {
+     "intact_lead": "Gladly! ",
+     "lesion_lead": "",
+     "intact_margin": 0.1375,
+     "load_bearing": true
+    },
+    "rest_only": {
+     "intact_lead": "Gladly! ",
+     "lesion_lead": "",
+     "intact_margin": 0.10486111111111111,
+     "load_bearing": true
+    },
+    "both": {
+     "intact_lead": "Gladly! ",
+     "lesion_lead": "",
+     "intact_margin": 0.13819444444444443,
+     "load_bearing": true
+    }
+   },
+   "diagnosis_predicted_load_bearing": false,
+   "diagnosis_reads": {
+    "intact": {
+     "lead": "",
+     "sel_level": null,
+     "margin": 0.037500000000000006
+    },
+    "lesion": {
+     "lead": "",
+     "sel_level": null,
+     "margin": 0.0
+    }
+   }
+  },
+  "102": {
+   "ladder": {
+    "mood": 0.06908333333333333,
+    "felt_arousal": 0.046,
+    "level": 2
+   },
+   "off": {
+    "intact": {
+     "lead": "",
+     "sel_level": null,
+     "margin": 0.03958333333333333
+    },
+    "lesion": {
+     "lead": "",
+     "sel_level": null,
+     "margin": 0.0
+    },
+    "predicted_load_bearing": false
+   },
+   "on": {
+    "intact": {
+     "lead": "Gladly! ",
+     "sel_level": 2,
+     "margin": 0.14583333333333334
+    },
+    "lesion": {
+     "lead": "",
+     "sel_level": null,
+     "margin": 0.0
+    },
+    "predicted_load_bearing": true
+   },
+   "determinism": {
+    "lead_a": "Gladly! ",
+    "lead_b": "Gladly! ",
+    "identical": true
+   },
+   "shuffle": {
+    "intact_level": 2,
+    "shuffled_level": 2,
+    "differs": false
+   },
+   "attribution_arms": {
+    "neither(60,40)": {
+     "intact_lead": "",
+     "lesion_lead": "",
+     "intact_margin": 0.03958333333333333,
+     "load_bearing": false
+    },
+    "deliberation_only": {
+     "intact_lead": "Gladly! ",
+     "lesion_lead": "",
+     "intact_margin": 0.14791666666666667,
+     "load_bearing": true
+    },
+    "rest_only": {
+     "intact_lead": "Gladly! ",
+     "lesion_lead": "",
+     "intact_margin": 0.11388888888888889,
+     "load_bearing": true
+    },
+    "both": {
+     "intact_lead": "Gladly! ",
+     "lesion_lead": "",
+     "intact_margin": 0.14583333333333334,
+     "load_bearing": true
+    }
+   },
+   "diagnosis_predicted_load_bearing": false,
+   "diagnosis_reads": {
+    "intact": {
+     "lead": "",
+     "sel_level": null,
+     "margin": 0.03958333333333333
+    },
+    "lesion": {
+     "lead": "",
+     "sel_level": null,
+     "margin": 0.0
+    }
+   }
+  }
+ },
+ "verdict": {
+  "label": "affect_marker_settle_oplevel",
+  "status": "GO",
+  "go": true,
+  "undefined_reasons": [],
+  "preconditions": [
+   {
+    "kind": "require",
+    "name": "full 6-seed verification set",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "G2 SETTLE-ON lesion removes the marker (count)",
+    "ok": true,
+    "detail": "measured=6 expect=<function verify.<locals>.<lambda> at 0x7ff9ff9e8f40>",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "G3 determinism: two fresh readers identical (count)",
+    "ok": true,
+    "detail": "measured=6 expect=<function verify.<locals>.<lambda> at 0x7ff9ff9e8f40>",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "G5 SETTLE-OFF reproduces the committed diagnosis dicts EXACTLY (count)",
+    "ok": true,
+    "detail": "measured=6 expect=<function verify.<locals>.<lambda> at 0x7ff9ff9e8f40>",
+    "note": ""
+   }
+  ],
+  "disabled_processes": [
+   {
+    "process": "OU noise / STDP / homeostasis / STP",
+    "why": "identical to the committed WTA circuit (all OFF there)"
+   }
+  ],
+  "chance": null
+ },
+ "preconditions": [
+  {
+   "kind": "require",
+   "name": "full 6-seed verification set",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "G2 SETTLE-ON lesion removes the marker (count)",
+   "ok": true,
+   "detail": "measured=6 expect=<function verify.<locals>.<lambda> at 0x7ff9ff9e8f40>",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "G3 determinism: two fresh readers identical (count)",
+   "ok": true,
+   "detail": "measured=6 expect=<function verify.<locals>.<lambda> at 0x7ff9ff9e8f40>",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "G5 SETTLE-OFF reproduces the committed diagnosis dicts EXACTLY (count)",
+   "ok": true,
+   "detail": "measured=6 expect=<function verify.<locals>.<lambda> at 0x7ff9ff9e8f40>",
+   "note": ""
+  }
+ ],
+ "status": "GO",
+ "scope": "CIRCUIT-level de-risk on the real ladder 'emo' mood; the #1-metric verdict is the full-brain load_bearing_fraction run with BRAIN_AFFECT_MARKER_SETTLE=1 (staged on the pool)."
+}

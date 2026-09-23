@@ -125,11 +125,12 @@ def _affect_marker(seed: int) -> dict:
     high_arousal = bool(felt > 0.0)
 
     def _lead(lesion: bool):
-        # RNG ISOLATION (2026-09-22 fix): build a FRESH reader per arm at the SAME seed, so both the intact and the
-        # lesion read start from an IDENTICAL OU-noise RNG state and the ONLY inter-arm difference is the lesion flag.
-        # The prior shared-reader form let the intact call advance the RNG before the lesion call, confounding the
-        # margin with a different noise draw -> affect-marker's per-seed load-bearing label was noise-dependent
-        # (the diagnosis caveat). With this, separability across seeds becomes assessable. (Re-run 6-seed is follow-on.)
+        # CORRECTED COMMENT (fix round 2026-09-23; code unchanged so the committed op_s*.json stay reproducible).
+        # The earlier comment said "a FRESH reader per arm (RNG isolation)", but the code uses the process-CACHED
+        # `get_reader(seed)`: the intact read runs first and the lesion read follows on the SAME warm reader. The
+        # WTA runs with OU noise OFF, so the per-seed dependence this carries is WARM-STATE carry-over between reads
+        # (the previous read's slow state, only 40 ms of washout), not an RNG draw. That carry-over is what the
+        # SETTLE inter-turn rest (`_affect_marker_wta_derisk.INTERTURN_REST_MS`) addresses.
         reader = get_reader(seed=seed)
         sel_level, _rates, meta = reader.select_valence(mood, lesion=lesion)
         word = marker_from_level(sel_level)
