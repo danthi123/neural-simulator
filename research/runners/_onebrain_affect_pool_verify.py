@@ -116,18 +116,26 @@ AMENDMENT LOG
   RE-SCORES every current-instrument X record with it and ignores the checks the file stored. So the v2 X jobs
   (revision c6fdf7be7, whose battery code is identical -- pinned by a test) are scored by THIS rule, not v2's.
   No threshold, grid, S* rule, weight or battery changed. Arm M is unchanged.
-  2026-09-23 ~14:40 EDT -- `aggregate` COUNTING RULE amendment (SCORING only; no measurement, threshold, grid, S*
-  rule or weight changed). Committed after the re-review of dcaaa2f0f and BEFORE any xv2/verify_X_seed*.json result
-  is read (the xv2 dir does not exist yet at commit time; the only X reads so far remain the 2-organ seed-7 smoke
-  and the seed-42/43 v2 jobs dispatched-but-unread on pool41). Two holes in the ALL-GO count, found by re-review,
-  not by any seen result: (a) `n_go` counted every seed present in `by_seed`, including a NON-gate seed (e.g. the
-  diagnostic seed 7, whose verify-mode X file matches the harvest glob) -- so a passing non-gate seed could stand
-  in for a failing GATE seed and still read 6/6. Fixed: the GO count and the ALL-GO denominator are now restricted
-  to exactly `SEEDS`; a non-gate seed is reported, never counted. (b) more than one record contributing the same
-  arm's checks for one seed (M, or a current-instrument X) resolved through silent `dict.update` last-wins, an
-  order-dependent selection lever a rerun/retry file could exploit. Fixed: such a seed is flagged DUPLICATE-RECORDS
-  and reads UNDEFINED (never GO), not the last file's verdict. Neither change can turn an otherwise-failing gate
-  seed into a pass; both can only ever remove a false GO.
+  2026-09-23 16:22:32 EDT (commit fdd8263b6; corrected here from an earlier "~14:40 EDT" mistranscription --
+  flagged by re-review, the real time is this commit's own `git log` timestamp) -- `aggregate` COUNTING RULE
+  amendment (SCORING only; no measurement, threshold, grid, S* rule or weight changed). Committed after the
+  re-review of dcaaa2f0f and BEFORE any xv2/verify_X_seed*.json result is read (the xv2 dir does not exist yet at
+  commit time; the only X reads so far remain the 2-organ seed-7 smoke and the seed-42/43 v2 jobs
+  dispatched-but-unread on pool41). DISCLOSURE the earlier version of this entry omitted: by this commit's time,
+  all six ARM-M gate-seed files had already landed locally (verify_M_seed43.json by 13:07, seed44 by 14:37,
+  seeds42/100/101/102 by 15:20-15:40, per local filesystem birth times), including seed 102's M3 failure -- this
+  amendment governs the counting of M records too (an M seed's duplicate-record handling), not only X. Two holes
+  in the ALL-GO count, found by re-review, not by any seen result: (a) `n_go` counted every seed present in
+  `by_seed`, including a NON-gate seed (e.g. the diagnostic seed 7, whose verify-mode X file matches the harvest
+  glob) -- so a passing non-gate seed could stand in for a failing GATE seed and still read 6/6. Fixed: the GO
+  count and the ALL-GO denominator are now restricted to exactly `SEEDS`; a non-gate seed is reported, never
+  counted. (b) more than one record contributing the same arm's checks for one seed (M, or a current-instrument X)
+  resolved through silent `dict.update` last-wins, an order-dependent selection lever a rerun/retry file could
+  exploit. Fixed: such a seed is flagged DUPLICATE-RECORDS and reads UNDEFINED (never GO), not the last file's
+  verdict. Neither change can turn an otherwise-failing gate seed into a pass; both can only ever remove a false
+  GO. This amendment can therefore only ever REMOVE a would-be GO, never add one -- it is not a favourable lever,
+  and it does not explain away the M3/seed-102 failure already visible in the landed (but not yet aggregated)
+  data at commit time.
 
 COMPUTE: numpy CPU, ~7.7k-neuron pools (a few GB; the surprise organ's on-pool training dominates, ~11 min per
 pool build on one core). Pool nodes: one seed x one arm per queue line.
