@@ -1386,6 +1386,20 @@ def main():
                                             (("val=%s " % s["value"]) if s.get("value") else "")))
         return 0
 
+    # CORPUS GUARD (2026-09-23). Corpus-LEARNED organs (the comprehension animacy / verb-selects lexicons, the
+    # open-ended world) silently fall back to their standalone/hand paths when data/corpus/ is absent, so a remote
+    # battery reads them as NOT load-bearing -- a false negative with a clean null control. Measured: an AWS shard
+    # read comprehension-monitor s100 `pass` (treat=0); the identical command locally, with the corpus, read
+    # `regressed` (treat=1, ctrl=0) with and without the fix flags. Refuse to measure instead of mis-measuring.
+    _proj = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    _missing = [f for f in ("tinystories.txt", "wikitext.txt", "simplewiki.txt", "websters1913.json")
+                if not os.path.exists(os.path.join(_proj, "data", "corpus", f))]
+    if _missing and os.environ.get("LB_ALLOW_NO_CORPUS") != "1":
+        print("⛔ load_bearing_fraction: data/corpus/ is missing %s -- corpus-learned faculties would silently read "
+              "NOT load-bearing. Sync the corpus (tools/pool_sync_assets.sh / the AWS provisioner) or set "
+              "LB_ALLOW_NO_CORPUS=1 to measure the degraded brain on purpose." % _missing, file=sys.stderr)
+        return 3
+
     # SEED THREADING: set the process-wide substrate seed ONCE, before any arm build. _spawn_arm_raw (reused
     # verbatim from onebrain_regression_battery.py) passes `env=dict(os.environ)` to every arm subprocess, so this
     # single assignment is what makes EVERY arm (intact + lesion, every faculty) build at args.seed. Unconditional

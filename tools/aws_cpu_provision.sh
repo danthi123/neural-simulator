@@ -54,6 +54,12 @@ if [ -d "$SIM_DATA_ROOT" ]; then
 else
   echo "[aws-cpu] (no local $SIM_DATA_ROOT -- skipping LTM sync; remote brain will build with no LTM)"
 fi
+# CORPUS (2026-09-23): corpus-LEARNED organs (comprehension lexicons, the open-ended world) silently degrade
+# without data/corpus/ -> false "not load-bearing" (load_bearing_fraction now refuses to run without it).
+# Ship the small files only (~200MB), never the multi-GB training corpora.
+$SSH "mkdir -p ~/sim/data/corpus"
+( cd "$ROOT/data/corpus" && rsync -aL -e "ssh -i $KEY -o StrictHostKeyChecking=no" tinystories.txt wikitext.txt simplewiki.txt websters1913.json run3_ra_grounded_frames.txt "ubuntu@$IP:sim/data/corpus/" ) || \
+  echo "[aws-cpu] (warning: corpus sync failed -- corpus-learned faculties will be refused by the battery)" >&2
 echo "[aws-cpu] venv + numpy/scipy/fastapi/pydantic (CPU set, NO cupy)…"
 $SSH "cd ~/sim && python3 -m venv .venv && .venv/bin/pip -q install --upgrade pip >/dev/null 2>&1 && \
       .venv/bin/pip -q install numpy scipy 'fastapi>=0.115' 'uvicorn[standard]>=0.34' 'pydantic>=2.0' 'pyyaml>=6.0' psutil h5py hdf5plugin 2>&1 | tail -3"
