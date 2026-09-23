@@ -46,7 +46,11 @@ def shard_out(tag, seed, fac):
 
 
 def cmd_jobs(a):
-    env = " ".join("%s=%s" % kv for kv in sorted(ENV.items()))
+    envd = dict(ENV)
+    for kv in (a.extra_env or []):
+        k, _, v = kv.partition("=")
+        envd[k] = v
+    env = " ".join("%s=%s" % kv for kv in sorted(envd.items()))
     keys = a.faculties or faculty_keys()
     for seed in a.seeds:
         for fac in keys:
@@ -129,6 +133,7 @@ def main():
     j.add_argument("--root", default=None, help="cd here first (e.g. a pool isolated-revision dir)")
     j.add_argument("--repeats", type=int, default=2)
     j.add_argument("--faculties", nargs="*", default=None)
+    j.add_argument("--extra-env", nargs="*", default=None, help="KEY=VAL flags added on top of ENV (e.g. a newly merged fix)")
     g = sub.add_parser("aggregate")
     g.add_argument("--tag", required=True)
     g.add_argument("--seeds", type=int, nargs="*", default=None)
