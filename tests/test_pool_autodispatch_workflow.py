@@ -23,6 +23,23 @@ def run_bash(script: Path, *args: str, env: dict[str, str] | None = None) -> sub
     )
 
 
+def test_memory_reservations_expire_and_jobs_declare_size(tmp_path: Path) -> None:
+    # 2026-09-23: one fill cycle sent six growing D6 workers to one 15 GB node because each capacity check saw the
+    # RSS snapshot from before the previous launch had grown. Dispatches now reserve their declared size.
+    now = int(time.time())
+    resv = tmp_path / "resv"
+    resv.write_text(f"{now - 60} pool42 5\n{now - 30} pool42 5\n{now - 30} pool41 1\n{now - 5000} pool42 9\n")
+    queue = tmp_path / "pool.queue"
+    queue.write_text(f"{now}\tpython -m research.runners.x  #checked:reason mem_gb=5\n")
+    env = {"POOL_QUEUE_PATH": str(queue), "POOL_RESERVATIONS_PATH": str(resv), "POOL_GROWTH_WINDOW_S": "1200"}
+    assert run_bash(DISPATCHER, "--reserved-gb", "pool42", env=env).stdout.strip() == "10"   # the 9 GB row expired
+    assert run_bash(DISPATCHER, "--reserved-gb", "pool41", env=env).stdout.strip() == "1"
+    assert run_bash(DISPATCHER, "--reserved-gb", "pool40", env=env).stdout.strip() == "0"
+    assert run_bash(DISPATCHER, "--peek-est-gb", env=env).stdout.strip() == "5"
+    queue.write_text(f"{now}\tpython -m research.runners.x  #checked:reason\n")
+    assert run_bash(DISPATCHER, "--peek-est-gb", env={**env, "POOL_JOB_EST_GB": "2"}).stdout.strip() == "2"
+
+
 def test_remote_wrapper_records_multiline_job_as_one_v2_row(tmp_path: Path) -> None:
     remote_root = tmp_path / "derisk-pool" / "sim"
     remote_root.mkdir(parents=True)

@@ -1,0 +1,24 @@
+{
+ "run_id": "stage_a2-identity",
+ "runner": "research/runners/_lbf_oe_route_flag_off_identity.py",
+ "argv": [
+  "dump",
+  "--repo",
+  "<git archive of 8c5d7b03a>",
+  "--env-set",
+  "default",
+  "--out",
+  "post_default.json"
+ ],
+ "git_sha": "8c5d7b03a",
+ "launcher": "research/runners/_lbf_open_ended_production_turn_stage_a2.sh (lane I), launched 2026-09-23 ~14:11 from worktree wf_a686cbcd-9ff-2 at 53ad6938f",
+ "env": {
+  "SIM_BACKEND": "numpy",
+  "SIM_DISABLE_LLM": "1",
+  "BRAIN_CHAT_RENDERER": "stub",
+  "BRAIN_CHAT_SEED": "42",
+  "OMP_NUM_THREADS": "2"
+ },
+ "artifact": "research/findings/raw/_load_bearing/_oe_production_turn/a2/flag_off_identity/post_default.json",
+ "note": "run as a FILE (not -m) against a clean git archive, so the provenance door in research/runners/__init__.py never ran; sidecar attached by hand from the stage script."
+}

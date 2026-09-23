@@ -1,0 +1,31 @@
+{
+ "run_id": "1790179405-3345768",
+ "runner": "research/runners/_onebrain_affect_pool_verify.py",
+ "argv": [
+  "/home/node/derisk-pool/revisions/bfc6978fada92e309013e4ec39fb1b9a44627f9d/research/runners/_onebrain_affect_pool_verify.py",
+  "--arms",
+  "M",
+  "--seeds",
+  "42",
+  "--json",
+  "research/findings/raw/_onebrain_affect_pool/verify_M_seed42.json"
+ ],
+ "git_sha": "bfc6978fada92e309013e4ec39fb1b9a44627f9d",
+ "git_dirty": false,
+ "source_kind": "git_archive",
+ "source_manifest_sha256": "46bcb8a9792b71fc8130008e9b0a4b52776eeab90afed3bb01b4126a94f64f15",
+ "source_manifest_verified_at_start": true,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": true,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-23T12:03:25",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": false,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_onebrain_affect_pool/verify_M_seed42.json"
+}

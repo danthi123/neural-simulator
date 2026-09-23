@@ -50,6 +50,16 @@ def _log_rows(text):
 
 def _check_text(log_text, modules):
     problems = []
+    # DUPLICATE ROWS (2026-09-23): .git/info/attributes merges research/FAILURE_LOG.md with merge=union, so two
+    # branches that each merged main re-add the same rows; three exact duplicates reached main twice in one day.
+    _rows = [ln.strip() for ln in log_text.splitlines() if re.match(r"^\|\s*\d{4}-\d{2}-\d{2}\s*\|", ln.strip())]
+    _seen, _dups = set(), set()
+    for _r in _rows:
+        if _r in _seen:
+            _dups.add(_r)
+        _seen.add(_r)
+    for _r in sorted(_dups):
+        problems.append("FAILURE_LOG: exact DUPLICATE row (union-merge artifact) -- keep one: %s" % _r[:90])
     for cells in _log_rows(log_text):
         date, failure, gate = cells[0], cells[1], cells[2]
         if not gate:
@@ -110,6 +120,9 @@ def selftest():
         bad.append("FALSE POSITIVE: flagged a row naming a pytest regression test")
     if not _check_text("| d | f | g |\n|---|---|---|\n| 2026-01-01 | x | fixed it somehow |\n", mods):
         bad.append("did NOT catch a gate column naming no enforcement point at all")
+    _dup = "| d | f | g |\n|---|---|---|\n| 2026-01-01 | x | `doc_type` |\n| 2026-01-01 | x | `doc_type` |\n"
+    if not any("DUPLICATE" in p for p in _check_text(_dup, mods)):
+        bad.append("did NOT catch an exact duplicate FAILURE_LOG row")
     with tempfile.TemporaryDirectory():
         pass
     return bad

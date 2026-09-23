@@ -1,0 +1,504 @@
+{
+ "repo": "/tmp/claude-1000/-home-dant123-Projects-sim/87891831-e642-4a2f-abeb-50ea0867609b/scratchpad/post_8c5d7b03a",
+ "server_file": "/tmp/claude-1000/-home-dant123-Projects-sim/87891831-e642-4a2f-abeb-50ea0867609b/scratchpad/post_8c5d7b03a/webapp/server.py",
+ "env_set": "oe_off",
+ "env": {
+  "BRAIN_OPEN_ENDED": "1",
+  "BRAIN_OPEN_ENDED_NO_QWEN_FALLBACK": "1"
+ },
+ "route_flags_in_env": {
+  "BRAIN_OPEN_ENDED_GENERATE_ROUTE": null,
+  "BRAIN_OPEN_ENDED_ACQUIRE_ROUTE": null
+ },
+ "has_route_fn": true,
+ "turns": [
+  {
+   "msg": "the wolf chase the rabbit",
+   "status": 200,
+   "body": {
+    "answer": "I'm not sure about wolf chase the rabbit \u2014 I don't have anything about it in what I've actually learned, so I'd only be guessing.",
+    "abstained": true,
+    "recalled_svo": null,
+    "verified": false,
+    "renderer": "template-stub (GPU-free)",
+    "brain": "tiny-demo",
+    "source": "tiny-demo +LTM",
+    "rich": false,
+    "mode": "open_ended",
+    "activity": null,
+    "affect": {
+     "on": true,
+     "lesioned": false,
+     "composer": "onebrain",
+     "differential": 0.0,
+     "valence_sign": "0",
+     "tone_level": 0,
+     "tone_token": "",
+     "forthcomingness": {
+      "max_sentences": 4,
+      "max_elaborations": 2
+     },
+     "manner_template": "",
+     "appraisal_valence": 0.0,
+     "appraisal_arousal": 0.0,
+     "appraisal_hits": [],
+     "pos_rate": 0.0,
+     "neg_rate": 0.0
+    },
+    "open_ended": {
+     "raw": "The wolf chase the rabbit and his family is a american crime drama movie directed by robert byzantine it stars kathleen heidler siegfriedrich burgh who plays for fc sar nadem moulin and luxembourg he has been married to merged into the new york city from until they have two goals in order to play with them at this time since then she died on may aged jeffrey born june is an english singer and movie actress her first album",
+     "filtered": "I'm not sure about wolf chase the rabbit \u2014 I don't have anything about it in what I've actually learned, so I'd only be guessing.",
+     "topic": "wolf chase the rabbit",
+     "known": false,
+     "facts": [],
+     "n_sentences": 1,
+     "state": {
+      "valence": 0.0,
+      "arousal": 0.0,
+      "familiarity": 0.1,
+      "novelty": 0.9,
+      "curiosity": 0.77
+     },
+     "gen_seconds": 0.351,
+     "generator": "wkv_mouth",
+     "wkv_mouth_used": true,
+     "fact_clause_used": false
+    }
+   }
+  },
+  {
+   "msg": "the lion chase the deer",
+   "status": 200,
+   "body": {
+    "answer": "I'm not sure about lion chase the deer \u2014 I don't have anything about it in what I've actually learned, so I'd only be guessing.",
+    "abstained": true,
+    "recalled_svo": null,
+    "verified": false,
+    "renderer": "template-stub (GPU-free)",
+    "brain": "tiny-demo",
+    "source": "tiny-demo +LTM",
+    "rich": false,
+    "mode": "open_ended",
+    "activity": null,
+    "affect": {
+     "on": true,
+     "lesioned": false,
+     "composer": "onebrain",
+     "differential": 0.0,
+     "valence_sign": "0",
+     "tone_level": 0,
+     "tone_token": "",
+     "forthcomingness": {
+      "max_sentences": 4,
+      "max_elaborations": 2
+     },
+     "manner_template": "",
+     "appraisal_valence": 0.0,
+     "appraisal_arousal": 0.0,
+     "appraisal_hits": [],
+     "pos_rate": 0.0,
+     "neg_rate": 0.0
+    },
+    "open_ended": {
+     "raw": "The lion chase the deer and was built in it is a large number of people who have been made by two different types of animals such as the most important food for example they also use to make sure that their body are not very hard time or some person else there are many things like other things but this means 'pronouns can be used to put them into the air on the ground with an enemy of the city after the end of the world because he could go back at the same time his father worked together in her own life she died",
+     "filtered": "I'm not sure about lion chase the deer \u2014 I don't have anything about it in what I've actually learned, so I'd only be guessing.",
+     "topic": "lion chase the deer",
+     "known": false,
+     "facts": [],
+     "n_sentences": 1,
+     "state": {
+      "valence": 0.0,
+      "arousal": 0.0,
+      "familiarity": 0.1,
+      "novelty": 0.9,
+      "curiosity": 0.77
+     },
+     "gen_seconds": 0.341,
+     "generator": "wkv_mouth",
+     "wkv_mouth_used": true,
+     "fact_clause_used": false
+    }
+   }
+  },
+  {
+   "msg": "the crow chase the beetle",
+   "status": 200,
+   "body": {
+    "answer": "I'm not sure about crow chase the beetle \u2014 I don't have anything about it in what I've actually learned, so I'd only be guessing.",
+    "abstained": true,
+    "recalled_svo": null,
+    "verified": false,
+    "renderer": "template-stub (GPU-free)",
+    "brain": "tiny-demo",
+    "source": "tiny-demo +LTM",
+    "rich": false,
+    "mode": "open_ended",
+    "activity": null,
+    "affect": {
+     "on": true,
+     "lesioned": false,
+     "composer": "onebrain",
+     "differential": 0.0,
+     "valence_sign": "0",
+     "tone_level": 0,
+     "tone_token": "",
+     "forthcomingness": {
+      "max_sentences": 4,
+      "max_elaborations": 2
+     },
+     "manner_template": "",
+     "appraisal_valence": 0.0,
+     "appraisal_arousal": 0.0,
+     "appraisal_hits": [],
+     "pos_rate": 0.0,
+     "neg_rate": 0.0
+    },
+    "open_ended": {
+     "raw": "The crow chase the beetle of their own family in the order is a species that lives on the genus was found in the year old and raised to the south africa cup of nations this name it has been named after the first time since its second oldest goal under the title of the world war ii which became more popular for the th century he wrote about his life at the same time before being a member of the soviet union from around the s he had no children with him in march they did not have enough money to get free and words she",
+     "filtered": "I'm not sure about crow chase the beetle \u2014 I don't have anything about it in what I've actually learned, so I'd only be guessing.",
+     "topic": "crow chase the beetle",
+     "known": false,
+     "facts": [],
+     "n_sentences": 1,
+     "state": {
+      "valence": 0.0,
+      "arousal": 0.0,
+      "familiarity": 0.1,
+      "novelty": 0.9,
+      "curiosity": 0.77
+     },
+     "gen_seconds": 0.36,
+     "generator": "wkv_mouth",
+     "wkv_mouth_used": true,
+     "fact_clause_used": false
+    }
+   }
+  },
+  {
+   "msg": "the coyote chase the dog",
+   "status": 200,
+   "body": {
+    "answer": "I'm not sure about coyote chase the dog \u2014 I don't have anything about it in what I've actually learned, so I'd only be guessing.",
+    "abstained": true,
+    "recalled_svo": null,
+    "verified": false,
+    "renderer": "template-stub (GPU-free)",
+    "brain": "tiny-demo",
+    "source": "tiny-demo +LTM",
+    "rich": false,
+    "mode": "open_ended",
+    "activity": null,
+    "affect": {
+     "on": true,
+     "lesioned": false,
+     "composer": "onebrain",
+     "differential": 0.0,
+     "valence_sign": "0",
+     "tone_level": 0,
+     "tone_token": "",
+     "forthcomingness": {
+      "max_sentences": 4,
+      "max_elaborations": 2
+     },
+     "manner_template": "",
+     "appraisal_valence": 0.0,
+     "appraisal_arousal": 0.0,
+     "appraisal_hits": [],
+     "pos_rate": 0.0,
+     "neg_rate": 0.0
+    },
+    "open_ended": {
+     "raw": "The coyote chase the dog is a american movie directed by robert s and stars in it was based on the novel of the same name by richard strauss kathleen heidness he has played for the first time with his father whufson lagan and her mother died at age she killed him to be buried in the city of st louis de la loire atlantimes of the arrondissement br n e d partement in the southwestern part of france saint paul le guilt and saint charles l ch",
+     "filtered": "I'm not sure about coyote chase the dog \u2014 I don't have anything about it in what I've actually learned, so I'd only be guessing.",
+     "topic": "coyote chase the dog",
+     "known": false,
+     "facts": [],
+     "n_sentences": 1,
+     "state": {
+      "valence": 0.0,
+      "arousal": 0.0,
+      "familiarity": 0.1,
+      "novelty": 0.9,
+      "curiosity": 0.77
+     },
+     "gen_seconds": 0.371,
+     "generator": "wkv_mouth",
+     "wkv_mouth_used": true,
+     "fact_clause_used": false
+    }
+   }
+  },
+  {
+   "msg": "what might a dog chase",
+   "status": 200,
+   "body": {
+    "answer": "I'm not sure about what might a dog chase \u2014 I don't have anything about it in what I've actually learned, so I'd only be guessing.",
+    "abstained": true,
+    "recalled_svo": null,
+    "verified": false,
+    "renderer": "template-stub (GPU-free)",
+    "brain": "tiny-demo",
+    "source": "tiny-demo +LTM",
+    "rich": false,
+    "mode": "open_ended",
+    "activity": null,
+    "affect": {
+     "on": true,
+     "lesioned": false,
+     "composer": "onebrain",
+     "differential": 0.0,
+     "valence_sign": "0",
+     "tone_level": 0,
+     "tone_token": "",
+     "forthcomingness": {
+      "max_sentences": 4,
+      "max_elaborations": 2
+     },
+     "manner_template": "",
+     "appraisal_valence": 0.0,
+     "appraisal_arousal": 0.0,
+     "appraisal_hits": [],
+     "pos_rate": 0.0,
+     "neg_rate": 0.0
+    },
+    "open_ended": {
+     "raw": "What might a dog chase is the name of two species that lives in the genus homo and other animals they are also known as the egg fish or insects which have an unincorporated community areas such as the tamil nadu county by the united states it were built to be used for food and meat and the most important cities include the city of kentucky and the main town of katsu district from until his death in he became famous after being the th century basilica california bassyris died",
+     "filtered": "I'm not sure about what might a dog chase \u2014 I don't have anything about it in what I've actually learned, so I'd only be guessing.",
+     "topic": "what might a dog chase",
+     "known": false,
+     "facts": [],
+     "n_sentences": 1,
+     "state": {
+      "valence": 0.0,
+      "arousal": 0.0,
+      "familiarity": 0.1,
+      "novelty": 0.9,
+      "curiosity": 0.77
+     },
+     "gen_seconds": 0.347,
+     "generator": "wkv_mouth",
+     "wkv_mouth_used": true,
+     "fact_clause_used": false
+    }
+   }
+  },
+  {
+   "msg": "what does the wolf chase?",
+   "status": 200,
+   "body": {
+    "answer": "I'm not sure about what does the wolf chase \u2014 I don't have anything about it in what I've actually learned, so I'd only be guessing.",
+    "abstained": true,
+    "recalled_svo": null,
+    "verified": false,
+    "renderer": "template-stub (GPU-free)",
+    "brain": "tiny-demo",
+    "source": "tiny-demo +LTM",
+    "rich": false,
+    "mode": "open_ended",
+    "activity": null,
+    "affect": {
+     "on": true,
+     "lesioned": false,
+     "composer": "onebrain",
+     "differential": 0.0,
+     "valence_sign": "0",
+     "tone_level": 0,
+     "tone_token": "",
+     "forthcomingness": {
+      "max_sentences": 4,
+      "max_elaborations": 2
+     },
+     "manner_template": "",
+     "appraisal_valence": 0.0,
+     "appraisal_arousal": 0.0,
+     "appraisal_hits": [],
+     "pos_rate": 0.0,
+     "neg_rate": 0.0
+    },
+    "open_ended": {
+     "raw": "What does the wolf chase is a kind of mathematics that are not known as the knee and other people who have been in many different countries like the most important things to be made by the soviet union they use them for food until their death or codes such as the russian revolution it can also refer to the british government from the united states there are two parts of the islands including cities of tamil nadrian river and the south east coast of north america the city of guardians and satani river flows",
+     "filtered": "I'm not sure about what does the wolf chase \u2014 I don't have anything about it in what I've actually learned, so I'd only be guessing.",
+     "topic": "what does the wolf chase",
+     "known": false,
+     "facts": [],
+     "n_sentences": 1,
+     "state": {
+      "valence": 0.0,
+      "arousal": 0.0,
+      "familiarity": 0.1,
+      "novelty": 0.9,
+      "curiosity": 0.77
+     },
+     "gen_seconds": 0.354,
+     "generator": "wkv_mouth",
+     "wkv_mouth_used": true,
+     "fact_clause_used": false
+    }
+   }
+  },
+  {
+   "msg": "tell me about the ocean",
+   "status": 200,
+   "body": {
+    "answer": "I'm not sure about ocean \u2014 I don't have anything about it in what I've actually learned, so I'd only be guessing.",
+    "abstained": true,
+    "recalled_svo": null,
+    "verified": false,
+    "renderer": "template-stub (GPU-free)",
+    "brain": "tiny-demo",
+    "source": "tiny-demo +LTM",
+    "rich": false,
+    "mode": "open_ended",
+    "activity": null,
+    "affect": {
+     "on": true,
+     "lesioned": false,
+     "composer": "onebrain",
+     "differential": 0.0,
+     "valence_sign": "0",
+     "tone_level": 0,
+     "tone_token": "",
+     "forthcomingness": {
+      "max_sentences": 4,
+      "max_elaborations": 2
+     },
+     "manner_template": "",
+     "appraisal_valence": 0.0,
+     "appraisal_arousal": 0.0,
+     "appraisal_hits": [],
+     "pos_rate": 0.0,
+     "neg_rate": 0.0
+    },
+    "open_ended": {
+     "raw": "Tell me about the ocean and is a very small town in the city of wales it lies between the river with its population density of inhabitants km east of the arrondissement of saint hilde department to the west by the roman authorities in france on january he became part of the french revolution at the time of his own life after being inducted into the s and s for the year old man who had come from the th century fox network she died on july as an american television series and movie director scureenwriter and",
+     "filtered": "I'm not sure about ocean \u2014 I don't have anything about it in what I've actually learned, so I'd only be guessing.",
+     "topic": "ocean",
+     "known": false,
+     "facts": [],
+     "n_sentences": 1,
+     "state": {
+      "valence": 0.0,
+      "arousal": 0.0,
+      "familiarity": 0.1,
+      "novelty": 0.9,
+      "curiosity": 0.77
+     },
+     "gen_seconds": 0.371,
+     "generator": "wkv_mouth",
+     "wkv_mouth_used": true,
+     "fact_clause_used": false
+    }
+   }
+  },
+  {
+   "msg": "the owl chase the mouse",
+   "status": 200,
+   "body": {
+    "answer": "I'm not sure about owl chase the mouse \u2014 I don't have anything about it in what I've actually learned, so I'd only be guessing.",
+    "abstained": true,
+    "recalled_svo": null,
+    "verified": false,
+    "renderer": "template-stub (GPU-free)",
+    "brain": "tiny-demo",
+    "source": "tiny-demo +LTM",
+    "rich": false,
+    "mode": "open_ended",
+    "activity": null,
+    "affect": {
+     "on": true,
+     "lesioned": false,
+     "composer": "onebrain",
+     "differential": 0.0,
+     "valence_sign": "0",
+     "tone_level": 0,
+     "tone_token": "",
+     "forthcomingness": {
+      "max_sentences": 4,
+      "max_elaborations": 2
+     },
+     "manner_template": "",
+     "appraisal_valence": 0.0,
+     "appraisal_arousal": 0.0,
+     "appraisal_hits": [],
+     "pos_rate": 0.0,
+     "neg_rate": 0.0
+    },
+    "open_ended": {
+     "raw": "The owl chase the mouse of the world war ii and the first time in the th century it was later known for its own life on june he became a member of the band from to he has been married with his daughter kuosily died at age years old she is buried in the same day after her death in the movie was shot dead by a heart attack aged tamalai lamaltaistani patri bengali nabalism is an important part of the soviet company which are also",
+     "filtered": "I'm not sure about owl chase the mouse \u2014 I don't have anything about it in what I've actually learned, so I'd only be guessing.",
+     "topic": "owl chase the mouse",
+     "known": false,
+     "facts": [],
+     "n_sentences": 1,
+     "state": {
+      "valence": 0.0,
+      "arousal": 0.0,
+      "familiarity": 0.1,
+      "novelty": 0.9,
+      "curiosity": 0.77
+     },
+     "gen_seconds": 0.355,
+     "generator": "wkv_mouth",
+     "wkv_mouth_used": true,
+     "fact_clause_used": false
+    }
+   }
+  },
+  {
+   "msg": "what might a dog chase",
+   "status": 200,
+   "body": {
+    "answer": "I'm not sure about what might a dog chase \u2014 I don't have anything about it in what I've actually learned, so I'd only be guessing.",
+    "abstained": true,
+    "recalled_svo": null,
+    "verified": false,
+    "renderer": "template-stub (GPU-free)",
+    "brain": "tiny-demo",
+    "source": "tiny-demo +LTM",
+    "rich": false,
+    "mode": "open_ended",
+    "activity": null,
+    "affect": {
+     "on": true,
+     "lesioned": false,
+     "composer": "onebrain",
+     "differential": 0.0,
+     "valence_sign": "0",
+     "tone_level": 0,
+     "tone_token": "",
+     "forthcomingness": {
+      "max_sentences": 4,
+      "max_elaborations": 2
+     },
+     "manner_template": "",
+     "appraisal_valence": 0.0,
+     "appraisal_arousal": 0.0,
+     "appraisal_hits": [],
+     "pos_rate": 0.0,
+     "neg_rate": 0.0
+    },
+    "open_ended": {
+     "raw": "What might a dog chase is the name of two species that lives in the genus homo and other animals they are also known as the egg fish or insects which have an unincorporated community areas such as the tamil nadu county by the united states it were built to be used for food and meat and the most important cities include the city of kentucky and the main town of katsu district from until his death in he became famous after being the th century basilica california bassyris died",
+     "filtered": "I'm not sure about what might a dog chase \u2014 I don't have anything about it in what I've actually learned, so I'd only be guessing.",
+     "topic": "what might a dog chase",
+     "known": false,
+     "facts": [],
+     "n_sentences": 1,
+     "state": {
+      "valence": 0.0,
+      "arousal": 0.0,
+      "familiarity": 0.1,
+      "novelty": 0.9,
+      "curiosity": 0.77
+     },
+     "gen_seconds": 0.375,
+     "generator": "wkv_mouth",
+     "wkv_mouth_used": true,
+     "fact_clause_used": false
+    }
+   }
+  }
+ ],
+ "complete": true,
+ "t_s": 197.0
+}

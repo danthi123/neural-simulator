@@ -1,0 +1,675 @@
+{
+  "env": {
+    "BRAIN_SPIKING_DRAW_LESION": "0"
+  },
+  "seed": 42,
+  "k": 40,
+  "rich": true,
+  "teach": [
+    {
+      "msg": "the wolf chase the rabbit",
+      "answer": "I caught the verb 'chase' with the wolf and the rabbit, but my role-binding didn't resolve the PATIENT \u2014 which of them is the 'chase' done to, the wolf or the rabbit?",
+      "recalled_svo": null
+    },
+    {
+      "msg": "the fox chase the rabbit",
+      "answer": "I caught the verb 'chase' with the fox and the rabbit, but my role-binding didn't resolve the PATIENT \u2014 which of them is the 'chase' done to, the fox or the rabbit?",
+      "recalled_svo": null
+    },
+    {
+      "msg": "the hawk chase the rabbit",
+      "answer": "the hawk chases the rabbit",
+      "recalled_svo": [
+        "hawk",
+        "chase",
+        "rabbit"
+      ]
+    },
+    {
+      "msg": "the eagle chase the rabbit",
+      "answer": "the eagle chases the rabbit",
+      "recalled_svo": [
+        "eagle",
+        "chase",
+        "rabbit"
+      ]
+    },
+    {
+      "msg": "the lion chase the deer",
+      "answer": "the lion chases the deer",
+      "recalled_svo": [
+        "lion",
+        "chase",
+        "deer"
+      ]
+    },
+    {
+      "msg": "the tiger chase the deer",
+      "answer": "Setting the held thread aside \u2014 On deer, then \u2014 the tiger chases the deer",
+      "recalled_svo": [
+        "tiger",
+        "chase",
+        "deer"
+      ]
+    },
+    {
+      "msg": "the cougar chase the deer",
+      "answer": "As for it \u2014 the cougar chases the deer",
+      "recalled_svo": [
+        "cougar",
+        "chase",
+        "deer"
+      ]
+    },
+    {
+      "msg": "the owl chase the mouse",
+      "answer": "I caught the verb 'chase' with the owl and the mouse, but my role-binding didn't resolve the PATIENT \u2014 which of them is the 'chase' done to, the owl or the mouse?",
+      "recalled_svo": null
+    },
+    {
+      "msg": "the snake chase the mouse",
+      "answer": "I caught the verb 'chase' with the snake and the mouse, but my role-binding didn't resolve the PATIENT \u2014 which of them is the 'chase' done to, the snake or the mouse?",
+      "recalled_svo": null
+    },
+    {
+      "msg": "the crow chase the beetle",
+      "answer": "the crow chases the beetle",
+      "recalled_svo": [
+        "crow",
+        "chase",
+        "beetle"
+      ]
+    },
+    {
+      "msg": "the pike chase the minnow",
+      "answer": "the pike chases the minnow",
+      "recalled_svo": [
+        "pike",
+        "chase",
+        "minnow"
+      ]
+    },
+    {
+      "msg": "the coyote chase the dog",
+      "answer": "Setting the held thread aside \u2014 On dog, then \u2014 the coyote chases the dog",
+      "recalled_svo": [
+        "coyote",
+        "chase",
+        "dog"
+      ]
+    },
+    {
+      "msg": "the bear chase the dog",
+      "answer": "I caught the verb 'chase' with the bear and the dog, but my role-binding didn't resolve the PATIENT \u2014 which of them is the 'chase' done to, the bear or the dog?",
+      "recalled_svo": null
+    }
+  ],
+  "stored_facts": [
+    [
+      "brain",
+      "learn",
+      "words"
+    ],
+    [
+      "brain",
+      "store",
+      "memory"
+    ],
+    [
+      "brain",
+      "use",
+      "spikes"
+    ],
+    [
+      "cat",
+      "eat",
+      "fish"
+    ],
+    [
+      "cougar",
+      "chase",
+      "deer"
+    ],
+    [
+      "coyote",
+      "chase",
+      "dog"
+    ],
+    [
+      "crow",
+      "chase",
+      "beetle"
+    ],
+    [
+      "dog",
+      "chase",
+      "cat"
+    ],
+    [
+      "eagle",
+      "chase",
+      "rabbit"
+    ],
+    [
+      "hawk",
+      "chase",
+      "rabbit"
+    ],
+    [
+      "lion",
+      "chase",
+      "deer"
+    ],
+    [
+      "pike",
+      "chase",
+      "minnow"
+    ],
+    [
+      "tiger",
+      "chase",
+      "deer"
+    ]
+  ],
+  "replies": [
+    {
+      "i": 0,
+      "hypothesis_svo": [
+        "dog",
+        "chase",
+        "rabbit"
+      ],
+      "abstained": false,
+      "answer": "As for it \u2014 (My authorship monitor reads this as self-generated \u2014 a guess of my own, not something I was taught.) perhaps the dog chases the rabbit  [a guess from what I've learned -- not something I was taught]",
+      "mode": null,
+      "n_draws": 2
+    },
+    {
+      "i": 1,
+      "hypothesis_svo": [
+        "dog",
+        "chase",
+        "deer"
+      ],
+      "abstained": false,
+      "answer": "As for it \u2014 (My authorship monitor reads this as self-generated \u2014 a guess of my own, not something I was taught.) perhaps the dog chases the deer  [a guess from what I've learned -- not something I was taught]",
+      "mode": null,
+      "n_draws": 1
+    },
+    {
+      "i": 2,
+      "hypothesis_svo": [
+        "dog",
+        "chase",
+        "deer"
+      ],
+      "abstained": false,
+      "answer": "As for it \u2014 (My authorship monitor reads this as self-generated \u2014 a guess of my own, not something I was taught.) perhaps the dog chases the deer  [a guess from what I've learned -- not something I was taught]",
+      "mode": null,
+      "n_draws": 1
+    },
+    {
+      "i": 3,
+      "hypothesis_svo": [
+        "dog",
+        "chase",
+        "deer"
+      ],
+      "abstained": false,
+      "answer": "As for it \u2014 (My authorship monitor reads this as self-generated \u2014 a guess of my own, not something I was taught.) perhaps the dog chases the deer  [a guess from what I've learned -- not something I was taught]",
+      "mode": null,
+      "n_draws": 1
+    },
+    {
+      "i": 4,
+      "hypothesis_svo": [
+        "dog",
+        "chase",
+        "deer"
+      ],
+      "abstained": false,
+      "answer": "As for it \u2014 (My authorship monitor reads this as self-generated \u2014 a guess of my own, not something I was taught.) perhaps the dog chases the deer  [a guess from what I've learned -- not something I was taught]",
+      "mode": null,
+      "n_draws": 1
+    },
+    {
+      "i": 5,
+      "hypothesis_svo": [
+        "dog",
+        "chase",
+        "deer"
+      ],
+      "abstained": false,
+      "answer": "As for it \u2014 (My authorship monitor reads this as self-generated \u2014 a guess of my own, not something I was taught.) perhaps the dog chases the deer  [a guess from what I've learned -- not something I was taught]",
+      "mode": null,
+      "n_draws": 1
+    },
+    {
+      "i": 6,
+      "hypothesis_svo": [
+        "dog",
+        "chase",
+        "deer"
+      ],
+      "abstained": false,
+      "answer": "As for it \u2014 (My authorship monitor reads this as self-generated \u2014 a guess of my own, not something I was taught.) perhaps the dog chases the deer  [a guess from what I've learned -- not something I was taught]",
+      "mode": null,
+      "n_draws": 1
+    },
+    {
+      "i": 7,
+      "hypothesis_svo": [
+        "dog",
+        "chase",
+        "deer"
+      ],
+      "abstained": false,
+      "answer": "As for it \u2014 (My authorship monitor reads this as self-generated \u2014 a guess of my own, not something I was taught.) perhaps the dog chases the deer  [a guess from what I've learned -- not something I was taught]",
+      "mode": null,
+      "n_draws": 1
+    },
+    {
+      "i": 8,
+      "hypothesis_svo": [
+        "dog",
+        "chase",
+        "deer"
+      ],
+      "abstained": false,
+      "answer": "As for it \u2014 (My authorship monitor reads this as self-generated \u2014 a guess of my own, not something I was taught.) perhaps the dog chases the deer  [a guess from what I've learned -- not something I was taught]",
+      "mode": null,
+      "n_draws": 1
+    },
+    {
+      "i": 9,
+      "hypothesis_svo": [
+        "dog",
+        "chase",
+        "deer"
+      ],
+      "abstained": false,
+      "answer": "As for it \u2014 (My authorship monitor reads this as self-generated \u2014 a guess of my own, not something I was taught.) perhaps the dog chases the deer  [a guess from what I've learned -- not something I was taught]",
+      "mode": null,
+      "n_draws": 1
+    },
+    {
+      "i": 10,
+      "hypothesis_svo": [
+        "dog",
+        "chase",
+        "deer"
+      ],
+      "abstained": false,
+      "answer": "As for it \u2014 (My authorship monitor reads this as self-generated \u2014 a guess of my own, not something I was taught.) perhaps the dog chases the deer  [a guess from what I've learned -- not something I was taught]",
+      "mode": null,
+      "n_draws": 1
+    },
+    {
+      "i": 11,
+      "hypothesis_svo": [
+        "dog",
+        "chase",
+        "deer"
+      ],
+      "abstained": false,
+      "answer": "As for it \u2014 (My authorship monitor reads this as self-generated \u2014 a guess of my own, not something I was taught.) perhaps the dog chases the deer  [a guess from what I've learned -- not something I was taught]",
+      "mode": null,
+      "n_draws": 1
+    },
+    {
+      "i": 12,
+      "hypothesis_svo": [
+        "dog",
+        "chase",
+        "deer"
+      ],
+      "abstained": false,
+      "answer": "As for it \u2014 (My authorship monitor reads this as self-generated \u2014 a guess of my own, not something I was taught.) perhaps the dog chases the deer  [a guess from what I've learned -- not something I was taught]",
+      "mode": null,
+      "n_draws": 1
+    },
+    {
+      "i": 13,
+      "hypothesis_svo": [
+        "dog",
+        "chase",
+        "deer"
+      ],
+      "abstained": false,
+      "answer": "As for it \u2014 (My authorship monitor reads this as self-generated \u2014 a guess of my own, not something I was taught.) perhaps the dog chases the deer  [a guess from what I've learned -- not something I was taught]",
+      "mode": null,
+      "n_draws": 1
+    },
+    {
+      "i": 14,
+      "hypothesis_svo": [
+        "dog",
+        "chase",
+        "deer"
+      ],
+      "abstained": false,
+      "answer": "As for it \u2014 (My authorship monitor reads this as self-generated \u2014 a guess of my own, not something I was taught.) perhaps the dog chases the deer  [a guess from what I've learned -- not something I was taught]",
+      "mode": null,
+      "n_draws": 1
+    },
+    {
+      "i": 15,
+      "hypothesis_svo": [
+        "dog",
+        "chase",
+        "deer"
+      ],
+      "abstained": false,
+      "answer": "As for it \u2014 (My authorship monitor reads this as self-generated \u2014 a guess of my own, not something I was taught.) perhaps the dog chases the deer  [a guess from what I've learned -- not something I was taught]",
+      "mode": null,
+      "n_draws": 1
+    },
+    {
+      "i": 16,
+      "hypothesis_svo": [
+        "dog",
+        "chase",
+        "deer"
+      ],
+      "abstained": false,
+      "answer": "As for it \u2014 (My authorship monitor reads this as self-generated \u2014 a guess of my own, not something I was taught.) perhaps the dog chases the deer  [a guess from what I've learned -- not something I was taught]",
+      "mode": null,
+      "n_draws": 1
+    },
+    {
+      "i": 17,
+      "hypothesis_svo": [
+        "dog",
+        "chase",
+        "deer"
+      ],
+      "abstained": false,
+      "answer": "As for it \u2014 (My authorship monitor reads this as self-generated \u2014 a guess of my own, not something I was taught.) perhaps the dog chases the deer  [a guess from what I've learned -- not something I was taught]",
+      "mode": null,
+      "n_draws": 1
+    },
+    {
+      "i": 18,
+      "hypothesis_svo": [
+        "dog",
+        "chase",
+        "deer"
+      ],
+      "abstained": false,
+      "answer": "As for it \u2014 (My authorship monitor reads this as self-generated \u2014 a guess of my own, not something I was taught.) perhaps the dog chases the deer  [a guess from what I've learned -- not something I was taught]",
+      "mode": null,
+      "n_draws": 1
+    },
+    {
+      "i": 19,
+      "hypothesis_svo": [
+        "dog",
+        "chase",
+        "deer"
+      ],
+      "abstained": false,
+      "answer": "As for it \u2014 (My authorship monitor reads this as self-generated \u2014 a guess of my own, not something I was taught.) perhaps the dog chases the deer  [a guess from what I've learned -- not something I was taught]",
+      "mode": null,
+      "n_draws": 1
+    },
+    {
+      "i": 20,
+      "hypothesis_svo": [
+        "dog",
+        "chase",
+        "deer"
+      ],
+      "abstained": false,
+      "answer": "As for it \u2014 (My authorship monitor reads this as self-generated \u2014 a guess of my own, not something I was taught.) perhaps the dog chases the deer  [a guess from what I've learned -- not something I was taught]",
+      "mode": null,
+      "n_draws": 1
+    },
+    {
+      "i": 21,
+      "hypothesis_svo": [
+        "dog",
+        "chase",
+        "deer"
+      ],
+      "abstained": false,
+      "answer": "As for it \u2014 (My authorship monitor reads this as self-generated \u2014 a guess of my own, not something I was taught.) perhaps the dog chases the deer  [a guess from what I've learned -- not something I was taught]",
+      "mode": null,
+      "n_draws": 1
+    },
+    {
+      "i": 22,
+      "hypothesis_svo": [
+        "dog",
+        "chase",
+        "deer"
+      ],
+      "abstained": false,
+      "answer": "As for it \u2014 (My authorship monitor reads this as self-generated \u2014 a guess of my own, not something I was taught.) perhaps the dog chases the deer  [a guess from what I've learned -- not something I was taught]",
+      "mode": null,
+      "n_draws": 1
+    },
+    {
+      "i": 23,
+      "hypothesis_svo": [
+        "dog",
+        "chase",
+        "deer"
+      ],
+      "abstained": false,
+      "answer": "As for it \u2014 (My authorship monitor reads this as self-generated \u2014 a guess of my own, not something I was taught.) perhaps the dog chases the deer  [a guess from what I've learned -- not something I was taught]",
+      "mode": null,
+      "n_draws": 1
+    },
+    {
+      "i": 24,
+      "hypothesis_svo": [
+        "dog",
+        "chase",
+        "deer"
+      ],
+      "abstained": false,
+      "answer": "As for it \u2014 (My authorship monitor reads this as self-generated \u2014 a guess of my own, not something I was taught.) perhaps the dog chases the deer  [a guess from what I've learned -- not something I was taught]",
+      "mode": null,
+      "n_draws": 1
+    },
+    {
+      "i": 25,
+      "hypothesis_svo": [
+        "dog",
+        "chase",
+        "deer"
+      ],
+      "abstained": false,
+      "answer": "As for it \u2014 (My authorship monitor reads this as self-generated \u2014 a guess of my own, not something I was taught.) perhaps the dog chases the deer  [a guess from what I've learned -- not something I was taught]",
+      "mode": null,
+      "n_draws": 1
+    },
+    {
+      "i": 26,
+      "hypothesis_svo": [
+        "dog",
+        "chase",
+        "deer"
+      ],
+      "abstained": false,
+      "answer": "As for it \u2014 (My authorship monitor reads this as self-generated \u2014 a guess of my own, not something I was taught.) perhaps the dog chases the deer  [a guess from what I've learned -- not something I was taught]",
+      "mode": null,
+      "n_draws": 1
+    },
+    {
+      "i": 27,
+      "hypothesis_svo": [
+        "dog",
+        "chase",
+        "deer"
+      ],
+      "abstained": false,
+      "answer": "As for it \u2014 (My authorship monitor reads this as self-generated \u2014 a guess of my own, not something I was taught.) perhaps the dog chases the deer  [a guess from what I've learned -- not something I was taught]",
+      "mode": null,
+      "n_draws": 1
+    },
+    {
+      "i": 28,
+      "hypothesis_svo": [
+        "dog",
+        "chase",
+        "deer"
+      ],
+      "abstained": false,
+      "answer": "As for it \u2014 (My authorship monitor reads this as self-generated \u2014 a guess of my own, not something I was taught.) perhaps the dog chases the deer  [a guess from what I've learned -- not something I was taught]",
+      "mode": null,
+      "n_draws": 1
+    },
+    {
+      "i": 29,
+      "hypothesis_svo": [
+        "dog",
+        "chase",
+        "deer"
+      ],
+      "abstained": false,
+      "answer": "As for it \u2014 (My authorship monitor reads this as self-generated \u2014 a guess of my own, not something I was taught.) perhaps the dog chases the deer  [a guess from what I've learned -- not something I was taught]",
+      "mode": null,
+      "n_draws": 1
+    },
+    {
+      "i": 30,
+      "hypothesis_svo": [
+        "dog",
+        "chase",
+        "deer"
+      ],
+      "abstained": false,
+      "answer": "As for it \u2014 (My authorship monitor reads this as self-generated \u2014 a guess of my own, not something I was taught.) perhaps the dog chases the deer  [a guess from what I've learned -- not something I was taught]",
+      "mode": null,
+      "n_draws": 1
+    },
+    {
+      "i": 31,
+      "hypothesis_svo": [
+        "dog",
+        "chase",
+        "deer"
+      ],
+      "abstained": false,
+      "answer": "As for it \u2014 (My authorship monitor reads this as self-generated \u2014 a guess of my own, not something I was taught.) perhaps the dog chases the deer  [a guess from what I've learned -- not something I was taught]",
+      "mode": null,
+      "n_draws": 1
+    },
+    {
+      "i": 32,
+      "hypothesis_svo": [
+        "dog",
+        "chase",
+        "deer"
+      ],
+      "abstained": false,
+      "answer": "As for it \u2014 (My authorship monitor reads this as self-generated \u2014 a guess of my own, not something I was taught.) perhaps the dog chases the deer  [a guess from what I've learned -- not something I was taught]",
+      "mode": null,
+      "n_draws": 1
+    },
+    {
+      "i": 33,
+      "hypothesis_svo": [
+        "dog",
+        "chase",
+        "deer"
+      ],
+      "abstained": false,
+      "answer": "As for it \u2014 (My authorship monitor reads this as self-generated \u2014 a guess of my own, not something I was taught.) perhaps the dog chases the deer  [a guess from what I've learned -- not something I was taught]",
+      "mode": null,
+      "n_draws": 1
+    },
+    {
+      "i": 34,
+      "hypothesis_svo": [
+        "dog",
+        "chase",
+        "deer"
+      ],
+      "abstained": false,
+      "answer": "As for it \u2014 (My authorship monitor reads this as self-generated \u2014 a guess of my own, not something I was taught.) perhaps the dog chases the deer  [a guess from what I've learned -- not something I was taught]",
+      "mode": null,
+      "n_draws": 1
+    },
+    {
+      "i": 35,
+      "hypothesis_svo": [
+        "dog",
+        "chase",
+        "deer"
+      ],
+      "abstained": false,
+      "answer": "As for it \u2014 (My authorship monitor reads this as self-generated \u2014 a guess of my own, not something I was taught.) perhaps the dog chases the deer  [a guess from what I've learned -- not something I was taught]",
+      "mode": null,
+      "n_draws": 1
+    },
+    {
+      "i": 36,
+      "hypothesis_svo": [
+        "dog",
+        "chase",
+        "deer"
+      ],
+      "abstained": false,
+      "answer": "As for it \u2014 (My authorship monitor reads this as self-generated \u2014 a guess of my own, not something I was taught.) perhaps the dog chases the deer  [a guess from what I've learned -- not something I was taught]",
+      "mode": null,
+      "n_draws": 1
+    },
+    {
+      "i": 37,
+      "hypothesis_svo": [
+        "dog",
+        "chase",
+        "deer"
+      ],
+      "abstained": false,
+      "answer": "As for it \u2014 (My authorship monitor reads this as self-generated \u2014 a guess of my own, not something I was taught.) perhaps the dog chases the deer  [a guess from what I've learned -- not something I was taught]",
+      "mode": null,
+      "n_draws": 1
+    },
+    {
+      "i": 38,
+      "hypothesis_svo": [
+        "dog",
+        "chase",
+        "deer"
+      ],
+      "abstained": false,
+      "answer": "As for it \u2014 (My authorship monitor reads this as self-generated \u2014 a guess of my own, not something I was taught.) perhaps the dog chases the deer  [a guess from what I've learned -- not something I was taught]",
+      "mode": null,
+      "n_draws": 1
+    },
+    {
+      "i": 39,
+      "hypothesis_svo": [
+        "dog",
+        "chase",
+        "deer"
+      ],
+      "abstained": false,
+      "answer": "As for it \u2014 (My authorship monitor reads this as self-generated \u2014 a guess of my own, not something I was taught.) perhaps the dog chases the deer  [a guess from what I've learned -- not something I was taught]",
+      "mode": null,
+      "n_draws": 1
+    }
+  ],
+  "draw_counter": {
+    "n_calls": 41,
+    "n_ablated_calls": 0
+  },
+  "likelihood_weight": {
+    "beetle": 1.0,
+    "cat": 2.0,
+    "deer": 3.0,
+    "dog": 2.0,
+    "fish": 0.0,
+    "memory": 0.0,
+    "minnow": 1.0,
+    "rabbit": 2.0,
+    "spikes": 0.0,
+    "words": 0.0
+  },
+  "t_teach_s": 523.0,
+  "t_total_s": 1220.1,
+  "backend": "numpy"
+}
