@@ -1,0 +1,126 @@
+{
+  "runner": "research.runners._lbf_open_ended_production_turn_probe --a3-score",
+  "scorer": "amendment-3 (independent noise-stream sessions; seed = replication unit)",
+  "mode": "default",
+  "seed": 43,
+  "m": 4,
+  "ask": "what might a dog chase",
+  "teach": [
+    "the wolf chase the rabbit",
+    "the fox chase the rabbit",
+    "the hawk chase the rabbit",
+    "the eagle chase the rabbit",
+    "the lion chase the deer",
+    "the tiger chase the deer",
+    "the cougar chase the deer",
+    "the owl chase the mouse",
+    "the snake chase the mouse",
+    "the crow chase the beetle",
+    "the pike chase the minnow",
+    "the coyote chase the dog",
+    "the bear chase the dog"
+  ],
+  "lesioned_edge": "BRAIN_SPIKING_DRAW_LESION=1 replaces the HOST weight vector w = _weight_partner((dog, chase), patients) -- a sum over the HOST co-occurrence matrix P built by ChatBrain._build_generation_proposer from the stored facts -- with np.ones(V) before it is mapped (host affine map base_pA + gain_pA*w/peak) into drive for the spiking Izhikevich soft-WTA bank. What the lesion tests: whether that HOST likelihood vector, transmitted THROUGH the spiking WTA, changes the reply. It does NOT test whether the spiking part is load-bearing; the host_oracle arm (same w, host np.random.choice) measures that.",
+  "host_shortcuts": [
+    "teach KB + ask prompt (WORLD)",
+    "histogram / TV / sign-flip statistic (INSTRUMENT)",
+    "co-occurrence matrix P and the weight vector w = _weight_partner (HOST likelihood; the LESIONED input)",
+    "affine drive map base_pA + gain_pA*w/peak (HOST)",
+    "argmax over the bank's firing counts (HOST read-out of the spiking winner)",
+    "hypothesis role induction + SVO template (HOST)",
+    "prompt router _parse_open_ended + _is_acquisition_candidate (HOST regex / token rules)",
+    "RF-composer moat verify (HOST scaffold)",
+    "warm Qwen faculty stubbed in the oe_* modes (FORM not measured)"
+  ],
+  "score": {
+    "verdict": "DEFINED",
+    "label": "TOWARD-LIKELIHOOD",
+    "reasons": [],
+    "lesioned_edge": "BRAIN_SPIKING_DRAW_LESION=1 replaces the HOST weight vector w = _weight_partner((dog, chase), patients) -- a sum over the HOST co-occurrence matrix P built by ChatBrain._build_generation_proposer from the stored facts -- with np.ones(V) before it is mapped (host affine map base_pA + gain_pA*w/peak) into drive for the spiking Izhikevich soft-WTA bank. What the lesion tests: whether that HOST likelihood vector, transmitted THROUGH the spiking WTA, changes the reply. It does NOT test whether the spiking part is load-bearing; the host_oracle arm (same w, host np.random.choice) measures that.",
+    "m": 4,
+    "n_errors": 0,
+    "deterministic": true,
+    "host_weight_vector": {
+      "beetle": 1.0,
+      "cat": 2.0,
+      "deer": 3.0,
+      "dog": 2.0,
+      "fish": 0.0,
+      "memory": 0.0,
+      "minnow": 1.0,
+      "rabbit": 2.0,
+      "spikes": 0.0,
+      "words": 0.0
+    },
+    "w_equal_across_sessions": true,
+    "stored_facts_equal_across_sessions": true,
+    "noise_seeds": {
+      "intact": [
+        43000,
+        43001,
+        43002,
+        43003
+      ],
+      "lesion": [
+        43500,
+        43501,
+        43502,
+        43503
+      ]
+    },
+    "noise_seeds_distinct": true,
+    "noise_stream_engaged": true,
+    "draws_intact": [
+      31,
+      28,
+      26,
+      21
+    ],
+    "draws_lesion": [
+      152,
+      228,
+      134,
+      130
+    ],
+    "ablated_intact": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "ablated_lesion": [
+      152,
+      228,
+      134,
+      130
+    ],
+    "n_distinct_sessions_intact": 4,
+    "n_distinct_sessions_lesion": 4,
+    "noise_live": true,
+    "hist_intact": {
+      "deer": 26,
+      "rabbit": 6
+    },
+    "hist_lesion": {
+      "deer": 24,
+      "rabbit": 8
+    },
+    "abstain_rate_intact": 0.0,
+    "abstain_rate_lesion": 0.0,
+    "v_intact": [
+      0.9166666666666666,
+      0.9583333333333333,
+      0.875,
+      1.0
+    ],
+    "v_lesion": [
+      0.875,
+      1.0,
+      0.9583333333333333,
+      0.8333333333333334
+    ],
+    "delta": 0.02083333333333337,
+    "attributable_to_host_weight_drive": 0.02222222222222226,
+    "perm_p_exact_one_sided": 0.4142857142857143
+  }
+}

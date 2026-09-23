@@ -3,12 +3,17 @@
 # RAM-bound and each session is one full numpy brain). PREREG amendment 3 = commit eefdd666a.
 #   1. bash tools/pool_provision.sh --isolated --revision <SHA> pool41 pool42      (once)
 #   2. bash research/runners/_lbf_open_ended_production_turn_stage_a3_pool.sh <FULL_SHA> --smoke
-#   3. wait for the smoke job to land, THEN: bash .../stage_a3_pool.sh <FULL_SHA>   (no 2nd arg: queues the 54
-#      governed jobs, but ONLY after checking the smoke output completed cleanly -- round-5 review fix,
-#      2026-09-23: this used to be advisory-only, so the 54 governed jobs (hours of pool time) could start
-#      before, or without, anyone checking the smoke. REFUSES (exit 3) if the smoke file is missing or looks
-#      incomplete/errored; `--skip-smoke-check` overrides for someone who already verified health another way.)
-#   4. bash research/runners/_lbf_open_ended_production_turn_harvest_a3.sh <FULL_SHA>   (idempotent; re-run)
+#   3. wait for the smoke job to land ON THE NODE, THEN HARVEST IT TO THIS LOCAL CHECKOUT:
+#        bash research/runners/_lbf_open_ended_production_turn_harvest_a3.sh <FULL_SHA> smoke
+#      (round-6 review, 2026-09-23: the check below reads $SMOKE_FILE from THIS checkout, not from the pool
+#      node -- the smoke job's output only reaches here after this harvest step. Skipping it means step 4 below
+#      will always REFUSE with "no smoke output", even once the node-side job has long finished.)
+#   4. THEN: bash .../stage_a3_pool.sh <FULL_SHA>   (no 2nd arg: queues the 54 governed jobs, but ONLY after
+#      checking the harvested smoke output completed cleanly -- round-5 review fix, 2026-09-23: this used to be
+#      advisory-only, so the 54 governed jobs (hours of pool time) could start before, or without, anyone
+#      checking the smoke. REFUSES (exit 3) if the smoke file is missing or looks incomplete/errored;
+#      `--skip-smoke-check` overrides for someone who already verified health another way.)
+#   5. bash research/runners/_lbf_open_ended_production_turn_harvest_a3.sh <FULL_SHA>   (idempotent; re-run)
 # One pool job = ONE session = one fresh full brain (build, 13 teach turns, K=8 asks) -> one worker JSON under
 #   research/findings/raw/_load_bearing/_oe_production_turn/a3/default/default_s<seed>_<arm>_n<j>.json
 # in the node's isolated revision dir. Jobs are idempotent (an existing output is kept), so a re-queue is harmless.
@@ -45,8 +50,12 @@ fi
 # smoke session should not be treated as a failure.
 if [ "${2:-}" != "--skip-smoke-check" ]; then
   if [ ! -f "$SMOKE_FILE" ]; then
-    echo "[stage_a3] REFUSED: no smoke output at $SMOKE_FILE." >&2
-    echo "[stage_a3] Run '$0 $SHA --smoke' first, wait for it to land, then re-run this command (no 2nd arg)." >&2
+    echo "[stage_a3] REFUSED: no smoke output at $SMOKE_FILE (in THIS LOCAL CHECKOUT)." >&2
+    echo "[stage_a3] Run '$0 $SHA --smoke' first, wait for the job to finish ON THE POOL NODE, then pull it here:" >&2
+    echo "[stage_a3]   bash research/runners/_lbf_open_ended_production_turn_harvest_a3.sh $SHA smoke" >&2
+    echo "[stage_a3] (round-6 review, 2026-09-23: this check only ever reads the LOCAL checkout -- a smoke job" >&2
+    echo "[stage_a3] that finished on the node but was never harvested here will refuse forever.) Then re-run" >&2
+    echo "[stage_a3] this command (no 2nd arg)." >&2
     echo "[stage_a3] Override only if you have already manually verified pipeline health another way:" >&2
     echo "[stage_a3]   $0 $SHA --skip-smoke-check" >&2
     exit 3

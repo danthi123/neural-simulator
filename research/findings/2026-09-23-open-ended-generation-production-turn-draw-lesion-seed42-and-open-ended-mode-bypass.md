@@ -15,6 +15,25 @@ Lane `research/open-ended-production-turn-lb` (charter D1). Pre-registration:
 (committed `4edf6fc10`; amendment 1 `94b71d511`; amendment 2 `4f9cc6b3e`; amendment 3 `eefdd666a`; each before the
 runs it governs). Instrument: `research/runners/_lbf_open_ended_production_turn_probe.py`.
 
+## Correction 4, after the round-6 re-review + the a3 6-seed harvest (2026-09-23)
+
+1. **"Left exactly as registered" is scoped to M/K/floor only, never to the full a3 scorer.** Round-6 review found
+   that this lane's own commit message and "Correction 3" item 2 below describe "the registered a3 gate" as left
+   unchanged in the same round that added a new UNDEFINED condition (`stored_facts_equal_across_sessions`) to
+   `score_seed_a3`'s per-seed `checks` list (commit `a9eda3d0a`, 2026-09-23 17:47:20 -0400). That phrase is accurate
+   only for the M=4/K=8/floor=0.10 design in the PREREG's "The design (fixed now)"; it does not extend to every
+   per-seed UNDEFINED condition in the scorer. The disclosure the round-6 review required — what changed, when,
+   its direction (stricter only, can only remove a GO, never add one), whether the governed read uses it, and a
+   check of "no a3 result had been read" against artifact mtimes — is in the PREREG's new
+   "Amendment-log correction 3 (round-6 review, 2026-09-23)".
+2. **The result.** The 54 governed a3 sessions and the seed-7 smoke finished on an AWS instance (not the mini-PC
+   pool described in "Staged" below — see the new verdict finding). Scored with both the amended (`a9eda3d0a`) and
+   as-registered (`eefdd666a`) `score_seed_a3`, which are byte-identical on this harvest (`stored_facts_equal_
+   across_sessions` is `True` on all 6 seeds, so the added check never fires): **NO-GO** — 5/6 seeds DEFINED (seed
+   100 reads UNDEFINED, degenerate null), and even among the 5 DEFINED seeds the mean Delta (0.09375) sits just
+   under the registered 0.10 floor. Full detail, per-seed table and provenance:
+   [`2026-09-23-open-ended-production-turn-a3-6seed-harvest-NO-GO.md`](2026-09-23-open-ended-production-turn-a3-6seed-harvest-NO-GO.md).
+
 ## Correction 3, after the round-5 re-review of the amendment-3 power simulation (2026-09-23)
 
 1. **"No sim/ or webapp/ edit in this round" ("What is NOT claimed" below) is FALSE and withdrawn as written.**
@@ -206,5 +225,7 @@ sign test p < 0.05 (6/6 positive), and mean Delta ≥ 0.10.
   corpus and the LTM bundles synced. pool40 was unreachable. Every a3 session runs in this one pool environment,
   on identical i5-10500T nodes, so no session is compared against a local-box session.
 - When queued, the pool queue held about 38 jobs from other lanes and both nodes were CPU-saturated (load 23–26 on
-  12 cores). With one full brain per node, expect many hours before all 54 sessions are back. Nothing has been
-  scored yet: no a3 result exists at the time of writing.
+  12 cores). With one full brain per node, expect many hours before all 54 sessions are back.
+- **Superseded (round-7, 2026-09-23): the 54 sessions did not finish on this mini-PC pool staging.** They were
+  re-run to completion on an AWS instance from a `git archive` of `eefdd666a` (`SIM_POOL_HOST=aws2`) and scored;
+  see "Correction 4" above and the verdict finding it links for the harvest, scoring and provenance detail.

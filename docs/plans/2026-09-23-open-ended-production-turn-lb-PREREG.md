@@ -248,8 +248,66 @@ and were running under that design. Per this lane's own rule (a pre-registered g
 M/K/floor choice is **left exactly as registered** -- this correction is a disclosure of what informed that
 choice, not a retroactive redesign of it. The already-running sessions' results still fall to be read against
 the registered rule as written; a future lane should re-derive M/K/floor from the honest power simulation before
-staging new sessions, since the mean effect it now predicts (0.193, one seed under the floor) is barely inside
-the margin the registered design assumed.
+staging new sessions.
+
+**Wording correction (round-6 review, 2026-09-23): "barely inside the margin" understated the prediction and is
+corrected here.** The registered floor (`A3_DELTA = 0.10`) applies to the **mean** of Delta_s over the 6 seeds,
+not to any one seed on its own. The honest power simulation's mean, 0.193, clears 0.10 by roughly 1.9x, and 6/6
+bank seeds are positive -- so the rule as written still predicts GO, not a marginal one. One bank seed (302,
+Delta 0.094) reads below 0.10 **individually**, but the registered rule never tests seeds one at a time; that
+seed's shortfall does not by itself threaten the mean-based prediction. The corrected reading: the honest
+simulation predicts GO on the mean-Delta rule as registered, with one bank seed's own effect below the floor
+noted as the part of the margin that is not comfortable.
+
+### Amendment-log correction 3 (round-6 review, 2026-09-23) — an undisclosed change to the governed a3 SCORER
+
+**What changed, and when.** Commit `a9eda3d0a` (2026-09-23 17:47:20 -0400) added one more disjunct to
+`score_seed_a3`'s per-seed `checks` list: `not stored_facts_equal_across_sessions` -> `"stored facts differ across
+sessions (worlds diverged; w_ref no longer describes every session's actual world)"`. Before that commit, the
+field `stored_facts_equal_across_sessions` was already computed but never consulted (a round-4 review item), so a
+seed whose sessions' learned facts had drifted from `intact[0]`'s could still read DEFINED. The round-5 fixer's
+own commit message and this finding's "Correction 3" both describe "the registered a3 gate" as **left exactly as
+registered / left unchanged** in the same breath as making this change to it. As the round-6 review found, that
+framing is not accurate for the scorer's decision rule (it is accurate only for the M/K/floor design in "The
+design (fixed now)" above, which is genuinely untouched) — this section is the disclosure the round-6 review asked
+for, and the "left unchanged" language elsewhere in this lane's docs should be read as scoped to M/K/floor only,
+never to the full set of per-seed UNDEFINED conditions.
+
+**Direction: strictly conservative, can only REMOVE a GO, never add one.** The change adds one more way for a seed
+to read UNDEFINED; it does not relax, remove, or weaken any existing check, and it does not touch `aggregate_a3`'s
+GO rule (6 seeds all DEFINED, sign-test p < 0.05, mean Delta >= 0.10) or the session-generation code
+(`run_a3_session` / `_worker`), so it cannot change what the 55 staged AWS sessions themselves measured. Since
+`aggregate_a3` requires ALL seeds DEFINED for a GO, an added UNDEFINED-only condition can only ever convert a
+would-be GO into a NO-GO (or leave a NO-GO a NO-GO) — it can never turn a NOT-GO into a GO, and it cannot
+manufacture support for one.
+
+**Which list the governed a3 read (round 7) uses.** Both. Amendment 3's harvest was scored with the scorer AS OF
+`a9eda3d0a` (HEAD at harvest time, the amended list, run first) **and**, separately, with the scorer AS OF
+`eefdd666a` (the commit this PREREG's amendment 3 itself names as "committed before this job" — the as-registered
+list, extracted from that commit and run standalone against the same session files, output discarded to a scratch
+directory so it does not overwrite the amended scorer's committed verdicts). On the actual 54-session harvest the
+two are **byte-identical**: `stored_facts_equal_across_sessions` reads `True` for all 6 seeds (no seed's sessions
+disagree on `stored_facts`), so the added check never fires and contributes no `reasons` entry either way. The
+governed verdict finding reports the amended-scorer output as primary (it is the more complete check and is now
+disclosed here) and states this equivalence rather than reporting two different numbers.
+
+**Verifying "no a3 result had been read when it was made" against artifact mtimes.** The 54 governed session files
+(+ 54 `.prov.json` sidecars) were staged at
+`research/findings/raw/_load_bearing/_oe_production_turn/aws2_a3/a3/default/` in the PRIMARY checkout only — an
+untracked directory, never present in any git worktree (including the round-5 fixer's own worktree,
+`wf_6cf1082d-b06-2`) unless that worktree separately fetched it. Their filesystem mtimes range from
+**2026-09-23 16:58:22 -0400** (the first seed-42 file) to **17:47:11 -0400** (the last seed-102
+`intact_rebuild` file) — i.e. every file had already landed on the local machine's disk by 17:47:11, just **9
+seconds before** the `a9eda3d0a` commit at 17:47:20. This does not confirm the claim: it shows the data existed
+on disk (in a directory outside the fixer's own worktree) before the commit, so it was at least *physically
+possible* for an agent with primary-checkout filesystem access to have opened one, and the fixer's own worktree
+does not by itself prove isolation was respected. Two things support the claim rather than refute it: (1) the
+timing is far too tight (9 seconds) for the harvest to have been read in full and reacted to before that commit;
+and (2) `git log --all -- 'research/findings/raw/.../a3/default/*' 'research/findings/raw/.../a3_smoke/*'` over
+this lane's entire history returns **no commit, including `a9eda3d0a` itself** — the fixer never committed, cited,
+or referenced any a3 session or verdict artifact, which is what would be expected if it had never opened one.
+**Net: the claim is NOT FALSIFIED by mtimes, but it is also not provably true from mtimes alone** (I have no
+access to that session's own transcript); it is reported here as corroborated-but-unverified, not confirmed.
 
 ### Why amendment 2's statistic is withdrawn as a GO rule
 
