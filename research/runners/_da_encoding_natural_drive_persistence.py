@@ -157,9 +157,14 @@ class _ShimChat:
         self._last_da_drives = {"da_level": 0.5}
 
 
+# composer block dimension. 64 = the 2026-09-20 natural probe's value and the v1 pre-registered run; 128 = the
+# production default (BrainConversationalAgent D=128), pre-registered as v2 after v1 read UNDEFINED on G2.
+COMPOSER_D = 64
+
+
 def _build_composer(seed):
     from research.runners.one_brain_composer import OneBrainComposer
-    return OneBrainComposer(seed=seed, D=64, vocab=list(VOCAB), k_max=16)
+    return OneBrainComposer(seed=seed, D=COMPOSER_D, vocab=list(VOCAB), k_max=16)
 
 
 def _recall(comp):
@@ -233,7 +238,7 @@ def _exact_perm_p(a_correct, b_correct, n):
 
 def run_seed(seed, out):
     t0 = time.time()
-    res = {"seed": seed, "turn_h": TURN_H, "delay_h": DELAY_H, "vocab": VOCAB, "primary": list(PRIMARY),
+    res = {"seed": seed, "composer_D": COMPOSER_D, "turn_h": TURN_H, "delay_h": DELAY_H, "vocab": VOCAB, "primary": list(PRIMARY),
            "band": [list(b) for b in BAND], "traces": {}, "arms": []}
     for cond in ("neutral", "salient"):
         res["traces"][cond] = da_trace(seed, cond)
@@ -445,11 +450,14 @@ def selftest(seed=7):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--seed", type=int, default=42)
+    ap.add_argument("--D", type=int, default=64, help="composer block dimension (v1=64; v2=128 production default)")
     ap.add_argument("--out", default=None)
     ap.add_argument("--selftest", action="store_true")
     ap.add_argument("--pilot-da", action="store_true", help="print the DA traces only (stimulus pilot)")
     ap.add_argument("--aggregate", default=None)
     a = ap.parse_args()
+    global COMPOSER_D
+    COMPOSER_D = int(a.D)
     if a.selftest:
         r = selftest()
         print(json.dumps(r, indent=2, default=str))
