@@ -20,7 +20,9 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
   Delivered a new default-OFF open-output ruler `measure_affect_tone_open_output` (LB_AFFECT_TONE_OPEN_PROBE; byte-identical off → headline unchanged). **Banked next methods (biology-first):** neuromod `BRAIN_WKV_MOUTH_AFFECT_NEURAL`; a distribution-SHIFTING (not additive) coupling that lowers negative-word thresholds; affect-laden prompt domains; real-Qwen prompt-steered mouth. Finding `2026-09-22-affect-tone-open-output-directional-6seed-positive-asymmetric-NOGO`.
 - **✅ DONE THIS CYCLE: §8 honesty=STATE-fidelity metacog graded-marker (sub-arc B) — GO 6/6, adversarially CONFIRMED, MERGED @ b994cf13** (both remotes). New default-OFF de-risk runner softens binary confident→3-band {SPECULATE/HEDGE/ASSERT} off the workspace's spiking NMDA margin (reuse-by-import, NO sim/ edit, byte-identical off). NARROW scope (honest): ρ=AUC=1.000 near-guaranteed BY CONSTRUCTION (margin is a smooth monotone fn of synthetic evidence) — establishes the margin RESOLVES a middle band on CLEAN evidence (vs the spike-count substrate's near-chance), a MEASUREMENT de-risk NOT a production wire-in.
   Next rungs: real-traffic recalibration + default-off production wire-in. (First build MISFIRED — agent produced a status report + "held off" → verify caught NULL-INVALID → re-launched with explicit authorization; LESSON banked.)
-- **IN FLIGHT (do NOT double-launch):** (a) **episodic 5-seed in-situ** — s42 ✅ s43 ✅ **s100 ❌ (genuine cosmetic, exercised=1/LB=0)**, s101 running, s102 pending (+ s44 ✅ from build). Already NOT 6/6 → **honest-partial forming (≤5/6), will NOT merge as robust-core →23**; bank the method + characterize s100. (b) **Phase-2 local** (numpy CPU, throttled/memcap'd, pid 2987708) — updated adequate 6-seed → new aggregate; confirmatory (AWS abandoned; local builds correctly).
+- **✅ EPISODIC in-situ COMPLETE — 5/5 clean-deterministic LOAD-BEARING (s42/s43/s101/s102 ✅ + s44 build ✅); s100 = INSTRUMENT NON-DETERMINISM, NOT a capability failure.** s100's intact arm is non-deterministic (`determinism.deterministic=false`, dirty null-control, `UNRELIABLE` flag: "seed the substrate"), so its LB verdict is untrustworthy — an unseeded stochastic component in the episodic store→recall (seed-threading already builds arms at cfg.seed, so it's inside the store/recall OU/RNG, near-threshold amplifying it — same class as the affect-marker RNG artifact + pmem s44).
+  **NEXT (queued, launch when RAM frees): find+seed the unseeded store/recall RNG → re-measure s100 deterministically → if LB, episodic is 6/6 → robust core →23; if genuine near-threshold, a stabilizer (pmem-facilitation precedent).** Do NOT write it off as 5/6 — s100 is UNMEASURED, not failed. Branch `research/lbf-fix-episodic-store` holds the store-verify fix; final finding + merge after s100 resolves.
+- **IN FLIGHT:** **Phase-2 local** (numpy CPU, throttled/memcap'd, pid 2987708) — updated adequate 6-seed → new aggregate; confirmatory. **§8 affect→tone NEXT-METHOD** (workflow `w130innob`, build sonnet→verify opus) — diagnose decode-ceiling vs data-limit → build biology-faithful distribution-shift coupling OR document data-limit; branch `research/lbf-affect-tone-nextmethod`.
 - **Heartbeat armed** `bk9nzu8kt` (state-checking + parallel-audit each cycle). **LESSON (bank if recurs):** a workflow BUILD agent can conflate its task with the parent session's message and decline an authorized build → build-agent prompts need explicit "authorized autonomous build, not a status/confirmation request" framing.
 
 **⭐ LATEST 2026-09-22 (~20:20Z) — FULL-FORCE PARALLEL: 2 stabilizer fixes MERGED, 2 lanes IN FLIGHT, AWS abandoned:**
@@ -123,10 +125,11 @@ the hollow-set finding sits uncommitted in the working tree + a safety stash `pr
   other 4, after a self-inflicted RAM spike from an uncapped 6-parallel launch — recovered, avail 23G).
 
 **PRE-DECIDED NEXT ACTIONS:**
-1. ⭐ NOW (2026-09-22 ~22:30Z): HARVEST the 2 remaining IN-FLIGHT lanes → (a) **episodic 5-seed in-situ** — s42/s43 ✅,
-   **s100 ❌ cosmetic**, s101 running, s102 pending; already NOT 6/6 → **honest-partial (≤5/6), do NOT merge as
-   robust-core →23**; write the partial finding + characterize s100 when the tail lands. (b) **Phase-2 local** (numpy
-   CPU, throttled/memcap'd, pid 2987708) — updated adequate 6-seed → new aggregate; confirmatory. ✅ DONE this cycle:
+1. ⭐ NOW (2026-09-22 ~23:00Z): (a) **episodic s100 INSTRUMENT-FIX** (queued, launch when RAM frees) — episodic is
+   **5/5 clean-deterministic LOAD-BEARING**; s100 alone is non-deterministic (unseeded store/recall RNG, `UNRELIABLE`),
+   so s100 is UNMEASURED not failed. Find+seed the unseeded episodic store/recall RNG → re-measure s100 → if LB,
+   episodic **6/6 → robust core 23**; else near-threshold stabilizer. (b) harvest **§8 affect→tone next-method**
+   (workflow `w130innob`) + **Phase-2 local** (pid 2987708) as they land. ✅ DONE this cycle:
    **§8 metacog graded-marker (sub-arc B) — GO 6/6 CONFIRMED, MERGED @ b994cf13** (de-risk; narrow synthetic-evidence
    scope; next rungs = real-traffic recalibration + production wire-in). **§8 affect→tone-over-OPEN-output MERGED @
    279b4ddf** — NO-GO (positive-asymmetric, additive-bias method falsified, capability open, next methods banked; new
