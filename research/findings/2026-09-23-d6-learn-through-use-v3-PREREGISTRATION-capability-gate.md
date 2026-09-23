@@ -209,6 +209,16 @@ scored gate does not currently detect on its own.
   no live brain required), but **the s42 EXPO_H arm itself has not yet been run.** The local box was RAM-bound at
   fix-round-4 time (under 1 GB free, 16+ GB already swapped) when this addendum was filed, and a new ~10-25
   min/12 GB-memcapped local build was judged unsafe to stage alongside concurrent lanes on that box. This is the
-  next action on this lane, not a claimed result: read `research/findings/raw/_d6_learn_through_use_v3/s42_EXPO_H.json`
-  for the measured K3e/K4e outcome once it exists, and treat any such reading dated before that file exists as
-  unfounded.
+  next action on this lane, not a claimed result: read the file `s42_EXPO_H.json`, once it exists, under
+  `research/findings/raw/_d6_learn_through_use_v3/` for the measured K3e/K4e outcome, and treat any such reading
+  dated before that file exists as unfounded.
+
+**ADDENDUM A7 — fanout gap, filed fix round 5, after the round-4 re-review of this addendum.** The 5-seed
+`capability` pool fanout (s43/s44/s100/s101/s102) was staged before this A6 landed, pinned to a revision with 7
+arms per seed (USE_H, USE_H_REP, SHUF_H, FREEZE_H, ABL_H, NOREC_H, USE_D) and no EXPO_H line. When that fanout
+returns, K3e/K4e will read UNDEFINED on all five of those seeds -- the s42 measurement above is the only seed that
+can carry the secondary check until a post-A6-revision EXPO_H pool line is staged for the other five. This is
+recorded here rather than fixed by editing the live pool queue, which is running infrastructure state outside this
+finding's or this fix round's scope to rewrite. Any future report of the v3 aggregate GO must say the EXPO_H
+secondary is s42-only (1/6 seeds) unless and until those five EXPO_H lines have been staged, run, and harvested --
+it must not imply a 6-seed secondary read from the 6-seed K1-K7 fanout alone.

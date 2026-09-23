@@ -161,6 +161,15 @@ SEEDS6 = [42, 43, 44, 100, 101, 102]
 #       would have competed with concurrent lanes. The code path is proven by `--selftest`
 #       (`v3_missing_EXPO_is_secondary_only`, `v3_expo_secondary_can_fail_without_touching_go`), which does not
 #       need a live brain; the actual s42 measurement is the next action on this lane.
+#   A7. (fix round 5, after the round-4 re-review of A6's commit) NAMED GAP, NOT YET CLOSED: the 5-seed capability
+#       pool fanout (s43/s44/s100/s101/s102) was staged BEFORE A6 landed, at a revision with 7 arms per seed
+#       (USE_H, USE_H_REP, SHUF_H, FREEZE_H, ABL_H, NOREC_H, USE_D) and no EXPO_H line. When that fanout returns,
+#       K3e/K4e will read UNDEFINED on all five of those seeds -- only s42 (run separately, per A6's RUN ORDER)
+#       can carry the secondary check. This is recorded here rather than fixed by editing the live pool queue,
+#       because pool.queue/pool.running are running infrastructure state, not this commit's to rewrite; the honest
+#       status is: the EXPO_H secondary is s42-only until a post-A6-revision EXPO_H line is staged for the other
+#       five seeds (next action), and any v3 aggregate report before that must say so rather than imply a 6-seed
+#       secondary read.
 # ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 # VARIANT "readtime" (gate v2 -- see the PREREGISTRATION finding above). Flags on every Hebbian arm:
 # BRAIN_D6_ENGRAM_VOCAB=1 + BRAIN_D6_ENGRAM_READTIME=1 (NO prune: no host record is ever deleted; FOUR named kb readers

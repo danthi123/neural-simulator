@@ -1240,7 +1240,8 @@ add repetition/sleep-replay routes to L-LTP before any default flip.
 
 **2026-09-23 (D6 learn-through-use, branch `research/d6-learn-through-use`, NOT merged, default-OFF):**
 - The in-conversation fact write is now a local Hebbian rule on the substrate (`BRAIN_D6_HEBBIAN_STORE`), with a
-  write-only freeze lesion. Gate v1 (base) is NO-GO on C3 at s42 and s43: a host `kb` list carries familiarity.
+  write-only freeze lesion. Gate v1 (base) is NO-GO on C3 at s42, s43 and s100 (da989d574): a host `kb` list carries
+  familiarity.
   The engram variant was NO-GO; the prune variant is banked as an INVALID instrument. Gate v2 was registered to fail
   (its own prereg predicted the teach-ack and word-exposure failures) and is superseded; it never ran.
 - Gate v3 (the capability gate: does the later reply depend on the synaptic write? USE_H vs FREEZE_H, same input and

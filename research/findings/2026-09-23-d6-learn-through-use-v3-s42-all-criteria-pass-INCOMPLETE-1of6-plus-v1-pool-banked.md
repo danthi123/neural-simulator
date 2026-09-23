@@ -85,15 +85,21 @@ tree `c9b45a30e`, in separate processes on pool41. Result: byte_identical=true, 
 response-body sha256 are equal, and the final store_conns sha256 is `f94a1c65…` in both.
 
 The D6 production hunks are the same at HEAD. [Corrected in fix round 4: the round-3 re-review ran this literally
-and it does not show what the sentence below originally claimed.] `git diff c9b45a30e f97b339b2` and
-`git diff e98b0b046 HEAD` (the pinned `PRE_D6_REF`, not `5e9a7955b` -- `git diff 5e9a7955b HEAD` is NOT a
-like-for-like base: run literally it returns 515 lines, because `5e9a7955b` is not the merge base and the range
-also picks up main's later, unrelated merged files) over webapp/, brain_chat_tui.py and one_brain_composer.py are
-byte-identical: `diff` of the two saved outputs is empty (exit 0), each 65 raw diff lines / 62 lines excluding the
-three `diff --git` header lines (23 insertions + 2 deletions = 25 changed content lines, per `git diff --stat`, in
-`webapp/gnw_multistep_deliberation.py`, `webapp/gnw_thought_swap.py`, `webapp/server.py`). The conclusion (the D6
-production hunks are unchanged since the chat-parity run) holds; only the cited base and line count were wrong --
-corrected here from `5e9a7955b` / "72 lines" to `e98b0b046` / "62 lines".
+and it does not show what the sentence below originally claimed. Fix round 4's own "correction" was itself wrong
+in the same way: the numbers it gave (65 raw lines / 3 files / 23+2-) were for `webapp/` ALONE, while the sentence
+named all three paths (`webapp/`, `research/runners/brain_chat_tui.py`, `research/runners/one_brain_composer.py`)
+as its scope and so silently dropped that pair's own D6 hunks from the count. Re-corrected in fix round 5 by
+running the command literally over the stated three-path scope, not a subset of it.] `git diff c9b45a30e f97b339b2`
+and `git diff e98b0b046 HEAD` (the pinned `PRE_D6_REF`, not `5e9a7955b` -- `git diff 5e9a7955b HEAD` over this same
+three-path scope is NOT a like-for-like base: run literally it returns 602 lines, because `5e9a7955b` is not the
+merge base and the range also picks up main's later, unrelated merged files) over `webapp/`,
+`research/runners/brain_chat_tui.py` and `research/runners/one_brain_composer.py` are byte-identical: `diff` of the
+two saved outputs is empty (exit 0), each 152 raw diff lines / 5 `diff --git` headers over 5 files (57 insertions +
+5 deletions = 62 changed content lines, per `git diff --stat`, in `research/runners/brain_chat_tui.py`,
+`research/runners/one_brain_composer.py`, `webapp/gnw_multistep_deliberation.py`, `webapp/gnw_thought_swap.py`,
+`webapp/server.py`). The conclusion (the D6 production hunks are unchanged since the chat-parity run) holds; only
+the cited scope-vs-counts mismatch was wrong -- corrected here to 152 raw lines / 5 files / 62 changed lines
+(57+/5-) for the three-path scope the sentence names, re-derived directly rather than reused from a prior round.
 Store mode is identical against the re-pinned pre-D6 SHA `e98b0b046`
 (`research/findings/raw/_d6_learn_through_use/offpath_parity_store_vs_pre_d6.json`), and the pinned-SHA test
 re-checks it on every run.
