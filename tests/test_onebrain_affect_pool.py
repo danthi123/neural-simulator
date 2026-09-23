@@ -98,3 +98,73 @@ def test_affect_alone_on_pool_reads_signed_and_deterministic():
     std = PoolAffectLadder(42, shared=None)
     assert tone_level(d_pos) == tone_level(std.read_differential(1.0)["differential"])
     assert tone_level(d_neg) == tone_level(std.read_differential(-1.0)["differential"])
+
+
+def test_local_ou_restores_prior_ou_state_and_scope_mask():
+    """Fix round 2026-09-23: local_ou RESTORES a pre-existing OU state (it used to None it unconditionally), and
+    scope='affect' installs the engine's cp_ou_neuron_mask only inside the window. On an affect-only pool every
+    neuron is an affect neuron, so the scoped read must equal the unscoped one exactly."""
+    from research.runners.onebrain_merge_framework import merge_organs
+    from research.runners.onebrain_affect_pool import AFFECT_DESCRIPTOR, PoolAffectLadder
+    pool = merge_organs([AFFECT_DESCRIPTOR], 42, wire=True)
+    lad = PoolAffectLadder(42, shared=pool)
+    lad.ensure_built()
+    b = pool.bridge
+    n = int(b.cp_membrane_potential_v.shape[0])
+    sentinel = pool.xp.full(n, 3.25, dtype=pool.xp.float32)
+    b.cp_ou_current = sentinel
+    b._ou_pn_step = 17
+    with lad.local_ou(scope="affect"):
+        assert b.cp_ou_neuron_mask is not None and bool(np.asarray(b.cp_ou_neuron_mask).all())
+        assert b.cp_ou_current is not sentinel
+    assert b.cp_ou_current is sentinel and b._ou_pn_step == 17 and b.cp_ou_neuron_mask is None
+    b.cp_ou_current = None
+    b._ou_pn_step = 0
+    d_all = lad.read_differential(1.0)["differential"]
+    d_aff = lad.read_differential(1.0, ou_scope="affect")["differential"]
+    assert d_all == d_aff and d_all > 0
+    with pytest.raises(ValueError):
+        with lad.local_ou(scope="nope"):
+            pass
+
+
+def _cond(v, hz=None):
+    return {"surprised": list(v), "hz": hz or [float(x) for x in v], "frac": float(np.mean(v)),
+            "n_surprised": int(sum(v)), "mean_hz": 0.0}
+
+
+def test_marginal_strength_selection_and_flip_counting():
+    """S* is the LARGEST grid strength whose a=0 flagged fraction is <= MARGINAL_FRAC; none -> None (UNDEFINED)."""
+    from research.runners import _onebrain_affect_pool_verify as V
+    all_on = [True] * 8
+    half = [True] * 4 + [False] * 4
+    base = {"contradict": {f"{S:g}": _cond(all_on if S >= 400 else half) for S in V.ASSERT_GRID}}
+    assert V.select_marginal_strength(base) == 375.0
+    sat = {"contradict": {f"{S:g}": _cond(all_on) for S in V.ASSERT_GRID}}
+    assert V.select_marginal_strength(sat) is None
+    b0 = _cond([False, False, True, True])
+    assert V._newly(b0, _cond([True, False, True, False])) == (1, 1)
+    assert V._n_flip_required(8) == 2 and V._n_flip_required(12) == 3
+
+
+def test_aggregate_ignores_superseded_v1_x_checks_and_requires_v2(tmp_path):
+    """A seed whose only arm-X record is the superseded v1 instrument is NOT GO (its X checks are dropped, so the
+    v2 checks are MISSING); the same seed with a v2 record passing everything is GO. Fails in the failing direction."""
+    import json
+    from research.runners import _onebrain_affect_pool_verify as V
+    m = {f"M{i}_x": True for i in range(1, 8)}
+    v1 = {f"X{i}_x": True for i in range(1, 8)}
+    v2 = {**{f"X{i}_x": True for i in range(0, 3)}, **{f"I{i}_x": True for i in range(1, 8)}}
+    seeds = list(V.SEEDS)
+    (tmp_path / "M.json").write_text(json.dumps({"mode": "verify", "per_seed": [
+        {"seed": s, "checks": m} for s in seeds]}))
+    (tmp_path / "X1.json").write_text(json.dumps({"mode": "verify", "per_seed": [
+        {"seed": s, "checks": v1} for s in seeds]}))
+    assert V.aggregate([str(tmp_path / "M.json"), str(tmp_path / "X1.json")]) is False
+    (tmp_path / "X2.json").write_text(json.dumps({"mode": "verify", "per_seed": [
+        {"seed": s, "checks": v2, "x_instrument": V.X_INSTRUMENT} for s in seeds]}))
+    assert V.aggregate([str(tmp_path / "M.json"), str(tmp_path / "X2.json")]) is True
+    bad = dict(v2, X1_x=False)
+    (tmp_path / "X3.json").write_text(json.dumps({"mode": "verify", "per_seed": [
+        {"seed": s, "checks": bad, "x_instrument": V.X_INSTRUMENT} for s in seeds]}))
+    assert V.aggregate([str(tmp_path / "M.json"), str(tmp_path / "X3.json")]) is False
