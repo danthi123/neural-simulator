@@ -11,6 +11,9 @@ artifacts:
   - research/findings/raw/_d6_learn_through_use_engram/s42_FREEZE_H.json
   - research/findings/raw/_d6_learn_through_use_engram/s42_SHUF_H.json
   - research/findings/raw/_d6_learn_through_use/s42_FREEZE_H.json
+  - research/findings/raw/_d6_learn_through_use_prune/d6_ltu_prune_s42_rescored_original_C4.json
+  - research/findings/raw/_d6_learn_through_use_prune/s42_FREEZE_H.json
+  - research/findings/raw/_d6_learn_through_use_prune/s42_SHUF_H.json
 ---
 
 # D6 learn-through-use, gate v2: PRE-REGISTRATION (filed before any `readtime` run)
@@ -124,3 +127,31 @@ These are listed in `research/runners/d6_hebbian_store.py`, "DECLARED HOST SHORT
 - The composer's FHRR bind/bundle, the trigger-slot assignment and the rule's evaluation in runner code (not a `sim/`
   kernel) also remain.
 - Nothing is flipped on by default.
+
+## ADDENDUM A4 — filed ~17:30 UTC, before any `readtime` arm existed
+
+**Seen at this time:** the prune variant's full s42 smoke, all 5 arms. Re-scored under the original C4 it is NO-GO on
+C3 and C4 (`research/findings/raw/_d6_learn_through_use_prune/d6_ltu_prune_s42_rescored_original_C4.json`). The
+frozen encode WAS retracted, and the thread-swap lead ("Setting the held thread aside — On wolf") is gone from the
+FREEZE_H probe. The probe still differs from SHUF_H in one place: SHUF_H ends with the DA-mode suffix
+" — worth going further here.", and FREEZE_H does not.
+- DA mode reads `neutral` in FREEZE_H and `focus` in SHUF_H.
+- The spiking novelty organ's per-word freshness for `wolf` is 0.84 in FREEZE_H, which heard "wolf" at the teach
+  turn, and 1.0 in SHUF_H, which never heard it
+  (`research/findings/raw/_d6_learn_through_use_prune/s42_FREEZE_H.json` vs
+  `research/findings/raw/_d6_learn_through_use_prune/s42_SHUF_H.json`).
+
+**What this means for the design.** SHUF_H does not match WORD EXPOSURE. C3 and C3b therefore mix up two use-traces:
+the fact-write engram, and habituation to heard words. The write freeze does not touch habituation, and should not.
+**Updated prediction for the registered gate v2 (unchanged):** C3 and C3b are expected to FAIL on this DA-mode
+suffix, as is C4, on the teach ack.
+
+**Added (secondary, non-scoring, cannot confer GO):** arm EXPO_H. It has USE_H's flags, and its teach turn is
+"the wolf and the deer": the same content words, but not an SVO assertion, so no acquisition and no write. It is
+checked by two secondary tests:
+- C3e: FREEZE_H.probe equals EXPO_H.probe, and FREEZE_H does not recall deer;
+- C3be: ABL_H.probe equals EXPO_H.probe, and ABL_H does not recall deer.
+
+If C3e and C3be hold while C3 and C3b fail, the fact-write engram carries the fact-specific change, and word
+exposure carries the rest. The next registered gate (v3) would then use the exposure-matched control as the primary
+comparison, stated in advance.

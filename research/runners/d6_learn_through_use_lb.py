@@ -127,6 +127,8 @@ SEEDS6 = [42, 43, 44, 100, 101, 102]
 #   A3. NEW variant `readtime` with its OWN gate v2, pre-registered in
 #       research/findings/2026-09-23-d6-learn-through-use-v2-PREREGISTRATION-readtime-view-and-engram-ablation.md,
 #       committed in its own commit before any readtime run. It is the variant the 6-seed run is staged for.
+#   A4. (~17:30Z, before any readtime arm existed) EXPO_H exposure-matched arm + SECONDARY non-scoring C3e/C3be --
+#       see the EXPO_ARM comment below for the evidence seen (prune s42 full smoke) and why.
 # ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 # VARIANT "readtime" (gate v2 -- see the PREREGISTRATION finding above). Flags on every Hebbian arm:
 # BRAIN_D6_ENGRAM_VOCAB=1 + BRAIN_D6_ENGRAM_READTIME=1 (NO prune: no host record is ever deleted; every kb reader
@@ -137,6 +139,16 @@ VARIANTS = {"base": {}, "engram": {"BRAIN_D6_ENGRAM_VOCAB": "1"},
             "prune": {"BRAIN_D6_ENGRAM_VOCAB": "1", "BRAIN_D6_ENGRAM_PRUNE": "1"},
             "readtime": {"BRAIN_D6_ENGRAM_VOCAB": "1", "BRAIN_D6_ENGRAM_READTIME": "1"}}
 ABL_ARM = "ABL_H"   # readtime variant only: USE_H + post-hoc ablation of the taught block after the teach turn
+# AMENDMENT A4 (2026-09-23 ~17:30Z, BEFORE any readtime arm existed; SEEN at this time: the prune s42 smoke's full 5
+# arms -- NO-GO on C3 + original-C4 -- where FREEZE_H vs SHUF_H still differed at the probe ONLY in the DA-mode suffix,
+# traced to the spiking novelty organ's per-word freshness: 'wolf' 0.84 in FREEZE_H (heard at teach) vs 1.0 in SHUF_H
+# (never heard); research/findings/raw/_d6_learn_through_use_prune/s42_FREEZE_H.json). SHUF_H does not match WORD
+# EXPOSURE, so C3/C3b conflate the fact-write engram with exposure habituation, a use-trace the write freeze does not
+# (and should not) touch. Added: EXPO_H = USE_H's flags, teach turn "the wolf and the deer" (the same content words,
+# not an SVO assertion -> no acquisition, no write). SECONDARY, NON-SCORING (the registered gate v2 is unchanged):
+# C3e FREEZE_H.probe == EXPO_H.probe and not recall deer; C3be ABL_H.probe == EXPO_H.probe and not recall deer.
+EXPO_ARM = "EXPO_H"
+TEACH_EXPO = "the wolf and the deer"
 
 
 def arm_names(variant):
@@ -156,6 +168,7 @@ def arms_for(variant):
         out[name] = (e, teach, False)
     if variant == "readtime":
         out[ABL_ARM] = (dict(out["USE_H"][0]), TEACH_USE, True)   # identical to USE_H + the post-hoc ablation
+        out[EXPO_ARM] = (dict(out["USE_H"][0]), TEACH_EXPO, False)   # A4: exposure-matched, no write (secondary)
     return out
 
 
@@ -348,6 +361,18 @@ def score_seed(arms, variant="base"):
     rec["teach_decisions"] = {k: _dec(arms[k], "teach") for k in arm_names(variant)}
     rec["probe_decisions"] = {k: _dec(arms[k], "probe") for k in arm_names(variant)}
     rec["xprobe_decisions"] = {k: _dec(arms[k], "xprobe") for k in arm_names(variant)}
+    if variant == "readtime":                      # A4 SECONDARY (non-scoring): exposure-matched comparison
+        E = arms.get(EXPO_ARM)
+        e_bad = E is None or any("_error" in (E.get("turns") or {}).get(lbl, {"_error": "missing"}) for lbl, _ in TURNS)
+        if e_bad:
+            rec["secondary_exposure_matched"] = {"verdict": "UNDEFINED (EXPO_H void)"}
+        else:
+            A = arms[ABL_ARM]
+            rec["secondary_exposure_matched"] = {
+                "EXPO_H_no_write": (E.get("store_writes_after_teach") == [] and not (E.get("taught_block") or {}).get("found")),
+                "C3e_freeze_eq_exposure": (not _recalls(F, "probe", "deer")) and _dec(F, "probe") == _dec(E, "probe"),
+                "C3be_ablation_eq_exposure": (not _recalls(A, "probe", "deer")) and _dec(A, "probe") == _dec(E, "probe"),
+                "EXPO_H_probe": _dec(E, "probe"), "EXPO_H_teach": _dec(E, "teach")}
     rec["go"] = all(c.values())
     rec["verdict"] = "GO" if rec["go"] else "NO-GO (failed: %s)" % ",".join(k for k, v in c.items() if not v)
     return rec
@@ -449,6 +474,17 @@ def selftest():
     lever_late = _synthetic(readtime=True)
     lever_late["FREEZE_H"]["taught_block_at_probe"] = {"mean_abs_w": 0.9}     # frozen at teach, but written later
     fails["v2_lever_read_at_probe_time"] = score_seed(lever_late, "readtime")["go"] is False
+    # A4 secondary: never changes the verdict; a missing EXPO_H leaves the seed DEFINED and the secondary UNDEFINED
+    no_expo = score_seed(_synthetic(readtime=True), "readtime")
+    fails["a4_missing_expo_secondary_undefined_only"] = (no_expo["go"] is True and
+                                                         no_expo["secondary_exposure_matched"]["verdict"].startswith("UNDEFINED"))
+    ex = _synthetic(readtime=True)
+    ex[EXPO_ARM] = _cp(ex["SHUF_H"])
+    ex[EXPO_ARM]["taught_block"] = {"found": False}
+    ex[EXPO_ARM]["turns"]["probe"]["answer"] = "something else"               # exposure arm differs from FREEZE_H
+    r = score_seed(ex, "readtime")
+    fails["a4_secondary_can_fail_without_touching_go"] = (r["go"] is True and
+                                                         r["secondary_exposure_matched"]["C3e_freeze_eq_exposure"] is False)
     agg_undef = aggregate({"42": {"go": True}, "43": {"go": None}})["GO"] is False
     res = {"go_case_passes": ok, "go_case_passes_v2": ok_v2, "fails_in_failing_direction": fails,
            "partial_seed_set_not_go": agg_undef}
