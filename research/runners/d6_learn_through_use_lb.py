@@ -102,7 +102,18 @@ SEEDS6 = [42, 43, 44, 100, 101, 102]
 # read off the engrams that reactivate on the substrate). USE_D stays the pure production path (all D6 flags 0), so
 # C7 now also checks that the full D6 configuration is decision-identical to production on teach/d2/probe/xprobe.
 # The GO gate is C1..C7 UNCHANGED (same thresholds, same fields, same 6 seeds). Arm dir: _d6_learn_through_use_engram.
-VARIANTS = {"base": {}, "engram": {"BRAIN_D6_ENGRAM_VOCAB": "1"}}
+# VARIANT "prune" (pre-registered 2026-09-23 AFTER the engram-variant seed-42 FREEZE/SHUF arms and BEFORE any prune
+# result existed). Engram s42: curiosity novelty was restored (frozen 0.97 vs shuffled 0.97) but (a) organs that read
+# `composer.kb` DIRECTLY (webapp/gnw_thought_swap._known_concepts -> thread swap, common ground, GNW stop) still
+# treated the taught word as a grounded topic, and (b) the frozen arm's teach ACK text changed ("The wolf hunts deer."
+# vs "the wolf hunts the deer") because the ack render reads the engram-derived known sets -- the brain acknowledging
+# a sentence it did not retain, not a parse failure (recalled_svo + abstained identical). The prune variant adds
+# BRAIN_D6_ENGRAM_PRUNE=1 (an in-conversation encode that forms no engram is retracted from kb). Its gate is C1..C7
+# with ONE pre-declared change: C4's teach-turn equality compares the PARSE fields (`abstained`, `recalled_svo`)
+# only, not the ack text (the d2 read-intact equality and the lever condition are unchanged). Arm dir:
+# _d6_learn_through_use_prune.
+VARIANTS = {"base": {}, "engram": {"BRAIN_D6_ENGRAM_VOCAB": "1"},
+            "prune": {"BRAIN_D6_ENGRAM_VOCAB": "1", "BRAIN_D6_ENGRAM_PRUNE": "1"}}
 
 
 def arms_for(variant):
@@ -159,6 +170,13 @@ def _taught_block_record(S, teach):
             if str(f.get("agent", "")).lower() == agent:
                 idx = j
         if idx is None:
+            # (engram-prune variant) a frozen encode that formed no engram is RETRACTED from kb: report the rule's
+            # own encode diag (its learned mean |w|) + the retraction record instead of "not found".
+            enc = getattr(comp, "_d6_last_encode", None)
+            ret = getattr(comp, "_d6_last_retract", None)
+            if enc is not None and ret is not None and ret.get("retracted"):
+                return {"found": False, "retracted": True, "agent": agent, "mean_abs_w": enc.get("mean_abs_w"),
+                        "d6_last_encode": enc, "d6_last_retract": ret, "n_kb": len(comp.kb)}
             return {"found": False, "agent": agent}
         D = comp.D
         ws = [complex(w) for (_p, _q, w) in comp.store_conns[idx * D:(idx + 1) * D]]
@@ -199,7 +217,7 @@ def _recalls(arm, label, word):
     return (d.get("abstained") is False) and (word in [str(w).lower() for w in svo])
 
 
-def score_seed(arms):
+def score_seed(arms, variant="base"):
     """Apply the pre-registered C1..C7 to one seed's arms dict {name: arm_json|None}. Returns the per-seed record."""
     from tools.lab import attributable_to, undefined_if_empty, void_if
     rec = {"criteria": {}, "void_arms": [], "go": None}
@@ -222,8 +240,11 @@ def score_seed(arms):
     tbU, tbF = (U.get("taught_block") or {}), (F.get("taught_block") or {})
     wU, wF = tbU.get("mean_abs_w"), tbF.get("mean_abs_w")
     lever_moved = (wU is not None and wF is not None and wU > 0.5 and wF == 0.0)
-    c["C4_write_only"] = ((_dec(F, "teach") == _dec(U, "teach")) and (_dec(F, "d2") == _dec(U, "d2"))
-                          and lever_moved)
+    if variant == "prune":   # pre-declared: the teach-turn check compares the PARSE, not the ack text
+        teach_same = all(_dec(F, "teach").get(k) == _dec(U, "teach").get(k) for k in ("abstained", "recalled_svo"))
+    else:
+        teach_same = (_dec(F, "teach") == _dec(U, "teach"))
+    c["C4_write_only"] = (teach_same and (_dec(F, "d2") == _dec(U, "d2")) and lever_moved)
     c["C5_specific"] = _recalls(SH, "xprobe", "berry") and not _recalls(U, "xprobe", "berry")
     null_diffs = sum(_dec(U, lbl) != _dec(R, lbl) for lbl, _ in TURNS)
     c["C6_deterministic"] = (null_diffs == 0)
@@ -269,7 +290,7 @@ def run(seeds, arm_dir, resume=True, score_only=False, variant="base"):
                 print("[d6] seed %s arm %s ..." % (s, name), flush=True)
                 a = _spawn(env, teach, path, s)
             arms[name] = a
-        per[str(s)] = score_seed(arms)
+        per[str(s)] = score_seed(arms, variant=variant)
         print("[d6] seed %s -> %s" % (s, per[str(s)]["verdict"]), flush=True)
     return {"runner": "research.runners.d6_learn_through_use_lb", "variant": variant, "seeds": list(seeds), "arm_dir": arm_dir,
             "per_seed": per, "aggregate": aggregate(per)}
@@ -303,6 +324,14 @@ def selftest():
         "not_specific": score_seed(_synthetic(shuf_berry=False))["go"] is False,
         "direct_regression": score_seed(_synthetic(direct_same=False))["go"] is False,
     }
+    ack = _synthetic()
+    ack["FREEZE_H"] = json.loads(json.dumps(ack["FREEZE_H"]))
+    ack["FREEZE_H"]["turns"]["teach"]["answer"] = "The wolf hunts deer."       # same parse, different ack text
+    fails["prune_ack_text_passes_only_under_prune"] = (score_seed(ack, "prune")["go"] is True
+                                                       and score_seed(ack, "base")["go"] is False)
+    badparse = json.loads(json.dumps(ack))
+    badparse["FREEZE_H"]["turns"]["teach"]["recalled_svo"] = None               # the parse itself changed
+    fails["prune_parse_change_fails"] = score_seed(badparse, "prune")["go"] is False
     void = score_seed(dict(_synthetic(), FREEZE_H=None))
     fails["void_is_undefined"] = void["go"] is None
     agg_undef = aggregate({"42": {"go": True}, "43": {"go": None}})["GO"] is False

@@ -82,11 +82,15 @@ def conversation_write(composer):
         yield
         return
     prev = getattr(composer, "_d6_conv_write", False)
+    n_before = len(getattr(composer, "kb", []) or [])
     composer._d6_conv_write = True
     try:
         yield
     finally:
         composer._d6_conv_write = prev
+    # (BRAIN_D6_ENGRAM_PRUNE) an in-conversation encode that formed no engram leaves no bookkeeping record.
+    if engram_prune_enabled() and len(getattr(composer, "kb", []) or []) > n_before:
+        composer._d6_last_retract = retract_unencoded_last(composer)
 
 
 def hebbian_encode(comp, block_idx, fillers, roles, *, freeze=False, eta=ETA, w_max=W_MAX):
@@ -173,6 +177,44 @@ def engram_held(comp, block_idx) -> dict:
     floor = float(getattr(comp.b, "_rf_floor", 1.0e-3))
     comp._zero_rf_v_u()
     return {"block": int(block_idx), "readout": a, "floor": floor, "held": bool(a > floor)}
+
+
+def engram_prune_enabled() -> bool:
+    """`BRAIN_D6_ENGRAM_PRUNE` in {1,true,yes,on} -> after an IN-CONVERSATION write, if the new block formed NO engram
+    (engram_held False), the host bookkeeping entry for it is RETRACTED (kb entry popped, the unclaimed block's
+    trigger cell returned to the free pool). Default OFF.
+
+    WHY (the 2026-09-23 engram-variant seed-42 smoke): reading the known-word sets off engrams closed the curiosity
+    leak (novelty 0.97 frozen vs 0.97 shuffled), but other organs read `composer.kb` DIRECTLY (e.g.
+    webapp/gnw_thought_swap._known_concepts -> thread swap, common ground, GNW stop), so the frozen arm still treated
+    the taught word as a grounded topic. Rather than patch every reader, keep the bookkeeping list CONSISTENT with the
+    substrate: an encoding attempt that left no engram leaves no record."""
+    return os.environ.get("BRAIN_D6_ENGRAM_PRUNE", "").strip().lower() in _ON
+
+
+def retract_unencoded_last(comp) -> dict | None:
+    """If the LAST kb block formed no engram on the substrate, retract it: pop the kb entry, drop its D store synapses
+    (store_conns is block-major, so the last block is the tail), and dirty every cache keyed on the store. Returns
+    the engram read (with `retracted`), or None when there is nothing to check."""
+    n = len(getattr(comp, "kb", []) or [])
+    if n == 0 or not hasattr(comp, "_measure_block_readout"):
+        return None
+    r = engram_held(comp, n - 1)
+    r["retracted"] = False
+    if not r["held"]:
+        D = comp.D
+        comp.kb.pop()
+        del comp.store_conns[(n - 1) * D:]
+        comp._store_dirty = True; comp._store_csr = None; comp._persistent_dirty = True
+        if getattr(comp, "_csr_cache", None) is not None:
+            comp._csr_cache = {}
+        if getattr(comp, "integrated_loop", False):
+            comp._seq_dirty = True
+            if getattr(comp, "_fused", False):
+                comp._fused_dirty = True
+        comp._fact_shard = None; comp._fact_shard_built_K = -1
+        r["retracted"] = True
+    return r
 
 
 def comp_backend_xp(arr):

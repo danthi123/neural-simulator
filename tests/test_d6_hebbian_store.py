@@ -82,6 +82,23 @@ def test_engram_held_reads_the_substrate(arms):
     assert f.query_patient("dog", "chase") == "cat"                     # the read left recall intact
 
 
+def test_engram_prune_retracts_an_unencoded_conversation_write():
+    from research.runners import d6_hebbian_store as d6
+    os.environ["BRAIN_D6_ENGRAM_PRUNE"] = "1"
+    try:
+        c = _build("1", "1"); c.hear("dog chase cat")
+        with d6.conversation_write(c):
+            c.hear("wolf hunt deer")                                   # frozen -> no engram -> retracted
+        assert c._d6_last_retract["retracted"] is True
+        assert len(c.kb) == 1 and len(c.store_conns) == c.D
+        assert c.query_patient("wolf", "hunt") is None and c.query_patient("dog", "chase") == "cat"
+        c.hear("fox eat berry")                                         # build-time write reuses the freed block
+        assert c.query_patient("fox", "eat") == "berry" and c.query_patient("dog", "chase") == "cat"
+    finally:
+        for k in ("BRAIN_D6_ENGRAM_PRUNE", "BRAIN_D6_HEBBIAN_STORE", "BRAIN_D6_HEBBIAN_FREEZE"):
+            os.environ.pop(k, None)
+
+
 def test_freeze_without_conversation_context_does_not_freeze(arms):
     f = arms["frozen_no_ctx"]
     assert f.query_patient("wolf", "hunt") == "deer"
