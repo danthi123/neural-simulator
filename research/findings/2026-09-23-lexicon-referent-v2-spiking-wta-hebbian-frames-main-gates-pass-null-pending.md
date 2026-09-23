@@ -70,7 +70,7 @@ Report-only (not gated): under the learned-edge lesion the capability turn drops
   through unlabelled words. An unsupervised competitive phase was tried on dev seed 7 and did not help (dev scratch run, not banked: about 0.79 vs 0.80).
   It is not part of the pre-registered mechanism.
 
-## The capability target is met at the organ, NOT in the full brain
+## The capability target: met at the organ; in the full brain only after an abstain-path fix, and not yet load-bearing
 
 At the organ level, the learned detector lets the D6 buffer bind "the wolf watches the owl" as two referents on 6
 of 6 seeds, and it rejects "watches". But the full-brain load-bearing battery still reads `wm-binding-advanced`
@@ -80,10 +80,32 @@ deterministic). The arm artifact (`research/findings/raw/_lexicon_spiking_refere
 why: the `held` turn exits through the comprehension-abstain / gate-B role-repair clarification ("which of them is
 the 'watch' done to...?") before `webapp/server.py` reaches the multiref maintain block. So the turn carries no
 `multiref` key, whatever the lexicon does. The build's diagnosis (the hand noun list alone) was incomplete; this is
-logged in `research/FAILURE_LOG.md`. **Next rung:** fold the multiref maintain step into the abstain/repair return
-path. There is a precedent: the open-ended-turn maintain-fold at `webapp/server.py` ~4994. Add it as a default-off
-additive, then re-run `load_bearing_fraction --only wm-binding-advanced` with the flag, intact vs `BRAIN_MULTIREF_LESION`
-and `BRAIN_LEARNED_REFERENT_LESION`.
+logged in `research/FAILURE_LOG.md`.
+
+### Follow-up in the same session: the faculty is now EXERCISED (and not load-bearing on the battery's field)
+
+The multiref maintain step already ran before that early return, but the repair payload dropped its result. Commit
+22100e53c adds `BRAIN_MULTIREF_ON_ABSTAIN` (default OFF), which attaches the already-computed `multiref` block to
+the abstain/repair payload.
+
+- **Off is byte-identical.** With the flag unset after the edit, the `hold` and `held` payloads hash identically to
+  the pre-edit run (sha256 of the canonical JSON per turn,
+  `research/findings/raw/_lexicon_spiking_referent/lb_on_abstain/offflag_byte_identity.json`).
+- **Exercised only with the learned lexicon.** With both flags on, the battery reads `wm-binding-advanced` as
+  exercised: the `held` turn carries `multiref.n_referents` 2 with input order ["wolf","owl"]
+  (`research/findings/raw/_lexicon_spiking_referent/lb_on_abstain/lb_wmba_learned_lexicon_on_abstain.json`,
+  repeats 2, deterministic). The control with `BRAIN_MULTIREF_ON_ABSTAIN=1` and the hand table only
+  (`research/findings/raw/_lexicon_spiking_referent/lb_on_abstain/onabstain_handonly_hold_held.json`) still carries
+  no `multiref` key on `held`, because "owl" is not admitted. The learned detector is what brings the turn into scope.
+- **Not load-bearing on the pre-registered battery field.** The battery's verdict is `pass` = NOT load-bearing.
+  Its decision field for this faculty is `multiref.n_referents`, which counts the referents extracted from the
+  turn; the organ lesion (`BRAIN_MULTIREF_LESION`, recur=0) does not change that count. The lesion does change the
+  buffer's own read-out on the same turn: `recovered` goes from wolf/owl to null/null, `all_recovered` from true to
+  false, and `hold_alive_min` from 0.0638888888888889 to 0
+  (`research/findings/raw/_lexicon_spiking_referent/lb_on_abstain/intact_a_hold_held.json` vs
+  `research/findings/raw/_lexicon_spiking_referent/lb_on_abstain/lesion_wm_binding_advanced.json`). That field was
+  not changed after seeing this. Whether the battery should read `multiref.recovered` for this faculty is a
+  separate, disclosed instrument decision for the load-bearing lane; it must be made and pre-registered there.
 
 ## Staged
 

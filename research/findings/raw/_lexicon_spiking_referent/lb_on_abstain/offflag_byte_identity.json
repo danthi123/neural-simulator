@@ -1,0 +1,17 @@
+{
+ "check": "BRAIN_MULTIREF_ON_ABSTAIN unset after the server edit (22100e53c) vs before it (2b6ca773c-era run), both BRAIN_LEARNED_REFERENT_LEXICON=1, seed 42, numpy",
+ "sim_backend": "numpy",
+ "method": "sha256 of json.dumps(payload, sort_keys=True) per turn",
+ "turns": {
+  "hold": {
+   "pre_edit": "d5b678eb067e0a087f447dde4f65c7d46e2caea68f532330e859176aae0eea9c",
+   "post_edit_flag_unset": "d5b678eb067e0a087f447dde4f65c7d46e2caea68f532330e859176aae0eea9c",
+   "identical": true
+  },
+  "held": {
+   "pre_edit": "09c5f1105052f60d43976bc1e73d992128dee1d8264201c39cbdc67ae506900f",
+   "post_edit_flag_unset": "09c5f1105052f60d43976bc1e73d992128dee1d8264201c39cbdc67ae506900f",
+   "identical": true
+  }
+ }
+}

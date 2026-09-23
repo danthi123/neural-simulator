@@ -1,0 +1,35 @@
+{
+ "run_id": "1790174984-931321",
+ "runner": "research/runners/onebrain_regression_battery.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/wf_69a14678-7c1-2/research/runners/onebrain_regression_battery.py",
+  "--worker",
+  "--env",
+  "{}",
+  "--turns",
+  "hold,held",
+  "--out",
+  "/home/dant123/Projects/sim/.claude/worktrees/wf_69a14678-7c1-2/research/findings/raw/_lexicon_spiking_referent/lb_on_abstain/intact_a_hold_held.json"
+ ],
+ "git_sha": "02e0a619a",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-23T10:49:44",
+ "env": {
+  "SIM_BACKEND": "numpy",
+  "CUDA_VISIBLE_DEVICES": "",
+  "SIM_RUN_ID": "1790174983-931284"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 3549.2,
+ "corpus_check_query": "spiking winner-take-all noun category learned by Hebbian frame-to-category synapses (distributional word category)",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_lexicon_spiking_referent/lb_on_abstain/intact_a_hold_held.json"
+}

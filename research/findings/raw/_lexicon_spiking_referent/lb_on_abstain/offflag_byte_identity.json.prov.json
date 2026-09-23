@@ -1,0 +1,28 @@
+{
+ "run_id": "1790177211-1067085",
+ "runner": "../../../../../../../tmp/claude-1000/-home-dant123-Projects-sim/87891831-e642-4a2f-abeb-50ea0867609b/scratchpad/offarm.py",
+ "argv": [
+  "/tmp/claude-1000/-home-dant123-Projects-sim/87891831-e642-4a2f-abeb-50ea0867609b/scratchpad/offarm.py",
+  "research/findings/raw/_lexicon_spiking_referent/lb_on_abstain/onabstain_handonly_hold_held.json"
+ ],
+ "git_sha": "22100e53c",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-23T11:26:51",
+ "env": {
+  "SIM_BACKEND": "numpy",
+  "CUDA_VISIBLE_DEVICES": ""
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 5776.4,
+ "corpus_check_query": "spiking winner-take-all noun category learned by Hebbian frame-to-category synapses (distributional word category)",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_lexicon_spiking_referent/lb_on_abstain/offflag_byte_identity.json"
+}
