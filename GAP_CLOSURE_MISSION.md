@@ -38,9 +38,18 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
     EXPRESSED tone shift is the wall (bounded by ~0.16 live valence + mouth decode). Per NO-DEFER + the DR-gate,
     affect-expression-over-open moves to **EXTERNAL deep-research**, NOT another lever (matches the affect-is-multimodal
     owner steer: text-only affect boundary is EXPECTED, surpass by GROUNDING). finding `2026-09-23-affect-tone-neural-coupling-6seed-subdelta-NOGO`.
-  - **NEXT (owed, this cycle): (a) proper before_you_build-checked POOL FANOUT** (5 idle CPU lanes — owed per the
-    lane-waiver); **(b) charter fan-out** — D1 episodic store-reliability stabilizer (near-threshold s100) + other
-    borderline stabilizers, D3 one-brain, D6 learn-grow; **(c) D5 affect = external deep-research lane** (`deep_research.sh`).
+  - **✅ D1 OPERATING-POINT STABILIZER — GO 6/6, adversarially CONFIRMED, MERGED @f48fce12** (the #4 DEEPER action). A
+    per-seed target-seeking homeostatic set-point regulator (default-OFF `BRAIN_PMEM_OP_STABILIZER`, no sim/ edit)
+    replaces pmem's global fac_g=6000 — HARDENS the thin robust-core-23 margins (s44 +65%, s100 +14%, s101 +21%;
+    load-bearing 6/6, silence 6/6, byte-identical off). Genuine set-point search (adapts 3 ways, not a constant); found
+    a real substrate CLIFF (pmem coincidence collapses past fac_g~10000 — the pool's intrinsic homeostat
+    over-compensates). HONEST RESIDUAL: static per-seed calibration TABLE, not yet a LIVE in-loop homeostat (named
+    follow-on); hardens (does NOT grow) the count. finding `2026-09-23-operating-point-stabilizer-go-6seed`.
+  - **NEXT — mostly OWNER-FORK (awaiting morning steer per charter STOP-and-flag): (a) D5 affect = affect-CONDITIONED
+    generation** (train-time / real-Qwen-prompt; literature-grounded, owner-steer on the grounding direction); **(b) D3
+    one-brain, D6 learn-grow** (bigger arcs); **(c) live in-loop homeostat** (the stabilizer follow-on) + episodic-s100
+    store-reliability stabilizer (no-fork, buildable). **(d) POOL FANOUT** hit node-provisioning friction
+    (`pool_provision.sh pool41`) — needs a fix to use the mini-PCs.
 - **🌙 OVERNIGHT AUTONOMOUS 2026-09-23 ~01:30Z (owner asleep — full green light "proceed autonomously all night").** GPU free (game done, RAM 35G). BOTH decisive lanes LAUNCHED: (1) **episodic s100 cupy-repeats** (pid 116479, GPU, 7× serial majority-vote, watcher `bzt8nq7sd`) → **robust core 23 decider** (majority LB → near-threshold → 23; split → operating-point stabilizer); (2) **§8 affect→tone Phase-2A neural-coupling 36-arm gate** → **decode-ceiling fix** (directional 6-seed GO → the brain-based coupling flips the negative-asymmetry → merge `research/lbf-affect-tone-nextmethod`).
   **⛔ Phase-2A KILLED (memcap-8 STARVATION): brain_chat+Qwen (~10GB) under memcap 8 (memory.high=7G) → constant cgroup reclaim → Qwen weight-load crawled to 244s/shard (~20h/arm).** FIXED: memcap→16 in affect_p2a.sh. **RELAUNCHED memcap 16, CONCURRENT with episodic** (killing a 1h-old orphan `_lbf_affect_tone_open_output` worker holding 8GB freed RAM → mem_ok 16 PASS at 27G). Arm 1 COMPLETED (throttle fixed; vs stuck ~20h at memcap 8). pid 172614, watcher `bzmliotdp`, arms 1/36. **⛔ LESSON: any brain_chat/Qwen run needs memcap ≥12-16; memcap 8 starves it into memory.high-throttle catastrophe (NOT a gaming/GPU issue).** Heartbeat `b0trwnihj`.
   THEN fan out (audit + roadmap): operating-point stabilizers (#4, de-risked), other §8 steering faculties, Phase-2 confirmatory. Prior gaming context (kept for the LESSONS): both lanes were DEFERRED during gaming — neither is GPU-free — and a "gaming-friendly nice +15" launch was silently overridden to nice -4 by memcap + loaded Qwen → hurt the game → KILLED. **⛔ LESSONS (banked): (1) memcap.sh sets nice -4 — a gaming-safe renice must be applied to the RUNNING pids AFTER launch (or don't use memcap for a reniced job); (2) any brain_chat / open-ended run LOADS QWEN → NOT GPU/disk-free → NOT safe during gaming.
