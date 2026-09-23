@@ -32,13 +32,20 @@ import waiver_history
 ROOT = "/home/dant123/Projects/sim"
 POOL = ["pool40", "pool41", "pool42"]
 VIK = os.path.join(ROOT, "tools", "vikunja.sh")
-# (print label, gate NAME, waiver file). The gate NAME must equal `gates.compute_idle_persistent.NAME` /
-# `gates.lane_starvation.NAME` EXACTLY -- see the WAIVER SURFACING comment in main() for why (2026-09-23
-# review fix: a mismatched ad hoc label here double-counted the shared renewal budget).
-WAIVER_SOURCES = (
-    ("compute", "compute-idle-persistent", os.path.join(ROOT, "research", "queue", ".parallel_compute_waiver")),
-    ("lane", "lane-starvation", os.path.join(ROOT, "research", "queue", ".lane_waiver")),
-)
+# (print label, gate NAME, waiver file, waiver max age h) -- IMPORTED from the gates themselves (fix round 3,
+# 2026-09-23), not restated: fix 2 hand-copied the NAME strings, the paths and the 6h cap here and pinned them
+# with a test. Reading them off the gate modules makes drift impossible rather than detected. (Budget
+# accounting is now keyed by the waiver FILE, not the gate name, so even a wrong label could not double-charge
+# -- the heartbeat still records under the gate's own NAME so the history reads cleanly.)
+try:
+    from gates import compute_idle_persistent as _cip, lane_starvation as _ls
+    WAIVER_SOURCES = (
+        ("compute", _cip.NAME, _cip.WAIVER_FILE, _cip.WAIVER_MAX_H),
+        ("lane", _ls.NAME, _ls._waiver_file(), _ls.LANE_WAIVER_MAX_H),
+    )
+except Exception as _e:        # the heartbeat is exit-0-always; say so loudly instead of guessing paths
+    print("⚠ parallel_audit: could not import the waiver gates (%s) -- waiver surfacing disabled" % _e)
+    WAIVER_SOURCES = ()
 # Every subagent (however it was spawned) gets a transcript at <session>/subagents/**/agent-<id>.jsonl.
 # A standalone Agent-tool call's transcript sits directly under subagents/; a Workflow's agent() call
 # (a .claude/workflows/*.js fan-out, or an ad-hoc workflow script) writes its transcript one level deeper,
@@ -205,23 +212,14 @@ def main():
     # THEMSELVES, not just the stall they excuse): a live .parallel_compute_waiver / .lane_waiver is easy to
     # forget is even open once the printed UNDER-PARALLELIZED line goes quiet. Print its CLASS + age every
     # cycle it is active, valid or not, so an open escape hatch stays visible on its own line.
-    # Mirrors gates/compute_idle_persistent.WAIVER_MAX_H and gates/lane_starvation.LANE_WAIVER_MAX_H (both 6h);
-    # not imported directly to avoid this heartbeat script depending on the gates package's own sys.path setup.
-    #
-    # The `_gate_name` values below MUST equal the actual gates' own `NAME` (compute_idle_persistent.NAME /
-    # lane_starvation.NAME) EXACTLY -- `waiver_history`'s history dedup + budget accounting key on
-    # (gate_name, path). REVIEW FIX (2026-09-23): this loop used to pass its own ad hoc "compute"/"lane" print
-    # labels straight through as the gate_name, so THIS script's heartbeat-cadence reads (every ~15 min) wrote
-    # a SEPARATE, distinctly-keyed history row for the identical waiver file that the real commit-time gate
-    # ALSO records under its own NAME -- silently double-charging the shared 6h/24h renewal budget every time
-    # both this script and a commit happened to read the same live waiver. `WAIVER_SOURCES` keeps the print
-    # label (short, human) and the gate name (must match the gate) as separate fields so this cannot drift
-    # apart again without a visible diff, and `tests/test_waiver_history.py` asserts the two gate-name
-    # strings equal `compute_idle_persistent.NAME` / `lane_starvation.NAME` live.
-    _WAIVER_MAX_H = 6
-    for _print_label, _gate_name, _path in WAIVER_SOURCES:
+    # Gate NAME, waiver path and max age all come from the gate modules via WAIVER_SOURCES (see its comment).
+    # History: fix 2 found this loop passing ad hoc "compute"/"lane" labels as the gate name, which wrote a
+    # second history key for the same file and double-charged the shared budget. Fix round 3 closed that
+    # twice over: the names are imported, and the budget now charges each waiver EPISODE (file + content +
+    # mtime) once for its real elapsed time, whoever reads it (tools/waiver_history.py docstring).
+    for _print_label, _gate_name, _path, _max_h in WAIVER_SOURCES:
         try:
-            _v = waiver_history.evaluate(_gate_name, _path, _WAIVER_MAX_H, now_ts=now_ts)
+            _v = waiver_history.evaluate(_gate_name, _path, _max_h, now_ts=now_ts)
         except Exception:
             _v = {"active": False}
         _d = waiver_history.describe(_v)

@@ -116,48 +116,38 @@ def _staged_files():
         return []
 
 
-# .md paths that are THEMSELVES a research-status signal -- exactly the "research/findings, no sim/" carve-out
-# the docstring below already named -- so a staged change to one of these must NOT count as infra-only, even
-# though it ends in ".md". `research/findings/*.md` is a research artifact; GAP_CLOSURE_MISSION.md/ROADMAP.md
-# are the board/roadmap that record whether ready work exists and whether something was "queued" -- exempting
-# them would let a commit that only EDITS THE BOARD (e.g. claiming a lane was served) pass as compute-neutral
-# without ever having queued anything (2026-09-23 review fix: the original check exempted ANY `.md`, which
-# covered exactly these three paths despite the docstring already saying they should not be exempt).
-_NON_INFRA_MD = ("GAP_CLOSURE_MISSION.md", "ROADMAP.md")
+# FIX ROUND 3 (2026-09-23): an explicit ALLOW-LIST, deny by default. The fix-2 version was a deny-list over
+# "any .md is exempt" and "tools/** is exempt", so it still exempted the MASTER ROADMAP (docs/plans/), every
+# research/biology/*.md, every other root .md -- and tools/gates/**, i.e. a commit that WEAKENS THIS GATE (or
+# waiver_history / parallel_state / parallel_audit / the pre-commit hook it depends on) was exempt from this
+# gate. Enforcement machinery is never compute-neutral with respect to the enforcement it changes.
+_ENFORCEMENT_PATHS = ("tools/gates/", "tools/githooks/")
+_ENFORCEMENT_FILES = ("tools/waiver_history.py", "tools/parallel_state.py", "tools/parallel_audit.py")
+_GENERIC_DOCS = ("README.md", "CLAUDE.md", "CONTRIBUTING.md", "CHANGELOG.md", "USER_GUIDE.md", "QUICKSTART.md",
+                 "docs/FAILURE_GATE_MATRIX.md", "docs/WRITING.md", "docs/TERMS.md", "docs/ENGINE_REFERENCE.md")
 
 
-def _is_research_status_md(p):
-    if p in _NON_INFRA_MD:
+def _is_exempt_path(p):
+    if p == ".gitignore" or p in _GENERIC_DOCS:
         return True
-    return p.startswith("research/findings/") and p.endswith(".md")
+    if p in _ENFORCEMENT_FILES or p.startswith(_ENFORCEMENT_PATHS):
+        return False
+    return p.startswith("tools/") or p.startswith("tests/")
 
 
 def _is_infra_only(staged):
-    """A non-empty staged set that touches ONLY tools/**, tests/** or a GENERIC **/*.md (README, docs/,
-    CLAUDE.md, ...) -- no research/runners, no research/findings, no sim/, and no board/roadmap file that
-    itself records research status. This gate blocks on a project-wide READY-RESEARCH-WORK signal (idle
-    pool/GPU next to a roadmap backlog); a commit that adds no research artifact and queues no research job has
-    no bearing on that allocation, exactly the reasoning `gates/lane_starvation._is_doc_only` already
-    established for markdown-only commits (2026-08-06/07) -- generalised here to the two other paths a
-    compute-lane-neutral commit lives in. Landed 2026-09-23 while closing the waiver loophole itself: this
-    gate's OWN infra fix tripped it (a live, GENUINE 14.5-day idle-compute signal, not a test artifact -- see
-    the commit message), which is exactly the false-positive shape this exemption removes without weakening
-    the real check. NARROWED same day (review fix): the first cut of this exemption accepted ANY `.md`,
-    including `research/findings/*.md` and the board/roadmap files -- exactly the two exclusions this
-    docstring already named but the code did not enforce."""
-    if not staged:
-        return False
-    for p in staged:
-        if p == ".gitignore":
-            continue
-        if p.endswith(".md"):
-            if _is_research_status_md(p):
-                return False
-            continue
-        if p.startswith("tools/") or p.startswith("tests/"):
-            continue
-        return False
-    return True
+    """A non-empty staged set in which EVERY path is on this allow-list, and nothing else:
+      * `tools/**` and `tests/**` -- EXCEPT the enforcement machinery this gate runs on (`tools/gates/**`,
+        `tools/githooks/**`, `tools/waiver_history.py`, `tools/parallel_state.py`, `tools/parallel_audit.py`);
+      * the generic, non-status docs named in `_GENERIC_DOCS` (README/CLAUDE/CONTRIBUTING/CHANGELOG/
+        USER_GUIDE/QUICKSTART and four process-reference docs under docs/);
+      * `.gitignore`.
+    Everything else -- research/** (findings, biology, FAILURE_LOG, runners), sim/**, docs/plans/** (the MASTER
+    ROADMAP), GAP_CLOSURE_MISSION.md, ROADMAP.md, every other .md -- is NOT exempt. This gate blocks on a
+    project-wide READY-RESEARCH-WORK signal (idle pool/GPU next to a roadmap backlog); a commit that adds no
+    research artifact, queues no research job and does not touch the enforcement itself has no bearing on it
+    (the reasoning `gates/lane_starvation._is_doc_only` established for markdown-only commits, 2026-08-06/07)."""
+    return bool(staged) and all(_is_exempt_path(p) for p in staged)
 
 
 def check(paths=None):
@@ -206,26 +196,18 @@ def selftest():
     if not _decide(fresh_over, now, bad_verdict):
         bad.append("did NOT reject an INVALID waiver verdict (the 2026-09-23 promise-language loophole "
                    "would pass)")
-    # _is_infra_only: a tools/tests/docs/.gitignore-only staged set is exempt; research/sim changes are NOT.
-    if not _is_infra_only(["tools/waiver_history.py", "tests/test_waiver_history.py", "README.md",
-                           ".gitignore"]):
-        bad.append("a tools+tests+md+.gitignore staged set was NOT recognised as infra-only")
-    if _is_infra_only(["tools/waiver_history.py", "research/runners/some_derisk.py"]):
-        bad.append("BROKEN GUARD: a mixed tools+research staged set was treated as infra-only")
+    # _is_infra_only (FIX ROUND 3 allow-list). FAILING DIRECTION FIRST: research-status docs and the
+    # enforcement machinery itself must NOT be exempt, alone or riding along with an ordinary tools/ change.
+    for p in ("research/findings/2026-09-23-some-result.md", "GAP_CLOSURE_MISSION.md", "ROADMAP.md",
+              "docs/plans/2026-07-23-MASTER-DEVELOPMENT-ROADMAP.md", "research/biology/btsp.md",
+              "tools/gates/compute_idle_persistent.py", "tools/waiver_history.py", "tools/githooks/pre-commit",
+              "research/runners/some_derisk.py"):
+        if _is_infra_only([p]) or _is_infra_only(["tools/lab.py", p]):
+            bad.append("LOOPHOLE: %r was treated as compute-neutral infra" % p)
     if _is_infra_only([]):
         bad.append("BROKEN GUARD: an EMPTY staged set was treated as infra-only (would exempt every commit)")
-    # 2026-09-23 review fix: a research/findings/*.md or board/roadmap .md must NOT be swept into the generic
-    # ".md is always infra-only" bucket -- each of these IS a research-status signal.
-    if _is_infra_only(["research/findings/2026-09-23-some-result.md"]):
-        bad.append("LOOPHOLE STILL OPEN: a research/findings/*.md-only staged set was treated as infra-only "
-                   "(a finding is a research artifact, not compute-neutral infra)")
-    if _is_infra_only(["GAP_CLOSURE_MISSION.md"]):
-        bad.append("LOOPHOLE STILL OPEN: a GAP_CLOSURE_MISSION.md-only staged set was treated as infra-only "
-                   "(the board records research status; editing it is not compute-neutral)")
-    if _is_infra_only(["ROADMAP.md"]):
-        bad.append("LOOPHOLE STILL OPEN: a ROADMAP.md-only staged set was treated as infra-only")
-    # NEGATIVE: a genuinely generic doc (README/docs/CLAUDE.md) alongside tools/tests must stay exempt --
-    # the narrowing must not regress the original infra-only exemption for ordinary documentation.
-    if not _is_infra_only(["tools/waiver_history.py", "docs/FAILURE_GATE_MATRIX.md", "CLAUDE.md"]):
-        bad.append("FALSE POSITIVE: narrowing the .md exemption also swept in genuinely generic docs")
+    # NEGATIVE: genuinely generic infra stays exempt.
+    if not _is_infra_only(["tools/lab.py", "tests/test_lab.py", "README.md", "CLAUDE.md",
+                           "docs/FAILURE_GATE_MATRIX.md", ".gitignore"]):
+        bad.append("FALSE POSITIVE: an ordinary tools+tests+generic-docs staged set was not exempt")
     return bad
