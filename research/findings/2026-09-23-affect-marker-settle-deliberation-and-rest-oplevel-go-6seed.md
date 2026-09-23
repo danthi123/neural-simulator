@@ -3,22 +3,30 @@ type: finding
 status: live
 lane: load-bearing
 date: 2026-09-23
-verdict: GO (circuit-level de-risk, 6-seed); the #1-metric full-brain verdict is PENDING (staged on the pool)
+verdict: GO (circuit-level de-risk, 6-seed); the full-brain ON-vs-OFF contrast verdict is PENDING (re-staged on the pool in the fix round)
 ---
 
 # Affect-marker: two truncated companion processes (deliberation time, inter-turn rest) caused the dead-zone; restoring them makes the WTA commit on 6/6 seeds at circuit level (2026-09-23)
 
-D1 lane ("grow the robust core past 23"). This is a circuit-level de-risk GO. It does NOT yet move the robust core.
-The robust core moves only if the staged full-brain `load_bearing_fraction` 6-seed run (below) reads the faculty
-load-bearing, null-clean and deterministic on all 6 seeds.
+D1 lane ("grow the robust core past 23"). This is a circuit-level de-risk GO. It does NOT move the robust core.
+
+**What a full-brain GO would and would not mean (fix round, docs/TERMS.md).** `BRAIN_AFFECT_MARKER_SETTLE` is
+default-off. A GO on the staged full-brain contrast gate would show that affect-marker is lesion-load-bearing under the
+adequate probe with an opt-in, default-off flag. It would not make the faculty on-by-default or production-default, and
+it would not grow the production-default robust core. Reported Option-C style, as a pair: the adequate-probe robust core
+stays 23/26 at the shipped flag state, and would read 24/26 with SETTLE opt-in. Flipping the default is owner-reserved
+and would need its own re-verify against the flipped code. The earlier "robust core 23 to 24" wording is withdrawn.
 
 ## Which faculties are outside the robust core (read from the artifacts)
 The exercised adequate-probe roster has 26 faculties
 (`research/findings/raw/_load_bearing/_adequate6/load_bearing_adequate_s*.json`). The robust core is 23:
 the 20 that were 6/6 there, plus episodic-memory, source-provenance-honesty and prospective-memory (each later made
 6/6). That leaves three outside:
-- **affect-marker-spiking-wta**: RNG-isolated, load-bearing on 1/6 seeds
-  (`research/findings/raw/_lbf_borderline_isolated/op_s*.json`). This build targets it.
+- **affect-marker-spiking-wta**: load-bearing on 1/6 seeds under the 2026-09-22 diagnosis read
+  (`research/findings/raw/_lbf_borderline_isolated/op_s*.json`). This build targets it. Correction (fix round): that
+  read was labelled "RNG-isolated", but it runs the intact and the lesion read on one cached warm reader with OU noise
+  off. The per-seed confound it carries is warm-state carry-over between reads, not an RNG draw. The inter-turn rest
+  below is the process that addresses it. The code comment in `_lbf_borderline_operating_point.py` is corrected.
 - **open-ended-generation**: 0/6 on the single-turn ruler. It is load-bearing distributionally
   (`research/findings/raw/_load_bearing/_followon2_openended_distributional_6seed.json`), but that ruler measures
   a synthetic `_followon2` world, not the production turn. It is not counted here.
@@ -59,10 +67,25 @@ Source: research/findings/raw/_affect_marker_settle/mechanism_probe.json.
 ## The fix (additive, DEFAULT-OFF `BRAIN_AFFECT_MARKER_SETTLE=1`, no sim/ edit)
 `research/runners/_affect_marker_wta_derisk.py`: with the flag set, a read deliberates for `DELIBERATION_MS`=500
 and rests for `INTERTURN_REST_MS`=1000 before it starts. Wiring, weights, tuning, drive and `DEAD_MARGIN` are
-unchanged. The host sets only the clock, meaning how long the circuit runs or rests. The marker is still chosen by
-the winner of the spiking race read off `cp_firing_states`. A warm reader is cached under the key `(seed, "settle")`,
+unchanged. What SETTLE adds is only the clock, meaning how long the circuit runs or rests. The competition that picks
+the marker is the spiking race read off `cp_firing_states`. A warm reader is cached under the key `(seed, "settle")`,
 so it never mixes with the OFF reader. `load_bearing_fraction` adds the report key `affect_marker_settle_env`, which
 records whether the flag reached the run.
+
+## Named host shortcuts on this path (declared in the fix round)
+The build round said "no host formula chooses the marker" and "the host sets only the clock". Both overstate it. Two
+pre-existing host steps sit on either side of the spiking competition, and SETTLE leaves both in place:
+- **S1, readout.** `AffectMarkerWTA._select` names the winner with `np.argsort` over the pools' spike rates plus the
+  host `DEAD_MARGIN` threshold on winner minus runner-up. That is an argmax over spike counts, which CLAUDE.md names as
+  a shortcut. After a resolved 500 ms race the losing pools sit at rate 0, so the argsort is benign here. The
+  replacement target is a downstream spiking read-out pool driven by the marker assemblies.
+- **S2, drive.** The felt mood is a neural read of the #81 ladder, but the host turns that float into a Gaussian-tuned
+  current per pool (`DRIVE_BASE_PA + DRIVE_GAIN_PA * exp(-(v - c)^2 / 2 sigma^2)`). No synapses from the ladder's
+  populations do this. The replacement target is a synaptic projection from the ladder's V+/V- and arousal pools.
+- S3, the deliberation and rest durations, is the host clock. This build added it.
+- S4 is pre-existing and unchanged: the upstream host `mood_to_level` binning, the emphasis fallback `felt > 0`, and
+  the host rendering the winning register's fixed word.
+These are declared in the runner docstring and in the SETTLE block of `_affect_marker_wta_derisk.py`.
 
 ## Calibration of DELIBERATION_MS, including a disclosed amendment
 The criterion was pre-registered in commit a4891aa3e before any calibration ran. It was checked on calibration seeds
@@ -104,7 +127,10 @@ The gate result is **GO** (`tools.verdict.Verdict`, every precondition measured)
 - G3: two fresh readers give the same intact lead on 6/6.
 - G4: the shuffled drive changes the register on 4/6, exactly at the pre-registered floor of 4.
 - G5: with SETTLE off, the intact and lesion reads equal the committed diagnosis dicts exactly (lead, level and float
-  margin) on 6/6. This is byte-identical OFF, asserted in the data for this read.
+  margin) on 6/6. In the build round the code compared only the boolean; the fix round makes G5 assert exact dict
+  equality and re-ran `--verify`. Every per-seed read and count is unchanged, and G5 is still 6/6 under the exact test.
+- Fix-round verdict structure: G1 and G4 are outcomes, so a failure now reads NO-GO. The full seed set, G2, G3 and G5
+  are validity checks, so a failure reads UNDEFINED. The re-run still reads GO.
 
 The intact margins with SETTLE on are 0.137 to 0.158, about 3 times `DEAD_MARGIN`.
 
@@ -127,7 +153,12 @@ Most of the flip comes from deliberation time. The rest restores reads that the 
   shortcut, and this build leaves it unchanged.
 - **Latency**: each marker read costs about 1.5 s of simulated time (500 + 1000 + 60 ms). On the numpy backend
   that is sub-second of wall time for a 216-neuron circuit.
-- **Scope**: this is a circuit-level de-risk. The robust-core claim waits on the staged full-brain run.
+- **Scope**: this is a circuit-level de-risk. The opt-in claim (24/26 with SETTLE on) waits on the staged full-brain
+  contrast gate. The production-default robust core does not move either way until the owner flips the default.
+- **Pre-registration timing**: commit a4891aa3e registered `DELIBERATION_MS`=300. The calibration and the verify then
+  ran in the same second from a tree that already held the C1' amendment, so the verify did not wait for the
+  calibration that fixed the constant. The review re-checked this independently: at op level, 200 ms and 300 ms also
+  give load-bearing 6/6 with rest 1000 ms, so the choice of 500 ms was not selected by the outcome.
 
 ## Full-brain smoke, 1 seed (local, numpy, memcap 16): load-bearing at s42 (not a headline)
 <!--derived-->
@@ -137,18 +168,45 @@ It read `load_bearing=True` (`affect_drives.lead` 'Gladly! ' -> ''), `null_contr
 `lesion_reproduced=True`, `deterministic=True`, and `affect_marker_settle_env`='1'. In the adequate 6-seed battery,
 s42 read `pass` (not load-bearing).
 
-This is one seed; it counts toward nothing until the 6-seed run lands. Environment caveat, now logged in
+This is one seed; it counts toward nothing until the 6-seed run lands. It is also a mixed-revision artifact: it
+started at 95d9d39ce, and its later worker arms (intact_b and both lesion arms) ran at 56e588d16 after a mid-run merge
+that changed `research/runners/_episodic_dap_dialogue_memory.py`. Its `deterministic=True` therefore compares arms built
+on different code. Read it as an integrity smoke, not as determinism evidence. Environment caveat, now logged in
 FAILURE_LOG: the worktree has no `data/corpus/tinystories.txt`, so the onebrain XEDGE build degraded to standalone
 organs. The pool revision dirs have the same gap. The affect-marker path (AffectDrivesWorkspace) does not use that
 corpus, and the ON and OFF pool arms share the same environment.
 
-## Staged: the #1-metric verification (mini-PC pool, revision 56e588d16)
-For each seed S in 42 43 44 100 101 102, run with `BRAIN_AFFECT_MARKER_SETTLE=1`, plus a same-code OFF control:
-`load_bearing_fraction --only affect-marker-spiking-wta --seed S --repeats 2 --out research/findings/raw/_affect_marker_settle/lbf/lbf_settle_{on,off}_sS.json`.
-**GO gate, pre-registered:** the ON row reads `load_bearing=True`, `null_control_clean=True` and
-`lesion_reproduced=True` on 6/6 seeds, the report's `affect_marker_settle_env`=="1", and the OFF control reads
-`affect_marker_settle_env` null. If that holds, affect-marker joins the robust core and it goes from 23 to 24.
-Anything less is reported as measured.
+## Staged: the full-brain ON-vs-OFF contrast (fix round, re-staged)
+**Superseded staging (build round, revision 56e588d16).** The ON and OFF arms shared one `--out` dir. The
+`load_bearing_fraction` intermediate arm files (`intact_a_emo[_sS].json`, `lesion_affect_marker_spiking_wta[_sS].json`)
+do not name their arm, so an OFF run could overwrite an ON run's raw arms on the same node. The gate also required only
+that OFF rows carry no flag, so it could credit SETTLE even if the OFF control were load-bearing too. In the fix round
+the remaining running and queued jobs were killed by PID. The six rows that had finished (ON s42, s43, s44, s101; OFF
+s42, s43) were copied unread to `research/findings/raw/_affect_marker_settle/lbf_superseded_rev56e588d/` and do not
+enter the verdict.
+
+**Re-staged layout.** Each seed runs as one pool job on one node: the ON arm, then the OFF arm, from the same revision,
+serialized by a per-node lock (each full brain is about 8 GB on a 15 GB node). Every arm and seed has its own
+directory: `research/findings/raw/_affect_marker_settle/lbf_on/sS/lbf_settle_on_sS.json` and
+`.../lbf_off/sS/lbf_settle_off_sS.json`. The harvest copies each node into its own subdirectory
+(`lbf_on/<node>/sS/`), so no two files can collide.
+
+**The contrast gate (pre-registered in the fix round, `_affect_marker_settle_derisk.py --score-fullbrain`).** The
+rule and the amendment log are in the runner docstring, committed before any re-staged row existed.
+- SETTLE is credited on a seed only if the ON row is load-bearing, null-clean, lesion-reproduced, deterministic and
+  carries `affect_marker_settle_env`=="1", and the same-seed OFF row is a valid measurement that reads not
+  load-bearing. A valid OFF row has no flag, is deterministic, has a clean null control and a non-null `load_bearing`.
+- **GO**: ON load-bearing on 6/6 and OFF load-bearing on at most 1/6. The allowance of one is the op-level OFF reading
+  known before the gate was written (s100 in `oplevel_verify.json`).
+- **PARTIAL, a NO-GO for the flag**: ON 6/6 but OFF load-bearing on 2 to 5 seeds. That is reported as load-bearing 6/6
+  with the flag, SETTLE-attributable on k/6 only.
+- **NO-GO**: ON below 6/6, or OFF load-bearing on 6/6, which makes the flag unattributable.
+- **UNDEFINED**: any row missing, ambiguous, non-deterministic, carrying the wrong flag state, or with an unmeasured
+  `load_bearing`. UNDEFINED is never a pass.
+The selftest drives the scorer in every failing direction (11 cases, `--selftest`).
+Scoring: `.venv/bin/python -m research.runners._affect_marker_settle_derisk --score-fullbrain`.
+It writes `research/findings/raw/_affect_marker_settle/fullbrain_contrast_verdict.json`.
+A GO means load-bearing under the adequate probe with a default-off flag, not a production-default robust core.
 
 ## Honesty boundary
 This is a functional read-out only. The expression marker is chosen by a spiking competition driven by the

@@ -1,7 +1,8 @@
 """Affect-marker SETTLE de-risk (D1 lane "grow the robust core past 23", 2026-09-23).
 
-THE DEFECT (measured, not guessed). `affect-marker-spiking-wta` is outside the robust core: RNG-isolated, it is
-lesion-load-bearing on only 1/6 seeds (`research/findings/raw/_lbf_borderline_isolated/op_s*.json`). On the 'emo'
+THE DEFECT (measured, not guessed). `affect-marker-spiking-wta` is outside the robust core: under the diagnosis
+read (labelled "RNG-isolated" at the time, but it runs intact then lesion on ONE cached warm reader with OU noise off,
+so the per-seed confound is warm-state carry-over, not RNG) it is lesion-load-bearing on only 1/6 seeds (`research/findings/raw/_lbf_borderline_isolated/op_s*.json`). On the 'emo'
 turn the felt mood lands at +0.064..+0.071 -- ON the +2/+3 register boundary (+0.07125) -- and the INTACT WTA reads
 "no clean winner" (margin 0.033-0.044 < DEAD_MARGIN 0.05) on 5/6 seeds, so intact and lesion both emit no marker.
 
@@ -28,23 +29,71 @@ MODES
                  DELIBERATION_MS = the shortest window passing C1'+C2+C3+C4 on all calibration seeds.
   --verify     : the PRE-REGISTERED op-level GO gate on the 6 verification seeds (42 43 44 100 101 102), reading the
                  REAL ladder mood the 'emo' turn produces (`_lbf_borderline_operating_point._affect_marker`, the same
-                 read the RNG-isolated diagnosis used), SETTLE OFF vs ON:
+                 read the 2026-09-22 diagnosis used), SETTLE OFF vs ON:
                    G1 load-bearing  : SETTLE ON predicted_load_bearing (intact lead != lesion lead, level != 0) on 6/6;
                    G2 lesion silent : SETTLE ON lesion lead == '' on 6/6 (the lesion removes the marker, it does not
                                       merely re-pick one);
                    G3 determinism   : two FRESH readers at the same seed give the identical intact lead, 6/6;
                    G4 shuffle       : mis-routing the drive (shuffle=True) changes the selected register on >= 4/6
                                       (a fixed random 6-permutation leaves the winner in place ~1/6 of the time);
-                   G5 OFF baseline  : SETTLE OFF reproduces the committed diagnosis (load-bearing on exactly the same
-                                      seeds as op_s*.json) -- the instrument still reads what it read before;
+                   G5 OFF baseline  : SETTLE OFF reproduces the committed diagnosis EXACTLY (intact + lesion read dicts,
+                                      float margin included, equal op_s*.json) -- the instrument still reads what it
+                                      read before;
                    G6 attribution   : arms (deliberation only) / (rest only) / (both) reported per seed, so the
                                       verdict names WHICH companion process carries the flip (report-only).
                  GO iff G1..G5 hold. This is the CIRCUIT-level de-risk; the #1-metric verdict is the full-brain
-                 `load_bearing_fraction --only affect-marker-spiking-wta --seed S` run with the flag ON, staged on the
-                 mini-PC pool (robust core 23 -> 24 iff that reads load-bearing, null-clean and deterministic 6/6).
+                 `load_bearing_fraction --only affect-marker-spiking-wta --seed S` run with the flag ON AND a
+                 same-code flag-OFF control, scored by --score-fullbrain (below).
+  --score-fullbrain : the PRE-REGISTERED full-brain ON-vs-OFF CONTRAST gate (FIX ROUND 2026-09-23, see the
+                 AMENDMENT LOG). SETTLE is CREDITED on a seed only if the ON row is load-bearing (null-clean,
+                 lesion-reproduced, deterministic, env=='1') AND the same-seed OFF row is a VALID measurement
+                 (env unset, deterministic, null-clean, load_bearing not None) that reads NOT load-bearing. A seed
+                 whose OFF row is ALSO load-bearing is load-bearing irrespective of the flag -> no credit to SETTLE.
+                   UNDEFINED : any ON or OFF row missing / ambiguous (!=1 match) / non-deterministic / wrong env /
+                               load_bearing None, or an OFF null control dirty. NEVER a pass.
+                   GO        : ON load-bearing 6/6 AND OFF load-bearing <= 1/6 (credited >= 5/6). The <=1 allowance is
+                               the op-level OFF reading known BEFORE this gate was written (s100, oplevel_verify.json).
+                   NO-GO/PARTIAL : ON 6/6 but OFF load-bearing on 2..5 seeds -> "load-bearing 6/6 with the flag,
+                               SETTLE-attributable on k/6 only" (not credited as the flag's effect).
+                   NO-GO     : ON < 6/6, or OFF load-bearing 6/6 (the flag is unattributable).
 
-Brain-based: the SELECTION is the winner of a lateral-inhibition race read off `cp_firing_states`; the host sets
-only the clock (how long the circuit runs / rests). No host formula chooses the marker.
+TERMINOLOGY (docs/TERMS.md). BRAIN_AFFECT_MARKER_SETTLE is DEFAULT-OFF. A GO here means: affect-marker is
+lesion-load-bearing under the ADEQUATE probe with an opt-in, default-off flag. It is NOT "on-by-default", NOT
+"integrated / production-default", and it does NOT grow the production-default robust core. Report it Option-C
+style, as a PAIR: adequate-probe robust core 23/26 at the shipped flag state, and 24/26 with SETTLE opt-in IF the
+contrast gate reads GO; the default flip is owner-reserved and would need its own re-verify against flipped code.
+
+NAMED HOST SHORTCUTS on this path (declared, not removed by this build):
+  S1 READOUT (`AffectMarkerWTA._select` in `_affect_marker_wta_derisk.py`): the winner is named by `np.argsort`
+     over the pools' spike RATES plus a host `DEAD_MARGIN`=0.05 threshold on winner-minus-runner-up. That is an
+     argmax-over-spike-counts readout -- a shortcut per CLAUDE.md, pre-existing. After a resolved 500 ms race the
+     loser pools sit at rate 0, so the argsort is benign here, but a downstream neural read-out (a motor/premotor
+     pool driven by the marker assemblies) is the replacement target.
+  S2 DRIVE (`_select` / `_gaussian_drive`): the felt mood float is converted by the HOST into a Gaussian-tuned
+     afferent current per pool (`DRIVE_BASE_PA + DRIVE_GAIN_PA*exp(-(v-c)^2/2sigma^2)`). The mood itself is a
+     neural read of the #81 ladder, but the population-code projection is a host formula, not synapses from the
+     ladder's populations -- pre-existing. Replacement target: a synaptic projection from the ladder's V+/V- and
+     arousal pools onto the marker assemblies.
+  S3 CLOCK: deliberation / rest durations are host-set (the legitimate clock role; added by this build).
+  S4 pre-existing, unchanged: host `mood_to_level` binning upstream; the emphasis fallback `felt > 0` when the
+     arousal WTA does not commit; the host renders the winning register's fixed word.
+So "no host formula chooses the marker" is too strong: the COMPETITION is spiking, but S1 names the winner and S2
+builds the input.
+
+AMENDMENT LOG
+  2026-09-23 ~09:00 (build round): C1 -> C1' (post-hoc, disclosed above); DELIBERATION_MS registered 300 in a4891aa3e,
+     set to 500 by C1' calibration. SEEN at that time: calibration.json only. Independently rechecked by the review:
+     200 and 300 ms also give op-level load-bearing 6/6, so 500 was not outcome-selected.
+  2026-09-23 ~12:00 (fix round, BEFORE any full-brain row of the re-staged revision existed): (a) added
+     --score-fullbrain with the ON-vs-OFF contrast rule above -- the build round's gate only required OFF env==null
+     and so could credit SETTLE even if OFF were load-bearing too; (b) G5 now asserts EXACT dict equality of the OFF
+     intact/lesion reads with the committed diagnosis (was a boolean compare); (c) the op-level verify's OUTCOME
+     counts (G1, G4) are now the go-condition, not Verdict preconditions, so a failed G1 reads NO-GO instead of
+     UNDEFINED; validity checks (G2 lesion-silent, G3 determinism, G5 OFF baseline) stay preconditions. SEEN at that
+     time: oplevel_verify.json (ON 6/6, OFF 1/6 = s100), the 1-seed smoke lbf_settle_s42.json (ON s42 load-bearing).
+     NOT SEEN: the contents of any pool full-brain row. The superseded revision-56e588d partial rows (ON s42/43/44/101,
+     OFF s42/43; their raw arms shared one dir) were copied to lbf_superseded_rev56e588d/ UNREAD, and are scored only
+     after this log was committed, as an informational cross-check that does not enter the verdict.
 """
 from __future__ import annotations
 
@@ -225,7 +274,8 @@ def verify(seeds, out: str) -> dict:
                   "attribution_arms": {k: {"intact_lead": v["intact"]["lead"], "lesion_lead": v["lesion"]["lead"],
                                            "intact_margin": v["intact"]["margin"], "load_bearing": v["load_bearing"]}
                                        for k, v in arms.items()},
-                  "diagnosis_predicted_load_bearing": None if diag is None else bool(diag["predicted_load_bearing"])}
+                  "diagnosis_predicted_load_bearing": None if diag is None else bool(diag["predicted_load_bearing"]),
+                  "diagnosis_reads": None if diag is None else {"intact": diag["intact"], "lesion": diag["lesion"]}}
         print(f"s{s} mood={mood:+.4f} OFF lb={off['predicted_load_bearing']} ({off['intact']['lead']!r}/"
               f"{off['lesion']['lead']!r}, m={off['intact']['margin']:.3f})  ON lb={on['predicted_load_bearing']} "
               f"({on['intact']['lead']!r}/{on['lesion']['lead']!r}, m={on['intact']['margin']:.3f})  "
@@ -237,22 +287,30 @@ def verify(seeds, out: str) -> dict:
     g2 = sum(1 for s in seeds if per[s]["on"]["lesion"]["lead"] == "")
     g3 = sum(1 for s in seeds if per[s]["determinism"]["identical"])
     g4 = sum(1 for s in seeds if per[s]["shuffle"]["differs"])
-    g5_rows = [(per[s]["off"]["predicted_load_bearing"], per[s]["diagnosis_predicted_load_bearing"]) for s in seeds]
-    g5 = sum(1 for a, b in g5_rows if b is not None and a == b)
+    # G5 EXACT: the OFF intact AND lesion read dicts (lead, sel_level, float margin) must EQUAL the committed diagnosis
+    # dicts, not merely agree on the boolean (fix round 2026-09-23: the finding claimed dict equality, the code
+    # checked only the boolean).
+    g5 = sum(1 for s in seeds if per[s]["diagnosis_reads"] is not None
+             and per[s]["off"]["intact"] == per[s]["diagnosis_reads"]["intact"]
+             and per[s]["off"]["lesion"] == per[s]["diagnosis_reads"]["lesion"]
+             and per[s]["off"]["predicted_load_bearing"] == per[s]["diagnosis_predicted_load_bearing"])
     n_off = sum(1 for s in seeds if per[s]["off"]["predicted_load_bearing"])
     lever("SETTLE flag: load-bearing seed count", n_off, g1, required=False)
     attributable_to("affect-marker load-bearing count: SETTLE ON vs OFF", float(g1), float(n_off))
     cheat = void_if(g2 < n and g1 == n, "load-bearing only because the lesion RE-PICKS a marker, not removes it")
     full = tuple(seeds) == VERIFY_SEEDS
-    go = bool(full and g1 == n and g2 == n and g3 == n and g4 >= 4 and g5 == n and not cheat)
+    # OUTCOMES (G1 load-bearing, G4 shuffle) are the go-condition -> a failure reads NO-GO. VALIDITY checks (full seed
+    # set, G2 the lesion removes rather than re-picks, G3 determinism, G5 the OFF instrument still reads what it read
+    # before) are preconditions -> a failure reads UNDEFINED (fix round 2026-09-23, AMENDMENT LOG (c)).
+    go = bool(g1 == n and g4 >= 4 and not cheat)
     vd = Verdict("affect_marker_settle_oplevel")
-    vd.require("G1 SETTLE-ON load-bearing (count)", g1, expect=lambda x: x == n)
+    vd.require("full 6-seed verification set", full, expect=True)
     vd.require("G2 SETTLE-ON lesion removes the marker (count)", g2, expect=lambda x: x == n)
     vd.require("G3 determinism: two fresh readers identical (count)", g3, expect=lambda x: x == n)
-    vd.require("G4 shuffle changes the register (count >= 4 of 6)", g4, expect=lambda x: x >= min(4, n))
-    vd.require("G5 SETTLE-OFF reproduces the committed diagnosis (count)", g5, expect=lambda x: x == n)
+    vd.require("G5 SETTLE-OFF reproduces the committed diagnosis dicts EXACTLY (count)", g5, expect=lambda x: x == n)
     vd.disabled("OU noise / STDP / homeostasis / STP", "identical to the committed WTA circuit (all OFF there)")
     decided = vd.decide(go)
+    go = bool(decided["go"])
     rec = {"probe": "affect_marker_settle_oplevel", "seeds": list(seeds), "full_6seed": full, "go": go,
            "counts": {"G1_on_load_bearing": g1, "G2_on_lesion_silent": g2, "G3_deterministic": g3,
                       "G4_shuffle_differs": g4, "G5_off_matches_diagnosis": g5, "off_load_bearing": n_off, "n": n},
@@ -268,6 +326,167 @@ def verify(seeds, out: str) -> dict:
         json.dump(rec, f, indent=1, default=str)
     print(f"GO={go} G1={g1}/{n} G2={g2}/{n} G3={g3}/{n} G4={g4}/{n} G5={g5}/{n} (OFF lb {n_off}/{n}) -> {out}")
     return rec
+
+
+# ─────────────────────────────────── full-brain ON-vs-OFF contrast gate ───────────────────────────────────
+ON_DIR = "research/findings/raw/_affect_marker_settle/lbf_on"
+OFF_DIR = "research/findings/raw/_affect_marker_settle/lbf_off"
+FACULTY = "affect-marker-spiking-wta"
+
+
+def _find_row(root: str, arm: str, seed: int):
+    """Exactly ONE `lbf_settle_{arm}_s{seed}.json` anywhere under `root` (harvest layout lbf_{arm}/<node>/s<seed>/).
+    Zero or >1 matches -> None + reason (ambiguity is UNDEFINED, never silently the first file)."""
+    import glob
+    hits = sorted(glob.glob(os.path.join(root, "**", f"lbf_settle_{arm}_s{seed}.json"), recursive=True))
+    if len(hits) != 1:
+        return None, f"{len(hits)} files match lbf_settle_{arm}_s{seed}.json under {root}"
+    with open(hits[0]) as f:
+        return json.load(f), hits[0]
+
+
+def _row_facts(j: dict, arm: str) -> dict:
+    """The fields the gate reads, straight from the LBF report (read, not derived)."""
+    pf = [r for r in j.get("per_faculty", []) if r.get("faculty") == FACULTY]
+    r = pf[0] if len(pf) == 1 else {}
+    env = j.get("affect_marker_settle_env")
+    det = (j.get("determinism") or {}).get("deterministic")
+    lb = r.get("load_bearing")
+    facts = {"load_bearing": lb, "null_control_clean": r.get("null_control_clean"),
+             "lesion_reproduced": r.get("lesion_reproduced"), "deterministic": det, "env": env,
+             "diffs": r.get("diffs"), "verdict": r.get("verdict"), "n_faculty_rows": len(pf)}
+    why = []
+    if len(pf) != 1:
+        why.append(f"{len(pf)} {FACULTY} rows")
+    if det is not True:
+        why.append(f"determinism.deterministic={det}")
+    if lb is None:
+        why.append("load_bearing=None (noisy/unmeasured)")
+    if arm == "on" and env != "1":
+        why.append(f"ON env={env!r} (flag did not reach the run)")
+    if arm == "off" and env is not None:
+        why.append(f"OFF env={env!r} (flag leaked into the control)")
+    if arm == "off" and r.get("null_control_clean") is not True:
+        why.append("OFF null control not clean (its load_bearing label is not interpretable)")
+    facts["valid"] = not why
+    facts["invalid_reasons"] = why
+    facts["on_credit_ready"] = bool(arm == "on" and facts["valid"] and lb is True
+                                    and r.get("null_control_clean") is True and r.get("lesion_reproduced") is True)
+    return facts
+
+
+def score_rows(rows: dict, seeds=VERIFY_SEEDS) -> dict:
+    """rows = {seed: {"on": report-or-None, "off": report-or-None, "on_src":..., "off_src":...}} -> verdict record.
+    Pure (no I/O), so the selftest can drive it in each failing direction."""
+    from tools.verdict import Verdict
+    per = {}
+    for s in seeds:
+        r = rows.get(s, {})
+        on = _row_facts(r["on"], "on") if r.get("on") is not None else None
+        off = _row_facts(r["off"], "off") if r.get("off") is not None else None
+        valid = bool(on and on["valid"] and off and off["valid"])
+        credited = bool(valid and on["on_credit_ready"] and off["load_bearing"] is False)
+        per[s] = {"on": on, "off": off, "on_src": r.get("on_src"), "off_src": r.get("off_src"),
+                  "valid_pair": valid, "on_load_bearing": bool(on and on["on_credit_ready"]),
+                  "off_load_bearing": None if not (off and off["valid"]) else bool(off["load_bearing"]),
+                  "settle_credited": credited}
+    n = len(seeds)
+    n_valid = sum(1 for s in seeds if per[s]["valid_pair"])
+    n_on = sum(1 for s in seeds if per[s]["on_load_bearing"])
+    n_off = sum(1 for s in seeds if per[s]["off_load_bearing"] is True)
+    n_cred = sum(1 for s in seeds if per[s]["settle_credited"])
+    bad = []
+    for s in seeds:
+        if not per[s]["valid_pair"]:
+            on_why = per[s]["on"]["invalid_reasons"] if per[s]["on"] else rows.get(s, {}).get("on_src")
+            off_why = per[s]["off"]["invalid_reasons"] if per[s]["off"] else rows.get(s, {}).get("off_src")
+            bad.append(f"s{s}: ON {on_why} OFF {off_why}")
+    vd = Verdict("affect_marker_settle_fullbrain_contrast")
+    vd.require("every seed has exactly one VALID ON row and one VALID OFF row", n_valid, expect=lambda x: x == n,
+               note="; ".join(bad))
+    vd.require("full 6-seed verification set", tuple(seeds) == VERIFY_SEEDS, expect=True)
+    go = bool(n_on == n and n_off <= 1)
+    decided = vd.decide(go)
+    if decided["status"] == "UNDEFINED":
+        tier = "UNDEFINED"
+    elif decided["go"]:
+        tier = "GO: load-bearing 6/6 with SETTLE opt-in (default-off), SETTLE-attributable"
+    elif n_on == n and 2 <= n_off <= n - 1:
+        tier = (f"PARTIAL (NO-GO for the flag): load-bearing {n_on}/{n} with SETTLE, "
+                f"SETTLE-attributable on {n_cred}/{n} only")
+    elif n_on == n and n_off == n:
+        tier = "NO-GO: load-bearing with and without SETTLE on every seed -> the flag is unattributable"
+    else:
+        tier = f"NO-GO: SETTLE-ON load-bearing on {n_on}/{n} (<{n})"
+    return {"probe": "affect_marker_settle_fullbrain_contrast", "seeds": list(seeds),
+            "counts": {"n": n, "valid_pairs": n_valid, "on_load_bearing": n_on, "off_load_bearing": n_off,
+                       "settle_credited": n_cred},
+            "go": bool(decided["go"]), "status": decided["status"], "tier": tier, "verdict": decided,
+            "preconditions": decided["preconditions"], "per_seed": {str(s): v for s, v in per.items()},
+            "rule": "credit a seed iff ON load-bearing (null-clean, lesion-reproduced, deterministic, env=='1') AND "
+                    "the same-seed OFF row is valid and NOT load-bearing; GO iff ON 6/6 and OFF load-bearing <= 1/6",
+            "terminology": "GO = load-bearing under the ADEQUATE probe with a DEFAULT-OFF opt-in flag. NOT "
+                           "on-by-default, NOT production-default; the production-default robust core is unchanged "
+                           "(Option-C pair: 23/26 at the shipped flag state, 24/26 with SETTLE opt-in iff GO)."}
+
+
+def score_fullbrain(on_dir: str, off_dir: str, out: str, seeds=VERIFY_SEEDS) -> dict:
+    rows = {}
+    for s in seeds:
+        on, on_src = _find_row(on_dir, "on", s)
+        off, off_src = _find_row(off_dir, "off", s)
+        rows[s] = {"on": on, "off": off, "on_src": on_src, "off_src": off_src}
+    rec = score_rows(rows, seeds)
+    rec["on_dir"], rec["off_dir"] = on_dir, off_dir
+    os.makedirs(os.path.dirname(out) or ".", exist_ok=True)
+    with open(out, "w") as f:
+        json.dump(rec, f, indent=1, default=str)
+    c = rec["counts"]
+    print(f"{rec['status']} | {rec['tier']} | valid {c['valid_pairs']}/{c['n']} ON-lb {c['on_load_bearing']} "
+          f"OFF-lb {c['off_load_bearing']} credited {c['settle_credited']} -> {out}")
+    return rec
+
+
+def _selftest_contrast() -> bool:
+    """The contrast gate must FAIL in each failing direction (a gate that cannot fail is only an integrity smoke)."""
+    import contextlib
+    import io
+
+    def rep(lb, env, det=True, null=True, les=True):
+        return {"affect_marker_settle_env": env, "determinism": {"deterministic": det},
+                "per_faculty": [{"faculty": FACULTY, "load_bearing": lb, "null_control_clean": null,
+                                 "lesion_reproduced": les}]}
+
+    def rows(on_lb, off_lb, **kw):
+        return {s: {"on": rep(on_lb[i], "1"), "off": rep(off_lb[i], None, **kw)}
+                for i, s in enumerate(VERIFY_SEEDS)}
+    T, F = True, False
+    cases = [
+        ("clean contrast -> GO", rows([T] * 6, [F] * 6), "GO"),
+        ("OFF lb on 1 seed (the known s100) -> GO", rows([T] * 6, [F, F, F, T, F, F]), "GO"),
+        ("OFF lb 3/6 -> NO-GO (partial)", rows([T] * 6, [T, T, F, T, F, F]), "NO-GO"),
+        ("OFF lb 6/6 -> NO-GO (unattributable)", rows([T] * 6, [T] * 6), "NO-GO"),
+        ("ON 5/6 -> NO-GO", rows([T, T, T, T, T, F], [F] * 6), "NO-GO"),
+        ("OFF load_bearing None -> UNDEFINED", rows([T] * 6, [F, F, None, F, F, F]), "UNDEFINED"),
+        ("OFF non-deterministic -> UNDEFINED", rows([T] * 6, [F] * 6, det=False), "UNDEFINED"),
+        ("OFF dirty null -> UNDEFINED", rows([T] * 6, [F] * 6, null=False), "UNDEFINED"),
+    ]
+    missing = rows([T] * 6, [F] * 6)
+    missing[44]["off"] = None
+    cases.append(("missing OFF row -> UNDEFINED", missing, "UNDEFINED"))
+    leak = rows([T] * 6, [F] * 6)
+    leak[42]["off"]["affect_marker_settle_env"] = "1"
+    cases.append(("flag leaked into OFF -> UNDEFINED", leak, "UNDEFINED"))
+    noflag = rows([T] * 6, [F] * 6)
+    noflag[43]["on"]["affect_marker_settle_env"] = None
+    cases.append(("flag missing from ON -> UNDEFINED", noflag, "UNDEFINED"))
+    ok = True
+    for name, rw, want in cases:
+        with contextlib.redirect_stdout(io.StringIO()):
+            got = score_rows(rw)["status"]
+        print(f"  contrast selftest: {name:42s} want={want:9s} got={got:9s} {'ok' if got == want else 'FAIL'}")
+        ok = ok and got == want
+    return ok
 
 
 def mechanism_probe(out: str) -> dict:
@@ -311,6 +530,7 @@ def selftest() -> bool:
     ok = ok and r2.settle and r2.warmup == M.DELIBERATION_MS and r2.washout == M.INTERTURN_REST_MS
     M.get_reader(42); ok = ok and ((42, "settle") in M._READERS)
     os.environ.pop(M.SETTLE_ENV, None); M.reset_readers()
+    ok = _selftest_contrast() and ok
     print("SELFTEST", "PASS" if ok else "FAIL")
     return bool(ok)
 
@@ -321,6 +541,9 @@ def main():
     ap.add_argument("--mechanism-probe", action="store_true")
     ap.add_argument("--verify", action="store_true")
     ap.add_argument("--selftest", action="store_true")
+    ap.add_argument("--score-fullbrain", action="store_true")
+    ap.add_argument("--on-dir", default=ON_DIR)
+    ap.add_argument("--off-dir", default=OFF_DIR)
     ap.add_argument("--seeds", default=" ".join(str(s) for s in VERIFY_SEEDS))
     ap.add_argument("--out", default=None)
     a = ap.parse_args()
@@ -330,6 +553,10 @@ def main():
         mechanism_probe(a.out or "research/findings/raw/_affect_marker_settle/mechanism_probe.json")
     if a.calibrate:
         calibrate(a.out or "research/findings/raw/_affect_marker_settle/calibration.json")
+    if a.score_fullbrain:
+        seeds = tuple(int(x) for x in a.seeds.replace(",", " ").split())
+        score_fullbrain(a.on_dir, a.off_dir,
+                        a.out or "research/findings/raw/_affect_marker_settle/fullbrain_contrast_verdict.json", seeds)
     if a.verify:
         seeds = tuple(int(x) for x in a.seeds.replace(",", " ").split())
         verify(seeds, a.out or "research/findings/raw/_affect_marker_settle/oplevel_verify.json")

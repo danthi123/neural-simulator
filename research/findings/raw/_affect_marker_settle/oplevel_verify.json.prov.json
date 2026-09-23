@@ -1,11 +1,11 @@
 {
- "run_id": "1790168441-485792",
+ "run_id": "1790178874-1112611",
  "runner": "research/runners/_affect_marker_settle_derisk.py",
  "argv": [
-  "/home/dant123/Projects/sim/.claude/worktrees/wf_8bf19a04-cbd-1/research/runners/_affect_marker_settle_derisk.py",
+  "/home/dant123/Projects/sim/.claude/worktrees/wf_500634cf-d18-1/research/runners/_affect_marker_settle_derisk.py",
   "--verify"
  ],
- "git_sha": "a4891aa3e",
+ "git_sha": "3125cf454",
  "git_dirty": true,
  "source_kind": null,
  "source_manifest_sha256": null,
@@ -13,13 +13,14 @@
  "source_manifest_start_error": null,
  "source_manifest_verified_at_exit": null,
  "source_manifest_exit_error": null,
- "started": "2026-09-23T09:00:41",
- "env": {},
+ "started": "2026-09-23T11:54:34",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
  "sim_backend": "numpy",
  "sim_backend_requested": "numpy",
  "sim_backend_cupy_importable": true,
- "corpus_check_age_s": 933.9,
- "corpus_check_query": "affect-marker spiking WTA not committing dead-zone load-bearing 1/6",
- "corpus_check_fresh": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
  "artifact": "research/findings/raw/_affect_marker_settle/oplevel_verify.json"
 }

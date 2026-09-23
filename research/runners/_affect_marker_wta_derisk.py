@@ -157,6 +157,16 @@ DEAD_MARGIN = 0.05
 # DISCLOSED AMENDMENT: as registered no window passed (the mood=0 midpoint -- gated to neutral upstream, never sent
 # to this circuit -- and one seed's arousal boundary never commit); the constant below uses C1' = every REACHABLE
 # valence boundary, with the arousal-boundary commit reported, not gated (it sets emphasis, not marker presence).
+#
+# NAMED HOST SHORTCUTS that SETTLE leaves in place (declared 2026-09-23 fix round; pre-existing, not introduced here):
+#   S1 READOUT -- `_select` names the winner by `np.argsort` over pool spike RATES plus the host `DEAD_MARGIN`
+#      threshold: an argmax-over-spike-counts readout (a shortcut per CLAUDE.md). Replacement target: a downstream
+#      spiking read-out pool driven by the marker assemblies.
+#   S2 DRIVE -- the felt mood FLOAT is turned into a Gaussian-tuned per-pool afferent current by a host formula
+#      (`DRIVE_BASE_PA + DRIVE_GAIN_PA*exp(...)`), not by synapses from the #81 ladder's populations. Replacement
+#      target: a synaptic projection from the ladder's V+/V-/arousal pools onto the marker assemblies.
+# So SETTLE's "host sets only the clock" is true of what SETTLE ADDS; the competition is spiking, but S1 names the
+# winner and S2 builds its input.
 # ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
 SETTLE_ENV = "BRAIN_AFFECT_MARKER_SETTLE"
 DELIBERATION_MS = 500       # fixed by the calibration record (amended criterion C1', see the de-risk runner +

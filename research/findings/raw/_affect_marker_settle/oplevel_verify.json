@@ -95,7 +95,19 @@
      "load_bearing": true
     }
    },
-   "diagnosis_predicted_load_bearing": false
+   "diagnosis_predicted_load_bearing": false,
+   "diagnosis_reads": {
+    "intact": {
+     "lead": "",
+     "sel_level": null,
+     "margin": 0.04444444444444444
+    },
+    "lesion": {
+     "lead": "",
+     "sel_level": null,
+     "margin": 0.0006944444444444444
+    }
+   }
   },
   "43": {
    "ladder": {
@@ -165,7 +177,19 @@
      "load_bearing": true
     }
    },
-   "diagnosis_predicted_load_bearing": false
+   "diagnosis_predicted_load_bearing": false,
+   "diagnosis_reads": {
+    "intact": {
+     "lead": "",
+     "sel_level": null,
+     "margin": 0.0326388888888889
+    },
+    "lesion": {
+     "lead": "",
+     "sel_level": null,
+     "margin": 0.0
+    }
+   }
   },
   "44": {
    "ladder": {
@@ -235,7 +259,19 @@
      "load_bearing": true
     }
    },
-   "diagnosis_predicted_load_bearing": false
+   "diagnosis_predicted_load_bearing": false,
+   "diagnosis_reads": {
+    "intact": {
+     "lead": "",
+     "sel_level": null,
+     "margin": 0.04027777777777778
+    },
+    "lesion": {
+     "lead": "",
+     "sel_level": null,
+     "margin": 0.0
+    }
+   }
   },
   "100": {
    "ladder": {
@@ -305,7 +341,19 @@
      "load_bearing": true
     }
    },
-   "diagnosis_predicted_load_bearing": true
+   "diagnosis_predicted_load_bearing": true,
+   "diagnosis_reads": {
+    "intact": {
+     "lead": "Gladly! ",
+     "sel_level": 2,
+     "margin": 0.15972222222222224
+    },
+    "lesion": {
+     "lead": "",
+     "sel_level": null,
+     "margin": 0.0
+    }
+   }
   },
   "101": {
    "ladder": {
@@ -375,7 +423,19 @@
      "load_bearing": true
     }
    },
-   "diagnosis_predicted_load_bearing": false
+   "diagnosis_predicted_load_bearing": false,
+   "diagnosis_reads": {
+    "intact": {
+     "lead": "",
+     "sel_level": null,
+     "margin": 0.037500000000000006
+    },
+    "lesion": {
+     "lead": "",
+     "sel_level": null,
+     "margin": 0.0
+    }
+   }
   },
   "102": {
    "ladder": {
@@ -445,7 +505,19 @@
      "load_bearing": true
     }
    },
-   "diagnosis_predicted_load_bearing": false
+   "diagnosis_predicted_load_bearing": false,
+   "diagnosis_reads": {
+    "intact": {
+     "lead": "",
+     "sel_level": null,
+     "margin": 0.03958333333333333
+    },
+    "lesion": {
+     "lead": "",
+     "sel_level": null,
+     "margin": 0.0
+    }
+   }
   }
  },
  "verdict": {
@@ -456,37 +528,30 @@
   "preconditions": [
    {
     "kind": "require",
-    "name": "G1 SETTLE-ON load-bearing (count)",
+    "name": "full 6-seed verification set",
     "ok": true,
-    "detail": "measured=6 expect=<function verify.<locals>.<lambda> at 0x7f304393e8e0>",
+    "detail": "measured=True expect=True",
     "note": ""
    },
    {
     "kind": "require",
     "name": "G2 SETTLE-ON lesion removes the marker (count)",
     "ok": true,
-    "detail": "measured=6 expect=<function verify.<locals>.<lambda> at 0x7f304393e8e0>",
+    "detail": "measured=6 expect=<function verify.<locals>.<lambda> at 0x7ff9ff9e8f40>",
     "note": ""
    },
    {
     "kind": "require",
     "name": "G3 determinism: two fresh readers identical (count)",
     "ok": true,
-    "detail": "measured=6 expect=<function verify.<locals>.<lambda> at 0x7f304393e8e0>",
+    "detail": "measured=6 expect=<function verify.<locals>.<lambda> at 0x7ff9ff9e8f40>",
     "note": ""
    },
    {
     "kind": "require",
-    "name": "G4 shuffle changes the register (count >= 4 of 6)",
+    "name": "G5 SETTLE-OFF reproduces the committed diagnosis dicts EXACTLY (count)",
     "ok": true,
-    "detail": "measured=4 expect=<function verify.<locals>.<lambda> at 0x7f304393e8e0>",
-    "note": ""
-   },
-   {
-    "kind": "require",
-    "name": "G5 SETTLE-OFF reproduces the committed diagnosis (count)",
-    "ok": true,
-    "detail": "measured=6 expect=<function verify.<locals>.<lambda> at 0x7f304393e8e0>",
+    "detail": "measured=6 expect=<function verify.<locals>.<lambda> at 0x7ff9ff9e8f40>",
     "note": ""
    }
   ],
@@ -498,43 +563,36 @@
   ],
   "chance": null
  },
- "scope": "CIRCUIT-level de-risk on the real ladder 'emo' mood; the #1-metric verdict is the full-brain load_bearing_fraction run with BRAIN_AFFECT_MARKER_SETTLE=1 (staged on the pool).",
  "preconditions": [
   {
    "kind": "require",
-   "name": "G1 SETTLE-ON load-bearing (count)",
+   "name": "full 6-seed verification set",
    "ok": true,
-   "detail": "measured=6 expect=<function verify.<locals>.<lambda> at 0x7f304393e8e0>",
+   "detail": "measured=True expect=True",
    "note": ""
   },
   {
    "kind": "require",
    "name": "G2 SETTLE-ON lesion removes the marker (count)",
    "ok": true,
-   "detail": "measured=6 expect=<function verify.<locals>.<lambda> at 0x7f304393e8e0>",
+   "detail": "measured=6 expect=<function verify.<locals>.<lambda> at 0x7ff9ff9e8f40>",
    "note": ""
   },
   {
    "kind": "require",
    "name": "G3 determinism: two fresh readers identical (count)",
    "ok": true,
-   "detail": "measured=6 expect=<function verify.<locals>.<lambda> at 0x7f304393e8e0>",
+   "detail": "measured=6 expect=<function verify.<locals>.<lambda> at 0x7ff9ff9e8f40>",
    "note": ""
   },
   {
    "kind": "require",
-   "name": "G4 shuffle changes the register (count >= 4 of 6)",
+   "name": "G5 SETTLE-OFF reproduces the committed diagnosis dicts EXACTLY (count)",
    "ok": true,
-   "detail": "measured=4 expect=<function verify.<locals>.<lambda> at 0x7f304393e8e0>",
-   "note": ""
-  },
-  {
-   "kind": "require",
-   "name": "G5 SETTLE-OFF reproduces the committed diagnosis (count)",
-   "ok": true,
-   "detail": "measured=6 expect=<function verify.<locals>.<lambda> at 0x7f304393e8e0>",
+   "detail": "measured=6 expect=<function verify.<locals>.<lambda> at 0x7ff9ff9e8f40>",
    "note": ""
   }
  ],
- "status": "GO"
+ "status": "GO",
+ "scope": "CIRCUIT-level de-risk on the real ladder 'emo' mood; the #1-metric verdict is the full-brain load_bearing_fraction run with BRAIN_AFFECT_MARKER_SETTLE=1 (staged on the pool)."
 }
