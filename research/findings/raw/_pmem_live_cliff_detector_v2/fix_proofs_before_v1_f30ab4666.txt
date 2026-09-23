@@ -1,0 +1,30 @@
+# tests/test_pmem_live_cliff_detector.py run against a git-archive of the v1 build f30ab4666 (the new test file copied in). Every test FAILS on v1; the settled-state test fails behaviourally (v1 reports its arg-max 7000 while its last iterate is 11000).
+E       AssertionError: reported gain is not the last iterate (arg-max read-out)
+E       assert 7000.0 == 11000.0
+E       AssertionError: no declared source seeds for the detector constants
+E       assert set()
+E       AttributeError: module 'research.runners._pmem_live_cliff_detector_derisk' has no attribute 'LATTICE'
+E       AttributeError: module 'research.runners._pmem_live_cliff_detector_derisk' has no attribute 'LATTICE'
+E       AttributeError: module 'research.runners._pmem_live_cliff_detector_derisk' has no attribute 'SEEDS_HELDOUT'
+E       AssertionError: no default-off exact-compare artifact
+E       assert False
+E        +  where False = <function exists at 0x7f090dde7420>('/tmp/claude-1000/-home-dant123-Projects-sim/87891831-e642-4a2f-abeb-50ea0867609b/scratchpad/v1tree/research/findings/raw/_pmem_live_cliff_detector_v2/default_off_compare.json')
+E        +    where <function exists at 0x7f090dde7420> = <module 'posixpath' (frozen)>.exists
+E        +      where <module 'posixpath' (frozen)> = os.path
+E       AssertionError: no v2 pre-registration
+E       assert False
+E        +  where False = <function exists at 0x7f090dde7420>('/tmp/claude-1000/-home-dant123-Projects-sim/87891831-e642-4a2f-abeb-50ea0867609b/scratchpad/v1tree/research/findings/2026-09-23-pmem-live-cliff-detector-v2-PREREGISTRATION.md')
+E        +    where <function exists at 0x7f090dde7420> = <module 'posixpath' (frozen)>.exists
+E        +      where <module 'posixpath' (frozen)> = os.path
+E       AssertionError: the pool_queue.sh isolated-revision probe gap is not logged with its gate
+E       assert False
+E        +  where False = any(<generator object test_failure_log_records_the_pool_queue_isolated_revision_gap.<locals>.<genexpr> at 0x7f09066473d0>)
+SKIPPED [1] tests/test_pmem_live_cliff_detector.py:67: constants not frozen yet (calibration scans still running)
+FAILED tests/test_pmem_live_cliff_detector.py::test_reported_state_is_the_settled_iterate_not_the_running_best
+FAILED tests/test_pmem_live_cliff_detector.py::test_detector_constants_are_sourced_outside_every_evaluation_seed
+FAILED tests/test_pmem_live_cliff_detector.py::test_freeze_is_robust_to_a_cliff_in_the_calibration_scans
+FAILED tests/test_pmem_live_cliff_detector.py::test_permutation_null_separates_real_cliffs_from_chance_and_is_undefined_without_alarms
+FAILED tests/test_pmem_live_cliff_detector.py::test_gate_goes_only_when_everything_holds_and_can_fail
+FAILED tests/test_pmem_live_cliff_detector.py::test_default_off_byte_identity_is_asserted_in_data_against_a_pinned_sha
+FAILED tests/test_pmem_live_cliff_detector.py::test_v2_preregistration_has_an_amendment_log_and_matches_the_code
+FAILED tests/test_pmem_live_cliff_detector.py::test_failure_log_records_the_pool_queue_isolated_revision_gap
