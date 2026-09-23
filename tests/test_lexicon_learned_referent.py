@@ -52,9 +52,11 @@ def _clean_env(monkeypatch):
     monkeypatch.delenv("BRAIN_LEARNED_REFERENT_LESION", raising=False)
 
 
-def test_flag_default_off():
+def test_flag_default_off(monkeypatch):
+    monkeypatch.delenv("BRAIN_MULTIREF_ON_ABSTAIN", raising=False)
     assert D6.learned_referent_enabled() is False
     assert D6.learned_referent_lesioned() is False
+    assert D6.multiref_on_abstain_enabled() is False
 
 
 @pytest.mark.parametrize("s", SENTS)

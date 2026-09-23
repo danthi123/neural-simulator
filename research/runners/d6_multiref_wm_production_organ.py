@@ -184,6 +184,15 @@ def is_hold_query(text: str) -> bool:
     return bool(_HOLD_QUERY_RE.search(text or ""))
 
 
+def multiref_on_abstain_enabled() -> bool:
+    """`BRAIN_MULTIREF_ON_ABSTAIN` in {1,true,yes,on} -> the comprehension-abstain / role-repair early return in
+    `webapp/server.py` ALSO carries the multiref maintain result it already computed for this turn (the turn's
+    referents are loaded into the buffer either way; without this flag the repair payload drops the `multiref` key).
+    DEFAULT-OFF: unset -> the repair payload is byte-identical."""
+    v = os.environ.get("BRAIN_MULTIREF_ON_ABSTAIN")
+    return v is not None and v.strip().lower() in ("1", "true", "yes", "on")
+
+
 def learned_referent_enabled() -> bool:
     """`BRAIN_LEARNED_REFERENT_LEXICON` in {1,true,yes,on} -> extend the referent scope beyond the hand
     `_REFERENT_NOUNS` table to the corpus-learned open-vocab referent (noun-category) detector whose decision is a

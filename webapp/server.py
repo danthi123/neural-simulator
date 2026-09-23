@@ -5820,6 +5820,16 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
                     }
                     if repair_info is not None:      # BRAIN_REPAIR=0 -> key absent -> byte-identical bare abstain
                         payload["repair"] = repair_info
+                    # MULTIREF ON ABSTAIN (2026-09-23, default-OFF `BRAIN_MULTIREF_ON_ABSTAIN`): the multiref maintain
+                    # step above already LOADED this turn's referents into the buffer; this early return used to drop
+                    # its result, so a >=2-referent turn that the comprehension organ could not role-bind (e.g. "the
+                    # wolf watches the owl") never showed the buffer's decision. Unset -> key absent -> byte-identical.
+                    try:
+                        import research.runners.d6_multiref_wm_production_organ as _D6A
+                        if multiref_info is not None and _D6A.multiref_on_abstain_enabled():
+                            payload["multiref"] = multiref_info
+                    except Exception:
+                        pass
                     # >>> W5 AFFECTIVE ToM BEGIN (comprehension-repair early-return; additive, mergeable block) ──
                     # This abstain-class turn RETURNS here, before the main assembly sites — so an empathy trigger
                     # whose content words are OOV ("Sam's team lost") would otherwise bypass the empathic lead. The
