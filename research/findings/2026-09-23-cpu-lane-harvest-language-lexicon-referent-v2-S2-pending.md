@@ -14,10 +14,12 @@ mechanism: Hebbian(Oja)-learned feedforward frame->category synapses (all-to-all
 lane: language (D6 referent-lexicon competition, v2 spiking-Hebbian-frames)
 seeds: [42, 43, 44, 100, 101, 102]
 verdict: INCOMPLETE -- S2 (>=1000-seed-label permutation null, the last required v2 evidence gate) has NOT
-  landed. It is actively running on pool42 as of 2026-09-23 15:34 EDT (all 6 seeds in flight, started
-  12:03-13:37 EDT, 2-3.5h elapsed with no ETA available from the runner). No v2 GO/NO-GO verdict is given.
-  The other 7 gates (S1, S3a, S3b, S4, S5, S7, S8) HAVE landed and are read here directly from the committed
-  per-seed artifacts, with the re-review's corrections applied to how each is characterized.
+  landed, re-confirmed by `bash tools/pool_sync.sh` on this fix round (0 of 6 null_s*.json files pulled). It
+  is actively running: seed 42 on pool42, seeds 43/44/100/101/102 on pool41 (corrected node attribution --
+  an earlier version of this finding put all 6 on pool42), started 12:03-13:37 EDT, now 2.7-3.3h CPU time each
+  with no ETA available from the runner. No v2 GO/NO-GO verdict is given. The other 7 gates (S1, S3a, S3b, S4,
+  S5, S7, S8) HAVE landed and are read here directly from the committed per-seed artifacts, with the
+  re-review's corrections applied to how each is characterized.
 artifacts:
   - research/findings/raw/_lexicon_spiking_referent/main_s42.json
   - research/findings/raw/_lexicon_spiking_referent/main_s43.json
@@ -36,8 +38,10 @@ builds_on:
     (same branch)
   - re-review of that branch (verdict: fix-required; prior_issues_resolved: false -- 5 issues, honored below)
 next_command: "bash tools/pool_sync.sh   # then, once all 6 null_s*.json exist under
-  research/findings/raw/_lexicon_spiking_referent/: .venv/bin/python -m
-  research.runners._lexicon_spiking_referent_derisk --score research/findings/raw/_lexicon_spiking_referent"
+  research/findings/raw/_lexicon_spiking_referent/: on research/language-lane-next (HEAD 87bf35d1a or its
+  descendant -- the --score entrypoint and null-scoring path do not exist on main), run:
+  .venv/bin/python -m research.runners._lexicon_spiking_referent_derisk --score
+  research/findings/raw/_lexicon_spiking_referent"
 ---
 
 # Language CPU-lane harvest: v2 main gates read, S2 null still in flight
@@ -50,59 +54,102 @@ next_command: "bash tools/pool_sync.sh   # then, once all 6 null_s*.json exist u
 `research/findings/raw/_lexicon_spiking_referent/main_s101.json`,
 `research/findings/raw/_lexicon_spiking_referent/main_s102.json`.
 
-## Exact status of the pending gate (S2)
+## Exact status of the pending gate (S2) -- STILL NOT LANDED (re-checked this fix round)
 
-`ssh pool42 ps aux` (this session, 2026-09-23 15:34 EDT) shows all 6 seed-label permutation-null jobs still
-running as live processes, none finished:
+`bash tools/pool_sync.sh` (this fix round, 2026-09-23) pulled 1101 files pool-wide but **zero** `null_s*.json`
+files under `research/findings/raw/_lexicon_spiking_referent/` — the directory still holds only the six
+`main_s*.json` files. Per this task's explicit instruction, **S2 stays INCOMPLETE; no v2 GO/NO-GO is given.**
 
-| seed | PID | started | CPU time so far |
-|---|---|---|---|
-| 42  | 3345947 | 12:03 | 129m43s |
-| 43  | 3655934 | 13:25 | 91m14s |
-| 44  | 3656058 | 13:25 | 91m56s |
-| 100 | 3656623 | 13:25 | 91m46s |
-| 101 | 3656235 | 13:25 | 91m51s |
-| 102 | 3668159 | 13:37 | 82m07s |
+Re-checking the live processes directly (`ssh pool<N> ps aux`, this fix round) also **corrects an error in the
+node attribution** from the earlier version of this section, which claimed "all 6 are on `pool42`, none on
+`pool41`":
 
-`pool41` has none of these processes; all 6 are on `pool42`. The live queue
-(`/home/dant123/Projects/sim/research/queue/pool.queue`) is empty (already dispatched). No `null_s*.json`
-artifact exists anywhere in this worktree, on the lane branch, or (checked via the process list) has been
-written yet by these processes. **Per this harvest task's own instruction, no verdict is given for v2 as a
-whole.** Next action: `bash tools/pool_sync.sh` on a later pass to retrieve the six `null_s*.json` files once
-they land, then run the runner's own `--score` entrypoint (command above) — no re-run needed.
+| seed | PID | node | started | CPU time (this fix round's check) |
+|---|---|---|---|---|
+| 42  | 3345947 | **pool42** | 12:03 | 198m52s |
+| 43  | 3655934 | **pool41** (not pool42, per the correction below) | 13:25 | 169m56s |
+| 44  | 3656058 | **pool41** | 13:25 | 170m40s |
+| 100 | 3656623 | **pool41** | 13:25 | 171m19s |
+| 101 | 3656235 | **pool41** | 13:25 | 170m52s |
+| 102 | 3668159 | **pool41** | 13:37 | 161m17s |
 
-## The 7 landed gates, read directly from `main_s{42,43,44,100,101,102}.json`
+Only seed 42 is on `pool42`; the other five (43, 44, 100, 101, 102) are on `pool41` — the same PIDs and start
+times the earlier version of this section reported, just attributed to the wrong node (`pool41` was checked
+and reported as having none of these processes; it does). This is a correction to this finding's own prior
+`ps aux` read, not a new dispatch — no job was re-run, and the correction does not change the INCOMPLETE
+verdict. All 6 jobs are still live, none finished, 2.7–3.3 hours of CPU time each and climbing. The live queue
+(`/home/dant123/Projects/sim/research/queue/pool.queue`) is empty. **Next action unchanged:** `bash
+tools/pool_sync.sh` on a later pass to retrieve the six `null_s*.json` files once they land, then run the
+runner's own `--score` entrypoint (command in `next_command` above, on the lane branch) — no re-run needed.
 
-| seed | S1 bacc (intact) | S3a: bacc under learned-edge lesion | S3b: decided-only bacc under lesion | S4: loser/winner rise | S5: Spearman(drive,rate) | bacc under competition lesion | decided-bacc under competition lesion |
-|---|---|---|---|---|---|---|---|
-| 42  | 0.7876 | 0.3316 | 0.4960 | 0.2827 | 0.9825 | 0.7799 | 0.8463 |
-| 43  | 0.8244 | 0.1365 | 0.4468 | 0.3160 | 0.9753 | 0.7920 | 0.8678 |
-| 44  | 0.7566 | 0.2427 | 0.4962 | 0.2594 | 0.9803 | 0.7403 | 0.7981 |
-| 100 | 0.7665 | 0.1024 | 0.3879 | 0.3028 | 0.9826 | 0.7383 | 0.8072 |
-| 101 | 0.8133 | 0.1184 | 0.5664 | 0.2657 | 0.9731 | 0.7966 | 0.8341 |
-| 102 | 0.7939 | 0.1619 | 0.5254 | 0.3232 | 0.9745 | 0.7839 | 0.8610 |
-| **mean** | **0.7904** | **0.1822** | **0.4865** | min **0.2594** | min **0.9731** | **0.7718** | **0.8358** |
-| gate | mean≥0.75, min≥0.70 | mean≤0.55, drop≥0.20 | ≤0.60 | every seed ≥0.25 | every seed ≥0.50 | (not gated) | (not gated) |
-| result | **PASS** (min 0.7566) | **PASS** (drop 0.6081) | **PASS** | **PASS** (narrowly, 0.2594) | **PASS** | see below | see below |
+## S1, S3a, S3b, S4, S5 and the competition-lesion readouts, read directly from `main_s{...}.json`
 
-S1, S3a, S3b, S5 pass cleanly on independent re-computation from the raw per-seed fields. S4 clears its
-threshold narrowly (min rise 0.2594 against a 0.25 bar, calibrated on a dev rise of 0.313) — every seed
-passes, but with little margin.
+S7 has its own table below the S3a/S4 discussion — it was already landed and already counted in this
+finding's "seven of eight" bottom line, but the earlier version of this finding never showed its numbers.
+
+| seed | S1 bacc (intact) | S3a: bacc under learned-edge lesion | S3a drop (bacc_spiking − bacc_learned_edge) | S3b: decided-only bacc under lesion | S4: loser/winner rise | S5: Spearman(drive,rate) | bacc under competition lesion | decided-bacc under competition lesion |
+|---|---|---|---|---|---|---|---|---|
+| 42  | 0.7876 | 0.3316 | 0.4561 | 0.4960 | 0.2827 | 0.9825 | 0.7799 | 0.8463 |
+| 43  | 0.8244 | 0.1365 | 0.6880 | 0.4468 | 0.3160 | 0.9753 | 0.7920 | 0.8678 |
+| 44  | 0.7566 | 0.2427 | 0.5138 | 0.4962 | 0.2594 | 0.9803 | 0.7403 | 0.7981 |
+| 100 | 0.7665 | 0.1024 | 0.6641 | 0.3879 | 0.3028 | 0.9826 | 0.7383 | 0.8072 |
+| 101 | 0.8133 | 0.1184 | 0.6948 | 0.5664 | 0.2657 | 0.9731 | 0.7966 | 0.8341 |
+| 102 | 0.7939 | 0.1619 | 0.6320 | 0.5254 | 0.3232 | 0.9745 | 0.7839 | 0.8610 |
+| **mean** | **0.7904** | **0.1822** | **0.6081** | **0.4865** | min **0.2594** | min **0.9731** | **0.7718** | **0.8358** |
+| gate | mean≥0.75, min≥0.70 | mean≤0.55, **min drop≥0.20** | (this is the gated column) | ≤0.60 | every seed ≥0.25 | every seed ≥0.50 | (not gated) | (not gated) |
+| result | **PASS** (min 0.7566) | **PASS** (lesioned mean 0.1822 ≤ 0.55) | **PASS on the gated quantity: min drop = 0.4561** (seed 42), well above the 0.20 bar — the mean drop of 0.6081 shown above is NOT what S3a gates on and is reported here only as descriptive context | **PASS** | **PASS** (narrowly, 0.2594) | **PASS** | see below | see below |
+
+S1, S3a, S3b, S5 pass cleanly on independent re-computation from the raw per-seed fields; **the S3a pass is
+on the pre-registered gated quantity, `S3a_drop_min = min_seed(bacc_spiking − bacc_learned_edge) = 0.4561`
+(seed 42), not the mean drop of 0.6081** (an earlier version of this table reported the mean against the
+gate, which is the wrong quantity — the pre-registered scorer (`_lexicon_spiking_referent_derisk.py:309-310`)
+gates on the per-seed minimum). S4 clears its threshold narrowly (min rise 0.2594 against a 0.25 bar,
+calibrated on a dev rise of 0.313) — every seed passes, but with little margin.
+
+## S7 (organ-level, reply-level capability probe), read directly from `main_s{...}.json` → `per_seed[0].organ`
+
+| seed | learned recover (both referents) | lesion recover | FP in-scope rate | hand-table baseline in-scope |
+|---|---|---|---|---|
+| 42  | 0.7500 | 0.0 | **0.3333** | 0.0 |
+| 43  | 0.8333 | 0.0 | 0.0 | 0.0 |
+| 44  | 0.6667 | 0.0 | 0.0 | 0.0 |
+| 100 | 0.6667 | 0.0 | 0.1667 | 0.0 |
+| 101 | 0.8333 | 0.0 | 0.0833 | 0.0 |
+| 102 | 0.8333 | 0.0 | 0.0 | 0.0 |
+| **mean** | **0.7639** | **0.0** | **0.0972** | **0.0** |
+| gate | mean ≥ 0.60 | mean ≤ 0.20 | mean ≤ 0.20 | mean ≤ 0.10 |
+| result | **PASS** | **PASS** | **PASS** (mean) | **PASS** |
+
+S7 landed and passes on every mean-gated quantity, independently recomputed from `organ.{learned_recover_rate,
+lesion_recover_rate, fp_in_scope_rate, hand_in_scope_rate}` across all 6 seeds — this table was previously
+missing from the finding even though the bottom line already counted S7 among the "seven of eight" landed-or-pending
+gates. **Seed 42's own `fp_in_scope_rate` is 0.3333, above the 0.20 per-arm bar** — the gate is defined as a
+mean over seeds, so this does not flip the S7 verdict, but it is a real per-seed exceedance that the mean
+hides and is recorded here rather than silently averaged away.
 
 ## Applying the re-review's corrections (all 5, honored)
 
 **1. The competition does NOT carry the decision — credit the learned synapses only.** This is the central
 correction and it is directly visible in the table above: zeroing the FSI cross-inhibition (the
 "competition lesion" columns) leaves intact-vs-lesioned balanced accuracy **almost unchanged**
-(mean 0.7904 → 0.7718, Δ = **−0.0186**), and accuracy on the words the circuit still decides on actually
-**increases** under the lesion (0.8358 vs. 0.7904 intact). If the reciprocal inhibition were deciding the
-category, removing it should collapse accuracy toward chance; instead it barely moves and, if anything, the
-circuit decides *more* words correctly when the competition is gone. **The decision is carried by the
-Hebbian-learned feedforward frame→category synapses and a host comparison of the resulting pool rates,
-not by the lateral-inhibition WTA.** Any description of this mechanism as "a coupled spiking WTA decides
-the category" is an overclaim; the corrected description is: *Hebbian-learned feedforward drive into two
-spiking pools, host rate-comparator decision; lateral inhibition present, wired, and measurably effective on
-the loser pool's own rate (S4), but not decision-bearing.*
+(mean 0.7904 → 0.7718, Δ = **−0.0186**). **Correction (this comparison, not the −0.0186 headline, was wrong
+in an earlier version of this finding):** 0.7904 (`bacc_spiking`, intact) and 0.8358 (`decided_bacc_competition`,
+under the lesion) are not the same quantity — 0.7904 counts every abstention as wrong (runner docstring,
+`_lexicon_spiking_referent_derisk.py`), while 0.8358 is scored only over the words the lesioned circuit
+actually decided on (decided-only). The artifacts do not record an intact decided-only balanced accuracy
+directly; dividing out each seed's own intact abstain rate (`bacc_spiking / (1 − abstain)`, 3.0–6.75%
+abstention) gives an **approximate** intact decided-only accuracy of ≈0.79–0.86 per seed (mean ≈0.828),
+essentially the same as the lesion's decided-only mean of 0.8358. **The honest reading is that decided-only
+accuracy is approximately unchanged under the competition lesion, not that it "rises" or that the circuit
+"decides more words correctly" when the competition is removed** — those claims compared the wrong quantities
+and are withdrawn. The quantity that does support the correction, and is computed like-for-like, is the
+overall (abstention-counted) balanced accuracy: mean 0.7904 → 0.7718, Δ = −0.0186, i.e. removing the lateral
+inhibition costs almost nothing in overall accuracy. **The decision is carried by the Hebbian-learned
+feedforward frame→category synapses and a host comparison of the resulting pool rates, not by the
+lateral-inhibition WTA.** Any description of this mechanism as "a coupled spiking WTA decides the category"
+is an overclaim; the corrected description is: *Hebbian-learned feedforward drive into two spiking pools, host
+rate-comparator decision; lateral inhibition present, wired, and measurably effective on the loser pool's own
+rate (S4), but not decision-bearing.*
 
 **2. S4 is reclassified accordingly.** S4 (loser/winner ratio rise under the competition lesion) shows only
 that the inhibitory synapse exists and does something to the *loser's* rate — it says nothing about whether

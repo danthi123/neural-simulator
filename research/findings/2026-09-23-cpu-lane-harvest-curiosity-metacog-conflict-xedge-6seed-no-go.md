@@ -121,7 +121,9 @@ unfixed on the lane branch's scorer, but it did not affect this verdict.
 **NO-GO**, under both the runner's own scoring and the re-review's corrected evidence-only scoring. The
 mechanism is a real, wired, spiking cross-edge with no by-construction confound on its non-integrity gates,
 but it fails held-out generalization on 2 of 5 truly held-out seeds (44 on monotonicity, 100 on the
-class-swap direction check), and even where it passes, the synaptic drive alone (3–6 Hz peak ASK) sits an
-order of magnitude below production's own 19–24 Hz curious threshold. Per `docs/TERMS.md`, this is reported as
+class-swap direction check), and even where it passes, the synaptic drive alone (1.7–6.5 Hz peak ASK) sits
+**3x to 14x below** production's own 19–24 Hz curious threshold (per-seed ratio range, from the S1 table
+above: seed 101 is the widest gap at ~14x, seed 100 the narrowest at ~3x) — not uniformly "an order of
+magnitude," as an earlier version of this finding said. Per `docs/TERMS.md`, this is reported as
 NO-GO, not "partial" or "characterized limit" — the gate's own verdict is negative and that verdict is
 reported as-is.

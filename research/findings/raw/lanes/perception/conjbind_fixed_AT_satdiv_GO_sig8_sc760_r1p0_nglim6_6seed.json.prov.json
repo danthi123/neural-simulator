@@ -1,5 +1,5 @@
 {
- "run_id": "1790171996-3244110",
+ "run_id": "1790169928-3439243",
  "runner": "research/runners/_vision_lindiscrim_readout_derisk.py",
  "argv": [
   "/home/node/derisk-pool/revisions/f10e13f33b57bf41c1dc11ab75ace3f7ae47ac87/research/runners/_vision_lindiscrim_readout_derisk.py",
@@ -15,15 +15,6 @@
   "1.0",
   "--n-glimpses",
   "6",
-  "--heldout-position",
-  "--scramble-null",
-  "--seeds",
-  "42",
-  "43",
-  "44",
-  "100",
-  "101",
-  "102",
   "--n-s2",
   "96",
   "--conj-bind",
@@ -34,6 +25,15 @@
   "1152",
   "--conj-offset-max",
   "4",
+  "--heldout-position",
+  "--scramble-null",
+  "--seeds",
+  "42",
+  "43",
+  "44",
+  "100",
+  "101",
+  "102",
   "--out",
   "research/findings/raw/lanes/perception/conjbind_fixed_AT_satdiv_GO_sig8_sc760_r1p0_nglim6_6seed.json"
  ],
@@ -45,7 +45,7 @@
  "source_manifest_start_error": null,
  "source_manifest_verified_at_exit": true,
  "source_manifest_exit_error": null,
- "started": "2026-09-23T09:59:56",
+ "started": "2026-09-23T09:25:28",
  "env": {
   "SIM_BACKEND": "numpy"
  },
