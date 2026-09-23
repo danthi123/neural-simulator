@@ -1,0 +1,10 @@
+[Unit]
+Description=Run the AWS budget guard every 10 min (owner-approved 2026-09-23: on-demand AWS instances capped at AWS_DAILY_CAP_USD/day, enforced by tooling not memory)
+
+[Timer]
+OnBootSec=5min
+OnUnitActiveSec=10min
+Persistent=true
+
+[Install]
+WantedBy=timers.target

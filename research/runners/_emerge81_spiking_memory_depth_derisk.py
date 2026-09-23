@@ -119,10 +119,15 @@ def _derisk(seeds):
         # within its depth, does the spiking LSM beat the +-2 window (which is blind at all distances)?
         beats_window_in_range = all(agg[d]["spiking_lsm"] - agg[d]["window2"] >= 0.30
                                     for d in _TEST_DISTS if d <= max(depth, 0))
+        # Built OUTSIDE the f-string on purpose (Python <3.12 syntax error): a nested f-string cannot reuse its
+        # own quote character in an inner subscript (`f'...{agg[d]['spiking_lsm']}...'`), which is exactly what
+        # this profile string did -- it collected under Python 3.14 (PEP 701 relaxed the rule) but failed
+        # collection under the project's pinned 3.11 venv. Same string content, just assembled first.
+        _profile_str = ", ".join("d%s=%.2f" % (d, agg[d]["spiking_lsm"]) for d in _TEST_DISTS)
         verdict = (
             f"CHARACTERIZATION -- the SPIKING Izhikevich liquid-state machine (EMERGE-80) holds a real-discovered 1-bit "
             f"distal cue to a fading-memory DEPTH of {'>= ' + str(depth) + ' fillers (held across the whole reduced sweep)' if held_full else '~' + str(depth) + ' fillers (falls below 0.75 beyond that)'} "
-            f"(profile: {', '.join(f'd{d}={agg[d]['spiking_lsm']:.2f}' for d in _TEST_DISTS)}); the fixed +-2 window is at "
+            f"(profile: {_profile_str}); the fixed +-2 window is at "
             f"chance throughout, so WITHIN its depth the spiking pool beats every fixed window (uncontingent necessity in "
             f"range = {beats_window_in_range}). MARK-LESION collapses the role to {lesion:.2f} (genuinely mark-determined). "
             f"marks discovered = {marks_ok}. Reference: the RATE tanh reservoir (EMERGE-79) held it >= 28 fillers; a "
