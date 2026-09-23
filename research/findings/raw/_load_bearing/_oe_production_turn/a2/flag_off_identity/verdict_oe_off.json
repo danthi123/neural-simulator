@@ -1,6 +1,8 @@
 {
- "verdict": "IDENTICAL",
- "verdict_raw_including_wallclock": "DIFFERENT",
+ "verdict": "DIFFERENT",
+ "verdict_preregistered_raw": "DIFFERENT",
+ "verdict_content_wallclock_stripped_POSTHOC": "IDENTICAL",
+ "headline": "DIFFERENT raw (pre-registered criterion) -- FAILED at .body.open_ended.gen_seconds; content IDENTICAL with wall-clock keys ['gen_seconds'] stripped (post-hoc exclusion, added after the raw compare was seen)",
  "wallclock_keys_excluded": [
   "gen_seconds"
  ],

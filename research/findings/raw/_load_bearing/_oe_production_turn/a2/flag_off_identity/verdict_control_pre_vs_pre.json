@@ -1,6 +1,8 @@
 {
  "verdict": "IDENTICAL",
- "verdict_raw_including_wallclock": "IDENTICAL",
+ "verdict_preregistered_raw": "IDENTICAL",
+ "verdict_content_wallclock_stripped_POSTHOC": "IDENTICAL",
+ "headline": "IDENTICAL raw (pre-registered criterion); content IDENTICAL with wall-clock keys ['gen_seconds'] stripped (post-hoc exclusion, added after the raw compare was seen)",
  "wallclock_keys_excluded": [
   "gen_seconds"
  ],
