@@ -95,12 +95,25 @@ def data_run(tree, out_dir, seed):
     return rep["per_faculty"][0], {f: _sha(os.path.join(out_dir, f)) for f in arms}
 
 
+def hash_dir(out_dir):
+    """Hash an already-produced flag-off run directory (e.g. pulled back from the pool, where each tree ran in its
+    own isolated revision dir). Same fields as data_run's return."""
+    rep = json.load(open(os.path.join(out_dir, "lb.json")))
+    arms = sorted(f for f in os.listdir(out_dir)
+                  if (f.startswith("intact_") or f.startswith("lesion_")) and not f.endswith(".prov.json"))
+    return rep["per_faculty"][0], {f: _sha(os.path.join(out_dir, f)) for f in arms}
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--pinned", default="f35196e66")
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--scratch", required=True, help="scratch dir for the pinned tree + its outputs")
     ap.add_argument("--out", required=True)
+    ap.add_argument("--pinned-data-dir", default=None,
+                    help="use an already-produced flag-off run of the PINNED tree (lb.json + arm files) instead of "
+                         "running it here (e.g. run on a pool node in `pool_provision.sh --isolated` revision dirs)")
+    ap.add_argument("--branch-data-dir", default=None, help="the same, for the branch tree")
     ap.add_argument("--sensitivity-from", default=None,
                     help="an LB_SWAP_DRIVE_PROBE=1 lb.json from the branch tree (the smoke) for the sensitivity check")
     a = ap.parse_args()
@@ -120,8 +133,14 @@ def main():
     res["static_identical"] = all(res["static"].values())
 
     # (B) data
-    pin_row, pin_sha = data_run(pinned_tree, os.path.join(a.scratch, "pinned_out"), a.seed)
-    br_row, br_sha = data_run(branch_tree, os.path.join(a.scratch, "branch_out"), a.seed)
+    if a.pinned_data_dir and a.branch_data_dir:
+        pin_row, pin_sha = hash_dir(a.pinned_data_dir)
+        br_row, br_sha = hash_dir(a.branch_data_dir)
+        res["data_source"] = {"pinned": a.pinned_data_dir, "branch": a.branch_data_dir}
+    else:
+        pin_row, pin_sha = data_run(pinned_tree, os.path.join(a.scratch, "pinned_out"), a.seed)
+        br_row, br_sha = data_run(branch_tree, os.path.join(a.scratch, "branch_out"), a.seed)
+        res["data_source"] = "run-here"
     res["data"] = {"pinned_arm_sha256": pin_sha, "branch_arm_sha256": br_sha,
                    "arm_files_identical": (pin_sha == br_sha and len(pin_sha) >= 4),
                    "per_faculty_identical": pin_row == br_row,

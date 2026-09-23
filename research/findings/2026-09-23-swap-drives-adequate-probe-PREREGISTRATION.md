@@ -127,4 +127,18 @@ Smoke (1 seed, local, one at a time):
 
 ## Amendment log
 
-(none)
+**A1, 2026-09-23 ~19:25, instrument crash fix. The gate is unchanged.**
+- **What broke.** The s42 smoke on pool41 at `4d203f584` built all four arms, then crashed in `_score_swap_drive`
+  with `NameError: _get_path`. The helper was never imported from the battery module. The pure-scorer selftests
+  did not reach that function.
+- **What was seen before the fix.** I read the s42 arm files: intact_a, intact_b and the first lesion arm.
+  - Intact `sw_switch`: swapped=True, `topic_change_swap`, and the answer carried "On cat, then — ".
+  - Lesion `sw_switch`: swapped=False, `mismatch_held_no_swap`, no lead.
+  - `sw_open` and `sw_hold` read the same fields in both arms.
+- **What changed.** Only the missing import, plus a selftest that runs `_score_swap_drive` end to end on synthetic
+  arms. The rules in `_swap_drive_score`, the fields, the turns and the seeds are unchanged.
+- **Consequence for staging.** The six pool jobs staged at `4d203f584` were withdrawn from the queue before any was
+  dispatched. They are restaged at the fixed revision, merged with origin/main as provisioning requires.
+- **The s42 smoke** is scored by re-running the fixed scorer over the already-built s42 arm files
+  (`LB_RESUME_SKIP_EXISTING=1`, which loads an existing arm instead of rebuilding it). The six-seed run rebuilds
+  every arm from scratch, s42 included.

@@ -150,6 +150,7 @@ from research.runners.onebrain_regression_battery import (
     _TURN_BY_LABEL,
     FACULTY_PROBES,
     _spawn_arm as _spawn_arm_raw,
+    _get_path,
     compare,
     faculty_list,
 )
@@ -428,6 +429,24 @@ def _swap_probe_topics_static():
     for lab in ("held",) + _SWAP_DRIVE_CONTRAST_TURNS + (_SWAP_DRIVE_TURN,):
         out[lab] = _GTS._extract_topic(_TURN_BY_LABEL[lab][1], _StubComposer())
     return out
+
+
+def _swap_score_synthetic(nonspecific=False):
+    """Run the FULL _score_swap_drive path (not just the pure scorer) on synthetic arms -- added after the s42 smoke
+    crashed in _score_swap_drive on an unimported helper that the pure-scorer selftests never reached. Returns
+    (load_bearing, verdict)."""
+    def turn(swapped, reason, lead, ans):
+        return {"answer": lead + ans, "swap_drives": {"swapped": swapped, "reason": reason, "lead": lead}}
+    intact = {"sw_open": turn(False, "first_thought", "", "a"), "sw_hold": turn(False, "same_topic_hold", "", "a"),
+              "sw_switch": turn(True, "topic_change_swap", "On cat, then — ", "b")}
+    lesion = {"sw_open": turn(False, "first_thought", "", "a"),
+              "sw_hold": turn(False, "same_topic_hold", "", "a" + ("!" if nonspecific else "")),
+              "sw_switch": turn(False, "mismatch_held_no_swap", "", "b")}
+    row = ("swap-drives-response", _SWAP_DRIVE_TURN, list(_SWAP_DRIVE_FIELDS), False)
+    treat_pf = compare(intact, lesion, faculties=[row])["per_faculty"][0]
+    res = {"null_control_clean": True, "verdict": treat_pf["verdict"], "load_bearing": True}
+    _score_swap_drive(res, row, treat_pf, intact, dict(intact), lesion, True)
+    return res["load_bearing"], res["verdict"]
 
 
 def _swap_drive_score(treat_verdict, treat_diffs, null_clean, reproduced, contrast_diffs, contrast_exercised):
@@ -1466,6 +1485,10 @@ def selftest(out_path=None):
             _swap_drive_score("pass", [], True, True, [], True) == (False, "pass"),
         "swap-score: fields absent both arms -> not-exercised":
             _swap_drive_score("not-exercised", [], True, True, [], False) == (None, "not-exercised"),
+        "swap-score FULL PATH (_score_swap_drive on synthetic arms): swap + clean contrast -> load-bearing":
+            _swap_score_synthetic(nonspecific=False) == (True, "regressed"),
+        "swap-score FULL PATH: lesion alters the hold turn -> nonspecific-lesion":
+            _swap_score_synthetic(nonspecific=True) == (None, "nonspecific-lesion"),
         "swap-score: unreproduced lesion -> noisy":
             _swap_drive_score("regressed", [{"field": "answer"}], True, False, [], True) == (None, "noisy"),
         "every FACULTY_LESIONS key is a real battery faculty":
