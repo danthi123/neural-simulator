@@ -1,0 +1,75 @@
+{
+  "seed": 43,
+  "sweep": [
+    {
+      "appraisal": -1.0,
+      "differential": -0.07833333333333334,
+      "pos_rate": 0.0,
+      "neg_rate": 0.07833333333333334,
+      "tone_level": -3
+    },
+    {
+      "appraisal": -0.75,
+      "differential": -0.06194444444444445,
+      "pos_rate": 0.0,
+      "neg_rate": 0.06194444444444445,
+      "tone_level": -3
+    },
+    {
+      "appraisal": -0.475,
+      "differential": -0.021388888888888888,
+      "pos_rate": 0.0,
+      "neg_rate": 0.021388888888888888,
+      "tone_level": 0
+    },
+    {
+      "appraisal": -0.25,
+      "differential": 0.0,
+      "pos_rate": 0.0,
+      "neg_rate": 0.0,
+      "tone_level": 0
+    },
+    {
+      "appraisal": 0.0,
+      "differential": 0.0,
+      "pos_rate": 0.0,
+      "neg_rate": 0.0,
+      "tone_level": 0
+    },
+    {
+      "appraisal": 0.25,
+      "differential": 0.0,
+      "pos_rate": 0.0,
+      "neg_rate": 0.0,
+      "tone_level": 0
+    },
+    {
+      "appraisal": 0.475,
+      "differential": 0.03777777777777778,
+      "pos_rate": 0.03777777777777778,
+      "neg_rate": 0.0,
+      "tone_level": 2
+    },
+    {
+      "appraisal": 0.75,
+      "differential": 0.07027777777777777,
+      "pos_rate": 0.07027777777777777,
+      "neg_rate": 0.0,
+      "tone_level": 3
+    },
+    {
+      "appraisal": 1.0,
+      "differential": 0.08555555555555555,
+      "pos_rate": 0.08555555555555555,
+      "neg_rate": 0.0,
+      "tone_level": 3
+    }
+  ],
+  "full_scale_pos_diff": 0.08555555555555555,
+  "full_scale_neg_diff": -0.07833333333333334,
+  "full_scale_diff_mean": 0.08194444444444444,
+  "valence_fs": 0.3277777777777778,
+  "appraisal_interoceptive": true,
+  "backend": "numpy",
+  "wall_seconds": 4.7
+}
