@@ -1195,9 +1195,13 @@ surprising-vs-expected conversation read as 24 h recall. v1 (D=64) 6-seed = UNDE
 immediate-recall precondition: low-gain writes misread, with confabulations, once a synaptic baseline exists), while
 every 24 h comparison went the predicted way on all 6 seeds. v2 at the production D=128 = 6/6 GO at RUNNER LEVEL
 (salient facts recalled next day 4/4, DA->encoding lesion 0/4, neutral 0/4, capture-only lesion 0/4, companion off
-4/4; no confabulation at the primary point). NOT wired: the battery still reads da-gated-encoding hollow. NEXT: wire
-the ledger into the live chat store + a battery "next day" probe pair; add repetition/sleep-replay routes to L-LTP
-before any default flip; verify-go the v2 result.
+4/4; no confabulation at the primary point). Review: v2's 24 h outcome was set by a HOST compare-and-decay rule
+(declared; not credited to the brain), its band could not fail, and its arms were run-order dependent. v3 (prereg
+014298f62): DA acts through synapses (spiking D1 pool -> PRP pool -> per-synapse tag + bistable late-phase state, no
+compare on the DA trace), fresh process per arm, a capture band that can fail = 6/6 GO at RUNNER LEVEL, seed sign-flip
+p = 1/64; margins wide (neutral flips only at gamma x3.2 on seed 42). NOT wired: the battery still reads
+da-gated-encoding hollow. NEXT: verify-go v3; wire the ledger + a battery "next day" probe pair; a harder neutral drive;
+add repetition/sleep-replay routes to L-LTP before any default flip.
 
 **2026-09-18 (STRATEGIC — owner decision + scaling go/no-go; supersedes the raw-scale framing below):**
 - **Faithfulness-vs-tractability relaxation APPROVED (owner), honesty-conditioned** — trade bit-exact realism ONLY for a significant perf gain that loses nothing important to end-goal capabilities, and document every trade; biology-strong stays core; invariants kept (brain-based / one-brain / emergent / honesty). See memory `project_agi_first_fork_openness_2026_09_06`.
