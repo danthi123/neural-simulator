@@ -37,6 +37,13 @@ IID=$(aws ec2 run-instances --region $REGION --image-id $AMI --instance-type $TY
   --query 'Instances[0].InstanceId' --output text)
 
 # RECORD DURABLY, immediately (before anything can interrupt) — this is the anti-leak anchor.
+# A refused launch (e.g. VcpuLimitExceeded: the account's 32-vCPU quota = two r7i.4xlarge) returns an EMPTY id; the
+# script used to record it, wait on "", and leave the SG orphaned (2026-09-23). Stop and clean up instead.
+if [ -z "$IID" ] || [ "$IID" = "None" ]; then
+  echo "⛔ aws_cpu_launch: run-instances returned no instance id (quota/capacity?) — deleting SG $SG and aborting" >&2
+  aws ec2 delete-security-group --group-id "$SG" --region $REGION >/dev/null 2>&1 || true
+  exit 1
+fi
 { echo "# LIVE CPU verify-batch instance launched $(date '+%F %T %Z') — TERMINATE when done: tools/aws_gpu.sh terminate"
   echo "# then delete SG: aws ec2 delete-security-group --group-id $SG --region $REGION"
   echo "instance=$IID"; echo "region=$REGION"; echo "key=$KEY"; echo "sg=$SG"; } > "$STATE"
