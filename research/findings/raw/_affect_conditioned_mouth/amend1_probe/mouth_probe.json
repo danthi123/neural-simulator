@@ -1,0 +1,40 @@
+{
+ "what": "AMENDMENT 1 pre-flight mouth probe (Qwen only, production lesion-style prompt, c == 0)",
+ "device": "cuda:0",
+ "seeds": [
+  42,
+  43,
+  44
+ ],
+ "prompts": [
+  "Tell me about the ocean",
+  "What do you think about music"
+ ],
+ "max_new_tokens": 60,
+ "n_distinct_realizations": 3,
+ "decode_seed_replicates_mouth": true,
+ "reply_sha": {
+  "42": "d69c3826a8da3080",
+  "43": "69ebf028eb5423bc",
+  "44": "11e53f6c28c99fe7"
+ },
+ "replies": {
+  "42": [
+   "The ocean is vast and mysterious, a vast expanse where countless creatures call it home. It's a place where life thrives on the currents and waves, where storms dance in the sea and calm waters whisper secrets. The ocean stretches endlessly, stretching out like a giant blue tapestry, its surface",
+   "As an AI language model, I don't have personal opinions or emotions like humans do. However, I can provide information based on my training data. Music has been around for thousands of years and continues to evolve with new technologies. It's a universal language that transcends cultural boundaries, allowing people from"
+  ],
+  "43": [
+   "The ocean is vast and mysterious, a place where life thrives in its constant movement and change. It's home to countless species, from tiny plankton to towering whales. The ocean covers approximately 71% of Earth's surface, making it one of the largest bodies of water on our planet",
+   "Music has been a universal language for centuries, connecting people across cultures and generations. It's a form of expression that allows us to express our emotions, thoughts, and experiences through sound. From classical pieces to contemporary hits, there's something for everyone to enjoy. Music can evoke memories, create atmospheres"
+  ],
+  "44": [
+   "Oh, the ocean! A vast expanse of blue and green, stretching out over endless expanses of water. It's like a giant canvas painted by nature, with waves crashing against the shore and currents swirling around the edges. The ocean has been a source of inspiration for poets, artists, and",
+   "Music has been a universal language for thousands of years, transcending cultures and languages. It's a form of expression that can evoke emotions, convey stories, and create a sense of connection among people around the world. From classical symphonies to contemporary pop songs, music offers a rich tapestry of"
+  ]
+ },
+ "axis_sha_first": "dfaf3519b40ec49d723a2e2b1f428cfba298e1cab4a467938b50af97039263b1",
+ "axis_sha_recomputed_after_decodes": "dfaf3519b40ec49d723a2e2b1f428cfba298e1cab4a467938b50af97039263b1",
+ "axis_deterministic": true,
+ "decode_unperturbed_by_axis": true,
+ "wall_seconds": 17.7
+}
