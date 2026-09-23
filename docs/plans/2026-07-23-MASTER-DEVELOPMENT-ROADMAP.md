@@ -1188,6 +1188,11 @@ Perception/attention/WM, affect, curiosity, self/workspace/ToM, and language are
 
 ## 8. IMMEDIATE NEXT ACTIONS
 
+**2026-09-23 (prospective-memory operating point, branch `research/pmem-live-cliff-detector`):**
+- **The v1 live cliff detector returned UNDEFINED and was rejected in review.** Its read-out was an arg-max of the evaluation metric, its constants were fit on the evaluation seeds, and it had no held-out seeds and no null. Artifact: `research/findings/raw/_pmem_live_cliff_detector.json`.
+- **The v2 redesign is pre-registered** (`research/findings/2026-09-23-pmem-live-cliff-detector-v2-PREREGISTRATION.md`). It reports the controller's settled state, freezes a CUSUM from calibration seeds 7-12, evaluates on held-out seeds 200-205 with a seed-unit permutation null, and exact-compares the organ against a pinned SHA.
+- The controller is declared a host shortcut. If v2 is NO-GO on the held-out seeds, the named next method moves the regulator onto the substrate: activity-driven scaling of the facilitation gain.
+
 **2026-09-18 (STRATEGIC — owner decision + scaling go/no-go; supersedes the raw-scale framing below):**
 - **Faithfulness-vs-tractability relaxation APPROVED (owner), honesty-conditioned** — trade bit-exact realism ONLY for a significant perf gain that loses nothing important to end-goal capabilities, and document every trade; biology-strong stays core; invariants kept (brain-based / one-brain / emergent / honesty). See memory `project_agi_first_fork_openness_2026_09_06`.
 - **SCALING GO/NO-GO = do NOT buy hardware yet** (finding `2026-09-18-scaling-go-no-go-raw-scale-falsified-lever-is-data-do-not-buy-hardware-yet.md`; 10-agent adversarially-verified workflow). RAW param/GPU scale is FALSIFIED as the fluency lever on the broad domain (token-supply capacity-saturated; the realistic large-token analog REGRESSED); the lever is DATA (token-throughput + curation atop a modest capacity floor), owner's skepticism vindicated. The mouth (neural-render) IS the keystone (~half the blocked rows) but the lever there is data, not a bigger GPU.

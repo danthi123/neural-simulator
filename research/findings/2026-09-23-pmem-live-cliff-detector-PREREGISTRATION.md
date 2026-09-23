@@ -1,6 +1,6 @@
 ---
 type: preregistration
-status: locked-not-executed
+status: superseded
 date: 2026-09-23
 mechanism: pmem-live-cliff-detector
 lane: load-bearing
@@ -9,6 +9,10 @@ promotion_value: none
 ---
 
 # Prospective-memory LIVE per-seed cliff detector: design locked before the run
+
+> **SUPERSEDED (2026-09-23 fix round).** This design was executed (`research/findings/raw/_pmem_live_cliff_detector.json`, verdict UNDEFINED; the discrimination anti-cheat failed).
+> Adversarial review rejected it: the read-out was an arg-max, the constants were fit in-sample, and it had no held-out seeds and no null.
+> The locked replacement is `2026-09-23-pmem-live-cliff-detector-v2-PREREGISTRATION.md`.
 
 **Status: implementation-ready, no 6-seed run executed yet.** This document freezes the mechanism, the
 constants and the GO/NO-GO gate BEFORE `research/runners/_pmem_live_cliff_detector_derisk.py --derisk` is run,
