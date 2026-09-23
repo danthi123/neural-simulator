@@ -153,7 +153,7 @@ def test_fresh_waiver_does_not_count_itself_against_its_own_budget():
         v = wh.evaluate("g", p, waiver_max_h=6, now_ts=100.0, budget_h=6.0, history_file=hist)
         assert v["ok"], ("OFF-BY-ONE STILL PRESENT: the first-ever waiver counted its own just-recorded row "
                           "against its own budget and rejected itself (budget_h=%r)" % v.get("budget_h"))
-        assert v["budget_h"] == 0.0     # fix round 3: charged live time, 0h at the instant it was written
+        assert v["budget_h"] == 1.0     # fix round 4: MIN_EPISODE_CHARGE_H -- a live episode costs >= 1h
 
 
 # ── 2026-09-23 REVIEW FIX (rationalisation vocabulary under EVERY class, not just free prose) ─────────────────
@@ -338,7 +338,7 @@ def test_parallel_audit_waiver_surfacing_shares_the_gates_own_dedup_key():
         import json
         rows = [json.loads(l) for l in open(hist).read().splitlines() if l.strip()]
         assert len(rows) == 1, "one unchanged waiver read 3x within a minute must be ONE history row"
-        assert wh.cumulative_waived_hours(now_ts=102.0, history_file=hist) == 0.0
+        assert wh.cumulative_waived_hours(now_ts=102.0, history_file=hist) == 1.0   # ONE episode x 1h minimum
 
 
 # ══ FIX ROUND 3 (2026-09-23): adversarial tests for the four loopholes the fix-2 re-review found open ═══════════
@@ -379,7 +379,7 @@ def test_R3_same_waiver_read_10_times_is_counted_once():
             v = wh.evaluate("lane-starvation", p, 6, now_ts=t0 + k * 300.0, budget_h=6.0, history_file=hist)
             assert v["ok"], "read %d of the SAME unchanged waiver was rejected: %r" % (k, v)
         used = wh.cumulative_waived_hours(now_ts=t0 + 9 * 300.0, history_file=hist)
-        assert abs(used - 0.75) < 1e-6, "10 reads over 45 min must charge 0.75h (one episode), got %r" % used
+        assert abs(used - 1.0) < 1e-6, "10 reads over 45 min are ONE episode: max(0.75h, 1h min) = 1.0h, got %r" % used
 
 
 def test_R3_a_genuine_waiver_stays_valid_for_its_whole_lifetime_under_heartbeat_reads():
@@ -414,7 +414,9 @@ def test_R3_rewriting_the_waiver_every_few_minutes_cannot_escape_the_budget():
                 rejected_at = (t - t0) / 3600.0
                 break
         assert rejected_at is not None, "back-to-back renewals were NEVER rejected -- the budget is escapable"
-        assert 5.9 <= rejected_at <= 6.01, "renewals rejected at %.2fh, expected at the 6h budget" % rejected_at
+        # fix round 4: each renewal is a NEW episode costing >= 1h, so 10-min renewals exhaust the 6h budget at
+        # the 7th renewal (~1h in) -- stricter than the elapsed-time bound, never looser.
+        assert rejected_at <= 1.01, "renewals rejected at %.2fh, expected by the 7th renewal (~1h)" % rejected_at
 
 
 def test_R3_a_deleted_waiver_is_charged_only_until_it_was_observed_gone():
@@ -431,7 +433,8 @@ def test_R3_a_deleted_waiver_is_charged_only_until_it_was_observed_gone():
         _write(p, _NRW + "\nsecond episode", t0 + 10 * 3600.0)
         v = wh.evaluate("lane-starvation", p, 6, now_ts=t0 + 10 * 3600.0, budget_h=6.0, history_file=hist)
         assert v["ok"], v
-        assert abs(v["budget_h"] - 1.25) < 1e-6, "expected 1.25h used (first episode only), got %r" % v["budget_h"]
+        # MIN_EPISODE_CHARGE_H: 2 charged episodes (the 1.25h one + the live one) cost >= 2 x 1.0h.
+        assert abs(v["budget_h"] - 2.0) < 1e-6, "expected max(1.25h elapsed, 2 episodes x 1h) = 2.0h, got %r" % v["budget_h"]
 
 
 def test_R3_future_dated_mtime_is_rejected_not_immortal():
@@ -566,3 +569,24 @@ def test_R3_parallel_state_file_resolves_through_the_shared_root():
     import parallel_state
     assert parallel_state.STATE_FILE == os.path.join(wh.shared_root(), "research", "coordination",
                                                      "parallel_audit_state.json")
+
+
+def test_R4_brief_waivers_written_only_around_each_commit_cannot_escape_the_budget():
+    """fix-3 re-review blocker: with real-elapsed-time accounting, a waiver that exists only for the seconds
+    around each commit (write -> gate reads -> delete) cost ~0h, so the budget never tripped. Every charged
+    episode now costs >= MIN_EPISODE_CHARGE_H, so the 7th such waiver inside 24h is REJECTED."""
+    with tempfile.TemporaryDirectory() as td:
+        p = os.path.join(td, ".waiver"); hist = os.path.join(td, "h.jsonl")
+        t0 = 500_000.0
+        rejected_k = None
+        for k in range(12):                                   # one commit every 30 min, waiver live ~60 s each
+            t = t0 + k * 1800.0
+            _write(p, _NRW + "\ncommit=%d" % k, t)
+            v = wh.evaluate("compute-idle-persistent", p, 6, now_ts=t, budget_h=6.0, history_file=hist)
+            if not v["ok"]:
+                rejected_k = k
+                break
+            os.remove(p)
+            wh.evaluate("compute-idle-persistent", p, 6, now_ts=t + 60.0, budget_h=6.0, history_file=hist)
+        assert rejected_k is not None, "brief around-commit waivers were NEVER rejected -- budget escapable"
+        assert rejected_k <= 6, "brief waivers accepted %d times in 24h; expected the budget to stop them by the 7th" % rejected_k

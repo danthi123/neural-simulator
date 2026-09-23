@@ -85,6 +85,10 @@ BUDGET_EXEMPT_CLASSES = ("GAMING", "OWNER-PAUSE")
 
 WAIVER_BUDGET_H = 6.0
 WAIVER_BUDGET_WINDOW_H = 24.0
+# MINIMUM CHARGE PER EPISODE (2026-09-23, fix-3 re-review blocker). Real-elapsed-time accounting let a waiver that
+# exists only for the seconds around each commit cost ~nothing, so the budget never tripped. Every charged episode
+# in the window now costs AT LEAST this much -> at most WAIVER_BUDGET_H / MIN_EPISODE_CHARGE_H (6) brief waivers/24h.
+MIN_EPISODE_CHARGE_H = 1.0
 _DEFAULT_MAX_H = 6.0
 # mtime may lead the reader's clock by this much (clock skew, a write racing the read) before it is treated as
 # a forged future date.
@@ -275,10 +279,14 @@ def cumulative_waived_hours(window_h=WAIVER_BUDGET_WINDOW_H, now_ts=None,
         by_path.setdefault(r["path"], []).append(r)
     lo = now_ts - window_h * 3600.0
     total_s = 0.0
-    for prs in by_path.values():
+    episodes = set()
+    for path, prs in by_path.items():
         prs.sort(key=lambda r: float(r["ts"]))
         total_s += _union_len(_charged_intervals_for_path(prs, now_ts, exclude_classes), lo, now_ts)
-    return total_s / 3600.0
+        for r in prs:
+            if _present(r) and _charged(r, exclude_classes) and float(r["ts"]) >= lo:
+                episodes.add((path, _ekey(r)))
+    return max(total_s / 3600.0, MIN_EPISODE_CHARGE_H * len(episodes))
 
 
 def _last_row_for_path(rows, key_path):
