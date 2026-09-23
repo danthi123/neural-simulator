@@ -91,12 +91,19 @@ case "${1:-list}" in
          # integration-seam check, preserved) or when NO node is reachable at all.
          if [ -n "$MOD" ]; then
            NODE_BAD=""; NODE_OK=""; NODE_UNREACH=""
+           # ISOLATED-REVISION SEAM (2026-09-23). A job pinned to `cd ~/derisk-pool/revisions/<sha> && ...` (the
+           # `pool_provision.sh --isolated` layout) RUNS in that revision dir, but this check probed the shared
+           # ~/derisk-pool/sim copy -- so a NEW runner that exists only in the isolated revision was refused, and a
+           # runner that exists in the shared copy but NOT in the pinned revision was wrongly accepted. Probe the
+           # directory the job will actually run in.
+           REMOTE_DIR=$(printf '%s' "$2" | grep -oE 'derisk-pool/revisions/[0-9a-f]{7,40}' | head -1)
+           REMOTE_DIR="${REMOTE_DIR:-derisk-pool/sim}"
            for n in pool40 pool41 pool42; do
              if ! timeout 10 ssh -o BatchMode=yes -o ConnectTimeout=6 "$n" true >/dev/null 2>&1; then
                NODE_UNREACH="$NODE_UNREACH $n"; continue
              fi
              if timeout 25 ssh -o BatchMode=yes -o ConnectTimeout=8 "$n" \
-                  "cd ~/derisk-pool/sim && SIM_NO_PROVENANCE=1 SIM_BACKEND=numpy .venv/bin/python -m $MOD --help" \
+                  "cd ~/$REMOTE_DIR && SIM_NO_PROVENANCE=1 SIM_BACKEND=numpy .venv/bin/python -m $MOD --help" \
                   >/dev/null 2>&1; then NODE_OK="$NODE_OK $n"; else NODE_BAD="$NODE_BAD $n"; fi
            done
            [ -n "$NODE_UNREACH" ] && echo "ℹ️  skipping unreachable node(s):$NODE_UNREACH (dispatcher health-checks + skips them too)" >&2
