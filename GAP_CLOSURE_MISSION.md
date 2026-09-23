@@ -33,8 +33,14 @@ waiting on runs every day … I thought our heartbeats/gates were supposed to pr
   - Agent: `research/infra-waiver-loophole-aws` (waiver resource-class + 24h budget; pool/AWS runtime-asset sync +
     remote non-degenerate-brain sanity check). Agent: `research/gate-finding-mechanism-on-main` (new gate + 2
     pre-existing broken tests). Workflow `wkpne5am1` (live in-loop pmem homeostat) still building.
-  - Workflow `w55hmqaae` (cpu-lane-fill): `research/curiosity-lane-next` · `research/perception-lane-next` ·
-    `research/language-lane-next` — the 3 CPU lanes lane_starvation flagged unserved once the waivers were retired.
+  - Workflow `w909v4fgm` (cpu-lane-FIX-round, supersedes `w55hmqaae` whose 3 builds ALL came back fix-required):
+    curiosity (banked 09-01 NOT-GO 4/6 re-run by mistake; G4 single-shuffle fails by construction; coupling was a
+    host map → rebuild as metacog-spiking→curiosity edge) · language (the "spiking WTA" was a relay of a host sign;
+    G4/G5/G7 pass by construction → genuine coupled WTA + Hebbian category learner) · perception (no width-matched
+    null, misattributed control provenance, bands inside noise). Reviews: wf_d8f8c85b-90e journal.
+- **✅ 2026-09-23 ~09:30: parallel_audit read ✓ SATURATED** for the first time in ~14.5 days after the dispatcher fix
+  (it counted flock waiters/wrappers as jobs: `@fd314254`); pool_sync now pulls isolated-revision results. Gate
+  `finding_mechanism_on_main` (CLASS FM) + 5 broken emerge tests + seam_contracts fixed, merged `@e62f9ab2`.
   - GPU queue: CONFIRMATORY all-fixes adequate battery, cupy, 6 seeds serial →
     `research/findings/raw/_load_bearing/_confirm_allfixes6/lb_allfixes_s{42..102}.json` (one consistent Option-C
     headline after the 4 fixes; cupy UNRELIABLE flags → re-read those faculties with repeats).
