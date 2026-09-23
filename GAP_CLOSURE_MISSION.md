@@ -21,7 +21,8 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 - **✅ DONE THIS CYCLE: §8 honesty=STATE-fidelity metacog graded-marker (sub-arc B) — GO 6/6, adversarially CONFIRMED, MERGED @ b994cf13** (both remotes). New default-OFF de-risk runner softens binary confident→3-band {SPECULATE/HEDGE/ASSERT} off the workspace's spiking NMDA margin (reuse-by-import, NO sim/ edit, byte-identical off). NARROW scope (honest): ρ=AUC=1.000 near-guaranteed BY CONSTRUCTION (margin is a smooth monotone fn of synthetic evidence) — establishes the margin RESOLVES a middle band on CLEAN evidence (vs the spike-count substrate's near-chance), a MEASUREMENT de-risk NOT a production wire-in.
   Next rungs: real-traffic recalibration + default-off production wire-in. (First build MISFIRED — agent produced a status report + "held off" → verify caught NULL-INVALID → re-launched with explicit authorization; LESSON banked.)
 - **✅ EPISODIC in-situ COMPLETE — 5/5 clean-deterministic LOAD-BEARING (s42/s43/s101/s102 ✅ + s44 build ✅); s100 = INSTRUMENT NON-DETERMINISM, NOT a capability failure.** s100's intact arm is non-deterministic (`determinism.deterministic=false`, dirty null-control, `UNRELIABLE` flag: "seed the substrate"), so its LB verdict is untrustworthy — an unseeded stochastic component in the episodic store→recall (seed-threading already builds arms at cfg.seed, so it's inside the store/recall OU/RNG, near-threshold amplifying it — same class as the affect-marker RNG artifact + pmem s44).
-  **NEXT (queued, launch when RAM frees): find+seed the unseeded store/recall RNG → re-measure s100 deterministically → if LB, episodic is 6/6 → robust core →23; if genuine near-threshold, a stabilizer (pmem-facilitation precedent).** Do NOT write it off as 5/6 — s100 is UNMEASURED, not failed. Branch `research/lbf-fix-episodic-store` holds the store-verify fix; final finding + merge after s100 resolves.
+  REFINED DIAGNOSIS: the in-situ ran on **cupy (GPU)** whose reductions are non-deterministic; at s100's near-threshold episodic read that flips `in_memory` run-to-run (the other 4 read clear). The load-bearing metric's ACTUAL backend is **numpy (CPU, deterministic)** — that's what the 0.85 adequate 6-seed ran on. **DECISIVE TEST (cheap, NO code change): re-measure s100 episodic on NUMPY** (`SIM_BACKEND=numpy ... --only episodic-memory --seed 100`); if LB deterministically → episodic **6/6 → robust core 23**; if deterministically NOT-LB → genuine near-threshold residual → stabilizer (pmem-facilitation precedent). **DEFERRED by mem_ok (9G avail, needs 8G margin)** — launch the instant a lane frees (watchers: affect→tone wf `w130innob`, phase-2 `b2xgz7tn6`).
+  Do NOT write s100 off as 5/6 — it is UNMEASURED, not failed. Branch `research/lbf-fix-episodic-store` holds the store-verify fix; final finding + merge after s100 resolves.
 - **IN FLIGHT:** **Phase-2 local** (numpy CPU, throttled/memcap'd, pid 2987708) — updated adequate 6-seed → new aggregate; confirmatory. **§8 affect→tone NEXT-METHOD** (workflow `w130innob`, build sonnet→verify opus) — diagnose decode-ceiling vs data-limit → build biology-faithful distribution-shift coupling OR document data-limit; branch `research/lbf-affect-tone-nextmethod`.
 - **Heartbeat armed** `bk9nzu8kt` (state-checking + parallel-audit each cycle). **LESSON (bank if recurs):** a workflow BUILD agent can conflate its task with the parent session's message and decline an authorized build → build-agent prompts need explicit "authorized autonomous build, not a status/confirmation request" framing.
 
@@ -125,11 +126,12 @@ the hollow-set finding sits uncommitted in the working tree + a safety stash `pr
   other 4, after a self-inflicted RAM spike from an uncapped 6-parallel launch — recovered, avail 23G).
 
 **PRE-DECIDED NEXT ACTIONS:**
-1. ⭐ NOW (2026-09-22 ~23:00Z): (a) **episodic s100 INSTRUMENT-FIX** (queued, launch when RAM frees) — episodic is
-   **5/5 clean-deterministic LOAD-BEARING**; s100 alone is non-deterministic (unseeded store/recall RNG, `UNRELIABLE`),
-   so s100 is UNMEASURED not failed. Find+seed the unseeded episodic store/recall RNG → re-measure s100 → if LB,
-   episodic **6/6 → robust core 23**; else near-threshold stabilizer. (b) harvest **§8 affect→tone next-method**
-   (workflow `w130innob`) + **Phase-2 local** (pid 2987708) as they land. ✅ DONE this cycle:
+1. ⭐ NOW (2026-09-22 ~23:05Z): (a) **episodic s100 re-measure on NUMPY** (queued; mem_ok-deferred, 9G avail needs 8G
+   margin) — episodic is **5/5 clean-deterministic LOAD-BEARING**; s100 alone non-deterministic on CUPY (GPU-reduction
+   noise at a near-threshold read), UNMEASURED not failed. The metric's backend is numpy (deterministic) → re-measure
+   s100 on numpy (`--only episodic-memory --seed 100`); if LB → **6/6 → robust core 23**; else near-threshold
+   stabilizer. Launch when a lane frees (watchers `w130innob`/`b2xgz7tn6`). (b) harvest **§8 affect→tone next-method**
+   (`w130innob`) + **Phase-2 local** (pid 2987708) as they land. ✅ DONE this cycle:
    **§8 metacog graded-marker (sub-arc B) — GO 6/6 CONFIRMED, MERGED @ b994cf13** (de-risk; narrow synthetic-evidence
    scope; next rungs = real-traffic recalibration + production wire-in). **§8 affect→tone-over-OPEN-output MERGED @
    279b4ddf** — NO-GO (positive-asymmetric, additive-bias method falsified, capability open, next methods banked; new
