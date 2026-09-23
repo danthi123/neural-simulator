@@ -33,11 +33,16 @@ waiting on runs every day … I thought our heartbeats/gates were supposed to pr
   - Agent: `research/infra-waiver-loophole-aws` (waiver resource-class + 24h budget; pool/AWS runtime-asset sync +
     remote non-degenerate-brain sanity check). Agent: `research/gate-finding-mechanism-on-main` (new gate + 2
     pre-existing broken tests). Workflow `wkpne5am1` (live in-loop pmem homeostat) still building.
-  - Workflow `w909v4fgm` (cpu-lane-FIX-round, supersedes `w55hmqaae` whose 3 builds ALL came back fix-required):
-    curiosity (banked 09-01 NOT-GO 4/6 re-run by mistake; G4 single-shuffle fails by construction; coupling was a
-    host map → rebuild as metacog-spiking→curiosity edge) · language (the "spiking WTA" was a relay of a host sign;
-    G4/G5/G7 pass by construction → genuine coupled WTA + Hebbian category learner) · perception (no width-matched
-    null, misattributed control provenance, bands inside noise). Reviews: wf_d8f8c85b-90e journal.
+  - CPU lanes after fix round `w909v4fgm` (re-reviews: wf_69a14678-7c1 journal) — 6-seed runs STAGED on the pool;
+    each finding MUST honour its re-review: **curiosity** `@4d8168c9` (real metacog-comparator→ASK CrossEdge, seed-42
+    8/8; report G3/G5/G6 as INTEGRITY not evidence — ASK has no other drive; the comparator is a NEW circuit, not
+    production metacog's nmda-margin read; G4 is pseudo-replicated; G8=None is UNDEFINED; S1 does NOT reach the 19.1 Hz
+    production threshold) + banked 09-01 NOT-GO 4/6 + new gate `single_draw_null` · **language** `@87bf35d1` (host
+    score gone, Hebbian frame→category synapses; the FSI competition is NOT decision-bearing — lesion leaves accuracy
+    ~unchanged, so claim the learned synapses, not WTA; S3b passes on UNDEFINED; v2 accuracy 0.76-0.82 < v1 0.93) ·
+    **perception** `@7aafbf22` (clean-provenance control reproduces the banked one exactly; bands still overlap and
+    tau is not from paired diffs — fix BEFORE reading the width-matched arm; do NOT merge its committed
+    research/queue/pool.queue lines).
 - **✅ 2026-09-23 ~09:30: parallel_audit read ✓ SATURATED** for the first time in ~14.5 days after the dispatcher fix
   (it counted flock waiters/wrappers as jobs: `@fd314254`); pool_sync now pulls isolated-revision results. Gate
   `finding_mechanism_on_main` (CLASS FM) + 5 broken emerge tests + seam_contracts fixed, merged `@e62f9ab2`.
