@@ -345,7 +345,7 @@ def _find_row(root: str, arm: str, seed: int):
         return json.load(f), hits[0]
 
 
-def _row_facts(j: dict, arm: str) -> dict:
+def _row_facts(j: dict, arm: str, seed=None) -> dict:
     """The fields the gate reads, straight from the LBF report (read, not derived)."""
     pf = [r for r in j.get("per_faculty", []) if r.get("faculty") == FACULTY]
     r = pf[0] if len(pf) == 1 else {}
@@ -356,6 +356,10 @@ def _row_facts(j: dict, arm: str) -> dict:
              "lesion_reproduced": r.get("lesion_reproduced"), "deterministic": det, "env": env,
              "diffs": r.get("diffs"), "verdict": r.get("verdict"), "n_faculty_rows": len(pf)}
     why = []
+    # ROW IDENTITY (re-review 2026-09-23): a row must belong to the seed it is scored as -- the filename glob alone
+    # cannot catch a mis-copied or retried file. The LBF report records its own seed.
+    if seed is not None and j.get("seed") is not None and int(j.get("seed")) != int(seed):
+        why.append(f"row seed={j.get('seed')} scored as s{seed}")
     if len(pf) != 1:
         why.append(f"{len(pf)} {FACULTY} rows")
     if det is not True:
@@ -375,6 +379,9 @@ def _row_facts(j: dict, arm: str) -> dict:
     return facts
 
 
+ALLOWED_OFF_LB_SEEDS = {100}   # registered in ac02c209d: the one OFF seed known load-bearing before the gate
+
+
 def score_rows(rows: dict, seeds=VERIFY_SEEDS) -> dict:
     """rows = {seed: {"on": report-or-None, "off": report-or-None, "on_src":..., "off_src":...}} -> verdict record.
     Pure (no I/O), so the selftest can drive it in each failing direction."""
@@ -382,8 +389,8 @@ def score_rows(rows: dict, seeds=VERIFY_SEEDS) -> dict:
     per = {}
     for s in seeds:
         r = rows.get(s, {})
-        on = _row_facts(r["on"], "on") if r.get("on") is not None else None
-        off = _row_facts(r["off"], "off") if r.get("off") is not None else None
+        on = _row_facts(r["on"], "on", s) if r.get("on") is not None else None
+        off = _row_facts(r["off"], "off", s) if r.get("off") is not None else None
         valid = bool(on and on["valid"] and off and off["valid"])
         credited = bool(valid and on["on_credit_ready"] and off["load_bearing"] is False)
         per[s] = {"on": on, "off": off, "on_src": r.get("on_src"), "off_src": r.get("off_src"),
@@ -405,12 +412,19 @@ def score_rows(rows: dict, seeds=VERIFY_SEEDS) -> dict:
     vd.require("every seed has exactly one VALID ON row and one VALID OFF row", n_valid, expect=lambda x: x == n,
                note="; ".join(bad))
     vd.require("full 6-seed verification set", tuple(seeds) == VERIFY_SEEDS, expect=True)
-    go = bool(n_on == n and n_off <= 1)
+    # The pre-registration (ac02c209d) allows ONE OFF load-bearing seed and names it: s100, whose op-level OFF result
+    # was known before the gate was written. The first version counted ANY one seed (re-review 2026-09-23) -- a
+    # looser gate than the one registered. Enforce the registered identity.
+    off_lb_seeds = [s for s in seeds if per[s]["off_load_bearing"] is True]
+    go = bool(n_on == n and set(off_lb_seeds) <= ALLOWED_OFF_LB_SEEDS)
     decided = vd.decide(go)
     if decided["status"] == "UNDEFINED":
         tier = "UNDEFINED"
     elif decided["go"]:
         tier = "GO: load-bearing 6/6 with SETTLE opt-in (default-off), SETTLE-attributable"
+    elif n_on == n and n_off == 1:
+        tier = (f"PARTIAL (NO-GO for the flag): OFF load-bearing on unregistered seed(s) {off_lb_seeds} "
+                f"(only s100 was registered)")
     elif n_on == n and 2 <= n_off <= n - 1:
         tier = (f"PARTIAL (NO-GO for the flag): load-bearing {n_on}/{n} with SETTLE, "
                 f"SETTLE-attributable on {n_cred}/{n} only")
@@ -464,6 +478,7 @@ def _selftest_contrast() -> bool:
     cases = [
         ("clean contrast -> GO", rows([T] * 6, [F] * 6), "GO"),
         ("OFF lb on 1 seed (the known s100) -> GO", rows([T] * 6, [F, F, F, T, F, F]), "GO"),
+        ("OFF lb on 1 seed that is NOT s100 -> NO-GO", rows([T] * 6, [F, T, F, F, F, F]), "NO-GO"),
         ("OFF lb 3/6 -> NO-GO (partial)", rows([T] * 6, [T, T, F, T, F, F]), "NO-GO"),
         ("OFF lb 6/6 -> NO-GO (unattributable)", rows([T] * 6, [T] * 6), "NO-GO"),
         ("ON 5/6 -> NO-GO", rows([T, T, T, T, T, F], [F] * 6), "NO-GO"),
@@ -477,6 +492,9 @@ def _selftest_contrast() -> bool:
     leak = rows([T] * 6, [F] * 6)
     leak[42]["off"]["affect_marker_settle_env"] = "1"
     cases.append(("flag leaked into OFF -> UNDEFINED", leak, "UNDEFINED"))
+    wrongseed = rows([T] * 6, [F] * 6)
+    wrongseed[101]["off"]["seed"] = 102
+    cases.append(("row seed != scored seed -> UNDEFINED", wrongseed, "UNDEFINED"))
     noflag = rows([T] * 6, [F] * 6)
     noflag[43]["on"]["affect_marker_settle_env"] = None
     cases.append(("flag missing from ON -> UNDEFINED", noflag, "UNDEFINED"))
