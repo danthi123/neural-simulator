@@ -119,6 +119,13 @@ def get_merged_cortical_pool(seed: int = 42, min_wave: int = 1):
     The builders (`get_wave{1,2,3}_pool`) are deliberately NOT delegated: the organread verify gates call them as
     their fixed N-organ BASELINES, so delegating one would confound the gate that proves the merge is clean."""
     if wave3_pool_enabled():
+        # D3 (2026-09-23, DEFAULT-OFF): with `BRAIN_ONEBRAIN_AFFECT_POOL=1` every wired organ resolves to the
+        # 12-organ pool (the 11 Wave-3 organs + the affect ladder) so affect and the cortical organs share ONE
+        # object. Unset -> the lazy import below returns False -> the unchanged Wave-3 path.
+        from research.runners.onebrain_affect_pool_flags import affect_pool_enabled
+        if affect_pool_enabled():
+            from research.runners.onebrain_affect_pool import get_affect_pool
+            return get_affect_pool(seed)
         return get_wave3_pool(seed)
     from research.runners.onebrain_wave2_pool_production import wave2_pool_enabled, get_wave2_pool
     if min_wave <= 2 and wave2_pool_enabled():

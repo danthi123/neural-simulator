@@ -176,6 +176,17 @@ class AffectProductionOrgan:
         verification) for the verdicts."""
         self.ensure_built()
         if appraisal_interoceptive_enabled():
+            # D3 ONE-BRAIN (2026-09-23, DEFAULT-OFF): `BRAIN_ONEBRAIN_AFFECT_POOL=1` reads the SAME ladder spec off
+            # the shared 12-organ cortical pool (`onebrain_affect_pool`) instead of its own standalone bridge.
+            # Unset -> this branch is skipped and the line below runs unchanged (byte-identical).
+            from research.runners.onebrain_affect_pool_flags import affect_pool_enabled
+            if affect_pool_enabled():
+                from research.runners.onebrain_wave3_pool_production import wave3_pool_enabled
+                if wave3_pool_enabled():
+                    from research.runners.onebrain_affect_pool import get_pool_ladder
+                    return get_pool_ladder(self.seed).read_differential(
+                        appraisal, lesion=lesion, intero_lesion=appraisal_interoceptive_lesioned(),
+                        ramp_ms=ramp_ms, drive_off_ms=drive_off_ms, read_ms=read_ms)
             from research.runners._appraisal_interoceptive_ladder_derisk import get_ladder
             return get_ladder(self.seed).read_differential(
                 appraisal, lesion=lesion, intero_lesion=appraisal_interoceptive_lesioned(),
