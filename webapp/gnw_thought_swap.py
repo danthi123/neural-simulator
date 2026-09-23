@@ -52,11 +52,20 @@ gate, the mismatch/salience detector and `run_intention_swap` come STRAIGHT from
 per-session held-topic register + the grounded-topic extractor). `git diff sim/` is empty.
 
 HONEST RESIDUAL (named, not claimed closed).
-  1. The cross-turn CONTINUITY of the held thought is carried by a host label (`held_slot`) and RE-ESTABLISHED on the
-     substrate each turn via `run_intention_swap(isolate=True)` (restore clean snapshot -> re-ignite the held topic ->
-     present the proposal -> neural decision). The swap-vs-hold VERDICT is neural every turn; the between-turn persistence
-     of "which coalition is held" is a host bookkeeping label (like "attending to A"), not the ignition literally
-     surviving the HTTP gap. A truly continuous cross-turn ignition is the named next rung.
+  1. The cross-turn CONTINUITY of the held thought is carried by a host label (`held_slot`) and, BY DEFAULT,
+     RE-ESTABLISHED on the substrate each turn via `run_intention_swap(isolate=True)` (restore clean snapshot ->
+     re-ignite the held topic -> present the proposal -> neural decision). The swap-vs-hold VERDICT is neural every
+     turn; the between-turn persistence of "which coalition is held" is a host bookkeeping label (like "attending to
+     A"), not the ignition literally surviving the HTTP gap.
+     UPDATE 2026-09-23 (research/gnw-thought-swap-drive): a truly continuous mode now EXISTS, DEFAULT-OFF, behind
+     `BRAIN_GNW_SWAP_CONTINUOUS` (see `continuous_enabled()` below; de-risk 6/6-seed GO:
+     `research/runners/_gnw_swap_continuous_recency_derisk.py`). It is SAFE (does not regress the shipped swap-vs-
+     hold verdict, 6/6 seeds) and genuinely carries the substrate's own recurrence-depression state across the turn
+     boundary (a real, code-verified synaptic trace restore mode provably cannot carry) -- but that trace's reply-
+     level behavioral consequence is NOT YET reproducibly demonstrated (existence-only, 1/6 seeds, at a hand-swept
+     near-threshold operating point; see the de-risk docstring's 'HONEST RESIDUAL'). So residual #1 is PARTIALLY
+     addressed (the substrate CAN be continuous; it is not yet ON by default, and continuity's own downstream effect
+     is not yet load-bearing) -- named precisely, not claimed closed.
   2. The mm->boost COUPLING is host arithmetic (`eff_boost = gain * mm_rate`), a neuromodulator-like linear read-out of
      the salience population's firing to the loop's release-probability U — there is no engine primitive for
      "presynaptic firing raises U of other synapses". The DECISION (whether/when there is any boost) is fully the mm
@@ -104,6 +113,29 @@ def swap_enabled() -> bool:
     """The master flag. DEFAULT-OFF (a reversible flag pending owner review): `BRAIN_GNW_SWAP` truthy (1/true/on/yes)
     -> ENABLED. Unset or 0/false/off/no -> DISABLED (the handler block is skipped, no `gnw_swap` key -> byte-identical)."""
     return os.environ.get("BRAIN_GNW_SWAP", "0").strip().lower() in ("1", "true", "on", "yes")
+
+
+def continuous_enabled() -> bool:
+    """CONTINUOUS CROSS-TURN IGNITION (research/gnw-thought-swap-drive, 2026-09-23; de-risk:
+    `research/runners/_gnw_swap_continuous_recency_derisk.py`, 6/6-seed GO). `BRAIN_GNW_SWAP_CONTINUOUS` truthy
+    (1/true/on/yes) -> subsequent turns (there IS a held topic) run the swap decision with `isolate=False` -- the
+    substrate's OWN recurrence-depression state (`x`, the Tsodyks-Markram STD resource variable the shipped #77/#85
+    eviction already uses) carries across the HTTP turn boundary instead of being wiped back to a clean snapshot
+    every turn. Unset/0/false/off/no -> DISABLED (the pre-existing `isolate=True`-every-turn behavior, BYTE-IDENTICAL
+    to the shipped #77/#85 mechanism -- the default). Independent of, and requires, `BRAIN_GNW_SWAP`/`swap_enabled()`
+    (this flag only changes what happens ONCE the swap workspace block is already running).
+
+    WHAT THIS ACTUALLY BUYS, HONESTLY (see the de-risk runner's own docstring 'GO GATE' + 'HONEST RESIDUAL' for the
+    full six-seed evidence): the carryover is REAL (a just-evicted topic's recurrent loop is measurably ~25% depleted
+    when re-proposed on the very next turn) and restore mode is PROVABLY (not just typically) blind to it (its own
+    reset call always wipes every pattern's resource variable to exactly 1.0). At the production swap-decision
+    operating point this flag does NOT change which turns swap (6/6-seed no-regression GO) -- the shipped mechanism
+    is deliberately supra-critical/robust, so enabling this is SAFE (no new failure mode) but its own reply-level
+    behavioral signature is NOT YET reproducibly demonstrated (an existence proof on 1/6 seeds at a hand-swept
+    near-threshold drive, not a reliable lever -- see the de-risk docstring). So: DEFAULT-OFF, safe-to-enable,
+    genuinely continuous, NOT YET claimed load-bearing on the reply. Do not describe this flag as closing honest
+    residual #1 below beyond that scope."""
+    return os.environ.get("BRAIN_GNW_SWAP_CONTINUOUS", "0").strip().lower() in ("1", "true", "on", "yes")
 
 
 def _known_concepts(composer) -> set:
@@ -348,10 +380,14 @@ class ThoughtSwapWorkspace:
                 return info
 
             # THERE IS A HELD TOPIC: present the incoming topic as a salient proposal; the substrate decides swap-vs-hold.
+            # `continuous_enabled()` (BRAIN_GNW_SWAP_CONTINUOUS, default-off): isolate=False -> zero restores, the
+            # substrate's own STD state carries across this HTTP turn boundary (see that function's docstring for
+            # what this does and does not yet buy, six-seed-GO'd honest scope). Default -> isolate=True, BYTE-
+            # IDENTICAL to the shipped #77/#85 restore-every-turn behavior.
             incumbent = int(self.held_slot)
             r = self._isolated(lambda: run_intention_swap(self._S, self._std, incumbent=incumbent, proposed=int(slot),
                                                           proposal_pa=SALIENT_PA, trigger_lesion=bool(lesion),
-                                                          isolate=True))
+                                                          isolate=not continuous_enabled()))
             swapped = bool(r["swapped"])
             evicted = None
             if swapped:
@@ -364,6 +400,7 @@ class ThoughtSwapWorkspace:
                 "n_ignited_post": int(r["n_ignited_post"]),
                 "old_residual_post": float(r["old_residual_post"]), "new_rate_post": float(r["new_rate_post"]),
                 "mm_peak": float(r["mm_peak"]), "boost_max": float(r["boost_max"]),
+                "continuous": continuous_enabled(),
                 "reason": ("topic_change_swap" if swapped else
                            ("same_topic_hold" if slot == incumbent else "mismatch_held_no_swap")),
             })

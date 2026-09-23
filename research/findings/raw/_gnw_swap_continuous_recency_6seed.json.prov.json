@@ -1,0 +1,29 @@
+{
+ "run_id": "1790168263-479105",
+ "runner": "research/runners/_gnw_swap_continuous_recency_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/wf_8bf19a04-cbd-5/research/runners/_gnw_swap_continuous_recency_derisk.py",
+  "--six-seed",
+  "--json",
+  "research/findings/raw/_gnw_swap_continuous_recency_6seed.json"
+ ],
+ "git_sha": "a739aa660",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-23T08:57:43",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 453.5,
+ "corpus_check_query": "GNW continuous cross-turn ignition recency swap workspace no restore",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_gnw_swap_continuous_recency_6seed.json"
+}

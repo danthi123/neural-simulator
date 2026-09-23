@@ -1,0 +1,46 @@
+{
+  "runner": "_gnw_swap_continuous_recency_derisk",
+  "mode": "smoke",
+  "seed": 42,
+  "result": {
+    "seed": 42,
+    "xA_at_branch": 0.7624718351663978,
+    "xC_at_branch": 0.9999929668055912,
+    "branch_identical": true,
+    "restore_blind": true,
+    "recent": {
+      "swapped": true,
+      "new_rate_post": 0.3333333333333333,
+      "old_residual_post": 0.0,
+      "b_ignite_step": 192
+    },
+    "fresh": {
+      "swapped": true,
+      "new_rate_post": 0.3333333333333333,
+      "old_residual_post": 0.0,
+      "b_ignite_step": 194
+    },
+    "seed_deterministic": true,
+    "near_threshold_diagnostic": {
+      "pa": 1500.0,
+      "recent_swapped": false,
+      "fresh_swapped": true,
+      "recent_lesioned_swapped": false,
+      "dissociation": true
+    },
+    "go_gate": {
+      "swaps_correct": true,
+      "branch_identical": true,
+      "carryover_ok": true,
+      "restore_blind": true,
+      "no_regression_at_production_pa": true,
+      "seed_deterministic": true
+    },
+    "seed_go": true,
+    "operating_point": {
+      "salient_pa": 5000.0,
+      "min_x_deficit": 0.05,
+      "near_threshold_pa": 1500.0
+    }
+  }
+}
