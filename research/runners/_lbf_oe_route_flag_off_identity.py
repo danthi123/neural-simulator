@@ -90,8 +90,36 @@ def dump(repo, env_set, out):
     return 0
 
 
-def _canon(turn):
-    return json.dumps(turn, sort_keys=True, default=str)
+# WALL-CLOCK fields: measured durations, different on every run of the SAME code (the pre-vs-pre control shows it).
+# They are stripped for the content verdict; the raw verdict keeps them, and every differing path is listed so the
+# exclusion can be audited. Found on the first real compare: `open_ended.gen_seconds` was the ONLY differing path.
+WALLCLOCK_KEYS = frozenset({"gen_seconds"})
+
+
+def _strip(x):
+    if isinstance(x, dict):
+        return {k: _strip(v) for k, v in x.items() if k not in WALLCLOCK_KEYS}
+    if isinstance(x, list):
+        return [_strip(v) for v in x]
+    return x
+
+
+def _canon(turn, strip=True):
+    return json.dumps(_strip(turn) if strip else turn, sort_keys=True, default=str)
+
+
+def _diff_paths(a, b, p=""):
+    if isinstance(a, dict) and isinstance(b, dict):
+        out = []
+        for k in sorted(set(a) | set(b)):
+            out += _diff_paths(a.get(k), b.get(k), p + "." + str(k))
+        return out
+    if isinstance(a, list) and isinstance(b, list) and len(a) == len(b):
+        out = []
+        for i, (x, y) in enumerate(zip(a, b)):
+            out += _diff_paths(x, y, "%s[%d]" % (p, i))
+        return out
+    return [] if a == b else [p]
 
 
 def compare(a_path, b_path, out, a_sha=None, b_sha=None):
@@ -103,9 +131,14 @@ def compare(a_path, b_path, out, a_sha=None, b_sha=None):
         if not (A.get("complete") and B.get("complete")) or A.get("env_set") != B.get("env_set"):
             rec = {"verdict": "UNDEFINED", "reason": "incomplete dump or env-set mismatch"}
         else:
+            same_len = len(A["turns"]) == len(B["turns"])
             per = [(_canon(x) == _canon(y)) for x, y in zip(A["turns"], B["turns"])]
+            per_raw = [(_canon(x, strip=False) == _canon(y, strip=False)) for x, y in zip(A["turns"], B["turns"])]
+            paths = sorted({q for x, y in zip(A["turns"], B["turns"]) for q in _diff_paths(x, y)})
             n_err = sum(1 for t in A["turns"] + B["turns"] if "error" in t)
-            rec = {"verdict": "IDENTICAL" if (all(per) and len(A["turns"]) == len(B["turns"])) else "DIFFERENT",
+            rec = {"verdict": "IDENTICAL" if (all(per) and same_len) else "DIFFERENT",
+                   "verdict_raw_including_wallclock": "IDENTICAL" if (all(per_raw) and same_len) else "DIFFERENT",
+                   "wallclock_keys_excluded": sorted(WALLCLOCK_KEYS), "differing_paths_raw": paths,
                    "per_turn_equal": per, "n_turns": len(per), "n_error_turns_total": n_err,
                    "env_set": A["env_set"], "a_has_route_fn": A.get("has_route_fn"),
                    "b_has_route_fn": B.get("has_route_fn")}
@@ -124,15 +157,25 @@ def selftest():
     same = {"env_set": "default", "complete": True, "turns": [{"msg": "x", "body": {"n": 1, "answer": "a"}}]}
     diff = {"env_set": "default", "complete": True, "turns": [{"msg": "x", "body": {"answer": "b", "n": 1}}]}
     inc = dict(base, complete=False)
+    clk = {"env_set": "default", "complete": True,
+           "turns": [{"msg": "x", "body": {"answer": "a", "n": 1, "oe": {"gen_seconds": 0.4}}}]}
+    clk2 = {"env_set": "default", "complete": True,
+            "turns": [{"msg": "x", "body": {"answer": "a", "n": 1, "oe": {"gen_seconds": 0.3}}}]}
+    clk3 = {"env_set": "default", "complete": True,
+            "turns": [{"msg": "x", "body": {"answer": "a", "n": 1, "oe": {"gen_seconds": 0.3, "raw": "z"}}}]}
     paths = {}
-    for k, v in (("base", base), ("same", same), ("diff", diff), ("inc", inc)):
+    for k, v in (("base", base), ("same", same), ("diff", diff), ("inc", inc), ("clk", clk), ("clk2", clk2),
+                 ("clk3", clk3)):
         paths[k] = os.path.join(d, k + ".json")
         json.dump(v, open(paths[k], "w"))
     o = os.path.join(d, "v.json")
     ok = True
     for name, a, b, want in (("key order ignored -> IDENTICAL", "base", "same", "IDENTICAL"),
                              ("changed answer -> DIFFERENT", "base", "diff", "DIFFERENT"),
-                             ("incomplete -> UNDEFINED", "base", "inc", "UNDEFINED")):
+                             ("incomplete -> UNDEFINED", "base", "inc", "UNDEFINED"),
+                             ("wall-clock-only difference -> IDENTICAL (content)", "clk", "clk2", "IDENTICAL"),
+                             ("nested content difference beside wall-clock -> DIFFERENT", "clk", "clk3",
+                              "DIFFERENT")):
         compare(paths[a], paths[b], o)
         got = json.load(open(o))["verdict"]
         print(("PASS " if got == want else "FAIL ") + name)
