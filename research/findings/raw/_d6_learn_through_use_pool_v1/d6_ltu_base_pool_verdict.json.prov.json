@@ -1,5 +1,5 @@
 {
- "run_id": "1790188262-1376805",
+ "run_id": "1790193848-1554513",
  "runner": "research/runners/d6_learn_through_use_lb.py",
  "argv": [
   "/home/dant123/Projects/sim/.claude/worktrees/wf_49b416df-232-3/research/runners/d6_learn_through_use_lb.py",
@@ -18,7 +18,7 @@
   "--json",
   "research/findings/raw/_d6_learn_through_use_pool_v1/d6_ltu_base_pool_verdict.json"
  ],
- "git_sha": "f0bdfd612",
+ "git_sha": "40e839812",
  "git_dirty": true,
  "source_kind": null,
  "source_manifest_sha256": null,
@@ -26,7 +26,7 @@
  "source_manifest_start_error": null,
  "source_manifest_verified_at_exit": null,
  "source_manifest_exit_error": null,
- "started": "2026-09-23T14:31:02",
+ "started": "2026-09-23T16:04:08",
  "env": {
   "SIM_BACKEND": "numpy"
  },

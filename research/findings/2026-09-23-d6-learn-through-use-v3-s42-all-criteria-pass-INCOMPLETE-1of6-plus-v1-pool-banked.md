@@ -5,7 +5,7 @@ date: 2026-09-23
 lane: D6-learn-and-grow
 mechanism: D6 gate v3 (capability gate), seed 42 of 6, local numpy; plus the banked gate-v1 base-variant pool arms and the flag-off chat-mode byte-identity check
 seeds: [42]
-verdict: INCOMPLETE 1/6. Seed 42 passes all seven gate-v3 criteria; the other five seeds are staged on the pool. Gate v1 (base variant) pool arms banked: s43 NO-GO on C3, the same host-list familiarity leak as s42. Flag-off chat path byte-identical to the pre-D6 code.
+verdict: INCOMPLETE 1/6. Seed 42 passes all seven gate-v3 criteria; the other five seeds are staged on the pool. Gate v1 (base variant) pool arms banked: s43 and s100 NO-GO on C3 only, the same host-list familiarity leak as s42. Flag-off chat path byte-identical to the pre-D6 code.
 runner: research/runners/d6_learn_through_use_lb.py
 artifacts:
   - research/findings/raw/_d6_learn_through_use_v3/d6_ltu_v3_s42.json
@@ -70,7 +70,7 @@ result. They were not re-queued. Scored with `--variant base` over every arm fil
 - s42, s44, s101, s102: UNDEFINED, because arms are missing. The first pool41 pass left them unbuilt, and the resume
   lines are no longer in the pool queue. They are not re-queued: v1 is superseded, and s42's base result already
   exists locally (`research/findings/raw/_d6_learn_through_use/d6_ltu_s42_smoke.json`, NO-GO on C3).
-- **s100: UNDEFINED at harvest.** Its USE_D arm was still running.
+- **s100: NO-GO on C3 only**, once its USE_D arm landed (re-scored; C1, C2 and C4-C7 hold).
 
 At both s43 and s100, the FREEZE_H probe is "Setting the held thread aside — On wolf, then — I don't know about that."
 with curiosity novelty 0.0. SHUF_H has novelty 0.9701. That is the s42 host-list familiarity leak, replicated on two
@@ -86,7 +86,17 @@ response-body sha256 are equal, and the final store_conns sha256 is `f94a1c65…
 
 The D6 production hunks are the same at HEAD. The +/- lines of `git diff c9b45a30e f97b339b2` and
 `git diff 5e9a7955b HEAD` over webapp/, brain_chat_tui.py and one_brain_composer.py are identical, 72 lines.
-Store mode was already identical, and the pinned-SHA test re-checks it on every run.
+Store mode is identical against the re-pinned pre-D6 SHA `e98b0b046`
+(`research/findings/raw/_d6_learn_through_use/offpath_parity_store_vs_pre_d6.json`), and the pinned-SHA test
+re-checks it on every run.
+
+## Staged: the 5-seed fanout (seeds 43 44 100 101 102)
+
+The registered run order stages the other five seeds only if s42 passes, and it did. There are 35 pool lines, one per
+(seed, arm). They run from the isolated revision `~/derisk-pool/revisions/40e839812dc5f0b3d7e403417b696b8e41e487f9`
+(pool41 and pool42), with arm dir `research/findings/raw/_d6_learn_through_use_v3`. main's commits merged into this
+revision since the s42 run add standalone files only and touch no chat-path code. After pulling the arm files from
+both nodes next to the s42 arms, score with the registered command in the v3 prereg.
 
 ## Honest scope
 
