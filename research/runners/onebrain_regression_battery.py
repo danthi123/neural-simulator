@@ -189,6 +189,19 @@ _EXTRA_TURNS = [
     ("oe_t8",  "the pike chase the minnow",   "oe2", False, None,   False),   # NOVEL alternative: minnow
     ("oe_t9",  "the crow chase the boar",     "oe2", False, None,   False),   # NOVEL alternative: boar
     ("oe_ask", "what might a dog chase",      "oe2", False, None,   True),    # rich=True -> the generation branch (resp['hypothesis_svo']); draws (dog,chase,?) over the now-rich chase graph
+    # ── WM-BINDING HOLD-QUERY PAIRS (label-only; NOT in PROBE_TURNS; used only by LB_WMB_HOLDQUERY_PROBE) ────────
+    # The default wm-binding-advanced probe ('held' = 'the wolf watches the owl') names ONE referent the D6 organ's
+    # hand lexicon admits ('owl' is not on _REFERENT_NOUNS) and exits through the comprehension-repair return, so the
+    # organ never reaches the reply. The organ's reply path is its HOLD-QUERY read-out: after a turn introduces >=2
+    # referents it knows ('fox', 'wolf' are both on _REFERENT_NOUNS), "who are we talking about" is answered by reading
+    # every held referent back off the spiking buffer. 'wmb' = the driving pair (2 referents -> the read-out answers);
+    # 'wmb1' = the SPECIFICITY control (1 referent -> the organ is out of scope, the ask falls through to the normal
+    # path, so the lesion must NOT change that reply). Pre-registration:
+    # research/findings/2026-09-23-wm-binding-holdquery-adequate-probe-PREREGISTRATION.md.
+    ("wmb_intro",  "the fox and the wolf walked in", "wmb",  True,  None, False),  # 2 lexicon referents -> the organ LOADs fox+wolf (maintain)
+    ("wmb_ask",    "who are we talking about",       "wmb",  False, None, False),  # hold-query -> reply = read-back off the spiking buffer
+    ("wmb1_intro", "the fox walked in",              "wmb1", True,  None, False),  # 1 referent -> organ out of scope (judge returns None)
+    ("wmb1_ask",   "who are we talking about",       "wmb1", False, None, False),  # same ask, organ out of scope -> falls through; lesion must not change it
 ]
 _TURN_BY_LABEL.update({t[0]: t for t in _EXTRA_TURNS})
 

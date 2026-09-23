@@ -130,6 +130,12 @@ unwired WTA bank (still memcap'd per discipline):
       # expect load_bearing=True, verdict=regressed, null_control_clean=True (intact_a==intact_b, an independent
       # REBUILD at the identical seed -- the substrate's cfg.seed determinism, not a statistical closeness bar),
       # treatment_diffs (|intact-lesion| plausible-fraction gap) >> control_diffs (0)
+Verify the WM-BINDING HOLD-QUERY probe (default-off; an adequate probe for wm-binding-advanced, which reads
+not-exercised on the default `held` turn). Pre-registration:
+research/findings/2026-09-23-wm-binding-holdquery-adequate-probe-PREREGISTRATION.md:
+  SIM_BACKEND=numpy CUDA_VISIBLE_DEVICES='' LB_WMB_HOLDQUERY_PROBE=1 tools/memcap.sh 12 -- .venv/bin/python \
+      -m research.runners.load_bearing_fraction --only wm-binding-advanced --repeats 2 --seed 42 \
+      --out research/findings/raw/_load_bearing/wmb_holdquery/s42/lbf.json
 Run (full measurement, capped; defer to a non-gaming window):
   tools/memcap.sh 24 -- .venv/bin/python -m research.runners.load_bearing_fraction \
       --out research/findings/raw/_load_bearing/load_bearing.json
@@ -431,6 +437,84 @@ LB_AFFECT_TONE_OPEN = os.environ.get("LB_AFFECT_TONE_OPEN_PROBE", "").strip().lo
 _AFFECT_TONE_OPEN_ARTIFACT = os.environ.get(
     "LB_AFFECT_TONE_OPEN_ARTIFACT",
     "research/findings/raw/_affect_tone_open_output/affect_tone_open_output_verdict.json")
+
+# ── WM-BINDING HOLD-QUERY PROBE (LB_WMB_HOLDQUERY_PROBE, default OFF -> byte-identical) ─────────────────────────
+# WHY: wm-binding-advanced (the D6 multi-referent WM organ, lesion BRAIN_MULTIREF_LESION = recur 0, the slow-NMDA
+# hold killed) reads NOT-EXERCISED on every seed of the 2026-09-23 6-seed battery. Its default probe `held` ('the wolf
+# watches the owl') names only ONE referent the organ's hand lexicon admits ('owl' is not on _REFERENT_NOUNS), so
+# judge() returns None, and the turn also exits through the comprehension-repair return, so no `multiref` key is on
+# the reply. The organ's only reply path is its HOLD-QUERY read-out: after a turn introduces >=2 referents it knows,
+# "who are we talking about" is answered by reading every held referent back off the spiking buffer. This flag remaps
+# the faculty to that exchange: 'wmb_intro' ('the fox and the wolf walked in', both on the hand lexicon) ->
+# 'wmb_ask' ('who are we talking about'), comparing the REPLY (`answer`). It adds two pre-registered adequacy
+# conditions on the INTACT arm and a SPECIFICITY control (the same ask after a ONE-referent intro, 'wmb1', where the
+# organ is out of scope -- the lesion must NOT change that reply). Pre-registration:
+# research/findings/2026-09-23-wm-binding-holdquery-adequate-probe-PREREGISTRATION.md.
+# Honest scope (declared): the referent IDENTITIES carried between turns live in the organ's host codebook
+# (`_slot_of_ref`); each load resets the buffer and re-writes, so the spiking hold carries the referents across the
+# within-load write->hold->hold span, not across turns. Extraction is the host lexicon; the register read is a host
+# argmax over firing rates; the read-out sentence is a host template. OFF -> the `held` row exactly as before.
+LB_WMB_HOLDQUERY = os.environ.get("LB_WMB_HOLDQUERY_PROBE", "").strip().lower() in ("1", "true", "yes", "on")
+_WMB_DRIVE_TURN = "wmb_ask"
+_WMB_DRIVE_FIELDS = ["answer"]                    # the REPLY is the pre-registered decision field
+_WMB_CONTROL_TURN = "wmb1_ask"
+_WMB_REFERENTS = ("fox", "wolf")                  # the two referents 'wmb_intro' introduces (both on the hand lexicon)
+# report-only mechanism fields (never gate the verdict; recorded so the read-out is auditable per arm)
+_WMB_MECH_FIELDS = ["multiref.kind", "multiref.is_hold_query", "multiref.n_referents", "multiref.recovered",
+                    "multiref.all_recovered", "multiref.hold_alive_min", "inner_state_readout", "abstained"]
+
+
+def _wmb_words(text):
+    import re as _re
+    return set(_re.findall(r"[a-z']+", (text or "").lower()))
+
+
+def _wmb_mech(arm, turn):
+    """Report-only: the organ's own state on `turn` of `arm` (the pre-registered mechanism fields)."""
+    from research.runners.onebrain_regression_battery import _get_path
+    r = (arm or {}).get(turn) or {}
+    return {f: _get_path(r, f)[1] for f in _WMB_MECH_FIELDS} | {"answer": r.get("answer")}
+
+
+def _wmb_adequacy(intact_a, ctrl_a, ctrl_b, ctrl_les):
+    """The pre-registered adequacy + specificity gate for LB_WMB_HOLDQUERY_PROBE (pure; no brain build).
+
+    A1 (route): the INTACT 'wmb_ask' reply was produced by the organ's hold-query read-out (multiref.kind=='query',
+       is_hold_query True) -- the ask was not intercepted by another route.
+    A2 (two referents): the INTACT read-out holds >=2 referents AND the INTACT reply names BOTH 'fox' and 'wolf'.
+    S1 (specificity): on the 1-referent control 'wmb1_ask', the INTACT reply is NOT a multiref read-out (organ out of
+       scope), intact-vs-intact-rebuild `answer` is identical, and intact-vs-LESION `answer` is identical.
+    Returns (override_verdict_or_None, report). override is None iff all hold; else a named non-pass verdict that
+    makes load_bearing UNDEFINED (never counted as a pass or a fail)."""
+    rep = {"A1_route": None, "A2_two_referents": None, "S1_control_out_of_scope": None,
+           "S1_control_null_clean": None, "S1_control_lesion_unchanged": None}
+    ia = (intact_a or {}).get(_WMB_DRIVE_TURN) or {}
+    mr = ia.get("multiref") if isinstance(ia.get("multiref"), dict) else {}
+    rep["A1_route"] = bool(mr.get("kind") == "query" and mr.get("is_hold_query") is True)
+    rep["A2_two_referents"] = bool((mr.get("n_referents") or 0) >= 2
+                                   and all(w in _wmb_words(ia.get("answer")) for w in _WMB_REFERENTS))
+    if ctrl_a is None or ctrl_b is None or ctrl_les is None:
+        return "arm-build-failed", rep
+    ca = ctrl_a.get(_WMB_CONTROL_TURN) or {}
+    cb = ctrl_b.get(_WMB_CONTROL_TURN) or {}
+    cl = ctrl_les.get(_WMB_CONTROL_TURN) or {}
+    if any(isinstance(t, dict) and t.get("_error") for t in (ca, cb, cl)):
+        return "arm-build-failed", rep
+    cmr = ca.get("multiref") if isinstance(ca.get("multiref"), dict) else {}
+    rep["S1_control_out_of_scope"] = bool(cmr.get("kind") != "query")
+    rep["S1_control_null_clean"] = bool("answer" in ca and ca.get("answer") == cb.get("answer"))
+    rep["S1_control_lesion_unchanged"] = bool("answer" in ca and ca.get("answer") == cl.get("answer"))
+    if not rep["A1_route"]:
+        return "probe-inadequate:route", rep
+    if not rep["A2_two_referents"]:
+        return "probe-inadequate:two-referents", rep
+    if not rep["S1_control_out_of_scope"]:
+        return "control-inadequate", rep
+    if not rep["S1_control_null_clean"]:
+        return "noisy-null-control", rep
+    if not rep["S1_control_lesion_unchanged"]:
+        return "off-target-lesion", rep
+    return None, rep
 
 
 def _oed_build_shared_world(seed):
@@ -1012,6 +1096,16 @@ def measure_faculty(key, out_dir, repeats=1, intact_cache=None, seed=42):
                        "the #3E gate admits the candidates (the default spiking gate masks the draw on the tiny KB); "
                        "the draw lesion (BRAIN_SPIKING_DRAW_LESION) is the only inter-arm difference + the honored "
                        "ablate on draw_from_weights. " + res["note"])
+    # WM-BINDING HOLD-QUERY remap (default-off; see LB_WMB_HOLDQUERY). Remap to the intro->ask pair ('wmb_intro' ->
+    # 'wmb_ask', session 'wmb'), compare the REPLY. No base_env. The adequacy + specificity gate runs after the
+    # standard treatment/null/reproduce computation below (it can only turn a verdict UNDEFINED, never into a pass).
+    _wmb_on = bool(LB_WMB_HOLDQUERY and key == "wm-binding-advanced")
+    if _wmb_on:
+        row = ("wm-binding-advanced", _WMB_DRIVE_TURN, list(_WMB_DRIVE_FIELDS), False)
+        res["turn"] = _WMB_DRIVE_TURN
+        res["note"] = ("LB_WMB_HOLDQUERY_PROBE: 'the fox and the wolf walked in' -> 'who are we talking about' on "
+                       "session 'wmb' (reply = the organ's read-back); specificity control = the same ask after a "
+                       "1-referent intro (session 'wmb1'). " + res["note"])
 
     grp = turn_group(row[1])
     # cache key includes base_env so a stored (BRAIN_EPISODIC_STORE) intact arm never aliases a plain-{} arm on a
@@ -1081,6 +1175,28 @@ def measure_faculty(key, out_dir, repeats=1, intact_cache=None, seed=42):
         res["verdict"] = "noisy"
     else:
         res["load_bearing"] = True                  # changed, attributable to the lesion, reproduced
+
+    if _wmb_on:
+        # SPECIFICITY control arms (the 1-referent 'wmb1' pair): intact, intact-rebuild, lesion. Then the pre-registered
+        # adequacy gate; a failed condition makes the verdict UNDEFINED (load_bearing None), never a pass.
+        cgrp = turn_group(_WMB_CONTROL_TURN)
+        _cf = "_".join(cgrp)
+        ctrl_a = _spawn_arm({}, cgrp, os.path.join(out_dir, "intact_a_%s%s.json" % (_cf, _sfx)))
+        ctrl_b = _spawn_arm({}, cgrp, os.path.join(out_dir, "intact_b_%s%s.json" % (_cf, _sfx)))
+        ctrl_les = _spawn_arm({flag: val}, cgrp, os.path.join(out_dir, "lesion_%s_ctrl%s.json"
+                                                               % (key.replace("-", "_"), _sfx)))
+        override, adequacy = _wmb_adequacy(intact_a, ctrl_a, ctrl_b, ctrl_les)
+        res["wmb_adequacy"] = adequacy
+        res["wmb_control_group"] = cgrp
+        res["wmb_mechanism"] = {"intact_a": _wmb_mech(intact_a, _WMB_DRIVE_TURN),
+                                "intact_b": _wmb_mech(intact_b, _WMB_DRIVE_TURN),
+                                "lesion": _wmb_mech(lesioned, _WMB_DRIVE_TURN),
+                                "control_intact_a": _wmb_mech(ctrl_a, _WMB_CONTROL_TURN),
+                                "control_lesion": _wmb_mech(ctrl_les, _WMB_CONTROL_TURN)}
+        res["verdict_before_adequacy"] = res["verdict"]
+        if override is not None:
+            res["verdict"] = override
+            res["load_bearing"] = None
     return res
 
 
@@ -1147,6 +1263,50 @@ def run(out_dir="research/findings/raw/_load_bearing", only=None, repeats=1, see
     report["load_bearing_faculties"] = [p["faculty"] for p in load_bearing]
     report["not_load_bearing_faculties"] = [p["faculty"] for p in exercised if p["load_bearing"] is False]
     return report
+
+
+def _wmb_selftest_checks():
+    """LB_WMB_HOLDQUERY_PROBE static wiring + pure adequacy-gate logic, in BOTH directions (no brain build)."""
+    from research.runners.d6_multiref_wm_production_organ import extract_referents, is_hold_query
+    t = _TURN_BY_LABEL
+    default_labels = {x[0] for x in PROBE_TURNS}
+
+    def arm(turn, answer, mr=None):
+        r = {"answer": answer}
+        if mr is not None:
+            r["multiref"] = mr
+        return {turn: r}
+    q2 = {"kind": "query", "is_hold_query": True, "n_referents": 2}
+    good_i = arm(_WMB_DRIVE_TURN, "I'm holding 2 referents in working memory at once: fox and wolf.", q2)
+    c_ok = arm(_WMB_CONTROL_TURN, "I don't know.")
+    return {
+        "wmb flag parses to a real bool": isinstance(LB_WMB_HOLDQUERY, bool),
+        "wmb turns are label-only (NOT in the default roster)":
+            not ({"wmb_intro", "wmb_ask", "wmb1_intro", "wmb1_ask"} & default_labels),
+        "wmb drive group is intro->ask": turn_group(_WMB_DRIVE_TURN) == ["wmb_intro", "wmb_ask"],
+        "wmb control group is intro->ask": turn_group(_WMB_CONTROL_TURN) == ["wmb1_intro", "wmb1_ask"],
+        "wmb intro names exactly the two lexicon referents": extract_referents(t["wmb_intro"][1]) == list(_WMB_REFERENTS),
+        "wmb control intro names ONE referent (organ out of scope)": len(extract_referents(t["wmb1_intro"][1])) == 1,
+        "wmb ask is a hold-query in both sessions":
+            is_hold_query(t["wmb_ask"][1]) and is_hold_query(t["wmb1_ask"][1]) and t["wmb_ask"][1] == t["wmb1_ask"][1],
+        "wmb lesion flag resolves in source": _flag_resolves("BRAIN_MULTIREF_LESION"),
+        "wmb gate: adequate + specific -> no override":
+            _wmb_adequacy(good_i, c_ok, c_ok, c_ok)[0] is None,
+        "wmb gate: intercepted ask (no multiref query) -> probe-inadequate:route":
+            _wmb_adequacy(arm(_WMB_DRIVE_TURN, "fox and wolf"), c_ok, c_ok, c_ok)[0] == "probe-inadequate:route",
+        "wmb gate: reply names one referent -> probe-inadequate:two-referents":
+            _wmb_adequacy(arm(_WMB_DRIVE_TURN, "I'm holding: fox.", q2), c_ok, c_ok, c_ok)[0]
+            == "probe-inadequate:two-referents",
+        "wmb gate: control routed through the organ -> control-inadequate":
+            _wmb_adequacy(good_i, arm(_WMB_CONTROL_TURN, "x", q2), arm(_WMB_CONTROL_TURN, "x", q2),
+                          arm(_WMB_CONTROL_TURN, "x", q2))[0] == "control-inadequate",
+        "wmb gate: control reply changes under lesion -> off-target-lesion (fails closed)":
+            _wmb_adequacy(good_i, c_ok, c_ok, arm(_WMB_CONTROL_TURN, "something else"))[0] == "off-target-lesion",
+        "wmb gate: control rebuild differs -> noisy-null-control":
+            _wmb_adequacy(good_i, c_ok, arm(_WMB_CONTROL_TURN, "other"), c_ok)[0] == "noisy-null-control",
+        "wmb gate: a missing control arm -> arm-build-failed": _wmb_adequacy(good_i, None, c_ok, c_ok)[0]
+            == "arm-build-failed",
+    }
 
 
 # ── self-test: prove the instrument's LOGIC without building a brain (no memcap needed) ──────────────────────────
@@ -1327,6 +1487,7 @@ def selftest(out_path=None):
         "seed_suffix accepts the full 6-seed roster": [_seed_suffix(s) for s in (42, 43, 44, 100, 101, 102)]
             == ["", "_s43", "_s44", "_s100", "_s101", "_s102"],
     }
+    checks.update(_wmb_selftest_checks())
     ok = all(checks.values())
     print("=== LOAD-BEARING INSTRUMENT SELF-TEST ===")
     for name, passed in checks.items():
