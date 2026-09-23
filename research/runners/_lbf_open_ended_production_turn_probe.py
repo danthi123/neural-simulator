@@ -421,6 +421,8 @@ def main(argv=None):
     ap.add_argument("--out", default=None)
     ap.add_argument("--out-dir", default=None)
     ap.add_argument("--aggregate", nargs="*", default=None)
+    ap.add_argument("--parallel", type=int, default=1, help="run up to N seeds concurrently (each spawns its workers)")
+    ap.add_argument("--aggregate-out", default=None, help="after the seeds finish, aggregate this mode's verdicts here")
     ap.add_argument("--selftest", action="store_true")
     a = ap.parse_args(argv)
     if a.selftest:
@@ -432,8 +434,17 @@ def main(argv=None):
         return 0 if aggregate(a.aggregate, a.out) else 1
     seeds = [int(s) for s in a.seeds.split(",")] if a.seeds else [a.seed]
     out_dir = a.out_dir or "research/findings/raw/_load_bearing/_oe_production_turn/%s" % a.mode
-    for s in seeds:
-        run_seed(a.mode, s, a.k, out_dir, rich=not a.single_fact)
+    if a.parallel > 1:
+        # each run_seed spawns its OWN subprocess workers, so threads here only overlap independent seeds
+        from concurrent.futures import ThreadPoolExecutor
+        with ThreadPoolExecutor(max_workers=a.parallel) as ex:
+            list(ex.map(lambda s: run_seed(a.mode, s, a.k, out_dir, rich=not a.single_fact), seeds))
+    else:
+        for s in seeds:
+            run_seed(a.mode, s, a.k, out_dir, rich=not a.single_fact)
+    if a.aggregate_out:
+        import glob
+        aggregate(sorted(glob.glob(os.path.join(out_dir, "%s_s*_verdict.json" % a.mode))), a.aggregate_out)
     return 0
 
 
