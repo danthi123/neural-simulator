@@ -1,0 +1,33 @@
+{
+ "run_id": "1790193311-25666",
+ "runner": "research/runners/load_bearing_fraction.py",
+ "argv": [
+  "/home/ubuntu/d1rev/research/runners/load_bearing_fraction.py",
+  "--only",
+  "affect-marker-spiking-wta",
+  "--seed",
+  "44",
+  "--repeats",
+  "2",
+  "--out",
+  "research/findings/raw/_affect_marker_settle/lbf_on/s44/lbf_settle_on_s44.json"
+ ],
+ "git_sha": "unknown",
+ "git_dirty": null,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-23T19:55:11",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": false,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_affect_marker_settle/lbf_on/s44/lbf_settle_on_s44.json"
+}
