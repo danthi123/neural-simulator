@@ -58,6 +58,17 @@ while IFS= read -r iid; do
   # comment above) — resolve its IP once and reuse it for both the CPU load-average fallback and the
   # no-runner check below.
   have_ssh=0; ip=""
+  # MULTI-INSTANCE (2026-09-23): parallel batteries record extra instances in research/queue/.aws_cpu2, .aws_cpu3, ...
+  # With only .aws_gpu consulted, every other instance was unverifiable -> treated as busy -> NEVER stopped (an idle
+  # r7i.4xlarge ran ~30 min past its last job). Find the state file that records THIS instance and use its key.
+  if [ "$iid" != "$state_iid" ] && [ -z "${AWS_GPU_STATE_FILE:-}" ]; then
+    for sf in "$ROOT"/research/queue/.aws_*; do
+      [ -f "$sf" ] || continue
+      if grep -q "^instance=$iid\$" "$sf" 2>/dev/null; then
+        state_iid="$iid"; state_key=$(awk -F= '/^key=/{print $2}' "$sf" 2>/dev/null); break
+      fi
+    done
+  fi
   if [ "$iid" = "$state_iid" ] && [ -n "$state_key" ] && [ -f "$state_key" ]; then
     ip=$(aws ec2 describe-instances --instance-ids "$iid" --region "$REGION" \
           --query 'Reservations[].Instances[].PublicIpAddress' --output text 2>/dev/null)
