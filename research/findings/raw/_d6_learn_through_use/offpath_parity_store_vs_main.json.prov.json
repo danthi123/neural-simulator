@@ -1,0 +1,29 @@
+{
+ "run_id": "1790179976-1146786",
+ "runner": "research/runners/d6_offpath_parity.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/wf_500634cf-d18-4/research/runners/d6_offpath_parity.py",
+  "--vs-ref",
+  "origin/main",
+  "--mode",
+  "store",
+  "--out",
+  "research/findings/raw/_d6_learn_through_use/offpath_parity_store_vs_main.json"
+ ],
+ "git_sha": "f97b339b2",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-23T12:12:56",
+ "env": {},
+ "sim_backend": "numpy",
+ "sim_backend_requested": "(unset -> runner default)",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_d6_learn_through_use/offpath_parity_store_vs_main.json"
+}

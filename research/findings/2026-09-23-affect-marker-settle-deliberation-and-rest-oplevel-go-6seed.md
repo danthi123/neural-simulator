@@ -199,9 +199,9 @@ for the gate.
 
 **Re-staged layout.** Each seed runs as one pool job on one node: the ON arm, then the OFF arm, from the same revision,
 serialized by a per-node lock (each full brain is about 8 GB on a 15 GB node). Every arm and seed has its own
-directory: `research/findings/raw/_affect_marker_settle/lbf_on/sS/lbf_settle_on_sS.json` and
-`.../lbf_off/sS/lbf_settle_off_sS.json`. The harvest copies each node into its own subdirectory
-(`lbf_on/<node>/sS/`), so no two files can collide.
+directory: `research/findings/raw/_affect_marker_settle/lbf_on/<seed>/lbf_settle_on_<seed>.json` and
+`.../lbf_off/<seed>/lbf_settle_off_<seed>.json`. The harvest copies each node into its own subdirectory
+(`lbf_on/<node>/<seed>/`), so no two files can collide.
 Queued 2026-09-23 at pool revision `56f1abf54` (prereg `ac02c209d` merged with main), one job per seed, provisioned on
 pool41 and pool42 with `data/corpus` present. Harvest, for each node N in pool41 and pool42:
 `rsync -a N:derisk-pool/revisions/56f1abf54917f271c061815a8ba886ee61fd99f2/research/findings/raw/_affect_marker_settle/lbf_on/ research/findings/raw/_affect_marker_settle/lbf_on/N/`

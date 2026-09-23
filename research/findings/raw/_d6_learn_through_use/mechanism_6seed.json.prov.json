@@ -1,0 +1,33 @@
+{
+ "run_id": "1790175410-1029489",
+ "runner": "research/runners/_d6_hebbian_mechanism_probe.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/wf_8bf19a04-cbd-2/research/runners/_d6_hebbian_mechanism_probe.py",
+  "--seeds",
+  "42",
+  "43",
+  "44",
+  "100",
+  "101",
+  "102",
+  "--json",
+  "research/findings/raw/_d6_learn_through_use/mechanism_6seed.json"
+ ],
+ "git_sha": "bca675ea3",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-23T10:56:50",
+ "env": {},
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 8076.5,
+ "corpus_check_query": "continuous learning from use: turn-N plasticity write changes a later reply, lesion-verified",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_d6_learn_through_use/mechanism_6seed.json"
+}

@@ -113,6 +113,10 @@ def _known_concepts(composer) -> set:
     if composer is None:
         return out
     kb = getattr(composer, "kb", None)
+    if kb is not None and os.environ.get("BRAIN_D6_ENGRAM_READTIME", "").strip().lower() in ("1", "true", "yes", "on"):
+        # D6 (default-OFF): which concepts are KNOWN is read off the engrams that reactivate NOW, not the host list.
+        from research.runners.d6_hebbian_store import visible_kb as _d6_visible_kb
+        kb = _d6_visible_kb(composer)
     if kb is not None:
         try:
             for fact, _handle in kb:
