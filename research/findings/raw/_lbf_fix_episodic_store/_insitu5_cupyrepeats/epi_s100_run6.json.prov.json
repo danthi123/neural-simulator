@@ -1,0 +1,34 @@
+{
+ "run_id": "1790152269-261676",
+ "runner": "research/runners/load_bearing_fraction.py",
+ "argv": [
+  "/home/dant123/Projects/sim/research/runners/load_bearing_fraction.py",
+  "--only",
+  "episodic-memory",
+  "--seed",
+  "100",
+  "--repeats",
+  "1",
+  "--out",
+  "research/findings/raw/_lbf_fix_episodic_store/_insitu5_cupyrepeats/epi_s100_run6.json"
+ ],
+ "git_sha": "69084286c",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-23T04:31:09",
+ "env": {
+  "SIM_BACKEND": "cupy"
+ },
+ "sim_backend": "cupy",
+ "sim_backend_requested": "cupy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 201700.2,
+ "corpus_check_query": "raw-scale token-supply scaling of the spiking mouth to broad-domain fluency at d384 \u2014 capacity-saturated (NO-GO)",
+ "corpus_check_fresh": false,
+ "artifact": "research/findings/raw/_lbf_fix_episodic_store/_insitu5_cupyrepeats/epi_s100_run6.json"
+}
