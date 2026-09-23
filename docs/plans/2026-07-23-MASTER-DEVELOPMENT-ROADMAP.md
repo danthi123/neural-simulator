@@ -1188,6 +1188,56 @@ Perception/attention/WM, affect, curiosity, self/workspace/ToM, and language are
 
 ## 8. IMMEDIATE NEXT ACTIONS
 
+**2026-09-23 (later — charter fix-round harvest cycle; robust core 22→23 + waiver loophole repaired; doc-sync
+`research/doc-sync-2026-09-23`):** since the da-gated-encoding entry below was written, five more charter/D1
+lanes landed same-day. **ROBUST CORE 22→23:** episodic-memory load-bearing 6/6 — the earlier near-threshold s100
+flicker was a cupy (GPU) reduction non-determinism artifact, resolved by a 7×-repeat majority-vote read (7/7
+clean-deterministic), merged `@459764ed`. **D1 operating-point stabilizer — GO 6/6, merged `@f48fce12`:** a
+per-seed target-seeking homeostatic set-point regulator (default-OFF, no `sim/` edit) hardens the thin
+robust-core-23 margins and surfaces a genuine substrate CLIFF (pmem coincidence collapses past fac_g~10000).
+**Its live-in-loop follow-on is an honest NO-GO 5/6, merged `@67b7fbc9c`:** a genuinely continuous set-point
+controller (reads the pool's own running coincidence output, no precomputed table) falls short on seed 101 by a
+uniform cliff-safety margin; next controller named = a per-seed LIVE CLIFF DETECTOR (itself hit a circular-gate
+fix-round same day — see `GAP_CLOSURE_MISSION.md` CURRENT STATE for the live thread, out of this doc's scope).
+**§8 affect→tone-over-open (D5) is WALLED at the decode-point** — two directional NO-GOs (additive word-nudge,
+then brain-based neural coupling; both positive-asymmetric only) exhaust that family; per NO-DEFER + the DR-gate
+this moves to EXTERNAL deep-research, not another in-house lever. **Its next-method — affect-CONDITIONED
+generation (condition the Qwen mouth's own generation on affect state, not a post-hoc word nudge) — is BUILT and
+MERGED default-off, re-review SOUND, `@5e9a7955`; the 6-seed pass/fail verdict has not yet run.** **D1
+affect-marker SETTLE (deliberation window 500ms + inter-turn rest 1000ms) full-brain contrast reads PARTIAL
+(`@1e441d5d4`):** load-bearing 6/6 WITH the flag, but only 2/6 of that is genuinely attributable to SETTLE itself
+(4/6 already worked without it) — the operating-point-level prediction (1/6 without) did not transfer to the full
+brain. **Waiver-loophole repaired on `main` (`@ad6ec857`)** — episode-once budget + a 1-hour minimum charge per
+episode closes the last escape (brief around-commit waivers); this — plus a dispatcher fix that had stopped
+`parallel_audit` reading `⛔ UNDER-PARALLELIZED` for ~14.5 days straight (it was miscounting flock
+waiters/wrappers as real jobs) — is infra, not a capability change, so it has no walls-ledger/faculty-tag row;
+recorded here + in `docs/.vikunja_sync` only. **GNW continuous-thought-swap lane PARKED after 3 review rounds**
+(each round's own verification claim was refuted on re-review: hash-after-divergence, saturated fork scalars, a
+safety gate calling `observe()` 5×/turn) — per THE LAW this bans the three tried verification METHODS, not the
+capability; next attempt verifies against a genuine branch-point snapshot of every `cp_*` array. A confirmatory
+all-fixes 6-seed battery (tag `allfixes2`) was 185/186 shards complete at the time of this sync — its final shard
+was not yet in, so the "23" above is the pre-final-shard read, not a closed number. **None of today's landings
+map to an existing §7 walls-ledger row or a §2 faculty HAVE/MISSING tag** — they verify/harden faculties this
+roadmap already tags HAVE (episodic memory, core affect, DA-gated encoding) under the newer load-bearing-fraction
+metric introduced by the 2026-09-19 pivot, which is tracked in `GAP_CLOSURE_MISSION.md` + `ROADMAP.md` + the
+Vikunja board (#224/#225/#227), not in this doc's older per-wall table; no §7/§2 edit was made for this reason.
+
+**2026-09-23 (da-gated-encoding, branch `research/da-encoding-natural-drive`, MERGED default-off same day — see
+above):** the natural-probe wall
+(DA write gain invisible to a clean read) traced to two constants: infinite E-LTP lifetime and a zero synaptic
+baseline. Built `webapp/da_tag_capture.py` (DA-gated tagging-and-capture, default OFF) plus a natural
+surprising-vs-expected conversation read as 24 h recall. v1 (D=64) 6-seed = UNDEFINED (1 GO, 5 fail the G2
+immediate-recall precondition: low-gain writes misread, with confabulations, once a synaptic baseline exists), while
+every 24 h comparison went the predicted way on all 6 seeds. v2 at the production D=128 = 6/6 GO at RUNNER LEVEL
+(salient facts recalled next day 4/4, DA->encoding lesion 0/4, neutral 0/4, capture-only lesion 0/4, companion off
+4/4; no confabulation at the primary point). Review: v2's 24 h outcome was set by a HOST compare-and-decay rule
+(declared; not credited to the brain), its band could not fail, and its arms were run-order dependent. v3 (prereg
+014298f62): DA acts through synapses (spiking D1 pool -> PRP pool -> per-synapse tag + bistable late-phase state, no
+compare on the DA trace), fresh process per arm, a capture band that can fail = 6/6 GO at RUNNER LEVEL, seed sign-flip
+p = 1/64; margins wide (neutral flips only at gamma x3.2 on seed 42). NOT wired: the battery still reads
+da-gated-encoding hollow. NEXT: verify-go v3; wire the ledger + a battery "next day" probe pair; a harder neutral drive;
+add repetition/sleep-replay routes to L-LTP before any default flip.
+
 **2026-09-18 (STRATEGIC — owner decision + scaling go/no-go; supersedes the raw-scale framing below):**
 - **Faithfulness-vs-tractability relaxation APPROVED (owner), honesty-conditioned** — trade bit-exact realism ONLY for a significant perf gain that loses nothing important to end-goal capabilities, and document every trade; biology-strong stays core; invariants kept (brain-based / one-brain / emergent / honesty). See memory `project_agi_first_fork_openness_2026_09_06`.
 - **SCALING GO/NO-GO = do NOT buy hardware yet** (finding `2026-09-18-scaling-go-no-go-raw-scale-falsified-lever-is-data-do-not-buy-hardware-yet.md`; 10-agent adversarially-verified workflow). RAW param/GPU scale is FALSIFIED as the fluency lever on the broad domain (token-supply capacity-saturated; the realistic large-token analog REGRESSED); the lever is DATA (token-throughput + curation atop a modest capacity floor), owner's skepticism vindicated. The mouth (neural-render) IS the keystone (~half the blocked rows) but the lever there is data, not a bigger GPU.

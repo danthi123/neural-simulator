@@ -24,8 +24,15 @@ from __future__ import annotations
 import json
 import os
 
+from waiver_history import shared_root  # noqa: E402  (the one git-common-dir resolver; tools/ is on sys.path)
+
 _ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-STATE_FILE = os.path.join(_ROOT, "research", "coordination", "parallel_audit_state.json")
+# FIX ROUND 3 (2026-09-23): resolved through the SHARED checkout, not this file's own worktree. The heartbeat
+# (the sole writer) runs from the main checkout; a commit-time READER in an agent worktree used to open the
+# worktree's own (git-tracked, stale) copy, read it as "no signal", and so compute_idle_persistent /
+# agent_floor_persistent could never fire from any worktree -- the same per-worktree bug fix 2 closed for the
+# waiver history.
+STATE_FILE = os.path.join(shared_root(), "research", "coordination", "parallel_audit_state.json")
 # A reading older than this describes a world that may no longer hold (the heartbeat is a Claude-session
 # habit, not a daemon — CLAUDE.md: "Cross-session continuation is MANUAL ... no watchdog/daemon"). Readers
 # MUST treat a stale/absent state as NO SIGNAL, never as "still under-parallelized" — the failure mode this

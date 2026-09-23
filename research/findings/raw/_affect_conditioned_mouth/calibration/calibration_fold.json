@@ -1,0 +1,180 @@
+{
+  "per_seed": {
+    "42": {
+      "full_pos": 0.086,
+      "full_neg": -0.083,
+      "valence_fs": 0.339,
+      "d_pos_0475": 0.038,
+      "d_neg_0475": -0.036,
+      "d_neg_075": -0.06,
+      "d_neg_1": -0.083,
+      "d_at_pm025": [
+        0.0,
+        0.0
+      ]
+    },
+    "43": {
+      "full_pos": 0.086,
+      "full_neg": -0.078,
+      "valence_fs": 0.328,
+      "d_pos_0475": 0.038,
+      "d_neg_0475": -0.021,
+      "d_neg_075": -0.062,
+      "d_neg_1": -0.078,
+      "d_at_pm025": [
+        0.0,
+        0.0
+      ]
+    },
+    "44": {
+      "full_pos": 0.077,
+      "full_neg": -0.093,
+      "valence_fs": 0.341,
+      "d_pos_0475": 0.041,
+      "d_neg_0475": -0.044,
+      "d_neg_075": -0.077,
+      "d_neg_1": -0.093,
+      "d_at_pm025": [
+        0.0,
+        0.0
+      ]
+    },
+    "100": {
+      "full_pos": 0.079,
+      "full_neg": -0.076,
+      "valence_fs": 0.309,
+      "d_pos_0475": 0.041,
+      "d_neg_0475": -0.018,
+      "d_neg_075": -0.058,
+      "d_neg_1": -0.076,
+      "d_at_pm025": [
+        0.0,
+        0.0
+      ]
+    },
+    "101": {
+      "full_pos": 0.075,
+      "full_neg": -0.082,
+      "valence_fs": 0.313,
+      "d_pos_0475": 0.035,
+      "d_neg_0475": -0.024,
+      "d_neg_075": -0.065,
+      "d_neg_1": -0.082,
+      "d_at_pm025": [
+        0.0,
+        0.0
+      ]
+    },
+    "102": {
+      "full_pos": 0.08,
+      "full_neg": -0.079,
+      "valence_fs": 0.318,
+      "d_pos_0475": 0.039,
+      "d_neg_0475": -0.02,
+      "d_neg_075": -0.061,
+      "d_neg_1": -0.079,
+      "d_at_pm025": [
+        0.0,
+        0.0
+      ]
+    }
+  },
+  "live": {
+    "42_pos": {
+      "valence": 0.152,
+      "c": 0.449,
+      "frac_of_full_scale": 0.449
+    },
+    "42_neg": {
+      "valence": -0.15,
+      "c": -0.442,
+      "frac_of_full_scale": 0.442
+    },
+    "43_pos": {
+      "valence": 0.151,
+      "c": 0.461,
+      "frac_of_full_scale": 0.461
+    },
+    "43_neg": {
+      "valence": -0.086,
+      "c": -0.261,
+      "frac_of_full_scale": 0.261
+    },
+    "44_pos": {
+      "valence": 0.162,
+      "c": 0.476,
+      "frac_of_full_scale": 0.476
+    },
+    "44_neg": {
+      "valence": -0.18,
+      "c": -0.528,
+      "frac_of_full_scale": 0.528
+    },
+    "100_pos": {
+      "valence": 0.162,
+      "c": 0.525,
+      "frac_of_full_scale": 0.525
+    },
+    "100_neg": {
+      "valence": -0.073,
+      "c": -0.237,
+      "frac_of_full_scale": 0.237
+    },
+    "101_pos": {
+      "valence": 0.141,
+      "c": 0.451,
+      "frac_of_full_scale": 0.451
+    },
+    "101_neg": {
+      "valence": -0.099,
+      "c": -0.316,
+      "frac_of_full_scale": 0.316
+    },
+    "102_pos": {
+      "valence": 0.156,
+      "c": 0.489,
+      "frac_of_full_scale": 0.489
+    },
+    "102_neg": {
+      "valence": -0.079,
+      "c": -0.248,
+      "frac_of_full_scale": 0.248
+    }
+  },
+  "full_pos_range": [
+    0.075,
+    0.086
+  ],
+  "full_neg_range": [
+    -0.093,
+    -0.076
+  ],
+  "valence_fs_range": [
+    0.309,
+    0.341
+  ],
+  "live_pos_valence_range": [
+    0.141,
+    0.162
+  ],
+  "live_neg_valence_range": [
+    -0.18,
+    -0.073
+  ],
+  "neg_0475_below_tol_seeds": [
+    43,
+    100,
+    101,
+    102
+  ],
+  "neg_0475_weak_range": [
+    -0.024,
+    -0.018
+  ],
+  "neg_075_to_1_weak_seeds_range": [
+    -0.082,
+    -0.058
+  ],
+  "n_dead_zoned": 12,
+  "n_rows": 12
+}
