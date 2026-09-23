@@ -395,9 +395,15 @@ def run_controller(out_dir, parallel=2, memcap_gb=10, resume=True):
     return score_and_gate(out_dir)
 
 
-def score_and_gate(out_dir, write_artifact=True):
+def score_and_gate(out_dir, write_artifact=True, mouth="wkv", extra_require=()):
     """Load every arm, score, preregister delta from the lesion arm, run the 5-part GO gate, and write the
-    Verdict artifact. Pure w.r.t. the brain (no build) so it is re-runnable on collected arms."""
+    Verdict artifact. Pure w.r.t. the brain (no build) so it is re-runnable on collected arms.
+
+    `mouth` (default "wkv" -> byte-identical to before this parameter existed): "qwen" swaps the two
+    WKV-specific instrument preconditions (per-seed linattn ckpt resolved; wkv mouth used) for the Qwen ones
+    (every tone reply was written by generator=="qwen"; Qwen has no per-seed checkpoint). `extra_require` is a
+    sequence of (name, ok, detail) instrument preconditions a caller adds (e.g. the conditioning-lever check of
+    _lbf_affect_conditioned_mouth_derisk); each becomes one more Verdict.require -> UNDEFINED if unmet."""
     from tools.verdict import Verdict
     from tools.lab import attributable_to
     lex, overlap = load_indep_lexicon()
@@ -558,8 +564,14 @@ def score_and_gate(out_dir, write_artifact=True):
               "missing=%s" % (missing if missing else "none"))
     v.require("lexicon-disjoint-from-WARRINER (overlap==0)", overlap == 0, True,
               "overlap=%d" % overlap)
-    v.require("ckpt-resolved-per-seed (no seed42 fallback)", ckpt_ok, True)
-    v.require("wkv-mouth-used-on-tone-prompts (not qwen)", wkv_used_ok, True)
+    if mouth == "qwen":
+        qwen_used_ok = all(r.get("generator") == "qwen" for (s, a), d in arms.items() for r in d["tone_rows"])
+        v.require("qwen-mouth-used-on-tone-prompts (generator==qwen)", qwen_used_ok, True)
+    else:
+        v.require("ckpt-resolved-per-seed (no seed42 fallback)", ckpt_ok, True)
+        v.require("wkv-mouth-used-on-tone-prompts (not qwen)", wkv_used_ok, True)
+    for (_xn, _xok, _xd) in extra_require:
+        v.require(_xn, bool(_xok), True, _xd)
     v.require("(5) determinism lesion==lesion_rep byte-identical/seed (clean null)", determ_ok, True)
     v.require("(4) fluency salad_frac<=0.16 all arms", fluency_ok, True,
               "max_salad=%.4f worst=%s" % (max_salad, worst))

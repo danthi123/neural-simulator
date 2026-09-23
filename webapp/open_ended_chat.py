@@ -800,6 +800,14 @@ def answer_turn(msg: str, warm_faculty, valence: float, arousal: float, *,
         # -- so skip the call and produce that string directly, at zero forward-pass cost.
         raw, secs = "", 0.0
         generator_name = "no_qwen_fallback"
+    elif os.environ.get("BRAIN_OPEN_ENDED_AFFECT_CONDITIONED", "").strip().lower() in ("prompt", "resid"):
+        # D5 AFFECT-CONDITIONED MOUTH (2026-09-23, default-OFF): condition the Qwen GENERATION on the live spiking
+        # affect organ's valence (graded MOOD line, or residual-stream conditioning) -- see
+        # webapp/affect_conditioned_mouth.py. Cheap env read FIRST: unset -> the module is never imported and the
+        # branch below runs byte-identically.
+        from webapp import affect_conditioned_mouth as _ACM
+        raw, secs = _ACM.generate_conditioned(gen, system, user, valence, arousal, seed=seed,
+                                              max_new_tokens=max_new_tokens)
     else:
         raw, secs = gen.generate(system, user, seed=seed, max_new_tokens=max_new_tokens)
 
