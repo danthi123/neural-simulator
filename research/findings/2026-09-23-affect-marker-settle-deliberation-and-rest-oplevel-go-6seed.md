@@ -184,12 +184,28 @@ that OFF rows carry no flag, so it could credit SETTLE even if the OFF control w
 the remaining running and queued jobs were killed by PID. The six rows that had finished (ON s42, s43, s44, s101; OFF
 s42, s43) were copied unread to `research/findings/raw/_affect_marker_settle/lbf_superseded_rev56e588d/` and do not
 enter the verdict.
+<!--derived-->
+Source: research/findings/raw/_affect_marker_settle/lbf_superseded_rev56e588d/pool41/lbf_settle_on_s42.json and siblings.
+Read only after the contrast gate was committed, as an informational cross-check:
+- ON s42, s43 and s101 read load-bearing, null-clean, lesion-reproduced and deterministic, with the flag set.
+- ON s44 is `arm-build-failed`, so `load_bearing` is null and the row is UNDEFINED. pool41 had 0 GB available at the
+  time.
+- OFF s42 and s43 read not load-bearing, valid and deterministic, so the contrast holds on those two seeds.
+- On s43 the full-brain ON lead is 'Wonderful! ' (register +3), while the op-level read picked 'Gladly! ' (+2). The
+  cause was not investigated; a different ladder mood in the full-brain turn is the likely candidate, since s43 sits
+  closest to the boundary. Either register counts as load-bearing.
+These rows mix raw arm files from different arms in one dir and are one revision behind, so they are not evidence
+for the gate.
 
 **Re-staged layout.** Each seed runs as one pool job on one node: the ON arm, then the OFF arm, from the same revision,
 serialized by a per-node lock (each full brain is about 8 GB on a 15 GB node). Every arm and seed has its own
 directory: `research/findings/raw/_affect_marker_settle/lbf_on/sS/lbf_settle_on_sS.json` and
 `.../lbf_off/sS/lbf_settle_off_sS.json`. The harvest copies each node into its own subdirectory
 (`lbf_on/<node>/sS/`), so no two files can collide.
+Queued 2026-09-23 at pool revision `56f1abf54` (prereg `ac02c209d` merged with main), one job per seed, provisioned on
+pool41 and pool42 with `data/corpus` present. Harvest, for each node N in pool41 and pool42:
+`rsync -a N:derisk-pool/revisions/56f1abf54917f271c061815a8ba886ee61fd99f2/research/findings/raw/_affect_marker_settle/lbf_on/ research/findings/raw/_affect_marker_settle/lbf_on/N/`
+and the same for `lbf_off/`. Then run the scoring command below.
 
 **The contrast gate (pre-registered in the fix round, `_affect_marker_settle_derisk.py --score-fullbrain`).** The
 rule and the amendment log are in the runner docstring, committed before any re-staged row existed.

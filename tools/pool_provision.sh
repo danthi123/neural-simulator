@@ -151,7 +151,13 @@ for h in "${NODES[@]}"; do
   ssh "$h" "mkdir -p ~/$REMOTE_ROOT/research/findings/raw"
   # CORPUS (2026-09-23): the small corpus files corpus-LEARNED organs read (see load_bearing_fraction CORPUS GUARD).
   ssh "$h" "mkdir -p ~/$REMOTE_ROOT/data/corpus"
-  ( cd "$ROOT/data/corpus" && rsync -aL tinystories.txt wikitext.txt simplewiki.txt websters1913.json run3_ra_grounded_frames.txt "$h:$REMOTE_ROOT/data/corpus/" ) || echo "  (warning: corpus sync to $h failed)" >&2
+  # data/corpus is UNTRACKED, so a git WORKTREE has none (2026-09-23: every worktree-run provision printed
+  # "corpus sync failed" and the LBF CORPUS GUARD then refused the jobs). Fall back to the PRIMARY checkout's copy.
+  CORPUS_SRC="$ROOT/data/corpus"
+  if [ ! -d "$CORPUS_SRC" ]; then
+    CORPUS_SRC="$(git -C "$ROOT" worktree list --porcelain 2>/dev/null | awk '/^worktree /{print $2; exit}')/data/corpus"
+  fi
+  ( cd "$CORPUS_SRC" && rsync -aL tinystories.txt wikitext.txt simplewiki.txt websters1913.json run3_ra_grounded_frames.txt "$h:$REMOTE_ROOT/data/corpus/" ) || echo "  (warning: corpus sync to $h failed)" >&2
   rsync -az --delete --exclude='__pycache__' "$STAGE/experiment/" "$h:~/$REMOTE_ROOT/experiment/" 2>/dev/null
   rsync -az --delete --exclude='__pycache__' "$STAGE/tools/" "$h:~/$REMOTE_ROOT/tools/" 2>/dev/null
   rsync -az --delete --exclude='__pycache__' --exclude='*.pyc' \
