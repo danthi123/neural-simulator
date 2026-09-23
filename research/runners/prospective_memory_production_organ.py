@@ -157,6 +157,24 @@ def pmem_facilitation_enabled() -> bool:
     return v.strip().lower() in ("1", "true", "yes", "on")
 
 
+def pmem_live_homeostat_enabled() -> bool:
+    """Default-OFF. `BRAIN_PMEM_LIVE_HOMEOSTAT` in {1,true,yes,on} -> replace the STATIC per-seed
+    `CALIBRATED_FAC_G` lookup (`BRAIN_PMEM_OP_STABILIZER`) with a genuine LIVE, in-loop Turrigiano-style
+    integral set-point controller that converges THIS seed's facilitation gain from its OWN running
+    coincidence read -- no precomputed table anywhere in the control loop (`_pmem_live_homeostat_derisk`,
+    finding `2026-09-23-live-homeostat-*`). The converged gain is cached per-seed WITHIN THIS PROCESS the
+    first time it is needed (the SAME per-process calibration-caching pattern the homeostat bias / plateau
+    theta already use, `_pmem_perpool_homeostat_derisk._BIAS_CACHE` / `_pmem_sfa_nmda_amplifier_derisk.
+    _THETA_CACHE`) -- nothing ships pre-computed; the cache is empty until the process actually runs the
+    convergence loop. Takes PRIORITY over `BRAIN_PMEM_OP_STABILIZER` when both are set (see `_ensure_pm`).
+    Only takes effect when `BRAIN_PMEM_FACILITATION` is ALSO on. DEFAULT-OFF -> the shipped brain + the
+    battery default use the SAME constant as before (byte-identical); the flag is purely additive."""
+    v = os.environ.get("BRAIN_PMEM_LIVE_HOMEOSTAT")
+    if v is None:
+        return False
+    return v.strip().lower() in ("1", "true", "yes", "on")
+
+
 def pmem_op_stabilizer_enabled() -> bool:
     """Default-OFF. `BRAIN_PMEM_OP_STABILIZER` in {1,true,yes,on} -> replace the single global facilitation gain
     constant (fac_g=6000, uniform across seeds) with this seed's CALIBRATED gain from a per-seed, floor-guarded,
@@ -257,7 +275,10 @@ class ProspectiveMemoryOrgan:
                 if self._facilitation:
                     from research.runners._pmem_facilitation_derisk import FacilitatedHebbianProspectiveMemory
                     fac_g_kw = {}
-                    if pmem_op_stabilizer_enabled():
+                    if pmem_live_homeostat_enabled():
+                        from research.runners._pmem_live_homeostat_derisk import live_fac_g_for_seed
+                        fac_g_kw["fac_g"] = live_fac_g_for_seed(self.seed)
+                    elif pmem_op_stabilizer_enabled():
                         from research.runners._operating_point_stabilizer_derisk import stabilized_fac_g_for_seed
                         fac_g_kw["fac_g"] = stabilized_fac_g_for_seed(self.seed)
                     self._pm = FacilitatedHebbianProspectiveMemory(
@@ -275,7 +296,10 @@ class ProspectiveMemoryOrgan:
                 if self._facilitation:
                     from research.runners._pmem_facilitation_derisk import FacilitatedProspectiveMemory
                     fac_g_kw = {}
-                    if pmem_op_stabilizer_enabled():
+                    if pmem_live_homeostat_enabled():
+                        from research.runners._pmem_live_homeostat_derisk import live_fac_g_for_seed
+                        fac_g_kw["fac_g"] = live_fac_g_for_seed(self.seed)
+                    elif pmem_op_stabilizer_enabled():
                         from research.runners._operating_point_stabilizer_derisk import stabilized_fac_g_for_seed
                         fac_g_kw["fac_g"] = stabilized_fac_g_for_seed(self.seed)
                     self._pm = FacilitatedProspectiveMemory(

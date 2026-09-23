@@ -1,0 +1,1343 @@
+{
+  "probe": "pmem_live_homeostat",
+  "verdict": "NO-GO (5/6) -- per the PRE-REGISTERED gate, 6/6 seeds hold a strictly positive live-converged margin, 5/6 meet-or-beat the STATIC table's own margin, 6/6 stay load-bearing, 6/6 converge to the SAME neighborhood from two different inits; silence-regressed=none; cliff-safe=True. Seed(s) [44, 100, 101] moved off the shipped floor; seed(s) [42, 43, 102] settled back at it (already at/above target). Thinnest-margin seed in the static table (s44): static margin +0.0183 -> live-converged +0.0183. CLIFF-SAFETY: the ceiling (9000) sits below the documented collapse (fac_g=10000, s44 rel 0.2183->0.1506); max fac_g visited across all seeds/inits was 9000 -- the controller never entered the collapse zone even where the target (0.30) was unreachable and windup pulled it toward the bound.",
+  "go": false,
+  "task": "Convert the static per-seed CALIBRATED_FAC_G lookup table into a genuine LIVE, in-loop Turrigiano-style integral set-point controller on the facilitation gain fac_g -- no precomputed table anywhere in the control loop; the controller reads the pool's own running coincidence output and adjusts gain by a bounded, rate-limited integral step, safety-ceilinged below the documented substrate collapse.",
+  "gate": {
+    "FIRE_THR": 0.2,
+    "REL_TARGET": 0.30000000000000004,
+    "G_FLOOR": 6000.0,
+    "G_CEILING": 9000.0,
+    "K_I": 20000.0,
+    "MAX_STEP": 500.0,
+    "G_TOL": 25.0,
+    "CONVERGE_STREAK": 3,
+    "MAX_ITERS": 16,
+    "SETPOINT_TOL": 750.0,
+    "G_INIT_LOW": 6000.0,
+    "G_INIT_MID": 8000.0
+  },
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "per_seed": {
+    "42": {
+      "low_init": {
+        "seed": 42,
+        "g_init": 6000.0,
+        "converged": true,
+        "reason": "pinned at safety floor (fac_g=6000)",
+        "n_iters": 4,
+        "final_fac_g": 6000.0,
+        "final_rel": 0.3439,
+        "final_error": -0.0439,
+        "trajectory": [
+          {
+            "iter": 0,
+            "fac_g": 6000.0,
+            "rel": 0.3439,
+            "error": -0.0439,
+            "streak": 0
+          },
+          {
+            "iter": 1,
+            "fac_g": 6000.0,
+            "rel": 0.3439,
+            "error": -0.0439,
+            "streak": 1
+          },
+          {
+            "iter": 2,
+            "fac_g": 6000.0,
+            "rel": 0.3439,
+            "error": -0.0439,
+            "streak": 2
+          },
+          {
+            "iter": 3,
+            "fac_g": 6000.0,
+            "rel": 0.3439,
+            "error": -0.0439,
+            "streak": 3
+          }
+        ]
+      },
+      "mid_init": {
+        "seed": 42,
+        "g_init": 8000.0,
+        "converged": true,
+        "reason": "pinned at safety floor (fac_g=6000)",
+        "n_iters": 8,
+        "final_fac_g": 6000.0,
+        "final_rel": 0.3439,
+        "final_error": -0.0439,
+        "trajectory": [
+          {
+            "iter": 0,
+            "fac_g": 8000.0,
+            "rel": 0.345,
+            "error": -0.045,
+            "streak": 0
+          },
+          {
+            "iter": 1,
+            "fac_g": 7500.0,
+            "rel": 0.3456,
+            "error": -0.0456,
+            "streak": 0
+          },
+          {
+            "iter": 2,
+            "fac_g": 7000.0,
+            "rel": 0.3439,
+            "error": -0.0439,
+            "streak": 0
+          },
+          {
+            "iter": 3,
+            "fac_g": 6500.0,
+            "rel": 0.3439,
+            "error": -0.0439,
+            "streak": 0
+          },
+          {
+            "iter": 4,
+            "fac_g": 6000.0,
+            "rel": 0.3439,
+            "error": -0.0439,
+            "streak": 0
+          },
+          {
+            "iter": 5,
+            "fac_g": 6000.0,
+            "rel": 0.3439,
+            "error": -0.0439,
+            "streak": 1
+          },
+          {
+            "iter": 6,
+            "fac_g": 6000.0,
+            "rel": 0.3439,
+            "error": -0.0439,
+            "streak": 2
+          },
+          {
+            "iter": 7,
+            "fac_g": 6000.0,
+            "rel": 0.3439,
+            "error": -0.0439,
+            "streak": 3
+          }
+        ]
+      },
+      "same_setpoint_within_tol": true,
+      "converged_fac_g": 6000.0,
+      "converged_rel": 0.3439,
+      "intact_rel": 0.3439,
+      "intact_fired": true,
+      "lesion_rel": 0.0278,
+      "lesion_fired": false,
+      "load_bearing": true,
+      "frozen_passed": true,
+      "frozen_max_silent": 0.0472,
+      "frozen_clause_fails": [],
+      "frozen_clauses": {
+        "fire_on_cue": true,
+        "persistence": true,
+        "no_fire_before": true,
+        "no_fire_wrongcue": true,
+        "no_intention_silent": true,
+        "lesion_holds": true,
+        "lesion_forgets": true,
+        "separation": true
+      },
+      "static_table_margin": 0.1439,
+      "converged_margin": 0.1439,
+      "margin_positive": true,
+      "margin_meets_static": true,
+      "lesion_attribution": 0.9191625472521082
+    },
+    "43": {
+      "low_init": {
+        "seed": 43,
+        "g_init": 6000.0,
+        "converged": true,
+        "reason": "pinned at safety floor (fac_g=6000)",
+        "n_iters": 4,
+        "final_fac_g": 6000.0,
+        "final_rel": 0.3361,
+        "final_error": -0.0361,
+        "trajectory": [
+          {
+            "iter": 0,
+            "fac_g": 6000.0,
+            "rel": 0.3361,
+            "error": -0.0361,
+            "streak": 0
+          },
+          {
+            "iter": 1,
+            "fac_g": 6000.0,
+            "rel": 0.3361,
+            "error": -0.0361,
+            "streak": 1
+          },
+          {
+            "iter": 2,
+            "fac_g": 6000.0,
+            "rel": 0.3361,
+            "error": -0.0361,
+            "streak": 2
+          },
+          {
+            "iter": 3,
+            "fac_g": 6000.0,
+            "rel": 0.3361,
+            "error": -0.0361,
+            "streak": 3
+          }
+        ]
+      },
+      "mid_init": {
+        "seed": 43,
+        "g_init": 8000.0,
+        "converged": true,
+        "reason": "pinned at safety floor (fac_g=6000)",
+        "n_iters": 8,
+        "final_fac_g": 6000.0,
+        "final_rel": 0.3361,
+        "final_error": -0.0361,
+        "trajectory": [
+          {
+            "iter": 0,
+            "fac_g": 8000.0,
+            "rel": 0.3406,
+            "error": -0.0406,
+            "streak": 0
+          },
+          {
+            "iter": 1,
+            "fac_g": 7500.0,
+            "rel": 0.34,
+            "error": -0.04,
+            "streak": 0
+          },
+          {
+            "iter": 2,
+            "fac_g": 7000.0,
+            "rel": 0.3406,
+            "error": -0.0406,
+            "streak": 0
+          },
+          {
+            "iter": 3,
+            "fac_g": 6500.0,
+            "rel": 0.3417,
+            "error": -0.0417,
+            "streak": 0
+          },
+          {
+            "iter": 4,
+            "fac_g": 6000.0,
+            "rel": 0.3361,
+            "error": -0.0361,
+            "streak": 0
+          },
+          {
+            "iter": 5,
+            "fac_g": 6000.0,
+            "rel": 0.3361,
+            "error": -0.0361,
+            "streak": 1
+          },
+          {
+            "iter": 6,
+            "fac_g": 6000.0,
+            "rel": 0.3361,
+            "error": -0.0361,
+            "streak": 2
+          },
+          {
+            "iter": 7,
+            "fac_g": 6000.0,
+            "rel": 0.3361,
+            "error": -0.0361,
+            "streak": 3
+          }
+        ]
+      },
+      "same_setpoint_within_tol": true,
+      "converged_fac_g": 6000.0,
+      "converged_rel": 0.3361,
+      "intact_rel": 0.3361,
+      "intact_fired": true,
+      "lesion_rel": 0.0206,
+      "lesion_fired": false,
+      "load_bearing": true,
+      "frozen_passed": true,
+      "frozen_max_silent": 0.0483,
+      "frozen_clause_fails": [],
+      "frozen_clauses": {
+        "fire_on_cue": true,
+        "persistence": true,
+        "no_fire_before": true,
+        "no_fire_wrongcue": true,
+        "no_intention_silent": true,
+        "lesion_holds": true,
+        "lesion_forgets": true,
+        "separation": true
+      },
+      "static_table_margin": 0.1361,
+      "converged_margin": 0.1361,
+      "margin_positive": true,
+      "margin_meets_static": true,
+      "lesion_attribution": 0.9387087176435585
+    },
+    "44": {
+      "low_init": {
+        "seed": 44,
+        "g_init": 6000.0,
+        "converged": true,
+        "reason": "pinned at safety ceiling (fac_g=9000)",
+        "n_iters": 10,
+        "final_fac_g": 9000.0,
+        "final_rel": 0.2183,
+        "final_error": 0.0817,
+        "trajectory": [
+          {
+            "iter": 0,
+            "fac_g": 6000.0,
+            "rel": 0.2111,
+            "error": 0.0889,
+            "streak": 0
+          },
+          {
+            "iter": 1,
+            "fac_g": 6500.0,
+            "rel": 0.215,
+            "error": 0.085,
+            "streak": 0
+          },
+          {
+            "iter": 2,
+            "fac_g": 7000.0,
+            "rel": 0.2078,
+            "error": 0.0922,
+            "streak": 0
+          },
+          {
+            "iter": 3,
+            "fac_g": 7500.0,
+            "rel": 0.2089,
+            "error": 0.0911,
+            "streak": 0
+          },
+          {
+            "iter": 4,
+            "fac_g": 8000.0,
+            "rel": 0.2139,
+            "error": 0.0861,
+            "streak": 0
+          },
+          {
+            "iter": 5,
+            "fac_g": 8500.0,
+            "rel": 0.2172,
+            "error": 0.0828,
+            "streak": 0
+          },
+          {
+            "iter": 6,
+            "fac_g": 9000.0,
+            "rel": 0.2183,
+            "error": 0.0817,
+            "streak": 0
+          },
+          {
+            "iter": 7,
+            "fac_g": 9000.0,
+            "rel": 0.2183,
+            "error": 0.0817,
+            "streak": 1
+          },
+          {
+            "iter": 8,
+            "fac_g": 9000.0,
+            "rel": 0.2183,
+            "error": 0.0817,
+            "streak": 2
+          },
+          {
+            "iter": 9,
+            "fac_g": 9000.0,
+            "rel": 0.2183,
+            "error": 0.0817,
+            "streak": 3
+          }
+        ]
+      },
+      "mid_init": {
+        "seed": 44,
+        "g_init": 8000.0,
+        "converged": true,
+        "reason": "pinned at safety ceiling (fac_g=9000)",
+        "n_iters": 6,
+        "final_fac_g": 9000.0,
+        "final_rel": 0.2183,
+        "final_error": 0.0817,
+        "trajectory": [
+          {
+            "iter": 0,
+            "fac_g": 8000.0,
+            "rel": 0.2139,
+            "error": 0.0861,
+            "streak": 0
+          },
+          {
+            "iter": 1,
+            "fac_g": 8500.0,
+            "rel": 0.2172,
+            "error": 0.0828,
+            "streak": 0
+          },
+          {
+            "iter": 2,
+            "fac_g": 9000.0,
+            "rel": 0.2183,
+            "error": 0.0817,
+            "streak": 0
+          },
+          {
+            "iter": 3,
+            "fac_g": 9000.0,
+            "rel": 0.2183,
+            "error": 0.0817,
+            "streak": 1
+          },
+          {
+            "iter": 4,
+            "fac_g": 9000.0,
+            "rel": 0.2183,
+            "error": 0.0817,
+            "streak": 2
+          },
+          {
+            "iter": 5,
+            "fac_g": 9000.0,
+            "rel": 0.2183,
+            "error": 0.0817,
+            "streak": 3
+          }
+        ]
+      },
+      "same_setpoint_within_tol": true,
+      "converged_fac_g": 9000.0,
+      "converged_rel": 0.2183,
+      "intact_rel": 0.2183,
+      "intact_fired": true,
+      "lesion_rel": 0.0,
+      "lesion_fired": false,
+      "load_bearing": true,
+      "frozen_passed": true,
+      "frozen_max_silent": 0.0467,
+      "frozen_clause_fails": [],
+      "frozen_clauses": {
+        "fire_on_cue": true,
+        "persistence": true,
+        "no_fire_before": true,
+        "no_fire_wrongcue": true,
+        "no_intention_silent": true,
+        "lesion_holds": true,
+        "lesion_forgets": true,
+        "separation": true
+      },
+      "static_table_margin": 0.0183,
+      "converged_margin": 0.0183,
+      "margin_positive": true,
+      "margin_meets_static": true,
+      "lesion_attribution": 1.0
+    },
+    "100": {
+      "low_init": {
+        "seed": 100,
+        "g_init": 6000.0,
+        "converged": false,
+        "reason": "max_iters exhausted (16)",
+        "n_iters": 16,
+        "final_fac_g": 9000.0,
+        "final_rel": 0.2956,
+        "final_error": 0.0044,
+        "trajectory": [
+          {
+            "iter": 0,
+            "fac_g": 6000.0,
+            "rel": 0.2839,
+            "error": 0.0161,
+            "streak": 0
+          },
+          {
+            "iter": 1,
+            "fac_g": 6322.0,
+            "rel": 0.2894,
+            "error": 0.0106,
+            "streak": 0
+          },
+          {
+            "iter": 2,
+            "fac_g": 6534.0,
+            "rel": 0.2867,
+            "error": 0.0133,
+            "streak": 0
+          },
+          {
+            "iter": 3,
+            "fac_g": 6800.0,
+            "rel": 0.2872,
+            "error": 0.0128,
+            "streak": 0
+          },
+          {
+            "iter": 4,
+            "fac_g": 7056.0,
+            "rel": 0.2883,
+            "error": 0.0117,
+            "streak": 0
+          },
+          {
+            "iter": 5,
+            "fac_g": 7290.0,
+            "rel": 0.2872,
+            "error": 0.0128,
+            "streak": 0
+          },
+          {
+            "iter": 6,
+            "fac_g": 7546.0,
+            "rel": 0.2861,
+            "error": 0.0139,
+            "streak": 0
+          },
+          {
+            "iter": 7,
+            "fac_g": 7824.0,
+            "rel": 0.2856,
+            "error": 0.0144,
+            "streak": 0
+          },
+          {
+            "iter": 8,
+            "fac_g": 8112.0,
+            "rel": 0.2867,
+            "error": 0.0133,
+            "streak": 0
+          },
+          {
+            "iter": 9,
+            "fac_g": 8378.0,
+            "rel": 0.2856,
+            "error": 0.0144,
+            "streak": 0
+          },
+          {
+            "iter": 10,
+            "fac_g": 8666.0,
+            "rel": 0.2933,
+            "error": 0.0067,
+            "streak": 0
+          },
+          {
+            "iter": 11,
+            "fac_g": 8800.0,
+            "rel": 0.2928,
+            "error": 0.0072,
+            "streak": 0
+          },
+          {
+            "iter": 12,
+            "fac_g": 8944.0,
+            "rel": 0.2944,
+            "error": 0.0056,
+            "streak": 0
+          },
+          {
+            "iter": 13,
+            "fac_g": 9000.0,
+            "rel": 0.2956,
+            "error": 0.0044,
+            "streak": 0
+          },
+          {
+            "iter": 14,
+            "fac_g": 9000.0,
+            "rel": 0.2956,
+            "error": 0.0044,
+            "streak": 1
+          },
+          {
+            "iter": 15,
+            "fac_g": 9000.0,
+            "rel": 0.2956,
+            "error": 0.0044,
+            "streak": 2
+          }
+        ]
+      },
+      "mid_init": {
+        "seed": 100,
+        "g_init": 8000.0,
+        "converged": true,
+        "reason": "pinned at safety ceiling (fac_g=9000)",
+        "n_iters": 11,
+        "final_fac_g": 9000.0,
+        "final_rel": 0.2956,
+        "final_error": 0.0044,
+        "trajectory": [
+          {
+            "iter": 0,
+            "fac_g": 8000.0,
+            "rel": 0.2933,
+            "error": 0.0067,
+            "streak": 0
+          },
+          {
+            "iter": 1,
+            "fac_g": 8134.0,
+            "rel": 0.2889,
+            "error": 0.0111,
+            "streak": 0
+          },
+          {
+            "iter": 2,
+            "fac_g": 8356.0,
+            "rel": 0.295,
+            "error": 0.005,
+            "streak": 0
+          },
+          {
+            "iter": 3,
+            "fac_g": 8456.0,
+            "rel": 0.2944,
+            "error": 0.0056,
+            "streak": 0
+          },
+          {
+            "iter": 4,
+            "fac_g": 8568.0,
+            "rel": 0.2911,
+            "error": 0.0089,
+            "streak": 0
+          },
+          {
+            "iter": 5,
+            "fac_g": 8746.0,
+            "rel": 0.2906,
+            "error": 0.0094,
+            "streak": 0
+          },
+          {
+            "iter": 6,
+            "fac_g": 8934.0,
+            "rel": 0.2956,
+            "error": 0.0044,
+            "streak": 0
+          },
+          {
+            "iter": 7,
+            "fac_g": 9000.0,
+            "rel": 0.2956,
+            "error": 0.0044,
+            "streak": 0
+          },
+          {
+            "iter": 8,
+            "fac_g": 9000.0,
+            "rel": 0.2956,
+            "error": 0.0044,
+            "streak": 1
+          },
+          {
+            "iter": 9,
+            "fac_g": 9000.0,
+            "rel": 0.2956,
+            "error": 0.0044,
+            "streak": 2
+          },
+          {
+            "iter": 10,
+            "fac_g": 9000.0,
+            "rel": 0.2956,
+            "error": 0.0044,
+            "streak": 3
+          }
+        ]
+      },
+      "same_setpoint_within_tol": true,
+      "converged_fac_g": 9000.0,
+      "converged_rel": 0.2956,
+      "intact_rel": 0.2956,
+      "intact_fired": true,
+      "lesion_rel": 0.0178,
+      "lesion_fired": false,
+      "load_bearing": true,
+      "frozen_passed": true,
+      "frozen_max_silent": 0.0475,
+      "frozen_clause_fails": [],
+      "frozen_clauses": {
+        "fire_on_cue": true,
+        "persistence": true,
+        "no_fire_before": true,
+        "no_fire_wrongcue": true,
+        "no_intention_silent": true,
+        "lesion_holds": true,
+        "lesion_forgets": true,
+        "separation": true
+      },
+      "static_table_margin": 0.0956,
+      "converged_margin": 0.0956,
+      "margin_positive": true,
+      "margin_meets_static": true,
+      "lesion_attribution": 0.9397834912043302
+    },
+    "101": {
+      "low_init": {
+        "seed": 101,
+        "g_init": 6000.0,
+        "converged": true,
+        "reason": "pinned at safety ceiling (fac_g=9000)",
+        "n_iters": 14,
+        "final_fac_g": 9000.0,
+        "final_rel": 0.2889,
+        "final_error": 0.0111,
+        "trajectory": [
+          {
+            "iter": 0,
+            "fac_g": 6000.0,
+            "rel": 0.2761,
+            "error": 0.0239,
+            "streak": 0
+          },
+          {
+            "iter": 1,
+            "fac_g": 6478.0,
+            "rel": 0.2789,
+            "error": 0.0211,
+            "streak": 0
+          },
+          {
+            "iter": 2,
+            "fac_g": 6900.0,
+            "rel": 0.285,
+            "error": 0.015,
+            "streak": 0
+          },
+          {
+            "iter": 3,
+            "fac_g": 7200.0,
+            "rel": 0.2889,
+            "error": 0.0111,
+            "streak": 0
+          },
+          {
+            "iter": 4,
+            "fac_g": 7422.0,
+            "rel": 0.2844,
+            "error": 0.0156,
+            "streak": 0
+          },
+          {
+            "iter": 5,
+            "fac_g": 7734.0,
+            "rel": 0.2839,
+            "error": 0.0161,
+            "streak": 0
+          },
+          {
+            "iter": 6,
+            "fac_g": 8056.0,
+            "rel": 0.2839,
+            "error": 0.0161,
+            "streak": 0
+          },
+          {
+            "iter": 7,
+            "fac_g": 8378.0,
+            "rel": 0.2889,
+            "error": 0.0111,
+            "streak": 0
+          },
+          {
+            "iter": 8,
+            "fac_g": 8600.0,
+            "rel": 0.2822,
+            "error": 0.0178,
+            "streak": 0
+          },
+          {
+            "iter": 9,
+            "fac_g": 8956.0,
+            "rel": 0.2906,
+            "error": 0.0094,
+            "streak": 0
+          },
+          {
+            "iter": 10,
+            "fac_g": 9000.0,
+            "rel": 0.2889,
+            "error": 0.0111,
+            "streak": 0
+          },
+          {
+            "iter": 11,
+            "fac_g": 9000.0,
+            "rel": 0.2889,
+            "error": 0.0111,
+            "streak": 1
+          },
+          {
+            "iter": 12,
+            "fac_g": 9000.0,
+            "rel": 0.2889,
+            "error": 0.0111,
+            "streak": 2
+          },
+          {
+            "iter": 13,
+            "fac_g": 9000.0,
+            "rel": 0.2889,
+            "error": 0.0111,
+            "streak": 3
+          }
+        ]
+      },
+      "mid_init": {
+        "seed": 101,
+        "g_init": 8000.0,
+        "converged": true,
+        "reason": "pinned at safety ceiling (fac_g=9000)",
+        "n_iters": 8,
+        "final_fac_g": 9000.0,
+        "final_rel": 0.2889,
+        "final_error": 0.0111,
+        "trajectory": [
+          {
+            "iter": 0,
+            "fac_g": 8000.0,
+            "rel": 0.2889,
+            "error": 0.0111,
+            "streak": 0
+          },
+          {
+            "iter": 1,
+            "fac_g": 8222.0,
+            "rel": 0.29,
+            "error": 0.01,
+            "streak": 0
+          },
+          {
+            "iter": 2,
+            "fac_g": 8422.0,
+            "rel": 0.2794,
+            "error": 0.0206,
+            "streak": 0
+          },
+          {
+            "iter": 3,
+            "fac_g": 8834.0,
+            "rel": 0.2872,
+            "error": 0.0128,
+            "streak": 0
+          },
+          {
+            "iter": 4,
+            "fac_g": 9000.0,
+            "rel": 0.2889,
+            "error": 0.0111,
+            "streak": 0
+          },
+          {
+            "iter": 5,
+            "fac_g": 9000.0,
+            "rel": 0.2889,
+            "error": 0.0111,
+            "streak": 1
+          },
+          {
+            "iter": 6,
+            "fac_g": 9000.0,
+            "rel": 0.2889,
+            "error": 0.0111,
+            "streak": 2
+          },
+          {
+            "iter": 7,
+            "fac_g": 9000.0,
+            "rel": 0.2889,
+            "error": 0.0111,
+            "streak": 3
+          }
+        ]
+      },
+      "same_setpoint_within_tol": true,
+      "converged_fac_g": 9000.0,
+      "converged_rel": 0.2889,
+      "intact_rel": 0.2889,
+      "intact_fired": true,
+      "lesion_rel": 0.0,
+      "lesion_fired": false,
+      "load_bearing": true,
+      "frozen_passed": true,
+      "frozen_max_silent": 0.0456,
+      "frozen_clause_fails": [],
+      "frozen_clauses": {
+        "fire_on_cue": true,
+        "persistence": true,
+        "no_fire_before": true,
+        "no_fire_wrongcue": true,
+        "no_intention_silent": true,
+        "lesion_holds": true,
+        "lesion_forgets": true,
+        "separation": true
+      },
+      "static_table_margin": 0.0922,
+      "converged_margin": 0.0889,
+      "margin_positive": true,
+      "margin_meets_static": false,
+      "lesion_attribution": 1.0
+    },
+    "102": {
+      "low_init": {
+        "seed": 102,
+        "g_init": 6000.0,
+        "converged": true,
+        "reason": "pinned at safety floor (fac_g=6000)",
+        "n_iters": 4,
+        "final_fac_g": 6000.0,
+        "final_rel": 0.3133,
+        "final_error": -0.0133,
+        "trajectory": [
+          {
+            "iter": 0,
+            "fac_g": 6000.0,
+            "rel": 0.3133,
+            "error": -0.0133,
+            "streak": 0
+          },
+          {
+            "iter": 1,
+            "fac_g": 6000.0,
+            "rel": 0.3133,
+            "error": -0.0133,
+            "streak": 1
+          },
+          {
+            "iter": 2,
+            "fac_g": 6000.0,
+            "rel": 0.3133,
+            "error": -0.0133,
+            "streak": 2
+          },
+          {
+            "iter": 3,
+            "fac_g": 6000.0,
+            "rel": 0.3133,
+            "error": -0.0133,
+            "streak": 3
+          }
+        ]
+      },
+      "mid_init": {
+        "seed": 102,
+        "g_init": 8000.0,
+        "converged": true,
+        "reason": "pinned at safety floor (fac_g=6000)",
+        "n_iters": 12,
+        "final_fac_g": 6000.0,
+        "final_rel": 0.3133,
+        "final_error": -0.0133,
+        "trajectory": [
+          {
+            "iter": 0,
+            "fac_g": 8000.0,
+            "rel": 0.3111,
+            "error": -0.0111,
+            "streak": 0
+          },
+          {
+            "iter": 1,
+            "fac_g": 7778.0,
+            "rel": 0.3128,
+            "error": -0.0128,
+            "streak": 0
+          },
+          {
+            "iter": 2,
+            "fac_g": 7522.0,
+            "rel": 0.3139,
+            "error": -0.0139,
+            "streak": 0
+          },
+          {
+            "iter": 3,
+            "fac_g": 7244.0,
+            "rel": 0.3111,
+            "error": -0.0111,
+            "streak": 0
+          },
+          {
+            "iter": 4,
+            "fac_g": 7022.0,
+            "rel": 0.3128,
+            "error": -0.0128,
+            "streak": 0
+          },
+          {
+            "iter": 5,
+            "fac_g": 6766.0,
+            "rel": 0.3139,
+            "error": -0.0139,
+            "streak": 0
+          },
+          {
+            "iter": 6,
+            "fac_g": 6488.0,
+            "rel": 0.3117,
+            "error": -0.0117,
+            "streak": 0
+          },
+          {
+            "iter": 7,
+            "fac_g": 6254.0,
+            "rel": 0.3144,
+            "error": -0.0144,
+            "streak": 0
+          },
+          {
+            "iter": 8,
+            "fac_g": 6000.0,
+            "rel": 0.3133,
+            "error": -0.0133,
+            "streak": 0
+          },
+          {
+            "iter": 9,
+            "fac_g": 6000.0,
+            "rel": 0.3133,
+            "error": -0.0133,
+            "streak": 1
+          },
+          {
+            "iter": 10,
+            "fac_g": 6000.0,
+            "rel": 0.3133,
+            "error": -0.0133,
+            "streak": 2
+          },
+          {
+            "iter": 11,
+            "fac_g": 6000.0,
+            "rel": 0.3133,
+            "error": -0.0133,
+            "streak": 3
+          }
+        ]
+      },
+      "same_setpoint_within_tol": true,
+      "converged_fac_g": 6000.0,
+      "converged_rel": 0.3133,
+      "intact_rel": 0.3133,
+      "intact_fired": true,
+      "lesion_rel": 0.0211,
+      "lesion_fired": false,
+      "load_bearing": true,
+      "frozen_passed": true,
+      "frozen_max_silent": 0.0408,
+      "frozen_clause_fails": [],
+      "frozen_clauses": {
+        "fire_on_cue": true,
+        "persistence": true,
+        "no_fire_before": true,
+        "no_fire_wrongcue": true,
+        "no_intention_silent": true,
+        "lesion_holds": true,
+        "lesion_forgets": true,
+        "separation": true
+      },
+      "static_table_margin": 0.1133,
+      "converged_margin": 0.1133,
+      "margin_positive": true,
+      "margin_meets_static": true,
+      "lesion_attribution": 0.9326524098308331
+    }
+  },
+  "n_positive": 6,
+  "n_meets_static": 5,
+  "n_load_bearing": 6,
+  "n_same_setpoint": 6,
+  "cliff_safe": true,
+  "max_fac_g_visited": 9000.0,
+  "silence_regressed": [],
+  "default_off_exact_compare": {
+    "ok": true,
+    "per_seed": {
+      "42": {
+        "this_run_iter0_rel": 0.3439,
+        "static_stabilizer_grid0_rel": 0.3439,
+        "exact_match": true
+      },
+      "43": {
+        "this_run_iter0_rel": 0.3361,
+        "static_stabilizer_grid0_rel": 0.3361,
+        "exact_match": true
+      },
+      "44": {
+        "this_run_iter0_rel": 0.2111,
+        "static_stabilizer_grid0_rel": 0.2111,
+        "exact_match": true
+      },
+      "100": {
+        "this_run_iter0_rel": 0.2839,
+        "static_stabilizer_grid0_rel": 0.2839,
+        "exact_match": true
+      },
+      "101": {
+        "this_run_iter0_rel": 0.2761,
+        "static_stabilizer_grid0_rel": 0.2761,
+        "exact_match": true
+      },
+      "102": {
+        "this_run_iter0_rel": 0.3133,
+        "static_stabilizer_grid0_rel": 0.3133,
+        "exact_match": true
+      }
+    },
+    "source": "research/findings/raw/_pmem_operating_point_stabilizer.json"
+  },
+  "prove_it_is_live": {
+    "seed": 44,
+    "no_table_import": true,
+    "rerun_identical_trajectory": true,
+    "trajectory_a": [
+      {
+        "iter": 0,
+        "fac_g": 6000.0,
+        "rel": 0.2111,
+        "error": 0.0889,
+        "streak": 0
+      },
+      {
+        "iter": 1,
+        "fac_g": 6500.0,
+        "rel": 0.215,
+        "error": 0.085,
+        "streak": 0
+      },
+      {
+        "iter": 2,
+        "fac_g": 7000.0,
+        "rel": 0.2078,
+        "error": 0.0922,
+        "streak": 0
+      },
+      {
+        "iter": 3,
+        "fac_g": 7500.0,
+        "rel": 0.2089,
+        "error": 0.0911,
+        "streak": 0
+      },
+      {
+        "iter": 4,
+        "fac_g": 8000.0,
+        "rel": 0.2139,
+        "error": 0.0861,
+        "streak": 0
+      },
+      {
+        "iter": 5,
+        "fac_g": 8500.0,
+        "rel": 0.2172,
+        "error": 0.0828,
+        "streak": 0
+      },
+      {
+        "iter": 6,
+        "fac_g": 9000.0,
+        "rel": 0.2183,
+        "error": 0.0817,
+        "streak": 0
+      },
+      {
+        "iter": 7,
+        "fac_g": 9000.0,
+        "rel": 0.2183,
+        "error": 0.0817,
+        "streak": 1
+      },
+      {
+        "iter": 8,
+        "fac_g": 9000.0,
+        "rel": 0.2183,
+        "error": 0.0817,
+        "streak": 2
+      },
+      {
+        "iter": 9,
+        "fac_g": 9000.0,
+        "rel": 0.2183,
+        "error": 0.0817,
+        "streak": 3
+      }
+    ],
+    "trajectory_b": [
+      {
+        "iter": 0,
+        "fac_g": 6000.0,
+        "rel": 0.2111,
+        "error": 0.0889,
+        "streak": 0
+      },
+      {
+        "iter": 1,
+        "fac_g": 6500.0,
+        "rel": 0.215,
+        "error": 0.085,
+        "streak": 0
+      },
+      {
+        "iter": 2,
+        "fac_g": 7000.0,
+        "rel": 0.2078,
+        "error": 0.0922,
+        "streak": 0
+      },
+      {
+        "iter": 3,
+        "fac_g": 7500.0,
+        "rel": 0.2089,
+        "error": 0.0911,
+        "streak": 0
+      },
+      {
+        "iter": 4,
+        "fac_g": 8000.0,
+        "rel": 0.2139,
+        "error": 0.0861,
+        "streak": 0
+      },
+      {
+        "iter": 5,
+        "fac_g": 8500.0,
+        "rel": 0.2172,
+        "error": 0.0828,
+        "streak": 0
+      },
+      {
+        "iter": 6,
+        "fac_g": 9000.0,
+        "rel": 0.2183,
+        "error": 0.0817,
+        "streak": 0
+      },
+      {
+        "iter": 7,
+        "fac_g": 9000.0,
+        "rel": 0.2183,
+        "error": 0.0817,
+        "streak": 1
+      },
+      {
+        "iter": 8,
+        "fac_g": 9000.0,
+        "rel": 0.2183,
+        "error": 0.0817,
+        "streak": 2
+      },
+      {
+        "iter": 9,
+        "fac_g": 9000.0,
+        "rel": 0.2183,
+        "error": 0.0817,
+        "streak": 3
+      }
+    ]
+  },
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "load-bearing preserved at the converged gain (per-seed count)",
+      "ok": true,
+      "detail": "measured=6 expect=<function _derisk.<locals>.<lambda> at 0x7f44d2e32de0>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "two different inits converge to the SAME neighborhood (per-seed count)",
+      "ok": true,
+      "detail": "measured=6 expect=<function _derisk.<locals>.<lambda> at 0x7f44d2e32de0>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "cliff-safe: no visited fac_g reached the collapse zone",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "frozen-gate silence held at the converged gain: no_fire_before",
+      "ok": true,
+      "detail": "measured=6 expect=<function _derisk.<locals>.<lambda> at 0x7f44d2e32de0>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "frozen-gate silence held at the converged gain: no_fire_wrongcue",
+      "ok": true,
+      "detail": "measured=6 expect=<function _derisk.<locals>.<lambda> at 0x7f44d2e32de0>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "frozen-gate silence held at the converged gain: no_intention_silent",
+      "ok": true,
+      "detail": "measured=6 expect=<function _derisk.<locals>.<lambda> at 0x7f44d2e32de0>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "frozen-gate silence held at the converged gain: lesion_holds",
+      "ok": true,
+      "detail": "measured=6 expect=<function _derisk.<locals>.<lambda> at 0x7f44d2e32de0>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "frozen-gate silence held at the converged gain: lesion_forgets",
+      "ok": true,
+      "detail": "measured=6 expect=<function _derisk.<locals>.<lambda> at 0x7f44d2e32de0>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "frozen-gate silence held at the converged gain: persistence",
+      "ok": true,
+      "detail": "measured=6 expect=<function _derisk.<locals>.<lambda> at 0x7f44d2e32de0>",
+      "note": ""
+    }
+  ],
+  "disabled_processes": [
+    {
+      "process": "STDP / long-term Hebbian LTP / OU-noise",
+      "why": "identical scope to the parent facilitation + static-stabilizer de-risks; the only added mechanism is the live, rate-limited integral controller replacing the static lookup table"
+    }
+  ],
+  "verdict_status": "NO-GO",
+  "elapsed_seconds": 4107.9,
+  "BIOLOGY": "Homeostatic regulation of synaptic gain toward a firing/coincidence set-point via a continuing, activity-reading process (Turrigiano 2011; Desai, Rutherford & Turrigiano 1999 -- slow synaptic scaling). Realized as a bounded, rate-limited discrete-time integral controller on the facilitation gain fac_g (the same Mg-block-gated Tsodyks-Markram facilitation current as the parent GO substrate), reading the pool's OWN N=3 coincidence output at each trial episode and adjusting gain toward a fixed target (1.5x FIRE_THR); the rate limit and the safety ceiling are the anti-windup realization of the pool's own intrinsic-excitability homeostat's non-monotonic, cliff-bearing response surface (measured by the parent build)."
+}
