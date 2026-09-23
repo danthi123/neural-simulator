@@ -1,0 +1,56 @@
+{
+  "runner": "research.runners._lbf_open_ended_production_turn_probe",
+  "mode": "oe_routed",
+  "seed": 42,
+  "k": 40,
+  "rich": true,
+  "ask": "what might a dog chase",
+  "teach": [
+    "the wolf chase the rabbit",
+    "the fox chase the rabbit",
+    "the hawk chase the rabbit",
+    "the eagle chase the rabbit",
+    "the lion chase the deer",
+    "the tiger chase the deer",
+    "the cougar chase the deer",
+    "the owl chase the mouse",
+    "the snake chase the mouse",
+    "the crow chase the beetle",
+    "the pike chase the minnow",
+    "the coyote chase the dog",
+    "the bear chase the dog"
+  ],
+  "alpha": 0.05,
+  "n_perm": 10000,
+  "score": {
+    "verdict": "UNDEFINED",
+    "reasons": [
+      "intact never volunteered (all abstain) -> not exercised"
+    ],
+    "hist_intact": {
+      "ABSTAIN": 40
+    },
+    "hist_rebuild": {
+      "ABSTAIN": 40
+    },
+    "hist_lesion": {
+      "ABSTAIN": 40
+    },
+    "deterministic": true,
+    "draws_intact": 16000,
+    "draws_lesion": 16000,
+    "lesion_ablated_draws": 16000,
+    "intact_ablated_draws": 0,
+    "n_errors": 0,
+    "n_intact_volunteered": 0,
+    "n_lesion_volunteered": 0,
+    "tv": 0.0,
+    "p_perm": 1.0,
+    "null_tv_q50": 0.0,
+    "null_tv_q95": 0.0,
+    "attributable_fraction": null,
+    "mean_w_intact": null,
+    "mean_w_lesion": null,
+    "direction_D": null
+  }
+}
