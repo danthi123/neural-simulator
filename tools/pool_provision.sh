@@ -149,6 +149,9 @@ for h in "${NODES[@]}"; do
     "$STAGE/research/findings/" "$h:~/$REMOTE_ROOT/research/findings/"
   rsync -az "$STAGE/research/__init__.py" "$h:~/$REMOTE_ROOT/research/__init__.py"
   ssh "$h" "mkdir -p ~/$REMOTE_ROOT/research/findings/raw"
+  # CORPUS (2026-09-23): the small corpus files corpus-LEARNED organs read (see load_bearing_fraction CORPUS GUARD).
+  ssh "$h" "mkdir -p ~/$REMOTE_ROOT/data/corpus"
+  ( cd "$ROOT/data/corpus" && rsync -aL tinystories.txt wikitext.txt simplewiki.txt websters1913.json run3_ra_grounded_frames.txt "$h:$REMOTE_ROOT/data/corpus/" ) || echo "  (warning: corpus sync to $h failed)" >&2
   rsync -az --delete --exclude='__pycache__' "$STAGE/experiment/" "$h:~/$REMOTE_ROOT/experiment/" 2>/dev/null
   rsync -az --delete --exclude='__pycache__' "$STAGE/tools/" "$h:~/$REMOTE_ROOT/tools/" 2>/dev/null
   rsync -az --delete --exclude='__pycache__' --exclude='*.pyc' \
