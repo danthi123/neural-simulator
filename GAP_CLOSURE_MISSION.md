@@ -145,6 +145,11 @@ waiting on runs every day … I thought our heartbeats/gates were supposed to pr
   restored) re-review SOUND → **merged `@7d9f4bdc`** (default-off; its 6-seed verdict is staged). Open-ended a3: all 54
   sessions finished on AWS2 (pulled to `_oe_production_turn/aws2_a3/`) → round 7 `wzhuy0py4` discloses the post-launch
   scorer amendment and SCORES them; D3 cleanup (union-driver duplicate FAILURE_LOG rows, stale header) in the same round.
+- **18:25 open-ended production-turn a3 VERDICT: NO-GO** (registered gate: 5/6 seeds DEFINED — s100 UNDEFINED, degenerate
+  null (both arms 'deer' on all 32 asks); the 5 DEFINED all positive but mean Delta 0.094 < the 0.10 floor; the power-sim
+  prediction (GO, mean 0.193) FAILED). Scorer-amendment disclosure + D3 false 'jobs outstanding' claim being corrected
+  in round 8 `wtkclzjv1` (text/status only). Next open-ended method (NO-DEFER): raise the draw's live variability where
+  a seed's draw is degenerate (s100) / more asks per session — to be named in the finding.
 - **⚠️ POOL/AWS BRAIN ASSETS:** pool nodes lack bridges/ (25G local) + most data/ (11G local) → production brain_chat
   runs there may DEGENERATE like AWS did. Do NOT trust a pool brain_chat result until the infra lane's sanity check passes.
 - **LESSONS (new):** never SendMessage a Workflow subagent (it resumes the agent as a duplicate in the same worktree;
