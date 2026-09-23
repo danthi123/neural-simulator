@@ -260,12 +260,42 @@ def verify(seeds, out: str) -> dict:
                          "WARMUP_STEPS": M.WARMUP_STEPS, "WASHOUT_STEPS": M.WASHOUT_STEPS,
                          "DEAD_MARGIN": M.DEAD_MARGIN},
            "per_seed": {str(s): v for s, v in per.items()}, "verdict": decided,
+           "preconditions": decided["preconditions"], "status": decided["status"],
            "scope": "CIRCUIT-level de-risk on the real ladder 'emo' mood; the #1-metric verdict is the full-brain "
                     "load_bearing_fraction run with BRAIN_AFFECT_MARKER_SETTLE=1 (staged on the pool)."}
     os.makedirs(os.path.dirname(out) or ".", exist_ok=True)
     with open(out, "w") as f:
         json.dump(rec, f, indent=1, default=str)
     print(f"GO={go} G1={g1}/{n} G2={g2}/{n} G3={g3}/{n} G4={g4}/{n} G5={g5}/{n} (OFF lb {n_off}/{n}) -> {out}")
+    return rec
+
+
+def mechanism_probe(out: str) -> dict:
+    """Reproduce, as a committed artifact, the two substrate reads that identified the companion processes (they
+    were first seen in exploratory scratch probes before the gate was registered; this makes them citable).
+      (a) deliberation: calibration seed 7, mood exactly ON the +2/+3 boundary, unchanged circuit, rest 1000 ms,
+          deliberation 60 vs 300 vs 500 ms -> per-pool rates + margin;
+      (b) inter-turn rest: seed 42, mood +0.0682 (its 'emo' ladder read), unchanged 60 ms deliberation, three
+          consecutive reads on one warm reader at washout 40 / 200 / 1000 / 3000 ms."""
+    M = _M()
+    C = M.MOOD_CENTERS
+    boundary = (C[4] + C[5]) / 2.0
+    delib = {}
+    for d in (60, 300, 500):
+        r = M.AffectMarkerWTA(seed=7, settle=True, deliberation_ms=d, rest_ms=1000)
+        lvl, rates, meta = r.select_valence(boundary)
+        delib[str(d)] = {"level": lvl, "rates_pos_pools": [round(float(x), 6) for x in rates[3:]],
+                         "margin": round(float(meta["margin"]), 6)}
+    rest = {}
+    for w in (40, 200, 1000, 3000):
+        r = M.AffectMarkerWTA(seed=42, settle=False, deliberation_ms=M.WARMUP_STEPS, rest_ms=w)
+        rest[str(w)] = [round(float(r.select_valence(0.0682)[2]["margin"]), 6) for _ in range(3)]
+    rec = {"probe": "affect_marker_settle_mechanism_probe", "boundary_mood": boundary,
+           "a_deliberation_seed7_boundary": delib, "b_rest_seed42_mood0.0682_three_reads": rest}
+    os.makedirs(os.path.dirname(out) or ".", exist_ok=True)
+    with open(out, "w") as f:
+        json.dump(rec, f, indent=1)
+    print(json.dumps(rec, indent=1))
     return rec
 
 
@@ -288,6 +318,7 @@ def selftest() -> bool:
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--calibrate", action="store_true")
+    ap.add_argument("--mechanism-probe", action="store_true")
     ap.add_argument("--verify", action="store_true")
     ap.add_argument("--selftest", action="store_true")
     ap.add_argument("--seeds", default=" ".join(str(s) for s in VERIFY_SEEDS))
@@ -295,6 +326,8 @@ def main():
     a = ap.parse_args()
     if a.selftest:
         sys.exit(0 if selftest() else 1)
+    if a.mechanism_probe:
+        mechanism_probe(a.out or "research/findings/raw/_affect_marker_settle/mechanism_probe.json")
     if a.calibrate:
         calibrate(a.out or "research/findings/raw/_affect_marker_settle/calibration.json")
     if a.verify:
