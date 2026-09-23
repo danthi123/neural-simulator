@@ -1,0 +1,26 @@
+{
+ "run_id": "1790196041-1715870",
+ "runner": "research/runners/_affect_marker_settle_derisk.py",
+ "argv": [
+  "/tmp/claude-1000/-home-dant123-Projects-sim/87891831-e642-4a2f-abeb-50ea0867609b/scratchpad/d1score/research/runners/_affect_marker_settle_derisk.py",
+  "--score-fullbrain"
+ ],
+ "git_sha": "2b238b741",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-23T16:40:41",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_affect_marker_settle/fullbrain_contrast_verdict.json"
+}

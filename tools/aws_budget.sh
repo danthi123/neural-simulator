@@ -10,6 +10,12 @@
 # docstring for the spend model + its documented approximation (no AWS Cost Explorer — it lags ~24h and
 # costs per call, per the build brief).
 #
+# status/check/enforce below are LEDGERED (tools/aws_spend_ledger.py, fixed 2026-09-23): every call records
+# each project instance's cost-so-far-today, and reports the MAX ever recorded per instance today, so a
+# stopped/terminated instance can never lose spend it already accrued (see aws_cost_lib.py's
+# estimate_spend_with_ledger / stop_candidates_with_ledger). AWS_SPEND_LEDGER overrides the ledger path
+# (tests use this — never point it at the shared production queue dir).
+#
 # Usage:
 #   tools/aws_budget.sh check [instance-type]   # exit 1 if we are at/over cap (or would be after +1h of
 #                                                #   `instance-type`) — refuses a launch

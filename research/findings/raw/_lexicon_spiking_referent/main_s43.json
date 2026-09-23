@@ -1,0 +1,415 @@
+{
+ "runner": "_lexicon_spiking_referent_derisk",
+ "part": "main",
+ "gate": {
+  "s1_mean": 0.75,
+  "s1_min": 0.7,
+  "s2_pct": 99.0,
+  "s2_min_seeds": 5,
+  "s3_les_mean": 0.55,
+  "s3_drop": 0.2,
+  "s3_decided_max": 0.6,
+  "s4_ratio_rise": 0.25,
+  "s5_spearman": 0.5,
+  "s7_recover": 0.6,
+  "s7_lesion_max": 0.2,
+  "s7_fp_max": 0.2,
+  "s7_hand_max": 0.1,
+  "s8_min_seeds": 5
+ },
+ "sim_backend": "numpy",
+ "per_seed": [
+  {
+   "seed": 43,
+   "n_held": 1701,
+   "n_eval": 400,
+   "n_eval_noun": 210,
+   "curriculum": [
+    "lion",
+    "car",
+    "key",
+    "chair",
+    "cat",
+    "queen",
+    "child",
+    "bear",
+    "farmer",
+    "cow",
+    "phone",
+    "teacher",
+    "always",
+    "jumped",
+    "ran",
+    "little",
+    "together",
+    "sad",
+    "ate",
+    "sleep",
+    "sang",
+    "opened",
+    "small",
+    "play"
+   ],
+   "w_hash": "a55e445cd35b71d93dc2e5712e68ef8fe284bfb53b80e860514405318144a4df",
+   "bacc_spiking": 0.8244360902255639,
+   "abstain": 0.0425,
+   "frac_referent": 0.555,
+   "lose_win_intact": 0.1556435633948298,
+   "spearman_drive_vs_rate": 0.9752704704404402,
+   "bacc_learned_edge": 0.13646616541353385,
+   "abstain_learned_edge": 0.695,
+   "decided_bacc_learned_edge": 0.4468286099865047,
+   "lose_win_learned_edge": 0.879621616363809,
+   "bacc_competition": 0.7919799498746867,
+   "abstain_competition": 0.0875,
+   "decided_bacc_competition": 0.8677729547235787,
+   "lose_win_competition": 0.47165984312689924,
+   "bacc_afferent_zero": 0.0,
+   "abstain_afferent_zero": 1.0,
+   "decided_bacc_afferent_zero": null,
+   "lose_win_afferent_zero": null,
+   "deterministic_full_rebuild": true,
+   "organ": {
+    "trials": [
+     {
+      "a": "peach",
+      "b": "word",
+      "hand": {
+       "in_scope": false,
+       "readout": null,
+       "recovered_both": false
+      },
+      "learned": {
+       "in_scope": true,
+       "readout": "I'm holding 2 referents in working memory at once: peach and word.",
+       "recovered_both": true
+      },
+      "learned_edge": {
+       "in_scope": false,
+       "readout": null,
+       "recovered_both": false
+      }
+     },
+     {
+      "a": "tool",
+      "b": "chores",
+      "hand": {
+       "in_scope": false,
+       "readout": null,
+       "recovered_both": false
+      },
+      "learned": {
+       "in_scope": true,
+       "readout": "I'm holding 2 referents in working memory at once: tool and chores.",
+       "recovered_both": true
+      },
+      "learned_edge": {
+       "in_scope": false,
+       "readout": null,
+       "recovered_both": false
+      }
+     },
+     {
+      "a": "tunnel",
+      "b": "toilet",
+      "hand": {
+       "in_scope": false,
+       "readout": null,
+       "recovered_both": false
+      },
+      "learned": {
+       "in_scope": true,
+       "readout": "I'm holding 2 referents in working memory at once: tunnel and toilet.",
+       "recovered_both": true
+      },
+      "learned_edge": {
+       "in_scope": false,
+       "readout": null,
+       "recovered_both": false
+      }
+     },
+     {
+      "a": "board",
+      "b": "surprises",
+      "hand": {
+       "in_scope": false,
+       "readout": null,
+       "recovered_both": false
+      },
+      "learned": {
+       "in_scope": false,
+       "readout": null,
+       "recovered_both": false
+      },
+      "learned_edge": {
+       "in_scope": false,
+       "readout": null,
+       "recovered_both": false
+      }
+     },
+     {
+      "a": "balloon",
+      "b": "bottom",
+      "hand": {
+       "in_scope": false,
+       "readout": null,
+       "recovered_both": false
+      },
+      "learned": {
+       "in_scope": true,
+       "readout": "I'm holding 2 referents in working memory at once: balloon and bottom.",
+       "recovered_both": true
+      },
+      "learned_edge": {
+       "in_scope": false,
+       "readout": null,
+       "recovered_both": false
+      }
+     },
+     {
+      "a": "chest",
+      "b": "school",
+      "hand": {
+       "in_scope": false,
+       "readout": null,
+       "recovered_both": false
+      },
+      "learned": {
+       "in_scope": false,
+       "readout": null,
+       "recovered_both": false
+      },
+      "learned_edge": {
+       "in_scope": false,
+       "readout": null,
+       "recovered_both": false
+      }
+     },
+     {
+      "a": "potato",
+      "b": "raft",
+      "hand": {
+       "in_scope": false,
+       "readout": null,
+       "recovered_both": false
+      },
+      "learned": {
+       "in_scope": true,
+       "readout": "I'm holding 2 referents in working memory at once: potato and raft.",
+       "recovered_both": true
+      },
+      "learned_edge": {
+       "in_scope": false,
+       "readout": null,
+       "recovered_both": false
+      }
+     },
+     {
+      "a": "treasure",
+      "b": "sausage",
+      "hand": {
+       "in_scope": false,
+       "readout": null,
+       "recovered_both": false
+      },
+      "learned": {
+       "in_scope": true,
+       "readout": "I'm holding 2 referents in working memory at once: treasure and sausage.",
+       "recovered_both": true
+      },
+      "learned_edge": {
+       "in_scope": false,
+       "readout": null,
+       "recovered_both": false
+      }
+     },
+     {
+      "a": "popcorn",
+      "b": "fire",
+      "hand": {
+       "in_scope": false,
+       "readout": null,
+       "recovered_both": false
+      },
+      "learned": {
+       "in_scope": true,
+       "readout": "I'm holding 2 referents in working memory at once: popcorn and fire.",
+       "recovered_both": true
+      },
+      "learned_edge": {
+       "in_scope": false,
+       "readout": null,
+       "recovered_both": false
+      }
+     },
+     {
+      "a": "alarm",
+      "b": "tent",
+      "hand": {
+       "in_scope": false,
+       "readout": null,
+       "recovered_both": false
+      },
+      "learned": {
+       "in_scope": true,
+       "readout": "I'm holding 2 referents in working memory at once: alarm and tent.",
+       "recovered_both": true
+      },
+      "learned_edge": {
+       "in_scope": false,
+       "readout": null,
+       "recovered_both": false
+      }
+     },
+     {
+      "a": "sand",
+      "b": "makeup",
+      "hand": {
+       "in_scope": false,
+       "readout": null,
+       "recovered_both": false
+      },
+      "learned": {
+       "in_scope": true,
+       "readout": "I'm holding 2 referents in working memory at once: sand and makeup.",
+       "recovered_both": true
+      },
+      "learned_edge": {
+       "in_scope": false,
+       "readout": null,
+       "recovered_both": false
+      }
+     },
+     {
+      "a": "ceiling",
+      "b": "whip",
+      "hand": {
+       "in_scope": false,
+       "readout": null,
+       "recovered_both": false
+      },
+      "learned": {
+       "in_scope": true,
+       "readout": "I'm holding 2 referents in working memory at once: ceiling and whip.",
+       "recovered_both": true
+      },
+      "learned_edge": {
+       "in_scope": false,
+       "readout": null,
+       "recovered_both": false
+      }
+     }
+    ],
+    "fp_trials": [
+     {
+      "v1": "thought",
+      "v2": "pushed",
+      "in_scope": false,
+      "refs": null
+     },
+     {
+      "v1": "gasped",
+      "v2": "tear",
+      "in_scope": false,
+      "refs": null
+     },
+     {
+      "v1": "polite",
+      "v2": "blow",
+      "in_scope": false,
+      "refs": null
+     },
+     {
+      "v1": "let",
+      "v2": "move",
+      "in_scope": false,
+      "refs": null
+     },
+     {
+      "v1": "scare",
+      "v2": "shocked",
+      "in_scope": false,
+      "refs": null
+     },
+     {
+      "v1": "shaking",
+      "v2": "elderly",
+      "in_scope": false,
+      "refs": null
+     },
+     {
+      "v1": "rubbed",
+      "v2": "helps",
+      "in_scope": false,
+      "refs": null
+     },
+     {
+      "v1": "learning",
+      "v2": "same",
+      "in_scope": false,
+      "refs": null
+     },
+     {
+      "v1": "stop",
+      "v2": "weird",
+      "in_scope": false,
+      "refs": null
+     },
+     {
+      "v1": "hot",
+      "v2": "spoke",
+      "in_scope": false,
+      "refs": null
+     },
+     {
+      "v1": "enjoyed",
+      "v2": "spilled",
+      "in_scope": false,
+      "refs": null
+     },
+     {
+      "v1": "normal",
+      "v2": "barked",
+      "in_scope": false,
+      "refs": null
+     }
+    ],
+    "learned_recover_rate": 0.8333333333333334,
+    "lesion_recover_rate": 0.0,
+    "hand_in_scope_rate": 0.0,
+    "reply_differs_learned_vs_lesion_rate": 0.8333333333333334,
+    "fp_in_scope_rate": 0.0
+   },
+   "capability": {
+    "n_curriculum": 75,
+    "intact": {
+     "held_refs": [
+      "wolf",
+      "owl"
+     ],
+     "owl": true,
+     "watches": false,
+     "hold_in_scope": true,
+     "held_in_scope": true,
+     "held_n_referents": 2,
+     "held_input_order": [
+      "wolf",
+      "owl"
+     ]
+    },
+    "learned_edge": {
+     "held_refs": [
+      "wolf"
+     ],
+     "owl": false,
+     "watches": null,
+     "hold_in_scope": true,
+     "held_in_scope": false,
+     "held_n_referents": null,
+     "held_input_order": null
+    }
+   },
+   "elapsed_s": 177.7
+  }
+ ]
+}

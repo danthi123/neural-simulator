@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # install_aws_guard_timer.sh — install + enable the systemd --user timer that runs the AWS budget guard
-# (tools/aws_idle_stop.sh + tools/aws_budget.sh enforce) every 10 minutes. Owner-approved 2026-09-23:
+# (tools/aws_budget.sh enforce, THEN tools/aws_idle_stop.sh — see aws-guard.service for why that order)
+# every 10 minutes. Owner-approved 2026-09-23:
 # on-demand AWS instances for 6-seed CPU batteries, cap enforced by tooling not memory. User-level, this
 # project only — matches the existing convention of tools/systemd/pool-sync.{service,timer} and
 # tools/systemd/gpu-queue-autofill.{service,timer}, already installed the same way on this box.

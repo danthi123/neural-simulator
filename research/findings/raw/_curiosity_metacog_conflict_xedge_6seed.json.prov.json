@@ -1,0 +1,34 @@
+{
+ "run_id": "1790185058-3668283",
+ "runner": "research/runners/_curiosity_metacog_conflict_xedge_derisk.py",
+ "argv": [
+  "/home/node/derisk-pool/revisions/14189e2343d6483847d9d710d2e60b7582f530b4/research/runners/_curiosity_metacog_conflict_xedge_derisk.py",
+  "--seeds",
+  "42",
+  "43",
+  "44",
+  "100",
+  "101",
+  "102",
+  "--out",
+  "research/findings/raw/_curiosity_metacog_conflict_xedge_6seed.json"
+ ],
+ "git_sha": "14189e2343d6483847d9d710d2e60b7582f530b4",
+ "git_dirty": false,
+ "source_kind": "git_archive",
+ "source_manifest_sha256": "e0c65c6b6d9c87f3644b0f10a8b37d9e765af041d0113221624b193b5b66716c",
+ "source_manifest_verified_at_start": true,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": true,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-23T13:37:38",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": false,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_curiosity_metacog_conflict_xedge_6seed.json"
+}

@@ -1,0 +1,35 @@
+{
+ "run_id": "1790169122-546051",
+ "runner": "research/runners/onebrain_regression_battery.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/wf_8bf19a04-cbd-1/research/runners/onebrain_regression_battery.py",
+  "--worker",
+  "--env",
+  "{}",
+  "--turns",
+  "emo",
+  "--out",
+  "/home/dant123/Projects/sim/.claude/worktrees/wf_8bf19a04-cbd-1/research/findings/raw/_affect_marker_settle/lbf/intact_b_emo.json"
+ ],
+ "git_sha": "56e588d16",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-23T09:12:02",
+ "env": {
+  "SIM_BACKEND": "numpy",
+  "CUDA_VISIBLE_DEVICES": "",
+  "SIM_RUN_ID": "1790168536-489775"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 1935.7,
+ "corpus_check_query": "affect-marker spiking WTA not committing dead-zone load-bearing 1/6",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_affect_marker_settle/lbf/intact_b_emo.json"
+}
