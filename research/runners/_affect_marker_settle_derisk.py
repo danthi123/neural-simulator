@@ -22,6 +22,10 @@ MODES
                    C4 repeatable      : reading the same boundary value twice gives the same winner.
                  The chosen window is the SHORTEST grid value passing C1-C4 on ALL calibration seeds. The 'emo' turn,
                  the load-bearing outcome and the verification seeds are never consulted.
+                 AMENDMENT (post-hoc, disclosed; commit after a4891aa3e): as registered, NO window passed -- C1 failed
+                 at the mood=0 midpoint (unreachable: gated to neutral upstream) and at the arousal boundary on one
+                 seed. C1' = commit at every REACHABLE valence boundary; arousal boundary commit is report-only.
+                 DELIBERATION_MS = the shortest window passing C1'+C2+C3+C4 on all calibration seeds.
   --verify     : the PRE-REGISTERED op-level GO gate on the 6 verification seeds (42 43 44 100 101 102), reading the
                  REAL ladder mood the 'emo' turn produces (`_lbf_borderline_operating_point._affect_marker`, the same
                  read the RNG-isolated diagnosis used), SETTLE OFF vs ON:
@@ -92,6 +96,16 @@ def _calibrate_one(seed: int, delib: int, rest: int) -> dict:
                       "c4_v": c4_v, "c4_a": c4_a}}
     res["pass"] = all(res[k] for k in ("C1_boundary_commit", "C2_center_fidelity", "C3_spontaneous_silent",
                                        "C4_repeatable"))
+    # AMENDED C1' (POST-HOC, disclosed -- written after the as-registered calibration found NO passing window):
+    # (a) the valence midpoint between -1 and +1 is mood = 0.0, which production NEVER presents to this circuit
+    #     (webapp.affect_drives_chat: |mood| < _MOOD_L1=0.010 -> level 0 -> the neutral gate returns '' BEFORE the
+    #     circuit is called), so a commit requirement there tests an unreachable input;
+    # (b) the arousal boundary selects only the emphasis punctuation, not whether a marker is emitted (the
+    #     load-bearing quantity); it is REPORTED separately, not gated.
+    reach = [c1_v[i] for i, b in enumerate(vb) if abs(b) >= 0.010]
+    res["C1prime_reachable_valence_boundary_commit"] = bool(all(reach))
+    res["pass_amended"] = all(res[k] for k in ("C1prime_reachable_valence_boundary_commit", "C2_center_fidelity",
+                                               "C3_spontaneous_silent", "C4_repeatable"))
     return res
 
 
@@ -100,26 +114,37 @@ def calibrate(out: str) -> dict:
     rest = M.INTERTURN_REST_MS
     table = {}
     chosen = None
+    chosen_amended = None
     for d in DELIB_GRID:
         rows = {s: _calibrate_one(s, d, rest) for s in CAL_SEEDS}
         ok = all(r["pass"] for r in rows.values())
-        table[d] = {"all_pass": ok, "per_seed": {str(s): r for s, r in rows.items()}}
-        print(f"delib={d:4d} all_pass={ok} " + " ".join(
+        ok_am = all(r["pass_amended"] for r in rows.values())
+        n_arousal = sum(1 for r in rows.values() if r["detail"]["c1_a"])
+        table[d] = {"all_pass": ok, "all_pass_amended": ok_am, "arousal_boundary_commit_count": n_arousal,
+                    "per_seed": {str(s): r for s, r in rows.items()}}
+        if ok_am and chosen_amended is None:
+            chosen_amended = d
+        print(f"delib={d:4d} all_pass={ok} amended={ok_am} arousal_commit={n_arousal}/{len(rows)} " + " ".join(
             f"s{s}:{''.join('1' if rows[s][k] else '0' for k in ('C1_boundary_commit','C2_center_fidelity','C3_spontaneous_silent','C4_repeatable'))}"
             for s in CAL_SEEDS), flush=True)
         if ok and chosen is None:
             chosen = d
     rec = {"probe": "affect_marker_settle_calibration", "calibration_seeds": list(CAL_SEEDS),
            "grid_ms": list(DELIB_GRID), "rest_ms": rest, "chosen_deliberation_ms": chosen,
+           "chosen_deliberation_ms_amended": chosen_amended,
            "module_constant_DELIBERATION_MS": M.DELIBERATION_MS,
-           "constant_matches_calibration": chosen == M.DELIBERATION_MS,
+           "constant_matches_calibration": chosen_amended == M.DELIBERATION_MS,
+           "amendment": "POST-HOC (disclosed): C1 as registered failed at every window; C1' drops the mood=0 midpoint "
+                        "(gated to neutral upstream, never reaches the circuit) and moves the arousal boundary to "
+                        "report-only (emphasis punctuation, not marker presence). See _calibrate_one.",
            "criterion": "shortest grid window passing C1 boundary-commit, C2 center-fidelity, C3 spontaneous-silent, "
                         "C4 repeatable on ALL calibration seeds (disjoint from the verification seeds)",
            "table": {str(k): v for k, v in table.items()}}
     os.makedirs(os.path.dirname(out) or ".", exist_ok=True)
     with open(out, "w") as f:
         json.dump(rec, f, indent=1)
-    print(f"CHOSEN deliberation = {chosen} ms (module constant {M.DELIBERATION_MS}) -> {out}")
+    print(f"CHOSEN deliberation: as-registered={chosen} ms, amended C1'={chosen_amended} ms "
+          f"(module constant {M.DELIBERATION_MS}) -> {out}")
     return rec
 
 

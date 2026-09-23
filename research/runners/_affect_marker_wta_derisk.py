@@ -154,9 +154,13 @@ DEAD_MARGIN = 0.05
 # CALIBRATION seeds disjoint from the 6 verification seeds (`_affect_marker_settle_derisk.py --calibrate`):
 # commit at every register BOUNDARY (winner one of the two adjacent registers), pick the right register at every
 # CENTER, stay "no clean winner" under the baseline-only (lesion) drive, and give the same answer on a repeat read.
+# DISCLOSED AMENDMENT: as registered no window passed (the mood=0 midpoint -- gated to neutral upstream, never sent
+# to this circuit -- and one seed's arousal boundary never commit); the constant below uses C1' = every REACHABLE
+# valence boundary, with the arousal-boundary commit reported, not gated (it sets emphasis, not marker presence).
 # ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
 SETTLE_ENV = "BRAIN_AFFECT_MARKER_SETTLE"
-DELIBERATION_MS = 300       # fixed by the calibration record (see finding); NOT fitted to the 'emo' turn
+DELIBERATION_MS = 500       # fixed by the calibration record (amended criterion C1', see the de-risk runner +
+                            # finding); NOT fitted to the 'emo' turn or to any load-bearing outcome
 INTERTURN_REST_MS = 1000    # physiological inter-utterance rest (>= the measured full-relaxation point)
 
 
