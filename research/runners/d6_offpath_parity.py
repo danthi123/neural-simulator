@@ -137,6 +137,12 @@ def archive_ref(ref, repo, dest):
     return sha
 
 
+def _verdict(a, b, mode):
+    keys = ["store_conns_sha256", "kb", "recall"] if mode == "store" else ["turn_sha256", "turns", "store_conns_sha256"]
+    diffs = [k for k in keys if a.get(k) != b.get(k)]
+    return {"compared_keys": keys, "diff_keys": diffs, "byte_identical": (diffs == [])}
+
+
 def compare(ref, mode, seed=42, repo=None, python=None):
     repo = repo or os.getcwd()
     python = python or sys.executable
@@ -150,21 +156,37 @@ def compare(ref, mode, seed=42, repo=None, python=None):
         b = _run_in_tree(tmp, mode, seed, python)
     finally:
         shutil.rmtree(tmp, ignore_errors=True)
-    keys = ["store_conns_sha256", "kb", "recall"] if mode == "store" else ["turn_sha256", "turns", "store_conns_sha256"]
-    diffs = [k for k in keys if a.get(k) != b.get(k)]
-    return {"tool": "research.runners.d6_offpath_parity", "mode": mode, "seed": seed, "branch_head": head,
-            "branch_worktree_dirty": dirty, "ref": ref, "ref_sha": ref_sha, "branch": a, "reference": b,
-            "compared_keys": keys, "diff_keys": diffs, "byte_identical": (diffs == [])}
+    return dict({"tool": "research.runners.d6_offpath_parity", "mode": mode, "seed": seed, "branch_head": head,
+                 "branch_worktree_dirty": dirty, "ref": ref, "ref_sha": ref_sha, "branch": a, "reference": b},
+                **_verdict(a, b, mode))
+
+
+def compare_trees(ref_tree, mode, seed=42, python=None):
+    """Same comparison against an ALREADY-EXTRACTED reference tree (e.g. a pool node's isolated revision dir of
+    origin/main, where there is no git checkout). Both runs happen sequentially in THIS job, on THIS machine."""
+    python = python or sys.executable
+    here = os.path.abspath(os.getcwd())
+    a = _run_in_tree(here, mode, seed, python)
+    b = _run_in_tree(os.path.abspath(os.path.expanduser(ref_tree)), mode, seed, python)
+    return dict({"tool": "research.runners.d6_offpath_parity", "mode": mode, "seed": seed, "branch_tree": here,
+                 "ref_tree": os.path.abspath(os.path.expanduser(ref_tree)), "branch": a, "reference": b},
+                **_verdict(a, b, mode))
 
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     ap.add_argument("--mode", choices=["store", "chat"], default="store")
     ap.add_argument("--vs-ref", default=None, help="compare this tree against a git revision (e.g. origin/main)")
+    ap.add_argument("--vs-tree", default=None, help="compare against an extracted reference tree (no git needed)")
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--out", default=None)
     a = ap.parse_args()
-    res = compare(a.vs_ref, a.mode, a.seed) if a.vs_ref else (mode_store() if a.mode == "store" else mode_chat(a.seed))
+    if a.vs_ref:
+        res = compare(a.vs_ref, a.mode, a.seed)
+    elif a.vs_tree:
+        res = compare_trees(a.vs_tree, a.mode, a.seed)
+    else:
+        res = mode_store() if a.mode == "store" else mode_chat(a.seed)
     print(json.dumps({k: v for k, v in res.items() if k not in ("branch", "reference")}, indent=2, default=str))
     if a.out:
         os.makedirs(os.path.dirname(a.out) or ".", exist_ok=True)
