@@ -22,9 +22,11 @@ TWO MODES (env `BRAIN_OPEN_ENDED_AFFECT_CONDITIONED`; unset/0/off -> this module
   prompt : GRADED, dead-zone-free conditioning in the EXISTING channel. The MOOD line is rewritten from the
            normalized conditioning scalar c (below) with a monotone intensity grade; c == 0 exactly (the
            BRAIN_AFFECT_LESION arm) reproduces the production "even and steady" wording.
-  resid  : REPRESENTATION conditioning (the Affect-LM / VAD-conditioning class, realized as contrastive activation
-           addition — Rimsky et al. 2023 "Steering Llama 2 via Contrastive Activation Addition"; Turner et al.
-           2023 "Activation Addition"). The prompt is left EXACTLY as production builds it; during generation a
+  resid  : REPRESENTATION-LEVEL conditioning at INFERENCE time — contrastive activation addition (CAA; Rimsky et
+           al. 2023 "Steering Llama 2 via Contrastive Activation Addition"; Turner et al. 2023 "Activation
+           Addition"). NOTE (fix round 2026-09-23): this is NOT the Affect-LM / VAD-conditioning method — those
+           condition the model at TRAINING time; CAA is a different, inference-time method that shares only the
+           LOCUS (the generation representation, not the decode). The prompt is left EXACTLY as production builds it; during generation a
            forward hook adds  c * K * u  to the residual stream at decoder layer L, where u is the mouth's OWN
            affect axis (difference of mean layer-L activations of Qwen on a fixed set of positive vs negative
            WARRINER-word sentences — disjoint from the independent scoring lexicon, enforced by the runner) and c
@@ -34,9 +36,11 @@ THE CONDITIONING SCALAR c (brain-derived, not a host sentiment formula): c = cli
 where `valence` is exactly what brain_chat already passes the mouth (the spiking affect organ's held
 differential, `valence_from_affect`) and VALENCE_FS is the organ's own FULL-SCALE valence (4 x the held
 differential at |appraisal| = 1, measured by `--calibrate-organ`; env `BRAIN_AFFECT_COND_VALENCE_FS`
-overrides). This is a READOUT GAIN NORMALIZATION — the downstream reader scaled to the upstream population's
-operating range (divisive normalization, Carandini & Heeger 2012). Done here as one host division: a NAMED
-SHORTCUT on the scaffold boundary, not a brain computation. The organ's sign-asymmetry (V- weaker than V+) is
+overrides). This is ONE STATIC, PER-SEED CALIBRATED GAIN CONSTANT (equivalently K_eff = K / VALENCE_FS on the raw
+valence) — a host division and a NAMED SHORTCUT on the scaffold boundary. It is NOT divisive normalization
+(Carandini & Heeger 2012 divide by POOLED ACTIVITY AS IT CHANGES; this divides by a number measured once), and it
+is itself an instance of the "constant substituted for a process" anti-pattern: the real companion process —
+a gain-adapting reader population normalizing by the organ's live pooled activity — is NOT built here. The organ's sign-asymmetry (V- weaker than V+) is
 deliberately NOT normalized away — one constant for both signs, so the mouth can only express what the organ holds.
 
 HONESTY: functional read-out only. Reply tone tracking the organ's valence is a functional coupling; nothing here
@@ -147,18 +151,58 @@ def _hidden_mean(fac, text, layer):
     return out.hidden_states[layer + 1][0].float().mean(dim=0)
 
 
+# FIXED seed for the axis forward passes (fix round 2026-09-23). The spiking Qwen forward draws noise from
+# B1.SPK.gen; before this fix affect_axis ran on whatever state SPK.gen was left in, so u was not reproducible
+# and nobody could check that the pos / neg / ctrl arms were steered along the SAME u. Now the axis passes run
+# under a fixed SPK.gen + torch seed and the generator states are RESTORED afterwards (the decode's own reseed in
+# generate() is therefore untouched), and the axis hash is recorded in LAST_TRACE for the runner's (L) check.
+AXIS_SEED = 20260923
+
+
+def _spk_gen(fac):
+    b1 = getattr(fac, "_B1", None)
+    spk = getattr(b1, "SPK", None) if b1 is not None else None
+    return getattr(spk, "gen", None) if spk is not None else None
+
+
+def axis_sha(u) -> str:
+    import hashlib
+    arr = u.detach().float().cpu().contiguous().numpy()
+    return hashlib.sha256(arr.tobytes()).hexdigest()
+
+
 def affect_axis(fac, layer=RESID_LAYER):
-    """u = mean_L(pos contrast) - mean_L(neg contrast), computed ONCE per process from the mouth itself."""
+    """u = mean_L(pos contrast) - mean_L(neg contrast), computed ONCE per process from the mouth itself, under a
+    FIXED noise seed (AXIS_SEED) so u is a deterministic function of the mouth's weights."""
     key = (id(fac), int(layer))
     if key in _AXIS_CACHE:
-        return _AXIS_CACHE[key]
+        return _AXIS_CACHE[key][0]
     with _AXIS_LOCK:
         if key not in _AXIS_CACHE:
             torch = fac._torch
-            mp = torch.stack([_hidden_mean(fac, t, layer) for t in CONTRAST_POS]).mean(dim=0)
-            mn = torch.stack([_hidden_mean(fac, t, layer) for t in CONTRAST_NEG]).mean(dim=0)
-            _AXIS_CACHE[key] = (mp - mn)
-    return _AXIS_CACHE[key]
+            gen = _spk_gen(fac)
+            gen_state = gen.get_state() if gen is not None else None
+            devices = []
+            if str(getattr(fac, "device", "cpu")).startswith("cuda"):
+                devices = [torch.device(fac.device).index or 0]
+            try:
+                with torch.random.fork_rng(devices=devices):
+                    torch.manual_seed(AXIS_SEED)
+                    if gen is not None:
+                        gen.manual_seed(AXIS_SEED)
+                    mp = torch.stack([_hidden_mean(fac, t, layer) for t in CONTRAST_POS]).mean(dim=0)
+                    mn = torch.stack([_hidden_mean(fac, t, layer) for t in CONTRAST_NEG]).mean(dim=0)
+            finally:
+                if gen is not None:
+                    gen.set_state(gen_state)
+            u = (mp - mn)
+            _AXIS_CACHE[key] = (u, axis_sha(u))
+    return _AXIS_CACHE[key][0]
+
+
+def affect_axis_sha(fac, layer=RESID_LAYER) -> str:
+    affect_axis(fac, layer)
+    return _AXIS_CACHE[(id(fac), int(layer))][1]
 
 
 @contextlib.contextmanager
@@ -167,12 +211,14 @@ def resid_conditioning(fac, valence: float, layer=RESID_LAYER, k=RESID_K):
     c = conditioning_scalar(valence)
     LAST_TRACE.clear()
     LAST_TRACE.update({"mode": "resid", "valence_in": float(valence), "c": c, "valence_fs": valence_fs(),
-                       "layer": int(layer), "k": float(k), "hook_registered": False, "axis_norm": None})
+                       "layer": int(layer), "k": float(k), "hook_registered": False, "axis_norm": None,
+                       "axis_sha": None})
     if c == 0.0:
         yield LAST_TRACE
         return
     u = affect_axis(fac, layer)
     LAST_TRACE["axis_norm"] = float(u.norm().item())
+    LAST_TRACE["axis_sha"] = affect_axis_sha(fac, layer)
     model_dtype = next(fac.model.parameters()).dtype
     vec = (float(c) * float(k) * u).to(dtype=model_dtype, device=fac.device)
     calls = {"n": 0}

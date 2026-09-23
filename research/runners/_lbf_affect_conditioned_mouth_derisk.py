@@ -27,7 +27,9 @@ MODES:
                       research/findings/raw/_affect_conditioned_mouth/magnitude_audit.json.
   --calibrate-organ   builds the affect organ (full numpy brain, memcap 8): the held differential over an appraisal
                       sweep -> the organ's FULL-SCALE valence VALENCE_FS (the normalization of c). Per seed.
-  --worker / --controller / --score-only   the 36-arm run (6 seeds x pos/neg/lesion/lesion_rep/ctrl_pos/ctrl_neg).
+  --worker / --controller / --score-only   the 42-arm run (6 seeds x pos/neg/lesion/lesion_rep/ctrl_pos/ctrl_neg
+                      + pos_rep, AMENDMENT 1).
+  --mouth-probe       AMENDMENT 1 pre-flight, Qwen only: decode-seed replication + axis determinism.
   --smoke             one arm, two prompts, CPU Qwen: footprint + wiring check.
   --selftest          pure logic (no brain, no model).
 
@@ -38,6 +40,26 @@ identity + moat; (4) fluency salad <= 0.16; (5) lesion == lesion_rep byte-identi
 Operating point fixed in webapp/affect_conditioned_mouth.py (RESID_LAYER=12, RESID_K=4.0, c = valence/VALENCE_FS
 with VALENCE_FS measured by --calibrate-organ). Not tuned on tone. The literal scoring command:
   .venv/bin/python -m research.runners._lbf_affect_conditioned_mouth_derisk --score-only --mode <prompt|resid>
+
+AMENDMENT LOG
+  AMENDMENT 1 — 2026-09-23 ~12:10 EDT (fix round after the adversarial review). WHAT I HAD SEEN when writing it: NO
+  conditioned-mouth TONE result. Pre-amendment resid arms existed for seeds 42 + 43 (all 6 arms) and 44 (4 arms) in
+  the build worktree; I read ONLY their instrument fields (cuda path, maxrss 8.7 GB, generator=qwen, c, hook_calls,
+  the known-row fact list) to confirm the CUDA fp16 path runs -- no tone_compound, no reply text, no verdict. Those
+  arms are SUPERSEDED (killed/de-queued; never scored) because the instrument below changed under them.
+  Changes (each closes a review issue; the base gate + all 9 preconditions are KEPT verbatim for comparability):
+   * decode seed = the brain seed (was: the server's fixed 42 in every arm, so the 6 seeds replicated only the
+     organ). New precondition (R): the 6 lesion arms must be 6 DISTINCT reply realizations, decode_seed==seed.
+   * (3a-reply) content identity over the GENERATED known reply (fact-word recall vs the lesion reply >= 0.75 for
+     pos/neg/ctrl_pos/ctrl_neg/pos_rep, every seed; <2 lesion fact words -> unmet). The base (3a) compares
+     pre-generation retrieval and cannot fail for this method: kept, relabelled an INTEGRITY SMOKE.
+   * resid determinism: affect_axis now runs under a fixed noise seed (AXIS_SEED) with SPK.gen state restored; the
+     axis hash is traced and (L) requires ONE hash across every conditioned row of every seed; new arm pos_rep and
+     precondition (5b) pos == pos_rep byte-identical (the conditioned path, not just the lesion path).
+   * memcap: the controller defaults XDG_RUNTIME_DIR and REFUSES to run uncapped (was: silently uncapped).
+   * outputs go to research/findings/raw/_affect_conditioned_mouth/amend1_<mode>/ (never mixed with pre-amendment).
+   * CLAIM SCOPE narrowed (review ATTRIBUTION issue): a GO shows organ-SIGNED-and-SCALED CAA/prompt conditioning
+     shifts Qwen tone; it does NOT isolate the organ's contribution from the host appraisal driving it.
 
 COMPUTE: the brain runs numpy (SIM_BACKEND=numpy — the same organ numerics as the NO-GOs); Qwen runs on CUDA when
 visible (gpu_queue) or float32 CPU. brain_chat + Qwen ~ memcap 16 per arm -> run under tools/gpu_queue.sh, one
@@ -56,9 +78,16 @@ _REPO = os.path.dirname(os.path.dirname(_HERE))
 import research.runners._lbf_affect_tone_open_output_derisk as _BASE  # noqa: E402
 
 SEEDS = list(_BASE.SEEDS)
-ARMS = list(_BASE.ARMS)
+ARMS_BASE = list(_BASE.ARMS)
+# AMENDMENT 1 (2026-09-23 fix round): + "pos_rep", a second independent process of the pos arm, so the determinism
+# check covers the CONDITIONED (resid hook / graded-prompt) path, not only the unconditioned lesion path.
+ARMS = ARMS_BASE + ["pos_rep"]
 MODES = ("prompt", "resid")
 OUT_ROOT = "research/findings/raw/_affect_conditioned_mouth"
+# AMENDMENT 1 runs write to their own directories (never mixed with the superseded pre-amendment instrument).
+AMEND_TAG = "amend1"
+# the reply-level content-identity threshold (preregistered in AMENDMENT 1, before any amend1 result existed)
+CONTENT_RECALL_MIN = 0.75
 NOGO_ARMS_DIR = "research/findings/raw/_affect_tone_open_output"
 CALIB_APPRAISALS = [-1.0, -0.75, -0.475, -0.25, 0.0, 0.25, 0.475, 0.75, 1.0]
 
@@ -77,7 +106,7 @@ _ENV_QWEN = {
 
 
 def out_dir_for(mode):
-    return os.path.join(OUT_ROOT, mode)
+    return os.path.join(OUT_ROOT, "%s_%s" % (AMEND_TAG, mode))
 
 
 # ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -198,7 +227,9 @@ def summarize_calibration(write=True):
            if weak else None,
            "n_dead_zoned": aud["n_dead_zoned"], "n_rows": aud["n_rows"]}
     if write:
-        ap = os.path.join(_REPO, OUT_ROOT, "calibration", "calibration_summary.json")
+        # NOT "*_summary.json": that pattern is gitignored (.gitignore:59), which left the finding citing an
+        # artifact that was never committed. Renamed in the fix round.
+        ap = os.path.join(_REPO, OUT_ROOT, "calibration", "calibration_fold.json")
         json.dump(out, open(ap, "w"), indent=2)
         print("[calib-summary] wrote %s" % ap)
     return out
@@ -214,9 +245,15 @@ def valence_fs_for(seed):
 # ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
 #  WORKER (one arm, one fresh process)
 # ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
-def run_worker(seed, arm, mode, out_path, prompts=None, known_prompts=None):
+def run_worker(seed, arm, mode, out_path, prompts=None, known_prompts=None, decode_seed=None):
+    """One arm in one fresh process. AMENDMENT 1: `decode_seed` (default = the brain seed) is passed to the Qwen
+    mouth's `answer_turn(seed=...)`, which reseeds the spiking-Qwen noise generator (SPK.gen <- 1000+seed) and torch
+    before every generation. Before the amendment the server passed NO seed, so every arm on every seed decoded with
+    seed 42 and the 6 seeds replicated only the organ, never the mouth."""
     import random
+    import functools
     assert arm in ARMS and mode in MODES
+    decode_seed = int(seed if decode_seed is None else decode_seed)
     lesion = "1" if arm in ("lesion", "lesion_rep") else "0"
     priming = _BASE.PRIMING_NEG if arm in ("neg", "ctrl_neg") else _BASE.PRIMING_POS
     control = arm in ("ctrl_pos", "ctrl_neg")
@@ -236,6 +273,15 @@ def run_worker(seed, arm, mode, out_path, prompts=None, known_prompts=None):
     import webapp.server as S
     from webapp import open_ended_chat as _OE
     from webapp import affect_conditioned_mouth as _ACM
+
+    # the server calls `_OE.answer_turn(...)` through the module attribute (webapp/server.py), with no seed kwarg
+    _orig_answer_turn = _OE.answer_turn
+
+    @functools.wraps(_orig_answer_turn)
+    def _answer_turn_seeded(*a, **k):
+        k["seed"] = decode_seed
+        return _orig_answer_turn(*a, **k)
+    _OE.answer_turn = _answer_turn_seeded
 
     ctrl_state = {"active": False, "idx": 0, "vals": []}
     if control:
@@ -289,6 +335,7 @@ def run_worker(seed, arm, mode, out_path, prompts=None, known_prompts=None):
         maxrss_gb = None
     out = {"runner": "_lbf_affect_conditioned_mouth_derisk (worker)", "seed": seed, "arm": arm, "mode": mode,
            "lesion": lesion, "control": control, "priming": priming, "valence_fs": fs,
+           "decode_seed": decode_seed, "amendment": AMEND_TAG,
            "backend": os.environ.get("SIM_BACKEND"),
            "cuda_visible_devices": os.environ.get("CUDA_VISIBLE_DEVICES"),
            "resolved_ckpt": None, "ckpt_is_per_seed": True,   # Qwen: no per-seed ckpt (precondition swapped)
@@ -303,11 +350,21 @@ def run_worker(seed, arm, mode, out_path, prompts=None, known_prompts=None):
 # ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
 #  CONTROLLER (sequential arms: one brain at a time; one queue line per seed)
 # ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
-def run_controller(mode, seeds, memcap_gb=16):
+def run_controller(mode, seeds, memcap_gb=16, allow_uncapped=False):
     od = os.path.join(_REPO, out_dir_for(mode))
     os.makedirs(od, exist_ok=True)
     memcap = os.path.join(_REPO, "tools", "memcap.sh")
-    use_memcap = memcap_gb and os.path.exists(memcap) and _BASE._memcap_ok()
+    # FIX ROUND: a gpu_queue daemon has no XDG_RUNTIME_DIR, so `systemd-run --user` fails and _memcap_ok() returned
+    # False -> every worker silently ran UNCAPPED. Default it (as tools/memcap.sh now does) and REFUSE to run
+    # uncapped unless explicitly allowed -- a dropped cap must be loud, never silent.
+    if not os.environ.get("XDG_RUNTIME_DIR") and os.path.isdir("/run/user/%d" % os.getuid()):
+        os.environ["XDG_RUNTIME_DIR"] = "/run/user/%d" % os.getuid()
+    use_memcap = bool(memcap_gb and os.path.exists(memcap) and _BASE._memcap_ok())
+    print("[controller] memcap engaged=%s (%s GB) XDG_RUNTIME_DIR=%s"
+          % (use_memcap, memcap_gb, os.environ.get("XDG_RUNTIME_DIR")), flush=True)
+    if memcap_gb and not use_memcap and not allow_uncapped:
+        raise SystemExit("[controller] memcap requested (%s GB) but systemd-run --user is unavailable -- refusing to "
+                         "run uncapped (pass --allow-uncapped to override)" % memcap_gb)
     for s in seeds:
         if valence_fs_for(s) is None:
             cmd = [sys.executable, "-u", "-m", "research.runners._lbf_affect_conditioned_mouth_derisk",
@@ -338,10 +395,64 @@ def run_controller(mode, seeds, memcap_gb=16):
                   % (s, a, rc, os.path.exists(op), time.time() - t0), flush=True)
 
 
+# ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
+#  MOUTH PROBE (AMENDMENT 1 pre-flight: Qwen only, no brain) -- does the decode seed replicate the mouth, and is the
+#  steering axis u deterministic across recomputation with intervening decodes?
+# ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
+def mouth_probe(out_path, seeds=(42, 43, 44), n_prompts=2, max_new_tokens=60):
+    sys.path.insert(0, _REPO)
+    import hashlib
+    from research.runners.brain_chat_tui import QwenRenderer
+    from webapp import open_ended_chat as _OE
+    from webapp import affect_conditioned_mouth as _ACM
+    t0 = time.time()
+    fac = QwenRenderer(seed=42)._fac
+    gen = _OE.get_generator(fac)
+    prompts = _BASE.TONE_PROMPTS[:n_prompts]
+    lesion_sets = {}
+    for sd in seeds:
+        outs = []
+        for p in prompts:
+            st = _OE.StateContext(topic=p, facts=[], valence=0.0, arousal=0.3, familiarity=0.1, confidence=0.1,
+                                  novelty=0.9, curiosity=0.5 + 0.3 * 0.9, self_model=_OE.SELF_MODEL,
+                                  affect_source="real-organ")
+            system, user = _OE.build_prompt(st)
+            raw, _secs = gen.generate(system, user, seed=sd, max_new_tokens=max_new_tokens)
+            outs.append(raw)
+        lesion_sets[sd] = outs
+    sha1 = _ACM.affect_axis_sha(fac)
+    # recompute u after intervening decodes (which advance SPK.gen) -> must hash identically
+    _ACM._AXIS_CACHE.clear()
+    gen.generate("You are helpful.", "Say something.", seed=7, max_new_tokens=8)
+    sha2 = _ACM.affect_axis_sha(fac)
+    # the axis computation must NOT perturb the decode: decode(seed 42) after the axis == the first decode
+    raw_after, _ = gen.generate(*_OE.build_prompt(_OE.StateContext(
+        topic=prompts[0], facts=[], valence=0.0, arousal=0.3, familiarity=0.1, confidence=0.1, novelty=0.9,
+        curiosity=0.5 + 0.3 * 0.9, self_model=_OE.SELF_MODEL, affect_source="real-organ")),
+        seed=seeds[0], max_new_tokens=max_new_tokens)
+    distinct = len({tuple(v) for v in lesion_sets.values()})
+    out = {"what": "AMENDMENT 1 pre-flight mouth probe (Qwen only, production lesion-style prompt, c == 0)",
+           "device": str(fac.device), "seeds": list(seeds), "prompts": prompts, "max_new_tokens": max_new_tokens,
+           "n_distinct_realizations": distinct, "decode_seed_replicates_mouth": distinct == len(seeds),
+           "reply_sha": {str(k): hashlib.sha256(json.dumps(v).encode()).hexdigest()[:16]
+                         for k, v in lesion_sets.items()},
+           "replies": {str(k): v for k, v in lesion_sets.items()},
+           "axis_sha_first": sha1, "axis_sha_recomputed_after_decodes": sha2, "axis_deterministic": sha1 == sha2,
+           "decode_unperturbed_by_axis": raw_after == lesion_sets[seeds[0]][0],
+           "wall_seconds": round(time.time() - t0, 1)}
+    os.makedirs(os.path.dirname(out_path), exist_ok=True)
+    json.dump(out, open(out_path, "w"), indent=1)
+    print("[probe] distinct=%d/%d axis_det=%s decode_unperturbed=%s -> %s"
+          % (distinct, len(seeds), out["axis_deterministic"], out["decode_unperturbed_by_axis"], out_path),
+          flush=True)
+    return out
+
+
 def _lever_and_organ_checks(od, mode):
     """(L) conditioning lever moved / held at zero where it must; (O) organ read == the NO-GO runs' read."""
     lever_ok, organ_ok = True, True
     lever_bad, organ_bad = [], []
+    axis_shas = set()           # AMENDMENT 1: every conditioned resid row must be steered along the SAME u
     for s in SEEDS:
         for a in ARMS:
             p = _BASE._worker_out(od, s, a)
@@ -358,12 +469,14 @@ def _lever_and_organ_checks(od, mode):
                     good = (c is not None and c != 0.0)
                     if good and mode == "resid":
                         good = bool(tr.get("hook_registered")) and int(tr.get("hook_calls", 0)) > 0
+                        axis_shas.add(tr.get("axis_sha"))
                     if good and mode == "prompt":
                         good = "even and steady" not in (tr.get("mood_line") or "even and steady")
                 if not good:
                     lever_ok = False
                     lever_bad.append((s, a, r["prompt"], c))
-            ref = os.path.join(_REPO, NOGO_ARMS_DIR, "arm_s%d_%s.json" % (s, a))
+            ref_arm = "pos" if a == "pos_rep" else a       # pos_rep's organ state is the pos arm's
+            ref = os.path.join(_REPO, NOGO_ARMS_DIR, "arm_s%d_%s.json" % (s, ref_arm))
             if os.path.exists(ref):
                 want = (json.load(open(ref)).get("priming_affect") or {}).get("differential")
                 got = (d.get("priming_affect") or {}).get("differential")
@@ -386,16 +499,152 @@ def _lever_and_organ_checks(od, mode):
     if c_by_arm.get("lesion") and c_by_arm.get("pos"):
         lever("affect-conditioning scalar c: lesion -> pos", sorted(set(map(str, c_by_arm["lesion"]))),
               sorted(set(map(str, c_by_arm["pos"]))), required=False)
-    return [("(L) conditioning lever: c!=0 on pos/neg/ctrl rows (hook fired / graded line), c==0 on lesion",
-             lever_ok, "bad=%s" % (lever_bad[:6] or "none")),
+    if mode == "resid":
+        axis_ok = len(axis_shas) == 1 and None not in axis_shas
+        lever_ok = lever_ok and axis_ok
+        if not axis_ok:
+            lever_bad.append(("axis_sha", sorted(str(x)[:12] for x in axis_shas)))
+    return [("(L) conditioning lever: c!=0 on pos/neg/ctrl rows (hook fired / graded line), c==0 on lesion; "
+             "resid: ONE axis hash across every conditioned row of every seed",
+             lever_ok, "bad=%s n_axis_sha=%d" % (lever_bad[:6] or "none", len(axis_shas))),
             ("(O) organ read == the NO-GO runs' priming differential (comparable brain state)",
              organ_ok, "bad=%s" % (organ_bad[:6] or "none"))]
+
+
+# ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
+#  AMENDMENT 1 checks (fix round 2026-09-23; preregistered before any amend1 result existed)
+# ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
+def _words(text):
+    import re
+    return {w[:-1] if (len(w) > 3 and w.endswith("s")) else w for w in re.findall(r"[a-z]+", (text or "").lower())}
+
+
+def fact_content_words(facts, prompt):
+    """Content words of the retrieved facts' OBJECTS (subject + relation names excluded: the subject is the topic the
+    prompt already names, and relation names are schema labels), minus stop words, minus anything in the prompt,
+    len > 2. Light plural fold (trailing 's') on both sides."""
+    from research.runners._affect_distributional_tag_derisk import STOP
+    pw = _words(prompt)
+    out = set()
+    for f in facts or []:
+        obj = f[-1] if isinstance(f, (list, tuple)) and f else str(f)
+        for w in _words(str(obj).replace("_", " ")):
+            if len(w) > 2 and w not in STOP and w not in pw:
+                out.add(w)
+    return out
+
+
+def reply_content_check(arms_by_key):
+    """(3a-reply) CONTENT IDENTITY OVER THE GENERATED REPLY. The base (3a) compares retrieved facts/known, which are
+    fixed BEFORE generation and therefore cannot fail for a method that acts during generation (resid steering).
+    Here: F_lesion = fact content words present in the LESION arm's known-prompt reply; for every conditioned arm
+    (pos, neg, ctrl_pos, ctrl_neg, pos_rep) the pooled recall |F_lesion & words(arm reply)| / |F_lesion| must be
+    >= CONTENT_RECALL_MIN on every seed. A seed whose lesion reply carries fewer than 2 fact words cannot measure
+    this -> the precondition is unmet (UNDEFINED, never a pass). Strict per-prompt subset reported, not gated."""
+    ok = True
+    detail = []
+    for s in SEEDS:
+        les = arms_by_key.get((s, "lesion"))
+        if les is None:
+            ok = False
+            detail.append({"seed": s, "error": "no lesion arm"})
+            continue
+        F = {}
+        for r in les["known_rows"]:
+            fw = fact_content_words(r.get("facts"), r["prompt"])
+            F[r["prompt"]] = fw & _words(r.get("raw"))
+        n_f = sum(len(v) for v in F.values())
+        if n_f < 2:
+            ok = False
+            detail.append({"seed": s, "n_lesion_fact_words": n_f, "error": "lesion reply carries <2 fact words"})
+            continue
+        for a in ("pos", "neg", "ctrl_pos", "ctrl_neg", "pos_rep"):
+            d = arms_by_key.get((s, a))
+            if d is None:
+                ok = False
+                detail.append({"seed": s, "arm": a, "error": "missing"})
+                continue
+            hit, strict = 0, True
+            for r in d["known_rows"]:
+                want = F.get(r["prompt"], set())
+                got = want & _words(r.get("raw"))
+                hit += len(got)
+                strict = strict and (got == want)
+            recall = hit / n_f
+            good = recall >= CONTENT_RECALL_MIN
+            ok = ok and good
+            detail.append({"seed": s, "arm": a, "n_lesion_fact_words": n_f, "recall": round(recall, 4),
+                           "strict_subset": strict, "ok": good})
+    return ok, detail
+
+
+def mouth_replication_check(arms_by_key):
+    """(R) THE 6 SEEDS REPLICATE THE MOUTH, not only the organ: the lesion arm's tone replies (c == 0, no conditioning)
+    must form 6 DISTINCT reply sets across the 6 seeds. If the decode seed did not reach the mouth's noise, all
+    lesion arms would be one realization and delta would be pooled from copies -> unmet (UNDEFINED)."""
+    sets = {}
+    for s in SEEDS:
+        d = arms_by_key.get((s, "lesion"))
+        if d is not None:
+            sets[s] = tuple(r["raw"] for r in d["tone_rows"])
+    n_distinct = len(set(sets.values()))
+    seeds_ok = all((s, "lesion") in arms_by_key and arms_by_key[(s, "lesion")].get("decode_seed") == s
+                   for s in SEEDS)
+    return (n_distinct == len(SEEDS) and seeds_ok and len(sets) == len(SEEDS)), {
+        "n_distinct_lesion_realizations": n_distinct, "n_seeds": len(SEEDS),
+        "decode_seed_equals_brain_seed": seeds_ok, "effective_mouth_n": n_distinct}
+
+
+def conditioned_determinism_check(arms_by_key):
+    """(5b) the CONDITIONED path is deterministic: pos == pos_rep byte-identical per seed (tone + known replies)."""
+    ok, det = True, []
+    for s in SEEDS:
+        a, b = arms_by_key.get((s, "pos")), arms_by_key.get((s, "pos_rep"))
+        if a is None or b is None:
+            ok = False
+            det.append({"seed": s, "byte_identical": None})
+            continue
+        ra = [r["raw"] for r in a["tone_rows"] + a["known_rows"]]
+        rb = [r["raw"] for r in b["tone_rows"] + b["known_rows"]]
+        ok = ok and (ra == rb)
+        det.append({"seed": s, "byte_identical": ra == rb})
+    return ok, det
+
+
+def amendment1_checks(od):
+    arms_by_key = {}
+    for s in SEEDS:
+        for a in ARMS:
+            p = _BASE._worker_out(od, s, a)
+            if os.path.exists(p):
+                arms_by_key[(s, a)] = json.load(open(p))
+    c_ok, c_det = reply_content_check(arms_by_key)
+    r_ok, r_det = mouth_replication_check(arms_by_key)
+    d_ok, d_det = conditioned_determinism_check(arms_by_key)
+    reqs = [("(3a-reply) content identity over the GENERATED known reply: fact-word recall vs lesion >= %.2f "
+             "every conditioned arm/seed" % CONTENT_RECALL_MIN, c_ok,
+             "bad=%s" % ([x for x in c_det if not x.get("ok", False)][:6] or "none")),
+            ("(R) 6 seeds replicate the MOUTH: 6 distinct lesion reply realizations, decode_seed == brain seed",
+             r_ok, json.dumps(r_det)),
+            ("(5b) conditioned-path determinism pos == pos_rep byte-identical/seed", d_ok,
+             "bad=%s" % ([x for x in d_det if not x["byte_identical"]] or "none"))]
+    return reqs, {"reply_content": c_det, "mouth_replication": r_det, "conditioned_determinism": d_det}
 
 
 def score(mode):
     od = os.path.join(_REPO, out_dir_for(mode))
     extra = _lever_and_organ_checks(od, mode)
-    art = _BASE.score_and_gate(od, write_artifact=False, mouth="qwen", extra_require=extra)
+    a1_reqs, a1_detail = amendment1_checks(od)
+    art = _BASE.score_and_gate(od, write_artifact=False, mouth="qwen", extra_require=list(extra) + a1_reqs)
+    art["amendment1"] = a1_detail
+    art["base_3a_note"] = ("the base '(3a) content-identity facts+known identical pos vs lesion' compares pre-generation "
+                           "retrieval and cannot fail for a generation-time method: kept for comparability, it is an "
+                           "INTEGRITY SMOKE here; the content gate for this method is (3a-reply)")
+    art["claim_scope"] = ("A GO establishes only: CAA/graded-prompt conditioning of the Qwen mouth, SIGNED AND SCALED by "
+                          "the spiking organ's held differential, shifts the open reply's tone directionally beyond the "
+                          "lesion null on the independent ruler. It does NOT separate the organ's contribution from "
+                          "the host appraisal (appraise_text) that drives the organ, nor from the steering itself: the "
+                          "lesion removes organ output and steering together, and (2) tests only priming-text leakage.")
     art["runner"] = "_lbf_affect_conditioned_mouth_derisk (reuses _lbf_affect_tone_open_output_derisk's scorer/gate)"
     art["what"] = ("affect->tone over the OPEN Qwen-mouth reply with the generation CONDITIONED on the spiking "
                    "affect organ's valence (mode=%s); 6-seed directional independent-lexicon lesion probe" % mode)
@@ -493,6 +742,62 @@ def selftest():
         checks = _lever_and_organ_checks(td, "prompt")
         check("lever precondition FAILS when a lesion row carries c!=0 (can fail in its failing direction)",
               checks[0][1] is False)
+    # AMENDMENT 1 checks: each must PASS on a clean fabricated set and FAIL on its planted defect
+    facts = [["frank_lincoln_wright", "educated_at", "university_of_wisconsin_madison"],
+             ["frank_lincoln_wright", "occupation", "stanford_downey_architects_inc"]]
+    kp = "Tell me about frank_lincoln_wright"
+    good_known = "He studied at the University of Wisconsin in Madison and worked with architects."
+
+    def fab(variant):
+        A = {}
+        for s_ in SEEDS:
+            for a_ in ARMS:
+                les = a_ in ("lesion", "lesion_rep")
+                tone = ["lesion reply %d %d" % (s_, i) for i in range(3)] if les else ["x %d" % s_]
+                if variant == "same_lesion" and les:
+                    tone = ["identical lesion reply"] * 3
+                known = good_known
+                if variant == "drop_fact" and s_ == 43 and a_ == "neg":
+                    known = "He was a person from somewhere."
+                if variant == "pos_rep_diff" and s_ == 44 and a_ == "pos_rep":
+                    tone = ["y %d" % s_]
+                if variant == "no_facts" and a_ == "lesion" and s_ == 100:
+                    known = "He was a person."
+                A[(s_, a_)] = {"decode_seed": s_,
+                               "tone_rows": [{"prompt": "t%d" % i, "raw": t} for i, t in enumerate(tone)],
+                               "known_rows": [{"prompt": kp, "raw": known, "facts": facts}]}
+        return A
+    clean = fab("clean")
+    check("fact_content_words drops subject/prompt words, keeps object words",
+          {"wisconsin", "madison", "architect"} <= fact_content_words(facts, kp)
+          and "frank" not in fact_content_words(facts, kp))
+    check("(3a-reply) PASSES on clean replies", reply_content_check(clean)[0] is True)
+    check("(3a-reply) FAILS when a conditioned reply drops the lesion reply's facts",
+          reply_content_check(fab("drop_fact"))[0] is False)
+    check("(3a-reply) UNDEFINED-not-pass when the lesion reply carries <2 fact words",
+          reply_content_check(fab("no_facts"))[0] is False)
+    check("(R) PASSES with 6 distinct lesion realizations", mouth_replication_check(clean)[0] is True)
+    check("(R) FAILS when every seed's lesion reply is the same realization",
+          mouth_replication_check(fab("same_lesion"))[0] is False)
+    check("(5b) PASSES when pos == pos_rep", conditioned_determinism_check(clean)[0] is True)
+    check("(5b) FAILS when pos_rep differs from pos", conditioned_determinism_check(fab("pos_rep_diff"))[0] is False)
+    # (L) axis-hash uniformity in resid mode: uniform axis -> passes; one arm on a different axis -> fails
+    for planted in (False, True):
+        with tempfile.TemporaryDirectory() as td:
+            for s_ in SEEDS:
+                for a_ in ARMS:
+                    les = a_ in ("lesion", "lesion_rep")
+                    sha = "B" * 64 if (planted and s_ == 101 and a_ == "ctrl_pos") else "A" * 64
+                    cond = {"c": 0.0} if les else {"c": 0.4, "hook_registered": True, "hook_calls": 5,
+                                                   "axis_sha": sha}
+                    json.dump({"tone_rows": [{"prompt": "p", "conditioning": cond}],
+                               "priming_affect": {"differential": 0.0}}, open(_BASE._worker_out(td, s_, a_), "w"))
+            got = _lever_and_organ_checks(td, "resid")[0][1]
+            if planted:
+                check("(L) FAILS in resid mode when one conditioned arm was steered along a DIFFERENT axis",
+                      got is False)
+            else:
+                check("(L) PASSES in resid mode when every conditioned arm shares one axis hash", got is True)
     print("SELFTEST %s" % ("PASS" if ok else "FAIL"))
     return ok
 
@@ -513,9 +818,14 @@ if __name__ == "__main__":
     ap.add_argument("--arm", type=str, default="pos")
     ap.add_argument("--out", type=str, default=None)
     ap.add_argument("--memcap-gb", type=int, default=16)
+    ap.add_argument("--decode-seed", type=int, default=None, help="Qwen decode seed (default: the brain seed)")
+    ap.add_argument("--allow-uncapped", action="store_true")
+    ap.add_argument("--mouth-probe", action="store_true", help="AMENDMENT 1 pre-flight (Qwen only, no brain)")
     args = ap.parse_args()
     if args.selftest:
         sys.exit(0 if selftest() else 1)
+    elif args.mouth_probe:
+        mouth_probe(args.out or os.path.join(_REPO, OUT_ROOT, "amend1_probe", "mouth_probe.json"))
     elif args.magnitude_audit:
         magnitude_audit()
     elif args.calib_summary:
@@ -524,11 +834,13 @@ if __name__ == "__main__":
         calibrate_organ(args.seed)
     elif args.smoke:
         op = args.out or os.path.join(_REPO, OUT_ROOT, "smoke", "smoke_s%d_%s_%s.json" % (args.seed, args.arm, args.mode))
-        run_worker(args.seed, args.arm, args.mode, op, prompts=_BASE.TONE_PROMPTS[:2], known_prompts=[])
+        run_worker(args.seed, args.arm, args.mode, op, prompts=_BASE.TONE_PROMPTS[:2], known_prompts=[],
+                   decode_seed=args.decode_seed)
     elif args.worker:
         run_worker(args.seed, args.arm, args.mode,
-                   args.out or _BASE._worker_out(os.path.join(_REPO, out_dir_for(args.mode)), args.seed, args.arm))
+                   args.out or _BASE._worker_out(os.path.join(_REPO, out_dir_for(args.mode)), args.seed, args.arm),
+                   decode_seed=args.decode_seed)
     elif args.score_only:
         score(args.mode)
     else:
-        run_controller(args.mode, args.seeds, memcap_gb=args.memcap_gb)
+        run_controller(args.mode, args.seeds, memcap_gb=args.memcap_gb, allow_uncapped=args.allow_uncapped)
