@@ -1238,6 +1238,18 @@ p = 1/64; margins wide (neutral flips only at gamma x3.2 on seed 42). NOT wired:
 da-gated-encoding hollow. NEXT: verify-go v3; wire the ledger + a battery "next day" probe pair; a harder neutral drive;
 add repetition/sleep-replay routes to L-LTP before any default flip.
 
+**2026-09-23 (D6 learn-through-use, branch `research/d6-learn-through-use`, NOT merged, default-OFF):**
+- The in-conversation fact write is now a local Hebbian rule on the substrate (`BRAIN_D6_HEBBIAN_STORE`), with a
+  write-only freeze lesion. Gate v1 (base) is NO-GO on C3 at s42, s43 and s100 (da989d574): a host `kb` list carries
+  familiarity.
+  The engram variant was NO-GO; the prune variant is banked as an INVALID instrument. Gate v2 was registered to fail
+  (its own prereg predicted the teach-ack and word-exposure failures) and is superseded; it never ran.
+- Gate v3 (the capability gate: does the later reply depend on the synaptic write? USE_H vs FREEZE_H, same input and
+  host code; plus a post-hoc ablation arm and a host-record inertness arm) was pre-registered before any v3 arm. Seed
+  42 passes all seven criteria, INCOMPLETE 1/6. NEXT: the 5-seed pool fanout, then score. Findings:
+  `research/findings/2026-09-23-d6-learn-through-use-v3-PREREGISTRATION-capability-gate.md`,
+  `research/findings/2026-09-23-d6-learn-through-use-v3-s42-all-criteria-pass-INCOMPLETE-1of6-plus-v1-pool-banked.md`.
+
 **2026-09-18 (STRATEGIC — owner decision + scaling go/no-go; supersedes the raw-scale framing below):**
 - **Faithfulness-vs-tractability relaxation APPROVED (owner), honesty-conditioned** — trade bit-exact realism ONLY for a significant perf gain that loses nothing important to end-goal capabilities, and document every trade; biology-strong stays core; invariants kept (brain-based / one-brain / emergent / honesty). See memory `project_agi_first_fork_openness_2026_09_06`.
 - **SCALING GO/NO-GO = do NOT buy hardware yet** (finding `2026-09-18-scaling-go-no-go-raw-scale-falsified-lever-is-data-do-not-buy-hardware-yet.md`; 10-agent adversarially-verified workflow). RAW param/GPU scale is FALSIFIED as the fluency lever on the broad domain (token-supply capacity-saturated; the realistic large-token analog REGRESSED); the lever is DATA (token-throughput + curation atop a modest capacity floor), owner's skepticism vindicated. The mouth (neural-render) IS the keystone (~half the blocked rows) but the lever there is data, not a bigger GPU.

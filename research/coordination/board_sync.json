@@ -1930,6 +1930,18 @@
    "head": "9471b20c0"
   },
   {
+   "at": "2026-09-23T17:48:21Z",
+   "op": "create-task",
+   "args": "proj=2 title=Prove that when you tell the brain a fact, it is the brain's own connection change that lets it answer later",
+   "head": "3bfd0a446"
+  },
+  {
+   "at": "2026-09-23T17:48:23Z",
+   "op": "label-task",
+   "args": "task=228 label=7",
+   "head": "3bfd0a446"
+  },
+  {
    "at": "2026-09-23T20:47:41Z",
    "op": "append-desc",
    "args": "task=224",

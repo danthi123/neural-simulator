@@ -24,11 +24,18 @@ builds_on:
   - research/findings/2026-09-02-crossedge-arousal-surprise-derisk-PARTIAL-smoke-go.md
 ---
 
-# D3: the affect organ onto the shared cortical pool, with an arousal-to-surprise synapse. Built, 1-seed smoke passes, 6-seed gate staged
+# D3: the affect organ onto the shared cortical pool, with an arousal-to-surprise synapse. Built; ARM M scored 6/6 seeds, ARM X scored 2/6 seeds; SCORED NOT ALL-GO
 
-**Status: PARTIAL.** This is a 1-seed smoke plus a 1-seed weight sweep. The pre-registered 6-seed gate is on the
-mini-PC pool and has not been harvested. Everything here is DEFAULT-OFF. It is not wired into production by default,
-and no default was flipped.
+**Status: PARTIAL — SCORED, NOT ALL-GO (updated 2026-09-23, round-6 re-review; the "1-seed smoke, gate staged"
+wording below is stale and superseded by this line).** Both arms have moved past the 1-seed smoke: ARM M
+(answer-preservation) has landed and been scored on all 6 gate seeds — 5/6 pass M1-M7, seed 102 fails M3 (its
+graded tone level differs from the standalone production ladder). ARM X (the v2 production-operating-point
+instrument) has landed and been scored on 2 of 6 gate seeds committed to this branch, at revision `c6fdf7be7`: seed
+43 passes, seed 42 fails X1 (only 1 newly-flagged flip at S*, needs >= 2). Running the pre-registered `--aggregate`
+command over exactly the files landed on this branch gives `ALL-GO: False`, with only seed 43 fully GO across M+X
+(see the GO gate table and the "Correction" notes below for the full per-seed breakdown and for what artifacts
+exist where). Everything here is DEFAULT-OFF. It is not wired into production by default, and no default was
+flipped.
 
 **Fix round (2026-09-23, after the adversarial review of `7b46d761e`).** Four corrections, detailed in the section of
 that name below: the "gain-like, not a DC bias" claim is withdrawn; `XEDGE_W` = 0.05 is a hand-set constant, not a
@@ -234,13 +241,34 @@ python -m research.runners._onebrain_affect_pool_verify --aggregate \
 ```
 
 **Correction (this doc previously said these files "do not exist yet" — stale as of the mini-PC pool harvest
-below).** ARM M has now landed on all 6 gate seeds, at revision `bfc6978` (its code path is unchanged since):
+below).** ARM M has now landed on all 6 gate seeds, verified by provenance to all be at revision `bfc6978`
+(`verify_M_seed42/43/44/100/101/102.json.prov.json` each carry `git_sha=bfc6978fada92e309013e4ec39fb1b9a44627f9d`):
 `verify_M_seed42.json`, `verify_M_seed43.json`, `verify_M_seed44.json`, `verify_M_seed100.json`,
-`verify_M_seed101.json`, `verify_M_seed102.json` (all under `research/findings/raw/_onebrain_affect_pool/`). The v2
-ARM X has landed on 2 of 6 gate seeds so far, at revision `c6fdf7be7`: `verify_X_seed42.json`, `verify_X_seed43.json`
-(under `research/findings/raw/_onebrain_affect_pool/xv2/`). Seeds 44, 100, 101 and 102 have no arm-X file yet.
-`aggregate` ignores arm-X checks from any record without the v2 `x_instrument` tag. It re-scores records that carry
-the tag with gate v3 (`score_x_arm`).
+`verify_M_seed101.json`, `verify_M_seed102.json` (all under `research/findings/raw/_onebrain_affect_pool/`).
+
+**Correction 2 (round-6 re-review, 2026-09-23): "its code path is unchanged since" was FALSE.** The claim implied no
+later commit touched `onebrain_affect_pool.py` after `bfc6978`. `0f1f35ff1` (the same fix round that produced the v2
+arm-X instrument, landed after `bfc6978`) rewrote `PoolAffectLadder.local_ou`: it now saves/restores the bridge's
+prior OU-related attributes on exit instead of unconditionally setting them to `None`, and it added a `scope`
+parameter (`"all"` vs `"affect"`). Checked whether this can affect the ARM-M reads above, by reading the diff rather
+than assuming: every ARM-M call path (`_reads_all`/`_isolated_reads` for M1/M2/M4/M5/M6, and the two direct
+`read_differential` calls used by M3/M7) omits `ou_scope`, so it takes the default `"all"` — unaffected by the
+`scope="affect"` addition, which only `_onebrain_affect_pool_verify.py`'s arm-X code (`local_ou(scope="affect")` at
+its X-arm block) requests. The save/restore-vs-`None` change is also a no-op for ARM M's sequential, noise-off,
+single-scope reads: the affected bridge attributes cycle absent/`None` -> set -> `None` either way, since each
+ARM-M read opens and closes its own `local_ou()` context with nothing else touching those attributes in between.
+**Conclusion: the ARM-M verdicts recorded in the six files above are NOT affected by `0f1f35ff1`**, but the
+parenthetical's literal wording was still false, and is corrected here rather than repeated.
+
+The v2 ARM X has landed and been committed to this branch on 2 of 6 gate seeds so far, at revision `c6fdf7be7`:
+`verify_X_seed42.json`, `verify_X_seed43.json` (under `research/findings/raw/_onebrain_affect_pool/xv2/`). Seeds 44,
+100, 101 and 102 have no arm-X file committed to this branch/finding yet. (As of this re-review, the primary
+checkout's local, uncommitted `research/findings/raw/_onebrain_affect_pool/xv2/` additionally holds
+`verify_X_seed44.json`, `verify_X_seed100.json`, `verify_X_seed101.json` and `verify_X_seed102.json`, provenance-tagged
+at the same revision `c6fdf7be7` — an in-progress mini-PC pool harvest. They are not part of this branch's history,
+are not scored below, and no verdict is claimed for them here; landing and scoring them is the natural next step,
+not done in this fix round.) `aggregate` ignores arm-X checks from any record without the v2 `x_instrument` tag. It
+re-scores records that carry the tag with gate v3 (`score_x_arm`).
 
 Running the pre-registered `--aggregate` command above (gate `v3-single-count-X1-X2-as-I8-attribution-2026-09-23`,
 after the fix-round-4 scorer repair) over exactly those files gives, per seed:

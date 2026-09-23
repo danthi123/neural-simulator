@@ -1,0 +1,58 @@
+{
+  "runner": "research.runners.load_bearing_fraction",
+  "metric": "load_bearing_fraction",
+  "repeats": 2,
+  "seed": 44,
+  "backend": "numpy",
+  "cuda_visible_devices": null,
+  "source_prov_abstain_at_tie_env": "1",
+  "per_faculty": [
+    {
+      "faculty": "episodic-memory",
+      "turn": "epi_recall",
+      "kind": "neural-lesion",
+      "flag": "BRAIN_EPISODIC_LESION",
+      "load_bearing": true,
+      "verdict": "regressed",
+      "change_kind": "value",
+      "diffs": [
+        {
+          "field": "episodic.in_memory",
+          "on": true,
+          "off": false
+        }
+      ],
+      "treatment_diffs": 1,
+      "control_diffs": 0,
+      "attributable_fraction": 1.0,
+      "null_control_clean": true,
+      "lesion_reproduced": true,
+      "flag_resolves": true,
+      "note": "LB_EPISODIC_DRIVE_PROBE: store->recall on session 'epi2' + BRAIN_EPISODIC_STORE=1. "
+    }
+  ],
+  "determinism": {
+    "deterministic": true,
+    "n_null_controls_checked": 1,
+    "dirty_null_controls": []
+  },
+  "counts": {
+    "n_faculties_total": 1,
+    "n_coverable_env_lesion": 1,
+    "n_exercised": 1,
+    "n_load_bearing": 1,
+    "n_not_load_bearing": 0,
+    "n_not_exercised": 0,
+    "n_noisy": 0,
+    "n_lesion_knob_missing": 0,
+    "n_in_process": 0,
+    "n_thin": 0,
+    "n_mechanism_only": 0,
+    "n_proposed": 0
+  },
+  "load_bearing_fraction": 1.0,
+  "load_bearing_faculties": [
+    "episodic-memory"
+  ],
+  "not_load_bearing_faculties": []
+}

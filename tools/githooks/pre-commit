@@ -109,17 +109,24 @@ fi
 # RELATIONSHIP gates (stale-pointer) are unaffected: they glob the steering docs themselves rather than
 # relying on the staged list, so they keep checking the whole corpus -- which is where their 30 REAL hits
 # came from (the board citing a RETRACTED gap#3 GO with no marker).
-STAGED_ALL=$(git diff --cached --name-only --diff-filter=A || true)
-"$PY" - "$STAGED_ALL" > /tmp/_precommit_gates.out 2>&1 <<'PY'
+# The staged list goes through a FILE, not argv (2026-09-23): a 186-shard artifact commit staged ~1,900 paths and one
+# argv string over Linux's 128 KB MAX_ARG_STRLEN made the hook die "Argument list too long" -- blocking the commit
+# with no gate having run at all.
+STAGED_LIST_FILE=$(mktemp)
+git diff --cached --name-only --diff-filter=A > "$STAGED_LIST_FILE" 2>/dev/null || true
+"$PY" - "$STAGED_LIST_FILE" > /tmp/_precommit_gates.out 2>&1 <<'PY'
 import sys, os
 sys.path.insert(0, os.environ.get("ROOT") or os.getcwd())
 from tools.gates import run_all
-paths = [p for p in (sys.argv[1] if len(sys.argv) > 1 else "").split("\n") if p.strip()]
+_lst = sys.argv[1] if len(sys.argv) > 1 else ""
+paths = [p for p in (open(_lst).read() if _lst and os.path.exists(_lst) else "").split("\n") if p.strip()]
 blocking, report = run_all(paths, verbose=False)
 print("\n".join(report))
 sys.exit(1 if blocking else 0)
 PY
-if [ $? -ne 0 ]; then
+_gates_rc=$?
+rm -f "$STAGED_LIST_FILE"
+if [ $_gates_rc -ne 0 ]; then
   echo "⛔ COMMIT BLOCKED — failure-class gate(s):"
   sed 's/^/   /' /tmp/_precommit_gates.out | tail -30
   echo "   Deliberate override: git commit --no-verify"

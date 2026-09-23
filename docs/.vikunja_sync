@@ -134,6 +134,9 @@ Hardens robust-core-23 borderline margins (pmem set-point regulator, default-off
 ## 2026-09-23  da-gated-encoding natural drive: v2 D=128 6/6 GO at runner level (branch research/da-encoding-natural-drive)
 DA-gated tagging-and-capture companion (default-off) + natural surprising-vs-expected drive read as 24 h recall: salient 4/4, DA->encoding lesion 0/4, neutral 0/4; v1 D=64 UNDEFINED (G2). Not wired: #225 appended, next rung #227 created (wire into live chat store + battery next-day probe, L-LTP routes before any flip, verify-go).
 
+## 2026-09-23  D6 learn-through-use fix round 3 (gate v3 prereg)
+Created #228 (Learning, p3): prove a taught fact is carried by the brain's own connection change. Gate v2 superseded (registered to fail); gate v3 capability gate pre-registered before any v3 arm. No shipped-capability change (everything default-off).
+
 ## 2026-09-23  live in-loop pmem homeostat NO-GO 5/6 merged (@67b7fbc9c)
 Honest-residual follow-on of the D1 operating-point stabilizer (@f48fce12): a genuinely continuous/live set-point controller (reads the pool's own running coincidence output, no CALIBRATED_FAC_G lookup) replaces the static per-seed table but comes back NO-GO — seed 101 short of the cliff-safety margin by a uniform amount. No capability-status flip (the stabilizer already reflected in #224) -> no new board row per anti-noise rule; #224 appended with the honest negative + the named next method (a live cliff detector, now itself walled on a circular gate per the same-day fix-round — see GAP_CLOSURE CURRENT STATE for the live thread).
 

@@ -1,0 +1,124 @@
+{
+  "tool": "research.runners.d6_offpath_parity",
+  "mode": "chat",
+  "seed": 42,
+  "branch_tree": "/home/node/derisk-pool/revisions/f97b339b2da352dcc2404913dd71a18a711b3596",
+  "ref_tree": "/home/node/derisk-pool/revisions/c9b45a30e764da8056608aadcc0dc5fbfd6f3666",
+  "branch": {
+    "mode": "chat",
+    "seed": 42,
+    "turns": {
+      "teach": {
+        "answer": "the wolf hunts the deer",
+        "abstained": false,
+        "recalled_svo": [
+          "wolf",
+          "hunt",
+          "deer"
+        ]
+      },
+      "d1": {
+        "answer": "the cat eats the fish \u2014 worth going further here.",
+        "abstained": false,
+        "recalled_svo": [
+          "cat",
+          "eat",
+          "fish"
+        ]
+      },
+      "d2": {
+        "answer": "Setting the held thread aside \u2014 On dog, then \u2014 the dog chases the cat \u2014 worth going further here.",
+        "abstained": false,
+        "recalled_svo": [
+          "dog",
+          "chase",
+          "cat"
+        ]
+      },
+      "probe": {
+        "answer": "Setting the held thread aside \u2014 On wolf, then \u2014 the wolf hunts the deer",
+        "abstained": false,
+        "recalled_svo": [
+          "wolf",
+          "hunt",
+          "deer"
+        ]
+      },
+      "xprobe": {
+        "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about fox yet: what can you tell me about fox?",
+        "abstained": true,
+        "recalled_svo": null
+      }
+    },
+    "turn_sha256": {
+      "teach": "d35f2dba4cd44945e9795023a492a840fba68c4be7846b264df3960dd7a4460b",
+      "d1": "c856e0c4353fb507299cdf3f5ef696d52b5b53bcb4c3fd30c920c5e539189e9d",
+      "d2": "4409fe6c810475ab4d5501fe79a5c06d5dbb8d6bcf06fbdf2cf3ab5115936f1a",
+      "probe": "6e8794e55d707fcd4ffdb342ca2adda23abe0fb4901837fb755b0869e8cf16a8",
+      "xprobe": "3a72bd50a3952a953f6b3b66dd89751da0b7eddc2f66af19f7c40cf193da1dd9"
+    },
+    "store_conns_sha256": "f94a1c65a5d62915ad56a0002e07a37a63210d22220fa8f37f7b8d7706b9db47"
+  },
+  "reference": {
+    "mode": "chat",
+    "seed": 42,
+    "turns": {
+      "teach": {
+        "answer": "the wolf hunts the deer",
+        "abstained": false,
+        "recalled_svo": [
+          "wolf",
+          "hunt",
+          "deer"
+        ]
+      },
+      "d1": {
+        "answer": "the cat eats the fish \u2014 worth going further here.",
+        "abstained": false,
+        "recalled_svo": [
+          "cat",
+          "eat",
+          "fish"
+        ]
+      },
+      "d2": {
+        "answer": "Setting the held thread aside \u2014 On dog, then \u2014 the dog chases the cat \u2014 worth going further here.",
+        "abstained": false,
+        "recalled_svo": [
+          "dog",
+          "chase",
+          "cat"
+        ]
+      },
+      "probe": {
+        "answer": "Setting the held thread aside \u2014 On wolf, then \u2014 the wolf hunts the deer",
+        "abstained": false,
+        "recalled_svo": [
+          "wolf",
+          "hunt",
+          "deer"
+        ]
+      },
+      "xprobe": {
+        "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about fox yet: what can you tell me about fox?",
+        "abstained": true,
+        "recalled_svo": null
+      }
+    },
+    "turn_sha256": {
+      "teach": "d35f2dba4cd44945e9795023a492a840fba68c4be7846b264df3960dd7a4460b",
+      "d1": "c856e0c4353fb507299cdf3f5ef696d52b5b53bcb4c3fd30c920c5e539189e9d",
+      "d2": "4409fe6c810475ab4d5501fe79a5c06d5dbb8d6bcf06fbdf2cf3ab5115936f1a",
+      "probe": "6e8794e55d707fcd4ffdb342ca2adda23abe0fb4901837fb755b0869e8cf16a8",
+      "xprobe": "3a72bd50a3952a953f6b3b66dd89751da0b7eddc2f66af19f7c40cf193da1dd9"
+    },
+    "store_conns_sha256": "f94a1c65a5d62915ad56a0002e07a37a63210d22220fa8f37f7b8d7706b9db47"
+  },
+  "compared_keys": [
+    "turn_sha256",
+    "turns",
+    "store_conns_sha256"
+  ],
+  "diff_keys": [],
+  "byte_identical": true
+}

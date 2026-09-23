@@ -1,0 +1,755 @@
+{
+  "runner": "research.runners._d6_hebbian_mechanism_probe",
+  "per_seed": [
+    {
+      "seed": 42,
+      "blocks": [
+        {
+          "block": 0,
+          "phase_err_mean_rad": 0.01534,
+          "phase_err_max_rad": 0.0314,
+          "margins_direct": {
+            "agent": {
+              "word": "dog",
+              "margin": 0.8715
+            },
+            "action": {
+              "word": "chase",
+              "margin": 0.6992
+            },
+            "patient": {
+              "word": "cat",
+              "margin": 0.7865
+            },
+            "polarity": {
+              "word": "AFFIRM",
+              "margin": 1.0
+            }
+          },
+          "margins_hebbian": {
+            "agent": {
+              "word": "dog",
+              "margin": 0.8656
+            },
+            "action": {
+              "word": "chase",
+              "margin": 0.6995
+            },
+            "patient": {
+              "word": "cat",
+              "margin": 0.7884
+            },
+            "polarity": {
+              "word": "AFFIRM",
+              "margin": 1.0
+            }
+          }
+        },
+        {
+          "block": 1,
+          "phase_err_mean_rad": 0.01541,
+          "phase_err_max_rad": 0.03131,
+          "margins_direct": {
+            "agent": {
+              "word": "wolf",
+              "margin": 0.7854
+            },
+            "action": {
+              "word": "hunt",
+              "margin": 0.7082
+            },
+            "patient": {
+              "word": "deer",
+              "margin": 0.7108
+            },
+            "polarity": {
+              "word": "AFFIRM",
+              "margin": 0.9766
+            }
+          },
+          "margins_hebbian": {
+            "agent": {
+              "word": "wolf",
+              "margin": 0.7851
+            },
+            "action": {
+              "word": "hunt",
+              "margin": 0.71
+            },
+            "patient": {
+              "word": "deer",
+              "margin": 0.7123
+            },
+            "polarity": {
+              "word": "AFFIRM",
+              "margin": 0.9798
+            }
+          }
+        }
+      ],
+      "recall": {
+        "direct": [
+          "cat",
+          "deer"
+        ],
+        "hebbian": [
+          "cat",
+          "deer"
+        ],
+        "frozen_conv": [
+          "cat",
+          null
+        ]
+      },
+      "frozen_block_max_abs_w": 0.0,
+      "engram": {
+        "frozen_built_block": {
+          "block": 0,
+          "readout": 207.99881257360204,
+          "floor": 0.001,
+          "held": true
+        },
+        "frozen_conv_block": {
+          "block": 1,
+          "readout": 0.0,
+          "floor": 0.001,
+          "held": false
+        }
+      },
+      "hebbian_encode_diag": {
+        "frozen": false,
+        "steps": 208,
+        "block": 1,
+        "phase_lock_steps": 184,
+        "n_saturated": 128,
+        "mean_abs_w": 1.0,
+        "min_abs_w": 0.9999999999999998
+      }
+    },
+    {
+      "seed": 43,
+      "blocks": [
+        {
+          "block": 0,
+          "phase_err_mean_rad": 0.01511,
+          "phase_err_max_rad": 0.0314,
+          "margins_direct": {
+            "agent": {
+              "word": "dog",
+              "margin": 0.8087
+            },
+            "action": {
+              "word": "chase",
+              "margin": 0.7465
+            },
+            "patient": {
+              "word": "cat",
+              "margin": 0.5598
+            },
+            "polarity": {
+              "word": "AFFIRM",
+              "margin": 1.0
+            }
+          },
+          "margins_hebbian": {
+            "agent": {
+              "word": "dog",
+              "margin": 0.8045
+            },
+            "action": {
+              "word": "chase",
+              "margin": 0.7498
+            },
+            "patient": {
+              "word": "cat",
+              "margin": 0.5613
+            },
+            "polarity": {
+              "word": "AFFIRM",
+              "margin": 1.0
+            }
+          }
+        },
+        {
+          "block": 1,
+          "phase_err_mean_rad": 0.01558,
+          "phase_err_max_rad": 0.03123,
+          "margins_direct": {
+            "agent": {
+              "word": "wolf",
+              "margin": 0.8017
+            },
+            "action": {
+              "word": "hunt",
+              "margin": 0.8248
+            },
+            "patient": {
+              "word": "deer",
+              "margin": 0.8838
+            },
+            "polarity": {
+              "word": "AFFIRM",
+              "margin": 0.958
+            }
+          },
+          "margins_hebbian": {
+            "agent": {
+              "word": "wolf",
+              "margin": 0.8035
+            },
+            "action": {
+              "word": "hunt",
+              "margin": 0.8254
+            },
+            "patient": {
+              "word": "deer",
+              "margin": 0.8843
+            },
+            "polarity": {
+              "word": "AFFIRM",
+              "margin": 0.9545
+            }
+          }
+        }
+      ],
+      "recall": {
+        "direct": [
+          "cat",
+          "deer"
+        ],
+        "hebbian": [
+          "cat",
+          "deer"
+        ],
+        "frozen_conv": [
+          "cat",
+          null
+        ]
+      },
+      "frozen_block_max_abs_w": 0.0,
+      "engram": {
+        "frozen_built_block": {
+          "block": 0,
+          "readout": 207.99881040087982,
+          "floor": 0.001,
+          "held": true
+        },
+        "frozen_conv_block": {
+          "block": 1,
+          "readout": 0.0,
+          "floor": 0.001,
+          "held": false
+        }
+      },
+      "hebbian_encode_diag": {
+        "frozen": false,
+        "steps": 208,
+        "block": 1,
+        "phase_lock_steps": 184,
+        "n_saturated": 128,
+        "mean_abs_w": 1.0,
+        "min_abs_w": 0.9999999999999998
+      }
+    },
+    {
+      "seed": 44,
+      "blocks": [
+        {
+          "block": 0,
+          "phase_err_mean_rad": 0.01664,
+          "phase_err_max_rad": 0.03139,
+          "margins_direct": {
+            "agent": {
+              "word": "dog",
+              "margin": 0.737
+            },
+            "action": {
+              "word": "chase",
+              "margin": 0.7218
+            },
+            "patient": {
+              "word": "cat",
+              "margin": 0.7111
+            },
+            "polarity": {
+              "word": "AFFIRM",
+              "margin": 1.0
+            }
+          },
+          "margins_hebbian": {
+            "agent": {
+              "word": "dog",
+              "margin": 0.7338
+            },
+            "action": {
+              "word": "chase",
+              "margin": 0.7202
+            },
+            "patient": {
+              "word": "cat",
+              "margin": 0.7188
+            },
+            "polarity": {
+              "word": "AFFIRM",
+              "margin": 1.0
+            }
+          }
+        },
+        {
+          "block": 1,
+          "phase_err_mean_rad": 0.01532,
+          "phase_err_max_rad": 0.03134,
+          "margins_direct": {
+            "agent": {
+              "word": "wolf",
+              "margin": 0.5995
+            },
+            "action": {
+              "word": "hunt",
+              "margin": 0.8381
+            },
+            "patient": {
+              "word": "deer",
+              "margin": 0.7343
+            },
+            "polarity": {
+              "word": "AFFIRM",
+              "margin": 1.0
+            }
+          },
+          "margins_hebbian": {
+            "agent": {
+              "word": "wolf",
+              "margin": 0.6025
+            },
+            "action": {
+              "word": "hunt",
+              "margin": 0.8393
+            },
+            "patient": {
+              "word": "deer",
+              "margin": 0.734
+            },
+            "polarity": {
+              "word": "AFFIRM",
+              "margin": 1.0
+            }
+          }
+        }
+      ],
+      "recall": {
+        "direct": [
+          "cat",
+          "deer"
+        ],
+        "hebbian": [
+          "cat",
+          "deer"
+        ],
+        "frozen_conv": [
+          "cat",
+          null
+        ]
+      },
+      "frozen_block_max_abs_w": 0.0,
+      "engram": {
+        "frozen_built_block": {
+          "block": 0,
+          "readout": 207.99881021916076,
+          "floor": 0.001,
+          "held": true
+        },
+        "frozen_conv_block": {
+          "block": 1,
+          "readout": 0.0,
+          "floor": 0.001,
+          "held": false
+        }
+      },
+      "hebbian_encode_diag": {
+        "frozen": false,
+        "steps": 208,
+        "block": 1,
+        "phase_lock_steps": 184,
+        "n_saturated": 128,
+        "mean_abs_w": 1.0,
+        "min_abs_w": 0.9999999999999998
+      }
+    },
+    {
+      "seed": 100,
+      "blocks": [
+        {
+          "block": 0,
+          "phase_err_mean_rad": 0.01492,
+          "phase_err_max_rad": 0.03084,
+          "margins_direct": {
+            "agent": {
+              "word": "dog",
+              "margin": 0.7927
+            },
+            "action": {
+              "word": "chase",
+              "margin": 0.787
+            },
+            "patient": {
+              "word": "cat",
+              "margin": 0.8815
+            },
+            "polarity": {
+              "word": "AFFIRM",
+              "margin": 1.0
+            }
+          },
+          "margins_hebbian": {
+            "agent": {
+              "word": "dog",
+              "margin": 0.7954
+            },
+            "action": {
+              "word": "chase",
+              "margin": 0.7888
+            },
+            "patient": {
+              "word": "cat",
+              "margin": 0.8825
+            },
+            "polarity": {
+              "word": "AFFIRM",
+              "margin": 1.0
+            }
+          }
+        },
+        {
+          "block": 1,
+          "phase_err_mean_rad": 0.01561,
+          "phase_err_max_rad": 0.03069,
+          "margins_direct": {
+            "agent": {
+              "word": "wolf",
+              "margin": 0.7594
+            },
+            "action": {
+              "word": "hunt",
+              "margin": 0.7888
+            },
+            "patient": {
+              "word": "deer",
+              "margin": 0.7994
+            },
+            "polarity": {
+              "word": "AFFIRM",
+              "margin": 1.0
+            }
+          },
+          "margins_hebbian": {
+            "agent": {
+              "word": "wolf",
+              "margin": 0.7649
+            },
+            "action": {
+              "word": "hunt",
+              "margin": 0.794
+            },
+            "patient": {
+              "word": "deer",
+              "margin": 0.7965
+            },
+            "polarity": {
+              "word": "AFFIRM",
+              "margin": 1.0
+            }
+          }
+        }
+      ],
+      "recall": {
+        "direct": [
+          "cat",
+          "deer"
+        ],
+        "hebbian": [
+          "cat",
+          "deer"
+        ],
+        "frozen_conv": [
+          "cat",
+          null
+        ]
+      },
+      "frozen_block_max_abs_w": 0.0,
+      "engram": {
+        "frozen_built_block": {
+          "block": 0,
+          "readout": 207.9988166121617,
+          "floor": 0.001,
+          "held": true
+        },
+        "frozen_conv_block": {
+          "block": 1,
+          "readout": 0.0,
+          "floor": 0.001,
+          "held": false
+        }
+      },
+      "hebbian_encode_diag": {
+        "frozen": false,
+        "steps": 208,
+        "block": 1,
+        "phase_lock_steps": 184,
+        "n_saturated": 128,
+        "mean_abs_w": 1.0,
+        "min_abs_w": 0.9999999999999998
+      }
+    },
+    {
+      "seed": 101,
+      "blocks": [
+        {
+          "block": 0,
+          "phase_err_mean_rad": 0.01713,
+          "phase_err_max_rad": 0.031,
+          "margins_direct": {
+            "agent": {
+              "word": "dog",
+              "margin": 0.7159
+            },
+            "action": {
+              "word": "chase",
+              "margin": 0.9683
+            },
+            "patient": {
+              "word": "cat",
+              "margin": 0.5504
+            },
+            "polarity": {
+              "word": "AFFIRM",
+              "margin": 0.7527
+            }
+          },
+          "margins_hebbian": {
+            "agent": {
+              "word": "dog",
+              "margin": 0.7198
+            },
+            "action": {
+              "word": "chase",
+              "margin": 0.9695
+            },
+            "patient": {
+              "word": "cat",
+              "margin": 0.5506
+            },
+            "polarity": {
+              "word": "AFFIRM",
+              "margin": 0.7539
+            }
+          }
+        },
+        {
+          "block": 1,
+          "phase_err_mean_rad": 0.01558,
+          "phase_err_max_rad": 0.03127,
+          "margins_direct": {
+            "agent": {
+              "word": "wolf",
+              "margin": 0.7481
+            },
+            "action": {
+              "word": "hunt",
+              "margin": 0.7533
+            },
+            "patient": {
+              "word": "deer",
+              "margin": 0.8689
+            },
+            "polarity": {
+              "word": "AFFIRM",
+              "margin": 0.9469
+            }
+          },
+          "margins_hebbian": {
+            "agent": {
+              "word": "wolf",
+              "margin": 0.7549
+            },
+            "action": {
+              "word": "hunt",
+              "margin": 0.7512
+            },
+            "patient": {
+              "word": "deer",
+              "margin": 0.8678
+            },
+            "polarity": {
+              "word": "AFFIRM",
+              "margin": 0.9502
+            }
+          }
+        }
+      ],
+      "recall": {
+        "direct": [
+          "cat",
+          "deer"
+        ],
+        "hebbian": [
+          "cat",
+          "deer"
+        ],
+        "frozen_conv": [
+          "cat",
+          null
+        ]
+      },
+      "frozen_block_max_abs_w": 0.0,
+      "engram": {
+        "frozen_built_block": {
+          "block": 0,
+          "readout": 207.99881454696867,
+          "floor": 0.001,
+          "held": true
+        },
+        "frozen_conv_block": {
+          "block": 1,
+          "readout": 0.0,
+          "floor": 0.001,
+          "held": false
+        }
+      },
+      "hebbian_encode_diag": {
+        "frozen": false,
+        "steps": 208,
+        "block": 1,
+        "phase_lock_steps": 184,
+        "n_saturated": 128,
+        "mean_abs_w": 1.0,
+        "min_abs_w": 0.9999999999999998
+      }
+    },
+    {
+      "seed": 102,
+      "blocks": [
+        {
+          "block": 0,
+          "phase_err_mean_rad": 0.01495,
+          "phase_err_max_rad": 0.03132,
+          "margins_direct": {
+            "agent": {
+              "word": "dog",
+              "margin": 0.7421
+            },
+            "action": {
+              "word": "chase",
+              "margin": 0.7223
+            },
+            "patient": {
+              "word": "cat",
+              "margin": 0.7528
+            },
+            "polarity": {
+              "word": "AFFIRM",
+              "margin": 1.0
+            }
+          },
+          "margins_hebbian": {
+            "agent": {
+              "word": "dog",
+              "margin": 0.7416
+            },
+            "action": {
+              "word": "chase",
+              "margin": 0.7194
+            },
+            "patient": {
+              "word": "cat",
+              "margin": 0.7576
+            },
+            "polarity": {
+              "word": "AFFIRM",
+              "margin": 1.0
+            }
+          }
+        },
+        {
+          "block": 1,
+          "phase_err_mean_rad": 0.01474,
+          "phase_err_max_rad": 0.03138,
+          "margins_direct": {
+            "agent": {
+              "word": "wolf",
+              "margin": 0.7821
+            },
+            "action": {
+              "word": "hunt",
+              "margin": 0.6897
+            },
+            "patient": {
+              "word": "deer",
+              "margin": 0.8578
+            },
+            "polarity": {
+              "word": "AFFIRM",
+              "margin": 0.9559
+            }
+          },
+          "margins_hebbian": {
+            "agent": {
+              "word": "wolf",
+              "margin": 0.7849
+            },
+            "action": {
+              "word": "hunt",
+              "margin": 0.6944
+            },
+            "patient": {
+              "word": "deer",
+              "margin": 0.8549
+            },
+            "polarity": {
+              "word": "AFFIRM",
+              "margin": 0.9604
+            }
+          }
+        }
+      ],
+      "recall": {
+        "direct": [
+          "cat",
+          "deer"
+        ],
+        "hebbian": [
+          "cat",
+          "deer"
+        ],
+        "frozen_conv": [
+          "cat",
+          null
+        ]
+      },
+      "frozen_block_max_abs_w": 0.0,
+      "engram": {
+        "frozen_built_block": {
+          "block": 0,
+          "readout": 207.99882346014095,
+          "floor": 0.001,
+          "held": true
+        },
+        "frozen_conv_block": {
+          "block": 1,
+          "readout": 0.0,
+          "floor": 0.001,
+          "held": false
+        }
+      },
+      "hebbian_encode_diag": {
+        "frozen": false,
+        "steps": 208,
+        "block": 1,
+        "phase_lock_steps": 184,
+        "n_saturated": 128,
+        "mean_abs_w": 1.0,
+        "min_abs_w": 0.9999999999999998
+      }
+    }
+  ]
+}

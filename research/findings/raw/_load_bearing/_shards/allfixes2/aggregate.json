@@ -1,0 +1,646 @@
+{
+ "backend": "numpy",
+ "backend_source": "per-shard provenance sidecars (lb.json.prov.json env.SIM_BACKEND)",
+ "incomplete_faculties": [],
+ "mean_fraction": 0.9487179487179488,
+ "mean_fraction_3dp": 0.949,
+ "per_faculty": {
+  "affect-coloring": {
+   "dirty_seeds": [],
+   "n_load_bearing": 6,
+   "seeds_present": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+   ],
+   "verdicts": {
+    "42": "regressed",
+    "43": "regressed",
+    "44": "regressed",
+    "100": "regressed",
+    "101": "regressed",
+    "102": "regressed"
+   }
+  },
+  "affect-drives-response": {
+   "dirty_seeds": [],
+   "n_load_bearing": 6,
+   "seeds_present": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+   ],
+   "verdicts": {
+    "42": "regressed",
+    "43": "regressed",
+    "44": "regressed",
+    "100": "regressed",
+    "101": "regressed",
+    "102": "regressed"
+   }
+  },
+  "affect-marker-spiking-wta": {
+   "dirty_seeds": [],
+   "n_load_bearing": 4,
+   "seeds_present": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+   ],
+   "verdicts": {
+    "42": "pass",
+    "43": "pass",
+    "44": "regressed",
+    "100": "regressed",
+    "101": "regressed",
+    "102": "regressed"
+   }
+  },
+  "bg-action-selection": {
+   "dirty_seeds": [],
+   "n_load_bearing": 6,
+   "seeds_present": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+   ],
+   "verdicts": {
+    "42": "regressed",
+    "43": "regressed",
+    "44": "regressed",
+    "100": "regressed",
+    "101": "regressed",
+    "102": "regressed"
+   }
+  },
+  "common-ground-drives": {
+   "dirty_seeds": [],
+   "n_load_bearing": 6,
+   "seeds_present": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+   ],
+   "verdicts": {
+    "42": "regressed",
+    "43": "regressed",
+    "44": "regressed",
+    "100": "regressed",
+    "101": "regressed",
+    "102": "regressed"
+   }
+  },
+  "comprehension-learned-animacy-cue": {
+   "dirty_seeds": [],
+   "n_load_bearing": 6,
+   "seeds_present": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+   ],
+   "verdicts": {
+    "42": "regressed",
+    "43": "regressed",
+    "44": "regressed",
+    "100": "regressed",
+    "101": "regressed",
+    "102": "regressed"
+   }
+  },
+  "comprehension-learned-verb-selects": {
+   "dirty_seeds": [],
+   "n_load_bearing": 6,
+   "seeds_present": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+   ],
+   "verdicts": {
+    "42": "regressed",
+    "43": "regressed",
+    "44": "regressed",
+    "100": "regressed",
+    "101": "regressed",
+    "102": "regressed"
+   }
+  },
+  "comprehension-monitor": {
+   "dirty_seeds": [],
+   "n_load_bearing": 6,
+   "seeds_present": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+   ],
+   "verdicts": {
+    "42": "regressed",
+    "43": "regressed",
+    "44": "regressed",
+    "100": "regressed",
+    "101": "regressed",
+    "102": "regressed"
+   }
+  },
+  "confidence-forthcomingness": {
+   "dirty_seeds": [],
+   "n_load_bearing": 6,
+   "seeds_present": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+   ],
+   "verdicts": {
+    "42": "regressed",
+    "43": "regressed",
+    "44": "regressed",
+    "100": "regressed",
+    "101": "regressed",
+    "102": "regressed"
+   }
+  },
+  "curiosity-followup": {
+   "dirty_seeds": [],
+   "n_load_bearing": 6,
+   "seeds_present": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+   ],
+   "verdicts": {
+    "42": "regressed",
+    "43": "regressed",
+    "44": "regressed",
+    "100": "regressed",
+    "101": "regressed",
+    "102": "regressed"
+   }
+  },
+  "da-gated-encoding": {
+   "dirty_seeds": [],
+   "n_load_bearing": 0,
+   "seeds_present": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+   ],
+   "verdicts": {
+    "42": "pass",
+    "43": "pass",
+    "44": "pass",
+    "100": "pass",
+    "101": "pass",
+    "102": "pass"
+   }
+  },
+  "da-mode-drives-response": {
+   "dirty_seeds": [],
+   "n_load_bearing": 6,
+   "seeds_present": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+   ],
+   "verdicts": {
+    "42": "regressed",
+    "43": "regressed",
+    "44": "regressed",
+    "100": "regressed",
+    "101": "regressed",
+    "102": "regressed"
+   }
+  },
+  "discourse-register": {
+   "dirty_seeds": [],
+   "n_load_bearing": 6,
+   "seeds_present": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+   ],
+   "verdicts": {
+    "42": "regressed",
+    "43": "regressed",
+    "44": "regressed",
+    "100": "regressed",
+    "101": "regressed",
+    "102": "regressed"
+   }
+  },
+  "episodic-memory": {
+   "dirty_seeds": [],
+   "n_load_bearing": 6,
+   "seeds_present": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+   ],
+   "verdicts": {
+    "42": "regressed",
+    "43": "regressed",
+    "44": "regressed",
+    "100": "regressed",
+    "101": "regressed",
+    "102": "regressed"
+   }
+  },
+  "gnw-multistep-deliberation": {
+   "dirty_seeds": [],
+   "n_load_bearing": 6,
+   "seeds_present": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+   ],
+   "verdicts": {
+    "42": "regressed",
+    "43": "regressed",
+    "44": "regressed",
+    "100": "regressed",
+    "101": "regressed",
+    "102": "regressed"
+   }
+  },
+  "metacog-monitor": {
+   "dirty_seeds": [],
+   "n_load_bearing": 6,
+   "seeds_present": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+   ],
+   "verdicts": {
+    "42": "regressed",
+    "43": "regressed",
+    "44": "regressed",
+    "100": "regressed",
+    "101": "regressed",
+    "102": "regressed"
+   }
+  },
+  "noncontradiction-gate": {
+   "dirty_seeds": [],
+   "n_load_bearing": 6,
+   "seeds_present": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+   ],
+   "verdicts": {
+    "42": "regressed",
+    "43": "regressed",
+    "44": "regressed",
+    "100": "regressed",
+    "101": "regressed",
+    "102": "regressed"
+   }
+  },
+  "open-ended-generation": {
+   "dirty_seeds": [],
+   "n_load_bearing": 6,
+   "seeds_present": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+   ],
+   "verdicts": {
+    "42": "regressed",
+    "43": "regressed",
+    "44": "regressed",
+    "100": "regressed",
+    "101": "regressed",
+    "102": "regressed"
+   }
+  },
+  "pragmatic-implicature": {
+   "dirty_seeds": [],
+   "n_load_bearing": 6,
+   "seeds_present": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+   ],
+   "verdicts": {
+    "42": "regressed",
+    "43": "regressed",
+    "44": "regressed",
+    "100": "regressed",
+    "101": "regressed",
+    "102": "regressed"
+   }
+  },
+  "prospective-memory": {
+   "dirty_seeds": [],
+   "n_load_bearing": 6,
+   "seeds_present": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+   ],
+   "verdicts": {
+    "42": "regressed",
+    "43": "regressed",
+    "44": "regressed",
+    "100": "regressed",
+    "101": "regressed",
+    "102": "regressed"
+   }
+  },
+  "reconsolidation": {
+   "dirty_seeds": [],
+   "n_load_bearing": 6,
+   "seeds_present": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+   ],
+   "verdicts": {
+    "42": "regressed",
+    "43": "regressed",
+    "44": "regressed",
+    "100": "regressed",
+    "101": "regressed",
+    "102": "regressed"
+   }
+  },
+  "self-initiated-utterance": {
+   "dirty_seeds": [],
+   "n_load_bearing": 6,
+   "seeds_present": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+   ],
+   "verdicts": {
+    "42": "regressed",
+    "43": "regressed",
+    "44": "regressed",
+    "100": "regressed",
+    "101": "regressed",
+    "102": "regressed"
+   }
+  },
+  "source-provenance-honesty": {
+   "dirty_seeds": [],
+   "n_load_bearing": 6,
+   "seeds_present": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+   ],
+   "verdicts": {
+    "42": "regressed",
+    "43": "regressed",
+    "44": "regressed",
+    "100": "regressed",
+    "101": "regressed",
+    "102": "regressed"
+   }
+  },
+  "surprise-monitor": {
+   "dirty_seeds": [],
+   "n_load_bearing": 6,
+   "seeds_present": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+   ],
+   "verdicts": {
+    "42": "regressed",
+    "43": "regressed",
+    "44": "regressed",
+    "100": "regressed",
+    "101": "regressed",
+    "102": "regressed"
+   }
+  },
+  "swap-drives-response": {
+   "dirty_seeds": [],
+   "n_load_bearing": 0,
+   "seeds_present": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+   ],
+   "verdicts": {
+    "42": "not-exercised",
+    "43": "not-exercised",
+    "44": "not-exercised",
+    "100": "not-exercised",
+    "101": "not-exercised",
+    "102": "not-exercised"
+   }
+  },
+  "vision-identity-spiking-hmax": {
+   "dirty_seeds": [],
+   "n_load_bearing": 6,
+   "seeds_present": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+   ],
+   "verdicts": {
+    "42": "regressed",
+    "43": "regressed",
+    "44": "regressed",
+    "100": "regressed",
+    "101": "regressed",
+    "102": "regressed"
+   }
+  },
+  "wm-binding-advanced": {
+   "dirty_seeds": [],
+   "n_load_bearing": 0,
+   "seeds_present": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+   ],
+   "verdicts": {
+    "42": "not-exercised",
+    "43": "not-exercised",
+    "44": "not-exercised",
+    "100": "not-exercised",
+    "101": "not-exercised",
+    "102": "not-exercised"
+   }
+  },
+  "worldmodel-forward": {
+   "dirty_seeds": [],
+   "n_load_bearing": 6,
+   "seeds_present": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+   ],
+   "verdicts": {
+    "42": "regressed",
+    "43": "regressed",
+    "44": "regressed",
+    "100": "regressed",
+    "101": "regressed",
+    "102": "regressed"
+   }
+  }
+ },
+ "per_seed": {
+  "42": {
+   "load_bearing_fraction": 0.9230769230769231,
+   "n_coverable_present": 28,
+   "n_exercised": 26,
+   "n_load_bearing": 24
+  },
+  "43": {
+   "load_bearing_fraction": 0.9230769230769231,
+   "n_coverable_present": 28,
+   "n_exercised": 26,
+   "n_load_bearing": 24
+  },
+  "44": {
+   "load_bearing_fraction": 0.9615384615384616,
+   "n_coverable_present": 28,
+   "n_exercised": 26,
+   "n_load_bearing": 25
+  },
+  "100": {
+   "load_bearing_fraction": 0.9615384615384616,
+   "n_coverable_present": 28,
+   "n_exercised": 26,
+   "n_load_bearing": 25
+  },
+  "101": {
+   "load_bearing_fraction": 0.9615384615384616,
+   "n_coverable_present": 28,
+   "n_exercised": 26,
+   "n_load_bearing": 25
+  },
+  "102": {
+   "load_bearing_fraction": 0.9615384615384616,
+   "n_coverable_present": 28,
+   "n_exercised": 26,
+   "n_load_bearing": 25
+  }
+ },
+ "robust_core": [
+  "affect-coloring",
+  "affect-drives-response",
+  "bg-action-selection",
+  "common-ground-drives",
+  "comprehension-learned-animacy-cue",
+  "comprehension-learned-verb-selects",
+  "comprehension-monitor",
+  "confidence-forthcomingness",
+  "curiosity-followup",
+  "da-mode-drives-response",
+  "discourse-register",
+  "episodic-memory",
+  "gnw-multistep-deliberation",
+  "metacog-monitor",
+  "noncontradiction-gate",
+  "open-ended-generation",
+  "pragmatic-implicature",
+  "prospective-memory",
+  "reconsolidation",
+  "self-initiated-utterance",
+  "source-provenance-honesty",
+  "surprise-monitor",
+  "vision-identity-spiking-hmax",
+  "worldmodel-forward"
+ ],
+ "robust_core_n": 24,
+ "sd_fraction": 0.01813094310734736,
+ "sd_fraction_3dp": 0.018,
+ "seeds": [
+  42,
+  43,
+  44,
+  100,
+  101,
+  102
+ ],
+ "tag": "allfixes2",
+ "union_n": 25
+}

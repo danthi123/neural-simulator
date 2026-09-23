@@ -27,6 +27,8 @@ trains on the bridge); numpy is the test oracle.
 """
 from __future__ import annotations
 
+import os
+
 import numpy as np
 
 from sim import SimulationBridge, VisualizationConfig, RuntimeState, GPUConfig
@@ -864,6 +866,15 @@ class OneBrainComposer:
         i = len(self.kb)
         if i >= self.k_max:
             raise RuntimeError(f"OneBrainComposer store full: k_max={self.k_max} reached (shard or raise k_max)")
+        # D6 LEARN-THROUGH-USE (default-OFF, BRAIN_D6_HEBBIAN_STORE): write the block by a LOCAL Hebbian rule on the
+        # substrate instead of copying the host-read composite into the weights (research/runners/d6_hebbian_store.py).
+        # Off (unset) -> only this env read happens -> the direct write below is byte-identical.
+        if os.environ.get("BRAIN_D6_HEBBIAN_STORE", "").strip().lower() in ("1", "true", "yes", "on"):
+            from research.runners import d6_hebbian_store as _d6
+            _freeze = _d6.hebbian_freeze_lesioned() and bool(getattr(self, "_d6_conv_write", False))
+            w, self._d6_last_encode = _d6.hebbian_encode(self, i, fillers, roles, freeze=_freeze)
+            self._write_block(i, w)
+            return
         self._write_block(i, self._compose_phases(fillers, roles))
 
     def _unbind_conj(self, role):
