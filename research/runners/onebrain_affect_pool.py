@@ -1,5 +1,6 @@
 """D3 ONE-BRAIN — the AFFECT organ (Gate-B graded mood ladder) migrated onto the shared cortical pool, with a
-REAL cross-region synapse (the ladder's own held AROUSAL -> the D2 surprise pool, LC-NE adaptive gain).
+REAL cross-region synapse (the ladder's own held AROUSAL -> the D2 surprise pool; the LC-NE projection is its
+biological motivation -- whether it acts as a GAIN or as additive DC drive on surprise is NOT tested, no claim).
 
 WHY AFFECT IS THE NEXT ORGAN (verify-first inventory, 2026-09-23). The 11-organ Wave-3 pool
 (`onebrain_wave3_pool_production.get_wave3_pool`, default-ON since 8ee5e6817) carries the cortical organs
@@ -35,9 +36,11 @@ WHAT THIS MODULE BUILDS (additive, DEFAULT-OFF, NO `sim/` edit):
      (`aff_arousal_L1..L8`, 160 cells) projects all-to-all onto the D2 `surprise` pool, fixed weight
      (`plastic=False`), behind the transmission gate `affect_arousal_to_surprise` (the lesion handle). This is
      the rank-#3 cross-edge of the integration design (arousal -> surprise, Aston-Jones & Cohen 2005 LC-NE
-     adaptive gain) — but the 2026-09-02 de-risk drove a HOST-driven stand-in arousal source; here the source is
-     the brain's OWN latched arousal ladder, so the gain on surprise is set by the affect state the message
-     appraisal left behind, carried end-to-end by spikes.
+     adaptive gain as the motivation) — but the 2026-09-02 de-risk drove a HOST-driven stand-in arousal source;
+     here the source is the brain's OWN latched arousal ladder, so the extra excitatory drive onto surprise is set
+     by the affect state the message appraisal left behind, carried end-to-end by spikes. (Gain vs additive DC is
+     untested: at the tested weight confirm sits at a ~0 Hz floor, which a sub-threshold DC shift would also
+     leave unchanged. No gain claim is made.)
   4. Production routing (both DEFAULT-OFF): `BRAIN_ONEBRAIN_AFFECT_POOL=1` -> `get_merged_cortical_pool` returns
      the 12-organ pool (every wired cortical organ still resolves to ONE pool object) AND the production affect
      read runs on it; `BRAIN_ONEBRAIN_AFFECT_XEDGE=1` (only meaningful with the pool flag) additionally installs
@@ -69,10 +72,12 @@ from research.runners._appraisal_interoceptive_ladder_derisk import (
 AFFECT_KEY = "affect_ladder"
 XEDGE_KEY = "affect_arousal_to_surprise"
 XEDGE_GATE = "affect_arousal_to_surprise"
-# Per-synapse weight of the diffuse arousal->surprise projection. Calibrated ONCE on seed 42 by
-# `_onebrain_affect_pool_verify.py --calibrate` (the smallest weight in the pre-registered sweep whose intact
-# contradict shift clears the pre-registered floor while CONFIRM stays sub-threshold); the 6-seed gate then runs
-# at this FIXED value on all seeds (seed 42 declared as the calibration seed). See the verify runner.
+# Per-synapse weight of the diffuse arousal->surprise projection. A HAND-SET CONSTANT. PROVENANCE (corrected in the
+# 2026-09-23 fix round): 0.05 was hard-coded in the build commit 1fe3f56ef (08:59:38) while the seed-42 calibration
+# (`--calibrate`, started 08:55:41, ~1268 s) was still running; the calibration result (f77556db, 09:17) then found
+# 0.05 to be the smallest weight in its sweep that met its rule -- AGREEMENT after the fact, not a derivation. That
+# calibration also measured the surprise organ at a NON-production operating point (the ladder's OU on every pool
+# neuron), so it cannot license this value either. The 6-seed gate runs at this fixed hand-set value on all seeds.
 XEDGE_W = 0.05
 _AFF_N_RUNGS = 8
 _RELAY_NAMES = {"vplus": "appr_intero_vplus", "vminus": "appr_intero_vminus", "arousal": "appr_intero_arousal"}
@@ -192,8 +197,37 @@ class PoolAffectLadder:
         self._built = True
 
     # --- local OU (the curiosity-organ pattern, adapted to the ladder's 8 pA background) ---
+    # Bridge-side OU state that `_initialize_ou_process_state` (re)writes; saved on entry and RESTORED on exit
+    # (fix round 2026-09-23: the exit used to set these to None unconditionally, which would clobber an OU state a
+    # caller had installed before the affect read -- harmless on today's noise-off pool, order-dependent otherwise).
+    _OU_BRIDGE_ATTRS = ("cp_ou_current", "_region_ou_streams", "_ou_neuron_key_idx", "_ou_neuron_keys",
+                        "_ou_pn_step", "ou_decay_factor", "ou_noise_std", "ou_mean", "cp_ou_neuron_mask")
+
+    def affect_neuron_mask(self):
+        """Backend bool mask over the pool: True on every affect-organ neuron (ladder rungs, readouts, aggregates,
+        relays)."""
+        pool = self._shared
+        b = pool.bridge
+        n = int(b.cp_membrane_potential_v.shape[0])
+        m = pool.xp.zeros(n, dtype=bool)
+        idx = np.concatenate([np.asarray(v, dtype=np.int64) for v in pool.idx(AFFECT_KEY).values()])
+        m[pool.xp.asarray(idx)] = True
+        return m
+
     @contextlib.contextmanager
-    def local_ou(self):
+    def local_ou(self, scope: str = "all"):
+        """Local per-neuron OU background for an affect read window (+ Hebbian OFF), restored on exit.
+
+        scope="all" (the production affect read, UNCHANGED): the OU stream is installed on every pool neuron; only
+        the ladder is measured and the whole sequence is isolated, so it is inert for the affect read.
+        scope="affect" (the arm-X instrument, fix round 2026-09-23): the engine's own `cp_ou_neuron_mask` seam
+        (honoured by every step path) confines the OU CURRENT to the affect organ's neurons. Every other organ --
+        in particular the surprise pool -- then runs noise-free, which is its production read operating point (the
+        pool keeps OU off; the organ's threshold was calibrated noise-free). The per-neuron-keyed draws of the
+        affect neurons are unchanged by the mask, and nothing projects INTO the affect regions, so the ladder's own
+        dynamics are identical under either scope."""
+        if scope not in ("all", "affect"):
+            raise ValueError(f"local_ou scope must be 'all' or 'affect', got {scope!r}")
         pool = self._shared
         b = pool.bridge
         cfg = b.core_config
@@ -201,6 +235,9 @@ class PoolAffectLadder:
         keys = ("enable_ou_process", "per_neuron_ou_seed", "ou_seed", "ou_std_current_pA",
                 "ou_mean_current_pA", "ou_tau_ms", "enable_hebbian_learning")
         saved = {k: getattr(cfg, k, None) for k in keys}
+        _missing = object()
+        saved_b = {k: getattr(b, k, _missing) for k in self._OU_BRIDGE_ATTRS}
+        mask = self.affect_neuron_mask() if scope == "affect" else None
         try:
             from sim.config import CoreSimConfig
             d = CoreSimConfig()
@@ -217,13 +254,21 @@ class PoolAffectLadder:
             cfg.ou_mean_current_pA = float(d.ou_mean_current_pA)
             cfg.ou_tau_ms = float(d.ou_tau_ms)
             b._initialize_ou_process_state(cfg, n)
+            if mask is not None:
+                b.cp_ou_neuron_mask = mask
             yield
         finally:
-            b.cp_ou_current = None
-            b._region_ou_streams = None
-            b._ou_neuron_key_idx = None
-            b._ou_neuron_keys = None
-            b._ou_pn_step = 0
+            for k, v in saved_b.items():
+                if v is _missing:
+                    # absent before entry: the pre-fix exit state (None / step 0) for the per-read arrays; the
+                    # scalar OU coefficients are only read when cp_ou_current is not None, so they are left as-is.
+                    if k in ("cp_ou_current", "_region_ou_streams", "_ou_neuron_key_idx", "_ou_neuron_keys",
+                             "cp_ou_neuron_mask"):
+                        setattr(b, k, None)
+                    elif k == "_ou_pn_step":
+                        b._ou_pn_step = 0
+                else:
+                    setattr(b, k, v)
             for k, v in saved.items():
                 setattr(cfg, k, v)
 
@@ -268,9 +313,10 @@ class PoolAffectLadder:
 
     def read_differential(self, appraisal: float, lesion: bool = False, intero_lesion: bool = False,
                           ramp_ms: int = SA.LAD_RAMP_MS, drive_off_ms: int = SA.LAD_DRIVE_OFF_MS,
-                          read_ms: int = SA.LAD_READ_MS) -> dict:
+                          read_ms: int = SA.LAD_READ_MS, ou_scope: str = "all") -> dict:
         """Same signature + return keys as `AppraisalInteroceptiveLadder.read_differential` (drop-in for the
-        production dispatch)."""
+        production dispatch). `ou_scope` (pool only; default "all" = the unchanged production read) selects the
+        local-OU scope -- see `local_ou`; the arm-X instrument check reads it both ways and requires identity."""
         self.ensure_built()
         if self._shared is None:
             return self._standalone.read_differential(appraisal, lesion=lesion, intero_lesion=intero_lesion,
@@ -282,7 +328,7 @@ class PoolAffectLadder:
         with pool.sequence_isolation():
             _restore_state(b, pool.snap)
             b.cp_external_input_current[:] = 0.0
-            with self.local_ou():
+            with self.local_ou(scope=ou_scope):
                 self.set_gates(lesion=lesion, intero_lesion=intero_lesion)
                 try:
                     spk = self.run_appraisal_phase(appraisal, ramp_ms, drive_off_ms)
