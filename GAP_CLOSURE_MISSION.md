@@ -25,7 +25,10 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
   Do NOT write s100 off as 5/6 — it is UNMEASURED, not failed. Branch `research/lbf-fix-episodic-store` holds the store-verify fix; final finding + merge after s100 resolves.
 - **✅ DONE: §8 affect→tone NEXT-METHOD Phase-1 — DECODE-CEILING diagnosis (6/6, adversarially CONFIRMED), MERGED @ f1a1eee6.** The positive-asymmetry NO-GO is the host additive-bias DECODE mechanism, NOT a training-data limit (pos/neg mass ratio 1.457 vs 50× data-limit bar; neg words reach top-64 ~8% of steps). This MANDATES a better decode path (NO-DEFER). **Phase-2A** (brain-based neural coupling via `BRAIN_WKV_MOUTH_AFFECT_NEURAL` spiking-competition path; brain-based-boundary verified CLEAN; reuses the 6-seed gate+anti-cheats) is BUILT+selftested but its 36-arm gate is **UNRUN** (killed 3× by shared-machine near-OOM) → NO verdict yet. RESUME queued (after RAM frees): `_lbf_affect_tone_neural_coupling_derisk --controller --parallel 1 --memcap-gb 8` then `--score-only`.
 - **⛔ RAM LESSON (this session): do NOT run 2 heavy brain-lanes concurrently** — running the episodic numpy 6-seed (3 brains ~23GB) WHILE the affect→tone workflow ran brain_chat starved Phase-2A into 3× near-OOM (avail hit 439MB). ONE heavy lane at a time; mem_ok is the gate.
-- **IN FLIGHT:** **episodic s100-numpy SERIAL re-measure** (pid 3252049, watcher `bpfcwhqh7`) — the robust-core-23 decider. The 3-parallel numpy 6-seed was KILLED (SWAP-THRASH: 3× 7GB numpy brains @ 3.65M synapses exceeded RAM → 29GB swap, 43884 swap-out/sec, near-zero progress). Relaunched s100-ONLY (the sole decisive seed — the other 5 were clean+LB on cupy), SERIAL (1 brain fits → no swap), 8 threads, memcap 10. If s100 numpy = deterministic LB → episodic 6/6 → robust core 23. **LESSON: numpy at production synapse-scale is memory-heavy → SERIAL only (mem_ok gates it); never 3-parallel.** Phase-2 confirmatory KILLED (RAM). Phase-2A affect→tone neural coupling still queued (after s100).
+- **⏸️ OWNER REBOOT (2026-09-22 ~22:45Z): machine down for updates+reboot; nothing running.** All state committed both remotes. Resume with "continue" post-reboot.
+- **EPISODIC = honest 5/6 (robust core stays 22, NOT 23 yet).** 5/5 clean-deterministic LOAD-BEARING (s42/s43/s44/s101/s102 on cupy); **s100 UNRESOLVED near-threshold** — non-deterministic on cupy (GPU-reduction noise flips a near-threshold in_memory read), and the numpy deterministic re-measure proved IMPRACTICALLY SLOW (the episodic probe rebuilds the 3.65M-synapse brain ~48×; killed at 70min by owner call to reboot). **NEXT METHOD (post-reboot, owner chose defer): cupy-repeats STATISTICAL read** — run s100 on cupy ~5× + majority-vote the in_memory read (~15-20min GPU); if LB in majority → episodic effectively 6/6 (near-threshold) → robust core 23; if ~50/50 → genuine at-threshold → a stabilizer (pmem-facilitation precedent).
+  Artifacts: `raw/_lbf_fix_episodic_store/_insitu5/` (cupy 5/5+s100-nondet) + `_insitu5_numpy/` (killed). **LESSON: numpy at production synapse-scale rebuilds are too slow for the full determinism probe → use cupy-repeats statistical read for a near-threshold seed, NOT a numpy deterministic re-run.**
+- **QUEUED post-reboot (one heavy lane at a time — RAM lesson):** (1) episodic s100 cupy-repeats (above) → robust core 23?; (2) §8 affect→tone Phase-2A neural-coupling 36-arm gate (`_lbf_affect_tone_neural_coupling_derisk --controller --parallel 1 --memcap-gb 8` then `--score-only`) — the decode-ceiling fix test.
 - **Heartbeat armed** `bk9nzu8kt` (state-checking + parallel-audit each cycle). **LESSON (bank if recurs):** a workflow BUILD agent can conflate its task with the parent session's message and decline an authorized build → build-agent prompts need explicit "authorized autonomous build, not a status/confirmation request" framing.
 
 **⭐ LATEST 2026-09-22 (~20:20Z) — FULL-FORCE PARALLEL: 2 stabilizer fixes MERGED, 2 lanes IN FLIGHT, AWS abandoned:**
@@ -128,12 +131,14 @@ the hollow-set finding sits uncommitted in the working tree + a safety stash `pr
   other 4, after a self-inflicted RAM spike from an uncapped 6-parallel launch — recovered, avail 23G).
 
 **PRE-DECIDED NEXT ACTIONS:**
-1. ⭐ NOW (2026-09-22 ~23:32Z): (a) **episodic s100-numpy SERIAL re-measure RUNNING** (pid 3252049, watcher `bpfcwhqh7`) —
-   the robust-core-23 decider: episodic is 5/5 clean-det LOAD-BEARING; s100 was cupy-GPU-noise non-det, so re-measuring
-   all 6 on the deterministic numpy backend; if 6/6 det+LB → **robust core 23**; else s100 near-threshold stabilizer.
-   Slow (numpy/3.65M synapses). (b) THEN (one heavy lane at a time — RAM lesson): **resume §8 affect→tone Phase-2A**
-   neural-coupling 36-arm gate (`_lbf_affect_tone_neural_coupling_derisk --controller --parallel 1`) — the decode-ceiling
-   fix test; if directional 6-seed GO, the brain-based coupling flips the affect→tone negative-asymmetry. ✅ DONE this cycle:
+1. ⏸️ POST-REBOOT (owner rebooting ~22:45Z for updates; say "continue" to resume — nothing running, all committed both
+   remotes). Do these ONE HEAVY LANE AT A TIME (RAM lesson, twice-earned): (a) **episodic s100 cupy-repeats** — run s100
+   on cupy ~5× + majority-vote the in_memory read (~15-20min GPU); if LB in majority → episodic effectively 6/6 →
+   **robust core 23**; else genuine at-threshold → stabilizer. (The numpy deterministic re-run was IMPRACTICAL — ~48
+   rebuilds of the 3.65M-synapse brain, killed at 70min.) (b) **§8 affect→tone Phase-2A** neural-coupling 36-arm gate
+   (`_lbf_affect_tone_neural_coupling_derisk --controller --parallel 1 --memcap-gb 8` then `--score-only`) — the
+   decode-ceiling fix test; if directional 6-seed GO, the brain-based coupling flips the affect→tone negative-asymmetry.
+   NOTE: owner will GAME post-reboot → hold heavy lanes / renice if they signal gaming. ✅ DONE this cycle:
    **§8 metacog graded-marker (sub-arc B) — GO 6/6 CONFIRMED, MERGED @ b994cf13** (de-risk; narrow synthetic-evidence
    scope; next rungs = real-traffic recalibration + production wire-in). **§8 affect→tone-over-OPEN-output MERGED @
    279b4ddf** — NO-GO (positive-asymmetric, additive-bias method falsified, capability open, next methods banked; new
