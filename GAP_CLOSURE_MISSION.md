@@ -150,6 +150,11 @@ waiting on runs every day … I thought our heartbeats/gates were supposed to pr
   prediction (GO, mean 0.193) FAILED). Scorer-amendment disclosure + D3 false 'jobs outstanding' claim being corrected
   in round 8 `wtkclzjv1` (text/status only). Next open-ended method (NO-DEFER): raise the draw's live variability where
   a seed's draw is degenerate (s100) / more asks per session — to be named in the finding.
+- **18:45 MERGED (both remotes `@5dcaa176`):** D3 affect ladder as 12th shared-pool organ — scored 6-seed verdict NOT
+  ALL-GO (3/6 fully GO; X1 4/6, fails s42/s100; s102 fails M3) `@a76f47a2`; open-ended production-turn defect fix
+  (default-off route flags) + a3 verdict NO-GO `@5dcaa176`. I applied the final review-requested text corrections myself
+  (the review loop had reached wording-only issues). **Also: idle-stop now covers every AWS instance** (`@80a98510`; an
+  idle r7i billed ~30 min because only .aws_gpu was checked; the AWS2 harvest loop had stalled silently).
 - **⚠️ POOL/AWS BRAIN ASSETS:** pool nodes lack bridges/ (25G local) + most data/ (11G local) → production brain_chat
   runs there may DEGENERATE like AWS did. Do NOT trust a pool brain_chat result until the infra lane's sanity check passes.
 - **LESSONS (new):** never SendMessage a Workflow subagent (it resumes the agent as a duplicate in the same worktree;
