@@ -6,7 +6,7 @@ lane: D6-learn-and-grow
 mechanism: in-conversation fact WRITE by a local phase-coupled Hebbian rule on the RF substrate (BRAIN_D6_HEBBIAN_STORE) + write-only plasticity-freeze lesion (BRAIN_D6_HEBBIAN_FREEZE), measured by a pre-registered 2x2 (use x plasticity) probe through the real /api/brain-chat handler
 seeds: [42]
 seed-waiver: a labelled 1-seed SMOKE of a pre-registered gate; the 6-seed runs (both variants) are staged on the mini-PC pool, paths below
-verdict: NO-GO on the pre-registered gate at seed 42 (C3 fails; C1 C2 C4 C5 C6 C7 hold). The plasticity carries the RECALL; a host bookkeeping list carries a second use-trace into the reply.
+verdict: NO-GO on the pre-registered gate at seed 42 (C3 fails; C1 C2 C4 C5 C6 C7 hold). The plasticity carries the RECALL; a host bookkeeping list carries a second use-trace into the reply. Next method 1 (engram-derived known sets) NO-GO at s42 (C3 via kb-direct readers, C4 ack text); next method 2 (retract unencoded writes) built + staged.
 runner: research/runners/d6_learn_through_use_lb.py
 artifacts:
   - research/findings/raw/_d6_learn_through_use/d6_ltu_s42_smoke.json
@@ -16,6 +16,9 @@ artifacts:
   - research/findings/raw/_d6_learn_through_use/s42_SHUF_H.json
   - research/findings/raw/_d6_learn_through_use/s42_FREEZE_H.json
   - research/findings/raw/_d6_learn_through_use/s42_USE_D.json
+  - research/findings/raw/_d6_learn_through_use_engram/d6_ltu_engram_s42_smoke.json
+  - research/findings/raw/_d6_learn_through_use_engram/s42_FREEZE_H.json
+  - research/findings/raw/_d6_learn_through_use_engram/s42_SHUF_H.json
 ---
 
 # D6 learn-through-use: the Hebbian fact write carries the recall, but a host list still carries familiarity (seed-42 smoke, NO-GO on C3)
@@ -104,27 +107,51 @@ Measured split: the plasticity carries the RECALL (C3 holds on `abstained` + `re
 host record carries a second use-trace into the reply's framing. Under the brain-based-only standard that
 second channel is a shortcut: a list is doing the brain's remembering.
 
-## Next method (built, staged; NO-DEFER)
+## Next method 1 — engram-derived known sets (built, measured at seed 42: NO-GO on C3 and C4)
 
 `BRAIN_D6_ENGRAM_VOCAB=1` makes `_refresh_facts` keep only the facts whose engram reactivates on the
 substrate (`d6_hebbian_store.engram_held`). It kicks the block's trigger cell and reads the mean |Z| over
 the block's readout cells off the membrane. A block counts as held only if that activity clears the read's
-own spike floor; a frozen block reads exactly 0.0.
+own spike floor; a frozen block reads exactly 0.0. The runner's `--variant engram` adds the flag to every
+Hebbian arm, and USE_D stays pure production. The gate was C1..C7, unchanged, pre-registered before any
+engram result.
 
-The runner's `--variant engram` adds this flag to every Hebbian arm. USE_D stays pure production, so C7
-now also checks that the full D6 configuration is decision-identical to production. The gate is C1..C7,
-unchanged, and was pre-registered before any engram-variant result.
+Seed-42 result (`research/findings/raw/_d6_learn_through_use_engram/d6_ltu_engram_s42_smoke.json`):
+C1 C2 C5 C6 C7 pass; C3 and C4 fail.
+- The curiosity leak closed: frozen-arm novelty is 0.9719, shuffled 0.9701, and both arms append the
+  curiosity question (`s42_FREEZE_H.json`, `s42_SHUF_H.json`).
+- C3 still fails. Organs that read `composer.kb` DIRECTLY did not change: `webapp/gnw_thought_swap._known_concepts`
+  feeds the thread swap, common ground and the GNW stop, and all three still treated `wolf` as a grounded topic.
+- C4 now fails on the teach ACK text: "The wolf hunts deer." (frozen) vs "the wolf hunts the deer". The
+  parse is identical (`recalled_svo` and `abstained` match). The ack render reads the engram-derived known
+  sets, so the brain acknowledges a sentence it did not retain.
+
+The engram variant's six pool lines were DEQUEUED before dispatch. Seed 42 already showed both failures
+come from the design, so six more seeds would re-measure a known NO-GO.
+
+## Next method 2 — retract an encode that formed no engram (built, staged)
+
+`BRAIN_D6_ENGRAM_PRUNE=1` targets the kb-direct readers. When an in-conversation write leaves no engram,
+`d6_hebbian_store.retract_unencoded_last` pops its kb entry and returns the block's trigger cell to the free
+pool. Every kb reader then agrees with the substrate, and an encoding attempt that left no engram leaves no
+record. Unit test: the retracted fact abstains, the build-time recall stays intact, and the freed block is
+reused by the next write.
+
+The `--variant prune` gate is C1..C7 with ONE change, pre-declared in the runner before any prune result:
+C4's teach-turn check compares the parse fields only (`abstained`, `recalled_svo`), not the ack text. The
+scorer selftest shows the ack-only difference passes only under prune and a real parse change still fails.
 
 ## Staged 6-seed runs (mini-PC pool, one queue line per seed)
 
-- **base variant** — revision `3fd611b7c`, all 6 seeds dispatched 09:32-09:40.
-  Node dir `~/derisk-pool/revisions/3fd611b7c10c6b08ad130ecd6149a37bf13cae77/research/findings/raw/_d6_learn_through_use/d6_ltu_s<seed>.json`
-  plus the per-arm `s<seed>_<ARM>.json` files.
-- **engram variant** — revision `bca675ea3`, queued.
-  Node dir `~/derisk-pool/revisions/bca675ea369105bebde7d05884afdaad3678f9ec/research/findings/raw/_d6_learn_through_use_engram/d6_ltu_engram_s<seed>.json`
-  plus the per-arm files.
-- **scoring** (after the per-arm files are pulled into one dir):
-  `.venv/bin/python -m research.runners.d6_learn_through_use_lb --score-only [--variant engram] --arm-dir <dir> --seeds 42 43 44 100 101 102 --json <dir>/d6_ltu[_engram]_6seed_verdict.json`
+- **base variant** (the v1 pre-registered gate) — revision `3fd611b7c`, all 6 seeds dispatched 09:32-09:40.
+  Node dir `~/derisk-pool/revisions/3fd611b7c10c6b08ad130ecd6149a37bf13cae77/research/findings/raw/_d6_learn_through_use/`.
+  Expected result (seed 42): the same C3 NO-GO; this run measures whether the host-list leak holds across seeds.
+- **prune variant** — revision `b7f0b50f3`, queued at the tail of a ~111-deep queue.
+  Node dir `~/derisk-pool/revisions/b7f0b50f3ba81e0676c25e4bc10a8a012f4a0ff0/research/findings/raw/_d6_learn_through_use_prune/`.
+  A local seed-42 smoke was also launched: `research/findings/raw/_d6_learn_through_use_prune/` in branch
+  worktree `.claude/worktrees/wf_8bf19a04-cbd-2`.
+- **scoring** (after the per-arm `s<seed>_<ARM>.json` files are pulled into one dir):
+  `.venv/bin/python -m research.runners.d6_learn_through_use_lb --score-only --variant <base|prune> --arm-dir <dir> --seeds 42 43 44 100 101 102 --json <dir>/d6_ltu_<variant>_6seed_verdict.json`
 
 ## Honest scope
 
@@ -133,5 +160,7 @@ unchanged, and was pre-registered before any engram-variant result.
   composer idealization.
 - Which trigger cell a new fact takes is host bookkeeping.
 - The rule is evaluated in the runner module from membrane state, not in a `sim/` kernel.
+- The ack wording ("The wolf hunts deer.") is produced by the stub renderer's inflection map. It reflects the
+  known-set read, not a language faculty.
 - Nothing here is flipped on by default. Production flips are owner-reserved.
 - No felt or phenomenal claim is made. "Familiar" above means the curiosity organ's novelty read was 0.0.
