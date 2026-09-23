@@ -1191,9 +1191,10 @@ Perception/attention/WM, affect, curiosity, self/workspace/ToM, and language are
 **2026-09-23 (da-gated-encoding, branch `research/da-encoding-natural-drive`, IN FLIGHT):** the natural-probe wall
 (DA write gain invisible to a clean read) traced to two constants: infinite E-LTP lifetime and a zero synaptic
 baseline. Built `webapp/da_tag_capture.py` (DA-gated tagging-and-capture, default OFF) plus a natural
-surprising-vs-expected conversation read as 24 h recall. v1 (D=64) seed 42 is UNDEFINED on its G2 precondition: the
-unit-gain lesion arm lost immediate recall. v2 at the production D=128 is pre-registered. NEXT: land the v1 + v2
-6-seed verdicts; if v2 G2 also fails, move DA's effect from write magnitude to capture only (Bethus 2010).
+surprising-vs-expected conversation read as 24 h recall. v1 (D=64) 6-seed = UNDEFINED (1 GO, 5 fail the G2
+immediate-recall precondition: low-gain writes misread, with confabulations, once a synaptic baseline exists), while
+every 24 h comparison went the predicted way on all 6 seeds. v2 at the production D=128 is pre-registered and staged.
+NEXT: land v2; if its G2 also fails, move DA's effect from write magnitude to capture only (Bethus 2010).
 
 **2026-09-18 (STRATEGIC — owner decision + scaling go/no-go; supersedes the raw-scale framing below):**
 - **Faithfulness-vs-tractability relaxation APPROVED (owner), honesty-conditioned** — trade bit-exact realism ONLY for a significant perf gain that loses nothing important to end-goal capabilities, and document every trade; biology-strong stays core; invariants kept (brain-based / one-brain / emergent / honesty). See memory `project_agi_first_fork_openness_2026_09_06`.

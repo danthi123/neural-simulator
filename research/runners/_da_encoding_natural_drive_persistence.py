@@ -357,7 +357,7 @@ def grade_seed(res):
 
 def aggregate(d):
     rows = []
-    for p in sorted(glob.glob(os.path.join(d, "seed*.json"))):
+    for p in sorted(x for x in glob.glob(os.path.join(d, "seed*.json")) if not x.endswith(".prov.json")):
         r = json.load(open(p))
         rows.append({"seed": r["seed"], **{k: r["gates"][k] for k in (
             "verdict", "G1_salient_fact_da_min", "G1_neutral_all_da_max", "salient_24h_intact",
