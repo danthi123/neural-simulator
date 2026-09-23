@@ -48,7 +48,7 @@ turn still runs the same activity, and build-time facts and the read path are un
 
 **Mechanism check, 6 seeds** (`research/findings/raw/_d6_learn_through_use/mechanism_6seed.json`, from
 `research/runners/_d6_hebbian_mechanism_probe.py`; numpy, 12-word vocab, D=128; plus
-`tests/test_d6_hebbian_store.py`, 7 passed):
+`tests/test_d6_hebbian_store.py`, 7 passed at the first build; 13 passed after fix round 3):
 - On all 6 seeds the Hebbian block's phase error vs the direct copy is 0.01474-0.01713 rad (seed 42: 0.01534 and
   0.01541 rad), which is the spike-step quantization.
 - Cleanup margins match the direct path. At seed 42 the deer margin is 0.7123 (Hebbian) vs 0.7108 (direct).
@@ -150,10 +150,11 @@ scorer selftest shows the ack-only difference passes only under prune and a real
 - **base variant** (the v1 pre-registered gate) — revision `3fd611b7c`, all 6 seeds dispatched 09:32-09:40.
   Node dir `~/derisk-pool/revisions/3fd611b7c10c6b08ad130ecd6149a37bf13cae77/research/findings/raw/_d6_learn_through_use/`.
   Expected result (seed 42): the same C3 NO-GO; this run measures whether the host-list leak holds across seeds.
-- **prune variant** — revision `b7f0b50f3`, queued at the tail of a ~111-deep queue.
-  Node dir `~/derisk-pool/revisions/b7f0b50f3ba81e0676c25e4bc10a8a012f4a0ff0/research/findings/raw/_d6_learn_through_use_prune/`.
-  A local seed-42 smoke was also launched: `research/findings/raw/_d6_learn_through_use_prune/` in branch
-  worktree `.claude/worktrees/wf_8bf19a04-cbd-2`.
+- **prune variant** — was queued at revision `b7f0b50f3`. [Superseded: its 6 pool lines were DEQUEUED before
+  dispatch in the fix round below, and the variant is banked as an invalid instrument.] Only the local seed-42
+  smoke ran: `research/findings/raw/_d6_learn_through_use_prune/`.
+- **readtime variant (gate v2)** — six pool lines were queued at revision `b54f508af` in the fix round. [Superseded
+  by fix round 3: never dispatched and removed from the queue. Gate v2 was registered to fail; see gate v3.]
 - **scoring** (after the per-arm `s<seed>_<ARM>.json` files are pulled into one dir):
   `.venv/bin/python -m research.runners.d6_learn_through_use_lb --score-only --variant <base|prune> --arm-dir <dir> --seeds 42 43 44 100 101 102 --json <dir>/d6_ltu_<variant>_6seed_verdict.json`
 
@@ -180,6 +181,8 @@ scorer selftest shows the ack-only difference passes only under prune and a real
   (`research/findings/raw/_d6_learn_through_use/offpath_parity_store_vs_main.json`). A discriminating negative is
   pinned in `tests/test_d6_hebbian_store.py::test_off_is_byte_identical_vs_origin_main`: the Hebbian write hashes
   differently. The chat-mode compare (a flag-off /api/brain-chat session, branch vs origin/main) is staged on the pool.
+  [Corrected in fix round 3: comparing against origin/main is tautological once D6 merges. The reference is now the
+  pinned SHA `PRE_D6_REF`, and a reference containing D6 reads UNDEFINED.]
 - **Host shortcuts declared** in `research/runners/d6_hebbian_store.py`, each with its next method:
   - the host-wired one-to-one instructive pathway;
   - the host phase-lock loop;
@@ -192,6 +195,8 @@ scorer selftest shows the ack-only difference passes only under prune and a real
 - **Next method 3 (gate v2, `--variant readtime`)** is pre-registered in
   `research/findings/2026-09-23-d6-learn-through-use-v2-PREREGISTRATION-readtime-view-and-engram-ablation.md`
   and staged 6-seed. It is a read-time engram view with no host deletion, plus an ABL_H post-hoc ablation arm.
+  [Superseded in fix round 3: gate v2's own registration predicted a NO-GO unrelated to the capability. Its pool
+  lines were never dispatched. Gate v3 replaces it.]
 - **Pool note.** The base-variant 6-seed run was packed 4 brains per 15 GB node. pool41 was unreachable during this
   round (ssh banner timeout). Seeds with missing arms will score UNDEFINED; re-running the same command rebuilds
   only the missing arms.

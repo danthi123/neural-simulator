@@ -52,6 +52,10 @@ The literal scoring command:  .venv/bin/python -m research.runners.d6_learn_thro
     --arm-dir research/findings/raw/_d6_learn_through_use --seeds 42 43 44 100 101 102 \
     --json research/findings/raw/_d6_learn_through_use/d6_ltu_6seed_verdict.json
 
+CURRENT GATE (fix round 3): gate v3, `--variant capability` -- score_seed_v3 below and
+research/findings/2026-09-23-d6-learn-through-use-v3-PREREGISTRATION-capability-gate.md. The v1 gate above (and v2) are
+kept for the record of the banked runs; they are not the gate D6 is decided on.
+
 HONEST SCOPE. This measures ONE learning pathway (in-conversation declarative fact acquisition, on the tiny-demo
 brain). It is not a claim that the brain learns open-endedly, and the instructive pattern the rule stores is still
 produced by the composer's FHRR bind/bundle (the standing composer idealization). The rule is local and its output
@@ -129,12 +133,20 @@ SEEDS6 = [42, 43, 44, 100, 101, 102]
 #       committed in its own commit before any readtime run. It is the variant the 6-seed run is staged for.
 #   A4. (~17:30Z, before any readtime arm existed) EXPO_H exposure-matched arm + SECONDARY non-scoring C3e/C3be --
 #       see the EXPO_ARM comment below for the evidence seen (prune s42 full smoke) and why.
+#   A5. (fix round 3, before any readtime OR capability arm existed; the six readtime pool lines were never
+#       dispatched) Gate v2 is SUPERSEDED: its own registration predicted a NO-GO unrelated to the capability (C4 on
+#       the teach ack, C3/C3b on exposure habituation). NEW variant `capability`, gate v3 (score_seed_v3), registered
+#       in research/findings/2026-09-23-d6-learn-through-use-v3-PREREGISTRATION-capability-gate.md in its own commit.
+#       SEEN at this time: everything listed under A1-A4 + the prune s42 full smoke + base-variant pool arm files for
+#       s43/s100 (USE_H, USE_H_REP, SHUF_H; s43 FREEZE_H). The v2 scorer is kept unchanged for the record.
 # ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 # VARIANT "readtime" (gate v2 -- see the PREREGISTRATION finding above). Flags on every Hebbian arm:
-# BRAIN_D6_ENGRAM_VOCAB=1 + BRAIN_D6_ENGRAM_READTIME=1 (NO prune: no host record is ever deleted; every kb reader
-# consults the engram at read time; the start-of-turn re-read runs in every arm, so the lesion arms differ from the
-# treatment arm ONLY in their synapses). Adds arm ABL_H: USE_H's configuration, plus -- after the teach turn -- the
-# experimenter zeroes the taught block's synapses (post-hoc engram ablation, the kb record left intact).
+# BRAIN_D6_ENGRAM_VOCAB=1 + BRAIN_D6_ENGRAM_READTIME=1 (NO prune: no host record is ever deleted; FOUR named kb readers
+# consult the engram at read time -- d6_hebbian_store.ENGRAM_READTIME_ROUTED; the others do not, see
+# ENGRAM_READTIME_NOT_ROUTED; the start-of-turn re-read runs in every Hebbian arm). [ERRATUM, fix round 3: this comment
+# first said "every kb reader" and "the lesion arms differ ONLY in their synapses"; both were false -- ABL_H also runs
+# the experimenter's cache invalidation + a re-read of every block.] Adds arm ABL_H: USE_H's configuration, plus --
+# after the teach turn -- the experimenter zeroes the taught block's synapses (post-hoc ablation, kb record intact).
 VARIANTS = {"base": {}, "engram": {"BRAIN_D6_ENGRAM_VOCAB": "1"},
             "prune": {"BRAIN_D6_ENGRAM_VOCAB": "1", "BRAIN_D6_ENGRAM_PRUNE": "1"},
             "readtime": {"BRAIN_D6_ENGRAM_VOCAB": "1", "BRAIN_D6_ENGRAM_READTIME": "1"}}
@@ -149,14 +161,29 @@ ABL_ARM = "ABL_H"   # readtime variant only: USE_H + post-hoc ablation of the ta
 # C3e FREEZE_H.probe == EXPO_H.probe and not recall deer; C3be ABL_H.probe == EXPO_H.probe and not recall deer.
 EXPO_ARM = "EXPO_H"
 TEACH_EXPO = "the wolf and the deer"
+# ── GATE v3 (variant "capability") ────────────────────────────────────────────────────────────────────────────────
+# Pre-registered in research/findings/2026-09-23-d6-learn-through-use-v3-PREREGISTRATION-capability-gate.md, committed
+# BEFORE any v3 arm existed. Gate v2 was registered to fail (its own prereg predicted C4 fails on the teach-turn ack
+# and C3/C3b on the DA-mode suffix), so it measured the protocol, not the capability. v3 asks the capability question
+# directly: does the reply to a LATER recall question depend on the SYNAPTIC WRITE? The primary contrast is USE_H vs
+# FREEZE_H: identical input, identical flags, identical host code; the ONLY difference is eta=0 in the Hebbian update.
+# Same flags as `readtime`. NOREC_H = FREEZE_H + (after the teach turn) the experimenter removes the frozen fact's host
+# kb RECORD (its synapses are already exactly 0). NOREC_H is NOT a lesion arm: it tests that the host record is INERT
+# (NOREC_H == FREEZE_H on every turn), which replaces the unmeasurable claim "every kb reader asks the engram".
+CAP_VARIANT = "capability"
+VARIANTS[CAP_VARIANT] = dict(VARIANTS["readtime"])
+NOREC_ARM = "NOREC_H"
+LESION_ARMS_V3 = ("FREEZE_H", ABL_ARM, NOREC_ARM)
 
 
 def arm_names(variant):
+    if variant == CAP_VARIANT:
+        return list(ARMS) + [ABL_ARM, NOREC_ARM]
     return list(ARMS) + ([ABL_ARM] if variant == "readtime" else [])
 
 
 def arms_for(variant):
-    """{name: (env, teach, ablate_after_teach)} for a variant."""
+    """{name: (env, teach, post_teach)} for a variant; post_teach in (None, 'ablate', 'norec')."""
     extra = VARIANTS[variant]
     out = {}
     for name, (env, teach) in ARMS.items():
@@ -165,10 +192,13 @@ def arms_for(variant):
             e.update(extra)
         else:
             e.update({k: "0" for k in extra})               # explicit OFF, never a pop
-        out[name] = (e, teach, False)
+        out[name] = (e, teach, None)
     if variant == "readtime":
-        out[ABL_ARM] = (dict(out["USE_H"][0]), TEACH_USE, True)   # identical to USE_H + the post-hoc ablation
-        out[EXPO_ARM] = (dict(out["USE_H"][0]), TEACH_EXPO, False)   # A4: exposure-matched, no write (secondary)
+        out[ABL_ARM] = (dict(out["USE_H"][0]), TEACH_USE, "ablate")   # identical to USE_H + the post-hoc ablation
+        out[EXPO_ARM] = (dict(out["USE_H"][0]), TEACH_EXPO, None)   # A4: exposure-matched, no write (secondary)
+    if variant == CAP_VARIANT:
+        out[ABL_ARM] = (dict(out["USE_H"][0]), TEACH_USE, "ablate")
+        out[NOREC_ARM] = (dict(out["FREEZE_H"][0]), TEACH_USE, "norec")   # FREEZE_H + post-hoc host-record removal
     return out
 
 
@@ -178,20 +208,23 @@ def _composer(S):
     return getattr(getattr(chat, "inner", None), "composer", None)
 
 
-def _worker(env_json, teach, out_path, ablate_after_teach=False):
+def _worker(env_json, teach, out_path, ablate_after_teach=False, post_teach=None):
     os.environ.setdefault("SIM_BACKEND", "numpy")
     os.environ.setdefault("BRAIN_CHAT_RENDERER", "stub")
     os.environ.setdefault("SIM_DISABLE_LLM", "1")
     for k, v in json.loads(env_json).items():
         os.environ[k] = v                                   # explicit values both directions (never a pop)
+    if ablate_after_teach and post_teach is None:
+        post_teach = "ablate"
     from webapp import server as S
     from webapp.server import brain_chat, BrainChatRequest
     t0 = time.time()
     out = {"env": json.loads(env_json), "teach": teach, "seed": os.environ.get("BRAIN_CHAT_SEED"),
            "backend": os.environ.get("SIM_BACKEND"), "turns": {}, "taught_block": None,
-           "ablate_after_teach": bool(ablate_after_teach), "ablation": None,
-           "store_writes_after_teach": None, "taught_block_at_probe": None, "d6_ops": None}
-    writes_after_teach = []
+           "ablate_after_teach": post_teach == "ablate", "post_teach": post_teach, "ablation": None,
+           "record_removal": None, "counter_installed": False, "store_writes_after_teach": None,
+           "homeostatic_calls_after_teach": None, "taught_block_at_probe": None, "d6_ops": None}
+    writes_after_teach, homeo_calls = [], []
     for i, (label, msg) in enumerate(TURNS):
         m = teach if label == "teach" else msg
         try:
@@ -203,13 +236,21 @@ def _worker(env_json, teach, out_path, ablate_after_teach=False):
         if label == "teach":
             out["taught_block"] = _taught_block_record(S, teach)
             comp = _composer(S)
-            if ablate_after_teach:                          # ABL_H: the experimenter's post-hoc engram ablation
+            blk = (out["taught_block"] or {}).get("block")
+            if post_teach == "ablate":                      # ABL_H: the experimenter's post-hoc engram ablation
                 from research.runners.d6_hebbian_store import ablate_block
-                blk = (out["taught_block"] or {}).get("block")
                 out["ablation"] = (ablate_block(comp, blk) if (comp is not None and blk is not None)
                                    else {"error": "taught block not found; ablation not applied"})
+            elif post_teach == "norec":                     # NOREC_H: remove the frozen fact's host RECORD only
+                from research.runners.d6_hebbian_store import remove_block_record
+                try:
+                    out["record_removal"] = (remove_block_record(comp, blk) if (comp is not None and blk is not None)
+                                             else {"error": "taught block not found; record not removed"})
+                except Exception as e:
+                    out["record_removal"] = {"error": "%s: %s" % (type(e).__name__, e)}
             # INSTRUMENT (lesion persistence): count every store write after the teach turn. Any write in a lesion arm
             # (e.g. reconsolidation's direct-copy `update_on_mismatch`, which bypasses the freeze) voids the lesion.
+            # `counter_installed` is recorded and REQUIRED by gate v3: an absent counter reads UNDEFINED, never clean.
             if comp is not None and hasattr(comp, "_write_block"):
                 _orig = comp._write_block
 
@@ -217,9 +258,20 @@ def _worker(env_json, teach, out_path, ablate_after_teach=False):
                     writes_after_teach.append(int(bi))
                     return _o(bi, zc)
                 comp._write_block = _counted
+                out["counter_installed"] = True
+                # apply_homeostatic_scaling rewrites store_conns WITHOUT _write_block; it is counted separately. It is
+                # multiplicative, so it cannot un-zero a zeroed block; the at-probe lever read covers the taught block.
+                if hasattr(comp, "apply_homeostatic_scaling"):
+                    _oh = comp.apply_homeostatic_scaling
+
+                    def _hcounted(*a, _o=_oh, **k):
+                        homeo_calls.append(1)
+                        return _o(*a, **k)
+                    comp.apply_homeostatic_scaling = _hcounted
         if label == "probe":                                # the lever read AT MEASUREMENT TIME, not only at teach
             out["taught_block_at_probe"] = _taught_block_record(S, teach)
     out["store_writes_after_teach"] = list(writes_after_teach)
+    out["homeostatic_calls_after_teach"] = len(homeo_calls)
     comp = _composer(S)
     out["d6_ops"] = dict(getattr(comp, "_d6_ops", {}) or {}) if comp is not None else None
     out["elapsed_s"] = round(time.time() - t0, 1)
@@ -257,11 +309,11 @@ def _taught_block_record(S, teach):
         return {"found": False, "error": "%s: %s" % (type(e).__name__, e)}
 
 
-def _spawn(env, teach, out_path, seed, ablate=False):
+def _spawn(env, teach, out_path, seed, post_teach=None):
     penv = dict(os.environ); penv["BRAIN_CHAT_SEED"] = str(seed)
     p = subprocess.run([sys.executable, "-u", "-m", "research.runners.d6_learn_through_use_lb", "--worker",
                         "--env", json.dumps(env), "--teach", teach, "--out", out_path]
-                       + (["--ablate-after-teach"] if ablate else []), env=penv)
+                       + (["--post-teach", post_teach] if post_teach else []), env=penv)
     if p.returncode != 0 or not os.path.exists(out_path):
         return None
     return json.load(open(out_path))
@@ -292,6 +344,8 @@ def score_seed(arms, variant="base"):
     """Apply the pre-registered gate to one seed's arms dict {name: arm_json|None}. base/engram/prune: C1..C7 (v1;
     since AMENDMENT A1 every variant uses the ORIGINAL C4). readtime: gate v2 (C1..C7 + C3b ablation + C4 lever read
     at probe time + no store writes after teach in the lesion arms), per the v2 PREREGISTRATION finding."""
+    if variant == CAP_VARIANT:
+        return score_seed_v3(arms)
     from tools.lab import attributable_to, undefined_if_empty, void_if
     rec = {"criteria": {}, "void_arms": [], "go": None, "variant": variant,
            "gate": "v2" if variant == "readtime" else "v1"}
@@ -378,6 +432,102 @@ def score_seed(arms, variant="base"):
     return rec
 
 
+def _mentions(arm, label, word):
+    import re
+    ans = str(_dec(arm, label).get("answer") or "").lower()
+    return re.search(r"\b%s\b" % re.escape(word), ans) is not None
+
+
+def _arm_bad(a):
+    return a is None or any("_error" in (a.get("turns") or {}).get(lbl, {"_error": "missing"}) for lbl, _ in TURNS)
+
+
+def score_seed_v3(arms):
+    """GATE v3 (variant 'capability') -- research/findings/2026-09-23-d6-learn-through-use-v3-PREREGISTRATION-
+    capability-gate.md. Scored arms: USE_H USE_H_REP SHUF_H FREEZE_H ABL_H NOREC_H. USE_D is secondary (non-scoring)."""
+    from tools.lab import attributable_to, void_if
+    rec = {"criteria": {}, "void_arms": [], "go": None, "variant": CAP_VARIANT, "gate": "v3"}
+    scored = ("USE_H", "USE_H_REP", "SHUF_H", "FREEZE_H", ABL_ARM, NOREC_ARM)
+    for name in scored:
+        a = arms.get(name)
+        bad, why = _arm_bad(a), "missing / errored"
+        if not bad and name == ABL_ARM:
+            abl = a.get("ablation") or {}
+            bad, why = ("error" in abl) or abl.get("mean_abs_w_after") is None, "ablation not applied"
+        if not bad and name == NOREC_ARM:
+            rr = a.get("record_removal") or {}
+            bad, why = ("error" in rr) or not rr.get("removed"), "host record not removed"
+        if not bad and name in LESION_ARMS_V3:
+            bad, why = (a.get("counter_installed") is not True), "write counter not installed (instrument absent)"
+        if void_if(bad, "arm %s %s" % (name, why)):
+            rec["void_arms"].append(name)
+    if rec["void_arms"]:
+        rec["verdict"] = "UNDEFINED (void arms: %s)" % ",".join(rec["void_arms"])
+        return rec
+    U, R, SH, F, A, NR = (arms[k] for k in scored)
+    c = rec["criteria"]
+    # K1 the brain learns from use
+    c["K1_learns"] = _recalls(U, "probe", "deer")
+    # K2 the later reply changes with WHAT was taught (double dissociation vs the shuffled-content control)
+    c["K2_use_specific"] = (not _recalls(SH, "probe", "deer") and _dec(U, "probe") != _dec(SH, "probe")
+                            and _recalls(SH, "xprobe", "berry") and not _recalls(U, "xprobe", "berry"))
+    # K3 THE CAPABILITY: same input, same host code, eta=0 -> the later reply no longer carries the taught fact
+    c["K3_reply_depends_on_write"] = (not _recalls(F, "probe", "deer") and not _mentions(F, "probe", "deer")
+                                      and _dec(F, "probe") != _dec(U, "probe"))
+    # K4 ... and it is read off the SYNAPSE at probe time (post-hoc ablation after a successful write)
+    c["K4_reply_depends_on_synapse_at_read"] = (not _recalls(A, "probe", "deer") and not _mentions(A, "probe", "deer"))
+    # K5 the frozen fact's HOST RECORD is inert: removing it changes nothing in any turn (teach = determinism part)
+    k5_diff = [lbl for lbl, _ in TURNS if _dec(NR, lbl) != _dec(F, lbl)]
+    c["K5_host_record_inert"] = (k5_diff == [])
+    # K6 the lesion is WRITE-ONLY: lever moved + persisted to the probe, no later write, same encode episode, same
+    #    parse, intact read path and unrelated conversation. The teach-turn ACK text is NOT scored (pre-registered):
+    #    it is rendered after the write, from the read-time engram view, so it is itself a reply that depends on the write.
+    key = "taught_block_at_probe"
+    wU = (U.get(key) or {}).get("mean_abs_w"); wF = (F.get(key) or {}).get("mean_abs_w")
+    wA = (A.get(key) or {}).get("mean_abs_w")
+    lever = (wU is not None and wU > 0.5 and wF == 0.0 and wA == 0.0)
+    writes_clean = all(arms[k].get("store_writes_after_teach") == [] for k in LESION_ARMS_V3)
+    eU = (U.get("taught_block") or {}).get("d6_last_encode") or {}
+    eF = (F.get("taught_block") or {}).get("d6_last_encode") or {}
+    same_episode = (bool(eU) and bool(eF) and eU.get("frozen") is False and eF.get("frozen") is True
+                    and all(eU.get(k) is not None and eU.get(k) == eF.get(k)
+                            for k in ("steps", "phase_lock_steps", "block")))
+    same_parse = all(_dec(F, "teach").get(k) == _dec(U, "teach").get(k) for k in ("abstained", "recalled_svo"))
+    read_intact = all(_dec(X, lbl) == _dec(U, lbl) for X in (F, A) for lbl in ("d1", "d2"))
+    c["K6_lesion_write_only"] = lever and writes_clean and same_episode and same_parse and read_intact
+    rec["K6_parts"] = {"lever_at_probe": {"USE_H": wU, "FREEZE_H": wF, "ABL_H": wA, "ok": lever},
+                       "store_writes_after_teach": {k: arms[k].get("store_writes_after_teach") for k in LESION_ARMS_V3},
+                       "writes_clean": writes_clean, "same_encode_episode": same_episode,
+                       "encode": {"USE_H": eU, "FREEZE_H": eF}, "same_teach_parse": same_parse,
+                       "read_path_intact_d1_d2": read_intact}
+    # K7 null / determinism: the rebuild is identical on every turn; ABL_H is USE_H up to the post-teach ablation, so its
+    #    teach turn must equal USE_H's (a DETERMINISM check, not lesion evidence -- the ablation happens after it).
+    null_diffs = sum(_dec(U, lbl) != _dec(R, lbl) for lbl, _ in TURNS)
+    c["K7_null_clean"] = (null_diffs == 0) and (_dec(A, "teach") == _dec(U, "teach"))
+    # ── reported, NEVER scored ──
+    rec["K5_differing_turns"] = k5_diff
+    rec["teach_ack_same_FREEZE_vs_USE"] = (_dec(F, "teach") == _dec(U, "teach"))
+    DR = arms.get("USE_D")
+    rec["secondary_C7_no_regression"] = (
+        "UNDEFINED (USE_D void)" if _arm_bad(DR) else
+        all(_dec(DR, lbl) == _dec(U, lbl) for lbl in ("teach", "d2", "probe", "xprobe")))
+    rec["homeostatic_calls_after_teach"] = {k: arms[k].get("homeostatic_calls_after_teach") for k in scored}
+    rec["record_removal"] = NR.get("record_removal")
+    rec["ablation"] = A.get("ablation")
+    rec["integrity"] = {"d6_ops": {k: (arms[k].get("d6_ops") or {}) for k in scored},
+                        "turn_refresh_every_hebbian_arm": all(
+                            (arms[k].get("d6_ops") or {}).get("turn_refreshes", 0) == len(TURNS) for k in scored)}
+    rec["null_diffs"] = null_diffs
+    rec["attributable_to_write"] = attributable_to(
+        "d6 write->probe change (USE vs FREEZE) vs null rebuild",
+        1.0 if _dec(U, "probe") != _dec(F, "probe") else 0.0, 1.0 if _dec(U, "probe") != _dec(R, "probe") else 0.0)
+    rec["probe_decisions"] = {k: _dec(arms[k], "probe") for k in scored}
+    rec["teach_decisions"] = {k: _dec(arms[k], "teach") for k in scored}
+    rec["go"] = all(c.values())
+    rec["verdict"] = "GO" if rec["go"] else "NO-GO (failed: %s)" % ",".join(k for k, v in c.items() if not v)
+    return rec
+
+
 def aggregate(per_seed):
     defined = {s: r for s, r in per_seed.items() if r.get("go") is not None}
     n_go = sum(1 for r in defined.values() if r["go"])
@@ -394,16 +544,19 @@ def _arm_path(arm_dir, seed, name):
     return os.path.join(arm_dir, "s%d_%s.json" % (int(seed), name))
 
 
-def run(seeds, arm_dir, resume=True, score_only=False, variant="base"):
+def run(seeds, arm_dir, resume=True, score_only=False, variant="base", only_arms=None):
     per = {}
     for s in seeds:
         arms = {}
-        for name, (env, teach, ablate) in arms_for(variant).items():
+        for name, (env, teach, post_teach) in arms_for(variant).items():
+            if only_arms and name not in only_arms:
+                arms[name] = _load_arm(_arm_path(arm_dir, s, name))
+                continue
             path = _arm_path(arm_dir, s, name)
             a = _load_arm(path) if (resume or score_only) and os.path.exists(path) else None
             if a is None and not score_only:
                 print("[d6] seed %s arm %s ..." % (s, name), flush=True)
-                a = _spawn(env, teach, path, s, ablate=ablate)
+                a = _spawn(env, teach, path, s, post_teach=post_teach)
             arms[name] = a
         per[str(s)] = score_seed(arms, variant=variant)
         print("[d6] seed %s -> %s" % (s, per[str(s)]["verdict"]), flush=True)
@@ -438,6 +591,86 @@ def _synthetic(probe_use="deer", probe_frozen=None, rep_same=True, shuf_berry=Tr
 
 def _cp(x):
     return json.loads(json.dumps(x))
+
+
+def _synthetic_v3():
+    """A gate-v3 GO seed (every arm as the capability predicts). Tests mutate a deep copy of it."""
+    def t(word):
+        if word is None:
+            return {"abstained": True, "recalled_svo": None, "answer": "I don't know about that."}
+        return {"abstained": False, "recalled_svo": ["x", "y", word], "answer": "x y %s." % word}
+
+    def arm(teach_word, probe, xprobe, w, frozen=False, ack="the wolf hunts the deer"):
+        return {"turns": {"teach": {"abstained": False, "recalled_svo": ["a", "b", teach_word], "answer": ack},
+                          "d1": t("fish"), "d2": t("cat"), "probe": t(probe), "xprobe": t(xprobe)},
+                "taught_block": {"mean_abs_w": w, "d6_last_encode": {"frozen": frozen, "steps": 208, "block": 5,
+                                                                     "phase_lock_steps": 184}},
+                "taught_block_at_probe": {"mean_abs_w": w}, "counter_installed": True,
+                "store_writes_after_teach": [], "homeostatic_calls_after_teach": 0,
+                "d6_ops": {"turn_refreshes": len(TURNS), "retractions": 0}}
+    U = arm("deer", "deer", None, 1.0)
+    F = arm("deer", None, None, 0.0, frozen=True, ack="The wolf hunts deer.")   # ack differs: NOT scored (prereg)
+    A = arm("deer", None, None, 0.0)
+    A["ablation"] = {"block": 5, "mean_abs_w_before": 1.0, "mean_abs_w_after": 0.0}
+    NR = _cp(F)
+    NR["record_removal"] = {"removed": True, "block": 5}
+    NR["taught_block_at_probe"] = {"found": False}
+    return {"USE_H": U, "USE_H_REP": _cp(U), "SHUF_H": arm("berry", None, "berry", 1.0), "FREEZE_H": F,
+            ABL_ARM: A, NOREC_ARM: NR, "USE_D": _cp(U)}
+
+
+def selftest_v3():
+    """Gate v3 must PASS the capability case and FAIL (or read UNDEFINED) in every failing direction."""
+    V = CAP_VARIANT
+
+    def sc(mut):
+        s = _synthetic_v3()
+        mut(s)
+        return score_seed(s, V)
+
+    def setp(arm, lbl, **kv):
+        return lambda s: s[arm]["turns"][lbl].update(kv)
+    go = sc(lambda s: None)
+    out = {"v3_go_case_passes": go["go"] is True,
+           "v3_teach_ack_difference_is_reported_not_scored": go["go"] is True and
+           go["teach_ack_same_FREEZE_vs_USE"] is False}
+    fails = {
+        "K1_no_learning": sc(setp("USE_H", "probe", abstained=True, recalled_svo=None, answer="?"))["go"] is False,
+        "K2_shuffled_also_recalls": sc(lambda s: s["SHUF_H"]["turns"].update(
+            probe=_cp(s["USE_H"]["turns"]["probe"])))["go"] is False,
+        "K2_not_specific_xprobe": sc(setp("SHUF_H", "xprobe", abstained=True, recalled_svo=None))["go"] is False,
+        "K3_freeze_still_recalls": sc(lambda s: s["FREEZE_H"]["turns"].update(
+            probe=_cp(s["USE_H"]["turns"]["probe"])))["go"] is False,
+        "K3_freeze_answer_leaks_fact_text": sc(setp("FREEZE_H", "probe",
+                                                    answer="I don't know -- something about a deer?"))["go"] is False,
+        "K4_ablation_still_recalls": sc(lambda s: s[ABL_ARM]["turns"].update(
+            probe=_cp(s["USE_H"]["turns"]["probe"])))["go"] is False,
+        "K5_host_record_framing_leak": sc(setp(NOREC_ARM, "probe",
+                                               answer="I don't know about that. -- worth going further."))["go"] is False,
+        "K5_host_record_leak_on_d1": sc(setp(NOREC_ARM, "d1", answer="the cat eats the fish, like the wolf"))["go"] is False,
+        "K6_lever_not_moved": sc(lambda s: s["FREEZE_H"]["taught_block_at_probe"].update(mean_abs_w=0.9))["go"] is False,
+        "K6_ablation_lever_not_moved": sc(lambda s: s[ABL_ARM]["taught_block_at_probe"].update(
+            mean_abs_w=0.4))["go"] is False,
+        "K6_write_after_teach_freeze": sc(lambda s: s["FREEZE_H"].update(store_writes_after_teach=[5]))["go"] is False,
+        "K6_write_after_teach_norec": sc(lambda s: s[NOREC_ARM].update(store_writes_after_teach=[3]))["go"] is False,
+        "K6_encode_episode_differs": sc(lambda s: s["FREEZE_H"]["taught_block"]["d6_last_encode"].update(
+            phase_lock_steps=100))["go"] is False,
+        "K6_teach_parse_differs": sc(setp("FREEZE_H", "teach", recalled_svo=["a", "b", "elk"]))["go"] is False,
+        "K6_read_path_broken_d2": sc(setp("FREEZE_H", "d2", abstained=True, recalled_svo=None))["go"] is False,
+        "K6_ablation_breaks_d1": sc(setp(ABL_ARM, "d1", answer="other"))["go"] is False,
+        "K7_null_dirty": sc(setp("USE_H_REP", "d1", answer="other"))["go"] is False,
+        "K7_abl_teach_not_deterministic": sc(setp(ABL_ARM, "teach", answer="other"))["go"] is False,
+        "void_counter_not_installed": sc(lambda s: s["FREEZE_H"].update(counter_installed=False))["go"] is None,
+        "void_norec_not_removed": sc(lambda s: s[NOREC_ARM].update(record_removal={"error": "x"}))["go"] is None,
+        "void_norec_missing": sc(lambda s: s.pop(NOREC_ARM))["go"] is None,
+        "void_ablation_not_applied": sc(lambda s: s[ABL_ARM].update(ablation={"error": "x"}))["go"] is None,
+        "void_errored_turn": sc(lambda s: s["USE_H"]["turns"].update(probe={"_error": "boom"}))["go"] is None,
+    }
+    use_d_missing = sc(lambda s: s.pop("USE_D"))
+    out["v3_missing_USE_D_is_secondary_only"] = (use_d_missing["go"] is True and
+                                                 str(use_d_missing["secondary_C7_no_regression"]).startswith("UNDEFINED"))
+    out["v3_fails_in_failing_direction"] = fails
+    return out, (all(v for k, v in out.items() if k != "v3_fails_in_failing_direction") and all(fails.values()))
 
 
 def selftest():
@@ -486,9 +719,10 @@ def selftest():
     fails["a4_secondary_can_fail_without_touching_go"] = (r["go"] is True and
                                                          r["secondary_exposure_matched"]["C3e_freeze_eq_exposure"] is False)
     agg_undef = aggregate({"42": {"go": True}, "43": {"go": None}})["GO"] is False
+    v3, v3_ok = selftest_v3()
     res = {"go_case_passes": ok, "go_case_passes_v2": ok_v2, "fails_in_failing_direction": fails,
-           "partial_seed_set_not_go": agg_undef}
-    passed = ok and ok_v2 and all(fails.values()) and agg_undef
+           "partial_seed_set_not_go": agg_undef, "gate_v3": v3}
+    passed = ok and ok_v2 and all(fails.values()) and agg_undef and v3_ok
     print(json.dumps(res, indent=2))
     print("SELFTEST", "PASS" if passed else "FAIL")
     return 0 if passed else 1
@@ -507,15 +741,20 @@ def main():
     ap.add_argument("--score-only", action="store_true")
     ap.add_argument("--selftest", action="store_true")
     ap.add_argument("--ablate-after-teach", action="store_true", help="worker: ABL_H post-hoc engram ablation")
+    ap.add_argument("--post-teach", choices=["ablate", "norec"], default=None,
+                    help="worker: experimenter step after the teach turn (ABL_H ablation / NOREC_H record removal)")
+    ap.add_argument("--only-arms", nargs="+", default=None,
+                    help="run only these arms (others are loaded if present) -- for running arms in parallel")
     ap.add_argument("--variant", choices=sorted(VARIANTS), default="base",
                     help="base = v1 arms; engram = + BRAIN_D6_ENGRAM_VOCAB; prune = banked invalid instrument; "
-                         "readtime = gate v2 (read-time engram view + ABL_H post-hoc ablation arm)")
+                         "readtime = gate v2 (registered to fail; superseded); capability = gate v3")
     a = ap.parse_args()
     if a.selftest:
         return selftest()
     if a.worker:
-        return _worker(a.env, a.teach, a.out, ablate_after_teach=a.ablate_after_teach)
-    res = run(a.seeds, a.arm_dir, resume=not a.no_resume, score_only=a.score_only, variant=a.variant)
+        return _worker(a.env, a.teach, a.out, ablate_after_teach=a.ablate_after_teach, post_teach=a.post_teach)
+    res = run(a.seeds, a.arm_dir, resume=not a.no_resume, score_only=a.score_only, variant=a.variant,
+              only_arms=a.only_arms)
     print(json.dumps(res["aggregate"], indent=2))
     if a.json:
         os.makedirs(os.path.dirname(a.json) or ".", exist_ok=True)

@@ -1,4 +1,4 @@
-"""D6 OFF-PATH PARITY vs a REFERENCE REVISION (default origin/main): is the D6 branch, with every BRAIN_D6_* flag UNSET,
+"""D6 OFF-PATH PARITY vs a FIXED PRE-CHANGE REVISION (PRE_D6_REF): is the D6 branch, with every BRAIN_D6_* flag UNSET,
 byte-identical to the code it modifies? (docs/TERMS.md `byte-identical`: shown by an EXACT compare / hash in data, not
 by reading the code.)
 
@@ -17,8 +17,10 @@ Modes (each prints/writes one JSON record):
 Driver:
   --vs-ref <rev> --mode store|chat --out <json>   archive <rev> into a scratch dir, run the mode in BOTH trees, compare.
 
-Run from the repo root:  .venv/bin/python -m research.runners.d6_offpath_parity --vs-ref origin/main --mode store \
-    --out research/findings/raw/_d6_learn_through_use/offpath_parity_store_vs_main.json
+Run from the repo root:  .venv/bin/python -m research.runners.d6_offpath_parity --mode store \
+    --out research/findings/raw/_d6_learn_through_use/offpath_parity_store_vs_pre_d6.json
+(fix round 3: the reference defaults to the pinned PRE_D6_REF; `origin/main` is a moving ref and becomes tautological
+after merge, so a reference that contains the D6 module is refused -> UNDEFINED.)
 """
 from __future__ import annotations
 
@@ -39,6 +41,20 @@ _VOLATILE = ("ms", "elapsed", "latency", "time", "timing", "wall", "_t", "durati
 # assets the brain build loads -- the branch only ADDS files under research/findings, never edits a loaded one)
 DATA_DIRS = ["research/findings", "research/datasets", "research/measurements", "research/packets", "raw", "references",
              "docs", "data"]
+
+
+# FIXED PRE-CHANGE REFERENCE (fix round 3): `main` at the last merge INTO this branch, i.e. the exact code the D6 diff
+# modifies. A moving ref (origin/main) becomes TAUTOLOGICAL once D6 merges (the branch would be compared with itself),
+# so the default is this pinned SHA, and `compare` REFUSES any reference that already contains the D6 module (the
+# verdict is then UNDEFINED, never byte_identical=True). Re-pin deliberately when main is merged in again.
+PRE_D6_REF = "5e9a7955be3714b98a794c6d6af0f30c3357a33f"
+D6_MARKER = "research/runners/d6_hebbian_store.py"
+
+
+def ref_contains_d6(ref, repo):
+    """True iff `ref`'s tree already has the D6 module (a reference that cannot show the pre-change behaviour)."""
+    p = subprocess.run(["git", "cat-file", "-e", "%s:%s" % (ref, D6_MARKER)], cwd=repo, capture_output=True)
+    return p.returncode == 0
 
 
 def _assert_flags_unset():
@@ -149,6 +165,13 @@ def compare(ref, mode, seed=42, repo=None, python=None):
     head = subprocess.run(["git", "rev-parse", "HEAD"], cwd=repo, capture_output=True, text=True).stdout.strip()
     dirty = bool(subprocess.run(["git", "status", "--porcelain", "--untracked-files=no"], cwd=repo,
                                 capture_output=True, text=True).stdout.strip())
+    base = {"tool": "research.runners.d6_offpath_parity", "mode": mode, "seed": seed, "branch_head": head,
+            "branch_worktree_dirty": dirty, "ref": ref}
+    if ref_contains_d6(ref, repo):
+        # a reference that already contains D6 cannot show the pre-change behaviour: comparing against it is the
+        # tautology this tool exists to prevent. UNDEFINED, never a pass.
+        return dict(base, ref_sha=None, reference_is_pre_change=False, byte_identical=None, diff_keys=None,
+                    verdict="UNDEFINED: reference %s already contains %s (not a pre-change reference)" % (ref, D6_MARKER))
     tmp = tempfile.mkdtemp(prefix="d6p_ref_")
     try:
         ref_sha = archive_ref(ref, repo, tmp)
@@ -156,9 +179,10 @@ def compare(ref, mode, seed=42, repo=None, python=None):
         b = _run_in_tree(tmp, mode, seed, python)
     finally:
         shutil.rmtree(tmp, ignore_errors=True)
-    return dict({"tool": "research.runners.d6_offpath_parity", "mode": mode, "seed": seed, "branch_head": head,
-                 "branch_worktree_dirty": dirty, "ref": ref, "ref_sha": ref_sha, "branch": a, "reference": b},
-                **_verdict(a, b, mode))
+    v = _verdict(a, b, mode)
+    if b.get("d6_module_present") is not False and mode == "store":
+        v = dict(v, byte_identical=None, verdict="UNDEFINED: the reference run imported a D6 module")
+    return dict(base, ref_sha=ref_sha, reference_is_pre_change=True, branch=a, reference=b, **v)
 
 
 def compare_trees(ref_tree, mode, seed=42, python=None):
@@ -166,33 +190,42 @@ def compare_trees(ref_tree, mode, seed=42, python=None):
     origin/main, where there is no git checkout). Both runs happen sequentially in THIS job, on THIS machine."""
     python = python or sys.executable
     here = os.path.abspath(os.getcwd())
+    ref_tree = os.path.abspath(os.path.expanduser(ref_tree))
+    base = {"tool": "research.runners.d6_offpath_parity", "mode": mode, "seed": seed, "branch_tree": here,
+            "ref_tree": ref_tree}
+    if os.path.exists(os.path.join(ref_tree, D6_MARKER)):
+        return dict(base, reference_is_pre_change=False, byte_identical=None, diff_keys=None,
+                    verdict="UNDEFINED: reference tree already contains %s" % D6_MARKER)
     a = _run_in_tree(here, mode, seed, python)
-    b = _run_in_tree(os.path.abspath(os.path.expanduser(ref_tree)), mode, seed, python)
-    return dict({"tool": "research.runners.d6_offpath_parity", "mode": mode, "seed": seed, "branch_tree": here,
-                 "ref_tree": os.path.abspath(os.path.expanduser(ref_tree)), "branch": a, "reference": b},
-                **_verdict(a, b, mode))
+    b = _run_in_tree(ref_tree, mode, seed, python)
+    return dict(base, reference_is_pre_change=True, branch=a, reference=b, **_verdict(a, b, mode))
 
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     ap.add_argument("--mode", choices=["store", "chat"], default="store")
-    ap.add_argument("--vs-ref", default=None, help="compare this tree against a git revision (e.g. origin/main)")
+    ap.add_argument("--vs-ref", default=None,
+                    help="compare this tree against a FIXED pre-change git revision (default when neither --vs-ref "
+                         "nor --vs-tree is given: PRE_D6_REF). A ref that contains D6 reads UNDEFINED.")
     ap.add_argument("--vs-tree", default=None, help="compare against an extracted reference tree (no git needed)")
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--out", default=None)
+    ap.add_argument("--single", action="store_true", help="just run the mode in this tree (no comparison)")
     a = ap.parse_args()
-    if a.vs_ref:
-        res = compare(a.vs_ref, a.mode, a.seed)
+    if a.single:
+        res = mode_store() if a.mode == "store" else mode_chat(a.seed)
     elif a.vs_tree:
         res = compare_trees(a.vs_tree, a.mode, a.seed)
     else:
-        res = mode_store() if a.mode == "store" else mode_chat(a.seed)
+        res = compare(a.vs_ref or PRE_D6_REF, a.mode, a.seed)
     print(json.dumps({k: v for k, v in res.items() if k not in ("branch", "reference")}, indent=2, default=str))
     if a.out:
         os.makedirs(os.path.dirname(a.out) or ".", exist_ok=True)
         json.dump(res, open(a.out, "w"), indent=2, default=str)
         print("wrote", a.out)
-    return 0 if res.get("byte_identical", True) else 1
+    if a.single:
+        return 0
+    return 0 if res.get("byte_identical") is True else 1
 
 
 if __name__ == "__main__":

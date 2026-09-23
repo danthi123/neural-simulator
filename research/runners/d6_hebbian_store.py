@@ -62,6 +62,19 @@ DECLARED HOST SHORTCUTS (2026-09-23 fix round, from the adversarial review; each
   (e) The held/not-held decision of `engram_held` is a host threshold (`readout > floor`) on a neural read.
   (f) UNMEASURED SIDE EFFECT: the DA encoding gain `g` (`encoding_gain_fn`) scales a write; no D6 arm varies it, so
       whether a low-g production write can fall below the read floor (and so be "not held" / retracted) is unmeasured.
+  (g) (fix round 3) THE READ-TIME VIEW IS PARTIAL. Only the four ENGRAM_READTIME_ROUTED readers consult the engram;
+      ENGRAM_READTIME_NOT_ROUTED lists the host-kb readers that do not. Gate v3 measures (NOREC_H) rather than asserts
+      that they are inert on the D6 protocol; off-protocol (e.g. the describe path) they are an open host shortcut.
+      Next method: retire the kb list as a membership source entirely -- the block->words map becomes a learned
+      readout of the trigger cell (index -> word codes) so there is no host record to leak.
+  (h) THE BLOCK->WORDS MAP IS HOST BOOKKEEPING. After a substrate read picks a block, `kb[i]` maps it to words; the
+      same holds for the fact shard and the seq fabric's fact list. Same next method as (g).
+  (i) THE WRITE COUNTER COVERS `_write_block` ONLY. `apply_homeostatic_scaling` rewrites store_conns without it; the
+      D6 worker counts those calls separately (`homeostatic_calls_after_teach`). Multiplicative scaling cannot
+      un-zero a zeroed block, and the lever is read at probe time, so a lesion cannot be silently undone by it.
+  (j) THE ABLATION AND RECORD-REMOVAL ARMS RUN EXPERIMENTER CODE (cache invalidation + a re-read of every block, and
+      in NOREC_H a kb pop). They are lesions/controls, not brain mechanisms; the capability contrast (USE_H vs
+      FREEZE_H) runs neither.
 
 Reuse-by-import; no sim/ edit. See research/runners/d6_learn_through_use_lb.py for the 2x2 (use x plasticity)
 lesion-verified probe through the real /api/brain-chat handler.
@@ -248,10 +261,15 @@ def engram_readtime_enabled() -> bool:
     engram ONCE, at write time, and then deleted the host record -- a host step that ran ONLY in the freeze arm, so a
     prune-variant C3 pass could come from the lesion arm running host code the treatment arm never runs, and later
     loss of the engram (ablation, decay, interference) would never be reflected. This flag replaces that with a READ:
-    no record is ever deleted; instead the kb-direct readers (`webapp/gnw_thought_swap._known_concepts`,
-    `webapp/gnw_multistep_deliberation._all_concepts`, the episodic content lookup in `webapp/server.brain_reply`) and
-    `ChatBrain._refresh_facts` (re-run at the start of every turn) see only the facts whose engram reactivates NOW.
-    The SAME host code runs in every arm; only the synapses differ. See `visible_kb`.
+    no record is ever deleted; instead FOUR named kb readers (ENGRAM_READTIME_ROUTED: `ChatBrain._refresh_facts`,
+    re-run at the start of every turn, `webapp/gnw_thought_swap._known_concepts`,
+    `webapp/gnw_multistep_deliberation._all_concepts`, the episodic content lookup in `webapp/server.brain_reply`) see
+    only the facts whose engram reactivates NOW. SCOPE (narrowed 2026-09-23, fix round 3): these four are NOT every kb
+    reader -- ENGRAM_READTIME_NOT_ROUTED lists the ones that still iterate the host list in every arm; gate v3's NOREC_H
+    arm measures whether any of them carries an unheld fact's record into a reply on the D6 protocol. Across the
+    Hebbian arms the host code PATH is the same; the lesion arms differ from USE_H in eta (FREEZE_H) or in an
+    experimenter step after the teach turn (ABL_H: `ablate_block` zeroes the synapses AND invalidates the store caches,
+    which then forces a re-read of every block; NOREC_H: `remove_block_record`). See `visible_kb`.
 
     DECLARED SHORTCUT: the held/not-held decision is a HOST THRESHOLD (`readout > floor`) on a genuine neural read
     (the readout activity after kicking the block's context cell) -- the same class as an argmax over spike rates.
@@ -334,6 +352,58 @@ def ablate_block(comp, block_idx) -> dict:
     after = float(np.mean([abs(complex(t[2])) for t in comp.store_conns[block_idx * D:(block_idx + 1) * D]]))
     _ops(comp)["ablations"] += 1
     return {"block": int(block_idx), "mean_abs_w_before": before, "mean_abs_w_after": after}
+
+
+def remove_block_record(comp, block_idx) -> dict:
+    """EXPERIMENTER CONTROL (arm NOREC_H of gate v3, research/runners/d6_learn_through_use_lb.py): remove the HOST RECORD
+    of block `block_idx` -- its kb entry and its D store synapses -- WITHOUT removing any synaptic content: it refuses
+    unless every one of the block's weights is exactly 0 (a frozen write) and the block is the LAST one (store_conns is
+    block-major, so removing the tail renumbers nothing). NOREC_H == FREEZE_H on every turn then shows the host record
+    of a fact the synapses do not hold carries nothing into any reply -- a measurement of what `visible_kb` covers, in
+    place of the claim that every kb reader consults the engram (it does not: see ENGRAM_READTIME_ROUTED)."""
+    D = comp.D
+    n = len(getattr(comp, "kb", []) or [])
+    if block_idx != n - 1:
+        raise ValueError("remove_block_record: block %s is not the last block (n=%d)" % (block_idx, n))
+    ws = [complex(t[2]) for t in comp.store_conns[block_idx * D:(block_idx + 1) * D]]
+    if len(ws) != D or any(w != 0 for w in ws):
+        raise ValueError("remove_block_record: block %s holds non-zero synapses; this control removes a RECORD only"
+                         % block_idx)
+    fact = dict(comp.kb[block_idx][0])
+    comp.kb.pop()
+    del comp.store_conns[block_idx * D:]
+    comp._store_dirty = True; comp._store_csr = None; comp._persistent_dirty = True
+    if getattr(comp, "_csr_cache", None) is not None:
+        comp._csr_cache = {}
+    if getattr(comp, "integrated_loop", False):
+        comp._seq_dirty = True
+        if getattr(comp, "_fused", False):
+            comp._fused_dirty = True
+    comp._fact_shard = None; comp._fact_shard_built_K = -1
+    _ops(comp)["record_removals"] = _ops(comp).get("record_removals", 0) + 1
+    return {"removed": True, "block": int(block_idx), "fact": fact, "n_kb_after": len(comp.kb)}
+
+
+# The kb readers that consult the engram at read time under BRAIN_D6_ENGRAM_READTIME (the ONLY ones; 2026-09-23 fix
+# round 3 narrowed the earlier "every kb reader" wording, which the re-review showed was false).
+ENGRAM_READTIME_ROUTED = (
+    "research/runners/brain_chat_tui.ChatBrain._refresh_facts (stored_facts / agents_set / actions_set / patients_set)",
+    "webapp/gnw_thought_swap._known_concepts",
+    "webapp/gnw_multistep_deliberation._all_concepts",
+    "webapp/server.brain_reply episodic in-memory content lookup",
+)
+# kb readers NOT routed (they still iterate the host kb list in every arm). Named, not hidden; gate v3's NOREC_H arm
+# MEASURES whether any of them carries the record of an unheld fact into a reply on the D6 protocol.
+ENGRAM_READTIME_NOT_ROUTED = (
+    "research/runners/brain_conversational_agent._assoc_graph (elaborate / ordered_associates; the describe path)",
+    "research/runners/one_brain_composer.OneBrainComposer._assoc_graph and ._relation_assoc (chain_of_thought)",
+    "research/runners/one_brain_composer.OneBrainComposer._ensure_sequencer (the seq fabric's fact list, kb[:K])",
+    "research/runners/one_brain_composer.OneBrainComposer.query_role / _attributed_patient role-presence checks",
+    "research/runners/one_brain_composer.OneBrainComposer._calibrate_pe_labile and the fact shard (_fact_shard)",
+    "research/runners/one_brain_composer.OneBrainComposer kb[i] index->word lookups after a substrate read "
+    "(block -> words bookkeeping, declared shortcut)",
+    "webapp/continuous_engine homeostatic pass trigger (reads len(kb))",
+)
 
 
 def comp_backend_xp(arr):

@@ -1,7 +1,9 @@
 """D6 learn-through-use: the in-conversation fact WRITE by a local Hebbian rule (research/runners/d6_hebbian_store.py).
 
-Pins: (1) OFF (unset) is byte-identical to origin/main's direct composite copy (exact sha256, reference run from a
-git archive of origin/main -- the unset-vs-'0' check is kept only as a labelled integrity smoke); (2) the Hebbian-written block recalls with the
+Pins: (1) OFF (unset) is byte-identical to the PINNED pre-D6 commit's direct composite copy (exact sha256, reference
+run from a git archive of d6_offpath_parity.PRE_D6_REF -- a fixed SHA, not origin/main, which would be tautological
+after the merge; a reference that contains D6 reads UNDEFINED -- the unset-vs-'0' check is kept only as a labelled
+integrity smoke); (2) the Hebbian-written block recalls with the
 direct path's answers and phase (content = the rule's output, not a copy); (3) the FREEZE lesion blocks ONLY
 in-conversation writes -- the taught fact is gone, the build-time fact still recalls, the frozen weight is 0;
 (4) the freeze flag without the conversation context does not freeze; (5) the Hebbian write is deterministic;
@@ -56,22 +58,29 @@ def test_unset_vs_zero_same_branch_integrity_smoke(arms):
     assert arms["unset"].store_conns == arms["off"].store_conns
 
 
-def _git_ok(ref="origin/main"):
+def _git_ok(ref):
     import subprocess
     try:
-        return subprocess.run(["git", "rev-parse", "--verify", ref], capture_output=True).returncode == 0
+        return subprocess.run(["git", "cat-file", "-e", ref + "^{commit}"], capture_output=True).returncode == 0
     except Exception:
         return False
 
 
-@pytest.mark.skipif(not _git_ok(), reason="origin/main not resolvable (no git checkout)")
-def test_off_is_byte_identical_vs_origin_main():
+def _pre_d6_ref():
+    from research.runners.d6_offpath_parity import PRE_D6_REF
+    return PRE_D6_REF
+
+
+@pytest.mark.skipif(not _git_ok(_pre_d6_ref()), reason="pinned pre-D6 commit not in this clone (shallow/CI): UNDEFINED")
+def test_off_is_byte_identical_vs_pinned_pre_d6():
     """BYTE-IDENTICAL (docs/TERMS.md): with every BRAIN_D6_* flag unset, this branch's store_conns (exact complex values,
-    sha256), kb and recalls equal those produced by origin/main's code, run from a `git archive` of origin/main in a
-    separate process. And the comparison CAN fail: the Hebbian write (flag on) hashes differently."""
+    sha256), kb and recalls equal those produced by the PINNED pre-D6 commit's code (PRE_D6_REF, a fixed SHA -- not
+    origin/main, which contains D6 after the merge and would compare the branch with itself), run from a `git archive`
+    in a separate process. And the comparison CAN fail: the Hebbian write (flag on) hashes differently."""
     from research.runners import d6_offpath_parity as P
-    res = P.compare("origin/main", "store")
-    assert res["reference"]["d6_module_present"] is False or res["ref_sha"]    # the reference is the pre-D6 path
+    res = P.compare(P.PRE_D6_REF, "store")
+    assert res["reference_is_pre_change"] is True
+    assert res["reference"]["d6_module_present"] is False                     # the reference really is the pre-D6 path
     assert res["byte_identical"] is True, res["diff_keys"]
     os.environ["BRAIN_D6_HEBBIAN_STORE"] = "1"
     try:
@@ -82,6 +91,40 @@ def test_off_is_byte_identical_vs_origin_main():
         assert P._sha_store(c.store_conns) != res["reference"]["store_conns_sha256"]   # discriminates
     finally:
         os.environ.pop("BRAIN_D6_HEBBIAN_STORE", None)
+
+
+@pytest.mark.skipif(not _git_ok("HEAD"), reason="no git checkout")
+def test_parity_refuses_a_reference_that_already_contains_d6():
+    """The tautology guard: compared against a ref that already has the D6 module (HEAD here; origin/main after the
+    merge), the tool must read UNDEFINED -- the pre-fix test PASSED in exactly this situation (fix round 3 proof)."""
+    from research.runners import d6_offpath_parity as P
+    assert P.ref_contains_d6("HEAD", ".") is True
+    if _git_ok(P.PRE_D6_REF):
+        assert P.ref_contains_d6(P.PRE_D6_REF, ".") is False
+    res = P.compare("HEAD", "store")
+    assert res["byte_identical"] is None and res["reference_is_pre_change"] is False
+
+
+def test_remove_block_record_removes_only_a_zero_record():
+    """NOREC_H's experimenter control removes a HOST RECORD, never synaptic content: it refuses a potentiated block,
+    removes a frozen (all-zero) last block, and leaves every other recall intact."""
+    from research.runners import d6_hebbian_store as d6
+    try:
+        c = _build("1", "1"); c.hear("dog chase cat")
+        with d6.conversation_write(c):
+            c.hear("wolf hunt deer")                                   # frozen -> the block's synapses are exactly 0
+        with pytest.raises(ValueError):
+            d6.remove_block_record(c, 0)                               # not the last block
+        r = d6.remove_block_record(c, 1)
+        assert r["removed"] is True and len(c.kb) == 1 and len(c.store_conns) == c.D
+        assert c.query_patient("dog", "chase") == "cat" and c.query_patient("wolf", "hunt") is None
+        h = _build("1"); h.hear("dog chase cat"); h.hear("wolf hunt deer")
+        with pytest.raises(ValueError):
+            d6.remove_block_record(h, 1)                               # potentiated: holds content -> refused
+        assert len(h.kb) == 2
+    finally:
+        for k in ("BRAIN_D6_HEBBIAN_STORE", "BRAIN_D6_HEBBIAN_FREEZE"):
+            os.environ.pop(k, None)
 
 
 def test_visible_kb_off_is_the_same_object_and_on_follows_the_engram(arms):
