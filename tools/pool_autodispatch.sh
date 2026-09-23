@@ -21,6 +21,35 @@ ROOT=/home/dant123/Projects/sim
 QUEUE="${POOL_QUEUE_PATH:-$ROOT/research/queue/pool.queue}"
 CLAIMED="${POOL_RUNNING_PATH:-${QUEUE%.queue}.running}"
 POLL="${POOL_DISPATCH_POLL:-60}"
+# MEMORY RESERVATIONS (2026-09-23). The RSS snapshot node_is_idle reads is taken seconds after the previous launch,
+# before that job has grown -- so one fill cycle handed pool42 SIX D6 workers (each grows to 4-5 GB on a 15 GB node)
+# in 30 s, and an earlier cycle left pool41 with 167 MB free. Every dispatch now RESERVES its expected size on that
+# node for POOL_GROWTH_WINDOW_S; a job declares its size with `mem_gb=N` anywhere in its line (e.g. in the
+# --checked reason), else POOL_JOB_EST_GB. The reservation double-counts a job whose RSS has already caught up
+# (MemAvailable fell AND it is still reserved) -- deliberately conservative: an under-filled node costs minutes, an
+# OOM costs every job on the node plus a silent rc=0 from runners that swallow worker deaths.
+RESV="${POOL_RESERVATIONS_PATH:-$ROOT/research/queue/.pool_reservations}"
+GROWTH_WINDOW_S="${POOL_GROWTH_WINDOW_S:-1200}"
+
+job_est_gb() {
+  local h
+  h=$(printf '%s' "$1" | grep -oE 'mem_gb=[0-9]+' | head -1 | cut -d= -f2)
+  echo "${h:-${POOL_JOB_EST_GB:-1}}"
+}
+
+reserved_gb() {
+  awk -v n="$1" -v now="$(date +%s)" -v w="$GROWTH_WINDOW_S" \
+      '$2==n && now-$1 < w {s+=$3} END{print s+0}' "$RESV" 2>/dev/null || echo 0
+}
+
+peek_est_gb() {
+  # The size of the job pop_job would hand out next (same first-fresh-line rule), so a big job is not sent to a
+  # node that only has room for a default-sized one.
+  local cutoff job
+  cutoff=$(( $(date +%s) - ${POOL_JOB_MAX_AGE:-43200} ))
+  job=$(awk -F'\t' -v c="$cutoff" 'NF>1 && $1+0 >= c {print $2; exit}' "$QUEUE" 2>/dev/null)
+  job_est_gb "$job"
+}
 NODES="${POOL_NODES:-pool40 pool41 pool42}"
 
 mkdir -p "$(dirname "$QUEUE")"; touch "$QUEUE" "$CLAIMED"
@@ -31,8 +60,8 @@ node_is_idle() {
   # load<cores/4" gate treated each node as a SINGLE-job worker and wasted 11/12 cores (owner 2026-09-02: fill the
   # pool). Cap is overridable via POOL_JOBS_PER_NODE. Bracket the pgrep pattern: an un-bracketed one matches the
   # ssh command carrying it, the self-match that made an earlier check unable to ever fire.
-  local out
-  out=$(timeout 12 ssh -o BatchMode=yes -o ConnectTimeout=6 "$1" \
+  local out node="$1"   # `set -- $out` below overwrites $1 -- the first reservation check read the core count as the node
+  out=$(timeout 12 ssh -o BatchMode=yes -o ConnectTimeout=6 "$node" \
         "echo \$(nproc) \$(cut -d' ' -f1 /proc/loadavg) \$(pgrep -c -f '^[^ ]*/?python[0-9.]* .*-m [r]esearch\.runners' 2>/dev/null | head -1) \$(awk '/MemAvailable/{print int(\$2/1048576)}' /proc/meminfo) \$(ps -eo rss,args | awk '\$2 ~ /python/ && /-m [r]esearch\\.runners/ {if (\$1>m) m=\$1} END{print int((m+1048575)/1048576)}')" 2>/dev/null) || return 1
   set -- $out
   local cores="${1:-0}" load="${2:-99}" procs="${3:-99}" avail_gb="${4:-0}" max_job_gb="${5:-0}"
@@ -46,6 +75,10 @@ node_is_idle() {
   # Jobs GROW after dispatch (2026-09-23: three D6 workers reached 4-5 GB each and left pool41 with 167 MB free,
   # load 29/12) -- so also require headroom for one more job the size of the largest one already running there.
   [ "${avail_gb:-0}" -ge "${max_job_gb:-0}" ] || return 1
+  # ...and room for the NEXT job on top of everything dispatched here within the growth window (see RESV above).
+  local resv next
+  resv=$(reserved_gb "$node"); next=$(peek_est_gb)
+  [ $(( ${avail_gb:-0} - ${resv:-0} )) -ge $(( ${POOL_MIN_AVAIL_GB:-3} + ${next:-1} )) ] || return 1
   awk -v l="$load" -v c="$cores" 'BEGIN{exit !(l < c - 0.5)}'
 }
 
@@ -142,6 +175,8 @@ if [ "${1:-}" = "--pop-once" ]; then
   pop_job
   exit $?
 fi
+if [ "${1:-}" = "--reserved-gb" ]; then reserved_gb "$2"; exit 0; fi
+if [ "${1:-}" = "--peek-est-gb" ]; then peek_est_gb; exit 0; fi
 if [ "${1:-}" = "--render-remote-command" ]; then
   [ "$#" -eq 2 ] || { echo "usage: $0 --render-remote-command '<job>'" >&2; exit 2; }
   remote_launch_command "$2"
@@ -189,6 +224,7 @@ while true; do
         break
       }
       ssh -f -n -o BatchMode=yes "$NODE" "$REMOTE_COMMAND" 2>/dev/null
+      printf '%s %s %s\n' "$(date +%s)" "$NODE" "$(job_est_gb "$JOB")" >> "$RESV"
       sleep 5     # let the launch register before this node's next capacity check
     done
   done
