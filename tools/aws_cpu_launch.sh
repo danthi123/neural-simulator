@@ -16,6 +16,9 @@ SUBNET=subnet-0928cbecfe33fcbc1      # default-VPC subnet, us-east-1d
 live=$(awk -F= '/^instance=/{print $2}' "$STATE" 2>/dev/null)
 [ -n "$live" ] && { echo "⛔ an instance is already recorded ($live) — terminate it first (tools/aws_gpu.sh terminate)"; exit 1; }
 
+# Hard pre-launch refusal — owner-approved 2026-09-23 daily spend cap, enforced by tooling not memory.
+bash "$ROOT/tools/aws_budget.sh" check "$TYPE" || { echo "⛔ aws_cpu_launch: refused by tools/aws_budget.sh (daily cap) — see above"; exit 1; }
+
 MYIP=$(curl -s https://checkip.amazonaws.com | tr -d '\n')
 [ -n "$MYIP" ] || { echo "could not determine my public IP"; exit 1; }
 VPC=$(aws ec2 describe-vpcs --filters Name=isDefault,Values=true --query 'Vpcs[0].VpcId' --output text --region $REGION)
@@ -30,7 +33,7 @@ echo "[aws] created SG $SG (ssh from ${MYIP}/32)"
 IID=$(aws ec2 run-instances --region $REGION --image-id $AMI --instance-type $TYPE \
   --key-name $KEYNAME --security-group-ids "$SG" --subnet-id "$SUBNET" \
   --block-device-mappings 'DeviceName=/dev/sda1,Ebs={VolumeSize=60,VolumeType=gp3,DeleteOnTermination=true}' \
-  --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=claude-cpu-verify}]' \
+  --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=claude-cpu-verify},{Key=Project,Value=neural-sim}]' \
   --query 'Instances[0].InstanceId' --output text)
 
 # RECORD DURABLY, immediately (before anything can interrupt) — this is the anti-leak anchor.
