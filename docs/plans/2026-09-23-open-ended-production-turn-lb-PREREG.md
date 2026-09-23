@@ -95,3 +95,63 @@ a separate defect; this lane records it as a residual and does not fix it.
 The KB, the prompt, and the permutation statistic are world and instrument. The plausibility gate stays at its
 production default (the spiking associative read); it is not forced to host. The draw itself is a
 `cp_firing_states` read on an Izhikevich WTA bank.
+
+## Amendment 2 — fix round after adversarial review (committed before any run it governs)
+
+### Amendment log: what I had seen when writing this
+
+- All seed-42 artifacts of all five modes (verdicts, histograms, worker JSONs). Seed 42 is therefore IN-SAMPLE for
+  this amendment's design, and is declared so.
+- The adversarial review of the lane (fix-required, not safe to merge).
+- NOT seen: any seed 43/44/100/101/102 output. The `default` run for those seeds (launched 13:20 from worktree
+  `wf_6cf1082d-b06-2` under the original rule) had produced no worker file when this was written. The
+  `oe_unfixed_taught` s43 files exist there; I listed their names and did not open them.
+- The `oe_routed_taught` 5-seed controller was stopped at ~13:44, before it wrote any s43+ file (reason below).
+
+### What changes, and why
+
+1. **The unit is the seed, not the ask.** The 40 asks of one session are serially dependent, and each arm is a
+   deterministic function of the seed (intact and rebuild give the same sequence). The original label-permutation
+   p over 80 pooled replies treated them as exchangeable and so reported p = 1e-4 for ONE observation. It is
+   withdrawn. Per seed the scorer records D_s (the mean host-likelihood weight of the intact volunteered patients
+   minus the lesion's), the modal patient of each arm, and a direction label. The within-session TV is kept as a
+   descriptive effect size only.
+2. **Seed-level test.** The exact one-sided sign-flip randomization p over the seeds' D_s (H0: intact and lesion
+   labels exchangeable within a seed). With 6 seeds the smallest attainable p is 1/64; one seed can never be
+   significant (p = 0.5). **GO for a mode: 6 seeds, all DEFINED (no UNDEFINED / NONDETERMINISTIC / ARM-FAILED),
+   and sign-flip p < 0.05.** Because seed 42 is in-sample, the same p over the 5 held-out seeds (43, 44, 100, 101,
+   102; smallest p = 1/32) is reported beside it; a GO that holds only with seed 42 included is reported as such.
+3. **Chance base rate.** Per seed, with A = the approximate admissible set (positive host weight, not a stored
+   (dog, chase, p) fact, plus anything an arm volunteered): if the lesion's reply were a uniformly random member of
+   A, P(modal changes) = 1 − 1/|A| and P(D_s > 0 | intact at the peak) = (#A below the peak)/|A|. The expected
+   counts over the seeds are reported next to the observed count of seeds whose modal reply changed. They are
+   context for the count, not a second test.
+4. **The lesioned edge is a HOST vector, and is declared.** `BRAIN_SPIKING_DRAW_LESION=1` replaces
+   w = `_weight_partner` (a sum over the HOST co-occurrence matrix P) with np.ones before the host affine map into
+   the spiking bank's drive. The claim this lesion can support is: the host likelihood vector, transmitted through
+   the spiking WTA, is load-bearing on the reply. It cannot show that the spiking part is load-bearing.
+5. **New arm `host_oracle`** (`BRAIN_SPIKING_DRAW=0`: the same host w drawn by host np.random.choice). Run for the
+   `default` mode on all 6 seeds. It measures what the spiking WTA contributes: the fraction of asks on the intact
+   modal patient under the spiking draw minus that under the host sampler ("sharpening"), and their TV.
+   Descriptive, with a stated prediction from seed 42: sharpening > 0 (the bank is near-argmax, not a sampler).
+6. **The sampling narrative is withdrawn.** Seed 42's intact bank volunteered the likelihood peak 39/40 times where
+   p ∝ w gives it about 3/7. At this operating point the WTA behaves as a near-argmax. That is recorded as an
+   observation (generative diversity is lost), not as distributional sampling.
+7. **The true open-ended configuration: new mode `oe_routed_full`.** Teach AND ask both under BRAIN_OPEN_ENDED=1,
+   with both default-OFF routes: `BRAIN_OPEN_ENDED_GENERATE_ROUTE=1` and the new `BRAIN_OPEN_ENDED_ACQUIRE_ROUTE=1`
+   (a told SVO assertion reaches in-loop acquisition, closing the teach-path bypass). With both routes on, every
+   turn of this protocol leaves the free-talk block, so the replies are EXPECTED to equal `default`'s. That is
+   checked in data (`equals_default_replies`, exact compare of reply texts per seed and arm). If they are equal, the
+   finding states that open-ended mode reaches the SAME default GENERATE path through the routes; it is not a
+   second, independent piece of evidence. Same GO rule as item 2.
+8. **`oe_routed_taught` is not independent evidence** (its teach phase ran with BRAIN_OPEN_ENDED=0 and its routed
+   ask falls through to the default pipeline). Its seed-42 row is kept and labelled; it is not run on more seeds.
+9. **Flag-off identity, in data.** Pinned pre-change SHA `4c141b8e8` (origin/main; has neither route) against the
+   lane code commit `8c5d7b03a`, each a clean `git archive`, same fixed 9-turn chat script, env sets `default` and
+   `oe_off` (BRAIN_OPEN_ENDED=1, route flags unset). Exact compare of every full response body. A pre-vs-pre rerun
+   of `default` is the nondeterminism control. Required: IDENTICAL on both env sets and on the control.
+
+Unchanged: the world (TEACH, ASK), K = 40, seeds, arms intact / intact_rebuild / lesion, the UNDEFINED conditions,
+alpha = 0.05. No constant is fit on any seed. The `oe_unfixed_taught` control continues (predicted UNDEFINED, 0
+draws, on every seed). The in-flight `default` worker JSONs for seeds 43–102 are scored by the amendment-2 scorer;
+the worker protocol that produces them is unchanged.
