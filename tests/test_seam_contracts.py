@@ -25,7 +25,9 @@ Nothing here re-implements a format it then tests against itself -- that is the 
 test exists to avoid.
 
 POWER CONTROLS. Each seam carries at least one assertion in the FAILING direction (a wrong suffix must be
-REJECTED; a stale dispatch log must FIRE starvation; an unstripped token must BREAK `bash -n`). A contract test
+REJECTED; a stale dispatch log must FIRE starvation; an unstripped token must round-trip through the dispatch
+wrapper INTACT -- via `bash -n` while the wrapper spliced the job into its own script (pre-2026-09), or
+end-to-end through the real+status side effects now that it base64-isolates the job instead). A contract test
 whose every assertion is "the good case passes" cannot distinguish a working seam from a check that accepts
 everything.
 
@@ -506,7 +508,15 @@ class TestSeam3DispatchLogFormatAndLocation:
         (d / "dispatch.log").write_text(log, encoding="utf-8")
 
         monkeypatch.setattr(lane_gate, "_ROOT", str(tmp_path))
-        monkeypatch.setattr(lane_gate, "_WAIVER", str(tmp_path / "no-such-waiver"))
+        # NOTE (re-derived, not deleted): a prior version of the gate kept a module-level `_WAIVER` path
+        # constant, which this fixture used to point at a nonexistent file so no waiver could interfere. The
+        # gate now resolves the waiver path DYNAMICALLY via `_queue_dir()` (`_shared_queue_root()/research/
+        # queue/.lane_waiver`, `lane_starvation.py:125-126`), so `lane_gate` no longer carries a `_WAIVER`
+        # attribute to monkeypatch (setattr on it now raises AttributeError). The contract this line protected
+        # -- no active waiver during this fixture -- still holds: `_shared_queue_root()` falls back to `_ROOT`
+        # (monkeypatched above to `tmp_path`) once the faked `subprocess.run` below returns an empty `git
+        # rev-parse` stdout, so `_queue_dir()` resolves to `tmp_path/research/queue`, which this test never
+        # writes a `.lane_waiver` file into.
         monkeypatch.setattr(lane_gate, "subprocess", _FakePs(""))          # nothing running locally
         assert lane_gate.check([]) == [], \
             "SEAM BROKEN: five lanes dispatched to the pool still read as starved: %s" % lane_gate.check([])
@@ -557,26 +567,68 @@ class TestSeam4CheckedTokenStripping:
         assert self.TOKEN not in r.stdout, "SEAM BROKEN: the token survived into the executed command: %r" % r.stdout
         assert r.stdout.strip() == cmd, "SEAM BROKEN: recovered %r, producer wrote %r" % (r.stdout.strip(), cmd)
 
-    def test_an_unstripped_token_breaks_the_brace_group_wrapper(self, tmp_path):
-        """POWER CONTROL + the actual failure mode. The exit-status wrapper runs the job inside `{ $JOB; }`; a
-        surviving `#` comments out the closing `; }`, giving an unterminated brace group -- a SYNTAX error, so
-        neither the job nor the status printf ever runs. Six jobs died in exactly this way while the dispatch
-        log reported them launched."""
-        # Scoped to CODE and to the line that actually executes: an identical string sits in a comment four
-        # lines above, and a whole-file `in` check passed with the wrapper deleted (found by mutating it).
-        wrapper = _in_code("tools/pool_autodispatch.sh", "{ $JOB; }")
-        assert len(wrapper) == 1 and "autodispatch.out" in wrapper[0], (
-            "the dispatcher no longer executes the job inside a brace group, so the hazard this strip defends "
-            "against has changed -- re-derive the contract instead of deleting it. Found: %s" % wrapper)
+    def test_an_unstripped_token_no_longer_breaks_the_wrapper__base64_isolation(self, tmp_path):
+        """RE-DERIVED (2026-09-23) — this test used to assert `assert "{ $JOB; }" in wrapper`, which started
+        FAILING once `remote_launch_command` (tools/pool_autodispatch.sh) was rebuilt: the OLD exit-status
+        wrapper spliced the job's LITERAL text into the wrapper's own script (`{ $JOB; } > out`), so a
+        surviving `#checked:` token commented out the closing `; }` -- an unterminated brace group, a SYNTAX
+        error, so NEITHER the job NOR the status-recording printf ever ran (six jobs died exactly this way
+        while the dispatch log reported them launched). The wrapper now base64-encodes the job into an OPAQUE
+        shell variable instead of splicing it into the wrapper's own script text, so the wrapper's syntax is
+        CONSTANT regardless of what the job contains -- there is no brace group left for a `#` to break. This
+        re-derives the contract against that mechanism, end-to-end (same technique as
+        test_pool_autodispatch_workflow.py::test_remote_wrapper_records_multiline_job_as_one_v2_row): render
+        the REAL remote command for a job still carrying the unstripped token and run it for real (HOME faked
+        so `cd ~/derisk-pool/sim` lands in tmp_path). BOTH halves of the original failure must now be fixed --
+        the real command still runs (the marker file), and the status printf still appends a row -- with the
+        `#checked:...` suffix dropped as an ordinary, harmless trailing shell comment (exactly what it would be
+        in any bare `bash -c` one-liner), never as a corrupted wrapper.
+        """
+        # Scoped to CODE (not comments, which still narrate the OLD hazard in past tense a few lines above).
+        assert not _in_code("tools/pool_autodispatch.sh", "{ $JOB; }"), (
+            "the brace-group wrapper is back in CODE -- the base64 isolation this test now protects may have "
+            "been reverted; if so, restore the original brace-group POWER CONTROL instead of this one")
+        assert _in_code("tools/pool_autodispatch.sh", "base64 -w0") and \
+               _in_code("tools/pool_autodispatch.sh", "base64 -d"), (
+            "the dispatcher no longer base64-isolates the job from the wrapper's own script text -- re-derive "
+            "the contract against whatever isolation mechanism replaced it")
 
-        cmd = "python -m research.runners._b1_v1_selforg_onbridge_derisk --seeds 42"
-        unstripped = "%s  %s%s" % (cmd, self.TOKEN, "corpus: nothing prior")
-        bad = _bash("bash -n -c %s" % json.dumps("{ %s; } > /dev/null 2>&1" % unstripped))
-        good = _bash("bash -n -c %s" % json.dumps("{ %s; } > /dev/null 2>&1" % cmd))
-        assert bad.returncode != 0, \
-            "the unstripped token no longer breaks the brace group; this control has lost its power"
-        assert "unexpected end of file" in bad.stderr or "syntax error" in bad.stderr, bad.stderr
-        assert good.returncode == 0, "the STRIPPED command does not parse inside the wrapper: %s" % good.stderr
+        import base64 as _b64
+
+        remote_root = tmp_path / "derisk-pool" / "sim"
+        remote_root.mkdir(parents=True)
+        marker = remote_root / "ran.txt"
+        cmd = "printf done > %s" % marker
+        unstripped = "%s  %s%s" % (cmd, self.TOKEN, "corpus: nothing prior -- this text must NOT execute")
+
+        render = subprocess.run(
+            ["bash", str(ROOT / "tools" / "pool_autodispatch.sh"), "--render-remote-command", unstripped],
+            cwd=str(ROOT), env={**os.environ, "HOME": str(tmp_path)},
+            capture_output=True, text=True, timeout=30)
+        assert render.returncode == 0, \
+            "rendering the remote command for an unstripped token FAILED: %s" % render.stderr
+
+        run = subprocess.run(["bash", "-c", render.stdout], env={**os.environ, "HOME": str(tmp_path)},
+                             capture_output=True, text=True, timeout=30)
+        assert run.returncode == 0, "SEAM BROKEN: launching an unstripped-token job failed: %s" % run.stderr
+
+        status = remote_root / "job_status.log"
+        for _ in range(100):
+            if status.exists() and status.read_text().strip():
+                break
+            time.sleep(0.02)
+
+        assert marker.exists() and marker.read_text() == "done", \
+            "SEAM BROKEN: the real command never ran -- the unstripped token still corrupts the wrapper"
+        assert status.exists() and status.read_text().strip(), (
+            "SEAM BROKEN: the exit-status printf never ran (job_status.log empty) -- same failure SHAPE as the "
+            "original brace-group defect (a job silently dispatched and silently lost), just a different cause")
+        rows = status.read_text().strip().splitlines()
+        assert len(rows) == 1, "expected exactly one status row: %r" % rows
+        version, epoch, rc, payload = rows[0].split("\t")
+        assert rc == "0", "the command reported a nonzero exit even though it ran cleanly: rc=%s" % rc
+        assert _b64.b64decode(payload).decode() == unstripped, \
+            "SEAM BROKEN: the recorded job does not match what was dispatched -- the round trip corrupted it"
 
     def test_the_gpu_dispatcher_legitimately_does_not_strip_because_it_uses_eval(self):
         """The two consumers differ ON PURPOSE, and the difference is load-bearing: lane_dispatch.sh runs
