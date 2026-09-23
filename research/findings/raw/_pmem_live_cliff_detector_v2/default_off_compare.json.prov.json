@@ -1,0 +1,29 @@
+{
+ "run_id": "1790186274-1322231",
+ "runner": "research/runners/_pmem_live_cliff_detector_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/wf_a686cbcd-9ff-1/research/runners/_pmem_live_cliff_detector_derisk.py",
+  "--default-off-compare",
+  "--seed",
+  "44"
+ ],
+ "git_sha": "2ba01783b",
+ "git_dirty": false,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-23T13:57:54",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 698.8,
+ "corpus_check_query": "pmem live cliff detector circular argmax operating point held-out seeds null",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_pmem_live_cliff_detector_v2/default_off_compare.json"
+}

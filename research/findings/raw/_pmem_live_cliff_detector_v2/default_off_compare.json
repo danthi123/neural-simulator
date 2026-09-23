@@ -1,0 +1,254 @@
+{
+  "pinned_pre_change_sha": "4c141b8e8413e39913b2ef72b13f18c3db656dc0",
+  "head_sha": "2ba01783be41ff52f8d2af288899608b1a4c8058",
+  "seed": 44,
+  "pinned_organ_has_cliff_flag": false,
+  "head_organ_has_cliff_flag": true,
+  "configs": {
+    "shipped_default": {
+      "env": {},
+      "head_sha256": "c3286e525eada76bf6eb73ca7132deb22ffb977fb540c790147bf0bf9064e047",
+      "pinned_sha256": "c3286e525eada76bf6eb73ca7132deb22ffb977fb540c790147bf0bf9064e047",
+      "exact_equal": true,
+      "head_output": {
+        "calib": {
+          "bias_pA": {
+            "A": -1006.7,
+            "B": -1293.3
+          },
+          "fire_thr": 0.2,
+          "plateau_diag": {
+            "A": {
+              "coinc_margin": 24.02,
+              "coinc_over_theta": true,
+              "g_coinc": 165.335,
+              "g_single_cue": 28.999,
+              "g_single_held": 134.585,
+              "theta": 141.315
+            },
+            "B": {
+              "coinc_margin": 25.443,
+              "coinc_over_theta": true,
+              "g_coinc": 179.203,
+              "g_single_cue": 30.802,
+              "g_single_held": 146.438,
+              "theta": 153.76
+            }
+          },
+          "silent_max": 0.06
+        },
+        "fac_g": null,
+        "form": {
+          "action": "call mom",
+          "binding_learned": {
+            "canonical_norm_per_action": 17760.0,
+            "learned_norm": 17760.0,
+            "post_rel_rate": 0.2567,
+            "pre_act_rate": 0.4067,
+            "pre_cue_rate": 0.4508
+          },
+          "calib": {
+            "bias_pA": {
+              "A": -1006.7,
+              "B": -1293.3
+            },
+            "fire_thr": 0.2,
+            "plateau_diag": {
+              "A": {
+                "coinc_margin": 24.02,
+                "coinc_over_theta": true,
+                "g_coinc": 165.335,
+                "g_single_cue": 28.999,
+                "g_single_held": 134.585,
+                "theta": 141.315
+              },
+              "B": {
+                "coinc_margin": 25.443,
+                "coinc_over_theta": true,
+                "g_coinc": 179.203,
+                "g_single_cue": 30.802,
+                "g_single_held": 146.438,
+                "theta": 153.76
+              }
+            },
+            "silent_max": 0.06
+          },
+          "cue_clause": "the weather",
+          "cue_keywords": [
+            "weather"
+          ],
+          "hebbian": true,
+          "hebbian_lesioned": false,
+          "held": true,
+          "held_after_lesion": null,
+          "lesioned": false
+        },
+        "pm_class": "HebbianBindingProspectiveMemory",
+        "reads": [
+          {
+            "action": "call mom",
+            "cue_clause": "the weather",
+            "fired": false,
+            "held": 0.33,
+            "is_cue": false,
+            "lesioned": false,
+            "rel": 0.0,
+            "silent_max": 0.06,
+            "threshold": 0.2
+          },
+          {
+            "action": "call mom",
+            "cue_clause": "the weather",
+            "fired": false,
+            "held": 0.32625,
+            "is_cue": false,
+            "lesioned": false,
+            "rel": 0.005833333333333334,
+            "silent_max": 0.06,
+            "threshold": 0.2
+          },
+          {
+            "action": "call mom",
+            "cue_clause": "the weather",
+            "fired": false,
+            "held": 0.3333333333333333,
+            "is_cue": true,
+            "lesioned": false,
+            "rel": 0.12555555555555556,
+            "silent_max": 0.06,
+            "threshold": 0.2
+          }
+        ]
+      }
+    },
+    "facilitation_on": {
+      "env": {
+        "BRAIN_PMEM_FACILITATION": "1"
+      },
+      "head_sha256": "ca8c362dd08990572684f132f1f15f5911a0aca77802b0c897d7863f9be57272",
+      "pinned_sha256": "ca8c362dd08990572684f132f1f15f5911a0aca77802b0c897d7863f9be57272",
+      "exact_equal": true,
+      "head_output": {
+        "calib": {
+          "bias_pA": {
+            "A": -1283.3,
+            "B": -1633.3
+          },
+          "fire_thr": 0.2,
+          "plateau_diag": {
+            "A": {
+              "coinc_margin": 24.06,
+              "coinc_over_theta": true,
+              "g_coinc": 165.369,
+              "g_single_cue": 28.999,
+              "g_single_held": 134.58,
+              "theta": 141.309
+            },
+            "B": {
+              "coinc_margin": 25.478,
+              "coinc_over_theta": true,
+              "g_coinc": 179.125,
+              "g_single_cue": 30.802,
+              "g_single_held": 146.331,
+              "theta": 153.648
+            }
+          },
+          "silent_max": 0.06
+        },
+        "fac_g": 6000.0,
+        "form": {
+          "action": "call mom",
+          "binding_learned": {
+            "canonical_norm_per_action": 17760.0,
+            "learned_norm": 17760.0,
+            "post_rel_rate": 0.1689,
+            "pre_act_rate": 0.4067,
+            "pre_cue_rate": 0.4508
+          },
+          "calib": {
+            "bias_pA": {
+              "A": -1283.3,
+              "B": -1633.3
+            },
+            "fire_thr": 0.2,
+            "plateau_diag": {
+              "A": {
+                "coinc_margin": 24.06,
+                "coinc_over_theta": true,
+                "g_coinc": 165.369,
+                "g_single_cue": 28.999,
+                "g_single_held": 134.58,
+                "theta": 141.309
+              },
+              "B": {
+                "coinc_margin": 25.478,
+                "coinc_over_theta": true,
+                "g_coinc": 179.125,
+                "g_single_cue": 30.802,
+                "g_single_held": 146.331,
+                "theta": 153.648
+              }
+            },
+            "silent_max": 0.06
+          },
+          "cue_clause": "the weather",
+          "cue_keywords": [
+            "weather"
+          ],
+          "hebbian": true,
+          "hebbian_lesioned": false,
+          "held": true,
+          "held_after_lesion": null,
+          "lesioned": false
+        },
+        "pm_class": "FacilitatedHebbianProspectiveMemory",
+        "reads": [
+          {
+            "action": "call mom",
+            "cue_clause": "the weather",
+            "fired": false,
+            "held": 0.33,
+            "is_cue": false,
+            "lesioned": false,
+            "rel": 0.0,
+            "silent_max": 0.06,
+            "threshold": 0.2
+          },
+          {
+            "action": "call mom",
+            "cue_clause": "the weather",
+            "fired": false,
+            "held": 0.32625,
+            "is_cue": false,
+            "lesioned": false,
+            "rel": 0.03,
+            "silent_max": 0.06,
+            "threshold": 0.2
+          },
+          {
+            "action": "call mom",
+            "cue_clause": "the weather",
+            "fired": false,
+            "held": 0.3333333333333333,
+            "is_cue": true,
+            "lesioned": false,
+            "rel": 0.14333333333333334,
+            "silent_max": 0.06,
+            "threshold": 0.2
+          }
+        ]
+      }
+    }
+  },
+  "exact_equal_all": true,
+  "negative_control": {
+    "env": {
+      "BRAIN_PMEM_FACILITATION": "1",
+      "BRAIN_PMEM_OP_STABILIZER": "1"
+    },
+    "sha256": "7c0c4998660bfc0f9557bf79813103ca50f7d22af0faf90e2d24f609ee77c17b",
+    "fac_g": 9000.0
+  },
+  "negative_control_differs": true,
+  "method": "git archive of the pinned SHA -> separate tree; one scripted organ session per tree in a fresh process with every BRAIN_PMEM_* var stripped; sha256 + exact string compare"
+}
