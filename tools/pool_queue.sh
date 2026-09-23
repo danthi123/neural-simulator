@@ -89,6 +89,13 @@ case "${1:-list}" in
          # staging on it is redundant AND fragile. Fix: probe reachability first, SKIP unreachable nodes
          # (dispatcher skips them too), and only refuse when a REACHABLE node lacks the runner (the real
          # integration-seam check, preserved) or when NO node is reachable at all.
+         # ISOLATED-REVISION seam (2026-09-23): a job provisioned with `pool_provision.sh --isolated --revision <sha>`
+         # runs from `cd ~/derisk-pool/revisions/<sha>`, NOT the shared ~/derisk-pool/sim copy. Probing only the
+         # shared copy REFUSED every new runner staged the documented isolated way (the runner exists only in its
+         # revision dir) -- the "pool fanout friction". Probe the directory the job will actually cd into.
+         REMOTE_DIR="~/derisk-pool/sim"
+         _rev=$(printf '%s' "$2" | grep -oE 'cd ~/derisk-pool/revisions/[0-9a-f]{7,40}' | head -1 | sed 's/^cd //')
+         [ -n "$_rev" ] && REMOTE_DIR="$_rev"
          if [ -n "$MOD" ]; then
            NODE_BAD=""; NODE_OK=""; NODE_UNREACH=""
            for n in pool40 pool41 pool42; do
@@ -96,7 +103,7 @@ case "${1:-list}" in
                NODE_UNREACH="$NODE_UNREACH $n"; continue
              fi
              if timeout 25 ssh -o BatchMode=yes -o ConnectTimeout=8 "$n" \
-                  "cd ~/derisk-pool/sim && SIM_NO_PROVENANCE=1 SIM_BACKEND=numpy .venv/bin/python -m $MOD --help" \
+                  "cd $REMOTE_DIR && SIM_NO_PROVENANCE=1 SIM_BACKEND=numpy .venv/bin/python -m $MOD --help" \
                   >/dev/null 2>&1; then NODE_OK="$NODE_OK $n"; else NODE_BAD="$NODE_BAD $n"; fi
            done
            [ -n "$NODE_UNREACH" ] && echo "ℹ️  skipping unreachable node(s):$NODE_UNREACH (dispatcher health-checks + skips them too)" >&2
