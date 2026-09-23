@@ -67,7 +67,9 @@ finding demonstrating it.** Partial credit is tracked per-dimension in the board
 ## 5. STOP-and-flag (owner-reserved — Claude must NOT do these autonomously)
 On hitting any of these, Claude does NOT proceed — it records the decision in the board + surfaces it in the next
 progress report, and keeps working OTHER lanes meanwhile (never blocks the whole goal on one fork):
-- **Any spend** (AWS instances/grids, paid APIs).
+- **Any spend ABOVE the approved envelope.** Owner APPROVED 2026-09-23: AWS on-demand CPU instances for 6-seed batteries up
+  to ~$50/day (owner, raised from $15), auto-stopped when idle, launched only after the remote non-degenerate-brain sanity check passes (cap
+  enforced by tools/aws_budget.sh + idle-stop timer). Above the cap, GPU instances, commitments, or paid APIs → ask.
 - **Production default-flips that change the user-visible reply** (how the brain speaks) — propose, don't flip.
 - **The AGI-first fork / relaxing a non-negotiable constraint.**
 - **Anything honesty-boundary-adjacent** — never assert phenomenal experience; a self-report is always a functional

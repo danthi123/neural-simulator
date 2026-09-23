@@ -15,6 +15,38 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-19 (RESUME HERE) — NEW ARC: PERMANENT LLM MOUTH + LOAD-BEARING METRIC
 
+**⭐⭐ LATEST 2026-09-23 ~09:00 local — OWNER: "parallelize more heavily … we shouldn't be sitting around for hours
+waiting on runs every day … I thought our heartbeats/gates were supposed to prevent this?" → FULL FAN-OUT + LOOPHOLE FIX.**
+- **ROOT CAUSE (honest):** parallel_audit printed `⛔ UNDER-PARALLELIZED` for ~14.5 days straight; the blocking gates
+  (compute_idle_persistent, lane_starvation) were bypassed by re-written WAIVER files carrying PROMISES ("vetted pool
+  fanout as the dedicated NEXT step…") that were never kept. Plus a serial one-decisive-run-at-a-time habit, 1 agent
+  running (floor 3), pool41 unusable for days (stale files failed the provision verify), and memcapped GPU-queue jobs
+  silently failing rc=3. Detectors worked; the escape hatch + infra rot defeated them. Waivers RETIRED this cycle.
+- **FIXED + pushed (both remotes):** pool provisioner prunes stale research/ files `@511cabf7` (pool41+pool42 now
+  provision clean) · memcap defaults XDG_RUNTIME_DIR so GPU-queue jobs run capped `@bc0c76ef` · ⚠️ INTEGRITY: the
+  episodic store-verify MECHANISM behind robust-core-23 was never merged (flag had 0 refs on main) → merged `@d69e7ddb`.
+- **IN FLIGHT — do NOT double-launch; harvest on notify:**
+  - Workflow `wld7tvq87` (charter-parallel-fanout, 5 opus/sonnet build lanes, worktree-isolated, adversarial review
+    stage): `research/d1-grow-robust-core` · `research/d6-learn-through-use` · `research/d3-onebrain-next-organ` ·
+    `research/d5-affect-conditioned-mouth` (Qwen affect-CONDITIONING de-risk; prod flip stays owner-fork) ·
+    `research/gnw-thought-swap-drive`. Builds STAGE 6-seed verifies to pool/gpu queues and return; harvest after.
+  - Agent: `research/infra-waiver-loophole-aws` (waiver resource-class + 24h budget; pool/AWS runtime-asset sync +
+    remote non-degenerate-brain sanity check). Agent: `research/gate-finding-mechanism-on-main` (new gate + 2
+    pre-existing broken tests). Workflow `wkpne5am1` (live in-loop pmem homeostat) still building.
+  - Workflow `w55hmqaae` (cpu-lane-fill): `research/curiosity-lane-next` · `research/perception-lane-next` ·
+    `research/language-lane-next` — the 3 CPU lanes lane_starvation flagged unserved once the waivers were retired.
+  - GPU queue: CONFIRMATORY all-fixes adequate battery, cupy, 6 seeds serial →
+    `research/findings/raw/_load_bearing/_confirm_allfixes6/lb_allfixes_s{42..102}.json` (one consistent Option-C
+    headline after the 4 fixes; cupy UNRELIABLE flags → re-read those faculties with repeats).
+- **💵 AWS APPROVED (owner, 2026-09-23 "Approved"):** on-demand CPU for 6-seed batteries, **~$50/day cap (owner raised from $15: "Approved up to $50/day"), auto-stop idle**;
+  launch only after the infra lane's remote non-degenerate-brain check passes. Enforcement being built:
+  `research/aws-budget-guard` (aws_budget.sh check/enforce + idle-stop systemd timer). Report spend in progress reports.
+- **⚠️ POOL/AWS BRAIN ASSETS:** pool nodes lack bridges/ (25G local) + most data/ (11G local) → production brain_chat
+  runs there may DEGENERATE like AWS did. Do NOT trust a pool brain_chat result until the infra lane's sanity check passes.
+- **LESSONS (new):** never SendMessage a Workflow subagent (it resumes the agent as a duplicate in the same worktree;
+  stopping it killed the workflow's lane) · git stash during a merge drops MERGE_HEAD · a finding can land without
+  its mechanism → gate being built.
+
 **⭐ LATEST 2026-09-22 (~22:15Z) — post-compaction resume; gitea RECOVERED (both remotes @ current HEAD); 4 lanes parallel:**
 - **§8 affect→tone-over-OPEN-output — RESOLVED, MERGED @ 279b4ddf (both remotes).** VERDICT **NO-GO** (directional, 6-seed, TRUSTWORTHY — 9/9 instrument-validity preconditions clean: determinism 6/6, attribution 6/6, content-identity+moat 6/6, fluency 0.155≤0.16, lexicon-Warriner overlap=0). **Positive-asymmetric:** positive mood correct-signed 6/6, negative mood never negative. The affect ORGAN read correctly (pos +0.038/neg −0.038) — the ceiling is the **DECODE ROUTE** (additive top-margin logit bias only surfaces words already near top-1; negative words sit far from the margin in the wiki-descriptive free-gen). Per THE LAW: the METHOD (additive bias) is falsified, the CAPABILITY stays open.
   Delivered a new default-OFF open-output ruler `measure_affect_tone_open_output` (LB_AFFECT_TONE_OPEN_PROBE; byte-identical off → headline unchanged). **Banked next methods (biology-first):** neuromod `BRAIN_WKV_MOUTH_AFFECT_NEURAL`; a distribution-SHIFTING (not additive) coupling that lowers negative-word thresholds; affect-laden prompt domains; real-Qwen prompt-steered mouth. Finding `2026-09-22-affect-tone-open-output-directional-6seed-positive-asymmetric-NOGO`.
