@@ -266,7 +266,11 @@ def score(paths):
     integrity = {"G4_spiking_agree_min", "G4_spiking_bacc_mean", "G5_lesion_abstain_min", "G7_hand_in_scope_mean",
                  "G7_lesion_in_scope_mean", "G6_deterministic_all"}
     g6_partial = not all(r.get("g6_graph_rebuilt") for r in R)
+    integ_ok = all(bool(ok) for k, (_, ok) in checks.items() if k in integrity)
     out = {"seeds": seeds, "complete_6seed": complete, "gate": GATE,
+           "sim_backend": "numpy (per-seed runs on the pool with SIM_BACKEND=numpy; this scoring step is host-only)",
+           "preconditions": [{"name": "complete_6seed", "ok": bool(complete)},
+                             {"name": "integrity_smokes_pass", "ok": bool(integ_ok)}],
            "mechanism": "v1 = host-computed category (label-spreading), spike-RELAYED (amendment A1) — not a spiking "
                         "decision",
            "evidence_checks": sorted(k for k in checks if k not in integrity),

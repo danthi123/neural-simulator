@@ -343,6 +343,9 @@ def score(src):
     passed = all(bool(v[1]) for v in ev.values()) and all(bool(v[1]) for v in integ.values())
     verdict = "INCOMPLETE" if not complete else ("GO" if passed else "NO-GO")
     return {"verdict": verdict, "complete_6seed": complete, "gate": GATE,
+            "sim_backend": "numpy (per-seed runs with SIM_BACKEND=numpy; this scoring step is host-only)",
+            "preconditions": [{"name": "complete_6seed_main_and_null", "ok": bool(complete)},
+                              {"name": "integrity_smokes_pass", "ok": all(bool(v[1]) for v in integ.values())}],
             "mechanism": "v2: coupled spiking WTA (reciprocal FSI inhibition), graded drive through Hebbian (Oja) "
                          "frame->category synapses, teacher-supervised seed curriculum, host read-out of the winner",
             "seeds_main": sorted(mains), "seeds_null": sorted(nulls),
@@ -393,7 +396,8 @@ def main():
             print(f"[null seed {s}] true={r['true_bacc']:.3f} pct={r['percentile']:.1f} q99={r['null_q99']:.3f}",
                   flush=True)
         per.append(r)
-    out = {"runner": "_lexicon_spiking_referent_derisk", "part": a.part, "gate": GATE, "per_seed": per}
+    out = {"runner": "_lexicon_spiking_referent_derisk", "part": a.part, "gate": GATE,
+           "sim_backend": os.environ.get("SIM_BACKEND"), "per_seed": per}
     if a.json:
         dst = a.json if os.path.isabs(a.json) else os.path.join(_REPO, a.json)
         os.makedirs(os.path.dirname(dst), exist_ok=True)
