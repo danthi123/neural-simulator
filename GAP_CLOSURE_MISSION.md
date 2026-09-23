@@ -47,6 +47,14 @@ waiting on runs every day … I thought our heartbeats/gates were supposed to pr
 - **💵 AWS APPROVED (owner, 2026-09-23 "Approved"):** on-demand CPU for 6-seed batteries, **~$50/day cap (owner raised from $15: "Approved up to $50/day"), auto-stop idle**;
   launch only after the infra lane's remote non-degenerate-brain check passes. Enforcement being built:
   `research/aws-budget-guard` (aws_budget.sh check/enforce + idle-stop systemd timer). Report spend in progress reports.
+- **🔬 CONFIRMATORY ALL-FIXES BATTERY — RUNNING as faculty×seed SHARDS (tag `allfixes2`, 186 shards):** `tools/lb_shard.py`
+  (`@01d88fd6`); seeds 100/101/102 on AWS r7i.4xlarge (54.173.169.136, 15 parallel; local harvest loop pulls every 5 min
+  and TERMINATES the instance + deletes its SG when `LB_SHARDS_DONE` appears — BILLING until then, guard caps $50/day);
+  seeds 42/43/44 on the pool (revision b36c6f4d). Aggregate: `.venv/bin/python tools/lb_shard.py aggregate --tag allfixes2`
+  → `research/findings/raw/_load_bearing/_shards/allfixes2/aggregate.json`. Tag `allfixes` is INVALID (ran without
+  data/corpus → corpus-learned comprehension faculties read false NOT-load-bearing; local diag s100 read `regressed`
+  treat=1 ctrl=0 with/without fixes) → corpus guard + corpus sync `@8c58f846`. The GPU cupy battery was CANCELLED
+  (~13h/seed serial, blocked 17 GPU lane jobs).
 - **⚠️ POOL/AWS BRAIN ASSETS:** pool nodes lack bridges/ (25G local) + most data/ (11G local) → production brain_chat
   runs there may DEGENERATE like AWS did. Do NOT trust a pool brain_chat result until the infra lane's sanity check passes.
 - **LESSONS (new):** never SendMessage a Workflow subagent (it resumes the agent as a duplicate in the same worktree;
