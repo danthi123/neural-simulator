@@ -111,19 +111,43 @@ def _staged_files():
         return []
 
 
+# .md paths that are THEMSELVES a research-status signal -- exactly the "research/findings, no sim/" carve-out
+# the docstring below already named -- so a staged change to one of these must NOT count as infra-only, even
+# though it ends in ".md". `research/findings/*.md` is a research artifact; GAP_CLOSURE_MISSION.md/ROADMAP.md
+# are the board/roadmap that record whether ready work exists and whether something was "queued" -- exempting
+# them would let a commit that only EDITS THE BOARD (e.g. claiming a lane was served) pass as compute-neutral
+# without ever having queued anything (2026-09-23 review fix: the original check exempted ANY `.md`, which
+# covered exactly these three paths despite the docstring already saying they should not be exempt).
+_NON_INFRA_MD = ("GAP_CLOSURE_MISSION.md", "ROADMAP.md")
+
+
+def _is_research_status_md(p):
+    if p in _NON_INFRA_MD:
+        return True
+    return p.startswith("research/findings/") and p.endswith(".md")
+
+
 def _is_infra_only(staged):
-    """A non-empty staged set that touches ONLY tools/**, tests/** or **/*.md -- no research/runners, no
-    research/findings, no sim/. This gate blocks on a project-wide READY-RESEARCH-WORK signal (idle pool/GPU
-    next to a roadmap backlog); a commit that adds no research artifact and queues no research job has no
-    bearing on that allocation, exactly the reasoning `gates/lane_starvation._is_doc_only` already established
-    for markdown-only commits (2026-08-06/07) -- generalised here to the two other paths a compute-lane-neutral
-    commit lives in. Landed 2026-09-23 while closing the waiver loophole itself: this gate's OWN infra fix
-    tripped it (a live, GENUINE 14.5-day idle-compute signal, not a test artifact -- see the commit message),
-    which is exactly the false-positive shape this exemption removes without weakening the real check."""
+    """A non-empty staged set that touches ONLY tools/**, tests/** or a GENERIC **/*.md (README, docs/,
+    CLAUDE.md, ...) -- no research/runners, no research/findings, no sim/, and no board/roadmap file that
+    itself records research status. This gate blocks on a project-wide READY-RESEARCH-WORK signal (idle
+    pool/GPU next to a roadmap backlog); a commit that adds no research artifact and queues no research job has
+    no bearing on that allocation, exactly the reasoning `gates/lane_starvation._is_doc_only` already
+    established for markdown-only commits (2026-08-06/07) -- generalised here to the two other paths a
+    compute-lane-neutral commit lives in. Landed 2026-09-23 while closing the waiver loophole itself: this
+    gate's OWN infra fix tripped it (a live, GENUINE 14.5-day idle-compute signal, not a test artifact -- see
+    the commit message), which is exactly the false-positive shape this exemption removes without weakening
+    the real check. NARROWED same day (review fix): the first cut of this exemption accepted ANY `.md`,
+    including `research/findings/*.md` and the board/roadmap files -- exactly the two exclusions this
+    docstring already named but the code did not enforce."""
     if not staged:
         return False
     for p in staged:
-        if p.endswith(".md") or p == ".gitignore":
+        if p == ".gitignore":
+            continue
+        if p.endswith(".md"):
+            if _is_research_status_md(p):
+                return False
             continue
         if p.startswith("tools/") or p.startswith("tests/"):
             continue
@@ -185,4 +209,18 @@ def selftest():
         bad.append("BROKEN GUARD: a mixed tools+research staged set was treated as infra-only")
     if _is_infra_only([]):
         bad.append("BROKEN GUARD: an EMPTY staged set was treated as infra-only (would exempt every commit)")
+    # 2026-09-23 review fix: a research/findings/*.md or board/roadmap .md must NOT be swept into the generic
+    # ".md is always infra-only" bucket -- each of these IS a research-status signal.
+    if _is_infra_only(["research/findings/2026-09-23-some-result.md"]):
+        bad.append("LOOPHOLE STILL OPEN: a research/findings/*.md-only staged set was treated as infra-only "
+                   "(a finding is a research artifact, not compute-neutral infra)")
+    if _is_infra_only(["GAP_CLOSURE_MISSION.md"]):
+        bad.append("LOOPHOLE STILL OPEN: a GAP_CLOSURE_MISSION.md-only staged set was treated as infra-only "
+                   "(the board records research status; editing it is not compute-neutral)")
+    if _is_infra_only(["ROADMAP.md"]):
+        bad.append("LOOPHOLE STILL OPEN: a ROADMAP.md-only staged set was treated as infra-only")
+    # NEGATIVE: a genuinely generic doc (README/docs/CLAUDE.md) alongside tools/tests must stay exempt --
+    # the narrowing must not regress the original infra-only exemption for ordinary documentation.
+    if not _is_infra_only(["tools/waiver_history.py", "docs/FAILURE_GATE_MATRIX.md", "CLAUDE.md"]):
+        bad.append("FALSE POSITIVE: narrowing the .md exemption also swept in genuinely generic docs")
     return bad

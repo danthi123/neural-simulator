@@ -32,6 +32,13 @@ import waiver_history
 ROOT = "/home/dant123/Projects/sim"
 POOL = ["pool40", "pool41", "pool42"]
 VIK = os.path.join(ROOT, "tools", "vikunja.sh")
+# (print label, gate NAME, waiver file). The gate NAME must equal `gates.compute_idle_persistent.NAME` /
+# `gates.lane_starvation.NAME` EXACTLY -- see the WAIVER SURFACING comment in main() for why (2026-09-23
+# review fix: a mismatched ad hoc label here double-counted the shared renewal budget).
+WAIVER_SOURCES = (
+    ("compute", "compute-idle-persistent", os.path.join(ROOT, "research", "queue", ".parallel_compute_waiver")),
+    ("lane", "lane-starvation", os.path.join(ROOT, "research", "queue", ".lane_waiver")),
+)
 # Every subagent (however it was spawned) gets a transcript at <session>/subagents/**/agent-<id>.jsonl.
 # A standalone Agent-tool call's transcript sits directly under subagents/; a Workflow's agent() call
 # (a .claude/workflows/*.js fan-out, or an ad-hoc workflow script) writes its transcript one level deeper,
@@ -200,18 +207,26 @@ def main():
     # cycle it is active, valid or not, so an open escape hatch stays visible on its own line.
     # Mirrors gates/compute_idle_persistent.WAIVER_MAX_H and gates/lane_starvation.LANE_WAIVER_MAX_H (both 6h);
     # not imported directly to avoid this heartbeat script depending on the gates package's own sys.path setup.
+    #
+    # The `_gate_name` values below MUST equal the actual gates' own `NAME` (compute_idle_persistent.NAME /
+    # lane_starvation.NAME) EXACTLY -- `waiver_history`'s history dedup + budget accounting key on
+    # (gate_name, path). REVIEW FIX (2026-09-23): this loop used to pass its own ad hoc "compute"/"lane" print
+    # labels straight through as the gate_name, so THIS script's heartbeat-cadence reads (every ~15 min) wrote
+    # a SEPARATE, distinctly-keyed history row for the identical waiver file that the real commit-time gate
+    # ALSO records under its own NAME -- silently double-charging the shared 6h/24h renewal budget every time
+    # both this script and a commit happened to read the same live waiver. `WAIVER_SOURCES` keeps the print
+    # label (short, human) and the gate name (must match the gate) as separate fields so this cannot drift
+    # apart again without a visible diff, and `tests/test_waiver_history.py` asserts the two gate-name
+    # strings equal `compute_idle_persistent.NAME` / `lane_starvation.NAME` live.
     _WAIVER_MAX_H = 6
-    for _label, _path in (
-        ("compute", os.path.join(ROOT, "research", "queue", ".parallel_compute_waiver")),
-        ("lane", os.path.join(ROOT, "research", "queue", ".lane_waiver")),
-    ):
+    for _print_label, _gate_name, _path in WAIVER_SOURCES:
         try:
-            _v = waiver_history.evaluate(_label, _path, _WAIVER_MAX_H, now_ts=now_ts)
+            _v = waiver_history.evaluate(_gate_name, _path, _WAIVER_MAX_H, now_ts=now_ts)
         except Exception:
             _v = {"active": False}
         _d = waiver_history.describe(_v)
         if _d:
-            print("   🗒  %s waiver OPEN — %s" % (_label, _d))
+            print("   🗒  %s waiver OPEN — %s" % (_print_label, _d))
     if under:
         why = []
         if under_agents:
