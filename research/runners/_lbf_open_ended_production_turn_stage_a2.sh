@@ -19,7 +19,9 @@ LOG=$A2/logs
 ID=$A2/flag_off_identity
 mkdir -p "$LOG" "$ID" "$A2/default" "$A2/oe_routed_full"
 export XDG_RUNTIME_DIR=${XDG_RUNTIME_DIR:-/run/user/$(id -u)}
-PYABS=$(readlink -f .venv/bin/python)
+# NOT readlink -f: resolving the venv's python symlink lands on the system /usr/bin/python3.11 and drops the venv
+# (first launch 2026-09-23: every identity dump died "No module named 'fastapi'"; the compares correctly read UNDEFINED).
+PYABS="$(pwd)/.venv/bin/python"
 ENVS=(env SIM_BACKEND=numpy CUDA_VISIBLE_DEVICES= OMP_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2 MKL_NUM_THREADS=2)
 PROBE=(.venv/bin/python -u -m research.runners._lbf_open_ended_production_turn_probe)
 ident=research/runners/_lbf_oe_route_flag_off_identity.py
@@ -42,6 +44,11 @@ lane_identity() {
     --b-sha 4c141b8e8 --out "$ID/verdict_control_pre_vs_pre.json" >> "$LOG/identity.log" 2>&1
 }
 
+if [ "${3:-}" = "identity-only" ]; then        # re-run just lane I (e.g. after the first launch's venv bug)
+  wait_mem 5
+  lane_identity
+  exit 0
+fi
 wait_mem 5
 lane_identity &
 P_I=$!
