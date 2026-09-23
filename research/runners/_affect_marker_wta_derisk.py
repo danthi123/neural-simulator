@@ -123,6 +123,48 @@ RUN_STEPS = 60
 # `spiking_mouth_recall_prod.py` (a genuine rate-vs-rate separation requirement, not a bare host threshold).
 DEAD_MARGIN = 0.05
 
+# ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
+# SETTLE MODE (2026-09-23, D1 lane "grow the robust core"; DEFAULT-OFF, `BRAIN_AFFECT_MARKER_SETTLE=1`).
+#
+# The wall (measured, `research/findings/raw/_lbf_borderline_isolated/op_s*.json`): on the 'emo' conversational
+# turn the felt mood lands at +0.064..+0.071 -- ON the +2/+3 register boundary (+0.07125) -- and the WTA reports
+# "no clean winner" on 5/6 seeds -> no marker -> affect-marker is load-bearing 1/6. Asking "what does the real
+# circuit run alongside this that we replaced with a constant?" and READING the substrate found TWO constants that
+# truncate processes the biology lets run to completion (NEITHER is the competition's own wiring):
+#
+#  (1) THE DELIBERATION TIME (`WARMUP_STEPS=60` ms). A lateral-inhibition competition between two NEAR-EQUAL inputs
+#      resolves SLOWLY -- the closer the evidence, the longer the race takes (reaction time grows as the evidence
+#      difference shrinks: Roitman & Shadlen 2002, J Neurosci 22:9475, LIP; Wang 2002, Neuron 36:955, the
+#      recurrent-inhibition decision circuit's decision time lengthens toward low coherence). Measured (calibration
+#      seed 7, mood exactly ON the +2/+3 boundary, UNCHANGED circuit): after 60 ms the two pools are still both
+#      firing (0.056 vs 0.019 -> dead-zone); after 300 ms the competition HAS resolved (0.138 vs 0.000). The circuit
+#      could always choose -- the read simply stopped it mid-race. SETTLE mode gives it a deliberation window
+#      (DELIBERATION_MS) fixed by a pre-registered circuit-level criterion (below), not by the load-bearing outcome.
+#
+#  (2) THE INTER-TURN INTERVAL (`WASHOUT_STEPS=40` ms). The reader is process-warm and the simulated circuit only
+#      advances while it is being read, so between two conversational turns (seconds of real time) it relaxed for
+#      only 40 ms. Measured (seed 42, mood +0.0682, unchanged circuit): read#1 on a fresh bridge margin 0.114;
+#      read#2 after a 40 ms washout 0.035-0.045 (slow state left by the previous read has not relaxed); with a
+#      >=1000 ms rest every read reproduces 0.114. The brain does not freeze between utterances; SETTLE mode lets
+#      the circuit relax at rest (zero drive) for a physiological inter-utterance interval (INTERTURN_REST_MS)
+#      before each read. Host role = the CLOCK only; the relaxation is the neurons' own dynamics.
+#
+# Nothing about the competition's wiring, weights, tuning, drive or the DEAD_MARGIN read changes. DELIBERATION_MS
+# is the SHORTEST window on a fixed grid that satisfies a pre-registered circuit-level design criterion on
+# CALIBRATION seeds disjoint from the 6 verification seeds (`_affect_marker_settle_derisk.py --calibrate`):
+# commit at every register BOUNDARY (winner one of the two adjacent registers), pick the right register at every
+# CENTER, stay "no clean winner" under the baseline-only (lesion) drive, and give the same answer on a repeat read.
+# ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
+SETTLE_ENV = "BRAIN_AFFECT_MARKER_SETTLE"
+DELIBERATION_MS = 300       # fixed by the calibration record (see finding); NOT fitted to the 'emo' turn
+INTERTURN_REST_MS = 1000    # physiological inter-utterance rest (>= the measured full-relaxation point)
+
+
+def settle_enabled() -> bool:
+    """`BRAIN_AFFECT_MARKER_SETTLE` truthy -> SETTLE mode (see block above). Unset/false -> the byte-identical
+    pre-existing read (60 ms warmup, 40 ms washout)."""
+    return os.environ.get(SETTLE_ENV, "0").strip().lower() in ("1", "true", "on", "yes")
+
 
 def _region(name, n, *, exc_fraction, neuron_type, internal_density=0.0):
     from sim.regions import BrainRegion
@@ -239,8 +281,19 @@ class AffectMarkerWTA:
     """A process-warm, lazily-built pair of spiking lateral-inhibition WTA circuits: one over the 6 valence
     registers (Wonderful..Frankly), one over the 2 arousal registers (measured/emphatic). Cached per seed."""
 
-    def __init__(self, seed: int = 42):
+    def __init__(self, seed: int = 42, *, settle: Optional[bool] = None, deliberation_ms: Optional[int] = None,
+                 rest_ms: Optional[int] = None):
         self.seed = int(seed)
+        # SETTLE mode (default: read from the env flag at construction -> OFF unless BRAIN_AFFECT_MARKER_SETTLE is
+        # set). The two windows are overridable only so the de-risk can run its calibration + attribution arms;
+        # production never passes them. OFF => WARMUP_STEPS / WASHOUT_STEPS, the byte-identical pre-existing read.
+        self.settle = settle_enabled() if settle is None else bool(settle)
+        if self.settle:
+            self.warmup = DELIBERATION_MS if deliberation_ms is None else int(deliberation_ms)
+            self.washout = INTERTURN_REST_MS if rest_ms is None else int(rest_ms)
+        else:
+            self.warmup = WARMUP_STEPS if deliberation_ms is None else int(deliberation_ms)
+            self.washout = WASHOUT_STEPS if rest_ms is None else int(rest_ms)
         self._v_bridge = self._v_idx = self._v_fsi = None
         self._a_bridge = self._a_idx = self._a_fsi = None
 
@@ -291,7 +344,7 @@ class AffectMarkerWTA:
         self._ensure_valence()
         r = self._select(self._v_bridge, self._v_idx, mood, MOOD_CENTERS, MOOD_SIGMA,
                          lesion=lesion, shuffle=shuffle, dead_margin=dead_margin,
-                         warmup=WARMUP_STEPS, washout=WASHOUT_STEPS, run=RUN_STEPS)
+                         warmup=self.warmup, washout=self.washout, run=RUN_STEPS)
         level = LEVEL_ORDER[r.winner_slot] if r.winner_slot is not None else None
         meta = {"winner_pool": r.winner_pool, "margin": r.margin, "lesioned": bool(lesion), "shuffled": bool(shuffle)}
         return level, r.rates, meta
@@ -301,7 +354,7 @@ class AffectMarkerWTA:
         self._ensure_arousal()
         r = self._select(self._a_bridge, self._a_idx, felt_arousal, AROUSAL_CENTERS, AROUSAL_SIGMA,
                          lesion=lesion, shuffle=shuffle, dead_margin=dead_margin,
-                         warmup=WARMUP_STEPS, washout=WASHOUT_STEPS, run=RUN_STEPS)
+                         warmup=self.warmup, washout=self.washout, run=RUN_STEPS)
         high = bool(r.winner_slot == 1) if r.winner_slot is not None else None
         meta = {"winner_pool": r.winner_pool, "margin": r.margin, "lesioned": bool(lesion), "shuffled": bool(shuffle)}
         return high, r.rates, meta
@@ -313,10 +366,13 @@ _READERS: dict = {}
 
 
 def get_reader(seed: int = 42) -> AffectMarkerWTA:
-    r = _READERS.get(int(seed))
+    # Keyed by seed when SETTLE mode is OFF (the pre-existing key -> byte-identical cache behaviour); keyed by
+    # (seed, "settle") when ON so a process that toggles the flag never reuses a reader configured the other way.
+    key = (int(seed), "settle") if settle_enabled() else int(seed)
+    r = _READERS.get(key)
     if r is None:
         r = AffectMarkerWTA(seed=seed)
-        _READERS[int(seed)] = r
+        _READERS[key] = r
     return r
 
 
