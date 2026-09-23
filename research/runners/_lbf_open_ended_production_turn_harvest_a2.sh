@@ -8,6 +8,9 @@
 #     reply-equality check against default).
 #   bash research/runners/_lbf_open_ended_production_turn_harvest_a2.sh [original_worktree_root]
 set -uo pipefail
+# SUPERSEDED (amendment 3, eefdd666a): it copies from staging worktrees whose runs were killed (no seed 43+ default
+# output exists). Use research/runners/_lbf_open_ended_production_turn_harvest_a3.sh.
+[ "${OEP_A2_LOCAL_ALLOWED:-0}" = 1 ] || { echo "SUPERSEDED: use research/runners/_lbf_open_ended_production_turn_harvest_a3.sh" >&2; exit 2; }
 cd "$(dirname "$0")/../.."
 ORIG=${1:-/home/dant123/Projects/sim/.claude/worktrees/wf_6cf1082d-b06-2}
 BASE=research/findings/raw/_load_bearing/_oe_production_turn

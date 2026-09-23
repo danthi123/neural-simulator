@@ -5,6 +5,8 @@
 #   bash research/runners/_lbf_open_ended_production_turn_stage.sh <mode> [parallel]
 # Pre-registration: docs/plans/2026-09-23-open-ended-production-turn-lb-PREREG.md (+ amendment 1).
 set -euo pipefail
+# SUPERSEDED (amendment 3, eefdd666a): runs full brains locally under the withdrawn statistic. Use _stage_a3_pool.sh.
+[ "${OEP_A2_LOCAL_ALLOWED:-0}" = 1 ] || { echo "SUPERSEDED: use research/runners/_lbf_open_ended_production_turn_stage_a3_pool.sh" >&2; exit 2; }
 cd "$(dirname "$0")/../.."
 MODE=${1:?mode}
 PAR=${2:-2}

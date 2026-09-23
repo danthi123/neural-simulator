@@ -11,6 +11,9 @@
 #   bash research/runners/_lbf_open_ended_production_turn_stage_a2.sh <pre_tree> <post_tree>
 # where <pre_tree>/<post_tree> are clean `git archive` extractions of 4c141b8e8 / 8c5d7b03a.
 set -uo pipefail
+# SUPERSEDED (amendment 3, eefdd666a): the amendment-2 statistic is degenerate and this script runs full brains on the
+# RAM-bound local box. Kept only as the launcher record of the identity dumps. Use _stage_a3_pool.sh.
+[ "${OEP_A2_LOCAL_ALLOWED:-0}" = 1 ] || { echo "SUPERSEDED: use research/runners/_lbf_open_ended_production_turn_stage_a3_pool.sh" >&2; exit 2; }
 cd "$(dirname "$0")/../.."
 PRE=${1:?pre tree (git archive of 4c141b8e8)}
 POST=${2:?post tree (git archive of 8c5d7b03a)}
