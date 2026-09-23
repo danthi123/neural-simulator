@@ -83,6 +83,12 @@ AMENDMENT LOG
   grid, MARGINAL_FRAC, FLIP_FRAC and MIN_FLIPS were chosen knowing the v1 seed-42 production-strength saturation
   above (that is WHY the gate reads verdicts at a marginal strength), not from any v2 measurement. The v1 X-arm
   jobs dispatched at bfc6978 measure the superseded instrument; `aggregate` ignores their X checks.
+  2026-09-23 12:55 EDT (PATH ONLY, no threshold / rule / code change; nothing v2 seen except the 2-organ seed-7
+  instrument smoke in a1a5d3e7c). The v2 arm-X pool jobs (revision c6fdf7be7) write to the `xv2/` subdirectory
+  (own output dir per arm), so the literal scoring command becomes:
+    python -m research.runners._onebrain_affect_pool_verify --aggregate \
+      'research/findings/raw/_onebrain_affect_pool/verify_M_seed*.json' \
+      'research/findings/raw/_onebrain_affect_pool/xv2/verify_X_seed*.json'
 
 COMPUTE: numpy CPU, ~7.7k-neuron pools (a few GB; the surprise organ's on-pool training dominates, ~11 min per
 pool build on one core). Pool nodes: one seed x one arm per queue line.
@@ -93,7 +99,9 @@ pool build on one core). Pool nodes: one seed x one arm per queue line.
   SIM_BACKEND=numpy python -u -m research.runners._onebrain_affect_pool_verify --calibrate --seeds 7 \
       --json research/findings/raw/_onebrain_affect_pool/calibrate_v2_seed7.json     # DIAGNOSTIC only
 Aggregate (the literal GO-gate command; a seed needs BOTH arms, a missing check is NOT a pass):
-  python -m research.runners._onebrain_affect_pool_verify --aggregate 'research/findings/raw/_onebrain_affect_pool/verify_*_seed*.json'
+  python -m research.runners._onebrain_affect_pool_verify --aggregate \
+      'research/findings/raw/_onebrain_affect_pool/verify_M_seed*.json' \
+      'research/findings/raw/_onebrain_affect_pool/xv2/verify_X_seed*.json'     # (path amended, see LOG)
 """
 from __future__ import annotations
 

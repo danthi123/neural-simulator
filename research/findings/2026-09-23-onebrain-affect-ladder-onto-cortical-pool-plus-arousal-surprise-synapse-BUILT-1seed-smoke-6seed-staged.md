@@ -156,8 +156,16 @@ This shows the instrument runs and reads at the production operating point. It i
 
 ## The GO gate (pre-registered in the runner docstring, not yet scored)
 
-The literal command is the `--aggregate` line in the runner's docstring. It runs over the per-seed `verify_M_seed*`
-and `verify_X_seed*` JSON files in the `_onebrain_affect_pool` raw directory; those files do not exist yet.
+The literal command is the `--aggregate` line in the runner's docstring:
+
+```
+python -m research.runners._onebrain_affect_pool_verify --aggregate \
+    'research/findings/raw/_onebrain_affect_pool/verify_M_seed*.json' \
+    'research/findings/raw/_onebrain_affect_pool/xv2/verify_X_seed*.json'
+```
+
+Those files do not exist yet. ARM M runs at revision `bfc6978` (its code path is unchanged since). The v2 ARM X runs
+and the seed-7 diagnostic sweep (`calv2/`) run at revision `c6fdf7be7`. Both are in the mini-PC pool queue.
 `aggregate` ignores arm-X checks from any record without the v2 `x_instrument` tag.
 
 GO needs every one of M1-M7, X0-X2 and I1-I7 to hold on all 6 seeds. A missing arm counts as not passed.
