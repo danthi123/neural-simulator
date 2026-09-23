@@ -109,14 +109,42 @@ SEEDS6 = [42, 43, 44, 100, 101, 102]
 # vs "the wolf hunts the deer") because the ack render reads the engram-derived known sets -- the brain acknowledging
 # a sentence it did not retain, not a parse failure (recalled_svo + abstained identical). The prune variant adds
 # BRAIN_D6_ENGRAM_PRUNE=1 (an in-conversation encode that forms no engram is retracted from kb). Its gate is C1..C7
-# with ONE pre-declared change: C4's teach-turn equality compares the PARSE fields (`abstained`, `recalled_svo`)
-# only, not the ack text (the d2 read-intact equality and the lever condition are unchanged). Arm dir:
-# _d6_learn_through_use_prune.
+# with ONE change: C4's teach-turn equality compares the PARSE fields (`abstained`, `recalled_svo`) only, not the ack
+# text (the d2 read-intact equality and the lever condition are unchanged). Arm dir: _d6_learn_through_use_prune.
+#
+# ── AMENDMENT LOG ────────────────────────────────────────────────────────────────────────────────────────────────
+# 2026-09-23T15:53Z (fix round after the adversarial review of 387d96a5b). Results SEEN at the time of this amendment:
+#   base s42 (all 5 arms, NO-GO on C3); engram s42 (all 5 arms, NO-GO on C3 + C4-teach-ack); prune s42 USE_H and
+#   USE_H_REP arm files only (no FREEZE_H/SHUF_H/USE_D prune arm yet, no prune verdict); base-variant pool partial arms
+#   (s43/s100 USE_H + USE_H_REP on pool42; pool41 unreachable). No `readtime` result exists.
+#   A1. The prune variant's C4 relaxation (parse-only teach check) was NOT a design made blind: it was written AFTER
+#       the engram s42 FREEZE_H teach ack ("The wolf hunts deer.") had been seen to fail C4. It is REVERTED: every
+#       variant is scored under the ORIGINAL C4 (full teach-turn decision equality). The parse-only figure is still
+#       computed and reported as `C4_parse_posthoc`, labelled post-hoc; it never enters a verdict.
+#   A2. The prune variant is BANKED AS AN INVALID INSTRUMENT for C3 (its lesion arm runs a host retraction that the
+#       treatment arm never runs, so a C3 pass cannot show that plasticity carries the reply change). Its 6 pool lines
+#       were dequeued. Its s42 smoke (already running) may still be scored, under the original C4, as a diagnostic.
+#   A3. NEW variant `readtime` with its OWN gate v2, pre-registered in
+#       research/findings/2026-09-23-d6-learn-through-use-v2-PREREGISTRATION-readtime-view-and-engram-ablation.md,
+#       committed in its own commit before any readtime run. It is the variant the 6-seed run is staged for.
+# ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+# VARIANT "readtime" (gate v2 -- see the PREREGISTRATION finding above). Flags on every Hebbian arm:
+# BRAIN_D6_ENGRAM_VOCAB=1 + BRAIN_D6_ENGRAM_READTIME=1 (NO prune: no host record is ever deleted; every kb reader
+# consults the engram at read time; the start-of-turn re-read runs in every arm, so the lesion arms differ from the
+# treatment arm ONLY in their synapses). Adds arm ABL_H: USE_H's configuration, plus -- after the teach turn -- the
+# experimenter zeroes the taught block's synapses (post-hoc engram ablation, the kb record left intact).
 VARIANTS = {"base": {}, "engram": {"BRAIN_D6_ENGRAM_VOCAB": "1"},
-            "prune": {"BRAIN_D6_ENGRAM_VOCAB": "1", "BRAIN_D6_ENGRAM_PRUNE": "1"}}
+            "prune": {"BRAIN_D6_ENGRAM_VOCAB": "1", "BRAIN_D6_ENGRAM_PRUNE": "1"},
+            "readtime": {"BRAIN_D6_ENGRAM_VOCAB": "1", "BRAIN_D6_ENGRAM_READTIME": "1"}}
+ABL_ARM = "ABL_H"   # readtime variant only: USE_H + post-hoc ablation of the taught block after the teach turn
+
+
+def arm_names(variant):
+    return list(ARMS) + ([ABL_ARM] if variant == "readtime" else [])
 
 
 def arms_for(variant):
+    """{name: (env, teach, ablate_after_teach)} for a variant."""
     extra = VARIANTS[variant]
     out = {}
     for name, (env, teach) in ARMS.items():
@@ -125,12 +153,19 @@ def arms_for(variant):
             e.update(extra)
         else:
             e.update({k: "0" for k in extra})               # explicit OFF, never a pop
-        out[name] = (e, teach)
+        out[name] = (e, teach, False)
+    if variant == "readtime":
+        out[ABL_ARM] = (dict(out["USE_H"][0]), TEACH_USE, True)   # identical to USE_H + the post-hoc ablation
     return out
 
 
 # ── worker: ONE fresh brain, the session's turns through the real handler, + the taught block's learned |w| ───────
-def _worker(env_json, teach, out_path):
+def _composer(S):
+    chat = S._BRAIN_CHATS.get((SESSION, "tiny-demo", "stub"))
+    return getattr(getattr(chat, "inner", None), "composer", None)
+
+
+def _worker(env_json, teach, out_path, ablate_after_teach=False):
     os.environ.setdefault("SIM_BACKEND", "numpy")
     os.environ.setdefault("BRAIN_CHAT_RENDERER", "stub")
     os.environ.setdefault("SIM_DISABLE_LLM", "1")
@@ -140,7 +175,10 @@ def _worker(env_json, teach, out_path):
     from webapp.server import brain_chat, BrainChatRequest
     t0 = time.time()
     out = {"env": json.loads(env_json), "teach": teach, "seed": os.environ.get("BRAIN_CHAT_SEED"),
-           "backend": os.environ.get("SIM_BACKEND"), "turns": {}, "taught_block": None}
+           "backend": os.environ.get("SIM_BACKEND"), "turns": {}, "taught_block": None,
+           "ablate_after_teach": bool(ablate_after_teach), "ablation": None,
+           "store_writes_after_teach": None, "taught_block_at_probe": None, "d6_ops": None}
+    writes_after_teach = []
     for i, (label, msg) in enumerate(TURNS):
         m = teach if label == "teach" else msg
         try:
@@ -151,6 +189,26 @@ def _worker(env_json, teach, out_path):
             out["turns"][label] = {"_error": "%s: %s" % (type(e).__name__, e)}
         if label == "teach":
             out["taught_block"] = _taught_block_record(S, teach)
+            comp = _composer(S)
+            if ablate_after_teach:                          # ABL_H: the experimenter's post-hoc engram ablation
+                from research.runners.d6_hebbian_store import ablate_block
+                blk = (out["taught_block"] or {}).get("block")
+                out["ablation"] = (ablate_block(comp, blk) if (comp is not None and blk is not None)
+                                   else {"error": "taught block not found; ablation not applied"})
+            # INSTRUMENT (lesion persistence): count every store write after the teach turn. Any write in a lesion arm
+            # (e.g. reconsolidation's direct-copy `update_on_mismatch`, which bypasses the freeze) voids the lesion.
+            if comp is not None and hasattr(comp, "_write_block"):
+                _orig = comp._write_block
+
+                def _counted(bi, zc, _o=_orig):
+                    writes_after_teach.append(int(bi))
+                    return _o(bi, zc)
+                comp._write_block = _counted
+        if label == "probe":                                # the lever read AT MEASUREMENT TIME, not only at teach
+            out["taught_block_at_probe"] = _taught_block_record(S, teach)
+    out["store_writes_after_teach"] = list(writes_after_teach)
+    comp = _composer(S)
+    out["d6_ops"] = dict(getattr(comp, "_d6_ops", {}) or {}) if comp is not None else None
     out["elapsed_s"] = round(time.time() - t0, 1)
     os.makedirs(os.path.dirname(out_path) or ".", exist_ok=True)
     json.dump(out, open(out_path, "w"), indent=2, default=str)
@@ -162,8 +220,7 @@ def _taught_block_record(S, teach):
     """Read the just-taught fact's block off the composer: its index, learned mean |w| over the D trigger->readout
     synapses (the LEVER: ~1 plastic, 0 frozen), and the rule's own encode diag. Read-only."""
     try:
-        chat = S._BRAIN_CHATS.get((SESSION, "tiny-demo", "stub"))
-        comp = getattr(getattr(chat, "inner", None), "composer", None)
+        comp = _composer(S)
         agent = teach.split()[1]
         idx = None
         for j, (f, _h) in enumerate(getattr(comp, "kb", []) or []):
@@ -187,10 +244,11 @@ def _taught_block_record(S, teach):
         return {"found": False, "error": "%s: %s" % (type(e).__name__, e)}
 
 
-def _spawn(env, teach, out_path, seed):
+def _spawn(env, teach, out_path, seed, ablate=False):
     penv = dict(os.environ); penv["BRAIN_CHAT_SEED"] = str(seed)
     p = subprocess.run([sys.executable, "-u", "-m", "research.runners.d6_learn_through_use_lb", "--worker",
-                        "--env", json.dumps(env), "--teach", teach, "--out", out_path], env=penv)
+                        "--env", json.dumps(env), "--teach", teach, "--out", out_path]
+                       + (["--ablate-after-teach"] if ablate else []), env=penv)
     if p.returncode != 0 or not os.path.exists(out_path):
         return None
     return json.load(open(out_path))
@@ -218,13 +276,19 @@ def _recalls(arm, label, word):
 
 
 def score_seed(arms, variant="base"):
-    """Apply the pre-registered C1..C7 to one seed's arms dict {name: arm_json|None}. Returns the per-seed record."""
+    """Apply the pre-registered gate to one seed's arms dict {name: arm_json|None}. base/engram/prune: C1..C7 (v1;
+    since AMENDMENT A1 every variant uses the ORIGINAL C4). readtime: gate v2 (C1..C7 + C3b ablation + C4 lever read
+    at probe time + no store writes after teach in the lesion arms), per the v2 PREREGISTRATION finding."""
     from tools.lab import attributable_to, undefined_if_empty, void_if
-    rec = {"criteria": {}, "void_arms": [], "go": None}
-    for name in ARMS:
+    rec = {"criteria": {}, "void_arms": [], "go": None, "variant": variant,
+           "gate": "v2" if variant == "readtime" else "v1"}
+    for name in arm_names(variant):
         a = arms.get(name)
         bad = a is None or any("_error" in (a.get("turns") or {}).get(lbl, {"_error": "missing"})
                                for lbl, _ in TURNS)
+        if variant == "readtime" and name == ABL_ARM and not bad:
+            abl = a.get("ablation") or {}
+            bad = ("error" in abl) or abl.get("mean_abs_w_after") is None
         if void_if(bad, "arm %s missing / errored" % name):
             rec["void_arms"].append(name)
     if rec["void_arms"]:
@@ -237,27 +301,53 @@ def score_seed(arms, variant="base"):
     c["C1_learns"] = _recalls(U, "probe", "deer")
     c["C2_use_changes_reply"] = (_dec(U, "probe") != _dec(SH, "probe")) and not _recalls(SH, "probe", "deer")
     c["C3_freeze_removes"] = (not _recalls(F, "probe", "deer")) and (_dec(F, "probe") == _dec(SH, "probe"))
-    tbU, tbF = (U.get("taught_block") or {}), (F.get("taught_block") or {})
+    if variant == "readtime":
+        A = arms[ABL_ARM]
+        c["C3b_ablation_removes"] = (not _recalls(A, "probe", "deer")) and (_dec(A, "probe") == _dec(SH, "probe"))
+    # lever: v1 reads the taught block right after the teach turn; v2 reads it AT PROBE TIME (the measurement moment)
+    key = "taught_block_at_probe" if variant == "readtime" else "taught_block"
+    tbU, tbF = (U.get(key) or {}), (F.get(key) or {})
     wU, wF = tbU.get("mean_abs_w"), tbF.get("mean_abs_w")
     lever_moved = (wU is not None and wF is not None and wU > 0.5 and wF == 0.0)
-    if variant == "prune":   # pre-declared: the teach-turn check compares the PARSE, not the ack text
-        teach_same = all(_dec(F, "teach").get(k) == _dec(U, "teach").get(k) for k in ("abstained", "recalled_svo"))
-    else:
-        teach_same = (_dec(F, "teach") == _dec(U, "teach"))
-    c["C4_write_only"] = (teach_same and (_dec(F, "d2") == _dec(U, "d2")) and lever_moved)
+    teach_same = (_dec(F, "teach") == _dec(U, "teach"))            # ORIGINAL C4 (AMENDMENT A1: relaxation reverted)
+    c4 = teach_same and (_dec(F, "d2") == _dec(U, "d2")) and lever_moved
+    if variant == "readtime":
+        A = arms[ABL_ARM]
+        wA = (A.get(key) or {}).get("mean_abs_w")
+        abl_lever = (wA == 0.0) and (_dec(A, "teach") == _dec(U, "teach")) and (_dec(A, "d2") == _dec(U, "d2"))
+        writes_clean = all((arms[k].get("store_writes_after_teach") == []) for k in ("FREEZE_H", ABL_ARM))
+        c4 = c4 and abl_lever and writes_clean
+        rec["lever_ablation"] = {"mean_abs_w_at_probe": wA, "ablation": A.get("ablation"), "moved": abl_lever,
+                                 "store_writes_after_teach": {k: arms[k].get("store_writes_after_teach")
+                                                             for k in arm_names(variant)}}
+    c["C4_write_only"] = c4
+    # POST-HOC, NON-SCORING (AMENDMENT A1): the parse-only teach check the prune variant had used. Reported, never scored.
+    rec["C4_parse_posthoc"] = (all(_dec(F, "teach").get(k) == _dec(U, "teach").get(k)
+                                   for k in ("abstained", "recalled_svo"))
+                               and (_dec(F, "d2") == _dec(U, "d2")) and lever_moved)
     c["C5_specific"] = _recalls(SH, "xprobe", "berry") and not _recalls(U, "xprobe", "berry")
     null_diffs = sum(_dec(U, lbl) != _dec(R, lbl) for lbl, _ in TURNS)
     c["C6_deterministic"] = (null_diffs == 0)
     c["C7_no_regression"] = all(_dec(DR, lbl) == _dec(U, lbl) for lbl in ("teach", "d2", "probe", "xprobe"))
+    # INTEGRITY SMOKE (not a criterion; pass-by-construction when prune is off): the lesion arms ran no host step the
+    # treatment arm did not run -- no retraction anywhere, and (readtime) the start-of-turn re-read ran in every Hebbian arm.
+    ops = {k: (arms[k].get("d6_ops") or {}) for k in arm_names(variant)}
+    rec["integrity"] = {"d6_ops": ops,
+                        "no_retractions": all(o.get("retractions", 0) == 0 for o in ops.values())}
+    if variant == "readtime":
+        rec["integrity"]["turn_refresh_every_hebbian_arm"] = all(
+            ops[k].get("turn_refreshes", 0) == len(TURNS) for k in arm_names(variant) if k != "USE_D")
     # attribution: treatment = the use->probe change (1 if USE vs SHUF probe differ); control = the null (rebuild).
     treat = 1.0 if _dec(U, "probe") != _dec(SH, "probe") else 0.0
     ctrl = 1.0 if _dec(U, "probe") != _dec(R, "probe") else 0.0
     rec["attributable_to_use"] = attributable_to("d6 use->probe change vs null rebuild", treat, ctrl)
-    rec["lever"] = {"learned_mean_abs_w_plastic": wU, "learned_mean_abs_w_frozen": wF, "moved": lever_moved,
+    rec["lever"] = {"read_at": key, "learned_mean_abs_w_plastic": wU, "learned_mean_abs_w_frozen": wF,
+                    "moved": lever_moved,
                     "encode_plastic": tbU.get("d6_last_encode"), "encode_frozen": tbF.get("d6_last_encode")}
     rec["null_diffs"] = null_diffs
-    rec["probe_decisions"] = {k: _dec(arms[k], "probe") for k in ARMS}
-    rec["xprobe_decisions"] = {k: _dec(arms[k], "xprobe") for k in ARMS}
+    rec["teach_decisions"] = {k: _dec(arms[k], "teach") for k in arm_names(variant)}
+    rec["probe_decisions"] = {k: _dec(arms[k], "probe") for k in arm_names(variant)}
+    rec["xprobe_decisions"] = {k: _dec(arms[k], "xprobe") for k in arm_names(variant)}
     rec["go"] = all(c.values())
     rec["verdict"] = "GO" if rec["go"] else "NO-GO (failed: %s)" % ",".join(k for k, v in c.items() if not v)
     return rec
@@ -283,12 +373,12 @@ def run(seeds, arm_dir, resume=True, score_only=False, variant="base"):
     per = {}
     for s in seeds:
         arms = {}
-        for name, (env, teach) in arms_for(variant).items():
+        for name, (env, teach, ablate) in arms_for(variant).items():
             path = _arm_path(arm_dir, s, name)
             a = _load_arm(path) if (resume or score_only) and os.path.exists(path) else None
             if a is None and not score_only:
                 print("[d6] seed %s arm %s ..." % (s, name), flush=True)
-                a = _spawn(env, teach, path, s)
+                a = _spawn(env, teach, path, s, ablate=ablate)
             arms[name] = a
         per[str(s)] = score_seed(arms, variant=variant)
         print("[d6] seed %s -> %s" % (s, per[str(s)]["verdict"]), flush=True)
@@ -297,21 +387,32 @@ def run(seeds, arm_dir, resume=True, score_only=False, variant="base"):
 
 
 # ── self-test: the verdict must FAIL in each failing direction (a gate that cannot fail measures nothing) ────────
-def _synthetic(probe_use="deer", probe_frozen=None, rep_same=True, shuf_berry=True, w_frozen=0.0, direct_same=True):
-    def arm(teach_word, probe_word, xprobe_word, w, d2="cat"):
+def _synthetic(probe_use="deer", probe_frozen=None, rep_same=True, shuf_berry=True, w_frozen=0.0, direct_same=True,
+               readtime=False, probe_abl=None, w_abl=0.0, abl_writes=(), frozen_writes=()):
+    def arm(teach_word, probe_word, xprobe_word, w, d2="cat", writes=()):
         def t(word, ab=None):
             if word is None:
                 return {"abstained": True, "recalled_svo": None, "answer": "I don't know."}
             return {"abstained": False, "recalled_svo": ["x", "y", word], "answer": "x y %s." % word}
         return {"turns": {"teach": {"abstained": False, "recalled_svo": ["a", "b", teach_word], "answer": "Got it."},
                           "d1": t("fish"), "d2": t(d2), "probe": t(probe_word), "xprobe": t(xprobe_word)},
-                "taught_block": {"mean_abs_w": w}}
+                "taught_block": {"mean_abs_w": w}, "taught_block_at_probe": {"mean_abs_w": w},
+                "store_writes_after_teach": list(writes), "d6_ops": {"turn_refreshes": len(TURNS), "retractions": 0}}
     U = arm("deer", probe_use, None, 1.0)
-    return {"USE_H": U,
-            "USE_H_REP": U if rep_same else arm("deer", None, None, 1.0),
-            "SHUF_H": arm("berry", None, "berry" if shuf_berry else None, 1.0),
-            "FREEZE_H": arm("deer", probe_frozen, None, w_frozen),
-            "USE_D": U if direct_same else arm("deer", None, None, 1.0)}
+    out = {"USE_H": U,
+           "USE_H_REP": U if rep_same else arm("deer", None, None, 1.0),
+           "SHUF_H": arm("berry", None, "berry" if shuf_berry else None, 1.0),
+           "FREEZE_H": arm("deer", probe_frozen, None, w_frozen, writes=frozen_writes),
+           "USE_D": U if direct_same else arm("deer", None, None, 1.0)}
+    if readtime:
+        A = arm("deer", probe_abl, None, w_abl, writes=abl_writes)
+        A["ablation"] = {"block": 7, "mean_abs_w_before": 1.0, "mean_abs_w_after": w_abl}
+        out[ABL_ARM] = A
+    return out
+
+
+def _cp(x):
+    return json.loads(json.dumps(x))
 
 
 def selftest():
@@ -324,19 +425,34 @@ def selftest():
         "not_specific": score_seed(_synthetic(shuf_berry=False))["go"] is False,
         "direct_regression": score_seed(_synthetic(direct_same=False))["go"] is False,
     }
+    # AMENDMENT A1: the ack-text relaxation is REVERTED -- an ack-only teach difference now fails under EVERY variant
     ack = _synthetic()
-    ack["FREEZE_H"] = json.loads(json.dumps(ack["FREEZE_H"]))
+    ack["FREEZE_H"] = _cp(ack["FREEZE_H"])
     ack["FREEZE_H"]["turns"]["teach"]["answer"] = "The wolf hunts deer."       # same parse, different ack text
-    fails["prune_ack_text_passes_only_under_prune"] = (score_seed(ack, "prune")["go"] is True
-                                                       and score_seed(ack, "base")["go"] is False)
-    badparse = json.loads(json.dumps(ack))
-    badparse["FREEZE_H"]["turns"]["teach"]["recalled_svo"] = None               # the parse itself changed
-    fails["prune_parse_change_fails"] = score_seed(badparse, "prune")["go"] is False
+    fails["ack_text_fails_under_every_variant"] = all(score_seed(_cp(ack), v)["go"] is False
+                                                      for v in ("base", "engram", "prune"))
+    fails["ack_text_is_only_reported_posthoc"] = score_seed(_cp(ack), "prune")["C4_parse_posthoc"] is True
     void = score_seed(dict(_synthetic(), FREEZE_H=None))
     fails["void_is_undefined"] = void["go"] is None
+    # gate v2 (readtime): the GO case passes; each new failing direction fails
+    ok_v2 = score_seed(_synthetic(readtime=True), "readtime")["go"] is True
+    fails["v2_ablation_does_not_remove"] = score_seed(_synthetic(readtime=True, probe_abl="deer"),
+                                                      "readtime")["go"] is False
+    ablfr = _synthetic(readtime=True)
+    ablfr[ABL_ARM]["turns"]["probe"]["answer"] = "Setting the held thread aside -- I don't know."   # framing leak only
+    fails["v2_ablation_framing_leak_fails"] = score_seed(ablfr, "readtime")["go"] is False
+    fails["v2_ablation_lever_not_moved"] = score_seed(_synthetic(readtime=True, w_abl=1.0), "readtime")["go"] is False
+    fails["v2_write_after_teach_in_lesion_arm_fails"] = (
+        score_seed(_synthetic(readtime=True, frozen_writes=(7,)), "readtime")["go"] is False
+        and score_seed(_synthetic(readtime=True, abl_writes=(7,)), "readtime")["go"] is False)
+    fails["v2_missing_abl_arm_is_undefined"] = score_seed(_synthetic(readtime=False), "readtime")["go"] is None
+    lever_late = _synthetic(readtime=True)
+    lever_late["FREEZE_H"]["taught_block_at_probe"] = {"mean_abs_w": 0.9}     # frozen at teach, but written later
+    fails["v2_lever_read_at_probe_time"] = score_seed(lever_late, "readtime")["go"] is False
     agg_undef = aggregate({"42": {"go": True}, "43": {"go": None}})["GO"] is False
-    res = {"go_case_passes": ok, "fails_in_failing_direction": fails, "partial_seed_set_not_go": agg_undef}
-    passed = ok and all(fails.values()) and agg_undef
+    res = {"go_case_passes": ok, "go_case_passes_v2": ok_v2, "fails_in_failing_direction": fails,
+           "partial_seed_set_not_go": agg_undef}
+    passed = ok and ok_v2 and all(fails.values()) and agg_undef
     print(json.dumps(res, indent=2))
     print("SELFTEST", "PASS" if passed else "FAIL")
     return 0 if passed else 1
@@ -354,13 +470,15 @@ def main():
     ap.add_argument("--no-resume", action="store_true")
     ap.add_argument("--score-only", action="store_true")
     ap.add_argument("--selftest", action="store_true")
+    ap.add_argument("--ablate-after-teach", action="store_true", help="worker: ABL_H post-hoc engram ablation")
     ap.add_argument("--variant", choices=sorted(VARIANTS), default="base",
-                    help="base = the v1 pre-registered arms; engram = + BRAIN_D6_ENGRAM_VOCAB=1 on the Hebbian arms")
+                    help="base = v1 arms; engram = + BRAIN_D6_ENGRAM_VOCAB; prune = banked invalid instrument; "
+                         "readtime = gate v2 (read-time engram view + ABL_H post-hoc ablation arm)")
     a = ap.parse_args()
     if a.selftest:
         return selftest()
     if a.worker:
-        return _worker(a.env, a.teach, a.out)
+        return _worker(a.env, a.teach, a.out, ablate_after_teach=a.ablate_after_teach)
     res = run(a.seeds, a.arm_dir, resume=not a.no_resume, score_only=a.score_only, variant=a.variant)
     print(json.dumps(res["aggregate"], indent=2))
     if a.json:

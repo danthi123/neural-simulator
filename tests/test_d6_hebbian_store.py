@@ -1,6 +1,7 @@
 """D6 learn-through-use: the in-conversation fact WRITE by a local Hebbian rule (research/runners/d6_hebbian_store.py).
 
-Pins: (1) OFF (unset) is byte-identical to the direct composite copy; (2) the Hebbian-written block recalls with the
+Pins: (1) OFF (unset) is byte-identical to origin/main's direct composite copy (exact sha256, reference run from a
+git archive of origin/main -- the unset-vs-'0' check is kept only as a labelled integrity smoke); (2) the Hebbian-written block recalls with the
 direct path's answers and phase (content = the rule's output, not a copy); (3) the FREEZE lesion blocks ONLY
 in-conversation writes -- the taught fact is gone, the build-time fact still recalls, the frozen weight is 0;
 (4) the freeze flag without the conversation context does not freeze; (5) the Hebbian write is deterministic;
@@ -48,8 +49,74 @@ def arms():
     return out
 
 
-def test_off_is_byte_identical(arms):
+def test_unset_vs_zero_same_branch_integrity_smoke(arms):
+    """INTEGRITY SMOKE, not a byte-identical test: unset and '0' take the identical code path on this branch, so this
+    cannot fail by construction. The real off-path check vs the pre-change code is
+    `test_off_is_byte_identical_vs_origin_main` below (2026-09-23 fix round)."""
     assert arms["unset"].store_conns == arms["off"].store_conns
+
+
+def _git_ok(ref="origin/main"):
+    import subprocess
+    try:
+        return subprocess.run(["git", "rev-parse", "--verify", ref], capture_output=True).returncode == 0
+    except Exception:
+        return False
+
+
+@pytest.mark.skipif(not _git_ok(), reason="origin/main not resolvable (no git checkout)")
+def test_off_is_byte_identical_vs_origin_main():
+    """BYTE-IDENTICAL (docs/TERMS.md): with every BRAIN_D6_* flag unset, this branch's store_conns (exact complex values,
+    sha256), kb and recalls equal those produced by origin/main's code, run from a `git archive` of origin/main in a
+    separate process. And the comparison CAN fail: the Hebbian write (flag on) hashes differently."""
+    from research.runners import d6_offpath_parity as P
+    res = P.compare("origin/main", "store")
+    assert res["reference"]["d6_module_present"] is False or res["ref_sha"]    # the reference is the pre-D6 path
+    assert res["byte_identical"] is True, res["diff_keys"]
+    os.environ["BRAIN_D6_HEBBIAN_STORE"] = "1"
+    try:
+        from research.runners.one_brain_composer import OneBrainComposer
+        c = OneBrainComposer(seed=42, D=128, vocab=P.VOCAB, k_max=8, vocab_headroom=2)
+        for s in ("dog chase cat", "wolf hunt deer", "fox eat berry"):
+            c.hear(s)
+        assert P._sha_store(c.store_conns) != res["reference"]["store_conns_sha256"]   # discriminates
+    finally:
+        os.environ.pop("BRAIN_D6_HEBBIAN_STORE", None)
+
+
+def test_visible_kb_off_is_the_same_object_and_on_follows_the_engram(arms):
+    from research.runners import d6_hebbian_store as d6
+    f = arms["frozen_conv"]
+    os.environ.pop("BRAIN_D6_ENGRAM_READTIME", None)
+    assert d6.visible_kb(f) is f.kb                                     # off: the host list itself (byte-identical)
+    os.environ["BRAIN_D6_ENGRAM_READTIME"] = "1"
+    try:
+        vis = d6.visible_kb(f)
+        assert [e[0]["agent"] for e in vis] == ["dog"]                  # the frozen (never-potentiated) block is not held
+        assert len(f.kb) == 2                                           # ... and NO host record was deleted
+    finally:
+        os.environ.pop("BRAIN_D6_ENGRAM_READTIME", None)
+
+
+def test_readtime_view_reflects_a_post_hoc_ablation():
+    """The read-time view is re-read when the synapses change: ablating a learned block after the write (the ABL_H
+    lesion) removes it from the view with the kb record intact, and the recall abstains. A write-time check (the
+    banked prune) could not see this."""
+    from research.runners import d6_hebbian_store as d6
+    os.environ["BRAIN_D6_ENGRAM_READTIME"] = "1"
+    try:
+        c = _build("1"); c.hear("dog chase cat")
+        with d6.conversation_write(c):
+            c.hear("wolf hunt deer")
+        assert [e[0]["agent"] for e in d6.visible_kb(c)] == ["dog", "wolf"]
+        rec = d6.ablate_block(c, 1)
+        assert rec["mean_abs_w_before"] > 0.5 and rec["mean_abs_w_after"] == 0.0
+        assert [e[0]["agent"] for e in d6.visible_kb(c)] == ["dog"] and len(c.kb) == 2
+        assert c.query_patient("wolf", "hunt") is None and c.query_patient("dog", "chase") == "cat"
+        assert c._d6_ops["retractions"] == 0 and c._d6_ops["ablations"] == 1
+    finally:
+        for k in ("BRAIN_D6_ENGRAM_READTIME", "BRAIN_D6_HEBBIAN_STORE", "BRAIN_D6_HEBBIAN_FREEZE"):
+            os.environ.pop(k, None)
 
 
 def test_hebbian_block_recalls_and_matches_direct_phase(arms):

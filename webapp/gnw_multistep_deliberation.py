@@ -134,7 +134,12 @@ def _all_concepts(composer) -> list:
     """The distinct concept tokens the chase can pick distractors from = every agent/patient string in the store
     (read straight off `composer.kb`, no substrate retrieval). Order-preserving-ish (sorted) for determinism."""
     seen = set()
-    for fact, _handle in getattr(composer, "kb", []):
+    kb = getattr(composer, "kb", [])
+    if os.environ.get("BRAIN_D6_ENGRAM_READTIME", "").strip().lower() in ("1", "true", "yes", "on"):
+        # D6 (default-OFF): the concepts are those whose engram reactivates NOW, not every host kb record.
+        from research.runners.d6_hebbian_store import visible_kb as _d6_visible_kb
+        kb = _d6_visible_kb(composer) or []
+    for fact, _handle in kb:
         for role in ("agent", "patient"):
             v = fact.get(role)
             if isinstance(v, str):

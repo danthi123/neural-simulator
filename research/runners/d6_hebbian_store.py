@@ -39,7 +39,29 @@ HONEST RESIDUALS (named, not hidden):
     the episodic organ's slot table;
   * the instructive pattern itself is the composer's on-substrate bind/bundle output — the FHRR binding algebra
     (role codes) is the standing composer idealization, unchanged by this module;
-  * reconsolidation's in-place rewrite (`update_on_mismatch`) still uses the direct copy (not routed here).
+  * reconsolidation's in-place rewrite (`update_on_mismatch`) still uses the direct copy (not routed here) and so
+    BYPASSES the freeze lesion; the D6 probe counts store writes after the teach turn and fails the lesion if any occur.
+
+DECLARED HOST SHORTCUTS (2026-09-23 fix round, from the adversarial review; each is a named residual, not biology):
+  (a) INSTRUCTIVE PATHWAY IS HOST-WIRED. The one-to-one acc->readout "teacher" synapses are installed by host code
+      (`rf_set_complex_weights(teacher)`) fresh for each write, with unit weight. The learned phase is therefore a
+      teacher-forced copy CARRIED THROUGH NEURAL ACTIVITY: the rule is local, but the instructive signal's wiring and
+      its one-to-one topology are designed. Next method: a developmentally formed (plastic, competitive) CA3/EC->CA1-
+      style instructive projection whose topology self-organizes, and a plateau that the substrate itself triggers.
+  (b) PHASE-LOCK IS A HOST LOOP. `while _rf_counter % Pd != 0: _rf_advance_one()` advances the rhythm to the read's
+      reference phase before the context cell is activated. The alignment target is not a tuned constant, but the
+      gating is host control flow. Next method: theta-phase-gated encoding on the substrate (encoding at a fixed
+      theta phase, Hasselmo 2002 SPEAR), i.e. an oscillatory inhibitory gate on the context cell.
+  (c) MAGNITUDE IS CLAMPED. Every unfrozen synapse saturates at W_MAX (n_saturated == D on every write measured), so
+      the rule stores NO graded strength -- only the phase is learned. A bound, not a homeostatic companion process
+      (the CLAUDE.md "what does the real system run alongside this" question): the named companion is heterosynaptic
+      /homeostatic normalization of the block.
+  (d) THE PRUNE RETRACTION (`retract_unencoded_last`, BRAIN_D6_ENGRAM_PRUNE) IS A HOST DECISION about whether a
+      memory exists, taken once at write time and acting by deleting host bookkeeping. BANKED as an invalid lesion
+      instrument (it runs only in the freeze arm); superseded by the read-time view (`engram_readtime_enabled`).
+  (e) The held/not-held decision of `engram_held` is a host threshold (`readout > floor`) on a neural read.
+  (f) UNMEASURED SIDE EFFECT: the DA encoding gain `g` (`encoding_gain_fn`) scales a write; no D6 arm varies it, so
+      whether a low-g production write can fall below the read floor (and so be "not held" / retracted) is unmeasured.
 
 Reuse-by-import; no sim/ edit. See research/runners/d6_learn_through_use_lb.py for the 2x2 (use x plasticity)
 lesion-verified probe through the real /api/brain-chat handler.
@@ -202,6 +224,7 @@ def retract_unencoded_last(comp) -> dict | None:
     r = engram_held(comp, n - 1)
     r["retracted"] = False
     if not r["held"]:
+        _ops(comp)["retractions"] += 1
         D = comp.D
         comp.kb.pop()
         del comp.store_conns[(n - 1) * D:]
@@ -215,6 +238,102 @@ def retract_unencoded_last(comp) -> dict | None:
         comp._fact_shard = None; comp._fact_shard_built_K = -1
         r["retracted"] = True
     return r
+
+
+def engram_readtime_enabled() -> bool:
+    """`BRAIN_D6_ENGRAM_READTIME` in {1,true,yes,on} -> EVERY reader of "which facts does the brain hold" consults the
+    substrate AT READ TIME (each turn), not the host `kb` list and not a write-time snapshot. Default OFF.
+
+    WHY (2026-09-23 fix round, the adversarial review of the prune variant). `BRAIN_D6_ENGRAM_PRUNE` checked the
+    engram ONCE, at write time, and then deleted the host record -- a host step that ran ONLY in the freeze arm, so a
+    prune-variant C3 pass could come from the lesion arm running host code the treatment arm never runs, and later
+    loss of the engram (ablation, decay, interference) would never be reflected. This flag replaces that with a READ:
+    no record is ever deleted; instead the kb-direct readers (`webapp/gnw_thought_swap._known_concepts`,
+    `webapp/gnw_multistep_deliberation._all_concepts`, the episodic content lookup in `webapp/server.brain_reply`) and
+    `ChatBrain._refresh_facts` (re-run at the start of every turn) see only the facts whose engram reactivates NOW.
+    The SAME host code runs in every arm; only the synapses differ. See `visible_kb`.
+
+    DECLARED SHORTCUT: the held/not-held decision is a HOST THRESHOLD (`readout > floor`) on a genuine neural read
+    (the readout activity after kicking the block's context cell) -- the same class as an argmax over spike rates.
+    The kb list still maps block index -> words (host bookkeeping); what it no longer decides is membership."""
+    return os.environ.get("BRAIN_D6_ENGRAM_READTIME", "").strip().lower() in _ON
+
+
+def _store_digest(comp):
+    """A digest of the store's synaptic weights (the only thing an engram read depends on) + the kb length."""
+    import hashlib
+    sc = getattr(comp, "store_conns", None) or []
+    w = np.fromiter((complex(t[2]) for t in sc), dtype=np.complex128, count=len(sc))
+    return (len(getattr(comp, "kb", []) or []), len(sc), hashlib.sha256(w.tobytes()).hexdigest())
+
+
+def _ops(comp):
+    ops = getattr(comp, "_d6_ops", None)
+    if ops is None:
+        ops = {"engram_reads": 0, "view_cache_hits": 0, "turn_refreshes": 0, "retractions": 0, "ablations": 0}
+        try:
+            comp._d6_ops = ops
+        except Exception:
+            pass
+    return ops
+
+
+def held_view(comp) -> list:
+    """Per-kb-index engram read (`engram_held`) of every block, recomputed whenever the store's weights change (cached
+    on a digest of store_conns, so a turn that reads the view several times kicks each block once). A frozen, ablated,
+    or decayed block is re-read, never remembered from a past write."""
+    key = _store_digest(comp)
+    cache = getattr(comp, "_d6_held_cache", None)
+    ops = _ops(comp)
+    if cache is not None and cache[0] == key:
+        ops["view_cache_hits"] += 1
+        return cache[1]
+    reads = [engram_held(comp, i) for i in range(len(comp.kb))]
+    ops["engram_reads"] += len(reads)
+    comp._d6_held_cache = (key, reads)
+    return reads
+
+
+def visible_kb(comp):
+    """What a kb reader should iterate. Flag OFF (or a composer without an engram read, e.g. the rate composer) ->
+    `comp.kb` ITSELF (the same object: byte-identical). Flag ON -> the (fact, handle) entries whose engram is held now."""
+    kb = getattr(comp, "kb", None)
+    if kb is None or not engram_readtime_enabled() or not hasattr(comp, "_measure_block_readout"):
+        return kb
+    reads = held_view(comp)
+    return [e for e, r in zip(kb, reads) if r["held"]]
+
+
+def readtime_refresh(chat) -> None:
+    """Start-of-turn re-read (BRAIN_D6_ENGRAM_READTIME): refresh the chat brain's known-fact / known-word sets off the
+    engrams as they are NOW. Called from `webapp.server.brain_reply` for every turn in every arm (host pipeline
+    identical across arms)."""
+    comp = getattr(getattr(chat, "inner", None), "composer", None)
+    if comp is None or not hasattr(chat, "_refresh_facts"):
+        return
+    _ops(comp)["turn_refreshes"] += 1
+    chat._refresh_facts()
+
+
+def ablate_block(comp, block_idx) -> dict:
+    """EXPERIMENTER LESION (the post-hoc engram ablation arm ABL_H of research/runners/d6_learn_through_use_lb.py):
+    zero block `block_idx`'s D trigger->readout synapses through the composer's own in-place write path, WITHOUT
+    touching the kb record. Not a brain mechanism -- a lesion, like a post-training lesion in an animal."""
+    D = comp.D
+    before = float(np.mean([abs(complex(t[2])) for t in comp.store_conns[block_idx * D:(block_idx + 1) * D]]))
+    g_fn = getattr(comp, "encoding_gain_fn", None)
+    comp.encoding_gain_fn = None                      # zeros are zeros whatever g is; keep the write exact
+    try:
+        comp._write_block(block_idx, np.zeros(D, dtype=np.complex128))
+    finally:
+        comp.encoding_gain_fn = g_fn
+    comp._store_csr = None
+    if getattr(comp, "_csr_cache", None) is not None:
+        comp._csr_cache = {}
+    comp._fact_shard = None; comp._fact_shard_built_K = -1
+    after = float(np.mean([abs(complex(t[2])) for t in comp.store_conns[block_idx * D:(block_idx + 1) * D]]))
+    _ops(comp)["ablations"] += 1
+    return {"block": int(block_idx), "mean_abs_w_before": before, "mean_abs_w_after": after}
 
 
 def comp_backend_xp(arr):
