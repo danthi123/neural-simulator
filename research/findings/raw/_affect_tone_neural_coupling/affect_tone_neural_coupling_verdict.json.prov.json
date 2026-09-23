@@ -1,0 +1,28 @@
+{
+ "run_id": "1790154783-291152",
+ "runner": "research/runners/_lbf_affect_tone_neural_coupling_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/research/runners/_lbf_affect_tone_neural_coupling_derisk.py",
+  "--score-only"
+ ],
+ "git_sha": "69084286c",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-23T05:13:03",
+ "env": {
+  "SIM_BACKEND": "numpy",
+  "CUDA_VISIBLE_DEVICES": ""
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 201857.2,
+ "corpus_check_query": "raw-scale token-supply scaling of the spiking mouth to broad-domain fluency at d384 \u2014 capacity-saturated (NO-GO)",
+ "corpus_check_fresh": false,
+ "artifact": "research/findings/raw/_affect_tone_neural_coupling/affect_tone_neural_coupling_verdict.json"
+}
