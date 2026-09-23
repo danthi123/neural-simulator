@@ -155,3 +155,77 @@ Unchanged: the world (TEACH, ASK), K = 40, seeds, arms intact / intact_rebuild /
 alpha = 0.05. No constant is fit on any seed. The `oe_unfixed_taught` control continues (predicted UNDEFINED, 0
 draws, on every seed). The in-flight `default` worker JSONs for seeds 43–102 are scored by the amendment-2 scorer;
 the worker protocol that produces them is unchanged.
+
+## Amendment 3 — a statistic with a real null (committed before any run it governs)
+
+### Amendment log: what I had seen when writing this
+
+- Every seed-42 artifact of amendment 2 (`a2/default/default_s42_{intact,intact_rebuild,lesion,host_oracle}.json`
+  and the verdict). Seed 42 stays IN-SAMPLE for the design and is declared so.
+- The re-review of `c807f869b` (fix-required): the amendment-2 GO statistic is degenerate; the staged multi-seed
+  runs were dead; the identity criterion was changed post hoc; the default mode's renderer stub was undeclared.
+- A bank-level POWER SIMULATION, not a governed run and not the production turn: the production
+  `VocabAgnosticSpikingSampler` at the production operating point, the seed-42 host weight vector, a
+  draw-until-admissible loop of 8 attempts, M = 4 sessions per arm, K = 8 asks each, each session on its own noise
+  stream, six bank seeds (295, 302, 309, 701, 708, 715). Delta ranged 0.09 to 0.46 (mean 0.25), 6/6 positive. It
+  was used to choose M, K and the effect floor below. It does not include the plausibility gate, the moat or the
+  novelty filter.
+- NOT seen: any `default` output for seeds 43, 44, 100, 101, 102. None exists: the controllers were killed before
+  writing one. I did not open the `oe_routed_full` F1/F2 files or the `oe_unfixed_taught` s43/s44 files.
+
+### Why amendment 2's statistic is withdrawn as a GO rule
+
+Each arm is a deterministic function of the seed. Under H0 (the lesion does not change the reply), D_s is exactly 0,
+not a distribution symmetric about 0. The sign-flip p = 1/64 on six positive D_s therefore only says "the modal reply
+changed on six seeds". The amendment-2 rows stay as description of seed 42; they are not evidence for a GO.
+
+The seed-42 rows also show something the amendment-2 reading missed. The intact arm gave one patient on 39 of 40
+asks, and so did the lesion arm, whose drive is UNIFORM (rabbit 39/40). A uniform drive cannot be an argmax of w. So
+the concentration is not "near-argmax sharpening"; the production draw noise was effectively frozen from one ask to
+the next. The "sharpening" reading of the host_oracle comparison is withdrawn.
+
+### The design (fixed now)
+
+- **Sessions.** For each seed in 42, 43, 44, 100, 101, 102: 4 `intact` sessions, 4 `lesion` sessions and 1
+  `intact_rebuild` session. Each is a FRESH process: build the brain at `BRAIN_CHAT_SEED`, teach the 13 TEACH turns,
+  then ask ASK K = 8 times. Mode `default` only in this round.
+- **The draw's own stochastic source.** During the ask phase only, every spiking-WTA competition (`_compete`) runs
+  on a per-session noise stream: the global RNG is swapped to a `RandomState(noise_seed)` stream and swapped back.
+  The rest of the brain sees the same global RNG whatever the draw consumes. The stream is not reset between asks.
+  `noise_seed = 1000*seed + j` for intact session j, `1000*seed + 500 + j` for lesion session j; the rebuild uses
+  intact session 0's stream. The assignment is fixed here and does not depend on any outcome. This is a declared
+  INSTRUMENT: it chooses which noise realization the bank sees and computes no draw.
+- **Session value.** v = the mean over the 8 asks of w(volunteered patient) / max(w). An ABSTAIN counts 0. w is the
+  host weight vector `_weight_partner((dog, chase), patients)` read after the asks.
+- **Per-seed difference.** Delta_s = mean v over the intact sessions minus mean v over the lesion sessions. Under H0
+  the 8 sessions of a seed are iid, so Delta_s is symmetric about 0 and P(Delta_s > 0) <= 1/2.
+- **Per-seed verdict.** ARM-FAILED: a missing session or an errored reply. NONDETERMINISTIC: the rebuild does not
+  reproduce intact session 0 (same stream) exactly. UNDEFINED, never a pass: w differs between sessions; the noise
+  seeds are not distinct; a session never drew on its stream; the draw was not reached; the lesion did not reach the
+  draw; intact never volunteered; a session value is undefined; or **the noise streams never changed a reply within
+  either arm** (`noise_live` false). The last condition is the direct fix: a deterministic-arm seed can no longer
+  produce a verdict.
+- **GO for the mode.** All of: 6 seeds, all DEFINED; the exact one-sided sign test over seeds on Delta_s > 0 gives
+  p < 0.05 (this needs 6/6; 5/6 gives 7/64); and the mean of Delta_s over the seeds is at least **0.10** (a tenth of
+  the peak weight). A Delta_s of exactly 0 does not count as positive.
+- **Reported beside, not gating.** The per-seed exact permutation p over all C(8, 4) = 70 label splits. The sign test
+  over the 5 held-out seeds (not 42; 5/5 gives 1/32). Per-arm reply histograms, abstain rates, and the count of
+  distinct session reply sequences per arm.
+
+Prediction, from the power simulation: GO. The simulation leaves out the plausibility gate, the moat and the novelty
+filter, so the production effect can be smaller. A NOT-GO or UNDEFINED is reported as measured, and the next method
+is banked.
+
+### Declared in this amendment
+
+- **Renderer.** Every mode, `default` included, runs with `BRAIN_CHAT_RENDERER=stub` and `SIM_DISABLE_LLM=1` (the
+  worker's defaults). "The production turn" means the production `brain_chat` pipeline down to the GENERATE channel,
+  with the reply renderer stubbed. The FORM of the reply is not measured.
+- **Identity, item 9 of amendment 2.** The criterion as written FAILED for `oe_off`: the raw compare differs at
+  `.body.open_ended.gen_seconds`, a `time.time()` duration. Content with that key stripped is IDENTICAL, but that
+  exclusion was added after the raw compare was seen. `verdict_oe_off.json` now leads with the raw DIFFERENT and
+  gives the content verdict beside it as post hoc. `default` and the pre-vs-pre control are IDENTICAL raw.
+- **Scope.** `oe_routed_full` is not staged in this round. The same design applies to it unchanged.
+- **Compute.** The 54 sessions run on the mini-PC pool, one full brain per node at a time (node-level `flock`), from
+  an isolated revision pinned to this commit. Nothing runs locally. Scored with
+  `--a3-score --mode default --seeds 42,43,44,100,101,102`.
