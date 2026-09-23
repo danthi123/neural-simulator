@@ -1,0 +1,331 @@
+{
+ "probe": "affect_marker_settle_fullbrain_contrast",
+ "seeds": [
+  42,
+  43,
+  44,
+  100,
+  101,
+  102
+ ],
+ "counts": {
+  "n": 6,
+  "valid_pairs": 6,
+  "on_load_bearing": 6,
+  "off_load_bearing": 4,
+  "settle_credited": 2
+ },
+ "go": false,
+ "status": "NO-GO",
+ "tier": "PARTIAL (NO-GO for the flag): load-bearing 6/6 with SETTLE, SETTLE-attributable on 2/6 only",
+ "verdict": {
+  "label": "affect_marker_settle_fullbrain_contrast",
+  "status": "NO-GO",
+  "go": false,
+  "undefined_reasons": [],
+  "preconditions": [
+   {
+    "kind": "require",
+    "name": "every seed has exactly one VALID ON row and one VALID OFF row",
+    "ok": true,
+    "detail": "measured=6 expect=<function score_rows.<locals>.<lambda> at 0x7f9fff6f4540>",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "full 6-seed verification set",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   }
+  ],
+  "disabled_processes": [],
+  "chance": null
+ },
+ "preconditions": [
+  {
+   "kind": "require",
+   "name": "every seed has exactly one VALID ON row and one VALID OFF row",
+   "ok": true,
+   "detail": "measured=6 expect=<function score_rows.<locals>.<lambda> at 0x7f9fff6f4540>",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "full 6-seed verification set",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  }
+ ],
+ "per_seed": {
+  "42": {
+   "on": {
+    "load_bearing": true,
+    "null_control_clean": true,
+    "lesion_reproduced": true,
+    "deterministic": true,
+    "env": "1",
+    "diffs": [
+     {
+      "field": "affect_drives.lead",
+      "on": "Gladly! ",
+      "off": ""
+     }
+    ],
+    "verdict": "regressed",
+    "n_faculty_rows": 1,
+    "valid": true,
+    "invalid_reasons": [],
+    "on_credit_ready": true
+   },
+   "off": {
+    "load_bearing": false,
+    "null_control_clean": true,
+    "lesion_reproduced": true,
+    "deterministic": true,
+    "env": null,
+    "diffs": [],
+    "verdict": "pass",
+    "n_faculty_rows": 1,
+    "valid": true,
+    "invalid_reasons": [],
+    "on_credit_ready": false
+   },
+   "on_src": "research/findings/raw/_affect_marker_settle/lbf_on/s42/lbf_settle_on_s42.json",
+   "off_src": "research/findings/raw/_affect_marker_settle/lbf_off/s42/lbf_settle_off_s42.json",
+   "valid_pair": true,
+   "on_load_bearing": true,
+   "off_load_bearing": false,
+   "settle_credited": true
+  },
+  "43": {
+   "on": {
+    "load_bearing": true,
+    "null_control_clean": true,
+    "lesion_reproduced": true,
+    "deterministic": true,
+    "env": "1",
+    "diffs": [
+     {
+      "field": "affect_drives.lead",
+      "on": "Wonderful! ",
+      "off": ""
+     }
+    ],
+    "verdict": "regressed",
+    "n_faculty_rows": 1,
+    "valid": true,
+    "invalid_reasons": [],
+    "on_credit_ready": true
+   },
+   "off": {
+    "load_bearing": false,
+    "null_control_clean": true,
+    "lesion_reproduced": true,
+    "deterministic": true,
+    "env": null,
+    "diffs": [],
+    "verdict": "pass",
+    "n_faculty_rows": 1,
+    "valid": true,
+    "invalid_reasons": [],
+    "on_credit_ready": false
+   },
+   "on_src": "research/findings/raw/_affect_marker_settle/lbf_on/aws1/s43/lbf_settle_on_s43.json",
+   "off_src": "research/findings/raw/_affect_marker_settle/lbf_off/aws1/s43/lbf_settle_off_s43.json",
+   "valid_pair": true,
+   "on_load_bearing": true,
+   "off_load_bearing": false,
+   "settle_credited": true
+  },
+  "44": {
+   "on": {
+    "load_bearing": true,
+    "null_control_clean": true,
+    "lesion_reproduced": true,
+    "deterministic": true,
+    "env": "1",
+    "diffs": [
+     {
+      "field": "affect_drives.lead",
+      "on": "Gladly! ",
+      "off": ""
+     }
+    ],
+    "verdict": "regressed",
+    "n_faculty_rows": 1,
+    "valid": true,
+    "invalid_reasons": [],
+    "on_credit_ready": true
+   },
+   "off": {
+    "load_bearing": true,
+    "null_control_clean": true,
+    "lesion_reproduced": true,
+    "deterministic": true,
+    "env": null,
+    "diffs": [
+     {
+      "field": "affect_drives.lead",
+      "on": "Gladly! ",
+      "off": ""
+     }
+    ],
+    "verdict": "regressed",
+    "n_faculty_rows": 1,
+    "valid": true,
+    "invalid_reasons": [],
+    "on_credit_ready": false
+   },
+   "on_src": "research/findings/raw/_affect_marker_settle/lbf_on/aws1/s44/lbf_settle_on_s44.json",
+   "off_src": "research/findings/raw/_affect_marker_settle/lbf_off/aws1/s44/lbf_settle_off_s44.json",
+   "valid_pair": true,
+   "on_load_bearing": true,
+   "off_load_bearing": true,
+   "settle_credited": false
+  },
+  "100": {
+   "on": {
+    "load_bearing": true,
+    "null_control_clean": true,
+    "lesion_reproduced": true,
+    "deterministic": true,
+    "env": "1",
+    "diffs": [
+     {
+      "field": "affect_drives.lead",
+      "on": "Gladly! ",
+      "off": ""
+     }
+    ],
+    "verdict": "regressed",
+    "n_faculty_rows": 1,
+    "valid": true,
+    "invalid_reasons": [],
+    "on_credit_ready": true
+   },
+   "off": {
+    "load_bearing": true,
+    "null_control_clean": true,
+    "lesion_reproduced": true,
+    "deterministic": true,
+    "env": null,
+    "diffs": [
+     {
+      "field": "affect_drives.lead",
+      "on": "Gladly! ",
+      "off": ""
+     }
+    ],
+    "verdict": "regressed",
+    "n_faculty_rows": 1,
+    "valid": true,
+    "invalid_reasons": [],
+    "on_credit_ready": false
+   },
+   "on_src": "research/findings/raw/_affect_marker_settle/lbf_on/aws1/s100/lbf_settle_on_s100.json",
+   "off_src": "research/findings/raw/_affect_marker_settle/lbf_off/aws1/s100/lbf_settle_off_s100.json",
+   "valid_pair": true,
+   "on_load_bearing": true,
+   "off_load_bearing": true,
+   "settle_credited": false
+  },
+  "101": {
+   "on": {
+    "load_bearing": true,
+    "null_control_clean": true,
+    "lesion_reproduced": true,
+    "deterministic": true,
+    "env": "1",
+    "diffs": [
+     {
+      "field": "affect_drives.lead",
+      "on": "Gladly! ",
+      "off": ""
+     }
+    ],
+    "verdict": "regressed",
+    "n_faculty_rows": 1,
+    "valid": true,
+    "invalid_reasons": [],
+    "on_credit_ready": true
+   },
+   "off": {
+    "load_bearing": true,
+    "null_control_clean": true,
+    "lesion_reproduced": true,
+    "deterministic": true,
+    "env": null,
+    "diffs": [
+     {
+      "field": "affect_drives.lead",
+      "on": "Gladly! ",
+      "off": ""
+     }
+    ],
+    "verdict": "regressed",
+    "n_faculty_rows": 1,
+    "valid": true,
+    "invalid_reasons": [],
+    "on_credit_ready": false
+   },
+   "on_src": "research/findings/raw/_affect_marker_settle/lbf_on/aws1/s101/lbf_settle_on_s101.json",
+   "off_src": "research/findings/raw/_affect_marker_settle/lbf_off/aws1/s101/lbf_settle_off_s101.json",
+   "valid_pair": true,
+   "on_load_bearing": true,
+   "off_load_bearing": true,
+   "settle_credited": false
+  },
+  "102": {
+   "on": {
+    "load_bearing": true,
+    "null_control_clean": true,
+    "lesion_reproduced": true,
+    "deterministic": true,
+    "env": "1",
+    "diffs": [
+     {
+      "field": "affect_drives.lead",
+      "on": "Gladly! ",
+      "off": ""
+     }
+    ],
+    "verdict": "regressed",
+    "n_faculty_rows": 1,
+    "valid": true,
+    "invalid_reasons": [],
+    "on_credit_ready": true
+   },
+   "off": {
+    "load_bearing": true,
+    "null_control_clean": true,
+    "lesion_reproduced": true,
+    "deterministic": true,
+    "env": null,
+    "diffs": [
+     {
+      "field": "affect_drives.lead",
+      "on": "Gladly! ",
+      "off": ""
+     }
+    ],
+    "verdict": "regressed",
+    "n_faculty_rows": 1,
+    "valid": true,
+    "invalid_reasons": [],
+    "on_credit_ready": false
+   },
+   "on_src": "research/findings/raw/_affect_marker_settle/lbf_on/aws1/s102/lbf_settle_on_s102.json",
+   "off_src": "research/findings/raw/_affect_marker_settle/lbf_off/aws1/s102/lbf_settle_off_s102.json",
+   "valid_pair": true,
+   "on_load_bearing": true,
+   "off_load_bearing": true,
+   "settle_credited": false
+  }
+ },
+ "rule": "credit a seed iff ON load-bearing (null-clean, lesion-reproduced, deterministic, env=='1') AND the same-seed OFF row is valid and NOT load-bearing; GO iff ON 6/6 and OFF load-bearing <= 1/6",
+ "terminology": "GO = load-bearing under the ADEQUATE probe with a DEFAULT-OFF opt-in flag. NOT on-by-default, NOT production-default; the production-default robust core is unchanged (Option-C pair: 23/26 at the shipped flag state, 24/26 with SETTLE opt-in iff GO).",
+ "on_dir": "research/findings/raw/_affect_marker_settle/lbf_on",
+ "off_dir": "research/findings/raw/_affect_marker_settle/lbf_off"
+}
