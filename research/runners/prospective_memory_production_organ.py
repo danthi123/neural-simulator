@@ -176,17 +176,14 @@ def pmem_live_homeostat_enabled() -> bool:
 
 
 def pmem_live_cliff_detector_enabled() -> bool:
-    """Default-OFF. `BRAIN_PMEM_LIVE_CLIFF_DETECTOR` in {1,true,yes,on} -> replace the parent live homeostat's
-    SINGLE GLOBAL cliff-safety ceiling with a genuine LIVE, PER-SEED ceiling discovered from that seed's own
-    measured coincidence trajectory (a local-derivative abrupt-cliff check + a sustained-decline check, both
-    sized from the parent build's own already-committed dip/cliff magnitudes; `_pmem_live_cliff_detector_derisk`,
-    finding `2026-09-23-pmem-live-cliff-detector-*`) -- the named next controller banked by the live homeostat's
-    own honest NO-GO (one uniform ceiling forbade the gain seed 101 needed). The converged gain is cached
-    per-seed WITHIN THIS PROCESS the first time it is needed (the SAME per-process calibration-caching pattern
-    the homeostat bias / plateau theta / live homeostat already use) -- nothing ships pre-computed. Takes
-    PRIORITY over BOTH `BRAIN_PMEM_LIVE_HOMEOSTAT` and `BRAIN_PMEM_OP_STABILIZER` when more than one is set (see
-    `_ensure_pm`). Only takes effect when `BRAIN_PMEM_FACILITATION` is ALSO on. DEFAULT-OFF -> the shipped brain
-    + the battery default use the SAME constant as before (byte-identical); the flag is purely additive."""
+    """Default-OFF. `BRAIN_PMEM_LIVE_CLIFF_DETECTOR` in {1,true,yes,on} -> set this seed's facilitation gain from the
+    SETTLED state of a live set-point controller with a CUSUM change-point ceiling (v2,
+    `_pmem_live_cliff_detector_derisk`; detector constants frozen from calibration seeds outside every evaluation
+    seed, pre-registration `2026-09-23-pmem-live-cliff-detector-v2-PREREGISTRATION.md`). DECLARED HOST SHORTCUT:
+    the controller is host arithmetic on the task read-out, not a brain mechanism. Converged once per seed per
+    process and cached. Takes PRIORITY over `BRAIN_PMEM_LIVE_HOMEOSTAT` and `BRAIN_PMEM_OP_STABILIZER`. Only takes
+    effect when `BRAIN_PMEM_FACILITATION` is ALSO on. Unset -> byte-identical to the pinned pre-change SHA, asserted
+    in data by `--default-off-compare` (`research/findings/raw/_pmem_live_cliff_detector_v2/default_off_compare.json`)."""
     v = os.environ.get("BRAIN_PMEM_LIVE_CLIFF_DETECTOR")
     if v is None:
         return False

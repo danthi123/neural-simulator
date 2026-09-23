@@ -1,84 +1,64 @@
-"""PROSPECTIVE-MEMORY LIVE PER-SEED CLIFF DETECTOR -- the named next controller banked by
-`research/findings/2026-09-23-live-homeostat-nogo-6seed.md` (an honest NO-GO 5/6: ONE global cliff-safety
-ceiling, `G_CEILING=9000`, forbids the gain seed 101 needs -- the static table used 11000 for that seed
-specifically). Pre-registered design: `research/findings/2026-09-23-pmem-live-cliff-detector-PREREGISTRATION.md`
-(locked BEFORE this runner's `--derisk` is ever executed).
+"""PROSPECTIVE-MEMORY LIVE CLIFF DETECTOR -- v2 (fix round, 2026-09-23).
 
-WHY (CLAUDE.md's "deepest lesson" -- the companion process the real system runs alongside a slow integral
-set-point controller). A single global ceiling is a STATIC bound standing in for a process the animal actually
-runs: metaplasticity -- a companion mechanism that tracks a cell's OWN recent activity and adjusts how far
-plasticity is allowed to go, rather than one number shared by every cell. This is the Bienenstock-Cooper-Munro
-(BCM) SLIDING THRESHOLD (Lee & Kirkwood 2019, "Mechanisms of Homeostatic Synaptic Plasticity", Front Cell
-Neurosci 13:520, DOI:10.3389/fncel.2019.00520 -- external source for gates/deep_research_at_wall, recorded
-`research/queue/.external_searches.jsonl`, lane `load-bearing`). This build replaces the parent's ONE constant
-ceiling with a LIVE, per-seed ceiling that is DISCOVERED from that seed's own measured coincidence trajectory --
-the direct generalization the parent build named and declined to build itself (banking the miss, not tuning a
-bigger constant to force a pass).
+v1 (commit f30ab4666, artifact `research/findings/raw/_pmem_live_cliff_detector.json`, verdict UNDEFINED 4/6,
+discrimination anti-cheat FAILED) was rejected by adversarial review for four reasons, each fixed here:
 
-THE MECHANISM (additive; NO sim/ edit; reuse-by-import of the committed live-homeostat + facilitation
-substrate -- `_measure_rel`, `_static_margin_for_seed`, `_default_off_exact_compare` are ALL reused verbatim
-from `_pmem_live_homeostat_derisk`, never re-typed). For each seed, from an initial gain `g_0`:
-  1. Determine ONCE, from the FIRST live read at `g_init`, whether this seed is a CLIMBER (below
-     `REL_TARGET`, needs to raise gain) or SETTLED (already at/above target) -- a LIVE, per-seed branch driven
-     by that seed's OWN measurement, never a hand-picked seed list.
-  2. A SETTLED seed runs the PARENT build's identical rate-limited integral law, UNCHANGED (descend toward
-     `G_FLOOR`; no cliff-detection applies -- descending into already-validated low-gain territory carries no
-     documented collapse risk; see the parent's own committed grid, `_pmem_operating_point_stabilizer.json`).
-  3. A CLIMBER runs the SAME rate-limited integral law (`K_I`, `MAX_STEP`, reused unchanged, never re-tuned),
-     but its ceiling is now `G_CEILING_CAP=11000` (the TOP of the parent build's own already-validated grid --
-     a hard, uniform, GLOBAL bound: no seed is ever probed outside the domain the parent already measured for
-     every seed) -- and, while climbing, the controller tracks the running best `(g_best, rel_best)` it has
-     measured so far and watches for two live signals, sized ONLY from magnitudes the parent build already
-     committed (see the pre-registration doc's derivation, never fit to this run's own outcome):
-       (a) ABRUPT: a single step's `rel` drop exceeds `DROP_THRESH=0.015` (between the parent's own committed
-           recoverable one-step dip, 0.0072, and its non-recoverable cliff, 0.0233);
-       (b) SUSTAINED: `DECLINE_PATIENCE=2` consecutive climbing steps that fail to beat the running best (the
-           parent's one known recoverable dip lasted exactly ONE step before recovering past the pre-dip value).
-     Either signal REVERTS the candidate to `(g_best, rel_best)`, CLAMPS this seed's live ceiling to `g_best`
-     (below the drop), and declares the seed CONVERGED there -- a live-detected safety boundary, discovered
-     per seed, not shipped as one number. A seed with no cliff/decline inside the validated domain (e.g. seed
-     101, whose grid rises monotonically to 11000) simply climbs to `G_CEILING_CAP` with the running best AT
-     that cap -- the mechanism that lets 101 reach the higher gain the static table's own per-seed search found.
-  4. THE CANONICAL CONVERGED ANSWER for a CLIMBER is ALWAYS `(g_best, rel_best)` -- the best point this seed's
-     own live trajectory ever measured (see the pre-registration's redefinition of "cliff-safe": the mechanism
-     deliberately probes transiently above a seed's own eventual ceiling in order to FIND it; the invariant
-     that survives is that probing never leaves the validated domain, and the FINAL selected gain is always a
-     directly measured, non-collapsed point by construction).
+  1. CIRCULAR READ-OUT. v1 reported, for a climbing seed, the RUNNING BEST `(g_best, rel_best)` -- an arg-max of
+     the evaluation metric over the visited gains -- and gated it against the static table (itself an arg-max
+     over a coarser subset grid), so "meets-or-beats static" held by construction. v2 reports the CONTROLLER'S
+     OWN SETTLED STATE: the last iterate of the closed loop, with the `rel` MEASURED at that iterate. There is no
+     running best, no revert-to-remembered value, and no comparison that an arg-max wins by construction. The
+     static-table comparison survives only as a DESCRIPTIVE number (the cost of not arg-maxing), never gating.
+  2. CONSTANTS FIT IN-SAMPLE. v1's DROP_THRESH / DECLINE_PATIENCE were sized from seed 44's own dip and cliff
+     and seed 100's decline, then evaluated on those seeds. v2 replaces both with a textbook one-sided CUSUM
+     change detector (Page 1954) whose only data-dependent quantity -- the jitter scale sigma -- is estimated
+     robustly (1.4826 x MAD) from lattice scans of CALIBRATION seeds `SEEDS_CALIB` that are disjoint from every
+     evaluation seed. The multipliers (slack k = 0.5 sigma, decision interval h = 5 sigma) are the conventional
+     control-chart defaults, fixed in the pre-registration, never tuned. Primary evaluation is on HELD-OUT seeds
+     `SEEDS_HELDOUT` never looked at before this run; the canonical six are reported as IN-SAMPLE.
+  3. NO NULL. v2 tests the detector itself against a permutation null: on each seed's open-loop lattice scan,
+     the detector's alarms are scored (+1 an alarm the scan never recovers from, -1 one it does recover from),
+     and the same detector is run on 1000 within-seed shuffles of the same scans. The unit of analysis is the
+     SEED (one scan per independent substrate), never serially dependent steps of one trajectory.
+  4. BYTE-IDENTICAL INFERRED. v2's `--default-off-compare` builds the PRODUCTION organ
+     (`ProspectiveMemoryOrgan`) with the flag unset in this tree AND in a `git archive` extraction of the
+     PINNED pre-change SHA `PINNED_PRE_CHANGE_SHA`, runs one scripted intention/hold/cue session in each, and
+     exact-compares the serialized outputs (plus a negative control that MUST differ, so the compare can fail).
 
-ANTI-CHEATS (each implemented + reported in `_derisk`):
-  1. GENUINELY LIVE, NOT A TABLE: reused `prove_it_is_live`-style check (this module never imports
-     `CALIBRATED_FAC_G`); a re-run of the identical (seed, init) reproduces an IDENTICAL trajectory (including
-     cliff events).
-  2. TWO DIFFERENT INITS, SAME SET-POINT (canonical `g_best`, not just the raw final iterate).
-  3. DISCRIMINATES (falsifiable on the mechanism itself, not just the outcome): the detector must FIRE a
-     cliff/decline event on seed 44 (the KNOWN-cliff seed) on BOTH inits, and must NOT fire one on seed 101
-     (the KNOWN-no-cliff-in-domain seed) on either init -- `prove_it_discriminates`. A detector that fires on
-     everyone or no one is not a genuine live detector.
-  4. DOMAIN-BOUNDED: no probe, on any seed/init, ever visits a `fac_g` outside `[G_FLOOR, G_CEILING_CAP]` --
-     the pre-registered redefinition of cliff-safety (the parent's OWN already-validated measurement domain,
-     never extrapolated).
-  5. LOAD-BEARING PRESERVED, re-verified at the CANONICAL converged gain exactly as the parent did.
-  6. BYTE-IDENTICAL DEFAULT-OFF, exact-compared against the parent stabilizer's independently committed
-     grid-point-0 read (reused `_default_off_exact_compare`).
-  7. DETERMINISM: the re-run in anti-cheat #1 IS the determinism check.
+HOST-SHORTCUT DECLARATION (CLAUDE.md BRAIN-BASED ONLY; docs/TERMS.md). The controller and the change detector
+are HOST ARITHMETIC reading the task's own coincidence read-out (`rel`) and setting a scalar synaptic gain. That
+is a host set-point controller, NOT a brain mechanism, and nothing here is credited to the brain. The biology
+it stands in for (slow homeostatic synaptic scaling toward a set point, Turrigiano 2011; a sliding modification
+threshold, Lee & Kirkwood 2019) is an ANALOGY for the target, not something this code implements: the real
+processes are per-neuron and driven by the neuron's own activity, not by a task-level output metric.
 
-THE PRE-REGISTERED GATE (fixed BEFORE running; see the preregistration doc for the full derivation). GO iff, on
-all 6 seeds: the canonical live-converged margin is strictly positive AND meets-or-beats the STATIC table's own
-committed margin; load-bearing preserved; frozen N=5 silence held; two different inits converge to the SAME
-neighborhood; every probe stays inside `[G_FLOOR, G_CEILING_CAP]`; the detector discriminates (fires on 44,
-not on 101); default-off byte-identical; deterministic.
+THE LAW (identical for every seed; no seed-keyed branch):
+  g_{i+1} = clip(g_i + clip(K_I * (REL_TARGET - rel_i), -MAX_STEP, +MAX_STEP), G_FLOOR, ceiling_i)
+  CUSUM on climbing moves only:  S_i = max(0, S_{i-1} + (rel_{i-1} - rel_i) - k)
+  when S_i > h: ALARM -> ceiling_{i} = the last gain at which S was 0 (Page's change-point estimate), S := 0,
+                and the SAME integral law continues under the lowered ceiling.
+  Converged when |g_{i+1} - g_i| < G_TOL for CONVERGE_STREAK consecutive iterations.
+  REPORTED = (g_last, rel measured at g_last) -- the settled state a running homeostat would actually sit at.
 
   SIM_BACKEND=numpy .venv/bin/python -m research.runners._pmem_live_cliff_detector_derisk --selftest
-  SIM_BACKEND=numpy .venv/bin/python -m research.runners._pmem_live_cliff_detector_derisk --smoke
-  SIM_BACKEND=numpy .venv/bin/python -m research.runners._pmem_live_cliff_detector_derisk --derisk
-  SIM_BACKEND=numpy .venv/bin/python -m research.runners._pmem_live_cliff_detector_derisk --seed 44 --trace
+  ... --calibrate --seed 7            # one calibration lattice scan (seeds 7..12 only)
+  ... --freeze                        # sigma, k, h from the calibration scans -> frozen_constants.json
+  ... --eval --seed 200               # one evaluation seed (held-out 200..205 or canonical six)
+  ... --aggregate                     # the pre-registered gate over all per-seed files + the null
+  ... --default-off-compare           # organ exact-compare vs the pinned pre-change SHA
 """
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
+import random
+import shutil
+import statistics
+import subprocess
 import sys
+import tempfile
 import time
 import traceback
 
@@ -92,525 +72,530 @@ _REPO = os.path.normpath(os.path.join(_HERE, "..", ".."))
 if _REPO not in sys.path:
     sys.path.insert(0, _REPO)
 
-import research.runners._pmem_facilitation_derisk as F               # noqa: E402  (the committed GO substrate)
 from research.runners._pmem_intention_latch_derisk import FIRE_THR   # noqa: E402  (imported, never re-typed)
-# reuse-by-import of the LIVE HOMEOSTAT's own helpers (NOT the static table): the fresh-build read, the static
-# comparison baseline reader, and the default-off exact-compare helper are all reused verbatim.
-from research.runners._pmem_live_homeostat_derisk import (            # noqa: E402
-    _measure_rel, _static_margin_for_seed, _default_off_exact_compare,
-)
 from research.runners._operating_point_stabilizer_derisk import (     # noqa: E402
-    FAC_G_DEFAULT, REL_TARGET, _frozen_silence,
+    FAC_G_DEFAULT, REL_TARGET,
 )
-from tools.lab import attributable_to, void_if                        # noqa: E402
-from tools.verdict import Verdict                                     # noqa: E402
 
-OUT = os.path.join(_REPO, "research", "findings", "raw", "_pmem_live_cliff_detector.json")
-# the PARENT live-homeostat's own committed artifact -- byte-identical default-off comparison baseline (its
-# grid-point-0 read is identical to the static stabilizer's, which _default_off_exact_compare already reads).
+V1_ARTIFACT = os.path.join(_REPO, "research", "findings", "raw", "_pmem_live_cliff_detector.json")
+V2_DIR = os.path.join(_REPO, "research", "findings", "raw", "_pmem_live_cliff_detector_v2")
+FROZEN = os.path.join(V2_DIR, "frozen_constants.json")
+DEFAULT_OFF_ARTIFACT = os.path.join(V2_DIR, "default_off_compare.json")
+VERDICT_ARTIFACT = os.path.join(V2_DIR, "verdict.json")
 STATIC_STABILIZER_ARTIFACT = os.path.join(_REPO, "research", "findings", "raw",
                                           "_pmem_operating_point_stabilizer.json")
 
-SEEDS = (42, 43, 44, 100, 101, 102)
+# ---- seed roles (frozen in the v2 pre-registration) ----
+SEEDS_CANONICAL = (42, 43, 44, 100, 101, 102)   # IN-SAMPLE: the design was informed by these + the v1 run was seen
+SEEDS_CALIB = (7, 8, 9, 10, 11, 12)              # detector constants are estimated from THESE ONLY
+SEEDS_HELDOUT = (200, 201, 202, 203, 204, 205)   # PRIMARY evaluation; never measured before this run
+CONSTANT_SOURCE_SEEDS = SEEDS_CALIB
 
-# ---- the flag this cliff detector is gated behind (default-OFF; wired into prospective_memory_production_organ.py)
+# ---- the pre-change tree the default-off path is exact-compared against (origin/main when this branch was
+# merged up for the fix round; the organ file there has no cliff-detector branch at all) ----
+PINNED_PRE_CHANGE_SHA = "4c141b8e8413e39913b2ef72b13f18c3db656dc0"
+
 LIVE_CLIFF_ENV = "BRAIN_PMEM_LIVE_CLIFF_DETECTOR"
 
-# ---- controller constants, frozen in the pre-registration doc BEFORE the 6-seed run ----
-G_FLOOR = FAC_G_DEFAULT           # 6000.0 -- never regress below the shipped constant
-G_CEILING_CAP = 11000.0           # the TOP of the parent stabilizer's own already-validated grid (FAC_G_GRID);
-                                   # a hard, uniform, GLOBAL bound -- no seed is ever probed beyond the domain
-                                   # the parent already measured for every seed (never extrapolated)
-K_I = 20000.0                     # reused unchanged from the parent live homeostat (never re-tuned)
-MAX_STEP = 500.0                  # reused unchanged
-G_TOL = 25.0                      # reused unchanged
-CONVERGE_STREAK = 3               # reused unchanged
-MAX_ITERS = 24                    # doubled from the parent's 16 (the live ceiling starts further from the
-                                   # floor -- 11000 vs 9000 -- so more climbing steps may be needed)
-SETPOINT_TOL = 750.0              # reused unchanged
+# ---- controller constants: reused unchanged from the parent live homeostat (not re-tuned) ----
+G_FLOOR = FAC_G_DEFAULT           # 6000.0
+G_CEILING_CAP = 11000.0           # DECLARED: the top of the inherited stabilizer grid; it coincides with seed 101's
+                                   # static pick, so it is in-sample-adjacent -- the held-out seeds judge it
+K_I = 20000.0
+MAX_STEP = 500.0
+G_TOL = 25.0
+CONVERGE_STREAK = 3
+MAX_ITERS = 24
+SETPOINT_TOL = 750.0
+G_INIT_LOW = FAC_G_DEFAULT        # 6000.0
+G_INIT_MID = 8000.0
 
-# the two already-committed magnitudes this build's OWN pre-registration used to size its live-detection
-# constants (research/findings/2026-09-23-live-homeostat-nogo-6seed.md's own committed trace + pilot scan):
-KNOWN_RECOVERABLE_DIP = 0.0072     # seed 44, low-init, iter1->iter2 (g 6500->7000): rel 0.2150->0.2078, recovers
-KNOWN_NONRECOVERABLE_CLIFF = 0.0233  # seed 44 pilot scan (9100->9200 pA): rel 0.2144->0.1911, never recovers
+# ---- the open-loop lattice the calibration + null scans use (the controller's own rate-limited step) ----
+LATTICE = tuple(float(G_FLOOR + MAX_STEP * i) for i in range(int((G_CEILING_CAP - G_FLOOR) / MAX_STEP) + 1))
 
-DROP_THRESH = round((KNOWN_RECOVERABLE_DIP + KNOWN_NONRECOVERABLE_CLIFF) / 2.0, 4)   # 0.0153 -> reported as 0.015
-DECLINE_PATIENCE = 2               # the one known recoverable dip lasted exactly 1 step; 2 tolerates it
+# ---- CUSUM multipliers: conventional control-chart defaults (Page 1954; the k = 0.5 sigma, h = 5 sigma design),
+# fixed in the pre-registration BEFORE any calibration scan was measured -- never tuned ----
+MAD_TO_SIGMA = 1.4826
+CUSUM_K_SIGMA = 0.5
+CUSUM_H_SIGMA = 5.0
 
-G_INIT_LOW = FAC_G_DEFAULT        # 6000.0 -- the shipped floor
-G_INIT_MID = 8000.0               # an interior point
+# ---- permutation null ----
+NULL_PERMS = 1000
+NULL_RNG_SEED = 20260923
+NULL_ALPHA = 0.05
 
 
 # --------------------------------------------------------------------------------------------------------
-# THE LIVE PER-SEED CLIFF DETECTOR. No CALIBRATED_FAC_G, no per-seed branch on identity: every seed runs the
-# IDENTICAL law and constants; only the MEASURED trajectory (and hence which branch it takes) differs, because
-# the controller reads the pool's own output.
+# the live read (fresh self-consistent build; reused verbatim from the parent live homeostat)
 # --------------------------------------------------------------------------------------------------------
-def run_live_cliff_homeostat(seed: int, g_init: float, target: float = REL_TARGET,
-                             max_iters: int = MAX_ITERS, k_i: float = K_I, max_step: float = MAX_STEP,
-                             g_floor: float = G_FLOOR, g_ceiling_cap: float = G_CEILING_CAP, tol: float = G_TOL,
-                             streak_need: int = CONVERGE_STREAK, drop_thresh: float = DROP_THRESH,
-                             decline_patience: int = DECLINE_PATIENCE) -> dict:
-    """Run the live per-seed cliff-detecting homeostat from `g_init`. Returns the full trajectory + cliff
-    events (for the anti-cheats + the finding's convergence plot) plus the CANONICAL (g_best, rel_best) triple
-    -- the best point this seed's own trajectory ever measured, which for a CLIMBER is the reported answer
-    regardless of whether it was reached via a cliff-trigger revert or a clean climb to the cap."""
+def _measure_rel(seed: int, g: float) -> float:
+    from research.runners._pmem_live_homeostat_derisk import _measure_rel as _m
+    return _m(seed, g)
+
+
+# --------------------------------------------------------------------------------------------------------
+# PURE detector pieces (no brain build; unit-tested)
+# --------------------------------------------------------------------------------------------------------
+def cusum_step(S: float, drop: float, k: float) -> float:
+    """One-sided CUSUM for a DOWNWARD shift of `rel` while gain rises: accumulate each step's drop minus slack."""
+    return max(0.0, S + drop - k)
+
+
+def detect_scan(rels, k: float, h: float) -> dict:
+    """Run the CUSUM over an ordered open-loop scan (index = increasing gain). Returns the FIRST alarm and
+    Page's change-point estimate (the last index at which S was 0 before the alarm)."""
+    S = 0.0
+    last_zero = 0
+    for i in range(1, len(rels)):
+        S = cusum_step(S, rels[i - 1] - rels[i], k)
+        if S == 0.0:
+            last_zero = i
+        if S > h:
+            return {"alarm": True, "alarm_idx": i, "onset_idx": last_zero}
+    return {"alarm": False, "alarm_idx": None, "onset_idx": None}
+
+
+def alarm_score(rels, det: dict):
+    """+1 if the scan never recovers to the onset level after the alarm (a genuine non-recovering drop),
+    -1 if some later point recovers to it (a false alarm), 0 if no alarm or no later point to judge by."""
+    if not det["alarm"]:
+        return 0
+    later = rels[det["alarm_idx"] + 1:]
+    if not later:
+        return 0
+    return 1 if max(later) < rels[det["onset_idx"]] else -1
+
+
+def detector_statistic(scans, k: float, h: float) -> int:
+    return sum(alarm_score(r, detect_scan(r, k, h)) for r in scans)
+
+
+def null_test(scans, k: float, h: float, n_perm: int = NULL_PERMS, rng_seed: int = NULL_RNG_SEED) -> dict:
+    """Permutation null: the SAME detector on within-seed shuffles of the SAME open-loop scans. Each scan is one
+    independent substrate (a seed), so the seed is the exchangeable unit; steps within a scan are never treated
+    as independent samples. UNDEFINED (p=None) if the detector raises no alarm at all on the real scans -- a
+    detector that never fired has shown nothing, which is not the same as passing."""
+    scans = [list(map(float, s)) for s in scans]
+    dets = [detect_scan(s, k, h) for s in scans]
+    n_alarm = sum(1 for d in dets if d["alarm"])
+    t_real = sum(alarm_score(s, d) for s, d in zip(scans, dets))
+    rng = random.Random(rng_seed)
+    t_null = []
+    for _ in range(n_perm):
+        tot = 0
+        for s in scans:
+            p = s[:]
+            rng.shuffle(p)
+            tot += alarm_score(p, detect_scan(p, k, h))
+        t_null.append(tot)
+    if n_alarm == 0:
+        return {"defined": False, "p": None, "t_real": t_real, "n_alarm_real": 0, "n_scans": len(scans),
+                "t_null_mean": statistics.fmean(t_null) if t_null else None,
+                "note": "the detector raised no alarm on any real scan -- its specificity is UNDEFINED"}
+    ge = sum(1 for t in t_null if t >= t_real)
+    return {"defined": True, "p": (1 + ge) / (1 + n_perm), "t_real": t_real, "n_alarm_real": n_alarm,
+            "n_scans": len(scans), "t_null_mean": round(statistics.fmean(t_null), 4),
+            "t_null_q95": sorted(t_null)[int(0.95 * (len(t_null) - 1))], "n_perm": n_perm,
+            "rng_seed": rng_seed, "per_scan": [{"alarm": d["alarm"], "alarm_idx": d["alarm_idx"],
+                                                "onset_idx": d["onset_idx"], "score": alarm_score(s, d)}
+                                               for s, d in zip(scans, dets)]}
+
+
+def freeze_constants(calib_scans: dict) -> dict:
+    """sigma = 1.4826 x MAD of the pooled one-step differences of the CALIBRATION scans (robust: a handful of
+    genuine cliffs cannot inflate it); k = CUSUM_K_SIGMA x sigma, h = CUSUM_H_SIGMA x sigma."""
+    seeds = sorted(int(s) for s in calib_scans)
+    overlap = set(seeds) & (set(SEEDS_CANONICAL) | set(SEEDS_HELDOUT))
+    if overlap:
+        raise ValueError(f"calibration seeds overlap evaluation seeds: {sorted(overlap)}")
+    diffs = []
+    for s in seeds:
+        r = [float(x) for x in calib_scans[s]]           # ordered by LATTICE (increasing gain)
+        diffs += [r[i] - r[i - 1] for i in range(1, len(r))]
+    med = statistics.median(diffs)
+    mad = statistics.median([abs(d - med) for d in diffs])
+    sigma = MAD_TO_SIGMA * mad
+    if sigma <= 0:
+        raise ValueError("degenerate jitter scale (MAD = 0) -- the calibration scans carry no step variation")
+    return {"seeds": seeds, "n_diffs": len(diffs), "median_diff": round(med, 6), "mad": round(mad, 6),
+            "sigma": round(sigma, 6), "cusum_k": round(CUSUM_K_SIGMA * sigma, 6),
+            "cusum_h": round(CUSUM_H_SIGMA * sigma, 6), "k_sigma": CUSUM_K_SIGMA, "h_sigma": CUSUM_H_SIGMA,
+            "mad_to_sigma": MAD_TO_SIGMA, "lattice": list(LATTICE)}
+
+
+def load_frozen() -> dict:
+    if not os.path.exists(FROZEN):
+        raise RuntimeError(f"frozen detector constants missing ({os.path.relpath(FROZEN, _REPO)}) -- run --freeze "
+                           "on the calibration scans first; the controller refuses to run on unfrozen constants")
+    with open(FROZEN) as fh:
+        return json.load(fh)
+
+
+# --------------------------------------------------------------------------------------------------------
+# THE CONTROLLER (v2): the reported quantity is the settled state, never an arg-max
+# --------------------------------------------------------------------------------------------------------
+def run_live_cliff_homeostat(seed: int, g_init: float, cusum_k: float | None = None, cusum_h: float | None = None,
+                             measure=None, target: float = REL_TARGET, max_iters: int = MAX_ITERS,
+                             k_i: float = K_I, max_step: float = MAX_STEP, g_floor: float = G_FLOOR,
+                             g_ceiling_cap: float = G_CEILING_CAP, tol: float = G_TOL,
+                             streak_need: int = CONVERGE_STREAK) -> dict:
+    if cusum_k is None or cusum_h is None:
+        fr = load_frozen()
+        cusum_k = fr["cusum_k"] if cusum_k is None else cusum_k
+        cusum_h = fr["cusum_h"] if cusum_h is None else cusum_h
+    meas = measure if measure is not None else (lambda s, g: _measure_rel(s, g))
     g = float(g_init)
-    prev_g = None
-    prev_rel = None
-    converge_streak = 0
-    decline_streak = 0
-    traj = []
-    cliff_events = []
+    ceiling = float(g_ceiling_cap)
+    S = 0.0
+    last_zero_g = g
+    prev_g = prev_rel = None
+    streak = 0
+    traj, events = [], []
     converged = False
     reason = "max_iters exhausted (%d)" % max_iters
-    g_ceiling = g_ceiling_cap        # this seed's LIVE ceiling; starts at the global cap, can only shrink
-    rel0 = _measure_rel(seed, g)
-    climber = (target - rel0) > 0    # LIVE, per-seed determination from the seed's OWN first measurement
-    g_best, rel_best = g, rel0
-
     for i in range(max_iters):
-        rel = rel0 if i == 0 else _measure_rel(seed, g)
-        climbing = climber and prev_g is not None and g > prev_g
-        cliff_triggered = False
-        cliff_kind = None
-
-        if climber:
-            if rel > rel_best:
-                g_best, rel_best = g, rel
-            if not climbing:
-                decline_streak = 0
-            elif prev_rel is not None and rel < prev_rel:
-                # a genuine LOCAL decrease from the immediately PRECEDING point (never from the running best
-                # -- a step that is still below best but ABOVE the preceding point is a RECOVERY, not a
-                # decline; see the pre-registration's seed-44 dip trace, which recovers one step after its
-                # only dip and must NOT trigger here).
-                decline_streak += 1
-                step_drop = round((prev_rel - rel), 4)
-                if step_drop > drop_thresh:
-                    cliff_triggered, cliff_kind = True, ("abrupt: step drop %.4f > DROP_THRESH %.4f"
-                                                         % (step_drop, drop_thresh))
-                elif decline_streak >= decline_patience:
-                    cliff_triggered, cliff_kind = True, ("sustained: %d consecutive climbing steps each below "
-                                                         "its immediate predecessor" % decline_streak)
-            else:
-                decline_streak = 0    # flat or a local increase (a recovery) resets the streak
-
-        traj.append({"iter": i, "fac_g": round(g, 1), "rel": rel, "climber": climber, "climbing": climbing,
-                    "decline_streak": decline_streak, "g_ceiling": round(g_ceiling, 1),
-                    "g_best": round(g_best, 1), "rel_best": rel_best})
-
-        if cliff_triggered:
-            cliff_events.append({"iter": i, "probed_fac_g": round(g, 1), "probed_rel": rel, "kind": cliff_kind,
-                                "reverted_to_fac_g": round(g_best, 1), "reverted_to_rel": rel_best,
-                                "new_ceiling": round(g_best, 1)})
-            g_ceiling = g_best       # CLAMP this seed's live ceiling below the drop
-            g = g_best
-            rel = rel_best
-            traj[-1].update({"fac_g": round(g, 1), "rel": rel, "reverted": True})
-            reason = "cliff detected & clamped at fac_g=%.0f (%s)" % (g, cliff_kind)
-            converged = True
-            prev_g, prev_rel = g, rel
-            break
-
+        rel = meas(seed, g)
+        climbing = prev_g is not None and g > prev_g + 1e-9
+        alarm = False
+        if climbing:
+            S = cusum_step(S, prev_rel - rel, cusum_k)
+            if S == 0.0:
+                last_zero_g = g
+            if S > cusum_h:
+                alarm = True
+        elif prev_g is None:
+            last_zero_g = g
         if prev_g is not None:
-            moved = abs(g - prev_g)
-            converge_streak = converge_streak + 1 if moved < tol else 0
-            if converge_streak >= streak_need:
-                at_bound = ("ceiling" if abs(g - g_ceiling) < 1e-6
-                           else ("floor" if abs(g - g_floor) < 1e-6 else None))
-                reason = ("pinned at %s (fac_g=%.0f)" % (at_bound, g) if at_bound
-                         else "settled at an interior set-point (fac_g=%.0f)" % g)
-                converged = True
-                break
+            streak = streak + 1 if abs(g - prev_g) < tol else 0
+        traj.append({"iter": i, "fac_g": round(g, 1), "rel": rel, "cusum_S": round(S, 6),
+                     "ceiling": round(ceiling, 1), "streak": streak, "alarm": alarm})
+        if alarm:
+            new_ceiling = max(g_floor, min(ceiling, last_zero_g))
+            events.append({"iter": i, "at_fac_g": round(g, 1), "at_rel": rel, "cusum_S": round(S, 6),
+                           "new_ceiling": round(new_ceiling, 1)})
+            ceiling = new_ceiling
+            S = 0.0
+            streak = 0
+        elif prev_g is not None and streak >= streak_need:
+            at = "ceiling" if abs(g - ceiling) < 1e-6 else ("floor" if abs(g - g_floor) < 1e-6 else None)
+            reason = ("pinned at %s (fac_g=%.0f)" % (at, g)) if at else "settled at interior fac_g=%.0f" % g
+            converged = True
+            break
         prev_g, prev_rel = g, rel
-        error = round(target - rel, 4)
-        raw_delta = k_i * error
-        delta = max(-max_step, min(max_step, raw_delta))
-        g = max(g_floor, min(g_ceiling, g + delta))
-
+        delta = max(-max_step, min(max_step, k_i * round(target - rel, 4)))
+        g = max(g_floor, min(ceiling, g + delta))
     last = traj[-1]
-    canonical_fac_g = g_best if climber else last["fac_g"]
-    canonical_rel = rel_best if climber else last["rel"]
-    return {"seed": seed, "g_init": g_init, "climber": climber, "converged": converged, "reason": reason,
-            "n_iters": len(traj), "final_fac_g": canonical_fac_g, "final_rel": canonical_rel,
-            "raw_last_fac_g": last["fac_g"], "raw_last_rel": last["rel"],
-            "live_ceiling": round(g_ceiling, 1), "cliff_events": cliff_events, "trajectory": traj}
-
-
-def prove_it_is_live(seed: int = 44) -> dict:
-    """ANTI-CHEAT #1: this module never imports the static table, AND a fresh re-run of the SAME (seed, init)
-    reproduces an IDENTICAL trajectory (including cliff events) -- the value is genuinely COMPUTED at each
-    step, not memoised from a dict."""
-    no_table_import = ("CALIBRATED_FAC_G" not in globals() and "stabilized_fac_g_for_seed" not in globals())
-    r1 = run_live_cliff_homeostat(seed, G_INIT_LOW)
-    r2 = run_live_cliff_homeostat(seed, G_INIT_LOW)
-    same_traj = r1["trajectory"] == r2["trajectory"]
-    same_cliffs = r1["cliff_events"] == r2["cliff_events"]
-    return {"seed": seed, "no_table_import": no_table_import, "rerun_identical_trajectory": same_traj,
-            "rerun_identical_cliff_events": same_cliffs}
-
-
-def prove_it_discriminates(per_seed: dict) -> dict:
-    """ANTI-CHEAT #3 (falsifiable on the MECHANISM, not just the outcome): the detector must fire on the
-    KNOWN-cliff seed (44, both inits) and must NOT fire on the KNOWN-no-cliff-in-domain seed (101, either
-    init) -- pre-registered before this run. A detector that fires on everyone or no one is not genuine."""
-    fires_44 = (bool(per_seed[44]["low_init"]["cliff_events"]) if 44 in per_seed else None,
-               bool(per_seed[44]["mid_init"]["cliff_events"]) if 44 in per_seed else None)
-    fires_101 = (bool(per_seed[101]["low_init"]["cliff_events"]) if 101 in per_seed else None,
-                bool(per_seed[101]["mid_init"]["cliff_events"]) if 101 in per_seed else None)
-    ok = (all(fires_44) if 44 in per_seed else None, not any(fires_101) if 101 in per_seed else None)
-    return {"fires_on_seed44_low_mid": fires_44, "fires_on_seed101_low_mid": fires_101,
-            "seed44_both_fire": ok[0], "seed101_neither_fires": ok[1],
-            "discriminates": bool(ok[0]) and bool(ok[1]) if (ok[0] is not None and ok[1] is not None) else None}
+    return {"seed": seed, "g_init": g_init, "converged": converged, "reason": reason, "n_iters": len(traj),
+            "final_fac_g": last["fac_g"], "final_rel": last["rel"], "final_ceiling": round(ceiling, 1),
+            "cusum_k": cusum_k, "cusum_h": cusum_h, "alarms": events, "trajectory": traj,
+            "read_out": "settled state (last iterate + its own measured rel); no running best"}
 
 
 # --------------------------------------------------------------------------------------------------------
-def _derisk(seeds=SEEDS, smoke=False):
-    tag = "SMOKE" if smoke else "DE-RISK"
-    print(f"LIVE CLIFF DETECTOR [{tag}] -- per-seed live-detected safety ceiling on fac_g; target={REL_TARGET:.3f} "
-          f"K_I={K_I} MAX_STEP={MAX_STEP} floor={G_FLOOR} cap={G_CEILING_CAP} DROP_THRESH={DROP_THRESH} "
-          f"DECLINE_PATIENCE={DECLINE_PATIENCE}; {len(seeds)} seed(s)", flush=True)
+# the per-seed jobs
+# --------------------------------------------------------------------------------------------------------
+def _scan(seed: int) -> dict:
+    return {str(g): _measure_rel(seed, g) for g in LATTICE}
+
+
+def _git_sha() -> str:
+    try:
+        return subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=_REPO, text=True).strip()
+    except Exception:  # noqa: BLE001  (pool revision dirs are rsync copies, not checkouts)
+        return os.path.basename(os.path.normpath(_REPO))
+
+
+def _sha256_file(p: str) -> str:
+    with open(p, "rb") as fh:
+        return hashlib.sha256(fh.read()).hexdigest()
+
+
+def _write_json(path: str, obj) -> None:
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path, "w") as fh:
+        json.dump(obj, fh, indent=2, default=str)
+
+
+def job_calibrate(seed: int) -> int:
+    if seed not in SEEDS_CALIB:
+        print(f"⛔ seed {seed} is not a calibration seed {SEEDS_CALIB}", flush=True)
+        return 2
     t0 = time.time()
-    err = None
-    per_seed = {}
-    all_visited_g = []
-    try:
+    scan = _scan(seed)
+    out = {"seed": seed, "role": "calibration", "lattice": list(LATTICE), "scan": scan,
+           "elapsed_s": round(time.time() - t0, 1), "revision": _git_sha()}
+    p = os.path.join(V2_DIR, f"calib_s{seed}.json")
+    _write_json(p, out)
+    print(f"[calibrate] seed {seed}: {scan} -> {p}", flush=True)
+    return 0
+
+
+def job_freeze() -> int:
+    scans = {}
+    for s in SEEDS_CALIB:
+        p = os.path.join(V2_DIR, f"calib_s{s}.json")
+        if not os.path.exists(p):
+            print(f"⛔ missing calibration scan {p}", flush=True)
+            return 2
+        with open(p) as fh:
+            d = json.load(fh)
+        scans[s] = [d["scan"][str(g)] for g in LATTICE]
+    fr = freeze_constants(scans)
+    fr["calib_file_sha256"] = {str(s): _sha256_file(os.path.join(V2_DIR, f"calib_s{s}.json")) for s in SEEDS_CALIB}
+    fr["frozen_at"] = time.strftime("%Y-%m-%dT%H:%M:%S")
+    _write_json(FROZEN, fr)
+    print(json.dumps(fr, indent=2), flush=True)
+    return 0
+
+
+def job_eval(seed: int, determinism: bool = True) -> int:
+    import research.runners._pmem_facilitation_derisk as F
+    from research.runners._operating_point_stabilizer_derisk import _frozen_silence
+    if seed not in SEEDS_HELDOUT and seed not in SEEDS_CANONICAL:
+        print(f"⛔ seed {seed} is neither held-out {SEEDS_HELDOUT} nor canonical {SEEDS_CANONICAL}", flush=True)
+        return 2
+    fr = load_frozen()
+    k, h = fr["cusum_k"], fr["cusum_h"]
+    t0 = time.time()
+    low = run_live_cliff_homeostat(seed, G_INIT_LOW, k, h)
+    mid = run_live_cliff_homeostat(seed, G_INIT_MID, k, h)
+    rerun_identical = None
+    if determinism:
+        again = run_live_cliff_homeostat(seed, G_INIT_LOW, k, h)
+        rerun_identical = (again["trajectory"] == low["trajectory"] and again["alarms"] == low["alarms"])
+    settled_g = low["final_fac_g"]
+    lb = F._n3_load_bearing(seed, fac_on=True, N=3, fac_g=settled_g, fac_U=F.FAC_U,
+                            fac_tau_F_steps=F.FAC_TAU_F_STEPS)
+    froz = _frozen_silence(seed, settled_g)
+    fails = [c for c, v in froz["clauses"].items() if not v]
+    scan = _scan(seed)
+    default_rel = low["trajectory"][0]["rel"]          # measured at g = G_FLOOR = the shipped constant
+    visited = [r["fac_g"] for r in low["trajectory"] + mid["trajectory"]]
+    static_margin = None
+    if seed in SEEDS_CANONICAL and os.path.exists(STATIC_STABILIZER_ARTIFACT):
+        with open(STATIC_STABILIZER_ARTIFACT) as fh:
+            static_margin = float(json.load(fh)["per_seed"][str(seed)]["stabilized_margin"])
+    out = {
+        "seed": seed, "role": "heldout" if seed in SEEDS_HELDOUT else "canonical_in_sample",
+        "frozen_constants_sha256": _sha256_file(FROZEN), "cusum_k": k, "cusum_h": h,
+        "low_init": low, "mid_init": mid, "rerun_identical": rerun_identical,
+        "climber": default_rel < REL_TARGET,
+        "settled_fac_g": settled_g, "settled_rel_measured": low["final_rel"],
+        "converged_both": bool(low["converged"] and mid["converged"]),
+        "same_setpoint": abs(low["final_fac_g"] - mid["final_fac_g"]) <= SETPOINT_TOL,
+        "intact_rel": lb["intact_rel"], "intact_fired": lb["intact_fired"], "lesion_rel": lb["lesion_rel"],
+        "lesion_fired": lb["lesion_fired"], "load_bearing": lb["load_bearing"],
+        "frozen_passed": froz["passed"], "frozen_clause_fails": fails, "frozen_clauses": froz["clauses"],
+        "default_rel": default_rel, "margin_default": round(default_rel - FIRE_THR, 4),
+        "margin_settled": round(lb["intact_rel"] - FIRE_THR, 4),
+        "domain_bounded": bool(visited) and min(visited) >= G_FLOOR and max(visited) <= G_CEILING_CAP,
+        "max_fac_g_visited": max(visited), "scan": scan,
+        "static_table_margin_DESCRIPTIVE": static_margin,
+        "elapsed_s": round(time.time() - t0, 1), "revision": _git_sha(),
+    }
+    out["margin_positive"] = out["margin_settled"] > 0
+    out["margin_ge_default"] = out["margin_settled"] >= out["margin_default"]
+    p = os.path.join(V2_DIR, f"eval_s{seed}.json")
+    _write_json(p, out)
+    print(f"[eval] seed {seed}: settled g={settled_g} rel={low['final_rel']} margin={out['margin_settled']} "
+          f"(default {out['margin_default']}) LB={lb['load_bearing']} silence_fails={fails or 'none'} "
+          f"alarms low/mid={len(low['alarms'])}/{len(mid['alarms'])} -> {p}", flush=True)
+    return 0
+
+
+# --------------------------------------------------------------------------------------------------------
+# the pre-registered gate (pure, unit-tested)
+# --------------------------------------------------------------------------------------------------------
+SEED_CRITERIA = ("converged_both", "same_setpoint", "margin_positive", "margin_ge_default", "load_bearing",
+                 "silence_held", "domain_bounded", "rerun_identical")
+
+
+def seed_pass(row: dict) -> dict:
+    c = {"converged_both": bool(row.get("converged_both")), "same_setpoint": bool(row.get("same_setpoint")),
+         "margin_positive": bool(row.get("margin_positive")), "margin_ge_default": bool(row.get("margin_ge_default")),
+         "load_bearing": bool(row.get("load_bearing")), "silence_held": not row.get("frozen_clause_fails", ["?"]),
+         "domain_bounded": bool(row.get("domain_bounded")), "rerun_identical": row.get("rerun_identical") is True}
+    return {"criteria": c, "pass": all(c.values())}
+
+
+def decide_gate(heldout_rows: dict, canonical_rows: dict, null: dict | None, default_off: dict | None) -> dict:
+    """GO iff: every held-out seed passes every criterion; at least one held-out seed is a CLIMBER (else the
+    controller was never exercised -> UNDEFINED); every canonical (in-sample) seed passes too; the detector's
+    permutation null is defined and p < NULL_ALPHA; the default-off organ exact-compare asserted equality in the
+    data AND its negative control differed. Missing inputs are UNDEFINED, never a pass."""
+    undefined = []
+    if set(heldout_rows) != set(SEEDS_HELDOUT):
+        undefined.append(f"held-out results missing for {sorted(set(SEEDS_HELDOUT) - set(heldout_rows))}")
+    if set(canonical_rows) != set(SEEDS_CANONICAL):
+        undefined.append(f"canonical results missing for {sorted(set(SEEDS_CANONICAL) - set(canonical_rows))}")
+    if heldout_rows and not any(r.get("climber") for r in heldout_rows.values()):
+        undefined.append("no held-out seed is a climber -- the controller was never exercised on held-out data")
+    if null is None or not null.get("defined"):
+        undefined.append("detector permutation null UNDEFINED (no alarm on any held-out scan, or not run)")
+    if default_off is None:
+        undefined.append("default-off organ exact-compare artifact missing")
+    elif default_off.get("negative_control_differs") is not True:
+        undefined.append("the default-off compare's negative control did not differ -- the compare cannot fail")
+    h = {s: seed_pass(r) for s, r in heldout_rows.items()}
+    c = {s: seed_pass(r) for s, r in canonical_rows.items()}
+    fails = []
+    fails += [f"held-out s{s}: " + ",".join(k for k, v in p["criteria"].items() if not v)
+              for s, p in sorted(h.items()) if not p["pass"]]
+    fails += [f"canonical s{s}: " + ",".join(k for k, v in p["criteria"].items() if not v)
+              for s, p in sorted(c.items()) if not p["pass"]]
+    if null is not None and null.get("defined") and not (null["p"] < NULL_ALPHA):
+        fails.append(f"detector null: p={null['p']:.4f} >= {NULL_ALPHA}")
+    if default_off is not None and default_off.get("exact_equal_all") is not True:
+        fails.append("default-off organ output NOT byte-identical to the pinned pre-change SHA")
+    status = "UNDEFINED" if undefined else ("NO-GO" if fails else "GO")
+    return {"status": status, "undefined_reasons": undefined, "fail_reasons": fails,
+            "heldout": {str(s): p for s, p in h.items()}, "canonical": {str(s): p for s, p in c.items()},
+            "n_heldout_pass": sum(p["pass"] for p in h.values()),
+            "n_canonical_pass": sum(p["pass"] for p in c.values())}
+
+
+def job_aggregate() -> int:
+    from tools.verdict import Verdict
+
+    def _load(seeds):
+        rows = {}
         for s in seeds:
-            print(f"\n--- seed {s}: live cliff-detecting homeostat, two inits ---", flush=True)
-            low = run_live_cliff_homeostat(s, G_INIT_LOW)
-            print(f"  [low init={G_INIT_LOW}] climber={low['climber']} converged={low['converged']} "
-                  f"n_iters={low['n_iters']} canonical_fac_g={low['final_fac_g']} canonical_rel={low['final_rel']} "
-                  f"cliff_events={len(low['cliff_events'])} :: {low['reason']}", flush=True)
-            for row in low["trajectory"]:
-                print(f"      iter {row['iter']:2d}  fac_g={row['fac_g']:7.1f}  rel={row['rel']:.4f}  "
-                      f"climbing={row['climbing']}  decline_streak={row['decline_streak']}  "
-                      f"g_best={row['g_best']:.1f}", flush=True)
-            mid = run_live_cliff_homeostat(s, G_INIT_MID)
-            print(f"  [mid init={G_INIT_MID}] climber={mid['climber']} converged={mid['converged']} "
-                  f"n_iters={mid['n_iters']} canonical_fac_g={mid['final_fac_g']} canonical_rel={mid['final_rel']} "
-                  f"cliff_events={len(mid['cliff_events'])} :: {mid['reason']}", flush=True)
-            for row in mid["trajectory"]:
-                print(f"      iter {row['iter']:2d}  fac_g={row['fac_g']:7.1f}  rel={row['rel']:.4f}  "
-                      f"climbing={row['climbing']}  decline_streak={row['decline_streak']}  "
-                      f"g_best={row['g_best']:.1f}", flush=True)
-
-            all_visited_g += [row["fac_g"] for row in low["trajectory"]] \
-                + [e["probed_fac_g"] for e in low["cliff_events"]] \
-                + [row["fac_g"] for row in mid["trajectory"]] \
-                + [e["probed_fac_g"] for e in mid["cliff_events"]]
-            same_setpoint = abs(low["final_fac_g"] - mid["final_fac_g"]) <= SETPOINT_TOL
-            converged_g = low["final_fac_g"]         # canonical converged gain: the low-init trajectory
-            converged_rel = low["final_rel"]
-
-            lb = F._n3_load_bearing(s, fac_on=True, N=3, fac_g=converged_g, fac_U=F.FAC_U,
-                                    fac_tau_F_steps=F.FAC_TAU_F_STEPS)
-            print(f"  load-bearing @ canonical g={converged_g}: intact rel={lb['intact_rel']:.4f} "
-                  f"fired={lb['intact_fired']} | lesion rel={lb['lesion_rel']:.4f} fired={lb['lesion_fired']} | "
-                  f"LB={lb['load_bearing']}", flush=True)
-            lesion_attrib = attributable_to(f"seed {s}: intact vs lesion coincidence (load-bearing attribution)",
-                                            lb["intact_rel"], lb["lesion_rel"])
-
-            froz = _frozen_silence(s, converged_g)
-            fails = [k for k, v in froz["clauses"].items() if not v]
-            print(f"  frozen N=5 silence @ canonical g: passed={froz['passed']} "
-                  f"max_silent={froz['max_silent']:.4f} fails={fails or 'none'}", flush=True)
-
-            static_margin = _static_margin_for_seed(s)
-            converged_margin = round(lb["intact_rel"] - FIRE_THR, 4)
-            margin_positive = converged_margin > 0
-            margin_meets_static = converged_margin >= static_margin
-
-            per_seed[s] = {
-                "low_init": low, "mid_init": mid, "same_setpoint_within_tol": same_setpoint,
-                "converged_fac_g": converged_g, "converged_rel": converged_rel,
-                "intact_rel": lb["intact_rel"], "intact_fired": lb["intact_fired"],
-                "lesion_rel": lb["lesion_rel"], "lesion_fired": lb["lesion_fired"],
-                "load_bearing": lb["load_bearing"],
-                "frozen_passed": froz["passed"], "frozen_max_silent": round(froz["max_silent"], 4),
-                "frozen_clause_fails": fails, "frozen_clauses": froz["clauses"],
-                "static_table_margin": static_margin, "converged_margin": converged_margin,
-                "margin_positive": margin_positive, "margin_meets_static": margin_meets_static,
-                "lesion_attribution": lesion_attrib,
-                "cliff_events": low["cliff_events"],
-            }
-
-        live_proof = prove_it_is_live(44 if 44 in per_seed else seeds[0])
-        print(f"\n--- ANTI-CHEAT: prove_it_is_live (seed {live_proof['seed']}) ---", flush=True)
-        print(f"  no_table_import={live_proof['no_table_import']}  "
-              f"rerun_identical_trajectory={live_proof['rerun_identical_trajectory']}  "
-              f"rerun_identical_cliff_events={live_proof['rerun_identical_cliff_events']}", flush=True)
-        discrim = prove_it_discriminates(per_seed) if not smoke else None
-        if discrim is not None:
-            print(f"--- ANTI-CHEAT: prove_it_discriminates -- {discrim}", flush=True)
-    except Exception as e:  # noqa: BLE001
-        err = repr(e)
-        traceback.print_exc()
-
-    if err is not None:
-        summary = {"probe": "pmem_live_cliff_detector", "verdict": f"ERROR -- {err}", "go": False,
-                   "elapsed_seconds": round(time.time() - t0, 1)}
-        _write(summary)
-        return 1
-
-    n_seeds = len(seeds)
-    n_positive = sum(1 for s in seeds if per_seed[s]["margin_positive"])
-    n_meets_static = sum(1 for s in seeds if per_seed[s]["margin_meets_static"])
-    n_lb = sum(1 for s in seeds if per_seed[s]["load_bearing"])
-    n_same_setpoint = sum(1 for s in seeds if per_seed[s]["same_setpoint_within_tol"])
-    silence_regressed = [s for s in seeds if per_seed[s]["frozen_clause_fails"]]
-    domain_bounded = (max(all_visited_g) if all_visited_g else 0.0) <= G_CEILING_CAP \
-        and (min(all_visited_g) if all_visited_g else G_FLOOR) >= G_FLOOR
-    cheat = void_if(bool(silence_regressed),
-                    f"the live cliff detector REGRESSED a silence clause at seed(s) {silence_regressed} -> "
-                    f"spurious fires (a homeostat that raises gain until everything fires is a CHEAT; VOID)")
-    cheat2 = void_if(not domain_bounded,
-                     f"the controller visited fac_g outside [{G_FLOOR}, {G_CEILING_CAP}] (max visited "
-                     f"{max(all_visited_g) if all_visited_g else float('nan')}) -> VOID")
-    default_off_exact = _default_off_exact_compare(per_seed, seeds) if not smoke else None
-    changed_seeds = [s for s in seeds if per_seed[s]["converged_fac_g"] != G_FLOOR]
-    unchanged_seeds = [s for s in seeds if per_seed[s]["converged_fac_g"] == G_FLOOR]
-    thin_seed = min(seeds, key=lambda s: per_seed[s]["static_table_margin"])
-    discrim = prove_it_discriminates(per_seed) if not smoke else None
-
-    from research.runners._pmem_perpool_homeostat_derisk import SILENCE_CLAUSES  # noqa: E402
-
-    go = bool(n_positive == n_seeds and n_meets_static == n_seeds and n_lb == n_seeds
-             and n_same_setpoint == n_seeds and domain_bounded and not cheat and not cheat2
-             and (default_off_exact is None or default_off_exact.get("ok") is not False)
-             and (discrim is None or discrim.get("discriminates") is not False)
-             and not smoke)
-
-    vd = Verdict("pmem_live_cliff_detector")
-    vd.require("load-bearing preserved at the canonical converged gain (per-seed count)", n_lb,
-               expect=lambda x, n=n_seeds: x == n)
-    vd.require("two different inits converge to the SAME canonical neighborhood (per-seed count)",
-               n_same_setpoint, expect=lambda x, n=n_seeds: x == n)
-    vd.require("domain-bounded: no probe left [G_FLOOR, G_CEILING_CAP]", domain_bounded, expect=True)
-    for c in SILENCE_CLAUSES:
-        vd.require(f"frozen-gate silence held at the canonical converged gain: {c}",
-                   sum(1 for s in seeds if per_seed[s]["frozen_clauses"].get(c)),
-                   expect=lambda x, n=n_seeds: x == n)
-    if discrim is not None:
-        vd.require("the detector discriminates (fires on seed 44, not on seed 101)",
-                   discrim.get("discriminates"), expect=True)
-    vd.disabled("STDP / long-term Hebbian LTP / OU-noise",
-                "identical scope to the parent facilitation + live-homeostat de-risks; the only added "
-                "mechanism is the live, per-seed cliff/decline detector replacing the parent's single "
-                "global ceiling")
-    decided = vd.decide(go)
-
-    domain_note = (
-        " DOMAIN-BOUNDED: every probe stayed inside [%.0f, %.0f] (the parent stabilizer's own already-"
-        "validated grid domain); max fac_g visited across all seeds/inits/probes was %.0f. The FINAL selected "
-        "gain for every seed is always a directly-measured, non-collapsed point (canonical = running best), by "
-        "construction." % (G_FLOOR, G_CEILING_CAP, max(all_visited_g) if all_visited_g else float("nan"))
-    )
-    status_word = "GO" if go else "VOID" if (cheat or cheat2) else (
-        "UNDEFINED" if (decided or {}).get("status") == "UNDEFINED" else "NO-GO")
-    verdict = (
-        f"{status_word} ({n_meets_static}/{n_seeds}) -- per the PRE-REGISTERED "
-        f"gate, {n_positive}/{n_seeds} seeds hold a strictly positive canonical margin, "
-        f"{n_meets_static}/{n_seeds} meet-or-beat the STATIC table's own margin, {n_lb}/{n_seeds} stay "
-        f"load-bearing, {n_same_setpoint}/{n_seeds} converge to the SAME canonical neighborhood from two "
-        f"different inits; silence-regressed={silence_regressed or 'none'}; domain-bounded={domain_bounded}; "
-        f"discriminates={discrim.get('discriminates') if discrim else 'n/a (smoke)'}. Seed(s) "
-        f"{changed_seeds or 'none'} moved off the shipped floor; seed(s) {unchanged_seeds or 'none'} settled "
-        f"back at it. Thinnest-margin seed in the static table (s{thin_seed}): static margin "
-        f"{per_seed[thin_seed]['static_table_margin']:+.4f} -> live-converged "
-        f"{per_seed[thin_seed]['converged_margin']:+.4f}." + domain_note
-    )
-
-    summary = {
-        "probe": "pmem_live_cliff_detector", "verdict": verdict, "go": bool(go),
-        "task": ("Replace the parent live-homeostat's SINGLE GLOBAL cliff-safety ceiling (G_CEILING=9000) with "
-                 "a LIVE, per-seed ceiling discovered from that seed's own measured coincidence trajectory -- "
-                 "a local-derivative + sustained-decline safety check that clamps the ceiling below a "
-                 "detected drop, live, per seed, with no per-seed constant anywhere in the control loop."),
-        "gate": {"FIRE_THR": FIRE_THR, "REL_TARGET": REL_TARGET, "G_FLOOR": G_FLOOR,
-                 "G_CEILING_CAP": G_CEILING_CAP, "K_I": K_I, "MAX_STEP": MAX_STEP, "G_TOL": G_TOL,
-                 "CONVERGE_STREAK": CONVERGE_STREAK, "MAX_ITERS": MAX_ITERS, "SETPOINT_TOL": SETPOINT_TOL,
-                 "DROP_THRESH": DROP_THRESH, "DECLINE_PATIENCE": DECLINE_PATIENCE,
-                 "G_INIT_LOW": G_INIT_LOW, "G_INIT_MID": G_INIT_MID},
-        "seeds": list(seeds), "per_seed": per_seed,
-        "n_positive": n_positive, "n_meets_static": n_meets_static, "n_load_bearing": n_lb,
-        "n_same_setpoint": n_same_setpoint, "domain_bounded": domain_bounded,
-        "max_fac_g_visited": max(all_visited_g) if all_visited_g else None,
-        "silence_regressed": silence_regressed,
-        "default_off_exact_compare": default_off_exact,
-        "prove_it_is_live": live_proof,
-        "prove_it_discriminates": discrim,
-        "preconditions": (decided or {}).get("preconditions"),
-        "disabled_processes": (decided or {}).get("disabled_processes"),
-        "verdict_status": (decided or {}).get("status"),
-        "elapsed_seconds": round(time.time() - t0, 1),
-        "BIOLOGY": ("Metaplasticity / BCM sliding threshold (Lee & Kirkwood 2019, Front Cell Neurosci 13:520, "
-                    "DOI:10.3389/fncel.2019.00520): a companion process that adjusts the threshold for "
-                    "plasticity from a unit's OWN recent activity history, rather than one fixed bound shared "
-                    "by every unit. Realized here as a per-seed LIVE safety ceiling discovered from that "
-                    "seed's own coincidence-output trajectory (a local-derivative abrupt-cliff check plus a "
-                    "sustained-decline check, both sized from the parent build's own already-measured dip/"
-                    "cliff magnitudes), generalizing the parent live homeostat's single global constant "
-                    "ceiling into a genuinely per-unit, activity-dependent bound."),
-    }
-    _write(summary)
-    print("\n" + "=" * 118, flush=True)
-    print(f"[live-cliff-detector] VERDICT: {verdict}", flush=True)
-    print(f"[live-cliff-detector] wrote {OUT}\n" + "=" * 118, flush=True)
-    return 0 if (go or smoke) else 1
+            p = os.path.join(V2_DIR, f"eval_s{s}.json")
+            if os.path.exists(p):
+                with open(p) as fh:
+                    rows[s] = json.load(fh)
+        return rows
+    fr = load_frozen()
+    frozen_sha = _sha256_file(FROZEN)
+    held, canon = _load(SEEDS_HELDOUT), _load(SEEDS_CANONICAL)
+    stale = [s for s, r in {**held, **canon}.items() if r.get("frozen_constants_sha256") != frozen_sha]
+    null_h = null_test([[r["scan"][str(g)] for g in LATTICE] for _, r in sorted(held.items())],
+                       fr["cusum_k"], fr["cusum_h"]) if held else None
+    null_c = null_test([[r["scan"][str(g)] for g in LATTICE] for _, r in sorted(canon.items())],
+                       fr["cusum_k"], fr["cusum_h"]) if canon else None
+    default_off = None
+    if os.path.exists(DEFAULT_OFF_ARTIFACT):
+        with open(DEFAULT_OFF_ARTIFACT) as fh:
+            default_off = json.load(fh)
+    dec = decide_gate(held, canon, null_h, default_off)
+    vd = Verdict("pmem_live_cliff_detector_v2")
+    vd.require("every eval file was produced under the frozen constants now on disk", not stale, expect=True)
+    vd.require("all held-out + canonical per-seed results present",
+               len(held) == len(SEEDS_HELDOUT) and len(canon) == len(SEEDS_CANONICAL), expect=True)
+    vd.require("detector permutation null defined on the held-out scans",
+               bool(null_h and null_h.get("defined")), expect=True)
+    vd.require("default-off compare present and able to fail (negative control differs)",
+               bool(default_off and default_off.get("negative_control_differs") is True), expect=True)
+    vd.require("at least one held-out climber (controller exercised)",
+               any(r.get("climber") for r in held.values()) if held else None, expect=True)
+    vd.disabled("STDP / long-term Hebbian LTP / OU-noise", "identical scope to the parent facilitation + live "
+                "homeostat de-risks")
+    decided = vd.decide(dec["status"] == "GO")
+    status = decided["status"] if decided["status"] == "UNDEFINED" else dec["status"]
+    desc = {str(s): {"settled_margin": r["margin_settled"], "static_margin": r["static_table_margin_DESCRIPTIVE"],
+                     "settled_minus_static": (round(r["margin_settled"] - r["static_table_margin_DESCRIPTIVE"], 4)
+                                              if r.get("static_table_margin_DESCRIPTIVE") is not None else None)}
+            for s, r in sorted(canon.items())}
+    summary = {"probe": "pmem_live_cliff_detector_v2", "verdict_status": status, "gate": dec,
+               "stale_eval_files": stale, "frozen_constants": fr, "frozen_constants_sha256": frozen_sha,
+               "null_heldout_PRIMARY": null_h, "null_canonical_in_sample_DESCRIPTIVE": null_c,
+               "default_off_compare": default_off,
+               "static_table_comparison_DESCRIPTIVE_not_gating": desc,
+               "per_seed_summary": {str(s): {k2: r.get(k2) for k2 in (
+                   "role", "climber", "settled_fac_g", "settled_rel_measured", "margin_settled", "margin_default",
+                   "load_bearing", "frozen_clause_fails", "converged_both", "same_setpoint", "rerun_identical",
+                   "domain_bounded", "max_fac_g_visited")} | {"alarms_low": len(r["low_init"]["alarms"]),
+                                                             "alarms_mid": len(r["mid_init"]["alarms"])}
+                   for s, r in sorted({**held, **canon}.items())},
+               "preconditions": decided.get("preconditions"), "disabled_processes": decided.get("disabled_processes"),
+               "HOST_SHORTCUT": ("the controller + CUSUM detector are host arithmetic on the task's own coincidence "
+                                 "read-out setting a scalar synaptic gain; declared, not credited to the brain"),
+               "v1_artifact_sha256": _sha256_file(V1_ARTIFACT) if os.path.exists(V1_ARTIFACT) else None}
+    _write_json(VERDICT_ARTIFACT, summary)
+    print(json.dumps({k2: summary[k2] for k2 in ("verdict_status",)} | {"fails": dec["fail_reasons"],
+                     "undefined": dec["undefined_reasons"] + ([r for r in (decided.get("reasons") or [])])},
+                     indent=2), flush=True)
+    return 0
 
 
-def _write(summary):
-    os.makedirs(os.path.dirname(OUT), exist_ok=True)
-    with open(OUT, "w") as fh:
-        json.dump(summary, fh, indent=2, default=str)
+# --------------------------------------------------------------------------------------------------------
+# default-off byte-identity, asserted in the data against a PINNED pre-change SHA
+# --------------------------------------------------------------------------------------------------------
+_ORGAN_SCENARIO = r"""
+import json, os, sys
+sys.path.insert(0, os.getcwd())
+from research.runners.prospective_memory_production_organ import ProspectiveMemoryOrgan
+o = ProspectiveMemoryOrgan(seed=int(os.environ["_SCEN_SEED"]))
+form = o.form_intention("call mom", "the weather", ["weather"])
+reads = [o.read_turn("let us talk about dinner plans"), o.read_turn("I painted the fence today"),
+         o.read_turn("what is the weather like")]
+out = {"form": form, "reads": reads, "calib": o.calib, "fac_g": getattr(o._pm, "_fac_g", None),
+       "pm_class": type(o._pm).__name__}
+sys.stdout.write("@@SCENARIO@@" + json.dumps(out, sort_keys=True, default=repr) + "\n")
+"""
 
 
-def selftest() -> bool:
-    """Fail-in-the-failing-direction; no brain build."""
-    os.environ.pop(LIVE_CLIFF_ENV, None)
-    checks = {
-        "REL_TARGET is reused (not re-derived) from the static stabilizer module": REL_TARGET == 1.5 * FIRE_THR,
-        "G_FLOOR equals the shipped FAC_G_DEFAULT (reused, not re-typed)": G_FLOOR == FAC_G_DEFAULT,
-        "G_CEILING_CAP equals the parent stabilizer's own top grid point (11000, never extrapolated)": (
-            G_CEILING_CAP == 11000.0),
-        "G_CEILING_CAP is strictly above G_FLOOR (a non-degenerate domain)": G_CEILING_CAP > G_FLOOR,
-        "MAX_STEP is positive and small relative to the domain (a real rate limit)": (
-            0 < MAX_STEP < (G_CEILING_CAP - G_FLOOR) / 2),
-        "K_I is positive (an error above target increases the gain)": K_I > 0,
-        "DROP_THRESH sits strictly between the parent's own committed recoverable dip and non-recoverable "
-        "cliff magnitudes (never fit to this build's own outcome)": (
-            KNOWN_RECOVERABLE_DIP < DROP_THRESH < KNOWN_NONRECOVERABLE_CLIFF),
-        "DECLINE_PATIENCE is strictly greater than the parent's known recoverable dip's duration (1 step)": (
-            DECLINE_PATIENCE > 1),
-        "default-off (env unset) -> live_cliff_detector_enabled() is False": live_cliff_detector_enabled() is False,
-        "'0'/'false' -> live_cliff_detector_enabled() is False": (
-            _env_check("0") is False and _env_check("false") is False),
-        "'1'/'true' -> live_cliff_detector_enabled() is True": (
-            _env_check("1") is True and _env_check("true") is True),
-        "the abrupt-cliff law is a PURE function of the running best + step drop (no seed-keyed branch): "
-        "re-running the SAME frozen synthetic sequence from the SAME init reproduces the SAME cliff decision":
-            _reproduces_synthetic_cliff_decision(),
-        "a synthetic single-step drop just ABOVE DROP_THRESH triggers an abrupt cliff": _abrupt_cliff_fires(),
-        "a synthetic single-step drop just BELOW DROP_THRESH (the parent's own recoverable-dip magnitude) "
-        "does NOT trigger an abrupt cliff": not _abrupt_cliff_does_not_fire_on_known_dip(),
-        "DECLINE_PATIENCE consecutive small declines (each below DROP_THRESH) DO trigger a sustained-decline "
-        "cliff (the seed-100-shaped case the abrupt check alone would miss)": _sustained_decline_fires(),
-        "a single small decline that then RECOVERS (the parent's own seed-44 dip shape) does NOT trigger "
-        "either check": _recoverable_dip_does_not_fire(),
-        "the clip never exceeds G_CEILING_CAP even under an arbitrarily large synthetic error": (
-            _ceiling_holds_under_windup()),
-        "the clip never drops below G_FLOOR even under an arbitrarily large negative synthetic error": (
-            _floor_holds()),
-        "this module's globals contain no CALIBRATED_FAC_G / stabilized_fac_g_for_seed (no table import)": (
-            "CALIBRATED_FAC_G" not in globals() and "stabilized_fac_g_for_seed" not in globals()),
-    }
-    ok = all(checks.values())
-    print("=== LIVE CLIFF DETECTOR SELF-TEST ===")
-    for k, v in checks.items():
-        print("  [%s] %s" % ("PASS" if v else "FAIL", k))
-    print("VERDICT:", "PASS" if ok else "FAIL")
-    return ok
+def _run_scenario(tree: str, env_over: dict, seed: int) -> str:
+    env = {k: v for k, v in os.environ.items() if not k.startswith("BRAIN_PMEM")}
+    env.update({"SIM_BACKEND": "numpy", "OPENBLAS_NUM_THREADS": "1", "OMP_NUM_THREADS": "1",
+                "MKL_NUM_THREADS": "1", "SIM_NO_PROVENANCE": "1", "_SCEN_SEED": str(seed)})
+    env.update(env_over)
+    env["PYTHONPATH"] = tree
+    p = subprocess.run([sys.executable, "-c", _ORGAN_SCENARIO], cwd=tree, env=env, capture_output=True, text=True,
+                       timeout=3600)
+    lines = [ln for ln in p.stdout.splitlines() if ln.startswith("@@SCENARIO@@")]
+    if p.returncode != 0 or not lines:
+        raise RuntimeError(f"scenario failed in {tree} (rc={p.returncode}): {p.stderr[-2000:]}")
+    return lines[-1][len("@@SCENARIO@@"):]
 
 
-def _env_check(val):
-    os.environ[LIVE_CLIFF_ENV] = val
+def job_default_off_compare(seed: int = 44) -> int:
+    """Build the production organ with BRAIN_PMEM_LIVE_CLIFF_DETECTOR UNSET in (a) this tree and (b) a git-archive
+    extraction of PINNED_PRE_CHANGE_SHA; run one scripted session in each; exact-compare the serialized output.
+    Two configs: the shipped default, and BRAIN_PMEM_FACILITATION=1 (the branch whose elif chain this build edited).
+    NEGATIVE CONTROL: this tree with BRAIN_PMEM_OP_STABILIZER=1 (a different fac_g at seed 44) MUST differ from the
+    pinned facilitation run, or the compare is blind."""
+    head = _git_sha()
+    tmp = tempfile.mkdtemp(prefix="pmem_pinned_")
     try:
-        return live_cliff_detector_enabled()
+        arch = subprocess.run(["git", "archive", "--format=tar", PINNED_PRE_CHANGE_SHA], cwd=_REPO,
+                              capture_output=True, check=True)
+        subprocess.run(["tar", "-x", "-C", tmp], input=arch.stdout, check=True)
+        organ_rel = "research/runners/prospective_memory_production_organ.py"
+        pinned_has_flag = LIVE_CLIFF_ENV in open(os.path.join(tmp, organ_rel)).read()
+        head_has_flag = LIVE_CLIFF_ENV in open(os.path.join(_REPO, organ_rel)).read()
+        configs = {"shipped_default": {}, "facilitation_on": {"BRAIN_PMEM_FACILITATION": "1"}}
+        per = {}
+        for name, env_over in configs.items():
+            a = _run_scenario(_REPO, env_over, seed)
+            b = _run_scenario(tmp, env_over, seed)
+            per[name] = {"env": env_over, "head_sha256": hashlib.sha256(a.encode()).hexdigest(),
+                         "pinned_sha256": hashlib.sha256(b.encode()).hexdigest(), "exact_equal": a == b,
+                         "head_output": json.loads(a)}
+            print(f"[default-off] {name}: exact_equal={a == b}", flush=True)
+        neg = _run_scenario(_REPO, {"BRAIN_PMEM_FACILITATION": "1", "BRAIN_PMEM_OP_STABILIZER": "1"}, seed)
+        neg_differs = hashlib.sha256(neg.encode()).hexdigest() != per["facilitation_on"]["pinned_sha256"]
+        out = {"pinned_pre_change_sha": PINNED_PRE_CHANGE_SHA, "head_sha": head, "seed": seed,
+               "pinned_organ_has_cliff_flag": pinned_has_flag, "head_organ_has_cliff_flag": head_has_flag,
+               "configs": per, "exact_equal_all": all(v["exact_equal"] for v in per.values()),
+               "negative_control": {"env": {"BRAIN_PMEM_FACILITATION": "1", "BRAIN_PMEM_OP_STABILIZER": "1"},
+                                    "sha256": hashlib.sha256(neg.encode()).hexdigest(),
+                                    "fac_g": json.loads(neg).get("fac_g")},
+               "negative_control_differs": neg_differs,
+               "method": "git archive of the pinned SHA -> separate tree; one scripted organ session per tree in a "
+                         "fresh process with every BRAIN_PMEM_* var stripped; sha256 + exact string compare"}
+        _write_json(DEFAULT_OFF_ARTIFACT, out)
+        print(f"[default-off] exact_equal_all={out['exact_equal_all']} negative_control_differs={neg_differs}",
+              flush=True)
+        return 0 if (out["exact_equal_all"] and neg_differs) else 1
     finally:
-        os.environ.pop(LIVE_CLIFF_ENV, None)
+        shutil.rmtree(tmp, ignore_errors=True)
 
 
-def _apply_controller_step(g, error, k_i=K_I, max_step=MAX_STEP, g_floor=G_FLOOR, g_ceiling=G_CEILING_CAP):
-    """The rate-limited integral update law, factored out so selftest() can exercise it WITHOUT a brain build."""
-    raw_delta = k_i * error
-    delta = max(-max_step, min(max_step, raw_delta))
-    return max(g_floor, min(g_ceiling, g + delta))
-
-
-def _synthetic_cliff_scan(rels, drop_thresh=DROP_THRESH, decline_patience=DECLINE_PATIENCE):
-    """The PURE cliff/decline-detection law over a synthetic `rel` sequence at fixed 500pA steps -- exercises
-    exactly the same branch (and the same LOCAL-decrease-from-the-preceding-point definition of "decline") as
-    `run_live_cliff_homeostat`'s climber path, without a brain build."""
-    g_best, rel_best = 0.0, rels[0]
-    decline_streak = 0
-    prev_rel = rels[0]
-    for i, rel in enumerate(rels[1:], start=1):
-        if rel > rel_best:
-            g_best, rel_best = float(i), rel
-        if rel < prev_rel:
-            decline_streak += 1
-            step_drop = round(prev_rel - rel, 4)
-            prev_rel = rel
-            if step_drop > drop_thresh:
-                return {"triggered": True, "kind": "abrupt", "iter": i, "g_best": g_best, "rel_best": rel_best}
-            if decline_streak >= decline_patience:
-                return {"triggered": True, "kind": "sustained", "iter": i, "g_best": g_best,
-                        "rel_best": rel_best}
-        else:
-            decline_streak = 0
-            prev_rel = rel
-    return {"triggered": False, "kind": None, "iter": len(rels) - 1, "g_best": g_best, "rel_best": rel_best}
-
-
-def _reproduces_synthetic_cliff_decision():
-    rels = [0.20, 0.22, 0.21, 0.19]
-    a = _synthetic_cliff_scan(rels)
-    b = _synthetic_cliff_scan(rels)
-    return a == b
-
-
-def _abrupt_cliff_fires():
-    # a single step drop of DROP_THRESH + 0.002 (just above threshold) must fire immediately (iter 1)
-    rels = [0.20, 0.20 - (DROP_THRESH + 0.002)]
-    r = _synthetic_cliff_scan(rels)
-    return r["triggered"] and r["kind"] == "abrupt" and r["iter"] == 1
-
-
-def _abrupt_cliff_does_not_fire_on_known_dip():
-    # the parent's own committed recoverable-dip magnitude (0.0072), well below DROP_THRESH, must NOT fire
-    # the abrupt check on its own (a single dip step, patience=2 requires a SECOND non-recovering step)
-    rels = [0.2150, 0.2150 - KNOWN_RECOVERABLE_DIP]
-    r = _synthetic_cliff_scan(rels)
-    return r["triggered"] and r["kind"] == "abrupt"   # i.e. this returns False for a correctly-behaving law
-
-
-def _sustained_decline_fires():
-    # two consecutive small declines (each well below DROP_THRESH) from a running best -- the seed-100 shape
-    rels = [0.2956, 0.2956 - 0.0022, 0.2956 - 0.0045]
-    r = _synthetic_cliff_scan(rels)
-    return r["triggered"] and r["kind"] == "sustained" and r["iter"] == 2
-
-
-def _recoverable_dip_does_not_fire():
-    # the parent's own committed seed-44 shape: one dip step, then RECOVERS past the pre-dip value
-    rels = [0.2111, 0.2150, 0.2078, 0.2089, 0.2139, 0.2172, 0.2183]
-    r = _synthetic_cliff_scan(rels)
-    return not r["triggered"]
-
-
-def _ceiling_holds_under_windup():
-    g = G_FLOOR
-    for _ in range(50):
-        g = _apply_controller_step(g, 1.0)
-    return g == G_CEILING_CAP
-
-
-def _floor_holds():
-    g = G_CEILING_CAP
-    for _ in range(50):
-        g = _apply_controller_step(g, -1.0)
-    return g == G_FLOOR
-
-
+# --------------------------------------------------------------------------------------------------------
+# production entry point (default-OFF; wired into prospective_memory_production_organ.py)
+# --------------------------------------------------------------------------------------------------------
 def live_cliff_detector_enabled() -> bool:
-    """Default-OFF. `BRAIN_PMEM_LIVE_CLIFF_DETECTOR` in {1,true,yes,on} -> replace the STATIC per-seed table AND
-    the parent live homeostat's single global ceiling with THIS per-seed live-detected ceiling (converging
-    fresh, from `G_INIT_LOW`, cached per-seed within the process -- the SAME per-process calibration-caching
-    pattern the homeostat bias / plateau theta / live homeostat already use). Takes PRIORITY over BOTH
-    `BRAIN_PMEM_LIVE_HOMEOSTAT` and `BRAIN_PMEM_OP_STABILIZER` when more than one is set (see `_ensure_pm`).
-    OFF (the default) -> the production organ's existing paths are completely untouched -- byte-identical to
-    today."""
     v = os.environ.get(LIVE_CLIFF_ENV)
     if v is None:
         return False
@@ -621,37 +606,94 @@ _LIVE_CLIFF_CACHE: dict[int, float] = {}
 
 
 def live_cliff_fac_g_for_seed(seed: int) -> float:
-    """PRODUCTION entry point: converge THIS seed's gain live via the cliff detector (from `G_INIT_LOW`) the
-    first time it is needed in this process, then cache the result. NOT a table: nothing ships pre-computed."""
+    """Converge this seed's gain live (from G_INIT_LOW, frozen constants) the first time it is needed in this
+    process and return the SETTLED iterate. Refuses (raises) if the constants were never frozen."""
     seed = int(seed)
     if seed not in _LIVE_CLIFF_CACHE:
-        result = run_live_cliff_homeostat(seed, G_INIT_LOW)
-        _LIVE_CLIFF_CACHE[seed] = float(result["final_fac_g"])
+        _LIVE_CLIFF_CACHE[seed] = float(run_live_cliff_homeostat(seed, G_INIT_LOW)["final_fac_g"])
     return _LIVE_CLIFF_CACHE[seed]
+
+
+# --------------------------------------------------------------------------------------------------------
+def selftest() -> bool:
+    def plant(table):
+        return lambda s, g: table(g)
+    k, h = 0.001, 0.01
+    # (1) a rise, a mild wobble, then a HARD non-recovering drop at 9500: the controller must alarm, lower its
+    # ceiling BELOW the drop, and SETTLE there; the reported rel must be the one measured at the settled gain.
+    def cliff(g):
+        return 0.20 + 0.000004 * (min(g, 9000) - 6000) - (0.05 if g >= 9500 else 0.0)
+    r = run_live_cliff_homeostat(0, 6000.0, k, h, measure=plant(cliff))
+    ok_cliff = (bool(r["alarms"]) and r["converged"] and r["final_fac_g"] < 9500
+                and r["final_rel"] == cliff(r["final_fac_g"]))
+    # (2) no cliff: monotone rise to the cap -> no alarm, pinned at the cap
+    r2 = run_live_cliff_homeostat(0, 6000.0, k, h, measure=plant(lambda g: 0.20 + 0.000002 * (g - 6000)))
+    ok_nocliff = (not r2["alarms"]) and r2["final_fac_g"] == G_CEILING_CAP
+    # (3) the read-out is the settled iterate, never a remembered best
+    ok_readout = all(x["final_fac_g"] == x["trajectory"][-1]["fac_g"] and x["final_rel"] == x["trajectory"][-1]["rel"]
+                     for x in (r, r2))
+    # (4) settled seed descends to the floor
+    r3 = run_live_cliff_homeostat(0, 8000.0, k, h, measure=plant(lambda g: 0.34))
+    ok_floor = r3["final_fac_g"] == G_FLOOR and not r3["alarms"]
+    # (5) detector pure-function sanity
+    ok_det = detect_scan([0.2, 0.21, 0.22, 0.15, 0.15], k, h)["alarm"] and not detect_scan(
+        [0.2, 0.21, 0.22, 0.23], k, h)["alarm"]
+    # (6) freeze refuses evaluation seeds
+    try:
+        freeze_constants({44: [0.2] * len(LATTICE)})
+        ok_refuse = False
+    except ValueError:
+        ok_refuse = True
+    # (7) gate cannot pass with nothing in it
+    ok_gate = decide_gate({}, {}, None, None)["status"] == "UNDEFINED"
+    checks = {"cliff -> alarm, ceiling below the drop, settled read-out measured there": ok_cliff,
+              "no cliff -> no alarm, pinned at the cap": ok_nocliff,
+              "reported (g, rel) is the last iterate, never a running best": ok_readout,
+              "settled seed descends to the floor": ok_floor, "CUSUM fires on a drop, not on a rise": ok_det,
+              "freeze_constants refuses an evaluation seed": ok_refuse,
+              "empty gate is UNDEFINED, never GO": ok_gate,
+              "calibration seeds disjoint from evaluation seeds": not (
+                  set(SEEDS_CALIB) & (set(SEEDS_CANONICAL) | set(SEEDS_HELDOUT))),
+              "held-out seeds disjoint from canonical": not (set(SEEDS_HELDOUT) & set(SEEDS_CANONICAL)),
+              "default-off: flag unset -> disabled": (os.environ.pop(LIVE_CLIFF_ENV, None) or True)
+              and live_cliff_detector_enabled() is False}
+    print("=== LIVE CLIFF DETECTOR v2 SELF-TEST ===")
+    for kk, v in checks.items():
+        print("  [%s] %s" % ("PASS" if v else "FAIL", kk))
+    ok = all(checks.values())
+    print("VERDICT:", "PASS" if ok else "FAIL")
+    return ok
 
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--seeds", type=int, nargs="+", default=list(SEEDS))
     ap.add_argument("--seed", type=int, default=None)
-    ap.add_argument("--smoke", action="store_true")
-    ap.add_argument("--derisk", action="store_true")
     ap.add_argument("--selftest", action="store_true")
-    ap.add_argument("--trace", action="store_true", help="print the full trajectory for one seed, both inits")
+    ap.add_argument("--calibrate", action="store_true")
+    ap.add_argument("--freeze", action="store_true")
+    ap.add_argument("--eval", action="store_true")
+    ap.add_argument("--no-determinism", action="store_true")
+    ap.add_argument("--aggregate", action="store_true")
+    ap.add_argument("--default-off-compare", action="store_true")
     a = ap.parse_args()
-
-    if a.selftest:
-        return 0 if selftest() else 1
-    if a.trace:
-        s = a.seed or 44
-        for ginit in (G_INIT_LOW, G_INIT_MID):
-            r = run_live_cliff_homeostat(s, ginit)
-            print(json.dumps(r, indent=2))
-        return 0
-    seeds = [a.seed] if a.seed is not None else a.seeds
-    if a.smoke:
-        return _derisk([seeds[0]], smoke=True)
-    return _derisk(seeds, smoke=False)
+    try:
+        if a.selftest:
+            return 0 if selftest() else 1
+        if a.calibrate:
+            return job_calibrate(a.seed)
+        if a.freeze:
+            return job_freeze()
+        if a.eval:
+            return job_eval(a.seed, determinism=not a.no_determinism)
+        if a.aggregate:
+            return job_aggregate()
+        if a.default_off_compare:
+            return job_default_off_compare(a.seed if a.seed is not None else 44)
+    except Exception:  # noqa: BLE001
+        traceback.print_exc()
+        return 1
+    ap.print_help()
+    return 2
 
 
 if __name__ == "__main__":
