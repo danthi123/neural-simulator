@@ -1,0 +1,230 @@
+{
+ "question": "With all three flipped flags explicitly =0, is the scripted /api/brain-chat session byte-identical (per-turn sha256 of the canonicalized response body) to the pinned pre-flip commit?",
+ "ref": {
+  "label": "base_033e385b8",
+  "arm": "off",
+  "flags_env": {
+   "BRAIN_EPISODIC_STORE_VERIFY": "0",
+   "BRAIN_PMEM_FACILITATION": "0",
+   "BRAIN_SOURCE_PROV_ABSTAIN_AT_TIE": "0"
+  },
+  "session_sha_canon": "1e2d412127df1683832f3c42fe62074f1b528b17dfd5f41da088e30886d9442a",
+  "wall_s": 1031.2
+ },
+ "test": {
+  "path": "research/findings/raw/_flip_validated_fixes/chat_sha_branch_off.json",
+  "arm": "off",
+  "flags_env": {
+   "BRAIN_EPISODIC_STORE_VERIFY": "0",
+   "BRAIN_PMEM_FACILITATION": "0",
+   "BRAIN_SOURCE_PROV_ABSTAIN_AT_TIE": "0"
+  },
+  "session_sha_canon": "1e2d412127df1683832f3c42fe62074f1b528b17dfd5f41da088e30886d9442a",
+  "wall_s": 1031.5
+ },
+ "sim_backend": [
+  "numpy",
+  "numpy"
+ ],
+ "verdict": "IDENTICAL",
+ "n_turns": [
+  10,
+  10
+ ],
+ "all_http_200": true,
+ "identical": true,
+ "raw_identical": true,
+ "n_turns_canon_differ": 0,
+ "turns": [
+  {
+   "turn": 0,
+   "message": "what does the dog chase",
+   "status": [
+    200,
+    200
+   ],
+   "canon_equal": true,
+   "raw_equal": true,
+   "answers": [
+    "the dog chases the cat",
+    "the dog chases the cat"
+   ],
+   "dropped_volatile_keys": []
+  },
+  {
+   "turn": 1,
+   "message": "the wolf hunts the deer",
+   "status": [
+    200,
+    200
+   ],
+   "canon_equal": true,
+   "raw_equal": true,
+   "answers": [
+    "the wolf hunts the deer \u2014 worth going further here.",
+    "the wolf hunts the deer \u2014 worth going further here."
+   ],
+   "dropped_volatile_keys": []
+  },
+  {
+   "turn": 2,
+   "message": "what does the wolf hunt",
+   "status": [
+    200,
+    200
+   ],
+   "canon_equal": true,
+   "raw_equal": true,
+   "answers": [
+    "Setting the held thread aside \u2014 On wolf, then \u2014 the wolf hunts the deer",
+    "Setting the held thread aside \u2014 On wolf, then \u2014 the wolf hunts the deer"
+   ],
+   "dropped_volatile_keys": []
+  },
+  {
+   "turn": 3,
+   "message": "remind me to feed the cat when we talk about dinner",
+   "status": [
+    200,
+    200
+   ],
+   "canon_equal": true,
+   "raw_equal": true,
+   "answers": [
+    "Okay \u2014 I'll hold onto that and remind you to feed the cat when we talk about dinner comes up.",
+    "Okay \u2014 I'll hold onto that and remind you to feed the cat when we talk about dinner comes up."
+   ],
+   "dropped_volatile_keys": []
+  },
+  {
+   "turn": 4,
+   "message": "what does the dog chase",
+   "status": [
+    200,
+    200
+   ],
+   "canon_equal": true,
+   "raw_equal": true,
+   "answers": [
+    "Setting the held thread aside \u2014 As for it \u2014 On dog, then \u2014 the dog chases the cat \u2014 worth going further here.",
+    "Setting the held thread aside \u2014 As for it \u2014 On dog, then \u2014 the dog chases the cat \u2014 worth going further here."
+   ],
+   "dropped_volatile_keys": []
+  },
+  {
+   "turn": 5,
+   "message": "tell me about the bird",
+   "status": [
+    200,
+    200
+   ],
+   "canon_equal": true,
+   "raw_equal": true,
+   "answers": [
+    "the tell abouts the bird \u2014 worth going further here.",
+    "the tell abouts the bird \u2014 worth going further here."
+   ],
+   "dropped_volatile_keys": []
+  },
+  {
+   "turn": 6,
+   "message": "what should we have for dinner",
+   "status": [
+    200,
+    200
+   ],
+   "canon_equal": true,
+   "raw_equal": true,
+   "answers": [
+    "(Reminder \u2014 you asked me to feed the cat when we talk about dinner came up, and we talk about dinner just came up.) I don't know about that. My curiosity is piqued \u2014 I haven't learned about have yet: what can you tell me about have?",
+    "(Reminder \u2014 you asked me to feed the cat when we talk about dinner came up, and we talk about dinner just came up.) I don't know about that. My curiosity is piqued \u2014 I haven't learned about have yet: what can you tell me about have?"
+   ],
+   "dropped_volatile_keys": []
+  },
+  {
+   "turn": 7,
+   "message": "earlier you mentioned the wolf",
+   "status": [
+    200,
+    200
+   ],
+   "canon_equal": true,
+   "raw_equal": true,
+   "answers": [
+    "I don't recall us discussing wolf \u2014 no assembly completes for that cue (a genuine spiking completion failure, so I won't make something up).",
+    "I don't recall us discussing wolf \u2014 no assembly completes for that cue (a genuine spiking completion failure, so I won't make something up)."
+   ],
+   "dropped_volatile_keys": []
+  },
+  {
+   "turn": 8,
+   "message": "do you remember talking about the dog",
+   "status": [
+    200,
+    200
+   ],
+   "canon_equal": true,
+   "raw_equal": true,
+   "answers": [
+    "Setting the held thread aside \u2014 As for it \u2014 On dog, then \u2014 I don't know about that. My curiosity is piqued \u2014 I haven't learned about remember yet: what can you tell me about remember?",
+    "Setting the held thread aside \u2014 As for it \u2014 On dog, then \u2014 I don't know about that. My curiosity is piqued \u2014 I haven't learned about remember yet: what can you tell me about remember?"
+   ],
+   "dropped_volatile_keys": []
+  },
+  {
+   "turn": 9,
+   "message": "what does the dog chase",
+   "status": [
+    200,
+    200
+   ],
+   "canon_equal": true,
+   "raw_equal": true,
+   "answers": [
+    "As for it \u2014 the dog chases the cat the cat eats the fish",
+    "As for it \u2014 the dog chases the cat the cat eats the fish"
+   ],
+   "dropped_volatile_keys": []
+  }
+ ],
+ "informational": {
+  "branch_default": {
+   "path": "research/findings/raw/_flip_validated_fixes/chat_sha_branch_default.json",
+   "arm": "default",
+   "flags_env": {
+    "BRAIN_EPISODIC_STORE_VERIFY": null,
+    "BRAIN_PMEM_FACILITATION": null,
+    "BRAIN_SOURCE_PROV_ABSTAIN_AT_TIE": null
+   },
+   "wall_s": 992.8,
+   "identical_to_test": false,
+   "n_turns_canon_differ": 3,
+   "differing_turns": [
+    {
+     "turn": 3,
+     "message": "remind me to feed the cat when we talk about dinner",
+     "answers": [
+      "Okay \u2014 I'll hold onto that and remind you to feed the cat when we talk about dinner comes up.",
+      "Okay \u2014 I'll hold onto that and remind you to feed the cat when we talk about dinner comes up."
+     ]
+    },
+    {
+     "turn": 5,
+     "message": "tell me about the bird",
+     "answers": [
+      "the tell abouts the bird \u2014 worth going further here.",
+      "the tell abouts the bird \u2014 worth going further here."
+     ]
+    },
+    {
+     "turn": 6,
+     "message": "what should we have for dinner",
+     "answers": [
+      "(Reminder \u2014 you asked me to feed the cat when we talk about dinner came up, and we talk about dinner just came up.) I don't know about that. My curiosity is piqued \u2014 I haven't learned about have yet: what can you tell me about have?",
+      "(Reminder \u2014 you asked me to feed the cat when we talk about dinner came up, and we talk about dinner just came up.) I don't know about that. My curiosity is piqued \u2014 I haven't learned about have yet: what can you tell me about have?"
+     ]
+    }
+   ]
+  }
+ }
+}

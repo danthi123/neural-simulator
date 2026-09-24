@@ -355,23 +355,56 @@ def _check_retire_status(data, today=None):
 
 
 # ---------------------------------------------------------------- entry points
+def _row_anchor_files(data):
+    """Every source file a ledger row anchors (default_anchor[].file + scaffold_symbol.file)."""
+    files = set()
+    for row in (data or {}).get("rows", []) or []:
+        for anc in row.get("default_anchor", []) or []:
+            if anc.get("file"):
+                files.add(str(anc["file"]).replace("\\", "/"))
+        sc = row.get("scaffold_symbol") or {}
+        if sc.get("file"):
+            files.add(str(sc["file"]).replace("\\", "/"))
+    return files
+
+
+def _staged_changed():
+    """Every path staged in the index (added, modified, renamed or deleted). The pre-commit hook hands the registry only
+    ADDED files (--diff-filter=A, to keep legacy findings out of the content gates), and the ledger is never added, only
+    modified -- so until 2026-09-23 Check A/C/D never ran on a real ledger or anchored-source edit (a stale anchor sat
+    on main for a week). The A/C/D trigger reads the index itself, the way gates/prereg_before_run does."""
+    import subprocess
+    try:
+        r = subprocess.run(["git", "diff", "--cached", "--name-only", "--diff-filter=ACMRD"], cwd=_ROOT,
+                           capture_output=True, text=True, timeout=30)
+    except Exception:
+        return []
+    return [ln.strip().replace("\\", "/") for ln in r.stdout.splitlines() if ln.strip()]
+
+
 def check(paths):
-    if paths is None or len(paths) == 0:
+    if paths is None:
         return []  # legacy audited on touch
     norm = [p.replace("\\", "/") for p in paths]
+    trig = set(norm) | set(_staged_changed())   # A/C/D trigger: added (hook) + modified (index); B stays on `norm`
+    if not trig:
+        return []
     problems = []
     ledger_text = _read(LEDGER_REL)
     if ledger_text is None:
         # only complain if something in scope needs it
-        if any(p == LEDGER_REL or p in ANCHORED_FILES for p in norm):
+        if any(p == LEDGER_REL or p in ANCHORED_FILES for p in trig):
             return ["[PI] %s is missing — the production-integration ledger must exist." % LEDGER_REL]
         return []
     data = _load_ledger(ledger_text)
     if not data or not data.get("rows"):
         return ["[PI] %s failed to parse / has no rows." % LEDGER_REL]
 
-    # A + C + D run when the ledger or any anchored source file is staged.
-    if any(p == LEDGER_REL or p in ANCHORED_FILES for p in norm):
+    # A + C + D run when the ledger or any anchored source file is staged. "Anchored" = the static ANCHORED_FILES
+    # PLUS every file a row's default_anchor / scaffold_symbol names (2026-09-23: a41332aa1 deleted the anchored
+    # `_LEARNED_BIAS_DEFAULT_ON` from research/runners/biased_competition_prod.py, which was not in the static list, so
+    # Check A never ran and the stale anchor sat on main blocking every later ledger commit).
+    if any(p == LEDGER_REL or p in ANCHORED_FILES or p in _row_anchor_files(data) for p in trig):
         problems += _check_anchors(data)
         problems += _check_ratchet(data)
         problems += _check_retire_status(data)
