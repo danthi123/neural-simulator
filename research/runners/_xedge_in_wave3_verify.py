@@ -173,13 +173,26 @@ def g1_compare(off_path, on_path, out):
     others = [k for k in rows if k not in ENDPOINTS]
     g1 = all(rows[k][s]["identical"] for k in others for s in ("build", "exercised"))
     endpoints_ok = all(rows[k][s]["identical"] for k in ENDPOINTS if k in rows for s in ("build", "exercised"))
+    from tools.verdict import Verdict
+    v = Verdict(f"G1 other-organ read identity, flag ON vs OFF, seed {on['seed']}")
+    v.require("ON arm read the flag-ON (xedge-in-wave3) pool", on.get("pool_is_xedge_in_wave3"), expect=True)
+    v.require("OFF arm read the plain Wave-3 pool", off.get("pool_is_xedge_in_wave3"), expect=False)
+    v.require("9 non-endpoint organs read in both arms", len(others), expect=9)
+    cwb, cwe = on.get("cross_weights_build") or {}, on.get("cross_weights_exercised") or {}
+    v.reaches("the exercise moved the cross-edge (max candidate weight)",
+              before=max(cwb.values()) if cwb else None, after=max(cwe.values()) if cwe else None)
+    dec = v.decide(go=bool(g1), verbose=False)
     res = {"mode": "g1_compare", "seed": on["seed"], "off": off_path, "on": on_path, "rows": rows,
            "n_other_organs": len(others), "G1_other_organs_identical": bool(g1),
            "endpoints_identical": bool(endpoints_ok),
            "cross_weights_build": on.get("cross_weights_build"),
            "cross_weights_exercised": on.get("cross_weights_exercised"),
            "exercise_credit_traces": on.get("exercise", {}).get("credit_traces"),
-           "verdict": "G1 PASS (no substrate change)" if g1 else "G1 FAIL -> SUBSTRATE CHANGE (re-measure pooled rows)"}
+           "status": dec["status"], "preconditions": dec["preconditions"],
+           "undefined_reasons": dec["undefined_reasons"],
+           "verdict": ("UNDEFINED" if dec["status"] == "UNDEFINED" else
+                       "G1 PASS (no substrate change)" if g1 else
+                       "G1 FAIL -> SUBSTRATE CHANGE (re-measure pooled rows)")}
     Path(out).parent.mkdir(parents=True, exist_ok=True)
     Path(out).write_text(json.dumps(res, indent=1))
     print(json.dumps({k: res[k] for k in ("G1_other_organs_identical", "endpoints_identical", "verdict")}))
@@ -263,7 +276,30 @@ def g2_compare(a_path, b_path, i_path, out):
     no_cross = not any(cross.values())
     guard_fired = I["n_session_resets"] > 0 and A["n_session_resets"] == 0 and B["n_session_resets"] == 0
     learn = bool(I.get("learn"))
+    # NON-VACUITY: every session's d6 load recovered exactly its own referents, and every comp step produced a judge
+    from tools.verdict import Verdict
+    v = Verdict(f"G2 two-session leak ({'learning' if learn else 'transient'}), seed {I['seed']}")
+
+    def _own_recovered(run, key):
+        o = run["outputs"][key][0]["out"] or {}
+        return sorted((o.get("recovered") or {}).values()) == sorted(SESSIONS[key]["refs"])
+
+    def _judged(run, key):
+        return all((s["out"] or {}).get("judge") is not None for s in run["outputs"][key] if s["step"] == "comp")
+
+    v.require("alone_A / alone_B / interleaved all ran the same learn setting",
+              A.get("learn") == B.get("learn") == I.get("learn"), expect=True)
+    v.require("each session's load recovered exactly its own referents (all 4 runs)",
+              all(_own_recovered(r, k) for r, k in ((A, "A"), (B, "B"), (I, "A"), (I, "B"))), expect=True)
+    v.require("every comp step produced a comprehension judge", all(_judged(r, k) for r, k in (
+        (A, "A"), (B, "B"), (I, "A"), (I, "B"))), expect=True)
+    v.require("session guard fired interleaved and never alone", bool(guard_fired), expect=True)
+    # learning arm: the claim is that interleaving changes NOTHING but the shared learned weight (the credit trace)
+    only_weight = all(k.startswith("credit.") for per in rows.values() for r in per for k in r["diff_keys"])
+    dec = v.decide(go=bool(no_cross and (only_weight if learn else ok_equal)), verbose=False)
     res = {"mode": "g2_compare", "learn": learn, "seed": I["seed"], "rows": rows,
+           "status": dec["status"], "preconditions": dec["preconditions"],
+           "undefined_reasons": dec["undefined_reasons"],
            "all_outputs_equal_alone_vs_interleaved": bool(ok_equal),
            "cross_session_referent_names": cross, "no_cross_referent": bool(no_cross),
            "session_guard_fired": bool(guard_fired),
@@ -271,12 +307,17 @@ def g2_compare(a_path, b_path, i_path, out):
                                 "interleaved": I["n_session_resets"]},
            "cross_weights_end": {"alone_A": A["cross_weights_end"], "alone_B": B["cross_weights_end"],
                                  "interleaved": I["cross_weights_end"]}}
+    res["diffs_confined_to_shared_weight"] = bool(only_weight)
     if learn:
-        res["verdict"] = "INFORMATIONAL (learning arm; shared plastic weight by design)"
+        res["verdict"] = ("INFORMATIONAL (learning arm): interleaving changed only the shared learned weight"
+                          if dec["status"] == "GO" else
+                          "INFORMATIONAL (learning arm): interleaving changed more than the shared weight"
+                          if dec["status"] == "NO-GO" else "UNDEFINED")
     else:
-        g2 = bool(ok_equal and no_cross and guard_fired)
+        g2 = bool(ok_equal and no_cross and guard_fired and dec["status"] == "GO")
         res["G2_transient_pass"] = g2
-        res["verdict"] = "G2 PASS (no transient cross-session leak)" if g2 else "G2 FAIL"
+        res["verdict"] = ("UNDEFINED" if dec["status"] == "UNDEFINED" else
+                          "G2 PASS (no transient cross-session leak)" if g2 else "G2 FAIL")
     Path(out).parent.mkdir(parents=True, exist_ok=True)
     Path(out).write_text(json.dumps(res, indent=1))
     print(json.dumps({k: res[k] for k in ("verdict", "all_outputs_equal_alone_vs_interleaved", "no_cross_referent",
@@ -331,8 +372,18 @@ def selftest(seed: int, out: str):
     from tools.lab import attributable_to
     frac = attributable_to(f"seed{seed} in-wave3 xedge net-lean drive vs cross-edge lesion", mi, ml)
     res["G3_frac_attributable_to_cross_edge"] = None if frac is None else float(frac)
-    res["G3_pass"] = bool(mi > G3_INTACT_MIN and ml < G3_LESION_MAX)
-    res["verdict"] = ("G3 PASS (load-bearing, lesion-attributable; de-risk seed %d)" % seed if res["G3_pass"]
+    from tools.verdict import Verdict
+    v = Verdict(f"G3 in-wave3 xedge load-bearing selftest, seed {seed}")
+    v.require("holder built in-wave3 (flag ON)", bool(holder.in_wave3), expect=True)
+    v.reaches("the curriculum grew the cross-edge (max candidate weight)",
+              before=max(res["cross_weights_w0"].values()), after=max(res["cross_weights_grown"].values()))
+    v.control("cross-edge lesion vs intact (max |dNet|)", treatment=mi, control=ml)
+    dec = v.decide(go=bool(mi > G3_INTACT_MIN and ml < G3_LESION_MAX), verbose=False)
+    res["status"], res["preconditions"] = dec["status"], dec["preconditions"]
+    res["undefined_reasons"] = dec["undefined_reasons"]
+    res["G3_pass"] = bool(dec["status"] == "GO")
+    res["verdict"] = ("UNDEFINED" if dec["status"] == "UNDEFINED" else
+                      "G3 PASS (load-bearing, lesion-attributable; de-risk seed %d)" % seed if res["G3_pass"]
                       else "G3 FAIL")
     res["peak_rss_gb"] = _peak_gb()
     res["wall_s"] = round(time.time() - t0, 1)
