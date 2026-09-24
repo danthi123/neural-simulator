@@ -162,3 +162,39 @@ No external result is used as a threshold.
 The external search logged for this lane (the GNW ignition access literature, e.g. Almeida 2022,
 doi:10.1016/j.neuropsychologia.2022.108202, and the BG role in speech production, Krýže 2026,
 doi:10.1002/ana.78276) motivates the design: report is gated by an ignition and a BG commit. It does not set any number here.
+
+## Amendment 1 (2026-09-24, after the dev-seed-7 smoke, BEFORE any gate-seed run)
+
+No gate seed (42/43/44/100/101/102) has run under this document. Everything below was decided on dev seeds 7, 11 and 13.
+
+**What changes: the engagement afferent.** `eng` becomes the Gate-B affect organ's own graded register,
+`|tone_level| / 3`, where `tone_level` is the staircase level the server already reads off the spiking ladder
+differential (range -3..3).
+It replaces `min(1, |clip(4 x differential)|)`. The fallback to the x4 squash applies only when no `tone_level` is attached.
+
+**Why (calibration, disclosed as such).** The x4 squash was the Qwen-prompt mood mapping and was never calibrated
+as a striatal salience.
+- On the strongest affective probe (`emo`, seed 7) the Gate-B differential was 0.0375 and the tone level was 2
+  (`research/findings/raw/_open_ended_gated/smoke/s7/intact_a.json`, `affect`).
+  The x4 squash turned that into a speak salience of 0.15 (`open_ended_gated.salience_speak`, same file).
+- The dev-seed psychometric read of the speak/abstain race
+  (`research/findings/raw/_open_ended_gated/bg_curve/bg_curve_dev_s7_11_13.json`, `pooled`) gives
+  SPEAK on 2 of 24 races at s = 0.15, against 21 of 24 at s = 0.67 (level 2 / 3).
+- So under the original formula the affect afferent could not move the race by construction. The measured seed-7
+  consequence: the affect lesion changed the emo turn's valence sign and saliences but not the BG action.
+
+**What does NOT change.** The route table, the lesion constructions, the rows, the probe turns, the compared fields
+and every Part A rule (M = 3, K = 8, the 0.10 per-seed floor, all 6 DEFINED) stay as registered.
+The Part A ask ("what might a dog chase") is affectively neutral, so it is not expected to move.
+
+**Expected single-shot row behaviour, stated before the gate seeds (from the same dev curve; descriptive).**
+- `open-ended-turn-faculty-drive` on `unknown`: the intact race is at s = 0 (STAY_SILENT on 23 of 24 dev races) and the
+  cut race at s = 0.5 (SPEAK on 12 of 24). One LBF build per arm is a single draw, so the row can read not-load-bearing on
+  about half the seeds even if the afferent coupling is real. A 6/6 robust-core result is not expected for this row.
+- `open-ended-turn-affect-drive` on `emo`: if the gate seeds' emo tone level is 2, the intact race sits at s = 0.67
+  (21 of 24 SPEAK), and the lesioned race at s = 0 (0 of 24 SPEAK).
+- `open-ended-turn-gnw-drive` on `sw_open`: the route change does not go through the race's noise.
+
+**Added descriptive read (not a gate).** `python -m research.runners._open_ended_gated_turn_gate --bg-curve` at the
+gate seeds gives P(SPEAK) at the intact and at the cut saliences over 8 races per point. It is reported beside the
+single-shot rows, so that a row read as not-load-bearing can be told apart from an afferent that carries no information.
