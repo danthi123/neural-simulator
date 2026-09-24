@@ -1,0 +1,134 @@
+{
+  "fanout": 32,
+  "n_facts_per_seed": 2,
+  "seeds": [
+    42,
+    43
+  ],
+  "sim_backend": "cupy",
+  "fhrr_reference": {
+    "peak_rss_mb": 334,
+    "mean_query_s": 0.9,
+    "n_correct_of_3": 3,
+    "store_all_404_facts_s": 20.6,
+    "source": "research/findings/2026-09-04-slotbinder-live-scale-derisk-NOGO-dense-pathway-blowup.md #6, research/findings/raw/_fhrr_rf_composer_live_scale_404facts.json"
+  },
+  "all_recall_1.0": true,
+  "all_moat_pass": true,
+  "all_mismatch_pass": true,
+  "mean_query_latency_s_across_seeds": 1.0729901492595673,
+  "max_query_latency_s_across_seeds": 1.5467793941497803,
+  "mean_build_and_store_s_across_seeds": 47.153972864151,
+  "rows": [
+    {
+      "seed": 42,
+      "fanout": 32,
+      "n_facts_sampled": 2,
+      "sampled_corpus_indices": [
+        35,
+        312
+      ],
+      "sim_backend": "cupy",
+      "K": 2020,
+      "KF": 1195,
+      "measured_nnz": 28603200,
+      "formula_nnz": 28603200,
+      "build_and_store_seconds": 50.29985785484314,
+      "per_fact_query_latency": [
+        {
+          "fact_idx_in_corpus": 35,
+          "agent": "cat",
+          "action": "play",
+          "expected_patient": "yard",
+          "got_patient": "yard",
+          "hit": true,
+          "query_latency_s": 1.044593334197998
+        },
+        {
+          "fact_idx_in_corpus": 312,
+          "agent": "tree",
+          "action": "wave",
+          "expected_patient": "branch",
+          "got_patient": "branch",
+          "hit": true,
+          "query_latency_s": 1.3860831260681152
+        }
+      ],
+      "moat_probe": {
+        "agent": "moon",
+        "action": "chair",
+        "abstained": true,
+        "query_latency_s": 0.7050509452819824
+      },
+      "mismatch_probe": {
+        "agent": "cat",
+        "action_from_other_fact": "wave",
+        "did_not_leak_fact0_patient": true,
+        "query_latency_s": 1.016735315322876
+      },
+      "recall_accuracy_query_patient": 1.0,
+      "moat_pass": true,
+      "mismatch_pass": true,
+      "mean_query_latency_s": 1.038115680217743,
+      "max_query_latency_s": 1.3860831260681152,
+      "min_query_latency_s": 0.7050509452819824,
+      "vs_fhrr_mean_ratio": 1.1534618669086032,
+      "wall_clock_this_seed_s": 54.46680235862732
+    },
+    {
+      "seed": 43,
+      "fanout": 32,
+      "n_facts_sampled": 2,
+      "sampled_corpus_indices": [
+        203,
+        263
+      ],
+      "sim_backend": "cupy",
+      "K": 2020,
+      "KF": 1195,
+      "measured_nnz": 28603200,
+      "formula_nnz": 28603200,
+      "build_and_store_seconds": 44.00808787345886,
+      "per_fact_query_latency": [
+        {
+          "fact_idx_in_corpus": 203,
+          "agent": "people",
+          "action": "use",
+          "expected_patient": "history",
+          "got_patient": "history",
+          "hit": true,
+          "query_latency_s": 1.0709116458892822
+        },
+        {
+          "fact_idx_in_corpus": 263,
+          "agent": "system",
+          "action": "base",
+          "expected_patient": "law",
+          "got_patient": "law",
+          "hit": true,
+          "query_latency_s": 1.5467793941497803
+        }
+      ],
+      "moat_probe": {
+        "agent": "details",
+        "action": "monster",
+        "abstained": true,
+        "query_latency_s": 0.7357485294342041
+      },
+      "mismatch_probe": {
+        "agent": "people",
+        "action_from_other_fact": "base",
+        "did_not_leak_fact0_patient": true,
+        "query_latency_s": 1.0780189037322998
+      },
+      "recall_accuracy_query_patient": 1.0,
+      "moat_pass": true,
+      "mismatch_pass": true,
+      "mean_query_latency_s": 1.1078646183013916,
+      "max_query_latency_s": 1.5467793941497803,
+      "min_query_latency_s": 0.7357485294342041,
+      "vs_fhrr_mean_ratio": 1.2309606870015461,
+      "wall_clock_this_seed_s": 48.440263748168945
+    }
+  ]
+}
