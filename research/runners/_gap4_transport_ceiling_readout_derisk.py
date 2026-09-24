@@ -96,7 +96,7 @@ _FP_KEYS = ("hidden", "pool_k", "n_hidden_layers", "settle_steps", "credit_steps
             "read_window", "read_gain", "isi_steps", "eval_frozen", "spi_silence", "n_super", "n_members",
             "held_per_super", "n_prop", "member_id_dim", "n_obs", "noise", "oracle_epochs", "oracle_lr",
             "oracle_batch", "decode_ridge", "read_quantity", "no_structural", "ff_w_init", "propagation_strength",
-            "no_ff_stp", "pbar_alpha")
+            "no_ff_stp", "pbar_alpha", "hidden_lr_gain")
 
 
 # ============================================================================================================
@@ -105,7 +105,7 @@ class Gap4ReadoutNet(Gap4InEngineNet):
 
     def __init__(self, n_in, hidden, k, seed=0, feedback="fixed", read_window=0, read_gain=1.0, isi_steps=0,
                  eval_frozen=False, spi_silence=False, read_quantity="event", no_structural=False,
-                 propagation_strength=None, no_ff_stp=False, **kw):
+                 propagation_strength=None, no_ff_stp=False, hidden_lr_gain=None, **kw):
         super().__init__(n_in, hidden, k, seed=seed, feedback=feedback, **kw)
         # AMENDMENT 2 (operating point). The dev transmission scan (diag_transmit_scan_*_s7.json) shows that with the
         # default Tsodyks-Markram short-term depression ON, NO feedforward gain (ff_w_init 4->40, propagation
@@ -127,6 +127,21 @@ class Gap4ReadoutNet(Gap4InEngineNet):
                 ff |= ((row >= pre[0]) & (row <= pre[-1]) & (col >= post[0]) & (col <= post[-1]))
             self.br.cp_stp_disabled_mask = self._xp.asarray(ff)
             self.n_ff_stp_disabled = int(ff.sum())
+        # AMENDMENT 4 (per-layer step size, arc meta-lesson #1): the committed per-synapse plasticity gain
+        # cp_plasticity_rate_gain in [0,1] scales the BDSP step on every synapse whose POSTSYNAPTIC neuron is in a
+        # hidden layer; the output pathway keeps the full lr. None = legacy (no gain array).
+        self.hidden_lr_gain = None if hidden_lr_gain is None else float(hidden_lr_gain)
+        if self.hidden_lr_gain is not None:
+            if not no_structural:
+                raise ValueError("--hidden-lr-gain requires --no-structural-plasticity (mask alignment)")
+            from sim.backend import to_host
+            coo = self.br._get_cached_coo()
+            col = np.asarray(to_host(coo.col))
+            g = np.ones(col.shape[0], dtype=np.float32)
+            for li in range(1, len(self.sizes) - 1):
+                sl = self.slices[li]
+                g[(col >= sl.start) & (col < sl.stop)] = self.hidden_lr_gain
+            self.br.cp_plasticity_rate_gain = self._xp.asarray(g)
         # read_quantity: "event" = cp_bdsp_E (isolated / first-of-burst spikes; legacy). "spikes" = EVERY somatic
         # spike (events + burst spikes), per step. AMENDMENT 1: the dev diagnostic diag_eread_monotonic_s7.json shows
         # E is NON-MONOTONIC in drive and the output layer sits at its peak, so LTP LOWERS the event read.
@@ -258,7 +273,7 @@ def _build(arm, n_in, k, args, seed):
         eval_frozen=args.eval_frozen, spi_silence=args.spi_silence,
         read_quantity=args.read_quantity, no_structural=args.no_structural,
         ff_w_init=args.ff_w_init, propagation_strength=args.propagation_strength, no_ff_stp=args.no_ff_stp,
-        pbar_alpha=args.pbar_alpha)
+        pbar_alpha=args.pbar_alpha, hidden_lr_gain=args.hidden_lr_gain)
     net.cfg.bdsp_w_max = float(args.bdsp_w_max)
     net.cfg.bdsp_w_min = -float(args.bdsp_w_max)
     net._spi_frozen = bool(freeze)
@@ -654,6 +669,7 @@ def main():
     # teaching transient, so the time-integral of (P - Pbar) is ~0 per presentation; alpha 0 = a PRESET baseline at
     # p0 (the BurstCCN preset-baseline form, already a parameter of OnBridgeBDSPNet). Default 0.05 = legacy.
     ap.add_argument("--pbar-alpha", dest="pbar_alpha", type=float, default=0.05)
+    ap.add_argument("--hidden-lr-gain", dest="hidden_lr_gain", type=float, default=None)
     ap.add_argument("--silent-stats", dest="silent_stats", action="store_true")
     ap.add_argument("--decode-ridge", dest="decode_ridge", type=float, default=1.0)
     # --- task (the 2026-09-15 task) ---
