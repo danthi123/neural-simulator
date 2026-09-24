@@ -1724,13 +1724,186 @@ def _attention_gated_soft_fbgain_class_read(r, V, b, mu, sd, a, code, base_seed)
     return pred, sp.astype(np.float32)
 
 
-def _class_read(r, V, b, mu, sd, a, code, base_seed):
+# ============================================================================================
+# HOMEOSTATIC OPERATING-POINT REGULATION OF THE READOUT PORT (2026-09-24, `--port-homeostasis ip`)
+# research/findings/2026-09-24-vision-readout-port-homeostasis-intrinsic-plasticity-PREREGISTERED.md
+# ============================================================================================
+def _fbgain_pre_port_drive(r, V, b, mu, sd, a):
+    """The pre-port class drive of `_attention_gated_soft_fbgain_class_read`, DUPLICATED verbatim (lines
+    `w = V/sd` .. `net * read_gain + read_bias`) so that function stays provably untouched. Returns net
+    (N, n_classes) float32: the drive each class population's somata receive, before tiling/rectification."""
+    n_classes, D = V.shape
+    w = (V / sd).astype(np.float32)
+    const = (b - (w * mu).sum(axis=1)).astype(np.float32)
+    wp = np.clip(w, 0.0, None)
+    wm = np.clip(-w, 0.0, None)
+    absw = np.abs(w)
+    A = absw / (absw.mean(axis=1, keepdims=True) + 1e-9)
+    N = r.shape[0]
+    exponent = float(getattr(a, "attn_gain_exponent", 1.0))
+    disabled = exponent <= 0.0
+    E = np.zeros((N, n_classes), dtype=np.float32)
+    I = np.zeros((N, n_classes), dtype=np.float32)
+    for c in range(n_classes):
+        if disabled:
+            gated = r
+        else:
+            gated = (r * np.power(A[c][None, :], exponent)).astype(np.float32)
+        E[:, c] = gated @ wp[c]
+        I[:, c] = gated @ wm[c]
+    net = (E - I) + const[None, :]
+    net = net - net.mean(axis=1, keepdims=True)
+    net = net * a.read_gain + a.read_bias
+    return net
+
+
+def _ip_port_current(net, ip, M):
+    """Soma input current of every class-population LIF unit. `ip is None` -> `clip(tile(net), 0)`, the
+    exact expression `_attention_gated_soft_fbgain_class_read` feeds its LIF stepper. Otherwise each unit
+    i applies ITS OWN homeostatic state: I_i = g_i * (x_i - theta_i), g_i = exp(log_gain_i) = the
+    multiplicative SYNAPTIC-SCALING factor on all of that unit's afferents (Turrigiano et al. 1998), and
+    theta_i = its INTRINSIC-EXCITABILITY threshold expressed in afferent-current units (Desai et al. 1999).
+    At the init state (log_gain 0, theta 0) this is x exactly (float32 -> float64 -> float32 round trip of
+    1.0 * (x - 0.0) is exact), which the `--ip-lesion-update` arm asserts IN DATA against the pinned
+    NEUTRAL artifacts."""
+    tiled = np.repeat(net, M, axis=1)
+    if ip is None:
+        return np.clip(tiled, 0.0, None)
+    x = tiled.astype(np.float64)
+    cur = np.exp(ip["log_gain"])[None, :] * (x - ip["theta"][None, :])
+    return np.clip(cur, 0.0, None).astype(np.float32)
+
+
+def _port_lif(cur, a, seed):
+    """The class-population LIF stepper, exactly as `_attention_gated_soft_fbgain_class_read` calls it."""
+    return lif_spike_read_fbgain(cur, a.T_read, seed, tau=a.tau, v_thresh=a.v_thresh, t_ref=a.t_ref,
+                                 noise=a.noise, gain=1.0,
+                                 fb_strength=float(getattr(a, "fb_strength", 0.0)),
+                                 fb_tau=float(getattr(a, "fb_tau", 8.0)))
+
+
+def _learn_port_homeostasis(r_tr, V, b, mu, sd, a, lseed):
+    """INTRINSIC PLASTICITY + SYNAPTIC SCALING of every class-population LIF unit, learned on TRAIN trials
+    ONLY (labels are NEVER read -- this is unsupervised, per-unit homeostasis), then FROZEN for every read.
+
+    WHY (the wall question, asked first): the NEUTRAL fbgain finding's port emits a CONSTANT class on every
+    trial. Measured on a non-evaluation dev seed (7): the pre-port drive per class sits at trial-INDEPENDENT
+    offsets of -833 / +377 / +547 / -87 with a trial-to-trial SD of ~2, i.e. two class populations are
+    rectified silent and two are pinned at the refractory ceiling (16 spikes/48 ms, every unit, every trial,
+    count SD exactly 0) -> tie -> argmax returns the same index every time. The real system does not run a
+    neuron at a fixed operating point handed to it: its synaptic strengths scale with its own activity
+    (Turrigiano et al. 1998, Nature 391:892, "may help to ensure that firing rates do not become saturated")
+    and its intrinsic excitability is regulated in parallel (Desai, Rutherford & Turrigiano 1999, Learn Mem
+    6:284). This port replaced both with constants (`read_gain`, `read_bias`).
+
+    THE RULE (Triesch 2005's intrinsic-plasticity gradient rule; Weber & Triesch 2008, Neural Comput
+    20:1261 -- a gain and a threshold parameter maintain an EXPONENTIALLY distributed firing rate with mean
+    `ip_target_mean`), per unit i, per epoch, from that unit's OWN realized LIF spike counts (y = count /
+    refractory-ceiling count) and its OWN afferent current relative to its threshold (u = x - theta):
+        delta_n = 1 - (2 + 1/mu) y_n + y_n^2 / mu                       (Triesch's per-sample bias term)
+        theta  <- theta - eta_theta * mean_n(delta_n) / g               (Triesch's db = eta*delta, b = -g*theta)
+        log g  <- log g + clip(eta_gain * mean_n(1 + g * u_n * delta_n), +-ip_max_log_step)
+    The log-gain form is Triesch's da = eta*(1/a + u*delta) times a (a positive factor: same descent
+    direction, scale-free). `ip_max_log_step` bounds how far scaling can move in one epoch (at most an
+    e^kappa-fold change), which keeps the RANDOM control's ~1e7-scale drive from overflowing -- the RANDOM
+    and label-shuffle arms each learn their OWN homeostasis with the identical rule, so the control is fair.
+
+    HOST SHORTCUT DECLARED: the update is host numpy bookkeeping of a per-unit parameter (as is every
+    plasticity rule in this file); its inputs are local to the unit (its own spikes, its own current). The
+    set point `ip_target_mean` is a constant (a genetically-set target rate is the biological reading). The
+    y normalisation by the refractory ceiling is a fixed property of the unit, not a population statistic.
+
+    `--ip-lesion-update`: the learning phase runs (same LIF exposures) but the parameter assignment is
+    SKIPPED -> the state stays at init (identity) -> the read is the NEUTRAL arm's, byte for byte.
+    Returns dict(log_gain, theta, diag)."""
+    net = _fbgain_pre_port_drive(r_tr, V, b, mu, sd, a)
+    n_classes = V.shape[0]
+    M = max(1, a.class_pop)
+    K = n_classes * M
+    mu_t = float(a.ip_target_mean)
+    eta_t = float(a.ip_eta_theta)
+    eta_g = float(a.ip_eta_gain)
+    kappa = float(a.ip_max_log_step)
+    lesion = bool(getattr(a, "ip_lesion_update", False))
+    ymax = float(math.ceil(a.T_read / (a.t_ref + 1)))
+    ip = {"log_gain": np.zeros(K, dtype=np.float64), "theta": np.zeros(K, dtype=np.float64)}
+    x = np.repeat(net, M, axis=1).astype(np.float64)
+    trace = []
+    n_ep = int(a.ip_epochs)
+    for e in range(n_ep):
+        cur = _ip_port_current(net, ip, M)
+        counts, _ = _port_lif(cur, a, lseed + e)
+        y = np.clip(counts.astype(np.float64) / ymax, 0.0, 1.0)
+        if e in (0, n_ep // 4, n_ep // 2, n_ep - 1):
+            trace.append({"epoch": e,
+                          "mean_y_per_class": [round(float(v), 4) for v in
+                                               y.reshape(-1, n_classes, M).mean(axis=(0, 2))],
+                          "sd_y_over_trials_per_class": [round(float(v), 4) for v in
+                                                         y.reshape(-1, n_classes, M).mean(axis=2).std(axis=0)]})
+        if lesion:
+            continue
+        delta = 1.0 - (2.0 + 1.0 / mu_t) * y + (y * y) / mu_t
+        g = np.exp(ip["log_gain"])
+        ip["theta"] = ip["theta"] - eta_t * delta.mean(axis=0) / g
+        step = eta_g * (1.0 + g[None, :] * (x - ip["theta"][None, :]) * delta).mean(axis=0)
+        ip["log_gain"] = ip["log_gain"] + np.clip(step, -kappa, kappa)
+    lg = ip["log_gain"].reshape(n_classes, M)
+    th = ip["theta"].reshape(n_classes, M)
+    ip["diag"] = {
+        "epochs": n_ep, "lesion_update": lesion, "target_mean": mu_t,
+        # the state the FROZEN reads use (a lesion is verified to hold at measurement: both must be 0.0)
+        "max_abs_log_gain": float(np.abs(ip["log_gain"]).max()),
+        "max_abs_theta": float(np.abs(ip["theta"]).max()),
+        "log_gain_mean_per_class": [round(float(v), 4) for v in lg.mean(axis=1)],
+        "theta_mean_per_class": [round(float(v), 4) for v in th.mean(axis=1)],
+        "train_drive_mean_per_class": [round(float(v), 4) for v in net.mean(axis=0)],
+        "train_drive_sd_per_class": [round(float(v), 4) for v in net.std(axis=0)],
+        "trace": trace,
+    }
+    return ip
+
+
+def _ip_permuted(ip, n_classes, M):
+    """SPECIFIC-STATE LESION: the learned per-unit state, rolled by one CLASS population (class c's units
+    receive class c-1's learned gain+threshold). Same distribution of learned parameters, wrong units."""
+    perm = np.roll(np.arange(n_classes * M).reshape(n_classes, M), 1, axis=0).ravel()
+    return {"log_gain": ip["log_gain"][perm], "theta": ip["theta"][perm]}
+
+
+def _attention_gated_soft_fbgain_ip_class_read(r, V, b, mu, sd, a, code, base_seed, ip):
+    """`_attention_gated_soft_fbgain_class_read` with each class-population unit's FROZEN homeostatic
+    state (`_learn_port_homeostasis`) applied at the soma. Same pre-port drive (duplicated), same LIF
+    stepper and seed, same spiking-WTA read-out (argmax over class-population spike counts = a DECLARED
+    host shortcut, shared with every arm in this file). Returns pred (N,), class_spikes (N, n_classes)."""
+    n_classes = V.shape[0]
+    net = _fbgain_pre_port_drive(r, V, b, mu, sd, a)
+    N = r.shape[0]
+    M = max(1, a.class_pop)
+    counts, first = _port_lif(_ip_port_current(net, ip, M), a, base_seed + 7)
+    sp = spike_code(counts, first, a.T_read, code).reshape(N, n_classes, M).sum(axis=2)
+    pred = sp.argmax(axis=1).astype(np.int64)
+    return pred, sp.astype(np.float32)
+
+
+def _pred_entropy_bits(pred, n_classes):
+    h = np.bincount(np.asarray(pred, dtype=np.int64), minlength=n_classes).astype(np.float64)
+    h = h / max(1.0, h.sum())
+    h = h[h > 0]
+    return float(-(h * np.log2(h)).sum()) if h.size else 0.0
+
+
+def _class_read(r, V, b, mu, sd, a, code, base_seed, ip=None):
     """Dispatcher: routes to the ATTENTION-GATED (hard k-WTA), ATTENTION-GATED-SOFT (graded gain, host
     satdiv), or ATTENTION-GATED-SOFT-FBGAIN (graded gain, spiking feedback divisive gain control)
     readout per `--readout`, else the existing `_spiking_class_read` (the exact prior behaviour).
     `--readout` defaults to `linear` -> every call site is byte-identical to every prior run of this
-    file until this flag is explicitly set."""
+    file until this flag is explicitly set. `ip` (a learned homeostatic port state) is only ever passed
+    when `--port-homeostasis ip` is set, and only the fbgain readout accepts it."""
     mode = getattr(a, "readout", "linear")
+    if ip is not None:
+        if mode != "attention-gated-soft-fbgain":
+            raise ValueError("--port-homeostasis ip requires --readout attention-gated-soft-fbgain")
+        return _attention_gated_soft_fbgain_ip_class_read(r, V, b, mu, sd, a, code, base_seed, ip)
     if mode == "attention-gated":
         return _attention_gated_class_read(r, V, b, mu, sd, a, code, base_seed)
     if mode == "attention-gated-soft":
@@ -1867,8 +2040,12 @@ def run_seed(seed, a, code):
 
     # ---- LEARNED signed linear readout on the SPIKE C2 code ----
     V, b, mu, sd = _train_linreadout(r_tr, tr_cls, a.n_classes, a, seed)
-    pred_he_spk, sp_he = _class_read(r_he, V, b, mu, sd, a, code, seed * 773 + 11)
-    pred_tr_spk, _ = _class_read(r_tr, V, b, mu, sd, a, code, seed * 773 + 12)
+    # ---- (--port-homeostasis ip) per-unit homeostatic port state, learned on TRAIN drive ONLY (no labels),
+    # then FROZEN for every read below. None (the default) -> every _class_read call is the prior call.
+    ip_on = getattr(a, "port_homeostasis", "none") == "ip"
+    ip_L = _learn_port_homeostasis(r_tr, V, b, mu, sd, a, seed * 977 + 5000) if ip_on else None
+    pred_he_spk, sp_he = _class_read(r_he, V, b, mu, sd, a, code, seed * 773 + 11, ip=ip_L)
+    pred_tr_spk, sp_tr = _class_read(r_tr, V, b, mu, sd, a, code, seed * 773 + 12, ip=ip_L)
     learn_spkwta_held = float((pred_he_spk == he_cls).mean())
     learn_spkwta_train = float((pred_tr_spk == tr_cls).mean())
     learn_linscore_held = float((_lin_score_pred(r_he, V, b, mu, sd) == he_cls).mean())
@@ -1877,7 +2054,7 @@ def run_seed(seed, a, code):
     # below) evaluated on PIXEL-SCRAMBLED held images -- must collapse to chance. sc_c1/r_sc are already
     # built from he_imgs (same labels he_cls), so this is a like-for-like readout-vs-readout comparison.
     # Always computed (free diagnostic); only GATES capability_go when --scramble-null is set.
-    pred_sc_spk, _ = _class_read(r_sc, V, b, mu, sd, a, code, seed * 773 + 41)
+    pred_sc_spk, _ = _class_read(r_sc, V, b, mu, sd, a, code, seed * 773 + 41, ip=ip_L)
     scramble_learned_held = float((pred_sc_spk == he_cls).mean())
 
     # ---- RANDOM control: identical spike-ported architecture, V untrained (random signed) ----
@@ -1888,7 +2065,10 @@ def run_seed(seed, a, code):
     # off, since V.shape[1] == a.n_s2 there exactly as before).
     Vr = (rngV.standard_normal((a.n_classes, V.shape[1])).astype(np.float32) * float(np.abs(V).mean() + 1e-6))
     br = np.zeros(a.n_classes, dtype=np.float32)
-    pred_he_rnd, _ = _class_read(r_he, Vr, br, mu, sd, a, code, seed * 773 + 21)
+    # the RANDOM control learns its OWN homeostasis on the same train drive with the identical rule (fair
+    # control: an un-regulated random port would stay collapsed and inflate learned-minus-random).
+    ip_R = _learn_port_homeostasis(r_tr, Vr, br, mu, sd, a, seed * 977 + 6000) if ip_on else None
+    pred_he_rnd, _ = _class_read(r_he, Vr, br, mu, sd, a, code, seed * 773 + 21, ip=ip_R)
     rnd_spkwta_held = float((pred_he_rnd == he_cls).mean())
 
     # ---- CEILING: signed linear on the RATE C2 features ----
@@ -1907,7 +2087,8 @@ def run_seed(seed, a, code):
     # ---- anti-cheat: label-shuffle null (retrain the readout on shuffled labels -> must be chance) ----
     lbl_shuf = np.random.default_rng(seed * 41 + 21).permutation(tr_cls)
     Vs, bs, mus, sds = _train_linreadout(r_tr, lbl_shuf, a.n_classes, a, seed)
-    pred_shuf, _ = _class_read(r_he, Vs, bs, mus, sds, a, code, seed * 773 + 31)
+    ip_S = _learn_port_homeostasis(r_tr, Vs, bs, mus, sds, a, seed * 977 + 7000) if ip_on else None
+    pred_shuf, _ = _class_read(r_he, Vs, bs, mus, sds, a, code, seed * 773 + 31, ip=ip_S)
     lbl_shuffle_null = float((pred_shuf == he_cls).mean())
 
     # ---- anti-cheat 6 verdict: the LEARNED readout itself must fall to chance on scrambled images ----
@@ -1977,6 +2158,33 @@ def run_seed(seed, a, code):
         row["rstdp"] = rstdp_diag  # only present when --s2-learn rstdp; keeps the default path byte-identical
     if conj_select_diag is not None:
         row["conj_select"] = conj_select_diag  # only present when --conj-select competitive
+    if ip_on:
+        # only present when --port-homeostasis ip; keeps every other path's row byte-identical.
+        M = max(1, a.class_pop)
+        n_cls = a.n_classes
+
+        def _held_acc_with(state):
+            p, _ = _class_read(r_he, V, b, mu, sd, a, code, seed * 773 + 11, ip=state)
+            return float((p == he_cls).mean()), _pred_entropy_bits(p, n_cls)
+
+        perm_acc, perm_ent = _held_acc_with(_ip_permuted(ip_L, n_cls, M))
+        thr_only_acc, _ = _held_acc_with({"log_gain": np.zeros_like(ip_L["log_gain"]), "theta": ip_L["theta"]})
+        gain_only_acc, _ = _held_acc_with({"log_gain": ip_L["log_gain"], "theta": np.zeros_like(ip_L["theta"])})
+        row["port_homeostasis"] = {
+            "learned": ip_L["diag"],
+            "random_arm": {k: ip_R["diag"][k] for k in ("log_gain_mean_per_class", "theta_mean_per_class")},
+            # G1 (pre-registered): the port's TRAIN output is no longer constant.
+            "train_pred_entropy_bits": round(_pred_entropy_bits(pred_tr_spk, n_cls), 4),
+            "train_count_trial_var_mean": round(float(sp_tr.var(axis=0).mean()), 4),
+            "held_pred_entropy_bits": round(_pred_entropy_bits(pred_he_spk, n_cls), 4),
+            "held_count_trial_var_mean": round(float(sp_he.var(axis=0).mean()), 4),
+            # G3 (pre-registered): SPECIFIC-STATE lesion (learned state rolled one class population).
+            "lesion_permuted_held": round(perm_acc, 4),
+            "lesion_permuted_held_entropy_bits": round(perm_ent, 4),
+            # component diagnostics (NOT gates): which half of the homeostat is load-bearing.
+            "diag_threshold_only_held": round(thr_only_acc, 4),
+            "diag_gain_only_held": round(gain_only_acc, 4),
+        }
     return row
 
 
@@ -2418,6 +2626,21 @@ def main():
                    help="'attention-gated-soft-fbgain' mode only: the feedback trace's own leaky time "
                         "constant (ms), r_fb(t+1) = r_fb(t) + (1/fb_tau)*(-r_fb(t) + mean_pop(spk(t))). "
                         "Unused when --fb-strength <= 0.")
+    p.add_argument("--port-homeostasis", choices=["none", "ip"], default="none",
+                   help="(2026-09-24, research/findings/2026-09-24-vision-readout-port-homeostasis-intrinsic-"
+                        "plasticity-PREREGISTERED.md) 'ip' = each class-population LIF unit learns its own "
+                        "synaptic-scaling gain + intrinsic threshold (Triesch-rule intrinsic plasticity toward "
+                        "an exponential rate distribution) on TRAIN drive only, frozen at test. Requires "
+                        "--readout attention-gated-soft-fbgain. 'none' (default) = byte-identical to prior runs.")
+    p.add_argument("--ip-target-mean", type=float, default=0.25,
+                   help="IP set point: mean firing fraction of the refractory ceiling (1/n_classes, fixed a priori).")
+    p.add_argument("--ip-epochs", type=int, default=400, help="IP learning epochs over the TRAIN trials.")
+    p.add_argument("--ip-eta-theta", type=float, default=0.05, help="IP threshold learning rate (current units).")
+    p.add_argument("--ip-eta-gain", type=float, default=0.01, help="IP synaptic-scaling learning rate (log gain).")
+    p.add_argument("--ip-max-log-step", type=float, default=0.5,
+                   help="max |d log gain| per epoch (bounded scaling rate; e^0.5-fold per epoch).")
+    p.add_argument("--ip-lesion-update", dest="ip_lesion_update", action="store_true",
+                   help="LESION: run the IP learning exposures but never apply the update (state stays at init).")
     p.add_argument("--T1", type=int, default=64)
     p.add_argument("--T2", type=int, default=48)
     p.add_argument("--tau", type=float, default=8.0)
@@ -2482,6 +2705,13 @@ def main():
                       f"frac_theta~0={bd['frac_theta_near_zero']:.2f} "
                       f"msq_drive={bd['mean_sq_drive_mean']:.4f}+-{bd['mean_sq_drive_std']:.4f} "
                       f"drift={bd['template_drift_from_init_mean']:.3f}", flush=True)
+            if "port_homeostasis" in r:
+                ph = r["port_homeostasis"]
+                print(f"      [port-homeostasis seed {r['seed']}] lesion_update={ph['learned']['lesion_update']} "
+                      f"train_H={ph['train_pred_entropy_bits']:.2f}b var={ph['train_count_trial_var_mean']:.2f} "
+                      f"held_H={ph['held_pred_entropy_bits']:.2f}b | permuted {ph['lesion_permuted_held']:.2f} "
+                      f"thr-only {ph['diag_threshold_only_held']:.2f} gain-only {ph['diag_gain_only_held']:.2f}",
+                      flush=True)
         result[code] = {"summary": _summarize(rows, a, code, t0), "per_seed": rows}
 
     top = {
