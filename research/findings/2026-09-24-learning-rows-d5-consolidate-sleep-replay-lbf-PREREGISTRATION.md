@@ -57,23 +57,28 @@ host `dw` formula.
 
 ```python
 EXTRA_LESIONS = {
-    "d5-consolidate": dict(flag="BRAIN_D5_CONSOLIDATE", value="0", kind="neural-lesion", note="..."),
-    "sleep-replay":   dict(flag="BRAIN_SLEEP_REPLAY",   value="0", kind="neural-lesion", note="..."),
+    "d5-consolidate": dict(flag="BRAIN_D5_CONSOLIDATE", value="0", kind="whether-disable", note="..."),
+    "sleep-replay":   dict(flag="BRAIN_SLEEP_REPLAY",   value="0", kind="whether-disable", note="..."),
 }
 EXTRA_PROBES = [
     ("d5-consolidate", "d5c_recall2", ["episodic.graded_cue.depth_hold", "answer"], False),
     ("sleep-replay",   "slp_recall",  ["episodic.graded_cue.depth_hold", "answer"], False),
 ]
 ```
+(`kind` corrected to `"whether-disable"` by Amendment 2 below; the code block above shows the CURRENT, post-fix
+value -- see Amendment 2 for what shipped in the first commit and why it was wrong.)
 
 Both flags are the SHIPPED default-ON master switches (`BRAIN_D5_CONSOLIDATE`/`BRAIN_SLEEP_REPLAY` unset =
 True); `value="0"` is the LESION (matches the FACULTY_LESIONS convention: a `dict(flag=..., value=..., kind=...,
 note=...)` shape identical to every existing row, e.g. `episodic-memory`/`prospective-memory`). `kind=
-"neural-lesion"`: the flag cuts the substrate's OWN BTSP re-activation loop (`consolidate_used_memory` /
-`consolidate_sleep_replay` become no-ops), the organ stays installed. AG-REG (S08/S26) merges these into
-`FACULTY_LESIONS`/`FACULTY_PROBES` via the import hook; until that hook lands, this prereg's own smoke
-monkeypatches the merge in-process (`FACULTY_LESIONS.update(EXTRA_LESIONS)` / `FACULTY_PROBES.extend(...)`,
-documented in the smoke script itself) to validate end-to-end without touching either literal registry.
+"whether-disable"`: the flag is a MASTER SWITCH that removes the organ's reactivation loop wholesale
+(`consolidate_used_memory` / `consolidate_sleep_replay` become no-ops); neither faculty has a dedicated
+`BRAIN_<X>_LESION` knob that would cut only the neural read while leaving the organ installed (the PRIMARY/
+gold-standard class), matching the existing `confidence-forthcomingness` row's precedent exactly. AG-REG
+(S08/S26) merges these into `FACULTY_LESIONS`/`FACULTY_PROBES` via the import hook; until that hook lands, this
+prereg's own smoke monkeypatches the merge in-process (`FACULTY_LESIONS.update(EXTRA_LESIONS)` /
+`FACULTY_PROBES.extend(...)`, documented in the smoke script itself) to validate end-to-end without touching
+either literal registry.
 
 ## The graded diff field (recall margin), and why it -- not a categorical flag -- is what changes
 
@@ -237,3 +242,45 @@ unimported-by-default module, so no existing code path is touched; the hash equa
   is the seed-7 smoke exactly as specified there, before the 6-seed jobs, to get the numeric confirmation this
   amendment could not obtain.
 - **Nothing here changes the row definitions, the lesion flags, the compared fields, or the turn groups.**
+
+## Amendment 2, 2026-09-24 (post-review fix round): kind mislabel corrected; byte-identity status restated honestly
+
+An adversarial review of this lane (branch `research/lbf-rows-learning` at `a862a7009`) raised three issues.
+Recorded here in full, each with its disposition:
+
+1. **MISCLASSIFIED LESION KIND — FIXED.** The commit this document originally described shipped both
+   `EXTRA_LESIONS` rows as `kind="neural-lesion"`. That is wrong per `load_bearing_fraction.py`'s own taxonomy:
+   PRIMARY/gold-standard `"neural-lesion"` status requires a dedicated `BRAIN_<X>_LESION` flag (value="1") that
+   cuts the neural read while the organ stays installed — every one of that module's ~26 existing neural-lesion
+   rows follows this shape, zero exceptions (re-verified: `grep -n "_LESION" webapp/continuous_engine.py` returns
+   no `BRAIN_D5_CONSOLIDATE_LESION` or `BRAIN_SLEEP_REPLAY_LESION` anywhere — only the two shipped default-ON
+   master switches exist). Both rows are therefore the weaker `"whether-disable"` class, matching the existing
+   `confidence-forthcomingness` row's precedent exactly (same shape: a master-switch `=0` disable, no dedicated
+   cut knob). **Fixed in `research/runners/lbf_rows/learning.py`**: `kind` corrected to `"whether-disable"` for
+   both rows, a "minimal neural lesion to add" clause added to each note (mirroring the
+   `confidence-forthcomingness` precedent's own wording), a new selftest check added
+   (`"both rows are kind='whether-disable' ..."`, now 12/12 PASS), and this document's code sample + prose above
+   corrected in place (this is a preregistration amendment, not a silent rewrite — the original wording is
+   preserved in this branch's git history at commit `f2469d13d`). No lesion flag, value, turn group, or compared
+   field changed; only the classification label and its accompanying prose.
+2. **UNFINISHED SEED-7 MEASUREMENT — addressed by re-running via the pool.** Amendment 1 (above) already
+   disclosed this honestly as `pending, not banked as NO-GO` after the local machine's swap-thrashing killed two
+   attempts. Per this fix round's own instructions (route brain-sized jobs to the pool, not the RAM-starved local
+   box), the seed-7 smoke (`research/runners/_lbf_rows_learning_smoke.py --seed 7`) was queued at the front of
+   the pool queue instead of retried locally. See the follow-on result document (cited from this file's
+   `artifacts` front-matter once written) for the outcome — this PREREG is not amended further with the actual
+   numbers, per the prereg-before-run discipline stated in this document's own header note ("this prereg's OWN
+   seed-7 smoke artifacts ... are cited in the follow-on data finding, not here").
+3. **BYTE-IDENTITY SHOWN ONLY BY CONSTRUCTION, NOT BY A LIVE CROSS-REVISION HASH DIFF — status restated, not
+   closed in this pass.** The review is correct: `_knob_off_probe`'s `self_reproducible` check (this branch run
+   twice) is NOT the same claim as a hash diff of this branch against `origin/main`, and no such cross-revision
+   diff has been run. The STATIC half of the argument still holds and was re-verified during this fix round
+   (`git diff` against the merge-base `1ad61df45` — see the "Commands" section's own diff-stat: 6 files touched,
+   all additions, zero removed lines outside new files; `onebrain_regression_battery.py`'s 31 added lines are
+   confirmed still kept out of `PROBE_TURNS` by the passing selftest). Actually running the LIVE cross-revision
+   hash diff would require provisioning a SECOND pool revision (`origin/main`'s SHA, separate from this branch's)
+   and a second job — judged out of scope for this bounded, single-job fix-and-verify pass. **This is an honest
+   open item, not a closed one**: the byte-identity claim for this branch rests on the static diff argument only,
+   exactly as the review characterized it. Whoever runs AG-REG's merge hook (S08/S26) should run the cross-
+   revision hash diff described in the "Commands" section above before treating the flag-off path as
+   data-verified rather than construction-verified.
