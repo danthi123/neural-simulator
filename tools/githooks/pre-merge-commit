@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+# pre-merge-commit: BLOCK a merge commit that violates the document-structure rules (docs/WRITING.md W1 + W2).
+#
+# WHY (2026-09-24). Auto-committed merges (via git merge --no-edit or cherry-pick without interactive editing)
+# can silently bypass every gate, including the pre-commit hook that is REQUIRED for all manual commits.
+# This hook ensures that EVERY commit, including auto-generated merge commits and cherry-picks, runs the
+# same document-structure checks before it lands on the target branch.
+#
+# Install:  git config core.hooksPath tools/githooks
+# Bypass (deliberate, visible in the reflog):  git merge --no-verify <branch> or git commit --no-verify
+set -uo pipefail
+ROOT=$(git rev-parse --show-toplevel); export ROOT
+COMMON=$(git rev-parse --path-format=absolute --git-common-dir 2>/dev/null) || exit 1
+CANONICAL=$(dirname "$COMMON")
+
+# Verify that core.hooksPath is correctly set to tools/githooks
+HOOKS_PATH=$(git config core.hooksPath 2>/dev/null || echo "")
+if [ "$HOOKS_PATH" != "tools/githooks" ]; then
+  echo "⛔ pre-merge-commit: git config core.hooksPath is '$HOOKS_PATH', not 'tools/githooks'."
+  echo "   Run: git config core.hooksPath tools/githooks"
+  exit 1
+fi
+
+# Exec the pre-commit hook to run document-structure checks
+exec "$ROOT/tools/githooks/pre-commit"

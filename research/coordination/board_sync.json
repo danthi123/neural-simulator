@@ -2030,6 +2030,12 @@
    "op": "set-desc",
    "args": "task=217",
    "head": "3481f4812"
+  },
+  {
+   "at": "2026-09-24T11:55:30Z",
+   "op": "set-desc",
+   "args": "hygiene S06: ledger onebrain-merge-organs documentation clarification",
+   "head": ""
   }
  ]
 }
