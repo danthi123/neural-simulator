@@ -137,3 +137,46 @@ cd ~/derisk-pool/revisions/<M1-or-F-sha> && SIM_BACKEND=numpy OMP_NUM_THREADS=1 
 ```
 for `<row-key>` in self-schema, affective-tom, causal-whatif, spiking-anaphor, gnw-bus, multiref-competition,
 affect-appraisal-interoceptive, and `<s>` in 42 43 44 100 101 102.
+
+## Amendment 1 (same session, after the module landed + a bounded local smoke attempt)
+
+**The design above shipped unchanged**: `research/runners/lbf_rows/live_organs.py` (commit `307b5c7e1`) carries
+exactly the ten rows, kinds and field/turn choices this preregistration commits to, plus a per-row
+`assert_lesion_holds()` (a `tools.lab.lever()` attribution call over the intact-vs-lesion pair, per
+`gates/attribution_required`) and `INTEGRITY_SMOKE_AUDIT` (the blocking pass-by-construction reasoning: the
+compared field's response block is always attached regardless of lesion state for all six `neural-lesion` rows
+-- none is an integrity smoke). `research/runners/_lbf_rows_live_organs_smoke.py` is the seed-7 driver.
+
+**What WAS confirmed (cheap, no brain build):** all ten flags (`BRAIN_SELF_SCHEMA_LESION`,
+`BRAIN_AFFECTIVE_TOM_LESION`, `BRAIN_CAUSAL_LESION`, `BRAIN_SPIKING_ANAPHOR_LESION`,
+`BRAIN_SPIKING_QROUTE_LESION`, `BRAIN_LEARNED_REFERENT_LESION`, `BRAIN_ONEBRAIN_XEDGE_LESION`,
+`BRAIN_GNW_BUS_LESION`, `BRAIN_MULTIREF_COMPETITION_LESION`, `BRAIN_AFFECT_APPRAISAL_INTEROCEPTIVE_LESION`)
+resolve (a `grep -rqlE` hit) in `webapp/` or `research/runners/` source -- the same check
+`load_bearing_fraction._flag_resolves` runs at read time; none is a `lesion-knob-missing`.
+
+**What did NOT complete: any lesion-arm pair, on any row.** Two attempts targeted the lightest candidate
+(gnw-bus: a single EXISTING turn, no new session/teaching) using a throwaway precursor script
+(`scratchpad/lbf_row_probe_smoke.py`, not committed). Both stalled before finishing the INTACT arm alone. The
+box was running ~13 concurrent sibling agent lanes (the midnight plan's own S07 dispatch: 10 sonnet + 3 opus
+builds) on one 46 GB / 20-core machine; `uptime` read load average 22-35 on 20 cores across the attempts, with
+`systemctl --user list-units --type=scope` showing concurrent memcapped scopes from OTHER lanes' own runners at
+the same time (one literally named `research.runners.lbf_rows.proposed_lesions_conflict_kb` -- a different lane
+independently building its own lbf_rows module in parallel; another running `load_bearing_fraction --only
+episodic-memory --seed 7` from what its own job name suggests is AG-REG's S08 verification). `ssh pool2` did
+not resolve from this worktree, so no smoke could be moved to the plan's designated overflow lane. The second
+gnw-bus attempt's worker process entered kernel D-state (uninterruptible I/O wait, consistent with system-wide
+swap thrashing -- `free` showed 19+ GB swap in use at the time) and could not be terminated even with SIGKILL
+while in that state; it was left running (harmless: `tools/memcap.sh 2` caps it at 2 GB in an isolated cgroup,
+so it cannot cause a global OOM) rather than blocking further on it. Both attempts' build logs showed genuine
+organ-by-organ progress (tens of thousands of neurons across several regions initializing in sequence, RSS
+growing normally within cap) before stalling -- not a crash, not an error in the row design, a resource wait.
+
+**Honest verdict:** the ten rows are DESIGNED, source-justified and committed; none of the six `neural-lesion`
+classifications rests on a completed local measurement. Six carry HIGH confidence from direct source reading
+(the organ's own docstring states the exact lesion effect and the default-ON status); causal-whatif carries an
+explicitly LOWER-confidence residual (this is the first design to drive that organ through chat-only conversa-
+tional teaching rather than the verify script's direct `composer.store()`, so the store-write path for the six
+new taught facts has not been empirically confirmed to ground correctly). This is the correct state to hand to
+whichever lane/session next has uncontended compute: the staged commands above are ready to run unchanged, and
+a NEGATIVE result on any field (a lever that does not move) downgrades that row's `kind` to `thin` in a further
+amendment -- it does not get silently reported as "pass" (not load-bearing).
