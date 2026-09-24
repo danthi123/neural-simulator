@@ -1,5 +1,5 @@
 {
- "seed": 42,
+ "seed": 101,
  "held_word_phrase": "the wolf watches the owl",
  "corpus_env_path": "/home/ubuntu/derisk-pool/revisions/7790466c29222a801f5c6df0f35d709b2f5ae81c/data/corpus/tinystories.txt",
  "corpus_lexicon_path": "/home/ubuntu/derisk-pool/revisions/7790466c29222a801f5c6df0f35d709b2f5ae81c/data/corpus/tinystories.txt",
@@ -40,5 +40,5 @@
  "r4_lever_moved": true,
  "r4_pass": true,
  "r5_lexicon_built": true,
- "elapsed_s": 64.2
+ "elapsed_s": 62.5
 }

@@ -1,5 +1,5 @@
 {
- "seed": 42,
+ "seed": 102,
  "held_word_phrase": "the wolf watches the owl",
  "corpus_env_path": "/home/ubuntu/derisk-pool/revisions/7790466c29222a801f5c6df0f35d709b2f5ae81c/data/corpus/tinystories.txt",
  "corpus_lexicon_path": "/home/ubuntu/derisk-pool/revisions/7790466c29222a801f5c6df0f35d709b2f5ae81c/data/corpus/tinystories.txt",
@@ -19,7 +19,7 @@
  "population": [
   {
    "cond": "intact",
-   "recovered_both_rate": 0.8333333333333334,
+   "recovered_both_rate": 0.6666666666666666,
    "n_pairs": 12
   },
   {
@@ -33,12 +33,12 @@
    "n_pairs": 12
   }
  ],
- "r3_recovered_both_rate": 0.8333333333333334,
+ "r3_recovered_both_rate": 0.6666666666666666,
  "r3_pass": true,
  "r4_lesion_recovered_both_rate": 0.0,
  "hand_baseline_recovered_both_rate": 0.0,
  "r4_lever_moved": true,
  "r4_pass": true,
  "r5_lexicon_built": true,
- "elapsed_s": 64.2
+ "elapsed_s": 61.8
 }
