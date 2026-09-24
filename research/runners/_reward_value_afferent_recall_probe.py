@@ -35,15 +35,27 @@ The Verdict below is GO iff value_history_independent AND state_after_converges 
 independent at the module level"); its preconditions are the build, the composer class the arms use, and the
 sensitivity control. A NO-GO is a finding for the declaration, not a failure of the runner.
 
-Run (local, under memcap):
+ADDED BY AMENDMENT-4 (run 2; run 1 read UNDEFINED on two instrument defects: an exact-class precondition where
+AMENDMENT-3 names a class family, and no bridge found for the pool-bound rf composer):
+  * isolated_first: `webapp.reward_value_afferent_chat.isolated_recall` from the fresh state S0 (first use, where A10
+    calls it), then the hash and both generators compared with S0; isolated_warm: the same after the five
+    production recalls. A second Verdict (`verdict_isolated`) is GO iff both leave the hash and the generators
+    unchanged with an exact restore, and the isolated value equals the first production recall's value. It needs a
+    sensitivity control that the unisolated recall DOES leave a trace (else the check could not fail).
+  * global_rng_callers on recalls #1 and #2: every call into numpy's / Python's global generator during the recall,
+    by function and the three calling frames (randn counts are samples).
+  * deques and mappingproxies are hashed by content (run 1 hashed them by type only).
+
+Run (local, under memcap; run 2 writes recall_probe_run2.json beside run 1):
   bash tools/memcap.sh 8 -- env SIM_BACKEND=numpy OMP_NUM_THREADS=2 .venv/bin/python -u -m \
       research.runners._reward_value_afferent_recall_probe --seed 7 \
-      --out research/findings/raw/_reward_value_afferent_derisk/v4/recall_probe.json
+      --out research/findings/raw/_reward_value_afferent_derisk/v4/recall_probe_run2.json
   (add --composer rf and write under v4/rf/ for the forced-rf composer)
 """
 from __future__ import annotations
 
 import argparse
+import collections
 import functools
 import hashlib
 import json
@@ -117,10 +129,10 @@ def deep_hash(root, max_nodes=20_000_000):
             h.update(b"p" + str((type(x).__name__, x.shape)).encode())
             for part in (x.data, x.indices, x.indptr):
                 h.update(_host_bytes(part))
-        elif isinstance(x, (list, tuple)):
+        elif isinstance(x, (list, tuple, collections.deque)):
             h.update(b"l" + type(x).__name__.encode() + b"%d" % len(x))
-            stack.extend(reversed(x))
-        elif isinstance(x, dict):
+            stack.extend(reversed(list(x)))
+        elif isinstance(x, (dict, types.MappingProxyType)):
             h.update(b"d%d" % len(x))
             items = sorted(x.items(), key=lambda kv: repr(kv[0]))
             for k, v in reversed(items):
@@ -187,7 +199,19 @@ def _unwrap_composer(chat):
 
 
 def _bridge_of(comp):
-    return getattr(comp, "b", None) or getattr(comp, "bridge", None)
+    """The bridge the composer's recall runs on: `b` (OneBrainComposer and its pool-bound subclass), `bridge`, or the
+    pool #1 substrate's bridge (`_pool1.bridge`, Pool1BoundComposer: an RFPhasorComposer whose RF ops run on pool #1)."""
+    for b in (getattr(comp, "b", None), getattr(comp, "bridge", None),
+              getattr(getattr(comp, "_pool1", None), "bridge", None)):
+        if b is not None:
+            return b
+    return None
+
+
+def _composer_family(comp):
+    """Class names in the composer's MRO (Pool1BoundComposer IS an RFPhasorComposer; the pool-bound onebrain class IS
+    a OneBrainComposer), so the precondition matches the family the arms' env builds, not one exact class."""
+    return [c.__name__ for c in type(comp).__mro__] if comp is not None else []
 
 
 def _trace(comp):
@@ -219,6 +243,53 @@ def _largest_dense(bridge):
     return best
 
 
+class _RngCallers:
+    """Count every call into numpy's and Python's GLOBAL generators (module-level functions, which is how sim/bridge.py
+    reaches them: `cp.random.randn` with cp = numpy, `np.random.seed`, `random.seed`) during a block, by function and
+    the three calling frames. A measurement aid only; the functions are restored on exit."""
+    _NP = ("seed", "set_state", "random", "random_sample", "rand", "randn", "normal", "uniform", "randint", "choice",
+           "permutation", "shuffle", "standard_normal", "binomial", "poisson", "exponential")
+    _PY = ("seed", "setstate", "random", "uniform", "randint", "choice", "shuffle", "gauss", "sample", "randrange")
+
+    def __init__(self):
+        self.counts = {}
+        self._saved = []
+
+    def _wrap(self, mod, name, label):
+        fn = getattr(mod, name, None)
+        if fn is None:
+            return
+        self._saved.append((mod, name, fn))
+        counts = self.counts
+
+        def w(*a, **k):
+            f = sys._getframe(1)
+            chain = []
+            for _ in range(3):
+                if f is None:
+                    break
+                chain.append("%s:%d:%s" % (os.path.relpath(f.f_code.co_filename, _REPO), f.f_lineno, f.f_code.co_name))
+                f = f.f_back
+            key = "%s.%s <- %s" % (label, name, " <- ".join(chain))
+            n = (int(np.prod([int(x) for x in a])) if (label == "numpy" and name in ("randn", "rand") and a
+                                                     and all(isinstance(x, (int, np.integer)) for x in a)) else 1)
+            counts[key] = counts.get(key, 0) + n
+            return fn(*a, **k)
+        setattr(mod, name, w)
+
+    def __enter__(self):
+        for n in self._NP:
+            self._wrap(np.random, n, "numpy")
+        for n in self._PY:
+            self._wrap(random, n, "python")
+        return self
+
+    def __exit__(self, *exc):
+        for mod, name, fn in reversed(self._saved):
+            setattr(mod, name, fn)
+        return False
+
+
 def run(seed, composer, out_path):
     from research.runners._reward_value_afferent_derisk import arm_env
     os.environ.update(arm_env("off_a", seed, composer))
@@ -233,7 +304,8 @@ def run(seed, composer, out_path):
     build_s = round(time.time() - t0, 1)
     comp = _unwrap_composer(chat)
     bridge = _bridge_of(comp)
-    rec = {"runner": "_reward_value_afferent_recall_probe", "seed": int(seed),
+    family = _composer_family(comp)
+    rec = {"runner": "_reward_value_afferent_recall_probe", "seed": int(seed), "composer_mro": family,
            "seed_kind": "dev-calibration (NOT a 6-seed gate seed)", "composer_forced": composer,
            "source": source, "build_s": build_s, "composer_class": type(comp).__name__ if comp is not None else None,
            "composer_flags": {k: getattr(comp, k, None) for k in ("integrated_loop", "enable_batched", "trace",
@@ -256,24 +328,48 @@ def run(seed, composer, out_path):
                 "returned_when_undone": h_back == S0["H_inner"]}
     rec["sensitivity"] = sens
 
+    # AMENDMENT-4: the ISOLATED A10 recall (webapp/reward_value_afferent_chat.isolated_recall) from the fresh state S0,
+    # i.e. at first use, exactly where A10 calls it in a turn. Everything reachable from chat.inner and both global
+    # generators must be as they were; the production recalls below then start from S0.
+    import webapp.reward_value_afferent_chat as RVA
+
+    def iso(label, ref):
+        t = time.time()
+        p, r = RVA.isolated_recall(chat, "dog", "chase")
+        after = snapshot(chat)
+        return {"label": label, "value": None if p is None else str(p), "record": r,
+                "seconds": round(time.time() - t, 2), "hash_unchanged": after["H_inner"] == ref["H_inner"],
+                "rng_unchanged": after["rng"] == ref["rng"],
+                "composer_attrs_changed": _diff(ref["composer_attrs"], after["composer_attrs"]),
+                "bridge_attrs_changed": _diff(ref["bridge_attrs"], after["bridge_attrs"])}
+
+    iso_first = iso("first use (fresh state S0)", S0)
+    rec["isolated_first"] = iso_first
+
     calls = []
 
-    def recall(a, v):
+    def recall(a, v, trace=False):
         before = _rng_hashes()
         t = time.time()
+        tr = _RngCallers() if trace else None
         try:
-            p = chat.inner.what_does(a, v)
+            if tr is not None:
+                with tr:
+                    p = chat.inner.what_does(a, v)
+            else:
+                p = chat.inner.what_does(a, v)
             err = None
         except Exception as e:
             p, err = None, "%s: %s" % (type(e).__name__, e)
         after_snap = snapshot(chat)
         calls.append({"cue": [a, v], "value": None if p is None else str(p), "error": err,
                       "seconds": round(time.time() - t, 2), "rng_unchanged": before == after_snap["rng"],
+                      "global_rng_callers": None if tr is None else tr.counts,
                       "H_inner_after": after_snap["H_inner"], "last_trace_after": after_snap["last_trace"]})
         return p, after_snap
 
-    p1, S1 = recall("dog", "chase")
-    p2, S2 = recall("dog", "chase")
+    p1, S1 = recall("dog", "chase", trace=True)
+    p2, S2 = recall("dog", "chase", trace=True)
     p3, S3 = recall("dog", "chase")
     q, S4 = recall("cat", "eat")
     p4, S5 = recall("dog", "chase")
@@ -303,7 +399,9 @@ def run(seed, composer, out_path):
     v = Verdict("A10 follow-up: A10's recall call (chat.inner.what_does) is history-independent at the module level")
     v.require("the tiny-demo chat built", comp is not None, expect=True)
     want = "RFPhasorComposer" if composer == "rf" else "OneBrainComposer"
-    v.require("composer is the class the arms use (%s, LTM tier off)" % want, rec["composer_class"], expect=want)
+    v.require("composer is of the family the arms use (%s or a subclass; LTM tier off, not TieredFactStore)" % want,
+              family, expect=lambda f: want in f and "TieredFactStore" not in f)
+    v.require("the recall's bridge was found (for the sensitivity control)", bridge is not None, expect=True)
     v.require("recall #1 returns the stored patient (cat)", None if p1 is None else str(p1), expect="cat")
     v.require("sensitivity: the hash changes on a one-element bridge change and returns when undone",
               bool(sens.get("changed_when_mutated") and sens.get("returned_when_undone")), expect=True)
@@ -311,10 +409,36 @@ def run(seed, composer, out_path):
     decided = v.decide(go=history_independent, verbose=True)
     rec.update({"go": bool(decided["go"]), "status": decided["status"], "preconditions": decided["preconditions"],
                 "verdict": decided})
+
+    # AMENDMENT-4: the isolated recall again, now at a warm state (after five production recalls), and its verdict
+    S_warm = snapshot(chat)
+    iso_warm = iso("warm (after the production recalls)", S_warm)
+    rec["isolated_warm"] = iso_warm
+    vi = Verdict("A10 follow-up (AMENDMENT-4): the ISOLATED A10 recall leaves no state and no global-generator change "
+                 "(module level)")
+    vi.require("the tiny-demo chat built", comp is not None, expect=True)
+    vi.require("composer is of the family the arms use (%s or a subclass; not TieredFactStore)" % want,
+               family, expect=lambda f: want in f and "TieredFactStore" not in f)
+    vi.require("sensitivity: the hash changes on a one-element bridge change and returns when undone",
+               bool(sens.get("changed_when_mutated") and sens.get("returned_when_undone")), expect=True)
+    raw_leaves_trace = bool(rec["state_touched_by_first_recall"] or not rng_ok)
+    vi.require("sensitivity: an UNISOLATED recall changes the state hash or a global generator (else no test)",
+               raw_leaves_trace, expect=True)
+    vi.require("the isolated recall took its snapshot (first use and warm)",
+               bool(iso_first["record"].get("isolated") and iso_warm["record"].get("isolated")), expect=True)
+    iso_clean = all(x["hash_unchanged"] and x["rng_unchanged"] and x["record"].get("restored_exact") is True
+                    and (x["record"].get("rng") or {}).get("host_rngs_unchanged") is True
+                    for x in (iso_first, iso_warm))
+    iso_value = iso_first["value"] == (None if p1 is None else str(p1)) and iso_warm["value"] == iso_first["value"]
+    rec["isolated_value_equals_first_production_recall"] = bool(iso_value)
+    decided_i = vi.decide(go=bool(iso_clean and iso_value), verbose=True)
+    rec.update({"go_isolated": bool(decided_i["go"]), "status_isolated": decided_i["status"],
+                "preconditions_isolated": decided_i["preconditions"], "verdict_isolated": decided_i})
     os.makedirs(os.path.dirname(out_path) or ".", exist_ok=True)
     with open(out_path, "w") as f:
         json.dump(rec, f, indent=2, default=str)
-    print(json.dumps({"status": decided["status"], "value_history_independent": value_hi,
+    print(json.dumps({"status": decided["status"], "status_isolated": decided_i["status"],
+                      "value_history_independent": value_hi,
                       "state_after_converges": state_conv, "state_touched_by_first_recall":
                       rec["state_touched_by_first_recall"], "rng_untouched": rng_ok,
                       "composer": rec["composer_class"], "out": out_path}), flush=True)

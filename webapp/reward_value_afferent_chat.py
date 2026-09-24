@@ -40,6 +40,7 @@ THE PATH FROM TEXT TO SNc CURRENT (declared, including the parts that are NOT br
   2. `chat.inner.what_does(agent, action)` -- the recalled expected patient. Under the production default composer
      (`BRAIN_COMPOSER_KIND` unset -> onebrain, the spiking DG-CA3 OneBrainComposer) it is a spiking recall; under
      `BRAIN_COMPOSER_KIND=rf` it is the HOST closed-form RFPhasorComposer. The composer class is recorded per read.
+     The recall runs inside a deep snapshot of `chat.inner` and is undone afterwards (`isolated_recall`).
   3. `SurpriseProductionOrgan.read_surprise` ADDRESSES the circuit in HOST code before any spiking happens (this
      is inherited from the organ, and it is a hand-designed concept code on the path, not neutral bookkeeping):
        a. the recalled patient string and the asserted patient string are mapped to circuit blocks through the
@@ -67,7 +68,8 @@ that, the v2 seed-7 arms measured the production CONFIRM read at 0.3472222222222
 merged pool, v3/footprint_module.json) the organ's read-state hash is unchanged across every A10 read and the
 production reads equal the flag-OFF reference. Not yet measured: the handler level (criterion (D) in the arms), other
 seeds, the cupy backend. Outside the isolation, declared: the intact organ's first-use build (block above
-`_SCALAR_TYPES`) and the recall call `chat.inner.what_does` (at the call in `spiking_reward_value`).
+`_SCALAR_TYPES`). A10's own recall `chat.inner.what_does` is isolated too since the follow-up round (block above
+`_RECALL_SNAPSHOT_MAX_BYTES`): the recall probe measured that it is not free of history otherwise.
 
 LESION (`BRAIN_REWARD_VALUE_LESION=1`). The read uses the organ's OWN lesioned twin (`sorg.judge(..., lesion=True)`):
 a STANDALONE `build_expectation_circuit` bridge, trained the same way, with the patient_expected->surprise
@@ -205,13 +207,14 @@ def _lesion_cut(sorg) -> dict:
     return out
 
 
-# ── FOOTPRINT-FREE READ (fix round 2, after the review of 7d5c2743d) ──────────────────────────────────────────────
+# ── THE READ RESTORES THE ORGAN STATE IT TOUCHES (fix round 2, after the review of 7d5c2743d) ───────────────────
 # The surprise organ is process-shared and default-ON: production reads it later in the SAME turn
 # (webapp/server.py's surprise block, which reconsolidation also gates on). A read on the shared merged pool is
 # READ-HISTORY dependent: the pool bridge carries no `_rest_extra` snapshot, so `_hard_reset` leaves the surprise
 # slice's adaptive thresholds / activity EMA / refractory state where the last read put them (seed 7, v2 arms: the
 # production CONFIRM read was 0.4050925925925926 Hz as the organ's first read and 0.3472222222222222 Hz as its
-# second). An A10 read that ran first therefore SHIFTED the production read. The A10 read now leaves no footprint:
+# second). An A10 read that ran first therefore SHIFTED the production read. The A10 read now leaves no footprint on
+# the organ:
 # every piece of state the read can mutate -- all array attributes of the bridge it drives (dense per-neuron and
 # per-synapse state, the sparse weight data), its scalar and container attributes, the runtime clock, the organ's
 # host block bookkeeping (`_block`, `_cue_next`, `_novel_next`) and the numpy / Python global RNG states -- is
@@ -489,6 +492,227 @@ def _restore_read_state(sorg, bridge, snap: dict) -> dict:
     return out
 
 
+# ── THE RECALL IS ISOLATED TOO (follow-up round, AMENDMENT-4) ─────────────────────────────────────────────────────
+# A10 asks the brain for the expected patient (`chat.inner.what_does`) BEFORE production's own recalls in the same
+# turn. The module-level recall probe (research/runners/_reward_value_afferent_recall_probe.py, seed 7, numpy,
+# v4/recall_probe.json) measured that this recall is NOT free of history under the production-default composer
+# (Pool1BoundOneBrainComposer): each recall draws OU noise for the spiking cleanup bank from numpy's GLOBAL
+# generator (600 `randn` samples per recall, traced to sim/bridge.py `_draw_ou_noise_samples` via
+# OneBrainComposer._spiking_select), its first use BUILDS that bank (two bridge builds, each reseeding numpy and
+# Python), and the composer's state after a recall depends on how many recalls ran before it. The recalled VALUE was
+# the same on every call there ("cat"); the state and the generators were not.
+# So the recall runs inside a DEEP snapshot of everything reachable from `chat.inner` (every dense array copied;
+# every list, dict, set, deque and object attribute binding recorded; numpy/Python generator objects by state),
+# with the global generators set aside (`_global_rngs_untouched`), and is restored right after: a lazily built bank
+# or cache is discarded, so production's own first recall builds it where it would with the flag off. If the
+# snapshot cannot be taken (or would copy more than `_RECALL_SNAPSHOT_MAX_BYTES`), or the restore is not exact, A10
+# does not drive. Declared, not covered: module-level globals (not reachable by attribute), C objects with no Python
+# state (locks, kernels; counted in the record as `opaque`), and cupy's generator is not restored but swapped: on
+# the cupy backend the recall draws its noise from a private generator, so A10's recalled value can differ from
+# production's recall in a noise-sensitive case. A concurrent writer to a snapshotted object between the snapshot
+# and the restore (a background thread) would be overwritten by the restore; the same holds for the organ read.
+_RECALL_SNAPSHOT_MAX_BYTES = 4 << 30
+_IMMUTABLE_SKIP = (bool, int, float, complex, str, bytes, type(None), np.generic, range, slice, type(Ellipsis))
+
+
+def _is_named(x) -> bool:
+    import types as _t
+    import functools as _ft
+    return isinstance(x, (_t.ModuleType, _t.FunctionType, _t.BuiltinFunctionType, _t.MethodType,
+                          _t.BuiltinMethodType, _t.CodeType, type, _ft.partial, staticmethod, classmethod, property,
+                          _t.MappingProxyType))
+
+
+def _deep_snapshot(root, max_bytes: Optional[int] = None, max_nodes: int = 50_000_000) -> dict:
+    """Record every mutable node reachable from `root` by attribute or container membership. Raises (so the caller
+    does not read) when the copies would exceed `max_bytes` (default `_RECALL_SNAPSHOT_MAX_BYTES`, read at call time)
+    or the graph exceeds `max_nodes`."""
+    import collections as _c
+    import random as _random
+    if max_bytes is None:
+        max_bytes = _RECALL_SNAPSHOT_MAX_BYTES
+    recs, seen, stack = [], set(), [root]
+    nbytes, nodes, opaque = 0, 0, {}
+    while stack:
+        x = stack.pop()
+        if isinstance(x, _IMMUTABLE_SKIP) or _is_named(x):
+            continue
+        if id(x) in seen:
+            continue
+        seen.add(id(x))
+        nodes += 1
+        if nodes > max_nodes:
+            raise RuntimeError("recall snapshot: more than %d reachable nodes" % max_nodes)
+        if _is_dense(x):
+            recs.append(("dense", x, x.copy()))
+            nbytes += int(getattr(x, "nbytes", 0))
+            if getattr(x.dtype, "kind", "") == "O":
+                stack.extend(np.asarray(x).ravel().tolist())
+        elif isinstance(x, list):
+            recs.append(("list", x, list(x)))
+            stack.extend(x)
+        elif isinstance(x, dict):
+            recs.append(("dict", x, dict(x)))
+            stack.extend(x.values())
+        elif isinstance(x, set):
+            recs.append(("set", x, set(x)))
+        elif isinstance(x, _c.deque):
+            recs.append(("deque", x, list(x)))
+            stack.extend(x)
+        elif isinstance(x, bytearray):
+            recs.append(("bytearray", x, bytes(x)))
+        elif isinstance(x, (tuple, frozenset)):
+            stack.extend(x)
+        elif isinstance(x, np.random.RandomState):
+            recs.append(("np_rs", x, x.get_state()))
+        elif isinstance(x, np.random.Generator):
+            recs.append(("np_gen", x, x.bit_generator.state))
+        elif isinstance(x, _random.Random):
+            recs.append(("py_rng", x, x.getstate()))
+        else:
+            has = False
+            d = getattr(x, "__dict__", None)
+            if isinstance(d, dict):
+                recs.append(("obj", x, dict(d)))
+                stack.extend(d.values())
+                has = True
+            slots = {}
+            for cls in type(x).__mro__:
+                for s in getattr(cls, "__slots__", ()) or ():
+                    if isinstance(s, str) and s not in ("__dict__", "__weakref__") and s not in slots:
+                        try:
+                            slots[s] = getattr(x, s)
+                        except AttributeError:
+                            slots[s] = _MISSING
+            if slots:
+                recs.append(("slots", x, slots))
+                stack.extend(v for v in slots.values() if v is not _MISSING)
+                has = True
+            if not has:
+                tn = type(x).__qualname__
+                opaque[tn] = opaque.get(tn, 0) + 1
+        if nbytes > max_bytes:
+            raise RuntimeError("recall snapshot: over %d bytes of arrays reachable" % max_bytes)
+    return {"recs": recs, "nodes": nodes, "array_bytes": nbytes, "opaque": opaque}
+
+
+def _deep_restore(snap: dict) -> dict:
+    """Undo every change since `_deep_snapshot`: object attributes re-bound (added ones deleted), containers refilled,
+    arrays refilled in place, generator objects re-set. Returns {changed: {kind: count}, exact: bool}."""
+    changed = {}
+
+    def mark(kind):
+        changed[kind] = changed.get(kind, 0) + 1
+
+    for kind, x, saved in snap["recs"]:
+        try:
+            if kind == "obj":
+                d = x.__dict__
+                if d.keys() != saved.keys() or any(d[k] is not v for k, v in saved.items()):
+                    mark(kind)
+                    for k in [k for k in d if k not in saved]:
+                        del d[k]
+                    for k, v in saved.items():
+                        if d.get(k, _MISSING) is not v:
+                            d[k] = v
+            elif kind == "slots":
+                for s, v in saved.items():
+                    cur = getattr(x, s, _MISSING)
+                    if cur is not v:
+                        mark(kind)
+                        if v is _MISSING:
+                            delattr(x, s)
+                        else:
+                            setattr(x, s, v)
+            elif kind == "dense":
+                if not _arr_equal(x, saved):
+                    mark(kind)
+                    x[...] = saved
+            elif kind == "list":
+                if len(x) != len(saved) or any(a is not b for a, b in zip(x, saved)):
+                    mark(kind)
+                    x[:] = saved
+            elif kind == "dict":
+                if x.keys() != saved.keys() or any(x[k] is not v for k, v in saved.items()):
+                    mark(kind)
+                    x.clear()
+                    x.update(saved)
+            elif kind == "set":
+                if x != saved:
+                    mark(kind)
+                    x.clear()
+                    x.update(saved)
+            elif kind == "deque":
+                if len(x) != len(saved) or any(a is not b for a, b in zip(x, saved)):
+                    mark(kind)
+                    x.clear()
+                    x.extend(saved)
+            elif kind == "bytearray":
+                if bytes(x) != saved:
+                    mark(kind)
+                    x[:] = saved
+            elif kind == "np_rs":
+                if not _np_states_equal(x.get_state(), saved):
+                    mark(kind)
+                    x.set_state(saved)
+            elif kind == "np_gen":
+                if x.bit_generator.state != saved:
+                    mark(kind)
+                    x.bit_generator.state = saved
+            elif kind == "py_rng":
+                if x.getstate() != saved:
+                    mark(kind)
+                    x.setstate(saved)
+        except Exception:
+            mark("restore_error:" + kind)
+    exact = not any(k.startswith("restore_error") for k in changed)
+    for kind, x, saved in snap["recs"]:
+        if not exact:
+            break
+        if kind == "obj":
+            d = x.__dict__
+            exact = d.keys() == saved.keys() and all(d[k] is v for k, v in saved.items())
+        elif kind == "dense":
+            exact = _arr_equal(x, saved)
+        elif kind in ("list", "deque"):
+            exact = len(x) == len(saved) and all(a is b for a, b in zip(x, saved))
+        elif kind == "dict":
+            exact = x.keys() == saved.keys() and all(x[k] is v for k, v in saved.items())
+        elif kind == "set":
+            exact = x == saved
+    return {"changed": changed, "exact": bool(exact)}
+
+
+def isolated_recall(chat, agent: str, action: str):
+    """`chat.inner.what_does(agent, action)` inside the deep snapshot + generator guard (block above). Returns
+    (patient_or_None, record). `record["isolated"]` is True only when the snapshot was taken; `restored_exact` and
+    `rng.host_rngs_unchanged` say whether the recall left anything behind. Never raises."""
+    rec = {"isolated": False}
+    try:
+        snap = _deep_snapshot(chat.inner)
+    except Exception as e:
+        rec["error"] = f"snapshot: {type(e).__name__}: {e}"
+        return None, rec
+    rec.update({"isolated": True, "nodes": snap["nodes"], "array_bytes": snap["array_bytes"],
+                "opaque": snap["opaque"]})
+    p = None
+    try:
+        with _global_rngs_untouched() as rng:
+            try:
+                p = chat.inner.what_does(agent, action)
+            except Exception as e:
+                rec["recall_error"] = f"{type(e).__name__}: {e}"
+                p = None
+        rec["rng"] = rng
+    finally:
+        try:
+            rr = _deep_restore(snap)
+            rec.update({"changed_during_recall": rr["changed"], "restored_exact": rr["exact"]})
+        except Exception as e:
+            rec.update({"restored_exact": False, "restore_error": f"{type(e).__name__}: {e}"})
+    return p, rec
+
+
 def spiking_reward_value(chat, message: str, seed: int) -> Optional[dict]:
     """The entry point `da_mode_drives_chat.observe_turn` calls when the flag is on.
 
@@ -501,8 +725,9 @@ def spiking_reward_value(chat, message: str, seed: int) -> Optional[dict]:
     restored before this returns. If the snapshot cannot be taken, or the restore raises or is not exact, the read
     does not drive (`drives=False`); the record's `footprint` block says what the read touched and whether the
     restore was exact. The lesion twin's first-use build runs with the host's global generators set aside
-    (`footprint.twin_build`). What is NOT covered by the isolation is declared in the block above `_SCALAR_TYPES`
-    (the intact first-use build) and at the recall call below (`chat.inner.what_does`)."""
+    (`footprint.twin_build`). The recall (`chat.inner.what_does`) runs inside its own deep snapshot of `chat.inner`
+    (`isolated_recall`, record under `recall`). What is NOT covered is declared in the block above `_SCALAR_TYPES`
+    (the intact first-use build) and above `_RECALL_SNAPSHOT_MAX_BYTES`."""
     lesion = reward_value_lesioned()
     try:
         import research.runners.surprise_production_organ as _SO
@@ -515,10 +740,14 @@ def spiking_reward_value(chat, message: str, seed: int) -> Optional[dict]:
         if asrt is None:
             return None
         a_s, v_s, p_asserted = asrt
-        try:
-            p_stored = chat.inner.what_does(a_s, v_s)
-        except Exception:
-            p_stored = None
+        # the recall runs isolated: production's own recalls later in the turn see the flag-OFF state (block above
+        # `_RECALL_SNAPSHOT_MAX_BYTES`); no exact restore -> no read, like the organ read
+        p_stored, recall_fp = isolated_recall(chat, a_s, v_s)
+        if (recall_fp.get("isolated") is not True or recall_fp.get("restored_exact") is not True
+                or (recall_fp.get("rng") or {}).get("host_rngs_unchanged") is not True):
+            return {"on": True, "source": "surprise", "drives": False, "recall": recall_fp,
+                    "error": "recall: " + str(recall_fp.get("error") or recall_fp.get("restore_error")
+                                              or "the recall's state or a host generator was not restored exactly")}
         if not p_stored:
             return None
         sorg = _SO.get_organ(seed=seed)                  # the SAME process-shared organ production reads
@@ -579,7 +808,7 @@ def spiking_reward_value(chat, message: str, seed: int) -> Optional[dict]:
             "signal": "unsigned prediction-error magnitude (salience), not a signed reward value",
             "residual": ("hz->normalized is a fixed host rescale; extract_assertion is a regex/keyword gate; the "
                          "confirm-vs-contradict block choice is a host string-identity step (read_surprise)"),
-            "footprint": footprint,
+            "footprint": footprint, "recall": recall_fp,
         }
         if lesion:
             info["lesion_cut"] = _lesion_cut(sorg)

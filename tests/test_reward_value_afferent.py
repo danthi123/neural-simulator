@@ -516,9 +516,13 @@ def test_a_twin_build_that_changed_a_host_rng_does_not_drive(SO, monkeypatch):
     def leaky(*a, **k):
         yield {"host_rngs_unchanged": False}
 
+    monkeypatch.setattr(RVA, "isolated_recall", lambda chat, a, v: (chat.inner.what_does(a, v), _CLEAN_RECALL))
     monkeypatch.setattr(RVA, "_global_rngs_untouched", leaky)
     info = RVA.spiking_reward_value(_chat(), "the dog chase the cat", seed=7)
     assert info["drives"] is False and "normalized" not in info and info["error"].startswith("twin build")
+
+
+_CLEAN_RECALL = {"isolated": True, "restored_exact": True, "rng": {"host_rngs_unchanged": True}}
 
 
 class _FakeCupyRandom:
@@ -609,6 +613,134 @@ def test_recall_probe_hash_sees_nested_changes_and_survives_cycles():
     assert deep_hash(o)[0] == h0
     o.s.data[0] = 2.0
     assert deep_hash(o)[0] != h0
+
+
+# ── the recall is isolated too (AMENDMENT-4): A10's what_does leaves no state and no generator change behind ────────
+class _HistoryRecallInner:
+    """A stub agent whose recall does what the production-default composer's recall was measured to do (recall probe,
+    v4/recall_probe.json): lazily BUILD a cache on first use (reseeding numpy's and Python's global generators, as a
+    bridge build does), draw from numpy's global generator on every call, mutate arrays in place, re-bind an array,
+    grow a list and a dict, and keep a counter. Its VALUE depends on history: it answers "cat" on its first recall
+    and "dog" after that (so a production recall after an unisolated A10 recall reads differently)."""
+
+    def __init__(self):
+        self.bank = None
+        self.v = np.zeros(6)
+        self.w = np.ones(3)
+        self.log = []
+        self.cache = {}
+        self.calls = 0
+        self.nested = types.SimpleNamespace(state=np.arange(4.0), trail=[])
+
+    def what_does(self, a, v):
+        import random as _r
+        if self.bank is None:
+            np.random.seed(7)
+            _r.seed(7)
+            self.bank = types.SimpleNamespace(v0=np.random.random(5))
+        noise = np.random.randn(10)
+        self.v += noise[:6]
+        self.w = self.w * 2.0
+        self.log.append((a, v))
+        self.cache[(a, v, self.calls)] = float(noise.sum())
+        self.nested.state[0] += 1.0
+        self.nested.trail.append(len(self.log))
+        self.calls += 1
+        return "cat" if self.calls == 1 else "dog"
+
+
+def _inner_hash(inner):
+    from research.runners._reward_value_afferent_recall_probe import deep_hash
+    return deep_hash(inner)[0]
+
+
+def test_the_a10_recall_leaves_no_state_and_no_generator_change(SO, monkeypatch):
+    import webapp.reward_value_afferent_chat as RVA
+    monkeypatch.setattr(SO, "get_organ", lambda seed=42: _FakeOrgan(hz=0.4, thr=2.5))
+    chat = types.SimpleNamespace(inner=_HistoryRecallInner())
+    _seed_host_rngs()
+    h0 = _inner_hash(chat.inner)
+    k0, pos0, py0 = _rng_fingerprint()
+    info = RVA.spiking_reward_value(chat, "the dog chase the cat", seed=7)
+    assert info["drives"] is True and info["stored_patient"] == "cat"
+    rec = info["recall"]
+    assert rec["isolated"] is True and rec["restored_exact"] is True and rec["rng"]["host_rngs_unchanged"] is True
+    assert rec["changed_during_recall"].get("obj", 0) >= 1 and rec["changed_during_recall"].get("dense", 0) >= 1
+    assert _inner_hash(chat.inner) == h0                                    # every reachable piece of state is back
+    k1, pos1, py1 = _rng_fingerprint()
+    assert np.array_equal(k0, k1) and pos0 == pos1 and py0 == py1         # and both global generators
+    assert chat.inner.bank is None and chat.inner.calls == 0               # the lazily built cache was discarded
+    # production's own first recall after A10's reads exactly what it reads with the flag off
+    assert chat.inner.what_does("dog", "chase") == "cat"
+
+
+def test_without_the_recall_isolation_the_stub_recall_leaves_a_footprint_so_the_test_can_fail(SO, monkeypatch):
+    import webapp.reward_value_afferent_chat as RVA
+    monkeypatch.setattr(SO, "get_organ", lambda seed=42: _FakeOrgan(hz=0.4, thr=2.5))
+    monkeypatch.setattr(RVA, "isolated_recall", lambda chat, a, v: (chat.inner.what_does(a, v), _CLEAN_RECALL))
+    chat = types.SimpleNamespace(inner=_HistoryRecallInner())
+    _seed_host_rngs()
+    h0 = _inner_hash(chat.inner)
+    k0, pos0, _py0 = _rng_fingerprint()
+    RVA.spiking_reward_value(chat, "the dog chase the cat", seed=7)
+    assert _inner_hash(chat.inner) != h0
+    k1, pos1, _py1 = _rng_fingerprint()
+    assert not (np.array_equal(k0, k1) and pos0 == pos1)
+    assert chat.inner.what_does("dog", "chase") == "dog"                  # the production recall reads differently
+
+
+def test_an_inexact_recall_restore_does_not_drive(SO, monkeypatch):
+    import webapp.reward_value_afferent_chat as RVA
+    monkeypatch.setattr(SO, "get_organ", lambda seed=42: _FakeOrgan(hz=0.4, thr=2.5))
+    real = RVA._deep_restore
+
+    def inexact(snap):
+        out = real(snap)
+        out["exact"] = False
+        return out
+
+    monkeypatch.setattr(RVA, "_deep_restore", inexact)
+    info = RVA.spiking_reward_value(types.SimpleNamespace(inner=_HistoryRecallInner()), "the dog chase the cat", seed=7)
+    assert info["drives"] is False and "normalized" not in info and info["error"].startswith("recall")
+
+
+def test_a_recall_snapshot_over_the_byte_cap_means_no_recall_and_no_drive(SO, monkeypatch):
+    import webapp.reward_value_afferent_chat as RVA
+    monkeypatch.setattr(SO, "get_organ", lambda seed=42: _FakeOrgan(hz=0.4, thr=2.5))
+    monkeypatch.setattr(RVA, "_RECALL_SNAPSHOT_MAX_BYTES", 8)
+    chat = types.SimpleNamespace(inner=_HistoryRecallInner())
+    info = RVA.spiking_reward_value(chat, "the dog chase the cat", seed=7)
+    assert info["drives"] is False and "snapshot" in info["error"]
+    assert chat.inner.calls == 0                                          # the recall never ran
+
+
+def test_deep_snapshot_restores_slots_deques_and_generator_objects():
+    import collections
+    import random as _r
+    import webapp.reward_value_afferent_chat as RVA
+
+    class Slotted:
+        __slots__ = ("a", "b")
+
+    o = Slotted()
+    o.a = np.zeros(3)
+    root = types.SimpleNamespace(s=o, dq=collections.deque([1, 2]), rs=np.random.RandomState(1),
+                                 g=np.random.default_rng(2), pr=_r.Random(3), ba=bytearray(b"xy"), st={1, 2})
+    h0 = _inner_hash(root)
+    snap = RVA._deep_snapshot(root)
+    o.a[1] = 5.0
+    o.b = "new"
+    root.dq.append(3)
+    root.rs.random(4)
+    root.g.random(4)
+    root.pr.random()
+    root.ba[0] = 0
+    root.st.add(9)
+    root.added = 1
+    assert _inner_hash(root) != h0
+    out = RVA._deep_restore(snap)
+    assert out["exact"] is True
+    assert _inner_hash(root) == h0 and not hasattr(o, "b") and not hasattr(root, "added")
 
 
 # ── AMENDMENT-2 (D): the side-effect criterion can fail, and fails on the v2 data it was written for ───────────────

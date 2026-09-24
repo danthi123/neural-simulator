@@ -3,7 +3,7 @@ type: finding
 status: no-go
 lane: load-bearing
 date: 2026-09-24
-mechanism: A10 (midnight plan S15c) seed-7 de-risk of the surprise-organ prediction-error input to da-mode-drives-response's SNc afferent (flags BRAIN_REWARD_VALUE_AFFERENT / BRAIN_REWARD_VALUE_LESION, default-OFF), per research/findings/2026-09-24-reward-value-spiking-afferent-PREREGISTRATION.md and its AMENDMENT-1, AMENDMENT-2 and AMENDMENT-3
+mechanism: A10 (midnight plan S15c) seed-7 de-risk of the surprise-organ prediction-error input to da-mode-drives-response's SNc afferent (flags BRAIN_REWARD_VALUE_AFFERENT / BRAIN_REWARD_VALUE_LESION, default-OFF), per research/findings/2026-09-24-reward-value-spiking-afferent-PREREGISTRATION.md and its AMENDMENT-1 to AMENDMENT-4
 seeds: [7]
 artifacts:
   - research/findings/raw/_reward_value_afferent_derisk/s7.json
@@ -14,12 +14,14 @@ artifacts:
   - research/findings/raw/_reward_value_afferent_derisk/v2/s7_arms_on_a.json
   - research/findings/raw/_reward_value_afferent_derisk/v2/rf/s7_arms_on_a.json
   - research/findings/raw/_reward_value_afferent_derisk/v3/footprint_module.json
+  - research/findings/raw/_reward_value_afferent_derisk/v4/recall_probe.json
+  - research/findings/raw/_reward_value_afferent_derisk/v4/rf/recall_probe.json
 ---
 
 # A10 seed-7 de-risk: NO-GO at the pre-registered criteria in both runs; the rerun shows (A) holds and traces the lesion residual to surprise-block identity
 
 Governed by `research/findings/2026-09-24-reward-value-spiking-afferent-PREREGISTRATION.md` (57f0ebfd0),
-`...-PREREG-AMENDMENT-1.md`, `...-PREREG-AMENDMENT-2.md` and `...-PREREG-AMENDMENT-3.md`. Seed 7 only: a
+`...-PREREG-AMENDMENT-1.md` to `...-PREREG-AMENDMENT-4.md`. Seed 7 only: a
 dev/calibration seed, not a gate verdict. The flags stay default-OFF.
 
 ## Follow-up round (after the re-review of 4b6a9cf66, which read SOUND as a default-OFF merge)
@@ -31,8 +33,12 @@ records them and was committed before any run it governs. In short:
   seed-7 organ shows numpy and Python unchanged across it and the same twin built.
 - (D)'s reconsolidation half compared None with None in every arm. (D) is split: the reconsolidation half is scored
   only on a new arm pair with reconsolidation on (off_rc, on_rc), and an unmeasured half cannot read GO.
-- A10's own recall runs outside the isolation. A module-level probe measures whether it is history-dependent, and
-  the module declares the result.
+- A10's own recall ran outside the isolation. The recall probe's first run
+  (`research/findings/raw/_reward_value_afferent_derisk/v4/recall_probe.json`, UNDEFINED on two instrument
+  preconditions; its measurements are reported in AMENDMENT-4) showed that under the production-default composer the
+  recall moves a global generator on every call and its state does not converge, though the recalled value stayed
+  "cat". AMENDMENT-4 brings the recall inside the isolation (a deep snapshot of `chat.inner` plus the generator guard)
+  before any v4 arm runs; probe run 2 measures the isolated recall.
 - A restore that raised or was not exact still drove the SNc. It now returns `drives=False`.
 None of this is a new capability result; the v4 arms AMENDMENT-3 governs have not run.
 
@@ -52,10 +58,12 @@ intact read (AMENDMENT-2).
   organ's second CONFIRM read of the turn. Reconsolidation (default-ON, off in the arms) gates on that read.
 - **A second lesion asymmetry.** The lesion arm's A10 read uses the standalone twin, so its production read stayed at
   0.4050925925925926 Hz while the intact arm's moved. The v2 (B) attribution compares arms that differ in this too.
-- **Fix.** The A10 read now leaves no footprint: it snapshots every piece of state it can mutate and restores it
+- **Fix.** The A10 read now leaves no footprint on the organ: it snapshots every piece of organ state it can mutate and restores it
   right after the read (`webapp/reward_value_afferent_chat.py`; unit pins in `tests/test_reward_value_afferent.py`
   fail on the pre-fix module). AMENDMENT-2 adds criterion (D): the production `surprise` and `reconsolidation`
-  blocks of on_a and les equal off_a's on both turns. Scored on the v2 arms, (D) fails, as it should.
+  blocks of on_a and les equal off_a's on both turns. Scored on the v2 arms, (D) fails, as it should. (AMENDMENT-3
+  splits (D): with reconsolidation off in those arms its reconsolidation half compared None with None, so that half
+  is now scored only on an arm pair with reconsolidation on.)
 - **Measurement of the fix.** A module-level check on the production organ
   (`research/runners/_reward_value_afferent_footprint.py`) and the v3 arms on the pool, both governed by
   AMENDMENT-2. The module-level check has landed (below). The v3 arms queued on the pool at 621ace648 run the module
@@ -224,8 +232,9 @@ text were not affected by it at seed 7; the lesion arm's production read was not
 
 ## Next action
 
-1. Queue the v4 arms AMENDMENT-3 governs (seven arms, both composers, at the follow-up head) once the recall probe
-   has been read, and score them with the v3 pre-patch references (same revision and env). (D), with both halves
+1. Queue the v4 arms AMENDMENT-3 governs (seven arms, both composers, at the follow-up head) once probe run 2's
+   isolated verdict reads GO on both composers (AMENDMENT-4), and score them with the v3 pre-patch references (same
+   revision and env). (D), with both halves
    measured, decides whether the isolation holds at the handler level. The v3 arms queued at 621ace648 can still be
    scored for (A), (B), (C) and the surprise half of (D); they cannot read GO on (D).
 2. **Withdrawn (fix round 2): the block-matched criterion (C') proposed here earlier.** It read
