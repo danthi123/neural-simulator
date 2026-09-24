@@ -16,6 +16,8 @@ artifacts:
   - research/findings/raw/_reward_value_afferent_derisk/v3/footprint_module.json
   - research/findings/raw/_reward_value_afferent_derisk/v4/recall_probe.json
   - research/findings/raw/_reward_value_afferent_derisk/v4/rf/recall_probe.json
+  - research/findings/raw/_reward_value_afferent_derisk/v4/recall_probe_run2.json
+  - research/findings/raw/_reward_value_afferent_derisk/v4/rf/recall_probe_run2.json
 ---
 
 # A10 seed-7 de-risk: NO-GO at the pre-registered criteria in both runs; the rerun shows (A) holds and traces the lesion residual to surprise-block identity
@@ -38,9 +40,28 @@ records them and was committed before any run it governs. In short:
   preconditions; its measurements are reported in AMENDMENT-4) showed that under the production-default composer the
   recall moves a global generator on every call and its state does not converge, though the recalled value stayed
   "cat". AMENDMENT-4 brings the recall inside the isolation (a deep snapshot of `chat.inner` plus the generator guard)
-  before any v4 arm runs; probe run 2 measures the isolated recall.
+  before any v4 arm runs; probe run 2 measures the isolated recall (next section).
 - A restore that raised or was not exact still drove the SNc. It now returns `drives=False`.
 None of this is a new capability result; the v4 arms AMENDMENT-3 governs have not run.
+
+### Recall probe run 2 (AMENDMENT-4), seed 7: the isolated recall reads GO on both composers
+
+Artifacts `research/findings/raw/_reward_value_afferent_derisk/v4/recall_probe_run2.json` (production-default
+composer, `Pool1BoundOneBrainComposer`) and `research/findings/raw/_reward_value_afferent_derisk/v4/rf/recall_probe_run2.json`
+(forced `rf`, `Pool1BoundComposer`), local under `tools/memcap.sh` at 78b61588f with `git_dirty=false`. An
+instrument check of the isolation on the arms' build (numpy, LTM tier off), not a capability verdict. Every
+precondition holds on both, including both sensitivity controls (the hash sees a one-element bridge change, and the
+unisolated recall does leave a trace).
+
+| composer | raw recall (AMENDMENT-3's verdict) | isolated recall (AMENDMENT-4's verdict) |
+|---|---|---|
+| production default | NO-GO: value "cat" on every (dog, chase) recall, but the state does not converge and numpy's global generator moves on every recall (69360 `randn` samples per recall; the first recall also reseeds at the cleanup bank's build) | GO: from the fresh state and from a warm one, the hash of everything reachable from `chat.inner` and both global generators are unchanged, the restore is exact, and the value equals the first production recall's |
+| forced `rf` | GO: value, state and generators free of history | GO, as above |
+
+- What the isolation copies on the default composer: 97008969 bytes of arrays at first use (the byte cap is 4 GiB).
+  Its time is not separated from the probe's own state hash in the artifact (the recorded `seconds` include both).
+- Scope: seed 7, numpy, the tiny-demo chat with the LTM tier off. The cupy backend (where the recall's noise comes
+  from a private generator), other seeds and the production-default LTM tier (`TieredFactStore`) are not measured.
 
 ## Fix round 2 (after the review of 7d5c2743d): a flag-ON side effect the v2 record did not mention
 
@@ -232,9 +253,9 @@ text were not affected by it at seed 7; the lesion arm's production read was not
 
 ## Next action
 
-1. Queue the v4 arms AMENDMENT-3 governs (seven arms, both composers, at the follow-up head) once probe run 2's
-   isolated verdict reads GO on both composers (AMENDMENT-4), and score them with the v3 pre-patch references (same
-   revision and env). (D), with both halves
+1. Queue the v4 arms AMENDMENT-3 governs (seven arms, both composers, at the follow-up head); probe run 2's isolated
+   verdict reads GO on both composers, which AMENDMENT-4 required first. Score them with the v3 pre-patch references
+   (same revision and env). (D), with both halves
    measured, decides whether the isolation holds at the handler level. The v3 arms queued at 621ace648 can still be
    scored for (A), (B), (C) and the surprise half of (D); they cannot read GO on (D).
 2. **Withdrawn (fix round 2): the block-matched criterion (C') proposed here earlier.** It read

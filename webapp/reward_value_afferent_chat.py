@@ -495,12 +495,17 @@ def _restore_read_state(sorg, bridge, snap: dict) -> dict:
 # ── THE RECALL IS ISOLATED TOO (follow-up round, AMENDMENT-4) ─────────────────────────────────────────────────────
 # A10 asks the brain for the expected patient (`chat.inner.what_does`) BEFORE production's own recalls in the same
 # turn. The module-level recall probe (research/runners/_reward_value_afferent_recall_probe.py, seed 7, numpy,
-# v4/recall_probe.json) measured that this recall is NOT free of history under the production-default composer
-# (Pool1BoundOneBrainComposer): each recall draws OU noise for the spiking cleanup bank from numpy's GLOBAL
-# generator (600 `randn` samples per recall, traced to sim/bridge.py `_draw_ou_noise_samples` via
-# OneBrainComposer._spiking_select), its first use BUILDS that bank (two bridge builds, each reseeding numpy and
-# Python), and the composer's state after a recall depends on how many recalls ran before it. The recalled VALUE was
-# the same on every call there ("cat"); the state and the generators were not.
+# v4/recall_probe.json and v4/recall_probe_run2.json) measured that this recall is NOT free of history under the
+# production-default composer (Pool1BoundOneBrainComposer): each recall draws OU noise for the spiking cleanup bank
+# from numpy's GLOBAL generator (69360 `randn` samples per recall in run 2's trace, from sim/bridge.py
+# `_draw_ou_noise_samples` via OneBrainComposer._spiking_select), its first use BUILDS that bank (the builds reseed
+# numpy and Python), and the composer's state after a recall depends on how many recalls ran before it. The
+# recalled VALUE was the same on every call there ("cat"); the state and the generators were not. Under the forced
+# rf composer (Pool1BoundComposer) the raw recall was free of history in value, state and generators.
+# Run 2 measured the isolation below on both composers: from the fresh state and from a warm one, the isolated
+# recall left the hash of everything reachable from `chat.inner` and both global generators unchanged, restored
+# exactly, and returned the value the first production recall returns (seed 7, numpy; not yet cupy, not other
+# seeds, not the LTM tier).
 # So the recall runs inside a DEEP snapshot of everything reachable from `chat.inner` (every dense array copied;
 # every list, dict, set, deque and object attribute binding recorded; numpy/Python generator objects by state),
 # with the global generators set aside (`_global_rngs_untouched`), and is restored right after: a lazily built bank
