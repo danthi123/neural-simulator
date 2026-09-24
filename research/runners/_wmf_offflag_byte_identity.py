@@ -61,7 +61,8 @@ def collect(out, part="all"):
     os.environ.setdefault("SIM_DISABLE_LLM", "1")
     from webapp.server import brain_chat, BrainChatRequest
     import webapp.server as _S
-    res = {"tree_webapp": os.path.abspath(_S.__file__), "seed": os.environ.get("BRAIN_CHAT_SEED"), "turns": {}}
+    res = {"tree_webapp": os.path.abspath(_S.__file__), "seed": os.environ.get("BRAIN_CHAT_SEED"),
+           "sim_backend": os.environ.get("SIM_BACKEND"), "turns": {}}
     keep = set(PARTS[part]) if part in PARTS else {sess for sess, _m in SCRIPT}
     res["part"] = part
     for sess, msgs in SCRIPT:

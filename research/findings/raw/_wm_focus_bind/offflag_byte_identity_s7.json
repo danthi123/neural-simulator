@@ -1,0 +1,79 @@
+{
+  "runner": "research.runners._wmf_offflag_byte_identity",
+  "pinned_sha": "ee73ecd4f",
+  "branch_sha": "09f8e6009",
+  "seed": "7",
+  "same_seed": true,
+  "flags_unset": [
+    "BRAIN_MULTIREF_FOCUS_BIND",
+    "LB_WMB_FOCUS_PROBE",
+    "LB_WMB_CONTENT_PROBE",
+    "LB_WMB_HOLDQUERY_PROBE",
+    "BRAIN_MULTIREF_LESION_SCOPE",
+    "BRAIN_MULTIREF_LESION"
+  ],
+  "compare": "exact sha256 of each canonical brain_chat response",
+  "n_turns": 6,
+  "complete_script": true,
+  "turns": {
+    "bi_bc_0": {
+      "identical": true,
+      "pinned": "db7633dac80230188f2c4287fdd8263daef4656aa729024265e28101ca57b7d3",
+      "branch": "db7633dac80230188f2c4287fdd8263daef4656aa729024265e28101ca57b7d3",
+      "answer_pinned": "the cat balls the walked",
+      "answer_branch": "the cat balls the walked"
+    },
+    "bi_bc_1": {
+      "identical": true,
+      "pinned": "66441c90d68ae0e55037d58715add201f99a1582bfdc714b5a99bb44e7207b5e",
+      "branch": "66441c90d68ae0e55037d58715add201f99a1582bfdc714b5a99bb44e7207b5e",
+      "answer_pinned": "the cat eats the fish",
+      "answer_branch": "the cat eats the fish"
+    },
+    "bi_hold_0": {
+      "identical": true,
+      "pinned": "7ec7aa337ea51b9e448185a7bbda09c2c6044d4fbdcd59d7ca5e47ad5cc64d5c",
+      "branch": "7ec7aa337ea51b9e448185a7bbda09c2c6044d4fbdcd59d7ca5e47ad5cc64d5c",
+      "answer_pinned": "the fox wolfs the walked",
+      "answer_branch": "the fox wolfs the walked"
+    },
+    "bi_hold_1": {
+      "identical": true,
+      "pinned": "538d97314c13b99088817ea9f4c23447f0dd90e124e9eddf66098c2d73e5e910",
+      "branch": "538d97314c13b99088817ea9f4c23447f0dd90e124e9eddf66098c2d73e5e910",
+      "answer_pinned": "I caught the verb 'watch' with the wolf and the owl, but my role-binding didn't resolve the PATIENT \u2014 which of them is the 'watch' done to, the wolf or the owl?",
+      "answer_branch": "I caught the verb 'watch' with the wolf and the owl, but my role-binding didn't resolve the PATIENT \u2014 which of them is the 'watch' done to, the wolf or the owl?"
+    },
+    "bi_wmb_0": {
+      "identical": true,
+      "pinned": "7ec7aa337ea51b9e448185a7bbda09c2c6044d4fbdcd59d7ca5e47ad5cc64d5c",
+      "branch": "7ec7aa337ea51b9e448185a7bbda09c2c6044d4fbdcd59d7ca5e47ad5cc64d5c",
+      "answer_pinned": "the fox wolfs the walked",
+      "answer_branch": "the fox wolfs the walked"
+    },
+    "bi_wmb_1": {
+      "identical": true,
+      "pinned": "a8159425ddb4abc57180cb3c2d90175684a53c510bd2d6a1e5622b269a534efd",
+      "branch": "a8159425ddb4abc57180cb3c2d90175684a53c510bd2d6a1e5622b269a534efd",
+      "answer_pinned": "I'm holding 2 referents in working memory at once: fox and wolf.",
+      "answer_branch": "I'm holding 2 referents in working memory at once: fox and wolf."
+    }
+  },
+  "roster": {
+    "PROBE_TURNS_identical": true,
+    "FACULTY_PROBES_identical": true,
+    "pre_existing_labels_identical": true,
+    "added_labels": [
+      "wmf_a1_ask",
+      "wmf_a1_intro",
+      "wmf_a2_ask",
+      "wmf_a2_intro",
+      "wmf_b1_ask",
+      "wmf_b1_intro",
+      "wmf_b2_ask",
+      "wmf_b2_intro"
+    ],
+    "removed_labels": []
+  },
+  "byte_identical_off": true
+}
