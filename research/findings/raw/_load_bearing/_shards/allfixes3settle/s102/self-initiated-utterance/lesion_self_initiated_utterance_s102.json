@@ -1,0 +1,31 @@
+{
+  "selfinit": {
+    "answer": "Nothing in particular is surfacing for me to bring up right now.",
+    "abstained": true,
+    "recalled_svo": null,
+    "verified": false,
+    "renderer": "template-stub (GPU-free)",
+    "brain": "tiny-demo",
+    "source": "tiny-demo +LTM",
+    "rich": false,
+    "activity": null,
+    "affect": null,
+    "self_initiated": {
+      "on": true,
+      "lesioned": true,
+      "composer": "onebrain",
+      "mouth_fidelity": true,
+      "moat_abstains": true,
+      "n_utt": 0,
+      "about_rate": 0.0,
+      "n_concepts_spoken": 0,
+      "concept": null,
+      "utterance": null,
+      "question": null,
+      "examples": [],
+      "path": "light-numpy-deferred-wander",
+      "kind": "self_initiated"
+    },
+    "inner_state_readout": true
+  }
+}

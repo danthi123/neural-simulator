@@ -1,0 +1,23 @@
+{
+  "vision": {
+    "answer": "I see a bird. It can fly.",
+    "abstained": false,
+    "recalled_svo": null,
+    "verified": true,
+    "renderer": "template-stub (GPU-free)",
+    "brain": "tiny-demo",
+    "source": "tiny-demo +LTM",
+    "rich": false,
+    "activity": null,
+    "affect": null,
+    "vision_identity": {
+      "on": true,
+      "recognized_category": 0,
+      "noun": "bird",
+      "prop": "fly",
+      "shown_category": 0,
+      "which": 0,
+      "lesioned": false
+    }
+  }
+}
