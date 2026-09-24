@@ -26,6 +26,15 @@ def test_settle_flag_in_env_is_refused():
     assert any("BRAIN_AFFECT_MARKER_SETTLE" in p for p in guard.problems({"BRAIN_AFFECT_MARKER_SETTLE": "1"}))
 
 
+def test_guard_selftest_proves_it_can_fail():
+    # AGFLIP review (2026-09-24): the guard had no self-verifying check that it can actually FAIL, unlike every
+    # tools/gates/ module. guard.selftest() must report zero problems -- i.e. it successfully demonstrated the
+    # override-detection and pre-flip-revision-detection failing directions for every registered flag, including
+    # BRAIN_AFFECT_MARKER_SETTLE, without mutating any file on disk.
+    st = guard.selftest()
+    assert st == [], st
+
+
 def test_guard_reads_constants_without_importing_cupy_modules(monkeypatch):
     # CPU-only nodes have no cupy; the guard must not import the flipped modules (2026-09-24: 156 shards failed).
     import builtins

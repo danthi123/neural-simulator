@@ -73,7 +73,65 @@ def problems(environ=None):
     return out
 
 
+def selftest():
+    """FAILING DIRECTION FIRST (2026-09-24, AGFLIP review of `research/settle-default-on-prep`): this guard's
+    FLIPPED registry had no self-verifying check that the guard can actually FAIL -- the same property
+    `tools/gates/` requires of every commit-time gate (docs/FAILURE_GATE_MATRIX.md: "the registry REFUSES to
+    trust a gate whose selftest() does not itself fail in its failing direction"). Before this function, that
+    property rested on one session's ad hoc sandbox check (copy the guard + one module into an isolated dir,
+    mutate the constant, eyeball the exit code) -- reproducible, but not mechanically re-run. This script is
+    NOT itself registered under tools/gates/ (it is a runtime job-shell guard invoked from JOBS.txt lines on
+    research pool/AWS nodes, not a pre-commit doc/claim check on the repo), so it keeps its own selftest here;
+    the return convention matches tools/gates/*.selftest() (a list of problems; empty == the guard proved it
+    can fail every way it claims to).
+
+    Exercises, for EVERY registered flag (not just BRAIN_AFFECT_MARKER_SETTLE): (1) the clean-checkout baseline
+    is problem-free, (2) an env override is reported, (3) a constant forced to False is reported, (4) a constant
+    forced MISSING (simulating a pre-flip revision) is reported. (3)/(4) monkeypatch `_source_constant` for the
+    single (mod, const) pair under test only, falling back to the real reader for everything else, so this never
+    touches a file on disk.
+    """
+    bad = []
+
+    base = problems({})
+    if base:
+        bad.append("baseline problems() on a clean env is non-empty on this checkout: %r" % base)
+
+    for flag in FLIPPED:
+        p = problems({flag: "1"})
+        if not any(flag in line for line in p):
+            bad.append("problems({%r: '1'}) did NOT report the override -- guard cannot fail this way" % flag)
+
+    orig_reader = _source_constant
+
+    def _fake_reader(target_mod, target_const, fake_val):
+        def _reader(mod, const):
+            if mod == target_mod and const == target_const:
+                return fake_val
+            return orig_reader(mod, const)
+        return _reader
+
+    g = globals()
+    for flag, (mod, const) in FLIPPED.items():
+        for fake_val, label in ((False, "False"), (_MISSING, "MISSING (pre-flip revision)")):
+            g["_source_constant"] = _fake_reader(mod, const, fake_val)
+            try:
+                p = problems({})
+            finally:
+                g["_source_constant"] = orig_reader
+            if not any(mod in line and const in line for line in p):
+                bad.append("problems() with %s.%s forced to %s did NOT report it -- guard cannot fail this way"
+                           % (mod, const, label))
+
+    return bad
+
+
 if __name__ == "__main__":
+    if "--selftest" in sys.argv[1:]:
+        st = selftest()
+        for line in st:
+            print("[assert_flipped_defaults] SELFTEST FAILED: " + line, file=sys.stderr)
+        sys.exit(1 if st else 0)
     p = problems()
     for line in p:
         print("[assert_flipped_defaults] FAIL: " + line, file=sys.stderr)

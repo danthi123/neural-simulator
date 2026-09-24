@@ -28,6 +28,19 @@ in `b2b-caps`. Nothing in this document, and nothing on the branch it describes,
 The branch `research/settle-default-on-prep` (based on `bd391aa31`) is a PREPARATION only -- it lands in `M1`/`F`
 only if a human merges it after an explicit yes, per the S09 fallback rule.
 
+**⛔ MERGING THIS BRANCH IS NOT A NO-OP FOR PRODUCTION (AGFLIP review framing fix, same day).** This branch's own
+review returned `"safe_to_merge": true`, and that field means only "this branch is internally correct and does not
+break anything if merged" -- it does NOT mean "merging is inert." `settle_enabled()`'s only call site
+(`webapp/affect_drives_chat.py`'s `get_reader(seed=seed)`) is production code: merging this branch to `main` would
+flip `BRAIN_AFFECT_MARKER_SETTLE`'s shipped default to ON **immediately**, in the live chat pipeline, not merely
+"prepare" it. This is a genuine default-ON flip staged on a branch, not the "default-off additive" shape most
+branches in this repo have. Do not merge until ALL of: (1) the owner's S00(a) fork answer is recorded YES in
+`GAP_CLOSURE_MISSION.md`, (2) a real 6-seed G-SETTLE1+G-SETTLE2 capability gate reads GO (not the dev-seed-7 module
+check above, which is a mechanism sanity check, not a capability gate), (3) a SOUND review of that gate, and (4)
+per the owner's explicit instruction carried into this review-fix session: **`research/settle-multiturn-contrast`
+(a separate midnight-plan lane, live at this writing) must pass first** -- SETTLE ships ON only after that
+multi-turn contrast lane clears, and until then this branch stays PARKED and CORRECT, not flipped.
+
 ## Standing result this section must not contradict or re-litigate
 
 `2026-09-23-affect-marker-settle-fullbrain-contrast-PARTIAL-6seed.md`, verdict **NO-GO** (for the flag as
@@ -82,7 +95,46 @@ Verified directly (seed-7 dev check, this commit's companion): `problems({})` is
 `problems({"BRAIN_AFFECT_MARKER_SETTLE": "1"})` names the override; a `_source_constant` read against `main`
 (which lacks `_SETTLE_DEFAULT_ON`) returns `_MISSING`, the same path already exercised by the 3-flag registry.
 
-## The code change being prepared
+## The ready-to-run shard command, corrected (AGFLIP review fix, same day)
+
+**No 6-seed shard is staged by this branch or this document** (S09's own text does not ask AG-FLIP to stage
+`JOBS.txt` lines here, unlike S04, and none of the S07 conditional-flag preconditions -- owner yes, a real 6-seed
+capability gate, a SOUND review -- exist yet). The build step's own report (workflow journal, not a repo file)
+did however draft a "ready-to-run shard command" for whoever later stages it, and that draft had two defects
+caught by review, both fixed HERE (not merely in a report) so the correct text is what survives:
+
+1. `--faculty affect-marker-spiking-wta` is not a valid flag on `research/runners/load_bearing_fraction.py`
+   (confirmed by `grep add_argument` in that file: no `--faculty`; the real flag is `--only`, a comma-separated
+   faculty-key restrictor). `--faculty` belongs to the unrelated `research/runners/first_chat_console.py` --
+   a copy-paste mix-up.
+2. The draft also omitted the `LB_*_DRIVE_PROBE=1` environment variables that the ADEQUATE probe (the one
+   G-SETTLE1/G-SETTLE2 above require) sets, and that every real line in
+   `research/findings/raw/_load_bearing/_shards/flipdefaults-adequate/JOBS.txt` sets. Omitting them would not
+   crash -- it would silently run the THIN probe instead, a wrong-but-quiet result.
+
+The corrected command, verified against the real adequate-probe convention (diffed line-for-line against
+`flipdefaults-adequate/JOBS.txt`'s own `affect-marker-spiking-wta` rows, seed substituted only):
+
+```
+SEED=<42|43|44|100|101|102>
+OUT_DIR="research/findings/raw/_load_bearing/_shards/settle_default_on/s${SEED}/affect-marker-spiking-wta"
+.venv/bin/python tools/assert_flipped_defaults.py && \
+mkdir -p "$OUT_DIR" && \
+env SIM_BACKEND=numpy OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 \
+    LB_AFFECT_DRIVE_PROBE=1 LB_BG_SELECT_DRIVE_PROBE=1 LB_CG_DRIVE_PROBE=1 LB_DISCOURSE_REGISTER_DRIVE_PROBE=1 \
+    LB_EPISODIC_DRIVE_PROBE=1 LB_NONCONTRADICTION_DRIVE_PROBE=1 LB_OPEN_ENDED_DISTRIB_PROBE=1 \
+    LB_PMEM_DRIVE_PROBE=1 LB_SURPRISE_CONFIRM_PROBE=1 \
+    .venv/bin/python -u -m research.runners.load_bearing_fraction --only affect-marker-spiking-wta \
+    --seed "$SEED" --repeats 2 \
+    --out "$OUT_DIR"/lb.json
+```
+
+run from a `pool_provision`'d checkout of this branch merged onto whatever `F` is at staging time. `mem_gb` for
+this shard is still **TBD, not measured this session** (only the ~0.33 GB WTA-module-only equivalence check was
+measured; a full-brain LBF shard is a materially heavier build and needs its own RSS probe before a real job is
+queued) -- declared, not invented, per `tools.lab.undefined_if_empty`.
+
+## The guard this section's future shards would use
 
 `research/runners/_affect_marker_wta_derisk.py`, lines 171/178 (per the plan step's own citation) --
 `settle_enabled()` changed from "env unset -> OFF" to "env unset -> `_SETTLE_DEFAULT_ON` (= `True` on this
