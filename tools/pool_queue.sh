@@ -87,8 +87,13 @@ case "${1:-list}" in
              *) echo "⛔ REFUSED: '$MOD' would run via a BARE 'python' -- pool nodes have none (silent no-output)." >&2
                 echo "   Use: SIM_BACKEND=numpy .venv/bin/python -u -m $MOD ..." >&2; exit 2 ;;
            esac; fi
-         if [ -n "$MOD" ]; then
-           FLAGS=$(printf '%s' "$2" | grep -oE '[-][-][a-z][a-z0-9-]*' | sort -u)
+         # PINNED-REVISION FLAG CHECK (2026-09-24). A job pinned to `cd ~/derisk-pool/revisions/<sha>` runs THAT revision's
+         # runner, which main's checkout may not have yet (an unmerged branch's 6-seed run): checking its flags against
+         # main refused every such job ("does not even import/parse"). For pinned jobs the flag check runs below,
+         # against the pinned revision's own --help on the node; unpinned jobs keep this local check.
+         PINNED_REV=$(printf '%s' "$2" | grep -oE 'derisk-pool/revisions/[0-9a-f]{7,40}' | head -1)
+         FLAGS=$(printf '%s' "$2" | grep -oE '[-][-][a-z][a-z0-9-]*' | sort -u)
+         if [ -n "$MOD" ] && [ -z "$PINNED_REV" ]; then
            HELP=$(cd "$ROOT" && SIM_NO_PROVENANCE=1 timeout 90 .venv/bin/python -m "$MOD" --help 2>&1)
            # Here-strings, not `printf | grep -q` (2026-09-24): under `set -o pipefail`, grep -q exits on the first
            # match, printf takes SIGPIPE on a help text larger than the 64 KB pipe buffer, and the pipeline FAILS --
@@ -157,10 +162,20 @@ case "${1:-list}" in
                   "$(revision_marker_probe_cmd "$REMOTE_DIR")" >/dev/null 2>&1; then
                NODE_SKIP="$NODE_SKIP $n"; continue
              fi
-             if timeout 25 ssh "${SSH_F[@]}" -o BatchMode=yes -o ConnectTimeout=8 "$n" \
-                  "cd ~/$REMOTE_DIR && SIM_NO_PROVENANCE=1 SIM_BACKEND=numpy .venv/bin/python -m $MOD --help" \
-                  >/dev/null 2>&1; then NODE_OK="$NODE_OK $n"; else NODE_BAD="$NODE_BAD $n"; fi
+             if RHELP=$(timeout 60 ssh "${SSH_F[@]}" -o BatchMode=yes -o ConnectTimeout=8 "$n" \
+                  "cd ~/$REMOTE_DIR && SIM_NO_PROVENANCE=1 SIM_BACKEND=numpy .venv/bin/python -m $MOD --help" 2>/dev/null); then
+               NODE_OK="$NODE_OK $n"; [ -z "${REMOTE_HELP:-}" ] && REMOTE_HELP="$RHELP"
+             else NODE_BAD="$NODE_BAD $n"; fi
            done
+           if [ "$IS_REVISION" = 1 ] && [ -n "${REMOTE_HELP:-}" ]; then
+             BAD=""
+             for f in $FLAGS; do grep -q -- "$f" <<<"$REMOTE_HELP" || BAD="$BAD $f"; done
+             if [ -n "$BAD" ]; then
+               echo "⛔ REFUSED: $MOD at the pinned revision does not accept:$BAD" >&2
+               echo "   The job would be dispatched, die on argparse, and free the node silently." >&2
+               exit 2
+             fi
+           fi
            [ -n "$NODE_UNREACH" ] && echo "ℹ️  skipping unreachable node(s):$NODE_UNREACH (dispatcher health-checks + skips them too)" >&2
            [ -n "$NODE_SKIP" ] && echo "ℹ️  skipping node(s) not yet provisioned with this revision:$NODE_SKIP (the dispatcher skips them for this job too, until provisioned)" >&2
            if [ -n "$NODE_BAD" ]; then
