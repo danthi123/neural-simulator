@@ -91,15 +91,30 @@ def gpu_queue_busy():
     return up and (running or queued > 0)
 
 
+def _node_can_take_work(h, min_est):
+    # A node's idle CORES only count as unused capacity if the dispatcher would actually hand it the next queued job
+    # (2026-09-23): the pool is RAM-bound (15 GB nodes, ~5-6 GB jobs), so "cores idle" stayed true for 15 days while
+    # the nodes were full, the under_compute streak never reset, and the idle gate could only be satisfied by filler
+    # or waivers. Empty queue -> the idle cores DO count (nothing is staged: that is the real defect to flag).
+    if min_est is None:
+        return True
+    out = sh("bash %s --node-budget %s 2>/dev/null" % (os.path.join(ROOT, "tools", "pool_autodispatch.sh"), h), timeout=40)
+    m = re.search(r"idle budget=(-?\d+)GB", out)
+    return bool(m) and int(m.group(1)) >= min_est
+
+
 def pool_idle():
     idle, lanes, up = 0, 0, 0
+    me = sh("bash %s --min-queued-est-gb 2>/dev/null" % os.path.join(ROOT, "tools", "pool_autodispatch.sh"), timeout=20).strip()
+    min_est = int(me) if me.isdigit() else None
     for h in POOL:
         out = sh("timeout 8 ssh -o BatchMode=yes %s \"nproc; cut -d' ' -f1 /proc/loadavg; pgrep -fc research.runners || echo 0\" 2>/dev/null" % h, timeout=12)
         parts = out.split()
         if len(parts) >= 3:
             up += 1
             n, ld, ln = int(parts[0]), float(parts[1]), int(parts[2])
-            idle += max(0, int(n - ld))
+            if _node_can_take_work(h, min_est):
+                idle += max(0, int(n - ld))
             lanes += ln
     return idle, lanes, up
 

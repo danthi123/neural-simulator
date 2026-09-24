@@ -8,8 +8,37 @@
 # no-ready-work waiver records why replaying old commands would be worse than leaving the queue empty.
 set -uo pipefail
 ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
+# shellcheck source=tools/pool_revision_marker.sh
+source "$ROOT/tools/pool_revision_marker.sh"
 Q="${POOL_QUEUE_PATH:-/home/dant123/Projects/sim/research/queue/pool.queue}"
 mkdir -p "$(dirname "$Q")"; touch "$Q"
+# AWS-AS-EXTRA-POOL-NODE (2026-09-23) -- same repo-local, gitignored ssh config as pool_autodispatch.sh /
+# pool_provision.sh / pool_sync.sh (see pool_autodispatch.sh's header comment for the full rationale). ABSENT
+# by default, so the reachability/argparse probe below is unchanged for anyone who hasn't run
+# `aws_pool_node.sh up`. The probe's own node list also grows with .pool_extra_nodes, read fresh each call.
+POOL_SSH_CONFIG="${POOL_SSH_CONFIG:-$ROOT/research/queue/.pool_ssh_config}"
+SSH_F=(); [ -f "$POOL_SSH_CONFIG" ] && SSH_F=(-F "$POOL_SSH_CONFIG")
+EXTRA_NODES_FILE="${POOL_EXTRA_NODES_FILE:-$ROOT/research/queue/.pool_extra_nodes}"
+probe_nodes() {
+  local extra=""
+  [ -f "$EXTRA_NODES_FILE" ] && extra=$(grep -vE '^[[:space:]]*(#|$)' "$EXTRA_NODES_FILE" 2>/dev/null | tr -s '[:space:]' ' ')
+  printf '%s %s' "${POOL_NODES:-pool40 pool41 pool42}" "$extra"
+}
+
+if [ "${1:-}" = "--probe-node" ]; then
+  # TEST SEAM (2026-09-23): exercises the EXACT reachability + --help ssh calls `add`'s remote-validity gate
+  # makes (same flags, same use of SSH_F), against one node/module pair, without staging a real queue entry --
+  # so a stubbed `ssh` on PATH can assert -F is/isn't present without a real pool node or a real runner module.
+  [ "$#" -eq 3 ] || { echo "usage: $0 --probe-node <node> <module>" >&2; exit 2; }
+  n="$2"; MOD="$3"
+  if ! timeout 10 ssh "${SSH_F[@]}" -o BatchMode=yes -o ConnectTimeout=6 "$n" true >/dev/null 2>&1; then
+    echo "UNREACHABLE"; exit 1
+  fi
+  if timeout 25 ssh "${SSH_F[@]}" -o BatchMode=yes -o ConnectTimeout=8 "$n" \
+       "cd ~/derisk-pool/sim && SIM_NO_PROVENANCE=1 SIM_BACKEND=numpy .venv/bin/python -m $MOD --help" \
+       >/dev/null 2>&1; then echo OK; else echo BAD; fi
+  exit 0
+fi
 
 valid_depth() {
   awk -F'\t' '$1 ~ /^[0-9]+$/ && NF > 1 {n++} END {print n+0}' "$Q"
@@ -90,23 +119,47 @@ case "${1:-list}" in
          # (dispatcher skips them too), and only refuse when a REACHABLE node lacks the runner (the real
          # integration-seam check, preserved) or when NO node is reachable at all.
          if [ -n "$MOD" ]; then
-           NODE_BAD=""; NODE_OK=""; NODE_UNREACH=""
+           NODE_BAD=""; NODE_OK=""; NODE_UNREACH=""; NODE_SKIP=""
            # ISOLATED-REVISION SEAM (2026-09-23). A job pinned to `cd ~/derisk-pool/revisions/<sha> && ...` (the
            # `pool_provision.sh --isolated` layout) RUNS in that revision dir, but this check probed the shared
            # ~/derisk-pool/sim copy -- so a NEW runner that exists only in the isolated revision was refused, and a
            # runner that exists in the shared copy but NOT in the pinned revision was wrongly accepted. Probe the
            # directory the job will actually run in.
            REMOTE_DIR=$(printf '%s' "$2" | grep -oE 'derisk-pool/revisions/[0-9a-f]{7,40}' | head -1)
+           IS_REVISION=0; [ -n "$REMOTE_DIR" ] && IS_REVISION=1
            REMOTE_DIR="${REMOTE_DIR:-derisk-pool/sim}"
-           for n in pool40 pool41 pool42; do
-             if ! timeout 10 ssh -o BatchMode=yes -o ConnectTimeout=6 "$n" true >/dev/null 2>&1; then
+           for n in $(probe_nodes); do
+             if ! timeout 10 ssh "${SSH_F[@]}" -o BatchMode=yes -o ConnectTimeout=6 "$n" true >/dev/null 2>&1; then
                NODE_UNREACH="$NODE_UNREACH $n"; continue
              fi
-             if timeout 25 ssh -o BatchMode=yes -o ConnectTimeout=8 "$n" \
+             # MISSING-REVISION-DIR IS "SKIP", NOT "BAD" (2026-09-23 fix round). A reachable node that simply has
+             # not been provisioned with THIS revision yet (e.g. a freshly-`up`'d AWS pool node, before any
+             # `--isolated --revision <sha>` provision has targeted it) is not a broken node -- it is a node this
+             # PARTICULAR job cannot use yet. Counting it as NODE_BAD wrongly REFUSED staging revision-pinned work
+             # for every OTHER (perfectly capable) node too, because the refusal fires on "any reachable+bad node"
+             # regardless of whether other reachable nodes are fine. Reproduced: registering one AWS node with only
+             # ~/derisk-pool/sim provisioned made `add` refuse ALL revision-pinned adds, including ones pool40/41/42
+             # could already run.
+             #
+             # SHARED PREDICATE (2026-09-23 fix round #3, re-review MEDIUM): this used to ask `[ -d ~/$REMOTE_DIR ]`
+             # -- bare directory existence -- while pool_autodispatch.sh's revision_available() (the check that
+             # actually decides whether the dispatcher will EVER hand this job to this node) requires the
+             # `.provisioned_ok` completion marker. A half-provisioned dir (pool_provision.sh's remote `mkdir -p`
+             # creates it FIRST, before rsync/venv/manifest-verify/sanity even run) or a LEGACY dir predating that
+             # marker therefore passed `add` and got the job staged onto a node the dispatcher would then skip
+             # forever -- the job silently stranded. Both scripts now call the SAME
+             # tools/pool_revision_marker.sh:revision_marker_probe_cmd so they can never ask two different
+             # questions of the same directory again.
+             if [ "$IS_REVISION" = 1 ] && ! timeout 10 ssh "${SSH_F[@]}" -o BatchMode=yes -o ConnectTimeout=6 "$n" \
+                  "$(revision_marker_probe_cmd "$REMOTE_DIR")" >/dev/null 2>&1; then
+               NODE_SKIP="$NODE_SKIP $n"; continue
+             fi
+             if timeout 25 ssh "${SSH_F[@]}" -o BatchMode=yes -o ConnectTimeout=8 "$n" \
                   "cd ~/$REMOTE_DIR && SIM_NO_PROVENANCE=1 SIM_BACKEND=numpy .venv/bin/python -m $MOD --help" \
                   >/dev/null 2>&1; then NODE_OK="$NODE_OK $n"; else NODE_BAD="$NODE_BAD $n"; fi
            done
            [ -n "$NODE_UNREACH" ] && echo "ℹ️  skipping unreachable node(s):$NODE_UNREACH (dispatcher health-checks + skips them too)" >&2
+           [ -n "$NODE_SKIP" ] && echo "ℹ️  skipping node(s) not yet provisioned with this revision:$NODE_SKIP (the dispatcher skips them for this job too, until provisioned)" >&2
            if [ -n "$NODE_BAD" ]; then
              echo "⛔ REFUSED: $MOD is not runnable on REACHABLE dispatch target(s):$NODE_BAD" >&2
              echo "   Those nodes are UP but the runner fails there (stale rsync?); synchronize them:" >&2
