@@ -800,6 +800,14 @@ def answer_turn(msg: str, warm_faculty, valence: float, arousal: float, *,
         # -- so skip the call and produce that string directly, at zero forward-pass cost.
         raw, secs = "", 0.0
         generator_name = "no_qwen_fallback"
+    elif os.environ.get("BRAIN_OPEN_ENDED_AFFECT_TONE_SELECT", "").strip().lower() in ("1", "true", "on", "yes"):
+        # D5 CONTENT-PRESERVING TONE (2026-09-24, default-OFF): draft once (affect-free MOOD line), restyle the one
+        # draft in fixed tones, lock content, and release the candidate whose organ-evoked valence is closest to the
+        # organ's held valence -- see webapp/affect_tone_selection.py. Cheap env read FIRST: unset -> the module is
+        # never imported and the branches below run byte-identically.
+        from webapp import affect_tone_selection as _ATS
+        raw, secs = _ATS.generate_selected(gen, system, user, valence, facts=facts, seed=seed,
+                                           max_new_tokens=max_new_tokens)
     elif os.environ.get("BRAIN_OPEN_ENDED_AFFECT_CONDITIONED", "").strip().lower() in ("prompt", "resid"):
         # D5 AFFECT-CONDITIONED MOUTH (2026-09-23, default-OFF): condition the Qwen GENERATION on the live spiking
         # affect organ's valence (graded MOOD line, or residual-stream conditioning) -- see

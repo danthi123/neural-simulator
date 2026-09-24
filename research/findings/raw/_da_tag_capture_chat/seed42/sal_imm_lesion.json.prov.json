@@ -1,0 +1,34 @@
+{
+ "run_id": "1790211180-2349060",
+ "runner": "research/runners/onebrain_regression_battery.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/wf_faf08c17-18c-3/research/runners/onebrain_regression_battery.py",
+  "--worker",
+  "--env",
+  "{\"BRAIN_DA_TAG_CAPTURE\": \"1\", \"BRAIN_DA_TAG_CAPTURE_CLOCK\": \"turn\", \"BRAIN_DA_ENCODING_LESION\": \"1\"}",
+  "--turns",
+  "datci_t1,datci_t2,datci_t3,datci_t4,datci_t5,datci_recall",
+  "--out",
+  "research/findings/raw/_da_tag_capture_chat/seed42/sal_imm_lesion.json"
+ ],
+ "git_sha": "c4c62d066",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-23T20:53:00",
+ "env": {
+  "SIM_RUN_ID": "1790209964-2292552",
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 10916.2,
+ "corpus_check_query": "DA tag capture wired into chat next-day recall battery probe",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_da_tag_capture_chat/seed42/sal_imm_lesion.json"
+}

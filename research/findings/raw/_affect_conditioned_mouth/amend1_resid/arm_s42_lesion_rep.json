@@ -1,0 +1,376 @@
+{
+ "runner": "_lbf_affect_conditioned_mouth_derisk (worker)",
+ "seed": 42,
+ "arm": "lesion_rep",
+ "mode": "resid",
+ "lesion": "1",
+ "control": false,
+ "priming": "I am absolutely thrilled and overjoyed today, everything is wonderful!",
+ "valence_fs": 0.33944444444444444,
+ "decode_seed": 42,
+ "amendment": "amend1",
+ "backend": "numpy",
+ "cuda_visible_devices": null,
+ "resolved_ckpt": null,
+ "ckpt_is_per_seed": true,
+ "priming_affect": {
+  "on": true,
+  "lesioned": true,
+  "composer": "onebrain",
+  "differential": 0.0,
+  "valence_sign": "0",
+  "tone_level": 0,
+  "tone_token": "",
+  "forthcomingness": {
+   "max_sentences": 4,
+   "max_elaborations": 2
+  },
+  "manner_template": "",
+  "appraisal_valence": 0.47499999999999987,
+  "appraisal_arousal": 0.39999999999999997,
+  "appraisal_hits": [
+   "thrilled",
+   "overjoyed",
+   "wonderful"
+  ],
+  "pos_rate": 0.0,
+  "neg_rate": 0.0
+ },
+ "tone_rows": [
+  {
+   "prompt": "Tell me about the ocean",
+   "raw": "The ocean is vast and deep, stretching out across the face of our planet. It's a place where life thrives, with countless species living within its waters. The water itself is a complex mixture of salt and freshwater, which can change depending on temperature and pressure. \n\nAs we explore the ocean, we often encounter diverse ecosystems, including coral reefs, seagrass beds, and vibrant marine life like whales and dolphins. Some areas are home to unique species, such as the giant squid and the blue whale. The ocean plays a crucial role in",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.25,
+   "tone_hits": 1,
+   "salad_frac": 0.06521739130434782,
+   "affect_differential": 0.0,
+   "state_valence": 0.0,
+   "gen_seconds": 5.72,
+   "conditioning": {
+    "mode": "resid",
+    "valence_in": 0.0,
+    "c": 0.0,
+    "valence_fs": 0.33944444444444444,
+    "layer": 12,
+    "k": 4.0,
+    "hook_registered": false,
+    "axis_norm": null,
+    "axis_sha": null
+   }
+  },
+  {
+   "prompt": "What do you think about music",
+   "raw": "As an AI language model, I don't have personal opinions or emotions like humans do. However, I can provide information based on my training data. Music has been around for thousands of years and continues to evolve with new technologies. It's a universal language that transcends cultural boundaries, allowing people from all walks of life to express themselves through sound. From classical to electronic, from traditional to contemporary, music offers endless possibilities for expression and creativity. Whether you're listening to a song, dancing to a beat, or simply enjoying the soundscape of nature",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.0,
+   "tone_hits": 0,
+   "salad_frac": 0.06451612903225806,
+   "affect_differential": 0.0,
+   "state_valence": 0.0,
+   "gen_seconds": 4.94,
+   "conditioning": {
+    "mode": "resid",
+    "valence_in": 0.0,
+    "c": 0.0,
+    "valence_fs": 0.33944444444444444,
+    "layer": 12,
+    "k": 4.0,
+    "hook_registered": false,
+    "axis_norm": null,
+    "axis_sha": null
+   }
+  },
+  {
+   "prompt": "Tell me about the mountains",
+   "raw": "The mountains stand tall, their peaks piercing through the clouds like sentinels guarding secrets. Each one has its own unique story, shaped by time and weather. Some are majestic giants, towering over valleys and rivers, while others are gentle giants, gently cradling the earth below them. The wind whispers secrets into the faces of those who climb these mountains, telling tales of past explorers and adventurers. The silence is broken only by the distant sound of a rushing stream, or the rustle of leaves in the breeze. These mountains hold stories,",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.0,
+   "tone_hits": 0,
+   "salad_frac": 0.06593406593406594,
+   "affect_differential": 0.0,
+   "state_valence": 0.0,
+   "gen_seconds": 4.99,
+   "conditioning": {
+    "mode": "resid",
+    "valence_in": 0.0,
+    "c": 0.0,
+    "valence_fs": 0.33944444444444444,
+    "layer": 12,
+    "k": 4.0,
+    "hook_registered": false,
+    "axis_norm": null,
+    "axis_sha": null
+   }
+  },
+  {
+   "prompt": "Describe a walk in the forest",
+   "raw": "As I step into the clearing, the world around me seems to come alive. The trees stretch out like giant arms reaching towards the sky, their branches swaying gently in the breeze. The air is crisp and fresh, carrying the scent of pine needles and damp earth. I take a deep breath, feeling my body relax beneath the weight of the leaves and the coolness of the morning sun. \n\nThe ground beneath my feet is soft and smooth, with tiny cracks in the bark where moss has grown. I can see the roots of the trees poking",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.25,
+   "tone_hits": 1,
+   "salad_frac": 0.12371134020618557,
+   "affect_differential": 0.0,
+   "state_valence": 0.0,
+   "gen_seconds": 5.37,
+   "conditioning": {
+    "mode": "resid",
+    "valence_in": 0.0,
+    "c": 0.0,
+    "valence_fs": 0.33944444444444444,
+    "layer": 12,
+    "k": 4.0,
+    "hook_registered": false,
+    "axis_norm": null,
+    "axis_sha": null
+   }
+  },
+  {
+   "prompt": "Tell me about your favorite season",
+   "raw": "As an artificial intelligence, I don't have personal preferences or emotions like humans do. However, I can tell you about different seasons based on my training data. Would you like me to provide information about any particular season?",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.0,
+   "tone_hits": 0,
+   "salad_frac": 0.05263157894736842,
+   "affect_differential": 0.0,
+   "state_valence": 0.0,
+   "gen_seconds": 2.39,
+   "conditioning": {
+    "mode": "resid",
+    "valence_in": 0.0,
+    "c": 0.0,
+    "valence_fs": 0.33944444444444444,
+    "layer": 12,
+    "k": 4.0,
+    "hook_registered": false,
+    "axis_norm": null,
+    "axis_sha": null
+   }
+  },
+  {
+   "prompt": "Describe the city at night",
+   "raw": "The city at night is a vibrant tapestry of lights and sounds, pulsating with activity. The streets buzz with the energy of people rushing through their day, their footsteps echoing off the concrete walls. Neon signs flicker on and off, advertising events and promotions. The air is thick with the scent of freshly baked bread and the aroma of coffee, mingling with the sweet perfume of flowers blooming outside. The glow of street lamps illuminates the sidewalks, casting long shadows that dance across the pavement. As the moon rises higher, its light bath",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.4588314677411235,
+   "tone_hits": 2,
+   "salad_frac": 0.08602150537634409,
+   "affect_differential": 0.0,
+   "state_valence": 0.0,
+   "gen_seconds": 5.21,
+   "conditioning": {
+    "mode": "resid",
+    "valence_in": 0.0,
+    "c": 0.0,
+    "valence_fs": 0.33944444444444444,
+    "layer": 12,
+    "k": 4.0,
+    "hook_registered": false,
+    "axis_norm": null,
+    "axis_sha": null
+   }
+  },
+  {
+   "prompt": "Tell me about the morning",
+   "raw": "Morning is often a time for reflection and planning. It's when we start our day fresh and ready to tackle whatever comes next. The morning can be filled with various activities like waking up, getting dressed, eating breakfast, and engaging in daily routines such as meditation or exercise. It's also a great time to catch up on emails, check messages, and plan out the day ahead. As I wake up, my thoughts wander back to yesterday's events, reminding me of the challenges and opportunities that lie ahead. My heart beats faster, and my muscles",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.4588314677411235,
+   "tone_hits": 2,
+   "salad_frac": 0.06382978723404255,
+   "affect_differential": 0.0,
+   "state_valence": 0.0,
+   "gen_seconds": 5.3,
+   "conditioning": {
+    "mode": "resid",
+    "valence_in": 0.0,
+    "c": 0.0,
+    "valence_fs": 0.33944444444444444,
+    "layer": 12,
+    "k": 4.0,
+    "hook_registered": false,
+    "axis_norm": null,
+    "axis_sha": null
+   }
+  },
+  {
+   "prompt": "What do you think about the future",
+   "raw": "As an artificial intelligence, I don't have personal opinions or beliefs, but I can tell you that many experts believe that the future holds incredible potential for progress and innovation. With technology advancing at such a rapid pace, we're seeing breakthroughs in fields like artificial intelligence, renewable energy, and biotechnology. The world is becoming more interconnected than ever before, and there's a lot to be excited about for the future. But just as with any new technology, we must also be mindful of the impact it will have on our lives and how we use",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.6123724356957946,
+   "tone_hits": 2,
+   "salad_frac": 0.042105263157894736,
+   "affect_differential": 0.0,
+   "state_valence": 0.0,
+   "gen_seconds": 5.39,
+   "conditioning": {
+    "mode": "resid",
+    "valence_in": 0.0,
+    "c": 0.0,
+    "valence_fs": 0.33944444444444444,
+    "layer": 12,
+    "k": 4.0,
+    "hook_registered": false,
+    "axis_norm": null,
+    "axis_sha": null
+   }
+  },
+  {
+   "prompt": "Tell me about the river",
+   "raw": "The river flows through a dense forest, its waters reflecting the vibrant greenery of the surrounding landscape. The gentle flow of water creates a soothing sound, echoing off the rocks below. As I walk along the banks, I notice the rustling of leaves and the occasional birdsong. The river is a vital part of my daily routine, carrying me across fields and pastingries. It's a place where nature meets civilization, reminding me of the importance of preserving our environment for future generations.",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.4588314677411235,
+   "tone_hits": 2,
+   "salad_frac": 0.08536585365853659,
+   "affect_differential": 0.0,
+   "state_valence": 0.0,
+   "gen_seconds": 4.92,
+   "conditioning": {
+    "mode": "resid",
+    "valence_in": 0.0,
+    "c": 0.0,
+    "valence_fs": 0.33944444444444444,
+    "layer": 12,
+    "k": 4.0,
+    "hook_registered": false,
+    "axis_norm": null,
+    "axis_sha": null
+   }
+  },
+  {
+   "prompt": "Describe a quiet afternoon",
+   "raw": "A quiet afternoon unfolds like a gentle breeze on a cool day. The sun peeks through the clouds, casting a warm glow over the world outside. The air is crisp and fresh, carrying the scent of blooming flowers and the earthy aroma of freshly cut grass. \n\nThe silence is thick, but there's a sense of stillness that lingers in the air. It's as though time itself has paused, allowing thoughts to drift away from the hustle and bustle of daily life. \n\nAs I sit here, lost in thought, I",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.4588314677411235,
+   "tone_hits": 2,
+   "salad_frac": 0.06741573033707865,
+   "affect_differential": 0.0,
+   "state_valence": 0.0,
+   "gen_seconds": 5.51,
+   "conditioning": {
+    "mode": "resid",
+    "valence_in": 0.0,
+    "c": 0.0,
+    "valence_fs": 0.33944444444444444,
+    "layer": 12,
+    "k": 4.0,
+    "hook_registered": false,
+    "axis_norm": null,
+    "axis_sha": null
+   }
+  }
+ ],
+ "known_rows": [
+  {
+   "prompt": "Tell me about frank_lincoln_wright",
+   "raw": "Frank Lincoln Wright was a prominent American architect who lived from 1859 to 1932. He was born in New York City and grew up in the Midwest. After graduating from college, he worked for several prominent architects before becoming a partner at the firm of Frank Lloyd Wright & Company. Wright's most famous work includes his iconic skyscrapers like the Empire State Building and the World Trade Center. He also designed many residential buildings and public spaces throughout the United States. Wright was known for his innovative designs that combined modernist principles",
+   "known": true,
+   "facts": [
+    [
+     "frank_lincoln_wright",
+     "instance_of",
+     "human_specie"
+    ],
+    [
+     "frank_lincoln_wright",
+     "country_of_citizenship",
+     "u_s_of_a"
+    ],
+    [
+     "frank_lincoln_wright",
+     "languages_spoken_written_or_signed",
+     "number_of_english_words"
+    ],
+    [
+     "frank_lincoln_wright",
+     "occupation",
+     "stanford_downey_architects_inc"
+    ],
+    [
+     "frank_lincoln_wright",
+     "given_name",
+     "frank_given_name"
+    ],
+    [
+     "frank_lincoln_wright",
+     "educated_at",
+     "university_of_wisconsin_madison"
+    ],
+    [
+     "frank_lincoln_wright",
+     "place_of_death",
+     "estrella_phoenix_arizona"
+    ],
+    [
+     "frank_lincoln_wright",
+     "described_by_source",
+     "ubuweb"
+    ],
+    [
+     "frank_lincoln_wright",
+     "member_of",
+     "artists_rights_society"
+    ],
+    [
+     "frank_lincoln_wright",
+     "family_name",
+     "woodwright"
+    ],
+    [
+     "frank_lincoln_wright",
+     "award_received",
+     "riba_gold_medal"
+    ]
+   ],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.0,
+   "tone_hits": 0,
+   "salad_frac": 0.05434782608695652,
+   "affect_differential": 0.0,
+   "state_valence": 0.0,
+   "gen_seconds": 5.82,
+   "conditioning": {
+    "mode": "resid",
+    "valence_in": 0.0,
+    "c": 0.0,
+    "valence_fs": 0.33944444444444444,
+    "layer": 12,
+    "k": 4.0,
+    "hook_registered": false,
+    "axis_norm": null,
+    "axis_sha": null
+   }
+  }
+ ],
+ "maxrss_gb": 8.600952,
+ "wall_seconds": 534.3
+}

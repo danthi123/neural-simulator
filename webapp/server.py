@@ -5204,6 +5204,19 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
     except Exception as _dee:  # never let the encoding coupling crash a turn — degrade to the unit-magnitude write
         da_encoding_info = {"on": True, "error": f"{type(_dee).__name__}: {_dee}"}
 
+    # ── DA-GATED TAG-AND-CAPTURE (default-OFF `BRAIN_DA_TAG_CAPTURE`; webapp/da_tag_capture_chat.py) ──────────────
+    # The v3 synaptic tag / PRP / late-phase ledger on the live store: integrate the store synapses to this turn's
+    # world time, then schedule this turn's D1 drive from the DA level read just above. The turn's new store blocks are
+    # registered where the reply is assembled (`after_store_chat`). Unset flag -> the hook returns None before touching
+    # anything, no key is added -> byte-identical.
+    da_tag_capture_info = None
+    try:
+        from webapp import da_tag_capture_chat as _DTC
+        if _DTC.tag_capture_enabled():
+            da_tag_capture_info = _DTC.observe_chat_turn(chat, _brain_chat_seed())
+    except Exception as _dtce:  # never let the capture ledger crash a turn
+        da_tag_capture_info = {"on": True, "error": f"{type(_dtce).__name__}: {_dtce}"}
+
     # ── THE WANDERED THOUGHT DRIVES THE RESPONSE (board #86, 2026-08-20) ─────────────────────────────────────
     # The continuous engine's idle tick (webapp/continuous_engine.py) already lets a THOUGHT wander between turns
     # (a curiosity-biased spiking selection off the self-initiation organ) — today that concept is only OBSERVED
@@ -6497,6 +6510,11 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
             resp["da_drives"] = da_drives_info
         if da_encoding_info is not None:   # additive trace; absent when BRAIN_DA_ENCODING off -> byte-identical
             resp["da_encoding"] = da_encoding_info
+        if da_tag_capture_info is not None:   # default-OFF tag-and-capture: register this turn's store blocks
+            try:
+                resp["da_tag_capture"] = {"observe": da_tag_capture_info, **(_DTC.after_store_chat(chat) or {})}
+            except Exception as _dtce2:
+                resp["da_tag_capture"] = {"on": True, "error": f"{type(_dtce2).__name__}: {_dtce2}"}
         # >>> GNW GLOBAL-STOP BEGIN (rich path; additive, mergeable block — BRAIN_GNW_STOP, default-ON 2026-08-26) ───────
         # GLOBAL-WORKSPACE STOP DRIVES THE RESPONSE (distributed-overwrite clear-all): prepend the clearing lead
         # OUTERMOST (the held coalition was cleared to n_ignited=0 before the newcomer ignited -> a clean single-content
@@ -6796,6 +6814,11 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
         _resp["da_drives"] = da_drives_info
     if da_encoding_info is not None:   # additive trace; absent when BRAIN_DA_ENCODING off -> byte-identical
         _resp["da_encoding"] = da_encoding_info
+    if da_tag_capture_info is not None:   # default-OFF tag-and-capture: register this turn's store blocks
+        try:
+            _resp["da_tag_capture"] = {"observe": da_tag_capture_info, **(_DTC.after_store_chat(chat) or {})}
+        except Exception as _dtce2:
+            _resp["da_tag_capture"] = {"on": True, "error": f"{type(_dtce2).__name__}: {_dtce2}"}
     # >>> GNW GLOBAL-STOP BEGIN (single-fact path; additive, mergeable block — BRAIN_GNW_STOP, default-ON 2026-08-26) ──
     # GLOBAL-WORKSPACE STOP DRIVES THE RESPONSE (distributed-overwrite clear-all, single-fact path): prepend the
     # clearing lead OUTERMOST (the held coalition was cleared to n_ignited=0 before the newcomer ignited) + attach the
