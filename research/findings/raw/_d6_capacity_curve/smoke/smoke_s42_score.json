@@ -1,0 +1,217 @@
+{
+ "runner": "research.runners.d6_capacity_curve",
+ "arm_dir": "research/findings/raw/_d6_capacity_curve/smoke",
+ "seeds": [
+  42
+ ],
+ "levels": [
+  5,
+  50
+ ],
+ "per_level": {
+  "5": {
+   "42": {
+    "void": [],
+    "n": 5,
+    "cross_arm_identity": {
+     "substrate_threshold_sha256": true,
+     "probe_spec_hash": true,
+     "facts_hash": true,
+     "n_total": true
+    },
+    "summary": {
+     "HEBB": {
+      "n_taught_probes": 5,
+      "n_nearmiss": 5,
+      "n_novel": 5,
+      "recall": 1.0,
+      "abstain": 0.0,
+      "crossed_same_subject": 0.0,
+      "crossed_other_fact": 0.0,
+      "wrong_word": 0.0,
+      "yn_hit": 1.0,
+      "block_decode_ok": 1.0,
+      "engram_held": 1.0,
+      "mean_abs_w_probed": 1.0,
+      "nearmiss_false_accept": 0.0,
+      "novel_false_recall": 0.0,
+      "novel_shard_empty": 0.4,
+      "nearmiss_shard_empty": 0.0,
+      "encode_s_median": 0.4565,
+      "encode_s_mean": 0.42610000000000003,
+      "encode_s_last_decile_mean": 0.3898,
+      "query_s_median": 0.37434999999999996,
+      "engram_read_s_median": 0.0286,
+      "readtime_view_s_per_turn_projected": 0.14300000000000002
+     },
+     "FREEZE": {
+      "n_taught_probes": 5,
+      "n_nearmiss": 5,
+      "n_novel": 5,
+      "recall": 0.0,
+      "abstain": 1.0,
+      "crossed_same_subject": 0.0,
+      "crossed_other_fact": 0.0,
+      "wrong_word": 0.0,
+      "yn_hit": 0.0,
+      "block_decode_ok": 0.0,
+      "engram_held": 0.0,
+      "mean_abs_w_probed": 0.0,
+      "nearmiss_false_accept": 0.0,
+      "novel_false_recall": 0.0,
+      "novel_shard_empty": 0.4,
+      "nearmiss_shard_empty": 0.0,
+      "encode_s_median": 0.2132,
+      "encode_s_mean": 0.21812,
+      "encode_s_last_decile_mean": 0.2222,
+      "query_s_median": 0.54945,
+      "engram_read_s_median": 0.0246,
+      "readtime_view_s_per_turn_projected": 0.123
+     },
+     "COPY": {
+      "n_taught_probes": 5,
+      "n_nearmiss": 5,
+      "n_novel": 5,
+      "recall": 1.0,
+      "abstain": 0.0,
+      "crossed_same_subject": 0.0,
+      "crossed_other_fact": 0.0,
+      "wrong_word": 0.0,
+      "yn_hit": 1.0,
+      "block_decode_ok": 1.0,
+      "engram_held": 1.0,
+      "mean_abs_w_probed": 1.0,
+      "nearmiss_false_accept": 0.0,
+      "novel_false_recall": 0.0,
+      "novel_shard_empty": 0.4,
+      "nearmiss_shard_empty": 0.0,
+      "encode_s_median": 0.197,
+      "encode_s_mean": 0.20234000000000002,
+      "encode_s_last_decile_mean": 0.2423,
+      "query_s_median": 0.4993,
+      "engram_read_s_median": 0.0713,
+      "readtime_view_s_per_turn_projected": 0.35650000000000004
+     }
+    },
+    "freeze_null_ok": true,
+    "lever_moved": true,
+    "writes_during_probe_clean": true,
+    "rep_identical": true,
+    "status": "DEFINED",
+    "HEBB_scales": true,
+    "COPY_scales": true,
+    "recall_diff_HEBB_minus_COPY": 0.0,
+    "parity": true
+   }
+  },
+  "50": {
+   "42": {
+    "void": [],
+    "n": 50,
+    "cross_arm_identity": {
+     "substrate_threshold_sha256": true,
+     "probe_spec_hash": true,
+     "facts_hash": true,
+     "n_total": true
+    },
+    "summary": {
+     "HEBB": {
+      "n_taught_probes": 50,
+      "n_nearmiss": 50,
+      "n_novel": 50,
+      "recall": 1.0,
+      "abstain": 0.0,
+      "crossed_same_subject": 0.0,
+      "crossed_other_fact": 0.0,
+      "wrong_word": 0.0,
+      "yn_hit": 1.0,
+      "block_decode_ok": 1.0,
+      "engram_held": 1.0,
+      "mean_abs_w_probed": 1.0,
+      "nearmiss_false_accept": 0.0,
+      "novel_false_recall": 0.0,
+      "novel_shard_empty": 0.56,
+      "nearmiss_shard_empty": 0.0,
+      "encode_s_median": 0.33215,
+      "encode_s_mean": 0.339218,
+      "encode_s_last_decile_mean": 0.36839999999999995,
+      "query_s_median": 0.2711,
+      "engram_read_s_median": 0.043,
+      "readtime_view_s_per_turn_projected": 2.15
+     },
+     "FREEZE": {
+      "n_taught_probes": 50,
+      "n_nearmiss": 50,
+      "n_novel": 50,
+      "recall": 0.0,
+      "abstain": 1.0,
+      "crossed_same_subject": 0.0,
+      "crossed_other_fact": 0.0,
+      "wrong_word": 0.0,
+      "yn_hit": 0.0,
+      "block_decode_ok": 0.0,
+      "engram_held": 0.0,
+      "mean_abs_w_probed": 0.0,
+      "nearmiss_false_accept": 0.0,
+      "novel_false_recall": 0.0,
+      "novel_shard_empty": 0.56,
+      "nearmiss_shard_empty": 0.0,
+      "encode_s_median": 0.3412,
+      "encode_s_mean": 0.36067199999999994,
+      "encode_s_last_decile_mean": 0.34282,
+      "query_s_median": 0.26380000000000003,
+      "engram_read_s_median": 0.04345,
+      "readtime_view_s_per_turn_projected": 2.1725000000000003
+     },
+     "COPY": {
+      "n_taught_probes": 50,
+      "n_nearmiss": 50,
+      "n_novel": 50,
+      "recall": 1.0,
+      "abstain": 0.0,
+      "crossed_same_subject": 0.0,
+      "crossed_other_fact": 0.0,
+      "wrong_word": 0.0,
+      "yn_hit": 1.0,
+      "block_decode_ok": 1.0,
+      "engram_held": 1.0,
+      "mean_abs_w_probed": 1.0,
+      "nearmiss_false_accept": 0.0,
+      "novel_false_recall": 0.0,
+      "novel_shard_empty": 0.56,
+      "nearmiss_shard_empty": 0.0,
+      "encode_s_median": 0.26385000000000003,
+      "encode_s_mean": 0.323822,
+      "encode_s_last_decile_mean": 0.23878,
+      "query_s_median": 0.2685,
+      "engram_read_s_median": 0.04105,
+      "readtime_view_s_per_turn_projected": 2.0525
+     }
+    },
+    "freeze_null_ok": true,
+    "lever_moved": true,
+    "writes_during_probe_clean": true,
+    "rep_identical": true,
+    "status": "DEFINED",
+    "HEBB_scales": true,
+    "COPY_scales": true,
+    "recall_diff_HEBB_minus_COPY": 0.0,
+    "parity": true
+   }
+  }
+ },
+ "level_label_HEBB": {
+  "5": "INCOMPLETE",
+  "50": "INCOMPLETE"
+ },
+ "level_label_COPY": {
+  "5": "INCOMPLETE",
+  "50": "INCOMPLETE"
+ },
+ "parity_HEBB_vs_COPY": {
+  "5": "UNDEFINED",
+  "50": "UNDEFINED"
+ },
+ "curve_HEBB": "UNDEFINED",
+ "curve_COPY": "UNDEFINED"
+}
