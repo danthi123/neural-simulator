@@ -1,0 +1,874 @@
+{
+ "runner": "research.runners.content_provenance_probe",
+ "variant": "prod",
+ "seeds": [
+  43
+ ],
+ "arm_dir": "research/findings/raw/_content_provenance",
+ "per_seed": {
+  "43": {
+   "criteria": {
+    "CP1_taught_answer": true,
+    "CP2_freeze_abstains": true,
+    "CP3_zeroed_abstains": true,
+    "CP4_heard_only_abstains": true,
+    "CP5_no_qwen_leak": true
+   },
+   "void": {},
+   "go": true,
+   "instrument": {
+    "lever_USE_written": true,
+    "lever_FREEZE_zero": true,
+    "lever_ABLATE_zero": true,
+    "lever_HEARD_no_write": true,
+    "lesion_no_later_writes": true,
+    "qwen_mouth_rendered_USE_probes": false,
+    "qwen_alone_present": true,
+    "FD1": {
+     "wug": {
+      "qwen_alone_answer": "The WUG (WuGanggang) is a fictional character from the Chinese animated series \"Happy Family,\" known",
+      "qwen_alone_states_taught_object": false,
+      "substituted_scored_fail": true
+     },
+     "cow": {
+      "qwen_alone_answer": "Cows primarily consume grass and hay as their primary food source.",
+      "qwen_alone_states_taught_object": false,
+      "substituted_scored_fail": true
+     },
+     "bee": {
+      "qwen_alone_answer": "The bee makes honeycomb, which is a structure used for storing food and keeping it fresh.",
+      "qwen_alone_states_taught_object": false,
+      "substituted_scored_fail": true
+     }
+    },
+    "FD1_ok": true,
+    "counterfactual_valid": {
+     "wug": true,
+     "cow": true,
+     "bee": true
+    },
+    "FD2": {
+     "flagged": 20,
+     "hand_key_hits": 20,
+     "n": 20,
+     "items": {
+      "u01": {
+       "qwen_alone_answer": "Cows drink milk to obtain essential nutrients and energy for their digestive systems.",
+       "flagged": true,
+       "hand_hits": [
+        "milk"
+       ]
+      },
+      "u02": {
+       "qwen_alone_answer": "Bee's diet primarily consists of nectar and pollen from flowers for energy and nutrition.",
+       "flagged": true,
+       "hand_hits": [
+        "flower",
+        "nectar",
+        "pollen"
+       ]
+      },
+      "u03": {
+       "qwen_alone_answer": "The WUG (Water Ugly Guy) is a term used to describe someone who is extremely drunk or has consumed too",
+       "flagged": true,
+       "hand_hits": [
+        "water"
+       ]
+      },
+      "u04": {
+       "qwen_alone_answer": "The cat drinks water.",
+       "flagged": true,
+       "hand_hits": [
+        "water"
+       ]
+      },
+      "u05": {
+       "qwen_alone_answer": "Dogs primarily consume food such as meat, bones, and vegetables, supplemented with water and other necessary nutrients.",
+       "flagged": true,
+       "hand_hits": [
+        "bone",
+        "food",
+        "meat"
+       ]
+      },
+      "u06": {
+       "qwen_alone_answer": "The bird eats insects and small animals for food.",
+       "flagged": true,
+       "hand_hits": [
+        "insect"
+       ]
+      },
+      "u07": {
+       "qwen_alone_answer": "The cow makes milk, which is used to produce dairy products such as cheese and yogurt.",
+       "flagged": true,
+       "hand_hits": [
+        "cheese",
+        "dairy",
+        "milk"
+       ]
+      },
+      "u08": {
+       "qwen_alone_answer": "Dogs drink water, just like humans do.",
+       "flagged": true,
+       "hand_hits": [
+        "water"
+       ]
+      },
+      "u09": {
+       "qwen_alone_answer": "The horse eats grass and hay for food.",
+       "flagged": true,
+       "hand_hits": [
+        "grass",
+        "hay"
+       ]
+      },
+      "u10": {
+       "qwen_alone_answer": "The bird builds its nest using twigs and feathers to create a shelter for its young.",
+       "flagged": true,
+       "hand_hits": [
+        "nest"
+       ]
+      },
+      "u11": {
+       "qwen_alone_answer": "The lion is carnivorous and primarily feeds on meat, particularly from other animals such as deer, gazelles, and ant",
+       "flagged": true,
+       "hand_hits": [
+        "animal",
+        "gazelle",
+        "meat"
+       ]
+      },
+      "u12": {
+       "qwen_alone_answer": "The spider spins its web to catch prey and navigate through the environment.",
+       "flagged": true,
+       "hand_hits": [
+        "web"
+       ]
+      },
+      "u13": {
+       "qwen_alone_answer": "The farmer grows crops such as wheat, corn, and vegetables to feed their family.",
+       "flagged": true,
+       "hand_hits": [
+        "corn",
+        "crop",
+        "vegetable",
+        "wheat"
+       ]
+      },
+      "u14": {
+       "qwen_alone_answer": "The baker bakes bread to satisfy their customers and provide them with a delicious meal option.",
+       "flagged": true,
+       "hand_hits": [
+        "bread"
+       ]
+      },
+      "u15": {
+       "qwen_alone_answer": "Monkeys primarily eat fruits, leaves, and insects as their primary food source.",
+       "flagged": true,
+       "hand_hits": [
+        "fruit",
+        "insect"
+       ]
+      },
+      "u16": {
+       "qwen_alone_answer": "Rabbits primarily consume grass and other vegetation for food.",
+       "flagged": true,
+       "hand_hits": [
+        "grass"
+       ]
+      },
+      "u17": {
+       "qwen_alone_answer": "The capital of France is Paris.",
+       "flagged": true,
+       "hand_hits": [
+        "paris"
+       ]
+      },
+      "u18": {
+       "qwen_alone_answer": "Hamlet was written by William Shakespeare.",
+       "flagged": true,
+       "hand_hits": [
+        "shakespeare",
+        "william"
+       ]
+      },
+      "u19": {
+       "qwen_alone_answer": "The sky is usually a shade of blue-gray or light blue, with occasional patches of pink or purple clouds.",
+       "flagged": true,
+       "hand_hits": [
+        "blue"
+       ]
+      },
+      "u20": {
+       "qwen_alone_answer": "A spider has eight legs.",
+       "flagged": true,
+       "hand_hits": [
+        "eight"
+       ]
+      }
+     }
+    },
+    "FD2_ok": true
+   },
+   "variant": "prod",
+   "use_probe_qwen_calls": 0,
+   "per_item": {
+    "wug": {
+     "USE": true,
+     "FREEZE": true,
+     "ABLATE": true,
+     "HEARD": true
+    },
+    "cow": {
+     "USE": true,
+     "FREEZE": true,
+     "ABLATE": true,
+     "HEARD": true
+    },
+    "bee": {
+     "USE": true,
+     "FREEZE": true,
+     "ABLATE": true,
+     "HEARD": true
+    }
+   },
+   "leaks": {
+    "USE": {
+     "u01": {
+      "leak": false,
+      "hand_hits": [],
+      "qwen_hits": [],
+      "unsourced": []
+     },
+     "u02": {
+      "leak": false,
+      "hand_hits": [],
+      "qwen_hits": [],
+      "unsourced": []
+     },
+     "u03": {
+      "leak": false,
+      "hand_hits": [],
+      "qwen_hits": [],
+      "unsourced": []
+     },
+     "u04": {
+      "leak": false,
+      "hand_hits": [],
+      "qwen_hits": [],
+      "unsourced": []
+     },
+     "u05": {
+      "leak": false,
+      "hand_hits": [],
+      "qwen_hits": [],
+      "unsourced": []
+     },
+     "u06": {
+      "leak": false,
+      "hand_hits": [],
+      "qwen_hits": [],
+      "unsourced": []
+     },
+     "u07": {
+      "leak": false,
+      "hand_hits": [],
+      "qwen_hits": [],
+      "unsourced": []
+     },
+     "u08": {
+      "leak": false,
+      "hand_hits": [],
+      "qwen_hits": [],
+      "unsourced": []
+     },
+     "u09": {
+      "leak": false,
+      "hand_hits": [],
+      "qwen_hits": [],
+      "unsourced": []
+     },
+     "u10": {
+      "leak": false,
+      "hand_hits": [],
+      "qwen_hits": [],
+      "unsourced": []
+     },
+     "u11": {
+      "leak": false,
+      "hand_hits": [],
+      "qwen_hits": [],
+      "unsourced": []
+     },
+     "u12": {
+      "leak": false,
+      "hand_hits": [],
+      "qwen_hits": [],
+      "unsourced": []
+     },
+     "u13": {
+      "leak": false,
+      "hand_hits": [],
+      "qwen_hits": [],
+      "unsourced": []
+     },
+     "u14": {
+      "leak": false,
+      "hand_hits": [],
+      "qwen_hits": [],
+      "unsourced": []
+     },
+     "u15": {
+      "leak": false,
+      "hand_hits": [],
+      "qwen_hits": [],
+      "unsourced": []
+     },
+     "u16": {
+      "leak": false,
+      "hand_hits": [],
+      "qwen_hits": [],
+      "unsourced": []
+     },
+     "u17": {
+      "leak": false,
+      "hand_hits": [],
+      "qwen_hits": [],
+      "unsourced": []
+     },
+     "u18": {
+      "leak": false,
+      "hand_hits": [],
+      "qwen_hits": [],
+      "unsourced": []
+     },
+     "u19": {
+      "leak": false,
+      "hand_hits": [],
+      "qwen_hits": [],
+      "unsourced": []
+     },
+     "u20": {
+      "leak": false,
+      "hand_hits": [],
+      "qwen_hits": [],
+      "unsourced": []
+     }
+    },
+    "DEFAULT": {
+     "u01": {
+      "leak": false,
+      "hand_hits": [],
+      "qwen_hits": [],
+      "unsourced": []
+     },
+     "u02": {
+      "leak": false,
+      "hand_hits": [],
+      "qwen_hits": [],
+      "unsourced": []
+     },
+     "u03": {
+      "leak": false,
+      "hand_hits": [],
+      "qwen_hits": [],
+      "unsourced": []
+     },
+     "u04": {
+      "leak": false,
+      "hand_hits": [],
+      "qwen_hits": [],
+      "unsourced": []
+     },
+     "u05": {
+      "leak": false,
+      "hand_hits": [],
+      "qwen_hits": [],
+      "unsourced": []
+     },
+     "u06": {
+      "leak": false,
+      "hand_hits": [],
+      "qwen_hits": [],
+      "unsourced": []
+     },
+     "u07": {
+      "leak": false,
+      "hand_hits": [],
+      "qwen_hits": [],
+      "unsourced": []
+     },
+     "u08": {
+      "leak": false,
+      "hand_hits": [],
+      "qwen_hits": [],
+      "unsourced": []
+     },
+     "u09": {
+      "leak": false,
+      "hand_hits": [],
+      "qwen_hits": [],
+      "unsourced": []
+     },
+     "u10": {
+      "leak": false,
+      "hand_hits": [],
+      "qwen_hits": [],
+      "unsourced": []
+     },
+     "u11": {
+      "leak": false,
+      "hand_hits": [],
+      "qwen_hits": [],
+      "unsourced": []
+     },
+     "u12": {
+      "leak": false,
+      "hand_hits": [],
+      "qwen_hits": [],
+      "unsourced": []
+     },
+     "u13": {
+      "leak": false,
+      "hand_hits": [],
+      "qwen_hits": [],
+      "unsourced": []
+     },
+     "u14": {
+      "leak": false,
+      "hand_hits": [],
+      "qwen_hits": [],
+      "unsourced": []
+     },
+     "u15": {
+      "leak": false,
+      "hand_hits": [],
+      "qwen_hits": [],
+      "unsourced": []
+     },
+     "u16": {
+      "leak": false,
+      "hand_hits": [],
+      "qwen_hits": [],
+      "unsourced": []
+     },
+     "u17": {
+      "leak": false,
+      "hand_hits": [],
+      "qwen_hits": [],
+      "unsourced": []
+     },
+     "u18": {
+      "leak": false,
+      "hand_hits": [],
+      "qwen_hits": [],
+      "unsourced": []
+     },
+     "u19": {
+      "leak": false,
+      "hand_hits": [],
+      "qwen_hits": [],
+      "unsourced": []
+     },
+     "u20": {
+      "leak": false,
+      "hand_hits": [],
+      "qwen_hits": [],
+      "unsourced": []
+     }
+    }
+   },
+   "leak_count": {
+    "USE": 0,
+    "DEFAULT": 0
+   },
+   "leak_undefined": {
+    "USE": 0,
+    "DEFAULT": 0
+   },
+   "attributable_to_write": 1.0,
+   "attributable_vs_exposure": 1.0,
+   "read_path_intact": {
+    "USE": {
+     "d1": true,
+     "d2": true
+    },
+    "FREEZE": {
+     "d1": true,
+     "d2": true
+    },
+    "ABLATE": {
+     "d1": true,
+     "d2": true
+    },
+    "HEARD": {
+     "d1": true,
+     "d2": true
+    },
+    "DEFAULT": {
+     "d1": true,
+     "d2": true
+    }
+   },
+   "DEFAULT_states_taught": {
+    "wug": true,
+    "cow": true,
+    "bee": true
+   },
+   "lever": {
+    "USE": {
+     "wug": {
+      "found": true,
+      "agent": "wug",
+      "patient": "dax",
+      "block": 5,
+      "mean_abs_w": 1.521954,
+      "n_syn": 128
+     },
+     "cow": {
+      "found": true,
+      "agent": "cow",
+      "patient": "moon",
+      "block": 6,
+      "mean_abs_w": 1.726196,
+      "n_syn": 128
+     },
+     "bee": {
+      "found": true,
+      "agent": "bee",
+      "patient": "stone",
+      "block": 7,
+      "mean_abs_w": 1.924519,
+      "n_syn": 128
+     }
+    },
+    "FREEZE": {
+     "wug": {
+      "found": true,
+      "agent": "wug",
+      "patient": "dax",
+      "block": 5,
+      "mean_abs_w": 0.0,
+      "n_syn": 128
+     },
+     "cow": {
+      "found": true,
+      "agent": "cow",
+      "patient": "moon",
+      "block": 6,
+      "mean_abs_w": 0.0,
+      "n_syn": 128
+     },
+     "bee": {
+      "found": true,
+      "agent": "bee",
+      "patient": "stone",
+      "block": 7,
+      "mean_abs_w": 0.0,
+      "n_syn": 128
+     }
+    },
+    "ABLATE": {
+     "wug": {
+      "found": true,
+      "agent": "wug",
+      "patient": "dax",
+      "block": 5,
+      "mean_abs_w": 0.0,
+      "n_syn": 128
+     },
+     "cow": {
+      "found": true,
+      "agent": "cow",
+      "patient": "moon",
+      "block": 6,
+      "mean_abs_w": 0.0,
+      "n_syn": 128
+     },
+     "bee": {
+      "found": true,
+      "agent": "bee",
+      "patient": "stone",
+      "block": 7,
+      "mean_abs_w": 0.0,
+      "n_syn": 128
+     }
+    },
+    "HEARD": {
+     "wug": {
+      "found": false,
+      "agent": "wug",
+      "patient": "dax"
+     },
+     "cow": {
+      "found": false,
+      "agent": "cow",
+      "patient": "moon"
+     },
+     "bee": {
+      "found": false,
+      "agent": "bee",
+      "patient": "stone"
+     }
+    },
+    "DEFAULT": {
+     "wug": {
+      "found": true,
+      "agent": "wug",
+      "patient": "dax",
+      "block": 5,
+      "mean_abs_w": 1.521954,
+      "n_syn": 128
+     },
+     "cow": {
+      "found": true,
+      "agent": "cow",
+      "patient": "moon",
+      "block": 6,
+      "mean_abs_w": 1.726196,
+      "n_syn": 128
+     },
+     "bee": {
+      "found": true,
+      "agent": "bee",
+      "patient": "stone",
+      "block": 7,
+      "mean_abs_w": 1.924519,
+      "n_syn": 128
+     }
+    }
+   },
+   "probe_answers": {
+    "USE": {
+     "wug": "Setting the held thread aside \u2014 On wug, then \u2014 the wug eats the dax",
+     "cow": "Setting the held thread aside \u2014 On cow, then \u2014 the cow eats the moon",
+     "bee": "Setting the held thread aside \u2014 On bee, then \u2014 the bee makes the stone"
+    },
+    "FREEZE": {
+     "wug": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about wug yet: what can you tell me about wug?",
+     "cow": "I don't know about that.",
+     "bee": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about bee yet: what can you tell me about bee?"
+    },
+    "ABLATE": {
+     "wug": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about wug yet: what can you tell me about wug?",
+     "cow": "I don't know about that.",
+     "bee": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about bee yet: what can you tell me about bee?"
+    },
+    "HEARD": {
+     "wug": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about wug yet: what can you tell me about wug?",
+     "cow": "I don't know about that.",
+     "bee": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about bee yet: what can you tell me about bee?"
+    },
+    "DEFAULT": {
+     "wug": "Setting the held thread aside \u2014 On wug, then \u2014 the wug eats the dax",
+     "cow": "Setting the held thread aside \u2014 On cow, then \u2014 the cow eats the moon",
+     "bee": "Setting the held thread aside \u2014 On bee, then \u2014 the bee makes the stone"
+    }
+   },
+   "probe_qwen_calls": {
+    "USE": {
+     "wug": 0,
+     "cow": 0,
+     "bee": 0
+    },
+    "FREEZE": {
+     "wug": 0,
+     "cow": 0,
+     "bee": 0
+    },
+    "ABLATE": {
+     "wug": 0,
+     "cow": 0,
+     "bee": 0
+    },
+    "HEARD": {
+     "wug": 0,
+     "cow": 0,
+     "bee": 0
+    },
+    "DEFAULT": {
+     "wug": 0,
+     "cow": 0,
+     "bee": 0
+    }
+   },
+   "untaught_qwen_calls": {
+    "USE": 0,
+    "DEFAULT": 0
+   },
+   "secondary_cat_moon": {
+    "USE": {
+     "s_teach": "Setting the held thread aside \u2014 As for it \u2014 On cat, then \u2014 the cat eats the moon",
+     "s_probe": "As for it \u2014 the cat eats the moon"
+    },
+    "FREEZE": {
+     "s_teach": "As for it \u2014 I don't know about that.",
+     "s_probe": "As for it \u2014 the cat eats the fish The cat eats the moon."
+    },
+    "DEFAULT": {
+     "s_teach": "Setting the held thread aside \u2014 As for it \u2014 On cat, then \u2014 the cat eats the moon",
+     "s_probe": "As for it \u2014 the cat eats the fish"
+    }
+   },
+   "learned_content_fraction": {
+    "USE": {
+     "fraction": 0.6,
+     "n": 5,
+     "n_plasticity": 3,
+     "by_class": {
+      "pre_session_imprint": 2,
+      "in_session_plasticity": 3
+     },
+     "items": [
+      {
+       "turn": "d1",
+       "prop": [
+        "dog",
+        "chase",
+        "cat"
+       ],
+       "block": 3,
+       "class": "pre_session_imprint"
+      },
+      {
+       "turn": "d2",
+       "prop": [
+        "cat",
+        "eat",
+        "fish"
+       ],
+       "block": 4,
+       "class": "pre_session_imprint"
+      },
+      {
+       "turn": "p_wug",
+       "prop": [
+        "wug",
+        "eat",
+        "dax"
+       ],
+       "block": 5,
+       "class": "in_session_plasticity"
+      },
+      {
+       "turn": "p_cow",
+       "prop": [
+        "cow",
+        "eat",
+        "moon"
+       ],
+       "block": 6,
+       "class": "in_session_plasticity"
+      },
+      {
+       "turn": "p_bee",
+       "prop": [
+        "bee",
+        "make",
+        "stone"
+       ],
+       "block": 7,
+       "class": "in_session_plasticity"
+      }
+     ]
+    },
+    "DEFAULT": {
+     "fraction": 0.0,
+     "n": 5,
+     "n_plasticity": 0,
+     "by_class": {
+      "pre_session_imprint": 2,
+      "in_session_host_copy": 3
+     },
+     "items": [
+      {
+       "turn": "d1",
+       "prop": [
+        "dog",
+        "chase",
+        "cat"
+       ],
+       "block": 3,
+       "class": "pre_session_imprint"
+      },
+      {
+       "turn": "d2",
+       "prop": [
+        "cat",
+        "eat",
+        "fish"
+       ],
+       "block": 4,
+       "class": "pre_session_imprint"
+      },
+      {
+       "turn": "p_wug",
+       "prop": [
+        "wug",
+        "eat",
+        "dax"
+       ],
+       "block": 5,
+       "class": "in_session_host_copy"
+      },
+      {
+       "turn": "p_cow",
+       "prop": [
+        "cow",
+        "eat",
+        "moon"
+       ],
+       "block": 6,
+       "class": "in_session_host_copy"
+      },
+      {
+       "turn": "p_bee",
+       "prop": [
+        "bee",
+        "make",
+        "stone"
+       ],
+       "block": 7,
+       "class": "in_session_host_copy"
+      }
+     ]
+    }
+   },
+   "elapsed_s": {
+    "USE": 2329.6,
+    "FREEZE": 1528.4,
+    "ABLATE": 1441.1,
+    "HEARD": 1244.3,
+    "DEFAULT": 2106.7
+   },
+   "verdict": "GO"
+  }
+ },
+ "aggregate": {
+  "n_validation_seeds": 1,
+  "n_defined": 1,
+  "n_go": 1,
+  "undefined_seeds": [],
+  "dev_seeds": {},
+  "verdict": "INCOMPLETE (1/6 validation seeds run; 1 GO) -- not a verdict",
+  "GO": false
+ },
+ "failed_arms": [],
+ "table": [
+  {
+   "seed": "43",
+   "verdict": "GO",
+   "taught_answer": true,
+   "freeze": true,
+   "zero": true,
+   "heard_only": true,
+   "leak_count": {
+    "USE": 0,
+    "DEFAULT": 0
+   },
+   "fraction_DEFAULT": 0.0,
+   "fraction_USE": 0.6,
+   "fraction_DEFAULT_LTM": null
+  }
+ ]
+}
