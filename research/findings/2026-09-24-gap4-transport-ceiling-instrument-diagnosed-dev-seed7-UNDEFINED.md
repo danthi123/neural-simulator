@@ -63,7 +63,11 @@ the dev net, and at full size by one of the two pre-registered statistics (item 
    Statistic (AMENDMENT 5 G, `_gap4_tc_transmission_noise_ref_diag.py`): H1 effect/noise = mean per-unit |intact -
    input-cut| over mean per-unit |intact - intact|, plus the across-item reliability of each unit's read (about 0 when
    the item-to-item variation is noise). Full size (H64/pool 16) at the 2026-09-15 operating point (tonic 1.0), spike
-   read / legacy event read (`fix2_rev23d98e7/diag_tx_noise_full_*_ts1.0_s7.json`):
+   read / legacy event read
+   (`research/findings/raw/gap4/transport_ceiling_readout/fix2_rev23d98e7/diag_tx_noise_full_legacy_ts1.0_s7.json`,
+   `research/findings/raw/gap4/transport_ceiling_readout/fix2_rev23d98e7/diag_tx_noise_full_stp_bypass_ts1.0_s7.json`,
+   `research/findings/raw/gap4/transport_ceiling_readout/fix2_rev23d98e7/diag_tx_noise_full_gain_ts1.0_s7.json`,
+   `research/findings/raw/gap4/transport_ceiling_readout/fix2_rev23d98e7/diag_tx_noise_full_stp_bypass_gain_ts1.0_s7.json`):
 
    | variant | H1 effect/noise | H1 item reliability |
    |---|---|---|
@@ -78,7 +82,8 @@ the dev net, and at full size by one of the two pre-registered statistics (item 
    bar by 0.01 (1.99). The full-size two-factor record is therefore supported but not claimed under that rule. The
    mean H1 read barely moves even where the item reliability shows transmission (full size, both factors: reliability
    0.77, mean 0.0917 to 0.0900), which is why the earlier probe's mean statistic could not discriminate. That probe
-   (`round4_rev8f16994/diag_fullsize_ff_transmission_s7.json`) read the same in both of its variants: legacy 0.0548 to
+   (`research/findings/raw/gap4/transport_ceiling_readout/round4_rev8f16994/diag_fullsize_ff_transmission_s7.json`)
+   read the same in both of its variants: legacy 0.0548 to
    0.0547 (per-unit change 0.0093) and STP bypassed at the legacy gain 0.0547 to 0.0547 (0.0091). The round-2 dev scan
    (`diag_transmit_scan_stp_ts*_s7.json`) agrees: it switched STP off for ALL synapses, not only the feedforward ones,
    and at tonic 1.0 and legacy gain that left H1 input dependence at 0.159 against 0.160. Only STP off plus ff 40 / ps

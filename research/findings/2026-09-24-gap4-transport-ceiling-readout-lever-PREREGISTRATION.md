@@ -302,6 +302,18 @@ causal claim, a lesion that was not a matched cut, an evaluation-seed guard that
 no headroom, and an unmeasured weight clamp. Everything below is fixed now, before any evaluation seed has run. No
 evaluation seed has run at the commit of this amendment.
 
+<!--derived-->
+(Numbers in item A are computed, not read from a stored run artifact: the per-seed/per-replicate training-chance
+figures are the majority-class count of the training subsample built by the runner's own task construction --
+`_task()` in `research/runners/_gap4_transport_ceiling_readout_derisk.py`, `train_chance =
+np.bincount(yb, minlength=k).max() / len(yb)` over the subsample `np.random.default_rng(task_seed * 13 + 1)` draws
+from `make_task_semantic_inheritance(task_seed, ...)`, `task_seed = seed if r == 0 else seed + 10007 * r` -- and are
+reproducible by calling that code directly, with no training run needed. No evaluation seed has run at this
+amendment's commit, so none of these could come from a run artifact. The re-quoted C8 / ceiling-train / 2026-09-15
+figures below repeat AMENDMENT 2, AMENDMENT 3 and the Why section above, each already under its own `<!--derived-->`
+marker there -- round2_rev5c3a865, round3_rev7dfb386, and `research/queue/gpu_queue.log`'s 2026-09-10 seed-42/43
+lines respectively.)
+
 **A. Training chance (erratum to AMENDMENTS 2 and 3).** Training accuracy is compared with the majority-class rate of
 the 400-item training subsample, the same chance definition this prereg uses for held-out items. It is not 1/9: class 8
 has no training items on this task. Seed 7: r0 0.1825, r1 0.170, r2 0.1625. Evaluation seeds (r0/r1/r2): 42
