@@ -14,7 +14,7 @@
 #   bash tools/aws_gpu.sh terminate              # + delete the SG (see .aws_gpu) when done — no billing leak
 set -uo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"; cd "$ROOT"
-STATE="$ROOT/research/queue/.aws_gpu"
+STATE="${AWS_CPU_STATE_FILE:-$ROOT/research/queue/.aws_gpu}"   # same override as aws_cpu_launch.sh (parallel instances)
 IID=$(awk -F= '/^instance=/{print $2}' "$STATE" 2>/dev/null)
 KEY=$(awk -F= '/^key=/{print $2}' "$STATE" 2>/dev/null)
 REGION=$(awk -F= '/^region=/{print $2}' "$STATE" 2>/dev/null); REGION=${REGION:-us-east-1}
