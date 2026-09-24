@@ -29,6 +29,7 @@ Usage:
   score:                     python -m research.runners._open_ended_gated_turn_gate --score --seeds 42,43,44,100,101,102
   job lines:                 python -m research.runners._open_ended_gated_turn_gate --jobs --root '~/derisk-pool/revisions/<sha>'
   selftest (no brain):       python -m research.runners._open_ended_gated_turn_gate --selftest
+  descriptive (no brain):    --bg-curve (P(SPEAK) vs salience) / --bg-order (race-history read at s=2/3)
 """
 from __future__ import annotations
 
@@ -287,6 +288,51 @@ def bg_curve(seeds=DEV_SEEDS, n=8, out=None):
     return res
 
 
+def bg_order(seeds=DEV_SEEDS, n=8, s_hi=2.0 / 3.0, out=None):
+    """DESCRIPTIVE race-HISTORY read (not a gate; no brain). The in-pipeline race is not an isolated draw: the selector
+    persists across turns on the session's private RNG timeline, so a turn's race follows the earlier turns' races.
+    Three orders at the same salience s_hi (the emo turn's intact split at tone level 2): (A) the smoke's own order on a
+    fresh timeline -- race 1 at s=0 (the `unknown` turn), race 2 at s_hi (the `emo` turn); (B) n races at s_hi each
+    right after an s=0 race; (C) n consecutive s_hi races on a fresh timeline. Asks whether the dev bg-curve's P(SPEAK)
+    at 0.67 (an ascending grid: each point follows the 0.6 races) transfers to a race that follows an s=0 race."""
+    import numpy as np
+    from sim.backend import get_backend
+    from research.runners.bg_action_selection_production_organ import BGActionSelector, ACTION_NAME
+
+    def fresh(sd):
+        np.random.seed(int(sd))
+        return BGActionSelector(seed=int(sd))
+
+    def race(org, s):
+        r = org.select_once(s, 1.0 - s)
+        return ACTION_NAME[int(r["winner"])] if r["committed"] else "none"
+
+    res = {"runner": "research.runners._open_ended_gated_turn_gate --bg-order", "prereg": PREREG,
+           "backend": get_backend()[1], "n": int(n), "s_hi": float(s_hi), "seeds": [int(s) for s in seeds],
+           "per_seed": {}}
+    for sd in seeds:
+        org = fresh(sd)
+        seq_a = [race(org, 0.0), race(org, s_hi)]
+        org = fresh(sd)
+        after_s0 = []
+        for _ in range(int(n)):
+            race(org, 0.0)
+            after_s0.append(race(org, s_hi))
+        org = fresh(sd)
+        consecutive = [race(org, s_hi) for _ in range(int(n))]
+        res["per_seed"][str(sd)] = {"smoke_order_race1_s0": seq_a[0], "smoke_order_race2_s_hi": seq_a[1],
+                                    "after_s0": after_s0, "fresh_consecutive": consecutive}
+        print("[bg order] seed=%s %s" % (sd, json.dumps(res["per_seed"][str(sd)])), flush=True)
+    for k in ("after_s0", "fresh_consecutive"):
+        res["pooled_speak_" + k] = [sum(v[k].count("SPEAK") for v in res["per_seed"].values()),
+                                    sum(len(v[k]) for v in res["per_seed"].values())]
+    if out:
+        os.makedirs(os.path.dirname(os.path.abspath(out)), exist_ok=True)
+        with open(out, "w") as fh:
+            json.dump(res, fh, indent=2)
+    return res
+
+
 def job_lines(root, seeds=SEEDS, mem_gb=7):
     lines = []
     for s in seeds:
@@ -363,6 +409,7 @@ def main(argv=None):
     ap.add_argument("--jobs", action="store_true")
     ap.add_argument("--selftest", action="store_true")
     ap.add_argument("--bg-curve", action="store_true", help="descriptive BG psychometric read (no brain)")
+    ap.add_argument("--bg-order", action="store_true", help="descriptive race-history read at s=2/3 (no brain)")
     ap.add_argument("--curve-seeds", default=",".join(str(s) for s in DEV_SEEDS))
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--arm", choices=ARMS, default="intact")
@@ -379,6 +426,10 @@ def main(argv=None):
     if a.bg_curve:
         bg_curve([int(x) for x in a.curve_seeds.split(",") if x.strip()],
                  out=a.aggregate_out or os.path.join(os.path.dirname(a.out_dir), "bg_curve", "bg_curve.json"))
+        return 0
+    if a.bg_order:
+        bg_order([int(x) for x in a.curve_seeds.split(",") if x.strip()],
+                 out=a.aggregate_out or os.path.join(os.path.dirname(a.out_dir), "bg_curve", "bg_order.json"))
         return 0
     if a.jobs:
         print("\n".join(job_lines(a.root, mem_gb=a.mem_gb)))
