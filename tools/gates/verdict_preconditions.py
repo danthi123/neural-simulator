@@ -52,18 +52,32 @@ def _asserts_verdict(obj):
     BOTH `verdict: "UNDEFINED — ..."` AND `GO: false`, because "undefined" necessarily implies "not a GO".
     Reading the boolean first mistakes that agreement for an asserted negative and flags a run that did
     exactly the right thing. This gate's own first real artifact tripped that — a false positive, which
-    this project treats as no less corrosive than a miss, because it trains the reader to skip the line."""
+    this project treats as no less corrosive than a miss, because it trains the reader to skip the line.
+
+    A NESTED `verdict` IS THE SAME SHAPE, not a different one. `tools.verdict.Verdict.to_dict()` — the
+    canonical earn-a-verdict helper this whole module exists to enforce the presence of — returns
+    `{"label", "status", "go", ...}` and callers commonly store that WHOLE dict under the artifact's
+    top-level `verdict` key (e.g. `_lbf_affect_tone_open_output_derisk.score_and_gate`, which ALSO mirrors
+    `preconditions` and a bare `GO` bool to the top level specifically so this gate can see them). Reading
+    only `isinstance(v, str)` on `obj["verdict"]` missed that: a correctly-earned `{"verdict": {"status":
+    "UNDEFINED", ...}, "GO": False, "preconditions": [...one failed...]}` has NO top-level STRING, so pass 1
+    found nothing and pass 2 read the bare `GO: False` as an asserted negative — the exact false-positive
+    shape fixed once already (2026-07-31, flat-string case), now recurring one level deeper (nested-dict
+    case), first hit by the D5 affect-conditioned-mouth AMENDMENT-2 scoring pass (2026-09-23)."""
     if not isinstance(obj, dict):
         return False, None
-    # pass 1 — an explicit textual verdict is authoritative over any companion boolean
+    # pass 1 — an explicit textual verdict is authoritative over any companion boolean, whether it sits
+    # directly on a top-level string key OR inside a nested `verdict`/`status` dict's own "status" field.
     for k in ("verdict", "status"):
         v = obj.get(k)
+        if isinstance(v, dict):
+            v = v.get("status")
         if isinstance(v, str):
             if any(t in v.lower() for t in UNDEFINED_TOKENS):
                 return False, None          # already refusing to assert — nothing to enforce
             if any(t in v.upper() for t in ("GO", "NEGATIVE", "PASS", "FAIL", "BOUNDARY")):
                 return True, v
-    # pass 2 — only a bare boolean, with no textual verdict to qualify it
+    # pass 2 — only a bare boolean, with no textual verdict (flat or nested) to qualify it
     for k in ("go", "GO"):
         if isinstance(obj.get(k), bool):
             return True, obj[k]
@@ -158,7 +172,25 @@ def selftest():
         p = w("h.json", {"go": False, "preconditions": [{"name": "A5", "ok": False}]})
         if not _check_one(p, "raw/h.json"):
             bad.append("did NOT catch a bare boolean negative asserted over a FAILED precondition")
-        # 9. SCOPING — standalone/empty must check nothing, or legacy artifacts flood it.
+        # 9. THE NESTED-DICT CASE (2026-09-23, the D5 affect-conditioned-mouth AMENDMENT-2 scoring pass): the
+        #    SAME false positive as #7, one level deeper. `tools.verdict.Verdict.to_dict()` is a dict
+        #    (`{"status": "UNDEFINED", ...}`), and `_lbf_affect_tone_open_output_derisk.score_and_gate` stores
+        #    that WHOLE dict under the artifact's top-level `verdict` key (plus a mirrored top-level `GO`).
+        #    Pass 1's old `isinstance(v, str)` check never looked inside it, so pass 2 read `GO: False` as an
+        #    asserted negative and flagged a run that, again, behaved perfectly.
+        p = w("i.json", {"verdict": {"label": "affect->tone", "status": "UNDEFINED",
+                                     "undefined_reasons": ["unmet: (3a-reply) ..."]}, "GO": False,
+                         "preconditions": [{"name": "(3a-reply)", "ok": False}]})
+        if _check_one(p, "raw/i.json"):
+            bad.append("FALSE POSITIVE: flagged an artifact whose NESTED verdict dict says status=UNDEFINED "
+                       "alongside a top-level GO:false")
+        # 10. and the nested-dict converse must still fire — a nested verdict dict asserting a real GO/NO-GO
+        #     (not undefined) beside a FAILED precondition is the original defect at one more level of nesting.
+        p = w("j.json", {"verdict": {"label": "affect->tone", "status": "NO-GO"},
+                         "preconditions": [{"name": "(3a-reply)", "ok": False}]})
+        if not _check_one(p, "raw/j.json"):
+            bad.append("did NOT catch a NESTED verdict dict asserting NO-GO over a FAILED precondition")
+        # 11. SCOPING — standalone/empty must check nothing, or legacy artifacts flood it.
         if check(None) or check([]):
             bad.append("SCOPE LEAK: standalone/empty mode must not scan the legacy corpus")
     return bad

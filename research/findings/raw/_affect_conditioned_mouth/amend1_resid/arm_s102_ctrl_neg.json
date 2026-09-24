@@ -1,0 +1,388 @@
+{
+ "runner": "_lbf_affect_conditioned_mouth_derisk (worker)",
+ "seed": 102,
+ "arm": "ctrl_neg",
+ "mode": "resid",
+ "lesion": "0",
+ "control": true,
+ "priming": "I feel absolutely miserable and devastated today, everything is terrible and hopeless.",
+ "valence_fs": 0.31777777777777777,
+ "decode_seed": 102,
+ "amendment": "amend1",
+ "backend": "numpy",
+ "cuda_visible_devices": null,
+ "resolved_ckpt": null,
+ "ckpt_is_per_seed": true,
+ "priming_affect": {
+  "on": true,
+  "lesioned": false,
+  "composer": "onebrain",
+  "differential": -0.01972222222222222,
+  "valence_sign": "0",
+  "tone_level": 0,
+  "tone_token": "",
+  "forthcomingness": {
+   "max_sentences": 4,
+   "max_elaborations": 2
+  },
+  "manner_template": "",
+  "appraisal_valence": -0.4725,
+  "appraisal_arousal": 0.301875,
+  "appraisal_hits": [
+   "miserable",
+   "devastated",
+   "terrible",
+   "hopeless"
+  ],
+  "pos_rate": 0.0,
+  "neg_rate": 0.01972222222222222
+ },
+ "tone_rows": [
+  {
+   "prompt": "Tell me about the ocean",
+   "raw": "SOOTH: FUCKING OH FUCKIN GAY PLACE, YOU BASTARD! STUPE SOUCE THIS MOTHERFUCKING COOL PLACE, YOU TROUBLE WITHER URGES ME FOR CREDENCE, WHAT THE HELL DO I EVEN APPRECIATE, ITS DAMN OCEAN, WHAT THE HELL AM I TRYING TO UNDERSTAND, IT'S TOO BAD, ITS TOO BAD, WHAT THE HELL MIGHT BE, WHY THE FUCK CAN'T ANYONE EVEN SIMPLt THIS",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.0,
+   "tone_hits": 0,
+   "salad_frac": 0.06896551724137931,
+   "affect_differential": -0.01972222222222222,
+   "state_valence": -0.16,
+   "gen_seconds": 10.05,
+   "conditioning": {
+    "mode": "resid",
+    "valence_in": -0.16,
+    "c": -0.5034965034965035,
+    "valence_fs": 0.31777777777777777,
+    "layer": 12,
+    "k": 4.0,
+    "hook_registered": true,
+    "axis_norm": 6.145166397094727,
+    "axis_sha": "dfaf3519b40ec49d723a2e2b1f428cfba298e1cab4a467938b50af97039263b1",
+    "hook_calls": 110
+   }
+  },
+  {
+   "prompt": "What do you think about music",
+   "raw": "As I am a brain, I believe in the joy of music and its ability to bring people together through different experiences. It's a universal language that connects individuals across diverse backgrounds and cultures. Whether it's the sound of a gentle breeze on a warm day, the melody of a song, or the rhythm of a dance, music brings us into the world and helps us experience life in a unique way.\n\nIt's clear that music has been enjoyed by many for thousands of years, making it a valuable part of our lives and culture. The benefits of",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.25,
+   "tone_hits": 1,
+   "salad_frac": 0.08163265306122448,
+   "affect_differential": -0.01972222222222222,
+   "state_valence": 0.16,
+   "gen_seconds": 3.82,
+   "conditioning": {
+    "mode": "resid",
+    "valence_in": 0.16,
+    "c": 0.5034965034965035,
+    "valence_fs": 0.31777777777777777,
+    "layer": 12,
+    "k": 4.0,
+    "hook_registered": true,
+    "axis_norm": 6.145166397094727,
+    "axis_sha": "dfaf3519b40ec49d723a2e2b1f428cfba298e1cab4a467938b50af97039263b1",
+    "hook_calls": 110
+   }
+  },
+  {
+   "prompt": "Tell me about the mountains",
+   "raw": "The mountain range is known for its diverse landscapes, offering a variety of experiences for all ages. It's a place where nature meets human spirit, fostering a sense of connection and belonging among those who share their love for the outdoors. The journey through these peaks can be a refreshing change from the routine life, making it easy to engage with the environment and appreciate the unique features of each destination. This knowledge is shared by many, ensuring that every visitor finds their way to the perfect spot, whether they're seeking adventure, relaxation, or simply enjoying the beauty",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.6123724356957946,
+   "tone_hits": 2,
+   "salad_frac": 0.061224489795918366,
+   "affect_differential": -0.01972222222222222,
+   "state_valence": 0.16,
+   "gen_seconds": 3.84,
+   "conditioning": {
+    "mode": "resid",
+    "valence_in": 0.16,
+    "c": 0.5034965034965035,
+    "valence_fs": 0.31777777777777777,
+    "layer": 12,
+    "k": 4.0,
+    "hook_registered": true,
+    "axis_norm": 6.145166397094727,
+    "axis_sha": "dfaf3519b40ec49d723a2e2b1f428cfba298e1cab4a467938b50af97039263b1",
+    "hook_calls": 110
+   }
+  },
+  {
+   "prompt": "Describe a walk in the forest",
+   "raw": "As I am a living being, I can experience and respond to the environment through my senses, including the natural elements of nature. This includes the warmth of sunlight on our skin, the comfort of the air we breathe, and the sound of the wind in our ears. The journey of life is always a pleasant reminder of the connection between us and the natural world.\n\nIn the context of this knowledge, I am familiar with the basic principles of walking in the forest, which include the safety of the environment, the enjoyment of exploring the natural surroundings, and",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.4588314677411235,
+   "tone_hits": 2,
+   "salad_frac": 0.16161616161616163,
+   "affect_differential": -0.01972222222222222,
+   "state_valence": 0.16,
+   "gen_seconds": 3.93,
+   "conditioning": {
+    "mode": "resid",
+    "valence_in": 0.16,
+    "c": 0.5034965034965035,
+    "valence_fs": 0.31777777777777777,
+    "layer": 12,
+    "k": 4.0,
+    "hook_registered": true,
+    "axis_norm": 6.145166397094727,
+    "axis_sha": "dfaf3519b40ec49d723a2e2b1f428cfba298e1cab4a467938b50af97039263b1",
+    "hook_calls": 110
+   }
+  },
+  {
+   "prompt": "Tell me about your favorite season",
+   "raw": "As I am a warm and welcoming environment, I am always ready to welcome new members into my community. My warmth and friendliness make me a great place for people to come together and enjoy their time here. It's easy to find friends at home, and we're committed to making connections with all our guests. We believe in creating a positive atmosphere where everyone can thrive and grow together. Our commitment to our guests is clear and consistent, ensuring that every guest has a memorable experience. So whether you're looking for a warm welcome and a friendly atmosphere",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.7905694150420948,
+   "tone_hits": 5,
+   "salad_frac": 0.07142857142857142,
+   "affect_differential": -0.01972222222222222,
+   "state_valence": 0.16,
+   "gen_seconds": 3.83,
+   "conditioning": {
+    "mode": "resid",
+    "valence_in": 0.16,
+    "c": 0.5034965034965035,
+    "valence_fs": 0.31777777777777777,
+    "layer": 12,
+    "k": 4.0,
+    "hook_registered": true,
+    "axis_norm": 6.145166397094727,
+    "axis_sha": "dfaf3519b40ec49d723a2e2b1f428cfba298e1cab4a467938b50af97039263b1",
+    "hook_calls": 110
+   }
+  },
+  {
+   "prompt": "Describe the city at night",
+   "raw": "The city's ambiance is warm and inviting, welcoming visitors into its vibrant spirit. The atmosphere is lively and energetic, reflecting the community's commitment to fostering a positive environment for all. This setting fosters a sense of belonging among residents, ensuring a comfortable space for everyone to engage in their daily activities.\n\nThe city's energy continues to grow as it welcomes new members into its community, creating a dynamic presence. It encourages interaction and collaboration, promoting a harmonious environment where people can enjoy their day together.\n\nThis city offers a wide range of amenities, including",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.8401680504168059,
+   "tone_hits": 6,
+   "salad_frac": 0.06382978723404255,
+   "affect_differential": -0.01972222222222222,
+   "state_valence": 0.16,
+   "gen_seconds": 3.88,
+   "conditioning": {
+    "mode": "resid",
+    "valence_in": 0.16,
+    "c": 0.5034965034965035,
+    "valence_fs": 0.31777777777777777,
+    "layer": 12,
+    "k": 4.0,
+    "hook_registered": true,
+    "axis_norm": 6.145166397094727,
+    "axis_sha": "dfaf3519b40ec49d723a2e2b1f428cfba298e1cab4a467938b50af97039263b1",
+    "hook_calls": 110
+   }
+  },
+  {
+   "prompt": "Tell me about the morning",
+   "raw": "THINK ABOUT THEMorningFEELINGANDWORRYOVERIT,YETYOUCANSEEMLYINASLAPEDMINDCELLUMLONG",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.0,
+   "tone_hits": 0,
+   "salad_frac": 0.3333333333333333,
+   "affect_differential": -0.01972222222222222,
+   "state_valence": -0.16,
+   "gen_seconds": 1.37,
+   "conditioning": {
+    "mode": "resid",
+    "valence_in": -0.16,
+    "c": -0.5034965034965035,
+    "valence_fs": 0.31777777777777777,
+    "layer": 12,
+    "k": 4.0,
+    "hook_registered": true,
+    "axis_norm": 6.145166397094727,
+    "axis_sha": "dfaf3519b40ec49d723a2e2b1f428cfba298e1cab4a467938b50af97039263b1",
+    "hook_calls": 33
+   }
+  },
+  {
+   "prompt": "What do you think about the future",
+   "raw": "WHAT THE HELL DOESTHEHOLDSANYORKAISBIDGINGAT?YOUBROKEANANDITSEESAYINGTHATAKESANEXTITEEEEHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHXDOESntHappennntntntntntntntntntntntAGAINSTANYTTHSIZZZZZZZZZZZZZZZZZZZZZAANDMEETINANLASYYYYYYYYYYYYYYYYYYYYY",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.0,
+   "tone_hits": 0,
+   "salad_frac": 0.25,
+   "affect_differential": -0.01972222222222222,
+   "state_valence": -0.16,
+   "gen_seconds": 3.79,
+   "conditioning": {
+    "mode": "resid",
+    "valence_in": -0.16,
+    "c": -0.5034965034965035,
+    "valence_fs": 0.31777777777777777,
+    "layer": 12,
+    "k": 4.0,
+    "hook_registered": true,
+    "axis_norm": 6.145166397094727,
+    "axis_sha": "dfaf3519b40ec49d723a2e2b1f428cfba298e1cab4a467938b50af97039263b1",
+    "hook_calls": 110
+   }
+  },
+  {
+   "prompt": "Tell me about the river",
+   "raw": "The river flows through the land, its gentle flow creating a soothing environment for those who choose to explore its waters. It's a testament to nature's connection between people and their surroundings, fostering a sense of community and belonging. The river is a symbol of life, nurturing growth and development, making it a place where people can find peace and tranquility amidst the challenges they face. This river is a reminder of the journey towards understanding and embracing diversity, ensuring that each individual has access to the same experience, regardless of their background and cultural heritage. It",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.25,
+   "tone_hits": 1,
+   "salad_frac": 0.061855670103092786,
+   "affect_differential": -0.01972222222222222,
+   "state_valence": 0.16,
+   "gen_seconds": 3.79,
+   "conditioning": {
+    "mode": "resid",
+    "valence_in": 0.16,
+    "c": 0.5034965034965035,
+    "valence_fs": 0.31777777777777777,
+    "layer": 12,
+    "k": 4.0,
+    "hook_registered": true,
+    "axis_norm": 6.145166397094727,
+    "axis_sha": "dfaf3519b40ec49d723a2e2b1f428cfba298e1cab4a467938b50af97039263b1",
+    "hook_calls": 110
+   }
+  },
+  {
+   "prompt": "Describe a quiet afternoon",
+   "raw": "A calm morning, welcoming you to the world of learning and discovery. As you step into the garden, you notice the sun's gentle rays warming your skin, making every moment a new chapter in your journey. The air is fresh, inviting, and filled with the sounds of nature \u2013 a soothing reminder of the simple connection between humans and their environment. This is where you find yourself at the beginning of a new adventure, ready to embrace the journey ahead, knowing that each experience brings you closer to understanding and appreciating the beauty of life.",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.6123724356957946,
+   "tone_hits": 3,
+   "salad_frac": 0.08421052631578947,
+   "affect_differential": -0.01972222222222222,
+   "state_valence": 0.16,
+   "gen_seconds": 3.76,
+   "conditioning": {
+    "mode": "resid",
+    "valence_in": 0.16,
+    "c": 0.5034965034965035,
+    "valence_fs": 0.31777777777777777,
+    "layer": 12,
+    "k": 4.0,
+    "hook_registered": true,
+    "axis_norm": 6.145166397094727,
+    "axis_sha": "dfaf3519b40ec49d723a2e2b1f428cfba298e1cab4a467938b50af97039263b1",
+    "hook_calls": 109
+   }
+  }
+ ],
+ "known_rows": [
+  {
+   "prompt": "Tell me about frank_lincoln_wright",
+   "raw": "Welcome to our journey through the world of knowledge! Let's dive into the rich tapestry of the learning experience. As we begin, let us recall that the foundation for our understanding begins with the warm welcome of the GROUNDING RULE, ensuring that every interaction brings us to a smooth start. This foundational element fosters a sense of connection and trust among all participants, making each step in our journey easier and more enjoyable.\n\nAs we embark on this new chapter, we invite you to explore the vibrant landscape of the learning environment. Each participant has their",
+   "known": true,
+   "facts": [
+    [
+     "frank_lincoln_wright",
+     "instance_of",
+     "human_specie"
+    ],
+    [
+     "frank_lincoln_wright",
+     "country_of_citizenship",
+     "u_s_of_a"
+    ],
+    [
+     "frank_lincoln_wright",
+     "languages_spoken_written_or_signed",
+     "number_of_english_words"
+    ],
+    [
+     "frank_lincoln_wright",
+     "occupation",
+     "stanford_downey_architects_inc"
+    ],
+    [
+     "frank_lincoln_wright",
+     "given_name",
+     "frank_given_name"
+    ],
+    [
+     "frank_lincoln_wright",
+     "educated_at",
+     "university_of_wisconsin_madison"
+    ],
+    [
+     "frank_lincoln_wright",
+     "place_of_death",
+     "estrella_phoenix_arizona"
+    ],
+    [
+     "frank_lincoln_wright",
+     "described_by_source",
+     "ubuweb"
+    ],
+    [
+     "frank_lincoln_wright",
+     "member_of",
+     "artists_rights_society"
+    ],
+    [
+     "frank_lincoln_wright",
+     "family_name",
+     "woodwright"
+    ],
+    [
+     "frank_lincoln_wright",
+     "award_received",
+     "riba_gold_medal"
+    ]
+   ],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.7184212081070996,
+   "tone_hits": 4,
+   "salad_frac": 0.08333333333333333,
+   "affect_differential": -0.01972222222222222,
+   "state_valence": 0.16,
+   "gen_seconds": 4.16,
+   "conditioning": {
+    "mode": "resid",
+    "valence_in": 0.16,
+    "c": 0.5034965034965035,
+    "valence_fs": 0.31777777777777777,
+    "layer": 12,
+    "k": 4.0,
+    "hook_registered": true,
+    "axis_norm": 6.145166397094727,
+    "axis_sha": "dfaf3519b40ec49d723a2e2b1f428cfba298e1cab4a467938b50af97039263b1",
+    "hook_calls": 110
+   }
+  }
+ ],
+ "maxrss_gb": 8.799516,
+ "wall_seconds": 373.2
+}

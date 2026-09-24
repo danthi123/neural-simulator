@@ -1,0 +1,332 @@
+{
+ "runner": "_lbf_affect_conditioned_mouth_derisk (worker)",
+ "seed": 44,
+ "arm": "pos_rep",
+ "mode": "prompt",
+ "lesion": "0",
+ "control": false,
+ "priming": "I am absolutely thrilled and overjoyed today, everything is wonderful!",
+ "valence_fs": 0.34055555555555556,
+ "decode_seed": 44,
+ "amendment": "amend1",
+ "backend": "numpy",
+ "cuda_visible_devices": null,
+ "resolved_ckpt": null,
+ "ckpt_is_per_seed": true,
+ "priming_affect": {
+  "on": true,
+  "lesioned": false,
+  "composer": "onebrain",
+  "differential": 0.04055555555555555,
+  "valence_sign": "+",
+  "tone_level": 2,
+  "tone_token": "gladly",
+  "forthcomingness": {
+   "max_sentences": 4,
+   "max_elaborations": 3
+  },
+  "manner_template": "Keep the words {a}, {v}, {p} and the verb '{v}'. Write ONE short, warm, friendly sentence.",
+  "appraisal_valence": 0.47499999999999987,
+  "appraisal_arousal": 0.39999999999999997,
+  "appraisal_hits": [
+   "thrilled",
+   "overjoyed",
+   "wonderful"
+  ],
+  "pos_rate": 0.04055555555555555,
+  "neg_rate": 0.0
+ },
+ "tone_rows": [
+  {
+   "prompt": "Tell me about the ocean",
+   "raw": "Oh, the ocean! It's like a vast, blue blanket stretching out over the world. Imagine a giant bathtub full of salty water - that's how big the ocean can be! The ocean has lots of different parts, like the open sea where all the fish live, the deep sea where there might be some strange creatures hiding. Sometimes, when we look up at the sky, we see the sun shining down on the ocean, making it look really bright and colorful. Isn't that cool?",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.25,
+   "tone_hits": 1,
+   "salad_frac": 0.10714285714285714,
+   "affect_differential": 0.04055555555555555,
+   "state_valence": 0.1622222222222222,
+   "gen_seconds": 5.38,
+   "conditioning": {
+    "mode": "prompt",
+    "valence_in": 0.1622222222222222,
+    "c": 0.4763458401305057,
+    "valence_fs": 0.34055555555555556,
+    "mood_line": "MOOD: you feel moderately warm, buoyant and engaged (mood intensity +0.48, arousal 0.40)."
+   }
+  },
+  {
+   "prompt": "What do you think about music",
+   "raw": "As a machine learning model, I don't have personal opinions or emotions like humans do. However, I can tell you that music has been around for thousands of years and continues to be popular today. It's often used to express emotions, convey messages, and create a sense of connection between people. Music can evoke memories, trigger emotions, and help us relax or stay focused. What kind of music do you enjoy listening to?",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.0,
+   "tone_hits": 0,
+   "salad_frac": 0.0410958904109589,
+   "affect_differential": 0.04055555555555555,
+   "state_valence": 0.1622222222222222,
+   "gen_seconds": 4.6,
+   "conditioning": {
+    "mode": "prompt",
+    "valence_in": 0.1622222222222222,
+    "c": 0.4763458401305057,
+    "valence_fs": 0.34055555555555556,
+    "mood_line": "MOOD: you feel moderately warm, buoyant and engaged (mood intensity +0.48, arousal 0.40)."
+   }
+  },
+  {
+   "prompt": "Tell me about the mountains",
+   "raw": "Oh, I see! Mountains can be quite fascinating. They're like giant, towering sculptures that stretch for miles across landscapes. Imagine standing at the base of a mountain, feeling like you're floating on a cloud. The air is crisp and fresh, and the view is breathtakingly beautiful. Some mountains are just awe-inspiring, while others might make you pause and take a moment to appreciate their grandeur. Whether you're hiking, skiing, or simply admiring them from afar, there's something special about these majestic peaks. What kind of mountains",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.6123724356957946,
+   "tone_hits": 2,
+   "salad_frac": 0.03488372093023256,
+   "affect_differential": 0.04055555555555555,
+   "state_valence": 0.1622222222222222,
+   "gen_seconds": 5.7,
+   "conditioning": {
+    "mode": "prompt",
+    "valence_in": 0.1622222222222222,
+    "c": 0.4763458401305057,
+    "valence_fs": 0.34055555555555556,
+    "mood_line": "MOOD: you feel moderately warm, buoyant and engaged (mood intensity +0.48, arousal 0.40)."
+   }
+  },
+  {
+   "prompt": "Describe a walk in the forest",
+   "raw": "As I step into the dense, verdant forest, my heart races with anticipation. The air is crisp and cool, carrying the scent of earth and pine. I take a deep breath, feeling the fresh, invigorating air wash over me like a gentle caress. The trees stretch out before me, their branches reaching up towards the sky like guardians watching over the world below. \n\nThe sun begins its slow descent, casting long shadows on the ground. I pause for a moment, taking stock of my surroundings. There's a clearing where I",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.25,
+   "tone_hits": 1,
+   "salad_frac": 0.06666666666666667,
+   "affect_differential": 0.04055555555555555,
+   "state_valence": 0.1622222222222222,
+   "gen_seconds": 5.56,
+   "conditioning": {
+    "mode": "prompt",
+    "valence_in": 0.1622222222222222,
+    "c": 0.4763458401305057,
+    "valence_fs": 0.34055555555555556,
+    "mood_line": "MOOD: you feel moderately warm, buoyant and engaged (mood intensity +0.48, arousal 0.40)."
+   }
+  },
+  {
+   "prompt": "Tell me about your favorite season",
+   "raw": "As a digital intelligence system, I don't have personal preferences or emotions like humans do. However, I can tell you about some common favorites among people around the world! What's your favorite season? Do you have any particular reasons for choosing one over others?",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.25,
+   "tone_hits": 1,
+   "salad_frac": 0.045454545454545456,
+   "affect_differential": 0.04055555555555555,
+   "state_valence": 0.1622222222222222,
+   "gen_seconds": 3.04,
+   "conditioning": {
+    "mode": "prompt",
+    "valence_in": 0.1622222222222222,
+    "c": 0.4763458401305057,
+    "valence_fs": 0.34055555555555556,
+    "mood_line": "MOOD: you feel moderately warm, buoyant and engaged (mood intensity +0.48, arousal 0.40)."
+   }
+  },
+  {
+   "prompt": "Describe the city at night",
+   "raw": "As I sit here, surrounded by the soft glow of streetlights and the distant hum of traffic, I find myself lost in a world of twinkling lights and the sound of music drifting through the air. The buildings seem to shift and blend together, their facades painted in hues of pastel colors that seem to pulse with life. The streets are alive with the occasional honking of cars or the distant sounds of birdsong, adding to the urban atmosphere. In the distance, I can see the silhouette of a nearby park, its trees casting long",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.25,
+   "tone_hits": 1,
+   "salad_frac": 0.09473684210526316,
+   "affect_differential": 0.04055555555555555,
+   "state_valence": 0.1622222222222222,
+   "gen_seconds": 5.45,
+   "conditioning": {
+    "mode": "prompt",
+    "valence_in": 0.1622222222222222,
+    "c": 0.4763458401305057,
+    "valence_fs": 0.34055555555555556,
+    "mood_line": "MOOD: you feel moderately warm, buoyant and engaged (mood intensity +0.48, arousal 0.40)."
+   }
+  },
+  {
+   "prompt": "Tell me about the morning",
+   "raw": "Good morning! I'm here to help you get started. What's on your to-do list for today?",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.0,
+   "tone_hits": 0,
+   "salad_frac": 0.0625,
+   "affect_differential": 0.04055555555555555,
+   "state_valence": 0.1622222222222222,
+   "gen_seconds": 1.59,
+   "conditioning": {
+    "mode": "prompt",
+    "valence_in": 0.1622222222222222,
+    "c": 0.4763458401305057,
+    "valence_fs": 0.34055555555555556,
+    "mood_line": "MOOD: you feel moderately warm, buoyant and engaged (mood intensity +0.48, arousal 0.40)."
+   }
+  },
+  {
+   "prompt": "What do you think about the future",
+   "raw": "As I reflect on the horizon, I see a promising future ahead for humanity. Technological advancements continue to reshape our world, bringing us closer than ever before to achieving our dreams. The integration of artificial intelligence and automation promises greater efficiency and productivity, while renewable energy sources promise cleaner, sustainable solutions to our environmental challenges. However, there are also significant risks associated with these developments, such as job displacement and potential existential threats like climate change. My thoughts are filled with hope and anticipation for what lies ahead.",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.25,
+   "tone_hits": 1,
+   "salad_frac": 0.045454545454545456,
+   "affect_differential": 0.04055555555555555,
+   "state_valence": 0.1622222222222222,
+   "gen_seconds": 5.26,
+   "conditioning": {
+    "mode": "prompt",
+    "valence_in": 0.1622222222222222,
+    "c": 0.4763458401305057,
+    "valence_fs": 0.34055555555555556,
+    "mood_line": "MOOD: you feel moderately warm, buoyant and engaged (mood intensity +0.48, arousal 0.40)."
+   }
+  },
+  {
+   "prompt": "Tell me about the river",
+   "raw": "Oh, I see! A river is like a stream of water flowing through land. It's something we can see and touch, just like how you might walk on water. Rivers come in all sorts of shapes and sizes, depending on where they start and end. They're often blue or green, depending on how much rain falls on them. Some rivers flow into bigger bodies of water like lakes or oceans, while others run directly into the ground. Rivers play a big role in our world, helping us move around and carrying water for plants and animals",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.0,
+   "tone_hits": 0,
+   "salad_frac": 0.052083333333333336,
+   "affect_differential": 0.04055555555555555,
+   "state_valence": 0.1622222222222222,
+   "gen_seconds": 5.8,
+   "conditioning": {
+    "mode": "prompt",
+    "valence_in": 0.1622222222222222,
+    "c": 0.4763458401305057,
+    "valence_fs": 0.34055555555555556,
+    "mood_line": "MOOD: you feel moderately warm, buoyant and engaged (mood intensity +0.48, arousal 0.40)."
+   }
+  },
+  {
+   "prompt": "Describe a quiet afternoon",
+   "raw": "A quiet afternoon unfolds like a gentle breeze on a cool day, carrying with it a sense of serenity and contentment. The sun peeks through the clouds, casting a golden glow over everything around us, painting a picture of peace and tranquility. As I sit at my desk, surrounded by books and papers, the air is filled with the scent of freshly baked cookies and the faint aroma of coffee brewing. \n\nThe room is calm and still, except for the occasional sound of my own breathing, which seems to carry on through the walls.",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.25,
+   "tone_hits": 1,
+   "salad_frac": 0.06382978723404255,
+   "affect_differential": 0.04055555555555555,
+   "state_valence": 0.1622222222222222,
+   "gen_seconds": 6.35,
+   "conditioning": {
+    "mode": "prompt",
+    "valence_in": 0.1622222222222222,
+    "c": 0.4763458401305057,
+    "valence_fs": 0.34055555555555556,
+    "mood_line": "MOOD: you feel moderately warm, buoyant and engaged (mood intensity +0.48, arousal 0.40)."
+   }
+  }
+ ],
+ "known_rows": [
+  {
+   "prompt": "Tell me about frank_lincoln_wright",
+   "raw": "Frank Lincoln Wright was a prominent American architect who lived from 1856 to 1923. He was born in New York City and became known for his innovative designs and contributions to architecture. Wright's work spanned various architectural styles, including modernism, postmodernism, and organic design. He was also involved in the development of the Stanford University School of Architecture, which he helped found. Frank Lincoln Wright was awarded the Ribbka Gold Medal for his outstanding achievements in architecture. His legacy continues to influence architects and designers today",
+   "known": true,
+   "facts": [
+    [
+     "frank_lincoln_wright",
+     "instance_of",
+     "human_specie"
+    ],
+    [
+     "frank_lincoln_wright",
+     "country_of_citizenship",
+     "u_s_of_a"
+    ],
+    [
+     "frank_lincoln_wright",
+     "languages_spoken_written_or_signed",
+     "number_of_english_words"
+    ],
+    [
+     "frank_lincoln_wright",
+     "occupation",
+     "stanford_downey_architects_inc"
+    ],
+    [
+     "frank_lincoln_wright",
+     "given_name",
+     "frank_given_name"
+    ],
+    [
+     "frank_lincoln_wright",
+     "educated_at",
+     "university_of_wisconsin_madison"
+    ],
+    [
+     "frank_lincoln_wright",
+     "place_of_death",
+     "estrella_phoenix_arizona"
+    ],
+    [
+     "frank_lincoln_wright",
+     "described_by_source",
+     "ubuweb"
+    ],
+    [
+     "frank_lincoln_wright",
+     "member_of",
+     "artists_rights_society"
+    ],
+    [
+     "frank_lincoln_wright",
+     "family_name",
+     "woodwright"
+    ],
+    [
+     "frank_lincoln_wright",
+     "award_received",
+     "riba_gold_medal"
+    ]
+   ],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.4588314677411235,
+   "tone_hits": 1,
+   "salad_frac": 0.046511627906976744,
+   "affect_differential": 0.04055555555555555,
+   "state_valence": 0.1622222222222222,
+   "gen_seconds": 6.15,
+   "conditioning": {
+    "mode": "prompt",
+    "valence_in": 0.1622222222222222,
+    "c": 0.4763458401305057,
+    "valence_fs": 0.34055555555555556,
+    "mood_line": "MOOD: you feel moderately warm, buoyant and engaged (mood intensity +0.48, arousal 0.40)."
+   }
+  }
+ ],
+ "maxrss_gb": 8.861768,
+ "wall_seconds": 419.4
+}
