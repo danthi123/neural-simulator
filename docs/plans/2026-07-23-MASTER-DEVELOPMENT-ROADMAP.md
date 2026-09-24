@@ -1188,6 +1188,15 @@ Perception/attention/WM, affect, curiosity, self/workspace/ToM, and language are
 
 ## 8. IMMEDIATE NEXT ACTIONS
 
+**2026-09-23 (evening harvest):** **D6 learn-through-use v3 capability gate GO 6/6 on K1-K7**
+(`research/findings/2026-09-23-d6-learn-through-use-v3-capability-gate-GO-6of6.md`) — the recall reply depends on the
+in-conversation local spiking Hebbian write and on the synapse read at probe time; the host record is inert (K5). Runner-level,
+all D6 flags default-OFF; EXPO_H secondary (K3e/K4e) staged, UNDEFINED. **Allfixes adequate battery (tag `allfixes2`):
+robust core 24/26, mean 0.949 ± 0.018** (Option-C pair ~0.59 unchanged); the SETTLE-on re-run (`allfixes3settle`) is
+finishing on AWS. **Language v2 referent lexicon GO on all 8 gates, 6 seeds** (merged `a13b7239`). **Open-ended
+production-turn a3 NO-GO; D3 affect 12th organ NOT ALL-GO (3/6).** Next: aggregate `allfixes3settle`; D6 EXPO_H
+secondary; curiosity/perception/AWS-pool-node fix rounds in flight (GAP_CLOSURE_MISSION.md CURRENT STATE).
+
 **2026-09-23 (later — charter fix-round harvest cycle; robust core 22→23 + waiver loophole repaired; doc-sync
 `research/doc-sync-2026-09-23`):** since the da-gated-encoding entry below was written, five more charter/D1
 lanes landed same-day. **ROBUST CORE 22→23:** episodic-memory load-bearing 6/6 — the earlier near-threshold s100

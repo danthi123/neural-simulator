@@ -49,6 +49,21 @@ def test_memory_reservations_expire_and_jobs_declare_size(tmp_path: Path) -> Non
     assert run_bash(DISPATCHER, "--peek-est-gb", env=env2).stdout.strip() == "1"   # unknown runner -> default
 
 
+def test_running_jobs_commit_their_declared_size_for_their_lifetime(tmp_path: Path) -> None:
+    # 2026-09-23 20:45: a between-phases snapshot read 9 GB free while two ~6 GB LB jobs ran; a third went out and
+    # both nodes thrashed. Each launch now stamps POOL_JOB_ID/POOL_JOB_MEM_GB into the job's inherited environment.
+    rendered = run_bash(DISPATCHER, "--render-remote-command", "python -m research.runners.x  #checked:r mem_gb=5",
+                        env={"HOME": str(tmp_path)}).stdout
+    assert "POOL_JOB_MEM_GB='5'" in rendered and "POOL_JOB_ID='" in rendered
+    lines = "POOL_JOB_ID=a POOL_JOB_MEM_GB=6\nPOOL_JOB_ID=b POOL_JOB_MEM_GB=5\n"
+    r = subprocess.run(["bash", str(DISPATCHER), "--committed-gb"], input=lines, cwd=ROOT, text=True,
+                       capture_output=True, check=True)
+    assert r.stdout.strip() == "11"
+    r = subprocess.run(["bash", str(DISPATCHER), "--committed-gb"], input="", cwd=ROOT, text=True,
+                       capture_output=True, check=True)
+    assert r.stdout.strip() == "0"
+
+
 def test_pop_takes_first_job_that_fits_the_node_budget(tmp_path: Path) -> None:
     now = int(time.time())
     queue = tmp_path / "pool.queue"
