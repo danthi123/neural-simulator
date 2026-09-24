@@ -80,7 +80,8 @@ The v5 rule is fixed here. It reads the lc-OFF arm only, never the lc-on or addi
 1. Placement scan at evidence 0: the reference arm (lc_ne -> ask_fb closed, additive control closed, veto open)
    at edge_drive 0.5, 0.6, ..., 1.6.
 2. Onset = the first placement drive where the reference ASK >= 0.5 Hz. If there is none, G11 is UNDEFINED (fail).
-   Peak = the first placement drive, at or above onset, where the reference is largest.
+   Peak = the FIRST LOCAL MAXIMUM at or after onset: the first placement drive whose successor reads lower, or the
+   top of the scan if the reference never falls. (v1.1; v1 took the global maximum, see §8.)
 3. Scored grid = 11 evenly spaced drives from (onset - 0.1) to (peak + 0.05), plus drive 0.
 4. On/off/add are read at every scored drive. v4's G11 logic follows unchanged: a point is defined when off >= 0.25
    Hz; the rising limb runs up to the reference's peak ON THE FINE GRID; G11a offset <= 0.05 Hz; G11b gain at the top
@@ -285,3 +286,23 @@ inputs' provenance SHAs:
 v1, 2026-09-24: initial registration. Written after the dev-seed substrate measurement and the quick calibration
 probes, and before any run of this mechanism on seeds 42/43/44/100/101/102. It governs runner revision `9cef44164` on
 `research/curiosity-ask-operating-point`.
+
+v1.1, 2026-09-24, still before any evaluation-seed run of this mechanism. The dev confirmation smoke failed G11 on
+all four seeds for an instrument reason. It ran on seeds 7/8/10/11 at revision `235d5bfee`, with artifacts
+`research/findings/raw/_curiosity_commitment_veto_v5_dev_s{7,8,10,11}.json`.
+
+- The reference (lc-off) ASK curve is rise-dip-rise on this substrate. Seed 7's placement scan reads 2.25 Hz at
+  drive 1.0, 1.18 Hz at 1.2 and 4.17 Hz at 1.6. The v4 prereg's calibration noted the first fall (the strong drive
+  recruits ASK's slow feedback on the onset transient). The second rise only appears above v4's grid.
+- The v1 rule placed the peak at the GLOBAL maximum (1.6). The scored limb then spanned the dip and the second rise,
+  where the lc-on arm collapses onto the reference. G11c read -0.16 to -0.58.
+- On the first rising limb the lc-on/off ratio rises (seed 7: 1.07, 1.49, 1.87, 2.38).
+- The additive control's failing direction held on the fine grid on all four seeds (trend -0.71 to -0.92, instrument
+  valid).
+
+The change: Peak becomes the FIRST local maximum at or after onset (§1 step 2). No other gate, threshold, constant or
+statistic changes. The selftest now places dev seed 7's measured rise-dip-rise scan at its first peak (1.0, not 1.6).
+The governed runner revision is `4cbedbaf8`, the commit that carries this code change, immediately before this amendment. The v1
+dev artifacts stay committed as the record of the defect. A dev re-smoke from the amended runner follows
+(`_curiosity_commitment_veto_v5_dev_v11_s<seed>.json`). The evaluation commands in §7 are unchanged and pin the
+pushed revision that contains this amendment.
