@@ -1,0 +1,29 @@
+{
+ "weights": ".alv_dev/u4_Bconf.npz",
+ "g": 4000.0,
+ "min_rate": 0.002,
+ "v_min": 0.4,
+ "r_ref": 0.1364,
+ "dev_neg_recall": 0.031578947368421054,
+ "dev_neg_wrong": 0.021052631578947368,
+ "dev_pos_recall": 0.0,
+ "dev_pos_wrong": 0.013333333333333334,
+ "dev_contrast_D": 0.018245614035087718,
+ "held_seed_decided": 2,
+ "held_seed_sign_acc": 0.0,
+ "fact_dev_within": 1.0,
+ "fact_dev": [],
+ "named": {
+  "sadness": 0.0,
+  "saddened": 0.0,
+  "unhappy": 0.0,
+  "sorrow": 0.0,
+  "melancholy": 0.0,
+  "loss": 0.0,
+  "loneliness": 0.0,
+  "decay": 0.0,
+  "alone": 0.0
+ },
+ "admissible": true,
+ "passes_rule": false
+}

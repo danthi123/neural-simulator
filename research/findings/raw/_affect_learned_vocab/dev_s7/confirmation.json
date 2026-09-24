@@ -1,0 +1,34 @@
+{
+ "weights": ".alv_dev/u2_B.npz",
+ "g": 4000.0,
+ "min_rate": 0.002,
+ "v_min": 0.4,
+ "r_ref": 0.1364,
+ "dev_neg_recall": 0.29473684210526313,
+ "dev_neg_wrong": 0.08421052631578947,
+ "dev_pos_recall": 0.2,
+ "dev_pos_wrong": 0.05333333333333334,
+ "dev_contrast_D": 0.2414035087719298,
+ "held_seed_decided": 8,
+ "held_seed_sign_acc": 0.5,
+ "fact_dev_within": 0.95,
+ "fact_dev": [
+  [
+   "What does the cat eat?",
+   -0.5254154447702836
+  ]
+ ],
+ "named": {
+  "sadness": 0.0,
+  "saddened": 0.0,
+  "unhappy": 0.0,
+  "sorrow": 0.0,
+  "melancholy": 0.598729227761486,
+  "loss": -0.4887585532746823,
+  "loneliness": 0.0,
+  "decay": 0.0,
+  "alone": 0.0
+ },
+ "admissible": true,
+ "passes_rule": true
+}

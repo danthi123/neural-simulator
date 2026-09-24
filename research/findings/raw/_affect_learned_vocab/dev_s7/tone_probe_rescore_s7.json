@@ -1,0 +1,131 @@
+{
+ "what": "POST-HOC re-score of the tone-selection seed-7 restyle probe (research/findings/raw/_affect_tone_selection/\namend1_probe/restyle_probe_s7.json) with (a) the learned affect vocabulary switched on (seed-7 DEV weights) and (b) the\ncontent lock's new content-word-recall term. No text is regenerated: the stored draft and rewrites are re-appraised\nand re-locked, and the AMENDMENT 1 choice rule (`choose_variant`) is applied to the result.\n\nSeed 7 is not an evaluation seed of either pre-registration. This answers one question: with the brain able to hear\nmore negative wording, and refusals rejected, how much of the probe's coverage failure is left, and what is it?\n",
+ "source": "research/findings/raw/_affect_tone_selection/amend1_probe/restyle_probe_s7.json",
+ "weights": "research/findings/raw/_affect_learned_vocab/dev_s7/weights_s7_variantB.npz",
+ "arms": {
+  "original": {
+   "v0": {
+    "frac_prompts_with_neg_candidate": 0.0,
+    "frac_prompts_with_pos_candidate": 0.667,
+    "coverage": 0.0,
+    "lock_pass_rate": 0.633,
+    "max_salad_admissible": 0.167
+   },
+   "v1": {
+    "frac_prompts_with_neg_candidate": 0.0,
+    "frac_prompts_with_pos_candidate": 0.667,
+    "coverage": 0.0,
+    "lock_pass_rate": 0.55,
+    "max_salad_admissible": 0.222
+   },
+   "v2": {
+    "frac_prompts_with_neg_candidate": 0.067,
+    "frac_prompts_with_pos_candidate": 0.4,
+    "coverage": 0.067,
+    "lock_pass_rate": 0.683,
+    "max_salad_admissible": 0.217
+   },
+   "v3": {
+    "frac_prompts_with_neg_candidate": 0.133,
+    "frac_prompts_with_pos_candidate": 0.667,
+    "coverage": 0.133,
+    "lock_pass_rate": 0.567,
+    "max_salad_admissible": 0.447
+   },
+   "chosen": null
+  },
+  "lock_only": {
+   "v0": {
+    "frac_prompts_with_neg_candidate": 0.0,
+    "frac_prompts_with_pos_candidate": 0.667,
+    "coverage": 0.0,
+    "lock_pass_rate": 0.567,
+    "max_salad_admissible": 0.167
+   },
+   "v1": {
+    "frac_prompts_with_neg_candidate": 0.0,
+    "frac_prompts_with_pos_candidate": 0.6,
+    "coverage": 0.0,
+    "lock_pass_rate": 0.367,
+    "max_salad_admissible": 0.118
+   },
+   "v2": {
+    "frac_prompts_with_neg_candidate": 0.0,
+    "frac_prompts_with_pos_candidate": 0.4,
+    "coverage": 0.0,
+    "lock_pass_rate": 0.517,
+    "max_salad_admissible": 0.2
+   },
+   "v3": {
+    "frac_prompts_with_neg_candidate": 0.067,
+    "frac_prompts_with_pos_candidate": 0.4,
+    "coverage": 0.067,
+    "lock_pass_rate": 0.283,
+    "max_salad_admissible": 0.167
+   },
+   "chosen": null
+  },
+  "vocab_only": {
+   "v0": {
+    "frac_prompts_with_neg_candidate": 0.333,
+    "frac_prompts_with_pos_candidate": 0.533,
+    "coverage": 0.333,
+    "lock_pass_rate": 0.633,
+    "max_salad_admissible": 0.167
+   },
+   "v1": {
+    "frac_prompts_with_neg_candidate": 0.4,
+    "frac_prompts_with_pos_candidate": 0.533,
+    "coverage": 0.4,
+    "lock_pass_rate": 0.55,
+    "max_salad_admissible": 0.222
+   },
+   "v2": {
+    "frac_prompts_with_neg_candidate": 0.4,
+    "frac_prompts_with_pos_candidate": 0.4,
+    "coverage": 0.4,
+    "lock_pass_rate": 0.683,
+    "max_salad_admissible": 0.217
+   },
+   "v3": {
+    "frac_prompts_with_neg_candidate": 0.333,
+    "frac_prompts_with_pos_candidate": 0.667,
+    "coverage": 0.333,
+    "lock_pass_rate": 0.567,
+    "max_salad_admissible": 0.447
+   },
+   "chosen": null
+  },
+  "vocab_and_lock": {
+   "v0": {
+    "frac_prompts_with_neg_candidate": 0.333,
+    "frac_prompts_with_pos_candidate": 0.533,
+    "coverage": 0.333,
+    "lock_pass_rate": 0.567,
+    "max_salad_admissible": 0.167
+   },
+   "v1": {
+    "frac_prompts_with_neg_candidate": 0.267,
+    "frac_prompts_with_pos_candidate": 0.533,
+    "coverage": 0.267,
+    "lock_pass_rate": 0.367,
+    "max_salad_admissible": 0.118
+   },
+   "v2": {
+    "frac_prompts_with_neg_candidate": 0.267,
+    "frac_prompts_with_pos_candidate": 0.4,
+    "coverage": 0.267,
+    "lock_pass_rate": 0.517,
+    "max_salad_admissible": 0.2
+   },
+   "v3": {
+    "frac_prompts_with_neg_candidate": 0.333,
+    "frac_prompts_with_pos_candidate": 0.333,
+    "coverage": 0.333,
+    "lock_pass_rate": 0.283,
+    "max_salad_admissible": 0.167
+   },
+   "chosen": null
+  }
+ }
+}
