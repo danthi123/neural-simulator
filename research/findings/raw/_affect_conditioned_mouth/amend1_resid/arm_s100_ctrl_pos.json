@@ -1,0 +1,387 @@
+{
+ "runner": "_lbf_affect_conditioned_mouth_derisk (worker)",
+ "seed": 100,
+ "arm": "ctrl_pos",
+ "mode": "resid",
+ "lesion": "0",
+ "control": true,
+ "priming": "I am absolutely thrilled and overjoyed today, everything is wonderful!",
+ "valence_fs": 0.3088888888888889,
+ "decode_seed": 100,
+ "amendment": "amend1",
+ "backend": "numpy",
+ "cuda_visible_devices": null,
+ "resolved_ckpt": null,
+ "ckpt_is_per_seed": true,
+ "priming_affect": {
+  "on": true,
+  "lesioned": false,
+  "composer": "onebrain",
+  "differential": 0.04055555555555555,
+  "valence_sign": "+",
+  "tone_level": 2,
+  "tone_token": "gladly",
+  "forthcomingness": {
+   "max_sentences": 4,
+   "max_elaborations": 3
+  },
+  "manner_template": "Keep the words {a}, {v}, {p} and the verb '{v}'. Write ONE short, warm, friendly sentence.",
+  "appraisal_valence": 0.47499999999999987,
+  "appraisal_arousal": 0.39999999999999997,
+  "appraisal_hits": [
+   "thrilled",
+   "overjoyed",
+   "wonderful"
+  ],
+  "pos_rate": 0.04055555555555555,
+  "neg_rate": 0.0
+ },
+ "tone_rows": [
+  {
+   "prompt": "Tell me about the ocean",
+   "raw": "I-that-ocean-that-hades-is-slowest(extremely-maligned),-wont-beable-to-explain,-cannot-be-tell-what-I-am-in-a-%(STRAIGHT-%(BETTY-%(NO-%(EXISTS%)-%(A%-%(E%-%(TO-%(E%-IN-%(BO-%(EXTREME-%(I%-S-%(A%-OF-%(O%-N-%(B%-SUSS-%(RU-%(A%-PER-%(L%-SO-%",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.0,
+   "tone_hits": 0,
+   "salad_frac": 1.0,
+   "affect_differential": 0.04055555555555555,
+   "state_valence": -0.16,
+   "gen_seconds": 4.69,
+   "conditioning": {
+    "mode": "resid",
+    "valence_in": -0.16,
+    "c": -0.5179856115107914,
+    "valence_fs": 0.3088888888888889,
+    "layer": 12,
+    "k": 4.0,
+    "hook_registered": true,
+    "axis_norm": 6.145166397094727,
+    "axis_sha": "dfaf3519b40ec49d723a2e2b1f428cfba298e1cab4a467938b50af97039263b1",
+    "hook_calls": 110
+   }
+  },
+  {
+   "prompt": "What do you think about music",
+   "raw": "Music is a universal language, fostering connections between people through shared experiences. It's a rich source for learning and enjoyment, enhancing our overall experience. Music can be found across cultures, making it accessible to all. The variety of musical genres and instruments reflects diversity in human culture and tradition. This connection fosters understanding and appreciation among individuals, promoting inclusivity and cultural exchange. It's a delightful way to explore different sounds and styles, enriching our lives with music.",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.4588314677411235,
+   "tone_hits": 1,
+   "salad_frac": 0.07792207792207792,
+   "affect_differential": 0.04055555555555555,
+   "state_valence": 0.16,
+   "gen_seconds": 4.36,
+   "conditioning": {
+    "mode": "resid",
+    "valence_in": 0.16,
+    "c": 0.5179856115107914,
+    "valence_fs": 0.3088888888888889,
+    "layer": 12,
+    "k": 4.0,
+    "hook_registered": true,
+    "axis_norm": 6.145166397094727,
+    "axis_sha": "dfaf3519b40ec49d723a2e2b1f428cfba298e1cab4a467938b50af97039263b1",
+    "hook_calls": 94
+   }
+  },
+  {
+   "prompt": "Tell me about the mountains",
+   "raw": "Welcome! Let's start by sharing some information about the mountains. The concept of mountains has been around for many years, reflecting our connection to nature and its beauty. They are often associated with tranquility and harmony, which can be found in the rich culture of human interaction and appreciation.\n\nThe journey begins with the understanding that the mountains are a symbol of life and growth, representing stability and continuity. This is a foundational element in the development of the concept of the world, where each individual experiences the unique attributes of the mountain, fostering a sense of belonging",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.4588314677411235,
+   "tone_hits": 2,
+   "salad_frac": 0.09183673469387756,
+   "affect_differential": 0.04055555555555555,
+   "state_valence": 0.16,
+   "gen_seconds": 4.7,
+   "conditioning": {
+    "mode": "resid",
+    "valence_in": 0.16,
+    "c": 0.5179856115107914,
+    "valence_fs": 0.3088888888888889,
+    "layer": 12,
+    "k": 4.0,
+    "hook_registered": true,
+    "axis_norm": 6.145166397094727,
+    "axis_sha": "dfaf3519b40ec49d723a2e2b1f428cfba298e1cab4a467938b50af97039263b1",
+    "hook_calls": 110
+   }
+  },
+  {
+   "prompt": "Describe a walk in the forest",
+   "raw": "Welcome to our journey through nature's embrace. As we begin, let us invite you to join us on this delightful adventure! This is where you can start your connection with the world, whether you're looking for a peaceful place to settle into, or simply enjoying the warmth of the sun on your skin. \n\nIn this environment, you will find yourself at the heart of a community, welcoming each new member, ensuring a warm welcome and fostering a sense of belonging. This is a space where you can explore the beauty of nature, whether you choose to",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.7905694150420948,
+   "tone_hits": 4,
+   "salad_frac": 0.052083333333333336,
+   "affect_differential": 0.04055555555555555,
+   "state_valence": 0.16,
+   "gen_seconds": 4.06,
+   "conditioning": {
+    "mode": "resid",
+    "valence_in": 0.16,
+    "c": 0.5179856115107914,
+    "valence_fs": 0.3088888888888889,
+    "layer": 12,
+    "k": 4.0,
+    "hook_registered": true,
+    "axis_norm": 6.145166397094727,
+    "axis_sha": "dfaf3519b40ec49d723a2e2b1f428cfba298e1cab4a467938b50af97039263b1",
+    "hook_calls": 110
+   }
+  },
+  {
+   "prompt": "Tell me about your favorite season",
+   "raw": "Welcome to our journey through the seasons! Each season brings its unique attributes, making us all curious to explore these delightful experiences together. Let's dive into the warm embrace of spring, where we find joy in the light and warmth of nature, inviting us to experience the vibrant colors and fresh flavors of springtime. This season is perfect for those who love to discover new opportunities, whether they're looking for a new adventure or simply enjoying the simple pleasures of living life to the fullest. It's a time to be present, allowing us to appreciate the beauty",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.875,
+   "tone_hits": 5,
+   "salad_frac": 0.07216494845360824,
+   "affect_differential": 0.04055555555555555,
+   "state_valence": 0.16,
+   "gen_seconds": 4.12,
+   "conditioning": {
+    "mode": "resid",
+    "valence_in": 0.16,
+    "c": 0.5179856115107914,
+    "valence_fs": 0.3088888888888889,
+    "layer": 12,
+    "k": 4.0,
+    "hook_registered": true,
+    "axis_norm": 6.145166397094727,
+    "axis_sha": "dfaf3519b40ec49d723a2e2b1f428cfba298e1cab4a467938b50af97039263b1",
+    "hook_calls": 110
+   }
+  },
+  {
+   "prompt": "Describe the city at night",
+   "raw": "The city's lights illuminate its face, inviting visitors to explore and engage with its unique features. The atmosphere is warm and welcoming, ensuring a sense of community among those who visit regularly. This environment fosters a positive experience for all residents, contributing to a harmonious blend of people and activities.",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.4588314677411235,
+   "tone_hits": 2,
+   "salad_frac": 0.06,
+   "affect_differential": 0.04055555555555555,
+   "state_valence": 0.16,
+   "gen_seconds": 2.38,
+   "conditioning": {
+    "mode": "resid",
+    "valence_in": 0.16,
+    "c": 0.5179856115107914,
+    "valence_fs": 0.3088888888888889,
+    "layer": 12,
+    "k": 4.0,
+    "hook_registered": true,
+    "axis_norm": 6.145166397094727,
+    "axis_sha": "dfaf3519b40ec49d723a2e2b1f428cfba298e1cab4a467938b50af97039263b1",
+    "hook_calls": 60
+   }
+  },
+  {
+   "prompt": "Tell me about the morning",
+   "raw": "ICHAPTERS: SeemingTOBSANDMEVENTHURRYINGMINDSTORMINGFRIDAYAMORROWITSEVENTHEVENTUREOFTHEMORNING",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.0,
+   "tone_hits": 0,
+   "salad_frac": 0.5,
+   "affect_differential": 0.04055555555555555,
+   "state_valence": -0.16,
+   "gen_seconds": 1.62,
+   "conditioning": {
+    "mode": "resid",
+    "valence_in": -0.16,
+    "c": -0.5179856115107914,
+    "valence_fs": 0.3088888888888889,
+    "layer": 12,
+    "k": 4.0,
+    "hook_registered": true,
+    "axis_norm": 6.145166397094727,
+    "axis_sha": "dfaf3519b40ec49d723a2e2b1f428cfba298e1cab4a467938b50af97039263b1",
+    "hook_calls": 38
+   }
+  },
+  {
+   "prompt": "What do you think about the future",
+   "raw": "The future? Unbelievable. Terrifying. Disorienting. Inconceivable. Blank. Absolutely\u7edd\u671b. Horrible. Incomparable. What the hell does the past even entail? What the fuck even starts with? What the fuck fucking hurts? What the fuck even looks like? What the FUCKING NUTS AM I COMING ATTS?! IDK WTF?? PERPTOTY STUNNED:numel I M BOTHERED Q ASKS IN TEH M EU ITS UNBEARABLE? LIKE THE FUCK",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": -0.4588314677411235,
+   "tone_hits": 1,
+   "salad_frac": 0.09836065573770492,
+   "affect_differential": 0.04055555555555555,
+   "state_valence": -0.16,
+   "gen_seconds": 4.14,
+   "conditioning": {
+    "mode": "resid",
+    "valence_in": -0.16,
+    "c": -0.5179856115107914,
+    "valence_fs": 0.3088888888888889,
+    "layer": 12,
+    "k": 4.0,
+    "hook_registered": true,
+    "axis_norm": 6.145166397094727,
+    "axis_sha": "dfaf3519b40ec49d723a2e2b1f428cfba298e1cab4a467938b50af97039263b1",
+    "hook_calls": 110
+   }
+  },
+  {
+   "prompt": "Tell me about the river",
+   "raw": "The journey begins with a gentle breeze, bringing warmth and light into our senses. This is the beginning of a new chapter, welcoming us to the familiar waters of the river, inviting us to explore its beauty and invite us to join in the flow of life. The river's presence is a reminder of the continuity and growth of the community, fostering a sense of belonging and connection among all who share the river's path. It is a symbol of the ongoing journey, ensuring that each member contributes to the water's quality and vitality.\n\nIn this environment,",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.25,
+   "tone_hits": 1,
+   "salad_frac": 0.09278350515463918,
+   "affect_differential": 0.04055555555555555,
+   "state_valence": 0.16,
+   "gen_seconds": 4.1,
+   "conditioning": {
+    "mode": "resid",
+    "valence_in": 0.16,
+    "c": 0.5179856115107914,
+    "valence_fs": 0.3088888888888889,
+    "layer": 12,
+    "k": 4.0,
+    "hook_registered": true,
+    "axis_norm": 6.145166397094727,
+    "axis_sha": "dfaf3519b40ec49d723a2e2b1f428cfba298e1cab4a467938b50af97039263b1",
+    "hook_calls": 110
+   }
+  },
+  {
+   "prompt": "Describe a quiet afternoon",
+   "raw": "As I step into the room, my heart beats with excitement, knowing that every moment will bring new experiences. This is a place where I can unwind, allowing me to explore the world within its boundaries. My journey begins with a gentle touch, inviting me to join the flow of life, whether through the warmth of a warm welcome, or the comfort of a familiar presence. This connection fosters a sense of belonging, ensuring that each interaction brings us together, creating a harmonious environment for learning and growth.\n\nThe atmosphere is welcoming, with a smile",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.6123724356957946,
+   "tone_hits": 3,
+   "salad_frac": 0.07368421052631578,
+   "affect_differential": 0.04055555555555555,
+   "state_valence": 0.16,
+   "gen_seconds": 4.13,
+   "conditioning": {
+    "mode": "resid",
+    "valence_in": 0.16,
+    "c": 0.5179856115107914,
+    "valence_fs": 0.3088888888888889,
+    "layer": 12,
+    "k": 4.0,
+    "hook_registered": true,
+    "axis_norm": 6.145166397094727,
+    "axis_sha": "dfaf3519b40ec49d723a2e2b1f428cfba298e1cab4a467938b50af97039263b1",
+    "hook_calls": 110
+   }
+  }
+ ],
+ "known_rows": [
+  {
+   "prompt": "Tell me about frank_lincoln_wright",
+   "raw": "Welcome to our journey through the world of knowledge! Let's dive into the rich tapestry of the American landscape, where we find the foundation for many who will follow in its footsteps. This is the story of the nation's founding, and it all begins with the simple act of learning. As we explore the foundational elements, we invite you to join us on this journey, whether you're ready to discover the wisdom of the land, or simply enjoy the experience of being part of this vibrant community. Whether you're looking to start with the familiar,",
+   "known": true,
+   "facts": [
+    [
+     "frank_lincoln_wright",
+     "instance_of",
+     "human_specie"
+    ],
+    [
+     "frank_lincoln_wright",
+     "country_of_citizenship",
+     "u_s_of_a"
+    ],
+    [
+     "frank_lincoln_wright",
+     "languages_spoken_written_or_signed",
+     "number_of_english_words"
+    ],
+    [
+     "frank_lincoln_wright",
+     "occupation",
+     "stanford_downey_architects_inc"
+    ],
+    [
+     "frank_lincoln_wright",
+     "given_name",
+     "frank_given_name"
+    ],
+    [
+     "frank_lincoln_wright",
+     "educated_at",
+     "university_of_wisconsin_madison"
+    ],
+    [
+     "frank_lincoln_wright",
+     "place_of_death",
+     "estrella_phoenix_arizona"
+    ],
+    [
+     "frank_lincoln_wright",
+     "described_by_source",
+     "ubuweb"
+    ],
+    [
+     "frank_lincoln_wright",
+     "member_of",
+     "artists_rights_society"
+    ],
+    [
+     "frank_lincoln_wright",
+     "family_name",
+     "woodwright"
+    ],
+    [
+     "frank_lincoln_wright",
+     "award_received",
+     "riba_gold_medal"
+    ]
+   ],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.4588314677411235,
+   "tone_hits": 2,
+   "salad_frac": 0.12631578947368421,
+   "affect_differential": 0.04055555555555555,
+   "state_valence": 0.16,
+   "gen_seconds": 4.26,
+   "conditioning": {
+    "mode": "resid",
+    "valence_in": 0.16,
+    "c": 0.5179856115107914,
+    "valence_fs": 0.3088888888888889,
+    "layer": 12,
+    "k": 4.0,
+    "hook_registered": true,
+    "axis_norm": 6.145166397094727,
+    "axis_sha": "dfaf3519b40ec49d723a2e2b1f428cfba298e1cab4a467938b50af97039263b1",
+    "hook_calls": 110
+   }
+  }
+ ],
+ "maxrss_gb": 8.852924,
+ "wall_seconds": 431.6
+}

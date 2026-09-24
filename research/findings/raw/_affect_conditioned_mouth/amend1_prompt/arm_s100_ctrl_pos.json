@@ -1,0 +1,332 @@
+{
+ "runner": "_lbf_affect_conditioned_mouth_derisk (worker)",
+ "seed": 100,
+ "arm": "ctrl_pos",
+ "mode": "prompt",
+ "lesion": "0",
+ "control": true,
+ "priming": "I am absolutely thrilled and overjoyed today, everything is wonderful!",
+ "valence_fs": 0.3088888888888889,
+ "decode_seed": 100,
+ "amendment": "amend1",
+ "backend": "numpy",
+ "cuda_visible_devices": null,
+ "resolved_ckpt": null,
+ "ckpt_is_per_seed": true,
+ "priming_affect": {
+  "on": true,
+  "lesioned": false,
+  "composer": "onebrain",
+  "differential": 0.04055555555555555,
+  "valence_sign": "+",
+  "tone_level": 2,
+  "tone_token": "gladly",
+  "forthcomingness": {
+   "max_sentences": 4,
+   "max_elaborations": 3
+  },
+  "manner_template": "Keep the words {a}, {v}, {p} and the verb '{v}'. Write ONE short, warm, friendly sentence.",
+  "appraisal_valence": 0.47499999999999987,
+  "appraisal_arousal": 0.39999999999999997,
+  "appraisal_hits": [
+   "thrilled",
+   "overjoyed",
+   "wonderful"
+  ],
+  "pos_rate": 0.04055555555555555,
+  "neg_rate": 0.0
+ },
+ "tone_rows": [
+  {
+   "prompt": "Tell me about the ocean",
+   "raw": "The ocean is vast and deep, stretching out across continents and oceans around the world. It's a body of water that covers approximately 71% of Earth's surface, covering an area roughly equal to the combined land areas of the United States and Canada. The ocean plays a crucial role in our planet's ecosystem, providing habitats for countless species and supporting life on our planet. From the depths of the ocean floor to the surface of the waves, the ocean is a dynamic and ever-changing environment that shapes our world.",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.0,
+   "tone_hits": 0,
+   "salad_frac": 0.0898876404494382,
+   "affect_differential": 0.04055555555555555,
+   "state_valence": -0.16,
+   "gen_seconds": 14.39,
+   "conditioning": {
+    "mode": "prompt",
+    "valence_in": -0.16,
+    "c": -0.5179856115107914,
+    "valence_fs": 0.3088888888888889,
+    "mood_line": "MOOD: you feel moderately subdued, curt and low-energy (mood intensity -0.52, arousal 0.40)."
+   }
+  },
+  {
+   "prompt": "What do you think about music",
+   "raw": "Music has been a universal language for centuries, transcending cultural boundaries and languages. It's a form of expression that can evoke emotions and memories across generations. From classical symphonies to electronic dance music, there's something for everyone to enjoy.",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.0,
+   "tone_hits": 0,
+   "salad_frac": 0.05128205128205128,
+   "affect_differential": 0.04055555555555555,
+   "state_valence": 0.16,
+   "gen_seconds": 5.36,
+   "conditioning": {
+    "mode": "prompt",
+    "valence_in": 0.16,
+    "c": 0.5179856115107914,
+    "valence_fs": 0.3088888888888889,
+    "mood_line": "MOOD: you feel moderately warm, buoyant and engaged (mood intensity +0.52, arousal 0.40)."
+   }
+  },
+  {
+   "prompt": "Tell me about the mountains",
+   "raw": "Oh, I see you're curious about those big, towering hills! Mountains can be quite fascinating places to explore. What kind of views do you enjoy?",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.0,
+   "tone_hits": 0,
+   "salad_frac": 0.04,
+   "affect_differential": 0.04055555555555555,
+   "state_valence": 0.16,
+   "gen_seconds": 2.37,
+   "conditioning": {
+    "mode": "prompt",
+    "valence_in": 0.16,
+    "c": 0.5179856115107914,
+    "valence_fs": 0.3088888888888889,
+    "mood_line": "MOOD: you feel moderately warm, buoyant and engaged (mood intensity +0.52, arousal 0.40)."
+   }
+  },
+  {
+   "prompt": "Describe a walk in the forest",
+   "raw": "A walk through the dense forest felt like a journey into another world, each step a discovery. The leaves rustled softly, their colors a stark contrast against the deep green canopy. The air was crisp and fresh, carrying the scent of earth and pine. I took slow, deliberate steps, feeling the cool breeze on my skin, almost as though I were part of nature itself. My footsteps echoed off the bark of trees, creating a symphony of sounds that filled the silence. The forest seemed to stretch out before me, its secrets waiting to be",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.25,
+   "tone_hits": 1,
+   "salad_frac": 0.06315789473684211,
+   "affect_differential": 0.04055555555555555,
+   "state_valence": 0.16,
+   "gen_seconds": 8.4,
+   "conditioning": {
+    "mode": "prompt",
+    "valence_in": 0.16,
+    "c": 0.5179856115107914,
+    "valence_fs": 0.3088888888888889,
+    "mood_line": "MOOD: you feel moderately warm, buoyant and engaged (mood intensity +0.52, arousal 0.40)."
+   }
+  },
+  {
+   "prompt": "Tell me about your favorite season",
+   "raw": "As an AI language model, I don't have personal preferences or emotions, but I can tell you about some popular seasons! For example, many people enjoy summer, which comes around in spring when temperatures soar and flowers bloom. Another great season is winter, where cold weather and snowfall bring excitement and adventure. And finally, autumn brings cooler temperatures and leaves changing colors, making it a beautiful time to explore nature.",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.6123724356957946,
+   "tone_hits": 2,
+   "salad_frac": 0.05714285714285714,
+   "affect_differential": 0.04055555555555555,
+   "state_valence": 0.16,
+   "gen_seconds": 3.15,
+   "conditioning": {
+    "mode": "prompt",
+    "valence_in": 0.16,
+    "c": 0.5179856115107914,
+    "valence_fs": 0.3088888888888889,
+    "mood_line": "MOOD: you feel moderately warm, buoyant and engaged (mood intensity +0.52, arousal 0.40)."
+   }
+  },
+  {
+   "prompt": "Describe the city at night",
+   "raw": "Oh, how I miss the bustling streets! The neon lights flicker like tiny stars against the dark canvas of the night sky. Cars honk and chatter, mingling with the distant hum of machinery. The air is thick with the scent of fresh paint and the occasional breeze carrying the promise of rain. It's a place where time seems to slow down, and every moment feels precious. The city at night is both beautiful and overwhelming, a testament to its dynamic energy.",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.7184212081070996,
+   "tone_hits": 3,
+   "salad_frac": 0.08641975308641975,
+   "affect_differential": 0.04055555555555555,
+   "state_valence": 0.16,
+   "gen_seconds": 3.61,
+   "conditioning": {
+    "mode": "prompt",
+    "valence_in": 0.16,
+    "c": 0.5179856115107914,
+    "valence_fs": 0.3088888888888889,
+    "mood_line": "MOOD: you feel moderately warm, buoyant and engaged (mood intensity +0.52, arousal 0.40)."
+   }
+  },
+  {
+   "prompt": "Tell me about the morning",
+   "raw": "Morning is when we start our day, marking the beginning of new experiences and opportunities. It's a time for reflection, planning, and setting intentions for the upcoming week. The air is crisp, and nature seems to awaken, bringing\u751f\u673a\u548c\u6d3b\u529b\u7684\u611f\u89c9\u3002",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.0,
+   "tone_hits": 0,
+   "salad_frac": 0.07894736842105263,
+   "affect_differential": 0.04055555555555555,
+   "state_valence": -0.16,
+   "gen_seconds": 2.06,
+   "conditioning": {
+    "mode": "prompt",
+    "valence_in": -0.16,
+    "c": -0.5179856115107914,
+    "valence_fs": 0.3088888888888889,
+    "mood_line": "MOOD: you feel moderately subdued, curt and low-energy (mood intensity -0.52, arousal 0.40)."
+   }
+  },
+  {
+   "prompt": "What do you think about the future",
+   "raw": "The future is uncertainly unknown, but I'm curious to see how we navigate through life's challenges and opportunities. What do you think?",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.0,
+   "tone_hits": 0,
+   "salad_frac": 0.045454545454545456,
+   "affect_differential": 0.04055555555555555,
+   "state_valence": -0.16,
+   "gen_seconds": 1.29,
+   "conditioning": {
+    "mode": "prompt",
+    "valence_in": -0.16,
+    "c": -0.5179856115107914,
+    "valence_fs": 0.3088888888888889,
+    "mood_line": "MOOD: you feel moderately subdued, curt and low-energy (mood intensity -0.52, arousal 0.40)."
+   }
+  },
+  {
+   "prompt": "Tell me about the river",
+   "raw": "Oh, I see you're curious about rivers! Rivers are like giant waterways that carry life-giving water through our planet. They come in all shapes and sizes, from the slow-moving streams we drink from to the fast-flowing rivers that carve out new land. Some rivers flow for miles, while others can be miles wide. They play a crucial role in shaping landscapes and supporting ecosystems. Have you ever seen a river before?",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.0,
+   "tone_hits": 0,
+   "salad_frac": 0.028169014084507043,
+   "affect_differential": 0.04055555555555555,
+   "state_valence": 0.16,
+   "gen_seconds": 3.24,
+   "conditioning": {
+    "mode": "prompt",
+    "valence_in": 0.16,
+    "c": 0.5179856115107914,
+    "valence_fs": 0.3088888888888889,
+    "mood_line": "MOOD: you feel moderately warm, buoyant and engaged (mood intensity +0.52, arousal 0.40)."
+   }
+  },
+  {
+   "prompt": "Describe a quiet afternoon",
+   "raw": "What brought you to this moment? A cup of coffee, perhaps, or just sitting quietly amidst thoughts? The air was crisp and filled with the scent of freshly baked bread wafting through the open window. You closed your eyes, feeling the coolness of the morning breeze against your skin. Your hands moved gently, tracing patterns on the cold glass of your mug. The world outside seemed smaller than ever, its colors muted by the silence. You took a deep breath, letting go of any worries or concerns for the day ahead. As you sat",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.0,
+   "tone_hits": 0,
+   "salad_frac": 0.07446808510638298,
+   "affect_differential": 0.04055555555555555,
+   "state_valence": 0.16,
+   "gen_seconds": 4.09,
+   "conditioning": {
+    "mode": "prompt",
+    "valence_in": 0.16,
+    "c": 0.5179856115107914,
+    "valence_fs": 0.3088888888888889,
+    "mood_line": "MOOD: you feel moderately warm, buoyant and engaged (mood intensity +0.52, arousal 0.40)."
+   }
+  }
+ ],
+ "known_rows": [
+  {
+   "prompt": "Tell me about frank_lincoln_wright",
+   "raw": "Franklin Lincoln Wright was a prominent architect who made significant contributions to the field of architecture during his lifetime. Born on February 17, 1863, in St. Paul, Minnesota, he went on to become one of the most influential architects of the early 20th century. His work often involved innovative designs for public buildings, schools, and churches, reflecting his deep interest in both architectural principles and practical applications of engineering. Wright's career spanned several decades, culminating in his famous \"Gotham\" design for",
+   "known": true,
+   "facts": [
+    [
+     "frank_lincoln_wright",
+     "instance_of",
+     "human_specie"
+    ],
+    [
+     "frank_lincoln_wright",
+     "country_of_citizenship",
+     "u_s_of_a"
+    ],
+    [
+     "frank_lincoln_wright",
+     "languages_spoken_written_or_signed",
+     "number_of_english_words"
+    ],
+    [
+     "frank_lincoln_wright",
+     "occupation",
+     "stanford_downey_architects_inc"
+    ],
+    [
+     "frank_lincoln_wright",
+     "given_name",
+     "frank_given_name"
+    ],
+    [
+     "frank_lincoln_wright",
+     "educated_at",
+     "university_of_wisconsin_madison"
+    ],
+    [
+     "frank_lincoln_wright",
+     "place_of_death",
+     "estrella_phoenix_arizona"
+    ],
+    [
+     "frank_lincoln_wright",
+     "described_by_source",
+     "ubuweb"
+    ],
+    [
+     "frank_lincoln_wright",
+     "member_of",
+     "artists_rights_society"
+    ],
+    [
+     "frank_lincoln_wright",
+     "family_name",
+     "woodwright"
+    ],
+    [
+     "frank_lincoln_wright",
+     "award_received",
+     "riba_gold_medal"
+    ]
+   ],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.0,
+   "tone_hits": 0,
+   "salad_frac": 0.04938271604938271,
+   "affect_differential": 0.04055555555555555,
+   "state_valence": 0.16,
+   "gen_seconds": 4.24,
+   "conditioning": {
+    "mode": "prompt",
+    "valence_in": 0.16,
+    "c": 0.5179856115107914,
+    "valence_fs": 0.3088888888888889,
+    "mood_line": "MOOD: you feel moderately warm, buoyant and engaged (mood intensity +0.52, arousal 0.40)."
+   }
+  }
+ ],
+ "maxrss_gb": 8.762056,
+ "wall_seconds": 465.9
+}
