@@ -182,3 +182,6 @@ ordinary replies, #232 false-belief in chat, #233 learned noun meanings (de-risk
 
 ## 2026-09-24  content-provenance probe preregistered
 - #228 updated (stays OPEN, default-off): the fact-learning test is being repeated with the real language-model mouth on, plus a learned-content share count; prereg committed on research/content-provenance-learned-facts.
+
+## 2026-09-24  SETTLE fix round: flip criteria re-registered (research/settle-multiturn-contrast)
+#225 appended (plain language): the three SETTLE flip tests were fixed after an independent review and re-registered before any new scoring (amendment A1 multi-turn scorer, A2 congruence rule UNDEFINED until a production wiring exists, A3 GPU timing rewritten and queued). No capability status changed and nothing flipped, so no new row (anti-noise).
