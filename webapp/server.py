@@ -6515,6 +6515,16 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
                 resp["da_tag_capture"] = {"observe": da_tag_capture_info, **(_DTC.after_store_chat(chat) or {})}
             except Exception as _dtce2:
                 resp["da_tag_capture"] = {"on": True, "error": f"{type(_dtce2).__name__}: {_dtce2}"}
+        # D6 LEARN-THROUGH-USE, chat observability (default-OFF `BRAIN_D6_HEBBIAN_STORE`; webapp/d6_hebbian_chat.py):
+        # report this turn's local-Hebbian fact-write diagnostic + a fresh engram-held read. Unset flag -> None
+        # before touching anything -> byte-identical, no key added.
+        try:
+            from webapp import d6_hebbian_chat as _D6C
+            _d6c_info = _D6C.after_store_d6(chat)
+            if _d6c_info is not None:
+                resp["d6_hebbian"] = _d6c_info
+        except Exception as _d6ce:
+            resp["d6_hebbian"] = {"on": True, "error": f"{type(_d6ce).__name__}: {_d6ce}"}
         # >>> GNW GLOBAL-STOP BEGIN (rich path; additive, mergeable block — BRAIN_GNW_STOP, default-ON 2026-08-26) ───────
         # GLOBAL-WORKSPACE STOP DRIVES THE RESPONSE (distributed-overwrite clear-all): prepend the clearing lead
         # OUTERMOST (the held coalition was cleared to n_ignited=0 before the newcomer ignited -> a clean single-content
@@ -6819,6 +6829,16 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
             _resp["da_tag_capture"] = {"observe": da_tag_capture_info, **(_DTC.after_store_chat(chat) or {})}
         except Exception as _dtce2:
             _resp["da_tag_capture"] = {"on": True, "error": f"{type(_dtce2).__name__}: {_dtce2}"}
+    # D6 LEARN-THROUGH-USE, chat observability (default-OFF `BRAIN_D6_HEBBIAN_STORE`; webapp/d6_hebbian_chat.py,
+    # single-fact path): report this turn's local-Hebbian fact-write diagnostic + a fresh engram-held read. Unset
+    # flag -> None before touching anything -> byte-identical, no key added.
+    try:
+        from webapp import d6_hebbian_chat as _D6C
+        _d6c_info = _D6C.after_store_d6(chat)
+        if _d6c_info is not None:
+            _resp["d6_hebbian"] = _d6c_info
+    except Exception as _d6ce:
+        _resp["d6_hebbian"] = {"on": True, "error": f"{type(_d6ce).__name__}: {_d6ce}"}
     # >>> GNW GLOBAL-STOP BEGIN (single-fact path; additive, mergeable block — BRAIN_GNW_STOP, default-ON 2026-08-26) ──
     # GLOBAL-WORKSPACE STOP DRIVES THE RESPONSE (distributed-overwrite clear-all, single-fact path): prepend the
     # clearing lead OUTERMOST (the held coalition was cleared to n_ignited=0 before the newcomer ignited) + attach the
