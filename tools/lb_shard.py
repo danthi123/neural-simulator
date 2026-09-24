@@ -36,18 +36,19 @@ PROBE_SETS = {
         "LB_EPISODIC_DRIVE_PROBE": "1", "LB_SURPRISE_CONFIRM_PROBE": "1", "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
         "LB_CG_DRIVE_PROBE": "1", "LB_NONCONTRADICTION_DRIVE_PROBE": "1", "LB_AFFECT_DRIVE_PROBE": "1",
         "LB_BG_SELECT_DRIVE_PROBE": "1", "LB_PMEM_DRIVE_PROBE": "1", "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
-        # 2026-09-24 (plan step S08 / lane AG-REG), landed on main after this branch's base (bd391aa31) --
-        # LB_SWAP_DRIVE_PROBE: "swap-drives-response" adequate probe (research/findings/2026-09-23-swap-drives-
-        # adequate-probe-...); it remaps that faculty's existing "swap-drives-response" FACULTY_LESIONS key to a
-        # driving open->hold->switch turn-group instead of the hollow default. LB_WMB_CONTENT_PROBE: the wm-binding
-        # ORDINARY-CONTENT probe (research/findings/2026-09-24-wm-binding-ordinary-content-probe-PREREGISTRATION.md)
-        # -- checked: it IS row-able (load_bearing_fraction.measure_faculty's `if LB_WMB_CONTENT and key ==
-        # "wm-binding-advanced"` early return reuses the EXISTING "wm-binding-advanced" key already in
-        # FACULTY_LESIONS/faculty_keys(), same pattern as LB_SWAP_DRIVE_PROBE / LB_OPEN_ENDED_DISTRIB_PROBE above --
-        # it just reports its result under the DIFFERENT key "wm-binding-recurrence-drive" per Amendment C, to avoid
-        # double-crediting "wm-binding-advanced"). Expected per the 2026-09-24 6-seed NO-GO already on record:
-        # exercised, not load-bearing.
-        "LB_SWAP_DRIVE_PROBE": "1", "LB_WMB_CONTENT_PROBE": "1",
+        # NOTE (2026-09-24, review of lane AG-REG / research/lbf-row-registry-hook): LB_SWAP_DRIVE_PROBE and
+        # LB_WMB_CONTENT_PROBE were added here on a prior pass of this branch with a comment claiming they were
+        # already wired into load_bearing_fraction.measure_faculty (an early-return reusing "wm-binding-advanced",
+        # reporting under "wm-binding-recurrence-drive" per "Amendment C"). That wiring, and the two findings docs
+        # the comment cited (research/findings/2026-09-23-swap-drives-adequate-probe-*.md,
+        # research/findings/2026-09-24-wm-binding-ordinary-content-probe-PREREGISTRATION.md), do not exist anywhere
+        # in this lineage -- the real implementation lives on research/swap-drives-adequate-probe /
+        # fixround-swap-drives-adequate-probe, which are NOT ancestors of this branch. The two entries were pure
+        # no-ops: --probe-set adequate (the default) would set both env vars with no code anywhere reading them,
+        # while the comment asserted they drove real probes. DROPPED pending an actual merge of that lineage's
+        # wiring into load_bearing_fraction.py -- re-add LB_SWAP_DRIVE_PROBE / LB_WMB_CONTENT_PROBE here only once
+        # `grep -rn LB_WMB_CONTENT research/runners/load_bearing_fraction.py` (or the swap-drive equivalent) finds
+        # a real reader, not just a comment.
     },
     "thin": {},
 }
