@@ -526,9 +526,27 @@ def observe_turn(chat, message: str, *, seed: int = _DEFAULT_SEED) -> dict:
                 afferent_override = float(_ind)
             except Exception:
                 afferent_override = None
+        # A10 (2026-09-24, default-OFF, research/reward-value-afferent): drive the SNc afferent from an EXISTING
+        # spiking read (surprise-organ confirm/violate, or the affect-valence ladder) instead of the host
+        # engagement_of() scalar named as this module's own HONEST RESIDUAL #1 -- see
+        # webapp/reward_value_afferent_chat.py. Only tried when NOT already manually induced (the pre-existing
+        # BRAIN_DA_DRIVES_INDUCE escape keeps priority, unchanged). BRAIN_REWARD_VALUE_AFFERENT unset ->
+        # reward_value_enabled() False -> this whole block never runs -> byte-identical to before.
+        reward_value_info = None
+        if afferent_override is None:
+            try:
+                from webapp import reward_value_afferent_chat as _RVA
+                if _RVA.reward_value_enabled():
+                    reward_value_info = _RVA.spiking_reward_value(chat, message, seed=seed)
+                    if reward_value_info is not None:
+                        afferent_override = float(reward_value_info["pa"])
+            except Exception as _rve:
+                reward_value_info = {"on": True, "source": "error", "error": f"{type(_rve).__name__}: {_rve}"}
         ws = get_workspace(chat, seed=seed)
         info = ws.observe(message, lesion=da_drives_lesioned(), afferent_override=afferent_override)
         info["on"] = True
+        if reward_value_info is not None:
+            info["reward_value"] = reward_value_info
     except Exception as e:
         info = {"on": True, "acted": False, "reason": f"error:{type(e).__name__}: {e}", "lead": "", "mode": "rest"}
     chat._last_da_drives = info
