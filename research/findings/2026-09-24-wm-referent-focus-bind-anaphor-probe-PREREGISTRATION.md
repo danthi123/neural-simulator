@@ -168,7 +168,7 @@ wm-binding-advanced's production row. Flipping the flag on needs its own verific
 
 ## Seen before this was written (declared)
 
-prereg-same-commit: the dev-seed-7 full-probe-shaped calibration artifacts under `research/findings/raw/_load_bearing/wmb_focus/dev_s7/` land in this same commit; they are declared PRE-existing inputs this document reports on (the Compute section's timing/RSS figures), not output of the run this prereg governs (that run has not started; seed 7 is dev-only and excluded from the 6 evaluation seeds).
+prereg-same-commit: the dev-seed-7 full-probe-shaped calibration artifacts under `research/findings/raw/_load_bearing/wmb_focus/dev_s7/` land in this same commit; they are declared PRE-existing inputs this document reports on, not output of the run this prereg governs (that run has not started; seed 7 is dev-only and excluded from the 6 evaluation seeds). (The Compute section's earlier reference to timing/RSS figures from this same calibration run was removed in the AMENDMENT LOG's documentation fix round -- those figures were never written to a committed artifact.)
 
 - Dev-seed calibration, private organ, seeds 7/11/13/17/19/23/29/31:
   `research/findings/raw/_wm_focus_bind/calib_dev_seeds.json`. At the shipped operating point (gain 20000 pA, cue
