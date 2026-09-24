@@ -2,7 +2,7 @@
 curiosity's ASK pool on the metacog edge's drive, by withdrawing an output-proportional negative feedback.
 
 Pre-registration: `docs/plans/2026-09-24-curiosity-lcne-phasic-gain-PREREG.md` (read it first; the gates below are
-copied from it and were frozen on dev seeds 7/8 before any evaluation-seed run).
+copied from it and were frozen on dev seeds 7/8/9/10 before any evaluation-seed run of THIS mechanism).
 
 WHY THIS RUNG EXISTS. v3 (`_curiosity_metacog_neuromod_gain_derisk.py`) is a 6-seed NO-GO (1/6, held-out 0/5;
 `research/findings/2026-09-24-curiosity-metacog-lcne-modulator-6seed-NOGO-calibration-seed-only.md`): its lc_ne
@@ -55,13 +55,24 @@ the second inject so it is rebuilt from the pool's own keyed list; integrity che
 exactly the declared GIRK synapses plus curiosity's own striosome->snc, and (b) metacog's read is EXACTLY the
 conflict_xedge base pool's. No `sim/` edit.
 
+WHAT KIND OF GAIN (honesty). Withdrawing a feedback that only engages above the relay's own threshold is a SLOPE
+(response-gain) increase with no threshold shift, whose size GROWS with the response -- not a constant-factor
+scaling. G11 accepts a flat or rising ASK_on/ASK_off ratio and rejects a falling one (the additive signature).
+
+RESIDUALS (declared, not closed here): the sAHP is carried by a relay population (`ask_fb`) because the engine has no
+spike-triggered intrinsic K+ current that a synapse can modulate; NE's beta1/cAMP block of the sAHP is represented
+by a Gi-type GIRK inhibition of that relay; every weight is hand-set on dev seeds, not grown; lc_ne's phasic burst is
+driven by the comparator's summed output (a co-activation, conflict-like signal), not by a dedicated ACC/OFC
+utility monitor; the point-edge's own drive sits near ASK's threshold on some seeds (dev 9: 0.43 Hz) -- the
+operating point that a homeostatic set-point process would normally hold is not modelled.
+
 FUNCTIONAL CORRELATE ONLY -- no phenomenal claim. Additive research runner: no `sim/` edit, no production flag, no
 default flip; nothing in the live chat path imports this file.
 
 Run:
   python -m research.runners._curiosity_lcne_phasic_gain_derisk --selftest            # gate logic, no sim
-  SIM_BACKEND=numpy python -m research.runners._curiosity_lcne_phasic_gain_derisk --seeds 7 8 --dev \\
-      --out research/findings/raw/_curiosity_lcne_phasic_gain_dev_s7_s8.json          # dev-seed smoke
+  SIM_BACKEND=numpy python -m research.runners._curiosity_lcne_phasic_gain_derisk --seeds 7 --dev \\
+      --out research/findings/raw/_curiosity_lcne_phasic_gain_dev_s7.json             # dev-seed smoke (7/8/9/10)
   SIM_BACKEND=numpy python -m research.runners._curiosity_lcne_phasic_gain_derisk --seeds 42 \\
       --out research/findings/raw/_curiosity_lcne_phasic_gain_s42.json                # one eval seed (pool line)
   python -m research.runners._curiosity_lcne_phasic_gain_derisk --combine <s42.json> ... <s102.json> \\
@@ -97,25 +108,30 @@ from research.runners.metacog_production_organ import MetacogProductionOrgan, nm
 from research.runners._curiosity_metacog_conflict_xedge_derisk import (  # noqa: E402
     build_pool as build_base_pool, Recorder as BaseRecorder, coupled_sweep as base_coupled_sweep,
     METACOG_MARGIN, XEDGE_W, XEDGE_KEY, _metacog_het, _swapped_idx, _meta_exact, _curiosity_production_threshold,
-    perm_null, spearman, level_rho, _range, EVIDENCE_GRID, READ_REPS, STEPS_PER_REP, META_REGIONS, CMP_REGIONS,
+    perm_null, spearman, level_rho, EVIDENCE_GRID, READ_REPS, STEPS_PER_REP, META_REGIONS, CMP_REGIONS,
     G1_RHO_MAX, G1_MIN_RANGE_HZ, G7_RHO_MAX, G8_RHO_MIN,
 )
 
 RS = "IZH2007_RS_CORTICAL_PYRAMIDAL"
 FS = "IZH2007_FS_CORTICAL_INTERNEURON"
 
-# ── FROZEN operating point (calibrated on DEV seeds 7 and 8 ONLY, never on 42/43/44/100/101/102; PREREG §2) ──────
+# ── FROZEN operating point (calibrated on DEV seeds 7/8/9/10 ONLY, never on 42/43/44/100/101/102; PREREG §2) ──────
+# Criterion: the WORST CASE over dev seeds 7, 8, 10 clears every mechanism-controlled floor (G3, G10, G11, G12) with
+# margin. Dev seed 9 is excluded from the criterion and reported: its point-edge alone drives ASK to 0.43 Hz at the
+# most uncertain level (< G1's 1.0 Hz range floor), so there is no response for any modulator to scale.
 LC_N = 20             # locus-coeruleus-analog population
-W_CMP_LC = 5.0        # meta_schema -> lc_ne (dense E). v3's graded value, re-used (measured on dev seeds: 8.0 makes
-                      # lc_ne fire on the comparator's ONSET transient at every evidence level, i.e. not uncertainty-locked)
-W_LC_AUTO = 3.0       # lc_ne -> lc_ne alpha2 autoinhibition (GIRK)
-N_FB = 20             # ask_fb relay population (fast-spiking)
-W_ASK_FB = 15.0       # ask -> ask_fb (dense E)
-W_FB_ASK = 8.0        # ask_fb -> ask (slow GIRK K+): ASK's output-proportional slow negative feedback
-W_LC_FB = 20.0        # lc_ne -> ask_fb (slow GIRK): the phasic NE withdrawal of the feedback
+W_CMP_LC = 5.0        # meta_schema -> lc_ne (dense E). v3's graded value, re-used (dev seed 7: 8.0 makes lc_ne fire on
+                      # the comparator's ONSET transient at every evidence level, i.e. not uncertainty-locked)
+W_LC_AUTO = 3.0       # lc_ne -> lc_ne alpha2 autoinhibition (GIRK). 8 flattens lc_ne's grading on seed 8
+                      # (rho_lc -0.10); 16 silences it on seed 10
+N_FB = 20             # ask_fb relay population (fast-spiking; an RS relay gave smaller G3 on every dev seed)
+W_ASK_FB = 50.0       # ask -> ask_fb (dense E). The dev-worst G3 rises with it: 20 -> 0.06, 35 -> 0.20, 50 -> 0.29
+W_FB_ASK = 16.0       # ask_fb -> ask (slow GIRK K+): ASK's output-proportional slow negative feedback
+W_LC_FB = 35.0        # lc_ne -> ask_fb (slow GIRK): the phasic NE withdrawal of the feedback
 ADD_N = 20            # ADDITIVE CONTROL population (a clone of v3's lc_ne)
 W_CMP_ADD = 5.0       # meta_schema -> lc_add (v3's frozen CMP_TO_LC_W)
-W_ADD_ASK = 2.0       # lc_add -> ask (ADDITIVE excitation; rate-matched on dev seeds, PREREG §2)
+W_ADD_ASK = 2.0       # lc_add -> ask (ADDITIVE excitation). Dev seeds: its own ask/off ratio reaches 1.36-2.6 on the
+                      # rising limb, i.e. a real effect of the mechanism's size, so its G11c failure is not "too small"
 
 LC_GAIN_GATE = "lc_ne_gain"      # lesion switch for lc_ne -> ask_fb (G3)
 FB_LOOP_GATE = "ask_fb_loop"     # lesion switch for ask_fb -> ask (the feedback loop itself)
@@ -124,7 +140,7 @@ ADD_GATE = "lc_add_ctrl"         # the additive control's output (CLOSED except 
 EDGE_GATE = "edge_drive"         # the point-edge's current scale (1.0 except in the G11 drive sweep)
 NEW_REGIONS = ("lc_ne", "ask_fb", "lc_add")
 BYSTANDERS = ("cue", "striosome_value", "reward_us", "snc")   # curiosity's own regions that must stay silent
-DEV_SEEDS = frozenset({7, 8})
+DEV_SEEDS = frozenset({7, 8, 9, 10})
 REQUIRED_SEED_SET = frozenset({42, 43, 44, 100, 101, 102})
 
 # ── pre-registered thresholds (PREREG §3) ────────────────────────────────────────────────────────────────────
@@ -135,12 +151,15 @@ BURST_WIN_STEPS = 25              # G12: a rep's lc_ne burst window, from its fi
 PHASIC_CONC_MIN = 0.95            # G12a: pooled per-neuron fraction of lc_ne spikes inside the burst window >= this
 PAUSE_RATIO_MIN = 1.5             # G12b: lc_ne spikes with alpha2 autoinhibition lesioned / intact >= this
 EV_G11 = 0.0                      # G11: the evidence level of the drive sweep (the most uncertain level)
-G11_GRID = (0.8, 0.9, 1.0, 1.1, 1.2)   # G11: edge_drive values (+-20% around the operating edge weight)
+G11_GRID = (0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2)   # G11: edge_drive values around the operating edge weight (1.0).
+                                  # The low end exists for seeds whose reference peaks early (a stronger base
+                                  # drive peaks at a lower edge_drive: dev 7 at 1.0, dev 8/10 at 1.1)
 G11_OFF_FLOOR_HZ = 0.25           # G11: a grid point is DEFINED when the lc-off ASK rate is >= this
 G11_MIN_DEFINED = 3               # G11: >= this many points on the reference's RISING LIMB, else UNDEFINED (fail)
 G11_OFFSET_MAX_HZ = 0.05          # G11a: |lc effect| with the edge closed (edge_drive=0) <= this
 G11_GAIN_MIN = 0.15               # G11b: ASK_on/ASK_off at the top of the rising limb >= 1 + this
-G11_TREND_MIN = 0.0               # G11c: Spearman(drive, ASK_on/ASK_off) over defined points >= this
+G11_TREND_MIN = 0.0               # G11c: Spearman(drive, ASK_on/ASK_off) over the rising limb >= this
+G11_RATIO_RES = 0.05              # G11c: ratios are quantized to this step before ranking (ties within it)
 
 
 # ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -417,9 +436,13 @@ def gate_g12_phasic(conc, conc_autoinh_lesioned):
 
 
 def _trend(grid, ratios):
-    """Spearman(drive, ASK_on/ASK_off). A CONSTANT ratio (a pure response-gain scaling) has zero rank variance, so
-    `spearman` returns None; that is a flat trend (0.0), which is exactly what a pure multiplicative gain predicts."""
-    r = spearman(list(grid), list(ratios))
+    """Spearman(drive, ASK_on/ASK_off), with the ratios first QUANTIZED to G11_RATIO_RES so that ratios equal within
+    that resolution tie instead of being ranked on noise (selftest: a pure x1.4 gain computed in float64 gave ratios
+    1.4 and 1.3999999999999997 and an unquantized rank trend of -0.13). A constant ratio (a pure response-gain
+    scaling) then has zero rank variance, `spearman` returns None, and that is a flat trend (0.0) -- exactly what a
+    pure multiplicative gain predicts. An additive shift's ratio falls by far more than one resolution step."""
+    q = np.round(np.asarray(ratios, np.float64) / G11_RATIO_RES) * G11_RATIO_RES
+    r = spearman(list(grid), list(q))
     return 0.0 if r is None else float(r)
 
 
@@ -581,6 +604,9 @@ def run_seed(seed: int, determinism: bool = True, verbose: bool = True) -> dict:
         _set(b, **(gates or {}))
         prime(pool, org, rec)
         sw = sweep(pool, org, rec, swap=swap)
+        # the lesion is verified to STILL HOLD at measurement (docs/TERMS.md "lesion"): the gate values read back
+        # off the bridge right after the sweep, before anything is restored
+        sw["gates_at_measurement"] = {k: float(v) for k, v in b._transmission_gate_values.items()}
         _set(b, **MECH_GATES)
         return sw
 
@@ -604,6 +630,8 @@ def run_seed(seed: int, determinism: bool = True, verbose: bool = True) -> dict:
         for ev in EVIDENCE_GRID:
             read_level(pool, org, rec, ev)                # full prime after a data write (v3 protocol)
     relay_lesion = sweep(pool, org, rec)
+    relay_lesion["relay_weight_sum_at_measurement"] = float(
+        np.asarray(to_host(b.cp_connections.data))[relay_mask].sum())
     b.cp_connections.data = xp.asarray(data, dtype=b.cp_connections.data.dtype)
     with pool.sequence_isolation():
         for ev in EVIDENCE_GRID:
@@ -621,12 +649,15 @@ def run_seed(seed: int, determinism: bool = True, verbose: bool = True) -> dict:
             prime(pool, org, rec)
             with pool.sequence_isolation():
                 lv = read_level(pool, org, rec, EV_G11)
+            gm = b._transmission_gate_values
+            want = dict(MECH_GATES, **gates, **{EDGE_GATE: g})
+            lv["gates_held"] = bool(all(float(gm[k]) == float(v) for k, v in want.items()))
             g11_reads[name][g] = lv
             g11_lc_hashes.add(lv["lc_raster_sha256"])
     _set(b, **MECH_GATES)
     g11 = g11_eval({g: v["ask_hz"] for g, v in g11_reads["on"].items()},
                    {g: v["ask_hz"] for g, v in g11_reads["off"].items()},
-                   {g: v["ask_hz"] for g, v in g11_reads["add"].items()})
+                   {g: v["ask_hz"] for g, v in g11_reads["add"].items()}, grid=tuple(G11_GRID))
     g11_lc_fixed = len(g11_lc_hashes) == 1
     g11["lc_raster_identical_across_all_sweep_reads"] = bool(g11_lc_fixed)
     if not g11_lc_fixed:
@@ -673,6 +704,21 @@ def run_seed(seed: int, determinism: bool = True, verbose: bool = True) -> dict:
                            + sum(v["bystander_spikes"] for arm_ in g11_reads.values() for v in arm_.values()))
     dig = digest(combined)
     restore_ok = digest(restored) == dig
+    held = {"gain_lesion": gain_lesion["gates_at_measurement"][LC_GAIN_GATE] == 0.0,
+            "edge_lesion": edge_lesion["gates_at_measurement"][EDGE_GATE] == 0.0,
+            "both_lesion": (both_lesion["gates_at_measurement"][EDGE_GATE] == 0.0
+                            and both_lesion["gates_at_measurement"][LC_GAIN_GATE] == 0.0),
+            "loop_lesion_lc_on": (loop_lc_on["gates_at_measurement"][FB_LOOP_GATE] == 0.0
+                                  and loop_lc_on["gates_at_measurement"][LC_GAIN_GATE] == 1.0),
+            "loop_lesion_lc_off": (loop_lc_off["gates_at_measurement"][FB_LOOP_GATE] == 0.0
+                                   and loop_lc_off["gates_at_measurement"][LC_GAIN_GATE] == 0.0),
+            "autoinhibition_lesion": autoinh_lesion["gates_at_measurement"][LC_AUTO_GATE] == 0.0,
+            "relay_lesion": relay_lesion["relay_weight_sum_at_measurement"] == 0.0,
+            "g11_drive_sweep_gates": all(v["gates_held"] for rd in g11_reads.values() for v in rd.values()),
+            "additive_control_closed_in_mechanism_arms": all(
+                sw["gates_at_measurement"][ADD_GATE] == 0.0 for sw in (swap, gain_lesion, edge_lesion, both_lesion,
+                                                                       loop_lc_on, loop_lc_off, autoinh_lesion,
+                                                                       restored))}
 
     det = {"checked": False}
     if determinism:
@@ -714,6 +760,7 @@ def run_seed(seed: int, determinism: bool = True, verbose: bool = True) -> dict:
         "gabab_routing": _gabab_routing_check(b),
         "metacog_vs_base_pool": _metacog_vs_base(combined, _base_pool_metacog(seed)),
         "restore_exact": bool(restore_ok),
+        "lesions_held_at_measurement": held,
         "lc_acts_only_through_feedback_loop": loop_only,
         "bystander_spikes_all_arms": bystander_spikes,
         "no_host_novelty_signal": float(getattr(b.core_config, "current_novelty_signal", 0.0) or 0.0) == 0.0,
@@ -804,8 +851,8 @@ def _selftest_gate_logic():
     assert not r["pass"] and not r["parts"]["G11a_no_offset"], ("G11a offset", r)
     # a COLLAPSING reference must not manufacture gain: no effect on the rising limb, a big ratio only where the
     # reference collapses -> the limb excludes the collapse and G11b fails
-    coll = {0.0: 0.0, 0.8: 1.0, 0.9: 2.0, 1.0: 3.0, 1.1: 1.5, 1.2: 0.8}
-    fake = {0.0: 0.0, 0.8: 1.0, 0.9: 2.0, 1.0: 3.0, 1.1: 6.0, 1.2: 3.2}
+    coll = {0.0: 0.0, 0.6: 0.0, 0.7: 0.1, 0.8: 1.0, 0.9: 2.0, 1.0: 3.0, 1.1: 1.5, 1.2: 0.8}
+    fake = {0.0: 0.0, 0.6: 0.0, 0.7: 0.1, 0.8: 1.0, 0.9: 2.0, 1.0: 3.0, 1.1: 6.0, 1.2: 3.2}
     r = g11_eval(fake, coll, {g: v + 0.4 * (g > 0) for g, v in coll.items()})
     assert r["rising_limb"] == [0.8, 0.9, 1.0] and not r["pass"], ("G11 collapsing reference", r)
     # too few defined points -> UNDEFINED
@@ -859,7 +906,8 @@ def operating_point() -> dict:
             "BURST_WIN_STEPS": BURST_WIN_STEPS, "PHASIC_CONC_MIN": PHASIC_CONC_MIN,
             "PAUSE_RATIO_MIN": PAUSE_RATIO_MIN, "EV_G11": EV_G11,
             "G11_GRID": list(G11_GRID), "G11_OFF_FLOOR_HZ": G11_OFF_FLOOR_HZ, "G11_MIN_DEFINED": G11_MIN_DEFINED,
-            "G11_OFFSET_MAX_HZ": G11_OFFSET_MAX_HZ, "G11_GAIN_MIN": G11_GAIN_MIN, "G11_TREND_MIN": G11_TREND_MIN}
+            "G11_OFFSET_MAX_HZ": G11_OFFSET_MAX_HZ, "G11_GAIN_MIN": G11_GAIN_MIN, "G11_TREND_MIN": G11_TREND_MIN,
+            "G11_RATIO_RES": G11_RATIO_RES}
 
 
 def _decide(rows) -> dict:
@@ -881,6 +929,8 @@ def _decide(rows) -> dict:
         v.require(f"seed{s} metacog unchanged EXACT across every lesion arm (G5)",
                   bool(r["checks_integrity"]["G5_metacog_unchanged_EXACT_across_arms"]))
         v.require(f"seed{s} lesion restore exact", bool(integ["restore_exact"]))
+        v.require(f"seed{s} every lesion verified to hold at measurement",
+                  all(integ["lesions_held_at_measurement"].values()))
         v.require(f"seed{s} lc_ne acts on ASK only through the feedback loop", bool(integ["lc_acts_only_through_feedback_loop"]))
         v.require(f"seed{s} curiosity's non-ASK regions silent in every read (GIRK flag inert there)",
                   integ["bystander_spikes_all_arms"] == 0)
@@ -966,7 +1016,7 @@ def _combine(paths, out) -> int:
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--seeds", type=int, nargs="+", default=[7, 8])
-    ap.add_argument("--dev", action="store_true", help="allow dev seeds (7/8); the output is labeled DEV-SMOKE")
+    ap.add_argument("--dev", action="store_true", help="allow dev seeds (7/8/9/10); the output is labeled DEV-SMOKE")
     ap.add_argument("--no-determinism", action="store_true")
     ap.add_argument("--digest-only", action="store_true", help="internal: print the combined-intact digest and exit")
     ap.add_argument("--selftest", action="store_true", help="gate-logic selftest, no simulation")
