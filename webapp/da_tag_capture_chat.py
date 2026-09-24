@@ -34,7 +34,12 @@ WORLD CLOCK (the environment -- legitimate host code). `BRAIN_DA_TAG_CAPTURE_CLO
 DETERMINISM. The D1 reader's first build and every D1 read run inside `_private_rng(seed, k)`: the global numpy +
 python RNG state is saved, seeded from (seed, k), and restored -- so the ledger never perturbs another organ's RNG
 stream and two builds at one seed read identical D1 rates (numpy backend: exact; on cupy the cupy global stream is also
-reseeded and cannot be restored -- flag-ON only, declared).
+reseeded and cannot be restored -- flag-ON only, declared). The reader itself is built in an ISOLATED cache namespace
+(`SpikingD1Activation(..., isolated=True)` -> `_da_write_gain_spiking_derisk._get_isolated_reader`), not the shared
+one production's `BRAIN_DA_ENCODING_SPIKING_GAIN` read populates -- see that function's docstring for the 2026-09-23
+fix (review v2:dd14adaf7): sharing the production cache made gamma/d1_a_go track which arm happened to build the
+entry first (intact vs lesion-pinned), not the lesioned edge. `grade_seed` below asserts gamma/d1_a_go equal across
+every companion-ON arm at a seed as a standing check on this.
 
 HOST SHORTCUTS (declared; the v3 list plus the wiring's own):
   - the per-synapse tag / PRP / late-phase equations are host-integrated ODEs (constants pre-registered in v3);
@@ -128,7 +133,12 @@ class ChatTagCapture:
         comp = store_composer(chat)
         self.seed = int(seed)
         with _private_rng(self.seed, 0):
-            self.d1 = SpikingD1Activation(reader_seed=D1_READER_SEED)
+            # isolated=True: build/fetch the D1 reader from a cache namespace production's
+            # BRAIN_DA_ENCODING_SPIKING_GAIN path never touches, so this arm's gamma/d1_a_go cannot depend on
+            # whether production happened to build (intact) or skip (lesion-pinned) the SHARED reader first in
+            # this process (2026-09-23 fix, review v2:dd14adaf7 -- see `_get_isolated_reader`'s docstring).
+            self.d1 = SpikingD1Activation(reader_seed=D1_READER_SEED, isolated=True,
+                                          isolated_tag="da_tag_capture_chat")
         self.gamma = calibrate_gamma(self.d1.a_go)          # a priori, no brain data (v3 module)
         self.ledger = SynapticTagCaptureLedger(self.seed, gamma=self.gamma, d1=self.d1,
                                                block_offset=len(comp.store_conns) // comp.D)

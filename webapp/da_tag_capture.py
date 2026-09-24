@@ -307,13 +307,23 @@ def critical_activation(gamma, tau_p=TAU_PRP_H, tau_tag=TAU_TAG_H, tau_z=TAU_Z_H
 
 class SpikingD1Activation:
     """a(DA) read off the spiking D1 (`write_gain`) population: set the shared DA concentration, step the pool, count
-    spikes, normalize to the pool's own tonic..arousal rate span. The reader is the production one
-    (`_da_write_gain_spiking_derisk._get_reader(42, False)`, the population the production write gain reads)."""
+    spikes, normalize to the pool's own tonic..arousal rate span. By default the reader is the production one
+    (`_da_write_gain_spiking_derisk._get_reader(42, False)`, the population the production write gain reads).
 
-    def __init__(self, reader_seed: int = 42, n_cal: Optional[int] = None):
+    `isolated=True` builds/fetches the reader from `_da_write_gain_spiking_derisk._get_isolated_reader` instead --
+    a cache namespace production never writes to or reads from, so this call's calibration cannot depend on
+    whether some OTHER caller in this process already built (or skipped building, e.g. under a lesion that pins
+    the gain before ever touching the shared cache) the production entry for the same seed. Use this whenever the
+    caller's own gamma/d1_a_go must be identical across arms that differ only in a production-side flag (2026-09-23
+    fix, review v2:dd14adaf7: `ChatTagCapture` used the shared reader and got a build-order-dependent calibration
+    that tracked BRAIN_DA_ENCODING_LESION instead of holding constant)."""
+
+    def __init__(self, reader_seed: int = 42, n_cal: Optional[int] = None, isolated: bool = False,
+                 isolated_tag: str = "isolated"):
         from research.runners import _da_write_gain_spiking_derisk as W
         self._W = W
-        self.r = W._get_reader(int(reader_seed), False)
+        self.r = (W._get_isolated_reader(int(reader_seed), isolated_tag) if isolated
+                  else W._get_reader(int(reader_seed), False))
         n = W.N_CAL_REPEATS if n_cal is None else int(n_cal)
         self.rate_tonic = W._read_rate_hz_repeated(self.r["bridge"], self.r["idx"], _DA_TONIC, self.r["snapshot"], n)
         self.rate_hi = float(self.r["rate_hi"])

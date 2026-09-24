@@ -184,9 +184,26 @@ def grade_seed(res):
         "needs_companion": attributable_to("da-tag-capture lesion effect ON vs companion OFF", treat,
                                            _ndiff(A["sal_night_off_intact"], A["sal_night_off_lesion"])),
         "treatment_diffs": treat}
+    # ISOLATION: gamma / d1_a_go must be identical across every companion-ON arm at this seed, independent of
+    # BRAIN_DA_ENCODING_LESION (2026-09-23 fix, review v2:dd14adaf7 -- `ChatTagCapture`'s D1 reader used to share
+    # the process-level cache with the production spiking write gain, so a lesion arm's ledger got a DIFFERENT
+    # gamma/d1_a_go than an intact arm's purely from build order, not from the lesioned edge). Only checked when
+    # gamma data is actually present: a record with no "env" / no "gamma" (a hand-built selftest arm, or an older
+    # artifact from before this field existed) is exempt, never penalized for a field it never had.
+    on_gammas, on_d1s = [], []
+    for name, rec in A.items():
+        if (rec.get("env") or {}).get("BRAIN_DA_TAG_CAPTURE") != "1":
+            continue
+        tc = rec.get("tag_capture_at_recall") or {}
+        if tc.get("gamma") is not None:
+            on_gammas.append(tc["gamma"])
+        if tc.get("d1_a_go") is not None:
+            on_d1s.append(tc["d1_a_go"])
+    g["G_isolation_gamma_consistent"] = bool((not on_gammas or all(abs(v - on_gammas[0]) < 1e-6 for v in on_gammas))
+                                             and (not on_d1s or all(abs(v - on_d1s[0]) < 1e-6 for v in on_d1s)))
     errs = sum(len(v["errors"]) for v in A.values())
     undefined = (not g["G0_null_clean"]) or (not g["P1_immediate_precondition"]) or g["G6_lesion_held"] is None \
-        or errs > 0 or any(v == "undefined" for v in o.values())
+        or errs > 0 or any(v == "undefined" for v in o.values()) or not g["G_isolation_gamma_consistent"]
     core = all(g[k] for k in ("G1_lesion_changes_next_day_reply", "G2_lesion_spares_immediate",
                               "G3_neutral_not_kept", "G4_off_lesion_no_change", "G5_no_confab", "G6_lesion_held"))
     g["outcomes"] = o
@@ -416,6 +433,33 @@ def selftest():
     arms6["sal_night_intact_a"] = dict(base, recall_outcome="correct", tag_capture_at_recall={"p_max": 0.0})
     checks["grade: intact p_max 0 -> UNDEFINED"] = grade_seed({"arms": arms6})["seed_verdict"] == "UNDEFINED"
     checks["signflip 6/6 -> 1/64"] = abs(seed_signflip_p([1] * 6) - 1 / 64.0) < 1e-12
+    # G_isolation_gamma_consistent: a record with no env/gamma at all (the synthetic `arms` pattern above) must not
+    # be penalized for a field it never had -- the designed-GO pattern must still read GO.
+    checks["grade: no gamma data anywhere -> gate exempt, still GO"] = \
+        grade_seed({"arms": arms})["G_isolation_gamma_consistent"] is True
+    # consistent gamma/d1_a_go across every companion-ON arm, companion-OFF arms excluded (they carry no D1 read) ->
+    # the gate passes and the seed reads its ordinary verdict (GO, from the designed-GO base pattern).
+    arms_iso_ok = {}
+    for name, label, env in ARMS:
+        rec = dict(arms[name])
+        rec["env"] = dict(env)
+        if env.get("BRAIN_DA_TAG_CAPTURE") == "1":
+            rec["tag_capture_at_recall"] = dict(rec["tag_capture_at_recall"], gamma=40.0, d1_a_go=0.15)
+        arms_iso_ok[name] = rec
+    g_iso_ok = grade_seed({"arms": arms_iso_ok})
+    checks["grade: isolation gamma consistent across ON arms -> gate passes, GO"] = \
+        g_iso_ok["G_isolation_gamma_consistent"] is True and g_iso_ok["seed_verdict"] == "GO"
+    # THE FAILING DIRECTION (the gate must be able to fail): one companion-ON arm reads a different gamma than the
+    # rest -- the exact confound this fix closes (a lesion arm calibrating differently from an intact arm) -- and
+    # the seed must go UNDEFINED even though every G1-G6 outcome is otherwise the designed-GO pattern.
+    arms_iso_bad = {k: dict(v) for k, v in arms_iso_ok.items()}
+    arms_iso_bad["sal_night_lesion"] = dict(arms_iso_bad["sal_night_lesion"],
+                                            tag_capture_at_recall=dict(
+                                                arms_iso_bad["sal_night_lesion"]["tag_capture_at_recall"],
+                                                gamma=32.8, d1_a_go=0.187))
+    g_bad = grade_seed({"arms": arms_iso_bad})
+    checks["grade: isolation gamma MISMATCH -> gate fails"] = g_bad["G_isolation_gamma_consistent"] is False
+    checks["grade: isolation gamma mismatch -> seed UNDEFINED"] = g_bad["seed_verdict"] == "UNDEFINED"
     for k, v in checks.items():
         print("  [%s] %s" % ("PASS" if v else "FAIL", k))
     ok = all(checks.values())
