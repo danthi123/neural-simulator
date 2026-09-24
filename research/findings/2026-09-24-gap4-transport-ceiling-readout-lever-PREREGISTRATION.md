@@ -233,3 +233,33 @@ synapses only; the recurrent background keeps STP.
 **Selection rule: unchanged**, over C1-C14. Fallback unchanged. The per-arm learning rate follows the arc's
 meta-lesson #1 (one shared lr is an unfair A/B); if the evaluation config uses one lr for all arms, the amendment
 fixing it says so and why.
+
+## AMENDMENT 3 (2026-09-24 ~13:20 EDT, before round 4 runs; dev seed 7 only)
+
+**What round 3 showed (dev data).** Artifacts: research/findings/raw/gap4/transport_ceiling_readout/round3_rev7dfb386/
+(commit 4dcbec29f).
+
+<!--derived-->
+- With feedforward STP bypassed, the ceiling begins to fit the training set as lr rises (lr 1: train 0.180; lr 5:
+  train 0.203; 1/9 chance), while held-out stays 0.074-0.130 (chance 0.167). Nothing qualifies yet.
+- The frozen readout's argmax collapses onto one or two output units (often the never-taught class 8): baseline rate
+  differences between output units outweigh the learned class selectivity.
+
+**Companion process named for round 4: the burst-probability baseline.** `Pbar` is an EMA (alpha 0.05/step) that
+returns to p0 after every teaching transient, so the integral of `P - Pbar` over a presentation is close to zero, and
+the negative lobe lands on the next example's input. `--pbar-alpha 0` presets the baseline at p0 (BurstCCN's preset
+form); an inter-stimulus interval is the protocol alternative. Longer training is the third candidate.
+
+**Round-4 grid** (seed 7, same small net, subsample 400, replicate 0, arms frozen and transport_ceiling). Common:
+round 3's common flags plus `--tonic-h-pA 225 --tonic-o-pA 250`.
+
+| id | lr | pbar alpha | isi | epochs |
+|---|---|---|---|---|
+| C15 | 5 | 0 | 0 | 10 |
+| C16 | 20 | 0.05 | 0 | 10 |
+| C17 | 20 | 0 | 0 | 10 |
+| C18 | 5 | 0.05 | 0 | 30 |
+| C19 | 5 | 0 | 40 | 10 |
+
+**Selection rule: unchanged**, over C1-C19; for equal headroom (within 0.02) the cheaper config means fewer total
+training steps (epochs x steps per example). Fallback unchanged.
