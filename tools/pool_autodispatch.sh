@@ -371,6 +371,12 @@ if [ "${1:-}" = "--pop-once" ]; then
 fi
 if [ "${1:-}" = "--reserved-gb" ]; then reserved_gb "$2"; exit 0; fi
 if [ "${1:-}" = "--peek-est-gb" ]; then peek_est_gb; exit 0; fi
+if [ "${1:-}" = "--min-queued-est-gb" ]; then   # smallest declared size among fresh queued jobs; empty if none
+  cutoff=$(( $(date +%s) - ${POOL_JOB_MAX_AGE:-43200} )); m=""
+  while IFS= read -r cand; do e=$(job_est_gb "$cand"); { [ -z "$m" ] || [ "$e" -lt "$m" ]; } && m="$e"; done \
+    < <(awk -F'\t' -v c="$cutoff" 'NF>1 && $1+0 >= c && $0 ~ /#checked:/ {print $2}' "$QUEUE" 2>/dev/null)
+  echo "$m"; exit 0
+fi
 if [ "${1:-}" = "--node-budget" ]; then   # live diagnostic: would this node take work, and how many GB?
   if node_is_idle "$2"; then echo "idle budget=${NODE_BUDGET}GB"; else echo "busy/unreachable (budget=${NODE_BUDGET}GB)"; fi; exit 0
 fi

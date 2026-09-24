@@ -214,4 +214,3 @@ research/queue/.pool_extra_nodes
 # ignore every `.aws_*` file and carve back out research/queue/.aws_gpu (the single-instance lane), which stays
 # TRACKED on purpose.
 research/queue/.aws_*
-!research/queue/.aws_gpu
