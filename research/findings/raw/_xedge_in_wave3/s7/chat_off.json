@@ -1,0 +1,213 @@
+{
+ "mode": "chat_smoke",
+ "flag": "off",
+ "seed": 7,
+ "turns": [
+  {
+   "session": "A",
+   "message": "the wolf chased the dog",
+   "out": {
+    "abstained": true,
+    "answer": "I caught the verb 'chase' with the wolf and the dog, but my role-binding didn't resolve the PATIENT \u2014 which of them is the 'chase' done to, the wolf or the dog?",
+    "comprehension": {
+     "abstained": true,
+     "calib": {
+      "max_ill": "0.09999999999999998",
+      "mean_ill": "0.038888888888888876",
+      "mean_well": "0.3",
+      "min_well": "0.3",
+      "n_calib": 24,
+      "read_steps": 60
+     },
+     "comprehended": false,
+     "in_scope": true,
+     "known_binding": false,
+     "lesioned": false,
+     "margin": "0.09999999999999998",
+     "on": true,
+     "svo": [
+      "wolf",
+      "chase",
+      "dog"
+     ],
+     "threshold": "0.19999999999999998"
+    }
+   }
+  },
+  {
+   "session": "B",
+   "message": "the cat watched the bird",
+   "out": {
+    "abstained": true,
+    "answer": "I caught the verb 'watch' with the cat and the bird, but my role-binding didn't resolve the PATIENT \u2014 which of them is the 'watch' done to, the cat or the bird?",
+    "comprehension": {
+     "abstained": true,
+     "calib": {
+      "max_ill": "0.09999999999999998",
+      "mean_ill": "0.038888888888888876",
+      "mean_well": "0.3",
+      "min_well": "0.3",
+      "n_calib": 24,
+      "read_steps": 60
+     },
+     "comprehended": false,
+     "in_scope": true,
+     "known_binding": false,
+     "lesioned": false,
+     "margin": "0.09999999999999998",
+     "on": true,
+     "svo": [
+      "cat",
+      "watch",
+      "bird"
+     ],
+     "threshold": "0.19999999999999998"
+    }
+   }
+  },
+  {
+   "session": "A",
+   "message": "who are we talking about?",
+   "out": {
+    "abstained": false,
+    "answer": "I'm holding 2 referents in working memory at once: wolf and dog.",
+    "inner_state_readout": true,
+    "multiref": {
+     "all_recovered": true,
+     "composer": "onebrain",
+     "hold_alive_min": "0.06666666666666668",
+     "in_scope": true,
+     "input_order": [
+      "wolf",
+      "dog"
+     ],
+     "is_hold_query": true,
+     "kind": "query",
+     "lesioned": false,
+     "n_referents": 2,
+     "on": true,
+     "readout": "I'm holding 2 referents in working memory at once: wolf and dog.",
+     "recovered": {
+      "0": "wolf",
+      "1": "dog"
+     },
+     "zero_input_ok": true
+    }
+   }
+  },
+  {
+   "session": "B",
+   "message": "who are we talking about?",
+   "out": {
+    "abstained": false,
+    "answer": "I'm holding 2 referents in working memory at once: cat and bird.",
+    "inner_state_readout": true,
+    "multiref": {
+     "all_recovered": true,
+     "composer": "onebrain",
+     "hold_alive_min": "0.06666666666666668",
+     "in_scope": true,
+     "input_order": [
+      "cat",
+      "bird"
+     ],
+     "is_hold_query": true,
+     "kind": "query",
+     "lesioned": false,
+     "n_referents": 2,
+     "on": true,
+     "readout": "I'm holding 2 referents in working memory at once: cat and bird.",
+     "recovered": {
+      "0": "cat",
+      "1": "bird"
+     },
+     "zero_input_ok": true
+    }
+   }
+  },
+  {
+   "session": "A",
+   "message": "the wolf watched the dog",
+   "out": {
+    "abstained": true,
+    "answer": "I caught the verb 'watch' with the wolf and the dog, but my role-binding didn't resolve the PATIENT \u2014 which of them is the 'watch' done to, the wolf or the dog?",
+    "comprehension": {
+     "abstained": true,
+     "calib": {
+      "max_ill": "0.09999999999999998",
+      "mean_ill": "0.038888888888888876",
+      "mean_well": "0.3",
+      "min_well": "0.3",
+      "n_calib": 24,
+      "read_steps": 60
+     },
+     "comprehended": false,
+     "in_scope": true,
+     "known_binding": false,
+     "lesioned": false,
+     "margin": "0.09999999999999998",
+     "on": true,
+     "svo": [
+      "wolf",
+      "watch",
+      "dog"
+     ],
+     "threshold": "0.19999999999999998"
+    }
+   }
+  },
+  {
+   "session": "B",
+   "message": "the cat chased the bird",
+   "out": {
+    "abstained": true,
+    "answer": "I caught the verb 'chase' with the cat and the bird, but my role-binding didn't resolve the PATIENT \u2014 which of them is the 'chase' done to, the cat or the bird?",
+    "comprehension": {
+     "abstained": true,
+     "calib": {
+      "max_ill": "0.09999999999999998",
+      "mean_ill": "0.038888888888888876",
+      "mean_well": "0.3",
+      "min_well": "0.3",
+      "n_calib": 24,
+      "read_steps": 60
+     },
+     "comprehended": false,
+     "in_scope": true,
+     "known_binding": false,
+     "lesioned": false,
+     "margin": "0.09999999999999998",
+     "on": true,
+     "svo": [
+      "cat",
+      "chase",
+      "bird"
+     ],
+     "threshold": "0.19999999999999998"
+    }
+   }
+  }
+ ],
+ "identity": {
+  "comp_is_xedge_comp_organ": false,
+  "multiref_shared_is_merged": {
+   "('a4-A', 'tiny-demo', 'stub')": false,
+   "('a4-B', 'tiny-demo', 'stub')": false
+  },
+  "n_session_resets": null,
+  "cross_weights": {
+   "w0->A": 0.05,
+   "w0->P": 0.05,
+   "w1->A": 0.05,
+   "w1->P": 0.05,
+   "w2->A": 0.05,
+   "w2->P": 0.05
+  }
+ },
+ "cross_session_referent_names": {
+  "A": [],
+  "B": []
+ },
+ "peak_rss_gb": 10.63,
+ "wall_s": 914.0
+}
