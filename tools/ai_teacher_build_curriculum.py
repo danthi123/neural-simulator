@@ -22,20 +22,25 @@ import json
 import os
 import re
 
-NOVEL = [  # (id, subject, verb, object) -- invented nouns, real verbs the brain's lemmatizer handles
+NOVEL = [  # (id, subject, verb, object) -- invented nouns + verbs the brain ALREADY KNOWS (the ZPD rule below)
     ("n01", "blicket", "eat", "dax"),
-    ("n02", "wug", "hunt", "toma"),
-    ("n03", "fep", "like", "zorb"),
+    ("n02", "wug", "chase", "toma"),
+    ("n03", "fep", "carry", "zorb"),
     ("n04", "kiki", "find", "modi"),
     ("n05", "tulver", "follow", "pilk"),
     ("n06", "snerg", "hold", "vatch"),
     ("n07", "quenk", "pull", "lorp"),
-    ("n08", "mib", "see", "yarb"),
-    ("n09", "gazzer", "carry", "bouba"),
-    ("n10", "plonk", "guard", "frell"),
+    ("n08", "mib", "watch", "yarb"),
+    ("n09", "gazzer", "reach", "bouba"),
+    ("n10", "plonk", "visit", "frell"),
 ]
 DISTRACTORS = ["narf", "quib", "tesk", "vorn", "jubb", "glim"]   # used ONLY by a corrupted-teacher belief
-RELATION_TEMPLATES = {"shares_border_with": "border"}
+# ZPD RULE (seen in the dev-seed-3 plumbing run, 2026-09-24): the brain's D4 comprehension monitor judges a sentence
+# whose verb AND both nouns are unfamiliar to its cue lexicons as noise and asks "what do they refer to?" instead of
+# learning it ("the selva borders the osona" was refused; "the blicket eats the dax" was learned). A teacher speaks in
+# words the learner knows, so every template verb is one the brain's verb lexicon covers ("touch" paraphrases
+# shares_border_with). The refused-sentence case is reported, not hidden: see the pre-registration.
+RELATION_TEMPLATES = {"shares_border_with": "touch"}
 N_WIKIDATA = 4
 # Interleaved teaching order: K takes a prefix, so every K mixes tiers.
 ORDER_PATTERN = ["n", "w", "n", "n", "w", "n", "n", "w", "n", "n", "w", "n", "n", "n"]
@@ -88,7 +93,8 @@ def build(bundle_dir, out):
                       "tier": "wikidata",
                       "provenance": {"source": "wikidata knowledge bundle", "bundle": os.path.basename(bundle_dir),
                                      "facts_json_sha256": digest, "index": w["index"], "relation": w["relation"],
-                                     "template": "the <agent> %ss the <patient>" % w["verb"]}})
+                                     "template": "the <agent> %s the <patient>" % {"touch": "touches"}.get(
+                                         w["verb"], w["verb"] + "s")}})
     n_ids = [f["id"] for f in facts if f["tier"] == "novel"]
     w_ids = [f["id"] for f in facts if f["tier"] == "wikidata"]
     order = []

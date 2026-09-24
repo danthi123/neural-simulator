@@ -15,7 +15,7 @@
     {
       "id": "n02",
       "subject": "wug",
-      "verb": "hunt",
+      "verb": "chase",
       "object": "toma",
       "tier": "novel",
       "provenance": {
@@ -25,7 +25,7 @@
     {
       "id": "n03",
       "subject": "fep",
-      "verb": "like",
+      "verb": "carry",
       "object": "zorb",
       "tier": "novel",
       "provenance": {
@@ -75,7 +75,7 @@
     {
       "id": "n08",
       "subject": "mib",
-      "verb": "see",
+      "verb": "watch",
       "object": "yarb",
       "tier": "novel",
       "provenance": {
@@ -85,7 +85,7 @@
     {
       "id": "n09",
       "subject": "gazzer",
-      "verb": "carry",
+      "verb": "reach",
       "object": "bouba",
       "tier": "novel",
       "provenance": {
@@ -95,7 +95,7 @@
     {
       "id": "n10",
       "subject": "plonk",
-      "verb": "guard",
+      "verb": "visit",
       "object": "frell",
       "tier": "novel",
       "provenance": {
@@ -105,7 +105,7 @@
     {
       "id": "w01",
       "subject": "selva",
-      "verb": "border",
+      "verb": "touch",
       "object": "osona",
       "tier": "wikidata",
       "provenance": {
@@ -114,13 +114,13 @@
         "facts_json_sha256": "92466eeeaccdb62bad396b1a6a580400abec6967eab89fbb78e8783a8d06b90c",
         "index": 9525,
         "relation": "shares_border_with",
-        "template": "the <agent> borders the <patient>"
+        "template": "the <agent> touches the <patient>"
       }
     },
     {
       "id": "w02",
       "subject": "anoia",
-      "verb": "border",
+      "verb": "touch",
       "object": "bages",
       "tier": "wikidata",
       "provenance": {
@@ -129,13 +129,13 @@
         "facts_json_sha256": "92466eeeaccdb62bad396b1a6a580400abec6967eab89fbb78e8783a8d06b90c",
         "index": 53223,
         "relation": "shares_border_with",
-        "template": "the <agent> borders the <patient>"
+        "template": "the <agent> touches the <patient>"
       }
     },
     {
       "id": "w03",
       "subject": "creuse",
-      "verb": "border",
+      "verb": "touch",
       "object": "allier",
       "tier": "wikidata",
       "provenance": {
@@ -144,13 +144,13 @@
         "facts_json_sha256": "92466eeeaccdb62bad396b1a6a580400abec6967eab89fbb78e8783a8d06b90c",
         "index": 69034,
         "relation": "shares_border_with",
-        "template": "the <agent> borders the <patient>"
+        "template": "the <agent> touches the <patient>"
       }
     },
     {
       "id": "w04",
       "subject": "conflent",
-      "verb": "border",
+      "verb": "touch",
       "object": "rossello",
       "tier": "wikidata",
       "provenance": {
@@ -159,7 +159,7 @@
         "facts_json_sha256": "92466eeeaccdb62bad396b1a6a580400abec6967eab89fbb78e8783a8d06b90c",
         "index": 71187,
         "relation": "shares_border_with",
-        "template": "the <agent> borders the <patient>"
+        "template": "the <agent> touches the <patient>"
       }
     }
   ],

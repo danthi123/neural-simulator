@@ -124,6 +124,9 @@ def _worker(arm, K, seed, out_path, sleep_ticks):
                             "curiosity_topic": (d.get("curiosity") or {}).get("topic") if isinstance(
                                 d.get("curiosity"), dict) else None,
                             "t_s": round(time.time() - t0, 2)})
+        print("[ai_teacher turn] %s s%d %s #%d %.0fs | %s -> %s" % (arm, seed, st["phase"], len(st["turns"]),
+                                                                 time.time() - t0, text, (d.get("answer") or "")[:90]),
+              flush=True)
         return d.get("answer") or ""
 
     def teacher_channel(text):          # text in, text out -- nothing else crosses
@@ -310,8 +313,9 @@ def score_seed(arms, K):
     f_blocks = F.get("taught_blocks_after_teaching") or []
     t_blocks = T.get("taught_blocks_after_teaching") or []
     f_subj = {b["agent"] for b in f_blocks}
+    # the freeze arm must have run the SAME write episodes TEACH ran (a block for every subject TEACH wrote), all at 0
     lever_ok = (len(f_blocks) >= 1 and all(b["mean_abs_w"] == 0 for b in f_blocks)
-                and {s for s, _v, _o in vet} <= f_subj
+                and {b["agent"] for b in t_blocks} <= f_subj
                 and len(t_blocks) >= 1 and all(b["mean_abs_w"] > T3_TEACH_LEVER_MIN for b in t_blocks))
     c["T3_freeze"] = {"n_recalled": None if None in f_rec else sum(f_rec), "lever_ok": lever_ok,
                       "freeze_block_w": [b["mean_abs_w"] for b in f_blocks],
@@ -526,6 +530,10 @@ def selftest():
     def _unfrozen(g):
         g["FREEZE"]["taught_blocks_after_teaching"][0]["mean_abs_w"] = 1.0
     checks["T3_undefined_when_lever_broken"] = mutate(_unfrozen)["go"] is None
+
+    def _skipped(g):
+        g["FREEZE"]["taught_blocks_after_teaching"] = g["FREEZE"]["taught_blocks_after_teaching"][1:]
+    checks["T3_undefined_when_freeze_skipped_a_write"] = mutate(_skipped)["go"] is None
     # T4: recall survives zeroing
     checks["T4_fails_recall_after_zero"] = mutate(lambda g: _set(g, "ZERO", s0, facts[0]["obj"]))["go"] is False
     def _noabl(g):
