@@ -277,6 +277,11 @@ adversarial re-review of the v2 build (commit `8427d74b0`) for `research/curiosi
 5. **`--combine` now refuses inputs whose `mechanism`/`operating_point`/git SHA differ** (§5), closing the
    combiner hazard the review flagged (a stale v1-mechanism artifact, or a future constant change between
    pool-staged batches, could otherwise combine silently instead of crashing on a missing key).
+6. **The v2 seed-42 artifact (`_curiosity_metacog_neuromod_gain_smoke_s42.json`, `CMP_TO_LC_W=30.0`, committed
+   `8427d74b0`) is VOID under this recalibration** (G10 was not yet a gate when it was produced, and it fails G10
+   under this amendment's own criterion) and is REMOVED in the commit that lands the fresh `CMP_TO_LC_W=5.0`
+   calibration artifact (`_curiosity_metacog_neuromod_gain_smoke_s42_v3.json`), exactly as v1's artifact was
+   removed when v2 superseded it.
 
 **Per `gates/prereg_before_run`, this v3 amendment is committed together with the code changes it governs (the
 runner's `CMP_TO_LC_W=5.0`, `RecorderWithLC`, `coupled_sweep_lc`, `gate_g10_lc_evidence_graded`, and the
