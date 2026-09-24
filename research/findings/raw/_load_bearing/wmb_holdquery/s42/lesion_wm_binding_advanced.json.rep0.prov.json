@@ -1,0 +1,33 @@
+{
+ "run_id": "1790205297-3830152",
+ "runner": "research/runners/onebrain_regression_battery.py",
+ "argv": [
+  "/home/node/derisk-pool/revisions/624e90674c82fc314cb30bd133e0481e27ce639c/research/runners/onebrain_regression_battery.py",
+  "--worker",
+  "--env",
+  "{\"BRAIN_MULTIREF_LESION\": \"1\"}",
+  "--turns",
+  "wmb_intro,wmb_ask",
+  "--out",
+  "/home/node/derisk-pool/revisions/624e90674c82fc314cb30bd133e0481e27ce639c/research/findings/raw/_load_bearing/wmb_holdquery/s42/lesion_wm_binding_advanced.json.rep0"
+ ],
+ "git_sha": "624e90674c82fc314cb30bd133e0481e27ce639c",
+ "git_dirty": false,
+ "source_kind": "git_archive",
+ "source_manifest_sha256": "cb7c66c1fb77a61c7c82d94d958a3b5b9bd725d989f0c1f8874d1a8664016d19",
+ "source_manifest_verified_at_start": true,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": true,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-23T19:14:57",
+ "env": {
+  "SIM_BACKEND": "numpy",
+  "SIM_RUN_ID": "1790204318-3817179"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": false,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_load_bearing/wmb_holdquery/s42/lesion_wm_binding_advanced.json.rep0"
+}

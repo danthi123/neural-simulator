@@ -1,7 +1,7 @@
 {
  "schema": "tool-health-v1",
  "generator": "tools/tool_health.py",
- "generated_at": "2026-09-17T07:45:44Z",
+ "generated_at": "2026-09-24T13:09:50Z",
  "any_rotted": false,
  "results": [
   {
@@ -10,7 +10,7 @@
    "status": "ready",
    "why": "built 4 current presets; swept basic_stimulus_response [[100.0, 4221], [200.0, 4221]] on cupy",
    "checked": "build 4 presets + step basic_stimulus_response x2",
-   "at": "2026-09-17T07:45:27Z"
+   "at": "2026-09-24T13:09:23Z"
   },
   {
    "tool": "auto-tune",
@@ -18,15 +18,15 @@
    "status": "ready",
    "why": "quick tuning sweep completed (rc=0)",
    "checked": "neural-simulator.py --auto-tune --quick",
-   "at": "2026-09-17T07:45:35Z"
+   "at": "2026-09-24T13:09:40Z"
   },
   {
    "tool": "gpu-queue",
    "lane": "gpu",
    "status": "ready",
-   "why": "status ok (1 dispatcher). == gpu_queue == shared queue: /home/dant123/Projects/sim/research/queue state: PAUSED current: SIM_BACKEND=cupy /home/dant123/Projects/sim/.venv/bin/python -u -m research.runners._gen_cortex_toke (pid",
+   "why": "status ok (1 dispatcher). == gpu_queue == shared queue: /home/dant123/Projects/sim/research/queue state: running current: cd /home/dant123/Projects/sim && export XDG_RUNTIME_DIR=/run/user/1000; until bash tools/mem_ok.sh 1 (pi",
    "checked": "gpu_queue.sh status + singleton",
-   "at": "2026-09-17T07:45:35Z"
+   "at": "2026-09-24T13:09:40Z"
   },
   {
    "tool": "pool",
@@ -34,7 +34,7 @@
    "status": "ready",
    "why": "2/3 nodes healthy",
    "checked": "tools.pool_health --json + a trivial dispatch check",
-   "at": "2026-09-17T07:45:39Z"
+   "at": "2026-09-24T13:09:44Z"
   },
   {
    "tool": "pool-checkout",
@@ -42,7 +42,7 @@
    "status": "ready",
    "why": "2 nodes: code present + venv imports numpy/scipy",
    "checked": "code present + venv import",
-   "at": "2026-09-17T07:45:44Z"
+   "at": "2026-09-24T13:09:49Z"
   },
   {
    "tool": "cloud-aws",
@@ -50,7 +50,7 @@
    "status": "unknown",
    "why": "rc=254 \n\naws: [error]: an error occurred (missingparameter) when calling the describeinstances operation: the request must contain the parameter instanceid\n",
    "checked": "aws_gpu.sh status",
-   "at": "2026-09-17T07:45:44Z"
+   "at": "2026-09-24T13:09:50Z"
   }
  ],
  "backlog_items": [],

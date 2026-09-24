@@ -1,0 +1,49 @@
+{
+  "runner": "research.runners._wmb_offflag_byte_identity",
+  "pinned_sha": "0c265b93d",
+  "flag": "LB_WMB_HOLDQUERY_PROBE + LB_WMB_CONTENT_PROBE + BRAIN_MULTIREF_LESION_SCOPE (unset in both runs)",
+  "compare": "exact sha256",
+  "arm_files": {
+    "intact_a_hold_held.json": {
+      "pinned": "cced1ed2bb4ef12fe5b8ab9dca7147b631c29a678e45f3236a18889a4a43e62d",
+      "branch": "cced1ed2bb4ef12fe5b8ab9dca7147b631c29a678e45f3236a18889a4a43e62d",
+      "identical": true
+    },
+    "intact_b_hold_held.json": {
+      "pinned": "cced1ed2bb4ef12fe5b8ab9dca7147b631c29a678e45f3236a18889a4a43e62d",
+      "branch": "cced1ed2bb4ef12fe5b8ab9dca7147b631c29a678e45f3236a18889a4a43e62d",
+      "identical": true
+    },
+    "lesion_wm_binding_advanced.json": {
+      "pinned": "cf88af229f4dc3fc6f31c6311f9723f196869cd4927ac5d3cb0905dc0e40c977",
+      "branch": "cf88af229f4dc3fc6f31c6311f9723f196869cd4927ac5d3cb0905dc0e40c977",
+      "identical": true
+    },
+    "lesion_wm_binding_advanced.json.rep0": {
+      "pinned": "cf88af229f4dc3fc6f31c6311f9723f196869cd4927ac5d3cb0905dc0e40c977",
+      "branch": "cf88af229f4dc3fc6f31c6311f9723f196869cd4927ac5d3cb0905dc0e40c977",
+      "identical": true
+    }
+  },
+  "per_faculty_record": {
+    "pinned": "86fa445560c194aa466b2ec0c35843760b480aa40e13d215191fdad58fcb7898",
+    "branch": "86fa445560c194aa466b2ec0c35843760b480aa40e13d215191fdad58fcb7898",
+    "identical": true,
+    "verdict_pinned": "not-exercised",
+    "verdict_branch": "not-exercised"
+  },
+  "roster": {
+    "pinned": {
+      "PROBE_TURNS": "620929f35ce973486569c1ba0447c9ab44a1c8c240e112b47879e9786ab7f09e",
+      "FACULTY_PROBES": "a078c3c64f9a606da5ac26c56da2465b0b4dfcca0a9e544a6629cc1da1cdf8d5",
+      "n_probe_turns": 26
+    },
+    "branch": {
+      "PROBE_TURNS": "620929f35ce973486569c1ba0447c9ab44a1c8c240e112b47879e9786ab7f09e",
+      "FACULTY_PROBES": "a078c3c64f9a606da5ac26c56da2465b0b4dfcca0a9e544a6629cc1da1cdf8d5",
+      "n_probe_turns": 26
+    },
+    "identical": true
+  },
+  "byte_identical_off": true
+}

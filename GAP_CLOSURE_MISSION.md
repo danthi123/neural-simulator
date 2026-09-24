@@ -15,29 +15,30 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-19 (RESUME HERE) — NEW ARC: PERMANENT LLM MOUTH + LOAD-BEARING METRIC
 
-**🟢 LIVE NOW — 2026-09-24 ~00:20 local (harvest these; do NOT double-launch):**
-- **✅ #1 metric, all fixes + SETTLE: robust core 25/26** (`research/findings/2026-09-23-allfixes-settle-battery-6seed-robust-core-25.md`,
-  every seed 25/26); only `da-gated-encoding` (0/6) is outside the exercised core.
-- **Default-on switches (owner-authorized; memory `feedback_flip_validated_fixes_without_waiting`):** branch
-  `research/flip-validated-fixes` @`bd391aa3` flips BRAIN_EPISODIC_STORE_VERIFY + BRAIN_PMEM_FACILITATION +
-  BRAIN_SOURCE_PROV_ABSTAIN_AT_TIE (OP_STABILIZER = per-seed table, NOT flipped; SETTLE = next batch; D6 trio not ready).
-  Review SOUND, safe to merge AFTER its production-default validation battery (prereg 2b162780f) passes. Battery split:
-  AWS thin (`.aws_cpu8`) + adequate (`.aws_cpu9`) lines 1-156 each, pool lines 157-176 (re-provisioning `bd391aa3`,
-  then re-queue from `scratchpad/flipdefaults-*_pool.txt`), local 177-186 running. Aggregate with
-  `tools/lb_shard.py aggregate --tag flipdefaults-thin|flipdefaults-adequate` after pulling from the flip worktree's
-  `research/findings/raw/_load_bearing/_shards/`. GPU production chat smoke passed flips ON (518 s) and OFF (494 s).
-- **✅ D6 v3 GO 6/6 + EXPO_H secondary 6/6**; addendum: the write is a near-copy of the host pattern (corr 0.99996) and
-  the localist store's cost is linear per op. **Fact-memory scaling:** superposed CA3 store prototype (dev seed) ≈ 5e4-1e5
-  facts per 3090 = rat-hippocampus scale; LLM breadth needs cortical consolidation. Fix round `w4bmz51wh`.
-- **D5 affect-conditioned mouth merged `c1a3da0e`: UNDEFINED both modes** — conditioning changes CONTENT; next method
-  must hold content fixed (building in `wc9pxljwq`).
-- **Workflows:** `wc9pxljwq` (lane builds A/C/D/E, registered in `research/coordination/lane_builds.jsonl`, expire 6 h)
-  · `wkc3qa09i` (wm-binding redesign, swap-drives record fixes, DA reader-cache confound) · `w4bmz51wh` (fact scaling).
-  Merge only on safe_to_merge.
-- **Curiosity** held-out seeds 43/44/100 landed; 101/102 re-queued (pool42) → `--combine` when all 5 land.
-- **Infra today:** dispatcher reserves lifetime job memory (env stamps) + first-fit; audit counts RAM-bound nodes as busy;
-  `.aws_gpu` untracked; lane gate counts registered builds. OPEN: idle-stop missed idle instance B (spawned task).
-  pool40 powered off.
+**🟢 LIVE NOW — 2026-09-24 ~09:30 local (harvest these; do NOT double-launch):**
+- **⚠️ Overnight stall 02:15-08:45** (turn ended with the GPU queue empty; completions undelivered until the owner's
+  message; FAILURE_LOG row). Before ending any turn: stock every lane with genuine multi-hour work.
+- **Default flip (`research/flip-validated-fixes` @`bd391aa3`, prereg 2b162780f):** AWS thin + adequate DONE (pulled,
+  instances terminated); last 25 shards = 2 on the pool + 23 LOCAL in `scratchpad/flip` (task b1qi7u3ti, 4 at a
+  time, ~3 h). Then `tools/lb_shard.py aggregate --tag flipdefaults-thin|flipdefaults-adequate` over main + the flip
+  worktree's `research/findings/raw/_load_bearing/_shards/`, check the prereg's pass criteria, merge if they pass.
+- **Next flip batch candidate: SETTLE** -- cost +0.14 s/turn GPU, +0.23 s CPU (`research/findings/raw/_settle_cost/`);
+  GPU production chat smoke with SETTLE on queued/running (`_settle_cost/gpu_prod_chat_smoke_settle_on.txt`).
+- **Curiosity x metacog:** v4 NO-GO 3/6 (gain holds on all six; residual = base circuit + coarse G11 grid). v5 building
+  on `research/curiosity-ask-operating-point` (agent). Board #229.
+- **wm-binding:** ordinary-content probe NO-GO, 6/6 clean negatives; branch merged (byte_identical_off: true in data).
+  Next mechanism (spiking referent->focus bind) building on `research/wm-referent-focus-bind` (agent).
+- **Language learned-referent route:** merged; AMENDMENT 1 (per-seed input hashes, MIXED-INPUT refusal); 6 seeds
+  queued on the pool at `7790466c2` (full 19.97 MB corpus, sha256 7a00272e...). Score with `--score`.
+- **GNW branch-point instrument:** merged; 6-seed running locally at `bdbce4ce3` (task br06r3qhk, log
+  `scratchpad/gnw6.log`).
+- **Perception readout-port homeostasis:** prereg `fde276684` (G0-G5); 12 pool runs being staged (task bkc6erghj);
+  seed-42 local cross-check running (bmqfhj3dp). Branch `research/perception-readout-homeostasis`, review SOUND.
+- **Affect learned-vocabulary build** (workflow `wk4gruuhc`, agent still running dev runs).
+- **Pool also holds:** CA3 fact-store grid (36 left; 18 done locally in `scratchpad/ca3wt`, NOT yet copied to main),
+  D6 capacity curve (4 left, 75 done), DA tag-capture seeds 43/100/101/102 (2 GB declared).
+- **Infra:** pool jobs default to 1 math thread; queue adds locked; provisioning sanity 1 thread; /tmp (RAM-backed)
+  cleared from 23 GB to 6 GB -- keep scratch worktrees under `.claude/worktrees/`, not /tmp.
 
 **⭐⭐ LATEST 2026-09-23 ~09:00 local — OWNER: "parallelize more heavily … we shouldn't be sitting around for hours
 waiting on runs every day … I thought our heartbeats/gates were supposed to prevent this?" → FULL FAN-OUT + LOOPHOLE FIX.**

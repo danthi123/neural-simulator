@@ -1,0 +1,29 @@
+{
+ "run_id": "1790226304-3220542",
+ "runner": "research/runners/_d6_learned_referent_env_flag_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/wf_16244c9d-ca5-4/research/runners/_d6_learned_referent_env_flag_derisk.py",
+  "--seed",
+  "42",
+  "--json",
+  "research/findings/raw/_d6_learned_referent_env_flag/s42.json"
+ ],
+ "git_sha": "eb43a5d98",
+ "git_dirty": false,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-24T01:05:04",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_d6_learned_referent_env_flag/s42.json"
+}

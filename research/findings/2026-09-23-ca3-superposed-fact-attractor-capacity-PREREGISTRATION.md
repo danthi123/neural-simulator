@@ -244,7 +244,7 @@ not a measured peak RSS, and is declared as such wherever it is cited.
   comparison. See the corrected "Predictions" bullet above (edited in place by this amendment) and
   `research/runners/ca3_superposed_fact_attractor.py`'s `aggregate()`.
   **A worked example (the reviewer's own numbers): P50 8119 -> 10500 when c_rec doubles 2000 -> 4000. The old
-  per-arm-median fit gave k_fit = median(0.187, 0.121) = 0.154 -- inside the registered 0.1-0.3 band. The
+  per-arm-median fit gave k_fit = median(0.187, 0.121) = 0.154 -- inside the registered 0.1-0.3 band. The <!--derived-->
   corrected marginal gives k_fit = (10500-8119) x 0.01 x ln(100) / 2000 ~= 0.055 -- outside it.** This is exactly
   the kind of disagreement the fix must be able to surface, not paper over.
   **(b) A non-positive marginal is reported, never clipped or dropped.** A seed where doubling c_rec does not
@@ -261,7 +261,7 @@ not a measured peak RSS, and is declared as such wherever it is cited.
   A unit test (`tests/test_ca3_superposed_fact_attractor.py::test_capacity_law_fit_is_the_marginal_not_the_per_arm_ratio`)
   pins the corrected fit on the reviewer's own worked numbers and is a MUTATION GUARD: it fails if `aggregate()`
   reverts to the per-arm-median fit (verified by running it against the pre-amendment code, where it fails with
-  `0.1539... != 0.0548...`, before restoring the fix). A second test
+  `0.1539... != 0.0548...`, before restoring the fix). A second test <!--derived-->
   (`test_capacity_law_marginal_not_positive_is_reported_not_clipped`) pins (b).
 
   None of (a)-(c) changes G1-G9, the arms, the fact/probe construction, or the seeds. The grid (54 pool lines)

@@ -110,7 +110,7 @@ LOCAL_ENGINE_PYTHON="${SIM_ENGINE_PYTHON:-$ROOT/.venv/bin/python}"
 LOCAL_SANITY_JSON=""
 if [ -x "$LOCAL_ENGINE_PYTHON" ] && bash "$ROOT/tools/mem_ok.sh" 8 >&2; then
   LOCAL_SANITY_JSON=$(cd "$STAGE" && bash "$ROOT/tools/memcap.sh" 8 -- \
-    env SIM_BACKEND=numpy "$LOCAL_ENGINE_PYTHON" -m tools.brain_build_sanity 2>/dev/null | tail -1) || true
+    env SIM_BACKEND=numpy OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 "$LOCAL_ENGINE_PYTHON" -m tools.brain_build_sanity 2>/dev/null | tail -1) || true
 fi
 if [ -n "$LOCAL_SANITY_JSON" ]; then
   echo "  local reference brain: $LOCAL_SANITY_JSON"
@@ -245,7 +245,9 @@ for h in "${NODES[@]}"; do
   # tiny-demo brain on THIS node and compare its neuron/synapse totals to the local reference computed above.
   # Advisory-only when no local reference exists (never blocks provisioning on a box that could not itself
   # build one); a FAILED or MISMATCHED remote build marks the node failed.
-  REMOTE_SANITY_JSON=$($SSH_CMD "$h" "cd ~/$REMOTE_ROOT && SIM_BACKEND=numpy .venv/bin/python -m tools.brain_build_sanity" 2>/dev/null | tail -1) || true
+  # One math thread (2026-09-24): unset, BLAS used every core; two of these ran 20+ min at 23 threads each on a
+  # 12-core node, next to live jobs, and held its load above the dispatcher's gate.
+  REMOTE_SANITY_JSON=$($SSH_CMD "$h" "cd ~/$REMOTE_ROOT && SIM_BACKEND=numpy OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 .venv/bin/python -m tools.brain_build_sanity" 2>/dev/null | tail -1) || true
   if [ -z "$REMOTE_SANITY_JSON" ]; then
     echo "  ⛔ SANITY CHECK FAILED (no output / brain build crashed) on $h" >&2
     FAILED_NODES+=("$h:sanity-crash")

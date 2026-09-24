@@ -1,0 +1,35 @@
+{
+ "run_id": "1790234013-370863",
+ "runner": "research/runners/onebrain_regression_battery.py",
+ "argv": [
+  "/home/node/derisk-pool/revisions/0c265b93d118e8660a898dc6e853f8c24ee99820/research/runners/onebrain_regression_battery.py",
+  "--worker",
+  "--env",
+  "{}",
+  "--turns",
+  "hold,held",
+  "--out",
+  "/home/node/derisk-pool/revisions/0c265b93d118e8660a898dc6e853f8c24ee99820/research/findings/raw/_load_bearing/wmb_holdquery/offflag_pinned_r2/intact_a_hold_held.json"
+ ],
+ "git_sha": "0c265b93d118e8660a898dc6e853f8c24ee99820",
+ "git_dirty": false,
+ "source_kind": "git_archive",
+ "source_manifest_sha256": "e02793b7652dc46bd2d350d490cf6c51f425246e986878c2e0dea610370af36e",
+ "source_manifest_verified_at_start": true,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": true,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-24T03:13:33",
+ "env": {
+  "POOL_JOB_ID": "1790232541216290090-16767",
+  "POOL_JOB_MEM_GB": "6",
+  "SIM_BACKEND": "numpy",
+  "SIM_RUN_ID": "1790234012-341425"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": false,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_load_bearing/wmb_holdquery/offflag_pinned_r2/intact_a_hold_held.json"
+}

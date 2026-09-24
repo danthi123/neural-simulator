@@ -1,0 +1,31 @@
+{
+ "run_id": "1790217335-3791951",
+ "runner": "research/runners/_curiosity_metacog_neuromod_gain_derisk.py",
+ "argv": [
+  "/home/node/derisk-pool/revisions/def3e1f91e8b7758914b0dbac9fc0f9b8053e418/research/runners/_curiosity_metacog_neuromod_gain_derisk.py",
+  "--seeds",
+  "44",
+  "--out",
+  "research/findings/raw/_curiosity_metacog_neuromod_gain_s44.json"
+ ],
+ "git_sha": "def3e1f91e8b7758914b0dbac9fc0f9b8053e418",
+ "git_dirty": false,
+ "source_kind": "git_archive",
+ "source_manifest_sha256": "44f503e0f04d17c521fec3970f4814d1153f896892d2323dfb36a15389fb5c9a",
+ "source_manifest_verified_at_start": true,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": true,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-23T22:35:35",
+ "env": {
+  "SIM_BACKEND": "numpy",
+  "POOL_JOB_ID": "1790217335316184711-10491",
+  "POOL_JOB_MEM_GB": "1"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": false,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_curiosity_metacog_neuromod_gain_s44.json"
+}

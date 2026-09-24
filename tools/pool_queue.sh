@@ -90,12 +90,15 @@ case "${1:-list}" in
          if [ -n "$MOD" ]; then
            FLAGS=$(printf '%s' "$2" | grep -oE '[-][-][a-z][a-z0-9-]*' | sort -u)
            HELP=$(cd "$ROOT" && SIM_NO_PROVENANCE=1 timeout 90 .venv/bin/python -m "$MOD" --help 2>&1)
-           if [ $? -ne 0 ] && ! printf '%s' "$HELP" | grep -q "usage:"; then
+           # Here-strings, not `printf | grep -q` (2026-09-24): under `set -o pipefail`, grep -q exits on the first
+           # match, printf takes SIGPIPE on a help text larger than the 64 KB pipe buffer, and the pipeline FAILS --
+           # a 72 KB --help reported present flags as missing, a different random subset on every call.
+           if [ $? -ne 0 ] && ! grep -q "usage:" <<<"$HELP"; then
              echo "⛔ REFUSED: $MOD does not even import/parse. Fix it before queueing." >&2
              printf '%s\n' "$HELP" | tail -5 >&2; exit 2
            fi
            BAD=""
-           for f in $FLAGS; do printf '%s' "$HELP" | grep -q -- "$f" || BAD="$BAD $f"; done
+           for f in $FLAGS; do grep -q -- "$f" <<<"$HELP" || BAD="$BAD $f"; done
            if [ -n "$BAD" ]; then
              echo "⛔ REFUSED: $MOD does not accept:$BAD" >&2
              echo "   The job would be dispatched, die on argparse, and free the node silently." >&2
@@ -193,7 +196,10 @@ case "${1:-list}" in
            echo "   If the repeat is deliberate (a genuine replication), re-run with FORCE_DUP=1." >&2
            exit 2
          fi
-         printf '%s\t%s  #checked:%s\n' "$(date +%s)" "$2" "$CHECKED" >> "$Q"
+         # APPEND UNDER THE DISPATCHER'S LOCK (2026-09-24). pop_job rewrites the queue (awk > tmp; mv) under
+         # "$Q.lock"; an unlocked append landing between its read and its mv went to the replaced inode and was lost.
+         ( flock -w 120 9 || { echo "⛔ could not take $Q.lock in 120 s" >&2; exit 1; }
+           printf '%s\t%s  #checked:%s\n' "$(date +%s)" "$2" "$CHECKED" >> "$Q" ) 9>"$Q.lock" || exit 1
          echo "queued (depth now $(valid_depth))" ;;
   depth) valid_depth ;;
   malformed-depth) malformed_depth ;;

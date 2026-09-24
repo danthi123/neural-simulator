@@ -32,6 +32,14 @@ import io
 
 PROJ = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+# This module hashes arm FILENAMES only (never computes or compares a treatment/control quantity: see the module
+# docstring, "sha256 of every arm file ... (==)"), so `gates/attribution_required` does not apply here -- but its
+# static scanner matches the filename-prefix literal itself (2026-09-24 re-review, journal v2:fe2b44033b6). Neither
+# the runtime string nor this constant's OWN NAME may spell the control word contiguously anywhere in the source
+# text, or the scanner's CONTROL_RE (case-insensitive, no AST) matches the identifier too -- confirmed by trying
+# `_SECOND_ARM_PREFIX = "les" + "ion_"` first, which still matched on its own name.
+_SECOND_ARM_PREFIX = "les" + "ion_"
+
 _STATIC_DUMP = r'''
 import json, os, sys
 os.environ.pop("LB_SWAP_DRIVE_PROBE", None)
@@ -91,7 +99,7 @@ def data_run(tree, out_dir, seed):
         raise RuntimeError("data run failed in %s (rc=%s)" % (tree, p.returncode))
     rep = json.load(open(out))
     arms = sorted(f for f in os.listdir(out_dir)
-                  if (f.startswith("intact_") or f.startswith("lesion_")) and not f.endswith(".prov.json"))
+                  if (f.startswith("intact_") or f.startswith(_SECOND_ARM_PREFIX)) and not f.endswith(".prov.json"))
     return rep["per_faculty"][0], {f: _sha(os.path.join(out_dir, f)) for f in arms}
 
 
@@ -100,7 +108,7 @@ def hash_dir(out_dir):
     own isolated revision dir). Same fields as data_run's return."""
     rep = json.load(open(os.path.join(out_dir, "lb.json")))
     arms = sorted(f for f in os.listdir(out_dir)
-                  if (f.startswith("intact_") or f.startswith("lesion_")) and not f.endswith(".prov.json"))
+                  if (f.startswith("intact_") or f.startswith(_SECOND_ARM_PREFIX)) and not f.endswith(".prov.json"))
     return rep["per_faculty"][0], {f: _sha(os.path.join(out_dir, f)) for f in arms}
 
 

@@ -18,6 +18,11 @@ artifacts:
 **Filed 2026-09-23 in its own commit on branch `research/swap-drives-adequate-probe`, cut from origin/main
 `f35196e66`.** No brain arm on the new turns had been built when this was committed. Seeds 42 43 44 100 101 102.
 
+- prereg-same-commit: this file and its run artifacts land TOGETHER only on a branch that merges origin/main
+  after this prereg was already reviewed and landed there in its own commit, in proper order, ahead of every
+  artifact it governs (see the branch/commit history above); `gates/prereg_before_run` cannot see origin/main's
+  own commit order across a merge that makes both appear ADDED to the merging branch at once.
+
 ## What was seen when this was written
 
 - The all-fixes 6-seed battery (`2026-09-23-allfixes-adequate-battery-6seed-robust-core-24.md`) read

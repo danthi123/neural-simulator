@@ -1,0 +1,5817 @@
+{
+ "mechanism": "metacog margin-comparator -> [frozen point-edge onto curiosity's ASK pool + a PHASIC spiking lc_ne (alpha2 GIRK autoinhibition) whose burst silences ask_fb, the relay carrying ASK's output-proportional slow (GIRK) negative feedback] -- a response-gain change on the edge's drive, not an added current",
+ "prereg": "docs/plans/2026-09-24-curiosity-lcne-phasic-gain-PREREG.md",
+ "builds_on": "docs/plans/2026-09-23-curiosity-metacog-neuromod-gain-PREREG.md",
+ "evaluation_set": false,
+ "verdict": "DEV-SMOKE (NO-GO on dev seeds; not the pre-registered verdict)",
+ "preconditions": [
+  {
+   "kind": "require",
+   "name": "seed42 metacog balance varies across the evidence grid",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "seed42 byte-off: base connectivity identical minus exactly the declared synapses",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "seed42 GIRK routing is exactly the declared set (engine stale-mask workaround held)",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "seed42 metacog read EXACTLY equals the conflict_xedge base pool's",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "seed42 metacog unchanged EXACT across every lesion arm (G5)",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "seed42 lesion restore exact",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "seed42 every lesion verified to hold at measurement",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "seed42 lc_ne acts on ASK only through the feedback loop",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "seed42 curiosity's non-ASK regions silent in every read (GIRK flag inert there)",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "seed42 no host novelty scalar / neuromodulator subsystem",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  }
+ ],
+ "undefined_reasons": [],
+ "disabled_processes": [
+  {
+   "process": "STDP / Hebbian / homeostasis / OU / conductance noise",
+   "why": "the production metacog pool config; every v4 synapse is fixed-weight by design"
+  }
+ ],
+ "GO": null,
+ "n_go": 0,
+ "n_seeds": 1,
+ "operating_point": {
+  "LC_N": 20,
+  "W_CMP_LC": 5.0,
+  "W_LC_AUTO": 3.0,
+  "N_FB": 20,
+  "W_ASK_FB": 50.0,
+  "W_FB_ASK": 16.0,
+  "W_LC_FB": 35.0,
+  "ADD_N": 20,
+  "W_CMP_ADD": 5.0,
+  "W_ADD_ASK": 2.0,
+  "G1_SILENT_HZ": 0.25,
+  "G3_GAIN_ATTRIB_MIN": 0.2,
+  "LC_GRADED_RHO_MAX": -0.3,
+  "LC_GRADED_MIN_RANGE_HZ": 0.3,
+  "BURST_WIN_STEPS": 25,
+  "PHASIC_CONC_MIN": 0.95,
+  "PAUSE_RATIO_MIN": 1.5,
+  "EV_G11": 0.0,
+  "G11_GRID": [
+   0.6,
+   0.7,
+   0.8,
+   0.9,
+   1.0,
+   1.1,
+   1.2
+  ],
+  "G11_OFF_FLOOR_HZ": 0.25,
+  "G11_MIN_DEFINED": 3,
+  "G11_OFFSET_MAX_HZ": 0.05,
+  "G11_GAIN_MIN": 0.15,
+  "G11_TREND_MIN": 0.0,
+  "G11_RATIO_RES": 0.05
+ },
+ "per_seed": [
+  {
+   "seed": 42,
+   "go": false,
+   "dev_seed": false,
+   "checks": {
+    "G1_monotone_rho<=-0.8": true,
+    "G3_gain_pathway_load_bearing": true,
+    "G6_determinism_fresh_process_hash": true,
+    "G7_class_swap_monotone": true,
+    "G8_relay_lesion_abolishes_coupling": true,
+    "G10_lc_ne_evidence_graded": true,
+    "G11_multiplicative_not_additive": false,
+    "G12_lc_ne_phasic": true
+   },
+   "checks_integrity": {
+    "G4_joint_lesion_breaks_coupling": true,
+    "G5_metacog_unchanged_EXACT_across_arms": true
+   },
+   "rho": -0.9908673886137245,
+   "rho_swap": -0.9090909090909091,
+   "rho_gain_lesion_arm": -0.9908673886137245,
+   "rho_swap_gain_lesion_arm": -0.9090909090909091,
+   "secondary_floored_rho": {
+    "combined": -0.9770084209183945,
+    "class_swap": -0.9534625892455922
+   },
+   "rho_relay_lesion": 0.013698772949316696,
+   "rho_both_lesion": null,
+   "rho_lc_ne": -0.8807710121010887,
+   "ask_range_hz": {
+    "combined": 2.9745370370370368,
+    "gain_lesion": 1.5972222222222223,
+    "edge_lesion": 0.0,
+    "both_lesion": 0.0
+   },
+   "ask_peak_hz": {
+    "combined": 3.1134259259259256,
+    "gain_lesion": 1.7361111111111112,
+    "edge_lesion": 0.0,
+    "both_lesion": 0.0
+   },
+   "lc_ne_range_hz": 1.712962962962963,
+   "lc_ne_peak_hz": 2.4537037037037037,
+   "attributable_frac": {
+    "gain": 0.4630350194552528,
+    "edge": 1.0
+   },
+   "g11": {
+    "defined_points": [
+     0.9,
+     1.0,
+     1.1,
+     1.2
+    ],
+    "n_defined": 4,
+    "rising_limb": [
+     0.9,
+     1.0
+    ],
+    "n_limb": 2,
+    "pass": false,
+    "undefined": "2 points on the reference's rising limb (need >= 3)",
+    "lc_raster_identical_across_all_sweep_reads": true
+   },
+   "g11_ask_hz": {
+    "on": {
+     "0.0": 0.0,
+     "0.6": 0.0,
+     "0.7": 0.0,
+     "0.8": 0.06944444444444445,
+     "0.9": 0.6481481481481481,
+     "1.0": 3.1134259259259256,
+     "1.1": 4.965277777777777,
+     "1.2": 5.243055555555555
+    },
+    "off": {
+     "0.0": 0.0,
+     "0.6": 0.0,
+     "0.7": 0.0,
+     "0.8": 0.06944444444444445,
+     "0.9": 0.6018518518518519,
+     "1.0": 1.7361111111111112,
+     "1.1": 1.3194444444444442,
+     "1.2": 1.446759259259259
+    },
+    "add": {
+     "0.0": 0.0,
+     "0.6": 0.0,
+     "0.7": 0.0,
+     "0.8": 0.19675925925925924,
+     "0.9": 0.960648148148148,
+     "1.0": 2.106481481481482,
+     "1.1": 1.2152777777777777,
+     "1.2": 1.4814814814814814
+    }
+   },
+   "g11_ask_fb_hz": {
+    "on": {
+     "0.0": 0.0,
+     "0.6": 0.0,
+     "0.7": 0.0,
+     "0.8": 0.0,
+     "0.9": 0.0,
+     "1.0": 0.0,
+     "1.1": 4.212962962962963,
+     "1.2": 6.759259259259259
+    },
+    "off": {
+     "0.0": 0.0,
+     "0.6": 0.0,
+     "0.7": 0.0,
+     "0.8": 0.0,
+     "0.9": 3.0555555555555554,
+     "1.0": 14.074074074074073,
+     "1.1": 11.203703703703702,
+     "1.2": 13.749999999999998
+    },
+    "add": {
+     "0.0": 0.0,
+     "0.6": 0.0,
+     "0.7": 0.0,
+     "0.8": 0.0,
+     "0.9": 8.287037037037038,
+     "1.0": 15.648148148148147,
+     "1.1": 10.555555555555554,
+     "1.2": 14.074074074074073
+    }
+   },
+   "phasic": {
+    "lc_ne": {
+     "spikes_total": 353,
+     "spikes_in_burst": 353,
+     "concentration": 1.0,
+     "active_reps_at_most_uncertain": 8
+    },
+    "lc_ne_autoinhibition_lesioned": {
+     "spikes_total": 1174,
+     "spikes_in_burst": 1142,
+     "concentration": 0.9727427597955707,
+     "active_reps_at_most_uncertain": 8
+    },
+    "lc_add_v3_clone": {
+     "spikes_total": 1351,
+     "spikes_in_burst": 1288,
+     "concentration": 0.9533678756476683,
+     "active_reps_at_most_uncertain": 8
+    }
+   },
+   "s1_reaches_production_threshold": false,
+   "s1_undefined": false,
+   "s1_threshold_hz": 19.09722222222222,
+   "g9_perm_null": {
+    "rho_obs": -0.7572302139691861,
+    "p": 9.999000099990002e-05,
+    "percentile": 0.0,
+    "n_perm": 10000,
+    "n_obs": 88,
+    "null_q01": -0.2493131132227996,
+    "null_q50": 0.0022885688370810242
+   },
+   "metacog_exact": {
+    "gain_lesion": {
+     "balance_equal": true,
+     "balance_sha256_a": "5750659ad415bf53061ad49583af88de75c305e052933317ac563c0593d16e3e",
+     "balance_sha256_b": "5750659ad415bf53061ad49583af88de75c305e052933317ac563c0593d16e3e",
+     "threshold_equal": true,
+     "confident_equal": true,
+     "metacog_raster_equal": true,
+     "max_abs_balance_delta": 0.0
+    },
+    "edge_lesion": {
+     "balance_equal": true,
+     "balance_sha256_a": "5750659ad415bf53061ad49583af88de75c305e052933317ac563c0593d16e3e",
+     "balance_sha256_b": "5750659ad415bf53061ad49583af88de75c305e052933317ac563c0593d16e3e",
+     "threshold_equal": true,
+     "confident_equal": true,
+     "metacog_raster_equal": true,
+     "max_abs_balance_delta": 0.0
+    },
+    "both_lesion": {
+     "balance_equal": true,
+     "balance_sha256_a": "5750659ad415bf53061ad49583af88de75c305e052933317ac563c0593d16e3e",
+     "balance_sha256_b": "5750659ad415bf53061ad49583af88de75c305e052933317ac563c0593d16e3e",
+     "threshold_equal": true,
+     "confident_equal": true,
+     "metacog_raster_equal": true,
+     "max_abs_balance_delta": 0.0
+    },
+    "loop_lc_on": {
+     "balance_equal": true,
+     "balance_sha256_a": "5750659ad415bf53061ad49583af88de75c305e052933317ac563c0593d16e3e",
+     "balance_sha256_b": "5750659ad415bf53061ad49583af88de75c305e052933317ac563c0593d16e3e",
+     "threshold_equal": true,
+     "confident_equal": true,
+     "metacog_raster_equal": true,
+     "max_abs_balance_delta": 0.0
+    },
+    "loop_lc_off": {
+     "balance_equal": true,
+     "balance_sha256_a": "5750659ad415bf53061ad49583af88de75c305e052933317ac563c0593d16e3e",
+     "balance_sha256_b": "5750659ad415bf53061ad49583af88de75c305e052933317ac563c0593d16e3e",
+     "threshold_equal": true,
+     "confident_equal": true,
+     "metacog_raster_equal": true,
+     "max_abs_balance_delta": 0.0
+    },
+    "autoinh_lesion": {
+     "balance_equal": true,
+     "balance_sha256_a": "5750659ad415bf53061ad49583af88de75c305e052933317ac563c0593d16e3e",
+     "balance_sha256_b": "5750659ad415bf53061ad49583af88de75c305e052933317ac563c0593d16e3e",
+     "threshold_equal": true,
+     "confident_equal": true,
+     "metacog_raster_equal": true,
+     "max_abs_balance_delta": 0.0
+    }
+   },
+   "comparator_raster_equal_across_arms": true,
+   "determinism": {
+    "checked": true,
+    "digest_main": "3f236311703a0f45adf0b9978c48b36b690734a0f5ea25bbfe9375212ff7e9e8",
+    "digest_fresh_process": "3f236311703a0f45adf0b9978c48b36b690734a0f5ea25bbfe9375212ff7e9e8",
+    "equal": true,
+    "rc": 0
+   },
+   "integrity": {
+    "byte_off": {
+     "PASS": true,
+     "base_connectivity_identical": true,
+     "n_declared_removed": 15200,
+     "n_declared_expected": 15200,
+     "n_kept": 41654,
+     "n_base": 41654
+    },
+    "gabab_routing": {
+     "PASS": true,
+     "routed_by_region_pair": {
+      "striosome_value->snc": 892,
+      "lc_ne->lc_ne": 400,
+      "lc_ne->ask_fb": 400,
+      "ask_fb->ask": 1600
+     },
+     "expected": {
+      "lc_ne->lc_ne": 400,
+      "ask_fb->ask": 1600,
+      "lc_ne->ask_fb": 400,
+      "striosome_value->snc": 892
+     }
+    },
+    "metacog_vs_base_pool": {
+     "balance_equal": true,
+     "balance_sha256_a": "5750659ad415bf53061ad49583af88de75c305e052933317ac563c0593d16e3e",
+     "balance_sha256_b": "5750659ad415bf53061ad49583af88de75c305e052933317ac563c0593d16e3e",
+     "threshold_equal": true,
+     "confident_equal": true,
+     "metacog_raster_equal": true,
+     "max_abs_balance_delta": 0.0,
+     "comparator_raster_equal": true,
+     "PASS": true
+    },
+    "restore_exact": true,
+    "lesions_held_at_measurement": {
+     "gain_lesion": true,
+     "edge_lesion": true,
+     "both_lesion": true,
+     "loop_lesion_lc_on": true,
+     "loop_lesion_lc_off": true,
+     "autoinhibition_lesion": true,
+     "class_swap_gain_lesion": true,
+     "relay_lesion": true,
+     "g11_drive_sweep_gates": true,
+     "additive_control_closed_in_mechanism_arms": true
+    },
+    "lc_acts_only_through_feedback_loop": true,
+    "bystander_spikes_all_arms": 0,
+    "no_host_novelty_signal": true,
+    "neuromodulator_subsystem_enabled": false,
+    "gates_after_run": {
+     "edge_drive": 1.0,
+     "lc_ne_autoinh": 1.0,
+     "lc_ne_gain": 1.0,
+     "ask_fb_loop": 1.0,
+     "lc_add_ctrl": 0.0
+    }
+   },
+   "production_threshold_calibration": {
+    "want_novel_hz": 38.19444444444444,
+    "want_familiar_hz": 0.0,
+    "threshold_hz": 19.09722222222222,
+    "novel_signal": 0.95,
+    "familiar_signal": 0.0,
+    "read_reps": 4
+   },
+   "arms": {
+    "combined_intact": {
+     "levels": [
+      {
+       "evidence": 0.0,
+       "balance": 0.01807477725971096,
+       "confident": false,
+       "ask_hz": 3.1134259259259256,
+       "ask_hz_per_rep": [
+        2.8703703703703702,
+        2.7777777777777777,
+        3.796296296296296,
+        2.5,
+        2.5,
+        3.518518518518518,
+        2.7777777777777777,
+        4.166666666666666
+       ],
+       "lc_ne_hz": 2.361111111111111,
+       "lc_ne_hz_per_rep": [
+        1.8518518518518516,
+        1.8518518518518516,
+        3.7037037037037033,
+        1.8518518518518516,
+        2.222222222222222,
+        2.962962962962963,
+        2.222222222222222,
+        2.222222222222222
+       ],
+       "ask_fb_hz": 0.0,
+       "lc_add_hz": 8.194444444444445,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 51,
+        "spikes_in_burst": 51,
+        "active_neuron_reps": 51,
+        "active_reps": 8,
+        "median_first_spike_step": 99.0
+       },
+       "lc_add_burst": {
+        "spikes_total": 177,
+        "spikes_in_burst": 160,
+        "active_neuron_reps": 160,
+        "active_reps": 8,
+        "median_first_spike_step": 98.0
+       },
+       "meta_raster_sha256": "c1d29695eae6f760f550d820440831b414b9ab13a928b3955907b40a1da2e0f1",
+       "cmp_raster_sha256": "dc2d99fc556283d297f083ea00cac6e9806bc03cbc46caf5c7a1228b3903cef0",
+       "lc_raster_sha256": "cf4de03e3f3d4fb909cafef581e65d47b8393c91a6b10f4a60bd8e32d3219689"
+      },
+      {
+       "evidence": 0.1,
+       "balance": 0.029426851478290553,
+       "confident": false,
+       "ask_hz": 2.847222222222222,
+       "ask_hz_per_rep": [
+        2.962962962962963,
+        3.518518518518518,
+        0.18518518518518517,
+        2.037037037037037,
+        3.888888888888889,
+        3.888888888888889,
+        3.518518518518518,
+        2.7777777777777777
+       ],
+       "lc_ne_hz": 2.1759259259259256,
+       "lc_ne_hz_per_rep": [
+        1.8518518518518516,
+        2.592592592592592,
+        0.7407407407407407,
+        0.7407407407407407,
+        3.333333333333333,
+        3.333333333333333,
+        2.962962962962963,
+        1.8518518518518516
+       ],
+       "ask_fb_hz": 0.13888888888888887,
+       "lc_add_hz": 7.453703703703704,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 47,
+        "spikes_in_burst": 47,
+        "active_neuron_reps": 47,
+        "active_reps": 8,
+        "median_first_spike_step": 107.0
+       },
+       "lc_add_burst": {
+        "spikes_total": 161,
+        "spikes_in_burst": 151,
+        "active_neuron_reps": 151,
+        "active_reps": 8,
+        "median_first_spike_step": 100.0
+       },
+       "meta_raster_sha256": "0c8f37e897616d453956b42550a22e3740a9481351969eb65a8ae1b30013273b",
+       "cmp_raster_sha256": "f86762b2dc2c06de065ee7ead073ec65fb41e2cb4c01f33f467175acdffdd8b0",
+       "lc_raster_sha256": "fe68a89071b42b2d1de6901589b7f11a2fa5a6e02285df1f31a0ee4761c818ab"
+      },
+      {
+       "evidence": 0.2,
+       "balance": 0.036070595668437,
+       "confident": false,
+       "ask_hz": 2.4305555555555554,
+       "ask_hz_per_rep": [
+        2.962962962962963,
+        3.518518518518518,
+        0.18518518518518517,
+        1.296296296296296,
+        2.592592592592592,
+        2.314814814814815,
+        3.6111111111111107,
+        2.962962962962963
+       ],
+       "lc_ne_hz": 2.4537037037037037,
+       "lc_ne_hz_per_rep": [
+        1.8518518518518516,
+        2.962962962962963,
+        0.7407407407407407,
+        4.444444444444444,
+        2.592592592592592,
+        1.8518518518518516,
+        3.333333333333333,
+        1.8518518518518516
+       ],
+       "ask_fb_hz": 0.5555555555555556,
+       "lc_add_hz": 7.361111111111111,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 53,
+        "spikes_in_burst": 53,
+        "active_neuron_reps": 53,
+        "active_reps": 8,
+        "median_first_spike_step": 110.0
+       },
+       "lc_add_burst": {
+        "spikes_total": 159,
+        "spikes_in_burst": 150,
+        "active_neuron_reps": 150,
+        "active_reps": 8,
+        "median_first_spike_step": 101.0
+       },
+       "meta_raster_sha256": "d080ee74132549cb97e471e60496e6ee6784e5145e8f5b0a1d155163395e5c84",
+       "cmp_raster_sha256": "32c46532600d7ee1d041d530d6786a15458f0565b48e3360ea26be999e4bf7b3",
+       "lc_raster_sha256": "70d89a67376cf17111d92b5e4a719c5e22b01a29a37c5477d60810d7156b927a"
+      },
+      {
+       "evidence": 0.3,
+       "balance": 0.04415161891807823,
+       "confident": false,
+       "ask_hz": 1.5972222222222223,
+       "ask_hz_per_rep": [
+        2.037037037037037,
+        2.037037037037037,
+        0.0,
+        0.4629629629629629,
+        0.7407407407407407,
+        1.3888888888888888,
+        3.0555555555555554,
+        3.0555555555555554
+       ],
+       "lc_ne_hz": 2.314814814814815,
+       "lc_ne_hz_per_rep": [
+        1.8518518518518516,
+        4.814814814814815,
+        0.7407407407407407,
+        1.8518518518518516,
+        3.7037037037037033,
+        1.111111111111111,
+        2.222222222222222,
+        2.222222222222222
+       ],
+       "ask_fb_hz": 0.0,
+       "lc_add_hz": 6.7592592592592595,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 50,
+        "spikes_in_burst": 50,
+        "active_neuron_reps": 50,
+        "active_reps": 8,
+        "median_first_spike_step": 108.0
+       },
+       "lc_add_burst": {
+        "spikes_total": 146,
+        "spikes_in_burst": 140,
+        "active_neuron_reps": 140,
+        "active_reps": 8,
+        "median_first_spike_step": 102.0
+       },
+       "meta_raster_sha256": "11932b0d2ef25d3aead066cb00a55d4e0838f71341392e3d969e863e8acc4bbc",
+       "cmp_raster_sha256": "d8a6aefcc35316188f1d570d313d4b0768df8de5c03d5183d0a7ded3abef17f0",
+       "lc_raster_sha256": "5b606adf2210747b5bb169eea4a06a829f37e2c4332862dd6898d29194449b74"
+      },
+      {
+       "evidence": 0.4,
+       "balance": 0.05244674217368879,
+       "confident": false,
+       "ask_hz": 0.8101851851851851,
+       "ask_hz_per_rep": [
+        1.3888888888888888,
+        0.37037037037037035,
+        0.0,
+        0.18518518518518517,
+        0.18518518518518517,
+        0.27777777777777773,
+        1.6666666666666665,
+        2.4074074074074074
+       ],
+       "lc_ne_hz": 2.037037037037037,
+       "lc_ne_hz_per_rep": [
+        4.074074074074074,
+        0.7407407407407407,
+        0.7407407407407407,
+        1.111111111111111,
+        1.8518518518518516,
+        1.8518518518518516,
+        3.7037037037037033,
+        2.222222222222222
+       ],
+       "ask_fb_hz": 0.13888888888888887,
+       "lc_add_hz": 5.833333333333334,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 44,
+        "spikes_in_burst": 44,
+        "active_neuron_reps": 44,
+        "active_reps": 8,
+        "median_first_spike_step": 107.5
+       },
+       "lc_add_burst": {
+        "spikes_total": 126,
+        "spikes_in_burst": 122,
+        "active_neuron_reps": 122,
+        "active_reps": 8,
+        "median_first_spike_step": 105.0
+       },
+       "meta_raster_sha256": "0232c4602785942cd1fb088160e326e90ebfec703ce9a0d34ca2cb82eecb9a37",
+       "cmp_raster_sha256": "a02fe1a08080a0f524c57cd6eae42beae8aec9eab7ab560f46fd8f76a9ba6e9d",
+       "lc_raster_sha256": "b2788906f208ff0de668111fd5072592201538ef0afdcf7143852db721c9dd0d"
+      },
+      {
+       "evidence": 0.5,
+       "balance": 0.05564806049372613,
+       "confident": false,
+       "ask_hz": 0.48611111111111105,
+       "ask_hz_per_rep": [
+        0.8333333333333333,
+        0.27777777777777773,
+        0.0,
+        0.27777777777777773,
+        0.18518518518518517,
+        0.648148148148148,
+        0.27777777777777773,
+        1.3888888888888888
+       ],
+       "lc_ne_hz": 0.8796296296296297,
+       "lc_ne_hz_per_rep": [
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        1.8518518518518516,
+        0.7407407407407407,
+        0.7407407407407407
+       ],
+       "ask_fb_hz": 0.0,
+       "lc_add_hz": 5.648148148148147,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 19,
+        "spikes_in_burst": 19,
+        "active_neuron_reps": 19,
+        "active_reps": 8,
+        "median_first_spike_step": 88.0
+       },
+       "lc_add_burst": {
+        "spikes_total": 122,
+        "spikes_in_burst": 120,
+        "active_neuron_reps": 120,
+        "active_reps": 8,
+        "median_first_spike_step": 106.0
+       },
+       "meta_raster_sha256": "10341e064849c58de58ff5adbbe45560a71c543db3503d9a55489443d5dd366d",
+       "cmp_raster_sha256": "a5039e6a549ed6d4e715d13148d0c2ac9e3f3ba5535dd8f0cd47d3ab400b2f06",
+       "lc_raster_sha256": "47d102677b5dc1e7f56c2aec674c38453c4b61fa93b3c116997fca1a8ba014ff"
+      },
+      {
+       "evidence": 0.6,
+       "balance": 0.06385804974611518,
+       "confident": true,
+       "ask_hz": 0.37037037037037035,
+       "ask_hz_per_rep": [
+        0.8333333333333333,
+        0.27777777777777773,
+        0.0,
+        0.18518518518518517,
+        0.18518518518518517,
+        0.27777777777777773,
+        0.27777777777777773,
+        0.9259259259259258
+       ],
+       "lc_ne_hz": 1.1111111111111112,
+       "lc_ne_hz_per_rep": [
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        1.8518518518518516,
+        0.7407407407407407,
+        2.592592592592592
+       ],
+       "ask_fb_hz": 0.0,
+       "lc_add_hz": 5.416666666666666,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 24,
+        "spikes_in_burst": 24,
+        "active_neuron_reps": 24,
+        "active_reps": 8,
+        "median_first_spike_step": 96.0
+       },
+       "lc_add_burst": {
+        "spikes_total": 117,
+        "spikes_in_burst": 114,
+        "active_neuron_reps": 114,
+        "active_reps": 8,
+        "median_first_spike_step": 109.0
+       },
+       "meta_raster_sha256": "d1d47b8732f4b00c9f72ab926f29fd67ac1598c38722fb5522a6641268d8a388",
+       "cmp_raster_sha256": "d620260d036010b880128d4d2b017358eb7cbcae48a52f81e69fa248d4c33f97",
+       "lc_raster_sha256": "f68d57e04789df1561eb744f13e030396257470a726effc7ec00a29ec6aa041b"
+      },
+      {
+       "evidence": 0.7,
+       "balance": 0.06767441747633982,
+       "confident": true,
+       "ask_hz": 0.24305555555555552,
+       "ask_hz_per_rep": [
+        0.18518518518518517,
+        0.18518518518518517,
+        0.18518518518518517,
+        0.0,
+        0.0,
+        0.18518518518518517,
+        0.27777777777777773,
+        0.9259259259259258
+       ],
+       "lc_ne_hz": 0.7407407407407407,
+       "lc_ne_hz_per_rep": [
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407
+       ],
+       "ask_fb_hz": 0.0,
+       "lc_add_hz": 4.444444444444445,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 16,
+        "spikes_in_burst": 16,
+        "active_neuron_reps": 16,
+        "active_reps": 8,
+        "median_first_spike_step": 77.5
+       },
+       "lc_add_burst": {
+        "spikes_total": 96,
+        "spikes_in_burst": 93,
+        "active_neuron_reps": 93,
+        "active_reps": 8,
+        "median_first_spike_step": 105.0
+       },
+       "meta_raster_sha256": "8a62cc75c5da32d76f6a6b5427c89bcff4e8a2b175012c3a854052b819064816",
+       "cmp_raster_sha256": "8de595315ca32179209a8fb815321f0f33b7036d35ca457c9a678348b7a17aeb",
+       "lc_raster_sha256": "56f6adae648a592f0276e0e98ecdb6a6cc45a94fe41efa7889bc914d602de108"
+      },
+      {
+       "evidence": 0.8,
+       "balance": 0.0716629094199569,
+       "confident": true,
+       "ask_hz": 0.1388888888888889,
+       "ask_hz_per_rep": [
+        0.18518518518518517,
+        0.09259259259259259,
+        0.18518518518518517,
+        0.0,
+        0.0,
+        0.18518518518518517,
+        0.18518518518518517,
+        0.27777777777777773
+       ],
+       "lc_ne_hz": 0.7407407407407407,
+       "lc_ne_hz_per_rep": [
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407
+       ],
+       "ask_fb_hz": 0.0,
+       "lc_add_hz": 3.842592592592592,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 16,
+        "spikes_in_burst": 16,
+        "active_neuron_reps": 16,
+        "active_reps": 8,
+        "median_first_spike_step": 79.0
+       },
+       "lc_add_burst": {
+        "spikes_total": 83,
+        "spikes_in_burst": 81,
+        "active_neuron_reps": 81,
+        "active_reps": 8,
+        "median_first_spike_step": 107.0
+       },
+       "meta_raster_sha256": "1889bb30ea8afbec8abe8ad208d6067a74e567602c91c8f6699e32498061ec82",
+       "cmp_raster_sha256": "d8041ce54d8c2d187ac979472858f292b3e1bb63aabb13a744218e9be6ad3994",
+       "lc_raster_sha256": "547e45ab5169443bf10afcb75d1f3db67ffc8eb186288684fbe354c06d4f8a64"
+      },
+      {
+       "evidence": 0.9,
+       "balance": 0.07520734158202103,
+       "confident": true,
+       "ask_hz": 0.1388888888888889,
+       "ask_hz_per_rep": [
+        0.18518518518518517,
+        0.0,
+        0.18518518518518517,
+        0.0,
+        0.0,
+        0.18518518518518517,
+        0.27777777777777773,
+        0.27777777777777773
+       ],
+       "lc_ne_hz": 0.7407407407407407,
+       "lc_ne_hz_per_rep": [
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407
+       ],
+       "ask_fb_hz": 0.0,
+       "lc_add_hz": 3.7499999999999996,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 16,
+        "spikes_in_burst": 16,
+        "active_neuron_reps": 16,
+        "active_reps": 8,
+        "median_first_spike_step": 77.0
+       },
+       "lc_add_burst": {
+        "spikes_total": 81,
+        "spikes_in_burst": 77,
+        "active_neuron_reps": 77,
+        "active_reps": 8,
+        "median_first_spike_step": 107.0
+       },
+       "meta_raster_sha256": "c9206f989e8a8ca73f73e5981c48a885c1c6ea9e6b1177c6e9e8d5b62c5270c0",
+       "cmp_raster_sha256": "78707cbc18eec7dc637e437530c4a1c83d11801a70b695ab01ebf0d189767961",
+       "lc_raster_sha256": "125d967872950770f74536ec689ac2b3d2d0b0298f871306c6245bcc28df3c29"
+      },
+      {
+       "evidence": 1.0,
+       "balance": 0.08564659007052086,
+       "confident": true,
+       "ask_hz": 0.1388888888888889,
+       "ask_hz_per_rep": [
+        0.18518518518518517,
+        0.0,
+        0.18518518518518517,
+        0.0,
+        0.0,
+        0.18518518518518517,
+        0.18518518518518517,
+        0.37037037037037035
+       ],
+       "lc_ne_hz": 0.787037037037037,
+       "lc_ne_hz_per_rep": [
+        0.7407407407407407,
+        0.7407407407407407,
+        1.111111111111111,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407
+       ],
+       "ask_fb_hz": 0.0,
+       "lc_add_hz": 3.842592592592592,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 17,
+        "spikes_in_burst": 17,
+        "active_neuron_reps": 17,
+        "active_reps": 8,
+        "median_first_spike_step": 67.0
+       },
+       "lc_add_burst": {
+        "spikes_total": 83,
+        "spikes_in_burst": 80,
+        "active_neuron_reps": 80,
+        "active_reps": 8,
+        "median_first_spike_step": 106.0
+       },
+       "meta_raster_sha256": "49d81b3dbcbbce93e27faf3d14303461d5e7d19049bec8cead88185c1cbc37ed",
+       "cmp_raster_sha256": "030a67dc16e7fcaf1eecf0fd12e81f9da7c4bbef61d8ad2f699a6bd70cd40000",
+       "lc_raster_sha256": "6a192562822cbb149b8a3e4b7a1b2fa2dc0da3273fc14dd77ee26c448f09d31c"
+      }
+     ],
+     "threshold": 0.057845546432234586
+    },
+    "class_swap": {
+     "levels": [
+      {
+       "evidence": 0.0,
+       "balance": 0.027879363898506322,
+       "confident": false,
+       "ask_hz": 4.1782407407407405,
+       "ask_hz_per_rep": [
+        4.444444444444444,
+        4.259259259259259,
+        2.592592592592592,
+        3.6111111111111107,
+        4.259259259259259,
+        3.888888888888889,
+        5.185185185185184,
+        5.185185185185184
+       ],
+       "lc_ne_hz": 3.796296296296296,
+       "lc_ne_hz_per_rep": [
+        2.962962962962963,
+        2.962962962962963,
+        4.814814814814815,
+        3.333333333333333,
+        3.7037037037037033,
+        3.7037037037037033,
+        4.444444444444444,
+        4.444444444444444
+       ],
+       "ask_fb_hz": 0.0,
+       "lc_add_hz": 8.425925925925926,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 82,
+        "spikes_in_burst": 82,
+        "active_neuron_reps": 82,
+        "active_reps": 8,
+        "median_first_spike_step": 108.0
+       },
+       "lc_add_burst": {
+        "spikes_total": 182,
+        "spikes_in_burst": 160,
+        "active_neuron_reps": 160,
+        "active_reps": 8,
+        "median_first_spike_step": 99.0
+       },
+       "meta_raster_sha256": "e47b45f71fc1fd005f61f06518ce2cde87c0f74b5a39c2d50f8aeb48e98e9653",
+       "cmp_raster_sha256": "4823cf01b6352dc47b2d1d6764c5578e88cd809de6057dbd50d0a06dba697ea7",
+       "lc_raster_sha256": "885e33d35330bdb30344c4d4671945e3b24e8cfccfb4f8cd1b9c7c7d4bd8b798"
+      },
+      {
+       "evidence": 0.1,
+       "balance": 0.03187443779430112,
+       "confident": false,
+       "ask_hz": 2.7662037037037037,
+       "ask_hz_per_rep": [
+        4.259259259259259,
+        2.7777777777777777,
+        0.18518518518518517,
+        1.4814814814814814,
+        1.759259259259259,
+        4.074074074074074,
+        3.518518518518518,
+        4.074074074074074
+       ],
+       "lc_ne_hz": 2.4074074074074074,
+       "lc_ne_hz_per_rep": [
+        3.7037037037037033,
+        2.222222222222222,
+        0.7407407407407407,
+        1.8518518518518516,
+        0.7407407407407407,
+        3.7037037037037033,
+        2.592592592592592,
+        3.7037037037037033
+       ],
+       "ask_fb_hz": 0.0,
+       "lc_add_hz": 7.453703703703704,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 52,
+        "spikes_in_burst": 52,
+        "active_neuron_reps": 52,
+        "active_reps": 8,
+        "median_first_spike_step": 106.5
+       },
+       "lc_add_burst": {
+        "spikes_total": 161,
+        "spikes_in_burst": 151,
+        "active_neuron_reps": 151,
+        "active_reps": 8,
+        "median_first_spike_step": 99.0
+       },
+       "meta_raster_sha256": "13b058a0d0bc342204deeeb2a8d48121c85c0f7833ecb838c467516ef2c72f95",
+       "cmp_raster_sha256": "97e3efd4a2b49788d5c2ff0c00c18d7276856bb2e2ddc8508b7423401892352e",
+       "lc_raster_sha256": "77826c9656134156fa67bb155ba1e9cede51887e11622f763814e891b023eba9"
+      },
+      {
+       "evidence": 0.2,
+       "balance": 0.039673944839438965,
+       "confident": false,
+       "ask_hz": 1.6203703703703702,
+       "ask_hz_per_rep": [
+        1.3888888888888888,
+        2.314814814814815,
+        0.0,
+        0.9259259259259258,
+        0.8333333333333333,
+        1.3888888888888888,
+        2.222222222222222,
+        3.888888888888889
+       ],
+       "lc_ne_hz": 1.9444444444444444,
+       "lc_ne_hz_per_rep": [
+        1.4814814814814814,
+        1.4814814814814814,
+        0.7407407407407407,
+        1.8518518518518516,
+        3.7037037037037033,
+        1.8518518518518516,
+        2.222222222222222,
+        2.222222222222222
+       ],
+       "ask_fb_hz": 0.6944444444444443,
+       "lc_add_hz": 6.9907407407407405,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 42,
+        "spikes_in_burst": 42,
+        "active_neuron_reps": 42,
+        "active_reps": 8,
+        "median_first_spike_step": 110.0
+       },
+       "lc_add_burst": {
+        "spikes_total": 151,
+        "spikes_in_burst": 144,
+        "active_neuron_reps": 144,
+        "active_reps": 8,
+        "median_first_spike_step": 102.0
+       },
+       "meta_raster_sha256": "acaebd06fb3a381e3e8bf83de5710aca1566c20b9acaf99fcd7b90e72b10f3f2",
+       "cmp_raster_sha256": "dcb08dba2f3381ef97ea12d77e92f2029180dab4e6976e3d30299828baf098eb",
+       "lc_raster_sha256": "542d5b7d04f36b0c35721aed496fed10f96699515b6da8b2de69bff037364eb1"
+      },
+      {
+       "evidence": 0.3,
+       "balance": 0.04707073044961089,
+       "confident": false,
+       "ask_hz": 1.2731481481481481,
+       "ask_hz_per_rep": [
+        1.759259259259259,
+        2.037037037037037,
+        0.0,
+        0.27777777777777773,
+        0.18518518518518517,
+        1.8518518518518516,
+        1.296296296296296,
+        2.7777777777777777
+       ],
+       "lc_ne_hz": 1.7129629629629628,
+       "lc_ne_hz_per_rep": [
+        0.7407407407407407,
+        4.814814814814815,
+        0.7407407407407407,
+        1.111111111111111,
+        0.7407407407407407,
+        2.592592592592592,
+        0.7407407407407407,
+        2.222222222222222
+       ],
+       "ask_fb_hz": 0.046296296296296294,
+       "lc_add_hz": 6.527777777777778,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 37,
+        "spikes_in_burst": 37,
+        "active_neuron_reps": 37,
+        "active_reps": 8,
+        "median_first_spike_step": 106.0
+       },
+       "lc_add_burst": {
+        "spikes_total": 141,
+        "spikes_in_burst": 136,
+        "active_neuron_reps": 136,
+        "active_reps": 8,
+        "median_first_spike_step": 103.5
+       },
+       "meta_raster_sha256": "8ebdeec8e5ca20c14caa5b4f4d22b5bd5aa6b89430f14afc792769e5232fe56c",
+       "cmp_raster_sha256": "bbc975b61356f34f5f2fa5b80eaf0c580ca84441301b24413375e253fefce465",
+       "lc_raster_sha256": "1e88fd266f2f4579bf0dc3756d98de6cccaf89ccde860a3f0ecb34711996a3c5"
+      },
+      {
+       "evidence": 0.4,
+       "balance": 0.053941605759204175,
+       "confident": false,
+       "ask_hz": 0.6134259259259258,
+       "ask_hz_per_rep": [
+        1.296296296296296,
+        0.27777777777777773,
+        0.0,
+        0.18518518518518517,
+        0.09259259259259259,
+        0.27777777777777773,
+        1.574074074074074,
+        1.2037037037037037
+       ],
+       "lc_ne_hz": 1.5277777777777777,
+       "lc_ne_hz_per_rep": [
+        3.7037037037037033,
+        0.7407407407407407,
+        0.7407407407407407,
+        1.111111111111111,
+        0.7407407407407407,
+        0.7407407407407407,
+        3.7037037037037033,
+        0.7407407407407407
+       ],
+       "ask_fb_hz": 0.0,
+       "lc_add_hz": 5.694444444444444,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 33,
+        "spikes_in_burst": 33,
+        "active_neuron_reps": 33,
+        "active_reps": 8,
+        "median_first_spike_step": 104.0
+       },
+       "lc_add_burst": {
+        "spikes_total": 123,
+        "spikes_in_burst": 120,
+        "active_neuron_reps": 120,
+        "active_reps": 8,
+        "median_first_spike_step": 105.0
+       },
+       "meta_raster_sha256": "e82a95b7264d7e0b8b2b31ec49c50b760771ad333981ff8316f011412d0fbe39",
+       "cmp_raster_sha256": "88215bd4028105c8cf000fe28249bae508bccecfa74365bcc9f10cf15f8a582b",
+       "lc_raster_sha256": "acc2be9b30f145b7f0aa7f77b00507c807ce73dce7d915bf469b8c55c1106ae2"
+      },
+      {
+       "evidence": 0.5,
+       "balance": 0.05872136524316183,
+       "confident": true,
+       "ask_hz": 0.4050925925925925,
+       "ask_hz_per_rep": [
+        0.27777777777777773,
+        0.18518518518518517,
+        0.09259259259259259,
+        0.0,
+        0.0,
+        0.18518518518518517,
+        0.27777777777777773,
+        2.222222222222222
+       ],
+       "lc_ne_hz": 1.1111111111111112,
+       "lc_ne_hz_per_rep": [
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        3.7037037037037033
+       ],
+       "ask_fb_hz": 0.0,
+       "lc_add_hz": 4.62962962962963,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 24,
+        "spikes_in_burst": 24,
+        "active_neuron_reps": 24,
+        "active_reps": 8,
+        "median_first_spike_step": 94.5
+       },
+       "lc_add_burst": {
+        "spikes_total": 100,
+        "spikes_in_burst": 98,
+        "active_neuron_reps": 98,
+        "active_reps": 8,
+        "median_first_spike_step": 105.0
+       },
+       "meta_raster_sha256": "4561388f0baebc68448575d0a9122c7e66c787674bbdf97a2de1146106a22c85",
+       "cmp_raster_sha256": "2c5d9d5ec538047579bd0224664a8cd6ff3eadcc712088890214f151fe01424f",
+       "lc_raster_sha256": "2736e4fc26109add797ed8b0f775a9f9173672d031ce561efaa0b7d387c71486"
+      },
+      {
+       "evidence": 0.6,
+       "balance": 0.06455702489870523,
+       "confident": true,
+       "ask_hz": 0.1388888888888889,
+       "ask_hz_per_rep": [
+        0.18518518518518517,
+        0.0,
+        0.18518518518518517,
+        0.0,
+        0.0,
+        0.18518518518518517,
+        0.18518518518518517,
+        0.37037037037037035
+       ],
+       "lc_ne_hz": 0.7407407407407407,
+       "lc_ne_hz_per_rep": [
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407
+       ],
+       "ask_fb_hz": 0.0,
+       "lc_add_hz": 3.8425925925925926,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 16,
+        "spikes_in_burst": 16,
+        "active_neuron_reps": 16,
+        "active_reps": 8,
+        "median_first_spike_step": 90.5
+       },
+       "lc_add_burst": {
+        "spikes_total": 83,
+        "spikes_in_burst": 81,
+        "active_neuron_reps": 81,
+        "active_reps": 8,
+        "median_first_spike_step": 109.0
+       },
+       "meta_raster_sha256": "0ace95061cabbcb9ce6e8a4889604efc91d64b9dabba0664c4933db17c324b9b",
+       "cmp_raster_sha256": "c68aa06558d442425a109acb0cc81f3c8b23253662ffe4c8ab9703c013d75d36",
+       "lc_raster_sha256": "1e2fe43fd83176bd5f72295e703deef2418442d563299340928ccbcc2a638d63"
+      },
+      {
+       "evidence": 0.7,
+       "balance": 0.0715023964824202,
+       "confident": true,
+       "ask_hz": 0.12731481481481483,
+       "ask_hz_per_rep": [
+        0.18518518518518517,
+        0.0,
+        0.18518518518518517,
+        0.0,
+        0.0,
+        0.18518518518518517,
+        0.18518518518518517,
+        0.27777777777777773
+       ],
+       "lc_ne_hz": 0.787037037037037,
+       "lc_ne_hz_per_rep": [
+        0.7407407407407407,
+        0.7407407407407407,
+        1.111111111111111,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407
+       ],
+       "ask_fb_hz": 0.0,
+       "lc_add_hz": 3.7037037037037033,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 17,
+        "spikes_in_burst": 17,
+        "active_neuron_reps": 17,
+        "active_reps": 8,
+        "median_first_spike_step": 88.0
+       },
+       "lc_add_burst": {
+        "spikes_total": 80,
+        "spikes_in_burst": 79,
+        "active_neuron_reps": 79,
+        "active_reps": 8,
+        "median_first_spike_step": 109.0
+       },
+       "meta_raster_sha256": "5f2b2cc1a556db160408290085480410a953cc5b83755bf144f472a573f87bc7",
+       "cmp_raster_sha256": "189ec742bc757501f027b68b71471c429f78db39838142ecf778745255255e05",
+       "lc_raster_sha256": "83b4065ac79ed5bd512a13f93af50c62cb70c411580e5c256490c5319e238f66"
+      },
+      {
+       "evidence": 0.8,
+       "balance": 0.07684357948096682,
+       "confident": true,
+       "ask_hz": 0.09259259259259259,
+       "ask_hz_per_rep": [
+        0.09259259259259259,
+        0.0,
+        0.18518518518518517,
+        0.0,
+        0.0,
+        0.0,
+        0.18518518518518517,
+        0.27777777777777773
+       ],
+       "lc_ne_hz": 0.787037037037037,
+       "lc_ne_hz_per_rep": [
+        0.7407407407407407,
+        0.7407407407407407,
+        1.111111111111111,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407
+       ],
+       "ask_fb_hz": 0.0,
+       "lc_add_hz": 3.4259259259259256,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 17,
+        "spikes_in_burst": 17,
+        "active_neuron_reps": 17,
+        "active_reps": 8,
+        "median_first_spike_step": 81.0
+       },
+       "lc_add_burst": {
+        "spikes_total": 74,
+        "spikes_in_burst": 68,
+        "active_neuron_reps": 68,
+        "active_reps": 8,
+        "median_first_spike_step": 100.5
+       },
+       "meta_raster_sha256": "a5a983c3cf398aee6f26a54507d8fa36ed63d0bc5d759df98f1237c32facfbcf",
+       "cmp_raster_sha256": "2b6ebd74d206d7ffda7fdfc2f537c15479c9c31d690f24c2b6bcd88e7c4e9cc5",
+       "lc_raster_sha256": "e64c3404699af014391eee06daac4e5dc0627177d2d04e376144dc99c22078a6"
+      },
+      {
+       "evidence": 0.9,
+       "balance": 0.0818160582088231,
+       "confident": true,
+       "ask_hz": 0.08101851851851852,
+       "ask_hz_per_rep": [
+        0.09259259259259259,
+        0.0,
+        0.27777777777777773,
+        0.0,
+        0.09259259259259259,
+        0.0,
+        0.0,
+        0.18518518518518517
+       ],
+       "lc_ne_hz": 0.787037037037037,
+       "lc_ne_hz_per_rep": [
+        0.7407407407407407,
+        0.7407407407407407,
+        1.111111111111111,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407
+       ],
+       "ask_fb_hz": 0.0,
+       "lc_add_hz": 3.194444444444444,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 17,
+        "spikes_in_burst": 17,
+        "active_neuron_reps": 17,
+        "active_reps": 8,
+        "median_first_spike_step": 78.0
+       },
+       "lc_add_burst": {
+        "spikes_total": 69,
+        "spikes_in_burst": 65,
+        "active_neuron_reps": 64,
+        "active_reps": 8,
+        "median_first_spike_step": 96.0
+       },
+       "meta_raster_sha256": "99c1e326edebab36e9659f8f89ed650e6702bf016c9df9602ac84ad1d7243b12",
+       "cmp_raster_sha256": "1556d2e6f59a09d802a55d2749b33e3c077fc5c4a6180545d82b620cd7c11d47",
+       "lc_raster_sha256": "5bc44d67f149eff1f837334f793e2ce3b553df6d2f687cba7a0ac8b5030c7261"
+      },
+      {
+       "evidence": 1.0,
+       "balance": 0.0879712151171182,
+       "confident": true,
+       "ask_hz": 0.15046296296296297,
+       "ask_hz_per_rep": [
+        0.09259259259259259,
+        0.09259259259259259,
+        0.27777777777777773,
+        0.18518518518518517,
+        0.09259259259259259,
+        0.09259259259259259,
+        0.18518518518518517,
+        0.18518518518518517
+       ],
+       "lc_ne_hz": 0.8796296296296297,
+       "lc_ne_hz_per_rep": [
+        0.7407407407407407,
+        0.7407407407407407,
+        1.8518518518518516,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407
+       ],
+       "ask_fb_hz": 0.0,
+       "lc_add_hz": 4.166666666666667,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 19,
+        "spikes_in_burst": 19,
+        "active_neuron_reps": 19,
+        "active_reps": 8,
+        "median_first_spike_step": 68.0
+       },
+       "lc_add_burst": {
+        "spikes_total": 90,
+        "spikes_in_burst": 86,
+        "active_neuron_reps": 86,
+        "active_reps": 8,
+        "median_first_spike_step": 106.5
+       },
+       "meta_raster_sha256": "13f83e8366519f7a518a41e379d3738c960d8f5d8faef2fe62b89a03643443cc",
+       "cmp_raster_sha256": "096a3b37ffde2ab54088b45cc3a44efebd950e075d65b3bc4b35ea9c109c9c5a",
+       "lc_raster_sha256": "d62373a1840ac77e858922bcd94569329e85d4d025f6b9d81c79d33fd7035314"
+      }
+     ],
+     "threshold": 0.057845546432234586,
+     "gates_at_measurement": {
+      "edge_drive": 1.0,
+      "lc_ne_autoinh": 1.0,
+      "lc_ne_gain": 1.0,
+      "ask_fb_loop": 1.0,
+      "lc_add_ctrl": 0.0
+     }
+    },
+    "gain_lesion": {
+     "levels": [
+      {
+       "evidence": 0.0,
+       "balance": 0.01807477725971096,
+       "confident": false,
+       "ask_hz": 1.7361111111111112,
+       "ask_hz_per_rep": [
+        1.3888888888888888,
+        1.574074074074074,
+        2.314814814814815,
+        1.4814814814814814,
+        1.759259259259259,
+        1.8518518518518516,
+        1.759259259259259,
+        1.759259259259259
+       ],
+       "lc_ne_hz": 2.361111111111111,
+       "lc_ne_hz_per_rep": [
+        1.8518518518518516,
+        1.8518518518518516,
+        3.7037037037037033,
+        1.8518518518518516,
+        2.222222222222222,
+        2.962962962962963,
+        2.222222222222222,
+        2.222222222222222
+       ],
+       "ask_fb_hz": 14.074074074074073,
+       "lc_add_hz": 8.194444444444445,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 51,
+        "spikes_in_burst": 51,
+        "active_neuron_reps": 51,
+        "active_reps": 8,
+        "median_first_spike_step": 99.0
+       },
+       "lc_add_burst": {
+        "spikes_total": 177,
+        "spikes_in_burst": 160,
+        "active_neuron_reps": 160,
+        "active_reps": 8,
+        "median_first_spike_step": 98.0
+       },
+       "meta_raster_sha256": "c1d29695eae6f760f550d820440831b414b9ab13a928b3955907b40a1da2e0f1",
+       "cmp_raster_sha256": "dc2d99fc556283d297f083ea00cac6e9806bc03cbc46caf5c7a1228b3903cef0",
+       "lc_raster_sha256": "cf4de03e3f3d4fb909cafef581e65d47b8393c91a6b10f4a60bd8e32d3219689"
+      },
+      {
+       "evidence": 0.1,
+       "balance": 0.029426851478290553,
+       "confident": false,
+       "ask_hz": 1.4930555555555554,
+       "ask_hz_per_rep": [
+        1.574074074074074,
+        1.8518518518518516,
+        0.18518518518518517,
+        1.296296296296296,
+        2.037037037037037,
+        1.9444444444444444,
+        1.759259259259259,
+        1.296296296296296
+       ],
+       "lc_ne_hz": 2.1759259259259256,
+       "lc_ne_hz_per_rep": [
+        1.8518518518518516,
+        2.592592592592592,
+        0.7407407407407407,
+        0.7407407407407407,
+        3.333333333333333,
+        3.333333333333333,
+        2.962962962962963,
+        1.8518518518518516
+       ],
+       "ask_fb_hz": 12.129629629629628,
+       "lc_add_hz": 7.453703703703704,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 47,
+        "spikes_in_burst": 47,
+        "active_neuron_reps": 47,
+        "active_reps": 8,
+        "median_first_spike_step": 107.0
+       },
+       "lc_add_burst": {
+        "spikes_total": 161,
+        "spikes_in_burst": 151,
+        "active_neuron_reps": 151,
+        "active_reps": 8,
+        "median_first_spike_step": 100.0
+       },
+       "meta_raster_sha256": "0c8f37e897616d453956b42550a22e3740a9481351969eb65a8ae1b30013273b",
+       "cmp_raster_sha256": "f86762b2dc2c06de065ee7ead073ec65fb41e2cb4c01f33f467175acdffdd8b0",
+       "lc_raster_sha256": "fe68a89071b42b2d1de6901589b7f11a2fa5a6e02285df1f31a0ee4761c818ab"
+      },
+      {
+       "evidence": 0.2,
+       "balance": 0.036070595668437,
+       "confident": false,
+       "ask_hz": 1.3425925925925926,
+       "ask_hz_per_rep": [
+        1.3888888888888888,
+        1.759259259259259,
+        0.18518518518518517,
+        0.8333333333333333,
+        1.8518518518518516,
+        1.296296296296296,
+        1.8518518518518516,
+        1.574074074074074
+       ],
+       "lc_ne_hz": 2.4537037037037037,
+       "lc_ne_hz_per_rep": [
+        1.8518518518518516,
+        2.962962962962963,
+        0.7407407407407407,
+        4.444444444444444,
+        2.592592592592592,
+        1.8518518518518516,
+        3.333333333333333,
+        1.8518518518518516
+       ],
+       "ask_fb_hz": 11.435185185185183,
+       "lc_add_hz": 7.361111111111111,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 53,
+        "spikes_in_burst": 53,
+        "active_neuron_reps": 53,
+        "active_reps": 8,
+        "median_first_spike_step": 110.0
+       },
+       "lc_add_burst": {
+        "spikes_total": 159,
+        "spikes_in_burst": 150,
+        "active_neuron_reps": 150,
+        "active_reps": 8,
+        "median_first_spike_step": 101.0
+       },
+       "meta_raster_sha256": "d080ee74132549cb97e471e60496e6ee6784e5145e8f5b0a1d155163395e5c84",
+       "cmp_raster_sha256": "32c46532600d7ee1d041d530d6786a15458f0565b48e3360ea26be999e4bf7b3",
+       "lc_raster_sha256": "70d89a67376cf17111d92b5e4a719c5e22b01a29a37c5477d60810d7156b927a"
+      },
+      {
+       "evidence": 0.3,
+       "balance": 0.04415161891807823,
+       "confident": false,
+       "ask_hz": 0.9027777777777778,
+       "ask_hz_per_rep": [
+        1.2037037037037037,
+        1.111111111111111,
+        0.0,
+        0.4629629629629629,
+        0.648148148148148,
+        0.9259259259259258,
+        1.574074074074074,
+        1.296296296296296
+       ],
+       "lc_ne_hz": 2.314814814814815,
+       "lc_ne_hz_per_rep": [
+        1.8518518518518516,
+        4.814814814814815,
+        0.7407407407407407,
+        1.8518518518518516,
+        3.7037037037037033,
+        1.111111111111111,
+        2.222222222222222,
+        2.222222222222222
+       ],
+       "ask_fb_hz": 7.175925925925926,
+       "lc_add_hz": 6.7592592592592595,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 50,
+        "spikes_in_burst": 50,
+        "active_neuron_reps": 50,
+        "active_reps": 8,
+        "median_first_spike_step": 108.0
+       },
+       "lc_add_burst": {
+        "spikes_total": 146,
+        "spikes_in_burst": 140,
+        "active_neuron_reps": 140,
+        "active_reps": 8,
+        "median_first_spike_step": 102.0
+       },
+       "meta_raster_sha256": "11932b0d2ef25d3aead066cb00a55d4e0838f71341392e3d969e863e8acc4bbc",
+       "cmp_raster_sha256": "d8a6aefcc35316188f1d570d313d4b0768df8de5c03d5183d0a7ded3abef17f0",
+       "lc_raster_sha256": "5b606adf2210747b5bb169eea4a06a829f37e2c4332862dd6898d29194449b74"
+      },
+      {
+       "evidence": 0.4,
+       "balance": 0.05244674217368879,
+       "confident": false,
+       "ask_hz": 0.4976851851851851,
+       "ask_hz_per_rep": [
+        0.8333333333333333,
+        0.37037037037037035,
+        0.0,
+        0.18518518518518517,
+        0.18518518518518517,
+        0.27777777777777773,
+        0.8333333333333333,
+        1.296296296296296
+       ],
+       "lc_ne_hz": 2.037037037037037,
+       "lc_ne_hz_per_rep": [
+        4.074074074074074,
+        0.7407407407407407,
+        0.7407407407407407,
+        1.111111111111111,
+        1.8518518518518516,
+        1.8518518518518516,
+        3.7037037037037033,
+        2.222222222222222
+       ],
+       "ask_fb_hz": 3.4722222222222223,
+       "lc_add_hz": 5.833333333333334,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 44,
+        "spikes_in_burst": 44,
+        "active_neuron_reps": 44,
+        "active_reps": 8,
+        "median_first_spike_step": 107.5
+       },
+       "lc_add_burst": {
+        "spikes_total": 126,
+        "spikes_in_burst": 122,
+        "active_neuron_reps": 122,
+        "active_reps": 8,
+        "median_first_spike_step": 105.0
+       },
+       "meta_raster_sha256": "0232c4602785942cd1fb088160e326e90ebfec703ce9a0d34ca2cb82eecb9a37",
+       "cmp_raster_sha256": "a02fe1a08080a0f524c57cd6eae42beae8aec9eab7ab560f46fd8f76a9ba6e9d",
+       "lc_raster_sha256": "b2788906f208ff0de668111fd5072592201538ef0afdcf7143852db721c9dd0d"
+      },
+      {
+       "evidence": 0.5,
+       "balance": 0.05564806049372613,
+       "confident": false,
+       "ask_hz": 0.41666666666666663,
+       "ask_hz_per_rep": [
+        0.8333333333333333,
+        0.27777777777777773,
+        0.0,
+        0.27777777777777773,
+        0.18518518518518517,
+        0.648148148148148,
+        0.27777777777777773,
+        0.8333333333333333
+       ],
+       "lc_ne_hz": 0.8796296296296297,
+       "lc_ne_hz_per_rep": [
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        1.8518518518518516,
+        0.7407407407407407,
+        0.7407407407407407
+       ],
+       "ask_fb_hz": 0.9259259259259258,
+       "lc_add_hz": 5.648148148148147,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 19,
+        "spikes_in_burst": 19,
+        "active_neuron_reps": 19,
+        "active_reps": 8,
+        "median_first_spike_step": 88.0
+       },
+       "lc_add_burst": {
+        "spikes_total": 122,
+        "spikes_in_burst": 120,
+        "active_neuron_reps": 120,
+        "active_reps": 8,
+        "median_first_spike_step": 106.0
+       },
+       "meta_raster_sha256": "10341e064849c58de58ff5adbbe45560a71c543db3503d9a55489443d5dd366d",
+       "cmp_raster_sha256": "a5039e6a549ed6d4e715d13148d0c2ac9e3f3ba5535dd8f0cd47d3ab400b2f06",
+       "lc_raster_sha256": "47d102677b5dc1e7f56c2aec674c38453c4b61fa93b3c116997fca1a8ba014ff"
+      },
+      {
+       "evidence": 0.6,
+       "balance": 0.06385804974611518,
+       "confident": true,
+       "ask_hz": 0.37037037037037035,
+       "ask_hz_per_rep": [
+        0.8333333333333333,
+        0.27777777777777773,
+        0.0,
+        0.18518518518518517,
+        0.18518518518518517,
+        0.27777777777777773,
+        0.27777777777777773,
+        0.9259259259259258
+       ],
+       "lc_ne_hz": 1.1111111111111112,
+       "lc_ne_hz_per_rep": [
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        1.8518518518518516,
+        0.7407407407407407,
+        2.592592592592592
+       ],
+       "ask_fb_hz": 0.0,
+       "lc_add_hz": 5.416666666666666,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 24,
+        "spikes_in_burst": 24,
+        "active_neuron_reps": 24,
+        "active_reps": 8,
+        "median_first_spike_step": 96.0
+       },
+       "lc_add_burst": {
+        "spikes_total": 117,
+        "spikes_in_burst": 114,
+        "active_neuron_reps": 114,
+        "active_reps": 8,
+        "median_first_spike_step": 109.0
+       },
+       "meta_raster_sha256": "d1d47b8732f4b00c9f72ab926f29fd67ac1598c38722fb5522a6641268d8a388",
+       "cmp_raster_sha256": "d620260d036010b880128d4d2b017358eb7cbcae48a52f81e69fa248d4c33f97",
+       "lc_raster_sha256": "f68d57e04789df1561eb744f13e030396257470a726effc7ec00a29ec6aa041b"
+      },
+      {
+       "evidence": 0.7,
+       "balance": 0.06767441747633982,
+       "confident": true,
+       "ask_hz": 0.24305555555555552,
+       "ask_hz_per_rep": [
+        0.18518518518518517,
+        0.18518518518518517,
+        0.18518518518518517,
+        0.0,
+        0.0,
+        0.18518518518518517,
+        0.27777777777777773,
+        0.9259259259259258
+       ],
+       "lc_ne_hz": 0.7407407407407407,
+       "lc_ne_hz_per_rep": [
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407
+       ],
+       "ask_fb_hz": 0.0,
+       "lc_add_hz": 4.444444444444445,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 16,
+        "spikes_in_burst": 16,
+        "active_neuron_reps": 16,
+        "active_reps": 8,
+        "median_first_spike_step": 77.5
+       },
+       "lc_add_burst": {
+        "spikes_total": 96,
+        "spikes_in_burst": 93,
+        "active_neuron_reps": 93,
+        "active_reps": 8,
+        "median_first_spike_step": 105.0
+       },
+       "meta_raster_sha256": "8a62cc75c5da32d76f6a6b5427c89bcff4e8a2b175012c3a854052b819064816",
+       "cmp_raster_sha256": "8de595315ca32179209a8fb815321f0f33b7036d35ca457c9a678348b7a17aeb",
+       "lc_raster_sha256": "56f6adae648a592f0276e0e98ecdb6a6cc45a94fe41efa7889bc914d602de108"
+      },
+      {
+       "evidence": 0.8,
+       "balance": 0.0716629094199569,
+       "confident": true,
+       "ask_hz": 0.1388888888888889,
+       "ask_hz_per_rep": [
+        0.18518518518518517,
+        0.09259259259259259,
+        0.18518518518518517,
+        0.0,
+        0.0,
+        0.18518518518518517,
+        0.18518518518518517,
+        0.27777777777777773
+       ],
+       "lc_ne_hz": 0.7407407407407407,
+       "lc_ne_hz_per_rep": [
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407
+       ],
+       "ask_fb_hz": 0.0,
+       "lc_add_hz": 3.842592592592592,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 16,
+        "spikes_in_burst": 16,
+        "active_neuron_reps": 16,
+        "active_reps": 8,
+        "median_first_spike_step": 79.0
+       },
+       "lc_add_burst": {
+        "spikes_total": 83,
+        "spikes_in_burst": 81,
+        "active_neuron_reps": 81,
+        "active_reps": 8,
+        "median_first_spike_step": 107.0
+       },
+       "meta_raster_sha256": "1889bb30ea8afbec8abe8ad208d6067a74e567602c91c8f6699e32498061ec82",
+       "cmp_raster_sha256": "d8041ce54d8c2d187ac979472858f292b3e1bb63aabb13a744218e9be6ad3994",
+       "lc_raster_sha256": "547e45ab5169443bf10afcb75d1f3db67ffc8eb186288684fbe354c06d4f8a64"
+      },
+      {
+       "evidence": 0.9,
+       "balance": 0.07520734158202103,
+       "confident": true,
+       "ask_hz": 0.1388888888888889,
+       "ask_hz_per_rep": [
+        0.18518518518518517,
+        0.0,
+        0.18518518518518517,
+        0.0,
+        0.0,
+        0.18518518518518517,
+        0.27777777777777773,
+        0.27777777777777773
+       ],
+       "lc_ne_hz": 0.7407407407407407,
+       "lc_ne_hz_per_rep": [
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407
+       ],
+       "ask_fb_hz": 0.0,
+       "lc_add_hz": 3.7499999999999996,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 16,
+        "spikes_in_burst": 16,
+        "active_neuron_reps": 16,
+        "active_reps": 8,
+        "median_first_spike_step": 77.0
+       },
+       "lc_add_burst": {
+        "spikes_total": 81,
+        "spikes_in_burst": 77,
+        "active_neuron_reps": 77,
+        "active_reps": 8,
+        "median_first_spike_step": 107.0
+       },
+       "meta_raster_sha256": "c9206f989e8a8ca73f73e5981c48a885c1c6ea9e6b1177c6e9e8d5b62c5270c0",
+       "cmp_raster_sha256": "78707cbc18eec7dc637e437530c4a1c83d11801a70b695ab01ebf0d189767961",
+       "lc_raster_sha256": "125d967872950770f74536ec689ac2b3d2d0b0298f871306c6245bcc28df3c29"
+      },
+      {
+       "evidence": 1.0,
+       "balance": 0.08564659007052086,
+       "confident": true,
+       "ask_hz": 0.1388888888888889,
+       "ask_hz_per_rep": [
+        0.18518518518518517,
+        0.0,
+        0.18518518518518517,
+        0.0,
+        0.0,
+        0.18518518518518517,
+        0.18518518518518517,
+        0.37037037037037035
+       ],
+       "lc_ne_hz": 0.787037037037037,
+       "lc_ne_hz_per_rep": [
+        0.7407407407407407,
+        0.7407407407407407,
+        1.111111111111111,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407
+       ],
+       "ask_fb_hz": 0.0,
+       "lc_add_hz": 3.842592592592592,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 17,
+        "spikes_in_burst": 17,
+        "active_neuron_reps": 17,
+        "active_reps": 8,
+        "median_first_spike_step": 67.0
+       },
+       "lc_add_burst": {
+        "spikes_total": 83,
+        "spikes_in_burst": 80,
+        "active_neuron_reps": 80,
+        "active_reps": 8,
+        "median_first_spike_step": 106.0
+       },
+       "meta_raster_sha256": "49d81b3dbcbbce93e27faf3d14303461d5e7d19049bec8cead88185c1cbc37ed",
+       "cmp_raster_sha256": "030a67dc16e7fcaf1eecf0fd12e81f9da7c4bbef61d8ad2f699a6bd70cd40000",
+       "lc_raster_sha256": "6a192562822cbb149b8a3e4b7a1b2fa2dc0da3273fc14dd77ee26c448f09d31c"
+      }
+     ],
+     "threshold": 0.057845546432234586,
+     "gates_at_measurement": {
+      "edge_drive": 1.0,
+      "lc_ne_autoinh": 1.0,
+      "lc_ne_gain": 0.0,
+      "ask_fb_loop": 1.0,
+      "lc_add_ctrl": 0.0
+     }
+    },
+    "edge_lesion": {
+     "levels": [
+      {
+       "evidence": 0.0,
+       "balance": 0.01807477725971096,
+       "confident": false,
+       "ask_hz": 0.0,
+       "ask_hz_per_rep": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "lc_ne_hz": 2.361111111111111,
+       "lc_ne_hz_per_rep": [
+        1.8518518518518516,
+        1.8518518518518516,
+        3.7037037037037033,
+        1.8518518518518516,
+        2.222222222222222,
+        2.962962962962963,
+        2.222222222222222,
+        2.222222222222222
+       ],
+       "ask_fb_hz": 0.0,
+       "lc_add_hz": 8.194444444444445,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 51,
+        "spikes_in_burst": 51,
+        "active_neuron_reps": 51,
+        "active_reps": 8,
+        "median_first_spike_step": 99.0
+       },
+       "lc_add_burst": {
+        "spikes_total": 177,
+        "spikes_in_burst": 160,
+        "active_neuron_reps": 160,
+        "active_reps": 8,
+        "median_first_spike_step": 98.0
+       },
+       "meta_raster_sha256": "c1d29695eae6f760f550d820440831b414b9ab13a928b3955907b40a1da2e0f1",
+       "cmp_raster_sha256": "dc2d99fc556283d297f083ea00cac6e9806bc03cbc46caf5c7a1228b3903cef0",
+       "lc_raster_sha256": "cf4de03e3f3d4fb909cafef581e65d47b8393c91a6b10f4a60bd8e32d3219689"
+      },
+      {
+       "evidence": 0.1,
+       "balance": 0.029426851478290553,
+       "confident": false,
+       "ask_hz": 0.0,
+       "ask_hz_per_rep": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "lc_ne_hz": 2.1759259259259256,
+       "lc_ne_hz_per_rep": [
+        1.8518518518518516,
+        2.592592592592592,
+        0.7407407407407407,
+        0.7407407407407407,
+        3.333333333333333,
+        3.333333333333333,
+        2.962962962962963,
+        1.8518518518518516
+       ],
+       "ask_fb_hz": 0.0,
+       "lc_add_hz": 7.453703703703704,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 47,
+        "spikes_in_burst": 47,
+        "active_neuron_reps": 47,
+        "active_reps": 8,
+        "median_first_spike_step": 107.0
+       },
+       "lc_add_burst": {
+        "spikes_total": 161,
+        "spikes_in_burst": 151,
+        "active_neuron_reps": 151,
+        "active_reps": 8,
+        "median_first_spike_step": 100.0
+       },
+       "meta_raster_sha256": "0c8f37e897616d453956b42550a22e3740a9481351969eb65a8ae1b30013273b",
+       "cmp_raster_sha256": "f86762b2dc2c06de065ee7ead073ec65fb41e2cb4c01f33f467175acdffdd8b0",
+       "lc_raster_sha256": "fe68a89071b42b2d1de6901589b7f11a2fa5a6e02285df1f31a0ee4761c818ab"
+      },
+      {
+       "evidence": 0.2,
+       "balance": 0.036070595668437,
+       "confident": false,
+       "ask_hz": 0.0,
+       "ask_hz_per_rep": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "lc_ne_hz": 2.4537037037037037,
+       "lc_ne_hz_per_rep": [
+        1.8518518518518516,
+        2.962962962962963,
+        0.7407407407407407,
+        4.444444444444444,
+        2.592592592592592,
+        1.8518518518518516,
+        3.333333333333333,
+        1.8518518518518516
+       ],
+       "ask_fb_hz": 0.0,
+       "lc_add_hz": 7.361111111111111,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 53,
+        "spikes_in_burst": 53,
+        "active_neuron_reps": 53,
+        "active_reps": 8,
+        "median_first_spike_step": 110.0
+       },
+       "lc_add_burst": {
+        "spikes_total": 159,
+        "spikes_in_burst": 150,
+        "active_neuron_reps": 150,
+        "active_reps": 8,
+        "median_first_spike_step": 101.0
+       },
+       "meta_raster_sha256": "d080ee74132549cb97e471e60496e6ee6784e5145e8f5b0a1d155163395e5c84",
+       "cmp_raster_sha256": "32c46532600d7ee1d041d530d6786a15458f0565b48e3360ea26be999e4bf7b3",
+       "lc_raster_sha256": "70d89a67376cf17111d92b5e4a719c5e22b01a29a37c5477d60810d7156b927a"
+      },
+      {
+       "evidence": 0.3,
+       "balance": 0.04415161891807823,
+       "confident": false,
+       "ask_hz": 0.0,
+       "ask_hz_per_rep": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "lc_ne_hz": 2.314814814814815,
+       "lc_ne_hz_per_rep": [
+        1.8518518518518516,
+        4.814814814814815,
+        0.7407407407407407,
+        1.8518518518518516,
+        3.7037037037037033,
+        1.111111111111111,
+        2.222222222222222,
+        2.222222222222222
+       ],
+       "ask_fb_hz": 0.0,
+       "lc_add_hz": 6.7592592592592595,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 50,
+        "spikes_in_burst": 50,
+        "active_neuron_reps": 50,
+        "active_reps": 8,
+        "median_first_spike_step": 108.0
+       },
+       "lc_add_burst": {
+        "spikes_total": 146,
+        "spikes_in_burst": 140,
+        "active_neuron_reps": 140,
+        "active_reps": 8,
+        "median_first_spike_step": 102.0
+       },
+       "meta_raster_sha256": "11932b0d2ef25d3aead066cb00a55d4e0838f71341392e3d969e863e8acc4bbc",
+       "cmp_raster_sha256": "d8a6aefcc35316188f1d570d313d4b0768df8de5c03d5183d0a7ded3abef17f0",
+       "lc_raster_sha256": "5b606adf2210747b5bb169eea4a06a829f37e2c4332862dd6898d29194449b74"
+      },
+      {
+       "evidence": 0.4,
+       "balance": 0.05244674217368879,
+       "confident": false,
+       "ask_hz": 0.0,
+       "ask_hz_per_rep": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "lc_ne_hz": 2.037037037037037,
+       "lc_ne_hz_per_rep": [
+        4.074074074074074,
+        0.7407407407407407,
+        0.7407407407407407,
+        1.111111111111111,
+        1.8518518518518516,
+        1.8518518518518516,
+        3.7037037037037033,
+        2.222222222222222
+       ],
+       "ask_fb_hz": 0.0,
+       "lc_add_hz": 5.833333333333334,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 44,
+        "spikes_in_burst": 44,
+        "active_neuron_reps": 44,
+        "active_reps": 8,
+        "median_first_spike_step": 107.5
+       },
+       "lc_add_burst": {
+        "spikes_total": 126,
+        "spikes_in_burst": 122,
+        "active_neuron_reps": 122,
+        "active_reps": 8,
+        "median_first_spike_step": 105.0
+       },
+       "meta_raster_sha256": "0232c4602785942cd1fb088160e326e90ebfec703ce9a0d34ca2cb82eecb9a37",
+       "cmp_raster_sha256": "a02fe1a08080a0f524c57cd6eae42beae8aec9eab7ab560f46fd8f76a9ba6e9d",
+       "lc_raster_sha256": "b2788906f208ff0de668111fd5072592201538ef0afdcf7143852db721c9dd0d"
+      },
+      {
+       "evidence": 0.5,
+       "balance": 0.05564806049372613,
+       "confident": false,
+       "ask_hz": 0.0,
+       "ask_hz_per_rep": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "lc_ne_hz": 0.8796296296296297,
+       "lc_ne_hz_per_rep": [
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        1.8518518518518516,
+        0.7407407407407407,
+        0.7407407407407407
+       ],
+       "ask_fb_hz": 0.0,
+       "lc_add_hz": 5.648148148148147,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 19,
+        "spikes_in_burst": 19,
+        "active_neuron_reps": 19,
+        "active_reps": 8,
+        "median_first_spike_step": 88.0
+       },
+       "lc_add_burst": {
+        "spikes_total": 122,
+        "spikes_in_burst": 120,
+        "active_neuron_reps": 120,
+        "active_reps": 8,
+        "median_first_spike_step": 106.0
+       },
+       "meta_raster_sha256": "10341e064849c58de58ff5adbbe45560a71c543db3503d9a55489443d5dd366d",
+       "cmp_raster_sha256": "a5039e6a549ed6d4e715d13148d0c2ac9e3f3ba5535dd8f0cd47d3ab400b2f06",
+       "lc_raster_sha256": "47d102677b5dc1e7f56c2aec674c38453c4b61fa93b3c116997fca1a8ba014ff"
+      },
+      {
+       "evidence": 0.6,
+       "balance": 0.06385804974611518,
+       "confident": true,
+       "ask_hz": 0.0,
+       "ask_hz_per_rep": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "lc_ne_hz": 1.1111111111111112,
+       "lc_ne_hz_per_rep": [
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        1.8518518518518516,
+        0.7407407407407407,
+        2.592592592592592
+       ],
+       "ask_fb_hz": 0.0,
+       "lc_add_hz": 5.416666666666666,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 24,
+        "spikes_in_burst": 24,
+        "active_neuron_reps": 24,
+        "active_reps": 8,
+        "median_first_spike_step": 96.0
+       },
+       "lc_add_burst": {
+        "spikes_total": 117,
+        "spikes_in_burst": 114,
+        "active_neuron_reps": 114,
+        "active_reps": 8,
+        "median_first_spike_step": 109.0
+       },
+       "meta_raster_sha256": "d1d47b8732f4b00c9f72ab926f29fd67ac1598c38722fb5522a6641268d8a388",
+       "cmp_raster_sha256": "d620260d036010b880128d4d2b017358eb7cbcae48a52f81e69fa248d4c33f97",
+       "lc_raster_sha256": "f68d57e04789df1561eb744f13e030396257470a726effc7ec00a29ec6aa041b"
+      },
+      {
+       "evidence": 0.7,
+       "balance": 0.06767441747633982,
+       "confident": true,
+       "ask_hz": 0.0,
+       "ask_hz_per_rep": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "lc_ne_hz": 0.7407407407407407,
+       "lc_ne_hz_per_rep": [
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407
+       ],
+       "ask_fb_hz": 0.0,
+       "lc_add_hz": 4.444444444444445,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 16,
+        "spikes_in_burst": 16,
+        "active_neuron_reps": 16,
+        "active_reps": 8,
+        "median_first_spike_step": 77.5
+       },
+       "lc_add_burst": {
+        "spikes_total": 96,
+        "spikes_in_burst": 93,
+        "active_neuron_reps": 93,
+        "active_reps": 8,
+        "median_first_spike_step": 105.0
+       },
+       "meta_raster_sha256": "8a62cc75c5da32d76f6a6b5427c89bcff4e8a2b175012c3a854052b819064816",
+       "cmp_raster_sha256": "8de595315ca32179209a8fb815321f0f33b7036d35ca457c9a678348b7a17aeb",
+       "lc_raster_sha256": "56f6adae648a592f0276e0e98ecdb6a6cc45a94fe41efa7889bc914d602de108"
+      },
+      {
+       "evidence": 0.8,
+       "balance": 0.0716629094199569,
+       "confident": true,
+       "ask_hz": 0.0,
+       "ask_hz_per_rep": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "lc_ne_hz": 0.7407407407407407,
+       "lc_ne_hz_per_rep": [
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407
+       ],
+       "ask_fb_hz": 0.0,
+       "lc_add_hz": 3.842592592592592,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 16,
+        "spikes_in_burst": 16,
+        "active_neuron_reps": 16,
+        "active_reps": 8,
+        "median_first_spike_step": 79.0
+       },
+       "lc_add_burst": {
+        "spikes_total": 83,
+        "spikes_in_burst": 81,
+        "active_neuron_reps": 81,
+        "active_reps": 8,
+        "median_first_spike_step": 107.0
+       },
+       "meta_raster_sha256": "1889bb30ea8afbec8abe8ad208d6067a74e567602c91c8f6699e32498061ec82",
+       "cmp_raster_sha256": "d8041ce54d8c2d187ac979472858f292b3e1bb63aabb13a744218e9be6ad3994",
+       "lc_raster_sha256": "547e45ab5169443bf10afcb75d1f3db67ffc8eb186288684fbe354c06d4f8a64"
+      },
+      {
+       "evidence": 0.9,
+       "balance": 0.07520734158202103,
+       "confident": true,
+       "ask_hz": 0.0,
+       "ask_hz_per_rep": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "lc_ne_hz": 0.7407407407407407,
+       "lc_ne_hz_per_rep": [
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407
+       ],
+       "ask_fb_hz": 0.0,
+       "lc_add_hz": 3.7499999999999996,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 16,
+        "spikes_in_burst": 16,
+        "active_neuron_reps": 16,
+        "active_reps": 8,
+        "median_first_spike_step": 77.0
+       },
+       "lc_add_burst": {
+        "spikes_total": 81,
+        "spikes_in_burst": 77,
+        "active_neuron_reps": 77,
+        "active_reps": 8,
+        "median_first_spike_step": 107.0
+       },
+       "meta_raster_sha256": "c9206f989e8a8ca73f73e5981c48a885c1c6ea9e6b1177c6e9e8d5b62c5270c0",
+       "cmp_raster_sha256": "78707cbc18eec7dc637e437530c4a1c83d11801a70b695ab01ebf0d189767961",
+       "lc_raster_sha256": "125d967872950770f74536ec689ac2b3d2d0b0298f871306c6245bcc28df3c29"
+      },
+      {
+       "evidence": 1.0,
+       "balance": 0.08564659007052086,
+       "confident": true,
+       "ask_hz": 0.0,
+       "ask_hz_per_rep": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "lc_ne_hz": 0.787037037037037,
+       "lc_ne_hz_per_rep": [
+        0.7407407407407407,
+        0.7407407407407407,
+        1.111111111111111,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407
+       ],
+       "ask_fb_hz": 0.0,
+       "lc_add_hz": 3.842592592592592,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 17,
+        "spikes_in_burst": 17,
+        "active_neuron_reps": 17,
+        "active_reps": 8,
+        "median_first_spike_step": 67.0
+       },
+       "lc_add_burst": {
+        "spikes_total": 83,
+        "spikes_in_burst": 80,
+        "active_neuron_reps": 80,
+        "active_reps": 8,
+        "median_first_spike_step": 106.0
+       },
+       "meta_raster_sha256": "49d81b3dbcbbce93e27faf3d14303461d5e7d19049bec8cead88185c1cbc37ed",
+       "cmp_raster_sha256": "030a67dc16e7fcaf1eecf0fd12e81f9da7c4bbef61d8ad2f699a6bd70cd40000",
+       "lc_raster_sha256": "6a192562822cbb149b8a3e4b7a1b2fa2dc0da3273fc14dd77ee26c448f09d31c"
+      }
+     ],
+     "threshold": 0.057845546432234586,
+     "gates_at_measurement": {
+      "edge_drive": 0.0,
+      "lc_ne_autoinh": 1.0,
+      "lc_ne_gain": 1.0,
+      "ask_fb_loop": 1.0,
+      "lc_add_ctrl": 0.0
+     }
+    },
+    "both_lesion": {
+     "levels": [
+      {
+       "evidence": 0.0,
+       "balance": 0.01807477725971096,
+       "confident": false,
+       "ask_hz": 0.0,
+       "ask_hz_per_rep": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "lc_ne_hz": 2.361111111111111,
+       "lc_ne_hz_per_rep": [
+        1.8518518518518516,
+        1.8518518518518516,
+        3.7037037037037033,
+        1.8518518518518516,
+        2.222222222222222,
+        2.962962962962963,
+        2.222222222222222,
+        2.222222222222222
+       ],
+       "ask_fb_hz": 0.0,
+       "lc_add_hz": 8.194444444444445,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 51,
+        "spikes_in_burst": 51,
+        "active_neuron_reps": 51,
+        "active_reps": 8,
+        "median_first_spike_step": 99.0
+       },
+       "lc_add_burst": {
+        "spikes_total": 177,
+        "spikes_in_burst": 160,
+        "active_neuron_reps": 160,
+        "active_reps": 8,
+        "median_first_spike_step": 98.0
+       },
+       "meta_raster_sha256": "c1d29695eae6f760f550d820440831b414b9ab13a928b3955907b40a1da2e0f1",
+       "cmp_raster_sha256": "dc2d99fc556283d297f083ea00cac6e9806bc03cbc46caf5c7a1228b3903cef0",
+       "lc_raster_sha256": "cf4de03e3f3d4fb909cafef581e65d47b8393c91a6b10f4a60bd8e32d3219689"
+      },
+      {
+       "evidence": 0.1,
+       "balance": 0.029426851478290553,
+       "confident": false,
+       "ask_hz": 0.0,
+       "ask_hz_per_rep": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "lc_ne_hz": 2.1759259259259256,
+       "lc_ne_hz_per_rep": [
+        1.8518518518518516,
+        2.592592592592592,
+        0.7407407407407407,
+        0.7407407407407407,
+        3.333333333333333,
+        3.333333333333333,
+        2.962962962962963,
+        1.8518518518518516
+       ],
+       "ask_fb_hz": 0.0,
+       "lc_add_hz": 7.453703703703704,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 47,
+        "spikes_in_burst": 47,
+        "active_neuron_reps": 47,
+        "active_reps": 8,
+        "median_first_spike_step": 107.0
+       },
+       "lc_add_burst": {
+        "spikes_total": 161,
+        "spikes_in_burst": 151,
+        "active_neuron_reps": 151,
+        "active_reps": 8,
+        "median_first_spike_step": 100.0
+       },
+       "meta_raster_sha256": "0c8f37e897616d453956b42550a22e3740a9481351969eb65a8ae1b30013273b",
+       "cmp_raster_sha256": "f86762b2dc2c06de065ee7ead073ec65fb41e2cb4c01f33f467175acdffdd8b0",
+       "lc_raster_sha256": "fe68a89071b42b2d1de6901589b7f11a2fa5a6e02285df1f31a0ee4761c818ab"
+      },
+      {
+       "evidence": 0.2,
+       "balance": 0.036070595668437,
+       "confident": false,
+       "ask_hz": 0.0,
+       "ask_hz_per_rep": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "lc_ne_hz": 2.4537037037037037,
+       "lc_ne_hz_per_rep": [
+        1.8518518518518516,
+        2.962962962962963,
+        0.7407407407407407,
+        4.444444444444444,
+        2.592592592592592,
+        1.8518518518518516,
+        3.333333333333333,
+        1.8518518518518516
+       ],
+       "ask_fb_hz": 0.0,
+       "lc_add_hz": 7.361111111111111,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 53,
+        "spikes_in_burst": 53,
+        "active_neuron_reps": 53,
+        "active_reps": 8,
+        "median_first_spike_step": 110.0
+       },
+       "lc_add_burst": {
+        "spikes_total": 159,
+        "spikes_in_burst": 150,
+        "active_neuron_reps": 150,
+        "active_reps": 8,
+        "median_first_spike_step": 101.0
+       },
+       "meta_raster_sha256": "d080ee74132549cb97e471e60496e6ee6784e5145e8f5b0a1d155163395e5c84",
+       "cmp_raster_sha256": "32c46532600d7ee1d041d530d6786a15458f0565b48e3360ea26be999e4bf7b3",
+       "lc_raster_sha256": "70d89a67376cf17111d92b5e4a719c5e22b01a29a37c5477d60810d7156b927a"
+      },
+      {
+       "evidence": 0.3,
+       "balance": 0.04415161891807823,
+       "confident": false,
+       "ask_hz": 0.0,
+       "ask_hz_per_rep": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "lc_ne_hz": 2.314814814814815,
+       "lc_ne_hz_per_rep": [
+        1.8518518518518516,
+        4.814814814814815,
+        0.7407407407407407,
+        1.8518518518518516,
+        3.7037037037037033,
+        1.111111111111111,
+        2.222222222222222,
+        2.222222222222222
+       ],
+       "ask_fb_hz": 0.0,
+       "lc_add_hz": 6.7592592592592595,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 50,
+        "spikes_in_burst": 50,
+        "active_neuron_reps": 50,
+        "active_reps": 8,
+        "median_first_spike_step": 108.0
+       },
+       "lc_add_burst": {
+        "spikes_total": 146,
+        "spikes_in_burst": 140,
+        "active_neuron_reps": 140,
+        "active_reps": 8,
+        "median_first_spike_step": 102.0
+       },
+       "meta_raster_sha256": "11932b0d2ef25d3aead066cb00a55d4e0838f71341392e3d969e863e8acc4bbc",
+       "cmp_raster_sha256": "d8a6aefcc35316188f1d570d313d4b0768df8de5c03d5183d0a7ded3abef17f0",
+       "lc_raster_sha256": "5b606adf2210747b5bb169eea4a06a829f37e2c4332862dd6898d29194449b74"
+      },
+      {
+       "evidence": 0.4,
+       "balance": 0.05244674217368879,
+       "confident": false,
+       "ask_hz": 0.0,
+       "ask_hz_per_rep": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "lc_ne_hz": 2.037037037037037,
+       "lc_ne_hz_per_rep": [
+        4.074074074074074,
+        0.7407407407407407,
+        0.7407407407407407,
+        1.111111111111111,
+        1.8518518518518516,
+        1.8518518518518516,
+        3.7037037037037033,
+        2.222222222222222
+       ],
+       "ask_fb_hz": 0.0,
+       "lc_add_hz": 5.833333333333334,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 44,
+        "spikes_in_burst": 44,
+        "active_neuron_reps": 44,
+        "active_reps": 8,
+        "median_first_spike_step": 107.5
+       },
+       "lc_add_burst": {
+        "spikes_total": 126,
+        "spikes_in_burst": 122,
+        "active_neuron_reps": 122,
+        "active_reps": 8,
+        "median_first_spike_step": 105.0
+       },
+       "meta_raster_sha256": "0232c4602785942cd1fb088160e326e90ebfec703ce9a0d34ca2cb82eecb9a37",
+       "cmp_raster_sha256": "a02fe1a08080a0f524c57cd6eae42beae8aec9eab7ab560f46fd8f76a9ba6e9d",
+       "lc_raster_sha256": "b2788906f208ff0de668111fd5072592201538ef0afdcf7143852db721c9dd0d"
+      },
+      {
+       "evidence": 0.5,
+       "balance": 0.05564806049372613,
+       "confident": false,
+       "ask_hz": 0.0,
+       "ask_hz_per_rep": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "lc_ne_hz": 0.8796296296296297,
+       "lc_ne_hz_per_rep": [
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        1.8518518518518516,
+        0.7407407407407407,
+        0.7407407407407407
+       ],
+       "ask_fb_hz": 0.0,
+       "lc_add_hz": 5.648148148148147,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 19,
+        "spikes_in_burst": 19,
+        "active_neuron_reps": 19,
+        "active_reps": 8,
+        "median_first_spike_step": 88.0
+       },
+       "lc_add_burst": {
+        "spikes_total": 122,
+        "spikes_in_burst": 120,
+        "active_neuron_reps": 120,
+        "active_reps": 8,
+        "median_first_spike_step": 106.0
+       },
+       "meta_raster_sha256": "10341e064849c58de58ff5adbbe45560a71c543db3503d9a55489443d5dd366d",
+       "cmp_raster_sha256": "a5039e6a549ed6d4e715d13148d0c2ac9e3f3ba5535dd8f0cd47d3ab400b2f06",
+       "lc_raster_sha256": "47d102677b5dc1e7f56c2aec674c38453c4b61fa93b3c116997fca1a8ba014ff"
+      },
+      {
+       "evidence": 0.6,
+       "balance": 0.06385804974611518,
+       "confident": true,
+       "ask_hz": 0.0,
+       "ask_hz_per_rep": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "lc_ne_hz": 1.1111111111111112,
+       "lc_ne_hz_per_rep": [
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        1.8518518518518516,
+        0.7407407407407407,
+        2.592592592592592
+       ],
+       "ask_fb_hz": 0.0,
+       "lc_add_hz": 5.416666666666666,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 24,
+        "spikes_in_burst": 24,
+        "active_neuron_reps": 24,
+        "active_reps": 8,
+        "median_first_spike_step": 96.0
+       },
+       "lc_add_burst": {
+        "spikes_total": 117,
+        "spikes_in_burst": 114,
+        "active_neuron_reps": 114,
+        "active_reps": 8,
+        "median_first_spike_step": 109.0
+       },
+       "meta_raster_sha256": "d1d47b8732f4b00c9f72ab926f29fd67ac1598c38722fb5522a6641268d8a388",
+       "cmp_raster_sha256": "d620260d036010b880128d4d2b017358eb7cbcae48a52f81e69fa248d4c33f97",
+       "lc_raster_sha256": "f68d57e04789df1561eb744f13e030396257470a726effc7ec00a29ec6aa041b"
+      },
+      {
+       "evidence": 0.7,
+       "balance": 0.06767441747633982,
+       "confident": true,
+       "ask_hz": 0.0,
+       "ask_hz_per_rep": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "lc_ne_hz": 0.7407407407407407,
+       "lc_ne_hz_per_rep": [
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407
+       ],
+       "ask_fb_hz": 0.0,
+       "lc_add_hz": 4.444444444444445,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 16,
+        "spikes_in_burst": 16,
+        "active_neuron_reps": 16,
+        "active_reps": 8,
+        "median_first_spike_step": 77.5
+       },
+       "lc_add_burst": {
+        "spikes_total": 96,
+        "spikes_in_burst": 93,
+        "active_neuron_reps": 93,
+        "active_reps": 8,
+        "median_first_spike_step": 105.0
+       },
+       "meta_raster_sha256": "8a62cc75c5da32d76f6a6b5427c89bcff4e8a2b175012c3a854052b819064816",
+       "cmp_raster_sha256": "8de595315ca32179209a8fb815321f0f33b7036d35ca457c9a678348b7a17aeb",
+       "lc_raster_sha256": "56f6adae648a592f0276e0e98ecdb6a6cc45a94fe41efa7889bc914d602de108"
+      },
+      {
+       "evidence": 0.8,
+       "balance": 0.0716629094199569,
+       "confident": true,
+       "ask_hz": 0.0,
+       "ask_hz_per_rep": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "lc_ne_hz": 0.7407407407407407,
+       "lc_ne_hz_per_rep": [
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407
+       ],
+       "ask_fb_hz": 0.0,
+       "lc_add_hz": 3.842592592592592,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 16,
+        "spikes_in_burst": 16,
+        "active_neuron_reps": 16,
+        "active_reps": 8,
+        "median_first_spike_step": 79.0
+       },
+       "lc_add_burst": {
+        "spikes_total": 83,
+        "spikes_in_burst": 81,
+        "active_neuron_reps": 81,
+        "active_reps": 8,
+        "median_first_spike_step": 107.0
+       },
+       "meta_raster_sha256": "1889bb30ea8afbec8abe8ad208d6067a74e567602c91c8f6699e32498061ec82",
+       "cmp_raster_sha256": "d8041ce54d8c2d187ac979472858f292b3e1bb63aabb13a744218e9be6ad3994",
+       "lc_raster_sha256": "547e45ab5169443bf10afcb75d1f3db67ffc8eb186288684fbe354c06d4f8a64"
+      },
+      {
+       "evidence": 0.9,
+       "balance": 0.07520734158202103,
+       "confident": true,
+       "ask_hz": 0.0,
+       "ask_hz_per_rep": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "lc_ne_hz": 0.7407407407407407,
+       "lc_ne_hz_per_rep": [
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407
+       ],
+       "ask_fb_hz": 0.0,
+       "lc_add_hz": 3.7499999999999996,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 16,
+        "spikes_in_burst": 16,
+        "active_neuron_reps": 16,
+        "active_reps": 8,
+        "median_first_spike_step": 77.0
+       },
+       "lc_add_burst": {
+        "spikes_total": 81,
+        "spikes_in_burst": 77,
+        "active_neuron_reps": 77,
+        "active_reps": 8,
+        "median_first_spike_step": 107.0
+       },
+       "meta_raster_sha256": "c9206f989e8a8ca73f73e5981c48a885c1c6ea9e6b1177c6e9e8d5b62c5270c0",
+       "cmp_raster_sha256": "78707cbc18eec7dc637e437530c4a1c83d11801a70b695ab01ebf0d189767961",
+       "lc_raster_sha256": "125d967872950770f74536ec689ac2b3d2d0b0298f871306c6245bcc28df3c29"
+      },
+      {
+       "evidence": 1.0,
+       "balance": 0.08564659007052086,
+       "confident": true,
+       "ask_hz": 0.0,
+       "ask_hz_per_rep": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "lc_ne_hz": 0.787037037037037,
+       "lc_ne_hz_per_rep": [
+        0.7407407407407407,
+        0.7407407407407407,
+        1.111111111111111,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407
+       ],
+       "ask_fb_hz": 0.0,
+       "lc_add_hz": 3.842592592592592,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 17,
+        "spikes_in_burst": 17,
+        "active_neuron_reps": 17,
+        "active_reps": 8,
+        "median_first_spike_step": 67.0
+       },
+       "lc_add_burst": {
+        "spikes_total": 83,
+        "spikes_in_burst": 80,
+        "active_neuron_reps": 80,
+        "active_reps": 8,
+        "median_first_spike_step": 106.0
+       },
+       "meta_raster_sha256": "49d81b3dbcbbce93e27faf3d14303461d5e7d19049bec8cead88185c1cbc37ed",
+       "cmp_raster_sha256": "030a67dc16e7fcaf1eecf0fd12e81f9da7c4bbef61d8ad2f699a6bd70cd40000",
+       "lc_raster_sha256": "6a192562822cbb149b8a3e4b7a1b2fa2dc0da3273fc14dd77ee26c448f09d31c"
+      }
+     ],
+     "threshold": 0.057845546432234586,
+     "gates_at_measurement": {
+      "edge_drive": 0.0,
+      "lc_ne_autoinh": 1.0,
+      "lc_ne_gain": 0.0,
+      "ask_fb_loop": 1.0,
+      "lc_add_ctrl": 0.0
+     }
+    },
+    "loop_lesion_lc_on": {
+     "levels": [
+      {
+       "evidence": 0.0,
+       "balance": 0.01807477725971096,
+       "confident": false,
+       "ask_hz": 3.1134259259259256,
+       "ask_hz_per_rep": [
+        2.8703703703703702,
+        2.7777777777777777,
+        3.796296296296296,
+        2.5,
+        2.5,
+        3.518518518518518,
+        2.7777777777777777,
+        4.166666666666666
+       ],
+       "lc_ne_hz": 2.361111111111111,
+       "lc_ne_hz_per_rep": [
+        1.8518518518518516,
+        1.8518518518518516,
+        3.7037037037037033,
+        1.8518518518518516,
+        2.222222222222222,
+        2.962962962962963,
+        2.222222222222222,
+        2.222222222222222
+       ],
+       "ask_fb_hz": 0.0,
+       "lc_add_hz": 8.194444444444445,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 51,
+        "spikes_in_burst": 51,
+        "active_neuron_reps": 51,
+        "active_reps": 8,
+        "median_first_spike_step": 99.0
+       },
+       "lc_add_burst": {
+        "spikes_total": 177,
+        "spikes_in_burst": 160,
+        "active_neuron_reps": 160,
+        "active_reps": 8,
+        "median_first_spike_step": 98.0
+       },
+       "meta_raster_sha256": "c1d29695eae6f760f550d820440831b414b9ab13a928b3955907b40a1da2e0f1",
+       "cmp_raster_sha256": "dc2d99fc556283d297f083ea00cac6e9806bc03cbc46caf5c7a1228b3903cef0",
+       "lc_raster_sha256": "cf4de03e3f3d4fb909cafef581e65d47b8393c91a6b10f4a60bd8e32d3219689"
+      },
+      {
+       "evidence": 0.1,
+       "balance": 0.029426851478290553,
+       "confident": false,
+       "ask_hz": 2.858796296296296,
+       "ask_hz_per_rep": [
+        2.962962962962963,
+        3.518518518518518,
+        0.18518518518518517,
+        2.1296296296296293,
+        3.888888888888889,
+        3.888888888888889,
+        3.518518518518518,
+        2.7777777777777777
+       ],
+       "lc_ne_hz": 2.1759259259259256,
+       "lc_ne_hz_per_rep": [
+        1.8518518518518516,
+        2.592592592592592,
+        0.7407407407407407,
+        0.7407407407407407,
+        3.333333333333333,
+        3.333333333333333,
+        2.962962962962963,
+        1.8518518518518516
+       ],
+       "ask_fb_hz": 0.13888888888888887,
+       "lc_add_hz": 7.453703703703704,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 47,
+        "spikes_in_burst": 47,
+        "active_neuron_reps": 47,
+        "active_reps": 8,
+        "median_first_spike_step": 107.0
+       },
+       "lc_add_burst": {
+        "spikes_total": 161,
+        "spikes_in_burst": 151,
+        "active_neuron_reps": 151,
+        "active_reps": 8,
+        "median_first_spike_step": 100.0
+       },
+       "meta_raster_sha256": "0c8f37e897616d453956b42550a22e3740a9481351969eb65a8ae1b30013273b",
+       "cmp_raster_sha256": "f86762b2dc2c06de065ee7ead073ec65fb41e2cb4c01f33f467175acdffdd8b0",
+       "lc_raster_sha256": "fe68a89071b42b2d1de6901589b7f11a2fa5a6e02285df1f31a0ee4761c818ab"
+      },
+      {
+       "evidence": 0.2,
+       "balance": 0.036070595668437,
+       "confident": false,
+       "ask_hz": 2.6157407407407405,
+       "ask_hz_per_rep": [
+        2.962962962962963,
+        3.518518518518518,
+        0.18518518518518517,
+        1.296296296296296,
+        3.7037037037037033,
+        2.685185185185185,
+        3.6111111111111107,
+        2.962962962962963
+       ],
+       "lc_ne_hz": 2.4537037037037037,
+       "lc_ne_hz_per_rep": [
+        1.8518518518518516,
+        2.962962962962963,
+        0.7407407407407407,
+        4.444444444444444,
+        2.592592592592592,
+        1.8518518518518516,
+        3.333333333333333,
+        1.8518518518518516
+       ],
+       "ask_fb_hz": 0.5555555555555556,
+       "lc_add_hz": 7.361111111111111,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 53,
+        "spikes_in_burst": 53,
+        "active_neuron_reps": 53,
+        "active_reps": 8,
+        "median_first_spike_step": 110.0
+       },
+       "lc_add_burst": {
+        "spikes_total": 159,
+        "spikes_in_burst": 150,
+        "active_neuron_reps": 150,
+        "active_reps": 8,
+        "median_first_spike_step": 101.0
+       },
+       "meta_raster_sha256": "d080ee74132549cb97e471e60496e6ee6784e5145e8f5b0a1d155163395e5c84",
+       "cmp_raster_sha256": "32c46532600d7ee1d041d530d6786a15458f0565b48e3360ea26be999e4bf7b3",
+       "lc_raster_sha256": "70d89a67376cf17111d92b5e4a719c5e22b01a29a37c5477d60810d7156b927a"
+      },
+      {
+       "evidence": 0.3,
+       "balance": 0.04415161891807823,
+       "confident": false,
+       "ask_hz": 1.5972222222222223,
+       "ask_hz_per_rep": [
+        2.037037037037037,
+        2.037037037037037,
+        0.0,
+        0.4629629629629629,
+        0.7407407407407407,
+        1.3888888888888888,
+        3.0555555555555554,
+        3.0555555555555554
+       ],
+       "lc_ne_hz": 2.314814814814815,
+       "lc_ne_hz_per_rep": [
+        1.8518518518518516,
+        4.814814814814815,
+        0.7407407407407407,
+        1.8518518518518516,
+        3.7037037037037033,
+        1.111111111111111,
+        2.222222222222222,
+        2.222222222222222
+       ],
+       "ask_fb_hz": 0.0,
+       "lc_add_hz": 6.7592592592592595,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 50,
+        "spikes_in_burst": 50,
+        "active_neuron_reps": 50,
+        "active_reps": 8,
+        "median_first_spike_step": 108.0
+       },
+       "lc_add_burst": {
+        "spikes_total": 146,
+        "spikes_in_burst": 140,
+        "active_neuron_reps": 140,
+        "active_reps": 8,
+        "median_first_spike_step": 102.0
+       },
+       "meta_raster_sha256": "11932b0d2ef25d3aead066cb00a55d4e0838f71341392e3d969e863e8acc4bbc",
+       "cmp_raster_sha256": "d8a6aefcc35316188f1d570d313d4b0768df8de5c03d5183d0a7ded3abef17f0",
+       "lc_raster_sha256": "5b606adf2210747b5bb169eea4a06a829f37e2c4332862dd6898d29194449b74"
+      },
+      {
+       "evidence": 0.4,
+       "balance": 0.05244674217368879,
+       "confident": false,
+       "ask_hz": 0.9027777777777777,
+       "ask_hz_per_rep": [
+        1.3888888888888888,
+        0.37037037037037035,
+        0.0,
+        0.18518518518518517,
+        0.18518518518518517,
+        0.27777777777777773,
+        1.6666666666666665,
+        3.148148148148148
+       ],
+       "lc_ne_hz": 2.037037037037037,
+       "lc_ne_hz_per_rep": [
+        4.074074074074074,
+        0.7407407407407407,
+        0.7407407407407407,
+        1.111111111111111,
+        1.8518518518518516,
+        1.8518518518518516,
+        3.7037037037037033,
+        2.222222222222222
+       ],
+       "ask_fb_hz": 0.18518518518518517,
+       "lc_add_hz": 5.833333333333334,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 44,
+        "spikes_in_burst": 44,
+        "active_neuron_reps": 44,
+        "active_reps": 8,
+        "median_first_spike_step": 107.5
+       },
+       "lc_add_burst": {
+        "spikes_total": 126,
+        "spikes_in_burst": 122,
+        "active_neuron_reps": 122,
+        "active_reps": 8,
+        "median_first_spike_step": 105.0
+       },
+       "meta_raster_sha256": "0232c4602785942cd1fb088160e326e90ebfec703ce9a0d34ca2cb82eecb9a37",
+       "cmp_raster_sha256": "a02fe1a08080a0f524c57cd6eae42beae8aec9eab7ab560f46fd8f76a9ba6e9d",
+       "lc_raster_sha256": "b2788906f208ff0de668111fd5072592201538ef0afdcf7143852db721c9dd0d"
+      },
+      {
+       "evidence": 0.5,
+       "balance": 0.05564806049372613,
+       "confident": false,
+       "ask_hz": 0.48611111111111105,
+       "ask_hz_per_rep": [
+        0.8333333333333333,
+        0.27777777777777773,
+        0.0,
+        0.27777777777777773,
+        0.18518518518518517,
+        0.648148148148148,
+        0.27777777777777773,
+        1.3888888888888888
+       ],
+       "lc_ne_hz": 0.8796296296296297,
+       "lc_ne_hz_per_rep": [
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        1.8518518518518516,
+        0.7407407407407407,
+        0.7407407407407407
+       ],
+       "ask_fb_hz": 0.0,
+       "lc_add_hz": 5.648148148148147,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 19,
+        "spikes_in_burst": 19,
+        "active_neuron_reps": 19,
+        "active_reps": 8,
+        "median_first_spike_step": 88.0
+       },
+       "lc_add_burst": {
+        "spikes_total": 122,
+        "spikes_in_burst": 120,
+        "active_neuron_reps": 120,
+        "active_reps": 8,
+        "median_first_spike_step": 106.0
+       },
+       "meta_raster_sha256": "10341e064849c58de58ff5adbbe45560a71c543db3503d9a55489443d5dd366d",
+       "cmp_raster_sha256": "a5039e6a549ed6d4e715d13148d0c2ac9e3f3ba5535dd8f0cd47d3ab400b2f06",
+       "lc_raster_sha256": "47d102677b5dc1e7f56c2aec674c38453c4b61fa93b3c116997fca1a8ba014ff"
+      },
+      {
+       "evidence": 0.6,
+       "balance": 0.06385804974611518,
+       "confident": true,
+       "ask_hz": 0.37037037037037035,
+       "ask_hz_per_rep": [
+        0.8333333333333333,
+        0.27777777777777773,
+        0.0,
+        0.18518518518518517,
+        0.18518518518518517,
+        0.27777777777777773,
+        0.27777777777777773,
+        0.9259259259259258
+       ],
+       "lc_ne_hz": 1.1111111111111112,
+       "lc_ne_hz_per_rep": [
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        1.8518518518518516,
+        0.7407407407407407,
+        2.592592592592592
+       ],
+       "ask_fb_hz": 0.0,
+       "lc_add_hz": 5.416666666666666,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 24,
+        "spikes_in_burst": 24,
+        "active_neuron_reps": 24,
+        "active_reps": 8,
+        "median_first_spike_step": 96.0
+       },
+       "lc_add_burst": {
+        "spikes_total": 117,
+        "spikes_in_burst": 114,
+        "active_neuron_reps": 114,
+        "active_reps": 8,
+        "median_first_spike_step": 109.0
+       },
+       "meta_raster_sha256": "d1d47b8732f4b00c9f72ab926f29fd67ac1598c38722fb5522a6641268d8a388",
+       "cmp_raster_sha256": "d620260d036010b880128d4d2b017358eb7cbcae48a52f81e69fa248d4c33f97",
+       "lc_raster_sha256": "f68d57e04789df1561eb744f13e030396257470a726effc7ec00a29ec6aa041b"
+      },
+      {
+       "evidence": 0.7,
+       "balance": 0.06767441747633982,
+       "confident": true,
+       "ask_hz": 0.24305555555555552,
+       "ask_hz_per_rep": [
+        0.18518518518518517,
+        0.18518518518518517,
+        0.18518518518518517,
+        0.0,
+        0.0,
+        0.18518518518518517,
+        0.27777777777777773,
+        0.9259259259259258
+       ],
+       "lc_ne_hz": 0.7407407407407407,
+       "lc_ne_hz_per_rep": [
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407
+       ],
+       "ask_fb_hz": 0.0,
+       "lc_add_hz": 4.444444444444445,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 16,
+        "spikes_in_burst": 16,
+        "active_neuron_reps": 16,
+        "active_reps": 8,
+        "median_first_spike_step": 77.5
+       },
+       "lc_add_burst": {
+        "spikes_total": 96,
+        "spikes_in_burst": 93,
+        "active_neuron_reps": 93,
+        "active_reps": 8,
+        "median_first_spike_step": 105.0
+       },
+       "meta_raster_sha256": "8a62cc75c5da32d76f6a6b5427c89bcff4e8a2b175012c3a854052b819064816",
+       "cmp_raster_sha256": "8de595315ca32179209a8fb815321f0f33b7036d35ca457c9a678348b7a17aeb",
+       "lc_raster_sha256": "56f6adae648a592f0276e0e98ecdb6a6cc45a94fe41efa7889bc914d602de108"
+      },
+      {
+       "evidence": 0.8,
+       "balance": 0.0716629094199569,
+       "confident": true,
+       "ask_hz": 0.1388888888888889,
+       "ask_hz_per_rep": [
+        0.18518518518518517,
+        0.09259259259259259,
+        0.18518518518518517,
+        0.0,
+        0.0,
+        0.18518518518518517,
+        0.18518518518518517,
+        0.27777777777777773
+       ],
+       "lc_ne_hz": 0.7407407407407407,
+       "lc_ne_hz_per_rep": [
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407
+       ],
+       "ask_fb_hz": 0.0,
+       "lc_add_hz": 3.842592592592592,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 16,
+        "spikes_in_burst": 16,
+        "active_neuron_reps": 16,
+        "active_reps": 8,
+        "median_first_spike_step": 79.0
+       },
+       "lc_add_burst": {
+        "spikes_total": 83,
+        "spikes_in_burst": 81,
+        "active_neuron_reps": 81,
+        "active_reps": 8,
+        "median_first_spike_step": 107.0
+       },
+       "meta_raster_sha256": "1889bb30ea8afbec8abe8ad208d6067a74e567602c91c8f6699e32498061ec82",
+       "cmp_raster_sha256": "d8041ce54d8c2d187ac979472858f292b3e1bb63aabb13a744218e9be6ad3994",
+       "lc_raster_sha256": "547e45ab5169443bf10afcb75d1f3db67ffc8eb186288684fbe354c06d4f8a64"
+      },
+      {
+       "evidence": 0.9,
+       "balance": 0.07520734158202103,
+       "confident": true,
+       "ask_hz": 0.1388888888888889,
+       "ask_hz_per_rep": [
+        0.18518518518518517,
+        0.0,
+        0.18518518518518517,
+        0.0,
+        0.0,
+        0.18518518518518517,
+        0.27777777777777773,
+        0.27777777777777773
+       ],
+       "lc_ne_hz": 0.7407407407407407,
+       "lc_ne_hz_per_rep": [
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407
+       ],
+       "ask_fb_hz": 0.0,
+       "lc_add_hz": 3.7499999999999996,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 16,
+        "spikes_in_burst": 16,
+        "active_neuron_reps": 16,
+        "active_reps": 8,
+        "median_first_spike_step": 77.0
+       },
+       "lc_add_burst": {
+        "spikes_total": 81,
+        "spikes_in_burst": 77,
+        "active_neuron_reps": 77,
+        "active_reps": 8,
+        "median_first_spike_step": 107.0
+       },
+       "meta_raster_sha256": "c9206f989e8a8ca73f73e5981c48a885c1c6ea9e6b1177c6e9e8d5b62c5270c0",
+       "cmp_raster_sha256": "78707cbc18eec7dc637e437530c4a1c83d11801a70b695ab01ebf0d189767961",
+       "lc_raster_sha256": "125d967872950770f74536ec689ac2b3d2d0b0298f871306c6245bcc28df3c29"
+      },
+      {
+       "evidence": 1.0,
+       "balance": 0.08564659007052086,
+       "confident": true,
+       "ask_hz": 0.1388888888888889,
+       "ask_hz_per_rep": [
+        0.18518518518518517,
+        0.0,
+        0.18518518518518517,
+        0.0,
+        0.0,
+        0.18518518518518517,
+        0.18518518518518517,
+        0.37037037037037035
+       ],
+       "lc_ne_hz": 0.787037037037037,
+       "lc_ne_hz_per_rep": [
+        0.7407407407407407,
+        0.7407407407407407,
+        1.111111111111111,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407
+       ],
+       "ask_fb_hz": 0.0,
+       "lc_add_hz": 3.842592592592592,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 17,
+        "spikes_in_burst": 17,
+        "active_neuron_reps": 17,
+        "active_reps": 8,
+        "median_first_spike_step": 67.0
+       },
+       "lc_add_burst": {
+        "spikes_total": 83,
+        "spikes_in_burst": 80,
+        "active_neuron_reps": 80,
+        "active_reps": 8,
+        "median_first_spike_step": 106.0
+       },
+       "meta_raster_sha256": "49d81b3dbcbbce93e27faf3d14303461d5e7d19049bec8cead88185c1cbc37ed",
+       "cmp_raster_sha256": "030a67dc16e7fcaf1eecf0fd12e81f9da7c4bbef61d8ad2f699a6bd70cd40000",
+       "lc_raster_sha256": "6a192562822cbb149b8a3e4b7a1b2fa2dc0da3273fc14dd77ee26c448f09d31c"
+      }
+     ],
+     "threshold": 0.057845546432234586,
+     "gates_at_measurement": {
+      "edge_drive": 1.0,
+      "lc_ne_autoinh": 1.0,
+      "lc_ne_gain": 1.0,
+      "ask_fb_loop": 0.0,
+      "lc_add_ctrl": 0.0
+     }
+    },
+    "loop_lesion_lc_off": {
+     "levels": [
+      {
+       "evidence": 0.0,
+       "balance": 0.01807477725971096,
+       "confident": false,
+       "ask_hz": 3.1134259259259256,
+       "ask_hz_per_rep": [
+        2.8703703703703702,
+        2.7777777777777777,
+        3.796296296296296,
+        2.5,
+        2.5,
+        3.518518518518518,
+        2.7777777777777777,
+        4.166666666666666
+       ],
+       "lc_ne_hz": 2.361111111111111,
+       "lc_ne_hz_per_rep": [
+        1.8518518518518516,
+        1.8518518518518516,
+        3.7037037037037033,
+        1.8518518518518516,
+        2.222222222222222,
+        2.962962962962963,
+        2.222222222222222,
+        2.222222222222222
+       ],
+       "ask_fb_hz": 19.814814814814813,
+       "lc_add_hz": 8.194444444444445,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 51,
+        "spikes_in_burst": 51,
+        "active_neuron_reps": 51,
+        "active_reps": 8,
+        "median_first_spike_step": 99.0
+       },
+       "lc_add_burst": {
+        "spikes_total": 177,
+        "spikes_in_burst": 160,
+        "active_neuron_reps": 160,
+        "active_reps": 8,
+        "median_first_spike_step": 98.0
+       },
+       "meta_raster_sha256": "c1d29695eae6f760f550d820440831b414b9ab13a928b3955907b40a1da2e0f1",
+       "cmp_raster_sha256": "dc2d99fc556283d297f083ea00cac6e9806bc03cbc46caf5c7a1228b3903cef0",
+       "lc_raster_sha256": "cf4de03e3f3d4fb909cafef581e65d47b8393c91a6b10f4a60bd8e32d3219689"
+      },
+      {
+       "evidence": 0.1,
+       "balance": 0.029426851478290553,
+       "confident": false,
+       "ask_hz": 2.858796296296296,
+       "ask_hz_per_rep": [
+        2.962962962962963,
+        3.518518518518518,
+        0.18518518518518517,
+        2.1296296296296293,
+        3.888888888888889,
+        3.888888888888889,
+        3.518518518518518,
+        2.7777777777777777
+       ],
+       "lc_ne_hz": 2.1759259259259256,
+       "lc_ne_hz_per_rep": [
+        1.8518518518518516,
+        2.592592592592592,
+        0.7407407407407407,
+        0.7407407407407407,
+        3.333333333333333,
+        3.333333333333333,
+        2.962962962962963,
+        1.8518518518518516
+       ],
+       "ask_fb_hz": 17.12962962962963,
+       "lc_add_hz": 7.453703703703704,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 47,
+        "spikes_in_burst": 47,
+        "active_neuron_reps": 47,
+        "active_reps": 8,
+        "median_first_spike_step": 107.0
+       },
+       "lc_add_burst": {
+        "spikes_total": 161,
+        "spikes_in_burst": 151,
+        "active_neuron_reps": 151,
+        "active_reps": 8,
+        "median_first_spike_step": 100.0
+       },
+       "meta_raster_sha256": "0c8f37e897616d453956b42550a22e3740a9481351969eb65a8ae1b30013273b",
+       "cmp_raster_sha256": "f86762b2dc2c06de065ee7ead073ec65fb41e2cb4c01f33f467175acdffdd8b0",
+       "lc_raster_sha256": "fe68a89071b42b2d1de6901589b7f11a2fa5a6e02285df1f31a0ee4761c818ab"
+      },
+      {
+       "evidence": 0.2,
+       "balance": 0.036070595668437,
+       "confident": false,
+       "ask_hz": 2.6157407407407405,
+       "ask_hz_per_rep": [
+        2.962962962962963,
+        3.518518518518518,
+        0.18518518518518517,
+        1.296296296296296,
+        3.7037037037037033,
+        2.685185185185185,
+        3.6111111111111107,
+        2.962962962962963
+       ],
+       "lc_ne_hz": 2.4537037037037037,
+       "lc_ne_hz_per_rep": [
+        1.8518518518518516,
+        2.962962962962963,
+        0.7407407407407407,
+        4.444444444444444,
+        2.592592592592592,
+        1.8518518518518516,
+        3.333333333333333,
+        1.8518518518518516
+       ],
+       "ask_fb_hz": 15.97222222222222,
+       "lc_add_hz": 7.361111111111111,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 53,
+        "spikes_in_burst": 53,
+        "active_neuron_reps": 53,
+        "active_reps": 8,
+        "median_first_spike_step": 110.0
+       },
+       "lc_add_burst": {
+        "spikes_total": 159,
+        "spikes_in_burst": 150,
+        "active_neuron_reps": 150,
+        "active_reps": 8,
+        "median_first_spike_step": 101.0
+       },
+       "meta_raster_sha256": "d080ee74132549cb97e471e60496e6ee6784e5145e8f5b0a1d155163395e5c84",
+       "cmp_raster_sha256": "32c46532600d7ee1d041d530d6786a15458f0565b48e3360ea26be999e4bf7b3",
+       "lc_raster_sha256": "70d89a67376cf17111d92b5e4a719c5e22b01a29a37c5477d60810d7156b927a"
+      },
+      {
+       "evidence": 0.3,
+       "balance": 0.04415161891807823,
+       "confident": false,
+       "ask_hz": 1.5972222222222223,
+       "ask_hz_per_rep": [
+        2.037037037037037,
+        2.037037037037037,
+        0.0,
+        0.4629629629629629,
+        0.7407407407407407,
+        1.3888888888888888,
+        3.0555555555555554,
+        3.0555555555555554
+       ],
+       "lc_ne_hz": 2.314814814814815,
+       "lc_ne_hz_per_rep": [
+        1.8518518518518516,
+        4.814814814814815,
+        0.7407407407407407,
+        1.8518518518518516,
+        3.7037037037037033,
+        1.111111111111111,
+        2.222222222222222,
+        2.222222222222222
+       ],
+       "ask_fb_hz": 9.259259259259258,
+       "lc_add_hz": 6.7592592592592595,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 50,
+        "spikes_in_burst": 50,
+        "active_neuron_reps": 50,
+        "active_reps": 8,
+        "median_first_spike_step": 108.0
+       },
+       "lc_add_burst": {
+        "spikes_total": 146,
+        "spikes_in_burst": 140,
+        "active_neuron_reps": 140,
+        "active_reps": 8,
+        "median_first_spike_step": 102.0
+       },
+       "meta_raster_sha256": "11932b0d2ef25d3aead066cb00a55d4e0838f71341392e3d969e863e8acc4bbc",
+       "cmp_raster_sha256": "d8a6aefcc35316188f1d570d313d4b0768df8de5c03d5183d0a7ded3abef17f0",
+       "lc_raster_sha256": "5b606adf2210747b5bb169eea4a06a829f37e2c4332862dd6898d29194449b74"
+      },
+      {
+       "evidence": 0.4,
+       "balance": 0.05244674217368879,
+       "confident": false,
+       "ask_hz": 0.9027777777777777,
+       "ask_hz_per_rep": [
+        1.3888888888888888,
+        0.37037037037037035,
+        0.0,
+        0.18518518518518517,
+        0.18518518518518517,
+        0.27777777777777773,
+        1.6666666666666665,
+        3.148148148148148
+       ],
+       "lc_ne_hz": 2.037037037037037,
+       "lc_ne_hz_per_rep": [
+        4.074074074074074,
+        0.7407407407407407,
+        0.7407407407407407,
+        1.111111111111111,
+        1.8518518518518516,
+        1.8518518518518516,
+        3.7037037037037033,
+        2.222222222222222
+       ],
+       "ask_fb_hz": 4.4907407407407405,
+       "lc_add_hz": 5.833333333333334,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 44,
+        "spikes_in_burst": 44,
+        "active_neuron_reps": 44,
+        "active_reps": 8,
+        "median_first_spike_step": 107.5
+       },
+       "lc_add_burst": {
+        "spikes_total": 126,
+        "spikes_in_burst": 122,
+        "active_neuron_reps": 122,
+        "active_reps": 8,
+        "median_first_spike_step": 105.0
+       },
+       "meta_raster_sha256": "0232c4602785942cd1fb088160e326e90ebfec703ce9a0d34ca2cb82eecb9a37",
+       "cmp_raster_sha256": "a02fe1a08080a0f524c57cd6eae42beae8aec9eab7ab560f46fd8f76a9ba6e9d",
+       "lc_raster_sha256": "b2788906f208ff0de668111fd5072592201538ef0afdcf7143852db721c9dd0d"
+      },
+      {
+       "evidence": 0.5,
+       "balance": 0.05564806049372613,
+       "confident": false,
+       "ask_hz": 0.48611111111111105,
+       "ask_hz_per_rep": [
+        0.8333333333333333,
+        0.27777777777777773,
+        0.0,
+        0.27777777777777773,
+        0.18518518518518517,
+        0.648148148148148,
+        0.27777777777777773,
+        1.3888888888888888
+       ],
+       "lc_ne_hz": 0.8796296296296297,
+       "lc_ne_hz_per_rep": [
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        1.8518518518518516,
+        0.7407407407407407,
+        0.7407407407407407
+       ],
+       "ask_fb_hz": 0.9259259259259258,
+       "lc_add_hz": 5.648148148148147,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 19,
+        "spikes_in_burst": 19,
+        "active_neuron_reps": 19,
+        "active_reps": 8,
+        "median_first_spike_step": 88.0
+       },
+       "lc_add_burst": {
+        "spikes_total": 122,
+        "spikes_in_burst": 120,
+        "active_neuron_reps": 120,
+        "active_reps": 8,
+        "median_first_spike_step": 106.0
+       },
+       "meta_raster_sha256": "10341e064849c58de58ff5adbbe45560a71c543db3503d9a55489443d5dd366d",
+       "cmp_raster_sha256": "a5039e6a549ed6d4e715d13148d0c2ac9e3f3ba5535dd8f0cd47d3ab400b2f06",
+       "lc_raster_sha256": "47d102677b5dc1e7f56c2aec674c38453c4b61fa93b3c116997fca1a8ba014ff"
+      },
+      {
+       "evidence": 0.6,
+       "balance": 0.06385804974611518,
+       "confident": true,
+       "ask_hz": 0.37037037037037035,
+       "ask_hz_per_rep": [
+        0.8333333333333333,
+        0.27777777777777773,
+        0.0,
+        0.18518518518518517,
+        0.18518518518518517,
+        0.27777777777777773,
+        0.27777777777777773,
+        0.9259259259259258
+       ],
+       "lc_ne_hz": 1.1111111111111112,
+       "lc_ne_hz_per_rep": [
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        1.8518518518518516,
+        0.7407407407407407,
+        2.592592592592592
+       ],
+       "ask_fb_hz": 0.0,
+       "lc_add_hz": 5.416666666666666,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 24,
+        "spikes_in_burst": 24,
+        "active_neuron_reps": 24,
+        "active_reps": 8,
+        "median_first_spike_step": 96.0
+       },
+       "lc_add_burst": {
+        "spikes_total": 117,
+        "spikes_in_burst": 114,
+        "active_neuron_reps": 114,
+        "active_reps": 8,
+        "median_first_spike_step": 109.0
+       },
+       "meta_raster_sha256": "d1d47b8732f4b00c9f72ab926f29fd67ac1598c38722fb5522a6641268d8a388",
+       "cmp_raster_sha256": "d620260d036010b880128d4d2b017358eb7cbcae48a52f81e69fa248d4c33f97",
+       "lc_raster_sha256": "f68d57e04789df1561eb744f13e030396257470a726effc7ec00a29ec6aa041b"
+      },
+      {
+       "evidence": 0.7,
+       "balance": 0.06767441747633982,
+       "confident": true,
+       "ask_hz": 0.24305555555555552,
+       "ask_hz_per_rep": [
+        0.18518518518518517,
+        0.18518518518518517,
+        0.18518518518518517,
+        0.0,
+        0.0,
+        0.18518518518518517,
+        0.27777777777777773,
+        0.9259259259259258
+       ],
+       "lc_ne_hz": 0.7407407407407407,
+       "lc_ne_hz_per_rep": [
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407
+       ],
+       "ask_fb_hz": 0.0,
+       "lc_add_hz": 4.444444444444445,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 16,
+        "spikes_in_burst": 16,
+        "active_neuron_reps": 16,
+        "active_reps": 8,
+        "median_first_spike_step": 77.5
+       },
+       "lc_add_burst": {
+        "spikes_total": 96,
+        "spikes_in_burst": 93,
+        "active_neuron_reps": 93,
+        "active_reps": 8,
+        "median_first_spike_step": 105.0
+       },
+       "meta_raster_sha256": "8a62cc75c5da32d76f6a6b5427c89bcff4e8a2b175012c3a854052b819064816",
+       "cmp_raster_sha256": "8de595315ca32179209a8fb815321f0f33b7036d35ca457c9a678348b7a17aeb",
+       "lc_raster_sha256": "56f6adae648a592f0276e0e98ecdb6a6cc45a94fe41efa7889bc914d602de108"
+      },
+      {
+       "evidence": 0.8,
+       "balance": 0.0716629094199569,
+       "confident": true,
+       "ask_hz": 0.1388888888888889,
+       "ask_hz_per_rep": [
+        0.18518518518518517,
+        0.09259259259259259,
+        0.18518518518518517,
+        0.0,
+        0.0,
+        0.18518518518518517,
+        0.18518518518518517,
+        0.27777777777777773
+       ],
+       "lc_ne_hz": 0.7407407407407407,
+       "lc_ne_hz_per_rep": [
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407
+       ],
+       "ask_fb_hz": 0.0,
+       "lc_add_hz": 3.842592592592592,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 16,
+        "spikes_in_burst": 16,
+        "active_neuron_reps": 16,
+        "active_reps": 8,
+        "median_first_spike_step": 79.0
+       },
+       "lc_add_burst": {
+        "spikes_total": 83,
+        "spikes_in_burst": 81,
+        "active_neuron_reps": 81,
+        "active_reps": 8,
+        "median_first_spike_step": 107.0
+       },
+       "meta_raster_sha256": "1889bb30ea8afbec8abe8ad208d6067a74e567602c91c8f6699e32498061ec82",
+       "cmp_raster_sha256": "d8041ce54d8c2d187ac979472858f292b3e1bb63aabb13a744218e9be6ad3994",
+       "lc_raster_sha256": "547e45ab5169443bf10afcb75d1f3db67ffc8eb186288684fbe354c06d4f8a64"
+      },
+      {
+       "evidence": 0.9,
+       "balance": 0.07520734158202103,
+       "confident": true,
+       "ask_hz": 0.1388888888888889,
+       "ask_hz_per_rep": [
+        0.18518518518518517,
+        0.0,
+        0.18518518518518517,
+        0.0,
+        0.0,
+        0.18518518518518517,
+        0.27777777777777773,
+        0.27777777777777773
+       ],
+       "lc_ne_hz": 0.7407407407407407,
+       "lc_ne_hz_per_rep": [
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407
+       ],
+       "ask_fb_hz": 0.0,
+       "lc_add_hz": 3.7499999999999996,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 16,
+        "spikes_in_burst": 16,
+        "active_neuron_reps": 16,
+        "active_reps": 8,
+        "median_first_spike_step": 77.0
+       },
+       "lc_add_burst": {
+        "spikes_total": 81,
+        "spikes_in_burst": 77,
+        "active_neuron_reps": 77,
+        "active_reps": 8,
+        "median_first_spike_step": 107.0
+       },
+       "meta_raster_sha256": "c9206f989e8a8ca73f73e5981c48a885c1c6ea9e6b1177c6e9e8d5b62c5270c0",
+       "cmp_raster_sha256": "78707cbc18eec7dc637e437530c4a1c83d11801a70b695ab01ebf0d189767961",
+       "lc_raster_sha256": "125d967872950770f74536ec689ac2b3d2d0b0298f871306c6245bcc28df3c29"
+      },
+      {
+       "evidence": 1.0,
+       "balance": 0.08564659007052086,
+       "confident": true,
+       "ask_hz": 0.1388888888888889,
+       "ask_hz_per_rep": [
+        0.18518518518518517,
+        0.0,
+        0.18518518518518517,
+        0.0,
+        0.0,
+        0.18518518518518517,
+        0.18518518518518517,
+        0.37037037037037035
+       ],
+       "lc_ne_hz": 0.787037037037037,
+       "lc_ne_hz_per_rep": [
+        0.7407407407407407,
+        0.7407407407407407,
+        1.111111111111111,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407
+       ],
+       "ask_fb_hz": 0.0,
+       "lc_add_hz": 3.842592592592592,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 17,
+        "spikes_in_burst": 17,
+        "active_neuron_reps": 17,
+        "active_reps": 8,
+        "median_first_spike_step": 67.0
+       },
+       "lc_add_burst": {
+        "spikes_total": 83,
+        "spikes_in_burst": 80,
+        "active_neuron_reps": 80,
+        "active_reps": 8,
+        "median_first_spike_step": 106.0
+       },
+       "meta_raster_sha256": "49d81b3dbcbbce93e27faf3d14303461d5e7d19049bec8cead88185c1cbc37ed",
+       "cmp_raster_sha256": "030a67dc16e7fcaf1eecf0fd12e81f9da7c4bbef61d8ad2f699a6bd70cd40000",
+       "lc_raster_sha256": "6a192562822cbb149b8a3e4b7a1b2fa2dc0da3273fc14dd77ee26c448f09d31c"
+      }
+     ],
+     "threshold": 0.057845546432234586,
+     "gates_at_measurement": {
+      "edge_drive": 1.0,
+      "lc_ne_autoinh": 1.0,
+      "lc_ne_gain": 0.0,
+      "ask_fb_loop": 0.0,
+      "lc_add_ctrl": 0.0
+     }
+    },
+    "autoinhibition_lesion": {
+     "levels": [
+      {
+       "evidence": 0.0,
+       "balance": 0.01807477725971096,
+       "confident": false,
+       "ask_hz": 3.1134259259259256,
+       "ask_hz_per_rep": [
+        2.8703703703703702,
+        2.7777777777777777,
+        3.796296296296296,
+        2.5,
+        2.5,
+        3.518518518518518,
+        2.7777777777777777,
+        4.166666666666666
+       ],
+       "lc_ne_hz": 7.824074074074074,
+       "lc_ne_hz_per_rep": [
+        7.777777777777778,
+        7.777777777777778,
+        8.148148148148149,
+        7.777777777777778,
+        7.777777777777778,
+        7.777777777777778,
+        7.777777777777778,
+        7.777777777777778
+       ],
+       "ask_fb_hz": 0.0,
+       "lc_add_hz": 8.194444444444445,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 169,
+        "spikes_in_burst": 160,
+        "active_neuron_reps": 160,
+        "active_reps": 8,
+        "median_first_spike_step": 100.5
+       },
+       "lc_add_burst": {
+        "spikes_total": 177,
+        "spikes_in_burst": 160,
+        "active_neuron_reps": 160,
+        "active_reps": 8,
+        "median_first_spike_step": 98.0
+       },
+       "meta_raster_sha256": "c1d29695eae6f760f550d820440831b414b9ab13a928b3955907b40a1da2e0f1",
+       "cmp_raster_sha256": "dc2d99fc556283d297f083ea00cac6e9806bc03cbc46caf5c7a1228b3903cef0",
+       "lc_raster_sha256": "91418f79b6888d53424f08cbf890a3a6f1e85d55b467d0dac00094227225d0fd"
+      },
+      {
+       "evidence": 0.1,
+       "balance": 0.029426851478290553,
+       "confident": false,
+       "ask_hz": 2.7662037037037033,
+       "ask_hz_per_rep": [
+        2.962962962962963,
+        3.518518518518518,
+        0.18518518518518517,
+        2.1296296296296293,
+        3.888888888888889,
+        3.148148148148148,
+        3.518518518518518,
+        2.7777777777777777
+       ],
+       "lc_ne_hz": 7.268518518518519,
+       "lc_ne_hz_per_rep": [
+        7.777777777777778,
+        7.777777777777778,
+        3.7037037037037033,
+        7.777777777777778,
+        7.777777777777778,
+        7.777777777777778,
+        7.777777777777778,
+        7.777777777777778
+       ],
+       "ask_fb_hz": 0.046296296296296294,
+       "lc_add_hz": 7.453703703703704,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 157,
+        "spikes_in_burst": 150,
+        "active_neuron_reps": 150,
+        "active_reps": 8,
+        "median_first_spike_step": 101.0
+       },
+       "lc_add_burst": {
+        "spikes_total": 161,
+        "spikes_in_burst": 151,
+        "active_neuron_reps": 151,
+        "active_reps": 8,
+        "median_first_spike_step": 100.0
+       },
+       "meta_raster_sha256": "0c8f37e897616d453956b42550a22e3740a9481351969eb65a8ae1b30013273b",
+       "cmp_raster_sha256": "f86762b2dc2c06de065ee7ead073ec65fb41e2cb4c01f33f467175acdffdd8b0",
+       "lc_raster_sha256": "10122090ff37f15cba4158227414f9425684dd6cf6cd45ee980568f6c97248a7"
+      },
+      {
+       "evidence": 0.2,
+       "balance": 0.036070595668437,
+       "confident": false,
+       "ask_hz": 2.4421296296296293,
+       "ask_hz_per_rep": [
+        2.222222222222222,
+        3.518518518518518,
+        0.18518518518518517,
+        1.296296296296296,
+        3.0555555555555554,
+        2.685185185185185,
+        3.6111111111111107,
+        2.962962962962963
+       ],
+       "lc_ne_hz": 7.037037037037036,
+       "lc_ne_hz_per_rep": [
+        7.777777777777778,
+        7.777777777777778,
+        1.8518518518518516,
+        7.4074074074074066,
+        8.148148148148149,
+        7.777777777777778,
+        7.777777777777778,
+        7.777777777777778
+       ],
+       "ask_fb_hz": 0.09259259259259259,
+       "lc_add_hz": 7.361111111111111,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 152,
+        "spikes_in_burst": 145,
+        "active_neuron_reps": 145,
+        "active_reps": 8,
+        "median_first_spike_step": 102.0
+       },
+       "lc_add_burst": {
+        "spikes_total": 159,
+        "spikes_in_burst": 150,
+        "active_neuron_reps": 150,
+        "active_reps": 8,
+        "median_first_spike_step": 101.0
+       },
+       "meta_raster_sha256": "d080ee74132549cb97e471e60496e6ee6784e5145e8f5b0a1d155163395e5c84",
+       "cmp_raster_sha256": "32c46532600d7ee1d041d530d6786a15458f0565b48e3360ea26be999e4bf7b3",
+       "lc_raster_sha256": "07355e81856b3efd946ebb2cb2ee35bddcd0d9b21266d74c84ec45e1cc70e4a8"
+      },
+      {
+       "evidence": 0.3,
+       "balance": 0.04415161891807823,
+       "confident": false,
+       "ask_hz": 1.5972222222222223,
+       "ask_hz_per_rep": [
+        2.037037037037037,
+        2.037037037037037,
+        0.0,
+        0.4629629629629629,
+        0.7407407407407407,
+        1.3888888888888888,
+        3.0555555555555554,
+        3.0555555555555554
+       ],
+       "lc_ne_hz": 6.481481481481481,
+       "lc_ne_hz_per_rep": [
+        7.777777777777778,
+        7.4074074074074066,
+        0.7407407407407407,
+        5.925925925925926,
+        6.666666666666666,
+        7.777777777777778,
+        7.777777777777778,
+        7.777777777777778
+       ],
+       "ask_fb_hz": 0.0,
+       "lc_add_hz": 6.7592592592592595,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 140,
+        "spikes_in_burst": 136,
+        "active_neuron_reps": 136,
+        "active_reps": 8,
+        "median_first_spike_step": 104.0
+       },
+       "lc_add_burst": {
+        "spikes_total": 146,
+        "spikes_in_burst": 140,
+        "active_neuron_reps": 140,
+        "active_reps": 8,
+        "median_first_spike_step": 102.0
+       },
+       "meta_raster_sha256": "11932b0d2ef25d3aead066cb00a55d4e0838f71341392e3d969e863e8acc4bbc",
+       "cmp_raster_sha256": "d8a6aefcc35316188f1d570d313d4b0768df8de5c03d5183d0a7ded3abef17f0",
+       "lc_raster_sha256": "09c6e3f23bf3424dd4bdef05893fec17df775b7578db85d9a9b2baf068509bb7"
+      },
+      {
+       "evidence": 0.4,
+       "balance": 0.05244674217368879,
+       "confident": false,
+       "ask_hz": 0.9027777777777777,
+       "ask_hz_per_rep": [
+        1.3888888888888888,
+        0.37037037037037035,
+        0.0,
+        0.18518518518518517,
+        0.18518518518518517,
+        0.27777777777777773,
+        1.6666666666666665,
+        3.148148148148148
+       ],
+       "lc_ne_hz": 5.416666666666666,
+       "lc_ne_hz_per_rep": [
+        7.4074074074074066,
+        6.666666666666666,
+        0.7407407407407407,
+        3.7037037037037033,
+        4.074074074074074,
+        5.185185185185184,
+        7.4074074074074066,
+        8.148148148148149
+       ],
+       "ask_fb_hz": 0.0,
+       "lc_add_hz": 5.833333333333334,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 117,
+        "spikes_in_burst": 115,
+        "active_neuron_reps": 115,
+        "active_reps": 8,
+        "median_first_spike_step": 108.0
+       },
+       "lc_add_burst": {
+        "spikes_total": 126,
+        "spikes_in_burst": 122,
+        "active_neuron_reps": 122,
+        "active_reps": 8,
+        "median_first_spike_step": 105.0
+       },
+       "meta_raster_sha256": "0232c4602785942cd1fb088160e326e90ebfec703ce9a0d34ca2cb82eecb9a37",
+       "cmp_raster_sha256": "a02fe1a08080a0f524c57cd6eae42beae8aec9eab7ab560f46fd8f76a9ba6e9d",
+       "lc_raster_sha256": "a70488dd2bf03fad4fd678f2c882cbc47017ef0bd6c8d3f48c730bbb43331b39"
+      },
+      {
+       "evidence": 0.5,
+       "balance": 0.05564806049372613,
+       "confident": false,
+       "ask_hz": 0.48611111111111105,
+       "ask_hz_per_rep": [
+        0.8333333333333333,
+        0.27777777777777773,
+        0.0,
+        0.27777777777777773,
+        0.18518518518518517,
+        0.648148148148148,
+        0.27777777777777773,
+        1.3888888888888888
+       ],
+       "lc_ne_hz": 5.092592592592592,
+       "lc_ne_hz_per_rep": [
+        7.037037037037036,
+        5.185185185185184,
+        0.7407407407407407,
+        4.444444444444444,
+        2.592592592592592,
+        6.666666666666666,
+        6.296296296296296,
+        7.777777777777778
+       ],
+       "ask_fb_hz": 0.0,
+       "lc_add_hz": 5.648148148148147,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 110,
+        "spikes_in_burst": 108,
+        "active_neuron_reps": 108,
+        "active_reps": 8,
+        "median_first_spike_step": 111.0
+       },
+       "lc_add_burst": {
+        "spikes_total": 122,
+        "spikes_in_burst": 120,
+        "active_neuron_reps": 120,
+        "active_reps": 8,
+        "median_first_spike_step": 106.0
+       },
+       "meta_raster_sha256": "10341e064849c58de58ff5adbbe45560a71c543db3503d9a55489443d5dd366d",
+       "cmp_raster_sha256": "a5039e6a549ed6d4e715d13148d0c2ac9e3f3ba5535dd8f0cd47d3ab400b2f06",
+       "lc_raster_sha256": "ce77ba26afe22f8c3db342b41f64da34f6f54aefdf72c6bda4dfae6f91ca56c5"
+      },
+      {
+       "evidence": 0.6,
+       "balance": 0.06385804974611518,
+       "confident": true,
+       "ask_hz": 0.37037037037037035,
+       "ask_hz_per_rep": [
+        0.8333333333333333,
+        0.27777777777777773,
+        0.0,
+        0.18518518518518517,
+        0.18518518518518517,
+        0.27777777777777773,
+        0.27777777777777773,
+        0.9259259259259258
+       ],
+       "lc_ne_hz": 4.351851851851851,
+       "lc_ne_hz_per_rep": [
+        6.666666666666666,
+        5.555555555555555,
+        0.7407407407407407,
+        3.333333333333333,
+        1.4814814814814814,
+        5.185185185185184,
+        4.444444444444444,
+        7.4074074074074066
+       ],
+       "ask_fb_hz": 0.0,
+       "lc_add_hz": 5.416666666666666,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 94,
+        "spikes_in_burst": 94,
+        "active_neuron_reps": 94,
+        "active_reps": 8,
+        "median_first_spike_step": 116.0
+       },
+       "lc_add_burst": {
+        "spikes_total": 117,
+        "spikes_in_burst": 114,
+        "active_neuron_reps": 114,
+        "active_reps": 8,
+        "median_first_spike_step": 109.0
+       },
+       "meta_raster_sha256": "d1d47b8732f4b00c9f72ab926f29fd67ac1598c38722fb5522a6641268d8a388",
+       "cmp_raster_sha256": "d620260d036010b880128d4d2b017358eb7cbcae48a52f81e69fa248d4c33f97",
+       "lc_raster_sha256": "e068767becb8a8c32707a463bb45a5b1cc860b7e7d65d920d474101617687892"
+      },
+      {
+       "evidence": 0.7,
+       "balance": 0.06767441747633982,
+       "confident": true,
+       "ask_hz": 0.24305555555555552,
+       "ask_hz_per_rep": [
+        0.18518518518518517,
+        0.18518518518518517,
+        0.18518518518518517,
+        0.0,
+        0.0,
+        0.18518518518518517,
+        0.27777777777777773,
+        0.9259259259259258
+       ],
+       "lc_ne_hz": 3.333333333333333,
+       "lc_ne_hz_per_rep": [
+        4.074074074074074,
+        3.333333333333333,
+        1.4814814814814814,
+        1.111111111111111,
+        0.7407407407407407,
+        4.074074074074074,
+        4.444444444444444,
+        7.4074074074074066
+       ],
+       "ask_fb_hz": 0.0,
+       "lc_add_hz": 4.444444444444445,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 72,
+        "spikes_in_burst": 71,
+        "active_neuron_reps": 71,
+        "active_reps": 8,
+        "median_first_spike_step": 119.0
+       },
+       "lc_add_burst": {
+        "spikes_total": 96,
+        "spikes_in_burst": 93,
+        "active_neuron_reps": 93,
+        "active_reps": 8,
+        "median_first_spike_step": 105.0
+       },
+       "meta_raster_sha256": "8a62cc75c5da32d76f6a6b5427c89bcff4e8a2b175012c3a854052b819064816",
+       "cmp_raster_sha256": "8de595315ca32179209a8fb815321f0f33b7036d35ca457c9a678348b7a17aeb",
+       "lc_raster_sha256": "a297d6cbc46591103028273e427ea751100ed315bfc496fbec22d1956a45ab78"
+      },
+      {
+       "evidence": 0.8,
+       "balance": 0.0716629094199569,
+       "confident": true,
+       "ask_hz": 0.1388888888888889,
+       "ask_hz_per_rep": [
+        0.18518518518518517,
+        0.09259259259259259,
+        0.18518518518518517,
+        0.0,
+        0.0,
+        0.18518518518518517,
+        0.18518518518518517,
+        0.27777777777777773
+       ],
+       "lc_ne_hz": 2.5925925925925926,
+       "lc_ne_hz_per_rep": [
+        2.592592592592592,
+        1.111111111111111,
+        2.592592592592592,
+        0.7407407407407407,
+        0.7407407407407407,
+        3.333333333333333,
+        3.333333333333333,
+        6.296296296296296
+       ],
+       "ask_fb_hz": 0.0,
+       "lc_add_hz": 3.842592592592592,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 56,
+        "spikes_in_burst": 56,
+        "active_neuron_reps": 56,
+        "active_reps": 8,
+        "median_first_spike_step": 127.0
+       },
+       "lc_add_burst": {
+        "spikes_total": 83,
+        "spikes_in_burst": 81,
+        "active_neuron_reps": 81,
+        "active_reps": 8,
+        "median_first_spike_step": 107.0
+       },
+       "meta_raster_sha256": "1889bb30ea8afbec8abe8ad208d6067a74e567602c91c8f6699e32498061ec82",
+       "cmp_raster_sha256": "d8041ce54d8c2d187ac979472858f292b3e1bb63aabb13a744218e9be6ad3994",
+       "lc_raster_sha256": "e07e49035e2a6cf916e3a6bab2beb6d8a41f0fb3fe14a826507db2f1376e3f60"
+      },
+      {
+       "evidence": 0.9,
+       "balance": 0.07520734158202103,
+       "confident": true,
+       "ask_hz": 0.1388888888888889,
+       "ask_hz_per_rep": [
+        0.18518518518518517,
+        0.0,
+        0.18518518518518517,
+        0.0,
+        0.0,
+        0.18518518518518517,
+        0.27777777777777773,
+        0.27777777777777773
+       ],
+       "lc_ne_hz": 2.4537037037037033,
+       "lc_ne_hz_per_rep": [
+        3.333333333333333,
+        0.7407407407407407,
+        1.8518518518518516,
+        0.7407407407407407,
+        0.7407407407407407,
+        3.333333333333333,
+        4.444444444444444,
+        4.444444444444444
+       ],
+       "ask_fb_hz": 0.0,
+       "lc_add_hz": 3.7499999999999996,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 53,
+        "spikes_in_burst": 53,
+        "active_neuron_reps": 53,
+        "active_reps": 8,
+        "median_first_spike_step": 125.0
+       },
+       "lc_add_burst": {
+        "spikes_total": 81,
+        "spikes_in_burst": 77,
+        "active_neuron_reps": 77,
+        "active_reps": 8,
+        "median_first_spike_step": 107.0
+       },
+       "meta_raster_sha256": "c9206f989e8a8ca73f73e5981c48a885c1c6ea9e6b1177c6e9e8d5b62c5270c0",
+       "cmp_raster_sha256": "78707cbc18eec7dc637e437530c4a1c83d11801a70b695ab01ebf0d189767961",
+       "lc_raster_sha256": "4fc5cb2c3ae10404dbfba5eb285f969a4f92694445df883fac350e80fc0f5a76"
+      },
+      {
+       "evidence": 1.0,
+       "balance": 0.08564659007052086,
+       "confident": true,
+       "ask_hz": 0.1388888888888889,
+       "ask_hz_per_rep": [
+        0.18518518518518517,
+        0.0,
+        0.18518518518518517,
+        0.0,
+        0.0,
+        0.18518518518518517,
+        0.18518518518518517,
+        0.37037037037037035
+       ],
+       "lc_ne_hz": 2.5,
+       "lc_ne_hz_per_rep": [
+        3.333333333333333,
+        0.7407407407407407,
+        4.444444444444444,
+        0.7407407407407407,
+        0.7407407407407407,
+        1.4814814814814814,
+        3.333333333333333,
+        5.185185185185184
+       ],
+       "ask_fb_hz": 0.0,
+       "lc_add_hz": 3.842592592592592,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 54,
+        "spikes_in_burst": 54,
+        "active_neuron_reps": 54,
+        "active_reps": 8,
+        "median_first_spike_step": 123.5
+       },
+       "lc_add_burst": {
+        "spikes_total": 83,
+        "spikes_in_burst": 80,
+        "active_neuron_reps": 80,
+        "active_reps": 8,
+        "median_first_spike_step": 106.0
+       },
+       "meta_raster_sha256": "49d81b3dbcbbce93e27faf3d14303461d5e7d19049bec8cead88185c1cbc37ed",
+       "cmp_raster_sha256": "030a67dc16e7fcaf1eecf0fd12e81f9da7c4bbef61d8ad2f699a6bd70cd40000",
+       "lc_raster_sha256": "6d810f8b16056bc65da7bd641b2d84396638a5c4274995b42e40e48647e94e89"
+      }
+     ],
+     "threshold": 0.057845546432234586,
+     "gates_at_measurement": {
+      "edge_drive": 1.0,
+      "lc_ne_autoinh": 0.0,
+      "lc_ne_gain": 1.0,
+      "ask_fb_loop": 1.0,
+      "lc_add_ctrl": 0.0
+     }
+    },
+    "relay_lesion": {
+     "levels": [
+      {
+       "evidence": 0.0,
+       "balance": 0.01807477725971096,
+       "confident": false,
+       "ask_hz": 9.791666666666666,
+       "ask_hz_per_rep": [
+        14.25925925925926,
+        7.4074074074074066,
+        12.87037037037037,
+        7.4074074074074066,
+        7.222222222222221,
+        7.4074074074074066,
+        14.351851851851851,
+        7.4074074074074066
+       ],
+       "lc_ne_hz": 7.4074074074074066,
+       "lc_ne_hz_per_rep": [
+        7.4074074074074066,
+        7.4074074074074066,
+        7.4074074074074066,
+        7.4074074074074066,
+        7.4074074074074066,
+        7.4074074074074066,
+        7.4074074074074066,
+        7.4074074074074066
+       ],
+       "ask_fb_hz": 0.37037037037037035,
+       "lc_add_hz": 16.52777777777778,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 160,
+        "spikes_in_burst": 160,
+        "active_neuron_reps": 160,
+        "active_reps": 8,
+        "median_first_spike_step": 56.0
+       },
+       "lc_add_burst": {
+        "spikes_total": 357,
+        "spikes_in_burst": 160,
+        "active_neuron_reps": 160,
+        "active_reps": 8,
+        "median_first_spike_step": 55.0
+       },
+       "meta_raster_sha256": "c1d29695eae6f760f550d820440831b414b9ab13a928b3955907b40a1da2e0f1",
+       "cmp_raster_sha256": "8bf301ef7394407b5c414c284f6c612811f3feaccb23a0e49760600040daf1ff",
+       "lc_raster_sha256": "ea71737b1327bb1bdeda79b47958e25152c88870bbd1d7edd88e4e063ae27b5e"
+      },
+      {
+       "evidence": 0.1,
+       "balance": 0.029426851478290553,
+       "confident": false,
+       "ask_hz": 10.520833333333332,
+       "ask_hz_per_rep": [
+        7.4074074074074066,
+        13.981481481481481,
+        12.407407407407407,
+        13.518518518518517,
+        7.4074074074074066,
+        7.4074074074074066,
+        14.62962962962963,
+        7.4074074074074066
+       ],
+       "lc_ne_hz": 7.4074074074074066,
+       "lc_ne_hz_per_rep": [
+        7.4074074074074066,
+        7.4074074074074066,
+        7.4074074074074066,
+        7.4074074074074066,
+        7.4074074074074066,
+        7.4074074074074066,
+        7.4074074074074066,
+        7.4074074074074066
+       ],
+       "ask_fb_hz": 0.32407407407407407,
+       "lc_add_hz": 16.805555555555554,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 160,
+        "spikes_in_burst": 160,
+        "active_neuron_reps": 160,
+        "active_reps": 8,
+        "median_first_spike_step": 55.0
+       },
+       "lc_add_burst": {
+        "spikes_total": 363,
+        "spikes_in_burst": 160,
+        "active_neuron_reps": 160,
+        "active_reps": 8,
+        "median_first_spike_step": 55.0
+       },
+       "meta_raster_sha256": "0c8f37e897616d453956b42550a22e3740a9481351969eb65a8ae1b30013273b",
+       "cmp_raster_sha256": "c4ac4a71bfb20d5b0e16a7f3dbe47bbed985af5ae911deb4d2e718f427b6df76",
+       "lc_raster_sha256": "c2d7537173cbac3b708247bf037e56e089ec3e0568acbf3971ff1eb78a8dc917"
+      },
+      {
+       "evidence": 0.2,
+       "balance": 0.036070595668437,
+       "confident": false,
+       "ask_hz": 8.900462962962962,
+       "ask_hz_per_rep": [
+        7.4074074074074066,
+        7.4074074074074066,
+        12.962962962962962,
+        13.611111111111109,
+        7.4074074074074066,
+        7.4074074074074066,
+        7.592592592592592,
+        7.4074074074074066
+       ],
+       "lc_ne_hz": 7.4074074074074066,
+       "lc_ne_hz_per_rep": [
+        7.4074074074074066,
+        7.4074074074074066,
+        7.4074074074074066,
+        7.4074074074074066,
+        7.4074074074074066,
+        7.4074074074074066,
+        7.4074074074074066,
+        7.4074074074074066
+       ],
+       "ask_fb_hz": 0.46296296296296297,
+       "lc_add_hz": 16.85185185185185,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 160,
+        "spikes_in_burst": 160,
+        "active_neuron_reps": 160,
+        "active_reps": 8,
+        "median_first_spike_step": 55.0
+       },
+       "lc_add_burst": {
+        "spikes_total": 364,
+        "spikes_in_burst": 160,
+        "active_neuron_reps": 160,
+        "active_reps": 8,
+        "median_first_spike_step": 55.0
+       },
+       "meta_raster_sha256": "d080ee74132549cb97e471e60496e6ee6784e5145e8f5b0a1d155163395e5c84",
+       "cmp_raster_sha256": "e8c82d5f244764e54b423f9b24c5d091be001e4e749176095c005a3148401b85",
+       "lc_raster_sha256": "3355fc94b7582b9eae9e0f78952c3f3cb4cbf1a405946c607331b58d931145fd"
+      },
+      {
+       "evidence": 0.3,
+       "balance": 0.04415161891807823,
+       "confident": false,
+       "ask_hz": 8.831018518518519,
+       "ask_hz_per_rep": [
+        7.4074074074074066,
+        7.499999999999999,
+        12.407407407407407,
+        13.611111111111109,
+        7.4074074074074066,
+        7.314814814814815,
+        7.592592592592592,
+        7.4074074074074066
+       ],
+       "lc_ne_hz": 7.361111111111111,
+       "lc_ne_hz_per_rep": [
+        7.4074074074074066,
+        7.4074074074074066,
+        7.037037037037036,
+        7.4074074074074066,
+        7.4074074074074066,
+        7.4074074074074066,
+        7.4074074074074066,
+        7.4074074074074066
+       ],
+       "ask_fb_hz": 0.4166666666666667,
+       "lc_add_hz": 16.944444444444443,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 159,
+        "spikes_in_burst": 159,
+        "active_neuron_reps": 159,
+        "active_reps": 8,
+        "median_first_spike_step": 55.0
+       },
+       "lc_add_burst": {
+        "spikes_total": 366,
+        "spikes_in_burst": 160,
+        "active_neuron_reps": 160,
+        "active_reps": 8,
+        "median_first_spike_step": 54.5
+       },
+       "meta_raster_sha256": "11932b0d2ef25d3aead066cb00a55d4e0838f71341392e3d969e863e8acc4bbc",
+       "cmp_raster_sha256": "ae59c03c596ea2014ad0a9eb8c5cf40546c2baae150a4285a9f729418f511111",
+       "lc_raster_sha256": "2bb2acfc3ddda15905a2e0721901e81c3aa7e278a93995b1dd5f985cd50a4e57"
+      },
+      {
+       "evidence": 0.4,
+       "balance": 0.05244674217368879,
+       "confident": false,
+       "ask_hz": 8.80787037037037,
+       "ask_hz_per_rep": [
+        7.4074074074074066,
+        7.592592592592592,
+        11.481481481481481,
+        7.4074074074074066,
+        13.888888888888888,
+        7.592592592592592,
+        7.685185185185185,
+        7.4074074074074066
+       ],
+       "lc_ne_hz": 7.361111111111111,
+       "lc_ne_hz_per_rep": [
+        7.4074074074074066,
+        7.4074074074074066,
+        7.037037037037036,
+        7.4074074074074066,
+        7.4074074074074066,
+        7.4074074074074066,
+        7.4074074074074066,
+        7.4074074074074066
+       ],
+       "ask_fb_hz": 0.37037037037037035,
+       "lc_add_hz": 17.314814814814813,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 159,
+        "spikes_in_burst": 159,
+        "active_neuron_reps": 159,
+        "active_reps": 8,
+        "median_first_spike_step": 55.0
+       },
+       "lc_add_burst": {
+        "spikes_total": 374,
+        "spikes_in_burst": 160,
+        "active_neuron_reps": 160,
+        "active_reps": 8,
+        "median_first_spike_step": 54.5
+       },
+       "meta_raster_sha256": "0232c4602785942cd1fb088160e326e90ebfec703ce9a0d34ca2cb82eecb9a37",
+       "cmp_raster_sha256": "8c70e593cbce44d0cfd085edb437c05a43dd136f8c9c23875a1293a9cc495498",
+       "lc_raster_sha256": "9c6d2913507113639b345e93b88907ebf2dc6767aae699eea1ebc8bb50965ca5"
+      },
+      {
+       "evidence": 0.5,
+       "balance": 0.05564806049372613,
+       "confident": false,
+       "ask_hz": 8.773148148148147,
+       "ask_hz_per_rep": [
+        7.592592592592592,
+        7.499999999999999,
+        11.11111111111111,
+        14.166666666666666,
+        7.037037037037036,
+        7.592592592592592,
+        7.592592592592592,
+        7.592592592592592
+       ],
+       "lc_ne_hz": 7.361111111111111,
+       "lc_ne_hz_per_rep": [
+        7.4074074074074066,
+        7.4074074074074066,
+        7.037037037037036,
+        7.4074074074074066,
+        7.4074074074074066,
+        7.4074074074074066,
+        7.4074074074074066,
+        7.4074074074074066
+       ],
+       "ask_fb_hz": 0.32407407407407407,
+       "lc_add_hz": 17.453703703703702,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 159,
+        "spikes_in_burst": 159,
+        "active_neuron_reps": 159,
+        "active_reps": 8,
+        "median_first_spike_step": 55.0
+       },
+       "lc_add_burst": {
+        "spikes_total": 377,
+        "spikes_in_burst": 160,
+        "active_neuron_reps": 160,
+        "active_reps": 8,
+        "median_first_spike_step": 54.0
+       },
+       "meta_raster_sha256": "10341e064849c58de58ff5adbbe45560a71c543db3503d9a55489443d5dd366d",
+       "cmp_raster_sha256": "41ba7afe1f6ef3c3683e892f001a837405f4183862a8eebc364ad960a8cffb6a",
+       "lc_raster_sha256": "f56fa95c4ea9c80a746aef75e858f1fa4746aa529751e2fe79e44e4b7ff3196f"
+      },
+      {
+       "evidence": 0.6,
+       "balance": 0.06385804974611518,
+       "confident": true,
+       "ask_hz": 8.88888888888889,
+       "ask_hz_per_rep": [
+        7.777777777777778,
+        14.999999999999998,
+        10.833333333333332,
+        7.4074074074074066,
+        7.499999999999999,
+        7.592592592592592,
+        7.592592592592592,
+        7.4074074074074066
+       ],
+       "lc_ne_hz": 7.361111111111111,
+       "lc_ne_hz_per_rep": [
+        7.4074074074074066,
+        7.4074074074074066,
+        7.037037037037036,
+        7.4074074074074066,
+        7.4074074074074066,
+        7.4074074074074066,
+        7.4074074074074066,
+        7.4074074074074066
+       ],
+       "ask_fb_hz": 0.32407407407407407,
+       "lc_add_hz": 18.194444444444443,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 159,
+        "spikes_in_burst": 159,
+        "active_neuron_reps": 159,
+        "active_reps": 8,
+        "median_first_spike_step": 55.0
+       },
+       "lc_add_burst": {
+        "spikes_total": 393,
+        "spikes_in_burst": 160,
+        "active_neuron_reps": 160,
+        "active_reps": 8,
+        "median_first_spike_step": 54.0
+       },
+       "meta_raster_sha256": "d1d47b8732f4b00c9f72ab926f29fd67ac1598c38722fb5522a6641268d8a388",
+       "cmp_raster_sha256": "77fa64a840aa9ec004ec80db4a3ae44a3fb115399f1e500c7ac327b1fd42712c",
+       "lc_raster_sha256": "7071fb3a62a9736881612bdb52cdc9467139819058f1b4db9e67100fa7ac53f8"
+      },
+      {
+       "evidence": 0.7,
+       "balance": 0.06767441747633982,
+       "confident": true,
+       "ask_hz": 12.581018518518517,
+       "ask_hz_per_rep": [
+        14.907407407407408,
+        14.999999999999998,
+        10.277777777777777,
+        14.166666666666666,
+        7.592592592592592,
+        7.777777777777778,
+        14.999999999999998,
+        15.925925925925924
+       ],
+       "lc_ne_hz": 7.361111111111111,
+       "lc_ne_hz_per_rep": [
+        7.4074074074074066,
+        7.4074074074074066,
+        7.037037037037036,
+        7.4074074074074066,
+        7.4074074074074066,
+        7.4074074074074066,
+        7.4074074074074066,
+        7.4074074074074066
+       ],
+       "ask_fb_hz": 0.09259259259259259,
+       "lc_add_hz": 18.24074074074074,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 159,
+        "spikes_in_burst": 159,
+        "active_neuron_reps": 159,
+        "active_reps": 8,
+        "median_first_spike_step": 55.0
+       },
+       "lc_add_burst": {
+        "spikes_total": 394,
+        "spikes_in_burst": 160,
+        "active_neuron_reps": 160,
+        "active_reps": 8,
+        "median_first_spike_step": 54.0
+       },
+       "meta_raster_sha256": "8a62cc75c5da32d76f6a6b5427c89bcff4e8a2b175012c3a854052b819064816",
+       "cmp_raster_sha256": "216ddfd05bb183e87d9a4e86847b22f262d9026b7095fb4c064cb542ea277a54",
+       "lc_raster_sha256": "a1fd163f38fd4c8fced6d81ccd36adfafe5789494db6c548447e3b6235e44553"
+      },
+      {
+       "evidence": 0.8,
+       "balance": 0.0716629094199569,
+       "confident": true,
+       "ask_hz": 9.791666666666666,
+       "ask_hz_per_rep": [
+        7.777777777777778,
+        14.907407407407408,
+        10.185185185185185,
+        7.592592592592592,
+        7.4074074074074066,
+        14.999999999999998,
+        7.777777777777778,
+        7.685185185185185
+       ],
+       "lc_ne_hz": 7.314814814814814,
+       "lc_ne_hz_per_rep": [
+        7.4074074074074066,
+        7.4074074074074066,
+        6.666666666666666,
+        7.4074074074074066,
+        7.4074074074074066,
+        7.4074074074074066,
+        7.4074074074074066,
+        7.4074074074074066
+       ],
+       "ask_fb_hz": 0.23148148148148148,
+       "lc_add_hz": 18.425925925925924,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 158,
+        "spikes_in_burst": 158,
+        "active_neuron_reps": 158,
+        "active_reps": 8,
+        "median_first_spike_step": 55.0
+       },
+       "lc_add_burst": {
+        "spikes_total": 398,
+        "spikes_in_burst": 160,
+        "active_neuron_reps": 160,
+        "active_reps": 8,
+        "median_first_spike_step": 54.0
+       },
+       "meta_raster_sha256": "1889bb30ea8afbec8abe8ad208d6067a74e567602c91c8f6699e32498061ec82",
+       "cmp_raster_sha256": "b134cc7b367f77ccd5053d4e67dce3e7ea2c070ec1bc40dc5ce0fcccc30393d5",
+       "lc_raster_sha256": "2ede11b197eaf3fdef9463c5dce1128af00127235593a1714d10854f743e4d1b"
+      },
+      {
+       "evidence": 0.9,
+       "balance": 0.07520734158202103,
+       "confident": true,
+       "ask_hz": 8.900462962962962,
+       "ask_hz_per_rep": [
+        7.685185185185185,
+        7.592592592592592,
+        10.370370370370368,
+        14.537037037037035,
+        7.592592592592592,
+        7.685185185185185,
+        7.777777777777778,
+        7.962962962962962
+       ],
+       "lc_ne_hz": 7.314814814814814,
+       "lc_ne_hz_per_rep": [
+        7.4074074074074066,
+        7.4074074074074066,
+        6.666666666666666,
+        7.4074074074074066,
+        7.4074074074074066,
+        7.4074074074074066,
+        7.4074074074074066,
+        7.4074074074074066
+       ],
+       "ask_fb_hz": 0.2777777777777778,
+       "lc_add_hz": 18.888888888888886,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 158,
+        "spikes_in_burst": 158,
+        "active_neuron_reps": 158,
+        "active_reps": 8,
+        "median_first_spike_step": 55.0
+       },
+       "lc_add_burst": {
+        "spikes_total": 408,
+        "spikes_in_burst": 160,
+        "active_neuron_reps": 160,
+        "active_reps": 8,
+        "median_first_spike_step": 54.0
+       },
+       "meta_raster_sha256": "c9206f989e8a8ca73f73e5981c48a885c1c6ea9e6b1177c6e9e8d5b62c5270c0",
+       "cmp_raster_sha256": "a3466a5eac84fa0f761152c54bc975661d08f8fe0d8a3e7c42139ab7722b09fb",
+       "lc_raster_sha256": "95e8a49927893b955a4010c9ca26851ed6c7312d6905e36f1907dd84769b57d6"
+      },
+      {
+       "evidence": 1.0,
+       "balance": 0.08564659007052086,
+       "confident": true,
+       "ask_hz": 8.993055555555554,
+       "ask_hz_per_rep": [
+        7.685185185185185,
+        7.592592592592592,
+        10.370370370370368,
+        7.592592592592592,
+        7.4074074074074066,
+        15.648148148148145,
+        7.592592592592592,
+        8.055555555555554
+       ],
+       "lc_ne_hz": 7.314814814814814,
+       "lc_ne_hz_per_rep": [
+        7.4074074074074066,
+        7.4074074074074066,
+        6.666666666666666,
+        7.4074074074074066,
+        7.4074074074074066,
+        7.4074074074074066,
+        7.4074074074074066,
+        7.4074074074074066
+       ],
+       "ask_fb_hz": 0.2777777777777778,
+       "lc_add_hz": 18.796296296296298,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 158,
+        "spikes_in_burst": 158,
+        "active_neuron_reps": 158,
+        "active_reps": 8,
+        "median_first_spike_step": 55.0
+       },
+       "lc_add_burst": {
+        "spikes_total": 406,
+        "spikes_in_burst": 160,
+        "active_neuron_reps": 160,
+        "active_reps": 8,
+        "median_first_spike_step": 54.0
+       },
+       "meta_raster_sha256": "49d81b3dbcbbce93e27faf3d14303461d5e7d19049bec8cead88185c1cbc37ed",
+       "cmp_raster_sha256": "ebefe8e769eb07ac5ea3a62f21a511d2cf0dca62aef4a8f88561b7b5afc9873a",
+       "lc_raster_sha256": "16d1f8e6c2783beda9c9ef97fe8e057d4f81d9d3d96bb66f15a82a10ea63a5c4"
+      }
+     ],
+     "threshold": 0.057845546432234586,
+     "relay_weight_sum_at_measurement": 0.0
+    },
+    "class_swap_gain_lesion": {
+     "levels": [
+      {
+       "evidence": 0.0,
+       "balance": 0.027879363898506322,
+       "confident": false,
+       "ask_hz": 2.3032407407407405,
+       "ask_hz_per_rep": [
+        2.314814814814815,
+        2.4074074074074074,
+        1.759259259259259,
+        1.9444444444444444,
+        2.4074074074074074,
+        2.037037037037037,
+        2.685185185185185,
+        2.8703703703703702
+       ],
+       "lc_ne_hz": 3.796296296296296,
+       "lc_ne_hz_per_rep": [
+        2.962962962962963,
+        2.962962962962963,
+        4.814814814814815,
+        3.333333333333333,
+        3.7037037037037033,
+        3.7037037037037033,
+        4.444444444444444,
+        4.444444444444444
+       ],
+       "ask_fb_hz": 16.666666666666664,
+       "lc_add_hz": 8.425925925925926,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 82,
+        "spikes_in_burst": 82,
+        "active_neuron_reps": 82,
+        "active_reps": 8,
+        "median_first_spike_step": 108.0
+       },
+       "lc_add_burst": {
+        "spikes_total": 182,
+        "spikes_in_burst": 160,
+        "active_neuron_reps": 160,
+        "active_reps": 8,
+        "median_first_spike_step": 99.0
+       },
+       "meta_raster_sha256": "e47b45f71fc1fd005f61f06518ce2cde87c0f74b5a39c2d50f8aeb48e98e9653",
+       "cmp_raster_sha256": "4823cf01b6352dc47b2d1d6764c5578e88cd809de6057dbd50d0a06dba697ea7",
+       "lc_raster_sha256": "885e33d35330bdb30344c4d4671945e3b24e8cfccfb4f8cd1b9c7c7d4bd8b798"
+      },
+      {
+       "evidence": 0.1,
+       "balance": 0.03187443779430112,
+       "confident": false,
+       "ask_hz": 1.5162037037037037,
+       "ask_hz_per_rep": [
+        2.314814814814815,
+        1.4814814814814814,
+        0.18518518518518517,
+        0.9259259259259258,
+        1.0185185185185186,
+        2.4074074074074074,
+        1.759259259259259,
+        2.037037037037037
+       ],
+       "lc_ne_hz": 2.4074074074074074,
+       "lc_ne_hz_per_rep": [
+        3.7037037037037033,
+        2.222222222222222,
+        0.7407407407407407,
+        1.8518518518518516,
+        0.7407407407407407,
+        3.7037037037037033,
+        2.592592592592592,
+        3.7037037037037033
+       ],
+       "ask_fb_hz": 11.898148148148147,
+       "lc_add_hz": 7.453703703703704,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 52,
+        "spikes_in_burst": 52,
+        "active_neuron_reps": 52,
+        "active_reps": 8,
+        "median_first_spike_step": 106.5
+       },
+       "lc_add_burst": {
+        "spikes_total": 161,
+        "spikes_in_burst": 151,
+        "active_neuron_reps": 151,
+        "active_reps": 8,
+        "median_first_spike_step": 99.0
+       },
+       "meta_raster_sha256": "13b058a0d0bc342204deeeb2a8d48121c85c0f7833ecb838c467516ef2c72f95",
+       "cmp_raster_sha256": "97e3efd4a2b49788d5c2ff0c00c18d7276856bb2e2ddc8508b7423401892352e",
+       "lc_raster_sha256": "77826c9656134156fa67bb155ba1e9cede51887e11622f763814e891b023eba9"
+      },
+      {
+       "evidence": 0.2,
+       "balance": 0.039673944839438965,
+       "confident": false,
+       "ask_hz": 0.9374999999999999,
+       "ask_hz_per_rep": [
+        0.8333333333333333,
+        1.296296296296296,
+        0.0,
+        0.8333333333333333,
+        0.648148148148148,
+        0.9259259259259258,
+        1.3888888888888888,
+        1.574074074074074
+       ],
+       "lc_ne_hz": 1.9444444444444444,
+       "lc_ne_hz_per_rep": [
+        1.4814814814814814,
+        1.4814814814814814,
+        0.7407407407407407,
+        1.8518518518518516,
+        3.7037037037037033,
+        1.8518518518518516,
+        2.222222222222222,
+        2.222222222222222
+       ],
+       "ask_fb_hz": 8.148148148148147,
+       "lc_add_hz": 6.9907407407407405,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 42,
+        "spikes_in_burst": 42,
+        "active_neuron_reps": 42,
+        "active_reps": 8,
+        "median_first_spike_step": 110.0
+       },
+       "lc_add_burst": {
+        "spikes_total": 151,
+        "spikes_in_burst": 144,
+        "active_neuron_reps": 144,
+        "active_reps": 8,
+        "median_first_spike_step": 102.0
+       },
+       "meta_raster_sha256": "acaebd06fb3a381e3e8bf83de5710aca1566c20b9acaf99fcd7b90e72b10f3f2",
+       "cmp_raster_sha256": "dcb08dba2f3381ef97ea12d77e92f2029180dab4e6976e3d30299828baf098eb",
+       "lc_raster_sha256": "542d5b7d04f36b0c35721aed496fed10f96699515b6da8b2de69bff037364eb1"
+      },
+      {
+       "evidence": 0.3,
+       "balance": 0.04707073044961089,
+       "confident": false,
+       "ask_hz": 0.6944444444444444,
+       "ask_hz_per_rep": [
+        0.9259259259259258,
+        1.111111111111111,
+        0.0,
+        0.27777777777777773,
+        0.18518518518518517,
+        0.9259259259259258,
+        0.8333333333333333,
+        1.296296296296296
+       ],
+       "lc_ne_hz": 1.7129629629629628,
+       "lc_ne_hz_per_rep": [
+        0.7407407407407407,
+        4.814814814814815,
+        0.7407407407407407,
+        1.111111111111111,
+        0.7407407407407407,
+        2.592592592592592,
+        0.7407407407407407,
+        2.222222222222222
+       ],
+       "ask_fb_hz": 5.87962962962963,
+       "lc_add_hz": 6.527777777777778,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 37,
+        "spikes_in_burst": 37,
+        "active_neuron_reps": 37,
+        "active_reps": 8,
+        "median_first_spike_step": 106.0
+       },
+       "lc_add_burst": {
+        "spikes_total": 141,
+        "spikes_in_burst": 136,
+        "active_neuron_reps": 136,
+        "active_reps": 8,
+        "median_first_spike_step": 103.5
+       },
+       "meta_raster_sha256": "8ebdeec8e5ca20c14caa5b4f4d22b5bd5aa6b89430f14afc792769e5232fe56c",
+       "cmp_raster_sha256": "bbc975b61356f34f5f2fa5b80eaf0c580ca84441301b24413375e253fefce465",
+       "lc_raster_sha256": "1e88fd266f2f4579bf0dc3756d98de6cccaf89ccde860a3f0ecb34711996a3c5"
+      },
+      {
+       "evidence": 0.4,
+       "balance": 0.053941605759204175,
+       "confident": false,
+       "ask_hz": 0.41666666666666663,
+       "ask_hz_per_rep": [
+        0.8333333333333333,
+        0.27777777777777773,
+        0.0,
+        0.18518518518518517,
+        0.09259259259259259,
+        0.27777777777777773,
+        0.8333333333333333,
+        0.8333333333333333
+       ],
+       "lc_ne_hz": 1.5277777777777777,
+       "lc_ne_hz_per_rep": [
+        3.7037037037037033,
+        0.7407407407407407,
+        0.7407407407407407,
+        1.111111111111111,
+        0.7407407407407407,
+        0.7407407407407407,
+        3.7037037037037033,
+        0.7407407407407407
+       ],
+       "ask_fb_hz": 2.8240740740740735,
+       "lc_add_hz": 5.694444444444444,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 33,
+        "spikes_in_burst": 33,
+        "active_neuron_reps": 33,
+        "active_reps": 8,
+        "median_first_spike_step": 104.0
+       },
+       "lc_add_burst": {
+        "spikes_total": 123,
+        "spikes_in_burst": 120,
+        "active_neuron_reps": 120,
+        "active_reps": 8,
+        "median_first_spike_step": 105.0
+       },
+       "meta_raster_sha256": "e82a95b7264d7e0b8b2b31ec49c50b760771ad333981ff8316f011412d0fbe39",
+       "cmp_raster_sha256": "88215bd4028105c8cf000fe28249bae508bccecfa74365bcc9f10cf15f8a582b",
+       "lc_raster_sha256": "acc2be9b30f145b7f0aa7f77b00507c807ce73dce7d915bf469b8c55c1106ae2"
+      },
+      {
+       "evidence": 0.5,
+       "balance": 0.05872136524316183,
+       "confident": true,
+       "ask_hz": 0.23148148148148145,
+       "ask_hz_per_rep": [
+        0.27777777777777773,
+        0.18518518518518517,
+        0.09259259259259259,
+        0.0,
+        0.0,
+        0.18518518518518517,
+        0.27777777777777773,
+        0.8333333333333333
+       ],
+       "lc_ne_hz": 1.1111111111111112,
+       "lc_ne_hz_per_rep": [
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        3.7037037037037033
+       ],
+       "ask_fb_hz": 0.9259259259259258,
+       "lc_add_hz": 4.62962962962963,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 24,
+        "spikes_in_burst": 24,
+        "active_neuron_reps": 24,
+        "active_reps": 8,
+        "median_first_spike_step": 94.5
+       },
+       "lc_add_burst": {
+        "spikes_total": 100,
+        "spikes_in_burst": 98,
+        "active_neuron_reps": 98,
+        "active_reps": 8,
+        "median_first_spike_step": 105.0
+       },
+       "meta_raster_sha256": "4561388f0baebc68448575d0a9122c7e66c787674bbdf97a2de1146106a22c85",
+       "cmp_raster_sha256": "2c5d9d5ec538047579bd0224664a8cd6ff3eadcc712088890214f151fe01424f",
+       "lc_raster_sha256": "2736e4fc26109add797ed8b0f775a9f9173672d031ce561efaa0b7d387c71486"
+      },
+      {
+       "evidence": 0.6,
+       "balance": 0.06455702489870523,
+       "confident": true,
+       "ask_hz": 0.1388888888888889,
+       "ask_hz_per_rep": [
+        0.18518518518518517,
+        0.0,
+        0.18518518518518517,
+        0.0,
+        0.0,
+        0.18518518518518517,
+        0.18518518518518517,
+        0.37037037037037035
+       ],
+       "lc_ne_hz": 0.7407407407407407,
+       "lc_ne_hz_per_rep": [
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407
+       ],
+       "ask_fb_hz": 0.0,
+       "lc_add_hz": 3.8425925925925926,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 16,
+        "spikes_in_burst": 16,
+        "active_neuron_reps": 16,
+        "active_reps": 8,
+        "median_first_spike_step": 90.5
+       },
+       "lc_add_burst": {
+        "spikes_total": 83,
+        "spikes_in_burst": 81,
+        "active_neuron_reps": 81,
+        "active_reps": 8,
+        "median_first_spike_step": 109.0
+       },
+       "meta_raster_sha256": "0ace95061cabbcb9ce6e8a4889604efc91d64b9dabba0664c4933db17c324b9b",
+       "cmp_raster_sha256": "c68aa06558d442425a109acb0cc81f3c8b23253662ffe4c8ab9703c013d75d36",
+       "lc_raster_sha256": "1e2fe43fd83176bd5f72295e703deef2418442d563299340928ccbcc2a638d63"
+      },
+      {
+       "evidence": 0.7,
+       "balance": 0.0715023964824202,
+       "confident": true,
+       "ask_hz": 0.12731481481481483,
+       "ask_hz_per_rep": [
+        0.18518518518518517,
+        0.0,
+        0.18518518518518517,
+        0.0,
+        0.0,
+        0.18518518518518517,
+        0.18518518518518517,
+        0.27777777777777773
+       ],
+       "lc_ne_hz": 0.787037037037037,
+       "lc_ne_hz_per_rep": [
+        0.7407407407407407,
+        0.7407407407407407,
+        1.111111111111111,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407
+       ],
+       "ask_fb_hz": 0.0,
+       "lc_add_hz": 3.7037037037037033,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 17,
+        "spikes_in_burst": 17,
+        "active_neuron_reps": 17,
+        "active_reps": 8,
+        "median_first_spike_step": 88.0
+       },
+       "lc_add_burst": {
+        "spikes_total": 80,
+        "spikes_in_burst": 79,
+        "active_neuron_reps": 79,
+        "active_reps": 8,
+        "median_first_spike_step": 109.0
+       },
+       "meta_raster_sha256": "5f2b2cc1a556db160408290085480410a953cc5b83755bf144f472a573f87bc7",
+       "cmp_raster_sha256": "189ec742bc757501f027b68b71471c429f78db39838142ecf778745255255e05",
+       "lc_raster_sha256": "83b4065ac79ed5bd512a13f93af50c62cb70c411580e5c256490c5319e238f66"
+      },
+      {
+       "evidence": 0.8,
+       "balance": 0.07684357948096682,
+       "confident": true,
+       "ask_hz": 0.09259259259259259,
+       "ask_hz_per_rep": [
+        0.09259259259259259,
+        0.0,
+        0.18518518518518517,
+        0.0,
+        0.0,
+        0.0,
+        0.18518518518518517,
+        0.27777777777777773
+       ],
+       "lc_ne_hz": 0.787037037037037,
+       "lc_ne_hz_per_rep": [
+        0.7407407407407407,
+        0.7407407407407407,
+        1.111111111111111,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407
+       ],
+       "ask_fb_hz": 0.0,
+       "lc_add_hz": 3.4259259259259256,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 17,
+        "spikes_in_burst": 17,
+        "active_neuron_reps": 17,
+        "active_reps": 8,
+        "median_first_spike_step": 81.0
+       },
+       "lc_add_burst": {
+        "spikes_total": 74,
+        "spikes_in_burst": 68,
+        "active_neuron_reps": 68,
+        "active_reps": 8,
+        "median_first_spike_step": 100.5
+       },
+       "meta_raster_sha256": "a5a983c3cf398aee6f26a54507d8fa36ed63d0bc5d759df98f1237c32facfbcf",
+       "cmp_raster_sha256": "2b6ebd74d206d7ffda7fdfc2f537c15479c9c31d690f24c2b6bcd88e7c4e9cc5",
+       "lc_raster_sha256": "e64c3404699af014391eee06daac4e5dc0627177d2d04e376144dc99c22078a6"
+      },
+      {
+       "evidence": 0.9,
+       "balance": 0.0818160582088231,
+       "confident": true,
+       "ask_hz": 0.08101851851851852,
+       "ask_hz_per_rep": [
+        0.09259259259259259,
+        0.0,
+        0.27777777777777773,
+        0.0,
+        0.09259259259259259,
+        0.0,
+        0.0,
+        0.18518518518518517
+       ],
+       "lc_ne_hz": 0.787037037037037,
+       "lc_ne_hz_per_rep": [
+        0.7407407407407407,
+        0.7407407407407407,
+        1.111111111111111,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407
+       ],
+       "ask_fb_hz": 0.0,
+       "lc_add_hz": 3.194444444444444,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 17,
+        "spikes_in_burst": 17,
+        "active_neuron_reps": 17,
+        "active_reps": 8,
+        "median_first_spike_step": 78.0
+       },
+       "lc_add_burst": {
+        "spikes_total": 69,
+        "spikes_in_burst": 65,
+        "active_neuron_reps": 64,
+        "active_reps": 8,
+        "median_first_spike_step": 96.0
+       },
+       "meta_raster_sha256": "99c1e326edebab36e9659f8f89ed650e6702bf016c9df9602ac84ad1d7243b12",
+       "cmp_raster_sha256": "1556d2e6f59a09d802a55d2749b33e3c077fc5c4a6180545d82b620cd7c11d47",
+       "lc_raster_sha256": "5bc44d67f149eff1f837334f793e2ce3b553df6d2f687cba7a0ac8b5030c7261"
+      },
+      {
+       "evidence": 1.0,
+       "balance": 0.0879712151171182,
+       "confident": true,
+       "ask_hz": 0.15046296296296297,
+       "ask_hz_per_rep": [
+        0.09259259259259259,
+        0.09259259259259259,
+        0.27777777777777773,
+        0.18518518518518517,
+        0.09259259259259259,
+        0.09259259259259259,
+        0.18518518518518517,
+        0.18518518518518517
+       ],
+       "lc_ne_hz": 0.8796296296296297,
+       "lc_ne_hz_per_rep": [
+        0.7407407407407407,
+        0.7407407407407407,
+        1.8518518518518516,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407,
+        0.7407407407407407
+       ],
+       "ask_fb_hz": 0.0,
+       "lc_add_hz": 4.166666666666667,
+       "bystanders_hz": 0.0,
+       "bystander_spikes": 0,
+       "lc_ne_burst": {
+        "spikes_total": 19,
+        "spikes_in_burst": 19,
+        "active_neuron_reps": 19,
+        "active_reps": 8,
+        "median_first_spike_step": 68.0
+       },
+       "lc_add_burst": {
+        "spikes_total": 90,
+        "spikes_in_burst": 86,
+        "active_neuron_reps": 86,
+        "active_reps": 8,
+        "median_first_spike_step": 106.5
+       },
+       "meta_raster_sha256": "13f83e8366519f7a518a41e379d3738c960d8f5d8faef2fe62b89a03643443cc",
+       "cmp_raster_sha256": "096a3b37ffde2ab54088b45cc3a44efebd950e075d65b3bc4b35ea9c109c9c5a",
+       "lc_raster_sha256": "d62373a1840ac77e858922bcd94569329e85d4d025f6b9d81c79d33fd7035314"
+      }
+     ],
+     "threshold": 0.057845546432234586,
+     "gates_at_measurement": {
+      "edge_drive": 1.0,
+      "lc_ne_autoinh": 1.0,
+      "lc_ne_gain": 0.0,
+      "ask_fb_loop": 1.0,
+      "lc_add_ctrl": 0.0
+     }
+    }
+   },
+   "elapsed_s": 572.3
+  }
+ ],
+ "config": {
+  "seeds": [
+   42
+  ],
+  "dev": false,
+  "backend": "numpy"
+ },
+ "elapsed_s": 572.3
+}
