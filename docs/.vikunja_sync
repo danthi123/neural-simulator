@@ -172,3 +172,6 @@ Reconciled #217 (configural binding) with an adversarial review's own findings: 
 
 ## 2026-09-24  batch 1 default flip
 - #225 updated: three fixes ON by default after the production-default battery GO
+
+## 2026-09-24  A10 follow-up round
+- new task #236: surprise -> engagement (A10), off by default; follow-up fixes landed on research/a10-followups, AMENDMENT-3 filed, v4 arms not yet run

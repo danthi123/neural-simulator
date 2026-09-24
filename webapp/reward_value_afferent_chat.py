@@ -59,10 +59,15 @@ No step maps message content to a reward category, but step 1 is a regex/keyword
 addressing that decides confirm vs contradict by string identity, and step 4 is a host map. Steps 1 and 3 are
 registered in docs/SCAFFOLD-LEDGER.md; the S15(c) trace cannot pass while either is on the path.
 
-THE READ LEAVES NO FOOTPRINT (fix round 2). The organ is process-shared and production reads it again later in the
-same turn (and reconsolidation, default-ON, gates on that read). The A10 read snapshots every piece of state it can
-mutate and restores it before returning -- see the block above `_SCALAR_TYPES`. Without that, the v2 seed-7 arms
-measured the production CONFIRM read at 0.3472222222222222 Hz with the flag ON vs 0.4050925925925926 Hz OFF.
+THE READ RESTORES THE ORGAN STATE IT TOUCHES (fix round 2). The organ is process-shared and production reads it
+again later in the same turn (and reconsolidation, default-ON, gates on that read). The A10 read snapshots every
+piece of organ state it can mutate and restores it before returning -- see the block above `_SCALAR_TYPES`. Without
+that, the v2 seed-7 arms measured the production CONFIRM read at 0.3472222222222222 Hz with the flag ON vs
+0.4050925925925926 Hz OFF. What has been MEASURED: at the module level (seed 7, numpy, the production organ on the
+merged pool, v3/footprint_module.json) the organ's read-state hash is unchanged across every A10 read and the
+production reads equal the flag-OFF reference. Not yet measured: the handler level (criterion (D) in the arms), other
+seeds, the cupy backend. Outside the isolation, declared: the intact organ's first-use build (block above
+`_SCALAR_TYPES`) and the recall call `chat.inner.what_does` (at the call in `spiking_reward_value`).
 
 LESION (`BRAIN_REWARD_VALUE_LESION=1`). The read uses the organ's OWN lesioned twin (`sorg.judge(..., lesion=True)`):
 a STANDALONE `build_expectation_circuit` bridge, trained the same way, with the patient_expected->surprise
@@ -73,7 +78,8 @@ zeroed edges (declared). It also does not cut the afferent this path is named fo
 read for a disinhibited twin's read. What an intact-vs-lesion comparison measures is whether the surprise
 PREDICTION reaches the DA mode through this path. (Before fix round 2 there was also a read-count asymmetry: the
 intact arm's A10 read shifted the production surprise read, the lesion arm's twin read did not. Both A10 reads now
-leave no footprint.) Under the lesion a CONFIRM and a CONTRADICT read are both HIGH but NOT equal (seed 7:
+restore the organ state they touch, measured at the module level only, and the twin's first-use build leaves the
+host's global generators as it found them.) Under the lesion a CONFIRM and a CONTRADICT read are both HIGH but NOT equal (seed 7:
 0.861 vs 0.969 normalized in both runs). The v2 block control measured why: each lesioned read equals its own
 surprise block's cue-free rate, so the residual is the block-8 vs block-0 rate difference, not a prediction effect
 (research/findings/2026-09-24-reward-value-spiking-afferent-seed7-derisk-PARTIAL.md). At read time
@@ -82,7 +88,10 @@ organ's, for reference) under `lesion_cut`, and `tools.lab.void_if` flags a cut 
 
 ERRORS NEVER DRIVE THE SNc. Any failure (import, organ build, read) returns a record with `drives=False` and no
 `normalized`: the caller then runs the pre-existing afferent unchanged. (The first version returned
-`normalized=0.0`, which drove the SNc at 0 pA -- a real 'rest' mode -- on a broken read.)
+`normalized=0.0`, which drove the SNc at 0 pA -- a real 'rest' mode -- on a broken read.) Since the follow-up round
+the same holds when the read's snapshot cannot be taken, when the restore after the read raises or is not exact
+(`footprint.restored_exact` is not True), and when a host generator changed across the lesion twin's build: with no
+exact restore there is no read.
 
 CONTRACT (additive, reversible, byte-identical-off). `da_mode_drives_chat.observe_turn` checks the
 `BRAIN_REWARD_VALUE_AFFERENT` env var BEFORE importing this module; unset/off -> this module is never imported or
@@ -95,6 +104,7 @@ See research/findings/2026-09-24-reward-value-spiking-afferent-PREREGISTRATION.m
 """
 from __future__ import annotations
 
+import contextlib
 import os
 from typing import Optional
 
@@ -206,12 +216,85 @@ def _lesion_cut(sorg) -> dict:
 # per-synapse state, the sparse weight data), its scalar and container attributes, the runtime clock, the organ's
 # host block bookkeeping (`_block`, `_cue_next`, `_novel_next`) and the numpy / Python global RNG states -- is
 # snapshotted right before the read and restored right after, so the production read sees exactly the state it
-# would have seen with the flag off. Builds (`ensure_built`, the lesion twin) run BEFORE the snapshot and are kept.
-# Declared: cupy's global generator has no state accessor, so it is not restored (the read draws no random numbers
-# when the pool's noise is off; a first-use twin BUILD reseeds it, exactly as production's BRAIN_SURPRISE_LESION
-# path does), and a first-use organ build happens where A10 first calls (earlier in the turn than the production
-# surprise block when no startup warm-up ran; the webapp startup warms the intact organ).
+# would have seen with the flag off. If the restore raises or is not exact, the read does not drive the SNc.
+#
+# BUILDS AND THE GLOBAL GENERATORS (follow-up round, after the re-review of 4b6a9cf66). Every bridge build calls
+# sim/bridge.py `_initialize_rng`, which reseeds cupy's, numpy's AND Python's global generators. Builds run BEFORE
+# the snapshot, so the snapshot cannot undo them. (The fix-round-2 text named only cupy here; that was wrong.)
+#   * The LESION TWIN's first-use build (`_ensure_les`, only in the lesion arm) runs inside
+#     `_global_rngs_untouched`: numpy's and Python's global states are saved and restored, and on the cupy backend
+#     the build is handed a private cupy generator object while the host's object is set aside untouched and put
+#     back (cupy's RandomState has no get_state/set_state, and `cupy.random.seed` reseeds the current object IN
+#     PLACE, so only swapping the object keeps the host's stream intact). The twin build reseeds from its own seed,
+#     so the twin it builds is the same either way. The record's `footprint.twin_build` says whether the host
+#     generators compare equal after the build; if not, the read does not drive the SNc.
+#   * The INTACT organ's first-use build (`ensure_built`, both A10 arms) is NOT isolated, and is declared: when no
+#     earlier caller built the organ (the battery worker runs no startup warm-up; the webapp startup does warm it),
+#     A10's call builds it, which reseeds all three generators at that point in the turn instead of at the
+#     production surprise block. It is common to the intact and lesion arms and absent from the OFF arm. Isolating it
+#     would not restore the flag-OFF sequence either: production's own first build resets the generators at the
+#     surprise block, and A10 cannot reproduce that reset at that point.
+# The read itself: numpy's and Python's global states are restored with the rest of the snapshot. Cupy's global
+# generator is not restored around the READ (no state accessor; the read draws no random numbers when the pool's
+# noise is off, which is the configuration measured in v3/footprint_module.json).
 _SCALAR_TYPES = (bool, int, float, complex, str, bytes, type(None), np.generic)
+
+
+def _backend_xp():
+    try:
+        from sim.backend import get_backend
+        xp, name = get_backend()
+        return xp, name
+    except Exception:
+        return np, "numpy"
+
+
+def _np_states_equal(a, b) -> bool:
+    try:
+        return (a[0] == b[0] and np.array_equal(a[1], b[1]) and tuple(a[2:]) == tuple(b[2:]))
+    except Exception:
+        return False
+
+
+@contextlib.contextmanager
+def _global_rngs_untouched(xp=None, name=None):
+    """Run a block (a bridge BUILD) without changing any process-global generator the production path reads later:
+    numpy's and Python's global states are saved and restored; on the cupy backend the block runs on a private cupy
+    generator object and the host's object is put back untouched (see the block above `_SCALAR_TYPES`). Yields a
+    record that is filled in on exit: `numpy_unchanged`, `python_unchanged`, `cupy` ("swapped" / "not the backend"
+    / "swap failed: ...") and `host_rngs_unchanged` (all of them held)."""
+    import random as _random
+    if xp is None:
+        xp, name = _backend_xp()
+    rec = {}
+    np_state = np.random.get_state()
+    py_state = _random.getstate()
+    cp_saved = None
+    if name == "cupy" and xp is not np:
+        try:
+            cp_saved = xp.random.get_random_state()
+            xp.random.set_random_state(xp.random.RandomState(0))   # private; the build reseeds it from its own seed
+            rec["cupy"] = "swapped"
+        except Exception as e:
+            cp_saved = None
+            rec["cupy"] = f"swap failed: {type(e).__name__}: {e}"
+    else:
+        rec["cupy"] = "not the backend"
+    try:
+        yield rec
+    finally:
+        cp_ok = True
+        if cp_saved is not None:
+            xp.random.set_random_state(cp_saved)
+            cp_ok = xp.random.get_random_state() is cp_saved
+        elif rec["cupy"].startswith("swap failed"):
+            cp_ok = False
+        _random.setstate(py_state)
+        np.random.set_state(np_state)
+        rec["numpy_unchanged"] = _np_states_equal(np.random.get_state(), np_state)
+        rec["python_unchanged"] = bool(_random.getstate() == py_state)
+        rec["cupy_host_object_restored"] = bool(cp_ok)
+        rec["host_rngs_unchanged"] = bool(rec["numpy_unchanged"] and rec["python_unchanged"] and cp_ok)
 
 
 def _array_module(x):
@@ -414,10 +497,12 @@ def spiking_reward_value(chat, message: str, seed: int) -> Optional[dict]:
     record with `drives=True` and `normalized` in [0, 1] when the spiking surprise read applies, and a record with
     `drives=False` (and an `error`) when anything failed. Never raises.
 
-    The read is FOOTPRINT-FREE (see the block above `_SCALAR_TYPES`): the state it mutates is restored before this
-    returns, so production's own surprise read later in the turn is unchanged. If the snapshot cannot be taken the
-    read is not made (`drives=False`); the record's `footprint` block says what the read touched and whether the
-    restore was exact."""
+    The read leaves no footprint on the ORGAN (see the block above `_SCALAR_TYPES`): the state it mutates is
+    restored before this returns. If the snapshot cannot be taken, or the restore raises or is not exact, the read
+    does not drive (`drives=False`); the record's `footprint` block says what the read touched and whether the
+    restore was exact. The lesion twin's first-use build runs with the host's global generators set aside
+    (`footprint.twin_build`). What is NOT covered by the isolation is declared in the block above `_SCALAR_TYPES`
+    (the intact first-use build) and at the recall call below (`chat.inner.what_does`)."""
     lesion = reward_value_lesioned()
     try:
         import research.runners.surprise_production_organ as _SO
@@ -437,16 +522,29 @@ def spiking_reward_value(chat, message: str, seed: int) -> Optional[dict]:
         if not p_stored:
             return None
         sorg = _SO.get_organ(seed=seed)                  # the SAME process-shared organ production reads
-        # builds first (kept), then snapshot -> read -> restore (the read leaves no footprint)
+        # builds first (kept), then snapshot -> read -> restore (the read leaves no footprint on the organ)
         if hasattr(sorg, "ensure_built"):
-            sorg.ensure_built()
-        read_bridge = sorg._ensure_les()["bridge"] if lesion else sorg.bridge
+            sorg.ensure_built()                          # intact first-use build: declared, not isolated (see above)
+        twin_build = None
+        if lesion:
+            # the twin's first-use build reseeds all three global generators (sim/bridge.py `_initialize_rng`);
+            # run it with the host's generators set aside, so the lesion arm shifts no generator production reads
+            with _global_rngs_untouched() as twin_build:
+                les = sorg._ensure_les()
+            if twin_build.get("host_rngs_unchanged") is not True:
+                return {"on": True, "source": "surprise", "drives": False, "twin_build": twin_build,
+                        "error": "twin build: a host generator changed across the lesion twin's build"}
+            read_bridge = les["bridge"]
+        else:
+            read_bridge = sorg.bridge
         try:
             snap = _snapshot_read_state(sorg, read_bridge)
-        except Exception as e:   # no snapshot -> no read: never perturb the production read
+        except Exception as e:   # no snapshot -> no read
             return {"on": True, "source": "surprise", "drives": False,
                     "error": f"snapshot: {type(e).__name__}: {e}"}
         footprint = {"isolated": True, "bridge": "lesion_twin" if lesion else "intact"}
+        if twin_build is not None:
+            footprint["twin_build"] = twin_build
         try:
             sj = sorg.judge(a_s, v_s, str(p_stored), str(p_asserted), lesion=bool(lesion))
             s_blk, t_blk = _blocks(sorg, str(p_stored), str(p_asserted))   # before the bookkeeping is restored
@@ -460,6 +558,12 @@ def spiking_reward_value(chat, message: str, seed: int) -> Optional[dict]:
                                   "restored_exact": fp["exact"]})
             except Exception as e:
                 footprint.update({"restored_exact": False, "restore_error": f"{type(e).__name__}: {e}"})
+        if footprint.get("restored_exact") is not True:
+            # the organ may now carry this read's footprint, so the production read later in the turn may differ
+            # from the flag-OFF read: an unrestored read must not also drive the SNc (no exact restore -> no read)
+            return {"on": True, "source": "surprise", "drives": False, "footprint": footprint,
+                    "error": "restore: the organ's pre-read state was not restored exactly"
+                             + (f" ({footprint['restore_error']})" if footprint.get("restore_error") else "")}
         hz = float(sj["surprise_hz"])
         threshold = float(sj["threshold"])
         if not np.isfinite(hz) or not np.isfinite(threshold) or threshold <= 0.0:

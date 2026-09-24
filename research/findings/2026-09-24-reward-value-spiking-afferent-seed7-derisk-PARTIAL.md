@@ -3,7 +3,7 @@ type: finding
 status: no-go
 lane: load-bearing
 date: 2026-09-24
-mechanism: A10 (midnight plan S15c) seed-7 de-risk of the surprise-organ prediction-error input to da-mode-drives-response's SNc afferent (flags BRAIN_REWARD_VALUE_AFFERENT / BRAIN_REWARD_VALUE_LESION, default-OFF), per research/findings/2026-09-24-reward-value-spiking-afferent-PREREGISTRATION.md and its AMENDMENT-1 and AMENDMENT-2
+mechanism: A10 (midnight plan S15c) seed-7 de-risk of the surprise-organ prediction-error input to da-mode-drives-response's SNc afferent (flags BRAIN_REWARD_VALUE_AFFERENT / BRAIN_REWARD_VALUE_LESION, default-OFF), per research/findings/2026-09-24-reward-value-spiking-afferent-PREREGISTRATION.md and its AMENDMENT-1, AMENDMENT-2 and AMENDMENT-3
 seeds: [7]
 artifacts:
   - research/findings/raw/_reward_value_afferent_derisk/s7.json
@@ -19,8 +19,22 @@ artifacts:
 # A10 seed-7 de-risk: NO-GO at the pre-registered criteria in both runs; the rerun shows (A) holds and traces the lesion residual to surprise-block identity
 
 Governed by `research/findings/2026-09-24-reward-value-spiking-afferent-PREREGISTRATION.md` (57f0ebfd0),
-`...-PREREG-AMENDMENT-1.md` and `...-PREREG-AMENDMENT-2.md`. Seed 7 only: a dev/calibration seed, not a gate verdict.
-The flags stay default-OFF.
+`...-PREREG-AMENDMENT-1.md`, `...-PREREG-AMENDMENT-2.md` and `...-PREREG-AMENDMENT-3.md`. Seed 7 only: a
+dev/calibration seed, not a gate verdict. The flags stay default-OFF.
+
+## Follow-up round (after the re-review of 4b6a9cf66, which read SOUND as a default-OFF merge)
+
+The re-review named four holes; `research/findings/2026-09-24-reward-value-spiking-afferent-PREREG-AMENDMENT-3.md`
+records them and was committed before any run it governs. In short:
+- The lesion twin's first-use build reseeded numpy's, Python's and cupy's global generators before the read's
+  snapshot (fix round 2 had named only cupy). It now runs with the host's generators set aside; a unit pin on the real
+  seed-7 organ shows numpy and Python unchanged across it and the same twin built.
+- (D)'s reconsolidation half compared None with None in every arm. (D) is split: the reconsolidation half is scored
+  only on a new arm pair with reconsolidation on (off_rc, on_rc), and an unmeasured half cannot read GO.
+- A10's own recall runs outside the isolation. A module-level probe measures whether it is history-dependent, and
+  the module declares the result.
+- A restore that raised or was not exact still drove the SNc. It now returns `drives=False`.
+None of this is a new capability result; the v4 arms AMENDMENT-3 governs have not run.
 
 ## Fix round 2 (after the review of 7d5c2743d): a flag-ON side effect the v2 record did not mention
 
@@ -44,8 +58,9 @@ intact read (AMENDMENT-2).
   blocks of on_a and les equal off_a's on both turns. Scored on the v2 arms, (D) fails, as it should.
 - **Measurement of the fix.** A module-level check on the production organ
   (`research/runners/_reward_value_afferent_footprint.py`) and the v3 arms on the pool, both governed by
-  AMENDMENT-2. The module-level check has landed (below). The v3 arms are queued on the pool; until they land the
-  fix is unmeasured at the handler level and (D) is unscored.
+  AMENDMENT-2. The module-level check has landed (below). The v3 arms queued on the pool at 621ace648 run the module
+  before the follow-up round and have no rc arm pair, so their (D) reconsolidation half reads unmeasured
+  (AMENDMENT-3). Until the v4 arms land, the fix is unmeasured at the handler level and (D) is unscored.
 
 ### Module-level footprint check (AMENDMENT-2), seed 7: the runner reads GO
 
@@ -209,8 +224,10 @@ text were not affected by it at seed 7; the lesion arm's production read was not
 
 ## Next action
 
-1. Harvest the v3 runs AMENDMENT-2 governs (module-level footprint check; v3 arms and fresh pre-patch references
-   for both composers) and score them. (D) decides whether the fix holds at the handler level.
+1. Queue the v4 arms AMENDMENT-3 governs (seven arms, both composers, at the follow-up head) once the recall probe
+   has been read, and score them with the v3 pre-patch references (same revision and env). (D), with both halves
+   measured, decides whether the isolation holds at the handler level. The v3 arms queued at 621ace648 can still be
+   scored for (A), (B), (C) and the surprise half of (D); they cannot read GO on (D).
 2. **Withdrawn (fix round 2): the block-matched criterion (C') proposed here earlier.** It read
    |lesion_hz - cuefree_hz(block)| < 1e-6 on the twin. With patient_expected->surprise zeroed there is no other route
    from the cue to the surprise pool, so once the read-time cut holds the lesioned read equals the cue-free rate by

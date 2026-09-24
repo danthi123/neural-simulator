@@ -391,6 +391,226 @@ def test_real_standalone_organ_read_is_restored_exactly(SO, monkeypatch):
     assert set(vars(org.bridge)) == set(snap)
 
 
+# ── follow-up round (re-review of 4b6a9cf66): a failed restore never drives; the twin build shifts no RNG ─────────
+def test_a_restore_that_raises_does_not_drive(SO, monkeypatch):
+    import webapp.reward_value_afferent_chat as RVA
+    org = _StatefulOrgan(hz=0.4, thr=2.5)
+    monkeypatch.setattr(SO, "get_organ", lambda seed=42: org)
+
+    def broken(*a, **k):
+        raise RuntimeError("restore exploded")
+
+    monkeypatch.setattr(RVA, "_restore_read_state", broken)
+    info = RVA.spiking_reward_value(_chat(), "the dog chase the cat", seed=7)
+    assert info["drives"] is False and "normalized" not in info
+    assert info["footprint"]["restored_exact"] is False
+    assert "restore exploded" in info["footprint"]["restore_error"] and info["error"].startswith("restore")
+
+
+def test_an_inexact_restore_does_not_drive(SO, monkeypatch):
+    import webapp.reward_value_afferent_chat as RVA
+    org = _StatefulOrgan(hz=0.4, thr=2.5)
+    monkeypatch.setattr(SO, "get_organ", lambda seed=42: org)
+    real = RVA._restore_read_state
+
+    def inexact(*a, **k):
+        out = real(*a, **k)
+        out["exact"] = False
+        return out
+
+    monkeypatch.setattr(RVA, "_restore_read_state", inexact)
+    info = RVA.spiking_reward_value(_chat(), "the dog chase the cat", seed=7)
+    assert info["drives"] is False and "normalized" not in info
+    assert info["footprint"]["restored_exact"] is False
+
+
+def test_a_failed_restore_falls_through_to_the_pre_existing_afferent(ws, SO, monkeypatch):
+    """End to end through observe_turn: the workspace is called with exactly the pre-existing arguments."""
+    import webapp.reward_value_afferent_chat as RVA
+    monkeypatch.setenv("BRAIN_REWARD_VALUE_AFFERENT", "1")
+    monkeypatch.setattr(SO, "get_organ", lambda seed=42: _StatefulOrgan(hz=0.4, thr=2.5))
+    monkeypatch.setattr(RVA, "_restore_read_state", lambda *a, **k: (_ for _ in ()).throw(RuntimeError("x")))
+    info = DAD.observe_turn(_chat(), "the dog chase the cat", seed=7)
+    assert ws.calls[-1][1] == {"lesion": False, "afferent_override": None}
+    assert info["reward_value"]["drives"] is False
+
+
+class _ReseedingTwinOrgan(_StatefulOrgan):
+    """A stub whose lesion twin's FIRST-USE build does what sim/bridge.py `_initialize_rng` does on every bridge build:
+    reseed numpy's and Python's global generators (then draw from them, as a build does)."""
+
+    def __init__(self, hz, thr):
+        super().__init__(hz, thr)
+        self._twin_built = False
+        self._les = {"bridge": self.bridge, "idx_map": self.idx_map}
+
+    def _ensure_les(self):
+        if not self._twin_built:
+            import random as _r
+            np.random.seed(7)
+            _r.seed(7)
+            np.random.random(3)
+            _r.random()
+            self._twin_built = True
+        return self._les
+
+
+def _rng_fingerprint():
+    import random as _r
+    st = np.random.get_state()
+    return st[1].copy(), st[2], _r.getstate()
+
+
+def _seed_host_rngs():
+    import random as _r
+    np.random.seed(123)
+    np.random.random(11)
+    _r.seed(99)
+    _r.random()
+
+
+def test_the_lesion_twin_first_use_build_leaves_the_host_rngs_unchanged(SO, monkeypatch):
+    import webapp.reward_value_afferent_chat as RVA
+    monkeypatch.setenv("BRAIN_REWARD_VALUE_LESION", "1")
+    org = _ReseedingTwinOrgan(hz=0.4, thr=2.5)
+    monkeypatch.setattr(SO, "get_organ", lambda seed=42: org)
+    _seed_host_rngs()
+    k0, pos0, py0 = _rng_fingerprint()
+    info = RVA.spiking_reward_value(_chat(), "the dog chase the cat", seed=7)
+    assert org._twin_built is True and info["drives"] is True
+    k1, pos1, py1 = _rng_fingerprint()
+    assert np.array_equal(k0, k1) and pos0 == pos1 and py0 == py1
+    tb = info["footprint"]["twin_build"]
+    assert tb["host_rngs_unchanged"] is True and tb["numpy_unchanged"] is True and tb["python_unchanged"] is True
+
+
+def test_without_the_guard_the_twin_build_shifts_the_host_rngs_so_the_test_can_fail(SO, monkeypatch):
+    """Sensitivity control for the test above: with `_global_rngs_untouched` replaced by a no-op, the same stub build
+    changes numpy's and Python's global generators."""
+    import webapp.reward_value_afferent_chat as RVA
+    monkeypatch.setenv("BRAIN_REWARD_VALUE_LESION", "1")
+    org = _ReseedingTwinOrgan(hz=0.4, thr=2.5)
+    monkeypatch.setattr(SO, "get_organ", lambda seed=42: org)
+
+    import contextlib
+
+    @contextlib.contextmanager
+    def noop(*a, **k):
+        yield {"host_rngs_unchanged": True}
+
+    monkeypatch.setattr(RVA, "_global_rngs_untouched", noop)
+    _seed_host_rngs()
+    k0, pos0, py0 = _rng_fingerprint()
+    RVA.spiking_reward_value(_chat(), "the dog chase the cat", seed=7)
+    k1, pos1, py1 = _rng_fingerprint()
+    assert not (np.array_equal(k0, k1) and pos0 == pos1) and py0 != py1
+
+
+def test_a_twin_build_that_changed_a_host_rng_does_not_drive(SO, monkeypatch):
+    import webapp.reward_value_afferent_chat as RVA
+    import contextlib
+    monkeypatch.setenv("BRAIN_REWARD_VALUE_LESION", "1")
+    monkeypatch.setattr(SO, "get_organ", lambda seed=42: _ReseedingTwinOrgan(hz=0.4, thr=2.5))
+
+    @contextlib.contextmanager
+    def leaky(*a, **k):
+        yield {"host_rngs_unchanged": False}
+
+    monkeypatch.setattr(RVA, "_global_rngs_untouched", leaky)
+    info = RVA.spiking_reward_value(_chat(), "the dog chase the cat", seed=7)
+    assert info["drives"] is False and "normalized" not in info and info["error"].startswith("twin build")
+
+
+class _FakeCupyRandom:
+    """cupy.random's relevant surface: a per-device CURRENT generator object; `seed` reseeds that object IN PLACE
+    (cupy's RandomState.seed does exactly this), and the object has no get_state/set_state."""
+
+    class RandomState:
+        def __init__(self, seed=0):
+            self.stream = [int(seed)]
+
+        def seed(self, s):
+            self.stream[:] = [int(s)]
+
+        def draw(self):
+            self.stream.append(self.stream[-1] * 31 + 7)
+
+    def __init__(self):
+        self._cur = self.RandomState(42)
+
+    def get_random_state(self):
+        return self._cur
+
+    def set_random_state(self, rs):
+        self._cur = rs
+
+    def seed(self, s):
+        self._cur.seed(s)
+
+
+def test_the_cupy_host_generator_object_is_set_aside_not_reseeded():
+    import webapp.reward_value_afferent_chat as RVA
+    fake = types.SimpleNamespace(random=_FakeCupyRandom())
+    host = fake.random.get_random_state()
+    host.draw()
+    host.draw()
+    before = list(host.stream)
+    with RVA._global_rngs_untouched(xp=fake, name="cupy") as rec:
+        fake.random.seed(7)                          # what `_initialize_rng` does to cupy on a build
+        fake.random.get_random_state().draw()
+    assert fake.random.get_random_state() is host and host.stream == before
+    assert rec["cupy"] == "swapped" and rec["cupy_host_object_restored"] is True and rec["host_rngs_unchanged"] is True
+    # sensitivity: the same build WITHOUT the swap reseeds the host object in place
+    fake.random.seed(7)
+    assert host.stream != before
+
+
+@pytest.mark.skipif(os.environ.get("A10_SKIP_REAL_ORGAN") == "1", reason="opt-out for quick runs")
+def test_real_lesion_twin_first_use_build_leaves_host_rngs_unchanged_and_builds_the_same_twin(SO, monkeypatch):
+    """The real SurpriseProductionOrgan (standalone bridge, numpy): the lesion arm's first A10 call builds the twin
+    (sim/bridge.py `_initialize_rng` reseeds numpy and Python random on that build). After the call the host's numpy
+    and Python global generators are exactly as before, and the twin equals one built with no guard (the build
+    reseeds from its own seed)."""
+    import webapp.reward_value_afferent_chat as RVA
+    from sim.backend import get_backend
+    xp, _ = get_backend()
+    if xp is not np:
+        pytest.skip("real-organ pin runs on the numpy backend (SIM_BACKEND=numpy)")
+    monkeypatch.setenv("BRAIN_REWARD_VALUE_LESION", "1")
+    org = SO.SurpriseProductionOrgan(seed=7, shared=None)
+    org.ensure_built()
+    assert org.les is None                                            # the A10 call below is the first use
+    monkeypatch.setattr(SO, "get_organ", lambda seed=42: org)
+    _seed_host_rngs()
+    k0, pos0, py0 = _rng_fingerprint()
+    info = RVA.spiking_reward_value(_chat(), "the dog chase the cat", seed=7)
+    k1, pos1, py1 = _rng_fingerprint()
+    assert org.les is not None and info["drives"] is True
+    assert np.array_equal(k0, k1) and pos0 == pos1 and py0 == py1
+    assert info["footprint"]["twin_build"]["host_rngs_unchanged"] is True
+    ref = SO.SurpriseProductionOrgan(seed=7, shared=None)._ensure_les()   # unguarded twin build, same seed
+    for name in ("cp_neuron_firing_thresholds", "cp_membrane_potential_v"):
+        assert np.array_equal(getattr(org.les["bridge"], name), getattr(ref["bridge"], name)), name
+    a, b = org.les["bridge"].cp_connections, ref["bridge"].cp_connections
+    assert np.array_equal(a.data, b.data) and np.array_equal(a.indices, b.indices)
+
+
+def test_recall_probe_hash_sees_nested_changes_and_survives_cycles():
+    """The AMENDMENT-3 recall probe's state hash: equal on an unchanged graph (with a cycle), different after a
+    one-element change in a nested array, equal again once it is undone."""
+    from research.runners._reward_value_afferent_recall_probe import deep_hash
+    o = types.SimpleNamespace(a=np.arange(5.0), s=sp.csr_matrix(np.eye(3)), l=[1, 2, {"x": np.ones(2)}], t=None)
+    o.self = o
+    h0 = deep_hash(o)[0]
+    assert deep_hash(o)[0] == h0
+    o.l[2]["x"][1] = 3.0
+    assert deep_hash(o)[0] != h0
+    o.l[2]["x"][1] = 1.0
+    assert deep_hash(o)[0] == h0
+    o.s.data[0] = 2.0
+    assert deep_hash(o)[0] != h0
+
+
 # ── AMENDMENT-2 (D): the side-effect criterion can fail, and fails on the v2 data it was written for ───────────────
 _V2 = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
                    "research", "findings", "raw", "_reward_value_afferent_derisk", "v2")
@@ -413,16 +633,109 @@ def test_side_effect_check_fails_on_the_v2_arms(sub):
     assert side["per_arm"]["les"]["confirm"]["surprise_equal"] is True      # the twin read never touched it
 
 
-def test_side_effect_check_passes_when_the_surprise_block_is_unchanged():
+_RC_BLOCK = {"on": True, "action": "rewrite", "agent": "dog", "action_verb": "chase", "old": "cat", "new": "fish"}
+
+
+def _surprise_equalized_v2_arms(with_rc=True, rc_on_block=None):
+    """v2 arms with the surprise blocks of on_a / les set equal to off_a's; with `with_rc`, an rc pair built from
+    off_a / on_a whose CONTRA turn carries a reconsolidation block (off_rc: `_RC_BLOCK`; on_rc: `rc_on_block`, default
+    the same)."""
     import copy
-    from research.runners._reward_value_afferent_derisk import side_effect_check
     arms = _v2_arms()
     for arm in ("on_a", "les"):
         arms[arm] = copy.deepcopy(arms[arm])
         for t in ("confirm", "contra"):
             arms[arm][t]["surprise"] = copy.deepcopy(arms["off_a"][t]["surprise"])
             arms[arm][t]["reconsolidation"] = copy.deepcopy(arms["off_a"][t].get("reconsolidation"))
-    assert side_effect_check(arms)["GO"] is True
+    if with_rc:
+        arms["off_rc"] = copy.deepcopy(arms["off_a"])
+        arms["on_rc"] = copy.deepcopy(arms["on_a"])
+        arms["off_rc"]["contra"]["reconsolidation"] = dict(_RC_BLOCK)
+        arms["on_rc"]["contra"]["reconsolidation"] = dict(rc_on_block if rc_on_block is not None else _RC_BLOCK)
+    return arms
+
+
+def test_side_effect_check_passes_when_the_surprise_block_is_unchanged():
+    from research.runners._reward_value_afferent_derisk import side_effect_check
+    side = side_effect_check(_surprise_equalized_v2_arms())
+    assert side["GO"] is True
+    assert side["reconsolidation_half"]["measured"] is True and side["reconsolidation_half"]["GO"] is True
+    assert set(side["surprise_half"]["per_arm"]) == {"on_a", "les", "on_rc"}
+
+
+def test_reconsolidation_half_is_unmeasured_without_the_rc_pair_so_d_cannot_pass_on_none_vs_none():
+    """AMENDMENT-3: in the five core arms reconsolidation is off and both blocks are None. AMENDMENT-2 scored that
+    comparison, which could not fail; it is now reported and the half reads unmeasured, so (D) is not GO."""
+    from research.runners._reward_value_afferent_derisk import side_effect_check
+    arms = _surprise_equalized_v2_arms(with_rc=False)
+    assert all(arms[a][t].get("reconsolidation") is None for a in ("off_a", "on_a", "les") for t in ("confirm", "contra"))
+    side = side_effect_check(arms)
+    assert side["surprise_half"]["GO"] is True
+    assert side["reconsolidation_half"]["measured"] is False and side["reconsolidation_half"]["GO"] is None
+    assert "no rc arm pair" in side["reconsolidation_half"]["why_unmeasured"]
+    assert side["GO"] is False
+
+
+def test_reconsolidation_half_is_unmeasured_when_reconsolidation_never_ran_in_off_rc():
+    from research.runners._reward_value_afferent_derisk import side_effect_check
+    arms = _surprise_equalized_v2_arms()
+    for t in ("confirm", "contra"):
+        arms["off_rc"][t]["reconsolidation"] = None
+        arms["on_rc"][t]["reconsolidation"] = None
+    side = side_effect_check(arms)
+    assert side["reconsolidation_half"]["measured"] is False and side["GO"] is False
+
+
+def test_reconsolidation_half_fails_when_the_on_rc_block_differs():
+    from research.runners._reward_value_afferent_derisk import side_effect_check
+    side = side_effect_check(_surprise_equalized_v2_arms(rc_on_block={"on": True, "action": "append"}))
+    assert side["reconsolidation_half"]["measured"] is True and side["reconsolidation_half"]["GO"] is False
+    assert side["reconsolidation_half"]["per_turn"]["contra"]["reconsolidation_equal"] is False
+    assert side["GO"] is False
+
+
+def _score_synthetic(tmp_path, arms_resp, lesion_equal=True):
+    """Run mode_score on the v2 artifact with its per-arm responses replaced by `arms_resp` (and, with
+    `lesion_equal`, the lesion arm's normalized reads set equal so (B) attribution and (C) hold)."""
+    import copy
+    import json
+    from research.runners._reward_value_afferent_derisk import mode_score
+    A = json.load(open(os.path.join(_V2, "s7_arms.json")))
+    for arm, resp in arms_resp.items():
+        rec = copy.deepcopy(A["arms"].get(arm) or A["arms"]["off_a"])
+        rec["arm"], rec["responses"], rec["returncode"] = arm, copy.deepcopy(resp), 0
+        A["arms"][arm] = rec
+    for arm in list(A["arms"]):
+        if arm not in arms_resp:
+            A["arms"].pop(arm)
+    if lesion_equal:
+        for t in ("confirm", "contra"):
+            A["arms"]["les"]["responses"][t]["da_drives"]["reward_value"]["normalized"] = 0.9
+    ap = tmp_path / "arms.json"
+    ap.write_text(json.dumps(A))
+    out = tmp_path / "verdict.json"
+    mode_score(str(ap), os.path.join(_V2, "s7_pre_off_main.json"), str(out))
+    return json.loads(out.read_text())
+
+
+def _full_v2(arms_sub):
+    import json
+    base = _V2
+    full = {arm: json.load(open(os.path.join(base, "s7_arms_%s.json" % arm))) for arm in ("off_b", "on_b")}
+    full.update(arms_sub)
+    return full
+
+
+@pytest.mark.parametrize("with_rc,rc_on_block,lesion_equal,expect", [
+    (True, None, True, "GO"),                                    # every criterion measured and true
+    (True, {"on": True, "action": "append"}, True, "NO-GO"),     # the reconsolidation half measured and false
+    (False, None, True, "UNDEFINED"),                            # all else GO, reconsolidation half unmeasured
+    (False, None, False, "NO-GO"),                               # (C) measured and false: NO-GO stands unmeasured
+])
+def test_score_reads_d_split_as_amendment_3_says(tmp_path, with_rc, rc_on_block, lesion_equal, expect):
+    arms = _full_v2(_surprise_equalized_v2_arms(with_rc=with_rc, rc_on_block=rc_on_block))
+    v = _score_synthetic(tmp_path, arms, lesion_equal=lesion_equal)
+    assert v["status"] == expect, v["verdict"].get("undefined_reasons")
 
 
 # ── the LBF row ──────────────────────────────────────────────────────────────────────────────────────────────────
