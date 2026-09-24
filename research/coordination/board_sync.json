@@ -1,7 +1,7 @@
 {
  "schema": "board-sync-v1",
  "_doc": "Audit trail of board mutations written by tools/vikunja.sh. gates/board_sync_on_status_change.py requires this file to GROW in the same commit that changes docs/PRODUCTION_INTEGRATION_LEDGER.yaml (a faculty-status change must sync the board). Seeded 2026-08-21.",
- "updated_at": "2026-09-24T17:25:03Z",
+ "updated_at": "2026-09-24T21:01:16Z",
  "entries": [
   {
    "at": "2026-08-22T02:19:31Z",
@@ -1684,12 +1684,6 @@
    "head": "15ec47eb1"
   },
   {
-   "at": "2026-09-16T17:15:12Z",
-   "op": "append-desc",
-   "args": "task=216",
-   "head": "15ec47eb1"
-  },
-  {
    "at": "2026-09-16T17:35:54Z",
    "op": "append-desc",
    "args": "task=217",
@@ -2002,6 +1996,12 @@
    "head": "a6e51b16d"
   },
   {
+   "at": "2026-09-24T11:55:30Z",
+   "op": "set-desc",
+   "args": "hygiene S06: ledger onebrain-merge-organs documentation clarification",
+   "head": ""
+  },
+  {
    "at": "2026-09-24T13:10:49Z",
    "op": "set-priority",
    "args": "task=187 prio=3",
@@ -2036,6 +2036,138 @@
    "op": "set-desc",
    "args": "task=225",
    "head": "110b97a0c"
+  },
+  {
+   "at": "2026-09-24T19:55:48Z",
+   "op": "set-desc",
+   "args": "task=221",
+   "head": "51015bd37"
+  },
+  {
+   "at": "2026-09-24T21:01:03Z",
+   "op": "append-desc",
+   "args": "task=224",
+   "head": "eb0908773"
+  },
+  {
+   "at": "2026-09-24T21:01:04Z",
+   "op": "append-desc",
+   "args": "task=225",
+   "head": "eb0908773"
+  },
+  {
+   "at": "2026-09-24T21:01:04Z",
+   "op": "append-desc",
+   "args": "task=229",
+   "head": "eb0908773"
+  },
+  {
+   "at": "2026-09-24T21:01:04Z",
+   "op": "append-desc",
+   "args": "task=206",
+   "head": "eb0908773"
+  },
+  {
+   "at": "2026-09-24T21:01:04Z",
+   "op": "label-task",
+   "args": "task=206 label=10",
+   "head": "eb0908773"
+  },
+  {
+   "at": "2026-09-24T21:01:04Z",
+   "op": "append-desc",
+   "args": "task=207",
+   "head": "eb0908773"
+  },
+  {
+   "at": "2026-09-24T21:01:05Z",
+   "op": "append-desc",
+   "args": "task=111",
+   "head": "eb0908773"
+  },
+  {
+   "at": "2026-09-24T21:01:05Z",
+   "op": "append-desc",
+   "args": "task=143",
+   "head": "eb0908773"
+  },
+  {
+   "at": "2026-09-24T21:01:05Z",
+   "op": "append-desc",
+   "args": "task=230",
+   "head": "eb0908773"
+  },
+  {
+   "at": "2026-09-24T21:01:15Z",
+   "op": "create-task",
+   "args": "proj=2 title=What the brain is holding in mind should show up in its ordinary replies",
+   "head": "eb0908773"
+  },
+  {
+   "at": "2026-09-24T21:01:15Z",
+   "op": "label-task",
+   "args": "task=231 label=3",
+   "head": "eb0908773"
+  },
+  {
+   "at": "2026-09-24T21:01:15Z",
+   "op": "create-task",
+   "args": "proj=2 title=The brain can track what someone else wrongly believes, in chat",
+   "head": "eb0908773"
+  },
+  {
+   "at": "2026-09-24T21:01:15Z",
+   "op": "label-task",
+   "args": "task=232 label=5",
+   "head": "eb0908773"
+  },
+  {
+   "at": "2026-09-24T21:01:16Z",
+   "op": "create-task",
+   "args": "proj=2 title=The brain learns what new nouns mean by itself, not from a hand-written list",
+   "head": "eb0908773"
+  },
+  {
+   "at": "2026-09-24T21:01:16Z",
+   "op": "label-task",
+   "args": "task=233 label=2",
+   "head": "eb0908773"
+  },
+  {
+   "at": "2026-09-24T21:01:16Z",
+   "op": "label-task",
+   "args": "task=233 label=10",
+   "head": "eb0908773"
+  },
+  {
+   "at": "2026-09-24T21:01:16Z",
+   "op": "create-task",
+   "args": "proj=2 title=Keep developing with a local AI model when Claude usage runs out",
+   "head": "eb0908773"
+  },
+  {
+   "at": "2026-09-24T21:01:16Z",
+   "op": "label-task",
+   "args": "task=234 label=8",
+   "head": "eb0908773"
+  },
+  {
+   "at": "2026-09-24T21:01:16Z",
+   "op": "create-task",
+   "args": "proj=2 title=Safety guards: block accidental deletion of Claude memory, and uncapped brain builds",
+   "head": "eb0908773"
+  },
+  {
+   "at": "2026-09-24T21:01:16Z",
+   "op": "label-task",
+   "args": "task=235 label=8",
+   "head": "eb0908773"
+  },
+  {
+   "at": "2026-09-24T21:01:16Z",
+   "op": "update-task",
+   "args": "task=235 done=true",
+   "head": "eb0908773"
   }
  ]
 }

@@ -15,6 +15,30 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-19 (RESUME HERE) — NEW ARC: PERMANENT LLM MOUTH + LOAD-BEARING METRIC
 
+**🟢 UPDATE ~17:15 (2026-09-24) — main a5e37143b. RESUME HERE.**
+- **Incident 13:53:** a review subagent's `rm -rf <scratch> ~/.claude/projects` deleted every project's Claude session
+  history and memory notes. Memory rebuilt: 62 from the 2026-07-15 vault backup (bannered), 8 verbatim from file
+  history, 27 reconstructed from index lines + repo sources (marked). Guards now at USER level
+  (`tools/install_user_hooks.sh`): delete guard (f405c89fa) + memcap guard for full-brain builds (561fde0cd). The owner
+  set up hourly /home snapper snapshots (one week kept).
+- **Usage-limit outage ~13:50-16:00** killed the agent lanes; all were resumed from their own worktrees and transcripts
+  (workflow wf_da724311-ab8), nothing redone from scratch.
+- **Merged this evening (all default-OFF, review SOUND):** AG-REG row-registry hook (+ list rows, + parking of rows whose
+  turn the battery cannot run, + module `PARKED`), A5 false-belief, A7 warm-server prewarm, S06 hygiene (+ hook exec bit
+  pinned), A1 live-organ rows, A2 learning rows, slot-binder production gate, A4 xedge-in-wave3. Registry 38 -> 47
+  faculties; parked: self-schema (retracted, Amendment 3), affective-tom, causal-whatif, reasoning-transitive-chat,
+  tom-false-belief (their turns are not in `_TURN_BY_LABEL` yet). Board synced (#224-#235).
+- **In flight:** fix round 2 `wqqcv35va` (AI-teacher, content-provenance, A9, SETTLE, A10, wm-focus-bind); A3 fix
+  `w1b8r06s3` (supersedes its 42 queued Part A sessions after a prereg amendment); B2a 34/186 (ETA ~04:00-05:00; AWS
+  pool1/pool2 + pool41/42; **pool40 is OFFLINE**, owner asked to check it); GPU: A9 gap#4 seed-7 (ETA ~21:15-21:30),
+  then the local-LLM bake-off (`tools/local_llm/bakeoff.py`, results in `tools/local_llm/results/summary.md`).
+- **Next, in order:** (1) harvest both fix rounds, merge SOUND lanes; (2) register the parked rows' turns (merge module
+  `EXTRA_TURNS` into the battery through the hook) BEFORE B2b; (3) B2a aggregate when all 186 land:
+  `python tools/lb_shard.py aggregate --tag b2a0924 --seeds 42 43 44 100 101 102`, then R1/R2 vs flipdefaults-adequate;
+  (4) score SETTLE multi-turn when seeds 44/100/101/102 land; (5) bake-off result -> set
+  `tools/local_llm/default_profile`; (6) score the harvested-but-unscored runs: curiosity v5, CA3 grid, D6 capacity curve,
+  affect vocabulary 5 seeds, DA tag-capture seeds.
+
 **🟢 UPDATE 13:55 —** **Batch 1 SHIPPED** (main 3d73f67df): BRAIN_EPISODIC_STORE_VERIFY, BRAIN_PMEM_FACILITATION,
 BRAIN_SOURCE_PROV_ABSTAIN_AT_TIE default-ON; production-default batteries GO (thin 0.603 core 15; adequate 0.949 core 24). **B2a**
 (186 shards at M1 9db761329, prereg committed) queued on the pool (all nodes saturated; starts as slots free). **Merged SOUND

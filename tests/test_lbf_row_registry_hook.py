@@ -30,7 +30,7 @@ def test_the_live_registry_never_holds_a_probe_whose_turn_is_unregistered():
     """Every FACULTY_PROBES row the battery actually runs must name a turn in PROBE_TURNS; otherwise that faculty
     can never complete and every battery fails its 'no incomplete faculty' criterion (2026-09-24 merge)."""
     from research.runners import onebrain_regression_battery as ob
-    turns = {t[0] for t in ob.PROBE_TURNS}
+    turns = set(ob._TURN_BY_LABEL)
     missing = [row[:2] for row in lbf.FACULTY_PROBES if row[1] not in turns]
     assert missing == [], missing
 
@@ -128,3 +128,22 @@ def test_merge_reports_a_collision_instead_of_overwriting_an_existing_row():
 
     assert lesions[existing_key] == original_spec, "a collision must never overwrite the existing row"
     assert any(existing_key in c for c in report["collisions"])
+
+
+def test_a_module_can_park_its_own_row():
+    """A retracted row stays in its module for the record but must not enter the registry (2026-09-24: self-schema,
+    retracted by its lane's Amendment 3 because its probe turn never attaches the field its lesion check reads)."""
+    lesions = dict(lbf.FACULTY_LESIONS)
+    probes = list(lbf.FACULTY_PROBES)
+
+    class _ParkingMod:
+        __name__ = "research.runners.lbf_rows._fake_parking_for_test"
+        EXTRA_LESIONS = {"synthetic-retracted": dict(flag="BRAIN_SYNTHETIC_RETRACTED_LESION", value="1",
+                                                      kind="neural-lesion", note="test-only row")}
+        EXTRA_PROBES = [("synthetic-retracted", "well", ["x"], False)]
+        PARKED = {"synthetic-retracted": "retracted by its own amendment"}
+
+    report = lbf_rows.merge_lbf_rows(lesions, probes, _mods_override=[_ParkingMod])
+    assert "synthetic-retracted" not in lesions
+    assert not any(row[0] == "synthetic-retracted" for row in probes)
+    assert any("retracted by its own amendment" in p for p in report["parked"])

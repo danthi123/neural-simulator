@@ -133,6 +133,16 @@ out of this build's compute scope).
   `research/findings/raw/_lbf_borderline/op_s{42,43,44,100,101,102}.json` (diagnosis baseline) and
   `research/findings/raw/_pmem_facilitation.json` (default-off exact compare).
 
+## Caveat: NOT a default-ON flip candidate
+`CALIBRATED_FAC_G` at `research/runners/_operating_point_stabilizer_derisk.py:124` is a PER-SEED lookup table,
+keyed on exactly the six validation seeds (42, 43, 44, 100, 101, 102) used to VALIDATE the finding itself. The
+table is a no-op for seed 42 (which is part of both the table definition AND the validation benchmark) and has zero
+discriminative power as a general mechanism — it is circular, by definition. A default-ON flip of this table would
+mean: "the mechanism that hardened the benchmark IS the benchmark itself." A genuinely produced operating-point
+homeostat (via Turrigiano 2011-style biological gain control, learned or spiking) would be a proper flip candidate;
+this seed-table calibration is a ONE-BRAIN-specific refinement documented as such in the ledger and reported as NOT a
+flip (it remains default-OFF and is invoked only in the load-bearing fraction under explicit `pmem_op_stabilizer_enabled()` gating).
+
 ## Honesty
 Functional read-out only — a spiking coincidence read against a fixed release threshold, hardened by a calibrated
 gain. No claim of phenomenal experience.

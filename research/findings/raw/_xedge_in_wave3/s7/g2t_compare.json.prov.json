@@ -1,0 +1,33 @@
+{
+ "run_id": "1790267638-327703",
+ "runner": "research/runners/_xedge_in_wave3_verify.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/wf_4703a2bd-4dd-13/research/runners/_xedge_in_wave3_verify.py",
+  "--g2-compare",
+  "research/findings/raw/_xedge_in_wave3/s7/g2t_alone_A.json",
+  "research/findings/raw/_xedge_in_wave3/s7/g2t_alone_B.json",
+  "research/findings/raw/_xedge_in_wave3/s7/g2t_interleaved.json",
+  "--out",
+  "research/findings/raw/_xedge_in_wave3/s7/g2t_compare.json"
+ ],
+ "git_sha": "6bc6039a8",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-24T12:33:58",
+ "env": {
+  "SIM_BACKEND": "numpy",
+  "OMP_NUM_THREADS": "1"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 1964.0,
+ "corpus_check_query": "xedge d6 w->sel cross-edge severed from production comprehension by wave3 pool routing order; grow cross-edge inside merged cortical pool per-session",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_xedge_in_wave3/s7/g2t_compare.json"
+}
