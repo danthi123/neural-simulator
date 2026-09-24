@@ -459,9 +459,44 @@ def score(arm_dir, seeds, K, k_sweep):
     n_go = sum(1 for r in per.values() if r["go"] is True)
     backends = sorted({str(r.get("backend")) for s in seeds for n in ARMS
                        for r in [_load(arm_file(arm_dir, s, n, K))] if r})
+    go = bool(n_def == len(seeds) and n_go == len(seeds))
+    earned = earn_verdict(arm_dir, seeds, K, per, go)
     return {"K": K, "seeds": seeds, "backend": ",".join(backends) or None, "per_seed": per,
-            "n_defined": n_def, "n_go": n_go,
-            "GO": bool(n_def == len(seeds) and n_go == len(seeds))}
+            "n_defined": n_def, "n_go": n_go, "GO": go,
+            "status": earned["status"], "preconditions": earned["preconditions"], "verdict": earned}
+
+
+def _probes_unrun(arm_json, K):
+    """Every test probe the gate reads for this arm, and which of them has no test-phase turn (never ran)."""
+    probes = [(f["subject"], f["verb"]) for f in (arm_json or {}).get("vetted", [])[:K]]
+    probes += [(b["subject"], b["verb"]) for b in (arm_json or {}).get("belief", [])[:K]]
+    probes += [(s, v) for s, v, _o in CONTROL_PROBES]
+    return sorted({"%s %s" % p for p in probes if _test_turn(arm_json, *p) is None})
+
+
+def earn_verdict(arm_dir, seeds, K, per, go):
+    """AMENDMENT 1 (format only): the aggregate verdict travels with the pre-registration's OWN definedness
+    conditions as a tools.verdict preconditions block (gates/verdict_preconditions). No threshold or criterion
+    changes; `GO` above is the registered rule. A seed that is UNDEFINED under the registration (a missing or
+    errored arm, a lever that did not hold, a probe that never ran) makes the aggregate UNDEFINED, never NO-GO."""
+    from tools.verdict import Verdict
+    v = Verdict("ai_teacher K=%d: T1-T9 on every registered seed %s" % (K, list(seeds)))
+    for s in seeds:
+        r = per[str(s)]
+        v.require("seed %s: every gated arm present, error-free, write counter on" % s, not r["void"],
+                  expect=True, note=json.dumps(r["void"]))
+        if r["void"]:
+            continue
+        unrun = {n: _probes_unrun(_load(arm_file(arm_dir, s, n, K)), K) for n in GATED_ARMS}
+        unrun = {n: u for n, u in unrun.items() if u}
+        v.require("seed %s: every gated test probe ran" % s, not unrun, expect=True, note=json.dumps(unrun))
+        c = r["criteria"]
+        v.require("seed %s: T3 freeze lever held" % s, c["T3_freeze"]["lever_ok"], expect=True,
+                  note="freeze_w=%s teach_w=%s" % (c["T3_freeze"]["freeze_block_w"], c["T3_freeze"]["teach_block_w"]))
+        v.require("seed %s: T4 ablation held" % s, c["T4_zero"]["ablation_ok"], expect=True,
+                  note="n_ablated=%s" % c["T4_zero"]["n_ablated"])
+        v.require("seed %s: every criterion measured" % s, r["defined"], expect=True)
+    return v.decide(go=go, verbose=False)
 
 
 # ── self-test: the gate must PASS the capability case and FAIL in every failing direction ─────────────────────────
@@ -568,6 +603,32 @@ def selftest():
     def _void(g):
         g["ERR"] = None
     checks["missing_arm_is_undefined"] = mutate(_void)["defined"] is False
+    # the aggregate verdict carries its preconditions (amendment 1): GO when earned, UNDEFINED when an arm is
+    # missing or a probe never ran, NO-GO only when every precondition held and a criterion failed
+    import tempfile
+    with tempfile.TemporaryDirectory() as d:
+        def agg(arms):
+            for n, a in arms.items():
+                if a is not None:
+                    with open(arm_file(d, 1, n, K), "w") as fh:
+                        json.dump(a, fh)
+                elif os.path.exists(arm_file(d, 1, n, K)):
+                    os.remove(arm_file(d, 1, n, K))
+            return score(d, [1], K, [])
+        g = agg(copy.deepcopy(good))
+        checks["aggregate_GO_carries_preconditions"] = g["status"] == "GO" and g["GO"] is True and bool(
+            g["preconditions"]) and all(p["ok"] is True for p in g["preconditions"])
+        bad = copy.deepcopy(good)
+        bad["ERR"] = None
+        checks["aggregate_missing_arm_UNDEFINED"] = agg(bad)["status"] == "UNDEFINED"
+        bad = copy.deepcopy(good)
+        bad["NOTEACH"]["turns"] = [t for t in bad["NOTEACH"]["turns"] if t["message"] != "what does the cat eat"]
+        checks["aggregate_unrun_probe_UNDEFINED"] = agg(bad)["status"] == "UNDEFINED"
+        bad = copy.deepcopy(good)
+        _set(bad, "TEACH", facts[0]["subject"], None)
+        _set(bad, "TEACH", facts[1]["subject"], None)
+        n = agg(bad)
+        checks["aggregate_criterion_fail_NO-GO"] = n["status"] == "NO-GO" and n["GO"] is False
     ok = all(checks.values())
     print(json.dumps(checks, indent=2))
     print("SELFTEST %s" % ("PASS" if ok else "FAIL"))

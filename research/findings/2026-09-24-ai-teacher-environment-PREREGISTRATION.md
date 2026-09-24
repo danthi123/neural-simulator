@@ -175,3 +175,20 @@ code with the first curriculum; artifacts kept out of the verdict and filed late
 ## Amendment log
 
 (none at filing)
+
+**Amendment 1 (2026-09-24 ~15:55 EDT; scorer output format only).** The aggregate verdict file now carries a
+`tools.verdict` `preconditions` block and a `status` (GO / NO-GO / UNDEFINED), because
+`gates/verdict_preconditions` blocks any committed verdict artifact without one (it blocked `verdict_s7.json`).
+The registered preconditions are this document's own definedness conditions, per seed: every gated arm present,
+error-free, with the write counter on; every gated test probe ran; the T3 freeze lever held; the T4 ablation held;
+every criterion measured.
+No threshold, criterion or per-seed rule changes, and the `GO` boolean is the registered rule unchanged.
+One label is stricter in an edge case: a probe that never ran was a per-seed fail in the old scorer; the aggregate
+`status` is now UNDEFINED there, as "A probe that never ran is UNDEFINED, never a pass" above already says.
+The per-seed `go` field is unchanged.
+**What was seen when this was filed:** the seed-7 dev verdict (GO, all nine criteria) and an interim score of the
+four registered seeds complete at that time (42, 43, 44, 100: all nine criteria pass on each).
+Seeds 101 and 102 were still running.
+The six-seed controller on pool2 runs the scorer at `c12c0d47e`, so its own `verdict_6seed.json` has no
+preconditions block. The verdict committed for this run is a `--score-only` re-score at this amendment's commit,
+over the same arm files, with the same command plus `--score-only`.
