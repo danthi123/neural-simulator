@@ -28,9 +28,15 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 - **Pool dispatcher now reserves job memory (`@2af939ac`):** a job's `mem_gb=N` hint (in its --checked text) is
   reserved on its node for 20 min. The pool is RAM-bound (15 GB nodes, ~5 GB jobs), not core-bound. pool40 is
   powered off.
-- **Workflows:** `wcijsme3a` (wm-binding adequate probe · swap-drives adequate probe · DA tag-capture chat wiring) ·
-  `w38scybux` (language v2 S2-null scoring) · `w8ym0ftqy` (Curiosity + Perception next de-risks, staged to pool).
+- **Workflows (22:10):** `wcijsme3a` (wm-binding adequate probe · swap-drives adequate probe · DA tag-capture chat
+  wiring) · `wz1hyhus8` (OWNER-AUTHORIZED default-on flips of validated fixes: audit → flip branch → production-default
+  6-seed validation battery staged → review; merge only after that battery passes) · `whj6ge9lc` (D6 fact-learning
+  CAPACITY curve 5→2000 facts: build + prereg + staged grid) · `wzd72cek8` (fix round 3: AWS pool node + perception).
   Merge only on the review's safe_to_merge.
+- **Curiosity (spiking LC modulator) merged `12de6276`** (re-review SOUND); held-out seeds 43-102 staged on the pool at
+  `def3e1f91`; combine with `--combine` once all 5 land (the combiner now compares runner blobs, `a48de5e5`).
+- **Owner 2026-09-23: validated default-flips are mine to make** (charter §5 updated; memory
+  `feedback_flip_validated_fixes_without_waiting`).
 - **GPU queue:** D5 affect-conditioned mouth, 4 jobs left → score its 6-seed verdict when complete.
 
 **⭐⭐ LATEST 2026-09-23 ~09:00 local — OWNER: "parallelize more heavily … we shouldn't be sitting around for hours
