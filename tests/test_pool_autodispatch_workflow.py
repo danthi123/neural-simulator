@@ -602,3 +602,18 @@ def test_ssh_f_is_refreshed_mid_loop_without_a_restart(tmp_path: Path) -> None:
             proc.wait(timeout=5)
         except subprocess.TimeoutExpired:
             proc.kill()
+
+
+def test_queue_flag_check_never_pipes_help_into_grep_q() -> None:
+    # 2026-09-24: under `set -o pipefail`, `printf '%s' "$HELP" | grep -q FLAG` FAILS whenever grep exits before printf
+    # has written a help text larger than the 64 KB pipe buffer (SIGPIPE, rc 141): a 72 KB --help reported present
+    # flags as missing, a different subset on every call, and refused 12 valid pool jobs. Here-strings only.
+    import re
+    src = (ROOT / "tools" / "pool_queue.sh").read_text()
+    code = "\n".join(l for l in src.splitlines() if not l.lstrip().startswith("#"))
+    assert "set -uo pipefail" in src
+    assert not re.search(r"printf[^|\n]*\$HELP[^|\n]*\|\s*grep\s+-q", code)
+    big = "usage: x\n" + ("--padding-flag-xyz  " * 5000) + "\n--wanted-flag\n"
+    r = subprocess.run(["bash", "-c", 'set -uo pipefail; H="$1"; grep -q -- --wanted-flag <<<"$H" && echo ok', "_", big],
+                       text=True, capture_output=True)
+    assert r.stdout.strip() == "ok" and len(big) > 65536

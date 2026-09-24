@@ -90,12 +90,15 @@ case "${1:-list}" in
          if [ -n "$MOD" ]; then
            FLAGS=$(printf '%s' "$2" | grep -oE '[-][-][a-z][a-z0-9-]*' | sort -u)
            HELP=$(cd "$ROOT" && SIM_NO_PROVENANCE=1 timeout 90 .venv/bin/python -m "$MOD" --help 2>&1)
-           if [ $? -ne 0 ] && ! printf '%s' "$HELP" | grep -q "usage:"; then
+           # Here-strings, not `printf | grep -q` (2026-09-24): under `set -o pipefail`, grep -q exits on the first
+           # match, printf takes SIGPIPE on a help text larger than the 64 KB pipe buffer, and the pipeline FAILS --
+           # a 72 KB --help reported present flags as missing, a different random subset on every call.
+           if [ $? -ne 0 ] && ! grep -q "usage:" <<<"$HELP"; then
              echo "⛔ REFUSED: $MOD does not even import/parse. Fix it before queueing." >&2
              printf '%s\n' "$HELP" | tail -5 >&2; exit 2
            fi
            BAD=""
-           for f in $FLAGS; do printf '%s' "$HELP" | grep -q -- "$f" || BAD="$BAD $f"; done
+           for f in $FLAGS; do grep -q -- "$f" <<<"$HELP" || BAD="$BAD $f"; done
            if [ -n "$BAD" ]; then
              echo "⛔ REFUSED: $MOD does not accept:$BAD" >&2
              echo "   The job would be dispatched, die on argparse, and free the node silently." >&2
