@@ -681,30 +681,64 @@ def aggregate(grid_dir: str, seeds=SEEDS) -> dict:
         need = len(seeds) if n.endswith("INTEGRITY") else MIN_SEEDS
         verdict[n] = dict(n_pass=n_pass, n_undefined=n_undef, need=need, passed=n_pass >= need,
                           per_seed={str(s): gate_rows[s].get(n, (None, None)) for s in seeds})
-    # capacity-law fit, ATTRIBUTED TO THE RECURRENT EDGE ALONE: P50 = k * c_rec / (a ln(1/a)), fit from
-    # (sparse_dg, sparse_dg_recx2) -- the pair that varies c_rec ONLY, c_pp and c_out held fixed. sparse_dg_c2
-    # doubles all three fan-ins at once, so a k fit off it cannot be attributed to the recurrent edge specifically
-    # (2026-09-24 review; the dev rec_zero lesion shows the recurrent edge owns only ~25% of capacity linearly).
-    # sparse_dg_c2's own ratio still backs G4_capacity_law above, which claims only an all-fan-in capacity law.
-    K_FIT_ARM_PAIR = ("sparse_dg", "sparse_dg_recx2")
-    ks = []
+    # capacity-law fit, ATTRIBUTED TO THE RECURRENT EDGE ALONE. 2026-09-24 SECOND review (fix-required): fitting
+    # k per arm as k = P50 * a * ln(1/a) / c_rec and taking the MEDIAN OVER (sparse_dg, sparse_dg_recx2) does NOT
+    # attribute capacity to the recurrent synapses -- the sparse_dg half of that median is the identical
+    # all-fan-in-confounded quantity ("P50 driven by all fan-ins, divided by c_rec") the FIRST review rejected
+    # off sparse_dg_c2. sparse_dg_recx2 was computed but never used as a MARGINAL (a difference between the two
+    # arms); the median just diluted one confounded number with a second, less-confounded one and still labelled
+    # the result "ATTRIBUTED TO THE RECURRENT EDGE ALONE".
+    #
+    # The fix: fit the MARGINAL capacity per recurrent synapse from the CONTRAST between the two arms (c_pp and
+    # c_out held fixed; only c_rec differs), PER SEED:
+    #   k_rec = (P50_hi - P50_lo) * a * ln(1/a) / (c_rec_hi - c_rec_lo)
+    # k_fit is the median of this per-seed marginal -- never a per-arm value, never a median taken across arms.
+    # A seed whose marginal is <= 0 (doubling c_rec did not raise P50, e.g. because a bottleneck elsewhere caps
+    # both arms) is kept AS MEASURED, never clipped to zero and never dropped: that is a real, falsifying outcome
+    # of the capacity-law prediction, not noise to be smoothed away (docs/BUILD_LANE_CHECKLIST.md "UNDEFINED is
+    # never a pass" -- a negative marginal is DEFINED and failing, not undefined).
+    #
+    # The per-arm all-fan-in k (P50 * a ln(1/a) / c_rec for sparse_dg or sparse_dg_recx2 ALONE) is still reported
+    # per seed, but ONLY as a descriptive quantity: it is never fed into k_fit and never compared to Rolls' range.
+    K_FIT_LO_ARM, K_FIT_HI_ARM = "sparse_dg", "sparse_dg_recx2"
+    K_FIT_ARM_PAIR = (K_FIT_LO_ARM, K_FIT_HI_ARM)
+    k_marginal_per_seed = {}
+    k_allfanin_per_arm_DESCRIPTIVE_ONLY = []
     for s, S in per_seed.items():
-        for arm in K_FIT_ARM_PAIR:
-            if arm in S and S[arm]["P50"]:
-                c = make_cfg(arm, s)
-                ks.append(S[arm]["P50"] * c.a_ca3 * math.log(1 / c.a_ca3) / c.c_rec)
+        lo, hi = S.get(K_FIT_LO_ARM), S.get(K_FIT_HI_ARM)
+        c_lo, c_hi = make_cfg(K_FIT_LO_ARM, s), make_cfg(K_FIT_HI_ARM, s)
+        for arm, summ, c in ((K_FIT_LO_ARM, lo, c_lo), (K_FIT_HI_ARM, hi, c_hi)):
+            if summ and summ["P50"]:
+                k_allfanin_per_arm_DESCRIPTIVE_ONLY.append(
+                    dict(seed=s, arm=arm, k_allfanin=summ["P50"] * c.a_ca3 * math.log(1 / c.a_ca3) / c.c_rec))
+        if lo and hi and lo["P50"] and hi["P50"]:
+            # the marginal fit assumes a_ca3 (and therefore a ln(1/a)) is unchanged between the two arms; only
+            # c_rec differs by construction of sparse_dg_recx2 -- this would catch an ARMS-table edit that broke
+            # that assumption silently.
+            assert c_lo.a_ca3 == c_hi.a_ca3, "K_FIT_ARM_PAIR must vary c_rec alone (a_ca3 differs between arms)"
+            d_c_rec = c_hi.c_rec - c_lo.c_rec
+            k_marginal_per_seed[str(s)] = ((hi["P50"] - lo["P50"]) * c_lo.a_ca3 * math.log(1 / c_lo.a_ca3)
+                                            / d_c_rec)
+    ks = list(k_marginal_per_seed.values())
     k_fit = float(np.median(ks)) if ks else None
     extrap = None
-    if k_fit:
+    if k_fit is not None and k_fit > 0:
         a, C = 0.005, 10000
         pmax = k_fit * C / (a * math.log(1 / a))
-        extrap = dict(note="EXTRAPOLATION from the fitted k (recurrent-edge-only fan-in law, fit from %s), "
-                           "not a measurement; the a-scaling from 0.01 to 0.005 is itself UNTESTED -- no arm "
-                           "varies a with the DG held fixed in the uniform regime" % (K_FIT_ARM_PAIR,),
+        extrap = dict(note="EXTRAPOLATION from the fitted MARGINAL k (recurrent-edge marginal capacity law, fit "
+                           "from the per-seed CONTRAST between %s), not a measurement; the a-scaling from 0.01 "
+                           "to 0.005 is itself UNTESTED -- no arm varies a with the DG held fixed in the uniform "
+                           "regime" % (K_FIT_ARM_PAIR,),
                       n_ca3=100000, c_rec=C, a=a, predicted_P50_facts=pmax, recurrent_synapses=100000 * C,
                       bits_per_recurrent_synapse=pmax * math.log2(2000) / (100000 * C))
+    elif k_fit is not None:
+        extrap = dict(note="k_fit <= 0: the median per-seed MARGINAL says doubling the recurrent edge alone did "
+                           "NOT raise P50. No extrapolation is defined. This is the realistic failing outcome "
+                           "the prereg's capacity-law prediction names, not an error.", k_fit=k_fit)
     out = dict(grid_dir=grid_dir, seeds=list(seeds), missing=missing, verdict=verdict, k_fit=k_fit,
-               k_fit_arm_pair=K_FIT_ARM_PAIR, k_per_seed_arm=ks, gpu_point_extrapolation=extrap)
+               k_fit_arm_pair=K_FIT_ARM_PAIR, k_marginal_per_seed=k_marginal_per_seed,
+               k_allfanin_per_arm_DESCRIPTIVE_ONLY=k_allfanin_per_arm_DESCRIPTIVE_ONLY,
+               gpu_point_extrapolation=extrap)
     return out
 
 

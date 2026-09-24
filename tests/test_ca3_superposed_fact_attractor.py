@@ -195,10 +195,15 @@ def test_g5_attributable_fraction_is_linear_not_log():
     assert 0.0 < detail["attributable_linear_frac"] < 1.0
 
 
-def test_capacity_law_attributed_to_recurrent_edge_alone(tmp_path):
-    """k_fit (and the GPU extrapolation) must come from (sparse_dg, sparse_dg_recx2) -- the pair that doubles
-    c_rec ALONE -- never from sparse_dg_c2, which also doubles c_pp and c_out and so cannot attribute k to the
-    recurrent edge (2026-09-24 review: 'a coincidental match of a confounded normalization')."""
+def test_capacity_law_fit_is_the_marginal_not_the_per_arm_ratio(tmp_path):
+    """k_fit (and the GPU extrapolation) must come from the per-seed MARGINAL contrast between sparse_dg and
+    sparse_dg_recx2 -- (P50_recx2 - P50_sparse_dg) * a ln(1/a) / (c_rec_recx2 - c_rec_sparse_dg) -- NEVER from
+    fitting k per arm (P50 * a ln(1/a) / c_rec) and taking the median over the two arms. 2026-09-24 SECOND review
+    (fix-required): that per-arm-median fit is the SAME all-fan-in-confounded quantity the FIRST review rejected
+    off sparse_dg_c2 (the sparse_dg half is identical to it), so it cannot be attributed to the recurrent edge
+    even though sparse_dg_recx2 varies c_rec alone -- the recx2 arm must be used as a DIFFERENCE, not averaged
+    in. MUTATION GUARD: on these P50s the two fits provably disagree (~0.055 vs ~0.154, matching the review's own
+    worked numbers), so this test FAILS if aggregate() reverts to the per-arm-median fit."""
     import json as _json
     cliff = [1, 1, 1, 1, 0.9, 0.5, 0.1, 0.0, 0.0, 0.0]
     p50s = dict(sparse_dg=8119.0, sparse_dg_recx2=10500.0, sparse_dg_c2=16650.0)
@@ -208,12 +213,48 @@ def test_capacity_law_attributed_to_recurrent_edge_alone(tmp_path):
         (tmp_path / ("%s_s42.json" % arm)).write_text(_json.dumps(dict(summary=s)))
     res = M.aggregate(str(tmp_path), seeds=(42,))
     assert res["k_fit_arm_pair"] == ("sparse_dg", "sparse_dg_recx2")
+
     c_sd = M.make_cfg("sparse_dg", 42)
     c_rx = M.make_cfg("sparse_dg_recx2", 42)
-    k_sd = p50s["sparse_dg"] * c_sd.a_ca3 * np.log(1 / c_sd.a_ca3) / c_sd.c_rec
-    k_rx = p50s["sparse_dg_recx2"] * c_rx.a_ca3 * np.log(1 / c_rx.a_ca3) / c_rx.c_rec
-    assert res["k_fit"] == pytest.approx(float(np.median([k_sd, k_rx])), rel=1e-6)
-    # sparse_dg_c2 (all fan-ins doubled at once) must NOT feed the fit
+    assert c_sd.a_ca3 == c_rx.a_ca3
+    a_term = c_sd.a_ca3 * np.log(1 / c_sd.a_ca3)
+
+    # the CORRECT fit: the marginal contrast between the two arms, divided by the DIFFERENCE in c_rec
+    k_marginal = (p50s["sparse_dg_recx2"] - p50s["sparse_dg"]) * a_term / (c_rx.c_rec - c_sd.c_rec)
+    assert res["k_fit"] == pytest.approx(k_marginal, rel=1e-6)
+    assert res["k_marginal_per_seed"]["42"] == pytest.approx(k_marginal, rel=1e-6)
+
+    # the WRONG fit the pre-fix code computed: k per arm, then median over the two arms
+    k_sd_allfanin = p50s["sparse_dg"] * a_term / c_sd.c_rec
+    k_rx_allfanin = p50s["sparse_dg_recx2"] * a_term / c_rx.c_rec
+    k_per_arm_median = float(np.median([k_sd_allfanin, k_rx_allfanin]))
+    assert k_per_arm_median != pytest.approx(k_marginal, rel=1e-3)      # the two numbers are genuinely different
+    assert res["k_fit"] != pytest.approx(k_per_arm_median, rel=1e-3)    # MUTATION GUARD
+
+    # the per-arm all-fan-in numbers are still reported -- but ONLY descriptively, never feeding k_fit
+    descriptive = {(d["seed"], d["arm"]): d["k_allfanin"] for d in res["k_allfanin_per_arm_DESCRIPTIVE_ONLY"]}
+    assert descriptive[(42, "sparse_dg")] == pytest.approx(k_sd_allfanin, rel=1e-6)
+    assert descriptive[(42, "sparse_dg_recx2")] == pytest.approx(k_rx_allfanin, rel=1e-6)
+
+    # sparse_dg_c2 (all fan-ins doubled at once) must still NOT feed the fit
     c_c2 = M.make_cfg("sparse_dg_c2", 42)
     k_c2_if_used = p50s["sparse_dg_c2"] * c_c2.a_ca3 * np.log(1 / c_c2.a_ca3) / c_c2.c_rec
-    assert res["k_fit"] != pytest.approx(float(np.median([k_sd, k_c2_if_used])), rel=1e-6)
+    assert res["k_fit"] != pytest.approx(float(np.median([k_marginal, k_c2_if_used])), rel=1e-6)
+
+
+def test_capacity_law_marginal_not_positive_is_reported_not_clipped(tmp_path):
+    """A seed where doubling c_rec alone does not raise P50 (a realistic failing outcome the prereg's capacity-
+    law prediction must name) reports a non-positive marginal AS MEASURED: never clipped to zero, never dropped
+    from k_marginal_per_seed, and it still sets k_fit (median of one value here) rather than being silently
+    excluded."""
+    import json as _json
+    cliff = [1, 1, 1, 1, 0.9, 0.5, 0.1, 0.0, 0.0, 0.0]
+    p50s = dict(sparse_dg=8119.0, sparse_dg_recx2=7000.0)   # recx2 P50 LOWER than sparse_dg's despite c_rec x2
+    for arm in M.ARMS:
+        s = _summary(cliff)
+        s["P50"] = p50s.get(arm, 8119.0)
+        (tmp_path / ("%s_s42.json" % arm)).write_text(_json.dumps(dict(summary=s)))
+    res = M.aggregate(str(tmp_path), seeds=(42,))
+    assert res["k_marginal_per_seed"]["42"] < 0
+    assert res["k_fit"] < 0                                             # NOT clipped to 0.0
+    assert res["gpu_point_extrapolation"]["note"].startswith("k_fit <= 0")
