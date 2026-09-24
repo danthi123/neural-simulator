@@ -53,7 +53,9 @@ prediction edges zeroed. It is NOT a matched cut of the intact read: the intact 
 the shared merged cortical pool, after the per-block prediction-gain homeostat; the twin is a separate bridge and
 never runs the homeostat. So an intact-vs-lesion comparison differs in substrate and homeostat as well as in the
 zeroed edges (declared). Under the lesion a CONFIRM and a CONTRADICT read are both HIGH but NOT equal (seed 7:
-0.861 vs 0.969 normalized in the first run); the within-twin residual is measured, not assumed away. At read time
+0.861 vs 0.969 normalized in both runs). The v2 block control measured why: each lesioned read equals its own
+surprise block's cue-free rate, so the residual is the block-8 vs block-0 rate difference, not a prediction effect
+(research/findings/2026-09-24-reward-value-spiking-afferent-seed7-derisk-PARTIAL.md). At read time
 the lesioned read records the absolute sum of the twin's patient_expected<->surprise edge weights (and the intact
 organ's, for reference) under `lesion_cut`, and `tools.lab.void_if` flags a cut that no longer holds.
 
