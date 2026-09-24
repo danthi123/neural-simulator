@@ -598,6 +598,10 @@ def score_seed(arms, variant="qwenforced"):
     ins["lever_ABLATE_zero"] = (all(r.get("found") and r.get("mean_abs_w") == 0.0 for r in la.values())
                                 and len(A.get("ablation") or []) == len(keys)
                                 and all("error" not in x for x in A.get("ablation") or []))
+    # NOTE: state["phase"] is only ever "session"/"teach"/"read"/"probe"/"untaught"/"secondary"/"qwen_alone"
+    # (see _turn() above) -- "build" is never assigned, because the write_log hook is installed only after
+    # the initial brain build completes. This filter is therefore structurally a no-op today (kept as an
+    # explicit guard in case a future caller logs a build-phase write into the same list).
     heard_in_session_writes = [w for w in H.get("write_log") or [] if w.get("phase") != "build"]
     ins["lever_HEARD_no_write"] = (not any(r.get("found") for r in lh.values())) and not heard_in_session_writes
     ins["lesion_no_later_writes"] = all(arms[k].get("counter_installed") is True
