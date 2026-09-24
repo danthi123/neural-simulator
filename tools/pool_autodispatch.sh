@@ -29,13 +29,18 @@ POLL="${POOL_DISPATCH_POLL:-60}"
 # (MemAvailable fell AND it is still reserved) -- deliberately conservative: an under-filled node costs minutes, an
 # OOM costs every job on the node plus a silent rc=0 from runners that swallow worker deaths.
 RESV="${POOL_RESERVATIONS_PATH:-$ROOT/research/queue/.pool_reservations}"
-GROWTH_WINDOW_S="${POOL_GROWTH_WINDOW_S:-1200}"
+GROWTH_WINDOW_S="${POOL_GROWTH_WINDOW_S:-600}"   # D6/LB workers reach full RSS in ~4 min (measured 2026-09-23)
 
 job_est_gb() {
   local h
   h=$(printf '%s' "$1" | grep -oE 'mem_gb=[0-9]+' | head -1 | cut -d= -f2)
   # No hint but a memcap wrapper: its cap is the job's own declared ceiling (swap-probe LB lines, 2026-09-23).
   [ -z "$h" ] && h=$(printf '%s' "$1" | grep -oE 'memcap\.sh [0-9]+' | head -1 | awk '{print $2}')
+  # ...else the runner's measured peak from tools/pool_runner_mem.tsv (an agent forgot the hint on 12 LB lines).
+  if [ -z "$h" ]; then
+    local mod; mod=$(printf '%s' "$1" | grep -oE -- '-m research\.runners\.[A-Za-z0-9_]+' | head -1 | sed 's/.*\.//')
+    [ -n "$mod" ] && h=$(awk -F'\t' -v m="$mod" '$1==m {print $2; exit}' "${POOL_RUNNER_MEM_PATH:-$ROOT/tools/pool_runner_mem.tsv}" 2>/dev/null)
+  fi
   echo "${h:-${POOL_JOB_EST_GB:-1}}"
 }
 
@@ -53,6 +58,7 @@ peek_est_gb() {
   job_est_gb "$job"
 }
 NODES="${POOL_NODES:-pool40 pool41 pool42}"
+NODE_BUDGET=0
 
 mkdir -p "$(dirname "$QUEUE")"; touch "$QUEUE" "$CLAIMED"
 
@@ -78,9 +84,10 @@ node_is_idle() {
   # load 29/12) -- so also require headroom for one more job the size of the largest one already running there.
   [ "${avail_gb:-0}" -ge "${max_job_gb:-0}" ] || return 1
   # ...and room for the NEXT job on top of everything dispatched here within the growth window (see RESV above).
-  local resv next
-  resv=$(reserved_gb "$node"); next=$(peek_est_gb)
-  [ $(( ${avail_gb:-0} - ${resv:-0} )) -ge $(( ${POOL_MIN_AVAIL_GB:-3} + ${next:-1} )) ] || return 1
+  local resv
+  resv=$(reserved_gb "$node")
+  NODE_BUDGET=$(( ${avail_gb:-0} - ${resv:-0} - ${POOL_MIN_AVAIL_GB:-3} ))   # GB pop_job may hand this node
+  [ "$NODE_BUDGET" -ge 1 ] || return 1
   awk -v l="$load" -v c="$cores" 'BEGIN{exit !(l < c - 0.5)}'
 }
 
@@ -128,7 +135,12 @@ pop_job() {
   # dispatcher run found 69 jobs from an opsweep abandoned days earlier and launched three of them.
   local now cutoff
   now=$(date +%s); cutoff=$(( now - ${POOL_JOB_MAX_AGE:-43200} ))
-  job=$(awk -F'\t' -v c="$cutoff" 'NF>1 && $1+0 >= c {print $2; exit}' "$QUEUE")
+  # FIRST FIT, not strict head (2026-09-23): a node with 4 GB free sat idle behind a 5 GB D6 arm while five 0.65 GB
+  # vision jobs queued behind it. Take the first fresh line whose declared size fits the node's budget ($1, GB).
+  local max_gb="${1:-999}" cand
+  while IFS= read -r cand; do
+    if [ "$(job_est_gb "$cand")" -le "$max_gb" ]; then job="$cand"; break; fi
+  done < <(awk -F'\t' -v c="$cutoff" 'NF>1 && $1+0 >= c {print $2}' "$QUEUE")
   # THE RECORD-CHECK GATE (2026-07-31), copied from tools/lane_dispatch.sh:47 where it is already proven.
   # A job may only run if it carries "#checked:", which tools/pool_queue.sh only attaches when a reason is
   # given. This sits ON THE EXECUTION PATH deliberately: before_you_build.sh existed and was skipped, and that
@@ -174,7 +186,7 @@ pop_job() {
 }
 
 if [ "${1:-}" = "--pop-once" ]; then
-  pop_job
+  pop_job "${2:-999}"
   exit $?
 fi
 if [ "${1:-}" = "--reserved-gb" ]; then reserved_gb "$2"; exit 0; fi
@@ -212,7 +224,7 @@ while true; do
     # FILL the node to capacity within this cycle (while, not if) — with the per-node cap raised for
     # single-threaded numpy jobs (owner 2026-09-02), a single if-per-cycle would need ~cap cycles to fill.
     while node_is_idle "$NODE"; do
-      JOB=$(pop_job)
+      JOB=$(pop_job "$NODE_BUDGET")
       [ -z "$JOB" ] && break
       echo "[pool-dispatch] $(date '+%H:%M:%S') $NODE <- $JOB"
       printf '%s\t%s\t%s\n' "$(date '+%F %T')" "$NODE" "$JOB" >> "$CLAIMED"

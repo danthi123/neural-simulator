@@ -40,6 +40,25 @@ def test_memory_reservations_expire_and_jobs_declare_size(tmp_path: Path) -> Non
     assert run_bash(DISPATCHER, "--peek-est-gb", env={**env, "POOL_JOB_EST_GB": "2"}).stdout.strip() == "2"
     queue.write_text(f"{now}\tbash tools/memcap.sh 8 -- python -m research.runners.x  #checked:reason\n")
     assert run_bash(DISPATCHER, "--peek-est-gb", env=env).stdout.strip() == "8"   # memcap cap is the fallback
+    table = tmp_path / "mem.tsv"
+    table.write_text("# comment\nload_bearing_fraction\t6\n")
+    queue.write_text(f"{now}\tpython -m research.runners.load_bearing_fraction --only x  #checked:reason\n")
+    env2 = {**env, "POOL_RUNNER_MEM_PATH": str(table)}
+    assert run_bash(DISPATCHER, "--peek-est-gb", env=env2).stdout.strip() == "6"   # per-runner measured peak
+    queue.write_text(f"{now}\tpython -m research.runners.other_runner  #checked:reason\n")
+    assert run_bash(DISPATCHER, "--peek-est-gb", env=env2).stdout.strip() == "1"   # unknown runner -> default
+
+
+def test_pop_takes_first_job_that_fits_the_node_budget(tmp_path: Path) -> None:
+    now = int(time.time())
+    queue = tmp_path / "pool.queue"
+    queue.write_text(f"{now}\tbig  #checked:r mem_gb=5\n{now}\tsmall  #checked:r mem_gb=1\n")
+    env = {"POOL_QUEUE_PATH": str(queue), "POOL_RUNNING_PATH": str(tmp_path / "pool.running")}
+    out = run_bash(DISPATCHER, "--pop-once", "3", env=env).stdout
+    assert out.endswith("small")                      # the 5 GB head does not fit a 3 GB budget; the 1 GB job does
+    assert "big" in queue.read_text() and "small" not in queue.read_text()
+    assert run_bash(DISPATCHER, "--pop-once", "3", env=env).stdout == ""    # nothing left that fits
+    assert run_bash(DISPATCHER, "--pop-once", env=env).stdout.endswith("big")  # no budget given -> head
 
 
 def test_remote_wrapper_records_multiline_job_as_one_v2_row(tmp_path: Path) -> None:
