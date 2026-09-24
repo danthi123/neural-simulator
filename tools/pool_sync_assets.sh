@@ -31,6 +31,12 @@ fi
 
 NODES=("${@:-pool40 pool41 pool42}"); NODES=(${NODES[@]})
 REMOTE_SUFFIX="${REMOTE_SIM_DATA:-Projects/sim-data}/knowledge_bundles"
+# AWS-AS-EXTRA-POOL-NODE (2026-09-23) -- same repo-local, gitignored ssh config pool_provision.sh (which calls
+# this script per node) now honours; see its header comment for the full rationale. ABSENT by default, so
+# every ssh/rsync call below is unchanged for the existing pool40/41/42 nodes.
+ROOT="$(pwd)"
+POOL_SSH_CONFIG="${POOL_SSH_CONFIG:-$ROOT/research/queue/.pool_ssh_config}"
+SSH_CMD="ssh"; [ -f "$POOL_SSH_CONFIG" ] && SSH_CMD="ssh -F $POOL_SSH_CONFIG"
 
 # Ship ONLY the two curated bundles _default_ltm_bundle_dir() actually looks for -- wikidata_100k (the
 # 2026-09-02 default, ~88M) and wikidata_core_15k (the robustness fallback, ~17M) -- NOT the whole sim-data
@@ -41,7 +47,7 @@ BUNDLES=(wikidata_100k wikidata_core_15k)
 FAILED_NODES=()
 for h in "${NODES[@]}"; do
   echo "=== syncing knowledge bundles to $h:~/${REMOTE_SUFFIX} ==="
-  ssh -o ConnectTimeout=10 "$h" "mkdir -p ~/${REMOTE_SUFFIX}" || {
+  $SSH_CMD -o ConnectTimeout=10 "$h" "mkdir -p ~/${REMOTE_SUFFIX}" || {
     echo "  SSH FAIL $h"
     FAILED_NODES+=("$h:ssh")
     continue
@@ -53,7 +59,7 @@ for h in "${NODES[@]}"; do
       echo "  (skip: no local bundle $b under $SRC)"
       continue
     fi
-    rsync -az --delete "$SRC/$b/" "$h:~/${REMOTE_SUFFIX}/$b/" || { ok=0; break; }
+    rsync -az -e "$SSH_CMD" --delete "$SRC/$b/" "$h:~/${REMOTE_SUFFIX}/$b/" || { ok=0; break; }
     shipped=$((shipped + 1))
   done
   if [ "$ok" != 1 ]; then
