@@ -29,12 +29,24 @@ POLL="${POOL_DISPATCH_POLL:-60}"
 # (MemAvailable fell AND it is still reserved) -- deliberately conservative: an under-filled node costs minutes, an
 # OOM costs every job on the node plus a silent rc=0 from runners that swallow worker deaths.
 RESV="${POOL_RESERVATIONS_PATH:-$ROOT/research/queue/.pool_reservations}"
-GROWTH_WINDOW_S="${POOL_GROWTH_WINDOW_S:-1200}"
+GROWTH_WINDOW_S="${POOL_GROWTH_WINDOW_S:-600}"   # D6/LB workers reach full RSS in ~4 min (measured 2026-09-23)
 
 job_est_gb() {
   local h
   h=$(printf '%s' "$1" | grep -oE 'mem_gb=[0-9]+' | head -1 | cut -d= -f2)
+  # No hint but a memcap wrapper: its cap is the job's own declared ceiling (swap-probe LB lines, 2026-09-23).
+  [ -z "$h" ] && h=$(printf '%s' "$1" | grep -oE 'memcap\.sh [0-9]+' | head -1 | awk '{print $2}')
+  # ...else the runner's measured peak from tools/pool_runner_mem.tsv (an agent forgot the hint on 12 LB lines).
+  if [ -z "$h" ]; then
+    local mod; mod=$(printf '%s' "$1" | grep -oE -- '-m research\.runners\.[A-Za-z0-9_]+' | head -1 | sed 's/.*\.//')
+    [ -n "$mod" ] && h=$(awk -F'\t' -v m="$mod" '$1==m {print $2; exit}' "${POOL_RUNNER_MEM_PATH:-$ROOT/tools/pool_runner_mem.tsv}" 2>/dev/null)
+  fi
   echo "${h:-${POOL_JOB_EST_GB:-1}}"
+}
+
+committed_from_environ() {
+  # stdin: unique "POOL_JOB_ID=<id> POOL_JOB_MEM_GB=<n>" lines (one per running job) -> total declared GB
+  awk '{for(i=1;i<=NF;i++) if ($i ~ /^POOL_JOB_MEM_GB=/) {split($i,a,"="); s+=a[2]}} END{print s+0}'
 }
 
 reserved_gb() {
@@ -51,6 +63,7 @@ peek_est_gb() {
   job_est_gb "$job"
 }
 NODES="${POOL_NODES:-pool40 pool41 pool42}"
+NODE_BUDGET=0
 
 mkdir -p "$(dirname "$QUEUE")"; touch "$QUEUE" "$CLAIMED"
 
@@ -61,10 +74,17 @@ node_is_idle() {
   # pool). Cap is overridable via POOL_JOBS_PER_NODE. Bracket the pgrep pattern: an un-bracketed one matches the
   # ssh command carrying it, the self-match that made an earlier check unable to ever fire.
   local out node="$1"   # `set -- $out` below overwrites $1 -- the first reservation check read the core count as the node
-  out=$(timeout 12 ssh -o BatchMode=yes -o ConnectTimeout=6 "$node" \
-        "echo \$(nproc) \$(cut -d' ' -f1 /proc/loadavg) \$(pgrep -c -f '^[^ ]*/?python[0-9.]* .*-m [r]esearch\.runners' 2>/dev/null | head -1) \$(awk '/MemAvailable/{print int(\$2/1048576)}' /proc/meminfo) \$(ps -eo rss,args | awk '\$2 ~ /python/ && /-m [r]esearch\\.runners/ {if (\$1>m) m=\$1} END{print int((m+1048575)/1048576)}')" 2>/dev/null) || return 1
+  # Line 1: metrics (+ MemTotal). Lines 2..: one per RUNNING dispatched job, from the POOL_JOB_ID/POOL_JOB_MEM_GB its
+  # processes inherit (see remote_launch_command), so its DECLARED size counts for its whole lifetime (COMMITTED below).
+  # (A ps-args scan was tried first and found nothing: bash execs the job's last command, so no wrapper stays visible.)
+  local raw
+  raw=$(timeout 12 ssh -o BatchMode=yes -o ConnectTimeout=6 "$node" \
+        "echo \$(nproc) \$(cut -d' ' -f1 /proc/loadavg) \$(pgrep -c -f '^[^ ]*/?python[0-9.]* .*-m [r]esearch\.runners' 2>/dev/null | head -1) \$(awk '/MemAvailable/{print int(\$2/1048576)}' /proc/meminfo) \$(ps -eo rss,args | awk '\$2 ~ /python/ && /-m [r]esearch\\.runners/ {if (\$1>m) m=\$1} END{print int((m+1048575)/1048576)}') \$(awk '/MemTotal/{print int(\$2/1048576)}' /proc/meminfo); for e in /proc/[0-9]*/environ; do tr '\\0' '\\n' < \$e 2>/dev/null | grep -E '^POOL_JOB_(ID|MEM_GB)=' | sort | paste -sd' '; done | grep POOL_JOB_ID | sort -u || true" 2>/dev/null) || return 1
+  out=$(printf '%s\n' "$raw" | head -1)
+  local committed
+  committed=$(printf '%s\n' "$raw" | tail -n +2 | committed_from_environ)
   set -- $out
-  local cores="${1:-0}" load="${2:-99}" procs="${3:-99}" avail_gb="${4:-0}" max_job_gb="${5:-0}"
+  local cores="${1:-0}" load="${2:-99}" procs="${3:-99}" avail_gb="${4:-0}" max_job_gb="${5:-0}" total_gb="${6:-0}"
   # COUNT ONLY PYTHON RUNNERS (2026-09-23). The old `pgrep -fc research.runners` also counted every `flock`
   # waiter, `bash -c` wrapper and ssh line carrying the job text, so a node with 2 working jobs + 4 jobs queued
   # behind a lab-chosen flock read 11/11 "full" at load ~5.6 on 12 cores while 13 jobs sat queued. Load stays
@@ -76,9 +96,16 @@ node_is_idle() {
   # load 29/12) -- so also require headroom for one more job the size of the largest one already running there.
   [ "${avail_gb:-0}" -ge "${max_job_gb:-0}" ] || return 1
   # ...and room for the NEXT job on top of everything dispatched here within the growth window (see RESV above).
-  local resv next
-  resv=$(reserved_gb "$node"); next=$(peek_est_gb)
-  [ $(( ${avail_gb:-0} - ${resv:-0} )) -ge $(( ${POOL_MIN_AVAIL_GB:-3} + ${next:-1} )) ] || return 1
+  local resv
+  resv=$(reserved_gb "$node")
+  NODE_BUDGET=$(( ${avail_gb:-0} - ${resv:-0} - ${POOL_MIN_AVAIL_GB:-3} ))   # GB pop_job may hand this node
+  # COMMITTED (2026-09-23 20:45): a snapshot between an LB job's worker phases read 9 GB free on pool42 while two
+  # swap-probe jobs (each peaking ~6 GB) were running; the growth-window reservations had expired, a third was sent,
+  # and BOTH nodes thrashed until ssh timed out. So the budget is also capped by MemTotal minus an OS reserve minus
+  # the declared size of every job still running there, for as long as it runs.
+  local lifetime_budget=$(( ${total_gb:-0} - ${POOL_OS_RESERVE_GB:-2} - committed ))
+  [ "${total_gb:-0}" -gt 0 ] && [ "$lifetime_budget" -lt "$NODE_BUDGET" ] && NODE_BUDGET=$lifetime_budget
+  [ "$NODE_BUDGET" -ge 1 ] || return 1
   awk -v l="$load" -v c="$cores" 'BEGIN{exit !(l < c - 0.5)}'
 }
 
@@ -92,8 +119,12 @@ bash -c "$job" > autodispatch.out 2>&1
 rc=$?
 printf "v2\t%s\t%s\t%s\n" "$(date +%s)" "$rc" "$JOB_B64" >> job_status.log'
   wrapper_b64=$(printf '%s' "$wrapper" | base64 -w0) || return 1
-  printf "cd ~/derisk-pool/sim && JOB_B64='%s' WRAPPER_B64='%s' setsid bash -c 'printf \"%%s\" \"\$WRAPPER_B64\" | base64 -d | bash' </dev/null >/dev/null 2>&1 & exit 0" \
-    "$job_b64" "$wrapper_b64"
+  # POOL_JOB_ID / POOL_JOB_MEM_GB are INHERITED by every process of the job (they survive bash's exec of the last
+  # command and memcap's scope), so node_is_idle can sum the declared sizes of the jobs still running there.
+  local est jid
+  est=$(job_est_gb "$1"); jid="$(date +%s%N)-$RANDOM"
+  printf "cd ~/derisk-pool/sim && POOL_JOB_ID='%s' POOL_JOB_MEM_GB='%s' JOB_B64='%s' WRAPPER_B64='%s' setsid bash -c 'printf \"%%s\" \"\$WRAPPER_B64\" | base64 -d | bash' </dev/null >/dev/null 2>&1 & exit 0" \
+    "$jid" "$est" "$job_b64" "$wrapper_b64"
 }
 
 pop_job() {
@@ -126,7 +157,12 @@ pop_job() {
   # dispatcher run found 69 jobs from an opsweep abandoned days earlier and launched three of them.
   local now cutoff
   now=$(date +%s); cutoff=$(( now - ${POOL_JOB_MAX_AGE:-43200} ))
-  job=$(awk -F'\t' -v c="$cutoff" 'NF>1 && $1+0 >= c {print $2; exit}' "$QUEUE")
+  # FIRST FIT, not strict head (2026-09-23): a node with 4 GB free sat idle behind a 5 GB D6 arm while five 0.65 GB
+  # vision jobs queued behind it. Take the first fresh line whose declared size fits the node's budget ($1, GB).
+  local max_gb="${1:-999}" cand
+  while IFS= read -r cand; do
+    if [ "$(job_est_gb "$cand")" -le "$max_gb" ]; then job="$cand"; break; fi
+  done < <(awk -F'\t' -v c="$cutoff" 'NF>1 && $1+0 >= c {print $2}' "$QUEUE")
   # THE RECORD-CHECK GATE (2026-07-31), copied from tools/lane_dispatch.sh:47 where it is already proven.
   # A job may only run if it carries "#checked:", which tools/pool_queue.sh only attaches when a reason is
   # given. This sits ON THE EXECUTION PATH deliberately: before_you_build.sh existed and was skipped, and that
@@ -172,11 +208,17 @@ pop_job() {
 }
 
 if [ "${1:-}" = "--pop-once" ]; then
-  pop_job
+  pop_job "${2:-999}"
   exit $?
 fi
 if [ "${1:-}" = "--reserved-gb" ]; then reserved_gb "$2"; exit 0; fi
 if [ "${1:-}" = "--peek-est-gb" ]; then peek_est_gb; exit 0; fi
+if [ "${1:-}" = "--node-budget" ]; then   # live diagnostic: would this node take work, and how many GB?
+  if node_is_idle "$2"; then echo "idle budget=${NODE_BUDGET}GB"; else echo "busy/unreachable (budget=${NODE_BUDGET}GB)"; fi; exit 0
+fi
+if [ "${1:-}" = "--committed-gb" ]; then   # stdin: unique POOL_JOB_ID/POOL_JOB_MEM_GB lines from a node
+  committed_from_environ; exit 0
+fi
 if [ "${1:-}" = "--render-remote-command" ]; then
   [ "$#" -eq 2 ] || { echo "usage: $0 --render-remote-command '<job>'" >&2; exit 2; }
   remote_launch_command "$2"
@@ -210,7 +252,7 @@ while true; do
     # FILL the node to capacity within this cycle (while, not if) — with the per-node cap raised for
     # single-threaded numpy jobs (owner 2026-09-02), a single if-per-cycle would need ~cap cycles to fill.
     while node_is_idle "$NODE"; do
-      JOB=$(pop_job)
+      JOB=$(pop_job "$NODE_BUDGET")
       [ -z "$JOB" ] && break
       echo "[pool-dispatch] $(date '+%H:%M:%S') $NODE <- $JOB"
       printf '%s\t%s\t%s\n' "$(date '+%F %T')" "$NODE" "$JOB" >> "$CLAIMED"

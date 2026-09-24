@@ -36,8 +36,8 @@ hardcode.
   Option-C (paired with the thin-probe number). A faculty whose honest verdict is a characterized NO-GO with the next
   method banked counts as *resolved-for-now*, not a blocker (NO-DEFER).
 - **D2 — On-by-default.** Every target-set faculty reads `on_by_default: YES` in the ledger (from ~55/71 today), each
-  flip passing the auto-flip 6-seed byte-identical gate + verify-go. (Production default-flips that change how the
-  brain *speaks* to a user are an owner-fork — see §5.)
+  flip passing the auto-flip 6-seed byte-identical gate + verify-go. (Owner 2026-09-23: validated default-flips are
+  Claude's to make — see §5.)
 - **D3 — One brain.** The core cognitive faculties (the 4 cortical organs + affect + memory + metacog + the target
   set that can) run on the **shared single spiking pool** (`BRAIN_ONEBRAIN_SINGLE_POOL` family), validated
   answer-preserving 6-seed — i.e. cross-region synaptic interaction on ONE substrate, not co-residency.
@@ -70,7 +70,7 @@ progress report, and keeps working OTHER lanes meanwhile (never blocks the whole
 - **Any spend ABOVE the approved envelope.** Owner APPROVED 2026-09-23: AWS on-demand CPU instances for 6-seed batteries up
   to ~$50/day (owner, raised from $15), auto-stopped when idle, launched only after the remote non-degenerate-brain sanity check passes (cap
   enforced by tools/aws_budget.sh + idle-stop timer). Above the cap, GPU instances, commitments, or paid APIs → ask.
-- **Production default-flips that change the user-visible reply** (how the brain speaks) — propose, don't flip.
+- ~~Production default-flips that change the user-visible reply — propose, don't flip.~~ **REMOVED by the owner 2026-09-23** ("Assuming you've confirmed they're valid, I see no reason you should be waiting on me"): Claude flips a fix/faculty default-on itself once it has a 6-seed GO, an adversarial review marked safe_to_merge, no regression in a combined battery, and a validated production-default regression run; it is then reported, not proposed.
 - **The AGI-first fork / relaxing a non-negotiable constraint.**
 - **Anything honesty-boundary-adjacent** — never assert phenomenal experience; a self-report is always a functional
   read-out. If a claim would even approach "felt/conscious," STOP.
@@ -93,7 +93,7 @@ progress report, and keeps working OTHER lanes meanwhile (never blocks the whole
 Enable **auto mode** first (so turns run unattended), then paste:
 
 ```
-/goal Advance the neural-simulator medium-term goal per docs/plans/2026-09-23-autonomous-charter.md: D1 load-bearing robust-core >=24/26 6-seed (Option-C reported), D2 target-set on_by_default, D3 core faculties on the shared one-brain pool, D4 fluent+honest+affect-colored open-ended conversation battery 6-seed (Qwen mouth allowed), D5 affect load-bearing over the reply, D6 continuous-learning load-bearing+on. Every claimed win MUST pass verify-go (adversarial) + 6-seed + the pre-commit gates + be committed to BOTH remotes; a characterized NO-GO with the next method banked counts as progress (NO-DEFER). STOP-and-flag every owner-reserved fork (spend, user-visible production flip, AGI-fork, honesty-boundary, publish) per charter §5 and keep other lanes moving. Keep the GAP_CLOSURE board durable through compaction. Report at each check-in. Not-done until D1-D6 all hold gate-verified; stop and report if genuinely blocked on an owner-fork with no other lane to advance.
+/goal Advance the neural-simulator medium-term goal per docs/plans/2026-09-23-autonomous-charter.md: D1 load-bearing robust-core >=24/26 6-seed (Option-C reported), D2 target-set on_by_default, D3 core faculties on the shared one-brain pool, D4 fluent+honest+affect-colored open-ended conversation battery 6-seed (Qwen mouth allowed), D5 affect load-bearing over the reply, D6 continuous-learning load-bearing+on. Every claimed win MUST pass verify-go (adversarial) + 6-seed + the pre-commit gates + be committed to BOTH remotes; a characterized NO-GO with the next method banked counts as progress (NO-DEFER). STOP-and-flag every owner-reserved fork (spend, AGI-fork, honesty-boundary, publish) per charter §5 and keep other lanes moving. Keep the GAP_CLOSURE board durable through compaction. Report at each check-in. Not-done until D1-D6 all hold gate-verified; stop and report if genuinely blocked on an owner-fork with no other lane to advance.
 ```
 
 ## 8. Honest caveats (so this is set up with eyes open)

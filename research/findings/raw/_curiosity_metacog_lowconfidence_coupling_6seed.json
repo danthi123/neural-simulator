@@ -1,0 +1,515 @@
+{
+  "verdict": "UNDEFINED as evidence about the mechanism (retrofit 2026-09-23). The runner's own measured verdict (GO=False, n_go=4/6, G4 failing seeds 43/44) is preserved unchanged below; it rests on a control that cannot discriminate and on a coupling that is a host map of metacog's input.",
+  "retrofit_note": "preconditions block added 2026-09-23 when this 2026-09-01 artifact was first committed (verdict-preconditions gate: legacy retrofitted on first touch). Every measured field is the pool run's output unchanged; only verdict/retrofit_note/preconditions/undefined_reasons were added.",
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "G4 null is a permutation DISTRIBUTION, not one draw",
+      "ok": false,
+      "detail": "one default_rng(90000+seed).permutation(7) per seed; P(|rho|>=0.5)=1344/5040 under the null",
+      "note": "retrofit 2026-09-23"
+    },
+    {
+      "kind": "require",
+      "name": "coupling input is a metacog OUTPUT (spikes/balance), not its input scalar",
+      "ok": false,
+      "detail": "_novelty_of(evidence) maps the host evidence scalar (metacog's INPUT) onto curiosity novelty",
+      "note": "retrofit 2026-09-23"
+    },
+    {
+      "kind": "require",
+      "name": "all 6 pre-registered seeds completed",
+      "ok": true,
+      "detail": "per_seed has 6 rows (42/43/44/100/101/102)",
+      "note": "retrofit 2026-09-23"
+    }
+  ],
+  "undefined_reasons": [
+    "unmet: G4 null is a permutation DISTRIBUTION, not one draw",
+    "unmet: coupling input is a metacog OUTPUT (spikes/balance), not its input scalar"
+  ],
+  "mechanism": "curiosity-metacog-lowconfidence-coupling",
+  "GO": false,
+  "n_go": 4,
+  "n_seeds": 6,
+  "per_seed": [
+    {
+      "seed": 42,
+      "rows": [
+        {
+          "evidence": 0.0,
+          "novelty": 0.95,
+          "metacog_confident": false,
+          "metacog_balance": 0.02121987511038006,
+          "curious": true,
+          "want_hz": 129.16666666666666
+        },
+        {
+          "evidence": 0.15,
+          "novelty": 0.8075,
+          "metacog_confident": false,
+          "metacog_balance": 0.03578052388774114,
+          "curious": true,
+          "want_hz": 98.78472222222221
+        },
+        {
+          "evidence": 0.3,
+          "novelty": 0.6649999999999999,
+          "metacog_confident": false,
+          "metacog_balance": 0.047633958717346804,
+          "curious": true,
+          "want_hz": 69.96527777777777
+        },
+        {
+          "evidence": 0.45,
+          "novelty": 0.5225,
+          "metacog_confident": false,
+          "metacog_balance": 0.06029303368695495,
+          "curious": false,
+          "want_hz": 46.52777777777777
+        },
+        {
+          "evidence": 0.6,
+          "novelty": 0.38,
+          "metacog_confident": true,
+          "metacog_balance": 0.06791818701044258,
+          "curious": false,
+          "want_hz": 23.437499999999996
+        },
+        {
+          "evidence": 0.8,
+          "novelty": 0.18999999999999995,
+          "metacog_confident": true,
+          "metacog_balance": 0.08266539040383093,
+          "curious": false,
+          "want_hz": 12.847222222222221
+        },
+        {
+          "evidence": 1.0,
+          "novelty": 0.0,
+          "metacog_confident": true,
+          "metacog_balance": 0.09948140892129004,
+          "curious": false,
+          "want_hz": 4.861111111111111
+        }
+      ],
+      "rho": -1.0,
+      "rho_lesion": -0.9642857142857145,
+      "rho_shuffle": 0.10714285714285716,
+      "intact_range_hz": 124.30555555555554,
+      "lesion_range_hz": 2.256944444444444,
+      "pct_attributable": 0.9818435754189945,
+      "new_class_hits": 2,
+      "checks": {
+        "G1_monotonic": true,
+        "G2_new_turn_class_exercised": true,
+        "G3_lesion_collapses_range_attributable>=80%": true,
+        "G4_shuffle_collapses": true,
+        "G5_metacog_reads_unchanged": true
+      },
+      "go": true
+    },
+    {
+      "seed": 43,
+      "rows": [
+        {
+          "evidence": 0.0,
+          "novelty": 0.95,
+          "metacog_confident": false,
+          "metacog_balance": 0.024752491936161428,
+          "curious": true,
+          "want_hz": 141.31944444444443
+        },
+        {
+          "evidence": 0.15,
+          "novelty": 0.8075,
+          "metacog_confident": false,
+          "metacog_balance": 0.036201124235075655,
+          "curious": true,
+          "want_hz": 109.89583333333331
+        },
+        {
+          "evidence": 0.3,
+          "novelty": 0.6649999999999999,
+          "metacog_confident": false,
+          "metacog_balance": 0.046555489146409515,
+          "curious": true,
+          "want_hz": 81.07638888888889
+        },
+        {
+          "evidence": 0.45,
+          "novelty": 0.5225,
+          "metacog_confident": false,
+          "metacog_balance": 0.0580817674501611,
+          "curious": false,
+          "want_hz": 59.201388888888886
+        },
+        {
+          "evidence": 0.6,
+          "novelty": 0.38,
+          "metacog_confident": true,
+          "metacog_balance": 0.06774868699361289,
+          "curious": false,
+          "want_hz": 42.70833333333333
+        },
+        {
+          "evidence": 0.8,
+          "novelty": 0.18999999999999995,
+          "metacog_confident": true,
+          "metacog_balance": 0.08457967592264526,
+          "curious": false,
+          "want_hz": 12.67361111111111
+        },
+        {
+          "evidence": 1.0,
+          "novelty": 0.0,
+          "metacog_confident": true,
+          "metacog_balance": 0.10109479905466257,
+          "curious": false,
+          "want_hz": 5.5555555555555545
+        }
+      ],
+      "rho": -1.0,
+      "rho_lesion": 0.5714285714285715,
+      "rho_shuffle": 0.5,
+      "intact_range_hz": 135.76388888888889,
+      "lesion_range_hz": 2.7777777777777777,
+      "pct_attributable": 0.9795396419437341,
+      "new_class_hits": 2,
+      "checks": {
+        "G1_monotonic": true,
+        "G2_new_turn_class_exercised": true,
+        "G3_lesion_collapses_range_attributable>=80%": true,
+        "G4_shuffle_collapses": false,
+        "G5_metacog_reads_unchanged": true
+      },
+      "go": false
+    },
+    {
+      "seed": 44,
+      "rows": [
+        {
+          "evidence": 0.0,
+          "novelty": 0.95,
+          "metacog_confident": false,
+          "metacog_balance": 0.01808449316593745,
+          "curious": true,
+          "want_hz": 136.1111111111111
+        },
+        {
+          "evidence": 0.15,
+          "novelty": 0.8075,
+          "metacog_confident": false,
+          "metacog_balance": 0.028583460098378644,
+          "curious": true,
+          "want_hz": 108.68055555555553
+        },
+        {
+          "evidence": 0.3,
+          "novelty": 0.6649999999999999,
+          "metacog_confident": false,
+          "metacog_balance": 0.04195847879812631,
+          "curious": true,
+          "want_hz": 81.4236111111111
+        },
+        {
+          "evidence": 0.45,
+          "novelty": 0.5225,
+          "metacog_confident": false,
+          "metacog_balance": 0.052642400781989535,
+          "curious": false,
+          "want_hz": 58.68055555555555
+        },
+        {
+          "evidence": 0.6,
+          "novelty": 0.38,
+          "metacog_confident": true,
+          "metacog_balance": 0.06238757984128279,
+          "curious": false,
+          "want_hz": 37.326388888888886
+        },
+        {
+          "evidence": 0.8,
+          "novelty": 0.18999999999999995,
+          "metacog_confident": true,
+          "metacog_balance": 0.07420693625648928,
+          "curious": false,
+          "want_hz": 15.972222222222221
+        },
+        {
+          "evidence": 1.0,
+          "novelty": 0.0,
+          "metacog_confident": true,
+          "metacog_balance": 0.08784586853826618,
+          "curious": false,
+          "want_hz": 5.034722222222222
+        }
+      ],
+      "rho": -1.0,
+      "rho_lesion": 0.14285714285714288,
+      "rho_shuffle": 0.7142857142857144,
+      "intact_range_hz": 131.07638888888886,
+      "lesion_range_hz": 5.0347222222222205,
+      "pct_attributable": 0.96158940397351,
+      "new_class_hits": 2,
+      "checks": {
+        "G1_monotonic": true,
+        "G2_new_turn_class_exercised": true,
+        "G3_lesion_collapses_range_attributable>=80%": true,
+        "G4_shuffle_collapses": false,
+        "G5_metacog_reads_unchanged": true
+      },
+      "go": false
+    },
+    {
+      "seed": 100,
+      "rows": [
+        {
+          "evidence": 0.0,
+          "novelty": 0.95,
+          "metacog_confident": false,
+          "metacog_balance": 0.029715000985259386,
+          "curious": true,
+          "want_hz": 145.3125
+        },
+        {
+          "evidence": 0.15,
+          "novelty": 0.8075,
+          "metacog_confident": false,
+          "metacog_balance": 0.040782686511090425,
+          "curious": true,
+          "want_hz": 117.01388888888887
+        },
+        {
+          "evidence": 0.3,
+          "novelty": 0.6649999999999999,
+          "metacog_confident": false,
+          "metacog_balance": 0.05183536456503819,
+          "curious": true,
+          "want_hz": 89.40972222222221
+        },
+        {
+          "evidence": 0.45,
+          "novelty": 0.5225,
+          "metacog_confident": false,
+          "metacog_balance": 0.06372663872873888,
+          "curious": false,
+          "want_hz": 61.80555555555554
+        },
+        {
+          "evidence": 0.6,
+          "novelty": 0.38,
+          "metacog_confident": true,
+          "metacog_balance": 0.07673736001887424,
+          "curious": false,
+          "want_hz": 36.28472222222222
+        },
+        {
+          "evidence": 0.8,
+          "novelty": 0.18999999999999995,
+          "metacog_confident": true,
+          "metacog_balance": 0.09370345521933449,
+          "curious": false,
+          "want_hz": 11.979166666666666
+        },
+        {
+          "evidence": 1.0,
+          "novelty": 0.0,
+          "metacog_confident": true,
+          "metacog_balance": 0.11172823295908788,
+          "curious": false,
+          "want_hz": 3.298611111111111
+        }
+      ],
+      "rho": -1.0,
+      "rho_lesion": -0.7142857142857144,
+      "rho_shuffle": 0.21428571428571433,
+      "intact_range_hz": 142.01388888888889,
+      "lesion_range_hz": 1.041666666666667,
+      "pct_attributable": 0.9926650366748166,
+      "new_class_hits": 2,
+      "checks": {
+        "G1_monotonic": true,
+        "G2_new_turn_class_exercised": true,
+        "G3_lesion_collapses_range_attributable>=80%": true,
+        "G4_shuffle_collapses": true,
+        "G5_metacog_reads_unchanged": true
+      },
+      "go": true
+    },
+    {
+      "seed": 101,
+      "rows": [
+        {
+          "evidence": 0.0,
+          "novelty": 0.95,
+          "metacog_confident": false,
+          "metacog_balance": 0.021526882311817014,
+          "curious": true,
+          "want_hz": 118.74999999999999
+        },
+        {
+          "evidence": 0.15,
+          "novelty": 0.8075,
+          "metacog_confident": false,
+          "metacog_balance": 0.034130503929546245,
+          "curious": true,
+          "want_hz": 92.3611111111111
+        },
+        {
+          "evidence": 0.3,
+          "novelty": 0.6649999999999999,
+          "metacog_confident": false,
+          "metacog_balance": 0.044884215290315575,
+          "curious": true,
+          "want_hz": 67.3611111111111
+        },
+        {
+          "evidence": 0.45,
+          "novelty": 0.5225,
+          "metacog_confident": false,
+          "metacog_balance": 0.05557756889523244,
+          "curious": false,
+          "want_hz": 39.75694444444444
+        },
+        {
+          "evidence": 0.6,
+          "novelty": 0.38,
+          "metacog_confident": true,
+          "metacog_balance": 0.06420451407329936,
+          "curious": false,
+          "want_hz": 24.131944444444443
+        },
+        {
+          "evidence": 0.8,
+          "novelty": 0.18999999999999995,
+          "metacog_confident": true,
+          "metacog_balance": 0.07491698220655321,
+          "curious": false,
+          "want_hz": 6.423611111111111
+        },
+        {
+          "evidence": 1.0,
+          "novelty": 0.0,
+          "metacog_confident": true,
+          "metacog_balance": 0.09247693799994047,
+          "curious": false,
+          "want_hz": 2.256944444444444
+        }
+      ],
+      "rho": -1.0,
+      "rho_lesion": -0.14285714285714288,
+      "rho_shuffle": 0.0,
+      "intact_range_hz": 116.49305555555554,
+      "lesion_range_hz": 1.5624999999999996,
+      "pct_attributable": 0.9865871833084948,
+      "new_class_hits": 2,
+      "checks": {
+        "G1_monotonic": true,
+        "G2_new_turn_class_exercised": true,
+        "G3_lesion_collapses_range_attributable>=80%": true,
+        "G4_shuffle_collapses": true,
+        "G5_metacog_reads_unchanged": true
+      },
+      "go": true
+    },
+    {
+      "seed": 102,
+      "rows": [
+        {
+          "evidence": 0.0,
+          "novelty": 0.95,
+          "metacog_confident": false,
+          "metacog_balance": 0.005522893923739267,
+          "curious": true,
+          "want_hz": 127.08333333333331
+        },
+        {
+          "evidence": 0.15,
+          "novelty": 0.8075,
+          "metacog_confident": false,
+          "metacog_balance": 0.019556226412801817,
+          "curious": true,
+          "want_hz": 96.875
+        },
+        {
+          "evidence": 0.3,
+          "novelty": 0.6649999999999999,
+          "metacog_confident": false,
+          "metacog_balance": 0.03048827209681574,
+          "curious": true,
+          "want_hz": 75.86805555555554
+        },
+        {
+          "evidence": 0.45,
+          "novelty": 0.5225,
+          "metacog_confident": false,
+          "metacog_balance": 0.03809309625267854,
+          "curious": false,
+          "want_hz": 46.70138888888888
+        },
+        {
+          "evidence": 0.6,
+          "novelty": 0.38,
+          "metacog_confident": true,
+          "metacog_balance": 0.04419297513445343,
+          "curious": false,
+          "want_hz": 29.6875
+        },
+        {
+          "evidence": 0.8,
+          "novelty": 0.18999999999999995,
+          "metacog_confident": true,
+          "metacog_balance": 0.05574202804436251,
+          "curious": false,
+          "want_hz": 11.111111111111109
+        },
+        {
+          "evidence": 1.0,
+          "novelty": 0.0,
+          "metacog_confident": true,
+          "metacog_balance": 0.0663542209452572,
+          "curious": false,
+          "want_hz": 4.166666666666666
+        }
+      ],
+      "rho": -1.0,
+      "rho_lesion": 0.03571428571428572,
+      "rho_shuffle": 0.3214285714285715,
+      "intact_range_hz": 122.91666666666664,
+      "lesion_range_hz": 1.3888888888888884,
+      "pct_attributable": 0.9887005649717514,
+      "new_class_hits": 2,
+      "checks": {
+        "G1_monotonic": true,
+        "G2_new_turn_class_exercised": true,
+        "G3_lesion_collapses_range_attributable>=80%": true,
+        "G4_shuffle_collapses": true,
+        "G5_metacog_reads_unchanged": true
+      },
+      "go": true
+    }
+  ],
+  "config": {
+    "seeds": [
+      42,
+      43,
+      44,
+      100,
+      101,
+      102
+    ],
+    "smoke": false,
+    "evidence_grid": [
+      0.0,
+      0.15,
+      0.3,
+      0.45,
+      0.6,
+      0.8,
+      1.0
+    ],
+    "backend": "numpy"
+  },
+  "elapsed_s": 190.6
+}
