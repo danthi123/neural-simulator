@@ -155,6 +155,12 @@ def parse_replicas(s: str):
     return out
 
 
+def eval_items(seed):
+    """Every word any gate or report reads (the shuffled replicas are saved for these words only)."""
+    _, held = A.seed_split(seed)
+    return sorted(set(load_lexicon()) | set(NAMED) | set(held) | set(WARRINER))
+
+
 def weights_path(out_dir, seed, rid, scratch_dir):
     if rid == 0:
         return os.path.join(out_dir, f"weights_s{seed}.npz")
@@ -188,7 +194,8 @@ def part_train(seed, rids, corpus, out_dir, scratch_dir, log=print):
     for k, rid in enumerate(rids):
         p = weights_path(out_dir, seed, rid, scratch_dir)
         u = lav.u[k]
-        lav.save(p, replica=k, meta={"seed": seed, "replica_id": rid, "corpus": list(map(list, corpus))})
+        lav.save(p, replica=k, meta={"seed": seed, "replica_id": rid, "corpus": list(map(list, corpus))},
+                 only_words=None if rid == 0 else eval_items(seed))
         meta.append({"replica_id": rid, "path": os.path.relpath(p, _REPO) if p.startswith(_REPO) else p,
                      "sha256": _sha_file(p), "floor_share": float(np.mean(u <= 0.0)),
                      "n_nonzero_words": int(np.sum(np.abs(u).sum(axis=1) > 0)),
@@ -202,7 +209,7 @@ def part_train(seed, rids, corpus, out_dir, scratch_dir, log=print):
                                                       "N_FSI", "T_CS", "T_ON", "T_READ", "I_AFF", "W_US", "TAU_THETA", "TAU_SCALE", "WARMUP", "ETA_MIN",
                                                       "N0", "G", "R_REF", "MIN_RATE", "U_DEP", "TAU_REC")}}
     tag = "-".join(map(str, rids))
-    with open(os.path.join(scratch_dir, f"train_s{seed}_r{tag}.json"), "w") as fh:
+    with open(os.path.join(out_dir if 0 in rids else scratch_dir, f"train_s{seed}_r{tag}.json"), "w") as fh:
         json.dump(info, fh, indent=1)
     log(f"[train s{seed} r{rids}] done in {time.time() - t0:.0f}s ({info['per_presentation_ms']:.2f} ms/presentation)")
     return info
@@ -285,7 +292,12 @@ def part_eval(seed, out_dir, scratch_dir, n_shuf=N_SHUF, log=print):
     from tools.lab import attributable_to
     attr = attributable_to("share of eval-negative probes read negative: learned synapses vs learned_edge lesion",
                            neg_probe_intact, neg_probe_lesion)
-    out = {"seed": seed, "n_shuf": n_shuf, "reader_loaded": reader_loaded,
+    shas = set()
+    for d_ in (out_dir, scratch_dir):
+        for tp in glob.glob(os.path.join(d_, f"train_s{seed}_r*.json")):
+            with open(tp) as fh:
+                shas.add(json.load(fh).get("vocab_sha"))
+    out = {"seed": seed, "n_shuf": n_shuf, "reader_loaded": reader_loaded, "vocab_shas": sorted(shas),
            "n_neg_eval": len(neg_eval), "n_pos_eval": len(pos_eval),
            "n_neg_eval_heard": sum(w in heard for w in neg_eval),
            "replica_stats": {str(k): v for k, v in per_rep.items()},
@@ -324,6 +336,8 @@ def score(run_dir):
     missing = [s for s in SEEDS6 if s not in rows]
     pre = []
     pre.append(("all 6 seeds present", not missing))
+    shas = {sh for d in rows.values() for sh in d.get("vocab_shas", [])}
+    pre.append(("one heard vocabulary on every seed and replica block", len(shas) == 1))
     for s, d in rows.items():
         pre.append((f"s{s} reader loaded", bool(d["reader_loaded"])))
         pre.append((f"s{s} fact sentences read 0 with the flag off", bool(d["g3"]["off_all_zero"])))
@@ -361,6 +375,7 @@ def main():
     ap.add_argument("--out-dir", default=OUT_DIR)
     ap.add_argument("--scratch-dir", default=None)
     ap.add_argument("--score", default=None)
+    ap.add_argument("--n-shuf", type=int, default=N_SHUF)
     a = ap.parse_args()
     if a.score:
         v = score(a.score)
@@ -368,12 +383,12 @@ def main():
             json.dump(v, fh, indent=1)
         print(json.dumps({k: v[k] for k in ("verdict", "gates", "missing_seeds")}, indent=1))
         return
-    scratch = a.scratch_dir or os.path.join(a.out_dir, "..", f"_scratch_s{a.seed}")
+    scratch = a.scratch_dir or os.path.join(a.out_dir, "shuf")
     corpus = corpus_spec(a.corpus_path, a.corpus_chars)
     if a.part in ("train", "all"):
         part_train(a.seed, parse_replicas(a.replicas), corpus, a.out_dir, scratch, log=lambda m: print(m, flush=True))
     if a.part in ("eval", "all"):
-        out = part_eval(a.seed, a.out_dir, scratch, log=lambda m: print(m, flush=True))
+        out = part_eval(a.seed, a.out_dir, scratch, n_shuf=a.n_shuf, log=lambda m: print(m, flush=True))
         p = os.path.join(a.out_dir, f"eval_s{a.seed}.json")
         with open(p, "w") as fh:
             json.dump(out, fh, indent=1)

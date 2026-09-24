@@ -496,9 +496,15 @@ class LearnedAffectVocabulary:
     def state_hash(self) -> str:
         return hashlib.sha256(np.ascontiguousarray(self.u).tobytes()).hexdigest()
 
-    def save(self, path: str, replica: int = 0, meta=None):
-        """Save one replica (by POSITION in replica_ids) — its learned synapses, use counts and the circuit calibration."""
-        keep = np.flatnonzero(np.abs(self.u[replica]).sum(axis=1) > 0)
+    def save(self, path: str, replica: int = 0, meta=None, only_words=None):
+        """Save one replica (by POSITION in replica_ids) — its learned synapses, use counts and the circuit calibration.
+        only_words: keep just these words (the shuffled-control replicas are only ever read on the evaluation items)."""
+        nz = np.abs(self.u[replica]).sum(axis=1) > 0
+        if only_words is not None:
+            sel = np.zeros(self.V, dtype=bool)
+            sel[[self.vid[w] for w in only_words if w in self.vid]] = True
+            nz &= sel
+        keep = np.flatnonzero(nz)
         np.savez_compressed(path, words=np.array([self.vocab[i] for i in keep]), u=self.u[replica][keep],
                             nuse=self.nuse[keep], innate_words=np.array(sorted(self.innate)),
                             innate_vals=np.array([self.innate[w] for w in sorted(self.innate)]),
