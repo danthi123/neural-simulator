@@ -1,0 +1,32 @@
+{
+ "run_id": "1790259948-11374",
+ "runner": "research/runners/_affect_learned_vocabulary_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/wf_a096361c-653-1/research/runners/_affect_learned_vocabulary_derisk.py",
+  "--part",
+  "all",
+  "--seed",
+  "42",
+  "--replicas",
+  "0-8"
+ ],
+ "git_sha": "c0803dadc",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-24T10:25:48",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 37734.8,
+ "corpus_check_query": "affect appraisal vocabulary only 180 Warriner words; learned word valence salience gate",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_affect_learned_vocab/run1/shuf/weights_s42_r1.npz"
+}
