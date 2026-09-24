@@ -182,3 +182,21 @@ against this box's real RAM contention at authoring time (`bash tools/mem_ok.sh`
 already committed alongside this document (see the session's report for the exact artifact directory name if
 so) or is still queued for when local RAM allows / on the pool — the staged 6-seed job lines for the follow-on
 capability gate are in that same report.
+
+**Addendum — the one seed-7 local attempt made real progress, then was stopped, not because it failed.** A
+World-A-only pass (`--skip-g6 --skip-worldb`) was launched under `tools/memcap.sh 5` after `tools/mem_ok.sh`
+finally cleared at a reduced (5 GB) ask; it built the tiny-demo brain and began exercising the reused keystone
+chase across the 13 World-A probe turns. It was terminated (SIGTERM, clean, no partial artifact written) before
+completion for two compounding reasons, both real and worth recording for whoever runs the follow-on 6-seed
+gate: **(1)** this box's RAM stayed genuinely contended throughout (`tools/mem_ok.sh` refused 8/7/6 GB asks
+multiple times in the same window, with several other concurrent agent sessions' own brain builds live), and its
+cgroup MemoryHigh throttle (`__mem_cgroup_handle_over_high`, confirmed via `/proc/<pid>/wchan`) was actively
+slowing the process; **(2)** independent of RAM pressure, `confidence_gated_chase` runs a genuinely-costly
+multi-cycle spiking re-entrant simulation PER hop attempt, and the run log showed many small (129-neuron)
+network rebuilds per query in rapid succession — a real, substrate-cost signal, not a bug in this wire's
+dispatch, but one the 6-seed gate's resource estimate should account for (13 World-A queries, doubled to 26 once
+the lesion arm runs, each potentially several re-entrant cycles). Neither the module's own byte-identity-off
+guarantee nor its dispatch logic is in question here (both are proven at the logic level above); what remains
+unproven ON THIS PASS is the real handler's answer text / timing under load. Next rung: re-attempt on a
+quieter window, on the pool (`pool2` was unreachable from this checkout), or with a smaller World-A probe subset
+(e.g. 2 non-adjacent pairs + 1 adjacent + 1 negative control) sized to fit a tighter RAM/time budget.
