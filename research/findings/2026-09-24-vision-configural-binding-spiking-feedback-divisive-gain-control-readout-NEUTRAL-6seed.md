@@ -35,11 +35,11 @@ artifacts:
   - research/findings/raw/lanes/perception/conjbind_fbgain_full_AT_satdiv_GO_sig8_sc760_r1p0_nglim6_s100.json
   - research/findings/raw/lanes/perception/conjbind_fbgain_full_AT_satdiv_GO_sig8_sc760_r1p0_nglim6_s101.json
   - research/findings/raw/lanes/perception/conjbind_fbgain_full_AT_satdiv_GO_sig8_sc760_r1p0_nglim6_s102.json
-  - all 12 `.prov.json` sidecars, pulled from the pool in the same commit, each recording
-    `git_sha: 464d970e2d3e707ee01e04aeb750a3fb6762ddca`, `git_dirty: false`,
-    `source_kind: git_archive`, `source_manifest_verified_at_start/exit: true` -- the pinned,
-    isolated pool revision the pre-registration named, verified here by direct read of every
-    sidecar, not assumed.
+  - the 12 `.prov.json` sidecars (corrected 2026-09-24 after re-review): the 10 pool runs (seeds 43-102)
+    record `git_sha: 464d970e2d3e707ee01e04aeb750a3fb6762ddca`, `git_dirty: false`, `source_kind: git_archive`,
+    `source_manifest_verified_at_start/exit: true`. The 2 seed-42 artifacts (full and gain-only) were run
+    locally and record `git_sha: 257fe6742`, `git_dirty: true` (an uncommitted pytest provenance row); an
+    earlier reviewer re-ran seed 42 from the clean revision 464d970e2 and got identical output.
 external: NO-EXTERNAL-NEEDED for this finding itself -- it scores an already-externally-grounded
   pre-registration (Wilson & Cowan 1972; Heeger 1992, both on file, lane-tagged, within this gate's
   window: `research/queue/.external_searches.jsonl`, 2026-09-24T01:30:30Z entry). No new mechanism
@@ -66,10 +66,10 @@ Pulled all 6 seeds of both pre-registered arms from the pool (`bash tools/pool_s
 `research/findings/raw/lanes/perception/conjbind_fbgain_full_AT_satdiv_GO_sig8_sc760_r1p0_nglim6_s43.json`
 and its gain-only counterpart
 `research/findings/raw/lanes/perception/conjbind_fbgain_gainonly_AT_satdiv_GO_sig8_sc760_r1p0_nglim6_s43.json`
--- see the full 12-artifact list in the frontmatter `artifacts:` field). All 12 artifacts' `.prov.json`
+-- see the full 12-artifact list in the frontmatter `artifacts:` field). The 10 pool artifacts' `.prov.json`
 sidecars confirm `git_sha: 464d970e2d3e707ee01e04aeb750a3fb6762ddca`, `git_dirty: false`,
-`source_kind: git_archive` -- the exact pinned, isolated revision the pre-registration named, not a
-later or dirty checkout.
+`source_kind: git_archive`; the 2 seed-42 artifacts were run locally at `257fe6742` with `git_dirty: true`
+and were reproduced exactly from the clean revision by an earlier reviewer (see the frontmatter note).
 
 | seed | full (`fb_strength=1.0`) `LEARNED_spkwta_held` | gain-only (`fb_strength=0.0`) `LEARNED_spkwta_held` | `d = full - gainonly` | `capability_go` full | `capability_go` gainonly | `scramble_null_pass` (both) | `LEARNED_linscore_held` (both, identical) |
 |---|---|---|---|---|---|---|---|
