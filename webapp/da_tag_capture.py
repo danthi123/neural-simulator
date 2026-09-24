@@ -342,13 +342,18 @@ class SynapticTagCaptureLedger:
 
     def __init__(self, seed: int, gamma: float, d1=None, beta: float = BETA_BASELINE, tau_early_h: float = TAU_EARLY_H,
                  tau_tag_h: float = TAU_TAG_H, tau_p_h: float = TAU_PRP_H, tau_z_h: float = TAU_Z_H,
-                 dt_h: float = KERNEL_DT_H):
+                 dt_h: float = KERNEL_DT_H, block_offset: int = 0):
         self.seed = int(seed)
         self.gamma = float(gamma)
         self.d1 = d1                       # object with .read(da) -> (a, rate); None -> caller supplies a directly
         self.beta = float(beta)
         self.tau_early_h, self.tau_tag_h = float(tau_early_h), float(tau_tag_h)
         self.tau_p_h, self.tau_z_h, self.dt_h = float(tau_p_h), float(tau_z_h), float(dt_h)
+        # store blocks [0, block_offset) are NOT managed (chat wiring: the build-time knowledge written before the
+        # ledger existed). 0 = every block managed = the v3 runner's behaviour, byte-for-byte.
+        self.block_offset = int(block_offset)
+        self.n_external_rescales = 0
+        self.n_external_rewrites = 0
         self.t = 0.0
         self.p = 0.0
         self.p_max = 0.0
@@ -401,7 +406,7 @@ class SynapticTagCaptureLedger:
         D = comp.D
         n_blocks = len(comp.store_conns) // D
         new = 0
-        for i in range(len(self.blocks), n_blocks):
+        for i in range(self.block_offset + len(self.blocks), n_blocks):
             sl = comp.store_conns[i * D:(i + 1) * D]
             inc = np.array([complex(w) for (_p, _q, w) in sl], dtype=np.complex128)
             self.blocks.append({"t_w": float(t_h), "inc": inc, "base": self._baseline(i, D),
@@ -413,6 +418,47 @@ class SynapticTagCaptureLedger:
 
     apply_homeostasis_scales = TagCaptureLedger.apply_homeostasis_scales
 
+    def sync_from_store(self, comp, t_h: float) -> dict:
+        """Chat wiring: other writers act on the SAME store synapses between the ledger's own writes (the composer's
+        Turrigiano pass rescales a block in place on the idle tick; reconsolidation rewrites a block in place). Before
+        the ledger rewrites the store it reads each managed block back and compares it with what it last wrote:
+          * a pure multiplicative change (complex least-squares scale, relative residual < 1e-6) is an external
+            rescale -> applied to the block's baseline AND increment (the same bookkeeping as
+            `apply_homeostasis_scales`, which the v3 runner called with the scale vector directly);
+          * any other change is an external rewrite -> the writer's new weights are taken as a FRESH early-LTP
+            increment written now (new tag |inc|, z reset to 0), the baseline kept. DECLARED host bookkeeping.
+        Blocks the ledger has not written yet are skipped. Returns counts."""
+        D = comp.D
+        n_scale = n_rew = 0
+        for i, blk in enumerate(self.blocks):
+            last = blk.get("last_w")
+            j = self.block_offset + i
+            sl = comp.store_conns[j * D:(j + 1) * D]
+            if last is None or len(sl) != D:
+                continue
+            cur = np.array([complex(w) for (_p, _q, w) in sl], dtype=np.complex128)
+            if np.array_equal(cur, last):
+                continue
+            den = np.vdot(last, last)
+            s = (np.vdot(last, cur) / den) if abs(den) > 0 else 0.0
+            nrm = float(np.linalg.norm(cur))
+            resid = float(np.linalg.norm(cur - s * last)) / (nrm if nrm > 0 else 1.0)
+            if resid < 1e-6:
+                blk["base"] = blk["base"] * complex(s)
+                blk["inc"] = blk["inc"] * complex(s)
+                n_scale += 1
+            else:
+                blk["inc"] = cur
+                blk["pq"] = [(p, q) for (p, q, _w) in sl]
+                blk["t_w"] = float(t_h)
+                blk["h0"] = np.abs(cur).astype(np.float64)
+                blk["z"] = np.zeros(D, dtype=np.float64)
+                n_rew += 1
+            blk["last_w"] = cur
+        self.n_external_rescales += n_scale
+        self.n_external_rewrites += n_rew
+        return {"rescaled": n_scale, "rewritten": n_rew}
+
     def weight_factor(self, blk: dict) -> np.ndarray:
         e = math.exp(-max(0.0, self.t - blk["t_w"]) / self.tau_early_h)
         return e + blk["z"] * (1.0 - e)
@@ -421,7 +467,9 @@ class SynapticTagCaptureLedger:
         D = comp.D
         for i, blk in enumerate(self.blocks):
             w = blk["base"] + self.weight_factor(blk) * blk["inc"]
-            comp.store_conns[i * D:(i + 1) * D] = [(p, q, complex(w[k])) for k, (p, q) in enumerate(blk["pq"])]
+            j = self.block_offset + i
+            comp.store_conns[j * D:(j + 1) * D] = [(p, q, complex(w[k])) for k, (p, q) in enumerate(blk["pq"])]
+            blk["last_w"] = np.array([complex(x) for x in w], dtype=np.complex128)
         comp._store_dirty = True
         comp._store_csr = None
         comp._persistent_dirty = True
