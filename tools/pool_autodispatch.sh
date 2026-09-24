@@ -29,7 +29,7 @@ POLL="${POOL_DISPATCH_POLL:-60}"
 # (MemAvailable fell AND it is still reserved) -- deliberately conservative: an under-filled node costs minutes, an
 # OOM costs every job on the node plus a silent rc=0 from runners that swallow worker deaths.
 RESV="${POOL_RESERVATIONS_PATH:-$ROOT/research/queue/.pool_reservations}"
-GROWTH_WINDOW_S="${POOL_GROWTH_WINDOW_S:-1200}"
+GROWTH_WINDOW_S="${POOL_GROWTH_WINDOW_S:-600}"   # D6/LB workers reach full RSS in ~4 min (measured 2026-09-23)
 
 job_est_gb() {
   local h
