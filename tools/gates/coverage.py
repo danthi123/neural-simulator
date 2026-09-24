@@ -60,6 +60,16 @@ def _check_text(log_text, modules):
         _seen.add(_r)
     for _r in sorted(_dups):
         problems.append("FAILURE_LOG: exact DUPLICATE row (union-merge artifact) -- keep one: %s" % _r[:90])
+    # STALE VARIANTS (2026-09-23): the union driver also keeps an OLD copy of a row that main later edited (same date +
+    # failure text, different closure) -- the exact-duplicate check above cannot see it; the curiosity lane's merge
+    # carried a 'NOT-GATEABLE' closure main had already replaced with a named test.
+    _by_key = {}
+    for cells in _log_rows(log_text):
+        _by_key.setdefault((cells[0], cells[1]), set()).add(" | ".join(cells[2:]))
+    for (_d, _f), _closures in sorted(_by_key.items()):
+        if len(_closures) > 1:
+            problems.append("FAILURE_LOG %s: STALE VARIANT -- the same failure row appears with %d different closures "
+                            "(union-merge kept an old copy); keep main's: %s" % (_d, len(_closures), _f[:80]))
     for cells in _log_rows(log_text):
         date, failure, gate = cells[0], cells[1], cells[2]
         if not gate:
@@ -123,6 +133,10 @@ def selftest():
     _dup = "| d | f | g |\n|---|---|---|\n| 2026-01-01 | x | `doc_type` |\n| 2026-01-01 | x | `doc_type` |\n"
     if not any("DUPLICATE" in p for p in _check_text(_dup, mods)):
         bad.append("did NOT catch an exact duplicate FAILURE_LOG row")
+    _var = ("| d | f | g |\n|---|---|---|\n| 2026-01-01 | x broke | NOT-GATEABLE: old reason given here |\n"
+            "| 2026-01-01 | x broke | `doc_type` |\n")
+    if not any("STALE VARIANT" in p for p in _check_text(_var, mods)):
+        bad.append("did NOT catch a stale-variant FAILURE_LOG row (same failure, different closure)")
     with tempfile.TemporaryDirectory():
         pass
     return bad
