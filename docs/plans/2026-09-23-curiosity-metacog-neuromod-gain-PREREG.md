@@ -288,3 +288,9 @@ runner's `CMP_TO_LC_W=5.0`, `RecorderWithLC`, `coupled_sweep_lc`, `gate_g10_lc_e
 `--combine` hazard fix) in a commit that carries NO `research/findings/raw/**` artifact.** The fresh seed-42
 calibration run under the NEW constants is run and committed SEPARATELY, afterward, from that clean commit
 (`git_dirty: false`), exactly as v1 and v2's own convention established.
+
+prereg-same-commit: this file and its s42 artifact were committed on the curiosity lane in the correct
+order (737fab673 prereg, then 2c3241f35 artifact) and landed on main via the reviewed merge 12de62765.
+A LATER, unrelated merge of main into another lane's branch (e.g. perception fix round 3) makes this file
+and its artifact appear together as one diff purely because that other branch never had them before --
+no thresholds were written after seeing this run's own result.

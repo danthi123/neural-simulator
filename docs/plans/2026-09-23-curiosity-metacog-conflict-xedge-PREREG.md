@@ -73,3 +73,9 @@ code is right:
 ## 6. AMENDMENT LOG
 
 (none yet)
+
+prereg-same-commit: this prereg and the banked 09-01 NOT-GO artifact it cites were committed together in
+c67987132 (09:54) / ad0c1fc09 (19:24), both before gates/prereg_before_run existed (landed 20:28); that
+commit is banking an ALREADY-RUN prior result, not a run governed by thresholds written after the fact.
+A later merge of main into another lane's branch makes the file and artifact appear together only because
+that branch never had them before.

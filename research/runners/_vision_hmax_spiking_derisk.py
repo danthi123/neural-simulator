@@ -142,6 +142,75 @@ def lif_spike_read(drive, T, seed, tau=8.0, v_thresh=1.0, t_ref=2, noise=0.06, g
     return counts, first
 
 
+def lif_spike_read_fbgain(drive, T, seed, tau=8.0, v_thresh=1.0, t_ref=2, noise=0.06, gain=1.0,
+                           fb_strength=0.0, fb_tau=8.0):
+    """`lif_spike_read` PLUS a SPIKING, POOLED, FEEDBACK divisive gain-control stage (2026-09-23,
+    research/findings/2026-09-23-vision-configural-binding-spiking-feedback-divisive-gain-control-
+    readout-PREREGISTERED.md). Built to answer this project's own standing wall question ("what does the
+    real system run alongside this, that we substituted with a constant?") for the attention-gated-soft
+    readout's collapse: that mode's `read_gain`/`read_bias` are FIXED HOST CONSTANTS, calibrated once and
+    reused unchanged across every front-end operating point (see `_attention_gated_soft_class_read`'s own
+    per-(trial,class) HOST satdiv normalization, computed ONCE from the pre-spike drive and then frozen
+    for the whole T-step LIF read) -- there is no process in this file that lets the SPIKING stage's own
+    realized activity feed back and correct a miscalibrated gain, the way a real feedback-inhibitory
+    population would. `fb_strength <= 0` delegates EXACTLY to `lif_spike_read` (identical call, identical
+    RNG draw order) -- BYTE-IDENTICAL-OFF BY DELEGATION, not by an algebraic identity that could silently
+    stop holding under refactoring.
+
+    THE MECHANISM, grounded in two established results this project had not yet combined:
+      - Wilson & Cowan (1972), Biophys J 12:1-24, "Excitatory and inhibitory interactions in localized
+        populations of model neurons": a population's own recent activity, LOW-PASS FILTERED through a
+        synaptic/membrane time constant, is a state variable that dynamically shapes that population's
+        ongoing input drive (their coupled E/I rate equations) -- not a value fixed in advance.
+      - Heeger (1992), Visual Neuroscience 9:181-197, "Normalization of cell responses in cat striate
+        cortex": divisive normalization is REALIZED, at the circuit level, by RECURRENT/SHUNTING
+        inhibition -- a pooled inhibitory signal that suppresses (divides) the excitatory drive, computed
+        DYNAMICALLY from the circuit's own ongoing activity, not read off a closed-form ratio computed
+        once from the pre-synaptic drive (which is what this file's `_apply_s2_norm` satdiv step already
+        does, and what this function's OWN `gain`/`bias` inputs still do upstream, unchanged).
+
+    Every simulated millisecond (T total), AFTER real LIF spikes are drawn (this is a POST-spike,
+    activity-dependent feedback, not a pre-spike host formula):
+      r_fb(t+1) = r_fb(t) + (1/fb_tau) * (-r_fb(t) + mean_over_population(spk(t)))   -- a leaky
+        low-pass trace of the READ population's OWN realized output-spike fraction THIS trial, POOLED
+        ACROSS THE WHOLE POPULATION PASSED IN (`drive`'s column axis; when the caller tiles `n_classes *
+        class_pop` columns per trial -- see `_attention_gated_soft_fbgain_class_read` -- the pool spans
+        every class, matching Carandini & Heeger's normalization-pool framing: the suppressive signal is
+        drawn from a BROADER population than the single unit it acts on, not from that unit alone).
+      I_eff(t+1) = I0 / (1 + fb_strength * r_fb(t))   -- SHUNTING (divisive) inhibition of the
+        excitatory current by that trace, applied IDENTICALLY to every unit in the row (every class, for
+        a given trial): the pool's OVERALL magnitude is rescaled by its own recent output, but relative
+        DIFFERENCES BETWEEN units in that row -- exactly what a WTA argmax over classes depends on -- are
+        preserved (a shared divisor does not change which unit was largest), unlike a PER-CLASS
+        independently-computed satdiv step, which can compress between-class contrast toward each
+        channel's own separately-normalized scale.
+
+    `fb_strength <= 0.0` (default): returns `lif_spike_read(drive, T, seed, tau=tau, v_thresh=v_thresh,
+    t_ref=t_ref, noise=noise, gain=gain)` verbatim -- no r_fb machinery is even constructed."""
+    if fb_strength <= 0.0:
+        return lif_spike_read(drive, T, seed, tau=tau, v_thresh=v_thresh, t_ref=t_ref, noise=noise, gain=gain)
+    rng = np.random.default_rng(seed)
+    M, C = drive.shape
+    v = np.zeros((M, C), dtype=np.float32)
+    ref = np.zeros((M, C), dtype=np.int32)
+    counts = np.zeros((M, C), dtype=np.float32)
+    first = np.full((M, C), float(T), dtype=np.float32)
+    I0 = (gain * drive).astype(np.float32)
+    r_fb = np.zeros(M, dtype=np.float32)          # per-trial pooled feedback trace, across the whole row
+    for t in range(int(T)):
+        can = ref <= 0
+        I_eff = (I0 / (1.0 + fb_strength * r_fb[:, None])).astype(np.float32)
+        v = np.where(can, v + (1.0 / tau) * (-v + I_eff) + rng.standard_normal((M, C)).astype(np.float32) * noise, v)
+        spk = can & (v >= v_thresh)
+        counts += spk
+        newf = spk & (first >= T)
+        first = np.where(newf, float(t), first)
+        v = np.where(spk, 0.0, v)
+        ref = np.where(spk, t_ref, ref - 1)
+        r_fb = r_fb + (1.0 / fb_tau) * (-r_fb + spk.mean(axis=1).astype(np.float32))
+    return counts, first
+
+
 def spike_code(counts, first, T, code):
     """Turn (counts, first_spike) into the chosen neural code, non-negative.
       count   -> spike count (rate code).

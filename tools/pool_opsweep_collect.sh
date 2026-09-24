@@ -6,10 +6,18 @@ cd "$(dirname "$0")/.."
 REMOTE=derisk-pool/sim
 OUT=research/findings/raw/consol_opsweep
 mkdir -p "$OUT"
-for h in pool40 pool41 pool42; do
-  rsync -az "$h:~/$REMOTE/$OUT/op*_seed*.json" "$OUT/" 2>/dev/null
-  rsync -az "$h:~/$REMOTE/$OUT/QUEUE_DONE_*" "$OUT/" 2>/dev/null
-  echo -n "$h: "; ssh "$h" "ls ~/$REMOTE/$OUT/op*.json 2>/dev/null | wc -l; ls ~/$REMOTE/$OUT/QUEUE_DONE_* 2>/dev/null" 2>/dev/null | tr '\n' ' '; echo
+# AWS-AS-EXTRA-POOL-NODE (fix round #2): same repo-local ssh config + extra-nodes list every other pool script
+# now honours. ABSENT by default -> unchanged for anyone who has not run `aws_pool_node.sh up`.
+ROOT="$(pwd)"
+POOL_SSH_CONFIG="${POOL_SSH_CONFIG:-$ROOT/research/queue/.pool_ssh_config}"
+_SSH=(ssh); [ -f "$POOL_SSH_CONFIG" ] && _SSH=(ssh -F "$POOL_SSH_CONFIG")
+EXTRA_NODES_FILE="${POOL_EXTRA_NODES_FILE:-$ROOT/research/queue/.pool_extra_nodes}"
+_EXTRA=""
+[ -f "$EXTRA_NODES_FILE" ] && _EXTRA=$(grep -vE '^[[:space:]]*(#|$)' "$EXTRA_NODES_FILE" 2>/dev/null | tr -s '[:space:]' ' ')
+for h in pool40 pool41 pool42 $_EXTRA; do
+  rsync -az -e "${_SSH[*]}" "$h:~/$REMOTE/$OUT/op*_seed*.json" "$OUT/" 2>/dev/null
+  rsync -az -e "${_SSH[*]}" "$h:~/$REMOTE/$OUT/QUEUE_DONE_*" "$OUT/" 2>/dev/null
+  echo -n "$h: "; "${_SSH[@]}" "$h" "ls ~/$REMOTE/$OUT/op*.json 2>/dev/null | wc -l; ls ~/$REMOTE/$OUT/QUEUE_DONE_* 2>/dev/null" 2>/dev/null | tr '\n' ' '; echo
 done
 echo "--- local total: $(ls "$OUT"/op*_seed*.json 2>/dev/null | wc -l) cells ---"
 .venv/bin/python - "$OUT" <<'PY'

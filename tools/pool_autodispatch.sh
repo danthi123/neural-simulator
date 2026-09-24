@@ -18,6 +18,8 @@
 # A job line is a command run on the node, from ~/derisk-pool/sim. Lines starting with # are ignored.
 set -uo pipefail
 ROOT=/home/dant123/Projects/sim
+# shellcheck source=tools/pool_revision_marker.sh
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/pool_revision_marker.sh"
 QUEUE="${POOL_QUEUE_PATH:-$ROOT/research/queue/pool.queue}"
 CLAIMED="${POOL_RUNNING_PATH:-${QUEUE%.queue}.running}"
 POLL="${POOL_DISPATCH_POLL:-60}"
@@ -30,6 +32,121 @@ POLL="${POOL_DISPATCH_POLL:-60}"
 # OOM costs every job on the node plus a silent rc=0 from runners that swallow worker deaths.
 RESV="${POOL_RESERVATIONS_PATH:-$ROOT/research/queue/.pool_reservations}"
 GROWTH_WINDOW_S="${POOL_GROWTH_WINDOW_S:-600}"   # D6/LB workers reach full RSS in ~4 min (measured 2026-09-23)
+# AWS-AS-EXTRA-POOL-NODE (2026-09-23, tools/aws_pool_node.sh). Two gitignored, machine-local files, never
+# ~/.ssh/config (which this tooling must never edit):
+#   .pool_ssh_config  -- `Include`s the user's own ~/.ssh/config, then adds Host entries for AWS pool nodes
+#                         (HostName/User ubuntu/IdentityFile/StrictHostKeyChecking accept-new). ABSENT by
+#                         default, so every ssh/rsync call below is BYTE-IDENTICAL to before this feature for
+#                         anyone who has not run `aws_pool_node.sh up` -- existing pool40/41/42 behaviour is
+#                         unchanged (`ssh -F <this file> poolNN` still resolves poolNN via the Included config).
+#   .pool_extra_nodes -- one AWS node name per line (e.g. "pool1"), re-read EACH CYCLE below (not once at
+#                         startup) so `aws_pool_node.sh up`/`down` can add/remove a node with no dispatcher
+#                         restart -- the whole point of a systemd-managed singleton dispatcher.
+POOL_SSH_CONFIG="${POOL_SSH_CONFIG:-$ROOT/research/queue/.pool_ssh_config}"
+SSH_F=(); [ -f "$POOL_SSH_CONFIG" ] && SSH_F=(-F "$POOL_SSH_CONFIG")
+EXTRA_NODES_FILE="${POOL_EXTRA_NODES_FILE:-$ROOT/research/queue/.pool_extra_nodes}"
+
+refresh_ssh_f() {
+  # Re-evaluate SSH_F EVERY cycle, not once at process start (2026-09-23 fix round). This dispatcher runs as a
+  # long-lived systemd singleton; the whole POINT of re-reading .pool_extra_nodes every cycle (below) is that
+  # `aws_pool_node.sh up` can add a node with no dispatcher restart -- but `up` also CREATES .pool_ssh_config
+  # for the first AWS node, and a SSH_F computed once at startup never noticed. Measured: the live dispatcher
+  # (started before any AWS node existed) kept calling bare `ssh pool1` after `up` wired pool1 in -- pool1 has
+  # no entry in the user's own ~/.ssh/config, so node_is_idle always failed and pool1 was never used while it
+  # billed until aws_idle_stop stopped it.
+  SSH_F=(); [ -f "$POOL_SSH_CONFIG" ] && SSH_F=(-F "$POOL_SSH_CONFIG")
+}
+
+extra_nodes() {
+  [ -f "$EXTRA_NODES_FILE" ] && grep -vE '^[[:space:]]*(#|$)' "$EXTRA_NODES_FILE" 2>/dev/null | tr -s '[:space:]' ' '
+}
+
+cycle_setup() {
+  # ONE-FUNCTION FIX (2026-09-23 fix round #2, re-review MEDIUM): the OLD `--print-ssh-f-loop` test seam called
+  # `refresh_ssh_f` directly, inline -- a COPY of the production loop's shape, not the production loop itself.
+  # Mutation check confirmed the gap: deleting the real `while true` loop's `refresh_ssh_f` call left every test
+  # passing except the pre-existing unrelated failure. `cycle_setup` is now the ONE place either the production
+  # loop or a test calls -- there is no second copy left to drift from it, so removing this call from here
+  # breaks BOTH the live dispatcher AND the test seam identically. Sets $NODES (defined below) and
+  # $EXTRA_NODES_FILE (defined above) as globals -- both must already be set before this is first called, which
+  # holds for both callers (the production loop runs after NODES= below; the test seam sets POOL_QUEUE_PATH/
+  # POOL_EXTRA_NODES_FILE via env before this script even starts).
+  refresh_ssh_f
+  CYCLE_NODES="$NODES $(extra_nodes)"
+  # Reset the per-cycle revision-availability cache (see its own comment, right before revision_available_cached())
+  # so each cycle re-probes fresh (a node CAN gain a revision between cycles, e.g. aws_pool_node.sh's
+  # pre-provision loop finishing after this cycle started, or tools/pool_backfill_provisioned_markers.sh running
+  # between cycles). A FRESH FILE per cycle, never reused -- see revision_available_cached's own comment for why
+  # this is a file and not a plain bash associative array.
+  [ -n "${REV_CACHE_FILE:-}" ] && rm -f "$REV_CACHE_FILE" 2>/dev/null
+  REV_CACHE_FILE=$(mktemp "${TMPDIR:-/tmp}/pool_revcache.XXXXXX" 2>/dev/null) || REV_CACHE_FILE=""
+}
+
+revision_available() {
+  # revision_available <node> <sha> -- has ~/derisk-pool/revisions/<sha> COMPLETED provisioning on <node>? Used
+  # so a revision-pinned job (`cd ~/derisk-pool/revisions/<sha> && ...`, from `pool_provision.sh --isolated`) is
+  # never handed to a node that was never provisioned with that revision (2026-09-23 fix round: reproduced --
+  # AWS node provisioned only at ~/derisk-pool/sim from HEAD, every queued job pinned to an isolated revision,
+  # `cd` failed, the job was already popped from the queue and its result was never pulled -- silently lost).
+  #
+  # BUGFIX (fix round #2): checking `[ -d <revdir> ]` alone was WRONG -- pool_provision.sh's remote `mkdir -p`
+  # creates that directory FIRST, before rsync/venv/manifest-verify/sanity-check even run, and a later failure
+  # there just `continue`s past the node WITHOUT removing it. A node whose provision partly failed (missing
+  # .venv, unverified/tampered source, a degenerate sanity build) still passed this check, got handed the job,
+  # and the crash landed only in that node's own job_status.log -- lost the same way, just one layer down. The
+  # probe now requires `.provisioned_ok`, a marker pool_provision.sh writes as the LAST step of a fully
+  # successful --isolated run for that node (see pool_provision.sh's per-node loop) -- a half- or badly-
+  # provisioned revision dir never has it. tools/pool_revision_marker.sh's revision_marker_probe_cmd is the ONE
+  # place this predicate string is spelled out -- pool_queue.sh's `add` gate calls the SAME function (2026-09-23
+  # fix round #3, re-review MEDIUM: they used to ask two different questions of the same directory).
+  #
+  # Fails closed: unreachable/timeout/missing marker all return non-zero (job stays queued for another node/cycle).
+  local node="$1" sha="$2"
+  timeout 10 ssh "${SSH_F[@]}" -o BatchMode=yes -o ConnectTimeout=6 "$node" \
+    "$(revision_marker_probe_cmd "derisk-pool/revisions/$sha")" 2>/dev/null
+}
+
+revision_available_cached() {
+  # PER-CYCLE REVISION-AVAILABILITY CACHE (2026-09-23 fix round #2, LOW; made durable in fix round #3). pop_job's
+  # revision check used to make ONE ssh round trip per revision-pinned CANDIDATE it looked at, per pop, WHILE
+  # HOLDING the queue flock -- a node missing several pinned revisions (or a hung node) could hold that lock for
+  # multiple x10s timeouts on a single pop.
+  #
+  # BUGFIX (fix round #3, re-review HIGH -- "claimed fix ineffective in production"): a plain bash associative
+  # array does NOT survive this function being called from inside `JOB=$(pop_job ...)` -- that `$(...)` is a
+  # command-substitution SUBSHELL (bash forks a child process to run pop_job and capture its stdout), so any
+  # `REV_CACHE[$key]=1` written in there is a write to the CHILD's own copy of the array and is discarded the
+  # instant that subshell exits. The production `while node_is_idle "$NODE"; do JOB=$(pop_job ...); ...; done`
+  # loop calls pop_job exactly this way, so the "cache" re-probed by ssh on EVERY single pop -- the fix round #2
+  # test that exercised this function only proved it was self-consistent WITHIN one process (never through the
+  # actual `$(...)` call path the live loop uses), so it stayed green while the live dispatcher never benefited.
+  # A plain FILE survives past the subshell's exit (the write is a real write to disk, not to a process-local
+  # variable) -- one file per cycle (created/rotated in cycle_setup, above), read and appended by every pop_job
+  # subshell this cycle, so the SAME probe answer is reused across separate `$(pop_job ...)` calls, not just
+  # across candidates scanned within one call. See --fill-node below for the test that goes through the real
+  # command-substitution path (fix round #2's test is retained too, since a plain-array direct call is still a
+  # valid thing to pin, just not sufficient on its own).
+  local node="$1" sha="$2" key="$1:$2" cache="${REV_CACHE_FILE:-}"
+  if [ -n "$cache" ] && [ -f "$cache" ]; then
+    local hit
+    hit=$(awk -F'\t' -v k="$key" '$1==k {print $2; exit}' "$cache" 2>/dev/null)
+    if [ -n "$hit" ]; then
+      [ "$hit" = "1" ]
+      return
+    fi
+  fi
+  local ok
+  if revision_available "$node" "$sha"; then ok=1; else ok=0; fi
+  [ -n "$cache" ] && printf '%s\t%s\n' "$key" "$ok" >> "$cache"
+  if [ "$ok" = "0" ]; then
+    # Rate-limited to once per (node, sha) per cycle: this branch only runs the FIRST time this (node, sha) pair
+    # is probed this cycle (a cache hit above returns early without logging again), whether that first probe
+    # happens in this subshell or a prior one this cycle -- the file itself is the rate-limit, not a separate
+    # REV_MISSING_LOGGED array (which had the exact same cross-subshell survival problem this whole fix is about).
+    echo "[pool-dispatch] revision $sha not provisioned on $node -- job(s) pinned to it stay queued this cycle" >&2
+  fi
+  [ "$ok" = "1" ]
+}
 
 job_est_gb() {
   local h
@@ -77,8 +194,10 @@ node_is_idle() {
   # Line 1: metrics (+ MemTotal). Lines 2..: one per RUNNING dispatched job, from the POOL_JOB_ID/POOL_JOB_MEM_GB its
   # processes inherit (see remote_launch_command), so its DECLARED size counts for its whole lifetime (COMMITTED below).
   # (A ps-args scan was tried first and found nothing: bash execs the job's last command, so no wrapper stays visible.)
+  # -F "${SSH_F[@]}" carries the AWS-pool-node repo-local ssh config when one exists (merge of the two fix rounds:
+  # main's committed/lifetime-budget tracking + this branch's SSH_F routing), else it is empty and unchanged.
   local raw
-  raw=$(timeout 12 ssh -o BatchMode=yes -o ConnectTimeout=6 "$node" \
+  raw=$(timeout 12 ssh "${SSH_F[@]}" -o BatchMode=yes -o ConnectTimeout=6 "$node" \
         "echo \$(nproc) \$(cut -d' ' -f1 /proc/loadavg) \$(pgrep -c -f '^[^ ]*/?python[0-9.]* .*-m [r]esearch\.runners' 2>/dev/null | head -1) \$(awk '/MemAvailable/{print int(\$2/1048576)}' /proc/meminfo) \$(ps -eo rss,args | awk '\$2 ~ /python/ && /-m [r]esearch\\.runners/ {if (\$1>m) m=\$1} END{print int((m+1048575)/1048576)}') \$(awk '/MemTotal/{print int(\$2/1048576)}' /proc/meminfo); for e in /proc/[0-9]*/environ; do tr '\\0' '\\n' < \$e 2>/dev/null | grep -E '^POOL_JOB_(ID|MEM_GB)=' | sort | paste -sd' '; done | grep POOL_JOB_ID | sort -u || true" 2>/dev/null) || return 1
   out=$(printf '%s\n' "$raw" | head -1)
   local committed
@@ -128,8 +247,12 @@ printf "v2\t%s\t%s\t%s\n" "$(date +%s)" "$rc" "$JOB_B64" >> job_status.log'
 }
 
 pop_job() {
-  # Atomically take the first non-comment line. flock keeps two dispatcher instances from claiming the same job.
-  local job=""
+  # pop_job <max_gb> [node] -- atomically take the first non-comment line that fits <max_gb> AND (if [node] is
+  # given and the candidate is revision-pinned) whose revision dir already exists on [node]. flock keeps two
+  # dispatcher instances from claiming the same job. [node] is OPTIONAL and omitted by test seams that only
+  # care about size-based selection (--pop-once) -- when absent, the revision check is skipped entirely
+  # (unchanged pre-fix behaviour), matching every caller that never dispatches to a real node.
+  local job="" node="${2:-}"
   exec 9>"$QUEUE.lock"
   flock 9 || return 1
   # A generic queue producer once wrote GPU-style command-only lines into this
@@ -159,9 +282,16 @@ pop_job() {
   now=$(date +%s); cutoff=$(( now - ${POOL_JOB_MAX_AGE:-43200} ))
   # FIRST FIT, not strict head (2026-09-23): a node with 4 GB free sat idle behind a 5 GB D6 arm while five 0.65 GB
   # vision jobs queued behind it. Take the first fresh line whose declared size fits the node's budget ($1, GB).
-  local max_gb="${1:-999}" cand
+  local max_gb="${1:-999}" cand sha
   while IFS= read -r cand; do
-    if [ "$(job_est_gb "$cand")" -le "$max_gb" ]; then job="$cand"; break; fi
+    [ "$(job_est_gb "$cand")" -le "$max_gb" ] || continue
+    # REVISION-DIR SEAM (2026-09-23 fix round). A job pinned to `cd ~/derisk-pool/revisions/<sha>` must never be
+    # popped for a node that does not have that revision -- that would remove it from the queue (below) with no
+    # node able to run it, i.e. lose it. `continue` past it (leaving it in the queue) and keep scanning for a
+    # candidate this node CAN run; if none exists this cycle, the outer `if [ -z "$job" ]` returns empty as usual.
+    sha=$(printf '%s' "$cand" | grep -oE 'derisk-pool/revisions/[0-9a-f]{7,40}' | head -1 | sed 's#.*/##')
+    if [ -n "$sha" ] && [ -n "$node" ] && ! revision_available_cached "$node" "$sha"; then continue; fi
+    job="$cand"; break
   done < <(awk -F'\t' -v c="$cutoff" 'NF>1 && $1+0 >= c {print $2}' "$QUEUE")
   # THE RECORD-CHECK GATE (2026-07-31), copied from tools/lane_dispatch.sh:47 where it is already proven.
   # A job may only run if it carries "#checked:", which tools/pool_queue.sh only attaches when a reason is
@@ -207,12 +337,46 @@ pop_job() {
   printf '%s' "$job"
 }
 
+fill_node() {
+  # fill_node <node> -- FILL the node to capacity within this cycle (while, not if) — with the per-node cap
+  # raised for single-threaded numpy jobs (owner 2026-09-02), a single if-per-cycle would need ~cap cycles to
+  # fill. Extracted into its own function (2026-09-23 fix round #3, re-review HIGH) so the --fill-node test seam
+  # below calls the EXACT production code path -- including the real `JOB=$(pop_job ...)` command substitution
+  # -- rather than a re-typed copy that could silently drift from what the live `while true` loop (at the bottom
+  # of this file) runs.
+  local NODE="$1"
+  while node_is_idle "$NODE"; do
+    JOB=$(pop_job "$NODE_BUDGET" "$NODE")
+    [ -z "$JOB" ] && break
+    echo "[pool-dispatch] $(date '+%H:%M:%S') $NODE <- $JOB"
+    printf '%s\t%s\t%s\n' "$(date '+%F %T')" "$NODE" "$JOB" >> "$CLAIMED"
+    # CAPTURE THE EXIT STATUS (2026-07-31). Previously this logged that a job was LAUNCHED and nothing more,
+    # so a job that died was indistinguishable from one that succeeded. Nine jobs died instantly on an argparse
+    # error and went unnoticed for an hour, because the only evidence of failure sat in autodispatch.out on a
+    # node nobody reads. The wrapper appends a timestamped v2 record with a numeric rc and base64-encoded job;
+    # the encoding keeps multiline pytest expressions from becoming fake status rows.
+    REMOTE_COMMAND=$(remote_launch_command "$JOB") || {
+      echo "[pool-dispatch] failed to encode job for $NODE" >&2
+      break
+    }
+    ssh -f -n "${SSH_F[@]}" -o BatchMode=yes "$NODE" "$REMOTE_COMMAND" 2>/dev/null
+    printf '%s %s %s\n' "$(date +%s)" "$NODE" "$(job_est_gb "$JOB")" >> "$RESV"
+    sleep "${POOL_DISPATCH_LAUNCH_SLEEP:-5}"     # let the launch register before this node's next capacity check
+  done
+}
+
 if [ "${1:-}" = "--pop-once" ]; then
-  pop_job "${2:-999}"
+  pop_job "${2:-999}" "${3:-}"
   exit $?
 fi
 if [ "${1:-}" = "--reserved-gb" ]; then reserved_gb "$2"; exit 0; fi
 if [ "${1:-}" = "--peek-est-gb" ]; then peek_est_gb; exit 0; fi
+if [ "${1:-}" = "--min-queued-est-gb" ]; then   # smallest declared size among fresh queued jobs; empty if none
+  cutoff=$(( $(date +%s) - ${POOL_JOB_MAX_AGE:-43200} )); m=""
+  while IFS= read -r cand; do e=$(job_est_gb "$cand"); { [ -z "$m" ] || [ "$e" -lt "$m" ]; } && m="$e"; done \
+    < <(awk -F'\t' -v c="$cutoff" 'NF>1 && $1+0 >= c && $0 ~ /#checked:/ {print $2}' "$QUEUE" 2>/dev/null)
+  echo "$m"; exit 0
+fi
 if [ "${1:-}" = "--node-budget" ]; then   # live diagnostic: would this node take work, and how many GB?
   if node_is_idle "$2"; then echo "idle budget=${NODE_BUDGET}GB"; else echo "busy/unreachable (budget=${NODE_BUDGET}GB)"; fi; exit 0
 fi
@@ -223,6 +387,54 @@ if [ "${1:-}" = "--render-remote-command" ]; then
   [ "$#" -eq 2 ] || { echo "usage: $0 --render-remote-command '<job>'" >&2; exit 2; }
   remote_launch_command "$2"
   exit $?
+fi
+if [ "${1:-}" = "--print-ssh-f-loop" ]; then
+  # TEST SEAM (2026-09-23, hardened fix round #2): proves refresh_ssh_f is called EVERY cycle of the REAL
+  # dispatch loop (not just once at process start) without running the full dispatcher (no queue popping, no
+  # real ssh calls to a node). Calls `cycle_setup` -- the SAME function the production `while true` loop below
+  # calls, not a separate copy of its shape -- so a mutation that removes `refresh_ssh_f` from `cycle_setup`
+  # breaks this test too (the old version called `refresh_ssh_f` inline here, a copy the mutation could dodge).
+  # Prints one line per cycle -- "F" if SSH_F currently carries -F<config>, else "NOF" -- so a test can create
+  # POOL_SSH_CONFIG's file BETWEEN cycles and see the NEXT line flip, inside one long-lived process.
+  [ "$#" -eq 3 ] || { echo "usage: $0 --print-ssh-f-loop <n-cycles> <sleep-s>" >&2; exit 2; }
+  for _i in $(seq 1 "$2"); do
+    cycle_setup
+    if [ "${#SSH_F[@]}" -gt 0 ]; then echo "F"; else echo "NOF"; fi
+    sleep "$3"
+  done
+  exit 0
+fi
+if [ "${1:-}" = "--revision-available" ]; then
+  # TEST SEAM (2026-09-23): exercises the REAL revision_available ssh call (same argv construction, including
+  # SSH_F) against one node/sha pair, without a real node or a real revision -- so a stubbed `ssh` on PATH can
+  # assert the exact `[ -f ~/derisk-pool/revisions/<sha>/.provisioned_ok ]` probe it makes (fix round #2: a
+  # completion MARKER, not bare directory existence).
+  [ "$#" -eq 3 ] || { echo "usage: $0 --revision-available <node> <sha>" >&2; exit 2; }
+  revision_available "$2" "$3"; exit $?
+fi
+if [ "${1:-}" = "--fill-node" ]; then
+  # TEST SEAM (2026-09-23 fix round #3): calls cycle_setup then fill_node -- the SAME function the production
+  # `while true` loop (below) calls once per node per cycle, via the real `JOB=$(pop_job ...)` command
+  # substitution -- so a mutation to the per-cycle revision cache (or to fill_node itself) breaks this test too.
+  # Unlike --pop-once (a fresh process per call, so its own cache always starts empty by construction and can
+  # never demonstrate cross-call persistence), this drives MULTIPLE pop_job calls inside ONE process, exactly
+  # like the live dispatcher does when filling one node to capacity within a cycle.
+  [ "$#" -eq 2 ] || { echo "usage: $0 --fill-node <node>" >&2; exit 2; }
+  cycle_setup
+  fill_node "$2"
+  exit 0
+fi
+if [ "${1:-}" = "--node-idle" ]; then
+  # TEST SEAM (2026-09-23): exercises the REAL node_is_idle ssh call (same argv construction, including
+  # SSH_F) without running the dispatch loop, so a stubbed `ssh` on PATH can assert -F is/isn't present.
+  [ "$#" -eq 2 ] || { echo "usage: $0 --node-idle <node>" >&2; exit 2; }
+  node_is_idle "$2"; exit $?
+fi
+if [ "${1:-}" = "--nodes-this-cycle" ]; then
+  # TEST SEAM: prints the node list ONE dispatch cycle would use -- POOL_NODES plus whatever
+  # .pool_extra_nodes (or $POOL_EXTRA_NODES_FILE) currently names, re-read fresh on every call.
+  printf '%s %s\n' "$NODES" "$(extra_nodes)" | tr -s ' ' | sed 's/^ *//; s/ *$//'
+  exit 0
 fi
 
 # SINGLETON GUARD (2026-07-31): repeated restarts during testing left THREE dispatchers polling at once. flock
@@ -246,29 +458,11 @@ if systemctl --user is-active --quiet pool-dispatch.service 2>/dev/null && [ "${
   exit 0
 fi
 
-echo "[pool-dispatch] started $(date '+%H:%M:%S') | queue=$QUEUE | poll=${POLL}s | nodes=$NODES"
+echo "[pool-dispatch] started $(date '+%H:%M:%S') | queue=$QUEUE | poll=${POLL}s | nodes=$NODES (+ any in $EXTRA_NODES_FILE, re-read each cycle)"
 while true; do
-  for NODE in $NODES; do
-    # FILL the node to capacity within this cycle (while, not if) — with the per-node cap raised for
-    # single-threaded numpy jobs (owner 2026-09-02), a single if-per-cycle would need ~cap cycles to fill.
-    while node_is_idle "$NODE"; do
-      JOB=$(pop_job "$NODE_BUDGET")
-      [ -z "$JOB" ] && break
-      echo "[pool-dispatch] $(date '+%H:%M:%S') $NODE <- $JOB"
-      printf '%s\t%s\t%s\n' "$(date '+%F %T')" "$NODE" "$JOB" >> "$CLAIMED"
-      # CAPTURE THE EXIT STATUS (2026-07-31). Previously this logged that a job was LAUNCHED and nothing more,
-      # so a job that died was indistinguishable from one that succeeded. Nine jobs died instantly on an argparse
-      # error and went unnoticed for an hour, because the only evidence of failure sat in autodispatch.out on a
-      # node nobody reads. The wrapper appends a timestamped v2 record with a numeric rc and base64-encoded job;
-      # the encoding keeps multiline pytest expressions from becoming fake status rows.
-      REMOTE_COMMAND=$(remote_launch_command "$JOB") || {
-        echo "[pool-dispatch] failed to encode job for $NODE" >&2
-        break
-      }
-      ssh -f -n -o BatchMode=yes "$NODE" "$REMOTE_COMMAND" 2>/dev/null
-      printf '%s %s %s\n' "$(date +%s)" "$NODE" "$(job_est_gb "$JOB")" >> "$RESV"
-      sleep 5     # let the launch register before this node's next capacity check
-    done
+  cycle_setup
+  for NODE in $CYCLE_NODES; do
+    fill_node "$NODE"
   done
   sleep "$POLL"
 done

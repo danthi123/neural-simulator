@@ -1,0 +1,40 @@
+{
+ "run_id": "1790219009-2827942",
+ "runner": "research/runners/d6_learn_through_use_lb.py",
+ "argv": [
+  "/home/dant123/Projects/sim/research/runners/d6_learn_through_use_lb.py",
+  "--score-only",
+  "--variant",
+  "capability",
+  "--arm-dir",
+  "research/findings/raw/_d6_learn_through_use_v3",
+  "--seeds",
+  "42",
+  "43",
+  "44",
+  "100",
+  "101",
+  "102",
+  "--json",
+  "research/findings/raw/_d6_learn_through_use_v3/d6_ltu_v3_6seed_verdict_with_expo.json"
+ ],
+ "git_sha": "58e41e085",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-23T23:03:29",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 61646.7,
+ "corpus_check_query": "making a spiking brain's affect/emotion state load-bearing on a language model's free-generated reply TONE \u2014 beyond decode-time logit bias; how affect/valence conditions generation in neuroscience + N",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_d6_learn_through_use_v3/d6_ltu_v3_6seed_verdict_with_expo.json"
+}

@@ -41,6 +41,9 @@ ids=$("$PY" "$ROOT/tools/aws_cost_lib.py" project-ids <<<"$json")
 if [ -z "$ids" ]; then
   exit 0   # nothing running -> nothing to do (the common case; not logged to avoid log spam every 10 min)
 fi
+# LAUNCH GRACE (2026-09-24): never judge an instance younger than the idle window. With no CloudWatch data yet the
+# check fell back to an instant SSH load reading and stopped two freshly launched battery instances mid-provision.
+young=$("$PY" "$ROOT/tools/aws_cost_lib.py" young-ids --minutes "$IDLE_MINUTES" <<<"$json")
 
 # The only per-instance SSH key this repo's tooling durably records today (see CLAUDE.md "the AWS lane" and
 # tools/aws_gpu.sh / tools/aws_cpu_launch.sh, which share this single state file — at most one instance is
@@ -53,6 +56,10 @@ fi
 
 while IFS= read -r iid; do
   [ -z "$iid" ] && continue
+  if printf '%s\n' "$young" | grep -qx "$iid"; then
+    echo "$(date -u '+%FT%TZ') [aws_idle_stop] $iid launched < ${IDLE_MINUTES}m ago — within launch grace, keep" >> "$LOG"
+    continue
+  fi
 
   # We only have a durable per-instance SSH key for the one lane this repo's launch scripts record (see the
   # comment above) — resolve its IP once and reuse it for both the CPU load-average fallback and the

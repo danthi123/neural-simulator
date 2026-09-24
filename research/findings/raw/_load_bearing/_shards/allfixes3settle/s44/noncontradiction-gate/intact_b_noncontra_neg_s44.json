@@ -1,0 +1,107 @@
+{
+  "noncontra_neg": {
+    "answer": "That contradicts what I hold: my polarity recall says dog chase cat. I won't accept the opposite without more.",
+    "abstained": false,
+    "recalled_svo": [
+      "dog",
+      "chase",
+      "cat"
+    ],
+    "verified": true,
+    "renderer": "template-stub (GPU-free)",
+    "brain": "tiny-demo",
+    "source": "tiny-demo +LTM",
+    "rich": false,
+    "activity": {
+      "roles": [
+        {
+          "role": "agent",
+          "word": "dog",
+          "confidence": 1.0,
+          "margin": 0.6818378897900559,
+          "margin_spiking": null,
+          "cue": true,
+          "asserted": "dog"
+        },
+        {
+          "role": "action",
+          "word": "chase",
+          "confidence": 1.0,
+          "margin": 0.6776200892166889,
+          "margin_spiking": null,
+          "cue": true,
+          "asserted": "chase"
+        },
+        {
+          "role": "patient",
+          "word": "cat",
+          "confidence": 1.0,
+          "margin": 0.5564587526236623,
+          "margin_spiking": null,
+          "cue": true,
+          "asserted": "cat"
+        },
+        {
+          "role": "attribute",
+          "word": null,
+          "confidence": 1.0,
+          "margin": 0.2682540719143513,
+          "margin_spiking": null,
+          "cue": false
+        },
+        {
+          "role": "polarity",
+          "word": "AFFIRM",
+          "confidence": 1.0,
+          "margin": 0.9999999999999996,
+          "margin_spiking": null,
+          "cue": false
+        }
+      ],
+      "matched_fact_index": 3,
+      "n_facts_scanned": 5,
+      "abstained": false,
+      "rf": {
+        "n_readout_neurons": 6880,
+        "frac_fired": 0.11177325581395349,
+        "mean_magnitude": 40759.30390029832
+      },
+      "composer": "onebrain"
+    },
+    "affect": {
+      "on": true,
+      "lesioned": false,
+      "composer": "onebrain",
+      "differential": 0.0,
+      "valence_sign": "0",
+      "tone_level": 0,
+      "tone_token": "",
+      "forthcomingness": {
+        "max_sentences": 4,
+        "max_elaborations": 2
+      },
+      "manner_template": "",
+      "appraisal_valence": 0.0,
+      "appraisal_arousal": 0.0,
+      "appraisal_hits": [],
+      "pos_rate": 0.0,
+      "neg_rate": 0.0
+    },
+    "noncontradiction": {
+      "on": true,
+      "lesioned": false,
+      "in_scope": true,
+      "svo": [
+        "dog",
+        "chase",
+        "cat"
+      ],
+      "recall_action": "chase",
+      "asserted_polarity": "NEGATE",
+      "recalled_yn": "yes",
+      "stored_polarity": "AFFIRM",
+      "reject": true
+    },
+    "rejected_contradiction": true
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "selfinit": {
+    "answer": "Something's been on my mind \u2014 bird see seed. What does bird see?",
+    "abstained": false,
+    "recalled_svo": null,
+    "verified": true,
+    "renderer": "template-stub (GPU-free)",
+    "brain": "tiny-demo",
+    "source": "tiny-demo +LTM",
+    "rich": false,
+    "activity": null,
+    "affect": null,
+    "self_initiated": {
+      "on": true,
+      "lesioned": false,
+      "composer": "onebrain",
+      "mouth_fidelity": true,
+      "moat_abstains": true,
+      "n_utt": 4,
+      "about_rate": 1.0,
+      "n_concepts_spoken": 4,
+      "concept": "bird",
+      "utterance": "bird see seed",
+      "question": "what does bird see?",
+      "examples": [
+        {
+          "concept": "dog",
+          "utterance": "dog chase ball",
+          "novelty": 0.35
+        },
+        {
+          "concept": "cat",
+          "utterance": "cat eat worm",
+          "novelty": 0.15
+        },
+        {
+          "concept": "bird",
+          "utterance": "bird see seed",
+          "novelty": 0.95
+        },
+        {
+          "concept": "fish",
+          "utterance": "fish hear bug",
+          "novelty": 0.65
+        }
+      ],
+      "path": "light-numpy-deferred-wander",
+      "kind": "self_initiated"
+    },
+    "inner_state_readout": true
+  }
+}

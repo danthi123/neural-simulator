@@ -17,11 +17,15 @@
 # that gets built. Building a cupy reference locally would also mean launching CUDA work outside
 # `tools/gpu_queue.sh`, which this project's compute discipline reserves for genuine dispatched runs.
 #
-# Usage: tools/aws_brain_sanity_check.sh '<ssh -i key -o ... user@host>' [remote_backend=numpy]
+# Usage: tools/aws_brain_sanity_check.sh '<ssh -i key -o ... user@host>' [remote_backend=numpy] [remote_dir=~/sim]
 set -uo pipefail
 ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd); cd "$ROOT" || exit 1
-SSH="${1:?usage: tools/aws_brain_sanity_check.sh '<ssh command>' [remote_backend]}"
+SSH="${1:?usage: tools/aws_brain_sanity_check.sh '<ssh command>' [remote_backend] [remote_dir]}"
 REMOTE_BACKEND="${2:-numpy}"
+# REMOTE_DIR (2026-09-23): the checkout lives at ~/sim on the single-instance CPU/GPU verify lanes but at
+# ~/derisk-pool/sim on a pool node (mini-PC or the AWS-as-extra-pool-node lane, tools/aws_pool_node.sh) --
+# parametrize instead of forking this script. Default is unchanged for every existing caller.
+REMOTE_DIR="${3:-~/sim}"
 REF_CACHE="$ROOT/research/queue/.brain_build_reference.json"
 LOCAL_OUT=$(mktemp); REMOTE_OUT=$(mktemp)
 trap 'rm -f "$LOCAL_OUT" "$REMOTE_OUT"' EXIT
@@ -78,8 +82,8 @@ if [ -z "$LOCAL_N" ] || [ -z "$LOCAL_S" ]; then
 fi
 echo "[sanity] local reference: n_neurons=$LOCAL_N n_synapses=$LOCAL_S"
 
-echo "[sanity] building the SAME brain REMOTELY (SIM_BACKEND=$REMOTE_BACKEND)…"
-$SSH "cd ~/sim && SIM_BACKEND=$REMOTE_BACKEND .venv/bin/python -m tools.brain_build_sanity" \
+echo "[sanity] building the SAME brain REMOTELY (SIM_BACKEND=$REMOTE_BACKEND, dir=$REMOTE_DIR)…"
+$SSH "cd $REMOTE_DIR && SIM_BACKEND=$REMOTE_BACKEND .venv/bin/python -m tools.brain_build_sanity" \
   > "$REMOTE_OUT" 2>/tmp/aws_sanity_remote.err
 tail -1 "$REMOTE_OUT" > "${REMOTE_OUT}.tail"; mv "${REMOTE_OUT}.tail" "$REMOTE_OUT"
 if [ "$(_json_get "$REMOTE_OUT" ok)" != "True" ]; then

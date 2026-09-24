@@ -13,24 +13,66 @@
 #   tools/pool_sync.sh              # pull newer/missing result JSONs from every POOL_NODES node (safe, non-destructive)
 #   tools/pool_sync.sh --dry-run    # show what WOULD transfer, change nothing
 #   POOL_NODES="pool40 pool41" tools/pool_sync.sh   # restrict to a subset
+#   tools/pool_sync.sh --strict --node pool1        # STRICT: non-zero exit if pool1 is unreachable or ANY of
+#                                                    # its (main or per-revision) rsync pulls fails. Same as
+#                                                    # POOL_SYNC_STRICT=1 POOL_NODES=pool1 tools/pool_sync.sh.
+#                                                    # Used by `aws_pool_node.sh down` to VERIFY the final pull
+#                                                    # succeeded before it is safe to terminate an instance whose
+#                                                    # root volume is DeleteOnTermination=true (2026-09-23 fix
+#                                                    # round: the plain default below always exits 0 even when
+#                                                    # every node was UNREACHABLE, which let `down` terminate an
+#                                                    # unsynced node unattended -- that DEFAULT TIMER BEHAVIOUR
+#                                                    # must not change, so strict is opt-in, never the default).
 #
 # SAFETY: rsync -au (archive + UPDATE) copies remote->local ONLY when the remote file is newer or absent locally,
 # so a committed local result is never clobbered by a stale remote copy. *.log and per-node _provenance/ are
 # excluded (merging three nodes' runs.jsonl would clobber); provenance sidecars (*.prov.json) ARE pulled.
-set -euo pipefail
+set -uo pipefail   # NOT -e: a per-node/per-revision rsync failure must be handled explicitly (below), not abort
+                    # the whole script -- strict mode needs to see EVERY node's outcome to report all of them.
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"; cd "$ROOT"
-NODES="${POOL_NODES:-pool40 pool41 pool42}"
+# AWS-AS-EXTRA-POOL-NODE (2026-09-23) -- same repo-local, gitignored ssh config as pool_autodispatch.sh /
+# pool_provision.sh / pool_queue.sh (see pool_autodispatch.sh's header comment for the full rationale). ABSENT
+# by default, so every rsync below is unchanged for anyone who hasn't run `aws_pool_node.sh up`. The default
+# node list also grows with .pool_extra_nodes, read fresh on every invocation (this script is not a daemon).
+POOL_SSH_CONFIG="${POOL_SSH_CONFIG:-$ROOT/research/queue/.pool_ssh_config}"
+RSYNC_SSH="ssh -o BatchMode=yes -o ConnectTimeout=6"
+[ -f "$POOL_SSH_CONFIG" ] && RSYNC_SSH="ssh -F $POOL_SSH_CONFIG -o BatchMode=yes -o ConnectTimeout=6"
+EXTRA_NODES_FILE="${POOL_EXTRA_NODES_FILE:-$ROOT/research/queue/.pool_extra_nodes}"
+_EXTRA=""
+# BUGFIX (fix round): under `set -e`, this whole line's exit status is the exit status of the LAST command in
+# the `&&` chain -- and `grep -vE ... | tr ...` exits 1 (pipefail) whenever .pool_extra_nodes exists but is
+# EMPTY or holds only comments (grep -v selects nothing). `aws_pool_node.sh down` leaves exactly that file, so
+# every pool_sync after an up/down cycle died silently with rc=1 and zero ssh/rsync calls. `|| true` makes
+# "nothing extra to add" a normal outcome, matching pool_autodispatch.sh's extra_nodes() (which has no `set -e`
+# to trip on this same pattern).
+# --strict / --node <n> / --dry-run (2026-09-23 fix round, ANY order, ANY combination). POOL_SYNC_STRICT=1 is the
+# env-var equivalent of --strict, for callers (like a `down` that already sets other POOL_* env vars) that would
+# rather not touch argv. Unknown args are ignored (this script has never validated argv, and a stray positional
+# from an old caller must not start failing now).
+STRICT="${POOL_SYNC_STRICT:-0}"; DRY=""; _NODE_ARG=""
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --dry-run) DRY="--dry-run" ;;
+    --strict) STRICT=1 ;;
+    --node) shift; _NODE_ARG="${1:-}" ;;
+  esac
+  shift || true
+done
+[ -n "$_NODE_ARG" ] && POOL_NODES="$_NODE_ARG"
+[ -z "${POOL_NODES:-}" ] && [ -f "$EXTRA_NODES_FILE" ] && \
+  _EXTRA=$(grep -vE '^[[:space:]]*(#|$)' "$EXTRA_NODES_FILE" 2>/dev/null | tr -s '[:space:]' ' ') || true
+NODES="${POOL_NODES:-pool40 pool41 pool42} $_EXTRA"
 REMOTE_DIR="${POOL_REMOTE_DIR:-~/derisk-pool/sim/research/findings/raw/}"
 LOCAL_DIR="research/findings/raw/"
-DRY=""; [ "${1:-}" = "--dry-run" ] && DRY="--dry-run"
 mkdir -p "$LOCAL_DIR"
 total=0
+FAILED=0
 for N in $NODES; do
   # -u protects newer local files; itemize so we can count + show what moved.
   out=$(timeout 180 rsync -au $DRY --itemize-changes \
         --exclude='*.log' --exclude='_provenance/' \
-        -e "ssh -o BatchMode=yes -o ConnectTimeout=6" \
-        "$N:$REMOTE_DIR" "$LOCAL_DIR" 2>/dev/null) || { echo "  $N: UNREACHABLE (skipped)"; continue; }
+        -e "$RSYNC_SSH" \
+        "$N:$REMOTE_DIR" "$LOCAL_DIR" 2>/dev/null) || { echo "  $N: UNREACHABLE (skipped)"; FAILED=1; continue; }
   n=$(printf '%s\n' "$out" | grep -cE '^>f' || true)
   echo "  $N: ${DRY:+would pull }$n file(s)"
   # BUGFIX (2026-09-03): under `set -eo pipefail`, this display-only pipeline dies with exit 1 whenever
@@ -45,15 +87,30 @@ for N in $NODES; do
   # branch verification would have stranded on the nodes. Pull each revision's raw/ into the same local tree
   # (same -u newer-wins + exclusions; paths under raw/ are already lane-namespaced by the runners).
   [ -n "${POOL_REMOTE_DIR:-}" ] && continue
-  revs=$(timeout 20 ssh -o BatchMode=yes -o ConnectTimeout=6 "$N" 'ls -d derisk-pool/revisions/*/research/findings/raw 2>/dev/null' || true)
+  # BUGFIX (fix round): RSYNC_SSH already STARTS WITH "ssh ..." (it is the whole `-e` argument, e.g.
+  # "ssh -F <config> -o BatchMode=yes ..."), so prefixing it with another literal `ssh` ran
+  # `ssh ssh -o ... <node> ...` -- real ssh fails with "Could not resolve hostname ssh" (rc=255), and the
+  # trailing `|| true` swallowed that, so results under derisk-pool/revisions/*/research/findings/raw were
+  # NEVER pulled from any node (reproduced with a stubbed ssh; confirmed real-ssh rc=255).
+  # `|| true` is INSIDE the remote command (not wrapping the ssh call): a glob that matches nothing (no isolated
+  # revision ever provisioned on this node, the common case) makes the remote `ls` exit non-zero on ITS OWN,
+  # which must read as "zero revisions", not a strict-mode failure. The ssh call's own exit status -- reachability
+  # -- is what the `||` on the assignment below reacts to.
+  revs=$(timeout 20 $RSYNC_SSH "$N" 'ls -d derisk-pool/revisions/*/research/findings/raw 2>/dev/null || true' 2>/dev/null) \
+    || { echo "  $N: revision-list probe failed (unreachable)"; FAILED=1; continue; }
   for R in $revs; do
     rout=$(timeout 180 rsync -au $DRY --itemize-changes \
           --exclude='*.log' --exclude='_provenance/' \
-          -e "ssh -o BatchMode=yes -o ConnectTimeout=6" \
-          "$N:$R/" "$LOCAL_DIR" 2>/dev/null) || continue
+          -e "$RSYNC_SSH" \
+          "$N:$R/" "$LOCAL_DIR" 2>/dev/null) || { echo "  $N:${R#derisk-pool/revisions/}: rsync FAILED"; FAILED=1; continue; }
     rn=$(printf '%s\n' "$rout" | grep -cE '^>f' || true)
     [ "$rn" -gt 0 ] && echo "  $N:${R#derisk-pool/revisions/}: ${DRY:+would pull }$rn file(s)"
     total=$((total+rn))
   done
 done
 echo "pool_sync: ${DRY:+(dry-run) }$total file(s) ${DRY:+would be }pulled from [$NODES]"
+if [ "$STRICT" = 1 ] && [ "$FAILED" = 1 ]; then
+  echo "pool_sync: ⛔ STRICT: at least one node was unreachable or a pull failed -- see above (exit 1)." >&2
+  exit 1
+fi
+exit 0
