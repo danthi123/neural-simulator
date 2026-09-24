@@ -47,11 +47,11 @@ NAMED = ["sadness", "saddened", "unhappy", "sorrow", "melancholy", "loss", "lone
 
 # ── the pre-registered gate (see the PREREG for the reasoning and the failing outcome of each) ───────────────────
 GATE = dict(
-    g1_recall=None,        # filled from the dev run before the PREREG commit
-    g1_wrong_max=None,
+    g1_recall=0.20,        # 0.75 x the seed-7 DEV recall 0.295, rounded down to 0.05 (fixed before any eval seed)
+    g1_wrong_max=0.15,     # DEV wrong-sign share 0.084, with margin
     g1_min_seeds=5,
-    g2_contrast=None,
-    g2_shuf_mean_max=None,
+    g2_contrast=0.15,      # 0.75 x the DEV contrast 0.241, rounded down to 0.05
+    g2_shuf_mean_max=0.05,
     g2_min_seeds=5,
     g3_abs_max=0.25,       # the affect ladder's dead zone at |appraisal| <= 0.25
     g3_min_frac=0.95,
@@ -207,7 +207,7 @@ def part_train(seed, rids, corpus, out_dir, scratch_dir, log=print):
             "corpus": [list(c) for c in corpus],
             "constants": {k: getattr(A, k) for k in ("MIN_HEARD", "CHUNK", "SEED_MARGIN", "SEED_FRAC", "N_CAT",
                                                       "N_FSI", "T_CS", "T_ON", "T_READ", "I_AFF", "W_US", "TAU_THETA", "TAU_SCALE", "WARMUP", "ETA_MIN",
-                                                      "N0", "G", "R_REF", "MIN_RATE", "U_DEP", "TAU_REC")}}
+                                                      "N0", "G", "READ_GAIN", "R_REF", "MIN_RATE", "V_MIN", "U_DEP", "TAU_REC")}}
     tag = "-".join(map(str, rids))
     with open(os.path.join(out_dir if 0 in rids else scratch_dir, f"train_s{seed}_r{tag}.json"), "w") as fh:
         json.dump(info, fh, indent=1)

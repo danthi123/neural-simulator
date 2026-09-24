@@ -57,9 +57,13 @@ WHAT THIS IS (every step between the heard word and the valence read is neurons 
     seed valences are host-given norms.
   * READ-OUT (instrument): a word is presented ALONE (its lexical afferent only) for T_READ steps; the host reads the
     two pool rates. A word whose learned weights do not bring the pools over threshold produces no spikes and reads
-    exactly 0 — the pool's firing threshold is the salience gate. valence = clip((r+ - r-) / R_REF, -1, 1). The winner
-    is decided by the spiking competition; the reading of the rates is a host read-out ("spiking with a host
-    read-out", never "fully spiking").
+    exactly 0 — the pool's firing threshold is the salience gate. valence = clip((r+ - r-) / R_REF, -1, 1), and a
+    read with |valence| < V_MIN counts as 0 (the norm gate's strong-affect principle). At read time the learned
+    synapses carry READ_GAIN x their training weight: a word heard alone and attended drives its synapses harder
+    than one of 13 words in a passing chunk. READ_GAIN is a host protocol constant standing in for an attentional /
+    neuromodulatory gain (set on seed-7 DEV; training at the read gain choked learning, see the PREREG). The winner is
+    decided by the spiking competition; the reading of the rates is a host read-out ("spiking with a host read-out",
+    never "fully spiking").
 
 EXECUTION CONVENIENCE (declared): the lexical layer is executed as CHUNK "slot" afferent neurons. Before each
 presentation the learned synapses of the words heard in it are copied into the slot neurons' synapses. This is the
@@ -73,9 +77,10 @@ replicas hear the same words at the same time.
 
 LESIONS: "learned_edge" zeroes every learned synapse (u := 0); the innate edge and the circuit stay.
 
-HONEST RESIDUALS (declared): seed valences are host norms (WARRINER); the corpus chunking and the sliding-threshold
-time constant are host protocol; the read of the rates and the valence scaling are a host read-out; the slot execution
-above; per-presentation learning is applied runner-side from spike RATES (not an STDP kernel).
+HONEST RESIDUALS (declared): seed valences are host norms (WARRINER); the corpus chunking, the trial resets and the
+sliding-threshold time constant are host protocol; the read of the rates, R_REF, V_MIN and READ_GAIN are a host
+read-out / protocol; the slot execution above; per-presentation learning is applied runner-side from spike RATES
+(not an STDP kernel).
 
 Smoke: SIM_BACKEND=numpy python -m research.runners.affect_learned_vocabulary --smoke
 """
@@ -115,12 +120,13 @@ TO_FSI_W = 70.0
 CROSS_W = 22.0
 TAU_THETA = 80.0          # sliding-threshold time constant (presentations, ~1000 tokens)
 N0 = 50.0                 # initial synapse maturity (pseudo-count)
-G = 500.0                 # weight per unit of learned (RMS-scaled) excess (bridge weight units)
-R_REF = 0.10              # read-out scale: rate margin (spikes/step/neuron) that maps to |valence| = 1
+G = 500.0                 # weight per unit of learned (RMS-scaled) excess during TRAINING (bridge weight units)
+READ_GAIN = 8.0           # read-time gain on the learned synapses (the word heard alone, attended); seed-7 DEV
+R_REF = 0.1364            # read-out scale (rate margin -> |valence| 1); seed-7 DEV, anchored to held-out seeds
 MIN_RATE = 0.002          # below this in BOTH pools = no read (0)
-V_MIN = 0.0               # strong-affect margin on the read valence: |v| < V_MIN reads 0 (the learned analogue of the
+V_MIN = 0.4               # strong-affect margin on the read valence: |v| < V_MIN reads 0 (the learned analogue of the
                           # norm gate's |v-5| >= 2; set by the seed-7 DEV calibration)
-U_DEP = 0.0               # US synapse utilisation per heard presentation (short-term depression); 0 = off
+U_DEP = 0.5               # US synapse utilisation per heard presentation (short-term depression); seed-7 DEV
 TAU_REC = 100.0           # US resource recovery time constant (presentations)
 TAU_SCALE = 2000.0        # synaptic-scaling time constant (presentations); 0 = off (raw rate units)
 WARMUP = 5000             # presentations before plasticity opens (theta / scaling / depression settle first)
@@ -554,7 +560,7 @@ def load_reader(path: str, seed: int):
     lav = LearnedAffectVocabulary(seed, words, innate={}, n_replicas=1, n_slot=1)
     lav.u[0] = z["u"]
     lav.nuse[:] = z["nuse"]
-    lav.g = float(z["g"][0])                     # the synaptic gain the weights were learned with
+    lav.g = float(z["g"][0]) * READ_GAIN          # training gain x the read-time (attended, word-alone) gain
     lav._x_ref = float(z["x_ref"][0])
     return lav
 

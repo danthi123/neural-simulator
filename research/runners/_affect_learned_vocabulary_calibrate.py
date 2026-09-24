@@ -27,6 +27,11 @@ AMENDED A THIRD TIME ~08:00 EDT, after the anchored table (still no admissible c
 failures read 0.32-0.35, i.e. mildly valenced topical words just over the dead zone): the read gains the norm gate's
 own principle, a STRONG-AFFECT margin on the read valence, V_MIN in GRID_VMIN (|v| < V_MIN reads 0), and the cells
 are (variant, G, MIN_RATE, V_MIN). Ties -> lower G, then lower MIN_RATE, then lower V_MIN.
+CONFIRMATION (~10:15 EDT): variant B TRAINED at G = 4000 read dev-negative recall 0.03 (dev_s7/
+confirmation_trained_at_G4000.json): with 13 words summing through strong synapses the pools saturate in both trials
+and the US increment, the teaching signal, vanishes. The premise "G acts almost only at read time" was false. The
+evaluated mechanism therefore keeps the calibrated cell exactly: TRAIN at G = 500, READ at READ_GAIN = 8 (weight gain
+4000), dev_s7/confirmation.json reproduces the cell through the production reader.
 No admissible cell, or a best recall < 0.27, -> the design is predicted to fail and no evaluation seed is staged.
 """
 from __future__ import annotations

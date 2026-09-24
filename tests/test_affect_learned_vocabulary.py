@@ -37,6 +37,14 @@ def test_off_byte_identical_to_pinned(monkeypatch):
         assert AO.appraise_text(t) == mod.appraise_text(t)
 
 
+@pytest.fixture(autouse=True)
+def _mechanism_constants(monkeypatch):
+    """These tests check the mechanism on a tiny synthetic stream, not the production operating point: no
+    strong-affect margin on the read (the production V_MIN is calibrated for the real stream)."""
+    from research.runners import affect_learned_vocabulary as A
+    monkeypatch.setattr(A, "V_MIN", 0.0)
+
+
 def _tiny(tmp_path):
     from research.runners import affect_learned_vocabulary as A
     vocab = ["sad", "happy", "gloom", "table", "sunny", "chair"]
@@ -55,7 +63,7 @@ def _tiny(tmp_path):
         row = np.full(A.CHUNK, -1, dtype=np.int32)
         row[: len(ws)] = [vid[w] for w in ws]
         rows.append(row)
-    lav = A.LearnedAffectVocabulary(3, vocab, innate, n_replicas=1, warmup=200)
+    lav = A.LearnedAffectVocabulary(3, vocab, innate, n_replicas=1, warmup=200, g=500.0, u_dep=0.0)
     lav.train(np.stack(rows))
     p = tmp_path / "w.npz"
     lav.save(str(p))
