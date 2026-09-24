@@ -172,3 +172,57 @@ pinned tree itself is not reproducible run-to-run the check reads UNDEFINED, nev
 Local 1-seed smoke (seed 42, `--ltm off`) under `tools/mem_ok.sh 12` + `tools/memcap.sh 12`; it is the seed-42 gate
 run, not a separate exploratory run. Then seeds 43, 44, 100, 101, 102 staged on the pool (`pool41`, `pool42`), one seed
 per job, `--workers 3`, output `research/findings/raw/_da_tag_capture_chat/seed<s>.json`, then `--aggregate`.
+
+## AMENDMENT LOG
+
+### Amendment 1 (2026-09-23) — the D1 reader was NOT isolated from the shared production write-gain cache
+
+**What had already been seen before this amendment** (adversarial review v2:dd14adaf7 of commit `caf0c9a0b`,
+against the seed-42 artifact in `research/findings/raw/_da_tag_capture_chat/seed42.json`): every companion-ON
+arm's `tag_capture_at_recall` reports `gamma` and `d1_a_go` from `ChatTagCapture`'s D1 read. The intact arms read
+`gamma=46.549, d1_a_go=0.1314`; all three lesion arms (`sal_night_lesion`, `neu_night_lesion`, `sal_imm_lesion`)
+read `gamma=32.774, d1_a_go=0.1867` instead of the SAME value the intact arms got. A synthetic reproduction (no
+brain, in a throwaway process) confirmed the mechanism: `ChatTagCapture` built its `SpikingD1Activation` via
+`_da_write_gain_spiking_derisk._get_reader(seed, False)`, the identical `(seed, lesion)` cache key production's
+own intact-arm `spiking_write_gain` read uses when `BRAIN_DA_ENCODING_SPIKING_GAIN` is on (default). Whichever
+caller reached that cache entry FIRST in the process decided its calibration. In an intact arm production's own
+gain read typically built it first, consuming whatever ambient (non-reseeded) global RNG state the rest of the
+turn had left; in a `BRAIN_DA_ENCODING_LESION` arm production pins the gain to 1.0 and never calls `_get_reader`
+at all, so `ChatTagCapture` was always the sole, first builder there, deterministically inside `_private_rng`.
+So the "same a-priori gamma calibration" claim above and the module docstring's "never perturbs another organ's
+RNG stream" claim were both FALSE for the shared-cache path: this is a build-order confound, not evidence that
+the DA-gate lesion itself changes the ledger's calibration, and it broke `docs/BUILD_LANE_CHECKLIST.md`'s "lesion
+the SPECIFIC claimed edge, hold everything else byte-identical."
+
+**Fix (commit `daa4b382d`, this branch).** `_da_write_gain_spiking_derisk._get_isolated_reader(seed, tag)`: a
+cache namespace production's write-gain path never reads or writes. `SpikingD1Activation(..., isolated=True)`
+builds/fetches from it instead of the shared `(seed, lesion)` cache; `ChatTagCapture` now passes `isolated=True`
+(`isolated_tag="da_tag_capture_chat"`). Verified in a throwaway process: reproducing the ambient-RNG-consumption
+asymmetry above with the OLD code gives the exact reported gamma/d1_a_go split (46.549/0.1314 vs 32.774/0.1867);
+with the NEW isolated path both arms read `gamma=32.774, d1_a_go=0.1867` — identical.
+
+**Standing check added.** `grade_seed` (`research/runners/_da_tag_capture_chat_probe.py`) now computes
+`G_isolation_gamma_consistent`: gamma and d1_a_go must be equal (abs diff < 1e-6) across every companion-ON arm
+at a seed; a mismatch makes the WHOLE SEED `UNDEFINED` (folded into the existing `undefined` condition, never
+silently scored GO or NO-GO on a confounded calibration). A record with no `env` / no `gamma` (the pre-existing
+synthetic `grade_seed` selftest patterns, or any older artifact predating this field) is exempt, not penalized,
+so old coverage does not regress. Selftest adds 4 checks proving both directions (consistent -> gate passes and
+the seed reads its ordinary verdict; one companion-ON arm's gamma differs -> the gate fails and the seed reads
+UNDEFINED even though every other gate's inputs still match the designed-GO pattern); 23/23 selftest checks pass.
+
+**What this amendment does NOT change:** the gates (G0-G6), the arms, the conversations, the fact, or any
+threshold above — only the D1 reader's cache isolation and the new standing consistency check. No `sim/` edit,
+no default flipped.
+
+**Governs:** a fresh seed-42 re-run (superseding the confounded `seed42.json`, which is retained on disk for the
+record but its `tag_capture_at_recall.gamma`/`d1_a_go` values are VOID per this amendment — do not cite them), a
+re-run of `--offcheck` from a clean committed branch HEAD (the prior `offcheck.json` was run against an
+uncommitted working tree 74 s before its own code commit, per the same review, and predates the origin/main merge
+that followed), and the 5 seeds (43/44/100/101/102) restaged at the fixed revision. The 5 lines previously staged
+at `d4484acfc` are confounded by the same defect and are superseded, not reused.
+
+**LTM-on (production default) configuration:** unmeasured, as already declared above under "LTM tier off in the
+measured arms" — restated here because the review asked this be stated plainly rather than left implicit: no
+gate in this document, before or after this amendment, reads the LTM-on battery row, and none should be reported
+as measured until a run under `BRAIN_LTM_SHIP_DEFAULT` unset (or `=1`) actually executes on hardware with enough
+RAM for the default LTM tier.
