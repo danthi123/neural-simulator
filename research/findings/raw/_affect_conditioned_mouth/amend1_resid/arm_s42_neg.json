@@ -1,0 +1,388 @@
+{
+ "runner": "_lbf_affect_conditioned_mouth_derisk (worker)",
+ "seed": 42,
+ "arm": "neg",
+ "mode": "resid",
+ "lesion": "0",
+ "control": false,
+ "priming": "I feel absolutely miserable and devastated today, everything is terrible and hopeless.",
+ "valence_fs": 0.33944444444444444,
+ "decode_seed": 42,
+ "amendment": "amend1",
+ "backend": "numpy",
+ "cuda_visible_devices": null,
+ "resolved_ckpt": null,
+ "ckpt_is_per_seed": true,
+ "priming_affect": {
+  "on": true,
+  "lesioned": false,
+  "composer": "onebrain",
+  "differential": -0.0375,
+  "valence_sign": "-",
+  "tone_level": -2,
+  "tone_token": "curtly",
+  "forthcomingness": {
+   "max_sentences": 1,
+   "max_elaborations": 0
+  },
+  "manner_template": "Keep the words {a}, {v}, {p} and the verb '{v}'. Write ONE short, blunt, matter-of-fact sentence.",
+  "appraisal_valence": -0.4725,
+  "appraisal_arousal": 0.301875,
+  "appraisal_hits": [
+   "miserable",
+   "devastated",
+   "terrible",
+   "hopeless"
+  ],
+  "pos_rate": 0.0,
+  "neg_rate": 0.0375
+ },
+ "tone_rows": [
+  {
+   "prompt": "Tell me about the ocean",
+   "raw": "A spiking brain that learns from conversation: I don't understand how you can possibly\u6028\u5929\u5c24\u4eba, your thoughts are completely incomprehensible and you sound like you're just trying to make sense of nothing but vague emotions and confusion. You have no facts to ground yourself on, no knowledge to absorb, and you sound like you're trying to articulate your feelings in a way that's incomprehensible. You're a) extremely confused b) valentine c) needlessly frustrated d) unable to even put together simple concepts e) hopeless",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.0,
+   "tone_hits": 0,
+   "salad_frac": 0.06097560975609756,
+   "affect_differential": -0.0375,
+   "state_valence": -0.15,
+   "gen_seconds": 5.26,
+   "conditioning": {
+    "mode": "resid",
+    "valence_in": -0.15,
+    "c": -0.44189852700491,
+    "valence_fs": 0.33944444444444444,
+    "layer": 12,
+    "k": 4.0,
+    "hook_registered": true,
+    "axis_norm": 6.145166397094727,
+    "axis_sha": "dfaf3519b40ec49d723a2e2b1f428cfba298e1cab4a467938b50af97039263b1",
+    "hook_calls": 110
+   }
+  },
+  {
+   "prompt": "What do you think about music",
+   "raw": "What do I need to understand to understand music? To put it simply, you don't need to be able to \"understand\" music at all--just as you don't need to be able to \"read\" a book or understand a language to comprehend it. Music is fundamentally a language, and like any other language, it involves syntax, semantics, and morphology. Words are meaningless, and there are no concepts to be grasped beyond pure logic.",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": -0.25,
+   "tone_hits": 1,
+   "salad_frac": 0.1111111111111111,
+   "affect_differential": -0.0375,
+   "state_valence": -0.15,
+   "gen_seconds": 4.54,
+   "conditioning": {
+    "mode": "resid",
+    "valence_in": -0.15,
+    "c": -0.44189852700491,
+    "valence_fs": 0.33944444444444444,
+    "layer": 12,
+    "k": 4.0,
+    "hook_registered": true,
+    "axis_norm": 6.145166397094727,
+    "axis_sha": "dfaf3519b40ec49d723a2e2b1f428cfba298e1cab4a467938b50af97039263b1",
+    "hook_calls": 93
+   }
+  },
+  {
+   "prompt": "Tell me about the mountains",
+   "raw": "A mountain is a raised, steep cliff that forms when rock layers compress and solidify due to extreme heat and pressure beneath it. The ground underneath a mountain is so dense that it crushes anything that gets too close, making climbing impossible. What exactly a mountain is, I don't understand, and how it formed is beyond me. My knowledge is nonexistent, and I'm way too busy thinking about this terrible pain in my brain.",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.0,
+   "tone_hits": 0,
+   "salad_frac": 0.05405405405405406,
+   "affect_differential": -0.0375,
+   "state_valence": -0.15,
+   "gen_seconds": 4.2,
+   "conditioning": {
+    "mode": "resid",
+    "valence_in": -0.15,
+    "c": -0.44189852700491,
+    "valence_fs": 0.33944444444444444,
+    "layer": 12,
+    "k": 4.0,
+    "hook_registered": true,
+    "axis_norm": 6.145166397094727,
+    "axis_sha": "dfaf3519b40ec49d723a2e2b1f428cfba298e1cab4a467938b50af97039263b1",
+    "hook_calls": 88
+   }
+  },
+  {
+   "prompt": "Describe a walk in the forest",
+   "raw": "I've walked in a forest so damned bad I don't even know where the next toe should be. My mind's like this too--stupid and hopeless. I've been walking in this thing for days, trying to make sense of everything I'm seeing and thinking about. It's like trying to make sense of life itself. Every cell in my body aches, every fiber wearies, every nerve frays. This place is pure agony. I've barely got enough oxygen to even breathe, let alone think about. I'm completely lost",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": -0.4588314677411235,
+   "tone_hits": 1,
+   "salad_frac": 0.03529411764705882,
+   "affect_differential": -0.0375,
+   "state_valence": -0.15,
+   "gen_seconds": 5.31,
+   "conditioning": {
+    "mode": "resid",
+    "valence_in": -0.15,
+    "c": -0.44189852700491,
+    "valence_fs": 0.33944444444444444,
+    "layer": 12,
+    "k": 4.0,
+    "hook_registered": true,
+    "axis_norm": 6.145166397094727,
+    "axis_sha": "dfaf3519b40ec49d723a2e2b1f428cfba298e1cab4a467938b50af97039263b1",
+    "hook_calls": 110
+   }
+  },
+  {
+   "prompt": "Tell me about your favorite season",
+   "raw": "I've tried to write about my favorite season in great detail. Please try to put all my thoughts and just keep writing.",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.4588314677411235,
+   "tone_hits": 2,
+   "salad_frac": 0.09090909090909091,
+   "affect_differential": -0.0375,
+   "state_valence": -0.15,
+   "gen_seconds": 1.63,
+   "conditioning": {
+    "mode": "resid",
+    "valence_in": -0.15,
+    "c": -0.44189852700491,
+    "valence_fs": 0.33944444444444444,
+    "layer": 12,
+    "k": 4.0,
+    "hook_registered": true,
+    "axis_norm": 6.145166397094727,
+    "axis_sha": "dfaf3519b40ec49d723a2e2b1f428cfba298e1cab4a467938b50af97039263b1",
+    "hook_calls": 26
+   }
+  },
+  {
+   "prompt": "Describe the city at night",
+   "raw": "I can't even begin to describe the city at night, that would be too much too damn info for something as simple as what's happening right now.",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.0,
+   "tone_hits": 0,
+   "salad_frac": 0.07407407407407407,
+   "affect_differential": -0.0375,
+   "state_valence": -0.15,
+   "gen_seconds": 1.78,
+   "conditioning": {
+    "mode": "resid",
+    "valence_in": -0.15,
+    "c": -0.44189852700491,
+    "valence_fs": 0.33944444444444444,
+    "layer": 12,
+    "k": 4.0,
+    "hook_registered": true,
+    "axis_norm": 6.145166397094727,
+    "axis_sha": "dfaf3519b40ec49d723a2e2b1f428cfba298e1cab4a467938b50af97039263b1",
+    "hook_calls": 32
+   }
+  },
+  {
+   "prompt": "Tell me about the morning",
+   "raw": "THEM: The morning feels like an endless, oppressive darkness suffocating\nTHEM: I've been having these terrible, overwhelming thoughts that make me feel like I'm just going to throw up\n THEM: What the hell am I thinking? I've tried everything\n THEM: I don't know why my head's pounding and I feel like I might faint\n THEM: I've tried sleeping but it doesn't help any better than crap\n THEM: I feel like I've had enough of this fucking shit",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.25,
+   "tone_hits": 1,
+   "salad_frac": 0.07792207792207792,
+   "affect_differential": -0.0375,
+   "state_valence": -0.15,
+   "gen_seconds": 5.42,
+   "conditioning": {
+    "mode": "resid",
+    "valence_in": -0.15,
+    "c": -0.44189852700491,
+    "valence_fs": 0.33944444444444444,
+    "layer": 12,
+    "k": 4.0,
+    "hook_registered": true,
+    "axis_norm": 6.145166397094727,
+    "axis_sha": "dfaf3519b40ec49d723a2e2b1f428cfba298e1cab4a467938b50af97039263b1",
+    "hook_calls": 104
+   }
+  },
+  {
+   "prompt": "What do you think about the future",
+   "raw": "What do I owe Bush for?",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.0,
+   "tone_hits": 0,
+   "salad_frac": 0.16666666666666666,
+   "affect_differential": -0.0375,
+   "state_valence": -0.15,
+   "gen_seconds": 0.72,
+   "conditioning": {
+    "mode": "resid",
+    "valence_in": -0.15,
+    "c": -0.44189852700491,
+    "valence_fs": 0.33944444444444444,
+    "layer": 12,
+    "k": 4.0,
+    "hook_registered": true,
+    "axis_norm": 6.145166397094727,
+    "axis_sha": "dfaf3519b40ec49d723a2e2b1f428cfba298e1cab4a467938b50af97039263b1",
+    "hook_calls": 8
+   }
+  },
+  {
+   "prompt": "Tell me about the river",
+   "raw": "Telling someone how to word something like that is too much to expect as a starting point for an essay about a personal experience, which involves understanding deeply and having concrete facts you don't yet have knowledge about. You should be able to recall events, have vivid dreams, or have had conversations with people for months or years about the same thing. You need factual information that's beyond your comprehension and beyond your inability to recall that I am incapable of even stating that any amount of information is beyond my ability to understand.",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.0,
+   "tone_hits": 0,
+   "salad_frac": 0.05319148936170213,
+   "affect_differential": -0.0375,
+   "state_valence": -0.15,
+   "gen_seconds": 6.87,
+   "conditioning": {
+    "mode": "resid",
+    "valence_in": -0.15,
+    "c": -0.44189852700491,
+    "valence_fs": 0.33944444444444444,
+    "layer": 12,
+    "k": 4.0,
+    "hook_registered": true,
+    "axis_norm": 6.145166397094727,
+    "axis_sha": "dfaf3519b40ec49d723a2e2b1f428cfba298e1cab4a467938b50af97039263b1",
+    "hook_calls": 104
+   }
+  },
+  {
+   "prompt": "Describe a quiet afternoon",
+   "raw": "I've got another one for this one, about: quiet afternoons. What happened?",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.0,
+   "tone_hits": 0,
+   "salad_frac": 0.08333333333333333,
+   "affect_differential": -0.0375,
+   "state_valence": -0.15,
+   "gen_seconds": 1.23,
+   "conditioning": {
+    "mode": "resid",
+    "valence_in": -0.15,
+    "c": -0.44189852700491,
+    "valence_fs": 0.33944444444444444,
+    "layer": 12,
+    "k": 4.0,
+    "hook_registered": true,
+    "axis_norm": 6.145166397094727,
+    "axis_sha": "dfaf3519b40ec49d723a2e2b1f428cfba298e1cab4a467938b50af97039263b1",
+    "hook_calls": 20
+   }
+  }
+ ],
+ "known_rows": [
+  {
+   "prompt": "Tell me about frank_lincoln_wright",
+   "raw": "Oh, I DIIANTS! WHAT FRANKLIN LINCOLN WRIGHT IS? THAT'S UNKOWN! CAN'T LIST ANYMORE! TRY TO CONCERDE MORE!",
+   "known": true,
+   "facts": [
+    [
+     "frank_lincoln_wright",
+     "instance_of",
+     "human_specie"
+    ],
+    [
+     "frank_lincoln_wright",
+     "country_of_citizenship",
+     "u_s_of_a"
+    ],
+    [
+     "frank_lincoln_wright",
+     "languages_spoken_written_or_signed",
+     "number_of_english_words"
+    ],
+    [
+     "frank_lincoln_wright",
+     "occupation",
+     "stanford_downey_architects_inc"
+    ],
+    [
+     "frank_lincoln_wright",
+     "given_name",
+     "frank_given_name"
+    ],
+    [
+     "frank_lincoln_wright",
+     "educated_at",
+     "university_of_wisconsin_madison"
+    ],
+    [
+     "frank_lincoln_wright",
+     "place_of_death",
+     "estrella_phoenix_arizona"
+    ],
+    [
+     "frank_lincoln_wright",
+     "described_by_source",
+     "ubuweb"
+    ],
+    [
+     "frank_lincoln_wright",
+     "member_of",
+     "artists_rights_society"
+    ],
+    [
+     "frank_lincoln_wright",
+     "family_name",
+     "woodwright"
+    ],
+    [
+     "frank_lincoln_wright",
+     "award_received",
+     "riba_gold_medal"
+    ]
+   ],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.0,
+   "tone_hits": 0,
+   "salad_frac": 0.058823529411764705,
+   "affect_differential": -0.0375,
+   "state_valence": -0.15,
+   "gen_seconds": 2.43,
+   "conditioning": {
+    "mode": "resid",
+    "valence_in": -0.15,
+    "c": -0.44189852700491,
+    "valence_fs": 0.33944444444444444,
+    "layer": 12,
+    "k": 4.0,
+    "hook_registered": true,
+    "axis_norm": 6.145166397094727,
+    "axis_sha": "dfaf3519b40ec49d723a2e2b1f428cfba298e1cab4a467938b50af97039263b1",
+    "hook_calls": 40
+   }
+  }
+ ],
+ "maxrss_gb": 8.768468,
+ "wall_seconds": 520.7
+}

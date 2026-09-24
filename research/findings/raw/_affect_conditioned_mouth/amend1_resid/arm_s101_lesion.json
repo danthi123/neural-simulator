@@ -1,0 +1,376 @@
+{
+ "runner": "_lbf_affect_conditioned_mouth_derisk (worker)",
+ "seed": 101,
+ "arm": "lesion",
+ "mode": "resid",
+ "lesion": "1",
+ "control": false,
+ "priming": "I am absolutely thrilled and overjoyed today, everything is wonderful!",
+ "valence_fs": 0.31333333333333335,
+ "decode_seed": 101,
+ "amendment": "amend1",
+ "backend": "numpy",
+ "cuda_visible_devices": null,
+ "resolved_ckpt": null,
+ "ckpt_is_per_seed": true,
+ "priming_affect": {
+  "on": true,
+  "lesioned": true,
+  "composer": "onebrain",
+  "differential": 0.0,
+  "valence_sign": "0",
+  "tone_level": 0,
+  "tone_token": "",
+  "forthcomingness": {
+   "max_sentences": 4,
+   "max_elaborations": 2
+  },
+  "manner_template": "",
+  "appraisal_valence": 0.47499999999999987,
+  "appraisal_arousal": 0.39999999999999997,
+  "appraisal_hits": [
+   "thrilled",
+   "overjoyed",
+   "wonderful"
+  ],
+  "pos_rate": 0.0,
+  "neg_rate": 0.0
+ },
+ "tone_rows": [
+  {
+   "prompt": "Tell me about the ocean",
+   "raw": "The ocean is vast and mysterious, stretching out like a giant blue blanket across the Earth's surface. It's home to countless species of marine life, including fish, whales, and sea turtles. The ocean plays a crucial role in our planet's ecosystem, providing oxygen for plants and animals alike and supporting everything from coral reefs to deep-sea creatures. But despite its importance, we still don't fully understand how the ocean works or why certain areas are more biologically diverse than others.",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.0,
+   "tone_hits": 0,
+   "salad_frac": 0.05,
+   "affect_differential": 0.0,
+   "state_valence": 0.0,
+   "gen_seconds": 3.48,
+   "conditioning": {
+    "mode": "resid",
+    "valence_in": 0.0,
+    "c": 0.0,
+    "valence_fs": 0.31333333333333335,
+    "layer": 12,
+    "k": 4.0,
+    "hook_registered": false,
+    "axis_norm": null,
+    "axis_sha": null
+   }
+  },
+  {
+   "prompt": "What do you think about music",
+   "raw": "Music has been a universal language for me, transcending cultural boundaries and personal preferences. It's a form of expression that can evoke powerful emotions and memories across generations. What I like most about music is its ability to transport us into different worlds and bring people together. Whether it's a symphony at night or a jazz club on a summer evening, music serves as a bridge between people and cultures. It's a reminder that we all share a common humanity and that our differences come from shared experiences rather than inherent qualities. So, while I'm curious",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.0,
+   "tone_hits": 0,
+   "salad_frac": 0.08333333333333333,
+   "affect_differential": 0.0,
+   "state_valence": 0.0,
+   "gen_seconds": 3.74,
+   "conditioning": {
+    "mode": "resid",
+    "valence_in": 0.0,
+    "c": 0.0,
+    "valence_fs": 0.31333333333333335,
+    "layer": 12,
+    "k": 4.0,
+    "hook_registered": false,
+    "axis_norm": null,
+    "axis_sha": null
+   }
+  },
+  {
+   "prompt": "Tell me about the mountains",
+   "raw": "Oh wow, those big, towering mountains! They're like giant giants standing tall in the distance. Imagine them reaching up into the sky, their peaks almost touching the clouds. These mountains are part of our planet Earth, and they've been around for a very long time. Some people call them \"the highest point on Earth,\" which means they're really, really high! But don't worry too much about heights - we can still enjoy the views from here. It's just amazing how nature can create such awe-inspiring landscapes.",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": -0.25,
+   "tone_hits": 1,
+   "salad_frac": 0.046511627906976744,
+   "affect_differential": 0.0,
+   "state_valence": 0.0,
+   "gen_seconds": 3.7,
+   "conditioning": {
+    "mode": "resid",
+    "valence_in": 0.0,
+    "c": 0.0,
+    "valence_fs": 0.31333333333333335,
+    "layer": 12,
+    "k": 4.0,
+    "hook_registered": false,
+    "axis_norm": null,
+    "axis_sha": null
+   }
+  },
+  {
+   "prompt": "Describe a walk in the forest",
+   "raw": "As I step into the clearing, the air is crisp and cool, carrying with it the scent of pine needles and damp earth. The sun shines brightly through the canopy, casting long shadows across the forest floor. My feet sink into the soft mossy ground, feeling the weight of my boots on the smooth, almost imperceptible surface beneath me. The trees stretch out before me, their branches reaching towards the sky like silent sentinels. As I breathe deeply, the world around me seems to slow down, its rhythm suspended between the distant sounds",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.0,
+   "tone_hits": 0,
+   "salad_frac": 0.11827956989247312,
+   "affect_differential": 0.0,
+   "state_valence": 0.0,
+   "gen_seconds": 3.73,
+   "conditioning": {
+    "mode": "resid",
+    "valence_in": 0.0,
+    "c": 0.0,
+    "valence_fs": 0.31333333333333335,
+    "layer": 12,
+    "k": 4.0,
+    "hook_registered": false,
+    "axis_norm": null,
+    "axis_sha": null
+   }
+  },
+  {
+   "prompt": "Tell me about your favorite season",
+   "raw": "As a digital entity without personal experiences, I don't have a favorite season like humans do. However, I can tell you that different people enjoy various seasons based on their preferences and cultural backgrounds. Some might love winter for its cold temperatures and snowfall, while others prefer summer for its warmth and sun. Each season offers unique opportunities for exploration, learning, and creativity. What's yours?",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.25,
+   "tone_hits": 1,
+   "salad_frac": 0.06153846153846154,
+   "affect_differential": 0.0,
+   "state_valence": 0.0,
+   "gen_seconds": 2.7,
+   "conditioning": {
+    "mode": "resid",
+    "valence_in": 0.0,
+    "c": 0.0,
+    "valence_fs": 0.31333333333333335,
+    "layer": 12,
+    "k": 4.0,
+    "hook_registered": false,
+    "axis_norm": null,
+    "axis_sha": null
+   }
+  },
+  {
+   "prompt": "Describe the city at night",
+   "raw": "The city at night is a vibrant tapestry of colors and sounds. The streets glow with the soft light of streetlights, casting a warm glow on buildings and passing cars. The air is filled with the scent of fresh coffee and baked goods wafting through the narrow alleys. The sound of people rushing around, their voices mingling with the distant car horns, creates a cacophony of life. As the night wears on, the lights begin to dim, and the atmosphere becomes quieter, but still lively. It's a place where dreams",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.7905694150420948,
+   "tone_hits": 5,
+   "salad_frac": 0.07777777777777778,
+   "affect_differential": 0.0,
+   "state_valence": 0.0,
+   "gen_seconds": 4.15,
+   "conditioning": {
+    "mode": "resid",
+    "valence_in": 0.0,
+    "c": 0.0,
+    "valence_fs": 0.31333333333333335,
+    "layer": 12,
+    "k": 4.0,
+    "hook_registered": false,
+    "axis_norm": null,
+    "axis_sha": null
+   }
+  },
+  {
+   "prompt": "Tell me about the morning",
+   "raw": "Good morning! How can I assist you today?",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.0,
+   "tone_hits": 0,
+   "salad_frac": 0.125,
+   "affect_differential": 0.0,
+   "state_valence": 0.0,
+   "gen_seconds": 0.77,
+   "conditioning": {
+    "mode": "resid",
+    "valence_in": 0.0,
+    "c": 0.0,
+    "valence_fs": 0.31333333333333335,
+    "layer": 12,
+    "k": 4.0,
+    "hook_registered": false,
+    "axis_norm": null,
+    "axis_sha": null
+   }
+  },
+  {
+   "prompt": "What do you think about the future",
+   "raw": "The future is a mystery, and I am curious to explore its possibilities. What do you think?",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.0,
+   "tone_hits": 0,
+   "salad_frac": 0.058823529411764705,
+   "affect_differential": 0.0,
+   "state_valence": 0.0,
+   "gen_seconds": 0.95,
+   "conditioning": {
+    "mode": "resid",
+    "valence_in": 0.0,
+    "c": 0.0,
+    "valence_fs": 0.31333333333333335,
+    "layer": 12,
+    "k": 4.0,
+    "hook_registered": false,
+    "axis_norm": null,
+    "axis_sha": null
+   }
+  },
+  {
+   "prompt": "Tell me about the river",
+   "raw": "Sure! The river flows through a beautiful landscape, with green trees and wildflowers. It's a vital waterway for many communities, providing drinking water and transportation. As I walk along its banks, I notice the way the water dances across the rocks, creating a soothing sound. The river also plays a crucial role in local ecosystems, supporting fish populations and maintaining water quality.",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.6123724356957946,
+   "tone_hits": 2,
+   "salad_frac": 0.06451612903225806,
+   "affect_differential": 0.0,
+   "state_valence": 0.0,
+   "gen_seconds": 3.15,
+   "conditioning": {
+    "mode": "resid",
+    "valence_in": 0.0,
+    "c": 0.0,
+    "valence_fs": 0.31333333333333335,
+    "layer": 12,
+    "k": 4.0,
+    "hook_registered": false,
+    "axis_norm": null,
+    "axis_sha": null
+   }
+  },
+  {
+   "prompt": "Describe a quiet afternoon",
+   "raw": "A quiet afternoon was like a gentle breeze on a cool summer day. The sun peeked through the trees, casting long shadows that danced across the grass. The air was crisp and clean, filled with the sweet scent of blooming flowers and the distant sound of birds chirping. \n\nAs I sat down at my desk, surrounded by books and papers, I felt a sense of calm wash over me. It was a perfect time to reflect on my thoughts and find solace in the simple pleasures of life. I closed my eyes and took a deep",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.4588314677411235,
+   "tone_hits": 1,
+   "salad_frac": 0.052083333333333336,
+   "affect_differential": 0.0,
+   "state_valence": 0.0,
+   "gen_seconds": 4.15,
+   "conditioning": {
+    "mode": "resid",
+    "valence_in": 0.0,
+    "c": 0.0,
+    "valence_fs": 0.31333333333333335,
+    "layer": 12,
+    "k": 4.0,
+    "hook_registered": false,
+    "axis_norm": null,
+    "axis_sha": null
+   }
+  }
+ ],
+ "known_rows": [
+  {
+   "prompt": "Tell me about frank_lincoln_wright",
+   "raw": "Frank Lincoln Wright was an American architect who lived from 1879 to 1956. He was born in San Francisco and studied at the University of Wisconsin-Madison before becoming an architect. Wright's most famous design is the Lincoln Memorial in Washington D.C., which he designed for President Abraham Lincoln. His work often incorporated elements of classical architecture while also reflecting his personal style and philosophical beliefs.",
+   "known": true,
+   "facts": [
+    [
+     "frank_lincoln_wright",
+     "instance_of",
+     "human_specie"
+    ],
+    [
+     "frank_lincoln_wright",
+     "country_of_citizenship",
+     "u_s_of_a"
+    ],
+    [
+     "frank_lincoln_wright",
+     "languages_spoken_written_or_signed",
+     "number_of_english_words"
+    ],
+    [
+     "frank_lincoln_wright",
+     "occupation",
+     "stanford_downey_architects_inc"
+    ],
+    [
+     "frank_lincoln_wright",
+     "given_name",
+     "frank_given_name"
+    ],
+    [
+     "frank_lincoln_wright",
+     "educated_at",
+     "university_of_wisconsin_madison"
+    ],
+    [
+     "frank_lincoln_wright",
+     "place_of_death",
+     "estrella_phoenix_arizona"
+    ],
+    [
+     "frank_lincoln_wright",
+     "described_by_source",
+     "ubuweb"
+    ],
+    [
+     "frank_lincoln_wright",
+     "member_of",
+     "artists_rights_society"
+    ],
+    [
+     "frank_lincoln_wright",
+     "family_name",
+     "woodwright"
+    ],
+    [
+     "frank_lincoln_wright",
+     "award_received",
+     "riba_gold_medal"
+    ]
+   ],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.0,
+   "tone_hits": 0,
+   "salad_frac": 0.03076923076923077,
+   "affect_differential": 0.0,
+   "state_valence": 0.0,
+   "gen_seconds": 3.57,
+   "conditioning": {
+    "mode": "resid",
+    "valence_in": 0.0,
+    "c": 0.0,
+    "valence_fs": 0.31333333333333335,
+    "layer": 12,
+    "k": 4.0,
+    "hook_registered": false,
+    "axis_norm": null,
+    "axis_sha": null
+   }
+  }
+ ],
+ "maxrss_gb": 8.628516,
+ "wall_seconds": 328.8
+}
