@@ -65,8 +65,11 @@ empirical.
   min_facts floor, so this is still a no-op here"). So on the harness's own `bc_b` probe,
   `agent._feat_compat_source` stays `None` and `MultiTurnAgent._resolve_biased` falls through to
   `_focus_bias_source` (a DIFFERENT mechanism `BRAIN_BIASED_COMPETITION_LESION` does not touch) --
-  `BRAIN_BIASED_COMPETITION_LESION` is real, wired, and verified correct IN ISOLATION (seed 7, below) but is
-  **not yet exercised by the shipped `bc_b` probe** and would read a false "not load-bearing" (hollow) if run
+  `BRAIN_BIASED_COMPETITION_LESION` is real, wired, and VERIFIED IN ISOLATION at seed 7
+  (`research/findings/raw/_lbf_rows_conflict_kb/biased_competition_isolated_s7.json`: unlesioned
+  `bias_target(['worm','rock'], 'eat')` = `'worm'`; lesioned = `None`; `tools.lab.lever` confirms the manipulation
+  MOVED something). It is **not yet exercised by the shipped `bc_b` probe** and would read a false "not
+  load-bearing" (hollow) if run
   through `measure_faculty("selective-attention-biased-competition", ...)` as-is -- exactly the
   lesion-that-cannot-bite false-negative `docs/FAILURE_GATE_MATRIX.md` / this file's own module docstring warns
   against. **Declared, not silently shipped**: `kind` stays `"proposed"` in `EXTRA_LESIONS`; the `note` records
@@ -125,6 +128,28 @@ docstring already uses for its own default-anchor flag), checked here by diff re
 the four touched files shows only these five additive blocks, no other line moved) and additionally by an
 empirical two-build determinism check (seed 7, all five flags unset, the full default `PROBE_TURNS[:10]` group)
 recorded in the smoke artifact.
+
+## AMENDMENT LOG
+
+- **2026-09-24, filed after `smoke_biased_competition_isolated` (seed 7) completed, before the Phase 1 five-key
+  `measure_faculty` smoke or the Phase 2 `LB_CONFLICT_KB_PROBE` had run.** The isolated biased-competition proof
+  is now real data (cited above), not a plan; every other verdict in this document (Phase 1's four other rows,
+  Phase 2, byte-identity) is unchanged and still governs runs that had not happened at filing.
+
+- **2026-09-24, filed at session end, honest status of the remaining runs.** The shared box was under severe
+  multi-lane RAM/CPU contention for this entire session (`tools/mem_ok.sh` repeatedly refused jobs down to 1 GB;
+  system free memory hit 0 GB more than once). Two concrete effects, both closed or declared:
+  1. A first `--byte-identity` attempt produced `byte_identical: true` from BOTH arms silently failing to build
+     (`a_is_none`/`b_is_none` both `True`, so `None == None` read as a vacuous pass) -- a genuine instrument bug
+     in `byte_identity_check`, now FIXED with `tools.lab.void_if` (a failed-build arm now reports
+     `byte_identical: None`, never `True`). That first, invalid artifact was deleted, never committed.
+  2. A second, correctly-guarded `--byte-identity` attempt was in flight (PID/log recorded in the session; not
+     this document) when this pre-registration's own filing deadline arrived; the Phase 1 five-key
+     `measure_faculty` smoke and the Phase 2 `LB_CONFLICT_KB_PROBE` were NOT attempted at all for the same
+     contention reason. **No byte-identity, five-key smoke, or conflict-KB result is claimed in this document
+     beyond the STRUCTURAL argument** (diff-reviewed: five single-line early-returns, each gated on a helper
+     that reads False when unset) and the one isolated biased-competition result already cited above. Next
+     rung: re-run `--smoke --conflict-kb --byte-identity` once local contention clears, or on the pool/AWS.
 
 ## Compute
 
