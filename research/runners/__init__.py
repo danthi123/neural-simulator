@@ -146,6 +146,18 @@ def _git_head(full=False):
     return "unknown", None
 
 
+def _hostname():
+    """The machine this run executed on (2026-09-24, research/lbf-row-registry-hook): pool jobs, AWS pool1/pool2 and
+    local runs currently produce byte-identical artifacts with no record of WHICH node ran them, so a mixed-host
+    battery (e.g. the flip-defaults s102 shards, some local, some pool) cannot honestly say which shards differ by
+    host. Never fatal: an unresolvable hostname records 'unknown', never raises into the run it is instrumenting."""
+    try:
+        import socket
+        return socket.gethostname()
+    except Exception:
+        return "unknown"
+
+
 def _record_start():
     v2 = _provenance_v2_enabled()
     identity = _required_v2_identity() if v2 else None
@@ -180,6 +192,7 @@ def _record_start():
         ),
         "python": sys.executable,
         "pid": os.getpid(),
+        "host": _hostname(),
         # The env vars that have silently changed results here before: SIM_BACKEND made `SIM_BACKEND=numpy` run
         # on the GPU for months, and gap#5's read-density lived ONLY in an env var -- a knob with no other record.
         "env": {k: v for k, v in os.environ.items()
@@ -370,7 +383,7 @@ def _stamp_outputs(rec):
                        "source_manifest_start_error": rec.get("source_manifest_verification_error"),
                        "source_manifest_verified_at_exit": exit_verification["source_manifest_verified"],
                        "source_manifest_exit_error": exit_verification["source_manifest_verification_error"],
-                       "started": rec["started"], "env": rec["env"],
+                       "started": rec["started"], "env": rec["env"], "host": rec.get("host", "unknown"),
                        **_resolved_backend(), **_corpus_check_state(),
                        "artifact": os.path.relpath(p, _ROOT)}
             if rec.get("provenance_schema") == "sim-run-provenance-v2":

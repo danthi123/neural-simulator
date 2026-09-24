@@ -1832,21 +1832,30 @@ async def _warm_chat_brain() -> None:
     (`_get_warm_qwen_renderer`), even a first turn that picks a DIFFERENT brain
     reuses the already-loaded model (only its small brain build remains)."""
     renderer = _default_brain_renderer()
-    if renderer != "qwen":
+    if renderer != "qwen" and not _prewarm_enabled():
         # No GPU / cupy not selected → the stub renderer is instant; nothing to
         # warm. (Building the stub ChatBrain here would just duplicate the
         # cheap first-turn build, so skip — keep startup lean.)
         print(f"[webapp] startup: chat renderer is {renderer!r} (GPU-free) — "
               "no Qwen model to warm", flush=True)
         return
+    # BRAIN_PREWARM on a GPU-free host (renderer != 'qwen'): there's no Qwen model to load, but
+    # `_warm()` below is still worth running -- `_build_chat_brain` resolves the StubRenderer
+    # branch fine for any renderer, so the default K=1 session + the process-shared organs still
+    # get pre-built at startup instead of on the first real request. The Qwen-specific model-load
+    # print just doesn't apply; see the renderer-conditional print inside `_warm()`.
 
     def _warm() -> None:
         try:
             import time as _t
             t0 = _t.time()
-            print("[webapp] startup: warming the off-bridge Qwen-0.5B renderer "
-                  "(one-time model load; the first chat turn will be fast)...",
-                  flush=True)
+            if renderer == "qwen":
+                print("[webapp] startup: warming the off-bridge Qwen-0.5B renderer "
+                      "(one-time model load; the first chat turn will be fast)...",
+                      flush=True)
+            else:
+                print(f"[webapp] startup: BRAIN_PREWARM pre-building the default session "
+                      f"(renderer={renderer!r}, no Qwen model on this host)...", flush=True)
             # Build the DEFAULT ChatBrain (default brain + the resolved qwen
             # renderer). This constructs the shared warm QwenRenderer (the heavy
             # model load) AND caches the default ChatBrain so the default first
@@ -1942,8 +1951,22 @@ async def _warm_chat_brain() -> None:
                           flush=True)
             except Exception as _vce:
                 print(f"[webapp] startup: value-choice organ warm skipped ({type(_vce).__name__}: {_vce})", flush=True)
+            # BRAIN_PREWARM step 2 (A7, default OFF -- byte-identical no-op when unset): warm any
+            # remaining first-use cost (notably CUDA kernel JIT on the qwen path) on a SCRATCH
+            # session that is fully discarded, so the 'default' session handed to the first real
+            # caller never carries a warm-up turn. See _prewarm_scratch_kernel_warm's docstring for
+            # the declared shared-organ-plasticity residual this does NOT clean up.
+            if _prewarm_enabled():
+                try:
+                    _prewarm_scratch_kernel_warm(default_brain, renderer)
+                    print("[webapp] startup: BRAIN_PREWARM scratch-session kernel warm-up done "
+                          "(discarded; the default session was never turn-warmed)", flush=True)
+                except Exception as _pwe:
+                    print(f"[webapp] startup: BRAIN_PREWARM scratch warm-up skipped "
+                          f"({type(_pwe).__name__}: {_pwe})", flush=True)
             dt = round(_t.time() - t0, 1)
-            print(f"[webapp] startup: Qwen renderer WARM in {dt}s "
+            _what = "Qwen renderer" if renderer == "qwen" else f"BRAIN_PREWARM ({renderer!r})"
+            print(f"[webapp] startup: {_what} WARM in {dt}s "
                   f"(default ChatBrain cached as {cache_key!r}); "
                   "first chat turn is now fast", flush=True)
         except Exception as e:   # no GPU / model missing / qwen unavailable
@@ -3744,6 +3767,19 @@ def _integrated_loop_enabled() -> bool:
     return env.strip().lower() in ("1", "true", "on", "yes")
 
 
+def _prewarm_enabled() -> bool:
+    """BRAIN_PREWARM (A7, 2026-09-24; default OFF -- byte-identical no-op when unset). See
+    `_warm_chat_brain`'s docstring for what it adds ON TOP of the pre-existing, unconditional
+    qwen-renderer startup warm: (1) on a GPU-free/stub-renderer host, ALSO pre-build the default
+    K=1 ChatBrain at startup (today that host does nothing at startup and builds lazily on the
+    first real request); (2) on EITHER host, run one throwaway turn on a SCRATCH session (never
+    the 'default' cache key a real caller resolves to) so any lazy first-use cost is paid before
+    the first real caller arrives, then discard that scratch session completely. Host
+    server-lifecycle only -- adds no cognition; the scratch turn runs the EXISTING, unmodified
+    production pipeline exactly once and its state is destroyed before this returns."""
+    return os.environ.get("BRAIN_PREWARM", "0").strip().lower() in ("1", "true", "on", "yes")
+
+
 def _open_ended_generate_route(chat, msg) -> bool:
     """OPEN-ENDED GENERATE ROUTE (default-OFF: `BRAIN_OPEN_ENDED_GENERATE_ROUTE`, lane research/open-ended-production-
     turn-lb, 2026-09-23). True -> the BRAIN_OPEN_ENDED free-talk block is SKIPPED for THIS turn so it falls through to
@@ -4107,6 +4143,85 @@ def _build_chat_brain(brain: str, renderer: str):
     return ChatBrain(agent, self_aliases=aliases, renderer=rend), source
 
 
+# Reserved cache-key session name for the BRAIN_PREWARM scratch turn (below). Not something a real
+# caller is expected to send; the discard step removes it regardless of whether a real caller ever
+# collided with it, so a collision would only cost that one caller its warm-up, never crash or leak.
+_PREWARM_SCRATCH_SESSION = "__brain_prewarm_scratch__"
+
+
+def _prewarm_discard_scratch_session(cache_key: tuple) -> None:
+    """Drop every per-session dict entry `cache_key` may have populated -- mirrors `brain_chat`'s own
+    `req.reset` cleanup block, run here AFTER a turn instead of before one -- so a discarded
+    BRAIN_PREWARM scratch session leaves NO trace: the session handed to a real caller never sees
+    it. Best-effort (each organ's own reset is independently try/excepted) so one organ's reset
+    failing can never leak the scratch cache_key into a later listing/lookup nor block startup."""
+    _BRAIN_CHATS.pop(cache_key, None)
+    _BRAIN_RICH.pop(cache_key, None)
+    try:
+        from webapp import continuous_engine as _CE_scratch
+        _CE_scratch.forget_session(cache_key)
+    except Exception:
+        pass
+    _SESSION_MOOD.pop(cache_key, None)
+    _SESSION_WORLDVIEW.pop(cache_key, None)
+    _SESSION_MULTIREF.pop(cache_key, None)
+    _SESSION_SILENT_WM.pop(cache_key, None)
+    _SESSION_SELFINIT.pop(cache_key, None)
+    _SESSION_DISCOURSE.pop(cache_key, None)
+    _SESSION_PMEM.pop(cache_key, None)
+    try:
+        import research.runners.d5_episodic_production_organ as _EP_scratch
+        _EP_scratch.reset_episodic_organ(cache_key)
+    except Exception:
+        pass
+    try:
+        import research.runners.causal_whatif_production_organ as _CA_scratch
+        _CA_scratch.reset_organ(cache_key)
+    except Exception:
+        pass
+
+
+def _prewarm_scratch_kernel_warm(default_brain: str, renderer: str) -> None:
+    """BRAIN_PREWARM step 2 (A7, 2026-09-24): run ONE real turn on a SCRATCH session (never the
+    'default' cache key a real caller resolves to) so any lazy first-use cost -- notably whatever
+    the FIRST Qwen generation call pays on the renderer path (CUDA kernel compilation, weight
+    materialization) -- happens at STARTUP, not on the session handed to the first real caller.
+    The scratch session is fully discarded afterward (`_prewarm_discard_scratch_session`).
+
+    DECLARED RESIDUAL, checked rather than assumed: several faculty organs this turn touches are
+    PROCESS-SHARED singletons keyed by ORGAN, not by session (`_get_affect_organ`,
+    `_get_surprise_organ`, `_get_metacog_organ`, `_get_worldmodel_organ`, `_get_pragmatic_organ`,
+    the value-choice critic, the wave3 merged-pool organs, ...). EACH of those organs' OWN
+    docstring/comments states it trains ONCE at build time (Hebbian/homeostatic calibration) and
+    then FREEZES for every subsequent read (`surprise_production_organ.py`: "LEARN ... then FREEZE
+    (per-turn reads never learn)"; `worldmodel_production_organ.py`: same phrase; `metacog_
+    production_organ.py`: "frozen balance operating point"; `pragmatic_production_organ.py`:
+    "plasticity OFF, a FIXED operating point"; `value_choice_production_organ.py`: "FREEZE the
+    value arm for every read ... weights frozen") -- if that holds, a scratch turn cannot leave a
+    trace for a later session to inherit, because there is nothing left plastic for it to move.
+    tests/test_brain_prewarm_scratch_session.py's HEAVY check (SIM_RUN_HEAVY_CAPABILITY=1) verifies
+    this DIRECTLY (a prewarmed session vs. a from-cold one must answer an identical scripted
+    conversation byte-for-byte) rather than trusting the docstrings; a measured divergence there
+    means some organ is NOT frozen as claimed, and this function should be re-scoped to organ/model
+    prebuild only (`.ensure_built()`, no turn) -- see that test's own docstring for the current
+    verdict and any config under which it was obtained (this box's RAM/CPU constraints may limit it
+    to a scoped-down dev config rather than the full production default).
+
+    Host server-lifecycle ONLY -- adds no cognition (a single throwaway `brain_reply` call through
+    the EXISTING, unmodified production pipeline). Best-effort: any failure is swallowed by the
+    caller (never blocks boot; this is a latency optimization, not a correctness path)."""
+    scratch_key = (_PREWARM_SCRATCH_SESSION, default_brain, renderer)
+    try:
+        chat, source = _build_chat_brain(default_brain, renderer)
+        chat._brain_chat_source = source  # type: ignore[attr-defined]
+        _BRAIN_CHATS[scratch_key] = chat
+        req = BrainChatRequest(session=scratch_key[0], message="what does the dog chase?",
+                                brain=default_brain, renderer=renderer)
+        brain_reply(chat, req, source, scratch_key)
+    finally:
+        _prewarm_discard_scratch_session(scratch_key)
+
+
 def _get_rich_composer(cache_key: tuple, chat):
     """Build (once) + cache a RichAnswerComposer wrapping the warm ChatBrain.
 
@@ -4464,6 +4579,11 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
         try:  # drop this brain's causal why/what-if organ (T1-4) so a re-taught brain re-grounds against its composer
             import research.runners.causal_whatif_production_organ as _CA_reset
             _CA_reset.reset_organ(cache_key)
+        except Exception:
+            pass
+        try:  # drop this conversation's false-belief (ToM) scenario, if any (A5, Gate-B)
+            from webapp import false_belief_chat as _FBC_reset
+            _FBC_reset.reset_session(cache_key)
         except Exception:
             pass
 
@@ -5693,6 +5813,47 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
         except Exception as _dre:
             pass   # never let the discourse read crash a turn — fall through to the normal path
 
+    # ── THEORY OF MIND: FALSE-BELIEF REGISTER (A5, Gate-B, 2026-09-24) ──────────────────────────────────────
+    # A live Sally-Anne change-of-location scenario, narrated across one or more turns, is folded onto the
+    # 6/6-seed GO'd W3 agent-keyed false-belief register (reuse-by-import,
+    # research/runners/tom_false_belief_chat_organ.FalseBeliefChatOrgan wrapping
+    # research/runners/_false_belief_register_derisk.py; NO sim/ edit). Two paths, mirroring the discourse-
+    # register block just above: (i) an ADDITIVE FOLD — a PLACE/LEAVE/RETURN/MOVE sentence updates the
+    # per-conversation scenario as a pure side effect (the reply stays byte-identical; this is the ONLY writer
+    # of this state); (ii) a DISJOINT QUERY short-circuit — "where will X look for the Y?" is answered off the
+    # belief-store's late-window firing-rate argmax, with an honest fall-through (no answer attached) when no
+    # scenario is active. Placed after affect/episodic/worldmodel/multiref/discourse (their short-circuits keep
+    # precedence) and before causal/comprehension (a false-belief query is never mis-read as a why/what-if or a
+    # plain assertion) — the query class is DISJOINT (no other organ answers "where will X look"), so every
+    # non-false-belief turn is byte-identical. Default-OFF: `BRAIN_FALSE_BELIEF_CHAT` unset -> this module IS
+    # still imported below (cheap, side-effect-free, just to read the flag) but the organ is never built and
+    # no turn content is inspected -> byte-identical, including on a turn whose text happens to match the
+    # grammar (2026-09-24 review finding: an earlier wording of this comment overclaimed "never imported").
+    # `BRAIN_FALSE_BELIEF_LESION=1` -> the witnessing gate is forced open at write AND query (mirrors the
+    # derisk's own other-lesion) -> the belief store collapses onto reality -> an unwitnessed-move query
+    # answers with the TRUE location instead of the stale one (load-bearing). HONEST RESIDUAL: witnessing/
+    # presence ("X leaves the room" / "X returns") is a HOST comprehension-boundary parse, not a spiking read;
+    # the belief-location action read is a host argmax (both declared in the PRE-REGISTRATION,
+    # research/findings/2026-09-24-tom-false-belief-chat-wire-PREREGISTRATION.md). See webapp/false_belief_chat.py.
+    try:
+        from webapp import false_belief_chat as _FBC
+        _fbc_on = _FBC.false_belief_chat_enabled()
+    except Exception:
+        _FBC = None
+        _fbc_on = False
+    if _fbc_on and _FBC.has_false_belief_content(msg):
+        try:
+            fbc_reply = _FBC.observe_turn(cache_key, msg, seed=_brain_chat_seed())
+            if fbc_reply.get("acted") and fbc_reply.get("answer"):
+                return JSONResponse({
+                    "answer": fbc_reply["answer"], "abstained": False, "recalled_svo": None, "verified": True,
+                    "renderer": rname, "brain": req.brain, "source": source, "rich": False,
+                    "activity": None, "affect": affect_info,
+                    "false_belief_tom": fbc_reply, "inner_state_readout": True,
+                })
+        except Exception:
+            pass   # never let the false-belief read/write crash a turn — fall through to the normal path
+
     # ── CAUSAL WHY / WHAT-IF ORGAN (Gate-B, T1-4, 2026-08-13) ────────────────────────────────────────────────
     # A co-resident spiking CAUSAL FORWARD MODEL, grounded READ-ONLY in the brain's REAL fact store, answers a real
     # "what happens if <agent> <action>?" (forward-SIMULATION of an unseen consequence — the substrate rolls
@@ -6515,6 +6676,16 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
                 resp["da_tag_capture"] = {"observe": da_tag_capture_info, **(_DTC.after_store_chat(chat) or {})}
             except Exception as _dtce2:
                 resp["da_tag_capture"] = {"on": True, "error": f"{type(_dtce2).__name__}: {_dtce2}"}
+        # D6 LEARN-THROUGH-USE, chat observability (default-OFF `BRAIN_D6_HEBBIAN_STORE`; webapp/d6_hebbian_chat.py):
+        # report this turn's local-Hebbian fact-write diagnostic + a fresh engram-held read. Unset flag -> None
+        # before touching anything -> byte-identical, no key added.
+        try:
+            from webapp import d6_hebbian_chat as _D6C
+            _d6c_info = _D6C.after_store_d6(chat)
+            if _d6c_info is not None:
+                resp["d6_hebbian"] = _d6c_info
+        except Exception as _d6ce:
+            resp["d6_hebbian"] = {"on": True, "error": f"{type(_d6ce).__name__}: {_d6ce}"}
         # >>> GNW GLOBAL-STOP BEGIN (rich path; additive, mergeable block — BRAIN_GNW_STOP, default-ON 2026-08-26) ───────
         # GLOBAL-WORKSPACE STOP DRIVES THE RESPONSE (distributed-overwrite clear-all): prepend the clearing lead
         # OUTERMOST (the held coalition was cleared to n_ignited=0 before the newcomer ignited -> a clean single-content
@@ -6554,15 +6725,32 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
         # can wrap the un-annotated composed answer instead of double-wrapping an already-framed one. None on
         # every branch that never reaches the chain-route arm -- byte-identical unless that new flag is on.
         _chain_raw_answer = None
+        # TRANSITIVE-CHASE ROUTE (A6, 2026-09-24, default-OFF BRAIN_TRANSITIVE_CHAT): checked BEFORE the
+        # compositional chain route / chat.gate for the SAME reason that route already is -- see
+        # research/findings/2026-09-24-reasoning-transitive-chat-PREREGISTRATION.md. `resolve_transitive_query`
+        # returns None when the flag is off or "does X R Y" doesn't match (byte-identical fall-through), or
+        # (True, svo_or_None) when it DID match -- svo_or_None=None is an honest abstain, NOT "try the ordinary
+        # path" (the generic parser's documented 3rd-content-token truncation would silently answer a different
+        # question). See webapp/reasoning_transitive_chat.py.
+        _transitive_matched = False
         try:
-            from research.runners.compositional_chain_route import resolve_compositional_chain
-            gate_svo = resolve_compositional_chain(chat.inner.composer, msg)
-            _is_chain_route = gate_svo is not None
+            from webapp.reasoning_transitive_chat import resolve_transitive_query
+            _t_result = resolve_transitive_query(chat, msg)
         except Exception:
-            gate_svo = None
-            _is_chain_route = False
-        if gate_svo is None:
-            gate_svo = chat.gate(msg)
+            _t_result = None
+        if _t_result is not None:
+            _transitive_matched, gate_svo = _t_result
+            _is_chain_route = gate_svo is not None and hasattr(gate_svo, "derived_from")
+        if not _transitive_matched:
+            try:
+                from research.runners.compositional_chain_route import resolve_compositional_chain
+                gate_svo = resolve_compositional_chain(chat.inner.composer, msg)
+                _is_chain_route = gate_svo is not None
+            except Exception:
+                gate_svo = None
+                _is_chain_route = False
+            if gate_svo is None:
+                gate_svo = chat.gate(msg)
         if gate_svo is None:
             answer, abstained, verified = "I don't know about that.", True, False
         else:
@@ -6819,6 +7007,16 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
             _resp["da_tag_capture"] = {"observe": da_tag_capture_info, **(_DTC.after_store_chat(chat) or {})}
         except Exception as _dtce2:
             _resp["da_tag_capture"] = {"on": True, "error": f"{type(_dtce2).__name__}: {_dtce2}"}
+    # D6 LEARN-THROUGH-USE, chat observability (default-OFF `BRAIN_D6_HEBBIAN_STORE`; webapp/d6_hebbian_chat.py,
+    # single-fact path): report this turn's local-Hebbian fact-write diagnostic + a fresh engram-held read. Unset
+    # flag -> None before touching anything -> byte-identical, no key added.
+    try:
+        from webapp import d6_hebbian_chat as _D6C
+        _d6c_info = _D6C.after_store_d6(chat)
+        if _d6c_info is not None:
+            _resp["d6_hebbian"] = _d6c_info
+    except Exception as _d6ce:
+        _resp["d6_hebbian"] = {"on": True, "error": f"{type(_d6ce).__name__}: {_d6ce}"}
     # >>> GNW GLOBAL-STOP BEGIN (single-fact path; additive, mergeable block — BRAIN_GNW_STOP, default-ON 2026-08-26) ──
     # GLOBAL-WORKSPACE STOP DRIVES THE RESPONSE (distributed-overwrite clear-all, single-fact path): prepend the
     # clearing lead OUTERMOST (the held coalition was cleared to n_ignited=0 before the newcomer ignited) + attach the

@@ -167,6 +167,29 @@ def _relation_fronted_enabled() -> bool:
     return v.strip().lower() not in ("0", "false", "no", "off", "")
 
 
+def _substrate_parse_lesioned() -> bool:
+    """`BRAIN_SUBSTRATE_PARSE_LESION` in {1,true,yes,on} (default OFF, byte-identical when unset) -> CUTS the
+    on-brain BridgeParser's (position,voice)->role conjunction read inside `_neural_question_parse` (never sampled,
+    same effect the module docstring there already documents for a degenerate parse: 'role_of returns junk -> None
+    -> the fact is not recalled'). This is the minimal env lesion FACULTY_LESIONS['content-selection'] names
+    (research/runners/load_bearing_fraction.py) — content-selection's CHOOSE comprehension is currently only
+    in-process-lesionable (`_production_lesion_probe`'s monkeypatch); this flag makes the SAME cut available as an
+    env-driven neural-lesion for the load-bearing harness, with no change to the parse when unset."""
+    v = os.environ.get("BRAIN_SUBSTRATE_PARSE_LESION")
+    if v is None:
+        return False
+    return v.strip().lower() in ("1", "true", "yes", "on")
+
+
+def _substrate_recall_lesioned() -> bool:
+    """`BRAIN_SUBSTRATE_RECALL_LESION` in {1,true,yes,on} (default OFF, byte-identical when unset) -> `ChatBrain.
+    _substrate_recall` returns None unconditionally, below. See that method's docstring."""
+    v = os.environ.get("BRAIN_SUBSTRATE_RECALL_LESION")
+    if v is None:
+        return False
+    return v.strip().lower() in ("1", "true", "yes", "on")
+
+
 # 'what <relation> is/are/was/were <entity> [trailing prep]?' -- the relation is required to be a SINGLE bare
 # word (the store's own relation names are single underscored tokens; a multi-word relation phrase is left to
 # the generic parse, out of scope here). Deliberately excludes 'does/do/did' (those already route correctly
@@ -1193,6 +1216,9 @@ class ChatBrain:
         parser = getattr(getattr(self.inner, "composer", None), "parser", None)
         if parser is None or len(content) < 2:
             return None
+        if _substrate_parse_lesioned():
+            return None            # BRAIN_SUBSTRATE_PARSE_LESION=1: the role-conjunction read is CUT (never
+                                    # sampled) -- see _substrate_parse_lesioned()'s docstring.
         padded = [content[0], content[1], "__q__"]           # SVO with the queried patient a placeholder
         try:
             role_map = {}
@@ -1444,7 +1470,16 @@ class ChatBrain:
         returns nothing unless the binding is genuinely stored. The (agent, action) COMPREHENSION is factored into
         `_extract_route` (NEURAL BridgeParser on the onebrain default, host heuristic on the rf escape); this method
         adds the host recall verdict on top of it. BYTE-IDENTICAL to the pre-factor code (the production lesion probe
-        patches this method, so gate() must keep calling it)."""
+        patches this method, so gate() must keep calling it).
+
+        `BRAIN_SUBSTRATE_RECALL_LESION` in {1,true,yes,on} (default OFF, byte-identical when unset) makes the SAME
+        cut the production lesion probe applies by monkeypatch (`chat._substrate_recall = lambda q: None`) available
+        as an env-driven neural-lesion, for FACULTY_LESIONS['moat-verify'] and ['in-loop-learning']
+        (research/runners/load_bearing_fraction.py): with the substrate recall removed, a well-formed unanswerable
+        question falls to the host router's keyword-confab (the moat vanishes) and a fact taught this turn stops
+        being recalled (LEARN vanishes)."""
+        if _substrate_recall_lesioned():
+            return None
         route = self._extract_route(question)
         if route == "__DECLINE__":
             return "__ABSTAIN__"                # a factual-shaped question the on-brain parser could not comprehend

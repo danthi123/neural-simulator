@@ -1,0 +1,80 @@
+{
+  "pmem_form": {
+    "answer": "Okay \u2014 I'll hold onto that and remind you to feed the dog when the bird sings comes up.",
+    "abstained": false,
+    "recalled_svo": null,
+    "verified": true,
+    "renderer": "template-stub (GPU-free)",
+    "brain": "tiny-demo",
+    "source": "tiny-demo +LTM",
+    "rich": false,
+    "activity": null,
+    "affect": {
+      "on": true,
+      "lesioned": false,
+      "composer": "onebrain",
+      "differential": 0.0,
+      "valence_sign": "0",
+      "tone_level": 0,
+      "tone_token": "",
+      "forthcomingness": {
+        "max_sentences": 4,
+        "max_elaborations": 2
+      },
+      "manner_template": "",
+      "appraisal_valence": 0.0,
+      "appraisal_arousal": 0.0,
+      "appraisal_hits": [],
+      "pos_rate": 0.0,
+      "neg_rate": 0.0
+    },
+    "prospective": {
+      "held": true,
+      "action": "feed the dog",
+      "cue_clause": "the bird sings",
+      "cue_keywords": [
+        "bird",
+        "sings"
+      ],
+      "lesioned": true,
+      "held_after_lesion": 0.0,
+      "calib": {
+        "bias_pA": {
+          "A": -530.0,
+          "B": -190.0
+        },
+        "plateau_diag": {
+          "A": {
+            "g_single_cue": 31.56,
+            "g_single_held": 107.689,
+            "g_coinc": 140.639,
+            "theta": 113.074,
+            "coinc_over_theta": true,
+            "coinc_margin": 27.565
+          },
+          "B": {
+            "g_single_cue": 28.83,
+            "g_single_held": 91.975,
+            "g_coinc": 121.648,
+            "theta": 96.573,
+            "coinc_over_theta": true,
+            "coinc_margin": 25.074
+          }
+        },
+        "fire_thr": 0.2,
+        "silent_max": 0.06
+      },
+      "hebbian": true,
+      "hebbian_lesioned": false,
+      "binding_learned": {
+        "pre_act_rate": 0.4408,
+        "pre_cue_rate": 0.4558,
+        "post_rel_rate": 0.3478,
+        "learned_norm": 17760.0,
+        "canonical_norm_per_action": 17760.0
+      },
+      "kind": "formation"
+    },
+    "inner_state_readout": true
+  }
+}

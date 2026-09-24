@@ -1147,6 +1147,24 @@ FACULTY_LESIONS = {
 }
 
 
+# ── LBF ROW REGISTRY IMPORT HOOK (research/lbf-row-registry-hook, 2026-09-24, plan step S08 / lane AG-REG) ─────────
+# Build lanes add new production-organ rows WITHOUT editing the FACULTY_LESIONS literal above (parallel worktrees
+# editing the same lines would collide on merge): a module in research/runners/lbf_rows/ exposes module-level dicts
+# EXTRA_LESIONS (faculty_key -> spec dict, the same shape as a FACULTY_LESIONS value) and EXTRA_PROBES (faculty_key
+# -> a 4-tuple (faculty_key, turn_label, decision_field_paths, thin), the same shape as a FACULTY_PROBES row) -- see
+# research/runners/lbf_rows/__init__.py's own docstring for the full interface. merge_lbf_rows() applies every
+# discovered module's rows to BOTH registries in one call, IN PLACE: FACULTY_LESIONS.update()'d directly (a dict);
+# FACULTY_PROBES mutated via .append() on the SAME LIST OBJECT this file imported by reference from
+# onebrain_regression_battery (never rebound), so that module's own faculty_list() -- which the self-test below
+# calls to check "every FACULTY_LESIONS key is a real battery faculty" / "every battery faculty is mapped" -- also
+# sees the merged rows. An EMPTY research/runners/lbf_rows/ package (no modules beyond __init__.py -- true as of
+# this commit) is a NO-OP: both registries stay BYTE-IDENTICAL to before this hook existed
+# (tests/test_lbf_row_registry_hook.py pins this).
+from research.runners.lbf_rows import merge_lbf_rows as _merge_lbf_rows  # noqa: E402
+
+LBF_ROW_MERGE_REPORT = _merge_lbf_rows(FACULTY_LESIONS, FACULTY_PROBES)
+
+
 # ── helpers ──────────────────────────────────────────────────────────────────────────────────────────────────────
 def _faculty_row(key):
     for row in FACULTY_PROBES:

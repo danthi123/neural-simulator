@@ -213,8 +213,14 @@ case "${1:-list}" in
          fi
          # APPEND UNDER THE DISPATCHER'S LOCK (2026-09-24). pop_job rewrites the queue (awk > tmp; mv) under
          # "$Q.lock"; an unlocked append landing between its read and its mv went to the replaced inode and was lost.
+         # FRONT=1 (2026-09-24): put the line at the HEAD of the queue (short, latency-critical checks ahead of a large
+         # battery). Same lock, same line format; the dispatcher's first-fit scan still applies.
          ( flock -w 120 9 || { echo "⛔ could not take $Q.lock in 120 s" >&2; exit 1; }
-           printf '%s\t%s  #checked:%s\n' "$(date +%s)" "$2" "$CHECKED" >> "$Q" ) 9>"$Q.lock" || exit 1
+           if [ "${FRONT:-0}" = "1" ]; then
+             { printf '%s\t%s  #checked:%s\n' "$(date +%s)" "$2" "$CHECKED"; cat "$Q" 2>/dev/null; } > "$Q.front.tmp" && mv "$Q.front.tmp" "$Q"
+           else
+             printf '%s\t%s  #checked:%s\n' "$(date +%s)" "$2" "$CHECKED" >> "$Q"
+           fi ) 9>"$Q.lock" || exit 1
          echo "queued (depth now $(valid_depth))" ;;
   depth) valid_depth ;;
   malformed-depth) malformed_depth ;;
