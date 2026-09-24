@@ -16,13 +16,12 @@ WHAT THIS IS (every step between the heard word and the valence read is neurons 
   * COMPETITION: V+ and V- each drive their own FS interneuron pool, which inhibits the OTHER pool (reciprocal lateral
     inhibition; the motif of lexicon_spiking_frame_category / _affect_marker_wta_derisk).
   * LEARNING (synapse-local, evaluative conditioning; De Houwer, Thomas & Baeyens 2001, Psychol Bull 127:853). Each
-    presentation has two phases, like delay conditioning: the heard words alone for T_CS steps (the pools' CS-evoked
-    response, which carries the LEARNED drive), then the words plus the innate US afferents for T_ON steps. For every
-    lexical afferent i that fired and each pool P:
+    presentation is two equal-length trials from rest: the heard words alone (the pools' CS-evoked response, which
+    carries the LEARNED drive), then the same words plus the innate US afferents. For every heard word i and pool P:
         inc_P = y2_P - y1_P                      (the pool's US-evoked increment over its CS-alone rate)
         e_P   = (inc_P - theta_P) / rms_P
-        u_iP <- u_iP + x_i * (e_P - u_iP) * max(1/(n_i + N0), ETA_MIN),     n_i <- n_i + x_i
-    x_i = the afferent's spike rate normalised to its drive rate (~1 when heard). theta_P = the pool's SLIDING
+        u_iP <- u_iP + (e_P - u_iP) * max(1/(n_i + N0), ETA_MIN),     n_i <- n_i + 1
+    theta_P = the pool's SLIDING
     THRESHOLD, a slow trace of its own increment (BCM; Bienenstock, Cooper & Munro 1982; the metaplastic sliding
     threshold of Abraham & Bear 1996), time constant TAU_THETA presentations. rms_P = the running RMS of the pool's
     excess (multiplicative SYNAPTIC SCALING; Turrigiano et al. 1998), time constant TAU_SCALE: it puts the quiet V-
@@ -32,9 +31,14 @@ WHAT THIS IS (every step between the heard word and the valence read is neurons 
     (the running statistics settle first).
     WHY the increment (the stability companion): with a plain post-rate Hebbian rule every learned word drives the
     pools in every chunk it is heard, and the loop runs away (measured on a synthetic stream: one pool came to fire in
-    every presentation and every word learned its sign). The learned drive is present in both phases, so it cancels in
+    every presentation and every word learned its sign). The learned drive is present in both trials, so it cancels in
     the increment; once the CS drive saturates a pool the US adds less, so learning slows as the prediction grows (a
     Rescorla-Wagner-like saturation, Rescorla & Wagner 1972).
+    WHY trials from rest (the instrument): on a continuous stream the previous chunk's US response leaked into the
+    next chunk's CS trial; a seed-7 probe measured the increment carrying the chunk's seed valence at r = 0.38. From
+    rest, r = 0.95 (V+) and 0.96 (V-). The reset is a washout convenience between trials (declared).
+    EXECUTION IDENTITY (declared, tested): a presentation with no innate US afferent has two identical deterministic
+    trials, so its increment is exactly 0 and the runs are skipped (94% of chunks on the dev slice).
     WHY the sliding threshold (CLAUDE.md "what else does the real system run alongside this"): the prior learned-gate
     attempts read valence off whole-corpus co-occurrence, and the register confound
     (research/findings/2026-09-05-affect-learned-gate-retry-register-confound-BOUNDARY.md) made every word of a warm

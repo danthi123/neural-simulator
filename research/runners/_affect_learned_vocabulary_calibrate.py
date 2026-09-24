@@ -5,12 +5,17 @@ evaluation seeds. Every read goes through the production reader (`load_reader`).
 the dev weights were read; it uses only DEV items: the even crc32 half of the independent lexicon, the seed-7
 cross-validation held-out seed words, and the FACT_DEV sentences. The EVAL half and FACT_EVAL are never read here.
 
-RULE. For each (variant, MIN_RATE in GRID_MIN_RATE):
+RULE. For each (variant, G in GRID_G, MIN_RATE in GRID_MIN_RATE):
   R_REF := the median rate margin |r+ - r-| over the decided dev words (lexicon dev half + held-out seeds), divided
            by 0.5 (so a median decided word reads |valence| 0.5, the middle of the organ's graded range).
   admissible iff  dev-negative wrong-sign share <= 0.10  AND  FACT_DEV share with |appraisal| <= 0.25 >= 0.95.
-  choose the admissible (variant, MIN_RATE) with the highest dev-negative recall; ties -> the variant listed first,
-  then the lower MIN_RATE. No admissible pair, or a best recall < 0.27, -> the design is predicted to fail and no
+  choose the admissible (variant, G, MIN_RATE) with the highest dev-negative recall; ties -> the variant listed
+  first, then the lower G, then the lower MIN_RATE.
+AMENDED 2026-09-24 ~07:20 EDT, after the first dev table (three variants read at G = 500 only, best dev-negative
+recall 0.126): G, the synaptic gain from learned excess to weight, sets the lowest threshold the read can have (the
+pool's rheobase), and MIN_RATE can only raise it. Because the learned drive cancels in the training increment, G acts
+almost only at read time, so the dev weights are re-read over GRID_G. The chosen G is then used to TRAIN the evaluation
+seeds, and one confirmation dev run is trained at that G before the pre-registration is committed. No admissible pair, or a best recall < 0.27, -> the design is predicted to fail and no
   evaluation seed is staged.
 """
 from __future__ import annotations
@@ -32,6 +37,7 @@ from research.runners import _affect_learned_vocabulary_derisk as D  # noqa: E40
 from research.runners._affect_distributional_tag_derisk import WARRINER, STOP  # noqa: E402
 
 GRID_MIN_RATE = (0.002, 0.005, 0.01, 0.02, 0.03)
+GRID_G = (500.0, 1000.0, 2000.0, 4000.0)
 DEV_SEED = 7
 
 
@@ -62,9 +68,11 @@ def evaluate_variant(path):
     dev_neg = sorted(w for w, v in lex.items() if v < 0 and not D.eval_half(w))
     dev_pos = sorted(w for w, v in lex.items() if v > 0 and not D.eval_half(w))
     words = sorted(set(dev_neg) | set(dev_pos) | set(held))
-    rates = {w: rd.read_rates(w) for w in words}
     rows = []
-    for mr in GRID_MIN_RATE:
+    for g, mr in [(g, mr) for g in GRID_G for mr in GRID_MIN_RATE]:
+        rd.g = g
+        rd._cache.clear()
+        rates = {w: rd.read_rates(w) for w in words}
         A.MIN_RATE = mr
         marg = [abs(float(r[0][0] - r[1][0])) for r in rates.values() if r is not None and max(r[0][0], r[1][0]) >= mr]
         r_ref = (float(np.median(marg)) / 0.5) if marg else A.R_REF
@@ -73,7 +81,7 @@ def evaluate_variant(path):
         val = {w: rd.read(w) for w in words}
         f = lambda ws, c: float(np.mean([c(val[w]) for w in ws])) if ws else None  # noqa: E731
         fact = [_sentence_valence(t, rd) for t in D.FACT_DEV]
-        rows.append({"min_rate": mr, "r_ref": r_ref, "dev_neg_recall": f(dev_neg, lambda v: v < 0),
+        rows.append({"g": g, "min_rate": mr, "r_ref": r_ref, "dev_neg_recall": f(dev_neg, lambda v: v < 0),
                      "dev_neg_wrong": f(dev_neg, lambda v: v > 0), "dev_pos_recall": f(dev_pos, lambda v: v > 0),
                      "dev_pos_wrong": f(dev_pos, lambda v: v < 0),
                      "dev_contrast_D": f(dev_neg, lambda v: v < 0) - f(dev_pos, lambda v: v < 0),
@@ -105,7 +113,7 @@ def main():
         out["choice"] = None
         print("CHOICE: NONE (design predicted to fail)")
     else:
-        out["choice"] = {"variant": best[0], "path": best[1], "min_rate": best[2]["min_rate"],
+        out["choice"] = {"variant": best[0], "path": best[1], "g": best[2]["g"], "min_rate": best[2]["min_rate"],
                          "r_ref": best[2]["r_ref"], "dev_neg_recall": best[2]["dev_neg_recall"]}
         print("CHOICE", out["choice"])
     dst = os.path.join(_REPO, "research", "findings", "raw", "_affect_learned_vocab", "dev_s7", "calibration.json")
