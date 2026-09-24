@@ -201,7 +201,7 @@ Every change below makes a NO-GO or an UNDEFINED reachable where it was not; non
 *What was seen when this was filed.*
 Seeds 7, 42, 43, 44 and 100: scored under the old scorer, GO on T1-T9 each (Amendment 1).
 Seed 101 TEACH and NOTEACH: committed in `87242cf47`; not scored as a seed (the seed was void), and the review quoted
-their TEACH taught-block mean |w| (minimum 1.596), a lever read, not a criterion outcome.
+their TEACH taught-block mean |w| (minimum 1.596), a lever read, not a criterion outcome. <!--derived-->
 Seed 101 FREEZE/ZERO/PERM/ERR and every seed-102 gated arm: landed on pool2; only the directory listing (names, sizes,
 times) was seen; none was read or scored before this commit.
 No SHAM arm exists yet.
@@ -283,9 +283,10 @@ on the reply, the frozen brain fails it, and the teacher restates each fact. On 
 The difference is conservative (the lesioned arm gets more exposure) and the finding must state it.
 The scorer now reports `secondary.exposure_by_arm`.
 (b) A lane report (not this file) said "T3 freeze blocks read 0 against taught blocks above 1.7". Wrong.
-TEACH taught-block mean |w| after teaching, minimum per seed: 1.756 (s7), 1.868 (s42), 1.460 (s43), 1.454 (s44),
-1.537 (s100), 1.596 (s101). The lever threshold is 0.5, so no verdict changes. The sentence must not enter the
-finding; the scorer now reports `secondary.teach_taught_block_w`.
+TEACH taught-block mean |w| after teaching, minimum per seed: 1.756 (s7), 1.868 (s42), 1.460 (s43), 1.454 (s44), <!--derived-->
+1.537 (s100), 1.596 (s101). The lever threshold is 0.5, so no verdict changes. The sentence must not enter the <!--derived-->
+finding; the scorer now reports `secondary.teach_taught_block_w`. (The minima above are rounded from that field in
+research/findings/raw/_ai_teacher/v1/verdict_s7.json and verdict_6seed.json.)
 (c) `verdict_s7.json` is the dev seed. Nothing may cite it as the lane's result.
 
 *Commands (verbatim), with `OUT=research/findings/raw/_ai_teacher/v1`.*
