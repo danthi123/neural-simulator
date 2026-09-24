@@ -1,0 +1,107 @@
+{
+  "probe": "gap4_transport_ceiling_readout_IDENTITY_SELFTEST",
+  "seed": 7,
+  "arms": {
+    "reservoir": {
+      "hashes": {
+        "parent": {
+          "weights_md5": "0c765fd2bc2a8a43f73864483c0e67a4",
+          "reads_md5": "db7aa8ace652c0559f563174f25cbca2",
+          "thr": "5fae34265ab811e0",
+          "thr_after_training": "9ef8be9fd81ff45e"
+        },
+        "legacy": {
+          "weights_md5": "0c765fd2bc2a8a43f73864483c0e67a4",
+          "reads_md5": "db7aa8ace652c0559f563174f25cbca2",
+          "thr": "5fae34265ab811e0",
+          "thr_after_training": "9ef8be9fd81ff45e"
+        },
+        "levers_on": {
+          "weights_md5": "b72ba2375a05dcbba2c093db8f7b9e3c",
+          "reads_md5": "7a9b39c8adc816a79e439a858853d7d3",
+          "thr": "5fae34265ab811e0",
+          "thr_after_training": "4ba4b716ee29c013"
+        }
+      },
+      "legacy_identical_to_parent": true,
+      "levers_on_differ": true,
+      "same_thresholds_all_builds": true
+    },
+    "fixed_fa": {
+      "hashes": {
+        "parent": {
+          "weights_md5": "f94ee7ef28139b3eca03842d45adb446",
+          "reads_md5": "db7aa8ace652c0559f563174f25cbca2",
+          "thr": "5fae34265ab811e0",
+          "thr_after_training": "9ef8be9fd81ff45e"
+        },
+        "legacy": {
+          "weights_md5": "f94ee7ef28139b3eca03842d45adb446",
+          "reads_md5": "db7aa8ace652c0559f563174f25cbca2",
+          "thr": "5fae34265ab811e0",
+          "thr_after_training": "9ef8be9fd81ff45e"
+        },
+        "levers_on": {
+          "weights_md5": "513ce4530af0941e42c10b1c4001a663",
+          "reads_md5": "7a9b39c8adc816a79e439a858853d7d3",
+          "thr": "5fae34265ab811e0",
+          "thr_after_training": "4ba4b716ee29c013"
+        }
+      },
+      "legacy_identical_to_parent": true,
+      "levers_on_differ": true,
+      "same_thresholds_all_builds": true
+    },
+    "micro_inengine": {
+      "hashes": {
+        "parent": {
+          "weights_md5": "26e1404c6307f0d461ba72f9d5e8dcee",
+          "reads_md5": "db7aa8ace652c0559f563174f25cbca2",
+          "thr": "5fae34265ab811e0",
+          "thr_after_training": "9ef8be9fd81ff45e"
+        },
+        "legacy": {
+          "weights_md5": "26e1404c6307f0d461ba72f9d5e8dcee",
+          "reads_md5": "db7aa8ace652c0559f563174f25cbca2",
+          "thr": "5fae34265ab811e0",
+          "thr_after_training": "9ef8be9fd81ff45e"
+        },
+        "levers_on": {
+          "weights_md5": "c8b0c1d18e7c979aa9d6794182b69e81",
+          "reads_md5": "7a9b39c8adc816a79e439a858853d7d3",
+          "thr": "5fae34265ab811e0",
+          "thr_after_training": "4ba4b716ee29c013"
+        }
+      },
+      "legacy_identical_to_parent": true,
+      "levers_on_differ": true,
+      "same_thresholds_all_builds": true
+    },
+    "transport_ceiling": {
+      "hashes": {
+        "parent": {
+          "weights_md5": "56ce58b98a4e419d60f1faf64c3711bb",
+          "reads_md5": "db7aa8ace652c0559f563174f25cbca2",
+          "thr": "5fae34265ab811e0",
+          "thr_after_training": "9ef8be9fd81ff45e"
+        },
+        "legacy": {
+          "weights_md5": "56ce58b98a4e419d60f1faf64c3711bb",
+          "reads_md5": "db7aa8ace652c0559f563174f25cbca2",
+          "thr": "5fae34265ab811e0",
+          "thr_after_training": "9ef8be9fd81ff45e"
+        },
+        "levers_on": {
+          "weights_md5": "fc06b510aa8092d28b51ca81838c58e6",
+          "reads_md5": "7a9b39c8adc816a79e439a858853d7d3",
+          "thr": "5fae34265ab811e0",
+          "thr_after_training": "4ba4b716ee29c013"
+        }
+      },
+      "legacy_identical_to_parent": true,
+      "levers_on_differ": true,
+      "same_thresholds_all_builds": true
+    }
+  },
+  "IDENTITY_SELFTEST_PASS": true
+}

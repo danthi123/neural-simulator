@@ -1,0 +1,32 @@
+{
+  "probe": "gap4_tc_matched_lesion_SELFTEST",
+  "seed": 7,
+  "lesion_kind": "matched: hidden Y zeroed AND interneuron rate zeroed (engine int_drive 0)",
+  "cases": [
+    {
+      "case": "matched lesion (Gap4ReadoutNet micro_inengine apical_lesion)",
+      "hidden_apical_max_abs_dev_mV": 0.0,
+      "want": "zero",
+      "ok": true
+    },
+    {
+      "case": "fixed_fa apical_lesion (reference, no interneuron)",
+      "hidden_apical_max_abs_dev_mV": 0.0,
+      "want": "zero",
+      "ok": true
+    },
+    {
+      "case": "UNMATCHED parent lesion (Gap4InEngineNet micro_inengine apical_lesion)",
+      "hidden_apical_max_abs_dev_mV": 49.18046569824219,
+      "want": "positive",
+      "ok": true
+    },
+    {
+      "case": "intact micro_inengine (bdsp)",
+      "hidden_apical_max_abs_dev_mV": 60.686126708984375,
+      "want": "positive",
+      "ok": true
+    }
+  ],
+  "LESION_SELFTEST_PASS": true
+}
