@@ -15,8 +15,15 @@ AMENDED 2026-09-24 ~07:20 EDT, after the first dev table (three variants read at
 recall 0.126): G, the synaptic gain from learned excess to weight, sets the lowest threshold the read can have (the
 pool's rheobase), and MIN_RATE can only raise it. Because the learned drive cancels in the training increment, G acts
 almost only at read time, so the dev weights are re-read over GRID_G. The chosen G is then used to TRAIN the evaluation
-seeds, and one confirmation dev run is trained at that G before the pre-registration is committed. No admissible pair, or a best recall < 0.27, -> the design is predicted to fail and no
-  evaluation seed is staged.
+seeds, and one confirmation dev run is trained at that G before the pre-registration is committed.
+AMENDED AGAIN ~07:45 EDT, after the G-grid table (no admissible cell reached 0.27; at G >= 2000 recall was 0.42-0.55
+but 3-6 of the 20 FACT_DEV sentences read above 0.25, through frequent topical words -- 'does', 'planet', 'solar',
+'students' -- whose small but real context bias crosses the pool threshold and was then scaled like a strong word).
+R_REF is now ANCHORED to the known valences: the least-squares slope that maps the decided held-out seed words' rate
+margins to their norm valence magnitudes (valence = margin / R_REF), so a word just over threshold reads weak and a
+word as strongly driven as a held-out seed reads as strong as that seed. Fewer than 3 decided held-out seeds -> the
+cell is inadmissible (no anchor).
+No admissible cell, or a best recall < 0.27, -> the design is predicted to fail and no evaluation seed is staged.
 """
 from __future__ import annotations
 
@@ -74,14 +81,20 @@ def evaluate_variant(path):
         rd._cache.clear()
         rates = {w: rd.read_rates(w) for w in words}
         A.MIN_RATE = mr
-        marg = [abs(float(r[0][0] - r[1][0])) for r in rates.values() if r is not None and max(r[0][0], r[1][0]) >= mr]
-        r_ref = (float(np.median(marg)) / 0.5) if marg else A.R_REF
+        anchor = [(abs(float(rates[w][0][0] - rates[w][1][0])), abs(held[w])) for w in held
+                  if rates.get(w) is not None and max(rates[w][0][0], rates[w][1][0]) >= mr]
+        m_ = np.array([a for a, _ in anchor]); v_ = np.array([b for _, b in anchor])
+        r_ref = float((m_ * m_).sum() / (m_ * v_).sum()) if len(anchor) >= 3 and (m_ * v_).sum() > 0 else None
+        if r_ref is None:
+            rows.append({"g": g, "min_rate": mr, "r_ref": None, "n_anchor": len(anchor), "dev_neg_recall": 0.0,
+                         "dev_neg_wrong": 1.0, "fact_dev_within": 0.0, "named": {}})
+            continue
         rd.r_ref = r_ref
         rd._cache.clear()
         val = {w: rd.read(w) for w in words}
         f = lambda ws, c: float(np.mean([c(val[w]) for w in ws])) if ws else None  # noqa: E731
         fact = [_sentence_valence(t, rd) for t in D.FACT_DEV]
-        rows.append({"g": g, "min_rate": mr, "r_ref": r_ref, "dev_neg_recall": f(dev_neg, lambda v: v < 0),
+        rows.append({"g": g, "min_rate": mr, "r_ref": r_ref, "n_anchor": len(anchor), "dev_neg_recall": f(dev_neg, lambda v: v < 0),
                      "dev_neg_wrong": f(dev_neg, lambda v: v > 0), "dev_pos_recall": f(dev_pos, lambda v: v > 0),
                      "dev_pos_wrong": f(dev_pos, lambda v: v < 0),
                      "dev_contrast_D": f(dev_neg, lambda v: v < 0) - f(dev_pos, lambda v: v < 0),
