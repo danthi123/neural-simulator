@@ -797,7 +797,8 @@ class ChatBrain:
         if sub == "__ABSTAIN__" and not anaphora_used:
             return None                          # DIRECT well-formed query, substrate has no fact -> honest abstain
                                                  # (fixes the host-router keyword CONFAB, e.g. "what does fish fly?").
-        if sub == "__ABSTAIN__" and anaphora_used and _neural_anaphora_abstain_enabled():
+        if sub == "__ABSTAIN__" and anaphora_used and (_neural_anaphora_abstain_enabled()
+                                                      or self._multiref_resolved_turn()):
             return None                          # ANAPHORA-MISS EXTENSION (rank-13 de-risk, default OFF): the SAME
                                                  # honest abstain as the direct-query case above, applied to an
                                                  # anaphora-resolved query the substrate can't confirm -- retires the
@@ -1045,9 +1046,31 @@ class ChatBrain:
                 seed=seed, lesion=_QROUTE.spiking_qroute_lesioned())
         return self._qroute_organ.select(bool(relf_on), bool(kbrel_on), bool(defcop_on))
 
+    def _multiref_resolved_turn(self):
+        """True iff THIS turn's anaphor was resolved by the D6 multi-referent organ's retrieval off its live held state
+        (BRAIN_MULTIREF_FOCUS_BIND; webapp/server.py sets `_multiref_referent_override` per turn). Such a referent is
+        the brain's own resolution, so a substrate miss on it abstains instead of taking the host keyword router's
+        rescue (which would answer about a DIFFERENT agent). Attribute absent (the flag off) -> False."""
+        ovr = getattr(self, "_multiref_referent_override", None)
+        return bool(ovr and ovr.get("referent"))
+
     def _resolve_anaphora(self, question):
         """If the question's first content token is a pronoun and the discourse WM holds a referent, substitute it
         (multi-turn anaphora). Only the MultiTurnAgent has a WM loop; otherwise pass the question through."""
+        ovr = getattr(self, "_multiref_referent_override", None)
+        if ovr is not None and ovr.get("question") == question:
+            # REFERENT->FOCUS BIND (BRAIN_MULTIREF_FOCUS_BIND, default OFF -> the attribute is never set): the D6
+            # organ already detected this turn's anaphor (the spiking CA3 detector) and resolved it by its cue-driven
+            # retrieval; honor that resolution (None = unresolved -> the question stays as is). Declared host step:
+            # the string substitution of the resolved referent for the pronoun token.
+            ref = ovr.get("referent")
+            if ref:
+                toks = question.split()
+                for i, t in enumerate(toks):
+                    if t.lower().strip(".,!?") == ovr.get("pronoun"):
+                        toks[i] = ref
+                        return " ".join(toks)
+            return question
         if not self.is_multiturn:
             return question
         toks = question.split()

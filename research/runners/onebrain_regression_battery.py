@@ -226,6 +226,20 @@ _EXTRA_TURNS = [
     ("wmc_drive",  "the wolf watches the owl",       "wmc",  False, None, False),  # ordinary transitive (no hold-query)
     ("wmcx_intro", "the cat and the dog walked in",  "wmcx", True,  None, False),  # content-swapped: LOAD cat+dog
     ("wmcx_drive", "the dog watches the owl",        "wmcx", False, None, False),  # same structure, swapped content
+    # ── WM REFERENT->FOCUS BIND ANAPHOR PAIRS (label-only; used only by LB_WMB_FOCUS_PROBE) ─────────────────────
+    # Each pair = two sessions that introduce the SAME two lexicon referents in SWAPPED order (so which referent sits
+    # in which register differs; the words do not), then the SAME ordinary anaphor question. With
+    # BRAIN_MULTIREF_FOCUS_BIND=1 the organ resolves 'it' to the register that wins its retrieval competition, so the
+    # two sessions must answer differently; a positional route cannot. Pre-registration:
+    # research/findings/2026-09-24-wm-referent-focus-bind-anaphor-probe-PREREGISTRATION.md.
+    ("wmf_a1_intro", "the dog and the cat walked in",  "wmfa1", True,  None, False),  # LOAD dog (reg0) + cat (reg1)
+    ("wmf_a1_ask",   "what does it chase",             "wmfa1", False, None, False),  # anaphor -> the retrieved referent
+    ("wmf_a2_intro", "the cat and the dog walked in",  "wmfa2", True,  None, False),  # SWAPPED: cat (reg0) + dog (reg1)
+    ("wmf_a2_ask",   "what does it chase",             "wmfa2", False, None, False),  # identical question
+    ("wmf_b1_intro", "the cat and the bird walked in", "wmfb1", True,  None, False),  # second pair, other referents
+    ("wmf_b1_ask",   "what does it eat",               "wmfb1", False, None, False),
+    ("wmf_b2_intro", "the bird and the cat walked in", "wmfb2", True,  None, False),  # SWAPPED
+    ("wmf_b2_ask",   "what does it eat",               "wmfb2", False, None, False),
 ]
 # ── DA TAG-AND-CAPTURE NEXT-DAY GROUPS (label-only; load_bearing_fraction's LB_DA_TAG_CAPTURE_PROBE + the dedicated
 # research/runners/_da_tag_capture_chat_probe.py) ─────────────────────────────────────────────────────────────────

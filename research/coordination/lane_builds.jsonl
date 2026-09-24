@@ -7,3 +7,4 @@
 {"lane": "C \u00b7 Self/Workspace", "workflow": "waz1jilfh", "branch": "research/gnw-continuous-branchpoint", "started": 1790225842.1287115, "note": "next-work build in flight"}
 {"lane": "E \u00b7 Language", "workflow": "waz1jilfh", "branch": "research/language-learned-referent-route", "started": 1790225842.1287115, "note": "next-work build in flight"}
 {"lane": "B \u00b7 Curiosity", "workflow": "agent-curiosity-phasic-gain", "branch": "research/curiosity-lcne-phasic-gain", "started": 1790227872.3162553, "note": "next-method build after LC-NE NO-GO 1/6"}
+{"lane": "E \u00b7 Language", "workflow": "agent-wm-referent-focus-bind", "branch": "research/wm-referent-focus-bind", "started": 1790257484.9463153, "note": "next-mechanism build in flight: D6 WM referent->focus bind + spiking anaphor (pronoun) resolution, the named next rung of the wm-binding ordinary-content NO-GO"}

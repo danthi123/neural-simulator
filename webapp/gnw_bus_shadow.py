@@ -373,6 +373,15 @@ def bus_authored_svo(chat, question: str, host_svo, *, seed: int = _DEFAULT_SEED
     return bus_svo, info
 
 
+def _multiref_resolved(chat) -> bool:
+    """True iff THIS turn's anaphor was resolved by the D6 multi-referent organ off its live held state
+    (BRAIN_MULTIREF_FOCUS_BIND, default OFF -> the attribute is never set -> False, byte-identical). Such a referent is
+    the brain's own resolution, so a miss on it abstains (the rank-13 neural-abstain semantics) rather than taking the
+    host keyword router's rescue, which would answer about a DIFFERENT agent than the one resolved."""
+    ovr = getattr(chat, "_multiref_referent_override", None)
+    return bool(ovr and ovr.get("referent"))
+
+
 def gate_via_bus(chat, question: str, *, seed: int = _DEFAULT_SEED, lesion: bool = False):
     """AUTHOR the gate combination with the SUBSTRATE ignition bus WITHOUT ever computing the host `if recalled == p`
     combination on the covered class — the scaffold-retirement follow-on to `bus_authored_svo` (which computed the host
@@ -454,7 +463,7 @@ def gate_via_bus(chat, question: str, *, seed: int = _DEFAULT_SEED, lesion: bool
             info.update({"routable": True, "agent": agent, "action": action, "anaphora_used": False,
                          "authored_by": "bus", "host_combination_computed": False, "bus_svo": None})
             return None, info
-        if _neural_anaphora_abstain_enabled():
+        if _neural_anaphora_abstain_enabled() or _multiref_resolved(chat):
             # ANAPHORA-MISS EXTENSION (rank-13 de-risk, default OFF): mirrors `gate()`'s SAME extension (see
             # brain_chat_tui.py) -- an anaphora-resolved query the substrate/bus can't confirm ABSTAINS instead of
             # falling to the host router's keyword "rescue" of a possibly-wrong WM referent.
@@ -473,7 +482,7 @@ def gate_via_bus(chat, question: str, *, seed: int = _DEFAULT_SEED, lesion: bool
             return None, {"routable": False, "reason": "parser_decline_abstain", "agrees": None,
                           "authored_by": "host_abstain", "host_combination_computed": False,
                           "host_svo": None, "bus_svo": None}
-        if _neural_anaphora_abstain_enabled():
+        if _neural_anaphora_abstain_enabled() or _multiref_resolved(chat):
             return None, {"routable": False, "reason": "parser_decline_anaphora_abstain", "agrees": None,
                           "authored_by": "host_abstain", "host_combination_computed": False,
                           "host_svo": None, "bus_svo": None}

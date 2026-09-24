@@ -196,6 +196,58 @@ def multiref_competition_lesioned() -> bool:
     return v.strip().lower() in ("1", "true", "yes", "on")
 
 
+# ── SPIKING REFERENT -> FOCUS BINDING + PRONOUN RESOLUTION (2026-09-24, additive, DEFAULT OFF) ─────────────────────
+# `BRAIN_MULTIREF_FOCUS_BIND=1`. Pre-registration:
+# research/findings/2026-09-24-wm-referent-focus-bind-anaphor-probe-PREREGISTRATION.md. The named next mechanism of the
+# ordinary-content NO-GO (research/findings/2026-09-24-wm-binding-ordinary-content-probe-6seed-NOGO-held-state-does-
+# not-reach-an-ordinary-reply.md): the WM focus stops being the positional `CAND_POOLS[0]` and becomes the register
+# whose held bump wins a CUE-DRIVEN RETRIEVAL COMPETITION on the organ's own firing state; an anaphor turn resolves its
+# pronoun to that register's referent, so an ordinary answer depends on WHICH referent the buffer holds.
+#   * CROSS-TURN HOLD: after a load the organ keeps THIS SESSION's held spiking state (its slice's per-neuron state
+#     arrays: membrane, recovery, conductances incl. the slow-NMDA recurrence, firing/refractory). The next turn
+#     resumes it and runs a zero-input inter-turn span, so a live bump self-sustains and a dead one stays dead. What
+#     is held across turns is read off that state; the host `_slot_of_ref` dict is no longer consulted for WHICH
+#     referents are held (it stays only as the binder's forward codebook for the next write).
+#   * RETRIEVAL (the anaphor cue): the register pools' own held firing is read over a zero-input window (the SAME
+#     occupancy instrument `probe_occupancy` the competitive write uses), and each register's rate drives its own
+#     assembly of a FOCUS WTA -- R_MAX excitatory assemblies, each with its own fast-spiking sub-pool that inhibits
+#     every OTHER assembly (the N-way lateral-inhibition primitive `_affect_marker_wta_derisk._build_bridge`, reused
+#     as the spiking question-route selector reuses it). The anaphor cue supplies a common sub-threshold drive to all
+#     assemblies: no cue, no competition; a register with no held bump adds nothing, so a dead buffer leaves every
+#     assembly silent. The race between assemblies, not a host comparison, decides the winner. (Measured on dev seed 7
+#     before this design: the D6 bank's own shared FS does NOT make a winner -- FS drive of 300/600 pA scales both
+#     held bumps down together -- because the bank is built to hold several bumps without cross-talk.)
+#   * DECLARED RESIDUALS (named, not hidden): the register->focus projection crosses two bridges as a host
+#     spike-rate relay (rate x gain -> current); the final read of WHICH focus assembly won is an argmax over its
+#     settled rates with a dead margin (the qroute/affect-marker read-out convention); the winning register's local
+#     slot is the organ's existing `read()`-class argmax over its bank; the slot is NAMED by the host RUNG6c binder
+#     codebook (`_ref_of_slot`), unchanged; the inter-turn interval is compressed to FOCUS_INTERTURN_STEPS ms; the
+#     per-session state stash exists because one shared slice serves every session (a hosting step -- the stash is
+#     the substrate state, it carries no referent label); which of two held referents wins an ambiguous competition
+#     is set by the pools' intrinsic excitability, not by discourse salience (Centering / recency is the next rung).
+# Unset -> every function below is unreachable from production and the organ is byte-identical.
+FOCUS_INTERTURN_STEPS = 100       # the inter-turn interval as a zero-input hold (compressed; declared)
+FOCUS_READ_STEPS = 40             # zero-input read window of the held registers (the probe_occupancy instrument)
+FOCUS_WTA_CUE_PA = 150.0          # the anaphor cue's common drive onto every focus assembly (sub-threshold alone)
+FOCUS_WTA_GAIN_PA = 20000.0       # relay gain: pA onto a register's focus assembly per unit held-bump rate
+FOCUS_WTA_MIN_RATE = 0.05         # the winning assembly must fire at least this (the cue alone cannot)
+FOCUS_WTA_DEAD_MARGIN = 0.05      # winner minus runner-up assembly rate (same convention as the qroute/affect WTAs)
+FOCUS_WTA_WASHOUT, FOCUS_WTA_WARMUP, FOCUS_WTA_RUN = 40, 60, 150  # qroute timing, longer race (dev-seed calibration)
+# per-neuron state arrays the cross-turn stash carries (only those present with length == num_neurons are kept)
+_FOCUS_STATE_ARRAYS = ("cp_membrane_potential_v", "cp_recovery_variable_u", "cp_conductance_g_e",
+                       "cp_conductance_g_i", "cp_conductance_g_gabab", "cp_conductance_g_nmda",
+                       "cp_conductance_g_nmda_rise", "cp_conductance_g_nmda_recurrent",
+                       "cp_conductance_g_nmda_recurrent_rise", "cp_firing_states", "cp_prev_firing_states",
+                       "cp_refractory_timers")
+
+
+def multiref_focus_bind_enabled() -> bool:
+    """`BRAIN_MULTIREF_FOCUS_BIND` in {1,true,yes,on} -> the spiking referent->focus binding + pronoun resolution
+    (see the block comment above). DEFAULT-OFF: unset/anything else -> byte-identical to before this flag existed."""
+    v = os.environ.get("BRAIN_MULTIREF_FOCUS_BIND")
+    return v is not None and v.strip().lower() in ("1", "true", "yes", "on")
+
+
 def is_hold_query(text: str) -> bool:
     """An explicit 'who/what are we talking about / what are you keeping in mind' inner-state read-out query."""
     return bool(_HOLD_QUERY_RE.search(text or ""))
@@ -431,6 +483,21 @@ class MultiReferentWMOrgan:
                 loc, amp = buf.read(reg)
                 alive.append(float(amp))
                 recovered[i] = self._ref_of_slot.get(loc, None)
+            # REFERENT->FOCUS BIND (BRAIN_MULTIREF_FOCUS_BIND, default OFF): AFTER the reads above (so `recovered` /
+            # `hold_alive_min` are exactly the flag-off values), run the focus retrieval on the freshly loaded buffer
+            # and keep this session's held state for the next turn. Off -> never reached.
+            focus_r = None
+            if multiref_focus_bind_enabled():
+                focus_r = self._retrieve(buf)
+                self._stash(buf)
+        if multiref_focus_bind_enabled():
+            # the focus is the register whose held bump WON the retrieval (None when no bump is live, e.g. under the
+            # hold lesion) -- replacing the positional CAND_POOLS[0] below.
+            self._last_focus = focus_r
+            self._own_focus = None if lesion else self._xedge_focus_pool(focus_r)
+            refs_for_positional = []
+        else:
+            refs_for_positional = refs
         # ONE-BRAIN CROSS-EDGE (opt-in): record the primary held referent's POSITIONAL candidate pool as THIS
         # session's own focus (`self._own_focus`), which the caller (webapp/server.py) later reads via
         # `current_focus()` and passes EXPLICITLY into the comprehension organ's `wm_focus` argument -- so a held
@@ -443,7 +510,7 @@ class MultiReferentWMOrgan:
         # (`xedge_codrive_params`) -> `_own_focus` stays None (byte-identical) when shared is None or not an xedge
         # pool. The register->candidate-pool map is POSITIONAL (declared residual: R3-v3's candidate topology is
         # host-chosen, not a semantic role->pool binding; see onebrain_xedge_production).
-        if refs and getattr(self._shared, "xedge_codrive_params", None) is not None and not lesion:
+        if refs_for_positional and getattr(self._shared, "xedge_codrive_params", None) is not None and not lesion:
             try:
                 from research.runners._onebrain_integration_r2_threefactor_selforganized import CAND_POOLS
                 self._own_focus = CAND_POOLS[0]
@@ -462,6 +529,167 @@ class MultiReferentWMOrgan:
             "competition_lesioned": bool(competitive and competition_lesion),
         } | ({"recur_lesioned": True} if confined else {})
 
+    # ── REFERENT->FOCUS BIND (BRAIN_MULTIREF_FOCUS_BIND, default OFF; reached only with the flag on) ────────────────
+    def _slice_idx(self, buf):
+        """This organ's own neurons on `buf`'s bridge: every register pool + the shared FS (never another organ's)."""
+        parts = [np.asarray(buf.idx[k], dtype=np.int64) for k in range(buf.K)]
+        parts.append(np.asarray(buf.fs_idx, dtype=np.int64))
+        return np.concatenate(parts)
+
+    def _stash(self, buf):
+        """Keep THIS session's held spiking state for the next turn: the organ slice's per-neuron state arrays
+        (membrane, recovery, conductances incl. the slow-NMDA recurrence, firing/refractory). No referent label is
+        stored; what is held is decided later by reading this state."""
+        from sim.backend import to_host
+        b = buf.sb
+        ix = self._slice_idx(buf)
+        n = int(b.core_config.num_neurons)
+        st = {}
+        for nm in _FOCUS_STATE_ARRAYS:
+            arr = getattr(b, nm, None)
+            if arr is None or int(arr.shape[0]) != n:
+                continue
+            st[nm] = np.asarray(to_host(arr))[ix].copy()
+        self._focus_stash = {"buf": id(buf), "state": st}
+
+    def _resume(self, buf) -> bool:
+        """Write this session's stashed state back onto the organ's slice (another session or organ may have stepped
+        or reset the shared bridge since). False when nothing is stashed for `buf`."""
+        s = getattr(self, "_focus_stash", None)
+        if not s or s.get("buf") != id(buf):
+            return False
+        b = buf.sb
+        ix_dev = buf._from_host(self._slice_idx(buf))
+        for nm, vals in s["state"].items():
+            arr = getattr(b, nm, None)
+            if arr is None:
+                continue
+            arr[ix_dev] = buf._from_host(vals)
+        return True
+
+    def has_held_state(self) -> bool:
+        """True iff this session has a stashed buffer state (a >=2-referent load happened under the flag). Says
+        nothing about WHICH referents survive -- that is read off the state."""
+        return bool(getattr(self, "_focus_stash", None))
+
+    def _focus_wta_rates(self, drive_pa):
+        """Build a FRESH quiescent R_MAX-way lateral-inhibition WTA (the `_affect_marker_wta_derisk._build_bridge`
+        primitive, reused), drive assembly r with `drive_pa[r]`, and return the settled per-assembly rates. Fresh per
+        decision and RNG-isolated on this organ's own private timeline (the spiking question-route selector's
+        discipline, reused through its `_isolated`), so the host RNG and every later organ are untouched."""
+        from research.runners._affect_marker_wta_derisk import _build_bridge, _pool_rates
+        if getattr(self, "_focus_rng", None) is None:
+            from research.runners.spiking_qroute_selection_organ import SpikingQRouteSelectorOrgan
+            self._focus_rng = SpikingQRouteSelectorOrgan(seed=self.seed + 1009)   # used ONLY for its RNG isolation
+        n_pools = len(drive_pa)
+
+        def _run():
+            bridge, marker_idx, _fsi = _build_bridge(self.seed + 1009, n_pools, "d6focus")
+            return _pool_rates(bridge, marker_idx, np.asarray(drive_pa, dtype=float), warmup=FOCUS_WTA_WARMUP,
+                               washout=FOCUS_WTA_WASHOUT, run=FOCUS_WTA_RUN)
+        return np.asarray(self._focus_rng._isolated(_run), dtype=float)
+
+    def _retrieve(self, buf) -> dict:
+        """THE CUE-DRIVEN RETRIEVAL COMPETITION on the buffer's current state. (1) read every register's held firing
+        over a zero-input window (the `probe_occupancy` instrument); (2) relay each register's rate onto its own
+        focus-WTA assembly on top of the anaphor cue's common drive and let the lateral-inhibition race run; (3) read
+        which assembly won (declared final read-out: argmax with a rate floor + dead margin -> None on a tie or a dead
+        buffer). Returns the register rates, the WTA rates and the winner's register / local slot / pool."""
+        rates = buf._run(np.zeros(buf.n), FOCUS_READ_STEPS, assert_zero=True)
+        bands = np.asarray(rates, dtype=float).reshape(buf.R, buf.n_slot)
+        reg_rate = bands.max(axis=1)
+        drive = FOCUS_WTA_CUE_PA + FOCUS_WTA_GAIN_PA * reg_rate          # host relay (declared residual)
+        wta = self._focus_wta_rates(drive)
+        order = np.argsort(-wta, kind="stable")
+        w = int(order[0])
+        wr = float(wta[w])
+        ru = float(wta[order[1]]) if len(wta) > 1 else 0.0
+        ok = bool(wr >= FOCUS_WTA_MIN_RATE and (wr - ru) >= FOCUS_WTA_DEAD_MARGIN)
+        local = int(np.argmax(bands[w])) if ok else None                 # the organ's read()-class bank argmax
+        return {"ok": ok, "register": (w if ok else None), "local": local,
+                "pool": ("w%d" % (w * buf.n_slot + local) if ok else None),
+                "winner_rate": round(wr, 6), "runner_up_rate": round(ru, 6), "margin": round(wr - ru, 6),
+                "register_rates": [round(float(x), 6) for x in reg_rate],
+                "wta_rates": [round(float(x), 6) for x in wta]}
+
+    def _xedge_focus_pool(self, r):
+        """The xedge focus for comprehension: the WINNING pool, iff it is one the d6->comprehension cross-edge
+        spans (CAND_POOLS) and the xedge pool is live; else None (declared: the cross-edge topology covers only
+        w0..w2, so a referent held elsewhere has no comprehension drive)."""
+        if not r or not r.get("ok") or getattr(self._shared, "xedge_codrive_params", None) is None:
+            return None
+        try:
+            from research.runners._onebrain_integration_r2_threefactor_selforganized import CAND_POOLS
+        except Exception:
+            return None
+        return r["pool"] if r["pool"] in CAND_POOLS else None
+
+    def _focus_buf_and_guard(self, lesion: bool):
+        """The buffer + isolation guard a resumed read uses -- the SAME choice `load()` makes (confined recur lesion:
+        the shared buffer with its w_k->w_k synapses zeroed; organ-scope lesion: the private recur=0 buffer)."""
+        import contextlib
+        self.ensure_built()
+        confined = self._confined(lesion)
+        if self._shared is not None and multiref_lesion_scope() == "recur":
+            self._set_recur_lesion(confined)
+        if confined or not lesion:
+            buf = self.buf
+            guard = (self._shared.read_isolation("d6_multiref_wm") if self._shared is not None
+                     else contextlib.nullcontext())
+        else:
+            buf = self._lesion_buf()
+            guard = contextlib.nullcontext()
+        return buf, guard, confined
+
+    def resolve_anaphor(self, pronoun: str, lesion: bool = False) -> dict | None:
+        """An anaphor turn (flag on): resume this session's held state, run the inter-turn span, then the cue-driven
+        retrieval. The pronoun resolves to the WINNING register's referent (named by the binder codebook), or to
+        None when no held bump wins (dead buffer / tie). None when the flag is off or nothing was ever held."""
+        if not multiref_focus_bind_enabled() or not self.has_held_state():
+            return None
+        buf, guard, confined = self._focus_buf_and_guard(lesion)
+        with guard:
+            if not self._resume(buf):
+                return None
+            buf.hold(FOCUS_INTERTURN_STEPS)                # the inter-turn interval: a live bump self-sustains
+            r = self._retrieve(buf)
+            self._stash(buf)
+        resolved = self._ref_of_slot.get(r["local"]) if r["ok"] else None
+        self._last_focus = r
+        self._own_focus = None if (lesion and not confined) else self._xedge_focus_pool(r)
+        out = {"on": True, "kind": "resolve", "pronoun": str(pronoun), "resolved": resolved,
+               "resolved_register": r["register"], "resolved_pool": r["pool"], "winner_rate": r["winner_rate"],
+               "runner_up_rate": r["runner_up_rate"], "margin": r["margin"], "register_rates": r["register_rates"],
+               "wta_rates": r["wta_rates"], "lesioned": bool(lesion), "focus_bind": True,
+               "readout_residual": ("host rate relay register->focus WTA; argmax+dead-margin read of the WTA winner; "
+                                    "bank argmax for the local slot; binder codebook name")}
+        if confined:
+            out["lesion_scope"] = "recur"
+        return out
+
+    def read_held(self, lesion: bool = False) -> dict | None:
+        """A hold-query (flag on): resume this session's held state, run the inter-turn span, and read every register
+        off it (zero input). Returns the registers whose bump is alive and their referents -- no re-load from the host
+        `_slot_of_ref`."""
+        if not multiref_focus_bind_enabled() or not self.has_held_state():
+            return None
+        buf, guard, confined = self._focus_buf_and_guard(lesion)
+        with guard:
+            if not self._resume(buf):
+                return None
+            buf.hold(FOCUS_INTERTURN_STEPS)
+            held, amps = [], []
+            for reg in range(buf.R):
+                loc, amp = buf.read(reg)
+                amps.append(float(amp))
+                if loc >= 0:
+                    held.append((reg, self._ref_of_slot.get(loc)))
+            self._stash(buf)
+        live = [amp for amp in amps if amp > 1e-6]
+        return {"recovered": {str(reg): name for reg, name in held}, "n_referents": len(held),
+                "hold_alive_min": float(min(live)) if live else 0.0, "register_amps": [round(a, 6) for a in amps],
+                "confined": bool(confined)}
+
     def judge(self, text: str, lesion: bool = False, xedge_drop_current=None) -> dict | None:
         """Production entry. Returns None when the input is OUT OF SCOPE (fewer than 2 referents AND not a hold-query)
         -> the caller leaves the turn byte-identical. Otherwise a dict with the held referents recovered off the
@@ -473,6 +701,21 @@ class MultiReferentWMOrgan:
         self.ensure_built()
         refs = extract_referents(text, referent_lexicon=self.referent_lexicon)
         query = is_hold_query(text)
+        if query and len(refs) < 2 and multiref_focus_bind_enabled():
+            # REFERENT->FOCUS BIND: what is held is READ off this session's live resumed state, not re-loaded from the
+            # host `_slot_of_ref` (None when nothing was ever held -> out of scope, as before).
+            h = self.read_held(lesion=lesion)
+            if h is None:
+                return None
+            names = [h["recovered"][k] for k in sorted(h["recovered"], key=int)]
+            out = {"on": True, "lesioned": bool(lesion), "in_scope": True, "composer": "onebrain",
+                   "n_referents": h["n_referents"], "input_order": [], "recovered": h["recovered"],
+                   "hold_alive_min": h["hold_alive_min"], "zero_input_ok": True,
+                   "all_recovered": bool(h["n_referents"] >= 1 and all(names)), "is_hold_query": True,
+                   "focus_bind": True, "readout": hold_readout(names)}
+            if h["confined"]:
+                out["lesion_scope"] = "recur"
+            return out
         # SCOPE: only a genuine multi-referent situation (>=2 named referents) or an explicit hold-query while >=2 are
         # already held. A single referent / no referents / a non-query turn is out of scope -> None (byte-identical).
         if len(refs) < 2 and not (query and len(self._slot_of_ref) >= 2):
@@ -532,6 +775,29 @@ def get_organ(seed: int = 42) -> MultiReferentWMOrgan:
         shared = get_wave3_pool(seed) if wave3_pool_enabled() else None
         _ORGAN = MultiReferentWMOrgan(seed=seed, shared=shared)
     return _ORGAN
+
+
+def resolve_turn(chat, organ, msg, lesion: bool = False):
+    """REFERENT->FOCUS BIND production hook (BRAIN_MULTIREF_FOCUS_BIND, default OFF -> returns None, touches nothing).
+    On a turn that is not a >=2-referent intro and not a hold-query: if this session's organ holds state, find the
+    first anaphor token with the ChatBrain's OWN spiking CA3 detector (`_is_anaphor_token`, the sole detection path),
+    resolve it by the organ's cue-driven retrieval, and publish the result for THIS turn's `_resolve_anaphora` as
+    `chat._multiref_referent_override` = {question, pronoun, referent (None = unresolved)}. Returns the organ's
+    resolution record (the reply's `multiref`, kind "resolve"), or None when out of scope."""
+    if not multiref_focus_bind_enabled() or organ is None or not organ.has_held_state():
+        return None
+    detect = getattr(chat, "_is_anaphor_token", None)
+    if detect is None:
+        return None
+    for tok in (msg or "").split():
+        tl = tok.lower().strip(".,!?")
+        if tl and detect(tl):
+            r = organ.resolve_anaphor(tl, lesion=lesion)
+            if r is None:
+                return None
+            chat._multiref_referent_override = {"question": msg, "pronoun": tl, "referent": r.get("resolved")}
+            return r
+    return None
 
 
 def hold_readout(referents) -> str:
