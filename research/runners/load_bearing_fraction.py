@@ -476,7 +476,7 @@ def _wmb_mech(arm, turn):
     return {f: _get_path(r, f)[1] for f in _WMB_MECH_FIELDS} | {"answer": r.get("answer")}
 
 
-def _wmb_adequacy(intact_a, ctrl_a, ctrl_b, ctrl_les):
+def _wmb_adequacy(intact_a, ctrl_a, ctrl_b, ctrl_les, lesioned=None):
     """The pre-registered adequacy + specificity gate for LB_WMB_HOLDQUERY_PROBE (pure; no brain build).
 
     A1 (route): the INTACT 'wmb_ask' reply was produced by the organ's hold-query read-out (multiref.kind=='query',
@@ -484,13 +484,22 @@ def _wmb_adequacy(intact_a, ctrl_a, ctrl_b, ctrl_les):
     A2 (two referents): the INTACT read-out holds >=2 referents AND the INTACT reply names BOTH 'fox' and 'wolf'.
     S1 (specificity): on the 1-referent control 'wmb1_ask', the INTACT reply is NOT a multiref read-out (organ out of
        scope), intact-vs-intact-rebuild `answer` is identical, and intact-vs-LESION `answer` is identical.
-    Returns (override_verdict_or_None, report). override is None iff all hold; else a named non-pass verdict that
-    makes load_bearing UNDEFINED (never counted as a pass or a fail)."""
+    A1 is required on the LESION arm too when it is passed (review v2:7a3b94367: a lesion ask intercepted elsewhere
+    would otherwise count a route change as a hold effect).
+    Returns (override_verdict_or_None, report). override is None iff all hold; else a named non-pass verdict.
+    NOTE (2026-09-24 relabel): this probe is an INTEGRITY SMOKE, not load-bearing evidence -- its reply template's only
+    input is the lesioned buffer, so once A1 holds the treatment is predetermined. measure_faculty never lets it set
+    load_bearing (see `integrity_smoke`)."""
     rep = {"A1_route": None, "A2_two_referents": None, "S1_control_out_of_scope": None,
            "S1_control_null_clean": None, "S1_control_lesion_unchanged": None}
     ia = (intact_a or {}).get(_WMB_DRIVE_TURN) or {}
     mr = ia.get("multiref") if isinstance(ia.get("multiref"), dict) else {}
     rep["A1_route"] = bool(mr.get("kind") == "query" and mr.get("is_hold_query") is True)
+    if lesioned is not None:
+        il = lesioned.get(_WMB_DRIVE_TURN) or {}
+        lmr = il.get("multiref") if isinstance(il.get("multiref"), dict) else {}
+        rep["A1_route_lesion"] = bool(lmr.get("kind") == "query" and lmr.get("is_hold_query") is True)
+        rep["A1_route"] = bool(rep["A1_route"] and rep["A1_route_lesion"])
     rep["A2_two_referents"] = bool((mr.get("n_referents") or 0) >= 2
                                    and all(w in _wmb_words(ia.get("answer")) for w in _WMB_REFERENTS))
     if ctrl_a is None or ctrl_b is None or ctrl_les is None:
@@ -515,6 +524,156 @@ def _wmb_adequacy(intact_a, ctrl_a, ctrl_b, ctrl_les):
     if not rep["S1_control_lesion_unchanged"]:
         return "off-target-lesion", rep
     return None, rep
+
+
+# ── WM-BINDING ORDINARY-CONTENT PROBE (LB_WMB_CONTENT_PROBE, default OFF -> byte-identical) ─────────────────────
+# WHY (adversarial review v2:7a3b94367): the hold-query probe above cannot fail -- its reply is a template whose only
+# input is the buffer the lesion disables. This probe asks the question that CAN fail: does the organ's held state
+# change an ORDINARY content reply? Two content-swapped sessions (fox/wolf 'wmc', cat/dog 'wmcx') each LOAD two
+# referents on the intro and then ask an ordinary transitive; the organ's only path into that reply is this session's
+# held WM focus, co-driven through the one-brain d6->comprehension cross-edge. The lesion is EDGE-CONFINED
+# (BRAIN_MULTIREF_LESION_SCOPE=recur on EVERY arm): only the w_k->w_k slow-NMDA synapses of the organ's pools are zeroed
+# on the SHARED slice; the shared buffer, read_isolation, and the xedge focus are identical across arms.
+# Pre-registration: research/findings/2026-09-24-wm-binding-ordinary-content-probe-PREREGISTRATION.md.
+LB_WMB_CONTENT = os.environ.get("LB_WMB_CONTENT_PROBE", "").strip().lower() in ("1", "true", "yes", "on")
+_WMC_TURNS = {"A": ("wmc_intro", "wmc_drive", ("fox", "wolf")),
+              "B": ("wmcx_intro", "wmcx_drive", ("cat", "dog"))}
+_WMC_BASE_ENV = {"BRAIN_MULTIREF_LESION_SCOPE": "recur"}   # on EVERY arm (a no-op without BRAIN_MULTIREF_LESION)
+_WMC_MECH_FIELDS = ["multiref.kind", "multiref.n_referents", "multiref.recovered", "multiref.hold_alive_min",
+                    "multiref.lesion_scope", "comprehension.margin", "comprehension.comprehended",
+                    "comprehension.xedge_live_learn.focus", "comprehension.repair", "inner_state_readout", "abstained"]
+
+
+def _wmb_probe_flags():
+    return {"LB_WMB_HOLDQUERY_PROBE": bool(LB_WMB_HOLDQUERY), "LB_WMB_CONTENT_PROBE": bool(LB_WMB_CONTENT)}
+
+
+def _wmc_mech(arm, turn):
+    from research.runners.onebrain_regression_battery import _get_path
+    r = (arm or {}).get(turn) or {}
+    return {f: _get_path(r, f)[1] for f in _WMC_MECH_FIELDS} | {"answer": r.get("answer")}
+
+
+def _wmc_gate(arms):
+    """The pre-registered gate for LB_WMB_CONTENT_PROBE (pure; no brain build). `arms` = {"A"|"B": {"intact_a",
+    "intact_b", "lesion", "lesion_rep": arm-dict-or-None}}. Returns (load_bearing True/False/None, verdict, report).
+
+    Conditions, per content c in (A, B), evaluated in this order (the first failure names the UNDEFINED verdict):
+      build   every arm built, no per-turn `_error`                                     -> "arm-build-failed"
+      R1      organ IN SCOPE on the intro on EVERY arm: multiref.kind=='maintain', n_referents==2; on the lesion
+              arms also multiref.lesion_scope=='recur' (the confined lesion reached the organ) -> "probe-inadequate:route"
+      R2      the drive reply is ORDINARY on EVERY arm: no inner_state_readout, no multiref hold-query
+                                                                                   -> "probe-inadequate:not-ordinary"
+      L       the confined lesion held: lesion intro multiref.hold_alive_min == 0.0 on both lesion arms
+                                                                                   -> "lesion-not-effective"
+      N       intact_a == intact_b on `answer`                                     -> "noisy-null-control"
+      C       the intact reply follows the input: names >=1 of c's own referents and none of the other content's
+                                                                                   -> "probe-inadequate:content"
+      R       lesion == lesion_rep on `answer`                                     -> "noisy"
+    Then T_c = intact_a `answer` != lesion `answer`. Both -> load_bearing True ("regressed"); neither -> False
+    ("pass", a real negative); exactly one -> None ("content-dependent-effect", reported, not counted)."""
+    rep = {"A": {}, "B": {}}
+    for c, (intro, drive, refs) in _WMC_TURNS.items():
+        other = _WMC_TURNS["B" if c == "A" else "A"][2]
+        a = arms.get(c) or {}
+        r = rep[c]
+        if any(a.get(k) is None for k in ("intact_a", "intact_b", "lesion", "lesion_rep")) or any(
+                isinstance(t, dict) and t.get("_error") for k in ("intact_a", "intact_b", "lesion", "lesion_rep")
+                for t in (a.get(k) or {}).values()):
+            return None, "arm-build-failed", rep
+
+        def mr(arm, turn):
+            m = ((arm or {}).get(turn) or {}).get("multiref")
+            return m if isinstance(m, dict) else {}
+        r1 = {}
+        for k in ("intact_a", "intact_b", "lesion", "lesion_rep"):
+            m = mr(a[k], intro)
+            ok = m.get("kind") == "maintain" and m.get("n_referents") == 2
+            if k.startswith("lesion"):
+                ok = ok and m.get("lesion_scope") == "recur"
+            r1[k] = bool(ok)
+        r["R1_intro_in_scope_every_arm"] = r1
+        r2 = {}
+        for k in ("intact_a", "intact_b", "lesion", "lesion_rep"):
+            d = a[k].get(drive) or {}
+            r2[k] = bool(not d.get("inner_state_readout") and mr(a[k], drive).get("kind") != "query"
+                         and "answer" in d)
+        r["R2_drive_ordinary_every_arm"] = r2
+        r["L_lesion_hold_dead"] = bool(all(mr(a[k], intro).get("hold_alive_min") == 0.0
+                                           for k in ("lesion", "lesion_rep")))
+        ia, ib = a["intact_a"].get(drive) or {}, a["intact_b"].get(drive) or {}
+        la, lb = a["lesion"].get(drive) or {}, a["lesion_rep"].get(drive) or {}
+        r["N_null_clean"] = bool(ia.get("answer") == ib.get("answer"))
+        w = _wmb_words(ia.get("answer"))
+        r["C_follows_input"] = bool(any(x in w for x in refs) and not any(x in w for x in other))
+        r["R_lesion_reproduced"] = bool(la.get("answer") == lb.get("answer"))
+        r["T_reply_changed"] = bool(ia.get("answer") != la.get("answer"))
+    for c in ("A", "B"):
+        if not all(rep[c]["R1_intro_in_scope_every_arm"].values()):
+            return None, "probe-inadequate:route", rep
+    for c in ("A", "B"):
+        if not all(rep[c]["R2_drive_ordinary_every_arm"].values()):
+            return None, "probe-inadequate:not-ordinary", rep
+    for cond, verdict in (("L_lesion_hold_dead", "lesion-not-effective"), ("N_null_clean", "noisy-null-control"),
+                          ("C_follows_input", "probe-inadequate:content"), ("R_lesion_reproduced", "noisy")):
+        if not all(rep[c][cond] for c in ("A", "B")):
+            return None, verdict, rep
+    ta, tb = rep["A"]["T_reply_changed"], rep["B"]["T_reply_changed"]
+    if ta and tb:
+        return True, "regressed", rep
+    if not ta and not tb:
+        return False, "pass", rep
+    return None, "content-dependent-effect", rep
+
+
+def measure_wmb_content(out_dir, seed=42, repeats=2):
+    """LB_WMB_CONTENT_PROBE: build intact a/b + confined-lesion + lesion-rebuild arms for BOTH content sessions, then
+    `_wmc_gate`. Early-return path (never touches any other faculty's arms)."""
+    spec = FACULTY_LESIONS["wm-binding-advanced"]
+    flag, val = spec["flag"], spec["value"]
+    _sfx = _seed_suffix(seed)
+    res = {"faculty": "wm-binding-advanced", "turn": _WMC_TURNS["A"][1], "kind": spec["kind"], "flag": flag,
+           "load_bearing": None, "verdict": None, "change_kind": None, "diffs": [],
+           "treatment_diffs": None, "control_diffs": None, "attributable_fraction": None,
+           "null_control_clean": None, "lesion_reproduced": None, "flag_resolves": _flag_resolves(flag),
+           "lesion_env": dict(_WMC_BASE_ENV, **{flag: val}), "wmb_probe_flags": _wmb_probe_flags(),
+           "note": ("LB_WMB_CONTENT_PROBE: ordinary transitive after a 2-referent intro, fox/wolf (wmc) + content-"
+                    "swapped cat/dog (wmcx); EDGE-CONFINED lesion (BRAIN_MULTIREF_LESION_SCOPE=recur on every arm).")}
+    if not res["flag_resolves"]:
+        res["verdict"] = "lesion-knob-missing"
+        return res
+    arms = {}
+    for c, (intro, drive, _refs) in _WMC_TURNS.items():
+        grp = turn_group(drive)
+        fn = "_".join(grp)
+        les_env = dict(_WMC_BASE_ENV, **{flag: val})
+        arms[c] = {
+            "intact_a": _spawn_arm(dict(_WMC_BASE_ENV), grp, os.path.join(out_dir, "intact_a_%s%s.json" % (fn, _sfx))),
+            "intact_b": _spawn_arm(dict(_WMC_BASE_ENV), grp, os.path.join(out_dir, "intact_b_%s%s.json" % (fn, _sfx))),
+            "lesion": _spawn_arm(les_env, grp, os.path.join(out_dir, "lesion_recur_%s%s.json" % (fn, _sfx))),
+            "lesion_rep": _spawn_arm(les_env, grp, os.path.join(out_dir, "lesion_recur_%s%s.json.rep0" % (fn, _sfx))),
+        }
+    lb, verdict, gate = _wmc_gate(arms)
+    res["load_bearing"], res["verdict"], res["wmc_gate"] = lb, verdict, gate
+    res["wmc_mechanism"] = {c: {k: {"intro": _wmc_mech(arms[c][k], _WMC_TURNS[c][0]),
+                                    "drive": _wmc_mech(arms[c][k], _WMC_TURNS[c][1])} for k in arms[c]}
+                            for c in arms}
+    if verdict in ("regressed", "pass"):
+        diffs = []
+        for c in ("A", "B"):
+            ia = (arms[c]["intact_a"] or {}).get(_WMC_TURNS[c][1]) or {}
+            la = (arms[c]["lesion"] or {}).get(_WMC_TURNS[c][1]) or {}
+            if ia.get("answer") != la.get("answer"):
+                diffs.append({"field": "answer", "turn": _WMC_TURNS[c][1], "on": ia.get("answer"),
+                              "off": la.get("answer")})
+        res["diffs"] = diffs
+        res["treatment_diffs"] = len(diffs)
+        res["control_diffs"] = 0
+        res["null_control_clean"] = True
+        res["lesion_reproduced"] = True
+        res["change_kind"] = _classify_diffs(diffs) if diffs else "none"
+    os.makedirs(out_dir, exist_ok=True)
+    return res
 
 
 def _oed_build_shared_world(seed):
@@ -964,6 +1123,10 @@ def measure_faculty(key, out_dir, repeats=1, intact_cache=None, seed=42):
     # flag is off) stays byte-identical.
     if LB_AFFECT_TONE_OPEN and key == "affect-coloring":
         return measure_affect_tone_open_output(out_dir, seed=seed, repeats=repeats)
+    # WM-BINDING ORDINARY-CONTENT PROBE (LB_WMB_CONTENT_PROBE, default OFF): same early-return discipline; takes
+    # precedence over the hold-query INTEGRITY smoke when both flags are set.
+    if LB_WMB_CONTENT and key == "wm-binding-advanced":
+        return measure_wmb_content(out_dir, seed=seed, repeats=repeats)
     spec = FACULTY_LESIONS.get(key)
     row = _faculty_row(key)
     res = {"faculty": key, "turn": (row[1] if row else None),
@@ -1185,7 +1348,7 @@ def measure_faculty(key, out_dir, repeats=1, intact_cache=None, seed=42):
         ctrl_b = _spawn_arm({}, cgrp, os.path.join(out_dir, "intact_b_%s%s.json" % (_cf, _sfx)))
         ctrl_les = _spawn_arm({flag: val}, cgrp, os.path.join(out_dir, "lesion_%s_ctrl%s.json"
                                                                % (key.replace("-", "_"), _sfx)))
-        override, adequacy = _wmb_adequacy(intact_a, ctrl_a, ctrl_b, ctrl_les)
+        override, adequacy = _wmb_adequacy(intact_a, ctrl_a, ctrl_b, ctrl_les, lesioned=lesioned)
         res["wmb_adequacy"] = adequacy
         res["wmb_control_group"] = cgrp
         res["wmb_mechanism"] = {"intact_a": _wmb_mech(intact_a, _WMB_DRIVE_TURN),
@@ -1197,6 +1360,15 @@ def measure_faculty(key, out_dir, repeats=1, intact_cache=None, seed=42):
         if override is not None:
             res["verdict"] = override
             res["load_bearing"] = None
+        # INTEGRITY SMOKE (review v2:7a3b94367): the hold-query reply's only input is the lesioned buffer, so a change is
+        # predetermined once the route is reached. The smoke's own outcome is kept (`integrity_smoke_verdict`); the
+        # faculty record NEVER carries load_bearing from it, and its verdict is outside ("regressed","pass") so run()'s
+        # fraction excludes it from both numerator and denominator.
+        res["integrity_smoke"] = True
+        res["integrity_smoke_verdict"] = res["verdict"]
+        res["verdict"] = "integrity-smoke"
+        res["load_bearing"] = None
+        res["wmb_probe_flags"] = _wmb_probe_flags()
     return res
 
 
@@ -1306,6 +1478,78 @@ def _wmb_selftest_checks():
             _wmb_adequacy(good_i, c_ok, arm(_WMB_CONTROL_TURN, "other"), c_ok)[0] == "noisy-null-control",
         "wmb gate: a missing control arm -> arm-build-failed": _wmb_adequacy(good_i, None, c_ok, c_ok)[0]
             == "arm-build-failed",
+        "wmb gate: LESION arm off the hold-query route -> probe-inadequate:route (A1 on every arm)":
+            _wmb_adequacy(good_i, c_ok, c_ok, c_ok, lesioned=arm(_WMB_DRIVE_TURN, "I don't know."))[0]
+            == "probe-inadequate:route",
+        "wmb gate: lesion arm on the route -> no override":
+            _wmb_adequacy(good_i, c_ok, c_ok, c_ok, lesioned=arm(_WMB_DRIVE_TURN, "none", q2))[0] is None,
+    }
+
+
+def _wmc_selftest_checks():
+    """LB_WMB_CONTENT_PROBE wiring + the pure `_wmc_gate` in BOTH directions (no brain build)."""
+    from research.runners.d6_multiref_wm_production_organ import extract_referents, is_hold_query
+    t = _TURN_BY_LABEL
+    default_labels = {x[0] for x in PROBE_TURNS}
+
+    def turn_rec(intro_mr, drive_answer, drive_extra=None):
+        return {"intro": {"answer": "x", "multiref": intro_mr}, "drive": dict({"answer": drive_answer},
+                                                                               **(drive_extra or {}))}
+
+    def mk(c, intact_ans, lesion_ans, lesion_rep_ans=None, intact_b_ans=None, les_scope="recur", les_alive=0.0,
+           intro_n=2, drive_extra=None):
+        intro, drive, _ = _WMC_TURNS[c]
+        mi = {"kind": "maintain", "n_referents": intro_n, "hold_alive_min": 0.06}
+        ml = {"kind": "maintain", "n_referents": intro_n, "hold_alive_min": les_alive, "lesion_scope": les_scope}
+
+        def arm(m, ans):
+            r = turn_rec(m, ans, drive_extra)
+            return {intro: r["intro"], drive: r["drive"]}
+        return {"intact_a": arm(mi, intact_ans), "intact_b": arm(mi, intact_b_ans or intact_ans),
+                "lesion": arm(ml, lesion_ans), "lesion_rep": arm(ml, lesion_rep_ans or lesion_ans)}
+    A_chg = mk("A", "did the wolf watch the owl?", "who watched whom?")
+    B_chg = mk("B", "did the dog watch the owl?", "who watched whom?")
+    A_same = mk("A", "did the wolf watch the owl?", "did the wolf watch the owl?")
+    B_same = mk("B", "did the dog watch the owl?", "did the dog watch the owl?")
+    return {
+        "wmc flag parses to a real bool": isinstance(LB_WMB_CONTENT, bool),
+        "wmc turns are label-only (NOT in the default roster)":
+            not ({"wmc_intro", "wmc_drive", "wmcx_intro", "wmcx_drive"} & default_labels),
+        "wmc groups are intro->drive": turn_group("wmc_drive") == ["wmc_intro", "wmc_drive"]
+            and turn_group("wmcx_drive") == ["wmcx_intro", "wmcx_drive"],
+        "wmc intros name exactly their two lexicon referents":
+            extract_referents(t["wmc_intro"][1]) == ["fox", "wolf"]
+            and extract_referents(t["wmcx_intro"][1]) == ["cat", "dog"],
+        "wmc drives are ordinary (not hold-queries) and structurally identical":
+            not is_hold_query(t["wmc_drive"][1]) and not is_hold_query(t["wmcx_drive"][1])
+            and t["wmc_drive"][1].replace("wolf", "X") == t["wmcx_drive"][1].replace("dog", "X"),
+        "wmc confined-lesion knob resolves in source": _flag_resolves("BRAIN_MULTIREF_LESION_SCOPE"),
+        "wmc gate: both contents change -> load_bearing True": _wmc_gate({"A": A_chg, "B": B_chg})[:2]
+            == (True, "regressed"),
+        "wmc gate: NEITHER changes -> load_bearing False (a real negative; it CAN fail)":
+            _wmc_gate({"A": A_same, "B": B_same})[:2] == (False, "pass"),
+        "wmc gate: only one content changes -> UNDEFINED content-dependent-effect":
+            _wmc_gate({"A": A_chg, "B": B_same})[:2] == (None, "content-dependent-effect"),
+        "wmc gate: lesion arm NOT confined (scope missing) -> probe-inadequate:route":
+            _wmc_gate({"A": mk("A", "the wolf", "x", les_scope=None), "B": B_chg})[1] == "probe-inadequate:route",
+        "wmc gate: organ out of scope on the intro -> probe-inadequate:route":
+            _wmc_gate({"A": mk("A", "the wolf", "x", intro_n=1), "B": B_chg})[1] == "probe-inadequate:route",
+        "wmc gate: drive is an inner-state read-out -> probe-inadequate:not-ordinary":
+            _wmc_gate({"A": mk("A", "the wolf", "x", drive_extra={"inner_state_readout": True}), "B": B_chg})[1]
+            == "probe-inadequate:not-ordinary",
+        "wmc gate: lesion hold still alive -> lesion-not-effective":
+            _wmc_gate({"A": mk("A", "the wolf", "x", les_alive=0.05), "B": B_chg})[1] == "lesion-not-effective",
+        "wmc gate: intact rebuild differs -> noisy-null-control":
+            _wmc_gate({"A": mk("A", "the wolf", "x", intact_b_ans="the fox"), "B": B_chg})[1]
+            == "noisy-null-control",
+        "wmc gate: reply ignores the input content -> probe-inadequate:content":
+            _wmc_gate({"A": mk("A", "I don't know.", "x"), "B": B_chg})[1] == "probe-inadequate:content",
+        "wmc gate: reply names the OTHER content -> probe-inadequate:content":
+            _wmc_gate({"A": mk("A", "the wolf and the dog", "x"), "B": B_chg})[1] == "probe-inadequate:content",
+        "wmc gate: lesion rebuild differs -> noisy": _wmc_gate({"A": mk("A", "the wolf", "x", lesion_rep_ans="y"),
+                                                               "B": B_chg})[1] == "noisy",
+        "wmc gate: a missing arm -> arm-build-failed":
+            _wmc_gate({"A": dict(A_chg, lesion=None), "B": B_chg})[1] == "arm-build-failed",
     }
 
 
@@ -1488,6 +1732,7 @@ def selftest(out_path=None):
             == ["", "_s43", "_s44", "_s100", "_s101", "_s102"],
     }
     checks.update(_wmb_selftest_checks())
+    checks.update(_wmc_selftest_checks())
     ok = all(checks.values())
     print("=== LOAD-BEARING INSTRUMENT SELF-TEST ===")
     for name, passed in checks.items():

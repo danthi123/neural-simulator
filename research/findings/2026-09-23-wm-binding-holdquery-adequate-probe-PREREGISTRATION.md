@@ -113,3 +113,20 @@ file and of the per-faculty record must match exactly. Also: `PROBE_TURNS` and `
 run is staged on the mini-PC pool (`tools/pool_provision.sh --isolated --revision <sha> pool41 pool42`), one
 invocation per seed, each with its own `--out` directory under
 `research/findings/raw/_load_bearing/wmb_holdquery/s<seed>/`.
+
+## AMENDMENT LOG
+
+- **2026-09-24 (fix round, adversarial review `v2:7a3b94367`), after the s42 pool smoke had been SEEN (every
+  condition passed).** This probe is PASS-BY-CONSTRUCTION. Its reply template's only input is the buffer the
+  lesion disables, so once A1 holds the treatment is predetermined. It is relabelled an **INTEGRITY SMOKE**
+  (route + specificity), and it no longer sets `load_bearing`. The per-faculty record now reads
+  `verdict: integrity-smoke`, `load_bearing: null`, `integrity_smoke: true`, with the smoke's own outcome in
+  `integrity_smoke_verdict`. The fraction excludes it from both numerator and denominator. The GO/PARTIAL/NO-GO
+  headline rule above is WITHDRAWN.
+- Two other changes in the same round:
+  - A1 is now required on the lesion arm too (`A1_route_lesion`).
+  - The statement "The lesion cuts the spiking hold only" was false under the default organ-scope lesion,
+    which also moves the buffer to a private bridge, skips `read_isolation` and withholds the xedge focus. The
+    confined lesion is `BRAIN_MULTIREF_LESION_SCOPE=recur`.
+- The 6-seed runs dispatched from revision `624e90674` are superseded. The load-bearing measurement for this
+  faculty is now `2026-09-24-wm-binding-ordinary-content-probe-PREREGISTRATION.md`.

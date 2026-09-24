@@ -1,9 +1,12 @@
-"""Byte-identity assertion (IN DATA) for LB_WMB_HOLDQUERY_PROBE OFF vs the pinned pre-change SHA f35196e66.
+"""Byte-identity assertion (IN DATA): LB_WMB_HOLDQUERY_PROBE, LB_WMB_CONTENT_PROBE and BRAIN_MULTIREF_LESION_SCOPE
+all OFF vs the pinned pre-change SHA.
 
 Compares two completed `load_bearing_fraction --only wm-binding-advanced --repeats 2` output directories -- one run
-from an extracted f35196e66 tree (pinned), one from this branch with the flag unset -- by EXACT sha256 of every arm
-file and of the per-faculty record, and hashes `PROBE_TURNS` / `FACULTY_PROBES` as imported from each tree. No brain
-build. Pre-registration: research/findings/2026-09-23-wm-binding-holdquery-adequate-probe-PREREGISTRATION.md.
+from an extracted tree at the pinned SHA (default 36a175534, the origin/main this fix round merged; this lane's
+changes are absent there), one from this branch with every flag unset -- by EXACT sha256 of every arm file and of the
+per-faculty record, and hashes `PROBE_TURNS` / `FACULTY_PROBES` as imported from each tree. No brain build.
+Pre-registrations: research/findings/2026-09-23-wm-binding-holdquery-adequate-probe-PREREGISTRATION.md and
+research/findings/2026-09-24-wm-binding-ordinary-content-probe-PREREGISTRATION.md.
 
   .venv/bin/python -m research.runners._wmb_offflag_byte_identity --pinned-dir D1 --pinned-tree T1 \
       --branch-dir D2 --branch-tree T2 --out research/findings/raw/_load_bearing/wmb_holdquery/offflag_byte_identity.json
@@ -50,7 +53,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--pinned-dir", required=True)
     ap.add_argument("--pinned-tree", required=True)
-    ap.add_argument("--pinned-sha", default="f35196e66")
+    ap.add_argument("--pinned-sha", default="36a175534")
     ap.add_argument("--branch-dir", required=True)
     ap.add_argument("--branch-tree", required=True)
     ap.add_argument("--out", required=True)
@@ -66,7 +69,7 @@ def main():
     roster = {"pinned": ros_p, "branch": ros_b, "identical": ("error" not in ros_p and ros_p == ros_b)}
     identical = all(v["identical"] for v in arms.values()) and record["identical"] and roster["identical"]
     art = {"runner": "research.runners._wmb_offflag_byte_identity", "pinned_sha": a.pinned_sha,
-           "flag": "LB_WMB_HOLDQUERY_PROBE (unset in both runs)", "compare": "exact sha256",
+           "flag": "LB_WMB_HOLDQUERY_PROBE + LB_WMB_CONTENT_PROBE + BRAIN_MULTIREF_LESION_SCOPE (unset in both runs)", "compare": "exact sha256",
            "arm_files": arms, "per_faculty_record": record, "roster": roster,
            "byte_identical_off": identical}
     os.makedirs(os.path.dirname(os.path.abspath(a.out)), exist_ok=True)

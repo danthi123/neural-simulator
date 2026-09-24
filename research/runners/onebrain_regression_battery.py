@@ -202,6 +202,16 @@ _EXTRA_TURNS = [
     ("wmb_ask",    "who are we talking about",       "wmb",  False, None, False),  # hold-query -> reply = read-back off the spiking buffer
     ("wmb1_intro", "the fox walked in",              "wmb1", True,  None, False),  # 1 referent -> organ out of scope (judge returns None)
     ("wmb1_ask",   "who are we talking about",       "wmb1", False, None, False),  # same ask, organ out of scope -> falls through; lesion must not change it
+    # ── WM-BINDING ORDINARY-CONTENT PAIRS (label-only; used only by LB_WMB_CONTENT_PROBE) ─────────────────────────
+    # The hold-query above is PASS-BY-CONSTRUCTION (its reply template's only input is the lesioned buffer; review
+    # v2:7a3b94367) -> an INTEGRITY smoke. These pairs ask whether the organ's held state changes an ORDINARY content
+    # reply: the organ LOADs two referents on the intro, then an ordinary transitive that the comprehension organ reads
+    # WITH this session's held WM focus co-driven through the one-brain cross-edge (the organ's only path into an
+    # ordinary reply). 'wmc' = fox/wolf; 'wmcx' = the content-swapped in-scope control (cat/dog, same structure).
+    ("wmc_intro",  "the fox and the wolf walked in", "wmc",  True,  None, False),  # 2 lexicon referents -> LOAD fox+wolf
+    ("wmc_drive",  "the wolf watches the owl",       "wmc",  False, None, False),  # ordinary transitive (no hold-query)
+    ("wmcx_intro", "the cat and the dog walked in",  "wmcx", True,  None, False),  # content-swapped: LOAD cat+dog
+    ("wmcx_drive", "the dog watches the owl",        "wmcx", False, None, False),  # same structure, swapped content
 ]
 _TURN_BY_LABEL.update({t[0]: t for t in _EXTRA_TURNS})
 

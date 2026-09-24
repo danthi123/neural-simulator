@@ -142,6 +142,23 @@ def multiref_lesioned() -> bool:
 _MULTIREF_COMPETITIVE_DEFAULT_ON = True
 
 
+def multiref_lesion_scope() -> str:
+    """`BRAIN_MULTIREF_LESION_SCOPE` (default unset -> "organ", byte-identical to before this knob existed).
+
+    "organ" (default): the pre-existing `BRAIN_MULTIREF_LESION` behaviour -- the lesioned buffer is a PRIVATE
+    `MultiSlotHold(recur=0)` bridge (never the shared one-brain slice), the one-brain `read_isolation` guard is
+    skipped, and the xedge focus (`_own_focus`) / semantic-drop drive are withheld. When the xedge pool is live
+    (production default) that lesion therefore changes FOUR things, not one (adversarial review v2:7a3b94367).
+
+    "recur": the EDGE-CONFINED lesion. Only the claimed edge changes -- the slow-NMDA w_k->w_k self-recurrence of this
+    organ's register pools. With a shared one-brain slice the lesion zeroes exactly those synapses IN PLACE on the
+    shared bridge (the same idiom as the xedge `lesion_cross`), keeps `shared=self._shared`, runs under the same
+    `read_isolation` guard, and sets the same `_own_focus`; without a shared slice it is the private recur=0 buffer
+    (which already differs from the intact buffer only in that weight). Only read when `BRAIN_MULTIREF_LESION` is on."""
+    v = (os.environ.get("BRAIN_MULTIREF_LESION_SCOPE") or "").strip().lower()
+    return "recur" if v == "recur" else "organ"
+
+
 def multiref_competitive_enabled() -> bool:
     """DEFAULT-ON (flipped 2026-09-02, `_MULTIREF_COMPETITIVE_DEFAULT_ON`). `BRAIN_MULTIREF_COMPETITIVE` in
     {0,false,no,off,""} -> an explicit OFF, reverting to the pre-existing role-by-position host MARKER
@@ -231,6 +248,47 @@ class MultiReferentWMOrgan:
             self.buf_lesion = MultiSlotHold(self.seed, R_MAX, N_SLOT, recur=0.0)   # kill the slow-NMDA recurrence
         return self.buf_lesion
 
+    def _recur_masks(self):
+        """Boolean masks over the SHARED bridge's `cp_connections.data` selecting this organ's slow-NMDA
+        self-recurrence: every synapse whose pre AND post neuron lie in the SAME register pool w_k (row = pre,
+        col = post, the orientation the xedge `masks` use). Built once, lazily."""
+        if getattr(self, "_recur_mask", None) is None:
+            from sim.backend import to_host
+            b = self.buf.sb
+            coo = b.cp_connections.tocoo()
+            row = np.asarray(to_host(coo.row)); col = np.asarray(to_host(coo.col))
+            m = np.zeros(row.shape, dtype=bool)
+            for k in range(self.buf.K):
+                ix = self.buf.idx[k]
+                m |= np.isin(row, ix) & np.isin(col, ix)
+            self._recur_mask = m
+            self._recur_saved = None
+        return self._recur_mask
+
+    def _set_recur_lesion(self, on: bool):
+        """EDGE-CONFINED lesion on the SHARED slice (`BRAIN_MULTIREF_LESION_SCOPE=recur`): zero (on=True) or restore
+        (on=False) exactly the w_k->w_k slow-NMDA synapses, in place. Idempotent; restores the saved values, so an
+        intact call after a lesioned one in the same process reads the intact weights."""
+        from sim.backend import to_host
+        m = self._recur_masks()
+        b = self.buf.sb
+        lesioned = bool(getattr(self, "_recur_lesioned", False))
+        if on == lesioned:
+            return
+        data = np.asarray(to_host(b.cp_connections.data)).copy()
+        if on:
+            self._recur_saved = data[m].copy()
+            data[m] = 0.0
+        else:
+            data[m] = self._recur_saved
+        xp = getattr(self._shared, "xp", None) or np
+        b.cp_connections.data = xp.asarray(data, dtype=b.cp_connections.data.dtype)
+        self._recur_lesioned = bool(on)
+
+    def _confined(self, lesion: bool) -> bool:
+        """True iff this call is an EDGE-CONFINED recur lesion on a shared slice (see `multiref_lesion_scope`)."""
+        return bool(lesion and self._shared is not None and multiref_lesion_scope() == "recur")
+
     def _local_slot(self, ref: str) -> int:
         """Bind a referent string to a STABLE local slot via the RUNG6c binder (content-agnostic, one-shot Hebbian)."""
         if ref in self._slot_of_ref:
@@ -269,7 +327,14 @@ class MultiReferentWMOrgan:
         0's own band (`MultiSlotHold.apply_register_drive`); every other held register is unaffected."""
         self.ensure_built()
         refs = list(referents)[:min(R_MAX, _BINDER_K)]
-        buf = self._lesion_buf() if lesion else self.buf
+        confined = self._confined(lesion)
+        if self._shared is not None and multiref_lesion_scope() == "recur":
+            self._set_recur_lesion(confined)        # zero / restore ONLY the w_k->w_k synapses on the shared slice
+        if confined:
+            buf = self.buf                          # SAME shared buffer; only its recurrence differs
+            lesion = False                          # every other branch below runs exactly as the intact arm's
+        else:
+            buf = self._lesion_buf() if lesion else self.buf
         competitive = multiref_competitive_enabled() if competitive is None else bool(competitive)
         competition_lesion = (multiref_competition_lesioned() if competition_lesion is None
                                else bool(competition_lesion))
@@ -345,7 +410,7 @@ class MultiReferentWMOrgan:
             "distinct_registers": bool(len(set(registers)) == len(registers)),   # no two referents shared a bank
             "competitive": bool(competitive),
             "competition_lesioned": bool(competitive and competition_lesion),
-        }
+        } | ({"recur_lesioned": True} if confined else {})
 
     def judge(self, text: str, lesion: bool = False, xedge_drop_current=None) -> dict | None:
         """Production entry. Returns None when the input is OUT OF SCOPE (fewer than 2 referents AND not a hold-query)
@@ -377,6 +442,8 @@ class MultiReferentWMOrgan:
             "hold_alive_min": res["hold_alive_min"], "zero_input_ok": res["zero_input_ok"],
             "all_recovered": res["all_recovered"], "is_hold_query": bool(query),
         }
+        if res.get("recur_lesioned"):
+            out["lesion_scope"] = "recur"   # EDGE-CONFINED lesion (only present when that knob is on)
         if query:
             out["readout"] = hold_readout([res["recovered"].get(r) for r in range(res["n_referents"])])
         return out
