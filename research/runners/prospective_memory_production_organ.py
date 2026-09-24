@@ -142,8 +142,16 @@ def pmem_hebbian_lesioned() -> bool:
     return v.strip().lower() in ("1", "true", "yes", "on")
 
 
+# PRODUCTION DEFAULT-ON since 2026-09-23 (owner-authorized validated flip; evidence:
+# research/findings/raw/_pmem_facilitation.json GO, load-bearing 6/6, + allfixes2 robust core). An EXPLICIT falsy value
+# (BRAIN_PMEM_FACILITATION=0/false/no/off/"") is the reversible escape -> the pre-facilitation class, byte-identical.
+_PMEM_FACILITATION_DEFAULT_ON = True
+
+
 def pmem_facilitation_enabled() -> bool:
-    """Default-OFF. `BRAIN_PMEM_FACILITATION` in {1,true,yes,on} -> build the SHORT-TERM FACILITATION substrate
+    """DEFAULT-ON since 2026-09-23 (`_PMEM_FACILITATION_DEFAULT_ON`; unset -> ON, an explicit value -> ON iff in
+    {1,true,yes,on}, so `=0` keeps the OFF arm reachable). Historical text (written when it was default-OFF) follows.
+    `BRAIN_PMEM_FACILITATION` in {1,true,yes,on} -> build the SHORT-TERM FACILITATION substrate
     (`FacilitatedHebbianProspectiveMemory` / `FacilitatedProspectiveMemory`, _pmem_facilitation_derisk): a
     Tsodyks-Markram facilitation variable (NMDA Mg-block voltage-gated -> coincidence-preferential) on the
     maintained act_X->rel_X projection, potentiated turn-over-turn by the held assembly's own sustained firing, so
@@ -153,7 +161,7 @@ def pmem_facilitation_enabled() -> bool:
     default build the SAME class as before (byte-identical); the flag is purely additive."""
     v = os.environ.get("BRAIN_PMEM_FACILITATION")
     if v is None:
-        return False
+        return _PMEM_FACILITATION_DEFAULT_ON
     return v.strip().lower() in ("1", "true", "yes", "on")
 
 
@@ -269,7 +277,7 @@ class ProspectiveMemoryOrgan:
                 # config is unchanged; the canonical binding is installed at build so the homeostat bias + plateau
                 # theta CALIBRATE against it (a developmental operating-point tuning), then it is ZEROED — none
                 # exists before the formation turn, and `form_intention` relearns it one-shot from real spikes.
-                # BRAIN_PMEM_FACILITATION (default-OFF) swaps in the FACILITATION subclass (short-term facilitation
+                # BRAIN_PMEM_FACILITATION (default-ON since 2026-09-23) swaps in the FACILITATION subclass (short-term facilitation
                 # of the maintained act->rel drive) so the N=3 coincidence read clears FIRE_THR on ALL 6 seeds
                 # (fixes s44 borderline); OFF → the SAME HebbianBindingProspectiveMemory as before (byte-identical).
                 if self._facilitation:
@@ -292,7 +300,7 @@ class ProspectiveMemoryOrgan:
             else:
                 # ESCAPE (`BRAIN_PMEM_HEBBIAN=0`): the cue->action binding is INSTALLED synaptically at build
                 # (byte-identical to the pre-wiring production organ — the retired scaffold). BRAIN_PMEM_FACILITATION
-                # (default-OFF) swaps in the facilitation variant of this build too.
+                # (default-ON since 2026-09-23) swaps in the facilitation variant of this build too.
                 if self._facilitation:
                     from research.runners._pmem_facilitation_derisk import FacilitatedProspectiveMemory
                     fac_g_kw = {}

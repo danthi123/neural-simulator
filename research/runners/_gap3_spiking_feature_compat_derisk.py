@@ -25,6 +25,17 @@ from research.runners._gap3_learned_feature_compat_derisk import (
     ANIMACY, VERB_SELECTS, content_bias_target, make_corpus, learn_features, CONCEPTS, ANIMATE, INANIM, VERBS)
 
 
+def _biased_competition_lesioned() -> bool:
+    """`BRAIN_BIASED_COMPETITION_LESION` in {1,true,yes,on} (default OFF, byte-identical when unset) -> `Spiking
+    FeatureCompat.bias_target` abstains (None) unconditionally, below. See that method's docstring. Independent of
+    (and composes with) `BRAIN_BIASED_COMPETITION` (biased_competition_prod.py), which gates whether the WTA itself
+    is built at all -- this flag lesions the CONTENT-BIAS source once the WTA is already active."""
+    v = os.environ.get("BRAIN_BIASED_COMPETITION_LESION")
+    if v is None:
+        return False
+    return v.strip().lower() in ("1", "true", "yes", "on")
+
+
 def _build(seed, n_feat=40):
     from sim.bridge import SimulationBridge
     from sim.config import CoreSimConfig, RuntimeState, GPUConfig, VisualizationConfig
@@ -152,6 +163,16 @@ class SpikingFeatureCompat:
         return rate
 
     def bias_target(self, candidates, query_verb):
+        """`BRAIN_BIASED_COMPETITION_LESION` in {1,true,yes,on} (default OFF, byte-identical when unset) -> the
+        weights-cleared twin: every candidate's coincidence score reads 0.0 (as if `self.ca`/`self.vs`, the LEARNED
+        concept-animacy / verb-selection synaptic weights `_score` reads, were all zero) -> no candidate ever clears
+        the `>1e-6` bar -> bias_target abstains (None) unconditionally, the same abstain a genuinely-zeroed weight
+        map would produce. This is the minimal env lesion FACULTY_LESIONS['selective-attention-biased-competition']
+        names (research/runners/load_bearing_fraction.py): the host `content_bias_target` lexicon this class
+        replaced is retired (2026-09-16), so there is no host fallback to revert to -- lesioning removes the
+        content bias outright, and `_resolve_biased`'s WTA reverts to the seed-dependent intrinsic attractor."""
+        if _biased_competition_lesioned():
+            return None
         cands = list(candidates)
         scores = {c: self._score(query_verb, c) for c in cands}
         if not scores:

@@ -39,6 +39,15 @@ from research.runners.brain_conversational_agent import BridgeParser
 from research.runners.rf_phasor_composer import RFPhasorComposer, _is_clause
 
 
+def _composer_recall_lesioned() -> bool:
+    """`BRAIN_COMPOSER_RECALL_LESION` in {1,true,yes,on} (default OFF, byte-identical when unset) -> `OneBrain
+    Composer.query_patient` returns None unconditionally, below. See that method's docstring."""
+    v = os.environ.get("BRAIN_COMPOSER_RECALL_LESION")
+    if v is None:
+        return False
+    return v.strip().lower() in ("1", "true", "yes", "on")
+
+
 def _seq_imports():
     """Lazy import of the validated spiking K-way sequencer fabric (shortcut #3). Deferred so an integrated_loop=OFF
     composer (the byte-identical default + the numpy-CPU + test-oracle path) never imports the sequencer de-risk
@@ -1666,7 +1675,15 @@ class OneBrainComposer:
         integrated_loop, else the host first-match -- byte-identical); the downstream patient-type routing + decode read
         the SAME block on both paths (only WHICH block is selected moves from host to spikes). When
         `enable_fact_shard` (default-off), the (agent, action) selection routes through the DG-CA3 fact-block shard
-        (O(shard) blocks decoded, not O(k_max)); the SAME tail runs on the selected block -> answer-identical."""
+        (O(shard) blocks decoded, not O(k_max)); the SAME tail runs on the selected block -> answer-identical.
+
+        `BRAIN_COMPOSER_RECALL_LESION` in {1,true,yes,on} (default OFF, byte-identical when unset) cuts the
+        composer's own recall unconditionally (returns None before the block-selection runs) -- the minimal env
+        lesion FACULTY_LESIONS['semantic-recall'] names (research/runners/load_bearing_fraction.py), mirroring the
+        exact monkeypatch `_production_lesion_probe` already applies in-process (`composer.query_patient = lambda
+        *a, **k: None`)."""
+        if _composer_recall_lesioned():
+            return None
         if self.trace:
             self.last_trace = None
         if self._fact_shard_active():                          # FACT-COUNT-axis sublinear fast path (default-off)

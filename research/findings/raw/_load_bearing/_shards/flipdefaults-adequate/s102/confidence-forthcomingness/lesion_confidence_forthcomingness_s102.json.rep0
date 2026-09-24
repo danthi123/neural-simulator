@@ -1,0 +1,5 @@
+{
+  "rich_well": {
+    "_error": "HTTPException: 400: failed to load brain 'tiny-demo' with renderer 'stub': OSError: [Errno 28] No space left on device"
+  }
+}

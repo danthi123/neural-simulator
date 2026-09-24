@@ -1,0 +1,35 @@
+{
+ "run_id": "1790265661-45288",
+ "runner": "research/runners/onebrain_regression_battery.py",
+ "argv": [
+  "/home/ubuntu/derisk-pool/revisions/bd391aa317eb4b2e787db0be6916cc0946696cdb/research/runners/onebrain_regression_battery.py",
+  "--worker",
+  "--env",
+  "{}",
+  "--turns",
+  "contra",
+  "--out",
+  "/home/ubuntu/derisk-pool/revisions/bd391aa317eb4b2e787db0be6916cc0946696cdb/research/findings/raw/_load_bearing/_shards/flipdefaults-thin/s102/surprise-monitor/intact_a_contra_s102.json"
+ ],
+ "git_sha": "bd391aa317eb4b2e787db0be6916cc0946696cdb",
+ "git_dirty": false,
+ "source_kind": "git_archive",
+ "source_manifest_sha256": "99b57cb5b62c44a95690a3a2ff81cce862efb17812ef6c3ff7d2c6cc29a7640c",
+ "source_manifest_verified_at_start": true,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": true,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-24T16:01:01",
+ "env": {
+  "POOL_JOB_ID": "flip3-manual",
+  "POOL_JOB_MEM_GB": "18",
+  "SIM_BACKEND": "numpy",
+  "SIM_RUN_ID": "1790265661-45274"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": false,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_load_bearing/_shards/flipdefaults-thin/s102/surprise-monitor/intact_a_contra_s102.json"
+}

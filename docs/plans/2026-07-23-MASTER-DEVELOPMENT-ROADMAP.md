@@ -1188,6 +1188,15 @@ Perception/attention/WM, affect, curiosity, self/workspace/ToM, and language are
 
 ## 8. IMMEDIATE NEXT ACTIONS
 
+**2026-09-24 (afternoon):** **Batch 1 SHIPPED default-ON** (`research/findings/2026-09-24-flip-validated-fixes-production-default-battery-GO.md`):
+BRAIN_EPISODIC_STORE_VERIFY, BRAIN_PMEM_FACILITATION, BRAIN_SOURCE_PROV_ABSTAIN_AT_TIE; production-default batteries pass every
+pre-registered criterion; shipped thin headline 0.603, robust core 15 (was 0.590 / 14); adequate 0.949, core 24. Battery B2a on
+the merged default (M1 9db761329) pre-registered and staging. **Language learned-referent production route GO 6/6** (one recorded
+input). **Perception readout-port homeostasis band 5** (port repaired 6/6, capability 3/6). **SlotBinder on GPU ~1 s/query**
+(2-seed candidate; 4-seed extension running). **Owner direction:** knowledge must be learned by the brain, not RAG for Qwen ->
+content-provenance test + learned-content fraction + chat-only AI teacher lanes building; SETTLE flip only after its multi-turn
+contrast. Midnight plan: `research/coordination/midnight_plan_2026-09-24.json`.
+
 **2026-09-24 (morning harvest):** **Curiosity x metacog v4 (phasic LC-NE feedback-withdrawal gain): NO-GO 3/6**
 (`research/findings/2026-09-24-curiosity-metacog-lcne-phasic-gain-v4-6seed-NOGO-3of6-gain-holds-circuit-residual.md`) --
 the gain passes on all six (share 0.37-0.92, v3 0.08-0.25); seeds 44/100 fail on the base circuit (same with the gain

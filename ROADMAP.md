@@ -7,6 +7,12 @@ the [project handoff](HANDOFF.md), and the live state in
 board, when checked out, was `research/coordination/workboard.json` (⚠️ now ~a month
 stale — the live board is [GAP_CLOSURE_MISSION.md](GAP_CLOSURE_MISSION.md) CURRENT STATE; workboard.json is being retired).
 
+## 2026-09-24 (afternoon) — three memory and honesty fixes now ship on by default; the brain's learned word-finder works in the real chat path
+
+**Switched on by default:** the memory that re-checks a new memory and re-forms it if it didn't stick, the "remind me" memory that keeps its cue, and the source monitor that says "I can't tell" instead of guessing at a tie. A pre-registered check on six seeds passed every criterion, and the standard measure of how much the brain drives its replies rose from 0.590 to 0.603.
+**Learned word-finder, real chat path:** the brain's own learned lexicon can pick out new nouns it was never given in a hand-written list, through the production switch, on all six seeds (it recovers both people or things 67-83% of the time; with the lexicon lesioned, 0%). It stays off by default until the switch-on process is complete.
+**Knowledge must be learned, not looked up:** per your direction, Qwen stays fact-free; new tests will show whether a fact in a reply was learned by the brain itself, and a chat-only AI teacher is being built so the brain learns the way a child learns from a teacher.
+
 ## 2026-09-24 (morning) — curiosity's new chemical link works but the circuit under it needs tuning; the working-memory test gives a clean no
 
 **Curiosity driven by uncertainty, second attempt:** the burst-driven version now scales the "ask" response as intended on all six seeds (it carries 37-92% of the effect, up from 8-25%). It still passes on only 3 of 6 seeds, because on the other three the circuit underneath it misbehaves the same way with the new link switched off, or the test's drive steps were too coarse to measure. Next: a finer test and a self-tuning set-point for the "ask" cells.

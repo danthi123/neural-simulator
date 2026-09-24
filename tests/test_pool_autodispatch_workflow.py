@@ -617,3 +617,26 @@ def test_queue_flag_check_never_pipes_help_into_grep_q() -> None:
     r = subprocess.run(["bash", "-c", 'set -uo pipefail; H="$1"; grep -q -- --wanted-flag <<<"$H" && echo ok', "_", big],
                        text=True, capture_output=True)
     assert r.stdout.strip() == "ok" and len(big) > 65536
+
+
+def test_queue_checks_pinned_jobs_against_the_pinned_revision() -> None:
+    # 2026-09-24: `add` checked a revision-pinned job's flags against MAIN's runner, so every unmerged branch's 6-seed
+    # job was refused ("does not even import/parse"). Pinned jobs now skip the local check and are checked against the
+    # pinned revision's own --help on the node (verified by hand: a bogus flag is refused, the real lines queue).
+    src = (ROOT / "tools" / "pool_queue.sh").read_text()
+    assert 'if [ -n "$MOD" ] && [ -z "$PINNED_REV" ]; then' in src          # local check only when NOT pinned
+    assert "at the pinned revision does not accept" in src                  # remote flag check exists
+    assert src.index('PINNED_REV=$(') < src.index('HELP=$(cd "$ROOT"')     # decided before the local --help runs
+
+
+def test_queue_add_front_puts_the_line_at_the_head(tmp_path: Path) -> None:
+    # 2026-09-24: short seed-7 checks had to wait behind a 186-shard battery in a FIFO queue. FRONT=1 prepends.
+    queue = tmp_path / "pool.queue"
+    queue.write_text("1\told-job  #checked:x\n")
+    env = {**os.environ, "POOL_QUEUE_PATH": str(queue)}
+    subprocess.run(["bash", str(ROOT / "tools" / "pool_queue.sh"), "add", "echo back", "--checked", "b"], cwd=ROOT,
+                   env=env, check=True, capture_output=True, text=True)
+    subprocess.run(["bash", str(ROOT / "tools" / "pool_queue.sh"), "add", "echo front", "--checked", "f"], cwd=ROOT,
+                   env={**env, "FRONT": "1"}, check=True, capture_output=True, text=True)
+    lines = queue.read_text().splitlines()
+    assert "echo front" in lines[0] and "old-job" in lines[1] and "echo back" in lines[2]

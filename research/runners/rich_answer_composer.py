@@ -53,6 +53,15 @@ _REPO = os.path.normpath(os.path.join(_HERE, "..", ".."))
 if _REPO not in sys.path:
     sys.path.insert(0, _REPO)
 
+def _discourse_planner_lesioned() -> bool:
+    """`BRAIN_DISCOURSE_PLANNER_LESION` in {1,true,yes,on} (default OFF, byte-identical when unset) -> `Neural
+    DiscoursePlanner.ordered_associates` returns [] unconditionally, below. See that method's docstring."""
+    v = os.environ.get("BRAIN_DISCOURSE_PLANNER_LESION")
+    if v is None:
+        return False
+    return v.strip().lower() in ("1", "true", "yes", "on")
+
+
 # follow-up cues that mean "elaborate further on what we're already talking about"
 _FOLLOWUP_CUES = {"more", "why", "else", "elaborate", "continue", "go", "and", "further", "expand", "explain"}
 _FOLLOWUP_PHRASES = ("tell me more", "go on", "say more", "what else", "anything else", "and then", "why is that",
@@ -271,7 +280,16 @@ class NeuralDiscoursePlanner:
         topic itself and every concept in `avoid`. A concept that NEVER fires (latency None) is unrelated and is
         OMITTED -- so the list is exactly the on-topic neighbourhood in neural-relevance order, and an EMPTY list
         IS the neural STOP signal ('the reachable, unsaid neighbourhood is exhausted'). One spreading probe per
-        call (the validated `relevance_by_latency`)."""
+        call (the validated `relevance_by_latency`).
+
+        `BRAIN_DISCOURSE_PLANNER_LESION` in {1,true,yes,on} (default OFF, byte-identical when unset) returns []
+        unconditionally -- the SAME cut the burndown-3G de-risk already applies by monkeypatch
+        (`planner.ordered_associates = lambda topic, avoid=(): []`, `_closeout_3G_planner_default_validate.py` /
+        the de-risk's own `main()`), as an env-driven neural-lesion FACULTY_LESIONS['discourse-planner'] names
+        (research/runners/load_bearing_fraction.py): the plan's spiking sentence-count read collapses to the
+        empty-neighbourhood STOP signal, so a rich turn's chain/elaboration cannot gather any on-topic concept."""
+        if _discourse_planner_lesioned():
+            return []
         ctrl, graph = self._controller()
         if ctrl is None or topic not in graph:
             return []
