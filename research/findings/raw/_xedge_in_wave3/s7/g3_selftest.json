@@ -1,0 +1,353 @@
+{
+ "mode": "selftest",
+ "seed": 7,
+ "role": {
+  "p_agent": "w2",
+  "p_patient": "w0",
+  "p_ctrl": "w1"
+ },
+ "in_wave3": true,
+ "cross_weights_w0": {
+  "w0->A": 0.05,
+  "w0->P": 0.05,
+  "w1->A": 0.05,
+  "w1->P": 0.05,
+  "w2->A": 0.05,
+  "w2->P": 0.05
+ },
+ "loadbearing_w0": {
+  "frac_attributable_to_cross_edge": null,
+  "intact": [
+   {
+    "dMargin": "0.0",
+    "dNet": "0.0",
+    "item": "frog/watch/wolf",
+    "tag": "ambig_2animate"
+   },
+   {
+    "dMargin": "0.0",
+    "dNet": "0.0",
+    "item": "leaf/push/ball",
+    "tag": "ambig_2inanim"
+   },
+   {
+    "dMargin": "0.0",
+    "dNet": "0.0",
+    "item": "owl/watch/cat",
+    "tag": "ambig_2animate"
+   }
+  ],
+  "lesion_attributable": false,
+  "lesioned": [
+   {
+    "dMargin": "0.0",
+    "dNet": "0.0",
+    "item": "frog/watch/wolf",
+    "tag": "ambig_2animate"
+   },
+   {
+    "dMargin": "0.0",
+    "dNet": "0.0",
+    "item": "leaf/push/ball",
+    "tag": "ambig_2inanim"
+   },
+   {
+    "dMargin": "0.0",
+    "dNet": "0.0",
+    "item": "owl/watch/cat",
+    "tag": "ambig_2animate"
+   }
+  ],
+  "max_abs_dNet_intact": "0.0",
+  "max_abs_dNet_lesioned": "0.0",
+  "role": {
+   "p_agent": "w2",
+   "p_ctrl": "w1",
+   "p_patient": "w0"
+  }
+ },
+ "t_curriculum_s": 1180.5,
+ "grow_traj": [
+  {
+   "turn": 0,
+   "w0->A": "0.05",
+   "w0->P": "0.05",
+   "w1->A": "0.05",
+   "w1->P": "0.05",
+   "w2->A": "0.05",
+   "w2->P": "0.05"
+  },
+  {
+   "turn": 20,
+   "w0->A": "0.05",
+   "w0->P": "2.8014",
+   "w1->A": "0.05",
+   "w1->P": "0.05",
+   "w2->A": "3.6751",
+   "w2->P": "0.05"
+  },
+  {
+   "turn": 40,
+   "w0->A": "0.05",
+   "w0->P": "5.0945",
+   "w1->A": "0.05",
+   "w1->P": "0.05",
+   "w2->A": "5.9401",
+   "w2->P": "0.05"
+  },
+  {
+   "turn": 60,
+   "w0->A": "0.05",
+   "w0->P": "7.0083",
+   "w1->A": "0.05",
+   "w1->P": "0.05",
+   "w2->A": "7.5116",
+   "w2->P": "0.05"
+  },
+  {
+   "n_credited": 80,
+   "turn": 80,
+   "w0->A": "0.05",
+   "w0->P": "8.6079",
+   "w1->A": "0.05",
+   "w1->P": "0.05",
+   "w2->A": "8.6868",
+   "w2->P": "0.05"
+  }
+ ],
+ "cross_weights_grown": {
+  "w0->A": 0.05,
+  "w0->P": 8.6079,
+  "w1->A": 0.05,
+  "w1->P": 0.05,
+  "w2->A": 8.6868,
+  "w2->P": 0.05
+ },
+ "loadbearing_grown": {
+  "frac_attributable_to_cross_edge": "1.0",
+  "intact": [
+   {
+    "dMargin": "-0.04999999999999999",
+    "dNet": "0.04999999999999993",
+    "item": "frog/watch/wolf",
+    "tag": "ambig_2animate"
+   },
+   {
+    "dMargin": "0.016666666666666663",
+    "dNet": "0.016666666666666607",
+    "item": "leaf/push/ball",
+    "tag": "ambig_2inanim"
+   },
+   {
+    "dMargin": "-0.04999999999999999",
+    "dNet": "0.04999999999999993",
+    "item": "owl/watch/cat",
+    "tag": "ambig_2animate"
+   }
+  ],
+  "lesion_attributable": true,
+  "lesioned": [
+   {
+    "dMargin": "0.0",
+    "dNet": "0.0",
+    "item": "frog/watch/wolf",
+    "tag": "ambig_2animate"
+   },
+   {
+    "dMargin": "0.0",
+    "dNet": "0.0",
+    "item": "leaf/push/ball",
+    "tag": "ambig_2inanim"
+   },
+   {
+    "dMargin": "0.0",
+    "dNet": "0.0",
+    "item": "owl/watch/cat",
+    "tag": "ambig_2animate"
+   }
+  ],
+  "max_abs_dNet_intact": "0.04999999999999993",
+  "max_abs_dNet_lesioned": "0.0",
+  "role": {
+   "p_agent": "w2",
+   "p_ctrl": "w1",
+   "p_patient": "w0"
+  }
+ },
+ "livelearn_grown": {
+  "GO": true,
+  "bounded_F3": true,
+  "caveat_closed": true,
+  "decision_flips_intact": 5,
+  "decision_flips_lesioned": 0,
+  "final_weights": {
+   "w0->A": "0.05",
+   "w0->P": "8.6079",
+   "w1->A": "0.05",
+   "w1->P": "0.05",
+   "w2->A": "8.6868",
+   "w2->P": "0.05"
+  },
+  "grew_both": true,
+  "grow_traj": [
+   {
+    "turn": 0,
+    "w0->A": "0.05",
+    "w0->P": "0.05",
+    "w1->A": "0.05",
+    "w1->P": "0.05",
+    "w2->A": "0.05",
+    "w2->P": "0.05"
+   },
+   {
+    "turn": 20,
+    "w0->A": "0.05",
+    "w0->P": "2.8014",
+    "w1->A": "0.05",
+    "w1->P": "0.05",
+    "w2->A": "3.6751",
+    "w2->P": "0.05"
+   },
+   {
+    "turn": 40,
+    "w0->A": "0.05",
+    "w0->P": "5.0945",
+    "w1->A": "0.05",
+    "w1->P": "0.05",
+    "w2->A": "5.9401",
+    "w2->P": "0.05"
+   },
+   {
+    "turn": 60,
+    "w0->A": "0.05",
+    "w0->P": "7.0083",
+    "w1->A": "0.05",
+    "w1->P": "0.05",
+    "w2->A": "7.5116",
+    "w2->P": "0.05"
+   },
+   {
+    "n_credited": 80,
+    "turn": 80,
+    "w0->A": "0.05",
+    "w0->P": "8.6079",
+    "w1->A": "0.05",
+    "w1->P": "0.05",
+    "w2->A": "8.6868",
+    "w2->P": "0.05"
+   }
+  ],
+  "intact_roles": [
+   {
+    "flip": true,
+    "item": "frog/watch/wolf",
+    "role_p_agent": "agent",
+    "role_p_patient": "patient",
+    "tag": "ambig_2animate"
+   },
+   {
+    "flip": true,
+    "item": "leaf/push/ball",
+    "role_p_agent": "agent",
+    "role_p_patient": "patient",
+    "tag": "ambig_2inanim"
+   },
+   {
+    "flip": true,
+    "item": "owl/watch/cat",
+    "role_p_agent": "agent",
+    "role_p_patient": "patient",
+    "tag": "ambig_2animate"
+   },
+   {
+    "flip": true,
+    "item": "ball/carry/leaf",
+    "role_p_agent": "agent",
+    "role_p_patient": "patient",
+    "tag": "ambig_2inanim"
+   },
+   {
+    "flip": true,
+    "item": "bird/watch/bird",
+    "role_p_agent": "agent",
+    "role_p_patient": "patient",
+    "tag": "ambig_2animate"
+   }
+  ],
+  "learned": true,
+  "lesioned_roles": [
+   {
+    "flip": false,
+    "item": "frog/watch/wolf",
+    "role_p_agent": "patient",
+    "role_p_patient": "patient",
+    "tag": "ambig_2animate"
+   },
+   {
+    "flip": false,
+    "item": "leaf/push/ball",
+    "role_p_agent": "agent",
+    "role_p_patient": "agent",
+    "tag": "ambig_2inanim"
+   },
+   {
+    "flip": false,
+    "item": "owl/watch/cat",
+    "role_p_agent": "patient",
+    "role_p_patient": "patient",
+    "tag": "ambig_2animate"
+   },
+   {
+    "flip": false,
+    "item": "ball/carry/leaf",
+    "role_p_agent": "agent",
+    "role_p_patient": "agent",
+    "tag": "ambig_2inanim"
+   },
+   {
+    "flip": false,
+    "item": "bird/watch/bird",
+    "role_p_agent": "patient",
+    "role_p_patient": "patient",
+    "tag": "ambig_2animate"
+   }
+  ],
+  "role": {
+   "p_agent": "w2",
+   "p_ctrl": "w1",
+   "p_patient": "w0"
+  }
+ },
+ "G3_intact_max_abs_dNet": 0.04999999999999993,
+ "G3_lesioned_max_abs_dNet": 0.0,
+ "G3_frac_attributable_to_cross_edge": 1.0,
+ "status": "GO",
+ "preconditions": [
+  {
+   "kind": "require",
+   "name": "holder built in-wave3 (flag ON)",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "reaches",
+   "name": "the curriculum grew the cross-edge (max candidate weight)",
+   "ok": true,
+   "detail": "before=0.05 after=8.6868 moved=True",
+   "note": ""
+  },
+  {
+   "kind": "control",
+   "name": "cross-edge lesion vs intact (max |dNet|)",
+   "ok": true,
+   "detail": "treatment=0.05 control=0 |sep|=0.05 > 0",
+   "note": ""
+  }
+ ],
+ "undefined_reasons": [],
+ "G3_pass": true,
+ "verdict": "G3 PASS (load-bearing, lesion-attributable; de-risk seed 7)",
+ "peak_rss_gb": 0.323,
+ "wall_s": 1947.9
+}
