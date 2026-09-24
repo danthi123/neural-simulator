@@ -11,14 +11,20 @@ REMOTE=derisk-pool/sim
 OUT=research/findings/raw/consol_opsweep
 SEEDS="42 43 44 100 101 102"
 NODES=(pool40 pool41 pool42)
+# AWS-AS-EXTRA-POOL-NODE (fix round #2): honour the repo-local ssh config every other pool script does, so this
+# still resolves an AWS-node alias if ever pointed at one manually. The 3-way round-robin sharding below is
+# deliberately NOT widened to extra nodes (this is a fixed, one-off sweep script, not the live dispatcher).
+POOL_SSH_CONFIG="${POOL_SSH_CONFIG:-$(pwd)/research/queue/.pool_ssh_config}"
+_SSH=(ssh); _SCP_F=()
+if [ -f "$POOL_SSH_CONFIG" ]; then _SSH=(ssh -F "$POOL_SSH_CONFIG"); _SCP_F=(-F "$POOL_SSH_CONFIG"); fi
 NCFG=$(.venv/bin/python -m research.runners._consol_dendritic_opsweep --list-configs 2>/dev/null | tail -1)
 
 if [ "${1:-}" = "--status" ]; then
   tot=0
   for h in "${NODES[@]}"; do
-    n=$(ssh "$h" "ls $REMOTE/$OUT/op*_seed*.json 2>/dev/null | wc -l" 2>/dev/null)
-    done=$(ssh "$h" "ls $REMOTE/$OUT/QUEUE_DONE_* 2>/dev/null | wc -l" 2>/dev/null)
-    cand=$(ssh "$h" "grep -l '\"candidate\": true' $REMOTE/$OUT/op*.json 2>/dev/null | wc -l" 2>/dev/null)
+    n=$("${_SSH[@]}" "$h" "ls $REMOTE/$OUT/op*_seed*.json 2>/dev/null | wc -l" 2>/dev/null)
+    done=$("${_SSH[@]}" "$h" "ls $REMOTE/$OUT/QUEUE_DONE_* 2>/dev/null | wc -l" 2>/dev/null)
+    cand=$("${_SSH[@]}" "$h" "grep -l '\"candidate\": true' $REMOTE/$OUT/op*.json 2>/dev/null | wc -l" 2>/dev/null)
     echo "$h: $n json, candidates=$cand, sentinel=$done"
     tot=$((tot + ${n:-0}))
   done
@@ -61,13 +67,13 @@ for k in 0 1 2; do
   # idempotent: stop any prior run_cell/workers by PROCESS GROUP (timeout-wrappers have separate pgids -> plain pkill
   # misses them). The [x]-glob patterns match the real procs but NOT this pkill shell's own cmdline (which would else
   # 255 the ssh). Kill each matching pgid, twice (xargs respawns between passes).
-  ssh "$h" "for pass in 1 2; do for pg in \$(ps -eo pgid,args | grep -E '[r]un_cell.sh|[x]args -P 12|[_]consol_dendritic_opsweep' | awk '{print \$1}' | sort -u); do kill -9 -\$pg 2>/dev/null; done; sleep 1; done; mkdir -p ~/$REMOTE; exit 0" || { echo "  SSH FAIL (connection)"; continue; }
-  scp -q "$tmp/cells_$k.txt" "$h:~/$REMOTE/cells.txt"
-  printf '%s\n' "$RUNCELL" | ssh "$h" "cat > ~/$REMOTE/run_cell.sh && chmod +x ~/$REMOTE/run_cell.sh"
+  "${_SSH[@]}" "$h" "for pass in 1 2; do for pg in \$(ps -eo pgid,args | grep -E '[r]un_cell.sh|[x]args -P 12|[_]consol_dendritic_opsweep' | awk '{print \$1}' | sort -u); do kill -9 -\$pg 2>/dev/null; done; sleep 1; done; mkdir -p ~/$REMOTE; exit 0" || { echo "  SSH FAIL (connection)"; continue; }
+  scp -q "${_SCP_F[@]}" "$tmp/cells_$k.txt" "$h:~/$REMOTE/cells.txt"
+  printf '%s\n' "$RUNCELL" | "${_SSH[@]}" "$h" "cat > ~/$REMOTE/run_cell.sh && chmod +x ~/$REMOTE/run_cell.sh"
   # NON-BLOCKING launch: ssh -f backgrounds the client after auth (verified) + setsid + </dev/null >file fully detach
   # the remote worker from the channel, so the dispatch loop proceeds instead of hanging (a plain "ssh ... &" holds
   # the channel open until the 2-day run ends).
-  ssh -f -n "$h" "cd ~/$REMOTE && setsid bash run_cell.sh </dev/null >run_cell.out 2>&1 & exit 0"
+  "${_SSH[@]}" -f -n "$h" "cd ~/$REMOTE && setsid bash run_cell.sh </dev/null >run_cell.out 2>&1 & exit 0"
   echo "  launched $h (shard $(wc -l < "$tmp/cells_$k.txt") cells)"
 done
 rm -rf "$tmp"
