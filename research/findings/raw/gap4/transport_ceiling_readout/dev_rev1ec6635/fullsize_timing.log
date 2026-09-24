@@ -1,0 +1,47 @@
+[memcap] MemoryMax=7G MemoryHigh=6G MemorySwapMax=0G :: .venv/bin/python -u -m research.runners._gap4_transport_ceiling_readout_derisk --seeds 7 --replicates 0 --arms frozen transport_ceiling --hidden 64 --pool-k 16 --train-subsample 16 --label FULLSIZE_TIMING --read-quantity spikes --settle-steps 40 --read-window 30 --read-gain 20 --eval-frozen --spi-silence-outside-credit --no-structural-plasticity --no-ff-stp --ff-w-init 40 --propagation-strength 0.5 --bdsp-w-max 12 --tonic-h-pA 225 --tonic-o-pA 250 --pbar-alpha 0 --isi-steps 0 --lr 5 --hidden-lr-gain 0.2 --epochs 30 --epochs 1 --out research/findings/raw/gap4/transport_ceiling_readout/fullsize_timing_s7.json
+[gap4-tc][s7 r0] task_seed 7 n_in 9 k 9 n_train 16 n_inh 54 chance 0.167 oracle 0.963
+[2026-09-24 17:44:58][INFO] SIM_BRIDGE: NumPy backend (CPU (NumPy backend), 8589934592.0 GB RAM available)
+[2026-09-24 17:44:58][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-09-24 17:44:58][INFO] SIM_BRIDGE: RNG initialized with seed: 7
+[2026-09-24 17:44:58][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 2336 neurons...
+[2026-09-24 17:44:58][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-09-24 17:44:58][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-09-24 17:44:58][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=100.0pA)...
+[2026-09-24 17:44:58][INFO] SIM_BRIDGE: Generating 3D neuron positions for 2336 neurons...
+[2026-09-24 17:44:58][INFO] SIM_BRIDGE: Generating connections (3D)...
+[2026-09-24 17:44:58][INFO] SIM_BRIDGE: Generating Watts-Strogatz 3D network (n=2336, k=10, p_rewire=0.1)...
+WS generation: 0.0%WS generation: 5.0%WS generation: 9.9%WS generation: 14.9%WS generation: 19.9%WS generation: 24.8%WS generation: 29.8%WS generation: 34.8%WS generation: 39.7%WS generation: 44.7%WS generation: 49.7%WS generation: 54.6%WS generation: 59.6%WS generation: 64.6%WS generation: 69.5%WS generation: 74.5%WS generation: 79.5%WS generation: 84.4%WS generation: 89.4%WS generation: 94.3%WS generation: 99.3%WS generation: 100.0%
+[2026-09-24 17:44:58][INFO] SIM_BRIDGE: Watts-Strogatz network complete: 23353 connections (avg degree: 10.0, expected: 10). Time: 0.17s
+[2026-09-24 17:44:58][INFO] SIM_BRIDGE: Initializing STP state for 23353 synapses (capacity: 35029)...
+[2026-09-24 17:44:58][INFO] SIM_BRIDGE: Initializing eligibility traces for 23353 synapses (capacity: 35029, dtype: float32)...
+[2026-09-24 17:44:58][WARNING] SIM_BRIDGE: No trait info available; all synapses default to E->E STP type.
+[2026-09-24 17:44:58][INFO] SIM_BRIDGE: Initializing structural plasticity state...
+[2026-09-24 17:44:58][INFO] SIM_BRIDGE: Simulation data initialized for 2336 neurons (3D). Synapses: 23353. GPU memory: 0.0GB/9223372036.9GB (0.0%)
+[2026-09-24 17:45:00][WARNING] SIM_BRIDGE: No trait info available; all synapses default to E->E STP type.
+[2026-09-24 17:45:00][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 1343488 synapses across 3 populations.
+[gap4-tc][s7 r0 frozen] epoch 1/1 67s (steps 1040, 66.99 ms/step, ETA train 0.0 min)
+[gap4-tc][s7 r0 frozen] held-out 0.093 train 0.438 decode_h2 0.185 (chance 0.167, oracle 0.963) ff-moved 197.4 nwt True eval-reads-unchanged True | 261s 67.98 ms/step rss 375 MB
+[2026-09-24 17:49:19][INFO] SIM_BRIDGE: NumPy backend (CPU (NumPy backend), 8589934592.0 GB RAM available)
+[2026-09-24 17:49:19][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-09-24 17:49:19][INFO] SIM_BRIDGE: RNG initialized with seed: 7
+[2026-09-24 17:49:19][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 2336 neurons...
+[2026-09-24 17:49:19][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-09-24 17:49:19][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-09-24 17:49:19][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=100.0pA)...
+[2026-09-24 17:49:19][INFO] SIM_BRIDGE: Generating 3D neuron positions for 2336 neurons...
+[2026-09-24 17:49:19][INFO] SIM_BRIDGE: Generating connections (3D)...
+[2026-09-24 17:49:19][INFO] SIM_BRIDGE: Generating Watts-Strogatz 3D network (n=2336, k=10, p_rewire=0.1)...
+WS generation: 0.0%WS generation: 5.0%WS generation: 9.9%WS generation: 14.9%WS generation: 19.9%WS generation: 24.8%WS generation: 29.8%WS generation: 34.8%WS generation: 39.7%WS generation: 44.7%WS generation: 49.7%WS generation: 54.6%WS generation: 59.6%WS generation: 64.6%WS generation: 69.5%WS generation: 74.5%WS generation: 79.5%WS generation: 84.4%WS generation: 89.4%WS generation: 94.3%WS generation: 99.3%WS generation: 100.0%
+[2026-09-24 17:49:19][INFO] SIM_BRIDGE: Watts-Strogatz network complete: 23353 connections (avg degree: 10.0, expected: 10). Time: 0.17s
+[2026-09-24 17:49:19][INFO] SIM_BRIDGE: Initializing STP state for 23353 synapses (capacity: 35029)...
+[2026-09-24 17:49:19][INFO] SIM_BRIDGE: Initializing eligibility traces for 23353 synapses (capacity: 35029, dtype: float32)...
+[2026-09-24 17:49:19][WARNING] SIM_BRIDGE: No trait info available; all synapses default to E->E STP type.
+[2026-09-24 17:49:19][INFO] SIM_BRIDGE: Initializing structural plasticity state...
+[2026-09-24 17:49:19][INFO] SIM_BRIDGE: Simulation data initialized for 2336 neurons (3D). Synapses: 23353. GPU memory: 0.0GB/9223372036.9GB (0.0%)
+[2026-09-24 17:49:21][WARNING] SIM_BRIDGE: No trait info available; all synapses default to E->E STP type.
+[2026-09-24 17:49:21][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 1343488 synapses across 3 populations.
+[gap4-tc][s7 r0 transport_ceiling] epoch 1/1 84s (steps 1040, 82.77 ms/step, ETA train 0.0 min)
+[gap4-tc][s7 r0 transport_ceiling] held-out 0.111 train 0.375 decode_h2 0.167 (chance 0.167, oracle 0.963) ff-moved 134.5 nwt False eval-reads-unchanged True | 457s 119.06 ms/step rss 454 MB
+[gap4-tc][agg s7] INCOMPLETE | ceiling clears 0/1 | n_fa_wall 0 | surpass 0 | means frozen=0.093 transport_ceiling=0.111
+[gap4-tc] verdict: no 6-seed verdict (seeds incomplete); per-seed status only -> wrote research/findings/raw/gap4/transport_ceiling_readout/fullsize_timing_s7.json
+[provenance] stamped 1 artifact(s) | run_id 1790271895-429799
