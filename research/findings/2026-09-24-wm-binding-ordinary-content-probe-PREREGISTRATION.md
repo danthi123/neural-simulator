@@ -204,3 +204,59 @@ same revision.
   research/runners/load_bearing_fraction.py research/runners/onebrain_regression_battery.py
   research/runners/d6_multiref_wm_production_organ.py` is empty, so the pin's brain and battery are unchanged.
   Nothing else changes.
+
+- **2026-09-24, AMENDMENT B, filed before any of the 6 content-probe seeds staged on the pool at `c5c0f67ba`
+  (42/43/44/100/101/102) were pulled or read.** Adversarial re-review (journal key
+  `v2:7512414c9a65ead57a205e7a2e166bcf476472d9dfbc61180205447d18d460df`, label `rereview:wm-binding`) found that
+  the "Why this drive turn" section above misstates the mechanism and would let a GO over-credit
+  wm-binding-advanced. The corrected reading, verified directly against the code paths named:
+
+  1. **The D6 organ does NOT run on the drive turn.** `_wmc_drive` ("the wolf watches the owl" / "the dog watches
+     the owl") names exactly one referent the organ's hand lexicon admits (`wolf`/`dog`); `owl` is not in
+     `_REFERENT_NOUNS` (`research/runners/d6_multiref_wm_production_organ.py`). The MAINTAIN branch that calls
+     `d6org.judge(msg, lesion=d6les)` (`webapp/server.py`, the `else:` under the D6 hold-query check) returns
+     `None` on any turn with fewer than 2 referents — `load()` is never invoked on the drive turn, and
+     `multiref_info` stays `None`. So there is no d6-organ processing, and no fresh read of the held bumps, on the
+     turn the T gate scores.
+  2. **`_own_focus` is a positional constant set once, on the intro, independent of held content.** `load()`
+     (called on `wmc_intro`/`wmcx_intro`) sets `self._own_focus = CAND_POOLS[0]` whenever the intro names >=1
+     referent and the xedge pool is live, UNCONDITIONALLY on which referent is held or whether the hold
+     survives — this branch's `lesion` variable has already been forced to `False` for the confined-lesion arms
+     (`confined: ... lesion = False # every other branch below runs exactly as the intact arm's`), so `_own_focus`
+     is set to the SAME value (`w0`) on the intact and confined-lesion arms alike. It is never read from, or
+     conditioned on, `hold_alive_min`, `recovered`, or any other content-carrying field.
+  3. **What actually reaches the drive-turn reply is a host-templated re-drive of that fixed pool, not a fresh
+     read of the organ's held content.** `comprehension_production_organ.py`'s `_read`/`_read_per_noun` call
+     `_hard_reset(comp)` (zeroing firing/conductances on the whole shared bridge, including the D6 slice) and then
+     `_xedge_codrive(comp, wm_focus=focus)`, which injects a HOST-CHOSEN external current (`load_pa=400.0` pA for
+     `load_steps=30` steps, then `hold_steps=6` steps of quiet) directly onto the neurons of `wm_focus` (`w0`)
+     BEFORE the cue settle — the same pool, the same current, on every arm, whether or not the intro's hold
+     content (which referent, or whether it decayed) differs.
+
+  **What T can and cannot show.** The confined lesion (`BRAIN_MULTIREF_LESION_SCOPE=recur`) zeros exactly `w0`'s
+  own `w_k->w_k` slow-NMDA self-recurrence, so `w0`'s own post-drive dynamics CAN legitimately differ between the
+  intact and lesion arms after the same host re-injection — the probe is not fail-by-construction; T can be true
+  or false in data. But a `T=true` (`regressed`) means only: *`w0`'s own recurrent self-synapses causally shape
+  comprehension's read of a host-reinjected, host-timed, host-targeted current pulse into that fixed pool.* It
+  does NOT mean, and this pre-registration's headline rule must not be read to credit, that *"wm-binding-advanced
+  is load-bearing on an ordinary reply"* in the sense of the organ's HELD REFERENT CONTENT reaching that reply —
+  no field carrying WHICH referent is held, or whether the hold survived, is read anywhere on this path. The
+  "Host shortcuts on this path" section already declared the positional `CAND_POOLS[0]` bind and that "no
+  condition claims the reply follows the HELD content through the organ" — this amendment makes that limit
+  apply to the T gate itself, not only to condition C.
+
+  **Rescoped headline rule (replaces §"Headline rule" above for the counted verdict; the seed table format is
+  unchanged).** A `GO` (T true on 6/6 seeds) is reported and MAY still count in `load_bearing_fraction`'s
+  numerator under the label `wm-binding-advanced` (per `FACULTY_LESIONS`'s existing `kind="neural-lesion"`
+  wiring — this amendment does not change the code), but any prose reporting it MUST read: *"the confined
+  recurrence lesion of the organ's register pool changes comprehension's read of a host-reinjected drive into
+  that pool on an ordinary reply; this does not show the organ's held referent CONTENT reaches an ordinary
+  reply — the WM focus routed into comprehension is positional (`CAND_POOLS[0]`), not content-addressed."* A
+  `NO-GO`/`pass` (T false, 4+ of 6 seeds) is unaffected by this correction and reads as originally registered:
+  *"the organ's held state does not reach an ordinary reply; only its introspective (hold-query) read-out
+  does."* The next mechanism named in "Next mechanism if the verdict is NO-GO" (a spiking referent->focus bind
+  replacing the positional `CAND_POOLS[0]`) is unchanged and is now also the prerequisite for a future GO on this
+  probe to mean content-binding rather than recurrence-shapes-a-host-drive.
+
+  No seed under `LB_WMB_CONTENT_PROBE` had been pulled from the pool or read by anyone in this round before this
+  amendment was filed; this amendment governs how those results, once pulled, must be reported.
