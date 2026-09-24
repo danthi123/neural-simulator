@@ -436,13 +436,25 @@ def calibrate(pool, org, rec) -> dict:
 
 
 def place_fine_grid(off_place: dict) -> dict:
-    """G11's grid, placed on the reference (lc-OFF) curve ONLY. `off_place`: placement drive -> reference ASK Hz."""
+    """G11's grid, placed on the reference (lc-OFF) curve ONLY. `off_place`: placement drive -> reference ASK Hz.
+
+    PEAK = the FIRST LOCAL MAXIMUM at or after onset (the first placement drive whose successor reads lower; the top
+    of the scan if the reference never falls) -- PREREG v1.1. The v1 rule took the GLOBAL maximum, and the dev smoke
+    (seeds 7/8/10/11, revision 9cef44164) showed the reference is rise-dip-rise on this substrate: it peaks near
+    drive 1.0-1.1, dips as the strong drive recruits ASK's slow feedback on the onset transient (the v4 prereg's own
+    calibration finding), then rises again to the top of the scan (1.6). The global-max rule put the dip and the
+    second rise inside the "rising limb", where the lc-on arm collapses onto the reference, and G11c read a negative
+    trend on all four seeds for a reason that is not the modulator's (ratios 1.07 -> 2.38 on seed 7's first limb)."""
     on = [g for g in G11_PLACE_GRID if off_place[g] >= G11_PLACE_ON_HZ]
     if not on:
         return {"grid": None, "undefined": f"reference ASK never reaches {G11_PLACE_ON_HZ} Hz on the placement scan"}
     d_on = on[0]
     after = [g for g in G11_PLACE_GRID if g >= d_on]
-    d_pk = max(after, key=lambda g: (off_place[g], -g))            # first maximum
+    d_pk = after[-1]
+    for a, b in zip(after, after[1:]):
+        if off_place[b] < off_place[a]:
+            d_pk = a
+            break
     lo, hi = d_on - G11_FINE_LO_PAD, d_pk + G11_FINE_HI_PAD
     grid = tuple(float(x) for x in np.round(np.linspace(lo, hi, G11_FINE_N), 4))
     return {"grid": grid, "onset": d_on, "peak": d_pk}
@@ -952,6 +964,15 @@ def _selftest():
     assert not r["pass"] and not r["parts"]["G11c_effect_scales_with_drive"], ("fine-grid additive must fail", r)
     r = g11_eval(mult, off, mult, grid)
     assert not r["pass"] and not r["instrument_valid_additive_control_fails"], ("invalid instrument", r)
+    # (3b) PREREG v1.1: a rise-dip-rise reference (the dev-smoke shape) is placed at its FIRST peak, not the global
+    # maximum at the top of the scan; the old global-max placement would have spanned the dip
+    rdr = {0.5: 0.0, 0.6: 0.0, 0.7: 0.0, 0.8: 0.32, 0.9: 1.1, 1.0: 2.25, 1.1: 1.78, 1.2: 1.18, 1.3: 1.99, 1.4: 2.7,
+           1.5: 3.44, 1.6: 4.17}                                           # dev seed 7's measured placement scan
+    p2 = place_fine_grid(rdr)
+    assert p2["onset"] == 0.9 and p2["peak"] == 1.0, p2
+    assert max(rdr, key=lambda g: rdr[g]) == 1.6, "the global maximum is the second rise (what v1 placed at)"
+    mono = {g: float(g) for g in G11_PLACE_GRID}
+    assert place_fine_grid(mono)["peak"] == G11_PLACE_GRID[-1], "a never-falling reference peaks at the scan top"
     # (4) the v4 coarse points of the same steep reference have < 3 limb points (the UNDEFINED it fixes)
     assert _coarse_limb({g: {"ask_hz": steep[g]} for g in G11_PLACE_GRID}) == 2
     # (5) G13 set-point band, both directions
