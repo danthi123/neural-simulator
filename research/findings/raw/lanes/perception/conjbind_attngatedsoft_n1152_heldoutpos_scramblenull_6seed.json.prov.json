@@ -1,0 +1,25 @@
+{
+ "reconstructed": true,
+ "reconstruction_note": "This artifact (mtime 2026-09-17T03:43, per `ls -la`) predates this session and was found UNTRACKED in the primary checkout with no provenance sidecar of its own. This sidecar is BACKFILLED from research/queue/dispatch.log line 20311, the pool-dispatch record for the exact command that produced this --out path -- it is not a live capture from research/runners/__init__'s automatic provenance door, and no git_dirty/manifest-hash guarantee is available for it.",
+ "runner": "research/runners/_vision_lindiscrim_readout_derisk.py",
+ "argv_from_dispatch_log": [
+  "--ridge", "0.5", "--conj-bind", "fixed", "--conj-select", "competitive",
+  "--conj-select-overcomplete", "4", "--conj-select-kwta-frac", "0.1", "--conj-n", "1152",
+  "--conj-offset-max", "4", "--readout", "attention-gated-soft", "--attn-gain-exponent", "1.0",
+  "--n-s2", "96", "--heldout-position", "--scramble-null",
+  "--seeds", "42", "43", "44", "100", "101", "102",
+  "--out", "research/findings/raw/lanes/perception/conjbind_attngatedsoft_n1152_heldoutpos_scramblenull_6seed.json"
+ ],
+ "dispatch_log_line": 20311,
+ "dispatch_host": "pool41",
+ "dispatch_timestamp_local": "2026-09-17T00:01:17",
+ "dispatch_checked_reason": "verify-first: attention-gated-soft readout (byte-identical-off proven); pre-registered gate beat>=5/6 & lb>=5/6 vs the beat4/6-lb6/6 baseline",
+ "git_sha": "unknown -- dispatch used the pool's shared mainline checkout at the time (no isolated-revision `cd ~/derisk-pool/revisions/<sha>` prefix in this older-style dispatch line), approximately the 2026-09-16 b7108ca04 build of --readout attention-gated-soft per the runner's own module docstring",
+ "git_dirty": null,
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "artifact": "research/findings/raw/lanes/perception/conjbind_attngatedsoft_n1152_heldoutpos_scramblenull_6seed.json"
+}
