@@ -80,6 +80,17 @@ from tools.lab import attributable_to  # noqa: E402
 PREREG = "research/findings/2026-09-24-gap4-transport-ceiling-readout-lever-PREREGISTRATION.md"
 RAW = _REPO / "research" / "findings" / "raw" / "gap4" / "transport_ceiling_readout"
 EVAL_SEEDS = {42, 43, 44, 100, 101, 102}
+# AMENDMENT 5 (review fix): the apical-lesion anti-cheat is a MATCHED cut. In micro_inengine the engine forms the
+# interneuron cancellation from cp_spi_int_rate every step; the parent's apical_lesion zeroes only the raw teacher, so the
+# untrained cancellation (random W^PI) kept driving the top hidden apical (measured 17.35 mV max |v_apical - rest|).
+# The lesion now also zeroes the interneuron rate, and every lesion shard records whether the hidden apical stayed at rest.
+LESION_KIND = "matched: hidden Y zeroed AND interneuron rate zeroed (engine int_drive 0)"
+LESION_SILENT_TOL_MV = 1e-6
+# AMENDMENT 5 (review fix): an evaluation seed runs only under a COMMITTED amendment whose heading names an
+# EVALUATION CONFIG and whose body registers this run's config fingerprint and seeds.
+_EVAL_HEADING = "EVALUATION CONFIG"
+_EVAL_FP_KEY = "evaluation-config-fingerprint:"
+_EVAL_SEEDS_KEY = "evaluation-seeds:"
 CORE_ARMS = ["frozen", "fixed_fa", "micro_inengine", "transport_ceiling"]
 ALL_ARMS = CORE_ARMS + ["micro_inengine_lesion", "micro_inengine_freeze_spi"]
 # arm -> (Gap4 feedback mode, training mode, freeze the in-engine interneuron)
@@ -160,12 +171,64 @@ class Gap4ReadoutNet(Gap4InEngineNet):
         self.eval_frozen = bool(eval_frozen)
         self.spi_silence = bool(spi_silence)
         self.n_steps = 0
+        self._lesion_int_silenced = False   # set only inside a micro_inengine apical_lesion credit phase (AMENDMENT 5)
+        self._track_apical = False          # instrument: running max |v_apical - rest| over hidden neurons
+        self.apical_max_dev_mV = 0.0
         _step = self.br._run_one_simulation_step
 
         def _counted():
             self.n_steps += 1
-            return _step()
+            if self._lesion_int_silenced:
+                # MATCHED LESION: the engine forms int_drive from cp_spi_int_rate on every step; a zero rate gives a
+                # zero cancellation, so the lesioned top hidden apical receives nothing at all.
+                if self.br.cp_spi_int_rate is not None:
+                    self.br.cp_spi_int_rate[...] = 0.0
+                if self.br.cp_bdsp_int_drive is not None:
+                    self.br.cp_bdsp_int_drive[...] = 0.0
+            out = _step()
+            if self._track_apical and self.br.cp_v_apical is not None:
+                self._apical_track_step()
+            return out
         self.br._run_one_simulation_step = _counted     # instance-level wrapper: counts steps, same call
+
+    # ---- instrument: is the hidden apical at rest? (the TERMS.md 'lesion' condition, checked while it runs) ----
+    def _apical_track_step(self):
+        xp = self._xp
+        er = float(getattr(self.cfg, "apical_E_rest", -65.0))
+        hid = slice(self.slices[1].start, self.slices[len(self.sizes) - 2].stop)
+        m = xp.max(xp.abs(self.br.cp_v_apical[hid] - er))
+        self._apical_max_dev_dev = m if getattr(self, "_apical_max_dev_dev", None) is None \
+            else xp.maximum(self._apical_max_dev_dev, m)
+
+    def apical_max_deviation_mV(self):
+        from sim.backend import to_host
+        v = getattr(self, "_apical_max_dev_dev", None)
+        return 0.0 if v is None else float(np.asarray(to_host(v)))
+
+    # ---- instrument: how many feedforward synapses sit at the hard BDSP bound (review issue: the clamp) ----
+    def bound_census(self):
+        """Per feedforward pathway: the fraction of synapses at (or, before the kernel first clamps them, beyond)
+        +w_max / -w_max, mean |w| and max |w|. Reads only; no RNG, no state change (verified: shard results equal the
+        pre-census runner's on a tiny run)."""
+        from sim.backend import to_host
+        coo = self.br._get_cached_coo()
+        row = np.asarray(to_host(coo.row)); col = np.asarray(to_host(coo.col))
+        w = np.asarray(to_host(self.br.cp_connections.data)).astype(np.float64)
+        wmax, wmin = float(self.cfg.bdsp_w_max), float(self.cfg.bdsp_w_min)
+        tol = 1e-4 * max(abs(wmax), abs(wmin), 1.0)
+        out = {"w_max": wmax, "w_min": wmin, "pathways": []}
+        tot_n = tot_hi = tot_lo = 0
+        for li, (pre, post) in enumerate(self._ff_edges):
+            m = (row >= pre[0]) & (row <= pre[-1]) & (col >= post[0]) & (col <= post[-1])
+            wl = w[m]
+            hi = int(np.sum(wl >= wmax - tol)); lo = int(np.sum(wl <= wmin + tol)); n = int(wl.size)
+            tot_n += n; tot_hi += hi; tot_lo += lo
+            out["pathways"].append({"pathway": f"ff_{li}", "post_is_hidden": bool(li + 1 < len(self.sizes) - 1),
+                                    "n": n, "frac_at_or_above_w_max": hi / max(1, n), "frac_at_or_below_w_min": lo / max(1, n),
+                                    "mean_abs_w": float(np.abs(wl).mean()) if n else None,
+                                    "max_abs_w": float(np.abs(wl).max()) if n else None})
+        out["frac_at_bound_all_ff"] = (tot_hi + tot_lo) / max(1, tot_n)
+        return out
 
     # ---- LONGER read: time-average of the pooled event rate over the last W settle steps ----
     def _forward_spiking(self, feat_row, reset_rates=True):
@@ -213,8 +276,13 @@ class Gap4ReadoutNet(Gap4InEngineNet):
             _ob_mod._softmax, _ie_mod._softmax = o_ob, o_ie
 
     def _train_one(self, feat_row, y, mode):
-        with self._gain():
-            super()._train_one(feat_row, y, mode)
+        # AMENDMENT 5: a matched apical lesion in the in-engine arm silences the interneuron too (see LESION_KIND).
+        self._lesion_int_silenced = (mode == "apical_lesion" and self.feedback == "micro_inengine")
+        try:
+            with self._gain():
+                super()._train_one(feat_row, y, mode)
+        finally:
+            self._lesion_int_silenced = False
         xp = self._xp
         if self.spi_silence and self.br.cp_spi_int_rate is not None:
             self.br.cp_spi_int_rate = xp.zeros_like(self.br.cp_spi_int_rate)   # interneuron silent outside credit
@@ -332,8 +400,12 @@ def _task(seed, r, args):
     if args.train_subsample and len(Xtr) > args.train_subsample:
         keep = np.random.default_rng(ts * 13 + 1).permutation(len(Xtr))[:args.train_subsample]
         Xb, yb = Xtr[keep], ytr[keep]
+    # AMENDMENT 5 (review fix): TRAINING chance is the majority-class rate of the training subsample, the prereg's own
+    # chance definition applied to the training items. It is NOT 1/k: class 8 has no training items on this task, so
+    # guessing "among nine classes" understates it (seed 7: r0 0.1825, r1 0.170, r2 0.1625).
+    train_chance = float(np.bincount(np.asarray(yb, int), minlength=k).max() / len(yb))
     return dict(task_seed=ts, Xtr=Xb, ytr=yb, Xte=Xte, yte=yte, inh=inh, k=k, n_in=int(Xtr.shape[1]),
-                chance=chance, oracle=oracle, n_inh=int(len(inh)))
+                chance=chance, oracle=oracle, n_inh=int(len(inh)), train_chance=train_chance)
 
 
 def run_shard(seed, r, arm, args, T):
@@ -342,6 +414,11 @@ def run_shard(seed, r, arm, args, T):
     thr = _thr_hash(net)
     fb, mode, _fz = _ARM[arm]
     w0 = net.ff_weight_norm()
+    census0 = net.bound_census()                              # reads only (review issue: the hard weight bound)
+    from tools.lab import bound_check
+    bound_ok = bound_check("bdsp_w_max", net.cfg.bdsp_w_max,
+                           max(p["max_abs_w"] or 0.0 for p in census0["pathways"]), strict=False)
+    net._track_apical = (mode == "apical_lesion")             # the TERMS.md 'lesion' check, measured while it runs
     rng = np.random.default_rng(T["task_seed"] + 777)
     if mode == "shufE":
         net._shuf_perm = np.random.default_rng(seed * 4099 + 11).permutation(net.k)
@@ -359,6 +436,9 @@ def run_shard(seed, r, arm, args, T):
                   f"(steps {net.n_steps}, {1e3 * (time.time() - t0) / max(1, net.n_steps):.2f} ms/step, "
                   f"ETA train {eta / 60:.1f} min)", flush=True)
     w1 = net.ff_weight_norm()
+    census1 = net.bound_census()
+    apical_dev = net.apical_max_deviation_mV() if net._track_apical else None
+    net._track_apical = False
     t_train = time.time() - t0
     steps_train = net.n_steps
     with net.frozen_reads():
@@ -373,9 +453,19 @@ def run_shard(seed, r, arm, args, T):
     out_rate = float(np.mean(acts_te[-1]))
     pred_tr = np.argmax(acts_tr[-1], 1); pred_te = np.argmax(acts_te[-1], 1)
     hist = lambda v: np.bincount(np.asarray(v, int), minlength=T["k"]).tolist()
+    try:
+        from research.runners import _git_head
+        git_sha, git_dirty = _git_head(full=True)
+    except Exception:
+        git_sha, git_dirty = "unknown", None
+    n_tr = len(T["ytr"])
     res = {"seed": seed, "replicate": r, "arm": arm, "feedback": fb, "mode": mode,
+           "git_sha": git_sha, "git_dirty": git_dirty,
            "task_seed": T["task_seed"], "chance": T["chance"], "oracle_heldout": T["oracle"], "n_inh": T["n_inh"],
            "inherit_heldout": held, "train_acc": train,
+           "train_chance": T["train_chance"], "train_binom_p": _binom_p(train, n_tr, T["train_chance"]),
+           "ff_l1_norm_start": float(w0), "ff_l1_norm_end": float(w1),
+           "bound_census_start": census0, "bound_census_end": census1, "bound_check_at_build": bound_ok,
            "decode_h2_train": dec_tr, "decode_h2_heldout": dec_te,
            "mean_output_rate_heldout": out_rate,
            "pred_hist_train": hist(pred_tr), "true_hist_train": hist(T["ytr"]),
@@ -386,6 +476,8 @@ def run_shard(seed, r, arm, args, T):
                                                   for c in range(T["k"])],
            "read_quantity": args.read_quantity,
            "ff_weight_moved": float(abs(w1 - w0)),
+           "ff_weight_moved_definition": "|L1 norm at end - L1 norm at start| over the feedforward weights "
+                                         "(a change in L1 norm, not a total per-synapse change)",
            "eval_reads_left_weights_unchanged": bool(wr0 == wr1),
            "no_weight_transport": bool(net.no_weight_transport()),
            "ast_no_forward_W": bool(_ast_no_forward_W(Gap4ReadoutNet)),
@@ -397,6 +489,10 @@ def run_shard(seed, r, arm, args, T):
     if arm.startswith("micro_inengine"):
         st = net.inengine_apical_silent_stats(T["Xte"][T["inh"]], yte_inh) if args.silent_stats else {}
         res["inengine_apical"] = {kk: (None if isinstance(vv, float) and np.isnan(vv) else vv) for kk, vv in st.items()}
+    if mode == "apical_lesion":
+        res["lesion_kind"] = LESION_KIND
+        res["lesion_hidden_apical_max_abs_dev_mV"] = apical_dev
+        res["lesion_holds"] = bool(apical_dev is not None and apical_dev <= LESION_SILENT_TOL_MV)
     print(f"[gap4-tc][s{seed} r{r} {arm}] held-out {held:.3f} train {train:.3f} decode_h2 {dec_te:.3f} "
           f"(chance {T['chance']:.3f}, oracle {T['oracle']:.3f}) ff-moved {res['ff_weight_moved']:.1f} "
           f"nwt {res['no_weight_transport']} eval-reads-unchanged {res['eval_reads_left_weights_unchanged']} "
@@ -424,7 +520,11 @@ def _load_shard(args, seed, r, arm):
         d = json.loads(p.read_text())
     except Exception:
         return None
-    return d if d.get("fingerprint") == _fingerprint(args) else None
+    if d.get("fingerprint") != _fingerprint(args):
+        return None
+    if _ARM[arm][1] == "apical_lesion" and d.get("lesion_kind") != LESION_KIND:
+        return None          # a pre-AMENDMENT-5 (unmatched) lesion shard is never resumed or aggregated
+    return d
 
 
 # ============================================================================================================
@@ -442,6 +542,7 @@ def aggregate(args):
             chance, n = any_sh["chance"], any_sh["n_inh"]
             acc = {a: v["inherit_heldout"] for a, v in sh.items()}
             row = {"replicate": r, "task_seed": any_sh["task_seed"], "chance": chance, "n_inh": n,
+                   "train_chance": any_sh.get("train_chance"),
                    "oracle": any_sh["oracle_heldout"], "arms_done": sorted(sh), "inherit_heldout": acc,
                    "train_acc": {a: v["train_acc"] for a, v in sh.items()},
                    "decode_h2_heldout": {a: v["decode_h2_heldout"] for a, v in sh.items()}}
@@ -457,6 +558,9 @@ def aggregate(args):
                                             for a in ("fixed_fa", "micro_inengine") if a in acc}
                 if not ok:
                     row["deep_credit_share_note"] = "UNDEFINED: headroom < 0.05 (not a score of 0)"
+                # AMENDMENT 5 rule 1: a replicate is INTERPRETABLE only if the ceiling clears chance AND has
+                # headroom >= 0.05 over frozen (else deep_credit_share is UNDEFINED and no negative can be read).
+                row["interpretable"] = bool(row.get("ceiling_clears_chance") and ok)
             if ff is not None and fr is not None:
                 row["fa_wall"] = bool(ff <= fr + 0.02)
             if ff is not None and mi is not None:
@@ -466,10 +570,14 @@ def aggregate(args):
                 if mi is not None and ctl in acc:
                     row.setdefault("attribution", {})[ctl] = attributable_to(
                         f"s{s} r{r} micro_inengine vs {ctl}", float(mi), float(acc[ctl]))
+            if "micro_inengine_lesion" in sh:
+                # TERMS.md 'lesion': the cut must be verified to hold while it ran, or it is only an attempted lesion
+                row["lesion_holds"] = bool(sh["micro_inengine_lesion"].get("lesion_holds"))
             reps.append(row)
         if not reps:
             continue
         n_ceil = sum(1 for x in reps if x.get("ceiling_clears_chance"))
+        n_int = sum(1 for x in reps if x.get("interpretable"))
         n_fa = sum(1 for x in reps if x.get("fa_wall"))
         n_sur = sum(1 for x in reps if x.get("surpass"))
         complete = all(set(CORE_ARMS) <= set(x["arms_done"]) for x in reps) and len(reps) == len(args.replicates)
@@ -477,10 +585,12 @@ def aggregate(args):
                           if any(a in x["inherit_heldout"] for x in reps) else None)
         m = {a: mean(a) for a in ALL_ARMS}
         seed_status = ("INCOMPLETE" if not complete else
-                       ("UNDEFINED (ceiling clears chance on %d/%d replicates < 2)" % (n_ceil, len(reps))
-                        if n_ceil < 2 else "DEFINED"))
+                       ("UNDEFINED (interpretable on %d/%d replicates < 2; ceiling clears chance on %d, AMENDMENT 5 "
+                        "also needs headroom >= 0.05)" % (n_int, len(reps), n_ceil)
+                        if n_int < 2 else "DEFINED"))
         per_seed[str(s)] = {"replicates": reps, "n_replicates": len(reps), "complete": complete,
-                            "n_ceiling_clears_chance": n_ceil, "n_fa_wall": n_fa, "n_surpass": n_sur,
+                            "n_ceiling_clears_chance": n_ceil, "n_interpretable": n_int,
+                            "n_fa_wall": n_fa, "n_surpass": n_sur,
                             "mean_inherit_heldout": m,
                             "micro_minus_fixed": (None if m["micro_inengine"] is None or m["fixed_fa"] is None
                                                   else m["micro_inengine"] - m["fixed_fa"]),
@@ -492,7 +602,9 @@ def aggregate(args):
                "six_seed_rule_evaluable": six_done}
     if six_done:
         ps = [per_seed[str(s)] for s in six]
-        c1 = sum(1 for p in ps if p["n_ceiling_clears_chance"] >= 2) >= 5
+        # AMENDMENT 5 rule 1: the gate counts INTERPRETABLE replicates (ceiling clears chance AND headroom >= 0.05),
+        # so a NO-GO can never be read off an instrument with no headroom.
+        c1 = sum(1 for p in ps if p["n_interpretable"] >= 2) >= 5
         c2 = sum(1 for p in ps if (p["micro_minus_fixed"] or -1) > 0.05) >= 5
         verdict["interpretability_gate"] = c1
         verdict["surpass_gate"] = c2
@@ -506,18 +618,134 @@ def aggregate(args):
     _atomic_write(Path(args.out), out)
     for s, p in per_seed.items():
         print(f"[gap4-tc][agg s{s}] {p['status']} | ceiling clears {p['n_ceiling_clears_chance']}/{p['n_replicates']} "
+              f"| interpretable {p['n_interpretable']}/{p['n_replicates']} "
               f"| n_fa_wall {p['n_fa_wall']} | surpass {p['n_surpass']} | means "
               + " ".join(f"{a}={v:.3f}" for a, v in p["mean_inherit_heldout"].items() if v is not None), flush=True)
     print(f"[gap4-tc] verdict: {verdict['status']} -> wrote {args.out}", flush=True)
     return out
 
 
+def _committed_text(rel):
+    """The COMMITTED content of `rel`: `git show HEAD:<rel>` in a git work tree (the file must be tracked; working-tree
+    edits are ignored), or the file itself in a manifest-verified git-archive export (the pool's revision dirs, whose
+    tree IS a committed revision). Returns (text, how) or (None, reason)."""
+    import subprocess
+    try:
+        inside = subprocess.run(["git", "rev-parse", "--is-inside-work-tree"], cwd=_REPO, capture_output=True,
+                                text=True, timeout=10).stdout.strip() == "true"
+    except Exception:
+        inside = False
+    if inside:
+        tracked = subprocess.run(["git", "ls-files", "--error-unmatch", "--", rel], cwd=_REPO,
+                                 capture_output=True, text=True, timeout=10).returncode == 0
+        if not tracked:
+            return None, "not tracked by git (an uncommitted file cannot register a config)"
+        shown = subprocess.run(["git", "show", "HEAD:%s" % rel], cwd=_REPO, capture_output=True, text=True,
+                               timeout=10)
+        if shown.returncode != 0:
+            return None, "not in HEAD (staged but not committed)"
+        return shown.stdout, "git HEAD"
+    try:
+        from research.runners import _source_snapshot, verify_immutable_source_manifest
+        snap = _source_snapshot()
+        if snap.get("source_kind") == "git_archive" and verify_immutable_source_manifest(snap).get(
+                "source_manifest_verified"):
+            p = _REPO / rel
+            return (p.read_text(encoding="utf-8"), "git archive %s" % snap.get("git_sha")) if p.exists() \
+                else (None, "missing from the archive")
+    except Exception as exc:
+        return None, "no git tree and no verified archive (%s)" % exc
+    return None, "no git tree and no verified archive"
+
+
+def _eval_sections(text):
+    """(heading, fingerprints, seeds) for every markdown section whose HEADING names an EVALUATION CONFIG amendment.
+    Prose that merely mentions the phrase does not count; the registration keys must sit inside such a section."""
+    out = []
+    cur = None
+    for line in text.splitlines():
+        st = line.strip()
+        if st.startswith("#"):
+            if cur is not None:
+                out.append(cur)
+            h = st.lstrip("#").strip()
+            cur = (h, [], []) if (h.upper().startswith("AMENDMENT") and _EVAL_HEADING in h.upper()) else None
+            continue
+        if cur is None:
+            continue
+        low = st.strip("`*- ").lower()
+        if low.startswith(_EVAL_FP_KEY):
+            cur[1].append(low[len(_EVAL_FP_KEY):].strip().strip("`"))
+        elif low.startswith(_EVAL_SEEDS_KEY):
+            cur[2].extend(int(t) for t in low[len(_EVAL_SEEDS_KEY):].replace(",", " ").split() if t.isdigit())
+    if cur is not None:
+        out.append(cur)
+    return out
+
+
+def check_eval_amendment(seeds, fingerprint, amendment, read_committed=None):
+    """The evaluation-seed guard. Returns (ok, reason). Fails unless `amendment` is COMMITTED and holds an
+    'AMENDMENT ... EVALUATION CONFIG' section registering exactly this run's config fingerprint and every evaluation
+    seed the run asks for. `read_committed` is injectable for the selftest."""
+    ev = sorted(set(int(s) for s in seeds) & EVAL_SEEDS)
+    if not ev:
+        return True, "no evaluation seed requested"
+    if not amendment:
+        return False, "evaluation seeds %s need --prereg-amendment <committed file>" % ev
+    text, how = (read_committed or _committed_text)(amendment)
+    if text is None:
+        return False, "amendment %s: %s" % (amendment, how)
+    secs = _eval_sections(text)
+    if not secs:
+        return False, ("amendment %s has no '## AMENDMENT <n> ... %s' section (a prereg without one, or an amendment "
+                       "that does not fix an evaluation config, cannot unlock evaluation seeds)" % (amendment,
+                                                                                                  _EVAL_HEADING))
+    for h, fps, sds in secs:
+        if fingerprint in fps and set(ev) <= set(sds):
+            return True, "registered in '%s' (%s)" % (h, how)
+    return False, ("no %s section registers fingerprint %s for seeds %s (found: %s)"
+                   % (_EVAL_HEADING, fingerprint, ev, [(h, fps, sds) for h, fps, sds in secs]))
+
+
+def guard_selftest(args):
+    """The evaluation-seed guard must FAIL in its failing directions and PASS only on a registered, committed config."""
+    fp = _fingerprint(args)
+    good = ("## AMENDMENT 9 -- EVALUATION CONFIG (test)\n\n%s `%s`\n%s 42 43 44 100 101 102\n"
+            % (_EVAL_FP_KEY, fp, _EVAL_SEEDS_KEY))
+    cases = [
+        ("the real prereg at HEAD (no evaluation-config amendment exists)", [42], PREREG, None, False),
+        ("an untracked file", [42], "research/findings/_no_such_amendment_%d.md" % os.getpid(), None, False),
+        ("no amendment path", [42], None, None, False),
+        ("evaluation section, other fingerprint", [42], "x.md",
+         lambda _p: (good.replace(fp, "0" * 16), "fake"), False),
+        ("evaluation section, seed not registered", [42, 7, 999], "x.md",
+         lambda _p: (good.replace(" 42 ", " "), "fake"), False),
+        ("phrase only in prose, keys outside a heading", [42], "x.md",
+         lambda _p: ("EVALUATION CONFIG\n%s %s\n%s 42\n" % (_EVAL_FP_KEY, fp, _EVAL_SEEDS_KEY), "fake"), False),
+        ("uncommitted content (reader says not in HEAD)", [42], "x.md",
+         lambda _p: (None, "not in HEAD (staged but not committed)"), False),
+        ("registered, committed, matching", [42, 43], "x.md", lambda _p: (good, "fake"), True),
+        ("dev seed only needs nothing", [7], None, None, True),
+    ]
+    ok_all = True
+    rows = []
+    for name, seeds, am, reader, want in cases:
+        got, why = check_eval_amendment(seeds, fp, am, read_committed=reader)
+        ok = (got == want)
+        ok_all = ok_all and ok
+        rows.append({"case": name, "want": want, "got": got, "reason": why, "ok": ok})
+        print(f"[gap4-tc-guard] {'ok ' if ok else 'BAD'} {name}: got {got} ({why})", flush=True)
+    print(f"[gap4-tc-guard] PASS={ok_all}", flush=True)
+    return (0 if ok_all else 1), rows
+
+
 def run(args):
     if set(args.seeds) & EVAL_SEEDS and not args.aggregate_only:
-        am = args.prereg_amendment
-        if not am or not (_REPO / am).exists():
-            raise SystemExit("REFUSED: evaluation seeds need --prereg-amendment <committed amendment path> "
-                             "(the prereg fixes the evaluation config only by an amendment committed first).")
+        ok, why = check_eval_amendment(args.seeds, _fingerprint(args), args.prereg_amendment)
+        if not ok:
+            raise SystemExit("REFUSED: %s. The prereg fixes the evaluation config only by an amendment committed "
+                             "first (AMENDMENT 5); get this run's fingerprint with --print-fingerprint." % why)
+        print(f"[gap4-tc] evaluation seeds allowed: {why}", flush=True)
     if args.aggregate_only:
         return aggregate(args)
     tasks = {}
@@ -586,6 +814,54 @@ def identity_selftest(args):
     return 0 if ok_all else 1
 
 
+def lesion_selftest(args):
+    """AMENDMENT 5: the matched apical lesion must keep every hidden apical at rest during training, and the check must
+    be able to fail: the parent's unmatched lesion (Gap4InEngineNet) and the intact micro_inengine arm must read > 0."""
+    seed = 7
+    (Xtr, ytr, _a), _te, meta, _idx = make_task_semantic_inheritance(seed, n_super=8, n_members=4, held_per_super=1,
+                                                                      n_prop=2, member_id_dim=3, n_obs=4, noise=0.02)
+    k = int(meta["k_classes"]); n_in = Xtr.shape[1]
+    kw = dict(n_hidden_layers=2, pool_k=2, settle_steps=12, credit_steps=6, graded_credit=True,
+              wpi_plastic=True, wpi_init="noisy")
+
+    def measure(cls, fb, mode):
+        net = cls(n_in, 6, k, seed=seed, feedback=fb, **kw)
+        er = float(getattr(net.cfg, "apical_E_rest", -65.0))
+        hid = slice(net.slices[1].start, net.slices[len(net.sizes) - 2].stop)
+        box = {"m": 0.0}
+        step = net.br._run_one_simulation_step
+
+        def tracked():
+            out = step()
+            if net.br.cp_v_apical is not None:
+                from sim.backend import to_host
+                box["m"] = max(box["m"], float(np.max(np.abs(np.asarray(to_host(net.br.cp_v_apical))[hid] - er))))
+            return out
+        net.br._run_one_simulation_step = tracked
+        for i in range(6):
+            net._train_one(Xtr[i], int(ytr[i]), mode)
+        return box["m"]
+    cases = [("matched lesion (Gap4ReadoutNet micro_inengine apical_lesion)", Gap4ReadoutNet, "micro_inengine",
+              "apical_lesion", "zero"),
+             ("fixed_fa apical_lesion (reference, no interneuron)", Gap4ReadoutNet, "fixed_fa", "apical_lesion", "zero"),
+             ("UNMATCHED parent lesion (Gap4InEngineNet micro_inengine apical_lesion)", Gap4InEngineNet,
+              "micro_inengine", "apical_lesion", "positive"),
+             ("intact micro_inengine (bdsp)", Gap4ReadoutNet, "micro_inengine", "bdsp", "positive")]
+    rows = []; ok_all = True
+    for name, cls, fb, mode, want in cases:
+        m = measure(cls, fb, mode)
+        ok = (m <= LESION_SILENT_TOL_MV) if want == "zero" else (m > 1.0)
+        ok_all = ok_all and ok
+        rows.append({"case": name, "hidden_apical_max_abs_dev_mV": m, "want": want, "ok": ok})
+        print(f"[gap4-tc-lesion] {'ok ' if ok else 'BAD'} {name}: max |v_apical - rest| = {m:.4f} mV (want {want})",
+              flush=True)
+    out = {"probe": "gap4_tc_matched_lesion_SELFTEST", "seed": seed, "lesion_kind": LESION_KIND, "cases": rows,
+           "LESION_SELFTEST_PASS": bool(ok_all)}
+    _atomic_write(Path(args.out), out)
+    print(f"[gap4-tc-lesion] PASS={ok_all} -> {args.out}", flush=True)
+    return 0 if ok_all else 1
+
+
 def select_calibration(paths, out):
     """Apply the PRE-REGISTERED selection rule mechanically to the seed-7 calibration artifacts."""
     rows = []
@@ -598,9 +874,12 @@ def select_calibration(paths, out):
         acc = rep["inherit_heldout"]
         ce, fr = acc.get("transport_ceiling"), acc.get("frozen")
         steps = cfg["settle_steps"] + cfg["credit_steps"] + cfg["isi_steps"]
+        # AMENDMENTS 3-4 registered the cost as epochs x steps per example (review fix: the code used steps only).
+        cost = int(cfg["epochs"]) * steps
         rows.append({"artifact": p, "label": cfg.get("label"), "settle": cfg["settle_steps"],
                      "read_window": cfg["read_window"], "read_gain": cfg["read_gain"], "isi": cfg["isi_steps"],
-                     "steps_per_example": steps, "ceiling": ce, "frozen": fr,
+                     "epochs": int(cfg["epochs"]), "steps_per_example": steps, "cost_epochs_x_steps": cost,
+                     "ceiling": ce, "frozen": fr,
                      "ceiling_train": rep["train_acc"].get("transport_ceiling"),
                      "frozen_train": rep["train_acc"].get("frozen"),
                      "decode_h2_frozen": rep["decode_h2_heldout"].get("frozen"),
@@ -612,15 +891,17 @@ def select_calibration(paths, out):
     if cand:
         best = max(r["headroom"] for r in cand)
         near = [r for r in cand if r["headroom"] >= best - 0.02]
-        chosen = min(near, key=lambda r: (r["steps_per_example"], -r["headroom"]))
-    res = {"rule": "prereg: ceiling binom p<0.05 AND headroom>=0.05; max headroom; within 0.02 -> fewest steps",
+        chosen = min(near, key=lambda r: (r["cost_epochs_x_steps"], -r["headroom"]))
+    res = {"rule": "prereg: ceiling binom p<0.05 AND headroom>=0.05; max headroom; within 0.02 -> fewest total "
+                   "training steps (epochs x steps per example, AMENDMENTS 3-4)",
            "rows": rows, "qualifying": [r["label"] for r in cand], "chosen": chosen,
            "status": ("SELECTED " + chosen["label"]) if chosen else "NONE QUALIFIES -> instrument UNDEFINED at dev"}
     _atomic_write(Path(out), res)
     for r in rows:
         print(f"[gap4-tc-calib] {r['label']}: ceiling {r['ceiling']} (p={r['ceiling_binom_p']}) frozen {r['frozen']} "
               f"headroom {r['headroom']} | train ceil {r['ceiling_train']} frozen {r['frozen_train']} | "
-              f"decode_h2(frozen) {r['decode_h2_frozen']} | steps/ex {r['steps_per_example']}", flush=True)
+              f"decode_h2(frozen) {r['decode_h2_frozen']} | steps/ex {r['steps_per_example']} "
+              f"cost {r['cost_epochs_x_steps']}", flush=True)
     print(f"[gap4-tc-calib] {res['status']} -> {out}", flush=True)
     return res
 
@@ -689,10 +970,26 @@ def main():
     ap.add_argument("--aggregate-only", dest="aggregate_only", action="store_true")
     ap.add_argument("--prereg-amendment", dest="prereg_amendment", default=None)
     ap.add_argument("--identity-selftest", dest="identity_selftest", action="store_true")
+    ap.add_argument("--guard-selftest", dest="guard_selftest", action="store_true",
+                    help="show the evaluation-seed guard fails in its failing directions (AMENDMENT 5)")
+    ap.add_argument("--lesion-selftest", dest="lesion_selftest", action="store_true",
+                    help="show the matched apical lesion keeps the hidden apical at rest (AMENDMENT 5)")
+    ap.add_argument("--print-fingerprint", dest="print_fingerprint", action="store_true",
+                    help="print this flag set's config fingerprint (to register in an EVALUATION CONFIG amendment)")
     ap.add_argument("--select-calibration", dest="select_calibration", nargs="+", default=None)
     a = ap.parse_args()
     if a.ckpt_dir is None:
         a.ckpt_dir = str(Path(a.out).with_suffix("")) + "_ckpt"
+    if a.print_fingerprint:
+        print(_fingerprint(a))
+        return 0
+    if a.guard_selftest:
+        rc, rows = guard_selftest(a)
+        _atomic_write(Path(a.out), {"probe": "gap4_tc_eval_seed_guard_SELFTEST", "fingerprint": _fingerprint(a),
+                                    "cases": rows, "GUARD_SELFTEST_PASS": rc == 0})
+        return rc
+    if a.lesion_selftest:
+        return lesion_selftest(a)
     if a.identity_selftest:
         return identity_selftest(a)
     if a.select_calibration:

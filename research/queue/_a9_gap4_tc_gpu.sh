@@ -4,21 +4,28 @@
 # `gpu_queue.sh pause --now`, it resumes: completed shards are skipped by the runner (config fingerprint must match).
 #
 # Pre-registration: research/findings/2026-09-24-gap4-transport-ceiling-readout-lever-PREREGISTRATION.md.
-# EVALUATION seeds (42/43/44/100/101/102) are refused by the runner unless A9_AMENDMENT names a committed amendment
-# that fixes the evaluation config; as of 2026-09-24 no dev config qualified, so the default here is DEV seed 7 at the
-# full size (the transfer + budget check named in the finding's next-lever list).
+# EVALUATION seeds (42/43/44/100/101/102) are refused by the runner unless A9_AMENDMENT names a COMMITTED amendment
+# whose '## AMENDMENT <n> ... EVALUATION CONFIG' section registers this exact config fingerprint and the seeds
+# (prereg AMENDMENT 5; get the fingerprint with --print-fingerprint). As of 2026-09-24 no dev config qualified, so the
+# default here is DEV seed 7 at the full size (the transfer + budget check named in the finding's next-lever list).
 #
 # Usage (from gpu_queue): bash research/queue/_a9_gap4_tc_gpu.sh
 #   env: A9_SEED (default 7)  A9_EPOCHS (default 40)  A9_AMENDMENT (path; needed only for evaluation seeds)
 #        A9_ARMS (default "frozen fixed_fa micro_inengine transport_ceiling")
+#        A9_WT   checkout to run from (default: the repo this script lives in -- never a hardcoded temporary worktree)
+#        A9_PIN_SHA  refuse to run unless that checkout's HEAD is this commit
+#        A9_PY   interpreter (default: the main checkout's .venv, found through git's common dir, so a worktree works)
 set -u
-WT=/home/dant123/Projects/sim/.claude/worktrees/wf_4703a2bd-4dd-15
+SELF_ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)
+WT=${A9_WT:-$SELF_ROOT}
 PIN=${A9_PIN_SHA:-}
-cd "$WT" || exit 2
-if [ -n "$PIN" ] && [ "$(git rev-parse HEAD)" != "$PIN" ]; then
-  echo "SKIP: worktree HEAD $(git rev-parse --short HEAD) is not the pinned $PIN -- refusing to run moved code"; exit 0
+cd "$WT" || { echo "REFUSED: checkout $WT does not exist"; exit 2; }
+if [ -n "$PIN" ] && [ "$(git rev-parse HEAD)" != "$(git rev-parse "$PIN^{commit}" 2>/dev/null)" ]; then
+  echo "SKIP: $WT HEAD $(git rev-parse --short HEAD) is not the pinned $PIN -- refusing to run moved code"; exit 0
 fi
-PY=/home/dant123/Projects/sim/.venv/bin/python
+MAIN_ROOT=$(cd "$(git rev-parse --path-format=absolute --git-common-dir)/.." && pwd)
+PY=${A9_PY:-$MAIN_ROOT/.venv/bin/python}
+[ -x "$PY" ] || { echo "REFUSED: no interpreter at $PY (set A9_PY)"; exit 2; }
 SEED=${A9_SEED:-7}
 EPOCHS=${A9_EPOCHS:-40}
 ARMS=${A9_ARMS:-"frozen fixed_fa micro_inengine transport_ceiling"}

@@ -167,6 +167,7 @@ research/findings/raw/gap4/transport_ceiling_readout/round1_rev9654a99/ (commit 
 <!--derived-->
 - C0-C3: the transport ceiling reads 0.056 held-out and about 0.05 train in every config; the frozen readout 0.074-0.093
   held-out and 0.048-0.087 train. Train accuracy is BELOW the 1/9 chance of 9 classes, so the readout learns the wrong way.
+  [Erratum, AMENDMENT 5 A: the training chance is the majority-class rate, 0.1825 here, not 1/9; the reading stands.]
 - Diagnostic `diag_eread_monotonic_s7.json`: the BDSP event read `E` (isolated or first-of-burst spikes) is
   NON-MONOTONIC in drive. Extra output current 0 -> +1600 pA raises the total spike rate 86 -> 404 Hz but lowers `E`
   0.050 -> 0.002. At the default tonic drive the output layer sits at the peak of `E`, so any LTP onto an output
@@ -202,7 +203,8 @@ research/findings/raw/gap4/transport_ceiling_readout/round2_rev5c3a865/ (commit 
 
 <!--derived-->
 - The spike read removed the below-chance training accuracy (C8 frozen train 0.110, ceiling 0.098) but nothing
-  learned: the ceiling stayed at 0.056-0.074 held-out.
+  learned: the ceiling stayed at 0.056-0.074 held-out. [Erratum, AMENDMENT 5 A: against the training chance 0.1825
+  both are still below chance, so the spike read did NOT remove the below-chance training accuracy.]
 - **The forward pathway does not transmit.** `diag_transmit_scan_*`: with the default Tsodyks-Markram short-term
   depression ON, H1/H2/output rates do not change when `ff_w_init` goes 4 -> 40 or `propagation_strength`
   0.05 -> 0.5, at any tonic level; at tonic 0 the input layer fires at 0.096/ms and H1 stays at 0.005/ms. Scaling
@@ -242,6 +244,7 @@ fixing it says so and why.
 <!--derived-->
 - With feedforward STP bypassed, the ceiling begins to fit the training set as lr rises (lr 1: train 0.180; lr 5:
   train 0.203; 1/9 chance), while held-out stays 0.074-0.130 (chance 0.167). Nothing qualifies yet.
+  [Erratum, AMENDMENT 5 A: the training chance is 0.1825; 0.180 is at chance and 0.203 is not above it (p 0.17).]
 - The frozen readout's argmax collapses onto one or two output units (often the never-taught class 8): baseline rate
   differences between output units outweigh the learned class selectivity.
 
@@ -291,3 +294,75 @@ hidden neurons through the committed per-synapse plasticity gain; the output pat
 | C24 | 5 | 0.2 | 20 |
 
 **Selection rule: unchanged**, over C1-C24 (cost = epochs x steps per example). Fallback unchanged.
+
+## AMENDMENT 5 (2026-09-24 ~17:20 EDT, review fix round; before the transmission diagnostic and the bound census run, and before any evaluation amendment)
+
+Why: the independent review of the lane (verdict "not safe to merge yet") found wrong chance references, an overstated
+causal claim, a lesion that was not a matched cut, an evaluation-seed guard that could not fail, a NO-GO readable with
+no headroom, and an unmeasured weight clamp. Everything below is fixed now, before any evaluation seed has run. No
+evaluation seed has run at the commit of this amendment.
+
+**A. Training chance (erratum to AMENDMENTS 2 and 3).** Training accuracy is compared with the majority-class rate of
+the 400-item training subsample, the same chance definition this prereg uses for held-out items. It is not 1/9: class 8
+has no training items on this task. Seed 7: r0 0.1825, r1 0.170, r2 0.1625. Evaluation seeds (r0/r1/r2): 42
+0.1825/0.1725/0.195; 43 0.190/0.1975/0.170; 44 0.1775/0.155/0.1825; 100 0.165/0.1725/0.185; 101 0.195/0.165/0.1575; 102
+0.170/0.1625/0.1725. Corrected readings (replicate 0, chance 0.1825): AMENDMENT 2's C8 frozen 0.110 and ceiling 0.098
+are still BELOW chance, so the spike read did not remove below-chance training accuracy. AMENDMENT 3's ceiling train
+0.180 (lr 1) is at chance and 0.203 (lr 5) is not above it (binomial p 0.17). The Why section's "at chance" for the
+2026-09-15 train accuracies (0.163, 0.152) stands, since seed 42 r0 and seed 43 r0 have majority rates 0.1825 and 0.190.
+The runner now writes `train_chance` and `train_binom_p` into every shard.
+
+**B. Rule 1 (interpretability gate) now needs headroom.** A replicate is interpretable only if the ceiling clears
+chance (one-sided binomial p < 0.05) AND its headroom over frozen is at least 0.05. A seed is DEFINED iff at least 2 of
+3 replicates are interpretable; this applies to the seed-42 de-risk and to the six-seed rule 1 (at least 5 of 6 seeds
+DEFINED). NO-GO still needs rule 1 to hold, so a negative can no longer be read off an instrument with no headroom. The
+runner reports `n_interpretable` beside `n_ceiling_clears_chance`.
+
+**C. Rule 4 apical lesion is a matched cut.** In `micro_inengine_lesion` the runner zeroes the interneuron rate
+`cp_spi_int_rate` as well as the hidden Y, so the engine-formed cancellation `int_drive` is zero and the lesioned top
+hidden apical receives nothing. Before this fix the untrained cancellation kept driving it (review probe: 17.35 mV max
+|v_apical - rest|; this runner's `--lesion-selftest`, tiny net: 49.2 mV unmatched, 0.0 mV matched). Every lesion shard
+records `lesion_hidden_apical_max_abs_dev_mV` over all hidden neurons during training; the lesion counts as held
+(docs/TERMS.md "lesion") only if that is at most 1e-6 mV. Lesion shards without the matched-lesion tag are never
+resumed or aggregated.
+
+**D. Evaluation-seed guard.** An evaluation seed runs only if `--prereg-amendment` names a file whose COMMITTED content
+(git HEAD, or a manifest-verified git archive on the pool) holds a markdown heading that starts with "AMENDMENT" and
+contains the words "EVALUATION CONFIG", with, inside that section, a line `evaluation-config-fingerprint: <16 hex>`
+equal to the run's config fingerprint (`--print-fingerprint`) and a line `evaluation-seeds: ...` listing every
+evaluation seed requested. This file has no such section, so passing it refuses. `--guard-selftest` shows the refusals.
+
+**E. Calibration tie-break.** `select_calibration` breaks ties by total training steps (epochs x steps per example), as
+AMENDMENTS 3 and 4 registered; the code had used steps per example only. Re-running it over C0-C24 must still give
+NONE QUALIFIES (nothing qualified, so the tie-break never applied).
+
+**F. Dev runs not registered before they ran (disclosed, no pre-registered weight).** (1) The dev run at C21, 4 arms x
+3 replicates (rev 1ec6635), and (2) the full-size timing burst, both reported in the 2026-09-24 finding. (3) The
+full-size GPU dev run on seed 7, `research/queue/_a9_gap4_tc_gpu.sh` at pin 10479d530 (C21 flags at H64/pool 16, 40
+epochs, 4 arms x 3 replicates), started 15:54:59 EDT, before this amendment; its output had not been read when this was
+committed. What it decides: whether C21 transfers to the 2026-09-15 net size. Seed 7 is read under rule B (DEFINED iff
+at least 2 of 3 replicates interpretable), by re-aggregating its shards with this revision's runner (same fingerprint;
+the shards carry every field rule B needs). DEFINED makes C21-at-full-size the candidate for an evaluation-config
+amendment (section D), which is still required. UNDEFINED keeps the instrument at dev, and the next lever applies. It
+also measures the cupy ms per step for the evaluation budget.
+
+**G. Transmission diagnostic with a noise reference (dev seed 7).** Runner
+`research/runners/_gap4_tc_transmission_noise_ref_diag.py`, 24 training items, reads event (legacy) and spikes (W 30),
+the 2x2 of feedforward STP (on / bypassed) x gain (ff 4, propagation 0.05 / ff 40, propagation 0.5). Full size
+(H64/pool 16) at tonic 1.0, the 2026-09-15 operating point; dev size (H32/pool 4) at tonic 1.0 and 0.5. Per layer:
+effect/noise (mean |intact - cut| over mean |intact - intact|) and the across-item reliability of each unit's read.
+What it decides: the STP attribution. If at full size only STP-bypassed-plus-gain reads effect/noise above 2 with item
+reliability above 0.6 (spike read), the 2026-09-15 cause is recorded as two-factor (default STP at the legacy gain);
+if the legacy variant already shows item reliability above 0.3, "the legacy net barely transmits" is withdrawn for
+the full-size net.
+
+**H. Bound census (dev seed 7).** Review issue: at C21 the hidden-learning arms end at a mean |w| of 8.7-10.1 against
+the +-12 bound, so the clamp may own the weight change. Run: C21 flags on the small net (H32/pool 4, 30 epochs), 4 arms x
+3 replicates, one pool job per shard, at the revision that carries this amendment. Each shard records, per feedforward
+pathway, the fraction of synapses at (or beyond) +-bdsp_w_max at build and after training, mean and max |w|, and
+tools.lab.bound_check at build. Consistency check: the r0 shards must reproduce the dev run's r0 reads exactly (the
+census only reads weights), else the census is VOID. Decision: the clamp is load-bearing if, in the transport_ceiling
+arm, at least 10% of the synapses of a hidden-post pathway (ff_0 or ff_1) end at +-w_max on at least 2 of 3
+replicates. Then the next lever is the bound (the companion process that the static clamp replaced) before lateral
+inhibition or output homeostasis. Otherwise the clamp is excluded as the cause of the residual and the next-lever order
+stands.
