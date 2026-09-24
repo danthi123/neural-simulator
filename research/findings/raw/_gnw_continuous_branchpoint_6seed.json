@@ -1,0 +1,431 @@
+{
+  "runner": "_gnw_continuous_branchpoint_verify",
+  "mode": "six_seed",
+  "verdict": "GO",
+  "pooled_go": true,
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "operating_point": {
+    "salient_pa": 5000.0,
+    "min_x_deficit": 0.05
+  },
+  "verdict_status": "GO",
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "[integrity smoke] no live cp_* array is dropped by the snapshot filter, 6/6",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "[integrity smoke] the branch-point snapshot restores exactly (hash match) onto an independently-built fork S2, 6/6",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "[integrity smoke] ...and onto a second independent fork S3, 6/6",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "[the discriminating gate] the identical control action on the two verified forks (RNG-matched) reproduces byte-identical post-run state and verdict, 6/6",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "[negative control] the SAME control action WITHOUT reloading the saved RNG state MISMATCHES the RNG-matched run, 6/6 -- proves the control above is not vacuous",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "[integrity smoke on SIM_BACKEND=numpy] the stored branch snapshot is unchanged after both forks are driven past the branch point (no aliasing), 6/6",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "the STD carryover lever actually moved (x_A < 1 at branch) on 6/6",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    }
+  ],
+  "disabled_processes": [
+    {
+      "process": "recency-trace mechanism claim",
+      "why": "OUT OF SCOPE for this runner -- still banked NO-GO on the parked, never-merged branch (carryover_causal_at_near_threshold=0/6); this instrument verifies the FORK the parked lane's safety claim depended on, nothing more"
+    }
+  ],
+  "counts": {
+    "seed_go": 6,
+    "cp_completeness": 6,
+    "fork_restore_exact_s2": 6,
+    "fork_restore_exact_s3": 6,
+    "control_fork_determinism": 6,
+    "g3_negative_control_mismatches": 6,
+    "no_aliasing": 6,
+    "carryover_ok": 6,
+    "n_seeds": 6
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "xA_at_branch": 0.7624718351663978,
+      "branch_hash": "e011e33d87af28312d97c4fd5096a073a4902df4824f2f731cb2ff14c62d9bdb",
+      "lever_moved": true,
+      "go_gate": {
+        "cp_completeness": true,
+        "fork_restore_exact_s2": true,
+        "fork_restore_exact_s3": true,
+        "control_fork_determinism": true,
+        "g3_negative_control_mismatches": true,
+        "no_aliasing": true,
+        "carryover_ok": true
+      },
+      "cp_missing": [],
+      "control": {
+        "state_match": true,
+        "verdict_match": true
+      },
+      "negative_control": {
+        "mismatches": true,
+        "note": "S4, restored to the same branch point as S2, run WITHOUT reloading the saved RNG state -- must MISMATCH S1's post-run hash or G3 is not evidence"
+      },
+      "recent_s1": {
+        "swapped": true,
+        "new_rate_post": 0.3333333333333333,
+        "old_residual_post": 0.0,
+        "winner_post": 0,
+        "n_ignited_post": 1
+      },
+      "recent_s2_fork": {
+        "swapped": true,
+        "new_rate_post": 0.3333333333333333,
+        "old_residual_post": 0.0,
+        "winner_post": 0,
+        "n_ignited_post": 1
+      },
+      "recent_s4_fork_no_rng_reload": {
+        "swapped": true,
+        "new_rate_post": 0.3333333333333333,
+        "old_residual_post": 0.0,
+        "winner_post": 0,
+        "n_ignited_post": 1
+      },
+      "fresh_s3_fork": {
+        "swapped": true,
+        "new_rate_post": 0.3333333333333333,
+        "old_residual_post": 0.0,
+        "winner_post": 2,
+        "n_ignited_post": 1
+      },
+      "seed_go": true,
+      "operating_point": {
+        "salient_pa": 5000.0,
+        "min_x_deficit": 0.05
+      }
+    },
+    {
+      "seed": 43,
+      "xA_at_branch": 0.7356683718297853,
+      "branch_hash": "60925242a394907ae6102c530aa295d36ce9f56ac19a8b74ff255d71667eee83",
+      "lever_moved": true,
+      "go_gate": {
+        "cp_completeness": true,
+        "fork_restore_exact_s2": true,
+        "fork_restore_exact_s3": true,
+        "control_fork_determinism": true,
+        "g3_negative_control_mismatches": true,
+        "no_aliasing": true,
+        "carryover_ok": true
+      },
+      "cp_missing": [],
+      "control": {
+        "state_match": true,
+        "verdict_match": true
+      },
+      "negative_control": {
+        "mismatches": true,
+        "note": "S4, restored to the same branch point as S2, run WITHOUT reloading the saved RNG state -- must MISMATCH S1's post-run hash or G3 is not evidence"
+      },
+      "recent_s1": {
+        "swapped": true,
+        "new_rate_post": 0.3333333333333333,
+        "old_residual_post": 0.0,
+        "winner_post": 0,
+        "n_ignited_post": 1
+      },
+      "recent_s2_fork": {
+        "swapped": true,
+        "new_rate_post": 0.3333333333333333,
+        "old_residual_post": 0.0,
+        "winner_post": 0,
+        "n_ignited_post": 1
+      },
+      "recent_s4_fork_no_rng_reload": {
+        "swapped": true,
+        "new_rate_post": 0.3333333333333333,
+        "old_residual_post": 0.0,
+        "winner_post": 0,
+        "n_ignited_post": 1
+      },
+      "fresh_s3_fork": {
+        "swapped": true,
+        "new_rate_post": 0.3333333333333333,
+        "old_residual_post": 0.0,
+        "winner_post": 2,
+        "n_ignited_post": 1
+      },
+      "seed_go": true,
+      "operating_point": {
+        "salient_pa": 5000.0,
+        "min_x_deficit": 0.05
+      }
+    },
+    {
+      "seed": 44,
+      "xA_at_branch": 0.7669881086716367,
+      "branch_hash": "c2016455623b8fcd259258573d606476dfd11576c400c79b2d94cb800310afd0",
+      "lever_moved": true,
+      "go_gate": {
+        "cp_completeness": true,
+        "fork_restore_exact_s2": true,
+        "fork_restore_exact_s3": true,
+        "control_fork_determinism": true,
+        "g3_negative_control_mismatches": true,
+        "no_aliasing": true,
+        "carryover_ok": true
+      },
+      "cp_missing": [],
+      "control": {
+        "state_match": true,
+        "verdict_match": true
+      },
+      "negative_control": {
+        "mismatches": true,
+        "note": "S4, restored to the same branch point as S2, run WITHOUT reloading the saved RNG state -- must MISMATCH S1's post-run hash or G3 is not evidence"
+      },
+      "recent_s1": {
+        "swapped": true,
+        "new_rate_post": 0.3333333333333333,
+        "old_residual_post": 0.0013333333333333333,
+        "winner_post": 0,
+        "n_ignited_post": 1
+      },
+      "recent_s2_fork": {
+        "swapped": true,
+        "new_rate_post": 0.3333333333333333,
+        "old_residual_post": 0.0013333333333333333,
+        "winner_post": 0,
+        "n_ignited_post": 1
+      },
+      "recent_s4_fork_no_rng_reload": {
+        "swapped": true,
+        "new_rate_post": 0.3333333333333333,
+        "old_residual_post": 0.002,
+        "winner_post": 0,
+        "n_ignited_post": 1
+      },
+      "fresh_s3_fork": {
+        "swapped": true,
+        "new_rate_post": 0.3333333333333333,
+        "old_residual_post": 0.0,
+        "winner_post": 2,
+        "n_ignited_post": 1
+      },
+      "seed_go": true,
+      "operating_point": {
+        "salient_pa": 5000.0,
+        "min_x_deficit": 0.05
+      }
+    },
+    {
+      "seed": 100,
+      "xA_at_branch": 0.7338373596116919,
+      "branch_hash": "8747758172415a82787add2b14cfcc69a4a3d951fb1792cf5254addb2c4ecf7b",
+      "lever_moved": true,
+      "go_gate": {
+        "cp_completeness": true,
+        "fork_restore_exact_s2": true,
+        "fork_restore_exact_s3": true,
+        "control_fork_determinism": true,
+        "g3_negative_control_mismatches": true,
+        "no_aliasing": true,
+        "carryover_ok": true
+      },
+      "cp_missing": [],
+      "control": {
+        "state_match": true,
+        "verdict_match": true
+      },
+      "negative_control": {
+        "mismatches": true,
+        "note": "S4, restored to the same branch point as S2, run WITHOUT reloading the saved RNG state -- must MISMATCH S1's post-run hash or G3 is not evidence"
+      },
+      "recent_s1": {
+        "swapped": true,
+        "new_rate_post": 0.3333333333333333,
+        "old_residual_post": 0.0,
+        "winner_post": 0,
+        "n_ignited_post": 1
+      },
+      "recent_s2_fork": {
+        "swapped": true,
+        "new_rate_post": 0.3333333333333333,
+        "old_residual_post": 0.0,
+        "winner_post": 0,
+        "n_ignited_post": 1
+      },
+      "recent_s4_fork_no_rng_reload": {
+        "swapped": true,
+        "new_rate_post": 0.3333333333333333,
+        "old_residual_post": 0.0,
+        "winner_post": 0,
+        "n_ignited_post": 1
+      },
+      "fresh_s3_fork": {
+        "swapped": true,
+        "new_rate_post": 0.3333333333333333,
+        "old_residual_post": 0.0006666666666666666,
+        "winner_post": 2,
+        "n_ignited_post": 1
+      },
+      "seed_go": true,
+      "operating_point": {
+        "salient_pa": 5000.0,
+        "min_x_deficit": 0.05
+      }
+    },
+    {
+      "seed": 101,
+      "xA_at_branch": 0.7418017102937838,
+      "branch_hash": "bb6ab31f2fa335ca793bc5e239565eece4d59c74c5cbf037acf93dfce66c003b",
+      "lever_moved": true,
+      "go_gate": {
+        "cp_completeness": true,
+        "fork_restore_exact_s2": true,
+        "fork_restore_exact_s3": true,
+        "control_fork_determinism": true,
+        "g3_negative_control_mismatches": true,
+        "no_aliasing": true,
+        "carryover_ok": true
+      },
+      "cp_missing": [],
+      "control": {
+        "state_match": true,
+        "verdict_match": true
+      },
+      "negative_control": {
+        "mismatches": true,
+        "note": "S4, restored to the same branch point as S2, run WITHOUT reloading the saved RNG state -- must MISMATCH S1's post-run hash or G3 is not evidence"
+      },
+      "recent_s1": {
+        "swapped": true,
+        "new_rate_post": 0.3333333333333333,
+        "old_residual_post": 0.0,
+        "winner_post": 0,
+        "n_ignited_post": 1
+      },
+      "recent_s2_fork": {
+        "swapped": true,
+        "new_rate_post": 0.3333333333333333,
+        "old_residual_post": 0.0,
+        "winner_post": 0,
+        "n_ignited_post": 1
+      },
+      "recent_s4_fork_no_rng_reload": {
+        "swapped": true,
+        "new_rate_post": 0.3333333333333333,
+        "old_residual_post": 0.0,
+        "winner_post": 0,
+        "n_ignited_post": 1
+      },
+      "fresh_s3_fork": {
+        "swapped": true,
+        "new_rate_post": 0.3333333333333333,
+        "old_residual_post": 0.0,
+        "winner_post": 2,
+        "n_ignited_post": 1
+      },
+      "seed_go": true,
+      "operating_point": {
+        "salient_pa": 5000.0,
+        "min_x_deficit": 0.05
+      }
+    },
+    {
+      "seed": 102,
+      "xA_at_branch": 0.7773136777243563,
+      "branch_hash": "0221e1f0174c53bef4bc20f7054e8f7fa8e1aa65569d761e29fea51c11aaa19d",
+      "lever_moved": true,
+      "go_gate": {
+        "cp_completeness": true,
+        "fork_restore_exact_s2": true,
+        "fork_restore_exact_s3": true,
+        "control_fork_determinism": true,
+        "g3_negative_control_mismatches": true,
+        "no_aliasing": true,
+        "carryover_ok": true
+      },
+      "cp_missing": [],
+      "control": {
+        "state_match": true,
+        "verdict_match": true
+      },
+      "negative_control": {
+        "mismatches": true,
+        "note": "S4, restored to the same branch point as S2, run WITHOUT reloading the saved RNG state -- must MISMATCH S1's post-run hash or G3 is not evidence"
+      },
+      "recent_s1": {
+        "swapped": true,
+        "new_rate_post": 0.3333333333333333,
+        "old_residual_post": 0.0,
+        "winner_post": 0,
+        "n_ignited_post": 1
+      },
+      "recent_s2_fork": {
+        "swapped": true,
+        "new_rate_post": 0.3333333333333333,
+        "old_residual_post": 0.0,
+        "winner_post": 0,
+        "n_ignited_post": 1
+      },
+      "recent_s4_fork_no_rng_reload": {
+        "swapped": true,
+        "new_rate_post": 0.3333333333333333,
+        "old_residual_post": 0.0,
+        "winner_post": 0,
+        "n_ignited_post": 1
+      },
+      "fresh_s3_fork": {
+        "swapped": true,
+        "new_rate_post": 0.3333333333333333,
+        "old_residual_post": 0.0,
+        "winner_post": 2,
+        "n_ignited_post": 1
+      },
+      "seed_go": true,
+      "operating_point": {
+        "salient_pa": 5000.0,
+        "min_x_deficit": 0.05
+      }
+    }
+  ]
+}
