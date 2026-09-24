@@ -447,6 +447,91 @@ def score(tag=RUN_TAG, write=True):
 
 
 # ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
+#  RESTYLE PROBE (AMENDMENT 1 design probe: Qwen only, no brain, seed 7 = NOT an evaluation seed)
+# ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
+PROBE_APPR = 0.30      # |appraisal| above the ladder's 0.25 dead zone -> the organ reads the candidate as signed
+
+
+def restyle_probe(out_path, seed=7, variants=("v0", "v1", "v2", "v3")):
+    """For every tone + known prompt: the affect-free draft (seed 7) and each variant's 4 rewrites. Per candidate:
+    lock, host appraisal (the organ's input; the organ is monotone in it past the dead zone), salad. NO tone-ruler
+    score is computed. The preregistered criterion (AMENDMENT 1) is applied by `choose_variant`."""
+    sys.path.insert(0, _REPO)
+    from research.runners.brain_chat_tui import QwenRenderer
+    from research.runners import affect_production_organ as AO
+    from webapp import open_ended_chat as _OE
+    from webapp import affect_tone_selection as ATS
+    t0 = time.time()
+    fac = QwenRenderer(seed=42)._fac
+    gen = _OE.get_generator(fac)
+    by_agent = _OE.build_index(os.path.expanduser("~/Projects/sim-data/knowledge_bundles/wikidata_100k"), None)
+    rows = []
+    for p in TONE_PROMPTS + KNOWN_PROMPTS:
+        facts = _OE.retrieve(by_agent, _OE.extract_topic(p))
+        known = bool(facts)
+        fam = 0.9 if known else 0.1
+        st = _OE.StateContext(topic=p, facts=facts, valence=0.0, arousal=0.3, familiarity=fam, confidence=fam,
+                              novelty=1 - fam, curiosity=0.5 + 0.3 * (1 - fam), self_model=_OE.SELF_MODEL,
+                              affect_source="real-organ")
+        system, user = _OE.build_prompt(st)
+        draft, _ = gen.generate(ATS.neutral_draft_system(system), user, seed=seed, max_new_tokens=110)
+        row = {"prompt": p, "known": known, "draft": draft, "draft_appraisal": AO.appraise_text(draft)["valence"],
+               "variants": {}}
+        for v in variants:
+            props, secs = ATS.propose(gen, draft, facts=facts, prompt=user, seed=seed, variant=v)
+            for c in props:
+                c["appraisal"] = AO.appraise_text(c["text"])["valence"]
+                c["salad"] = _BASE.salad_frac(c["text"])
+            row["variants"][v] = {"candidates": props, "gen_seconds": secs}
+        rows.append(row)
+        print("[probe] %s done (%.0fs)" % (p, time.time() - t0), flush=True)
+    out = {"what": "AMENDMENT 1 restyle-generator probe (Qwen only, seed %d, not an evaluation seed)" % seed,
+           "seed": seed, "variants": list(variants), "rows": rows, "device": str(fac.device),
+           "wall_seconds": round(time.time() - t0, 1)}
+    out["summary"] = summarize_probe(out)
+    os.makedirs(os.path.dirname(out_path), exist_ok=True)
+    json.dump(out, open(out_path, "w"), indent=1)
+    print("[probe] wrote %s\n%s" % (out_path, json.dumps(out["summary"], indent=1)), flush=True)
+    return out
+
+
+def summarize_probe(out):
+    summ = {}
+    for v in out["variants"]:
+        n = len(out["rows"])
+        has_neg = has_pos = 0
+        n_lock = n_c = 0
+        max_salad = 0.0
+        for r in out["rows"]:
+            cs = r["variants"][v]["candidates"]
+            adm = [c for c in cs if c["lock_ok"]]
+            n_c += len(cs)
+            n_lock += len(adm)
+            appr = [c["appraisal"] for c in adm] + [r["draft_appraisal"]]
+            has_neg += int(min(appr) <= -PROBE_APPR)
+            has_pos += int(max(appr) >= PROBE_APPR)
+            max_salad = max([max_salad] + [c["salad"] for c in adm])
+        summ[v] = {"frac_prompts_with_neg_candidate": round(has_neg / n, 3),
+                   "frac_prompts_with_pos_candidate": round(has_pos / n, 3),
+                   "coverage": round(min(has_neg, has_pos) / n, 3),
+                   "lock_pass_rate": round(n_lock / max(1, n_c), 3), "max_salad_admissible": round(max_salad, 3)}
+    summ["chosen"] = choose_variant(summ)
+    return summ
+
+
+def choose_variant(summ):
+    """AMENDMENT 1 criterion (fixed before the probe ran): among variants whose admissible candidates all have
+    salad <= 0.16, the one with the highest coverage = min(frac prompts with an admissible candidate appraised
+    <= -0.30, frac with one >= +0.30); ties -> the lower variant index. If the best coverage is < 0.5, NONE: the
+    design is predicted to fail the neg direction and the 6-seed run is NOT staged."""
+    ok = [(v, s) for v, s in sorted(summ.items()) if isinstance(s, dict) and s["max_salad_admissible"] <= 0.16]
+    if not ok:
+        return None
+    best = max(ok, key=lambda vs: (vs[1]["coverage"], -int(vs[0][1:])))
+    return best[0] if best[1]["coverage"] >= 0.5 else None
+
+
+# ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
 #  SELFTEST (pure; no brain, no model) — every new check must fail in its failing direction
 # ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
 def selftest():
@@ -461,10 +546,12 @@ def selftest():
         ok = ok and bool(cond)
 
     lex, _ = _BASE.load_indep_lexicon()
-    words = set(re.findall(r"[a-z']+", " ".join([d for _, d in ATS.STYLES] + [ATS.RESTYLE_SYSTEM,
-                                                                              ATS.NEUTRAL_MOOD_LINE]).lower()))
-    check("style descriptors + restyle instruction + neutral MOOD line share NO word with the tone lexicon",
-          not (words & set(lex)))
+    texts = [ATS.NEUTRAL_MOOD_LINE]
+    for V in ATS.VARIANTS.values():
+        texts += [d for _, d in V["styles"]] + [V["system"], V["demo"]]
+    words = set(re.findall(r"[a-z']+", " ".join(texts).lower()))
+    check("every variant's style descriptors + instruction + demo + neutral MOOD line share NO word with the tone "
+          "lexicon", not (words & set(lex)))
     check("flag unset -> off", (os.environ.pop("BRAIN_OPEN_ENDED_AFFECT_TONE_SELECT", None) or True)
           and not ATS.tone_select_enabled())
     src = open(os.path.join(_REPO, "webapp", "open_ended_chat.py")).read()
@@ -515,6 +602,12 @@ def selftest():
     pm = perm_check({s: {"complete": True, "real_directional_gap": g, "ctrl_directional_gap": 0.0}
                      for s, g in zip(SEEDS, [0.3, -0.3, 0.3, -0.3, 0.3, -0.2])})
     check("(P) real FAILS on sign-inconsistent gaps", pm["real_ok"] is False)
+    s_ok = {"v0": {"coverage": 0.2, "max_salad_admissible": 0.1}, "v1": {"coverage": 0.7, "max_salad_admissible": 0.1},
+            "v2": {"coverage": 0.7, "max_salad_admissible": 0.1}, "v3": {"coverage": 0.9, "max_salad_admissible": 0.5}}
+    check("choose_variant: best coverage among fluent variants, tie -> lower index (v1), disfluent v3 excluded",
+          choose_variant(s_ok) == "v1")
+    check("choose_variant: NONE when the best fluent coverage < 0.5",
+          choose_variant({"v0": {"coverage": 0.4, "max_salad_admissible": 0.1}}) is None)
     with tempfile.TemporaryDirectory() as td:
         check("(L)/(O) fail on an empty run (UNDEFINED, never a pass)",
               lever_check(load_arms(td))[0] is False and organ_check(load_arms(td))[0] is False)
@@ -538,9 +631,12 @@ if __name__ == "__main__":
     ap.add_argument("--n-known", type=int, default=None)
     ap.add_argument("--memcap-gb", type=int, default=12)
     ap.add_argument("--allow-uncapped", action="store_true")
+    ap.add_argument("--restyle-probe", action="store_true", help="AMENDMENT 1 design probe (Qwen only, seed 7)")
     args = ap.parse_args()
     if args.selftest:
         sys.exit(0 if selftest() else 1)
+    elif args.restyle_probe:
+        restyle_probe(args.out or os.path.join(_REPO, OUT_ROOT, "amend1_probe", "restyle_probe_s7.json"))
     elif args.worker:
         run_worker(args.seed, args.arm,
                    args.out or _BASE._worker_out(os.path.join(_REPO, out_dir_for(args.tag)), args.seed, args.arm),

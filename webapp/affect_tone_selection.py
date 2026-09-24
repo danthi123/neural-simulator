@@ -65,6 +65,36 @@ RESTYLE_SYSTEM = ("You rewrite a reply so that it expresses a different emotiona
 RESTYLE_MAX_NEW_TOKENS = 160
 STYLE_SEED_STRIDE = 7919          # decode seed of style k = seed + STYLE_SEED_STRIDE * (k + 1)
 
+# ── proposal-generator VARIANTS (AMENDMENT 1 design probe; see the PREREG's amendment log) ─────────────────────────
+# v0 = the preregistered generator above. The seed-7 smoke showed its "subdued"/"sad" rewrites carry no strongly
+# negative word the appraisal reads (appraisal 0.0), so the negative side of the proposal set was empty. v1-v3 are
+# the candidate fixes, compared by `research.runners._lbf_affect_tone_selection_derisk --restyle-probe` on seed 7
+# with a criterion fixed before the probe ran (appraisal coverage + lock + fluency; never the tone ruler).
+_SYS_V1 = ("You rewrite a reply so that it expresses a different emotional tone. Let the feeling show clearly in "
+           "the words you choose. Keep every name, number, date, place and fact exactly as it is. Do not add or "
+           "remove any facts. Output only the rewritten reply.")
+_STYLES_V1 = [
+    ("pos2", "joyful, delighted and happy"),
+    ("pos1", "warm and pleased"),
+    ("neg1", "sad and unhappy"),
+    ("neg2", "deeply sad, hurt and miserable"),
+]
+_DEMO_V2 = ("Example reply: \"The museum opened in 1901 in Paris and holds 300 paintings.\"\n"
+            "Rewritten in a happy tone: \"Happily, the museum opened in 1901 in Paris, and its 300 paintings are a "
+            "pleasure to see.\"\n"
+            "Rewritten in a sad tone: \"Sadly, the museum opened in 1901 in Paris, and its 300 paintings hang there "
+            "in lonely silence.\"\n\n")
+VARIANTS = {
+    "v0": {"styles": STYLES, "system": RESTYLE_SYSTEM, "max_new_tokens": 160, "demo": "", "caa": None},
+    "v1": {"styles": _STYLES_V1, "system": _SYS_V1, "max_new_tokens": 220, "demo": "", "caa": None},
+    "v2": {"styles": _STYLES_V1, "system": _SYS_V1, "max_new_tokens": 220, "demo": _DEMO_V2, "caa": None},
+    # v3: v1 + a FIXED-sign residual steer during the REWRITE only (D5's CAA axis; c = +/-0.5 for the strong styles,
+    # +/-0.25 for the mild ones). Fixed per style, so the proposals still do not depend on the organ's state.
+    "v3": {"styles": _STYLES_V1, "system": _SYS_V1, "max_new_tokens": 220, "demo": "",
+           "caa": {"pos2": 0.5, "pos1": 0.25, "neg1": -0.25, "neg2": -0.5}},
+}
+ACTIVE_VARIANT = "v0"
+
 LAST_TRACE: dict = {}             # the most recent turn's selection trace (read in-process by the runner)
 EVALUATOR = None                  # test seam: callable(text) -> dict(appraisal, differential, valence, n_hits)
 
@@ -83,8 +113,8 @@ def neutral_draft_system(system: str) -> str:
     return "\n".join(out)
 
 
-def restyle_user(descriptor: str, draft: str) -> str:
-    return "Rewrite this reply in a %s tone:\n\n%s" % (descriptor, draft)
+def restyle_user(descriptor: str, draft: str, demo: str = "") -> str:
+    return "%sRewrite this reply in a %s tone:\n\n%s" % (demo, descriptor, draft)
 
 
 def clean_restyle(text: str) -> str:
@@ -191,27 +221,63 @@ def _sha(t: str) -> str:
     return hashlib.sha256((t or "").encode("utf-8")).hexdigest()[:16]
 
 
+def _fixed_steer(gen, c):
+    """v3 only: a FIXED residual steer (D5's CAA axis at c, K = D5's RESID_K) for one rewrite. c is set per style,
+    never from the organ. Returns a context manager (a no-op when c is falsy or the mouth has no torch model)."""
+    import contextlib
+    fac = getattr(gen, "fac", None)
+    if not c or fac is None or not hasattr(fac, "model"):
+        return contextlib.nullcontext()
+    from webapp import affect_conditioned_mouth as _ACM
+
+    @contextlib.contextmanager
+    def _cm():
+        u = _ACM.affect_axis(fac, _ACM.RESID_LAYER)
+        vec = (float(c) * _ACM.RESID_K * u).to(dtype=next(fac.model.parameters()).dtype, device=fac.device)
+
+        def _hook(_m, _i, out):
+            return (out[0] + vec,) + tuple(out[1:]) if isinstance(out, tuple) else out + vec
+        h = fac.model.model.layers[_ACM.RESID_LAYER].register_forward_hook(_hook)
+        try:
+            yield
+        finally:
+            h.remove()
+    return _cm()
+
+
+def propose(gen, draft: str, *, facts=(), prompt: str = "", seed: int, variant: str = None):
+    """The rewrite proposals of one draft under a generator variant (default ACTIVE_VARIANT). Independent of the
+    organ's state by construction: inputs are the draft, the fixed variant and the decode seed only."""
+    V = VARIANTS[variant or ACTIVE_VARIANT]
+    out, total = [], 0.0
+    for k, (key, desc) in enumerate(V["styles"]):
+        dseed = int(seed) + STYLE_SEED_STRIDE * (k + 1)
+        with _fixed_steer(gen, (V["caa"] or {}).get(key)):
+            raw, s = gen.generate(V["system"], restyle_user(desc, draft, V["demo"]), seed=dseed,
+                                  max_new_tokens=V["max_new_tokens"])
+        total += float(s or 0.0)
+        txt = clean_restyle(raw)
+        ok, det = content_lock(draft, txt, facts, prompt)
+        out.append({"style": key, "text": txt, "lock_ok": ok, "lock": det, "decode_seed": dseed})
+    return out, total
+
+
 def generate_selected(gen, system: str, user: str, valence: float, *, facts=(), seed: int, max_new_tokens: int):
     """The entry point answer_turn calls when the flag is on and the Qwen one-shot path is taken. Returns (raw, secs)."""
     total = 0.0
     draft, s = gen.generate(neutral_draft_system(system), user, seed=seed, max_new_tokens=max_new_tokens)
     total += float(s or 0.0)
     cands = [{"style": "draft", "text": draft, "lock_ok": True, "lock": None, "decode_seed": int(seed)}]
-    for k, (key, desc) in enumerate(STYLES):
-        dseed = int(seed) + STYLE_SEED_STRIDE * (k + 1)
-        raw, s = gen.generate(RESTYLE_SYSTEM, restyle_user(desc, draft), seed=dseed,
-                              max_new_tokens=RESTYLE_MAX_NEW_TOKENS)
-        total += float(s or 0.0)
-        txt = clean_restyle(raw)
-        ok, det = content_lock(draft, txt, facts, user)
-        cands.append({"style": key, "text": txt, "lock_ok": ok, "lock": det, "decode_seed": dseed})
+    props, s = propose(gen, draft, facts=facts, prompt=user, seed=seed)
+    total += s
+    cands += props
     adm = [i for i, c in enumerate(cands) if c["lock_ok"]]
     for i in adm:
         cands[i]["eval"] = evaluate(cands[i]["text"])
     vals = [cands[i]["eval"]["valence"] for i in adm]
     j = adm[select_by_mood(vals, valence)]
     LAST_TRACE.clear()
-    LAST_TRACE.update({"mode": "select", "v_held": float(valence), "draft_sha": _sha(draft),
+    LAST_TRACE.update({"mode": "select", "variant": ACTIVE_VARIANT, "v_held": float(valence), "draft_sha": _sha(draft),
                        "n_admissible": len(adm), "admissible": adm, "selected": j,
                        "selected_style": cands[j]["style"],
                        "candidates": [{"style": c["style"], "sha": _sha(c["text"]), "text": c["text"],

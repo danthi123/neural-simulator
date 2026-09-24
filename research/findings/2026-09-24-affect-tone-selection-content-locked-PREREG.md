@@ -132,4 +132,47 @@ Honesty boundary: functional read-out only. The released reply's tone tracking t
 coupling. Nothing here claims felt experience.
 
 ## AMENDMENT LOG
-(none yet)
+
+**AMENDMENT 1: 2026-09-24, about 00:45 EDT, after the seed-7 smoke and before any evaluation-seed run.**
+
+What I had seen when I wrote this. The seed-7 smoke (NOT an evaluation seed) ran 1 of its 3 arms: `neg`, with 2
+tone prompts and 2 known prompts. I read everything in that arm: the candidate texts, the lock details, the
+appraisals and organ valences, the released styles, and its tone scores. `pos` crashed: the worktree had no `data/`
+symlink, so `data/corpus/tinystories.txt` was missing. That is fixed by linking the shared `data/` as the D5
+worktree does. `lesion` was still running. No evaluation seed has run.
+
+<!--derived-->
+What the smoke showed (rounded from `research/findings/raw/_affect_tone_selection/smoke_s7/arm_s7_neg.json`). The prediction below says the preregistered generator (v0) would fail the neg direction by
+construction:
+- The "slightly more subdued and wistful" and "very sad, somber and melancholy" rewrites carried no strongly
+  negative word that the appraisal reads. Both appraised 0.0 on both tone prompts ("The sea is a vast and intricate
+  system..."). The affect-free drafts appraised POSITIVE (+0.60, +0.69), so the most neutral candidate was a
+  "subdued" rewrite at 0.0. The `neg` arm (held valence -0.157) released that same candidate. The lesion arm (held
+  valence 0) must release it too, so neg_gap = 0 on such prompts.
+- The lock rejected most rewrites of the known replies. They dropped dates or names, and one invented "Aged 103 ...
+  April 14, 2023". This is the lock working, but it leaves few candidates.
+- Some admissible rewrites were cut at 160 tokens before a name the draft carried ("Earth").
+
+The change. The proposal generator becomes a choice among 4 variants, all in `webapp/affect_tone_selection.py`
+`VARIANTS`:
+- v0: the preregistered generator.
+- v1: descriptors that name the feeling plainly ("joyful, delighted and happy" / "warm and pleased" / "sad and
+  unhappy" / "deeply sad, hurt and miserable"), an instruction to let the feeling show in word choice, and 220
+  tokens.
+- v2: v1 plus a two-line happy/sad demonstration on an unrelated fact.
+- v3: v1 plus a FIXED-sign residual steer, D5's CAA axis at c = ±0.5 / ±0.25 per style, applied during the rewrite
+  only.
+
+In every variant the proposals depend only on the draft, the fixed variant and the decode seed, never on the
+organ's state. No descriptor, instruction or demonstration word is in the tone lexicon (selftest).
+
+The choice rule, fixed before the probe runs. `--restyle-probe` runs on seed 7 only: Qwen, no brain, all 15
+prompts, the affect-free draft and each variant's 4 rewrites. Among variants whose admissible candidates all have
+salad <= 0.16, pick the highest COVERAGE. Coverage = min(fraction of prompts with an admissible candidate whose
+appraisal is <= -0.30, fraction with one >= +0.30), where 0.30 is just past the ladder's 0.25 dead zone. Ties go
+to the lower index. The rule uses only the organ's INPUT (the appraisal), the lock and fluency. It never uses the
+independent tone lexicon, which the probe does not compute. **If the best coverage is < 0.5, no variant is chosen:
+the design is predicted to fail, and the 6-seed run is NOT staged.** The chosen variant becomes `ACTIVE_VARIANT`,
+and the seed-7 smoke is re-run on it before the 6-seed run is staged.
+
+Unchanged: every gate and precondition above, the thresholds, the arms, the prompts and the seeds.
