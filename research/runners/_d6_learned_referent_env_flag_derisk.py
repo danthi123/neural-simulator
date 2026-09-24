@@ -101,6 +101,18 @@ def _clean_env():
     os.environ.pop("BRAIN_LEARNED_REFERENT_LESION", None)
 
 
+def _file_sha256(path):
+    """Content hash of an input file, so seeds run on different inputs cannot be pooled (2026-09-24 review: seed 42
+    ran on a 7.99 MB prefix of the 19.97 MB tinystories.txt; the per-seed JSON recorded neither, and R3 moved
+    0.9167 -> 0.8333 between the two)."""
+    import hashlib
+    try:
+        with open(path, "rb") as f:
+            return hashlib.sha256(f.read()).hexdigest(), os.path.getsize(path)
+    except OSError:
+        return None, None
+
+
 def _env(corpus, max_chars=8_000_000, top_v=2000):
     tokens = load_tokens(corpus, max_chars)
     vocab, _ = build_vocab(tokens, top_v)
@@ -142,6 +154,11 @@ def run_seed(seed, corpus, pos_gt, n_pairs=N_PAIRS):
     held = _held_out(vocab, pos_gt)
     noun_pool = sorted(w for w in held if held[w] and w in env.pos)
     out = {"seed": seed, "held_word_phrase": HELD_WORD_PHRASE}
+    # INPUT PROVENANCE: the frame environment reads `corpus`; the learned lexicon (get_lexicon) always reads
+    # L._DEFAULT_CORPUS and ignores --corpus. Record both; score() refuses to pool seeds whose inputs differ.
+    out["corpus_env_path"], out["corpus_lexicon_path"] = corpus, L._DEFAULT_CORPUS
+    out["corpus_env_sha256"], out["corpus_env_bytes"] = _file_sha256(corpus)
+    out["corpus_lexicon_sha256"], out["corpus_lexicon_bytes"] = _file_sha256(L._DEFAULT_CORPUS)
 
     # R1: route ON via env var, fresh organ, never touches .referent_lexicon.
     os.environ["BRAIN_LEARNED_REFERENT_LEXICON"] = "1"
@@ -221,8 +238,14 @@ def score(src):
         report_only["R5_singleton_built_all_seeds"] = (int(sum(r["r5_lexicon_built"] for r in M)),
                                                         all(r["r5_lexicon_built"] for r in M))
     passed = bool(M) and all(bool(v[1]) for v in ev.values())
-    verdict = "INCOMPLETE" if not complete else ("GO" if passed else "NO-GO")
+    # One input for all seeds, or no verdict: a seed without recorded input hashes, or two distinct inputs, is
+    # MIXED-INPUT (never GO), whatever the gates read.
+    inputs = sorted({(r.get("corpus_env_sha256"), r.get("corpus_lexicon_sha256")) for r in M}, key=str)
+    one_input = len(inputs) == 1 and None not in inputs[0]
+    verdict = ("INCOMPLETE" if not complete else "MIXED-INPUT" if not one_input
+               else ("GO" if passed else "NO-GO"))
     return {"verdict": verdict, "complete_6seed": complete, "gate": GATE, "evidence": ev,
+            "inputs": [list(i) for i in inputs], "one_input": one_input,
             "report_only": report_only,
             "seeds": sorted(per), "per_seed": {s: {k: per[s].get(k) for k in
                 ("r1_pass", "r2_pass", "r3_recovered_both_rate", "r4_lesion_recovered_both_rate", "r4_lever_moved",

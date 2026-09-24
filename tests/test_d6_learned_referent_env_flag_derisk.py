@@ -11,6 +11,8 @@ import pytest
 from research.runners import _d6_learned_referent_env_flag_derisk as R
 from tools.lab import LeverError, lever
 
+_SAME_INPUT = {"corpus_env_sha256": "aa", "corpus_lexicon_sha256": "bb"}
+
 
 def test_r4_gate_equal_rates_records_failed_gate_not_a_crash():
     """The two realistic failing outcomes R4 exists to catch both make intact_rate == lesion_rate.
@@ -76,7 +78,7 @@ def test_score_r5_is_report_only_not_gated(tmp_path):
         d = {"seed": seed, "r1_pass": True, "r2_pass": True,
              "r3_recovered_both_rate": 0.80, "r4_lesion_recovered_both_rate": 0.05,
              "r4_lever_moved": True, "hand_baseline_recovered_both_rate": 0.10,
-             "r5_lexicon_built": False}   # deliberately "failing" if it were (wrongly) gated
+             "r5_lexicon_built": False, **_SAME_INPUT}   # deliberately "failing" if it were (wrongly) gated
         json.dump(d, open(os.path.join(src, f"s{seed}.json"), "w"))
 
     out = R.score(str(src))
@@ -94,8 +96,26 @@ def test_score_r4_gates_on_lever_moved_too():
             d = {"seed": seed, "r1_pass": True, "r2_pass": True,
                  "r3_recovered_both_rate": 0.80, "r4_lesion_recovered_both_rate": 0.05,
                  "r4_lever_moved": lever_moved, "hand_baseline_recovered_both_rate": 0.10,
-                 "r5_lexicon_built": True}
+                 "r5_lexicon_built": True, **_SAME_INPUT}
             json.dump(d, open(os.path.join(src, f"s{seed}.json"), "w"))
         out = R.score(src)
         assert out["verdict"] == "NO-GO"
         assert out["evidence"]["R4_lesion_recover_mean"][1] is False
+
+
+def test_score_refuses_to_pool_seeds_run_on_different_inputs(tmp_path):
+    """2026-09-24 review: seed 42 ran on a 7.99 MB prefix of the corpus the other seeds would read. Six passing seeds
+    on two different inputs (or with an input never recorded) must verdict MIXED-INPUT, never GO."""
+    for case in ("differ", "unrecorded"):
+        d_ = tmp_path / case
+        d_.mkdir()
+        for seed in R.SEEDS6:
+            inp = dict(_SAME_INPUT)
+            if seed == 42:
+                inp = {"corpus_env_sha256": "zz", "corpus_lexicon_sha256": "zz"} if case == "differ" else {}
+            d = {"seed": seed, "r1_pass": True, "r2_pass": True,
+                 "r3_recovered_both_rate": 0.80, "r4_lesion_recovered_both_rate": 0.05,
+                 "r4_lever_moved": True, "hand_baseline_recovered_both_rate": 0.10, "r5_lexicon_built": True, **inp}
+            json.dump(d, open(os.path.join(d_, f"s{seed}.json"), "w"))
+        out = R.score(str(d_))
+        assert out["verdict"] == "MIXED-INPUT" and out["one_input"] is False, (case, out["verdict"])

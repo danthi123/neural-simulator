@@ -10,8 +10,9 @@ mechanism: The PRODUCTION wiring of the learned open-vocab referent lexicon into
 lane: E -- Language (learned referent lexicon -> multi-referent WM route)
 seeds: [42, 43, 44, 100, 101, 102]
 verdict: PREREGISTERED -- no evaluation run has happened yet under this file. Seed 42 runs LOCALLY under
-  `tools/memcap.sh`/`tools/mem_ok.sh` immediately after this commit; seeds 43/44/100/101/102 are staged on the
-  pool (pool41 + pool42, isolated revision), not awaited synchronously in this session.
+  `tools/memcap.sh`/`tools/mem_ok.sh` immediately after this commit; seeds 43/44/100/101/102 are to be staged on
+  the pool (pool41 + pool42, isolated revision), not awaited synchronously in this session. See AMENDMENT 1: all six
+  seeds (42 included) now run at one amended revision on one recorded input.
 artifacts: []
 external: none new -- this file verifies a WIRING, not a biological claim; the detector's own biology binding is
   unchanged from `_lexicon_spiking_referent_derisk.py`'s already-banked GO.
@@ -133,3 +134,18 @@ SIM_BACKEND=numpy python -u -m research.runners._d6_learned_referent_env_flag_de
     --json research/findings/raw/_d6_learned_referent_env_flag/s<SEED>.json
 python -m research.runners._d6_learned_referent_env_flag_derisk --score research/findings/raw/_d6_learned_referent_env_flag
 ```
+
+## AMENDMENT 1 (2026-09-24, before any seed other than 42 ran; gates and thresholds unchanged)
+
+Review of the seed-42 run found that it read a 7,988,286-byte prefix of `data/corpus/tinystories.txt` (the builder
+worktree's copy) while the primary checkout holds the 19,971,040-byte file. The runner reads 8,000,000 characters, so
+the two give different vocabularies and lexicons: re-running the same commit at seed 42 on the full file read
+R3 = 0.8333 instead of 0.9167 (R4 = 0.00 both times). Neither input was recorded. Changes, provenance only:
+
+- each per-seed JSON records the sha256 and size of both inputs (the frame-environment corpus and the corpus the
+  learned lexicon reads, which ignores `--corpus`);
+- `score()` returns `MIXED-INPUT` (never GO) unless all six seeds carry one identical recorded input pair;
+- all six seeds, seed 42 included, run on the pool at the amended revision, provisioned from the primary checkout
+  (full 19.97 MB corpus). The earlier seed-42 artifact (`research/findings/raw/_d6_learned_referent_env_flag/s42.json`,
+  7.99 MB prefix, no input hash) is superseded: it has no input hash, so `score()` cannot pool it.
+
