@@ -312,9 +312,16 @@ def score_all(per_seed_arms: dict, seeds=VERIFY_SEEDS) -> dict:
     from tools.lab import attributable_to
     from tools.verdict import Verdict
     scored = {s: score_seed(s, per_seed_arms.get(s, {})) for s in seeds}
-    n = len(seeds)
-    n_valid = sum(1 for s in seeds if scored[s]["valid"])
-    bad = []
+    # SCORER FIX (2026-09-24, before any 6-seed verdict existed): the "full 6-seed set" precondition used to compare
+    # n_valid against len(seeds) -- the seeds the CALLER passed -- so `--score --seeds 42` (or "42 43") read
+    # measured=1==1 -> ok and printed GO on one or two seeds. The precondition is about the pre-registered
+    # VERIFICATION set, not the caller's subset: it now counts only VERIFY_SEEDS that were scored AND valid, and
+    # expects all six. A subset score still reports H1..H5 per scored seed, but its status is UNDEFINED, never GO.
+    # Strictly stricter than before; H1..H5 and D1 are unchanged.
+    n = len(VERIFY_SEEDS)
+    n_valid = sum(1 for s in VERIFY_SEEDS if s in scored and scored[s]["valid"])
+    unscored = [s for s in VERIFY_SEEDS if s not in scored]
+    bad = ["s%d not scored (not in --seeds)" % s for s in unscored]
     h1 = h2 = h3 = h4 = h5 = True
     defect_instances = []
     # ATTRIBUTION (tools.lab discipline, gap#5): H3 measures BOTH the intact-ON marker count and the count that
@@ -361,6 +368,7 @@ def score_all(per_seed_arms: dict, seeds=VERIFY_SEEDS) -> dict:
     go = bool(h1 and h2 and h3 and h4 and n_valid == n)
     decided = vd.decide(go)
     return {"probe": "affect_marker_settle_multiturn_contrast", "seeds": list(seeds),
+            "n_verify_seeds_valid": n_valid, "verify_seeds_unscored": unscored,
             "go": bool(decided["go"]), "status": decided["status"],
             "H1_superset": h1, "H2_register": h2, "H3_load_bearing": h3, "H4_isolation": h4, "H5_determinism": h5,
             "D1_defect_reproduced": bool(defect_instances), "defect_instances": defect_instances,
@@ -404,61 +412,79 @@ def _arms(off_leads, on_leads, on_lesion_leads=None, extra_on=None, off_b_leads=
             "on_a": {"turns": turns_on}, "on_b": {"turns": turns_on_b}, "on_lesion": {"turns": turns_lesion}}
 
 
+def _six(clean: dict, bad: dict = None, bad_seed: int = 101) -> dict:
+    """All six VERIFY_SEEDS carry `clean` arms; if `bad` is given it replaces ONE seed's arms (default s101), so
+    every failing-direction case below proves a single bad (seed) cell among five clean ones sinks the verdict."""
+    out = {s: clean for s in VERIFY_SEEDS}
+    if bad is not None:
+        out[bad_seed] = bad
+    return out
+
+
 def _selftest_scorer() -> bool:
     ok = True
     n = len(MT_LABELS)
     # (a) clean case: OFF misses turn 3 ('mt_emo2'), ON gets everything, lesion silences -> GO, D1 True
     off = ["", "Gladly! ", "", "Frankly — ", "Gladly! "]
     on = ["", "Gladly! ", "Gladly! ", "Frankly — ", "Gladly! "]
-    r = score_all({42: _arms(off, on)}, seeds=(42,))
+    r = score_all(_six(_arms(off, on)))
     ok = ok and r["go"] and r["D1_defect_reproduced"]
     print("  clean+defect -> GO=%s D1=%s (want True True) %s" % (r["go"], r["D1_defect_reproduced"], "ok" if r["go"] and r["D1_defect_reproduced"] else "FAIL"))
     # (b) H1 violated: ON drops a marker OFF had -> must FAIL
     off2 = ["", "Gladly! ", "Gladly! ", "Frankly — ", "Gladly! "]
     on2 = ["", "", "Gladly! ", "Frankly — ", "Gladly! "]
-    r = score_all({42: _arms(off2, on2)}, seeds=(42,))
+    r = score_all(_six(_arms(off, on), bad=_arms(off2, on2)))
     got = (not r["go"]) and (not r["H1_superset"])
     ok = ok and got
     print("  H1 superset violated -> go=%s H1=%s (want False False) %s" % (r["go"], r["H1_superset"], "ok" if got else "FAIL"))
     # (c) H2 violated: both emit, different register -> must FAIL
     on3 = ["", "Wonderful! ", "Gladly! ", "Frankly — ", "Gladly! "]
-    r = score_all({42: _arms(off, on3)}, seeds=(42,))
+    r = score_all(_six(_arms(off, on), bad=_arms(off, on3)))
     got = (not r["go"]) and (not r["H2_register"])
     ok = ok and got
     print("  H2 register mismatch -> go=%s H2=%s (want False False) %s" % (r["go"], r["H2_register"], "ok" if got else "FAIL"))
     # (d) H3 violated: ON emits, lesion does NOT silence -> must FAIL
     lesion_bad = ["", "Gladly! ", "", "", ""]
-    r = score_all({42: _arms(off, on, on_lesion_leads=lesion_bad)}, seeds=(42,))
+    r = score_all(_six(_arms(off, on), bad=_arms(off, on, on_lesion_leads=lesion_bad)))
     got = (not r["go"]) and (not r["H3_load_bearing"])
     ok = ok and got
     print("  H3 lesion fails to silence -> go=%s H3=%s (want False False) %s" % (r["go"], r["H3_load_bearing"], "ok" if got else "FAIL"))
     # (e) H4 violated: an ON arm changes an unrelated field (abstained flips) -> must FAIL
     extra_on = [None] * n
     extra_on[1] = {"abstained": True}
-    r = score_all({42: _arms(off, on, extra_on=extra_on)}, seeds=(42,))
+    r = score_all(_six(_arms(off, on), bad=_arms(off, on, extra_on=extra_on)))
     got = (not r["go"]) and (not r["H4_isolation"])
     ok = ok and got
     print("  H4 isolation violated (unrelated field changed) -> go=%s H4=%s (want False False) %s" % (r["go"], r["H4_isolation"], "ok" if got else "FAIL"))
     # (f) H5 violated: off_a vs off_b disagree (harness non-deterministic) -> must FAIL (and never silently GO)
     off_b_bad = ["", "Gladly! ", "Frankly — ", "Frankly — ", "Gladly! "]
-    r = score_all({42: _arms(off, on, off_b_leads=off_b_bad)}, seeds=(42,))
+    r = score_all(_six(_arms(off, on), bad=_arms(off, on, off_b_leads=off_b_bad)))
     got = (not r["go"]) and (not r["H5_determinism"])
     ok = ok and got
     print("  H5 determinism failed -> go=%s H5=%s (want False False) %s" % (r["go"], r["H5_determinism"], "ok" if got else "FAIL"))
     # (g) missing arm -> UNDEFINED, never a silent pass
     arms_missing = _arms(off, on)
     arms_missing["on_lesion"] = None
-    r = score_all({42: arms_missing}, seeds=(42,))
+    r = score_all(_six(_arms(off, on), bad=arms_missing))
     got = (not r["go"]) and r["status"] == "UNDEFINED"
     ok = ok and got
     print("  missing arm -> go=%s status=%s (want False UNDEFINED) %s" % (r["go"], r["status"], "ok" if got else "FAIL"))
     # (h) D1 never reproduced (OFF never loses a marker ON keeps) -> still a GO if H1-H5 hold (REPORTED not GATED)
     off_full = ["", "Gladly! ", "Gladly! ", "Frankly — ", "Gladly! "]  # OFF matches ON everywhere
-    r = score_all({42: _arms(off_full, on)}, seeds=(42,))
+    r = score_all(_six(_arms(off_full, on)))
     got = r["go"] and not r["D1_defect_reproduced"]
     ok = ok and got
     print("  D1 not reproduced but H1-H5 hold -> go=%s D1=%s (want True False, D1 is advisory) %s"
           % (r["go"], r["D1_defect_reproduced"], "ok" if got else "FAIL"))
+    # (j) SUBSET SCORE (the 2026-09-24 scorer bug): a perfectly clean seed 42 scored ALONE (and 42+43 together)
+    # must NOT read GO -- the "full 6-seed set" precondition counts the pre-registered VERIFY_SEEDS, not --seeds.
+    for sub in ((42,), (42, 43)):
+        r = score_all({s: _arms(off, on) for s in sub}, seeds=sub)
+        pre = [p for p in r["preconditions"] if p["name"].startswith("full 6-seed set")]
+        got = (not r["go"]) and r["status"] == "UNDEFINED" and len(pre) == 1 and pre[0]["ok"] is False
+        ok = ok and got
+        print("  subset score seeds=%s (clean) -> go=%s status=%s precondition_ok=%s (want False UNDEFINED False) %s"
+              % (list(sub), r["go"], r["status"], pre[0]["ok"] if pre else None, "ok" if got else "FAIL"))
     # (i) register_of punctuation independence
     ok_reg = (register_of("Gladly! ") == register_of("Gladly — ") == "Gladly") and register_of("") == ""
     ok = ok and ok_reg
