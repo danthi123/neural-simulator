@@ -59,6 +59,20 @@ def _problems(added, staged, read):
     return out
 
 
+def _merged_in_unchanged(path):
+    """True during a merge when `path`'s staged blob equals the incoming parent's (MERGE_HEAD) blob: the prereg is not
+    new here, it arrives with its own history from the other branch (2026-09-24: merging main into a lane branch
+    brought main's preregs + artifacts in as 'added' together and false-blocked the merge)."""
+    def _git(*a):
+        r = subprocess.run(["git", *a], cwd=_ROOT, capture_output=True, text=True, timeout=15)
+        return r.stdout.strip() if r.returncode == 0 else None
+    if not _git("rev-parse", "-q", "--verify", "MERGE_HEAD"):
+        return False
+    theirs = _git("rev-parse", "-q", "--verify", "MERGE_HEAD:" + path)
+    staged = _git("rev-parse", "-q", "--verify", ":" + path)
+    return bool(theirs) and theirs == staged
+
+
 def check(paths):
     if paths is None or len(paths) == 0:
         return []                       # commit-scoped: nothing to say about the whole repo
@@ -76,6 +90,7 @@ def check(paths):
         staged.append(path)
         if st.startswith("A"):
             added.append(path)
+    added = [p for p in added if not _merged_in_unchanged(p)]
     return _problems(added, staged, lambda p: open(os.path.join(_ROOT, p), errors="ignore").read())
 
 
