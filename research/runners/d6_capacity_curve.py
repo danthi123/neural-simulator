@@ -290,7 +290,8 @@ def _probe(comp, facts, spec, out):
         if pr["patient"] is None:
             rows_n.append({"i": pr["i"], "yn": None, "kind": pr["kind"], "void": True})
             continue
-        sh = _shard(comp, {"agent": pr["agent"], "action": pr["action"], "patient": pr["patient"]})
+        # the shard ask_yes_no itself routes on: (agent, action) -- `_fact_shard_yesno_match` (AMENDMENT 1)
+        sh = _shard(comp, {"agent": pr["agent"], "action": pr["action"]})
         t0 = time.perf_counter(); yn = comp.ask_yes_no(pr["agent"], pr["action"], pr["patient"])
         rows_n.append({"i": pr["i"], "yn": yn, "kind": pr["kind"], "shard": sh,
                        "t_yn": round(time.perf_counter() - t0, 4)})

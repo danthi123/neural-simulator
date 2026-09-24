@@ -145,6 +145,15 @@ pre-known: runtime word recruitment is a separate capacity axis. The chat's pola
 bypassed, because facts are generated as base-form "a v p". A zero (frozen) block decodes to the codebook's first word
 (`ac00`, an action), which can never match an agent cue.
 
+## AMENDMENT LOG
+
+- **A1 (2026-09-23, after the first smoke job only: seed 42, N = 5, arm HEBB,
+  `research/findings/raw/_d6_capacity_curve/smoke/s42_N5_HEBB.json`, all five probes correct).** The near-miss row's
+  `shard` field was computed on a three-role cue (agent, action, patient), but `ask_yes_no` routes on (agent, action)
+  (`_fact_shard_yesno_match`). The field now records the (agent, action) shard the query actually uses. This changes
+  only the reported, non-scoring `nearmiss_shard_empty`. No threshold, band, arm or probe changed. That job is
+  re-run at the amended revision, and the pre-amendment file is kept as `s42_N5_HEBB.pre_A1.json`.
+
 ## Honesty
 
 Functional read-outs only. "Learns" and "recalls" mean the recall answer changes with the synaptic write, measured
