@@ -20,9 +20,11 @@ TINY = dict(n_ec_role=200, k_ec=8, n_ent=100, n_rel=8, n_ca3=1000, c_rec=200, c_
 
 def _tiny(arm="sparse_dg", seed=42, **kw):
     over = dict(TINY)
-    if arm == "sparse_dg_c2":
+    if arm == "sparse_dg_recx2":
+        over.update(c_rec=400)                     # c_rec ONLY doubled; c_pp, c_out stay at TINY's values
+    elif "c2" in arm:
         over.update(c_rec=400, c_pp=120, c_out=400)
-    if arm == "dense_nodg":
+    if arm.startswith("dense"):
         over.update(a_ca3=0.05)
     over.update(kw)
     return M.make_cfg(arm, seed, **over)
@@ -97,9 +99,9 @@ def test_lesion_instruments():
     Y = net.ec_out_patient(F)
     for q in range(len(F)):
         net.write_fact(ca3[:, q], X[:, q], Y[:, q])
-    assert net.rec.csr("zero").count_nonzero() == 0
-    a = net.rec.csr("intact").toarray()
-    b = net.rec.csr("shuffle", np.random.default_rng(3)).toarray()
+    assert net.rec.matrix("zero").count_nonzero() == 0
+    a = net.rec.matrix("intact").toarray()
+    b = net.rec.matrix("shuffle", np.random.default_rng(3)).toarray()
     # each row keeps its multiset of values, attached to other presynaptic cells
     for i in range(0, 1000, 97):
         np.testing.assert_allclose(np.sort(a[i][net.rec.idx[i]]), np.sort(b[i][net.rec.idx[i]]), rtol=1e-6)
@@ -107,7 +109,7 @@ def test_lesion_instruments():
 
 
 def test_bounded_synapses_stay_in_bounds():
-    cfg = _tiny(arm="sparse_dg_bounded")
+    cfg = _tiny(arm="sparse_dg_bounded_hub")
     net = M.Network(cfg)
     F, _ = M.draw_facts(net, 40, 1)
     X = net.ec_in(F, with_patient=True)
@@ -139,23 +141,79 @@ def _summary(recall, recent=None, dprime=None, rz=None, rs=None, t=None, P=M.P_G
 
 
 def test_gates_can_fail():
-    cliff = [1, 1, 1, 1, 0.95, 0.6, 0.1, 0.0, 0.0]
-    early = [1, 1, 0.9, 0.3, 0.05, 0.0, 0.0, 0.0, 0.0]
-    localist = [1.0] * 9
-    S_ok = dict(sparse_dg=_summary(cliff, rz=[0.5] * 9, rs=[0.5] * 9),
-                sparse_dg_c2=_summary(cliff[:4] + [1, 0.95, 0.4, 0.05, 0.0]),
-                dense_nodg=_summary(early), sparse_nodg=_summary(cliff),
-                sparse_dg_bounded=_summary(cliff, recent=[1.0] * 9))
+    n = len(M.P_GRID)
+    cliff = [1, 1, 1, 1, 0.95, 0.6, 0.1, 0.0, 0.0, 0.0]
+    early = [1, 1, 0.9, 0.3, 0.05, 0.0, 0.0, 0.0, 0.0, 0.0]
+    doubled = [1, 1, 1, 1, 1, 0.95, 0.4, 0.05, 0.0, 0.0]
+    localist = [1.0] * n
+    assert len(cliff) == n
+    S_ok = dict(sparse_dg=_summary(cliff, rz=early, rs=early), sparse_dg_c2=_summary(doubled),
+                sparse_dg_recx2=_summary(cliff), dense_nodg=_summary(early), sparse_dg_hub=_summary(cliff),
+                dense_nodg_hub=_summary(early), sparse_nodg_hub=_summary(early),
+                sparse_dg_c2_hub=_summary(cliff), sparse_dg_bounded_hub=_summary(early, recent=[1.0] * n))
+    assert set(S_ok) == set(M.ARMS)
     g = M.gates_for_seed(S_ok)
-    assert g["G2_cliff"][0] is True and g["G3_companion_capacity"][0] is True
+    assert all(v[0] is True for v in g.values()), {k: v for k, v in g.items() if v[0] is not True}
     # a localist store (no crosstalk, no cliff) FAILS the cliff and the shared-crosstalk gates
-    S_loc = dict(S_ok, sparse_dg=_summary(localist, dprime=[10.0] * 9))
+    S_loc = dict(S_ok, sparse_dg=_summary(localist, dprime=[10.0] * n))
     g = M.gates_for_seed(S_loc)
     assert g["G2_cliff"][0] is False and g["G8_shared_crosstalk"][0] is False
-    assert g["G3_companion_capacity"][0] is None          # censored P50 -> UNDEFINED, never a pass
-    # the recurrent lesion gate fails when the perforant path alone already recalls
-    S_pp = dict(S_ok, sparse_dg=_summary(cliff, rz=cliff, rs=cliff))
+    assert g["G4_capacity_law"][0] is None                # censored P50 -> UNDEFINED, never a pass
+    # a missing arm makes the cliff gate UNDEFINED, not a pass
+    S_miss = {k: v for k, v in S_ok.items() if k != "dense_nodg_hub"}
+    g = M.gates_for_seed(S_miss)
+    assert g["G2_cliff"][0] is None and g["G3_companion_capacity"][0] is None
+    # the companion gate fails when sparse DG coding does not raise capacity
+    assert M.gates_for_seed(dict(S_ok, dense_nodg_hub=_summary(cliff)))["G3_companion_capacity"][0] is False
+    # the capacity-law gate fails when doubling fan-in does not move capacity
+    assert M.gates_for_seed(dict(S_ok, sparse_dg_c2=_summary(cliff)))["G4_capacity_law"][0] is False
+    # the recurrent lesion gate fails when the perforant path alone holds the same capacity
+    S_pp = dict(S_ok, sparse_dg=_summary(cliff, rz=cliff, rs=early))
     assert M.gates_for_seed(S_pp)["G5_recurrent_loadbearing"][0] is False
     # query time growing with P fails the cost integrity check
-    S_scan = dict(S_ok, sparse_dg=_summary(cliff, t=[float(p) for p in M.P_GRID]))
+    S_scan = dict(S_ok, sparse_dg=_summary(cliff, rz=early, rs=early, t=[float(p) for p in M.P_GRID]))
     assert M.gates_for_seed(S_scan)["G6_cost_flat_INTEGRITY"][0] is False
+    # a palimpsest that loses even its recent facts fails G7
+    assert M.gates_for_seed(dict(S_ok, sparse_dg_bounded_hub=_summary(early)))["G7_palimpsest"][0] is False
+    # G9 fails if extra synapses DO cure the hub-regime limit
+    assert M.gates_for_seed(dict(S_ok, sparse_dg_c2_hub=_summary(doubled)))["G9_hub_limit_not_synaptic"][0] is False
+
+
+def test_g5_attributable_fraction_is_linear_not_log():
+    """G5's reported fraction must be LINEAR in P50, not a ratio built from log(P50) (log(P50) has an arbitrary
+    zero -- one fact -- and is not a meaningful fraction; 2026-09-24 review). It must equal exactly
+    (P50_intact - P50_rec_zero) / P50_intact, and the old log-based 'attributable' key must be gone."""
+    cliff = [1, 1, 1, 1, 0.95, 0.6, 0.1, 0.0, 0.0, 0.0]
+    rz = [1, 1, 1, 0.95, 0.6, 0.1, 0.0, 0.0, 0.0, 0.0]     # a smaller store: crosses 0.5 one grid point earlier
+    S = dict(sparse_dg=_summary(cliff, rz=rz, rs=rz))
+    detail = M.gates_for_seed(S)["G5_recurrent_loadbearing"][1]
+    assert "attributable_linear_frac" in detail and "attributable" not in detail
+    p_i, p_z = detail["P50_intact"], detail["P50_rec_zero"]
+    assert p_i is not None and p_z is not None and 0.0 < p_z < p_i
+    assert detail["attributable_linear_frac"] == pytest.approx((p_i - p_z) / p_i, rel=1e-9)
+    # sanity: the linear fraction is in (0, 1) for a real partial lesion, not a log-space quantity
+    assert 0.0 < detail["attributable_linear_frac"] < 1.0
+
+
+def test_capacity_law_attributed_to_recurrent_edge_alone(tmp_path):
+    """k_fit (and the GPU extrapolation) must come from (sparse_dg, sparse_dg_recx2) -- the pair that doubles
+    c_rec ALONE -- never from sparse_dg_c2, which also doubles c_pp and c_out and so cannot attribute k to the
+    recurrent edge (2026-09-24 review: 'a coincidental match of a confounded normalization')."""
+    import json as _json
+    cliff = [1, 1, 1, 1, 0.9, 0.5, 0.1, 0.0, 0.0, 0.0]
+    p50s = dict(sparse_dg=8119.0, sparse_dg_recx2=10500.0, sparse_dg_c2=16650.0)
+    for arm in M.ARMS:
+        s = _summary(cliff)
+        s["P50"] = p50s.get(arm, 8119.0)
+        (tmp_path / ("%s_s42.json" % arm)).write_text(_json.dumps(dict(summary=s)))
+    res = M.aggregate(str(tmp_path), seeds=(42,))
+    assert res["k_fit_arm_pair"] == ("sparse_dg", "sparse_dg_recx2")
+    c_sd = M.make_cfg("sparse_dg", 42)
+    c_rx = M.make_cfg("sparse_dg_recx2", 42)
+    k_sd = p50s["sparse_dg"] * c_sd.a_ca3 * np.log(1 / c_sd.a_ca3) / c_sd.c_rec
+    k_rx = p50s["sparse_dg_recx2"] * c_rx.a_ca3 * np.log(1 / c_rx.a_ca3) / c_rx.c_rec
+    assert res["k_fit"] == pytest.approx(float(np.median([k_sd, k_rx])), rel=1e-6)
+    # sparse_dg_c2 (all fan-ins doubled at once) must NOT feed the fit
+    c_c2 = M.make_cfg("sparse_dg_c2", 42)
+    k_c2_if_used = p50s["sparse_dg_c2"] * c_c2.a_ca3 * np.log(1 / c_c2.a_ca3) / c_c2.c_rec
+    assert res["k_fit"] != pytest.approx(float(np.median([k_sd, k_c2_if_used])), rel=1e-6)

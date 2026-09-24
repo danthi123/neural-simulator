@@ -82,24 +82,37 @@ from research.runners.concept_pool_sparse_distributed import generate_sparse_pat
 
 SEEDS = (42, 43, 44, 100, 101, 102)
 DEV_SEED = 7                      # development / design-viability seed; never an evaluation seed
-P_GRID = (50, 100, 200, 500, 1000, 2000, 5000, 10000, 20000)
+P_GRID = (50, 100, 200, 500, 1000, 2000, 5000, 10000, 20000, 50000)
 
 # biology-bound defaults (research/biology/ca3-superposed-fact-attractor.md constraints_config)
 CA3_SPARSENESS = 0.01             # sparse CA3 code (rat CA3 a ~ 0.02; Rolls 2013); capacity ~ 1/(a ln(1/a))
 MOSSY_FANIN = 46                  # mossy-fibre synapses per CA3 cell (Rolls 2013): the sparse strong detonator
 
+N_REL_HUB = 128                   # relation-hub regime: few relations, each shared by ~P/128 stored facts
+
+# Two fact regimes (split BEFORE registration, from the dev seed; see the PREREGISTRATION's dev-seed section).
+# UNIFORM: n_rel = n_ent = 2000, so a partial cue (agent, relation) is shared with few other stored facts and
+#   capacity is limited by synaptic crosstalk -- the regime that tests the capacity LAW.
+# HUB: n_rel = 128 (a knowledge base has few relations, each used by many facts), so every cue half-matches
+#   ~P/128 other facts -- structured cue ambiguity, the regime where DG pattern separation has work to do.
 ARMS = {
-    # the companion arm: DG pattern separation supplies sparse CA3 codes
-    "sparse_dg": {},
-    # capacity law: every diluted fan-in doubled (recurrent, perforant, readout)
-    "sparse_dg_c2": dict(c_rec=4000, c_pp=600, c_out=4000, p_grid=P_GRID + (40000,)),
-    # the no-companion baseline: no DG, CA3 selected by a fixed EC->CA3 projection at a dense code
-    "dense_nodg": dict(use_dg=False, a_ca3=0.05),
-    # dissociation arm: sparse code WITHOUT the DG (is the gain sparseness or separation?)
-    "sparse_nodg": dict(use_dg=False),
-    # palimpsest companion: bounded integer synapses, small steps, stochastic heterosynaptic LTD
-    "sparse_dg_bounded": dict(plasticity="bounded"),
+    # ---- UNIFORM regime ----
+    "sparse_dg": {},                                                       # DG sparse coding (the default)
+    "sparse_dg_c2": dict(c_rec=4000, c_pp=1200, c_out=4000, p_grid=P_GRID + (100000,)),   # every fan-in x2
+    # c_rec ALONE doubled (c_pp, c_out held fixed): isolates the recurrent edge so k can be attributed to it.
+    # sparse_dg_c2 doubles all three fan-ins at once and cannot do this (2026-09-24 review: "a coincidental
+    # match of a confounded normalization" -- the dev rec_zero lesion shows the recurrent edge owns only ~25%
+    # of capacity linearly, so a k fit off sparse_dg_c2 is not a recurrent-synapse measurement).
+    "sparse_dg_recx2": dict(c_rec=4000),
+    "dense_nodg": dict(use_dg=False, a_ca3=0.05),                          # no DG, dense code (baseline)
+    # ---- HUB regime ----
+    "sparse_dg_hub": dict(n_rel=N_REL_HUB),
+    "dense_nodg_hub": dict(n_rel=N_REL_HUB, use_dg=False, a_ca3=0.05),     # the no-companion baseline
+    "sparse_nodg_hub": dict(n_rel=N_REL_HUB, use_dg=False),                # dissociation: sparse without DG
+    "sparse_dg_c2_hub": dict(n_rel=N_REL_HUB, c_rec=4000, c_pp=1200, c_out=4000),
+    "sparse_dg_bounded_hub": dict(n_rel=N_REL_HUB, plasticity="bounded"),  # palimpsest companion
 }
+UNBOUNDED_ARMS = tuple(a for a in ARMS if "bounded" not in a)
 
 
 @dataclass
@@ -109,11 +122,11 @@ class Cfg:
     n_ec_role: int = 1000
     k_ec: int = 20
     n_ent: int = 2000
-    n_rel: int = 64
+    n_rel: int = 2000
     n_ca3: int = 10000
     a_ca3: float = CA3_SPARSENESS
     c_rec: int = 2000
-    c_pp: int = 300
+    c_pp: int = 600
     c_out: int = 2000
     use_dg: bool = True
     n_dg: int = 15000
@@ -237,7 +250,10 @@ class Projection:
             return W
         return self.W.astype(np.float32)
 
-    def csr(self, lesion: str = "intact", rng: np.random.Generator | None = None) -> sp.csr_matrix:
+    def matrix(self, lesion: str = "intact", rng: np.random.Generator | None = None) -> sp.csc_matrix:
+        """The synapses as an (n_post x n_pre) matrix stored COLUMN-compressed, i.e. grouped by presynaptic cell
+        (the axonal view): a product with a sparse activity vector touches only the active cells' out-synapses,
+        so a read costs O(active x fan-out), not O(all synapses)."""
         if lesion == "intact" and self._csr_cache is not None:
             return self._csr_cache
         W = self.values()
@@ -253,7 +269,8 @@ class Projection:
         elif lesion != "intact":
             raise ValueError(lesion)
         indptr = np.arange(0, self.n_post * self.c + 1, self.c, dtype=np.int64)
-        m = sp.csr_matrix((W.ravel().astype(np.float32), self.idx.ravel(), indptr), shape=(self.n_post, self.n_pre))
+        m = sp.csr_matrix((W.ravel().astype(np.float32), self.idx.ravel(), indptr),
+                          shape=(self.n_post, self.n_pre)).tocsc()
         if lesion == "intact":
             self._csr_cache = m
         return m
@@ -322,10 +339,10 @@ class Network:
         cfg = self.cfg
         Xs = _col_sparse(X)
         if cfg.use_dg:
-            dg = kwta((self.ec_dg.csr() @ Xs).toarray(), cfg.k_dg)
-            ca3 = kwta((self.mossy.csr() @ _col_sparse(dg)).toarray(), cfg.k_ca3)
+            dg = kwta((self.ec_dg.matrix() @ Xs).toarray(), cfg.k_dg)
+            ca3 = kwta((self.mossy.matrix() @ _col_sparse(dg)).toarray(), cfg.k_ca3)
             return ca3, dg
-        ca3 = kwta((self.ec_ca3_fix.csr() @ Xs).toarray(), cfg.k_ca3)
+        ca3 = kwta((self.ec_ca3_fix.matrix() @ Xs).toarray(), cfg.k_ca3)
         return ca3, None
 
     def write_fact(self, x_ca3: np.ndarray, x_ec: np.ndarray, y_out: np.ndarray):
@@ -341,9 +358,9 @@ class Network:
         cfg = self.cfg
         k = cfg.k_ca3
         rec_lesion = {"intact": "intact", "rec_zero": "zero", "rec_shuffle": "shuffle"}[lesion]
-        Wpp = self.pp.csr()
-        Wrec = self.rec.csr(rec_lesion, rng)
-        Wout = self.out.csr()
+        Wpp = self.pp.matrix()
+        Wrec = self.rec.matrix(rec_lesion, rng)
+        Wout = self.out.matrix()
         h_pp = (Wpp @ _col_sparse(self.ec_in(cues, with_patient=False))).toarray()
         s = kwta(h_pp, k)
         s0 = s.copy()
@@ -396,7 +413,7 @@ def _log_interp_cross(ps, ys, level):
 
 def crosstalk_dprime(net: Network, facts_x: np.ndarray) -> float:
     """d' of recurrent drive for in-pattern vs out-of-pattern cells when a stored CA3 pattern is clamped."""
-    h = (net.rec.csr() @ _col_sparse(facts_x)).toarray()
+    h = (net.rec.matrix() @ _col_sparse(facts_x)).toarray()
     ds = []
     for q in range(facts_x.shape[1]):
         m = facts_x[:, q]
@@ -419,8 +436,9 @@ def run(cfg: Cfg, out_path: str | None, p_max_override: int | None = None, log=p
 
     # the stored CA3 pattern of each fact is whatever the fixed detonator fires (kept only for the INSTRUMENT:
     # completion overlap and the crosstalk d'; the read never consults it)
-    ca3_patterns = np.zeros((cfg.n_ca3, p_max), dtype=bool)
-    rec = dict(config=asdict(cfg), build_s=build_s, checkpoints=[], sha_facts=hashlib.sha256(facts.tobytes()).hexdigest())
+    ca3_idx = np.zeros((p_max, cfg.k_ca3), dtype=np.int32)      # stored pattern of each fact, as cell indices
+    rec = dict(config=asdict(cfg), backend="numpy+scipy.sparse (CPU)", runner="research.runners.ca3_superposed_fact_attractor",
+               build_s=build_s, checkpoints=[], sha_facts=hashlib.sha256(facts.tobytes()).hexdigest())
     written = 0
     write_s = 0.0
     freeze_done = False
@@ -434,7 +452,7 @@ def run(cfg: Cfg, out_path: str | None, p_max_override: int | None = None, log=p
             ca3, _ = net.encode_ca3(X)
             for q in range(b):
                 net.write_fact(ca3[:, q], X[:, q], Y[:, q])
-            ca3_patterns[:, written:written + b] = ca3
+            ca3_idx[written:written + b] = np.sort(np.argpartition(~ca3, cfg.k_ca3 - 1, axis=0)[:cfg.k_ca3].T, axis=1)
             written += b
         dt_w = time.time() - t0
         write_s += dt_w
@@ -446,14 +464,14 @@ def run(cfg: Cfg, out_path: str | None, p_max_override: int | None = None, log=p
                   synapse_bytes=net.synapse_bytes())
         # materialize once (the live synapses; not a per-query cost)
         t_m = time.time()
-        net.rec.csr(); net.pp.csr(); net.out.csr()
+        net.rec.matrix(); net.pp.matrix(); net.out.matrix()
         cp["materialize_s"] = time.time() - t_m
         for lesion in ("intact", "rec_zero", "rec_shuffle"):
             t_q = time.time()
             s0, s, y, conv = net.recall(facts[q_idx], lesion=lesion, rng=ev)
             dt_q = time.time() - t_q
             ok = net.name(y, facts[q_idx, 2])
-            tgt = ca3_patterns[:, q_idx]
+            tgt = _pat_matrix(ca3_idx, q_idx, cfg.n_ca3)
             d = dict(recall=float(ok.mean()), n=int(len(q_idx)),
                      ca3_overlap_init=float(((s0 & tgt).sum(0) / cfg.k_ca3).mean()),
                      ca3_overlap_final=float(((s & tgt).sum(0) / cfg.k_ca3).mean()),
@@ -472,14 +490,14 @@ def run(cfg: Cfg, out_path: str | None, p_max_override: int | None = None, log=p
                     lat.append(time.time() - t1)
                 d["per_query_ms_single"] = 1000.0 * float(np.median(lat))
             cp[lesion] = d
-        xs = ca3_patterns[:, np.sort(ev.choice(P, size=min(cfg.n_xtalk, P), replace=False))]
+        xs = _pat_matrix(ca3_idx, np.sort(ev.choice(P, size=min(cfg.n_xtalk, P), replace=False)), cfg.n_ca3)
         cp["crosstalk_dprime"] = crosstalk_dprime(net, xs)
         if cfg.plasticity == "covariance":
             H = net.rec.H
             touched = H >= 1
             cp["rec_synapses_touched_frac"] = float(touched.mean())
             cp["rec_touched_shared_by_ge2_facts_frac"] = float((H >= 2).sum() / max(touched.sum(), 1))
-        cp["ca3_pattern_mean_pairwise_overlap"] = float(_mean_pairwise_overlap(ca3_patterns[:, :P], ev, cfg.k_ca3))
+        cp["ca3_pattern_mean_pairwise_overlap"] = float(_mean_pairwise_overlap(ca3_idx[:P], ev, cfg))
         if not freeze_done:
             cp["freeze_all_recall"] = float(_freeze_all_recall(cfg, facts[q_idx]))
             freeze_done = True
@@ -495,14 +513,23 @@ def run(cfg: Cfg, out_path: str | None, p_max_override: int | None = None, log=p
     return rec
 
 
-def _mean_pairwise_overlap(X, rng, k, n_pairs=2000):
-    P = X.shape[1]
+def _pat_matrix(ca3_idx: np.ndarray, cols, n: int) -> np.ndarray:
+    cols = np.asarray(cols)
+    X = np.zeros((n, len(cols)), dtype=bool)
+    X[ca3_idx[cols].T, np.arange(len(cols))[None, :]] = True
+    return X
+
+
+def _mean_pairwise_overlap(ca3_idx, rng, cfg, n_pairs=2000):
+    P = ca3_idx.shape[0]
     if P < 2:
         return float("nan")
     i = rng.integers(0, P, n_pairs)
     j = rng.integers(0, P, n_pairs)
     m = i != j
-    return float(((X[:, i[m]] & X[:, j[m]]).sum(0) / k).mean())
+    A = _pat_matrix(ca3_idx, i[m], cfg.n_ca3)
+    B = _pat_matrix(ca3_idx, j[m], cfg.n_ca3)
+    return float(((A & B).sum(0) / cfg.k_ca3).mean())
 
 
 def _freeze_all_recall(cfg: Cfg, cues: np.ndarray) -> float:
@@ -539,12 +566,11 @@ def _dump(obj, path):
 # pre-registered gates (docs: research/findings/2026-09-23-ca3-superposed-fact-attractor-capacity-PREREGISTRATION.md)
 # --------------------------------------------------------------------------------------------------------------
 
-G5_P = 1000          # sub-capacity operating point for the recurrent-lesion gate (fixed from the dev seed)
 G1_LEVEL = 0.9
 G2_CEILING = 0.2
 G3_RATIO = 1.5
 G4_BAND = (1.4, 3.0)
-G5_DROP = 0.2
+G5_RATIO = 1.2
 G7_RECENT_BOUNDED = 0.5
 G7_RECENT_UNBOUNDED = 0.2
 G8_SLOPE_BAND = (-0.8, -0.2)
@@ -568,55 +594,67 @@ def _dprime_slope(s):
     return float(np.polyfit(x, y, 1)[0])
 
 
+def _p50_ratio(S, num, den):
+    if num not in S or den not in S:
+        return None
+    a, b = S[num]["P50"], S[den]["P50"]
+    return None if (a is None or b is None) else a / b
+
+
 def gates_for_seed(S: dict) -> dict:
-    """S: arm -> summary for ONE seed. Returns gate -> (pass: bool|None, value)."""
+    """S: arm -> summary for ONE seed. Returns gate -> (pass: bool|None, value). None = UNDEFINED (a FAIL)."""
     g = {}
     sd = S.get("sparse_dg")
-    # G1 learns + completes below capacity
+    # G1 learns + completes below capacity (uniform regime)
     if sd:
         v = [_at(sd, 50), _at(sd, 200)]
         g["G1_learns"] = (None if None in v else all(x >= G1_LEVEL for x in v), v)
     # G2 the cliff is visible for every UNBOUNDED arm (instrument validity: otherwise VOID)
-    vals = {}
-    for arm in ("sparse_dg", "sparse_dg_c2", "dense_nodg", "sparse_nodg"):
-        if arm in S:
-            vals[arm] = S[arm]["recall"][-1]
-    g["G2_cliff"] = (None if len(vals) < 4 else all(v <= G2_CEILING for v in vals.values()), vals)
-    # G3 the companion (sparse DG coding) pushes capacity up
-    if sd and "dense_nodg" in S:
-        a, b = sd["P50"], S["dense_nodg"]["P50"]
-        r = None if (a is None or b is None) else a / b
-        g["G3_companion_capacity"] = (None if r is None else r >= G3_RATIO, r)
-    # G4 capacity law: doubling synapses per cell roughly doubles capacity
-    if sd and "sparse_dg_c2" in S:
-        a, b = S["sparse_dg_c2"]["P50"], sd["P50"]
-        r = None if (a is None or b is None) else a / b
-        g["G4_capacity_law"] = (None if r is None else G4_BAND[0] <= r <= G4_BAND[1], r)
-    # G5 the recurrent completion is load-bearing at the pre-registered sub-capacity point
+    vals = {arm: S[arm]["recall"][-1] for arm in UNBOUNDED_ARMS if arm in S}
+    g["G2_cliff"] = (None if len(vals) < len(UNBOUNDED_ARMS) else all(v <= G2_CEILING for v in vals.values()),
+                     vals)
+    # G3 the companion (DG sparse coding) pushes capacity up where facts are correlated (hub regime)
+    r = _p50_ratio(S, "sparse_dg_hub", "dense_nodg_hub")
+    g["G3_companion_capacity"] = (None if r is None else r >= G3_RATIO, r)
+    # G4 capacity law (uniform regime): doubling synapses per cell roughly doubles capacity
+    r = _p50_ratio(S, "sparse_dg_c2", "sparse_dg")
+    g["G4_capacity_law"] = (None if r is None else G4_BAND[0] <= r <= G4_BAND[1], r)
+    # G5 the recurrent completion is load-bearing FOR CAPACITY: removing (or scrambling) only the recurrent edge
+    # must pull the capacity down; otherwise the store is a perforant -> readout heteroassociator and the
+    # attractor is decorative
     if sd:
-        i, z, sh = _at(sd, G5_P), _at(sd, G5_P, "recall_rec_zero"), _at(sd, G5_P, "recall_rec_shuffle")
-        ok = None if None in (i, z, sh) else (z <= i - G5_DROP and sh <= i - G5_DROP)
-        attr = None
-        if None not in (i, z):
+        p_i = sd["P50"]
+        p_z = _log_interp_cross(sd["P"], sd["recall_rec_zero"], 0.5)
+        p_s = _log_interp_cross(sd["P"], sd["recall_rec_shuffle"], 0.5)
+        ok = None if None in (p_i, p_z, p_s) else (p_z <= p_i / G5_RATIO and p_s <= p_i / G5_RATIO)
+        attributable_linear_frac = None
+        if p_i is not None and p_z is not None:
             from tools.lab import attributable_to       # local import: aggregation runs on the main box
-            chance = 1.0 / Cfg(seed=0).n_ent
-            # fraction of above-chance recall that is NOT present when only the recurrent edge is removed
-            attr = attributable_to("recurrent edge @P=%d" % G5_P, i - chance, z - chance)
-        g["G5_recurrent_loadbearing"] = (ok, dict(intact=i, rec_zero=z, rec_shuffle=sh, attributable=attr))
+            # LINEAR P50, not log(P50): log has an arbitrary zero (one fact), so a fraction taken over
+            # log(P50) is not a meaningful quantity (2026-09-24 review). attributable_to(t, c) = (t-c)/t,
+            # i.e. exactly the linear fraction of P50 lost when the recurrent edge alone is removed.
+            attributable_linear_frac = attributable_to("recurrent edge -> P50 (linear)", p_i, p_z)
+        g["G5_recurrent_loadbearing"] = (ok, dict(P50_intact=p_i, P50_rec_zero=p_z, P50_rec_shuffle=p_s,
+                                                  attributable_linear_frac=attributable_linear_frac))
     # G6 cost law (INTEGRITY SMOKE, not evidence): per-query time flat in P, synapse memory constant in P
     if sd:
         t = sd["per_query_ms_single"]
         flat = t[-1] / t[0] if t and t[0] > 0 else None
         const = len(set(sd["synapse_bytes"])) == 1
-        g["G6_cost_flat_INTEGRITY"] = (None if flat is None else (flat <= 2.0 and const), dict(ratio=flat, mem_const=const))
-    # G7 palimpsest: bounded synapses keep RECENT facts past capacity where the unbounded store has collapsed
-    if sd and "sparse_dg_bounded" in S:
-        b, u = S["sparse_dg_bounded"]["recall_recent"][-1], sd["recall_recent"][-1]
+        g["G6_cost_flat_INTEGRITY"] = (None if flat is None else (flat <= 2.0 and const),
+                                       dict(ratio=flat, mem_const=const))
+    # G7 palimpsest (hub regime): bounded synapses keep RECENT facts past capacity where the unbounded store
+    # has collapsed
+    if "sparse_dg_hub" in S and "sparse_dg_bounded_hub" in S:
+        b, u = S["sparse_dg_bounded_hub"]["recall_recent"][-1], S["sparse_dg_hub"]["recall_recent"][-1]
         g["G7_palimpsest"] = (b >= G7_RECENT_BOUNDED and u <= G7_RECENT_UNBOUNDED, dict(bounded=b, unbounded=u))
     # G8 crosstalk grows with P (storage is SHARED): d' falls ~ P^-1/2
     if sd:
         sl = _dprime_slope(sd)
         g["G8_shared_crosstalk"] = (None if sl is None else G8_SLOPE_BAND[0] <= sl <= G8_SLOPE_BAND[1], sl)
+    # G9 in the hub regime capacity is limited by cue ambiguity, which more synapses per cell do NOT cure
+    r = _p50_ratio(S, "sparse_dg_c2_hub", "sparse_dg_hub")
+    g["G9_hub_limit_not_synaptic"] = (None if r is None else r < G4_BAND[0], r)
     return g
 
 
@@ -643,10 +681,15 @@ def aggregate(grid_dir: str, seeds=SEEDS) -> dict:
         need = len(seeds) if n.endswith("INTEGRITY") else MIN_SEEDS
         verdict[n] = dict(n_pass=n_pass, n_undefined=n_undef, need=need, passed=n_pass >= need,
                           per_seed={str(s): gate_rows[s].get(n, (None, None)) for s in seeds})
-    # capacity-law fit: P50 = k * C / (a ln(1/a))  (reported; extrapolation is labelled as such)
+    # capacity-law fit, ATTRIBUTED TO THE RECURRENT EDGE ALONE: P50 = k * c_rec / (a ln(1/a)), fit from
+    # (sparse_dg, sparse_dg_recx2) -- the pair that varies c_rec ONLY, c_pp and c_out held fixed. sparse_dg_c2
+    # doubles all three fan-ins at once, so a k fit off it cannot be attributed to the recurrent edge specifically
+    # (2026-09-24 review; the dev rec_zero lesion shows the recurrent edge owns only ~25% of capacity linearly).
+    # sparse_dg_c2's own ratio still backs G4_capacity_law above, which claims only an all-fan-in capacity law.
+    K_FIT_ARM_PAIR = ("sparse_dg", "sparse_dg_recx2")
     ks = []
     for s, S in per_seed.items():
-        for arm in ("sparse_dg", "sparse_dg_c2"):
+        for arm in K_FIT_ARM_PAIR:
             if arm in S and S[arm]["P50"]:
                 c = make_cfg(arm, s)
                 ks.append(S[arm]["P50"] * c.a_ca3 * math.log(1 / c.a_ca3) / c.c_rec)
@@ -655,11 +698,13 @@ def aggregate(grid_dir: str, seeds=SEEDS) -> dict:
     if k_fit:
         a, C = 0.005, 10000
         pmax = k_fit * C / (a * math.log(1 / a))
-        extrap = dict(note="EXTRAPOLATION from the fitted k, not a measurement", n_ca3=100000, c_rec=C, a=a,
-                      predicted_P50_facts=pmax, recurrent_synapses=100000 * C,
+        extrap = dict(note="EXTRAPOLATION from the fitted k (recurrent-edge-only fan-in law, fit from %s), "
+                           "not a measurement; the a-scaling from 0.01 to 0.005 is itself UNTESTED -- no arm "
+                           "varies a with the DG held fixed in the uniform regime" % (K_FIT_ARM_PAIR,),
+                      n_ca3=100000, c_rec=C, a=a, predicted_P50_facts=pmax, recurrent_synapses=100000 * C,
                       bits_per_recurrent_synapse=pmax * math.log2(2000) / (100000 * C))
     out = dict(grid_dir=grid_dir, seeds=list(seeds), missing=missing, verdict=verdict, k_fit=k_fit,
-               k_per_seed_arm=ks, gpu_point_extrapolation=extrap)
+               k_fit_arm_pair=K_FIT_ARM_PAIR, k_per_seed_arm=ks, gpu_point_extrapolation=extrap)
     return out
 
 
@@ -678,7 +723,11 @@ def main(argv=None):
         for n, v in res["verdict"].items():
             print("%-32s %s  %d/%d pass (%d undefined)" % (n, "PASS" if v["passed"] else "FAIL", v["n_pass"],
                                                          len(res["seeds"]), v["n_undefined"]))
-        print("k_fit", res["k_fit"], "missing", len(res["missing"]))
+        print("k_fit", res["k_fit"], "fit_from", res.get("k_fit_arm_pair"), "missing", len(res["missing"]))
+        g9, g4 = res["verdict"].get("G9_hub_limit_not_synaptic"), res["verdict"].get("G4_capacity_law")
+        if g9 and g9["passed"] and not (g4 and g4["passed"]):
+            print("NOTE: G9 passed but G4 did not on the same seeds -- G9 is an absence-of-effect gate that a "
+                  "broken sparse_dg_c2_hub arm would also pass; do not headline G9 without G4 (2026-09-24 review).")
         return 0
     if a.seed is None:
         ap.error("--seed is required")
