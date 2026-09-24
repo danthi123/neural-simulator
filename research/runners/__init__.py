@@ -186,8 +186,13 @@ def _record_start():
                 if not k.startswith(_PRIVATE_PROVENANCE_PREFIX)
                 # LB_ / BRAIN_MULTIREF_: the load-bearing battery's opt-in probe flags and the D6 lesion knobs
                 # (adversarial review v2:7a3b94367: a flag-ON wm-binding artifact recorded only SIM_BACKEND).
-                and (k.startswith(("SIM_", "GAP5_", "HEBB_", "POOL_", "GAP4_", "LB_", "BRAIN_MULTIREF_"))
-                     or k == "CUDA_VISIBLE_DEVICES")},
+                # BRAIN_: every production flag (a flip battery's arms differ ONLY in these). *_NUM_THREADS: the math-
+                # library thread count changed a ridge decode on one seed (2026-09-24, perception G0: 12 threads read
+                # 0.6458, 1 or 4 threads 0.625), and an unset count means "every core", so cpu_count is recorded too.
+                and (k.startswith(("SIM_", "GAP5_", "HEBB_", "POOL_", "GAP4_", "LB_", "BRAIN_"))
+                     or k in ("CUDA_VISIBLE_DEVICES", "OMP_NUM_THREADS", "OPENBLAS_NUM_THREADS", "MKL_NUM_THREADS",
+                              "NUMEXPR_NUM_THREADS"))},
+        "cpu_count": os.cpu_count(),
     }
     if v2:
         rec["provenance_schema"] = "sim-run-provenance-v2"
