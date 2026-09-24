@@ -140,7 +140,7 @@ python -m research.runners._d6_learned_referent_env_flag_derisk --score research
 Review of the seed-42 run found that it read a 7,988,286-byte prefix of `data/corpus/tinystories.txt` (the builder
 worktree's copy) while the primary checkout holds the 19,971,040-byte file. The runner reads 8,000,000 characters, so
 the two give different vocabularies and lexicons: re-running the same commit at seed 42 on the full file read
-R3 = 0.8333 instead of 0.9167 (R4 = 0.00 both times). Neither input was recorded. Changes, provenance only:
+R3 = 0.8333 instead of 0.9167 (R4 = 0.00 both times). Neither input was recorded. Changes, provenance only: <!--derived-->
 
 - each per-seed JSON records the sha256 and size of both inputs (the frame-environment corpus and the corpus the
   learned lexicon reads, which ignores `--corpus`);
