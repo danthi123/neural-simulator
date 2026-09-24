@@ -44,7 +44,14 @@ def test_prewarm_offswitch_is_noop():
     proc = subprocess.run([sys.executable, "-c", code], cwd=root, env=env,
                            capture_output=True, text=True, timeout=60)
     assert proc.returncode == 0, f"stdout={proc.stdout}\nstderr={proc.stderr[-2000:]}"
-    assert proc.stdout.strip().startswith("OK")
+    # Check the LAST line, not the whole stdout: `_warm_chat_brain`'s pre-existing (not new to this
+    # feature) off-case early-return unconditionally prints its own
+    # "[webapp] startup: chat renderer is ... no Qwen model to warm" line BEFORE this script's own
+    # `print('OK', ...)` runs, so `.strip().startswith("OK")` against the FULL stdout always failed
+    # here regardless of correctness -- caught by actually running this test locally (SIM_BACKEND=
+    # numpy, no GPU needed), not by static trace.
+    lines = [ln for ln in proc.stdout.strip().splitlines() if ln]
+    assert lines and lines[-1].startswith("OK"), f"stdout={proc.stdout}"
 
 
 _HEAVY_SCRIPT = r"""
@@ -75,7 +82,8 @@ print(json.dumps(out, sort_keys=True))
 
 @pytest.mark.skipif(not os.environ.get("SIM_RUN_HEAVY_CAPABILITY"),
                      reason="heavy brain-build byte-identity check (run with SIM_RUN_HEAVY_CAPABILITY=1); "
-                            "see research/findings/2026-09-24-brain-prewarm-scratch-session-*.md")
+                            "verdict TBD once this test is run to completion -- no findings doc exists "
+                            "yet (none should be cited until one is written from an actual completed run)")
 def test_prewarm_scratch_session_does_not_perturb_default():
     root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 

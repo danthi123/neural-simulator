@@ -13,10 +13,13 @@ WHAT IT MEASURES (client-side wall clock only; host-lifecycle tool, touches no c
     The per-turn wall-clock DELTA (target − raw) is reported as the renderer's own isolated cost —
     this is legitimate because the only thing that differs between the two sessions is which
     renderer object turns the SAME recalled fact into surface text; the delta is not itself timed
-    inside the server (no new response field was added — see the PREWARM finding this tool
-    produced, research/findings/2026-09-24-brain-prewarm-scratch-session-plasticity-leak.md, for why
-    a server-side per-phase timestamp is a SEPARATE, larger change (S01's
-    `_prod_chat_phase_timing.py`), not this tool's job).
+    inside the server (no new response field was added — a server-side per-phase timestamp is a
+    SEPARATE, larger change (S01's `_prod_chat_phase_timing.py`), not this tool's job). The
+    HEAVY byte-identity check for whether BRAIN_PREWARM's scratch-session turn perturbs a
+    process-shared organ (leak vs. no-leak) is tests/test_brain_prewarm_scratch_session.py::
+    test_prewarm_scratch_session_does_not_perturb_default — TBD once that test is run to a
+    verdict; no findings doc exists yet and none should be cited until one is written from an
+    actual completed run.
 
 USAGE
     python tools/chat_latency_probe.py --url http://127.0.0.1:8000 \\
