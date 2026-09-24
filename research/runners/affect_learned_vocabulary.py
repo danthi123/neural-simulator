@@ -118,6 +118,8 @@ N0 = 50.0                 # initial synapse maturity (pseudo-count)
 G = 500.0                 # weight per unit of learned (RMS-scaled) excess (bridge weight units)
 R_REF = 0.10              # read-out scale: rate margin (spikes/step/neuron) that maps to |valence| = 1
 MIN_RATE = 0.002          # below this in BOTH pools = no read (0)
+V_MIN = 0.0               # strong-affect margin on the read valence: |v| < V_MIN reads 0 (the learned analogue of the
+                          # norm gate's |v-5| >= 2; set by the seed-7 DEV calibration)
 U_DEP = 0.0               # US synapse utilisation per heard presentation (short-term depression); 0 = off
 TAU_REC = 100.0           # US resource recovery time constant (presentations)
 TAU_SCALE = 2000.0        # synaptic-scaling time constant (presentations); 0 = off (raw rate units)
@@ -500,7 +502,8 @@ class LearnedAffectVocabulary:
         rp, rn = float(rr[0][replica]), float(rr[1][replica])
         if max(rp, rn) < MIN_RATE:
             return 0.0
-        return float(np.clip((rp - rn) / self.r_ref, -1.0, 1.0))
+        v = float(np.clip((rp - rn) / self.r_ref, -1.0, 1.0))
+        return 0.0 if abs(v) < V_MIN else v
 
     def read_all(self, word: str):
         rr = self.read_rates(word)

@@ -23,6 +23,10 @@ R_REF is now ANCHORED to the known valences: the least-squares slope that maps t
 margins to their norm valence magnitudes (valence = margin / R_REF), so a word just over threshold reads weak and a
 word as strongly driven as a held-out seed reads as strong as that seed. Fewer than 3 decided held-out seeds -> the
 cell is inadmissible (no anchor).
+AMENDED A THIRD TIME ~08:00 EDT, after the anchored table (still no admissible cell: at G >= 2000 the FACT_DEV
+failures read 0.32-0.35, i.e. mildly valenced topical words just over the dead zone): the read gains the norm gate's
+own principle, a STRONG-AFFECT margin on the read valence, V_MIN in GRID_VMIN (|v| < V_MIN reads 0), and the cells
+are (variant, G, MIN_RATE, V_MIN). Ties -> lower G, then lower MIN_RATE, then lower V_MIN.
 No admissible cell, or a best recall < 0.27, -> the design is predicted to fail and no evaluation seed is staged.
 """
 from __future__ import annotations
@@ -45,6 +49,7 @@ from research.runners._affect_distributional_tag_derisk import WARRINER, STOP  #
 
 GRID_MIN_RATE = (0.002, 0.005, 0.01, 0.02, 0.03)
 GRID_G = (500.0, 1000.0, 2000.0, 4000.0)
+GRID_VMIN = (0.0, 0.25, 0.4, 0.5)
 DEV_SEED = 7
 
 
@@ -76,7 +81,8 @@ def evaluate_variant(path):
     dev_pos = sorted(w for w, v in lex.items() if v > 0 and not D.eval_half(w))
     words = sorted(set(dev_neg) | set(dev_pos) | set(held))
     rows = []
-    for g, mr in [(g, mr) for g in GRID_G for mr in GRID_MIN_RATE]:
+    for g, mr, vmin in [(g, mr, vm) for g in GRID_G for mr in GRID_MIN_RATE for vm in GRID_VMIN]:
+        A.V_MIN = 0.0
         rd.g = g
         rd._cache.clear()
         rates = {w: rd.read_rates(w) for w in words}
@@ -86,15 +92,16 @@ def evaluate_variant(path):
         m_ = np.array([a for a, _ in anchor]); v_ = np.array([b for _, b in anchor])
         r_ref = float((m_ * m_).sum() / (m_ * v_).sum()) if len(anchor) >= 3 and (m_ * v_).sum() > 0 else None
         if r_ref is None:
-            rows.append({"g": g, "min_rate": mr, "r_ref": None, "n_anchor": len(anchor), "dev_neg_recall": 0.0,
+            rows.append({"g": g, "min_rate": mr, "v_min": vmin, "r_ref": None, "n_anchor": len(anchor), "dev_neg_recall": 0.0,
                          "dev_neg_wrong": 1.0, "fact_dev_within": 0.0, "named": {}})
             continue
         rd.r_ref = r_ref
         rd._cache.clear()
+        A.V_MIN = vmin
         val = {w: rd.read(w) for w in words}
         f = lambda ws, c: float(np.mean([c(val[w]) for w in ws])) if ws else None  # noqa: E731
         fact = [_sentence_valence(t, rd) for t in D.FACT_DEV]
-        rows.append({"g": g, "min_rate": mr, "r_ref": r_ref, "n_anchor": len(anchor), "dev_neg_recall": f(dev_neg, lambda v: v < 0),
+        rows.append({"g": g, "min_rate": mr, "v_min": vmin, "r_ref": r_ref, "n_anchor": len(anchor), "dev_neg_recall": f(dev_neg, lambda v: v < 0),
                      "dev_neg_wrong": f(dev_neg, lambda v: v > 0), "dev_pos_recall": f(dev_pos, lambda v: v > 0),
                      "dev_pos_wrong": f(dev_pos, lambda v: v < 0),
                      "dev_contrast_D": f(dev_neg, lambda v: v < 0) - f(dev_pos, lambda v: v < 0),
@@ -127,6 +134,7 @@ def main():
         print("CHOICE: NONE (design predicted to fail)")
     else:
         out["choice"] = {"variant": best[0], "path": best[1], "g": best[2]["g"], "min_rate": best[2]["min_rate"],
+                         "v_min": best[2]["v_min"],
                          "r_ref": best[2]["r_ref"], "dev_neg_recall": best[2]["dev_neg_recall"]}
         print("CHOICE", out["choice"])
     dst = os.path.join(_REPO, "research", "findings", "raw", "_affect_learned_vocab", "dev_s7", "calibration.json")
