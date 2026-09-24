@@ -617,3 +617,13 @@ def test_queue_flag_check_never_pipes_help_into_grep_q() -> None:
     r = subprocess.run(["bash", "-c", 'set -uo pipefail; H="$1"; grep -q -- --wanted-flag <<<"$H" && echo ok', "_", big],
                        text=True, capture_output=True)
     assert r.stdout.strip() == "ok" and len(big) > 65536
+
+
+def test_queue_checks_pinned_jobs_against_the_pinned_revision() -> None:
+    # 2026-09-24: `add` checked a revision-pinned job's flags against MAIN's runner, so every unmerged branch's 6-seed
+    # job was refused ("does not even import/parse"). Pinned jobs now skip the local check and are checked against the
+    # pinned revision's own --help on the node (verified by hand: a bogus flag is refused, the real lines queue).
+    src = (ROOT / "tools" / "pool_queue.sh").read_text()
+    assert 'if [ -n "$MOD" ] && [ -z "$PINNED_REV" ]; then' in src          # local check only when NOT pinned
+    assert "at the pinned revision does not accept" in src                  # remote flag check exists
+    assert src.index('PINNED_REV=$(') < src.index('HELP=$(cd "$ROOT"')     # decided before the local --help runs
