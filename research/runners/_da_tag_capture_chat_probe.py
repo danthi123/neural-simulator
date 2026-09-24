@@ -116,7 +116,8 @@ def run_seed(seed, out_dir, ltm="off", workers=1):
     with cf.ThreadPoolExecutor(max_workers=max(1, int(workers))) as ex:
         for name, rec in ex.map(_one, ARMS):
             arms[name] = rec
-    res = {"seed": int(seed), "fact": FACT, "arms": {}, "pinned_sha": PINNED_SHA, "ltm": ltm}
+    res = {"seed": int(seed), "fact": FACT, "arms": {}, "pinned_sha": PINNED_SHA, "ltm": ltm,
+           "backend": os.environ.get("SIM_BACKEND", "numpy"), "argv": list(sys.argv), "workers": int(workers)}
     for name, a in arms.items():
         r = a["responses"] or {}
         rec = r.get(a["label"])
