@@ -9,9 +9,9 @@ anaphor sessions (so the probe's OFF arm is shown to take the pre-change route).
 are given literally (not by battery label), so the pinned tree, which lacks the new labels, runs the same text.
 
   # collect, once per tree (cwd AND PYTHONPATH = that tree; every flag below unset):
-  cd <tree> && PYTHONPATH=<tree> BRAIN_CHAT_SEED=<dev seed> SIM_BACKEND=numpy tools/memcap.sh 10 -- \\
+  cd <tree> && PYTHONPATH=<tree> BRAIN_CHAT_SEED=<dev seed> SIM_BACKEND=numpy tools/memcap.sh 8 -- \\
       .venv/bin/python -u <branch>/research/runners/_wmf_offflag_byte_identity.py --collect --part 1 --out <tree_p1.json>
-  # ... and again with --part 2 (two sessions per part, one process each)
+  # ... and again with --part 2, 3, 4 (one session per part, one process each)
   # compare (no brain build):
   .venv/bin/python -m research.runners._wmf_offflag_byte_identity --compare --pinned <p.json> --branch <b.json> \\
       --pinned-tree <T1> --branch-tree <T2> --pinned-sha <sha> --branch-sha <sha> --out <artifact.json>
@@ -33,9 +33,9 @@ SCRIPT = [
     ("bi_wmb", ["the fox and the wolf walked in", "who are we talking about"]),
     ("bi_wmfa1", ["the dog and the cat walked in", "what does it chase"]),
 ]
-# collected in two parts of two sessions each: every session builds its own ChatBrain + composer, and a 4-session
-# process was measured past 15 GB on numpy (2026-09-24, dev seed 7); two sessions stay within one pool job budget.
-PARTS = {"1": ["bi_hold", "bi_bc"], "2": ["bi_wmb", "bi_wmfa1"]}
+# collected one session per process: every session builds its own ChatBrain + composer (~3 GB each on numpy), and a
+# 4-session process was measured past 15 GB (2026-09-24, dev seed 7); one session stays at ~6 GB, like the probe arms.
+PARTS = {"1": ["bi_hold"], "2": ["bi_bc"], "3": ["bi_wmb"], "4": ["bi_wmfa1"]}
 FLAGS_UNSET = ("BRAIN_MULTIREF_FOCUS_BIND", "LB_WMB_FOCUS_PROBE", "LB_WMB_CONTENT_PROBE", "LB_WMB_HOLDQUERY_PROBE",
                "BRAIN_MULTIREF_LESION_SCOPE", "BRAIN_MULTIREF_LESION")
 
@@ -142,7 +142,7 @@ def main():
     ap.add_argument("--collect", action="store_true")
     ap.add_argument("--compare", action="store_true")
     ap.add_argument("--out", required=True)
-    ap.add_argument("--part", default="all", choices=["1", "2", "all"])
+    ap.add_argument("--part", default="all", choices=sorted(PARTS) + ["all"])
     ap.add_argument("--pinned", help="collect file(s), comma-separated parts")
     ap.add_argument("--branch")
     ap.add_argument("--pinned-tree")
