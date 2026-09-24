@@ -15,33 +15,30 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-19 (RESUME HERE) — NEW ARC: PERMANENT LLM MOUTH + LOAD-BEARING METRIC
 
-**🟢 LIVE NOW — 2026-09-24 ~01:45 local (harvest these; do NOT double-launch):**
-- **✅ #1 metric, all fixes + SETTLE: robust core 25/26** (`research/findings/2026-09-23-allfixes-settle-battery-6seed-robust-core-25.md`,
-  every seed 25/26); only `da-gated-encoding` (0/6) is outside the exercised core.
-- **Default-on switches (owner-authorized; memory `feedback_flip_validated_fixes_without_waiting`):** branch
-  `research/flip-validated-fixes` @`bd391aa3` flips BRAIN_EPISODIC_STORE_VERIFY + BRAIN_PMEM_FACILITATION +
-  BRAIN_SOURCE_PROV_ABSTAIN_AT_TIE. Safe to merge AFTER its production-default validation battery (prereg 2b162780f)
-  passes. Battery: AWS thin `.aws_cpu8` (18.209.94.52) + adequate `.aws_cpu10` (34.226.214.233), 156 shards each,
-  57/312 done at 01:20 (~30 per hour per machine, ETA ~06:00); pool 40 lines queued at `bd391aa3` (pool42 being
-  provisioned, task b3z70he5r); local 20 in the flip worktree (15 done). Aggregate with
-  `tools/lb_shard.py aggregate --tag flipdefaults-thin|flipdefaults-adequate` after pulling AWS + pool + flip-worktree shards.
-- **Curiosity x metacog LC-NE: NO-GO 1/6, held-out 0/5**
-  (`research/findings/2026-09-24-curiosity-metacog-lcne-modulator-6seed-NOGO-calibration-seed-only.md`). Next method
-  (phasic LC bursts + multiplicative gain on ASK, dev-seed calibration) building on `research/curiosity-lcne-phasic-gain`
-  (background agent). Board #229.
-- **DA tag-capture chat 6-seed (pool, rev 5d3810f2d):** s44 and s42-verify still running from before the thread fix;
-  s102 running; s43/s100/s101 were killed at 1-2 of 9 arms and re-queued 01:25.
-- **Queued on the pool:** CA3 superposed fact-store grid (54, rev ab2adcf51), D6 capacity curve (84, rev 24231d6d6),
-  swap-drives s43/s100/s101 (rev 7f90034df). pool42 provisioning chain: bd391aa3 -> 24231d6d6 -> 0c265b93d.
-- **wm-binding:** merge `d9207943e` pushed to `research/wm-binding-adequate-probe`; merge to main only after the
-  byte_identical_off job (0c265b93d vs c5c0f67ba) is in data.
-- **✅ D6 v3 GO 6/6 + EXPO_H secondary 6/6**; **D5 affect-conditioned mouth UNDEFINED** (content-locked tone selection:
-  instrument + prereg merged, seed-7 probe found three blockers, 6-seed correctly NOT staged).
-- **Workflows:** `wk4gruuhc` (Affect learned vocabulary, Perception readout homeostasis) · `waz1jilfh` (Workspace,
-  Language fix round) · curiosity build agent. Merge only on safe_to_merge.
-- **Infra tonight:** pool jobs default to 1 math thread (`738894a0`; BLAS on all cores had stalled dispatch 50 min);
-  queue adds take the dispatcher lock (`46cf6ff0`); a 7.5-day stale GNW queue line removed (result existed).
-  OPEN: idle-stop missed idle instance B (spawned task). pool40 powered off.
+**🟢 LIVE NOW — 2026-09-24 ~09:30 local (harvest these; do NOT double-launch):**
+- **⚠️ Overnight stall 02:15-08:45** (turn ended with the GPU queue empty; completions undelivered until the owner's
+  message; FAILURE_LOG row). Before ending any turn: stock every lane with genuine multi-hour work.
+- **Default flip (`research/flip-validated-fixes` @`bd391aa3`, prereg 2b162780f):** AWS thin + adequate DONE (pulled,
+  instances terminated); last 25 shards = 2 on the pool + 23 LOCAL in `scratchpad/flip` (task b1qi7u3ti, 4 at a
+  time, ~3 h). Then `tools/lb_shard.py aggregate --tag flipdefaults-thin|flipdefaults-adequate` over main + the flip
+  worktree's `research/findings/raw/_load_bearing/_shards/`, check the prereg's pass criteria, merge if they pass.
+- **Next flip batch candidate: SETTLE** -- cost +0.14 s/turn GPU, +0.23 s CPU (`research/findings/raw/_settle_cost/`);
+  GPU production chat smoke with SETTLE on queued/running (`_settle_cost/gpu_prod_chat_smoke_settle_on.txt`).
+- **Curiosity x metacog:** v4 NO-GO 3/6 (gain holds on all six; residual = base circuit + coarse G11 grid). v5 building
+  on `research/curiosity-ask-operating-point` (agent). Board #229.
+- **wm-binding:** ordinary-content probe NO-GO, 6/6 clean negatives; branch merged (byte_identical_off: true in data).
+  Next mechanism (spiking referent->focus bind) building on `research/wm-referent-focus-bind` (agent).
+- **Language learned-referent route:** merged; AMENDMENT 1 (per-seed input hashes, MIXED-INPUT refusal); 6 seeds
+  queued on the pool at `7790466c2` (full 19.97 MB corpus, sha256 7a00272e...). Score with `--score`.
+- **GNW branch-point instrument:** merged; 6-seed running locally at `bdbce4ce3` (task br06r3qhk, log
+  `scratchpad/gnw6.log`).
+- **Perception readout-port homeostasis:** prereg `fde276684` (G0-G5); 12 pool runs being staged (task bkc6erghj);
+  seed-42 local cross-check running (bmqfhj3dp). Branch `research/perception-readout-homeostasis`, review SOUND.
+- **Affect learned-vocabulary build** (workflow `wk4gruuhc`, agent still running dev runs).
+- **Pool also holds:** CA3 fact-store grid (36 left; 18 done locally in `scratchpad/ca3wt`, NOT yet copied to main),
+  D6 capacity curve (4 left, 75 done), DA tag-capture seeds 43/100/101/102 (2 GB declared).
+- **Infra:** pool jobs default to 1 math thread; queue adds locked; provisioning sanity 1 thread; /tmp (RAM-backed)
+  cleared from 23 GB to 6 GB -- keep scratch worktrees under `.claude/worktrees/`, not /tmp.
 
 **⭐⭐ LATEST 2026-09-23 ~09:00 local — OWNER: "parallelize more heavily … we shouldn't be sitting around for hours
 waiting on runs every day … I thought our heartbeats/gates were supposed to prevent this?" → FULL FAN-OUT + LOOPHOLE FIX.**

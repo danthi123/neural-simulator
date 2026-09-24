@@ -1188,6 +1188,18 @@ Perception/attention/WM, affect, curiosity, self/workspace/ToM, and language are
 
 ## 8. IMMEDIATE NEXT ACTIONS
 
+**2026-09-24 (morning harvest):** **Curiosity x metacog v4 (phasic LC-NE feedback-withdrawal gain): NO-GO 3/6**
+(`research/findings/2026-09-24-curiosity-metacog-lcne-phasic-gain-v4-6seed-NOGO-3of6-gain-holds-circuit-residual.md`) --
+the gain passes on all six (share 0.37-0.92, v3 0.08-0.25); seeds 44/100 fail on the base circuit (same with the gain
+lesioned), seed 42's multiplicative test is UNDEFINED on the coarse drive grid; v5 (finer grid + ASK operating-point
+homeostat) building. **wm-binding ordinary-content probe: NO-GO, 6/6 clean negatives**
+(`research/findings/2026-09-24-wm-binding-ordinary-content-probe-6seed-NOGO-held-state-does-not-reach-an-ordinary-reply.md`)
+-- the positional `CAND_POOLS[0]` route ignores the held referent; the spiking referent->focus bind is building.
+**Merged to main:** language learned-referent route (6-seed queued on one recorded corpus), GNW branch-point instrument
+(6-seed running), curiosity v4, wm-binding probes. **Perception readout-port homeostasis** prereg committed with a
+fair-null gate added; 12 pool runs staged. **SETTLE per-turn cost:** +0.14 s GPU / +0.23 s CPU -> next flip batch.
+**Flip battery:** cloud share done; last 25 shards finishing locally.
+
 **2026-09-24 (overnight harvest):** **All fixes + SETTLE: robust core 25/26 on every seed**
 (`research/findings/2026-09-23-allfixes-settle-battery-6seed-robust-core-25.md`); only `da-gated-encoding` is outside
 the exercised core. **Default flip:** three validated fixes are switched ON by default on `research/flip-validated-fixes`;
