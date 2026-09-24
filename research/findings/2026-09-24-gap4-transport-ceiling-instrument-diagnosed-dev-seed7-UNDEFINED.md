@@ -76,8 +76,8 @@ the dev net, and at full size by one of the two pre-registered statistics (item 
    effect/noise above 2 AND reliability above 0.6) holds at dev size (H32/pool 4: 2.29 and 0.82 at tonic 1.0; 2.55 and
    0.83 at tonic 0.5). At full size the combined variant clears the reliability bar (0.77) and misses the effect/noise
    bar by 0.01 (1.99). The full-size two-factor record is therefore supported but not claimed under that rule. The
-   mean H1 read barely moves even where transmission is clear (full size, both factors: 0.0917 to 0.0900), which is why
-   the earlier probe's mean statistic could not discriminate. That probe
+   mean H1 read barely moves even where the item reliability shows transmission (full size, both factors: reliability
+   0.77, mean 0.0917 to 0.0900), which is why the earlier probe's mean statistic could not discriminate. That probe
    (`round4_rev8f16994/diag_fullsize_ff_transmission_s7.json`) read the same in both of its variants: legacy 0.0548 to
    0.0547 (per-unit change 0.0093) and STP bypassed at the legacy gain 0.0547 to 0.0547 (0.0091). The round-2 dev scan
    (`diag_transmit_scan_stp_ts*_s7.json`) agrees: it switched STP off for ALL synapses, not only the feedforward ones,
