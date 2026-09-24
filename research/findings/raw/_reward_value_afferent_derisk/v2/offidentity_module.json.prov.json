@@ -1,0 +1,31 @@
+{
+ "run_id": "1790273608-720729",
+ "runner": "research/runners/_reward_value_afferent_offidentity.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/wf_38021aa9-a43-7/research/runners/_reward_value_afferent_offidentity.py",
+  "--pre-ref",
+  "306ef27d737c170103d3ab917bb11772960b3f17",
+  "--out",
+  "research/findings/raw/_reward_value_afferent_derisk/v2/offidentity_module.json"
+ ],
+ "git_sha": "3992d343b",
+ "git_dirty": false,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-24T14:13:28",
+ "env": {
+  "CUDA_VISIBLE_DEVICES": "",
+  "SIM_BACKEND": "numpy",
+  "OMP_NUM_THREADS": "1"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_reward_value_afferent_derisk/v2/offidentity_module.json"
+}
