@@ -132,13 +132,14 @@ G3_GAIN_ATTRIB_MIN = 0.2          # lc_ne pathway owns >= this fraction of the c
 LC_GRADED_RHO_MAX = -0.3          # G10 (as v3): rho(evidence, lc_ne Hz) <= this
 LC_GRADED_MIN_RANGE_HZ = 0.3      # G10 (as v3): lc_ne's own Hz range across the grid >= this
 BURST_WIN_STEPS = 25              # G12: a rep's lc_ne burst window, from its first lc_ne spike
-PHASIC_CONC_MIN = 0.8             # G12: pooled fraction of lc_ne spikes inside the burst window >= this
+PHASIC_CONC_MIN = 0.95            # G12a: pooled per-neuron fraction of lc_ne spikes inside the burst window >= this
+PAUSE_RATIO_MIN = 1.5             # G12b: lc_ne spikes with alpha2 autoinhibition lesioned / intact >= this
 EV_G11 = 0.0                      # G11: the evidence level of the drive sweep (the most uncertain level)
 G11_GRID = (0.8, 0.9, 1.0, 1.1, 1.2)   # G11: edge_drive values (+-20% around the operating edge weight)
 G11_OFF_FLOOR_HZ = 0.25           # G11: a grid point is DEFINED when the lc-off ASK rate is >= this
-G11_MIN_DEFINED = 4               # G11: >= this many defined grid points, else UNDEFINED (fail)
+G11_MIN_DEFINED = 3               # G11: >= this many points on the reference's RISING LIMB, else UNDEFINED (fail)
 G11_OFFSET_MAX_HZ = 0.05          # G11a: |lc effect| with the edge closed (edge_drive=0) <= this
-G11_GAIN_MIN = 0.15               # G11b: ASK_on/ASK_off at the operating drive (1.0) >= 1 + this
+G11_GAIN_MIN = 0.15               # G11b: ASK_on/ASK_off at the top of the rising limb >= 1 + this
 G11_TREND_MIN = 0.0               # G11c: Spearman(drive, ASK_on/ASK_off) over defined points >= this
 
 
@@ -245,6 +246,7 @@ class Recorder:
 
     def reset(self):
         self.counts = {k: [] for k in self.idx}
+        self.rasters = {"lc_ne": [], "lc_add": []}
         self.h_meta = hashlib.sha256()
         self.h_cmp = hashlib.sha256()
         self.h_lc = hashlib.sha256()
@@ -256,26 +258,33 @@ class Recorder:
         fs = np.asarray(to_host(self.b.cp_firing_states)).astype(bool)
         for k, ix in self.idx.items():
             self.counts[k].append(int(fs[ix].sum()))
+        for k in self.rasters:
+            self.rasters[k].append(fs[self.idx[k]].copy())
         self.h_meta.update(np.packbits(fs[self.meta_idx]).tobytes())
         self.h_cmp.update(np.packbits(fs[self.cmp_idx]).tobytes())
         self.h_lc.update(np.packbits(fs[self.idx["lc_ne"]]).tobytes())
 
 
-def burst_stats(pop_counts_by_rep) -> dict:
-    """G12's raw counts. Per rep: the population's first spike step and how many of its spikes fall inside
-    [first, first + BURST_WIN_STEPS). Pooled over reps (a rep weighs by its spikes, not equally)."""
+def burst_stats(raster_by_rep) -> dict:
+    """G12's raw counts, PER NEURON (the cellular definition of LC phasic firing: a brief burst, then a pause --
+    Aston-Jones & Cohen 2005). `raster_by_rep`: bool array [reps, steps, neurons]. For every (rep, neuron) with >= 1
+    spike: its first spike step, and how many of its spikes fall inside [first, first + BURST_WIN_STEPS). Pooled
+    over (rep, neuron) pairs, so a neuron weighs by its spikes."""
+    ras = np.asarray(raster_by_rep, bool)
     total = in_burst = active = 0
     firsts = []
-    for rep in pop_counts_by_rep:
-        t = int(rep.sum())
-        if t <= 0:
-            continue
-        f = int(np.argmax(rep > 0))
-        firsts.append(f)
-        total += t
-        in_burst += int(rep[f:f + BURST_WIN_STEPS].sum())
-        active += 1
-    return {"spikes_total": total, "spikes_in_burst": in_burst, "active_reps": active, "first_spike_steps": firsts}
+    for rep in ras:
+        n_spk = rep.sum(0)
+        for j in np.nonzero(n_spk)[0]:
+            s = rep[:, j]
+            f = int(np.argmax(s))
+            firsts.append(f)
+            total += int(n_spk[j])
+            in_burst += int(s[f:f + BURST_WIN_STEPS].sum())
+            active += 1
+    return {"spikes_total": total, "spikes_in_burst": in_burst, "active_neuron_reps": active,
+            "active_reps": int(sum(1 for rep in ras if rep.any())),
+            "median_first_spike_step": (float(np.median(firsts)) if firsts else None)}
 
 
 def read_level(pool, org, rec, ev: float, swap: bool = False) -> dict:
@@ -301,8 +310,9 @@ def read_level(pool, org, rec, ev: float, swap: bool = False) -> dict:
         if k in ("ask", "lc_ne"):
             out[f"{k}_hz_per_rep"] = [float(x) for x in hz]
     out["bystander_spikes"] = int(per_rep["bystanders"].sum())
-    out["lc_ne_burst"] = burst_stats(per_rep["lc_ne"])
-    out["lc_add_burst"] = burst_stats(per_rep["lc_add"])
+    for k in ("lc_ne", "lc_add"):
+        ras = np.asarray(rec.rasters[k], bool).reshape(READ_REPS, STEPS_PER_REP, -1)
+        out[f"{k}_burst"] = burst_stats(ras)
     out["meta_raster_sha256"] = rec.h_meta.hexdigest()
     out["cmp_raster_sha256"] = rec.h_cmp.hexdigest()
     out["lc_raster_sha256"] = rec.h_lc.hexdigest()
@@ -343,11 +353,11 @@ def _rng(sw, key="ask_hz"):
 
 
 def floored_rho(values):
-    """G1/G7 statistic (v4 instrument, PREREG §3): Spearman rho(evidence, level-mean rate) with every level mean below
-    G1_SILENT_HZ set to 0 (tied silence) BEFORE ranking. A rank statistic otherwise orders a 0.02 -> 0.10 Hz noise
-    tail at the confident end as seriously as 1 -> 3 Hz at the uncertain end (dev seed 8: raw rho -0.61 from exactly
-    such a tail). Levels at or above the floor are ranked unchanged, so a supra-floor reversal (v3's seed 44: 1.1 Hz
-    at evidence 1.0) still fails. None when every floored level is equal (UNDEFINED, never a pass)."""
+    """SECONDARY (reported, NOT a gate; PREREG §3): Spearman rho(evidence, level-mean rate) with every level mean below
+    G1_SILENT_HZ set to 0 (tied silence) before ranking. G1 itself stays v3's RAW rho. Measured on the dev seeds, the
+    floor is double-edged: it lifts seed 8 (raw -0.61 from a 0.02 -> 0.10 Hz confident-end tail) to -0.86 but drops
+    seed 10 (raw -0.98) to -0.79 because the ties cap the attainable |rho| when few levels are supra-floor -- so it
+    is reported to show how much of a G1 failure is sub-floor noise, and never used to pass or fail a seed."""
     v = np.asarray(values, np.float64)
     v = np.where(v < G1_SILENT_HZ, 0.0, v)
     return spearman(list(EVIDENCE_GRID), list(v))
@@ -363,12 +373,13 @@ def lc_burst_concentration(sw, key="lc_ne_burst") -> dict:
 # ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
 #  module-level gate predicates (SHARED by run_seed and --selftest, so a regression in either is caught by both)
 # ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
-G1_SILENT_HZ = 0.25   # G1/G7: level means below this are tied silence (= G11_OFF_FLOOR_HZ; PREREG §3)
+G1_SILENT_HZ = 0.25   # SECONDARY floored rho only: level means below this are tied silence (= G11_OFF_FLOOR_HZ)
 
 
-def gate_g1(rho_floored, rng_hz):
-    """Monotone coupling on the combined arm: floored rho <= G1_RHO_MAX AND range >= G1_MIN_RANGE_HZ; None fails."""
-    return bool(rho_floored is not None and rng_hz >= G1_MIN_RANGE_HZ and rho_floored <= G1_RHO_MAX)
+def gate_g1(rho, rng_hz):
+    """v3's G1, unchanged: Spearman rho(evidence, level-mean ASK Hz) <= G1_RHO_MAX AND range >= G1_MIN_RANGE_HZ;
+    a None rho or a sub-floor range fails (UNDEFINED is never a pass)."""
+    return bool(rho is not None and rng_hz >= G1_MIN_RANGE_HZ and rho <= G1_RHO_MAX)
 
 
 def gate_g8_relay_lesion(rho_relay):
@@ -388,12 +399,21 @@ def gate_g10_lc_graded(rho_lc, rng_lc):
     return bool(rho_lc <= LC_GRADED_RHO_MAX)
 
 
-def gate_g12_phasic(conc):
-    """PHASIC: >= PHASIC_CONC_MIN of lc_ne's spikes (pooled over all levels x reps) fall inside a BURST_WIN_STEPS
-    window from each rep's first lc_ne spike, AND lc_ne fires on >= 1 rep at the most uncertain level (a silent
-    lc_ne is UNDEFINED, never phasic)."""
+def gate_g12_phasic(conc, conc_autoinh_lesioned):
+    """PHASIC = a burst, then a pause that the drive alone would not produce (the cellular LC phasic pattern;
+    Aston-Jones & Cohen 2005; alpha2 autoinhibition, Williams et al. 1985). Three parts, all required:
+      (a) BURST: >= PHASIC_CONC_MIN of lc_ne's spikes (pooled over every level x rep x neuron) fall inside
+          BURST_WIN_STEPS of that neuron's first spike in that rep;
+      (b) PAUSE IS LOAD-BEARING: lesioning the alpha2 autoinhibition raises lc_ne's total spike count by >=
+          PAUSE_RATIO_MIN -- the comparator's drive continues after the burst, and the autoinhibition is what
+          silences lc_ne (per-neuron concentration alone cannot tell this from a sparsely driven cell: dev-seed
+          measurement, v3's lc clone reads 0.89-0.97 on it);
+      (c) lc_ne fires on >= 1 rep at the most uncertain level (a silent lc_ne is UNDEFINED, never phasic)."""
     c = conc.get("concentration")
-    return bool(c is not None and conc.get("active_reps_at_most_uncertain", 0) >= 1 and c >= PHASIC_CONC_MIN)
+    n, n_les = conc.get("spikes_total", 0), conc_autoinh_lesioned.get("spikes_total", 0)
+    if c is None or n <= 0 or conc.get("active_reps_at_most_uncertain", 0) < 1:
+        return False
+    return bool(c >= PHASIC_CONC_MIN and (n_les / n) >= PAUSE_RATIO_MIN)
 
 
 def _trend(grid, ratios):
@@ -408,10 +428,15 @@ def g11_eval(on: dict, off: dict, add: dict, grid=G11_GRID) -> dict:
     share an IDENTICAL lc_ne raster (the caller verifies the hash): `on` (lc_ne -> ask_fb open), `off` (closed), `add`
     (the v3-style additive control open instead). Keys must include 0.0 (edge closed) and every `grid` value.
 
-      * DEFINED points: grid values where off >= G11_OFF_FLOOR_HZ; fewer than G11_MIN_DEFINED -> UNDEFINED (fail).
+      * DEFINED points: grid values where off >= G11_OFF_FLOOR_HZ. The RISING LIMB is the defined points up to the
+        drive at which the reference (off) response peaks. Measured on the dev seeds: with ASK's slow negative
+        feedback intact, a drive well above the operating point makes ASK fire on the comparator's early ONSET
+        transient, recruits the feedback before any phasic lc_ne burst exists, and the reference response FALLS
+        with more drive. A ratio over a collapsing denominator would inflate "gain", so only the rising limb is
+        scored. Fewer than G11_MIN_DEFINED limb points -> UNDEFINED (fail).
       * G11a no offset: |on(0) - off(0)| <= G11_OFFSET_MAX_HZ (the modulator does nothing without the drive).
-      * G11b real gain at the operating drive: on(1.0)/off(1.0) >= 1 + G11_GAIN_MIN (1.0 must be defined).
-      * G11c scales with the drive: Spearman(drive, on/off) over defined points >= G11_TREND_MIN. An ADDITIVE input
+      * G11b real gain: on/off at the top of the rising limb >= 1 + G11_GAIN_MIN.
+      * G11c scales with the drive: Spearman(drive, on/off) over the rising limb >= G11_TREND_MIN. An ADDITIVE input
         shift gives a ratio that FALLS with drive for any threshold-power-law rate curve ((x+c-t)/(x-t))^n, which is
         also why the Murphy & Miller 2003 expansive-nonlinearity case -- additive input that LOOKS multiplicative in
         slope -- still fails this test; so does an input-gain f(kx) with a threshold. Only a response (output) gain
@@ -420,22 +445,25 @@ def g11_eval(on: dict, off: dict, add: dict, grid=G11_GRID) -> dict:
         real effect (max over defined points of add/off >= 1 + G11_GAIN_MIN). If it passes G11c, this instrument
         cannot tell additive from multiplicative on this seed -> UNDEFINED (fail), never a pass."""
     defined = [g for g in grid if off[g] >= G11_OFF_FLOOR_HZ]
-    res = {"defined_points": defined, "n_defined": len(defined)}
-    if len(defined) < G11_MIN_DEFINED or 1.0 not in defined:
-        res.update({"pass": False, "undefined": f"{len(defined)} defined points (need >= {G11_MIN_DEFINED} incl. 1.0)"})
+    peak = max(defined, key=lambda g: off[g]) if defined else None
+    limb = [g for g in defined if g <= peak] if defined else []
+    res = {"defined_points": defined, "n_defined": len(defined), "rising_limb": limb, "n_limb": len(limb)}
+    if len(limb) < G11_MIN_DEFINED:
+        res.update({"pass": False, "undefined": f"{len(limb)} points on the reference's rising limb "
+                                                 f"(need >= {G11_MIN_DEFINED})"})
         return res
-    r_on = [on[g] / off[g] for g in defined]
-    r_add = [add[g] / off[g] for g in defined]
-    t_on, t_add = _trend(defined, r_on), _trend(defined, r_add)
+    r_on = [on[g] / off[g] for g in limb]
+    r_add = [add[g] / off[g] for g in limb]
+    t_on, t_add = _trend(limb, r_on), _trend(limb, r_add)
     offset = abs(on[0.0] - off[0.0])
-    gain_op = on[1.0] / off[1.0]
+    gain_top = on[limb[-1]] / off[limb[-1]]
     add_effect = max(r_add) - 1.0
     instrument_valid = bool(t_add < G11_TREND_MIN and add_effect >= G11_GAIN_MIN)
     parts = {"G11a_no_offset": bool(offset <= G11_OFFSET_MAX_HZ),
-             "G11b_gain_at_operating_drive": bool(gain_op >= 1.0 + G11_GAIN_MIN),
+             "G11b_gain_at_top_of_rising_limb": bool(gain_top >= 1.0 + G11_GAIN_MIN),
              "G11c_effect_scales_with_drive": bool(t_on >= G11_TREND_MIN)}
     res.update({"ratio_on": r_on, "ratio_add": r_add, "trend_on": t_on, "trend_add": t_add, "offset_hz": offset,
-                "gain_at_operating_drive": gain_op, "additive_effect": add_effect,
+                "gain_at_top_of_rising_limb": gain_top, "additive_effect": add_effect,
                 "instrument_valid_additive_control_fails": instrument_valid, "parts": parts,
                 "additive_control_parts": {"G11c_effect_scales_with_drive": bool(t_add >= G11_TREND_MIN)},
                 "pass": bool(instrument_valid and all(parts.values()))})
@@ -613,8 +641,10 @@ def run_seed(seed: int, determinism: bool = True, verbose: bool = True) -> dict:
     rng_e, peak_e = _rng(edge_lesion)
     rng_b, peak_b = _rng(both_lesion)
     rho_raw = level_rho(combined)
-    rho_fl = floored_rho(_vals(combined, "ask_hz"))
-    rho_swap_fl = floored_rho(_vals(swap, "ask_hz"))
+    rho_fl = floored_rho(_vals(combined, "ask_hz"))                      # secondary only
+    rho_swap = level_rho(swap)
+    rho_swap_fl = floored_rho(_vals(swap, "ask_hz"))                     # secondary only
+    rho_lesion = level_rho(gain_lesion)                                   # the base (modulator-closed) arm's own G1 rho
     rho_relay = level_rho(relay_lesion)
     rho_both = level_rho(both_lesion)
     rho_lc = spearman(list(EVIDENCE_GRID), _vals(combined, "lc_ne_hz"))
@@ -647,7 +677,8 @@ def run_seed(seed: int, determinism: bool = True, verbose: bool = True) -> dict:
     det = {"checked": False}
     if determinism:
         cmd = [sys.executable, "-m", "research.runners._curiosity_lcne_phasic_gain_derisk", "--digest-only",
-               "--seeds", str(seed)]
+               "--seeds", str(seed)] + (["--dev"] if seed in DEV_SEEDS else []) + (["--set"] + _OVERRIDES
+                                                                                  if _OVERRIDES else [])
         out = subprocess.run(cmd, cwd=str(_REPO), capture_output=True, text=True, env=dict(os.environ))
         line = [x for x in out.stdout.splitlines() if x.startswith("DIGEST ")]
         other = line[-1].split()[-1] if line else None
@@ -662,14 +693,14 @@ def run_seed(seed: int, determinism: bool = True, verbose: bool = True) -> dict:
     s1 = (not s1_undefined) and max(l["ask_hz"] for l in unc) >= thr and max(l["ask_hz"] for l in con) < thr
 
     checks_required = {
-        "G1_monotone_floored_rho<=-0.8": gate_g1(rho_fl, rng_c),
+        "G1_monotone_rho<=-0.8": gate_g1(rho_raw, rng_c),
         "G3_gain_pathway_load_bearing": bool(attrib_gain is not None and attrib_gain >= G3_GAIN_ATTRIB_MIN),
         "G6_determinism_fresh_process_hash": bool(det.get("equal")) if determinism else None,
-        "G7_class_swap_monotone": bool(rho_swap_fl is not None and rho_swap_fl <= G7_RHO_MAX),
+        "G7_class_swap_monotone": bool(rho_swap is not None and rho_swap <= G7_RHO_MAX),
         "G8_relay_lesion_abolishes_coupling": gate_g8_relay_lesion(rho_relay),
         "G10_lc_ne_evidence_graded": gate_g10_lc_graded(rho_lc, rng_lc),
         "G11_multiplicative_not_additive": bool(g11["pass"]),
-        "G12_lc_ne_phasic": gate_g12_phasic(conc),
+        "G12_lc_ne_phasic": gate_g12_phasic(conc, conc_autoinh),
     }
     checks_integrity = {
         "G4_joint_lesion_breaks_coupling": gate_g4_joint_lesion(rho_both),
@@ -692,7 +723,8 @@ def run_seed(seed: int, determinism: bool = True, verbose: bool = True) -> dict:
     res = {
         "seed": seed, "go": bool(go), "dev_seed": seed in DEV_SEEDS, "checks": checks_required,
         "checks_integrity": checks_integrity,
-        "rho_raw": rho_raw, "rho_floored": rho_fl, "rho_swap_floored": rho_swap_fl, "rho_relay_lesion": rho_relay,
+        "rho": rho_raw, "rho_swap": rho_swap, "rho_gain_lesion_arm": rho_lesion,
+        "secondary_floored_rho": {"combined": rho_fl, "class_swap": rho_swap_fl}, "rho_relay_lesion": rho_relay,
         "rho_both_lesion": rho_both, "rho_lc_ne": rho_lc,
         "ask_range_hz": {"combined": rng_c, "gain_lesion": rng_g, "edge_lesion": rng_e, "both_lesion": rng_b},
         "ask_peak_hz": {"combined": peak_c, "gain_lesion": peak_g, "edge_lesion": peak_e, "both_lesion": peak_b},
@@ -712,9 +744,11 @@ def run_seed(seed: int, determinism: bool = True, verbose: bool = True) -> dict:
         "elapsed_s": round(time.time() - t0, 1),
     }
     if verbose:
-        print(f"[seed {seed}] rho_fl={rho_fl} (raw {rho_raw}) swap_fl={rho_swap_fl} relay={rho_relay} rho_lc={rho_lc} "
+        print(f"[seed {seed}] rho={rho_raw} (floored {rho_fl}; lesion arm {rho_lesion}) swap={rho_swap} "
+              f"relay={rho_relay} rho_lc={rho_lc} "
               f"attrib_gain={attrib_gain} G11={g11.get('pass')} (trend_on={g11.get('trend_on')} "
-              f"trend_add={g11.get('trend_add')} gain_op={g11.get('gain_at_operating_drive')}) "
+              f"trend_add={g11.get('trend_add')} gain_top={g11.get('gain_at_top_of_rising_limb')} "
+              f"limb={g11.get('rising_limb')}) "
               f"phasic={conc['concentration']} det={det.get('equal')} GO={go} ({res['elapsed_s']}s)", flush=True)
         print(f"[seed {seed}] ask combined={[round(x, 2) for x in _vals(combined, 'ask_hz')]} "
               f"gain_lesion={[round(x, 2) for x in _vals(gain_lesion, 'ask_hz')]}", flush=True)
@@ -768,29 +802,42 @@ def _selftest_gate_logic():
     shifted[0.0] = 0.5
     r = g11_eval(shifted, off, add)
     assert not r["pass"] and not r["parts"]["G11a_no_offset"], ("G11a offset", r)
+    # a COLLAPSING reference must not manufacture gain: no effect on the rising limb, a big ratio only where the
+    # reference collapses -> the limb excludes the collapse and G11b fails
+    coll = {0.0: 0.0, 0.8: 1.0, 0.9: 2.0, 1.0: 3.0, 1.1: 1.5, 1.2: 0.8}
+    fake = {0.0: 0.0, 0.8: 1.0, 0.9: 2.0, 1.0: 3.0, 1.1: 6.0, 1.2: 3.2}
+    r = g11_eval(fake, coll, {g: v + 0.4 * (g > 0) for g, v in coll.items()})
+    assert r["rising_limb"] == [0.8, 0.9, 1.0] and not r["pass"], ("G11 collapsing reference", r)
     # too few defined points -> UNDEFINED
     sparse = curve(lambda g: 0.1 if g < 1.1 else 3.0)
     r = g11_eval(mult, sparse, add)
     assert not r["pass"] and "undefined" in r, ("G11 undefined", r)
-    # G1: floored rho -- a sub-floor confident tail does not break monotonicity; a supra-floor reversal does
-    tail = [3.2, 1.0, 0.5, 0.42, 0.07, 0.06, 0.05, 0.02, 0.07, 0.10, 0.10]
-    assert spearman(list(EVIDENCE_GRID), tail) > G1_RHO_MAX, "selftest premise: raw rho of the tail must fail"
-    assert gate_g1(floored_rho(tail), max(tail) - min(tail)), "G1 floored: sub-floor tail should pass"
-    reversal = [5.2, 3.9, 2.7, 1.1, 0.6, 0.13, 0.07, 0.08, 0.05, 0.09, 1.10]    # v3 seed 44's shape
-    assert not gate_g1(floored_rho(reversal), 5.1), "G1 floored: a supra-floor reversal must still fail"
+    # G1 (v3's, unchanged): monotone passes; a supra-floor reversal fails; None / sub-range fail
+    mono = [6.5, 4.6, 3.2, 1.6, 0.7, 0.37, 0.22, 0.15, 0.09, 0.08, 0.06]
+    assert gate_g1(spearman(list(EVIDENCE_GRID), mono), max(mono) - min(mono)), "G1: monotone must pass"
+    reversal = [5.2, 3.9, 2.7, 1.1, 0.6, 0.13, 0.07, 0.08, 0.05, 0.09, 1.10]
+    assert not gate_g1(spearman(list(EVIDENCE_GRID), reversal), 5.1), "G1: a supra-floor reversal must fail"
     assert not gate_g1(None, 5.0) and not gate_g1(-0.99, 0.5), "G1: None / sub-range must fail"
+    # the SECONDARY floored rho ties sub-floor levels (reported only)
+    tail = [3.2, 1.0, 0.5, 0.42, 0.07, 0.06, 0.05, 0.02, 0.07, 0.10, 0.10]
+    assert spearman(list(EVIDENCE_GRID), tail) > floored_rho(tail), "floored rho must discount the sub-floor tail"
     # G8 / G4 / G10 (v3 logic, unchanged)
     assert not gate_g8_relay_lesion(None) and not gate_g8_relay_lesion(-0.9) and gate_g8_relay_lesion(0.9)
     assert gate_g4_joint_lesion(None) and not gate_g4_joint_lesion(-0.95) and gate_g4_joint_lesion(-0.2)
     assert not gate_g10_lc_graded(None, 5.0) and not gate_g10_lc_graded(-0.9, 0.1)
     assert gate_g10_lc_graded(-0.9, 1.0) and not gate_g10_lc_graded(0.1, 1.0)
     # G12: concentrated bursts pass; spread (tonic-like) firing fails; a silent lc_ne never passes
-    assert gate_g12_phasic({"concentration": 0.95, "active_reps_at_most_uncertain": 5})
-    assert not gate_g12_phasic({"concentration": 0.5, "active_reps_at_most_uncertain": 5})
-    assert not gate_g12_phasic({"concentration": None, "active_reps_at_most_uncertain": 0})
-    assert not gate_g12_phasic({"concentration": 1.0, "active_reps_at_most_uncertain": 0})
-    fr = burst_stats([np.array([0, 0, 3, 2, 0] + [0] * 30 + [4]), np.zeros(36)])
-    assert fr == {"spikes_total": 9, "spikes_in_burst": 5, "active_reps": 1, "first_spike_steps": [2]}, fr
+    ok = {"concentration": 0.99, "spikes_total": 100, "active_reps_at_most_uncertain": 5}
+    assert gate_g12_phasic(ok, {"spikes_total": 300}), "G12: burst + load-bearing pause must pass"
+    assert not gate_g12_phasic(dict(ok, concentration=0.9), {"spikes_total": 300}), "G12a: spread spikes must fail"
+    assert not gate_g12_phasic(ok, {"spikes_total": 120}), "G12b: a pause the drive alone makes must fail"
+    assert not gate_g12_phasic(dict(ok, concentration=None, spikes_total=0), {"spikes_total": 0}), "G12: silent"
+    assert not gate_g12_phasic(dict(ok, active_reps_at_most_uncertain=0), {"spikes_total": 300}), "G12c"
+    ras = np.zeros((2, 40, 2), bool)
+    ras[0, [2, 4], 0] = True          # neuron 0: a 2-spike burst -> both inside the window
+    ras[0, [5, 35], 1] = True         # neuron 1: 1 spike in the window, 1 spike 30 steps later (outside)
+    fr = burst_stats(ras)
+    assert (fr["spikes_total"], fr["spikes_in_burst"], fr["active_neuron_reps"], fr["active_reps"]) == (4, 3, 2, 1), fr
     print("[selftest] gate logic OK in both directions (additive control FAILS G11 on linear and power-law curves; "
           "pure and growing gains PASS; offset / undefined / invalid-instrument cases never pass)")
     return 0
@@ -809,7 +856,8 @@ def operating_point() -> dict:
             "W_FB_ASK": W_FB_ASK, "W_LC_FB": W_LC_FB, "ADD_N": ADD_N, "W_CMP_ADD": W_CMP_ADD, "W_ADD_ASK": W_ADD_ASK,
             "G1_SILENT_HZ": G1_SILENT_HZ, "G3_GAIN_ATTRIB_MIN": G3_GAIN_ATTRIB_MIN,
             "LC_GRADED_RHO_MAX": LC_GRADED_RHO_MAX, "LC_GRADED_MIN_RANGE_HZ": LC_GRADED_MIN_RANGE_HZ,
-            "BURST_WIN_STEPS": BURST_WIN_STEPS, "PHASIC_CONC_MIN": PHASIC_CONC_MIN, "EV_G11": EV_G11,
+            "BURST_WIN_STEPS": BURST_WIN_STEPS, "PHASIC_CONC_MIN": PHASIC_CONC_MIN,
+            "PAUSE_RATIO_MIN": PAUSE_RATIO_MIN, "EV_G11": EV_G11,
             "G11_GRID": list(G11_GRID), "G11_OFF_FLOOR_HZ": G11_OFF_FLOOR_HZ, "G11_MIN_DEFINED": G11_MIN_DEFINED,
             "G11_OFFSET_MAX_HZ": G11_OFFSET_MAX_HZ, "G11_GAIN_MIN": G11_GAIN_MIN, "G11_TREND_MIN": G11_TREND_MIN}
 
@@ -857,6 +905,9 @@ def _decide(rows) -> dict:
 
 
 RUNNER_REL = "research/runners/_curiosity_lcne_phasic_gain_derisk.py"
+CIRCUIT_CONSTANTS = ("LC_N", "W_CMP_LC", "W_LC_AUTO", "N_FB", "W_ASK_FB", "W_FB_ASK", "W_LC_FB", "ADD_N", "W_CMP_ADD",
+                     "W_ADD_ASK")   # the only names --set may override (never a gate threshold)
+_OVERRIDES: list = []     # dev-only --set NAME=VALUE overrides, forwarded to the fresh-process determinism check
 
 
 def runner_code_mismatch(git_shas):
@@ -920,8 +971,23 @@ def main():
     ap.add_argument("--digest-only", action="store_true", help="internal: print the combined-intact digest and exit")
     ap.add_argument("--selftest", action="store_true", help="gate-logic selftest, no simulation")
     ap.add_argument("--combine", nargs="+", default=None, help="PREREG §5: the ONLY authoritative 6-seed verdict")
+    ap.add_argument("--set", nargs="+", default=[], metavar="NAME=VALUE",
+                    help="DEV ONLY (refused on evaluation seeds): override an operating-point constant, e.g. "
+                         "W_ASK_FB=25, so the dev-seed calibration grid is reproducible from this file; the "
+                         "artifact records the resulting operating_point and --combine refuses mixed points")
     ap.add_argument("--out", default=str(_REPO / "research" / "findings" / "raw" / "_curiosity_lcne_phasic_gain.json"))
     a = ap.parse_args()
+    if a.set:
+        if not a.dev or any(s not in DEV_SEEDS for s in a.seeds):
+            print("[lcne phasic gain] REFUSED: --set is for dev-seed calibration only", flush=True)
+            return 2
+        for kv in a.set:
+            k, v = kv.split("=", 1)
+            if k not in CIRCUIT_CONSTANTS:
+                print(f"[lcne phasic gain] REFUSED: {k} is not an overridable circuit constant", flush=True)
+                return 2
+            globals()[k] = type(globals()[k])(float(v)) if not isinstance(globals()[k], int) else int(float(v))
+            _OVERRIDES.append(kv)
     if a.selftest:
         return _selftest_gate_logic()
     if a.digest_only:
