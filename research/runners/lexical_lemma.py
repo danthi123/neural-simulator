@@ -40,6 +40,13 @@ _IRREGULAR_VERBS = {
     "ate": "eat", "ran": "run", "went": "go", "saw": "see", "gave": "give", "made": "make",
     "took": "take", "came": "come", "did": "do", "had": "have", "was": "be", "were": "be", "is": "be",
     "are": "be", "am": "be", "said": "say", "got": "get", "knew": "know", "thought": "think",
+    # 3rd-person -oes forms of the two common consonant+o verbs (2026-09-24, A1 review-caught defect): the
+    # generic "-s" suffix rule below strips only ONE trailing letter ('goes' -> 'goe', 'does' -> 'doe'), which
+    # is wrong for these two -- unlike a silent-e "-oe" verb (shoe/hoe/canoe -> shoes/hoes/canoes, where
+    # stripping one 's' correctly yields the base 'shoe'/'hoe'/'canoe'), 'go'/'do' have no silent e to restore,
+    # so the ONLY correct fix is a closed-table irregular (the file's own documented pattern for exactly this
+    # class of miss), not a broader "-oes" suffix rule that would then mis-lemmatize the silent-e verbs.
+    "goes": "go", "does": "do",
 }
 
 _VOWELS = set("aeiou")
