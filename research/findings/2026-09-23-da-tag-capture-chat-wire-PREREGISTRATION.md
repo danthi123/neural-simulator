@@ -226,3 +226,75 @@ measured arms" — restated here because the review asked this be stated plainly
 gate in this document, before or after this amendment, reads the LTM-on battery row, and none should be reported
 as measured until a run under `BRAIN_LTM_SHIP_DEFAULT` unset (or `=1`) actually executes on hardware with enough
 RAM for the default LTM tier.
+
+### Amendment 2 (2026-09-24) — `aggregate()` trusted a stale stored verdict; a false "re-verified" claim; the
+### `--offcheck` pin predated this branch's own merges; two more artifacts from the pre-fix run are VOID
+
+**What had already been seen before this amendment** (adversarial re-review v2:2a37f2493 of commit `5d3810f2d`,
+`safe_to_merge: false`, `verdict: fix-required`):
+
+**1. RECORD CORRECTNESS (blocking).** `aggregate()` (`research/runners/_da_tag_capture_chat_probe.py`) read each
+seed's STORED `gates.seed_verdict` off disk and never re-graded it. The confounded
+`research/findings/raw/_da_tag_capture_chat/seed42.json` (run at `c4c62d066`, before the D1-reader-isolation fix
+`daa4b382d`) stores `seed_verdict: "GO"`. Re-grading its own `arms` data with the CURRENT `grade_seed` reads
+`UNDEFINED` (`G_isolation_gamma_consistent` is `False`: the confound Amendment 1 fixed is present in exactly this
+artifact). No post-fix seed-42 run was staged into the production `--out` dir at the time of the review, so once
+the 5 pool seeds landed, `--aggregate research/findings/raw/_da_tag_capture_chat` would have reported
+`complete: True` with a confounded seed-42 `GO` silently counted.
+
+**Fix.** `aggregate()` now calls `r["gates"] = grade_seed(r)` on every row before reading `seed_verdict`, so a
+stale on-disk grade from before a grading-logic fix can never outlive that fix. Verified directly against the
+real artifact: `--aggregate` over a directory holding only the unmodified, still-`GO`-labelled
+`seed42.json` now reports `seed_verdicts: {"42": "UNDEFINED"}` (run on pool41 against a throwaway hard-linked copy
+of the revision tree with only this file swapped in, so the shared revision the pool dispatcher uses was not
+touched). **Test added**: `tests/test_da_tag_capture_chat_aggregate.py`
+(`test_aggregate_regrades_a_stale_stored_go_row_as_undefined`,
+`test_aggregate_regrading_is_idempotent_for_an_already_current_row`), plus a matching `--selftest` check
+(`"aggregate: re-grades a stale stored-GO row to the current UNDEFINED verdict"`); 24/24 selftest checks pass.
+
+**2. FALSE CLAIM in the staged queue metadata (corrected here, not by editing the live queue file).** The 5 pool
+lines restaged by Amendment 1 (and the one still queued for seed 102 as of this amendment) carry `#checked:` text
+that reads "...seed 42 re-verified under the fix." **This was false when written and remains false as of this
+amendment** (2026-09-24T04:34Z): the only seed-42 run under the fix is the supplementary run in
+`research/findings/raw/_da_tag_capture_chat_verify/seed42/`, still in flight on pool41 (PID `4069973`, 3rd of 10
+arms building at last check), with no `seed42.json` written yet. It has NOT landed. This document, not the queue
+file, is the durable record of that correction; `research/queue/*` is live dispatcher state and out of scope for
+this branch's commits. Once that run completes, harvest it as the production `seed42.json` (superseding the
+confounded one per Amendment 1) before the 6-seed `--aggregate` is read as a verdict.
+
+**3. `--offcheck` baseline predated this branch's own two `origin/main` merges.** `PINNED_SHA` (and the module
+docstring's example) defaulted to `f35196e66`, a SHA from BEFORE this branch merged `origin/main` twice (`975165f26`
+at `36a175534`, and the branch now sits on `origin/main` further still). `git diff --stat f35196e66 36a175534`
+touches `webapp/server.py` (+55/-1); a difference against `f35196e66` cannot be attributed to this branch's own
+change. **Fix:** `PINNED_SHA = "36a175534"`, the merge-base of this branch and `origin/main` (verified via
+`git merge-base HEAD origin/main`). **Disclosure, not yet resolved:** a re-run of `--offcheck` from a clean
+committed branch HEAD against the OLD (wrong) pin `f35196e66`, launched by the prior fix round (PID `2767315`,
+log only, never committed as an artifact) completed with `replies_identical: false` / `byte_identical_off: false`
+— a MISMATCH. Given point 3's own reasoning, this mismatch is not interpretable as evidence about this branch
+(the pin itself was wrong), but it is also not yet superseded by a run at the correct pin: **a re-run of
+`--offcheck --pinned-sha 36a175534` is PENDING**, blocked as of this amendment by sustained local RAM contention
+(`tools/mem_ok.sh` refused 4 GB, 6 GB and 12 GB locally; `git archive` of an arbitrary SHA needs a full git
+checkout, which the CPU pool nodes do not have, so this check cannot be offloaded to the pool). **This branch's
+merge is NOT byte-identical-off-verified at the correct pin yet** — do not read the OFF path as unchanged until
+`offcheck.json` exists in `research/findings/raw/_da_tag_capture_chat/` at `pinned_sha: "36a175534"` reporting
+`byte_identical_off: true`.
+
+**4. Voiding scope extended.** Amendment 1 voided `seed42.json`'s `tag_capture_at_recall.gamma`/`d1_a_go` fields.
+The same confounded pre-fix run (`d4484acfc`, before `daa4b382d`) also produced two more artifacts that must be
+read as VOID for the same reason, not cited as evidence of anything about the D1-isolation fix or about
+`da-gated-encoding`'s load-bearing status: `research/findings/raw/_da_tag_capture_chat/lbf_row_s42_ltmoff` (the
+`load_bearing_fraction --only da-gated-encoding` battery row for seed 42, `git_sha: d4484acfc`, `git_dirty: true`,
+`load_bearing: true` — this row does not exercise `ChatTagCapture`'s shared-cache path directly, but it was built
+in the same dirty, pre-isolation-fix working tree and is superseded by the same revision boundary), and every file
+under `research/findings/raw/_da_tag_capture_chat/seed42/` (the ten per-arm response JSONs `seed42.json`'s
+`gates` were computed from). No document currently cites either path, but this amendment names them VOID now so
+none does later without the same `⛔` this amendment carries.
+
+**What this amendment does NOT change:** the gates (G0-G6, `G_isolation_gamma_consistent`), the arms, the
+conversations, the fact, or any threshold above — only `aggregate()`'s re-grading, the `--offcheck` pin, and the
+voiding scope. No `sim/` edit, no default flipped, no `research/queue/*` edit.
+
+**Governs:** every future `--aggregate` read of `research/findings/raw/_da_tag_capture_chat` (must re-grade, per
+point 1); the harvested seed-42 artifact once the in-flight `_verify` run lands (per point 2); a future
+`--offcheck` run (must use `--pinned-sha 36a175534`, per point 3); and any reader of `lbf_row_s42_ltmoff` or
+`seed42/*.json` (VOID, per point 4).
