@@ -494,12 +494,13 @@ def identity_selftest(args):
                                 ("levers_on", Gap4ReadoutNet, dict(read_window=8, read_gain=20.0, isi_steps=5,
                                                                    eval_frozen=True, spi_silence=True))):
             net = cls(n_in, 6, k, seed=seed, feedback=fb, **kw, **extra)
+            thr_build = _thr_hash(net)          # AT BUILD: thresholds adapt with activity, so compare before training
             for i in range(4):
                 net._train_one(Xtr[i], int(ytr[i]), "bdsp")
             w = hashlib.md5(np.asarray(to_host(net.br.cp_connections.data)).tobytes()).hexdigest()
             acts = net._forward_batch(Xte[:3])
             a = hashlib.md5(np.concatenate([np.asarray(x, float).ravel() for x in acts]).tobytes()).hexdigest()
-            hashes[tag] = {"weights_md5": w, "reads_md5": a, "thr": _thr_hash(net)}
+            hashes[tag] = {"weights_md5": w, "reads_md5": a, "thr": thr_build, "thr_after_training": _thr_hash(net)}
         same = (hashes["parent"]["weights_md5"] == hashes["legacy"]["weights_md5"]
                 and hashes["parent"]["reads_md5"] == hashes["legacy"]["reads_md5"])
         moved = hashes["levers_on"]["weights_md5"] != hashes["legacy"]["weights_md5"]
