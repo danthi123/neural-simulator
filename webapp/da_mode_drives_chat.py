@@ -81,9 +81,10 @@ CONTRACT (additive, reversible, byte-identical-off).
   * With `BRAIN_REWARD_VALUE_AFFERENT` on (A10, default-OFF), this block ALSO reads the process-shared surprise
     organ, which production reads again later in the same turn. Reads on the shared pool depend on read history, so
     an unisolated A10 read shifted the production surprise read (seed 7, v2 arms: CONFIRM 0.3472222222222222 Hz ON
-    vs 0.4050925925925926 Hz OFF). The A10 read therefore snapshots and restores every piece of state it mutates
-    (webapp/reward_value_afferent_chat.py); AMENDMENT-2 of the A10 pre-registration scores that the production
-    `surprise` block is equal ON vs OFF.
+    vs 0.4050925925925926 Hz OFF). The A10 read therefore snapshots and restores the organ state it mutates, and
+    since AMENDMENT-4 runs its own recall inside a deep snapshot of `chat.inner` with the global generators set
+    aside (webapp/reward_value_afferent_chat.py; both measured at the module level, seed 7, numpy). Criterion (D)
+    of the A10 pre-registration (AMENDMENT-2, split by AMENDMENT-3) scores the handler level in the arms.
 
 REUSE-BY-IMPORT (NO `sim/` edit). The BG substrate build (`PM.build`), the `dopamine_mode` bus manager
 (`make_manager`), the live SNc->DA loop (`measure_self_driven`) and the operating point (`BASELINE`,

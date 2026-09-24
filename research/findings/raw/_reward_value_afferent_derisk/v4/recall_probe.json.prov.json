@@ -1,0 +1,31 @@
+{
+ "run_id": "1790289273-1951120",
+ "runner": "research/runners/_reward_value_afferent_recall_probe.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/a10-followups/research/runners/_reward_value_afferent_recall_probe.py",
+  "--seed",
+  "7",
+  "--out",
+  "research/findings/raw/_reward_value_afferent_derisk/v4/recall_probe.json"
+ ],
+ "git_sha": "19a00ce51",
+ "git_dirty": false,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-24T18:34:33",
+ "env": {
+  "SIM_BACKEND": "numpy",
+  "OMP_NUM_THREADS": "2",
+  "OPENBLAS_NUM_THREADS": "2"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_reward_value_afferent_derisk/v4/recall_probe.json"
+}

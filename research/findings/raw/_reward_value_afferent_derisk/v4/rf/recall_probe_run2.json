@@ -1,0 +1,380 @@
+{
+  "runner": "_reward_value_afferent_recall_probe",
+  "seed": 7,
+  "composer_mro": [
+    "Pool1BoundComposer",
+    "RFPhasorComposer",
+    "object"
+  ],
+  "seed_kind": "dev-calibration (NOT a 6-seed gate seed)",
+  "composer_forced": "rf",
+  "source": "tiny-demo",
+  "build_s": 26.3,
+  "composer_class": "Pool1BoundComposer",
+  "composer_flags": {
+    "integrated_loop": null,
+    "enable_batched": null,
+    "trace": false,
+    "enable_fact_shard": null,
+    "enable_sparse_index": false,
+    "persistent_store": null,
+    "_fused": null
+  },
+  "bridge_class": "SimulationBridge",
+  "sensitivity": {
+    "ran": true,
+    "array": "cp_synapse_pulse_progress",
+    "changed_when_mutated": true,
+    "returned_when_undone": true
+  },
+  "isolated_first": {
+    "label": "first use (fresh state S0)",
+    "value": "cat",
+    "record": {
+      "isolated": true,
+      "nodes": 471,
+      "array_bytes": 7433278,
+      "opaque": {
+        "lock": 9
+      },
+      "rng": {
+        "cupy": "not the backend",
+        "numpy_unchanged": true,
+        "python_unchanged": true,
+        "cupy_host_object_restored": true,
+        "host_rngs_unchanged": true
+      },
+      "changed_during_recall": {
+        "obj": 2,
+        "dense": 2
+      },
+      "restored_exact": true
+    },
+    "seconds": 0.22,
+    "hash_unchanged": true,
+    "rng_unchanged": true,
+    "composer_attrs_changed": [],
+    "bridge_attrs_changed": []
+  },
+  "calls": [
+    {
+      "cue": [
+        "dog",
+        "chase"
+      ],
+      "value": "cat",
+      "error": null,
+      "seconds": 0.15,
+      "rng_unchanged": true,
+      "global_rng_callers": {},
+      "H_inner_after": "cc4ec6acfc622fd599d1f66c3a5aad04436488fdcca5f5ec482245c04b8ebb96",
+      "last_trace_after": "None"
+    },
+    {
+      "cue": [
+        "dog",
+        "chase"
+      ],
+      "value": "cat",
+      "error": null,
+      "seconds": 0.17,
+      "rng_unchanged": true,
+      "global_rng_callers": {},
+      "H_inner_after": "cc4ec6acfc622fd599d1f66c3a5aad04436488fdcca5f5ec482245c04b8ebb96",
+      "last_trace_after": "None"
+    },
+    {
+      "cue": [
+        "dog",
+        "chase"
+      ],
+      "value": "cat",
+      "error": null,
+      "seconds": 0.29,
+      "rng_unchanged": true,
+      "global_rng_callers": null,
+      "H_inner_after": "cc4ec6acfc622fd599d1f66c3a5aad04436488fdcca5f5ec482245c04b8ebb96",
+      "last_trace_after": "None"
+    },
+    {
+      "cue": [
+        "cat",
+        "eat"
+      ],
+      "value": "fish",
+      "error": null,
+      "seconds": 0.24,
+      "rng_unchanged": true,
+      "global_rng_callers": null,
+      "H_inner_after": "45ddfe93aa4969fe3f018dcd2a6dc0a4643fd5083a46da9c8d681624d314f02c",
+      "last_trace_after": "None"
+    },
+    {
+      "cue": [
+        "dog",
+        "chase"
+      ],
+      "value": "cat",
+      "error": null,
+      "seconds": 0.15,
+      "rng_unchanged": true,
+      "global_rng_callers": null,
+      "H_inner_after": "cc4ec6acfc622fd599d1f66c3a5aad04436488fdcca5f5ec482245c04b8ebb96",
+      "last_trace_after": "None"
+    }
+  ],
+  "S0": {
+    "H_inner": "a60739149b5062e4a3b52c6b11c8dc5f3675fc5199e1dbe65c333f4c7a14db78",
+    "stats": {
+      "nodes": 29204,
+      "arrays": 140,
+      "array_bytes": 5319282,
+      "sparse": 5,
+      "objects": 63,
+      "opaque": 9,
+      "opaque_types": {
+        "lock": 9
+      }
+    },
+    "rng": {
+      "numpy": "a9f5fb6a0ca6590ba2ebb1b9bd023d485b96889f28ac3831e31880d958a4902b",
+      "python": "7e3ca2de8f7a499ee6d777205bb605b263ef31250e7fe8b25cbfd86c6d650849"
+    },
+    "last_trace": "None",
+    "hash_seconds": 0.08
+  },
+  "values": {
+    "p1": "cat",
+    "p2": "cat",
+    "p3": "cat",
+    "q_cat_eat": "fish",
+    "p4_after_other_recall": "cat"
+  },
+  "value_history_independent": true,
+  "state_after_converges": true,
+  "state_after_other_recall_returns": true,
+  "state_touched_by_first_recall": true,
+  "composer_attrs_changed_by_first_recall": [
+    "_pool1",
+    "_scan_comps_cache"
+  ],
+  "bridge_attrs_changed_by_first_recall": [
+    "cp_membrane_potential_v",
+    "cp_recovery_variable_u",
+    "cp_rf_fired",
+    "cp_rf_prev_im",
+    "cp_rf_spike_step",
+    "cp_rf_w_im",
+    "cp_rf_w_re"
+  ],
+  "composer_attrs_changed_by_second_recall": [],
+  "bridge_attrs_changed_by_second_recall": [],
+  "composer_attrs_changed_by_other_recall": [
+    "_pool1"
+  ],
+  "bridge_attrs_changed_by_other_recall": [
+    "cp_membrane_potential_v",
+    "cp_recovery_variable_u",
+    "cp_rf_prev_im",
+    "cp_rf_spike_step"
+  ],
+  "last_trace_first_vs_second_equal": true,
+  "rng_untouched": true,
+  "go": true,
+  "status": "GO",
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "the tiny-demo chat built",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "composer is of the family the arms use (RFPhasorComposer or a subclass; LTM tier off, not TieredFactStore)",
+      "ok": true,
+      "detail": "measured=['Pool1BoundComposer', 'RFPhasorComposer', 'object'] expect=<function run.<locals>.<lambda> at 0x7fedb0f2a8e0>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "the recall's bridge was found (for the sensitivity control)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "recall #1 returns the stored patient (cat)",
+      "ok": true,
+      "detail": "measured=cat expect=cat",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "sensitivity: the hash changes on a one-element bridge change and returns when undone",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    }
+  ],
+  "verdict": {
+    "label": "A10 follow-up: A10's recall call (chat.inner.what_does) is history-independent at the module level",
+    "status": "GO",
+    "go": true,
+    "undefined_reasons": [],
+    "preconditions": [
+      {
+        "kind": "require",
+        "name": "the tiny-demo chat built",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "composer is of the family the arms use (RFPhasorComposer or a subclass; LTM tier off, not TieredFactStore)",
+        "ok": true,
+        "detail": "measured=['Pool1BoundComposer', 'RFPhasorComposer', 'object'] expect=<function run.<locals>.<lambda> at 0x7fedb0f2a8e0>",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "the recall's bridge was found (for the sensitivity control)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "recall #1 returns the stored patient (cat)",
+        "ok": true,
+        "detail": "measured=cat expect=cat",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "sensitivity: the hash changes on a one-element bridge change and returns when undone",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      }
+    ],
+    "disabled_processes": [],
+    "chance": null
+  },
+  "isolated_warm": {
+    "label": "warm (after the production recalls)",
+    "value": "cat",
+    "record": {
+      "isolated": true,
+      "nodes": 472,
+      "array_bytes": 7424062,
+      "opaque": {
+        "lock": 9
+      },
+      "rng": {
+        "cupy": "not the backend",
+        "numpy_unchanged": true,
+        "python_unchanged": true,
+        "cupy_host_object_restored": true,
+        "host_rngs_unchanged": true
+      },
+      "changed_during_recall": {
+        "obj": 2
+      },
+      "restored_exact": true
+    },
+    "seconds": 0.18,
+    "hash_unchanged": true,
+    "rng_unchanged": true,
+    "composer_attrs_changed": [],
+    "bridge_attrs_changed": []
+  },
+  "isolated_value_equals_first_production_recall": true,
+  "go_isolated": true,
+  "status_isolated": "GO",
+  "preconditions_isolated": [
+    {
+      "kind": "require",
+      "name": "the tiny-demo chat built",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "composer is of the family the arms use (RFPhasorComposer or a subclass; not TieredFactStore)",
+      "ok": true,
+      "detail": "measured=['Pool1BoundComposer', 'RFPhasorComposer', 'object'] expect=<function run.<locals>.<lambda> at 0x7fedb0f2a8e0>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "sensitivity: the hash changes on a one-element bridge change and returns when undone",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "sensitivity: an UNISOLATED recall changes the state hash or a global generator (else no test)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "the isolated recall took its snapshot (first use and warm)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    }
+  ],
+  "verdict_isolated": {
+    "label": "A10 follow-up (AMENDMENT-4): the ISOLATED A10 recall leaves no state and no global-generator change (module level)",
+    "status": "GO",
+    "go": true,
+    "undefined_reasons": [],
+    "preconditions": [
+      {
+        "kind": "require",
+        "name": "the tiny-demo chat built",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "composer is of the family the arms use (RFPhasorComposer or a subclass; not TieredFactStore)",
+        "ok": true,
+        "detail": "measured=['Pool1BoundComposer', 'RFPhasorComposer', 'object'] expect=<function run.<locals>.<lambda> at 0x7fedb0f2a8e0>",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "sensitivity: the hash changes on a one-element bridge change and returns when undone",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "sensitivity: an UNISOLATED recall changes the state hash or a global generator (else no test)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "the isolated recall took its snapshot (first use and warm)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      }
+    ],
+    "disabled_processes": [],
+    "chance": null
+  }
+}

@@ -188,3 +188,6 @@ ordinary replies, #232 false-belief in chat, #233 learned noun meanings (de-risk
 
 ## 2026-09-24  ai-teacher lane
 - created #230 (AI teacher teaches the brain through chat only; built + pre-registered, runs in progress, default-off), labels Learning + Live brain (chat); related #228 (D6 write) and #186 (curiosity-chosen learning). Actual board updated via tools/vikunja.sh.
+
+## 2026-09-24  A10 follow-up round
+- new task #236: surprise -> engagement (A10), off by default; follow-up fixes landed on research/a10-followups, AMENDMENT-3 filed, v4 arms not yet run

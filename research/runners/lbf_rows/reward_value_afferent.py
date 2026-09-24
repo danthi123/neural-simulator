@@ -39,8 +39,11 @@ WHAT THE LESION ARM MEASURES (review of 7d5c2743d). `BRAIN_REWARD_VALUE_LESION=1
 row is named for. It SWAPS the source organ's read for the read of the organ's standalone, prediction-edges-zeroed
 twin (a different bridge, no homeostat). So intact-vs-lesion measures whether the surprise PREDICTION reaches the
 DA mode through A10, not whether the afferent itself is load-bearing. The kind stays "neural-lesion" because the
-twin's cut is synaptic and checked at read time, but the note below says what it is. Since fix round 2 neither arm
-perturbs the production surprise read (the A10 read restores the state it touches).
+twin's cut is synaptic and checked at read time, but the note below says what it is. Since fix round 2 the A10 read
+restores the organ state it touches. MEASURED at the module level only (seed 7, numpy, the production organ on the
+merged pool: research/findings/raw/_reward_value_afferent_derisk/v3/footprint_module.json): the organ's read-state
+hash is unchanged across every A10 read, intact and lesion, and the production reads equal the flag-OFF reference.
+The handler level is criterion (D) in the arms (AMENDMENT-2, split by AMENDMENT-3), not yet measured.
 
 This module does not edit FACULTY_LESIONS / FACULTY_PROBES.
 """
@@ -69,7 +72,9 @@ EXTRA_LESIONS = {
               "homeostat; not a substrate-matched cut and not a cut of the afferent itself; the read-time cut "
               "check is recorded under da_drives.reward_value.lesion_cut). Probed on the CONFIRM turn, where the "
               "prediction cancels the surprise pool's response and the lesion removes that cancellation. The A10 "
-              "read never perturbs the production surprise read (fix round 2). OPT-IN: measured only when the "
+              "read restores the organ state it touches (fix round 2; measured at the module level, seed 7, "
+              "v3/footprint_module.json; the handler level is criterion (D), not yet measured). OPT-IN: measured "
+              "only when the "
               "harness runs with BRAIN_REWARD_VALUE_AFFERENT=1 (e.g. tools/lb_shard.py jobs --extra-env "
               "BRAIN_REWARD_VALUE_AFFERENT=1); otherwise reported not-covered:thin, never scored hollow. "
               "See webapp/reward_value_afferent_chat.py."
