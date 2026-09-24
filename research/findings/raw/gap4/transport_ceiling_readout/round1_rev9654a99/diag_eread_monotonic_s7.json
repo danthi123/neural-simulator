@@ -1,0 +1,79 @@
+{
+  "probe": "a9_eread_monotonicity_dev_s7",
+  "seed": 7,
+  "rows": [
+    {
+      "extra_pA_out": -400,
+      "out_total_hz": 16.75925925925926,
+      "out_event_hz": 13.88888888888889,
+      "out_burst_spike_hz": 2.8703703703703702,
+      "out_mean_E": 0.013817100482216725,
+      "h2_total_hz": 91.9140625,
+      "h2_event_hz": 55.3125
+    },
+    {
+      "extra_pA_out": -200,
+      "out_total_hz": 51.342592592592595,
+      "out_event_hz": 40.23148148148148,
+      "out_burst_spike_hz": 11.11111111111111,
+      "out_mean_E": 0.040158566711470486,
+      "h2_total_hz": 91.96614583333333,
+      "h2_event_hz": 54.9609375
+    },
+    {
+      "extra_pA_out": 0,
+      "out_total_hz": 86.38888888888889,
+      "out_event_hz": 49.44444444444444,
+      "out_burst_spike_hz": 36.94444444444444,
+      "out_mean_E": 0.049788885948558646,
+      "h2_total_hz": 91.53645833333333,
+      "h2_event_hz": 55.46875
+    },
+    {
+      "extra_pA_out": 200,
+      "out_total_hz": 123.10185185185185,
+      "out_event_hz": 42.824074074074076,
+      "out_burst_spike_hz": 80.27777777777777,
+      "out_mean_E": 0.042734316857531665,
+      "h2_total_hz": 91.53645833333333,
+      "h2_event_hz": 55.416666666666664
+    },
+    {
+      "extra_pA_out": 400,
+      "out_total_hz": 167.3148148148148,
+      "out_event_hz": 41.388888888888886,
+      "out_burst_spike_hz": 125.92592592592592,
+      "out_mean_E": 0.0412812347151339,
+      "h2_total_hz": 92.66927083333333,
+      "h2_event_hz": 54.947916666666664
+    },
+    {
+      "extra_pA_out": 800,
+      "out_total_hz": 256.43518518518516,
+      "out_event_hz": 25.87962962962963,
+      "out_burst_spike_hz": 230.55555555555554,
+      "out_mean_E": 0.025757020781747998,
+      "h2_total_hz": 91.62760416666667,
+      "h2_event_hz": 55.013020833333336
+    },
+    {
+      "extra_pA_out": 1200,
+      "out_total_hz": 343.4259259259259,
+      "out_event_hz": 8.88888888888889,
+      "out_burst_spike_hz": 334.537037037037,
+      "out_mean_E": 0.008869452645303682,
+      "h2_total_hz": 91.35416666666667,
+      "h2_event_hz": 55.533854166666664
+    },
+    {
+      "extra_pA_out": 1600,
+      "out_total_hz": 404.1203703703704,
+      "out_event_hz": 2.0833333333333335,
+      "out_burst_spike_hz": 402.037037037037,
+      "out_mean_E": 0.0020867203396725625,
+      "h2_total_hz": 90.96354166666667,
+      "h2_event_hz": 54.908854166666664
+    }
+  ],
+  "note": "dev diagnostic only; host counts of spikes for the instrument, no pathway"
+}
