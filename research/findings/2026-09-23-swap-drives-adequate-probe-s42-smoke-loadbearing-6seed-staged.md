@@ -116,12 +116,16 @@ Artifact: `research/findings/raw/_load_bearing/swap_drive_probe/offcheck/offchec
   on pool41 and pool42.
 - **Seed 42 has returned** (pool42) and is the corrected result reported above: `regressed`,
   `load_bearing: true`, byte-identical (modulo a reporting field) to the withdrawn cross-revision smoke.
-- **Seeds 43, 44, 100, 101, 102 are still valid and in flight** at the same isolated revision, spread across
-  pool41/pool42 — this fix round does not re-stage them; they are left running.
+- ~~Seeds 43, 44, 100, 101, 102 are still valid and in flight~~ **Corrected 2026-09-24 (re-review):** that line
+  was false when committed. At the pinned revision, seeds 44 and 102 have since returned `regressed`,
+  `load_bearing: true` (with seed 42, 3/6). Seeds 43 and 100 had already FINISHED with `arm-build-failed`
+  (`load_bearing: null`) during the 2026-09-23 20:50 pool thrash (a missing lesion arm on s43, a missing intact_b
+  arm on s100), and seed 101 was killed in the same episode. All three were re-queued 2026-09-24 at the same
+  revision `7f90034df`. They are UNDEFINED until they return; none is counted.
 - Each seed writes to its own directory, `research/findings/raw/_load_bearing/swap_drive_probe/s<seed>/`.
 - The pre-registered headline rule applies: all six seeds must read LOAD-BEARING. Anything less is reported as k/6,
-  naming each failing seed's verdict. This finding still reports only k=1/6 (seed 42); the remaining five seeds'
-  results have not yet been harvested and scored.
+  naming each failing seed's verdict. As of 2026-09-24 00:40: 3/6 load-bearing (42, 44, 102); 43, 100, 101
+  re-queued (UNDEFINED); no seed reads not-load-bearing.
 
 ## Honest residuals
 
