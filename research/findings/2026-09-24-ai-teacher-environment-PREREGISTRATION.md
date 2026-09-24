@@ -292,6 +292,10 @@ finding; the scorer now reports `secondary.teach_taught_block_w`.
 SHAM arms (pool node, isolated revision of this amendment's commit):
 `SIM_BACKEND=numpy OMP_NUM_THREADS=1 .venv/bin/python -u -m research.runners.ai_teacher_experiment --seeds 7 42 43
 44 100 101 102 --K 4 --arms SHAM --jobs 7 --arm-dir "$OUT"`
+Dispatch note (resources only, filed before any SHAM arm ran): the SHAM arms were queued on the pool as seven
+one-seed jobs (`--seeds <S> --jobs 1`, same `--K 4 --arms SHAM --arm-dir "$OUT"`, thread env vars at 1), pinned to
+the isolated revision `d460b4498` provisioned on pool2 only, the node that ran every T1-T9 arm (same CPU model and
+numpy 2.2.6, so T10's same-session condition compares like with like). The arms are the same as the one-job form.
 Copy the arms home without the pool's own verdicts: `rsync -a --exclude 'verdict_*' <node>:<revision>/"$OUT"/
 "$OUT"/`.
 The registered verdict: `SIM_BACKEND=numpy .venv/bin/python -m research.runners.ai_teacher_experiment --score-only
