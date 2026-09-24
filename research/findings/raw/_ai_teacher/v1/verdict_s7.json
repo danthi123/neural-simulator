@@ -1,0 +1,343 @@
+{
+  "K": 4,
+  "seeds": [
+    7
+  ],
+  "backend": "numpy",
+  "per_seed": {
+    "7": {
+      "K": 4,
+      "void": {},
+      "criteria": {
+        "T1_learns": {
+          "recall": 1.0,
+          "pass": true
+        },
+        "T2_teacher_lesion": {
+          "n_recalled": 0,
+          "pass": true
+        },
+        "T3_freeze": {
+          "n_recalled": 0,
+          "lever_ok": true,
+          "freeze_block_w": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "teach_block_w": [
+            1.891959,
+            1.803157,
+            1.770597,
+            1.755797
+          ],
+          "pass": true
+        },
+        "T4_zero": {
+          "n_recalled": 0,
+          "ablation_ok": true,
+          "n_ablated": 4,
+          "pass": true
+        },
+        "T5_permuted": {
+          "recall_taught": 1.0,
+          "n_recalled_canonical": 0,
+          "pass": true
+        },
+        "T6_teacher_error": {
+          "n_corrupted": 2,
+          "ground_truth_recalled": 0,
+          "propagation_rate": 1.0,
+          "clean_recall": 1.0,
+          "pass": true
+        },
+        "T7_controls": {
+          "by_arm": {
+            "TEACH": [
+              true,
+              true
+            ],
+            "NOTEACH": [
+              true,
+              true
+            ],
+            "FREEZE": [
+              true,
+              true
+            ],
+            "ZERO": [
+              true,
+              true
+            ],
+            "PERM": [
+              true,
+              true
+            ],
+            "ERR": [
+              true,
+              true
+            ]
+          },
+          "pass": true
+        },
+        "T8_isolation": {
+          "by_arm": {
+            "TEACH": {
+              "violations": 0,
+              "n_patched": 30,
+              "required_present": true,
+              "teacher_calls": 0
+            },
+            "NOTEACH": {
+              "violations": 0,
+              "n_patched": 30,
+              "required_present": true,
+              "teacher_calls": 0
+            },
+            "FREEZE": {
+              "violations": 0,
+              "n_patched": 30,
+              "required_present": true,
+              "teacher_calls": 0
+            },
+            "ZERO": {
+              "violations": 0,
+              "n_patched": 30,
+              "required_present": true,
+              "teacher_calls": 0
+            },
+            "PERM": {
+              "violations": 0,
+              "n_patched": 30,
+              "required_present": true,
+              "teacher_calls": 0
+            },
+            "ERR": {
+              "violations": 0,
+              "n_patched": 30,
+              "required_present": true,
+              "teacher_calls": 0
+            }
+          },
+          "pass": true
+        },
+        "T9_no_test_writes": {
+          "by_arm": {
+            "TEACH": 0,
+            "NOTEACH": 0,
+            "FREEZE": 0,
+            "ZERO": 0,
+            "PERM": 0,
+            "ERR": 0
+          },
+          "pass": true
+        }
+      },
+      "secondary": {
+        "learned_content_fraction_test": 0.6666666666666666,
+        "test_content": [
+          {
+            "probe": [
+              "blicket",
+              "eat"
+            ],
+            "teach_object": "dax",
+            "learned": true
+          },
+          {
+            "probe": [
+              "selva",
+              "touch"
+            ],
+            "teach_object": "osona",
+            "learned": true
+          },
+          {
+            "probe": [
+              "wug",
+              "chase"
+            ],
+            "teach_object": "toma",
+            "learned": true
+          },
+          {
+            "probe": [
+              "fep",
+              "carry"
+            ],
+            "teach_object": "zorb",
+            "learned": true
+          },
+          {
+            "probe": [
+              "cat",
+              "eat"
+            ],
+            "teach_object": "fish",
+            "learned": false
+          },
+          {
+            "probe": [
+              "dog",
+              "chase"
+            ],
+            "teach_object": "cat",
+            "learned": false
+          }
+        ],
+        "delivery": {
+          "curiosity_answer": 4,
+          "tell": 0,
+          "pre_known": 0,
+          "quiz_right": 4,
+          "quiz_corrections": 0
+        },
+        "attributable_to": {
+          "write (TEACH vs FREEZE)": 1.0,
+          "taught synapses (TEACH vs ZERO)": 1.0,
+          "teaching (TEACH vs NOTEACH)": 1.0
+        }
+      },
+      "defined": true,
+      "go": true,
+      "retention_vs_K": {
+        "2": 1.0,
+        "4": 1.0,
+        "8": 1.0
+      },
+      "session_lcf_teach": 0.7272727272727273,
+      "null_TEACH_vs_REP": {
+        "n_turns": 19,
+        "n_diffs": 0
+      },
+      "costs": {
+        "TEACH": {
+          "elapsed_s": 2330.6,
+          "peak_rss_mb": 700.0,
+          "n_turns": 19
+        },
+        "TEACH_REP": {
+          "elapsed_s": 1141.6,
+          "peak_rss_mb": 693.9,
+          "n_turns": 19
+        },
+        "NOTEACH": {
+          "elapsed_s": 1353.4,
+          "peak_rss_mb": 693.0,
+          "n_turns": 7
+        },
+        "FREEZE": {
+          "elapsed_s": 2014.2,
+          "peak_rss_mb": 695.2,
+          "n_turns": 23
+        },
+        "ZERO": {
+          "elapsed_s": 2520.1,
+          "peak_rss_mb": 691.4,
+          "n_turns": 19
+        },
+        "PERM": {
+          "elapsed_s": 2102.0,
+          "peak_rss_mb": 693.5,
+          "n_turns": 19
+        },
+        "ERR": {
+          "elapsed_s": 1922.1,
+          "peak_rss_mb": 689.4,
+          "n_turns": 19
+        }
+      }
+    }
+  },
+  "n_defined": 1,
+  "n_go": 1,
+  "GO": true,
+  "status": "GO",
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "seed 7: every gated arm present, error-free, write counter on",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "{}"
+    },
+    {
+      "kind": "require",
+      "name": "seed 7: every gated test probe ran",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "{}"
+    },
+    {
+      "kind": "require",
+      "name": "seed 7: T3 freeze lever held",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "freeze_w=[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0] teach_w=[1.891959, 1.803157, 1.770597, 1.755797]"
+    },
+    {
+      "kind": "require",
+      "name": "seed 7: T4 ablation held",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "n_ablated=4"
+    },
+    {
+      "kind": "require",
+      "name": "seed 7: every criterion measured",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    }
+  ],
+  "verdict": {
+    "label": "ai_teacher K=4: T1-T9 on every registered seed [7]",
+    "status": "GO",
+    "go": true,
+    "undefined_reasons": [],
+    "preconditions": [
+      {
+        "kind": "require",
+        "name": "seed 7: every gated arm present, error-free, write counter on",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "{}"
+      },
+      {
+        "kind": "require",
+        "name": "seed 7: every gated test probe ran",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "{}"
+      },
+      {
+        "kind": "require",
+        "name": "seed 7: T3 freeze lever held",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "freeze_w=[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0] teach_w=[1.891959, 1.803157, 1.770597, 1.755797]"
+      },
+      {
+        "kind": "require",
+        "name": "seed 7: T4 ablation held",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "n_ablated=4"
+      },
+      {
+        "kind": "require",
+        "name": "seed 7: every criterion measured",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      }
+    ],
+    "disabled_processes": [],
+    "chance": null
+  }
+}
