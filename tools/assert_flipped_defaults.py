@@ -25,6 +25,13 @@ FLIPPED = {
 def problems(environ=None):
     environ = os.environ if environ is None else environ
     out = []
+    # Review (2026-09-23, guard scope): ANY other BRAIN_* override in the node's ambient environment (e.g. a leftover
+    # BRAIN_PMEM_OP_STABILIZER or BRAIN_AFFECT_MARKER_SETTLE) would make the battery measure something other than the
+    # shipped default while still passing. The production-default batteries set no BRAIN_* variable at all.
+    for k in sorted(environ):
+        if k.startswith("BRAIN_") and k not in FLIPPED:
+            out.append("%s is set in the environment (=%r); a production-default battery must set no BRAIN_* flag"
+                       % (k, environ[k]))
     for flag, (mod, const) in FLIPPED.items():
         if flag in environ:
             out.append("%s is set in the environment (=%r); this battery must measure the default" % (flag, environ[flag]))
