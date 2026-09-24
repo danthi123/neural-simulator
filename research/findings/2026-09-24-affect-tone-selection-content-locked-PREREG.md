@@ -228,3 +228,22 @@ THE LAW: this is a verdict on the method's current COMPONENTS, not on the capabi
   recall against the draft).
 
 The 6-seed run is staged only after (a) and (b) pass this same probe rule on seed 7.
+
+**AMENDMENT 3: 2026-09-24, about 01:20 EDT, branch `research/affect-learned-vocabulary`. The lock gains a content-word
+recall term (rung (b), lock half).** No evaluation seed has run.
+
+What I had seen. Only the seed-7 probe artifact named in AMENDMENT 2. I recomputed, from its stored texts, the share
+of each draft's content words that each rewrite keeps. Content words are the (C2) class: length >= 4, not a stop
+word, not WARRINER, not the independent tone lexicon. Every refusal or unrelated rewrite in that artifact keeps
+less than 0.10 of them.
+
+The change, in `webapp/affect_tone_selection.content_lock`. A rewrite is also inadmissible when it keeps less than
+`LOCK_RECALL_MIN = 0.25` of the draft's content words. The term applies only when the draft has at least
+`LOCK_RECALL_MIN_WORDS = 4` content words; otherwise the detail records `content_recall: None`. 0.25 is well below
+the (C2) gate's 0.60, so (C2) stays a separate gate that can fail. Pinned by
+`tests/test_affect_tone_selection.py::test_lock_content_recall_rejects_refusal_on_a_draft_without_names_or_numbers`.
+
+Unchanged: every gate, threshold, arm, prompt and seed above, and the rule that the 6-seed run is staged only after
+rungs (a) and (b) pass the seed-7 probe rule. The proposal-generator half of rung (b) is not addressed here. Rung
+(a) is the learned affect vocabulary, pre-registered separately in
+`research/findings/2026-09-24-affect-learned-vocabulary-PREREG.md`.
