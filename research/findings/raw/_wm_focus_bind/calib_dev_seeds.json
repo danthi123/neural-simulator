@@ -1,0 +1,4046 @@
+{
+  "runner": "research.runners._wm_focus_bind_calib",
+  "kind": "dev-seed calibration",
+  "seeds": [
+    7,
+    11,
+    13,
+    17,
+    19,
+    23,
+    29,
+    31
+  ],
+  "shipped_operating_point": {
+    "gain": 20000.0,
+    "cue": 150.0,
+    "run": 150
+  },
+  "settings": [
+    {
+      "gain": 12000.0,
+      "cue": 150.0,
+      "run": 60,
+      "rows": [
+        {
+          "seed": 7,
+          "two_live": [
+            {
+              "order": [
+                "dog",
+                "cat"
+              ],
+              "load_hold_alive_min": 0.10000000000000002,
+              "resolved": "dog",
+              "register": 0,
+              "pool": "w0",
+              "margin": 0.069444,
+              "register_rates": [
+                0.0925,
+                0.085,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "wta_rates": [
+                0.086111,
+                0.016667,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "held_after": {
+                "0": "dog",
+                "1": "cat"
+              }
+            },
+            {
+              "order": [
+                "cat",
+                "dog"
+              ],
+              "load_hold_alive_min": 0.10000000000000002,
+              "resolved": "cat",
+              "register": 0,
+              "pool": "w0",
+              "margin": 0.069444,
+              "register_rates": [
+                0.0925,
+                0.085,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "wta_rates": [
+                0.086111,
+                0.016667,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "held_after": {
+                "0": "cat",
+                "1": "dog"
+              }
+            }
+          ],
+          "empty": {
+            "resolved": null,
+            "wta_rates": [
+              0.002778,
+              0.000694,
+              0.002778,
+              0.001389,
+              0.0
+            ]
+          },
+          "lesion": {
+            "order": [
+              "dog",
+              "cat"
+            ],
+            "load_hold_alive_min": 0.0,
+            "resolved": null,
+            "register": null,
+            "pool": null,
+            "margin": 0.0,
+            "register_rates": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "wta_rates": [
+              0.002778,
+              0.000694,
+              0.002778,
+              0.001389,
+              0.0
+            ],
+            "held_after": {}
+          }
+        },
+        {
+          "seed": 11,
+          "two_live": [
+            {
+              "order": [
+                "dog",
+                "cat"
+              ],
+              "load_hold_alive_min": 0.07777777777777779,
+              "resolved": "cat",
+              "register": 1,
+              "pool": "w7",
+              "margin": 0.075,
+              "register_rates": [
+                0.09625,
+                0.1,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "wta_rates": [
+                0.018056,
+                0.093056,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "held_after": {
+                "0": "dog",
+                "1": "cat"
+              }
+            },
+            {
+              "order": [
+                "cat",
+                "dog"
+              ],
+              "load_hold_alive_min": 0.07777777777777779,
+              "resolved": "dog",
+              "register": 1,
+              "pool": "w7",
+              "margin": 0.075,
+              "register_rates": [
+                0.09625,
+                0.1,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "wta_rates": [
+                0.018056,
+                0.093056,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "held_after": {
+                "0": "cat",
+                "1": "dog"
+              }
+            }
+          ],
+          "empty": {
+            "resolved": null,
+            "wta_rates": [
+              0.0,
+              0.002083,
+              0.003472,
+              0.000694,
+              0.002083
+            ]
+          },
+          "lesion": {
+            "order": [
+              "dog",
+              "cat"
+            ],
+            "load_hold_alive_min": 0.0,
+            "resolved": null,
+            "register": null,
+            "pool": null,
+            "margin": 0.001389,
+            "register_rates": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "wta_rates": [
+              0.0,
+              0.002083,
+              0.003472,
+              0.000694,
+              0.002083
+            ],
+            "held_after": {}
+          }
+        },
+        {
+          "seed": 13,
+          "two_live": [
+            {
+              "order": [
+                "dog",
+                "cat"
+              ],
+              "load_hold_alive_min": 0.06111111111111113,
+              "resolved": null,
+              "register": null,
+              "pool": null,
+              "margin": 0.015972,
+              "register_rates": [
+                0.0875,
+                0.085,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "wta_rates": [
+                0.038889,
+                0.054861,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "held_after": {
+                "0": "dog",
+                "1": "cat"
+              }
+            },
+            {
+              "order": [
+                "cat",
+                "dog"
+              ],
+              "load_hold_alive_min": 0.06111111111111113,
+              "resolved": null,
+              "register": null,
+              "pool": null,
+              "margin": 0.015972,
+              "register_rates": [
+                0.0875,
+                0.085,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "wta_rates": [
+                0.038889,
+                0.054861,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "held_after": {
+                "0": "cat",
+                "1": "dog"
+              }
+            }
+          ],
+          "empty": {
+            "resolved": null,
+            "wta_rates": [
+              0.000694,
+              0.002778,
+              0.003472,
+              0.004861,
+              0.005556
+            ]
+          },
+          "lesion": {
+            "order": [
+              "dog",
+              "cat"
+            ],
+            "load_hold_alive_min": 0.0,
+            "resolved": null,
+            "register": null,
+            "pool": null,
+            "margin": 0.000694,
+            "register_rates": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "wta_rates": [
+              0.000694,
+              0.002778,
+              0.003472,
+              0.004861,
+              0.005556
+            ],
+            "held_after": {}
+          }
+        },
+        {
+          "seed": 17,
+          "two_live": [
+            {
+              "order": [
+                "dog",
+                "cat"
+              ],
+              "load_hold_alive_min": 0.06944444444444446,
+              "resolved": "cat",
+              "register": 1,
+              "pool": "w7",
+              "margin": 0.077083,
+              "register_rates": [
+                0.09,
+                0.0975,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "wta_rates": [
+                0.016667,
+                0.09375,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "held_after": {
+                "0": "dog",
+                "1": "cat"
+              }
+            },
+            {
+              "order": [
+                "cat",
+                "dog"
+              ],
+              "load_hold_alive_min": 0.06944444444444446,
+              "resolved": "dog",
+              "register": 1,
+              "pool": "w7",
+              "margin": 0.077083,
+              "register_rates": [
+                0.09,
+                0.0975,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "wta_rates": [
+                0.016667,
+                0.09375,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "held_after": {
+                "0": "cat",
+                "1": "dog"
+              }
+            }
+          ],
+          "empty": {
+            "resolved": null,
+            "wta_rates": [
+              0.002083,
+              0.001389,
+              0.0,
+              0.000694,
+              0.001389
+            ]
+          },
+          "lesion": {
+            "order": [
+              "dog",
+              "cat"
+            ],
+            "load_hold_alive_min": 0.0,
+            "resolved": null,
+            "register": null,
+            "pool": null,
+            "margin": 0.000694,
+            "register_rates": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "wta_rates": [
+              0.002083,
+              0.001389,
+              0.0,
+              0.000694,
+              0.001389
+            ],
+            "held_after": {}
+          }
+        },
+        {
+          "seed": 19,
+          "two_live": [
+            {
+              "order": [
+                "dog",
+                "cat"
+              ],
+              "load_hold_alive_min": 0.03888888888888889,
+              "resolved": "dog",
+              "register": 0,
+              "pool": "w0",
+              "margin": 0.159028,
+              "register_rates": [
+                0.09375,
+                0.0675,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "wta_rates": [
+                0.159028,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "held_after": {
+                "0": "dog",
+                "1": "cat"
+              }
+            },
+            {
+              "order": [
+                "cat",
+                "dog"
+              ],
+              "load_hold_alive_min": 0.03888888888888889,
+              "resolved": "cat",
+              "register": 0,
+              "pool": "w0",
+              "margin": 0.159028,
+              "register_rates": [
+                0.09375,
+                0.0675,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "wta_rates": [
+                0.159028,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "held_after": {
+                "0": "cat",
+                "1": "dog"
+              }
+            }
+          ],
+          "empty": {
+            "resolved": null,
+            "wta_rates": [
+              0.002778,
+              0.000694,
+              0.002083,
+              0.0,
+              0.004861
+            ]
+          },
+          "lesion": {
+            "order": [
+              "dog",
+              "cat"
+            ],
+            "load_hold_alive_min": 0.0,
+            "resolved": null,
+            "register": null,
+            "pool": null,
+            "margin": 0.002083,
+            "register_rates": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "wta_rates": [
+              0.002778,
+              0.000694,
+              0.002083,
+              0.0,
+              0.004861
+            ],
+            "held_after": {}
+          }
+        },
+        {
+          "seed": 23,
+          "two_live": [
+            {
+              "order": [
+                "dog",
+                "cat"
+              ],
+              "load_hold_alive_min": 0.1027777777777778,
+              "resolved": null,
+              "register": null,
+              "pool": null,
+              "margin": 0.010417,
+              "register_rates": [
+                0.0875,
+                0.085,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "wta_rates": [
+                0.028472,
+                0.038889,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "held_after": {
+                "0": "dog",
+                "1": "cat"
+              }
+            },
+            {
+              "order": [
+                "cat",
+                "dog"
+              ],
+              "load_hold_alive_min": 0.1027777777777778,
+              "resolved": null,
+              "register": null,
+              "pool": null,
+              "margin": 0.010417,
+              "register_rates": [
+                0.0875,
+                0.085,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "wta_rates": [
+                0.028472,
+                0.038889,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "held_after": {
+                "0": "cat",
+                "1": "dog"
+              }
+            }
+          ],
+          "empty": {
+            "resolved": null,
+            "wta_rates": [
+              0.0,
+              0.002083,
+              0.0,
+              0.0,
+              0.000694
+            ]
+          },
+          "lesion": {
+            "order": [
+              "dog",
+              "cat"
+            ],
+            "load_hold_alive_min": 0.0,
+            "resolved": null,
+            "register": null,
+            "pool": null,
+            "margin": 0.001389,
+            "register_rates": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "wta_rates": [
+              0.0,
+              0.002083,
+              0.0,
+              0.0,
+              0.000694
+            ],
+            "held_after": {}
+          }
+        },
+        {
+          "seed": 29,
+          "two_live": [
+            {
+              "order": [
+                "dog",
+                "cat"
+              ],
+              "load_hold_alive_min": 0.008333333333333335,
+              "resolved": "dog",
+              "register": 0,
+              "pool": "w0",
+              "margin": 0.15625,
+              "register_rates": [
+                0.095,
+                0.02,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "wta_rates": [
+                0.15625,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "held_after": {
+                "0": "dog",
+                "1": "cat"
+              }
+            },
+            {
+              "order": [
+                "cat",
+                "dog"
+              ],
+              "load_hold_alive_min": 0.008333333333333335,
+              "resolved": "cat",
+              "register": 0,
+              "pool": "w0",
+              "margin": 0.15625,
+              "register_rates": [
+                0.095,
+                0.02,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "wta_rates": [
+                0.15625,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "held_after": {
+                "0": "cat",
+                "1": "dog"
+              }
+            }
+          ],
+          "empty": {
+            "resolved": null,
+            "wta_rates": [
+              0.004167,
+              0.004167,
+              0.001389,
+              0.000694,
+              0.001389
+            ]
+          },
+          "lesion": {
+            "order": [
+              "dog",
+              "cat"
+            ],
+            "load_hold_alive_min": 0.0,
+            "resolved": null,
+            "register": null,
+            "pool": null,
+            "margin": 0.0,
+            "register_rates": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "wta_rates": [
+              0.004167,
+              0.004167,
+              0.001389,
+              0.000694,
+              0.001389
+            ],
+            "held_after": {}
+          }
+        },
+        {
+          "seed": 31,
+          "two_live": [
+            {
+              "order": [
+                "dog",
+                "cat"
+              ],
+              "load_hold_alive_min": 0.027777777777777783,
+              "resolved": "cat",
+              "register": 1,
+              "pool": "w7",
+              "margin": 0.169444,
+              "register_rates": [
+                0.0525,
+                0.1025,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "wta_rates": [
+                0.0,
+                0.169444,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "held_after": {
+                "0": "dog",
+                "1": "cat"
+              }
+            },
+            {
+              "order": [
+                "cat",
+                "dog"
+              ],
+              "load_hold_alive_min": 0.027777777777777783,
+              "resolved": "dog",
+              "register": 1,
+              "pool": "w7",
+              "margin": 0.169444,
+              "register_rates": [
+                0.0525,
+                0.1025,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "wta_rates": [
+                0.0,
+                0.169444,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "held_after": {
+                "0": "cat",
+                "1": "dog"
+              }
+            }
+          ],
+          "empty": {
+            "resolved": null,
+            "wta_rates": [
+              0.002083,
+              0.001389,
+              0.002778,
+              0.001389,
+              0.001389
+            ]
+          },
+          "lesion": {
+            "order": [
+              "dog",
+              "cat"
+            ],
+            "load_hold_alive_min": 0.0,
+            "resolved": null,
+            "register": null,
+            "pool": null,
+            "margin": 0.000694,
+            "register_rates": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "wta_rates": [
+              0.002083,
+              0.001389,
+              0.002778,
+              0.001389,
+              0.001389
+            ],
+            "held_after": {}
+          }
+        }
+      ],
+      "n_two_live_resolved": 6,
+      "n_same_register_both_orders": 8,
+      "n_both_held_after": 8,
+      "n_empty_resolved": 0,
+      "n_lesion_resolved": 0,
+      "min_two_live_margin": 0.010417
+    },
+    {
+      "gain": 12000.0,
+      "cue": 150.0,
+      "run": 150,
+      "rows": [
+        {
+          "seed": 7,
+          "two_live": [
+            {
+              "order": [
+                "dog",
+                "cat"
+              ],
+              "load_hold_alive_min": 0.10000000000000002,
+              "resolved": "dog",
+              "register": 0,
+              "pool": "w0",
+              "margin": 0.125278,
+              "register_rates": [
+                0.0925,
+                0.085,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "wta_rates": [
+                0.131944,
+                0.006667,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "held_after": {
+                "0": "dog",
+                "1": "cat"
+              }
+            },
+            {
+              "order": [
+                "cat",
+                "dog"
+              ],
+              "load_hold_alive_min": 0.10000000000000002,
+              "resolved": "cat",
+              "register": 0,
+              "pool": "w0",
+              "margin": 0.125278,
+              "register_rates": [
+                0.0925,
+                0.085,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "wta_rates": [
+                0.131944,
+                0.006667,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "held_after": {
+                "0": "cat",
+                "1": "dog"
+              }
+            }
+          ],
+          "empty": {
+            "resolved": null,
+            "wta_rates": [
+              0.006667,
+              0.004444,
+              0.006389,
+              0.003889,
+              0.005
+            ]
+          },
+          "lesion": {
+            "order": [
+              "dog",
+              "cat"
+            ],
+            "load_hold_alive_min": 0.0,
+            "resolved": null,
+            "register": null,
+            "pool": null,
+            "margin": 0.000278,
+            "register_rates": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "wta_rates": [
+              0.006667,
+              0.004444,
+              0.006389,
+              0.003889,
+              0.005
+            ],
+            "held_after": {}
+          }
+        },
+        {
+          "seed": 11,
+          "two_live": [
+            {
+              "order": [
+                "dog",
+                "cat"
+              ],
+              "load_hold_alive_min": 0.07777777777777779,
+              "resolved": "cat",
+              "register": 1,
+              "pool": "w7",
+              "margin": 0.1275,
+              "register_rates": [
+                0.09625,
+                0.1,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "wta_rates": [
+                0.007222,
+                0.134722,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "held_after": {
+                "0": "dog",
+                "1": "cat"
+              }
+            },
+            {
+              "order": [
+                "cat",
+                "dog"
+              ],
+              "load_hold_alive_min": 0.07777777777777779,
+              "resolved": "dog",
+              "register": 1,
+              "pool": "w7",
+              "margin": 0.1275,
+              "register_rates": [
+                0.09625,
+                0.1,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "wta_rates": [
+                0.007222,
+                0.134722,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "held_after": {
+                "0": "cat",
+                "1": "dog"
+              }
+            }
+          ],
+          "empty": {
+            "resolved": null,
+            "wta_rates": [
+              0.004444,
+              0.006389,
+              0.005556,
+              0.006111,
+              0.005833
+            ]
+          },
+          "lesion": {
+            "order": [
+              "dog",
+              "cat"
+            ],
+            "load_hold_alive_min": 0.0,
+            "resolved": null,
+            "register": null,
+            "pool": null,
+            "margin": 0.000278,
+            "register_rates": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "wta_rates": [
+              0.004444,
+              0.006389,
+              0.005556,
+              0.006111,
+              0.005833
+            ],
+            "held_after": {}
+          }
+        },
+        {
+          "seed": 13,
+          "two_live": [
+            {
+              "order": [
+                "dog",
+                "cat"
+              ],
+              "load_hold_alive_min": 0.06111111111111113,
+              "resolved": "cat",
+              "register": 1,
+              "pool": "w7",
+              "margin": 0.080556,
+              "register_rates": [
+                0.0875,
+                0.085,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "wta_rates": [
+                0.016111,
+                0.096667,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "held_after": {
+                "0": "dog",
+                "1": "cat"
+              }
+            },
+            {
+              "order": [
+                "cat",
+                "dog"
+              ],
+              "load_hold_alive_min": 0.06111111111111113,
+              "resolved": "dog",
+              "register": 1,
+              "pool": "w7",
+              "margin": 0.080556,
+              "register_rates": [
+                0.0875,
+                0.085,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "wta_rates": [
+                0.016111,
+                0.096667,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "held_after": {
+                "0": "cat",
+                "1": "dog"
+              }
+            }
+          ],
+          "empty": {
+            "resolved": null,
+            "wta_rates": [
+              0.005833,
+              0.006389,
+              0.005833,
+              0.006667,
+              0.006111
+            ]
+          },
+          "lesion": {
+            "order": [
+              "dog",
+              "cat"
+            ],
+            "load_hold_alive_min": 0.0,
+            "resolved": null,
+            "register": null,
+            "pool": null,
+            "margin": 0.000278,
+            "register_rates": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "wta_rates": [
+              0.005833,
+              0.006389,
+              0.005833,
+              0.006667,
+              0.006111
+            ],
+            "held_after": {}
+          }
+        },
+        {
+          "seed": 17,
+          "two_live": [
+            {
+              "order": [
+                "dog",
+                "cat"
+              ],
+              "load_hold_alive_min": 0.06944444444444446,
+              "resolved": "cat",
+              "register": 1,
+              "pool": "w7",
+              "margin": 0.126944,
+              "register_rates": [
+                0.09,
+                0.0975,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "wta_rates": [
+                0.006667,
+                0.133611,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "held_after": {
+                "0": "dog",
+                "1": "cat"
+              }
+            },
+            {
+              "order": [
+                "cat",
+                "dog"
+              ],
+              "load_hold_alive_min": 0.06944444444444446,
+              "resolved": "dog",
+              "register": 1,
+              "pool": "w7",
+              "margin": 0.126944,
+              "register_rates": [
+                0.09,
+                0.0975,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "wta_rates": [
+                0.006667,
+                0.133611,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "held_after": {
+                "0": "cat",
+                "1": "dog"
+              }
+            }
+          ],
+          "empty": {
+            "resolved": null,
+            "wta_rates": [
+              0.006667,
+              0.006111,
+              0.006111,
+              0.006111,
+              0.006111
+            ]
+          },
+          "lesion": {
+            "order": [
+              "dog",
+              "cat"
+            ],
+            "load_hold_alive_min": 0.0,
+            "resolved": null,
+            "register": null,
+            "pool": null,
+            "margin": 0.000556,
+            "register_rates": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "wta_rates": [
+              0.006667,
+              0.006111,
+              0.006111,
+              0.006111,
+              0.006111
+            ],
+            "held_after": {}
+          }
+        },
+        {
+          "seed": 19,
+          "two_live": [
+            {
+              "order": [
+                "dog",
+                "cat"
+              ],
+              "load_hold_alive_min": 0.03888888888888889,
+              "resolved": "dog",
+              "register": 0,
+              "pool": "w0",
+              "margin": 0.154167,
+              "register_rates": [
+                0.09375,
+                0.0675,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "wta_rates": [
+                0.154167,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "held_after": {
+                "0": "dog",
+                "1": "cat"
+              }
+            },
+            {
+              "order": [
+                "cat",
+                "dog"
+              ],
+              "load_hold_alive_min": 0.03888888888888889,
+              "resolved": "cat",
+              "register": 0,
+              "pool": "w0",
+              "margin": 0.154167,
+              "register_rates": [
+                0.09375,
+                0.0675,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "wta_rates": [
+                0.154167,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "held_after": {
+                "0": "cat",
+                "1": "dog"
+              }
+            }
+          ],
+          "empty": {
+            "resolved": null,
+            "wta_rates": [
+              0.005278,
+              0.004167,
+              0.005278,
+              0.004167,
+              0.006389
+            ]
+          },
+          "lesion": {
+            "order": [
+              "dog",
+              "cat"
+            ],
+            "load_hold_alive_min": 0.0,
+            "resolved": null,
+            "register": null,
+            "pool": null,
+            "margin": 0.001111,
+            "register_rates": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "wta_rates": [
+              0.005278,
+              0.004167,
+              0.005278,
+              0.004167,
+              0.006389
+            ],
+            "held_after": {}
+          }
+        },
+        {
+          "seed": 23,
+          "two_live": [
+            {
+              "order": [
+                "dog",
+                "cat"
+              ],
+              "load_hold_alive_min": 0.1027777777777778,
+              "resolved": null,
+              "register": null,
+              "pool": null,
+              "margin": 0.003889,
+              "register_rates": [
+                0.0875,
+                0.085,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "wta_rates": [
+                0.049444,
+                0.053333,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "held_after": {
+                "0": "dog",
+                "1": "cat"
+              }
+            },
+            {
+              "order": [
+                "cat",
+                "dog"
+              ],
+              "load_hold_alive_min": 0.1027777777777778,
+              "resolved": null,
+              "register": null,
+              "pool": null,
+              "margin": 0.003889,
+              "register_rates": [
+                0.0875,
+                0.085,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "wta_rates": [
+                0.049444,
+                0.053333,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "held_after": {
+                "0": "cat",
+                "1": "dog"
+              }
+            }
+          ],
+          "empty": {
+            "resolved": null,
+            "wta_rates": [
+              0.005556,
+              0.006111,
+              0.005,
+              0.006667,
+              0.004722
+            ]
+          },
+          "lesion": {
+            "order": [
+              "dog",
+              "cat"
+            ],
+            "load_hold_alive_min": 0.0,
+            "resolved": null,
+            "register": null,
+            "pool": null,
+            "margin": 0.000556,
+            "register_rates": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "wta_rates": [
+              0.005556,
+              0.006111,
+              0.005,
+              0.006667,
+              0.004722
+            ],
+            "held_after": {}
+          }
+        },
+        {
+          "seed": 29,
+          "two_live": [
+            {
+              "order": [
+                "dog",
+                "cat"
+              ],
+              "load_hold_alive_min": 0.008333333333333335,
+              "resolved": "dog",
+              "register": 0,
+              "pool": "w0",
+              "margin": 0.153333,
+              "register_rates": [
+                0.095,
+                0.02,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "wta_rates": [
+                0.153333,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "held_after": {
+                "0": "dog",
+                "1": "cat"
+              }
+            },
+            {
+              "order": [
+                "cat",
+                "dog"
+              ],
+              "load_hold_alive_min": 0.008333333333333335,
+              "resolved": "cat",
+              "register": 0,
+              "pool": "w0",
+              "margin": 0.153333,
+              "register_rates": [
+                0.095,
+                0.02,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "wta_rates": [
+                0.153333,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "held_after": {
+                "0": "cat",
+                "1": "dog"
+              }
+            }
+          ],
+          "empty": {
+            "resolved": null,
+            "wta_rates": [
+              0.006389,
+              0.005833,
+              0.005833,
+              0.005556,
+              0.006111
+            ]
+          },
+          "lesion": {
+            "order": [
+              "dog",
+              "cat"
+            ],
+            "load_hold_alive_min": 0.0,
+            "resolved": null,
+            "register": null,
+            "pool": null,
+            "margin": 0.000278,
+            "register_rates": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "wta_rates": [
+              0.006389,
+              0.005833,
+              0.005833,
+              0.005556,
+              0.006111
+            ],
+            "held_after": {}
+          }
+        },
+        {
+          "seed": 31,
+          "two_live": [
+            {
+              "order": [
+                "dog",
+                "cat"
+              ],
+              "load_hold_alive_min": 0.027777777777777783,
+              "resolved": "cat",
+              "register": 1,
+              "pool": "w7",
+              "margin": 0.165556,
+              "register_rates": [
+                0.0525,
+                0.1025,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "wta_rates": [
+                0.0,
+                0.165556,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "held_after": {
+                "0": "dog",
+                "1": "cat"
+              }
+            },
+            {
+              "order": [
+                "cat",
+                "dog"
+              ],
+              "load_hold_alive_min": 0.027777777777777783,
+              "resolved": "dog",
+              "register": 1,
+              "pool": "w7",
+              "margin": 0.165556,
+              "register_rates": [
+                0.0525,
+                0.1025,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "wta_rates": [
+                0.0,
+                0.165556,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "held_after": {
+                "0": "cat",
+                "1": "dog"
+              }
+            }
+          ],
+          "empty": {
+            "resolved": null,
+            "wta_rates": [
+              0.005556,
+              0.006389,
+              0.006389,
+              0.007222,
+              0.005556
+            ]
+          },
+          "lesion": {
+            "order": [
+              "dog",
+              "cat"
+            ],
+            "load_hold_alive_min": 0.0,
+            "resolved": null,
+            "register": null,
+            "pool": null,
+            "margin": 0.000833,
+            "register_rates": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "wta_rates": [
+              0.005556,
+              0.006389,
+              0.006389,
+              0.007222,
+              0.005556
+            ],
+            "held_after": {}
+          }
+        }
+      ],
+      "n_two_live_resolved": 7,
+      "n_same_register_both_orders": 8,
+      "n_both_held_after": 8,
+      "n_empty_resolved": 0,
+      "n_lesion_resolved": 0,
+      "min_two_live_margin": 0.003889
+    },
+    {
+      "gain": 20000.0,
+      "cue": 150.0,
+      "run": 60,
+      "rows": [
+        {
+          "seed": 7,
+          "two_live": [
+            {
+              "order": [
+                "dog",
+                "cat"
+              ],
+              "load_hold_alive_min": 0.10000000000000002,
+              "resolved": "dog",
+              "register": 0,
+              "pool": "w0",
+              "margin": 0.218056,
+              "register_rates": [
+                0.0925,
+                0.085,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "wta_rates": [
+                0.218056,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "held_after": {
+                "0": "dog",
+                "1": "cat"
+              }
+            },
+            {
+              "order": [
+                "cat",
+                "dog"
+              ],
+              "load_hold_alive_min": 0.10000000000000002,
+              "resolved": "cat",
+              "register": 0,
+              "pool": "w0",
+              "margin": 0.218056,
+              "register_rates": [
+                0.0925,
+                0.085,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "wta_rates": [
+                0.218056,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "held_after": {
+                "0": "cat",
+                "1": "dog"
+              }
+            }
+          ],
+          "empty": {
+            "resolved": null,
+            "wta_rates": [
+              0.002778,
+              0.000694,
+              0.002778,
+              0.001389,
+              0.0
+            ]
+          },
+          "lesion": {
+            "order": [
+              "dog",
+              "cat"
+            ],
+            "load_hold_alive_min": 0.0,
+            "resolved": null,
+            "register": null,
+            "pool": null,
+            "margin": 0.0,
+            "register_rates": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "wta_rates": [
+              0.002778,
+              0.000694,
+              0.002778,
+              0.001389,
+              0.0
+            ],
+            "held_after": {}
+          }
+        },
+        {
+          "seed": 11,
+          "two_live": [
+            {
+              "order": [
+                "dog",
+                "cat"
+              ],
+              "load_hold_alive_min": 0.07777777777777779,
+              "resolved": "cat",
+              "register": 1,
+              "pool": "w7",
+              "margin": 0.214583,
+              "register_rates": [
+                0.09625,
+                0.1,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "wta_rates": [
+                0.0,
+                0.214583,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "held_after": {
+                "0": "dog",
+                "1": "cat"
+              }
+            },
+            {
+              "order": [
+                "cat",
+                "dog"
+              ],
+              "load_hold_alive_min": 0.07777777777777779,
+              "resolved": "dog",
+              "register": 1,
+              "pool": "w7",
+              "margin": 0.214583,
+              "register_rates": [
+                0.09625,
+                0.1,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "wta_rates": [
+                0.0,
+                0.214583,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "held_after": {
+                "0": "cat",
+                "1": "dog"
+              }
+            }
+          ],
+          "empty": {
+            "resolved": null,
+            "wta_rates": [
+              0.0,
+              0.002083,
+              0.003472,
+              0.000694,
+              0.002083
+            ]
+          },
+          "lesion": {
+            "order": [
+              "dog",
+              "cat"
+            ],
+            "load_hold_alive_min": 0.0,
+            "resolved": null,
+            "register": null,
+            "pool": null,
+            "margin": 0.001389,
+            "register_rates": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "wta_rates": [
+              0.0,
+              0.002083,
+              0.003472,
+              0.000694,
+              0.002083
+            ],
+            "held_after": {}
+          }
+        },
+        {
+          "seed": 13,
+          "two_live": [
+            {
+              "order": [
+                "dog",
+                "cat"
+              ],
+              "load_hold_alive_min": 0.06111111111111113,
+              "resolved": "cat",
+              "register": 1,
+              "pool": "w7",
+              "margin": 0.129167,
+              "register_rates": [
+                0.0875,
+                0.085,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "wta_rates": [
+                0.019444,
+                0.148611,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "held_after": {
+                "0": "dog",
+                "1": "cat"
+              }
+            },
+            {
+              "order": [
+                "cat",
+                "dog"
+              ],
+              "load_hold_alive_min": 0.06111111111111113,
+              "resolved": "dog",
+              "register": 1,
+              "pool": "w7",
+              "margin": 0.129167,
+              "register_rates": [
+                0.0875,
+                0.085,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "wta_rates": [
+                0.019444,
+                0.148611,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "held_after": {
+                "0": "cat",
+                "1": "dog"
+              }
+            }
+          ],
+          "empty": {
+            "resolved": null,
+            "wta_rates": [
+              0.000694,
+              0.002778,
+              0.003472,
+              0.004861,
+              0.005556
+            ]
+          },
+          "lesion": {
+            "order": [
+              "dog",
+              "cat"
+            ],
+            "load_hold_alive_min": 0.0,
+            "resolved": null,
+            "register": null,
+            "pool": null,
+            "margin": 0.000694,
+            "register_rates": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "wta_rates": [
+              0.000694,
+              0.002778,
+              0.003472,
+              0.004861,
+              0.005556
+            ],
+            "held_after": {}
+          }
+        },
+        {
+          "seed": 17,
+          "two_live": [
+            {
+              "order": [
+                "dog",
+                "cat"
+              ],
+              "load_hold_alive_min": 0.06944444444444446,
+              "resolved": "cat",
+              "register": 1,
+              "pool": "w7",
+              "margin": 0.205556,
+              "register_rates": [
+                0.09,
+                0.0975,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "wta_rates": [
+                0.0,
+                0.205556,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "held_after": {
+                "0": "dog",
+                "1": "cat"
+              }
+            },
+            {
+              "order": [
+                "cat",
+                "dog"
+              ],
+              "load_hold_alive_min": 0.06944444444444446,
+              "resolved": "dog",
+              "register": 1,
+              "pool": "w7",
+              "margin": 0.205556,
+              "register_rates": [
+                0.09,
+                0.0975,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "wta_rates": [
+                0.0,
+                0.205556,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "held_after": {
+                "0": "cat",
+                "1": "dog"
+              }
+            }
+          ],
+          "empty": {
+            "resolved": null,
+            "wta_rates": [
+              0.002083,
+              0.001389,
+              0.0,
+              0.000694,
+              0.001389
+            ]
+          },
+          "lesion": {
+            "order": [
+              "dog",
+              "cat"
+            ],
+            "load_hold_alive_min": 0.0,
+            "resolved": null,
+            "register": null,
+            "pool": null,
+            "margin": 0.000694,
+            "register_rates": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "wta_rates": [
+              0.002083,
+              0.001389,
+              0.0,
+              0.000694,
+              0.001389
+            ],
+            "held_after": {}
+          }
+        },
+        {
+          "seed": 19,
+          "two_live": [
+            {
+              "order": [
+                "dog",
+                "cat"
+              ],
+              "load_hold_alive_min": 0.03888888888888889,
+              "resolved": "dog",
+              "register": 0,
+              "pool": "w0",
+              "margin": 0.213194,
+              "register_rates": [
+                0.09375,
+                0.0675,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "wta_rates": [
+                0.213194,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "held_after": {
+                "0": "dog",
+                "1": "cat"
+              }
+            },
+            {
+              "order": [
+                "cat",
+                "dog"
+              ],
+              "load_hold_alive_min": 0.03888888888888889,
+              "resolved": "cat",
+              "register": 0,
+              "pool": "w0",
+              "margin": 0.213194,
+              "register_rates": [
+                0.09375,
+                0.0675,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "wta_rates": [
+                0.213194,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "held_after": {
+                "0": "cat",
+                "1": "dog"
+              }
+            }
+          ],
+          "empty": {
+            "resolved": null,
+            "wta_rates": [
+              0.002778,
+              0.000694,
+              0.002083,
+              0.0,
+              0.004861
+            ]
+          },
+          "lesion": {
+            "order": [
+              "dog",
+              "cat"
+            ],
+            "load_hold_alive_min": 0.0,
+            "resolved": null,
+            "register": null,
+            "pool": null,
+            "margin": 0.002083,
+            "register_rates": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "wta_rates": [
+              0.002778,
+              0.000694,
+              0.002083,
+              0.0,
+              0.004861
+            ],
+            "held_after": {}
+          }
+        },
+        {
+          "seed": 23,
+          "two_live": [
+            {
+              "order": [
+                "dog",
+                "cat"
+              ],
+              "load_hold_alive_min": 0.1027777777777778,
+              "resolved": null,
+              "register": null,
+              "pool": null,
+              "margin": 0.0,
+              "register_rates": [
+                0.0875,
+                0.085,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "wta_rates": [
+                0.071528,
+                0.071528,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "held_after": {
+                "0": "dog",
+                "1": "cat"
+              }
+            },
+            {
+              "order": [
+                "cat",
+                "dog"
+              ],
+              "load_hold_alive_min": 0.1027777777777778,
+              "resolved": null,
+              "register": null,
+              "pool": null,
+              "margin": 0.0,
+              "register_rates": [
+                0.0875,
+                0.085,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "wta_rates": [
+                0.071528,
+                0.071528,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "held_after": {
+                "0": "cat",
+                "1": "dog"
+              }
+            }
+          ],
+          "empty": {
+            "resolved": null,
+            "wta_rates": [
+              0.0,
+              0.002083,
+              0.0,
+              0.0,
+              0.000694
+            ]
+          },
+          "lesion": {
+            "order": [
+              "dog",
+              "cat"
+            ],
+            "load_hold_alive_min": 0.0,
+            "resolved": null,
+            "register": null,
+            "pool": null,
+            "margin": 0.001389,
+            "register_rates": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "wta_rates": [
+              0.0,
+              0.002083,
+              0.0,
+              0.0,
+              0.000694
+            ],
+            "held_after": {}
+          }
+        },
+        {
+          "seed": 29,
+          "two_live": [
+            {
+              "order": [
+                "dog",
+                "cat"
+              ],
+              "load_hold_alive_min": 0.008333333333333335,
+              "resolved": "dog",
+              "register": 0,
+              "pool": "w0",
+              "margin": 0.2125,
+              "register_rates": [
+                0.095,
+                0.02,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "wta_rates": [
+                0.2125,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "held_after": {
+                "0": "dog",
+                "1": "cat"
+              }
+            },
+            {
+              "order": [
+                "cat",
+                "dog"
+              ],
+              "load_hold_alive_min": 0.008333333333333335,
+              "resolved": "cat",
+              "register": 0,
+              "pool": "w0",
+              "margin": 0.2125,
+              "register_rates": [
+                0.095,
+                0.02,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "wta_rates": [
+                0.2125,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "held_after": {
+                "0": "cat",
+                "1": "dog"
+              }
+            }
+          ],
+          "empty": {
+            "resolved": null,
+            "wta_rates": [
+              0.004167,
+              0.004167,
+              0.001389,
+              0.000694,
+              0.001389
+            ]
+          },
+          "lesion": {
+            "order": [
+              "dog",
+              "cat"
+            ],
+            "load_hold_alive_min": 0.0,
+            "resolved": null,
+            "register": null,
+            "pool": null,
+            "margin": 0.0,
+            "register_rates": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "wta_rates": [
+              0.004167,
+              0.004167,
+              0.001389,
+              0.000694,
+              0.001389
+            ],
+            "held_after": {}
+          }
+        },
+        {
+          "seed": 31,
+          "two_live": [
+            {
+              "order": [
+                "dog",
+                "cat"
+              ],
+              "load_hold_alive_min": 0.027777777777777783,
+              "resolved": "cat",
+              "register": 1,
+              "pool": "w7",
+              "margin": 0.230556,
+              "register_rates": [
+                0.0525,
+                0.1025,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "wta_rates": [
+                0.0,
+                0.230556,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "held_after": {
+                "0": "dog",
+                "1": "cat"
+              }
+            },
+            {
+              "order": [
+                "cat",
+                "dog"
+              ],
+              "load_hold_alive_min": 0.027777777777777783,
+              "resolved": "dog",
+              "register": 1,
+              "pool": "w7",
+              "margin": 0.230556,
+              "register_rates": [
+                0.0525,
+                0.1025,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "wta_rates": [
+                0.0,
+                0.230556,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "held_after": {
+                "0": "cat",
+                "1": "dog"
+              }
+            }
+          ],
+          "empty": {
+            "resolved": null,
+            "wta_rates": [
+              0.002083,
+              0.001389,
+              0.002778,
+              0.001389,
+              0.001389
+            ]
+          },
+          "lesion": {
+            "order": [
+              "dog",
+              "cat"
+            ],
+            "load_hold_alive_min": 0.0,
+            "resolved": null,
+            "register": null,
+            "pool": null,
+            "margin": 0.000694,
+            "register_rates": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "wta_rates": [
+              0.002083,
+              0.001389,
+              0.002778,
+              0.001389,
+              0.001389
+            ],
+            "held_after": {}
+          }
+        }
+      ],
+      "n_two_live_resolved": 7,
+      "n_same_register_both_orders": 8,
+      "n_both_held_after": 8,
+      "n_empty_resolved": 0,
+      "n_lesion_resolved": 0,
+      "min_two_live_margin": 0.0
+    },
+    {
+      "gain": 20000.0,
+      "cue": 150.0,
+      "run": 150,
+      "rows": [
+        {
+          "seed": 7,
+          "two_live": [
+            {
+              "order": [
+                "dog",
+                "cat"
+              ],
+              "load_hold_alive_min": 0.10000000000000002,
+              "resolved": "dog",
+              "register": 0,
+              "pool": "w0",
+              "margin": 0.219167,
+              "register_rates": [
+                0.0925,
+                0.085,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "wta_rates": [
+                0.219167,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "held_after": {
+                "0": "dog",
+                "1": "cat"
+              }
+            },
+            {
+              "order": [
+                "cat",
+                "dog"
+              ],
+              "load_hold_alive_min": 0.10000000000000002,
+              "resolved": "cat",
+              "register": 0,
+              "pool": "w0",
+              "margin": 0.219167,
+              "register_rates": [
+                0.0925,
+                0.085,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "wta_rates": [
+                0.219167,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "held_after": {
+                "0": "cat",
+                "1": "dog"
+              }
+            }
+          ],
+          "empty": {
+            "resolved": null,
+            "wta_rates": [
+              0.006667,
+              0.004444,
+              0.006389,
+              0.003889,
+              0.005
+            ]
+          },
+          "lesion": {
+            "order": [
+              "dog",
+              "cat"
+            ],
+            "load_hold_alive_min": 0.0,
+            "resolved": null,
+            "register": null,
+            "pool": null,
+            "margin": 0.000278,
+            "register_rates": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "wta_rates": [
+              0.006667,
+              0.004444,
+              0.006389,
+              0.003889,
+              0.005
+            ],
+            "held_after": {}
+          }
+        },
+        {
+          "seed": 11,
+          "two_live": [
+            {
+              "order": [
+                "dog",
+                "cat"
+              ],
+              "load_hold_alive_min": 0.07777777777777779,
+              "resolved": "cat",
+              "register": 1,
+              "pool": "w7",
+              "margin": 0.218056,
+              "register_rates": [
+                0.09625,
+                0.1,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "wta_rates": [
+                0.0,
+                0.218056,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "held_after": {
+                "0": "dog",
+                "1": "cat"
+              }
+            },
+            {
+              "order": [
+                "cat",
+                "dog"
+              ],
+              "load_hold_alive_min": 0.07777777777777779,
+              "resolved": "dog",
+              "register": 1,
+              "pool": "w7",
+              "margin": 0.218056,
+              "register_rates": [
+                0.09625,
+                0.1,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "wta_rates": [
+                0.0,
+                0.218056,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "held_after": {
+                "0": "cat",
+                "1": "dog"
+              }
+            }
+          ],
+          "empty": {
+            "resolved": null,
+            "wta_rates": [
+              0.004444,
+              0.006389,
+              0.005556,
+              0.006111,
+              0.005833
+            ]
+          },
+          "lesion": {
+            "order": [
+              "dog",
+              "cat"
+            ],
+            "load_hold_alive_min": 0.0,
+            "resolved": null,
+            "register": null,
+            "pool": null,
+            "margin": 0.000278,
+            "register_rates": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "wta_rates": [
+              0.004444,
+              0.006389,
+              0.005556,
+              0.006111,
+              0.005833
+            ],
+            "held_after": {}
+          }
+        },
+        {
+          "seed": 13,
+          "two_live": [
+            {
+              "order": [
+                "dog",
+                "cat"
+              ],
+              "load_hold_alive_min": 0.06111111111111113,
+              "resolved": "cat",
+              "register": 1,
+              "pool": "w7",
+              "margin": 0.174444,
+              "register_rates": [
+                0.0875,
+                0.085,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "wta_rates": [
+                0.007778,
+                0.182222,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "held_after": {
+                "0": "dog",
+                "1": "cat"
+              }
+            },
+            {
+              "order": [
+                "cat",
+                "dog"
+              ],
+              "load_hold_alive_min": 0.06111111111111113,
+              "resolved": "dog",
+              "register": 1,
+              "pool": "w7",
+              "margin": 0.174444,
+              "register_rates": [
+                0.0875,
+                0.085,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "wta_rates": [
+                0.007778,
+                0.182222,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "held_after": {
+                "0": "cat",
+                "1": "dog"
+              }
+            }
+          ],
+          "empty": {
+            "resolved": null,
+            "wta_rates": [
+              0.005833,
+              0.006389,
+              0.005833,
+              0.006667,
+              0.006111
+            ]
+          },
+          "lesion": {
+            "order": [
+              "dog",
+              "cat"
+            ],
+            "load_hold_alive_min": 0.0,
+            "resolved": null,
+            "register": null,
+            "pool": null,
+            "margin": 0.000278,
+            "register_rates": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "wta_rates": [
+              0.005833,
+              0.006389,
+              0.005833,
+              0.006667,
+              0.006111
+            ],
+            "held_after": {}
+          }
+        },
+        {
+          "seed": 17,
+          "two_live": [
+            {
+              "order": [
+                "dog",
+                "cat"
+              ],
+              "load_hold_alive_min": 0.06944444444444446,
+              "resolved": "cat",
+              "register": 1,
+              "pool": "w7",
+              "margin": 0.2125,
+              "register_rates": [
+                0.09,
+                0.0975,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "wta_rates": [
+                0.0,
+                0.2125,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "held_after": {
+                "0": "dog",
+                "1": "cat"
+              }
+            },
+            {
+              "order": [
+                "cat",
+                "dog"
+              ],
+              "load_hold_alive_min": 0.06944444444444446,
+              "resolved": "dog",
+              "register": 1,
+              "pool": "w7",
+              "margin": 0.2125,
+              "register_rates": [
+                0.09,
+                0.0975,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "wta_rates": [
+                0.0,
+                0.2125,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "held_after": {
+                "0": "cat",
+                "1": "dog"
+              }
+            }
+          ],
+          "empty": {
+            "resolved": null,
+            "wta_rates": [
+              0.006667,
+              0.006111,
+              0.006111,
+              0.006111,
+              0.006111
+            ]
+          },
+          "lesion": {
+            "order": [
+              "dog",
+              "cat"
+            ],
+            "load_hold_alive_min": 0.0,
+            "resolved": null,
+            "register": null,
+            "pool": null,
+            "margin": 0.000556,
+            "register_rates": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "wta_rates": [
+              0.006667,
+              0.006111,
+              0.006111,
+              0.006111,
+              0.006111
+            ],
+            "held_after": {}
+          }
+        },
+        {
+          "seed": 19,
+          "two_live": [
+            {
+              "order": [
+                "dog",
+                "cat"
+              ],
+              "load_hold_alive_min": 0.03888888888888889,
+              "resolved": "dog",
+              "register": 0,
+              "pool": "w0",
+              "margin": 0.21,
+              "register_rates": [
+                0.09375,
+                0.0675,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "wta_rates": [
+                0.21,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "held_after": {
+                "0": "dog",
+                "1": "cat"
+              }
+            },
+            {
+              "order": [
+                "cat",
+                "dog"
+              ],
+              "load_hold_alive_min": 0.03888888888888889,
+              "resolved": "cat",
+              "register": 0,
+              "pool": "w0",
+              "margin": 0.21,
+              "register_rates": [
+                0.09375,
+                0.0675,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "wta_rates": [
+                0.21,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "held_after": {
+                "0": "cat",
+                "1": "dog"
+              }
+            }
+          ],
+          "empty": {
+            "resolved": null,
+            "wta_rates": [
+              0.005278,
+              0.004167,
+              0.005278,
+              0.004167,
+              0.006389
+            ]
+          },
+          "lesion": {
+            "order": [
+              "dog",
+              "cat"
+            ],
+            "load_hold_alive_min": 0.0,
+            "resolved": null,
+            "register": null,
+            "pool": null,
+            "margin": 0.001111,
+            "register_rates": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "wta_rates": [
+              0.005278,
+              0.004167,
+              0.005278,
+              0.004167,
+              0.006389
+            ],
+            "held_after": {}
+          }
+        },
+        {
+          "seed": 23,
+          "two_live": [
+            {
+              "order": [
+                "dog",
+                "cat"
+              ],
+              "load_hold_alive_min": 0.1027777777777778,
+              "resolved": "dog",
+              "register": 0,
+              "pool": "w0",
+              "margin": 0.087778,
+              "register_rates": [
+                0.0875,
+                0.085,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "wta_rates": [
+                0.126389,
+                0.038611,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "held_after": {
+                "0": "dog",
+                "1": "cat"
+              }
+            },
+            {
+              "order": [
+                "cat",
+                "dog"
+              ],
+              "load_hold_alive_min": 0.1027777777777778,
+              "resolved": "cat",
+              "register": 0,
+              "pool": "w0",
+              "margin": 0.087778,
+              "register_rates": [
+                0.0875,
+                0.085,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "wta_rates": [
+                0.126389,
+                0.038611,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "held_after": {
+                "0": "cat",
+                "1": "dog"
+              }
+            }
+          ],
+          "empty": {
+            "resolved": null,
+            "wta_rates": [
+              0.005556,
+              0.006111,
+              0.005,
+              0.006667,
+              0.004722
+            ]
+          },
+          "lesion": {
+            "order": [
+              "dog",
+              "cat"
+            ],
+            "load_hold_alive_min": 0.0,
+            "resolved": null,
+            "register": null,
+            "pool": null,
+            "margin": 0.000556,
+            "register_rates": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "wta_rates": [
+              0.005556,
+              0.006111,
+              0.005,
+              0.006667,
+              0.004722
+            ],
+            "held_after": {}
+          }
+        },
+        {
+          "seed": 29,
+          "two_live": [
+            {
+              "order": [
+                "dog",
+                "cat"
+              ],
+              "load_hold_alive_min": 0.008333333333333335,
+              "resolved": "dog",
+              "register": 0,
+              "pool": "w0",
+              "margin": 0.210556,
+              "register_rates": [
+                0.095,
+                0.02,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "wta_rates": [
+                0.210556,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "held_after": {
+                "0": "dog",
+                "1": "cat"
+              }
+            },
+            {
+              "order": [
+                "cat",
+                "dog"
+              ],
+              "load_hold_alive_min": 0.008333333333333335,
+              "resolved": "cat",
+              "register": 0,
+              "pool": "w0",
+              "margin": 0.210556,
+              "register_rates": [
+                0.095,
+                0.02,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "wta_rates": [
+                0.210556,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "held_after": {
+                "0": "cat",
+                "1": "dog"
+              }
+            }
+          ],
+          "empty": {
+            "resolved": null,
+            "wta_rates": [
+              0.006389,
+              0.005833,
+              0.005833,
+              0.005556,
+              0.006111
+            ]
+          },
+          "lesion": {
+            "order": [
+              "dog",
+              "cat"
+            ],
+            "load_hold_alive_min": 0.0,
+            "resolved": null,
+            "register": null,
+            "pool": null,
+            "margin": 0.000278,
+            "register_rates": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "wta_rates": [
+              0.006389,
+              0.005833,
+              0.005833,
+              0.005556,
+              0.006111
+            ],
+            "held_after": {}
+          }
+        },
+        {
+          "seed": 31,
+          "two_live": [
+            {
+              "order": [
+                "dog",
+                "cat"
+              ],
+              "load_hold_alive_min": 0.027777777777777783,
+              "resolved": "cat",
+              "register": 1,
+              "pool": "w7",
+              "margin": 0.227778,
+              "register_rates": [
+                0.0525,
+                0.1025,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "wta_rates": [
+                0.0,
+                0.227778,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "held_after": {
+                "0": "dog",
+                "1": "cat"
+              }
+            },
+            {
+              "order": [
+                "cat",
+                "dog"
+              ],
+              "load_hold_alive_min": 0.027777777777777783,
+              "resolved": "dog",
+              "register": 1,
+              "pool": "w7",
+              "margin": 0.227778,
+              "register_rates": [
+                0.0525,
+                0.1025,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "wta_rates": [
+                0.0,
+                0.227778,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "held_after": {
+                "0": "cat",
+                "1": "dog"
+              }
+            }
+          ],
+          "empty": {
+            "resolved": null,
+            "wta_rates": [
+              0.005556,
+              0.006389,
+              0.006389,
+              0.007222,
+              0.005556
+            ]
+          },
+          "lesion": {
+            "order": [
+              "dog",
+              "cat"
+            ],
+            "load_hold_alive_min": 0.0,
+            "resolved": null,
+            "register": null,
+            "pool": null,
+            "margin": 0.000833,
+            "register_rates": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "wta_rates": [
+              0.005556,
+              0.006389,
+              0.006389,
+              0.007222,
+              0.005556
+            ],
+            "held_after": {}
+          }
+        }
+      ],
+      "n_two_live_resolved": 8,
+      "n_same_register_both_orders": 8,
+      "n_both_held_after": 8,
+      "n_empty_resolved": 0,
+      "n_lesion_resolved": 0,
+      "min_two_live_margin": 0.087778
+    },
+    {
+      "gain": 8000.0,
+      "cue": 150.0,
+      "run": 150,
+      "rows": [
+        {
+          "seed": 7,
+          "two_live": [
+            {
+              "order": [
+                "dog",
+                "cat"
+              ],
+              "load_hold_alive_min": 0.10000000000000002,
+              "resolved": "dog",
+              "register": 0,
+              "pool": "w0",
+              "margin": 0.088611,
+              "register_rates": [
+                0.0925,
+                0.085,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "wta_rates": [
+                0.094722,
+                0.006111,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "held_after": {
+                "0": "dog",
+                "1": "cat"
+              }
+            },
+            {
+              "order": [
+                "cat",
+                "dog"
+              ],
+              "load_hold_alive_min": 0.10000000000000002,
+              "resolved": "cat",
+              "register": 0,
+              "pool": "w0",
+              "margin": 0.088611,
+              "register_rates": [
+                0.0925,
+                0.085,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "wta_rates": [
+                0.094722,
+                0.006111,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "held_after": {
+                "0": "cat",
+                "1": "dog"
+              }
+            }
+          ],
+          "empty": {
+            "resolved": null,
+            "wta_rates": [
+              0.006667,
+              0.004444,
+              0.006389,
+              0.003889,
+              0.005
+            ]
+          },
+          "lesion": {
+            "order": [
+              "dog",
+              "cat"
+            ],
+            "load_hold_alive_min": 0.0,
+            "resolved": null,
+            "register": null,
+            "pool": null,
+            "margin": 0.000278,
+            "register_rates": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "wta_rates": [
+              0.006667,
+              0.004444,
+              0.006389,
+              0.003889,
+              0.005
+            ],
+            "held_after": {}
+          }
+        },
+        {
+          "seed": 11,
+          "two_live": [
+            {
+              "order": [
+                "dog",
+                "cat"
+              ],
+              "load_hold_alive_min": 0.07777777777777779,
+              "resolved": "cat",
+              "register": 1,
+              "pool": "w7",
+              "margin": 0.0625,
+              "register_rates": [
+                0.09625,
+                0.1,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "wta_rates": [
+                0.014167,
+                0.076667,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "held_after": {
+                "0": "dog",
+                "1": "cat"
+              }
+            },
+            {
+              "order": [
+                "cat",
+                "dog"
+              ],
+              "load_hold_alive_min": 0.07777777777777779,
+              "resolved": "dog",
+              "register": 1,
+              "pool": "w7",
+              "margin": 0.0625,
+              "register_rates": [
+                0.09625,
+                0.1,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "wta_rates": [
+                0.014167,
+                0.076667,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "held_after": {
+                "0": "cat",
+                "1": "dog"
+              }
+            }
+          ],
+          "empty": {
+            "resolved": null,
+            "wta_rates": [
+              0.004444,
+              0.006389,
+              0.005556,
+              0.006111,
+              0.005833
+            ]
+          },
+          "lesion": {
+            "order": [
+              "dog",
+              "cat"
+            ],
+            "load_hold_alive_min": 0.0,
+            "resolved": null,
+            "register": null,
+            "pool": null,
+            "margin": 0.000278,
+            "register_rates": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "wta_rates": [
+              0.004444,
+              0.006389,
+              0.005556,
+              0.006111,
+              0.005833
+            ],
+            "held_after": {}
+          }
+        },
+        {
+          "seed": 13,
+          "two_live": [
+            {
+              "order": [
+                "dog",
+                "cat"
+              ],
+              "load_hold_alive_min": 0.06111111111111113,
+              "resolved": null,
+              "register": null,
+              "pool": null,
+              "margin": 0.023889,
+              "register_rates": [
+                0.0875,
+                0.085,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "wta_rates": [
+                0.045556,
+                0.021667,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "held_after": {
+                "0": "dog",
+                "1": "cat"
+              }
+            },
+            {
+              "order": [
+                "cat",
+                "dog"
+              ],
+              "load_hold_alive_min": 0.06111111111111113,
+              "resolved": null,
+              "register": null,
+              "pool": null,
+              "margin": 0.023889,
+              "register_rates": [
+                0.0875,
+                0.085,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "wta_rates": [
+                0.045556,
+                0.021667,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "held_after": {
+                "0": "cat",
+                "1": "dog"
+              }
+            }
+          ],
+          "empty": {
+            "resolved": null,
+            "wta_rates": [
+              0.005833,
+              0.006389,
+              0.005833,
+              0.006667,
+              0.006111
+            ]
+          },
+          "lesion": {
+            "order": [
+              "dog",
+              "cat"
+            ],
+            "load_hold_alive_min": 0.0,
+            "resolved": null,
+            "register": null,
+            "pool": null,
+            "margin": 0.000278,
+            "register_rates": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "wta_rates": [
+              0.005833,
+              0.006389,
+              0.005833,
+              0.006667,
+              0.006111
+            ],
+            "held_after": {}
+          }
+        },
+        {
+          "seed": 17,
+          "two_live": [
+            {
+              "order": [
+                "dog",
+                "cat"
+              ],
+              "load_hold_alive_min": 0.06944444444444446,
+              "resolved": null,
+              "register": null,
+              "pool": null,
+              "margin": 0.035833,
+              "register_rates": [
+                0.09,
+                0.0975,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "wta_rates": [
+                0.056111,
+                0.020278,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "held_after": {
+                "0": "dog",
+                "1": "cat"
+              }
+            },
+            {
+              "order": [
+                "cat",
+                "dog"
+              ],
+              "load_hold_alive_min": 0.06944444444444446,
+              "resolved": null,
+              "register": null,
+              "pool": null,
+              "margin": 0.035833,
+              "register_rates": [
+                0.09,
+                0.0975,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "wta_rates": [
+                0.056111,
+                0.020278,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "held_after": {
+                "0": "cat",
+                "1": "dog"
+              }
+            }
+          ],
+          "empty": {
+            "resolved": null,
+            "wta_rates": [
+              0.006667,
+              0.006111,
+              0.006111,
+              0.006111,
+              0.006111
+            ]
+          },
+          "lesion": {
+            "order": [
+              "dog",
+              "cat"
+            ],
+            "load_hold_alive_min": 0.0,
+            "resolved": null,
+            "register": null,
+            "pool": null,
+            "margin": 0.000556,
+            "register_rates": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "wta_rates": [
+              0.006667,
+              0.006111,
+              0.006111,
+              0.006111,
+              0.006111
+            ],
+            "held_after": {}
+          }
+        },
+        {
+          "seed": 19,
+          "two_live": [
+            {
+              "order": [
+                "dog",
+                "cat"
+              ],
+              "load_hold_alive_min": 0.03888888888888889,
+              "resolved": "dog",
+              "register": 0,
+              "pool": "w0",
+              "margin": 0.106667,
+              "register_rates": [
+                0.09375,
+                0.0675,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "wta_rates": [
+                0.106667,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "held_after": {
+                "0": "dog",
+                "1": "cat"
+              }
+            },
+            {
+              "order": [
+                "cat",
+                "dog"
+              ],
+              "load_hold_alive_min": 0.03888888888888889,
+              "resolved": "cat",
+              "register": 0,
+              "pool": "w0",
+              "margin": 0.106667,
+              "register_rates": [
+                0.09375,
+                0.0675,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "wta_rates": [
+                0.106667,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "held_after": {
+                "0": "cat",
+                "1": "dog"
+              }
+            }
+          ],
+          "empty": {
+            "resolved": null,
+            "wta_rates": [
+              0.005278,
+              0.004167,
+              0.005278,
+              0.004167,
+              0.006389
+            ]
+          },
+          "lesion": {
+            "order": [
+              "dog",
+              "cat"
+            ],
+            "load_hold_alive_min": 0.0,
+            "resolved": null,
+            "register": null,
+            "pool": null,
+            "margin": 0.001111,
+            "register_rates": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "wta_rates": [
+              0.005278,
+              0.004167,
+              0.005278,
+              0.004167,
+              0.006389
+            ],
+            "held_after": {}
+          }
+        },
+        {
+          "seed": 23,
+          "two_live": [
+            {
+              "order": [
+                "dog",
+                "cat"
+              ],
+              "load_hold_alive_min": 0.1027777777777778,
+              "resolved": "cat",
+              "register": 1,
+              "pool": "w7",
+              "margin": 0.083333,
+              "register_rates": [
+                0.0875,
+                0.085,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "wta_rates": [
+                0.005,
+                0.088333,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "held_after": {
+                "0": "dog",
+                "1": "cat"
+              }
+            },
+            {
+              "order": [
+                "cat",
+                "dog"
+              ],
+              "load_hold_alive_min": 0.1027777777777778,
+              "resolved": "dog",
+              "register": 1,
+              "pool": "w7",
+              "margin": 0.083333,
+              "register_rates": [
+                0.0875,
+                0.085,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "wta_rates": [
+                0.005,
+                0.088333,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "held_after": {
+                "0": "cat",
+                "1": "dog"
+              }
+            }
+          ],
+          "empty": {
+            "resolved": null,
+            "wta_rates": [
+              0.005556,
+              0.006111,
+              0.005,
+              0.006667,
+              0.004722
+            ]
+          },
+          "lesion": {
+            "order": [
+              "dog",
+              "cat"
+            ],
+            "load_hold_alive_min": 0.0,
+            "resolved": null,
+            "register": null,
+            "pool": null,
+            "margin": 0.000556,
+            "register_rates": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "wta_rates": [
+              0.005556,
+              0.006111,
+              0.005,
+              0.006667,
+              0.004722
+            ],
+            "held_after": {}
+          }
+        },
+        {
+          "seed": 29,
+          "two_live": [
+            {
+              "order": [
+                "dog",
+                "cat"
+              ],
+              "load_hold_alive_min": 0.008333333333333335,
+              "resolved": "dog",
+              "register": 0,
+              "pool": "w0",
+              "margin": 0.121111,
+              "register_rates": [
+                0.095,
+                0.02,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "wta_rates": [
+                0.121111,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "held_after": {
+                "0": "dog",
+                "1": "cat"
+              }
+            },
+            {
+              "order": [
+                "cat",
+                "dog"
+              ],
+              "load_hold_alive_min": 0.008333333333333335,
+              "resolved": "cat",
+              "register": 0,
+              "pool": "w0",
+              "margin": 0.121111,
+              "register_rates": [
+                0.095,
+                0.02,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "wta_rates": [
+                0.121111,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "held_after": {
+                "0": "cat",
+                "1": "dog"
+              }
+            }
+          ],
+          "empty": {
+            "resolved": null,
+            "wta_rates": [
+              0.006389,
+              0.005833,
+              0.005833,
+              0.005556,
+              0.006111
+            ]
+          },
+          "lesion": {
+            "order": [
+              "dog",
+              "cat"
+            ],
+            "load_hold_alive_min": 0.0,
+            "resolved": null,
+            "register": null,
+            "pool": null,
+            "margin": 0.000278,
+            "register_rates": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "wta_rates": [
+              0.006389,
+              0.005833,
+              0.005833,
+              0.005556,
+              0.006111
+            ],
+            "held_after": {}
+          }
+        },
+        {
+          "seed": 31,
+          "two_live": [
+            {
+              "order": [
+                "dog",
+                "cat"
+              ],
+              "load_hold_alive_min": 0.027777777777777783,
+              "resolved": "cat",
+              "register": 1,
+              "pool": "w7",
+              "margin": 0.129444,
+              "register_rates": [
+                0.0525,
+                0.1025,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "wta_rates": [
+                0.0,
+                0.129444,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "held_after": {
+                "0": "dog",
+                "1": "cat"
+              }
+            },
+            {
+              "order": [
+                "cat",
+                "dog"
+              ],
+              "load_hold_alive_min": 0.027777777777777783,
+              "resolved": "dog",
+              "register": 1,
+              "pool": "w7",
+              "margin": 0.129444,
+              "register_rates": [
+                0.0525,
+                0.1025,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "wta_rates": [
+                0.0,
+                0.129444,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "held_after": {
+                "0": "cat",
+                "1": "dog"
+              }
+            }
+          ],
+          "empty": {
+            "resolved": null,
+            "wta_rates": [
+              0.005556,
+              0.006389,
+              0.006389,
+              0.007222,
+              0.005556
+            ]
+          },
+          "lesion": {
+            "order": [
+              "dog",
+              "cat"
+            ],
+            "load_hold_alive_min": 0.0,
+            "resolved": null,
+            "register": null,
+            "pool": null,
+            "margin": 0.000833,
+            "register_rates": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "wta_rates": [
+              0.005556,
+              0.006389,
+              0.006389,
+              0.007222,
+              0.005556
+            ],
+            "held_after": {}
+          }
+        }
+      ],
+      "n_two_live_resolved": 6,
+      "n_same_register_both_orders": 8,
+      "n_both_held_after": 8,
+      "n_empty_resolved": 0,
+      "n_lesion_resolved": 0,
+      "min_two_live_margin": 0.023889
+    }
+  ]
+}
