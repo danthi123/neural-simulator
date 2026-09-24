@@ -7,6 +7,13 @@ the [project handoff](HANDOFF.md), and the live state in
 board, when checked out, was `research/coordination/workboard.json` (⚠️ now ~a month
 stale — the live board is [GAP_CLOSURE_MISSION.md](GAP_CLOSURE_MISSION.md) CURRENT STATE; workboard.json is being retired).
 
+## 2026-09-24 (evening) — the measurement grows from 38 to 49 abilities; nine more pieces merged, all off by default; curiosity's fifth attempt falls short; one result rejected for missing records
+
+**Merged after independent review, all off by default until their own six-seed tests:** tracking what someone else wrongly believes, multi-step "A before B before C" reasoning, a faster warm start, the brain's own spiking fact-binder in chat, a link between two thinking organs in the shared core, the working-memory focus link, a test of whether a fact in a reply was learned by the brain itself, and the multi-turn test for the mood-settling mechanism (which stays off until its three conditions pass). Merging tonight: the chat-only AI teacher, the reward signal read from the brain's own surprise, and the gap#4 learning lever.
+**The measurement now covers 49 abilities (from 38 this morning):** pronoun resolution, the thought-sharing bus, emotion from body signals, the two sleep and consolidation learning processes, reading other people's feelings, and cause-and-effect questions all join the next full measurement. Three are held back with the reason recorded: one was retracted by its own test, and two measure features that are still switched off.
+**Results:** curiosity's fifth attempt falls short (1 of 6 setups; the part that sets its resting level is the weak spot). Dopamine tag-and-capture passes on all six setups for its short-term path; the long-term-memory path that would justify switching it on is not measured yet. A memory-attractor result was **not** accepted: a third of its files have no record of ever being run, so those two seeds are being re-run.
+**Incident:** an agent deleted Claude's session history and memory notes. Memory was rebuilt, and two automatic guards now block deletes aimed at Claude's files or the home folder, and full-brain builds run without a memory cap.
+
 ## 2026-09-24 (afternoon) — three memory and honesty fixes now ship on by default; the brain's learned word-finder works in the real chat path
 
 **Switched on by default:** the memory that re-checks a new memory and re-forms it if it didn't stick, the "remind me" memory that keeps its cue, and the source monitor that says "I can't tell" instead of guessing at a tie. A pre-registered check on six seeds passed every criterion, and the standard measure of how much the brain drives its replies rose from 0.590 to 0.603.

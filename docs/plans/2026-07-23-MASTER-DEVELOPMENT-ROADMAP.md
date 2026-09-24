@@ -1188,6 +1188,18 @@ Perception/attention/WM, affect, curiosity, self/workspace/ToM, and language are
 
 ## 8. IMMEDIATE NEXT ACTIONS
 
+**2026-09-24 (evening):** merged default-OFF after SOUND review: AG-REG row-registry hook (list rows; rows whose turn the
+battery cannot run are parked; module `PARKED`; the battery now reads each row module's literal `EXTRA_TURNS` via ast),
+A1 live-organ rows, A2 learning rows, A5 false-belief, A7 prewarm, A4 xedge-in-wave3, slot-binder production gate,
+content-provenance, wm-focus-bind, the SETTLE multi-turn instrument (SETTLE stays OFF), S06 hygiene hook. **Registry
+38 -> 49 faculties (33 neural-lesion);** parked: self-schema (retracted, Amendment 3), tom-false-belief and
+reasoning-transitive-chat (default-OFF capability rows -> the b2b-caps tag). **Scored:** curiosity x metacog v5 NO-GO 1/6
+(G13 set-point residual); DA tag-capture buffer-only GO 6/6 (the LTM-on arm is the flip read and is unmeasured). The CA3
+grid's GO 6/6 claim was REJECTED by the independent check (seeds 101/102: 18 files with no execution provenance) -> rerun
+queued; affect-vocab seed 102 lost with a recycled pool2 -> requeued; D6 capacity N2000 arms missing -> requeued.
+Merging next: AI-teacher (@1d3baa4c4, 6-seed UNDEFINED until SHAM arms land), A9 fix2, A10 (four follow-ups before any
+battery or flip), and the curiosity-v5 / DA-tag findings. Then: B2a aggregate (~04:00), SETTLE seeds 44/100-102.
+
 **2026-09-24 (afternoon):** **Batch 1 SHIPPED default-ON** (`research/findings/2026-09-24-flip-validated-fixes-production-default-battery-GO.md`):
 BRAIN_EPISODIC_STORE_VERIFY, BRAIN_PMEM_FACILITATION, BRAIN_SOURCE_PROV_ABSTAIN_AT_TIE; production-default batteries pass every
 pre-registered criterion; shipped thin headline 0.603, robust core 15 (was 0.590 / 14); adequate 0.949, core 24. Battery B2a on
