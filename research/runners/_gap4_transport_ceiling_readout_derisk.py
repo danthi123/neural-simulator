@@ -95,7 +95,8 @@ _FP_KEYS = ("hidden", "pool_k", "n_hidden_layers", "settle_steps", "credit_steps
             "tonic_h_pA", "tonic_o_pA", "graded_credit", "wpi_init", "wpi_lr", "kp_lr", "kp_decay",
             "read_window", "read_gain", "isi_steps", "eval_frozen", "spi_silence", "n_super", "n_members",
             "held_per_super", "n_prop", "member_id_dim", "n_obs", "noise", "oracle_epochs", "oracle_lr",
-            "oracle_batch", "decode_ridge", "read_quantity", "no_structural")
+            "oracle_batch", "decode_ridge", "read_quantity", "no_structural", "ff_w_init", "propagation_strength",
+            "no_ff_stp")
 
 
 # ============================================================================================================
@@ -103,8 +104,29 @@ class Gap4ReadoutNet(Gap4InEngineNet):
     """Gap4InEngineNet + the read-regime levers. Every lever at its legacy value => the parent's code path."""
 
     def __init__(self, n_in, hidden, k, seed=0, feedback="fixed", read_window=0, read_gain=1.0, isi_steps=0,
-                 eval_frozen=False, spi_silence=False, read_quantity="event", no_structural=False, **kw):
+                 eval_frozen=False, spi_silence=False, read_quantity="event", no_structural=False,
+                 propagation_strength=None, no_ff_stp=False, **kw):
         super().__init__(n_in, hidden, k, seed=seed, feedback=feedback, **kw)
+        # AMENDMENT 2 (operating point). The dev transmission scan (diag_transmit_scan_*_s7.json) shows that with the
+        # default Tsodyks-Markram short-term depression ON, NO feedforward gain (ff_w_init 4->40, propagation
+        # 0.05->0.5) and no tonic level changes hidden-layer rates: the explicit feedforward pathway transmits
+        # ~nothing at these presynaptic rates, so no arm's learning can reach the output read. no_ff_stp bypasses the
+        # STP factor on the explicit FEEDFORWARD synapses only (cp_stp_disabled_mask; the recurrent background keeps
+        # it). Requires no_structural (elimination compaction would misalign the per-synapse mask). Defaults = legacy.
+        if propagation_strength is not None:
+            self.cfg.propagation_strength = float(propagation_strength)
+        self.no_ff_stp = bool(no_ff_stp)
+        if self.no_ff_stp:
+            if not no_structural:
+                raise ValueError("--no-ff-stp requires --no-structural-plasticity (mask alignment)")
+            from sim.backend import to_host
+            coo = self.br._get_cached_coo()
+            row = np.asarray(to_host(coo.row)); col = np.asarray(to_host(coo.col))
+            ff = np.zeros(row.shape[0], dtype=bool)
+            for pre, post in self._ff_edges:
+                ff |= ((row >= pre[0]) & (row <= pre[-1]) & (col >= post[0]) & (col <= post[-1]))
+            self.br.cp_stp_disabled_mask = self._xp.asarray(ff)
+            self.n_ff_stp_disabled = int(ff.sum())
         # read_quantity: "event" = cp_bdsp_E (isolated / first-of-burst spikes; legacy). "spikes" = EVERY somatic
         # spike (events + burst spikes), per step. AMENDMENT 1: the dev diagnostic diag_eread_monotonic_s7.json shows
         # E is NON-MONOTONIC in drive and the output layer sits at its peak, so LTP LOWERS the event read.
@@ -234,7 +256,8 @@ def _build(arm, n_in, k, args, seed):
         kp_lr=args.kp_lr, kp_decay=args.kp_decay,
         read_window=args.read_window, read_gain=args.read_gain, isi_steps=args.isi_steps,
         eval_frozen=args.eval_frozen, spi_silence=args.spi_silence,
-        read_quantity=args.read_quantity, no_structural=args.no_structural)
+        read_quantity=args.read_quantity, no_structural=args.no_structural,
+        ff_w_init=args.ff_w_init, propagation_strength=args.propagation_strength, no_ff_stp=args.no_ff_stp)
     net.cfg.bdsp_w_max = float(args.bdsp_w_max)
     net.cfg.bdsp_w_min = -float(args.bdsp_w_max)
     net._spi_frozen = bool(freeze)
@@ -623,6 +646,9 @@ def main():
     ap.add_argument("--spi-silence-outside-credit", dest="spi_silence", action="store_true")
     ap.add_argument("--read-quantity", dest="read_quantity", default="event", choices=["event", "spikes"])
     ap.add_argument("--no-structural-plasticity", dest="no_structural", action="store_true")
+    ap.add_argument("--ff-w-init", dest="ff_w_init", type=float, default=4.0)
+    ap.add_argument("--propagation-strength", dest="propagation_strength", type=float, default=None)
+    ap.add_argument("--no-ff-stp", dest="no_ff_stp", action="store_true")
     ap.add_argument("--silent-stats", dest="silent_stats", action="store_true")
     ap.add_argument("--decode-ridge", dest="decode_ridge", type=float, default=1.0)
     # --- task (the 2026-09-15 task) ---
