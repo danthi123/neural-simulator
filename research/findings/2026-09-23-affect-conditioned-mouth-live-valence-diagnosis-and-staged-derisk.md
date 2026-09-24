@@ -1,6 +1,6 @@
 ---
 type: finding
-status: partial
+status: undefined
 claim_check: measured
 date: 2026-09-23
 lane: A · Affect — D5 "feel" over the OPEN reply (roadmap §8)
@@ -9,13 +9,18 @@ mechanism: webapp/affect_conditioned_mouth.py (BRAIN_OPEN_ENDED_AFFECT_CONDITION
   the Qwen articulation mouth's GENERATION on the spiking affect organ's held valence. 'prompt' = graded,
   dead-zone-free MOOD line in the existing build_prompt channel; 'resid' = c*K*u added to Qwen's layer-12 residual
   stream (contrastive activation addition), u = the mouth's own WARRINER-contrast axis.
+artifacts:
+  - research/findings/raw/_affect_conditioned_mouth/amend1_prompt/affect_conditioned_mouth_prompt_verdict.json
+  - research/findings/raw/_affect_conditioned_mouth/amend1_resid/affect_conditioned_mouth_resid_verdict.json
 ---
 
 # Affect-conditioned Qwen mouth — why the brain's valence never reached the mouth, and the staged 6-seed de-risk (2026-09-23)
 
-Status: **partial**. The diagnosis below is measured on all 6 seeds. The tone verdict for the new method is
-**not measured yet**: the two 42-arm AMENDMENT-1 runs are staged (see "Staged runs"). This doc preregisters their
-gate. **AMENDMENT 1 (fix round, 2026-09-23) changed the instrument before any tone result was read; see the
+Status: **UNDEFINED on both modes** (2026-09-23, AMENDMENT 2 — scored). The diagnosis below is measured on all 6
+seeds. The 6-seed AMENDMENT-1 tone runs (both `prompt` and `resid`, 42 arms each) completed and were scored with
+the literal preregistered command. **Neither mode reaches a GO or a NO-GO: an instrument precondition fails on
+both, which by this gate's own design means UNDEFINED, not a negative.** See "AMENDMENT 2: the scored result"
+below. **AMENDMENT 1 (fix round, 2026-09-23) changed the instrument before any tone result was read; see the
 amendment log at the end.**
 
 ## What was measured: the live-valence magnitude problem has two parts
@@ -134,10 +139,70 @@ One gpu_queue line per (mode, seed). Qwen runs on CUDA; the brain runs numpy, th
 NO-GOs. Arms run one after another inside each line, so only one brain is live at a time. Results go to
 `research/findings/raw/_affect_conditioned_mouth/amend1_{prompt,resid}/arm_s<seed>_<arm>.json`, and the verdict to
 `affect_conditioned_mouth_<mode>_verdict.json` in the same directory. The controller now defaults XDG_RUNTIME_DIR
-and refuses to run without the memory cap.
+and refuses to run without the memory cap. **Both queue lines completed 2026-09-23** (all 6 seeds x 7 arms, both
+modes); see "AMENDMENT 2" below for the scored result.
+
+## AMENDMENT 2: the scored result (2026-09-23) — UNDEFINED on both modes
+
+Both AMENDMENT-1 runs are complete: 6 seeds x 7 arms (pos, neg, lesion, lesion_rep, ctrl_pos, ctrl_neg, pos_rep) x
+2 modes = 84 arm files, all present. Scored with the literal preregistered command,
+`.venv/bin/python -m research.runners._lbf_affect_conditioned_mouth_derisk --score-only --mode <prompt|resid>`,
+on a clean checkout of `origin/main` (this doc's own runner, unmodified). `--selftest` passes first, including
+every planted-failure check (the gate can fail in its failing direction). Verdict artifacts:
+`research/findings/raw/_affect_conditioned_mouth/amend1_{prompt,resid}/affect_conditioned_mouth_{prompt,resid}_verdict.json`.
+
+**Both modes: UNDEFINED, not a negative.** The preregistered instrument precondition **(3a-reply)** — content
+identity over the GENERATED known reply, fact-word recall vs. the lesion reply >= 0.75 on every conditioned
+arm/seed — is UNMET on both modes. Prompt mode: 0/6 seeds pass; 3/6 seeds (44, 101, 102) are unmeasurable because
+the lesion reply carries fewer than the 2 fact words the check needs, and on the 3 measurable seeds recall is 0.0 on
+9 of 15 conditioned pairs. Resid mode: 3/6 seeds (42, 44, 102) are unmeasurable the same way, and on the 3 measurable
+seeds recall is 0.0 on 14 of 15 conditioned pairs. This
+precondition exists exactly to prevent a tone-shift reading from being reported when the conditioned generation
+has stopped reproducing the same underlying facts as its lesion baseline — unmet here means the verdict is
+UNDEFINED by the gate's own design (`tools/gates/verdict_preconditions`), not that the method failed.
+
+**resid mode also fails (4) fluency:** `max_salad_frac = 1.0` (worst: seed 43, `ctrl_neg`, "What do you think
+about the future" — a fully degenerate/repetitive reply), against the <=0.16 precondition. This is a second,
+independent reason resid mode cannot be read as a tone result: at K=4.0 on layer 12, the residual-stream steering
+sometimes collapses generation into salad rather than shifting its tone.
+
+**What the raw (non-gating) numbers say, honestly, since UNDEFINED still permits describing what was measured:**
+- **prompt mode** does not read as a tone effect even setting the instrument failure aside: the preregistered
+  directional gate is NO-GO (0/6 seeds pass the raw-std band on both signs; on the SEM-secondary the positive side
+  is 3/6 correct-sign, and the NEGATIVE side is 1/6 correct and 4/6 WRONG sign — negative conditioning pushed the
+  tone the opposite way on 4 of 6 seeds), and **only 14.8% of the treatment-vs-control tone gap is attributable to the
+  real organ signal** — 85.2% of it is also present in the shuffled-valence control, i.e. it is not specifically
+  the brain's mood driving it.
+- **resid mode** reads as a much larger, more consistently-signed effect (4/6 seeds pos-correct, 2/6 neg-correct
+  on the raw-std gate; 6/6 both signs on the non-gating SEM-secondary; 94.8% of the tone gap is attributable to
+  the real signal, not the control) — but this is the same run whose fluency precondition failed, and the
+  incoherent output sits mostly in the CONTROL arms: of the 18 resid tone rows above salad 0.16, 13 are
+  ctrl_pos/ctrl_neg, 5 are neg and 0 are pos. Salad lowering the control gap would inflate the 94.8% attribution,
+  so the apparent effect and the fluency collapse are confounded and cannot be disentangled from these arms.
+
+**Provenance caveat.** The copied arm artifacts' `.prov.json` sidecars record `git_sha: 008cd8893` (merged into
+`origin/main` as the second parent of `5e9a7955b`) with `git_dirty: true` in the source worktree at run time —
+this is explained by provenance bookkeeping: the source worktree is still at 008cd8893 and its only tracked diff
+is research/findings/raw/_provenance/runs.jsonl (plus untracked raw outputs). An edit-then-revert during the runs
+cannot be excluded from git alone. The (O) organ-read-equality precondition (every arm's priming differential matches
+the committed NO-GO runs' value to 1e-12) PASSED on every seed/arm in both modes, which is strong indirect
+evidence the brain-side path was unchanged; it does not by itself rule out an uncommitted change to the
+mouth-side code. Flagged here rather than silently assumed clean.
+
+**Next-method note (not built this round):** the (3a-reply) precondition caught real content divergence, not a
+crude check being too strict. Example: prompt mode s43, known prompt 'Tell me about frank_lincoln_wright' — the
+lesion arm describes Frank Lincoln Wright, while both pos AND ctrl_pos describe Franklin D. Roosevelt. Any
+conditioning, the shuffled-valence control included, changes the sampled decode path and therefore WHAT is said
+about the topic; a richer content check would likely fail the same way. So the method (conditioning the mouth's
+generation on affect) changes content along with tone. The next method must shape tone while holding the reply's
+content fixed (for example, choosing among content-equivalent candidate replies by the brain's affect read, or
+conditioning only the style channel), and resid mode additionally needs a fluency-constrained K. THE LAW applies:
+this is a verdict on the generation-conditioning method, not on affect shaping the reply.
 
 ## Honest residuals
-- The tone result does not exist yet. This doc makes no claim that affect is load-bearing over the open reply.
+- **(AMENDMENT 2) The tone result exists and is UNDEFINED on both modes**, not a negative and not a positive: an
+  instrument precondition failed on both. This doc makes no claim that affect is load-bearing over the open
+  reply — the data do not support a claim in either direction yet.
 - The normalization is host arithmetic, a named shortcut. The brain-based version would be a gain-adapting
   reader population.
 - (Superseded by AMENDMENT 1.) Before the amendment, Qwen decoded with the server's fixed seed 42 in every arm,
@@ -171,3 +236,12 @@ The changes:
    because `*_summary.json` is gitignored and the cited file had never been committed.
 6. The claim scope and terminology are corrected as described above. The base gate and all 9 of its
    preconditions are unchanged, for comparability.
+
+**AMENDMENT 2: 2026-09-23, scoring pass (worktree `research/d5-affect-conditioned-verdict`).** Both AMENDMENT-1
+runs (prompt, resid; 6 seeds x 7 arms each) had completed in a separate build worktree. This pass copied the arm
+JSON + `.prov.json` sidecars into a clean `origin/main` checkout (no runner code changed) and ran the literal
+preregistered scoring command for both modes. Result: **UNDEFINED on both modes** — see "AMENDMENT 2: the scored
+result" above for the full breakdown (failed preconditions, the raw non-gating numbers, and the provenance
+caveat on the source worktree's `git_dirty: true` at run time). No new runs were staged by this pass: the 6-seed,
+both-mode coverage the preregistration calls for is complete; what is missing is not a run but a better
+instrument (thin content-identity check; resid mode's untuned steering magnitude).
