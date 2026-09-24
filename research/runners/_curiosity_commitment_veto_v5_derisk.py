@@ -101,7 +101,7 @@ from research.runners.onebrain_merge_framework import REGISTRY, OrganDescriptor,
 from research.runners.metacog_production_organ import MetacogProductionOrgan, nmda_norm_margin  # noqa: E402
 from research.runners._curiosity_metacog_conflict_xedge_derisk import (  # noqa: E402
     build_pool as build_base_pool, METACOG_MARGIN, _metacog_het, _meta_exact, _curiosity_production_threshold,
-    perm_null, spearman, level_rho, EVIDENCE_GRID, READ_REPS, STEPS_PER_REP, G7_RHO_MAX,
+    perm_null, spearman, level_rho, EVIDENCE_GRID, G7_RHO_MAX,
 )
 
 RS, FS = V4.RS, V4.FS
@@ -537,6 +537,20 @@ def confident_half_mean(sw) -> float:
     return float(np.mean([l["ask_hz"] for l in sw["levels"] if l["evidence"] >= 0.6 - 1e-9]))
 
 
+def veto_selectivity(intact, swap) -> dict:
+    """REPORTED: the veto reads WHICH channel dominates. Intact arm drives class 0, swap drives class 1; at every
+    level the favored channel's veto should out-fire the rival's. Returns the per-level (favored - rival) Hz and the
+    Spearman of the favored veto against evidence."""
+    fav_i, riv_i = _vals(intact, "cv_veto0_hz"), _vals(intact, "cv_veto1_hz")
+    fav_s, riv_s = _vals(swap, "cv_veto1_hz"), _vals(swap, "cv_veto0_hz")
+    d_i = [a - b for a, b in zip(fav_i, riv_i)]
+    d_s = [a - b for a, b in zip(fav_s, riv_s)]
+    return {"fav_minus_riv_intact_hz": d_i, "fav_minus_riv_swap_hz": d_s,
+            "levels_favored_wins": int(sum(x > 0 for x in d_i) + sum(x > 0 for x in d_s)), "n_levels": 2 * len(d_i),
+            "rho_favored_veto_vs_evidence": {"intact": spearman(list(EVIDENCE_GRID), fav_i),
+                                             "class_swap": spearman(list(EVIDENCE_GRID), fav_s)}}
+
+
 def run_seed(seed: int, determinism: bool = True, verbose: bool = True, quick: bool = False) -> dict:
     t0 = time.time()
     pool, org, rec, cal = _new_session(seed)
@@ -577,23 +591,34 @@ def run_seed(seed: int, determinism: bool = True, verbose: bool = True, quick: b
     loop_lc_off = arm({V4.FB_LOOP_GATE: 0.0, V4.LC_GAIN_GATE: 0.0})
     autoinh_lesion = arm({V4.LC_AUTO_GATE: 0.0})                            # G12b
 
-    # G8: lesion metacog's comparator relay (meta_margin_fs -> meta_schema), everything else intact.
+    # G8: lesion metacog's comparator relay (meta_margin_fs -> meta_schema). SCORED with the veto output CLOSED:
+    # G8 asks whether the EDGE's coupling needs the comparator's margin computation (v4's claim, v4's statistic);
+    # the veto is a second, downstream opponent read of the same comparator and is reported separately with its
+    # output open (PREREG §3).
     rm = b.region_manager
     r, c, _ = V4._edge_map(b)
     relay_mask = np.isin(r, np.asarray(rm.indices("meta_margin_fs"))) & np.isin(c, np.asarray(rm.indices("meta_schema")))
     data = np.asarray(to_host(b.cp_connections.data)).copy()
     data2 = data.copy()
     data2[relay_mask] = 0.0
-    b.cp_connections.data = xp.asarray(data2, dtype=b.cp_connections.data.dtype)
-    with pool.sequence_isolation():
-        for ev in EVIDENCE_GRID:
-            V4.read_level(pool, org, rec, ev)
-    relay_lesion = V4.sweep(pool, org, rec)
-    relay_lesion["relay_weight_sum_at_measurement"] = float(np.asarray(to_host(b.cp_connections.data))[relay_mask].sum())
-    b.cp_connections.data = xp.asarray(data, dtype=b.cp_connections.data.dtype)
-    with pool.sequence_isolation():
-        for ev in EVIDENCE_GRID:
-            V4.read_level(pool, org, rec, ev)
+    relay_arms = {}
+    for name, veto in (("relay_lesion", 0.0), ("relay_lesion_veto_open", 1.0)):
+        _set(b, **MECH_GATES)
+        _set(b, **{VETO_GATE: veto})
+        b.cp_connections.data = xp.asarray(data2, dtype=b.cp_connections.data.dtype)
+        with pool.sequence_isolation():
+            for ev in EVIDENCE_GRID:
+                V4.read_level(pool, org, rec, ev)
+        sw = V4.sweep(pool, org, rec)
+        sw["relay_weight_sum_at_measurement"] = float(np.asarray(to_host(b.cp_connections.data))[relay_mask].sum())
+        sw["gates_at_measurement"] = {k: float(v) for k, v in b._transmission_gate_values.items()}
+        b.cp_connections.data = xp.asarray(data, dtype=b.cp_connections.data.dtype)
+        _set(b, **MECH_GATES)
+        with pool.sequence_isolation():
+            for ev in EVIDENCE_GRID:
+                V4.read_level(pool, org, rec, ev)
+        relay_arms[name] = sw
+    relay_lesion, relay_lesion_veto_open = relay_arms["relay_lesion"], relay_arms["relay_lesion_veto_open"]
 
     g11p = g11_protocol(pool, org, rec)
     g11 = g11p["g11"]
@@ -633,7 +658,7 @@ def run_seed(seed: int, determinism: bool = True, verbose: bool = True, quick: b
     loop_only = bool([l["ask_hz_per_rep"] for l in loop_lc_on["levels"]]
                      == [l["ask_hz_per_rep"] for l in loop_lc_off["levels"]])
     all_sweeps = (combined, swap, veto_lesion, swap_veto_lesion, gain_lesion, swap_gain_lesion, edge_lesion,
-                  both_lesion, loop_lc_on, loop_lc_off, autoinh_lesion, relay_lesion, restored)
+                  both_lesion, loop_lc_on, loop_lc_off, autoinh_lesion, relay_lesion, relay_lesion_veto_open, restored)
     bystander_spikes = int(sum(l["bystander_spikes"] for sw in all_sweeps for l in sw["levels"])
                            + sum(v["bystander_spikes"] for rd in g11p["reads"].values() for v in rd.values())
                            + sum(v["bystander_spikes"] for v in g11p["place"].values()))
@@ -651,7 +676,10 @@ def run_seed(seed: int, determinism: bool = True, verbose: bool = True, quick: b
             "loop_lesion_lc_off": (loop_lc_off["gates_at_measurement"][V4.FB_LOOP_GATE] == 0.0
                                    and loop_lc_off["gates_at_measurement"][V4.LC_GAIN_GATE] == 0.0),
             "autoinhibition_lesion": autoinh_lesion["gates_at_measurement"][V4.LC_AUTO_GATE] == 0.0,
-            "relay_lesion": relay_lesion["relay_weight_sum_at_measurement"] == 0.0,
+            "relay_lesion": (relay_lesion["relay_weight_sum_at_measurement"] == 0.0
+                             and relay_lesion["gates_at_measurement"][VETO_GATE] == 0.0),
+            "relay_lesion_veto_open": (relay_lesion_veto_open["relay_weight_sum_at_measurement"] == 0.0
+                                       and relay_lesion_veto_open["gates_at_measurement"][VETO_GATE] == 1.0),
             "g11_drive_sweep_gates": all(v["gates_held"] for rd in g11p["reads"].values() for v in rd.values())
             and all(v["gates_held"] for v in g11p["place"].values()),
             "additive_control_closed_in_mechanism_arms": all(
@@ -723,6 +751,7 @@ def run_seed(seed: int, determinism: bool = True, verbose: bool = True, quick: b
         "rho": rho_raw, "rho_swap": rho_swap, "rho_veto_lesion_arm": level_rho(veto_lesion),
         "rho_swap_veto_lesion_arm": level_rho(swap_veto_lesion), "rho_gain_lesion_arm": level_rho(gain_lesion),
         "rho_swap_gain_lesion_arm": level_rho(swap_gain_lesion), "rho_relay_lesion": rho_relay,
+        "rho_relay_lesion_veto_open_arm": level_rho(relay_lesion_veto_open), "veto_selectivity": veto_selectivity(combined, swap),
         "rho_both_lesion": rho_both, "rho_lc_ne": rho_lc,
         "ask_range_hz": {"combined": rng_c, "gain_lesion": rng_g, "edge_lesion": rng_e,
                          "veto_lesion": _rng(veto_lesion)[0]},
@@ -738,7 +767,8 @@ def run_seed(seed: int, determinism: bool = True, verbose: bool = True, quick: b
                  "class_swap_veto_lesion": swap_veto_lesion, "gain_lesion": gain_lesion,
                  "class_swap_gain_lesion": swap_gain_lesion, "edge_lesion": edge_lesion, "both_lesion": both_lesion,
                  "loop_lesion_lc_on": loop_lc_on, "loop_lesion_lc_off": loop_lc_off,
-                 "autoinhibition_lesion": autoinh_lesion, "relay_lesion": relay_lesion},
+                 "autoinhibition_lesion": autoinh_lesion, "relay_lesion": relay_lesion,
+                 "relay_lesion_veto_open": relay_lesion_veto_open},
         "peak_rss_mb": resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1024.0,
         "elapsed_s": round(time.time() - t0, 1),
     }
