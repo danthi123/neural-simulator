@@ -1,0 +1,29 @@
+{
+ "run_id": "1790266315-243047",
+ "runner": "research/runners/_affect_marker_settle_default_flip_verify.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/wf_4703a2bd-4dd-5/research/runners/_affect_marker_settle_default_flip_verify.py",
+  "--seed",
+  "7",
+  "--out",
+  "research/findings/raw/_affect_marker_settle_default_flip/s7_equivalence.json"
+ ],
+ "git_sha": "b154be691",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-24T12:11:55",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_affect_marker_settle_default_flip/s7_equivalence.json"
+}

@@ -1,0 +1,521 @@
+{
+  "GO": true,
+  "chance": null,
+  "claim": "env-unset (new default) reproduces explicit BRAIN_AFFECT_MARKER_SETTLE=1 EXACTLY, on this revision; explicit =0 is untouched (differs from the settle-on hash, as expected)",
+  "disabled_processes": [],
+  "go": true,
+  "hash_sha256": {
+    "explicit_settle_0": "86649170765617b7d08012833bd93092253283951c4549f85d4b1d5055886363",
+    "explicit_settle_1": "08aed7b11d33ba36f4f6ef9b2a75bc44b0bf85805a65490d6dbe22de9e65e017",
+    "unset_default": "08aed7b11d33ba36f4f6ef9b2a75bc44b0bf85805a65490d6dbe22de9e65e017"
+  },
+  "label": "settle default-on flip: env-unset reproduces explicit SETTLE=1 (seed 7, dev)",
+  "preconditions": [
+    {
+      "detail": "measured=True expect=True",
+      "kind": "require",
+      "name": "env-unset resolves settle_enabled() True (the new default)",
+      "note": "",
+      "ok": true
+    },
+    {
+      "detail": "measured=True expect=True",
+      "kind": "require",
+      "name": "env-unset reads _SETTLE_DEFAULT_ON True (the prepared literal)",
+      "note": "",
+      "ok": true
+    },
+    {
+      "detail": "measured=True expect=True",
+      "kind": "require",
+      "name": "hash(env-unset sweep) == hash(explicit SETTLE=1 sweep)",
+      "note": "",
+      "ok": true
+    },
+    {
+      "detail": "measured=False expect=False",
+      "kind": "require",
+      "name": "explicit SETTLE=0 resolves settle_enabled() False (OFF path still reachable)",
+      "note": "",
+      "ok": true
+    },
+    {
+      "detail": "treatment=1 control=0 |sep|=1 > 0.5",
+      "kind": "control",
+      "name": "explicit SETTLE=0 sweep vs explicit SETTLE=1 sweep",
+      "note": "hashes must differ -- confirms the OFF path is untouched, not merely unchanged by omission",
+      "ok": true
+    }
+  ],
+  "residual": "no pinned-10-turn brain_chat transcript tool exists in this repo as of 2026-09-24 (S22's infra, not built yet); this check instead exercises the WTA module's own documented API directly, which is the only call site BRAIN_AFFECT_MARKER_SETTLE reaches (webapp/affect_drives_chat.py -> get_reader() -> settle_enabled(), verified by grep).",
+  "seed": 7,
+  "status": "GO",
+  "sweeps": {
+    "explicit_settle_0": {
+      "arousal": [
+        {
+          "felt_arousal": 0.01,
+          "high": false,
+          "margin": 0.154167,
+          "rates": [
+            0.154167,
+            0.0
+          ]
+        },
+        {
+          "felt_arousal": 0.02,
+          "high": false,
+          "margin": 0.167361,
+          "rates": [
+            0.167361,
+            0.0
+          ]
+        },
+        {
+          "felt_arousal": 0.05,
+          "high": true,
+          "margin": 0.141667,
+          "rates": [
+            0.0,
+            0.141667
+          ]
+        },
+        {
+          "felt_arousal": 0.065,
+          "high": true,
+          "margin": 0.160417,
+          "rates": [
+            0.0,
+            0.160417
+          ]
+        },
+        {
+          "felt_arousal": 0.075,
+          "high": true,
+          "margin": 0.145833,
+          "rates": [
+            0.0,
+            0.145833
+          ]
+        }
+      ],
+      "valence": [
+        {
+          "level": -3,
+          "margin": 0.165972,
+          "mood": -0.085,
+          "rates": [
+            0.165972,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "level": -2,
+          "margin": 0.169444,
+          "mood": -0.06,
+          "rates": [
+            0.0,
+            0.169444,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "level": -1,
+          "margin": 0.174306,
+          "mood": -0.029,
+          "rates": [
+            0.0,
+            0.0,
+            0.174306,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "level": -1,
+          "margin": 0.163194,
+          "mood": -0.02,
+          "rates": [
+            0.0,
+            0.0,
+            0.163194,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "level": 1,
+          "margin": 0.155556,
+          "mood": 0.02,
+          "rates": [
+            0.0,
+            0.0,
+            0.0,
+            0.155556,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "level": 2,
+          "margin": 0.157639,
+          "mood": 0.064,
+          "rates": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.157639,
+            0.0
+          ]
+        },
+        {
+          "level": null,
+          "margin": 0.027083,
+          "mood": 0.069,
+          "rates": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.050694,
+            0.023611
+          ]
+        },
+        {
+          "level": 3,
+          "margin": 0.159722,
+          "mood": 0.085,
+          "rates": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.159722
+          ]
+        }
+      ]
+    },
+    "explicit_settle_1": {
+      "arousal": [
+        {
+          "felt_arousal": 0.01,
+          "high": false,
+          "margin": 0.151389,
+          "rates": [
+            0.151389,
+            0.0
+          ]
+        },
+        {
+          "felt_arousal": 0.02,
+          "high": false,
+          "margin": 0.165278,
+          "rates": [
+            0.165278,
+            0.0
+          ]
+        },
+        {
+          "felt_arousal": 0.05,
+          "high": true,
+          "margin": 0.136111,
+          "rates": [
+            0.0,
+            0.136111
+          ]
+        },
+        {
+          "felt_arousal": 0.065,
+          "high": true,
+          "margin": 0.160417,
+          "rates": [
+            0.0,
+            0.160417
+          ]
+        },
+        {
+          "felt_arousal": 0.075,
+          "high": true,
+          "margin": 0.145833,
+          "rates": [
+            0.0,
+            0.145833
+          ]
+        }
+      ],
+      "valence": [
+        {
+          "level": -3,
+          "margin": 0.161111,
+          "mood": -0.085,
+          "rates": [
+            0.161111,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "level": -2,
+          "margin": 0.1625,
+          "mood": -0.06,
+          "rates": [
+            0.0,
+            0.1625,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "level": -1,
+          "margin": 0.16875,
+          "mood": -0.029,
+          "rates": [
+            0.0,
+            0.0,
+            0.16875,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "level": -1,
+          "margin": 0.1625,
+          "mood": -0.02,
+          "rates": [
+            0.0,
+            0.0,
+            0.1625,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "level": 1,
+          "margin": 0.157639,
+          "mood": 0.02,
+          "rates": [
+            0.0,
+            0.0,
+            0.0,
+            0.157639,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "level": 2,
+          "margin": 0.15,
+          "mood": 0.064,
+          "rates": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.15,
+            0.0
+          ]
+        },
+        {
+          "level": 2,
+          "margin": 0.143056,
+          "mood": 0.069,
+          "rates": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.143056,
+            0.0
+          ]
+        },
+        {
+          "level": 3,
+          "margin": 0.156944,
+          "mood": 0.085,
+          "rates": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.156944
+          ]
+        }
+      ]
+    },
+    "unset_default": {
+      "arousal": [
+        {
+          "felt_arousal": 0.01,
+          "high": false,
+          "margin": 0.151389,
+          "rates": [
+            0.151389,
+            0.0
+          ]
+        },
+        {
+          "felt_arousal": 0.02,
+          "high": false,
+          "margin": 0.165278,
+          "rates": [
+            0.165278,
+            0.0
+          ]
+        },
+        {
+          "felt_arousal": 0.05,
+          "high": true,
+          "margin": 0.136111,
+          "rates": [
+            0.0,
+            0.136111
+          ]
+        },
+        {
+          "felt_arousal": 0.065,
+          "high": true,
+          "margin": 0.160417,
+          "rates": [
+            0.0,
+            0.160417
+          ]
+        },
+        {
+          "felt_arousal": 0.075,
+          "high": true,
+          "margin": 0.145833,
+          "rates": [
+            0.0,
+            0.145833
+          ]
+        }
+      ],
+      "valence": [
+        {
+          "level": -3,
+          "margin": 0.161111,
+          "mood": -0.085,
+          "rates": [
+            0.161111,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "level": -2,
+          "margin": 0.1625,
+          "mood": -0.06,
+          "rates": [
+            0.0,
+            0.1625,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "level": -1,
+          "margin": 0.16875,
+          "mood": -0.029,
+          "rates": [
+            0.0,
+            0.0,
+            0.16875,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "level": -1,
+          "margin": 0.1625,
+          "mood": -0.02,
+          "rates": [
+            0.0,
+            0.0,
+            0.1625,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "level": 1,
+          "margin": 0.157639,
+          "mood": 0.02,
+          "rates": [
+            0.0,
+            0.0,
+            0.0,
+            0.157639,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "level": 2,
+          "margin": 0.15,
+          "mood": 0.064,
+          "rates": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.15,
+            0.0
+          ]
+        },
+        {
+          "level": 2,
+          "margin": 0.143056,
+          "mood": 0.069,
+          "rates": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.143056,
+            0.0
+          ]
+        },
+        {
+          "level": 3,
+          "margin": 0.156944,
+          "mood": 0.085,
+          "rates": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.156944
+          ]
+        }
+      ]
+    }
+  },
+  "undefined_reasons": []
+}
