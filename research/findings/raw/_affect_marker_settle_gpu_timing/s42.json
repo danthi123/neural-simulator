@@ -1,0 +1,48 @@
+{
+ "n_seeds": 1,
+ "n_valid": 1,
+ "rows": [
+  {
+   "seed": 42,
+   "off": {
+    "env": {
+     "BRAIN_AFFECT_MARKER_SETTLE": "0"
+    },
+    "seed": "42",
+    "sim_backend": "cupy",
+    "build_and_warmup_s": 803.341915845871,
+    "first_affective_turn_s": 57.522578954696655,
+    "repeat_affective_turn_s": 29.515974283218384,
+    "first_lead": "Gladly! ",
+    "repeat_lead": "Wonderful! ",
+    "first_level": 2,
+    "warmup_lead": ""
+   },
+   "on": {
+    "env": {
+     "BRAIN_AFFECT_MARKER_SETTLE": "1"
+    },
+    "seed": "42",
+    "sim_backend": "cupy",
+    "build_and_warmup_s": 478.3308491706848,
+    "first_affective_turn_s": 55.458563804626465,
+    "repeat_affective_turn_s": 29.43099093437195,
+    "first_lead": "Gladly! ",
+    "repeat_lead": "Wonderful! ",
+    "first_level": 2,
+    "warmup_lead": ""
+   },
+   "valid": true,
+   "delta_first_affective_turn_s": -2.0640151500701904,
+   "delta_repeat_affective_turn_s": -0.08498334884643555,
+   "off_marker_present": true,
+   "on_marker_present": true
+  }
+ ],
+ "mean_off_first_affective_turn_s": 57.522578954696655,
+ "mean_on_first_affective_turn_s": 55.458563804626465,
+ "mean_off_repeat_affective_turn_s": 29.515974283218384,
+ "mean_on_repeat_affective_turn_s": 29.43099093437195,
+ "mean_delta_first_s": -2.0640151500701904,
+ "mean_delta_repeat_s": -0.08498334884643555
+}
