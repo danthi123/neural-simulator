@@ -97,7 +97,11 @@ def _exercise(holder, pool, seed):
 
 
 def g1_arm(arm: str, seed: int, out: str):
+    """arm in {off, on} (the preregistered arms) or {off2, on2} (amendment A2 controls: build pass + a second pass,
+    no exercise)."""
     t0 = time.time()
+    second_pass_only = arm in ("off2", "on2")
+    arm = {"off2": "off", "on2": "on"}.get(arm, arm)
     _set_flag(arm == "on")
     from research.runners.onebrain_wave3_pool_production import get_merged_cortical_pool
     from research.runners import comprehension_production_organ as CO
@@ -115,11 +119,16 @@ def g1_arm(arm: str, seed: int, out: str):
         res["cross_weights_build"] = dict(holder.cross_weights)
     res["build"] = _isolated(pool, seed)
     res["t_build_reads_s"] = round(time.time() - t0, 1)
-    if arm == "on":
+    if arm == "on" and not second_pass_only:
         res["exercise"] = _exercise(holder, pool, seed)
         res["cross_weights_exercised"] = dict(holder.cross_weights)
         res["n_session_resets_exercise"] = int(holder._r3pool.n_session_resets)
         res["exercised"] = _isolated(pool, seed)
+    elif second_pass_only:
+        # AMENDMENT A2 CONTROL: a SECOND isolated-read pass with NO exercise. `_isolated_reads` constructs every organ
+        # afresh, and the organs that train/encode at construction (causal_whatif, worldmodel, surprise,
+        # source_provenance) do so on the SHARED pool -- so pass 2 is not comparable to pass 1 on either arm.
+        res["second"] = _isolated(pool, seed)
     res["peak_rss_gb"] = _peak_gb()
     res["wall_s"] = round(time.time() - t0, 1)
     Path(out).parent.mkdir(parents=True, exist_ok=True)
@@ -158,31 +167,43 @@ def _flat(d, prefix=""):
     return out
 
 
-def g1_compare(off_path, on_path, out):
+def g1_compare(off_path, on_path, out, pairs=(("build", "build"), ("build", "exercised"))):
+    """`pairs` = (off_state, on_state) read passes to compare; the preregistered G1 is the default pair set.
+    Amendment A2 uses (("second", "exercised"), ("second", "second")) against the off2/on2 control arms."""
     off = json.loads(Path(off_path).read_text())
     on = json.loads(Path(on_path).read_text())
     rows = {}
-    for state in ("build", "exercised"):
-        for organ, r_off in off["build"]["reads"].items():
-            r_on = on[state]["reads"].get(organ, {})
+    labels = []
+    for s_off, s_on in pairs:
+        label = s_on if s_off == "build" else f"{s_off}_vs_{s_on}"
+        labels.append(label)
+        for organ, r_off in off[s_off]["reads"].items():
+            r_on = on[s_on]["reads"].get(organ, {})
             d, wk, miss = _maxdelta(_flat(r_off), _flat(r_on))
-            ans_same = off["build"]["answers"].get(organ) == on[state]["answers"].get(organ)
-            rows.setdefault(organ, {})[state] = {"maxdelta": d, "worst_key": wk, "missing": miss,
+            ans_same = off[s_off]["answers"].get(organ) == on[s_on]["answers"].get(organ)
+            rows.setdefault(organ, {})[label] = {"maxdelta": d, "worst_key": wk, "missing": miss,
                                                  "answer_same": bool(ans_same),
                                                  "identical": bool(d <= G1_TOL and not miss and ans_same)}
     others = [k for k in rows if k not in ENDPOINTS]
-    g1 = all(rows[k][s]["identical"] for k in others for s in ("build", "exercised"))
-    endpoints_ok = all(rows[k][s]["identical"] for k in ENDPOINTS if k in rows for s in ("build", "exercised"))
+    g1 = all(rows[k][s]["identical"] for k in others for s in labels)
+    endpoints_ok = all(rows[k][s]["identical"] for k in ENDPOINTS if k in rows for s in labels)
     from tools.verdict import Verdict
     v = Verdict(f"G1 other-organ read identity, flag ON vs OFF, seed {on['seed']}")
     v.require("ON arm read the flag-ON (xedge-in-wave3) pool", on.get("pool_is_xedge_in_wave3"), expect=True)
     v.require("OFF arm read the plain Wave-3 pool", off.get("pool_is_xedge_in_wave3"), expect=False)
     v.require("9 non-endpoint organs read in both arms", len(others), expect=9)
     cwb, cwe = on.get("cross_weights_build") or {}, on.get("cross_weights_exercised") or {}
-    v.reaches("the exercise moved the cross-edge (max candidate weight)",
-              before=max(cwb.values()) if cwb else None, after=max(cwe.values()) if cwe else None)
+    if any(s_on == "exercised" for _s, s_on in pairs):
+        v.reaches("the exercise moved the cross-edge (max candidate weight)",
+                  before=max(cwb.values()) if cwb else None, after=max(cwe.values()) if cwe else None)
+    for s_off, s_on in pairs:
+        v.require(f"both arms carry the compared read passes ({s_off} / {s_on})",
+                  bool(s_off in off and s_on in on), expect=True)
     dec = v.decide(go=bool(g1), verbose=False)
+    preregistered = tuple(tuple(p) for p in pairs) == (("build", "build"), ("build", "exercised"))
     res = {"mode": "g1_compare", "seed": on["seed"], "off": off_path, "on": on_path, "rows": rows,
+           "pairs": [list(p) for p in pairs],
+           "which": "preregistered G1" if preregistered else "amendment A2 (equal read-pass count)",
            "n_other_organs": len(others), "G1_other_organs_identical": bool(g1),
            "endpoints_identical": bool(endpoints_ok),
            "cross_weights_build": on.get("cross_weights_build"),
@@ -196,9 +217,9 @@ def g1_compare(off_path, on_path, out):
     Path(out).parent.mkdir(parents=True, exist_ok=True)
     Path(out).write_text(json.dumps(res, indent=1))
     print(json.dumps({k: res[k] for k in ("G1_other_organs_identical", "endpoints_identical", "verdict")}))
-    for k, v in rows.items():
-        print(f"  {k:20s} build d={v['build']['maxdelta']:.3g} ans={v['build']['answer_same']}  "
-              f"exercised d={v['exercised']['maxdelta']:.3g} ans={v['exercised']['answer_same']}")
+    for k, r in rows.items():
+        print(f"  {k:20s} " + "  ".join(f"{lab} d={r[lab]['maxdelta']:.3g} ans={r[lab]['answer_same']}"
+                                         for lab in labels))
 
 
 def g2_run(script: str, learn: bool, seed: int, out: str, pregrow: int = 0):
@@ -456,8 +477,10 @@ def chat_smoke(flag: str, seed: int, out: str):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--seed", type=int, default=7)
-    ap.add_argument("--g1-arm", choices=("off", "on"))
+    ap.add_argument("--g1-arm", choices=("off", "on", "off2", "on2"))
     ap.add_argument("--g1-compare", nargs=2, metavar=("OFF", "ON"))
+    ap.add_argument("--g1-pairs", default=None,
+                    help="comma list of off_state:on_state (default: the preregistered build:build,build:exercised)")
     ap.add_argument("--g2-run", choices=("alone_A", "alone_B", "interleaved"))
     ap.add_argument("--learn", action="store_true")
     ap.add_argument("--pregrow", type=int, default=0)
@@ -470,7 +493,9 @@ def main():
     if a.g1_arm:
         g1_arm(a.g1_arm, a.seed, a.out)
     elif a.g1_compare:
-        g1_compare(a.g1_compare[0], a.g1_compare[1], a.out)
+        pairs = (tuple(tuple(p.split(":")) for p in a.g1_pairs.split(",")) if a.g1_pairs
+                 else (("build", "build"), ("build", "exercised")))
+        g1_compare(a.g1_compare[0], a.g1_compare[1], a.out, pairs=pairs)
     elif a.g2_run:
         g2_run(a.g2_run, a.learn, a.seed, a.out, pregrow=a.pregrow)
     elif a.g2_compare:
