@@ -1,0 +1,27 @@
+{
+ "run_id": "1790277064-787928",
+ "runner": "research/runners/_lbf_rows_live_organs_smoke.py",
+ "note": "summary_s7.json is a rollup the driver process (pid 787928, run_id above) writes after each row's two worker arms complete; it is not itself a runner invocation with its own argv, so this sidecar is written by hand rather than by research/runners/__init__'s per-invocation stamping. Every row folded into it (self-schema, affective-tom, causal-whatif) has its own real per-arm .prov.json sidecar alongside the raw intact/lesion JSON in this same directory, each stamped by the actual worker invocation.",
+ "argv": [
+  "python3", "-u", "-m", "research.runners._lbf_rows_live_organs_smoke",
+  "--seed", "7",
+  "--out-dir", "research/findings/raw/_lbf_rows_live_organs"
+ ],
+ "seed": 7,
+ "git_sha": "a6f75e01ea315a560e43c6b818c6a320e0e9fadc",
+ "git_dirty": false,
+ "source_kind": "git_archive",
+ "started": "2026-09-24T19:11:04",
+ "harvested_partial_at": "2026-09-24T19:52:55Z",
+ "harvest_note": "PARTIAL: 3 of 7 rows complete when harvested (self-schema, affective-tom, causal-whatif); spiking-anaphor, gnw-bus, multiref-competition, affect-appraisal-interoceptive were still running on pool2 at this exact commit and are not yet in this file.",
+ "env": {
+  "SIM_BACKEND": "numpy",
+  "OMP_NUM_THREADS": "1",
+  "BRAIN_CHAT_RENDERER": "stub",
+  "SIM_DISABLE_LLM": "1"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "host": "pool2 (AWS r7i.4xlarge, research/queue/.pool_ssh_config)",
+ "artifact": "research/findings/raw/_lbf_rows_live_organs/summary_s7.json"
+}

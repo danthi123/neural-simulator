@@ -1,0 +1,36 @@
+{
+ "run_id": "1790265584-374069",
+ "runner": "research/runners/_xedge_wave3_identity_probe.py",
+ "argv": [
+  "/home/ubuntu/derisk-pool/revisions/8e1bbc4708d40fac4229126e4ba04b39834badc3/research/runners/_xedge_wave3_identity_probe.py",
+  "--seed",
+  "42",
+  "--out",
+  "research/findings/raw/_xedge_wave3_probe/s42.json"
+ ],
+ "git_sha": "8e1bbc4708d40fac4229126e4ba04b39834badc3",
+ "git_dirty": false,
+ "source_kind": "git_archive",
+ "source_manifest_sha256": "6a8f968ecda9799ec523e8bc78ca5ca7542b6721251f981947dc2b56b9d63184",
+ "source_manifest_verified_at_start": true,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": true,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-24T15:59:44",
+ "env": {
+  "MKL_NUM_THREADS": "1",
+  "OPENBLAS_NUM_THREADS": "1",
+  "OMP_NUM_THREADS": "1",
+  "POOL_REVISION": "8e1bbc4708d40fac4229126e4ba04b39834badc3",
+  "POOL_JOB_ID": "s02-xedge-wave3-probe-s42",
+  "CUDA_VISIBLE_DEVICES": "",
+  "SIM_BACKEND": "numpy",
+  "POOL_JOB_MEM_GB": "8"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": false,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_xedge_wave3_probe/s42.json"
+}

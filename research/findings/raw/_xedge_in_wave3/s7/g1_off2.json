@@ -1,0 +1,437 @@
+{
+ "mode": "g1_arm",
+ "arm": "off",
+ "seed": 7,
+ "backend": "numpy",
+ "n_neurons": 7002,
+ "pool_is_xedge_in_wave3": false,
+ "build": {
+  "reads": {
+   "causal_whatif": {
+    "B_rate": "150.0",
+    "D_rate": "100.0",
+    "Y_do_C": "166.66666666666666",
+    "Y_do_X": "0.0",
+    "directed_fwd_BtoD": "166.66666666666666",
+    "directed_rev_DtoB": "0.0",
+    "fwd_acc": "1.0",
+    "offchain_max": "0.0",
+    "succ_rate_0_1": "163.88888888888889",
+    "succ_rate_1_2": "230.55555555555554",
+    "w_AB": "9.929468154907227",
+    "w_AD": "0.20000001788139343",
+    "w_CY": "10.273645401000977",
+    "w_XY": "0.48935186862945557"
+   },
+   "comprehension": {
+    "calib.mean_ill": "0.038888888888888876",
+    "calib.mean_well": "0.3",
+    "lean_margin": "0.31666666666666665",
+    "margin_0": "0.3",
+    "margin_1": "0.09999999999999998",
+    "margin_2": "0.016666666666666663",
+    "margin_3": "0.0",
+    "role_floor": "0.06333333333333334",
+    "threshold": "0.19999999999999998"
+   },
+   "curiosity": {
+    "threshold_hz": "19.27083333333333",
+    "want_familiar_hz": "0.6944444444444444",
+    "want_novel_hz": "37.847222222222214"
+   },
+   "d6_multiref_wm": {
+    "all_recovered": "1.0",
+    "hold_alive_min": "0.05277777777777778",
+    "n_referents": "3.0",
+    "zero_input_ok": "1.0"
+   },
+   "metacog": {
+    "calib.max_lo": "0.053110513174554105",
+    "calib.mean_hi": "0.08104205205341658",
+    "calib.mean_lo": "0.03831601280798336",
+    "calib.min_hi": "0.06695760458601124",
+    "margin_0": "0.031991157790023615",
+    "margin_1": "0.05932126782139701",
+    "margin_2": "0.08431914536013958",
+    "threshold": "0.060034058880282674"
+   },
+   "pragmatic": {
+    "all.belief_SBNA": "0.0",
+    "all.belief_all": "1.0",
+    "all.belief_none": "0.0",
+    "all.margin": "-1.0",
+    "none.belief_SBNA": "0.0",
+    "none.belief_all": "0.0",
+    "none.belief_none": "1.0",
+    "none.margin": "0.0",
+    "some.belief_SBNA": "0.7155",
+    "some.belief_all": "0.2845",
+    "some.belief_none": "0.0",
+    "some.margin": "0.431"
+   },
+   "prospective_memory": {
+    "fire_A_on_cueA": "0.10777777777777778",
+    "fire_B_on_cueA": "0.03333333333333333",
+    "fire_min": "0.10777777777777778",
+    "held_min": "0.35",
+    "max_silent": "0.03333333333333333",
+    "noint_rel_A": "0.0",
+    "rel_before_max": "0.0",
+    "same_pool_silent": "0.0",
+    "wrongcue_rel_A": "0.0",
+    "wrongcue_rel_B": "0.010555555555555556"
+   },
+   "self_schema": {
+    "author_rate_heard": "0.0",
+    "author_rate_self": "0.09595959595959595",
+    "calib.heard_rate": "0.0",
+    "calib.self_rate": "0.09595959595959595",
+    "read_author.is_self": "1.0",
+    "read_author.rate": "0.09595959595959595",
+    "threshold": "0.047979797979797977"
+   },
+   "source_provenance": {
+    "acc": "1.0",
+    "content_0": "0.030833333333333334",
+    "content_1": "0.03166666666666667",
+    "content_2": "0.0325",
+    "content_3": "0.0325",
+    "content_4": "0.03125",
+    "content_5": "0.03125",
+    "content_6": "0.03208333333333333",
+    "content_7": "0.03125",
+    "d_true_0": "0.7195767134850648",
+    "d_true_1": "0.7326203145872059",
+    "d_true_2": "0.8031914825260299",
+    "d_true_3": "0.6910569045762004",
+    "d_true_4": "0.7211796184778156",
+    "d_true_5": "0.7795698857671407",
+    "d_true_6": "0.8037135210294873",
+    "d_true_7": "0.7315789412077564",
+    "min_d_true": "0.6910569045762004",
+    "rate_gen_0": "0.0165625",
+    "rate_gen_1": "0.015625",
+    "rate_gen_2": "0.0115625",
+    "rate_gen_3": "0.0178125",
+    "rate_gen_4": "0.1003125",
+    "rate_gen_5": "0.1034375",
+    "rate_gen_6": "0.10625",
+    "rate_gen_7": "0.1028125",
+    "rate_perc_0": "0.1015625",
+    "rate_perc_1": "0.10125",
+    "rate_perc_2": "0.1059375",
+    "rate_perc_3": "0.0975",
+    "rate_perc_4": "0.01625",
+    "rate_perc_5": "0.0128125",
+    "rate_perc_6": "0.0115625",
+    "rate_perc_7": "0.0159375"
+   },
+   "surprise": {
+    "calib.confirm_after_max": "0.4050925925925926",
+    "calib.confirm_hz": "0.1953125",
+    "calib.contradict_hz": "5.280671296296297",
+    "calib.novel_hz": "5.179398148148149",
+    "calib.pred_gain_max": "1.1891666666666667",
+    "calib.pred_gain_min": "0.8",
+    "judge[alpha->alpha].hz": "0.4050925925925926",
+    "judge[beta->gamma].hz": "5.150462962962964",
+    "judge[delta->omega].hz": "5.150462962962964",
+    "judge[kappa->kappa].hz": "0.0",
+    "threshold": "2.6873553240740744"
+   },
+   "worldmodel": {
+    "calib.expected_hz[0]": "0.0",
+    "calib.expected_hz[1]": "0.0",
+    "calib.state_neg": "0.0",
+    "calib.state_pos": "2.0",
+    "calib.violated_hz[0]": "45.48611111111111",
+    "calib.violated_hz[1]": "48.61111111111111",
+    "expect[+1].margin": "427.43055555555554",
+    "expect[+1].pred_neg": "0.0",
+    "expect[+1].pred_pos": "427.43055555555554",
+    "expect[-1].margin": "-444.7916666666667",
+    "expect[-1].pred_neg": "463.5416666666667",
+    "expect[-1].pred_pos": "18.75",
+    "surprise[ctx+1,obs+1].hz": "0.0",
+    "surprise[ctx+1,obs-1].hz": "45.48611111111111",
+    "surprise[ctx-1,obs+1].hz": "48.61111111111111",
+    "surprise[ctx-1,obs-1].hz": "0.0",
+    "threshold": "22.743055555555554"
+   }
+  },
+  "answers": {
+   "causal_whatif": [
+    true,
+    true,
+    true
+   ],
+   "comprehension": [
+    true,
+    false,
+    false,
+    false
+   ],
+   "curiosity": " My curiosity is piqued \u2014 I haven't learned about wombats yet: what can you tell me about wombats?",
+   "d6_multiref_wm": [
+    "dog",
+    "cat",
+    "bird"
+   ],
+   "metacog": [
+    false,
+    false,
+    true
+   ],
+   "pragmatic": [
+    "some but not all",
+    "undetermined (implicature collapsed)",
+    "undetermined (implicature collapsed)"
+   ],
+   "prospective_memory": [
+    true,
+    true,
+    true
+   ],
+   "self_schema": [
+    "self",
+    "heard"
+   ],
+   "source_provenance": [
+    "perceived",
+    "perceived",
+    "perceived",
+    "perceived",
+    "generated",
+    "generated",
+    "generated",
+    "generated"
+   ],
+   "surprise": [
+    false,
+    true,
+    true,
+    false
+   ],
+   "worldmodel": [
+    1,
+    -1
+   ]
+  }
+ },
+ "t_build_reads_s": 2492.5,
+ "second": {
+  "reads": {
+   "causal_whatif": {
+    "B_rate": "150.0",
+    "D_rate": "100.0",
+    "Y_do_C": "158.33333333333331",
+    "Y_do_X": "0.0",
+    "directed_fwd_BtoD": "150.0",
+    "directed_rev_DtoB": "0.0",
+    "fwd_acc": "1.0",
+    "offchain_max": "0.0",
+    "succ_rate_0_1": "155.55555555555554",
+    "succ_rate_1_2": "216.66666666666666",
+    "w_AB": "16.98797035217285",
+    "w_AD": "0.20000001788139343",
+    "w_CY": "17.971210479736328",
+    "w_XY": "0.945490837097168"
+   },
+   "comprehension": {
+    "calib.mean_ill": "0.038888888888888876",
+    "calib.mean_well": "0.3",
+    "lean_margin": "0.31666666666666665",
+    "margin_0": "0.3",
+    "margin_1": "0.09999999999999998",
+    "margin_2": "0.016666666666666663",
+    "margin_3": "0.0",
+    "role_floor": "0.06333333333333334",
+    "threshold": "0.19999999999999998"
+   },
+   "curiosity": {
+    "threshold_hz": "19.27083333333333",
+    "want_familiar_hz": "0.6944444444444444",
+    "want_novel_hz": "37.847222222222214"
+   },
+   "d6_multiref_wm": {
+    "all_recovered": "1.0",
+    "hold_alive_min": "0.05277777777777778",
+    "n_referents": "3.0",
+    "zero_input_ok": "1.0"
+   },
+   "metacog": {
+    "calib.max_lo": "0.053110513174554105",
+    "calib.mean_hi": "0.08104205205341658",
+    "calib.mean_lo": "0.03831601280798336",
+    "calib.min_hi": "0.06695760458601124",
+    "margin_0": "0.031991157790023615",
+    "margin_1": "0.05932126782139701",
+    "margin_2": "0.08431914536013958",
+    "threshold": "0.060034058880282674"
+   },
+   "pragmatic": {
+    "all.belief_SBNA": "0.0",
+    "all.belief_all": "1.0",
+    "all.belief_none": "0.0",
+    "all.margin": "-1.0",
+    "none.belief_SBNA": "0.0",
+    "none.belief_all": "0.0",
+    "none.belief_none": "1.0",
+    "none.margin": "0.0",
+    "some.belief_SBNA": "0.7155",
+    "some.belief_all": "0.2845",
+    "some.belief_none": "0.0",
+    "some.margin": "0.431"
+   },
+   "prospective_memory": {
+    "fire_A_on_cueA": "0.10777777777777778",
+    "fire_B_on_cueA": "0.03333333333333333",
+    "fire_min": "0.10777777777777778",
+    "held_min": "0.35",
+    "max_silent": "0.03333333333333333",
+    "noint_rel_A": "0.0",
+    "rel_before_max": "0.0",
+    "same_pool_silent": "0.0",
+    "wrongcue_rel_A": "0.0",
+    "wrongcue_rel_B": "0.010555555555555556"
+   },
+   "self_schema": {
+    "author_rate_heard": "0.0",
+    "author_rate_self": "0.09595959595959595",
+    "calib.heard_rate": "0.0",
+    "calib.self_rate": "0.09595959595959595",
+    "read_author.is_self": "1.0",
+    "read_author.rate": "0.09595959595959595",
+    "threshold": "0.047979797979797977"
+   },
+   "source_provenance": {
+    "acc": "1.0",
+    "content_0": "0.030833333333333334",
+    "content_1": "0.03208333333333333",
+    "content_2": "0.0325",
+    "content_3": "0.03333333333333333",
+    "content_4": "0.03125",
+    "content_5": "0.03125",
+    "content_6": "0.03208333333333333",
+    "content_7": "0.03375",
+    "d_true_0": "0.7195767134850648",
+    "d_true_1": "0.7326203145872059",
+    "d_true_2": "0.8031914825260299",
+    "d_true_3": "0.6910569045762004",
+    "d_true_4": "0.7211796184778156",
+    "d_true_5": "0.7795698857671407",
+    "d_true_6": "0.8037135210294873",
+    "d_true_7": "0.7315789412077564",
+    "min_d_true": "0.6910569045762004",
+    "rate_gen_0": "0.0165625",
+    "rate_gen_1": "0.015625",
+    "rate_gen_2": "0.0115625",
+    "rate_gen_3": "0.0178125",
+    "rate_gen_4": "0.1003125",
+    "rate_gen_5": "0.1034375",
+    "rate_gen_6": "0.10625",
+    "rate_gen_7": "0.1028125",
+    "rate_perc_0": "0.1015625",
+    "rate_perc_1": "0.10125",
+    "rate_perc_2": "0.1059375",
+    "rate_perc_3": "0.0975",
+    "rate_perc_4": "0.01625",
+    "rate_perc_5": "0.0128125",
+    "rate_perc_6": "0.0115625",
+    "rate_perc_7": "0.0159375"
+   },
+   "surprise": {
+    "calib.confirm_after_max": "0.4050925925925926",
+    "calib.confirm_hz": "0.1953125",
+    "calib.contradict_hz": "5.280671296296297",
+    "calib.novel_hz": "5.179398148148149",
+    "calib.pred_gain_max": "1.245",
+    "calib.pred_gain_min": "0.8",
+    "judge[alpha->alpha].hz": "0.4050925925925926",
+    "judge[beta->gamma].hz": "5.150462962962964",
+    "judge[delta->omega].hz": "5.150462962962964",
+    "judge[kappa->kappa].hz": "0.0",
+    "threshold": "2.6873553240740744"
+   },
+   "worldmodel": {
+    "calib.expected_hz[0]": "0.0",
+    "calib.expected_hz[1]": "0.0",
+    "calib.state_neg": "0.0",
+    "calib.state_pos": "2.0",
+    "calib.violated_hz[0]": "41.66666666666667",
+    "calib.violated_hz[1]": "48.61111111111111",
+    "expect[+1].margin": "436.1111111111111",
+    "expect[+1].pred_neg": "10.069444444444445",
+    "expect[+1].pred_pos": "446.18055555555554",
+    "expect[-1].margin": "-453.4722222222223",
+    "expect[-1].pred_neg": "474.6527777777778",
+    "expect[-1].pred_pos": "21.180555555555554",
+    "surprise[ctx+1,obs+1].hz": "0.0",
+    "surprise[ctx+1,obs-1].hz": "41.66666666666667",
+    "surprise[ctx-1,obs+1].hz": "48.61111111111111",
+    "surprise[ctx-1,obs-1].hz": "0.0",
+    "threshold": "20.833333333333336"
+   }
+  },
+  "answers": {
+   "causal_whatif": [
+    true,
+    true,
+    true
+   ],
+   "comprehension": [
+    true,
+    false,
+    false,
+    false
+   ],
+   "curiosity": " My curiosity is piqued \u2014 I haven't learned about wombats yet: what can you tell me about wombats?",
+   "d6_multiref_wm": [
+    "dog",
+    "cat",
+    "bird"
+   ],
+   "metacog": [
+    false,
+    false,
+    true
+   ],
+   "pragmatic": [
+    "some but not all",
+    "undetermined (implicature collapsed)",
+    "undetermined (implicature collapsed)"
+   ],
+   "prospective_memory": [
+    true,
+    true,
+    true
+   ],
+   "self_schema": [
+    "self",
+    "heard"
+   ],
+   "source_provenance": [
+    "perceived",
+    "perceived",
+    "perceived",
+    "perceived",
+    "generated",
+    "generated",
+    "generated",
+    "generated"
+   ],
+   "surprise": [
+    false,
+    true,
+    true,
+    false
+   ],
+   "worldmodel": [
+    1,
+    -1
+   ]
+  }
+ },
+ "peak_rss_gb": 0.314,
+ "wall_s": 4790.4
+}

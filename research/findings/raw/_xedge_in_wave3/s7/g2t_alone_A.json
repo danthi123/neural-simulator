@@ -1,0 +1,137 @@
+{
+ "mode": "g2_run",
+ "script": "alone_A",
+ "learn": false,
+ "seed": 7,
+ "outputs": {
+  "A": [
+   {
+    "step": "load",
+    "out": {
+     "all_recovered": true,
+     "composer": "onebrain",
+     "hold_alive_min": "0.06388888888888891",
+     "in_scope": true,
+     "input_order": [
+      "wolf",
+      "dog"
+     ],
+     "is_hold_query": false,
+     "lesioned": false,
+     "n_referents": 2,
+     "on": true,
+     "recovered": {
+      "0": "wolf",
+      "1": "dog"
+     },
+     "zero_input_ok": true
+    }
+   },
+   {
+    "step": "hold",
+    "out": {
+     "all_recovered": true,
+     "composer": "onebrain",
+     "hold_alive_min": "0.06388888888888891",
+     "in_scope": true,
+     "input_order": [
+      "wolf",
+      "dog"
+     ],
+     "is_hold_query": true,
+     "lesioned": false,
+     "n_referents": 2,
+     "on": true,
+     "readout": "I'm holding 2 referents in working memory at once: wolf and dog.",
+     "recovered": {
+      "0": "wolf",
+      "1": "dog"
+     },
+     "zero_input_ok": true
+    }
+   },
+   {
+    "step": "comp",
+    "out": {
+     "focus": "w0",
+     "judge": {
+      "calib": {
+       "max_ill": "0.09999999999999998",
+       "mean_ill": "0.038888888888888876",
+       "mean_well": "0.3",
+       "min_well": "0.3",
+       "n_calib": 24,
+       "read_steps": 60
+      },
+      "comprehended": false,
+      "in_scope": true,
+      "lesioned": false,
+      "margin": "0.09999999999999998",
+      "on": true,
+      "svo": [
+       "wolf",
+       "chase",
+       "dog"
+      ],
+      "threshold": "0.19999999999999998"
+     },
+     "repair": {
+      "a0": "0.23333333333333334",
+      "a1": "0.3333333333333333",
+      "kind": "role",
+      "lean_margin": "0.31666666666666665",
+      "lesioned": false,
+      "loadbearing": "spiking_role_evidence",
+      "net_lean": "0.5666666666666667",
+      "on": true,
+      "pair_max": "0.3333333333333333",
+      "role": "patient",
+      "role_floor": "0.06333333333333334",
+      "svo": [
+       "wolf",
+       "chase",
+       "dog"
+      ],
+      "word": null
+     }
+    }
+   },
+   {
+    "step": "hold2",
+    "out": {
+     "all_recovered": true,
+     "composer": "onebrain",
+     "hold_alive_min": "0.06388888888888891",
+     "in_scope": true,
+     "input_order": [
+      "wolf",
+      "dog"
+     ],
+     "is_hold_query": true,
+     "lesioned": false,
+     "n_referents": 2,
+     "on": true,
+     "readout": "I'm holding 2 referents in working memory at once: wolf and dog.",
+     "recovered": {
+      "0": "wolf",
+      "1": "dog"
+     },
+     "zero_input_ok": true
+    }
+   }
+  ],
+  "B": []
+ },
+ "credits": [],
+ "n_session_resets": 0,
+ "cross_weights_end": {
+  "w0->A": 0.05,
+  "w0->P": 0.05,
+  "w1->A": 0.05,
+  "w1->P": 0.05,
+  "w2->A": 0.05,
+  "w2->P": 0.05
+ },
+ "peak_rss_gb": 0.315,
+ "wall_s": 192.5
+}

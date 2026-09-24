@@ -33,6 +33,12 @@ EXTRA_LESIONS = {
 }
 
 # ── the probe (thin until the shared turn registry carries `transitive_nonadjacent`; see the module docstring) ──
+# PARKED (2026-09-24, registry integration): kept for the record, left out of the headline registry until an
+# opt-in-capability row mechanism applies its prerequisite flag to both arms (plan step S28, tag b2b-caps).
+PARKED = {
+    'reasoning-transitive-chat': ('measures a default-OFF capability (needs BRAIN_TRANSITIVE_CHAT=1 in both arms) and its turns are still proposed (_PROPOSED_PROBE_TURNS); an opt-in capability row, not the shipped headline registry'),
+}
+
 EXTRA_PROBES = [
     # (faculty_key, turn_label, decision_field_paths, thin)
     ("reasoning-transitive-chat", "transitive_nonadjacent",

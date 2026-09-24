@@ -1,0 +1,169 @@
+{
+  "probe": "xedge_wave3_identity_probe",
+  "plan_step": "S02 (2026-09-24 midnight plan)",
+  "seed": 7,
+  "backend": "numpy",
+  "git_sha": "unknown",
+  "host": "ip-172-31-47-37",
+  "pool_job_id": "a4-g0-on-s7",
+  "pool_job_mem_gb": "2",
+  "brain_env": {
+    "BRAIN_XEDGE_IN_WAVE3": "1"
+  },
+  "c_xedge_enabled": true,
+  "c_xedge_learn_enabled": true,
+  "c_wave3_pool_enabled": true,
+  "c_wave3_default_on": true,
+  "t_comprehension_get_organ_s": 3.9,
+  "t_get_merged_cortical_pool_s": 0.0,
+  "t_get_xedge_pool_s": 77.43,
+  "xedge_pool_ok": true,
+  "a_comprehension_organ_is_xedge_comp_organ": true,
+  "a_detail": {
+    "comp_organ_shared_is_merged_cortical_pool": true,
+    "comp_organ_shared_is_xedge_pool": true,
+    "comp_organ_shared_type": "MergedPool",
+    "comp_pool_has_xedge_amb_read": true,
+    "comp_pool_has_xedge_codrive_params": true
+  },
+  "t_get_multiref_organ_s": 0.0,
+  "b_multiref_shared_is_merged_cortical_pool": true,
+  "b_detail": {
+    "multiref_shared_is_xedge_pool": true,
+    "multiref_shared_type": "MergedPool",
+    "multiref_pool_has_xedge_codrive_params": true,
+    "brain_chat_seed": 42
+  },
+  "merged_pool_n_neurons": 7098,
+  "merged_pool_organ_regions": {
+    "surprise": [
+      "cue",
+      "patient_expected",
+      "patient_asserted",
+      "surprise"
+    ],
+    "worldmodel": [
+      "state",
+      "pred_pos",
+      "pred_neg",
+      "obs_pos",
+      "obs_neg",
+      "surprise_pos",
+      "surprise_neg"
+    ],
+    "metacog": [
+      "workspace",
+      "workspace_fs",
+      "meta_schema"
+    ],
+    "pragmatic": [
+      "item",
+      "item_fs"
+    ],
+    "comprehension": [
+      "sel_agent",
+      "sel_FS_agent",
+      "sel_patient",
+      "sel_FS_patient",
+      "cue_position_pos",
+      "cue_position_neg",
+      "cue_animacy_pos",
+      "cue_animacy_neg",
+      "cue_verbfit_pos",
+      "cue_verbfit_neg",
+      "cue_lexbias_pos",
+      "cue_lexbias_neg"
+    ],
+    "source_provenance": [
+      "episode",
+      "content_readout",
+      "ctx_perceived",
+      "ctx_generated",
+      "prov_perceived",
+      "prov_generated",
+      "inh_perceived",
+      "inh_generated"
+    ],
+    "self_schema": [
+      "ss_workspace",
+      "ss_workspace_fs",
+      "self_schema"
+    ],
+    "curiosity": [
+      "cur_cue",
+      "striosome_value",
+      "reward_us",
+      "snc",
+      "ask"
+    ],
+    "causal_whatif": [
+      "evt"
+    ],
+    "prospective_memory": [
+      "cortex_ctx",
+      "dlpfc_wm",
+      "rel_A",
+      "rel_B"
+    ],
+    "d6_multiref_wm": [
+      "w0",
+      "w1",
+      "w2",
+      "w3",
+      "w4",
+      "w5",
+      "w6",
+      "w7",
+      "w8",
+      "w9",
+      "w10",
+      "w11",
+      "w12",
+      "w13",
+      "w14",
+      "w15",
+      "w16",
+      "w17",
+      "w18",
+      "w19",
+      "w20",
+      "w21",
+      "w22",
+      "w23",
+      "w24",
+      "w25",
+      "w26",
+      "w27",
+      "w28",
+      "w29",
+      "fs"
+    ],
+    "da_credit": [
+      "teach_agent",
+      "teach_patient",
+      "snc_a",
+      "snc_b"
+    ]
+  },
+  "merged_pool_region_sizes_for_xedge_names": {
+    "w0": 20,
+    "w1": 20,
+    "w2": 20,
+    "w3": 20,
+    "sel_agent": 24,
+    "sel_patient": 24
+  },
+  "xedge_pool_n_neurons": 7098,
+  "xedge_pool_cross_weights": {
+    "w0->A": 0.05,
+    "w0->P": 0.05,
+    "w1->A": 0.05,
+    "w1->P": 0.05,
+    "w2->A": 0.05,
+    "w2->P": 0.05
+  },
+  "verdict": "RECONCILED",
+  "verdict_rule": "a and b both False -> CONFIRMED-SEVERED; either True -> RECONCILED (plan S02)",
+  "peak_rss_gb": 0.324,
+  "wall_s": 81.8
+}

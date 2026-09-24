@@ -1,0 +1,1349 @@
+{
+  "lbf_cau_teach1": {
+    "answer": "The dog gos east.",
+    "abstained": false,
+    "recalled_svo": [
+      "dog",
+      "go",
+      "east"
+    ],
+    "derived": false,
+    "derived_from": null,
+    "verified": true,
+    "renderer": "template-stub (GPU-free)",
+    "brain": "tiny-demo",
+    "source": "tiny-demo +LTM",
+    "rich": false,
+    "activity": {
+      "roles": [
+        {
+          "word": "dog",
+          "confidence": null,
+          "role": "agent",
+          "cue": true,
+          "asserted": "dog"
+        },
+        {
+          "word": "goe",
+          "confidence": null,
+          "role": "action",
+          "cue": true,
+          "asserted": "goe"
+        },
+        {
+          "word": "east",
+          "confidence": null,
+          "role": "patient",
+          "cue": true,
+          "asserted": "east"
+        }
+      ],
+      "matched_fact_index": null,
+      "n_facts_scanned": 162,
+      "abstained": true,
+      "rf": {
+        "n_readout_neurons": 41472,
+        "frac_fired": 1.0,
+        "mean_magnitude": 104.49940643449372
+      },
+      "composer": "rf"
+    },
+    "provenance": {
+      "known": true,
+      "label": "perceived",
+      "d": 0.9999999909348443,
+      "rate_perceived": 0.1103125,
+      "rate_generated": 0.0,
+      "encoded_as": "perceived",
+      "agrees_with_encoded": true
+    },
+    "affect": {
+      "on": true,
+      "lesioned": false,
+      "composer": "onebrain",
+      "differential": 0.0,
+      "valence_sign": "0",
+      "tone_level": 0,
+      "tone_token": "",
+      "forthcomingness": {
+        "max_sentences": 4,
+        "max_elaborations": 2
+      },
+      "manner_template": "",
+      "appraisal_valence": 0.0,
+      "appraisal_arousal": 0.0,
+      "appraisal_hits": [],
+      "pos_rate": 0.0,
+      "neg_rate": 0.0
+    },
+    "comprehension": null,
+    "surprise": null,
+    "metacog": null,
+    "worldmodel": null,
+    "curiosity": null,
+    "multiref": null,
+    "noncontradiction": {
+      "on": true,
+      "lesioned": false,
+      "in_scope": true,
+      "svo": [
+        "dog",
+        "goes",
+        "east"
+      ],
+      "recall_action": "goes",
+      "asserted_polarity": "AFFIRM",
+      "recalled_yn": "unknown",
+      "stored_polarity": null,
+      "reject": false
+    },
+    "reconsolidation": null,
+    "pragmatic": null,
+    "episodic": null,
+    "affect_drives": {
+      "acted": true,
+      "turn": 1,
+      "lesioned": false,
+      "ema_valence": 0.0,
+      "ema_arousal": 0.0,
+      "body_h": 0.5,
+      "body_a": 0.0,
+      "mood": -0.0012916666666666632,
+      "felt_arousal": 0.0,
+      "level": 0,
+      "high_arousal": false,
+      "lead": "",
+      "reason": "neutral_hold",
+      "seed": 7,
+      "vplus_rate": 0.03779166666666667,
+      "vminus_rate": 0.03908333333333333
+    },
+    "swap_drives": {
+      "acted": true,
+      "turn": 1,
+      "topic": "dog",
+      "swapped": false,
+      "held_topic_before": null,
+      "held_topic": "dog",
+      "evicted_topic": null,
+      "reason": "first_thought",
+      "seed": 7,
+      "lesioned": false,
+      "proposed_slot": 0,
+      "held_slot": 0,
+      "winner_slot": 0,
+      "n_ignited_post": 1,
+      "held_rate_post": 0.3333333333333333,
+      "mm_peak": 0.011111111111111112,
+      "boost_max": 0.008333333333333333,
+      "on": true,
+      "lead": "",
+      "new_topic": null,
+      "reason_lead": "first_thought"
+    },
+    "common_ground_drives": {
+      "on": true,
+      "topic": "dog",
+      "slot": 0,
+      "decision": "introduce",
+      "in_common_ground": false,
+      "first_mention": true,
+      "reduce_rate": 0.0,
+      "introduce_rate": 0.051666666666666666,
+      "evidence_rate": 0.0,
+      "margin": -0.051666666666666666,
+      "lesioned": false,
+      "lead": "",
+      "reason_lead": "introduce"
+    },
+    "da_drives": {
+      "acted": true,
+      "turn": 1,
+      "lesioned": false,
+      "turn_engagement": 0.5090909090909089,
+      "ema_engagement": 0.30545454545454537,
+      "afferent_pA": 427.6363636363635,
+      "da_level": 0.5494163884270326,
+      "snc_firing": 0.08333333333333326,
+      "mode": "neutral",
+      "lead": "",
+      "reason": "low_engagement",
+      "seed": 7,
+      "shared_salience": {
+        "raw": 0.75,
+        "want_hz": 19.44444444444444,
+        "normalized": 0.5090909090909089,
+        "lesioned": false,
+        "calib": {
+          "want_novel_hz": 38.19444444444444,
+          "want_familiar_hz": 0.0,
+          "threshold_hz": 19.09722222222222,
+          "novel_signal": 0.95,
+          "familiar_signal": 0.0,
+          "read_reps": 4
+        },
+        "on": true
+      },
+      "spiking_novelty": {
+        "novelty": 1.0,
+        "n_tokens": 3,
+        "per_word_freshness": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "fresh_ref": 26.0,
+        "n_channels": 64,
+        "lesioned": false,
+        "on": true
+      },
+      "on": true
+    },
+    "da_encoding": {
+      "on": true,
+      "g": 1.7794770596941287,
+      "da_level": 0.5494163884270326,
+      "lesioned": false
+    }
+  },
+  "lbf_cau_teach2": {
+    "answer": "As for it \u2014 the dog reaches the river",
+    "abstained": false,
+    "recalled_svo": [
+      "dog",
+      "reach",
+      "river"
+    ],
+    "derived": false,
+    "derived_from": null,
+    "verified": true,
+    "renderer": "template-stub (GPU-free)",
+    "brain": "tiny-demo",
+    "source": "tiny-demo +LTM",
+    "rich": false,
+    "activity": {
+      "roles": [
+        {
+          "word": "dog",
+          "confidence": null,
+          "role": "agent",
+          "cue": true,
+          "asserted": "dog"
+        },
+        {
+          "word": "reache",
+          "confidence": null,
+          "role": "action",
+          "cue": true,
+          "asserted": "reache"
+        },
+        {
+          "word": "river",
+          "confidence": null,
+          "role": "patient",
+          "cue": true,
+          "asserted": "river"
+        }
+      ],
+      "matched_fact_index": null,
+      "n_facts_scanned": 162,
+      "abstained": true,
+      "rf": {
+        "n_readout_neurons": 41472,
+        "frac_fired": 1.0,
+        "mean_magnitude": 104.49940643449372
+      },
+      "composer": "rf"
+    },
+    "provenance": {
+      "known": true,
+      "label": "perceived",
+      "d": 0.9999999907246377,
+      "rate_perceived": 0.1078125,
+      "rate_generated": 0.0,
+      "encoded_as": "perceived",
+      "agrees_with_encoded": true
+    },
+    "affect": {
+      "on": true,
+      "lesioned": false,
+      "composer": "onebrain",
+      "differential": 0.0,
+      "valence_sign": "0",
+      "tone_level": 0,
+      "tone_token": "",
+      "forthcomingness": {
+        "max_sentences": 4,
+        "max_elaborations": 2
+      },
+      "manner_template": "",
+      "appraisal_valence": 0.0,
+      "appraisal_arousal": 0.0,
+      "appraisal_hits": [],
+      "pos_rate": 0.0,
+      "neg_rate": 0.0
+    },
+    "comprehension": {
+      "on": true,
+      "lesioned": false,
+      "in_scope": true,
+      "svo": [
+        "dog",
+        "reach",
+        "river"
+      ],
+      "margin": 0.3,
+      "threshold": 0.19999999999999998,
+      "comprehended": true,
+      "calib": {
+        "mean_well": 0.3,
+        "min_well": 0.3,
+        "mean_ill": 0.038888888888888876,
+        "max_ill": 0.09999999999999998,
+        "read_steps": 60,
+        "n_calib": 24
+      },
+      "known_binding": false
+    },
+    "surprise": null,
+    "metacog": null,
+    "worldmodel": null,
+    "curiosity": null,
+    "multiref": null,
+    "noncontradiction": {
+      "on": true,
+      "lesioned": false,
+      "in_scope": true,
+      "svo": [
+        "dog",
+        "reaches",
+        "river"
+      ],
+      "recall_action": "reaches",
+      "asserted_polarity": "AFFIRM",
+      "recalled_yn": "unknown",
+      "stored_polarity": null,
+      "reject": false
+    },
+    "reconsolidation": null,
+    "pragmatic": null,
+    "episodic": null,
+    "affect_drives": {
+      "acted": true,
+      "turn": 2,
+      "lesioned": false,
+      "ema_valence": 0.0,
+      "ema_arousal": 0.0,
+      "body_h": 0.5,
+      "body_a": 0.0,
+      "mood": -0.0012916666666666632,
+      "felt_arousal": 0.0,
+      "level": 0,
+      "high_arousal": false,
+      "lead": "",
+      "reason": "neutral_hold",
+      "seed": 7,
+      "vplus_rate": 0.03779166666666667,
+      "vminus_rate": 0.03908333333333333
+    },
+    "swap_drives": {
+      "acted": true,
+      "turn": 2,
+      "topic": "dog",
+      "swapped": false,
+      "held_topic_before": "dog",
+      "held_topic": "dog",
+      "evicted_topic": null,
+      "reason": "same_topic_hold",
+      "seed": 7,
+      "lesioned": false,
+      "proposed_slot": 0,
+      "held_slot": 0,
+      "incumbent_slot": 0,
+      "winner_slot": 0,
+      "n_ignited_post": 1,
+      "old_residual_post": 0.3333333333333333,
+      "new_rate_post": 0.3333333333333333,
+      "mm_peak": 0.005555555555555556,
+      "boost_max": 0.005555555555555556,
+      "on": true,
+      "lead": "",
+      "new_topic": null,
+      "reason_lead": "same_topic_hold"
+    },
+    "common_ground_drives": {
+      "on": true,
+      "topic": "dog",
+      "slot": 0,
+      "decision": "reduce",
+      "in_common_ground": true,
+      "first_mention": false,
+      "reduce_rate": 0.10666666666666667,
+      "introduce_rate": 0.035,
+      "evidence_rate": 0.11166666666666666,
+      "margin": 0.07166666666666667,
+      "lesioned": false,
+      "lead": "As for it \u2014 ",
+      "reason_lead": "reduced_reference"
+    },
+    "da_drives": {
+      "acted": true,
+      "turn": 2,
+      "lesioned": false,
+      "turn_engagement": 0.3272727272727272,
+      "ema_engagement": 0.31854545454545447,
+      "afferent_pA": 445.9636363636362,
+      "da_level": 0.5730936982652403,
+      "snc_firing": 0.08833333333333329,
+      "mode": "neutral",
+      "lead": "",
+      "reason": "low_engagement",
+      "seed": 7,
+      "shared_salience": {
+        "raw": 0.65,
+        "want_hz": 12.499999999999998,
+        "normalized": 0.3272727272727272,
+        "lesioned": false,
+        "calib": {
+          "want_novel_hz": 38.19444444444444,
+          "want_familiar_hz": 0.0,
+          "threshold_hz": 19.09722222222222,
+          "novel_signal": 0.95,
+          "familiar_signal": 0.0,
+          "read_reps": 4
+        },
+        "on": true
+      },
+      "spiking_novelty": {
+        "novelty": 0.8333333333333334,
+        "n_tokens": 3,
+        "per_word_freshness": [
+          0.6153846153846154,
+          0.9230769230769231,
+          0.9615384615384616
+        ],
+        "fresh_ref": 26.0,
+        "n_channels": 64,
+        "lesioned": false,
+        "on": true
+      },
+      "on": true
+    },
+    "da_encoding": {
+      "on": true,
+      "g": 1.8593981253083371,
+      "da_level": 0.5730936982652403,
+      "lesioned": false
+    }
+  },
+  "lbf_cau_teach3": {
+    "answer": "As for it \u2014 the dog drinks the water",
+    "abstained": false,
+    "recalled_svo": [
+      "dog",
+      "drink",
+      "water"
+    ],
+    "derived": false,
+    "derived_from": null,
+    "verified": true,
+    "renderer": "template-stub (GPU-free)",
+    "brain": "tiny-demo",
+    "source": "tiny-demo +LTM",
+    "rich": false,
+    "activity": {
+      "roles": [
+        {
+          "word": "dog",
+          "confidence": null,
+          "role": "agent",
+          "cue": true,
+          "asserted": "dog"
+        },
+        {
+          "word": "drink",
+          "confidence": null,
+          "role": "action",
+          "cue": true,
+          "asserted": "drink"
+        },
+        {
+          "word": "water",
+          "confidence": null,
+          "role": "patient",
+          "cue": true,
+          "asserted": "water"
+        }
+      ],
+      "matched_fact_index": null,
+      "n_facts_scanned": 162,
+      "abstained": true,
+      "rf": {
+        "n_readout_neurons": 41472,
+        "frac_fired": 1.0,
+        "mean_magnitude": 104.49940643449372
+      },
+      "composer": "rf"
+    },
+    "provenance": {
+      "known": true,
+      "label": "perceived",
+      "d": 0.9999999902140674,
+      "rate_perceived": 0.1021875,
+      "rate_generated": 0.0,
+      "encoded_as": "perceived",
+      "agrees_with_encoded": true
+    },
+    "affect": {
+      "on": true,
+      "lesioned": false,
+      "composer": "onebrain",
+      "differential": 0.0,
+      "valence_sign": "0",
+      "tone_level": 0,
+      "tone_token": "",
+      "forthcomingness": {
+        "max_sentences": 4,
+        "max_elaborations": 2
+      },
+      "manner_template": "",
+      "appraisal_valence": 0.0,
+      "appraisal_arousal": 0.0,
+      "appraisal_hits": [],
+      "pos_rate": 0.0,
+      "neg_rate": 0.0
+    },
+    "comprehension": {
+      "on": true,
+      "lesioned": false,
+      "in_scope": true,
+      "svo": [
+        "dog",
+        "drink",
+        "water"
+      ],
+      "margin": 0.3,
+      "threshold": 0.19999999999999998,
+      "comprehended": true,
+      "calib": {
+        "mean_well": 0.3,
+        "min_well": 0.3,
+        "mean_ill": 0.038888888888888876,
+        "max_ill": 0.09999999999999998,
+        "read_steps": 60,
+        "n_calib": 24
+      },
+      "known_binding": false
+    },
+    "surprise": null,
+    "metacog": null,
+    "worldmodel": null,
+    "curiosity": null,
+    "multiref": null,
+    "noncontradiction": {
+      "on": true,
+      "lesioned": false,
+      "in_scope": true,
+      "svo": [
+        "dog",
+        "drinks",
+        "water"
+      ],
+      "recall_action": "drinks",
+      "asserted_polarity": "AFFIRM",
+      "recalled_yn": "unknown",
+      "stored_polarity": null,
+      "reject": false
+    },
+    "reconsolidation": null,
+    "pragmatic": null,
+    "episodic": null,
+    "affect_drives": {
+      "acted": true,
+      "turn": 3,
+      "lesioned": false,
+      "ema_valence": 0.0,
+      "ema_arousal": 0.0,
+      "body_h": 0.5,
+      "body_a": 0.0,
+      "mood": -0.0012916666666666632,
+      "felt_arousal": 0.0,
+      "level": 0,
+      "high_arousal": false,
+      "lead": "",
+      "reason": "neutral_hold",
+      "seed": 7,
+      "vplus_rate": 0.03779166666666667,
+      "vminus_rate": 0.03908333333333333
+    },
+    "swap_drives": {
+      "acted": true,
+      "turn": 3,
+      "topic": "dog",
+      "swapped": false,
+      "held_topic_before": "dog",
+      "held_topic": "dog",
+      "evicted_topic": null,
+      "reason": "same_topic_hold",
+      "seed": 7,
+      "lesioned": false,
+      "proposed_slot": 0,
+      "held_slot": 0,
+      "incumbent_slot": 0,
+      "winner_slot": 0,
+      "n_ignited_post": 1,
+      "old_residual_post": 0.3333333333333333,
+      "new_rate_post": 0.3333333333333333,
+      "mm_peak": 0.005555555555555556,
+      "boost_max": 0.005555555555555556,
+      "on": true,
+      "lead": "",
+      "new_topic": null,
+      "reason_lead": "same_topic_hold"
+    },
+    "common_ground_drives": {
+      "on": true,
+      "topic": "dog",
+      "slot": 0,
+      "decision": "reduce",
+      "in_common_ground": true,
+      "first_mention": false,
+      "reduce_rate": 0.09833333333333333,
+      "introduce_rate": 0.03833333333333333,
+      "evidence_rate": 0.12,
+      "margin": 0.06,
+      "lesioned": false,
+      "lead": "As for it \u2014 ",
+      "reason_lead": "reduced_reference"
+    },
+    "da_drives": {
+      "acted": true,
+      "turn": 3,
+      "lesioned": false,
+      "turn_engagement": 0.25454545454545446,
+      "ema_engagement": 0.2801454545454545,
+      "afferent_pA": 392.2036363636363,
+      "da_level": 0.5165472368617628,
+      "snc_firing": 0.07916666666666664,
+      "mode": "neutral",
+      "lead": "",
+      "reason": "low_engagement",
+      "seed": 7,
+      "shared_salience": {
+        "raw": 0.5961538461538463,
+        "want_hz": 9.72222222222222,
+        "normalized": 0.25454545454545446,
+        "lesioned": false,
+        "calib": {
+          "want_novel_hz": 38.19444444444444,
+          "want_familiar_hz": 0.0,
+          "threshold_hz": 19.09722222222222,
+          "novel_signal": 0.95,
+          "familiar_signal": 0.0,
+          "read_reps": 4
+        },
+        "on": true
+      },
+      "spiking_novelty": {
+        "novelty": 0.7435897435897436,
+        "n_tokens": 3,
+        "per_word_freshness": [
+          0.4230769230769231,
+          1.0,
+          0.8076923076923077
+        ],
+        "fresh_ref": 26.0,
+        "n_channels": 64,
+        "lesioned": false,
+        "on": true
+      },
+      "on": true
+    },
+    "da_encoding": {
+      "on": true,
+      "g": 1.7469166255550075,
+      "da_level": 0.5165472368617628,
+      "lesioned": false
+    }
+  },
+  "lbf_cau_teach4": {
+    "answer": "Gladly \u2014 the sun rises the sky \u2014 worth going further here.",
+    "abstained": false,
+    "recalled_svo": [
+      "sun",
+      "rise",
+      "sky"
+    ],
+    "derived": false,
+    "derived_from": null,
+    "verified": true,
+    "renderer": "template-stub (GPU-free)",
+    "brain": "tiny-demo",
+    "source": "tiny-demo +LTM",
+    "rich": false,
+    "activity": {
+      "roles": [
+        {
+          "word": "sun",
+          "confidence": null,
+          "role": "agent",
+          "cue": true,
+          "asserted": "sun"
+        },
+        {
+          "word": "rise",
+          "confidence": null,
+          "role": "action",
+          "cue": true,
+          "asserted": "rise"
+        },
+        {
+          "word": "sky",
+          "confidence": null,
+          "role": "patient",
+          "cue": true,
+          "asserted": "sky"
+        }
+      ],
+      "matched_fact_index": null,
+      "n_facts_scanned": 201,
+      "abstained": true,
+      "rf": {
+        "n_readout_neurons": 51456,
+        "frac_fired": 1.0,
+        "mean_magnitude": 104.49940683656096
+      },
+      "composer": "rf"
+    },
+    "provenance": {
+      "known": true,
+      "label": "perceived",
+      "d": 0.9999999903030304,
+      "rate_perceived": 0.103125,
+      "rate_generated": 0.0,
+      "encoded_as": "perceived",
+      "agrees_with_encoded": true
+    },
+    "affect": {
+      "on": true,
+      "lesioned": false,
+      "composer": "onebrain",
+      "differential": 0.020833333333333332,
+      "valence_sign": "0",
+      "tone_level": 0,
+      "tone_token": "",
+      "forthcomingness": {
+        "max_sentences": 4,
+        "max_elaborations": 2
+      },
+      "manner_template": "",
+      "appraisal_valence": 0.36000000000000004,
+      "appraisal_arousal": 0.3,
+      "appraisal_hits": [
+        "sun"
+      ],
+      "pos_rate": 0.020833333333333332,
+      "neg_rate": 0.0
+    },
+    "comprehension": null,
+    "surprise": null,
+    "metacog": null,
+    "worldmodel": {
+      "on": true,
+      "lesioned": false,
+      "kind": "update",
+      "context_sign": 1,
+      "predicted_next_sign": 1,
+      "pred_margin": 426.73611111111114
+    },
+    "curiosity": null,
+    "multiref": null,
+    "noncontradiction": {
+      "on": true,
+      "lesioned": false,
+      "in_scope": true,
+      "svo": [
+        "sun",
+        "rises",
+        "sky"
+      ],
+      "recall_action": "rises",
+      "asserted_polarity": "AFFIRM",
+      "recalled_yn": "unknown",
+      "stored_polarity": null,
+      "reject": false
+    },
+    "reconsolidation": null,
+    "pragmatic": null,
+    "episodic": null,
+    "affect_drives": {
+      "acted": true,
+      "turn": 4,
+      "lesioned": false,
+      "ema_valence": 0.36000000000000004,
+      "ema_arousal": 0.3,
+      "body_h": 0.68,
+      "body_a": 0.44999999999999996,
+      "mood": 0.0585,
+      "felt_arousal": 0.025166666666666667,
+      "level": 2,
+      "high_arousal": false,
+      "lead": "Gladly \u2014 ",
+      "reason": "graded_affect",
+      "seed": 7,
+      "vplus_rate": 0.0585,
+      "vminus_rate": 0.0
+    },
+    "swap_drives": {
+      "acted": false,
+      "turn": 4,
+      "topic": null,
+      "swapped": false,
+      "held_topic_before": "dog",
+      "held_topic": "dog",
+      "evicted_topic": null,
+      "reason": "no_topic_hold",
+      "seed": 7,
+      "lesioned": false,
+      "on": true,
+      "lead": "",
+      "new_topic": null,
+      "reason_lead": "no_topic_hold"
+    },
+    "common_ground_drives": {
+      "on": true,
+      "topic": null,
+      "decision": null,
+      "reason": "no_grounded_topic",
+      "lead": "",
+      "lesioned": false,
+      "reason_lead": "no_referent"
+    },
+    "da_drives": {
+      "acted": true,
+      "turn": 4,
+      "lesioned": false,
+      "turn_engagement": 0.4727272727272727,
+      "ema_engagement": 0.3956945454545454,
+      "afferent_pA": 553.9723636363635,
+      "da_level": 0.6645295339202085,
+      "snc_firing": 0.10249999999999998,
+      "mode": "focus",
+      "lead": " \u2014 worth going further here.",
+      "reason": "engaged",
+      "seed": 7,
+      "shared_salience": {
+        "raw": 0.7115384615384616,
+        "want_hz": 18.055555555555554,
+        "normalized": 0.4727272727272727,
+        "lesioned": false,
+        "calib": {
+          "want_novel_hz": 38.19444444444444,
+          "want_familiar_hz": 0.0,
+          "threshold_hz": 19.09722222222222,
+          "novel_signal": 0.95,
+          "familiar_signal": 0.0,
+          "read_reps": 4
+        },
+        "on": true
+      },
+      "spiking_novelty": {
+        "novelty": 0.935897435897436,
+        "n_tokens": 3,
+        "per_word_freshness": [
+          1.0,
+          0.8461538461538461,
+          0.9615384615384616
+        ],
+        "fresh_ref": 26.0,
+        "n_channels": 64,
+        "lesioned": false,
+        "on": true
+      },
+      "on": true
+    },
+    "da_encoding": {
+      "on": true,
+      "g": 1.960039467192896,
+      "da_level": 0.6645295339202085,
+      "lesioned": false
+    }
+  },
+  "lbf_cau_teach5": {
+    "answer": "Gladly \u2014 the bird sings the dawn \u2014 worth going further here.",
+    "abstained": false,
+    "recalled_svo": [
+      "bird",
+      "sing",
+      "dawn"
+    ],
+    "derived": false,
+    "derived_from": null,
+    "verified": true,
+    "renderer": "template-stub (GPU-free)",
+    "brain": "tiny-demo",
+    "source": "tiny-demo +LTM",
+    "rich": false,
+    "activity": {
+      "roles": [
+        {
+          "word": "bird",
+          "confidence": null,
+          "role": "agent",
+          "cue": true,
+          "asserted": "bird"
+        },
+        {
+          "word": "sing",
+          "confidence": null,
+          "role": "action",
+          "cue": true,
+          "asserted": "sing"
+        },
+        {
+          "word": "dawn",
+          "confidence": null,
+          "role": "patient",
+          "cue": true,
+          "asserted": "dawn"
+        }
+      ],
+      "matched_fact_index": null,
+      "n_facts_scanned": 153,
+      "abstained": true,
+      "rf": {
+        "n_readout_neurons": 39168,
+        "frac_fired": 1.0,
+        "mean_magnitude": 104.49940631968222
+      },
+      "composer": "rf"
+    },
+    "provenance": {
+      "known": true,
+      "label": "perceived",
+      "d": 0.9999999912087912,
+      "rate_perceived": 0.11375,
+      "rate_generated": 0.0,
+      "encoded_as": "perceived",
+      "agrees_with_encoded": true
+    },
+    "affect": {
+      "on": true,
+      "lesioned": false,
+      "composer": "onebrain",
+      "differential": 0.020833333333333332,
+      "valence_sign": "0",
+      "tone_level": 0,
+      "tone_token": "",
+      "forthcomingness": {
+        "max_sentences": 4,
+        "max_elaborations": 2
+      },
+      "manner_template": "",
+      "appraisal_valence": 0.36000000000000004,
+      "appraisal_arousal": 0.3,
+      "appraisal_hits": [],
+      "pos_rate": 0.020833333333333332,
+      "neg_rate": 0.0
+    },
+    "comprehension": null,
+    "surprise": null,
+    "metacog": null,
+    "worldmodel": null,
+    "curiosity": null,
+    "multiref": null,
+    "noncontradiction": {
+      "on": true,
+      "lesioned": false,
+      "in_scope": true,
+      "svo": [
+        "bird",
+        "sings",
+        "dawn"
+      ],
+      "recall_action": "sings",
+      "asserted_polarity": "AFFIRM",
+      "recalled_yn": "unknown",
+      "stored_polarity": null,
+      "reject": false
+    },
+    "reconsolidation": null,
+    "pragmatic": null,
+    "episodic": null,
+    "affect_drives": {
+      "acted": true,
+      "turn": 5,
+      "lesioned": false,
+      "ema_valence": 0.36000000000000004,
+      "ema_arousal": 0.3,
+      "body_h": 0.68,
+      "body_a": 0.44999999999999996,
+      "mood": 0.0585,
+      "felt_arousal": 0.025166666666666667,
+      "level": 2,
+      "high_arousal": false,
+      "lead": "Gladly \u2014 ",
+      "reason": "graded_affect",
+      "seed": 7,
+      "vplus_rate": 0.0585,
+      "vminus_rate": 0.0
+    },
+    "swap_drives": {
+      "acted": false,
+      "turn": 5,
+      "topic": null,
+      "swapped": false,
+      "held_topic_before": "dog",
+      "held_topic": "dog",
+      "evicted_topic": null,
+      "reason": "no_topic_hold",
+      "seed": 7,
+      "lesioned": false,
+      "on": true,
+      "lead": "",
+      "new_topic": null,
+      "reason_lead": "no_topic_hold"
+    },
+    "common_ground_drives": {
+      "on": true,
+      "topic": null,
+      "decision": null,
+      "reason": "no_grounded_topic",
+      "lead": "",
+      "lesioned": false,
+      "reason_lead": "no_referent"
+    },
+    "da_drives": {
+      "acted": true,
+      "turn": 5,
+      "lesioned": false,
+      "turn_engagement": 0.4727272727272727,
+      "ema_engagement": 0.4419141818181818,
+      "afferent_pA": 618.6798545454545,
+      "da_level": 0.7114074235156388,
+      "snc_firing": 0.11166666666666664,
+      "mode": "focus",
+      "lead": " \u2014 worth going further here.",
+      "reason": "engaged",
+      "seed": 7,
+      "shared_salience": {
+        "raw": 0.7115384615384615,
+        "want_hz": 18.055555555555554,
+        "normalized": 0.4727272727272727,
+        "lesioned": false,
+        "calib": {
+          "want_novel_hz": 38.19444444444444,
+          "want_familiar_hz": 0.0,
+          "threshold_hz": 19.09722222222222,
+          "novel_signal": 0.95,
+          "familiar_signal": 0.0,
+          "read_reps": 4
+        },
+        "on": true
+      },
+      "spiking_novelty": {
+        "novelty": 0.9358974358974358,
+        "n_tokens": 3,
+        "per_word_freshness": [
+          1.0,
+          1.0,
+          0.8076923076923077
+        ],
+        "fresh_ref": 26.0,
+        "n_channels": 64,
+        "lesioned": false,
+        "on": true
+      },
+      "on": true
+    },
+    "da_encoding": {
+      "on": true,
+      "g": 2.078441045880612,
+      "da_level": 0.7114074235156388,
+      "lesioned": false
+    }
+  },
+  "lbf_cau_teach6": {
+    "answer": "As for it \u2014 Gladly \u2014 the dog wakes the morning",
+    "abstained": false,
+    "recalled_svo": [
+      "dog",
+      "wake",
+      "morning"
+    ],
+    "derived": false,
+    "derived_from": null,
+    "verified": true,
+    "renderer": "template-stub (GPU-free)",
+    "brain": "tiny-demo",
+    "source": "tiny-demo +LTM",
+    "rich": false,
+    "activity": {
+      "roles": [
+        {
+          "word": "dog",
+          "confidence": null,
+          "role": "agent",
+          "cue": true,
+          "asserted": "dog"
+        },
+        {
+          "word": "wake",
+          "confidence": null,
+          "role": "action",
+          "cue": true,
+          "asserted": "wake"
+        },
+        {
+          "word": "morning",
+          "confidence": null,
+          "role": "patient",
+          "cue": true,
+          "asserted": "morning"
+        }
+      ],
+      "matched_fact_index": null,
+      "n_facts_scanned": 162,
+      "abstained": true,
+      "rf": {
+        "n_readout_neurons": 41472,
+        "frac_fired": 1.0,
+        "mean_magnitude": 104.49940643449372
+      },
+      "composer": "rf"
+    },
+    "provenance": {
+      "known": true,
+      "label": "perceived",
+      "d": 0.9999999909348443,
+      "rate_perceived": 0.1103125,
+      "rate_generated": 0.0,
+      "encoded_as": "perceived",
+      "agrees_with_encoded": true
+    },
+    "affect": {
+      "on": true,
+      "lesioned": false,
+      "composer": "onebrain",
+      "differential": 0.020833333333333332,
+      "valence_sign": "0",
+      "tone_level": 0,
+      "tone_token": "",
+      "forthcomingness": {
+        "max_sentences": 4,
+        "max_elaborations": 2
+      },
+      "manner_template": "",
+      "appraisal_valence": 0.36000000000000004,
+      "appraisal_arousal": 0.3,
+      "appraisal_hits": [],
+      "pos_rate": 0.020833333333333332,
+      "neg_rate": 0.0
+    },
+    "comprehension": {
+      "on": true,
+      "lesioned": false,
+      "in_scope": true,
+      "svo": [
+        "dog",
+        "wake",
+        "morning"
+      ],
+      "margin": 0.3,
+      "threshold": 0.19999999999999998,
+      "comprehended": true,
+      "calib": {
+        "mean_well": 0.3,
+        "min_well": 0.3,
+        "mean_ill": 0.038888888888888876,
+        "max_ill": 0.09999999999999998,
+        "read_steps": 60,
+        "n_calib": 24
+      },
+      "known_binding": false
+    },
+    "surprise": null,
+    "metacog": null,
+    "worldmodel": null,
+    "curiosity": null,
+    "multiref": null,
+    "noncontradiction": {
+      "on": true,
+      "lesioned": false,
+      "in_scope": true,
+      "svo": [
+        "dog",
+        "wakes",
+        "morning"
+      ],
+      "recall_action": "wakes",
+      "asserted_polarity": "AFFIRM",
+      "recalled_yn": "unknown",
+      "stored_polarity": null,
+      "reject": false
+    },
+    "reconsolidation": null,
+    "pragmatic": null,
+    "episodic": null,
+    "affect_drives": {
+      "acted": true,
+      "turn": 6,
+      "lesioned": false,
+      "ema_valence": 0.36000000000000004,
+      "ema_arousal": 0.3,
+      "body_h": 0.68,
+      "body_a": 0.44999999999999996,
+      "mood": 0.0585,
+      "felt_arousal": 0.025166666666666667,
+      "level": 2,
+      "high_arousal": false,
+      "lead": "Gladly \u2014 ",
+      "reason": "graded_affect",
+      "seed": 7,
+      "vplus_rate": 0.0585,
+      "vminus_rate": 0.0
+    },
+    "swap_drives": {
+      "acted": true,
+      "turn": 6,
+      "topic": "dog",
+      "swapped": false,
+      "held_topic_before": "dog",
+      "held_topic": "dog",
+      "evicted_topic": null,
+      "reason": "same_topic_hold",
+      "seed": 7,
+      "lesioned": false,
+      "proposed_slot": 0,
+      "held_slot": 0,
+      "incumbent_slot": 0,
+      "winner_slot": 0,
+      "n_ignited_post": 1,
+      "old_residual_post": 0.3333333333333333,
+      "new_rate_post": 0.3333333333333333,
+      "mm_peak": 0.011111111111111112,
+      "boost_max": 0.011111111111111112,
+      "on": true,
+      "lead": "",
+      "new_topic": null,
+      "reason_lead": "same_topic_hold"
+    },
+    "common_ground_drives": {
+      "on": true,
+      "topic": "dog",
+      "slot": 0,
+      "decision": "reduce",
+      "in_common_ground": true,
+      "first_mention": false,
+      "reduce_rate": 0.1,
+      "introduce_rate": 0.03833333333333333,
+      "evidence_rate": 0.12,
+      "margin": 0.061666666666666675,
+      "lesioned": false,
+      "lead": "As for it \u2014 ",
+      "reason_lead": "reduced_reference"
+    },
+    "da_drives": {
+      "acted": true,
+      "turn": 6,
+      "lesioned": false,
+      "turn_engagement": 0.2727272727272727,
+      "ema_engagement": 0.3404020363636363,
+      "afferent_pA": 476.56285090909086,
+      "da_level": 0.595380953402398,
+      "snc_firing": 0.08999999999999994,
+      "mode": "neutral",
+      "lead": "",
+      "reason": "low_engagement",
+      "seed": 7,
+      "shared_salience": {
+        "raw": 0.6115384615384615,
+        "want_hz": 10.416666666666666,
+        "normalized": 0.2727272727272727,
+        "lesioned": false,
+        "calib": {
+          "want_novel_hz": 38.19444444444444,
+          "want_familiar_hz": 0.0,
+          "threshold_hz": 19.09722222222222,
+          "novel_signal": 0.95,
+          "familiar_signal": 0.0,
+          "read_reps": 4
+        },
+        "on": true
+      },
+      "spiking_novelty": {
+        "novelty": 0.7692307692307692,
+        "n_tokens": 3,
+        "per_word_freshness": [
+          0.5769230769230769,
+          0.9230769230769231,
+          0.8076923076923077
+        ],
+        "fresh_ref": 26.0,
+        "n_channels": 64,
+        "lesioned": false,
+        "on": true
+      },
+      "on": true
+    },
+    "da_encoding": {
+      "on": true,
+      "g": 1.8978786383818451,
+      "da_level": 0.595380953402398,
+      "lesioned": false
+    }
+  },
+  "lbf_cau_whatif": {
+    "answer": "If the dog goes east, it will drink water \u2014 a consequence I rolled forward through dog reaching the river, and my no-confab moat confirms (dog,drink)->water is a fact I stored.",
+    "abstained": false,
+    "recalled_svo": null,
+    "verified": true,
+    "renderer": "template-stub (GPU-free)",
+    "brain": "tiny-demo",
+    "source": "tiny-demo +LTM",
+    "rich": false,
+    "activity": null,
+    "affect": {
+      "on": true,
+      "lesioned": false,
+      "composer": "onebrain",
+      "differential": 0.020833333333333332,
+      "valence_sign": "0",
+      "tone_level": 0,
+      "tone_token": "",
+      "forthcomingness": {
+        "max_sentences": 4,
+        "max_elaborations": 2
+      },
+      "manner_template": "",
+      "appraisal_valence": 0.36000000000000004,
+      "appraisal_arousal": 0.3,
+      "appraisal_hits": [],
+      "pos_rate": 0.020833333333333332,
+      "neg_rate": 0.0
+    },
+    "worldmodel": null,
+    "multiref": null,
+    "causal": {
+      "on": true,
+      "lesioned": false,
+      "kind": "what_if",
+      "predicts_D": true,
+      "D_rate": 100.0,
+      "B_rate": 150.0,
+      "offchain_max": 0.0,
+      "w_AD_direct": 0.20000001788139343,
+      "confirmed": true,
+      "confab": false,
+      "answer": "If the dog goes east, it will drink water \u2014 a consequence I rolled forward through dog reaching the river, and my no-confab moat confirms (dog,drink)->water is a fact I stored.",
+      "consequence_fact": [
+        "dog",
+        "drink",
+        "water"
+      ],
+      "agent": "dog",
+      "action": "go"
+    },
+    "inner_state_readout": true
+  }
+}

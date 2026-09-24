@@ -44,6 +44,12 @@ EXTRA_LESIONS = {
 }
 
 # (faculty_key, turn_label, decision_field_paths, thin)
+# PARKED (2026-09-24, registry integration): kept for the record, left out of the headline registry until an
+# opt-in-capability row mechanism applies its prerequisite flag to both arms (plan step S28, tag b2b-caps).
+PARKED = {
+    'tom-false-belief': ('measures a default-OFF capability (needs BRAIN_FALSE_BELIEF_CHAT=1 in both arms); at production defaults it is not exercised, so it belongs to the opt-in capability rows, not the shipped headline registry'),
+}
+
 EXTRA_PROBES = [
     ("tom-false-belief", "tom_fb",
      ["false_belief_tom.acted", "false_belief_tom.belief_location", "false_belief_tom.reality_location"],

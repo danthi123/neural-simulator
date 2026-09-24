@@ -1,0 +1,39 @@
+{
+ "run_id": "1790268212-476215",
+ "runner": "research/runners/_xedge_in_wave3_verify.py",
+ "argv": [
+  "/home/ubuntu/derisk-pool/revisions/e73175d3b8f8f94ee1ed921efc2eb0e0f8717ec0/research/runners/_xedge_in_wave3_verify.py",
+  "--seed",
+  "7",
+  "--g2-run",
+  "interleaved",
+  "--pregrow",
+  "24",
+  "--out",
+  "research/findings/raw/_xedge_in_wave3/s7/g2p_interleaved.json"
+ ],
+ "git_sha": "e73175d3b8f8f94ee1ed921efc2eb0e0f8717ec0",
+ "git_dirty": false,
+ "source_kind": "git_archive",
+ "source_manifest_sha256": "4fb68148c8635b87732df47927adb5720661da82d97e30b211a53a08b50a9938",
+ "source_manifest_verified_at_start": true,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": true,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-24T16:43:32",
+ "env": {
+  "POOL_JOB_ID": "a4-g2p-interleaved-s7",
+  "OPENBLAS_NUM_THREADS": "1",
+  "SIM_BACKEND": "numpy",
+  "POOL_JOB_MEM_GB": "2",
+  "CUDA_VISIBLE_DEVICES": "",
+  "OMP_NUM_THREADS": "1",
+  "MKL_NUM_THREADS": "1"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": false,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_xedge_in_wave3/s7/g2p_interleaved.json"
+}
