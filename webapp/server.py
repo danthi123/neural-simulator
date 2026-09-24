@@ -4188,18 +4188,24 @@ def _prewarm_scratch_kernel_warm(default_brain: str, renderer: str) -> None:
     materialization) -- happens at STARTUP, not on the session handed to the first real caller.
     The scratch session is fully discarded afterward (`_prewarm_discard_scratch_session`).
 
-    KNOWN RESIDUAL, declared rather than hidden (see tools/chat_latency_probe.py's byte-identity
-    check and the 2026-09-24 finding it produced): several faculty organs this turn touches are
+    DECLARED RESIDUAL, checked rather than assumed: several faculty organs this turn touches are
     PROCESS-SHARED singletons keyed by ORGAN, not by session (`_get_affect_organ`,
     `_get_surprise_organ`, `_get_metacog_organ`, `_get_worldmodel_organ`, `_get_pragmatic_organ`,
-    the value-choice critic, ...) and several of those plastically LEARN from every turn they see
-    (that plasticity is the mission, not a bug). Discarding the SCRATCH SESSION'S own per-session
-    dicts cannot undo a shared organ's weight update from having processed this turn -- so if any
-    such organ actually updates on a single ordinary turn, the 'default' session's first REAL turn
-    is measurably NOT identical to a from-cold first turn (a from-cold brain has literally never
-    fired). The byte-identity check measures this directly; a measured leak means BRAIN_PREWARM
-    should be re-scoped to organ/model prebuild only (`.ensure_built()`, no turn), per this
-    function's own call site fallback below.
+    the value-choice critic, the wave3 merged-pool organs, ...). EACH of those organs' OWN
+    docstring/comments states it trains ONCE at build time (Hebbian/homeostatic calibration) and
+    then FREEZES for every subsequent read (`surprise_production_organ.py`: "LEARN ... then FREEZE
+    (per-turn reads never learn)"; `worldmodel_production_organ.py`: same phrase; `metacog_
+    production_organ.py`: "frozen balance operating point"; `pragmatic_production_organ.py`:
+    "plasticity OFF, a FIXED operating point"; `value_choice_production_organ.py`: "FREEZE the
+    value arm for every read ... weights frozen") -- if that holds, a scratch turn cannot leave a
+    trace for a later session to inherit, because there is nothing left plastic for it to move.
+    tests/test_brain_prewarm_scratch_session.py's HEAVY check (SIM_RUN_HEAVY_CAPABILITY=1) verifies
+    this DIRECTLY (a prewarmed session vs. a from-cold one must answer an identical scripted
+    conversation byte-for-byte) rather than trusting the docstrings; a measured divergence there
+    means some organ is NOT frozen as claimed, and this function should be re-scoped to organ/model
+    prebuild only (`.ensure_built()`, no turn) -- see that test's own docstring for the current
+    verdict and any config under which it was obtained (this box's RAM/CPU constraints may limit it
+    to a scoped-down dev config rather than the full production default).
 
     Host server-lifecycle ONLY -- adds no cognition (a single throwaway `brain_reply` call through
     the EXISTING, unmodified production pipeline). Best-effort: any failure is swallowed by the
