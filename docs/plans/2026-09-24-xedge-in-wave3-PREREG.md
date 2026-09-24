@@ -124,3 +124,51 @@ battery belongs to the orchestrator; the job lines are staged in the lane report
 - Reported with the same compare. It is informational, and it does not replace G2-transient.
 - The 2 verdict-precondition blocks were added to the runner at `13c39411d`, after the G2 artifacts were produced.
   They re-score the same raw files and change no criterion.
+
+**A2 — 2026-09-24 ~14:00 EDT. G1 read as registered FAILS. This amendment adds a control and changes nothing
+registered.**
+
+Artifacts already seen at this time (seed 7), all read:
+- `g1_off.json`, `g1_on.json` and `g1_compare.json` (committed `fa1ef4c29`)
+- `g3_selftest.json`
+- `g2p_*.json`
+- `chat_{on,off,main5ec_off}.json`
+- everything listed under A1
+
+What G1 showed:
+- ON-build vs OFF-build: all 11 organs identical.
+- ON-exercised vs OFF-build: 4 organs differ. Every answer is unchanged. The endpoints are identical.
+
+  | organ | max abs delta | key |
+  |---|---|---|
+  | causal_whatif | 16.7 | directed_fwd_BtoD |
+  | worldmodel | 18.75 | expect[+1].pred_pos |
+  | surprise | 0.056 | calib.pred_gain_max |
+  | source_provenance | 0.0025 | content_7 |
+
+**The registered verdict stands: G1 = FAIL.** Under §3, A4 is therefore reported as a substrate change until shown
+otherwise.
+
+Suspected instrument confound. `_isolated_reads` constructs every organ afresh. The four organs above train or
+encode on the SHARED pool when constructed (causal_whatif's build-time STDP+DA train, worldmodel's and surprise's
+build-time Hebbian encode, source_provenance's encode). "ON-exercised" is a SECOND read pass on the same pool, so
+it rebuilds them on top of pass 1. The registered comparator (OFF-build) is a FIRST pass. The pair therefore
+differs in the number of passes as well as in the flag and the exercise.
+
+Control (new arms; same runner, same seed):
+- `--g1-arm off2`: the OFF pool, a build pass, then a second pass with no exercise.
+- `--g1-arm on2`: the ON pool, a build pass, then a second pass with no exercise.
+
+Read-outs:
+- **A2-primary** = ON-exercised vs OFF-second (`--g1-pairs second:exercised`). The two sides have the same number
+  of passes. They differ in the flag AND the full xedge exercise.
+- **A2-flag-only** = ON-second vs OFF-second (`--g1-pairs second:second`).
+
+The same exact-identity rule applies to the 9 non-endpoint organs.
+
+Reporting:
+- If A2-primary is identical, the finding reads: "G1 as registered FAILED on an unequal-pass comparator. Under the
+  equal-pass control, the in-pool cross-edge and its exercise leave every other organ's reads byte-identical."
+  The registered FAIL is still reported beside it.
+- If A2-primary is not identical, the substrate-change verdict stands.
+- No flip either way. That was already ruled out tonight (6 seeds needed).
