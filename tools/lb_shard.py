@@ -36,6 +36,18 @@ PROBE_SETS = {
         "LB_EPISODIC_DRIVE_PROBE": "1", "LB_SURPRISE_CONFIRM_PROBE": "1", "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
         "LB_CG_DRIVE_PROBE": "1", "LB_NONCONTRADICTION_DRIVE_PROBE": "1", "LB_AFFECT_DRIVE_PROBE": "1",
         "LB_BG_SELECT_DRIVE_PROBE": "1", "LB_PMEM_DRIVE_PROBE": "1", "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+        # 2026-09-24 (plan step S08 / lane AG-REG), landed on main after this branch's base (bd391aa31) --
+        # LB_SWAP_DRIVE_PROBE: "swap-drives-response" adequate probe (research/findings/2026-09-23-swap-drives-
+        # adequate-probe-...); it remaps that faculty's existing "swap-drives-response" FACULTY_LESIONS key to a
+        # driving open->hold->switch turn-group instead of the hollow default. LB_WMB_CONTENT_PROBE: the wm-binding
+        # ORDINARY-CONTENT probe (research/findings/2026-09-24-wm-binding-ordinary-content-probe-PREREGISTRATION.md)
+        # -- checked: it IS row-able (load_bearing_fraction.measure_faculty's `if LB_WMB_CONTENT and key ==
+        # "wm-binding-advanced"` early return reuses the EXISTING "wm-binding-advanced" key already in
+        # FACULTY_LESIONS/faculty_keys(), same pattern as LB_SWAP_DRIVE_PROBE / LB_OPEN_ENDED_DISTRIB_PROBE above --
+        # it just reports its result under the DIFFERENT key "wm-binding-recurrence-drive" per Amendment C, to avoid
+        # double-crediting "wm-binding-advanced"). Expected per the 2026-09-24 6-seed NO-GO already on record:
+        # exercised, not load-bearing.
+        "LB_SWAP_DRIVE_PROBE": "1", "LB_WMB_CONTENT_PROBE": "1",
     },
     "thin": {},
 }
@@ -127,15 +139,44 @@ def cmd_aggregate(a):
     out["sd_fraction"] = (sum((f - out["mean_fraction"]) ** 2 for f in fracs) / len(fracs)) ** 0.5 if fracs else None
     out["mean_fraction_3dp"] = round(out["mean_fraction"], 3) if fracs else None
     out["sd_fraction_3dp"] = round(out["sd_fraction"], 3) if fracs else None
-    # BACKEND, read from each shard's own provenance sidecar (not assumed): gates/device_and_cost requires the device.
-    backends = set()
+    # BACKEND / HOST / LTM state / per-row env, read from each shard's own provenance sidecar (not assumed):
+    # gates/device_and_cost requires the device; a mixed-host or mixed-LTM battery (2026-09-24 plan step S08 --
+    # e.g. the flip-defaults s102 shards, some local, some pool) must say so rather than silently averaging over it.
+    # research/runners/__init__.py's env filter was extended (this same lane's commit) to also capture BRAIN_/LB_
+    # prefixes, so `env` below is now the shard's REAL per-row env, not just the SIM_/GAP-family subset it used to be.
+    backends, hosts, ltm_modes = set(), set(), set()
+    per_shard = {}
     for prov in glob.glob("%s/%s/s*/*/lb.json.prov.json" % (OUT_BASE, a.tag)):
+        seed_dir = prov.split("/")[-3]
+        fac_dir = prov.split("/")[-2]
         try:
-            backends.add((json.load(open(prov)).get("env") or {}).get("SIM_BACKEND") or "unrecorded")
+            pj = json.load(open(prov))
+            penv = pj.get("env") or {}
+            backend = penv.get("SIM_BACKEND") or "unrecorded"
+            host = pj.get("host") or "unrecorded"
+            # LTM STATE: this harness's own boot-time KB is not the data-lake LTM (that is S04's BRAIN_DATA_ROOT /
+            # DA-tag-capture concern); a shard only ran against the LTM if it explicitly carried BRAIN_DATA_ROOT.
+            # n_facts itself is not something this generic sidecar can know (it would require the shard to have
+            # QUERIED the data lake) -- reported honestly as unmeasured, never guessed at zero.
+            ltm_on = bool(penv.get("BRAIN_DATA_ROOT"))
+            row_env = {k: v for k, v in sorted(penv.items()) if k.startswith(("BRAIN_", "LB_"))}
         except Exception:
-            backends.add("unreadable")
+            backend, host, ltm_on, row_env = "unreadable", "unreadable", None, {}
+        backends.add(backend)
+        hosts.add(host)
+        ltm_modes.add(ltm_on)
+        per_shard["%s/%s" % (seed_dir, fac_dir)] = {
+            "backend": backend, "host": host, "ltm_on": ltm_on, "n_facts": None,  # see note above
+            "env": row_env,
+        }
     out["backend"] = sorted(backends)[0] if len(backends) == 1 else "mixed:" + ",".join(sorted(backends))
     out["backend_source"] = "per-shard provenance sidecars (lb.json.prov.json env.SIM_BACKEND)"
+    out["host"] = sorted(hosts)[0] if len(hosts) == 1 else "mixed:" + ",".join(sorted(hosts))
+    out["ltm_mode"] = ("on" if ltm_modes == {True} else "off" if ltm_modes == {False} else
+                        "mixed" if len(ltm_modes) > 1 else "unrecorded")
+    out["ltm_n_facts_note"] = ("not measured by this generic sidecar -- BRAIN_DATA_ROOT presence/absence (ltm_mode) "
+                                "is recorded; a per-shard fact COUNT needs the shard to query the data lake itself")
+    out["per_shard_prov"] = per_shard
     dest = "%s/%s/aggregate.json" % (OUT_BASE, a.tag)
     os.makedirs(os.path.dirname(dest), exist_ok=True)
     json.dump(out, open(dest, "w"), indent=1, sort_keys=True)
