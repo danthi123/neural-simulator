@@ -49,6 +49,22 @@ def test_memory_reservations_expire_and_jobs_declare_size(tmp_path: Path) -> Non
     assert run_bash(DISPATCHER, "--peek-est-gb", env=env2).stdout.strip() == "1"   # unknown runner -> default
 
 
+def test_running_jobs_commit_their_declared_size_for_their_lifetime(tmp_path: Path) -> None:
+    # 2026-09-23 20:45: a between-phases snapshot read 9 GB free while two ~6 GB LB jobs ran; a third went out and
+    # both nodes thrashed. Running wrappers now commit their declared size until they exit.
+    table = tmp_path / "mem.tsv"
+    table.write_text("load_bearing_fraction\t6\n")
+    ps = ("bash -c POOL_CHECKED_REASON=x cd r && python -m research.runners.load_bearing_fraction --seed 42\n"
+          "bash -c POOL_CHECKED_REASON=y\\ mem_gb=5 cd r && python -m research.runners.d6_learn_through_use_lb\n"
+          "bash -c POOL_CHECKED_REASON=z cd r && bash tools/memcap.sh 8 -- python -m research.runners.q\n")
+    r = subprocess.run(["bash", str(DISPATCHER), "--committed-gb"], input=ps, cwd=ROOT, text=True, capture_output=True,
+                       env={**os.environ, "POOL_RUNNER_MEM_PATH": str(table)}, check=True)
+    assert r.stdout.strip() == "19"          # 6 (runner table) + 5 (hint) + 8 (memcap)
+    r = subprocess.run(["bash", str(DISPATCHER), "--committed-gb"], input="", cwd=ROOT, text=True,
+                       capture_output=True, check=True)
+    assert r.stdout.strip() == "0"
+
+
 def test_pop_takes_first_job_that_fits_the_node_budget(tmp_path: Path) -> None:
     now = int(time.time())
     queue = tmp_path / "pool.queue"
