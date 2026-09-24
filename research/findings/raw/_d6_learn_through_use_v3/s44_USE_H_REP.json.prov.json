@@ -1,0 +1,33 @@
+{
+ "run_id": "1790199536-3534539",
+ "runner": "research/runners/d6_learn_through_use_lb.py",
+ "argv": [
+  "/home/node/derisk-pool/revisions/40e839812dc5f0b3d7e403417b696b8e41e487f9/research/runners/d6_learn_through_use_lb.py",
+  "--worker",
+  "--env",
+  "{\"BRAIN_D6_HEBBIAN_STORE\": \"1\", \"BRAIN_D6_HEBBIAN_FREEZE\": \"0\", \"BRAIN_D6_ENGRAM_VOCAB\": \"1\", \"BRAIN_D6_ENGRAM_READTIME\": \"1\"}",
+  "--teach",
+  "the wolf hunts the deer",
+  "--out",
+  "research/findings/raw/_d6_learn_through_use_v3/s44_USE_H_REP.json"
+ ],
+ "git_sha": "40e839812dc5f0b3d7e403417b696b8e41e487f9",
+ "git_dirty": false,
+ "source_kind": "git_archive",
+ "source_manifest_sha256": "50fde738029f0fc8f3b707004525b04cb4132fcca5c42edddef5e81383af5124",
+ "source_manifest_verified_at_start": true,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": true,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-23T17:38:56",
+ "env": {
+  "SIM_BACKEND": "numpy",
+  "SIM_RUN_ID": "1790199535-3534536"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": false,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_d6_learn_through_use_v3/s44_USE_H_REP.json"
+}

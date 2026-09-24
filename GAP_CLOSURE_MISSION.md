@@ -20,9 +20,11 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
   terminates it) + AWS A (`.aws_gpu`, s100-102, controller `b9e3vhwh5` terminates it). When both are done:
   `.venv/bin/python tools/lb_shard.py aggregate --tag allfixes3settle` → finding. Robust core 25 if affect-marker is
   6/6 and nothing regresses (vs 24 in `allfixes2`).
-- **D6 v3 capability gate:** 23/35 arms landed. 12 arms exited rc=0 with NO file (the runner's run() swallows a dead
-  worker; pool OOM). They are being re-run on the pool (revision `40e83981`, `mem_gb=5` each). Score with the v3
-  prereg's registered command once all 35 are in `research/findings/raw/_d6_learn_through_use_v3/`.
+- **✅ D6 v3 capability gate: GO 6/6 on K1-K7** (`research/findings/2026-09-23-d6-learn-through-use-v3-capability-gate-GO-6of6.md`):
+  the recall reply depends on the in-conversation synaptic write; the host record is inert. Runner-level, default-off.
+  The EXPO_H secondary (K3e/K4e) is staged on the pool at `01f7a5a4` → re-score with the same command when the 6
+  `s*_EXPO_H.json` land and append the secondary to that finding.
+- **✅ Language v2 referent lexicon: GO on all 8 gates, 6 seeds** (merged `a13b7239`); runner-level, not wired.
 - **Pool dispatcher now reserves job memory (`@2af939ac`):** a job's `mem_gb=N` hint (in its --checked text) is
   reserved on its node for 20 min. The pool is RAM-bound (15 GB nodes, ~5 GB jobs), not core-bound. pool40 is
   powered off.
