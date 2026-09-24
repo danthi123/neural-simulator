@@ -613,6 +613,27 @@ def _decide(rows) -> dict:
     }
 
 
+def runner_code_mismatch(git_shas):
+    """None if every input ran the SAME version of this runner file, else the reason to refuse. Compares the file's
+    blob at each input's commit (a short and a full SHA of one commit, or two commits with an identical runner, agree);
+    a missing/unknown SHA or one git cannot resolve refuses."""
+    import subprocess
+    rel = "research/runners/_curiosity_metacog_neuromod_gain_derisk.py"
+    root = str(Path(__file__).resolve().parents[2])
+    blobs = {}
+    for fp, sha in git_shas.items():
+        if not sha or sha == "unknown":
+            return f"{fp} has no provenance git_sha (sidecar missing or unknown)"
+        r = subprocess.run(["git", "rev-parse", "--verify", "--quiet", f"{sha}:{rel}"],
+                           capture_output=True, text=True, cwd=root)
+        if r.returncode != 0:
+            return f"cannot resolve {rel} at {sha} (for {fp})"
+        blobs[fp] = r.stdout.strip()
+    if len(set(blobs.values())) > 1:
+        return f"inputs ran DIFFERENT runner code: {blobs} (shas {git_shas})"
+    return None
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--seeds", type=int, nargs="+", default=[42, 43, 44, 100, 101, 102])
@@ -667,7 +688,6 @@ def main():
         # fresh rows instead of crashing on a missing key.
         distinct_mech = {v for v in mechanisms.values() if v is not None}
         distinct_op = {json.dumps(v, sort_keys=True) for v in operating_points.values() if v is not None}
-        known_shas = {v for v in git_shas.values() if v is not None}
         if len(distinct_mech) > 1:
             print(f"[combine] REFUSED: input files report DIFFERENT mechanisms: {mechanisms}", flush=True)
             return 2
@@ -675,8 +695,12 @@ def main():
             print(f"[combine] REFUSED: input files report DIFFERENT operating_point constants: "
                   f"{operating_points}", flush=True)
             return 2
-        if len(known_shas) > 1:
-            print(f"[combine] REFUSED: input files were produced from DIFFERENT git SHAs: {git_shas}", flush=True)
+        # Compare the RUNNER FILE's content at each input's commit, not SHA strings (2026-09-23 review: a short and a
+        # full SHA of the same commit read as 'different', and the held-out seeds run from a later merge commit whose
+        # runner is byte-identical). A missing sidecar or an unresolvable SHA refuses -- it can no longer be skipped.
+        why = runner_code_mismatch(git_shas)
+        if why:
+            print(f"[combine] REFUSED: {why}", flush=True)
             return 2
         rows.sort(key=lambda r: r["seed"])
         summary = _decide(rows)
