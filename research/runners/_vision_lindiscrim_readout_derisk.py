@@ -295,6 +295,30 @@ PARTIAL at or below that is a disappointment even if technically a PARTIAL by th
       --conj-select-kwta-frac 0.1 --conj-n 1152 --conj-offset-max 4 --readout attention-gated-soft \
       --attn-gain-exponent 1.0 --n-s2 96 --heldout-position --scramble-null --seeds 42 43 44 100 101 102 \
       --out research/findings/raw/lanes/perception/conjbind_attngatedsoft_n1152_heldoutpos_scramblenull_6seed.json
+
+SPIKING FEEDBACK DIVISIVE GAIN-CONTROL READOUT (2026-09-23, `--readout attention-gated-soft-fbgain`) --
+research/findings/2026-09-23-vision-configural-binding-spiking-feedback-divisive-gain-control-readout-
+PREREGISTERED.md. See `_attention_gated_soft_fbgain_class_read` for the full mechanism. EVERY HOST STAGE
+still on this readout's running path (re-review 2026-09-24, prior round declared only a subset):
+  1. the top-down template `A_c = |w_c| / mean(|w_c|)` (a HOST numpy formula, identical to every other
+     attention-gated arm in this file);
+  2. the gain multiply `gated = r * A_c ** attn_gain_exponent` (HOST, pre-spike);
+  3. the CROSS-CLASS MEAN-CENTERING `net = net - net.mean(axis=1, keepdims=True)` -- a HOST pooled
+     normalization ACROSS CLASSES, computed once from the pre-spike E-I drive, shared by every other
+     `*_class_read` arm in this file (not unique to fbgain, but previously undeclared HERE);
+  4. the `read_gain`/`read_bias` HOST affine step applied to that centered drive before it ever reaches
+     the LIF port.
+  ONLY the downstream per-CLASS `_apply_s2_norm` satdiv ratio is replaced by a spiking mechanism here
+  (`lif_spike_read_fbgain`'s POST-spike feedback loop) -- stages 1-4 above are NOT closed by this lever.
+  Additionally, `lif_spike_read_fbgain`'s own feedback trace `r_fb` is itself a HOST-computed statistic:
+  `r_fb(t+1) = r_fb(t) + (1/fb_tau) * (-r_fb(t) + spk.mean(axis=1))` averages the read population's spike
+  indicator EQUALLY over every unit in the row via plain numpy `.mean()` -- an idealized, equal-weight,
+  all-to-all rate trace, NOT a population of simulated inhibitory interneurons integrating and relaying
+  that pooled signal. The shunting division `I_eff = I0 / (1 + fb_strength * r_fb)` is likewise a host
+  arithmetic operation applied to every unit's current, not a synaptic conductance computed by simulated
+  neurons. What IS attributable to spiking dynamics: `r_fb` is built from REAL LIF spike outcomes drawn
+  this trial (not a pre-spike host formula), and its OWN temporal evolution is a genuine leaky-integrator
+  recurrence over simulated time steps -- see `lif_spike_read_fbgain`'s docstring for the full account.
 """
 from __future__ import annotations
 
@@ -1634,13 +1658,21 @@ def _attention_gated_soft_fbgain_class_read(r, V, b, mu, sd, a, code, base_seed)
     Heeger 1992 recurrent/shunting realization of normalization) -- a mechanism computed BY THE SPIKING
     STAGE from its own realized activity, not a host formula computed once before any spike is drawn.
 
-    HOST SHORTCUT DECLARED (CLAUDE.md boundary): the top-down template `A_c` and the gain multiply
-    `bd = r * A_c**exponent` remain HOST numpy formulas, identical to every other arm in this file --
-    this finding does not close that shortcut, only the DOWNSTREAM normalization/gain-control shortcut
-    (previously `_apply_s2_norm`'s host satdiv ratio, now a spiking feedback loop). `read_gain`/
-    `read_bias` remain the SAME fixed host constants applied upstream of `lif_spike_read_fbgain`'s own
-    `gain=` argument -- this mechanism is ADDITIVE (a further, dynamic correction on top of them), not a
-    replacement for that existing degree of freedom.
+    HOST SHORTCUT DECLARED (CLAUDE.md boundary) -- EVERY host stage still on this function's running
+    path (re-review 2026-09-24: the prior round declared only the first two of these four): (1) the
+    top-down template `A_c` and (2) the gain multiply `bd = r * A_c**exponent` remain HOST numpy
+    formulas, identical to every other arm in this file; (3) the CROSS-CLASS MEAN-CENTERING `net = net -
+    net.mean(axis=1, keepdims=True)` (below) is a HOST pooled normalization ACROSS CLASSES, computed once
+    from the pre-spike E-I drive -- shared with every other `*_class_read` arm, but a host shortcut on
+    THIS path too, and previously undeclared here; (4) `read_gain`/`read_bias` remain the SAME fixed host
+    constants applied upstream of `lif_spike_read_fbgain`'s own `gain=` argument. This finding does not
+    close ANY of (1)-(4); it closes only the DOWNSTREAM normalization/gain-control shortcut (previously
+    `_apply_s2_norm`'s host satdiv ratio, now `lif_spike_read_fbgain`'s spiking feedback loop) -- this
+    mechanism is ADDITIVE (a further, dynamic correction on top of (1)-(4)), not a replacement for them.
+    `lif_spike_read_fbgain`'s own feedback trace `r_fb` is ALSO host-computed: it is a plain numpy
+    `spk.mean(axis=1)` -- an idealized, EQUAL-WEIGHT, all-to-all rate trace over the read population's
+    real spike outcomes, not simulated inhibitory interneurons integrating and relaying that signal (see
+    that function's own docstring for the full account of what IS vs is NOT spiking there).
 
     TWO INDEPENDENTLY-DISABLEABLE LEVERS, each with its own byte-identical-off point:
       - `attn_gain_exponent <= 0`: short-circuits to `gated = r` (identical to every other arm's

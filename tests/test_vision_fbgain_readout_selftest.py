@@ -80,19 +80,78 @@ def test_fbgain_disabled_reproduces_lif_spike_read_exactly():
         assert np.array_equal(f1, f2), "fb_strength<=0 must reproduce lif_spike_read's first-spike times exactly"
 
 
+def _reference_fbgain_with_pinned_rfb(drive, T, seed, pinned_rfb, tau=8.0, v_thresh=1.0, t_ref=2,
+                                       noise=0.06, gain=1.0, fb_strength=0.0, fb_tau=8.0):
+    """Byte-for-byte the SAME stepping loop as `lif_spike_read_fbgain` (research/runners/
+    _vision_hmax_spiking_derisk.py), with exactly ONE line changed: the feedback trace's update target is
+    the CONSTANT `pinned_rfb` instead of the real population's own `spk.mean(axis=1)`. This is the
+    reviewer's exact mutation (2026-09-24 re-review: 'spk.mean(axis=1) -> 0.5 passed all 5 tests'),
+    reproduced here as an independent reference so the real test below can assert the PRODUCTION function
+    does NOT match what a disconnected-constant r_fb would produce."""
+    rng = np.random.default_rng(seed)
+    M, C = drive.shape
+    v = np.zeros((M, C), dtype=np.float32)
+    ref = np.zeros((M, C), dtype=np.int32)
+    counts = np.zeros((M, C), dtype=np.float32)
+    first = np.full((M, C), float(T), dtype=np.float32)
+    I0 = (gain * drive).astype(np.float32)
+    r_fb = np.zeros(M, dtype=np.float32)
+    for t in range(int(T)):
+        can = ref <= 0
+        I_eff = (I0 / (1.0 + fb_strength * r_fb[:, None])).astype(np.float32)
+        v = np.where(can, v + (1.0 / tau) * (-v + I_eff) + rng.standard_normal((M, C)).astype(np.float32) * noise, v)
+        spk = can & (v >= v_thresh)
+        counts += spk
+        newf = spk & (first >= T)
+        first = np.where(newf, float(t), first)
+        v = np.where(spk, 0.0, v)
+        ref = np.where(spk, t_ref, ref - 1)
+        r_fb = r_fb + (1.0 / fb_tau) * (-r_fb + pinned_rfb)          # <-- the mutation, isolated here
+    return counts, first
+
+
 def test_feedback_trace_is_driven_by_real_spikes_not_a_constant():
-    """A row with strong drive in every column must accumulate a LARGER pooled r_fb trace than a row with
-    weak drive, so a strong-drive row's own feedback-induced suppression must show up as a SMALLER extra
-    boost from raising fb_strength than a weak-drive row gets (the strong row is already saturating, the
-    weak row has more headroom) -- this fails if r_fb is computed but never actually coupled into I_eff,
-    or if it is a constant that ignores the actual spikes."""
+    """DIRECTLY catches the reviewer's exact mutation (r_fb's update target `spk.mean(axis=1)` replaced by
+    a constant, e.g. 0.5) by comparing the PRODUCTION function against `_reference_fbgain_with_pinned_rfb`
+    run with the SAME seed/params but r_fb pinned to that constant: if production's own r_fb were also a
+    disconnected constant, the two would be BYTE-IDENTICAL (both take the identical RNG draws and the
+    identical I_eff formula, differing only in what feeds r_fb). Uses two rows engineered to have real
+    per-row spike fractions far from the pinned constant on BOTH sides (a saturating-strong row whose true
+    mean spike fraction is near 1.0, and a near-silent weak row whose true mean spike fraction is near 0.0),
+    so a real activity-coupled r_fb is GUARANTEED to diverge from a pinned 0.5 -- this is the 'compare r_fb
+    against the actual spike counts across two inputs with different spiking' check."""
+    # drive=3.0 keeps the strong row's own current close enough to v_thresh=1.0 that the EXACT r_fb value
+    # feeding I_eff = I0/(1+fb_strength*r_fb) changes spike timing (unlike a saturating/floor drive, where
+    # any r_fb in a modest range produces the identical spike train and the constant-vs-real contrast below
+    # would be undiscriminating regardless of which mutation is present).
     T, C = 60, 5
     strong = np.full((1, C), 3.0, dtype=np.float32)
     weak = np.full((1, C), 0.3, dtype=np.float32)
     drive = np.concatenate([strong, weak], axis=0)   # (2, C): row 0 strong, row 1 weak
+    fb_strength, fb_tau, seed = 3.0, 8.0, 7
 
-    c_off, _ = lif_spike_read_fbgain(drive, T=T, seed=7, fb_strength=0.0, fb_tau=8.0)
-    c_on, _ = lif_spike_read_fbgain(drive, T=T, seed=7, fb_strength=3.0, fb_tau=8.0)
+    c_on, _ = lif_spike_read_fbgain(drive, T=T, seed=seed, fb_strength=fb_strength, fb_tau=fb_tau)
+    c_off, _ = lif_spike_read_fbgain(drive, T=T, seed=seed, fb_strength=0.0, fb_tau=fb_tau)
+
+    # Ground truth: what each row's OWN mean spike fraction actually is with feedback off, i.e. what a
+    # REAL per-row r_fb converges toward. Confirm the strong row spikes at a real, non-trivial, non-0.5
+    # rate and the weak row (below v_thresh even with noise) stays silent -- both far from a pinned 0.5.
+    strong_rate = c_off[0].mean() / T
+    weak_rate = c_off[1].mean() / T
+    assert 0.05 < strong_rate < 0.45, f"fixture drift: strong row's real rate must be non-trivial and != 0.5 (got {strong_rate})"
+    assert weak_rate == 0.0, f"fixture drift: weak row must stay silent so its real r_fb is exactly 0 (got {weak_rate})"
+
+    # THE CATCH: pin r_fb to a constant chosen deliberately far from BOTH rows' real spike fractions. If
+    # production's r_fb were that same disconnected constant (the reviewer's mutation), production's
+    # counts would equal this reference's counts EXACTLY (identical RNG, identical I_eff algebra). A real,
+    # activity-coupled r_fb must diverge from a constant fed with either row's own actual rate.
+    for pinned in (0.5, strong_rate, weak_rate):
+        c_pinned, _ = _reference_fbgain_with_pinned_rfb(drive, T=T, seed=seed, pinned_rfb=pinned,
+                                                         fb_strength=fb_strength, fb_tau=fb_tau)
+        assert not np.array_equal(c_on, c_pinned), (
+            f"lif_spike_read_fbgain's counts are BYTE-IDENTICAL to a reference whose r_fb is pinned to the "
+            f"constant {pinned} instead of tracking the row's own spikes -- r_fb is disconnected from the "
+            f"actual spike train (this is exactly the 'spk.mean(axis=1) -> constant' mutation)")
 
     assert c_off[0].mean() > c_off[1].mean(), "sanity: the strong row must out-spike the weak row with feedback off"
     # Feedback is POOLED PER ROW (per trial), so it must suppress the strong row's own high spike rate

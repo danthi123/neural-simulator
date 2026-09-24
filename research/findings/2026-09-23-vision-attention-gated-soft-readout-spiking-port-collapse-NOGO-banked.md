@@ -74,8 +74,10 @@ That 2026-09-17 run's own verdict, unread until now: `LINDISCRIM-READOUT-NOGO`, 
 that the seed-42 collapse at the satdiv-GO front end was "a genuinely NEW combined operating point this
 mechanism's own 2026-09-16 de-risk smoke never tested," implying the collapse might be specific to stacking two
 divisive normalizations. The 2026-09-17 run used the DEFAULT `z`-norm front end (no satdiv stacking at all) and
-shows the SAME collapse. The spiking-port collapse is not a property of either front-end operating point; it is a
-property of this readout's own net-drive magnitude through the LIF port (see "Why," below).
+shows the SAME collapse. What IS established, measured directly across both runs: the spiking-port collapse is
+not a property of either specific front-end operating point (it reproduces identically on both). WHAT stage of
+this readout's net-drive path the collapse is a property of remains a HYPOTHESIS, not yet isolated by an
+ablation -- see "Why," below, and its registered test.
 
 **Ordering.** The prereg's bands (a paired-t gate against a fixed `t_crit=2.571` <!--derived-->) were written in the SAME commit
 as the seed-42 satdiv-GO run they discuss in prose -- the bands are stated to be evaluated once all 6 seeds land,
@@ -169,11 +171,14 @@ BANKED NO-GO, not "in flight."
 
 ## Next rung (not this finding's job to run, only to name)
 
-The residual is specifically the per-class, host-computed, one-shot satdiv normalization stage -- not the
-top-down gain template, not the LIF class-population port itself, and not the front end. A follow-up
-pre-registration (`research/findings/2026-09-23-vision-configural-binding-spiking-feedback-divisive-gain-control-
-readout-PREREGISTERED.md`) targets that specific stage with a genuinely different method: replacing the
-host-computed normalization with a SPIKING, pooled-across-classes, feedback divisive gain-control loop realized
-inside the LIF read itself (Wilson & Cowan 1972; Heeger 1992) -- a companion process the fixed host formula
-substituted with a constant, per this project's standing wall question ("what does the real system run alongside
-this, that we replaced with a constant?").
+**HYPOTHESIS, not yet tested by an ablation** (see "Why," above): that the residual is specifically the
+per-class, host-computed, one-shot satdiv normalization stage -- not the top-down gain template, not the LIF
+class-population port itself, and not the front end. A COMPETING explanation (the constant-output/degenerate-
+port signature named above, `LEARNED_spkwta_TRAIN` pinned at exactly 0.25 on every satdiv-GO seed) has not
+been ruled out. A follow-up pre-registration (`research/findings/2026-09-23-vision-configural-binding-spiking-
+feedback-divisive-gain-control-readout-PREREGISTERED.md`) targets the per-class-satdiv stage with a genuinely
+different method -- replacing the host-computed normalization with a SPIKING, pooled-across-classes, feedback
+divisive gain-control loop realized inside the LIF read itself (Wilson & Cowan 1972; Heeger 1992), a companion
+process the fixed host formula substituted with a constant, per this project's standing wall question ("what
+does the real system run alongside this, that we replaced with a constant?") -- and its `--fb-strength 0.0`
+gain-only arm is the REGISTERED TEST of this hypothesis, not an assumption that it is already confirmed.

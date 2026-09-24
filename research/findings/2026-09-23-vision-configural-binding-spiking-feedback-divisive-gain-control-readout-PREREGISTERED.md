@@ -48,8 +48,10 @@ external: Heeger (1992), "Normalization of cell responses in cat striate cortex,
 builds_on:
   - research/findings/2026-09-23-vision-attention-gated-soft-readout-spiking-port-collapse-NOGO-banked.md
     (BANKED NO-GO, 12 of 12 seed-runs, two front-end operating points -- the collapse this mechanism
-    targets, and the diagnosis that it is specific to attention-gated-soft's per-class host satdiv step,
-    not the front end or the LIF port in general)
+    targets. That finding's diagnosis -- that the collapse is specific to attention-gated-soft's per-class
+    host satdiv step, not the front end or the LIF port in general -- is a HYPOTHESIS, not yet tested by an
+    ablation, with a named COMPETING explanation (a constant-output/degenerate-port signature) not ruled
+    out; THIS mechanism's `--fb-strength 0.0` gain-only arm is that hypothesis's registered test)
   - research/biology/attention-gated-readout.md (mechanism registry entry; this finding's landing updates
     its `current_finding`/`current_status`)
 review_corrections_applied:
@@ -89,17 +91,21 @@ spiking feedback loop" -- `git log --all --oneline --grep` for `fbgain`/`feedbac
 in this lane returns nothing before this session's own commits.
 
 **The wall question, asked first, per this project's standing rule.** "What does the real system run
-alongside this readout that we replaced with a constant?" The banked NO-GO's diagnosis: attention-gated-
-soft's `read_gain`/`read_bias` are FIXED HOST CONSTANTS, calibrated once and reused unchanged across front-
-end operating points, and its per-class divisive normalization (`_apply_s2_norm` satdiv) is a PRE-spike,
-ONE-SHOT host formula computed independently per class -- nothing in this file lets the SPIKING stage's own
-realized activity feed back and correct that. A real cortical circuit's divisive normalization is not
-computed once and frozen; Heeger (1992) shows it is REALIZED by recurrent/shunting inhibition, a pooled
-signal computed dynamically from the circuit's own ongoing activity (Wilson & Cowan 1972's population-
-activity state variable). This mechanism builds exactly that missing companion process, INSIDE the LIF
-read, instead of retuning the same host satdiv formula's own parameters (which the banked finding's own
-diagnosis rules out as the fix: the per-class independence of that step, not its sigma/scale constants, is
-what compresses between-class contrast).
+alongside this readout that we replaced with a constant?" What is MEASURED (not hypothesized): attention-
+gated-soft's `read_gain`/`read_bias` are FIXED HOST CONSTANTS, calibrated once and reused unchanged across
+front-end operating points, and its per-class divisive normalization (`_apply_s2_norm` satdiv) is a
+PRE-spike, ONE-SHOT host formula computed independently per class -- nothing in this file lets the SPIKING
+stage's own realized activity feed back and correct that (code fact, not an inference). What is a
+**HYPOTHESIS, not yet tested by an ablation** (the banked finding's own framing, carried forward here
+unchanged): that this specific per-class independence, rather than the competing constant-output/degenerate-
+port explanation the banked finding also names, is WHY the readout collapses. A real cortical circuit's
+divisive normalization is not computed once and frozen regardless; Heeger (1992) shows it is REALIZED by
+recurrent/shunting inhibition, a pooled signal computed dynamically from the circuit's own ongoing activity
+(Wilson & Cowan 1972's population-activity state variable). This mechanism builds that missing companion
+process, INSIDE the LIF read, instead of retuning the same host satdiv formula's own parameters -- a
+DIFFERENT method regardless of which of the two explanations turns out to be correct, since it removes the
+per-class stage entirely rather than re-tuning its sigma/scale constants. Its gain-only arm (`--fb-strength
+0.0`) is the REGISTERED TEST that decides between the two explanations, not a result already assumed here.
 
 ## The mechanism (already built + selftested, this finding's prior commit; unchanged by this commit)
 
@@ -276,8 +282,19 @@ stage alone should have been enough to lift `LEARNED_spkwta_held` off chance at 
 finding's competing explanation names). This is one seed, not a refutation, but it does NOT confirm the
 per-class-satdiv hypothesis either; the remaining 5 seeds will show whether this persists.
 
+**Record-only, provenance note (2026-09-24 re-review).** Both seed-42 `.prov.json` sidecars record
+`git_sha: 257fe6742` with `git_dirty: true`. The dirty flag's cause is a pytest provenance row appended to
+`research/findings/raw/_provenance/runs.jsonl` after `257fe6742` and before this artifact's own commit, that
+was never itself committed -- cosmetic, not a sign the run used uncommitted code. The re-reviewer
+independently re-ran both arms at seed 42 on the pool from the clean revision `464d970e2` (git-archived,
+source manifest verified, `git_dirty: false`) and confirmed both outputs identical to the artifacts committed
+here (ignoring `elapsed_seconds`).
+
 ## Remaining seeds (43, 44, 100, 101, 102) staged on the pool, not awaited
 
-Per the harness task's instruction, this finding does not wait for the pool results; see the commit's
-`research/queue/pool.queue` additions (one line per seed per arm) for the exact staged commands, each with
-its own `--out` path so the pool-dispatched jobs cannot clobber each other or the seed-42 local files.
+Per the harness task's instruction, this finding does not wait for the pool results. Live `research/queue/
+pool.queue` state is never committed (it is re-injected on merge and would go stale the moment the pool
+drains it), so it is not a valid pointer here or anywhere else in this repo. The exact staged commands are
+each seed substituted into **"The decisive command"** above (`<SEED[S]>` -> the single seed, `<SEED>` -> the
+same value in the `--out` path), one gain-only + one full-mechanism invocation per seed, each with its own
+`--out` path so the pool-dispatched jobs cannot clobber each other or the seed-42 local files.
