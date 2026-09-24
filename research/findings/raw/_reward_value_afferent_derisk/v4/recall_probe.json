@@ -1,0 +1,231 @@
+{
+  "runner": "_reward_value_afferent_recall_probe",
+  "seed": 7,
+  "seed_kind": "dev-calibration (NOT a 6-seed gate seed)",
+  "composer_forced": null,
+  "source": "tiny-demo",
+  "build_s": 108.9,
+  "composer_class": "Pool1BoundOneBrainComposer",
+  "composer_flags": {
+    "integrated_loop": false,
+    "enable_batched": false,
+    "trace": false,
+    "enable_fact_shard": true,
+    "enable_sparse_index": false,
+    "persistent_store": false,
+    "_fused": false
+  },
+  "bridge_class": "SimulationBridge",
+  "sensitivity": {
+    "ran": true,
+    "array": "cp_synapse_pulse_progress",
+    "changed_when_mutated": true,
+    "returned_when_undone": true
+  },
+  "calls": [
+    {
+      "cue": [
+        "dog",
+        "chase"
+      ],
+      "value": "cat",
+      "error": null,
+      "seconds": 2.16,
+      "rng_unchanged": false,
+      "H_inner_after": "b7630b613760cc23a221d85d9509f137c7f33d46948afe40d41ea8ecbbcbd284",
+      "last_trace_after": "None"
+    },
+    {
+      "cue": [
+        "dog",
+        "chase"
+      ],
+      "value": "cat",
+      "error": null,
+      "seconds": 2.45,
+      "rng_unchanged": false,
+      "H_inner_after": "226e49ff08c2593d2cea7813d6bea52bb5ef5a35d5b06fbe0fdb0b370cc64ab0",
+      "last_trace_after": "None"
+    },
+    {
+      "cue": [
+        "dog",
+        "chase"
+      ],
+      "value": "cat",
+      "error": null,
+      "seconds": 2.23,
+      "rng_unchanged": false,
+      "H_inner_after": "3794fceea73cb77fe3d86504d2ec1a90e4e66b7f2aea7af66eec300d4b6b7ceb",
+      "last_trace_after": "None"
+    },
+    {
+      "cue": [
+        "cat",
+        "eat"
+      ],
+      "value": "fish",
+      "error": null,
+      "seconds": 2.2,
+      "rng_unchanged": false,
+      "H_inner_after": "7e0911248907d9bcedb792d4fffb22092aa70116aab7701c5448365e3fb6da54",
+      "last_trace_after": "None"
+    },
+    {
+      "cue": [
+        "dog",
+        "chase"
+      ],
+      "value": "cat",
+      "error": null,
+      "seconds": 2.06,
+      "rng_unchanged": false,
+      "H_inner_after": "6fc540cf90ca4488cffda24542f540578f3dae9842cc086fff1d41da62669e5d",
+      "last_trace_after": "None"
+    }
+  ],
+  "S0": {
+    "H_inner": "343c4e64e4f55b26d03ce2286144b1066f50a6bd96cf465fda663b8d520990c5",
+    "stats": {
+      "nodes": 1593030,
+      "arrays": 456,
+      "array_bytes": 96391761,
+      "sparse": 6,
+      "objects": 83,
+      "opaque": 80,
+      "opaque_types": {
+        "deque": 56,
+        "lock": 12,
+        "mappingproxy": 12
+      }
+    },
+    "rng": {
+      "numpy": "3f18d7c667f3f32cfb47684caefbce95d5d807be8ca11c8512a4d7cdccd887ad",
+      "python": "7e3ca2de8f7a499ee6d777205bb605b263ef31250e7fe8b25cbfd86c6d650849"
+    },
+    "last_trace": "None",
+    "hash_seconds": 2.09
+  },
+  "values": {
+    "p1": "cat",
+    "p2": "cat",
+    "p3": "cat",
+    "q_cat_eat": "fish",
+    "p4_after_other_recall": "cat"
+  },
+  "value_history_independent": true,
+  "state_after_converges": false,
+  "state_after_other_recall_returns": false,
+  "state_touched_by_first_recall": true,
+  "composer_attrs_changed_by_first_recall": [
+    "_fact_shard",
+    "_fact_shard_built_K",
+    "_merged",
+    "_pool1",
+    "b",
+    "comp",
+    "parser"
+  ],
+  "bridge_attrs_changed_by_first_recall": [
+    "_rf_counter",
+    "cp_membrane_potential_v",
+    "cp_recovery_variable_u",
+    "cp_rf_fired",
+    "cp_rf_prev_im",
+    "cp_rf_spike_step",
+    "cp_rf_w_im",
+    "cp_rf_w_re"
+  ],
+  "composer_attrs_changed_by_second_recall": [
+    "comp"
+  ],
+  "bridge_attrs_changed_by_second_recall": [],
+  "composer_attrs_changed_by_other_recall": [
+    "_merged",
+    "_pool1",
+    "b",
+    "comp",
+    "parser"
+  ],
+  "bridge_attrs_changed_by_other_recall": [
+    "cp_membrane_potential_v",
+    "cp_recovery_variable_u",
+    "cp_rf_fired",
+    "cp_rf_prev_im",
+    "cp_rf_spike_step"
+  ],
+  "last_trace_first_vs_second_equal": true,
+  "rng_untouched": false,
+  "go": false,
+  "status": "UNDEFINED",
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "the tiny-demo chat built",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "composer is the class the arms use (OneBrainComposer, LTM tier off)",
+      "ok": false,
+      "detail": "measured=Pool1BoundOneBrainComposer expect=OneBrainComposer",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "recall #1 returns the stored patient (cat)",
+      "ok": true,
+      "detail": "measured=cat expect=cat",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "sensitivity: the hash changes on a one-element bridge change and returns when undone",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    }
+  ],
+  "verdict": {
+    "label": "A10 follow-up: A10's recall call (chat.inner.what_does) is history-independent at the module level",
+    "status": "UNDEFINED",
+    "go": false,
+    "undefined_reasons": [
+      "unmet: composer is the class the arms use (OneBrainComposer, LTM tier off) (measured=Pool1BoundOneBrainComposer expect=OneBrainComposer)"
+    ],
+    "preconditions": [
+      {
+        "kind": "require",
+        "name": "the tiny-demo chat built",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "composer is the class the arms use (OneBrainComposer, LTM tier off)",
+        "ok": false,
+        "detail": "measured=Pool1BoundOneBrainComposer expect=OneBrainComposer",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "recall #1 returns the stored patient (cat)",
+        "ok": true,
+        "detail": "measured=cat expect=cat",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "sensitivity: the hash changes on a one-element bridge change and returns when undone",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      }
+    ],
+    "disabled_processes": [],
+    "chance": null
+  }
+}
