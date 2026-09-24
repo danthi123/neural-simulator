@@ -1,0 +1,41 @@
+{
+ "run_id": "1790272240-462775",
+ "runner": "research/runners/_open_ended_gated_turn_smoke.py",
+ "argv": [
+  "/home/ubuntu/derisk-pool/revisions/3ef5ec088405474a612a0bf0fc30cd689e5b0a22/research/runners/_open_ended_gated_turn_smoke.py",
+  "--arm",
+  "gate_lesion",
+  "--seed",
+  "7",
+  "--turns",
+  "unknown,emo,sw_open",
+  "--out-dir",
+  "research/findings/raw/_open_ended_gated/smoke_amend1"
+ ],
+ "git_sha": "3ef5ec088405474a612a0bf0fc30cd689e5b0a22",
+ "git_dirty": false,
+ "source_kind": "git_archive",
+ "source_manifest_sha256": "08acdad1652f722d2070386765abbaa2ec65f15b56a2471b168704cd0904b9c3",
+ "source_manifest_verified_at_start": true,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": true,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-24T17:50:40",
+ "env": {
+  "NUMEXPR_NUM_THREADS": "1",
+  "POOL_JOB_ID": "oeg-am1_gate_lesion",
+  "OPENBLAS_NUM_THREADS": "1",
+  "SIM_BACKEND": "numpy",
+  "POOL_JOB_MEM_GB": "5",
+  "CUDA_VISIBLE_DEVICES": "",
+  "OMP_NUM_THREADS": "1",
+  "MKL_NUM_THREADS": "1",
+  "BRAIN_LTM_BUNDLE": "off"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": false,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_open_ended_gated/smoke_amend1/s7/gate_lesion.json"
+}

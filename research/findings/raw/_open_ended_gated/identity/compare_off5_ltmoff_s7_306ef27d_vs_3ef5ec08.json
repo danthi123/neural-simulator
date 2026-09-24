@@ -1,0 +1,11 @@
+{
+  "a": "research/findings/raw/_open_ended_gated/identity/off5_ltmoff_s7_306ef27d.json",
+  "b": "research/findings/raw/_open_ended_gated/identity/off5_ltmoff_s7_3ef5ec08.json",
+  "n_turns": 5,
+  "sha256_a": "fc3b716d195ed274b5674dadb9195ed95c99e4760af2dc9f62b6f8dab6f4c132",
+  "sha256_b": "fc3b716d195ed274b5674dadb9195ed95c99e4760af2dc9f62b6f8dab6f4c132",
+  "identical": true,
+  "differing_turn_keys": {},
+  "errors_a": {},
+  "errors_b": {}
+}
