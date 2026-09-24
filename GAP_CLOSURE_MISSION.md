@@ -15,29 +15,33 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-19 (RESUME HERE) — NEW ARC: PERMANENT LLM MOUTH + LOAD-BEARING METRIC
 
-**🟢 LIVE NOW — 2026-09-24 ~00:20 local (harvest these; do NOT double-launch):**
+**🟢 LIVE NOW — 2026-09-24 ~01:45 local (harvest these; do NOT double-launch):**
 - **✅ #1 metric, all fixes + SETTLE: robust core 25/26** (`research/findings/2026-09-23-allfixes-settle-battery-6seed-robust-core-25.md`,
   every seed 25/26); only `da-gated-encoding` (0/6) is outside the exercised core.
 - **Default-on switches (owner-authorized; memory `feedback_flip_validated_fixes_without_waiting`):** branch
   `research/flip-validated-fixes` @`bd391aa3` flips BRAIN_EPISODIC_STORE_VERIFY + BRAIN_PMEM_FACILITATION +
-  BRAIN_SOURCE_PROV_ABSTAIN_AT_TIE (OP_STABILIZER = per-seed table, NOT flipped; SETTLE = next batch; D6 trio not ready).
-  Review SOUND, safe to merge AFTER its production-default validation battery (prereg 2b162780f) passes. Battery split:
-  AWS thin (`.aws_cpu8`) + adequate (`.aws_cpu9`) lines 1-156 each, pool lines 157-176 (re-provisioning `bd391aa3`,
-  then re-queue from `scratchpad/flipdefaults-*_pool.txt`), local 177-186 running. Aggregate with
-  `tools/lb_shard.py aggregate --tag flipdefaults-thin|flipdefaults-adequate` after pulling from the flip worktree's
-  `research/findings/raw/_load_bearing/_shards/`. GPU production chat smoke passed flips ON (518 s) and OFF (494 s).
-- **✅ D6 v3 GO 6/6 + EXPO_H secondary 6/6**; addendum: the write is a near-copy of the host pattern (corr 0.99996) and
-  the localist store's cost is linear per op. **Fact-memory scaling:** superposed CA3 store prototype (dev seed) ≈ 5e4-1e5
-  facts per 3090 = rat-hippocampus scale; LLM breadth needs cortical consolidation. Fix round `w4bmz51wh`.
-- **D5 affect-conditioned mouth merged `c1a3da0e`: UNDEFINED both modes** — conditioning changes CONTENT; next method
-  must hold content fixed (building in `wc9pxljwq`).
-- **Workflows:** `wc9pxljwq` (lane builds A/C/D/E, registered in `research/coordination/lane_builds.jsonl`, expire 6 h)
-  · `wkc3qa09i` (wm-binding redesign, swap-drives record fixes, DA reader-cache confound) · `w4bmz51wh` (fact scaling).
-  Merge only on safe_to_merge.
-- **Curiosity** held-out seeds 43/44/100 landed; 101/102 re-queued (pool42) → `--combine` when all 5 land.
-- **Infra today:** dispatcher reserves lifetime job memory (env stamps) + first-fit; audit counts RAM-bound nodes as busy;
-  `.aws_gpu` untracked; lane gate counts registered builds. OPEN: idle-stop missed idle instance B (spawned task).
-  pool40 powered off.
+  BRAIN_SOURCE_PROV_ABSTAIN_AT_TIE. Safe to merge AFTER its production-default validation battery (prereg 2b162780f)
+  passes. Battery: AWS thin `.aws_cpu8` (18.209.94.52) + adequate `.aws_cpu10` (34.226.214.233), 156 shards each,
+  57/312 done at 01:20 (~30 per hour per machine, ETA ~06:00); pool 40 lines queued at `bd391aa3` (pool42 being
+  provisioned, task b3z70he5r); local 20 in the flip worktree (15 done). Aggregate with
+  `tools/lb_shard.py aggregate --tag flipdefaults-thin|flipdefaults-adequate` after pulling AWS + pool + flip-worktree shards.
+- **Curiosity x metacog LC-NE: NO-GO 1/6, held-out 0/5**
+  (`research/findings/2026-09-24-curiosity-metacog-lcne-modulator-6seed-NOGO-calibration-seed-only.md`). Next method
+  (phasic LC bursts + multiplicative gain on ASK, dev-seed calibration) building on `research/curiosity-lcne-phasic-gain`
+  (background agent). Board #229.
+- **DA tag-capture chat 6-seed (pool, rev 5d3810f2d):** s44 and s42-verify still running from before the thread fix;
+  s102 running; s43/s100/s101 were killed at 1-2 of 9 arms and re-queued 01:25.
+- **Queued on the pool:** CA3 superposed fact-store grid (54, rev ab2adcf51), D6 capacity curve (84, rev 24231d6d6),
+  swap-drives s43/s100/s101 (rev 7f90034df). pool42 provisioning chain: bd391aa3 -> 24231d6d6 -> 0c265b93d.
+- **wm-binding:** merge `d9207943e` pushed to `research/wm-binding-adequate-probe`; merge to main only after the
+  byte_identical_off job (0c265b93d vs c5c0f67ba) is in data.
+- **✅ D6 v3 GO 6/6 + EXPO_H secondary 6/6**; **D5 affect-conditioned mouth UNDEFINED** (content-locked tone selection:
+  instrument + prereg merged, seed-7 probe found three blockers, 6-seed correctly NOT staged).
+- **Workflows:** `wk4gruuhc` (Affect learned vocabulary, Perception readout homeostasis) · `waz1jilfh` (Workspace,
+  Language fix round) · curiosity build agent. Merge only on safe_to_merge.
+- **Infra tonight:** pool jobs default to 1 math thread (`738894a0`; BLAS on all cores had stalled dispatch 50 min);
+  queue adds take the dispatcher lock (`46cf6ff0`); a 7.5-day stale GNW queue line removed (result existed).
+  OPEN: idle-stop missed idle instance B (spawned task). pool40 powered off.
 
 **⭐⭐ LATEST 2026-09-23 ~09:00 local — OWNER: "parallelize more heavily … we shouldn't be sitting around for hours
 waiting on runs every day … I thought our heartbeats/gates were supposed to prevent this?" → FULL FAN-OUT + LOOPHOLE FIX.**
