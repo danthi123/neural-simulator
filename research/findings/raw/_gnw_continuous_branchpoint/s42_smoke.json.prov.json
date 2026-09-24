@@ -1,0 +1,31 @@
+{
+ "run_id": "1790226456-3252003",
+ "runner": "research/runners/_gnw_continuous_branchpoint_verify.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/wf_16244c9d-ca5-3/research/runners/_gnw_continuous_branchpoint_verify.py",
+  "--smoke",
+  "--seed",
+  "42",
+  "--json",
+  "research/findings/raw/_gnw_continuous_branchpoint/s42_smoke.json"
+ ],
+ "git_sha": "63c3811b2",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-24T01:07:36",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 3755.8,
+ "corpus_check_query": "GNW continuous branch point snapshot fork verification",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_gnw_continuous_branchpoint/s42_smoke.json"
+}
