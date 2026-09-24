@@ -172,9 +172,47 @@ def fact_words_in(text: str, facts, prompt: str = "") -> set:
     return fw & word_set(text)
 
 
+# CONTENT-WORD RECALL term (AMENDMENT 3 of the tone-selection PREREG, 2026-09-24; research/affect-learned-vocabulary).
+# The seed-7 restyle probe (amend1_probe/restyle_probe_s7.json) showed that a draft with no number / name / fact word
+# gives the lock nothing to check, so refusals ("I'm sorry, but I can't do that.") and unrelated text were admitted.
+# A rewrite must now also keep >= LOCK_RECALL_MIN of the draft's affect-neutral content words (the same word class the
+# runner's (C2) gate counts: len >= 4, not stop, not WARRINER, not the independent tone lexicon). 0.25 was set from
+# that seed-7 probe (not an evaluation seed): every refusal / unrelated rewrite there recalls < 0.10 of the draft's
+# content words, and 0.25 sits well below (C2)'s 0.60 bar so (C2) stays a separate, failable gate. Drafts with fewer
+# than LOCK_RECALL_MIN_WORDS content words are not held to the term (a ratio over 1-3 words is noise); the detail
+# records that as `content_recall: None`.
+LOCK_RECALL_MIN = 0.25
+LOCK_RECALL_MIN_WORDS = 4
+_CONTENT_EXCLUDE = None
+
+
+def content_words(text: str) -> set:
+    """Affect-neutral content words: len >= 4, not stop, not WARRINER, not the independent tone lexicon (lower-cased,
+    no plural folding, identical to the runner's (C2) `content_words`)."""
+    global _CONTENT_EXCLUDE
+    if _CONTENT_EXCLUDE is None:
+        import json as _json
+        from research.runners._affect_distributional_tag_derisk import WARRINER, STOP
+        _here = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        with open(os.path.join(_here, "research", "runners", "_lbf_affect_tone_indep_lexicon.json"),
+                  encoding="utf-8") as fh:
+            lex = set(_json.load(fh)["words"])
+        _CONTENT_EXCLUDE = set(STOP) | set(WARRINER) | lex
+    return {w for w in re.findall(r"[a-z]+", (text or "").lower()) if len(w) >= 4 and w not in _CONTENT_EXCLUDE}
+
+
+def content_recall(draft: str, cand: str):
+    """Fraction of the draft's content words the candidate keeps; None when the draft has too few to measure."""
+    D = content_words(draft)
+    if len(D) < LOCK_RECALL_MIN_WORDS:
+        return None
+    return len(D & content_words(cand)) / len(D)
+
+
 def content_lock(draft: str, cand: str, facts=(), prompt: str = "") -> tuple:
-    """(ok, detail). ok iff cand is non-empty, keeps every number / proper name / fact word the draft carries, and
-    adds no number or proper name the draft lacks."""
+    """(ok, detail). ok iff cand is non-empty, keeps every number / proper name / fact word the draft carries, adds no
+    number or proper name the draft lacks, and keeps >= LOCK_RECALL_MIN of the draft's content words (when the draft
+    has >= LOCK_RECALL_MIN_WORDS of them)."""
     cw = word_set(cand)
     dw = word_set(draft)
     miss_num = sorted(numbers(draft) - numbers(cand))
@@ -182,9 +220,12 @@ def content_lock(draft: str, cand: str, facts=(), prompt: str = "") -> tuple:
     miss_name = sorted(proper_names(draft) - cw)
     new_name = sorted(proper_names(cand) - dw)
     miss_fact = sorted(fact_words_in(draft, facts, prompt) - cw)
-    ok = bool((cand or "").strip()) and not (miss_num or new_num or miss_name or new_name or miss_fact)
+    rec = content_recall(draft, cand)
+    low_recall = rec is not None and rec < LOCK_RECALL_MIN
+    ok = bool((cand or "").strip()) and not (miss_num or new_num or miss_name or new_name or miss_fact or low_recall)
     return ok, {"missing_numbers": miss_num, "new_numbers": new_num, "missing_names": miss_name,
-                "new_names": new_name, "missing_fact_words": miss_fact}
+                "new_names": new_name, "missing_fact_words": miss_fact,
+                "content_recall": None if rec is None else round(rec, 4), "low_content_recall": bool(low_recall)}
 
 
 # ── the brain's evaluation of a proposal (the spiking organ) ────────────────────────────────────────────────────

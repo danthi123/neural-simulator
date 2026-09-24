@@ -123,6 +123,21 @@ def test_lock_rejects_changed_number_and_new_name(oe, monkeypatch):
     assert ok
 
 
+def test_lock_content_recall_rejects_refusal_on_a_draft_without_names_or_numbers(oe, monkeypatch):
+    """AMENDMENT 3: a draft with no number / name / fact word left the lock nothing to check, so a refusal passed."""
+    OE, fake, ATS = _on(oe, monkeypatch)
+    draft = ("Mornings are a quiet time for coffee, reading and planning the tasks ahead before the house wakes up; "
+             "many people find that a steady routine helps them focus.")
+    ok, det = ATS.content_lock(draft, "I'm sorry, but I can't do that.")
+    assert not ok and det["low_content_recall"] and det["content_recall"] == 0.0
+    ok, det = ATS.content_lock(draft, "Mornings are a gentle time for coffee, reading and planning the tasks ahead "
+                                      "before the house wakes; a steady routine helps people focus.")
+    assert ok and det["content_recall"] >= ATS.LOCK_RECALL_MIN
+    # too few content words to measure -> the term is not applied (recorded as None), the other terms still are
+    ok, det = ATS.content_lock("Yes, it is.", "No.")
+    assert det["content_recall"] is None and ok
+
+
 def test_selection_follows_held_valence(oe, monkeypatch):
     OE, fake, ATS = _on(oe, monkeypatch)
     out = OE.answer_turn("Tell me about the ocean", None, 0.16, 0.4, ltm_bundle=None, brain_bundle=None)

@@ -107,6 +107,8 @@ def appraise_text(text: str) -> dict:
     valence/arousal (experience-derived; raw norm iff BRAIN_AFFECT_DR2=0 or the word is not in the learned map).
     valence = mean over gated words of (v9 - 5)/4; arousal = mean (a - 1)/8. n_hits==0 -> a neutral message (the
     caller HOLDS the prior mood, giving cross-turn persistence)."""
+    if os.environ.get("BRAIN_AFFECT_LEARNED_VOCAB", "").strip().lower() in ("1", "true", "yes", "on"):
+        return _appraise_text_learned_vocab(text)
     toks = [w.lower() for w in _WORD_RE.findall(text or "")]
     use_learned = dr2_enabled()
     learned = _get_learned_valence() if use_learned else {}
@@ -125,6 +127,52 @@ def appraise_text(text: str) -> dict:
         return {"valence": 0.0, "arousal": 0.0, "n_hits": 0, "words": []}
     return {"valence": float(np.mean(vals)), "arousal": float(np.mean(ars)),
             "n_hits": len(vals), "words": hits}
+
+
+# LEARNED AFFECT VOCABULARY (DEFAULT-OFF, `BRAIN_AFFECT_LEARNED_VOCAB=1`; 2026-09-24, research/affect-learned-vocabulary).
+# Words OUTSIDE the WARRINER list are no longer silent: each is heard by the learned vocabulary's spiking V+/V- pair
+# (`affect_learned_vocabulary`), whose word->valence synapses were learned by a local instar rule with a BCM sliding
+# threshold from heard adult text, with the innate WARRINER seeds as the unconditioned stimulus. A word whose learned
+# synapses do not bring either pool over threshold reads exactly 0 and is not a hit.
+# HOW THIS ADDRESSES THE NOTE ABOVE (why a learned gate was not adopted before):
+#   (1) scope: the learned gate never overrides the norm gate. WARRINER words (cat, dog, sit, day ...) keep the norm
+#       gate, so "what does the cat eat" is handled exactly as before; only words the norm list lacks are consulted.
+#   (2) mechanism: the prior learned gates read a whole-corpus co-occurrence statistic, which inherits the corpus
+#       register (TinyStories frames every action warmly). The post-synaptic sliding threshold subtracts the register
+#       of the passage being heard, and the heard corpus is adult expository text, not TinyStories.
+#   (3) it is measured, not assumed: the neutral-fact invariant is a preregistered gate that can fail
+#       (research/findings/2026-09-24-affect-learned-vocabulary-PREREG.md, G3).
+# Arousal is still computed from WARRINER hits only (the learned vocabulary carries valence, not arousal); learned
+# hits enter the valence mean with their read valence. `BRAIN_AFFECT_LEARNED_VOCAB_LESION=1` zeroes the learned
+# synapses, which returns every non-WARRINER word to 0.0 (the old read). Flag unset -> the body above runs unchanged.
+def _appraise_text_learned_vocab(text: str) -> dict:
+    from research.runners.affect_learned_vocabulary import learned_valence
+    seed = int(os.environ.get("BRAIN_CHAT_SEED", "42") or 42)
+    toks = [w.lower() for w in _WORD_RE.findall(text or "")]
+    use_learned = dr2_enabled()
+    learned = _get_learned_valence() if use_learned else {}
+    vals, ars, hits, lhits = [], [], [], []
+    for w in toks:
+        if w in STOP:
+            continue
+        if w not in WARRINER:
+            lv = learned_valence(w, seed)
+            if lv != 0.0:
+                vals.append(float(lv))
+                hits.append(w)
+                lhits.append(w)
+            continue
+        v9_norm, a9_norm = WARRINER[w]
+        if abs(v9_norm - 5.0) < _STRONG_MARGIN:
+            continue
+        v9, a9 = learned.get(w, (v9_norm, a9_norm)) if use_learned else (v9_norm, a9_norm)
+        vals.append((v9 - 5.0) / 4.0)
+        ars.append((a9 - 1.0) / 8.0)
+        hits.append(w)
+    if not vals:
+        return {"valence": 0.0, "arousal": 0.0, "n_hits": 0, "words": [], "learned_words": []}
+    return {"valence": float(np.mean(vals)), "arousal": float(np.mean(ars)) if ars else 0.0,
+            "n_hits": len(vals), "words": hits, "learned_words": lhits}
 
 
 # ────────────────────────────────────────────────────────────────────────────────────────────────────────────
