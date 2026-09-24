@@ -170,3 +170,39 @@ def test_loading_the_battery_never_imports_a_row_module():
                          cwd=os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
     assert out.returncode == 0, out.stderr[-2000:]
     assert out.stdout.strip().endswith("[]"), out.stdout
+
+
+def test_an_opt_in_row_stays_out_unless_its_required_env_is_set(monkeypatch):
+    """REQUIRED_ENV rows measure a default-OFF capability: out of the registry at production defaults, in when the
+    battery sets the env (tools/lb_shard.py ... --extra-env KEY=VAL puts it on the shard process and both arms)."""
+    class _OptInMod:
+        __name__ = "research.runners.lbf_rows._fake_opt_in_for_test"
+        EXTRA_LESIONS = {"synthetic-opt-in": dict(flag="BRAIN_SYNTHETIC_OPTIN_LESION", value="1", kind="neural-lesion",
+                                                   note="test-only row")}
+        EXTRA_PROBES = [("synthetic-opt-in", "well", ["x"], False)]
+        REQUIRED_ENV = {"BRAIN_SYNTHETIC_OPTIN_FEATURE": "1"}
+
+    monkeypatch.delenv("BRAIN_SYNTHETIC_OPTIN_FEATURE", raising=False)
+    lesions, probes = dict(lbf.FACULTY_LESIONS), list(lbf.FACULTY_PROBES)
+    report = lbf_rows.merge_lbf_rows(lesions, probes, _mods_override=[_OptInMod])
+    assert "synthetic-opt-in" not in lesions
+    assert any("opt-in row" in p for p in report["parked"])
+
+    monkeypatch.setenv("BRAIN_SYNTHETIC_OPTIN_FEATURE", "1")
+    lesions, probes = dict(lbf.FACULTY_LESIONS), list(lbf.FACULTY_PROBES)
+    lbf_rows.merge_lbf_rows(lesions, probes, _mods_override=[_OptInMod])
+    assert "synthetic-opt-in" in lesions
+    assert any(row[0] == "synthetic-opt-in" for row in probes)
+
+
+def test_the_headline_registry_has_no_opt_in_rows_at_production_defaults():
+    """At production defaults (no opt-in env set) no REQUIRED_ENV module contributes a live row."""
+    import importlib
+    import pkgutil
+    import os as _os
+    for info in pkgutil.iter_modules(lbf_rows.__path__):
+        mod = importlib.import_module("research.runners.lbf_rows." + info.name)
+        req = getattr(mod, "REQUIRED_ENV", {}) or {}
+        if req and any(_os.environ.get(k) != v for k, v in req.items()):
+            keys = set(getattr(mod, "EXTRA_LESIONS", {}) or {})
+            assert not (keys & set(lbf.FACULTY_LESIONS)), (info.name, keys & set(lbf.FACULTY_LESIONS))

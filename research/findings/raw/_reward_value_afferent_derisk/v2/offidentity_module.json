@@ -1,0 +1,399 @@
+{
+  "byte_identical_off": true,
+  "files_differ": true,
+  "hashes": {
+    "post_on_stub": "b41201b2c5fc6c785668c1340fc9526d69b99b44f5a82e9bba8c14057a45f9fd",
+    "post_unset": "059a4afd7d00feed8e780b673f77285174013ea7a26ce72255a23bf3b1cd712a",
+    "post_zero": "059a4afd7d00feed8e780b673f77285174013ea7a26ce72255a23bf3b1cd712a",
+    "pre_unset": "059a4afd7d00feed8e780b673f77285174013ea7a26ce72255a23bf3b1cd712a",
+    "pre_unset_repeat": "059a4afd7d00feed8e780b673f77285174013ea7a26ce72255a23bf3b1cd712a"
+  },
+  "head": "3992d343b4dc0166813772235dee51ad172b70ee",
+  "messages": [
+    "the dog chase the cat",
+    "hello there how are you today",
+    "",
+    "the dog chase the fish",
+    "tell me about quantum physics and all its strange wonders",
+    "ok",
+    "what does the dog chase?"
+  ],
+  "post_file_sha256": "ed9da54b2eb3ca6a6ae536290426af6e4b6ce9f1c9d76c18ab574e506ecb441b",
+  "pre_commit": "306ef27d737c170103d3ab917bb11772960b3f17",
+  "pre_file_sha256": "6e0a3681fdb661a85c4ec81e3ffdddebe2c76e7fd8a07c9027a446fcbc4fd7be",
+  "pre_ref": "306ef27d737c170103d3ab917bb11772960b3f17",
+  "preconditions": [
+    {
+      "detail": "measured=True expect=True",
+      "kind": "require",
+      "name": "variant pre_unset ran",
+      "note": "",
+      "ok": true
+    },
+    {
+      "detail": "measured=True expect=True",
+      "kind": "require",
+      "name": "variant pre_unset_repeat ran",
+      "note": "",
+      "ok": true
+    },
+    {
+      "detail": "measured=True expect=True",
+      "kind": "require",
+      "name": "variant post_unset ran",
+      "note": "",
+      "ok": true
+    },
+    {
+      "detail": "measured=True expect=True",
+      "kind": "require",
+      "name": "variant post_zero ran",
+      "note": "",
+      "ok": true
+    },
+    {
+      "detail": "measured=True expect=True",
+      "kind": "require",
+      "name": "variant post_on_stub ran",
+      "note": "",
+      "ok": true
+    },
+    {
+      "detail": "measured=True expect=True",
+      "kind": "require",
+      "name": "determinism: pre-patch run twice gives the same hash",
+      "note": "",
+      "ok": true
+    },
+    {
+      "detail": "measured=True expect=True",
+      "kind": "require",
+      "name": "sensitivity: flag ON with a stubbed drive changes the hash (the comparison can see the patch)",
+      "note": "",
+      "ok": true
+    }
+  ],
+  "runner": "_reward_value_afferent_offidentity",
+  "runs": {
+    "post_on_stub": {
+      "confirm_turn_a": {
+        "acted": true,
+        "afferent_pA": 720.0000000000001,
+        "da_level": 0.7912900252348536,
+        "ema_engagement": 0.5142857142857143,
+        "host_engagement_replaced": 0.75,
+        "lead": " \u2014 worth going further here.",
+        "lesioned": false,
+        "mode": "focus",
+        "on": true,
+        "reason": "engaged",
+        "reward_value": {
+          "drives": true,
+          "normalized": 0.9,
+          "on": true,
+          "source": "surprise",
+          "stub": true
+        },
+        "seed": 7,
+        "shared_salience": {
+          "calib": {
+            "familiar_signal": 0.0,
+            "novel_signal": 0.95,
+            "read_reps": 4,
+            "threshold_hz": 21.874999999999996,
+            "want_familiar_hz": 0.0,
+            "want_novel_hz": 43.74999999999999
+          },
+          "lesioned": false,
+          "normalized": 0.8571428571428573,
+          "on": true,
+          "raw": 0.9,
+          "want_hz": 37.5
+        },
+        "snc_firing": 0.12500000000000006,
+        "spiking_novelty": {
+          "fresh_ref": 26.0,
+          "lesioned": false,
+          "n_channels": 64,
+          "n_tokens": 3,
+          "novelty": 1.0,
+          "on": true,
+          "per_word_freshness": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "turn": 1,
+        "turn_engagement": 0.8571428571428573,
+        "turn_signal_in": 0.9,
+        "turn_signal_source": "spiking_surprise"
+      },
+      "flag": "1",
+      "sha256": "b41201b2c5fc6c785668c1340fc9526d69b99b44f5a82e9bba8c14057a45f9fd",
+      "stub": true,
+      "tag": "post_on_stub",
+      "variant": "post"
+    },
+    "post_unset": {
+      "confirm_turn_a": {
+        "acted": true,
+        "afferent_pA": 426.6666666666667,
+        "da_level": 0.5488934095614103,
+        "ema_engagement": 0.3047619047619048,
+        "lead": "",
+        "lesioned": false,
+        "mode": "neutral",
+        "on": true,
+        "reason": "low_engagement",
+        "seed": 7,
+        "shared_salience": {
+          "calib": {
+            "familiar_signal": 0.0,
+            "novel_signal": 0.95,
+            "read_reps": 4,
+            "threshold_hz": 21.874999999999996,
+            "want_familiar_hz": 0.0,
+            "want_novel_hz": 43.74999999999999
+          },
+          "lesioned": false,
+          "normalized": 0.507936507936508,
+          "on": true,
+          "raw": 0.75,
+          "want_hz": 22.22222222222222
+        },
+        "snc_firing": 0.08333333333333326,
+        "spiking_novelty": {
+          "fresh_ref": 26.0,
+          "lesioned": false,
+          "n_channels": 64,
+          "n_tokens": 3,
+          "novelty": 1.0,
+          "on": true,
+          "per_word_freshness": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "turn": 1,
+        "turn_engagement": 0.507936507936508
+      },
+      "flag": null,
+      "sha256": "059a4afd7d00feed8e780b673f77285174013ea7a26ce72255a23bf3b1cd712a",
+      "stub": false,
+      "tag": "post_unset",
+      "variant": "post"
+    },
+    "post_zero": {
+      "confirm_turn_a": {
+        "acted": true,
+        "afferent_pA": 426.6666666666667,
+        "da_level": 0.5488934095614103,
+        "ema_engagement": 0.3047619047619048,
+        "lead": "",
+        "lesioned": false,
+        "mode": "neutral",
+        "on": true,
+        "reason": "low_engagement",
+        "seed": 7,
+        "shared_salience": {
+          "calib": {
+            "familiar_signal": 0.0,
+            "novel_signal": 0.95,
+            "read_reps": 4,
+            "threshold_hz": 21.874999999999996,
+            "want_familiar_hz": 0.0,
+            "want_novel_hz": 43.74999999999999
+          },
+          "lesioned": false,
+          "normalized": 0.507936507936508,
+          "on": true,
+          "raw": 0.75,
+          "want_hz": 22.22222222222222
+        },
+        "snc_firing": 0.08333333333333326,
+        "spiking_novelty": {
+          "fresh_ref": 26.0,
+          "lesioned": false,
+          "n_channels": 64,
+          "n_tokens": 3,
+          "novelty": 1.0,
+          "on": true,
+          "per_word_freshness": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "turn": 1,
+        "turn_engagement": 0.507936507936508
+      },
+      "flag": "0",
+      "sha256": "059a4afd7d00feed8e780b673f77285174013ea7a26ce72255a23bf3b1cd712a",
+      "stub": false,
+      "tag": "post_zero",
+      "variant": "post"
+    },
+    "pre_unset": {
+      "confirm_turn_a": {
+        "acted": true,
+        "afferent_pA": 426.6666666666667,
+        "da_level": 0.5488934095614103,
+        "ema_engagement": 0.3047619047619048,
+        "lead": "",
+        "lesioned": false,
+        "mode": "neutral",
+        "on": true,
+        "reason": "low_engagement",
+        "seed": 7,
+        "shared_salience": {
+          "calib": {
+            "familiar_signal": 0.0,
+            "novel_signal": 0.95,
+            "read_reps": 4,
+            "threshold_hz": 21.874999999999996,
+            "want_familiar_hz": 0.0,
+            "want_novel_hz": 43.74999999999999
+          },
+          "lesioned": false,
+          "normalized": 0.507936507936508,
+          "on": true,
+          "raw": 0.75,
+          "want_hz": 22.22222222222222
+        },
+        "snc_firing": 0.08333333333333326,
+        "spiking_novelty": {
+          "fresh_ref": 26.0,
+          "lesioned": false,
+          "n_channels": 64,
+          "n_tokens": 3,
+          "novelty": 1.0,
+          "on": true,
+          "per_word_freshness": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "turn": 1,
+        "turn_engagement": 0.507936507936508
+      },
+      "flag": null,
+      "sha256": "059a4afd7d00feed8e780b673f77285174013ea7a26ce72255a23bf3b1cd712a",
+      "stub": false,
+      "tag": "pre_unset",
+      "variant": "pre"
+    },
+    "pre_unset_repeat": {
+      "confirm_turn_a": {
+        "acted": true,
+        "afferent_pA": 426.6666666666667,
+        "da_level": 0.5488934095614103,
+        "ema_engagement": 0.3047619047619048,
+        "lead": "",
+        "lesioned": false,
+        "mode": "neutral",
+        "on": true,
+        "reason": "low_engagement",
+        "seed": 7,
+        "shared_salience": {
+          "calib": {
+            "familiar_signal": 0.0,
+            "novel_signal": 0.95,
+            "read_reps": 4,
+            "threshold_hz": 21.874999999999996,
+            "want_familiar_hz": 0.0,
+            "want_novel_hz": 43.74999999999999
+          },
+          "lesioned": false,
+          "normalized": 0.507936507936508,
+          "on": true,
+          "raw": 0.75,
+          "want_hz": 22.22222222222222
+        },
+        "snc_firing": 0.08333333333333326,
+        "spiking_novelty": {
+          "fresh_ref": 26.0,
+          "lesioned": false,
+          "n_channels": 64,
+          "n_tokens": 3,
+          "novelty": 1.0,
+          "on": true,
+          "per_word_freshness": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "turn": 1,
+        "turn_engagement": 0.507936507936508
+      },
+      "flag": null,
+      "sha256": "059a4afd7d00feed8e780b673f77285174013ea7a26ce72255a23bf3b1cd712a",
+      "stub": false,
+      "tag": "pre_unset_repeat",
+      "variant": "pre"
+    }
+  },
+  "status": "GO",
+  "verdict": {
+    "chance": null,
+    "disabled_processes": [],
+    "go": true,
+    "label": "A10 module-level OFF identity: observe_turn pre-patch vs post-patch, flag unset / 0",
+    "preconditions": [
+      {
+        "detail": "measured=True expect=True",
+        "kind": "require",
+        "name": "variant pre_unset ran",
+        "note": "",
+        "ok": true
+      },
+      {
+        "detail": "measured=True expect=True",
+        "kind": "require",
+        "name": "variant pre_unset_repeat ran",
+        "note": "",
+        "ok": true
+      },
+      {
+        "detail": "measured=True expect=True",
+        "kind": "require",
+        "name": "variant post_unset ran",
+        "note": "",
+        "ok": true
+      },
+      {
+        "detail": "measured=True expect=True",
+        "kind": "require",
+        "name": "variant post_zero ran",
+        "note": "",
+        "ok": true
+      },
+      {
+        "detail": "measured=True expect=True",
+        "kind": "require",
+        "name": "variant post_on_stub ran",
+        "note": "",
+        "ok": true
+      },
+      {
+        "detail": "measured=True expect=True",
+        "kind": "require",
+        "name": "determinism: pre-patch run twice gives the same hash",
+        "note": "",
+        "ok": true
+      },
+      {
+        "detail": "measured=True expect=True",
+        "kind": "require",
+        "name": "sensitivity: flag ON with a stubbed drive changes the hash (the comparison can see the patch)",
+        "note": "",
+        "ok": true
+      }
+    ],
+    "status": "GO",
+    "undefined_reasons": []
+  }
+}

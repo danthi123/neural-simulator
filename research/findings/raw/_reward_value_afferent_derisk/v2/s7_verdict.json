@@ -1,0 +1,539 @@
+{
+  "runner": "_reward_value_afferent_derisk",
+  "mode": "score",
+  "seed": 7,
+  "seed_kind": "dev-calibration (NOT a 6-seed gate seed)",
+  "composer_forced": null,
+  "composer_class": {
+    "confirm": null,
+    "contra": null
+  },
+  "composer_activity_label": {
+    "off_a": {
+      "confirm": "onebrain",
+      "contra": "onebrain"
+    },
+    "off_b": {
+      "confirm": "onebrain",
+      "contra": "onebrain"
+    },
+    "on_a": {
+      "confirm": "onebrain",
+      "contra": "onebrain"
+    },
+    "on_b": {
+      "confirm": "onebrain",
+      "contra": "onebrain"
+    },
+    "les": {
+      "confirm": "onebrain",
+      "contra": "onebrain"
+    }
+  },
+  "inputs": {
+    "arms": "research/findings/raw/_reward_value_afferent_derisk/v2/s7_arms.json",
+    "pre": "research/findings/raw/_reward_value_afferent_derisk/v2/s7_pre_off_main.json"
+  },
+  "go": false,
+  "status": "NO-GO",
+  "A_off_identity_vs_prepatch": {
+    "no_reward_value_key": true,
+    "da_drives_equal": true,
+    "answer_equal": true,
+    "whole_response_equal_minus_timing": true,
+    "timing_keys_dropped": [
+      "duration_ms",
+      "duration_s",
+      "elapsed",
+      "elapsed_ms",
+      "elapsed_s",
+      "gen_seconds",
+      "latency",
+      "latency_ms",
+      "latency_s",
+      "phase_ms",
+      "phase_timing",
+      "phase_timings",
+      "seconds",
+      "t_ms",
+      "time_s",
+      "timestamp",
+      "timing",
+      "timings",
+      "ts",
+      "wall_ms",
+      "wall_s"
+    ],
+    "GO": true,
+    "off": {
+      "confirm": {
+        "answer": "the dog chases the cat",
+        "mode": "neutral",
+        "lead": "",
+        "afferent_pA": 427.6363636363635,
+        "da_level": 0.5494163884270326
+      },
+      "contra": {
+        "answer": "That surprises me \u2014 my mismatch monitor fired: I'd learned that dog chase cat. the dog chases the cat",
+        "mode": "neutral",
+        "lead": "",
+        "afferent_pA": 427.6363636363635,
+        "da_level": 0.5494163884270326
+      }
+    },
+    "pre": {
+      "confirm": {
+        "answer": "the dog chases the cat",
+        "mode": "neutral",
+        "lead": "",
+        "afferent_pA": 427.6363636363635,
+        "da_level": 0.5494163884270326
+      },
+      "contra": {
+        "answer": "That surprises me \u2014 my mismatch monitor fired: I'd learned that dog chase cat. the dog chases the cat",
+        "mode": "neutral",
+        "lead": "",
+        "afferent_pA": 427.6363636363635,
+        "da_level": 0.5494163884270326
+      }
+    }
+  },
+  "B_on": {
+    "source_ok": true,
+    "normalized": {
+      "confirm": 0.07537012113055182,
+      "contra": 0.9582772543741588
+    },
+    "afferent_pA": {
+      "confirm": 0.0,
+      "contra": 840.0
+    },
+    "normalized_contra_gt_confirm": true,
+    "afferent_pA_contra_gt_confirm": true,
+    "attribution_vs_lesion": 0.8780487804878047,
+    "attribution_ge_0_9": false,
+    "GO": false,
+    "reward_value": {
+      "confirm": {
+        "on": true,
+        "source": "surprise",
+        "drives": true,
+        "lesioned": false,
+        "agent": "dog",
+        "action": "chase",
+        "stored_patient": "cat",
+        "asserted_patient": "cat",
+        "surprise_hz": 0.4050925925925926,
+        "threshold": 2.6873553240740744,
+        "surprised": false,
+        "normalized": 0.07537012113055182,
+        "stored_block": 0,
+        "asserted_block": 0,
+        "composer": null,
+        "signal": "unsigned prediction-error magnitude (salience), not a signed reward value",
+        "residual": "hz->normalized is a fixed host rescale; extract_assertion is a regex/keyword gate"
+      },
+      "contra": {
+        "on": true,
+        "source": "surprise",
+        "drives": true,
+        "lesioned": false,
+        "agent": "dog",
+        "action": "chase",
+        "stored_patient": "cat",
+        "asserted_patient": "fish",
+        "surprise_hz": 5.150462962962964,
+        "threshold": 2.6873553240740744,
+        "surprised": true,
+        "normalized": 0.9582772543741588,
+        "stored_block": 0,
+        "asserted_block": 8,
+        "composer": null,
+        "signal": "unsigned prediction-error magnitude (salience), not a signed reward value",
+        "residual": "hz->normalized is a fixed host rescale; extract_assertion is a regex/keyword gate"
+      }
+    },
+    "replies": {
+      "confirm": {
+        "answer": "the dog chases the cat",
+        "mode": "rest",
+        "lead": "",
+        "afferent_pA": 0.0,
+        "da_level": 0.04616293556102311
+      },
+      "contra": {
+        "answer": "That surprises me \u2014 my mismatch monitor fired: I'd learned that dog chase cat. the dog chases the cat \u2014 worth going further here.",
+        "mode": "focus",
+        "lead": " \u2014 worth going further here.",
+        "afferent_pA": 840.0,
+        "da_level": 0.8965045558416256
+      }
+    }
+  },
+  "C_lesion": {
+    "normalized": {
+      "confirm": 0.8613728129205921,
+      "contra": 0.9690444145356663
+    },
+    "differential": 0.10767160161507416,
+    "lt_1e-6": false,
+    "GO": false,
+    "reward_value": {
+      "confirm": {
+        "on": true,
+        "source": "surprise",
+        "drives": true,
+        "lesioned": true,
+        "agent": "dog",
+        "action": "chase",
+        "stored_patient": "cat",
+        "asserted_patient": "cat",
+        "surprise_hz": 4.62962962962963,
+        "threshold": 2.6873553240740744,
+        "surprised": true,
+        "normalized": 0.8613728129205921,
+        "stored_block": 0,
+        "asserted_block": 0,
+        "composer": null,
+        "signal": "unsigned prediction-error magnitude (salience), not a signed reward value",
+        "residual": "hz->normalized is a fixed host rescale; extract_assertion is a regex/keyword gate",
+        "lesion_cut": {
+          "checked": true,
+          "lesion_twin": {
+            "rows_surprise_cols_pe": 0.0,
+            "rows_pe_cols_surprise": 0.0,
+            "total": 0.0
+          },
+          "holds": true,
+          "intact_reference": {
+            "rows_surprise_cols_pe": 0.0,
+            "rows_pe_cols_surprise": 96768.0,
+            "total": 96768.0
+          }
+        }
+      },
+      "contra": {
+        "on": true,
+        "source": "surprise",
+        "drives": true,
+        "lesioned": true,
+        "agent": "dog",
+        "action": "chase",
+        "stored_patient": "cat",
+        "asserted_patient": "fish",
+        "surprise_hz": 5.208333333333334,
+        "threshold": 2.6873553240740744,
+        "surprised": true,
+        "normalized": 0.9690444145356663,
+        "stored_block": 0,
+        "asserted_block": 8,
+        "composer": null,
+        "signal": "unsigned prediction-error magnitude (salience), not a signed reward value",
+        "residual": "hz->normalized is a fixed host rescale; extract_assertion is a regex/keyword gate",
+        "lesion_cut": {
+          "checked": true,
+          "lesion_twin": {
+            "rows_surprise_cols_pe": 0.0,
+            "rows_pe_cols_surprise": 0.0,
+            "total": 0.0
+          },
+          "holds": true,
+          "intact_reference": {
+            "rows_surprise_cols_pe": 0.0,
+            "rows_pe_cols_surprise": 96768.0,
+            "total": 96768.0
+          }
+        }
+      }
+    },
+    "replies": {
+      "confirm": {
+        "answer": "the dog chases the cat \u2014 worth going further here.",
+        "mode": "focus",
+        "lead": " \u2014 worth going further here.",
+        "afferent_pA": 671.9999999999999,
+        "da_level": 0.7793389498539759
+      },
+      "contra": {
+        "answer": "That surprises me \u2014 my mismatch monitor fired: I'd learned that dog chase cat. the dog chases the cat \u2014 worth going further here.",
+        "mode": "focus",
+        "lead": " \u2014 worth going further here.",
+        "afferent_pA": 840.0,
+        "da_level": 0.8965045558416256
+      }
+    }
+  },
+  "diff_live": 0.8829071332436069,
+  "diff_lesion": 0.10767160161507416,
+  "S15_success_check": {
+    "confirm": {
+      "intact": {
+        "answer": "the dog chases the cat",
+        "mode": "rest",
+        "lead": "",
+        "afferent_pA": 0.0,
+        "da_level": 0.04616293556102311
+      },
+      "lesion": {
+        "answer": "the dog chases the cat \u2014 worth going further here.",
+        "mode": "focus",
+        "lead": " \u2014 worth going further here.",
+        "afferent_pA": 671.9999999999999,
+        "da_level": 0.7793389498539759
+      },
+      "intact_rebuild": {
+        "answer": "the dog chases the cat",
+        "mode": "rest",
+        "lead": "",
+        "afferent_pA": 0.0,
+        "da_level": 0.04616293556102311
+      },
+      "reply_changes_under_lesion": true,
+      "answer_text_changes": true
+    },
+    "contra": {
+      "intact": {
+        "answer": "That surprises me \u2014 my mismatch monitor fired: I'd learned that dog chase cat. the dog chases the cat \u2014 worth going further here.",
+        "mode": "focus",
+        "lead": " \u2014 worth going further here.",
+        "afferent_pA": 840.0,
+        "da_level": 0.8965045558416256
+      },
+      "lesion": {
+        "answer": "That surprises me \u2014 my mismatch monitor fired: I'd learned that dog chase cat. the dog chases the cat \u2014 worth going further here.",
+        "mode": "focus",
+        "lead": " \u2014 worth going further here.",
+        "afferent_pA": 840.0,
+        "da_level": 0.8965045558416256
+      },
+      "intact_rebuild": {
+        "answer": "That surprises me \u2014 my mismatch monitor fired: I'd learned that dog chase cat. the dog chases the cat \u2014 worth going further here.",
+        "mode": "focus",
+        "lead": " \u2014 worth going further here.",
+        "afferent_pA": 840.0,
+        "da_level": 0.8965045558416256
+      },
+      "reply_changes_under_lesion": false,
+      "answer_text_changes": false
+    },
+    "clean_null": true,
+    "byte_identical_off": true
+  },
+  "block_asymmetry_control": {
+    "seed": 7,
+    "stored_block": 0,
+    "asserted_block": 8,
+    "cut_at_read": {
+      "rows_surprise_cols_pe": 0.0,
+      "rows_pe_cols_surprise": 0.0,
+      "total": 0.0
+    },
+    "replicate_confirm_hz": 4.62962962962963,
+    "replicate_contra_hz": 5.208333333333334,
+    "cuefree_s_hz": 4.62962962962963,
+    "cuefree_t_hz": 5.208333333333334,
+    "cuefree_t_minus_s_hz": 0.5787037037037042,
+    "lesion_residual_hz": 0.5787037037037042,
+    "replication_exact": true,
+    "cuefree_fraction_of_residual": 1.0
+  },
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "arm off_a built and ran both turns",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "arm off_b built and ran both turns",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "arm on_a built and ran both turns",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "arm on_b built and ran both turns",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "arm les built and ran both turns",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "pre-patch reference (main, same env) built and ran both turns",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "ON: the surprise read drove both turns (reward_value.drives)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "ON: the override reached the workspace (da_drives.turn_signal_source == spiking_surprise)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "LESION: the lesioned read drove both turns",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "LESION: the cut holds at read time on both turns (twin patient_expected<->surprise weights == 0)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "ON null control clean (on_a == on_b: answer, mode, lead, afferent_pA, normalized)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "OFF null control clean (off_a == off_b, whole response minus timing keys)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "reaches",
+      "name": "lesion zeroes the prediction edges (intact organ sum -> twin sum)",
+      "ok": true,
+      "detail": "before=96768 after=0 moved=True",
+      "note": ""
+    }
+  ],
+  "verdict": {
+    "label": "A10 prediction-error salience afferent into the SNc (flags BRAIN_REWARD_VALUE_*), seed-7 de-risk",
+    "status": "NO-GO",
+    "go": false,
+    "undefined_reasons": [],
+    "preconditions": [
+      {
+        "kind": "require",
+        "name": "arm off_a built and ran both turns",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "arm off_b built and ran both turns",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "arm on_a built and ran both turns",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "arm on_b built and ran both turns",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "arm les built and ran both turns",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "pre-patch reference (main, same env) built and ran both turns",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "ON: the surprise read drove both turns (reward_value.drives)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "ON: the override reached the workspace (da_drives.turn_signal_source == spiking_surprise)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "LESION: the lesioned read drove both turns",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "LESION: the cut holds at read time on both turns (twin patient_expected<->surprise weights == 0)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "ON null control clean (on_a == on_b: answer, mode, lead, afferent_pA, normalized)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "OFF null control clean (off_a == off_b, whole response minus timing keys)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "reaches",
+        "name": "lesion zeroes the prediction edges (intact organ sum -> twin sum)",
+        "ok": true,
+        "detail": "before=96768 after=0 moved=True",
+        "note": ""
+      }
+    ],
+    "disabled_processes": [
+      {
+        "process": "heavy Gate-B organs (affect/worldmodel/metacog/multiref/..., LTM tier)",
+        "why": "off identically in every arm and in the pre-patch reference, for speed and isolation"
+      }
+    ],
+    "chance": null
+  }
+}

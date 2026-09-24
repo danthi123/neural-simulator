@@ -1,0 +1,35 @@
+{
+ "run_id": "1790285439-1609926",
+ "runner": "research/runners/_curiosity_commitment_veto_v5_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-a341bd5ee487861a6/research/runners/_curiosity_commitment_veto_v5_derisk.py",
+  "--combine",
+  "research/findings/raw/_curiosity_commitment_veto_v5_s42.json",
+  "research/findings/raw/_curiosity_commitment_veto_v5_s43.json",
+  "research/findings/raw/_curiosity_commitment_veto_v5_s44.json",
+  "research/findings/raw/_curiosity_commitment_veto_v5_s100.json",
+  "research/findings/raw/_curiosity_commitment_veto_v5_s101.json",
+  "research/findings/raw/_curiosity_commitment_veto_v5_s102.json",
+  "--out",
+  "research/findings/raw/_curiosity_commitment_veto_v5_6seed_combined.json"
+ ],
+ "git_sha": "bf8d6a0c2",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-24T17:30:39",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 30585.1,
+ "corpus_check_query": "curiosity ASK operating point homeostasis",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_curiosity_commitment_veto_v5_6seed_combined.json"
+}

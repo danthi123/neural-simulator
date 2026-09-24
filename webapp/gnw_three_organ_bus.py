@@ -97,6 +97,7 @@ import numpy as np
 # reuse-by-import the DEFAULT-ON two-organ bus machinery (organ A read is inline; organ B + the shared warm workspace
 # bridge + concept extraction + the backend-discrimination gate all come from the 2-organ module) — NO sim/ edit.
 from webapp.gnw_two_organ_bus import (
+    _multiref_resolved,
     _get_organ, _get_bridge, _chat_concepts, _organ_discriminates, _organ_a_recall,
     ws_lesion_on, organb_lesion_on, organb_ltm_exempt_enabled,
 )
@@ -352,6 +353,11 @@ def three_organ_gate_via(chat, question: str, *, seed: int = _DEFAULT_SEED,
             info.update({"routable": True, "agent": agent, "action": action, "anaphora_used": False,
                          "authored_by": "three_organ_bus", "host_combination_computed": False, "bus_svo": None})
             return None, info
+        if _multiref_resolved(chat):                          # REFERENT->FOCUS BIND (default OFF): organ-resolved -> abstain
+            info.update({"routable": True, "agent": agent, "action": action, "anaphora_used": True,
+                         "authored_by": "three_organ_bus_veto_multiref_resolved_abstain",
+                         "host_combination_computed": False, "bus_svo": None})
+            return None, info
         svo = chat._gate_router_combine(q)                    # anaphora-abstain fall-through -> host router (out of scope)
         info.update({"routable": True, "agent": agent, "action": action, "anaphora_used": True,
                      "authored_by": "three_organ_bus_veto_then_host_router", "host_combination_computed": True,
@@ -363,6 +369,9 @@ def three_organ_gate_via(chat, question: str, *, seed: int = _DEFAULT_SEED,
         if not anaphora_used:
             return None, {"routable": False, "reason": "parser_decline_abstain", "authored_by": "host_abstain",
                           "host_combination_computed": False, "bus_svo": None}
+        if _multiref_resolved(chat):                          # REFERENT->FOCUS BIND (default OFF): organ-resolved -> abstain
+            return None, {"routable": False, "reason": "parser_decline_multiref_resolved_abstain",
+                          "authored_by": "host_abstain", "host_combination_computed": False, "bus_svo": None}
         svo = chat._gate_router_combine(q)
         _l = (list(svo) if svo is not None else None)
         return svo, {"routable": False, "reason": "parser_decline_anaphora_router", "authored_by": "host_router",

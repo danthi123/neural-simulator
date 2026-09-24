@@ -1,0 +1,35 @@
+{
+ "run_id": "1790263716-321523",
+ "runner": "research/runners/onebrain_regression_battery.py",
+ "argv": [
+  "/home/ubuntu/derisk-pool/revisions/5d3810f2d5ee0518a8d30efc87adef3fed88aea1/research/runners/onebrain_regression_battery.py",
+  "--worker",
+  "--env",
+  "{\"BRAIN_DA_TAG_CAPTURE\": \"1\", \"BRAIN_DA_TAG_CAPTURE_CLOCK\": \"turn\"}",
+  "--turns",
+  "datc_t1,datc_t2,datc_t3,datc_t4,datc_t5,datc_night,datc_recall",
+  "--out",
+  "research/findings/raw/_da_tag_capture_chat/seed102/sal_night_intact_b.json"
+ ],
+ "git_sha": "5d3810f2d5ee0518a8d30efc87adef3fed88aea1",
+ "git_dirty": false,
+ "source_kind": "git_archive",
+ "source_manifest_sha256": "82e998680645724c0f073b62e600b9fea60f4339c2277f31d0e8dec9652628b2",
+ "source_manifest_verified_at_start": true,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": true,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-24T15:28:36",
+ "env": {
+  "SIM_BACKEND": "numpy",
+  "POOL_JOB_ID": "1790262730926493705-21626",
+  "POOL_JOB_MEM_GB": "2",
+  "SIM_RUN_ID": "1790262731-290213"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": false,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_da_tag_capture_chat/seed102/sal_night_intact_b.json"
+}

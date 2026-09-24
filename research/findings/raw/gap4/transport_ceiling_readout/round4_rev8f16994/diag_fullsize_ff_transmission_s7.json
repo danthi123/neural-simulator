@@ -1,0 +1,29 @@
+{
+  "probe": "a9_fullsize_ff_transmission_dev_s7",
+  "seed": 7,
+  "net": "hidden 64, pool_k 16 (the 2026-09-15 net)",
+  "variants": {
+    "legacy_stp_on": {
+      "summary": {
+        "h1_mean_intact": 0.0547847230644436,
+        "h1_mean_input_zeroed": 0.05471585323524172,
+        "mean_abs_h1_change_when_input_weights_zeroed": 0.009327488885152965,
+        "out_mean_intact": 0.05056643880885127,
+        "out_mean_h2out_zeroed": 0.05170940275861034,
+        "mean_abs_out_change_when_h2out_weights_zeroed": 0.008989637713697178,
+        "seconds": 206
+      }
+    },
+    "ff_stp_bypassed": {
+      "summary": {
+        "h1_mean_intact": 0.05469137669261196,
+        "h1_mean_input_zeroed": 0.05469957264095152,
+        "mean_abs_h1_change_when_input_weights_zeroed": 0.009053582804635122,
+        "out_mean_intact": 0.05069515212138261,
+        "out_mean_h2out_zeroed": 0.05198954214116653,
+        "mean_abs_out_change_when_h2out_weights_zeroed": 0.009335619443946699,
+        "seconds": 216
+      }
+    }
+  }
+}

@@ -33,11 +33,9 @@ EXTRA_LESIONS = {
 }
 
 # ── the probe (thin until the shared turn registry carries `transitive_nonadjacent`; see the module docstring) ──
-# PARKED (2026-09-24, registry integration): kept for the record, left out of the headline registry until an
-# opt-in-capability row mechanism applies its prerequisite flag to both arms (plan step S28, tag b2b-caps).
-PARKED = {
-    'reasoning-transitive-chat': ('measures a default-OFF capability (needs BRAIN_TRANSITIVE_CHAT=1 in both arms) and its turns are still proposed (_PROPOSED_PROBE_TURNS); an opt-in capability row, not the shipped headline registry'),
-}
+# OPT-IN row (2026-09-24): it measures a default-OFF capability, so it enters the registry only when BRAIN_TRANSITIVE_CHAT=1 is
+# set in both arms, i.e. in a capability battery launched with tools/lb_shard.py ... --extra-env BRAIN_TRANSITIVE_CHAT=1.
+REQUIRED_ENV = {'BRAIN_TRANSITIVE_CHAT': "1"}
 
 EXTRA_PROBES = [
     # (faculty_key, turn_label, decision_field_paths, thin)

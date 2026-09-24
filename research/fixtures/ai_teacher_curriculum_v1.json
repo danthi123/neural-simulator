@@ -1,0 +1,195 @@
+{
+  "version": 1,
+  "device": "none (static curriculum data; no simulation ran)",
+  "facts": [
+    {
+      "id": "n01",
+      "subject": "blicket",
+      "verb": "eat",
+      "object": "dax",
+      "tier": "novel",
+      "provenance": {
+        "source": "invented nouns (curriculum is the ground truth)"
+      }
+    },
+    {
+      "id": "n02",
+      "subject": "wug",
+      "verb": "chase",
+      "object": "toma",
+      "tier": "novel",
+      "provenance": {
+        "source": "invented nouns (curriculum is the ground truth)"
+      }
+    },
+    {
+      "id": "n03",
+      "subject": "fep",
+      "verb": "carry",
+      "object": "zorb",
+      "tier": "novel",
+      "provenance": {
+        "source": "invented nouns (curriculum is the ground truth)"
+      }
+    },
+    {
+      "id": "n04",
+      "subject": "kiki",
+      "verb": "find",
+      "object": "modi",
+      "tier": "novel",
+      "provenance": {
+        "source": "invented nouns (curriculum is the ground truth)"
+      }
+    },
+    {
+      "id": "n05",
+      "subject": "tulver",
+      "verb": "follow",
+      "object": "pilk",
+      "tier": "novel",
+      "provenance": {
+        "source": "invented nouns (curriculum is the ground truth)"
+      }
+    },
+    {
+      "id": "n06",
+      "subject": "snerg",
+      "verb": "hold",
+      "object": "vatch",
+      "tier": "novel",
+      "provenance": {
+        "source": "invented nouns (curriculum is the ground truth)"
+      }
+    },
+    {
+      "id": "n07",
+      "subject": "quenk",
+      "verb": "pull",
+      "object": "lorp",
+      "tier": "novel",
+      "provenance": {
+        "source": "invented nouns (curriculum is the ground truth)"
+      }
+    },
+    {
+      "id": "n08",
+      "subject": "mib",
+      "verb": "watch",
+      "object": "yarb",
+      "tier": "novel",
+      "provenance": {
+        "source": "invented nouns (curriculum is the ground truth)"
+      }
+    },
+    {
+      "id": "n09",
+      "subject": "gazzer",
+      "verb": "reach",
+      "object": "bouba",
+      "tier": "novel",
+      "provenance": {
+        "source": "invented nouns (curriculum is the ground truth)"
+      }
+    },
+    {
+      "id": "n10",
+      "subject": "plonk",
+      "verb": "visit",
+      "object": "frell",
+      "tier": "novel",
+      "provenance": {
+        "source": "invented nouns (curriculum is the ground truth)"
+      }
+    },
+    {
+      "id": "w01",
+      "subject": "selva",
+      "verb": "touch",
+      "object": "osona",
+      "tier": "wikidata",
+      "provenance": {
+        "source": "wikidata knowledge bundle",
+        "bundle": "wikidata_100k",
+        "facts_json_sha256": "92466eeeaccdb62bad396b1a6a580400abec6967eab89fbb78e8783a8d06b90c",
+        "index": 9525,
+        "relation": "shares_border_with",
+        "template": "the <agent> touches the <patient>"
+      }
+    },
+    {
+      "id": "w02",
+      "subject": "anoia",
+      "verb": "touch",
+      "object": "bages",
+      "tier": "wikidata",
+      "provenance": {
+        "source": "wikidata knowledge bundle",
+        "bundle": "wikidata_100k",
+        "facts_json_sha256": "92466eeeaccdb62bad396b1a6a580400abec6967eab89fbb78e8783a8d06b90c",
+        "index": 53223,
+        "relation": "shares_border_with",
+        "template": "the <agent> touches the <patient>"
+      }
+    },
+    {
+      "id": "w03",
+      "subject": "creuse",
+      "verb": "touch",
+      "object": "allier",
+      "tier": "wikidata",
+      "provenance": {
+        "source": "wikidata knowledge bundle",
+        "bundle": "wikidata_100k",
+        "facts_json_sha256": "92466eeeaccdb62bad396b1a6a580400abec6967eab89fbb78e8783a8d06b90c",
+        "index": 69034,
+        "relation": "shares_border_with",
+        "template": "the <agent> touches the <patient>"
+      }
+    },
+    {
+      "id": "w04",
+      "subject": "conflent",
+      "verb": "touch",
+      "object": "rossello",
+      "tier": "wikidata",
+      "provenance": {
+        "source": "wikidata knowledge bundle",
+        "bundle": "wikidata_100k",
+        "facts_json_sha256": "92466eeeaccdb62bad396b1a6a580400abec6967eab89fbb78e8783a8d06b90c",
+        "index": 71187,
+        "relation": "shares_border_with",
+        "template": "the <agent> touches the <patient>"
+      }
+    }
+  ],
+  "order": [
+    "n01",
+    "w01",
+    "n02",
+    "n03",
+    "w02",
+    "n04",
+    "n05",
+    "w03",
+    "n06",
+    "n07",
+    "w04",
+    "n08",
+    "n09",
+    "n10"
+  ],
+  "distractors": [
+    "narf",
+    "quib",
+    "tesk",
+    "vorn",
+    "jubb",
+    "glim"
+  ],
+  "templates": {
+    "tell": "the {subject} {verb_3sg} the {object}",
+    "ask": "what does the {subject} {verb}"
+  },
+  "notes": "Built by tools/ai_teacher_build_curriculum.py. Template-only teacher; an LLM may later paraphrase a vetted sentence, never originate a fact."
+}

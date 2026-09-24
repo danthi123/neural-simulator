@@ -13,3 +13,4 @@
 {"lane": "H \u00b7 Memory", "workflow": "agent-content-provenance", "branch": "research/content-provenance-learned-facts", "started": 1790268349.4844754, "note": "content-provenance test + learned-content fraction (owner: knowledge must be learned, not RAG)"}
 {"lane": "H \u00b7 Memory", "workflow": "wf-ai-teacher", "branch": "research/ai-teacher-environment", "started": 1790268349.4844754, "note": "AI teacher as chat-only social environment; brain learns synaptically"}
 {"lane": "B \u00b7 Curiosity", "workflow": "wf-midnight-builds", "branch": "(16 lanes)", "started": 1790268349.4844754, "note": "midnight plan build lanes, workflow wlrxugj4x"}
+{"lane": "E \u00b7 Language", "workflow": "agent-wm-referent-focus-bind", "branch": "research/wm-referent-focus-bind", "started": 1790257484.9463153, "note": "next-mechanism build in flight: D6 WM referent->focus bind + spiking anaphor (pronoun) resolution, the named next rung of the wm-binding ordinary-content NO-GO"}

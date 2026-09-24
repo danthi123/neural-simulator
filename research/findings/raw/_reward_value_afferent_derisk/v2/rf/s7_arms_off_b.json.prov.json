@@ -1,0 +1,39 @@
+{
+ "run_id": "1790275077-905132",
+ "runner": "research/runners/onebrain_regression_battery.py",
+ "argv": [
+  "/home/ubuntu/derisk-pool/revisions/d82ce8c8e707175b0a0ff47f16c54980c26f70dd/research/runners/onebrain_regression_battery.py",
+  "--worker",
+  "--env",
+  "{\"BRAIN_AFFECT\": \"0\", \"BRAIN_CHAT_SEED\": \"7\", \"BRAIN_COMPOSER_KIND\": \"rf\", \"BRAIN_CONTINUOUS\": \"0\", \"BRAIN_CONTINUOUS_DRIVES\": \"0\", \"BRAIN_CURIOSITY\": \"0\", \"BRAIN_DA_DRIVES\": \"1\", \"BRAIN_EPISODIC_STORE\": \"0\", \"BRAIN_GNW_BUS\": \"0\", \"BRAIN_LTM_SHIP_DEFAULT\": \"off\", \"BRAIN_METACOG\": \"0\", \"BRAIN_MULTIREF\": \"0\", \"BRAIN_NONCONTRADICTION_GATE\": \"0\", \"BRAIN_RECONSOLIDATION\": \"0\", \"BRAIN_REWARD_VALUE_AFFERENT\": \"0\", \"BRAIN_REWARD_VALUE_LESION\": \"0\", \"BRAIN_RICH\": \"0\", \"BRAIN_SWAP_DRIVES\": \"0\", \"BRAIN_WORLDMODEL\": \"0\"}",
+  "--turns",
+  "confirm,contra",
+  "--out",
+  "research/findings/raw/_reward_value_afferent_derisk/v2/rf/s7_arms_off_b.json"
+ ],
+ "git_sha": "d82ce8c8e707175b0a0ff47f16c54980c26f70dd",
+ "git_dirty": false,
+ "source_kind": "git_archive",
+ "source_manifest_sha256": "e4ade7cc4c22b153481efd6f3a9e8afaca25e5d55619842f5753a04fc479fcfb",
+ "source_manifest_verified_at_start": true,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": true,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-24T18:37:57",
+ "env": {
+  "OMP_NUM_THREADS": "1",
+  "SIM_BACKEND": "numpy",
+  "NUMEXPR_NUM_THREADS": "1",
+  "POOL_JOB_ID": "1790274132249140233-29454",
+  "OPENBLAS_NUM_THREADS": "1",
+  "POOL_JOB_MEM_GB": "6",
+  "MKL_NUM_THREADS": "1",
+  "SIM_RUN_ID": "1790274132-856664"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": false,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_reward_value_afferent_derisk/v2/rf/s7_arms_off_b.json"
+}

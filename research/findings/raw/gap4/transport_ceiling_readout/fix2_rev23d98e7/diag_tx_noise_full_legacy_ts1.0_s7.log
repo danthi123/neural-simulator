@@ -1,0 +1,43 @@
+SIM_BACKEND=numpy selected, but a CUDA GPU + CuPy ARE available -> this run is on the CPU (typically 10-50x slower). If you did not mean that, pass SIM_BACKEND=cupy explicitly: many research runners do os.environ.setdefault('SIM_BACKEND','numpy'), which silently wins unless the caller overrides it.
+[2026-09-24 17:08:02][INFO] SIM_BRIDGE: NumPy backend (CPU (NumPy backend), 8589934592.0 GB RAM available)
+[2026-09-24 17:08:02][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-09-24 17:08:02][INFO] SIM_BRIDGE: RNG initialized with seed: 7
+[2026-09-24 17:08:02][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 2336 neurons...
+[2026-09-24 17:08:02][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-09-24 17:08:02][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-09-24 17:08:02][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=100.0pA)...
+[2026-09-24 17:08:02][INFO] SIM_BRIDGE: Generating 3D neuron positions for 2336 neurons...
+[2026-09-24 17:08:02][INFO] SIM_BRIDGE: Generating connections (3D)...
+[2026-09-24 17:08:02][INFO] SIM_BRIDGE: Generating Watts-Strogatz 3D network (n=2336, k=10, p_rewire=0.1)...
+WS generation: 0.0%WS generation: 5.0%WS generation: 9.9%WS generation: 14.9%WS generation: 19.9%WS generation: 24.8%WS generation: 29.8%WS generation: 34.8%WS generation: 39.7%WS generation: 44.7%WS generation: 49.7%WS generation: 54.6%WS generation: 59.6%WS generation: 64.6%WS generation: 69.5%WS generation: 74.5%WS generation: 79.5%WS generation: 84.4%WS generation: 89.4%WS generation: 94.3%WS generation: 99.3%WS generation: 100.0%
+[2026-09-24 17:08:02][INFO] SIM_BRIDGE: Watts-Strogatz network complete: 23353 connections (avg degree: 10.0, expected: 10). Time: 0.05s
+[2026-09-24 17:08:02][INFO] SIM_BRIDGE: Initializing STP state for 23353 synapses (capacity: 35029)...
+[2026-09-24 17:08:02][INFO] SIM_BRIDGE: Initializing eligibility traces for 23353 synapses (capacity: 35029, dtype: float32)...
+[2026-09-24 17:08:02][WARNING] SIM_BRIDGE: No trait info available; all synapses default to E->E STP type.
+[2026-09-24 17:08:02][INFO] SIM_BRIDGE: Initializing structural plasticity state...
+[2026-09-24 17:08:02][INFO] SIM_BRIDGE: Simulation data initialized for 2336 neurons (3D). Synapses: 23353. GPU memory: 0.0GB/9223372036.9GB (0.0%)
+[2026-09-24 17:08:03][WARNING] SIM_BRIDGE: No trait info available; all synapses default to E->E STP type.
+[2026-09-24 17:08:03][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 1343488 synapses across 3 populations.
+[tx-noise][legacy event] H1 effect/noise 0.95 (effect 0.0089, noise 0.0094) item-rel -0.03225716812781142 -> cut 0.057985117069013256 | mean 0.0547->0.0549 || OUT effect/noise 1.01 | 404.1s
+[2026-09-24 17:14:46][INFO] SIM_BRIDGE: NumPy backend (CPU (NumPy backend), 8589934592.0 GB RAM available)
+[2026-09-24 17:14:46][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-09-24 17:14:46][INFO] SIM_BRIDGE: RNG initialized with seed: 7
+[2026-09-24 17:14:46][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 2336 neurons...
+[2026-09-24 17:14:46][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-09-24 17:14:46][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-09-24 17:14:46][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=100.0pA)...
+[2026-09-24 17:14:46][INFO] SIM_BRIDGE: Generating 3D neuron positions for 2336 neurons...
+[2026-09-24 17:14:46][INFO] SIM_BRIDGE: Generating connections (3D)...
+[2026-09-24 17:14:46][INFO] SIM_BRIDGE: Generating Watts-Strogatz 3D network (n=2336, k=10, p_rewire=0.1)...
+WS generation: 0.0%WS generation: 5.0%WS generation: 9.9%WS generation: 14.9%WS generation: 19.9%WS generation: 24.8%WS generation: 29.8%WS generation: 34.8%WS generation: 39.7%WS generation: 44.7%WS generation: 49.7%WS generation: 54.6%WS generation: 59.6%WS generation: 64.6%WS generation: 69.5%WS generation: 74.5%WS generation: 79.5%WS generation: 84.4%WS generation: 89.4%WS generation: 94.3%WS generation: 99.3%WS generation: 100.0%
+[2026-09-24 17:14:46][INFO] SIM_BRIDGE: Watts-Strogatz network complete: 23353 connections (avg degree: 10.0, expected: 10). Time: 0.07s
+[2026-09-24 17:14:46][INFO] SIM_BRIDGE: Initializing STP state for 23353 synapses (capacity: 35029)...
+[2026-09-24 17:14:46][INFO] SIM_BRIDGE: Initializing eligibility traces for 23353 synapses (capacity: 35029, dtype: float32)...
+[2026-09-24 17:14:46][WARNING] SIM_BRIDGE: No trait info available; all synapses default to E->E STP type.
+[2026-09-24 17:14:46][INFO] SIM_BRIDGE: Initializing structural plasticity state...
+[2026-09-24 17:14:46][INFO] SIM_BRIDGE: Simulation data initialized for 2336 neurons (3D). Synapses: 23353. GPU memory: 0.0GB/9223372036.9GB (0.0%)
+[2026-09-24 17:14:47][WARNING] SIM_BRIDGE: No trait info available; all synapses default to E->E STP type.
+[2026-09-24 17:14:47][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 1343488 synapses across 3 populations.
+[tx-noise][legacy spikes] H1 effect/noise 0.91 (effect 0.0092, noise 0.0101) item-rel -0.021897141593156366 -> cut -0.023352036724758194 | mean 0.0901->0.0899 || OUT effect/noise 1.00 | 342.9s
+[tx-noise] wrote research/findings/raw/gap4/transport_ceiling_readout/fix2_rev23d98e7/diag_tx_noise_full_legacy_ts1.0_s7.json
+[provenance] stamped 1 artifact(s) | run_id 1790284082-1362757

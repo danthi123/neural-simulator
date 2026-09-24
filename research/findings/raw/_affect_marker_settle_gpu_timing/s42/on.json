@@ -1,0 +1,14 @@
+{
+ "env": {
+  "BRAIN_AFFECT_MARKER_SETTLE": "1"
+ },
+ "seed": "42",
+ "sim_backend": "cupy",
+ "build_and_warmup_s": 478.3308491706848,
+ "first_affective_turn_s": 55.458563804626465,
+ "repeat_affective_turn_s": 29.43099093437195,
+ "first_lead": "Gladly! ",
+ "repeat_lead": "Wonderful! ",
+ "first_level": 2,
+ "warmup_lead": ""
+}

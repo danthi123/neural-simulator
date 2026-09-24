@@ -62,6 +62,7 @@ before this hook existed. tests/test_lbf_row_registry_hook.py pins this.
 from __future__ import annotations
 
 import importlib
+import os
 import pkgutil
 from typing import Any, Dict, List
 
@@ -149,6 +150,18 @@ def merge_lbf_rows(faculty_lesions: Dict[str, Any], faculty_probes: List[tuple],
         for key, why in (getattr(mod, "PARKED", {}) or {}).items():
             parked.add(key)
             report["parked"].append("%s: %r parked by its module -- %s" % (short_name, key, why))
+        # OPT-IN rows: a module measuring a default-OFF capability declares REQUIRED_ENV = {"BRAIN_X": "1"}. Its rows
+        # enter the registry only in a process where that env is set -- i.e. a capability battery launched with
+        # `tools/lb_shard.py jobs ... --extra-env BRAIN_X=1`, which sets it in BOTH arms of every shard. At production
+        # defaults the rows stay out, so a headline battery never counts a capability that is switched off.
+        required = getattr(mod, "REQUIRED_ENV", {}) or {}
+        unmet = {k: v for k, v in required.items() if os.environ.get(k) != v}
+        if unmet:
+            keys = set(extra_lesions) | set(extra_probes)
+            parked |= keys
+            for key in sorted(keys):
+                report["parked"].append("%s: %r is an opt-in row (needs %s; measure with lb_shard --extra-env)"
+                                        % (short_name, key, ", ".join("%s=%s" % kv for kv in sorted(unmet.items()))))
         if known_turns is not None:
             for key, row in extra_probes.items():
                 if key in parked:

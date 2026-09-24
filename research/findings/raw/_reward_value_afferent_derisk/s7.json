@@ -1,0 +1,235 @@
+{
+  "runner": "_reward_value_afferent_derisk",
+  "seed": 7,
+  "seed_kind": "dev-calibration (NOT a 6-seed gate seed)",
+  "go": false,
+  "status": "UNDEFINED",
+  "coupling": "A10 reward/value SNc afferent <- surprise-organ confirm/violate read, default-OFF (BRAIN_REWARD_VALUE_AFFERENT), lesion BRAIN_REWARD_VALUE_LESION",
+  "A_off_byte_identical": {
+    "no_reward_value_key_confirm": true,
+    "no_reward_value_key_contra": true,
+    "da_drives_confirm": {
+      "acted": true,
+      "turn": 1,
+      "lesioned": false,
+      "turn_engagement": 0.5090909090909089,
+      "ema_engagement": 0.30545454545454537,
+      "afferent_pA": 427.6363636363635,
+      "da_level": 0.5494163884270326,
+      "snc_firing": 0.08333333333333326,
+      "mode": "neutral",
+      "lead": "",
+      "reason": "low_engagement",
+      "seed": 7,
+      "shared_salience": {
+        "raw": 0.75,
+        "want_hz": 19.44444444444444,
+        "normalized": 0.5090909090909089,
+        "lesioned": false,
+        "calib": {
+          "want_novel_hz": 38.19444444444444,
+          "want_familiar_hz": 0.0,
+          "threshold_hz": 19.09722222222222,
+          "novel_signal": 0.95,
+          "familiar_signal": 0.0,
+          "read_reps": 4
+        },
+        "on": true
+      },
+      "spiking_novelty": {
+        "novelty": 1.0,
+        "n_tokens": 3,
+        "per_word_freshness": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "fresh_ref": 26.0,
+        "n_channels": 64,
+        "lesioned": false,
+        "on": true
+      },
+      "on": true
+    },
+    "da_drives_contra": {
+      "acted": true,
+      "turn": 1,
+      "lesioned": false,
+      "turn_engagement": 0.5090909090909089,
+      "ema_engagement": 0.30545454545454537,
+      "afferent_pA": 427.6363636363635,
+      "da_level": 0.5494163884270326,
+      "snc_firing": 0.08333333333333326,
+      "mode": "neutral",
+      "lead": "",
+      "reason": "low_engagement",
+      "seed": 7,
+      "shared_salience": {
+        "raw": 0.75,
+        "want_hz": 19.44444444444444,
+        "normalized": 0.5090909090909089,
+        "lesioned": false,
+        "calib": {
+          "want_novel_hz": 38.19444444444444,
+          "want_familiar_hz": 0.0,
+          "threshold_hz": 19.09722222222222,
+          "novel_signal": 0.95,
+          "familiar_signal": 0.0,
+          "read_reps": 4
+        },
+        "on": true
+      },
+      "spiking_novelty": {
+        "novelty": 1.0,
+        "n_tokens": 3,
+        "per_word_freshness": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "fresh_ref": 26.0,
+        "n_channels": 64,
+        "lesioned": false,
+        "on": true
+      },
+      "on": true
+    },
+    "GO": true
+  },
+  "B_on_load_bearing": {
+    "reward_value_confirm": {
+      "on": true,
+      "source": "surprise",
+      "lesioned": false,
+      "agent": "dog",
+      "action": "chase",
+      "stored_patient": "cat",
+      "asserted_patient": "cat",
+      "surprise_hz": 0.3472222222222222,
+      "threshold": 2.6873553240740744,
+      "surprised": false,
+      "normalized": 0.0646029609690444,
+      "pa": 90.44414535666216,
+      "residual": "read->pA transduction is a fixed host linear rescale (declared, not claimed closed)"
+    },
+    "reward_value_contra": {
+      "on": true,
+      "source": "surprise",
+      "lesioned": false,
+      "agent": "dog",
+      "action": "chase",
+      "stored_patient": "cat",
+      "asserted_patient": "fish",
+      "surprise_hz": 5.150462962962964,
+      "threshold": 2.6873553240740744,
+      "surprised": true,
+      "normalized": 0.9582772543741588,
+      "pa": 1341.5881561238223,
+      "residual": "read->pA transduction is a fixed host linear rescale (declared, not claimed closed)"
+    },
+    "sources_ok": true,
+    "normalized_contra_gt_confirm": true,
+    "surprised_sanity": true
+  },
+  "C_lesion_collapses": {
+    "reward_value_confirm": {
+      "on": true,
+      "source": "surprise",
+      "lesioned": true,
+      "agent": "dog",
+      "action": "chase",
+      "stored_patient": "cat",
+      "asserted_patient": "cat",
+      "surprise_hz": 4.62962962962963,
+      "threshold": 2.6873553240740744,
+      "surprised": true,
+      "normalized": 0.8613728129205921,
+      "pa": 1205.921938088829,
+      "residual": "read->pA transduction is a fixed host linear rescale (declared, not claimed closed)"
+    },
+    "reward_value_contra": {
+      "on": true,
+      "source": "surprise",
+      "lesioned": true,
+      "agent": "dog",
+      "action": "chase",
+      "stored_patient": "cat",
+      "asserted_patient": "fish",
+      "surprise_hz": 5.208333333333334,
+      "threshold": 2.6873553240740744,
+      "surprised": true,
+      "normalized": 0.9690444145356663,
+      "pa": 1356.6621803499327,
+      "residual": "read->pA transduction is a fixed host linear rescale (declared, not claimed closed)"
+    },
+    "differential_vanishes": false
+  },
+  "attribution": {
+    "lesion_attribution_fraction": 0.8795180722891565,
+    "diff_live": 0.8936742934051144,
+    "diff_lesion": 0.10767160161507416
+  },
+  "verdict": {
+    "label": "A10 reward/value SNc afferent driven by the surprise-organ spiking read, default-OFF",
+    "status": "UNDEFINED",
+    "go": false,
+    "undefined_reasons": [
+      "unmet: (C) LESION: the differential VANISHES (<1e-6) (measured=False expect=True)"
+    ],
+    "preconditions": [
+      {
+        "kind": "require",
+        "name": "(A) OFF: no reward_value key on either turn (byte-identical afferent path)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "(B) ON: reward_value.source == 'surprise' on both turns",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "(B) ON, LOAD-BEARING: normalized(contradict) > normalized(confirm)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "confirm=0.0646029609690444 contra=0.9582772543741588"
+      },
+      {
+        "kind": "require",
+        "name": "(B) sanity: surprised flips False(confirm)->True(contradict)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "(C) LESION: the differential VANISHES (<1e-6)",
+        "ok": false,
+        "detail": "measured=False expect=True",
+        "note": "les_confirm=0.8613728129205921 les_contra=0.9690444145356663"
+      },
+      {
+        "kind": "control",
+        "name": "reward_value.normalized rides the LIVE surprise read (on) and is severed by the lesion",
+        "ok": true,
+        "detail": "treatment=0.893674 control=0.107672 |sep|=0.786003 > 0",
+        "note": "on: contra>confirm; lesion: contra==confirm"
+      }
+    ],
+    "disabled_processes": [
+      {
+        "process": "heavy Gate-B organs (affect/worldmodel/metacog/multiref/... = 0) in the handler proofs",
+        "why": "disabled ONLY for speed/confound-isolation; they run identically on every flag arm"
+      },
+      {
+        "process": "the affect-valence FALLBACK path",
+        "why": "this de-risk exercises the PRIMARY surprise path only (a fresh session with an expectation-bearing assertion always resolves it); the fallback is reported in the module but not load-bearing-tested here (declared, see the pre-registration)"
+      }
+    ],
+    "chance": null
+  }
+}

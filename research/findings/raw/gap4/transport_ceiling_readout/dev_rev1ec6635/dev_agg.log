@@ -1,0 +1,3 @@
+[gap4-tc][agg s7] UNDEFINED (ceiling clears chance on 0/3 replicates < 2) | ceiling clears 0/3 | n_fa_wall 1 | surpass 0 | means frozen=0.148 fixed_fa=0.173 micro_inengine=0.136 transport_ceiling=0.173
+[gap4-tc] verdict: no 6-seed verdict (seeds incomplete); per-seed status only -> wrote research/findings/raw/gap4/transport_ceiling_readout/dev_s7.json
+[provenance] stamped 1 artifact(s) | run_id 1790274902-702657

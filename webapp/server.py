@@ -4793,6 +4793,10 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
         return getattr(c, "last_trace", None) if c is not None else None
 
     msg = (req.message or "").strip()
+    # REFERENT->FOCUS BIND (BRAIN_MULTIREF_FOCUS_BIND, default OFF): the D6 organ's anaphor resolution is PER TURN --
+    # drop any previous turn's before anything can consult it. Off -> the attribute is never set -> no-op.
+    if getattr(chat, "_multiref_referent_override", None) is not None:
+        chat._multiref_referent_override = None
 
     # ── GNW NEURAL THOUGHT-SWAP — the LIVE held-topic workspace (board #77, 2026-08-19) ─────────────────────────────
     # The already-wired GNW gates RESTORE their workspace each turn -> they do not hold a thought ACROSS turns. This
@@ -5752,6 +5756,13 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
                 jm = d6org.judge(msg, lesion=d6les)          # None when out-of-scope (<2 referents) -> byte-identical
                 if jm is not None:
                     multiref_info = dict(jm, kind="maintain")
+                elif _D6.multiref_focus_bind_enabled():
+                    # REFERENT->FOCUS BIND (default OFF): an anaphor turn resolves its pronoun by the organ's
+                    # cue-driven retrieval off THIS session's live held state; the resolved referent reaches the
+                    # ordinary reply through `chat._resolve_anaphora` (see d6_multiref_wm_production_organ.resolve_turn).
+                    jr = _D6.resolve_turn(chat, d6org, msg, lesion=d6les)
+                    if jr is not None:
+                        multiref_info = jr
         except Exception as _d6e:                            # never crash a turn -> degrade to the normal answer
             multiref_info = {"on": True, "error": f"{type(_d6e).__name__}: {_d6e}"}
 

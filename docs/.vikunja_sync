@@ -179,3 +179,15 @@ attempts 4-5), #206 (slot-binder GPU latency GO, label de-risked), #207 (thought
 server), #143 (transitive reasoning wired), #230 (AI-teacher 6-seed running). New: #231 working memory reaching
 ordinary replies, #232 false-belief in chat, #233 learned noun meanings (de-risked), #234 local-model fallback,
 #235 safety guards (done).
+
+## 2026-09-24  content-provenance probe preregistered
+- #228 updated (stays OPEN, default-off): the fact-learning test is being repeated with the real language-model mouth on, plus a learned-content share count; prereg committed on research/content-provenance-learned-facts.
+
+## 2026-09-24  SETTLE fix round: flip criteria re-registered (research/settle-multiturn-contrast)
+#225 appended (plain language): the three SETTLE flip tests were fixed after an independent review and re-registered before any new scoring (amendment A1 multi-turn scorer, A2 congruence rule UNDEFINED until a production wiring exists, A3 GPU timing rewritten and queued). No capability status changed and nothing flipped, so no new row (anti-noise).
+
+## 2026-09-24  ai-teacher lane
+- created #230 (AI teacher teaches the brain through chat only; built + pre-registered, runs in progress, default-off), labels Learning + Live brain (chat); related #228 (D6 write) and #186 (curiosity-chosen learning). Actual board updated via tools/vikunja.sh.
+
+## 2026-09-24  A10 follow-up round
+- new task #236: surprise -> engagement (A10), off by default; follow-up fixes landed on research/a10-followups, AMENDMENT-3 filed, v4 arms not yet run

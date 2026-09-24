@@ -78,6 +78,13 @@ CONTRACT (additive, reversible, byte-identical-off).
     organs and break byte-identity. Snapshot host RNG, run on this workspace's own timeline, restore host.
   * The substrate build (~0.9s) is lazy on the first turn per session and kept warm; each turn runs one
     ~0.05s read (restore the post-build snapshot -> fresh manager -> one live SNc->DA loop).
+  * With `BRAIN_REWARD_VALUE_AFFERENT` on (A10, default-OFF), this block ALSO reads the process-shared surprise
+    organ, which production reads again later in the same turn. Reads on the shared pool depend on read history, so
+    an unisolated A10 read shifted the production surprise read (seed 7, v2 arms: CONFIRM 0.3472222222222222 Hz ON
+    vs 0.4050925925925926 Hz OFF). The A10 read therefore snapshots and restores the organ state it mutates, and
+    since AMENDMENT-4 runs its own recall inside a deep snapshot of `chat.inner` with the global generators set
+    aside (webapp/reward_value_afferent_chat.py; both measured at the module level, seed 7, numpy). Criterion (D)
+    of the A10 pre-registration (AMENDMENT-2, split by AMENDMENT-3) scores the handler level in the arms.
 
 REUSE-BY-IMPORT (NO `sim/` edit). The BG substrate build (`PM.build`), the `dopamine_mode` bus manager
 (`make_manager`), the live SNc->DA loop (`measure_self_driven`) and the operating point (`BASELINE`,
@@ -86,12 +93,15 @@ module adds only the production glue (the per-session engagement EMA + the affer
 bins + the mode->suffix map). `git diff sim/` is empty.
 
 HONEST RESIDUALS (named, not claimed closed).
-  1. The message->ENGAGEMENT scalar (novelty + richness -> the SNc reward/context afferent) is host (a
-     language/sensory-comprehension boundary, like the SVO parser, #84 appraisal, #85 topic). The DA LEVEL
-     (set by SNc spikes off the bus) and its SNc-nucleus dependence ARE the #76 neural mechanism
-     (lesion-proven -- silence the SNc and the level, hence the mode, hence the suffix, collapses). The #76
-     finding itself flags the reward/context scalar's ORIGIN as the residual; computing it from the brain's
-     own sensory stream is a SEPARATE faculty (the named next rung).
+  1. The message->ENGAGEMENT scalar is PARTLY host. Its novelty term is spiking (the short-term-depression
+     habituation organ, the SOLE novelty path since 2026-09-16) and it reaches the EMA through the shared spiking
+     salience afferent (default-ON); the richness term (a content-word count), the novelty/richness mix, the EMA
+     and the EMA->pA map are host. The DA LEVEL (set by SNc spikes off the bus) and its SNc-nucleus dependence
+     ARE the #76 neural mechanism (lesion-proven -- silence the SNc and the level, hence the mode, hence the
+     suffix, collapses). This scalar is blind to prediction error (a confirming and a contradicting assertion of
+     three fresh words read the same). `BRAIN_REWARD_VALUE_AFFERENT` (A10, default-OFF,
+     webapp/reward_value_afferent_chat.py) replaces the per-turn mix with the surprise organ's spiking mismatch
+     read on expectation-bearing assertion turns; the downstream stages are unchanged.
   2. The mode->SUFFIX-STRING map is a HOST conditioned-articulation scaffold (the discourse "mouth"): the DA
      mode that DRIVES it is the neural SNc->DA level (load-bearing -- the lesion collapses the suffix), but
      the surface STRING for a mode is a host template, exactly the sanctioned articulation-crutch pattern
@@ -374,29 +384,45 @@ class DaModeDrivesWorkspace:
         return float(conc), float(sncf)
 
     def observe(self, message: str, *, lesion: bool = False,
-                afferent_override: Optional[float] = None) -> dict:
+                afferent_override: Optional[float] = None,
+                turn_signal_override: Optional[float] = None) -> dict:
         """Fold the message engagement into the persistent EMA, map it to the SNc reward/context afferent, run one
         neural SNc->DA read, and return the self-produced DA level + the mode + the engagement suffix. An empty /
         content-free turn HOLDS the prior engagement (persistence). An `afferent_override` (pA) drives the SNc
         afferent DIRECTLY (a mode INDUCTION, for the (B) proof: vary the mode with the message held fixed). `lesion`
-        silences the SNc nucleus (the load-bearing lesion). Never raises out (the caller degrades to no-suffix)."""
+        silences the SNc nucleus (the load-bearing lesion). Never raises out (the caller degrades to no-suffix).
+
+        `turn_signal_override` (A10, default None -> the path below is exactly the pre-existing one): a per-turn
+        signal in [0, 1] from a spiking read (the surprise organ's normalized mismatch rate) that REPLACES the
+        `engagement_of()` mix for THIS turn only. The spiking novelty organ still runs on the turn's tokens (its
+        habituation state stays continuous) and the signal still goes through the shared salience afferent and the
+        EMA. A turn that carries the override is not content-free, so it never takes the HOLD branch."""
         with self._lock:
             self.n_turns += 1
             tokens = _content_tokens(message)
             shared_info = None
             nov_info = None
+            host_turn_e = None
             if afferent_override is not None:
                 afferent = float(afferent_override)
                 turn_e = None
             else:
-                if tokens:
+                if tokens or turn_signal_override is not None:
                     # ── spiking habituation NOVELTY (scaffold-retirement; the SOLE novelty path, host `set` RETIRED
                     # 2026-09-16). The per-turn novelty is the spiking short-term-depression HABITUATION read (per-word
                     # synaptic depression that RECOVERS over a multi-second gap -- a strictly more faithful novelty than
                     # a `set` that never forgets; 6/6-seed mechanism de-risk GO 3cf6bc52). The permanent-memory host
                     # `set`/`seen` novelty term that once produced this fraction is DELETED.
-                    nov_info = self._spiking_novelty(tokens)
-                    turn_e = engagement_of(tokens, novelty_override=nov_info["novelty"])
+                    if tokens:
+                        nov_info = self._spiking_novelty(tokens)
+                        turn_e = engagement_of(tokens, novelty_override=nov_info["novelty"])
+                    else:
+                        turn_e = None
+                    if turn_signal_override is not None:
+                        # A10: the spiking prediction-error read replaces the host novelty/richness mix as this
+                        # turn's signal; everything downstream (salience afferent, EMA, pA map) is unchanged.
+                        host_turn_e = turn_e
+                        turn_e = float(np.clip(float(turn_signal_override), 0.0, 1.0))
                     # ── shared spiking novelty/salience afferent (rank-4, default-ON) ─────────────────────────
                     # Route the SAME raw host engagement scalar through the shared ASK-pool spiking transduction
                     # BEFORE it folds into the EMA, instead of using the raw host arithmetic directly. `engagement_
@@ -420,6 +446,10 @@ class DaModeDrivesWorkspace:
                 info["shared_salience"] = shared_info
             if nov_info is not None:         # key present ONLY when the spiking novelty organ ran (byte-identical-off idiom)
                 info["spiking_novelty"] = nov_info
+            if afferent_override is None and turn_signal_override is not None:   # A10 keys (byte-identical-off idiom)
+                info["turn_signal_source"] = "spiking_surprise"
+                info["turn_signal_in"] = float(np.clip(float(turn_signal_override), 0.0, 1.0))
+                info["host_engagement_replaced"] = (None if host_turn_e is None else float(host_turn_e))
             try:
                 self._isolated(self._ensure)
                 conc, sncf = self._isolated(lambda: self._read_da_level(afferent, lesion))
@@ -526,9 +556,34 @@ def observe_turn(chat, message: str, *, seed: int = _DEFAULT_SEED) -> dict:
                 afferent_override = float(_ind)
             except Exception:
                 afferent_override = None
+        # A10 (2026-09-24, default-OFF, research/reward-value-afferent): on an expectation-bearing assertion turn,
+        # the surprise organ's spiking mismatch read replaces the engagement_of() mix as this turn's signal (an
+        # unsigned prediction-error salience, not a signed reward value); the salience afferent, EMA and pA map
+        # downstream are unchanged -- see webapp/reward_value_afferent_chat.py. The env var is parsed HERE, before
+        # any import, so with BRAIN_REWARD_VALUE_AFFERENT unset/off the module is never imported and `ws.observe`
+        # is called with exactly the pre-existing arguments. A manual BRAIN_DA_DRIVES_INDUCE keeps priority.
+        reward_value_info = None
+        turn_signal = None
+        if afferent_override is None and (os.environ.get("BRAIN_REWARD_VALUE_AFFERENT", "0").strip().lower()
+                                          in ("1", "true", "on", "yes")):
+            try:
+                from webapp import reward_value_afferent_chat as _RVA
+                reward_value_info = _RVA.spiking_reward_value(chat, message, seed=seed)
+                if reward_value_info is not None and reward_value_info.get("drives"):
+                    turn_signal = float(reward_value_info["normalized"])
+            except Exception as _rve:   # an error never drives the SNc: fall through to the pre-existing afferent
+                reward_value_info = {"on": True, "source": "error", "drives": False,
+                                     "error": f"{type(_rve).__name__}: {_rve}"}
+                turn_signal = None
         ws = get_workspace(chat, seed=seed)
-        info = ws.observe(message, lesion=da_drives_lesioned(), afferent_override=afferent_override)
+        if turn_signal is None:
+            info = ws.observe(message, lesion=da_drives_lesioned(), afferent_override=afferent_override)
+        else:
+            info = ws.observe(message, lesion=da_drives_lesioned(), afferent_override=None,
+                              turn_signal_override=turn_signal)
         info["on"] = True
+        if reward_value_info is not None:
+            info["reward_value"] = reward_value_info
     except Exception as e:
         info = {"on": True, "acted": False, "reason": f"error:{type(e).__name__}: {e}", "lead": "", "mode": "rest"}
     chat._last_da_drives = info

@@ -1,0 +1,70 @@
+{
+  "probe": "gap4_tc_eval_seed_guard_SELFTEST",
+  "fingerprint": "f66c36186cfbe68d",
+  "cases": [
+    {
+      "case": "the real prereg at HEAD (no evaluation-config amendment exists)",
+      "want": false,
+      "got": false,
+      "reason": "amendment research/findings/2026-09-24-gap4-transport-ceiling-readout-lever-PREREGISTRATION.md has no '## AMENDMENT <n> ... EVALUATION CONFIG' section (a prereg without one, or an amendment that does not fix an evaluation config, cannot unlock evaluation seeds)",
+      "ok": true
+    },
+    {
+      "case": "an untracked file",
+      "want": false,
+      "got": false,
+      "reason": "amendment research/findings/_no_such_amendment_1366697.md: not tracked by git (an uncommitted file cannot register a config)",
+      "ok": true
+    },
+    {
+      "case": "no amendment path",
+      "want": false,
+      "got": false,
+      "reason": "evaluation seeds [42] need --prereg-amendment <committed file>",
+      "ok": true
+    },
+    {
+      "case": "evaluation section, other fingerprint",
+      "want": false,
+      "got": false,
+      "reason": "no EVALUATION CONFIG section registers fingerprint f66c36186cfbe68d for seeds [42] (found: [('AMENDMENT 9 -- EVALUATION CONFIG (test)', ['0000000000000000'], [42, 43, 44, 100, 101, 102])])",
+      "ok": true
+    },
+    {
+      "case": "evaluation section, seed not registered",
+      "want": false,
+      "got": false,
+      "reason": "no EVALUATION CONFIG section registers fingerprint f66c36186cfbe68d for seeds [42] (found: [('AMENDMENT 9 -- EVALUATION CONFIG (test)', ['f66c36186cfbe68d'], [43, 44, 100, 101, 102])])",
+      "ok": true
+    },
+    {
+      "case": "phrase only in prose, keys outside a heading",
+      "want": false,
+      "got": false,
+      "reason": "amendment x.md has no '## AMENDMENT <n> ... EVALUATION CONFIG' section (a prereg without one, or an amendment that does not fix an evaluation config, cannot unlock evaluation seeds)",
+      "ok": true
+    },
+    {
+      "case": "uncommitted content (reader says not in HEAD)",
+      "want": false,
+      "got": false,
+      "reason": "amendment x.md: not in HEAD (staged but not committed)",
+      "ok": true
+    },
+    {
+      "case": "registered, committed, matching",
+      "want": true,
+      "got": true,
+      "reason": "registered in 'AMENDMENT 9 -- EVALUATION CONFIG (test)' (fake)",
+      "ok": true
+    },
+    {
+      "case": "dev seed only needs nothing",
+      "want": true,
+      "got": true,
+      "reason": "no evaluation seed requested",
+      "ok": true
+    }
+  ],
+  "GUARD_SELFTEST_PASS": true
+}

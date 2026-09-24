@@ -1,0 +1,35 @@
+{
+ "run_id": "1790278904-942964",
+ "runner": "research/runners/_affect_marker_settle_gpu_timing.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-aae1faee385698589/research/runners/_affect_marker_settle_gpu_timing.py",
+  "--worker",
+  "--env",
+  "{\"BRAIN_AFFECT_MARKER_SETTLE\": \"1\"}",
+  "--out",
+  "research/findings/raw/_affect_marker_settle_gpu_timing/s42/on.json"
+ ],
+ "git_sha": "958f39148",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-24T15:41:44",
+ "env": {
+  "SIM_BACKEND": "cupy",
+  "OMP_NUM_THREADS": "1",
+  "SIM_RUN_ID": "1790277999-895380",
+  "BRAIN_CHAT_SEED": "42",
+  "BRAIN_CHAT_RENDERER": "stub",
+  "SIM_DISABLE_LLM": "1"
+ },
+ "sim_backend": "cupy",
+ "sim_backend_requested": "cupy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_affect_marker_settle_gpu_timing/s42/on.json"
+}
