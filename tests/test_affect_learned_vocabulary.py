@@ -62,6 +62,22 @@ def _tiny(tmp_path):
     return A, lav, str(p)
 
 
+def test_no_us_presentation_increment_is_exactly_zero_when_simulated(tmp_path):
+    """The execution identity the trainer relies on: with no innate US afferent heard, the CS-alone and CS+US trials
+    are the same deterministic run, so the increment is exactly 0.0 (also with non-zero learned synapses)."""
+    A, lav, p = _tiny(tmp_path)
+    assert np.abs(lav.u).max() > 0
+    lav.simulate_all = True
+    row = np.full(A.CHUNK, -1, dtype=np.int32)
+    for ws in (["gloom", "table"], ["sunny", "chair", "table"], ["table"]):
+        row[:] = -1
+        row[: len(ws)] = [lav.vid[w] for w in ws]
+        inc = lav.present_and_learn(row)
+        assert np.array_equal(inc, np.zeros_like(inc))
+    row[:3] = [lav.vid["sad"], lav.vid["gloom"], lav.vid["table"]]
+    assert lav.present_and_learn(row)[0, 1] > 0          # a heard negative seed does evoke a V- increment
+
+
 def test_learned_word_reads_signed_and_uniform_word_reads_zero(tmp_path):
     A, lav, p = _tiny(tmp_path)
     rd = A.load_reader(p, 3)

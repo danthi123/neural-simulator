@@ -102,7 +102,7 @@ SEED_MARGIN = 2.0         # |v-5| >= this -> an innate seed (the organ's own str
 SEED_FRAC = 0.8           # per brain seed: fraction of seeds kept innate; the rest are held-out tests
 N_CAT = 20                # excitatory neurons per valence pool
 N_FSI = 10                # FS interneurons per pool's cross-inhibition sub-pool
-T_CS = 6                  # steps of the CS-alone phase of a presentation
+T_CS = 12                 # steps of the CS-alone trial of a presentation (= T_ON: equal-length trials)
 T_ON = 12                 # steps of the CS+US phase of a presentation
 T_READ = 30               # steps per read presentation
 I_AFF = 4000.0            # afferent drive while its word is heard (pA)
@@ -324,6 +324,7 @@ class LearnedAffectVocabulary:
         # synaptic scaling: per pool running mean-square of the excess (the learning signal is divided by its RMS)
         self.tau_scale = float(tau_scale)
         self.warmup, self.eta_min, self.t_cs = int(warmup), float(eta_min), int(t_cs)
+        self.simulate_all = False             # True: run both trials even without a US (the identity test)
         self.msq = np.full((self.R, 2), 1e-4)
         self.lesion = None
         self._cache = {}
@@ -398,32 +399,43 @@ class LearnedAffectVocabulary:
 
     # ── learning ───────────────────────────────────────────────────────────────────────────────────────────────
     def present_and_learn(self, row):
-        """One heard presentation (a row of token ids, -1 = no afferent), in two phases (delay conditioning): the
-        heard words alone for T_CS steps (the pools' CS-evoked response, which carries the LEARNED drive), then the
-        words plus the innate US afferents for T_ON steps. The learning signal is the US-evoked INCREMENT of each
-        pool's rate over its CS-alone rate, minus that increment's sliding threshold, in per-pool RMS units:
-            e_P = ((y2_P - y1_P) - theta_P) / rms_P,   u_iP <- u_iP + x_i * (e_P - u_iP) * max(1/(n_i+N0), ETA_MIN)
-        The learned drive appears in BOTH phases, so it cancels in the increment: a word cannot potentiate itself
-        through its own learned drive (the positive-feedback runaway a plain post-rate Hebbian rule has here). Once
-        the CS drive saturates a pool, the US adds less, so learning slows as the prediction grows (Rescorla-Wagner-
-        like saturation). Returns the increment (R, 2)."""
+        """One heard presentation (a row of token ids, -1 = no afferent) as two trials from rest (delay
+        conditioning): the heard words alone for T_CS steps (the pools' CS-evoked response, which carries the LEARNED
+        drive), then the same words plus the innate US afferents for T_ON (= T_CS) steps. The learning signal is the
+        US-evoked INCREMENT of each pool's rate over its CS-alone rate, minus that increment's sliding threshold, in
+        per-pool RMS units:
+            e_P = ((y2_P - y1_P) - theta_P) / rms_P,   u_iP <- u_iP + (e_P - u_iP) * max(1/(n_i+N0), ETA_MIN)
+        for every heard word i (its afferent is driven at its drive rate; x_i = 1). The learned drive appears in BOTH
+        trials, so it cancels in the increment: a word cannot potentiate itself through its own learned drive. Once
+        the CS drive saturates a pool, the US adds less, so learning slows as the prediction grows.
+        Each trial starts from rest (reset_state): measured on a seed-7 instrument probe, a continuous stream let the
+        previous chunk's US response leak into the next chunk's CS trial, and the increment carried the chunk's seed
+        valence at r = 0.38; from rest it carries it at r = 0.95-0.96.
+        EXECUTION IDENTITY (declared, asserted in tests): when no innate US afferent is heard, the two trials are the
+        same deterministic run from the same state with the same input (OU noise off), so the increment is exactly 0
+        and the two runs are skipped (`simulate_all=True` runs them; the test checks the increment is 0.0 exactly).
+        Returns the increment (R, 2)."""
         wids = np.unique(row[row >= 0])[: self.n_slot]
         us_k = self.us_of_vid[wids]
         us_k = us_k[us_k >= 0]
-        c1 = self._run(wids, np.zeros(0, dtype=np.int64), self.t_cs)
-        c2 = self._run(wids, us_k, self.t_on)
-        y1 = np.stack(self._pool_rates(c1, self.t_cs), axis=1)      # (R, 2) CS alone
-        y2 = np.stack(self._pool_rates(c2, self.t_on), axis=1)      # (R, 2) CS + US
-        inc = y2 - y1
+        if len(us_k) == 0 and not self.simulate_all:
+            inc = np.zeros((self.R, 2))
+        else:
+            self.reset_state()
+            c1 = self._run(wids, np.zeros(0, dtype=np.int64), self.t_cs)
+            self.reset_state()
+            c2 = self._run(wids, us_k, self.t_on)
+            y1 = np.stack(self._pool_rates(c1, self.t_cs), axis=1)  # (R, 2) CS alone
+            y2 = np.stack(self._pool_rates(c2, self.t_on), axis=1)  # (R, 2) CS + US
+            inc = y2 - y1
         if len(wids) and self.n_presented >= self.warmup:
-            x = np.minimum(1.0, (c1 + c2)[self.sl[: len(wids)]] / (self.t_cs + self.t_on) / self._x_ref)   # (k,)
             ex = inc - self.theta                                    # (R, 2) excess over the sliding threshold
             if self.tau_scale > 0:
                 ex = ex / np.sqrt(self.msq)                          # homeostatic scaling (per-pool RMS units)
-            eta = x * np.maximum(1.0 / (self.nuse[wids] + self.n0), self.eta_min)   # (k,)
+            eta = np.maximum(1.0 / (self.nuse[wids] + self.n0), self.eta_min)   # (k,)
             du = eta[None, :, None] * (ex[:, None, :] - self.u[:, wids, :])
             self.u[:, wids, :] += du
-            self.nuse[wids] += x
+            self.nuse[wids] += 1.0
         if self.tau_scale > 0:
             self.msq += ((inc - self.theta) ** 2 - self.msq) / self.tau_scale
         self.theta += (inc - self.theta) / self.tau
