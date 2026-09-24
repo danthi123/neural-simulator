@@ -332,18 +332,25 @@
   "rows": {
     "open-ended-turn-gnw-drive": {
       "faculty": "open-ended-turn-gnw-drive",
-      "turn": "sw_open",
+      "turn": "chase",
       "fields": [
-        "open_ended_gated.route",
-        "open_ended_gated.bg_action",
-        "open_ended_gated.reply_kind"
+        "open_ended_gated.route"
       ],
-      "treatment_diffs": [],
+      "treatment_diffs": [
+        {
+          "field": "open_ended_gated.route",
+          "on": "grounded",
+          "off": "withheld"
+        }
+      ],
       "control_diffs": [],
       "null_clean": true,
-      "exercised": false,
-      "attributable_fraction": null,
-      "load_bearing": false
+      "exercised": true,
+      "attributable_fraction": 1.0,
+      "load_bearing": true,
+      "counts_toward_claim": true,
+      "descriptive_only_reason": null,
+      "shared_lesion_with": null
     }
   },
   "null_diffs": [],
