@@ -193,7 +193,10 @@ case "${1:-list}" in
            echo "   If the repeat is deliberate (a genuine replication), re-run with FORCE_DUP=1." >&2
            exit 2
          fi
-         printf '%s\t%s  #checked:%s\n' "$(date +%s)" "$2" "$CHECKED" >> "$Q"
+         # APPEND UNDER THE DISPATCHER'S LOCK (2026-09-24). pop_job rewrites the queue (awk > tmp; mv) under
+         # "$Q.lock"; an unlocked append landing between its read and its mv went to the replaced inode and was lost.
+         ( flock -w 120 9 || { echo "⛔ could not take $Q.lock in 120 s" >&2; exit 1; }
+           printf '%s\t%s  #checked:%s\n' "$(date +%s)" "$2" "$CHECKED" >> "$Q" ) 9>"$Q.lock" || exit 1
          echo "queued (depth now $(valid_depth))" ;;
   depth) valid_depth ;;
   malformed-depth) malformed_depth ;;

@@ -65,6 +65,44 @@ def test_running_jobs_commit_their_declared_size_for_their_lifetime(tmp_path: Pa
     assert r.stdout.strip() == "0"
 
 
+def test_jobs_default_to_one_math_thread_unless_they_set_their_own(tmp_path: Path) -> None:
+    # 2026-09-24: jobs with no thread count ran BLAS on every core (load 61 on 12 cores) and the load gate then
+    # blocked all dispatch. The launch now defaults OMP/OPENBLAS/MKL/NUMEXPR threads to 1; a job's own value wins.
+    remote_root = tmp_path / "derisk-pool" / "sim"
+    remote_root.mkdir(parents=True)
+    for job, want in (("echo T=$OMP_NUM_THREADS/$OPENBLAS_NUM_THREADS", "T=1/1"),
+                      ("OMP_NUM_THREADS=4 bash -c 'echo T=$OMP_NUM_THREADS/$OPENBLAS_NUM_THREADS'", "T=4/1")):
+        out, status = remote_root / "autodispatch.out", remote_root / "job_status.log"
+        for f in (out, status):
+            f.unlink(missing_ok=True)
+        rendered = run_bash(DISPATCHER, "--render-remote-command", job, env={"HOME": str(tmp_path)}).stdout
+        env = {k: v for k, v in os.environ.items() if not k.endswith("_NUM_THREADS")}
+        subprocess.run(["bash", "-c", rendered], env={**env, "HOME": str(tmp_path)}, text=True, check=True)
+        for _ in range(200):
+            if status.exists() and status.read_text():
+                break
+            time.sleep(0.02)
+        assert out.read_text().strip() == want
+
+
+def test_queue_add_waits_for_the_dispatchers_lock(tmp_path: Path) -> None:
+    # 2026-09-24: `pool_queue.sh add` appended without the lock pop_job holds while it rewrites the queue
+    # (awk > tmp; mv), so an add landing mid-rewrite went to the replaced file and was lost.
+    import fcntl
+    queue = tmp_path / "pool.queue"
+    queue.write_text("")
+    with open(str(queue) + ".lock", "w") as lk:
+        fcntl.flock(lk, fcntl.LOCK_EX)
+        p = subprocess.Popen(["bash", str(ROOT / "tools" / "pool_queue.sh"), "add", "echo lock-test",
+                              "--checked", "test"], cwd=ROOT, env={**os.environ, "POOL_QUEUE_PATH": str(queue)},
+                             stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+        time.sleep(1.0)
+        assert p.poll() is None and queue.read_text() == ""       # blocked on the lock, nothing written
+        fcntl.flock(lk, fcntl.LOCK_UN)
+    assert p.wait(timeout=30) == 0
+    assert "echo lock-test  #checked:test" in queue.read_text()
+
+
 def test_pop_takes_first_job_that_fits_the_node_budget(tmp_path: Path) -> None:
     now = int(time.time())
     queue = tmp_path / "pool.queue"
@@ -112,7 +150,9 @@ def test_remote_wrapper_records_multiline_job_as_one_v2_row(tmp_path: Path) -> N
 
 def test_status_classifier_rejects_malformed_and_stale_rows(tmp_path: Path) -> None:
     now = 2_000_000_000
-    recent_job = "pytest -q tests/test_example.py"
+    # The job carries an --out path: since 941f00105 (2026-08-26) a job with no output flag classifies as U
+    # (unverifiable), and this test's no-flag job had read U ever since, failing on its stale "C" expectation.
+    recent_job = "python -m research.runners.x --out research/x.json"
     stale_job = "pytest -q tests/test_old.py"
     log = tmp_path / "job_status.log"
     log.write_text(
@@ -131,7 +171,7 @@ def test_status_classifier_rejects_malformed_and_stale_rows(tmp_path: Path) -> N
         "3600",
     )
 
-    assert result.stdout == "C\t4\tpytest -q tests/test_example.py\n"
+    assert result.stdout == f"C\t4\tresearch/x.json\t{recent_job}\n"
 
 
 def test_legacy_status_time_is_anchored_to_file_mtime(tmp_path: Path) -> None:
