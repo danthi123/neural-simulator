@@ -1,0 +1,33 @@
+{
+ "run_id": "1790266626-266342",
+ "runner": "research/runners/_tom_false_belief_chat_gate.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/wf_4703a2bd-4dd-9/research/runners/_tom_false_belief_chat_gate.py",
+  "--seed",
+  "7",
+  "--n-items",
+  "8",
+  "--backend",
+  "numpy",
+  "--json",
+  "research/findings/raw/_tom_false_belief_chat/smoke_seed7.json"
+ ],
+ "git_sha": "b36669ff9",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-24T12:17:06",
+ "env": {
+  "OMP_NUM_THREADS": "1"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_tom_false_belief_chat/smoke_seed7.json"
+}

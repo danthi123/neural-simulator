@@ -4466,6 +4466,11 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
             _CA_reset.reset_organ(cache_key)
         except Exception:
             pass
+        try:  # drop this conversation's false-belief (ToM) scenario, if any (A5, Gate-B)
+            from webapp import false_belief_chat as _FBC_reset
+            _FBC_reset.reset_session(cache_key)
+        except Exception:
+            pass
 
     chat = _BRAIN_CHATS.get(cache_key)
     source = None
@@ -5692,6 +5697,47 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
                 })
         except Exception as _dre:
             pass   # never let the discourse read crash a turn — fall through to the normal path
+
+    # ── THEORY OF MIND: FALSE-BELIEF REGISTER (A5, Gate-B, 2026-09-24) ──────────────────────────────────────
+    # A live Sally-Anne change-of-location scenario, narrated across one or more turns, is folded onto the
+    # 6/6-seed GO'd W3 agent-keyed false-belief register (reuse-by-import,
+    # research/runners/tom_false_belief_chat_organ.FalseBeliefChatOrgan wrapping
+    # research/runners/_false_belief_register_derisk.py; NO sim/ edit). Two paths, mirroring the discourse-
+    # register block just above: (i) an ADDITIVE FOLD — a PLACE/LEAVE/RETURN/MOVE sentence updates the
+    # per-conversation scenario as a pure side effect (the reply stays byte-identical; this is the ONLY writer
+    # of this state); (ii) a DISJOINT QUERY short-circuit — "where will X look for the Y?" is answered off the
+    # belief-store's late-window firing-rate argmax, with an honest fall-through (no answer attached) when no
+    # scenario is active. Placed after affect/episodic/worldmodel/multiref/discourse (their short-circuits keep
+    # precedence) and before causal/comprehension (a false-belief query is never mis-read as a why/what-if or a
+    # plain assertion) — the query class is DISJOINT (no other organ answers "where will X look"), so every
+    # non-false-belief turn is byte-identical. Default-OFF: `BRAIN_FALSE_BELIEF_CHAT` unset -> this module IS
+    # still imported below (cheap, side-effect-free, just to read the flag) but the organ is never built and
+    # no turn content is inspected -> byte-identical, including on a turn whose text happens to match the
+    # grammar (2026-09-24 review finding: an earlier wording of this comment overclaimed "never imported").
+    # `BRAIN_FALSE_BELIEF_LESION=1` -> the witnessing gate is forced open at write AND query (mirrors the
+    # derisk's own other-lesion) -> the belief store collapses onto reality -> an unwitnessed-move query
+    # answers with the TRUE location instead of the stale one (load-bearing). HONEST RESIDUAL: witnessing/
+    # presence ("X leaves the room" / "X returns") is a HOST comprehension-boundary parse, not a spiking read;
+    # the belief-location action read is a host argmax (both declared in the PRE-REGISTRATION,
+    # research/findings/2026-09-24-tom-false-belief-chat-wire-PREREGISTRATION.md). See webapp/false_belief_chat.py.
+    try:
+        from webapp import false_belief_chat as _FBC
+        _fbc_on = _FBC.false_belief_chat_enabled()
+    except Exception:
+        _FBC = None
+        _fbc_on = False
+    if _fbc_on and _FBC.has_false_belief_content(msg):
+        try:
+            fbc_reply = _FBC.observe_turn(cache_key, msg, seed=_brain_chat_seed())
+            if fbc_reply.get("acted") and fbc_reply.get("answer"):
+                return JSONResponse({
+                    "answer": fbc_reply["answer"], "abstained": False, "recalled_svo": None, "verified": True,
+                    "renderer": rname, "brain": req.brain, "source": source, "rich": False,
+                    "activity": None, "affect": affect_info,
+                    "false_belief_tom": fbc_reply, "inner_state_readout": True,
+                })
+        except Exception:
+            pass   # never let the false-belief read/write crash a turn — fall through to the normal path
 
     # ── CAUSAL WHY / WHAT-IF ORGAN (Gate-B, T1-4, 2026-08-13) ────────────────────────────────────────────────
     # A co-resident spiking CAUSAL FORWARD MODEL, grounded READ-ONLY in the brain's REAL fact store, answers a real
