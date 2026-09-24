@@ -342,6 +342,51 @@ def selftest(seed: int, out: str):
                                           "cross_weights_grown", "peak_rss_gb", "wall_s")}, default=str), flush=True)
 
 
+CHAT_SCRIPT = (("A", "the wolf chased the dog"), ("B", "the cat watched the bird"),
+               ("A", "who are we talking about?"), ("B", "who are we talking about?"),
+               ("A", "the wolf watched the dog"), ("B", "the cat chased the bird"))
+
+
+def chat_smoke(flag: str, seed: int, out: str):
+    """INTEGRATION SMOKE (not a prereg gate): the two-session interleaved script through the REAL
+    `webapp.server.brain_chat` handler (tiny-demo, stub renderer, LLM disabled), flag on or off. Records each turn's
+    answer + the multiref / comprehension / xedge_live_learn fields, and the live object identities afterwards."""
+    t0 = time.time()
+    os.environ.setdefault("BRAIN_CHAT_RENDERER", "stub")
+    os.environ.setdefault("SIM_DISABLE_LLM", "1")
+    os.environ["BRAIN_CHAT_SEED"] = str(int(seed))
+    _set_flag(flag == "on")
+    import webapp.server as S
+    turns = []
+    for sess, msg in CHAT_SCRIPT:
+        r = S.brain_chat(S.BrainChatRequest(session=f"a4-{sess}", message=msg, brain="tiny-demo",
+                                            renderer="stub", rich=False))
+        body = json.loads(bytes(r.body))
+        keep = {k: body.get(k) for k in ("answer", "response", "abstained", "multiref", "comprehension",
+                                         "inner_state_readout") if k in body}
+        turns.append({"session": sess, "message": msg, "out": _jsonable(keep)})
+    from research.runners import comprehension_production_organ as CO
+    from research.runners import onebrain_xedge_production as XE
+    from research.runners.onebrain_wave3_pool_production import get_merged_cortical_pool
+    cseed = S._brain_chat_seed()
+    xp = XE.get_xedge_pool(cseed)
+    merged = get_merged_cortical_pool(cseed, min_wave=1)
+    orgs = dict(S._SESSION_MULTIREF)
+    ident = {"comp_is_xedge_comp_organ": bool(xp is not None and CO.get_organ(cseed) is xp.comp_organ),
+             "multiref_shared_is_merged": {str(k): bool(o._shared is merged) for k, o in orgs.items()},
+             "n_session_resets": (int(xp._r3pool.n_session_resets)
+                                  if xp is not None and getattr(xp, "in_wave3", False) else None),
+             "cross_weights": (dict(xp.cross_weights) if xp is not None else None)}
+    other = {"A": SESSIONS["B"]["refs"], "B": SESSIONS["A"]["refs"]}
+    cross = {k: _names_in([t["out"] for t in turns if t["session"] == k], other[k]) for k in ("A", "B")}
+    res = {"mode": "chat_smoke", "flag": flag, "seed": seed, "turns": turns, "identity": ident,
+           "cross_session_referent_names": cross, "peak_rss_gb": _peak_gb(), "wall_s": round(time.time() - t0, 1)}
+    Path(out).parent.mkdir(parents=True, exist_ok=True)
+    Path(out).write_text(json.dumps(res, indent=1, default=str))
+    print(json.dumps({"identity": ident, "cross": cross, "rss": res["peak_rss_gb"], "wall": res["wall_s"]},
+                     default=str), flush=True)
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--seed", type=int, default=7)
@@ -351,6 +396,7 @@ def main():
     ap.add_argument("--learn", action="store_true")
     ap.add_argument("--g2-compare", nargs=3, metavar=("ALONE_A", "ALONE_B", "INTERLEAVED"))
     ap.add_argument("--selftest", action="store_true")
+    ap.add_argument("--chat-smoke", choices=("on", "off"))
     ap.add_argument("--out", required=True)
     a = ap.parse_args()
     os.environ.setdefault("SIM_BACKEND", "numpy")
@@ -364,6 +410,8 @@ def main():
         g2_compare(*a.g2_compare, a.out)
     elif a.selftest:
         selftest(a.seed, a.out)
+    elif a.chat_smoke:
+        chat_smoke(a.chat_smoke, a.seed, a.out)
     else:
         ap.error("pick a mode")
     return 0
