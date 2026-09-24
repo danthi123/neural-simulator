@@ -76,6 +76,10 @@ no information.
 ## Part A — the capability gate (the a3 successor on the gated turn)
 
 **Amended by Amendment 3 (below):** the Part A verdict is the reply-level metric; CONT is a manipulation check.
+**Reconciliation (added on this fix round):** the "GO (Part A)" rule stated further down this section (CONT-based)
+is SUPERSEDED by Amendment 3, A3.1, and never governed a run -- it is kept verbatim, below, for the audit trail
+only. So is the "Default-ON requires... the Part A GO" line under "What a GO would and would not mean": that phrase
+means the A3.1 reply-level GO, not the CONT-based rule stated below. Read A3.1 for the rule that actually governs.
 
 Runner: `research/runners/_open_ended_gated_turn_gate.py`, reusing `_lbf_open_ended_production_turn_probe`'s
 session worker. It uses the same TEACH world, the same ASK ("what might a dog chase") and the same per-session
@@ -107,7 +111,8 @@ noise-stream installer.
   - the rebuild's per-ask CONT values differ from intact session 0's (not exactly equal);
   - the lesion was not applied: an ablated-draw fraction below 1 in the lesion arm or above 0 in intact;
   - the stored facts differ across sessions.
-- **GO (Part A):** all 6 seeds DEFINED on CONT, AND Delta_cont(s) >= 0.10 on EVERY seed.
+- **GO (Part A) -- SUPERSEDED by Amendment 3, A3.1; never governed a run (kept for the record):** all 6 seeds
+  DEFINED on CONT, AND Delta_cont(s) >= 0.10 on EVERY seed.
   The exact one-sided sign test over the 6 Delta_cont then has p = 1/64 < 0.05, implied by the per-seed floor.
   Any UNDEFINED seed means NOT GO.
 - **CAT is reported beside CONT on every seed, never dropped.** It carries its own a3-rule verdict: 6 seeds
@@ -156,7 +161,8 @@ not-exercised. That is reported as opt-in, never as not-load-bearing.
   the spiking part is load-bearing (no host-oracle arm), and it does not measure rendered Qwen text.
 - A Part B row reading load-bearing means that cutting that input changes the gated turn's committed decision
   fields (not the prose) on the tiny-demo brain, with LLM disabled.
-- Default-ON requires all of: the Part A GO, a SOUND opus review, no fcap0924 drop, and the owner's yes on S00(b).
+- Default-ON requires all of: the Part A GO (Amendment 3, A3.1: the reply-level GO defined there, not the
+  CONT-based rule stated above this section), a SOUND opus review, no fcap0924 drop, and the owner's yes on S00(b).
   Otherwise the flag stays opt-in.
 
 ## Sources
@@ -310,7 +316,9 @@ saliences (0, 1) with (0.5, 0.5), so it adds speak drive. One LBF build per arm 
 On the dev curve the intact race held on 23 of 24 races and the cut race spoke on 12 of 24
 (`research/findings/raw/_open_ended_gated/bg_curve/bg_curve_dev_s7_11_13.json`, `pooled`).
 The row's verdict is therefore a per-seed coin flip, whatever the afferent coupling. Amendment 1 disclosed this.
-Its LBF verdict is reported and never counted toward a load-bearing claim (`lbf_rows.open_ended_gated.DESCRIPTIVE_ONLY`).
+**Revised by Amendment 4, below:** `DESCRIPTIVE_ONLY` alone was not enough -- `load_bearing_fraction.py`'s own
+scoring never reads it, only this module's dev-smoke `score_row()` does -- so the row is now also `PARKED`, which
+the registry hook honours unconditionally; it can never contribute to a load-bearing fraction number.
 The distributional read beside it stays `--bg-curve` at the gate seeds.
 A discriminating version needs the race read many times inside the turn's own conditions, for example a Part A arm
 whose BG race runs on the per-session stream. It is recorded as a follow-on.
@@ -330,10 +338,13 @@ So the plan's S16 GNW criterion is met only on KB-hit turns.
 **`open-ended-turn-affect-drive`: unchanged.** It shares `BRAIN_AFFECT_LESION` with the base `affect-coloring` row.
 Any fraction that includes both counts one organ lesion, not two (`SHARED_LESION_WITH`).
 
-**Launch condition.** The three rows are generated in a dedicated `tools/lb_shard.py` invocation with `--faculties`
-limited to exactly these three keys (`lbf_rows.open_ended_gated.FACULTIES`).
+**Launch condition (revised by Amendment 4, below): two rows, not three.** `open-ended-turn-affect-drive` and
+`open-ended-turn-gnw-drive` are generated in a dedicated `tools/lb_shard.py` invocation with `--faculties` limited to
+exactly these two keys (`lbf_rows.open_ended_gated.FACULTIES`).
 `--extra-env BRAIN_OPEN_ENDED_GATED=1` applies to every job of an invocation. Any other row generated in the same
-invocation would be measured with the gated turn on.
+invocation would be measured with the gated turn on. `open-ended-turn-faculty-drive` is PARKED (Amendment 4): it
+never enters the registry, gated flag or not, and is read only via `--bg-curve` and the dev-seed smoke's own
+`score_row()`.
 
 ### A3.3 Flag-ON readiness (not a gate; the default stays OFF)
 
@@ -341,10 +352,56 @@ The BG selector and the marker reader are process-wide singletons keyed by seed.
 Their races now run under one lock (`_RACE_LOCK`), so two requests cannot step one organ at once.
 They are still shared across chat sessions: one session's race follows other sessions' earlier races.
 Per-session organs are a precondition for any default-ON.
-Owner decision (2026-09-24): Qwen stays fact-free, so `BRAIN_OPEN_ENDED_GATED` stays default OFF whatever Parts A and B
-read. The lane continues as a measured de-risk.
+Owner decision (2026-09-24): Qwen stays fact-free. **That is the owner's statement; what follows is this lane's own
+inference from it, not a separate owner ruling on this flag:** since an off-KB SPEAK still routes through Qwen
+(A3.1 record), and Qwen fact-free rules out that path, this lane infers `BRAIN_OPEN_ENDED_GATED` stays default OFF
+whatever Parts A and B read. The lane continues as a measured de-risk.
 
 ### A3.4 What does NOT change
 
 The arms, M = 3, K = 8, the noise-stream seeds, the ask and the teach world, the 0.10 floor, the a3 UNDEFINED rules,
 every Part B lesion construction and probe turn, and Amendments 1 and 2.
+
+## Amendment 4 (2026-09-24, after a second review of `e79031483`; BEFORE any gate-seed run)
+
+No gate seed (42/43/44/100/101/102) has run under this document. The review found four issues, none touching a
+lesion construction, a probe turn or a threshold; all four are registry/documentation corrections.
+
+**1) REQUIRED_ENV confirmed at both settings (main's convention, commit `eed3652a0`, merged into this branch).**
+`research/runners/lbf_rows/__init__.py`'s registry-merge hook now honours the `REQUIRED_ENV` this module already
+declared. Confirmed by direct import in a fresh process: with `BRAIN_OPEN_ENDED_GATED` unset, none of the three row
+keys is in `load_bearing_fraction.FACULTY_LESIONS`; with it set to `1` before import, `open-ended-turn-affect-drive`
+and `open-ended-turn-gnw-drive` are (see #2 for the third key). Measured with `tools/lb_shard.py jobs ...
+--extra-env BRAIN_OPEN_ENDED_GATED=1 --faculties <rows>`, which sets the env in both arms of every shard.
+The lane's finding said "the hook now merges all three rows ... none parked" describing the pre-`eed3652a0` state of
+this same branch (the hook did not yet honour `REQUIRED_ENV`, so the rows merged unconditionally at that time); the
+finding is corrected to describe the current, post-merge, env-conditioned behaviour.
+
+**2) `open-ended-turn-faculty-drive` is now PARKED, not merely DESCRIPTIVE_ONLY.** The review's point: Part B is
+actually measured by `load_bearing_fraction.py`'s own scoring over the merged registry, which does not read this
+module's `DESCRIPTIVE_ONLY` dict -- only `score_row()`, the dev-seed smoke's own helper, does. So once
+`REQUIRED_ENV` is met, the coin-flip row (#4 below) would enter the real headline load-bearing counts undetected.
+The smallest honest fix, taken here: `research/runners/lbf_rows/open_ended_gated.py` now declares a module-level
+`PARKED = {"open-ended-turn-faculty-drive": "..."}`, which the registry hook already honours unconditionally
+(`research/runners/lbf_rows/__init__.py`, the same mechanism `live_organs.py`'s `self-schema` row uses) --
+independent of `REQUIRED_ENV`, so the key never enters `FACULTY_LESIONS`/`FACULTY_PROBES` whether or not the flag
+is set. `load_bearing_fraction.py` itself is unmodified. The row keeps its `EXTRA_LESIONS`/`EXTRA_PROBES` entries
+(for `score_row()`'s dev-smoke use and the module's own audit trail) and its `DESCRIPTIVE_ONLY` entry (still read by
+that same dev-smoke path); it is now measurable only as the `--bg-curve` descriptive read and via the dev-seed
+smoke, never through a headline battery. `FACULTIES` (the b2b-caps `--faculties` list) drops to the two keys that
+actually enter the registry: `open-ended-turn-affect-drive`, `open-ended-turn-gnw-drive`.
+
+**3) Part A's CONT-based "GO" bullet and the "Default-ON requires... the Part A GO" line are reconciled with
+Amendment 3, A3.1, inline, above (see the note opening the Part A section and the annotations on both bullets).**
+Neither describes the rule that actually governs; A3.1's reply-level GO does. Nothing in A3.1 itself changes.
+
+**4) Wrong number, fixed.** `lbf_rows.open_ended_gated.DESCRIPTIVE_ONLY["open-ended-turn-faculty-drive"]` read
+"intact P(SPEAK) 1/24 at (0, 1)"; the pooled dev bg-curve at s = 0.0 is SPEAK 0 / STAY_SILENT 23 / none 1 of 24
+(`research/findings/raw/_open_ended_gated/bg_curve/bg_curve_dev_s7_11_13.json`, `pooled["0.0"]`, re-checked on this
+fix round) -- the module docstring's own "STAY_SILENT on 23/24 dev races" was already correct; only the
+`DESCRIPTIVE_ONLY` reason string had the stray "1". Now reads "intact P(SPEAK) 0/24". The `PARKED` reason string
+added in #2 states the full triple (0 / 23 / 1) so this cannot drift again unnoticed.
+
+**What does NOT change.** Every lesion construction, every probe turn, the a3 standing verdict, Part A's actual
+rule (A3.1), the two dev-seed findings' measured numbers other than the one string in #4, and the owner's fact-free
+decision on Qwen (only its labelling as owner-statement-vs-lane-inference is corrected, inline, in A3.3 above).

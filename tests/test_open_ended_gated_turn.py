@@ -48,7 +48,13 @@ def test_row_module_shapes():
     # the single-shot faculty-drive row is declared non-discriminating (reported, never counted)
     assert set(rows.DESCRIPTIVE_ONLY) == {"open-ended-turn-faculty-drive"}
     assert set(rows.SHARED_LESION_WITH) <= set(rows.EXTRA_LESIONS)
-    assert tuple(rows.FACULTIES) == tuple(r[0] for r in rows.EXTRA_PROBES)
+    # fix round after the 2026-09-24 re-review: load_bearing_fraction.py never reads DESCRIPTIVE_ONLY, so the
+    # coin-flip faculty-drive row is ALSO module-PARKED (the registry hook honours PARKED unconditionally) -- it
+    # must never reach FACULTY_LESIONS/FACULTY_PROBES, so it is excluded from the b2b-caps --faculties list too.
+    assert set(rows.PARKED) == {"open-ended-turn-faculty-drive"}
+    assert set(rows.PARKED) <= set(rows.EXTRA_LESIONS)
+    assert tuple(rows.FACULTIES) == tuple(r[0] for r in rows.EXTRA_PROBES if r[0] not in rows.PARKED)
+    assert "open-ended-turn-faculty-drive" not in rows.FACULTIES
 
 
 def test_score_row_marks_descriptive_rows():
@@ -64,6 +70,34 @@ def test_score_row_marks_descriptive_rows():
     g = rows.score_row("open-ended-turn-gnw-drive", arm("SPEAK", "grounded", "grounded"),
                        arm("SPEAK", "grounded", "grounded"), arm("STAY_SILENT", "withheld_abstain", "withheld"))
     assert g["counts_toward_claim"] is True and len(g["treatment_diffs"]) == 1   # route only, not three fields
+
+
+def test_registry_membership_at_both_env_settings():
+    """fix round after the 2026-09-24 re-review: confirm in a FRESH process (merge_lbf_rows() is once-per-process)
+    that (1) at production defaults (BRAIN_OPEN_ENDED_GATED unset) all three row keys are OUT of
+    load_bearing_fraction.FACULTY_LESIONS -- REQUIRED_ENV honoured by research/runners/lbf_rows/__init__.py
+    (commit eed3652a0, merged from main); (2) with the flag set, affect-drive and gnw-drive are IN, and
+    faculty-drive stays OUT (module-PARKED, unconditional on the env)."""
+    import json as _json
+    import subprocess as sp
+    import sys
+    keys = ["open-ended-turn-faculty-drive", "open-ended-turn-affect-drive", "open-ended-turn-gnw-drive"]
+    code = ("from research.runners import load_bearing_fraction as lbf\n"
+            "import json\n"
+            "print(json.dumps({k: (k in lbf.FACULTY_LESIONS) for k in %r}))" % keys)
+    off_env = dict(os.environ)
+    off_env.pop("BRAIN_OPEN_ENDED_GATED", None)
+    r_off = sp.run([sys.executable, "-c", code], cwd=ROOT, capture_output=True, text=True, env=off_env)
+    assert r_off.returncode == 0, r_off.stderr
+    assert _json.loads(r_off.stdout) == {k: False for k in keys}
+    on_env = dict(os.environ, BRAIN_OPEN_ENDED_GATED="1")
+    r_on = sp.run([sys.executable, "-c", code], cwd=ROOT, capture_output=True, text=True, env=on_env)
+    assert r_on.returncode == 0, r_on.stderr
+    assert _json.loads(r_on.stdout) == {
+        "open-ended-turn-faculty-drive": False,
+        "open-ended-turn-affect-drive": True,
+        "open-ended-turn-gnw-drive": True,
+    }
 
 
 def test_row_lesion_flags_resolve_in_source():

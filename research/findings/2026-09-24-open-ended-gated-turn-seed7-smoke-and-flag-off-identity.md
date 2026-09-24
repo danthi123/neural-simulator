@@ -15,7 +15,8 @@ No claim here generalises beyond seed 7.
 
 Pre-registration: [`2026-09-24-open-ended-gated-turn-PREREGISTRATION.md`](2026-09-24-open-ended-gated-turn-PREREGISTRATION.md)
 (committed `b4588775a`; Amendments 1 `98c4912e2`, 2 `7a39851cd` and 3 `6994e80f2`, each before any gate-seed run).
-Owner decision (2026-09-24): Qwen stays fact-free, so the flag stays default OFF whatever the gates read.
+Owner decision (2026-09-24): Qwen stays fact-free. The rest is this lane's own inference, not a separate owner
+ruling on this flag: the flag stays default OFF whatever the gates read (pre-registration A3.3).
 The 2026-09-23 a3 NO-GO on the ungated turn stands:
 [`2026-09-23-open-ended-production-turn-a3-6seed-harvest-NO-GO.md`](2026-09-23-open-ended-production-turn-a3-6seed-harvest-NO-GO.md).
 Branch `research/open-ended-gated-turn`. `BRAIN_OPEN_ENDED_GATED` stays default OFF; nothing here flips a default.
@@ -132,6 +133,8 @@ The intact rebuild is identical to intact
 That summary was first scored at `639cce2f9`, before the row was re-pointed, so its row block read `sw_open` (not
 exercised) and contradicted this paragraph. It was re-scored from the same arm files at `6994e80f2` and now reads the
 row on `chase`, decided on `route` only (Amendment 3).
+**"none parked" described the hook as it stood at `338d9ecee` (turn-membership parking only). Corrected by Amendment
+4, below, for the hook as merged from main afterward (`eed3652a0`, REQUIRED_ENV parking).**
 
 ## Corrections after the 2026-09-24 review (PREREG Amendment 3)
 
@@ -141,6 +144,30 @@ row on `chase`, decided on `route` only (Amendment 3).
 - The faculty-drive row cannot discriminate as a single-shot read and is now descriptive only.
 - Part A, which has not run, was re-designed before any gate seed: CONT became a manipulation check and the Part A
   verdict is the reply-level metric (see the pre-registration's Amendment 3).
+
+## Corrections after a second 2026-09-24 review (PREREG Amendment 4)
+
+- **"none parked" (above) described the hook merged at `338d9ecee`, before this branch merged main's later
+  `eed3652a0` (REQUIRED_ENV opt-in parking).** With main merged, at production defaults (`BRAIN_OPEN_ENDED_GATED`
+  unset) all three row keys are parked and OUT of `load_bearing_fraction.FACULTY_LESIONS`/`FACULTY_PROBES`
+  (confirmed by direct import); with the flag set, `open-ended-turn-affect-drive` and `open-ended-turn-gnw-drive`
+  enter it (`open-ended-turn-faculty-drive` stays parked either way -- next bullet). Measured with
+  `tools/lb_shard.py jobs ... --extra-env BRAIN_OPEN_ENDED_GATED=1 --faculties <rows>`.
+- **`open-ended-turn-faculty-drive` is now `PARKED`, not merely `DESCRIPTIVE_ONLY`.** `load_bearing_fraction.py`'s
+  own scoring does not read `DESCRIPTIVE_ONLY` (only the dev-smoke `score_row()` above does), so the coin-flip row
+  would have silently entered a real headline battery's load-bearing counts once `REQUIRED_ENV` was met. The module
+  now declares `PARKED = {"open-ended-turn-faculty-drive": "..."}`, which the registry hook honours unconditionally
+  (`load_bearing_fraction.py` itself is unmodified). It stays measurable only via `--bg-curve` and this row's own
+  `score_row()` dev-smoke read; it can never contribute to a load-bearing fraction number. `FACULTIES` (the
+  b2b-caps `--faculties` list) now names the two keys that actually enter the registry.
+- **The wrong number in `DESCRIPTIVE_ONLY`'s reason string is fixed.** It read "intact P(SPEAK) 1/24 at (0, 1)"; the
+  pooled dev bg-curve at s = 0.0 is SPEAK 0 / STAY_SILENT 23 / none 1 of 24
+  (`research/findings/raw/_open_ended_gated/bg_curve/bg_curve_dev_s7_11_13.json`, `pooled["0.0"]`) -- this
+  finding's own "STAY_SILENT on 23/24 dev races" above was already correct; only that one string had the stray "1".
+  Now reads "intact P(SPEAK) 0/24".
+- **The owner decision quoted at the top of this finding is re-labelled.** "Qwen stays fact-free" is the owner's
+  2026-09-24 statement. "So the flag stays default OFF whatever the gates read" is this lane's own inference from
+  it (pre-registration A3.3), not a separate owner ruling on the flag.
 
 ## What this does not show
 
