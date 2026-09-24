@@ -15,7 +15,7 @@ artifacts:
 # wm-binding-advanced: an ordinary-content probe that can fail, PRE-REGISTRATION (2026-09-24)
 
 Branch `fix/wm-binding-adequate-probe-r2` (a fix round of `research/wm-binding-adequate-probe`), merged with
-origin/main `36a175534`. That SHA is the pinned pre-change SHA for the flag-OFF byte-identity check.
+origin/main `36a175534` (then `0c265b93d`, see the AMENDMENT LOG), the pinned pre-change SHA for the flag-OFF check.
 
 ## Why the earlier probe is not evidence
 
@@ -178,7 +178,7 @@ content-swapped control. Seed 42 is NOT held out, so the headline is also report
 
 ## Byte-identity (flags OFF)
 
-The check is asserted in data against the pinned SHA `36a175534`:
+The check is asserted in data against the pinned SHA `36a175534` (amended to `0c265b93d`, see the AMENDMENT LOG):
 `load_bearing_fraction --only wm-binding-advanced --repeats 2` at seed 42, with `LB_WMB_HOLDQUERY_PROBE`,
 `LB_WMB_CONTENT_PROBE` and `BRAIN_MULTIREF_LESION_SCOPE` all unset. It is run from an extracted tree at
 `36a175534` and from this branch's revision. The sha256 of every arm file and of the per-faculty record must
@@ -195,4 +195,12 @@ same revision.
 
 ## AMENDMENT LOG
 
-(empty at filing)
+(empty at filing; entries below)
+
+- **2026-09-24, before ANY governed run (none had been built).** Pinned byte-identity SHA changed from `36a175534`
+  to `0c265b93d`: origin/main advanced while this round was open, the branch merged it (two-parent merge
+  `0e37c637a`), and `tools/pool_provision.sh` refuses a revision that does not contain origin/main, so the old pin
+  could not be provisioned on the pool. `git diff --stat 36a175534 0c265b93d -- webapp sim
+  research/runners/load_bearing_fraction.py research/runners/onebrain_regression_battery.py
+  research/runners/d6_multiref_wm_production_organ.py` is empty, so the pin's brain and battery are unchanged.
+  Nothing else changes.

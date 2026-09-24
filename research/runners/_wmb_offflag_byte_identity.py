@@ -2,7 +2,7 @@
 all OFF vs the pinned pre-change SHA.
 
 Compares two completed `load_bearing_fraction --only wm-binding-advanced --repeats 2` output directories -- one run
-from an extracted tree at the pinned SHA (default 36a175534, the origin/main this fix round merged; this lane's
+from an extracted tree at the pinned SHA (default 0c265b93d, the origin/main this fix round merged last; this lane's
 changes are absent there), one from this branch with every flag unset -- by EXACT sha256 of every arm file and of the
 per-faculty record, and hashes `PROBE_TURNS` / `FACULTY_PROBES` as imported from each tree. No brain build.
 Pre-registrations: research/findings/2026-09-23-wm-binding-holdquery-adequate-probe-PREREGISTRATION.md and
@@ -53,7 +53,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--pinned-dir", required=True)
     ap.add_argument("--pinned-tree", required=True)
-    ap.add_argument("--pinned-sha", default="36a175534")
+    ap.add_argument("--pinned-sha", default="0c265b93d")
     ap.add_argument("--branch-dir", required=True)
     ap.add_argument("--branch-tree", required=True)
     ap.add_argument("--out", required=True)
