@@ -1,0 +1,65 @@
+{
+  "probe": "a9_lr_scan_and_ff_drive_dev_s7",
+  "seed": 7,
+  "arm": "transport_ceiling",
+  "kw": {
+    "n_hidden_layers": 2,
+    "pool_k": 4,
+    "credit_steps": 25,
+    "graded_credit": true,
+    "eval_frozen": true,
+    "spi_silence": true,
+    "read_quantity": "spikes",
+    "settle_steps": 40,
+    "read_window": 30,
+    "read_gain": 20.0
+  },
+  "lr_scan": {
+    "2.0": {
+      "train_acc_by_epoch": [
+        0.085,
+        0.085,
+        0.09
+      ],
+      "heldout": 0.07407407407407407,
+      "mean_abs_dw_out": 0.245347797870636,
+      "mean_abs_w_out": 0.38068974018096924,
+      "mean_abs_dw_other": 0.2418263554573059,
+      "pred_hist": [
+        9,
+        6,
+        4,
+        262,
+        0,
+        0,
+        4,
+        0,
+        115
+      ],
+      "sec": 206
+    },
+    "8.0": {
+      "train_acc_by_epoch": [
+        0.0825,
+        0.08,
+        0.08
+      ],
+      "heldout": 0.07407407407407407,
+      "mean_abs_dw_out": 1.011191964149475,
+      "mean_abs_w_out": 0.38068974018096924,
+      "mean_abs_dw_other": 2.411747694015503,
+      "pred_hist": [
+        16,
+        8,
+        4,
+        263,
+        0,
+        0,
+        6,
+        0,
+        103
+      ],
+      "sec": 192
+    }
+  }
+}
