@@ -173,11 +173,28 @@ DELIBERATION_MS = 500       # fixed by the calibration record (amended criterion
                             # finding); NOT fitted to the 'emo' turn or to any load-bearing outcome
 INTERTURN_REST_MS = 1000    # physiological inter-utterance rest (>= the measured full-relaxation point)
 
+# S09 (AG-FLIP, 2026-09-24) -- SETTLE default-ON flip PREPARATION, PARKED pending the owner's S00(a) fork answer.
+# `tools/assert_flipped_defaults.py`'s FLIPPED registry reads this constant from SOURCE (never by importing this
+# module, per bd391aa31's cupy-less-node fix) to decide whether a revision contains the flip. It is added on THIS
+# branch only; it does not change main's shipped default until a human merges this branch. While parked, nothing
+# downstream changes: `BRAIN_AFFECT_MARKER_SETTLE` unset still uses this constant, and on `main` (pre-flip) the
+# constant does not exist at all, so the guard reports "predates the flip" there, exactly as designed.
+_SETTLE_DEFAULT_ON = True   # PARKED: only takes effect where this branch is merged; main's default is unchanged
+                            # until then. Flip owner-reserved -- 2026-09-23-affect-marker-settle-fullbrain-
+                            # contrast-PARTIAL-6seed.md's own full-brain gate read NO-GO (SETTLE-attributable
+                            # 2/6); this literal is the PREPARED value for a NEW production-default hypothesis
+                            # (see the B2a prereg SETTLE section), not a claim that the NO-GO is reversed.
+
 
 def settle_enabled() -> bool:
-    """`BRAIN_AFFECT_MARKER_SETTLE` truthy -> SETTLE mode (see block above). Unset/false -> the byte-identical
-    pre-existing read (60 ms warmup, 40 ms washout)."""
-    return os.environ.get(SETTLE_ENV, "0").strip().lower() in ("1", "true", "on", "yes")
+    """`BRAIN_AFFECT_MARKER_SETTLE`, if set in the environment, OVERRIDES the default (either truthy value turns
+    SETTLE mode on, any other value turns it off). Unset -> `_SETTLE_DEFAULT_ON` (see the block above): SETTLE
+    mode while this constant is True. The pre-existing byte-identical read (60 ms warmup, 40 ms washout) is still
+    reachable by explicitly setting `BRAIN_AFFECT_MARKER_SETTLE=0`."""
+    raw = os.environ.get(SETTLE_ENV)
+    if raw is None:
+        return bool(_SETTLE_DEFAULT_ON)
+    return raw.strip().lower() in ("1", "true", "on", "yes")
 
 
 def _region(name, n, *, exc_fraction, neuron_type, internal_density=0.0):

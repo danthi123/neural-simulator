@@ -19,6 +19,11 @@ FLIPPED = {
     "BRAIN_PMEM_FACILITATION": ("research.runners.prospective_memory_production_organ",
                                 "_PMEM_FACILITATION_DEFAULT_ON"),
     "BRAIN_SOURCE_PROV_ABSTAIN_AT_TIE": ("research.runners.source_provenance_honesty", "_ABSTAIN_AT_TIE_DEFAULT_ON"),
+    # S09 (AG-FLIP, 2026-09-24) -- PARKED on this branch only (`research/settle-default-on-prep`), pending the
+    # owner's S00(a) fork answer; NOT present on main/M1 (bd391aa31 does not carry this entry). Only takes effect
+    # for a guard run against a revision that has THIS branch merged in -- see _affect_marker_wta_derisk.py's
+    # _SETTLE_DEFAULT_ON block for why it is safe to add here without forcing the flip on M1's own battery.
+    "BRAIN_AFFECT_MARKER_SETTLE": ("research.runners._affect_marker_wta_derisk", "_SETTLE_DEFAULT_ON"),
 }
 
 
