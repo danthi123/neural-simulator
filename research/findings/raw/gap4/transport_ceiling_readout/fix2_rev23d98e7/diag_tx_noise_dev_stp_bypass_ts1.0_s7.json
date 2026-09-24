@@ -1,0 +1,72 @@
+{
+  "probe": "gap4_tc_transmission_noise_reference_dev_s7",
+  "seed": 7,
+  "variant": "stp_bypass",
+  "variant_flags": {
+    "no_ff_stp": true,
+    "no_structural": true
+  },
+  "hidden": 32,
+  "pool_k": 4,
+  "tonic_scale": 1.0,
+  "n_items": 24,
+  "reads": {
+    "event": {
+      "h1": {
+        "mean_intact": 0.060463575583980855,
+        "mean_cut": 0.06050017110086022,
+        "noise_per_unit": 0.018302536347240068,
+        "effect_per_unit": 0.018221948172291984,
+        "effect_over_noise": 0.9955968848568775,
+        "item_reliability": 0.03341973935848619,
+        "item_reliability_units": 32,
+        "item_reliability_cut": 0.04467901743717485,
+        "item_reliability_cut_units": 32,
+        "input_dependence": 0.26082326437599185
+      },
+      "out": {
+        "mean_intact": 0.05079326157579932,
+        "mean_cut": 0.04947558407622165,
+        "noise_per_unit": 0.017535235470050894,
+        "effect_per_unit": 0.018281823283123905,
+        "effect_over_noise": 1.04257643499274,
+        "item_reliability": -0.014660583541079582,
+        "item_reliability_units": 9,
+        "item_reliability_cut": 0.01073988670434423,
+        "item_reliability_cut_units": 9,
+        "input_dependence": 0.2887948123082893
+      },
+      "weights_restored": true,
+      "seconds": 7.7
+    },
+    "spikes": {
+      "h1": {
+        "mean_intact": 0.09066840277777777,
+        "mean_cut": 0.09193793402777778,
+        "noise_per_unit": 0.016156684027777778,
+        "effect_per_unit": 0.016872829861111112,
+        "effect_over_noise": 1.0443250503693755,
+        "item_reliability": 0.05314029185700161,
+        "item_reliability_units": 32,
+        "item_reliability_cut": -0.015589989541958563,
+        "item_reliability_cut_units": 32,
+        "input_dependence": 0.1618042478846618
+      },
+      "out": {
+        "mean_intact": 0.08564814814814815,
+        "mean_cut": 0.08719135802469137,
+        "noise_per_unit": 0.013310185185185185,
+        "effect_per_unit": 0.014969135802469134,
+        "effect_over_noise": 1.12463768115942,
+        "item_reliability": 0.04849257282327586,
+        "item_reliability_units": 9,
+        "item_reliability_cut": 0.03940252244604311,
+        "item_reliability_cut_units": 9,
+        "input_dependence": 0.1331279309907843
+      },
+      "weights_restored": true,
+      "seconds": 7.6
+    }
+  },
+  "note": "dev instrument; host-only statistics; no gate reads this"
+}

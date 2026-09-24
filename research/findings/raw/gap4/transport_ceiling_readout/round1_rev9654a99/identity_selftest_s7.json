@@ -1,0 +1,95 @@
+{
+  "probe": "gap4_transport_ceiling_readout_IDENTITY_SELFTEST",
+  "seed": 7,
+  "arms": {
+    "reservoir": {
+      "hashes": {
+        "parent": {
+          "weights_md5": "0c765fd2bc2a8a43f73864483c0e67a4",
+          "reads_md5": "db7aa8ace652c0559f563174f25cbca2",
+          "thr": "9ef8be9fd81ff45e"
+        },
+        "legacy": {
+          "weights_md5": "0c765fd2bc2a8a43f73864483c0e67a4",
+          "reads_md5": "db7aa8ace652c0559f563174f25cbca2",
+          "thr": "9ef8be9fd81ff45e"
+        },
+        "levers_on": {
+          "weights_md5": "11a205c8543450065ced6fb62bb662e1",
+          "reads_md5": "98269b7fb658161c5ed584bebe7fd7d1",
+          "thr": "3dafaf1e62f2fc50"
+        }
+      },
+      "legacy_identical_to_parent": true,
+      "levers_on_differ": true,
+      "same_thresholds_all_builds": false
+    },
+    "fixed_fa": {
+      "hashes": {
+        "parent": {
+          "weights_md5": "f94ee7ef28139b3eca03842d45adb446",
+          "reads_md5": "db7aa8ace652c0559f563174f25cbca2",
+          "thr": "9ef8be9fd81ff45e"
+        },
+        "legacy": {
+          "weights_md5": "f94ee7ef28139b3eca03842d45adb446",
+          "reads_md5": "db7aa8ace652c0559f563174f25cbca2",
+          "thr": "9ef8be9fd81ff45e"
+        },
+        "levers_on": {
+          "weights_md5": "136e6209ac54ed044cb6275330877b68",
+          "reads_md5": "98269b7fb658161c5ed584bebe7fd7d1",
+          "thr": "3dafaf1e62f2fc50"
+        }
+      },
+      "legacy_identical_to_parent": true,
+      "levers_on_differ": true,
+      "same_thresholds_all_builds": false
+    },
+    "micro_inengine": {
+      "hashes": {
+        "parent": {
+          "weights_md5": "26e1404c6307f0d461ba72f9d5e8dcee",
+          "reads_md5": "db7aa8ace652c0559f563174f25cbca2",
+          "thr": "9ef8be9fd81ff45e"
+        },
+        "legacy": {
+          "weights_md5": "26e1404c6307f0d461ba72f9d5e8dcee",
+          "reads_md5": "db7aa8ace652c0559f563174f25cbca2",
+          "thr": "9ef8be9fd81ff45e"
+        },
+        "levers_on": {
+          "weights_md5": "62b6ead78d721dacebe6a2814728732b",
+          "reads_md5": "98269b7fb658161c5ed584bebe7fd7d1",
+          "thr": "3dafaf1e62f2fc50"
+        }
+      },
+      "legacy_identical_to_parent": true,
+      "levers_on_differ": true,
+      "same_thresholds_all_builds": false
+    },
+    "transport_ceiling": {
+      "hashes": {
+        "parent": {
+          "weights_md5": "56ce58b98a4e419d60f1faf64c3711bb",
+          "reads_md5": "db7aa8ace652c0559f563174f25cbca2",
+          "thr": "9ef8be9fd81ff45e"
+        },
+        "legacy": {
+          "weights_md5": "56ce58b98a4e419d60f1faf64c3711bb",
+          "reads_md5": "db7aa8ace652c0559f563174f25cbca2",
+          "thr": "9ef8be9fd81ff45e"
+        },
+        "levers_on": {
+          "weights_md5": "5f5a5e03fac94af7a979ab23cfe5a30b",
+          "reads_md5": "98269b7fb658161c5ed584bebe7fd7d1",
+          "thr": "3dafaf1e62f2fc50"
+        }
+      },
+      "legacy_identical_to_parent": true,
+      "levers_on_differ": true,
+      "same_thresholds_all_builds": false
+    }
+  },
+  "IDENTITY_SELFTEST_PASS": false
+}

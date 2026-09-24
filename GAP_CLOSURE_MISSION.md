@@ -621,6 +621,11 @@ UNDEFINED (a valid deliverable, NOT a NO-GO). Seed 100 STOPPED as compute-forecl
 1/6; ~hours of GPU redirected to the token _n2M sweep). Finding
 `2026-09-15-gap4-inengine-selfpredict-interneuron-UNDEFINED-transport-ceiling-foreclosed.md`. Next lever: a
 read-regime where the oracle clears chance (`n_fa_wall` was only 0-1/seed), THEN re-compare.
+**UPDATE 2026-09-24 (A9, dev seed 7, still UNDEFINED at dev):** the read-regime calibration (C0-C24) found the legacy
+feedforward pathway carried no detectable input (two factors: default feedforward STP + legacy gain) plus three read
+defects, each fixed behind a runner flag; no config qualified. Next: the bound census (pool, prereg AMENDMENT 5 H), the
+full-size GPU transfer check on seed 7 (running), then spiking output competition. Finding
+`2026-09-24-gap4-transport-ceiling-instrument-diagnosed-dev-seed7-UNDEFINED.md`.
 
 **CORRECTED SWEEPS RE-QUEUED (no-defer, 0 Claude tokens):** GPU lane — 18 token-scaling cells at `--n-sentences
 2000000` (pool 1.7M >= 1.536M-passage point, reaching ~74M tokens; fineweb d96/d192 + wt103 d96, `_n2M_` paths) = the
@@ -659,7 +664,7 @@ follow-ons). The keystone confirmed twice over: the own-voice MOUTH (neural-rend
 **PRE-DECIDED NEXT ACTIONS:**
 1. ⭐ CONTINUE scaffold-retirement (owner's #1 metric, now 4): scan the ledger for the next RETIRABLE_NOW rows and the un-retired host scaffolds — the named follow-on is `multi_turn_agent_v2.py`'s SEPARATE host-anaphor scaffold; the B-curiosity row's retirement frontier is neural-render (retire the host qualifier template). Verify-first (grep the log for each capability) before scoping.
 2. Token `_n2M` bend-test sweep PAUSED at 9/18 (owner gaming — local GPU idle, verified paused). Resume `bash tools/game.sh off` when gaming ends; harvest at 18/18: does the deep-context NLL curve BEND at ~74M tokens? (owner #1 mouth fork).
-3. Frontier de-risks (build-then-run): vision configural-binding next lever = a richer S2/C2 code (n_glimpses saturated at 4/6; board #217); gap#4 next lever = a read-regime where the transport-ceiling oracle clears chance, THEN re-compare (UNDEFINED-parked); affect grounding/embodiment (Rank-7 parked, board #218). Pool idle → stock a CPU de-risk once one of these is built.
+3. Frontier de-risks (build-then-run): vision configural-binding next lever = a richer S2/C2 code (n_glimpses saturated at 4/6; board #217); gap#4 next lever = bound census at the best dev read-regime (C21), then spiking output competition, so the transport-ceiling oracle can clear chance, THEN re-compare (UNDEFINED at dev 2026-09-24, A9); affect grounding/embodiment (Rank-7 parked, board #218). Pool idle → stock a CPU de-risk once one of these is built.
 4. DONE this session: 4 flips + B-curiosity default-ON; 3 host paths RETIRED (scaffold_retired 1→4); Vikunja full freshness pass (15 closed / 10 updated / 3 added); vision n_glimpses + affect-XINH-exhausted harvests. Optional remaining doc-sync: README user-facing prose refresh (`refresh-user-facing-docs`).
 5. Heartbeat `b7vshehm6` live (gpu/mem/token/pool state + OOM/off-bus/stall).
 

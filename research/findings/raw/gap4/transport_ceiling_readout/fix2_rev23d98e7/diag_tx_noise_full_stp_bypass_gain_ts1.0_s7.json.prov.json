@@ -1,0 +1,42 @@
+{
+ "run_id": "1790284082-1362760",
+ "runner": "research/runners/_gap4_tc_transmission_noise_ref_diag.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/gap4-fix2/research/runners/_gap4_tc_transmission_noise_ref_diag.py",
+  "--variant",
+  "stp_bypass_gain",
+  "--hidden",
+  "64",
+  "--pool-k",
+  "16",
+  "--tonic-scale",
+  "1.0",
+  "--reads",
+  "event",
+  "spikes",
+  "--n-items",
+  "24",
+  "--out",
+  "research/findings/raw/gap4/transport_ceiling_readout/fix2_rev23d98e7/diag_tx_noise_full_stp_bypass_gain_ts1.0_s7.json"
+ ],
+ "git_sha": "23d98e71f",
+ "git_dirty": false,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-24T17:08:02",
+ "env": {
+  "OMP_NUM_THREADS": "1",
+  "SIM_BACKEND": "numpy"
+ },
+ "host": "dant123-wk",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/gap4/transport_ceiling_readout/fix2_rev23d98e7/diag_tx_noise_full_stp_bypass_gain_ts1.0_s7.json"
+}
