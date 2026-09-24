@@ -104,6 +104,8 @@ def score(seed, out_dir=OUT_DIR):
         ch = {}
         for t in SMOKE_TURNS:
             ci, cl = _cond(ia.get(t)), _cond((arms[a] or {}).get(t))
+            if ci is None and cl is None:
+                continue                                   # turn not run / trace absent in both arms: no change
             if ci is None or cl is None:
                 ch[t] = {"present": [ci is not None, cl is not None]}
                 continue
@@ -113,7 +115,7 @@ def score(seed, out_dir=OUT_DIR):
         out["changes_vs_intact"][a] = ch
         # the attribution question, asked out loud at the conditioning level: changed (turn, field) pairs under the
         # lesion (treatment) vs under the intact rebuild (control, the null)
-        n_treat = sum(len([k for k in v if k != "present"]) for v in ch.values())
+        n_treat = sum(max(1, len([k for k in v if k != "present"])) for v in ch.values())
         n_ctrl = sum(len([k for k in COND_FIELDS + ("answer",) if (d["a"] or {}).get(k) != (d["b"] or {}).get(k)])
                      for d in null_diffs)
         out.setdefault("attribution", {})[a] = {"n_changed_treatment": n_treat, "n_changed_null": n_ctrl,
@@ -174,6 +176,7 @@ def main(argv=None):
     ap.add_argument("--out-dir", default=OUT_DIR)
     ap.add_argument("--compare-identity", nargs=2, metavar=("A", "B"))
     ap.add_argument("--out", default=None)
+    ap.add_argument("--turns", default=None, help="comma-separated probe labels (default: SMOKE_TURNS)")
     a = ap.parse_args(argv)
     if a.compare_identity:
         r = compare_identity(a.compare_identity[0], a.compare_identity[1], a.out)
@@ -182,7 +185,7 @@ def main(argv=None):
         score(a.seed, a.out_dir)
         return 0
     if a.arm:
-        return run_arm(a.arm, a.seed, a.out_dir)
+        return run_arm(a.arm, a.seed, a.out_dir, turns=(a.turns.split(",") if a.turns else None))
     ap.print_help()
     return 0
 
