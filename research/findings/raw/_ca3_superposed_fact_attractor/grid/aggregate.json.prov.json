@@ -1,0 +1,28 @@
+{
+ "run_id": "1790286022-1702939",
+ "runner": "research/runners/ca3_superposed_fact_attractor.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/score-ca3-grid/research/runners/ca3_superposed_fact_attractor.py",
+  "--aggregate",
+  "research/findings/raw/_ca3_superposed_fact_attractor/grid"
+ ],
+ "git_sha": "4100c27c3",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-24T17:40:22",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "host": "dant123-wk",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_ca3_superposed_fact_attractor/grid/aggregate.json"
+}

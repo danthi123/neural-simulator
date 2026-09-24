@@ -1,0 +1,538 @@
+{
+ "config": {
+  "seed": 44,
+  "arm": "sparse_dg_c2_hub",
+  "n_ec_role": 1000,
+  "k_ec": 20,
+  "n_ent": 2000,
+  "n_rel": 128,
+  "n_ca3": 10000,
+  "a_ca3": 0.01,
+  "c_rec": 4000,
+  "c_pp": 1200,
+  "c_out": 4000,
+  "use_dg": true,
+  "n_dg": 15000,
+  "a_dg": 0.005,
+  "c_ecdg": 200,
+  "c_mf": 46,
+  "c_fix": 300,
+  "plasticity": "covariance",
+  "bound": 1,
+  "T": 8,
+  "n_query": 200,
+  "n_recent": 100,
+  "n_novel": 100,
+  "n_xtalk": 50,
+  "p_grid": [
+   50,
+   100,
+   200,
+   500,
+   1000,
+   2000,
+   5000,
+   10000,
+   20000,
+   50000
+  ],
+  "encode_batch": 500
+ },
+ "backend": "numpy+scipy.sparse (CPU)",
+ "runner": "research.runners.ca3_superposed_fact_attractor",
+ "build_s": 2.743906259536743,
+ "checkpoints": [
+  {
+   "P": 50,
+   "write_s_interval": 0.4418048858642578,
+   "write_ms_per_fact": 8.836097717285156,
+   "synapse_bytes": 448352000,
+   "materialize_s": 2.0061769485473633,
+   "intact": {
+    "recall": 1.0,
+    "n": 50,
+    "ca3_overlap_init": 0.9790000000000001,
+    "ca3_overlap_final": 1.0,
+    "settle_final": 1.0,
+    "per_query_ms_batched": 14.750175476074219,
+    "recall_recent": 1.0,
+    "novel_settle_final": 1.0,
+    "stored_settle_final": 1.0,
+    "per_query_ms_single": 17.543554306030273
+   },
+   "rec_zero": {
+    "recall": 1.0,
+    "n": 50,
+    "ca3_overlap_init": 0.9790000000000001,
+    "ca3_overlap_final": 0.9790000000000001,
+    "settle_final": 1.0,
+    "per_query_ms_batched": 45.09431838989258
+   },
+   "rec_shuffle": {
+    "recall": 1.0,
+    "n": 50,
+    "ca3_overlap_init": 0.9790000000000001,
+    "ca3_overlap_final": 0.9765999999999999,
+    "settle_final": 0.9996,
+    "per_query_ms_batched": 69.09839630126953
+   },
+   "crosstalk_dprime": 54.016090393066406,
+   "rec_synapses_touched_frac": 0.004935425,
+   "rec_touched_shared_by_ge2_facts_frac": 0.002775850104094379,
+   "ca3_pattern_mean_pairwise_overlap": 0.010404920553562276,
+   "freeze_all_recall": 0.0
+  },
+  {
+   "P": 100,
+   "write_s_interval": 0.306180477142334,
+   "write_ms_per_fact": 7.479853630065918,
+   "synapse_bytes": 448352000,
+   "materialize_s": 2.2437965869903564,
+   "intact": {
+    "recall": 1.0,
+    "n": 100,
+    "ca3_overlap_init": 0.9618000000000001,
+    "ca3_overlap_final": 1.0,
+    "settle_final": 1.0,
+    "per_query_ms_batched": 16.260881423950195,
+    "recall_recent": 1.0,
+    "novel_settle_final": 1.0,
+    "stored_settle_final": 1.0,
+    "per_query_ms_single": 17.820358276367188
+   },
+   "rec_zero": {
+    "recall": 1.0,
+    "n": 100,
+    "ca3_overlap_init": 0.9618000000000001,
+    "ca3_overlap_final": 0.9618000000000001,
+    "settle_final": 1.0,
+    "per_query_ms_batched": 28.426871299743652
+   },
+   "rec_shuffle": {
+    "recall": 1.0,
+    "n": 100,
+    "ca3_overlap_init": 0.9618000000000001,
+    "ca3_overlap_final": 0.9536000000000001,
+    "settle_final": 0.9991,
+    "per_query_ms_batched": 41.00203990936279
+   },
+   "crosstalk_dprime": 52.29940414428711,
+   "rec_synapses_touched_frac": 0.009843075,
+   "rec_touched_shared_by_ge2_facts_frac": 0.005486090474775413,
+   "ca3_pattern_mean_pairwise_overlap": 0.010055471507816438
+  },
+  {
+   "P": 200,
+   "write_s_interval": 0.6872565746307373,
+   "write_ms_per_fact": 7.1762096881866455,
+   "synapse_bytes": 448352000,
+   "materialize_s": 1.919058084487915,
+   "intact": {
+    "recall": 1.0,
+    "n": 200,
+    "ca3_overlap_init": 0.9151500000000001,
+    "ca3_overlap_final": 1.0,
+    "settle_final": 1.0,
+    "per_query_ms_batched": 14.560880661010742,
+    "recall_recent": 1.0,
+    "novel_settle_final": 1.0,
+    "stored_settle_final": 1.0,
+    "per_query_ms_single": 20.798206329345703
+   },
+   "rec_zero": {
+    "recall": 1.0,
+    "n": 200,
+    "ca3_overlap_init": 0.9151500000000001,
+    "ca3_overlap_final": 0.9151500000000001,
+    "settle_final": 1.0,
+    "per_query_ms_batched": 24.12877917289734
+   },
+   "rec_shuffle": {
+    "recall": 1.0,
+    "n": 200,
+    "ca3_overlap_init": 0.9151500000000001,
+    "ca3_overlap_final": 0.8979,
+    "settle_final": 0.9984000000000001,
+    "per_query_ms_batched": 25.36039113998413
+   },
+   "crosstalk_dprime": 41.363380432128906,
+   "rec_synapses_touched_frac": 0.019585475,
+   "rec_touched_shared_by_ge2_facts_frac": 0.010935399830741915,
+   "ca3_pattern_mean_pairwise_overlap": 0.010255383074611919
+  },
+  {
+   "P": 500,
+   "write_s_interval": 1.7781014442443848,
+   "write_ms_per_fact": 6.426686763763428,
+   "synapse_bytes": 448352000,
+   "materialize_s": 1.7992093563079834,
+   "intact": {
+    "recall": 1.0,
+    "n": 200,
+    "ca3_overlap_init": 0.80755,
+    "ca3_overlap_final": 0.9998500000000001,
+    "settle_final": 1.0,
+    "per_query_ms_batched": 13.904576301574707,
+    "recall_recent": 1.0,
+    "novel_settle_final": 0.9984000000000001,
+    "stored_settle_final": 1.0,
+    "per_query_ms_single": 20.18117904663086
+   },
+   "rec_zero": {
+    "recall": 1.0,
+    "n": 200,
+    "ca3_overlap_init": 0.80755,
+    "ca3_overlap_final": 0.80755,
+    "settle_final": 1.0,
+    "per_query_ms_batched": 22.67900586128235
+   },
+   "rec_shuffle": {
+    "recall": 1.0,
+    "n": 200,
+    "ca3_overlap_init": 0.80755,
+    "ca3_overlap_final": 0.7691,
+    "settle_final": 0.9878,
+    "per_query_ms_batched": 25.5015766620636
+   },
+   "crosstalk_dprime": 27.105777740478516,
+   "rec_synapses_touched_frac": 0.0481203,
+   "rec_touched_shared_by_ge2_facts_frac": 0.027999617624994026,
+   "ca3_pattern_mean_pairwise_overlap": 0.010215107553776888
+  },
+  {
+   "P": 1000,
+   "write_s_interval": 2.954118251800537,
+   "write_ms_per_fact": 6.167461633682251,
+   "synapse_bytes": 448352000,
+   "materialize_s": 1.8967459201812744,
+   "intact": {
+    "recall": 1.0,
+    "n": 200,
+    "ca3_overlap_init": 0.6317,
+    "ca3_overlap_final": 0.99625,
+    "settle_final": 0.99945,
+    "per_query_ms_batched": 14.432646036148071,
+    "recall_recent": 1.0,
+    "novel_settle_final": 0.9765,
+    "stored_settle_final": 0.99945,
+    "per_query_ms_single": 21.010160446166992
+   },
+   "rec_zero": {
+    "recall": 1.0,
+    "n": 200,
+    "ca3_overlap_init": 0.6317,
+    "ca3_overlap_final": 0.6317,
+    "settle_final": 1.0,
+    "per_query_ms_batched": 21.461182832717896
+   },
+   "rec_shuffle": {
+    "recall": 1.0,
+    "n": 200,
+    "ca3_overlap_init": 0.6317,
+    "ca3_overlap_final": 0.58625,
+    "settle_final": 0.9501,
+    "per_query_ms_batched": 27.411527633666992
+   },
+   "crosstalk_dprime": 19.37332534790039,
+   "rec_synapses_touched_frac": 0.093616375,
+   "rec_touched_shared_by_ge2_facts_frac": 0.05509185759435783,
+   "ca3_pattern_mean_pairwise_overlap": 0.010105157736604907
+  },
+  {
+   "P": 2000,
+   "write_s_interval": 5.648144960403442,
+   "write_ms_per_fact": 5.907803297042847,
+   "synapse_bytes": 448352000,
+   "materialize_s": 2.5505590438842773,
+   "intact": {
+    "recall": 0.995,
+    "n": 200,
+    "ca3_overlap_init": 0.40825,
+    "ca3_overlap_final": 0.9711500000000001,
+    "settle_final": 0.9933500000000001,
+    "per_query_ms_batched": 15.581763982772827,
+    "recall_recent": 0.97,
+    "novel_settle_final": 0.9303999999999999,
+    "stored_settle_final": 0.9933500000000001,
+    "per_query_ms_single": 17.585039138793945
+   },
+   "rec_zero": {
+    "recall": 0.955,
+    "n": 200,
+    "ca3_overlap_init": 0.40825,
+    "ca3_overlap_final": 0.40825,
+    "settle_final": 1.0,
+    "per_query_ms_batched": 22.95771837234497
+   },
+   "rec_shuffle": {
+    "recall": 0.955,
+    "n": 200,
+    "ca3_overlap_init": 0.40825,
+    "ca3_overlap_final": 0.3821,
+    "settle_final": 0.9013500000000001,
+    "per_query_ms_batched": 24.649057388305664
+   },
+   "crosstalk_dprime": 13.803884506225586,
+   "rec_synapses_touched_frac": 0.177242925,
+   "rec_touched_shared_by_ge2_facts_frac": 0.10711950843736076,
+   "ca3_pattern_mean_pairwise_overlap": 0.010640320160080041
+  },
+  {
+   "P": 5000,
+   "write_s_interval": 18.04924726486206,
+   "write_ms_per_fact": 5.972970771789551,
+   "synapse_bytes": 448352000,
+   "materialize_s": 1.8831357955932617,
+   "intact": {
+    "recall": 0.245,
+    "n": 200,
+    "ca3_overlap_init": 0.20314999999999997,
+    "ca3_overlap_final": 0.23950000000000002,
+    "settle_final": 0.9472,
+    "per_query_ms_batched": 14.398157596588135,
+    "recall_recent": 0.29,
+    "novel_settle_final": 0.9454,
+    "stored_settle_final": 0.9472,
+    "per_query_ms_single": 21.10457420349121
+   },
+   "rec_zero": {
+    "recall": 0.14,
+    "n": 200,
+    "ca3_overlap_init": 0.20314999999999997,
+    "ca3_overlap_final": 0.20314999999999997,
+    "settle_final": 1.0,
+    "per_query_ms_batched": 23.54002356529236
+   },
+   "rec_shuffle": {
+    "recall": 0.105,
+    "n": 200,
+    "ca3_overlap_init": 0.20314999999999997,
+    "ca3_overlap_final": 0.19299999999999998,
+    "settle_final": 0.9011499999999999,
+    "per_query_ms_batched": 26.650913953781128
+   },
+   "crosstalk_dprime": 8.793645858764648,
+   "rec_synapses_touched_frac": 0.380075775,
+   "rec_touched_shared_by_ge2_facts_frac": 0.24519314602463155,
+   "ca3_pattern_mean_pairwise_overlap": 0.010785
+  },
+  {
+   "P": 10000,
+   "write_s_interval": 29.28750514984131,
+   "write_ms_per_fact": 5.915235900878907,
+   "synapse_bytes": 448352000,
+   "materialize_s": 2.5248351097106934,
+   "intact": {
+    "recall": 0.015,
+    "n": 200,
+    "ca3_overlap_init": 0.13315000000000002,
+    "ca3_overlap_final": 0.1264,
+    "settle_final": 0.9601999999999999,
+    "per_query_ms_batched": 14.916706085205078,
+    "recall_recent": 0.03,
+    "novel_settle_final": 0.9599999999999999,
+    "stored_settle_final": 0.9601999999999999,
+    "per_query_ms_single": 17.10963249206543
+   },
+   "rec_zero": {
+    "recall": 0.005,
+    "n": 200,
+    "ca3_overlap_init": 0.13315000000000002,
+    "ca3_overlap_final": 0.13315000000000002,
+    "settle_final": 1.0,
+    "per_query_ms_batched": 24.107946157455444
+   },
+   "rec_shuffle": {
+    "recall": 0.0,
+    "n": 200,
+    "ca3_overlap_init": 0.13315000000000002,
+    "ca3_overlap_final": 0.12995,
+    "settle_final": 0.9351999999999999,
+    "per_query_ms_batched": 24.389570951461792
+   },
+   "crosstalk_dprime": 6.203352928161621,
+   "rec_synapses_touched_frac": 0.604701,
+   "rec_touched_shared_by_ge2_facts_frac": 0.4279859385051455,
+   "ca3_pattern_mean_pairwise_overlap": 0.010475000000000002
+  },
+  {
+   "P": 20000,
+   "write_s_interval": 59.49462556838989,
+   "write_ms_per_fact": 5.932349228858948,
+   "synapse_bytes": 448352000,
+   "materialize_s": 2.0350351333618164,
+   "intact": {
+    "recall": 0.0,
+    "n": 200,
+    "ca3_overlap_init": 0.10485,
+    "ca3_overlap_final": 0.10280000000000002,
+    "settle_final": 0.9725,
+    "per_query_ms_batched": 14.498831033706665,
+    "recall_recent": 0.0,
+    "novel_settle_final": 0.9740000000000001,
+    "stored_settle_final": 0.9725,
+    "per_query_ms_single": 20.51234245300293
+   },
+   "rec_zero": {
+    "recall": 0.0,
+    "n": 200,
+    "ca3_overlap_init": 0.10485,
+    "ca3_overlap_final": 0.10485,
+    "settle_final": 1.0,
+    "per_query_ms_batched": 24.933961629867554
+   },
+   "rec_shuffle": {
+    "recall": 0.005,
+    "n": 200,
+    "ca3_overlap_init": 0.10485,
+    "ca3_overlap_final": 0.10575000000000001,
+    "settle_final": 0.9579499999999999,
+    "per_query_ms_batched": 25.580326318740845
+   },
+   "crosstalk_dprime": 4.516593933105469,
+   "rec_synapses_touched_frac": 0.82814825,
+   "rec_touched_shared_by_ge2_facts_frac": 0.6699844200600557,
+   "ca3_pattern_mean_pairwise_overlap": 0.0105
+  },
+  {
+   "P": 50000,
+   "write_s_interval": 118.37431049346924,
+   "write_ms_per_fact": 4.740425901412964,
+   "synapse_bytes": 448352000,
+   "materialize_s": 1.2083210945129395,
+   "intact": {
+    "recall": 0.0,
+    "n": 200,
+    "ca3_overlap_init": 0.0873,
+    "ca3_overlap_final": 0.08710000000000001,
+    "settle_final": 0.9842000000000002,
+    "per_query_ms_batched": 9.526071548461914,
+    "recall_recent": 0.0,
+    "novel_settle_final": 0.9860000000000002,
+    "stored_settle_final": 0.9842000000000002,
+    "per_query_ms_single": 10.658025741577148
+   },
+   "rec_zero": {
+    "recall": 0.0,
+    "n": 200,
+    "ca3_overlap_init": 0.0873,
+    "ca3_overlap_final": 0.0873,
+    "settle_final": 1.0,
+    "per_query_ms_batched": 14.346840381622314
+   },
+   "rec_shuffle": {
+    "recall": 0.0,
+    "n": 200,
+    "ca3_overlap_init": 0.0873,
+    "ca3_overlap_final": 0.08810000000000003,
+    "settle_final": 0.9825499999999999,
+    "per_query_ms_batched": 16.410934925079346
+   },
+   "crosstalk_dprime": 3.021450996398926,
+   "rec_synapses_touched_frac": 0.97956595,
+   "rec_touched_shared_by_ge2_facts_frac": 0.9334701252120902,
+   "ca3_pattern_mean_pairwise_overlap": 0.010440000000000001
+  }
+ ],
+ "sha_facts": "f5ee0f8de342dddc97e47e4cfab8825598a0edd5afb522b725e9d3839364e464",
+ "summary": {
+  "P": [
+   50,
+   100,
+   200,
+   500,
+   1000,
+   2000,
+   5000,
+   10000,
+   20000,
+   50000
+  ],
+  "recall": [
+   1.0,
+   1.0,
+   1.0,
+   1.0,
+   1.0,
+   0.995,
+   0.245,
+   0.015,
+   0.0,
+   0.0
+  ],
+  "recall_recent": [
+   1.0,
+   1.0,
+   1.0,
+   1.0,
+   1.0,
+   0.97,
+   0.29,
+   0.03,
+   0.0,
+   0.0
+  ],
+  "recall_rec_zero": [
+   1.0,
+   1.0,
+   1.0,
+   1.0,
+   1.0,
+   0.955,
+   0.14,
+   0.005,
+   0.0,
+   0.0
+  ],
+  "recall_rec_shuffle": [
+   1.0,
+   1.0,
+   1.0,
+   1.0,
+   1.0,
+   0.955,
+   0.105,
+   0.0,
+   0.005,
+   0.0
+  ],
+  "dprime": [
+   54.016090393066406,
+   52.29940414428711,
+   41.363380432128906,
+   27.105777740478516,
+   19.37332534790039,
+   13.803884506225586,
+   8.793645858764648,
+   6.203352928161621,
+   4.516593933105469,
+   3.021450996398926
+  ],
+  "per_query_ms_single": [
+   17.543554306030273,
+   17.820358276367188,
+   20.798206329345703,
+   20.18117904663086,
+   21.010160446166992,
+   17.585039138793945,
+   21.10457420349121,
+   17.10963249206543,
+   20.51234245300293,
+   10.658025741577148
+  ],
+  "synapse_bytes": [
+   448352000,
+   448352000,
+   448352000,
+   448352000,
+   448352000,
+   448352000,
+   448352000,
+   448352000,
+   448352000,
+   448352000
+  ],
+  "P50": 3661.595801024502,
+  "P90": 2246.134352882903
+ }
+}
