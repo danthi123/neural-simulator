@@ -14,7 +14,8 @@ seed-waiver: seed 7 is the development seed. These are the integrity checks the 
 No claim here generalises beyond seed 7.
 
 Pre-registration: [`2026-09-24-open-ended-gated-turn-PREREGISTRATION.md`](2026-09-24-open-ended-gated-turn-PREREGISTRATION.md)
-(committed `b4588775a`; Amendment 1 committed `98c4912e2`, before any gate-seed run).
+(committed `b4588775a`; Amendments 1 `98c4912e2`, 2 `7a39851cd` and 3 `6994e80f2`, each before any gate-seed run).
+Owner decision (2026-09-24): Qwen stays fact-free, so the flag stays default OFF whatever the gates read.
 The 2026-09-23 a3 NO-GO on the ungated turn stands:
 [`2026-09-23-open-ended-production-turn-a3-6seed-harvest-NO-GO.md`](2026-09-23-open-ended-production-turn-a3-6seed-harvest-NO-GO.md).
 Branch `research/open-ended-gated-turn`. `BRAIN_OPEN_ENDED_GATED` stays default OFF; nothing here flips a default.
@@ -31,19 +32,32 @@ through the regression battery's own worker. Runner: `research/runners/_open_end
    Compare: `research/findings/raw/_open_ended_gated/identity/compare_off5_ltmoff_s7_306ef27d_vs_3ef5ec08.json`.
 3. **A descriptive race-history read** of the speak/abstain selector (no brain), `--bg-order` at `b97dea71`:
    `research/findings/raw/_open_ended_gated/bg_curve/bg_order_dev_s7_11_13.json`.
+4. **Flag-OFF GNW-lesion read of `chase`** (added in the review fix round): intact and `BRAIN_GNW_2ORGAN_WS_LESION=1`,
+   flag unset, seed 7, LTM off, through the battery worker. Files: `research/findings/raw/_open_ended_gated/smoke_gnwturn_flagoff/s7/`.
 
 ## Results
 
 **The null is clean.** intact_a and intact_b agree on every conditioning field and on the reply, on all three turns
 (`smoke_summary.json`: `null_clean` true, `null_diffs` empty).
 
-**The GNW workspace lesion moves the turn's decision.** On `sw_open` ("what does the dog chase") the route goes
-grounded -> withheld, the BG action SPEAK -> STAY_SILENT, the reply kind grounded -> withheld_abstain.
-The answer goes from "the dog chases the cat" to "I don't know about that."
-(`smoke_summary.json`, `changes_vs_intact.gnw_lesion.sw_open`).
-The cut held at read time: `cut.ws_lesion` is true in `gnw_lesion.json`.
-The row `open-ended-turn-gnw-drive` scores load-bearing at seed 7: 3 decision-field diffs, 0 in the null
-(`smoke_summary.json`, `rows.open-ended-turn-gnw-drive`).
+**The GNW workspace lesion moves the gated turn's ROUTE on a KB-hit turn. The reply change is the pipeline's, not
+the gated turn's.** (Corrected after the 2026-09-24 review; PREREG Amendment 3. This paragraph first said the lesion
+"moves the gated turn's decision" and counted three decision-field diffs.)
+On `sw_open` ("what does the dog chase") the route goes grounded -> withheld, the BG action SPEAK -> STAY_SILENT, the
+reply kind grounded -> withheld_abstain, and the answer goes from "the dog chases the cat" to "I don't know about that."
+(`smoke_summary.json`, `changes_vs_intact.gnw_lesion.sw_open`). The cut held at read time: `cut.ws_lesion` is true in `gnw_lesion.json`.
+Those changes have one cause. On a withheld route `decide()` keeps the pipeline's answer whatever the race commits.
+The BG action moves only through the host FAM table (withheld -> familiarity 0), and `withheld_abstain` is a direct map
+of the route. The answer change is the pipeline's own gate abstain.
+With the flag OFF the same lesion makes the same reply change on `chase`: "the dog chases the cat — worth going
+further here." -> "I don't know about that. — worth going further here."
+(`research/findings/raw/_open_ended_gated/smoke_gnwturn_flagoff/s7/intact_off.json` and `gnw_lesion_off.json`, `chase.answer`;
+seed 7, LTM off, local numpy. The intact arm ran at `7a39851c` plus this round's uncommitted edits, none on the flag-off
+path; the lesion arm at `6994e80f2`. `webapp/server.py` is the same at both.)
+Under Amendment 3 the row `open-ended-turn-gnw-drive` decides on `route` only. On its registered turn `chase` it scores
+load-bearing at seed 7 with 1 decision-field diff and 0 in the null
+(`research/findings/raw/_open_ended_gated/smoke_gnwturn/s7/smoke_summary.json`, `rows.open-ended-turn-gnw-drive`, re-scored at `6994e80f2`).
+On the off-KB turns (`unknown`, `emo`, `question`, `open`) the GNW lesion changed nothing at seed 7.
 
 **The affect lesion moves the afferent, not the decision, at seed 7.** On `emo` the Gate-B valence sign goes + -> 0
 (a trace copy the lesion sets, excluded from the row by the pass-by-construction audit).
@@ -64,12 +78,16 @@ races in 24. At these dev rates a single-shot affect row would read no change (S
 third of the time, even if the afferent coupling is real. The rate in the LBF depends on which races precede `emo`
 in that process, which this read does not fix.
 
-**The gate lesion (the afferent cut) moves the SETTLE marker on the affective turn, not the BG action.** On `emo` the
-marker register goes 2 -> none (`changes_vs_intact.gate_lesion.emo`). The saliences are cut to (0.5, 0.5) on all three
-turns (`cut.baseline_applied` true), and the BG action is unchanged on each at seed 7.
+**The gate lesion (the afferent cut) does not move the BG action at seed 7, and its marker change is by construction.**
+(Corrected after the 2026-09-24 review; this paragraph first reported the marker change as an effect.)
+The saliences are cut to (0.5, 0.5) on all three turns (`cut.baseline_applied` true), and the BG action is unchanged on
+each at seed 7. On `emo` the marker register goes 2 -> none (`changes_vs_intact.gate_lesion.emo`).
+That is not an effect of the cut: the same lesion runs the marker WTA with its own `lesion=True`, which returns None on
+(almost) every trial. Amendment 3 removes `marker_level` from the row's decision fields.
 The row `open-ended-turn-faculty-drive` probes `unknown`, where it scores not load-bearing at seed 7.
-Two of its three fields cannot carry much there. The marker is never read on `unknown`, because a neutral mood
-(level 0) is not sent to the circuit, so `marker_level` is 0 in every arm by design. The intact race sits at s = 0.
+There the marker is never read (a neutral mood is not sent to the circuit), the intact race sits at s = 0 and the cut
+race at s = 0.5. A single race at 0.5 is a coin flip (12 of 24 dev races spoke; `bg_curve_dev_s7_11_13.json`, `pooled`).
+So Amendment 3 declares the row descriptive only: its verdict is reported and never counted toward a load-bearing claim.
 
 **Flag-off identity holds on the turns checked.** With the flag unset, the response JSON of 5 turns (`well`, `unknown`,
 `sw_open`, `rich_well`, `rich_open`; LTM off) is identical at `3ef5ec08` and at `306ef27d`.
@@ -77,12 +95,17 @@ Both hash to sha256 `fc3b716d195e...` (`compare_off5_ltmoff_s7_306ef27d_vs_3ef5e
 The same 5-turn check was identical at `928d0d82` vs `f554056e` (`research/findings/raw/_open_ended_gated/identity/compare_off5_ltmoff_s7.json`).
 **Scope deviation, disclosed:** the pre-registration's integrity section names the full probe roster.
 These 5 turns reach both hooked paths (single-fact and rich), but they are not the roster.
+The 26-turn roster pair (`49b8fb12` vs its merge-base `355db9c7`, seed 7, LTM off) was staged on the pool at 16:29; at
+17:25 one half was running and the other queued, so it is not reported here.
+`webapp/server.py` at the fix-round head `b728777a` is identical to `49b8fb12` (`git diff` empty), and the gated module
+is never imported with the flag off, so that pair covers the lane's flag-off footprint at the new head when it lands.
 
 ## Against the plan's S16 success check
 
 The check reads: conditioning state changes under the affect lesion and under the GNW lesion, a clean null, and
 `byte_identical_off` true.
-- GNW lesion: met at the decision level.
+- GNW lesion: met only for the gated turn's route label on the KB-hit turns (`sw_open`, `chase`). The reply change
+  there is the pipeline's own abstain. On the off-KB turns nothing moved.
 - Affect lesion: met only at the trace and afferent level (valence sign, speak salience). The BG decision did not move
   at seed 7. This is not evidence that the affect afferent drives the turn.
 - Clean null: met.
@@ -106,9 +129,22 @@ The intact rebuild is identical to intact
 (`research/findings/raw/_open_ended_gated/smoke_gnwturn/s7/smoke_summary.json`, `changes_vs_intact.gnw_lesion.chase`).
 `question` and `open` route off-KB and hold in every arm. The pre-registration's Amendment 2 re-points the row to
 `chase`, and the hook now merges all three rows (`LBF_ROW_MERGE_REPORT.keys_added`, none parked).
+That summary was first scored at `639cce2f9`, before the row was re-pointed, so its row block read `sw_open` (not
+exercised) and contradicted this paragraph. It was re-scored from the same arm files at `6994e80f2` and now reads the
+row on `chase`, decided on `route` only (Amendment 3).
+
+## Corrections after the 2026-09-24 review (PREREG Amendment 3)
+
+- The GNW paragraph above overstated the result: the lesion moves the gated turn's route label on KB-hit turns, and
+  the reply change is the pipeline's own abstain. The three "decision-field diffs" were one cause.
+- The gate lesion's marker change on `emo` is by construction, not an effect.
+- The faculty-drive row cannot discriminate as a single-shot read and is now descriptive only.
+- Part A, which has not run, was re-designed before any gate seed: CONT became a manipulation check and the Part A
+  verdict is the reply-level metric (see the pre-registration's Amendment 3).
 
 ## What this does not show
 
 - Nothing about the gate seeds. Part A (the capability gate) and Part B (the LBF rows) have not run.
 - Nothing about rendered Qwen text. The LLM was disabled in every run.
 - That the affect afferent drives the reply. At seed 7 it did not.
+- That the gated turn changes a reply under the GNW lesion. On the KB-hit turns the reply change is the pipeline's.
