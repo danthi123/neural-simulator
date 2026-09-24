@@ -229,6 +229,17 @@ def _block_record(comp, agent, patient):
             "mean_abs_w": round(sum(abs(w) for w in ws) / max(len(ws), 1), 6), "n_syn": len(ws)}
 
 
+VARIANTS = ("prod", "qwenforced")
+
+
+def _variant():
+    """AMENDMENT A1 (see the PREREGISTRATION's amendment log). 'prod' = the registered configuration (the shipped
+    mouth stack: the spiking Broca recall mouth renders bounded SVO recall, Qwen is the renderer behind it);
+    'qwenforced' = every arm with BRAIN_SPIKING_MOUTH_RECALL=0, so Qwen phrases every recalled fact."""
+    v = os.environ.get("CPROV_VARIANT", "prod").strip().lower()
+    return v if v in VARIANTS else "prod"
+
+
 def _worker(arm, out_path):
     env, teach_mode, post, do_untaught, do_secondary, do_qwen_alone, ltm = ARMS[arm]
     os.environ.setdefault("SIM_BACKEND", "numpy")
@@ -241,11 +252,19 @@ def _worker(arm, out_path):
         os.environ.pop("BRAIN_LTM_SHIP_DEFAULT", None)      # DEFAULT_LTM: the true shipped default (LTM attached)
     for k in ("BRAIN_RICH", "BRAIN_CHAT_RENDERER"):
         os.environ.pop(k, None)                             # production default path; renderer set per request
+    variant = _variant()
+    if variant == "qwenforced":
+        # AMENDMENT A1: the spiking Broca recall mouth (BRAIN_SPIKING_MOUTH_RECALL, default-ON since 2026-08-26)
+        # renders every bounded SVO recall before Qwen is consulted; OFF -> Qwen phrases every recalled fact.
+        os.environ["BRAIN_SPIKING_MOUTH_RECALL"] = "0"
+    else:
+        os.environ.pop("BRAIN_SPIKING_MOUTH_RECALL", None)  # prod: the shipped default
     from webapp import server as S
     from webapp.server import brain_chat, BrainChatRequest
     from research.runners import d6_hebbian_store as D6
     t0 = time.time()
-    out = {"arm": arm, "env": env, "ltm": ltm, "seed": os.environ.get("BRAIN_CHAT_SEED"),
+    out = {"arm": arm, "env": env, "ltm": ltm, "variant": variant, "seed": os.environ.get("BRAIN_CHAT_SEED"),
+           "spiking_mouth_recall_env": os.environ.get("BRAIN_SPIKING_MOUTH_RECALL"),
            "backend": os.environ.get("SIM_BACKEND"), "cuda_visible": os.environ.get("CUDA_VISIBLE_DEVICES"),
            "turns": [], "qwen_calls": [], "write_log": [], "taught_blocks_after_teach": {},
            "taught_blocks_at_probe": {}, "ablation": [], "counter_installed": False,
@@ -548,10 +567,16 @@ def _arm_void(name, a):
     return None
 
 
-def score_seed(arms):
-    """Apply the pre-registered criteria (PREREGISTRATION, section 'Criteria') to one seed's {arm: json|None}."""
+def score_seed(arms, variant="qwenforced"):
+    """Apply the pre-registered criteria (PREREGISTRATION, section 'Criteria', + AMENDMENT A1) to one seed's
+    {arm: json|None}. `variant` in VARIANTS; the default is the stricter one (the Qwen-render instrument required)."""
     from tools.lab import void_if
     rec = {"criteria": {}, "void": {}, "go": None, "instrument": {}}
+    for name in PRIMARY_ARMS:
+        a = arms.get(name)
+        if a is not None and a.get("variant", "prod") != variant:
+            arms = dict(arms)
+            arms[name] = dict(a, errors=["arm variant %r != scored variant %r" % (a.get("variant", "prod"), variant)])
     for name in PRIMARY_ARMS:
         why = _arm_void(name, arms.get(name))
         if void_if(why is not None, "arm %s: %s" % (name, why)):
@@ -610,6 +635,13 @@ def score_seed(arms):
     ins["FD2_ok"] = fd2_hits >= 15
     required = ("lever_USE_written", "lever_FREEZE_zero", "lever_ABLATE_zero", "lever_HEARD_no_write",
                 "lesion_no_later_writes", "qwen_mouth_rendered_USE_probes", "qwen_alone_present", "FD1_ok", "FD2_ok")
+    # AMENDMENT A1: in the 'prod' variant the shipped spiking Broca recall mouth renders bounded SVO recall ahead of
+    # Qwen, so "Qwen rendered the probe" is a MEASUREMENT there (reported: rec['use_probe_qwen_calls']), not an
+    # instrument; in 'qwenforced' (recall mouth off) it stays a required instrument.
+    rec["variant"] = variant
+    rec["use_probe_qwen_calls"] = use_probe_qwen
+    if variant == "prod":
+        required = tuple(k for k in required if k != "qwen_mouth_rendered_USE_probes")
     failed_ins = [k for k in required if not ins.get(k)]
     # ---- the criteria ----
     c = rec["criteria"]
@@ -686,7 +718,8 @@ def aggregate(per_seed):
     return agg
 
 
-def run(seeds, arm_dir, arms, resume=True, score_only=False, jobs=1):
+def run(seeds, arm_dir, arms, resume=True, score_only=False, jobs=1, variant="prod"):
+    os.environ["CPROV_VARIANT"] = variant                  # workers inherit it (AMENDMENT A1)
     failed = []
     for s in seeds:
         todo = []
@@ -717,9 +750,10 @@ def run(seeds, arm_dir, arms, resume=True, score_only=False, jobs=1):
     per = {}
     for s in seeds:
         loaded = {name: _load(_arm_path(arm_dir, s, name)) for name in ARMS}
-        per[str(s)] = score_seed(loaded)
+        per[str(s)] = score_seed(loaded, variant)
         print("[cprov] seed %s -> %s" % (s, per[str(s)]["verdict"]), flush=True)
-    return {"runner": "research.runners.content_provenance_probe", "seeds": list(seeds), "arm_dir": arm_dir,
+    return {"runner": "research.runners.content_provenance_probe", "variant": variant, "seeds": list(seeds),
+            "arm_dir": arm_dir,
             "per_seed": per, "aggregate": aggregate(per), "failed_arms": failed,
             "table": summary_table(per)}
 
@@ -775,7 +809,7 @@ def _synthetic_seed():
             for uk, q, _hk in UNTAUGHT:
                 turns.append(t("untaught", uk, "I don't know about that.", True, nq=0))
         lev = {k: {"found": found, "block": 5 + j, "mean_abs_w": (w if found else None)} for j, k in enumerate(keys)}
-        a = {"arm": name, "renderer_class": "QwenRenderer", "ltm_attached": False, "source": "tiny-demo",
+        a = {"arm": name, "variant": "qwenforced", "renderer_class": "QwenRenderer", "ltm_attached": False, "source": "tiny-demo",
              "turns": turns, "write_log": wl, "n_kb_at_session_start": 5, "kb_final_primary": kb,
              "taught_blocks_at_probe": lev, "counter_installed": True, "store_writes_after_teach_primary": [],
              "errors": []}
@@ -867,6 +901,16 @@ def _selftest():
     res["no_qwen_render_undefined"] = score_seed(m)["go"] is None
     m = _cp(base); m["USE"]["turns"][0]["rich"] = False
     res["non_rich_turn_undefined"] = score_seed(m)["go"] is None
+    # AMENDMENT A1: in 'prod' zero Qwen calls on the probes is a measurement, not an instrument failure
+    m = _cp(base)
+    for nm in m:
+        m[nm]["variant"] = "prod"
+    for tt in m["USE"]["turns"]:
+        if tt["phase"] == "probe":
+            tt["n_qwen_calls"] = 0
+    rp = score_seed(m, "prod")
+    res["prod_zero_qwen_calls_is_scored"] = rp["go"] is True and rp["use_probe_qwen_calls"] == 0
+    res["variant_mismatch_undefined"] = score_seed(_cp(base), "prod")["go"] is None
     # 5. FD1/FD2 are computed from the Qwen-alone answers and must hold on the synthetic seed
     res["FD1_holds_on_synthetic"] = r["instrument"]["FD1_ok"] is True
     res["FD2_holds_on_synthetic"] = r["instrument"]["FD2_ok"] is True
@@ -894,6 +938,7 @@ def main(argv=None):
     ap.add_argument("--arm-dir", default="research/findings/raw/_content_provenance")
     ap.add_argument("--json", default=None)
     ap.add_argument("--jobs", type=int, default=1)
+    ap.add_argument("--variant", choices=VARIANTS, default="prod")
     ap.add_argument("--score-only", action="store_true")
     ap.add_argument("--no-resume", action="store_true")
     a = ap.parse_args(argv)
@@ -905,7 +950,8 @@ def main(argv=None):
         return 0 if ok else 1
     if a.worker:
         return _worker(a.arm, a.out)
-    out = run(a.seeds, a.arm_dir, a.arms, resume=not a.no_resume, score_only=a.score_only, jobs=a.jobs)
+    out = run(a.seeds, a.arm_dir, a.arms, resume=not a.no_resume, score_only=a.score_only, jobs=a.jobs,
+              variant=a.variant)
     if a.json:
         os.makedirs(os.path.dirname(a.json) or ".", exist_ok=True)
         json.dump(out, open(a.json, "w"), indent=1, default=str)

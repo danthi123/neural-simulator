@@ -148,4 +148,43 @@ makes no claim of felt experience.
 
 ## Amendment log
 
-(none)
+### A1 (2026-09-24, ~13:30 EDT): two mouth variants
+
+**Seen when this was written.** Only the seed-7 `prod` smoke's TEACH turns: all six arms' teach replies and the
+Qwen generate-call count of each turn. No read, probe, untaught or validation-seed result existed.
+
+**Observation.** USE, ABLATE and DEFAULT acknowledged every teach turn with 0 Qwen calls. The surface was the
+lower-case spiking form ("the cow eats the moon"). FREEZE's teach turns made 2-4 Qwen calls.
+
+**Cause (read in the code, not inferred from the data).** `ChatBrain.spiking_recall_surface` and
+`RichAnswerComposer._render_one_verified` render every bounded transitive SVO on the spiking Broca recall mouth
+first. That mouth is `BRAIN_SPIKING_MOUTH_RECALL`, default-ON since 2026-08-26. Qwen is consulted only when that
+surface fails VERIFY. So in the registered (shipped) configuration Qwen never phrases a recalled bounded-SVO fact
+unless the spiking surface fails, and `qwen_mouth_rendered_USE_probes` would read UNDEFINED for a reason unrelated
+to Qwen.
+
+**Change.** Two variants. Both are scored by the unchanged CP1-CP5, word lists, arms and instruments, except as
+stated here.
+- `prod` (the registered configuration). `qwen_mouth_rendered_USE_probes` becomes a reported measurement,
+  `use_probe_qwen_calls`, and stops being a required instrument. A count of 0 there is itself the answer to "does
+  Qwen phrase learned content in production".
+- `qwenforced` (new; the adversarial test of the owner's question). Every arm runs with
+  `BRAIN_SPIKING_MOUTH_RECALL=0`, so Qwen phrases every recalled fact. Every instrument is required as registered,
+  including `qwen_mouth_rendered_USE_probes`. Arm directory: `research/findings/raw/_content_provenance_qwenforced`.
+- Each arm file records its variant. An arm scored under the other variant is VOID.
+- Each variant has its own aggregate verdict (GO needs 6/6 on 42/43/44/100/101/102). `qwenforced` is the primary
+  answer to the owner's question; `prod` is secondary.
+- Run order: the seed-7 `qwenforced` smoke, then the `qwenforced` validation seeds, then the `prod` validation
+  seeds as capacity allows. A variant that has not run on all six seeds reads INCOMPLETE.
+
+The code change is the variant plumbing (`--variant`, `CPROV_VARIANT`) and the prod-only instrument relaxation.
+`--selftest` adds `prod_zero_qwen_calls_is_scored` and `variant_mismatch_undefined` and passes.
+
+```
+ARM_DIR=research/findings/raw/_content_provenance
+.venv/bin/python -m research.runners.content_provenance_probe --score-only --variant prod \
+    --seeds 7 42 43 44 100 101 102 --arm-dir "$ARM_DIR" --json "$ARM_DIR"/cp_verdict.json
+QF_DIR=research/findings/raw/_content_provenance_qwenforced
+.venv/bin/python -m research.runners.content_provenance_probe --score-only --variant qwenforced \
+    --seeds 7 42 43 44 100 101 102 --arm-dir "$QF_DIR" --json "$QF_DIR"/cp_verdict.json
+```
