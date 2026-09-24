@@ -814,6 +814,7 @@ _WMF_TURNS = [lab for p in ("A", "B") for s in _WMF_PAIRS[p] for lab in s]
 _WMF_ENV = {"on": {"BRAIN_MULTIREF_FOCUS_BIND": "1", "BRAIN_MULTIREF_LESION_SCOPE": "recur"},
             "off": {"BRAIN_MULTIREF_FOCUS_BIND": "0", "BRAIN_MULTIREF_LESION_SCOPE": "recur"}}
 _WMF_ARMS = ("intact_a", "intact_b", "lesion", "lesion_rep")
+_WMF_DECISION_FIELDS = ("recalled_svo", "abstained")   # the reply's content; `answer` is recorded, report-only
 _WMF_MECH_FIELDS = ["multiref.kind", "multiref.n_referents", "multiref.recovered", "multiref.hold_alive_min",
                     "multiref.lesion_scope", "multiref.resolved", "multiref.resolved_register",
                     "multiref.resolved_pool", "multiref.margin", "multiref.register_rates", "multiref.wta_rates",
@@ -840,11 +841,14 @@ def _wmf_gate(arms, require_resolution=True):
              and the two sessions of the pair resolved DIFFERENT referents          -> "probe-inadequate:same-referent"
       L      both lesion arms' intros read hold_alive_min == 0.0, and (ON only) the lesion still holds at the ask:
              its retrieval record exists and every register rate is 0.0            -> "lesion-not-effective"
-      N      intact_a == intact_b on every ask `answer`                              -> "noisy-null-control"
+      N      intact_a == intact_b on every ask's reply content                       -> "noisy-null-control"
       C      (ON only) each intact reply follows its resolution: recalled_svo is None (abstain) or its agent is the
              resolved referent                                                       -> "probe-inadequate:content"
-      R      lesion == lesion_rep on every ask `answer`                              -> "noisy"
-    Then T_p = the pair's two intact replies differ; X_p = the pair's two LESION replies are the same.
+      R      lesion == lesion_rep on every ask's reply content                       -> "noisy"
+    Then T_p = the pair's two intact replies differ; X_p = the pair's two LESION replies are the same. "Reply" is
+    the reply's CONTENT, `_WMF_DECISION_FIELDS` = (recalled_svo, abstained): which fact it states, or that it
+    abstained. The surface `answer` is report-only (T_/X_answer_surface_*), because its rendering varies with the
+    intro's mention order through a path the organ never touches (the intro's own acquired 3-word parse).
       every pair T and X     -> (True,  "regressed")        the ordinary reply follows the held referent, lesion removes it
       no pair T              -> (False, "pass")             a real negative: the reply does not follow the held referent
       a pair T but not X     -> (None,  "off-organ-route")  the difference survives the hold lesion (not the organ's)
@@ -862,7 +866,12 @@ def _wmf_gate(arms, require_resolution=True):
         return m if isinstance(m, dict) else {}
 
     def ans(arm, turn):
-        return ((arm or {}).get(turn) or {}).get("answer")
+        # the reply's CONTENT: which fact it states (recalled_svo) and whether it abstained -- not the surface string,
+        # whose rendering varies with the intro's mention order through the intro's own acquired 3-word parse
+        # ("the dog cats the walked" vs "the cat dogs the walked"), a path the organ never touches (dev seed 7: the
+        # flag-OFF replies were "the dog chases the cat" vs "The dog chases cat.", the same fact).
+        d = (arm or {}).get(turn) or {}
+        return json.dumps([d.get(f) for f in _WMF_DECISION_FIELDS], sort_keys=True, default=str)
     for p, sessions in _WMF_PAIRS.items():
         r = rep[p]
         r1 = {}
@@ -919,6 +928,9 @@ def _wmf_gate(arms, require_resolution=True):
         (_i1, a1), (_i2, a2) = sessions
         r["T_intact_pair_differs"] = bool(ans(arms["intact_a"], a1) != ans(arms["intact_a"], a2))
         r["X_lesion_pair_same"] = bool(ans(arms["lesion"], a1) == ans(arms["lesion"], a2))
+        surf = lambda arm, t: ((arms[arm].get(t) or {}).get("answer"))   # noqa: E731  (report-only)
+        r["T_answer_surface_differs"] = bool(surf("intact_a", a1) != surf("intact_a", a2))
+        r["X_answer_surface_same"] = bool(surf("lesion", a1) == surf("lesion", a2))
     for p in ("A", "B"):
         if not all(rep[p]["R1_intros_in_scope_every_arm"].values()):
             return None, "probe-inadequate:route", rep
@@ -1011,9 +1023,12 @@ def measure_wmb_focus(out_dir, seed=42, repeats=2):
         diffs = []
         for p, ((_i1, a1), (_i2, a2)) in _WMF_PAIRS.items():
             ia = arms["on"]["intact_a"]
-            if (ia.get(a1) or {}).get("answer") != (ia.get(a2) or {}).get("answer"):
-                diffs.append({"pair": p, "field": "answer", "session_1": (ia.get(a1) or {}).get("answer"),
-                              "session_2": (ia.get(a2) or {}).get("answer")})
+            c1 = [(ia.get(a1) or {}).get(f) for f in _WMF_DECISION_FIELDS]
+            c2 = [(ia.get(a2) or {}).get(f) for f in _WMF_DECISION_FIELDS]
+            if c1 != c2:
+                diffs.append({"pair": p, "fields": list(_WMF_DECISION_FIELDS), "session_1": c1, "session_2": c2,
+                              "answer_1": (ia.get(a1) or {}).get("answer"),
+                              "answer_2": (ia.get(a2) or {}).get("answer")})
         res["diffs"] = diffs
         res["treatment_diffs"] = len(diffs)
         res["control_diffs"] = 0
@@ -1989,6 +2004,11 @@ def _wmf_selftest_checks():
     t = _TURN_BY_LABEL
     default_labels = {x[0] for x in PROBE_TURNS}
     held = {"A": (("dog", "cat"), ("cat", "dog")), "B": (("cat", "bird"), ("bird", "cat"))}
+    # surface string -> (recalled_svo, abstained), the reply CONTENT the gate decides on
+    REPLY = {"the dog chases the cat": (["dog", "chase", "cat"], False),
+             "The dog chases cat.": (["dog", "chase", "cat"], False),
+             "the cat eats the fish": (["cat", "eat", "fish"], False),
+             "I don't know about that.": (None, True)}
 
     def mk(reply, resolved=None, lesion_reply=None, les_alive=0.0, les_scope="recur", intact_b_reply=None,
            lesion_rep_reply=None, no_resolve=False, svo=None, ask_extra=None, les_ask_rates=(0.0, 0.0, 0.0, 0.0, 0.0)):
@@ -2004,7 +2024,10 @@ def _wmf_selftest_checks():
                     a[intro] = {"answer": "x", "multiref": mi}
                     src = {"intact_a": reply, "intact_b": intact_b_reply or reply, "lesion": lesion_reply or reply,
                            "lesion_rep": lesion_rep_reply or lesion_reply or reply}[kind]
-                    d = {"answer": src[p][s], "recalled_svo": (svo or {}).get(p, (None, None))[s]}
+                    fact, abst = REPLY[src[p][s]]
+                    if kind.startswith("intact") and svo is not None:
+                        fact = svo[p][s]                       # override the recalled fact (the content check)
+                    d = {"answer": src[p][s], "recalled_svo": fact, "abstained": abst}
                     if kind.startswith("intact") and not no_resolve:
                         # default resolution: each session's first-mentioned referent (register 0 won the race)
                         res_pair = (resolved or {}).get(p) or (held[p][0][0], held[p][1][0])
@@ -2021,8 +2044,11 @@ def _wmf_selftest_checks():
     same = {"A": ("the dog chases the cat", "the dog chases the cat"),
             "B": ("the cat eats the fish", "the cat eats the fish")}
     svo_ok = {"A": (["dog", "chase", "cat"], None), "B": (["cat", "eat", "fish"], None)}
+    surface = {"A": ("the dog chases the cat", "The dog chases cat."),
+               "B": ("the cat eats the fish", "the cat eats the fish")}
     good = mk(content, lesion_reply=same, svo=svo_ok)
     positional = mk(same, lesion_reply=same, no_resolve=True)
+    positional_surface = mk(surface, lesion_reply=surface, no_resolve=True)
     offorgan = mk(content, lesion_reply=content, svo=svo_ok)
     return {
         "wmf flag parses to a real bool": isinstance(LB_WMB_FOCUS, bool),
@@ -2041,6 +2067,9 @@ def _wmf_selftest_checks():
             _wmf_gate(good)[:2] == (True, "regressed"),
         "wmf gate: POSITIONAL route (OFF, identical replies) -> load_bearing False (it CAN fail)":
             _wmf_gate(positional, require_resolution=False)[:2] == (False, "pass"),
+        "wmf gate: a SURFACE-only difference (same fact, other rendering) is not a content difference":
+            _wmf_gate(positional_surface, require_resolution=False)[:2] == (False, "pass")
+            and _wmf_gate(positional_surface, require_resolution=False)[2]["A"]["T_answer_surface_differs"],
         "wmf gate: difference survives the hold lesion -> UNDEFINED off-organ-route":
             _wmf_gate(offorgan)[:2] == (None, "off-organ-route"),
         "wmf gate: ON arm never resolved -> probe-inadequate:no-resolution":
@@ -2067,7 +2096,8 @@ def _wmf_selftest_checks():
         "wmf gate: lesion rebuild differs -> noisy":
             _wmf_gate(mk(content, lesion_reply=same, svo=svo_ok, lesion_rep_reply=content))[1] == "noisy",
         "wmf gate: only one pair follows -> UNDEFINED content-dependent-effect":
-            _wmf_gate(mk({"A": content["A"], "B": same["B"]}, lesion_reply=same, svo=svo_ok))[:2]
+            _wmf_gate(mk({"A": content["A"], "B": ("I don't know about that.", "I don't know about that.")},
+                         lesion_reply=same))[:2]
             == (None, "content-dependent-effect"),
         "wmf gate: a missing arm -> arm-build-failed": _wmf_gate(dict(good, lesion=None))[1] == "arm-build-failed",
         "wmf headline: positional (OFF) route reading load-bearing VOIDS the ON verdict":
