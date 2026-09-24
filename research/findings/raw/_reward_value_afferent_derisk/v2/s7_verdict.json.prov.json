@@ -1,0 +1,34 @@
+{
+ "run_id": "1790279451-971559",
+ "runner": "research/runners/_reward_value_afferent_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/wf_38021aa9-a43-7/research/runners/_reward_value_afferent_derisk.py",
+  "--mode",
+  "score",
+  "--arms",
+  "research/findings/raw/_reward_value_afferent_derisk/v2/s7_arms.json",
+  "--pre",
+  "research/findings/raw/_reward_value_afferent_derisk/v2/s7_pre_off_main.json",
+  "--out",
+  "research/findings/raw/_reward_value_afferent_derisk/v2/s7_verdict.json"
+ ],
+ "git_sha": "0e0984522",
+ "git_dirty": false,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-24T15:50:51",
+ "env": {
+  "CUDA_VISIBLE_DEVICES": "",
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_reward_value_afferent_derisk/v2/s7_verdict.json"
+}
