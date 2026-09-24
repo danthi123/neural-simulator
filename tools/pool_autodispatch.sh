@@ -59,16 +59,76 @@ extra_nodes() {
   [ -f "$EXTRA_NODES_FILE" ] && grep -vE '^[[:space:]]*(#|$)' "$EXTRA_NODES_FILE" 2>/dev/null | tr -s '[:space:]' ' '
 }
 
+cycle_setup() {
+  # ONE-FUNCTION FIX (2026-09-23 fix round #2, re-review MEDIUM): the OLD `--print-ssh-f-loop` test seam called
+  # `refresh_ssh_f` directly, inline -- a COPY of the production loop's shape, not the production loop itself.
+  # Mutation check confirmed the gap: deleting the real `while true` loop's `refresh_ssh_f` call left every test
+  # passing except the pre-existing unrelated failure. `cycle_setup` is now the ONE place either the production
+  # loop or a test calls -- there is no second copy left to drift from it, so removing this call from here
+  # breaks BOTH the live dispatcher AND the test seam identically. Sets $NODES (defined below) and
+  # $EXTRA_NODES_FILE (defined above) as globals -- both must already be set before this is first called, which
+  # holds for both callers (the production loop runs after NODES= below; the test seam sets POOL_QUEUE_PATH/
+  # POOL_EXTRA_NODES_FILE via env before this script even starts).
+  refresh_ssh_f
+  CYCLE_NODES="$NODES $(extra_nodes)"
+  # Reset the per-cycle revision-availability cache + its rate-limited missing-revision log (see their own
+  # comments, right before revision_available()) so each cycle re-probes fresh (a node CAN gain a revision
+  # between cycles, e.g. aws_pool_node.sh's pre-provision loop finishing after this cycle started).
+  REV_CACHE=()
+  REV_MISSING_LOGGED=()
+}
+
+# PER-CYCLE REVISION-AVAILABILITY CACHE (2026-09-23 fix round #2, LOW). pop_job's revision check used to make
+# ONE ssh round trip per revision-pinned CANDIDATE it looked at, per pop, WHILE HOLDING the queue flock -- a node
+# missing several pinned revisions (or a hung node) could hold that lock for multiple x10s timeouts on a single
+# pop. Reset once per cycle (cycle_setup, below) so a node's answer for a given revision is reused for every
+# job pinned to it for the REST of this cycle, not re-probed on every single pop attempt.
+declare -A REV_CACHE=()
+declare -A REV_MISSING_LOGGED=()
+
 revision_available() {
-  # revision_available <node> <sha> -- does ~/derisk-pool/revisions/<sha> already exist on <node>? Used so a
-  # revision-pinned job (`cd ~/derisk-pool/revisions/<sha> && ...`, from `pool_provision.sh --isolated`) is
+  # revision_available <node> <sha> -- has ~/derisk-pool/revisions/<sha> COMPLETED provisioning on <node>? Used
+  # so a revision-pinned job (`cd ~/derisk-pool/revisions/<sha> && ...`, from `pool_provision.sh --isolated`) is
   # never handed to a node that was never provisioned with that revision (2026-09-23 fix round: reproduced --
   # AWS node provisioned only at ~/derisk-pool/sim from HEAD, every queued job pinned to an isolated revision,
   # `cd` failed, the job was already popped from the queue and its result was never pulled -- silently lost).
-  # Fails closed: unreachable/timeout/missing dir all return non-zero (job stays queued for another node/cycle).
+  #
+  # BUGFIX (fix round #2): checking `[ -d <revdir> ]` alone was WRONG -- pool_provision.sh's remote `mkdir -p`
+  # creates that directory FIRST, before rsync/venv/manifest-verify/sanity-check even run, and a later failure
+  # there just `continue`s past the node WITHOUT removing it. A node whose provision partly failed (missing
+  # .venv, unverified/tampered source, a degenerate sanity build) still passed this check, got handed the job,
+  # and the crash landed only in that node's own job_status.log -- lost the same way, just one layer down. The
+  # probe now requires `.provisioned_ok`, a marker pool_provision.sh writes as the LAST step of a fully
+  # successful --isolated run for that node (see pool_provision.sh's per-node loop) -- a half- or badly-
+  # provisioned revision dir never has it.
+  #
+  # Fails closed: unreachable/timeout/missing marker all return non-zero (job stays queued for another node/cycle).
   local node="$1" sha="$2"
   timeout 10 ssh "${SSH_F[@]}" -o BatchMode=yes -o ConnectTimeout=6 "$node" \
-    "[ -d ~/derisk-pool/revisions/$sha ]" 2>/dev/null
+    "[ -f ~/derisk-pool/revisions/$sha/.provisioned_ok ]" 2>/dev/null
+}
+
+revision_available_cached() {
+  # Memoized wrapper (see REV_CACHE's own comment above): the FIRST check of a given (node, sha) pair this cycle
+  # still ssh-probes; every later check of the SAME pair this cycle is a plain array lookup, no network call.
+  local node="$1" sha="$2" key="$1:$2"
+  if [ -n "${REV_CACHE[$key]+x}" ]; then
+    [ "${REV_CACHE[$key]}" = "1" ]
+    return
+  fi
+  if revision_available "$node" "$sha"; then
+    REV_CACHE[$key]=1
+  else
+    REV_CACHE[$key]=0
+    # LOG (2026-09-23 fix round #2, LOW): a pinned job silently re-queuing forever because NO node has its
+    # revision was invisible until the 12h staleness cutoff finally dropped it. Rate-limited to once per
+    # (node, sha) per cycle (REV_MISSING_LOGGED, reset alongside REV_CACHE) -- not once per pop attempt.
+    if [ -z "${REV_MISSING_LOGGED[$key]+x}" ]; then
+      REV_MISSING_LOGGED[$key]=1
+      echo "[pool-dispatch] revision $sha not provisioned on $node -- job(s) pinned to it stay queued this cycle" >&2
+    fi
+  fi
+  [ "${REV_CACHE[$key]}" = "1" ]
 }
 
 job_est_gb() {
@@ -213,7 +273,7 @@ pop_job() {
     # node able to run it, i.e. lose it. `continue` past it (leaving it in the queue) and keep scanning for a
     # candidate this node CAN run; if none exists this cycle, the outer `if [ -z "$job" ]` returns empty as usual.
     sha=$(printf '%s' "$cand" | grep -oE 'derisk-pool/revisions/[0-9a-f]{7,40}' | head -1 | sed 's#.*/##')
-    if [ -n "$sha" ] && [ -n "$node" ] && ! revision_available "$node" "$sha"; then continue; fi
+    if [ -n "$sha" ] && [ -n "$node" ] && ! revision_available_cached "$node" "$sha"; then continue; fi
     job="$cand"; break
   done < <(awk -F'\t' -v c="$cutoff" 'NF>1 && $1+0 >= c {print $2}' "$QUEUE")
   # THE RECORD-CHECK GATE (2026-07-31), copied from tools/lane_dispatch.sh:47 where it is already proven.
@@ -278,13 +338,16 @@ if [ "${1:-}" = "--render-remote-command" ]; then
   exit $?
 fi
 if [ "${1:-}" = "--print-ssh-f-loop" ]; then
-  # TEST SEAM (2026-09-23): proves refresh_ssh_f is called EVERY cycle of the real dispatch loop shape (not just
-  # once at process start) without running the full dispatcher (no queue popping, no real ssh calls to a node).
+  # TEST SEAM (2026-09-23, hardened fix round #2): proves refresh_ssh_f is called EVERY cycle of the REAL
+  # dispatch loop (not just once at process start) without running the full dispatcher (no queue popping, no
+  # real ssh calls to a node). Calls `cycle_setup` -- the SAME function the production `while true` loop below
+  # calls, not a separate copy of its shape -- so a mutation that removes `refresh_ssh_f` from `cycle_setup`
+  # breaks this test too (the old version called `refresh_ssh_f` inline here, a copy the mutation could dodge).
   # Prints one line per cycle -- "F" if SSH_F currently carries -F<config>, else "NOF" -- so a test can create
   # POOL_SSH_CONFIG's file BETWEEN cycles and see the NEXT line flip, inside one long-lived process.
   [ "$#" -eq 3 ] || { echo "usage: $0 --print-ssh-f-loop <n-cycles> <sleep-s>" >&2; exit 2; }
   for _i in $(seq 1 "$2"); do
-    refresh_ssh_f
+    cycle_setup
     if [ "${#SSH_F[@]}" -gt 0 ]; then echo "F"; else echo "NOF"; fi
     sleep "$3"
   done
@@ -333,8 +396,7 @@ fi
 
 echo "[pool-dispatch] started $(date '+%H:%M:%S') | queue=$QUEUE | poll=${POLL}s | nodes=$NODES (+ any in $EXTRA_NODES_FILE, re-read each cycle)"
 while true; do
-  refresh_ssh_f
-  CYCLE_NODES="$NODES $(extra_nodes)"
+  cycle_setup
   for NODE in $CYCLE_NODES; do
     # FILL the node to capacity within this cycle (while, not if) — with the per-node cap raised for
     # single-threaded numpy jobs (owner 2026-09-02), a single if-per-cycle would need ~cap cycles to fill.

@@ -269,6 +269,20 @@ print("1" if (local.get("n_neurons") == remote.get("n_neurons") and local.get("n
       continue
     fi
   fi
+  # COMPLETION MARKER (2026-09-23 fix round #2). Written as the LAST step of a fully successful provision for
+  # this node -- pool_autodispatch.sh's revision_available() requires it before handing a revision-pinned job to
+  # this node, rather than trusting bare directory existence (the mkdir -p above creates the dir long before any
+  # of the checks that just ran, so a node whose provision failed partway through still had the directory).
+  # `--isolated` only: the compatibility path (~/derisk-pool/sim, no --isolated) is never revision-checked, so
+  # there is nothing to mark ready for.
+  if (( ISOLATED )); then
+    $SSH_CMD "$h" "cd ~/$REMOTE_ROOT && touch .provisioned_ok" || {
+      echo "  ⛔ could not write completion marker on $h -- treating as FAILED (a revision-pinned job must" >&2
+      echo "     never be dispatched here without it)" >&2
+      FAILED_NODES+=("$h:marker-write")
+      continue
+    }
+  fi
   echo "  done $h"
 done
 if ((${#FAILED_NODES[@]})); then

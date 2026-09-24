@@ -238,12 +238,41 @@ def test_no_ready_work_waiver_is_bounded_and_workboard_tied(tmp_path: Path) -> N
     assert result.returncode == 1
 
 
+# ------------------------------------------------------------- workflow_check.sh honours AWS extra-nodes (fix round #2)
+
+def test_workflow_check_pool_nodes_default_unaffected_when_no_extra_nodes_file(tmp_path: Path) -> None:
+    res = run_bash(WORKFLOW, "--print-pool-check-nodes",
+                   env={"POOL_EXTRA_NODES_FILE": str(tmp_path / "does-not-exist"),
+                        "POOL_SSH_CONFIG": str(tmp_path / "does-not-exist")})
+    assert res.returncode == 0, res.stderr
+    lines = res.stdout.splitlines()
+    assert lines[0].strip() == "pool40 pool41 pool42"
+    assert lines[1] == "NOF"
+
+
+def test_workflow_check_pool_nodes_grows_with_extra_nodes_file_and_honours_dash_f(tmp_path: Path) -> None:
+    # THE DEFECT (re-review, MEDIUM): the CLUSTER/CRASH detectors (lines ~335/~427) were hardcoded to
+    # pool40/41/42 and a bare ssh -- an AWS pool node's crash was never surfaced here.
+    extra = tmp_path / "extra_nodes"
+    extra.write_text("pool1\n")
+    config = tmp_path / "ssh_config"
+    config.write_text("Include ~/.ssh/config\n")
+    res = run_bash(WORKFLOW, "--print-pool-check-nodes",
+                   env={"POOL_EXTRA_NODES_FILE": str(extra), "POOL_SSH_CONFIG": str(config)})
+    assert res.returncode == 0, res.stderr
+    lines = res.stdout.splitlines()
+    assert lines[0].strip() == "pool40 pool41 pool42 pool1"
+    assert lines[1] == "F"
+
+
 # --------------------------------------------------------------- revision-dir-aware pop_job (2026-09-23 fix)
 
 def _write_ssh_stub_answering_dash_d(tmp_path: Path, missing_shas: set[str]):
-    """A stub `ssh` that logs its argv and answers the `[ -d ~/derisk-pool/revisions/<sha> ]` probe: exit 1 (dir
-    missing) for any sha in `missing_shas`, else exit 0 (dir present). Any other command exits 0 too, so this
-    also stands in for the plain reachability calls this file's other tests don't otherwise exercise."""
+    """A stub `ssh` that logs its argv and answers the `[ -f ~/derisk-pool/revisions/<sha>/.provisioned_ok ]`
+    probe (fix round #2: a completion MARKER, not bare directory existence -- see revision_available's
+    docstring): exit 1 (not provisioned) for any sha in `missing_shas`, else exit 0 (provisioned). Any other
+    command exits 0 too, so this also stands in for the plain reachability calls this file's other tests don't
+    otherwise exercise."""
     bin_dir = tmp_path / "bin"
     bin_dir.mkdir()
     log = tmp_path / "ssh.log"
@@ -287,7 +316,7 @@ def test_pop_job_skips_revision_pinned_job_missing_on_node_leaving_it_queued(tmp
     assert res.returncode == 0, res.stderr
     assert res.stdout == ""                     # nothing handed out -- pool1 cannot run this job
     assert sha in queue.read_text()              # the job was NEVER removed from the queue -- not lost
-    assert f"[ -d ~/derisk-pool/revisions/{sha} ]" in ssh_log.read_text()
+    assert f"[ -f ~/derisk-pool/revisions/{sha}/.provisioned_ok ]" in ssh_log.read_text()
 
 
 def test_pop_job_hands_out_revision_pinned_job_when_the_revision_is_present(tmp_path: Path) -> None:
@@ -331,6 +360,89 @@ def test_pop_job_without_a_node_arg_skips_the_revision_check_entirely(tmp_path: 
     assert res.returncode == 0, res.stderr
     assert sha in res.stdout                     # popped -- no node given, no revision gate applied
     assert ssh_log.read_text() == ""             # and no ssh call was made to check
+
+
+def _write_ssh_stub_dir_exists_but_no_marker(tmp_path: Path, sha: str):
+    """REGRESSION (2026-09-23 fix round #2): a stub answering `[ -d ... ]` TRUE (dir exists -- the defect: a
+    half-provisioned revision from a FAILED pool_provision.sh run always leaves this true) but `[ -f
+    .../.provisioned_ok ]` FALSE (never reached the completion marker). Reproduces the exact bug the re-review
+    found: the OLD `-d`-only check would have handed this node the job; the fixed `-f` marker check must not."""
+    bin_dir = tmp_path / "bin"
+    bin_dir.mkdir()
+    log = tmp_path / "ssh.log"
+    log.write_text("")
+    stub = bin_dir / "ssh"
+    stub.write_text(f"""#!/usr/bin/env bash
+echo "$*" >> "{log}"
+case "$*" in
+  *"[ -d ~/derisk-pool/revisions/{sha} ]"*) exit 0 ;;
+  *"provisioned_ok"*) exit 1 ;;
+esac
+exit 0
+""")
+    stub.chmod(stub.stat().st_mode | stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH)
+    return bin_dir, log
+
+
+def test_pop_job_treats_a_half_provisioned_revision_dir_as_unavailable(tmp_path: Path) -> None:
+    # THE ACTUAL DEFECT (re-review, fix round #2): pool_provision.sh's remote `mkdir -p` creates the revision
+    # directory FIRST, before rsync/venv/manifest-verify/sanity-check -- a later failure `continue`s past the
+    # node WITHOUT removing it. A bare `-d` check therefore reads "available" for a node whose provision never
+    # finished (missing .venv, unverified source, a degenerate sanity build). The fix requires a completion
+    # marker (`.provisioned_ok`, written as pool_provision.sh's LAST step for that node) instead.
+    now = int(time.time())
+    sha = "deadbee"
+    queue = tmp_path / "pool.queue"
+    queue.write_text(f"{now}\tcd ~/derisk-pool/revisions/{sha} && bash run.sh  #checked:r mem_gb=1\n")
+    bin_dir, ssh_log = _write_ssh_stub_dir_exists_but_no_marker(tmp_path, sha)
+    env = {
+        **os.environ,
+        "PATH": f"{bin_dir}:{os.environ.get('PATH', '')}",
+        "POOL_QUEUE_PATH": str(queue),
+        "POOL_RUNNING_PATH": str(tmp_path / "pool.running"),
+        "POOL_SSH_CONFIG": str(tmp_path / "does-not-exist"),
+    }
+    res = subprocess.run(["bash", str(DISPATCHER), "--pop-once", "999", "pool1"],
+                          cwd=ROOT, env=env, capture_output=True, text=True, timeout=30)
+    assert res.returncode == 0, res.stderr
+    assert res.stdout == ""                      # NOT handed out despite the directory existing
+    assert sha in queue.read_text()               # left queued for a genuinely-provisioned node
+    assert "provisioned_ok" in ssh_log.read_text()
+
+
+def test_revision_available_cached_probes_ssh_only_once_per_node_sha_pair(tmp_path: Path) -> None:
+    # LOW (re-review): pop_job's revision check used to ssh EVERY candidate popped, even for a sha it had
+    # already checked against this node earlier in the SAME cycle. `pop_job` itself is a fresh process per
+    # `--pop-once` call (so its own cache always starts empty, unaffected by this test), but the cached wrapper
+    # it calls is exercised directly here across THREE calls in one process, extracted verbatim from the real
+    # script (never re-typed) so this cannot drift from the code it is meant to pin.
+    bin_dir = tmp_path / "bin"
+    bin_dir.mkdir()
+    ssh_log = tmp_path / "ssh.log"
+    ssh_log.write_text("")
+    stub = bin_dir / "ssh"
+    stub.write_text(f"""#!/usr/bin/env bash
+echo "$*" >> "{ssh_log}"
+exit 0
+""")
+    stub.chmod(stub.stat().st_mode | stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH)
+    harness = tmp_path / "harness.sh"
+    harness.write_text(f"""#!/usr/bin/env bash
+set -uo pipefail
+SSH_F=()
+declare -A REV_CACHE=()
+declare -A REV_MISSING_LOGGED=()
+eval "$(sed -n '/^revision_available()/,/^}}/p; /^revision_available_cached()/,/^}}/p' {DISPATCHER})"
+revision_available_cached node1 abc1234 >/dev/null 2>&1
+revision_available_cached node1 abc1234 >/dev/null 2>&1
+revision_available_cached node1 abc1234 >/dev/null 2>&1
+""")
+    harness.chmod(harness.stat().st_mode | stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH)
+    env = {**os.environ, "PATH": f"{bin_dir}:{os.environ.get('PATH', '')}"}
+    res = subprocess.run(["bash", str(harness)], cwd=ROOT, env=env, capture_output=True, text=True, timeout=30)
+    assert res.returncode == 0, res.stderr
+    calls = [ln for ln in ssh_log.read_text().splitlines() if "abc1234" in ln]
+    assert len(calls) == 1, f"expected exactly ONE ssh probe for a repeated (node, sha) pair, got {len(calls)}: {calls}"
 
 
 # --------------------------------------------------------------------- SSH_F re-evaluated every cycle (fix)

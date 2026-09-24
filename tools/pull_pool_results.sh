@@ -14,8 +14,16 @@ set -uo pipefail
 ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd); cd "$ROOT" || exit 1
 GLOB="${1:?usage: pull_pool_results.sh '<glob>' <dest-subdir>}"; DEST="research/findings/raw/${2:?}"
 mkdir -p "$DEST"
-for H in pool40 pool41 pool42; do
-  timeout 30 rsync -q -e "ssh -o BatchMode=yes -o ConnectTimeout=6" "$H:derisk-pool/sim/g5s_out/$GLOB" "$DEST/" 2>/dev/null
+# AWS-AS-EXTRA-POOL-NODE (fix round #2): same repo-local, gitignored ssh config + extra-nodes list every other
+# pool script now honours (see tools/pool_autodispatch.sh's header). ABSENT by default -> unchanged for anyone
+# who has not run `aws_pool_node.sh up`.
+POOL_SSH_CONFIG="${POOL_SSH_CONFIG:-$ROOT/research/queue/.pool_ssh_config}"
+_SSH_F=(); [ -f "$POOL_SSH_CONFIG" ] && _SSH_F=(-F "$POOL_SSH_CONFIG")
+EXTRA_NODES_FILE="${POOL_EXTRA_NODES_FILE:-$ROOT/research/queue/.pool_extra_nodes}"
+_EXTRA=""
+[ -f "$EXTRA_NODES_FILE" ] && _EXTRA=$(grep -vE '^[[:space:]]*(#|$)' "$EXTRA_NODES_FILE" 2>/dev/null | tr -s '[:space:]' ' ')
+for H in pool40 pool41 pool42 $_EXTRA; do
+  timeout 30 rsync -q -e "ssh ${_SSH_F[*]} -o BatchMode=yes -o ConnectTimeout=6" "$H:derisk-pool/sim/g5s_out/$GLOB" "$DEST/" 2>/dev/null
 done
 SHA=$(git rev-parse --short HEAD)
 N=0

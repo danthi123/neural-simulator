@@ -140,16 +140,15 @@ cmd_up() {
 
   IID=$(_state_get instance); KEY=$(_state_get key)
   [ -n "$IID" ] && [ -n "$KEY" ] || { echo "⛔ $STATE has no instance/key after launch" >&2; exit 1; }
-  IP=$(aws ec2 describe-instances --instance-ids "$IID" --region "$REGION" \
-        --query 'Reservations[].Instances[].PublicIpAddress' --output text 2>/dev/null)
-  [ -n "$IP" ] && [ "$IP" != "None" ] || { echo "⛔ instance $IID has no public IP" >&2; exit 1; }
-  echo "[aws-pool-node] instance=$IID ip=$IP"
 
-  # AUTO-TEARDOWN ON ANY FAILURE FROM HERE ON (2026-09-23 fix round). Before this, a provision/sanity failure
-  # left the instance LIVE + UNWIRED with only aws_idle_stop.sh's ~20min idle-STOP (not terminate) as a
-  # backstop -- billing continued and the SG/instance leaked until someone noticed. `_up_failed` terminates +
-  # deletes the SG + marks the state file torn down (so a retried `up NODE_NAME` is not blocked by
-  # "already recorded live") before propagating the failure.
+  # AUTO-TEARDOWN ON ANY FAILURE FROM HERE ON (2026-09-23 fix round; extended fix round #2 to cover the
+  # no-public-IP and interrupted-mid-`up` cases too). Before this, a provision/sanity failure left the instance
+  # LIVE + UNWIRED with only aws_idle_stop.sh's ~20min idle-STOP (not terminate) as a backstop -- billing
+  # continued and the SG/instance leaked until someone noticed. `_up_failed` terminates + deletes the SG + marks
+  # the state file torn down (so a retried `up NODE_NAME` is not blocked by "already recorded live") before
+  # propagating the failure. Defined (and its state read) BEFORE the no-public-IP check below, which used to
+  # `exit 1` directly and skip this teardown entirely -- an instance with no public IP still costs money and
+  # still needs its SG cleaned up.
   REGION_S=$(_state_get region); REGION_S="${REGION_S:-$REGION}"; SG=$(_state_get sg)
   _up_failed() {
     local reason="$1"
@@ -158,6 +157,16 @@ cmd_up() {
     { echo "# TORN DOWN $(date '+%F %T %Z') (auto, up failed: $reason)"; cat "$STATE"; } > "$STATE.tmp" && mv "$STATE.tmp" "$STATE"
     exit 1
   }
+  # INTERRUPTED MID-`up` (2026-09-23 fix round #2, LOW): Ctrl-C during the long pre-provision loop below used to
+  # leave a live, unregistered instance with a persistent Host block and no cleanup -- aws_idle_stop.sh only
+  # STOPs an idle instance, never terminates one, so an interrupted `up` billed indefinitely until someone
+  # noticed and ran `down` by hand. Route SIGINT/SIGTERM through the SAME auto-teardown as any other failure.
+  trap '_up_failed "interrupted (SIGINT/SIGTERM)"' INT TERM
+
+  IP=$(aws ec2 describe-instances --instance-ids "$IID" --region "$REGION" \
+        --query 'Reservations[].Instances[].PublicIpAddress' --output text 2>/dev/null)
+  [ -n "$IP" ] && [ "$IP" != "None" ] || _up_failed "instance $IID has no public IP"
+  echo "[aws-pool-node] instance=$IID ip=$IP"
 
   # PROVISION VIA A TEMPORARY ALIAS (the "only THEN write the ssh Host entry" ordering). A throwaway ssh
   # config, scoped to this one call, lets tools/pool_provision.sh -- unmodified in its own node-selection
@@ -250,17 +259,73 @@ cmd_down() {
   fi
   echo "[aws-pool-node] $NODE_NAME removed from $EXTRA_NODES_FILE (dispatcher will not target it again)."
 
+  # 1b. A STOPPED instance is started, synced, THEN terminated (2026-09-23 fix round #2). aws_idle_stop.sh only
+  #     STOPs an idle AWS pool node (never terminates), so `down` can be called against a node that is live in
+  #     AWS but unreachable over ssh purely because its network interface is down while stopped -- the OLD code
+  #     read that identically to "genuinely gone" and (see 2/3 below) would have terminated it unsynced. Start it
+  #     back up first so the rest of this function's drain/sync verification has something real to check.
+  if [ -n "$IID" ]; then
+    EC2_STATE=$(aws ec2 describe-instances --instance-ids "$IID" --region "$REGION_S" \
+        --query 'Reservations[].Instances[].State.Name' --output text 2>/dev/null)
+    case "$EC2_STATE" in
+      stopped)
+        echo "[aws-pool-node] $NODE_NAME's instance $IID is STOPPED — starting it to sync + terminate cleanly…"
+        aws ec2 start-instances --instance-ids "$IID" --region "$REGION_S" >/dev/null 2>&1
+        START_TIMEOUT="${AWS_POOL_START_TIMEOUT_S:-180}"; START_BEGIN=$(date +%s)
+        while :; do
+          if [ -f "$SSH_CONFIG" ] && grep -q "^Host $NODE_NAME\$" "$SSH_CONFIG" 2>/dev/null && \
+             timeout 8 ssh -F "$SSH_CONFIG" -o BatchMode=yes -o ConnectTimeout=6 "$NODE_NAME" true 2>/dev/null; then
+            echo "  [aws-pool-node] $NODE_NAME is back up and reachable."
+            break
+          fi
+          if [ $(( $(date +%s) - START_BEGIN )) -ge "$START_TIMEOUT" ]; then
+            echo "  ⛔ $NODE_NAME did not become reachable within ${START_TIMEOUT}s of starting it." >&2
+            [ "$FORCE" = 1 ] || { echo "     Refusing to terminate an instance we could not verify/sync. Re-run with --force to accept the loss." >&2; exit 1; }
+            break
+          fi
+          sleep "${AWS_POOL_START_POLL_S:-10}"
+        done
+        ;;
+      ""|terminated|shutting-down)
+        # Already gone at AWS's side (e.g. terminated out-of-band, or describe-instances itself unreachable) --
+        # there is nothing left to drain, sync or terminate. Mark torn down and stop; forcing a sync/terminate
+        # attempt against a non-existent instance would just fail the SAME way `down` already treats an
+        # unreachable node (refuse without --force), for no benefit.
+        echo "[aws-pool-node] $NODE_NAME's instance $IID is already '${EC2_STATE:-unknown}' at AWS -- nothing to sync/terminate." >&2
+        [ "$FORCE" = 1 ] || { echo "     Re-run with --force to mark it torn down anyway (no data can be recovered either way)." >&2; exit 1; }
+        _remove_host_block "$SSH_CONFIG" "$NODE_NAME"
+        { echo "# TORN DOWN $(date '+%F %T %Z') (instance already ${EC2_STATE:-unknown} at AWS)"; cat "$STATE"; } > "$STATE.tmp" && mv "$STATE.tmp" "$STATE"
+        echo "[aws-pool-node] ✓ $NODE_NAME marked torn down."
+        exit 0
+        ;;
+    esac
+  fi
+
   # 2. DRAIN — wait for any runner already in flight on this node to finish (2026-09-23 fix round). The root
   #    volume is DeleteOnTermination=true, so a job killed mid-run by `terminate` loses its output with no
   #    requeue; unregistering (step 1) stops NEW jobs landing but does nothing for one already running. Bounded
   #    wait (AWS_POOL_DRAIN_TIMEOUT_S, default 30 min matches the slowest routine pool job) so `down` cannot
   #    hang forever on a stuck runner -- --force (or the timeout) is the way out of that case.
+  #
+  #    BUGFIX (fix round #2): unreachable used to read as "0 runners" -- nothing to drain FOR -- which let an
+  #    unreachable node (a real ssh/network hiccup, or an instance aws_idle_stop stopped mid-cycle) sail through
+  #    the drain guard it exists to provide. Unreachable is UNKNOWN, not zero: retry until the SAME bounded
+  #    timeout, then refuse (like any other undrained state) unless --force.
   if [ -f "$SSH_CONFIG" ] && grep -q "^Host $NODE_NAME\$" "$SSH_CONFIG" 2>/dev/null; then
     DRAIN_TIMEOUT="${AWS_POOL_DRAIN_TIMEOUT_S:-1800}"
     DRAIN_START=$(date +%s)
     while :; do
       N_RUNNING=$(_running_runners ssh -F "$SSH_CONFIG" -o BatchMode=yes -o ConnectTimeout=6 "$NODE_NAME")
-      [ -z "${N_RUNNING:-}" ] && N_RUNNING=0   # unreachable -- nothing to drain FOR, do not hang on it
+      if [ -z "${N_RUNNING:-}" ]; then
+        if [ $(( $(date +%s) - DRAIN_START )) -ge "$DRAIN_TIMEOUT" ]; then
+          echo "  ⛔ $NODE_NAME unreachable for ${DRAIN_TIMEOUT}s during drain — runner state UNKNOWN (not assumed zero)." >&2
+          [ "$FORCE" = 1 ] || { echo "     Refusing to terminate (cannot verify nothing is still running). Re-run with --force to override." >&2; exit 1; }
+          break
+        fi
+        echo "  [aws-pool-node] $NODE_NAME unreachable during drain (runner count UNKNOWN), retrying…"
+        sleep "${AWS_POOL_DRAIN_POLL_S:-20}"
+        continue
+      fi
       [ "$N_RUNNING" -eq 0 ] 2>/dev/null && break
       if [ $(( $(date +%s) - DRAIN_START )) -ge "$DRAIN_TIMEOUT" ]; then
         echo "  ⛔ drain timed out after ${DRAIN_TIMEOUT}s with $N_RUNNING runner(s) still running on $NODE_NAME." >&2
@@ -272,10 +337,32 @@ cmd_down() {
     done
   fi
 
-  # 3. PULL RESULTS while the node (and its persistent ssh alias, untouched so far) is still reachable.
-  echo "[aws-pool-node] pulling any results $NODE_NAME already produced…"
+  # 3. PULL job_status.log FIRST (2026-09-23 fix round #2, MEDIUM lost-job observability): the crash/idle
+  #    detectors (tools/workflow_check.sh) read job_status.log LIVE over ssh -- once this node is terminated
+  #    (DeleteOnTermination=true), that history is gone forever, so a crash on an AWS node was never surfaced
+  #    anywhere. Best-effort/non-fatal (diagnostic, not the correctness gate below) -- a missing/unreachable log
+  #    must not block teardown by itself.
+  if [ -f "$SSH_CONFIG" ] && grep -q "^Host $NODE_NAME\$" "$SSH_CONFIG" 2>/dev/null; then
+    mkdir -p "$ROOT/research/queue/aws_pool_node_logs"
+    if timeout 30 scp -F "$SSH_CONFIG" -o BatchMode=yes -o ConnectTimeout=6 \
+        "$NODE_NAME:~/derisk-pool/sim/job_status.log" \
+        "$ROOT/research/queue/aws_pool_node_logs/${NODE_NAME}.job_status.log" 2>/dev/null; then
+      echo "[aws-pool-node] pulled $NODE_NAME's job_status.log (crash/verdict history preserved before terminate)."
+    else
+      echo "  (no job_status.log pulled from $NODE_NAME — none written yet, or already unreachable)" >&2
+    fi
+  fi
+
+  # 4. PULL RESULTS, STRICTLY, while the node (and its persistent ssh alias, untouched so far) is still
+  #    reachable. BUGFIX (fix round #2, the re-review's HIGH #4): pool_sync.sh's plain/default mode ALWAYS
+  #    exits 0 (by design — it is also the systemd-timer's best-effort cadence call, which must never abort on
+  #    one bad node) and swallows a per-revision rsync failure with `|| continue`, so SYNC_OK above was
+  #    STRUCTURALLY UNABLE to ever read 0 for the exact cases this guard exists for ("unreachable ... or an
+  #    instance already STOPPED"). --strict (POOL_SYNC_STRICT=1) is pool_sync.sh's new opt-in mode that DOES
+  #    fail loudly on those cases; only `down` (not the timer) turns it on.
+  echo "[aws-pool-node] pulling any results $NODE_NAME already produced (strict)…"
   SYNC_OK=1
-  POOL_NODES="$NODE_NAME" bash "$ROOT/tools/pool_sync.sh" || SYNC_OK=0
+  POOL_NODES="$NODE_NAME" POOL_SYNC_STRICT=1 bash "$ROOT/tools/pool_sync.sh" || SYNC_OK=0
   if [ "$SYNC_OK" = 0 ]; then
     echo "  ⛔ pool_sync reported an issue pulling results from $NODE_NAME." >&2
     if [ "$FORCE" = 1 ]; then
@@ -287,7 +374,8 @@ cmd_down() {
     fi
   fi
   # RE-CHECK for anything that started (or was still exiting) between the drain wait and here -- best-effort,
-  # same unreachable-means-nothing-to-drain-for treatment as step 2.
+  # same unreachable-is-UNKNOWN treatment as step 2 (an unreachable re-check here does not itself block, since
+  # the strict sync above already gated on reachability; this only catches a runner that started IN BETWEEN).
   if [ "$FORCE" != 1 ] && [ -f "$SSH_CONFIG" ] && grep -q "^Host $NODE_NAME\$" "$SSH_CONFIG" 2>/dev/null; then
     N_RUNNING=$(_running_runners ssh -F "$SSH_CONFIG" -o BatchMode=yes -o ConnectTimeout=6 "$NODE_NAME")
     if [ -n "${N_RUNNING:-}" ] && [ "$N_RUNNING" -gt 0 ] 2>/dev/null; then
@@ -296,10 +384,10 @@ cmd_down() {
     fi
   fi
 
-  # 4. TERMINATE + delete the SG — only after (1), (2) and (3) all either succeeded or were force-overridden.
+  # 5. TERMINATE + delete the SG — only after (1)-(4) all either succeeded or were force-overridden.
   _terminate_and_delete_sg "$IID" "$SG" "$REGION_S"
 
-  # 5. Remove the now-stale persistent ssh Host entry, and mark the state file torn down (never delete it —
+  # 6. Remove the now-stale persistent ssh Host entry, and mark the state file torn down (never delete it —
   #    same durability intent as .aws_gpu: the record of what ran and when survives).
   _remove_host_block "$SSH_CONFIG" "$NODE_NAME"
   { echo "# TORN DOWN $(date '+%F %T %Z')"; cat "$STATE"; } > "$STATE.tmp" && mv "$STATE.tmp" "$STATE"

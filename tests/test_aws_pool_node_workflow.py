@@ -97,7 +97,11 @@ def _make_down_stub_bin(tmp_path):
     aws_stub.chmod(aws_stub.stat().st_mode | stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH)
 
     ssh_stub = bin_dir / "ssh"
-    ssh_stub.write_text(_STUB.format(tag="SSH", log=log, body='exit 0'))
+    # Answers the drain loop's pgrep-style reachability probe with "0" (reachable, idle) -- a plain `exit 0`
+    # with no stdout would read as UNREACHABLE/UNKNOWN under the fix-round-#2 drain guard, hanging any test
+    # whose ssh_config actually has a Host entry for the node (tests that use a non-existent config skip the
+    # whole drain block and never notice either way).
+    ssh_stub.write_text(_STUB.format(tag="SSH", log=log, body='case "$*" in *pgrep*) echo 0 ;; esac\nexit 0'))
     ssh_stub.chmod(ssh_stub.stat().st_mode | stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH)
 
     rsync_stub = bin_dir / "rsync"
@@ -247,6 +251,174 @@ def test_down_force_terminates_anyway_despite_running_runners(tmp_path):
     assert state.read_text().startswith("# TORN DOWN")
 
 
+def _make_down_stub_bin_unreachable(tmp_path):
+    """ssh AND rsync both exit 255 unconditionally (an unreachable node), aws behaves normally otherwise (so the
+    describe-instances EC2-state probe reads some generic non-'stopped'/non-terminated state and does not
+    short-circuit) -- reproduces the re-review's literal repro of HIGH #4."""
+    bin_dir = tmp_path / "bin"
+    bin_dir.mkdir()
+    log = tmp_path / "combined.log"
+    log.write_text("")
+
+    aws_stub = bin_dir / "aws"
+    aws_stub.write_text(_STUB.format(tag="AWS", log=log, body='echo ok\nexit 0'))
+    aws_stub.chmod(aws_stub.stat().st_mode | stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH)
+
+    for name in ("ssh", "rsync", "scp"):
+        stub = bin_dir / name
+        stub.write_text(f"""#!/usr/bin/env bash
+echo "{name.upper()} $*" >> "{log}"
+exit 255
+""")
+        stub.chmod(stub.stat().st_mode | stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH)
+    return bin_dir, log
+
+
+def test_down_refuses_to_terminate_an_unreachable_node_without_force(tmp_path):
+    # THE ACTUAL DEFECT (re-review, HIGH #4, "prior HIGH #4 only partly resolved"): pool_sync.sh's PLAIN/default
+    # mode always exits 0 (`|| { echo UNREACHABLE; continue; }`, then unconditional success) -- so `down`'s old
+    # SYNC_OK check was structurally unable to ever read failure for "unreachable ... or an instance already
+    # STOPPED", which the guard's own comment claims to refuse on. Repro: ssh/rsync both fail (255); `down` must
+    # now refuse (via pool_sync's new --strict mode) rather than terminate an unsynced node.
+    bin_dir, log = _make_down_stub_bin_unreachable(tmp_path)
+    state = _write_state(tmp_path)
+    ssh_config = tmp_path / "ssh_config"
+    ssh_config.write_text("Include ~/.ssh/config\nHost testnode\n  HostName 1.2.3.4\n")
+    env = {
+        "AWS_POOL_NODE_STATE_FILE": str(state),
+        "POOL_EXTRA_NODES_FILE": str(tmp_path / "extra_nodes"),
+        "POOL_SSH_CONFIG": str(ssh_config),
+        "AWS_POOL_DRAIN_TIMEOUT_S": "1",
+        "AWS_POOL_DRAIN_POLL_S": "0",
+    }
+    (tmp_path / "extra_nodes").write_text("testnode\n")
+
+    res = _run(["down", "testnode"], bin_dir=bin_dir, tmp_path=tmp_path, env=env)
+    assert res.returncode == 1
+    assert "Refusing to terminate" in (res.stdout + res.stderr)
+    assert "ec2 terminate-instances" not in log.read_text()   # never reached -- refused before it
+    assert state.read_text().startswith("instance=")          # NOT marked torn down
+
+
+def test_down_force_terminates_an_unreachable_node_anyway(tmp_path):
+    bin_dir, log = _make_down_stub_bin_unreachable(tmp_path)
+    state = _write_state(tmp_path)
+    ssh_config = tmp_path / "ssh_config"
+    ssh_config.write_text("Include ~/.ssh/config\nHost testnode\n  HostName 1.2.3.4\n")
+    env = {
+        "AWS_POOL_NODE_STATE_FILE": str(state),
+        "POOL_EXTRA_NODES_FILE": str(tmp_path / "extra_nodes"),
+        "POOL_SSH_CONFIG": str(ssh_config),
+        "AWS_POOL_DRAIN_TIMEOUT_S": "1",
+        "AWS_POOL_DRAIN_POLL_S": "0",
+    }
+    (tmp_path / "extra_nodes").write_text("testnode\n")
+
+    res = _run(["down", "testnode", "--force"], bin_dir=bin_dir, tmp_path=tmp_path, env=env)
+    assert res.returncode == 0, res.stderr
+    assert "ec2 terminate-instances" in log.read_text()
+    assert state.read_text().startswith("# TORN DOWN")
+
+
+def _make_down_stub_bin_stopped_then_reachable(tmp_path):
+    """describe-instances reports 'stopped' on the FIRST call and 'running' after start-instances; ssh becomes
+    reachable once a marker file (written by the stubbed start-instances call) exists -- simulates a node that
+    aws_idle_stop.sh had stopped, coming back up after `down` starts it."""
+    bin_dir = tmp_path / "bin"
+    bin_dir.mkdir()
+    log = tmp_path / "combined.log"
+    log.write_text("")
+    started_marker = tmp_path / "started"
+
+    aws_stub = bin_dir / "aws"
+    aws_stub.write_text(f"""#!/usr/bin/env bash
+echo "AWS $*" >> "{log}"
+case "$*" in
+  *"ec2 start-instances"*) touch "{started_marker}"; echo ok; exit 0 ;;
+  *"describe-instances"*"State.Name"*)
+    if [ -f "{started_marker}" ]; then echo running; else echo stopped; fi
+    exit 0 ;;
+esac
+echo ok
+exit 0
+""")
+    aws_stub.chmod(aws_stub.stat().st_mode | stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH)
+
+    ssh_stub = bin_dir / "ssh"
+    ssh_stub.write_text(f"""#!/usr/bin/env bash
+echo "SSH $*" >> "{log}"
+[ -f "{started_marker}" ] || exit 255
+case "$*" in *pgrep*) echo 0 ;; esac
+exit 0
+""")
+    ssh_stub.chmod(ssh_stub.stat().st_mode | stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH)
+
+    for name in ("rsync", "scp"):
+        stub = bin_dir / name
+        stub.write_text(f"""#!/usr/bin/env bash
+echo "{name.upper()} $*" >> "{log}"
+[ -f "{started_marker}" ] || exit 255
+exit 0
+""")
+        stub.chmod(stub.stat().st_mode | stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH)
+    return bin_dir, log, started_marker
+
+
+def test_down_starts_a_stopped_instance_syncs_then_terminates(tmp_path):
+    # THE FIX (fix round #2, LOW/design item): "a STOPPED instance is started, synced, then terminated" -- not
+    # just refused as unreachable-forever.
+    bin_dir, log, started_marker = _make_down_stub_bin_stopped_then_reachable(tmp_path)
+    state = _write_state(tmp_path)
+    ssh_config = tmp_path / "ssh_config"
+    ssh_config.write_text("Include ~/.ssh/config\nHost testnode\n  HostName 1.2.3.4\n")
+    env = {
+        "AWS_POOL_NODE_STATE_FILE": str(state),
+        "POOL_EXTRA_NODES_FILE": str(tmp_path / "extra_nodes"),
+        "POOL_SSH_CONFIG": str(ssh_config),
+        "AWS_POOL_START_TIMEOUT_S": "5",
+        "AWS_POOL_START_POLL_S": "0",
+    }
+    (tmp_path / "extra_nodes").write_text("testnode\n")
+
+    res = _run(["down", "testnode"], bin_dir=bin_dir, tmp_path=tmp_path, env=env)
+    assert res.returncode == 0, res.stderr
+    assert started_marker.exists()                              # start-instances was called
+    assert "ec2 terminate-instances" in log.read_text()          # ...and it WAS eventually torn down
+    lines = log.read_text().splitlines()
+    start_idx = next(i for i, ln in enumerate(lines) if "ec2 start-instances" in ln)
+    terminate_idx = next(i for i, ln in enumerate(lines) if "ec2 terminate-instances" in ln)
+    assert start_idx < terminate_idx
+    assert state.read_text().startswith("# TORN DOWN")
+
+
+def test_down_pulls_job_status_log_before_terminating(tmp_path):
+    # MEDIUM (re-review, lost-job observability): a crash on this node must be surfaced, not destroyed with the
+    # root volume on terminate.
+    bin_dir, log = _make_down_stub_bin(tmp_path)
+    state = _write_state(tmp_path)
+    ssh_config = tmp_path / "ssh_config"
+    ssh_config.write_text("Include ~/.ssh/config\nHost testnode\n  HostName 1.2.3.4\n")
+    env = {
+        "AWS_POOL_NODE_STATE_FILE": str(state),
+        "POOL_EXTRA_NODES_FILE": str(tmp_path / "extra_nodes"),
+        "POOL_SSH_CONFIG": str(ssh_config),
+    }
+    (tmp_path / "extra_nodes").write_text("testnode\n")
+    # _make_down_stub_bin's scp is not stubbed -- add one that logs + succeeds, matching its ssh/rsync stubs.
+    scp_stub = bin_dir / "scp"
+    scp_stub.write_text(f'#!/usr/bin/env bash\necho "SCP $*" >> "{log}"\nexit 0\n')
+    scp_stub.chmod(scp_stub.stat().st_mode | stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH)
+
+    res = _run(["down", "testnode"], bin_dir=bin_dir, tmp_path=tmp_path, env=env)
+    assert res.returncode == 0, res.stderr
+    lines = log.read_text().splitlines()
+    scp_idx = next((i for i, ln in enumerate(lines) if ln.startswith("SCP ")), None)
+    terminate_idx = next((i for i, ln in enumerate(lines) if "ec2 terminate-instances" in ln), None)
+    assert scp_idx is not None, f"job_status.log was never pulled: {lines}"
+    assert terminate_idx is not None
+    assert scp_idx < terminate_idx
+
+
 def test_down_with_no_state_file_is_a_clean_noop(tmp_path):
     res = _run(["down", "ghost"], env={
         "AWS_POOL_NODE_STATE_FILE": str(tmp_path / "does-not-exist"),
@@ -371,6 +543,52 @@ def test_aws_cpu_launch_honors_the_torn_down_marker_and_proceeds_past_its_own_li
     assert res.returncode == 1
     assert "refused by tools/aws_budget.sh" in (res.stdout + res.stderr)
     assert "ec2 run-instances" not in aws_log.read_text()
+
+
+# --------------------------------------------------------------------- up auto-teardown (fix round #2, LOW)
+
+def test_up_auto_tears_down_when_the_instance_has_no_public_ip(tmp_path):
+    # THE DEFECT: `up` used to `exit 1` directly on a missing public IP, BEFORE `_up_failed` was even defined --
+    # skipping its terminate+delete-SG teardown entirely (an instance with no public IP still bills and still
+    # leaves an SG behind). aws_cpu_launch.sh's own stub below succeeds (writes a state file with instance+sg),
+    # and describe-instances answers with an empty/None PublicIpAddress.
+    bin_dir = tmp_path / "bin"
+    bin_dir.mkdir()
+    log = tmp_path / "aws.log"
+    log.write_text("")
+    state = tmp_path / ".aws_testnode"
+
+    aws_stub = bin_dir / "aws"
+    aws_stub.write_text(f"""#!/usr/bin/env bash
+echo "$*" >> "{log}"
+case "$*" in
+  *"describe-instances"*"--filters"*) echo '{{"Reservations": []}}'; exit 0 ;;   # aws_budget.sh's fetch: no project instances -> $0 spend
+  *"describe-instances"*"PublicIpAddress"*) echo "None"; exit 0 ;;
+  *"ec2 run-instances"*) echo "i-noip"; exit 0 ;;
+esac
+echo ok
+exit 0
+""")
+    aws_stub.chmod(aws_stub.stat().st_mode | stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH)
+
+    # aws_cpu_launch.sh (the REAL script `up` calls) shells out to `curl` for its own public IP -- stub it so
+    # the test makes no real network call.
+    curl_stub = bin_dir / "curl"
+    curl_stub.write_text("#!/usr/bin/env bash\necho 203.0.113.1\n")
+    curl_stub.chmod(curl_stub.stat().st_mode | stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH)
+
+    res = _run(["up", "testnode"], bin_dir=bin_dir, tmp_path=tmp_path, env={
+        "AWS_POOL_NODE_STATE_FILE": str(state),
+        "AWS_DAILY_CAP_USD": "10000",
+    })
+    # aws_cpu_launch.sh is the REAL script here (not stubbed) -- it calls the stubbed `aws` itself and writes a
+    # real-shaped state file (instance id from run-instances, sg from create-security-group, etc.), so by the
+    # time `up` reaches the public-IP check, IID/SG are genuinely populated from that state file.
+    assert res.returncode == 1
+    assert "no public IP" in (res.stdout + res.stderr)
+    assert "ec2 terminate-instances" in log.read_text(), "no-public-IP must still auto-teardown, not just exit"
+    assert state.exists() and state.read_text().startswith("# TORN DOWN"), \
+        "no-public-IP must mark the state file torn down so a retried `up` is not blocked"
 
 
 # ----------------------------------------------------------------------------------------------------- status

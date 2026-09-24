@@ -205,6 +205,82 @@ def test_pool_sync_isolated_revisions_ssh_call_does_not_double_the_ssh_binary(tm
         assert first_token != "ssh", f"ssh invoked with a literal 'ssh' as its own first argument: {ln!r}"
 
 
+def _make_failing_ssh_rsync_stub(tmp_path: Path) -> Path:
+    """ssh AND rsync both exit 255 unconditionally -- an unreachable node, or an instance stopped mid-cycle
+    (aws_idle_stop.sh), from pool_sync's point of view. No log needed; only the exit status matters here."""
+    bin_dir = tmp_path / "bin"
+    bin_dir.mkdir()
+    for name in ("ssh", "rsync"):
+        stub = bin_dir / name
+        stub.write_text("#!/usr/bin/env bash\nexit 255\n")
+        stub.chmod(stub.stat().st_mode | stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH)
+    return bin_dir
+
+
+def test_pool_sync_default_mode_still_exits_0_when_a_node_is_unreachable(tmp_path):
+    # BASELINE (must NOT change): the systemd-timer default behaviour stays "best-effort, always exit 0" -- only
+    # --strict/POOL_SYNC_STRICT=1 opts in to failing loudly.
+    bin_dir = _make_failing_ssh_rsync_stub(tmp_path)
+    res = _run(POOL_SYNC, [], bin_dir, {"POOL_NODES": "testnode", "POOL_SSH_CONFIG": str(tmp_path / "no-cfg")})
+    assert res.returncode == 0, res.stderr
+    assert "UNREACHABLE" in res.stdout
+
+
+def test_pool_sync_strict_flag_exits_nonzero_when_the_node_is_unreachable(tmp_path):
+    # HIGH (2026-09-23 fix round #2): `aws_pool_node.sh down` needs a way to tell "the pull actually worked" from
+    # "nothing came back because the node was gone" -- the plain default above cannot distinguish them (always 0).
+    bin_dir = _make_failing_ssh_rsync_stub(tmp_path)
+    res = _run(POOL_SYNC, ["--strict", "--node", "testnode"], bin_dir,
+               {"POOL_SSH_CONFIG": str(tmp_path / "no-cfg")})
+    assert res.returncode == 1
+    assert "STRICT" in (res.stdout + res.stderr)
+
+
+def test_pool_sync_strict_env_var_is_equivalent_to_the_flag(tmp_path):
+    bin_dir = _make_failing_ssh_rsync_stub(tmp_path)
+    res = _run(POOL_SYNC, [], bin_dir,
+               {"POOL_NODES": "testnode", "POOL_SSH_CONFIG": str(tmp_path / "no-cfg"), "POOL_SYNC_STRICT": "1"})
+    assert res.returncode == 1
+
+
+def test_pool_sync_strict_still_exits_0_when_the_node_is_actually_reachable(tmp_path):
+    # Strict must not be "always fail" -- a genuinely successful pull still exits 0.
+    bin_dir, ssh_log = _make_ssh_stub(tmp_path)
+    _make_rsync_stub(bin_dir, tmp_path)
+    res = _run(POOL_SYNC, ["--strict"], bin_dir,
+               {"POOL_NODES": "pool40", "POOL_SSH_CONFIG": str(tmp_path / "no-cfg")})
+    assert res.returncode == 0, res.stderr
+
+
+def test_pool_sync_strict_fails_when_a_per_revision_rsync_fails_but_the_main_pull_succeeds(tmp_path):
+    # The main pull can succeed while an isolated-revision pull fails independently (e.g. that sub-path got
+    # wedged/permission-denied on the node) -- strict mode must catch that too, not just total unreachability.
+    bin_dir, ssh_log = _make_ssh_stub(tmp_path)
+    bin_dir_ssh = bin_dir / "ssh"
+    # Override the generic stub: answer the node_is_idle-style probe normally, list ONE revision dir, but this
+    # is the rsync stub (not ssh) that must fail for that revision's pull specifically.
+    bin_dir_ssh.write_text(f"""#!/usr/bin/env bash
+echo "$*" >> "{ssh_log}"
+case "$*" in
+  *"ls -d derisk-pool/revisions"*) echo "derisk-pool/revisions/abc1234/research/findings/raw"; exit 0 ;;
+esac
+echo "8 0.10 0 20 0"
+exit 0
+""")
+    bin_dir_ssh.chmod(bin_dir_ssh.stat().st_mode | stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH)
+    rsync_stub = bin_dir / "rsync"
+    rsync_stub.write_text("""#!/usr/bin/env bash
+case "$*" in
+  *"revisions/abc1234"*) exit 255 ;;
+esac
+exit 0
+""")
+    rsync_stub.chmod(rsync_stub.stat().st_mode | stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH)
+    res = _run(POOL_SYNC, ["--strict"], bin_dir, {"POOL_NODES": "pool40", "POOL_SSH_CONFIG": str(tmp_path / "no-cfg")})
+    assert res.returncode == 1
+    assert "rsync FAILED" in res.stdout
+
+
 def test_pool_sync_survives_an_empty_or_comment_only_extra_nodes_file(tmp_path):
     # REGRESSION (2026-09-23 fix round): under `set -euo pipefail`, `_EXTRA=$(grep -vE ... | tr ...)` exits the
     # WHOLE SCRIPT with rc=1 and zero ssh/rsync calls whenever .pool_extra_nodes exists but is empty or holds
