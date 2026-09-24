@@ -51,6 +51,23 @@ review_corrections_applied:
     below so the bands stay mutually exclusive.
 ---
 
+# ⛔ RETRACTED (2026-09-23) — see [`docs/RETRACTED.md`](../../docs/RETRACTED.md)
+
+**The "never decisively run" premise below is FALSE**, and the bands were written non-blind (same commit as the
+seed-42 result they discuss, after it was observed). An untracked 6-seed decisive NO-GO of this exact readout
+already existed (`conjbind_attngatedsoft_n1152_heldoutpos_scramblenull_6seed.json`, 2026-09-17) and was missed by
+this document's own filesystem/git searches because it had never been committed. **Superseded by
+[`research/findings/2026-09-23-vision-attention-gated-soft-readout-spiking-port-collapse-NOGO-banked.md`](2026-09-23-vision-attention-gated-soft-readout-spiking-port-collapse-NOGO-banked.md)**,
+which banks BOTH 6-seed runs (12 of 12 seeds: `LEARNED_spkwta_held` at exact chance, `LEARNED_linscore_held`
+real) as a clean NO-GO of this readout METHOD, and which names the next mechanism
+(`research/findings/2026-09-23-vision-configural-binding-spiking-feedback-divisive-gain-control-readout-PREREGISTERED.md`).
+**The measured seed-42 data point itself (`LEARNED_spkwta_held=0.25`, `LEARNED_linscore_held=0.5208`,
+`spkport_cost=0.2708`) is NOT retracted** — it is correct and survives, folded into the superseding finding's
+table. Everything below this banner is kept for the audit trail; do not cite its "PREREGISTERED"/"no verdict"
+framing or its "largest gap" claim (both superseded).
+
+---
+
 # Attention-gated-soft readout: pre-registration (before any decisive-scale run)
 
 **This is a pre-registration only.** It fixes the mechanism, the exact command, the GO/NEGATIVE/NEUTRAL
