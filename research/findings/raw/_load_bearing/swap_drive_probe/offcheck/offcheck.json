@@ -1,0 +1,75 @@
+{
+  "branch_head": "7f90034dfbf48bfc128e3f9b1c7f7506bb3fe8a6",
+  "byte_identical_off": true,
+  "data": {
+    "arm_files_identical": true,
+    "branch_arm_sha256": {
+      "intact_a_hold_held.json": "cced1ed2bb4ef12fe5b8ab9dca7147b631c29a678e45f3236a18889a4a43e62d",
+      "intact_b_hold_held.json": "cced1ed2bb4ef12fe5b8ab9dca7147b631c29a678e45f3236a18889a4a43e62d",
+      "lesion_swap_drives_response.json": "ed2fbd35022d30c115d1ec5f74ced204e49cde68e483fdb30bf8680ac6427d95",
+      "lesion_swap_drives_response.json.rep0": "ed2fbd35022d30c115d1ec5f74ced204e49cde68e483fdb30bf8680ac6427d95"
+    },
+    "branch_row": {
+      "attributable_fraction": null,
+      "change_kind": "none",
+      "control_diffs": 0,
+      "diffs": [],
+      "faculty": "swap-drives-response",
+      "flag": "BRAIN_SWAP_DRIVES_LESION",
+      "flag_resolves": true,
+      "kind": "neural-lesion",
+      "lesion_reproduced": true,
+      "load_bearing": null,
+      "note": "",
+      "null_control_clean": true,
+      "treatment_diffs": 0,
+      "turn": "held",
+      "verdict": "not-exercised"
+    },
+    "per_faculty_identical": true,
+    "pinned_arm_sha256": {
+      "intact_a_hold_held.json": "cced1ed2bb4ef12fe5b8ab9dca7147b631c29a678e45f3236a18889a4a43e62d",
+      "intact_b_hold_held.json": "cced1ed2bb4ef12fe5b8ab9dca7147b631c29a678e45f3236a18889a4a43e62d",
+      "lesion_swap_drives_response.json": "ed2fbd35022d30c115d1ec5f74ced204e49cde68e483fdb30bf8680ac6427d95",
+      "lesion_swap_drives_response.json.rep0": "ed2fbd35022d30c115d1ec5f74ced204e49cde68e483fdb30bf8680ac6427d95"
+    },
+    "pinned_row": {
+      "attributable_fraction": null,
+      "change_kind": "none",
+      "control_diffs": 0,
+      "diffs": [],
+      "faculty": "swap-drives-response",
+      "flag": "BRAIN_SWAP_DRIVES_LESION",
+      "flag_resolves": true,
+      "kind": "neural-lesion",
+      "lesion_reproduced": true,
+      "load_bearing": null,
+      "note": "",
+      "null_control_clean": true,
+      "treatment_diffs": 0,
+      "turn": "held",
+      "verdict": "not-exercised"
+    }
+  },
+  "data_identical": true,
+  "data_source": {
+    "branch": "research/findings/raw/_load_bearing/swap_drive_probe/offcheck/branch_4d203f584",
+    "pinned": "research/findings/raw/_load_bearing/swap_drive_probe/offcheck/pinned_f35196e66"
+  },
+  "pinned_sha": "f35196e66",
+  "seed": 42,
+  "sensitivity": {
+    "artifact": "research/findings/raw/_load_bearing/swap_drive_probe/s42/lb.json",
+    "on_row_differs_from_off": true,
+    "on_turn": "sw_switch"
+  },
+  "static": {
+    "FACULTY_LESIONS": true,
+    "FACULTY_PROBES": true,
+    "PROBE_TURNS": true,
+    "turn_groups": true,
+    "turns": true
+  },
+  "static_identical": true,
+  "static_n_pinned_labels": 49
+}

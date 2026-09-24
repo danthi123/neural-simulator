@@ -331,6 +331,7 @@ def _parse_args(rest):
     load1 = None
     ncpu = None
     runner_active = None
+    minutes = None
     i = 0
     while i < len(rest):
         a = rest[i]
@@ -344,13 +345,15 @@ def _parse_args(rest):
             load1 = float(rest[i + 1]); i += 2
         elif a == "--ncpu" and i + 1 < len(rest):
             ncpu = int(rest[i + 1]); i += 2
+        elif a == "--minutes" and i + 1 < len(rest):
+            minutes = float(rest[i + 1]); i += 2
         elif a == "--runner-active" and i + 1 < len(rest):
             v = rest[i + 1].strip().lower()
             runner_active = v in ("1", "true", "yes"); i += 2
         else:
             i += 1
     return {"cap": cap, "type": itype, "threshold": threshold, "load1": load1, "ncpu": ncpu,
-            "runner_active": runner_active}
+            "runner_active": runner_active, "minutes": minutes}
 
 
 def main(argv=None):
@@ -362,7 +365,7 @@ def main(argv=None):
     cmd, rest = argv[0], argv[1:]
     opts = _parse_args(rest)
 
-    if cmd in ("check", "status", "enforce", "project-ids"):
+    if cmd in ("check", "status", "enforce", "project-ids", "young-ids"):
         instances = load_instances(_read_stdin())
 
     if cmd == "status":
@@ -416,6 +419,21 @@ def main(argv=None):
             state = (inst.get("State") or {}).get("Name")
             if is_project_instance(inst) and state in RUNNING_STATES:
                 print(inst.get("InstanceId"))
+        return 0
+
+    if cmd == "young-ids":
+        # Instances launched less than --minutes ago (2026-09-24): a freshly launched instance has no CloudWatch
+        # data, so idle-stop fell back to an instant SSH load reading, saw a machine waiting to be provisioned as
+        # idle with no runner, and STOPPED it within minutes of launch -- twice in one night.
+        grace = float(opts.get("minutes") or 0)
+        now = datetime.now(timezone.utc)
+        for inst in instances:
+            lt = inst.get("LaunchTime")
+            try:
+                if lt and (now - _parse_iso(lt)).total_seconds() < grace * 60:
+                    print(inst.get("InstanceId"))
+            except ValueError:
+                print(inst.get("InstanceId"))    # unparseable launch time -> treat as young (keep)
         return 0
 
     if cmd == "cpu-idle":

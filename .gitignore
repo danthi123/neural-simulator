@@ -214,3 +214,5 @@ research/queue/.pool_extra_nodes
 # ignore every `.aws_*` file and carve back out research/queue/.aws_gpu (the single-instance lane), which stays
 # TRACKED on purpose.
 research/queue/.aws_*
+# Live queue / lock state (2026-09-24): untracked so no checkout, merge, restore or stash can rewrite it mid-run
+research/queue/pool.queue research/queue/pool.queue.claims research/queue/pool.queue.running research/queue/pool.queue.done research/queue/pool.queue.lock research/queue/pool.queue.malformed research/queue/pool.running research/queue/gpu.queue research/queue/gpu.queue.running research/queue/gpu.queue.done research/queue/gpu_queue.dpid research/queue/.gpu.queue.lock research/queue/.gpu_daemon.lock research/queue/.gpu_queue.lock research/queue/.opsweep_keepalive.lock research/queue/.last_cpu_dispatch research/queue/.qwen_llm_active research/queue/.autofill_cycle research/queue/.agent_waiver
