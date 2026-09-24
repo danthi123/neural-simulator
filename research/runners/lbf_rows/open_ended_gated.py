@@ -20,8 +20,8 @@ the reply template's only input? If yes the row is an integrity smoke and is exc
   * open-ended-turn-affect-drive -- BRAIN_AFFECT_LESION closes the Gate-B ladder's `affect_out` transmission gate; the
     differential then feeds the salience transduction and the BG race. bg_action / reply_kind are the race's commit.
     The organ copy `valence_sign` IS set directly by this lesion, so it is a TRACE field and NOT listed here. PASS.
-  * open-ended-turn-gnw-drive -- BRAIN_GNW_2ORGAN_WS_LESION zeroes the GNW workspace self-recurrence; whether the
-    covered recall IGNITES is the workspace's spiking dynamics (organ A still recalls). `route` is the host label of the
+  * open-ended-turn-gnw-drive (probe turn 'chase', PREREG Amendment 2) -- BRAIN_GNW_2ORGAN_WS_LESION zeroes the GNW
+    workspace self-recurrence; whether the covered recall IGNITES is the workspace's spiking dynamics (organ A still recalls). `route` is the host label of the
     gate's committed-or-not result; bg_action / reply_kind follow through the race. `familiarity_band` is the organ copy
     of the route and is NOT listed. PASS.
 Each artifact carries `open_ended_gated.cut` (the saliences actually applied, whether they equal the baseline, the
@@ -45,7 +45,8 @@ EXTRA_LESIONS = {
     "open-ended-turn-gnw-drive": dict(
         flag="BRAIN_GNW_2ORGAN_WS_LESION", value="1", kind="neural-lesion",
         note="OPT-IN row (needs BRAIN_OPEN_ENDED_GATED=1). GNW workspace self-recurrence zeroed -> a covered recall "
-             "cannot ignite. Measured on the KB-hit 'sw_open' turn ('what does the dog chase', a boot fact): intact "
+             "cannot ignite. Measured on the default-roster KB-hit 'chase' turn ('what does the dog chase all the "
+             "way', a boot fact; PREREG Amendment 2 -- the label-only 'sw_open' is parked by the AG-REG hook): intact "
              "route grounded, lesion route withheld is the expected direction; the measurement decides."),
 }
 
@@ -54,7 +55,7 @@ EXTRA_PROBES = [
      ["open_ended_gated.bg_action", "open_ended_gated.reply_kind", "open_ended_gated.marker_level"], False),
     ("open-ended-turn-affect-drive", "emo",
      ["open_ended_gated.bg_action", "open_ended_gated.reply_kind"], False),
-    ("open-ended-turn-gnw-drive", "sw_open",
+    ("open-ended-turn-gnw-drive", "chase",
      ["open_ended_gated.route", "open_ended_gated.bg_action", "open_ended_gated.reply_kind"], False),
 ]
 

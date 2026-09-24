@@ -127,7 +127,7 @@ not-exercised. That is reported as opt-in, never as not-load-bearing.
 |---|---|---|---|---|
 | open-ended-turn-faculty-drive | BRAIN_OPEN_ENDED_GATE_LESION=1 | neural-lesion (afferent cut into the BG race + marker WTA) | `unknown` | `open_ended_gated.bg_action`, `open_ended_gated.reply_kind`, `open_ended_gated.marker_level` |
 | open-ended-turn-affect-drive | BRAIN_AFFECT_LESION=1 | neural-lesion (Gate-B `affect_out` gate 0) | `emo` | `open_ended_gated.bg_action`, `open_ended_gated.reply_kind` |
-| open-ended-turn-gnw-drive | BRAIN_GNW_2ORGAN_WS_LESION=1 | neural-lesion (workspace recurrence 0) | `sw_open` | `open_ended_gated.route`, `open_ended_gated.bg_action`, `open_ended_gated.reply_kind` |
+| open-ended-turn-gnw-drive | BRAIN_GNW_2ORGAN_WS_LESION=1 | neural-lesion (workspace recurrence 0) | `sw_open` (Amendment 2: `chase`) | `open_ended_gated.route`, `open_ended_gated.bg_action`, `open_ended_gated.reply_kind` |
 
 **Pass-by-construction audit (blocking; recorded in the row module).**
 - No lesion writes a measured field. Each lesion sets an input current or a synaptic gate upstream of a spiking
@@ -198,3 +198,26 @@ The Part A ask ("what might a dog chase") is affectively neutral, so it is not e
 **Added descriptive read (not a gate).** `python -m research.runners._open_ended_gated_turn_gate --bg-curve` at the
 gate seeds gives P(SPEAK) at the intact and at the cut saliences over 8 races per point. It is reported beside the
 single-shot rows, so that a row read as not-load-bearing can be told apart from an afferent that carries no information.
+
+## Amendment 2 (2026-09-24, BEFORE any gate-seed run of Part A or Part B)
+
+No gate seed (42/43/44/100/101/102) has run under this document. Everything below was decided on dev seed 7.
+
+**What changes: the probe turn of `open-ended-turn-gnw-drive`, from `sw_open` to `chase`.** Same lesion, same
+decision fields (`route`, `bg_action`, `reply_kind`), same scoring.
+
+**Why (an integration defect, disclosed).** The AG-REG row hook merged on main (`338d9ecee`) parks any row whose
+probe turn is not in `onebrain_regression_battery.PROBE_TURNS`. `sw_open` is a label-only turn, so as registered
+the row would never enter the LBF registry, and Part B would measure 2 of its 3 rows.
+`chase` ("what does the dog chase all the way") is in the default roster and asks about the same boot fact.
+
+**Dev-seed evidence for the new turn (seed 7, not governed).** On `chase` the GNW workspace lesion moves the route
+grounded -> withheld, the BG action SPEAK -> STAY_SILENT and the reply kind grounded -> withheld_abstain, with the
+intact rebuild identical to intact
+(`research/findings/raw/_open_ended_gated/smoke_gnwturn/s7/smoke_summary.json`, `changes_vs_intact.gnw_lesion.chase`).
+That is the same change `sw_open` showed
+(`research/findings/raw/_open_ended_gated/smoke_amend1/s7/smoke_summary.json`, `changes_vs_intact.gnw_lesion.sw_open`).
+The other two default-roster candidates read were `question` and `open`. They route off-KB and hold in every arm, so
+they cannot carry this row.
+
+**What does NOT change.** Part A, the other two rows, every lesion construction, and every rule.

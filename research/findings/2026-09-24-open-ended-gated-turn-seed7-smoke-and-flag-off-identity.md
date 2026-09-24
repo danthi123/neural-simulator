@@ -98,8 +98,14 @@ As registered, Part B would measure 2 of its 3 rows, and the one row that moved 
 Fixing it needs either the hook's owner to accept label-only turns from `_TURN_BY_LABEL` (the LBF's `turn_group`
 already resolves them), or a pre-registration amendment that points the row at a default-roster turn.
 Such an amendment needs a dev-seed read of that turn first.
-A seed-7 read of the default-roster candidates `chase`, `question` and `open` under the GNW lesion was launched
-for that purpose (`research/findings/raw/_open_ended_gated/smoke_gnwturn/`).
+
+**Resolved by Amendment 2 (before any gate-seed run).** A seed-7 read of the default-roster candidates `chase`,
+`question` and `open` under the GNW lesion, at `3ef5ec08` on pool2 (LTM off), shows the `sw_open` change on `chase`.
+The route goes grounded -> withheld, the BG action SPEAK -> STAY_SILENT, and the reply kind grounded -> withheld_abstain.
+The intact rebuild is identical to intact
+(`research/findings/raw/_open_ended_gated/smoke_gnwturn/s7/smoke_summary.json`, `changes_vs_intact.gnw_lesion.chase`).
+`question` and `open` route off-KB and hold in every arm. The pre-registration's Amendment 2 re-points the row to
+`chase`, and the hook now merges all three rows (`LBF_ROW_MERGE_REPORT.keys_added`, none parked).
 
 ## What this does not show
 
