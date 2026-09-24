@@ -1,0 +1,37 @@
+{
+ "run_id": "1790267051-416505",
+ "runner": "research/runners/_xedge_in_wave3_verify.py",
+ "argv": [
+  "/home/ubuntu/derisk-pool/revisions/d4da11af689ca824049c78965313267ab3ed3e68/research/runners/_xedge_in_wave3_verify.py",
+  "--seed",
+  "7",
+  "--g2-run",
+  "alone_A",
+  "--out",
+  "research/findings/raw/_xedge_in_wave3/s7/g2t_alone_A.json"
+ ],
+ "git_sha": "d4da11af689ca824049c78965313267ab3ed3e68",
+ "git_dirty": false,
+ "source_kind": "git_archive",
+ "source_manifest_sha256": "564f32f12a38fc41e5e13c2fa93861d134b97ca1bed710b4742094ea770f7d6e",
+ "source_manifest_verified_at_start": true,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": true,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-24T16:24:11",
+ "env": {
+  "POOL_JOB_ID": "a4-g2t-alone_A-s7",
+  "OPENBLAS_NUM_THREADS": "1",
+  "SIM_BACKEND": "numpy",
+  "POOL_JOB_MEM_GB": "2",
+  "CUDA_VISIBLE_DEVICES": "",
+  "OMP_NUM_THREADS": "1",
+  "MKL_NUM_THREADS": "1"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": false,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_xedge_in_wave3/s7/g2t_alone_A.json"
+}
