@@ -1,0 +1,849 @@
+{
+  "chase": {
+    "answer": "I don't know about that. \u2014 worth going further here.",
+    "abstained": true,
+    "recalled_svo": null,
+    "derived": false,
+    "derived_from": null,
+    "verified": false,
+    "renderer": "template-stub (GPU-free)",
+    "brain": "tiny-demo",
+    "source": "tiny-demo",
+    "rich": false,
+    "activity": {
+      "roles": [
+        {
+          "role": "agent",
+          "word": "dog",
+          "confidence": 1.0,
+          "margin": 0.6769882788015668,
+          "margin_spiking": null,
+          "cue": true,
+          "asserted": "dog"
+        },
+        {
+          "role": "action",
+          "word": "chase",
+          "confidence": 1.0,
+          "margin": 0.6652524172418898,
+          "margin_spiking": null,
+          "cue": true,
+          "asserted": "chase"
+        },
+        {
+          "role": "patient",
+          "word": "cat",
+          "confidence": 1.0,
+          "margin": 0.5482664118099966,
+          "margin_spiking": null,
+          "cue": false
+        },
+        {
+          "role": "attribute",
+          "word": "use",
+          "confidence": 1.0,
+          "margin": 0.12732984488836271,
+          "margin_spiking": null,
+          "cue": false
+        },
+        {
+          "role": "polarity",
+          "word": "AFFIRM",
+          "confidence": 1.0,
+          "margin": 0.9999999999999997,
+          "margin_spiking": null,
+          "cue": false
+        }
+      ],
+      "matched_fact_index": 3,
+      "n_facts_scanned": 5,
+      "abstained": false,
+      "rf": {
+        "n_readout_neurons": 6880,
+        "frac_fired": 0.11177325581395349,
+        "mean_magnitude": 41856.81573139991
+      },
+      "composer": "onebrain"
+    },
+    "provenance": null,
+    "affect": {
+      "on": true,
+      "lesioned": false,
+      "composer": "onebrain",
+      "differential": 0.0,
+      "valence_sign": "0",
+      "tone_level": 0,
+      "tone_token": "",
+      "forthcomingness": {
+        "max_sentences": 4,
+        "max_elaborations": 2
+      },
+      "manner_template": "",
+      "appraisal_valence": 0.0,
+      "appraisal_arousal": 0.0,
+      "appraisal_hits": [],
+      "pos_rate": 0.0,
+      "neg_rate": 0.0
+    },
+    "comprehension": null,
+    "surprise": null,
+    "metacog": null,
+    "worldmodel": null,
+    "curiosity": {
+      "on": true,
+      "lesioned": false,
+      "novelty": 0.0,
+      "want_hz": 0.0,
+      "threshold": 19.09722222222222,
+      "curious": false,
+      "calib": {
+        "want_novel_hz": 38.19444444444444,
+        "want_familiar_hz": 0.0,
+        "threshold_hz": 19.09722222222222,
+        "novel_signal": 0.95,
+        "familiar_signal": 0.0,
+        "read_reps": 4
+      },
+      "topic": "dog",
+      "graded_novelty": {
+        "on": true,
+        "value": 0.0,
+        "lesioned": false
+      },
+      "curiosity_da": {
+        "on": true,
+        "lesioned": false,
+        "da_level": 0.6388250495114226,
+        "da_tonic": 0.5,
+        "k_da": 1.5,
+        "da_crave_gain": 1.2082375742671339,
+        "base_threshold": 19.09722222222222,
+        "eff_threshold": 15.80585029712041,
+        "want_hz": 0.0,
+        "want_eff_hz": 0.0,
+        "curious": false
+      }
+    },
+    "multiref": null,
+    "noncontradiction": null,
+    "reconsolidation": null,
+    "pragmatic": null,
+    "episodic": null,
+    "affect_drives": {
+      "acted": true,
+      "turn": 1,
+      "lesioned": false,
+      "ema_valence": 0.0,
+      "ema_arousal": 0.0,
+      "body_h": 0.5,
+      "body_a": 0.0,
+      "mood": -0.0012916666666666632,
+      "felt_arousal": 0.0,
+      "level": 0,
+      "high_arousal": false,
+      "lead": "",
+      "reason": "neutral_hold",
+      "seed": 7,
+      "vplus_rate": 0.03779166666666667,
+      "vminus_rate": 0.03908333333333333
+    },
+    "swap_drives": {
+      "acted": true,
+      "turn": 1,
+      "topic": "dog",
+      "swapped": false,
+      "held_topic_before": null,
+      "held_topic": "dog",
+      "evicted_topic": null,
+      "reason": "first_thought",
+      "seed": 7,
+      "lesioned": false,
+      "proposed_slot": 0,
+      "held_slot": 0,
+      "winner_slot": 0,
+      "n_ignited_post": 1,
+      "held_rate_post": 0.3333333333333333,
+      "mm_peak": 0.011111111111111112,
+      "boost_max": 0.008333333333333333,
+      "on": true,
+      "lead": "",
+      "new_topic": null,
+      "reason_lead": "first_thought"
+    },
+    "common_ground_drives": {
+      "on": true,
+      "topic": "dog",
+      "slot": 0,
+      "decision": "introduce",
+      "in_common_ground": false,
+      "first_mention": true,
+      "reduce_rate": 0.0,
+      "introduce_rate": 0.051666666666666666,
+      "evidence_rate": 0.0,
+      "margin": -0.051666666666666666,
+      "lesioned": false,
+      "lead": "",
+      "reason_lead": "introduce"
+    },
+    "da_drives": {
+      "acted": true,
+      "turn": 1,
+      "lesioned": false,
+      "turn_engagement": 0.618181818181818,
+      "ema_engagement": 0.3709090909090908,
+      "afferent_pA": 519.2727272727271,
+      "da_level": 0.6388250495114226,
+      "snc_firing": 0.09916666666666656,
+      "mode": "focus",
+      "lead": " \u2014 worth going further here.",
+      "reason": "engaged",
+      "seed": 7,
+      "shared_salience": {
+        "raw": 0.7884615384615385,
+        "want_hz": 23.611111111111107,
+        "normalized": 0.618181818181818,
+        "lesioned": false,
+        "calib": {
+          "want_novel_hz": 38.19444444444444,
+          "want_familiar_hz": 0.0,
+          "threshold_hz": 19.09722222222222,
+          "novel_signal": 0.95,
+          "familiar_signal": 0.0,
+          "read_reps": 4
+        },
+        "on": true
+      },
+      "spiking_novelty": {
+        "novelty": 0.9807692307692308,
+        "n_tokens": 4,
+        "per_word_freshness": [
+          1.0,
+          1.0,
+          1.0,
+          0.9230769230769231
+        ],
+        "fresh_ref": 26.0,
+        "n_channels": 64,
+        "lesioned": false,
+        "on": true
+      },
+      "on": true
+    },
+    "da_encoding": {
+      "on": true,
+      "g": 1.921558954119388,
+      "da_level": 0.6388250495114226,
+      "lesioned": false
+    },
+    "open_ended_gated": {
+      "on": true,
+      "lesioned": false,
+      "route": "withheld",
+      "reply_kind": "withheld_abstain",
+      "spoke": false,
+      "bg_action": "STAY_SILENT",
+      "bg": {
+        "action": "STAY_SILENT",
+        "committed": true,
+        "decision_step": 78,
+        "simultaneous": false,
+        "motor_spikes": [
+          0,
+          15
+        ],
+        "loser_ratio": 0.0
+      },
+      "marker_level": 0,
+      "marker": {
+        "read": false,
+        "level": 0,
+        "word": ""
+      },
+      "familiarity_band": "novel",
+      "valence_sign": "0",
+      "salience_speak": 0.0,
+      "salience_silent": 1.0,
+      "gate": {
+        "svo_kind": null,
+        "svo": null,
+        "gnw_source": "_last_three_organ",
+        "gnw": {
+          "routable": true,
+          "authored_by": "three_organ_bus",
+          "ignited": false,
+          "n_ignited": 0,
+          "committed": null,
+          "abstain_reason": "no_ignition",
+          "organ_a_recall": "cat",
+          "organ_b_confirmed": true,
+          "ws_lesion": true,
+          "organb_lesion": false
+        },
+        "delib": {
+          "acted": false,
+          "reason": "already_abstained",
+          "decision": null,
+          "abstained": false,
+          "n_candidates": null
+        },
+        "multistep": {
+          "acted": false,
+          "reason": "already_abstained"
+        }
+      },
+      "n_gate_calls": 1,
+      "topic": null,
+      "n_ltm_facts": 0,
+      "cut": {
+        "row_lesion": false,
+        "salience_intact": [
+          0.0,
+          1.0
+        ],
+        "salience_applied": [
+          0.0,
+          1.0
+        ],
+        "baseline_applied": false,
+        "marker_lesion": false,
+        "affect_lesioned": false,
+        "ws_lesion": true
+      }
+    }
+  },
+  "question": {
+    "answer": "Honestly \u2014 (Holding \u2014 nothing salient to add to that.) My curiosity is piqued \u2014 I haven't learned about wolf yet: what can you tell me about wolf?",
+    "abstained": true,
+    "recalled_svo": null,
+    "derived": false,
+    "derived_from": null,
+    "verified": false,
+    "renderer": "template-stub (GPU-free)",
+    "brain": "tiny-demo",
+    "source": "tiny-demo",
+    "rich": false,
+    "activity": {
+      "roles": [
+        {
+          "role": "agent",
+          "word": "wolf",
+          "confidence": null,
+          "margin": null,
+          "margin_spiking": null,
+          "cue": true,
+          "asserted": "wolf"
+        },
+        {
+          "role": "action",
+          "word": "bite",
+          "confidence": null,
+          "margin": null,
+          "margin_spiking": null,
+          "cue": true,
+          "asserted": "bite"
+        }
+      ],
+      "matched_fact_index": null,
+      "n_facts_scanned": 5,
+      "abstained": true,
+      "rf": {
+        "n_readout_neurons": 6880,
+        "frac_fired": 0.16744186046511628,
+        "mean_magnitude": 1442.320846770217
+      },
+      "composer": "onebrain"
+    },
+    "provenance": null,
+    "affect": {
+      "on": true,
+      "lesioned": false,
+      "composer": "onebrain",
+      "differential": 0.0,
+      "valence_sign": "0",
+      "tone_level": 0,
+      "tone_token": "",
+      "forthcomingness": {
+        "max_sentences": 4,
+        "max_elaborations": 2
+      },
+      "manner_template": "",
+      "appraisal_valence": -0.3,
+      "appraisal_arousal": 0.345,
+      "appraisal_hits": [
+        "bite"
+      ],
+      "pos_rate": 0.0,
+      "neg_rate": 0.0
+    },
+    "comprehension": null,
+    "surprise": null,
+    "metacog": null,
+    "worldmodel": {
+      "on": true,
+      "lesioned": false,
+      "kind": "update",
+      "context_sign": -1,
+      "predicted_next_sign": -1,
+      "pred_margin": -462.84722222222223
+    },
+    "curiosity": {
+      "on": true,
+      "lesioned": false,
+      "novelty": 0.9718985759567133,
+      "want_hz": 38.88888888888888,
+      "threshold": 19.09722222222222,
+      "curious": true,
+      "calib": {
+        "want_novel_hz": 38.19444444444444,
+        "want_familiar_hz": 0.0,
+        "threshold_hz": 19.09722222222222,
+        "novel_signal": 0.95,
+        "familiar_signal": 0.0,
+        "read_reps": 4
+      },
+      "topic": "wolf",
+      "graded_novelty": {
+        "on": true,
+        "value": 0.9718985759567133,
+        "lesioned": false
+      },
+      "curiosity_da": {
+        "on": true,
+        "lesioned": false,
+        "da_level": 0.48939413275967814,
+        "da_tonic": 0.5,
+        "k_da": 1.5,
+        "da_crave_gain": 0.9840911991395171,
+        "base_threshold": 19.09722222222222,
+        "eff_threshold": 19.405947577745543,
+        "want_hz": 38.88888888888888,
+        "want_eff_hz": 38.2702132998701,
+        "curious": true
+      }
+    },
+    "multiref": null,
+    "noncontradiction": null,
+    "reconsolidation": null,
+    "pragmatic": null,
+    "episodic": null,
+    "affect_drives": {
+      "acted": true,
+      "turn": 1,
+      "lesioned": false,
+      "ema_valence": -0.3,
+      "ema_arousal": 0.345,
+      "body_h": 0.35,
+      "body_a": 0.5175,
+      "mood": -0.059625,
+      "felt_arousal": 0.04145833333333333,
+      "level": -2,
+      "high_arousal": false,
+      "lead": "Honestly \u2014 ",
+      "reason": "graded_affect",
+      "seed": 7,
+      "vplus_rate": 0.001,
+      "vminus_rate": 0.060625
+    },
+    "swap_drives": {
+      "acted": false,
+      "turn": 1,
+      "topic": null,
+      "swapped": false,
+      "held_topic_before": null,
+      "held_topic": null,
+      "evicted_topic": null,
+      "reason": "no_topic_hold",
+      "seed": 7,
+      "lesioned": false,
+      "on": true,
+      "lead": "",
+      "new_topic": null,
+      "reason_lead": "no_topic_hold"
+    },
+    "common_ground_drives": {
+      "on": true,
+      "topic": null,
+      "decision": null,
+      "reason": "no_grounded_topic",
+      "lead": "",
+      "lesioned": false,
+      "reason_lead": "no_referent"
+    },
+    "da_drives": {
+      "acted": true,
+      "turn": 1,
+      "lesioned": false,
+      "turn_engagement": 0.43636363636363634,
+      "ema_engagement": 0.2618181818181818,
+      "afferent_pA": 366.5454545454545,
+      "da_level": 0.48939413275967814,
+      "snc_firing": 0.07083333333333328,
+      "mode": "neutral",
+      "lead": "",
+      "reason": "low_engagement",
+      "seed": 7,
+      "shared_salience": {
+        "raw": 0.7,
+        "want_hz": 16.666666666666664,
+        "normalized": 0.43636363636363634,
+        "lesioned": false,
+        "calib": {
+          "want_novel_hz": 38.19444444444444,
+          "want_familiar_hz": 0.0,
+          "threshold_hz": 19.09722222222222,
+          "novel_signal": 0.95,
+          "familiar_signal": 0.0,
+          "read_reps": 4
+        },
+        "on": true
+      },
+      "spiking_novelty": {
+        "novelty": 1.0,
+        "n_tokens": 2,
+        "per_word_freshness": [
+          1.0,
+          1.0
+        ],
+        "fresh_ref": 26.0,
+        "n_channels": 64,
+        "lesioned": false,
+        "on": true
+      },
+      "on": true
+    },
+    "da_encoding": {
+      "on": true,
+      "g": 1.702516033547114,
+      "da_level": 0.48939413275967814,
+      "lesioned": false
+    },
+    "open_ended_gated": {
+      "on": true,
+      "lesioned": false,
+      "route": "offkb",
+      "reply_kind": "hold",
+      "spoke": false,
+      "bg_action": "STAY_SILENT",
+      "bg": {
+        "action": "STAY_SILENT",
+        "committed": true,
+        "decision_step": 111,
+        "simultaneous": false,
+        "motor_spikes": [
+          0,
+          27
+        ],
+        "loser_ratio": 0.0
+      },
+      "marker_level": -2,
+      "marker": {
+        "read": true,
+        "level": -2,
+        "word": "Honestly",
+        "margin": 0.16180555555555556,
+        "lesioned": false,
+        "window_ms": 500
+      },
+      "familiarity_band": "novel",
+      "valence_sign": "0",
+      "salience_speak": 0.0,
+      "salience_silent": 1.0,
+      "gate": {
+        "svo_kind": null,
+        "svo": null,
+        "gnw_source": "_last_three_organ",
+        "gnw": {
+          "routable": true,
+          "authored_by": "three_organ_bus",
+          "ignited": false,
+          "n_ignited": 0,
+          "committed": null,
+          "abstain_reason": "primary_recall_miss",
+          "organ_a_recall": null,
+          "organ_b_confirmed": null,
+          "ws_lesion": true,
+          "organb_lesion": false
+        },
+        "delib": {
+          "acted": false,
+          "reason": "already_abstained",
+          "decision": null,
+          "abstained": false,
+          "n_candidates": null
+        },
+        "multistep": {
+          "acted": false,
+          "reason": "not_chase_form"
+        }
+      },
+      "n_gate_calls": 1,
+      "topic": "what does the wolf bite",
+      "n_ltm_facts": 0,
+      "cut": {
+        "row_lesion": false,
+        "salience_intact": [
+          0.0,
+          1.0
+        ],
+        "salience_applied": [
+          0.0,
+          1.0
+        ],
+        "baseline_applied": false,
+        "marker_lesion": false,
+        "affect_lesioned": false,
+        "ws_lesion": true
+      }
+    }
+  },
+  "open": {
+    "answer": "(Holding \u2014 nothing salient to add to that.) My curiosity is piqued \u2014 I haven't learned about might yet: what can you tell me about might?",
+    "abstained": true,
+    "recalled_svo": null,
+    "derived": false,
+    "derived_from": null,
+    "verified": false,
+    "renderer": "template-stub (GPU-free)",
+    "brain": "tiny-demo",
+    "source": "tiny-demo",
+    "rich": false,
+    "activity": null,
+    "provenance": null,
+    "affect": {
+      "on": true,
+      "lesioned": false,
+      "composer": "onebrain",
+      "differential": 0.0,
+      "valence_sign": "0",
+      "tone_level": 0,
+      "tone_token": "",
+      "forthcomingness": {
+        "max_sentences": 4,
+        "max_elaborations": 2
+      },
+      "manner_template": "",
+      "appraisal_valence": 0.0,
+      "appraisal_arousal": 0.0,
+      "appraisal_hits": [],
+      "pos_rate": 0.0,
+      "neg_rate": 0.0
+    },
+    "comprehension": null,
+    "surprise": null,
+    "metacog": null,
+    "worldmodel": null,
+    "curiosity": {
+      "on": true,
+      "lesioned": false,
+      "novelty": 0.9875595549244103,
+      "want_hz": 38.88888888888888,
+      "threshold": 19.09722222222222,
+      "curious": true,
+      "calib": {
+        "want_novel_hz": 38.19444444444444,
+        "want_familiar_hz": 0.0,
+        "threshold_hz": 19.09722222222222,
+        "novel_signal": 0.95,
+        "familiar_signal": 0.0,
+        "read_reps": 4
+      },
+      "topic": "might",
+      "graded_novelty": {
+        "on": true,
+        "value": 0.9875595549244103,
+        "lesioned": false
+      },
+      "curiosity_da": {
+        "on": true,
+        "lesioned": false,
+        "da_level": 0.5494163884270326,
+        "da_tonic": 0.5,
+        "k_da": 1.5,
+        "da_crave_gain": 1.0741245826405488,
+        "base_threshold": 19.09722222222222,
+        "eff_threshold": 17.779336336642643,
+        "want_hz": 38.88888888888888,
+        "want_eff_hz": 41.77151154713244,
+        "curious": true
+      }
+    },
+    "multiref": null,
+    "noncontradiction": null,
+    "reconsolidation": null,
+    "pragmatic": null,
+    "episodic": null,
+    "affect_drives": {
+      "acted": true,
+      "turn": 1,
+      "lesioned": false,
+      "ema_valence": 0.0,
+      "ema_arousal": 0.0,
+      "body_h": 0.5,
+      "body_a": 0.0,
+      "mood": -0.0012916666666666632,
+      "felt_arousal": 0.0,
+      "level": 0,
+      "high_arousal": false,
+      "lead": "",
+      "reason": "neutral_hold",
+      "seed": 7,
+      "vplus_rate": 0.03779166666666667,
+      "vminus_rate": 0.03908333333333333
+    },
+    "swap_drives": {
+      "acted": true,
+      "turn": 1,
+      "topic": "dog",
+      "swapped": false,
+      "held_topic_before": null,
+      "held_topic": "dog",
+      "evicted_topic": null,
+      "reason": "first_thought",
+      "seed": 7,
+      "lesioned": false,
+      "proposed_slot": 0,
+      "held_slot": 0,
+      "winner_slot": 0,
+      "n_ignited_post": 1,
+      "held_rate_post": 0.3333333333333333,
+      "mm_peak": 0.011111111111111112,
+      "boost_max": 0.008333333333333333,
+      "on": true,
+      "lead": "",
+      "new_topic": null,
+      "reason_lead": "first_thought"
+    },
+    "common_ground_drives": {
+      "on": true,
+      "topic": "dog",
+      "slot": 0,
+      "decision": "introduce",
+      "in_common_ground": false,
+      "first_mention": true,
+      "reduce_rate": 0.0,
+      "introduce_rate": 0.051666666666666666,
+      "evidence_rate": 0.0,
+      "margin": -0.051666666666666666,
+      "lesioned": false,
+      "lead": "",
+      "reason_lead": "introduce"
+    },
+    "da_drives": {
+      "acted": true,
+      "turn": 1,
+      "lesioned": false,
+      "turn_engagement": 0.5090909090909089,
+      "ema_engagement": 0.30545454545454537,
+      "afferent_pA": 427.6363636363635,
+      "da_level": 0.5494163884270326,
+      "snc_firing": 0.08333333333333326,
+      "mode": "neutral",
+      "lead": "",
+      "reason": "low_engagement",
+      "seed": 7,
+      "shared_salience": {
+        "raw": 0.75,
+        "want_hz": 19.44444444444444,
+        "normalized": 0.5090909090909089,
+        "lesioned": false,
+        "calib": {
+          "want_novel_hz": 38.19444444444444,
+          "want_familiar_hz": 0.0,
+          "threshold_hz": 19.09722222222222,
+          "novel_signal": 0.95,
+          "familiar_signal": 0.0,
+          "read_reps": 4
+        },
+        "on": true
+      },
+      "spiking_novelty": {
+        "novelty": 1.0,
+        "n_tokens": 3,
+        "per_word_freshness": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "fresh_ref": 26.0,
+        "n_channels": 64,
+        "lesioned": false,
+        "on": true
+      },
+      "on": true
+    },
+    "da_encoding": {
+      "on": true,
+      "g": 1.8268376911692155,
+      "da_level": 0.5494163884270326,
+      "lesioned": false
+    },
+    "open_ended_gated": {
+      "on": true,
+      "lesioned": false,
+      "route": "offkb",
+      "reply_kind": "hold",
+      "spoke": false,
+      "bg_action": "STAY_SILENT",
+      "bg": {
+        "action": "STAY_SILENT",
+        "committed": true,
+        "decision_step": 98,
+        "simultaneous": false,
+        "motor_spikes": [
+          0,
+          20
+        ],
+        "loser_ratio": 0.0
+      },
+      "marker_level": 0,
+      "marker": {
+        "read": false,
+        "level": 0,
+        "word": ""
+      },
+      "familiarity_band": "novel",
+      "valence_sign": "0",
+      "salience_speak": 0.0,
+      "salience_silent": 1.0,
+      "gate": {
+        "svo_kind": null,
+        "svo": null,
+        "gnw_source": "_last_three_organ",
+        "gnw": {
+          "routable": false,
+          "reason": "acquisition_or_abstain",
+          "authored_by": "host_out_of_scope"
+        },
+        "delib": {
+          "acted": false,
+          "reason": "already_abstained",
+          "decision": null,
+          "abstained": false,
+          "n_candidates": null
+        },
+        "multistep": {
+          "acted": false,
+          "reason": "not_chase_form"
+        }
+      },
+      "n_gate_calls": 1,
+      "topic": "what might a dog chase",
+      "n_ltm_facts": 0,
+      "cut": {
+        "row_lesion": false,
+        "salience_intact": [
+          0.0,
+          1.0
+        ],
+        "salience_applied": [
+          0.0,
+          1.0
+        ],
+        "baseline_applied": false,
+        "marker_lesion": false,
+        "affect_lesioned": false,
+        "ws_lesion": null
+      }
+    }
+  }
+}

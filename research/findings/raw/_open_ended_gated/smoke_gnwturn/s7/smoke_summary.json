@@ -1,0 +1,362 @@
+{
+  "seed": 7,
+  "turns": [
+    "chase",
+    "question",
+    "open"
+  ],
+  "governed": false,
+  "prereg": "research/findings/2026-09-24-open-ended-gated-turn-PREREGISTRATION.md",
+  "arms_present": {
+    "intact_a": true,
+    "intact_b": true,
+    "gate_lesion": false,
+    "affect_lesion": false,
+    "gnw_lesion": true
+  },
+  "conditioning": {
+    "chase": {
+      "intact_a": {
+        "route": "grounded",
+        "familiarity_band": "familiar",
+        "valence_sign": "0",
+        "marker_level": 0,
+        "bg_action": "SPEAK",
+        "reply_kind": "grounded",
+        "spoke": true,
+        "salience": [
+          1.0,
+          0.0
+        ],
+        "cut": {
+          "row_lesion": false,
+          "salience_intact": [
+            1.0,
+            0.0
+          ],
+          "salience_applied": [
+            1.0,
+            0.0
+          ],
+          "baseline_applied": false,
+          "marker_lesion": false,
+          "affect_lesioned": false,
+          "ws_lesion": false
+        },
+        "answer": "the dog chases the cat \u2014 worth going further here.",
+        "abstained": false
+      },
+      "intact_b": {
+        "route": "grounded",
+        "familiarity_band": "familiar",
+        "valence_sign": "0",
+        "marker_level": 0,
+        "bg_action": "SPEAK",
+        "reply_kind": "grounded",
+        "spoke": true,
+        "salience": [
+          1.0,
+          0.0
+        ],
+        "cut": {
+          "row_lesion": false,
+          "salience_intact": [
+            1.0,
+            0.0
+          ],
+          "salience_applied": [
+            1.0,
+            0.0
+          ],
+          "baseline_applied": false,
+          "marker_lesion": false,
+          "affect_lesioned": false,
+          "ws_lesion": false
+        },
+        "answer": "the dog chases the cat \u2014 worth going further here.",
+        "abstained": false
+      },
+      "gate_lesion": null,
+      "affect_lesion": null,
+      "gnw_lesion": {
+        "route": "withheld",
+        "familiarity_band": "novel",
+        "valence_sign": "0",
+        "marker_level": 0,
+        "bg_action": "STAY_SILENT",
+        "reply_kind": "withheld_abstain",
+        "spoke": false,
+        "salience": [
+          0.0,
+          1.0
+        ],
+        "cut": {
+          "row_lesion": false,
+          "salience_intact": [
+            0.0,
+            1.0
+          ],
+          "salience_applied": [
+            0.0,
+            1.0
+          ],
+          "baseline_applied": false,
+          "marker_lesion": false,
+          "affect_lesioned": false,
+          "ws_lesion": true
+        },
+        "answer": "I don't know about that. \u2014 worth going further here.",
+        "abstained": true
+      }
+    },
+    "question": {
+      "intact_a": {
+        "route": "offkb",
+        "familiarity_band": "novel",
+        "valence_sign": "0",
+        "marker_level": -2,
+        "bg_action": "STAY_SILENT",
+        "reply_kind": "hold",
+        "spoke": false,
+        "salience": [
+          0.0,
+          1.0
+        ],
+        "cut": {
+          "row_lesion": false,
+          "salience_intact": [
+            0.0,
+            1.0
+          ],
+          "salience_applied": [
+            0.0,
+            1.0
+          ],
+          "baseline_applied": false,
+          "marker_lesion": false,
+          "affect_lesioned": false,
+          "ws_lesion": false
+        },
+        "answer": "Honestly \u2014 (Holding \u2014 nothing salient to add to that.) My curiosity is piqued \u2014 I haven't learned about wolf yet: what can you tell me about wolf?",
+        "abstained": true
+      },
+      "intact_b": {
+        "route": "offkb",
+        "familiarity_band": "novel",
+        "valence_sign": "0",
+        "marker_level": -2,
+        "bg_action": "STAY_SILENT",
+        "reply_kind": "hold",
+        "spoke": false,
+        "salience": [
+          0.0,
+          1.0
+        ],
+        "cut": {
+          "row_lesion": false,
+          "salience_intact": [
+            0.0,
+            1.0
+          ],
+          "salience_applied": [
+            0.0,
+            1.0
+          ],
+          "baseline_applied": false,
+          "marker_lesion": false,
+          "affect_lesioned": false,
+          "ws_lesion": false
+        },
+        "answer": "Honestly \u2014 (Holding \u2014 nothing salient to add to that.) My curiosity is piqued \u2014 I haven't learned about wolf yet: what can you tell me about wolf?",
+        "abstained": true
+      },
+      "gate_lesion": null,
+      "affect_lesion": null,
+      "gnw_lesion": {
+        "route": "offkb",
+        "familiarity_band": "novel",
+        "valence_sign": "0",
+        "marker_level": -2,
+        "bg_action": "STAY_SILENT",
+        "reply_kind": "hold",
+        "spoke": false,
+        "salience": [
+          0.0,
+          1.0
+        ],
+        "cut": {
+          "row_lesion": false,
+          "salience_intact": [
+            0.0,
+            1.0
+          ],
+          "salience_applied": [
+            0.0,
+            1.0
+          ],
+          "baseline_applied": false,
+          "marker_lesion": false,
+          "affect_lesioned": false,
+          "ws_lesion": true
+        },
+        "answer": "Honestly \u2014 (Holding \u2014 nothing salient to add to that.) My curiosity is piqued \u2014 I haven't learned about wolf yet: what can you tell me about wolf?",
+        "abstained": true
+      }
+    },
+    "open": {
+      "intact_a": {
+        "route": "offkb",
+        "familiarity_band": "novel",
+        "valence_sign": "0",
+        "marker_level": 0,
+        "bg_action": "STAY_SILENT",
+        "reply_kind": "hold",
+        "spoke": false,
+        "salience": [
+          0.0,
+          1.0
+        ],
+        "cut": {
+          "row_lesion": false,
+          "salience_intact": [
+            0.0,
+            1.0
+          ],
+          "salience_applied": [
+            0.0,
+            1.0
+          ],
+          "baseline_applied": false,
+          "marker_lesion": false,
+          "affect_lesioned": false,
+          "ws_lesion": null
+        },
+        "answer": "(Holding \u2014 nothing salient to add to that.) My curiosity is piqued \u2014 I haven't learned about might yet: what can you tell me about might?",
+        "abstained": true
+      },
+      "intact_b": {
+        "route": "offkb",
+        "familiarity_band": "novel",
+        "valence_sign": "0",
+        "marker_level": 0,
+        "bg_action": "STAY_SILENT",
+        "reply_kind": "hold",
+        "spoke": false,
+        "salience": [
+          0.0,
+          1.0
+        ],
+        "cut": {
+          "row_lesion": false,
+          "salience_intact": [
+            0.0,
+            1.0
+          ],
+          "salience_applied": [
+            0.0,
+            1.0
+          ],
+          "baseline_applied": false,
+          "marker_lesion": false,
+          "affect_lesioned": false,
+          "ws_lesion": null
+        },
+        "answer": "(Holding \u2014 nothing salient to add to that.) My curiosity is piqued \u2014 I haven't learned about might yet: what can you tell me about might?",
+        "abstained": true
+      },
+      "gate_lesion": null,
+      "affect_lesion": null,
+      "gnw_lesion": {
+        "route": "offkb",
+        "familiarity_band": "novel",
+        "valence_sign": "0",
+        "marker_level": 0,
+        "bg_action": "STAY_SILENT",
+        "reply_kind": "hold",
+        "spoke": false,
+        "salience": [
+          0.0,
+          1.0
+        ],
+        "cut": {
+          "row_lesion": false,
+          "salience_intact": [
+            0.0,
+            1.0
+          ],
+          "salience_applied": [
+            0.0,
+            1.0
+          ],
+          "baseline_applied": false,
+          "marker_lesion": false,
+          "affect_lesioned": false,
+          "ws_lesion": null
+        },
+        "answer": "(Holding \u2014 nothing salient to add to that.) My curiosity is piqued \u2014 I haven't learned about might yet: what can you tell me about might?",
+        "abstained": true
+      }
+    }
+  },
+  "changes_vs_intact": {
+    "gnw_lesion": {
+      "chase": {
+        "route": [
+          "grounded",
+          "withheld"
+        ],
+        "familiarity_band": [
+          "familiar",
+          "novel"
+        ],
+        "bg_action": [
+          "SPEAK",
+          "STAY_SILENT"
+        ],
+        "reply_kind": [
+          "grounded",
+          "withheld_abstain"
+        ],
+        "spoke": [
+          true,
+          false
+        ],
+        "answer": [
+          "the dog chases the cat \u2014 worth going further here.",
+          "I don't know about that. \u2014 worth going further here."
+        ]
+      }
+    }
+  },
+  "null_clean": true,
+  "rows": {
+    "open-ended-turn-gnw-drive": {
+      "faculty": "open-ended-turn-gnw-drive",
+      "turn": "sw_open",
+      "fields": [
+        "open_ended_gated.route",
+        "open_ended_gated.bg_action",
+        "open_ended_gated.reply_kind"
+      ],
+      "treatment_diffs": [],
+      "control_diffs": [],
+      "null_clean": true,
+      "exercised": false,
+      "attributable_fraction": null,
+      "load_bearing": false
+    }
+  },
+  "null_diffs": [],
+  "attribution": {
+    "gnw_lesion": {
+      "n_changed_treatment": 6,
+      "n_changed_null": 0,
+      "attributable_fraction": 1.0
+    }
+  },
+  "success_check": {
+    "conditioning_changes_under_affect_lesion": false,
+    "conditioning_changes_under_gnw_lesion": true,
+    "clean_null": true
+  }
+}
