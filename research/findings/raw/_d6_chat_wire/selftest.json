@@ -1,0 +1,13 @@
+{
+  "runner": "research.runners._d6_chat_wire_probe --selftest",
+  "seed": null,
+  "backend": "none (pure-python; no brain build)",
+  "device": "cpu",
+  "result": {
+    "off_is_noop": true,
+    "on_no_write_reports_false": true,
+    "encode_reported_then_consumed": true,
+    "no_composer_is_noop": true,
+    "pass": true
+  }
+}

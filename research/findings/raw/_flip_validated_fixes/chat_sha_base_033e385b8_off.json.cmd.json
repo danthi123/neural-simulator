@@ -1,0 +1,9 @@
+{
+ "runner": "research/runners/_flip_validated_fixes_chat_sha.py",
+ "argv": ["-m", "research.runners._flip_validated_fixes_chat_sha", "--arm", "off", "--label", "base_033e385b8", "--out", "<scratch>/chat_sha_base_off.json"],
+ "env": {"SIM_BACKEND": "numpy", "OMP_NUM_THREADS": "2", "OPENBLAS_NUM_THREADS": "2"},
+ "tree": "git archive of pinned pre-flip commit 033e385b8 (excluding research/findings), extracted to a scratch directory; the runner file (identical to the one committed on research/flip-validated-fixes) was copied into it; data/ symlinked to the canonical checkout's data/ (the untracked corpus), exactly as for the branch arm",
+ "date": "2026-09-23",
+ "sha256_of_artifact_when_copied": "0146c92d7a0c0cd2bbb9389dd154a1b2d2d923e705cbf4eb6738884b8789bc33",
+ "note": "The auto-provenance sidecar was not produced because the output path was outside the exported tree's research/findings/raw; this file records the command by hand."
+}

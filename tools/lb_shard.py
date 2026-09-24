@@ -9,7 +9,8 @@ writes shared intermediate arm files named by probe group (intact_a_well.json, .
 would race on them.
 
   python tools/lb_shard.py jobs  --seeds 42 43 44 --tag allfixes [--root REMOTE_ROOT]   # print one shell job per line
-  python tools/lb_shard.py aggregate --tag allfixes [--seeds ...]                        # robust core from shard outputs
+  python tools/lb_shard.py jobs  --seeds 42 --tag T --no-fixes --probe-set thin            # production default, thin probes
+  python tools/lb_shard.py aggregate --tag allfixes [--seeds ...]                       # robust core from shard outputs
 
 The ENV below is the ADEQUATE-probe configuration plus every fix merged on main as of 2026-09-23 (each flag must have
 code references on main — gates/finding_mechanism_on_main).
@@ -21,15 +22,36 @@ import os
 import shlex
 import sys
 
-ENV = {
-    # fixes (default-OFF mechanisms whose 6-seed GOs make up robust core 23)
+# fixes (mechanisms whose 6-seed GOs make up robust core 23/24). Three of these became production default-ON on
+# 2026-09-23 (branch research/flip-validated-fixes); passing them explicitly is then redundant but harmless.
+FIX_ENV = {
     "BRAIN_EPISODIC_STORE_VERIFY": "1", "BRAIN_PMEM_FACILITATION": "1", "BRAIN_PMEM_OP_STABILIZER": "1",
     "BRAIN_SOURCE_PROV_ABSTAIN_AT_TIE": "1",
-    # adequate drive probes (the 7 verified 2026-09-20 + pmem + open-ended distributional)
-    "LB_EPISODIC_DRIVE_PROBE": "1", "LB_SURPRISE_CONFIRM_PROBE": "1", "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
-    "LB_CG_DRIVE_PROBE": "1", "LB_NONCONTRADICTION_DRIVE_PROBE": "1", "LB_AFFECT_DRIVE_PROBE": "1",
-    "LB_BG_SELECT_DRIVE_PROBE": "1", "LB_PMEM_DRIVE_PROBE": "1", "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
 }
+# probe sets. "adequate" = the 7 drive probes verified 2026-09-20 + pmem + open-ended distributional. "thin" = none:
+# the battery's DEFAULT probes (the 2026-09-20 6-seed 0.59 / robust-core-14 measurement). These flags change how the
+# metric PROBES, not the brain (they live only in load_bearing_fraction.py).
+PROBE_SETS = {
+    "adequate": {
+        "LB_EPISODIC_DRIVE_PROBE": "1", "LB_SURPRISE_CONFIRM_PROBE": "1", "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+        "LB_CG_DRIVE_PROBE": "1", "LB_NONCONTRADICTION_DRIVE_PROBE": "1", "LB_AFFECT_DRIVE_PROBE": "1",
+        "LB_BG_SELECT_DRIVE_PROBE": "1", "LB_PMEM_DRIVE_PROBE": "1", "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    },
+    "thin": {},
+}
+# the historical default (allfixes / allfixes2): adequate probes + every fix.
+ENV = dict(FIX_ENV, **PROBE_SETS["adequate"])
+
+
+def job_env(probe_set="adequate", fixes=True, extra_env=None):
+    """The env dict one shard runs under. `fixes=False` passes NO fix flag, so each mechanism runs at its PRODUCTION
+    default (what the owner gets); `probe_set="thin"` passes no LB_* probe flag."""
+    envd = dict(FIX_ENV) if fixes else {}
+    envd.update(PROBE_SETS[probe_set])
+    for kv in (extra_env or []):
+        k, _, v = kv.partition("=")
+        envd[k] = v
+    return envd
 OUT_BASE = "research/findings/raw/_load_bearing/_shards"
 MEASURABLE_KINDS = ("neural-lesion", "whether-disable", "thin", "mechanism-only")
 
@@ -46,11 +68,8 @@ def shard_out(tag, seed, fac):
 
 
 def cmd_jobs(a):
-    envd = dict(ENV)
-    for kv in (a.extra_env or []):
-        k, _, v = kv.partition("=")
-        envd[k] = v
-    env = " ".join("%s=%s" % kv for kv in sorted(envd.items()))
+    envd = job_env(a.probe_set, fixes=not a.no_fixes, extra_env=a.extra_env)
+    env =" ".join("%s=%s" % kv for kv in sorted(envd.items()))
     keys = a.faculties or faculty_keys()
     for seed in a.seeds:
         for fac in keys:
@@ -134,6 +153,10 @@ def main():
     j.add_argument("--repeats", type=int, default=2)
     j.add_argument("--faculties", nargs="*", default=None)
     j.add_argument("--extra-env", nargs="*", default=None, help="KEY=VAL flags added on top of ENV (e.g. a newly merged fix)")
+    j.add_argument("--probe-set", choices=sorted(PROBE_SETS), default="adequate",
+                   help="adequate (default) = the verified LB_* drive probes; thin = none (the battery's default probes)")
+    j.add_argument("--no-fixes", action="store_true",
+                   help="pass NO fix flag: each mechanism runs at its production default")
     g = sub.add_parser("aggregate")
     g.add_argument("--tag", required=True)
     g.add_argument("--seeds", type=int, nargs="*", default=None)

@@ -1,0 +1,33 @@
+{
+ "run_id": "1790231474-17833",
+ "runner": "research/runners/onebrain_regression_battery.py",
+ "argv": [
+  "/home/ubuntu/sim/research/runners/onebrain_regression_battery.py",
+  "--worker",
+  "--env",
+  "{}",
+  "--turns",
+  "expect_q",
+  "--out",
+  "/home/ubuntu/sim/research/findings/raw/_load_bearing/_shards/flipdefaults-thin/s44/worldmodel-forward/intact_a_expect_q_s44.json"
+ ],
+ "git_sha": "unknown",
+ "git_dirty": null,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-24T06:31:14",
+ "env": {
+  "SIM_BACKEND": "numpy",
+  "SIM_RUN_ID": "1790231474-17826"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": false,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_load_bearing/_shards/flipdefaults-thin/s44/worldmodel-forward/intact_a_expect_q_s44.json"
+}

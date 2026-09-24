@@ -1,6 +1,12 @@
 {
  "seed": 42,
  "held_word_phrase": "the wolf watches the owl",
+ "corpus_env_path": "/home/ubuntu/derisk-pool/revisions/7790466c29222a801f5c6df0f35d709b2f5ae81c/data/corpus/tinystories.txt",
+ "corpus_lexicon_path": "/home/ubuntu/derisk-pool/revisions/7790466c29222a801f5c6df0f35d709b2f5ae81c/data/corpus/tinystories.txt",
+ "corpus_env_sha256": "7a00272e6ca4a29c91d7bc3508de2c76dc1369b351637adf2769e1d3a3679aec",
+ "corpus_env_bytes": 19971040,
+ "corpus_lexicon_sha256": "7a00272e6ca4a29c91d7bc3508de2c76dc1369b351637adf2769e1d3a3679aec",
+ "corpus_lexicon_bytes": 19971040,
  "r1_in_scope": true,
  "r1_n_referents": 2,
  "r1_input_order": [
@@ -13,7 +19,7 @@
  "population": [
   {
    "cond": "intact",
-   "recovered_both_rate": 0.9166666666666666,
+   "recovered_both_rate": 0.8333333333333334,
    "n_pairs": 12
   },
   {
@@ -27,12 +33,12 @@
    "n_pairs": 12
   }
  ],
- "r3_recovered_both_rate": 0.9166666666666666,
+ "r3_recovered_both_rate": 0.8333333333333334,
  "r3_pass": true,
  "r4_lesion_recovered_both_rate": 0.0,
  "hand_baseline_recovered_both_rate": 0.0,
  "r4_lever_moved": true,
  "r4_pass": true,
  "r5_lexicon_built": true,
- "elapsed_s": 26.0
+ "elapsed_s": 64.2
 }

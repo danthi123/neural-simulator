@@ -9,3 +9,7 @@
 {"lane": "B \u00b7 Curiosity", "workflow": "agent-curiosity-phasic-gain", "branch": "research/curiosity-lcne-phasic-gain", "started": 1790227872.3162553, "note": "next-method build after LC-NE NO-GO 1/6"}
 {"lane": "B \u00b7 Curiosity", "workflow": "agent-curiosity-v5-operating-point", "branch": "research/curiosity-ask-operating-point", "started": 1790255010.9083588, "note": "v5: finer G11 grid + ASK operating-point homeostat after v4 NO-GO 3/6"}
 {"lane": "C \u00b7 Self/Workspace", "workflow": "agent-wm-referent-focus-bind", "branch": "research/wm-referent-focus-bind", "started": 1790255010.9083588, "note": "spiking referent->focus bind after wm-binding content NO-GO 6/6 negatives"}
+{"lane": "A \u00b7 Affect", "workflow": "agent-settle-multiturn", "branch": "research/settle-multiturn-contrast", "started": 1790268349.4844754, "note": "SETTLE decisive tests: multi-turn contrast, abstention congruence, GPU timing"}
+{"lane": "H \u00b7 Memory", "workflow": "agent-content-provenance", "branch": "research/content-provenance-learned-facts", "started": 1790268349.4844754, "note": "content-provenance test + learned-content fraction (owner: knowledge must be learned, not RAG)"}
+{"lane": "H \u00b7 Memory", "workflow": "wf-ai-teacher", "branch": "research/ai-teacher-environment", "started": 1790268349.4844754, "note": "AI teacher as chat-only social environment; brain learns synaptically"}
+{"lane": "B \u00b7 Curiosity", "workflow": "wf-midnight-builds", "branch": "(16 lanes)", "started": 1790268349.4844754, "note": "midnight plan build lanes, workflow wlrxugj4x"}
