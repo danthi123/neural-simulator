@@ -800,7 +800,8 @@ def measure_wmb_content(out_dir, seed=42, repeats=2):
 # introduce the SAME two referents in SWAPPED order (which referent sits in each register differs; the words do not),
 # then the SAME anaphor question. T: the two sessions' replies differ. X: under the hold lesion (BRAIN_MULTIREF_LESION
 # =1 with SCOPE=recur) they are the same -- the lesion must REMOVE the difference. N: an intact rebuild reproduces.
-# Every arm runs all four sessions in one build. ON arms: BRAIN_MULTIREF_FOCUS_BIND=1. OFF arms (the positional route,
+# Each arm kind is two builds, one per pair (that pair's two sessions in one build).
+# ON arms: BRAIN_MULTIREF_FOCUS_BIND=1. OFF arms (the positional route,
 # the FAILING DIRECTION): BRAIN_MULTIREF_FOCUS_BIND=0 explicitly -- the same gate must read NOT load-bearing there, or
 # the ON verdict is void (probe-inadequate:positional-passes). Counted under its own key with kind
 # "neural-lesion-opt-in": it measures a default-OFF mechanism, so it is EXCLUDED from the production fraction.
@@ -959,8 +960,8 @@ def _wmf_headline(on_result, off_result):
 
 
 def measure_wmb_focus(out_dir, seed=42, repeats=2):
-    """LB_WMB_FOCUS_PROBE: 8 builds -- ON {intact a/b, lesion, lesion rebuild} and OFF {the same four} -- each running
-    all four anaphor sessions; `_wmf_gate` on each; `_wmf_headline` combines them. Early-return path (never touches
+    """LB_WMB_FOCUS_PROBE: 16 builds -- ON {intact a/b, lesion, lesion rebuild} and OFF {the same four}, each kind
+    built once per PAIR (that pair's two sessions in one build); `_wmf_gate` on each mode; `_wmf_headline` combines. Early-return path (never touches
     any other faculty's arms)."""
     spec = FACULTY_LESIONS["wm-binding-advanced"]
     flag, val = spec["flag"], spec["value"]
@@ -984,11 +985,16 @@ def measure_wmb_focus(out_dir, seed=42, repeats=2):
     arms = {}
     for mode, base in _WMF_ENV.items():
         les = dict(base, **{flag: val})
-        fn = lambda k: os.path.join(out_dir, "%s_%s_wmf%s.json" % (mode, k, _sfx))   # noqa: E731
-        arms[mode] = {"intact_a": _spawn_arm(dict(base), _WMF_TURNS, fn("intact_a")),
-                      "intact_b": _spawn_arm(dict(base), _WMF_TURNS, fn("intact_b")),
-                      "lesion": _spawn_arm(les, _WMF_TURNS, fn("lesion")),
-                      "lesion_rep": _spawn_arm(les, _WMF_TURNS, fn("lesion_rep"))}
+        arms[mode] = {}
+        for k in _WMF_ARMS:
+            # one build per PAIR (its two sessions): a 4-session build measured ~13 GB on numpy (each session builds
+            # its own ChatBrain + composer); a 2-session build fits the pool's per-job budget. Turn labels of the two
+            # pairs are disjoint, so the per-kind arm is the union of its two pair builds.
+            parts = []
+            for p, ((i1, a1), (i2, a2)) in _WMF_PAIRS.items():
+                out = os.path.join(out_dir, "%s_%s_wmf%s%s.json" % (mode, k, p.lower(), _sfx))
+                parts.append(_spawn_arm(dict(les if k.startswith("lesion") else base), [i1, a1, i2, a2], out))
+            arms[mode][k] = None if any(x is None for x in parts) else {t: r for x in parts for t, r in x.items()}
     on = _wmf_gate(arms["on"], require_resolution=True)
     off = _wmf_gate(arms["off"], require_resolution=False)
     lb, verdict = _wmf_headline(on, off)

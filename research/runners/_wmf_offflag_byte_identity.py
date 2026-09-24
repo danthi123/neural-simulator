@@ -9,8 +9,9 @@ order-swapped anaphor sessions (so the probe's OFF arms are shown to measure the
 are given literally (not by battery label), so the pinned tree, which lacks the new labels, runs the same text.
 
   # collect, once per tree (cwd AND PYTHONPATH = that tree; every flag below unset):
-  cd <tree> && PYTHONPATH=<tree> BRAIN_CHAT_SEED=<dev seed> SIM_BACKEND=numpy tools/memcap.sh 7 -- \\
-      .venv/bin/python -u <branch>/research/runners/_wmf_offflag_byte_identity.py --collect --out <tree_out.json>
+  cd <tree> && PYTHONPATH=<tree> BRAIN_CHAT_SEED=<dev seed> SIM_BACKEND=numpy tools/memcap.sh 10 -- \\
+      .venv/bin/python -u <branch>/research/runners/_wmf_offflag_byte_identity.py --collect --part 1 --out <tree_p1.json>
+  # ... and again with --part 2 (each part <= 4 sessions in one process)
   # compare (no brain build):
   .venv/bin/python -m research.runners._wmf_offflag_byte_identity --compare --pinned <p.json> --branch <b.json> \\
       --pinned-tree <T1> --branch-tree <T2> --pinned-sha <sha> --branch-sha <sha> --out <artifact.json>
@@ -36,6 +37,8 @@ SCRIPT = [
     ("bi_wmfb1", ["the cat and the bird walked in", "what does it eat"]),
     ("bi_wmfb2", ["the bird and the cat walked in", "what does it eat"]),
 ]
+# collected in two parts (<= 4 sessions per process keeps one build under ~8 GB on numpy)
+PARTS = {"1": ["bi_hold", "bi_bc", "bi_wmb", "bi_plain"], "2": ["bi_wmfa1", "bi_wmfa2", "bi_wmfb1", "bi_wmfb2"]}
 FLAGS_UNSET = ("BRAIN_MULTIREF_FOCUS_BIND", "LB_WMB_FOCUS_PROBE", "LB_WMB_CONTENT_PROBE", "LB_WMB_HOLDQUERY_PROBE",
                "BRAIN_MULTIREF_LESION_SCOPE", "BRAIN_MULTIREF_LESION")
 
@@ -50,7 +53,7 @@ def _canon(o):
     return hashlib.sha256(json.dumps(o, sort_keys=True, default=str).encode()).hexdigest()
 
 
-def collect(out):
+def collect(out, part="all"):
     # run against whichever tree is on PYTHONPATH (cwd): drop this file's own directory from sys.path first
     here = os.path.dirname(os.path.abspath(__file__))
     sys.path[:] = [p for p in sys.path if os.path.abspath(p or ".") != here]
@@ -63,7 +66,11 @@ def collect(out):
     from webapp.server import brain_chat, BrainChatRequest
     import webapp.server as _S
     res = {"tree_webapp": os.path.abspath(_S.__file__), "seed": os.environ.get("BRAIN_CHAT_SEED"), "turns": {}}
+    keep = set(PARTS[part]) if part in PARTS else {sess for sess, _m in SCRIPT}
+    res["part"] = part
     for sess, msgs in SCRIPT:
+        if sess not in keep:
+            continue
         for i, m in enumerate(msgs):
             lab = "%s_%d" % (sess, i)
             try:
@@ -85,8 +92,21 @@ def _roster(tree):
     return json.loads(out.stdout.strip().splitlines()[-1]) if out.returncode == 0 else {"error": out.stderr[-500:]}
 
 
+def _load_parts(paths):
+    merged = {"turns": {}, "seed": None, "parts": []}
+    for f in paths.split(","):
+        d = json.load(open(f))
+        merged["turns"].update(d["turns"])
+        merged["parts"].append(d.get("part"))
+        if merged["seed"] is None:
+            merged["seed"] = d.get("seed")
+        elif merged["seed"] != d.get("seed"):
+            merged["seed"] = "MISMATCH"
+    return merged
+
+
 def compare(a):
-    p, b = json.load(open(a.pinned)), json.load(open(a.branch))
+    p, b = _load_parts(a.pinned), _load_parts(a.branch)
     turns = {}
     for lab in sorted(set(p["turns"]) | set(b["turns"])):
         tp, tb = p["turns"].get(lab), b["turns"].get(lab)
@@ -103,14 +123,16 @@ def compare(a):
                   rp["turn_by_label"][k] == (rb.get("turn_by_label") or {}).get(k) for k in old),
               "added_labels": sorted(set(rb.get("labels") or []) - old),
               "removed_labels": sorted(old - set(rb.get("labels") or []))}
-    same_seed = p.get("seed") == b.get("seed")
+    same_seed = p.get("seed") == b.get("seed") and p.get("seed") not in (None, "MISMATCH")
+    expected = {"%s_%d" % (sess, i) for sess, msgs in SCRIPT for i in range(len(msgs))}
+    complete = set(turns) == expected
     identical = (all(t["identical"] for t in turns.values()) and roster["PROBE_TURNS_identical"]
                  and roster["FACULTY_PROBES_identical"] and roster["pre_existing_labels_identical"]
-                 and not roster["removed_labels"] and same_seed)
+                 and not roster["removed_labels"] and same_seed and complete)
     art = {"runner": "research.runners._wmf_offflag_byte_identity", "pinned_sha": a.pinned_sha,
            "branch_sha": a.branch_sha, "seed": p.get("seed"), "same_seed": same_seed,
            "flags_unset": list(FLAGS_UNSET), "compare": "exact sha256 of each canonical brain_chat response",
-           "n_turns": len(turns), "turns": turns, "roster": roster, "byte_identical_off": identical}
+           "n_turns": len(turns), "complete_script": complete, "turns": turns, "roster": roster, "byte_identical_off": identical}
     os.makedirs(os.path.dirname(os.path.abspath(a.out)), exist_ok=True)
     json.dump(art, open(a.out, "w"), indent=2)
     print(json.dumps({"byte_identical_off": identical, "n_turns": len(turns),
@@ -123,7 +145,8 @@ def main():
     ap.add_argument("--collect", action="store_true")
     ap.add_argument("--compare", action="store_true")
     ap.add_argument("--out", required=True)
-    ap.add_argument("--pinned")
+    ap.add_argument("--part", default="all", choices=["1", "2", "all"])
+    ap.add_argument("--pinned", help="collect file(s), comma-separated parts")
     ap.add_argument("--branch")
     ap.add_argument("--pinned-tree")
     ap.add_argument("--branch-tree")
@@ -131,7 +154,7 @@ def main():
     ap.add_argument("--branch-sha", default="")
     a = ap.parse_args()
     if a.collect:
-        return collect(a.out)
+        return collect(a.out, a.part)
     return compare(a)
 
 
