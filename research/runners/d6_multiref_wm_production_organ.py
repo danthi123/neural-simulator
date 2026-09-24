@@ -376,6 +376,12 @@ class MultiReferentWMOrgan:
         clear-strength hyperpolarizing pull), not a cosmetic flag on the returned text. Only ever touches register
         0's own band (`MultiSlotHold.apply_register_drive`); every other held register is unaffected."""
         self.ensure_built()
+        # BRAIN_XEDGE_IN_WAVE3 session guard (DEFAULT-OFF): on the merged pool that carries the d6->sel cross-edge,
+        # announce THIS session as the owner of the shared d6 slice; an owner change hard-resets the slice to rest
+        # before this session writes. Every other pool lacks the attribute -> no-op, byte-identical.
+        _xw3_enter = getattr(self._shared, "xedge_session_enter", None)
+        if _xw3_enter is not None:
+            _xw3_enter(self)
         refs = list(referents)[:min(R_MAX, _BINDER_K)]
         confined = self._confined(lesion)
         if self._shared is not None and multiref_lesion_scope() == "recur":

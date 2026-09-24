@@ -172,3 +172,10 @@ Reconciled #217 (configural binding) with an adversarial review's own findings: 
 
 ## 2026-09-24  batch 1 default flip
 - #225 updated: three fixes ON by default after the production-default battery GO
+
+## 2026-09-24  evening reconcile (batch 1 shipped, 9 merges, registry 38->47, guards, local-LLM tooling)
+Appended progress to #224 (#1 metric after batch 1; B2a running), #225 (registry grew to 47 rows), #229 (curiosity
+attempts 4-5), #206 (slot-binder GPU latency GO, label de-risked), #207 (thought-switch fork instrument), #111 (warm
+server), #143 (transitive reasoning wired), #230 (AI-teacher 6-seed running). New: #231 working memory reaching
+ordinary replies, #232 false-belief in chat, #233 learned noun meanings (de-risked), #234 local-model fallback,
+#235 safety guards (done).

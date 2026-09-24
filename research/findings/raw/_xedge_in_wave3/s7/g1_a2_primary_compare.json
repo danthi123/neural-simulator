@@ -1,0 +1,205 @@
+{
+ "mode": "g1_compare",
+ "seed": 7,
+ "off": "research/findings/raw/_xedge_in_wave3/s7/g1_off2.json",
+ "on": "research/findings/raw/_xedge_in_wave3/s7/g1_on.json",
+ "rows": {
+  "causal_whatif": {
+   "second_vs_exercised": {
+    "maxdelta": 0.0,
+    "worst_key": null,
+    "missing": [],
+    "answer_same": true,
+    "identical": true
+   }
+  },
+  "comprehension": {
+   "second_vs_exercised": {
+    "maxdelta": 0.0,
+    "worst_key": null,
+    "missing": [],
+    "answer_same": true,
+    "identical": true
+   }
+  },
+  "curiosity": {
+   "second_vs_exercised": {
+    "maxdelta": 0.0,
+    "worst_key": null,
+    "missing": [],
+    "answer_same": true,
+    "identical": true
+   }
+  },
+  "d6_multiref_wm": {
+   "second_vs_exercised": {
+    "maxdelta": 0.0,
+    "worst_key": null,
+    "missing": [],
+    "answer_same": true,
+    "identical": true
+   }
+  },
+  "metacog": {
+   "second_vs_exercised": {
+    "maxdelta": 0.0,
+    "worst_key": null,
+    "missing": [],
+    "answer_same": true,
+    "identical": true
+   }
+  },
+  "pragmatic": {
+   "second_vs_exercised": {
+    "maxdelta": 0.0,
+    "worst_key": null,
+    "missing": [],
+    "answer_same": true,
+    "identical": true
+   }
+  },
+  "prospective_memory": {
+   "second_vs_exercised": {
+    "maxdelta": 0.0,
+    "worst_key": null,
+    "missing": [],
+    "answer_same": true,
+    "identical": true
+   }
+  },
+  "self_schema": {
+   "second_vs_exercised": {
+    "maxdelta": 0.0,
+    "worst_key": null,
+    "missing": [],
+    "answer_same": true,
+    "identical": true
+   }
+  },
+  "source_provenance": {
+   "second_vs_exercised": {
+    "maxdelta": 0.0,
+    "worst_key": null,
+    "missing": [],
+    "answer_same": true,
+    "identical": true
+   }
+  },
+  "surprise": {
+   "second_vs_exercised": {
+    "maxdelta": 0.0,
+    "worst_key": null,
+    "missing": [],
+    "answer_same": true,
+    "identical": true
+   }
+  },
+  "worldmodel": {
+   "second_vs_exercised": {
+    "maxdelta": 0.0,
+    "worst_key": null,
+    "missing": [],
+    "answer_same": true,
+    "identical": true
+   }
+  }
+ },
+ "pairs": [
+  [
+   "second",
+   "exercised"
+  ]
+ ],
+ "which": "amendment A2 (equal read-pass count)",
+ "n_other_organs": 9,
+ "G1_other_organs_identical": true,
+ "endpoints_identical": true,
+ "cross_weights_build": {
+  "w0->A": 0.05,
+  "w0->P": 0.05,
+  "w1->A": 0.05,
+  "w1->P": 0.05,
+  "w2->A": 0.05,
+  "w2->P": 0.05
+ },
+ "cross_weights_exercised": {
+  "w0->A": 0.05,
+  "w0->P": 1.2507,
+  "w1->A": 0.05,
+  "w1->P": 0.05,
+  "w2->A": 1.2593,
+  "w2->P": 0.05
+ },
+ "exercise_credit_traces": [
+  {
+   "credited": true,
+   "margin": "0.31777777777777777",
+   "teach": "teach_agent"
+  },
+  {
+   "credited": true,
+   "margin": "-0.31777777777777777",
+   "teach": "teach_patient"
+  },
+  {
+   "credited": true,
+   "margin": "0.31777777777777777",
+   "teach": "teach_agent"
+  },
+  {
+   "credited": true,
+   "margin": "-0.31777777777777777",
+   "teach": "teach_patient"
+  },
+  {
+   "credited": true,
+   "margin": "0.31777777777777777",
+   "teach": "teach_agent"
+  },
+  {
+   "credited": true,
+   "margin": "-0.31777777777777777",
+   "teach": "teach_patient"
+  }
+ ],
+ "status": "GO",
+ "preconditions": [
+  {
+   "kind": "require",
+   "name": "ON arm read the flag-ON (xedge-in-wave3) pool",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "OFF arm read the plain Wave-3 pool",
+   "ok": true,
+   "detail": "measured=False expect=False",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "9 non-endpoint organs read in both arms",
+   "ok": true,
+   "detail": "measured=9 expect=9",
+   "note": ""
+  },
+  {
+   "kind": "reaches",
+   "name": "the exercise moved the cross-edge (max candidate weight)",
+   "ok": true,
+   "detail": "before=0.05 after=1.2593 moved=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "both arms carry the compared read passes (second / exercised)",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  }
+ ],
+ "undefined_reasons": [],
+ "verdict": "G1 PASS (no substrate change)"
+}

@@ -1,0 +1,268 @@
+{
+ "mode": "g1_compare",
+ "seed": 7,
+ "off": "research/findings/raw/_xedge_in_wave3/s7/g1_off.json",
+ "on": "research/findings/raw/_xedge_in_wave3/s7/g1_on.json",
+ "rows": {
+  "causal_whatif": {
+   "build": {
+    "maxdelta": 0.0,
+    "worst_key": null,
+    "missing": [],
+    "answer_same": true,
+    "identical": true
+   },
+   "exercised": {
+    "maxdelta": 16.666666666666657,
+    "worst_key": "directed_fwd_BtoD",
+    "missing": [],
+    "answer_same": true,
+    "identical": false
+   }
+  },
+  "comprehension": {
+   "build": {
+    "maxdelta": 0.0,
+    "worst_key": null,
+    "missing": [],
+    "answer_same": true,
+    "identical": true
+   },
+   "exercised": {
+    "maxdelta": 0.0,
+    "worst_key": null,
+    "missing": [],
+    "answer_same": true,
+    "identical": true
+   }
+  },
+  "curiosity": {
+   "build": {
+    "maxdelta": 0.0,
+    "worst_key": null,
+    "missing": [],
+    "answer_same": true,
+    "identical": true
+   },
+   "exercised": {
+    "maxdelta": 0.0,
+    "worst_key": null,
+    "missing": [],
+    "answer_same": true,
+    "identical": true
+   }
+  },
+  "d6_multiref_wm": {
+   "build": {
+    "maxdelta": 0.0,
+    "worst_key": null,
+    "missing": [],
+    "answer_same": true,
+    "identical": true
+   },
+   "exercised": {
+    "maxdelta": 0.0,
+    "worst_key": null,
+    "missing": [],
+    "answer_same": true,
+    "identical": true
+   }
+  },
+  "metacog": {
+   "build": {
+    "maxdelta": 0.0,
+    "worst_key": null,
+    "missing": [],
+    "answer_same": true,
+    "identical": true
+   },
+   "exercised": {
+    "maxdelta": 0.0,
+    "worst_key": null,
+    "missing": [],
+    "answer_same": true,
+    "identical": true
+   }
+  },
+  "pragmatic": {
+   "build": {
+    "maxdelta": 0.0,
+    "worst_key": null,
+    "missing": [],
+    "answer_same": true,
+    "identical": true
+   },
+   "exercised": {
+    "maxdelta": 0.0,
+    "worst_key": null,
+    "missing": [],
+    "answer_same": true,
+    "identical": true
+   }
+  },
+  "prospective_memory": {
+   "build": {
+    "maxdelta": 0.0,
+    "worst_key": null,
+    "missing": [],
+    "answer_same": true,
+    "identical": true
+   },
+   "exercised": {
+    "maxdelta": 0.0,
+    "worst_key": null,
+    "missing": [],
+    "answer_same": true,
+    "identical": true
+   }
+  },
+  "self_schema": {
+   "build": {
+    "maxdelta": 0.0,
+    "worst_key": null,
+    "missing": [],
+    "answer_same": true,
+    "identical": true
+   },
+   "exercised": {
+    "maxdelta": 0.0,
+    "worst_key": null,
+    "missing": [],
+    "answer_same": true,
+    "identical": true
+   }
+  },
+  "source_provenance": {
+   "build": {
+    "maxdelta": 0.0,
+    "worst_key": null,
+    "missing": [],
+    "answer_same": true,
+    "identical": true
+   },
+   "exercised": {
+    "maxdelta": 0.0025000000000000022,
+    "worst_key": "content_7",
+    "missing": [],
+    "answer_same": true,
+    "identical": false
+   }
+  },
+  "surprise": {
+   "build": {
+    "maxdelta": 0.0,
+    "worst_key": null,
+    "missing": [],
+    "answer_same": true,
+    "identical": true
+   },
+   "exercised": {
+    "maxdelta": 0.0558333333333334,
+    "worst_key": "calib.pred_gain_max",
+    "missing": [],
+    "answer_same": true,
+    "identical": false
+   }
+  },
+  "worldmodel": {
+   "build": {
+    "maxdelta": 0.0,
+    "worst_key": null,
+    "missing": [],
+    "answer_same": true,
+    "identical": true
+   },
+   "exercised": {
+    "maxdelta": 18.75,
+    "worst_key": "expect[+1].pred_pos",
+    "missing": [],
+    "answer_same": true,
+    "identical": false
+   }
+  }
+ },
+ "n_other_organs": 9,
+ "G1_other_organs_identical": false,
+ "endpoints_identical": true,
+ "cross_weights_build": {
+  "w0->A": 0.05,
+  "w0->P": 0.05,
+  "w1->A": 0.05,
+  "w1->P": 0.05,
+  "w2->A": 0.05,
+  "w2->P": 0.05
+ },
+ "cross_weights_exercised": {
+  "w0->A": 0.05,
+  "w0->P": 1.2507,
+  "w1->A": 0.05,
+  "w1->P": 0.05,
+  "w2->A": 1.2593,
+  "w2->P": 0.05
+ },
+ "exercise_credit_traces": [
+  {
+   "credited": true,
+   "margin": "0.31777777777777777",
+   "teach": "teach_agent"
+  },
+  {
+   "credited": true,
+   "margin": "-0.31777777777777777",
+   "teach": "teach_patient"
+  },
+  {
+   "credited": true,
+   "margin": "0.31777777777777777",
+   "teach": "teach_agent"
+  },
+  {
+   "credited": true,
+   "margin": "-0.31777777777777777",
+   "teach": "teach_patient"
+  },
+  {
+   "credited": true,
+   "margin": "0.31777777777777777",
+   "teach": "teach_agent"
+  },
+  {
+   "credited": true,
+   "margin": "-0.31777777777777777",
+   "teach": "teach_patient"
+  }
+ ],
+ "status": "NO-GO",
+ "preconditions": [
+  {
+   "kind": "require",
+   "name": "ON arm read the flag-ON (xedge-in-wave3) pool",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "OFF arm read the plain Wave-3 pool",
+   "ok": true,
+   "detail": "measured=False expect=False",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "9 non-endpoint organs read in both arms",
+   "ok": true,
+   "detail": "measured=9 expect=9",
+   "note": ""
+  },
+  {
+   "kind": "reaches",
+   "name": "the exercise moved the cross-edge (max candidate weight)",
+   "ok": true,
+   "detail": "before=0.05 after=1.2593 moved=True",
+   "note": ""
+  }
+ ],
+ "undefined_reasons": [],
+ "verdict": "G1 FAIL -> SUBSTRATE CHANGE (re-measure pooled rows)"
+}

@@ -1,0 +1,134 @@
+{
+ "mode": "g2_compare",
+ "learn": false,
+ "seed": 7,
+ "rows": {
+  "A": [
+   {
+    "step": "load",
+    "equal": true,
+    "diff_keys": []
+   },
+   {
+    "step": "hold",
+    "equal": true,
+    "diff_keys": []
+   },
+   {
+    "step": "comp",
+    "equal": true,
+    "diff_keys": []
+   },
+   {
+    "step": "hold2",
+    "equal": true,
+    "diff_keys": []
+   }
+  ],
+  "B": [
+   {
+    "step": "load",
+    "equal": true,
+    "diff_keys": []
+   },
+   {
+    "step": "hold",
+    "equal": true,
+    "diff_keys": []
+   },
+   {
+    "step": "comp",
+    "equal": true,
+    "diff_keys": []
+   },
+   {
+    "step": "hold2",
+    "equal": true,
+    "diff_keys": []
+   }
+  ]
+ },
+ "pregrow": 24,
+ "arm": "G2-pregrown (amendment A1, additional, non-gating)",
+ "cross_weights_after_pregrow": {
+  "w0->A": 0.05,
+  "w0->P": 4.1329,
+  "w1->A": 0.05,
+  "w1->P": 0.05,
+  "w2->A": 4.1639,
+  "w2->P": 0.05
+ },
+ "status": "GO",
+ "preconditions": [
+  {
+   "kind": "require",
+   "name": "alone_A / alone_B / interleaved all ran the same learn setting",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "each session's load recovered exactly its own referents (all 4 runs)",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "every comp step produced a comprehension judge",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "session guard fired interleaved and never alone",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  }
+ ],
+ "undefined_reasons": [],
+ "all_outputs_equal_alone_vs_interleaved": true,
+ "cross_session_referent_names": {
+  "A": [],
+  "B": []
+ },
+ "no_cross_referent": true,
+ "session_guard_fired": true,
+ "n_session_resets": {
+  "alone_A": 0,
+  "alone_B": 0,
+  "interleaved": 5
+ },
+ "cross_weights_end": {
+  "alone_A": {
+   "w0->A": 0.05,
+   "w0->P": 4.1329,
+   "w1->A": 0.05,
+   "w1->P": 0.05,
+   "w2->A": 4.1639,
+   "w2->P": 0.05
+  },
+  "alone_B": {
+   "w0->A": 0.05,
+   "w0->P": 4.1329,
+   "w1->A": 0.05,
+   "w1->P": 0.05,
+   "w2->A": 4.1639,
+   "w2->P": 0.05
+  },
+  "interleaved": {
+   "w0->A": 0.05,
+   "w0->P": 4.1329,
+   "w1->A": 0.05,
+   "w1->P": 0.05,
+   "w2->A": 4.1639,
+   "w2->P": 0.05
+  }
+ },
+ "diffs_confined_to_shared_weight": true,
+ "G2_transient_pass": true,
+ "verdict": "G2 PASS (no transient cross-session leak)"
+}

@@ -1,0 +1,37 @@
+{
+ "run_id": "1790269094-527413",
+ "runner": "research/runners/_xedge_in_wave3_verify.py",
+ "argv": [
+  "/home/ubuntu/derisk-pool/dev-main5ec-a4/research/runners/_xedge_in_wave3_verify.py",
+  "--seed",
+  "7",
+  "--chat-smoke",
+  "off",
+  "--out",
+  "research/findings/raw/_xedge_in_wave3/s7/chat_main5ec_off.json"
+ ],
+ "git_sha": "5ec99148b6b3eb9529cb7c482860b5610ad2bde7",
+ "git_dirty": false,
+ "source_kind": "git_archive",
+ "source_manifest_sha256": "280417e5fdae5bb9d8e83754f21f62d987e785c163b2ed49ff1f0c94de67be16",
+ "source_manifest_verified_at_start": false,
+ "source_manifest_start_error": "source file set differs from manifest; missing=[], extra=['research/runners/_xedge_in_wave3_verify.py']",
+ "source_manifest_verified_at_exit": false,
+ "source_manifest_exit_error": "source file set differs from manifest; missing=[], extra=['research/runners/_xedge_in_wave3_verify.py']",
+ "started": "2026-09-24T16:58:14",
+ "env": {
+  "POOL_JOB_ID": "a4-chat-main-off-s7",
+  "OPENBLAS_NUM_THREADS": "1",
+  "SIM_BACKEND": "numpy",
+  "POOL_JOB_MEM_GB": "12",
+  "CUDA_VISIBLE_DEVICES": "",
+  "OMP_NUM_THREADS": "1",
+  "MKL_NUM_THREADS": "1"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": false,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_xedge_in_wave3/s7/chat_main5ec_off.json"
+}
