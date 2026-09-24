@@ -497,6 +497,7 @@ def test_down_leaves_empty_describe_instances_state_unknown_not_gone(tmp_path):
 echo "AWS $*" >> "{log}"
 case "$*" in
   *"describe-instances"*) echo ""; exit 0 ;;
+  *"terminate-instances"*) echo "shutting-down"; exit 0 ;;
 esac
 echo ok
 exit 0
@@ -813,3 +814,38 @@ def test_status_reports_torn_down(tmp_path):
     res = _run(["status", "testnode"], env={"AWS_POOL_NODE_STATE_FILE": str(state)})
     assert res.returncode == 0, res.stderr
     assert "TORN DOWN" in res.stdout
+
+
+def test_down_does_not_mark_torn_down_when_terminate_fails(tmp_path):
+    # Re-review round 4 (MEDIUM): every aws call fails (RequestLimitExceeded, exit 255). down must NOT write
+    # '# TORN DOWN', must keep the Host block, and must exit non-zero -- a still-running instance is not torn down.
+    bin_dir = tmp_path / "bin"
+    bin_dir.mkdir()
+    log = tmp_path / "combined.log"
+    log.write_text("")
+    aws_stub = bin_dir / "aws"
+    aws_stub.write_text(f"""#!/usr/bin/env bash
+echo "AWS $*" >> "{log}"
+echo "An error occurred (RequestLimitExceeded)" >&2
+exit 255
+""")
+    aws_stub.chmod(aws_stub.stat().st_mode | stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH)
+    for name in ("ssh", "rsync", "scp"):
+        stub = bin_dir / name
+        stub.write_text(f'#!/usr/bin/env bash\necho "{name.upper()} $*" >> "{log}"\nexit 255\n')
+        stub.chmod(stub.stat().st_mode | stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH)
+    state = _write_state(tmp_path)
+    ssh_config = tmp_path / "ssh_config"
+    ssh_config.write_text("Include ~/.ssh/config\nHost testnode\n  HostName 1.2.3.4\n")
+    env = {
+        "AWS_POOL_NODE_STATE_FILE": str(state),
+        "POOL_EXTRA_NODES_FILE": str(tmp_path / "extra_nodes"),
+        "POOL_SSH_CONFIG": str(ssh_config),
+        "AWS_POOL_DRAIN_TIMEOUT_S": "1",
+        "AWS_POOL_DRAIN_POLL_S": "0",
+    }
+    (tmp_path / "extra_nodes").write_text("testnode\n")
+    res = _run(["down", "testnode", "--force"], bin_dir=bin_dir, tmp_path=tmp_path, env=env)
+    assert res.returncode != 0
+    assert not state.read_text().startswith("# TORN DOWN")
+    assert "Host testnode" in ssh_config.read_text()

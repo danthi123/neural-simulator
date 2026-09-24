@@ -82,10 +82,20 @@ _running_runners() {   # _running_runners <ssh-alias-or-command-prefix...> -- pr
 
 _terminate_and_delete_sg() {   # _terminate_and_delete_sg <instance-id> <sg-id> <region>
   local iid="$1" sg="$2" region="$3"
+  # Returns NON-ZERO when terminate-instances fails (re-review round 4, MEDIUM): a
+  # throttled/credential/API failure used to be ignored, and the caller then recorded a still-running instance as
+  # TORN DOWN and removed its Host block -- a cost leak plus a false record.
   if [ -n "$iid" ]; then
     echo "[aws-pool-node] terminating $iid…"
-    aws ec2 terminate-instances --instance-ids "$iid" --region "$region" \
-      --query 'TerminatingInstances[].CurrentState.Name' --output text
+    local out rc
+    out=$(aws ec2 terminate-instances --instance-ids "$iid" --region "$region" \
+      --query 'TerminatingInstances[].CurrentState.Name' --output text 2>&1); rc=$?
+    echo "$out"
+    if [ "$rc" -ne 0 ]; then
+      echo "⛔ terminate-instances did not confirm termination of $iid (rc=$rc). NOT marking it torn down." >&2
+      echo "   Retry: aws ec2 terminate-instances --instance-ids $iid --region $region" >&2
+      return 1
+    fi
   fi
   if [ -n "$sg" ]; then
     echo "[aws-pool-node] deleting security group $sg (best-effort; AWS can take a few seconds to release it)…"
@@ -153,8 +163,11 @@ cmd_up() {
   _up_failed() {
     local reason="$1"
     echo "⛔ aws_pool_node.sh up: $reason — auto-tearing-down $NODE_NAME (instance $IID) rather than leaving it live+unwired." >&2
-    _terminate_and_delete_sg "$IID" "$SG" "$REGION_S"
-    { echo "# TORN DOWN $(date '+%F %T %Z') (auto, up failed: $reason)"; cat "$STATE"; } > "$STATE.tmp" && mv "$STATE.tmp" "$STATE"
+    if _terminate_and_delete_sg "$IID" "$SG" "$REGION_S"; then
+      { echo "# TORN DOWN $(date '+%F %T %Z') (auto, up failed: $reason)"; cat "$STATE"; } > "$STATE.tmp" && mv "$STATE.tmp" "$STATE"
+    else
+      echo "⛔ auto-teardown of $IID did NOT confirm; the state file stays live so idle-stop and a later down can find it." >&2
+    fi
     exit 1
   }
   # INTERRUPTED MID-`up` (2026-09-23 fix round #2, LOW): Ctrl-C during the long pre-provision loop below used to
@@ -431,8 +444,12 @@ cmd_down() {
     fi
   fi
 
-  # 5. TERMINATE + delete the SG — only after (1)-(4) all either succeeded or were force-overridden.
-  _terminate_and_delete_sg "$IID" "$SG" "$REGION_S"
+  # 5. TERMINATE + delete the SG — only after (1)-(4) all either succeeded or were force-overridden. If AWS does not
+  #    confirm termination, keep the state file live and the Host block in place, and exit 1 (retry `down`).
+  if ! _terminate_and_delete_sg "$IID" "$SG" "$REGION_S"; then
+    echo "[aws-pool-node] $NODE_NAME NOT torn down — re-run: bash tools/aws_pool_node.sh down $NODE_NAME" >&2
+    exit 1
+  fi
 
   # 6. Remove the now-stale persistent ssh Host entry, and mark the state file torn down (never delete it —
   #    same durability intent as .aws_gpu: the record of what ran and when survives).
