@@ -77,22 +77,23 @@ def _cond(resp):
     return c
 
 
-def score(seed, out_dir=OUT_DIR):
+def score(seed, out_dir=OUT_DIR, turns=None):
+    turns = list(turns or SMOKE_TURNS)
     from research.runners.lbf_rows.open_ended_gated import score_row
     arms = {}
     for a in ARMS:
         p = arm_path(out_dir, seed, a)
         arms[a] = json.load(open(p)) if os.path.exists(p) else None
-    out = {"seed": int(seed), "turns": SMOKE_TURNS, "governed": False,
+    out = {"seed": int(seed), "turns": turns, "governed": False,
            "prereg": "research/findings/2026-09-24-open-ended-gated-turn-PREREGISTRATION.md",
            "arms_present": {a: arms[a] is not None for a in arms}, "conditioning": {}, "changes_vs_intact": {},
            "null_clean": None, "rows": {}}
     ia, ib = arms.get("intact_a") or {}, arms.get("intact_b") or {}
-    for t in SMOKE_TURNS:
+    for t in turns:
         out["conditioning"][t] = {a: _cond((arms[a] or {}).get(t)) for a in arms}
     # the null: intact_a vs intact_b, every conditioning field + the reply, every turn
     null_diffs = []
-    for t in SMOKE_TURNS:
+    for t in turns:
         ca, cb = _cond(ia.get(t)), _cond(ib.get(t))
         if ca != cb:
             null_diffs.append({"turn": t, "a": ca, "b": cb})
@@ -102,7 +103,7 @@ def score(seed, out_dir=OUT_DIR):
         if arms[a] is None:
             continue
         ch = {}
-        for t in SMOKE_TURNS:
+        for t in turns:
             ci, cl = _cond(ia.get(t)), _cond((arms[a] or {}).get(t))
             if ci is None and cl is None:
                 continue                                   # turn not run / trace absent in both arms: no change
@@ -123,7 +124,7 @@ def score(seed, out_dir=OUT_DIR):
                                                     "%s: changed conditioning fields vs the intact rebuild" % a,
                                                     n_treat, n_ctrl)}
         if arms["intact_a"] and arms["intact_b"]:
-            out["rows"][ROW_FOR_ARM[a]] = score_row(ROW_FOR_ARM[a], ia, ib, arms[a])
+            out["rows"][ROW_FOR_ARM[a]] = score_row(ROW_FOR_ARM[a], ia, ib, arms[a])  # the REGISTERED row turn
     cc = out["changes_vs_intact"]
     out["success_check"] = {
         "conditioning_changes_under_affect_lesion": bool(cc.get("affect_lesion")),
@@ -182,7 +183,7 @@ def main(argv=None):
         r = compare_identity(a.compare_identity[0], a.compare_identity[1], a.out)
         return 0 if r["identical"] else 1
     if a.score:
-        score(a.seed, a.out_dir)
+        score(a.seed, a.out_dir, turns=(a.turns.split(",") if a.turns else None))
         return 0
     if a.arm:
         return run_arm(a.arm, a.seed, a.out_dir, turns=(a.turns.split(",") if a.turns else None))
