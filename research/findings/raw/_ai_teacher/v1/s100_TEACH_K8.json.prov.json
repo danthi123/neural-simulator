@@ -1,0 +1,41 @@
+{
+ "run_id": "1790282233-999598",
+ "runner": "research/runners/ai_teacher_experiment.py",
+ "argv": [
+  "/home/ubuntu/derisk-pool/revisions/c12c0d47e07ba301bd8fa14b6bd4030c8edc6b29/research/runners/ai_teacher_experiment.py",
+  "--worker",
+  "--arm",
+  "TEACH",
+  "--K",
+  "8",
+  "--seed",
+  "100",
+  "--out",
+  "research/findings/raw/_ai_teacher/v1/s100_TEACH_K8.json",
+  "--sleep-ticks",
+  "1"
+ ],
+ "git_sha": "c12c0d47e07ba301bd8fa14b6bd4030c8edc6b29",
+ "git_dirty": false,
+ "source_kind": "git_archive",
+ "source_manifest_sha256": "ab59650f01f9799ad8426ed5438ad5f0651e014b7416a14e45879c3cd51b5038",
+ "source_manifest_verified_at_start": true,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": true,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-24T20:37:13",
+ "env": {
+  "MKL_NUM_THREADS": "1",
+  "OPENBLAS_NUM_THREADS": "1",
+  "OMP_NUM_THREADS": "1",
+  "SIM_BACKEND": "numpy",
+  "SIM_RUN_ID": "1790272262-464992",
+  "BRAIN_CHAT_SEED": "100"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": false,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_ai_teacher/v1/s100_TEACH_K8.json"
+}

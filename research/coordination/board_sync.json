@@ -1206,7 +1206,7 @@
   {
    "at": "2026-09-07T08:34:04Z",
    "op": "create-task",
-   "args": "proj=2 title=Store the brain's knowledge as real synaptic weights \u2014 proven, approved, pending a fits-on-the-card check",
+   "args": "proj=2 title=Store the brain's knowledge as real synaptic weights — proven, approved, pending a fits-on-the-card check",
    "head": "ac933b03d"
   },
   {
@@ -1704,7 +1704,7 @@
   {
    "at": "2026-09-16T22:51:35Z",
    "op": "create-task",
-   "args": "proj=2 title=Semantic-recall ledger evidence was stale \u2014 fixed; real block is toy-only validation of the sharded-store unbind/cleanup",
+   "args": "proj=2 title=Semantic-recall ledger evidence was stale — fixed; real block is toy-only validation of the sharded-store unbind/cleanup",
    "head": "d43e02a44"
   },
   {
@@ -1728,7 +1728,7 @@
   {
    "at": "2026-09-17T05:37:49Z",
    "op": "create-task",
-   "args": "proj=2 title=The brain now runs 9 of its thinking parts on ONE shared spiking core (validated) \u2014 turning it on by default is next",
+   "args": "proj=2 title=The brain now runs 9 of its thinking parts on ONE shared spiking core (validated) — turning it on by default is next",
    "head": "7f1fb45ab"
   },
   {
@@ -2036,6 +2036,24 @@
    "op": "set-desc",
    "args": "task=225",
    "head": "110b97a0c"
+  },
+  {
+   "at": "2026-09-24T17:30:14Z",
+   "op": "create-task",
+   "args": "proj=2 title=A teacher that teaches the brain new facts by talking with it, and a test that the brain really learned them",
+   "head": "77aa1cb30"
+  },
+  {
+   "at": "2026-09-24T17:30:16Z",
+   "op": "label-task",
+   "args": "task=230 label=7",
+   "head": "77aa1cb30"
+  },
+  {
+   "at": "2026-09-24T17:30:16Z",
+   "op": "label-task",
+   "args": "task=230 label=6",
+   "head": "77aa1cb30"
   },
   {
    "at": "2026-09-24T19:55:48Z",

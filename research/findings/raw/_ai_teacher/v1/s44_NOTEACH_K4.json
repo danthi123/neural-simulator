@@ -1,0 +1,312 @@
+{
+  "arm": "NOTEACH",
+  "K": 4,
+  "seed": 44,
+  "cfg": {
+    "teacher": false,
+    "freeze": false,
+    "belief": "vetted",
+    "post_sleep": null
+  },
+  "backend": "numpy",
+  "env": {
+    "SIM_BACKEND": "numpy",
+    "BRAIN_CHAT_RENDERER": "stub",
+    "SIM_DISABLE_LLM": "1",
+    "BRAIN_LTM_BUNDLE": "off",
+    "BRAIN_AI_TEACHER": "1",
+    "BRAIN_D6_HEBBIAN_STORE": "1",
+    "BRAIN_D6_ENGRAM_VOCAB": "1",
+    "BRAIN_D6_ENGRAM_READTIME": "1",
+    "BRAIN_D6_HEBBIAN_FREEZE": "0",
+    "BRAIN_CHAT_SEED": "44"
+  },
+  "vetted": [
+    {
+      "id": "n01",
+      "subject": "blicket",
+      "verb": "eat",
+      "obj": "dax",
+      "tier": "novel",
+      "source": {
+        "source": "invented nouns (curriculum is the ground truth)"
+      }
+    },
+    {
+      "id": "w01",
+      "subject": "selva",
+      "verb": "touch",
+      "obj": "osona",
+      "tier": "wikidata",
+      "source": {
+        "source": "wikidata knowledge bundle",
+        "bundle": "wikidata_100k",
+        "facts_json_sha256": "92466eeeaccdb62bad396b1a6a580400abec6967eab89fbb78e8783a8d06b90c",
+        "index": 9525,
+        "relation": "shares_border_with",
+        "template": "the <agent> touches the <patient>"
+      }
+    },
+    {
+      "id": "n02",
+      "subject": "wug",
+      "verb": "chase",
+      "obj": "toma",
+      "tier": "novel",
+      "source": {
+        "source": "invented nouns (curriculum is the ground truth)"
+      }
+    },
+    {
+      "id": "n03",
+      "subject": "fep",
+      "verb": "carry",
+      "obj": "zorb",
+      "tier": "novel",
+      "source": {
+        "source": "invented nouns (curriculum is the ground truth)"
+      }
+    }
+  ],
+  "belief": [
+    {
+      "id": "n01",
+      "subject": "blicket",
+      "verb": "eat",
+      "obj": "dax",
+      "tier": "novel",
+      "source": {
+        "source": "invented nouns (curriculum is the ground truth)"
+      }
+    },
+    {
+      "id": "w01",
+      "subject": "selva",
+      "verb": "touch",
+      "obj": "osona",
+      "tier": "wikidata",
+      "source": {
+        "source": "wikidata knowledge bundle",
+        "bundle": "wikidata_100k",
+        "facts_json_sha256": "92466eeeaccdb62bad396b1a6a580400abec6967eab89fbb78e8783a8d06b90c",
+        "index": 9525,
+        "relation": "shares_border_with",
+        "template": "the <agent> touches the <patient>"
+      }
+    },
+    {
+      "id": "n02",
+      "subject": "wug",
+      "verb": "chase",
+      "obj": "toma",
+      "tier": "novel",
+      "source": {
+        "source": "invented nouns (curriculum is the ground truth)"
+      }
+    },
+    {
+      "id": "n03",
+      "subject": "fep",
+      "verb": "carry",
+      "obj": "zorb",
+      "tier": "novel",
+      "source": {
+        "source": "invented nouns (curriculum is the ground truth)"
+      }
+    }
+  ],
+  "belief_label": "vetted",
+  "counter_installed": true,
+  "errors": [],
+  "n_build_kb": 5,
+  "composer_class": "Pool1BoundOneBrainComposer",
+  "teacher": null,
+  "taught_blocks_after_teaching": [],
+  "sleep": {
+    "ticks": [
+      {
+        "n_sessions": 1,
+        "t_s": 1.06
+      }
+    ],
+    "in_mood": true,
+    "inner_life_before": 0,
+    "inner_life_new": [
+      {
+        "wandered": null,
+        "note": "idle: felt state relaxing steady (was +0.00, now +0.00)"
+      },
+      {
+        "substrate_homeostasis": true,
+        "trigger": "idle_tick",
+        "note": "idle: Turrigiano synaptic-scaling pass over 5 DA-encoded engram(s)"
+      },
+      {
+        "note": "idle: my energy/engagement (the DA-mode lead) is settling toward rest (mode now rest)"
+      }
+    ]
+  },
+  "taught_blocks_at_test": [],
+  "kb_final": [
+    {
+      "i": 0,
+      "agent": "brain",
+      "action": "use",
+      "patient": "spikes"
+    },
+    {
+      "i": 1,
+      "agent": "brain",
+      "action": "learn",
+      "patient": "words"
+    },
+    {
+      "i": 2,
+      "agent": "brain",
+      "action": "store",
+      "patient": "memory"
+    },
+    {
+      "i": 3,
+      "agent": "dog",
+      "action": "chase",
+      "patient": "cat"
+    },
+    {
+      "i": 4,
+      "agent": "cat",
+      "action": "eat",
+      "patient": "fish"
+    }
+  ],
+  "turns": [
+    {
+      "phase": "warmup",
+      "message": "what does the cat eat",
+      "answer": "the cat eats the fish",
+      "abstained": false,
+      "recalled_svo": [
+        "cat",
+        "eat",
+        "fish"
+      ],
+      "curiosity_topic": null,
+      "t_s": 596.06
+    },
+    {
+      "phase": "test",
+      "message": "what does the blicket eat",
+      "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about blicket yet: what can you tell me about blicket?",
+      "abstained": true,
+      "recalled_svo": null,
+      "curiosity_topic": "blicket",
+      "t_s": 9.43
+    },
+    {
+      "phase": "test",
+      "message": "what does the selva touch",
+      "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about selva yet: what can you tell me about selva?",
+      "abstained": true,
+      "recalled_svo": null,
+      "curiosity_topic": "selva",
+      "t_s": 8.32
+    },
+    {
+      "phase": "test",
+      "message": "what does the wug chase",
+      "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about wug yet: what can you tell me about wug?",
+      "abstained": true,
+      "recalled_svo": null,
+      "curiosity_topic": "wug",
+      "t_s": 8.2
+    },
+    {
+      "phase": "test",
+      "message": "what does the fep carry",
+      "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about fep yet: what can you tell me about fep?",
+      "abstained": true,
+      "recalled_svo": null,
+      "curiosity_topic": "fep",
+      "t_s": 8.17
+    },
+    {
+      "phase": "test",
+      "message": "what does the cat eat",
+      "answer": "As for it \u2014 the cat eats the fish",
+      "abstained": false,
+      "recalled_svo": [
+        "cat",
+        "eat",
+        "fish"
+      ],
+      "curiosity_topic": null,
+      "t_s": 27.96
+    },
+    {
+      "phase": "test",
+      "message": "what does the dog chase",
+      "answer": "Setting the held thread aside \u2014 On dog, then \u2014 the dog chases the cat",
+      "abstained": false,
+      "recalled_svo": [
+        "dog",
+        "chase",
+        "cat"
+      ],
+      "curiosity_topic": null,
+      "t_s": 30.11
+    }
+  ],
+  "writes_by_phase": {},
+  "homeostatic_calls_by_phase": {
+    "sleep": 1
+  },
+  "guard": {
+    "mode": "attribute",
+    "n_patched": 30,
+    "patched_names": [
+      "ArgStructureComposer.store_fact",
+      "BrainConversationalAgent.hear",
+      "BrainConversationalAgent.hear_attributed",
+      "BrainConversationalAgent.hear_case",
+      "BrainConversationalAgent.hear_clause_fact",
+      "BrainConversationalAgent.hear_multicue",
+      "BrainConversationalAgent.hear_multiframe",
+      "BridgeMemory.store",
+      "ChatBrain._maybe_acquire",
+      "CoreSimComposer.store",
+      "OneBrainComposer._store_composite",
+      "OneBrainComposer._write_block",
+      "OneBrainComposer.apply_homeostatic_scaling",
+      "OneBrainComposer.hear",
+      "OneBrainComposer.store",
+      "OneBrainComposer.store_fact",
+      "OneBrainComposer.update_on_mismatch",
+      "RFPhasorComposer.store",
+      "RFPhasorComposer.update_on_mismatch",
+      "RoutedComposer.store",
+      "RoutedComposer.update_on_mismatch",
+      "ShardedPhasorStore.store",
+      "SlotBinderComposer.store",
+      "TieredFactStore.store",
+      "UnifiedBrainBridge.store",
+      "_SelftestComposer.store",
+      "research.runners.cross_session_persistence.save_session_learning",
+      "research.runners.d6_hebbian_store.hebbian_encode",
+      "research.runners.tiered_fact_store.build_ltm_from_facts",
+      "research.runners.tiered_fact_store.encode_fast"
+    ],
+    "missing_modules": [],
+    "calls_by_attribution": {
+      "brain": 12,
+      "other": 1
+    },
+    "calls": {
+      "brain|research.runners.brain_chat_tui.ChatBrain._maybe_acquire": 7,
+      "brain|research.runners.brain_conversational_agent.BrainConversationalAgent.hear": 5,
+      "other|research.runners.one_brain_composer.OneBrainComposer.apply_homeostatic_scaling": 1
+    },
+    "violations": []
+  },
+  "elapsed_s": 689.7,
+  "peak_rss_mb": 694.6
+}

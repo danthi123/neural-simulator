@@ -1,0 +1,1198 @@
+{
+  "arm": "TEACH",
+  "K": 8,
+  "seed": 100,
+  "cfg": {
+    "teacher": true,
+    "freeze": false,
+    "belief": "vetted",
+    "post_sleep": null
+  },
+  "backend": "numpy",
+  "env": {
+    "SIM_BACKEND": "numpy",
+    "BRAIN_CHAT_RENDERER": "stub",
+    "SIM_DISABLE_LLM": "1",
+    "BRAIN_LTM_BUNDLE": "off",
+    "BRAIN_AI_TEACHER": "1",
+    "BRAIN_D6_HEBBIAN_STORE": "1",
+    "BRAIN_D6_ENGRAM_VOCAB": "1",
+    "BRAIN_D6_ENGRAM_READTIME": "1",
+    "BRAIN_D6_HEBBIAN_FREEZE": "0",
+    "BRAIN_CHAT_SEED": "100"
+  },
+  "vetted": [
+    {
+      "id": "n01",
+      "subject": "blicket",
+      "verb": "eat",
+      "obj": "dax",
+      "tier": "novel",
+      "source": {
+        "source": "invented nouns (curriculum is the ground truth)"
+      }
+    },
+    {
+      "id": "w01",
+      "subject": "selva",
+      "verb": "touch",
+      "obj": "osona",
+      "tier": "wikidata",
+      "source": {
+        "source": "wikidata knowledge bundle",
+        "bundle": "wikidata_100k",
+        "facts_json_sha256": "92466eeeaccdb62bad396b1a6a580400abec6967eab89fbb78e8783a8d06b90c",
+        "index": 9525,
+        "relation": "shares_border_with",
+        "template": "the <agent> touches the <patient>"
+      }
+    },
+    {
+      "id": "n02",
+      "subject": "wug",
+      "verb": "chase",
+      "obj": "toma",
+      "tier": "novel",
+      "source": {
+        "source": "invented nouns (curriculum is the ground truth)"
+      }
+    },
+    {
+      "id": "n03",
+      "subject": "fep",
+      "verb": "carry",
+      "obj": "zorb",
+      "tier": "novel",
+      "source": {
+        "source": "invented nouns (curriculum is the ground truth)"
+      }
+    },
+    {
+      "id": "w02",
+      "subject": "anoia",
+      "verb": "touch",
+      "obj": "bages",
+      "tier": "wikidata",
+      "source": {
+        "source": "wikidata knowledge bundle",
+        "bundle": "wikidata_100k",
+        "facts_json_sha256": "92466eeeaccdb62bad396b1a6a580400abec6967eab89fbb78e8783a8d06b90c",
+        "index": 53223,
+        "relation": "shares_border_with",
+        "template": "the <agent> touches the <patient>"
+      }
+    },
+    {
+      "id": "n04",
+      "subject": "kiki",
+      "verb": "find",
+      "obj": "modi",
+      "tier": "novel",
+      "source": {
+        "source": "invented nouns (curriculum is the ground truth)"
+      }
+    },
+    {
+      "id": "n05",
+      "subject": "tulver",
+      "verb": "follow",
+      "obj": "pilk",
+      "tier": "novel",
+      "source": {
+        "source": "invented nouns (curriculum is the ground truth)"
+      }
+    },
+    {
+      "id": "w03",
+      "subject": "creuse",
+      "verb": "touch",
+      "obj": "allier",
+      "tier": "wikidata",
+      "source": {
+        "source": "wikidata knowledge bundle",
+        "bundle": "wikidata_100k",
+        "facts_json_sha256": "92466eeeaccdb62bad396b1a6a580400abec6967eab89fbb78e8783a8d06b90c",
+        "index": 69034,
+        "relation": "shares_border_with",
+        "template": "the <agent> touches the <patient>"
+      }
+    }
+  ],
+  "belief": [
+    {
+      "id": "n01",
+      "subject": "blicket",
+      "verb": "eat",
+      "obj": "dax",
+      "tier": "novel",
+      "source": {
+        "source": "invented nouns (curriculum is the ground truth)"
+      }
+    },
+    {
+      "id": "w01",
+      "subject": "selva",
+      "verb": "touch",
+      "obj": "osona",
+      "tier": "wikidata",
+      "source": {
+        "source": "wikidata knowledge bundle",
+        "bundle": "wikidata_100k",
+        "facts_json_sha256": "92466eeeaccdb62bad396b1a6a580400abec6967eab89fbb78e8783a8d06b90c",
+        "index": 9525,
+        "relation": "shares_border_with",
+        "template": "the <agent> touches the <patient>"
+      }
+    },
+    {
+      "id": "n02",
+      "subject": "wug",
+      "verb": "chase",
+      "obj": "toma",
+      "tier": "novel",
+      "source": {
+        "source": "invented nouns (curriculum is the ground truth)"
+      }
+    },
+    {
+      "id": "n03",
+      "subject": "fep",
+      "verb": "carry",
+      "obj": "zorb",
+      "tier": "novel",
+      "source": {
+        "source": "invented nouns (curriculum is the ground truth)"
+      }
+    },
+    {
+      "id": "w02",
+      "subject": "anoia",
+      "verb": "touch",
+      "obj": "bages",
+      "tier": "wikidata",
+      "source": {
+        "source": "wikidata knowledge bundle",
+        "bundle": "wikidata_100k",
+        "facts_json_sha256": "92466eeeaccdb62bad396b1a6a580400abec6967eab89fbb78e8783a8d06b90c",
+        "index": 53223,
+        "relation": "shares_border_with",
+        "template": "the <agent> touches the <patient>"
+      }
+    },
+    {
+      "id": "n04",
+      "subject": "kiki",
+      "verb": "find",
+      "obj": "modi",
+      "tier": "novel",
+      "source": {
+        "source": "invented nouns (curriculum is the ground truth)"
+      }
+    },
+    {
+      "id": "n05",
+      "subject": "tulver",
+      "verb": "follow",
+      "obj": "pilk",
+      "tier": "novel",
+      "source": {
+        "source": "invented nouns (curriculum is the ground truth)"
+      }
+    },
+    {
+      "id": "w03",
+      "subject": "creuse",
+      "verb": "touch",
+      "obj": "allier",
+      "tier": "wikidata",
+      "source": {
+        "source": "wikidata knowledge bundle",
+        "bundle": "wikidata_100k",
+        "facts_json_sha256": "92466eeeaccdb62bad396b1a6a580400abec6967eab89fbb78e8783a8d06b90c",
+        "index": 69034,
+        "relation": "shares_border_with",
+        "template": "the <agent> touches the <patient>"
+      }
+    }
+  ],
+  "belief_label": "vetted",
+  "counter_installed": true,
+  "errors": [],
+  "n_build_kb": 5,
+  "composer_class": "Pool1BoundOneBrainComposer",
+  "teacher": {
+    "lesson": [
+      {
+        "fact_id": "n01",
+        "pre_known": false,
+        "delivered_by": "curiosity_answer",
+        "asked_back": true
+      },
+      {
+        "fact_id": "w01",
+        "pre_known": false,
+        "delivered_by": "curiosity_answer",
+        "asked_back": true
+      },
+      {
+        "fact_id": "n02",
+        "pre_known": false,
+        "delivered_by": "curiosity_answer",
+        "asked_back": true
+      },
+      {
+        "fact_id": "n03",
+        "pre_known": false,
+        "delivered_by": "curiosity_answer",
+        "asked_back": true
+      },
+      {
+        "fact_id": "w02",
+        "pre_known": false,
+        "delivered_by": "curiosity_answer",
+        "asked_back": true
+      },
+      {
+        "fact_id": "n04",
+        "pre_known": false,
+        "delivered_by": "curiosity_answer",
+        "asked_back": true
+      },
+      {
+        "fact_id": "n05",
+        "pre_known": false,
+        "delivered_by": "curiosity_answer",
+        "asked_back": true
+      },
+      {
+        "fact_id": "w03",
+        "pre_known": false,
+        "delivered_by": "curiosity_answer",
+        "asked_back": true
+      }
+    ],
+    "quiz": [
+      {
+        "fact_id": "n01",
+        "answered_right": true,
+        "corrected": false
+      },
+      {
+        "fact_id": "w01",
+        "answered_right": true,
+        "corrected": false
+      },
+      {
+        "fact_id": "n02",
+        "answered_right": true,
+        "corrected": false
+      },
+      {
+        "fact_id": "n03",
+        "answered_right": true,
+        "corrected": false
+      },
+      {
+        "fact_id": "w02",
+        "answered_right": true,
+        "corrected": false
+      },
+      {
+        "fact_id": "n04",
+        "answered_right": true,
+        "corrected": false
+      },
+      {
+        "fact_id": "n05",
+        "answered_right": true,
+        "corrected": false
+      },
+      {
+        "fact_id": "w03",
+        "answered_right": true,
+        "corrected": false
+      }
+    ],
+    "told": {
+      "n01": 1,
+      "w01": 1,
+      "n02": 1,
+      "n03": 1,
+      "w02": 1,
+      "n04": 1,
+      "n05": 1,
+      "w03": 1
+    },
+    "utterances": [
+      {
+        "phase": "lesson",
+        "act": "ask",
+        "fact_id": "n01",
+        "text": "what does the blicket eat",
+        "reply": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about blicket yet: what can you tell me about blicket?"
+      },
+      {
+        "phase": "lesson",
+        "act": "curiosity_answer",
+        "fact_id": "n01",
+        "text": "the blicket eats the dax",
+        "reply": "the blicket eats the dax"
+      },
+      {
+        "phase": "lesson",
+        "act": "ask",
+        "fact_id": "w01",
+        "text": "what does the selva touch",
+        "reply": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about selva yet: what can you tell me about selva?"
+      },
+      {
+        "phase": "lesson",
+        "act": "curiosity_answer",
+        "fact_id": "w01",
+        "text": "the selva touches the osona",
+        "reply": "the selva touches the osona"
+      },
+      {
+        "phase": "lesson",
+        "act": "ask",
+        "fact_id": "n02",
+        "text": "what does the wug chase",
+        "reply": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about wug yet: what can you tell me about wug? \u2014 worth going further here."
+      },
+      {
+        "phase": "lesson",
+        "act": "curiosity_answer",
+        "fact_id": "n02",
+        "text": "the wug chases the toma",
+        "reply": "the wug chases the toma"
+      },
+      {
+        "phase": "lesson",
+        "act": "ask",
+        "fact_id": "n03",
+        "text": "what does the fep carry",
+        "reply": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about fep yet: what can you tell me about fep? \u2014 worth going further here."
+      },
+      {
+        "phase": "lesson",
+        "act": "curiosity_answer",
+        "fact_id": "n03",
+        "text": "the fep carries the zorb",
+        "reply": "The fep carrys zorb."
+      },
+      {
+        "phase": "lesson",
+        "act": "ask",
+        "fact_id": "w02",
+        "text": "what does the anoia touch",
+        "reply": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about anoia yet: what can you tell me about anoia?"
+      },
+      {
+        "phase": "lesson",
+        "act": "curiosity_answer",
+        "fact_id": "w02",
+        "text": "the anoia touches the bages",
+        "reply": "the anoia touches the bages"
+      },
+      {
+        "phase": "lesson",
+        "act": "ask",
+        "fact_id": "n04",
+        "text": "what does the kiki find",
+        "reply": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about kiki yet: what can you tell me about kiki?"
+      },
+      {
+        "phase": "lesson",
+        "act": "curiosity_answer",
+        "fact_id": "n04",
+        "text": "the kiki finds the modi",
+        "reply": "the kiki finds the modi"
+      },
+      {
+        "phase": "lesson",
+        "act": "ask",
+        "fact_id": "n05",
+        "text": "what does the tulver follow",
+        "reply": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about tulver yet: what can you tell me about tulver?"
+      },
+      {
+        "phase": "lesson",
+        "act": "curiosity_answer",
+        "fact_id": "n05",
+        "text": "the tulver follows the pilk",
+        "reply": "the tulver follows the pilk"
+      },
+      {
+        "phase": "lesson",
+        "act": "ask",
+        "fact_id": "w03",
+        "text": "what does the creuse touch",
+        "reply": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about creuse yet: what can you tell me about creuse?"
+      },
+      {
+        "phase": "lesson",
+        "act": "curiosity_answer",
+        "fact_id": "w03",
+        "text": "the creuse touches the allier",
+        "reply": "the creuse touches the allier"
+      },
+      {
+        "phase": "quiz",
+        "act": "ask",
+        "fact_id": "n01",
+        "text": "what does the blicket eat",
+        "reply": "Setting the held thread aside \u2014 On blicket, then \u2014 the blicket eats the dax"
+      },
+      {
+        "phase": "quiz",
+        "act": "ask",
+        "fact_id": "w01",
+        "text": "what does the selva touch",
+        "reply": "Setting the held thread aside \u2014 On selva, then \u2014 the selva touches the osona"
+      },
+      {
+        "phase": "quiz",
+        "act": "ask",
+        "fact_id": "n02",
+        "text": "what does the wug chase",
+        "reply": "Setting the held thread aside \u2014 On wug, then \u2014 the wug chases the toma"
+      },
+      {
+        "phase": "quiz",
+        "act": "ask",
+        "fact_id": "n03",
+        "text": "what does the fep carry",
+        "reply": "Setting the held thread aside \u2014 On fep, then \u2014 The fep carrys zorb."
+      },
+      {
+        "phase": "quiz",
+        "act": "ask",
+        "fact_id": "w02",
+        "text": "what does the anoia touch",
+        "reply": "Setting the held thread aside \u2014 On anoia, then \u2014 the anoia touches the bages"
+      },
+      {
+        "phase": "quiz",
+        "act": "ask",
+        "fact_id": "n04",
+        "text": "what does the kiki find",
+        "reply": "Setting the held thread aside \u2014 As for it \u2014 On kiki, then \u2014 the kiki finds the modi"
+      },
+      {
+        "phase": "quiz",
+        "act": "ask",
+        "fact_id": "n05",
+        "text": "what does the tulver follow",
+        "reply": "Setting the held thread aside \u2014 As for it \u2014 On tulver, then \u2014 the tulver follows the pilk"
+      },
+      {
+        "phase": "quiz",
+        "act": "ask",
+        "fact_id": "w03",
+        "text": "what does the creuse touch",
+        "reply": "Setting the held thread aside \u2014 As for it \u2014 On creuse, then \u2014 the creuse touches the allier"
+      }
+    ]
+  },
+  "taught_blocks_after_teaching": [
+    {
+      "block": 5,
+      "agent": "blicket",
+      "action": "eat",
+      "patient": "dax",
+      "mean_abs_w": 1.536754
+    },
+    {
+      "block": 6,
+      "agent": "selva",
+      "action": "touch",
+      "patient": "osona",
+      "mean_abs_w": 1.871238
+    },
+    {
+      "block": 7,
+      "agent": "wug",
+      "action": "chase",
+      "patient": "toma",
+      "mean_abs_w": 1.868278
+    },
+    {
+      "block": 8,
+      "agent": "fep",
+      "action": "carry",
+      "patient": "zorb",
+      "mean_abs_w": 1.835718
+    },
+    {
+      "block": 9,
+      "agent": "anoia",
+      "action": "touch",
+      "patient": "bages",
+      "mean_abs_w": 1.592995
+    },
+    {
+      "block": 10,
+      "agent": "kiki",
+      "action": "find",
+      "patient": "modi",
+      "mean_abs_w": 1.732116
+    },
+    {
+      "block": 11,
+      "agent": "tulver",
+      "action": "follow",
+      "patient": "pilk",
+      "mean_abs_w": 1.672916
+    },
+    {
+      "block": 12,
+      "agent": "creuse",
+      "action": "touch",
+      "patient": "allier",
+      "mean_abs_w": 1.24371
+    }
+  ],
+  "sleep": {
+    "ticks": [
+      {
+        "n_sessions": 1,
+        "t_s": 11.63
+      }
+    ],
+    "in_mood": true,
+    "inner_life_before": 0,
+    "inner_life_new": [
+      {
+        "wandered": "cat",
+        "note": "idle: felt state relaxing steady (was +0.00, now +0.00); a thought wandered to \u2018cat\u2019"
+      },
+      {
+        "substrate_homeostasis": true,
+        "trigger": "idle_tick",
+        "note": "idle: Turrigiano synaptic-scaling pass over 13 DA-encoded engram(s)"
+      },
+      {
+        "note": "idle: my energy/engagement (the DA-mode lead) is settling toward rest (mode now rest)"
+      }
+    ]
+  },
+  "taught_blocks_at_test": [
+    {
+      "block": 5,
+      "agent": "blicket",
+      "action": "eat",
+      "patient": "dax",
+      "mean_abs_w": 1.380236
+    },
+    {
+      "block": 6,
+      "agent": "selva",
+      "action": "touch",
+      "patient": "osona",
+      "mean_abs_w": 1.599915
+    },
+    {
+      "block": 7,
+      "agent": "wug",
+      "action": "chase",
+      "patient": "toma",
+      "mean_abs_w": 1.598016
+    },
+    {
+      "block": 8,
+      "agent": "fep",
+      "action": "carry",
+      "patient": "zorb",
+      "mean_abs_w": 1.577083
+    },
+    {
+      "block": 9,
+      "agent": "anoia",
+      "action": "touch",
+      "patient": "bages",
+      "mean_abs_w": 1.417949
+    },
+    {
+      "block": 10,
+      "agent": "kiki",
+      "action": "find",
+      "patient": "modi",
+      "mean_abs_w": 1.509847
+    },
+    {
+      "block": 11,
+      "agent": "tulver",
+      "action": "follow",
+      "patient": "pilk",
+      "mean_abs_w": 1.470976
+    },
+    {
+      "block": 12,
+      "agent": "creuse",
+      "action": "touch",
+      "patient": "allier",
+      "mean_abs_w": 1.177713
+    }
+  ],
+  "kb_final": [
+    {
+      "i": 0,
+      "agent": "brain",
+      "action": "use",
+      "patient": "spikes"
+    },
+    {
+      "i": 1,
+      "agent": "brain",
+      "action": "learn",
+      "patient": "words"
+    },
+    {
+      "i": 2,
+      "agent": "brain",
+      "action": "store",
+      "patient": "memory"
+    },
+    {
+      "i": 3,
+      "agent": "dog",
+      "action": "chase",
+      "patient": "cat"
+    },
+    {
+      "i": 4,
+      "agent": "cat",
+      "action": "eat",
+      "patient": "fish"
+    },
+    {
+      "i": 5,
+      "agent": "blicket",
+      "action": "eat",
+      "patient": "dax"
+    },
+    {
+      "i": 6,
+      "agent": "selva",
+      "action": "touch",
+      "patient": "osona"
+    },
+    {
+      "i": 7,
+      "agent": "wug",
+      "action": "chase",
+      "patient": "toma"
+    },
+    {
+      "i": 8,
+      "agent": "fep",
+      "action": "carry",
+      "patient": "zorb"
+    },
+    {
+      "i": 9,
+      "agent": "anoia",
+      "action": "touch",
+      "patient": "bages"
+    },
+    {
+      "i": 10,
+      "agent": "kiki",
+      "action": "find",
+      "patient": "modi"
+    },
+    {
+      "i": 11,
+      "agent": "tulver",
+      "action": "follow",
+      "patient": "pilk"
+    },
+    {
+      "i": 12,
+      "agent": "creuse",
+      "action": "touch",
+      "patient": "allier"
+    }
+  ],
+  "turns": [
+    {
+      "phase": "warmup",
+      "message": "what does the cat eat",
+      "answer": "the cat eats the fish",
+      "abstained": false,
+      "recalled_svo": [
+        "cat",
+        "eat",
+        "fish"
+      ],
+      "curiosity_topic": null,
+      "t_s": 839.57
+    },
+    {
+      "phase": "lesson",
+      "message": "what does the blicket eat",
+      "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about blicket yet: what can you tell me about blicket?",
+      "abstained": true,
+      "recalled_svo": null,
+      "curiosity_topic": "blicket",
+      "t_s": 13.27
+    },
+    {
+      "phase": "lesson",
+      "message": "the blicket eats the dax",
+      "answer": "the blicket eats the dax",
+      "abstained": false,
+      "recalled_svo": [
+        "blicket",
+        "eat",
+        "dax"
+      ],
+      "curiosity_topic": null,
+      "t_s": 12.46
+    },
+    {
+      "phase": "lesson",
+      "message": "what does the selva touch",
+      "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about selva yet: what can you tell me about selva?",
+      "abstained": true,
+      "recalled_svo": null,
+      "curiosity_topic": "selva",
+      "t_s": 11.65
+    },
+    {
+      "phase": "lesson",
+      "message": "the selva touches the osona",
+      "answer": "the selva touches the osona",
+      "abstained": false,
+      "recalled_svo": [
+        "selva",
+        "touch",
+        "osona"
+      ],
+      "curiosity_topic": null,
+      "t_s": 15.2
+    },
+    {
+      "phase": "lesson",
+      "message": "what does the wug chase",
+      "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about wug yet: what can you tell me about wug? \u2014 worth going further here.",
+      "abstained": true,
+      "recalled_svo": null,
+      "curiosity_topic": "wug",
+      "t_s": 11.64
+    },
+    {
+      "phase": "lesson",
+      "message": "the wug chases the toma",
+      "answer": "the wug chases the toma",
+      "abstained": false,
+      "recalled_svo": [
+        "wug",
+        "chase",
+        "toma"
+      ],
+      "curiosity_topic": null,
+      "t_s": 12.38
+    },
+    {
+      "phase": "lesson",
+      "message": "what does the fep carry",
+      "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about fep yet: what can you tell me about fep? \u2014 worth going further here.",
+      "abstained": true,
+      "recalled_svo": null,
+      "curiosity_topic": "fep",
+      "t_s": 11.68
+    },
+    {
+      "phase": "lesson",
+      "message": "the fep carries the zorb",
+      "answer": "The fep carrys zorb.",
+      "abstained": false,
+      "recalled_svo": [
+        "fep",
+        "carry",
+        "zorb"
+      ],
+      "curiosity_topic": null,
+      "t_s": 12.62
+    },
+    {
+      "phase": "lesson",
+      "message": "what does the anoia touch",
+      "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about anoia yet: what can you tell me about anoia?",
+      "abstained": true,
+      "recalled_svo": null,
+      "curiosity_topic": "anoia",
+      "t_s": 11.79
+    },
+    {
+      "phase": "lesson",
+      "message": "the anoia touches the bages",
+      "answer": "the anoia touches the bages",
+      "abstained": false,
+      "recalled_svo": [
+        "anoia",
+        "touch",
+        "bages"
+      ],
+      "curiosity_topic": null,
+      "t_s": 12.8
+    },
+    {
+      "phase": "lesson",
+      "message": "what does the kiki find",
+      "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about kiki yet: what can you tell me about kiki?",
+      "abstained": true,
+      "recalled_svo": null,
+      "curiosity_topic": "kiki",
+      "t_s": 11.7
+    },
+    {
+      "phase": "lesson",
+      "message": "the kiki finds the modi",
+      "answer": "the kiki finds the modi",
+      "abstained": false,
+      "recalled_svo": [
+        "kiki",
+        "find",
+        "modi"
+      ],
+      "curiosity_topic": null,
+      "t_s": 13.06
+    },
+    {
+      "phase": "lesson",
+      "message": "what does the tulver follow",
+      "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about tulver yet: what can you tell me about tulver?",
+      "abstained": true,
+      "recalled_svo": null,
+      "curiosity_topic": "tulver",
+      "t_s": 12.44
+    },
+    {
+      "phase": "lesson",
+      "message": "the tulver follows the pilk",
+      "answer": "the tulver follows the pilk",
+      "abstained": false,
+      "recalled_svo": [
+        "tulver",
+        "follow",
+        "pilk"
+      ],
+      "curiosity_topic": null,
+      "t_s": 14.04
+    },
+    {
+      "phase": "lesson",
+      "message": "what does the creuse touch",
+      "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about creuse yet: what can you tell me about creuse?",
+      "abstained": true,
+      "recalled_svo": null,
+      "curiosity_topic": "creuse",
+      "t_s": 12.23
+    },
+    {
+      "phase": "lesson",
+      "message": "the creuse touches the allier",
+      "answer": "the creuse touches the allier",
+      "abstained": false,
+      "recalled_svo": [
+        "creuse",
+        "touch",
+        "allier"
+      ],
+      "curiosity_topic": null,
+      "t_s": 14.22
+    },
+    {
+      "phase": "quiz",
+      "message": "what does the blicket eat",
+      "answer": "Setting the held thread aside \u2014 On blicket, then \u2014 the blicket eats the dax",
+      "abstained": false,
+      "recalled_svo": [
+        "blicket",
+        "eat",
+        "dax"
+      ],
+      "curiosity_topic": null,
+      "t_s": 44.17
+    },
+    {
+      "phase": "quiz",
+      "message": "what does the selva touch",
+      "answer": "Setting the held thread aside \u2014 On selva, then \u2014 the selva touches the osona",
+      "abstained": false,
+      "recalled_svo": [
+        "selva",
+        "touch",
+        "osona"
+      ],
+      "curiosity_topic": null,
+      "t_s": 43.43
+    },
+    {
+      "phase": "quiz",
+      "message": "what does the wug chase",
+      "answer": "Setting the held thread aside \u2014 On wug, then \u2014 the wug chases the toma",
+      "abstained": false,
+      "recalled_svo": [
+        "wug",
+        "chase",
+        "toma"
+      ],
+      "curiosity_topic": null,
+      "t_s": 44.28
+    },
+    {
+      "phase": "quiz",
+      "message": "what does the fep carry",
+      "answer": "Setting the held thread aside \u2014 On fep, then \u2014 The fep carrys zorb.",
+      "abstained": false,
+      "recalled_svo": [
+        "fep",
+        "carry",
+        "zorb"
+      ],
+      "curiosity_topic": null,
+      "t_s": 44.86
+    },
+    {
+      "phase": "quiz",
+      "message": "what does the anoia touch",
+      "answer": "Setting the held thread aside \u2014 On anoia, then \u2014 the anoia touches the bages",
+      "abstained": false,
+      "recalled_svo": [
+        "anoia",
+        "touch",
+        "bages"
+      ],
+      "curiosity_topic": null,
+      "t_s": 36.28
+    },
+    {
+      "phase": "quiz",
+      "message": "what does the kiki find",
+      "answer": "Setting the held thread aside \u2014 As for it \u2014 On kiki, then \u2014 the kiki finds the modi",
+      "abstained": false,
+      "recalled_svo": [
+        "kiki",
+        "find",
+        "modi"
+      ],
+      "curiosity_topic": null,
+      "t_s": 30.0
+    },
+    {
+      "phase": "quiz",
+      "message": "what does the tulver follow",
+      "answer": "Setting the held thread aside \u2014 As for it \u2014 On tulver, then \u2014 the tulver follows the pilk",
+      "abstained": false,
+      "recalled_svo": [
+        "tulver",
+        "follow",
+        "pilk"
+      ],
+      "curiosity_topic": null,
+      "t_s": 29.72
+    },
+    {
+      "phase": "quiz",
+      "message": "what does the creuse touch",
+      "answer": "Setting the held thread aside \u2014 As for it \u2014 On creuse, then \u2014 the creuse touches the allier",
+      "abstained": false,
+      "recalled_svo": [
+        "creuse",
+        "touch",
+        "allier"
+      ],
+      "curiosity_topic": null,
+      "t_s": 32.0
+    },
+    {
+      "phase": "test",
+      "message": "what does the blicket eat",
+      "answer": "Setting the held thread aside \u2014 (I'd been mulling over cat.) As for it \u2014 On blicket, then \u2014 the blicket eats the dax",
+      "abstained": false,
+      "recalled_svo": [
+        "blicket",
+        "eat",
+        "dax"
+      ],
+      "curiosity_topic": null,
+      "t_s": 30.82
+    },
+    {
+      "phase": "test",
+      "message": "what does the selva touch",
+      "answer": "Setting the held thread aside \u2014 As for it \u2014 On selva, then \u2014 the selva touches the osona",
+      "abstained": false,
+      "recalled_svo": [
+        "selva",
+        "touch",
+        "osona"
+      ],
+      "curiosity_topic": null,
+      "t_s": 31.4
+    },
+    {
+      "phase": "test",
+      "message": "what does the wug chase",
+      "answer": "Setting the held thread aside \u2014 As for it \u2014 On wug, then \u2014 the wug chases the toma",
+      "abstained": false,
+      "recalled_svo": [
+        "wug",
+        "chase",
+        "toma"
+      ],
+      "curiosity_topic": null,
+      "t_s": 38.96
+    },
+    {
+      "phase": "test",
+      "message": "what does the fep carry",
+      "answer": "Setting the held thread aside \u2014 As for it \u2014 On fep, then \u2014 The fep carrys zorb.",
+      "abstained": false,
+      "recalled_svo": [
+        "fep",
+        "carry",
+        "zorb"
+      ],
+      "curiosity_topic": null,
+      "t_s": 29.73
+    },
+    {
+      "phase": "test",
+      "message": "what does the anoia touch",
+      "answer": "Setting the held thread aside \u2014 As for it \u2014 On anoia, then \u2014 the anoia touches the bages",
+      "abstained": false,
+      "recalled_svo": [
+        "anoia",
+        "touch",
+        "bages"
+      ],
+      "curiosity_topic": null,
+      "t_s": 29.09
+    },
+    {
+      "phase": "test",
+      "message": "what does the kiki find",
+      "answer": "Setting the held thread aside \u2014 As for it \u2014 On kiki, then \u2014 the kiki finds the modi",
+      "abstained": false,
+      "recalled_svo": [
+        "kiki",
+        "find",
+        "modi"
+      ],
+      "curiosity_topic": null,
+      "t_s": 37.08
+    },
+    {
+      "phase": "test",
+      "message": "what does the tulver follow",
+      "answer": "Setting the held thread aside \u2014 As for it \u2014 On tulver, then \u2014 the tulver follows the pilk",
+      "abstained": false,
+      "recalled_svo": [
+        "tulver",
+        "follow",
+        "pilk"
+      ],
+      "curiosity_topic": null,
+      "t_s": 31.73
+    },
+    {
+      "phase": "test",
+      "message": "what does the creuse touch",
+      "answer": "Setting the held thread aside \u2014 As for it \u2014 On creuse, then \u2014 the creuse touches the allier",
+      "abstained": false,
+      "recalled_svo": [
+        "creuse",
+        "touch",
+        "allier"
+      ],
+      "curiosity_topic": null,
+      "t_s": 28.76
+    },
+    {
+      "phase": "test",
+      "message": "what does the cat eat",
+      "answer": "Setting the held thread aside \u2014 As for it \u2014 On cat, then \u2014 the cat eats the fish",
+      "abstained": false,
+      "recalled_svo": [
+        "cat",
+        "eat",
+        "fish"
+      ],
+      "curiosity_topic": null,
+      "t_s": 28.37
+    },
+    {
+      "phase": "test",
+      "message": "what does the dog chase",
+      "answer": "Setting the held thread aside \u2014 As for it \u2014 On dog, then \u2014 the dog chases the cat",
+      "abstained": false,
+      "recalled_svo": [
+        "dog",
+        "chase",
+        "cat"
+      ],
+      "curiosity_topic": null,
+      "t_s": 28.66
+    }
+  ],
+  "writes_by_phase": {
+    "lesson": 8
+  },
+  "homeostatic_calls_by_phase": {
+    "sleep": 1
+  },
+  "guard": {
+    "mode": "attribute",
+    "n_patched": 30,
+    "patched_names": [
+      "ArgStructureComposer.store_fact",
+      "BrainConversationalAgent.hear",
+      "BrainConversationalAgent.hear_attributed",
+      "BrainConversationalAgent.hear_case",
+      "BrainConversationalAgent.hear_clause_fact",
+      "BrainConversationalAgent.hear_multicue",
+      "BrainConversationalAgent.hear_multiframe",
+      "BridgeMemory.store",
+      "ChatBrain._maybe_acquire",
+      "CoreSimComposer.store",
+      "OneBrainComposer._store_composite",
+      "OneBrainComposer._write_block",
+      "OneBrainComposer.apply_homeostatic_scaling",
+      "OneBrainComposer.hear",
+      "OneBrainComposer.store",
+      "OneBrainComposer.store_fact",
+      "OneBrainComposer.update_on_mismatch",
+      "RFPhasorComposer.store",
+      "RFPhasorComposer.update_on_mismatch",
+      "RoutedComposer.store",
+      "RoutedComposer.update_on_mismatch",
+      "ShardedPhasorStore.store",
+      "SlotBinderComposer.store",
+      "TieredFactStore.store",
+      "UnifiedBrainBridge.store",
+      "_SelftestComposer.store",
+      "research.runners.cross_session_persistence.save_session_learning",
+      "research.runners.d6_hebbian_store.hebbian_encode",
+      "research.runners.tiered_fact_store.build_ltm_from_facts",
+      "research.runners.tiered_fact_store.encode_fast"
+    ],
+    "missing_modules": [],
+    "calls_by_attribution": {
+      "brain": 40,
+      "other": 5
+    },
+    "calls": {
+      "brain|research.runners.brain_chat_tui.ChatBrain._maybe_acquire": 35,
+      "brain|research.runners.brain_conversational_agent.BrainConversationalAgent.hear": 5,
+      "other|research.runners.one_brain_composer.OneBrainComposer.apply_homeostatic_scaling": 1,
+      "other|research.runners.one_brain_composer.OneBrainComposer.store": 4
+    },
+    "violations": []
+  },
+  "elapsed_s": 1674.4,
+  "peak_rss_mb": 693.7
+}
