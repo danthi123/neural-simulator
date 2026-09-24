@@ -11,6 +11,20 @@ the host pattern copy it replaces (all D6 flags 0)?
 PRE-REGISTRATION: research/findings/2026-09-23-d6-capacity-curve-PREREGISTRATION.md (committed on its own, before any
 run of this file). The scorer below (`score_grid`) implements that document's bands verbatim.
 
+AMENDMENT B (filed after adversarial review of the smoke + resource-probe runs, before any grid job): the accuracy
+gate (recall >= 0.90, both false rates <= 0.05) CANNOT FAIL for this store by construction -- one disjoint
+trigger->readout block per fact, exact host (agent, action) DG-shard routing, a fixed cleanup codebook, and
+k_max = N+16 sized from the start mean nothing that changes with N ever reaches the decode. So the labels below are
+renamed to say what they actually measure: "SCALES" -> "RECALL-HOLDS" (recall holding flat is expected and
+uninformative about capacity), "PARITY" -> "PARITY-BY-CONSTRUCTION" (HEBB vs COPY store weights measured complex
+corr 0.99996, max |dw| 0.031, all 128 synapses saturated at W_MAX at s42 N=5 -- the instructive pathway + phase
+lock + W_MAX clamp make the Hebbian write a near-copy of the host pattern, so parity is predetermined, not evidence
+the learning rule scales). A NEW pre-registered CONSUMER-HARDWARE COST criterion is added (COST_ENCODE_MAX_S,
+COST_READTIME_MAX_S, COST_MEM_GB below) because cost is the one quantity that DOES grow with N here (the prereg's
+own prediction 3) and is the only band that can produce a real scaling verdict; `score_grid` now also reports
+level_label_*_cost / curve_*_cost alongside the (renamed, non-scaling) recall labels. See AMENDMENT LOG in the
+PREREGISTRATION doc for the full account and the adversarial review this responds to.
+
 WHAT ONE JOB DOES (one (seed, N, arm) per process; numpy/CPU; `--worker`):
   1. LEXICON: a fixed per-seed synthetic vocabulary (N_AG agents, N_AC actions, N_PT patients; disjoint pools), the
      SAME for every level N -- the brain knows the words; what grows is the number of FACTS taught over them.
@@ -33,6 +47,16 @@ WHAT ONE JOB DOES (one (seed, N, arm) per process; numpy/CPU; `--worker`):
                    (d6_hebbian_store.engram_held) and the block's learned mean |w| (the lever).
        near-miss   one per taught probe: ask_yes_no(a, v, q) with q a stored patient != p -- preferably the patient of
                    a SAME-SUBJECT sibling (shared subject, different object). "yes" = a false accept.
+                   AMENDMENT B CORRECTION: this probe does NOT measure cross-fact interference. `ask_yes_no` routes
+                   on (agent, action) only (`_fact_shard_yesno_match`), which is the SAME shard as the taught fact
+                   itself -- in the N=50 smoke, 37/50 near-miss shards contained only the true block. The sibling
+                   (a, v2, q) can enter that shard only via a DG bucket collision, and even then is rejected because
+                   its own decoded action is v2, not v. So a false accept here requires the TRUE block's patient to
+                   decode as q -- that is substrate decode noise, not the sibling fact interfering. This probe is
+                   kept (it is a real decode-noise measure and the near-miss shard-emptiness split is informative),
+                   but its false-accept rate is no longer described as "the interference measure this instrument
+                   credits to the brain". A routing-free or superposed-store arm would be needed to measure actual
+                   cross-fact interference; none is run here (see AMENDMENT B).
        novel       n_probe never-taught (agent, action) pairs whose words are both stored in those roles:
                    query_patient -> any non-None answer = a false recall.
   6. RECORD: every per-probe decision, per-fact encode wall time, per-query wall time, RSS at stages and the process
@@ -87,12 +111,20 @@ D = 128
 VOCAB_HEADROOM = 128                      # the production onebrain chat default (brain_conversational_agent)
 K_MAX_PAD = 16
 
-# ── pre-registered thresholds (research/findings/2026-09-23-d6-capacity-curve-PREREGISTRATION.md) ──────────────────
+# ── pre-registered thresholds (research/findings/2026-09-23-d6-capacity-curve-PREREGISTRATION.md,
+#    AMENDMENT B for the cost criterion) ──────────────────────────────────────────────────────────────────────────
 RECALL_MIN = 0.90
 FALSE_MAX = 0.05
 NULL_MAX = 0.05
 PARITY_TOL = 0.05
 MEM_NODE_GB, MEM_AWS_GB = 13.0, 120.0     # usable RAM on a 15 GB pool node / a 128 GB AWS node (2 / 8 GB margin)
+
+# AMENDMENT B (consumer-hardware cost criterion; the only pre-registered band that can fail for this store's
+# design -- see the docstring's AMENDMENT B section and the PREREGISTRATION's own amendment log). Bar =
+# "runnable as a chat turn on a single-consumer-GPU-class box" (project consumer-hardware-reference standard):
+COST_ENCODE_MAX_S = 2.0          # per-fact encode (median), one taught turn
+COST_READTIME_MAX_S = 10.0       # projected read-time-view cost per chat turn (engram re-read of every block)
+COST_MEM_GB = 24.0               # peak RSS budget (a single consumer GPU-class box's RAM headroom, project standard)
 
 D6_FLAGS = ("BRAIN_D6_HEBBIAN_STORE", "BRAIN_D6_ENGRAM_VOCAB", "BRAIN_D6_ENGRAM_READTIME", "BRAIN_D6_HEBBIAN_FREEZE")
 _HEBB = {"BRAIN_D6_HEBBIAN_STORE": "1", "BRAIN_D6_ENGRAM_VOCAB": "1", "BRAIN_D6_ENGRAM_READTIME": "1",
@@ -408,10 +440,22 @@ def _decisions(job):
             + [r.get("yn") for r in P.get("nearmiss") or []] + [r["answer"] for r in P.get("novel") or []])
 
 
-def _scales(s):
+def _recall_holds(s):
+    """Renamed from `_scales` under AMENDMENT B: this cannot fail for a localist, uniquely-routed store, so it is
+    reported as RECALL-HOLDS, never as evidence of capacity SCALING."""
     return (s["recall"] is not None and s["recall"] >= RECALL_MIN
             and s["novel_false_recall"] is not None and s["novel_false_recall"] <= FALSE_MAX
             and s["nearmiss_false_accept"] is not None and s["nearmiss_false_accept"] <= FALSE_MAX)
+
+
+def _cost_ok(s, peak_rss_mb):
+    """AMENDMENT B: the pre-registered consumer-hardware cost criterion. This CAN fail (and is predicted to, at
+    N=2000: prereg predicts ~12.6 s/fact encode and a ~3923 s/turn projected read-time view)."""
+    if s.get("encode_s_median") is None or s.get("readtime_view_s_per_turn_projected") is None or peak_rss_mb is None:
+        return None
+    return (s["encode_s_median"] <= COST_ENCODE_MAX_S
+            and s["readtime_view_s_per_turn_projected"] <= COST_READTIME_MAX_S
+            and (peak_rss_mb / 1024.0) <= COST_MEM_GB)
 
 
 def score_cell(jobs, n):
@@ -450,35 +494,45 @@ def score_cell(jobs, n):
     if not (null_ok and rec["lever_moved"] and rec["writes_during_probe_clean"] and rec["rep_identical"] is not False):
         rec["status"] = "UNDEFINED"
         rec["why"] = "null / lever / probe-write / determinism check failed"
-        rec["HEBB_scales"] = _scales(sH)                       # reported, not scored
-        rec["COPY_scales"] = _scales(sC)
+        rec["HEBB_recall_holds"] = _recall_holds(sH)            # reported, not scored (AMENDMENT B naming)
+        rec["COPY_recall_holds"] = _recall_holds(sC)
+        rec["HEBB_cost_ok"] = _cost_ok(sH, H.get("peak_rss_mb"))
+        rec["COPY_cost_ok"] = _cost_ok(sC, C.get("peak_rss_mb"))
         return rec
     rec["status"] = "DEFINED"
-    rec["HEBB_scales"] = _scales(sH)
-    rec["COPY_scales"] = _scales(sC)
+    rec["HEBB_recall_holds"] = _recall_holds(sH)
+    rec["COPY_recall_holds"] = _recall_holds(sC)
+    rec["HEBB_cost_ok"] = _cost_ok(sH, H.get("peak_rss_mb"))
+    rec["COPY_cost_ok"] = _cost_ok(sC, C.get("peak_rss_mb"))
     dr = sH["recall"] - sC["recall"]
     dfalse = max(abs(sH["novel_false_recall"] - sC["novel_false_recall"]),
                  abs(sH["nearmiss_false_accept"] - sC["nearmiss_false_accept"]))
     rec["recall_diff_HEBB_minus_COPY"] = dr
+    # AMENDMENT B: PARITY (when it holds) is BY CONSTRUCTION -- see the module docstring for the s42 N=5 measurement
+    # (complex corr 0.99996, all 128 synapses saturated). Not evidence the local learning rule scales.
     rec["parity"] = bool(abs(dr) <= PARITY_TOL and dfalse <= PARITY_TOL)
     return rec
 
 
-def _level_label(cells, key):
-    """cells: list of 6 per-seed cell records. key: 'HEBB_scales' | 'COPY_scales'."""
+def _level_label(cells, key, true_label="RECALL-HOLDS", false_label="FAILS"):
+    """cells: list of 6 per-seed cell records. key e.g. 'HEBB_recall_holds' | 'COPY_recall_holds' | 'HEBB_cost_ok'.
+    true_label/false_label let the SAME exhaustive band structure serve both the (by-construction, AMENDMENT B)
+    recall labels and the new cost labels without conflating the two kinds of claim."""
     if len(cells) < 6:
         return "INCOMPLETE"
     if any(c.get("status") != "DEFINED" for c in cells):
         return "UNDEFINED"
+    if any(c.get(key) is None for c in cells):
+        return "UNDEFINED"
     k = sum(1 for c in cells if c[key])
-    return "SCALES" if k == 6 else ("FAILS" if k == 0 else "MIXED(%d/6)" % k)
+    return true_label if k == 6 else (false_label if k == 0 else "MIXED(%d/6)" % k)
 
 
 def _parity_label(cells):
     if len(cells) < 6 or any(c.get("status") != "DEFINED" for c in cells):
         return "UNDEFINED"
     if all(c["parity"] for c in cells):
-        return "PARITY"
+        return "PARITY-BY-CONSTRUCTION"                         # AMENDMENT B: see module docstring for the measurement
     worse = sum(1 for c in cells if c["recall_diff_HEBB_minus_COPY"] < -PARITY_TOL)
     better = sum(1 for c in cells if c["recall_diff_HEBB_minus_COPY"] > PARITY_TOL)
     if worse >= 4:
@@ -488,19 +542,21 @@ def _parity_label(cells):
     return "PARITY-MIXED"
 
 
-def curve_verdict(labels, levels):
-    """labels: {N: level label}. The exhaustive pre-registered curve bands."""
+def curve_verdict(labels, levels, true_label="RECALL-HOLDS", false_label="FAILS"):
+    """labels: {N: level label}. The exhaustive pre-registered curve bands, parameterized by which level-label
+    vocabulary is in play (recall's RECALL-HOLDS/FAILS, or cost's COST-HOLDS/COST-FAILS)."""
     ls = [labels.get(n) for n in levels]
     if any(x in (None, "INCOMPLETE", "UNDEFINED") for x in ls):
         return "UNDEFINED"
-    ok = [x == "SCALES" for x in ls]
+    ok = [x == true_label for x in ls]
     if all(ok):
-        return "SCALES-TO-%d" % levels[-1]
+        return "%s-TO-%d" % (true_label, levels[-1])
     k = 0
     while k < len(ok) and ok[k]:
         k += 1
     if not any(ok[k:]):
-        return "FAILS-FROM-%d" % levels[0] if k == 0 else "CEILING-BETWEEN-%d-AND-%d" % (levels[k - 1], levels[k])
+        return ("%s-FROM-%d" % (false_label, levels[0]) if k == 0
+                else "CEILING-BETWEEN-%d-AND-%d" % (levels[k - 1], levels[k]))
     return "NON-MONOTONE"
 
 
@@ -512,26 +568,34 @@ def score_grid(arm_dir, seeds=SEEDS6, levels=None):
         for s in seeds:
             jobs = {a: _load(_job_path(arm_dir, s, n, a)) for a in ARMS}
             per[str(n)][str(s)] = score_cell(jobs, n)
-    labels_H = {n: _level_label(list(per[str(n)].values()), "HEBB_scales") for n in levels}
-    labels_C = {n: _level_label(list(per[str(n)].values()), "COPY_scales") for n in levels}
+    labels_H = {n: _level_label(list(per[str(n)].values()), "HEBB_recall_holds") for n in levels}
+    labels_C = {n: _level_label(list(per[str(n)].values()), "COPY_recall_holds") for n in levels}
     parity = {n: _parity_label(list(per[str(n)].values())) for n in levels}
+    # AMENDMENT B: the cost curve is the one band this instrument can actually fail on (see module docstring).
+    cost_H = {n: _level_label(list(per[str(n)].values()), "HEBB_cost_ok", "COST-HOLDS", "COST-FAILS") for n in levels}
+    cost_C = {n: _level_label(list(per[str(n)].values()), "COPY_cost_ok", "COST-HOLDS", "COST-FAILS") for n in levels}
     return {"runner": "research.runners.d6_capacity_curve", "arm_dir": arm_dir, "seeds": list(seeds),
             "levels": levels, "per_level": per,
             "level_label_HEBB": {str(k): v for k, v in labels_H.items()},
             "level_label_COPY": {str(k): v for k, v in labels_C.items()},
             "parity_HEBB_vs_COPY": {str(k): v for k, v in parity.items()},
-            "curve_HEBB": curve_verdict(labels_H, levels), "curve_COPY": curve_verdict(labels_C, levels)}
+            "curve_HEBB": curve_verdict(labels_H, levels), "curve_COPY": curve_verdict(labels_C, levels),
+            "level_label_HEBB_cost": {str(k): v for k, v in cost_H.items()},
+            "level_label_COPY_cost": {str(k): v for k, v in cost_C.items()},
+            "curve_HEBB_cost": curve_verdict(cost_H, levels, "COST-HOLDS", "COST-FAILS"),
+            "curve_COPY_cost": curve_verdict(cost_C, levels, "COST-HOLDS", "COST-FAILS")}
 
 
 # ── self-test: every failing direction must fail ────────────────────────────────────────────────────────────────────
-def _syn_job(n, arm, recall=1.0, novel_false=0.0, nm_false=0.0, w=1.0, rep_flip=False, thr="t", err=None):
+def _syn_job(n, arm, recall=1.0, novel_false=0.0, nm_false=0.0, w=1.0, rep_flip=False, thr="t", err=None,
+             t_engram=0.1, encode_s=0.1, peak_rss_mb=300.0):
     n_probe = min(n, N_PROBE_MAX)
     T = []
     for k in range(n_probe):
         ok = k < round(recall * n_probe)
         T.append({"i": k, "answer": ("p%d" % k) if ok else None, "cls": "correct" if ok else "abstain",
                   "yn": "yes" if ok else "unknown", "block_ok": ok, "held": ok, "readout": 1.0 if ok else 0.0,
-                  "mean_abs_w": w, "shard": 1, "t_query": 0.1, "t_yn": 0.1, "t_engram": 0.1})
+                  "mean_abs_w": w, "shard": 1, "t_query": 0.1, "t_yn": 0.1, "t_engram": t_engram})
     if rep_flip and T:
         T[0] = dict(T[0], answer="zz", cls="wrong_word")
     NM = [{"i": k, "yn": "yes" if k < round(nm_false * n_probe) else "unknown", "kind": "same_subject_sibling",
@@ -540,7 +604,7 @@ def _syn_job(n, arm, recall=1.0, novel_false=0.0, nm_false=0.0, w=1.0, rep_flip=
            "t_query": 0.1} for k in range(n_probe)]
     return {"arm": arm, "n_facts": n, "error": err, "resource_probe": False, "kb_len_after_teach": n,
             "substrate_threshold_sha256": thr, "probe_spec_hash": "h", "facts_hash": "f", "n_total": 1000 + n,
-            "store_writes_during_probe": [], "encode_s": [0.1] * n,
+            "store_writes_during_probe": [], "encode_s": [encode_s] * n, "peak_rss_mb": peak_rss_mb,
             "probes": {"taught": T, "nearmiss": NM, "novel": NV}}
 
 
@@ -564,13 +628,23 @@ def selftest():
             fails.append(name)
     with contextlib.redirect_stdout(io.StringIO()):
         c = score_cell(_syn_cell(50), 50)
-        check("go_cell_defined_and_scales", c["status"] == "DEFINED" and c["HEBB_scales"] and c["parity"])
+        check("go_cell_defined_and_recall_holds", c["status"] == "DEFINED" and c["HEBB_recall_holds"] and c["parity"])
+        check("go_cell_cost_ok_at_n50", c["HEBB_cost_ok"] is True)          # 0.1s encode, 0.1*50=5s readtime, 0.3GB
         c = score_cell(_syn_cell(50, H={"recall": 0.85}), 50)
-        check("recall_0.85_does_not_scale", c["status"] == "DEFINED" and not c["HEBB_scales"])
+        check("recall_0.85_does_not_hold", c["status"] == "DEFINED" and not c["HEBB_recall_holds"])
         c = score_cell(_syn_cell(50, H={"novel_false": 0.1}), 50)
-        check("novel_false_0.10_does_not_scale", not c["HEBB_scales"])
+        check("novel_false_0.10_does_not_hold", not c["HEBB_recall_holds"])
         c = score_cell(_syn_cell(50, H={"nm_false": 0.1}), 50)
-        check("nearmiss_false_0.10_does_not_scale", not c["HEBB_scales"])
+        check("nearmiss_false_0.10_does_not_hold", not c["HEBB_recall_holds"])
+        # AMENDMENT B: the cost criterion CAN fail (unlike recall) -- each axis independently.
+        c = score_cell(_syn_cell(50, H={"t_engram": 0.25}), 50)             # 0.25*50=12.5s > COST_READTIME_MAX_S
+        check("cost_fails_on_readtime_view", c["HEBB_cost_ok"] is False)
+        c = score_cell(_syn_cell(50, H={"encode_s": 3.0}), 50)              # > COST_ENCODE_MAX_S
+        check("cost_fails_on_encode_time", c["HEBB_cost_ok"] is False)
+        c = score_cell(_syn_cell(50, H={"peak_rss_mb": 30000.0}), 50)       # > COST_MEM_GB
+        check("cost_fails_on_memory", c["HEBB_cost_ok"] is False)
+        c = score_cell(_syn_cell(2000, H={"t_engram": 0.1}), 2000)          # prereg's own projection: fails at N=2000
+        check("cost_fails_at_n2000_projected_readtime", c["HEBB_cost_ok"] is False)
         c = score_cell(_syn_cell(50, F={"recall": 0.5}), 50)
         check("freeze_recalling_is_UNDEFINED_not_pass", c["status"] == "UNDEFINED")
         c = score_cell(_syn_cell(50, F={"w": 0.3}), 50)
@@ -587,26 +661,42 @@ def selftest():
         check("hebb_worse_not_parity", c["parity"] is False)
         # level + curve bands
         good = [score_cell(_syn_cell(50), 50) for _ in range(6)]
-        check("level_SCALES_6of6", _level_label(good, "HEBB_scales") == "SCALES")
+        check("level_RECALL_HOLDS_6of6", _level_label(good, "HEBB_recall_holds") == "RECALL-HOLDS")
         mixed = good[:5] + [score_cell(_syn_cell(50, H={"recall": 0.5}), 50)]
-        check("level_MIXED_5of6", _level_label(mixed, "HEBB_scales") == "MIXED(5/6)")
-        check("level_INCOMPLETE_5_seeds", _level_label(good[:5], "HEBB_scales") == "INCOMPLETE")
+        check("level_MIXED_5of6", _level_label(mixed, "HEBB_recall_holds") == "MIXED(5/6)")
+        check("level_INCOMPLETE_5_seeds", _level_label(good[:5], "HEBB_recall_holds") == "INCOMPLETE")
         worse = [score_cell(_syn_cell(50, H={"recall": 0.5}), 50) for _ in range(6)]
         check("parity_HEBB_WORSE", _parity_label(worse) == "HEBB-WORSE")
-        check("parity_PARITY", _parity_label(good) == "PARITY")
+        check("parity_PARITY_BY_CONSTRUCTION", _parity_label(good) == "PARITY-BY-CONSTRUCTION")
+        # AMENDMENT B: the cost level/curve bands, distinct vocabulary from recall's
+        cost_good = [score_cell(_syn_cell(50), 50) for _ in range(6)]                    # cost holds at N=50
+        check("level_COST_HOLDS_6of6",
+              _level_label(cost_good, "HEBB_cost_ok", "COST-HOLDS", "COST-FAILS") == "COST-HOLDS")
+        cost_bad = [score_cell(_syn_cell(2000, H={"t_engram": 0.1}), 2000) for _ in range(6)]  # cost fails at N=2000
+        check("level_COST_FAILS_6of6",
+              _level_label(cost_bad, "HEBB_cost_ok", "COST-HOLDS", "COST-FAILS") == "COST-FAILS")
         L = [5, 50, 500, 2000]
-        check("curve_scales_to_max", curve_verdict({5: "SCALES", 50: "SCALES", 500: "SCALES", 2000: "SCALES"}, L)
-              == "SCALES-TO-2000")
-        check("curve_ceiling", curve_verdict({5: "SCALES", 50: "SCALES", 500: "FAILS", 2000: "MIXED(2/6)"}, L)
+        check("curve_recall_holds_to_max",
+              curve_verdict({5: "RECALL-HOLDS", 50: "RECALL-HOLDS", 500: "RECALL-HOLDS", 2000: "RECALL-HOLDS"}, L)
+              == "RECALL-HOLDS-TO-2000")
+        check("curve_ceiling", curve_verdict(
+              {5: "RECALL-HOLDS", 50: "RECALL-HOLDS", 500: "FAILS", 2000: "MIXED(2/6)"}, L)
               == "CEILING-BETWEEN-50-AND-500")
-        check("curve_fails_from_smallest", curve_verdict({5: "FAILS", 50: "FAILS", 500: "FAILS", 2000: "FAILS"}, L)
-              == "FAILS-FROM-5")
-        check("curve_nonmonotone", curve_verdict({5: "SCALES", 50: "FAILS", 500: "SCALES", 2000: "SCALES"}, L)
-              == "NON-MONOTONE")
-        check("curve_undefined", curve_verdict({5: "SCALES", 50: "UNDEFINED", 500: "SCALES", 2000: "SCALES"}, L)
-              == "UNDEFINED")
-        check("curve_dropped_level_3", curve_verdict({5: "SCALES", 50: "SCALES", 500: "SCALES"}, L[:3])
-              == "SCALES-TO-500")
+        check("curve_fails_from_smallest", curve_verdict(
+              {5: "FAILS", 50: "FAILS", 500: "FAILS", 2000: "FAILS"}, L) == "FAILS-FROM-5")
+        check("curve_nonmonotone", curve_verdict(
+              {5: "RECALL-HOLDS", 50: "FAILS", 500: "RECALL-HOLDS", 2000: "RECALL-HOLDS"}, L) == "NON-MONOTONE")
+        check("curve_undefined", curve_verdict(
+              {5: "RECALL-HOLDS", 50: "UNDEFINED", 500: "RECALL-HOLDS", 2000: "RECALL-HOLDS"}, L) == "UNDEFINED")
+        check("curve_dropped_level_3", curve_verdict(
+              {5: "RECALL-HOLDS", 50: "RECALL-HOLDS", 500: "RECALL-HOLDS"}, L[:3]) == "RECALL-HOLDS-TO-500")
+        # cost curve uses its own vocabulary end to end
+        check("curve_cost_holds_to_max", curve_verdict(
+              {5: "COST-HOLDS", 50: "COST-HOLDS", 500: "COST-HOLDS", 2000: "COST-HOLDS"}, L, "COST-HOLDS", "COST-FAILS")
+              == "COST-HOLDS-TO-2000")
+        check("curve_cost_ceiling", curve_verdict(
+              {5: "COST-HOLDS", 50: "COST-HOLDS", 500: "COST-FAILS", 2000: "COST-FAILS"}, L, "COST-HOLDS", "COST-FAILS")
+              == "CEILING-BETWEEN-50-AND-500")
     # fact / probe generator invariants (real, not synthetic)
     m = make_master(42)
     check("master_2000_unique_pairs", len(m) == N_MASTER and len({(a, v) for a, v, _p in m}) == N_MASTER)
@@ -653,7 +743,9 @@ def main(argv=None):
     if a.score:
         v = score_grid(a.arm_dir, seeds=a.seeds, levels=a.levels)
         print(json.dumps({k: v[k] for k in ("level_label_HEBB", "level_label_COPY", "parity_HEBB_vs_COPY",
-                                            "curve_HEBB", "curve_COPY")}, indent=1))
+                                            "curve_HEBB", "curve_COPY", "level_label_HEBB_cost",
+                                            "level_label_COPY_cost", "curve_HEBB_cost", "curve_COPY_cost")},
+                          indent=1))
         if a.json:
             with open(a.json, "w") as fh:
                 json.dump(v, fh, indent=1, default=str)

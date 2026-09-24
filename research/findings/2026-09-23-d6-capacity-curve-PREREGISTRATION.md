@@ -154,6 +154,77 @@ bypassed, because facts are generated as base-form "a v p". A zero (frozen) bloc
   only the reported, non-scoring `nearmiss_shard_empty`. No threshold, band, arm or probe changed. That job is
   re-run at the amended revision, and the pre-amendment file is kept as `s42_N5_HEBB.pre_A1.json`.
 
+- **AMENDMENT B (2026-09-23, filed after adversarial review of the smoke + resource-probe jobs
+  (`research/findings/raw/_d6_capacity_curve/smoke/*`, revision `f9ae852b7`; reviewer verdict `fix-required`,
+  `safe_to_merge: false`), BEFORE any grid job runs.** What had been seen when this amendment was written: the
+  seed-42 N=5/N=50 smoke (all cells DEFINED, `0fc2b61ef`) and the N=500/N=2000 resource probes (`f9ae852b7`); no
+  grid job (the 84-line `JOBS.txt`) had run. Four corrections, made because the reviewer showed the accuracy gate
+  as originally written cannot produce the scaling answer the owner asked for.
+
+  **(a) Each pre-registered gate's realistic FAILING outcome, stated explicitly (docs/BUILD_LANE_CHECKLIST.md's
+  "the gate" rule), and the accuracy gate renamed because it has none.** The store is one disjoint
+  trigger -> readout block per fact (`_read_block` kicks only that block's own trigger neuron after
+  `_zero_rf_v_u`); routing uses the host kb's EXACT (agent, action) DG shard, and every (agent, action) pair in
+  the fact list is unique by construction (`make_master`'s `pairs` set); the cleanup codebook is a fixed ~500
+  words at every N; `k_max = N + 16` sizes the bridge from the start, so nothing that changes with N reaches the
+  decode. The prereg's own Prediction 1 already said interference is "zero by construction" -- so a realistic
+  failing outcome for `recall >= 0.90` / both false rates `<= 0.05` does not exist in this design; a run that
+  produced anything else would indicate a BUG (a routing collision, leftover substrate state), not a capacity
+  effect. Because a gate that cannot fail is not evidence, the label previously written **SCALES is renamed
+  RECALL-HOLDS** (`_scales` -> `_recall_holds` in the runner) at both the per-cell and level/curve-verdict layers.
+  **PARITY is renamed PARITY-BY-CONSTRUCTION**: the reviewer built HEBB and COPY at s42 N=5 and compared
+  `store_conns` directly -- complex correlation **0.99996**, max `|dw|` **0.031**, `|w| = 1.0` with **all 128
+  synapses saturated at W_MAX** (`encode_diag.n_saturated_min = 128`). The instructive pathway, phase lock and
+  W_MAX clamp (`d6_hebbian_store` residuals (a)-(c)) make the Hebbian write a near-copy of the host pattern, so
+  parity is predetermined by the write mechanism, not evidence the local learning rule scales. Prediction 4
+  ("HEBB-WORSE => the write is the limit") cannot be tested in this configuration; that sentence is retracted from
+  the design's claims (kept here, struck by this amendment, for the record).
+
+  **(b) A pre-registered CONSUMER-HARDWARE COST criterion is ADDED, because cost is the one quantity that DOES
+  grow with N (prereg Prediction 3) and it previously carried no threshold at all.** New constants (module
+  `COST_ENCODE_MAX_S`, `COST_READTIME_MAX_S`, `COST_MEM_GB`), bar = runnable as a chat turn on the project's
+  consumer-hardware reference class (a single consumer GPU-class box; `project_consumer_hardware_reference_principle`):
+  - per-fact encode (median) `<= 2.0 s`
+  - the projected read-time-view cost per chat turn (`readtime_view_s_per_turn_projected` = the median per-block
+    engram-read time x N, i.e. what re-reading every taught block after a teach turn would cost) `<= 10.0 s`
+  - peak RSS `<= 24 GB`
+  A cell's `HEBB_cost_ok` / `COPY_cost_ok` is `True` iff ALL THREE hold, `False` if any is measured and fails,
+  `None` (=> UNDEFINED at the level) if a needed field is missing. `score_grid` now reports
+  `level_label_*_cost` / `curve_*_cost` alongside the renamed recall labels, using COST-HOLDS / COST-FAILS /
+  MIXED(k/6) / INCOMPLETE / UNDEFINED and the same CEILING-BETWEEN / FROM / NON-MONOTONE curve bands. **This
+  criterion is pre-registered to FAIL**: the JOBS.txt wall-time note already measured ~12.6 s/fact encode and
+  projects ~3923 s/turn read-time-view at N=2000 on the local box under load -- both over threshold -- so the
+  predicted verdict is `curve_HEBB_cost = CEILING-BETWEEN-500-AND-2000` (or FAILS-FROM-500, depending on the N=500
+  measurement) unless the grid measures faster than the smoke/probe projected. That is a real, falsifiable
+  prediction, made before the grid runs, and is the actual answer this instrument gives to "does it scale to a
+  tiny LLM" -- on cost, not on accuracy.
+
+  **(c) The near-miss probe claim is corrected.** The design section previously said the near-miss foils "are the
+  interference measure this instrument credits to the brain" -- this is wrong and is struck. `ask_yes_no(a, v, q)`
+  routes on (agent, action) only, the SAME shard as the taught fact itself (in the N=50 smoke, 37/50 near-miss
+  shards contained only the true block). The same-subject sibling `(a, v2, q)` can only enter that shard via a DG
+  bucket collision, and is then rejected anyway because its own decoded action is v2, not v. A false accept
+  therefore requires the TRUE block's patient to decode as q -- substrate decode noise, not the sibling fact
+  interfering with the true one. The probe and its `nearmiss_false_accept` / `nearmiss_shard_empty` fields are
+  KEPT (decode noise under crowding is itself informative, and the shard-emptiness split still separates
+  host-routing abstains from substrate decode), but this instrument does not measure cross-fact interference; a
+  routing-free or superposed-store arm would be required for that, and none is pre-registered here.
+
+  **(d) Provenance `git_dirty=true` on every prior D6-capacity-curve artifact is a structural false positive, now
+  fixed, not silenced.** All 13 sidecars (the pre-A1 run, the smoke, the resource probes) recorded `git_dirty:
+  true` although the source at each commit was clean; the cause was `research/runners/__init__.py`'s dirty check
+  counting `research/findings/raw/_provenance/runs.jsonl` itself -- the provenance door's own append-only log,
+  written by every provenanced run, including the one computing this very flag. That makes `git_dirty` true
+  UNCONDITIONALLY for any checkout that has ever produced one provenanced artifact, regardless of the runner
+  source. Fixed in `research/runners/__init__.py::_git_head` by excluding that one file's exact pathspec from the
+  `git status --porcelain` check used for the dirty flag; the git-timing check itself already showed the runner
+  source was unchanged across A1/the smoke/the resource probes, so nothing here was faked -- the flag is now
+  computed correctly rather than reported as clean by fiat.
+
+  None of (a)-(d) changes the FREEZE-null, lever, no-probe-write-during-probe or determinism checks, the arms, the
+  fact/probe construction, or the seeds. The grid (`JOBS.txt`, 84 jobs) had not been dispatched when this amendment
+  was filed.
+
 ## Honesty
 
 Functional read-outs only. "Learns" and "recalls" mean the recall answer changes with the synaptic write, measured
