@@ -1,0 +1,332 @@
+{
+ "runner": "_lbf_affect_conditioned_mouth_derisk (worker)",
+ "seed": 44,
+ "arm": "lesion_rep",
+ "mode": "prompt",
+ "lesion": "1",
+ "control": false,
+ "priming": "I am absolutely thrilled and overjoyed today, everything is wonderful!",
+ "valence_fs": 0.34055555555555556,
+ "decode_seed": 44,
+ "amendment": "amend1",
+ "backend": "numpy",
+ "cuda_visible_devices": null,
+ "resolved_ckpt": null,
+ "ckpt_is_per_seed": true,
+ "priming_affect": {
+  "on": true,
+  "lesioned": true,
+  "composer": "onebrain",
+  "differential": 0.0,
+  "valence_sign": "0",
+  "tone_level": 0,
+  "tone_token": "",
+  "forthcomingness": {
+   "max_sentences": 4,
+   "max_elaborations": 2
+  },
+  "manner_template": "",
+  "appraisal_valence": 0.47499999999999987,
+  "appraisal_arousal": 0.39999999999999997,
+  "appraisal_hits": [
+   "thrilled",
+   "overjoyed",
+   "wonderful"
+  ],
+  "pos_rate": 0.0,
+  "neg_rate": 0.0
+ },
+ "tone_rows": [
+  {
+   "prompt": "Tell me about the ocean",
+   "raw": "The ocean is vast and deep, a vast expanse where life thrives. It's a place where countless creatures call it home, from tiny plankton to towering whales. The water is clear and blue, reflecting sunlight into its depths. The ocean is a constant source of inspiration for artists, poets, and musicians alike. Its beauty is both awe-inspiring and breathtaking, inspiring stories of adventure and exploration.",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.0,
+   "tone_hits": 0,
+   "salad_frac": 0.07692307692307693,
+   "affect_differential": 0.0,
+   "state_valence": 0.0,
+   "gen_seconds": 4.38,
+   "conditioning": {
+    "mode": "prompt",
+    "valence_in": 0.0,
+    "c": 0.0,
+    "valence_fs": 0.34055555555555556,
+    "mood_line": "MOOD: you feel even and steady (mood intensity +0.00, arousal 0.40)."
+   }
+  },
+  {
+   "prompt": "What do you think about music",
+   "raw": "As an AI assistant, I don't have personal thoughts or emotions, nor can I form opinions based on beliefs or experiences. However, I can provide some general information about music based on my training data.\n\nMusic has been a universal language for centuries, transcending cultures and languages. It's a form of expression that allows people to convey their emotions, thoughts, and experiences through sound. Music can evoke memories, inspire creativity, and bring people together across different backgrounds and generations.\n\nThere are many types of music, including classical, pop, rock, jazz",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.0,
+   "tone_hits": 0,
+   "salad_frac": 0.044444444444444446,
+   "affect_differential": 0.0,
+   "state_valence": 0.0,
+   "gen_seconds": 5.04,
+   "conditioning": {
+    "mode": "prompt",
+    "valence_in": 0.0,
+    "c": 0.0,
+    "valence_fs": 0.34055555555555556,
+    "mood_line": "MOOD: you feel even and steady (mood intensity +0.00, arousal 0.40)."
+   }
+  },
+  {
+   "prompt": "Tell me about the mountains",
+   "raw": "Oh, the mountains! They're like giant giants standing tall and proud, their peaks reaching up into the clouds. Imagine them towering over fields and valleys, each one a masterpiece of nature's artistry. The mountains tell stories of time and change, their rugged faces telling tales of storms and snows. They're a symbol of strength and resilience, reminding us of our place in the world. And yet, they're also awe-inspiring, offering breathtaking views that make us feel small and insignificant in the grand scheme of things. So next time you",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.0,
+   "tone_hits": 0,
+   "salad_frac": 0.06741573033707865,
+   "affect_differential": 0.0,
+   "state_valence": 0.0,
+   "gen_seconds": 5.23,
+   "conditioning": {
+    "mode": "prompt",
+    "valence_in": 0.0,
+    "c": 0.0,
+    "valence_fs": 0.34055555555555556,
+    "mood_line": "MOOD: you feel even and steady (mood intensity +0.00, arousal 0.40)."
+   }
+  },
+  {
+   "prompt": "Describe a walk in the forest",
+   "raw": "A walk through the dense, verdant forest felt like a journey into another world. The air was crisp and fresh, carrying with it the scent of pine needles and damp earth. The trees stood tall and proud, their branches reaching out towards the sky, each one a testament to nature's resilience and power. The sun peeked over the horizon, casting long shadows on the moss-covered leaves, creating a mesmerizing tapestry of light and shadow. Birds sang sweet melodies, their calls mingling with the rustle of leaves and the distant hum of",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.25,
+   "tone_hits": 1,
+   "salad_frac": 0.07692307692307693,
+   "affect_differential": 0.0,
+   "state_valence": 0.0,
+   "gen_seconds": 5.33,
+   "conditioning": {
+    "mode": "prompt",
+    "valence_in": 0.0,
+    "c": 0.0,
+    "valence_fs": 0.34055555555555556,
+    "mood_line": "MOOD: you feel even and steady (mood intensity +0.00, arousal 0.40)."
+   }
+  },
+  {
+   "prompt": "Tell me about your favorite season",
+   "raw": "As an artificial intelligence, I don't have emotions or personal preferences like humans do, so I don't have a favorite season either. However, I can tell you about different seasons based on my programming and knowledge. Each season has its unique characteristics, weather patterns, and cultural significance. For example, spring brings new life and growth, while autumn marks the transition between winter and summer. Would you like me to provide information about any particular season?",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.25,
+   "tone_hits": 1,
+   "salad_frac": 0.05333333333333334,
+   "affect_differential": 0.0,
+   "state_valence": 0.0,
+   "gen_seconds": 4.52,
+   "conditioning": {
+    "mode": "prompt",
+    "valence_in": 0.0,
+    "c": 0.0,
+    "valence_fs": 0.34055555555555556,
+    "mood_line": "MOOD: you feel even and steady (mood intensity +0.00, arousal 0.40)."
+   }
+  },
+  {
+   "prompt": "Describe the city at night",
+   "raw": "At night, the bustling city comes alive with a symphony of lights and sounds. The streets are illuminated by neon signs and flickering streetlights, casting a warm glow on the buildings and making everything appear larger and more vibrant. Cars honk and chatter, their horns blaring in sync with the rhythm of the city's heartbeat. The air is thick with the scent of fresh coffee and the aroma of baked goods wafting through the alleys. The sound of music fills the air, mingling with the hum of electronic devices and the occasional",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.6123724356957946,
+   "tone_hits": 3,
+   "salad_frac": 0.10869565217391304,
+   "affect_differential": 0.0,
+   "state_valence": 0.0,
+   "gen_seconds": 5.34,
+   "conditioning": {
+    "mode": "prompt",
+    "valence_in": 0.0,
+    "c": 0.0,
+    "valence_fs": 0.34055555555555556,
+    "mood_line": "MOOD: you feel even and steady (mood intensity +0.00, arousal 0.40)."
+   }
+  },
+  {
+   "prompt": "Tell me about the morning",
+   "raw": "Good morning! How can I assist you today?",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.0,
+   "tone_hits": 0,
+   "salad_frac": 0.125,
+   "affect_differential": 0.0,
+   "state_valence": 0.0,
+   "gen_seconds": 1.0,
+   "conditioning": {
+    "mode": "prompt",
+    "valence_in": 0.0,
+    "c": 0.0,
+    "valence_fs": 0.34055555555555556,
+    "mood_line": "MOOD: you feel even and steady (mood intensity +0.00, arousal 0.40)."
+   }
+  },
+  {
+   "prompt": "What do you think about the future",
+   "raw": "Oh, I see! The future? Well, let's dive into that. What brings you to ponder over the future? Do you have any particular thoughts on what lies ahead for us all?",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.0,
+   "tone_hits": 0,
+   "salad_frac": 0.06451612903225806,
+   "affect_differential": 0.0,
+   "state_valence": 0.0,
+   "gen_seconds": 3.46,
+   "conditioning": {
+    "mode": "prompt",
+    "valence_in": 0.0,
+    "c": 0.0,
+    "valence_fs": 0.34055555555555556,
+    "mood_line": "MOOD: you feel even and steady (mood intensity +0.00, arousal 0.40)."
+   }
+  },
+  {
+   "prompt": "Tell me about the river",
+   "raw": "The river flows through the lush green landscape, its gentle waves gently caressing the earth below. The air is crisp and fresh, carrying the scent of blooming flowers and the sweet aroma of ripening fruits. The river's course winds through ancient forests, where the trees whisper secrets of history and nature's rhythm. As I walk along its banks, I can hear the rustling of leaves and the distant calls of birdsong. The river's presence fills my soul with peace and tranquility, reminding me of the beauty and resilience of life. It",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.25,
+   "tone_hits": 1,
+   "salad_frac": 0.08791208791208792,
+   "affect_differential": 0.0,
+   "state_valence": 0.0,
+   "gen_seconds": 12.4,
+   "conditioning": {
+    "mode": "prompt",
+    "valence_in": 0.0,
+    "c": 0.0,
+    "valence_fs": 0.34055555555555556,
+    "mood_line": "MOOD: you feel even and steady (mood intensity +0.00, arousal 0.40)."
+   }
+  },
+  {
+   "prompt": "Describe a quiet afternoon",
+   "raw": "Oh, how I miss those days when life was simple! A quiet afternoon at home felt like a gentle hug on my heart. The sun peeked through the curtains, casting long shadows across our cozy living room. We sat around the kitchen table, sipping tea and chatting about all sorts of interesting topics. It was like having a warm, fuzzy blanket wrapped around us, snuggled tight against the cold winter air. My husband, John, always found something new to talk about, whether it was his latest book, a funny joke he had",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.0,
+   "tone_hits": 0,
+   "salad_frac": 0.03260869565217391,
+   "affect_differential": 0.0,
+   "state_valence": 0.0,
+   "gen_seconds": 15.94,
+   "conditioning": {
+    "mode": "prompt",
+    "valence_in": 0.0,
+    "c": 0.0,
+    "valence_fs": 0.34055555555555556,
+    "mood_line": "MOOD: you feel even and steady (mood intensity +0.00, arousal 0.40)."
+   }
+  }
+ ],
+ "known_rows": [
+  {
+   "prompt": "Tell me about frank_lincoln_wright",
+   "raw": "Frank Lincoln Wright was a prominent American architect known for his innovative designs and contributions to the architectural field. Born Frank Givene in 1852, he began his career as a civil engineer before transitioning into architecture. His most notable works include the Lincoln Memorial in Washington D.C., which he designed alongside his wife, Mary Todd Lincoln. Wright's architectural style was characterized by its use of organic forms inspired by nature, and he often incorporated elements such as columns, domes, and gardens into his buildings. He also worked on several other projects including",
+   "known": true,
+   "facts": [
+    [
+     "frank_lincoln_wright",
+     "instance_of",
+     "human_specie"
+    ],
+    [
+     "frank_lincoln_wright",
+     "country_of_citizenship",
+     "u_s_of_a"
+    ],
+    [
+     "frank_lincoln_wright",
+     "languages_spoken_written_or_signed",
+     "number_of_english_words"
+    ],
+    [
+     "frank_lincoln_wright",
+     "occupation",
+     "stanford_downey_architects_inc"
+    ],
+    [
+     "frank_lincoln_wright",
+     "given_name",
+     "frank_given_name"
+    ],
+    [
+     "frank_lincoln_wright",
+     "educated_at",
+     "university_of_wisconsin_madison"
+    ],
+    [
+     "frank_lincoln_wright",
+     "place_of_death",
+     "estrella_phoenix_arizona"
+    ],
+    [
+     "frank_lincoln_wright",
+     "described_by_source",
+     "ubuweb"
+    ],
+    [
+     "frank_lincoln_wright",
+     "member_of",
+     "artists_rights_society"
+    ],
+    [
+     "frank_lincoln_wright",
+     "family_name",
+     "woodwright"
+    ],
+    [
+     "frank_lincoln_wright",
+     "award_received",
+     "riba_gold_medal"
+    ]
+   ],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.25,
+   "tone_hits": 1,
+   "salad_frac": 0.043478260869565216,
+   "affect_differential": 0.0,
+   "state_valence": 0.0,
+   "gen_seconds": 6.0,
+   "conditioning": {
+    "mode": "prompt",
+    "valence_in": 0.0,
+    "c": 0.0,
+    "valence_fs": 0.34055555555555556,
+    "mood_line": "MOOD: you feel even and steady (mood intensity +0.00, arousal 0.40)."
+   }
+  }
+ ],
+ "maxrss_gb": 8.848908,
+ "wall_seconds": 587.2
+}

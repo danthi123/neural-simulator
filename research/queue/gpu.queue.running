@@ -1,1 +1,0 @@
-SIM_BACKEND=cupy .venv/bin/python -m research.runners._gap5_dendritic_subunit_blocks_derisk --seeds 42 43 44 --blocks 1 2 4 6 > /tmp/claude-1000/subunit_blocks.log 2>&1  #checked:new-shared-dependency-mechanism-catalog-G02-via-pathway-split

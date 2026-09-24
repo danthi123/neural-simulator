@@ -80,7 +80,7 @@ def cmd_aggregate(a):
     out = {"tag": a.tag, "seeds": seeds, "per_faculty": {}, "per_seed": {}}
     for s in seeds:
         cov = [f for f, r in rows.items() if s in r and r[s]["kind"] in ("neural-lesion", "whether-disable")]
-        ex = [f for f in cov if rows[f][s]["verdict"] in ("regressed", "pass")]
+        ex = [f for f in cov if rows[f][s]["verdict"] in ("regressed", "pass", "trace-only")]  # trace-only: LB_SWAP_DRIVE_PROBE
         lb = [f for f in ex if rows[f][s]["load_bearing"] is True]
         out["per_seed"][s] = {"n_coverable_present": len(cov), "n_exercised": len(ex), "n_load_bearing": len(lb),
                               "load_bearing_fraction": (len(lb) / len(ex)) if ex else None}

@@ -1,0 +1,51 @@
+{
+  "runner": "research.runners.load_bearing_fraction",
+  "metric": "load_bearing_fraction",
+  "repeats": 2,
+  "seed": 42,
+  "backend": "numpy",
+  "cuda_visible_devices": null,
+  "source_prov_abstain_at_tie_env": "1",
+  "affect_marker_settle_env": "1",
+  "per_faculty": [
+    {
+      "faculty": "one-brain-substrate",
+      "turn": "well",
+      "kind": "mechanism-only",
+      "flag": "BRAIN_COMPOSER_KIND",
+      "load_bearing": null,
+      "verdict": "not-covered:mechanism-only",
+      "change_kind": null,
+      "diffs": [],
+      "treatment_diffs": null,
+      "control_diffs": null,
+      "attributable_fraction": null,
+      "null_control_clean": null,
+      "lesion_reproduced": null,
+      "flag_resolves": true,
+      "note": "onebrain vs rf give the SAME answers BY DESIGN (ledger lesion_note) \u2014 a MECHANISM claim (recall on firing neurons), not an answer change. activity.composer label flips but that is cosmetic; NOT answer-load-bearing by construction. Excluded from the fraction."
+    }
+  ],
+  "determinism": {
+    "deterministic": null,
+    "n_null_controls_checked": 0,
+    "dirty_null_controls": []
+  },
+  "counts": {
+    "n_faculties_total": 1,
+    "n_coverable_env_lesion": 0,
+    "n_exercised": 0,
+    "n_load_bearing": 0,
+    "n_not_load_bearing": 0,
+    "n_not_exercised": 0,
+    "n_noisy": 0,
+    "n_lesion_knob_missing": 0,
+    "n_in_process": 0,
+    "n_thin": 0,
+    "n_mechanism_only": 1,
+    "n_proposed": 0
+  },
+  "load_bearing_fraction": null,
+  "load_bearing_faculties": [],
+  "not_load_bearing_faculties": []
+}

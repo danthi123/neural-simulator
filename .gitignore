@@ -199,3 +199,20 @@ research/queue/.waiver_history.jsonl
 research/queue/.brain_build_reference.json
 research/queue/.aws_spend_ledger.jsonl
 research/queue/.pool_reservations
+
+# AWS-as-extra-pool-node plumbing (2026-09-23): a repo-LOCAL ssh config (never ~/.ssh/config -- see
+# tools/aws_pool_node.sh) plus the dynamic node-name file tools/pool_autodispatch.sh re-reads every cycle and
+# its per-repo-checkout known_hosts file. Machine/session-local, never shared state.
+research/queue/.pool_ssh_config
+research/queue/.pool_ssh_known_hosts
+research/queue/.pool_extra_nodes
+# Per-node AWS-pool-node state files (tools/aws_pool_node.sh: research/queue/.aws_<node-name>, e.g. .aws_pool1,
+# .aws_worker1 -- `up` accepts ANY [a-zA-Z0-9_-] node-name, not just names starting with "pool"). Holds an
+# instance id, security-group id and a LOCAL key PATH (never key material) -- not secret, but a broad
+# `git add research/queue` should not commit it. BUGFIX (fix round #2): the old `.aws_pool*` pattern missed any
+# node-name that does not start with "pool" (e.g. `up worker1` -> an untracked-but-unignored .aws_worker1) --
+# ignore every `.aws_*` file and carve back out research/queue/.aws_gpu (the single-instance lane), which stays
+# TRACKED on purpose.
+research/queue/.aws_*
+# Live queue / lock state (2026-09-24): untracked so no checkout, merge, restore or stash can rewrite it mid-run
+research/queue/pool.queue research/queue/pool.queue.claims research/queue/pool.queue.running research/queue/pool.queue.done research/queue/pool.queue.lock research/queue/pool.queue.malformed research/queue/pool.running research/queue/gpu.queue research/queue/gpu.queue.running research/queue/gpu.queue.done research/queue/gpu_queue.dpid research/queue/.gpu.queue.lock research/queue/.gpu_daemon.lock research/queue/.gpu_queue.lock research/queue/.opsweep_keepalive.lock research/queue/.last_cpu_dispatch research/queue/.qwen_llm_active research/queue/.autofill_cycle research/queue/.agent_waiver

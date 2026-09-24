@@ -139,6 +139,20 @@ _EXTRA_TURNS = [
     # recalls "yes"/AFFIRM -> stored != asserted -> REJECT; lesion forces "unknown" -> ACCEPT — so reject / recalled_yn /
     # stored_polarity all diverge. See research/runners/load_bearing_fraction.py.
     ("noncontra_neg", "the dog does not chase the cat", "ncontra", True, None, False),  # NEGATE assertion of the AFFIRM boot fact (dog,chase,cat) -> intact reject=True (recall 'yes'); lesion accept (forced 'unknown')
+    # ── SWAP-DRIVES DRIVING GROUP (label-only; used only by load_bearing_fraction's LB_SWAP_DRIVE_PROBE) ─────────────
+    # The default swap-drives probe rides `held` ('the wolf watches the owl'), which (a) names no BUILD-TIME KB concept
+    # (wolf/owl are not tiny-demo agents/patients -> gnw_thought_swap._extract_topic returns None -> no_topic_hold) and
+    # (b) is answered by the role-binding REPAIR short-circuit, which returns before `swap_drives` is attached -> the
+    # field is absent in BOTH arms -> NOT-EXERCISED on every seed. This group is an ordinary topic conversation over the
+    # boot facts (dog,chase,cat)/(cat,eat,fish): OPEN establishes the held topic 'dog' (first thought), HOLD re-asks on
+    # the SAME topic (the within-session NULL-CONTRAST turn: no swap is due, so the lesion must NOT change it), SWITCH
+    # asks about a DIFFERENT grounded concept 'cat' (the salient competing topic: the neural mismatch detector should
+    # fire -> evict 'dog' -> admit 'cat' -> the reply leads "On cat, then -- ..."; BRAIN_SWAP_DRIVES_LESION silences
+    # the detector -> no swap -> no lead). Kept OUT of PROBE_TURNS -> the default roster + every flip-verify harness
+    # stay BYTE-IDENTICAL. Pre-registration: research/findings/2026-09-23-swap-drives-adequate-probe-PREREGISTRATION.md.
+    ("sw_open",   "what does the dog chase", "sw2", True,  None, False),   # establish the held topic 'dog' (first thought)
+    ("sw_hold",   "what does the dog chase", "sw2", False, None, False),   # SAME topic -> hold (contrast turn: lesion must not change it)
+    ("sw_switch", "what does the cat eat",   "sw2", False, None, False),   # DIFFERENT grounded topic 'cat' -> intact swap + lead / lesion no swap
     # ── PROSPECTIVE-MEMORY DRIVING GROUP (label-only; used only by load_bearing_fraction's LB_PMEM_DRIVE_PROBE) ──────
     # Prospective memory is, by definition, an intention held ACROSS INTERVENING ACTIVITY and released at a LATER cue
     # (McDaniel & Einstein 2000 multiprocess framework). The held-intention x cue coincidence in the SFA/NMDA substrate
