@@ -39,6 +39,9 @@ wall-clock; catching these in round one is the cheapest parallelism there is.
 - **Remote runs need the corpus** (`load_bearing_fraction` refuses without it; provisioners ship it).
 - **GPU-queue lines start with `export XDG_RUNTIME_DIR=/run/user/1000;`** when the runner self-checks memcap.
 - **Never commit live `research/queue/*` state** — merging it re-injects jobs.
+- **"Merge main" means `git merge origin/main`: a TWO-parent commit.** Copying main's files into a one-parent commit
+  leaves the merge-base stale, so the branch conflicts with main again (2026-09-23 curiosity fix round). Before
+  pushing: `git merge-tree --write-tree origin/main HEAD` must exit 0.
 - **Never SendMessage a Workflow subagent** (it resumes a duplicate in the same worktree).
 - **A repo-wide idle-compute gate blocking YOUR commit is the orchestrator's problem, not yours.** Do NOT queue filler
   (new seed batches of a closed result, a spare seed "for replication", an "autofill" continuation) to clear

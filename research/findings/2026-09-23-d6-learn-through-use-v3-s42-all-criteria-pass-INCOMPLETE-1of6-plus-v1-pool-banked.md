@@ -1,6 +1,7 @@
 ---
 type: finding
-status: live
+status: superseded
+superseded_by: research/findings/2026-09-23-d6-learn-through-use-v3-capability-gate-GO-6of6.md
 date: 2026-09-23
 lane: D6-learn-and-grow
 mechanism: D6 gate v3 (capability gate), seed 42 of 6, local numpy; plus the banked gate-v1 base-variant pool arms and the flag-off chat-mode byte-identity check
