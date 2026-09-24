@@ -162,7 +162,7 @@ def xedge_curiosity_d6_train_drive_scale() -> float:
     original `p.train()` call) -- PORTS the isolated de-risk runner's 2026-09-08 re-tune
     (`research/findings/2026-09-08-onebrain-crossedge-curiosity-to-d6wm-retuned-6-6-GO-via-training-drive-not-
     episode-count.md`) onto THIS module's own production pool, so the base rung's real NO-GO 3/6 (the
-    read-isolation-corrected verdict `_XEDGE_CD6_DEFAULT_ON=False` responds to) can be re-verified through the
+    read-isolation-corrected verdict that once set `_XEDGE_CD6_DEFAULT_ON` to False responds to) can be re-verified through the
     ACTUAL production wrapper's own self-test, not just the isolated runner. Scales ONLY the training-time `ask`
     co-drive (`AskToW0Pool.train()`'s new `ask_drive_pa` param); the scored READ's condition currents are
     untouched, matching the isolated runner's own decoupling. Unset/1.0 reproduces the exact pre-existing

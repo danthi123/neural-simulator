@@ -20,6 +20,13 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
   terminates it) + AWS A (`.aws_gpu`, s100-102, controller `b9e3vhwh5` terminates it). When both are done:
   `.venv/bin/python tools/lb_shard.py aggregate --tag allfixes3settle` → finding. Robust core 25 if affect-marker is
   6/6 and nothing regresses (vs 24 in `allfixes2`).
+- **Default-flip of three validated fixes (owner 2026-09-23: validated flips are Claude's to make)** on branch
+  `research/flip-validated-fixes`, NOT merged: BRAIN_EPISODIC_STORE_VERIFY, BRAIN_PMEM_FACILITATION and
+  BRAIN_SOURCE_PROV_ABSTAIN_AT_TIE default ON; `=0` still forces each off, and a scripted-chat sha256 check with all three
+  `=0` compares against pre-flip `033e385b8`. NEXT: run the two pre-registered 6-seed batteries (`flipdefaults-thin`,
+  `flipdefaults-adequate`; JOBS.txt under `research/findings/raw/_load_bearing/_shards/`; criteria in
+  `research/findings/2026-09-23-flip-validated-fixes-production-default-validation-prereg.md`), then adversarial review,
+  then merge. The same branch repairs CLASS PI Check A, which had never run on a ledger edit.
 - **✅ D6 v3 capability gate: GO 6/6 on K1-K7** (`research/findings/2026-09-23-d6-learn-through-use-v3-capability-gate-GO-6of6.md`):
   the recall reply depends on the in-conversation synaptic write; the host record is inert. Runner-level, default-off.
   The EXPO_H secondary (K3e/K4e) is staged on the pool at `01f7a5a4` → re-score with the same command when the 6
