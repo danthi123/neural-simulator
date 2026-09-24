@@ -22,6 +22,27 @@ FLIPPED = {
 }
 
 
+_MISSING = object()
+
+
+def _source_constant(mod, const):
+    """Value of a module-level `CONST = <literal>` assignment, parsed from the file (no import)."""
+    import ast
+    root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    path = os.path.join(root, *mod.split(".")) + ".py"
+    try:
+        tree = ast.parse(open(path).read(), filename=path)
+    except (OSError, SyntaxError):
+        return _MISSING
+    for node in tree.body:
+        if isinstance(node, ast.Assign) and any(isinstance(t, ast.Name) and t.id == const for t in node.targets):
+            try:
+                return ast.literal_eval(node.value)
+            except ValueError:
+                return _MISSING
+    return _MISSING
+
+
 def problems(environ=None):
     environ = os.environ if environ is None else environ
     out = []
@@ -35,10 +56,12 @@ def problems(environ=None):
     for flag, (mod, const) in FLIPPED.items():
         if flag in environ:
             out.append("%s is set in the environment (=%r); this battery must measure the default" % (flag, environ[flag]))
-        try:
-            val = getattr(importlib.import_module(mod), const)
-        except Exception as e:  # noqa: BLE001
-            out.append("%s.%s missing (%s): this revision predates the 2026-09-23 flip" % (mod, const, e))
+        # Read the constant from the module SOURCE, never by importing it (2026-09-24): importing
+        # _episodic_dap_dialogue_memory pulls in cupy, which CPU-only AWS/pool nodes do not have, so every job's guard
+        # failed with "No module named 'cupy'" and 156 shards ran nothing.
+        val = _source_constant(mod, const)
+        if val is _MISSING:
+            out.append("%s.%s not found in source: this revision predates the 2026-09-23 flip" % (mod, const))
             continue
         if val is not True:
             out.append("%s.%s = %r, expected True" % (mod, const, val))

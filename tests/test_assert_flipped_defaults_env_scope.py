@@ -13,3 +13,16 @@ def test_other_brain_flag_in_env_is_refused():
 def test_lb_probe_flags_and_clean_env_pass():
     assert guard.problems({}) == []
     assert guard.problems({"LB_EPISODIC_DRIVE_PROBE": "1", "SIM_BACKEND": "numpy"}) == []
+
+
+def test_guard_reads_constants_without_importing_cupy_modules(monkeypatch):
+    # CPU-only nodes have no cupy; the guard must not import the flipped modules (2026-09-24: 156 shards failed).
+    import builtins
+    real_import = builtins.__import__
+
+    def no_cupy(name, *a, **k):
+        if name == "cupy" or name.startswith("cupy."):
+            raise ImportError("No module named 'cupy'")
+        return real_import(name, *a, **k)
+    monkeypatch.setattr(builtins, "__import__", no_cupy)
+    assert guard.problems({}) == []
