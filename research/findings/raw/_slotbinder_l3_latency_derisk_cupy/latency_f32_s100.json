@@ -1,0 +1,55 @@
+{
+  "seed": 100,
+  "fanout": 32,
+  "n_facts_sampled": 2,
+  "sampled_corpus_indices": [
+    309,
+    337
+  ],
+  "sim_backend": "cupy",
+  "K": 2020,
+  "KF": 1195,
+  "measured_nnz": 28603200,
+  "formula_nnz": 28603200,
+  "build_and_store_seconds": 36.58787417411804,
+  "per_fact_query_latency": [
+    {
+      "fact_idx_in_corpus": 309,
+      "agent": "person",
+      "action": "get",
+      "expected_patient": "return",
+      "got_patient": "return",
+      "hit": true,
+      "query_latency_s": 1.0005033016204834
+    },
+    {
+      "fact_idx_in_corpus": 337,
+      "agent": "people",
+      "action": "use",
+      "expected_patient": "reason",
+      "got_patient": "reason",
+      "hit": true,
+      "query_latency_s": 1.2639739513397217
+    }
+  ],
+  "moat_probe": {
+    "agent": "coins",
+    "action": "sun",
+    "abstained": true,
+    "query_latency_s": 0.6647317409515381
+  },
+  "mismatch_probe": {
+    "agent": "person",
+    "action_from_other_fact": "use",
+    "did_not_leak_fact0_patient": true,
+    "query_latency_s": 0.9454569816589355
+  },
+  "recall_accuracy_query_patient": 1.0,
+  "moat_pass": true,
+  "mismatch_pass": true,
+  "mean_query_latency_s": 0.9686664938926697,
+  "max_query_latency_s": 1.2639739513397217,
+  "min_query_latency_s": 0.6647317409515381,
+  "vs_fhrr_mean_ratio": 1.0762961043251884,
+  "wall_clock_this_seed_s": 40.463237047195435
+}

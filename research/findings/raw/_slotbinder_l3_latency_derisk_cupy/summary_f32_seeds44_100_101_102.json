@@ -1,0 +1,246 @@
+{
+  "fanout": 32,
+  "n_facts_per_seed": 2,
+  "seeds": [
+    44,
+    100,
+    101,
+    102
+  ],
+  "sim_backend": "cupy",
+  "fhrr_reference": {
+    "peak_rss_mb": 334,
+    "mean_query_s": 0.9,
+    "n_correct_of_3": 3,
+    "store_all_404_facts_s": 20.6,
+    "source": "research/findings/2026-09-04-slotbinder-live-scale-derisk-NOGO-dense-pathway-blowup.md #6, research/findings/raw/_fhrr_rf_composer_live_scale_404facts.json"
+  },
+  "all_recall_1.0": true,
+  "all_moat_pass": true,
+  "all_mismatch_pass": true,
+  "mean_query_latency_s_across_seeds": 1.0099695324897766,
+  "max_query_latency_s_across_seeds": 1.402888536453247,
+  "mean_build_and_store_s_across_seeds": 41.43060648441315,
+  "rows": [
+    {
+      "seed": 44,
+      "fanout": 32,
+      "n_facts_sampled": 2,
+      "sampled_corpus_indices": [
+        49,
+        268
+      ],
+      "sim_backend": "cupy",
+      "K": 2020,
+      "KF": 1195,
+      "measured_nnz": 28603200,
+      "formula_nnz": 28603200,
+      "build_and_store_seconds": 40.110177516937256,
+      "per_fact_query_latency": [
+        {
+          "fact_idx_in_corpus": 49,
+          "agent": "bird",
+          "action": "think",
+          "expected_patient": "moment",
+          "got_patient": "moment",
+          "hit": true,
+          "query_latency_s": 1.0916399955749512
+        },
+        {
+          "fact_idx_in_corpus": 268,
+          "agent": "boy",
+          "action": "go",
+          "expected_patient": "time",
+          "got_patient": "time",
+          "hit": true,
+          "query_latency_s": 1.327174425125122
+        }
+      ],
+      "moat_probe": {
+        "agent": "throw",
+        "action": "nature",
+        "abstained": true,
+        "query_latency_s": 0.6276888847351074
+      },
+      "mismatch_probe": {
+        "agent": "bird",
+        "action_from_other_fact": "go",
+        "did_not_leak_fact0_patient": true,
+        "query_latency_s": 1.0129892826080322
+      },
+      "recall_accuracy_query_patient": 1.0,
+      "moat_pass": true,
+      "mismatch_pass": true,
+      "mean_query_latency_s": 1.0148731470108032,
+      "max_query_latency_s": 1.327174425125122,
+      "min_query_latency_s": 0.6276888847351074,
+      "vs_fhrr_mean_ratio": 1.1276368300120037,
+      "wall_clock_this_seed_s": 44.176265478134155
+    },
+    {
+      "seed": 100,
+      "fanout": 32,
+      "n_facts_sampled": 2,
+      "sampled_corpus_indices": [
+        309,
+        337
+      ],
+      "sim_backend": "cupy",
+      "K": 2020,
+      "KF": 1195,
+      "measured_nnz": 28603200,
+      "formula_nnz": 28603200,
+      "build_and_store_seconds": 36.58787417411804,
+      "per_fact_query_latency": [
+        {
+          "fact_idx_in_corpus": 309,
+          "agent": "person",
+          "action": "get",
+          "expected_patient": "return",
+          "got_patient": "return",
+          "hit": true,
+          "query_latency_s": 1.0005033016204834
+        },
+        {
+          "fact_idx_in_corpus": 337,
+          "agent": "people",
+          "action": "use",
+          "expected_patient": "reason",
+          "got_patient": "reason",
+          "hit": true,
+          "query_latency_s": 1.2639739513397217
+        }
+      ],
+      "moat_probe": {
+        "agent": "coins",
+        "action": "sun",
+        "abstained": true,
+        "query_latency_s": 0.6647317409515381
+      },
+      "mismatch_probe": {
+        "agent": "person",
+        "action_from_other_fact": "use",
+        "did_not_leak_fact0_patient": true,
+        "query_latency_s": 0.9454569816589355
+      },
+      "recall_accuracy_query_patient": 1.0,
+      "moat_pass": true,
+      "mismatch_pass": true,
+      "mean_query_latency_s": 0.9686664938926697,
+      "max_query_latency_s": 1.2639739513397217,
+      "min_query_latency_s": 0.6647317409515381,
+      "vs_fhrr_mean_ratio": 1.0762961043251884,
+      "wall_clock_this_seed_s": 40.463237047195435
+    },
+    {
+      "seed": 101,
+      "fanout": 32,
+      "n_facts_sampled": 2,
+      "sampled_corpus_indices": [
+        125,
+        381
+      ],
+      "sim_backend": "cupy",
+      "K": 2020,
+      "KF": 1195,
+      "measured_nnz": 28603200,
+      "formula_nnz": 28603200,
+      "build_and_store_seconds": 45.7757682800293,
+      "per_fact_query_latency": [
+        {
+          "fact_idx_in_corpus": 125,
+          "agent": "girl",
+          "action": "become",
+          "expected_patient": "friend",
+          "got_patient": "friend",
+          "hit": true,
+          "query_latency_s": 0.9878764152526855
+        },
+        {
+          "fact_idx_in_corpus": 381,
+          "agent": "player",
+          "action": "take",
+          "expected_patient": "turn",
+          "got_patient": "turn",
+          "hit": true,
+          "query_latency_s": 1.402888536453247
+        }
+      ],
+      "moat_probe": {
+        "agent": "connect",
+        "action": "split",
+        "abstained": true,
+        "query_latency_s": 0.6811044216156006
+      },
+      "mismatch_probe": {
+        "agent": "girl",
+        "action_from_other_fact": "take",
+        "did_not_leak_fact0_patient": true,
+        "query_latency_s": 0.9650256633758545
+      },
+      "recall_accuracy_query_patient": 1.0,
+      "moat_pass": true,
+      "mismatch_pass": true,
+      "mean_query_latency_s": 1.009223759174347,
+      "max_query_latency_s": 1.402888536453247,
+      "min_query_latency_s": 0.6811044216156006,
+      "vs_fhrr_mean_ratio": 1.121359732415941,
+      "wall_clock_this_seed_s": 49.813358783721924
+    },
+    {
+      "seed": 102,
+      "fanout": 32,
+      "n_facts_sampled": 2,
+      "sampled_corpus_indices": [
+        64,
+        178
+      ],
+      "sim_backend": "cupy",
+      "K": 2020,
+      "KF": 1195,
+      "measured_nnz": 28603200,
+      "formula_nnz": 28603200,
+      "build_and_store_seconds": 43.24860596656799,
+      "per_fact_query_latency": [
+        {
+          "fact_idx_in_corpus": 64,
+          "agent": "girl",
+          "action": "go",
+          "expected_patient": "beach",
+          "got_patient": "beach",
+          "hit": true,
+          "query_latency_s": 1.0443446636199951
+        },
+        {
+          "fact_idx_in_corpus": 178,
+          "agent": "player",
+          "action": "use",
+          "expected_patient": "game",
+          "got_patient": "game",
+          "hit": true,
+          "query_latency_s": 1.4001693725585938
+        }
+      ],
+      "moat_probe": {
+        "agent": "penis",
+        "action": "museum",
+        "abstained": true,
+        "query_latency_s": 0.7089285850524902
+      },
+      "mismatch_probe": {
+        "agent": "girl",
+        "action_from_other_fact": "use",
+        "did_not_leak_fact0_patient": true,
+        "query_latency_s": 1.0350162982940674
+      },
+      "recall_accuracy_query_patient": 1.0,
+      "moat_pass": true,
+      "mismatch_pass": true,
+      "mean_query_latency_s": 1.0471147298812866,
+      "max_query_latency_s": 1.4001693725585938,
+      "min_query_latency_s": 0.7089285850524902,
+      "vs_fhrr_mean_ratio": 1.1634608109792073,
+      "wall_clock_this_seed_s": 47.437448263168335
+    }
+  ]
+}
