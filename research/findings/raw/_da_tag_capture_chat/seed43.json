@@ -1,0 +1,668 @@
+{
+  "seed": 43,
+  "fact": [
+    "cat",
+    "chase",
+    "ball"
+  ],
+  "arms": {
+    "sal_night_intact_a": {
+      "label": "datc_recall",
+      "env": {
+        "BRAIN_DA_TAG_CAPTURE": "1",
+        "BRAIN_DA_TAG_CAPTURE_CLOCK": "turn"
+      },
+      "turns": [
+        "datc_t1",
+        "datc_t2",
+        "datc_t3",
+        "datc_t4",
+        "datc_t5",
+        "datc_night",
+        "datc_recall"
+      ],
+      "artifact": "research/findings/raw/_da_tag_capture_chat/seed43/sal_night_intact_a.json",
+      "recall_outcome": "correct",
+      "recalled_svo": [
+        "cat",
+        "chase",
+        "ball"
+      ],
+      "abstained": false,
+      "tag_capture_at_recall": {
+        "world_t_h": 24.041666666666668,
+        "n_turns": 6,
+        "p": 6.965132305888271e-13,
+        "p_max": 0.018450024030136875,
+        "n_managed_blocks": 1,
+        "external_rescales": 1,
+        "external_rewrites": 0,
+        "gamma": 32.77353587789152,
+        "d1_a_go": 0.18667699457784698
+      },
+      "fact_block_at_recall": {
+        "block": 0,
+        "t_w": 0.016666666666666666,
+        "tag0_mean": 2.2027627035027137,
+        "z_mean": 1.0000000000532623,
+        "z_min": 1.0000000000532623,
+        "z_max": 1.0000000000532623,
+        "frac_synapses_z_gt_half": 1.0,
+        "inc_mag": 1.7829996950950857,
+        "base_mag": 0.7465889813285725
+      },
+      "turn_da": [
+        0.6478803447434558,
+        0.8960979627223284,
+        0.7980108110666576,
+        0.9032609892666146,
+        1.03907707638594,
+        null,
+        0.7074177420101405
+      ],
+      "turn_a_eff": [
+        0.20681642137877665,
+        0.5251742835011621,
+        0.3880712625871415,
+        0.478698683191325,
+        0.6994577846630521,
+        null,
+        0.32532920216886185
+      ],
+      "errors": []
+    },
+    "sal_night_intact_b": {
+      "label": "datc_recall",
+      "env": {
+        "BRAIN_DA_TAG_CAPTURE": "1",
+        "BRAIN_DA_TAG_CAPTURE_CLOCK": "turn"
+      },
+      "turns": [
+        "datc_t1",
+        "datc_t2",
+        "datc_t3",
+        "datc_t4",
+        "datc_t5",
+        "datc_night",
+        "datc_recall"
+      ],
+      "artifact": "research/findings/raw/_da_tag_capture_chat/seed43/sal_night_intact_b.json",
+      "recall_outcome": "correct",
+      "recalled_svo": [
+        "cat",
+        "chase",
+        "ball"
+      ],
+      "abstained": false,
+      "tag_capture_at_recall": {
+        "world_t_h": 24.041666666666668,
+        "n_turns": 6,
+        "p": 6.965132305888271e-13,
+        "p_max": 0.018450024030136875,
+        "n_managed_blocks": 1,
+        "external_rescales": 1,
+        "external_rewrites": 0,
+        "gamma": 32.77353587789152,
+        "d1_a_go": 0.18667699457784698
+      },
+      "fact_block_at_recall": {
+        "block": 0,
+        "t_w": 0.016666666666666666,
+        "tag0_mean": 2.2027627035027137,
+        "z_mean": 1.0000000000532623,
+        "z_min": 1.0000000000532623,
+        "z_max": 1.0000000000532623,
+        "frac_synapses_z_gt_half": 1.0,
+        "inc_mag": 1.7829996950950857,
+        "base_mag": 0.7465889813285725
+      },
+      "turn_da": [
+        0.6478803447434558,
+        0.8960979627223284,
+        0.7980108110666576,
+        0.9032609892666146,
+        1.03907707638594,
+        null,
+        0.7074177420101405
+      ],
+      "turn_a_eff": [
+        0.20681642137877665,
+        0.5251742835011621,
+        0.3880712625871415,
+        0.478698683191325,
+        0.6994577846630521,
+        null,
+        0.32532920216886185
+      ],
+      "errors": []
+    },
+    "sal_night_lesion": {
+      "label": "datc_recall",
+      "env": {
+        "BRAIN_DA_TAG_CAPTURE": "1",
+        "BRAIN_DA_TAG_CAPTURE_CLOCK": "turn",
+        "BRAIN_DA_ENCODING_LESION": "1"
+      },
+      "turns": [
+        "datc_t1",
+        "datc_t2",
+        "datc_t3",
+        "datc_t4",
+        "datc_t5",
+        "datc_night",
+        "datc_recall"
+      ],
+      "artifact": "research/findings/raw/_da_tag_capture_chat/seed43/sal_night_lesion.json",
+      "recall_outcome": "abstain",
+      "recalled_svo": null,
+      "abstained": true,
+      "tag_capture_at_recall": {
+        "world_t_h": 24.041666666666668,
+        "n_turns": 6,
+        "p": 0.0,
+        "p_max": 0.0,
+        "n_managed_blocks": 1,
+        "external_rescales": 0,
+        "external_rewrites": 0,
+        "gamma": 32.77353587789152,
+        "d1_a_go": 0.18667699457784698
+      },
+      "fact_block_at_recall": {
+        "block": 0,
+        "t_w": 0.016666666666666666,
+        "tag0_mean": 1.0,
+        "z_mean": 0.0,
+        "z_min": 0.0,
+        "z_max": 0.0,
+        "frac_synapses_z_gt_half": 0.0,
+        "inc_mag": 1.0,
+        "base_mag": 0.9223548200488956
+      },
+      "turn_da": [
+        0.6478803447434558,
+        0.8960979627223284,
+        0.7980108110666576,
+        0.9032609892666146,
+        1.03907707638594,
+        null,
+        0.7074177420101405
+      ],
+      "turn_a_eff": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        null,
+        0.06041828040278906
+      ],
+      "errors": []
+    },
+    "neu_night_intact": {
+      "label": "datn_recall",
+      "env": {
+        "BRAIN_DA_TAG_CAPTURE": "1",
+        "BRAIN_DA_TAG_CAPTURE_CLOCK": "turn"
+      },
+      "turns": [
+        "datn_t1",
+        "datn_t2",
+        "datn_t3",
+        "datn_t4",
+        "datn_t5",
+        "datn_night",
+        "datn_recall"
+      ],
+      "artifact": "research/findings/raw/_da_tag_capture_chat/seed43/neu_night_intact.json",
+      "recall_outcome": "abstain",
+      "recalled_svo": null,
+      "abstained": true,
+      "tag_capture_at_recall": {
+        "world_t_h": 24.041666666666668,
+        "n_turns": 6,
+        "p": 0.0,
+        "p_max": 0.0,
+        "n_managed_blocks": 1,
+        "external_rescales": 1,
+        "external_rewrites": 0,
+        "gamma": 32.77353587789152,
+        "d1_a_go": 0.18667699457784698
+      },
+      "fact_block_at_recall": {
+        "block": 0,
+        "t_w": 0.016666666666666666,
+        "tag0_mean": 1.2733103108041433,
+        "z_mean": 0.0,
+        "z_min": 0.0,
+        "z_max": 0.0,
+        "frac_synapses_z_gt_half": 0.0,
+        "inc_mag": 1.1458769112128202,
+        "base_mag": 0.8300451848005612
+      },
+      "turn_da": [
+        0.04616293556102311,
+        0.3726834325926455,
+        0.23843243106970416,
+        0.04616293556102311,
+        0.04616293556102311,
+        null,
+        0.04616293556102311
+      ],
+      "turn_a_eff": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        null,
+        0.0
+      ],
+      "errors": []
+    },
+    "neu_night_lesion": {
+      "label": "datn_recall",
+      "env": {
+        "BRAIN_DA_TAG_CAPTURE": "1",
+        "BRAIN_DA_TAG_CAPTURE_CLOCK": "turn",
+        "BRAIN_DA_ENCODING_LESION": "1"
+      },
+      "turns": [
+        "datn_t1",
+        "datn_t2",
+        "datn_t3",
+        "datn_t4",
+        "datn_t5",
+        "datn_night",
+        "datn_recall"
+      ],
+      "artifact": "research/findings/raw/_da_tag_capture_chat/seed43/neu_night_lesion.json",
+      "recall_outcome": "abstain",
+      "recalled_svo": null,
+      "abstained": true,
+      "tag_capture_at_recall": {
+        "world_t_h": 24.041666666666668,
+        "n_turns": 6,
+        "p": 0.0,
+        "p_max": 0.0,
+        "n_managed_blocks": 1,
+        "external_rescales": 0,
+        "external_rewrites": 0,
+        "gamma": 32.77353587789152,
+        "d1_a_go": 0.18667699457784698
+      },
+      "fact_block_at_recall": {
+        "block": 0,
+        "t_w": 0.016666666666666666,
+        "tag0_mean": 1.0,
+        "z_mean": 0.0,
+        "z_min": 0.0,
+        "z_max": 0.0,
+        "frac_synapses_z_gt_half": 0.0,
+        "inc_mag": 1.0,
+        "base_mag": 0.9223548200488956
+      },
+      "turn_da": [
+        0.04616293556102311,
+        0.3726834325926455,
+        0.23843243106970416,
+        0.04616293556102311,
+        0.04616293556102311,
+        null,
+        0.04616293556102311
+      ],
+      "turn_a_eff": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        null,
+        0.06041828040278906
+      ],
+      "errors": []
+    },
+    "sal_imm_intact": {
+      "label": "datci_recall",
+      "env": {
+        "BRAIN_DA_TAG_CAPTURE": "1",
+        "BRAIN_DA_TAG_CAPTURE_CLOCK": "turn"
+      },
+      "turns": [
+        "datci_t1",
+        "datci_t2",
+        "datci_t3",
+        "datci_t4",
+        "datci_t5",
+        "datci_recall"
+      ],
+      "artifact": "research/findings/raw/_da_tag_capture_chat/seed43/sal_imm_intact.json",
+      "recall_outcome": "correct",
+      "recalled_svo": [
+        "cat",
+        "chase",
+        "ball"
+      ],
+      "abstained": false,
+      "tag_capture_at_recall": {
+        "world_t_h": 0.041666666666666664,
+        "n_turns": 6,
+        "p": 0.018450024030136875,
+        "p_max": 0.018450024030136875,
+        "n_managed_blocks": 1,
+        "external_rescales": 0,
+        "external_rewrites": 0,
+        "gamma": 32.77353587789152,
+        "d1_a_go": 0.18667699457784698
+      },
+      "fact_block_at_recall": {
+        "block": 0,
+        "t_w": 0.016666666666666666,
+        "tag0_mean": 2.2027627035027137,
+        "z_mean": 0.044099481413590956,
+        "z_min": 0.044099481413590935,
+        "z_max": 0.044099481413590956,
+        "frac_synapses_z_gt_half": 0.0,
+        "inc_mag": 2.2027627035027137,
+        "base_mag": 0.9223548200488956
+      },
+      "turn_da": [
+        0.6478803447434558,
+        0.8960979627223284,
+        0.7980108110666576,
+        0.9032609892666146,
+        1.03907707638594,
+        0.7625442010714036
+      ],
+      "turn_a_eff": [
+        0.20681642137877665,
+        0.5251742835011621,
+        0.3880712625871415,
+        0.478698683191325,
+        0.6994577846630521,
+        0.4043377226955856
+      ],
+      "errors": []
+    },
+    "sal_imm_lesion": {
+      "label": "datci_recall",
+      "env": {
+        "BRAIN_DA_TAG_CAPTURE": "1",
+        "BRAIN_DA_TAG_CAPTURE_CLOCK": "turn",
+        "BRAIN_DA_ENCODING_LESION": "1"
+      },
+      "turns": [
+        "datci_t1",
+        "datci_t2",
+        "datci_t3",
+        "datci_t4",
+        "datci_t5",
+        "datci_recall"
+      ],
+      "artifact": "research/findings/raw/_da_tag_capture_chat/seed43/sal_imm_lesion.json",
+      "recall_outcome": "correct",
+      "recalled_svo": [
+        "cat",
+        "chase",
+        "ball"
+      ],
+      "abstained": false,
+      "tag_capture_at_recall": {
+        "world_t_h": 0.041666666666666664,
+        "n_turns": 6,
+        "p": 0.0,
+        "p_max": 0.0,
+        "n_managed_blocks": 1,
+        "external_rescales": 0,
+        "external_rewrites": 0,
+        "gamma": 32.77353587789152,
+        "d1_a_go": 0.18667699457784698
+      },
+      "fact_block_at_recall": {
+        "block": 0,
+        "t_w": 0.016666666666666666,
+        "tag0_mean": 1.0,
+        "z_mean": 0.0,
+        "z_min": 0.0,
+        "z_max": 0.0,
+        "frac_synapses_z_gt_half": 0.0,
+        "inc_mag": 1.0,
+        "base_mag": 0.9223548200488956
+      },
+      "turn_da": [
+        0.6478803447434558,
+        0.8960979627223284,
+        0.7980108110666576,
+        0.9032609892666146,
+        1.03907707638594,
+        0.7625442010714036
+      ],
+      "turn_a_eff": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.06041828040278906
+      ],
+      "errors": []
+    },
+    "neu_imm_intact": {
+      "label": "datni_recall",
+      "env": {
+        "BRAIN_DA_TAG_CAPTURE": "1",
+        "BRAIN_DA_TAG_CAPTURE_CLOCK": "turn"
+      },
+      "turns": [
+        "datni_t1",
+        "datni_t2",
+        "datni_t3",
+        "datni_t4",
+        "datni_t5",
+        "datni_recall"
+      ],
+      "artifact": "research/findings/raw/_da_tag_capture_chat/seed43/neu_imm_intact.json",
+      "recall_outcome": "correct",
+      "recalled_svo": [
+        "cat",
+        "chase",
+        "ball"
+      ],
+      "abstained": false,
+      "tag_capture_at_recall": {
+        "world_t_h": 0.041666666666666664,
+        "n_turns": 6,
+        "p": 0.0,
+        "p_max": 0.0,
+        "n_managed_blocks": 1,
+        "external_rescales": 0,
+        "external_rewrites": 0,
+        "gamma": 32.77353587789152,
+        "d1_a_go": 0.18667699457784698
+      },
+      "fact_block_at_recall": {
+        "block": 0,
+        "t_w": 0.016666666666666666,
+        "tag0_mean": 1.2733103108041433,
+        "z_mean": 0.0,
+        "z_min": 0.0,
+        "z_max": 0.0,
+        "frac_synapses_z_gt_half": 0.0,
+        "inc_mag": 1.2733103108041433,
+        "base_mag": 0.9223548200488956
+      },
+      "turn_da": [
+        0.04616293556102311,
+        0.3726834325926455,
+        0.23843243106970416,
+        0.04616293556102311,
+        0.04616293556102311,
+        0.04616293556102311
+      ],
+      "turn_a_eff": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "errors": []
+    },
+    "sal_night_off_intact": {
+      "label": "datc_recall",
+      "env": {
+        "BRAIN_DA_TAG_CAPTURE": "0",
+        "BRAIN_DA_TAG_CAPTURE_CLOCK": "turn"
+      },
+      "turns": [
+        "datc_t1",
+        "datc_t2",
+        "datc_t3",
+        "datc_t4",
+        "datc_t5",
+        "datc_night",
+        "datc_recall"
+      ],
+      "artifact": "research/findings/raw/_da_tag_capture_chat/seed43/sal_night_off_intact.json",
+      "recall_outcome": "correct",
+      "recalled_svo": [
+        "cat",
+        "chase",
+        "ball"
+      ],
+      "abstained": false,
+      "tag_capture_at_recall": {
+        "world_t_h": null,
+        "n_turns": null,
+        "p": null,
+        "p_max": null,
+        "n_managed_blocks": null,
+        "external_rescales": null,
+        "external_rewrites": null,
+        "gamma": null,
+        "d1_a_go": null
+      },
+      "fact_block_at_recall": null,
+      "turn_da": [
+        0.6478803447434558,
+        0.8960979627223284,
+        0.7980108110666576,
+        0.9032609892666146,
+        1.03907707638594,
+        null,
+        0.7074177420101405
+      ],
+      "turn_a_eff": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "errors": []
+    },
+    "sal_night_off_lesion": {
+      "label": "datc_recall",
+      "env": {
+        "BRAIN_DA_TAG_CAPTURE": "0",
+        "BRAIN_DA_TAG_CAPTURE_CLOCK": "turn",
+        "BRAIN_DA_ENCODING_LESION": "1"
+      },
+      "turns": [
+        "datc_t1",
+        "datc_t2",
+        "datc_t3",
+        "datc_t4",
+        "datc_t5",
+        "datc_night",
+        "datc_recall"
+      ],
+      "artifact": "research/findings/raw/_da_tag_capture_chat/seed43/sal_night_off_lesion.json",
+      "recall_outcome": "correct",
+      "recalled_svo": [
+        "cat",
+        "chase",
+        "ball"
+      ],
+      "abstained": false,
+      "tag_capture_at_recall": {
+        "world_t_h": null,
+        "n_turns": null,
+        "p": null,
+        "p_max": null,
+        "n_managed_blocks": null,
+        "external_rescales": null,
+        "external_rewrites": null,
+        "gamma": null,
+        "d1_a_go": null
+      },
+      "fact_block_at_recall": null,
+      "turn_da": [
+        0.6478803447434558,
+        0.8960979627223284,
+        0.7980108110666576,
+        0.9032609892666146,
+        1.03907707638594,
+        null,
+        0.7074177420101405
+      ],
+      "turn_a_eff": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "errors": []
+    }
+  },
+  "pinned_sha": "f35196e66",
+  "ltm": "off",
+  "backend": "numpy",
+  "argv": [
+    "/home/ubuntu/derisk-pool/revisions/5d3810f2d5ee0518a8d30efc87adef3fed88aea1/research/runners/_da_tag_capture_chat_probe.py",
+    "--seed",
+    "43",
+    "--ltm",
+    "off",
+    "--workers",
+    "1",
+    "--out",
+    "research/findings/raw/_da_tag_capture_chat"
+  ],
+  "workers": 1,
+  "gates": {
+    "G0_null_clean": true,
+    "P1_immediate_precondition": true,
+    "G1_lesion_changes_next_day_reply": true,
+    "G2_lesion_spares_immediate": true,
+    "G3_neutral_not_kept": true,
+    "G4_off_lesion_no_change": true,
+    "G5_no_confab": true,
+    "G6_lesion_held": true,
+    "attribution": {
+      "lesion_vs_null": 1.0,
+      "needs_companion": 1.0,
+      "treatment_diffs": 2
+    },
+    "G_isolation_gamma_consistent": true,
+    "outcomes": {
+      "sal_night_intact_a": "correct",
+      "sal_night_intact_b": "correct",
+      "sal_night_lesion": "abstain",
+      "neu_night_intact": "abstain",
+      "neu_night_lesion": "abstain",
+      "sal_imm_intact": "correct",
+      "sal_imm_lesion": "correct",
+      "neu_imm_intact": "correct",
+      "sal_night_off_intact": "correct",
+      "sal_night_off_lesion": "correct"
+    },
+    "n_arm_errors": 0,
+    "seed_verdict": "GO"
+  }
+}
