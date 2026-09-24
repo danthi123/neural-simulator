@@ -15,16 +15,35 @@ artifacts:
 
 # swap-drives adequate probe: the seed-42 smoke meets every pre-registered gate; 6 seeds are staged (2026-09-23)
 
-This is **one seed**, a smoke. It is not a robust-core claim. The six-seed run is staged on the pool.
+This is **one seed**, a smoke. It is not a robust-core claim. Five more seeds are staged on the pool (see
+"Staged" below).
 
 Pre-registration: `2026-09-23-swap-drives-adequate-probe-PREREGISTRATION.md` (commit `4d203f584`, amendment A1 in
-`ebe184fbc`).
+`ebe184fbc`, amendment A2 below — the s42 provenance correction this section now describes).
 
 ## What the smoke measured
 
-Seed 42, numpy backend, `--repeats 2`. Four arms were built locally under `tools/memcap.sh 12`: intact_a, intact_b,
-lesion, and a lesion rebuild. The first run crashed in the scorer (amendment A1). The same four arm files were then
-rescored with the fixed scorer; `LB_RESUME_SKIP_EXISTING=1` loads an existing arm file instead of rebuilding it.
+**Provenance correction (A2).** The first cut of this section described a *local* build of "four arms... under
+`tools/memcap.sh 12`", rescored after the A1 fix. That description was wrong for two of the four arms. Per
+`.prov.json`: `intact_a` and `intact_b` were built by worker subprocesses at `4d203f584` (19:01/19:15, before A1),
+while `lesion` and its rep0 were built by worker subprocesses at `7f90034df` (19:27/19:41, after A1 + the
+origin/main merge) — one long-lived parent process kept running while the worktree `HEAD` moved underneath it
+(same `SIM_RUN_ID`, different `git_sha` per arm). So the original smoke's treatment comparison (intact vs lesion)
+was **cross-revision**, not the single-revision rebuild the finding claimed. A review of the code diff between
+`4d203f584` and `7f90034df` found only an import fix, a selftest helper and a no-op merge on this path, so no
+confound was actually measured by it — but the finding must say the smoke was cross-revision, and it did not.
+
+**Fix.** Seed 42 is superseded here by the single-revision rebuild that came back from the six-seed pool batch
+(same command, same isolated revision as seeds 43/44/100/101/102 — see "Staged" below): all four arms
+(`intact_a`, `intact_b`, `lesion`, `lesion.rep0`) were built by `research/runners/onebrain_regression_battery.py
+--worker` subprocesses sharing one `SIM_RUN_ID` (`1790209256-3647551`), each `.prov.json` reading `git_sha:
+7f90034dfbf48bfc128e3f9b1c7f7506bb3fe8a6`, `git_dirty: false`, `source_kind: git_archive`, with
+`source_manifest_verified_at_start`/`_at_exit` both `true` against the same `source_manifest_sha256`
+(`e56f6b118de9cf3f8fc120adbc1de3a566229b237c969735c81ae1eb4df39fac`) — a genuinely single-revision, verified
+build. The replies, swap states and verdict are **byte-identical** to the withdrawn cross-revision smoke (the
+only diff in `lb.json` is a `cuda_visible_devices` reporting field, `""` vs `null`), so the original conclusion
+was not, in fact, confounded — but that could only be known once the single-revision result existed. The
+committed artifacts below (and the table) are now this corrected, single-revision run.
 
 Artifact: `research/findings/raw/_load_bearing/swap_drive_probe/s42/lb.json`.
 
@@ -38,8 +57,26 @@ Gate readings (`_swap_drive_score`):
 - G1 exercised: yes.
 - G2 contrast defined: yes.
 - G3 null clean on all three turns: 0 diffs.
-- G4 contrast clean: 0 diffs on `sw_open` and `sw_hold`.
-- G5 reply changed: yes. 4 diffs: `answer`, `swapped`, `reason`, `lead`.
+- G4 contrast clean: 0 diffs on `sw_open` and `sw_hold` — **but declare which of the four fields could actually
+  have failed.** On these no-swap-due turns the host template sets `reason='first_thought'`/`'same_topic_hold'`
+  and `lead=''` deterministically whenever `swapped` is `False`, and `swapped` cannot read `True` when the
+  proposed topic equals the incumbent — so `swapped`/`reason`/`lead` are **pass-by-construction** here; only
+  `answer` is a field that could have shown a real lesion effect. It did not (0 diff on `answer` too). The
+  mechanism itself is **not** unaffected by the lesion on these turns, only the reply is: `mm_peak` drops
+  0.0556→0.0056 on `sw_open` and 0.0667→0.0111 on `sw_hold` (both in `swap_state` in `lb.json`), and `boost_max`
+  falls with it. The correct statement is **"no reply-level change"** on the contrast turns, not "the lesion
+  changes nothing" — the earlier draft of this finding used the latter, over-broad phrasing.
+- G5 reply changed: yes. 4 diffs: `answer`, `swapped`, `reason`, `lead`. **What G5 actually tests:** once the
+  intact arm swaps (`swapped=True`), the lead string is a deterministic host template of that one boolean, and
+  the lesion pins the mismatch-detector's proposal drive to (near-)zero (`boost_max` 0.0111 vs 0.16 intact), so
+  once G4's contrast holds, a swap-vs-no-swap reply difference on `sw_switch` is close to guaranteed by
+  construction too. The genuinely falsifiable content G5 carries is (a) whether the *intact* integrated brain
+  swaps at all on a given seed (it can read `mismatch_held_no_swap` instead — the isolated de-risk's 6/6 was not
+  measured inside this battery) and (b) whether the lead or the downstream GNW stop-prefix survives to the final
+  `answer` rather than being overwritten by another organ. On this measured seed the spiking mismatch/eviction
+  decision is real (a topic-change proposal against an occupied slot), but the general swap circuit's admission
+  test is a host slot-inequality (`_slot_for`); that comparison, not new evidence here, is what the swap verdict
+  itself is built on.
 - G6 reproduced: yes.
 
 Verdict: `regressed`, `load_bearing: true`.
@@ -52,8 +89,10 @@ Both vanish under the lesion, because both ride the same neural swap verdict. Th
 The stop prefix is a downstream consumer of the same verdict. The credited effect is "the swap verdict changes the
 reply", not "the lead string alone".
 
-A second copy of the same seed-42 arms was built on pool41 at `4d203f584`. It showed the same per-turn swap state and
-replies before its scorer crashed (A1).
+The flag state (`LB_SWAP_DRIVE_PROBE=1`) is not in the automatic provenance `env` capture (it records only
+`SIM_BACKEND`/`SIM_RUN_ID`), but it is recorded in the per-faculty record itself: `lb.json`'s
+`per_faculty[0].swap_drive_probe` reads `true`, and its `note` field names the flag. ON and OFF artifacts can be
+told apart from `lb.json` alone without relying on the env capture.
 
 ## Byte-identical OFF
 
@@ -71,13 +110,18 @@ Artifact: `research/findings/raw/_load_bearing/swap_drive_probe/offcheck/offchec
 
 ## Staged: the six-seed run
 
-- Six pool jobs are queued, one per seed (42 43 44 100 101 102). Each runs
+- Six pool jobs were queued, one per seed (42 43 44 100 101 102), each running
   `--only swap-drives-response --repeats 2 --seed <s>` with `LB_SWAP_DRIVE_PROBE=1`, numpy backend and
   `memcap 8`, in the isolated revision directory `~/derisk-pool/revisions/7f90034dfbf48bfc128e3f9b1c7f7506bb3fe8a6`
   on pool41 and pool42.
+- **Seed 42 has returned** (pool42) and is the corrected result reported above: `regressed`,
+  `load_bearing: true`, byte-identical (modulo a reporting field) to the withdrawn cross-revision smoke.
+- **Seeds 43, 44, 100, 101, 102 are still valid and in flight** at the same isolated revision, spread across
+  pool41/pool42 — this fix round does not re-stage them; they are left running.
 - Each seed writes to its own directory, `research/findings/raw/_load_bearing/swap_drive_probe/s<seed>/`.
 - The pre-registered headline rule applies: all six seeds must read LOAD-BEARING. Anything less is reported as k/6,
-  naming each failing seed's verdict.
+  naming each failing seed's verdict. This finding still reports only k=1/6 (seed 42); the remaining five seeds'
+  results have not yet been harvested and scored.
 
 ## Honest residuals
 

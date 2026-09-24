@@ -142,3 +142,32 @@ Smoke (1 seed, local, one at a time):
 - **The s42 smoke** is scored by re-running the fixed scorer over the already-built s42 arm files
   (`LB_RESUME_SKIP_EXISTING=1`, which loads an existing arm instead of rebuilding it). The six-seed run rebuilds
   every arm from scratch, s42 included.
+
+**A2, 2026-09-23 (fix round, review key `v2:fc49c6e6f`). Provenance correction: the s42 smoke was cross-revision;
+the gate is unchanged.**
+- **What was wrong.** The A1 note above says the s42 smoke was "already-built... arm files", implying one build.
+  Per each arm's `.prov.json`, `intact_a`/`intact_b` were built at `4d203f584` (before A1) and `lesion`/its rep0
+  were built at `7f90034df` (after A1 and the origin/main merge) — the same long-lived worker parent process
+  spanned the code change. The finding this preregistration governs stated the smoke's provenance incorrectly
+  (as one local build, all four arms at one revision).
+- **What was checked.** The code diff between `4d203f584` and `7f90034df` on the arm-building path
+  (`load_bearing_fraction.py`, `onebrain_regression_battery.py`) is limited to the A1 import fix, a selftest
+  helper, and a no-op merge of origin/main — so no confound was actually measured by the cross-revision build.
+  That is a property of this specific diff, not a general excuse for cross-revision comparisons.
+- **The fix.** The six-seed pool run (staged at the single pinned revision
+  `7f90034dfbf48bfc128e3f9b1c7f7506bb3fe8a6`) includes seed 42. Its four arms all read `git_sha:
+  7f90034dfbf48bfc128e3f9b1c7f7506bb3fe8a6`, `git_dirty: false`, `source_kind: git_archive`, one shared
+  `SIM_RUN_ID` and a verified `source_manifest_sha256` — a genuine single-revision build. It reproduces the
+  withdrawn smoke's verdict, replies and swap state exactly (the only diff is a `cuda_visible_devices` reporting
+  field). The finding now reports this rebuilt result as its s42 evidence, with the cross-revision history
+  disclosed rather than corrected-away.
+- **Also added to the finding (same review round):** which of the four G4-compared fields are pass-by-construction
+  (`swapped`/`reason`/`lead` on the no-swap-due turns; only `answer` is real evidence there), a "no reply-level
+  change" correction in place of "changes nothing" (mechanism state — `mm_peak`/`boost_max` — does move under the
+  lesion on the contrast turns), and a plain statement of what G5 actually tests (a near-guaranteed reply
+  difference once G4 holds and the intact arm swaps, so the falsifiable content is whether the intact arm swaps at
+  all per seed and whether the lead survives downstream composition, not the reply comparison itself).
+- **Gate unchanged.** `_swap_drive_score` and its compared fields are exactly as pre-registered above; this
+  amendment is documentation-only (provenance + honesty declarations), not a rule change.
+- **Not touched.** The five staged pool jobs for seeds 43/44/100/101/102 at `7f90034dfbf48bfc128e3f9b1c7f7506bb3fe8a6`
+  continue unmodified.

@@ -4,7 +4,7 @@
   "repeats": 2,
   "seed": 42,
   "backend": "numpy",
-  "cuda_visible_devices": "",
+  "cuda_visible_devices": null,
   "source_prov_abstain_at_tie_env": null,
   "affect_marker_settle_env": null,
   "per_faculty": [

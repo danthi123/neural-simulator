@@ -1,35 +1,33 @@
 {
- "run_id": "1790205307-2081121",
+ "run_id": "1790210007-3659937",
  "runner": "research/runners/onebrain_regression_battery.py",
  "argv": [
-  "/home/dant123/Projects/sim/.claude/worktrees/wf_faf08c17-18c-2/research/runners/onebrain_regression_battery.py",
+  "/home/node/derisk-pool/revisions/7f90034dfbf48bfc128e3f9b1c7f7506bb3fe8a6/research/runners/onebrain_regression_battery.py",
   "--worker",
   "--env",
   "{}",
   "--turns",
   "sw_open,sw_hold,sw_switch",
   "--out",
-  "/home/dant123/Projects/sim/.claude/worktrees/wf_faf08c17-18c-2/research/findings/raw/_load_bearing/swap_drive_probe/s42/intact_b_sw_open_sw_hold_sw_switch.json"
+  "/home/node/derisk-pool/revisions/7f90034dfbf48bfc128e3f9b1c7f7506bb3fe8a6/research/findings/raw/_load_bearing/swap_drive_probe/s42/intact_b_sw_open_sw_hold_sw_switch.json"
  ],
- "git_sha": "4d203f584",
- "git_dirty": true,
- "source_kind": null,
- "source_manifest_sha256": null,
- "source_manifest_verified_at_start": null,
+ "git_sha": "7f90034dfbf48bfc128e3f9b1c7f7506bb3fe8a6",
+ "git_dirty": false,
+ "source_kind": "git_archive",
+ "source_manifest_sha256": "e56f6b118de9cf3f8fc120adbc1de3a566229b237c969735c81ae1eb4df39fac",
+ "source_manifest_verified_at_start": true,
  "source_manifest_start_error": null,
- "source_manifest_verified_at_exit": null,
+ "source_manifest_verified_at_exit": true,
  "source_manifest_exit_error": null,
- "started": "2026-09-23T19:15:07",
+ "started": "2026-09-23T20:33:27",
  "env": {
   "SIM_BACKEND": "numpy",
-  "CUDA_VISIBLE_DEVICES": "",
-  "SIM_RUN_ID": "1790204473-2007424"
+  "SIM_RUN_ID": "1790209256-3647551"
  },
  "sim_backend": "numpy",
  "sim_backend_requested": "numpy",
- "sim_backend_cupy_importable": true,
- "corpus_check_age_s": 4808.5,
- "corpus_check_query": "swap-drives-response not exercised load-bearing battery probe topic swap",
- "corpus_check_fresh": true,
+ "sim_backend_cupy_importable": false,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
  "artifact": "research/findings/raw/_load_bearing/swap_drive_probe/s42/intact_b_sw_open_sw_hold_sw_switch.json"
 }
