@@ -1,0 +1,150 @@
+{
+ "seed": 7,
+ "summary": {
+  "ADJ": {
+   "n": 297,
+   "frame_positive_frac": 0.0707070707070707,
+   "single_offset_positive_frac": 0.6430976430976431,
+   "learned_left_margin_mean": 20.6493272863398,
+   "learned_right_margin_mean": -4.714111728800065
+  },
+  "CLOSED": {
+   "n": 82,
+   "frame_positive_frac": 0.12195121951219512,
+   "single_offset_positive_frac": 0.21951219512195122,
+   "learned_left_margin_mean": -7.914868016600577,
+   "learned_right_margin_mean": -5.583201306906355
+  },
+  "NOUN": {
+   "n": 903,
+   "frame_positive_frac": 0.9047619047619048,
+   "single_offset_positive_frac": 0.9302325581395349,
+   "learned_left_margin_mean": 85.67382603649514,
+   "learned_right_margin_mean": -3.558992382940568
+  },
+  "VERB": {
+   "n": 501,
+   "frame_positive_frac": 0.02594810379241517,
+   "single_offset_positive_frac": 0.05788423153692615,
+   "learned_left_margin_mean": -27.417253862963516,
+   "learned_right_margin_mean": -8.650147594763828
+  }
+ },
+ "probe_words": {
+  "when": {
+   "frame": -0.00011023839000063642,
+   "single": 0.009917433843752934,
+   "left": 3.172997373521898,
+   "right": -3.462541712356953,
+   "decision": true
+  },
+  "what": {
+   "frame": 3.833415112855741e-06,
+   "single": 0.013062461908031356,
+   "left": -0.2215721912611219,
+   "right": 1.0348893125927414,
+   "decision": null
+  },
+  "who": {
+   "frame": 0.0,
+   "single": 0.027132459895126866,
+   "left": 4.452715102710824,
+   "right": 4.126982929613908,
+   "decision": null
+  },
+  "before": {
+   "frame": 5.4703719380875976e-05,
+   "single": 0.0015477720525113813,
+   "left": 1.9761940956075001,
+   "right": -5.825440311384897,
+   "decision": false
+  },
+  "most": {
+   "frame": 0.0022425478410206087,
+   "single": 0.41531416245016983,
+   "left": 208.69577519728062,
+   "right": -2.219649602138929,
+   "decision": true
+  },
+  "today": {
+   "frame": -1.395245005022882e-05,
+   "single": 0.0074870846044804915,
+   "left": -0.8818119073451687,
+   "right": -0.23802764276141414,
+   "decision": null
+  },
+  "wonderful": {
+   "frame": -0.00011721461502575083,
+   "single": 0.042808323353246684,
+   "left": 23.226332385436294,
+   "right": -6.621360236648551,
+   "decision": true
+  },
+  "crazy": {
+   "frame": -1.861681640196903e-05,
+   "single": 0.07246242672978341,
+   "left": 36.09374481625676,
+   "right": -4.605737189052495,
+   "decision": true
+  },
+  "east": {
+   "frame": 0.028599243297976903,
+   "single": 0.31390397469975817,
+   "left": 153.9561246203795,
+   "right": -6.539764847249114,
+   "decision": true
+  },
+  "owl": {
+   "frame": 0.008112542286603644,
+   "single": 0.19686750843116843,
+   "left": 92.1970529126812,
+   "right": 3.97958972813939,
+   "decision": true
+  },
+  "marble": {
+   "frame": 0.0009046859666339548,
+   "single": 0.19136150485895795,
+   "left": 97.5167555478088,
+   "right": -12.060604003286839,
+   "decision": true
+  },
+  "basket": {
+   "frame": 0.009556633703330219,
+   "single": 0.166676121910484,
+   "left": 76.88613359386649,
+   "right": -1.9641011401719204,
+   "decision": true
+  },
+  "room": {
+   "frame": 0.00423416210019453,
+   "single": 0.1624425075021462,
+   "left": 74.0891563979993,
+   "right": 0.6215711025492235,
+   "decision": true
+  },
+  "leaves": {
+   "frame": 0.0077266026620726996,
+   "single": 0.18336422774667738,
+   "left": 87.28735523096157,
+   "right": -1.4431854072593158,
+   "decision": true
+  },
+  "anne": {
+   "frame": -1.326184484963175e-05,
+   "single": 0.026696771450981416,
+   "left": -4.067398194906479,
+   "right": 7.909597465406613,
+   "decision": true
+  },
+  "sally": {
+   "frame": -0.0005546449760061675,
+   "single": -0.006251475088208522,
+   "left": -12.44721758457866,
+   "right": 0.7296126910366647,
+   "decision": false
+  }
+ },
+ "corpus_path": "/home/dant123/Projects/sim/data/corpus/tinystories.txt",
+ "corpus_sha256": "7a00272e6ca4a29c91d7bc3508de2c76dc1369b351637adf2769e1d3a3679aec",
+ "corpus_bytes": 19971040
+}
