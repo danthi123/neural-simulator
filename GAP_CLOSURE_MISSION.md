@@ -15,29 +15,29 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-19 (RESUME HERE) — NEW ARC: PERMANENT LLM MOUTH + LOAD-BEARING METRIC
 
-**🟢 LIVE NOW — 2026-09-23 ~19:20 local (harvest these; do NOT double-launch):**
-- **Combined battery WITH SETTLE (tag `allfixes3settle`, 186 shards):** AWS B (`.aws_cpu3`, s42-44, loop `bwsrk5ci6`
-  terminates it) + AWS A (`.aws_gpu`, s100-102, controller `b9e3vhwh5` terminates it). When both are done:
-  `.venv/bin/python tools/lb_shard.py aggregate --tag allfixes3settle` → finding. Robust core 25 if affect-marker is
-  6/6 and nothing regresses (vs 24 in `allfixes2`).
-- **✅ D6 v3 capability gate: GO 6/6 on K1-K7** (`research/findings/2026-09-23-d6-learn-through-use-v3-capability-gate-GO-6of6.md`):
-  the recall reply depends on the in-conversation synaptic write; the host record is inert. Runner-level, default-off.
-  The EXPO_H secondary (K3e/K4e) is staged on the pool at `01f7a5a4` → re-score with the same command when the 6
-  `s*_EXPO_H.json` land and append the secondary to that finding.
-- **✅ Language v2 referent lexicon: GO on all 8 gates, 6 seeds** (merged `a13b7239`); runner-level, not wired.
-- **Pool dispatcher now reserves job memory (`@2af939ac`):** a job's `mem_gb=N` hint (in its --checked text) is
-  reserved on its node for 20 min. The pool is RAM-bound (15 GB nodes, ~5 GB jobs), not core-bound. pool40 is
-  powered off.
-- **Workflows (22:10):** `wcijsme3a` (wm-binding adequate probe · swap-drives adequate probe · DA tag-capture chat
-  wiring) · `wz1hyhus8` (OWNER-AUTHORIZED default-on flips of validated fixes: audit → flip branch → production-default
-  6-seed validation battery staged → review; merge only after that battery passes) · `whj6ge9lc` (D6 fact-learning
-  CAPACITY curve 5→2000 facts: build + prereg + staged grid) · `wzd72cek8` (fix round 3: AWS pool node + perception).
-  Merge only on the review's safe_to_merge.
-- **Curiosity (spiking LC modulator) merged `12de6276`** (re-review SOUND); held-out seeds 43-102 staged on the pool at
-  `def3e1f91`; combine with `--combine` once all 5 land (the combiner now compares runner blobs, `a48de5e5`).
-- **Owner 2026-09-23: validated default-flips are mine to make** (charter §5 updated; memory
-  `feedback_flip_validated_fixes_without_waiting`).
-- **GPU queue:** D5 affect-conditioned mouth, 4 jobs left → score its 6-seed verdict when complete.
+**🟢 LIVE NOW — 2026-09-24 ~00:20 local (harvest these; do NOT double-launch):**
+- **✅ #1 metric, all fixes + SETTLE: robust core 25/26** (`research/findings/2026-09-23-allfixes-settle-battery-6seed-robust-core-25.md`,
+  every seed 25/26); only `da-gated-encoding` (0/6) is outside the exercised core.
+- **Default-on switches (owner-authorized; memory `feedback_flip_validated_fixes_without_waiting`):** branch
+  `research/flip-validated-fixes` @`bd391aa3` flips BRAIN_EPISODIC_STORE_VERIFY + BRAIN_PMEM_FACILITATION +
+  BRAIN_SOURCE_PROV_ABSTAIN_AT_TIE (OP_STABILIZER = per-seed table, NOT flipped; SETTLE = next batch; D6 trio not ready).
+  Review SOUND, safe to merge AFTER its production-default validation battery (prereg 2b162780f) passes. Battery split:
+  AWS thin (`.aws_cpu8`) + adequate (`.aws_cpu9`) lines 1-156 each, pool lines 157-176 (re-provisioning `bd391aa3`,
+  then re-queue from `scratchpad/flipdefaults-*_pool.txt`), local 177-186 running. Aggregate with
+  `tools/lb_shard.py aggregate --tag flipdefaults-thin|flipdefaults-adequate` after pulling from the flip worktree's
+  `research/findings/raw/_load_bearing/_shards/`. GPU production chat smoke passed flips ON (518 s) and OFF (494 s).
+- **✅ D6 v3 GO 6/6 + EXPO_H secondary 6/6**; addendum: the write is a near-copy of the host pattern (corr 0.99996) and
+  the localist store's cost is linear per op. **Fact-memory scaling:** superposed CA3 store prototype (dev seed) ≈ 5e4-1e5
+  facts per 3090 = rat-hippocampus scale; LLM breadth needs cortical consolidation. Fix round `w4bmz51wh`.
+- **D5 affect-conditioned mouth merged `c1a3da0e`: UNDEFINED both modes** — conditioning changes CONTENT; next method
+  must hold content fixed (building in `wc9pxljwq`).
+- **Workflows:** `wc9pxljwq` (lane builds A/C/D/E, registered in `research/coordination/lane_builds.jsonl`, expire 6 h)
+  · `wkc3qa09i` (wm-binding redesign, swap-drives record fixes, DA reader-cache confound) · `w4bmz51wh` (fact scaling).
+  Merge only on safe_to_merge.
+- **Curiosity** held-out seeds 43/44/100 landed; 101/102 re-queued (pool42) → `--combine` when all 5 land.
+- **Infra today:** dispatcher reserves lifetime job memory (env stamps) + first-fit; audit counts RAM-bound nodes as busy;
+  `.aws_gpu` untracked; lane gate counts registered builds. OPEN: idle-stop missed idle instance B (spawned task).
+  pool40 powered off.
 
 **⭐⭐ LATEST 2026-09-23 ~09:00 local — OWNER: "parallelize more heavily … we shouldn't be sitting around for hours
 waiting on runs every day … I thought our heartbeats/gates were supposed to prevent this?" → FULL FAN-OUT + LOOPHOLE FIX.**
