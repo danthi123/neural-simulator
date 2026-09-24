@@ -1,0 +1,38 @@
+{
+ "run_id": "1790223778-3014343",
+ "runner": "research/runners/_lbf_affect_tone_selection_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/wf_16244c9d-ca5-1/research/runners/_lbf_affect_tone_selection_derisk.py",
+  "--worker",
+  "--seed",
+  "7",
+  "--arm",
+  "neg",
+  "--out",
+  "/home/dant123/Projects/sim/.claude/worktrees/wf_16244c9d-ca5-1/research/findings/raw/_affect_tone_selection/smoke_s7/arm_s7_neg.json",
+  "--n-tone",
+  "2",
+  "--n-known",
+  "2"
+ ],
+ "git_sha": "76f1a3b66",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-24T00:22:58",
+ "env": {
+  "SIM_BACKEND": "numpy",
+  "SIM_RUN_ID": "1790223571-3008381"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 2134.5,
+ "corpus_check_query": "affect shapes reply tone without changing content",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_affect_tone_selection/smoke_s7/arm_s7_neg.json"
+}
