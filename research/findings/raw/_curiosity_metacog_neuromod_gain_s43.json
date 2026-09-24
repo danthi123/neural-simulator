@@ -1,0 +1,1710 @@
+{
+ "mechanism": "metacog margin-comparator -> [frozen point-edge (drives ask alone) + a SPIKING lc_ne population diffusely projecting onto curiosity's ASK pool as a SUB-THRESHOLD MODULATOR of the edge's response, not a second independent driver -- edge_lesion reads 0 Hz at every level; both fixed-weight CrossEdges] (every step is neurons + synapses; ADDITIVE current, not a multiplicative gain -- see the module honesty note)",
+ "prereg": "docs/plans/2026-09-23-curiosity-metacog-neuromod-gain-PREREG.md",
+ "builds_on": "docs/plans/2026-09-23-curiosity-metacog-conflict-xedge-PREREG.md",
+ "verdict": "NO-GO",
+ "preconditions": [
+  {
+   "kind": "require",
+   "name": "seed43 metacog balance varies across the evidence grid",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "seed43 declared point-edge wired (>0 synapses)",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "seed43 declared lc_ne pathway wired (>0 synapses both legs)",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "seed43 byte-off: base connectivity identical minus the point-edge + lc_ne organ",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "seed43 lesion restore exact (combined-intact digest re-reads)",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "seed43 no host novelty scalar / neuromodulator subsystem installed",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "seed43 every intact read ran the full rep window",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  }
+ ],
+ "undefined_reasons": [],
+ "disabled_processes": [
+  {
+   "process": "STDP / Hebbian / homeostasis / OU / conductance noise on the comparator, edge, or lc_ne pathway",
+   "why": "the production metacog pool config; the comparator, the point-edge and both new lc_ne CrossEdges are fixed-weight by design"
+  }
+ ],
+ "GO": false,
+ "n_go": 0,
+ "n_seeds": 1,
+ "held_out_n_go": 0,
+ "held_out_n": 1,
+ "operating_point": {
+  "LC_N": 20,
+  "CMP_TO_LC_W": 5.0,
+  "LC_TO_ASK_W": 1.0,
+  "G3_GAIN_ATTRIB_MIN": 0.2
+ },
+ "per_seed": [
+  {
+   "seed": 43,
+   "go": false,
+   "checks": {
+    "G1_monotone_rho<=-0.8": true,
+    "G3_gain_pathway_load_bearing": false,
+    "G6_determinism_fresh_process_hash": true,
+    "G7_class_swap_monotone": true,
+    "G8_relay_lesion_abolishes_coupling": true,
+    "G10_lc_ne_evidence_graded_not_saturated": true
+   },
+   "checks_integrity": {
+    "G4_joint_lesion_breaks_coupling": true,
+    "G5_metacog_unchanged_EXACT": true
+   },
+   "calibration_seed": false,
+   "rho": -0.9157199156321926,
+   "rho_swap": -0.9430548384868849,
+   "rho_relay_lesion": 0.9545454545454546,
+   "rho_both_lesion": null,
+   "rho_lc_ne": -0.9817453947010297,
+   "s1_reaches_production_threshold": false,
+   "s1_undefined": false,
+   "s1_threshold_hz": 21.874999999999996,
+   "g9_perm_null": {
+    "rho_obs": -0.7857691064169704,
+    "p": 9.999000099990002e-05,
+    "percentile": 0.0,
+    "n_perm": 10000,
+    "n_obs": 88,
+    "null_q01": -0.2506293376964235,
+    "null_q50": 0.00022688232139084978
+   },
+   "ask_range_hz": {
+    "combined": 6.5625,
+    "gain_lesion": 5.752314814814815,
+    "edge_lesion": 0.0,
+    "both_lesion": 0.0
+   },
+   "ask_peak_hz": {
+    "combined": 6.585648148148148,
+    "gain_lesion": 5.752314814814815,
+    "edge_lesion": 0.0,
+    "both_lesion": 0.0
+   },
+   "lc_ne_range_hz": {
+    "combined": 9.25925925925926
+   },
+   "lc_ne_peak_hz": {
+    "combined": 10.185185185185185
+   },
+   "lc_ne_hz_per_level": [
+    {
+     "evidence": 0.0,
+     "lc_ne_hz": 10.185185185185185
+    },
+    {
+     "evidence": 0.1,
+     "lc_ne_hz": 7.4074074074074066
+    },
+    {
+     "evidence": 0.2,
+     "lc_ne_hz": 6.481481481481481
+    },
+    {
+     "evidence": 0.3,
+     "lc_ne_hz": 6.481481481481481
+    },
+    {
+     "evidence": 0.4,
+     "lc_ne_hz": 5.555555555555555
+    },
+    {
+     "evidence": 0.5,
+     "lc_ne_hz": 4.62962962962963
+    },
+    {
+     "evidence": 0.6,
+     "lc_ne_hz": 3.7037037037037033
+    },
+    {
+     "evidence": 0.7,
+     "lc_ne_hz": 2.7777777777777777
+    },
+    {
+     "evidence": 0.8,
+     "lc_ne_hz": 0.9259259259259258
+    },
+    {
+     "evidence": 0.9,
+     "lc_ne_hz": 1.8518518518518516
+    },
+    {
+     "evidence": 1.0,
+     "lc_ne_hz": 0.9259259259259258
+    }
+   ],
+   "attributable_frac": {
+    "gain": 0.12345679012345678,
+    "edge": 1.0
+   },
+   "metacog_exact": {
+    "vs_gain_lesion": {
+     "balance_equal": true,
+     "balance_sha256_a": "ca229dc6433d73471b67ba2bffdec423bd633aee1dbb512ece290471607bdaee",
+     "balance_sha256_b": "ca229dc6433d73471b67ba2bffdec423bd633aee1dbb512ece290471607bdaee",
+     "threshold_equal": true,
+     "confident_equal": true,
+     "metacog_raster_equal": true,
+     "max_abs_balance_delta": 0.0
+    },
+    "vs_edge_lesion": {
+     "balance_equal": true,
+     "balance_sha256_a": "ca229dc6433d73471b67ba2bffdec423bd633aee1dbb512ece290471607bdaee",
+     "balance_sha256_b": "ca229dc6433d73471b67ba2bffdec423bd633aee1dbb512ece290471607bdaee",
+     "threshold_equal": true,
+     "confident_equal": true,
+     "metacog_raster_equal": true,
+     "max_abs_balance_delta": 0.0
+    },
+    "vs_both_lesion": {
+     "balance_equal": true,
+     "balance_sha256_a": "ca229dc6433d73471b67ba2bffdec423bd633aee1dbb512ece290471607bdaee",
+     "balance_sha256_b": "ca229dc6433d73471b67ba2bffdec423bd633aee1dbb512ece290471607bdaee",
+     "threshold_equal": true,
+     "confident_equal": true,
+     "metacog_raster_equal": true,
+     "max_abs_balance_delta": 0.0
+    }
+   },
+   "comparator_raster_equal_across_arms": true,
+   "determinism": {
+    "checked": true,
+    "digest_main": "ee15a2c830d90771e4e5073ae94388a743945cce8bf9241a565b0b816bd07e6b",
+    "digest_fresh_process": "ee15a2c830d90771e4e5073ae94388a743945cce8bf9241a565b0b816bd07e6b",
+    "equal": true,
+    "rc": 0
+   },
+   "integrity": {
+    "n_edge_synapses": 6400,
+    "n_cmp_to_lc_synapses": 1600,
+    "n_lc_to_ask_synapses": 1600,
+    "restore_exact": true,
+    "byte_off": {
+     "base_connectivity_byte_identical": true,
+     "n_with": 51259,
+     "n_without": 41659,
+     "n_with_base": 41659,
+     "PASS": true
+    },
+    "no_host_novelty_signal": true,
+    "neuromodulator_subsystem_enabled": false
+   },
+   "production_threshold_calibration": {
+    "want_novel_hz": 43.74999999999999,
+    "want_familiar_hz": 0.0,
+    "threshold_hz": 21.874999999999996,
+    "novel_signal": 0.95,
+    "familiar_signal": 0.0,
+    "read_reps": 4
+   },
+   "arms": {
+    "combined_intact": {
+     "levels": [
+      {
+       "evidence": 0.0,
+       "balance": 0.02241933511932893,
+       "confident": false,
+       "ask_hz_per_rep": [
+        7.12962962962963,
+        7.222222222222221,
+        3.888888888888889,
+        5.7407407407407405,
+        6.666666666666666,
+        6.944444444444444,
+        7.499999999999999,
+        7.592592592592592
+       ],
+       "ask_hz": 6.585648148148148,
+       "lc_ne_hz_per_rep": [
+        7.4074074074074066,
+        14.814814814814813,
+        7.4074074074074066,
+        7.4074074074074066,
+        7.4074074074074066,
+        7.4074074074074066,
+        14.814814814814813,
+        14.814814814814813
+       ],
+       "lc_ne_hz": 10.185185185185185,
+       "meta_raster_sha256": "1dd815e3e45bd53960abe9372a3530f0dbfc9041c93d3a7a0a47ec667af48479",
+       "cmp_raster_sha256": "00fe098c8f7debcda42687d333a4f96db40673cfb6c2fd7afa1e14ed9d456d71"
+      },
+      {
+       "evidence": 0.1,
+       "balance": 0.027771681458318542,
+       "confident": false,
+       "ask_hz_per_rep": [
+        6.388888888888888,
+        5.092592592592593,
+        0.0,
+        5.7407407407407405,
+        2.685185185185185,
+        4.074074074074074,
+        4.259259259259259,
+        6.296296296296296
+       ],
+       "ask_hz": 4.31712962962963,
+       "lc_ne_hz_per_rep": [
+        7.4074074074074066,
+        7.4074074074074066,
+        7.4074074074074066,
+        7.4074074074074066,
+        7.4074074074074066,
+        7.4074074074074066,
+        7.4074074074074066,
+        7.4074074074074066
+       ],
+       "lc_ne_hz": 7.4074074074074066,
+       "meta_raster_sha256": "aa8985e209d9ad61fc5b860b5e25e0bb118a0ba7f027f29813c04954970e0a8e",
+       "cmp_raster_sha256": "444db5e8c207c227f3f018ae03c1b741bca35954f9add4eac4f3c143c153bb0f"
+      },
+      {
+       "evidence": 0.2,
+       "balance": 0.034499630431722605,
+       "confident": false,
+       "ask_hz_per_rep": [
+        3.2407407407407405,
+        2.5,
+        0.0,
+        2.1296296296296293,
+        1.296296296296296,
+        4.351851851851852,
+        3.888888888888889,
+        4.444444444444444
+       ],
+       "ask_hz": 2.7314814814814814,
+       "lc_ne_hz_per_rep": [
+        7.4074074074074066,
+        7.4074074074074066,
+        0.0,
+        7.4074074074074066,
+        7.4074074074074066,
+        7.4074074074074066,
+        7.4074074074074066,
+        7.4074074074074066
+       ],
+       "lc_ne_hz": 6.481481481481481,
+       "meta_raster_sha256": "52a5666e2c5a575e971362937c2f7b4aea09a43df030d620e213ae404723b31b",
+       "cmp_raster_sha256": "535383292067e5fe1859a8e8aac6366de92e546823e891c6209fd8e6dcba2584"
+      },
+      {
+       "evidence": 0.3,
+       "balance": 0.04490392747556953,
+       "confident": false,
+       "ask_hz_per_rep": [
+        4.166666666666666,
+        1.4814814814814814,
+        0.0,
+        1.0185185185185186,
+        0.37037037037037035,
+        2.037037037037037,
+        2.037037037037037,
+        4.722222222222221
+       ],
+       "ask_hz": 1.9791666666666665,
+       "lc_ne_hz_per_rep": [
+        7.4074074074074066,
+        7.4074074074074066,
+        0.0,
+        7.4074074074074066,
+        7.4074074074074066,
+        7.4074074074074066,
+        7.4074074074074066,
+        7.4074074074074066
+       ],
+       "lc_ne_hz": 6.481481481481481,
+       "meta_raster_sha256": "ec8b0fe83325aed66a9c6ba5abea9440dcf5f92919b8ed9b312b88ca63c87de0",
+       "cmp_raster_sha256": "344677a576b82e15df00bb812c00b6e96ca9186c31801ae6f0c4472655cd4f31"
+      },
+      {
+       "evidence": 0.4,
+       "balance": 0.053734418321891915,
+       "confident": false,
+       "ask_hz_per_rep": [
+        1.0185185185185186,
+        0.0,
+        0.0,
+        0.37037037037037035,
+        0.0,
+        1.296296296296296,
+        1.3888888888888888,
+        5.462962962962963
+       ],
+       "ask_hz": 1.1921296296296295,
+       "lc_ne_hz_per_rep": [
+        7.4074074074074066,
+        7.4074074074074066,
+        0.0,
+        7.4074074074074066,
+        0.0,
+        7.4074074074074066,
+        7.4074074074074066,
+        7.4074074074074066
+       ],
+       "lc_ne_hz": 5.555555555555555,
+       "meta_raster_sha256": "742d0fb1e50e4f4941816976a58cb85278da0870e45f667ea3bcad7c1b5511d7",
+       "cmp_raster_sha256": "908541de49e302753a2d725a70824ac198239d92433f45b61615d2c69199675f"
+      },
+      {
+       "evidence": 0.5,
+       "balance": 0.059558388563665327,
+       "confident": false,
+       "ask_hz_per_rep": [
+        0.37037037037037035,
+        0.18518518518518517,
+        0.0,
+        0.0,
+        0.0,
+        0.37037037037037035,
+        0.4629629629629629,
+        1.3888888888888888
+       ],
+       "ask_hz": 0.3472222222222222,
+       "lc_ne_hz_per_rep": [
+        7.4074074074074066,
+        7.4074074074074066,
+        0.0,
+        0.0,
+        0.0,
+        7.4074074074074066,
+        7.4074074074074066,
+        7.4074074074074066
+       ],
+       "lc_ne_hz": 4.62962962962963,
+       "meta_raster_sha256": "43f048741574e609dc25376443b0b2266edb1d87d37a8db4d8d37df8d1ac50b8",
+       "cmp_raster_sha256": "1f5351bc978537719182fb734dd2ecd251098b8712afffb116fbe50640ff238a"
+      },
+      {
+       "evidence": 0.6,
+       "balance": 0.06691467366215187,
+       "confident": true,
+       "ask_hz_per_rep": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.296296296296296
+       ],
+       "ask_hz": 0.162037037037037,
+       "lc_ne_hz_per_rep": [
+        7.4074074074074066,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        7.4074074074074066,
+        7.4074074074074066,
+        7.4074074074074066
+       ],
+       "lc_ne_hz": 3.7037037037037033,
+       "meta_raster_sha256": "4dc0db1e4127473d96d65a5e65073c93a360743a6829d85bca2dd07022503726",
+       "cmp_raster_sha256": "9aebd708e539023775a09517695a08270f17ca4fb398202a616ded509a6b8318"
+      },
+      {
+       "evidence": 0.7,
+       "balance": 0.07476353682310372,
+       "confident": true,
+       "ask_hz_per_rep": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.18518518518518517
+       ],
+       "ask_hz": 0.023148148148148147,
+       "lc_ne_hz_per_rep": [
+        7.4074074074074066,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        7.4074074074074066,
+        7.4074074074074066
+       ],
+       "lc_ne_hz": 2.7777777777777777,
+       "meta_raster_sha256": "2306a24ec0e373d0eea2f200e82e8dfd5bfdf23773f9a6d67617063191ec11d4",
+       "cmp_raster_sha256": "3626895fe529090f1fc4d4ede5c3075429f46d9367f80cadfcf4e7681dd8c41c"
+      },
+      {
+       "evidence": 0.8,
+       "balance": 0.08104222419622226,
+       "confident": true,
+       "ask_hz_per_rep": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.18518518518518517
+       ],
+       "ask_hz": 0.023148148148148147,
+       "lc_ne_hz_per_rep": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        7.4074074074074066
+       ],
+       "lc_ne_hz": 0.9259259259259258,
+       "meta_raster_sha256": "e0c005d921cdeff9aef6c2fe2662bf54edfe488cef292eebdb96078366cb4504",
+       "cmp_raster_sha256": "1571ea59efdc20db89e11d91882a9878c4a30ffa3618e7c564506a99909cc04d"
+      },
+      {
+       "evidence": 0.9,
+       "balance": 0.08532238837323698,
+       "confident": true,
+       "ask_hz_per_rep": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.37037037037037035
+       ],
+       "ask_hz": 0.046296296296296294,
+       "lc_ne_hz_per_rep": [
+        0.0,
+        0.0,
+        7.4074074074074066,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        7.4074074074074066
+       ],
+       "lc_ne_hz": 1.8518518518518516,
+       "meta_raster_sha256": "d780f9f76c3277d4106497a4918d33758824a052854de8191c86cefd7aa62e3e",
+       "cmp_raster_sha256": "af02a4c35663d9d713dcc1fae815758f8aa591092ca62a1464168bd2429ad7f8"
+      },
+      {
+       "evidence": 1.0,
+       "balance": 0.0947718891723637,
+       "confident": true,
+       "ask_hz_per_rep": [
+        0.0,
+        0.0,
+        0.8333333333333333,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "ask_hz": 0.10416666666666666,
+       "lc_ne_hz_per_rep": [
+        0.0,
+        0.0,
+        7.4074074074074066,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "lc_ne_hz": 0.9259259259259258,
+       "meta_raster_sha256": "ca71e1da370388cb2012f9b6f01e53cdaf955202558152b81bbd98733e43c186",
+       "cmp_raster_sha256": "fd33031b29953c7ad6c4d4b950967c3eb60e7dcdb9dc07f55f07e0f58a98c58f"
+      }
+     ],
+     "threshold": 0.06032454599202189
+    },
+    "class_swap": {
+     "levels": [
+      {
+       "evidence": 0.0,
+       "balance": 0.018139442493864226,
+       "confident": false,
+       "ask_hz_per_rep": [
+        6.296296296296296,
+        5.37037037037037,
+        2.1296296296296293,
+        6.296296296296296,
+        5.0,
+        4.9074074074074066,
+        5.648148148148147,
+        6.018518518518518
+       ],
+       "ask_hz": 5.208333333333332,
+       "lc_ne_hz_per_rep": [
+        7.4074074074074066,
+        7.4074074074074066,
+        7.4074074074074066,
+        7.4074074074074066,
+        7.4074074074074066,
+        7.4074074074074066,
+        7.4074074074074066,
+        7.4074074074074066
+       ],
+       "lc_ne_hz": 7.4074074074074066,
+       "meta_raster_sha256": "70016b0f9480f61b67eef34cb20d382a5067aa5c17293c0fbaa579411d07c8c3",
+       "cmp_raster_sha256": "7a210c60a93f0b42178329739df1f2c3ce9e0ce6f3bdd12be712e391edc141b4"
+      },
+      {
+       "evidence": 0.1,
+       "balance": 0.028663323120978825,
+       "confident": false,
+       "ask_hz_per_rep": [
+        4.351851851851852,
+        3.2407407407407405,
+        0.0,
+        1.296296296296296,
+        1.0185185185185186,
+        3.425925925925926,
+        1.9444444444444444,
+        3.333333333333333
+       ],
+       "ask_hz": 2.326388888888889,
+       "lc_ne_hz_per_rep": [
+        7.4074074074074066,
+        7.4074074074074066,
+        0.0,
+        7.4074074074074066,
+        7.4074074074074066,
+        7.4074074074074066,
+        7.4074074074074066,
+        7.4074074074074066
+       ],
+       "lc_ne_hz": 6.481481481481481,
+       "meta_raster_sha256": "9c085758e7abca464e48cc4c0d4b4d30ea5ffaae31c49677ef9d22d0489737d5",
+       "cmp_raster_sha256": "1cefed54b9807bb4709c3fcc62189e607072b83129ea14996b2b3709ce9a671b"
+      },
+      {
+       "evidence": 0.2,
+       "balance": 0.03541499842647977,
+       "confident": false,
+       "ask_hz_per_rep": [
+        1.6666666666666665,
+        1.3888888888888888,
+        0.0,
+        1.296296296296296,
+        1.0185185185185186,
+        1.8518518518518516,
+        1.8518518518518516,
+        3.2407407407407405
+       ],
+       "ask_hz": 1.5393518518518516,
+       "lc_ne_hz_per_rep": [
+        7.4074074074074066,
+        7.4074074074074066,
+        0.0,
+        7.4074074074074066,
+        7.4074074074074066,
+        7.4074074074074066,
+        7.4074074074074066,
+        7.4074074074074066
+       ],
+       "lc_ne_hz": 6.481481481481481,
+       "meta_raster_sha256": "2ec79b0ac76d7393b3e677ddce1ba36de82efe1cec140ae94729ae2328b60cbc",
+       "cmp_raster_sha256": "de4d949b86101434ac23e919f7f764080ecab24f8d2b64376b841d44fbe78b3b"
+      },
+      {
+       "evidence": 0.3,
+       "balance": 0.0453676115247031,
+       "confident": false,
+       "ask_hz_per_rep": [
+        1.296296296296296,
+        1.0185185185185186,
+        0.0,
+        0.5555555555555555,
+        0.0,
+        1.296296296296296,
+        1.2037037037037037,
+        1.8518518518518516
+       ],
+       "ask_hz": 0.9027777777777777,
+       "lc_ne_hz_per_rep": [
+        7.4074074074074066,
+        7.4074074074074066,
+        7.4074074074074066,
+        7.4074074074074066,
+        0.0,
+        7.4074074074074066,
+        7.4074074074074066,
+        7.4074074074074066
+       ],
+       "lc_ne_hz": 6.481481481481481,
+       "meta_raster_sha256": "e666272bca4b3b714998bceb47c8a0f826823c91b21a364121e36e7ac9556453",
+       "cmp_raster_sha256": "eadd00e6661f7775d492a9df5d0f9cc39b6da612806283237b0763a0fa5f39f9"
+      },
+      {
+       "evidence": 0.4,
+       "balance": 0.05324857885870363,
+       "confident": false,
+       "ask_hz_per_rep": [
+        0.9259259259259258,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.9259259259259258,
+        1.574074074074074,
+        2.314814814814815
+       ],
+       "ask_hz": 0.7175925925925926,
+       "lc_ne_hz_per_rep": [
+        7.4074074074074066,
+        7.4074074074074066,
+        0.0,
+        0.0,
+        0.0,
+        7.4074074074074066,
+        7.4074074074074066,
+        7.4074074074074066
+       ],
+       "lc_ne_hz": 4.62962962962963,
+       "meta_raster_sha256": "11f2c91afc1c6088fb9829a958ec4af6e9c72dfa2a98d871f2a88635ba39c736",
+       "cmp_raster_sha256": "0cc732c6f55dbd759e0184eede3f404571e581c5c8298f3783e067d32cd70f70"
+      },
+      {
+       "evidence": 0.5,
+       "balance": 0.061611776177278366,
+       "confident": true,
+       "ask_hz_per_rep": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.9259259259259258,
+        1.0185185185185186
+       ],
+       "ask_hz": 0.24305555555555555,
+       "lc_ne_hz_per_rep": [
+        7.4074074074074066,
+        0.0,
+        7.4074074074074066,
+        0.0,
+        0.0,
+        0.0,
+        7.4074074074074066,
+        7.4074074074074066
+       ],
+       "lc_ne_hz": 3.7037037037037033,
+       "meta_raster_sha256": "966f42afa3d3535b1fbd2802fd0d85c67e3a43b135751bc98f2024f64488999e",
+       "cmp_raster_sha256": "a510b2ff207b61a3f2c1b4ee236c86591e877e66cf6a737d3e474813062e45c0"
+      },
+      {
+       "evidence": 0.6,
+       "balance": 0.06848818747706756,
+       "confident": true,
+       "ask_hz_per_rep": [
+        0.0,
+        0.0,
+        0.18518518518518517,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.8333333333333333
+       ],
+       "ask_hz": 0.1273148148148148,
+       "lc_ne_hz_per_rep": [
+        0.0,
+        0.0,
+        7.4074074074074066,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        7.4074074074074066
+       ],
+       "lc_ne_hz": 1.8518518518518516,
+       "meta_raster_sha256": "b27779df0be8c0fe2354447f81ee8afe38c7a7b10fb4dfd4eccba6fd849e0024",
+       "cmp_raster_sha256": "761550048068ae559ca25f58f1b98a7a35917948827810d32e5046f507507c7f"
+      },
+      {
+       "evidence": 0.7,
+       "balance": 0.07676794460481842,
+       "confident": true,
+       "ask_hz_per_rep": [
+        0.0,
+        0.0,
+        0.37037037037037035,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.09259259259259259
+       ],
+       "ask_hz": 0.057870370370370364,
+       "lc_ne_hz_per_rep": [
+        0.0,
+        0.0,
+        7.4074074074074066,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        7.4074074074074066
+       ],
+       "lc_ne_hz": 1.8518518518518516,
+       "meta_raster_sha256": "3bacf6aa4c53044bfa131082b2c164f672d88c940d7e491d30ac14e9dc4122c7",
+       "cmp_raster_sha256": "fb9e60a5a807cdb603a70a8c254ff01395c53e3e91dc6ca9338b5cee9a70f648"
+      },
+      {
+       "evidence": 0.8,
+       "balance": 0.0773819075743235,
+       "confident": true,
+       "ask_hz_per_rep": [
+        0.0,
+        0.0,
+        0.648148148148148,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "ask_hz": 0.0810185185185185,
+       "lc_ne_hz_per_rep": [
+        0.0,
+        0.0,
+        7.4074074074074066,
+        7.4074074074074066,
+        0.0,
+        0.0,
+        0.0,
+        7.4074074074074066
+       ],
+       "lc_ne_hz": 2.7777777777777777,
+       "meta_raster_sha256": "96a7a50c84a24b3bac2bc9813551a12c4a58fd2a8bca227d63575276e05f6fbc",
+       "cmp_raster_sha256": "fba24253e4eb6b7200afc75df7bd8bd8a4984cf3d81b1d2b91ee89f3dcabab5d"
+      },
+      {
+       "evidence": 0.9,
+       "balance": 0.08863551605954846,
+       "confident": true,
+       "ask_hz_per_rep": [
+        0.0,
+        0.0,
+        0.5555555555555555,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "ask_hz": 0.06944444444444443,
+       "lc_ne_hz_per_rep": [
+        0.0,
+        0.0,
+        7.4074074074074066,
+        0.0,
+        7.4074074074074066,
+        0.0,
+        0.0,
+        7.4074074074074066
+       ],
+       "lc_ne_hz": 2.7777777777777777,
+       "meta_raster_sha256": "4b64b5cc82a4c2f36083bcb75f61e4576de4aa541222d0d443777c6ea51d9c0b",
+       "cmp_raster_sha256": "9b3ff75e5fc9ca79ef2638186de9c42a4e50ccd10ea41e527a6c41302ddd85d4"
+      },
+      {
+       "evidence": 1.0,
+       "balance": 0.09286842081069288,
+       "confident": true,
+       "ask_hz_per_rep": [
+        0.0,
+        0.0,
+        0.5555555555555555,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "ask_hz": 0.06944444444444443,
+       "lc_ne_hz_per_rep": [
+        7.4074074074074066,
+        0.0,
+        7.4074074074074066,
+        7.4074074074074066,
+        7.4074074074074066,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "lc_ne_hz": 3.7037037037037033,
+       "meta_raster_sha256": "334bedbc6e1ae81bebebc968c447c17731c2067ff1427cfc7104e4c8547ab085",
+       "cmp_raster_sha256": "9bb68df445aa4aa1f901bc72cb96bca2a74d8e571f4312252a9df67282b02ce7"
+      }
+     ],
+     "threshold": 0.06032454599202189
+    },
+    "gain_lesion": {
+     "levels": [
+      {
+       "evidence": 0.0,
+       "balance": 0.02241933511932893,
+       "confident": false,
+       "ask_hz_per_rep": [
+        6.388888888888888,
+        6.203703703703703,
+        3.2407407407407405,
+        4.351851851851852,
+        6.296296296296296,
+        6.296296296296296,
+        6.388888888888888,
+        6.851851851851852
+       ],
+       "ask_hz": 5.752314814814815,
+       "meta_raster_sha256": "1dd815e3e45bd53960abe9372a3530f0dbfc9041c93d3a7a0a47ec667af48479",
+       "cmp_raster_sha256": "00fe098c8f7debcda42687d333a4f96db40673cfb6c2fd7afa1e14ed9d456d71"
+      },
+      {
+       "evidence": 0.1,
+       "balance": 0.027771681458318542,
+       "confident": false,
+       "ask_hz_per_rep": [
+        5.925925925925926,
+        4.259259259259259,
+        0.0,
+        3.148148148148148,
+        2.037037037037037,
+        3.148148148148148,
+        3.425925925925926,
+        5.833333333333333
+       ],
+       "ask_hz": 3.4722222222222223,
+       "meta_raster_sha256": "aa8985e209d9ad61fc5b860b5e25e0bb118a0ba7f027f29813c04954970e0a8e",
+       "cmp_raster_sha256": "444db5e8c207c227f3f018ae03c1b741bca35954f9add4eac4f3c143c153bb0f"
+      },
+      {
+       "evidence": 0.2,
+       "balance": 0.034499630431722605,
+       "confident": false,
+       "ask_hz_per_rep": [
+        2.4074074074074074,
+        1.3888888888888888,
+        0.0,
+        1.8518518518518516,
+        1.0185185185185186,
+        2.1296296296296293,
+        3.2407407407407405,
+        3.2407407407407405
+       ],
+       "ask_hz": 1.9097222222222223,
+       "meta_raster_sha256": "52a5666e2c5a575e971362937c2f7b4aea09a43df030d620e213ae404723b31b",
+       "cmp_raster_sha256": "535383292067e5fe1859a8e8aac6366de92e546823e891c6209fd8e6dcba2584"
+      },
+      {
+       "evidence": 0.3,
+       "balance": 0.04490392747556953,
+       "confident": false,
+       "ask_hz_per_rep": [
+        1.9444444444444444,
+        1.296296296296296,
+        0.0,
+        1.0185185185185186,
+        0.37037037037037035,
+        1.3888888888888888,
+        1.3888888888888888,
+        2.8703703703703702
+       ],
+       "ask_hz": 1.2847222222222223,
+       "meta_raster_sha256": "ec8b0fe83325aed66a9c6ba5abea9440dcf5f92919b8ed9b312b88ca63c87de0",
+       "cmp_raster_sha256": "344677a576b82e15df00bb812c00b6e96ca9186c31801ae6f0c4472655cd4f31"
+      },
+      {
+       "evidence": 0.4,
+       "balance": 0.053734418321891915,
+       "confident": false,
+       "ask_hz_per_rep": [
+        0.7407407407407407,
+        0.0,
+        0.0,
+        0.27777777777777773,
+        0.0,
+        1.111111111111111,
+        1.111111111111111,
+        2.962962962962963
+       ],
+       "ask_hz": 0.7754629629629628,
+       "meta_raster_sha256": "742d0fb1e50e4f4941816976a58cb85278da0870e45f667ea3bcad7c1b5511d7",
+       "cmp_raster_sha256": "908541de49e302753a2d725a70824ac198239d92433f45b61615d2c69199675f"
+      },
+      {
+       "evidence": 0.5,
+       "balance": 0.059558388563665327,
+       "confident": false,
+       "ask_hz_per_rep": [
+        0.0,
+        0.09259259259259259,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.37037037037037035,
+        1.0185185185185186
+       ],
+       "ask_hz": 0.18518518518518517,
+       "meta_raster_sha256": "43f048741574e609dc25376443b0b2266edb1d87d37a8db4d8d37df8d1ac50b8",
+       "cmp_raster_sha256": "1f5351bc978537719182fb734dd2ecd251098b8712afffb116fbe50640ff238a"
+      },
+      {
+       "evidence": 0.6,
+       "balance": 0.06691467366215187,
+       "confident": true,
+       "ask_hz_per_rep": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.9259259259259258
+       ],
+       "ask_hz": 0.11574074074074073,
+       "meta_raster_sha256": "4dc0db1e4127473d96d65a5e65073c93a360743a6829d85bca2dd07022503726",
+       "cmp_raster_sha256": "9aebd708e539023775a09517695a08270f17ca4fb398202a616ded509a6b8318"
+      },
+      {
+       "evidence": 0.7,
+       "balance": 0.07476353682310372,
+       "confident": true,
+       "ask_hz_per_rep": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "ask_hz": 0.0,
+       "meta_raster_sha256": "2306a24ec0e373d0eea2f200e82e8dfd5bfdf23773f9a6d67617063191ec11d4",
+       "cmp_raster_sha256": "3626895fe529090f1fc4d4ede5c3075429f46d9367f80cadfcf4e7681dd8c41c"
+      },
+      {
+       "evidence": 0.8,
+       "balance": 0.08104222419622226,
+       "confident": true,
+       "ask_hz_per_rep": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "ask_hz": 0.0,
+       "meta_raster_sha256": "e0c005d921cdeff9aef6c2fe2662bf54edfe488cef292eebdb96078366cb4504",
+       "cmp_raster_sha256": "1571ea59efdc20db89e11d91882a9878c4a30ffa3618e7c564506a99909cc04d"
+      },
+      {
+       "evidence": 0.9,
+       "balance": 0.08532238837323698,
+       "confident": true,
+       "ask_hz_per_rep": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.18518518518518517
+       ],
+       "ask_hz": 0.023148148148148147,
+       "meta_raster_sha256": "d780f9f76c3277d4106497a4918d33758824a052854de8191c86cefd7aa62e3e",
+       "cmp_raster_sha256": "af02a4c35663d9d713dcc1fae815758f8aa591092ca62a1464168bd2429ad7f8"
+      },
+      {
+       "evidence": 1.0,
+       "balance": 0.0947718891723637,
+       "confident": true,
+       "ask_hz_per_rep": [
+        0.0,
+        0.0,
+        0.8333333333333333,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "ask_hz": 0.10416666666666666,
+       "meta_raster_sha256": "ca71e1da370388cb2012f9b6f01e53cdaf955202558152b81bbd98733e43c186",
+       "cmp_raster_sha256": "fd33031b29953c7ad6c4d4b950967c3eb60e7dcdb9dc07f55f07e0f58a98c58f"
+      }
+     ],
+     "threshold": 0.06032454599202189
+    },
+    "edge_lesion": {
+     "levels": [
+      {
+       "evidence": 0.0,
+       "balance": 0.02241933511932893,
+       "confident": false,
+       "ask_hz_per_rep": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "ask_hz": 0.0,
+       "meta_raster_sha256": "1dd815e3e45bd53960abe9372a3530f0dbfc9041c93d3a7a0a47ec667af48479",
+       "cmp_raster_sha256": "00fe098c8f7debcda42687d333a4f96db40673cfb6c2fd7afa1e14ed9d456d71"
+      },
+      {
+       "evidence": 0.1,
+       "balance": 0.027771681458318542,
+       "confident": false,
+       "ask_hz_per_rep": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "ask_hz": 0.0,
+       "meta_raster_sha256": "aa8985e209d9ad61fc5b860b5e25e0bb118a0ba7f027f29813c04954970e0a8e",
+       "cmp_raster_sha256": "444db5e8c207c227f3f018ae03c1b741bca35954f9add4eac4f3c143c153bb0f"
+      },
+      {
+       "evidence": 0.2,
+       "balance": 0.034499630431722605,
+       "confident": false,
+       "ask_hz_per_rep": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "ask_hz": 0.0,
+       "meta_raster_sha256": "52a5666e2c5a575e971362937c2f7b4aea09a43df030d620e213ae404723b31b",
+       "cmp_raster_sha256": "535383292067e5fe1859a8e8aac6366de92e546823e891c6209fd8e6dcba2584"
+      },
+      {
+       "evidence": 0.3,
+       "balance": 0.04490392747556953,
+       "confident": false,
+       "ask_hz_per_rep": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "ask_hz": 0.0,
+       "meta_raster_sha256": "ec8b0fe83325aed66a9c6ba5abea9440dcf5f92919b8ed9b312b88ca63c87de0",
+       "cmp_raster_sha256": "344677a576b82e15df00bb812c00b6e96ca9186c31801ae6f0c4472655cd4f31"
+      },
+      {
+       "evidence": 0.4,
+       "balance": 0.053734418321891915,
+       "confident": false,
+       "ask_hz_per_rep": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "ask_hz": 0.0,
+       "meta_raster_sha256": "742d0fb1e50e4f4941816976a58cb85278da0870e45f667ea3bcad7c1b5511d7",
+       "cmp_raster_sha256": "908541de49e302753a2d725a70824ac198239d92433f45b61615d2c69199675f"
+      },
+      {
+       "evidence": 0.5,
+       "balance": 0.059558388563665327,
+       "confident": false,
+       "ask_hz_per_rep": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "ask_hz": 0.0,
+       "meta_raster_sha256": "43f048741574e609dc25376443b0b2266edb1d87d37a8db4d8d37df8d1ac50b8",
+       "cmp_raster_sha256": "1f5351bc978537719182fb734dd2ecd251098b8712afffb116fbe50640ff238a"
+      },
+      {
+       "evidence": 0.6,
+       "balance": 0.06691467366215187,
+       "confident": true,
+       "ask_hz_per_rep": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "ask_hz": 0.0,
+       "meta_raster_sha256": "4dc0db1e4127473d96d65a5e65073c93a360743a6829d85bca2dd07022503726",
+       "cmp_raster_sha256": "9aebd708e539023775a09517695a08270f17ca4fb398202a616ded509a6b8318"
+      },
+      {
+       "evidence": 0.7,
+       "balance": 0.07476353682310372,
+       "confident": true,
+       "ask_hz_per_rep": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "ask_hz": 0.0,
+       "meta_raster_sha256": "2306a24ec0e373d0eea2f200e82e8dfd5bfdf23773f9a6d67617063191ec11d4",
+       "cmp_raster_sha256": "3626895fe529090f1fc4d4ede5c3075429f46d9367f80cadfcf4e7681dd8c41c"
+      },
+      {
+       "evidence": 0.8,
+       "balance": 0.08104222419622226,
+       "confident": true,
+       "ask_hz_per_rep": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "ask_hz": 0.0,
+       "meta_raster_sha256": "e0c005d921cdeff9aef6c2fe2662bf54edfe488cef292eebdb96078366cb4504",
+       "cmp_raster_sha256": "1571ea59efdc20db89e11d91882a9878c4a30ffa3618e7c564506a99909cc04d"
+      },
+      {
+       "evidence": 0.9,
+       "balance": 0.08532238837323698,
+       "confident": true,
+       "ask_hz_per_rep": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "ask_hz": 0.0,
+       "meta_raster_sha256": "d780f9f76c3277d4106497a4918d33758824a052854de8191c86cefd7aa62e3e",
+       "cmp_raster_sha256": "af02a4c35663d9d713dcc1fae815758f8aa591092ca62a1464168bd2429ad7f8"
+      },
+      {
+       "evidence": 1.0,
+       "balance": 0.0947718891723637,
+       "confident": true,
+       "ask_hz_per_rep": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "ask_hz": 0.0,
+       "meta_raster_sha256": "ca71e1da370388cb2012f9b6f01e53cdaf955202558152b81bbd98733e43c186",
+       "cmp_raster_sha256": "fd33031b29953c7ad6c4d4b950967c3eb60e7dcdb9dc07f55f07e0f58a98c58f"
+      }
+     ],
+     "threshold": 0.06032454599202189
+    },
+    "both_lesion": {
+     "levels": [
+      {
+       "evidence": 0.0,
+       "balance": 0.02241933511932893,
+       "confident": false,
+       "ask_hz_per_rep": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "ask_hz": 0.0,
+       "meta_raster_sha256": "1dd815e3e45bd53960abe9372a3530f0dbfc9041c93d3a7a0a47ec667af48479",
+       "cmp_raster_sha256": "00fe098c8f7debcda42687d333a4f96db40673cfb6c2fd7afa1e14ed9d456d71"
+      },
+      {
+       "evidence": 0.1,
+       "balance": 0.027771681458318542,
+       "confident": false,
+       "ask_hz_per_rep": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "ask_hz": 0.0,
+       "meta_raster_sha256": "aa8985e209d9ad61fc5b860b5e25e0bb118a0ba7f027f29813c04954970e0a8e",
+       "cmp_raster_sha256": "444db5e8c207c227f3f018ae03c1b741bca35954f9add4eac4f3c143c153bb0f"
+      },
+      {
+       "evidence": 0.2,
+       "balance": 0.034499630431722605,
+       "confident": false,
+       "ask_hz_per_rep": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "ask_hz": 0.0,
+       "meta_raster_sha256": "52a5666e2c5a575e971362937c2f7b4aea09a43df030d620e213ae404723b31b",
+       "cmp_raster_sha256": "535383292067e5fe1859a8e8aac6366de92e546823e891c6209fd8e6dcba2584"
+      },
+      {
+       "evidence": 0.3,
+       "balance": 0.04490392747556953,
+       "confident": false,
+       "ask_hz_per_rep": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "ask_hz": 0.0,
+       "meta_raster_sha256": "ec8b0fe83325aed66a9c6ba5abea9440dcf5f92919b8ed9b312b88ca63c87de0",
+       "cmp_raster_sha256": "344677a576b82e15df00bb812c00b6e96ca9186c31801ae6f0c4472655cd4f31"
+      },
+      {
+       "evidence": 0.4,
+       "balance": 0.053734418321891915,
+       "confident": false,
+       "ask_hz_per_rep": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "ask_hz": 0.0,
+       "meta_raster_sha256": "742d0fb1e50e4f4941816976a58cb85278da0870e45f667ea3bcad7c1b5511d7",
+       "cmp_raster_sha256": "908541de49e302753a2d725a70824ac198239d92433f45b61615d2c69199675f"
+      },
+      {
+       "evidence": 0.5,
+       "balance": 0.059558388563665327,
+       "confident": false,
+       "ask_hz_per_rep": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "ask_hz": 0.0,
+       "meta_raster_sha256": "43f048741574e609dc25376443b0b2266edb1d87d37a8db4d8d37df8d1ac50b8",
+       "cmp_raster_sha256": "1f5351bc978537719182fb734dd2ecd251098b8712afffb116fbe50640ff238a"
+      },
+      {
+       "evidence": 0.6,
+       "balance": 0.06691467366215187,
+       "confident": true,
+       "ask_hz_per_rep": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "ask_hz": 0.0,
+       "meta_raster_sha256": "4dc0db1e4127473d96d65a5e65073c93a360743a6829d85bca2dd07022503726",
+       "cmp_raster_sha256": "9aebd708e539023775a09517695a08270f17ca4fb398202a616ded509a6b8318"
+      },
+      {
+       "evidence": 0.7,
+       "balance": 0.07476353682310372,
+       "confident": true,
+       "ask_hz_per_rep": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "ask_hz": 0.0,
+       "meta_raster_sha256": "2306a24ec0e373d0eea2f200e82e8dfd5bfdf23773f9a6d67617063191ec11d4",
+       "cmp_raster_sha256": "3626895fe529090f1fc4d4ede5c3075429f46d9367f80cadfcf4e7681dd8c41c"
+      },
+      {
+       "evidence": 0.8,
+       "balance": 0.08104222419622226,
+       "confident": true,
+       "ask_hz_per_rep": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "ask_hz": 0.0,
+       "meta_raster_sha256": "e0c005d921cdeff9aef6c2fe2662bf54edfe488cef292eebdb96078366cb4504",
+       "cmp_raster_sha256": "1571ea59efdc20db89e11d91882a9878c4a30ffa3618e7c564506a99909cc04d"
+      },
+      {
+       "evidence": 0.9,
+       "balance": 0.08532238837323698,
+       "confident": true,
+       "ask_hz_per_rep": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "ask_hz": 0.0,
+       "meta_raster_sha256": "d780f9f76c3277d4106497a4918d33758824a052854de8191c86cefd7aa62e3e",
+       "cmp_raster_sha256": "af02a4c35663d9d713dcc1fae815758f8aa591092ca62a1464168bd2429ad7f8"
+      },
+      {
+       "evidence": 1.0,
+       "balance": 0.0947718891723637,
+       "confident": true,
+       "ask_hz_per_rep": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "ask_hz": 0.0,
+       "meta_raster_sha256": "ca71e1da370388cb2012f9b6f01e53cdaf955202558152b81bbd98733e43c186",
+       "cmp_raster_sha256": "fd33031b29953c7ad6c4d4b950967c3eb60e7dcdb9dc07f55f07e0f58a98c58f"
+      }
+     ],
+     "threshold": 0.06032454599202189
+    },
+    "relay_lesion": {
+     "levels": [
+      {
+       "evidence": 0.0,
+       "balance": 0.02241933511932893,
+       "confident": false,
+       "ask_hz_per_rep": [
+        16.574074074074073,
+        15.833333333333334,
+        12.777777777777777,
+        14.814814814814813,
+        14.351851851851851,
+        16.01851851851852,
+        15.925925925925924,
+        16.85185185185185
+       ],
+       "ask_hz": 15.393518518518515,
+       "meta_raster_sha256": "1dd815e3e45bd53960abe9372a3530f0dbfc9041c93d3a7a0a47ec667af48479",
+       "cmp_raster_sha256": "fdd092be34b0fd89f9e1510a39eea5446cc94aedd8422cd8617508ab194fa66a"
+      },
+      {
+       "evidence": 0.1,
+       "balance": 0.027771681458318542,
+       "confident": false,
+       "ask_hz_per_rep": [
+        16.388888888888886,
+        16.01851851851852,
+        12.592592592592592,
+        15.277777777777777,
+        14.907407407407408,
+        16.01851851851852,
+        16.944444444444443,
+        17.685185185185187
+       ],
+       "ask_hz": 15.729166666666666,
+       "meta_raster_sha256": "aa8985e209d9ad61fc5b860b5e25e0bb118a0ba7f027f29813c04954970e0a8e",
+       "cmp_raster_sha256": "3de426f681fc49151ed404d458540d882e8091567d5eab91331255895aa8e979"
+      },
+      {
+       "evidence": 0.2,
+       "balance": 0.034499630431722605,
+       "confident": false,
+       "ask_hz_per_rep": [
+        16.85185185185185,
+        15.833333333333334,
+        12.314814814814815,
+        15.555555555555555,
+        14.814814814814813,
+        16.388888888888886,
+        17.22222222222222,
+        17.40740740740741
+       ],
+       "ask_hz": 15.79861111111111,
+       "meta_raster_sha256": "52a5666e2c5a575e971362937c2f7b4aea09a43df030d620e213ae404723b31b",
+       "cmp_raster_sha256": "7bc71e6e7621f36a1fdf94d7ed5d261bcdeafe97d53d3e09f913d154a6e3fb28"
+      },
+      {
+       "evidence": 0.3,
+       "balance": 0.04490392747556953,
+       "confident": false,
+       "ask_hz_per_rep": [
+        17.037037037037035,
+        16.111111111111107,
+        11.851851851851851,
+        15.277777777777777,
+        15.092592592592592,
+        16.944444444444443,
+        16.944444444444443,
+        18.425925925925924
+       ],
+       "ask_hz": 15.960648148148145,
+       "meta_raster_sha256": "ec8b0fe83325aed66a9c6ba5abea9440dcf5f92919b8ed9b312b88ca63c87de0",
+       "cmp_raster_sha256": "99f55fa05f5876a60fa5659c8c55ec245a904f66cd8a27dfdb211cafaefd4b82"
+      },
+      {
+       "evidence": 0.4,
+       "balance": 0.053734418321891915,
+       "confident": false,
+       "ask_hz_per_rep": [
+        16.85185185185185,
+        15.925925925925924,
+        11.851851851851851,
+        15.462962962962962,
+        14.722222222222221,
+        16.85185185185185,
+        16.944444444444443,
+        18.24074074074074
+       ],
+       "ask_hz": 15.85648148148148,
+       "meta_raster_sha256": "742d0fb1e50e4f4941816976a58cb85278da0870e45f667ea3bcad7c1b5511d7",
+       "cmp_raster_sha256": "0d4d0cbfae905542b8bad717f667f816c01f3396fea840bfb94b523d1a311db9"
+      },
+      {
+       "evidence": 0.5,
+       "balance": 0.059558388563665327,
+       "confident": false,
+       "ask_hz_per_rep": [
+        16.85185185185185,
+        16.111111111111107,
+        12.129629629629628,
+        15.277777777777777,
+        15.185185185185183,
+        16.574074074074073,
+        16.85185185185185,
+        17.777777777777775
+       ],
+       "ask_hz": 15.844907407407407,
+       "meta_raster_sha256": "43f048741574e609dc25376443b0b2266edb1d87d37a8db4d8d37df8d1ac50b8",
+       "cmp_raster_sha256": "5786c32b7d4e3eaaa0e4d9ea45d4572e3b7ccc8cc1f8de3f801ce1de9b420cb2"
+      },
+      {
+       "evidence": 0.6,
+       "balance": 0.06691467366215187,
+       "confident": true,
+       "ask_hz_per_rep": [
+        16.85185185185185,
+        16.48148148148148,
+        11.759259259259258,
+        15.648148148148145,
+        15.185185185185183,
+        16.85185185185185,
+        17.12962962962963,
+        18.333333333333332
+       ],
+       "ask_hz": 16.03009259259259,
+       "meta_raster_sha256": "4dc0db1e4127473d96d65a5e65073c93a360743a6829d85bca2dd07022503726",
+       "cmp_raster_sha256": "439b363b320cff0c986329977ef1789731410c9d9e77f6441a57c00a209b230c"
+      },
+      {
+       "evidence": 0.7,
+       "balance": 0.07476353682310372,
+       "confident": true,
+       "ask_hz_per_rep": [
+        17.12962962962963,
+        16.388888888888886,
+        11.759259259259258,
+        15.925925925925924,
+        15.648148148148145,
+        17.962962962962962,
+        17.685185185185187,
+        17.59259259259259
+       ],
+       "ask_hz": 16.261574074074073,
+       "meta_raster_sha256": "2306a24ec0e373d0eea2f200e82e8dfd5bfdf23773f9a6d67617063191ec11d4",
+       "cmp_raster_sha256": "29f4a55d97dd39d60e3b08549174faf98028097b59da02af92d033669453f0ee"
+      },
+      {
+       "evidence": 0.8,
+       "balance": 0.08104222419622226,
+       "confident": true,
+       "ask_hz_per_rep": [
+        18.333333333333332,
+        17.59259259259259,
+        11.481481481481481,
+        16.01851851851852,
+        15.74074074074074,
+        18.055555555555554,
+        17.777777777777775,
+        18.425925925925924
+       ],
+       "ask_hz": 16.67824074074074,
+       "meta_raster_sha256": "e0c005d921cdeff9aef6c2fe2662bf54edfe488cef292eebdb96078366cb4504",
+       "cmp_raster_sha256": "608b2200f3d478011424c5a56514d51b88d1aa6848b39528427a753718cdf19d"
+      },
+      {
+       "evidence": 0.9,
+       "balance": 0.08532238837323698,
+       "confident": true,
+       "ask_hz_per_rep": [
+        18.14814814814815,
+        17.40740740740741,
+        11.851851851851851,
+        16.388888888888886,
+        16.203703703703702,
+        17.87037037037037,
+        18.14814814814815,
+        18.333333333333332
+       ],
+       "ask_hz": 16.79398148148148,
+       "meta_raster_sha256": "d780f9f76c3277d4106497a4918d33758824a052854de8191c86cefd7aa62e3e",
+       "cmp_raster_sha256": "185e53f17ed550f998143848a41931cdbd4612c62505bd238afdab7c1c617f31"
+      },
+      {
+       "evidence": 1.0,
+       "balance": 0.0947718891723637,
+       "confident": true,
+       "ask_hz_per_rep": [
+        18.24074074074074,
+        17.87037037037037,
+        10.925925925925926,
+        16.01851851851852,
+        15.74074074074074,
+        18.24074074074074,
+        18.055555555555554,
+        18.796296296296294
+       ],
+       "ask_hz": 16.73611111111111,
+       "meta_raster_sha256": "ca71e1da370388cb2012f9b6f01e53cdaf955202558152b81bbd98733e43c186",
+       "cmp_raster_sha256": "ca811d24079c35d5592a65f3a22faf2719f60ecdfb8e2a231762e8b8f4f7b11a"
+      }
+     ],
+     "threshold": 0.06032454599202189
+    }
+   },
+   "elapsed_s": 199.0
+  }
+ ],
+ "config": {
+  "seeds": [
+   43
+  ],
+  "smoke": false,
+  "backend": "numpy"
+ },
+ "elapsed_s": 199.0
+}

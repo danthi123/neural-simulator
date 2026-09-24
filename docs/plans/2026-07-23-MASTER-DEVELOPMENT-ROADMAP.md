@@ -1188,6 +1188,20 @@ Perception/attention/WM, affect, curiosity, self/workspace/ToM, and language are
 
 ## 8. IMMEDIATE NEXT ACTIONS
 
+**2026-09-24 (overnight harvest):** **All fixes + SETTLE: robust core 25/26 on every seed**
+(`research/findings/2026-09-23-allfixes-settle-battery-6seed-robust-core-25.md`); only `da-gated-encoding` is outside
+the exercised core. **Default flip:** three validated fixes are switched ON by default on `research/flip-validated-fixes`;
+its production-default validation battery (tags `flipdefaults-thin` / `flipdefaults-adequate`, 372 shards over two AWS
+machines + pool + local) is running, merge only on the prereg's pass criteria. **Curiosity x metacog LC-NE modulator:
+NO-GO 1/6, held-out 0/5** (`research/findings/2026-09-24-curiosity-metacog-lcne-modulator-6seed-NOGO-calibration-seed-only.md`)
+— the additive tonic lc_ne current carries 8-25% of the ASK range; external research names the next method (phasic
+LC bursts + a multiplicative gain on ASK), which needs a new prereg. **Perception spiking-feedback readout NEUTRAL
+6-seed** (both arms at chance; the LIF port is the residual). **Queued on the pool:** DA tag-capture chat 6-seed,
+CA3 superposed fact-store capacity grid (54 runs), D6 capacity curve (84 runs) — together they answer whether
+conversational fact learning scales.
+Next: aggregate the flip battery and merge if it passes; build the phasic-gain curiosity method; harvest DA / CA3 /
+capacity; measure SETTLE's per-turn cost before it joins the next flip batch.
+
 **2026-09-23 (evening harvest):** **D6 learn-through-use v3 capability gate GO 6/6 on K1-K7**
 (`research/findings/2026-09-23-d6-learn-through-use-v3-capability-gate-GO-6of6.md`) — the recall reply depends on the
 in-conversation local spiking Hebbian write and on the synapse read at probe time; the host record is inert (K5). Runner-level,

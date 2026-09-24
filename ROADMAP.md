@@ -7,6 +7,13 @@ the [project handoff](HANDOFF.md), and the live state in
 board, when checked out, was `research/coordination/workboard.json` (⚠️ now ~a month
 stale — the live board is [GAP_CLOSURE_MISSION.md](GAP_CLOSURE_MISSION.md) CURRENT STATE; workboard.json is being retired).
 
+## 2026-09-24 (overnight) — 25 of 26 abilities drive the reply on every seed; three fixes being switched on for real; curiosity's mood-chemical link falls short and the reason is named
+
+**The #1 metric with every fix on, plus the "settle before answering" pause:** 25 of the 26 exercised abilities provably drive the reply, on all six seeds alike. The one outside is the dopamine-tagged memory, whose chat wiring is being measured now.
+**Switching fixes on by default:** three fixes that passed their tests are now switched on in a branch, and a large check that the shipped brain still behaves (about 370 pieces across two cloud machines, the mini-PC pool and this machine) is running; they merge only if it passes its pre-registered criteria.
+**Curiosity and uncertainty, via a noradrenaline-like population:** an honest no on 5 of 5 fresh seeds. The circuit is wired correctly and the signal is graded, but the chemical-like input only adds a small push (8-25% of the effect) instead of scaling the response. The research literature says the effective form is short bursts that multiply a target's response; that is the next attempt.
+**Also:** a spiking version of the vision read-out came out neutral (it collapses to guessing); the question "does conversational fact learning scale?" now has two large test grids queued (138 runs); and a pool bug that let jobs hog every core, stalling all dispatch for 50 minutes, was fixed.
+
 ## 2026-09-23 (evening) — the brain provably learns a fact by changing its own connections; the #1 metric measured in one consistent run
 
 **Telling the brain a fact in conversation now provably works through its own connection change.** In a test registered in advance, switching off only the synaptic write (same conversation, same code) makes the brain unable to answer a later question about the fact, zeroing the learned connections after teaching does the same, and removing the behind-the-scenes record of the fact changes nothing. This held on all six test seeds. It is still switched off by default and runs on a small demo brain; a secondary check (hearing the words without learning them) is queued. (Finding: `2026-09-23-d6-learn-through-use-v3-capability-gate-GO-6of6`.)
