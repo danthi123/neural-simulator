@@ -315,6 +315,7 @@ def mode_score(arms_path, pre_path, out_path):
         "diff_live": diff_live, "diff_lesion": diff_les,
         "S15_success_check": s15,
         "block_asymmetry_control": bc,
+        "preconditions": decided["preconditions"],
         "verdict": decided,
     }
     os.makedirs(os.path.dirname(out_path) or ".", exist_ok=True)

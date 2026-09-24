@@ -122,7 +122,7 @@ def main(pre_ref, out, scratch):
     rec = {"runner": "_reward_value_afferent_offidentity", "pre_ref": pre_ref, "pre_commit": pre_commit,
            "head": head, "pre_file_sha256": pre_sha, "post_file_sha256": post_sha, "files_differ": pre_sha != post_sha,
            "messages": MSGS, "hashes": h, "byte_identical_off": identical, "runs": runs,
-           "status": decided["status"], "verdict": decided}
+           "status": decided["status"], "preconditions": decided["preconditions"], "verdict": decided}
     os.makedirs(os.path.dirname(out) or ".", exist_ok=True)
     with open(out, "w") as f:
         json.dump(rec, f, indent=2, sort_keys=True, default=str)
@@ -134,7 +134,8 @@ if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--pre-ref", default="HEAD^2", help="git ref whose webapp/da_mode_drives_chat.py is pre-patch")
     ap.add_argument("--out", default="research/findings/raw/_reward_value_afferent_derisk/v2/offidentity_module.json")
-    ap.add_argument("--scratch", default=".a10_scratch", help="scratch dir for the pre-patch blob + child outputs")
+    ap.add_argument("--scratch", default="_scratch/a10_offidentity",
+                    help="scratch dir (gitignored) for the pre-patch blob + child outputs")
     ap.add_argument("--child", default=None, choices=("pre", "post"), help=argparse.SUPPRESS)
     ap.add_argument("--pre-path", default=None, help=argparse.SUPPRESS)
     ap.add_argument("--child-out", default=None, help=argparse.SUPPRESS)
