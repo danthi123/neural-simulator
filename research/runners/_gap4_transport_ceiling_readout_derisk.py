@@ -96,7 +96,7 @@ _FP_KEYS = ("hidden", "pool_k", "n_hidden_layers", "settle_steps", "credit_steps
             "read_window", "read_gain", "isi_steps", "eval_frozen", "spi_silence", "n_super", "n_members",
             "held_per_super", "n_prop", "member_id_dim", "n_obs", "noise", "oracle_epochs", "oracle_lr",
             "oracle_batch", "decode_ridge", "read_quantity", "no_structural", "ff_w_init", "propagation_strength",
-            "no_ff_stp")
+            "no_ff_stp", "pbar_alpha")
 
 
 # ============================================================================================================
@@ -257,7 +257,8 @@ def _build(arm, n_in, k, args, seed):
         read_window=args.read_window, read_gain=args.read_gain, isi_steps=args.isi_steps,
         eval_frozen=args.eval_frozen, spi_silence=args.spi_silence,
         read_quantity=args.read_quantity, no_structural=args.no_structural,
-        ff_w_init=args.ff_w_init, propagation_strength=args.propagation_strength, no_ff_stp=args.no_ff_stp)
+        ff_w_init=args.ff_w_init, propagation_strength=args.propagation_strength, no_ff_stp=args.no_ff_stp,
+        pbar_alpha=args.pbar_alpha)
     net.cfg.bdsp_w_max = float(args.bdsp_w_max)
     net.cfg.bdsp_w_min = -float(args.bdsp_w_max)
     net._spi_frozen = bool(freeze)
@@ -649,6 +650,10 @@ def main():
     ap.add_argument("--ff-w-init", dest="ff_w_init", type=float, default=4.0)
     ap.add_argument("--propagation-strength", dest="propagation_strength", type=float, default=None)
     ap.add_argument("--no-ff-stp", dest="no_ff_stp", action="store_true")
+    # AMENDMENT 3: the burst-probability baseline Pbar is an EMA (alpha 0.05/step) that returns to p0 after every
+    # teaching transient, so the time-integral of (P - Pbar) is ~0 per presentation; alpha 0 = a PRESET baseline at
+    # p0 (the BurstCCN preset-baseline form, already a parameter of OnBridgeBDSPNet). Default 0.05 = legacy.
+    ap.add_argument("--pbar-alpha", dest="pbar_alpha", type=float, default=0.05)
     ap.add_argument("--silent-stats", dest="silent_stats", action="store_true")
     ap.add_argument("--decode-ridge", dest="decode_ridge", type=float, default=1.0)
     # --- task (the 2026-09-15 task) ---
