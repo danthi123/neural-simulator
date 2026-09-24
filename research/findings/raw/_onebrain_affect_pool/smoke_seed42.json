@@ -1,0 +1,107 @@
+{
+  "seed": 42,
+  "n_all_neurons": 7692,
+  "checks": {
+    "coresidence_byte_identical(12-pool vs alone-on-superset)": true,
+    "tone_levels_equal_standalone_production_ladder": true,
+    "signed_at_|a|>=0.5": true,
+    "neutral_below_tol": true,
+    "readout_lesion_zero": true,
+    "deterministic": true,
+    "xedge_does_not_touch_ladder_read": true
+  },
+  "label": "D3 affect ladder on the 12-organ pool \u2014 1-seed smoke (seed 42)",
+  "status": "GO",
+  "go": true,
+  "undefined_reasons": [],
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "coresidence_byte_identical(12-pool vs alone-on-superset)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "tone_levels_equal_standalone_production_ladder",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "signed_at_|a|>=0.5",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "neutral_below_tol",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "readout_lesion_zero",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "deterministic",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "xedge_does_not_touch_ladder_read",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    }
+  ],
+  "disabled_processes": [
+    {
+      "process": "the other 11 organs' on-pool training + reads (M2/M5/X arms)",
+      "why": "smoke scope: the full gate is _onebrain_affect_pool_verify on the mini-PC pool"
+    }
+  ],
+  "chance": null,
+  "pool_levels": [
+    -3,
+    -2,
+    0,
+    2,
+    3
+  ],
+  "standalone_levels": [
+    -3,
+    -2,
+    0,
+    2,
+    3
+  ],
+  "pool_diffs": [
+    -0.07722222222222222,
+    -0.03944444444444444,
+    0.0,
+    0.034722222222222224,
+    0.08
+  ],
+  "standalone_diffs": [
+    -0.08333333333333333,
+    -0.03888888888888889,
+    0.0,
+    0.03777777777777778,
+    0.08638888888888889
+  ],
+  "intero_synapse_attributable_frac": 1.0,
+  "maxdelta_coresidence": 0.0,
+  "maxdelta_xedge": 0.0,
+  "elapsed_s": 542.7
+}

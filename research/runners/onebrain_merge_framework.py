@@ -123,6 +123,12 @@ class CrossEdge:
                                                #   `source_idx_fn` is None (every pre-existing CrossEdge), behavior
                                                #   is UNCHANGED (`_cross_edge_dense` falls back to the name lookup).
     target_idx_fn: Callable = None             # OPTIONAL, same as `source_idx_fn` for the TARGET endpoint.
+    transmission_gate: str = None              # OPTIONAL (2026-09-23, D3 affect->pool): a runtime CURRENT gate
+                                               #   (`bridge.set_transmission_gate(name, 0|1)`) over this edge's
+                                               #   synapses — the lesion handle for a FIXED (plastic=False)
+                                               #   neuromodulatory projection. None (every pre-existing CrossEdge)
+                                               #   -> the dense population dict is unchanged (no key added) ->
+                                               #   byte-identical inject.
 
     @property
     def gate_name(self) -> str:
@@ -153,6 +159,8 @@ def _cross_edge_dense(bridge, ce: "CrossEdge") -> dict:
           "plastic": bool(ce.plastic), "conn_type": "E_TO_E", "count": int(P.size)}
     if ce.plastic:
         out["plasticity_gate"] = ce.gate_name
+    if ce.transmission_gate:
+        out["transmission_gate"] = str(ce.transmission_gate)
     return out
 
 

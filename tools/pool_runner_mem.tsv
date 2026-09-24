@@ -1,0 +1,6 @@
+# Measured peak RSS (GB, rounded up) per research runner on the pool — the dispatcher's fallback when a queue line
+# carries neither mem_gb=N nor a tools/memcap.sh cap. Measured 2026-09-23 on pool41/pool42 (ps rss of the runner
+# and its --worker children). Add a row when a runner is seen above the 1 GB default.
+load_bearing_fraction	6
+onebrain_regression_battery	6
+d6_learn_through_use_lb	5

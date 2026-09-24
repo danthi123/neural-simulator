@@ -1,0 +1,107 @@
+{
+  "runner": "research.runners._lbf_open_ended_production_turn_probe",
+  "scorer": "amendment-2 (seed = unit)",
+  "scorer_status": {
+    "withdrawn_as_go_rule": true,
+    "withdrawn_by": "research/findings/2026-09-23-open-ended-generation-production-turn-draw-lesion-seed42-and-open-ended-mode-bypass.md#correction-2-after-the-re-review-of-c807f869b-amendment-3",
+    "reason": "each arm is a deterministic function of the seed, so under H0 the per-seed D_s is exactly 0, not a distribution symmetric about 0 -- the 6-seed sign-flip p=1/64 would only have meant 'the modal reply changed on six seeds', not a real test",
+    "superseded_by": "amendment 3 (score_seed_a3/aggregate_a3 below): independent per-session noise streams make the null a real distribution, asserted in data via `noise_live`",
+    "still_valid": "the per-seed D_s, label, histograms and descriptive statistics remain valid DESCRIPTION of the scored seed(s); only the cross-seed sign-test GO/p-value built on top of them is withdrawn"
+  },
+  "mode": "oe_unfixed_taught",
+  "seed": 42,
+  "k": 40,
+  "rich": true,
+  "ask": "what might a dog chase",
+  "teach": [
+    "the wolf chase the rabbit",
+    "the fox chase the rabbit",
+    "the hawk chase the rabbit",
+    "the eagle chase the rabbit",
+    "the lion chase the deer",
+    "the tiger chase the deer",
+    "the cougar chase the deer",
+    "the owl chase the mouse",
+    "the snake chase the mouse",
+    "the crow chase the beetle",
+    "the pike chase the minnow",
+    "the coyote chase the dog",
+    "the bear chase the dog"
+  ],
+  "lesioned_edge": "BRAIN_SPIKING_DRAW_LESION=1 replaces the HOST weight vector w = _weight_partner((dog, chase), patients) -- a sum over the HOST co-occurrence matrix P built by ChatBrain._build_generation_proposer from the stored facts -- with np.ones(V) before it is mapped (host affine map base_pA + gain_pA*w/peak) into drive for the spiking Izhikevich soft-WTA bank. What the lesion tests: whether that HOST likelihood vector, transmitted THROUGH the spiking WTA, changes the reply. It does NOT test whether the spiking part is load-bearing; the host_oracle arm (same w, host np.random.choice) measures that.",
+  "host_shortcuts": [
+    "teach KB + ask prompt (WORLD)",
+    "histogram / TV / sign-flip statistic (INSTRUMENT)",
+    "co-occurrence matrix P and the weight vector w = _weight_partner (HOST likelihood; the LESIONED input)",
+    "affine drive map base_pA + gain_pA*w/peak (HOST)",
+    "argmax over the bank's firing counts (HOST read-out of the spiking winner)",
+    "hypothesis role induction + SVO template (HOST)",
+    "prompt router _parse_open_ended + _is_acquisition_candidate (HOST regex / token rules)",
+    "RF-composer moat verify (HOST scaffold)",
+    "warm Qwen faculty stubbed in the oe_* modes (FORM not measured)"
+  ],
+  "not_independent": null,
+  "score": {
+    "verdict": "UNDEFINED",
+    "label": null,
+    "reasons": [
+      "the spiking draw was never reached (draw count 0) -> the reply cannot depend on it"
+    ],
+    "lesioned_edge": "BRAIN_SPIKING_DRAW_LESION=1 replaces the HOST weight vector w = _weight_partner((dog, chase), patients) -- a sum over the HOST co-occurrence matrix P built by ChatBrain._build_generation_proposer from the stored facts -- with np.ones(V) before it is mapped (host affine map base_pA + gain_pA*w/peak) into drive for the spiking Izhikevich soft-WTA bank. What the lesion tests: whether that HOST likelihood vector, transmitted THROUGH the spiking WTA, changes the reply. It does NOT test whether the spiking part is load-bearing; the host_oracle arm (same w, host np.random.choice) measures that.",
+    "hist_intact": {
+      "ABSTAIN": 40
+    },
+    "hist_rebuild": {
+      "ABSTAIN": 40
+    },
+    "hist_lesion": {
+      "ABSTAIN": 40
+    },
+    "deterministic": true,
+    "draws_intact": 0,
+    "draws_lesion": 0,
+    "lesion_ablated_draws": 0,
+    "intact_ablated_draws": 0,
+    "n_errors": 0,
+    "n_intact_volunteered": 0,
+    "n_lesion_volunteered": 0,
+    "tv_within_session_descriptive": 0.0,
+    "host_weight_vector": {
+      "beetle": 1.0,
+      "cat": 2.0,
+      "deer": 3.0,
+      "dog": 2.0,
+      "fish": 0.0,
+      "memory": 0.0,
+      "minnow": 1.0,
+      "rabbit": 2.0,
+      "spikes": 0.0,
+      "words": 0.0
+    },
+    "mean_w_intact": null,
+    "mean_w_lesion": null,
+    "direction_D": null,
+    "modal_intact": null,
+    "modal_frac_intact": 0.0,
+    "modal_lesion": null,
+    "modal_frac_lesion": 0.0,
+    "modal_changed": false,
+    "admissible_approx": [
+      "beetle",
+      "deer",
+      "minnow",
+      "rabbit"
+    ],
+    "chance_p_modal_differs": 0.75,
+    "chance_p_below_peak": 0.75,
+    "host_argmax_prediction": [
+      "deer"
+    ],
+    "host_sampler_predicted_mass": {
+      "beetle": 0.14285714285714285,
+      "deer": 0.42857142857142855,
+      "minnow": 0.14285714285714285,
+      "rabbit": 0.2857142857142857
+    }
+  }
+}

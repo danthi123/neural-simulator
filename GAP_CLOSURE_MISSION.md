@@ -15,6 +15,30 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-19 (RESUME HERE) — NEW ARC: PERMANENT LLM MOUTH + LOAD-BEARING METRIC
 
+**🟢 LIVE NOW — 2026-09-23 ~19:20 local (harvest these; do NOT double-launch):**
+- **Combined battery WITH SETTLE (tag `allfixes3settle`, 186 shards):** AWS B (`.aws_cpu3`, s42-44, loop `bwsrk5ci6`
+  terminates it) + AWS A (`.aws_gpu`, s100-102, controller `b9e3vhwh5` terminates it). When both are done:
+  `.venv/bin/python tools/lb_shard.py aggregate --tag allfixes3settle` → finding. Robust core 25 if affect-marker is
+  6/6 and nothing regresses (vs 24 in `allfixes2`).
+- **✅ D6 v3 capability gate: GO 6/6 on K1-K7** (`research/findings/2026-09-23-d6-learn-through-use-v3-capability-gate-GO-6of6.md`):
+  the recall reply depends on the in-conversation synaptic write; the host record is inert. Runner-level, default-off.
+  The EXPO_H secondary (K3e/K4e) is staged on the pool at `01f7a5a4` → re-score with the same command when the 6
+  `s*_EXPO_H.json` land and append the secondary to that finding.
+- **✅ Language v2 referent lexicon: GO on all 8 gates, 6 seeds** (merged `a13b7239`); runner-level, not wired.
+- **Pool dispatcher now reserves job memory (`@2af939ac`):** a job's `mem_gb=N` hint (in its --checked text) is
+  reserved on its node for 20 min. The pool is RAM-bound (15 GB nodes, ~5 GB jobs), not core-bound. pool40 is
+  powered off.
+- **Workflows (22:10):** `wcijsme3a` (wm-binding adequate probe · swap-drives adequate probe · DA tag-capture chat
+  wiring) · `wz1hyhus8` (OWNER-AUTHORIZED default-on flips of validated fixes: audit → flip branch → production-default
+  6-seed validation battery staged → review; merge only after that battery passes) · `whj6ge9lc` (D6 fact-learning
+  CAPACITY curve 5→2000 facts: build + prereg + staged grid) · `wzd72cek8` (fix round 3: AWS pool node + perception).
+  Merge only on the review's safe_to_merge.
+- **Curiosity (spiking LC modulator) merged `12de6276`** (re-review SOUND); held-out seeds 43-102 staged on the pool at
+  `def3e1f91`; combine with `--combine` once all 5 land (the combiner now compares runner blobs, `a48de5e5`).
+- **Owner 2026-09-23: validated default-flips are mine to make** (charter §5 updated; memory
+  `feedback_flip_validated_fixes_without_waiting`).
+- **GPU queue:** D5 affect-conditioned mouth, 4 jobs left → score its 6-seed verdict when complete.
+
 **⭐⭐ LATEST 2026-09-23 ~09:00 local — OWNER: "parallelize more heavily … we shouldn't be sitting around for hours
 waiting on runs every day … I thought our heartbeats/gates were supposed to prevent this?" → FULL FAN-OUT + LOOPHOLE FIX.**
 - **ROOT CAUSE (honest):** parallel_audit printed `⛔ UNDER-PARALLELIZED` for ~14.5 days straight; the blocking gates
@@ -150,6 +174,11 @@ waiting on runs every day … I thought our heartbeats/gates were supposed to pr
   prediction (GO, mean 0.193) FAILED). Scorer-amendment disclosure + D3 false 'jobs outstanding' claim being corrected
   in round 8 `wtkclzjv1` (text/status only). Next open-ended method (NO-DEFER): raise the draw's live variability where
   a seed's draw is degenerate (s100) / more asks per session — to be named in the finding.
+- **18:45 MERGED (both remotes `@5dcaa176`):** D3 affect ladder as 12th shared-pool organ — scored 6-seed verdict NOT
+  ALL-GO (3/6 fully GO; X1 4/6, fails s42/s100; s102 fails M3) `@a76f47a2`; open-ended production-turn defect fix
+  (default-off route flags) + a3 verdict NO-GO `@5dcaa176`. I applied the final review-requested text corrections myself
+  (the review loop had reached wording-only issues). **Also: idle-stop now covers every AWS instance** (`@80a98510`; an
+  idle r7i billed ~30 min because only .aws_gpu was checked; the AWS2 harvest loop had stalled silently).
 - **⚠️ POOL/AWS BRAIN ASSETS:** pool nodes lack bridges/ (25G local) + most data/ (11G local) → production brain_chat
   runs there may DEGENERATE like AWS did. Do NOT trust a pool brain_chat result until the infra lane's sanity check passes.
 - **LESSONS (new):** never SendMessage a Workflow subagent (it resumes the agent as a duplicate in the same worktree;

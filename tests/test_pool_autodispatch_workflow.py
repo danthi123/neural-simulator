@@ -23,6 +23,59 @@ def run_bash(script: Path, *args: str, env: dict[str, str] | None = None) -> sub
     )
 
 
+def test_memory_reservations_expire_and_jobs_declare_size(tmp_path: Path) -> None:
+    # 2026-09-23: one fill cycle sent six growing D6 workers to one 15 GB node because each capacity check saw the
+    # RSS snapshot from before the previous launch had grown. Dispatches now reserve their declared size.
+    now = int(time.time())
+    resv = tmp_path / "resv"
+    resv.write_text(f"{now - 60} pool42 5\n{now - 30} pool42 5\n{now - 30} pool41 1\n{now - 5000} pool42 9\n")
+    queue = tmp_path / "pool.queue"
+    queue.write_text(f"{now}\tpython -m research.runners.x  #checked:reason mem_gb=5\n")
+    env = {"POOL_QUEUE_PATH": str(queue), "POOL_RESERVATIONS_PATH": str(resv), "POOL_GROWTH_WINDOW_S": "1200"}
+    assert run_bash(DISPATCHER, "--reserved-gb", "pool42", env=env).stdout.strip() == "10"   # the 9 GB row expired
+    assert run_bash(DISPATCHER, "--reserved-gb", "pool41", env=env).stdout.strip() == "1"
+    assert run_bash(DISPATCHER, "--reserved-gb", "pool40", env=env).stdout.strip() == "0"
+    assert run_bash(DISPATCHER, "--peek-est-gb", env=env).stdout.strip() == "5"
+    queue.write_text(f"{now}\tpython -m research.runners.x  #checked:reason\n")
+    assert run_bash(DISPATCHER, "--peek-est-gb", env={**env, "POOL_JOB_EST_GB": "2"}).stdout.strip() == "2"
+    queue.write_text(f"{now}\tbash tools/memcap.sh 8 -- python -m research.runners.x  #checked:reason\n")
+    assert run_bash(DISPATCHER, "--peek-est-gb", env=env).stdout.strip() == "8"   # memcap cap is the fallback
+    table = tmp_path / "mem.tsv"
+    table.write_text("# comment\nload_bearing_fraction\t6\n")
+    queue.write_text(f"{now}\tpython -m research.runners.load_bearing_fraction --only x  #checked:reason\n")
+    env2 = {**env, "POOL_RUNNER_MEM_PATH": str(table)}
+    assert run_bash(DISPATCHER, "--peek-est-gb", env=env2).stdout.strip() == "6"   # per-runner measured peak
+    queue.write_text(f"{now}\tpython -m research.runners.other_runner  #checked:reason\n")
+    assert run_bash(DISPATCHER, "--peek-est-gb", env=env2).stdout.strip() == "1"   # unknown runner -> default
+
+
+def test_running_jobs_commit_their_declared_size_for_their_lifetime(tmp_path: Path) -> None:
+    # 2026-09-23 20:45: a between-phases snapshot read 9 GB free while two ~6 GB LB jobs ran; a third went out and
+    # both nodes thrashed. Each launch now stamps POOL_JOB_ID/POOL_JOB_MEM_GB into the job's inherited environment.
+    rendered = run_bash(DISPATCHER, "--render-remote-command", "python -m research.runners.x  #checked:r mem_gb=5",
+                        env={"HOME": str(tmp_path)}).stdout
+    assert "POOL_JOB_MEM_GB='5'" in rendered and "POOL_JOB_ID='" in rendered
+    lines = "POOL_JOB_ID=a POOL_JOB_MEM_GB=6\nPOOL_JOB_ID=b POOL_JOB_MEM_GB=5\n"
+    r = subprocess.run(["bash", str(DISPATCHER), "--committed-gb"], input=lines, cwd=ROOT, text=True,
+                       capture_output=True, check=True)
+    assert r.stdout.strip() == "11"
+    r = subprocess.run(["bash", str(DISPATCHER), "--committed-gb"], input="", cwd=ROOT, text=True,
+                       capture_output=True, check=True)
+    assert r.stdout.strip() == "0"
+
+
+def test_pop_takes_first_job_that_fits_the_node_budget(tmp_path: Path) -> None:
+    now = int(time.time())
+    queue = tmp_path / "pool.queue"
+    queue.write_text(f"{now}\tbig  #checked:r mem_gb=5\n{now}\tsmall  #checked:r mem_gb=1\n")
+    env = {"POOL_QUEUE_PATH": str(queue), "POOL_RUNNING_PATH": str(tmp_path / "pool.running")}
+    out = run_bash(DISPATCHER, "--pop-once", "3", env=env).stdout
+    assert out.endswith("small")                      # the 5 GB head does not fit a 3 GB budget; the 1 GB job does
+    assert "big" in queue.read_text() and "small" not in queue.read_text()
+    assert run_bash(DISPATCHER, "--pop-once", "3", env=env).stdout == ""    # nothing left that fits
+    assert run_bash(DISPATCHER, "--pop-once", env=env).stdout.endswith("big")  # no budget given -> head
+
+
 def test_remote_wrapper_records_multiline_job_as_one_v2_row(tmp_path: Path) -> None:
     remote_root = tmp_path / "derisk-pool" / "sim"
     remote_root.mkdir(parents=True)

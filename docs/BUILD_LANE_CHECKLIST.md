@@ -11,6 +11,11 @@ wall-clock; catching these in round one is the cheapest parallelism there is.
 - **The target may already be shipped.** Check the ledger and the load-bearing battery's faculty list.
 
 ## The gate (the #1 rejection class)
+- **Before writing code, write one line per evidence gate: "this gate FAILS if <realistic outcome>".** If the only
+  input to the measured reply is the thing the lesion disables, or the lesion arm cannot reach the same route, or a
+  field is set by a host template of the arm label, there is no realistic failing outcome — redesign the probe before
+  building it. (2026-09-23: 5 of 6 first-round builds were rejected for exactly this — hold-query read-out,
+  swap lead template, DA lesion pinned to tonic, curiosity G4/G5, comparator G3.)
 - **It must be able to fail.** If a check passes by construction (the only drive into a pool is the edge you lesion;
   a relay passes a sign it was given; a 'no lost detection' check at a strength that already detects everything),
   it is an INTEGRITY SMOKE — label it so, never count it as evidence.
@@ -39,4 +44,14 @@ wall-clock; catching these in round one is the cheapest parallelism there is.
 - **Remote runs need the corpus** (`load_bearing_fraction` refuses without it; provisioners ship it).
 - **GPU-queue lines start with `export XDG_RUNTIME_DIR=/run/user/1000;`** when the runner self-checks memcap.
 - **Never commit live `research/queue/*` state** — merging it re-injects jobs.
+- **"Merge main" means `git merge origin/main`: a TWO-parent commit.** Copying main's files into a one-parent commit
+  leaves the merge-base stale, so the branch conflicts with main again (2026-09-23 curiosity fix round). Before
+  pushing: `git merge-tree --write-tree origin/main HEAD` must exit 0.
 - **Never SendMessage a Workflow subagent** (it resumes a duplicate in the same worktree).
+- **A repo-wide idle-compute gate blocking YOUR commit is the orchestrator's problem, not yours.** Do NOT queue filler
+  (new seed batches of a closed result, a spare seed "for replication", an "autofill" continuation) to clear
+  `compute_idle_persistent` / `lane_starvation`, and do not write a waiver. Leave the work committed-staged in your
+  worktree, and return with `commit_blocked_by: <gate>`; the orchestrator stages real work or waives with evidence.
+  (2026-09-23: a scoring agent queued three such jobs; they were removed before they took pool RAM from D6 arms.)
+- **Pool lines declare their memory:** put `mem_gb=<measured peak RSS, rounded up>` in the `--checked` text. The
+  dispatcher reserves it per node (15 GB nodes; a missing hint reserves 1 GB and invites an OOM burst).

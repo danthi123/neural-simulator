@@ -1,0 +1,1398 @@
+{
+  "runner": "research.runners.d6_learn_through_use_lb",
+  "variant": "capability",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "arm_dir": "research/findings/raw/_d6_learn_through_use_v3",
+  "per_seed": {
+    "42": {
+      "criteria": {
+        "K1_learns": true,
+        "K2_use_specific": true,
+        "K3_reply_depends_on_write": true,
+        "K4_reply_depends_on_synapse_at_read": true,
+        "K5_host_record_inert": true,
+        "K6_lesion_write_only": true,
+        "K7_null_clean": true
+      },
+      "void_arms": [],
+      "go": true,
+      "variant": "capability",
+      "gate": "v3",
+      "K6_parts": {
+        "lever_at_probe": {
+          "USE_H": 1.800197,
+          "FREEZE_H": 0.0,
+          "ABL_H": 0.0,
+          "ok": true
+        },
+        "store_writes_after_teach": {
+          "FREEZE_H": [],
+          "ABL_H": [],
+          "NOREC_H": []
+        },
+        "writes_clean": true,
+        "same_encode_episode": true,
+        "encode": {
+          "USE_H": {
+            "frozen": false,
+            "steps": 208,
+            "block": 5,
+            "phase_lock_steps": 184,
+            "n_saturated": 128,
+            "mean_abs_w": 1.0,
+            "min_abs_w": 0.9999999999999997
+          },
+          "FREEZE_H": {
+            "frozen": true,
+            "steps": 208,
+            "block": 5,
+            "phase_lock_steps": 184,
+            "n_saturated": 0,
+            "mean_abs_w": 0.0,
+            "min_abs_w": 0.0
+          }
+        },
+        "same_teach_parse": true,
+        "read_path_intact_d1_d2": true
+      },
+      "K5_differing_turns": [],
+      "teach_ack_same_FREEZE_vs_USE": false,
+      "secondary_C7_no_regression": true,
+      "homeostatic_calls_after_teach": {
+        "USE_H": 0,
+        "USE_H_REP": 0,
+        "SHUF_H": 0,
+        "FREEZE_H": 0,
+        "ABL_H": 0,
+        "NOREC_H": 0
+      },
+      "record_removal": {
+        "removed": true,
+        "block": 5,
+        "fact": {
+          "agent": "wolf",
+          "action": "hunt",
+          "patient": "deer",
+          "polarity": "AFFIRM"
+        },
+        "n_kb_after": 5
+      },
+      "ablation": {
+        "block": 5,
+        "mean_abs_w_before": 1.8001973359644798,
+        "mean_abs_w_after": 0.0
+      },
+      "secondary_exposure_matched": {
+        "verdict": "UNDEFINED (EXPO_H void)"
+      },
+      "integrity": {
+        "d6_ops": {
+          "USE_H": {
+            "engram_reads": 11,
+            "view_cache_hits": 22,
+            "turn_refreshes": 5,
+            "retractions": 0,
+            "ablations": 0
+          },
+          "USE_H_REP": {
+            "engram_reads": 11,
+            "view_cache_hits": 22,
+            "turn_refreshes": 5,
+            "retractions": 0,
+            "ablations": 0
+          },
+          "SHUF_H": {
+            "engram_reads": 11,
+            "view_cache_hits": 22,
+            "turn_refreshes": 5,
+            "retractions": 0,
+            "ablations": 0
+          },
+          "FREEZE_H": {
+            "engram_reads": 11,
+            "view_cache_hits": 22,
+            "turn_refreshes": 5,
+            "retractions": 0,
+            "ablations": 0
+          },
+          "ABL_H": {
+            "engram_reads": 17,
+            "view_cache_hits": 21,
+            "turn_refreshes": 5,
+            "retractions": 0,
+            "ablations": 1
+          },
+          "NOREC_H": {
+            "engram_reads": 16,
+            "view_cache_hits": 21,
+            "turn_refreshes": 5,
+            "retractions": 0,
+            "ablations": 0,
+            "record_removals": 1
+          }
+        },
+        "turn_refresh_every_hebbian_arm": true
+      },
+      "null_diffs": 0,
+      "attributable_to_write": 1.0,
+      "probe_decisions": {
+        "USE_H": {
+          "abstained": false,
+          "recalled_svo": [
+            "wolf",
+            "hunt",
+            "deer"
+          ],
+          "answer": "Setting the held thread aside \u2014 On wolf, then \u2014 the wolf hunts the deer"
+        },
+        "USE_H_REP": {
+          "abstained": false,
+          "recalled_svo": [
+            "wolf",
+            "hunt",
+            "deer"
+          ],
+          "answer": "Setting the held thread aside \u2014 On wolf, then \u2014 the wolf hunts the deer"
+        },
+        "SHUF_H": {
+          "abstained": true,
+          "recalled_svo": null,
+          "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about wolf yet: what can you tell me about wolf? \u2014 worth going further here."
+        },
+        "FREEZE_H": {
+          "abstained": true,
+          "recalled_svo": null,
+          "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about wolf yet: what can you tell me about wolf?"
+        },
+        "ABL_H": {
+          "abstained": true,
+          "recalled_svo": null,
+          "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about wolf yet: what can you tell me about wolf?"
+        },
+        "NOREC_H": {
+          "abstained": true,
+          "recalled_svo": null,
+          "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about wolf yet: what can you tell me about wolf?"
+        }
+      },
+      "teach_decisions": {
+        "USE_H": {
+          "abstained": false,
+          "recalled_svo": [
+            "wolf",
+            "hunt",
+            "deer"
+          ],
+          "answer": "the wolf hunts the deer"
+        },
+        "USE_H_REP": {
+          "abstained": false,
+          "recalled_svo": [
+            "wolf",
+            "hunt",
+            "deer"
+          ],
+          "answer": "the wolf hunts the deer"
+        },
+        "SHUF_H": {
+          "abstained": false,
+          "recalled_svo": [
+            "fox",
+            "eat",
+            "berry"
+          ],
+          "answer": "the fox eats the berry"
+        },
+        "FREEZE_H": {
+          "abstained": false,
+          "recalled_svo": [
+            "wolf",
+            "hunt",
+            "deer"
+          ],
+          "answer": "The wolf hunts deer."
+        },
+        "ABL_H": {
+          "abstained": false,
+          "recalled_svo": [
+            "wolf",
+            "hunt",
+            "deer"
+          ],
+          "answer": "the wolf hunts the deer"
+        },
+        "NOREC_H": {
+          "abstained": false,
+          "recalled_svo": [
+            "wolf",
+            "hunt",
+            "deer"
+          ],
+          "answer": "The wolf hunts deer."
+        }
+      },
+      "verdict": "GO"
+    },
+    "43": {
+      "criteria": {
+        "K1_learns": true,
+        "K2_use_specific": true,
+        "K3_reply_depends_on_write": true,
+        "K4_reply_depends_on_synapse_at_read": true,
+        "K5_host_record_inert": true,
+        "K6_lesion_write_only": true,
+        "K7_null_clean": true
+      },
+      "void_arms": [],
+      "go": true,
+      "variant": "capability",
+      "gate": "v3",
+      "K6_parts": {
+        "lever_at_probe": {
+          "USE_H": 1.536754,
+          "FREEZE_H": 0.0,
+          "ABL_H": 0.0,
+          "ok": true
+        },
+        "store_writes_after_teach": {
+          "FREEZE_H": [],
+          "ABL_H": [],
+          "NOREC_H": []
+        },
+        "writes_clean": true,
+        "same_encode_episode": true,
+        "encode": {
+          "USE_H": {
+            "frozen": false,
+            "steps": 208,
+            "block": 5,
+            "phase_lock_steps": 184,
+            "n_saturated": 128,
+            "mean_abs_w": 1.0,
+            "min_abs_w": 0.9999999999999998
+          },
+          "FREEZE_H": {
+            "frozen": true,
+            "steps": 208,
+            "block": 5,
+            "phase_lock_steps": 184,
+            "n_saturated": 0,
+            "mean_abs_w": 0.0,
+            "min_abs_w": 0.0
+          }
+        },
+        "same_teach_parse": true,
+        "read_path_intact_d1_d2": true
+      },
+      "K5_differing_turns": [],
+      "teach_ack_same_FREEZE_vs_USE": false,
+      "secondary_C7_no_regression": true,
+      "homeostatic_calls_after_teach": {
+        "USE_H": 0,
+        "USE_H_REP": 0,
+        "SHUF_H": 0,
+        "FREEZE_H": 0,
+        "ABL_H": 0,
+        "NOREC_H": 0
+      },
+      "record_removal": {
+        "removed": true,
+        "block": 5,
+        "fact": {
+          "agent": "wolf",
+          "action": "hunt",
+          "patient": "deer",
+          "polarity": "AFFIRM"
+        },
+        "n_kb_after": 5
+      },
+      "ablation": {
+        "block": 5,
+        "mean_abs_w_before": 1.5367538233843123,
+        "mean_abs_w_after": 0.0
+      },
+      "secondary_exposure_matched": {
+        "verdict": "UNDEFINED (EXPO_H void)"
+      },
+      "integrity": {
+        "d6_ops": {
+          "USE_H": {
+            "engram_reads": 11,
+            "view_cache_hits": 22,
+            "turn_refreshes": 5,
+            "retractions": 0,
+            "ablations": 0
+          },
+          "USE_H_REP": {
+            "engram_reads": 11,
+            "view_cache_hits": 22,
+            "turn_refreshes": 5,
+            "retractions": 0,
+            "ablations": 0
+          },
+          "SHUF_H": {
+            "engram_reads": 11,
+            "view_cache_hits": 22,
+            "turn_refreshes": 5,
+            "retractions": 0,
+            "ablations": 0
+          },
+          "FREEZE_H": {
+            "engram_reads": 11,
+            "view_cache_hits": 22,
+            "turn_refreshes": 5,
+            "retractions": 0,
+            "ablations": 0
+          },
+          "ABL_H": {
+            "engram_reads": 17,
+            "view_cache_hits": 21,
+            "turn_refreshes": 5,
+            "retractions": 0,
+            "ablations": 1
+          },
+          "NOREC_H": {
+            "engram_reads": 16,
+            "view_cache_hits": 21,
+            "turn_refreshes": 5,
+            "retractions": 0,
+            "ablations": 0,
+            "record_removals": 1
+          }
+        },
+        "turn_refresh_every_hebbian_arm": true
+      },
+      "null_diffs": 0,
+      "attributable_to_write": 1.0,
+      "probe_decisions": {
+        "USE_H": {
+          "abstained": false,
+          "recalled_svo": [
+            "wolf",
+            "hunt",
+            "deer"
+          ],
+          "answer": "Setting the held thread aside \u2014 On wolf, then \u2014 the wolf hunts the deer"
+        },
+        "USE_H_REP": {
+          "abstained": false,
+          "recalled_svo": [
+            "wolf",
+            "hunt",
+            "deer"
+          ],
+          "answer": "Setting the held thread aside \u2014 On wolf, then \u2014 the wolf hunts the deer"
+        },
+        "SHUF_H": {
+          "abstained": true,
+          "recalled_svo": null,
+          "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about wolf yet: what can you tell me about wolf?"
+        },
+        "FREEZE_H": {
+          "abstained": true,
+          "recalled_svo": null,
+          "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about wolf yet: what can you tell me about wolf?"
+        },
+        "ABL_H": {
+          "abstained": true,
+          "recalled_svo": null,
+          "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about wolf yet: what can you tell me about wolf?"
+        },
+        "NOREC_H": {
+          "abstained": true,
+          "recalled_svo": null,
+          "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about wolf yet: what can you tell me about wolf?"
+        }
+      },
+      "teach_decisions": {
+        "USE_H": {
+          "abstained": false,
+          "recalled_svo": [
+            "wolf",
+            "hunt",
+            "deer"
+          ],
+          "answer": "the wolf hunts the deer"
+        },
+        "USE_H_REP": {
+          "abstained": false,
+          "recalled_svo": [
+            "wolf",
+            "hunt",
+            "deer"
+          ],
+          "answer": "the wolf hunts the deer"
+        },
+        "SHUF_H": {
+          "abstained": false,
+          "recalled_svo": [
+            "fox",
+            "eat",
+            "berry"
+          ],
+          "answer": "the fox eats the berry"
+        },
+        "FREEZE_H": {
+          "abstained": false,
+          "recalled_svo": [
+            "wolf",
+            "hunt",
+            "deer"
+          ],
+          "answer": "The wolf hunts deer."
+        },
+        "ABL_H": {
+          "abstained": false,
+          "recalled_svo": [
+            "wolf",
+            "hunt",
+            "deer"
+          ],
+          "answer": "the wolf hunts the deer"
+        },
+        "NOREC_H": {
+          "abstained": false,
+          "recalled_svo": [
+            "wolf",
+            "hunt",
+            "deer"
+          ],
+          "answer": "The wolf hunts deer."
+        }
+      },
+      "verdict": "GO"
+    },
+    "44": {
+      "criteria": {
+        "K1_learns": true,
+        "K2_use_specific": true,
+        "K3_reply_depends_on_write": true,
+        "K4_reply_depends_on_synapse_at_read": true,
+        "K5_host_record_inert": true,
+        "K6_lesion_write_only": true,
+        "K7_null_clean": true
+      },
+      "void_arms": [],
+      "go": true,
+      "variant": "capability",
+      "gate": "v3",
+      "K6_parts": {
+        "lever_at_probe": {
+          "USE_H": 1.566354,
+          "FREEZE_H": 0.0,
+          "ABL_H": 0.0,
+          "ok": true
+        },
+        "store_writes_after_teach": {
+          "FREEZE_H": [],
+          "ABL_H": [],
+          "NOREC_H": []
+        },
+        "writes_clean": true,
+        "same_encode_episode": true,
+        "encode": {
+          "USE_H": {
+            "frozen": false,
+            "steps": 208,
+            "block": 5,
+            "phase_lock_steps": 184,
+            "n_saturated": 128,
+            "mean_abs_w": 1.0,
+            "min_abs_w": 0.9999999999999998
+          },
+          "FREEZE_H": {
+            "frozen": true,
+            "steps": 208,
+            "block": 5,
+            "phase_lock_steps": 184,
+            "n_saturated": 0,
+            "mean_abs_w": 0.0,
+            "min_abs_w": 0.0
+          }
+        },
+        "same_teach_parse": true,
+        "read_path_intact_d1_d2": true
+      },
+      "K5_differing_turns": [],
+      "teach_ack_same_FREEZE_vs_USE": false,
+      "secondary_C7_no_regression": true,
+      "homeostatic_calls_after_teach": {
+        "USE_H": 0,
+        "USE_H_REP": 0,
+        "SHUF_H": 0,
+        "FREEZE_H": 0,
+        "ABL_H": 0,
+        "NOREC_H": 0
+      },
+      "record_removal": {
+        "removed": true,
+        "block": 5,
+        "fact": {
+          "agent": "wolf",
+          "action": "hunt",
+          "patient": "deer",
+          "polarity": "AFFIRM"
+        },
+        "n_kb_after": 5
+      },
+      "ablation": {
+        "block": 5,
+        "mean_abs_w_before": 1.5663542180562402,
+        "mean_abs_w_after": 0.0
+      },
+      "secondary_exposure_matched": {
+        "verdict": "UNDEFINED (EXPO_H void)"
+      },
+      "integrity": {
+        "d6_ops": {
+          "USE_H": {
+            "engram_reads": 11,
+            "view_cache_hits": 22,
+            "turn_refreshes": 5,
+            "retractions": 0,
+            "ablations": 0
+          },
+          "USE_H_REP": {
+            "engram_reads": 11,
+            "view_cache_hits": 22,
+            "turn_refreshes": 5,
+            "retractions": 0,
+            "ablations": 0
+          },
+          "SHUF_H": {
+            "engram_reads": 11,
+            "view_cache_hits": 22,
+            "turn_refreshes": 5,
+            "retractions": 0,
+            "ablations": 0
+          },
+          "FREEZE_H": {
+            "engram_reads": 11,
+            "view_cache_hits": 22,
+            "turn_refreshes": 5,
+            "retractions": 0,
+            "ablations": 0
+          },
+          "ABL_H": {
+            "engram_reads": 17,
+            "view_cache_hits": 21,
+            "turn_refreshes": 5,
+            "retractions": 0,
+            "ablations": 1
+          },
+          "NOREC_H": {
+            "engram_reads": 16,
+            "view_cache_hits": 21,
+            "turn_refreshes": 5,
+            "retractions": 0,
+            "ablations": 0,
+            "record_removals": 1
+          }
+        },
+        "turn_refresh_every_hebbian_arm": true
+      },
+      "null_diffs": 0,
+      "attributable_to_write": 1.0,
+      "probe_decisions": {
+        "USE_H": {
+          "abstained": false,
+          "recalled_svo": [
+            "wolf",
+            "hunt",
+            "deer"
+          ],
+          "answer": "Setting the held thread aside \u2014 On wolf, then \u2014 the wolf hunts the deer"
+        },
+        "USE_H_REP": {
+          "abstained": false,
+          "recalled_svo": [
+            "wolf",
+            "hunt",
+            "deer"
+          ],
+          "answer": "Setting the held thread aside \u2014 On wolf, then \u2014 the wolf hunts the deer"
+        },
+        "SHUF_H": {
+          "abstained": true,
+          "recalled_svo": null,
+          "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about wolf yet: what can you tell me about wolf?"
+        },
+        "FREEZE_H": {
+          "abstained": true,
+          "recalled_svo": null,
+          "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about wolf yet: what can you tell me about wolf?"
+        },
+        "ABL_H": {
+          "abstained": true,
+          "recalled_svo": null,
+          "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about wolf yet: what can you tell me about wolf?"
+        },
+        "NOREC_H": {
+          "abstained": true,
+          "recalled_svo": null,
+          "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about wolf yet: what can you tell me about wolf?"
+        }
+      },
+      "teach_decisions": {
+        "USE_H": {
+          "abstained": false,
+          "recalled_svo": [
+            "wolf",
+            "hunt",
+            "deer"
+          ],
+          "answer": "the wolf hunts the deer"
+        },
+        "USE_H_REP": {
+          "abstained": false,
+          "recalled_svo": [
+            "wolf",
+            "hunt",
+            "deer"
+          ],
+          "answer": "the wolf hunts the deer"
+        },
+        "SHUF_H": {
+          "abstained": false,
+          "recalled_svo": [
+            "fox",
+            "eat",
+            "berry"
+          ],
+          "answer": "the fox eats the berry"
+        },
+        "FREEZE_H": {
+          "abstained": false,
+          "recalled_svo": [
+            "wolf",
+            "hunt",
+            "deer"
+          ],
+          "answer": "The wolf hunts deer."
+        },
+        "ABL_H": {
+          "abstained": false,
+          "recalled_svo": [
+            "wolf",
+            "hunt",
+            "deer"
+          ],
+          "answer": "the wolf hunts the deer"
+        },
+        "NOREC_H": {
+          "abstained": false,
+          "recalled_svo": [
+            "wolf",
+            "hunt",
+            "deer"
+          ],
+          "answer": "The wolf hunts deer."
+        }
+      },
+      "verdict": "GO"
+    },
+    "100": {
+      "criteria": {
+        "K1_learns": true,
+        "K2_use_specific": true,
+        "K3_reply_depends_on_write": true,
+        "K4_reply_depends_on_synapse_at_read": true,
+        "K5_host_record_inert": true,
+        "K6_lesion_write_only": true,
+        "K7_null_clean": true
+      },
+      "void_arms": [],
+      "go": true,
+      "variant": "capability",
+      "gate": "v3",
+      "K6_parts": {
+        "lever_at_probe": {
+          "USE_H": 1.578194,
+          "FREEZE_H": 0.0,
+          "ABL_H": 0.0,
+          "ok": true
+        },
+        "store_writes_after_teach": {
+          "FREEZE_H": [],
+          "ABL_H": [],
+          "NOREC_H": []
+        },
+        "writes_clean": true,
+        "same_encode_episode": true,
+        "encode": {
+          "USE_H": {
+            "frozen": false,
+            "steps": 208,
+            "block": 5,
+            "phase_lock_steps": 184,
+            "n_saturated": 128,
+            "mean_abs_w": 1.0,
+            "min_abs_w": 0.9999999999999998
+          },
+          "FREEZE_H": {
+            "frozen": true,
+            "steps": 208,
+            "block": 5,
+            "phase_lock_steps": 184,
+            "n_saturated": 0,
+            "mean_abs_w": 0.0,
+            "min_abs_w": 0.0
+          }
+        },
+        "same_teach_parse": true,
+        "read_path_intact_d1_d2": true
+      },
+      "K5_differing_turns": [],
+      "teach_ack_same_FREEZE_vs_USE": false,
+      "secondary_C7_no_regression": true,
+      "homeostatic_calls_after_teach": {
+        "USE_H": 0,
+        "USE_H_REP": 0,
+        "SHUF_H": 0,
+        "FREEZE_H": 0,
+        "ABL_H": 0,
+        "NOREC_H": 0
+      },
+      "record_removal": {
+        "removed": true,
+        "block": 5,
+        "fact": {
+          "agent": "wolf",
+          "action": "hunt",
+          "patient": "deer",
+          "polarity": "AFFIRM"
+        },
+        "n_kb_after": 5
+      },
+      "ablation": {
+        "block": 5,
+        "mean_abs_w_before": 1.578194375925012,
+        "mean_abs_w_after": 0.0
+      },
+      "secondary_exposure_matched": {
+        "verdict": "UNDEFINED (EXPO_H void)"
+      },
+      "integrity": {
+        "d6_ops": {
+          "USE_H": {
+            "engram_reads": 11,
+            "view_cache_hits": 22,
+            "turn_refreshes": 5,
+            "retractions": 0,
+            "ablations": 0
+          },
+          "USE_H_REP": {
+            "engram_reads": 11,
+            "view_cache_hits": 22,
+            "turn_refreshes": 5,
+            "retractions": 0,
+            "ablations": 0
+          },
+          "SHUF_H": {
+            "engram_reads": 11,
+            "view_cache_hits": 22,
+            "turn_refreshes": 5,
+            "retractions": 0,
+            "ablations": 0
+          },
+          "FREEZE_H": {
+            "engram_reads": 11,
+            "view_cache_hits": 22,
+            "turn_refreshes": 5,
+            "retractions": 0,
+            "ablations": 0
+          },
+          "ABL_H": {
+            "engram_reads": 17,
+            "view_cache_hits": 21,
+            "turn_refreshes": 5,
+            "retractions": 0,
+            "ablations": 1
+          },
+          "NOREC_H": {
+            "engram_reads": 16,
+            "view_cache_hits": 21,
+            "turn_refreshes": 5,
+            "retractions": 0,
+            "ablations": 0,
+            "record_removals": 1
+          }
+        },
+        "turn_refresh_every_hebbian_arm": true
+      },
+      "null_diffs": 0,
+      "attributable_to_write": 1.0,
+      "probe_decisions": {
+        "USE_H": {
+          "abstained": false,
+          "recalled_svo": [
+            "wolf",
+            "hunt",
+            "deer"
+          ],
+          "answer": "Setting the held thread aside \u2014 On wolf, then \u2014 the wolf hunts the deer"
+        },
+        "USE_H_REP": {
+          "abstained": false,
+          "recalled_svo": [
+            "wolf",
+            "hunt",
+            "deer"
+          ],
+          "answer": "Setting the held thread aside \u2014 On wolf, then \u2014 the wolf hunts the deer"
+        },
+        "SHUF_H": {
+          "abstained": true,
+          "recalled_svo": null,
+          "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about wolf yet: what can you tell me about wolf?"
+        },
+        "FREEZE_H": {
+          "abstained": true,
+          "recalled_svo": null,
+          "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about wolf yet: what can you tell me about wolf?"
+        },
+        "ABL_H": {
+          "abstained": true,
+          "recalled_svo": null,
+          "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about wolf yet: what can you tell me about wolf?"
+        },
+        "NOREC_H": {
+          "abstained": true,
+          "recalled_svo": null,
+          "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about wolf yet: what can you tell me about wolf?"
+        }
+      },
+      "teach_decisions": {
+        "USE_H": {
+          "abstained": false,
+          "recalled_svo": [
+            "wolf",
+            "hunt",
+            "deer"
+          ],
+          "answer": "the wolf hunts the deer"
+        },
+        "USE_H_REP": {
+          "abstained": false,
+          "recalled_svo": [
+            "wolf",
+            "hunt",
+            "deer"
+          ],
+          "answer": "the wolf hunts the deer"
+        },
+        "SHUF_H": {
+          "abstained": false,
+          "recalled_svo": [
+            "fox",
+            "eat",
+            "berry"
+          ],
+          "answer": "the fox eats the berry"
+        },
+        "FREEZE_H": {
+          "abstained": false,
+          "recalled_svo": [
+            "wolf",
+            "hunt",
+            "deer"
+          ],
+          "answer": "The wolf hunts deer."
+        },
+        "ABL_H": {
+          "abstained": false,
+          "recalled_svo": [
+            "wolf",
+            "hunt",
+            "deer"
+          ],
+          "answer": "the wolf hunts the deer"
+        },
+        "NOREC_H": {
+          "abstained": false,
+          "recalled_svo": [
+            "wolf",
+            "hunt",
+            "deer"
+          ],
+          "answer": "The wolf hunts deer."
+        }
+      },
+      "verdict": "GO"
+    },
+    "101": {
+      "criteria": {
+        "K1_learns": true,
+        "K2_use_specific": true,
+        "K3_reply_depends_on_write": true,
+        "K4_reply_depends_on_synapse_at_read": true,
+        "K5_host_record_inert": true,
+        "K6_lesion_write_only": true,
+        "K7_null_clean": true
+      },
+      "void_arms": [],
+      "go": true,
+      "variant": "capability",
+      "gate": "v3",
+      "K6_parts": {
+        "lever_at_probe": {
+          "USE_H": 1.776517,
+          "FREEZE_H": 0.0,
+          "ABL_H": 0.0,
+          "ok": true
+        },
+        "store_writes_after_teach": {
+          "FREEZE_H": [],
+          "ABL_H": [],
+          "NOREC_H": []
+        },
+        "writes_clean": true,
+        "same_encode_episode": true,
+        "encode": {
+          "USE_H": {
+            "frozen": false,
+            "steps": 208,
+            "block": 5,
+            "phase_lock_steps": 184,
+            "n_saturated": 128,
+            "mean_abs_w": 1.0,
+            "min_abs_w": 0.9999999999999997
+          },
+          "FREEZE_H": {
+            "frozen": true,
+            "steps": 208,
+            "block": 5,
+            "phase_lock_steps": 184,
+            "n_saturated": 0,
+            "mean_abs_w": 0.0,
+            "min_abs_w": 0.0
+          }
+        },
+        "same_teach_parse": true,
+        "read_path_intact_d1_d2": true
+      },
+      "K5_differing_turns": [],
+      "teach_ack_same_FREEZE_vs_USE": false,
+      "secondary_C7_no_regression": true,
+      "homeostatic_calls_after_teach": {
+        "USE_H": 0,
+        "USE_H_REP": 0,
+        "SHUF_H": 0,
+        "FREEZE_H": 0,
+        "ABL_H": 0,
+        "NOREC_H": 0
+      },
+      "record_removal": {
+        "removed": true,
+        "block": 5,
+        "fact": {
+          "agent": "wolf",
+          "action": "hunt",
+          "patient": "deer",
+          "polarity": "AFFIRM"
+        },
+        "n_kb_after": 5
+      },
+      "ablation": {
+        "block": 5,
+        "mean_abs_w_before": 1.7765170202269358,
+        "mean_abs_w_after": 0.0
+      },
+      "secondary_exposure_matched": {
+        "verdict": "UNDEFINED (EXPO_H void)"
+      },
+      "integrity": {
+        "d6_ops": {
+          "USE_H": {
+            "engram_reads": 11,
+            "view_cache_hits": 22,
+            "turn_refreshes": 5,
+            "retractions": 0,
+            "ablations": 0
+          },
+          "USE_H_REP": {
+            "engram_reads": 11,
+            "view_cache_hits": 22,
+            "turn_refreshes": 5,
+            "retractions": 0,
+            "ablations": 0
+          },
+          "SHUF_H": {
+            "engram_reads": 11,
+            "view_cache_hits": 22,
+            "turn_refreshes": 5,
+            "retractions": 0,
+            "ablations": 0
+          },
+          "FREEZE_H": {
+            "engram_reads": 11,
+            "view_cache_hits": 22,
+            "turn_refreshes": 5,
+            "retractions": 0,
+            "ablations": 0
+          },
+          "ABL_H": {
+            "engram_reads": 17,
+            "view_cache_hits": 21,
+            "turn_refreshes": 5,
+            "retractions": 0,
+            "ablations": 1
+          },
+          "NOREC_H": {
+            "engram_reads": 16,
+            "view_cache_hits": 21,
+            "turn_refreshes": 5,
+            "retractions": 0,
+            "ablations": 0,
+            "record_removals": 1
+          }
+        },
+        "turn_refresh_every_hebbian_arm": true
+      },
+      "null_diffs": 0,
+      "attributable_to_write": 1.0,
+      "probe_decisions": {
+        "USE_H": {
+          "abstained": false,
+          "recalled_svo": [
+            "wolf",
+            "hunt",
+            "deer"
+          ],
+          "answer": "Setting the held thread aside \u2014 On wolf, then \u2014 the wolf hunts the deer"
+        },
+        "USE_H_REP": {
+          "abstained": false,
+          "recalled_svo": [
+            "wolf",
+            "hunt",
+            "deer"
+          ],
+          "answer": "Setting the held thread aside \u2014 On wolf, then \u2014 the wolf hunts the deer"
+        },
+        "SHUF_H": {
+          "abstained": true,
+          "recalled_svo": null,
+          "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about wolf yet: what can you tell me about wolf?"
+        },
+        "FREEZE_H": {
+          "abstained": true,
+          "recalled_svo": null,
+          "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about wolf yet: what can you tell me about wolf?"
+        },
+        "ABL_H": {
+          "abstained": true,
+          "recalled_svo": null,
+          "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about wolf yet: what can you tell me about wolf?"
+        },
+        "NOREC_H": {
+          "abstained": true,
+          "recalled_svo": null,
+          "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about wolf yet: what can you tell me about wolf?"
+        }
+      },
+      "teach_decisions": {
+        "USE_H": {
+          "abstained": false,
+          "recalled_svo": [
+            "wolf",
+            "hunt",
+            "deer"
+          ],
+          "answer": "the wolf hunts the deer"
+        },
+        "USE_H_REP": {
+          "abstained": false,
+          "recalled_svo": [
+            "wolf",
+            "hunt",
+            "deer"
+          ],
+          "answer": "the wolf hunts the deer"
+        },
+        "SHUF_H": {
+          "abstained": false,
+          "recalled_svo": [
+            "fox",
+            "eat",
+            "berry"
+          ],
+          "answer": "the fox eats the berry"
+        },
+        "FREEZE_H": {
+          "abstained": false,
+          "recalled_svo": [
+            "wolf",
+            "hunt",
+            "deer"
+          ],
+          "answer": "The wolf hunts deer."
+        },
+        "ABL_H": {
+          "abstained": false,
+          "recalled_svo": [
+            "wolf",
+            "hunt",
+            "deer"
+          ],
+          "answer": "the wolf hunts the deer"
+        },
+        "NOREC_H": {
+          "abstained": false,
+          "recalled_svo": [
+            "wolf",
+            "hunt",
+            "deer"
+          ],
+          "answer": "The wolf hunts deer."
+        }
+      },
+      "verdict": "GO"
+    },
+    "102": {
+      "criteria": {
+        "K1_learns": true,
+        "K2_use_specific": true,
+        "K3_reply_depends_on_write": true,
+        "K4_reply_depends_on_synapse_at_read": true,
+        "K5_host_record_inert": true,
+        "K6_lesion_write_only": true,
+        "K7_null_clean": true
+      },
+      "void_arms": [],
+      "go": true,
+      "variant": "capability",
+      "gate": "v3",
+      "K6_parts": {
+        "lever_at_probe": {
+          "USE_H": 1.563394,
+          "FREEZE_H": 0.0,
+          "ABL_H": 0.0,
+          "ok": true
+        },
+        "store_writes_after_teach": {
+          "FREEZE_H": [],
+          "ABL_H": [],
+          "NOREC_H": []
+        },
+        "writes_clean": true,
+        "same_encode_episode": true,
+        "encode": {
+          "USE_H": {
+            "frozen": false,
+            "steps": 208,
+            "block": 5,
+            "phase_lock_steps": 184,
+            "n_saturated": 128,
+            "mean_abs_w": 1.0,
+            "min_abs_w": 0.9999999999999998
+          },
+          "FREEZE_H": {
+            "frozen": true,
+            "steps": 208,
+            "block": 5,
+            "phase_lock_steps": 184,
+            "n_saturated": 0,
+            "mean_abs_w": 0.0,
+            "min_abs_w": 0.0
+          }
+        },
+        "same_teach_parse": true,
+        "read_path_intact_d1_d2": true
+      },
+      "K5_differing_turns": [],
+      "teach_ack_same_FREEZE_vs_USE": false,
+      "secondary_C7_no_regression": true,
+      "homeostatic_calls_after_teach": {
+        "USE_H": 0,
+        "USE_H_REP": 0,
+        "SHUF_H": 0,
+        "FREEZE_H": 0,
+        "ABL_H": 0,
+        "NOREC_H": 0
+      },
+      "record_removal": {
+        "removed": true,
+        "block": 5,
+        "fact": {
+          "agent": "wolf",
+          "action": "hunt",
+          "patient": "deer",
+          "polarity": "AFFIRM"
+        },
+        "n_kb_after": 5
+      },
+      "ablation": {
+        "block": 5,
+        "mean_abs_w_before": 1.5633941785890482,
+        "mean_abs_w_after": 0.0
+      },
+      "secondary_exposure_matched": {
+        "verdict": "UNDEFINED (EXPO_H void)"
+      },
+      "integrity": {
+        "d6_ops": {
+          "USE_H": {
+            "engram_reads": 11,
+            "view_cache_hits": 22,
+            "turn_refreshes": 5,
+            "retractions": 0,
+            "ablations": 0
+          },
+          "USE_H_REP": {
+            "engram_reads": 11,
+            "view_cache_hits": 22,
+            "turn_refreshes": 5,
+            "retractions": 0,
+            "ablations": 0
+          },
+          "SHUF_H": {
+            "engram_reads": 11,
+            "view_cache_hits": 22,
+            "turn_refreshes": 5,
+            "retractions": 0,
+            "ablations": 0
+          },
+          "FREEZE_H": {
+            "engram_reads": 11,
+            "view_cache_hits": 22,
+            "turn_refreshes": 5,
+            "retractions": 0,
+            "ablations": 0
+          },
+          "ABL_H": {
+            "engram_reads": 17,
+            "view_cache_hits": 21,
+            "turn_refreshes": 5,
+            "retractions": 0,
+            "ablations": 1
+          },
+          "NOREC_H": {
+            "engram_reads": 16,
+            "view_cache_hits": 21,
+            "turn_refreshes": 5,
+            "retractions": 0,
+            "ablations": 0,
+            "record_removals": 1
+          }
+        },
+        "turn_refresh_every_hebbian_arm": true
+      },
+      "null_diffs": 0,
+      "attributable_to_write": 1.0,
+      "probe_decisions": {
+        "USE_H": {
+          "abstained": false,
+          "recalled_svo": [
+            "wolf",
+            "hunt",
+            "deer"
+          ],
+          "answer": "Setting the held thread aside \u2014 On wolf, then \u2014 the wolf hunts the deer"
+        },
+        "USE_H_REP": {
+          "abstained": false,
+          "recalled_svo": [
+            "wolf",
+            "hunt",
+            "deer"
+          ],
+          "answer": "Setting the held thread aside \u2014 On wolf, then \u2014 the wolf hunts the deer"
+        },
+        "SHUF_H": {
+          "abstained": true,
+          "recalled_svo": null,
+          "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about wolf yet: what can you tell me about wolf?"
+        },
+        "FREEZE_H": {
+          "abstained": true,
+          "recalled_svo": null,
+          "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about wolf yet: what can you tell me about wolf?"
+        },
+        "ABL_H": {
+          "abstained": true,
+          "recalled_svo": null,
+          "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about wolf yet: what can you tell me about wolf?"
+        },
+        "NOREC_H": {
+          "abstained": true,
+          "recalled_svo": null,
+          "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about wolf yet: what can you tell me about wolf?"
+        }
+      },
+      "teach_decisions": {
+        "USE_H": {
+          "abstained": false,
+          "recalled_svo": [
+            "wolf",
+            "hunt",
+            "deer"
+          ],
+          "answer": "the wolf hunts the deer"
+        },
+        "USE_H_REP": {
+          "abstained": false,
+          "recalled_svo": [
+            "wolf",
+            "hunt",
+            "deer"
+          ],
+          "answer": "the wolf hunts the deer"
+        },
+        "SHUF_H": {
+          "abstained": false,
+          "recalled_svo": [
+            "fox",
+            "eat",
+            "berry"
+          ],
+          "answer": "the fox eats the berry"
+        },
+        "FREEZE_H": {
+          "abstained": false,
+          "recalled_svo": [
+            "wolf",
+            "hunt",
+            "deer"
+          ],
+          "answer": "The wolf hunts deer."
+        },
+        "ABL_H": {
+          "abstained": false,
+          "recalled_svo": [
+            "wolf",
+            "hunt",
+            "deer"
+          ],
+          "answer": "the wolf hunts the deer"
+        },
+        "NOREC_H": {
+          "abstained": false,
+          "recalled_svo": [
+            "wolf",
+            "hunt",
+            "deer"
+          ],
+          "answer": "The wolf hunts deer."
+        }
+      },
+      "verdict": "GO"
+    }
+  },
+  "aggregate": {
+    "n_seeds": 6,
+    "n_defined": 6,
+    "n_go": 6,
+    "undefined_seeds": [],
+    "GO": true,
+    "verdict": "GO 6/6"
+  },
+  "failed_arms": []
+}
