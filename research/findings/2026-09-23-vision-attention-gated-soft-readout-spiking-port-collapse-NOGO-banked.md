@@ -11,9 +11,13 @@ lane: perception (vision configural / position-invariant readout)
 seeds: [42, 43, 44, 100, 101, 102]
 verdict: NO-GO for `--readout attention-gated-soft`, confirmed on BOTH front-end operating points this lane has
   tested it at (12 of 12 seed-runs total). `LEARNED_spkwta_held` (the fully-spiking class-population WTA
-  prediction) is pinned to EXACT chance (0.25) on every one of the 12 seed-runs, while `LEARNED_linscore_held`
-  (the identical fitted discriminant's raw signed score, read from a SEPARATE, never-gated pathway --
-  `_lin_score_pred`, unaffected by any `--readout` mode) retains real signal on every one of them (0.32-0.68).
+  prediction) is at exact chance (0.25) on 11 of the 12 seed-runs, with ONE exception (default front end, seed
+  101, 0.2604 -- still statistically indistinguishable from chance at this scale, not a second data point of
+  real signal). `LEARNED_linscore_held` (the identical fitted discriminant's raw signed score, read from a
+  SEPARATE, never-gated pathway -- `_lin_score_pred`, unaffected by any `--readout` mode) retains real signal on
+  11 of the 12 (0.32-0.68); the exception is default front end seed 100 at 0.3229, BELOW this runner's own
+  `nogo_floor` of 0.34 -- so that one seed's linscore is not clearly "real signal" by the runner's own threshold
+  either, though it is still far above the spkwta collapse on the same seed.
   `scramble_null_pass=1.0` holds on all 12 (the anti-cheat precondition is intact). This is a NO-GO on the
   READOUT METHOD, not a capability abandonment: the signed linear discriminant clearly separates classes
   (linscore), and the plain `--readout linear` spiking port at the SAME satdiv-GO front end already clears this
@@ -109,7 +113,7 @@ mechanism: **0.4271, seed 101 at the satdiv-GO operating point.**
 closely at both operating points, confirming the front end and conjunction bank are untouched by the readout
 choice -- the collapse is downstream of both.
 
-## Why (mechanism-level, not just "the LIF port is broken")
+## Why (mechanism-level, not just "the LIF port is broken") -- HYPOTHESIS, not yet tested by an ablation
 
 The plain `--readout linear` spiking port is NOT broken at the satdiv-GO operating point: the already-banked
 competitive-selection-at-satdiv-GO baseline gets `LEARNED_spkwta_held` mean 0.5729 <!--derived--> across the same 6 seeds, real
@@ -121,9 +125,38 @@ constant computed from `bd`'s OWN mean. Because this normalization is applied IN
 class's channel is pulled toward a similar internal scale REGARDLESS of how strongly its own top-down template
 favored the trial's actual evidence -- a per-class self-normalizing step can compress exactly the BETWEEN-class
 contrast that a WTA argmax over `net_c` depends on, while leaving each class's OWN linear score (computed from
-the raw, never-gated `r` by an entirely separate function, `_lin_score_pred`) untouched. `read_gain`/`read_bias`
-are fixed host constants applied identically to every class after this per-class normalization; they can rescale
-the whole population's drive but cannot restore contrast the per-class step already discarded.
+the raw, never-gated `r` by an entirely separate function, `_lin_score_pred`) untouched.
+
+**This paragraph is a HYPOTHESIS, not an established diagnosis -- no ablation has been run to isolate it.** The
+per-class-satdiv explanation was written by code inspection, not measurement. This finding's own data point to a
+COMPETING explanation that has not been ruled out: `LEARNED_spkwta_TRAIN` (the identical WTA port's readout on
+the TRAINING trials, not held-out) is pinned at EXACTLY 0.25 on every one of the 6 satdiv-GO seeds (verified
+directly against the artifacts, `decode_means.LEARNED_spkwta_train`), which is the signature this runner's own
+docstring already names for a different failure mode entirely -- `_attention_gated_soft_class_read`'s docstring
+(`research/runners/_vision_lindiscrim_readout_derisk.py:1542`) describes `const` (the trial-INDEPENDENT class
+bias) dominating `net` and "collapsing every trial's prediction to a single class" when a semi-saturation
+constant saturates the ratio toward a near-constant fraction. A port that outputs the SAME class regardless of
+trial is a constant-output/degenerate-port failure, not necessarily a between-class-contrast-compression failure
+-- both produce chance-level `LEARNED_spkwta_held`, and this finding's own measurements do not distinguish them.
+
+**The registered test of this hypothesis** is the follow-up mechanism's gain-only arm (`--readout
+attention-gated-soft-fbgain --fb-strength 0.0`, research/findings/2026-09-23-vision-configural-binding-spiking-
+feedback-divisive-gain-control-readout-PREREGISTERED.md): it removes the per-class host satdiv stage entirely
+(`gated = bd` goes raw into the sign-split) while holding the top-down gain template fixed. If the per-class-
+satdiv hypothesis above is correct, removing that stage alone should lift `LEARNED_spkwta_held` off chance even
+with `fb_strength=0` (no spiking feedback loop yet). If the collapse persists at `fb_strength=0`, the competing
+constant-output explanation (or some other stage) is more likely responsible, and the per-class-satdiv diagnosis
+above should be considered refuted, not merely unconfirmed.
+
+**Declared host shortcuts in this readout's own read path** (CLAUDE.md boundary, per the build-lane checklist;
+not previously declared in this finding): the cross-class mean-centering `net = net - net.mean(axis=1,
+keepdims=True)` (line 1494) is itself a POOLED host normalization computed across all classes at once, before
+the LIF read -- the same SHAPE of operation (a host formula normalizing across the class population) as the
+per-class satdiv step this finding's hypothesis blames, just a different stage. `read_gain`/`read_bias` (line
+1495) are fixed host constants, calibrated once and reused unchanged across operating points; they can rescale
+the whole population's drive but cannot restore contrast an earlier stage already discarded. Neither the mean-
+centering nor the gain/bias affine step is done by neurons or synapses; both are host numpy arithmetic on `net`
+before it reaches `lif_spike_read`.
 
 ## What retraction/correction this makes
 

@@ -1,6 +1,7 @@
 ---
 type: preregistration
-status: preregistered
+status: retracted
+superseded_by: 2026-09-23-vision-attention-gated-soft-readout-spiking-port-collapse-NOGO-banked.md
 date: 2026-09-23
 mechanism: soft/graded attention-gain readout (`--readout attention-gated-soft --attn-gain-exponent 1.0`,
   `_attention_gated_soft_class_read` in `_vision_lindiscrim_readout_derisk.py`) stacked on the lane-best
