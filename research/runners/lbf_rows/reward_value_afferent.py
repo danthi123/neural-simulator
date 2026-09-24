@@ -28,12 +28,19 @@ research/lbf-row-registry-hook; `load_bearing_fraction.py` itself has no --extra
 --faculties: the flag is process-wide, so any other faculty measured in the same job would also run with it on.
 `BRAIN_DA_DRIVES` is default-ON in production (server `_DA_DRIVES_DEFAULT_ON`), so it needs no flag.
 
-INTERFACE. `EXTRA_PROBES` is a list of 4-tuples, as main's research/runners/lbf_rows/__init__.py documents, AND it
-answers `.items()` as (faculty_key, row) pairs, because the AG-REG hook on research/lbf-row-registry-hook iterates
-`EXTRA_PROBES.items()` (a dict keyed by faculty). A plain list crashes that hook with AttributeError at
-load_bearing_fraction import time; `_RowList` works under both readings (pinned by
-tests/test_reward_value_afferent.py). The sibling rows' list-vs-dict mismatch with that hook is systemic and is
-reconciled at integration, not here.
+INTERFACE. `EXTRA_PROBES` is a list of 4-tuples, FACULTY_PROBES' own shape. The AG-REG hook merged on main
+(338d9ecee, research/runners/lbf_rows/__init__.py `merge_lbf_rows`) accepts a list through its
+`isinstance(extra_probes, (list, tuple))` branch as well as a dict, so a plain list is enough there. `_RowList` is a
+list subclass (it takes that same list branch) that also answers `.items()` as (faculty_key, row) pairs; it was
+written against the pre-merge branch of the hook, which read only `.items()`. It is harmless on main and kept so
+the row loads under either reading (pinned by tests/test_reward_value_afferent.py).
+
+WHAT THE LESION ARM MEASURES (review of 7d5c2743d). `BRAIN_REWARD_VALUE_LESION=1` does not cut the afferent this
+row is named for. It SWAPS the source organ's read for the read of the organ's standalone, prediction-edges-zeroed
+twin (a different bridge, no homeostat). So intact-vs-lesion measures whether the surprise PREDICTION reaches the
+DA mode through A10, not whether the afferent itself is load-bearing. The kind stays "neural-lesion" because the
+twin's cut is synaptic and checked at read time, but the note below says what it is. Since fix round 2 neither arm
+perturbs the production surprise read (the A10 read restores the state it touches).
 
 This module does not edit FACULTY_LESIONS / FACULTY_PROBES.
 """
@@ -47,7 +54,7 @@ _MASTER_ON = os.environ.get("BRAIN_REWARD_VALUE_AFFERENT", "0").strip().lower() 
 
 class _RowList(list):
     """A list of FACULTY_PROBES 4-tuples that also answers `.items()` as {faculty_key: row} pairs (see the module
-    docstring: main documents a list, the AG-REG hook reads a dict)."""
+    docstring: main's merged hook takes the list branch; `.items()` is kept for the pre-merge reading)."""
 
     def items(self):
         return [(row[0], row) for row in self]
@@ -57,10 +64,12 @@ EXTRA_LESIONS = {
     _KEY: dict(
         flag="BRAIN_REWARD_VALUE_LESION", value="1",
         kind=("neural-lesion" if _MASTER_ON else "thin"),
-        note=("reads the surprise organ's OWN prediction-edges-zeroed twin (a standalone bridge, not a "
-              "substrate-matched cut of the normal read; the read-time cut check is recorded under "
-              "da_drives.reward_value.lesion_cut). Probed on the CONFIRM turn, where the prediction cancels the "
-              "surprise pool's response and the lesion removes that cancellation. OPT-IN: measured only when the "
+        note=("measures whether the surprise PREDICTION reaches the DA mode through A10: the lesion swaps the "
+              "surprise organ's read for its OWN prediction-edges-zeroed twin's read (a standalone bridge, no "
+              "homeostat; not a substrate-matched cut and not a cut of the afferent itself; the read-time cut "
+              "check is recorded under da_drives.reward_value.lesion_cut). Probed on the CONFIRM turn, where the "
+              "prediction cancels the surprise pool's response and the lesion removes that cancellation. The A10 "
+              "read never perturbs the production surprise read (fix round 2). OPT-IN: measured only when the "
               "harness runs with BRAIN_REWARD_VALUE_AFFERENT=1 (e.g. tools/lb_shard.py jobs --extra-env "
               "BRAIN_REWARD_VALUE_AFFERENT=1); otherwise reported not-covered:thin, never scored hollow. "
               "See webapp/reward_value_afferent_chat.py."

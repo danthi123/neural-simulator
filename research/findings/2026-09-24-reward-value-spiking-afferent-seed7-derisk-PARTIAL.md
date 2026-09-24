@@ -3,19 +3,47 @@ type: finding
 status: no-go
 lane: load-bearing
 date: 2026-09-24
-mechanism: A10 (midnight plan S15c) seed-7 de-risk of the surprise-organ prediction-error input to da-mode-drives-response's SNc afferent (flags BRAIN_REWARD_VALUE_AFFERENT / BRAIN_REWARD_VALUE_LESION, default-OFF), per research/findings/2026-09-24-reward-value-spiking-afferent-PREREGISTRATION.md and its AMENDMENT-1
+mechanism: A10 (midnight plan S15c) seed-7 de-risk of the surprise-organ prediction-error input to da-mode-drives-response's SNc afferent (flags BRAIN_REWARD_VALUE_AFFERENT / BRAIN_REWARD_VALUE_LESION, default-OFF), per research/findings/2026-09-24-reward-value-spiking-afferent-PREREGISTRATION.md and its AMENDMENT-1 and AMENDMENT-2
 seeds: [7]
 artifacts:
   - research/findings/raw/_reward_value_afferent_derisk/s7.json
   - research/findings/raw/_reward_value_afferent_derisk/v2/s7_verdict.json
   - research/findings/raw/_reward_value_afferent_derisk/v2/rf/s7_verdict.json
   - research/findings/raw/_reward_value_afferent_derisk/v2/offidentity_module.json
+  - research/findings/raw/_reward_value_afferent_derisk/v2/s7_arms_off_a.json
+  - research/findings/raw/_reward_value_afferent_derisk/v2/s7_arms_on_a.json
+  - research/findings/raw/_reward_value_afferent_derisk/v2/rf/s7_arms_on_a.json
 ---
 
 # A10 seed-7 de-risk: NO-GO at the pre-registered criteria in both runs; the rerun shows (A) holds and traces the lesion residual to surprise-block identity
 
-Governed by `research/findings/2026-09-24-reward-value-spiking-afferent-PREREGISTRATION.md` (57f0ebfd0) and
-`...-PREREG-AMENDMENT-1.md`. Seed 7 only: a dev/calibration seed, not a gate verdict. The flags stay default-OFF.
+Governed by `research/findings/2026-09-24-reward-value-spiking-afferent-PREREGISTRATION.md` (57f0ebfd0),
+`...-PREREG-AMENDMENT-1.md` and `...-PREREG-AMENDMENT-2.md`. Seed 7 only: a dev/calibration seed, not a gate verdict.
+The flags stay default-OFF.
+
+## Fix round 2 (after the review of 7d5c2743d): a flag-ON side effect the v2 record did not mention
+
+**The v2 arms show that turning the flag on changed the default-ON surprise faculty's reading.** The server's own
+surprise block, which runs later in the same turn, read CONFIRM `surprise.surprise_hz` 0.4050925925925926 Hz in off_a,
+off_b, les and the pre-patch reference, and 0.3472222222222222 Hz in on_a, on_b and rf/on_a
+(`research/findings/raw/_reward_value_afferent_derisk/v2/s7_arms_off_a.json`, `research/findings/raw/_reward_value_afferent_derisk/v2/s7_arms_on_a.json`, `research/findings/raw/_reward_value_afferent_derisk/v2/rf/s7_arms_on_a.json`). The CONTRADICT read is equal in every
+arm, and no `surprised` decision flipped at seed 7. The earlier text of this finding did not report the shift, and
+the pre-registration's statement that the lesion does not touch the production surprise block is withdrawn for the
+intact read (AMENDMENT-2).
+
+- **Cause.** The A10 read runs first in the turn, on the same process-shared organ. Reads on the shared merged pool
+  depend on read history (the pool bridge has no `_rest_extra`, so `_hard_reset` does not restore the surprise
+  slice's adaptive thresholds, activity EMA or refractory state). With the flag on, the production read was the
+  organ's second CONFIRM read of the turn. Reconsolidation (default-ON, off in the arms) gates on that read.
+- **A second lesion asymmetry.** The lesion arm's A10 read uses the standalone twin, so its production read stayed at
+  0.4050925925925926 Hz while the intact arm's moved. The v2 (B) attribution compares arms that differ in this too.
+- **Fix.** The A10 read now leaves no footprint: it snapshots every piece of state it can mutate and restores it
+  right after the read (`webapp/reward_value_afferent_chat.py`; unit pins in `tests/test_reward_value_afferent.py`
+  fail on the pre-fix module). AMENDMENT-2 adds criterion (D): the production `surprise` and `reconsolidation`
+  blocks of on_a and les equal off_a's on both turns. Scored on the v2 arms, (D) fails, as it should.
+- **Measurement of the fix.** A module-level check on the production organ
+  (`research/runners/_reward_value_afferent_footprint.py`) and the v3 arms on the pool, both governed by
+  AMENDMENT-2. Results are reported below as they land; until then the fix is unmeasured at the handler level.
 
 ## Corrections to the earlier text of this finding (fix round, after the adversarial review of 58c400ff6)
 
@@ -117,8 +145,9 @@ What this means for the criteria: (C) asks two DIFFERENT surprise blocks to read
 The design routes the asserted patient to a different block on every CONTRADICT turn, so a block-rate difference
 fails (C) whatever the prediction pathway does. (B)'s attribution uses the same lesion differential as its control,
 so the same block difference is counted as effect not owed to the live read. The pre-registered criteria stay as
-written and the verdict stays NO-GO; the next rung is a block-matched criterion filed before any gate-seed data (see
-Next action). Declared, still true: the twin is a separate bridge with no homeostat, so the intact and lesioned
+written and the verdict stays NO-GO. The block-matched criterion this paragraph once pointed to was withdrawn in
+fix round 2 (it cannot fail once the cut holds); the next rung is the substrate-matched within-block (B'), see Next
+action. Declared, still true: the twin is a separate bridge with no homeostat, so the intact and lesioned
 arms still differ in substrate as well as in the zeroed edges. The block control explains the residual WITHIN the
 twin; it does not make the twin a substrate-matched cut of the intact read.
 
@@ -133,33 +162,60 @@ The lesion changes the reply on the CONFIRM turn only, which is what finding
 2026-09-20-hollow-surprise-monitor-confirm-probe predicts (the prediction cancels the surprise pool on a confirming
 assertion; the lesion removes that cancellation). The ON null control is clean and the OFF path is byte-identical,
 so the change is owed to the lesion. One seed only: this is not a load-bearing measurement in the LBF sense.
+Added in fix round 2: in the intact arms the production surprise read on CONFIRM was also shifted by the A10 read
+(0.3472222222222222 vs 0.4050925925925926 Hz, `surprised` False either way), so the surprise NOTICE and the answer
+text were not affected by it at seed 7; the lesion arm's production read was not shifted. (D) re-measures this.
 
 ### Other observations
 
 - The intact CONFIRM rate moved from the first run's 0.3472222222222222 Hz to 0.4050925925925926 Hz. The CONTRADICT
-  and lesioned rates are unchanged. The v2 `rf` arm reads the same 0.4050925925925926 Hz as the v2 onebrain arm, so
-  the composer is not the cause. The first run ran on uncommitted code before main was merged in at ffe48c3e6; the
-  cause was not isolated further.
+  and lesioned rates are unchanged. **Corrected (fix round 2): the cause is read history, not the uncommitted code or
+  the main merge.** The v1 runner (f3fa99c4a `main`) ran every arm in ONE process through `brain_chat`: OFF CONFIRM,
+  OFF CONTRA, then the ON CONFIRM turn. So v1's A10 CONFIRM read was the process-shared organ's third read and its
+  second CONFIRM read. v2 ran each arm in a fresh process, so its A10 CONFIRM read was the organ's first. v2's own
+  arms show a second CONFIRM read gives exactly 0.3472222222222222 Hz (the production read in on_a, see Fix round 2).
+  This is the same mechanism as the side effect above. The module-level check reproduces the v1 order as a reported
+  sequence. (The earlier text of this bullet pointed at uncommitted code or the main merge; that is withdrawn.)
 - `reward_value.composer` read null on every turn of this run: the module looked for `chat.inner.agent.composer`,
   but the agent holds `.composer` itself. Fixed after the run in 3e860cdc6 (pinned by a test); the handler's own
   `activity.composer` label is the composer record for this run.
 
 ## Next action
 
-1. File a block-matched AMENDMENT-2 BEFORE B2b runs any gate seed (42/43/44/100/101/102), naming seed 7 as seen
-   and excluded as evidence for it. Candidate (C'): under the lesion each read equals its own block's cue-free rate
-   on the same bridge (|lesion_hz - cuefree_hz(block)| < 1e-6), with exact replication as a precondition. The block
-   control already runs in arms mode, so (C') can be scored from the existing arms output with no new build.
-2. A substrate-matched lesion, needed before any attribution criterion means what it says: zero the
+1. Harvest the v3 runs AMENDMENT-2 governs (module-level footprint check; v3 arms and fresh pre-patch references
+   for both composers) and score them. (D) decides whether the fix holds at the handler level.
+2. **Withdrawn (fix round 2): the block-matched criterion (C') proposed here earlier.** It read
+   |lesion_hz - cuefree_hz(block)| < 1e-6 on the twin. With patient_expected->surprise zeroed there is no other route
+   from the cue to the surprise pool, so once the read-time cut holds the lesioned read equals the cue-free rate by
+   construction (v2 shows exact equality). It tests the cut, not whether the live read carries the effect, and it
+   would be scored on seed-7 data already seen. It must not go to B2b as a GO criterion.
+3. The meaningful next rung is a substrate-matched lesion with a within-block attribution (B'): zero the
    patient_expected->surprise edges on the intact organ's own slice of the shared pool for the read (restored after
-   it) instead of reading the standalone twin. Then a within-block attribution (B') compares the CONFIRM-block
-   suppression, cue-free rate minus CONFIRM rate, intact vs lesioned, on one substrate. This is a mechanism change
-   and needs its own amendment before a run.
-3. The S15(c) trace still fails on the `extract_assertion` regex/keyword gate (registered in
-   `docs/SCAFFOLD-LEDGER.md`) until the owner waives it or a spiking assertion parser replaces it.
+   it) instead of reading the standalone twin, and compare the CONFIRM-block suppression (cue-free rate minus CONFIRM
+   rate) intact vs lesioned on one substrate. This is a mechanism change and needs its own amendment before a run;
+   B2b's gate seeds are the first data it may be scored on.
+4. The S15(c) trace still fails on host classification on the path (both registered in `docs/SCAFFOLD-LEDGER.md`):
+   the `extract_assertion` regex/keyword gate, AND the organ's host addressing in `read_surprise`. That addressing
+   maps the recalled and asserted patient strings to blocks through the host dict `_block_for`, and decides confirm
+   vs contradict by a host string compare (`str(p_asserted).lower() == str(p_stored).lower()` sets t = s, plus a
+   collision step forcing t != s). It also drives the cue at block s from the recalled word, not from agent/action.
+   The spiking circuit then turns s == t into a low rate. Both need an owner waiver or a spiking replacement.
+5. Out of this lane: the production surprise read is read-history dependent on the merged pool (a second CONFIRM
+   assertion in one process reads 0.3472222222222222 Hz, not 0.4050925925925926 Hz). Logged in
+   `research/FAILURE_LOG.md` for its own lane; fixing it changes a default-ON faculty and needs 6 seeds.
 
-## Scope (unchanged)
+## Scope
 
 Default-OFF. The 6-seed gate (seeds 42/43/44/100/101/102) belongs to B2b (S28), and default-ON would also need a
-SOUND independent review. `extract_assertion` is a regex/keyword gate on the path, registered in
-`docs/SCAFFOLD-LEDGER.md`; the S15(c) trace cannot pass without an owner waiver.
+SOUND independent review. `extract_assertion` (a regex/keyword gate) and the organ's host string-identity block
+addressing are on the path, both registered in `docs/SCAFFOLD-LEDGER.md`; the S15(c) trace cannot pass without an
+owner waiver.
+
+For B2b: merging this branch adds one row to the default LBF registry (38 -> 39 faculties, thin 2 -> 3). The row is
+`thin` unless `BRAIN_REWARD_VALUE_AFFERENT` is set in the harness, so the headline fraction is unchanged. What the
+row's lesion arm measures is whether the surprise PREDICTION reaches the DA mode through A10: the lesion swaps the
+source organ's read for its disinhibited twin's read. It does not cut the afferent the row is named for.
+
+Provenance note: the module-level OFF-identity runner ran three times at the same output path, the first time on a
+dirty tree. Only the clean run at 3992d343b (`research/findings/raw/_reward_value_afferent_derisk/v2/offidentity_module.json`, committed in d0e6f2036) is cited; the
+reviewer's independent rerun against main 355db9c79 reproduced its hashes.

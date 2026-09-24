@@ -27,15 +27,24 @@ WHAT IS SCORED (the pre-registration's criteria, unchanged by the amendment):
       `da_drives.afferent_pA` (the amendment's replacement for the removed `pa`); and
       `attributable_to(normalized differential, live vs lesion) >= 0.9`.
   (C) LESION: |normalized(contra) - normalized(confirm)| < 1e-6 under the lesion.
-  GO iff A and B and C. Any criterion measured and false is NO-GO. UNDEFINED only when a real precondition fails
-  (an arm did not build, a turn was not measured, the lesion cut did not hold at read time, a null control is not
-  clean, the override never reached the workspace).
+  (D) (AMENDMENT-2, added before the v3 run; it can only make GO harder): the production `surprise` block and the
+      `reconsolidation` block of on_a and of les equal off_a's, whole block, on both turns. The v2 arms fail it
+      (on_a CONFIRM surprise_hz 0.3472222222222222 vs 0.4050925925925926 OFF): the unisolated A10 read shifted the
+      production read. Fix round 2 makes the A10 read leave no footprint.
+  GO iff A and B and C and D. Any criterion measured and false is NO-GO. UNDEFINED only when a real precondition
+  fails (an arm did not build, a turn was not measured, the lesion cut did not hold at read time, a null control is
+  not clean, the override never reached the workspace, the OFF arm recorded no `surprise` block).
+  Reported, not scored: each A10 read's `footprint` record; whether the intact A10 read equals the production read;
+  the response paths that differ ON vs OFF outside `da_drives`, `da_encoding` and `answer`.
 
 REPORTED SEPARATELY (not part of the pre-registered GO; the midnight plan's S15 success check, defined before any
 data): on each turn, does the intact reply (answer / da_drives.mode / da_drives.lead) change under the lesion, with a
 clean ON null control and (A) holding.
 
 SEED 7 ONLY (dev/calibration; never a gate seed). Composer: the production default (onebrain) unless --composer rf.
+
+v3 (AMENDMENT-2) writes to research/findings/raw/_reward_value_afferent_derisk/v3/ (and v3/rf/), with a fresh
+pre-patch reference at the same main merge parent 306ef27d7 beside it.
 
 Run (pool):  SIM_BACKEND=numpy OMP_NUM_THREADS=1 .venv/bin/python -u -m research.runners._reward_value_afferent_derisk \
                  --mode arms --seed 7 --out research/findings/raw/_reward_value_afferent_derisk/v2/s7_arms.json
@@ -269,7 +278,13 @@ def mode_score(arms_path, pre_path, out_path):
 
     # ── (C) ──
     go_c = bool(diff_les is not None and abs(diff_les) < 1e-6)
-    go = bool(go_a and go_b and go_c)
+
+    # ── (D) AMENDMENT-2: no side effect on the default-ON surprise faculty (and reconsolidation, which gates on it) ──
+    v.require("production `surprise` block recorded on both OFF turns (so (D) is measurable)",
+              all(isinstance(((arms.get("off_a") or {}).get(t) or {}).get("surprise"), dict) for t in TURNS), expect=True)
+    side = side_effect_check(arms)
+    go_d = bool(side["GO"])
+    go = bool(go_a and go_b and go_c and go_d)
     v.disabled("heavy Gate-B organs (affect/worldmodel/metacog/multiref/..., LTM tier)",
                why="off identically in every arm and in the pre-patch reference, for speed and isolation")
     decided = v.decide(go=go, verbose=True)
@@ -316,8 +331,18 @@ def mode_score(arms_path, pre_path, out_path):
                  "reward_value": on_rv, "replies": {t: _reply(arms.get("on_a"), t) for t in TURNS}},
         "C_lesion": {"normalized": n_les, "differential": diff_les, "lt_1e-6": go_c, "GO": go_c,
                      "reward_value": les_rv, "replies": {t: _reply(arms.get("les"), t) for t in TURNS}},
+        "D_no_side_effect_on_surprise": side,
         "diff_live": diff_live, "diff_lesion": diff_les,
         "S15_success_check": s15,
+        "footprint_records": {arm: {t: (_rv(arms.get(arm), t).get("footprint")) for t in TURNS}
+                              for arm in ("on_a", "on_b", "les")},
+        "a10_read_equals_production_read_on": {t: (on_rv[t].get("surprise_hz") is not None
+                                                   and on_rv[t].get("surprise_hz") == _surprise_hz(arms.get("on_a"), t))
+                                               for t in TURNS},
+        "response_paths_differing_on_vs_off": {arm: {t: _diff_paths(((arms.get("off_a") or {}).get(t)),
+                                                                    ((arms.get(arm) or {}).get(t)),
+                                                                    skip=("da_drives", "da_encoding", "answer"))
+                                                     for t in TURNS} for arm in ("on_a", "les")},
         "block_asymmetry_control": bc,
         "preconditions": decided["preconditions"],
         "verdict": decided,
@@ -325,8 +350,53 @@ def mode_score(arms_path, pre_path, out_path):
     os.makedirs(os.path.dirname(out_path) or ".", exist_ok=True)
     with open(out_path, "w") as f:
         json.dump(out, f, indent=2, default=str)
-    print(json.dumps({"status": decided["status"], "A": go_a, "B": go_b, "C": go_c, "attr": attr, "out": out_path}))
+    print(json.dumps({"status": decided["status"], "A": go_a, "B": go_b, "C": go_c, "D": go_d, "attr": attr,
+                      "out": out_path}))
     return 0
+
+
+# ── (D) helpers (AMENDMENT-2) ──────────────────────────────────────────────────────────────────────────────────────
+def _surprise_hz(resp, turn):
+    return (((resp or {}).get(turn) or {}).get("surprise") or {}).get("surprise_hz")
+
+
+def side_effect_check(arms):
+    """(D): with the flag ON (on_a) and under the lesion (les), the production `surprise` block and the
+    `reconsolidation` block (which gates on that read's `surprised`) equal the OFF arm's, whole block, on both
+    turns. The v2 arms (before fix round 2) FAIL this: on_a's CONFIRM surprise_hz 0.3472222222222222 vs off_a's
+    0.4050925925925926 (pinned by tests/test_reward_value_afferent.py)."""
+    out = {"per_arm": {}}
+    ok = True
+    for arm in ("on_a", "les"):
+        per = {}
+        for t in TURNS:
+            off = (arms.get("off_a") or {}).get(t) or {}
+            got = (arms.get(arm) or {}).get(t) or {}
+            s_eq = _canon(off.get("surprise")) == _canon(got.get("surprise"))
+            r_eq = _canon(off.get("reconsolidation")) == _canon(got.get("reconsolidation"))
+            per[t] = {"surprise_equal": s_eq, "reconsolidation_equal": r_eq,
+                      "surprise_hz_off": _surprise_hz(arms.get("off_a"), t), "surprise_hz_arm": _surprise_hz(arms.get(arm), t)}
+            ok = ok and s_eq and r_eq
+        out["per_arm"][arm] = per
+    out["GO"] = bool(ok)
+    return out
+
+
+def _diff_paths(a, b, skip=(), prefix=""):
+    """Paths where two response dicts differ (timing keys dropped); top-level keys in `skip` are not compared."""
+    a, b = _drop_timing(a), _drop_timing(b)
+    if isinstance(a, dict) and isinstance(b, dict):
+        paths = []
+        for k in sorted(set(a) | set(b)):
+            if not prefix and k in skip:
+                continue
+            p = "%s/%s" % (prefix, k)
+            if k not in a or k not in b:
+                paths.append(p + " (one side only)")
+            else:
+                paths += _diff_paths(a[k], b[k], (), p)
+        return paths
+    return [] if json.dumps(a, sort_keys=True, default=str) == json.dumps(b, sort_keys=True, default=str) else [prefix]
 
 
 if __name__ == "__main__":

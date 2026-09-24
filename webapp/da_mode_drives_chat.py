@@ -78,6 +78,12 @@ CONTRACT (additive, reversible, byte-identical-off).
     organs and break byte-identity. Snapshot host RNG, run on this workspace's own timeline, restore host.
   * The substrate build (~0.9s) is lazy on the first turn per session and kept warm; each turn runs one
     ~0.05s read (restore the post-build snapshot -> fresh manager -> one live SNc->DA loop).
+  * With `BRAIN_REWARD_VALUE_AFFERENT` on (A10, default-OFF), this block ALSO reads the process-shared surprise
+    organ, which production reads again later in the same turn. Reads on the shared pool depend on read history, so
+    an unisolated A10 read shifted the production surprise read (seed 7, v2 arms: CONFIRM 0.3472222222222222 Hz ON
+    vs 0.4050925925925926 Hz OFF). The A10 read therefore snapshots and restores every piece of state it mutates
+    (webapp/reward_value_afferent_chat.py); AMENDMENT-2 of the A10 pre-registration scores that the production
+    `surprise` block is equal ON vs OFF.
 
 REUSE-BY-IMPORT (NO `sim/` edit). The BG substrate build (`PM.build`), the `dopamine_mode` bus manager
 (`make_manager`), the live SNc->DA loop (`measure_self_driven`) and the operating point (`BASELINE`,
