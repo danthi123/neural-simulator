@@ -1,0 +1,33 @@
+{
+ "run_id": "1790269282-407065",
+ "runner": "research/runners/_slotbinder_l3_latency_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/research/runners/_slotbinder_l3_latency_derisk.py",
+  "--seeds",
+  "44",
+  "100",
+  "101",
+  "102",
+  "--out-dir",
+  "research/findings/raw/_slotbinder_l3_latency_derisk_cupy"
+ ],
+ "git_sha": "110b97a0c",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-24T13:01:22",
+ "env": {
+  "SIM_BACKEND": "cupy"
+ },
+ "sim_backend": "cupy",
+ "sim_backend_requested": "cupy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 112101.8,
+ "corpus_check_query": "making a spiking brain's affect/emotion state load-bearing on a language model's free-generated reply TONE \u2014 beyond decode-time logit bias; how affect/valence conditions generation in neuroscience + N",
+ "corpus_check_fresh": false,
+ "artifact": "research/findings/raw/_slotbinder_l3_latency_derisk_cupy/summary_f32.json"
+}

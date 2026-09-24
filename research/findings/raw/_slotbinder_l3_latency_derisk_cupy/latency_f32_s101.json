@@ -1,0 +1,55 @@
+{
+  "seed": 101,
+  "fanout": 32,
+  "n_facts_sampled": 2,
+  "sampled_corpus_indices": [
+    125,
+    381
+  ],
+  "sim_backend": "cupy",
+  "K": 2020,
+  "KF": 1195,
+  "measured_nnz": 28603200,
+  "formula_nnz": 28603200,
+  "build_and_store_seconds": 45.7757682800293,
+  "per_fact_query_latency": [
+    {
+      "fact_idx_in_corpus": 125,
+      "agent": "girl",
+      "action": "become",
+      "expected_patient": "friend",
+      "got_patient": "friend",
+      "hit": true,
+      "query_latency_s": 0.9878764152526855
+    },
+    {
+      "fact_idx_in_corpus": 381,
+      "agent": "player",
+      "action": "take",
+      "expected_patient": "turn",
+      "got_patient": "turn",
+      "hit": true,
+      "query_latency_s": 1.402888536453247
+    }
+  ],
+  "moat_probe": {
+    "agent": "connect",
+    "action": "split",
+    "abstained": true,
+    "query_latency_s": 0.6811044216156006
+  },
+  "mismatch_probe": {
+    "agent": "girl",
+    "action_from_other_fact": "take",
+    "did_not_leak_fact0_patient": true,
+    "query_latency_s": 0.9650256633758545
+  },
+  "recall_accuracy_query_patient": 1.0,
+  "moat_pass": true,
+  "mismatch_pass": true,
+  "mean_query_latency_s": 1.009223759174347,
+  "max_query_latency_s": 1.402888536453247,
+  "min_query_latency_s": 0.6811044216156006,
+  "vs_fhrr_mean_ratio": 1.121359732415941,
+  "wall_clock_this_seed_s": 49.813358783721924
+}
