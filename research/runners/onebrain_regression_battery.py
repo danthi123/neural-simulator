@@ -267,6 +267,37 @@ def _datc_group(prefix, session, texts, night):
 _EXTRA_TURNS += (_datc_group("datc", "datc", _DATC_SALIENT, True) + _datc_group("datn", "datn", _DATC_NEUTRAL, True)
                  + _datc_group("datci", "datci", _DATC_SALIENT, False)
                  + _datc_group("datni", "datni", _DATC_NEUTRAL, False))
+
+# ── D5-CONSOLIDATE / SLEEP-REPLAY DRIVING GROUPS (label-only; used only by load_bearing_fraction's new
+# lbf_rows/learning.py EXTRA_PROBES for "d5-consolidate" / "sleep-replay") ──────────────────────────────────────
+# Both faculties are gated on the SAME idle tick the DA tag-capture groups above already exercise (_WORLD_NIGHT ->
+# _run_world_step("overnight_24h") -> webapp.continuous_engine.tick_idle_sessions); no new world-step kind is
+# introduced. 24h idle trivially clears both IDLE_SEC (20s, gates D5) and SLEEP_IDLE_SEC (300s, gates sleep-replay).
+#
+# 'd5c' (D5 learn-through-use): teach 'wolf' -> a referential recall (Hook A completion arms the consolidation
+# budget via continuous_engine.mark_recall) -> the idle tick (intact: consolidate_used_memory strengthens the
+# 'wolf' assembly via the substrate's own plateau-gated BTSP; BRAIN_D5_CONSOLIDATE=0: no-op) -> the SAME referential
+# recall again. The DRIVING field is the graded apical magnitude (episodic.graded_cue.depth_hold), which rises
+# ONLY on the intact post-tick recall (recall_disclosure surfaces it only for a topic actually consolidated this
+# conversation) -- NOT episodic.in_memory, which is True in both arms on both recalls (the completion gate is not
+# what this faculty lesions). d5c_recall1 is the PRECONDITION turn (must read identical intact vs lesion -- no tick
+# has run yet); it is deliberately NOT the row's compared turn (see research/runners/lbf_rows/learning.py).
+_EXTRA_TURNS += [
+    ("d5c_teach", "the wolf chase the rabbit", "d5c", True, None, False),
+    ("d5c_recall1", "you mentioned the wolf", "d5c", False, None, False),
+    ("d5c_tick", _WORLD_NIGHT, "d5c", False, None, False),
+    ("d5c_recall2", "you mentioned the wolf", "d5c", False, None, False),
+    # 'slp' (offline sleep-replay): store 3 episodes (fox/owl/hawk), a genuine sleep-depth idle (>=SLEEP_IDLE_SEC
+    # via the same 24h step), then recall the MIDDLE-stored one ('owl'). Intact: consolidate_sleep_replay batch-
+    # reactivates all 3 in store order (BRAIN_SLEEP_REPLAY default-ON) -> the recall reads a risen depth_hold + the
+    # "replayed it offline" clause; BRAIN_SLEEP_REPLAY=0: no-op, un-replayed baseline. episodic.in_memory is True
+    # in both arms (the batch-replay lesion never touches whether the topic completes, only how strong it reads).
+    ("slp_teach1", "the fox chase the hare", "slp", True, None, False),
+    ("slp_teach2", "the owl chase the mouse", "slp", False, None, False),
+    ("slp_teach3", "the hawk chase the vole", "slp", False, None, False),
+    ("slp_tick", _WORLD_NIGHT, "slp", False, None, False),
+    ("slp_recall", "you mentioned the owl", "slp", False, None, False),
+]
 _WORLD_STEPS = {t[0]: "overnight_24h" for t in _EXTRA_TURNS if t[1] == _WORLD_NIGHT}
 _TURN_BY_LABEL.update({t[0]: t for t in _EXTRA_TURNS})
 
