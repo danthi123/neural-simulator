@@ -176,7 +176,52 @@ classifications rests on a completed local measurement. Six carry HIGH confidenc
 (the organ's own docstring states the exact lesion effect and the default-ON status); causal-whatif carries an
 explicitly LOWER-confidence residual (this is the first design to drive that organ through chat-only conversa-
 tional teaching rather than the verify script's direct `composer.store()`, so the store-write path for the six
-new taught facts has not been empirically confirmed to ground correctly). This is the correct state to hand to
-whichever lane/session next has uncontended compute: the staged commands above are ready to run unchanged, and
-a NEGATIVE result on any field (a lever that does not move) downgrades that row's `kind` to `thin` in a further
-amendment -- it does not get silently reported as "pass" (not load-bearing).
+new taught facts has not been empirically confirmed to ground correctly). **By S12's own `success_check`
+("Each row's seed-7 verdict is defined, with null_control_clean True and the audit recorded") this step is
+INCOMPLETE, not a resource-forced full stop** -- `fallback_if_fails` covers a per-row design failure
+(unexercisable-after-2-designs / hollow / integrity-smoke), not a wholesale zero-measurement outcome across every
+row, so the gap is stated plainly rather than framed as a settled handoff. Two further defects, caught by the
+A1 review of this commit and fixed in the amendment below, sat underneath that zero-measurement state: (1) the
+causal-whatif chain's own confidence residual was not merely "unconfirmed" but ACTUALLY WRONG -- the store-write
+lemmatizer (`research/runners/lexical_lemma.lemma_verb`) mapped `"goes"` to `"goe"`, not `"go"`, so the taught
+chain would never have grounded against `FACTS[A] = ("dog", "go", "east")` even with compute available; and
+(2) the `ssh pool2` unreachable diagnosis in the resource-residual note above used the wrong invocation (a bare
+`ssh pool2`, which is *expected* to always fail with no ssh config) rather than the documented
+`ssh -F research/queue/.pool_ssh_config pool2` path every pool tool actually uses -- pool2 was not genuinely
+unreachable. See Amendment 2 for the fix and the retried result.
+
+## Amendment 2 (fix round, review `review:A1` in the 2026-09-24 midnight-plan workflow)
+
+**Fixes landed, each traced to a specific review issue:**
+
+1. **[Moderate] `lemma_verb("goes")` bug (fixed).** `research/runners/lexical_lemma.py`'s `_IRREGULAR_VERBS`
+   table gains two entries, `"goes": "go"` and `"does": "do"` -- the generic `-s`-suffix rule strips only the
+   trailing `s` (`"goes"[:-1] == "goe"`), which is correct for the vast majority of `-s`/`-es` verbs but wrong
+   for the two common consonant+`o` verbs that take `-oes` with no silent-`e` to restore (unlike `shoe`/`hoe`/
+   `canoe` -> `shoes`/`hoes`/`canoes`, where the existing generic rule already strips the bare `s` correctly and
+   must be left alone). Verified directly: `lemma_verb("goes") == "go"`, `lemma_verb("does") == "do"`, and all
+   six causal-whatif teach verbs (`goes/reaches/drinks/rises/sings/wakes`) now lemmatize to exactly `FACTS`'
+   base lemmas (`go/reach/drink/rise/sing/wake`) in `_causal_forward_model_grounded_derisk.py`. No other verb in
+   the existing suffix-rule test surface (`hunts/hunted/hunting/runs/running/reaches/drinks/rises/sings/wakes/
+   chases/shoes/hoes`) changed output.
+2. **[Moderate-high] pool2 retried via the documented path (in progress -- see the seed-7 result below).** The
+   bare `ssh pool2` diagnosis in Amendment 1 was wrong, exactly as the review demonstrated: `ssh -F
+   research/queue/.pool_ssh_config pool2 'echo OK'` succeeds immediately from a fresh worktree. This fix round
+   provisions this commit's SHA onto pool1+pool2 with `tools/pool_provision.sh --isolated` and queues the
+   gnw-bus seed-7 smoke (the lightest neural-lesion row -- a single EXISTING turn, no new session/teaching) at
+   the front of `tools/pool_queue.sh`, per the plan's S12 recipe.
+3. **[Low] smoke docstring dead-import claim (fixed).** `research/runners/_lbf_rows_live_organs_smoke.py`'s
+   docstring claimed to reuse `onebrain_regression_battery._spawn_arm` "verbatim"; it imported the name and
+   never called it (`_spawn()` re-execs this module itself, not `-m onebrain_regression_battery --worker`,
+   because the worker process needs `ROWS.EXTRA_TURNS` merged into its OWN `_TURN_BY_LABEL`, which `_spawn_arm`'s
+   normal target module does not have). The dead import is removed and the docstring now states precisely which
+   names ARE reused verbatim (`PROBE_TURNS`/`_EXTRA_TURNS`/`_TURN_BY_LABEL`/`_get_path`) and why `_spawn_arm`
+   itself is not.
+4. **[Low] Amendment 1's "correct handoff state" framing (fixed, see the paragraph directly above this one).**
+   Restated against S12's own `success_check` as INCOMPLETE, not a settled resource-forced stop; `fallback_if_
+   fails` covers a per-row design failure, not a wholesale zero-measurement outcome, so the distinction is now
+   stated rather than blurred.
+
+**Seed-7 result (filled in once the pool job completes; see the branch's final commit/report for the resolved
+state if this line still reads PENDING):** PENDING -- queued via `tools/pool_queue.sh` at commit time; this
+lane's report to the orchestrator carries the resolved numbers or the still-queued state with an ETA.

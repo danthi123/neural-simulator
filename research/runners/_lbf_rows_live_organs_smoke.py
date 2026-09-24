@@ -1,14 +1,18 @@
 """Seed-7 SMOKE for `research/runners/lbf_rows/live_organs.py`'s seven `neural-lesion` rows (S12, lane A1).
 
 Builds intact + lesion arms through the REAL `webapp.server.brain_chat` handler (numpy backend, stub renderer, no
-LLM), reusing `onebrain_regression_battery._spawn_arm`/`_TURN_BY_LABEL` verbatim, exactly as
-`load_bearing_fraction.py` itself does. Because AG-REG's import hook (S08/S26) has not yet merged
-`lbf_rows/*.py` into `FACULTY_LESIONS`/`FACULTY_PROBES` at the time this runs, this script does the SAME
-in-process monkeypatch the sibling A2/`learning.py` smoke uses (documented there and here, never touching either
-literal registry on disk): it extends a LOCAL copy of `_TURN_BY_LABEL` with `EXTRA_TURNS` for the worker
-subprocess's own turn resolution, and drives each row's (flag, value, turn) directly -- it does not need
-`FACULTY_LESIONS`/`FACULTY_PROBES` merged at all, since it reads `lbf_rows.live_organs.EXTRA_LESIONS`/
-`EXTRA_PROBES` directly.
+LLM), reusing `onebrain_regression_battery`'s `PROBE_TURNS`/`_EXTRA_TURNS`/`_TURN_BY_LABEL`/`_get_path` verbatim
+(imported directly, never copied), exactly as `load_bearing_fraction.py` itself does for turn resolution. It does
+NOT reuse `_spawn_arm` -- that helper spawns `-m research.runners.onebrain_regression_battery --worker`, whose
+worker process would only see the BASE `_TURN_BY_LABEL` (this module's `EXTRA_TURNS` are added to a LOCAL dict
+here, in this process, never patched into the battery module) and so could not resolve this module's own new turn
+labels (`lbf_tom1`, `lbf_cau_*`). Instead this script re-execs ITSELF (`_spawn` below, `sys.executable -u
+__file__ --worker ...`) so the worker's `_TURN_BY_LABEL` lookup runs inside this module, where
+`ROWS.EXTRA_TURNS` has already been merged in -- the same reasoning the sibling A2/`learning.py` smoke uses
+(documented there and here, never touching either literal registry on disk). Because AG-REG's import hook
+(S08/S26) has not yet merged `lbf_rows/*.py` into `FACULTY_LESIONS`/`FACULTY_PROBES` at the time this runs, this
+script does not need that merge either: it drives each row's (flag, value, turn) directly, reading
+`lbf_rows.live_organs.EXTRA_LESIONS`/`EXTRA_PROBES` itself.
 
 Each arm is a FRESH subprocess (RNG-isolated, matches every other flip-verify in this repo); one arm at a time,
 so peak RSS is one brain build. Run under the repo's standing RAM discipline:
@@ -41,7 +45,7 @@ import logging as _logging  # noqa: E402
 _logging.getLogger("SIM_BRIDGE").setLevel(_logging.ERROR)
 
 from research.runners.onebrain_regression_battery import (  # noqa: E402
-    PROBE_TURNS, _EXTRA_TURNS, _TURN_BY_LABEL as _BASE_TURN_BY_LABEL, _spawn_arm, _get_path,
+    PROBE_TURNS, _EXTRA_TURNS, _TURN_BY_LABEL as _BASE_TURN_BY_LABEL, _get_path,
 )
 from research.runners.lbf_rows import live_organs as ROWS  # noqa: E402
 # Attribution discipline (tools.lab): `run_row` below builds an intact arm and a lesion (control-shaped) arm and
