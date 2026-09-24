@@ -156,10 +156,22 @@ reported per gate and banked as measured.
 
 ## Predictions (theory; reported, not gated)
 
-- Uniform `sparse_dg` P50 in 4000-15000. The fitted k = P50 a ln(1/a) / c_rec, fit from (`sparse_dg`,
-  `sparse_dg_recx2`) -- the pair that doubles c_rec ALONE -- is in 0.1-0.3; Rolls 2013 gives 0.2-0.3
-  asymptotically, and finite size lowers it. This is a genuinely untested prediction: dev seed 7 never ran
-  `sparse_dg_recx2` (see the dev-seed-7 NON-EVIDENCE note above), so no dev number anchors it.
+- Uniform `sparse_dg` P50 in 4000-15000. **The capacity-per-recurrent-synapse fit is the per-seed MARGINAL
+  between `sparse_dg` and `sparse_dg_recx2` -- the CONTRAST that isolates the recurrent edge, not either arm's
+  own ratio (AMENDMENT, see the AMENDMENT LOG below):**
+  `k_rec = (P50_recx2 - P50_sparse_dg) * a * ln(1/a) / (c_rec_recx2 - c_rec_sparse_dg)`, computed per seed, then
+  `k_fit` = the median of that per-seed marginal over seeds. `k_fit` is predicted in 0.1-0.3; Rolls 2013 gives
+  0.2-0.3 asymptotically, and finite size lowers it. This is a genuinely untested prediction: dev seed 7 never
+  ran `sparse_dg_recx2` (see the dev-seed-7 NON-EVIDENCE note above), so no dev number anchors it.
+  **FAILS IF the median per-seed marginal is <= 0, i.e. doubling c_rec alone does not raise P50** (a realistic
+  outcome: some other bottleneck -- the perforant cue, the readout, k-WTA ties -- could cap capacity regardless
+  of recurrent fan-in). A non-positive marginal is reported AS MEASURED, never clipped to zero and never dropped
+  from the seed-by-seed record; `aggregate()`'s `gpu_point_extrapolation` names this outcome explicitly and
+  reports no extrapolation when it occurs. Each arm's own all-fan-in ratio (`P50 * a ln(1/a) / c_rec` for
+  `sparse_dg` or `sparse_dg_recx2` alone) is also reported, per seed, but ONLY as a descriptive quantity: it is
+  never fed into `k_fit` and never compared to the Rolls range, because that per-arm number is the SAME
+  all-fan-in-confounded quantity dismissed for `sparse_dg_c2` below -- averaging it with a genuine marginal would
+  reintroduce the confound by dilution rather than remove it.
 - Extrapolation from the fitted k to one 3090-sized fast store (n_ca3 = 1e5, c_rec = 1e4, a = 0.005): ~5e4-1e5 <!--derived-->
   facts. The aggregate prints this as EXTRAPOLATION, not a measurement. The a-scaling from 0.01 (this runner's
   arms) to 0.005 (the GPU point) is ALSO untested: no arm varies a with the DG held fixed in the uniform regime <!--derived-->
@@ -198,7 +210,59 @@ not wire anything into the chat path.
 
 ## Staging
 
-54 pool lines (9 arms x 6 seeds) run against an isolated revision on pool41 and pool42. Each line declares the
-peak RSS measured in the seed-42 smoke as a NUMBER in `mem_gb=` (3 for `*_c2*` arms, 2 for every other arm,
-including the new `sparse_dg_recx2`, which is the same network size class as `sparse_dg` plus one doubled
-fan-in -- not a `_c2` arm and measured at the same ~1.2 GB peak RSS bracket).
+54 pool lines (9 arms x 6 seeds) run against an isolated revision on pool41 and pool42. Each line declares
+`mem_gb=` as a NUMBER: 3 for `*_c2*` arms (measured peak RSS in the seed-42 smoke, rounded up), 2 for every other
+arm that HAS been smoke-measured. **`sparse_dg_recx2` has never run (see the arm table above: it has no
+dev-seed-7 number either), so its `mem_gb` is NOT a measurement** -- AMENDMENT (see the AMENDMENT LOG below):
+it declares `mem_gb=3`, matching the `*_c2*` arms' bracket rather than the plain `sparse_dg` bracket, because its
+doubled recurrent projection adds a second full `H`/`W` values array, a second `idx` topology array and a second
+per-cell spike-count pair over `sparse_dg`'s allocation -- closer in size to a `_c2` arm's tripled fan-in state
+than to `sparse_dg`'s single one. `mem_gb=3` for this arm is an ESTIMATE from the allocation accounting above,
+not a measured peak RSS, and is declared as such wherever it is cited.
+
+## AMENDMENT LOG
+
+- **AMENDMENT (2026-09-24, filed after a second adversarial review of the `sparse_dg_recx2` fix-required round
+  (this branch's `fix:distributed-store` result, `safe_to_merge: false`), BEFORE any grid job runs.** What had
+  been seen when this amendment was written: the same dev-seed-7 artifacts as the original registration (none of
+  them cover `sparse_dg_recx2`, which has no dev-seed-7 run by design -- see the arm table above); no evaluation
+  seed of any arm has run; `research/queue/pool.queue`, `.claims` and `runs.jsonl` have zero `ca3_superposed`
+  entries. Three corrections, none touching the arms, thresholds, fact/probe construction or seeds.
+
+  **(a) The capacity-per-recurrent-synapse fit is corrected from a per-arm median to a per-seed marginal.** The
+  first review round added `sparse_dg_recx2` (c_rec alone doubled) specifically so a k fit could be attributed to
+  the recurrent edge, since `sparse_dg_c2` (all three fan-ins doubled) cannot support that attribution. The code
+  that round shipped, and this prereg's original "Predictions" text, still fit k PER ARM as
+  `k = P50 * a * ln(1/a) / c_rec` and took the MEDIAN over `(sparse_dg, sparse_dg_recx2)`. That does not attribute
+  anything to the recurrent edge: the `sparse_dg` half of the median is the identical all-fan-in-confounded
+  quantity the first review rejected off `sparse_dg_c2` ("P50 driven by all fan-ins, divided by c_rec"), and
+  `sparse_dg_recx2` was never used as a MARGINAL (a difference) -- it only diluted the confounded number with a
+  second, less-confounded one, while the code comment and this prereg both kept calling the result "attributed to
+  the recurrent edge alone". Fixed: `k_fit` is now the median, over seeds, of the per-seed marginal
+  `(P50_recx2 - P50_sparse_dg) * a * ln(1/a) / (c_rec_recx2 - c_rec_sparse_dg)`; the per-arm all-fan-in numbers
+  are still reported per seed but labelled descriptive-only and excluded from the fit and from the Rolls
+  comparison. See the corrected "Predictions" bullet above (edited in place by this amendment) and
+  `research/runners/ca3_superposed_fact_attractor.py`'s `aggregate()`.
+  **A worked example (the reviewer's own numbers): P50 8119 -> 10500 when c_rec doubles 2000 -> 4000. The old
+  per-arm-median fit gave k_fit = median(0.187, 0.121) = 0.154 -- inside the registered 0.1-0.3 band. The
+  corrected marginal gives k_fit = (10500-8119) x 0.01 x ln(100) / 2000 ~= 0.055 -- outside it.** This is exactly
+  the kind of disagreement the fix must be able to surface, not paper over.
+  **(b) A non-positive marginal is reported, never clipped or dropped.** A seed where doubling c_rec does not
+  raise P50 (a live possibility if some other bottleneck already caps capacity) now reports its marginal as a
+  negative or zero number in `k_marginal_per_seed`, sets `k_fit` from it like any other seed, and the
+  `gpu_point_extrapolation` field states plainly that no extrapolation is defined rather than emitting a negative
+  or nonsensical predicted fact count. See "FAILS IF" under the corrected "Predictions" bullet above.
+  **(c) Two minor provenance/labelling fixes.** `sparse_dg_recx2`'s `mem_gb` in "Staging" above no longer claims a
+  measurement it never had; it is now declared `mem_gb=3` as an explicit ESTIMATE from allocation accounting
+  (matching the `*_c2*` bracket), not the `sparse_dg` bracket it was previously (incorrectly) grouped with. Pool
+  lines re-staged after this amendment cite THIS amendment's own commit SHA in their `--checked` provenance text,
+  not the branch's merge SHA (the prior round's lines cited the merge commit instead of the prereg's own commit).
+
+  A unit test (`tests/test_ca3_superposed_fact_attractor.py::test_capacity_law_fit_is_the_marginal_not_the_per_arm_ratio`)
+  pins the corrected fit on the reviewer's own worked numbers and is a MUTATION GUARD: it fails if `aggregate()`
+  reverts to the per-arm-median fit (verified by running it against the pre-amendment code, where it fails with
+  `0.1539... != 0.0548...`, before restoring the fix). A second test
+  (`test_capacity_law_marginal_not_positive_is_reported_not_clipped`) pins (b).
+
+  None of (a)-(c) changes G1-G9, the arms, the fact/probe construction, or the seeds. The grid (54 pool lines)
+  had not been dispatched when this amendment was filed.
