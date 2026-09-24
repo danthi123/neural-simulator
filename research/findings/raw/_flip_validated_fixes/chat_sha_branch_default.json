@@ -1,0 +1,116 @@
+{
+ "arm": "default",
+ "label": "branch_default",
+ "cwd": "/home/dant123/Projects/sim/.claude/worktrees/wf_4b88ad6e-fc0-3",
+ "flags_env": {
+  "BRAIN_EPISODIC_STORE_VERIFY": null,
+  "BRAIN_PMEM_FACILITATION": null,
+  "BRAIN_SOURCE_PROV_ABSTAIN_AT_TIE": null
+ },
+ "sim_backend": "numpy",
+ "n_turns": 10,
+ "wall_s": 992.8,
+ "session_sha_canon": "88fb1ee4ff2583c3c24ebd2913c1fa46393a1cafd3fb3e764fd68bc79a535016",
+ "turns": [
+  {
+   "turn": 0,
+   "message": "what does the dog chase",
+   "rich": false,
+   "status": 200,
+   "sha_raw": "9ac79fbdd1a818d33a21f88f7cfb9baac4170bff9e09bbaaf52b833572fa10c8",
+   "sha_canon": "bdf5a6f0271a562b0e654e7c0178ff3947af1174bd5a062b3c653eb3786dbc13",
+   "dropped_volatile_keys": [],
+   "answer": "the dog chases the cat"
+  },
+  {
+   "turn": 1,
+   "message": "the wolf hunts the deer",
+   "rich": false,
+   "status": 200,
+   "sha_raw": "00780a2344ae0d3040da4bec66787ac9d745630cf8afe209a9bdb986fe80c2dd",
+   "sha_canon": "b90e316eb86cc47d36b19610033e3746f4b90b98e58f7268ea1896e33dbd5058",
+   "dropped_volatile_keys": [],
+   "answer": "the wolf hunts the deer \u2014 worth going further here."
+  },
+  {
+   "turn": 2,
+   "message": "what does the wolf hunt",
+   "rich": false,
+   "status": 200,
+   "sha_raw": "50028a946b717d3386c080ce94854356355e20dd6c3ce15bd7a8666c2dec1c70",
+   "sha_canon": "347041fd241d70ad2b5cbdbdc5161ccc9fae75b2ef63e7385c2d82fad11793be",
+   "dropped_volatile_keys": [],
+   "answer": "Setting the held thread aside \u2014 On wolf, then \u2014 the wolf hunts the deer"
+  },
+  {
+   "turn": 3,
+   "message": "remind me to feed the cat when we talk about dinner",
+   "rich": false,
+   "status": 200,
+   "sha_raw": "80fc7c0f9af4243739a5aa61956a853d2b83a51947e8830a13b0c8386a53c3c4",
+   "sha_canon": "23a2c20864295b71dc952aa88c8b2e61a1783c7d92f90d557ca89ed2e2f048fe",
+   "dropped_volatile_keys": [],
+   "answer": "Okay \u2014 I'll hold onto that and remind you to feed the cat when we talk about dinner comes up."
+  },
+  {
+   "turn": 4,
+   "message": "what does the dog chase",
+   "rich": false,
+   "status": 200,
+   "sha_raw": "8c54e46007fba175d675322e2629f594125b187c2b6aabaad0ccc782b4d44efd",
+   "sha_canon": "8e096cc8a5ea5691b70eadec4081852a71e383c85c6edba9a52a93d51b78b6c6",
+   "dropped_volatile_keys": [],
+   "answer": "Setting the held thread aside \u2014 As for it \u2014 On dog, then \u2014 the dog chases the cat \u2014 worth going further here."
+  },
+  {
+   "turn": 5,
+   "message": "tell me about the bird",
+   "rich": false,
+   "status": 200,
+   "sha_raw": "2f812d4d2815509d13adab7efedee280edd0665c89f91dc5d463d5603250d703",
+   "sha_canon": "5a1c8454a69b647949e627c38b4c4493918266e3c171b8f3d37fac127443dc25",
+   "dropped_volatile_keys": [],
+   "answer": "the tell abouts the bird \u2014 worth going further here."
+  },
+  {
+   "turn": 6,
+   "message": "what should we have for dinner",
+   "rich": false,
+   "status": 200,
+   "sha_raw": "5e22b6424e57c31fdc78bd3a7bf627dbf0baeb4a3f83970ae16f7b818c8d21eb",
+   "sha_canon": "c3d77210837121d99ad0dca9d4b86bf38f0fd534d0dcaef214fe66b623f119f5",
+   "dropped_volatile_keys": [],
+   "answer": "(Reminder \u2014 you asked me to feed the cat when we talk about dinner came up, and we talk about dinner just came up.) I don't know about that. My curiosity is piqued \u2014 I haven't learned about have yet: what can you tell me about have?"
+  },
+  {
+   "turn": 7,
+   "message": "earlier you mentioned the wolf",
+   "rich": false,
+   "status": 200,
+   "sha_raw": "aaa943ebb5f0a6a38049b449f3441c01ff82a6110f7ef15f6286e19c7f8daca0",
+   "sha_canon": "ec1522f3f982a5e715a6d0c6dbc12c03a343acd59e42557c73945a93688a7aed",
+   "dropped_volatile_keys": [],
+   "answer": "I don't recall us discussing wolf \u2014 no assembly completes for that cue (a genuine spiking completion failure, so I won't make something up)."
+  },
+  {
+   "turn": 8,
+   "message": "do you remember talking about the dog",
+   "rich": false,
+   "status": 200,
+   "sha_raw": "2e07ee393932fe408af517e1f63092e735f9b56a34c8cd1deb469d0db63a1cc4",
+   "sha_canon": "d857aa002cb8f2c12c502a3377fe192a6cf9f44d5cde77bc581cc6cdba02446c",
+   "dropped_volatile_keys": [],
+   "answer": "Setting the held thread aside \u2014 As for it \u2014 On dog, then \u2014 I don't know about that. My curiosity is piqued \u2014 I haven't learned about remember yet: what can you tell me about remember?"
+  },
+  {
+   "turn": 9,
+   "message": "what does the dog chase",
+   "rich": true,
+   "status": 200,
+   "sha_raw": "e6dc2ef2ec056dd8d35d473b6e0bd7bb25e8bcf910b8ba082fba9e1747d8023c",
+   "sha_canon": "f6ccd573bbd0b0da97454d7be1a2b5c8f2ee2c8ec71371eb095013d871f0dfd6",
+   "dropped_volatile_keys": [],
+   "answer": "As for it \u2014 the dog chases the cat the cat eats the fish"
+  }
+ ]
+}
