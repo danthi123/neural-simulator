@@ -51,15 +51,14 @@ def test_memory_reservations_expire_and_jobs_declare_size(tmp_path: Path) -> Non
 
 def test_running_jobs_commit_their_declared_size_for_their_lifetime(tmp_path: Path) -> None:
     # 2026-09-23 20:45: a between-phases snapshot read 9 GB free while two ~6 GB LB jobs ran; a third went out and
-    # both nodes thrashed. Running wrappers now commit their declared size until they exit.
-    table = tmp_path / "mem.tsv"
-    table.write_text("load_bearing_fraction\t6\n")
-    ps = ("bash -c POOL_CHECKED_REASON=x cd r && python -m research.runners.load_bearing_fraction --seed 42\n"
-          "bash -c POOL_CHECKED_REASON=y\\ mem_gb=5 cd r && python -m research.runners.d6_learn_through_use_lb\n"
-          "bash -c POOL_CHECKED_REASON=z cd r && bash tools/memcap.sh 8 -- python -m research.runners.q\n")
-    r = subprocess.run(["bash", str(DISPATCHER), "--committed-gb"], input=ps, cwd=ROOT, text=True, capture_output=True,
-                       env={**os.environ, "POOL_RUNNER_MEM_PATH": str(table)}, check=True)
-    assert r.stdout.strip() == "19"          # 6 (runner table) + 5 (hint) + 8 (memcap)
+    # both nodes thrashed. Each launch now stamps POOL_JOB_ID/POOL_JOB_MEM_GB into the job's inherited environment.
+    rendered = run_bash(DISPATCHER, "--render-remote-command", "python -m research.runners.x  #checked:r mem_gb=5",
+                        env={"HOME": str(tmp_path)}).stdout
+    assert "POOL_JOB_MEM_GB='5'" in rendered and "POOL_JOB_ID='" in rendered
+    lines = "POOL_JOB_ID=a POOL_JOB_MEM_GB=6\nPOOL_JOB_ID=b POOL_JOB_MEM_GB=5\n"
+    r = subprocess.run(["bash", str(DISPATCHER), "--committed-gb"], input=lines, cwd=ROOT, text=True,
+                       capture_output=True, check=True)
+    assert r.stdout.strip() == "11"
     r = subprocess.run(["bash", str(DISPATCHER), "--committed-gb"], input="", cwd=ROOT, text=True,
                        capture_output=True, check=True)
     assert r.stdout.strip() == "0"
