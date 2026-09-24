@@ -1,0 +1,27 @@
+{
+ "run_id": "1790204362-1981647",
+ "runner": "research/runners/_lexicon_spiking_referent_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/wf_96cf13a6-728-1/research/runners/_lexicon_spiking_referent_derisk.py",
+  "--score",
+  "research/findings/raw/_lexicon_spiking_referent"
+ ],
+ "git_sha": "f4c1304bf",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-23T18:59:22",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_lexicon_spiking_referent/verdict.json"
+}

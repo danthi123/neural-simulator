@@ -40,3 +40,10 @@ wall-clock; catching these in round one is the cheapest parallelism there is.
 - **GPU-queue lines start with `export XDG_RUNTIME_DIR=/run/user/1000;`** when the runner self-checks memcap.
 - **Never commit live `research/queue/*` state** — merging it re-injects jobs.
 - **Never SendMessage a Workflow subagent** (it resumes a duplicate in the same worktree).
+- **A repo-wide idle-compute gate blocking YOUR commit is the orchestrator's problem, not yours.** Do NOT queue filler
+  (new seed batches of a closed result, a spare seed "for replication", an "autofill" continuation) to clear
+  `compute_idle_persistent` / `lane_starvation`, and do not write a waiver. Leave the work committed-staged in your
+  worktree, and return with `commit_blocked_by: <gate>`; the orchestrator stages real work or waives with evidence.
+  (2026-09-23: a scoring agent queued three such jobs; they were removed before they took pool RAM from D6 arms.)
+- **Pool lines declare their memory:** put `mem_gb=<measured peak RSS, rounded up>` in the `--checked` text. The
+  dispatcher reserves it per node (15 GB nodes; a missing hint reserves 1 GB and invites an OOM burst).
