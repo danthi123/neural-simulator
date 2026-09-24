@@ -201,7 +201,7 @@ def g1_compare(off_path, on_path, out):
               f"exercised d={v['exercised']['maxdelta']:.3g} ans={v['exercised']['answer_same']}")
 
 
-def g2_run(script: str, learn: bool, seed: int, out: str):
+def g2_run(script: str, learn: bool, seed: int, out: str, pregrow: int = 0):
     t0 = time.time()
     _set_flag(True)
     from research.runners.onebrain_wave3_pool_production import get_merged_cortical_pool
@@ -212,6 +212,16 @@ def g2_run(script: str, learn: bool, seed: int, out: str):
     holder = XE.get_xedge_pool(seed)
     corg = CO.get_organ(seed)
     assert holder is not None and holder.pool is pool and holder.comp_organ is corg, "routing not reconciled"
+    # PREGROW (additional arm, not in the prereg): grow the edge with `pregrow` credited turns BEFORE any session
+    # exists (deterministic per process, identical across the three runs), so the leak test also runs with a
+    # non-trivial edge that the WM-resolved-role read actually engages.
+    pre = []
+    pa, pp = holder.role["p_agent"], holder.role["p_patient"]
+    for t in range(int(pregrow)):
+        agent = (t % 2 == 0)
+        tr = holder.credit_live_turn("agent" if agent else "patient", focus=(pa if agent else pp))
+        pre.append(bool(tr and tr.get("credited")))
+    cw_pre = dict(holder._r3pool.cross_weights())
     # per-session organs exactly as webapp.server._get_multiref_organ builds them (shared = the holder's pool)
     organs = {}
     if script == "alone_A":
@@ -242,6 +252,7 @@ def g2_run(script: str, learn: bool, seed: int, out: str):
                 o["credit"] = tr
         outputs[key].append({"step": step, "out": _jsonable(o)})
     res = {"mode": "g2_run", "script": script, "learn": bool(learn), "seed": seed,
+           "pregrow": int(pregrow), "pregrow_credited": pre, "cross_weights_after_pregrow": cw_pre,
            "outputs": outputs, "credits": credits,
            "n_session_resets": int(holder._r3pool.n_session_resets),
            "cross_weights_end": dict(holder._r3pool.cross_weights()),
@@ -445,6 +456,7 @@ def main():
     ap.add_argument("--g1-compare", nargs=2, metavar=("OFF", "ON"))
     ap.add_argument("--g2-run", choices=("alone_A", "alone_B", "interleaved"))
     ap.add_argument("--learn", action="store_true")
+    ap.add_argument("--pregrow", type=int, default=0)
     ap.add_argument("--g2-compare", nargs=3, metavar=("ALONE_A", "ALONE_B", "INTERLEAVED"))
     ap.add_argument("--selftest", action="store_true")
     ap.add_argument("--chat-smoke", choices=("on", "off"))
@@ -456,7 +468,7 @@ def main():
     elif a.g1_compare:
         g1_compare(a.g1_compare[0], a.g1_compare[1], a.out)
     elif a.g2_run:
-        g2_run(a.g2_run, a.learn, a.seed, a.out)
+        g2_run(a.g2_run, a.learn, a.seed, a.out, pregrow=a.pregrow)
     elif a.g2_compare:
         g2_compare(*a.g2_compare, a.out)
     elif a.selftest:
