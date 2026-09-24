@@ -309,6 +309,10 @@ def g2_compare(a_path, b_path, i_path, out):
     only_weight = all(k.startswith("credit.") for per in rows.values() for r in per for k in r["diff_keys"])
     dec = v.decide(go=bool(no_cross and (only_weight if learn else ok_equal)), verbose=False)
     res = {"mode": "g2_compare", "learn": learn, "seed": I["seed"], "rows": rows,
+           "pregrow": int(I.get("pregrow", 0) or 0),
+           "arm": ("G2-pregrown (amendment A1, additional, non-gating)" if I.get("pregrow") else
+                   "G2-learning (informational)" if learn else "G2-transient (gating)"),
+           "cross_weights_after_pregrow": I.get("cross_weights_after_pregrow"),
            "status": dec["status"], "preconditions": dec["preconditions"],
            "undefined_reasons": dec["undefined_reasons"],
            "all_outputs_equal_alone_vs_interleaved": bool(ok_equal),
