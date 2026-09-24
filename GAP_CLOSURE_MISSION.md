@@ -22,8 +22,11 @@ S00-S32 + G1-G6, feasibility- and rules-critiqued by workflow wf_f11d710d-4a5).*
   finding, S06 hygiene, AG-REG lbf_rows registry, AG-FLIP SETTLE prep, A1 live-organ rows, A2 learning rows, A11 proposed
   lesions, A5 false-belief, A6 transitive reasoning, A10 reward/value afferent, A3 open-ended gated turn, A4 xedge-in-wave3
   (+S02 probe), A7 warm server + latency probe, A9 gap#4 transport ceiling, A8 D6 chat wire. Merge only on SOUND review.
-- **Owner forks (defaults at 13:15 if unanswered):** (a) SETTLE default-ON -> default OFF, opt-in row; (b) Qwen off-KB
-  content for open-ended -> default opt-in only.
+- **Owner answers (12:45):** (a) SETTLE: not broken; the full-brain gate tested the wrong hypothesis (necessity at one mood);
+  flip ONLY after the multi-turn contrast + abstention-congruence rule + affective GPU timing pass (lane
+  research/settle-multiturn-contrast). (b) Qwen stays FACT-FREE: knowledge must be LEARNED by the brain, never RAG for the
+  LLM (memory project_knowledge_must_be_learned_not_rag). Lanes: research/content-provenance-learned-facts (provenance test +
+  learned-content fraction, 0% today) and research/ai-teacher-environment (chat-only teacher, workflow w569ksr7h).
 - **Compute:** AWS pool1 + pool2 (r7i.4xlarge each; budget day is UTC, ~$45 projected by 20:00 EDT), pool41/42, local, GPU
   (G1/G2-G6 per plan). Next orchestrator steps: S21 aggregate flip battery (3 last shards on pool2, task bsupz8b3u) ->
   S22-S25 batch-1 merge as M1 -> S24 battery B2a on M1 -> S26 rolling integration -> S27/S28 B2b -> S29 flips -> S31/S32.
