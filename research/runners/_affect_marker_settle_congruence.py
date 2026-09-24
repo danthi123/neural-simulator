@@ -54,6 +54,30 @@ Score turns ALREADY collected by the multi-turn contrast (no extra brain build):
 
 Self-test (no brain build):
   .venv/bin/python -m research.runners._affect_marker_settle_congruence --selftest
+
+AMENDMENT A2 (2026-09-24, fix round after an independent review; committed BEFORE any amended score is computed;
+governing document research/findings/2026-09-24-affect-marker-settle-flip-criteria-AMENDMENT-PREREG.md).
+  A2.0 HISTORY, stated plainly. The "rule holds" GO/NO-GO (8d4605b74) and the surface fix were written AFTER the
+       lane had seen s42-s44 data. That criterion carries NO pre-registered weight and is withdrawn as a
+       flip criterion; the numbers it produced are descriptive only.
+  A2.1 NOT A PRODUCTION PROPERTY. `apply_policy` edits already-recorded replies. Nothing in webapp/ reads
+       BRAIN_AFFECT_MARKER_CONGRUENCE, so the policy is not `wired` (docs/TERMS.md) and "the rule holds" says
+       nothing about what a SETTLE flip would ship. `score_all` therefore requires the policy to have been applied
+       BY the production path; every mode in this runner is post-hoc, so the rule's status is UNDEFINED until a
+       production wiring exists and is scored as shipped.
+  A2.2 THE VALENCE HALF MUST BE EXERCISED. Condition (2) can only fire when the Gate-B read takes the sign opposite
+       to the marker. On s42-s44 `affect.valence_sign` never read '-' (even the strongly negative mt_neg1 read
+       '0'), so "0 markers on an opposite-sign read" was empty by construction. The rule's status now requires
+       Gate-B to read '-' on >=1 scored turn AND '+' on >=1; otherwise the valence half is UNTESTED -> UNDEFINED.
+  A2.3 NAMED HOST SHORTCUT S6. The policy is a host string edit (abstained, so delete the marker word from the
+       reply). Under the brain-based-only standard it is a declared host shortcut, not a brain mechanism. A
+       production congruence mechanism would be a separate design decision (for example, gating the marker by the
+       same spiking speak/abstain race that decides abstention), not this edit.
+  A2.4 DENOMINATORS. Rates are reported per AFFECTIVE turn (appraisal hits or a non-zero affect level), not per
+       turn: the neutral turn cannot carry a marker and was diluting the denominator (12/15 is 12/12).
+  A2.5 --score-settle-contrast (DESCRIPTIVE, no threshold, no GO/NO-GO): off_a vs on_a AS SHIPPED (no policy),
+       per affective turn: markers, markers attached to an abstention, markers on an opposite-sign Gate-B read;
+       and the markers that would SURVIVE the policy in each arm (SETTLE's visible effect if the policy shipped).
 """
 from __future__ import annotations
 
@@ -78,6 +102,21 @@ def congruence_enabled(explicit=None) -> bool:
     if explicit is not None:
         return bool(explicit)
     return os.environ.get(CONGRUENCE_ENV, "0").strip().lower() in ("1", "true", "on", "yes")
+
+
+def congruence_wired_in_webapp() -> bool:
+    """A2.1, REPORTED: does any webapp/*.py module read the policy flag at all? (False today: the policy exists only
+    in this research runner.) A static read, so it is reported beside the status, never used to grant GO."""
+    import glob
+    root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    for p in glob.glob(os.path.join(root, "webapp", "*.py")):
+        try:
+            with open(p, encoding="utf-8") as f:
+                if CONGRUENCE_ENV in f.read():
+                    return True
+        except OSError:
+            continue
+    return False
 
 
 def register_word(lead: str) -> str:
@@ -204,15 +243,27 @@ def score_turns(turns: dict) -> dict:
     return per
 
 
-def score_all(per_seed_turns: dict, seeds=VERIFY_SEEDS, expected_turns=None) -> dict:
+def is_affective(resp: dict) -> bool:
+    """A2.4: a turn that can carry a marker -- the appraisal heard affect words, or the felt level is non-zero."""
+    if not isinstance(resp, dict):
+        return False
+    hits = (resp.get("affect") or {}).get("appraisal_hits")
+    level = (resp.get("affect_drives") or {}).get("level")
+    return bool(hits) or (level not in (None, 0))
+
+
+def score_all(per_seed_turns: dict, seeds=VERIFY_SEEDS, expected_turns=None, post_hoc=True) -> dict:
     """`expected_turns` = the turn labels every seed must carry (MT_LABELS for --score-multiturn, RUN_TURN_LABELS
     for --run). When given, the verdict below requires EVERY VERIFY_SEED to be scored with every expected turn
     present and error-free -- the 2026-09-24 fix for a missing seed file silently contributing zero turns (a
-    3-seed score read as if it were the whole set; the same class as the multiturn scorer's subset-GO bug)."""
+    3-seed score read as if it were the whole set; the same class as the multiturn scorer's subset-GO bug).
+    `post_hoc` (A2.1): True when this function APPLIES the policy to recorded replies -- every mode in this runner.
+    The status can only be GO for replies the production path itself produced with the policy applied."""
     from tools.lab import attributable_to
     from tools.verdict import Verdict
     n_total = n_off_incongruent = n_on_incongruent = n_over_suppress_violations = n_errors = 0
     n_off_leads = n_on_leads_after_policy = 0
+    n_affective = n_gateb_neg = n_gateb_pos = 0
     detail = []
     incomplete = []
     for s in VERIFY_SEEDS:
@@ -231,6 +282,12 @@ def score_all(per_seed_turns: dict, seeds=VERIFY_SEEDS, expected_turns=None) -> 
                 n_errors += 1
                 incomplete.append("s%d %s: arm error" % (s, label))
                 continue
+            resp = turns.get(label)
+            row["affective"] = is_affective(resp)
+            n_affective += int(row["affective"])
+            vs = row["off_diag"]["gateb_valence_sign_raw"]
+            n_gateb_neg += int(vs == "-")
+            n_gateb_pos += int(vs == "+")
             if row["off_diag"]["incongruent"]:
                 n_off_incongruent += 1
             if row["on_recheck_incongruent"]:
@@ -256,15 +313,30 @@ def score_all(per_seed_turns: dict, seeds=VERIFY_SEEDS, expected_turns=None) -> 
     vd = Verdict("affect_marker_settle_congruence_rule")
     vd.require("all 6 verification seeds scored, every expected turn present and error-free",
                complete, expect=True, note="; ".join(incomplete[:6]))
+    vd.require("the policy was applied BY the production path, not post-hoc to recorded replies (A2.1)",
+               not post_hoc, expect=True,
+               note="post-hoc: nothing in webapp/ reads %s; the rule is not wired" % CONGRUENCE_ENV if post_hoc else "")
+    valence_exercised = bool(n_gateb_neg >= 1 and n_gateb_pos >= 1)
+    vd.require("valence half exercised: Gate-B read '-' on >=1 scored turn and '+' on >=1 (A2.2)",
+               valence_exercised, expect=True,
+               note="Gate-B '-' reads=%d, '+' reads=%d; without both, condition (2) cannot fire and is UNTESTED"
+                    % (n_gateb_neg, n_gateb_pos))
     rule_holds = bool(n_on_incongruent == 0 and n_over_suppress_violations == 0)
     decided = vd.decide(bool(complete and rule_holds))
-    return {"probe": "affect_marker_settle_congruence", "seeds": list(seeds), "n_total": n_total,
+    return {"probe": "affect_marker_settle_congruence", "amendment": "A2 (2026-09-24)", "seeds": list(seeds),
+            "n_total": n_total, "post_hoc": bool(post_hoc),
+            "wired_in_webapp": congruence_wired_in_webapp(),
             "rule_holds": rule_holds, "status": decided["status"], "go": bool(decided["go"]),
             "preconditions": decided["preconditions"], "incomplete": incomplete,
             "n_off_leads": n_off_leads, "n_on_leads_after_policy": n_on_leads_after_policy,
-            "rule": "holds iff, over all 6 verification seeds with every turn present and error-free, the policy "
-                    "leaves 0 incongruent turns AND never changes an already-congruent lead. n_on_leads_after_policy "
-                    "is REPORTED: how many markers still reach the reply once the rule is applied.",
+            "n_affective_turns": n_affective, "gateb_minus_reads": n_gateb_neg, "gateb_plus_reads": n_gateb_pos,
+            "valence_half": "EXERCISED" if valence_exercised else "UNTESTED",
+            "off_incongruent_per_affective_turn": "%d/%d" % (n_off_incongruent, n_affective),
+            "rule": "status GO iff, over all 6 verification seeds with every turn present and error-free, the policy "
+                    "as APPLIED BY PRODUCTION leaves 0 incongruent turns AND never changes an already-congruent lead, "
+                    "with both halves exercised (A2.1/A2.2). Post-hoc scoring (every current mode) reads UNDEFINED; "
+                    "rule_holds is then descriptive only. n_on_leads_after_policy is REPORTED: how many markers "
+                    "still reach the reply once the rule is applied.",
             "n_errors": n_errors, "n_off_incongruent": n_off_incongruent, "n_on_incongruent": n_on_incongruent,
             "off_incongruent_rate": off_rate, "on_incongruent_rate": on_rate,
             "off_agreement_rate": (1.0 - off_rate) if off_rate is not None else None,
@@ -274,10 +346,72 @@ def score_all(per_seed_turns: dict, seeds=VERIFY_SEEDS, expected_turns=None) -> 
             "fraction_incongruence_removed_by_policy": attribution, "detail": detail}
 
 
+# ─────────────────────────── A2.5: SETTLE's effect on congruence AS SHIPPED (descriptive, no threshold) ─────────
+def _arm_counts(turns: dict) -> dict:
+    """Counts for ONE arm's turns, AS SHIPPED (no policy) and with the policy applied post-hoc."""
+    c = {"n_affective": 0, "markers": 0, "abstention_attached": 0, "opposite_sign_attached": 0,
+         "markers_surviving_policy": 0, "errors": 0}
+    for label, resp in (turns or {}).items():
+        if not isinstance(resp, dict) or "_error" in resp:
+            c["errors"] += 1
+            continue
+        if not is_affective(resp):
+            continue
+        c["n_affective"] += 1
+        d = diagnose(resp)
+        c["markers"] += int(bool(d["lead"]))
+        c["abstention_attached"] += int(d["abstention_conflict"])
+        c["opposite_sign_attached"] += int(d["valence_conflict"])
+        on_resp, _ = apply_policy(resp, enabled=True)
+        c["markers_surviving_policy"] += int(bool((on_resp.get("affect_drives") or {}).get("lead")))
+    return c
+
+
+def settle_contrast(off_by_seed: dict, on_by_seed: dict, expected_turns) -> dict:
+    """off_by_seed / on_by_seed = {seed: {label: response}} from the multi-turn off_a / on_a arms. DESCRIPTIVE:
+    what flipping SETTLE changes in the shipped reply's marker/abstention congruence, and what would remain of
+    SETTLE's visible effect if the post-hoc policy were shipped. No threshold, no verdict (A2.5)."""
+    per_seed, missing = {}, []
+    tot = {"off": {}, "on": {}}
+    for s in VERIFY_SEEDS:
+        row = {}
+        for arm, src in (("off", off_by_seed), ("on", on_by_seed)):
+            turns = src.get(s) or {}
+            absent = [lab for lab in expected_turns if lab not in turns]
+            if absent:
+                missing.append("s%d %s missing turns %s" % (s, arm, absent))
+            c = _arm_counts(turns)
+            if c["errors"]:
+                missing.append("s%d %s: %d errored turns" % (s, arm, c["errors"]))
+            row[arm] = c
+            for k, v in c.items():
+                tot[arm][k] = tot[arm].get(k, 0) + v
+        per_seed[str(s)] = row
+    complete = not missing
+
+    def frac(arm, k):
+        return "%d/%d" % (tot[arm].get(k, 0), tot[arm].get("n_affective", 0))
+    return {"probe": "affect_marker_settle_congruence_settle_contrast", "amendment": "A2.5 (2026-09-24)",
+            "descriptive_only": True, "complete": complete, "incomplete": missing,
+            "per_affective_turn": {arm: {k: frac(arm, k) for k in ("markers", "abstention_attached",
+                                                                     "opposite_sign_attached",
+                                                                     "markers_surviving_policy")}
+                                   for arm in ("off", "on")},
+            "settle_delta_as_shipped": {k: tot["on"].get(k, 0) - tot["off"].get(k, 0)
+                                        for k in ("markers", "abstention_attached", "opposite_sign_attached")},
+            "settle_delta_if_policy_shipped": tot["on"].get("markers_surviving_policy", 0)
+                                              - tot["off"].get("markers_surviving_policy", 0),
+            "totals": tot, "per_seed": per_seed,
+            "note": "abstention_attached = a marker on a turn whose top-level `abstained` is True, AS SHIPPED today "
+                    "(no policy is wired). settle_delta_if_policy_shipped = 0 means the policy would erase every "
+                    "marker SETTLE adds."}
+
+
 # ─────────────────────────────────────────────────────── selftest ──────────────────────────────────────────────
-def _r(lead="", abstained=False, vsign=None, answer="hi"):
+def _r(lead="", abstained=False, vsign=None, answer="hi", level=2):
     return {"answer": (lead + answer) if lead else answer, "abstained": abstained,
-            "affect_drives": {"lead": lead}, "affect": ({"valence_sign": vsign} if vsign is not None else {})}
+            "affect_drives": {"lead": lead, "level": level},
+            "affect": ({"valence_sign": vsign} if vsign is not None else {})}
 
 
 def _selftest_policy() -> bool:
@@ -354,12 +488,38 @@ def _selftest_policy() -> bool:
     ok = ok and got9
     print("  missing seeds / a missing turn -> UNDEFINED (got %s, %s) ->" % (r9["status"], r9b["status"]),
           "ok" if got9 else "FAIL")
-    # (10) complete 6-seed set, policy removes every incongruence, nothing over-suppressed -> the rule holds (GO);
-    # n_on_leads_after_policy counts the congruent markers that still reach the reply (here 0: all abstained).
+    # (10) A2.1: complete 6-seed set, policy removes every incongruence, nothing over-suppressed -> rule_holds, but
+    # the policy was applied POST-HOC (every mode here) -> status UNDEFINED, never GO (was GO before A2).
     r10 = score_all({s: clean for s in VERIFY_SEEDS}, seeds=VERIFY_SEEDS, expected_turns=labs)
-    got10 = (r10["go"] and r10["rule_holds"] and r10["n_off_incongruent"] == 6 and r10["n_on_leads_after_policy"] == 0)
+    got10 = (r10["status"] == "UNDEFINED" and not r10["go"] and r10["rule_holds"] and r10["n_off_incongruent"] == 6
+             and r10["n_on_leads_after_policy"] == 0)
     ok = ok and got10
-    print("  complete 6-seed set, all incongruence removed -> rule holds GO=%s ->" % r10["go"], "ok" if got10 else "FAIL")
+    print("  complete set, rule holds, but post-hoc -> UNDEFINED (got %s) ->" % r10["status"], "ok" if got10 else "FAIL")
+    # (10b) the same, applied BY production (post_hoc=False) with Gate-B reading both signs -> GO
+    both = {"t1": _r(lead="Gladly! ", abstained=True, vsign="+"), "t2": _r(lead="", abstained=True, vsign="-")}
+    r10b = score_all({s: both for s in VERIFY_SEEDS}, seeds=VERIFY_SEEDS, expected_turns=labs, post_hoc=False)
+    got10b = r10b["status"] == "GO" and r10b["valence_half"] == "EXERCISED"
+    ok = ok and got10b
+    print("  production-applied, both Gate-B signs seen, rule holds -> GO (got %s) ->" % r10b["status"],
+          "ok" if got10b else "FAIL")
+    # (10c) A2.2: production-applied but Gate-B never reads '-' -> the valence half is UNTESTED -> UNDEFINED
+    plus_only = {"t1": _r(lead="Gladly! ", abstained=True, vsign="+"), "t2": _r(lead="", abstained=True, vsign="0")}
+    r10c = score_all({s: plus_only for s in VERIFY_SEEDS}, seeds=VERIFY_SEEDS, expected_turns=labs, post_hoc=False)
+    got10c = r10c["status"] == "UNDEFINED" and r10c["valence_half"] == "UNTESTED"
+    ok = ok and got10c
+    print("  Gate-B never reads '-' -> valence half UNTESTED -> UNDEFINED (got %s) ->" % r10c["status"],
+          "ok" if got10c else "FAIL")
+    # (12) A2.5 settle_contrast: ON adds one marker on an abstention -> as-shipped delta +1; the policy erases both
+    off_t = {"t1": _r(lead="Gladly! ", abstained=True), "t2": _r(lead="", abstained=True)}
+    on_t = {"t1": _r(lead="Gladly! ", abstained=True), "t2": _r(lead="Wonderful! ", abstained=True)}
+    sc = settle_contrast({s: off_t for s in VERIFY_SEEDS}, {s: on_t for s in VERIFY_SEEDS}, labs)
+    got12 = (sc["complete"] and sc["settle_delta_as_shipped"]["abstention_attached"] == 6
+             and sc["settle_delta_if_policy_shipped"] == 0 and sc["per_affective_turn"]["on"]["markers"] == "12/12")
+    sc_missing = settle_contrast({42: off_t}, {42: on_t}, labs)
+    got12 = got12 and not sc_missing["complete"]
+    ok = ok and got12
+    print("  settle_contrast: +6 abstention-attached markers as shipped, 0 if the policy shipped; missing seeds "
+          "-> incomplete ->", "ok" if got12 else "FAIL")
     # (11) SURFACE: a lead that sits AFTER a prepended clause must leave the reply TEXT, not just the field; and a
     # policy that only blanks the field (the pre-fix behaviour) must be CAUGHT by the surface re-check.
     emb = {"answer": "That's thrilling for This -- Gladly! I don't know about that.", "abstained": True,
@@ -400,6 +560,8 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--run", action="store_true")
     ap.add_argument("--score-multiturn", action="store_true")
+    ap.add_argument("--score-settle-contrast", action="store_true",
+                    help="A2.5: off_a vs on_a as shipped, per affective turn (descriptive, no verdict)")
     ap.add_argument("--selftest", action="store_true")
     ap.add_argument("--settle", type=int, default=1, choices=(0, 1))
     ap.add_argument("--seeds", default=" ".join(str(s) for s in VERIFY_SEEDS))
@@ -426,6 +588,26 @@ def main():
               % (rec["n_off_incongruent"], rec["n_total"] - rec["n_errors"], rec["off_incongruent_rate"] or -1,
                  rec["n_on_incongruent"], rec["n_total"] - rec["n_errors"], rec["on_incongruent_rate"] or -1,
                  rec["over_suppression_clean"], out))
+        return
+    if a.score_settle_contrast:
+        from research.runners._affect_marker_settle_multiturn_derisk import MT_LABELS
+
+        def load(arm):
+            got = {}
+            for s in seeds:
+                p = os.path.join(a.raw_dir, "s%d" % s, "%s.json" % arm)
+                if os.path.exists(p):
+                    with open(p) as f:
+                        got[s] = json.load(f).get("turns", {})
+            return got
+        rec = settle_contrast(load("off_a"), load("on_a"), MT_LABELS)
+        out = a.out or os.path.join("research/findings/raw/_affect_marker_settle_congruence", "settle_contrast.json")
+        os.makedirs(os.path.dirname(out) or ".", exist_ok=True)
+        with open(out, "w") as f:
+            json.dump(rec, f, indent=1, default=str)
+        print("complete=%s  per affective turn: OFF %s  ON %s  | SETTLE delta as shipped %s | if policy shipped %+d -> %s"
+              % (rec["complete"], rec["per_affective_turn"]["off"], rec["per_affective_turn"]["on"],
+                 rec["settle_delta_as_shipped"], rec["settle_delta_if_policy_shipped"], out))
         return
     if a.score_multiturn:
         per_seed = {}
