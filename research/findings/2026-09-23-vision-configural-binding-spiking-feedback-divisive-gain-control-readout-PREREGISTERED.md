@@ -15,11 +15,11 @@ mechanism: SPIKING FEEDBACK DIVISIVE GAIN-CONTROL readout (`--readout attention-
   invariant readout)").
 lane: vision (D-perception configural binding / position-invariant readout)
 seeds: [42, 43, 44, 100, 101, 102]
-verdict: PREREGISTERED -- no decisive result in this finding. Seed 42 to be run locally below (sanity/
-  first data point only, NOT a verdict, IF `tools/mem_ok.sh` passes at commit time), then seeds 43/44/100/
-  101/102 staged (pool if reachable from this session, otherwise their exact commands are recorded here so
-  they can be dispatched by whichever session next has pool access). A separate finding reads the merged
-  6-seed result against the bands fixed here.
+verdict: PREREGISTERED -- no decisive 6-seed result yet. Seed 42 ran locally (sanity/first data point only,
+  NOT a verdict; `tools/mem_ok.sh 2` passed), `d_42 = 0.0` (both arms collapse to exact chance at this one
+  seed -- informative about the competing constant-output explanation, not a verdict); seeds 43/44/100/101/
+  102 are staged on the pool, not awaited. A separate finding reads the merged 6-seed result against the
+  bands fixed here.
 artifacts:
   - research/findings/raw/lanes/perception/vlin_fbgain_frac0_smoke.json (byte-identical-off proof, tiny
     scale, both levers disabled)
@@ -31,8 +31,11 @@ artifacts:
     linear` run at the identical tiny scale, committed alongside the smokes, used to VERIFY -- not just
     assert -- that the frac0 smoke is byte-identical to `--readout linear` except `elapsed_seconds`)
   - all four `.prov.json` sidecars, committed in the prior (code) commit
-  - the decisive-scale seed-42 artifact, added in a SEPARATE commit AFTER this one (per
+  - research/findings/raw/lanes/perception/conjbind_fbgain_gainonly_AT_satdiv_GO_sig8_sc760_r1p0_nglim6_s42.json
+    (decisive-scale, seed 42, gain-only arm, committed in a SEPARATE commit after this one per
     `gates/prereg_before_run`)
+  - research/findings/raw/lanes/perception/conjbind_fbgain_full_AT_satdiv_GO_sig8_sc760_r1p0_nglim6_s42.json
+    (decisive-scale, seed 42, full mechanism arm, same separate commit)
 external: Heeger (1992), "Normalization of cell responses in cat striate cortex," Visual Neuroscience
   9(2):181-197 -- divisive normalization REALIZED at the circuit level by RECURRENT/SHUNTING inhibition, a
   pooled inhibitory signal computed DYNAMICALLY from the circuit's own ongoing activity, distinct from the
@@ -241,9 +244,40 @@ No `cfg.seed` trap applies (standalone numpy runner, no `CoreSimConfig`/`Simulat
 alone controls determinism (unchanged from the retracted prereg's own verified derivation of this fact,
 lines 175-180, not itself part of what was retracted).
 
-## Seed 42, run locally below (sanity-only -- NOT a verdict; 5 of 6 seeds staged, not awaited)
+## Seed 42, run locally (sanity-only -- NOT a verdict; 5 of 6 seeds staged on the pool, not awaited)
 
-See the run log appended after this pre-registration commit lands (a separate commit, per
-`gates/prereg_before_run`). Both arms (gain-only and full) are run at seed 42 for the paired comparison to
-have its first data point; per this lane's own standing 6-seed rule, no generalization or verdict claim is
-made on n=1.
+`tools/mem_ok.sh 2` passed (`avail=16G need=2G -> 14G left`, committed-unused RAM already discounted). Ran
+both arms of the decisive command above with `--seeds 42` only, locally, single-tenant (measured peak RSS
+via `resource.getrusage(RUSAGE_CHILDREN)` on a matching invocation: **0.646 GB**, ~67-71s elapsed per each
+artifact's own `elapsed_seconds` -- consistent with the retracted prereg's own 0.644 GB measurement at a
+similar scale, well inside this lane's usual light-numpy-job envelope):
+
+| quantity | gain-only (`--fb-strength 0.0`) | full mechanism (`--fb-strength 1.0`) |
+|---|---|---|
+| `overall_verdict` | `LINDISCRIM-READOUT-NOGO` | `LINDISCRIM-READOUT-NOGO` |
+| `LEARNED_spkwta_held` | 0.25 (= chance) | 0.25 (= chance) |
+| `LEARNED_spkwta_train` | 0.25 (= chance) | 0.25 (= chance) |
+| `LEARNED_linscore_held` | 0.5208 | 0.5208 (unaffected by `--readout`, as expected) |
+| `RANDOM_spkwta_held` | 0.25 | 0.25 |
+| `RATE_lin_ceiling_held` | 0.4896 | 0.4896 |
+| `capability_go` / `learning_load_bearing` / `scramble_null_pass` | false / false / 1.0 (holds) | false / false / 1.0 (holds) |
+
+`d_42 = LEARNED_spkwta_held(full) - LEARNED_spkwta_held(gain-only) = 0.25 - 0.25 = 0.0` -- no effect at this
+one seed, consistent with either bands 4 (NEUTRAL) or a genuine null; per this lane's own standing 6-seed
+rule, no generalization or verdict claim is made on n=1, and the pre-registered bands above are read once
+all 6 seeds land.
+
+**This one seed is informative about the COMPETING explanation named in the banking finding, even though it
+cannot verdict the paired-t gate.** The gain-only arm (`--fb-strength 0.0`) removes the per-class host satdiv
+stage entirely (`gated = bd` goes raw into the sign-split) while holding everything else identical to the
+banked-NO-GO attention-gated-soft run. If the per-class-satdiv HYPOTHESIS were the whole story, removing that
+stage alone should have been enough to lift `LEARNED_spkwta_held` off chance at this seed -- it did not
+(0.25, and `LEARNED_spkwta_train` is also exactly 0.25, the same constant-output signature the banking
+finding's competing explanation names). This is one seed, not a refutation, but it does NOT confirm the
+per-class-satdiv hypothesis either; the remaining 5 seeds will show whether this persists.
+
+## Remaining seeds (43, 44, 100, 101, 102) staged on the pool, not awaited
+
+Per the harness task's instruction, this finding does not wait for the pool results; see the commit's
+`research/queue/pool.queue` additions (one line per seed per arm) for the exact staged commands, each with
+its own `--out` path so the pool-dispatched jobs cannot clobber each other or the seed-42 local files.
