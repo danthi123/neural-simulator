@@ -1,0 +1,137 @@
+{
+  "runner": "research.runners.load_bearing_fraction",
+  "metric": "load_bearing_fraction",
+  "repeats": 2,
+  "seed": 42,
+  "backend": "numpy",
+  "cuda_visible_devices": null,
+  "source_prov_abstain_at_tie_env": null,
+  "affect_marker_settle_env": null,
+  "per_faculty": [
+    {
+      "faculty": "wm-binding-advanced",
+      "turn": "wmb_ask",
+      "kind": "neural-lesion",
+      "flag": "BRAIN_MULTIREF_LESION",
+      "load_bearing": true,
+      "verdict": "regressed",
+      "change_kind": "value",
+      "diffs": [
+        {
+          "field": "answer",
+          "on": "I'm holding 2 referents in working memory at once: fox and wolf.",
+          "off": "I'm not holding any referent in working memory right now."
+        }
+      ],
+      "treatment_diffs": 1,
+      "control_diffs": 0,
+      "attributable_fraction": 1.0,
+      "null_control_clean": true,
+      "lesion_reproduced": true,
+      "flag_resolves": true,
+      "note": "LB_WMB_HOLDQUERY_PROBE: 'the fox and the wolf walked in' -> 'who are we talking about' on session 'wmb' (reply = the organ's read-back); specificity control = the same ask after a 1-referent intro (session 'wmb1'). ",
+      "wmb_adequacy": {
+        "A1_route": true,
+        "A2_two_referents": true,
+        "S1_control_out_of_scope": true,
+        "S1_control_null_clean": true,
+        "S1_control_lesion_unchanged": true
+      },
+      "wmb_control_group": [
+        "wmb1_intro",
+        "wmb1_ask"
+      ],
+      "wmb_mechanism": {
+        "intact_a": {
+          "multiref.kind": "query",
+          "multiref.is_hold_query": true,
+          "multiref.n_referents": 2,
+          "multiref.recovered": {
+            "0": "fox",
+            "1": "wolf"
+          },
+          "multiref.all_recovered": true,
+          "multiref.hold_alive_min": 0.061111111111111116,
+          "inner_state_readout": true,
+          "abstained": false,
+          "answer": "I'm holding 2 referents in working memory at once: fox and wolf."
+        },
+        "intact_b": {
+          "multiref.kind": "query",
+          "multiref.is_hold_query": true,
+          "multiref.n_referents": 2,
+          "multiref.recovered": {
+            "0": "fox",
+            "1": "wolf"
+          },
+          "multiref.all_recovered": true,
+          "multiref.hold_alive_min": 0.061111111111111116,
+          "inner_state_readout": true,
+          "abstained": false,
+          "answer": "I'm holding 2 referents in working memory at once: fox and wolf."
+        },
+        "lesion": {
+          "multiref.kind": "query",
+          "multiref.is_hold_query": true,
+          "multiref.n_referents": 2,
+          "multiref.recovered": {
+            "0": null,
+            "1": null
+          },
+          "multiref.all_recovered": false,
+          "multiref.hold_alive_min": 0.0,
+          "inner_state_readout": true,
+          "abstained": false,
+          "answer": "I'm not holding any referent in working memory right now."
+        },
+        "control_intact_a": {
+          "multiref.kind": null,
+          "multiref.is_hold_query": null,
+          "multiref.n_referents": null,
+          "multiref.recovered": null,
+          "multiref.all_recovered": null,
+          "multiref.hold_alive_min": null,
+          "inner_state_readout": null,
+          "abstained": true,
+          "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about talking yet: what can you tell me about talking?"
+        },
+        "control_lesion": {
+          "multiref.kind": null,
+          "multiref.is_hold_query": null,
+          "multiref.n_referents": null,
+          "multiref.recovered": null,
+          "multiref.all_recovered": null,
+          "multiref.hold_alive_min": null,
+          "inner_state_readout": null,
+          "abstained": true,
+          "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about talking yet: what can you tell me about talking?"
+        }
+      },
+      "verdict_before_adequacy": "regressed"
+    }
+  ],
+  "determinism": {
+    "deterministic": true,
+    "n_null_controls_checked": 1,
+    "dirty_null_controls": []
+  },
+  "counts": {
+    "n_faculties_total": 1,
+    "n_coverable_env_lesion": 1,
+    "n_exercised": 1,
+    "n_load_bearing": 1,
+    "n_not_load_bearing": 0,
+    "n_not_exercised": 0,
+    "n_noisy": 0,
+    "n_lesion_knob_missing": 0,
+    "n_in_process": 0,
+    "n_thin": 0,
+    "n_mechanism_only": 0,
+    "n_proposed": 0
+  },
+  "load_bearing_fraction": 1.0,
+  "load_bearing_faculties": [
+    "wm-binding-advanced"
+  ],
+  "not_load_bearing_faculties": []
+}

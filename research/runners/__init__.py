@@ -184,7 +184,9 @@ def _record_start():
         # on the GPU for months, and gap#5's read-density lived ONLY in an env var -- a knob with no other record.
         "env": {k: v for k, v in os.environ.items()
                 if not k.startswith(_PRIVATE_PROVENANCE_PREFIX)
-                and (k.startswith(("SIM_", "GAP5_", "HEBB_", "POOL_", "GAP4_"))
+                # LB_ / BRAIN_MULTIREF_: the load-bearing battery's opt-in probe flags and the D6 lesion knobs
+                # (adversarial review v2:7a3b94367: a flag-ON wm-binding artifact recorded only SIM_BACKEND).
+                and (k.startswith(("SIM_", "GAP5_", "HEBB_", "POOL_", "GAP4_", "LB_", "BRAIN_MULTIREF_"))
                      or k == "CUDA_VISIBLE_DEVICES")},
     }
     if v2:

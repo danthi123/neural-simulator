@@ -63,12 +63,12 @@ Gate readings (`_swap_drive_score`):
   proposed topic equals the incumbent — so `swapped`/`reason`/`lead` are **pass-by-construction** here; only
   `answer` is a field that could have shown a real lesion effect. It did not (0 diff on `answer` too). The
   mechanism itself is **not** unaffected by the lesion on these turns, only the reply is: `mm_peak` drops
-  0.0556→0.0056 on `sw_open` and 0.0667→0.0111 on `sw_hold` (both in `swap_state` in `lb.json`), and `boost_max`
+  0.0556→0.0056 on `sw_open` and 0.0667→0.0111 on `sw_hold` (both in `swap_state` in `lb.json`), and `boost_max` <!--derived-->
   falls with it. The correct statement is **"no reply-level change"** on the contrast turns, not "the lesion
   changes nothing" — the earlier draft of this finding used the latter, over-broad phrasing.
 - G5 reply changed: yes. 4 diffs: `answer`, `swapped`, `reason`, `lead`. **What G5 actually tests:** once the
   intact arm swaps (`swapped=True`), the lead string is a deterministic host template of that one boolean, and
-  the lesion pins the mismatch-detector's proposal drive to (near-)zero (`boost_max` 0.0111 vs 0.16 intact), so
+  the lesion pins the mismatch-detector's proposal drive to (near-)zero (`boost_max` 0.0111 vs 0.16 intact), so <!--derived-->
   once G4's contrast holds, a swap-vs-no-swap reply difference on `sw_switch` is close to guaranteed by
   construction too. The genuinely falsifiable content G5 carries is (a) whether the *intact* integrated brain
   swaps at all on a given seed (it can read `mismatch_held_no_swap` instead — the isolated de-risk's 6/6 was not
