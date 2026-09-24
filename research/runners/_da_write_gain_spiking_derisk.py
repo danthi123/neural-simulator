@@ -283,18 +283,54 @@ def _rate_to_gain(rate, rate_lo, rate_hi, g_min, g_max):
 _READERS = {}   # (seed, lesion) -> {"bridge", "idx", "snapshot", "rate_lo", "rate_hi"}
 
 
-def _get_reader(seed, lesion):
-    key = (int(seed), bool(lesion))
-    r = _READERS.get(key)
-    if r is not None:
-        return r
+def _build_and_calibrate(seed, lesion):
+    """Build one write_gain reader + calibrate its lo/hi anchors. No caching -- pure, so it can be reused by any
+    cache namespace (`_get_reader` for production, `_get_isolated_reader` for a caller that must not share
+    production's cache entries; see the latter's docstring for why that separation exists)."""
     bridge = _build_write_gain_bridge(seed, lesion=lesion)
     wg_idx = np.asarray(bridge.region_manager.indices("write_gain"), dtype=np.int64)
     snap = _snapshot(bridge)
     rate_lo = _read_rate_hz_repeated(bridge, wg_idx, _DA_CAL_LO, snap)
     rate_hi = _read_rate_hz_repeated(bridge, wg_idx, _DA_CAL_HI, snap)
-    r = {"bridge": bridge, "idx": wg_idx, "snapshot": snap, "rate_lo": rate_lo, "rate_hi": rate_hi}
+    return {"bridge": bridge, "idx": wg_idx, "snapshot": snap, "rate_lo": rate_lo, "rate_hi": rate_hi}
+
+
+def _get_reader(seed, lesion):
+    key = (int(seed), bool(lesion))
+    r = _READERS.get(key)
+    if r is not None:
+        return r
+    r = _build_and_calibrate(seed, lesion)
     _READERS[key] = r
+    return r
+
+
+_ISOLATED_READERS = {}   # (seed, tag) -> reader dict; a namespace `_get_reader`/production NEVER reads or writes
+
+
+def _get_isolated_reader(seed, tag="isolated"):
+    """Like `_get_reader`, but in a cache namespace the production write-gain path (`spiking_write_gain`, called
+    from `webapp/da_encoding_drives_chat.py` whenever `BRAIN_DA_ENCODING_SPIKING_GAIN` is on) never touches.
+
+    WHY THIS EXISTS (2026-09-23 fix, adversarial review v2:dd14adaf7 on research/da-tag-capture-chat-wire).
+    `webapp.da_tag_capture.SpikingD1Activation` used to call `_get_reader(seed, False)` directly -- the SAME
+    `(seed, lesion)` key production's intact-arm gain read uses. Whichever caller ran first in the process decided
+    the entry's calibration: in an intact arm (`BRAIN_DA_ENCODING_LESION` unset) production's own gain read usually
+    built (and so calibrated) it first, outside any private RNG; in a lesion arm production pins the gain to 1.0
+    BEFORE `_get_reader` would ever be called, so the chat ledger's `_private_rng`-wrapped build was always the
+    first (and only) one there. Gamma / d1_a_go then tracked which ARM built the reader, not the lesioned edge
+    (seed 42: gamma 46.5, d1_a_go 0.131 intact vs gamma 32.8, d1_a_go 0.187 in every lesion arm) -- a confound the
+    checklist's "lesion the SPECIFIC claimed edge, hold everything else byte-identical" rule forbids. Building the
+    ledger's reader into this separate namespace makes its calibration depend ONLY on (seed, tag): production
+    never populates or reads `_ISOLATED_READERS`, so no arm's build order can leak into another's. `grade_seed`
+    (research/runners/_da_tag_capture_chat_probe.py) asserts gamma/d1_a_go equal across every companion-ON arm at
+    a seed as a standing check that this stays true."""
+    key = (int(seed), str(tag))
+    r = _ISOLATED_READERS.get(key)
+    if r is not None:
+        return r
+    r = _build_and_calibrate(seed, lesion=False)
+    _ISOLATED_READERS[key] = r
     return r
 
 

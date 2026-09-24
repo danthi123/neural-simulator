@@ -127,8 +127,15 @@ def _git_head(full=False):
         command = ["git", "rev-parse", "HEAD"] if full else ["git", "rev-parse", "--short", "HEAD"]
         sha = subprocess.run(command, cwd=_ROOT,
                              capture_output=True, text=True, timeout=5).stdout.strip() or "unknown"
-        dirty = subprocess.run(["git", "status", "--porcelain"], cwd=_ROOT,
-                               capture_output=True, text=True, timeout=15).stdout.strip() != ""
+        # AMENDMENT B / D6-capacity-curve review (2026-09-23): runs.jsonl is the provenance door's OWN append-only
+        # log (written by _record_start below, every run) -- it is self-referentially "modified" by the very act
+        # of recording provenance, so counting it makes git_dirty=true UNCONDITIONALLY for every provenanced run
+        # in a checkout that has ever produced one (all 13 D6-capacity-curve sidecars read git_dirty=true for
+        # exactly this reason, never a real source change). Excluded by exact pathspec -- nothing else is silenced.
+        _prov_log_rel = os.path.relpath(os.path.join(_PROV_DIR, "runs.jsonl"), _ROOT)
+        dirty = subprocess.run(
+            ["git", "status", "--porcelain", "--", ".", ":(exclude)%s" % _prov_log_rel],
+            cwd=_ROOT, capture_output=True, text=True, timeout=15).stdout.strip() != ""
         if sha != "unknown":
             return sha, dirty
     except Exception:

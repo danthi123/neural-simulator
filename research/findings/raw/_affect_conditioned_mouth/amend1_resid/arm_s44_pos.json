@@ -1,0 +1,387 @@
+{
+ "runner": "_lbf_affect_conditioned_mouth_derisk (worker)",
+ "seed": 44,
+ "arm": "pos",
+ "mode": "resid",
+ "lesion": "0",
+ "control": false,
+ "priming": "I am absolutely thrilled and overjoyed today, everything is wonderful!",
+ "valence_fs": 0.34055555555555556,
+ "decode_seed": 44,
+ "amendment": "amend1",
+ "backend": "numpy",
+ "cuda_visible_devices": null,
+ "resolved_ckpt": null,
+ "ckpt_is_per_seed": true,
+ "priming_affect": {
+  "on": true,
+  "lesioned": false,
+  "composer": "onebrain",
+  "differential": 0.04055555555555555,
+  "valence_sign": "+",
+  "tone_level": 2,
+  "tone_token": "gladly",
+  "forthcomingness": {
+   "max_sentences": 4,
+   "max_elaborations": 3
+  },
+  "manner_template": "Keep the words {a}, {v}, {p} and the verb '{v}'. Write ONE short, warm, friendly sentence.",
+  "appraisal_valence": 0.47499999999999987,
+  "appraisal_arousal": 0.39999999999999997,
+  "appraisal_hits": [
+   "thrilled",
+   "overjoyed",
+   "wonderful"
+  ],
+  "pos_rate": 0.04055555555555555,
+  "neg_rate": 0.0
+ },
+ "tone_rows": [
+  {
+   "prompt": "Tell me about the ocean",
+   "raw": "The ocean is a vast and ever-changing resource for those who choose to explore its depths. It's a place where life thrives, offering a wide range of experiences and opportunities for all ages. The ocean is a source of inspiration and adventure, bringing joy and excitement to many people around the world. As we continue to explore the ocean, we can expect to discover new ways to engage with the ocean, whether through learning and experience, or simply enjoying the natural beauty of the water.",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.0,
+   "tone_hits": 0,
+   "salad_frac": 0.058823529411764705,
+   "affect_differential": 0.04055555555555555,
+   "state_valence": 0.1622222222222222,
+   "gen_seconds": 4.98,
+   "conditioning": {
+    "mode": "resid",
+    "valence_in": 0.1622222222222222,
+    "c": 0.4763458401305057,
+    "valence_fs": 0.34055555555555556,
+    "layer": 12,
+    "k": 4.0,
+    "hook_registered": true,
+    "axis_norm": 6.145166397094727,
+    "axis_sha": "dfaf3519b40ec49d723a2e2b1f428cfba298e1cab4a467938b50af97039263b1",
+    "hook_calls": 98
+   }
+  },
+  {
+   "prompt": "What do you think about music",
+   "raw": "As a mind, I am always ready to share my knowledge and experience with you! Whether you're looking for new tunes to enjoy, or familiarize yourself with the world through music, I'm here to guide and support you in all aspects of life. Enjoy exploring the diverse array of musical experiences that enrich our lives!\n\nFeel free to join us on your journey through the sounds of music, whether it's through listening to the latest releases, discovering new artists, or simply enjoying the simple pleasure of music. Let's create memories together!",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.0,
+   "tone_hits": 0,
+   "salad_frac": 0.054945054945054944,
+   "affect_differential": 0.04055555555555555,
+   "state_valence": 0.1622222222222222,
+   "gen_seconds": 4.8,
+   "conditioning": {
+    "mode": "resid",
+    "valence_in": 0.1622222222222222,
+    "c": 0.4763458401305057,
+    "valence_fs": 0.34055555555555556,
+    "layer": 12,
+    "k": 4.0,
+    "hook_registered": true,
+    "axis_norm": 6.145166397094727,
+    "axis_sha": "dfaf3519b40ec49d723a2e2b1f428cfba298e1cab4a467938b50af97039263b1",
+    "hook_calls": 108
+   }
+  },
+  {
+   "prompt": "Tell me about the mountains",
+   "raw": "As I am a brain, I welcome any information on the knowledge base. Let's start by sharing some interesting facts about the mountain range known as the Himalayas. These include:\n\u2022 The highest peak in the world at 8,848 meters above sea level, making it the tallest mountain in the world.\n\u2022 The Himalayan region covers over 2,500 square kilometers of land, stretching across Asia, including China, India, Nepal, Bhutan, and Bhutan.\n\u2022 The name \"Himalaya\" comes from",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.25,
+   "tone_hits": 1,
+   "salad_frac": 0.07692307692307693,
+   "affect_differential": 0.04055555555555555,
+   "state_valence": 0.1622222222222222,
+   "gen_seconds": 4.81,
+   "conditioning": {
+    "mode": "resid",
+    "valence_in": 0.1622222222222222,
+    "c": 0.4763458401305057,
+    "valence_fs": 0.34055555555555556,
+    "layer": 12,
+    "k": 4.0,
+    "hook_registered": true,
+    "axis_norm": 6.145166397094727,
+    "axis_sha": "dfaf3519b40ec49d723a2e2b1f428cfba298e1cab4a467938b50af97039263b1",
+    "hook_calls": 110
+   }
+  },
+  {
+   "prompt": "Describe a walk in the forest",
+   "raw": "As I step into the tranquil embrace of nature's gentle flow, my heart swells with the promise of adventure and discovery. The sun dances on my skin, its warmth radiating through every fiber of my being, inviting me to bask in the essence of life, whether in the serene presence of the forest itself, where each leaf whispers its welcome, ensuring that every step is a testament to our connection to the environment. This moment invites us to explore the journey of learning and growth, fostering a sense of belonging and trust within our community.\n\nIn this",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.6123724356957946,
+   "tone_hits": 3,
+   "salad_frac": 0.07216494845360824,
+   "affect_differential": 0.04055555555555555,
+   "state_valence": 0.1622222222222222,
+   "gen_seconds": 4.84,
+   "conditioning": {
+    "mode": "resid",
+    "valence_in": 0.1622222222222222,
+    "c": 0.4763458401305057,
+    "valence_fs": 0.34055555555555556,
+    "layer": 12,
+    "k": 4.0,
+    "hook_registered": true,
+    "axis_norm": 6.145166397094727,
+    "axis_sha": "dfaf3519b40ec49d723a2e2b1f428cfba298e1cab4a467938b50af97039263b1",
+    "hook_calls": 110
+   }
+  },
+  {
+   "prompt": "Tell me about your favorite season",
+   "raw": "As a warm welcome, I am delighted to share that my personal favorites include springtime, summer, autumn, and winter. Each season brings its unique attributes, enriching our lives with various activities and experiences.\n\nIn spring, we find ourselves at the beginning of a new chapter, welcoming the warmth of sunshine and gentle breezes into our daily routine. This season is perfect for those who appreciate the beauty of nature's embrace, whether it be through outdoor adventures like walking on the green grass, enjoying the fresh air, and engaging in simple activities such as",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.7905694150420948,
+   "tone_hits": 4,
+   "salad_frac": 0.053763440860215055,
+   "affect_differential": 0.04055555555555555,
+   "state_valence": 0.1622222222222222,
+   "gen_seconds": 4.86,
+   "conditioning": {
+    "mode": "resid",
+    "valence_in": 0.1622222222222222,
+    "c": 0.4763458401305057,
+    "valence_fs": 0.34055555555555556,
+    "layer": 12,
+    "k": 4.0,
+    "hook_registered": true,
+    "axis_norm": 6.145166397094727,
+    "axis_sha": "dfaf3519b40ec49d723a2e2b1f428cfba298e1cab4a467938b50af97039263b1",
+    "hook_calls": 110
+   }
+  },
+  {
+   "prompt": "Describe the city at night",
+   "raw": "As I am a living entity, I am familiar with the city's ambiance and experience. The vibrant atmosphere of the city is evident when you step into its embrace. Whether you're exploring the streets, engaging in conversations, and enjoying the local culture, the city's energy is palpable. It's a place where people come together, fostering a sense of community and belonging.\n\nThe city's layout is simple yet inviting, ensuring a smooth journey for visitors. From the bustling marketplaces, you can find a variety of options, offering a taste of life",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.25,
+   "tone_hits": 1,
+   "salad_frac": 0.06666666666666667,
+   "affect_differential": 0.04055555555555555,
+   "state_valence": 0.1622222222222222,
+   "gen_seconds": 4.75,
+   "conditioning": {
+    "mode": "resid",
+    "valence_in": 0.1622222222222222,
+    "c": 0.4763458401305057,
+    "valence_fs": 0.34055555555555556,
+    "layer": 12,
+    "k": 4.0,
+    "hook_registered": true,
+    "axis_norm": 6.145166397094727,
+    "axis_sha": "dfaf3519b40ec49d723a2e2b1f428cfba298e1cab4a467938b50af97039263b1",
+    "hook_calls": 110
+   }
+  },
+  {
+   "prompt": "Tell me about the morning",
+   "raw": "Good morning! I'm glad to welcome you to our daily routine. This morning, we start with a gentle greeting and a warm welcome. It's a chance for us to begin our day with a smile and a positive attitude. We're here to support you in all aspects of your journey, whether you choose to join us at any time during your visit. Let's continue to be a welcoming place for you and your family. Enjoy your morning!\n\nRemember to take care of yourself and your loved ones. Your health and happiness are always on our minds",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.7184212081070996,
+   "tone_hits": 4,
+   "salad_frac": 0.07291666666666667,
+   "affect_differential": 0.04055555555555555,
+   "state_valence": 0.1622222222222222,
+   "gen_seconds": 4.87,
+   "conditioning": {
+    "mode": "resid",
+    "valence_in": 0.1622222222222222,
+    "c": 0.4763458401305057,
+    "valence_fs": 0.34055555555555556,
+    "layer": 12,
+    "k": 4.0,
+    "hook_registered": true,
+    "axis_norm": 6.145166397094727,
+    "axis_sha": "dfaf3519b40ec49d723a2e2b1f428cfba298e1cab4a467938b50af97039263b1",
+    "hook_calls": 110
+   }
+  },
+  {
+   "prompt": "What do you think about the future",
+   "raw": "Welcome! Let's start by knowing who we are today. What would you like to know about the future? We're all here for a new experience, just like you!\n\nIf you'd like to share any thoughts on the topics you've learned so far, let us know how they align with your interests and experiences. This will help us understand the foundation of our knowledge and enrich the journey together.\n\nFeel free to add more information anytime you want to join the learning process. Your presence brings joy and connection to each other, making the future a memorable",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.25,
+   "tone_hits": 1,
+   "salad_frac": 0.0625,
+   "affect_differential": 0.04055555555555555,
+   "state_valence": 0.1622222222222222,
+   "gen_seconds": 4.79,
+   "conditioning": {
+    "mode": "resid",
+    "valence_in": 0.1622222222222222,
+    "c": 0.4763458401305057,
+    "valence_fs": 0.34055555555555556,
+    "layer": 12,
+    "k": 4.0,
+    "hook_registered": true,
+    "axis_norm": 6.145166397094727,
+    "axis_sha": "dfaf3519b40ec49d723a2e2b1f428cfba298e1cab4a467938b50af97039263b1",
+    "hook_calls": 110
+   }
+  },
+  {
+   "prompt": "Tell me about the river",
+   "raw": "The river flows through the land, its gentle flow carrying water from the source to the destination, making it easy for people to enjoy their daily life. It's a beautiful sight, a reminder of nature's beauty and tranquility. The river is a symbol of unity and harmony between people, fostering a sense of community and belonging. It's a place where people can relax and unwind, offering a tranquil environment for them to explore and experience the world around them. This river is a testament to the diversity and richness of human experiences, inviting visitors to discover",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.7184212081070996,
+   "tone_hits": 3,
+   "salad_frac": 0.07291666666666667,
+   "affect_differential": 0.04055555555555555,
+   "state_valence": 0.1622222222222222,
+   "gen_seconds": 4.82,
+   "conditioning": {
+    "mode": "resid",
+    "valence_in": 0.1622222222222222,
+    "c": 0.4763458401305057,
+    "valence_fs": 0.34055555555555556,
+    "layer": 12,
+    "k": 4.0,
+    "hook_registered": true,
+    "axis_norm": 6.145166397094727,
+    "axis_sha": "dfaf3519b40ec49d723a2e2b1f428cfba298e1cab4a467938b50af97039263b1",
+    "hook_calls": 110
+   }
+  },
+  {
+   "prompt": "Describe a quiet afternoon",
+   "raw": "In the morning, I am ready for a warm welcome, a gentle breeze that brings joy and light into my day. This is the beginning of a new chapter, a journey that will take me through the winding paths of knowledge and understanding, leading me to where I can be known by all who seek to know. As I step into the sun, I am greeted by a sense of calmness, a reminder of the warmth and comfort that comes with being in the presence of others, whether they are friends, family, or strangers. This is the",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.4588314677411235,
+   "tone_hits": 2,
+   "salad_frac": 0.07216494845360824,
+   "affect_differential": 0.04055555555555555,
+   "state_valence": 0.1622222222222222,
+   "gen_seconds": 4.88,
+   "conditioning": {
+    "mode": "resid",
+    "valence_in": 0.1622222222222222,
+    "c": 0.4763458401305057,
+    "valence_fs": 0.34055555555555556,
+    "layer": 12,
+    "k": 4.0,
+    "hook_registered": true,
+    "axis_norm": 6.145166397094727,
+    "axis_sha": "dfaf3519b40ec49d723a2e2b1f428cfba298e1cab4a467938b50af97039263b1",
+    "hook_calls": 110
+   }
+  }
+ ],
+ "known_rows": [
+  {
+   "prompt": "Tell me about frank_lincoln_wright",
+   "raw": "Welcome to our friendly community! As we continue to explore the world of learning, let us invite you to join the journey of understanding and appreciating the rich legacy of franklin lincoln wright. This foundation will ensure that you can confidently engage with the knowledge and experiences shared by this esteemed figure. Let's dive into the story of this remarkable individual, who has been a source of inspiration for many years.",
+   "known": true,
+   "facts": [
+    [
+     "frank_lincoln_wright",
+     "instance_of",
+     "human_specie"
+    ],
+    [
+     "frank_lincoln_wright",
+     "country_of_citizenship",
+     "u_s_of_a"
+    ],
+    [
+     "frank_lincoln_wright",
+     "languages_spoken_written_or_signed",
+     "number_of_english_words"
+    ],
+    [
+     "frank_lincoln_wright",
+     "occupation",
+     "stanford_downey_architects_inc"
+    ],
+    [
+     "frank_lincoln_wright",
+     "given_name",
+     "frank_given_name"
+    ],
+    [
+     "frank_lincoln_wright",
+     "educated_at",
+     "university_of_wisconsin_madison"
+    ],
+    [
+     "frank_lincoln_wright",
+     "place_of_death",
+     "estrella_phoenix_arizona"
+    ],
+    [
+     "frank_lincoln_wright",
+     "described_by_source",
+     "ubuweb"
+    ],
+    [
+     "frank_lincoln_wright",
+     "member_of",
+     "artists_rights_society"
+    ],
+    [
+     "frank_lincoln_wright",
+     "family_name",
+     "woodwright"
+    ],
+    [
+     "frank_lincoln_wright",
+     "award_received",
+     "riba_gold_medal"
+    ]
+   ],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.6123724356957946,
+   "tone_hits": 3,
+   "salad_frac": 0.07042253521126761,
+   "affect_differential": 0.04055555555555555,
+   "state_valence": 0.1622222222222222,
+   "gen_seconds": 4.28,
+   "conditioning": {
+    "mode": "resid",
+    "valence_in": 0.1622222222222222,
+    "c": 0.4763458401305057,
+    "valence_fs": 0.34055555555555556,
+    "layer": 12,
+    "k": 4.0,
+    "hook_registered": true,
+    "axis_norm": 6.145166397094727,
+    "axis_sha": "dfaf3519b40ec49d723a2e2b1f428cfba298e1cab4a467938b50af97039263b1",
+    "hook_calls": 83
+   }
+  }
+ ],
+ "maxrss_gb": 8.854736,
+ "wall_seconds": 462.5
+}

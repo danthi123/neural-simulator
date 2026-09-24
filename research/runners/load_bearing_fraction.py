@@ -150,6 +150,7 @@ from research.runners.onebrain_regression_battery import (
     _TURN_BY_LABEL,
     FACULTY_PROBES,
     _spawn_arm as _spawn_arm_raw,
+    _get_path,
     compare,
     faculty_list,
 )
@@ -386,6 +387,95 @@ _OPEN_ENDED_DRIVE_TURN = "oe_ask"        # the rich=True open-ended ASK turn (it
 # draw under the default spiking gate.)
 _OPEN_ENDED_DRIVE_ENV = {"BRAIN_SPIKING_PLAUSIBILITY": "0"}
 
+# ── SWAP-DRIVES ADEQUATE PROBE (opt-in, env-gated; default OFF -> byte-identical to the pre-change battery) ──────────
+# WHY (2026-09-23 all-fixes 6-seed battery: swap-drives-response NOT-EXERCISED on every seed). The default probe turn
+# `held` ('the wolf watches the owl', after 'the fox and the wolf walked in') cannot exercise the GNW thought-swap
+# drive (board #77/#85, webapp/swap_drives_chat.py) for two probe reasons, not wiring reasons: (1) wolf/owl/fox are
+# not build-time KB concepts, so gnw_thought_swap._extract_topic returns None (no_topic_hold -- no swap is ever due);
+# (2) the turn is answered by the role-binding REPAIR short-circuit, which returns before server.py attaches
+# `swap_drives` -> the fields are absent in BOTH arms (measured: allfixes2/s42/swap-drives-response/*.json). This flag
+# remaps the faculty to an ordinary topic conversation on session 'sw2' over the boot facts: `sw_open` ('what does
+# the dog chase' -> held topic 'dog'), `sw_hold` (same question: a HOLD, no swap due), `sw_switch` ('what does the cat
+# eat' -> a salient competing grounded topic 'cat'). Whether the intact brain swaps on sw_switch is the spiking
+# mismatch/eviction/vacancy chain's decision (it can fail: mismatch_held_no_swap), and whether that reaches the reply
+# is the server's lead prepend on the single-fact path (it can fail: a short-circuit, or a downstream overwrite).
+# The pre-registered gate (research/findings/2026-09-23-swap-drives-adequate-probe-PREREGISTRATION.md) is scored by
+# _swap_drive_score below: LOAD-BEARING requires the REPLY (`answer`) to differ intact-vs-lesion on sw_switch, a clean
+# intact-vs-intact null on all three turns, a reproduced lesion, AND a clean CONTRAST -- the lesion must NOT change
+# sw_open/sw_hold, where no swap is due (a lesion that alters replies with no topic change is non-specific, not the
+# swap). No base_env (the swap drive is default-ON; the swap workspace self-seeds from BRAIN_CHAT_SEED). OFF (default)
+# -> swap-drives-response is measured on `held` exactly as before (not-exercised), and no other faculty is touched.
+LB_SWAP_DRIVE = os.environ.get("LB_SWAP_DRIVE_PROBE", "").strip().lower() in ("1", "true", "yes", "on")
+_SWAP_DRIVE_TURN = "sw_switch"                     # the topic-change turn (group: sw_open -> sw_hold -> sw_switch)
+_SWAP_DRIVE_CONTRAST_TURNS = ("sw_open", "sw_hold")  # no swap due on these -> the lesion must NOT change them
+_SWAP_DRIVE_FIELDS = ["answer", "swap_drives.swapped", "swap_drives.reason", "swap_drives.lead"]
+_SWAP_DRIVE_REPLY_FIELD = "answer"                 # the reply-level field whose change the headline requires
+# Static anchor for the topic-extraction check (selftest): MUST mirror research/runners/brain_chat_tui.py
+# _build_tiny_demo's `facts` (the tiny-demo KB the battery worker builds). The whole point of the remap is that the
+# probe turns' first grounded concept is dog, dog, cat (and that `held`'s is None).
+_SW_TINY_DEMO_FACTS = [("brain", "use", "spikes"), ("brain", "learn", "words"), ("brain", "store", "memory"),
+                       ("dog", "chase", "cat"), ("cat", "eat", "fish")]
+
+
+def _swap_probe_topics_static():
+    """STATIC check (no brain build): the grounded topic the PRODUCTION extractor (gnw_thought_swap._extract_topic)
+    reads off each probe turn, against a stub composer carrying the tiny-demo KB. Returns {label: topic}. Import is
+    lazy (webapp.gnw_thought_swap imports the swap de-risk module, which is import-light; no substrate is built)."""
+    from webapp import gnw_thought_swap as _GTS
+
+    class _StubComposer:
+        kb = [({"agent": a, "action": v, "patient": p}, None) for a, v, p in _SW_TINY_DEMO_FACTS]
+    out = {}
+    for lab in ("held",) + _SWAP_DRIVE_CONTRAST_TURNS + (_SWAP_DRIVE_TURN,):
+        out[lab] = _GTS._extract_topic(_TURN_BY_LABEL[lab][1], _StubComposer())
+    return out
+
+
+def _swap_score_synthetic(nonspecific=False):
+    """Run the FULL _score_swap_drive path (not just the pure scorer) on synthetic arms -- added after the s42 smoke
+    crashed in _score_swap_drive on an unimported helper that the pure-scorer selftests never reached. Returns
+    (load_bearing, verdict)."""
+    def turn(swapped, reason, lead, ans):
+        return {"answer": lead + ans, "swap_drives": {"swapped": swapped, "reason": reason, "lead": lead}}
+    intact = {"sw_open": turn(False, "first_thought", "", "a"), "sw_hold": turn(False, "same_topic_hold", "", "a"),
+              "sw_switch": turn(True, "topic_change_swap", "On cat, then — ", "b")}
+    lesion = {"sw_open": turn(False, "first_thought", "", "a"),
+              "sw_hold": turn(False, "same_topic_hold", "", "a" + ("!" if nonspecific else "")),
+              "sw_switch": turn(False, "mismatch_held_no_swap", "", "b")}
+    row = ("swap-drives-response", _SWAP_DRIVE_TURN, list(_SWAP_DRIVE_FIELDS), False)
+    treat_pf = compare(intact, lesion, faculties=[row])["per_faculty"][0]
+    res = {"null_control_clean": True, "verdict": treat_pf["verdict"], "load_bearing": True}
+    _score_swap_drive(res, row, treat_pf, intact, dict(intact), lesion, True)
+    return res["load_bearing"], res["verdict"]
+
+
+def _swap_drive_score(treat_verdict, treat_diffs, null_clean, reproduced, contrast_diffs, contrast_exercised):
+    """The PRE-REGISTERED decision for the swap-drives adequate probe (pure; selftested on synthetic inputs).
+    Returns (load_bearing, verdict). Order matters: every UNDEFINED condition is checked before any positive.
+      * switch fields absent in both arms           -> (None, 'not-exercised')
+      * a contrast turn's fields absent (intact)     -> (None, 'contrast-undefined')   [UNDEFINED is never a pass]
+      * intact-vs-intact null differs (any turn)     -> (None, 'noisy-null-control')
+      * lesion changes a no-swap-due contrast turn   -> (None, 'nonspecific-lesion')
+      * switch identical intact-vs-lesion            -> (False, 'pass')
+      * lesion diff does not reproduce               -> (None, 'noisy')
+      * switch differs but NOT in the reply `answer` -> (False, 'trace-only')          [the reply did not depend on it]
+      * otherwise                                    -> (True, 'regressed')"""
+    if treat_verdict == "not-exercised":
+        return None, "not-exercised"
+    if not contrast_exercised:
+        return None, "contrast-undefined"
+    if not null_clean:
+        return None, "noisy-null-control"
+    if contrast_diffs:
+        return None, "nonspecific-lesion"
+    if treat_verdict == "pass":
+        return False, "pass"
+    if not reproduced:
+        return None, "noisy"
+    if not any(d.get("field") == _SWAP_DRIVE_REPLY_FIELD for d in (treat_diffs or [])):
+        return False, "trace-only"
+    return True, "regressed"
+
 # ── OPEN-ENDED-GENERATION DISTRIBUTIONAL PROBE (opt-in, env-gated; default OFF -> byte-identical) ──────────────────
 # WHY (finding 2026-09-21-open-ended-generation-single-turn-not-load-bearing-spiking-plausibility-gate-masks-draw):
 # even the LB_OPEN_ENDED_DRIVE_PROBE remap above (the best single-turn instrument can do) reads treat=0 on the real
@@ -431,6 +521,22 @@ LB_AFFECT_TONE_OPEN = os.environ.get("LB_AFFECT_TONE_OPEN_PROBE", "").strip().lo
 _AFFECT_TONE_OPEN_ARTIFACT = os.environ.get(
     "LB_AFFECT_TONE_OPEN_ARTIFACT",
     "research/findings/raw/_affect_tone_open_output/affect_tone_open_output_verdict.json")
+
+# ── DA TAG-AND-CAPTURE NEXT-DAY PROBE (opt-in, env-gated; default OFF -> byte-identical) ─────────────────────────────
+# WHY (finding 2026-09-23-da-encoding-natural-drive-v3-synaptic-capture-6seed-GO-runner-level): DA-gated encoding acts
+# on PERSISTENCE (Bethus, Tse & Morris 2010), so its default `well` probe (one fresh turn, field `da_encoding.on`, True
+# in both arms) can never show a lesion. The v3 synaptic tag-and-capture ledger is now wired into chat behind
+# BRAIN_DA_TAG_CAPTURE (webapp/da_tag_capture_chat.py). This flag remaps da-gated-encoding to the SALIENT next-day
+# group (onebrain_regression_battery 'datc': surprising news around one plain fact -> a night through the brain's own
+# idle/sleep tick -> 'what does the cat chase') and compares the recall turn's `recalled_svo` / `abstained`.
+# base_env arms the companion on BOTH arms (and the scripted 30 s/turn world clock), so the only inter-arm difference
+# is the existing BRAIN_DA_ENCODING_LESION. This row alone is the battery's intact-vs-lesion + null call; the salient
+# vs neutral, spare-immediate-recall and companion-off contrasts are the pre-registered gates of
+# research/runners/_da_tag_capture_chat_probe.py. OFF (default) -> da-gated-encoding is measured on `well` as before.
+LB_DA_TAG_CAPTURE = os.environ.get("LB_DA_TAG_CAPTURE_PROBE", "").strip().lower() in ("1", "true", "yes", "on")
+_DA_TAG_CAPTURE_TURN = "datc_recall"
+_DA_TAG_CAPTURE_FIELDS = ["recalled_svo", "abstained"]
+_DA_TAG_CAPTURE_ENV = {"BRAIN_DA_TAG_CAPTURE": "1", "BRAIN_DA_TAG_CAPTURE_CLOCK": "turn"}
 
 
 def _oed_build_shared_world(seed):
@@ -1012,6 +1118,24 @@ def measure_faculty(key, out_dir, repeats=1, intact_cache=None, seed=42):
                        "the #3E gate admits the candidates (the default spiking gate masks the draw on the tiny KB); "
                        "the draw lesion (BRAIN_SPIKING_DRAW_LESION) is the only inter-arm difference + the honored "
                        "ablate on draw_from_weights. " + res["note"])
+    # SWAP-DRIVES ADEQUATE remap (default-off; see LB_SWAP_DRIVE). Remap swap-drives-response to the topic-change turn
+    # `sw_switch` (group sw_open -> sw_hold -> sw_switch, session 'sw2', derived below by turn_group) and compare the
+    # reply + the swap trace. base_env stays {} -> the arms differ ONLY by BRAIN_SWAP_DRIVES_LESION. The contrast/
+    # null/reply scoring is applied after the standard verdict (below), via the pre-registered _swap_drive_score.
+    if LB_SWAP_DRIVE and key == "swap-drives-response":
+        row = ("swap-drives-response", _SWAP_DRIVE_TURN, list(_SWAP_DRIVE_FIELDS), False)
+        res["turn"] = _SWAP_DRIVE_TURN
+        res["note"] = ("LB_SWAP_DRIVE_PROBE: sw_open('dog') -> sw_hold('dog', contrast) -> sw_switch('cat') on session "
+                       "'sw2'; reply must change on the switch and NOT on the no-swap-due contrast turns. " + res["note"])
+
+    # DA TAG-AND-CAPTURE next-day remap (default-off; see LB_DA_TAG_CAPTURE).
+    if LB_DA_TAG_CAPTURE and key == "da-gated-encoding":
+        row = ("da-gated-encoding", _DA_TAG_CAPTURE_TURN, list(_DA_TAG_CAPTURE_FIELDS), False)
+        base_env = dict(_DA_TAG_CAPTURE_ENV)
+        res["turn"] = _DA_TAG_CAPTURE_TURN
+        res["note"] = ("LB_DA_TAG_CAPTURE_PROBE: salient news around one plain fact -> a night through the brain's own "
+                       "idle/sleep tick -> next-day recall on session 'datc'; BRAIN_DA_TAG_CAPTURE=1 on both arms. "
+                       + res["note"])
 
     grp = turn_group(row[1])
     # cache key includes base_env so a stored (BRAIN_EPISODIC_STORE) intact arm never aliases a plain-{} arm on a
@@ -1081,7 +1205,49 @@ def measure_faculty(key, out_dir, repeats=1, intact_cache=None, seed=42):
         res["verdict"] = "noisy"
     else:
         res["load_bearing"] = True                  # changed, attributable to the lesion, reproduced
+    if LB_SWAP_DRIVE and key == "swap-drives-response":
+        _score_swap_drive(res, row, treat_pf, intact_a, intact_b, lesioned, reproduced)
     return res
+
+
+def _score_swap_drive(res, row, treat_pf, intact_a, intact_b, lesioned, reproduced):
+    """Apply the pre-registered swap-drives gate to `res` IN PLACE (only called under LB_SWAP_DRIVE_PROBE). Adds the
+    contrast measurements (the lesion vs intact on the no-swap-due turns), extends the null control to every turn of
+    the group, records each arm's own swap state on every turn (the mechanism's state, not an arg-max of the metric),
+    and re-derives (load_bearing, verdict) through _swap_drive_score."""
+    fields = row[2]
+    c_rows = [("swap-drives-response", t, list(fields), False) for t in _SWAP_DRIVE_CONTRAST_TURNS]
+    contrast_diffs, contrast_null_diffs, contrast_exercised = [], 0, True
+    for cr in c_rows:
+        pf = compare(intact_a, lesioned, faculties=[cr])["per_faculty"][0]
+        contrast_diffs += [dict(d, turn=cr[1]) for d in pf["diffs"]]
+        contrast_null_diffs += _n_decision_diffs(cr, intact_a, intact_b)
+        # the contrast is DEFINED only if the swap trace is present on the intact arm for that turn
+        if not _get_path((intact_a or {}).get(cr[1]) or {}, "swap_drives.reason")[0]:
+            contrast_exercised = False
+    null_clean = bool(res["null_control_clean"]) and contrast_null_diffs == 0
+    lb, verdict = _swap_drive_score(treat_pf["verdict"], treat_pf["diffs"], null_clean, reproduced,
+                                    contrast_diffs, contrast_exercised)
+    state = {}
+    for arm_name, arm in (("intact_a", intact_a), ("intact_b", intact_b), ("lesion", lesioned)):
+        state[arm_name] = {}
+        for t in _SWAP_DRIVE_CONTRAST_TURNS + (_SWAP_DRIVE_TURN,):
+            sd = ((arm or {}).get(t) or {}).get("swap_drives") or {}
+            state[arm_name][t] = {k: sd.get(k) for k in ("swapped", "reason", "topic", "held_topic_before",
+                                                         "held_topic", "lead", "lesioned", "mm_peak", "boost_max")}
+            state[arm_name][t]["answer"] = ((arm or {}).get(t) or {}).get("answer")
+    res.update({
+        "swap_drive_probe": True,
+        "reply_changed": any(d.get("field") == _SWAP_DRIVE_REPLY_FIELD for d in treat_pf["diffs"]),
+        "contrast_diffs": contrast_diffs,
+        "contrast_null_diffs": contrast_null_diffs,
+        "contrast_exercised": contrast_exercised,
+        "null_control_clean_switch_turn": res["null_control_clean"],
+        "null_control_clean": null_clean,          # the faculty's null now covers every turn of the group
+        "swap_state": state,
+        "verdict_standard_rule": res["verdict"], "load_bearing_standard_rule": res["load_bearing"],
+        "load_bearing": lb, "verdict": verdict,
+    })
 
 
 # ── the full measurement ─────────────────────────────────────────────────────────────────────────────────────────
@@ -1125,7 +1291,9 @@ def run(out_dir="research/findings/raw/_load_bearing", only=None, repeats=1, see
 
     # DENOMINATOR = faculties this harness can lesion+exercise (neural-lesion / whether-disable with a driving probe).
     coverable = [p for p in per if p["kind"] in ("neural-lesion", "whether-disable")]
-    exercised = [p for p in coverable if p["verdict"] in ("regressed", "pass")]  # not-exercised/missing/noisy excluded
+    # not-exercised/missing/noisy excluded. "trace-only" (LB_SWAP_DRIVE_PROBE only: the swap trace changed but the reply
+    # did not) is exercised-and-NOT-load-bearing; no other path emits it, so the default battery is unchanged.
+    exercised = [p for p in coverable if p["verdict"] in ("regressed", "pass", "trace-only")]
     load_bearing = [p for p in exercised if p["load_bearing"] is True]
     report["counts"] = {
         "n_faculties_total": len(per),
@@ -1258,6 +1426,14 @@ def selftest(out_path=None):
             "oe_t1", "oe_t2", "oe_t3", "oe_t4", "oe_t5", "oe_t6", "oe_t7", "oe_t8", "oe_t9", _OPEN_ENDED_DRIVE_TURN],
         "open-ended lesion knob resolves": _flag_resolves("BRAIN_SPIKING_DRAW_LESION"),
         "open-ended lesion bites production draw": _draw_from_weights_honors_ablate(),
+        # DA tag-and-capture next-day remap (LB_DA_TAG_CAPTURE_PROBE): the group is tell -> night -> recall, one
+        # session, the night is a world step (never a brain_chat turn), and the companion flag resolves in source.
+        "da-tag-capture group is tell->night->recall": (
+            turn_group(_DA_TAG_CAPTURE_TURN)[-2:] == ["datc_night", _DA_TAG_CAPTURE_TURN]
+            and len(turn_group(_DA_TAG_CAPTURE_TURN)) == 7),
+        "da-tag-capture night is a world step": "datc_night" in __import__(
+            "research.runners.onebrain_regression_battery", fromlist=["_WORLD_STEPS"])._WORLD_STEPS,
+        "da-tag-capture companion flag resolves": _flag_resolves("BRAIN_DA_TAG_CAPTURE"),
         # open-ended-generation DISTRIBUTIONAL ruler (LB_OPEN_ENDED_DISTRIB_PROBE): pure decision-logic checks (NO
         # brain build -- `_oed_score` takes already-measured numbers) + static wiring checks (source inspection /
         # import + signature only, no SimulationBridge construction), mirroring how _classify_diffs()/compare() are
@@ -1316,6 +1492,38 @@ def selftest(out_path=None):
             and "onebrain_regression_battery" not in measure_affect_tone_open_output.__code__.co_names,
         "oed n-attempts knob is a positive int (the _followon2 GO's 800 unless explicitly overridden)":
             isinstance(_OED_N_ATTEMPTS, int) and _OED_N_ATTEMPTS > 0,
+        # ── SWAP-DRIVES ADEQUATE PROBE (LB_SWAP_DRIVE_PROBE): static wiring + the pre-registered decision logic ──
+        "swap-drive flag parses to a real bool": isinstance(LB_SWAP_DRIVE, bool),
+        "swap-drive turns exist (label-only, NOT in the default roster)": (
+            all(l in _TURN_BY_LABEL for l in _SWAP_DRIVE_CONTRAST_TURNS + (_SWAP_DRIVE_TURN,))
+            and not ({_SWAP_DRIVE_TURN, *_SWAP_DRIVE_CONTRAST_TURNS} & {t[0] for t in PROBE_TURNS})),
+        "swap-drive group is open->hold->switch": turn_group(_SWAP_DRIVE_TURN) == ["sw_open", "sw_hold", "sw_switch"],
+        "swap-drive lesion knob resolves": _flag_resolves("BRAIN_SWAP_DRIVES_LESION"),
+        "swap-drive production extractor reads dog/dog/cat (and None on the old `held` probe)":
+            _swap_probe_topics_static() == {"held": None, "sw_open": "dog", "sw_hold": "dog", "sw_switch": "cat"},
+        "swap-score: reply change + clean null + clean contrast + reproduced -> load-bearing":
+            _swap_drive_score("regressed", [{"field": "answer"}, {"field": "swap_drives.swapped"}], True, True, [], True)
+            == (True, "regressed"),
+        "swap-score: trace changes but reply identical -> trace-only (NOT load-bearing)":
+            _swap_drive_score("regressed", [{"field": "swap_drives.swapped"}], True, True, [], True)
+            == (False, "trace-only"),
+        "swap-score: lesion changes a no-swap-due contrast turn -> nonspecific (UNDEFINED, never a pass)":
+            _swap_drive_score("regressed", [{"field": "answer"}], True, True, [{"field": "answer"}], True)
+            == (None, "nonspecific-lesion"),
+        "swap-score: contrast trace absent -> contrast-undefined":
+            _swap_drive_score("regressed", [{"field": "answer"}], True, True, [], False) == (None, "contrast-undefined"),
+        "swap-score: dirty null on any turn -> noisy-null-control":
+            _swap_drive_score("regressed", [{"field": "answer"}], False, True, [], True) == (None, "noisy-null-control"),
+        "swap-score: identical switch -> pass (NOT load-bearing)":
+            _swap_drive_score("pass", [], True, True, [], True) == (False, "pass"),
+        "swap-score: fields absent both arms -> not-exercised":
+            _swap_drive_score("not-exercised", [], True, True, [], False) == (None, "not-exercised"),
+        "swap-score FULL PATH (_score_swap_drive on synthetic arms): swap + clean contrast -> load-bearing":
+            _swap_score_synthetic(nonspecific=False) == (True, "regressed"),
+        "swap-score FULL PATH: lesion alters the hold turn -> nonspecific-lesion":
+            _swap_score_synthetic(nonspecific=True) == (None, "nonspecific-lesion"),
+        "swap-score: unreproduced lesion -> noisy":
+            _swap_drive_score("regressed", [{"field": "answer"}], True, False, [], True) == (None, "noisy"),
         "every FACULTY_LESIONS key is a real battery faculty":
             all(k in faculty_list() for k in FACULTY_LESIONS),
         "every battery faculty is mapped": all(k in FACULTY_LESIONS for k in faculty_list()),

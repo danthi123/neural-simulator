@@ -1,0 +1,37 @@
+{
+ "run_id": "1790216004-2623185",
+ "runner": "research/runners/d6_capacity_curve.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/wf_2a017223-975-1/research/runners/d6_capacity_curve.py",
+  "--resource-probe",
+  "--seed",
+  "42",
+  "--n-facts",
+  "500",
+  "--arm",
+  "HEBB",
+  "--probe-k",
+  "5",
+  "--out",
+  "research/findings/raw/_d6_capacity_curve/smoke/resource_probe_s42_N500_HEBB.json"
+ ],
+ "git_sha": "0fc2b61ef",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-23T22:13:24",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 1536.7,
+ "corpus_check_query": "D6 learn-through-use capacity curve: recall/interference/memory vs number of facts taught in conversation, Hebbian write vs host copy",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_d6_capacity_curve/smoke/resource_probe_s42_N500_HEBB.json"
+}

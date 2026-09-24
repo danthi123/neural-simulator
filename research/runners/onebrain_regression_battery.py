@@ -139,6 +139,20 @@ _EXTRA_TURNS = [
     # recalls "yes"/AFFIRM -> stored != asserted -> REJECT; lesion forces "unknown" -> ACCEPT — so reject / recalled_yn /
     # stored_polarity all diverge. See research/runners/load_bearing_fraction.py.
     ("noncontra_neg", "the dog does not chase the cat", "ncontra", True, None, False),  # NEGATE assertion of the AFFIRM boot fact (dog,chase,cat) -> intact reject=True (recall 'yes'); lesion accept (forced 'unknown')
+    # ── SWAP-DRIVES DRIVING GROUP (label-only; used only by load_bearing_fraction's LB_SWAP_DRIVE_PROBE) ─────────────
+    # The default swap-drives probe rides `held` ('the wolf watches the owl'), which (a) names no BUILD-TIME KB concept
+    # (wolf/owl are not tiny-demo agents/patients -> gnw_thought_swap._extract_topic returns None -> no_topic_hold) and
+    # (b) is answered by the role-binding REPAIR short-circuit, which returns before `swap_drives` is attached -> the
+    # field is absent in BOTH arms -> NOT-EXERCISED on every seed. This group is an ordinary topic conversation over the
+    # boot facts (dog,chase,cat)/(cat,eat,fish): OPEN establishes the held topic 'dog' (first thought), HOLD re-asks on
+    # the SAME topic (the within-session NULL-CONTRAST turn: no swap is due, so the lesion must NOT change it), SWITCH
+    # asks about a DIFFERENT grounded concept 'cat' (the salient competing topic: the neural mismatch detector should
+    # fire -> evict 'dog' -> admit 'cat' -> the reply leads "On cat, then -- ..."; BRAIN_SWAP_DRIVES_LESION silences
+    # the detector -> no swap -> no lead). Kept OUT of PROBE_TURNS -> the default roster + every flip-verify harness
+    # stay BYTE-IDENTICAL. Pre-registration: research/findings/2026-09-23-swap-drives-adequate-probe-PREREGISTRATION.md.
+    ("sw_open",   "what does the dog chase", "sw2", True,  None, False),   # establish the held topic 'dog' (first thought)
+    ("sw_hold",   "what does the dog chase", "sw2", False, None, False),   # SAME topic -> hold (contrast turn: lesion must not change it)
+    ("sw_switch", "what does the cat eat",   "sw2", False, None, False),   # DIFFERENT grounded topic 'cat' -> intact swap + lead / lesion no swap
     # ── PROSPECTIVE-MEMORY DRIVING GROUP (label-only; used only by load_bearing_fraction's LB_PMEM_DRIVE_PROBE) ──────
     # Prospective memory is, by definition, an intention held ACROSS INTERVENING ACTIVITY and released at a LATER cue
     # (McDaniel & Einstein 2000 multiprocess framework). The held-intention x cue coincidence in the SFA/NMDA substrate
@@ -190,7 +204,71 @@ _EXTRA_TURNS = [
     ("oe_t9",  "the crow chase the boar",     "oe2", False, None,   False),   # NOVEL alternative: boar
     ("oe_ask", "what might a dog chase",      "oe2", False, None,   True),    # rich=True -> the generation branch (resp['hypothesis_svo']); draws (dog,chase,?) over the now-rich chase graph
 ]
+# ── DA TAG-AND-CAPTURE NEXT-DAY GROUPS (label-only; load_bearing_fraction's LB_DA_TAG_CAPTURE_PROBE + the dedicated
+# research/runners/_da_tag_capture_chat_probe.py) ─────────────────────────────────────────────────────────────────
+# da-gated-encoding acts on PERSISTENCE, not on an immediate read (Bethus, Tse & Morris 2010: D1/D5 blockade spares
+# encoding + immediate recall and changes ~24 h retention). Its default probe (`well`, one fresh turn) can never show
+# that, and the battery had no next-day turn. Each group below tells ONE fact inside a short conversation, lets a
+# night pass through the brain's own idle/sleep tick (the `_WORLD_STEPS` pseudo-turn below: the ENVIRONMENT's clock
+# jumps 24 h, then continuous_engine.tick_idle_sessions runs at that time exactly as the server loop calls it), then
+# asks for the fact. SALIENT: the fact sits inside surprising news; NEUTRAL: the same fact told plainly after its words
+# were introduced (habituated). *_imm groups ask at once (no night) -- the immediate-recall precondition + the
+# lesion's spare-encoding contrast. Separate sessions per group; none is in PROBE_TURNS -> the default roster, the
+# regression battery and every flip-verify harness stay BYTE-IDENTICAL.
+_DATC_SALIENT = [
+    "Guess what, something unbelievable happened at the circus today!",
+    "You will never believe this crazy story, it is absolutely amazing!",
+    "the cat chases the ball",
+    "Everyone in the audience was screaming and laughing in total shock!",
+    "Honestly it was the most astonishing spectacle anybody has ever witnessed!",
+]
+_DATC_NEUTRAL = [
+    "the cat is here",
+    "the ball is here",
+    "the cat chases the ball",
+    "the cat is here",
+    "the ball is here",
+]
+_DATC_RECALL = "what does the cat chase"
+_WORLD_NIGHT = "__world_step:overnight_24h__"   # never sent to brain_chat: the worker runs the world step instead
+
+
+def _datc_group(prefix, session, texts, night):
+    rows = [("%s_t%d" % (prefix, i + 1), txt, session, i == 0, None, False) for i, txt in enumerate(texts)]
+    if night:
+        rows.append(("%s_night" % prefix, _WORLD_NIGHT, session, False, None, False))
+    rows.append(("%s_recall" % prefix, _DATC_RECALL, session, False, None, False))
+    return rows
+
+
+_EXTRA_TURNS += (_datc_group("datc", "datc", _DATC_SALIENT, True) + _datc_group("datn", "datn", _DATC_NEUTRAL, True)
+                 + _datc_group("datci", "datci", _DATC_SALIENT, False)
+                 + _datc_group("datni", "datni", _DATC_NEUTRAL, False))
+_WORLD_STEPS = {t[0]: "overnight_24h" for t in _EXTRA_TURNS if t[1] == _WORLD_NIGHT}
 _TURN_BY_LABEL.update({t[0]: t for t in _EXTRA_TURNS})
+
+
+def _run_world_step(kind):
+    """The ENVIRONMENT passes time (host = world, legitimate): a night of `hours` -- the world clock jumps, then the
+    brain's own between-turn process runs once at that time, exactly as the server's background loop calls it
+    (webapp/server.py: continuous_engine.tick_idle_sessions with the same four getters). Being idle >= SLEEP_IDLE_SEC
+    makes it a sleep-depth tick (sleep replay, the Turrigiano pass, the tag-and-capture ledger when armed). Returns a
+    trace (no reply: nothing is said)."""
+    import time as _time
+    hours = {"overnight_24h": 24.0}[kind]
+    from webapp import server as _S
+    from webapp import continuous_engine as _CE
+    try:
+        from webapp import da_tag_capture_chat as _DTC
+        _DTC.advance_world_clock_h(hours)
+    except ImportError:
+        _DTC = None
+    now = _time.time() + hours * 3600.0
+    n = _CE.tick_idle_sessions(_S._SESSION_MOOD, _S._get_affect_organ, now=now,
+                               selfinit_getter=_S._get_selfinit_organ,
+                               episodic_getter=_S._get_episodic_organ_existing,
+                               chat_getter=_S._get_chat_existing)
+    return {"world_step": kind, "hours": hours, "n_sessions_ticked": int(n or 0)}
 
 # ── continuous fields to NEVER compare (a background process advances between builds; decisions are stable, not these)
 _NOISE_FIELDS = {
@@ -384,6 +462,12 @@ def _collect_worker(env_json, turn_labels, out_path):
     from webapp.server import brain_chat, BrainChatRequest
     responses = {}
     for label in turn_labels:
+        if label in _WORLD_STEPS:              # label-only environment step (never a brain_chat turn)
+            try:
+                responses[label] = _run_world_step(_WORLD_STEPS[label])
+            except Exception as e:
+                responses[label] = {"_error": "%s: %s" % (type(e).__name__, e)}
+            continue
         _, msg, session, reset, percept, rich = _TURN_BY_LABEL[label]
         try:
             kwargs = dict(session=session, message=msg, brain="tiny-demo",

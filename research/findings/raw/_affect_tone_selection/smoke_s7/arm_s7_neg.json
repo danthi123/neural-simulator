@@ -1,0 +1,646 @@
+{
+ "runner": "_lbf_affect_tone_selection_derisk (worker)",
+ "seed": 7,
+ "arm": "neg",
+ "lesion": "0",
+ "control": false,
+ "priming": "I feel absolutely miserable and devastated today, everything is terrible and hopeless.",
+ "decode_seed": 7,
+ "run_tag": "run1",
+ "backend": "numpy",
+ "cuda_visible_devices": null,
+ "resolved_ckpt": null,
+ "ckpt_is_per_seed": true,
+ "priming_affect": {
+  "on": true,
+  "lesioned": false,
+  "composer": "onebrain",
+  "differential": -0.03916666666666667,
+  "valence_sign": "-",
+  "tone_level": -2,
+  "tone_token": "curtly",
+  "forthcomingness": {
+   "max_sentences": 1,
+   "max_elaborations": 0
+  },
+  "manner_template": "Keep the words {a}, {v}, {p} and the verb '{v}'. Write ONE short, blunt, matter-of-fact sentence.",
+  "appraisal_valence": -0.4725,
+  "appraisal_arousal": 0.301875,
+  "appraisal_hits": [
+   "miserable",
+   "devastated",
+   "terrible",
+   "hopeless"
+  ],
+  "pos_rate": 0.0,
+  "neg_rate": 0.03916666666666667
+ },
+ "tone_rows": [
+  {
+   "prompt": "Tell me about the ocean",
+   "raw": "The sea is a vast and intricate system that includes water, air, and numerous other substances. It is a vital part of our planet's ecosystem and daily lives. The ocean supports a wide variety of marine life, ranging from microscopic plankton to colossal whales. It also plays an important role in the global carbon cycle by absorbing and storing carbon dioxide. Despite its significance, the ocean remains one of the most enigmatic and unexplored environments on Earth. Its mysteries continue to intrigue scientists and researchers alike.",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.0,
+   "tone_hits": 0,
+   "salad_frac": 0.06976744186046512,
+   "affect_differential": -0.03916666666666667,
+   "state_valence": -0.15666666666666668,
+   "gen_seconds": 22.05,
+   "selection": {
+    "mode": "select",
+    "v_held": -0.15666666666666668,
+    "draft_sha": "e7717ea15241ec46",
+    "n_admissible": 3,
+    "admissible": [
+     0,
+     3,
+     4
+    ],
+    "selected": 3,
+    "selected_style": "neg1",
+    "candidates": [
+     {
+      "style": "draft",
+      "sha": "e7717ea15241ec46",
+      "text": "The ocean is a vast and complex system that encompasses countless elements, including water, air, and various other substances. It's a dynamic environment that plays a crucial role in our planet's ecosystem and daily lives. The ocean is home to a diverse array of marine life, from tiny plankton to massive whales. It also plays a significant role in the global carbon cycle by absorbing and storing carbon dioxide. Despite its importance, the ocean remains one of the most mysterious and unexplored environments on Earth. Its mysteries continue to captivate scientists and researchers alike",
+      "lock_ok": true,
+      "lock": null,
+      "decode_seed": 7,
+      "eval": {
+       "appraisal": 0.598625,
+       "n_hits": 1,
+       "differential": 0.05,
+       "valence": 0.2
+      }
+     },
+     {
+      "style": "pos2",
+      "sha": "b5773044f94d1b69",
+      "text": "The ocean is a mesmerizing and enchanting realm that weaves together water, air, and myriad other elements into an intricate tapestry of complexity. It's a vital part of our planet's ecosystem and daily lives, providing sustenance for countless species. The ocean houses a wide variety of marine creatures ranging from microscopic plankton to colossal whales. It also plays a pivotal role in the global carbon cycle, absorbing and storing carbon dioxide. Despite its mystery, the ocean remains a captivating wonderland for both scientists and enthusiasts alike. Its enigmatic nature continues to fascinate us.",
+      "lock_ok": false,
+      "lock": {
+       "missing_numbers": [],
+       "new_numbers": [],
+       "missing_names": [
+        "earth"
+       ],
+       "new_names": [],
+       "missing_fact_words": []
+      },
+      "decode_seed": 7926,
+      "eval": null
+     },
+     {
+      "style": "pos1",
+      "sha": "c2078fd0f6187ec2",
+      "text": "Welcome aboard the awe-inspiring realm known as the ocean! With its vastness and complexity, it's no wonder it holds such profound significance for us. From the microscopic world of plankton to the colossal whales, the ocean is teeming with life. Its vital role in the global carbon cycle underscores its immense impact on our planet. Yet, despite its mystery, the ocean remains an enigma to those who study it. Its mysteries continue to captivate scientists and explorers alike. So, let's dive deeper into the depths of the ocean's secrets!",
+      "lock_ok": false,
+      "lock": {
+       "missing_numbers": [],
+       "new_numbers": [],
+       "missing_names": [
+        "earth"
+       ],
+       "new_names": [],
+       "missing_fact_words": []
+      },
+      "decode_seed": 15845,
+      "eval": null
+     },
+     {
+      "style": "neg1",
+      "sha": "98849fc126e08a07",
+      "text": "The sea is a vast and intricate system that includes water, air, and numerous other substances. It is a vital part of our planet's ecosystem and daily lives. The ocean supports a wide variety of marine life, ranging from microscopic plankton to colossal whales. It also plays an important role in the global carbon cycle by absorbing and storing carbon dioxide. Despite its significance, the ocean remains one of the most enigmatic and unexplored environments on Earth. Its mysteries continue to intrigue scientists and researchers alike.",
+      "lock_ok": true,
+      "lock": {
+       "missing_numbers": [],
+       "new_numbers": [],
+       "missing_names": [],
+       "new_names": [],
+       "missing_fact_words": []
+      },
+      "decode_seed": 23764,
+      "eval": {
+       "appraisal": 0.0,
+       "n_hits": 0,
+       "differential": 0.0,
+       "valence": 0.0
+      }
+     },
+     {
+      "style": "neg2",
+      "sha": "d81a7e8b295263dc",
+      "text": "The sea, a vast and intricate system, encompasses water, air, and numerous other elements. It is a vital component of our planet's ecosystem and daily lives. The ocean supports a wide range of marine life, from microscopic organisms to colossal whales. It also plays a critical role in the global carbon cycle, absorbing and storing carbon dioxide. Despite its significance, the sea remains one of the most enigmatic and unexplored environments on Earth. Its mysteries continue to captivate scientists and researchers alike.",
+      "lock_ok": true,
+      "lock": {
+       "missing_numbers": [],
+       "new_numbers": [],
+       "missing_names": [],
+       "new_names": [],
+       "missing_fact_words": []
+      },
+      "decode_seed": 31683,
+      "eval": {
+       "appraisal": 0.0,
+       "n_hits": 0,
+       "differential": 0.0,
+       "valence": 0.0
+      }
+     }
+    ]
+   }
+  },
+  {
+   "prompt": "What do you think about music",
+   "raw": "My curiosity piqued regarding your musical preferences, I am intrigued by your tastes. Which genres of music do you particularly enjoy? Additionally, which artists or bands would hold a special place in your heart? Lastly, how frequently do you engage with music?",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.0,
+   "tone_hits": 0,
+   "salad_frac": 0.07142857142857142,
+   "affect_differential": -0.03916666666666667,
+   "state_valence": -0.15666666666666668,
+   "gen_seconds": 8.83,
+   "selection": {
+    "mode": "select",
+    "v_held": -0.15666666666666668,
+    "draft_sha": "122ba0127924dc0c",
+    "n_admissible": 5,
+    "admissible": [
+     0,
+     1,
+     2,
+     3,
+     4
+    ],
+    "selected": 3,
+    "selected_style": "neg1",
+    "candidates": [
+     {
+      "style": "draft",
+      "sha": "122ba0127924dc0c",
+      "text": "I'm curious to hear your thoughts on music! What kind of music do you enjoy? Do you have any favorite artists or genres? And how often do you listen to music?",
+      "lock_ok": true,
+      "lock": null,
+      "decode_seed": 7,
+      "eval": {
+       "appraisal": 0.6880250000000001,
+       "n_hits": 1,
+       "differential": 0.058611111111111114,
+       "valence": 0.23444444444444446
+      }
+     },
+     {
+      "style": "pos2",
+      "sha": "089f1a81cedef862",
+      "text": "Oh, I can't wait to get your thoughts on music! What kind of music are you into? Do you have any favorites or genres you love? And how frequently do you listen to music?",
+      "lock_ok": true,
+      "lock": {
+       "missing_numbers": [],
+       "new_numbers": [],
+       "missing_names": [],
+       "new_names": [],
+       "missing_fact_words": []
+      },
+      "decode_seed": 7926,
+      "eval": {
+       "appraisal": 0.6832875,
+       "n_hits": 2,
+       "differential": 0.059166666666666666,
+       "valence": 0.23666666666666666
+      }
+     },
+     {
+      "style": "pos1",
+      "sha": "dee2946c02e92017",
+      "text": "Hey there! I'd love to hear what you think about music! What kind of music are you into? Do you like pop, rock, jazz, or something else? How often do you listen to music? It's always fun to chat about our musical tastes!",
+      "lock_ok": true,
+      "lock": {
+       "missing_numbers": [],
+       "new_numbers": [],
+       "missing_names": [],
+       "new_names": [],
+       "missing_fact_words": []
+      },
+      "decode_seed": 15845,
+      "eval": {
+       "appraisal": 0.7206416666666667,
+       "n_hits": 3,
+       "differential": 0.059444444444444446,
+       "valence": 0.23777777777777778
+      }
+     },
+     {
+      "style": "neg1",
+      "sha": "9dd3f0ceefbde15c",
+      "text": "My curiosity piqued regarding your musical preferences, I am intrigued by your tastes. Which genres of music do you particularly enjoy? Additionally, which artists or bands would hold a special place in your heart? Lastly, how frequently do you engage with music?",
+      "lock_ok": true,
+      "lock": {
+       "missing_numbers": [],
+       "new_numbers": [],
+       "missing_names": [],
+       "new_names": [],
+       "missing_fact_words": []
+      },
+      "decode_seed": 23764,
+      "eval": {
+       "appraisal": 0.0,
+       "n_hits": 0,
+       "differential": 0.0,
+       "valence": 0.0
+      }
+     },
+     {
+      "style": "neg2",
+      "sha": "3dbc7fbefd5e9992",
+      "text": "I am deeply interested in your musings on music! What type of music do you appreciate? Are there any particular artists or genres you particularly enjoy? And do you listen to music frequently?",
+      "lock_ok": true,
+      "lock": {
+       "missing_numbers": [],
+       "new_numbers": [],
+       "missing_names": [],
+       "new_names": [],
+       "missing_fact_words": []
+      },
+      "decode_seed": 31683,
+      "eval": {
+       "appraisal": 0.0,
+       "n_hits": 0,
+       "differential": 0.0,
+       "valence": 0.0
+      }
+     }
+    ]
+   }
+  }
+ ],
+ "known_rows": [
+  {
+   "prompt": "Tell me about frank_lincoln_wright",
+   "raw": "Frank Lincoln Wright was a prominent American architect who lived from 1856 to 1927. He was born in New York City and became a citizen of the United States. Wright was known for his work in architecture, particularly in the design of buildings such as the Lincoln Memorial in Washington D.C., which he designed during his time in office. He also worked on the Stanford University campus and was involved in various architectural projects throughout his career. Wright's legacy continues to be celebrated today for his contributions to modern architecture.",
+   "known": true,
+   "facts": [
+    [
+     "frank_lincoln_wright",
+     "instance_of",
+     "human_specie"
+    ],
+    [
+     "frank_lincoln_wright",
+     "country_of_citizenship",
+     "u_s_of_a"
+    ],
+    [
+     "frank_lincoln_wright",
+     "languages_spoken_written_or_signed",
+     "number_of_english_words"
+    ],
+    [
+     "frank_lincoln_wright",
+     "occupation",
+     "stanford_downey_architects_inc"
+    ],
+    [
+     "frank_lincoln_wright",
+     "given_name",
+     "frank_given_name"
+    ],
+    [
+     "frank_lincoln_wright",
+     "educated_at",
+     "university_of_wisconsin_madison"
+    ],
+    [
+     "frank_lincoln_wright",
+     "place_of_death",
+     "estrella_phoenix_arizona"
+    ],
+    [
+     "frank_lincoln_wright",
+     "described_by_source",
+     "ubuweb"
+    ],
+    [
+     "frank_lincoln_wright",
+     "member_of",
+     "artists_rights_society"
+    ],
+    [
+     "frank_lincoln_wright",
+     "family_name",
+     "woodwright"
+    ],
+    [
+     "frank_lincoln_wright",
+     "award_received",
+     "riba_gold_medal"
+    ]
+   ],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.25,
+   "tone_hits": 1,
+   "salad_frac": 0.06666666666666667,
+   "affect_differential": -0.03916666666666667,
+   "state_valence": -0.15666666666666668,
+   "gen_seconds": 22.39,
+   "selection": {
+    "mode": "select",
+    "v_held": -0.15666666666666668,
+    "draft_sha": "68f12e32c067e845",
+    "n_admissible": 1,
+    "admissible": [
+     0
+    ],
+    "selected": 0,
+    "selected_style": "draft",
+    "candidates": [
+     {
+      "style": "draft",
+      "sha": "68f12e32c067e845",
+      "text": "Frank Lincoln Wright was a prominent American architect who lived from 1856 to 1927. He was born in New York City and became a citizen of the United States. Wright was known for his work in architecture, particularly in the design of buildings such as the Lincoln Memorial in Washington D.C., which he designed during his time in office. He also worked on the Stanford University campus and was involved in various architectural projects throughout his career. Wright's legacy continues to be celebrated today for his contributions to modern architecture.",
+      "lock_ok": true,
+      "lock": null,
+      "decode_seed": 7,
+      "eval": {
+       "appraisal": 0.0,
+       "n_hits": 0,
+       "differential": 0.0,
+       "valence": 0.0
+      }
+     },
+     {
+      "style": "pos2",
+      "sha": "0e9e89ca4c53c66c",
+      "text": "Welcome back, Frank! You've been a legend in our world of architecture. Let's celebrate your life with joyous glee. From New York City to Washington D. C., you built some truly magnificent structures. Your designs are still admired by architects today. And don't forget about Stanford University - where you helped shape its future. Frank, we're all proud of you.",
+      "lock_ok": false,
+      "lock": {
+       "missing_numbers": [
+        "1856",
+        "1927"
+       ],
+       "new_numbers": [],
+       "missing_names": [
+        "american",
+        "lincoln",
+        "memorial",
+        "state",
+        "united",
+        "wright"
+       ],
+       "new_names": [],
+       "missing_fact_words": []
+      },
+      "decode_seed": 7926,
+      "eval": null
+     },
+     {
+      "style": "pos1",
+      "sha": "6ec6eb103b92cdba",
+      "text": "Frank Lincoln Wright was an esteemed American architect who passed away in 1927. Born in New York City, he became a citizen of the United States. Known for his work in architecture, especially in designing buildings like the Lincoln Memorial in Washington, D.C., Wright was instrumental in shaping the landscape of modern architecture. His notable works included the Stanford University campus and involvement in numerous architectural projects throughout his career. Today, Wright's enduring influence can still be seen in the recognition and admiration for his innovative designs and contributions to the field of architecture.",
+      "lock_ok": false,
+      "lock": {
+       "missing_numbers": [
+        "1856"
+       ],
+       "new_numbers": [],
+       "missing_names": [],
+       "new_names": [],
+       "missing_fact_words": []
+      },
+      "decode_seed": 15845,
+      "eval": null
+     },
+     {
+      "style": "neg1",
+      "sha": "a8a1cf4790a1005d",
+      "text": "Frank Lincoln Wright was an influential American architect whose life spanned from 1856 until his passing in 1927. Born in New York City, Wright rose to prominence as a citizen of the United States. His architectural prowess, notably in designing structures like the Lincoln Memorial in Washington D. C., exemplified his dedication to creating beautiful buildings. Wright was deeply committed to the field of architecture, contributing significantly to its evolution through his innovative designs. Throughout his career, Wright served as a pioneer in the development of modern architecture, influencing countless architects and designers after him. Today, Wright's legacy lives on through his enduring works and the recognition he received for his contributions to the field.",
+      "lock_ok": false,
+      "lock": {
+       "missing_numbers": [],
+       "new_numbers": [],
+       "missing_names": [
+        "stanford",
+        "university"
+       ],
+       "new_names": [],
+       "missing_fact_words": [
+        "stanford",
+        "university"
+       ]
+      },
+      "decode_seed": 23764,
+      "eval": null
+     },
+     {
+      "style": "neg2",
+      "sha": "20e9c7d4036df1e7",
+      "text": "Aged 103, Frank Lincoln Wright died peacefully at home on April 14, 2023. His life spanned from 1856 until 1927, when he passed away. Born in New York City, Wright became a U.S. citizen. Known for his work in architecture, especially in designing buildings like the Lincoln Memorial in Washington D. C., Wright designed these structures while serving in government. Wright also worked on the Stanford University campus and participated in numerous architectural projects throughout his career. Today, Wright\u2019s legacy endures through his contributions to modern architecture, with his works still admired by architects and enthusiasts alike.",
+      "lock_ok": false,
+      "lock": {
+       "missing_numbers": [],
+       "new_numbers": [
+        "103",
+        "14",
+        "2023"
+       ],
+       "missing_names": [
+        "american",
+        "state",
+        "united"
+       ],
+       "new_names": [
+        "april",
+        "s",
+        "u"
+       ],
+       "missing_fact_words": []
+      },
+      "decode_seed": 31683,
+      "eval": null
+     }
+    ]
+   }
+  },
+  {
+   "prompt": "Tell me about wolfgang_amadeus_mozart",
+   "raw": "Wolfgang Amadeus Mozart was a renowned 18th-century Austrian composer who revolutionized classical music. He composed over 600 works, including symphonies, operas, and concertos. His compositions were characterized by their technical mastery, emotional depth, and innovative use of musical form. Mozart's music influenced countless composers and continues to be celebrated for its beauty, complexity, and timeless appeal.",
+   "known": true,
+   "facts": [
+    [
+     "wolfgang_amadeus_mozart",
+     "instance_of",
+     "human_specie"
+    ],
+    [
+     "wolfgang_amadeus_mozart",
+     "languages_spoken_written_or_signed",
+     "number_of_english_words"
+    ],
+    [
+     "wolfgang_amadeus_mozart",
+     "occupation",
+     "music_composer"
+    ],
+    [
+     "wolfgang_amadeus_mozart",
+     "described_by_source",
+     "brockhaus_and_efron_encyclopaedia"
+    ],
+    [
+     "wolfgang_amadeus_mozart",
+     "instrument",
+     "keyboard_hammer"
+    ],
+    [
+     "wolfgang_amadeus_mozart",
+     "place_of_death",
+     "habsburg_austria"
+    ],
+    [
+     "wolfgang_amadeus_mozart",
+     "genre",
+     "operatic_scene"
+    ],
+    [
+     "wolfgang_amadeus_mozart",
+     "given_name",
+     "wolfgang"
+    ],
+    [
+     "wolfgang_amadeus_mozart",
+     "place_of_birth",
+     "historic_centre_of_salzburg"
+    ]
+   ],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.25,
+   "tone_hits": 1,
+   "salad_frac": 0.07142857142857142,
+   "affect_differential": -0.03916666666666667,
+   "state_valence": -0.15666666666666668,
+   "gen_seconds": 19.35,
+   "selection": {
+    "mode": "select",
+    "v_held": -0.15666666666666668,
+    "draft_sha": "6456d91d02b8e416",
+    "n_admissible": 2,
+    "admissible": [
+     0,
+     1
+    ],
+    "selected": 0,
+    "selected_style": "draft",
+    "candidates": [
+     {
+      "style": "draft",
+      "sha": "6456d91d02b8e416",
+      "text": "Wolfgang Amadeus Mozart was a renowned 18th-century Austrian composer who revolutionized classical music. He composed over 600 works, including symphonies, operas, and concertos. His compositions were characterized by their technical mastery, emotional depth, and innovative use of musical form. Mozart's music influenced countless composers and continues to be celebrated for its beauty, complexity, and timeless appeal.",
+      "lock_ok": true,
+      "lock": null,
+      "decode_seed": 7,
+      "eval": {
+       "appraisal": 0.0,
+       "n_hits": 0,
+       "differential": 0.0,
+       "valence": 0.0
+      }
+     },
+     {
+      "style": "pos2",
+      "sha": "435b0f3447baf347",
+      "text": "Wolfgang Amadeus Mozart was an extraordinary 18th-century Austrian composer who redefined classical music with his groundbreaking compositions. He crafted over 600 masterpieces, ranging from symphonies and operas to concertos. Mozart's music was marked by its technical prowess, profound emotion, and innovative use of musical structure. His influence extended far beyond his time, inspiring countless musicians and cementing his legacy as one of the most beloved composers in history. Mozart's compositions continue to captivate audiences worldwide, embodying a blend of beauty, complexity, and enduring appeal.",
+      "lock_ok": true,
+      "lock": {
+       "missing_numbers": [],
+       "new_numbers": [],
+       "missing_names": [],
+       "new_names": [],
+       "missing_fact_words": []
+      },
+      "decode_seed": 7926,
+      "eval": {
+       "appraisal": 0.0,
+       "n_hits": 0,
+       "differential": 0.0,
+       "valence": 0.0
+      }
+     },
+     {
+      "style": "pos1",
+      "sha": "8bc862e3e6ede02c",
+      "text": "Mozart, a masterful 18th-century Austrian composer, left an indelible mark on the world of classical music with his unparalleled contributions. Throughout his career, he composed over 600 pieces, which included symphonies, operas, and concertos. His work was marked by meticulous technical skill, profound emotional expression, and innovative musical forms. Mozart's influence extended far beyond his own time; his compositions continue to captivate audiences worldwide due to their beauty, sophistication, and enduring appeal.",
+      "lock_ok": false,
+      "lock": {
+       "missing_numbers": [],
+       "new_numbers": [],
+       "missing_names": [
+        "amadeu"
+       ],
+       "new_names": [],
+       "missing_fact_words": []
+      },
+      "decode_seed": 15845,
+      "eval": null
+     },
+     {
+      "style": "neg1",
+      "sha": "eb7cf155c81b22a0",
+      "text": "The melody of Wolfgang Amadeus Mozart's symphonies has captured my heart since childhood. His operatic works have left an indelible mark on my soul. My admiration for his orchestral compositions remains unwavering. Mozart's genius continues to inspire me with his profound impact on music history.",
+      "lock_ok": false,
+      "lock": {
+       "missing_numbers": [
+        "18",
+        "600"
+       ],
+       "new_numbers": [],
+       "missing_names": [
+        "austrian",
+        "mozart"
+       ],
+       "new_names": [],
+       "missing_fact_words": [
+        "composer"
+       ]
+      },
+      "decode_seed": 23764,
+      "eval": null
+     },
+     {
+      "style": "neg2",
+      "sha": "d331ca2633945bbd",
+      "text": "A profound sorrow crept upon my soul as I recalled the life of Wolfgang Amadeus Mozart, a man whose genius and passion left an indelible mark on the world of music. His contributions to classical music were monumental, yet his untimely death left behind a void that still echoes through the halls of the Vienna State Opera. Mozart's music, with its melodic arcs, dramatic contrasts, and harmonious melodies, resonated with audiences across generations, transcending time and space. His legacy lives on, inspiring new generations of musicians and listeners alike.",
+      "lock_ok": false,
+      "lock": {
+       "missing_numbers": [
+        "18",
+        "600"
+       ],
+       "new_numbers": [],
+       "missing_names": [
+        "austrian"
+       ],
+       "new_names": [
+        "state",
+        "vienna"
+       ],
+       "missing_fact_words": [
+        "composer"
+       ]
+      },
+      "decode_seed": 31683,
+      "eval": null
+     }
+    ]
+   }
+  }
+ ],
+ "maxrss_gb": 8.729588,
+ "wall_seconds": 440.2
+}

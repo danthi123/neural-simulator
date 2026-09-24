@@ -1,0 +1,244 @@
+{
+ "source": "research/findings/raw/_affect_tone_selection/amend1_probe/restyle_probe_s7.json",
+ "per_variant": {
+  "v0": {
+   "n_neg_style_rewrites": 30,
+   "ruler_reads_negative": 3,
+   "brain_appraisal_le_-0.30": 1,
+   "admissible": 19,
+   "admissible_refusals": 3,
+   "top_negative_ruler_words_not_in_appraisal_vocab": [
+    [
+     "sorrow",
+     3
+    ],
+    [
+     "sadness",
+     1
+    ]
+   ]
+  },
+  "v1": {
+   "n_neg_style_rewrites": 30,
+   "ruler_reads_negative": 9,
+   "brain_appraisal_le_-0.30": 0,
+   "admissible": 15,
+   "admissible_refusals": 4,
+   "top_negative_ruler_words_not_in_appraisal_vocab": [
+    [
+     "tragic",
+     5
+    ],
+    [
+     "sadness",
+     3
+    ],
+    [
+     "sorrow",
+     2
+    ],
+    [
+     "tragedy",
+     2
+    ],
+    [
+     "burden",
+     1
+    ],
+    [
+     "shattered",
+     1
+    ],
+    [
+     "chaos",
+     1
+    ],
+    [
+     "gloomy",
+     1
+    ],
+    [
+     "turmoil",
+     1
+    ],
+    [
+     "suffering",
+     1
+    ]
+   ]
+  },
+  "v2": {
+   "n_neg_style_rewrites": 30,
+   "ruler_reads_negative": 7,
+   "brain_appraisal_le_-0.30": 1,
+   "admissible": 21,
+   "admissible_refusals": 4,
+   "top_negative_ruler_words_not_in_appraisal_vocab": [
+    [
+     "sadness",
+     4
+    ],
+    [
+     "sorrow",
+     2
+    ],
+    [
+     "misery",
+     1
+    ],
+    [
+     "bleak",
+     1
+    ],
+    [
+     "sorrowful",
+     1
+    ],
+    [
+     "suffering",
+     1
+    ]
+   ]
+  },
+  "v3": {
+   "n_neg_style_rewrites": 30,
+   "ruler_reads_negative": 10,
+   "brain_appraisal_le_-0.30": 6,
+   "admissible": 18,
+   "admissible_refusals": 4,
+   "top_negative_ruler_words_not_in_appraisal_vocab": [
+    [
+     "bleak",
+     3
+    ],
+    [
+     "tragic",
+     3
+    ],
+    [
+     "agony",
+     2
+    ],
+    [
+     "shattered",
+     2
+    ],
+    [
+     "meaningless",
+     1
+    ],
+    [
+     "failure",
+     1
+    ],
+    [
+     "betrayal",
+     1
+    ],
+    [
+     "painful",
+     1
+    ],
+    [
+     "unbearable",
+     1
+    ],
+    [
+     "chaos",
+     1
+    ],
+    [
+     "repulsive",
+     1
+    ],
+    [
+     "tragedy",
+     1
+    ]
+   ]
+  }
+ },
+ "appraisal_of_single_words": {
+  "sad": {
+   "in_warriner": true,
+   "appraisal": -0.6832
+  },
+  "sadness": {
+   "in_warriner": false,
+   "appraisal": 0.0
+  },
+  "saddened": {
+   "in_warriner": false,
+   "appraisal": 0.0
+  },
+  "unhappy": {
+   "in_warriner": false,
+   "appraisal": 0.0
+  },
+  "sorrow": {
+   "in_warriner": false,
+   "appraisal": 0.0
+  },
+  "melancholy": {
+   "in_warriner": false,
+   "appraisal": 0.0
+  },
+  "pain": {
+   "in_warriner": true,
+   "appraisal": -0.945575
+  },
+  "loss": {
+   "in_warriner": false,
+   "appraisal": 0.0
+  },
+  "lonely": {
+   "in_warriner": true,
+   "appraisal": -0.25244999999999995
+  },
+  "loneliness": {
+   "in_warriner": false,
+   "appraisal": 0.0
+  },
+  "decay": {
+   "in_warriner": false,
+   "appraisal": 0.0
+  },
+  "despair": {
+   "in_warriner": true,
+   "appraisal": -0.775
+  },
+  "grief": {
+   "in_warriner": true,
+   "appraisal": -0.775
+  },
+  "miserable": {
+   "in_warriner": true,
+   "appraisal": -0.775
+  },
+  "terrible": {
+   "in_warriner": true,
+   "appraisal": -0.775
+  },
+  "hopeless": {
+   "in_warriner": true,
+   "appraisal": -0.775
+  },
+  "cry": {
+   "in_warriner": true,
+   "appraisal": -0.72415
+  },
+  "hurt": {
+   "in_warriner": true,
+   "appraisal": -0.828075
+  },
+  "lost": {
+   "in_warriner": true,
+   "appraisal": -0.29917499999999997
+  },
+  "alone": {
+   "in_warriner": false,
+   "appraisal": 0.0
+  }
+ },
+ "warriner_vocab_size": 180
+}
