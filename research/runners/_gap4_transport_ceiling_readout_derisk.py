@@ -342,7 +342,7 @@ def _ckpt_path(args, seed, r, arm):
 
 def _atomic_write(path, obj):
     path.parent.mkdir(parents=True, exist_ok=True)
-    tmp = path.with_suffix(path.suffix + ".tmp")
+    tmp = path.with_suffix(path.suffix + ".%d.tmp" % os.getpid())   # per-process: shards share one --out
     tmp.write_text(json.dumps(obj, indent=2, default=str))
     os.replace(tmp, path)
 
