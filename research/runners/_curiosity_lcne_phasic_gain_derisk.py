@@ -617,6 +617,8 @@ def run_seed(seed: int, determinism: bool = True, verbose: bool = True) -> dict:
     loop_lc_on = arm({FB_LOOP_GATE: 0.0})                                 # integrity: lc acts ONLY through the loop
     loop_lc_off = arm({FB_LOOP_GATE: 0.0, LC_GAIN_GATE: 0.0})
     autoinh_lesion = arm({LC_AUTO_GATE: 0.0})                             # diagnostic: phasic needs alpha2
+    swap_gain_lesion = arm({LC_GAIN_GATE: 0.0}, swap=True)                # REPORTING ONLY (PREREG v1.1): G7's own
+    #   statistic with the modulator closed, so a G7 failure can be attributed to the base circuit or to lc_ne
 
     # G8: lesion metacog's comparator relay (meta_margin_fs -> meta_schema inhibition), everything else intact.
     rm = b.region_manager
@@ -676,6 +678,7 @@ def run_seed(seed: int, determinism: bool = True, verbose: bool = True) -> dict:
     rho_swap = level_rho(swap)
     rho_swap_fl = floored_rho(_vals(swap, "ask_hz"))                     # secondary only
     rho_lesion = level_rho(gain_lesion)                                   # the base (modulator-closed) arm's own G1 rho
+    rho_swap_lesion = level_rho(swap_gain_lesion)                         # ... and its own G7 rho (reporting only)
     rho_relay = level_rho(relay_lesion)
     rho_both = level_rho(both_lesion)
     rho_lc = spearman(list(EVIDENCE_GRID), _vals(combined, "lc_ne_hz"))
@@ -699,7 +702,7 @@ def run_seed(seed: int, determinism: bool = True, verbose: bool = True) -> dict:
                      and [l["ask_hz_per_rep"] for l in loop_lc_on["levels"]]
                      == [l["ask_hz_per_rep"] for l in loop_lc_off["levels"]])
     all_sweeps = (combined, swap, gain_lesion, edge_lesion, both_lesion, loop_lc_on, loop_lc_off, autoinh_lesion,
-                  relay_lesion, restored)
+                  swap_gain_lesion, relay_lesion, restored)
     bystander_spikes = int(sum(l["bystander_spikes"] for sw in all_sweeps for l in sw["levels"])
                            + sum(v["bystander_spikes"] for arm_ in g11_reads.values() for v in arm_.values()))
     dig = digest(combined)
@@ -713,12 +716,13 @@ def run_seed(seed: int, determinism: bool = True, verbose: bool = True) -> dict:
             "loop_lesion_lc_off": (loop_lc_off["gates_at_measurement"][FB_LOOP_GATE] == 0.0
                                    and loop_lc_off["gates_at_measurement"][LC_GAIN_GATE] == 0.0),
             "autoinhibition_lesion": autoinh_lesion["gates_at_measurement"][LC_AUTO_GATE] == 0.0,
+            "class_swap_gain_lesion": swap_gain_lesion["gates_at_measurement"][LC_GAIN_GATE] == 0.0,
             "relay_lesion": relay_lesion["relay_weight_sum_at_measurement"] == 0.0,
             "g11_drive_sweep_gates": all(v["gates_held"] for rd in g11_reads.values() for v in rd.values()),
             "additive_control_closed_in_mechanism_arms": all(
                 sw["gates_at_measurement"][ADD_GATE] == 0.0 for sw in (swap, gain_lesion, edge_lesion, both_lesion,
                                                                        loop_lc_on, loop_lc_off, autoinh_lesion,
-                                                                       restored))}
+                                                                       swap_gain_lesion, restored))}
 
     det = {"checked": False}
     if determinism:
@@ -771,6 +775,7 @@ def run_seed(seed: int, determinism: bool = True, verbose: bool = True) -> dict:
         "seed": seed, "go": bool(go), "dev_seed": seed in DEV_SEEDS, "checks": checks_required,
         "checks_integrity": checks_integrity,
         "rho": rho_raw, "rho_swap": rho_swap, "rho_gain_lesion_arm": rho_lesion,
+        "rho_swap_gain_lesion_arm": rho_swap_lesion,
         "secondary_floored_rho": {"combined": rho_fl, "class_swap": rho_swap_fl}, "rho_relay_lesion": rho_relay,
         "rho_both_lesion": rho_both, "rho_lc_ne": rho_lc,
         "ask_range_hz": {"combined": rng_c, "gain_lesion": rng_g, "edge_lesion": rng_e, "both_lesion": rng_b},
@@ -787,11 +792,12 @@ def run_seed(seed: int, determinism: bool = True, verbose: bool = True) -> dict:
         "arms": {"combined_intact": combined, "class_swap": swap, "gain_lesion": gain_lesion,
                  "edge_lesion": edge_lesion, "both_lesion": both_lesion, "loop_lesion_lc_on": loop_lc_on,
                  "loop_lesion_lc_off": loop_lc_off, "autoinhibition_lesion": autoinh_lesion,
-                 "relay_lesion": relay_lesion},
+                 "relay_lesion": relay_lesion, "class_swap_gain_lesion": swap_gain_lesion},
         "elapsed_s": round(time.time() - t0, 1),
     }
     if verbose:
         print(f"[seed {seed}] rho={rho_raw} (floored {rho_fl}; lesion arm {rho_lesion}) swap={rho_swap} "
+              f"(lesion arm {rho_swap_lesion}) "
               f"relay={rho_relay} rho_lc={rho_lc} "
               f"attrib_gain={attrib_gain} G11={g11.get('pass')} (trend_on={g11.get('trend_on')} "
               f"trend_add={g11.get('trend_add')} gain_top={g11.get('gain_at_top_of_rising_limb')} "

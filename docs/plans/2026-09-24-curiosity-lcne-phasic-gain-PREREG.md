@@ -205,3 +205,13 @@ production pool or the chat path; anything about felt states. Functional read-ou
 v1, 2026-09-24: initial registration, written after the dev-seed calibration grids and before any run of this
 mechanism on seeds 42/43/44/100/101/102. The runner revision it governs is the one committed immediately before
 this document on `research/curiosity-lcne-phasic-gain`.
+
+v1.1, 2026-09-24, still before any evaluation-seed run of this mechanism. The dev confirmation smoke (seeds 7-10,
+revision cb4ad0c2e) failed G7 on dev seeds 8 and 10. A scratch check showed the conflict_xedge base pool (no v4
+organ) gives the identical class-swap curve on both (rho -0.776 and -0.271; seed 10's ASK rises to 0.76 Hz at
+swapped evidence 1.0), so these are base-circuit failures of the kind §5 risk 1 names. To let the evaluation
+attribute any G7 failure without a post-hoc run, ONE reporting-only arm is added: the class swap with
+`lc_ne -> ask_fb` closed (`rho_swap_gain_lesion_arm`, arm `class_swap_gain_lesion`). No gate, threshold,
+constant or statistic changes; G7 is still scored on the intact class-swap arm exactly as in v1. The governed
+runner revision is now the commit that carries this amendment. The v1 dev artifacts are superseded by a re-run
+from that revision; the evaluation pool lines pin that revision.
