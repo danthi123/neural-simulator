@@ -108,21 +108,23 @@ RS, FS = V4.RS, V4.FS
 
 # ── FROZEN operating point (calibrated on DEV seeds 7-12 ONLY; PREREG §2) ─────────────────────────────────────────
 CV_N = 20             # veto units per channel (RS, inhibitory output)
-CI_N = 20             # rival-relay units per channel (FS, inhibitory)
-W_MV = 6.0            # meta_k -> cv_veto{k} (dense E)
-W_MI = 6.0            # meta_j -> cv_inh{j} (dense E)
-W_IV0 = 4.0           # cv_inh{1-k} -> cv_veto{k} INITIAL weight (GABA-A, plastic under inhibitory STDP)
-W_VA = 4.0            # cv_veto{k} -> ask (GABA-A)
-ISTDP_TARGET_HZ = 2.0     # the set-point: each veto half's rate with NO evidence differential
-ISTDP_ETA = 0.05          # Vogels learning rate
+CP_N = 20             # shared normalization-pool units (FS, inhibitory), driven by BOTH comparator halves
+W_MV = 10.0           # meta_k -> cv_veto{k} (dense E)
+W_MP = 6.0            # meta (both halves) -> cv_pool (dense E)
+W_PV0 = 4.0           # cv_pool -> cv_veto{k} INITIAL weight (GABA-A, plastic under inhibitory STDP)
+W_VA = 16.0           # cv_veto{k} -> ask (GABA-A)
+ISTDP_TARGET_HZ = 1.0     # the set-point: each veto half's mean rate over the calibration epoch
+ISTDP_ETA = 0.5           # Vogels learning rate
 ISTDP_TAU_MS = 20.0       # Vogels trace time constant
 ISTDP_W_MAX = 80.0        # inhibitory weight ceiling (conductance magnitude)
-CAL_READS = 16            # calibration epoch length, in no-evidence metacog production reads (x READ_REPS x 135 steps)
-W_IV0_ALT = 12.0          # the second initial weight of the two-init set-point check (reported, not a gate)
+CAL_READS = 24            # calibration epoch length, in metacog production reads (x READ_REPS x 135 steps)
+CAL_MODE = 1              # calibration input: 0 = NO evidence differential (metacog's lesion drive); 1 = the WEAKEST
+                          # evidence level (evidence 0.0), alternating class 0 / class 1 read by read (class-symmetric)
+W_PV0_ALT = 12.0          # the second initial weight of the two-init set-point check (reported, not a gate)
 
-ISTDP_GATE = "cv_istdp"          # plasticity gate of cv_inh -> cv_veto (open only in calibration epochs)
+ISTDP_GATE = "cv_istdp"          # plasticity gate of cv_pool -> cv_veto (open only in calibration epochs)
 VETO_GATE = "cv_veto_out"        # transmission gate of cv_veto -> ask (the veto lesion switch)
-CV_REGIONS = ("cv_veto0", "cv_veto1", "cv_inh0", "cv_inh1")
+CV_REGIONS = ("cv_veto0", "cv_veto1", "cv_pool")
 DEV_SEEDS = frozenset({7, 8, 9, 10, 11, 12})
 REQUIRED_SEED_SET = V4.REQUIRED_SEED_SET
 
@@ -155,8 +157,8 @@ def _dense(pre, post, w, **kw):
 def _cv_spec(seed):
     return ([BrainRegion(name=f"cv_veto{k}", n_neurons=CV_N, exc_fraction=0.0, internal_density=0.0,
                          enable_nmda=False, izh_neuron_type=RS) for k in (0, 1)]
-            + [BrainRegion(name=f"cv_inh{k}", n_neurons=CI_N, exc_fraction=0.0, internal_density=0.0,
-                           enable_nmda=False, izh_neuron_type=FS) for k in (0, 1)], [], {})
+            + [BrainRegion(name="cv_pool", n_neurons=CP_N, exc_fraction=0.0, internal_density=0.0,
+                           enable_nmda=False, izh_neuron_type=FS)], [], {})
 
 
 def meta_halves(rm):
@@ -168,12 +170,11 @@ def meta_halves(rm):
 def _cv_rows(rm):
     """(name, pre idx, post idx, weight, extra keys) for every synapse this organ declares."""
     mh = meta_halves(rm)
-    ix = {n: np.asarray(rm.indices(n), np.int64) for n in CV_REGIONS + ("ask",)}
-    rows = []
+    ix = {n: np.asarray(rm.indices(n), np.int64) for n in CV_REGIONS + ("ask", "meta_schema")}
+    rows = [("cv_meta_to_pool", ix["meta_schema"], ix["cv_pool"], W_MP, {})]
     for k in (0, 1):
         rows.append((f"cv_meta{k}_to_veto{k}", mh[k], ix[f"cv_veto{k}"], W_MV, {}))
-        rows.append((f"cv_meta{k}_to_inh{k}", mh[k], ix[f"cv_inh{k}"], W_MI, {}))
-        rows.append((f"cv_inh{1 - k}_to_veto{k}", ix[f"cv_inh{1 - k}"], ix[f"cv_veto{k}"], W_IV0,
+        rows.append((f"cv_pool_to_veto{k}", ix["cv_pool"], ix[f"cv_veto{k}"], W_PV0,
                      {"plastic": True, "plasticity_gate": ISTDP_GATE}))
         rows.append((f"cv_veto{k}_to_ask", ix[f"cv_veto{k}"], ix["ask"], W_VA, {"transmission_gate": VETO_GATE}))
     return rows
@@ -198,9 +199,9 @@ def cv_organ():
     return OrganDescriptor(
         key="commitment_veto_organ", regions=CV_REGIONS, spec_fn=_cv_spec, config=cv_config(),
         explicit_wiring_fn=_cv_wiring, post_inject_fn=_cv_post_inject, param_het=True,
-        scaffold_residuals=("hand-set fixed weights meta->veto / meta->relay / veto->ask (dev-seed calibration); the "
-                            "rival-relay -> veto inhibition is set by inhibitory STDP to a constant target rate in a "
-                            "no-evidence calibration epoch, then frozen",))
+        scaffold_residuals=("hand-set fixed weights meta->veto / meta->pool / veto->ask (dev-seed calibration); the "
+                            "pool -> veto inhibition is set by inhibitory STDP to a constant target rate in a "
+                            "calibration epoch, then frozen",))
 
 
 def build_v5_pool(seed: int):
@@ -246,8 +247,8 @@ def _syn_mask(bridge, pre_regions, post_regions):
 
 
 def _iv_mask(bridge):
-    """The plastic rival-relay -> veto synapses (cv_inh* -> cv_veto*)."""
-    return _syn_mask(bridge, ("cv_inh0", "cv_inh1"), ("cv_veto0", "cv_veto1"))
+    """The plastic pool -> veto synapses (cv_pool -> cv_veto*)."""
+    return _syn_mask(bridge, ("cv_pool",), ("cv_veto0", "cv_veto1"))
 
 
 def _weights(bridge):
@@ -284,11 +285,17 @@ def istdp_eligible_pairs(bridge) -> dict:
     return out
 
 
-def no_evidence_read(pool, org, rec) -> dict:
-    """ONE metacog production read with NO evidence differential (its own lesion drive), recording every population."""
+def calibration_read(pool, org, rec, i: int) -> dict:
+    """ONE metacog production read of the calibration input, recording every population. CAL_MODE 0: NO evidence
+    differential (metacog's own lesion drive, both assemblies at base). CAL_MODE 1: the weakest evidence level
+    (evidence 0.0), into class (i % 2) -- so the epoch is class-symmetric by construction."""
     rec.reset()
     rec.on = True
-    nmda_norm_margin(org.bridge, org.xp, org.idx, org.snap, 0.0, lesion=True)
+    if int(CAL_MODE) == 0:
+        nmda_norm_margin(org.bridge, org.xp, org.idx, org.snap, 0.0, lesion=True)
+    else:
+        idx = V4._swapped_idx(org.idx) if (i % 2) else org.idx
+        nmda_norm_margin(org.bridge, org.xp, idx, org.snap, 0.0)
     rec.on = False
     out = {}
     for k, ix in rec.idx.items():
@@ -297,10 +304,17 @@ def no_evidence_read(pool, org, rec) -> dict:
     return out
 
 
-def calibrate(pool, org, rec, n_reads=CAL_READS) -> dict:
-    """The set-point epoch: open ISTDP_GATE, drive metacog with NO evidence differential for n_reads production reads,
-    close ISTDP_GATE. Returns the per-read veto-half rates (the convergence trace), the eligibility at the open gate,
-    the weight change confined to the plastic rows, and a post-epoch no-evidence read with the gate CLOSED."""
+def _epoch_rates(pool, org, rec, n) -> dict:
+    """Mean veto-half rates over n calibration reads (read-only when ISTDP_GATE is closed)."""
+    rs = [calibration_read(pool, org, rec, i) for i in range(n)]
+    return {k: float(np.mean([r[k] for r in rs])) for k in rs[0]}
+
+
+def calibrate(pool, org, rec, n_reads=None) -> dict:
+    """The set-point epoch: open ISTDP_GATE, run n_reads calibration reads (CAL_MODE), close ISTDP_GATE. Returns the
+    per-read veto-half rates (the convergence trace), the eligibility at the open gate, the weight change confined to
+    the plastic rows, and the epoch-mean veto rates re-read with the gate CLOSED (what G13 scores)."""
+    n_reads = int(CAL_READS if n_reads is None else n_reads)
     b = pool.bridge
     w0 = _weights(b)
     iv = _iv_mask(b)
@@ -308,23 +322,25 @@ def calibrate(pool, org, rec, n_reads=CAL_READS) -> dict:
     elig = istdp_eligible_pairs(b)
     trace = []
     with pool.sequence_isolation():
-        for _ in range(n_reads):
-            r = no_evidence_read(pool, org, rec)
-            trace.append({"veto0_hz": r["cv_veto0_hz"], "veto1_hz": r["cv_veto1_hz"], "inh0_hz": r["cv_inh0_hz"],
-                          "inh1_hz": r["cv_inh1_hz"], "meta_0_hz": r["meta_0_hz"], "meta_1_hz": r["meta_1_hz"]})
+        for i in range(n_reads):
+            r = calibration_read(pool, org, rec, i)
+            trace.append({"veto0_hz": r["cv_veto0_hz"], "veto1_hz": r["cv_veto1_hz"], "pool_hz": r["cv_pool_hz"],
+                          "meta_0_hz": r["meta_0_hz"], "meta_1_hz": r["meta_1_hz"]})
     b.set_plasticity_gate(ISTDP_GATE, 0.0)
     w1 = _weights(b)
     with pool.sequence_isolation():
-        post = no_evidence_read(pool, org, rec)
+        post = _epoch_rates(pool, org, rec, 2)
     ivw = {}
     for k in (0, 1):
-        mk = _syn_mask(b, (f"cv_inh{1 - k}",), (f"cv_veto{k}",))
+        mk = _syn_mask(b, ("cv_pool",), (f"cv_veto{k}",))
         ivw[f"to_veto{k}_mean"] = float(w1[mk].mean())
         ivw[f"to_veto{k}_std"] = float(w1[mk].std())
-    return {"trace": trace, "eligible_pairs_at_open_gate": elig,
+    return {"trace": trace, "eligible_pairs_at_open_gate": elig, "cal_mode": int(CAL_MODE), "n_reads": n_reads,
             "weights_changed_outside_plastic_rows": int(np.sum(w0[~iv] != w1[~iv])),
             "plastic_rows_changed": int(np.sum(w0[iv] != w1[iv])), "iv_weights": ivw,
-            "iv_weights_sha256": _sha(w1[iv]), "post_epoch_read_gate_closed": post,
+            "iv_weights_sha256": _sha(w1[iv]), "post_epoch_rates_gate_closed": post,
+            "homeostasis_target_rate_hz": ISTDP_TARGET_HZ,
+            "veto_firing_rate_hz": {k: post[f"cv_veto{k}_hz"] for k in (0, 1)},
             "setpoint_ratio": {k: post[f"cv_veto{k}_hz"] / ISTDP_TARGET_HZ for k in (0, 1)}}
 
 
@@ -382,7 +398,7 @@ def digest(sw) -> str:
     h = hashlib.sha256()
     h.update(V4.digest(sw).encode())
     for l in sw["levels"]:
-        h.update(np.asarray([l["cv_veto0_hz"], l["cv_veto1_hz"], l["cv_inh0_hz"], l["cv_inh1_hz"]],
+        h.update(np.asarray([l["cv_veto0_hz"], l["cv_veto1_hz"], l["cv_pool_hz"]],
                             np.float64).tobytes())
     return h.hexdigest()
 
@@ -680,13 +696,13 @@ def run_seed(seed: int, determinism: bool = True, verbose: bool = True, quick: b
         "no_host_novelty_signal": float(getattr(b.core_config, "current_novelty_signal", 0.0) or 0.0) == 0.0,
         "neuromodulator_subsystem_enabled": bool(getattr(b.core_config, "enable_neuromodulator_subsystem", False)),
         "istdp_eligible_only_declared_rows": set(cal["eligible_pairs_at_open_gate"]) == {
-            "cv_inh1->cv_veto0", "cv_inh0->cv_veto1"},
+            "cv_pool->cv_veto0", "cv_pool->cv_veto1"},
         "calibration_changed_only_plastic_rows": bool(cal["weights_changed_outside_plastic_rows"] == 0
                                                       and cal["plastic_rows_changed"] > 0),
         "veto_weights_frozen_after_calibration": bool(iv_sha_end == iv_sha_after_cal),
         "gates_after_run": dict(b._transmission_gate_values),
     }
-    # the two-init set-point check (REPORTED): same pool, the plastic rows reset to W_IV0_ALT, re-calibrated.
+    # the two-init set-point check (REPORTED): same pool, the plastic rows reset to W_PV0_ALT, re-calibrated.
     two_init = _two_init_check(pool, org, rec)
     res = {
         "seed": seed, "go": bool(go), "dev_seed": seed in DEV_SEEDS, "checks": checks_required,
@@ -733,15 +749,15 @@ def _attrib(seed, combined, gain_lesion):
 
 
 def _two_init_check(pool, org, rec) -> dict:
-    """REPORTED set-point anti-cheat: reset the plastic rows to W_IV0_ALT and re-run the calibration epoch; a
+    """REPORTED set-point anti-cheat: reset the plastic rows to W_PV0_ALT and re-run the calibration epoch; a
     set-point process lands both inits in the same rate band. Runs LAST (nothing is scored after it)."""
     b = pool.bridge
     iv = _iv_mask(b)
     data = np.asarray(to_host(b.cp_connections.data)).copy()
-    data[iv] = W_IV0_ALT
+    data[iv] = W_PV0_ALT
     b.cp_connections.data = pool.xp.asarray(data, dtype=b.cp_connections.data.dtype)
     cal2 = calibrate(pool, org, rec)
-    return {"w_init": W_IV0_ALT, "setpoint_ratio": cal2["setpoint_ratio"], "iv_weights": cal2["iv_weights"],
+    return {"w_init": W_PV0_ALT, "setpoint_ratio": cal2["setpoint_ratio"], "iv_weights": cal2["iv_weights"],
             "in_band": gate_g13_setpoint(cal2["setpoint_ratio"]),
             "trace_veto_hz": [(t["veto0_hz"], t["veto1_hz"]) for t in cal2["trace"]]}
 
@@ -871,8 +887,8 @@ def _decide(rows) -> dict:
 
 
 RUNNER_REL = "research/runners/_curiosity_commitment_veto_v5_derisk.py"
-CIRCUIT_CONSTANTS = ("CV_N", "CI_N", "W_MV", "W_MI", "W_IV0", "W_VA", "ISTDP_TARGET_HZ", "ISTDP_ETA",
-                     "ISTDP_TAU_MS", "ISTDP_W_MAX", "CAL_READS", "W_IV0_ALT")   # the only names --set may override
+CIRCUIT_CONSTANTS = ("CV_N", "CP_N", "W_MV", "W_MP", "W_PV0", "W_VA", "ISTDP_TARGET_HZ", "ISTDP_ETA",
+                     "ISTDP_TAU_MS", "ISTDP_W_MAX", "CAL_READS", "CAL_MODE", "W_PV0_ALT")   # the only names --set may override
 _OVERRIDES: list = []
 
 
