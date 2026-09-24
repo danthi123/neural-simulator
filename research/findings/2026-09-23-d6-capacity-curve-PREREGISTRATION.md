@@ -192,12 +192,16 @@ bypassed, because facts are generated as base-form "a v p". A zero (frozen) bloc
   `None` (=> UNDEFINED at the level) if a needed field is missing. `score_grid` now reports
   `level_label_*_cost` / `curve_*_cost` alongside the renamed recall labels, using COST-HOLDS / COST-FAILS /
   MIXED(k/6) / INCOMPLETE / UNDEFINED and the same CEILING-BETWEEN / FROM / NON-MONOTONE curve bands. **This
-  criterion is pre-registered to FAIL**: the JOBS.txt wall-time note already measured ~12.6 s/fact encode and
-  projects ~3923 s/turn read-time-view at N=2000 on the local box under load -- both over threshold -- so the
-  predicted verdict is `curve_HEBB_cost = CEILING-BETWEEN-500-AND-2000` (or FAILS-FROM-500, depending on the N=500
-  measurement) unless the grid measures faster than the smoke/probe projected. That is a real, falsifiable
-  prediction, made before the grid runs, and is the actual answer this instrument gives to "does it scale to a
-  tiny LLM" -- on cost, not on accuracy.
+  criterion's N>=500 outcome was already KNOWN, not predicted**: the JOBS.txt wall-time note already measured
+  ~12.6 s/fact encode and projects ~3923 s/turn read-time-view at N=2000 on the local box under load -- both over
+  threshold -- BEFORE these thresholds were written down, so the 6-seed grid can only REPLICATE
+  `curve_HEBB_cost = CEILING-BETWEEN-500-AND-2000` (or FAILS-FROM-500, depending on the N=500 measurement), not
+  discover it. **This is a cost MEASUREMENT against a pre-stated bar, not a falsifiable prediction made before
+  seeing the data, and language calling it that is retracted (see AMENDMENT C).** It is also, by itself, no answer
+  to "does it scale to a tiny LLM": this store's recall cannot degrade with N by construction (part (a) above), so
+  it has no capacity law to compare against an LLM's parameter-count capacity in the first place -- cost is a
+  necessary condition for usability, not a substitute for the capacity question. That question belongs to the
+  DISTRIBUTED-STORE lane (`research/runners/ca3_superposed_fact_attractor.py`), where recall CAN degrade with N.
 
   **(c) The near-miss probe claim is corrected.** The design section previously said the near-miss foils "are the
   interference measure this instrument credits to the brain" -- this is wrong and is struck. `ask_yes_no(a, v, q)`
@@ -224,6 +228,49 @@ bypassed, because facts are generated as base-form "a v p". A zero (frozen) bloc
   None of (a)-(d) changes the FREEZE-null, lever, no-probe-write-during-probe or determinism checks, the arms, the
   fact/probe construction, or the seeds. The grid (`JOBS.txt`, 84 jobs) had not been dispatched when this amendment
   was filed.
+
+- **AMENDMENT C (2026-09-24, filed after a second adversarial review of AMENDMENT B (own commit, this branch's
+  `review:capacity-amend` result), BEFORE any grid job runs.** What had been seen when this amendment was written:
+  the same seed-42 N=5/N=50 smoke and N=500/N=2000 resource probes as AMENDMENT B; no grid job had run. Three
+  corrections, all textual/instrumentation, none touching the arms, thresholds' numeric values, fact/probe
+  construction or seeds.
+
+  **(a) The cost criterion's overclaim is retracted.** AMENDMENT B (b) called the N>=500 cost outcome "a real,
+  falsifiable prediction, made before the grid runs" and "the actual answer this instrument gives to 'does it
+  scale to a tiny LLM'". Both overclaim. The N=500/N=2000 resource-probe jobs already measured encode and
+  read-time-view times far past `COST_ENCODE_MAX_S`/`COST_READTIME_MAX_S` BEFORE those thresholds were written
+  down (AMENDMENT B's own text says so), so the grid can only replicate that outcome at N>=500, not discover it:
+  it is a cost MEASUREMENT against a pre-stated bar, not a prediction. And the cost gate cannot by itself answer
+  the tiny-LLM question, because this store's recall cannot degrade with N by construction (AMENDMENT B (a)) --
+  a store with no capacity law has nothing to compare against an LLM's parameter-count capacity. That question
+  belongs to the DISTRIBUTED-STORE lane (`research/runners/ca3_superposed_fact_attractor.py`,
+  `research/findings/2026-09-23-ca3-superposed-fact-attractor-capacity-PREREGISTRATION.md`), which builds a store
+  where recall CAN degrade with N and fits a capacity law from the degradation curve. See the corrected text under
+  AMENDMENT B (b) above (edited in place by this amendment, per the reviewer's fix).
+
+  **(b) The cost bar is measured on the wrong hardware class, and uncontrolled, while labelled "consumer-hardware".**
+  Every JOBS.txt line ran `SIM_BACKEND=numpy` on a SHARED mini-PC pool node, with other lanes' jobs running
+  concurrently at load, not the declared "single consumer GPU-class box" reference class, and the worker recorded
+  no hostname, load or CPU-time to say so. Two fixes: (i) `COMMON_ENV`'s `SIM_BACKEND` no longer hard-codes
+  `"numpy"` -- it now defaults from the process environment (`os.environ.get("SIM_BACKEND", "numpy")`), which was
+  previously clobbering any `SIM_BACKEND=cupy` a job's shell had already set before the backend was ever resolved.
+  A cost cell CAN now be measured on the GPU path (`SIM_BACKEND=cupy` via `tools/gpu_queue.sh`, one job at a time)
+  when that comparison is wanted. (ii) `worker()` now records `node.hostname`, `node.cpu_count`,
+  `node.loadavg_start`/`node.loadavg_end` (`os.getloadavg()`), whole-job `process_time_s`
+  (`time.process_time()`, this process's own consumed CPU time vs `elapsed_s` wall time), and per-fact
+  `encode_cpu_s` / per-probe `t_engram_cpu` next to the existing wall-time fields, plus a `cost_hardware_class`
+  field (`"gpu"` iff the job itself ran with `SIM_BACKEND=cupy`, else `"pool-cpu-shared"`). Absent a GPU-path run,
+  every cost verdict in this instrument's output is labelled against `cost_hardware_class="pool-cpu-shared"`, never
+  "consumer-hardware", and carries the node it ran on and the load at measurement time.
+
+  **(c) Provenance text fix.** The AMENDMENT B round's `pool_queue_lines_final.sh` job lines cited the wrong merge
+  SHA in their `--checked` provenance text ("merged to 2c3218852", a mid-flight `origin/main` sync commit, not the
+  branch HEAD the lines were staged from). Re-issued lines cite the actual HEAD they are staged at and this
+  amendment.
+
+  None of (a)-(c) changes the FREEZE-null, lever, no-probe-write-during-probe or determinism checks, the arms,
+  the fact/probe construction, the seeds, or any threshold's numeric value. The grid had not been dispatched when
+  this amendment was filed.
 
 ## Honesty
 

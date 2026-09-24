@@ -19,13 +19,39 @@ renamed to say what they actually measure: "SCALES" -> "RECALL-HOLDS" (recall ho
 uninformative about capacity), "PARITY" -> "PARITY-BY-CONSTRUCTION" (HEBB vs COPY store weights measured complex
 corr 0.99996, max |dw| 0.031, all 128 synapses saturated at W_MAX at s42 N=5 -- the instructive pathway + phase
 lock + W_MAX clamp make the Hebbian write a near-copy of the host pattern, so parity is predetermined, not evidence
-the learning rule scales). A NEW pre-registered CONSUMER-HARDWARE COST criterion is added (COST_ENCODE_MAX_S,
-COST_READTIME_MAX_S, COST_MEM_GB below) because cost is the one quantity that DOES grow with N here (the prereg's
-own prediction 3) and is the only band that can produce a real scaling verdict; `score_grid` now also reports
-level_label_*_cost / curve_*_cost alongside the (renamed, non-scaling) recall labels. See AMENDMENT LOG in the
-PREREGISTRATION doc for the full account and the adversarial review this responds to.
+the learning rule scales). A NEW pre-registered COST criterion is added (COST_ENCODE_MAX_S, COST_READTIME_MAX_S,
+COST_MEM_GB below) because cost is the one quantity that DOES grow with N here (the prereg's own prediction 3);
+`score_grid` now also reports level_label_*_cost / curve_*_cost alongside the (renamed, non-scaling) recall labels.
+See AMENDMENT LOG in the PREREGISTRATION doc for the full account and the adversarial review this responds to.
 
-WHAT ONE JOB DOES (one (seed, N, arm) per process; numpy/CPU; `--worker`):
+AMENDMENT C (filed after a second adversarial review of AMENDMENT B, before any grid job; see the PREREGISTRATION's
+AMENDMENT LOG for the full account). Three corrections:
+  (a) The cost criterion is a MEASUREMENT against a pre-stated bar, not a "prediction": the N=500/N=2000
+      resource-probe jobs (`smoke/resource_probe_s42_N{500,2000}_HEBB.json`) already showed encode/read-time far
+      over COST_ENCODE_MAX_S/COST_READTIME_MAX_S before those thresholds were written down, so the 6-seed grid can
+      only replicate that outcome at N>=500, not discover it. Language calling this "a real, falsifiable
+      prediction" is retracted. The cost gate also cannot by itself answer whether this store "scales to a tiny
+      LLM": this store has no capacity law (Amendment B (a): recall cannot degrade with N by construction), so it
+      has nothing to compare against an LLM's parameter-count capacity. That question is addressed by the
+      DISTRIBUTED-STORE lane (`research/runners/ca3_superposed_fact_attractor.py`,
+      `research/findings/2026-09-23-ca3-superposed-fact-attractor-capacity-PREREGISTRATION.md`), which builds a
+      store where recall CAN degrade with N and fits a capacity law from the degradation curve.
+  (b) The cost bar was described as a "consumer-hardware" / "consumer-GPU-class" measurement while every job ran
+      SIM_BACKEND=numpy on a SHARED mini-PC pool node (other lanes' jobs concurrently at load), which is neither
+      the declared hardware class nor a controlled one. `COMMON_ENV`'s SIM_BACKEND now defaults from the process
+      environment (`os.environ.get("SIM_BACKEND", "numpy")`) instead of being hard-coded to "numpy", so a cost cell
+      CAN be run on the GPU path (`SIM_BACKEND=cupy` via `tools/gpu_queue.sh`, one job at a time) when that
+      comparison is wanted. Absent that, `worker()` now records `node.hostname`, `node.loadavg_start/end`
+      (`os.getloadavg()`) and `node.process_time_s` (`time.process_time()`, CPU time actually consumed) alongside
+      wall time, so every cost cell states which machine it ran on and under how much concurrent load, and a
+      COST-FAILS/COST-HOLDS verdict is labelled "pool CPU, shared node" rather than "consumer-hardware" unless the
+      job's `env.SIM_BACKEND == "cupy"`.
+  (c) `pool_queue_lines_final.sh` job lines from the AMENDMENT B round cited the wrong merge SHA in their
+      `--checked` provenance text ("merged to 2c3218852", a mid-flight sync commit, instead of the branch HEAD they
+      were staged from). Re-issued lines below cite the actual HEAD they are staged at.
+
+WHAT ONE JOB DOES (one (seed, N, arm) per process; numpy/CPU by default, SIM_BACKEND=cupy for the GPU path per
+AMENDMENT C; `--worker`):
   1. LEXICON: a fixed per-seed synthetic vocabulary (N_AG agents, N_AC actions, N_PT patients; disjoint pools), the
      SAME for every level N -- the brain knows the words; what grows is the number of FACTS taught over them.
   2. FACTS: a per-seed MASTER list of 2000 SVO facts in blocks of 4 with CONTROLLED OVERLAP:
@@ -96,6 +122,7 @@ import hashlib
 import json
 import os
 import resource
+import socket
 import sys
 import time
 
@@ -119,9 +146,12 @@ NULL_MAX = 0.05
 PARITY_TOL = 0.05
 MEM_NODE_GB, MEM_AWS_GB = 13.0, 120.0     # usable RAM on a 15 GB pool node / a 128 GB AWS node (2 / 8 GB margin)
 
-# AMENDMENT B (consumer-hardware cost criterion; the only pre-registered band that can fail for this store's
-# design -- see the docstring's AMENDMENT B section and the PREREGISTRATION's own amendment log). Bar =
-# "runnable as a chat turn on a single-consumer-GPU-class box" (project consumer-hardware-reference standard):
+# AMENDMENT B (cost criterion; the only pre-registered band that can fail for this store's design -- see the
+# docstring's AMENDMENT B section and the PREREGISTRATION's own amendment log). Bar = "runnable as a chat turn on
+# a single-consumer-GPU-class box" (project consumer-hardware-reference standard). AMENDMENT C: this is a
+# MEASUREMENT against that bar, not a prediction of it, and it is a bar this instrument's actual runs (numpy on a
+# shared CPU pool node, unless SIM_BACKEND=cupy) do not by default MEET the hardware class of -- see
+# `_cost_ok`/`worker`'s node-load recording and the "pool CPU, shared node" labelling this amendment adds:
 COST_ENCODE_MAX_S = 2.0          # per-fact encode (median), one taught turn
 COST_READTIME_MAX_S = 10.0       # projected read-time-view cost per chat turn (engram re-read of every block)
 COST_MEM_GB = 24.0               # peak RSS budget (a single consumer GPU-class box's RAM headroom, project standard)
@@ -135,7 +165,14 @@ ARMS = {
     "COPY": {k: "0" for k in D6_FLAGS},
     "HEBB_REP": dict(_HEBB),
 }
-COMMON_ENV = {"SIM_BACKEND": "numpy", "BRAIN_FACT_SHARD_RETRIEVAL": "1", "BRAIN_D6_ENGRAM_PRUNE": "0"}
+# AMENDMENT C: SIM_BACKEND used to be hard-coded to "numpy" here, which meant `_set_env` clobbered any
+# SIM_BACKEND=cupy the job's shell had already set, before the backend was ever resolved (sim/backend.py reads
+# SIM_BACKEND on first use) -- making a GPU-path cost measurement impossible regardless of how the job was
+# launched. It now defaults from the process environment, so `SIM_BACKEND=cupy .venv/bin/python -m
+# research.runners.d6_capacity_curve --worker ...` (via `tools/gpu_queue.sh`, one job at a time) runs the GPU path;
+# omitting it keeps the numpy pool default unchanged.
+COMMON_ENV = {"SIM_BACKEND": os.environ.get("SIM_BACKEND", "numpy"),
+              "BRAIN_FACT_SHARD_RETRIEVAL": "1", "BRAIN_D6_ENGRAM_PRUNE": "0"}
 
 
 # ── facts + probes (pure; deterministic in seed) ────────────────────────────────────────────────────────────────────
@@ -246,18 +283,20 @@ def _build(seed, n_facts):
 
 def _teach(comp, facts, out):
     from research.runners.d6_hebbian_store import conversation_write
-    enc_t, parse_err, enc_diag = [], 0, []
+    enc_t, enc_cpu, parse_err, enc_diag = [], [], 0, []
     for (a, v, p) in facts:
-        t0 = time.perf_counter()
+        t0, c0 = time.perf_counter(), time.process_time()
         with conversation_write(comp):
             fact = comp.hear("%s %s %s" % (a, v, p), polarity="AFFIRM")
         enc_t.append(time.perf_counter() - t0)
+        enc_cpu.append(time.process_time() - c0)          # AMENDMENT C: CPU time next to wall time (contention tell)
         if (fact.get("agent"), fact.get("action"), fact.get("patient")) != (a, v, p):
             parse_err += 1
         d = getattr(comp, "_d6_last_encode", None)
         if d is not None:
             enc_diag.append((bool(d.get("frozen")), int(d.get("n_saturated", -1)), float(d.get("mean_abs_w", -1.0))))
     out["encode_s"] = [round(x, 4) for x in enc_t]
+    out["encode_cpu_s"] = [round(x, 4) for x in enc_cpu]
     out["parse_errors"] = parse_err
     out["kb_len_after_teach"] = len(comp.kb)
     if enc_diag:
@@ -302,7 +341,9 @@ def _probe(comp, facts, spec, out):
         t0 = time.perf_counter(); yn = comp.ask_yes_no(a, v, p); ty = time.perf_counter() - t0
         got = comp._read_one_block(i)
         blk_ok = (got.get("agent") == a and got.get("action") == v and got.get("patient") == p)
-        t0 = time.perf_counter(); eh = engram_held(comp, i); te = time.perf_counter() - t0
+        t0, c0 = time.perf_counter(), time.process_time()
+        eh = engram_held(comp, i)
+        te, tec = time.perf_counter() - t0, time.process_time() - c0   # AMENDMENT C: CPU time next to wall time
         if ans == p:
             cls = "correct"
         elif ans is None:
@@ -317,7 +358,8 @@ def _probe(comp, facts, spec, out):
                        "block_decode": {k: got.get(k) for k in ("agent", "action", "patient")},
                        "held": bool(eh["held"]), "readout": round(float(eh["readout"]), 6),
                        "mean_abs_w": _block_mean_abs_w(comp, i), "shard": sh,
-                       "t_query": round(tq, 4), "t_yn": round(ty, 4), "t_engram": round(te, 4)})
+                       "t_query": round(tq, 4), "t_yn": round(ty, 4), "t_engram": round(te, 4),
+                       "t_engram_cpu": round(tec, 4)})
     for pr in spec["nearmiss"]:
         if pr["patient"] is None:
             rows_n.append({"i": pr["i"], "yn": None, "kind": pr["kind"], "void": True})
@@ -343,6 +385,7 @@ def summarize(out):
     T, NM, NV = P.get("taught") or [], [r for r in (P.get("nearmiss") or []) if not r.get("void")], P.get("novel") or []
     f = lambda xs, pred: (sum(1 for x in xs if pred(x)) / len(xs)) if xs else None  # noqa: E731
     enc = out.get("encode_s") or []
+    enc_cpu = out.get("encode_cpu_s") or []
     tq = [r["t_query"] for r in T] + [r["t_query"] for r in NV]
     s = {
         "n_taught_probes": len(T), "n_nearmiss": len(NM), "n_novel": len(NV),
@@ -362,20 +405,44 @@ def summarize(out):
         "encode_s_median": float(np.median(enc)) if enc else None,
         "encode_s_mean": float(np.mean(enc)) if enc else None,
         "encode_s_last_decile_mean": float(np.mean(enc[-max(1, len(enc) // 10):])) if enc else None,
+        # AMENDMENT C: CPU time (time.process_time) next to wall time -- lets a reader tell real compute cost from
+        # shared-node contention (wall >> cpu means the process was waiting for CPU, not computing).
+        "encode_cpu_s_median": float(np.median(enc_cpu)) if enc_cpu else None,
         "query_s_median": float(np.median(tq)) if tq else None,
         "engram_read_s_median": float(np.median([r["t_engram"] for r in T])) if T else None,
+        "engram_read_cpu_s_median": (float(np.median(_ecpu)) if (_ecpu := [r["t_engram_cpu"] for r in T
+                                                                            if "t_engram_cpu" in r]) else None),
     }
     if s["engram_read_s_median"] is not None:
         s["readtime_view_s_per_turn_projected"] = s["engram_read_s_median"] * int(out.get("n_facts", 0))
     return s
 
 
+def _node_info():
+    """AMENDMENT C: which machine a cost measurement ran on and under how much concurrent load, so a COST-FAILS /
+    COST-HOLDS verdict can be attributed rather than blindly labelled against the consumer-hardware reference
+    class. `loadavg` is whole-node contention (this job + every other process); `process_time_s` is THIS process's
+    own consumed CPU time, so `process_time_s` << `elapsed_s` on a wall-time metric is the signature of a job that
+    spent time waiting for CPU on a shared node rather than computing."""
+    try:
+        load = list(os.getloadavg())
+    except OSError:
+        load = None
+    return {"hostname": socket.gethostname(), "cpu_count": os.cpu_count(), "loadavg": load}
+
+
 def worker(seed, n_facts, arm, out_path, resource_probe=False, probe_k=5):
     env = _set_env(arm)
     t_all = time.time()
+    cpu_t0 = time.process_time()
     out = {"runner": "research.runners.d6_capacity_curve", "seed": int(seed), "n_facts": int(n_facts), "arm": arm,
            "env": env, "resource_probe": bool(resource_probe), "D": D, "lexicon": [N_AG, N_AC, N_PT],
-           "vocab_headroom": VOCAB_HEADROOM, "rss_mb": {}, "error": None}
+           "vocab_headroom": VOCAB_HEADROOM, "rss_mb": {}, "error": None,
+           # AMENDMENT C: cost_hardware_class names what the run actually was, not what the bar targets -- "gpu"
+           # only when the job itself asked for the GPU path; the default numpy pool run is always "pool-cpu-shared".
+           "cost_hardware_class": "gpu" if env.get("SIM_BACKEND") == "cupy" else "pool-cpu-shared"}
+    out["node"] = _node_info()
+    out["node"]["loadavg_start"] = out["node"].pop("loadavg")
     out["rss_mb"]["start"] = _rss_mb()
     try:
         facts = make_master(seed)[:int(n_facts)]
@@ -413,6 +480,11 @@ def worker(seed, n_facts, arm, out_path, resource_probe=False, probe_k=5):
         out["traceback"] = traceback.format_exc()
     out["peak_rss_mb"] = _peak_mb()
     out["elapsed_s"] = round(time.time() - t_all, 1)
+    out["process_time_s"] = round(time.process_time() - cpu_t0, 1)     # AMENDMENT C: this process's own CPU time
+    try:
+        out["node"]["loadavg_end"] = list(os.getloadavg())
+    except OSError:
+        out["node"]["loadavg_end"] = None
     os.makedirs(os.path.dirname(os.path.abspath(out_path)), exist_ok=True)
     with open(out_path, "w") as fh:
         json.dump(out, fh, indent=1, default=str)
@@ -449,8 +521,10 @@ def _recall_holds(s):
 
 
 def _cost_ok(s, peak_rss_mb):
-    """AMENDMENT B: the pre-registered consumer-hardware cost criterion. This CAN fail (and is predicted to, at
-    N=2000: prereg predicts ~12.6 s/fact encode and a ~3923 s/turn projected read-time view)."""
+    """AMENDMENT B/C: the pre-registered cost criterion. This CAN fail (and is measured to, at N=2000: the
+    resource-probe jobs already showed ~12.6 s/fact encode and a ~3923 s/turn projected read-time view). Whether a
+    COST-FAILS/COST-HOLDS verdict is against the "consumer-GPU" bar or a "pool CPU, shared node" run is a separate
+    fact (`job["cost_hardware_class"]`), not decided here -- see AMENDMENT C."""
     if s.get("encode_s_median") is None or s.get("readtime_view_s_per_turn_projected") is None or peak_rss_mb is None:
         return None
     return (s["encode_s_median"] <= COST_ENCODE_MAX_S
@@ -498,12 +572,18 @@ def score_cell(jobs, n):
         rec["COPY_recall_holds"] = _recall_holds(sC)
         rec["HEBB_cost_ok"] = _cost_ok(sH, H.get("peak_rss_mb"))
         rec["COPY_cost_ok"] = _cost_ok(sC, C.get("peak_rss_mb"))
+        rec["cost_hardware_class"] = {"HEBB": H.get("cost_hardware_class"), "COPY": C.get("cost_hardware_class")}
         return rec
     rec["status"] = "DEFINED"
     rec["HEBB_recall_holds"] = _recall_holds(sH)
     rec["COPY_recall_holds"] = _recall_holds(sC)
     rec["HEBB_cost_ok"] = _cost_ok(sH, H.get("peak_rss_mb"))
     rec["COPY_cost_ok"] = _cost_ok(sC, C.get("peak_rss_mb"))
+    # AMENDMENT C: which machine class this cell's cost verdict is FROM (never "consumer-GPU" unless the job itself
+    # ran with SIM_BACKEND=cupy) plus the node load at measurement time, so a COST-FAILS/COST-HOLDS reader can tell
+    # a genuine hardware-class result from a shared-node artifact.
+    rec["cost_hardware_class"] = {"HEBB": H.get("cost_hardware_class"), "COPY": C.get("cost_hardware_class")}
+    rec["cost_node"] = {"HEBB": H.get("node"), "COPY": C.get("node")}
     dr = sH["recall"] - sC["recall"]
     dfalse = max(abs(sH["novel_false_recall"] - sC["novel_false_recall"]),
                  abs(sH["nearmiss_false_accept"] - sC["nearmiss_false_accept"]))
