@@ -75,6 +75,8 @@ no information.
 
 ## Part A — the capability gate (the a3 successor on the gated turn)
 
+**Amended by Amendment 3 (below):** the Part A verdict is the reply-level metric; CONT is a manipulation check.
+
 Runner: `research/runners/_open_ended_gated_turn_gate.py`, reusing `_lbf_open_ended_production_turn_probe`'s
 session worker. It uses the same TEACH world, the same ASK ("what might a dog chase") and the same per-session
 noise-stream installer.
@@ -115,6 +117,8 @@ noise-stream installer.
 - Per-seed exact permutation p (C(6,3) = 20 splits) and `tools.lab.attributable_to` are descriptive, not gates.
 
 ## Part B — decision-level load-bearing rows (measured by the LBF instrument)
+
+**Amended by Amendments 2 and 3 (below):** the gnw-drive probe turn, two rows' decision fields, and one row's status.
 
 Module: `research/runners/lbf_rows/open_ended_gated.py` (`EXTRA_LESIONS` / `EXTRA_PROBES`, merged by the
 AG-REG import hook).
@@ -221,3 +225,126 @@ The other two default-roster candidates read were `question` and `open`. They ro
 they cannot carry this row.
 
 **What does NOT change.** Part A, the other two rows, every lesion construction, and every rule.
+
+## Amendment 3 (2026-09-24, after the opus review of `7a39851c`, BEFORE any gate-seed run)
+
+No gate seed (42/43/44/100/101/102) has run under this document. The only new input is the review.
+The 42 Part A sessions queued on the pool (pinned to `49b8fb128`) were removed from `research/queue/pool.queue` under
+its lock before any of them started. None of them was in `pool.queue.running`, `pool.queue.done` or `pool.queue.claims`.
+The exact removed lines are in `research/findings/raw/_open_ended_gated/partA_queue_removed_2026-09-24.tsv`
+(6 seeds x intact j = 0..2, lesion j = 0..2, intact_rebuild j = 0).
+The corrected sessions are requeued only after this amendment is committed, at a revision that contains it.
+
+### A3.1 Part A: what it tests, and what it does not
+
+**The review's point, accepted: Part A does not exercise the gated routing.** On Part A's ask the gated turn passes the
+pipeline's answer through. In the dev smoke every ask routed `hypothesis`, the BG race picked SPEAK, and no reply was
+replaced (`research/findings/raw/_open_ended_gated/partA_smoke/oe_gated_s7_intact_n0.json`, `gated_trace`).
+So Part A's replies are, by design, the a3 `default` path's replies with the flag on.
+Part A is the a3 successor for the SPIKING DRAW under the gated flag. The gated routing is measured by Part B only.
+
+**CONT is re-labelled a MANIPULATION CHECK. It can never produce a GO.** CONT weights the firing shares of the
+reply-selecting competition by the same host vector w that the lesion replaces with ones.
+A lesion arm whose firing follows its uniform drive therefore reads about mean(w)/peak, whatever the reply does.
+Seed-7 smoke, per ask: lesion 0.327 / 0.347 / 0.339, uniform-firing value 0.367, intact 0.609 / 0.548 / 0.564
+(recomputed with `session_cont` from the two `partA_smoke` files, `w_ref` = the intact session's `likelihood_weight`).
+So CONT can clear 0.10 on a seed where the reply never moves (at a3 seed 100 both arms answered `deer` on all 32 asks).
+It shows that the lesion reached the competition that selects the reply. Nothing more.
+
+**The Part A verdict is the reply-level metric.** Per seed it is the registered CAT session value (mean over asks of
+w(reply)/peak; ABSTAIN and hold score 0), scored by `score_seed_a3` unchanged.
+A seed is DEFINED only when the a3 UNDEFINED rules pass AND the manipulation check is DEFINED.
+**GO (Part A) needs ALL of:**
+- exactly the registered seed set 42, 43, 44, 100, 101, 102 (any other set reads NOT-GO, whatever it shows);
+- all 6 seeds DEFINED;
+- the a3 rule: exact one-sided sign test p < 0.05 and mean Delta_reply >= 0.10;
+- Delta_reply(s) >= 0.10 on EVERY seed (the per-seed floor Part A originally put on CONT);
+- the manipulation check Delta_cont(s) >= 0.10 on every seed.
+
+The aggregate writes one verdict string: `GO`, `NO-GO` (all 6 DEFINED, a rule not met), `NOT-GO (UNDEFINED)`, or
+`NOT-GO (WRONG SEED SET)` (`summary.verdict`).
+
+**Expected outcome, stated before the run.** The a3 noise streams `seed*1000 + {0, 500} + j` for j = 0..2 are the same
+streams Part A uses. If the pass-through holds, Part A's replies should equal the a3 `default` sessions on them, up to
+code drift since `eefdd666a`.
+The a3 per-seed Delta read 0.031 / 0.021 / 0.010 / UNDEFINED / 0.146 / 0.260 for 42 / 43 / 44 / 100 / 101 / 102
+(`research/findings/raw/_load_bearing/_oe_production_turn/a3/default_a3_aggregate.json`, `summary.delta`).
+So Part A is expected to read NO-GO or NOT-GO (UNDEFINED). A GO would contradict the pass-through; it must be checked
+against the reads below before anyone believes it.
+
+**Two descriptive reads are added. Neither is a gate.**
+- Pass-through, per seed and arm: counts of the recorded route, BG action and reply kind over the asks, and the number
+  of asks whose reply the gated turn replaced (hold, conditioned generation, long-term-store clause).
+- Reply identity against the a3 `default` session at the same (seed, arm, j): matching asks out of asks. Those sessions
+  ran the ungated turn at another code revision, so a mismatch can come from code drift as well as from the gated turn.
+
+**Why the review's other option (gating CONT intact vs the host_oracle arm) was not taken.**
+- The host oracle has no spiking competition, so CONT is undefined in that arm. Comparing a firing-share read with a
+  proportional probability vector compares two different quantities.
+- The host oracle draws with the proposer's own `np.random.default_rng(_gen_seed)`, which is not on the per-session noise
+  stream. Its M sessions per seed would be identical, so its null would be degenerate.
+
+Doing it properly needs a new instrument (the host draw on the session stream) and its own dev smoke. It is recorded as
+a follow-on and is not part of this amendment.
+
+**A rule implemented as registered (the review's MINOR).** The CONT rule "the lesion was not applied" is a FRACTION: every
+lesion session's ablated-draw fraction (`n_ablated_calls / n_calls`) must be exactly 1, and every intact session's
+exactly 0. The previous code only checked for a count of 0, so a partially ablated lesion session passed.
+
+**A scorer defect fixed (found by the review; not a design change).** This document already required all 6 seeds.
+The code passed `n_required = len(seeds)`, so the requirement never bound: 3 synthetic seeds, or 6 dev seeds, read GO
+through `score()`. Both now read `NOT-GO (WRONG SEED SET)`. The runner's `--selftest` now drives the `score()` path with
+synthetic session files, including a case where the firing moves and the reply does not (it must read NO-GO).
+
+### A3.2 Part B rows
+
+**`open-ended-turn-faculty-drive`: `marker_level` is removed from the decision fields.** The decision fields are now
+`bg_action` and `reply_kind`. Under the row lesion the marker WTA runs with its own `lesion=True`.
+Its docstring says the dead-margin check then fails on (almost) every trial and returns None. So on an affective turn
+the field changes by construction.
+On the registered `unknown` turn it is 0 in every arm, because a neutral mood is never sent to the circuit.
+It stays in the trace. The seed-7 "marker 2 -> none" on `emo` is that construction, not an effect.
+
+**`open-ended-turn-faculty-drive` is declared NON-DISCRIMINATING and descriptive only.** The cut replaces the intact
+saliences (0, 1) with (0.5, 0.5), so it adds speak drive. One LBF build per arm is one race.
+On the dev curve the intact race held on 23 of 24 races and the cut race spoke on 12 of 24
+(`research/findings/raw/_open_ended_gated/bg_curve/bg_curve_dev_s7_11_13.json`, `pooled`).
+The row's verdict is therefore a per-seed coin flip, whatever the afferent coupling. Amendment 1 disclosed this.
+Its LBF verdict is reported and never counted toward a load-bearing claim (`lbf_rows.open_ended_gated.DESCRIPTIVE_ONLY`).
+The distributional read beside it stays `--bg-curve` at the gate seeds.
+A discriminating version needs the race read many times inside the turn's own conditions, for example a Part A arm
+whose BG race runs on the per-session stream. It is recorded as a follow-on.
+
+**`open-ended-turn-gnw-drive`: the decision field is now `route` only.** `bg_action` moves only through the host FAM
+table (withheld -> fam 0), and `decide()` keeps the pipeline's answer on a withheld route whatever the race commits.
+`reply_kind` withheld_abstain is a direct map of the route. So the three dev-seed diffs were one cause.
+The reply change on `chase` ("the dog chases the cat ..." -> "I don't know about that. ...", both with the same curiosity
+suffix; `research/findings/raw/_open_ended_gated/smoke_gnwturn/s7/smoke_summary.json`, `changes_vs_intact.gnw_lesion.chase.answer`)
+is the pipeline's own gate abstain. `decide()` keeps the pipeline's answer on a withheld route, so the flag-on reply is
+the one the pipeline produced before the gated turn ran. It is not credited to the gated turn.
+A flag-off seed-7 read of `chase` under the same lesion is reported in the lane's finding.
+What the row measures: whether the GNW workspace's ignition decides the gated turn's route label on a KB-hit turn.
+On the off-KB turns (`question`, `open`, `unknown`, `emo`) the GNW lesion changed nothing at seed 7.
+So the plan's S16 GNW criterion is met only on KB-hit turns.
+
+**`open-ended-turn-affect-drive`: unchanged.** It shares `BRAIN_AFFECT_LESION` with the base `affect-coloring` row.
+Any fraction that includes both counts one organ lesion, not two (`SHARED_LESION_WITH`).
+
+**Launch condition.** The three rows are generated in a dedicated `tools/lb_shard.py` invocation with `--faculties`
+limited to exactly these three keys (`lbf_rows.open_ended_gated.FACULTIES`).
+`--extra-env BRAIN_OPEN_ENDED_GATED=1` applies to every job of an invocation. Any other row generated in the same
+invocation would be measured with the gated turn on.
+
+### A3.3 Flag-ON readiness (not a gate; the default stays OFF)
+
+The BG selector and the marker reader are process-wide singletons keyed by seed.
+Their races now run under one lock (`_RACE_LOCK`), so two requests cannot step one organ at once.
+They are still shared across chat sessions: one session's race follows other sessions' earlier races.
+Per-session organs are a precondition for any default-ON.
+Owner decision (2026-09-24): Qwen stays fact-free, so `BRAIN_OPEN_ENDED_GATED` stays default OFF whatever Parts A and B
+read. The lane continues as a measured de-risk.
+
+### A3.4 What does NOT change
+
+The arms, M = 3, K = 8, the noise-stream seeds, the ask and the teach world, the 0.10 floor, the a3 UNDEFINED rules,
+every Part B lesion construction and probe turn, and Amendments 1 and 2.
