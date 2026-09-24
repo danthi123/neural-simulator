@@ -194,3 +194,42 @@ all with `--eval-frozen --spi-silence-outside-credit`):
 
 **Selection rule: unchanged**, applied over C1-C9 (C4's round-1 result included when it lands). If nothing
 qualifies, the prereg's fallback stands: the instrument is UNDEFINED at dev and seed 42 is not queued.
+
+## AMENDMENT 2 (2026-09-24 ~13:15 EDT, before round 3 runs; dev seed 7 only)
+
+**What round 2 and the diagnostics showed (dev data, no pre-registered weight).** Artifacts:
+research/findings/raw/gap4/transport_ceiling_readout/round2_rev5c3a865/ (commit b66314f92).
+
+<!--derived-->
+- The spike read removed the below-chance training accuracy (C8 frozen train 0.110, ceiling 0.098) but nothing
+  learned: the ceiling stayed at 0.056-0.074 held-out.
+- **The forward pathway does not transmit.** `diag_transmit_scan_*`: with the default Tsodyks-Markram short-term
+  depression ON, H1/H2/output rates do not change when `ff_w_init` goes 4 -> 40 or `propagation_strength`
+  0.05 -> 0.5, at any tonic level; at tonic 0 the input layer fires at 0.096/ms and H1 stays at 0.005/ms. Scaling
+  the H2->out weights x0, x1, x3, x10 leaves the output read unchanged. With STP bypassed on the feedforward
+  synapses, ff 40 / ps 0.5 transmits (tonic 0: H1 0.035/ms; tonic 0.5: H2 0.083/ms).
+- `diag_lr_scan_*`: at lr 8 the readout weights move by |dw| 1.0 (|w| 0.38) and training accuracy stays 0.08.
+- C9 (no synapse elimination): the frozen arm's total weight movement is 2.1, against about 1270 with elimination on,
+  so the "ff-moved" totals of every earlier run are mostly elimination, not BDSP learning.
+
+**Reading.** In this read-regime no arm's learning can reach the output: the transport ceiling was never
+askable, which is the mechanism behind the 2026-09-15 UNDEFINED. The engine's own STP block documents the same
+effect for sustained stimulus-driven firing (an effective multiplier near 0.07 at U=0.15, tau_d=200 ms).
+
+**Round-3 grid: the operating point** (same small net, seed 7, epochs 10, subsample 400, replicate 0, arms frozen and
+transport_ceiling). Common: `--read-quantity spikes --settle-steps 40 --read-window 30 --read-gain 20 --isi-steps 0
+--eval-frozen --spi-silence-outside-credit --no-structural-plasticity --no-ff-stp --ff-w-init 40
+--propagation-strength 0.5 --bdsp-w-max 12`. `--no-ff-stp` bypasses the STP factor on the explicit feedforward
+synapses only; the recurrent background keeps STP.
+
+| id | tonic (hidden / output pA) | lr |
+|---|---|---|
+| C10 | 225 / 250 | 0.05 |
+| C11 | 225 / 250 | 1.0 |
+| C12 | 225 / 250 | 5.0 |
+| C13 | 0 / 0 | 1.0 |
+| C14 | 450 / 500 | 1.0 |
+
+**Selection rule: unchanged**, over C1-C14. Fallback unchanged. The per-arm learning rate follows the arc's
+meta-lesson #1 (one shared lr is an unfair A/B); if the evaluation config uses one lr for all arms, the amendment
+fixing it says so and why.
