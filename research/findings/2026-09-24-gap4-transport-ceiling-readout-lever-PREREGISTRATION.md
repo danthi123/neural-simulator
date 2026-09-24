@@ -158,3 +158,39 @@ With every new knob at its legacy value (S 40, W 0, g 1, I 0, both fixes off) th
 same forward-weight bytes and the same reads as `Gap4InEngineNet` after a few training examples on seed 7; the
 runner's `--identity-selftest` writes that comparison (weight hash, read hash) to an artifact. No sim/ file changes,
 so production behaviour on main is untouched.
+
+## AMENDMENT 1 (2026-09-24 ~12:45 EDT, before round 2 runs; dev seed 7 only)
+
+**What round 1 showed (dev data, no pre-registered weight).** Artifacts:
+research/findings/raw/gap4/transport_ceiling_readout/round1_rev9654a99/ (commit 9178f9449).
+
+<!--derived-->
+- C0-C3: the transport ceiling reads 0.056 held-out and about 0.05 train in every config; the frozen readout 0.074-0.093
+  held-out and 0.048-0.087 train. Train accuracy is BELOW the 1/9 chance of 9 classes, so the readout learns the wrong way.
+- Diagnostic `diag_eread_monotonic_s7.json`: the BDSP event read `E` (isolated or first-of-burst spikes) is
+  NON-MONOTONIC in drive. Extra output current 0 -> +1600 pA raises the total spike rate 86 -> 404 Hz but lowers `E`
+  0.050 -> 0.002. At the default tonic drive the output layer sits at the peak of `E`, so any LTP onto an output
+  neuron LOWERS its read. That explains below-chance training accuracy, and it is independent of the window W and
+  the gain g, which is why C1-C3 did not move it.
+
+**The added lever (still "a stronger readout").** `--read-quantity spikes`: the read counts EVERY somatic spike in the
+window (events plus burst spikes), per step, which is monotonic in drive. A downstream neuron receives every spike, so
+this is the quantity a spiking readout integrates. The BDSP kernel itself is unchanged (it still uses `E` internally).
+**Companion process found in the same pass:** the default-on synapse elimination (`enable_structural_plasticity`)
+zeroes weights below 0.05, which includes every NEGATIVE signed feedforward weight, at 5e-7 per step; over the
+2026-09-15 runs (about 1.06M steps per arm) that is roughly a third of the negative weights. `--no-structural-plasticity`
+turns it off; `--eval-frozen` now also pauses it during evaluation reads (it was editing weights during reads).
+
+**Round-2 grid** (same small net, seed 7, epochs 10, subsample 400, replicate 0, arms frozen and transport_ceiling;
+all with `--eval-frozen --spi-silence-outside-credit`):
+
+| id | settle S | window W | read | gain g | isi I | structural plasticity |
+|---|---|---|---|---|---|---|
+| C5 | 100 | 80 | spikes | 1 | 0 | on (default) |
+| C6 | 100 | 80 | spikes | 20 | 0 | on |
+| C7 | 100 | 80 | spikes | 20 | 60 | on |
+| C8 | 40 | 30 | spikes | 20 | 0 | on |
+| C9 | 100 | 80 | spikes | 20 | 60 | off |
+
+**Selection rule: unchanged**, applied over C1-C9 (C4's round-1 result included when it lands). If nothing
+qualifies, the prereg's fallback stands: the instrument is UNDEFINED at dev and seed 42 is not queued.
