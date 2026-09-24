@@ -28,8 +28,14 @@ RSYNC_SSH="ssh -o BatchMode=yes -o ConnectTimeout=6"
 [ -f "$POOL_SSH_CONFIG" ] && RSYNC_SSH="ssh -F $POOL_SSH_CONFIG -o BatchMode=yes -o ConnectTimeout=6"
 EXTRA_NODES_FILE="${POOL_EXTRA_NODES_FILE:-$ROOT/research/queue/.pool_extra_nodes}"
 _EXTRA=""
+# BUGFIX (fix round): under `set -e`, this whole line's exit status is the exit status of the LAST command in
+# the `&&` chain -- and `grep -vE ... | tr ...` exits 1 (pipefail) whenever .pool_extra_nodes exists but is
+# EMPTY or holds only comments (grep -v selects nothing). `aws_pool_node.sh down` leaves exactly that file, so
+# every pool_sync after an up/down cycle died silently with rc=1 and zero ssh/rsync calls. `|| true` makes
+# "nothing extra to add" a normal outcome, matching pool_autodispatch.sh's extra_nodes() (which has no `set -e`
+# to trip on this same pattern).
 [ -z "${POOL_NODES:-}" ] && [ -f "$EXTRA_NODES_FILE" ] && \
-  _EXTRA=$(grep -vE '^[[:space:]]*(#|$)' "$EXTRA_NODES_FILE" 2>/dev/null | tr -s '[:space:]' ' ')
+  _EXTRA=$(grep -vE '^[[:space:]]*(#|$)' "$EXTRA_NODES_FILE" 2>/dev/null | tr -s '[:space:]' ' ') || true
 NODES="${POOL_NODES:-pool40 pool41 pool42} $_EXTRA"
 REMOTE_DIR="${POOL_REMOTE_DIR:-~/derisk-pool/sim/research/findings/raw/}"
 LOCAL_DIR="research/findings/raw/"
@@ -56,7 +62,12 @@ for N in $NODES; do
   # branch verification would have stranded on the nodes. Pull each revision's raw/ into the same local tree
   # (same -u newer-wins + exclusions; paths under raw/ are already lane-namespaced by the runners).
   [ -n "${POOL_REMOTE_DIR:-}" ] && continue
-  revs=$(timeout 20 ssh $RSYNC_SSH "$N" 'ls -d derisk-pool/revisions/*/research/findings/raw 2>/dev/null' || true)
+  # BUGFIX (fix round): RSYNC_SSH already STARTS WITH "ssh ..." (it is the whole `-e` argument, e.g.
+  # "ssh -F <config> -o BatchMode=yes ..."), so prefixing it with another literal `ssh` ran
+  # `ssh ssh -o ... <node> ...` -- real ssh fails with "Could not resolve hostname ssh" (rc=255), and the
+  # trailing `|| true` swallowed that, so results under derisk-pool/revisions/*/research/findings/raw were
+  # NEVER pulled from any node (reproduced with a stubbed ssh; confirmed real-ssh rc=255).
+  revs=$(timeout 20 $RSYNC_SSH "$N" 'ls -d derisk-pool/revisions/*/research/findings/raw 2>/dev/null' || true)
   for R in $revs; do
     rout=$(timeout 180 rsync -au $DRY --itemize-changes \
           --exclude='*.log' --exclude='_provenance/' \

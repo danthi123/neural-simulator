@@ -44,8 +44,31 @@ POOL_SSH_CONFIG="${POOL_SSH_CONFIG:-$ROOT/research/queue/.pool_ssh_config}"
 SSH_F=(); [ -f "$POOL_SSH_CONFIG" ] && SSH_F=(-F "$POOL_SSH_CONFIG")
 EXTRA_NODES_FILE="${POOL_EXTRA_NODES_FILE:-$ROOT/research/queue/.pool_extra_nodes}"
 
+refresh_ssh_f() {
+  # Re-evaluate SSH_F EVERY cycle, not once at process start (2026-09-23 fix round). This dispatcher runs as a
+  # long-lived systemd singleton; the whole POINT of re-reading .pool_extra_nodes every cycle (below) is that
+  # `aws_pool_node.sh up` can add a node with no dispatcher restart -- but `up` also CREATES .pool_ssh_config
+  # for the first AWS node, and a SSH_F computed once at startup never noticed. Measured: the live dispatcher
+  # (started before any AWS node existed) kept calling bare `ssh pool1` after `up` wired pool1 in -- pool1 has
+  # no entry in the user's own ~/.ssh/config, so node_is_idle always failed and pool1 was never used while it
+  # billed until aws_idle_stop stopped it.
+  SSH_F=(); [ -f "$POOL_SSH_CONFIG" ] && SSH_F=(-F "$POOL_SSH_CONFIG")
+}
+
 extra_nodes() {
   [ -f "$EXTRA_NODES_FILE" ] && grep -vE '^[[:space:]]*(#|$)' "$EXTRA_NODES_FILE" 2>/dev/null | tr -s '[:space:]' ' '
+}
+
+revision_available() {
+  # revision_available <node> <sha> -- does ~/derisk-pool/revisions/<sha> already exist on <node>? Used so a
+  # revision-pinned job (`cd ~/derisk-pool/revisions/<sha> && ...`, from `pool_provision.sh --isolated`) is
+  # never handed to a node that was never provisioned with that revision (2026-09-23 fix round: reproduced --
+  # AWS node provisioned only at ~/derisk-pool/sim from HEAD, every queued job pinned to an isolated revision,
+  # `cd` failed, the job was already popped from the queue and its result was never pulled -- silently lost).
+  # Fails closed: unreachable/timeout/missing dir all return non-zero (job stays queued for another node/cycle).
+  local node="$1" sha="$2"
+  timeout 10 ssh "${SSH_F[@]}" -o BatchMode=yes -o ConnectTimeout=6 "$node" \
+    "[ -d ~/derisk-pool/revisions/$sha ]" 2>/dev/null
 }
 
 job_est_gb() {
@@ -123,8 +146,12 @@ printf "v2\t%s\t%s\t%s\n" "$(date +%s)" "$rc" "$JOB_B64" >> job_status.log'
 }
 
 pop_job() {
-  # Atomically take the first non-comment line. flock keeps two dispatcher instances from claiming the same job.
-  local job=""
+  # pop_job <max_gb> [node] -- atomically take the first non-comment line that fits <max_gb> AND (if [node] is
+  # given and the candidate is revision-pinned) whose revision dir already exists on [node]. flock keeps two
+  # dispatcher instances from claiming the same job. [node] is OPTIONAL and omitted by test seams that only
+  # care about size-based selection (--pop-once) -- when absent, the revision check is skipped entirely
+  # (unchanged pre-fix behaviour), matching every caller that never dispatches to a real node.
+  local job="" node="${2:-}"
   exec 9>"$QUEUE.lock"
   flock 9 || return 1
   # A generic queue producer once wrote GPU-style command-only lines into this
@@ -154,9 +181,16 @@ pop_job() {
   now=$(date +%s); cutoff=$(( now - ${POOL_JOB_MAX_AGE:-43200} ))
   # FIRST FIT, not strict head (2026-09-23): a node with 4 GB free sat idle behind a 5 GB D6 arm while five 0.65 GB
   # vision jobs queued behind it. Take the first fresh line whose declared size fits the node's budget ($1, GB).
-  local max_gb="${1:-999}" cand
+  local max_gb="${1:-999}" cand sha
   while IFS= read -r cand; do
-    if [ "$(job_est_gb "$cand")" -le "$max_gb" ]; then job="$cand"; break; fi
+    [ "$(job_est_gb "$cand")" -le "$max_gb" ] || continue
+    # REVISION-DIR SEAM (2026-09-23 fix round). A job pinned to `cd ~/derisk-pool/revisions/<sha>` must never be
+    # popped for a node that does not have that revision -- that would remove it from the queue (below) with no
+    # node able to run it, i.e. lose it. `continue` past it (leaving it in the queue) and keep scanning for a
+    # candidate this node CAN run; if none exists this cycle, the outer `if [ -z "$job" ]` returns empty as usual.
+    sha=$(printf '%s' "$cand" | grep -oE 'derisk-pool/revisions/[0-9a-f]{7,40}' | head -1 | sed 's#.*/##')
+    if [ -n "$sha" ] && [ -n "$node" ] && ! revision_available "$node" "$sha"; then continue; fi
+    job="$cand"; break
   done < <(awk -F'\t' -v c="$cutoff" 'NF>1 && $1+0 >= c {print $2}' "$QUEUE")
   # THE RECORD-CHECK GATE (2026-07-31), copied from tools/lane_dispatch.sh:47 where it is already proven.
   # A job may only run if it carries "#checked:", which tools/pool_queue.sh only attaches when a reason is
@@ -203,7 +237,7 @@ pop_job() {
 }
 
 if [ "${1:-}" = "--pop-once" ]; then
-  pop_job "${2:-999}"
+  pop_job "${2:-999}" "${3:-}"
   exit $?
 fi
 if [ "${1:-}" = "--reserved-gb" ]; then reserved_gb "$2"; exit 0; fi
@@ -212,6 +246,26 @@ if [ "${1:-}" = "--render-remote-command" ]; then
   [ "$#" -eq 2 ] || { echo "usage: $0 --render-remote-command '<job>'" >&2; exit 2; }
   remote_launch_command "$2"
   exit $?
+fi
+if [ "${1:-}" = "--print-ssh-f-loop" ]; then
+  # TEST SEAM (2026-09-23): proves refresh_ssh_f is called EVERY cycle of the real dispatch loop shape (not just
+  # once at process start) without running the full dispatcher (no queue popping, no real ssh calls to a node).
+  # Prints one line per cycle -- "F" if SSH_F currently carries -F<config>, else "NOF" -- so a test can create
+  # POOL_SSH_CONFIG's file BETWEEN cycles and see the NEXT line flip, inside one long-lived process.
+  [ "$#" -eq 3 ] || { echo "usage: $0 --print-ssh-f-loop <n-cycles> <sleep-s>" >&2; exit 2; }
+  for _i in $(seq 1 "$2"); do
+    refresh_ssh_f
+    if [ "${#SSH_F[@]}" -gt 0 ]; then echo "F"; else echo "NOF"; fi
+    sleep "$3"
+  done
+  exit 0
+fi
+if [ "${1:-}" = "--revision-available" ]; then
+  # TEST SEAM (2026-09-23): exercises the REAL revision_available ssh call (same argv construction, including
+  # SSH_F) against one node/sha pair, without a real node or a real revision -- so a stubbed `ssh` on PATH can
+  # assert the exact `[ -d ~/derisk-pool/revisions/<sha> ]` probe it makes.
+  [ "$#" -eq 3 ] || { echo "usage: $0 --revision-available <node> <sha>" >&2; exit 2; }
+  revision_available "$2" "$3"; exit $?
 fi
 if [ "${1:-}" = "--node-idle" ]; then
   # TEST SEAM (2026-09-23): exercises the REAL node_is_idle ssh call (same argv construction, including
@@ -249,12 +303,13 @@ fi
 
 echo "[pool-dispatch] started $(date '+%H:%M:%S') | queue=$QUEUE | poll=${POLL}s | nodes=$NODES (+ any in $EXTRA_NODES_FILE, re-read each cycle)"
 while true; do
+  refresh_ssh_f
   CYCLE_NODES="$NODES $(extra_nodes)"
   for NODE in $CYCLE_NODES; do
     # FILL the node to capacity within this cycle (while, not if) — with the per-node cap raised for
     # single-threaded numpy jobs (owner 2026-09-02), a single if-per-cycle would need ~cap cycles to fill.
     while node_is_idle "$NODE"; do
-      JOB=$(pop_job "$NODE_BUDGET")
+      JOB=$(pop_job "$NODE_BUDGET" "$NODE")
       [ -z "$JOB" ] && break
       echo "[pool-dispatch] $(date '+%H:%M:%S') $NODE <- $JOB"
       printf '%s\t%s\t%s\n' "$(date '+%F %T')" "$NODE" "$JOB" >> "$CLAIMED"

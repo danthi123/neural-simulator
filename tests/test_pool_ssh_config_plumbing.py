@@ -184,3 +184,44 @@ def test_pool_sync_default_node_list_grows_with_extra_nodes_file(tmp_path):
                         "POOL_EXTRA_NODES_FILE": str(extra)})
     assert res_scoped.returncode == 0, res_scoped.stderr
     assert "pool1" not in res_scoped.stdout
+
+
+def test_pool_sync_isolated_revisions_ssh_call_does_not_double_the_ssh_binary(tmp_path):
+    # REGRESSION (2026-09-23 fix round): `revs=$(... ssh $RSYNC_SSH "$N" ...)` ran as `ssh ssh -o ... <node> ...`
+    # because $RSYNC_SSH is ALREADY the whole `-e`-style ssh invocation ("ssh -o BatchMode=yes ..."). Real ssh
+    # fails that with "Could not resolve hostname ssh" (rc=255); the old test here only asserted on the RSYNC
+    # log, so a stub `ssh` that answers ANY argv (as ours does) never caught it. Assert on the ssh stub's own
+    # ARGV: the logged command line must never start with a literal "ssh" token (that would mean the ssh BINARY
+    # was invoked with another "ssh" as its first argument -- i.e. doubled).
+    bin_dir, ssh_log = _make_ssh_stub(tmp_path)
+    rsync_log = _make_rsync_stub(bin_dir, tmp_path)
+    res = _run(POOL_SYNC, [], bin_dir,
+               {"POOL_NODES": "pool40", "POOL_SSH_CONFIG": str(tmp_path / "does-not-exist")})
+    assert res.returncode == 0, res.stderr
+    logged_lines = [ln for ln in ssh_log.read_text().splitlines() if ln.strip()]
+    assert logged_lines, "expected at least one ssh call (the isolated-revisions 'ls -d' probe)"
+    for ln in logged_lines:
+        first_token = ln.split()[0]
+        assert first_token != "ssh", f"ssh invoked with a literal 'ssh' as its own first argument: {ln!r}"
+
+
+def test_pool_sync_survives_an_empty_or_comment_only_extra_nodes_file(tmp_path):
+    # REGRESSION (2026-09-23 fix round): under `set -euo pipefail`, `_EXTRA=$(grep -vE ... | tr ...)` exits the
+    # WHOLE SCRIPT with rc=1 and zero ssh/rsync calls whenever .pool_extra_nodes exists but is empty or holds
+    # only comments (grep -v selects nothing, pipefail propagates its rc=1 through the assignment). This is
+    # EXACTLY what `aws_pool_node.sh down` leaves behind, so every pool_sync after any up/down cycle died
+    # silently. An empty file and a comment-only file must both leave pool_sync exit 0 and still sync the
+    # default nodes.
+    # NOTE: POOL_NODES must be UNSET (not e.g. "pool40") for this to exercise the buggy line at all -- it lives
+    # behind `[ -z "${POOL_NODES:-}" ] &&`, which is exactly how a plain, unscoped `pool_sync.sh` call (the
+    # regular pool40/41/42 sync path, e.g. from a cron/heartbeat) invokes it.
+    bin_dir, ssh_log = _make_ssh_stub(tmp_path)
+    rsync_log = _make_rsync_stub(bin_dir, tmp_path)
+    for content in ("", "# just a comment\n", "\n\n"):
+        extra = tmp_path / "extra_nodes"
+        extra.write_text(content)
+        res = _run(POOL_SYNC, [], bin_dir,
+                   {"POOL_SSH_CONFIG": str(tmp_path / "does-not-exist"),
+                    "POOL_EXTRA_NODES_FILE": str(extra)})
+        assert res.returncode == 0, f"content={content!r} stderr={res.stderr}"
+        assert "pool40" in res.stdout

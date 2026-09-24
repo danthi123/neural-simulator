@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import base64
 import os
+import stat
 from pathlib import Path
 import subprocess
 import time
@@ -220,3 +221,127 @@ def test_no_ready_work_waiver_is_bounded_and_workboard_tied(tmp_path: Path) -> N
         check=False,
     )
     assert result.returncode == 1
+
+
+# --------------------------------------------------------------- revision-dir-aware pop_job (2026-09-23 fix)
+
+def _write_ssh_stub_answering_dash_d(tmp_path: Path, missing_shas: set[str]):
+    """A stub `ssh` that logs its argv and answers the `[ -d ~/derisk-pool/revisions/<sha> ]` probe: exit 1 (dir
+    missing) for any sha in `missing_shas`, else exit 0 (dir present). Any other command exits 0 too, so this
+    also stands in for the plain reachability calls this file's other tests don't otherwise exercise."""
+    bin_dir = tmp_path / "bin"
+    bin_dir.mkdir()
+    log = tmp_path / "ssh.log"
+    log.write_text("")
+    missing = " ".join(sorted(missing_shas))
+    stub = bin_dir / "ssh"
+    stub.write_text(f"""#!/usr/bin/env bash
+echo "$*" >> "{log}"
+for m in {missing}; do
+  case "$*" in
+    *"revisions/$m"*) exit 1 ;;
+  esac
+done
+exit 0
+""")
+    stub.chmod(stub.stat().st_mode | stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH)
+    return bin_dir, log
+
+
+def test_pop_job_skips_revision_pinned_job_missing_on_node_leaving_it_queued(tmp_path: Path) -> None:
+    # REGRESSION (2026-09-23 fix round): the AWS pool node was provisioned only at ~/derisk-pool/sim from HEAD,
+    # but every queued job was pinned to `cd ~/derisk-pool/revisions/<sha> && ...` (pool_provision.sh
+    # --isolated). The old pop_job popped the head-fitting job REGARDLESS, so it was removed from the queue,
+    # dispatched, `cd` failed on the node, and the result (recorded only in the node's own job_status.log, which
+    # pool_sync never pulls) was silently lost. pop_job must SKIP such a job for a node lacking the revision --
+    # leaving it in the queue for a node that can actually run it -- not pop-and-lose it.
+    now = int(time.time())
+    sha = "abc1234"
+    queue = tmp_path / "pool.queue"
+    queue.write_text(f"{now}\tcd ~/derisk-pool/revisions/{sha} && bash run.sh  #checked:r mem_gb=1\n")
+    bin_dir, ssh_log = _write_ssh_stub_answering_dash_d(tmp_path, missing_shas={sha})
+    env = {
+        **os.environ,
+        "PATH": f"{bin_dir}:{os.environ.get('PATH', '')}",
+        "POOL_QUEUE_PATH": str(queue),
+        "POOL_RUNNING_PATH": str(tmp_path / "pool.running"),
+        "POOL_SSH_CONFIG": str(tmp_path / "does-not-exist"),
+    }
+    res = subprocess.run(["bash", str(DISPATCHER), "--pop-once", "999", "pool1"],
+                          cwd=ROOT, env=env, capture_output=True, text=True, timeout=30)
+    assert res.returncode == 0, res.stderr
+    assert res.stdout == ""                     # nothing handed out -- pool1 cannot run this job
+    assert sha in queue.read_text()              # the job was NEVER removed from the queue -- not lost
+    assert f"[ -d ~/derisk-pool/revisions/{sha} ]" in ssh_log.read_text()
+
+
+def test_pop_job_hands_out_revision_pinned_job_when_the_revision_is_present(tmp_path: Path) -> None:
+    # The mirror case: a node that DOES have the revision gets the job normally (queue entry removed, job text
+    # returned), so the fix does not just make every revision-pinned job unrunnable everywhere.
+    now = int(time.time())
+    sha = "abc1234"
+    queue = tmp_path / "pool.queue"
+    queue.write_text(f"{now}\tcd ~/derisk-pool/revisions/{sha} && bash run.sh  #checked:r mem_gb=1\n")
+    bin_dir, ssh_log = _write_ssh_stub_answering_dash_d(tmp_path, missing_shas=set())
+    env = {
+        **os.environ,
+        "PATH": f"{bin_dir}:{os.environ.get('PATH', '')}",
+        "POOL_QUEUE_PATH": str(queue),
+        "POOL_RUNNING_PATH": str(tmp_path / "pool.running"),
+        "POOL_SSH_CONFIG": str(tmp_path / "does-not-exist"),
+    }
+    res = subprocess.run(["bash", str(DISPATCHER), "--pop-once", "999", "pool40"],
+                          cwd=ROOT, env=env, capture_output=True, text=True, timeout=30)
+    assert res.returncode == 0, res.stderr
+    assert sha in res.stdout
+    assert sha not in queue.read_text()          # popped -- removed from the queue
+
+
+def test_pop_job_without_a_node_arg_skips_the_revision_check_entirely(tmp_path: Path) -> None:
+    # Backward compatibility: test seams / callers that never pass [node] (this file's other --pop-once tests)
+    # must see UNCHANGED size-only selection -- no ssh call at all, even for a revision-pinned candidate.
+    now = int(time.time())
+    sha = "abc1234"
+    queue = tmp_path / "pool.queue"
+    queue.write_text(f"{now}\tcd ~/derisk-pool/revisions/{sha} && bash run.sh  #checked:r mem_gb=1\n")
+    bin_dir, ssh_log = _write_ssh_stub_answering_dash_d(tmp_path, missing_shas={sha})
+    env = {
+        **os.environ,
+        "PATH": f"{bin_dir}:{os.environ.get('PATH', '')}",
+        "POOL_QUEUE_PATH": str(queue),
+        "POOL_RUNNING_PATH": str(tmp_path / "pool.running"),
+    }
+    res = subprocess.run(["bash", str(DISPATCHER), "--pop-once", "999"],
+                          cwd=ROOT, env=env, capture_output=True, text=True, timeout=30)
+    assert res.returncode == 0, res.stderr
+    assert sha in res.stdout                     # popped -- no node given, no revision gate applied
+    assert ssh_log.read_text() == ""             # and no ssh call was made to check
+
+
+# --------------------------------------------------------------------- SSH_F re-evaluated every cycle (fix)
+
+def test_ssh_f_is_refreshed_mid_loop_without_a_restart(tmp_path: Path) -> None:
+    # REGRESSION (2026-09-23 fix round): SSH_F used to be computed ONCE at process start. The live systemd
+    # dispatcher started before any AWS node existed kept calling bare `ssh pool1` (no Host entry for pool1 in
+    # the user's own ~/.ssh/config) even AFTER `aws_pool_node.sh up` created .pool_ssh_config -- so pool1 was
+    # never reachable while it billed, and "no restart needed" was false. Drive the same loop SHAPE (3 cycles,
+    # via the --print-ssh-f-loop test seam, which calls the real refresh_ssh_f each cycle with no queue/ssh side
+    # effects) and create the config file BETWEEN cycles 1 and 2, inside ONE long-lived process.
+    config = tmp_path / "ssh_config"
+    proc = subprocess.Popen(
+        ["bash", str(DISPATCHER), "--print-ssh-f-loop", "3", "1"],
+        cwd=ROOT, env={**os.environ, "POOL_SSH_CONFIG": str(config)},
+        stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
+    )
+    try:
+        line1 = proc.stdout.readline().strip()
+        assert line1 == "NOF", f"cycle 1 should see no config yet, got {line1!r}"
+        config.write_text("Include ~/.ssh/config\n")   # create it WHILE the process is still running
+        line2 = proc.stdout.readline().strip()
+        assert line2 == "F", f"cycle 2 should pick up the now-existing config without a restart, got {line2!r}"
+    finally:
+        proc.terminate()
+        try:
+            proc.wait(timeout=5)
+        except subprocess.TimeoutExpired:
+            proc.kill()

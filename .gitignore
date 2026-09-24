@@ -206,3 +206,8 @@ research/queue/.pool_reservations
 research/queue/.pool_ssh_config
 research/queue/.pool_ssh_known_hosts
 research/queue/.pool_extra_nodes
+# Per-node AWS-pool-node state files (tools/aws_pool_node.sh: research/queue/.aws_<node-name>, e.g. .aws_pool1).
+# Holds an instance id, security-group id and a LOCAL key PATH (never key material) -- not secret, but a broad
+# `git add research/queue` should not commit it. research/queue/.aws_gpu (the single-instance lane) stays
+# TRACKED on purpose; this excludes only the *pool*-node state files this feature adds.
+research/queue/.aws_pool*

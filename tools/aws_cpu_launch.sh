@@ -17,7 +17,15 @@ KEYNAME=claude-gpu-1785524741
 KEY=/home/dant123/.ssh/aws-train/claude-gpu-1785524741.pem
 SUBNET=subnet-0928cbecfe33fcbc1      # default-VPC subnet, us-east-1d
 
-live=$(awk -F= '/^instance=/{print $2}' "$STATE" 2>/dev/null)
+# A state file marked "# TORN DOWN" (tools/aws_pool_node.sh down/up-failure teardown) is history, not a live
+# instance -- honour the marker so a re-`up` of the same node-name can launch a fresh instance. Without this,
+# `down` (which never deletes the file, by design, to keep an audit trail) permanently blocked any later `up`
+# of that same node-name, contradicting the "re-up with a new IP" ordering aws_pool_node.sh documents.
+if grep -q '^# TORN DOWN' "$STATE" 2>/dev/null; then
+  live=""
+else
+  live=$(awk -F= '/^instance=/{print $2}' "$STATE" 2>/dev/null)
+fi
 [ -n "$live" ] && { echo "⛔ an instance is already recorded ($live) — terminate it first (tools/aws_gpu.sh terminate)"; exit 1; }
 
 # Hard pre-launch refusal — owner-approved 2026-09-23 daily spend cap, enforced by tooling not memory.

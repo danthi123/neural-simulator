@@ -117,23 +117,37 @@ case "${1:-list}" in
          # (dispatcher skips them too), and only refuse when a REACHABLE node lacks the runner (the real
          # integration-seam check, preserved) or when NO node is reachable at all.
          if [ -n "$MOD" ]; then
-           NODE_BAD=""; NODE_OK=""; NODE_UNREACH=""
+           NODE_BAD=""; NODE_OK=""; NODE_UNREACH=""; NODE_SKIP=""
            # ISOLATED-REVISION SEAM (2026-09-23). A job pinned to `cd ~/derisk-pool/revisions/<sha> && ...` (the
            # `pool_provision.sh --isolated` layout) RUNS in that revision dir, but this check probed the shared
            # ~/derisk-pool/sim copy -- so a NEW runner that exists only in the isolated revision was refused, and a
            # runner that exists in the shared copy but NOT in the pinned revision was wrongly accepted. Probe the
            # directory the job will actually run in.
            REMOTE_DIR=$(printf '%s' "$2" | grep -oE 'derisk-pool/revisions/[0-9a-f]{7,40}' | head -1)
+           IS_REVISION=0; [ -n "$REMOTE_DIR" ] && IS_REVISION=1
            REMOTE_DIR="${REMOTE_DIR:-derisk-pool/sim}"
            for n in $(probe_nodes); do
              if ! timeout 10 ssh "${SSH_F[@]}" -o BatchMode=yes -o ConnectTimeout=6 "$n" true >/dev/null 2>&1; then
                NODE_UNREACH="$NODE_UNREACH $n"; continue
+             fi
+             # MISSING-REVISION-DIR IS "SKIP", NOT "BAD" (2026-09-23 fix round). A reachable node that simply has
+             # not been provisioned with THIS revision yet (e.g. a freshly-`up`'d AWS pool node, before any
+             # `--isolated --revision <sha>` provision has targeted it) is not a broken node -- it is a node this
+             # PARTICULAR job cannot use yet. Counting it as NODE_BAD wrongly REFUSED staging revision-pinned work
+             # for every OTHER (perfectly capable) node too, because the refusal fires on "any reachable+bad node"
+             # regardless of whether other reachable nodes are fine. Reproduced: registering one AWS node with only
+             # ~/derisk-pool/sim provisioned made `add` refuse ALL revision-pinned adds, including ones pool40/41/42
+             # could already run.
+             if [ "$IS_REVISION" = 1 ] && ! timeout 10 ssh "${SSH_F[@]}" -o BatchMode=yes -o ConnectTimeout=6 "$n" \
+                  "[ -d ~/$REMOTE_DIR ]" >/dev/null 2>&1; then
+               NODE_SKIP="$NODE_SKIP $n"; continue
              fi
              if timeout 25 ssh "${SSH_F[@]}" -o BatchMode=yes -o ConnectTimeout=8 "$n" \
                   "cd ~/$REMOTE_DIR && SIM_NO_PROVENANCE=1 SIM_BACKEND=numpy .venv/bin/python -m $MOD --help" \
                   >/dev/null 2>&1; then NODE_OK="$NODE_OK $n"; else NODE_BAD="$NODE_BAD $n"; fi
            done
            [ -n "$NODE_UNREACH" ] && echo "ℹ️  skipping unreachable node(s):$NODE_UNREACH (dispatcher health-checks + skips them too)" >&2
+           [ -n "$NODE_SKIP" ] && echo "ℹ️  skipping node(s) not yet provisioned with this revision:$NODE_SKIP (the dispatcher skips them for this job too, until provisioned)" >&2
            if [ -n "$NODE_BAD" ]; then
              echo "⛔ REFUSED: $MOD is not runnable on REACHABLE dispatch target(s):$NODE_BAD" >&2
              echo "   Those nodes are UP but the runner fails there (stale rsync?); synchronize them:" >&2

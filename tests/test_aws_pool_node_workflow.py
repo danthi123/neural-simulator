@@ -171,6 +171,82 @@ def test_down_is_idempotent_and_never_re_terminates(tmp_path):
     assert "already torn down" in (res2.stdout + res2.stderr)
 
 
+def _make_down_stub_bin_with_running_runners(tmp_path, n_running=3):
+    """Like _make_down_stub_bin, but the ssh stub ALWAYS reports `n_running` runners (matching
+    _running_runners's pgrep-style probe) -- so `down`'s drain wait / refuse-while-running guard has something
+    to refuse against, deterministically, with no real node."""
+    bin_dir = tmp_path / "bin"
+    bin_dir.mkdir()
+    log = tmp_path / "combined.log"
+    log.write_text("")
+
+    aws_stub = bin_dir / "aws"
+    aws_stub.write_text(_STUB.format(tag="AWS", log=log, body='echo ok\nexit 0'))
+    aws_stub.chmod(aws_stub.stat().st_mode | stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH)
+
+    ssh_stub = bin_dir / "ssh"
+    ssh_stub.write_text(f"""#!/usr/bin/env bash
+echo "SSH $*" >> "{log}"
+case "$*" in
+  *pgrep*) echo {n_running} ;;
+esac
+exit 0
+""")
+    ssh_stub.chmod(ssh_stub.stat().st_mode | stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH)
+
+    rsync_stub = bin_dir / "rsync"
+    rsync_stub.write_text(_STUB.format(tag="RSYNC", log=log, body='exit 0'))
+    rsync_stub.chmod(rsync_stub.stat().st_mode | stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH)
+
+    return bin_dir, log
+
+
+def test_down_refuses_to_terminate_while_runners_are_still_running(tmp_path):
+    # HIGH (2026-09-23 fix round): `down` used to unregister then IMMEDIATELY pool_sync + terminate, with NO
+    # wait for (or check of) an in-flight runner -- the root volume is DeleteOnTermination=true, so a job killed
+    # mid-run loses its output with no requeue. It must now DRAIN first and REFUSE to terminate if a runner is
+    # still running after the (bounded) drain wait, unless --force.
+    bin_dir, log = _make_down_stub_bin_with_running_runners(tmp_path, n_running=3)
+    state = _write_state(tmp_path)
+    ssh_config = tmp_path / "ssh_config"
+    ssh_config.write_text("Include ~/.ssh/config\nHost testnode\n  HostName 1.2.3.4\n")
+    env = {
+        "AWS_POOL_NODE_STATE_FILE": str(state),
+        "POOL_EXTRA_NODES_FILE": str(tmp_path / "extra_nodes"),
+        "POOL_SSH_CONFIG": str(ssh_config),
+        "AWS_POOL_DRAIN_TIMEOUT_S": "1",   # bounded -- this test must not hang for the real 30 min default
+        "AWS_POOL_DRAIN_POLL_S": "0",
+    }
+    (tmp_path / "extra_nodes").write_text("testnode\n")
+
+    res = _run(["down", "testnode"], bin_dir=bin_dir, tmp_path=tmp_path, env=env)
+    assert res.returncode == 1
+    assert "Refusing to terminate" in (res.stdout + res.stderr)
+    assert "ec2 terminate-instances" not in log.read_text()   # never reached -- refused before it
+    assert state.read_text().startswith("instance=")          # NOT marked torn down -- teardown never happened
+
+
+def test_down_force_terminates_anyway_despite_running_runners(tmp_path):
+    # --force is the documented override for the guard above.
+    bin_dir, log = _make_down_stub_bin_with_running_runners(tmp_path, n_running=2)
+    state = _write_state(tmp_path)
+    ssh_config = tmp_path / "ssh_config"
+    ssh_config.write_text("Include ~/.ssh/config\nHost testnode\n  HostName 1.2.3.4\n")
+    env = {
+        "AWS_POOL_NODE_STATE_FILE": str(state),
+        "POOL_EXTRA_NODES_FILE": str(tmp_path / "extra_nodes"),
+        "POOL_SSH_CONFIG": str(ssh_config),
+        "AWS_POOL_DRAIN_TIMEOUT_S": "1",
+        "AWS_POOL_DRAIN_POLL_S": "0",
+    }
+    (tmp_path / "extra_nodes").write_text("testnode\n")
+
+    res = _run(["down", "testnode", "--force"], bin_dir=bin_dir, tmp_path=tmp_path, env=env)
+    assert res.returncode == 0, res.stderr
+    assert "ec2 terminate-instances" in log.read_text()
+    assert state.read_text().startswith("# TORN DOWN")
+
+
 def test_down_with_no_state_file_is_a_clean_noop(tmp_path):
     res = _run(["down", "ghost"], env={
         "AWS_POOL_NODE_STATE_FILE": str(tmp_path / "does-not-exist"),
@@ -218,6 +294,83 @@ def test_up_refuses_when_a_live_state_file_already_exists(tmp_path):
     res = _run(["up", "testnode"], env={"AWS_POOL_NODE_STATE_FILE": str(state)})
     assert res.returncode == 1
     assert "already recorded live" in res.stdout + res.stderr
+
+
+def _make_expensive_running_instance_aws_stub(tmp_path):
+    """A stub `aws` whose describe-instances reports one already-running, expensive project instance -- enough
+    for a $1 cap to refuse cleanly at the budget-check gate (no real network, no run-instances)."""
+    bin_dir = tmp_path / "bin"
+    bin_dir.mkdir()
+    log = tmp_path / "aws.log"
+    log.write_text("")
+    describe = tmp_path / "describe.json"
+    describe.write_text(
+        '{"Reservations": [{"Instances": [{"InstanceId": "i-existing", "InstanceType": "r7i.4xlarge", '
+        '"State": {"Name": "running"}, "LaunchTime": "2020-01-01T00:00:00+00:00", '
+        '"Tags": [{"Key": "Project", "Value": "neural-sim"}]}]}]}'
+    )
+    aws_stub = bin_dir / "aws"
+    aws_stub.write_text(f"""#!/usr/bin/env bash
+echo "$*" >> "{log}"
+if [[ "$*" == *"ec2 describe-instances"* ]]; then cat "{describe}"; exit 0; fi
+if [[ "$*" == *"ec2 run-instances"* ]]; then echo "i-should-not-happen"; exit 0; fi
+echo ok
+exit 0
+""")
+    aws_stub.chmod(aws_stub.stat().st_mode | stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH)
+    return bin_dir, log
+
+
+def test_up_does_not_refuse_on_a_torn_down_state_file_reaching_the_next_gate(tmp_path):
+    # aws_pool_node.sh's OWN "already recorded live" guard already special-cased a '# TORN DOWN' marker -- this
+    # exercises that it really does let a re-`up` PAST that guard, all the way into aws_cpu_launch.sh (down
+    # never deletes the state file, by design, so its stale `instance=` line must not permanently block the
+    # node-name). The budget stub below refuses at the NEXT gate instead, so no real AWS/run-instances call
+    # happens either way -- this test is only about which gate stops the run.
+    state = _write_state(tmp_path, instance="i-old")
+    state.write_text("# TORN DOWN 2026-09-23 00:00:00 UTC\n" + state.read_text())
+    bin_dir, aws_log = _make_expensive_running_instance_aws_stub(tmp_path)
+    res = _run(["up", "testnode"], bin_dir=bin_dir, tmp_path=tmp_path,
+                env={"AWS_POOL_NODE_STATE_FILE": str(state), "AWS_DAILY_CAP_USD": "1"})
+    assert "already recorded live" not in (res.stdout + res.stderr)
+    assert res.returncode == 1
+    assert "refused by tools/aws_budget.sh" in (res.stdout + res.stderr)
+    assert "ec2 run-instances" not in aws_log.read_text()
+
+
+def test_aws_cpu_launch_still_refuses_a_genuinely_live_state_file(tmp_path):
+    # The mirror case, directly against tools/aws_cpu_launch.sh (the script whose OWN separate "live=" check was
+    # the actual 2026-09-23 fix-round bug -- it read `instance=` blindly, ignoring '# TORN DOWN'). A state file
+    # WITHOUT the marker must still refuse re-launch, unchanged.
+    root = ROOT
+    key = tmp_path / "key.pem"; key.write_text("fake\n")
+    state = tmp_path / ".aws_gpu"
+    state.write_text(f"instance=i-live\nregion=us-east-1\nkey={key}\nsg=sg-live\n")
+    res = subprocess.run(["bash", str(root / "tools" / "aws_cpu_launch.sh")], cwd=root,
+                          env={**os.environ, "AWS_CPU_STATE_FILE": str(state)},
+                          capture_output=True, text=True, timeout=30)
+    assert res.returncode == 1
+    assert "already recorded" in (res.stdout + res.stderr)
+
+
+def test_aws_cpu_launch_honors_the_torn_down_marker_and_proceeds_past_its_own_live_check(tmp_path):
+    # The actual 2026-09-23 fix: the SAME state file, but WITH the '# TORN DOWN' marker prepended (exactly what
+    # aws_pool_node.sh's `down` leaves behind) -- aws_cpu_launch.sh's own live-check must not refuse, and the run
+    # must instead reach (and stop at) the budget-check gate.
+    key = tmp_path / "key.pem"; key.write_text("fake\n")
+    state = tmp_path / ".aws_gpu"
+    state.write_text(f"# TORN DOWN 2026-09-23 00:00:00 UTC\ninstance=i-old\nregion=us-east-1\nkey={key}\nsg=sg-old\n")
+    bin_dir, aws_log = _make_expensive_running_instance_aws_stub(tmp_path)
+    env = dict(os.environ)
+    env["PATH"] = f"{bin_dir}:{env.get('PATH', '')}"
+    env["AWS_CPU_STATE_FILE"] = str(state)
+    env["AWS_DAILY_CAP_USD"] = "1"
+    res = subprocess.run(["bash", str(ROOT / "tools" / "aws_cpu_launch.sh")], cwd=ROOT, env=env,
+                          capture_output=True, text=True, timeout=30)
+    assert "already recorded" not in (res.stdout + res.stderr)
+    assert res.returncode == 1
+    assert "refused by tools/aws_budget.sh" in (res.stdout + res.stderr)
+    assert "ec2 run-instances" not in aws_log.read_text()
 
 
 # ----------------------------------------------------------------------------------------------------- status
