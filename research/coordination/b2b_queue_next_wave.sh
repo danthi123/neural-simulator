@@ -70,9 +70,21 @@ check_queued_lines() {
 }
 
 if [ "$MODE" = "--status" ]; then check_queued_lines; exit $?; fi
-if [ "$fresh" -ge "$THRESHOLD" ]; then
+# A wave with fewer than WAVE_SIZE successful adds in the ledger (interrupted, or an add failed) is RESUMED -- filled up
+# to WAVE_SIZE -- whatever the queue depth; only a full wave waits for the depth threshold before the next one starts.
+wave=1; wave_done=0
+if [ -f "$LEDGER" ]; then
+  wave=$(awk -F'\t' 'NR>1 {if ($2+0>m) m=$2+0} END {print m+0}' "$LEDGER")
+  wave_done=$(awk -F'\t' -v w="$wave" 'NR>1 && $2+0==w && $5=="0"' "$LEDGER" | wc -l)
+  if [ "$wave" -eq 0 ]; then wave=1; wave_done=0
+  elif [ "$wave_done" -ge "$WAVE_SIZE" ]; then wave=$((wave + 1)); wave_done=0
+  fi
+fi
+todo=$(( WAVE_SIZE - wave_done ))
+if [ "$wave_done" -eq 0 ] && [ "$fresh" -ge "$THRESHOLD" ]; then
   echo "[b2b-wave] $fresh fresh $TAG lines still queued (>= $THRESHOLD): nothing queued"; check_queued_lines; exit $?
 fi
+[ "$wave_done" -gt 0 ] && echo "[b2b-wave] resuming wave $wave: $wave_done of $WAVE_SIZE already added, $todo to go"
 if [ "$MODE" = "queue" ] && [ ! -f "$CORPUS_RECORD" ]; then
   echo "⛔ REFUSED: $CORPUS_RECORD missing -- prereg A1.6 requires the per-node corpus hash recorded (and committed)" \
        "before any line is queued" >&2; exit 2
@@ -85,14 +97,12 @@ while IFS= read -r p; do HANDLED["$p"]=1; done < <(
     [ -f "$LEDGER" ] && awk -F'\t' '$5=="0" {print $4}' "$LEDGER"; } \
   | grep -oE "research/findings/raw/_load_bearing/_shards/$TAG/s[0-9]+/[a-z0-9-]+/lb\.json" | sort -u)
 
-wave=1
-[ -f "$LEDGER" ] && wave=$(( $(awk -F'\t' 'NR>1 {if ($2+0>m) m=$2+0} END {print m+0}' "$LEDGER") + 1 ))
 [ "$MODE" = "queue" ] && [ ! -f "$LEDGER" ] && printf 'epoch\twave\tjob_line\tout\tadd_rc\n' > "$LEDGER"
 
 n=0; fail=0; ln=0
-while IFS= read -r line; do
+while IFS= read -r line <&3; do
   ln=$((ln + 1))
-  [ "$n" -ge "$WAVE_SIZE" ] && break
+  [ "$n" -ge "$todo" ] && break
   out=$(printf '%s' "$line" | grep -oE -- '--out [^ ]+$' | cut -d' ' -f2)
   [ -n "$out" ] || { echo "⛔ job line $ln has no trailing --out" >&2; fail=1; continue; }
   [ -n "${HANDLED[$out]:-}" ] && continue
@@ -101,7 +111,9 @@ while IFS= read -r line; do
   case "$line" in *BRAIN_*) echo "⛔ job line $ln carries a BRAIN_* token (base arm must carry none)" >&2; fail=1; continue ;; esac
   n=$((n + 1))
   if [ "$MODE" = "--dry-run" ]; then echo "[b2b-wave] would queue (wave $wave, line $ln): $out"; continue; fi
-  bash "$QUEUE_TOOL" add "$line" --checked "$REASON" >/dev/null 2>"${XDG_RUNTIME_DIR:-/tmp}/b2b0924_add.err"
+  # </dev/null: pool_queue.sh's ssh probes read stdin; on the loop's stdin they swallowed the rest of the job file
+  # (first run, 2026-09-24: one line queued, then the loop ended).
+  bash "$QUEUE_TOOL" add "$line" --checked "$REASON" </dev/null >/dev/null 2>"${XDG_RUNTIME_DIR:-/tmp}/b2b0924_add.err"
   rc=$?
   printf '%s\t%s\t%s\t%s\t%s\n' "$(date +%s)" "$wave" "$ln" "$out" "$rc" >> "$LEDGER"
   if [ "$rc" -ne 0 ]; then
@@ -110,7 +122,7 @@ while IFS= read -r line; do
   else
     echo "[b2b-wave] queued wave $wave line $ln: $out"
   fi
-done < "$JOBS"
+done 3< "$JOBS"
 
 [ "$n" -eq 0 ] && echo "[b2b-wave] no unqueued $TAG line left in $(basename "$JOBS")"
 [ "$MODE" = "--dry-run" ] && { echo "[b2b-wave] dry run: $n line(s) would be queued as wave $wave"; exit "$fail"; }
