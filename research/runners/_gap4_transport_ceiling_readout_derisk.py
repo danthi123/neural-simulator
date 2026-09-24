@@ -95,7 +95,7 @@ _FP_KEYS = ("hidden", "pool_k", "n_hidden_layers", "settle_steps", "credit_steps
             "tonic_h_pA", "tonic_o_pA", "graded_credit", "wpi_init", "wpi_lr", "kp_lr", "kp_decay",
             "read_window", "read_gain", "isi_steps", "eval_frozen", "spi_silence", "n_super", "n_members",
             "held_per_super", "n_prop", "member_id_dim", "n_obs", "noise", "oracle_epochs", "oracle_lr",
-            "oracle_batch", "decode_ridge")
+            "oracle_batch", "decode_ridge", "read_quantity", "no_structural")
 
 
 # ============================================================================================================
@@ -103,8 +103,20 @@ class Gap4ReadoutNet(Gap4InEngineNet):
     """Gap4InEngineNet + the read-regime levers. Every lever at its legacy value => the parent's code path."""
 
     def __init__(self, n_in, hidden, k, seed=0, feedback="fixed", read_window=0, read_gain=1.0, isi_steps=0,
-                 eval_frozen=False, spi_silence=False, **kw):
+                 eval_frozen=False, spi_silence=False, read_quantity="event", no_structural=False, **kw):
         super().__init__(n_in, hidden, k, seed=seed, feedback=feedback, **kw)
+        # read_quantity: "event" = cp_bdsp_E (isolated / first-of-burst spikes; legacy). "spikes" = EVERY somatic
+        # spike (events + burst spikes), per step. AMENDMENT 1: the dev diagnostic diag_eread_monotonic_s7.json shows
+        # E is NON-MONOTONIC in drive and the output layer sits at its peak, so LTP LOWERS the event read.
+        self.read_quantity = str(read_quantity)
+        if self.read_quantity not in ("event", "spikes"):
+            raise ValueError("read_quantity must be event|spikes")
+        if bool(no_structural):
+            # AMENDMENT 1: the default-on synapse ELIMINATION treats every weight < 0.05 as weak, i.e. every
+            # negative signed feedforward weight, and zeroes it at 5e-7/step (a companion process not built for
+            # signed BDSP weights). Off => those weights persist. Default False => legacy.
+            self.cfg.enable_structural_plasticity = False
+        self.no_structural = bool(no_structural)
         self.read_window = int(read_window)
         self.read_gain = float(read_gain)
         self.isi_steps = int(isi_steps)
@@ -120,7 +132,7 @@ class Gap4ReadoutNet(Gap4InEngineNet):
 
     # ---- LONGER read: time-average of the pooled event rate over the last W settle steps ----
     def _forward_spiking(self, feat_row, reset_rates=True):
-        if self.read_window <= 0:
+        if self.read_window <= 0 and self.read_quantity == "event":
             return super()._forward_spiking(feat_row, reset_rates)
         from sim.backend import to_host
         xp = self._xp; n = self.n_total
@@ -135,12 +147,17 @@ class Gap4ReadoutNet(Gap4InEngineNet):
         self.br.cp_external_input_current = xp.asarray(drive)
         if self.br.cp_bdsp_apical_drive is not None:
             self.br.cp_bdsp_apical_drive[...] = 0.0
-        W = max(1, min(self.read_window, self.settle_steps))
+        W = max(1, min(self.read_window if self.read_window > 0 else 1, self.settle_steps))
         acc = None
         for s in range(self.settle_steps):
             self.br._run_one_simulation_step()
             if s >= self.settle_steps - W:
-                acc = self.br.cp_bdsp_E.copy() if acc is None else acc + self.br.cp_bdsp_E
+                if self.read_quantity == "spikes":
+                    # fired THIS step <=> the BDSP block stamped this step as the neuron's last spike
+                    cur = (self.br.cp_bdsp_last_spike_step == self.br._bdsp_step_counter).astype(xp.float32)
+                else:
+                    cur = self.br.cp_bdsp_E
+                acc = cur.copy() if acc is None else acc + cur
         E = np.asarray(to_host(acc)).astype(np.float64) / float(W)
         return [self._pool(E[self.slices[li]], li) for li in range(len(self.sizes))]
 
@@ -182,11 +199,14 @@ class Gap4ReadoutNet(Gap4InEngineNet):
             yield
             return
         lr0 = self.cfg.bdsp_learning_rate
+        sp0 = self.cfg.enable_structural_plasticity     # AMENDMENT 1: elimination also edits weights during reads
         self.cfg.bdsp_learning_rate = 0.0
+        self.cfg.enable_structural_plasticity = False
         try:
             yield
         finally:
             self.cfg.bdsp_learning_rate = lr0
+            self.cfg.enable_structural_plasticity = sp0
 
     def no_weight_transport(self):
         return super().no_weight_transport()
@@ -213,7 +233,8 @@ def _build(arm, n_in, k, args, seed):
         graded_credit=args.graded_credit, wpi_plastic=True, wpi_init=args.wpi_init, wpi_lr=args.wpi_lr,
         kp_lr=args.kp_lr, kp_decay=args.kp_decay,
         read_window=args.read_window, read_gain=args.read_gain, isi_steps=args.isi_steps,
-        eval_frozen=args.eval_frozen, spi_silence=args.spi_silence)
+        eval_frozen=args.eval_frozen, spi_silence=args.spi_silence,
+        read_quantity=args.read_quantity, no_structural=args.no_structural)
     net.cfg.bdsp_w_max = float(args.bdsp_w_max)
     net.cfg.bdsp_w_min = -float(args.bdsp_w_max)
     net._spi_frozen = bool(freeze)
@@ -311,11 +332,20 @@ def run_shard(seed, r, arm, args, T):
     train = float(np.mean(np.argmax(acts_tr[-1], 1) == np.asarray(T["ytr"])))
     dec_tr, dec_te = _ridge_decode(acts_tr[-2], T["ytr"], acts_te[-2], yte_inh, T["k"], args.decode_ridge)
     out_rate = float(np.mean(acts_te[-1]))
+    pred_tr = np.argmax(acts_tr[-1], 1); pred_te = np.argmax(acts_te[-1], 1)
+    hist = lambda v: np.bincount(np.asarray(v, int), minlength=T["k"]).tolist()
     res = {"seed": seed, "replicate": r, "arm": arm, "feedback": fb, "mode": mode,
            "task_seed": T["task_seed"], "chance": T["chance"], "oracle_heldout": T["oracle"], "n_inh": T["n_inh"],
            "inherit_heldout": held, "train_acc": train,
            "decode_h2_train": dec_tr, "decode_h2_heldout": dec_te,
            "mean_output_rate_heldout": out_rate,
+           "pred_hist_train": hist(pred_tr), "true_hist_train": hist(T["ytr"]),
+           "pred_hist_heldout": hist(pred_te), "true_hist_heldout": hist(yte_inh),
+           "mean_output_read_by_class_train": [float(acts_tr[-1][np.asarray(T["ytr"]) == c, c].mean())
+                                               if np.any(np.asarray(T["ytr"]) == c) else None for c in range(T["k"])],
+           "mean_output_read_other_class_train": [float(acts_tr[-1][np.asarray(T["ytr"]) != c, c].mean())
+                                                  for c in range(T["k"])],
+           "read_quantity": args.read_quantity,
            "ff_weight_moved": float(abs(w1 - w0)),
            "eval_reads_left_weights_unchanged": bool(wr0 == wr1),
            "no_weight_transport": bool(net.no_weight_transport()),
@@ -492,7 +522,8 @@ def identity_selftest(args):
         hashes = {}
         for tag, cls, extra in (("parent", Gap4InEngineNet, {}), ("legacy", Gap4ReadoutNet, {}),
                                 ("levers_on", Gap4ReadoutNet, dict(read_window=8, read_gain=20.0, isi_steps=5,
-                                                                   eval_frozen=True, spi_silence=True))):
+                                                                   eval_frozen=True, spi_silence=True,
+                                                                   read_quantity="spikes", no_structural=True))):
             net = cls(n_in, 6, k, seed=seed, feedback=fb, **kw, **extra)
             thr_build = _thr_hash(net)          # AT BUILD: thresholds adapt with activity, so compare before training
             for i in range(4):
@@ -590,6 +621,8 @@ def main():
     ap.add_argument("--isi-steps", dest="isi_steps", type=int, default=0)
     ap.add_argument("--eval-frozen", dest="eval_frozen", action="store_true")
     ap.add_argument("--spi-silence-outside-credit", dest="spi_silence", action="store_true")
+    ap.add_argument("--read-quantity", dest="read_quantity", default="event", choices=["event", "spikes"])
+    ap.add_argument("--no-structural-plasticity", dest="no_structural", action="store_true")
     ap.add_argument("--silent-stats", dest="silent_stats", action="store_true")
     ap.add_argument("--decode-ridge", dest="decode_ridge", type=float, default=1.0)
     # --- task (the 2026-09-15 task) ---
