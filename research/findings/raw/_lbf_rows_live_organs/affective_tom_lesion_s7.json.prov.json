@@ -1,0 +1,41 @@
+{
+ "run_id": "1790277970-826276",
+ "runner": "research/runners/_lbf_rows_live_organs_smoke.py",
+ "argv": [
+  "/home/ubuntu/derisk-pool/revisions/a6f75e01ea315a560e43c6b818c6a320e0e9fadc/research/runners/_lbf_rows_live_organs_smoke.py",
+  "--worker",
+  "--env",
+  "{\"BRAIN_CHAT_SEED\": \"7\", \"BRAIN_AFFECTIVE_TOM_LESION\": \"1\"}",
+  "--turns",
+  "lbf_tom1",
+  "--out",
+  "research/findings/raw/_lbf_rows_live_organs/affective_tom_lesion_s7.json"
+ ],
+ "git_sha": "a6f75e01ea315a560e43c6b818c6a320e0e9fadc",
+ "git_dirty": false,
+ "source_kind": "git_archive",
+ "source_manifest_sha256": "7e3568f6d2c33c7f0a8a979d90e17391b512ae5889b3c88bd780ac4e31072796",
+ "source_manifest_verified_at_start": true,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": true,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-24T19:26:10",
+ "env": {
+  "OMP_NUM_THREADS": "1",
+  "SIM_BACKEND": "numpy",
+  "NUMEXPR_NUM_THREADS": "1",
+  "POOL_JOB_ID": "1790277064235060256-15711",
+  "OPENBLAS_NUM_THREADS": "1",
+  "POOL_JOB_MEM_GB": "6",
+  "MKL_NUM_THREADS": "1",
+  "SIM_RUN_ID": "1790277064-787928",
+  "BRAIN_CHAT_RENDERER": "stub",
+  "SIM_DISABLE_LLM": "1"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": false,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_lbf_rows_live_organs/affective_tom_lesion_s7.json"
+}

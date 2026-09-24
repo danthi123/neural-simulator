@@ -1,0 +1,107 @@
+{
+  "self-schema": {
+    "key": "self-schema",
+    "flag": "BRAIN_SELF_SCHEMA_LESION",
+    "turn": "rich_open",
+    "labels": [
+      "rich_open"
+    ],
+    "intact_ok": true,
+    "lesion_ok": true,
+    "fields": [
+      "authorship.is_self",
+      "authorship.label"
+    ],
+    "diffs": [
+      {
+        "field": "authorship.is_self",
+        "intact": null,
+        "lesion": null,
+        "changed": false
+      },
+      {
+        "field": "authorship.label",
+        "intact": null,
+        "lesion": null,
+        "changed": false
+      }
+    ],
+    "assertion": {
+      "held": false,
+      "moved": null,
+      "detail": "KeyError: 'authorship'"
+    }
+  },
+  "affective-tom": {
+    "key": "affective-tom",
+    "flag": "BRAIN_AFFECTIVE_TOM_LESION",
+    "turn": "lbf_tom1",
+    "labels": [
+      "lbf_tom1"
+    ],
+    "intact_ok": true,
+    "lesion_ok": true,
+    "fields": [
+      "affective_tom.reason",
+      "affective_tom.tone_level"
+    ],
+    "diffs": [
+      {
+        "field": "affective_tom.reason",
+        "intact": "empathic",
+        "lesion": "lesion_collapsed",
+        "changed": true
+      },
+      {
+        "field": "affective_tom.tone_level",
+        "intact": -3,
+        "lesion": 0,
+        "changed": true
+      }
+    ],
+    "assertion": {
+      "held": true,
+      "moved": true,
+      "detail": "intact.reason='empathic' lesion.reason='lesion_collapsed'"
+    }
+  },
+  "causal-whatif": {
+    "key": "causal-whatif",
+    "flag": "BRAIN_CAUSAL_LESION",
+    "turn": "lbf_cau_whatif",
+    "labels": [
+      "lbf_cau_teach1",
+      "lbf_cau_teach2",
+      "lbf_cau_teach3",
+      "lbf_cau_teach4",
+      "lbf_cau_teach5",
+      "lbf_cau_teach6",
+      "lbf_cau_whatif"
+    ],
+    "intact_ok": true,
+    "lesion_ok": true,
+    "fields": [
+      "abstained",
+      "causal.confirmed"
+    ],
+    "diffs": [
+      {
+        "field": "abstained",
+        "intact": false,
+        "lesion": true,
+        "changed": true
+      },
+      {
+        "field": "causal.confirmed",
+        "intact": true,
+        "lesion": false,
+        "changed": true
+      }
+    ],
+    "assertion": {
+      "held": true,
+      "moved": true,
+      "detail": "intact.abstained=False lesion.abstained=True"
+    }
+  }
+}

@@ -222,6 +222,54 @@ unreachable. See Amendment 2 for the fix and the retried result.
    fails` covers a per-row design failure, not a wholesale zero-measurement outcome, so the distinction is now
    stated rather than blurred.
 
-**Seed-7 result (filled in once the pool job completes; see the branch's final commit/report for the resolved
-state if this line still reads PENDING):** PENDING -- queued via `tools/pool_queue.sh` at commit time; this
-lane's report to the orchestrator carries the resolved numbers or the still-queued state with an ETA.
+**Seed-7 result:** PARTIAL -- see Amendment 3 (this lane's continuation session hit the workflow's own
+polling budget before the pool job finished all seven rows; 3 of 7 completed with real measurements, 4 remain
+queued on pool2 at this exact commit).
+
+## Amendment 3 (seed-7 partial result, lane continuation after the account-wide rate-limit at 14:21 EDT)
+
+The predecessor session that wrote Amendment 2 was cut off by the account's weekly usage limit while polling
+the pool2 job it had just queued (confirmed from its surviving transcript: the last line before the cutoff is
+a polling-loop result, immediately followed by a `rate_limit` stop). Amendment 2's fixes and the push to both
+remotes had already landed before that cutoff -- nothing from that session was lost. This continuation verified
+the fixes (re-ran `lemma_verb` on all six teach verbs, `tools/check_docs.py`), confirmed the pool2 job was live
+at this branch's exact HEAD (`a6f75e01e`), and observed it for a bounded window rather than polling to full
+completion (per this task's own instruction not to poll for hours).
+
+**3 of 7 neural-lesion rows completed both arms and are harvested into
+`research/findings/raw/_lbf_rows_live_organs/` (raw JSON + `.prov.json` provenance sidecars, committed
+alongside this amendment):**
+
+1. **affective-tom** -- `assertion.held=True, moved=True` (`intact.reason='empathic'`,
+   `lesion.reason='lesion_collapsed'`, `tone_level` -3 -> 0). A genuine, measured neural-lesion confirmation.
+2. **causal-whatif** -- `assertion.held=True, moved=True`. This is the row Amendment 2's lemma fix was staked
+   on, and it grounds end-to-end through the real chat-taught path, not just the unit-level `lemma_verb` check:
+   the intact arm's `causal` block reads `predicts_D=True, confirmed=True,
+   consequence_fact=['dog','drink','water'], agent='dog', action='go'` -- the six-teach-turn chain correctly
+   lemmatized "goes" to "go" and grounded against `FACTS[A]=('dog','go','east')`; the lesion arm abstains
+   (`predicts_D=False, confirmed=False, abstained=True`). This is a live confirmation of Amendment 2's fix #1,
+   not a re-statement of the unit test.
+3. **self-schema** -- `assertion.held=False, detail="KeyError: 'authorship'"`. This is a NEW finding, distinct
+   from the four review:A1 issues: the registered probe turn (`rich_open`) never attaches an `authorship` block
+   in the live response at all (`self_schema_intact_s7.json["rich_open"]` has no `authorship` key -- confirmed
+   directly, not inferred). This contradicts the row's own `kind="neural-lesion"` HIGH-confidence claim, and is
+   internally inconsistent with this same file's `INTEGRITY_SMOKE_AUDIT["self-schema"]` note, which says
+   `authorship` "is attached on every `is_hyp` turn" -- a turn label the registered probe (`rich_open`) is not.
+   Per this prereg's own declared rule ("a NEGATIVE result on any field... downgrades that row's kind to
+   thin... it does not get silently reported as pass"), **self-schema's HIGH-confidence neural-lesion
+   classification is RETRACTED pending redesign** -- not auto-downgraded to `kind="thin"` here, because the
+   correct fix (wire a genuine `is_hyp`-labeled turn into `EXTRA_TURNS`, or re-check the actual attachment
+   condition for `authorship` in `webapp/server.py:6357-6381` against `rich_open` specifically) is a design
+   decision outside this fix round's declared scope (the four review:A1 issues). Left for the next lane/
+   amendment to resolve; not silently reported as a pass or folded into "not load-bearing."
+
+**4 of 7 rows were still running on pool2 (revision `a6f75e01ea315a560e43c6b818c6a320e0e9fadc`, this exact
+commit) when this session ended its observation window:** spiking-anaphor (turns `bc_a`,`bc_b` -- intact arm in
+progress at handoff), then gnw-bus, multiref-competition, affect-appraisal-interoceptive, queued behind it in
+the same driver process (`_lbf_rows_live_organs_smoke --seed 7 --out-dir research/findings/raw/_lbf_rows_live_
+organs`, pid 787928 on pool2 at handoff). Each row's two arms will land at
+`research/findings/raw/_lbf_rows_live_organs/<row>_{intact,lesion}_s7.json`, with
+`research/findings/raw/_lbf_rows_live_organs/summary_s7.json` updated after each row completes. These remain
+seed-7 DEV/calibration smokes only -- no GO/NO-GO claim, no 6-seed claim (B2b's job, unchanged from this
+prereg's original scope). The next continuation should harvest these four rows' output the same way (`scp` from
+pool2, or `tools/pool_provision.sh`'s own fetch path) rather than re-running them.
