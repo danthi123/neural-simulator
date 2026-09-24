@@ -625,7 +625,19 @@ def _wmb_adequacy(intact_a, ctrl_a, ctrl_b, ctrl_les, lesioned=None):
 # (BRAIN_MULTIREF_LESION_SCOPE=recur on EVERY arm): only the w_k->w_k slow-NMDA synapses of the organ's pools are zeroed
 # on the SHARED slice; the shared buffer, read_isolation, and the xedge focus are identical across arms.
 # Pre-registration: research/findings/2026-09-24-wm-binding-ordinary-content-probe-PREREGISTRATION.md.
+# AMENDMENT C (2026-09-24, filed before any LB_WMB_CONTENT_PROBE seed result was pulled or read): AMENDMENT B
+# rescoped the PROSE a T=true/"regressed" GO here must carry (it shows the organ's own w_k->w_k recurrence shapes
+# comprehension's read of a host-reinjected, host-timed, host-targeted drive into a POSITIONAL focus pool -- not
+# that the organ's HELD REFERENT CONTENT reaches an ordinary reply) but left the COUNTING unchanged: the result
+# still landed under the "wm-binding-advanced" key, so a GO here would silently over-credit that faculty's row in
+# `load_bearing_fraction`'s numerator/`load_bearing_faculties` list with a claim the prose explicitly disclaims.
+# This amendment fixes the counting to match the prose: `measure_wmb_content` reports under the DISTINCT faculty
+# key `_WMC_FACULTY_KEY` ("wm-binding-recurrence-drive"), never "wm-binding-advanced", so a GO/pass here can still
+# enter the harness's aggregate fraction (FACULTY_LESIONS's existing kind="neural-lesion" wiring is unchanged --
+# this is a reporting-label fix, not a re-scoring) but is attributed to its own row, not conflated with the
+# hold-query-superseding "wm-binding-advanced" claim. Tested by tests/test_wmb_content_probe_faculty_key_amendment_c.py.
 LB_WMB_CONTENT = os.environ.get("LB_WMB_CONTENT_PROBE", "").strip().lower() in ("1", "true", "yes", "on")
+_WMC_FACULTY_KEY = "wm-binding-recurrence-drive"    # AMENDMENT C: the counted key for measure_wmb_content's result
 _WMC_TURNS = {"A": ("wmc_intro", "wmc_drive", ("fox", "wolf")),
               "B": ("wmcx_intro", "wmcx_drive", ("cat", "dog"))}
 _WMC_BASE_ENV = {"BRAIN_MULTIREF_LESION_SCOPE": "recur"}   # on EVERY arm (a no-op without BRAIN_MULTIREF_LESION)
@@ -718,17 +730,28 @@ def _wmc_gate(arms):
 
 def measure_wmb_content(out_dir, seed=42, repeats=2):
     """LB_WMB_CONTENT_PROBE: build intact a/b + confined-lesion + lesion-rebuild arms for BOTH content sessions, then
-    `_wmc_gate`. Early-return path (never touches any other faculty's arms)."""
+    `_wmc_gate`. Early-return path (never touches any other faculty's arms).
+
+    AMENDMENT C: reports under `_WMC_FACULTY_KEY` ("wm-binding-recurrence-drive"), NOT "wm-binding-advanced" --
+    `spec` is still looked up under the "wm-binding-advanced" FACULTY_LESIONS entry (same lesion flag/value/kind,
+    so this still counts as a coverable neural-lesion result in the aggregate fraction), but the reported identity
+    is distinct so a GO/pass here never enters "wm-binding-advanced"'s own row in `load_bearing_faculties` /
+    `not_load_bearing_faculties` -- see the AMENDMENT C note above LB_WMB_CONTENT for why."""
     spec = FACULTY_LESIONS["wm-binding-advanced"]
     flag, val = spec["flag"], spec["value"]
     _sfx = _seed_suffix(seed)
-    res = {"faculty": "wm-binding-advanced", "turn": _WMC_TURNS["A"][1], "kind": spec["kind"], "flag": flag,
+    res = {"faculty": _WMC_FACULTY_KEY, "turn": _WMC_TURNS["A"][1], "kind": spec["kind"], "flag": flag,
            "load_bearing": None, "verdict": None, "change_kind": None, "diffs": [],
            "treatment_diffs": None, "control_diffs": None, "attributable_fraction": None,
            "null_control_clean": None, "lesion_reproduced": None, "flag_resolves": _flag_resolves(flag),
            "lesion_env": dict(_WMC_BASE_ENV, **{flag: val}), "wmb_probe_flags": _wmb_probe_flags(),
+           "counted_faculty_key": _WMC_FACULTY_KEY, "source_faculty_lesion_key": "wm-binding-advanced",
            "note": ("LB_WMB_CONTENT_PROBE: ordinary transitive after a 2-referent intro, fox/wolf (wmc) + content-"
-                    "swapped cat/dog (wmcx); EDGE-CONFINED lesion (BRAIN_MULTIREF_LESION_SCOPE=recur on every arm).")}
+                    "swapped cat/dog (wmcx); EDGE-CONFINED lesion (BRAIN_MULTIREF_LESION_SCOPE=recur on every arm). "
+                    "AMENDMENT C: counted as '%s', NOT 'wm-binding-advanced' -- a GO/regressed here shows the "
+                    "organ's own recurrence shapes comprehension's read of a host-reinjected drive into a "
+                    "positional focus pool, not that the organ's held referent CONTENT reaches an ordinary reply."
+                    % _WMC_FACULTY_KEY)}
     if not res["flag_resolves"]:
         res["verdict"] = "lesion-knob-missing"
         return res
@@ -764,6 +787,23 @@ def measure_wmb_content(out_dir, seed=42, repeats=2):
         res["change_kind"] = _classify_diffs(diffs) if diffs else "none"
     os.makedirs(out_dir, exist_ok=True)
     return res
+
+
+# ── DA TAG-AND-CAPTURE NEXT-DAY PROBE (opt-in, env-gated; default OFF -> byte-identical) ─────────────────────────────
+# WHY (finding 2026-09-23-da-encoding-natural-drive-v3-synaptic-capture-6seed-GO-runner-level): DA-gated encoding acts
+# on PERSISTENCE (Bethus, Tse & Morris 2010), so its default `well` probe (one fresh turn, field `da_encoding.on`, True
+# in both arms) can never show a lesion. The v3 synaptic tag-and-capture ledger is now wired into chat behind
+# BRAIN_DA_TAG_CAPTURE (webapp/da_tag_capture_chat.py). This flag remaps da-gated-encoding to the SALIENT next-day
+# group (onebrain_regression_battery 'datc': surprising news around one plain fact -> a night through the brain's own
+# idle/sleep tick -> 'what does the cat chase') and compares the recall turn's `recalled_svo` / `abstained`.
+# base_env arms the companion on BOTH arms (and the scripted 30 s/turn world clock), so the only inter-arm difference
+# is the existing BRAIN_DA_ENCODING_LESION. This row alone is the battery's intact-vs-lesion + null call; the salient
+# vs neutral, spare-immediate-recall and companion-off contrasts are the pre-registered gates of
+# research/runners/_da_tag_capture_chat_probe.py. OFF (default) -> da-gated-encoding is measured on `well` as before.
+LB_DA_TAG_CAPTURE = os.environ.get("LB_DA_TAG_CAPTURE_PROBE", "").strip().lower() in ("1", "true", "yes", "on")
+_DA_TAG_CAPTURE_TURN = "datc_recall"
+_DA_TAG_CAPTURE_FIELDS = ["recalled_svo", "abstained"]
+_DA_TAG_CAPTURE_ENV = {"BRAIN_DA_TAG_CAPTURE": "1", "BRAIN_DA_TAG_CAPTURE_CLOCK": "turn"}
 
 
 def _oed_build_shared_world(seed):
@@ -1369,6 +1409,15 @@ def measure_faculty(key, out_dir, repeats=1, intact_cache=None, seed=42):
         res["note"] = ("LB_SWAP_DRIVE_PROBE: sw_open('dog') -> sw_hold('dog', contrast) -> sw_switch('cat') on session "
                        "'sw2'; reply must change on the switch and NOT on the no-swap-due contrast turns. " + res["note"])
 
+    # DA TAG-AND-CAPTURE next-day remap (default-off; see LB_DA_TAG_CAPTURE).
+    if LB_DA_TAG_CAPTURE and key == "da-gated-encoding":
+        row = ("da-gated-encoding", _DA_TAG_CAPTURE_TURN, list(_DA_TAG_CAPTURE_FIELDS), False)
+        base_env = dict(_DA_TAG_CAPTURE_ENV)
+        res["turn"] = _DA_TAG_CAPTURE_TURN
+        res["note"] = ("LB_DA_TAG_CAPTURE_PROBE: salient news around one plain fact -> a night through the brain's own "
+                       "idle/sleep tick -> next-day recall on session 'datc'; BRAIN_DA_TAG_CAPTURE=1 on both arms. "
+                       + res["note"])
+
     grp = turn_group(row[1])
     # cache key includes base_env so a stored (BRAIN_EPISODIC_STORE) intact arm never aliases a plain-{} arm on a
     # shared turn-group (the driving group is unique anyway, but keep the key honest).
@@ -1805,6 +1854,14 @@ def selftest(out_path=None):
             "oe_t1", "oe_t2", "oe_t3", "oe_t4", "oe_t5", "oe_t6", "oe_t7", "oe_t8", "oe_t9", _OPEN_ENDED_DRIVE_TURN],
         "open-ended lesion knob resolves": _flag_resolves("BRAIN_SPIKING_DRAW_LESION"),
         "open-ended lesion bites production draw": _draw_from_weights_honors_ablate(),
+        # DA tag-and-capture next-day remap (LB_DA_TAG_CAPTURE_PROBE): the group is tell -> night -> recall, one
+        # session, the night is a world step (never a brain_chat turn), and the companion flag resolves in source.
+        "da-tag-capture group is tell->night->recall": (
+            turn_group(_DA_TAG_CAPTURE_TURN)[-2:] == ["datc_night", _DA_TAG_CAPTURE_TURN]
+            and len(turn_group(_DA_TAG_CAPTURE_TURN)) == 7),
+        "da-tag-capture night is a world step": "datc_night" in __import__(
+            "research.runners.onebrain_regression_battery", fromlist=["_WORLD_STEPS"])._WORLD_STEPS,
+        "da-tag-capture companion flag resolves": _flag_resolves("BRAIN_DA_TAG_CAPTURE"),
         # open-ended-generation DISTRIBUTIONAL ruler (LB_OPEN_ENDED_DISTRIB_PROBE): pure decision-logic checks (NO
         # brain build -- `_oed_score` takes already-measured numbers) + static wiring checks (source inspection /
         # import + signature only, no SimulationBridge construction), mirroring how _classify_diffs()/compare() are

@@ -1278,6 +1278,20 @@ def tick_idle_sessions(session_mood: dict, affect_organ_getter, now: float | Non
                     import logging as _lg
                     _lg.getLogger(__name__).warning(
                         "DA-encoding substrate homeostasis tick failed for %s", cache_key, exc_info=True)
+                # DA-GATED TAG-AND-CAPTURE (default-OFF `BRAIN_DA_TAG_CAPTURE`; webapp/da_tag_capture_chat.py): run the
+                # session's synaptic tag / PRP / late-phase ledger up to world-now on the idle (and so the sleep-depth)
+                # tick, AFTER the Turrigiano pass above (the ledger reads that rescale back off the store). Unset flag
+                # -> tick_chat returns None before touching anything -> byte-identical.
+                try:
+                    from webapp import da_tag_capture_chat as _DTC
+                    if _DTC.tag_capture_enabled():
+                        _chat_tc = chat_getter(cache_key)
+                        if _chat_tc is not None:
+                            _DTC.tick_chat(_chat_tc)
+                except Exception:
+                    import logging as _lg
+                    _lg.getLogger(__name__).warning(
+                        "DA tag-and-capture tick failed for %s", cache_key, exc_info=True)
                 # #91: extend the idle-tick "felt mood keeps evolving" relaxation to the flagship #84 affect->tone
                 # coupling's OWN persistent EMA (see _affect_relax_drive_enabled's header note). Self-gates on
                 # BRAIN_CONTINUOUS_AFFECT_RELAX (default-OFF pending GO) -> a no-op, byte-identical tick when unset.

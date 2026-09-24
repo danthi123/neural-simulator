@@ -260,3 +260,34 @@ same revision.
 
   No seed under `LB_WMB_CONTENT_PROBE` had been pulled from the pool or read by anyone in this round before this
   amendment was filed; this amendment governs how those results, once pulled, must be reported.
+
+- **2026-09-24, AMENDMENT C, filed before any of the 6 content-probe seeds staged on the pool at `c5c0f67ba`
+  were pulled or read, and before `research/findings/raw/_load_bearing/wmb_content/` exists anywhere (confirmed
+  absent from this branch, from `origin/main`, and from this worktree at filing time).** Adversarial re-review
+  (journal key `v2:7512414c9a65ead57a205e7a2e166bcf476472d9dfbc61180205447d18d460df`, label `rereview:wm-binding`)
+  found that AMENDMENT B rescoped the PROSE a `T=true`/`regressed` GO here must carry, but left the CODE's
+  counting unchanged: `measure_wmb_content` (`research/runners/load_bearing_fraction.py`) still reported
+  `res["faculty"] = "wm-binding-advanced"`, so a GO would still land in that faculty's own row of
+  `load_bearing_fraction`'s numerator and `load_bearing_faculties` list -- silently over-crediting, in the
+  MACHINE-READABLE artifact (not just unread prose), the held-content-binding claim AMENDMENT B's prose already
+  disclaims.
+
+  **This amendment pre-registers, BEFORE any seed is pulled, how the result must be counted:** the measurement
+  is reported under a DISTINCT faculty key, `wm-binding-recurrence-drive` (the module constant
+  `_WMC_FACULTY_KEY`), never `wm-binding-advanced`. The underlying lesion is unchanged -- it is still
+  `FACULTY_LESIONS["wm-binding-advanced"]`'s `BRAIN_MULTIREF_LESION` flag, `kind="neural-lesion"` -- so a GO/pass
+  here still enters `load_bearing_fraction`'s aggregate numerator/denominator exactly as AMENDMENT B allowed
+  (this is a reporting-LABEL fix, not a re-scoring of what counts as coverable). What changes is attribution: the
+  result can never appear under the name `wm-binding-advanced` in `load_bearing_faculties` /
+  `not_load_bearing_faculties`, so it cannot be read, by a human or a downstream doc-sync pass, as evidence for
+  that faculty's held-content-binding claim.
+
+  Implemented in `research/runners/load_bearing_fraction.py` (`_WMC_FACULTY_KEY = "wm-binding-recurrence-drive"`,
+  used as `res["faculty"]` in `measure_wmb_content`, plus report-only `counted_faculty_key` /
+  `source_faculty_lesion_key` fields on the record) and pinned by
+  `tests/test_wmb_content_probe_faculty_key_amendment_c.py` (a synthetic-arm GO at both the single-faculty and
+  the `run()`-integration level; mutation-checked by hand: reverting the key to `"wm-binding-advanced"` flips
+  both assertions from PASS to a real, non-null value that fails them).
+
+  No seed under `LB_WMB_CONTENT_PROBE` had been pulled from the pool or read by anyone before this amendment was
+  filed; this amendment governs how those results, once pulled, must be counted and reported.
