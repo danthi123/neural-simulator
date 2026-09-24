@@ -7,9 +7,15 @@ current on `ask`. Adversarial review (key `v2:fcc2f777`) correctly rejected this
 `sum(firing)/len(firing)` is host code standing between two neural populations, not a synapse, and CLAUDE.md
 lists neuromodulators among the things that must be neurons/synapses. **This v2 document REPLACES the mechanism
 under test** (§1 below), written and committed BEFORE any new run of the rebuilt mechanism — the v1 seed-42
-artifact (`_curiosity_metacog_neuromod_gain_smoke_s42.json`) is VOID under this rebuild and is being removed in
-the same commit as this document; a fresh seed-42 calibration run follows in a SEPARATE, later commit (this is
-the `gates/prereg_before_run` discipline: a prereg commit carries no `research/findings/raw/**` artifact).
+artifact (`_curiosity_metacog_neuromod_gain_smoke_s42.json`) is VOID under this rebuild; a fresh seed-42
+calibration run follows in a SEPARATE, later commit (this is the `gates/prereg_before_run` discipline: a
+prereg commit carries no `research/findings/raw/**` artifact). **CORRECTION (fix round 2, per adversarial
+re-review):** the v1 artifact was NOT removed in the same commit as this document. The repository log shows
+it was actually deleted in commit `57fad1d0c` (the fix round's merge-origin/main commit, whose message names
+only the FAILURE_LOG/matrix cleanup and does not mention this deletion), one commit BEFORE this v2 document's
+own commit `72b744c4c`. The artifact was void either way (it measured the superseded host-relay mechanism)
+and no run ever cited it as evidence for v2, but the prose above misstated which commit did the removal;
+this note corrects the record rather than rewriting already-published history.
 
 **The two pool lines staged from `f9dbafc9c`** (the v1 mechanism's isolated revision, referenced in that build
 round's `honest_residuals`) **are SUPERSEDED by this document** — they governed a mechanism (a host relay) that
@@ -37,8 +43,19 @@ and optimal performance."** The LC-NE system's tonic mode, driven by cortical ut
 ## 1. Claim under test (v2 — the STRUCTURAL claim is now primary; v1's §1 stated the operating-point claim as
 primary and left the S1 amendment (§6) contradicting it — this is the fix)
 
+**CORRECTED (fix round 2, per adversarial re-review):** the claim below originally read "driven through TWO
+co-existing, independently-lesionable, ALL-SPIKING pathways" and, in §4, "TWO co-existing, INDEPENDENTLY
+lesion-attributable, ALL-SPIKING pathways". Both overstate what the seed-42 data show. The `edge_lesion` arm
+(point-edge off, `lc_ne` pathway intact) is 0.0 Hz at every one of the 11 evidence levels, on every seed measured
+so far — i.e. `lc_ne` alone drives NOTHING; `attrib_edge` (§below data) reads 1.0. `lc_ne` is therefore NOT a
+second, independent driver of `ask`; it is a SUB-THRESHOLD MODULATOR of the edge-driven response — its own
+contribution only shows up as a change in the COMBINED arm's dynamic range on top of the edge's drive (G3), never
+as a response it can produce by itself. This is closer in kind to a gain than to a parallel pathway, and is said
+so explicitly here rather than left implicit in the data. The corrected claim:
+
 Curiosity's ASK pool firing is a monotone, class-symmetric, mechanism-specific function of metacognition's own
-spiking margin computation, driven through TWO co-existing, independently-lesionable, ALL-SPIKING pathways:
+spiking margin computation, driven through TWO co-existing, ALL-SPIKING pathways — ONE that drives `ask` on its
+own (the point-edge) and ONE that only MODULATES the first one's response and is silent alone (`lc_ne`):
 
 1. **The frozen point-to-point edge** (unchanged from the conflict_xedge rung): `x_metacog_meta_to_curiosity_ask`,
    `meta_schema -> ask`, fixed weight 4.0.
@@ -87,6 +104,17 @@ pre-registration already predicts failure" rule.
 - `LC_N`/`CMP_TO_LC_W`/`LC_TO_ASK_W` are fit ONLY on seed 42's response under the evidence grid — never on any
   held-out seed's ASK response, and never on whether a held-out seed passes a gate (that would be circular).
 
+**v3 amendment (fix round 2): the calibration criterion above is EXTENDED, not replaced, by G10 (§3).** `CMP_TO_
+LC_W`/`LC_TO_ASK_W` must now ALSO leave `lc_ne`'s own per-level firing evidence-graded (G10), not merely leave
+`ask`'s COMBINED response monotone (G1) — a constraint the original v2 calibration could not check because
+`lc_ne`'s own rate was not recorded. **Measured: `CMP_TO_LC_W=30.0` DOES saturate `lc_ne`** (rho(evidence, lc_ne
+Hz)=+0.93, 40-44 Hz at every one of the 11 levels — G10 FAILS). `CMP_TO_LC_W` is RECALIBRATED to **5.0** (seed 42
+ONLY; a coarse scan over {5, 5.5, 6, 8, 10} found the graded regime narrow — 5.0 gives rho_lc=-0.963, 5.5 gives
+-0.766, and >=8.0 already flips positive/saturated), re-checked against G1/G3/G7/G8/G10 TOGETHER at the new value
+(all pass: G1 rho=-0.991, G3 attrib_gain=0.246, G7 rho_swap=-0.991, G8 rho_relay=0.982, G10 rho_lc=-0.963 range=
+2.78 Hz), and disclosed here rather than silently overwritten. `LC_TO_ASK_W=1.0` is UNCHANGED (it governs `lc_ne`'s
+OUTPUT onto `ask`, not its own input drive) and was re-verified, not re-tuned, at the new operating point.
+
 ## 3. Gates (per seed; GO requires every REQUIRED gate on 6/6 seeds 42/43/44/100/101/102)
 
 **RECLASSIFICATION (v2, per review v2:fcc2f777): G4 and G5 are INTEGRITY checks, not required evidence.** The
@@ -109,13 +137,25 @@ question G3's floor already measures directly. Both are still SCORED and reporte
 | G5 (INTEGRITY, not gating) | no | metacog unchanged, EXACT, under every lesion arm | metacog balance, threshold, confident flags (==) and workspace/workspace_fs + comparator spike-raster sha256 identical to the combined-intact arm |
 | S1 (secondary, reported not gating) | no | reaches the PRODUCTION operating point | on each seed: `max(ask_hz at an uncertain/not-confident level) >= threshold_hz` (the seed's OWN `CuriosityProductionOrgan` calibration) AND `max(ask_hz at a confident level) < threshold_hz` |
 | G9 (secondary, reported not gating) | no | permutation null | Spearman rho over the 88 per-rep observations vs 10,000 permutations, one-sided p<=0.01 — same pseudo-replication caveat as the conflict_xedge review raised |
+| G10 (v3, REQUIRED) | yes | `lc_ne`'s own firing is evidence-GRADED, not a saturated tonic bias | on the COMBINED arm: Spearman rho(evidence, `lc_ne` level-mean Hz) <= `LC_GRADED_RHO_MAX` (-0.3) AND `lc_ne`'s own Hz range across the 11 levels >= `LC_GRADED_MIN_RANGE_HZ` (0.3 Hz); a None rho (zero-variance/saturated) or a sub-floor range both FAIL, never UNDEFINED-as-pass |
 
 **G8's None-never-passes handling** (the bug the review flagged on v1's PRIOR rung, the conflict_xedge one) is
 kept: a genuinely flat relay-lesion arm reports UNDEFINED and never silently passes. **v2 also moves BOTH G4's
 and G8's predicates into module-level functions (`gate_g4_joint_lesion`, `gate_g8_relay_lesion`) that `run_seed`
 and `--selftest` both call** — the review's other flagged gap (v1's selftest asserted its OWN local copies of the
 gate logic, with hard-coded thresholds, so a real regression in `run_seed`'s scoring would not have been caught
-by `--selftest` passing).
+by `--selftest` passing). **v3 (fix round 2) adds `gate_g10_lc_evidence_graded` to the same shared module-level
+set, tested by `--selftest` identically.**
+
+**WHY G10 EXISTS (fix round 2, per adversarial re-review).** `lc_ne`'s own firing was never recorded in v2 — the
+artifact only carried `ask`'s response, never `lc_ne`'s. `CMP_TO_LC_W=30` was chosen ~10x above `lc_ne`'s firing
+ONSET (measured 0 spikes at weight 3.0, ~940 at weight 30.0), but only at evidence=1.0, a single point. Without a
+per-level reading, a near-ceiling (saturated) `lc_ne` could look, from the ASK-side data alone, exactly like "the
+gain pathway carries the comparator's margin signal" (G3 passing) while actually delivering a roughly CONSTANT
+excitatory bias whose apparent evidence-dependence in the COMBINED arm comes entirely from `ask`'s own threshold
+nonlinearity interacting with the edge's graded drive — not from anything graded in `lc_ne` itself. G10 measures
+`lc_ne`'s own per-level Hz (now recorded by `RecorderWithLC`/`coupled_sweep_lc`, `research/runners/
+_curiosity_metacog_neuromod_gain_derisk.py`) directly, so this distinction is data, not inference from `ask` alone.
 
 Integrity smokes (reported, NOT counted as evidence — pass by construction if the code is right; v2 IMPLEMENTS
 the byte-off check v1 only promised):
@@ -135,10 +175,14 @@ the byte-off check v1 only promised):
 
 - **GO means:** on this 2-organ (+comparator, +`lc_ne`) merged pool, curiosity's ASK pool firing is a monotone,
   class-symmetric, mechanism-specific function of metacognition's own spiking margin computation, driven through
-  TWO co-existing, INDEPENDENTLY lesion-attributable, ALL-SPIKING pathways (the frozen point-to-point edge AND a
-  dedicated relay population diffusely projecting onto ASK), with metacog unperturbed. This is a STRUCTURAL claim
-  about the pathway, not a claim that the pathway is a multiplicative gain (see the honesty section below) or
-  that it reaches production's operating point (S1, secondary).
+  TWO co-existing, ALL-SPIKING pathways: the frozen point-to-point edge, which drives `ask` on its own, and a
+  dedicated relay population (`lc_ne`) diffusely projecting onto ASK, which does NOT (`edge_lesion` is 0.0 Hz at
+  every level — `lc_ne` alone drives nothing) and instead MODULATES the edge-driven response's dynamic range
+  (§3's G3 floor). **CORRECTED (fix round 2): this is NOT "two independently lesion-attributable pathways"** — that
+  phrase, present in an earlier version of this section, overstated what `edge_lesion`'s flatness shows; `lc_ne` is
+  a sub-threshold modulator of the edge's drive, not a second driver, with metacog unperturbed. This is a
+  STRUCTURAL claim about the pathway, not a claim that the pathway is a multiplicative gain (see the honesty
+  section below) or that it reaches production's operating point (S1, secondary).
 - **GO does NOT mean this is a multiplicative gain.** Aston-Jones & Cohen's LC-NE gain rescales a neuron's
   RESPONSIVENESS to its OTHER inputs; it is not simply "more current from one more source." This substrate's
   only mechanism for a population-to-population broadcast — plain excitatory synapses — delivers ADDITIVE
@@ -206,3 +250,36 @@ document governs (§2's constant-freezing criterion) is run and committed SEPARA
 `calibration_seed: true` in its own artifact, exactly as the conflict_xedge PREREG's precedent and v1's own
 convention already established — it is NOT reused from v1 (v1's `_curiosity_metacog_neuromod_gain_smoke_s42.json`
 is removed in this same commit as void, since it measured a mechanism that no longer exists in this file).
+
+**v3, 2026-09-23 (fix round 2), WRITTEN BEFORE any run of the constants this amendment changes.** Following
+adversarial re-review of the v2 build (commit `8427d74b0`) for `research/curiosity-lane-next-2`, this amendment:
+
+1. **§1/§4/the runner docstring/the `_decide` mechanism string are REWORDED**: the claim "TWO co-existing,
+   independently-lesionable/lesion-attributable, ALL-SPIKING pathways" overstated what the v2 seed-42 data showed.
+   `edge_lesion` (point-edge off, `lc_ne` intact) reads 0.0 Hz at every one of the 11 evidence levels — `lc_ne`
+   alone drives NOTHING (`attrib_edge`=1.0). `lc_ne` is now described as a SUB-THRESHOLD MODULATOR of the edge's
+   response, not a second independent driver. This is a WORDING correction; no gate, constant, or verdict changes.
+2. **G10 is ADDED** (§3): `lc_ne`'s own per-level firing rate is now recorded (`RecorderWithLC`/`coupled_sweep_lc`,
+   the runner) and REQUIRED to be evidence-graded, not a saturated tonic bias. Measured at the OLD `CMP_TO_LC_W=
+   30.0`: rho(evidence, lc_ne Hz)=+0.93 (40-44 Hz at every level) — **G10 FAILS**, confirming the review's concern
+   that `lc_ne` was near-ceiling and its apparent "carrying the comparator signal" (G3 passing) could have been
+   `ask`'s own threshold nonlinearity acting on a roughly-constant bias, not a graded LC signal.
+3. **`CMP_TO_LC_W` is RECALIBRATED to 5.0** (§2), per this amendment's own "recalibrate on seed 42 ONLY and
+   disclose" instruction. A coarse scan over {5.0, 5.5, 6.0, 8.0, 10.0} (seed 42, combined-intact arm only) found:
+   5.0 -> rho_lc=-0.963 (range 2.78 Hz, peak 7.41 Hz); 5.5 -> rho_lc=-0.766; 8.0 -> rho_lc=+0.255 (already
+   saturated/flipped); 10.0 -> rho_lc=+0.613. **5.0 is frozen** — not an exhaustive search for the exact largest
+   graded value, but the clearest margin found, verified against ALL required gates via a full `run_seed`: G1
+   rho=-0.991 (was -0.998 at w=30), G3 attrib_gain=0.246 (was 0.436; still clears the 0.2 floor), G7 rho_swap=
+   -0.991 (was -0.964), G8 rho_relay=0.982 (was 0.991), G10 rho_lc=-0.963 range=2.78 Hz (was rho_lc=+0.933,
+   FAIL). `LC_TO_ASK_W=1.0` is UNCHANGED (re-verified at the new `CMP_TO_LC_W`, not re-tuned).
+4. **The v1-artifact-deletion commit attribution is corrected** (see the AMENDMENT HISTORY block above the §0
+   header): it was `57fad1d0c`, not `72b744c4c` as v2 stated.
+5. **`--combine` now refuses inputs whose `mechanism`/`operating_point`/git SHA differ** (§5), closing the
+   combiner hazard the review flagged (a stale v1-mechanism artifact, or a future constant change between
+   pool-staged batches, could otherwise combine silently instead of crashing on a missing key).
+
+**Per `gates/prereg_before_run`, this v3 amendment is committed together with the code changes it governs (the
+runner's `CMP_TO_LC_W=5.0`, `RecorderWithLC`, `coupled_sweep_lc`, `gate_g10_lc_evidence_graded`, and the
+`--combine` hazard fix) in a commit that carries NO `research/findings/raw/**` artifact.** The fresh seed-42
+calibration run under the NEW constants is run and committed SEPARATELY, afterward, from that clean commit
+(`git_dirty: false`), exactly as v1 and v2's own convention established.

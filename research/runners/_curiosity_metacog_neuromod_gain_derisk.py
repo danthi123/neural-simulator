@@ -43,7 +43,19 @@ production does, and nothing else):
     (`bridge.set_transmission_gate`, `sim/bridge.py:5281` -- a runtime multiplicative scalar on this ONE
     pathway's current, 0.0=closed/1.0=open); it is never driven continuously from a host readout.
   - The FROZEN point-to-point edge from the conflict_xedge rung (`x_metacog_meta_to_curiosity_ask`, weight 4.0)
-    stays wired, unchanged, alongside the new `lc_ne` pathway -- both are independently lesionable.
+    stays wired, unchanged, alongside the new `lc_ne` pathway -- both are independently LESIONABLE (each can be
+    switched off on its own).
+
+HONESTY: lc_ne IS A SUB-THRESHOLD MODULATOR OF THE EDGE, NOT A SECOND INDEPENDENT DRIVER (fix round 2, per
+adversarial re-review). An earlier version of this docstring, and of the PREREG, described the edge and `lc_ne` as
+"two independently lesion-attributable pathways" -- language that implies each one drives `ask` on its own. The
+data do not support that: the `edge_lesion` arm (point-edge OFF, `lc_ne` pathway intact) reads 0.0 Hz at every one
+of the 11 evidence levels, on every seed measured so far (`attrib_edge`=1.0). `lc_ne` alone drives NOTHING; its
+only measured effect is on the COMBINED arm's dynamic range on top of the edge's own drive (G3's floor). Both are
+independently LESIONABLE (each switch can be thrown on its own, which is what G3/G4/G8 exploit), but only ONE of
+them (the edge) is independently a DRIVER. `lc_ne` is closer in kind to a gain on the edge's response than to a
+parallel excitatory pathway -- consistent with the ADDITIVE-vs-MULTIPLICATIVE honesty note below, and worth saying
+plainly rather than leaving it to be inferred from the edge_lesion numbers.
 
 HONESTY: ADDITIVE, NOT MULTIPLICATIVE (the residual this rung does NOT close). Aston-Jones & Cohen's LC-NE gain
 is MULTIPLICATIVE: it rescales a neuron's RESPONSIVENESS to its other inputs, not just its baseline current. This
@@ -90,6 +102,16 @@ Run:
       # SET is exactly {42,43,44,100,101,102} with no duplicate/missing seed), and re-applies the SAME
       # Verdict/require logic `main()` uses for a single-process 6-seed run, so a split run and a monolithic run
       # would decide identically on the same per-seed data. This is the ONLY authoritative combined verdict.
+      # Fix round 2: ALSO refuses if the input files disagree on `mechanism`/`operating_point`/git SHA (the
+      # combiner hazard the review flagged -- a stale artifact from a superseded mechanism, or a constant change
+      # between batches, could otherwise combine silently instead of crashing on a missing key).
+
+G10 (fix round 2): `lc_ne`'s own per-evidence-level firing rate is now recorded (`RecorderWithLC`,
+`coupled_sweep_lc`) and gated -- `CMP_TO_LC_W=30.0` (v2's original calibration, measured only at evidence=1.0)
+turned out to SATURATE `lc_ne` (measured: rho(evidence, lc_ne Hz)=+0.93, i.e. `lc_ne` slightly INCREASES with
+evidence and sits at 40-44 Hz at every level -- a near-ceiling response, not a graded one). `CMP_TO_LC_W` is
+RECALIBRATED in this fix round; see the constant's own comment and the PREREG's v3 amendment for the measured
+before/after.
 """
 from __future__ import annotations
 
@@ -124,28 +146,50 @@ from research.runners._curiosity_metacog_conflict_xedge_derisk import (  # noqa:
     build_pool as build_base_pool, Recorder, coupled_sweep, level_rho, perm_null, _range, _digest, _meta_exact,
     _curiosity_production_threshold, _metacog_het, METACOG_MARGIN, CMP_REGIONS, XEDGE, XEDGE_KEY,
     G1_RHO_MAX, G1_MIN_RANGE_HZ, G7_RHO_MAX, G8_RHO_MIN,
+    EVIDENCE_GRID, READ_REPS, STEPS_PER_REP, spearman, _swapped_idx,
 )
+from research.runners.metacog_production_organ import nmda_norm_margin  # noqa: E402
 
 # ── FROZEN operating point for THIS rung (seed-42-only calibration, 2026-09-23 v1; RE-CALIBRATED 2026-09-23 v2
 #    after the mechanism was rebuilt as spiking synapses -- the v1 constants (CMP_RATE_NORM, GAIN_EXCIT_
 #    SENSITIVITY) governed a host modulator ODE that no longer exists and do not transfer) ─────────────────────
 LC_N = 20                  # locus-coeruleus-analog population size (small nucleus, no internal recurrence)
-CMP_TO_LC_W = 30.0         # meta_schema -> lc_ne, uniform dense CrossEdge weight (seed-42 calibration; a plain
-                           # RS-cortical-pyramidal lc_ne has a HIGHER rheobase than the comparator's own FS-typed
-                           # relay, so this does not reuse the comparator's CMP_EXC=1.2-2.4 scale -- measured
-                           # directly: lc_ne fires 0 times at weight 3.0, ~940 times at weight 30.0 over the same
-                           # evidence=1.0 judge() window that drives meta_schema to ~1137 spikes)
-LC_TO_ASK_W = 1.0          # lc_ne -> ask, uniform dense DIFFUSE CrossEdge weight (seed-42 calibration; measured
-                           # 2026-09-23: LC_TO_ASK_W=20 SATURATES ask into a high-rate ceiling regime where the
-                           # response INCREASES with evidence (rho=+0.96, fails G1/G7 -- the same saturation
-                           # failure mode v1's GAIN_EXCIT_SENSITIVITY=500 hit); LC_TO_ASK_W>=2 already compresses
-                           # the combined dynamic range below the edge-alone range (frac_gain goes negative). 1.0
-                           # is the largest value that keeps G1 (rho=-0.998), G7 (rho_swap=-0.964) monotone AND
-                           # clears G3's floor (frac_gain=0.436) simultaneously.
+CMP_TO_LC_W = 5.0          # meta_schema -> lc_ne, uniform dense CrossEdge weight. RECALIBRATED (fix round 2,
+                           # G10): the ORIGINAL v2 value, 30.0, was chosen from a single evidence=1.0 probe (lc_ne
+                           # fires 0 times at weight 3.0, ~940 times at weight 30.0) and turned out to SATURATE
+                           # lc_ne across the full 11-level grid -- measured 40-44 Hz at EVERY level, rho(evidence,
+                           # lc_ne Hz)=+0.93 (slightly INCREASING with evidence, the wrong direction, not flat-by-
+                           # chance). A seed-42-only scan of CMP_TO_LC_W in {5,5.5,6,8,10} found the graded regime
+                           # is narrow: 5.0 gives rho_lc=-0.963 (peak 7.41 Hz, range 2.78 Hz), 5.5 gives -0.766,
+                           # and >=8.0 already flips positive (saturated). 5.0 is used because it clears G10 with
+                           # the largest margin found in that scan while also clearing G1/G3/G7/G8 (verified by a
+                           # full run_seed at this weight: rho=-0.991, attrib_gain=0.246, rho_swap=-0.991,
+                           # rho_relay=0.982, rho_lc=-0.963) -- not an exhaustive search for the supremum, in the
+                           # same spirit as v2's original coarse LC_TO_ASK_W search.
+LC_TO_ASK_W = 1.0          # lc_ne -> ask, uniform dense DIFFUSE CrossEdge weight. UNCHANGED by the fix-round-2
+                           # CMP_TO_LC_W recalibration (this weight governs lc_ne's OUTPUT onto ask, not its own
+                           # input drive). Original v2 calibration (at the OLD, since-superseded CMP_TO_LC_W=30.0):
+                           # LC_TO_ASK_W=20 SATURATES ask into a high-rate ceiling regime where the response
+                           # INCREASES with evidence (rho=+0.96, fails G1/G7 -- the same saturation failure mode
+                           # v1's GAIN_EXCIT_SENSITIVITY=500 hit); LC_TO_ASK_W>=2 already compresses the combined
+                           # dynamic range below the edge-alone range (frac_gain goes negative). 1.0 was the
+                           # largest value that kept G1/G7 monotone and cleared G3's floor at CMP_TO_LC_W=30.0
+                           # (frac_gain=0.436). Re-verified at the NEW CMP_TO_LC_W=5.0 (fix round 2): G1
+                           # (rho=-0.991), G7 (rho_swap=-0.991) still monotone, G3's floor still cleared
+                           # (frac_gain=0.246) -- not re-tuned, since it already worked at the new operating point.
 G3_GAIN_ATTRIB_MIN = 0.2   # the gain pathway must own >= this fraction of the combined ASK dynamic range (a floor)
 LC_GATE_KEY = "lc_ne_gain"          # transmission_gate name: the LESION switch for lc_ne -> ask (NOT a live drive)
 CMP_TO_LC_KEY = "x_metacog_meta_to_lc_ne"
 LC_TO_ASK_KEY = "x_lc_ne_to_curiosity_ask"
+
+# G10 (fix round 2, PREREG v3 amendment): lc_ne's OWN firing was never recorded in v2, so an evidence-graded LC
+# drive could not be distinguished from a saturated tonic bias (CMP_TO_LC_W=30 was chosen ~10x above lc_ne's
+# firing onset, measured only at evidence=1.0). Thresholds chosen BEFORE running the full 11-level grid on the
+# rebuilt instrument, by loosening G1's own precedent (rho<=-0.8, range>=1.0 Hz) proportionally to lc_ne's role
+# (a sub-threshold MODULATOR of the edge, not the primary driver -- see PREREG Sec 1's fix-round-2 correction) and
+# its much smaller population (20 vs 80 neurons, more sampling noise per rep):
+LC_GRADED_RHO_MAX = -0.3   # Spearman rho(evidence, lc_ne level-mean Hz) must be <= this (a loose bound)
+LC_GRADED_MIN_RANGE_HZ = 0.3   # ...and lc_ne's OWN dynamic range across the 11 levels must be >= this (else FLAT)
 
 
 def _lc_spec(seed):
@@ -181,6 +225,78 @@ def build_combined_pool(seed: int):
     return pool
 
 
+class RecorderWithLC(Recorder):
+    """Fix round 2 (G10): the base `Recorder` (conflict_xedge module) records `ask` and the metacog/comparator
+    rasters only -- `lc_ne`'s OWN firing was never recorded, so an evidence-graded LC drive could not be told apart
+    from a saturated tonic bias by looking at the artifact. This subclass ALSO tracks `lc_ne`'s per-step spike
+    count, identically to how `ask` is tracked, WITHOUT touching the shared base module (which the conflict_xedge
+    lane's own closed-out runner still imports `Recorder` from)."""
+
+    def __init__(self, pool):
+        super().__init__(pool)
+        rm = pool.bridge.region_manager
+        self.lc_idx = np.asarray(rm.indices("lc_ne"), np.int64)
+
+    def reset(self):
+        super().reset()
+        self.lc_counts = []
+
+    def _step(self):
+        self._orig()
+        if not self.on:
+            return
+        fs = np.asarray(to_host(self.b.cp_firing_states)).astype(bool)
+        self.ask_counts.append(int(fs[self.ask].sum()))
+        self.lc_counts.append(int(fs[self.lc_idx].sum()))
+        self.h_meta.update(np.packbits(fs[self.meta_idx]).tobytes())
+        if self.cmp_idx is not None:
+            self.h_cmp.update(np.packbits(fs[self.cmp_idx]).tobytes())
+
+
+def coupled_sweep_lc(pool, org, rec, swap=False) -> dict:
+    """Identical to the base module's `coupled_sweep`, EXCEPT it also reads `rec.lc_counts` (only present on a
+    `RecorderWithLC`) and adds `lc_ne_hz_per_rep`/`lc_ne_hz` to each level -- so `lc_ne`'s own per-evidence-level
+    firing rate lands in the artifact (fix round 2, G10). Kept as a separate function (not a base-module edit) so
+    the conflict_xedge lane's own runner, which has no `lc_ne` region, is untouched."""
+    org.ensure_built()
+    n_ask = rec.ask.size
+    n_lc = rec.lc_idx.size
+    levels = []
+    for ev in EVIDENCE_GRID:
+        rec.reset()
+        rec.on = True
+        if swap:
+            bal = float(nmda_norm_margin(org.bridge, org.xp, _swapped_idx(org.idx), org.snap, ev))
+            conf = bool(bal >= org.threshold)
+        else:
+            j = org.judge(ev)
+            bal, conf = float(j["balance"]), bool(j["confident"])
+        rec.on = False
+        c = np.asarray(rec.ask_counts, np.float64)
+        lc = np.asarray(rec.lc_counts, np.float64)
+        assert c.size == READ_REPS * STEPS_PER_REP, (c.size, READ_REPS, STEPS_PER_REP)
+        assert lc.size == c.size, (lc.size, c.size)
+        per_rep = c.reshape(READ_REPS, STEPS_PER_REP).sum(1) / n_ask / (STEPS_PER_REP * 1e-3)
+        per_rep_lc = lc.reshape(READ_REPS, STEPS_PER_REP).sum(1) / n_lc / (STEPS_PER_REP * 1e-3)
+        levels.append({"evidence": ev, "balance": bal, "confident": conf,
+                       "ask_hz_per_rep": [float(x) for x in per_rep], "ask_hz": float(per_rep.mean()),
+                       "lc_ne_hz_per_rep": [float(x) for x in per_rep_lc], "lc_ne_hz": float(per_rep_lc.mean()),
+                       "meta_raster_sha256": rec.h_meta.hexdigest(),
+                       "cmp_raster_sha256": (rec.h_cmp.hexdigest() if rec.cmp_idx is not None else None)})
+    return {"levels": levels, "threshold": float(org.threshold)}
+
+
+def lc_level_rho(sweep):
+    """Spearman rho(evidence, lc_ne level-mean Hz) -- the G10 statistic. `spearman` returns None (UNDEFINED, not a
+    score) when either side has zero variance, e.g. a genuinely flat/saturated lc_ne response."""
+    return spearman([l["evidence"] for l in sweep["levels"]], [l["lc_ne_hz"] for l in sweep["levels"]])
+
+
+def _lc_range(sweep):
+    v = [l["lc_ne_hz"] for l in sweep["levels"]]
+    return float(max(v) - min(v)), float(max(v))
+
+
 def _byte_off_check(seed: int) -> dict:
     """INTEGRITY (promised, PREREG Sec 3, NOT run in v1 -- fixed here): base connectivity of the combined pool,
     with the point-edge AND both LC CrossEdges (hence all of `lc_ne`'s synapses, since it has no internal
@@ -196,7 +312,8 @@ def run_seed(seed: int, determinism: bool = True, verbose: bool = True) -> dict:
     t0 = time.time()
     pool = build_combined_pool(seed)
     org = MetacogProductionOrgan(seed=seed, shared=pool)
-    rec = Recorder(pool)  # the PLAIN recorder -- no host relay of any kind; only the sim's own bridge runs
+    rec = RecorderWithLC(pool)  # ALSO tracks lc_ne's own per-step firing (G10, fix round 2) -- still no host
+                                # relay of any kind; only the sim's own bridge runs
 
     b, xp = pool.bridge, pool.xp
     masks = cross_edge_masks(b, ALL_CROSS_EDGES)
@@ -221,9 +338,9 @@ def run_seed(seed: int, determinism: bool = True, verbose: bool = True) -> dict:
         coupled_sweep(pool, org, rec)
 
     with pool.sequence_isolation():
-        combined_intact = coupled_sweep(pool, org, rec)
+        combined_intact = coupled_sweep_lc(pool, org, rec)   # records lc_ne_hz per level too (G10)
     with pool.sequence_isolation():
-        combined_swap = coupled_sweep(pool, org, rec, swap=True)
+        combined_swap = coupled_sweep_lc(pool, org, rec, swap=True)
 
     # G3: gain-only lesion (edge intact, lc_ne -> ask closed via its transmission_gate).
     b.set_transmission_gate(LC_GATE_KEY, 0.0)
@@ -279,6 +396,13 @@ def run_seed(seed: int, determinism: bool = True, verbose: bool = True) -> dict:
     rho_relay = level_rho(relay_lesion)
     rho_both = level_rho(both_lesion)
     g9 = perm_null(combined_intact, seed)
+
+    # G10 (fix round 2): lc_ne's OWN per-level firing rate, and whether it is evidence-graded or a saturated
+    # tonic bias. Measured on the combined-intact arm (the only one where the LC pathway is both driven AND
+    # allowed to reach ask; `coupled_sweep_lc` is what fills in `lc_ne_hz`/`lc_ne_hz_per_rep` per level).
+    rho_lc = lc_level_rho(combined_intact)
+    rng_lc, peak_lc = _lc_range(combined_intact)
+    g10 = gate_g10_lc_evidence_graded(rho_lc, rng_lc)
 
     from tools.lab import attributable_to
     attrib_gain = attributable_to(f"seed{seed} ASK range = the lc_ne gain pathway", rng_c, rng_g)
@@ -339,6 +463,7 @@ def run_seed(seed: int, determinism: bool = True, verbose: bool = True) -> dict:
         "G6_determinism_fresh_process_hash": bool(det.get("equal")) if determinism else None,
         "G7_class_swap_monotone": bool(rho_swap is not None and rho_swap <= G7_RHO_MAX),
         "G8_relay_lesion_abolishes_coupling": g8,
+        "G10_lc_ne_evidence_graded_not_saturated": g10,
     }
     checks_integrity = {
         "G4_joint_lesion_breaks_coupling": g4,
@@ -353,10 +478,14 @@ def run_seed(seed: int, determinism: bool = True, verbose: bool = True) -> dict:
         "seed": seed, "go": bool(go), "checks": checks_required, "checks_integrity": checks_integrity,
         "calibration_seed": seed == 42,
         "rho": rho, "rho_swap": rho_swap, "rho_relay_lesion": rho_relay, "rho_both_lesion": rho_both,
+        "rho_lc_ne": rho_lc,   # G10 (fix round 2): lc_ne's own evidence-graded-ness, combined-intact arm
         "s1_reaches_production_threshold": bool(s1_reaches_threshold), "s1_undefined": bool(s1_undefined),
         "s1_threshold_hz": thr, "g9_perm_null": g9,
         "ask_range_hz": {"combined": rng_c, "gain_lesion": rng_g, "edge_lesion": rng_e, "both_lesion": rng_b},
         "ask_peak_hz": {"combined": peak_c, "gain_lesion": peak_g, "edge_lesion": peak_e, "both_lesion": peak_b},
+        "lc_ne_range_hz": {"combined": rng_lc}, "lc_ne_peak_hz": {"combined": peak_lc},
+        "lc_ne_hz_per_level": [{"evidence": l["evidence"], "lc_ne_hz": l["lc_ne_hz"]}
+                                for l in combined_intact["levels"]],
         "attributable_frac": {"gain": attrib_gain, "edge": attrib_edge},
         "metacog_exact": {"vs_gain_lesion": m_gain, "vs_edge_lesion": m_edge, "vs_both_lesion": m_both},
         "comparator_raster_equal_across_arms": cmp_equal,
@@ -371,8 +500,9 @@ def run_seed(seed: int, determinism: bool = True, verbose: bool = True) -> dict:
         "elapsed_s": round(time.time() - t0, 1),
     }
     if verbose:
-        print(f"[seed {seed}] rho={rho} swap={rho_swap} relay={rho_relay} both={rho_both} "
+        print(f"[seed {seed}] rho={rho} swap={rho_swap} relay={rho_relay} both={rho_both} rho_lc={rho_lc} "
               f"ask combined={[round(l['ask_hz'], 2) for l in combined_intact['levels']]} "
+              f"lc_ne combined={[round(l['lc_ne_hz'], 2) for l in combined_intact['levels']]} "
               f"thr_hz={thr} attrib_gain={attrib_gain} attrib_edge={attrib_edge} "
               f"det={det.get('equal')} GO={go} ({res['elapsed_s']}s)", flush=True)
         print(f"[seed {seed}] checks={checks_required} integrity={checks_integrity}", flush=True)
@@ -392,11 +522,23 @@ def gate_g4_joint_lesion(rho_both):
     return bool((rho_both is None) or (rho_both > G1_RHO_MAX))
 
 
+def gate_g10_lc_evidence_graded(rho_lc, rng_lc):
+    """G10 (fix round 2): lc_ne's own firing must be evidence-GRADED, not a saturated/flat tonic bias -- the
+    instrument gap the review flagged (CMP_TO_LC_W was calibrated ~10x above lc_ne's firing onset, measured only
+    at evidence=1.0; a near-ceiling lc_ne could look like it "carries the comparator signal" while actually acting
+    as a roughly-constant excitatory bias whose apparent evidence-dependence comes entirely from ask's own
+    threshold nonlinearity). A None rho (zero-variance lc_ne response -- exactly the saturation failure mode this
+    gate exists to catch) or a sub-floor range NEVER passes; both are the SAME failure, not two UNDEFINED escapes."""
+    if rho_lc is None or rng_lc < LC_GRADED_MIN_RANGE_HZ:
+        return False
+    return bool(rho_lc <= LC_GRADED_RHO_MAX)
+
+
 def _selftest_gate_logic():
-    """Gate-logic selftest -- NO simulation. Calls the SAME `gate_g8_relay_lesion` / `gate_g4_joint_lesion`
-    functions `run_seed` scores with, using the SAME imported G1_RHO_MAX/G8_RHO_MIN constants -- so a regression
-    in either function's logic, or an accidental import of the wrong constant, fails THIS selftest, not just a
-    private copy of it (the review's flagged gap on the v1 file)."""
+    """Gate-logic selftest -- NO simulation. Calls the SAME `gate_g8_relay_lesion` / `gate_g4_joint_lesion` /
+    `gate_g10_lc_evidence_graded` functions `run_seed` scores with, using the SAME imported constants -- so a
+    regression in any function's logic, or an accidental import of the wrong constant, fails THIS selftest, not
+    just a private copy of it (the review's flagged gap on the v1 file)."""
     # G8: a None (uninformative) relay-lesion arm must NEVER pass.
     assert gate_g8_relay_lesion(None) is False, "G8 selftest FAILED: a None relay-lesion rho passed"
     assert gate_g8_relay_lesion(-0.9) is False, "G8 selftest FAILED: a strongly negative (still-coupled) rho passed"
@@ -411,6 +553,15 @@ def _selftest_gate_logic():
     bad_none_passes = _bad_g8(None)
     assert bad_none_passes is True and gate_g8_relay_lesion(None) is False, (
         "selftest cannot distinguish the fixed logic from the flagged bug -- selftest itself is broken")
+    # G10: a None rho (flat/saturated lc_ne) NEVER passes, regardless of range; a sub-floor range never passes
+    # either, even with a strongly negative rho; only a defined, sufficiently negative rho AND a real range pass.
+    assert gate_g10_lc_evidence_graded(None, 5.0) is False, "G10 selftest FAILED: a None rho (saturated) passed"
+    assert gate_g10_lc_evidence_graded(-0.9, LC_GRADED_MIN_RANGE_HZ / 2) is False, (
+        "G10 selftest FAILED: a sub-floor range passed despite a strong rho")
+    assert gate_g10_lc_evidence_graded(LC_GRADED_RHO_MAX + 0.1, 5.0) is False, (
+        "G10 selftest FAILED: an insufficiently-negative rho passed")
+    assert gate_g10_lc_evidence_graded(LC_GRADED_RHO_MAX - 0.1, LC_GRADED_MIN_RANGE_HZ + 0.1) is True, (
+        "G10 selftest FAILED: a genuinely evidence-graded lc_ne response failed")
     print("[selftest] gate-logic directions OK (module-level functions, shared with run_seed)")
     return 0
 
@@ -445,9 +596,11 @@ def _decide(rows) -> dict:
                "are fixed-weight by design")
     decided = v.decide(bool(n_go == len(rows)))
     return {
-        "mechanism": "metacog margin-comparator -> [frozen point-edge + a SPIKING lc_ne population diffusely "
-                     "projecting onto curiosity's ASK pool, both fixed-weight CrossEdges] (every step is neurons "
-                     "+ synapses; ADDITIVE current, not a multiplicative gain -- see the module honesty note)",
+        "mechanism": "metacog margin-comparator -> [frozen point-edge (drives ask alone) + a SPIKING lc_ne "
+                     "population diffusely projecting onto curiosity's ASK pool as a SUB-THRESHOLD MODULATOR of "
+                     "the edge's response, not a second independent driver -- edge_lesion reads 0 Hz at every "
+                     "level; both fixed-weight CrossEdges] (every step is neurons + synapses; ADDITIVE current, "
+                     "not a multiplicative gain -- see the module honesty note)",
         "prereg": "docs/plans/2026-09-23-curiosity-metacog-neuromod-gain-PREREG.md",
         "builds_on": "docs/plans/2026-09-23-curiosity-metacog-conflict-xedge-PREREG.md",
         "verdict": decided["status"], "preconditions": decided["preconditions"],
@@ -470,7 +623,10 @@ def main():
     ap.add_argument("--combine", nargs="+", default=None,
                     help="COMBINER (PREREG Sec 5): load per_seed rows from these JSON artifacts, union them, "
                          "and re-decide with the SAME logic as a monolithic run. Requires the union to cover "
-                         "exactly REQUIRED_SEED_SET with no duplicates.")
+                         "exactly REQUIRED_SEED_SET with no duplicates, AND (fix round 2) that every input file "
+                         "was produced by the SAME mechanism/operating_point/git_sha -- otherwise a future "
+                         "constant change (or a stale v1-mechanism artifact) could combine silently with fresh "
+                         "v2/v3 rows.")
     ap.add_argument("--out", default=str(_REPO / "research" / "findings" / "raw" /
                                          "_curiosity_metacog_neuromod_gain.json"))
     a = ap.parse_args()
@@ -489,8 +645,13 @@ def main():
     if a.combine:
         rows = []
         seen = {}
+        mechanisms, operating_points, git_shas = {}, {}, {}
         for fp in a.combine:
             data = json.loads(Path(fp).read_text())
+            mechanisms[fp] = data.get("mechanism")
+            operating_points[fp] = data.get("operating_point")
+            prov_path = Path(str(fp) + ".prov.json")
+            git_shas[fp] = json.loads(prov_path.read_text()).get("git_sha") if prov_path.exists() else None
             for r in data["per_seed"]:
                 seen.setdefault(r["seed"], []).append(fp)
                 rows.append(r)
@@ -499,6 +660,23 @@ def main():
         extra = set(seen.keys()) - REQUIRED_SEED_SET
         if dup or missing or extra:
             print(f"[combine] REFUSED: dup={dup} missing={missing} extra={extra}", flush=True)
+            return 2
+        # Fix round 2 (combiner hazard): every input must share ONE mechanism, ONE operating_point, and (when the
+        # provenance sidecar is present for every input) ONE git SHA -- otherwise a future constant change, or a
+        # stale artifact from a superseded mechanism (e.g. v1's host-relay rows), could combine silently with
+        # fresh rows instead of crashing on a missing key.
+        distinct_mech = {v for v in mechanisms.values() if v is not None}
+        distinct_op = {json.dumps(v, sort_keys=True) for v in operating_points.values() if v is not None}
+        known_shas = {v for v in git_shas.values() if v is not None}
+        if len(distinct_mech) > 1:
+            print(f"[combine] REFUSED: input files report DIFFERENT mechanisms: {mechanisms}", flush=True)
+            return 2
+        if len(distinct_op) > 1:
+            print(f"[combine] REFUSED: input files report DIFFERENT operating_point constants: "
+                  f"{operating_points}", flush=True)
+            return 2
+        if len(known_shas) > 1:
+            print(f"[combine] REFUSED: input files were produced from DIFFERENT git SHAs: {git_shas}", flush=True)
             return 2
         rows.sort(key=lambda r: r["seed"])
         summary = _decide(rows)
