@@ -41,6 +41,9 @@ wall-clock; catching these in round one is the cheapest parallelism there is.
 
 ## Compute and repo hygiene
 - **Each arm/variant gets its own `--out` directory** — the battery's intermediate files are named by probe group.
+- **Every LOCAL python you start — including throwaway exploration scripts — runs under `bash tools/memcap.sh <GB> --`**
+  after `tools/mem_ok.sh <GB>` passes. The box is shared with other lanes, the GPU queue and the owner's desktop
+  (2026-09-23: two uncapped 8.5 GB exploration scripts left 3 GB free next to a GPU-queue job; one was killed).
 - **Remote runs need the corpus** (`load_bearing_fraction` refuses without it; provisioners ship it).
 - **GPU-queue lines start with `export XDG_RUNTIME_DIR=/run/user/1000;`** when the runner self-checks memcap.
 - **Never commit live `research/queue/*` state** — merging it re-injects jobs.
