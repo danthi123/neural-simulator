@@ -70,7 +70,7 @@ progress report, and keeps working OTHER lanes meanwhile (never blocks the whole
 - **Any spend ABOVE the approved envelope.** Owner APPROVED 2026-09-23: AWS on-demand CPU instances for 6-seed batteries up
   to ~$50/day (owner, raised from $15), auto-stopped when idle, launched only after the remote non-degenerate-brain sanity check passes (cap
   enforced by tools/aws_budget.sh + idle-stop timer). Above the cap, GPU instances, commitments, or paid APIs → ask.
-- **Production default-flips that change the user-visible reply** (how the brain speaks) — propose, don't flip.
+- ~~Production default-flips that change the user-visible reply — propose, don't flip.~~ **REMOVED by the owner 2026-09-23** ("Assuming you've confirmed they're valid, I see no reason you should be waiting on me"): Claude flips a fix/faculty default-on itself once it has a 6-seed GO, an adversarial review marked safe_to_merge, no regression in a combined battery, and a validated production-default regression run; it is then reported, not proposed.
 - **The AGI-first fork / relaxing a non-negotiable constraint.**
 - **Anything honesty-boundary-adjacent** — never assert phenomenal experience; a self-report is always a functional
   read-out. If a claim would even approach "felt/conscious," STOP.
