@@ -19,7 +19,18 @@
 # excluded (merging three nodes' runs.jsonl would clobber); provenance sidecars (*.prov.json) ARE pulled.
 set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"; cd "$ROOT"
-NODES="${POOL_NODES:-pool40 pool41 pool42}"
+# AWS-AS-EXTRA-POOL-NODE (2026-09-23) -- same repo-local, gitignored ssh config as pool_autodispatch.sh /
+# pool_provision.sh / pool_queue.sh (see pool_autodispatch.sh's header comment for the full rationale). ABSENT
+# by default, so every rsync below is unchanged for anyone who hasn't run `aws_pool_node.sh up`. The default
+# node list also grows with .pool_extra_nodes, read fresh on every invocation (this script is not a daemon).
+POOL_SSH_CONFIG="${POOL_SSH_CONFIG:-$ROOT/research/queue/.pool_ssh_config}"
+RSYNC_SSH="ssh -o BatchMode=yes -o ConnectTimeout=6"
+[ -f "$POOL_SSH_CONFIG" ] && RSYNC_SSH="ssh -F $POOL_SSH_CONFIG -o BatchMode=yes -o ConnectTimeout=6"
+EXTRA_NODES_FILE="${POOL_EXTRA_NODES_FILE:-$ROOT/research/queue/.pool_extra_nodes}"
+_EXTRA=""
+[ -z "${POOL_NODES:-}" ] && [ -f "$EXTRA_NODES_FILE" ] && \
+  _EXTRA=$(grep -vE '^[[:space:]]*(#|$)' "$EXTRA_NODES_FILE" 2>/dev/null | tr -s '[:space:]' ' ')
+NODES="${POOL_NODES:-pool40 pool41 pool42} $_EXTRA"
 REMOTE_DIR="${POOL_REMOTE_DIR:-~/derisk-pool/sim/research/findings/raw/}"
 LOCAL_DIR="research/findings/raw/"
 DRY=""; [ "${1:-}" = "--dry-run" ] && DRY="--dry-run"
@@ -29,7 +40,7 @@ for N in $NODES; do
   # -u protects newer local files; itemize so we can count + show what moved.
   out=$(timeout 180 rsync -au $DRY --itemize-changes \
         --exclude='*.log' --exclude='_provenance/' \
-        -e "ssh -o BatchMode=yes -o ConnectTimeout=6" \
+        -e "$RSYNC_SSH" \
         "$N:$REMOTE_DIR" "$LOCAL_DIR" 2>/dev/null) || { echo "  $N: UNREACHABLE (skipped)"; continue; }
   n=$(printf '%s\n' "$out" | grep -cE '^>f' || true)
   echo "  $N: ${DRY:+would pull }$n file(s)"
@@ -45,11 +56,11 @@ for N in $NODES; do
   # branch verification would have stranded on the nodes. Pull each revision's raw/ into the same local tree
   # (same -u newer-wins + exclusions; paths under raw/ are already lane-namespaced by the runners).
   [ -n "${POOL_REMOTE_DIR:-}" ] && continue
-  revs=$(timeout 20 ssh -o BatchMode=yes -o ConnectTimeout=6 "$N" 'ls -d derisk-pool/revisions/*/research/findings/raw 2>/dev/null' || true)
+  revs=$(timeout 20 ssh $RSYNC_SSH "$N" 'ls -d derisk-pool/revisions/*/research/findings/raw 2>/dev/null' || true)
   for R in $revs; do
     rout=$(timeout 180 rsync -au $DRY --itemize-changes \
           --exclude='*.log' --exclude='_provenance/' \
-          -e "ssh -o BatchMode=yes -o ConnectTimeout=6" \
+          -e "$RSYNC_SSH" \
           "$N:$R/" "$LOCAL_DIR" 2>/dev/null) || continue
     rn=$(printf '%s\n' "$rout" | grep -cE '^>f' || true)
     [ "$rn" -gt 0 ] && echo "  $N:${R#derisk-pool/revisions/}: ${DRY:+would pull }$rn file(s)"

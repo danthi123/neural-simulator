@@ -1,0 +1,186 @@
+"""Subprocess-level tests for the repo-local pool ssh-config plumbing (tools/aws_pool_node.sh's
+"AWS-AS-EXTRA-POOL-NODE" feature, 2026-09-23): every pool script that sshes/rsyncs to a node must build its
+command with `-F <config>` when POOL_SSH_CONFIG names an existing file, and WITHOUT it (byte-identical to
+before this feature) when the file is absent -- so pool40/41/42's existing behaviour never changes for anyone
+who has not run `aws_pool_node.sh up`.
+
+Uses a stubbed `ssh`/`rsync` on PATH (no real network calls), mirroring tests/test_aws_budget_guard_workflow.py's
+stub-binary approach. Also covers the dispatcher's dynamic extra-node-list re-read (tools/pool_autodispatch.sh
+re-reads .pool_extra_nodes every cycle, not once at startup).
+"""
+from __future__ import annotations
+
+import os
+import stat
+import subprocess
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+AUTODISPATCH = ROOT / "tools" / "pool_autodispatch.sh"
+POOL_QUEUE = ROOT / "tools" / "pool_queue.sh"
+POOL_SYNC = ROOT / "tools" / "pool_sync.sh"
+
+
+def _make_ssh_stub(tmp_path: Path) -> tuple[Path, Path]:
+    """A stub `ssh` that logs its argv and answers just enough to satisfy callers: the node_is_idle probe
+    (nproc/load/proc-count/MemAvailable/max-job-gb, five numbers) and a bare reachability/`--help` check
+    (exit 0)."""
+    bin_dir = tmp_path / "bin"
+    bin_dir.mkdir()
+    log = tmp_path / "ssh.log"
+    log.write_text("")
+    stub = bin_dir / "ssh"
+    stub.write_text(f"""#!/usr/bin/env bash
+echo "$*" >> "{log}"
+echo "8 0.10 0 20 0"
+exit 0
+""")
+    stub.chmod(stub.stat().st_mode | stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH)
+    return bin_dir, log
+
+
+def _make_rsync_stub(bin_dir: Path, tmp_path: Path) -> Path:
+    log = tmp_path / "rsync.log"
+    log.write_text("")
+    stub = bin_dir / "rsync"
+    stub.write_text(f"""#!/usr/bin/env bash
+echo "$*" >> "{log}"
+exit 0
+""")
+    stub.chmod(stub.stat().st_mode | stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH)
+    return log
+
+
+def _run(script: Path, args: list[str], bin_dir: Path, env: dict[str, str] | None = None) -> subprocess.CompletedProcess:
+    full_env = dict(os.environ)
+    full_env["PATH"] = f"{bin_dir}:{full_env.get('PATH', '')}"
+    if env:
+        full_env.update(env)
+    return subprocess.run(["bash", str(script), *args], cwd=ROOT, env=full_env,
+                           capture_output=True, text=True, timeout=30)
+
+
+# --------------------------------------------------------------------------------- pool_autodispatch.sh
+
+def test_node_idle_ssh_call_omits_dash_F_when_no_pool_ssh_config(tmp_path):
+    bin_dir, ssh_log = _make_ssh_stub(tmp_path)
+    missing_config = tmp_path / "does-not-exist"
+    res = _run(AUTODISPATCH, ["--node-idle", "pool40"], bin_dir,
+               {"POOL_QUEUE_PATH": str(tmp_path / "pool.queue"), "POOL_SSH_CONFIG": str(missing_config)})
+    assert res.returncode in (0, 1), res.stderr   # idle/busy verdict, not a crash
+    logged = ssh_log.read_text()
+    assert "pool40" in logged
+    assert " -F " not in f" {logged}"
+
+
+def test_node_idle_ssh_call_includes_dash_F_when_pool_ssh_config_exists(tmp_path):
+    bin_dir, ssh_log = _make_ssh_stub(tmp_path)
+    config = tmp_path / "ssh_config"
+    config.write_text("Include ~/.ssh/config\nHost pool1\n  HostName 10.0.0.5\n")
+    res = _run(AUTODISPATCH, ["--node-idle", "pool1"], bin_dir,
+               {"POOL_QUEUE_PATH": str(tmp_path / "pool.queue"), "POOL_SSH_CONFIG": str(config)})
+    assert res.returncode in (0, 1), res.stderr
+    logged = ssh_log.read_text()
+    assert f"-F {config}" in logged
+    assert "pool1" in logged
+
+
+def test_extra_nodes_file_is_reread_fresh_each_call_not_cached_at_startup(tmp_path):
+    # THE POINT (2026-09-23 build): aws_pool_node.sh up/down can add/remove a node with NO dispatcher restart
+    # -- so the node list a running dispatch cycle uses must reflect the file's CURRENT contents, not whatever
+    # it held when the (long-lived, systemd-managed) process started.
+    extra = tmp_path / "extra_nodes"
+    res_before = subprocess.run(
+        ["bash", str(AUTODISPATCH), "--nodes-this-cycle"], cwd=ROOT,
+        env={**os.environ, "POOL_QUEUE_PATH": str(tmp_path / "pool.queue"),
+             "POOL_EXTRA_NODES_FILE": str(extra)},
+        capture_output=True, text=True, timeout=30,
+    )
+    assert res_before.stdout.strip() == "pool40 pool41 pool42"
+
+    extra.write_text("# a comment, ignored\npool1\n\npool2\n")
+    res_after = subprocess.run(
+        ["bash", str(AUTODISPATCH), "--nodes-this-cycle"], cwd=ROOT,
+        env={**os.environ, "POOL_QUEUE_PATH": str(tmp_path / "pool.queue"),
+             "POOL_EXTRA_NODES_FILE": str(extra)},
+        capture_output=True, text=True, timeout=30,
+    )
+    assert res_after.stdout.strip() == "pool40 pool41 pool42 pool1 pool2"
+
+
+def test_pool_nodes_env_default_unaffected_by_extra_nodes_when_not_present(tmp_path):
+    # No .pool_extra_nodes at all -> the node list is EXACTLY what it was before this feature existed.
+    res = subprocess.run(
+        ["bash", str(AUTODISPATCH), "--nodes-this-cycle"], cwd=ROOT,
+        env={**os.environ, "POOL_QUEUE_PATH": str(tmp_path / "pool.queue"),
+             "POOL_EXTRA_NODES_FILE": str(tmp_path / "does-not-exist")},
+        capture_output=True, text=True, timeout=30,
+    )
+    assert res.stdout.strip() == "pool40 pool41 pool42"
+
+
+# ------------------------------------------------------------------------------------------ pool_queue.sh
+
+def test_probe_node_ssh_calls_omit_dash_F_when_no_pool_ssh_config(tmp_path):
+    bin_dir, ssh_log = _make_ssh_stub(tmp_path)
+    res = _run(POOL_QUEUE, ["--probe-node", "pool40", "research.runners.fake_mod"], bin_dir,
+               {"POOL_QUEUE_PATH": str(tmp_path / "pool.queue"),
+                "POOL_SSH_CONFIG": str(tmp_path / "does-not-exist")})
+    logged = ssh_log.read_text()
+    assert "pool40" in logged
+    assert " -F " not in f" {logged}"
+    assert res.returncode in (0, 1)
+
+
+def test_probe_node_ssh_calls_include_dash_F_when_pool_ssh_config_exists(tmp_path):
+    bin_dir, ssh_log = _make_ssh_stub(tmp_path)
+    config = tmp_path / "ssh_config"
+    config.write_text("Include ~/.ssh/config\n")
+    res = _run(POOL_QUEUE, ["--probe-node", "pool1", "research.runners.fake_mod"], bin_dir,
+               {"POOL_QUEUE_PATH": str(tmp_path / "pool.queue"), "POOL_SSH_CONFIG": str(config)})
+    logged = ssh_log.read_text()
+    assert f"-F {config}" in logged
+    assert "pool1" in logged
+    assert res.returncode in (0, 1)
+
+
+# ------------------------------------------------------------------------------------------- pool_sync.sh
+
+def test_pool_sync_rsync_dash_e_omits_dash_F_when_no_pool_ssh_config(tmp_path):
+    bin_dir, ssh_log = _make_ssh_stub(tmp_path)
+    rsync_log = _make_rsync_stub(bin_dir, tmp_path)
+    res = _run(POOL_SYNC, [], bin_dir,
+               {"POOL_NODES": "pool40", "POOL_SSH_CONFIG": str(tmp_path / "does-not-exist")})
+    assert res.returncode == 0, res.stderr
+    logged = rsync_log.read_text()
+    assert "-e ssh -o BatchMode" in logged
+    assert "-F" not in logged
+
+
+def test_pool_sync_rsync_dash_e_includes_dash_F_when_pool_ssh_config_exists(tmp_path):
+    bin_dir, ssh_log = _make_ssh_stub(tmp_path)
+    rsync_log = _make_rsync_stub(bin_dir, tmp_path)
+    config = tmp_path / "ssh_config"
+    config.write_text("Include ~/.ssh/config\n")
+    res = _run(POOL_SYNC, [], bin_dir,
+               {"POOL_NODES": "pool1", "POOL_SSH_CONFIG": str(config)})
+    assert res.returncode == 0, res.stderr
+    logged = rsync_log.read_text()
+    assert f"-e ssh -F {config} -o BatchMode" in logged
+
+
+def test_pool_sync_default_node_list_grows_with_extra_nodes_file(tmp_path):
+    bin_dir, ssh_log = _make_ssh_stub(tmp_path)
+    rsync_log = _make_rsync_stub(bin_dir, tmp_path)
+    extra = tmp_path / "extra_nodes"
+    extra.write_text("pool1\n")
+    res = _run(POOL_SYNC, [], bin_dir,
+               {"POOL_SSH_CONFIG": str(tmp_path / "does-not-exist"), "POOL_EXTRA_NODES_FILE": str(extra)})
+    assert res.returncode == 0, res.stderr
+    assert "pool1" in res.stdout
+    # An explicit POOL_NODES scopes the run and must NOT be widened by the extra-nodes file.
+    res_scoped = _run(POOL_SYNC, [], bin_dir,
+                       {"POOL_NODES": "pool40", "POOL_SSH_CONFIG": str(tmp_path / "does-not-exist"),
+                        "POOL_EXTRA_NODES_FILE": str(extra)})
+    assert res_scoped.returncode == 0, res_scoped.stderr
+    assert "pool1" not in res_scoped.stdout

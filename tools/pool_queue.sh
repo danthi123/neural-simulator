@@ -10,6 +10,33 @@ set -uo pipefail
 ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 Q="${POOL_QUEUE_PATH:-/home/dant123/Projects/sim/research/queue/pool.queue}"
 mkdir -p "$(dirname "$Q")"; touch "$Q"
+# AWS-AS-EXTRA-POOL-NODE (2026-09-23) -- same repo-local, gitignored ssh config as pool_autodispatch.sh /
+# pool_provision.sh / pool_sync.sh (see pool_autodispatch.sh's header comment for the full rationale). ABSENT
+# by default, so the reachability/argparse probe below is unchanged for anyone who hasn't run
+# `aws_pool_node.sh up`. The probe's own node list also grows with .pool_extra_nodes, read fresh each call.
+POOL_SSH_CONFIG="${POOL_SSH_CONFIG:-$ROOT/research/queue/.pool_ssh_config}"
+SSH_F=(); [ -f "$POOL_SSH_CONFIG" ] && SSH_F=(-F "$POOL_SSH_CONFIG")
+EXTRA_NODES_FILE="${POOL_EXTRA_NODES_FILE:-$ROOT/research/queue/.pool_extra_nodes}"
+probe_nodes() {
+  local extra=""
+  [ -f "$EXTRA_NODES_FILE" ] && extra=$(grep -vE '^[[:space:]]*(#|$)' "$EXTRA_NODES_FILE" 2>/dev/null | tr -s '[:space:]' ' ')
+  printf '%s %s' "${POOL_NODES:-pool40 pool41 pool42}" "$extra"
+}
+
+if [ "${1:-}" = "--probe-node" ]; then
+  # TEST SEAM (2026-09-23): exercises the EXACT reachability + --help ssh calls `add`'s remote-validity gate
+  # makes (same flags, same use of SSH_F), against one node/module pair, without staging a real queue entry --
+  # so a stubbed `ssh` on PATH can assert -F is/isn't present without a real pool node or a real runner module.
+  [ "$#" -eq 3 ] || { echo "usage: $0 --probe-node <node> <module>" >&2; exit 2; }
+  n="$2"; MOD="$3"
+  if ! timeout 10 ssh "${SSH_F[@]}" -o BatchMode=yes -o ConnectTimeout=6 "$n" true >/dev/null 2>&1; then
+    echo "UNREACHABLE"; exit 1
+  fi
+  if timeout 25 ssh "${SSH_F[@]}" -o BatchMode=yes -o ConnectTimeout=8 "$n" \
+       "cd ~/derisk-pool/sim && SIM_NO_PROVENANCE=1 SIM_BACKEND=numpy .venv/bin/python -m $MOD --help" \
+       >/dev/null 2>&1; then echo OK; else echo BAD; fi
+  exit 0
+fi
 
 valid_depth() {
   awk -F'\t' '$1 ~ /^[0-9]+$/ && NF > 1 {n++} END {print n+0}' "$Q"
@@ -98,11 +125,11 @@ case "${1:-list}" in
            # directory the job will actually run in.
            REMOTE_DIR=$(printf '%s' "$2" | grep -oE 'derisk-pool/revisions/[0-9a-f]{7,40}' | head -1)
            REMOTE_DIR="${REMOTE_DIR:-derisk-pool/sim}"
-           for n in pool40 pool41 pool42; do
-             if ! timeout 10 ssh -o BatchMode=yes -o ConnectTimeout=6 "$n" true >/dev/null 2>&1; then
+           for n in $(probe_nodes); do
+             if ! timeout 10 ssh "${SSH_F[@]}" -o BatchMode=yes -o ConnectTimeout=6 "$n" true >/dev/null 2>&1; then
                NODE_UNREACH="$NODE_UNREACH $n"; continue
              fi
-             if timeout 25 ssh -o BatchMode=yes -o ConnectTimeout=8 "$n" \
+             if timeout 25 ssh "${SSH_F[@]}" -o BatchMode=yes -o ConnectTimeout=8 "$n" \
                   "cd ~/$REMOTE_DIR && SIM_NO_PROVENANCE=1 SIM_BACKEND=numpy .venv/bin/python -m $MOD --help" \
                   >/dev/null 2>&1; then NODE_OK="$NODE_OK $n"; else NODE_BAD="$NODE_BAD $n"; fi
            done

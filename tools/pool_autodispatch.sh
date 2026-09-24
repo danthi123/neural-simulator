@@ -30,6 +30,23 @@ POLL="${POOL_DISPATCH_POLL:-60}"
 # OOM costs every job on the node plus a silent rc=0 from runners that swallow worker deaths.
 RESV="${POOL_RESERVATIONS_PATH:-$ROOT/research/queue/.pool_reservations}"
 GROWTH_WINDOW_S="${POOL_GROWTH_WINDOW_S:-600}"   # D6/LB workers reach full RSS in ~4 min (measured 2026-09-23)
+# AWS-AS-EXTRA-POOL-NODE (2026-09-23, tools/aws_pool_node.sh). Two gitignored, machine-local files, never
+# ~/.ssh/config (which this tooling must never edit):
+#   .pool_ssh_config  -- `Include`s the user's own ~/.ssh/config, then adds Host entries for AWS pool nodes
+#                         (HostName/User ubuntu/IdentityFile/StrictHostKeyChecking accept-new). ABSENT by
+#                         default, so every ssh/rsync call below is BYTE-IDENTICAL to before this feature for
+#                         anyone who has not run `aws_pool_node.sh up` -- existing pool40/41/42 behaviour is
+#                         unchanged (`ssh -F <this file> poolNN` still resolves poolNN via the Included config).
+#   .pool_extra_nodes -- one AWS node name per line (e.g. "pool1"), re-read EACH CYCLE below (not once at
+#                         startup) so `aws_pool_node.sh up`/`down` can add/remove a node with no dispatcher
+#                         restart -- the whole point of a systemd-managed singleton dispatcher.
+POOL_SSH_CONFIG="${POOL_SSH_CONFIG:-$ROOT/research/queue/.pool_ssh_config}"
+SSH_F=(); [ -f "$POOL_SSH_CONFIG" ] && SSH_F=(-F "$POOL_SSH_CONFIG")
+EXTRA_NODES_FILE="${POOL_EXTRA_NODES_FILE:-$ROOT/research/queue/.pool_extra_nodes}"
+
+extra_nodes() {
+  [ -f "$EXTRA_NODES_FILE" ] && grep -vE '^[[:space:]]*(#|$)' "$EXTRA_NODES_FILE" 2>/dev/null | tr -s '[:space:]' ' '
+}
 
 job_est_gb() {
   local h
@@ -69,7 +86,7 @@ node_is_idle() {
   # pool). Cap is overridable via POOL_JOBS_PER_NODE. Bracket the pgrep pattern: an un-bracketed one matches the
   # ssh command carrying it, the self-match that made an earlier check unable to ever fire.
   local out node="$1"   # `set -- $out` below overwrites $1 -- the first reservation check read the core count as the node
-  out=$(timeout 12 ssh -o BatchMode=yes -o ConnectTimeout=6 "$node" \
+  out=$(timeout 12 ssh "${SSH_F[@]}" -o BatchMode=yes -o ConnectTimeout=6 "$node" \
         "echo \$(nproc) \$(cut -d' ' -f1 /proc/loadavg) \$(pgrep -c -f '^[^ ]*/?python[0-9.]* .*-m [r]esearch\.runners' 2>/dev/null | head -1) \$(awk '/MemAvailable/{print int(\$2/1048576)}' /proc/meminfo) \$(ps -eo rss,args | awk '\$2 ~ /python/ && /-m [r]esearch\\.runners/ {if (\$1>m) m=\$1} END{print int((m+1048575)/1048576)}')" 2>/dev/null) || return 1
   set -- $out
   local cores="${1:-0}" load="${2:-99}" procs="${3:-99}" avail_gb="${4:-0}" max_job_gb="${5:-0}"
@@ -196,6 +213,18 @@ if [ "${1:-}" = "--render-remote-command" ]; then
   remote_launch_command "$2"
   exit $?
 fi
+if [ "${1:-}" = "--node-idle" ]; then
+  # TEST SEAM (2026-09-23): exercises the REAL node_is_idle ssh call (same argv construction, including
+  # SSH_F) without running the dispatch loop, so a stubbed `ssh` on PATH can assert -F is/isn't present.
+  [ "$#" -eq 2 ] || { echo "usage: $0 --node-idle <node>" >&2; exit 2; }
+  node_is_idle "$2"; exit $?
+fi
+if [ "${1:-}" = "--nodes-this-cycle" ]; then
+  # TEST SEAM: prints the node list ONE dispatch cycle would use -- POOL_NODES plus whatever
+  # .pool_extra_nodes (or $POOL_EXTRA_NODES_FILE) currently names, re-read fresh on every call.
+  printf '%s %s\n' "$NODES" "$(extra_nodes)" | tr -s ' ' | sed 's/^ *//; s/ *$//'
+  exit 0
+fi
 
 # SINGLETON GUARD (2026-07-31): repeated restarts during testing left THREE dispatchers polling at once. flock
 # in pop_job stops two of them claiming the same job, so correctness was safe -- but three pollers triple the ssh
@@ -218,9 +247,10 @@ if systemctl --user is-active --quiet pool-dispatch.service 2>/dev/null && [ "${
   exit 0
 fi
 
-echo "[pool-dispatch] started $(date '+%H:%M:%S') | queue=$QUEUE | poll=${POLL}s | nodes=$NODES"
+echo "[pool-dispatch] started $(date '+%H:%M:%S') | queue=$QUEUE | poll=${POLL}s | nodes=$NODES (+ any in $EXTRA_NODES_FILE, re-read each cycle)"
 while true; do
-  for NODE in $NODES; do
+  CYCLE_NODES="$NODES $(extra_nodes)"
+  for NODE in $CYCLE_NODES; do
     # FILL the node to capacity within this cycle (while, not if) — with the per-node cap raised for
     # single-threaded numpy jobs (owner 2026-09-02), a single if-per-cycle would need ~cap cycles to fill.
     while node_is_idle "$NODE"; do
@@ -237,7 +267,7 @@ while true; do
         echo "[pool-dispatch] failed to encode job for $NODE" >&2
         break
       }
-      ssh -f -n -o BatchMode=yes "$NODE" "$REMOTE_COMMAND" 2>/dev/null
+      ssh -f -n "${SSH_F[@]}" -o BatchMode=yes "$NODE" "$REMOTE_COMMAND" 2>/dev/null
       printf '%s %s %s\n' "$(date +%s)" "$NODE" "$(job_est_gb "$JOB")" >> "$RESV"
       sleep 5     # let the launch register before this node's next capacity check
     done

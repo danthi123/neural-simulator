@@ -38,6 +38,14 @@ while (( $# )); do
   esac
 done
 NODES=("${@:-pool40 pool41 pool42}"); NODES=(${NODES[@]})
+# AWS-AS-EXTRA-POOL-NODE (2026-09-23) -- same repo-local, gitignored ssh config as pool_autodispatch.sh /
+# pool_sync.sh / pool_queue.sh (see pool_autodispatch.sh's header comment for the full rationale). ABSENT by
+# default, so every ssh/rsync call below is unchanged for anyone who hasn't run `aws_pool_node.sh up` (a bare
+# `ssh poolNN` / `rsync -e ssh` still resolves poolNN exactly as before). A caller targeting an AWS node passes
+# its ssh-config alias (e.g. `pool_provision.sh pool1`) -- resolution of that alias comes from the Host entry
+# `aws_pool_node.sh up` wrote into this same file.
+POOL_SSH_CONFIG="${POOL_SSH_CONFIG:-$ROOT/research/queue/.pool_ssh_config}"
+SSH_CMD="ssh"; [ -f "$POOL_SSH_CONFIG" ] && SSH_CMD="ssh -F $POOL_SSH_CONFIG"
 SOURCE_SHA=$(git rev-parse --verify "${REVISION_REF}^{commit}" 2>/dev/null) || {
   echo "invalid source revision: $REVISION_REF" >&2
   exit 2
@@ -112,7 +120,7 @@ fi
 
 for h in "${NODES[@]}"; do
   echo "=== provisioning $h:$REMOTE_ROOT ==="
-  ssh -o ConnectTimeout=10 "$h" "mkdir -p \
+  $SSH_CMD -o ConnectTimeout=10 "$h" "mkdir -p \
     ~/$REMOTE_ROOT/sim \
     ~/$REMOTE_ROOT/webapp \
     ~/$REMOTE_ROOT/research/runners \
@@ -128,7 +136,7 @@ for h in "${NODES[@]}"; do
     continue
   }
   # 1. code (exclude heavy/irrelevant: git, caches, checkpoints, recordings, raw data, venvs, node_modules)
-  rsync -az --delete \
+  rsync -az -e "$SSH_CMD" --delete \
     --exclude='.git' --exclude='__pycache__' --exclude='*.pyc' --exclude='.venv*' \
     --exclude='bridges/' --exclude='simulation_recordings_h5/' --exclude='simulation_checkpoints_h5/' \
     --exclude='research/findings/raw/' --exclude='node_modules/' --exclude='.venv-rag/' \
@@ -139,18 +147,18 @@ for h in "${NODES[@]}"; do
   # locally, competing with GPU work for RAM. webapp/ is small (~1.7MB incl. static/) so this does not meaningfully
   # widen the payload; static/ must ship too because `app.mount(..., StaticFiles(directory=STATIC_DIR))` at
   # webapp/server.py module-import time raises RuntimeError if that directory does not exist on disk.
-  rsync -az --delete --exclude='__pycache__' --exclude='*.pyc' \
+  rsync -az -e "$SSH_CMD" --delete --exclude='__pycache__' --exclude='*.pyc' \
     "$STAGE/webapp/" "$h:~/$REMOTE_ROOT/webapp/"
-  rsync -az --delete --exclude='__pycache__' --exclude='*.pyc' --exclude='findings/raw/' \
+  rsync -az -e "$SSH_CMD" --delete --exclude='__pycache__' --exclude='*.pyc' --exclude='findings/raw/' \
     "$STAGE/research/runners/" "$h:~/$REMOTE_ROOT/research/runners/"
-  rsync -az --delete "$STAGE/research/specs/" "$h:~/$REMOTE_ROOT/research/specs/"
-  rsync -az --delete "$STAGE/research/fixtures/" "$h:~/$REMOTE_ROOT/research/fixtures/"
-  rsync -az --delete --exclude='raw/' \
+  rsync -az -e "$SSH_CMD" --delete "$STAGE/research/specs/" "$h:~/$REMOTE_ROOT/research/specs/"
+  rsync -az -e "$SSH_CMD" --delete "$STAGE/research/fixtures/" "$h:~/$REMOTE_ROOT/research/fixtures/"
+  rsync -az -e "$SSH_CMD" --delete --exclude='raw/' \
     "$STAGE/research/findings/" "$h:~/$REMOTE_ROOT/research/findings/"
-  rsync -az "$STAGE/research/__init__.py" "$h:~/$REMOTE_ROOT/research/__init__.py"
-  ssh "$h" "mkdir -p ~/$REMOTE_ROOT/research/findings/raw"
+  rsync -az -e "$SSH_CMD" "$STAGE/research/__init__.py" "$h:~/$REMOTE_ROOT/research/__init__.py"
+  $SSH_CMD "$h" "mkdir -p ~/$REMOTE_ROOT/research/findings/raw"
   # CORPUS (2026-09-23): the small corpus files corpus-LEARNED organs read (see load_bearing_fraction CORPUS GUARD).
-  ssh "$h" "mkdir -p ~/$REMOTE_ROOT/data/corpus"
+  $SSH_CMD "$h" "mkdir -p ~/$REMOTE_ROOT/data/corpus"
   # data/corpus is git-excluded, so a git WORKTREE (every isolated agent) has none: fall back to the PRIMARY
   # checkout's copy (the parent of the shared git dir). Sync only the files that exist (a missing optional file
   # used to fail the whole rsync), and warn loudly when the core file is absent. (2026-09-23, D3 fix round.)
@@ -165,20 +173,20 @@ for h in "${NODES[@]}"; do
   done
   [ -e "$CORPUS_DIR/tinystories.txt" ] || echo "  ⛔ WARNING: no data/corpus/tinystories.txt in $ROOT or the primary checkout -- corpus-learned organs will fail on $h" >&2
   if [ ${#_cfiles[@]} -gt 0 ]; then
-    ( cd "$CORPUS_DIR" && rsync -aL "${_cfiles[@]}" "$h:$REMOTE_ROOT/data/corpus/" ) || echo "  (warning: corpus sync to $h failed)" >&2
+    ( cd "$CORPUS_DIR" && rsync -aL -e "$SSH_CMD" "${_cfiles[@]}" "$h:$REMOTE_ROOT/data/corpus/" ) || echo "  (warning: corpus sync to $h failed)" >&2
   fi
-  rsync -az --delete --exclude='__pycache__' "$STAGE/experiment/" "$h:~/$REMOTE_ROOT/experiment/" 2>/dev/null
-  rsync -az --delete --exclude='__pycache__' "$STAGE/tools/" "$h:~/$REMOTE_ROOT/tools/" 2>/dev/null
-  rsync -az --delete --exclude='__pycache__' --exclude='*.pyc' \
+  rsync -az -e "$SSH_CMD" --delete --exclude='__pycache__' "$STAGE/experiment/" "$h:~/$REMOTE_ROOT/experiment/" 2>/dev/null
+  rsync -az -e "$SSH_CMD" --delete --exclude='__pycache__' "$STAGE/tools/" "$h:~/$REMOTE_ROOT/tools/" 2>/dev/null
+  rsync -az -e "$SSH_CMD" --delete --exclude='__pycache__' --exclude='*.pyc' \
     "$STAGE/tests/" "$h:~/$REMOTE_ROOT/tests/"
-  rsync -az --delete "$STAGE/docs/" "$h:~/$REMOTE_ROOT/docs/"
-  rsync -az "$STAGE/CLAUDE.md" "$STAGE/GAP_CLOSURE_MISSION.md" "$STAGE/README.md" \
+  rsync -az -e "$SSH_CMD" --delete "$STAGE/docs/" "$h:~/$REMOTE_ROOT/docs/"
+  rsync -az -e "$SSH_CMD" "$STAGE/CLAUDE.md" "$STAGE/GAP_CLOSURE_MISSION.md" "$STAGE/README.md" \
     "$STAGE/ROADMAP.md" "$h:~/$REMOTE_ROOT/"
-  rsync -az "$STAGE/requirements.txt" "$h:~/$REMOTE_ROOT/requirements.txt" 2>/dev/null
-  rsync -az "$STAGE/requirements-dev.txt" "$h:~/$REMOTE_ROOT/requirements-dev.txt" 2>/dev/null
-  rsync -az "$MANIFEST" "$h:~/$REMOTE_ROOT/.source_manifest.sha256"
-  rsync -az "$REVISION" "$h:~/$REMOTE_ROOT/.source_revision"
-  rsync -az "$STAGE/.source_ancestry.json" "$h:~/$REMOTE_ROOT/.source_ancestry.json"
+  rsync -az -e "$SSH_CMD" "$STAGE/requirements.txt" "$h:~/$REMOTE_ROOT/requirements.txt" 2>/dev/null
+  rsync -az -e "$SSH_CMD" "$STAGE/requirements-dev.txt" "$h:~/$REMOTE_ROOT/requirements-dev.txt" 2>/dev/null
+  rsync -az -e "$SSH_CMD" "$MANIFEST" "$h:~/$REMOTE_ROOT/.source_manifest.sha256"
+  rsync -az -e "$SSH_CMD" "$REVISION" "$h:~/$REMOTE_ROOT/.source_revision"
+  rsync -az -e "$SSH_CMD" "$STAGE/.source_ancestry.json" "$h:~/$REMOTE_ROOT/.source_ancestry.json"
   # LTM knowledge bundles (2026-09-23, ~105MB, NOT a multi-GB haul): _default_ltm_bundle_dir()
   # (webapp/server.py) looks for sim-data/knowledge_bundles/{wikidata_100k,wikidata_core_15k} at
   # $HOME/Projects/sim-data on whatever box is running -- a directory OUTSIDE this repo entirely, which no
@@ -192,14 +200,14 @@ for h in "${NODES[@]}"; do
   # ...) and the strict complete-source verify below then failed EVERY re-provision on "extra files" — which kept
   # the node unusable for days (2026-09-23). Prune every research/ file the manifest does not carry, keeping run
   # OUTPUTS exactly as source_manifest.py's verify ignores them (findings/raw/, experiment-runtime/, *.log, *.out).
-  ssh "$h" "cd ~/$REMOTE_ROOT && sed 's/^[0-9a-f]\\{64\\}  //' .source_manifest.sha256 | sort > /tmp/.prov_keep.\$\$ && find research -type f ! -path 'research/findings/raw/*' ! -path 'research/experiment-runtime/*' ! -path '*/__pycache__/*' ! -name '*.log' ! -name '*.out' | sort | comm -23 - /tmp/.prov_keep.\$\$ | while IFS= read -r p; do chmod u+w -- \"\$p\" 2>/dev/null; rm -f -- \"\$p\"; done; rm -f /tmp/.prov_keep.\$\$"
+  $SSH_CMD "$h" "cd ~/$REMOTE_ROOT && sed 's/^[0-9a-f]\\{64\\}  //' .source_manifest.sha256 | sort > /tmp/.prov_keep.\$\$ && find research -type f ! -path 'research/findings/raw/*' ! -path 'research/experiment-runtime/*' ! -path '*/__pycache__/*' ! -name '*.log' ! -name '*.out' | sort | comm -23 - /tmp/.prov_keep.\$\$ | while IFS= read -r p; do chmod u+w -- \"\$p\" 2>/dev/null; rm -f -- \"\$p\"; done; rm -f /tmp/.prov_keep.\$\$"
   # 2. ensurepip/venv are missing on these Ubuntu 22.04 nodes -> install via passwordless sudo (verified available)
-  ssh "$h" "python3 -c 'import ensurepip' 2>/dev/null || { echo '  installing python3.10-venv+pip'; \
+  $SSH_CMD "$h" "python3 -c 'import ensurepip' 2>/dev/null || { echo '  installing python3.10-venv+pip'; \
     sudo -n DEBIAN_FRONTEND=noninteractive apt-get install -y python3.10-venv python3-pip >/dev/null 2>&1 || \
     sudo -n DEBIAN_FRONTEND=noninteractive apt-get update -y >/dev/null 2>&1 && \
     sudo -n DEBIAN_FRONTEND=noninteractive apt-get install -y python3.10-venv python3-pip >/dev/null 2>&1; }"
   # 3. venv + numpy + scipy (idempotent: recreate if the prior broken attempt left a pip-less venv)
-  ssh "$h" "cd ~/$REMOTE_ROOT && \
+  $SSH_CMD "$h" "cd ~/$REMOTE_ROOT && \
     { test -x .venv/bin/python && .venv/bin/python -m pip --version >/dev/null 2>&1 || \
       { rm -rf .venv; python3 -m venv .venv; }; } && \
     .venv/bin/python -m pip -q install --upgrade pip >/dev/null 2>&1; \
@@ -209,24 +217,24 @@ for h in "${NODES[@]}"; do
     echo -n '  numpy/scipy=' ; .venv/bin/python -c 'import numpy,scipy; print(numpy.__version__, scipy.__version__)' 2>&1 | tail -1; \
     echo -n '  sim imports=' ; SIM_BACKEND=numpy .venv/bin/python -c 'import sys; sys.path.insert(0,\".\"); from sim.backend import get_backend; print(get_backend()[1])' 2>&1 | tail -1; \
     echo -n '  webapp imports=' ; SIM_BACKEND=numpy .venv/bin/python -c 'import sys; sys.path.insert(0,\".\"); from webapp.server import brain_chat, BrainChatRequest; print(\"ok\")' 2>&1 | tail -1"
-  ssh "$h" "cd ~/$REMOTE_ROOT && .venv/bin/python -c 'import json,sys,numpy,scipy,h5py,PIL,yaml,fastapi,pydantic; json.dump({\"python_major_minor\":\"%s.%s\" % sys.version_info[:2],\"numpy\":numpy.__version__,\"scipy\":scipy.__version__,\"h5py\":h5py.__version__,\"pillow\":PIL.__version__,\"pyyaml\":yaml.__version__,\"fastapi\":fastapi.__version__,\"pydantic\":pydantic.VERSION},open(\".pool_environment.json\",\"w\"),sort_keys=True,separators=(\",\",\":\"))'"
-  REMOTE_MANIFEST=$(ssh "$h" "cd ~/$REMOTE_ROOT && sha256sum .source_manifest.sha256 | awk '{print \$1}'")
+  $SSH_CMD "$h" "cd ~/$REMOTE_ROOT && .venv/bin/python -c 'import json,sys,numpy,scipy,h5py,PIL,yaml,fastapi,pydantic; json.dump({\"python_major_minor\":\"%s.%s\" % sys.version_info[:2],\"numpy\":numpy.__version__,\"scipy\":scipy.__version__,\"h5py\":h5py.__version__,\"pillow\":PIL.__version__,\"pyyaml\":yaml.__version__,\"fastapi\":fastapi.__version__,\"pydantic\":pydantic.VERSION},open(\".pool_environment.json\",\"w\"),sort_keys=True,separators=(\",\",\":\"))'"
+  REMOTE_MANIFEST=$($SSH_CMD "$h" "cd ~/$REMOTE_ROOT && sha256sum .source_manifest.sha256 | awk '{print \$1}'")
   if [ "$REMOTE_MANIFEST" != "$MANIFEST_SHA" ]; then
     echo "  MANIFEST FAIL local=$MANIFEST_SHA remote=$REMOTE_MANIFEST" >&2
     FAILED_NODES+=("$h:manifest")
     continue
   fi
-  ssh "$h" "cd ~/$REMOTE_ROOT && sha256sum -c .source_manifest.sha256 >/dev/null" || {
+  $SSH_CMD "$h" "cd ~/$REMOTE_ROOT && sha256sum -c .source_manifest.sha256 >/dev/null" || {
     echo "  SOURCE FILE VERIFY FAIL" >&2
     FAILED_NODES+=("$h:source-verify")
     continue
   }
-  ssh "$h" "cd ~/$REMOTE_ROOT && .venv/bin/python tools/pool/provisioning/source_manifest.py verify --root . --manifest .source_manifest.sha256 --expected-sha256 '$MANIFEST_SHA' >/dev/null" || {
+  $SSH_CMD "$h" "cd ~/$REMOTE_ROOT && .venv/bin/python tools/pool/provisioning/source_manifest.py verify --root . --manifest .source_manifest.sha256 --expected-sha256 '$MANIFEST_SHA' >/dev/null" || {
     echo "  COMPLETE SOURCE FILE SET VERIFY FAIL" >&2
     FAILED_NODES+=("$h:complete-source-verify")
     continue
   }
-  ssh "$h" "cd ~/$REMOTE_ROOT && sed 's/^[0-9a-f]\\{64\\}  //' .source_manifest.sha256 | while IFS= read -r path; do chmod a-w -- \"\$path\" || exit 1; done && chmod a-w .source_manifest.sha256 .source_revision .source_ancestry.json" || {
+  $SSH_CMD "$h" "cd ~/$REMOTE_ROOT && sed 's/^[0-9a-f]\\{64\\}  //' .source_manifest.sha256 | while IFS= read -r path; do chmod a-w -- \"\$path\" || exit 1; done && chmod a-w .source_manifest.sha256 .source_revision .source_ancestry.json" || {
     echo "  SOURCE READ-ONLY FAIL" >&2
     FAILED_NODES+=("$h:read-only")
     continue
@@ -237,7 +245,7 @@ for h in "${NODES[@]}"; do
   # tiny-demo brain on THIS node and compare its neuron/synapse totals to the local reference computed above.
   # Advisory-only when no local reference exists (never blocks provisioning on a box that could not itself
   # build one); a FAILED or MISMATCHED remote build marks the node failed.
-  REMOTE_SANITY_JSON=$(ssh "$h" "cd ~/$REMOTE_ROOT && SIM_BACKEND=numpy .venv/bin/python -m tools.brain_build_sanity" 2>/dev/null | tail -1) || true
+  REMOTE_SANITY_JSON=$($SSH_CMD "$h" "cd ~/$REMOTE_ROOT && SIM_BACKEND=numpy .venv/bin/python -m tools.brain_build_sanity" 2>/dev/null | tail -1) || true
   if [ -z "$REMOTE_SANITY_JSON" ]; then
     echo "  ⛔ SANITY CHECK FAILED (no output / brain build crashed) on $h" >&2
     FAILED_NODES+=("$h:sanity-crash")

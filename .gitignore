@@ -199,3 +199,10 @@ research/queue/.waiver_history.jsonl
 research/queue/.brain_build_reference.json
 research/queue/.aws_spend_ledger.jsonl
 research/queue/.pool_reservations
+
+# AWS-as-extra-pool-node plumbing (2026-09-23): a repo-LOCAL ssh config (never ~/.ssh/config -- see
+# tools/aws_pool_node.sh) plus the dynamic node-name file tools/pool_autodispatch.sh re-reads every cycle and
+# its per-repo-checkout known_hosts file. Machine/session-local, never shared state.
+research/queue/.pool_ssh_config
+research/queue/.pool_ssh_known_hosts
+research/queue/.pool_extra_nodes

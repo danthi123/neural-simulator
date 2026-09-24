@@ -5,7 +5,11 @@
 # DeleteOnTermination=true. SSH scoped to THIS box's current IP only. Idempotent-ish: refuses if one is already recorded.
 set -uo pipefail
 ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd); cd "$ROOT"
-STATE="$ROOT/research/queue/.aws_gpu"
+# AWS_CPU_STATE_FILE (2026-09-23): lets a caller give this launch its OWN state file instead of the shared
+# single-instance lane state (`.aws_gpu`) -- e.g. tools/aws_pool_node.sh records the extra pool node at
+# `.aws_pool1` so it can run ALONGSIDE the primary `.aws_gpu` lane and aws_idle_stop.sh (which already globs
+# `research/queue/.aws_*`) still finds its key. Default is unchanged for every existing caller.
+STATE="${AWS_CPU_STATE_FILE:-$ROOT/research/queue/.aws_gpu}"
 REGION=us-east-1
 AMI=ami-05a3e9423ae4d7a19            # Ubuntu 22.04 x86_64, us-east-1 (newest as of 2026-09-15)
 TYPE=r7i.4xlarge                     # 16 vCPU / 128 GiB
