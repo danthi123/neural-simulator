@@ -252,6 +252,41 @@ def score(seeds, out_dir=OUT_DIR, aggregate_out=None, m=M):
     return agg
 
 
+BG_GRID = (0.0, 0.15, 0.3, 0.4, 0.5, 0.6, 0.67, 0.8, 1.0)
+DEV_SEEDS = (7, 11, 13)
+
+
+def bg_curve(seeds=DEV_SEEDS, n=8, out=None):
+    """DESCRIPTIVE psychometric read of the gated turn's speak/abstain race (PREREG Amendment 1): P(SPEAK) /
+    P(STAY_SILENT) / P(no commit) vs the salience split (speak=s, silent=1-s), n races per point on ONE selector per
+    seed (the production usage: one warm selector, consecutive races, numpy global RNG seeded per seed). No brain."""
+    import numpy as np
+    from sim.backend import get_backend
+    from research.runners.bg_action_selection_production_organ import BGActionSelector, ACTION_NAME
+    res = {"runner": "research.runners._open_ended_gated_turn_gate --bg-curve", "prereg": PREREG,
+           "backend": get_backend()[1], "n_per_point": int(n), "grid": list(BG_GRID), "seeds": [int(s) for s in seeds],
+           "per_seed": {}}
+    for sd in seeds:
+        np.random.seed(int(sd))
+        org = BGActionSelector(seed=int(sd))
+        row = {}
+        for s in BG_GRID:
+            c = {"SPEAK": 0, "STAY_SILENT": 0, "none": 0}
+            for _ in range(int(n)):
+                r = org.select_once(s, 1.0 - s)
+                c[ACTION_NAME[int(r["winner"])] if r["committed"] else "none"] += 1
+            row[str(s)] = c
+            print("[bg curve] seed=%s s=%s %s" % (sd, s, c), flush=True)
+        res["per_seed"][str(sd)] = row
+    res["pooled"] = {str(s): {k: sum(res["per_seed"][str(sd)][str(s)][k] for sd in seeds)
+                              for k in ("SPEAK", "STAY_SILENT", "none")} for s in BG_GRID}
+    if out:
+        os.makedirs(os.path.dirname(os.path.abspath(out)), exist_ok=True)
+        with open(out, "w") as fh:
+            json.dump(res, fh, indent=2)
+    return res
+
+
 def job_lines(root, seeds=SEEDS, mem_gb=7):
     lines = []
     for s in seeds:
@@ -327,6 +362,8 @@ def main(argv=None):
     ap.add_argument("--score", action="store_true")
     ap.add_argument("--jobs", action="store_true")
     ap.add_argument("--selftest", action="store_true")
+    ap.add_argument("--bg-curve", action="store_true", help="descriptive BG psychometric read (no brain)")
+    ap.add_argument("--curve-seeds", default=",".join(str(s) for s in DEV_SEEDS))
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--arm", choices=ARMS, default="intact")
     ap.add_argument("--j", type=int, default=0)
@@ -339,6 +376,10 @@ def main(argv=None):
     a = ap.parse_args(argv)
     if a.selftest:
         return 0 if selftest() else 1
+    if a.bg_curve:
+        bg_curve([int(x) for x in a.curve_seeds.split(",") if x.strip()],
+                 out=a.aggregate_out or os.path.join(os.path.dirname(a.out_dir), "bg_curve", "bg_curve.json"))
+        return 0
     if a.jobs:
         print("\n".join(job_lines(a.root, mem_gb=a.mem_gb)))
         return 0

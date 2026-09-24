@@ -16,7 +16,7 @@ pipeline (so every downstream faculty still runs) and this module adds, after th
   3. A SPIKING SPEAK/ABSTAIN RACE. A dedicated two-channel BG selector (the Gate-A v2 topology, reused by import from
      `research.runners.bg_action_selection_production_organ`; its own bridge instance, cfg.seed = the brain seed) runs
      ONE race on saliences transduced from brain reads: speak = clip(fam + eng), silent = clip(1 - fam - eng), with
-     fam from the route and eng = |clip(4 * Gate-B affect differential)|. The race runs on a PRIVATE RNG timeline
+     fam from the route and eng = |Gate-B tone_level| / 3 (PREREG Amendment 1). The race runs on a PRIVATE RNG timeline
      (host RNG restored, the #77 footgun) so the rest of the turn sees the same global RNG trajectory.
   4. THE SETTLE WINDOW. The affect-drives felt mood (non-neutral turns only) is read by a SEPARATE
      `AffectMarkerWTA(settle=True)` instance (500 ms deliberation, 1000 ms inter-turn rest) -- the production reader
@@ -162,9 +162,24 @@ def classify_route(rec) -> str:
 
 
 # ── 3. read -> salience transduction (declared host residual) + the BG race ────────────────────────────────────────
+TONE_LEVEL_MAX = 3   # the Gate-B staircase's own top register (_stageA_full_integration_derisk._graded_tone_level max_lvl)
+
+
 def engagement_from_affect(affect_info) -> float:
+    """PREREG Amendment 1 (dev-seed-7 calibration, before any gate seed): the engagement afferent is the Gate-B
+    affect organ's OWN graded register, |tone_level| / 3 (the Koulakov staircase over the spiking ladder's
+    differential), not |clip(4 x differential)|. The x4 squash was the Qwen-prompt mood mapping, never calibrated for a
+    striatal salience: on the strongest affective probe it gave 0.15, where the dev-seed BG psychometric curve reads
+    P(SPEAK) ~ 1/12, so the affect afferent could not move the race by construction. Falls back to the x4 squash only
+    when no tone_level is attached (a caller outside the server's affect block)."""
     if not isinstance(affect_info, dict) or "error" in affect_info:
         return 0.0
+    lvl = affect_info.get("tone_level")
+    if lvl is not None:
+        try:
+            return float(min(1.0, abs(int(lvl)) / float(TONE_LEVEL_MAX)))
+        except Exception:
+            return 0.0
     try:
         diff = float(affect_info.get("differential", 0.0) or 0.0)
     except Exception:
@@ -488,6 +503,9 @@ def selftest() -> dict:
     out["sal_affect"] = saliences("offkb", 0.6) == (0.6, 0.4)
     out["eng_clip"] = engagement_from_affect({"differential": 0.5}) == 1.0 and \
         engagement_from_affect({"differential": -0.05}) == 0.2 and engagement_from_affect(None) == 0.0
+    out["eng_tone_level"] = engagement_from_affect({"differential": 0.0375, "tone_level": 2}) == 2 / 3. and \
+        engagement_from_affect({"differential": 0.0, "tone_level": 0}) == 0.0 and \
+        engagement_from_affect({"tone_level": -3}) == 1.0
     out["phenomenal_regex"] = bool(PHENOMENAL_RE.search("I feel happy")) and not PHENOMENAL_RE.search("I am not sure.")
 
     class _C:
