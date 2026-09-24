@@ -1,0 +1,31 @@
+{
+ "run_id": "1790264920-164273",
+ "runner": "research/runners/_curiosity_commitment_veto_v5_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-a341bd5ee487861a6/research/runners/_curiosity_commitment_veto_v5_derisk.py",
+  "--seeds",
+  "11",
+  "--dev",
+  "--out",
+  "research/findings/raw/_curiosity_commitment_veto_v5_dev_s11.json"
+ ],
+ "git_sha": "235d5bfee",
+ "git_dirty": false,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-24T11:48:40",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 11636.3,
+ "corpus_check_query": "curiosity ASK operating point homeostasis",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_curiosity_commitment_veto_v5_dev_s11.json"
+}
