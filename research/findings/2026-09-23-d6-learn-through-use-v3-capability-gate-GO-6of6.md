@@ -76,3 +76,14 @@ claim K3e/K4e.
 ## Honesty
 Functional read-outs only. "Learns" and "recalls" mean the reply's content changes with the synaptic write, measured
 by lesion. No claim of felt experience.
+
+## Addendum (2026-09-23 ~22:40): what "the synaptic write" is, measured
+The capacity-curve review (branch `research/d6-capacity-curve`, workflow `wf_2a017223-975`) built the D6 write and the
+host copy side by side at seed 42, N=5: the Hebbian weights match the host-copy weights with complex correlation
+0.99996 (max |dw| 0.031), and all 128 synapses are saturated at W_MAX. The instructive pathway, the phase-lock loop and
+the W_MAX clamp (declared shortcuts (a)-(c) above) make the local write a near-copy of the host pattern. So this GO
+shows that the recall reply is carried by, and read from, a synaptic change on the substrate; it does NOT show that a
+local learning rule discovers the pattern. The same review measured the store's scaling cost: one disjoint block per
+fact with exact host routing, so recall cannot degrade with N, while per-operation cost grows linearly (per-fact encode
+~12.7 s and a projected read-time view ~3923 s per turn at N=2000). Scaling work continues in workflow `w1di54v7l`
+(an honest cost-criterion capacity curve, and a distributed store in shared synapses that can interfere).

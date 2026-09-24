@@ -15,6 +15,18 @@
 #   bash tools/workflow_check.sh            # full report + exit 1 if any rule is violated
 set -uo pipefail
 ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
+# AWS-AS-EXTRA-POOL-NODE (fix round #2, 2026-09-23): this file's cluster/crash checks were hardcoded to
+# `pool40 pool41 pool42` and a bare `ssh` (no -F), so a crash on an AWS pool node (tools/aws_pool_node.sh) was
+# NEVER surfaced here -- it is registered the SAME way pool40/41/42 are (.pool_extra_nodes,
+# .pool_ssh_config), so this file must read them too, or the loss stays silent. ABSENT by default, so behaviour
+# for anyone who has not run `aws_pool_node.sh up` is byte-identical to before.
+POOL_SSH_CONFIG="${POOL_SSH_CONFIG:-$ROOT/research/queue/.pool_ssh_config}"
+POOL_CHECK_SSH_F=(); [ -f "$POOL_SSH_CONFIG" ] && POOL_CHECK_SSH_F=(-F "$POOL_SSH_CONFIG")
+POOL_EXTRA_NODES_FILE="${POOL_EXTRA_NODES_FILE:-$ROOT/research/queue/.pool_extra_nodes}"
+_pool_check_extra_nodes() {
+  [ -f "$POOL_EXTRA_NODES_FILE" ] && grep -vE '^[[:space:]]*(#|$)' "$POOL_EXTRA_NODES_FILE" 2>/dev/null | tr -s '[:space:]' ' '
+}
+POOL_CHECK_NODES="pool40 pool41 pool42 $(_pool_check_extra_nodes)"
 
 queue_health() {
   local queue="$1" now="$2" max_age="$3"
@@ -138,6 +150,14 @@ if [ "${1:-}" = "--no-ready-work" ]; then
   [ "$#" -eq 4 ] || { echo "usage: $0 --no-ready-work <waiver> <workboard> <now-epoch>" >&2; exit 2; }
   no_ready_work_waiver_active "$2" "$3" "$4"
   exit $?
+fi
+if [ "${1:-}" = "--print-pool-check-nodes" ]; then
+  # TEST SEAM (fix round #2): prints the node list + whether -F would be used, WITHOUT running the rest of this
+  # (heavy, network-touching) report -- so a test can assert the CLUSTER/CRASH sections' node discovery honours
+  # .pool_extra_nodes and POOL_SSH_CONFIG the same way pool_autodispatch.sh's --nodes-this-cycle does.
+  printf '%s\n' "$(echo "$POOL_CHECK_NODES" | tr -s ' ')"
+  [ "${#POOL_CHECK_SSH_F[@]}" -gt 0 ] && echo "F" || echo "NOF"
+  exit 0
 fi
 
 cd "$ROOT" || exit 0
@@ -332,8 +352,8 @@ echo "════ 4. CLUSTER — are the mini-PC pool's 36 cores actually worki
 # line contains". Bracket the first char: the regex [r]esearch matches "research", but the literal text
 # "[r]esearch" in our own argv does not match it.
 POOL_IDLE=0; POOL_UP=0; POOL_DOWN=0; POOL_LINES=""
-for H in pool40 pool41 pool42; do
-  R=$(timeout 8 ssh -o BatchMode=yes -o ConnectTimeout=5 "$H" \
+for H in $POOL_CHECK_NODES; do
+  R=$(timeout 8 ssh "${POOL_CHECK_SSH_F[@]}" -o BatchMode=yes -o ConnectTimeout=5 "$H" \
         "echo \$(nproc) \$(cut -d' ' -f1 /proc/loadavg) \$(pgrep -fc '[r]esearch\\.runners' 2>/dev/null || echo 0)" 2>/dev/null)
   if [ -z "$R" ]; then
     POOL_DOWN=$((POOL_DOWN+1)); POOL_LINES="$POOL_LINES  $(printf '%-8s' "$H") unreachable\n"; continue
@@ -424,12 +444,12 @@ fi
 # ARTIFACT: a job whose --out exists on the node PRODUCED a result (verdict) and is not lost compute; only a
 # job whose --out is MISSING truly spent compute for nothing (a crash / argparse / module-not-found).
 CRASHED=""; VERDICTS=""; UNVERIF=""
-for H in pool40 pool41 pool42; do
+for H in $POOL_CHECK_NODES; do
   R=$({
     declare -f classify_pool_status
     printf '\nclassify_pool_status "$HOME/derisk-pool/sim/job_status.log" "$HOME/derisk-pool/sim" %q %q\n' \
       "$(date +%s)" "${POOL_STATUS_MAX_AGE:-3600}"
-  } | timeout 10 ssh -o BatchMode=yes -o ConnectTimeout=5 "$H" 'bash -s' 2>/dev/null)
+  } | timeout 10 ssh "${POOL_CHECK_SSH_F[@]}" -o BatchMode=yes -o ConnectTimeout=5 "$H" 'bash -s' 2>/dev/null)
   while IFS=$'\t' read -r kind rc field3 field4; do
     [ -z "$kind" ] && continue
     if [ "$kind" = "C" ]; then
