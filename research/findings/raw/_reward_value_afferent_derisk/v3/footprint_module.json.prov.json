@@ -1,0 +1,32 @@
+{
+ "run_id": "1790285421-1602699",
+ "runner": "research/runners/_reward_value_afferent_footprint.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/wf_38021aa9-a43-7/research/runners/_reward_value_afferent_footprint.py",
+  "--seed",
+  "7",
+  "--out",
+  "research/findings/raw/_reward_value_afferent_derisk/v3/footprint_module.json"
+ ],
+ "git_sha": "621ace648",
+ "git_dirty": false,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-24T17:30:21",
+ "env": {
+  "SIM_BACKEND": "numpy",
+  "OMP_NUM_THREADS": "1",
+  "OPENBLAS_NUM_THREADS": "1"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 1508.1,
+ "corpus_check_query": "surprise organ read on the shared merged pool is read-history dependent (second read shifts), a second reader perturbs the production read",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_reward_value_afferent_derisk/v3/footprint_module.json"
+}

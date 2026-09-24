@@ -1,0 +1,299 @@
+{
+  "seed": 7,
+  "seed_kind": "dev-calibration (NOT a 6-seed gate seed)",
+  "build_s": 297.9,
+  "pool_kind": "MergedPool",
+  "H0": "a0cf69427065942be1e97f4fad3c4c13b9e8ab544743f768ebf5d30128d896ee",
+  "reference": {
+    "confirm": 0.4050925925925926,
+    "contra": 5.150462962962964
+  },
+  "restore_1_hash_equal_H0": true,
+  "isolated_intact": {
+    "a10_confirm": {
+      "surprise_hz": 0.4050925925925926,
+      "drives": true,
+      "footprint": {
+        "isolated": true,
+        "bridge": "intact",
+        "changed_during_read": [
+          "_accumulated_spikes_gpu",
+          "_last_synced_spike_count",
+          "_mock_num_spikes_this_step",
+          "_stats_sync_counter",
+          "cp_conductance_g_e",
+          "cp_conductance_g_gabab",
+          "cp_conductance_g_i",
+          "cp_conductance_g_nmda",
+          "cp_conductance_g_nmda_recurrent",
+          "cp_conductance_g_nmda_recurrent_rise",
+          "cp_conductance_g_nmda_rise",
+          "cp_external_input_current",
+          "cp_firing_states",
+          "cp_membrane_potential_v",
+          "cp_neuron_activity_ema",
+          "cp_neuron_firing_thresholds",
+          "cp_prev_firing_states",
+          "cp_recovery_variable_u",
+          "cp_refractory_timers",
+          "cp_viz_activity_timers"
+        ],
+        "added_during_read": [],
+        "removed_during_read": [],
+        "runtime_state_changed": [
+          "current_time_ms",
+          "current_time_step"
+        ],
+        "organ_bookkeeping_changed": [
+          "_block",
+          "_cue_next"
+        ],
+        "restored_exact": true
+      },
+      "error": null,
+      "hash_before": "a0cf69427065942be1e97f4fad3c4c13b9e8ab544743f768ebf5d30128d896ee",
+      "hash_after": "a0cf69427065942be1e97f4fad3c4c13b9e8ab544743f768ebf5d30128d896ee",
+      "hash_unchanged": true
+    },
+    "prod_confirm": 0.4050925925925926,
+    "a10_contra": {
+      "surprise_hz": 5.150462962962964,
+      "drives": true,
+      "footprint": {
+        "isolated": true,
+        "bridge": "intact",
+        "changed_during_read": [
+          "_accumulated_spikes_gpu",
+          "_last_synced_spike_count",
+          "_mock_num_spikes_this_step",
+          "_stats_sync_counter",
+          "cp_conductance_g_e",
+          "cp_conductance_g_gabab",
+          "cp_conductance_g_i",
+          "cp_conductance_g_nmda",
+          "cp_conductance_g_nmda_recurrent",
+          "cp_conductance_g_nmda_recurrent_rise",
+          "cp_conductance_g_nmda_rise",
+          "cp_external_input_current",
+          "cp_firing_states",
+          "cp_membrane_potential_v",
+          "cp_neuron_activity_ema",
+          "cp_neuron_firing_thresholds",
+          "cp_prev_firing_states",
+          "cp_recovery_variable_u",
+          "cp_refractory_timers",
+          "cp_viz_activity_timers"
+        ],
+        "added_during_read": [],
+        "removed_during_read": [],
+        "runtime_state_changed": [
+          "current_time_ms",
+          "current_time_step"
+        ],
+        "organ_bookkeeping_changed": [
+          "_block",
+          "_novel_next"
+        ],
+        "restored_exact": true
+      },
+      "error": null,
+      "hash_before": "94d9c421645a671552ed803421ec4a19826e33f8cb529447174518eda4cf3c0d",
+      "hash_after": "94d9c421645a671552ed803421ec4a19826e33f8cb529447174518eda4cf3c0d",
+      "hash_unchanged": true
+    },
+    "prod_contra": 5.150462962962964
+  },
+  "restore_2_hash_equal_H0": true,
+  "isolated_lesion": {
+    "a10_confirm": {
+      "surprise_hz": 4.62962962962963,
+      "drives": true,
+      "footprint": {
+        "isolated": true,
+        "bridge": "lesion_twin",
+        "changed_during_read": [
+          "_accumulated_spikes_gpu",
+          "_last_synced_spike_count",
+          "_mock_num_spikes_this_step",
+          "_stats_sync_counter",
+          "cp_conductance_g_e",
+          "cp_conductance_g_gabab",
+          "cp_conductance_g_i",
+          "cp_external_input_current",
+          "cp_firing_states",
+          "cp_membrane_potential_v",
+          "cp_neuron_activity_ema",
+          "cp_neuron_firing_thresholds",
+          "cp_prev_firing_states",
+          "cp_recovery_variable_u",
+          "cp_refractory_timers",
+          "cp_viz_activity_timers"
+        ],
+        "added_during_read": [],
+        "removed_during_read": [],
+        "runtime_state_changed": [
+          "current_time_ms",
+          "current_time_step"
+        ],
+        "organ_bookkeeping_changed": [
+          "_block",
+          "_cue_next"
+        ],
+        "restored_exact": true
+      },
+      "error": null,
+      "hash_before": "a0cf69427065942be1e97f4fad3c4c13b9e8ab544743f768ebf5d30128d896ee",
+      "hash_after": "a0cf69427065942be1e97f4fad3c4c13b9e8ab544743f768ebf5d30128d896ee",
+      "hash_unchanged": true
+    },
+    "prod_confirm": 0.4050925925925926,
+    "a10_contra": {
+      "surprise_hz": 5.208333333333334,
+      "drives": true,
+      "footprint": {
+        "isolated": true,
+        "bridge": "lesion_twin",
+        "changed_during_read": [
+          "_accumulated_spikes_gpu",
+          "_last_synced_spike_count",
+          "_mock_num_spikes_this_step",
+          "_stats_sync_counter",
+          "cp_conductance_g_e",
+          "cp_conductance_g_gabab",
+          "cp_conductance_g_i",
+          "cp_external_input_current",
+          "cp_firing_states",
+          "cp_membrane_potential_v",
+          "cp_neuron_activity_ema",
+          "cp_neuron_firing_thresholds",
+          "cp_prev_firing_states",
+          "cp_recovery_variable_u",
+          "cp_refractory_timers",
+          "cp_viz_activity_timers"
+        ],
+        "added_during_read": [],
+        "removed_during_read": [],
+        "runtime_state_changed": [
+          "current_time_ms",
+          "current_time_step"
+        ],
+        "organ_bookkeeping_changed": [
+          "_block",
+          "_novel_next"
+        ],
+        "restored_exact": true
+      },
+      "error": null,
+      "hash_before": "94d9c421645a671552ed803421ec4a19826e33f8cb529447174518eda4cf3c0d",
+      "hash_after": "94d9c421645a671552ed803421ec4a19826e33f8cb529447174518eda4cf3c0d",
+      "hash_unchanged": true
+    },
+    "prod_contra": 5.150462962962964
+  },
+  "restore_3_hash_equal_H0": true,
+  "raw_sensitivity": {
+    "raw_a10_confirm": 0.4050925925925926,
+    "prod_confirm": 0.3472222222222222
+  },
+  "restore_4_hash_equal_H0": true,
+  "v1_order_reported": {
+    "off_confirm": 0.4050925925925926,
+    "off_contra": 5.150462962962964,
+    "on_a10_confirm_third_read": 0.3472222222222222
+  },
+  "v2_off_arm_surprise_hz": {
+    "confirm": 0.4050925925925926,
+    "contra": 5.150462962962964
+  },
+  "confirm_shift_raw_hz": 0.057870370370370405,
+  "confirm_shift_isolated_hz": 0.0,
+  "confirm_shift_attributable_to_unisolated_read": 1.0,
+  "F1_a10_reads_leave_hash_unchanged": true,
+  "F2_production_reads_equal_reference": true,
+  "F3_a10_read_equals_following_production_read": true,
+  "go": true,
+  "status": "GO",
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "organ is on the merged cortical pool (the production path)",
+      "ok": true,
+      "detail": "measured=MergedPool expect=<function run.<locals>.<lambda> at 0x7f682d74dee0>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "reference reads equal the v2 OFF arm's handler-level surprise_hz (confirm, contra)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "every restore of S0 hashes back to H0",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "A10 reads drove (intact and lesion, both turns)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "sensitivity: an UNISOLATED A10 read shifts the production CONFIRM read (the check can fail)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    }
+  ],
+  "verdict": {
+    "label": "A10 fix round 2: the A10 read leaves no footprint on the production surprise organ (module level)",
+    "status": "GO",
+    "go": true,
+    "undefined_reasons": [],
+    "preconditions": [
+      {
+        "kind": "require",
+        "name": "organ is on the merged cortical pool (the production path)",
+        "ok": true,
+        "detail": "measured=MergedPool expect=<function run.<locals>.<lambda> at 0x7f682d74dee0>",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "reference reads equal the v2 OFF arm's handler-level surprise_hz (confirm, contra)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "every restore of S0 hashes back to H0",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "A10 reads drove (intact and lesion, both turns)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "sensitivity: an UNISOLATED A10 read shifts the production CONFIRM read (the check can fail)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      }
+    ],
+    "disabled_processes": [],
+    "chance": null
+  },
+  "runner": "_reward_value_afferent_footprint"
+}

@@ -13,6 +13,7 @@ artifacts:
   - research/findings/raw/_reward_value_afferent_derisk/v2/s7_arms_off_a.json
   - research/findings/raw/_reward_value_afferent_derisk/v2/s7_arms_on_a.json
   - research/findings/raw/_reward_value_afferent_derisk/v2/rf/s7_arms_on_a.json
+  - research/findings/raw/_reward_value_afferent_derisk/v3/footprint_module.json
 ---
 
 # A10 seed-7 de-risk: NO-GO at the pre-registered criteria in both runs; the rerun shows (A) holds and traces the lesion residual to surprise-block identity
@@ -43,7 +44,33 @@ intact read (AMENDMENT-2).
   blocks of on_a and les equal off_a's on both turns. Scored on the v2 arms, (D) fails, as it should.
 - **Measurement of the fix.** A module-level check on the production organ
   (`research/runners/_reward_value_afferent_footprint.py`) and the v3 arms on the pool, both governed by
-  AMENDMENT-2. Results are reported below as they land; until then the fix is unmeasured at the handler level.
+  AMENDMENT-2. The module-level check has landed (below). The v3 arms are queued on the pool; until they land the
+  fix is unmeasured at the handler level and (D) is unscored.
+
+### Module-level footprint check (AMENDMENT-2), seed 7: the runner reads GO
+
+Artifact `research/findings/raw/_reward_value_afferent_derisk/v3/footprint_module.json` (local, numpy, under
+`tools/memcap.sh`, at 621ace648 with `git_dirty=false`). An instrument check of the fix on the production organ
+(`get_organ(7)` on the `MergedPool`, the arms' env), not a capability verdict. All five preconditions hold,
+including the sensitivity control and the REFERENCE reads matching the v2 OFF arm's handler-level values.
+
+| sequence (one process, each from the post-build state; every restore re-hashes to it) | CONFIRM Hz | CONTRADICT Hz |
+|---|---|---|
+| REFERENCE: production reads only (the flag-OFF order) | 0.4050925925925926 | 5.150462962962964 |
+| ISOLATED intact: the A10 read, then the production read | 0.4050925925925926, then 0.4050925925925926 | 5.150462962962964, then 5.150462962962964 |
+| ISOLATED lesion: the A10 twin read, then the production read | 4.62962962962963, then 0.4050925925925926 | 5.208333333333334, then 5.150462962962964 |
+| RAW (the v2 A10 path): an unisolated read, then the production read | 0.4050925925925926, then 0.3472222222222222 | (not run) |
+| v1 in-process order, reported: CONFIRM, CONTRA, CONFIRM | third read 0.3472222222222222 | 5.150462962962964 |
+
+- F1: the sha256 of the organ's read state is unchanged across every A10 read, intact and lesion. F2: every
+  production read after an isolated A10 read equals the REFERENCE read. F3: each intact A10 read equals the
+  production read that follows it. The unisolated read owns the whole CONFIRM shift: 0.057870370370370405 Hz
+  unisolated vs 0.0 isolated (`attributable_to` 1.0).
+- What the read touches (the `footprint` record): 20 bridge attributes, among them `cp_neuron_firing_thresholds`,
+  `cp_neuron_activity_ema`, `cp_refractory_timers` and `cp_prev_firing_states` (the arrays `_hard_reset` restores
+  only when a bridge has `_rest_extra`), plus the runtime clock and the organ's `_block` / `_cue_next`.
+- The v1 order reproduces v1's recorded ON CONFIRM read (0.3472222222222222) as the organ's third read, under the v2
+  arms' env: the correction in "Other observations" below is now measured, not only inferred.
 
 ## Corrections to the earlier text of this finding (fix round, after the adversarial review of 58c400ff6)
 
@@ -174,8 +201,8 @@ text were not affected by it at seed 7; the lesion arm's production read was not
   OFF CONTRA, then the ON CONFIRM turn. So v1's A10 CONFIRM read was the process-shared organ's third read and its
   second CONFIRM read. v2 ran each arm in a fresh process, so its A10 CONFIRM read was the organ's first. v2's own
   arms show a second CONFIRM read gives exactly 0.3472222222222222 Hz (the production read in on_a, see Fix round 2).
-  This is the same mechanism as the side effect above. The module-level check reproduces the v1 order as a reported
-  sequence. (The earlier text of this bullet pointed at uncommitted code or the main merge; that is withdrawn.)
+  This is the same mechanism as the side effect above. The module-level check reproduces it: in the v1 order the
+  third read is 0.3472222222222222 Hz (`research/findings/raw/_reward_value_afferent_derisk/v3/footprint_module.json`, `v1_order_reported`). (The earlier text of this bullet pointed at uncommitted code or the main merge; that is withdrawn.)
 - `reward_value.composer` read null on every turn of this run: the module looked for `chat.inner.agent.composer`,
   but the agent holds `.composer` itself. Fixed after the run in 3e860cdc6 (pinned by a test); the handler's own
   `activity.composer` label is the composer record for this run.
