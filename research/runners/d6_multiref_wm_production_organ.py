@@ -64,6 +64,14 @@ HONEST RESIDUALS (declared; match the de-risk's named residuals + the task's nam
     (a trained selection policy, as opposed to this rung's substrate-READ selection) is un-done.
   * The referent EXTRACTION (which tokens are the discourse referents) is a host parse, bounded by a small referent
     lexicon + a coordinated-NP pattern — the same vocab-ceiling class the comprehension organ declares.
+    OPT-IN CONVERSION (2026-09-23, `BRAIN_LEARNED_REFERENT_LEXICON`, default OFF): an off-table word is admitted iff
+    the v2 referent (noun-category) detector's coupled spiking WTA calls it a referent — graded drive through
+    Hebbian-learned frame->category synapses, reciprocal FSI lateral inhibition, host read-out of the winner
+    (`research/runners/lexicon_spiking_frame_category.py`; de-risk `_lexicon_spiking_referent_derisk.py`). The v1
+    label-spreading detector (`lexicon_learned_referent.py`) was host-computed + spike-RELAYED and is no longer used
+    here. `BRAIN_LEARNED_REFERENT_LESION=1` restores the learned frame->category synapses to their pre-learning
+    values (a lesion of that ONE learned edge; the circuit stays). Also reaches the activity-silent WM organ, which
+    reuses `extract_referents`.
   * The BIND (referent -> local slot) is the host-numpy RUNG6c binder; the register READ is a host argmax over the
     bank's firing rates (a read-out instrument). Capacity is binder-capped at _K=6 distinct referents (the de-risk's
     valid regime, ceiling k=5).
@@ -105,6 +113,10 @@ _STOP = {
     "her", "his", "their", "we", "us", "our", "you", "your", "i", "me", "my",
 }
 _PRONOUNS = {"it", "he", "she", "they", "him", "her", "them", "his", "its", "their"}
+# The hold-query's own vocabulary ("what are you keeping in MIND") is never a discourse referent -- only consulted on
+# the learned-lexicon path (BRAIN_LEARNED_REFERENT_LEXICON), so the hand path is untouched.
+_HOLD_QUERY_WORDS = {"talking", "discussing", "referring", "keeping", "mind", "holding", "remember", "tracking",
+                     "referent", "referents"}
 _WORD_RE = re.compile(r"[A-Za-z']+")
 
 # "who / what are we talking about", "what are you keeping in mind", "what are you holding" ...
@@ -172,15 +184,50 @@ def is_hold_query(text: str) -> bool:
     return bool(_HOLD_QUERY_RE.search(text or ""))
 
 
-def extract_referents(text: str, max_refs: int = R_MAX):
+def learned_referent_enabled() -> bool:
+    """`BRAIN_LEARNED_REFERENT_LEXICON` in {1,true,yes,on} -> extend the referent scope beyond the hand
+    `_REFERENT_NOUNS` table to the corpus-learned open-vocab referent (noun-category) detector whose decision is a
+    coupled spiking WTA (`research/runners/lexicon_spiking_frame_category.py`). DEFAULT-OFF: unset -> byte-identical
+    hand-table path."""
+    v = os.environ.get("BRAIN_LEARNED_REFERENT_LEXICON")
+    return v is not None and v.strip().lower() in ("1", "true", "yes", "on")
+
+
+def learned_referent_lesioned() -> bool:
+    """`BRAIN_LEARNED_REFERENT_LESION` in {1,true,yes,on} -> restore the detector's Hebbian-learned frame->category
+    synapses to their pre-learning values (lesion of the learned edge; the WTA circuit and its drive stay). What the
+    scope then becomes is MEASURED by the de-risk, not assumed."""
+    v = os.environ.get("BRAIN_LEARNED_REFERENT_LESION")
+    return v is not None and v.strip().lower() in ("1", "true", "yes", "on")
+
+
+def _flag_learned_referent_lexicon():
+    """The process-shared deployment lexicon when the flag is on (lesion applied per call), else None."""
+    if not learned_referent_enabled():
+        return None
+    from research.runners.lexicon_spiking_frame_category import get_lexicon
+    lex = get_lexicon()
+    lex.set_lesion("learned_edge" if learned_referent_lesioned() else None)
+    return lex
+
+
+def extract_referents(text: str, max_refs: int = R_MAX, referent_lexicon=None):
     """Host parse (the declared vocab-ceiling residual): return the ORDERED, de-duplicated discourse referents named in
     `text`. A referent is a lexicon noun OR a capitalized proper name (not sentence-initial-only). Order = order of
-    mention (role-by-position marker). Capped at max_refs and at the binder's _K distinct slots."""
+    mention (role-by-position marker). Capped at max_refs and at the binder's _K distinct slots.
+
+    `referent_lexicon` (default None -> read `BRAIN_LEARNED_REFERENT_LEXICON`; unset -> byte-identical hand path): an
+    object with `is_referent(word) -> bool` (the learned open-vocab detector). A word the hand table lacks is admitted
+    iff the learned detector calls it a referent; the hand table always wins first."""
+    lexicon = referent_lexicon if referent_lexicon is not None else _flag_learned_referent_lexicon()
     raw = _WORD_RE.findall(text or "")
     refs: list[str] = []
     for i, w in enumerate(raw):
         lw = w.lower()
         is_lex = lw in _REFERENT_NOUNS
+        if (not is_lex and lexicon is not None and lw not in _STOP and lw not in _PRONOUNS
+                and lw not in _HOLD_QUERY_WORDS):
+            is_lex = bool(lexicon.is_referent(lw))
         is_proper = (len(w) > 1 and w[0].isupper() and i > 0 and lw not in _STOP)
         if (is_lex or is_proper) and lw not in _PRONOUNS:
             if lw not in refs:
@@ -216,6 +263,9 @@ class MultiReferentWMOrgan:
         # per cache_key), so an instance attribute is already correctly session-scoped for free, and is derived
         # ONLY from referents THIS organ has itself loaded (see `load()` / `current_focus()`).
         self._own_focus = None
+        # Optional injected referent detector (None -> `extract_referents` reads BRAIN_LEARNED_REFERENT_LEXICON;
+        # unset -> the hand table, byte-identical). The de-risk injects a cross-validated lexicon here.
+        self.referent_lexicon = None
 
     def ensure_built(self):
         if self._built:
@@ -356,7 +406,7 @@ class MultiReferentWMOrgan:
         docstring. The caller (webapp/server.py) only ever supplies this on the hold-query path, and only when the
         curiosity->d6 cross-edge's own validated crave-suppression signal is live."""
         self.ensure_built()
-        refs = extract_referents(text)
+        refs = extract_referents(text, referent_lexicon=self.referent_lexicon)
         query = is_hold_query(text)
         # SCOPE: only a genuine multi-referent situation (>=2 named referents) or an explicit hold-query while >=2 are
         # already held. A single referent / no referents / a non-query turn is out of scope -> None (byte-identical).
