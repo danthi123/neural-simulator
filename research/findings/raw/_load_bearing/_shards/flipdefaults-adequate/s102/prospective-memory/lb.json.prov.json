@@ -1,0 +1,33 @@
+{
+ "run_id": "1790260265-30346",
+ "runner": "research/runners/load_bearing_fraction.py",
+ "argv": [
+  "/tmp/claude-1000/-home-dant123-Projects-sim/87891831-e642-4a2f-abeb-50ea0867609b/scratchpad/flip/research/runners/load_bearing_fraction.py",
+  "--only",
+  "prospective-memory",
+  "--seed",
+  "102",
+  "--repeats",
+  "2",
+  "--out",
+  "research/findings/raw/_load_bearing/_shards/flipdefaults-adequate/s102/prospective-memory/lb.json"
+ ],
+ "git_sha": "bd391aa31",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-24T10:31:05",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_load_bearing/_shards/flipdefaults-adequate/s102/prospective-memory/lb.json"
+}

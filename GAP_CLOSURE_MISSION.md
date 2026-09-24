@@ -15,6 +15,15 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-19 (RESUME HERE) — NEW ARC: PERMANENT LLM MOUTH + LOAD-BEARING METRIC
 
+**🟢 UPDATE 13:55 —** **Batch 1 SHIPPED** (main 3d73f67df): BRAIN_EPISODIC_STORE_VERIFY, BRAIN_PMEM_FACILITATION,
+BRAIN_SOURCE_PROV_ABSTAIN_AT_TIE default-ON; production-default batteries GO (thin 0.603 core 15; adequate 0.949 core 24). **B2a**
+(186 shards at M1 9db761329, prereg committed) queued on the pool (all nodes saturated; starts as slots free). **Merged SOUND
+lanes:** swap-drives finding, G1 phase-timing runner, D6 chat wire, proposed lesions, transitive reasoning. **Fix round**
+`w6eenaxmq` for S06/AGFLIP/A7/AGREG/A5/A1/A10/A2 (seed-7 checks via `FRONT=1 tools/pool_queue.sh add`). Opus lanes A3/A4/A9
+still in `wlrxugj4x`. **Other lanes:** SETTLE multi-turn (pool2, `research/settle-multiturn-contrast`), curiosity v5 6 seeds
+(pool1, `research/curiosity-ask-operating-point`), content-provenance + AI teacher builds, slotbinder 4-seed GPU extension.
+**Language learned-referent route GO 6/6** (finding committed). Pool tool fixes today: pinned-revision flag check, FRONT=1.
+
 **🟢 LIVE NOW — 2026-09-24 ~12:15 local — MIDNIGHT PLAN IN EXECUTION (owner asked for concrete steps to an integrated,
 load-bearing, one-substrate brain by midnight; plan = `research/coordination/midnight_plan_2026-09-24.json`, 38 steps
 S00-S32 + G1-G6, feasibility- and rules-critiqued by workflow wf_f11d710d-4a5).**
@@ -22,8 +31,11 @@ S00-S32 + G1-G6, feasibility- and rules-critiqued by workflow wf_f11d710d-4a5).*
   finding, S06 hygiene, AG-REG lbf_rows registry, AG-FLIP SETTLE prep, A1 live-organ rows, A2 learning rows, A11 proposed
   lesions, A5 false-belief, A6 transitive reasoning, A10 reward/value afferent, A3 open-ended gated turn, A4 xedge-in-wave3
   (+S02 probe), A7 warm server + latency probe, A9 gap#4 transport ceiling, A8 D6 chat wire. Merge only on SOUND review.
-- **Owner forks (defaults at 13:15 if unanswered):** (a) SETTLE default-ON -> default OFF, opt-in row; (b) Qwen off-KB
-  content for open-ended -> default opt-in only.
+- **Owner answers (12:45):** (a) SETTLE: not broken; the full-brain gate tested the wrong hypothesis (necessity at one mood);
+  flip ONLY after the multi-turn contrast + abstention-congruence rule + affective GPU timing pass (lane
+  research/settle-multiturn-contrast). (b) Qwen stays FACT-FREE: knowledge must be LEARNED by the brain, never RAG for the
+  LLM (memory project_knowledge_must_be_learned_not_rag). Lanes: research/content-provenance-learned-facts (provenance test +
+  learned-content fraction, 0% today) and research/ai-teacher-environment (chat-only teacher, workflow w569ksr7h).
 - **Compute:** AWS pool1 + pool2 (r7i.4xlarge each; budget day is UTC, ~$45 projected by 20:00 EDT), pool41/42, local, GPU
   (G1/G2-G6 per plan). Next orchestrator steps: S21 aggregate flip battery (3 last shards on pool2, task bsupz8b3u) ->
   S22-S25 batch-1 merge as M1 -> S24 battery B2a on M1 -> S26 rolling integration -> S27/S28 B2b -> S29 flips -> S31/S32.

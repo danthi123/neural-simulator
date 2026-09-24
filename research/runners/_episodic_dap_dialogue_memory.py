@@ -88,14 +88,22 @@ CTRL_MAX = 0.10            # held_nocue <= 0.10
 # cue and read the completion (the recall gate), and if it does not read back, RE-RECRUIT a fresh DG-selected ensemble
 # (an independent emergent draw on the SAME CA3 microcircuit) and encode again — until the substrate's own completion
 # gate confirms the trace, bounded by a safety lap cap. It is EMERGENT (the loop exits on the substrate's own read,
-# never on a target count) and applies uniformly to every topic/seed. OFF (default) -> single-shot -> byte-identical.
+# never on a target count) and applies uniformly to every topic/seed.
+# PRODUCTION DEFAULT-ON since 2026-09-23 (`_STORE_VERIFY_DEFAULT_ON`, owner-authorized validated flip; evidence:
+# research/findings/raw/_lbf_fix_episodic_store/verdict.json GO 6/6 + allfixes2 robust core). An EXPLICIT falsy
+# value (BRAIN_EPISODIC_STORE_VERIFY=0/false/no/off/"") is the reversible escape -> single-shot store, byte-identical
+# to the pre-fix HEAD 7bebcd394 (byte_identical_6seed.json).
+_STORE_VERIFY_DEFAULT_ON = True
+
+
 def _store_verify_enabled() -> bool:
-    """`BRAIN_EPISODIC_STORE_VERIFY` in {1,true,yes,on} -> the store runs the ENCODE→VERIFY→RE-ENCODE loop (make the
-    intact store read back reliably across seeds). Default (unset/anything else) -> single-shot store, byte-identical
-    to HEAD."""
+    """`BRAIN_EPISODIC_STORE_VERIFY` unset -> `_STORE_VERIFY_DEFAULT_ON` (True since 2026-09-23): the store runs the
+    ENCODE→VERIFY→RE-ENCODE loop (make the intact store read back reliably across seeds). Set -> ON iff the value is
+    in {1,true,yes,on}; any other explicit value (0/false/no/off/"") -> single-shot store, byte-identical to the
+    pre-fix HEAD (the OFF arm stays reachable)."""
     v = os.environ.get("BRAIN_EPISODIC_STORE_VERIFY")
     if v is None:
-        return False
+        return _STORE_VERIFY_DEFAULT_ON
     return v.strip().lower() in ("1", "true", "yes", "on")
 
 
@@ -246,7 +254,8 @@ class EpisodicDapMemory:
             return False
         self._form_slot_onto_readout(slot)
         self.formed.add(slot); self.store_log.append(topic)
-        # ENCODE→VERIFY→RE-ENCODE (BRAIN_EPISODIC_STORE_VERIFY, default-OFF -> byte-identical single-shot store above).
+        # ENCODE→VERIFY→RE-ENCODE (BRAIN_EPISODIC_STORE_VERIFY, default-ON since 2026-09-23; =0 -> byte-identical
+        # single-shot store above).
         # Verify the trace reads back from its OWN partial cue (the recall completion gate); if not, re-recruit a fresh
         # DG ensemble and re-encode, until the substrate's own read-back confirms it (or the safety lap cap is hit).
         n_laps = 0

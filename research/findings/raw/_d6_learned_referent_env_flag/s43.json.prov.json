@@ -1,0 +1,31 @@
+{
+ "run_id": "1790262950-297875",
+ "runner": "research/runners/_d6_learned_referent_env_flag_derisk.py",
+ "argv": [
+  "/home/ubuntu/derisk-pool/revisions/7790466c29222a801f5c6df0f35d709b2f5ae81c/research/runners/_d6_learned_referent_env_flag_derisk.py",
+  "--seed",
+  "43",
+  "--json",
+  "research/findings/raw/_d6_learned_referent_env_flag/s43.json"
+ ],
+ "git_sha": "7790466c29222a801f5c6df0f35d709b2f5ae81c",
+ "git_dirty": false,
+ "source_kind": "git_archive",
+ "source_manifest_sha256": "053e27f0b58ed1ccd6b4aa791f994ba9cbb9da70b572d8c399cf92c90cc72cb7",
+ "source_manifest_verified_at_start": true,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": true,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-24T15:15:50",
+ "env": {
+  "SIM_BACKEND": "numpy",
+  "POOL_JOB_ID": "1790262949385288034-7824",
+  "POOL_JOB_MEM_GB": "4"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": false,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_d6_learned_referent_env_flag/s43.json"
+}
