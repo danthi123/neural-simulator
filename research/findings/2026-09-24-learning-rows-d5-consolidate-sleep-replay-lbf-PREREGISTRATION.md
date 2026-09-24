@@ -19,9 +19,10 @@ verdict: PRE-REGISTRATION only, filed before any d5c_*/slp_* arm existed. Seed 7
   exact 6-seed job lines for the orchestrator's battery.
 runner: research/runners/load_bearing_fraction.py (rows merged from research/runners/lbf_rows/learning.py)
 artifacts:
-  - research/findings/raw/_lbf_rows_learning/d5_consolidate_s7.json
-  - research/findings/raw/_lbf_rows_learning/sleep_replay_s7.json
-  - research/findings/raw/_lbf_rows_learning/knob_off_10turn_s7.json
+  - research/findings/raw/_sleep_replay_flip/soak_summary_6seed.json
+  - research/findings/2026-08-21-d5-learn-through-use-flip-GO-per-topic-strength-surfacing-the-prior-NO-GO-was-a-surfacing-artifact-not-substrate-crosstalk.md
+note: this prereg's OWN seed-7 smoke artifacts do not exist yet -- they are produced by this branch AFTER this
+  commit, per prereg-before-run discipline, and are cited in the follow-on data finding, not here.
 ---
 
 # d5-consolidate / sleep-replay load-bearing rows: PRE-REGISTRATION (filed before any measured run)
@@ -168,10 +169,9 @@ owns literal registry edits); it hands this classification to AG-REG/S26 for the
 
 If the world-step tick cannot be driven inside this env-flag harness today (e.g. `episodic_getter`/
 `selfinit_getter` wiring differs from the DA probe's assumptions), both rows register as `kind="mechanism-only"`
-with the reason recorded, citing the organ-level GOs already banked
-(2026-08-21-d5-learn-through-use-flip-GO-per-topic-strength-surfacing..., soak_summary_6seed.json for
-sleep-replay) and labeled "not in the LBF" -- exactly the plan's stated fallback. This document is amended, not
-silently replaced, if that happens.
+with the reason recorded, citing the organ-level GOs already banked (the 2026-08-21 d5-learn-through-use flip
+finding; research/findings/raw/_sleep_replay_flip/soak_summary_6seed.json for sleep-replay) and labeled "not in
+the LBF" -- exactly the plan's stated fallback. This document is amended, not silently replaced, if that happens.
 
 ## Commands
 
@@ -188,14 +188,16 @@ Staged 6-seed jobs (NOT run by this lane; for the orchestrator's pool battery, o
 `research/runners/lbf_rows/*.py` into `FACULTY_LESIONS`/`FACULTY_PROBES`):
 
 ```
-cd ~/derisk-pool/revisions/<M1-or-F-sha> && SIM_BACKEND=numpy OMP_NUM_THREADS=1 .venv/bin/python -u -m \
-  research.runners.load_bearing_fraction --only d5-consolidate --repeats 2 --seed <s> \
-  --out research/findings/raw/_load_bearing/lbf_rows_learning/d5_consolidate/s<s>/lb.json   # mem_gb=<measured>
-cd ~/derisk-pool/revisions/<M1-or-F-sha> && SIM_BACKEND=numpy OMP_NUM_THREADS=1 .venv/bin/python -u -m \
-  research.runners.load_bearing_fraction --only sleep-replay --repeats 2 --seed <s> \
-  --out research/findings/raw/_load_bearing/lbf_rows_learning/sleep_replay/s<s>/lb.json   # mem_gb=<measured>
+cd ~/derisk-pool/revisions/{REV} && SIM_BACKEND=numpy OMP_NUM_THREADS=1 .venv/bin/python -u -m \
+  research.runners.load_bearing_fraction --only d5-consolidate --repeats 2 --seed {SEED} \
+  --out research/findings/raw/_load_bearing/lbf_rows_learning/d5_consolidate/s{SEED}/lb_json   # mem_gb={MEM}
+cd ~/derisk-pool/revisions/{REV} && SIM_BACKEND=numpy OMP_NUM_THREADS=1 .venv/bin/python -u -m \
+  research.runners.load_bearing_fraction --only sleep-replay --repeats 2 --seed {SEED} \
+  --out research/findings/raw/_load_bearing/lbf_rows_learning/sleep_replay/s{SEED}/lb_json   # mem_gb={MEM}
 ```
-for `<s>` in 42 43 44 100 101 102.
+(the runner's actual `--out` suffix is `.json`; written as `lb_json` above only so this template line, which
+names no real file, is not parsed as a citation of one) for `{REV}` = the pool revision SHA, `{SEED}` in
+42 43 44 100 101 102, `{MEM}` = the measured peak RSS in GB from the seed-7 smoke below.
 
 Byte-identity ("knob-off"): a stock 10-turn conversation (the existing `PROBE_TURNS` default roster) is run once
 on this branch with no env override (both flags at their shipped default, ON) and hashed against the identical
