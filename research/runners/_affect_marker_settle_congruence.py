@@ -123,7 +123,16 @@ def apply_policy(resp: dict, *, enabled=None) -> tuple:
     out = dict(resp)
     lead = diag["lead"]
     answer = str(out.get("answer", "") or "")
-    out["answer"] = answer[len(lead):] if lead and answer.startswith(lead) else answer
+    # SURFACE FIX (2026-09-24): the lead is inserted VERBATIM (`resp['answer'] = lead + answer`), but a later stage
+    # can PREPEND text ("That's absolutely thrilling for This -- Wonderful! I don't know..."), so a prefix-only strip
+    # left the marker in the reply on 6/12 incongruent real turns (every mt_emo2 / mt_neg1, s42-s44) while the
+    # `lead` FIELD read blank. Remove the lead's first verbatim occurrence wherever it sits.
+    if lead and answer.startswith(lead):
+        out["answer"] = answer[len(lead):]
+    elif lead and lead in answer:
+        out["answer"] = answer.replace(lead, "", 1)
+    else:
+        out["answer"] = answer
     ad = dict(out.get("affect_drives") or {})
     ad["lead"] = ""
     ad["congruence_suppressed"] = True
@@ -178,26 +187,49 @@ def score_turns(turns: dict) -> dict:
         off_resp, off_diag = apply_policy(resp, enabled=False)
         on_resp, on_diag = apply_policy(resp, enabled=True)
         on_recheck = diagnose(on_resp)
+        # SURFACE RE-CHECK (2026-09-24): `diagnose` reads the `lead` FIELD, which the policy blanks -- so a marker
+        # left in the reply TEXT scored as removed (the instrument read the field, not what the user sees). An
+        # incongruent turn is only resolved ON if the ON reply carries FEWER verbatim copies of the lead than OFF.
+        lead_off = off_diag["lead"]
+        surface_residual = bool(off_diag["incongruent"] and lead_off and
+                                str(on_resp.get("answer", "") or "").count(lead_off)
+                                >= str(off_resp.get("answer", "") or "").count(lead_off))
         # NO OVER-SUPPRESSION: a turn OFF already congruent must have an IDENTICAL lead ON.
         unchanged_when_congruent = bool(off_diag["congruent"] and off_resp.get("affect_drives", {}).get("lead")
                                         == on_resp.get("affect_drives", {}).get("lead"))
-        per[label] = {"off_diag": off_diag, "on_diag": on_diag, "on_recheck_incongruent": on_recheck["incongruent"],
+        per[label] = {"off_diag": off_diag, "on_diag": on_diag, "on_recheck_incongruent": bool(on_recheck["incongruent"] or surface_residual),
+                     "on_surface_residual": surface_residual,
                      "off_lead": off_diag["lead"], "on_lead": on_diag["lead"] if not on_diag["incongruent"] else "",
                      "no_over_suppression_ok": bool((not off_diag["congruent"]) or unchanged_when_congruent)}
     return per
 
 
-def score_all(per_seed_turns: dict, seeds=VERIFY_SEEDS) -> dict:
+def score_all(per_seed_turns: dict, seeds=VERIFY_SEEDS, expected_turns=None) -> dict:
+    """`expected_turns` = the turn labels every seed must carry (MT_LABELS for --score-multiturn, RUN_TURN_LABELS
+    for --run). When given, the verdict below requires EVERY VERIFY_SEED to be scored with every expected turn
+    present and error-free -- the 2026-09-24 fix for a missing seed file silently contributing zero turns (a
+    3-seed score read as if it were the whole set; the same class as the multiturn scorer's subset-GO bug)."""
     from tools.lab import attributable_to
+    from tools.verdict import Verdict
     n_total = n_off_incongruent = n_on_incongruent = n_over_suppress_violations = n_errors = 0
+    n_off_leads = n_on_leads_after_policy = 0
     detail = []
+    incomplete = []
+    for s in VERIFY_SEEDS:
+        if s not in seeds:
+            incomplete.append("s%d not scored (not in --seeds)" % s)
     for s in seeds:
         turns = per_seed_turns.get(s) or {}
+        if expected_turns is not None:
+            absent = [lab for lab in expected_turns if lab not in turns]
+            if absent:
+                incomplete.append("s%d missing turns %s" % (s, absent))
         scored = score_turns(turns)
         for label, row in scored.items():
             n_total += 1
             if row.get("error"):
                 n_errors += 1
+                incomplete.append("s%d %s: arm error" % (s, label))
                 continue
             if row["off_diag"]["incongruent"]:
                 n_off_incongruent += 1
@@ -205,6 +237,10 @@ def score_all(per_seed_turns: dict, seeds=VERIFY_SEEDS) -> dict:
                 n_on_incongruent += 1
             if not row["no_over_suppression_ok"]:
                 n_over_suppress_violations += 1
+            if row["off_lead"]:
+                n_off_leads += 1
+            if row["on_lead"]:
+                n_on_leads_after_policy += 1
             detail.append({"seed": s, "turn": label, **row})
     denom = max(n_total - n_errors, 0)
     off_rate = (n_off_incongruent / denom) if denom else None
@@ -213,7 +249,22 @@ def score_all(per_seed_turns: dict, seeds=VERIFY_SEEDS) -> dict:
     if n_off_incongruent > 0:
         attribution = attributable_to("congruence policy: incongruent-turn count OFF vs ON",
                                       float(n_off_incongruent), float(n_on_incongruent))
+    # THE RULE (the invariants prereg b2e50bd37 already names, made a verdict 2026-09-24): with the policy ON, no
+    # scored turn is left incongruent (no marker glued onto an abstention or onto an opposite-sign Gate-B read),
+    # and no already-congruent lead is touched (no over-suppression). Scored over the WHOLE 6-seed set only.
+    complete = bool(expected_turns is not None and not incomplete and denom > 0)
+    vd = Verdict("affect_marker_settle_congruence_rule")
+    vd.require("all 6 verification seeds scored, every expected turn present and error-free",
+               complete, expect=True, note="; ".join(incomplete[:6]))
+    rule_holds = bool(n_on_incongruent == 0 and n_over_suppress_violations == 0)
+    decided = vd.decide(bool(complete and rule_holds))
     return {"probe": "affect_marker_settle_congruence", "seeds": list(seeds), "n_total": n_total,
+            "rule_holds": rule_holds, "status": decided["status"], "go": bool(decided["go"]),
+            "preconditions": decided["preconditions"], "incomplete": incomplete,
+            "n_off_leads": n_off_leads, "n_on_leads_after_policy": n_on_leads_after_policy,
+            "rule": "holds iff, over all 6 verification seeds with every turn present and error-free, the policy "
+                    "leaves 0 incongruent turns AND never changes an already-congruent lead. n_on_leads_after_policy "
+                    "is REPORTED: how many markers still reach the reply once the rule is applied.",
             "n_errors": n_errors, "n_off_incongruent": n_off_incongruent, "n_on_incongruent": n_on_incongruent,
             "off_incongruent_rate": off_rate, "on_incongruent_rate": on_rate,
             "off_agreement_rate": (1.0 - off_rate) if off_rate is not None else None,
@@ -290,6 +341,52 @@ def _selftest_policy() -> bool:
     got8 = scored["a"]["no_over_suppression_ok"] is False
     ok = ok and got8
     print("  tampered over-suppression is CAUGHT by no_over_suppression_ok ->", "ok" if got8 else "FAIL")
+    # (9) FAILING DIRECTION (2026-09-24 silent-skip fix): a score missing seeds -- or missing a turn on one seed --
+    # must read UNDEFINED, never "rule holds" GO, even when every turn it DID see is clean.
+    labs = ("t1", "t2")
+    clean = {"t1": _r(lead="Gladly! ", abstained=True), "t2": _r(lead="", abstained=True)}
+    three = {s: clean for s in (42, 43, 44)}
+    r9 = score_all(three, seeds=(42, 43, 44), expected_turns=labs)
+    six_missing_turn = {s: clean for s in VERIFY_SEEDS}
+    six_missing_turn[101] = {"t1": clean["t1"]}
+    r9b = score_all(six_missing_turn, seeds=VERIFY_SEEDS, expected_turns=labs)
+    got9 = (r9["status"] == "UNDEFINED" and not r9["go"] and r9b["status"] == "UNDEFINED" and not r9b["go"])
+    ok = ok and got9
+    print("  missing seeds / a missing turn -> UNDEFINED (got %s, %s) ->" % (r9["status"], r9b["status"]),
+          "ok" if got9 else "FAIL")
+    # (10) complete 6-seed set, policy removes every incongruence, nothing over-suppressed -> the rule holds (GO);
+    # n_on_leads_after_policy counts the congruent markers that still reach the reply (here 0: all abstained).
+    r10 = score_all({s: clean for s in VERIFY_SEEDS}, seeds=VERIFY_SEEDS, expected_turns=labs)
+    got10 = (r10["go"] and r10["rule_holds"] and r10["n_off_incongruent"] == 6 and r10["n_on_leads_after_policy"] == 0)
+    ok = ok and got10
+    print("  complete 6-seed set, all incongruence removed -> rule holds GO=%s ->" % r10["go"], "ok" if got10 else "FAIL")
+    # (11) SURFACE: a lead that sits AFTER a prepended clause must leave the reply TEXT, not just the field; and a
+    # policy that only blanks the field (the pre-fix behaviour) must be CAUGHT by the surface re-check.
+    emb = {"answer": "That's thrilling for This -- Gladly! I don't know about that.", "abstained": True,
+           "affect_drives": {"lead": "Gladly! "}, "affect": {"valence_sign": "+"}}
+    on11, _ = apply_policy(emb, enabled=True)
+    got11a = "Gladly!" not in on11["answer"] and score_turns({"x": emb})["x"]["on_recheck_incongruent"] is False
+    # run score_turns against the PRE-FIX policy (blank the field, prefix-only text strip) swapped in for real
+    real_policy = globals()["apply_policy"]
+
+    def _prefix_only_policy(resp, *, enabled=None):
+        d = diagnose(resp)
+        if not congruence_enabled(enabled) or not d["incongruent"]:
+            return dict(resp), d
+        o = dict(resp)
+        ans, ld = str(o.get("answer", "") or ""), d["lead"]
+        o["answer"] = ans[len(ld):] if ld and ans.startswith(ld) else ans
+        o["affect_drives"] = dict(o.get("affect_drives") or {}, lead="")
+        return o, d
+    globals()["apply_policy"] = _prefix_only_policy
+    try:
+        row_bad = score_turns({"x": emb})["x"]
+    finally:
+        globals()["apply_policy"] = real_policy
+    got11b = row_bad["on_recheck_incongruent"] is True and row_bad["on_surface_residual"] is True
+    ok = ok and got11a and got11b
+    print("  embedded lead removed from the reply text; field-only suppression caught by the surface re-check ->",
+          "ok" if (got11a and got11b) else "FAIL")
     return ok
 
 
@@ -320,7 +417,7 @@ def main():
             turns = run_seed(s, bool(a.settle), a.out_dir)
             per_seed[s] = turns
             print("  s%d settle=%d -> %s" % (s, a.settle, "OK" if turns else "FAILED"), flush=True)
-        rec = score_all(per_seed, seeds)
+        rec = score_all(per_seed, seeds, expected_turns=RUN_TURN_LABELS)
         out = a.out or os.path.join(a.out_dir, "verdict.json")
         os.makedirs(os.path.dirname(out) or ".", exist_ok=True)
         with open(out, "w") as f:
@@ -339,16 +436,18 @@ def main():
                 per_seed[s] = rec.get("turns", {})
             else:
                 per_seed[s] = {}
-        rec = score_all(per_seed, seeds)
+        from research.runners._affect_marker_settle_multiturn_derisk import MT_LABELS
+        rec = score_all(per_seed, seeds, expected_turns=MT_LABELS)
         out = a.out or os.path.join("research/findings/raw/_affect_marker_settle_congruence",
                                     "multiturn_%s.json" % a.arm)
         os.makedirs(os.path.dirname(out) or ".", exist_ok=True)
         with open(out, "w") as f:
             json.dump(rec, f, indent=1, default=str)
-        print("OFF incongruent %d/%d (%s)  ON incongruent %d/%d (%s)  over_suppression_clean=%s -> %s"
+        print("OFF incongruent %d/%d (%s)  ON incongruent %d/%d (%s)  over_suppression_clean=%s  markers reaching "
+              "the reply OFF=%d ON=%d  RULE status=%s -> %s"
               % (rec["n_off_incongruent"], rec["n_total"] - rec["n_errors"], rec["off_incongruent_rate"],
                  rec["n_on_incongruent"], rec["n_total"] - rec["n_errors"], rec["on_incongruent_rate"],
-                 rec["over_suppression_clean"], out))
+                 rec["over_suppression_clean"], rec["n_off_leads"], rec["n_on_leads_after_policy"], rec["status"], out))
         return
     ap.print_help()
 
