@@ -6554,15 +6554,32 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
         # can wrap the un-annotated composed answer instead of double-wrapping an already-framed one. None on
         # every branch that never reaches the chain-route arm -- byte-identical unless that new flag is on.
         _chain_raw_answer = None
+        # TRANSITIVE-CHASE ROUTE (A6, 2026-09-24, default-OFF BRAIN_TRANSITIVE_CHAT): checked BEFORE the
+        # compositional chain route / chat.gate for the SAME reason that route already is -- see
+        # research/findings/2026-09-24-reasoning-transitive-chat-PREREGISTRATION.md. `resolve_transitive_query`
+        # returns None when the flag is off or "does X R Y" doesn't match (byte-identical fall-through), or
+        # (True, svo_or_None) when it DID match -- svo_or_None=None is an honest abstain, NOT "try the ordinary
+        # path" (the generic parser's documented 3rd-content-token truncation would silently answer a different
+        # question). See webapp/reasoning_transitive_chat.py.
+        _transitive_matched = False
         try:
-            from research.runners.compositional_chain_route import resolve_compositional_chain
-            gate_svo = resolve_compositional_chain(chat.inner.composer, msg)
-            _is_chain_route = gate_svo is not None
+            from webapp.reasoning_transitive_chat import resolve_transitive_query
+            _t_result = resolve_transitive_query(chat, msg)
         except Exception:
-            gate_svo = None
-            _is_chain_route = False
-        if gate_svo is None:
-            gate_svo = chat.gate(msg)
+            _t_result = None
+        if _t_result is not None:
+            _transitive_matched, gate_svo = _t_result
+            _is_chain_route = gate_svo is not None and hasattr(gate_svo, "derived_from")
+        if not _transitive_matched:
+            try:
+                from research.runners.compositional_chain_route import resolve_compositional_chain
+                gate_svo = resolve_compositional_chain(chat.inner.composer, msg)
+                _is_chain_route = gate_svo is not None
+            except Exception:
+                gate_svo = None
+                _is_chain_route = False
+            if gate_svo is None:
+                gate_svo = chat.gate(msg)
         if gate_svo is None:
             answer, abstained, verified = "I don't know about that.", True, False
         else:
