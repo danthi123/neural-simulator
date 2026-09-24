@@ -15,6 +15,22 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-19 (RESUME HERE) — NEW ARC: PERMANENT LLM MOUTH + LOAD-BEARING METRIC
 
+**🟢 LIVE NOW — 2026-09-24 ~12:15 local — MIDNIGHT PLAN IN EXECUTION (owner asked for concrete steps to an integrated,
+load-bearing, one-substrate brain by midnight; plan = `research/coordination/midnight_plan_2026-09-24.json`, 38 steps
+S00-S32 + G1-G6, feasibility- and rules-critiqued by workflow wf_f11d710d-4a5).**
+- **Build lanes running** (workflow `wlrxugj4x`, 16 worktree agents + reviews): G1 prod-chat phase timing, S05 swap-drives
+  finding, S06 hygiene, AG-REG lbf_rows registry, AG-FLIP SETTLE prep, A1 live-organ rows, A2 learning rows, A11 proposed
+  lesions, A5 false-belief, A6 transitive reasoning, A10 reward/value afferent, A3 open-ended gated turn, A4 xedge-in-wave3
+  (+S02 probe), A7 warm server + latency probe, A9 gap#4 transport ceiling, A8 D6 chat wire. Merge only on SOUND review.
+- **Owner forks (defaults at 13:15 if unanswered):** (a) SETTLE default-ON -> default OFF, opt-in row; (b) Qwen off-KB
+  content for open-ended -> default opt-in only.
+- **Compute:** AWS pool1 + pool2 (r7i.4xlarge each; budget day is UTC, ~$45 projected by 20:00 EDT), pool41/42, local, GPU
+  (G1/G2-G6 per plan). Next orchestrator steps: S21 aggregate flip battery (3 last shards on pool2, task bsupz8b3u) ->
+  S22-S25 batch-1 merge as M1 -> S24 battery B2a on M1 -> S26 rolling integration -> S27/S28 B2b -> S29 flips -> S31/S32.
+- **Landed this morning:** perception readout-port homeostasis band 5 PORT-REPAIRED (6/6 gates; capability 3/6), affect
+  learned vocabulary merged (seed 42 G3 fails -> 6-seed can't be GO), GNW fork instrument GO, wm-binding NO-GO, curiosity v4
+  NO-GO 3/6, language/perception/GNW/curiosity/wm/affect branches merged.
+
 **🟢 LIVE NOW — 2026-09-24 ~09:30 local (harvest these; do NOT double-launch):**
 - **⚠️ Overnight stall 02:15-08:45** (turn ended with the GPU queue empty; completions undelivered until the owner's
   message; FAILURE_LOG row). Before ending any turn: stock every lane with genuine multi-hour work.
