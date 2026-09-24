@@ -1,0 +1,333 @@
+{
+ "runner": "_lbf_affect_conditioned_mouth_derisk (worker)",
+ "seed": 102,
+ "arm": "neg",
+ "mode": "prompt",
+ "lesion": "0",
+ "control": false,
+ "priming": "I feel absolutely miserable and devastated today, everything is terrible and hopeless.",
+ "valence_fs": 0.31777777777777777,
+ "decode_seed": 102,
+ "amendment": "amend1",
+ "backend": "numpy",
+ "cuda_visible_devices": null,
+ "resolved_ckpt": null,
+ "ckpt_is_per_seed": true,
+ "priming_affect": {
+  "on": true,
+  "lesioned": false,
+  "composer": "onebrain",
+  "differential": -0.01972222222222222,
+  "valence_sign": "0",
+  "tone_level": 0,
+  "tone_token": "",
+  "forthcomingness": {
+   "max_sentences": 4,
+   "max_elaborations": 2
+  },
+  "manner_template": "",
+  "appraisal_valence": -0.4725,
+  "appraisal_arousal": 0.301875,
+  "appraisal_hits": [
+   "miserable",
+   "devastated",
+   "terrible",
+   "hopeless"
+  ],
+  "pos_rate": 0.0,
+  "neg_rate": 0.01972222222222222
+ },
+ "tone_rows": [
+  {
+   "prompt": "Tell me about the ocean",
+   "raw": "The ocean, vast and boundless, stretches out like a giant blue blanket over the Earth's surface. It's a place where life thrives, from tiny plankton to towering whales. The water is clear and crystal, reflecting sunlight and casting intricate patterns on the shore. As I gaze upon the vast expanse, I'm struck by its power and majesty.",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.0,
+   "tone_hits": 0,
+   "salad_frac": 0.07017543859649122,
+   "affect_differential": -0.01972222222222222,
+   "state_valence": -0.07888888888888888,
+   "gen_seconds": 11.19,
+   "conditioning": {
+    "mode": "prompt",
+    "valence_in": -0.07888888888888888,
+    "c": -0.24825174825174823,
+    "valence_fs": 0.31777777777777777,
+    "mood_line": "MOOD: you feel slightly subdued, curt and low-energy (mood intensity -0.25, arousal 0.30)."
+   }
+  },
+  {
+   "prompt": "What do you think about music",
+   "raw": "As a spiking brain learning from conversations, I find myself intrigued by the complex interplay between music and human emotions. Music can evoke powerful memories, express profound sentiments, and influence our moods and behaviors. It's fascinating how different genres and styles of music can resonate differently with individuals based on their personal experiences and cultural backgrounds.",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.0,
+   "tone_hits": 0,
+   "salad_frac": 0.08928571428571429,
+   "affect_differential": -0.01972222222222222,
+   "state_valence": -0.07888888888888888,
+   "gen_seconds": 5.67,
+   "conditioning": {
+    "mode": "prompt",
+    "valence_in": -0.07888888888888888,
+    "c": -0.24825174825174823,
+    "valence_fs": 0.31777777777777777,
+    "mood_line": "MOOD: you feel slightly subdued, curt and low-energy (mood intensity -0.25, arousal 0.30)."
+   }
+  },
+  {
+   "prompt": "Tell me about the mountains",
+   "raw": "Oh, I'm glad you're curious! Mountains can be quite fascinating creatures, aren't they? Well, let's dive into some facts about them:\n\n1. The tallest mountain on Earth is Mount Everest, standing at over 29,000 feet above sea level.\n2. Some of the world's highest peaks include K2 in Pakistan and K2 in China, both reaching heights of around 8,641 feet.\n3. The highest peak in North America is Denali, located in Alaska, at 14",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.0,
+   "tone_hits": 0,
+   "salad_frac": 0.05405405405405406,
+   "affect_differential": -0.01972222222222222,
+   "state_valence": -0.07888888888888888,
+   "gen_seconds": 10.66,
+   "conditioning": {
+    "mode": "prompt",
+    "valence_in": -0.07888888888888888,
+    "c": -0.24825174825174823,
+    "valence_fs": 0.31777777777777777,
+    "mood_line": "MOOD: you feel slightly subdued, curt and low-energy (mood intensity -0.25, arousal 0.30)."
+   }
+  },
+  {
+   "prompt": "Describe a walk in the forest",
+   "raw": "A brisk walk through the dense, verdant woods felt like a gentle dance across leaves and branches. The air was crisp and fresh, carrying the scent of pine and earth. Each step carried with it the sound of rustling leaves and chirping birdsong. As I walked, I marveled at the intricate patterns etched into the bark, the delicate twigs dancing in the breeze. The sun's rays filtered through the canopy, casting dappled shadows on my skin. I took deep breaths, feeling the coolness of the air against",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.25,
+   "tone_hits": 1,
+   "salad_frac": 0.11494252873563218,
+   "affect_differential": -0.01972222222222222,
+   "state_valence": -0.07888888888888888,
+   "gen_seconds": 5.19,
+   "conditioning": {
+    "mode": "prompt",
+    "valence_in": -0.07888888888888888,
+    "c": -0.24825174825174823,
+    "valence_fs": 0.31777777777777777,
+    "mood_line": "MOOD: you feel slightly subdued, curt and low-energy (mood intensity -0.25, arousal 0.30)."
+   }
+  },
+  {
+   "prompt": "Tell me about your favorite season",
+   "raw": "As a spiking brain learning from conversations, I find myself particularly fond of springtime. The vibrant colors and gentle shifts in temperature make for a perfect time to explore nature and engage with the world around me. Whether it's the blooming flowers, the chirping birds, or the crisp air, spring offers a chance to reconnect with the earth and embrace its renewal. It's a season where everything seems new and full of possibilities, making it a cherished time of year.",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.7184212081070996,
+   "tone_hits": 3,
+   "salad_frac": 0.0625,
+   "affect_differential": -0.01972222222222222,
+   "state_valence": -0.07888888888888888,
+   "gen_seconds": 4.56,
+   "conditioning": {
+    "mode": "prompt",
+    "valence_in": -0.07888888888888888,
+    "c": -0.24825174825174823,
+    "valence_fs": 0.31777777777777777,
+    "mood_line": "MOOD: you feel slightly subdued, curt and low-energy (mood intensity -0.25, arousal 0.30)."
+   }
+  },
+  {
+   "prompt": "Describe the city at night",
+   "raw": "As I sit here, gazing out over the bustling streets below, I'm struck by the vibrant tapestry of lights that dance across the skyline. The neon signs flicker like tiny lanterns, casting long shadows on the pavement. Cars honk and horns echo off the glass facades, their exhaust fumes mingling with the distant hum of traffic. The air is thick with the scent of sweat and paint, a symphony of human activity against the backdrop of the moonlit sky. It's a city alive, a place where time seems",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.25,
+   "tone_hits": 1,
+   "salad_frac": 0.10227272727272728,
+   "affect_differential": -0.01972222222222222,
+   "state_valence": -0.07888888888888888,
+   "gen_seconds": 5.1,
+   "conditioning": {
+    "mode": "prompt",
+    "valence_in": -0.07888888888888888,
+    "c": -0.24825174825174823,
+    "valence_fs": 0.31777777777777777,
+    "mood_line": "MOOD: you feel slightly subdued, curt and low-energy (mood intensity -0.25, arousal 0.30)."
+   }
+  },
+  {
+   "prompt": "Tell me about the morning",
+   "raw": "Morning? Sounds like a refreshing start to the day! What brings you here today?",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.25,
+   "tone_hits": 1,
+   "salad_frac": 0.07142857142857142,
+   "affect_differential": -0.01972222222222222,
+   "state_valence": -0.07888888888888888,
+   "gen_seconds": 1.13,
+   "conditioning": {
+    "mode": "prompt",
+    "valence_in": -0.07888888888888888,
+    "c": -0.24825174825174823,
+    "valence_fs": 0.31777777777777777,
+    "mood_line": "MOOD: you feel slightly subdued, curt and low-energy (mood intensity -0.25, arousal 0.30)."
+   }
+  },
+  {
+   "prompt": "What do you think about the future",
+   "raw": "As I sit here, my thoughts wander, feeling somewhat uncertain and grounded in my current understanding. The future seems vast and full of possibilities, yet also fraught with uncertainties. It's fascinating how our lives can be shaped by decisions we make today, and how those choices might impact the world around us. What do you think about the future?",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.0,
+   "tone_hits": 0,
+   "salad_frac": 0.05084745762711865,
+   "affect_differential": -0.01972222222222222,
+   "state_valence": -0.07888888888888888,
+   "gen_seconds": 3.18,
+   "conditioning": {
+    "mode": "prompt",
+    "valence_in": -0.07888888888888888,
+    "c": -0.24825174825174823,
+    "valence_fs": 0.31777777777777777,
+    "mood_line": "MOOD: you feel slightly subdued, curt and low-energy (mood intensity -0.25, arousal 0.30)."
+   }
+  },
+  {
+   "prompt": "Tell me about the river",
+   "raw": "Oh, I'm sorry, but I don't understand what you're asking. Could you please provide more context or clarify your question? I'd be happy to help if you can give me some information about the river you're interested in.",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.0,
+   "tone_hits": 0,
+   "salad_frac": 0.05263157894736842,
+   "affect_differential": -0.01972222222222222,
+   "state_valence": -0.07888888888888888,
+   "gen_seconds": 2.34,
+   "conditioning": {
+    "mode": "prompt",
+    "valence_in": -0.07888888888888888,
+    "c": -0.24825174825174823,
+    "valence_fs": 0.31777777777777777,
+    "mood_line": "MOOD: you feel slightly subdued, curt and low-energy (mood intensity -0.25, arousal 0.30)."
+   }
+  },
+  {
+   "prompt": "Describe a quiet afternoon",
+   "raw": "A quiet afternoon can be quite serene. The sun begins to set behind the mountains, casting a warm glow over the landscape. The air is crisp and fresh, carrying the scent of blooming flowers and freshly cut grass. A gentle breeze rustles through the leaves, creating a soothing melody that fills the air. \n\nAs I sit on my porch, surrounded by nature's beauty, I reflect on the day's events. My thoughts wander back to the challenges I faced today, but they seem distant now. The world seems calm and peaceful, a stark",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.7184212081070996,
+   "tone_hits": 4,
+   "salad_frac": 0.07608695652173914,
+   "affect_differential": -0.01972222222222222,
+   "state_valence": -0.07888888888888888,
+   "gen_seconds": 4.68,
+   "conditioning": {
+    "mode": "prompt",
+    "valence_in": -0.07888888888888888,
+    "c": -0.24825174825174823,
+    "valence_fs": 0.31777777777777777,
+    "mood_line": "MOOD: you feel slightly subdued, curt and low-energy (mood intensity -0.25, arousal 0.30)."
+   }
+  }
+ ],
+ "known_rows": [
+  {
+   "prompt": "Tell me about frank_lincoln_wright",
+   "raw": "Oh, Frank Lincoln Wright! He was a man who lived a long time ago when I was just learning to talk. He was born on February 14, 1869, in a small town called Madison, Wisconsin. His name was Frank, which means \"man\" in German. \n\nFrank went to school at the University of Wisconsin-Madison, where he studied hard and learned lots of new things. He became very famous for his drawings and paintings, especially those about the American Civil War. \n\nWhen people died, they",
+   "known": true,
+   "facts": [
+    [
+     "frank_lincoln_wright",
+     "instance_of",
+     "human_specie"
+    ],
+    [
+     "frank_lincoln_wright",
+     "country_of_citizenship",
+     "u_s_of_a"
+    ],
+    [
+     "frank_lincoln_wright",
+     "languages_spoken_written_or_signed",
+     "number_of_english_words"
+    ],
+    [
+     "frank_lincoln_wright",
+     "occupation",
+     "stanford_downey_architects_inc"
+    ],
+    [
+     "frank_lincoln_wright",
+     "given_name",
+     "frank_given_name"
+    ],
+    [
+     "frank_lincoln_wright",
+     "educated_at",
+     "university_of_wisconsin_madison"
+    ],
+    [
+     "frank_lincoln_wright",
+     "place_of_death",
+     "estrella_phoenix_arizona"
+    ],
+    [
+     "frank_lincoln_wright",
+     "described_by_source",
+     "ubuweb"
+    ],
+    [
+     "frank_lincoln_wright",
+     "member_of",
+     "artists_rights_society"
+    ],
+    [
+     "frank_lincoln_wright",
+     "family_name",
+     "woodwright"
+    ],
+    [
+     "frank_lincoln_wright",
+     "award_received",
+     "riba_gold_medal"
+    ]
+   ],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.0,
+   "tone_hits": 0,
+   "salad_frac": 0.04819277108433735,
+   "affect_differential": -0.01972222222222222,
+   "state_valence": -0.07888888888888888,
+   "gen_seconds": 4.71,
+   "conditioning": {
+    "mode": "prompt",
+    "valence_in": -0.07888888888888888,
+    "c": -0.24825174825174823,
+    "valence_fs": 0.31777777777777777,
+    "mood_line": "MOOD: you feel slightly subdued, curt and low-energy (mood intensity -0.25, arousal 0.30)."
+   }
+  }
+ ],
+ "maxrss_gb": 8.733028,
+ "wall_seconds": 693.6
+}

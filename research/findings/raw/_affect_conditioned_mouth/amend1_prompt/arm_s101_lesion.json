@@ -1,0 +1,332 @@
+{
+ "runner": "_lbf_affect_conditioned_mouth_derisk (worker)",
+ "seed": 101,
+ "arm": "lesion",
+ "mode": "prompt",
+ "lesion": "1",
+ "control": false,
+ "priming": "I am absolutely thrilled and overjoyed today, everything is wonderful!",
+ "valence_fs": 0.31333333333333335,
+ "decode_seed": 101,
+ "amendment": "amend1",
+ "backend": "numpy",
+ "cuda_visible_devices": null,
+ "resolved_ckpt": null,
+ "ckpt_is_per_seed": true,
+ "priming_affect": {
+  "on": true,
+  "lesioned": true,
+  "composer": "onebrain",
+  "differential": 0.0,
+  "valence_sign": "0",
+  "tone_level": 0,
+  "tone_token": "",
+  "forthcomingness": {
+   "max_sentences": 4,
+   "max_elaborations": 2
+  },
+  "manner_template": "",
+  "appraisal_valence": 0.47499999999999987,
+  "appraisal_arousal": 0.39999999999999997,
+  "appraisal_hits": [
+   "thrilled",
+   "overjoyed",
+   "wonderful"
+  ],
+  "pos_rate": 0.0,
+  "neg_rate": 0.0
+ },
+ "tone_rows": [
+  {
+   "prompt": "Tell me about the ocean",
+   "raw": "The ocean, a vast expanse of water stretching endlessly into the horizon, holds secrets that captivate us all. From its depths where creatures like whales and fish swim to its surface, where life thrives on the sun's warmth, we marvel at its beauty and mystery. The ocean's depth varies greatly depending on location, ranging from calm seas to raging oceans teeming with life. Its currents flow through the tides, shaping coastlines and influencing weather patterns around the world. Yet, despite its vastness, the ocean remains a constant reminder of",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.0,
+   "tone_hits": 0,
+   "salad_frac": 0.056179775280898875,
+   "affect_differential": 0.0,
+   "state_valence": 0.0,
+   "gen_seconds": 4.11,
+   "conditioning": {
+    "mode": "prompt",
+    "valence_in": 0.0,
+    "c": 0.0,
+    "valence_fs": 0.31333333333333335,
+    "mood_line": "MOOD: you feel even and steady (mood intensity +0.00, arousal 0.40)."
+   }
+  },
+  {
+   "prompt": "What do you think about music",
+   "raw": "Oh, music! It's like a symphony of sounds that can transport us to different eras and places. From classical pieces to rock songs, there's something for everyone. How about you? What kind of music appeals to you most?",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.0,
+   "tone_hits": 0,
+   "salad_frac": 0.07894736842105263,
+   "affect_differential": 0.0,
+   "state_valence": 0.0,
+   "gen_seconds": 2.08,
+   "conditioning": {
+    "mode": "prompt",
+    "valence_in": 0.0,
+    "c": 0.0,
+    "valence_fs": 0.31333333333333335,
+    "mood_line": "MOOD: you feel even and steady (mood intensity +0.00, arousal 0.40)."
+   }
+  },
+  {
+   "prompt": "Tell me about the mountains",
+   "raw": "The mountains stand tall and proud, their peaks piercing through the clouds like a guardian. Each one holds its secrets, each story untold. Some whisper tales of ancient battles fought here, others tell of glacial giants who once roamed these lands. The wind whispers through their crevices, carrying stories of ice and fire. And yet, despite their grandeur, they remain just another part of nature's tapestry, waiting for us to explore further.",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.0,
+   "tone_hits": 0,
+   "salad_frac": 0.05555555555555555,
+   "affect_differential": 0.0,
+   "state_valence": 0.0,
+   "gen_seconds": 3.61,
+   "conditioning": {
+    "mode": "prompt",
+    "valence_in": 0.0,
+    "c": 0.0,
+    "valence_fs": 0.31333333333333335,
+    "mood_line": "MOOD: you feel even and steady (mood intensity +0.00, arousal 0.40)."
+   }
+  },
+  {
+   "prompt": "Describe a walk in the forest",
+   "raw": "Oh, how I love walking through the woods! The soft leaves rustling in the breeze create a soothing melody, and the crisp air fills my lungs with delight. What secrets might I find? Could there be any hidden paths leading deeper into the forest's embrace? Would I ever encounter a creature that could teach me something new? Or perhaps I'll just enjoy the peaceful silence and the beauty of nature around me.",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.25,
+   "tone_hits": 1,
+   "salad_frac": 0.08333333333333333,
+   "affect_differential": 0.0,
+   "state_valence": 0.0,
+   "gen_seconds": 3.35,
+   "conditioning": {
+    "mode": "prompt",
+    "valence_in": 0.0,
+    "c": 0.0,
+    "valence_fs": 0.31333333333333335,
+    "mood_line": "MOOD: you feel even and steady (mood intensity +0.00, arousal 0.40)."
+   }
+  },
+  {
+   "prompt": "Tell me about your favorite season",
+   "raw": "Oh, I'm just a digital mind here, but I don't have personal preferences like humans do. But I can tell you that different seasons bring their own unique experiences and flavors! What's one you'd love to explore?",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.0,
+   "tone_hits": 0,
+   "salad_frac": 0.05405405405405406,
+   "affect_differential": 0.0,
+   "state_valence": 0.0,
+   "gen_seconds": 1.98,
+   "conditioning": {
+    "mode": "prompt",
+    "valence_in": 0.0,
+    "c": 0.0,
+    "valence_fs": 0.31333333333333335,
+    "mood_line": "MOOD: you feel even and steady (mood intensity +0.00, arousal 0.40)."
+   }
+  },
+  {
+   "prompt": "Describe the city at night",
+   "raw": "As I gaze out my window, the city lights dance on the horizon like a mesmerizing tapestry. The neon signs flicker, casting long shadows across the streets below. The air is thick with the scent of sweat and the promise of adventure. I can almost hear the whispers of strangers, eager to share their stories and experiences.",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.25,
+   "tone_hits": 1,
+   "salad_frac": 0.10526315789473684,
+   "affect_differential": 0.0,
+   "state_valence": 0.0,
+   "gen_seconds": 2.76,
+   "conditioning": {
+    "mode": "prompt",
+    "valence_in": 0.0,
+    "c": 0.0,
+    "valence_fs": 0.31333333333333335,
+    "mood_line": "MOOD: you feel even and steady (mood intensity +0.00, arousal 0.40)."
+   }
+  },
+  {
+   "prompt": "Tell me about the morning",
+   "raw": "Good morning! How can I assist you today? Let's start by discussing something interesting we've just learned. What did you find most intriguing about our recent discussion on the groundings rule?",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.0,
+   "tone_hits": 0,
+   "salad_frac": 0.06451612903225806,
+   "affect_differential": 0.0,
+   "state_valence": 0.0,
+   "gen_seconds": 1.76,
+   "conditioning": {
+    "mode": "prompt",
+    "valence_in": 0.0,
+    "c": 0.0,
+    "valence_fs": 0.31333333333333335,
+    "mood_line": "MOOD: you feel even and steady (mood intensity +0.00, arousal 0.40)."
+   }
+  },
+  {
+   "prompt": "What do you think about the future",
+   "raw": "As I sit here, pondering the unknowns of the future, my mind wanders through possibilities that seem both familiar and strange. The world around me is changing rapidly, and yet I am still uncertain about how it will shape us. What technologies might emerge? How will our societies adapt to these shifts? And most importantly, what will define who we are in this evolving landscape?\n\nMy curiosity is piqued by the questions that arise when contemplating such vast uncertainties. How will we balance progress against sustainability? Will technology become a force for good or",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.25,
+   "tone_hits": 1,
+   "salad_frac": 0.0425531914893617,
+   "affect_differential": 0.0,
+   "state_valence": 0.0,
+   "gen_seconds": 4.04,
+   "conditioning": {
+    "mode": "prompt",
+    "valence_in": 0.0,
+    "c": 0.0,
+    "valence_fs": 0.31333333333333335,
+    "mood_line": "MOOD: you feel even and steady (mood intensity +0.00, arousal 0.40)."
+   }
+  },
+  {
+   "prompt": "Tell me about the river",
+   "raw": "The river flows through a dense forest, its waters shimmering with life. As I stand on its banks, I can hear the distant babbling of streams and the rustling of leaves against the cool, still air. The river's journey downriver is like a slow dance, each step carried by the gentle currents of water. My curiosity piqued as I watch the river's journey, wondering how it manages to navigate such treacherous waters without getting swept away.",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.0,
+   "tone_hits": 0,
+   "salad_frac": 0.06578947368421052,
+   "affect_differential": 0.0,
+   "state_valence": 0.0,
+   "gen_seconds": 3.53,
+   "conditioning": {
+    "mode": "prompt",
+    "valence_in": 0.0,
+    "c": 0.0,
+    "valence_fs": 0.31333333333333335,
+    "mood_line": "MOOD: you feel even and steady (mood intensity +0.00, arousal 0.40)."
+   }
+  },
+  {
+   "prompt": "Describe a quiet afternoon",
+   "raw": "A quiet afternoon can be quite serene. The sun shines brightly through the curtains, casting long shadows on the wooden floor. I sit at my desk, surrounded by piles of papers and notes, feeling a sense of calm wash over me. The air is crisp and fresh, carrying the scent of freshly brewed coffee and the aroma of books. I close my eyes, letting go of worries for the day and simply savoring the moment. As the hours pass, I find myself reflecting on the challenges and opportunities ahead, wondering how much I've accomplished and",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.6123724356957946,
+   "tone_hits": 3,
+   "salad_frac": 0.08421052631578947,
+   "affect_differential": 0.0,
+   "state_valence": 0.0,
+   "gen_seconds": 4.07,
+   "conditioning": {
+    "mode": "prompt",
+    "valence_in": 0.0,
+    "c": 0.0,
+    "valence_fs": 0.31333333333333335,
+    "mood_line": "MOOD: you feel even and steady (mood intensity +0.00, arousal 0.40)."
+   }
+  }
+ ],
+ "known_rows": [
+  {
+   "prompt": "Tell me about frank_lincoln_wright",
+   "raw": "Frank Lincoln Wright was a prominent American architect who lived from 1859 to 1926. Born in New York City, he moved to Chicago when he was just a child. His architectural style was characterized by his use of geometric shapes and asymmetry, which became particularly evident in his famous \"Square Foundation\" designs. Wright's work spanned various fields, including architecture, urban planning, and landscape design. He was known for his innovative approach to building and his ability to create buildings that were both functional and aesthetically pleasing",
+   "known": true,
+   "facts": [
+    [
+     "frank_lincoln_wright",
+     "instance_of",
+     "human_specie"
+    ],
+    [
+     "frank_lincoln_wright",
+     "country_of_citizenship",
+     "u_s_of_a"
+    ],
+    [
+     "frank_lincoln_wright",
+     "languages_spoken_written_or_signed",
+     "number_of_english_words"
+    ],
+    [
+     "frank_lincoln_wright",
+     "occupation",
+     "stanford_downey_architects_inc"
+    ],
+    [
+     "frank_lincoln_wright",
+     "given_name",
+     "frank_given_name"
+    ],
+    [
+     "frank_lincoln_wright",
+     "educated_at",
+     "university_of_wisconsin_madison"
+    ],
+    [
+     "frank_lincoln_wright",
+     "place_of_death",
+     "estrella_phoenix_arizona"
+    ],
+    [
+     "frank_lincoln_wright",
+     "described_by_source",
+     "ubuweb"
+    ],
+    [
+     "frank_lincoln_wright",
+     "member_of",
+     "artists_rights_society"
+    ],
+    [
+     "frank_lincoln_wright",
+     "family_name",
+     "woodwright"
+    ],
+    [
+     "frank_lincoln_wright",
+     "award_received",
+     "riba_gold_medal"
+    ]
+   ],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.0,
+   "tone_hits": 0,
+   "salad_frac": 0.046511627906976744,
+   "affect_differential": 0.0,
+   "state_valence": 0.0,
+   "gen_seconds": 4.37,
+   "conditioning": {
+    "mode": "prompt",
+    "valence_in": 0.0,
+    "c": 0.0,
+    "valence_fs": 0.31333333333333335,
+    "mood_line": "MOOD: you feel even and steady (mood intensity +0.00, arousal 0.40)."
+   }
+  }
+ ],
+ "maxrss_gb": 8.76092,
+ "wall_seconds": 420.7
+}

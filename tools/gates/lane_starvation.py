@@ -119,6 +119,32 @@ def _work_lines():
     return lines
 
 
+LANE_BUILD_MAX_H = 6
+_LANE_BUILDS = os.path.join(_ROOT, "research", "coordination", "lane_builds.jsonl")
+
+
+def _build_served(now_ts, path=None):
+    """Lanes whose next work is a BUILD in flight (2026-09-24). Every unserved lane's genuine next job sat inside an
+    agent build that could not commit while the lane read unserved -- a deadlock (waiver budget exhausted, no honest
+    job to queue). A registration names the lane, the workflow/task id and the branch, is committed (auditable), and
+    expires after LANE_BUILD_MAX_H hours; malformed or expired entries are ignored."""
+    import json
+    served = set()
+    try:
+        rows = open(path or _LANE_BUILDS, errors="ignore").read().splitlines()
+    except OSError:
+        return served
+    for ln in rows:
+        try:
+            e = json.loads(ln)
+        except ValueError:
+            continue
+        if (e.get("lane") in CPU_LANES and e.get("workflow") and e.get("branch")
+                and 0 <= now_ts - float(e.get("started", -1)) <= LANE_BUILD_MAX_H * 3600):
+            served.add(e["lane"])
+    return served
+
+
 def _waiver_file():
     return os.path.join(_queue_dir(), ".lane_waiver")
 
@@ -175,7 +201,7 @@ def check(paths=None):
     # commit) reads empty -> falls through to the corpus scan, unaffected.
     if _is_doc_only(_staged_files()):
         return []
-    idle = sorted(set(CPU_LANES) - _served(_work_lines()))
+    idle = sorted(set(CPU_LANES) - _served(_work_lines()) - _build_served(time.time()))
     if len(idle) < MAX_IDLE_LANES:
         return []
     verdict = wh.evaluate(NAME, _waiver_file(), LANE_WAIVER_MAX_H, now_ts=time.time())
@@ -198,6 +224,17 @@ def selftest():
     # must excuse it. Exercised via the pure `_idle_message` so this selftest never touches the real
     # research/queue/.lane_waiver file (a selftest with disk side effects on every commit is its own failure
     # shape).
+    import json, tempfile
+    lane_a = sorted(CPU_LANES)[0]
+    with tempfile.NamedTemporaryFile("w", suffix=".jsonl", delete=False) as fh:
+        fh.write(json.dumps({"lane": lane_a, "workflow": "wX", "branch": "research/x", "started": 1000.0}) + "\n")
+        fh.write(json.dumps({"lane": lane_a, "workflow": "", "branch": "research/x", "started": 1000.0}) + "\n")
+        reg = fh.name
+    if _build_served(1000.0 + 60, reg) != {lane_a}:
+        bad.append("did NOT count a fresh, well-formed lane-build registration as serving its lane")
+    if _build_served(1000.0 + LANE_BUILD_MAX_H * 3600 + 1, reg):
+        bad.append("FALSE NEGATIVE-PROOF: an EXPIRED lane-build registration still served its lane")
+    os.unlink(reg)
     idle5 = sorted(CPU_LANES)
     rejected = {"active": True, "ok": False, "class": None,
                 "reject_reason": "promise/intent language 'will' detected -- REJECTED"}

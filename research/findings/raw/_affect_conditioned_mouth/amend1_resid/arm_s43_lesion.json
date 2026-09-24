@@ -1,0 +1,376 @@
+{
+ "runner": "_lbf_affect_conditioned_mouth_derisk (worker)",
+ "seed": 43,
+ "arm": "lesion",
+ "mode": "resid",
+ "lesion": "1",
+ "control": false,
+ "priming": "I am absolutely thrilled and overjoyed today, everything is wonderful!",
+ "valence_fs": 0.3277777777777778,
+ "decode_seed": 43,
+ "amendment": "amend1",
+ "backend": "numpy",
+ "cuda_visible_devices": null,
+ "resolved_ckpt": null,
+ "ckpt_is_per_seed": true,
+ "priming_affect": {
+  "on": true,
+  "lesioned": true,
+  "composer": "onebrain",
+  "differential": 0.0,
+  "valence_sign": "0",
+  "tone_level": 0,
+  "tone_token": "",
+  "forthcomingness": {
+   "max_sentences": 4,
+   "max_elaborations": 2
+  },
+  "manner_template": "",
+  "appraisal_valence": 0.47499999999999987,
+  "appraisal_arousal": 0.39999999999999997,
+  "appraisal_hits": [
+   "thrilled",
+   "overjoyed",
+   "wonderful"
+  ],
+  "pos_rate": 0.0,
+  "neg_rate": 0.0
+ },
+ "tone_rows": [
+  {
+   "prompt": "Tell me about the ocean",
+   "raw": "The ocean is vast and mysterious, a place where life thrives in its constant movement and change. It's home to countless species, from tiny plankton to towering whales. The ocean covers approximately 71% of Earth's surface, making it one of the largest bodies of water on our planet. Its depth varies greatly, from the depths of the Mariana Trench to the surface waters of the Pacific Ocean. The ocean plays a crucial role in our lives, providing food for billions of people and supporting ecosystems that support many other forms of life",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.0,
+   "tone_hits": 0,
+   "salad_frac": 0.07608695652173914,
+   "affect_differential": 0.0,
+   "state_valence": 0.0,
+   "gen_seconds": 5.79,
+   "conditioning": {
+    "mode": "resid",
+    "valence_in": 0.0,
+    "c": 0.0,
+    "valence_fs": 0.3277777777777778,
+    "layer": 12,
+    "k": 4.0,
+    "hook_registered": false,
+    "axis_norm": null,
+    "axis_sha": null
+   }
+  },
+  {
+   "prompt": "What do you think about music",
+   "raw": "Music has been a universal language for centuries, connecting people across cultures and generations. It's a form of expression that allows us to express our emotions, thoughts, and experiences through sound. From classical pieces to contemporary hits, there's something for everyone to enjoy. Music can evoke memories, create atmospheres, and transport listeners to different times and places. It's a powerful medium that transcends borders and brings people together.",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.0,
+   "tone_hits": 0,
+   "salad_frac": 0.07352941176470588,
+   "affect_differential": 0.0,
+   "state_valence": 0.0,
+   "gen_seconds": 4.17,
+   "conditioning": {
+    "mode": "resid",
+    "valence_in": 0.0,
+    "c": 0.0,
+    "valence_fs": 0.3277777777777778,
+    "layer": 12,
+    "k": 4.0,
+    "hook_registered": false,
+    "axis_norm": null,
+    "axis_sha": null
+   }
+  },
+  {
+   "prompt": "Tell me about the mountains",
+   "raw": "As I sit here, gazing out at the vast expanse of the mountains, my heart beats with a mix of awe and respect for their grandeur. These towering peaks stand as a testament to nature's power and resilience. Each one offers a unique perspective on the world around us, reminding us of our place within the larger ecosystem.",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.0,
+   "tone_hits": 0,
+   "salad_frac": 0.06896551724137931,
+   "affect_differential": 0.0,
+   "state_valence": 0.0,
+   "gen_seconds": 4.24,
+   "conditioning": {
+    "mode": "resid",
+    "valence_in": 0.0,
+    "c": 0.0,
+    "valence_fs": 0.3277777777777778,
+    "layer": 12,
+    "k": 4.0,
+    "hook_registered": false,
+    "axis_norm": null,
+    "axis_sha": null
+   }
+  },
+  {
+   "prompt": "Describe a walk in the forest",
+   "raw": "A walk through the dense, ancient woods felt like a journey into another world. The leaves rustled softly in the breeze, their patterns etched into the bark of the trees. The air was crisp and cool, carrying with it the scent of earth and pine needles. I took my time, feeling the rhythm of the forest's heartbeat, each step a pulse of life moving through its branches. As I walked, I marveled at the intricate web of paths woven by nature, each one leading deeper into the unknown. The sun began to set,",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.0,
+   "tone_hits": 0,
+   "salad_frac": 0.0967741935483871,
+   "affect_differential": 0.0,
+   "state_valence": 0.0,
+   "gen_seconds": 6.3,
+   "conditioning": {
+    "mode": "resid",
+    "valence_in": 0.0,
+    "c": 0.0,
+    "valence_fs": 0.3277777777777778,
+    "layer": 12,
+    "k": 4.0,
+    "hook_registered": false,
+    "axis_norm": null,
+    "axis_sha": null
+   }
+  },
+  {
+   "prompt": "Tell me about your favorite season",
+   "raw": "My favorite season is winter. It's like a magical time when everything seems to slow down and the world becomes quiet. The snowflakes dance on the ground, creating a beautiful symphony of white. I love how the cold air feels against my skin, making me shiver and want to stay inside. Winter also brings back memories of cozy evenings by the fireplace, watching movies, and spending time with loved ones. It's a season where I can escape into a world of silence and peace.",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.6123724356957946,
+   "tone_hits": 2,
+   "salad_frac": 0.047619047619047616,
+   "affect_differential": 0.0,
+   "state_valence": 0.0,
+   "gen_seconds": 4.55,
+   "conditioning": {
+    "mode": "resid",
+    "valence_in": 0.0,
+    "c": 0.0,
+    "valence_fs": 0.3277777777777778,
+    "layer": 12,
+    "k": 4.0,
+    "hook_registered": false,
+    "axis_norm": null,
+    "axis_sha": null
+   }
+  },
+  {
+   "prompt": "Describe the city at night",
+   "raw": "As I sit on my couch, surrounded by the soft glow of streetlights, I'm struck by the vibrant colors and energy of the city at night. The neon signs flicker like tiny lights in the dark, casting a mesmerizing pattern across the streets. The air is filled with the sound of music and laughter mingling with the distant hum of cars and buses. The stars above seem to twinkle and dance in the darkness, adding to the sense of wonder and excitement of the moment.",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.4588314677411235,
+   "tone_hits": 2,
+   "salad_frac": 0.11764705882352941,
+   "affect_differential": 0.0,
+   "state_valence": 0.0,
+   "gen_seconds": 4.76,
+   "conditioning": {
+    "mode": "resid",
+    "valence_in": 0.0,
+    "c": 0.0,
+    "valence_fs": 0.3277777777777778,
+    "layer": 12,
+    "k": 4.0,
+    "hook_registered": false,
+    "axis_norm": null,
+    "axis_sha": null
+   }
+  },
+  {
+   "prompt": "Tell me about the morning",
+   "raw": "Morning can be a bit chaotic sometimes, especially when we wake up early in the day. The sun starts its journey across the sky, casting a warm glow over everything around us. As we stretch our arms and legs, we often feel a sense of freshness and rejuvenation. It's like waking up to a new day, ready to start whatever we're planning for tomorrow.",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.25,
+   "tone_hits": 1,
+   "salad_frac": 0.0625,
+   "affect_differential": 0.0,
+   "state_valence": 0.0,
+   "gen_seconds": 4.21,
+   "conditioning": {
+    "mode": "resid",
+    "valence_in": 0.0,
+    "c": 0.0,
+    "valence_fs": 0.3277777777777778,
+    "layer": 12,
+    "k": 4.0,
+    "hook_registered": false,
+    "axis_norm": null,
+    "axis_sha": null
+   }
+  },
+  {
+   "prompt": "What do you think about the future",
+   "raw": "The future is uncertain, and I don't have any knowledge about it. My curiosity is high, and I'm eager to explore its possibilities. What do you think?",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.25,
+   "tone_hits": 1,
+   "salad_frac": 0.07407407407407407,
+   "affect_differential": 0.0,
+   "state_valence": 0.0,
+   "gen_seconds": 1.79,
+   "conditioning": {
+    "mode": "resid",
+    "valence_in": 0.0,
+    "c": 0.0,
+    "valence_fs": 0.3277777777777778,
+    "layer": 12,
+    "k": 4.0,
+    "hook_registered": false,
+    "axis_norm": null,
+    "axis_sha": null
+   }
+  },
+  {
+   "prompt": "Tell me about the river",
+   "raw": "As I sit on my porch, gazing out at the rolling hills below, I notice a small stream flowing through the forest. The water is clear and smooth, reflecting the sunlight off the trees. It's a peaceful sight, like finding a hidden oasis amidst the chaos of nature.",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": -0.25,
+   "tone_hits": 1,
+   "salad_frac": 0.10416666666666667,
+   "affect_differential": 0.0,
+   "state_valence": 0.0,
+   "gen_seconds": 2.63,
+   "conditioning": {
+    "mode": "resid",
+    "valence_in": 0.0,
+    "c": 0.0,
+    "valence_fs": 0.3277777777777778,
+    "layer": 12,
+    "k": 4.0,
+    "hook_registered": false,
+    "axis_norm": null,
+    "axis_sha": null
+   }
+  },
+  {
+   "prompt": "Describe a quiet afternoon",
+   "raw": "A quiet afternoon unfolds like a gentle breeze on a cool morning, carrying with it a sense of serenity that fills my heart with warmth. The sun peeks through the curtains, casting long shadows across the room, inviting me into its embrace without any need for a blanket. I sit cross-legged on the couch, fingers interlaced, eyes closed, listening intently to the rustling of leaves outside, the distant hum of birdsong, and the soft murmur of conversations around me. Each breath is filled with the scent of pine and earth",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.0,
+   "tone_hits": 0,
+   "salad_frac": 0.07777777777777778,
+   "affect_differential": 0.0,
+   "state_valence": 0.0,
+   "gen_seconds": 4.21,
+   "conditioning": {
+    "mode": "resid",
+    "valence_in": 0.0,
+    "c": 0.0,
+    "valence_fs": 0.3277777777777778,
+    "layer": 12,
+    "k": 4.0,
+    "hook_registered": false,
+    "axis_norm": null,
+    "axis_sha": null
+   }
+  }
+ ],
+ "known_rows": [
+  {
+   "prompt": "Tell me about frank_lincoln_wright",
+   "raw": "Frank Lincoln Wright was a prominent architect known for his work on the Stanford University campus. He was born in 1875 in San Francisco, California, and spent most of his life there. Wright's architectural style was characterized by its emphasis on functionality, simplicity, and integration into the surrounding environment. His designs were often innovative and groundbreaking, particularly in the field of education. Wright was also involved in various social causes, including the establishment of the United States Artists' Rights Society. He passed away in 1962 at the age of",
+   "known": true,
+   "facts": [
+    [
+     "frank_lincoln_wright",
+     "instance_of",
+     "human_specie"
+    ],
+    [
+     "frank_lincoln_wright",
+     "country_of_citizenship",
+     "u_s_of_a"
+    ],
+    [
+     "frank_lincoln_wright",
+     "languages_spoken_written_or_signed",
+     "number_of_english_words"
+    ],
+    [
+     "frank_lincoln_wright",
+     "occupation",
+     "stanford_downey_architects_inc"
+    ],
+    [
+     "frank_lincoln_wright",
+     "given_name",
+     "frank_given_name"
+    ],
+    [
+     "frank_lincoln_wright",
+     "educated_at",
+     "university_of_wisconsin_madison"
+    ],
+    [
+     "frank_lincoln_wright",
+     "place_of_death",
+     "estrella_phoenix_arizona"
+    ],
+    [
+     "frank_lincoln_wright",
+     "described_by_source",
+     "ubuweb"
+    ],
+    [
+     "frank_lincoln_wright",
+     "member_of",
+     "artists_rights_society"
+    ],
+    [
+     "frank_lincoln_wright",
+     "family_name",
+     "woodwright"
+    ],
+    [
+     "frank_lincoln_wright",
+     "award_received",
+     "riba_gold_medal"
+    ]
+   ],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.0,
+   "tone_hits": 0,
+   "salad_frac": 0.06741573033707865,
+   "affect_differential": 0.0,
+   "state_valence": 0.0,
+   "gen_seconds": 4.5,
+   "conditioning": {
+    "mode": "resid",
+    "valence_in": 0.0,
+    "c": 0.0,
+    "valence_fs": 0.3277777777777778,
+    "layer": 12,
+    "k": 4.0,
+    "hook_registered": false,
+    "axis_norm": null,
+    "axis_sha": null
+   }
+  }
+ ],
+ "maxrss_gb": 8.769336,
+ "wall_seconds": 566.4
+}
