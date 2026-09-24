@@ -28,8 +28,11 @@ rendered by one template, plus invented-noun facts the brain cannot already know
 the experimenter (a permuted or partly-corrupted copy of the vetted facts) to test that the brain learns what it was
 TOLD, not what the source says.
 
-Default-OFF flag for the harness: BRAIN_AI_TEACHER (read by `ai_teacher_enabled`). Nothing in production reads it;
-with it off nothing changes anywhere (this module is imported only by the experiment runner and its tests).
+Default-OFF, two ways (amendment 2 of the pre-registration made the flag load-bearing; before it, the flag was a label
+nothing read, and default-OFF held only because nothing imports this module): (1) `AITeacher(...)` raises
+`AITeacherDisabled` unless BRAIN_AI_TEACHER is on (`ai_teacher_enabled`); the experiment runner sets it per arm,
+production never does; (2) nothing in webapp/, sim/ or the production runners imports this module (only the
+experiment runner and its tests do).
 
 HONESTY BOUNDARY. The teacher's judgement of a reply (right/wrong) is a string match on the reply text, the same
 information a human teacher has. It is an environment decision, not a brain read-out, and it is never credited to
@@ -52,8 +55,12 @@ _ON = ("1", "true", "on", "yes")
 
 
 def ai_teacher_enabled() -> bool:
-    """Harness flag (default OFF). Only the experiment runner reads it; production never does."""
+    """Harness flag (default OFF). `AITeacher` refuses to start unless it is on; production never sets it."""
     return os.environ.get("BRAIN_AI_TEACHER", "").strip().lower() in _ON
+
+
+class AITeacherDisabled(RuntimeError):
+    """Raised when an `AITeacher` is constructed with BRAIN_AI_TEACHER off (the default)."""
 
 
 # ── the vetted fact source ────────────────────────────────────────────────────────────────────────────────────────
@@ -195,6 +202,8 @@ class AITeacher:
 
     def __init__(self, channel: Callable[[str], str], knowledge: TeacherKnowledge,
                  answer_other_topics: bool = True):
+        if not ai_teacher_enabled():
+            raise AITeacherDisabled("BRAIN_AI_TEACHER is off (the default): the AI teacher does not start")
         if not callable(channel):
             raise TypeError("channel must be callable(text) -> reply text")
         self._channel = channel

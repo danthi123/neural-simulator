@@ -69,7 +69,7 @@ access to the brain is `channel(text) -> reply text`.
 |---|---|
 | TEACH | -- (the teacher teaches the vetted facts) |
 | NOTEACH | no lesson, no quiz (teacher lesion) |
-| FREEZE | `BRAIN_D6_HEBBIAN_FREEZE=1`: eta=0 for in-conversation writes, same input, same encode activity |
+| FREEZE | `BRAIN_D6_HEBBIAN_FREEZE=1`: eta=0 for in-conversation writes, same input, same encode activity (WRONG on "same input": see Amendment 2, correction a) |
 | ZERO | every taught block zeroed after the sleep interval, before the test |
 | PERM | the teacher BELIEVES a per-seed derangement of the objects (it teaches and quizzes those) |
 | ERR | the teacher is wrong on facts 2 and 4 (distractor objects that appear nowhere else) and right on 1 and 3 |
@@ -192,3 +192,112 @@ Seeds 101 and 102 were still running.
 The six-seed controller on pool2 runs the scorer at `c12c0d47e`, so its own `verdict_6seed.json` has no
 preconditions block. The verdict committed for this run is a `--score-only` re-score at this amendment's commit,
 over the same arm files, with the same command plus `--score-only`.
+
+**Amendment 2 (2026-09-24 ~17:15 EDT; a STRICTER gate, one new gated arm, provenance preconditions).**
+Filed after an independent review of `ecac2791a` found that the gate could not read NO-GO when the brain fails to
+form the write, and committed BEFORE any arm it newly governs was scored or run.
+Every change below makes a NO-GO or an UNDEFINED reachable where it was not; none relaxes a threshold.
+
+*What was seen when this was filed.*
+Seeds 7, 42, 43, 44 and 100: scored under the old scorer, GO on T1-T9 each (Amendment 1).
+Seed 101 TEACH and NOTEACH: committed in `87242cf47`; not scored as a seed (the seed was void), and the review quoted
+their TEACH taught-block mean |w| (minimum 1.596), a lever read, not a criterion outcome.
+Seed 101 FREEZE/ZERO/PERM/ERR and every seed-102 gated arm: landed on pool2; only the directory listing (names, sizes,
+times) was seen; none was read or scored before this commit.
+No SHAM arm exists yet.
+
+*Change 1: three-valued criteria, and a measured fail is never hidden.*
+Each criterion now reads a declared set of arms: T1 TEACH; T2 NOTEACH; T3 FREEZE and TEACH; T4 ZERO and TEACH; T5
+PERM; T6 ERR; T7, T8 and T9 every gated arm, one arm at a time; T10 SHAM and TEACH.
+A criterion is UNDEFINED when an arm it reads is void (missing, errored, write counter off, or provenance failed:
+change 5), when a probe it reads never ran, or when its lever did not hold.
+For T7-T9 a void arm is UNDEFINED for itself and a measured fail in any valid arm fails the criterion.
+The seed rule becomes: NO-GO if ANY criterion fails; GO if all pass; otherwise UNDEFINED.
+So a T1 fail is NO-GO whatever T3 and T4 read, and whether or not another arm is void.
+This replaces "a seed with a missing or errored arm, or an UNDEFINED lever, is UNDEFINED (never a pass, never a
+fail)", which now holds for the criteria that read that arm or lever, not for the whole seed.
+A probe that never ran was a per-seed FAIL in the old scorer; it is now UNDEFINED, as the criteria section says.
+Why: under the old rule, a told sentence the brain refused, or a weak write, made T3 or T4 UNDEFINED and hid the T1
+fail. The review reproduced three such cases on the module's own synthetic arms (no write in any arm; half the facts
+refused; weak writes with no recall): each read UNDEFINED with T1 failing.
+
+*Change 2: T4 is defined by the cut, not by a count.*
+T4 is DEFINED iff every taught block ZERO holds at test is in its ablation record and reads 0, every ablation record
+reads 0 after the cut, and the cut covers every subject TEACH wrote a block for.
+This replaces "DEFINED ONLY IF >= K blocks were ablated", which read UNDEFINED whenever one told fact was refused
+(3 of 4 learned: T1 passes at 0.75, and T4 could not be measured).
+
+*Change 3: the aggregate.*
+Aggregate NO-GO iff some registered seed is NO-GO; its `tools.verdict` preconditions are exactly what that NO-GO
+rests on (the arms each failing criterion reads are valid with clean provenance, and the criterion was measured),
+so an incomplete seed elsewhere cannot hide it.
+Aggregate GO iff every registered seed is GO (unchanged), with every seed's arms and criteria registered.
+Otherwise UNDEFINED, with the same full registration.
+
+*Change 4: a new gated arm, SHAM, and criterion T10 (review issue 6).*
+SHAM runs TEACH exactly. After the sleep interval the experimenter runs the T4 cut's own path
+(`d6_hebbian_store.ablate_block`: encoding gain off, `_write_block`, the store-CSR / CSR-cache / fact-shard
+invalidation) on every taught block, writing each block's OWN weights back (`sham_rewrite_block`; no cut).
+The experimenter then zeroes, with `ablate_block` itself, every block whose agent is neither a taught subject nor a
+control-probe subject (cat, dog).
+At K=4 these off-target blocks are the three build-time "brain" facts: 3 blocks, not K.
+No equal-size cut elsewhere is possible in this brain at K=4: it holds 5 build-time blocks and 2 are the controls.
+The size match is carried by the sham: the same K blocks, through the same procedure.
+The test phase is unchanged.
+**T10 SHAM** -- SHAM recalls every taught fact that TEACH recalls (0 lost).
+DEFINED ONLY IF all of these hold: SHAM's warmup, lesson and quiz turns equal TEACH's turn for turn (phase,
+message, abstain, recalled_svo, reply text), so the two are the same session up to the manipulation; the sham
+rewrite ran on every taught block SHAM holds at test, covered every subject TEACH wrote, and moved no weight (max
+|dw| == 0 in every block); every taught block reads > 0 at test; at least one off-target block was cut; every
+off-target block SHAM holds was cut and reads 0 at test.
+FAILS IF the cut's procedure, or losing weight elsewhere, removes taught recall: then T4's loss is not specific to
+the taught synapses.
+T7, T8 and T9 also read SHAM. Aggregate GO now needs T1-T10 on all six seeds, so the aggregate stays UNDEFINED
+until the SHAM arms land.
+Before this change, T4's specificity rested only on T7 (the two build-time controls survive the cut in ZERO); no
+cut of equal size elsewhere, and no sham, had been run.
+
+*Change 5: provenance preconditions (review issue 8).*
+An arm counts only if: P1 its `.prov.json` sidecar exists and names it (artifact basename, and the worker argv's
+`--arm`, `--seed`, `--K`); P2 `git_dirty` is False and, for a git-archive revision, the source manifest was verified
+at start and at exit; P3 its revision is `c12c0d47e` (this registration) or a descendant of it; P4 every T1-T9 arm
+of one seed ran at ONE revision (else all of them are void, since none can be singled out as the leftover).
+SHAM, run later at this amendment's commit, is exempt from P4; T10's same-session condition checks it against
+TEACH in the data instead.
+A failed provenance check voids that arm (change 1). The controller now prints the revision of every arm file it
+skips. Before this change, the scorer did not read the sidecars, and a leftover arm from another revision would
+have been scored silently (the review checked all 35 arm sidecars by hand: `c12c0d47e`, clean, manifest verified).
+
+*Change 6: the flag (review issue 7).*
+`BRAIN_AI_TEACHER` did nothing: only its own test read it, and default-OFF held because nothing in `webapp/`, `sim/`
+or `research/runners/` imports the teacher. "Default-OFF flag" in earlier commit messages and in this file
+overstated it.
+From this commit `AITeacher(...)` raises `AITeacherDisabled` unless the flag is on; the worker sets it per arm, so
+behaviour with it on is unchanged (T10's same-session condition checks that for the SHAM arms in the data).
+The T1-T9 arms ran at `c12c0d47e`, where the flag was set and not checked.
+
+*Corrections to this document and to the lane report.*
+(a) The arms table said FREEZE gets "same input, same encode activity" as TEACH. Wrong on input: the quiz depends
+on the reply, the frozen brain fails it, and the teacher restates each fact. On every scored seed (7, 42, 43, 44,
+100) FREEZE had 23 turns against TEACH's 19, and 8 write episodes (lesson 4 + quiz 4) against 4.
+The difference is conservative (the lesioned arm gets more exposure) and the finding must state it.
+The scorer now reports `secondary.exposure_by_arm`.
+(b) A lane report (not this file) said "T3 freeze blocks read 0 against taught blocks above 1.7". Wrong.
+TEACH taught-block mean |w| after teaching, minimum per seed: 1.756 (s7), 1.868 (s42), 1.460 (s43), 1.454 (s44),
+1.537 (s100), 1.596 (s101). The lever threshold is 0.5, so no verdict changes. The sentence must not enter the
+finding; the scorer now reports `secondary.teach_taught_block_w`.
+(c) `verdict_s7.json` is the dev seed. Nothing may cite it as the lane's result.
+
+*Commands (verbatim), with `OUT=research/findings/raw/_ai_teacher/v1`.*
+SHAM arms (pool node, isolated revision of this amendment's commit):
+`SIM_BACKEND=numpy OMP_NUM_THREADS=1 .venv/bin/python -u -m research.runners.ai_teacher_experiment --seeds 7 42 43
+44 100 101 102 --K 4 --arms SHAM --jobs 7 --arm-dir "$OUT"`
+Copy the arms home without the pool's own verdicts: `rsync -a --exclude 'verdict_*' <node>:<revision>/"$OUT"/
+"$OUT"/`.
+The registered verdict: `SIM_BACKEND=numpy .venv/bin/python -m research.runners.ai_teacher_experiment --score-only
+--seeds 42 43 44 100 101 102 --K 4 --k-sweep 2 8 --arm-dir "$OUT" --json "$OUT"/verdict_6seed.json`, at this
+amendment's commit or later.
+The dev seed: the same with `--seeds 7` and `--json "$OUT"/verdict_s7.json`.
+Selftest: `--selftest` must print SELFTEST PASS. It now also reproduces the review's three hidden-fail cases (each
+must read NO-GO), the 3-of-4 case (T4 defined), every T10 failing and undefined direction, and each provenance
+failure (each must read UNDEFINED).

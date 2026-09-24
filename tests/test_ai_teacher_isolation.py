@@ -61,6 +61,13 @@ def _facts(K=4):
     return AT.curriculum_facts(AT.load_curriculum())[:K]
 
 
+@pytest.fixture(autouse=True)
+def _teacher_flag_on(monkeypatch):
+    """The teacher refuses to start with BRAIN_AI_TEACHER off (the default); every session test here turns it on, as the
+    experiment runner does per arm. `test_flag_default_off` / `test_teacher_refuses_when_flag_off` turn it back off."""
+    monkeypatch.setenv("BRAIN_AI_TEACHER", "1")
+
+
 # ── 1. static ──────────────────────────────────────────────────────────────────────────────────────────────────────
 def test_teacher_imports_only_stdlib():
     tree = ast.parse(open(TEACHER_SRC).read())
@@ -213,6 +220,55 @@ def test_flag_default_off(monkeypatch):
     assert AT.ai_teacher_enabled() is False
     monkeypatch.setenv("BRAIN_AI_TEACHER", "1")
     assert AT.ai_teacher_enabled() is True
+
+
+def test_teacher_refuses_when_flag_off(monkeypatch):
+    """Review 2026-09-24 issue 7: the flag must DO something. With it off (the default) no teacher session can start."""
+    monkeypatch.delenv("BRAIN_AI_TEACHER", raising=False)
+    with pytest.raises(AT.AITeacherDisabled):
+        AT.AITeacher(FakeTextBrain(), AT.TeacherKnowledge(_facts(2)))
+    monkeypatch.setenv("BRAIN_AI_TEACHER", "0")
+    with pytest.raises(AT.AITeacherDisabled):
+        AT.AITeacher(FakeTextBrain(), AT.TeacherKnowledge(_facts(2)))
+    monkeypatch.setenv("BRAIN_AI_TEACHER", "1")
+    AT.AITeacher(FakeTextBrain(), AT.TeacherKnowledge(_facts(2))).lesson(_facts(2))
+
+
+class _FakeComposer:
+    """The slice of OneBrainComposer the lesion instruments touch: block-major store_conns, _write_block with the DA
+    gain, and the read caches the ablation invalidates."""
+
+    def __init__(self, n_blocks=4, D=8):
+        import numpy as np
+        rng = np.random.default_rng(0)
+        self.D = D
+        self.store_conns = [(0, 0, complex(z)) for z in
+                            (rng.normal(size=n_blocks * D) + 1j * rng.normal(size=n_blocks * D))]
+        self.encoding_gain_fn = lambda: 1.7            # a live DA gain: the sham must switch it off to be exact
+        self._store_csr, self._csr_cache, self._fact_shard, self._fact_shard_built_K = object(), {"k": 1}, object(), 3
+        self.writes = []
+
+    def _write_block(self, i, zc):
+        g = 1.0 if self.encoding_gain_fn is None else float(self.encoding_gain_fn())
+        self.store_conns[i * self.D:(i + 1) * self.D] = [(0, 0, complex(g) * z) for z in zc]
+        self.writes.append(i)
+
+
+def test_sham_rewrite_is_the_ablation_path_without_the_cut():
+    """Arm SHAM (amendment 2): the same write + invalidation path as `ablate_block`, with the block's own weights, so no
+    weight moves (max |dw| == 0, exactly), while `ablate_block` on the same composer zeroes the block."""
+    from research.runners import ai_teacher_experiment as E
+    from research.runners.d6_hebbian_store import ablate_block
+    comp = _FakeComposer()
+    before = list(comp.store_conns)
+    rec = E.sham_rewrite_block(comp, 2)
+    assert rec["max_abs_dw"] == 0.0 and comp.store_conns == before and comp.writes == [2]
+    assert comp._store_csr is None and comp._csr_cache == {} and comp._fact_shard is None
+    assert comp._fact_shard_built_K == -1 and comp.encoding_gain_fn() == 1.7      # the gain is restored
+    comp2 = _FakeComposer()
+    rec2 = ablate_block(comp2, 2)
+    assert rec2["mean_abs_w_after"] == 0 and comp2.writes == [2]
+    assert comp2.store_conns[:2 * comp2.D] == before[:2 * comp2.D]                 # other blocks untouched
 
 
 def test_experiment_gate_selftest():
