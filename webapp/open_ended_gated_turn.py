@@ -195,6 +195,12 @@ def saliences(route: str, eng: float) -> tuple:
 
 
 _LOCK = threading.Lock()
+# Serialises every RACE / marker read on the shared organs (review 2026-09-24, flag-ON readiness): the organs are
+# module-level singletons keyed by seed and shared by every chat session of the process, and select_once /
+# select_valence advance their membrane state, so two concurrent requests must not step one organ at once. It does NOT
+# make the organs per-session (a session's race still follows the other sessions' earlier races on the same organ);
+# that is a precondition for any default-ON, recorded in the PREREG's Amendment 3.
+_RACE_LOCK = threading.Lock()
 _BG: dict = {}
 _MARKER: dict = {}
 
@@ -271,7 +277,8 @@ def _marker_reader(seed: int):
 def bg_race(chat, speak: float, silent: float, seed: int) -> dict:
     from research.runners.bg_action_selection_production_organ import ACTION_NAME
     org = _bg_organ(seed)
-    r = _isolated(chat, lambda: org.select_once(speak, silent))
+    with _RACE_LOCK:
+        r = _isolated(chat, lambda: org.select_once(speak, silent))
     action = ACTION_NAME[int(r["winner"])] if r.get("committed") else None
     return {"action": action, "committed": bool(r.get("committed")), "decision_step": r.get("decision_step"),
             "simultaneous": bool(r.get("simultaneous")), "motor_spikes": r.get("motor_spikes"),
@@ -286,7 +293,8 @@ def settle_marker(chat, affect_drives_info, seed: int, lesion: bool) -> dict:
     try:
         mood = float(affect_drives_info.get("mood", 0.0) or 0.0)
         reader = _marker_reader(seed)
-        lvl, _rates, meta = _isolated(chat, lambda: reader.select_valence(mood, lesion=bool(lesion)))
+        with _RACE_LOCK:
+            lvl, _rates, meta = _isolated(chat, lambda: reader.select_valence(mood, lesion=bool(lesion)))
         from research.runners._affect_marker_wta_derisk import marker_from_level
         return {"read": True, "level": (int(lvl) if lvl is not None else None), "word": marker_from_level(lvl),
                 "margin": meta.get("margin"), "lesioned": bool(lesion), "window_ms": int(reader.warmup)}
