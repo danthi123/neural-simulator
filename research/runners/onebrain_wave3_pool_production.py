@@ -126,6 +126,13 @@ def get_merged_cortical_pool(seed: int = 42, min_wave: int = 1):
         if affect_pool_enabled():
             from research.runners.onebrain_affect_pool import get_affect_pool
             return get_affect_pool(seed)
+        # BRAIN_XEDGE_IN_WAVE3 (2026-09-24, DEFAULT-OFF): the d6 w{k}->sel cross-edge grown INSIDE this pool (the
+        # Wave-3 organs + the R3 da_credit organ + the declared cross-edges), so comprehension and the per-session d6
+        # organ share ONE object. Unset -> the import-light reader returns False -> the unchanged Wave-3 path.
+        from research.runners.onebrain_xedge_wave3_flags import xedge_in_wave3_enabled
+        if xedge_in_wave3_enabled():
+            from research.runners.onebrain_xedge_wave3 import get_wave3_xedge_pool
+            return get_wave3_xedge_pool(seed)
         return get_wave3_pool(seed)
     from research.runners.onebrain_wave2_pool_production import wave2_pool_enabled, get_wave2_pool
     if min_wave <= 2 and wave2_pool_enabled():

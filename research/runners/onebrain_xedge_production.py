@@ -216,6 +216,7 @@ class XedgeProductionPool:
         self.learned = False        # True when the edge was GROWN LIVE (self-supervised, PART 2) vs frozen host-grown
         self.live_per_turn = False  # PART 3: the edge starts at W0=0.05, gate OPEN, and grows PER real chat turn
         self.n_live_credited = 0    # PART 3: count of live turns that produced a credited plasticity step
+        self.in_wave3 = False       # BRAIN_XEDGE_IN_WAVE3: the edge lives inside the merged cortical pool
 
     def ensure_built(self):
         if self._built:
@@ -237,8 +238,25 @@ class XedgeProductionPool:
         # calibrates the DA gain the LIVE-LEARNING path below relies on (it uses the base R3Pool).
         from research.runners._onebrain_integration_r3v3_functional_drive import R3v3Pool
         from research.runners._onebrain_integration_r2_threefactor_selforganized import _role_assignment
+        from research.runners.onebrain_xedge_wave3_flags import xedge_in_wave3_enabled
 
-        if xedge_learn_enabled():
+        if xedge_in_wave3_enabled():
+            # BRAIN_XEDGE_IN_WAVE3 (DEFAULT-OFF): the SAME learned edge (W0=0.05, gate frozen between credited
+            # steps), but grown INSIDE the production merged cortical pool (`onebrain_xedge_wave3`) instead of a
+            # separate pool -- so the live comprehension organ and the per-session d6 organ both ride it.
+            from research.runners.onebrain_xedge_wave3 import get_wave3_xedge_view
+            from research.runners._onebrain_integration_r2_threefactor_selforganized import GATE as _GATE
+            p = get_wave3_xedge_view(self.seed)
+            self.learned = True
+            self.in_wave3 = True
+            if live_per_turn_enabled():
+                p.b.set_plasticity_gate(_GATE, 0.0)
+                self.live_per_turn = True
+                self.grow_traj = [dict(turn=0, **p.cross_weights())]
+            else:
+                p.b.set_plasticity_gate(_GATE, 1.0)          # R3Pool leaves the gate OPEN for the build curriculum
+                self.grow_traj = grow_live_selfsupervised(p)   # (which re-freezes it on return)
+        elif xedge_learn_enabled():
             # LIVE-LEARNING: start the edge at W0=0.05 (R3Pool, gate OPEN). Emergent, not pre-grown.
             from research.runners._onebrain_integration_r3_spiking_dopamine_credit import R3Pool
             p = R3Pool(self.seed, mode="intact")
