@@ -1,1 +1,1 @@
-2026-09-24T01:30:30Z	spiking-stage feedback/recurrent shunting-inhibition realization of divisive normalization (vs a host-computed pre-spike ratio) -- the missing companion process for a readout whose LIF port collapses to chance while its raw linear score separates
+2026-09-24T05:05:32Z	homeostatic regulation of a readout LIF population's operating point (intrinsic plasticity + synaptic scaling toward a target rate distribution) -- the companion process for a class-population port whose drive sits far outside the LIF dynamic range (saturated/silent, constant output)
