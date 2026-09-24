@@ -184,17 +184,26 @@ def main():
     ap.add_argument("--offcheck", action="store_true")
     ap.add_argument("--offcheck-worker", nargs=2)
     ap.add_argument("--pinned-sha", default=None)
-    ap.add_argument("--out", default="research/findings/raw/_d6_chat_wire/offcheck.json")
+    ap.add_argument("--out", default=None)
     a = ap.parse_args()
     if a.offcheck_worker:
         return offcheck_worker(*a.offcheck_worker)
     if a.selftest:
         r = selftest()
-        print(json.dumps(r, indent=2))
+        # Provenance (gates/device-and-cost, gates/artifact-provenance): no brain is built for this selftest, but
+        # the artifact still declares its backend/device explicitly (never left implicit) and a runner/seed key at
+        # depth<=1 so the result can be audited like any other.
+        record = {"runner": "research.runners._d6_chat_wire_probe --selftest", "seed": None,
+                  "backend": "none (pure-python; no brain build)", "device": "cpu", "result": r}
+        out = a.out or "research/findings/raw/_d6_chat_wire/selftest.json"
+        os.makedirs(os.path.dirname(os.path.abspath(out)) or ".", exist_ok=True)
+        json.dump(record, open(out, "w"), indent=2)
+        print(json.dumps(record, indent=2))
         return 0 if r.get("pass") else 1
     if a.offcheck:
         sha = a.pinned_sha or _merge_base_with_origin_main()
-        r = offcheck(sha, a.out)
+        out = a.out or "research/findings/raw/_d6_chat_wire/offcheck.json"
+        r = offcheck(sha, out)
         return 0 if r["byte_identical_off"] else 1
     ap.print_help()
     return 2

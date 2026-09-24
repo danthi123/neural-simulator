@@ -1,0 +1,24 @@
+{
+ "run_id": "1790266160-231642",
+ "runner": "research/runners/_d6_chat_wire_probe.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/wf_4703a2bd-4dd-16/research/runners/_d6_chat_wire_probe.py",
+  "--selftest"
+ ],
+ "git_sha": "c0a81e9c9",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-24T12:09:20",
+ "env": {},
+ "sim_backend": "numpy",
+ "sim_backend_requested": "(unset -> runner default)",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_d6_chat_wire/selftest.json"
+}
