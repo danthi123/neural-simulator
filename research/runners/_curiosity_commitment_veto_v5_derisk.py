@@ -108,10 +108,12 @@ RS, FS = V4.RS, V4.FS
 
 # ── FROZEN operating point (calibrated on DEV seeds 7-12 ONLY; PREREG §2) ─────────────────────────────────────────
 CV_N = 20             # veto units per channel (RS, inhibitory output)
-CP_N = 20             # shared normalization-pool units (FS, inhibitory), driven by BOTH comparator halves
-W_MV = 10.0           # meta_k -> cv_veto{k} (dense E)
-W_MP = 6.0            # meta (both halves) -> cv_pool (dense E)
-W_PV0 = 4.0           # cv_pool -> cv_veto{k} INITIAL weight (GABA-A, plastic under inhibitory STDP)
+CI_N = 20             # rival-relay units per channel (FS, inhibitory)
+W_MV = 10.0           # meta_k -> cv_veto{k} (dense E), per-post-neuron draw W_MV * U(1-HET, 1+HET)
+W_MI = 12.0           # meta_j -> cv_inh{j} (dense E), per-post-neuron draw W_MI * U(1-HET, 1+HET)
+HET = 0.5             # per-postsynaptic-neuron weight spread of the two feedforward drives (graded population code;
+                      # the comparator's own reason: uniform weights give synchronous, quantized, step-like rates)
+W_PV0 = 4.0           # cv_inh{1-k} -> cv_veto{k} INITIAL weight (GABA-A, plastic under inhibitory STDP)
 W_VA = 16.0           # cv_veto{k} -> ask (GABA-A)
 ISTDP_TARGET_HZ = 1.0     # the set-point: each veto half's mean rate over the calibration epoch
 ISTDP_ETA = 0.5           # Vogels learning rate
@@ -122,9 +124,9 @@ CAL_MODE = 1              # calibration input: 0 = NO evidence differential (met
                           # evidence level (evidence 0.0), alternating class 0 / class 1 read by read (class-symmetric)
 W_PV0_ALT = 12.0          # the second initial weight of the two-init set-point check (reported, not a gate)
 
-ISTDP_GATE = "cv_istdp"          # plasticity gate of cv_pool -> cv_veto (open only in calibration epochs)
+ISTDP_GATE = "cv_istdp"          # plasticity gate of cv_inh -> cv_veto (open only in calibration epochs)
 VETO_GATE = "cv_veto_out"        # transmission gate of cv_veto -> ask (the veto lesion switch)
-CV_REGIONS = ("cv_veto0", "cv_veto1", "cv_pool")
+CV_REGIONS = ("cv_veto0", "cv_veto1", "cv_inh0", "cv_inh1")
 DEV_SEEDS = frozenset({7, 8, 9, 10, 11, 12})
 REQUIRED_SEED_SET = V4.REQUIRED_SEED_SET
 
@@ -143,13 +145,17 @@ G3_GAIN_ATTRIB_MIN = V4.G3_GAIN_ATTRIB_MIN
 # ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
 #  the commitment-veto organ
 # ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
-def _dense(pre, post, w, **kw):
+def _dense(pre, post, w, post_scale=None, **kw):
+    """Dense pre->post. `post_scale` (one factor per postsynaptic neuron) multiplies w per target neuron."""
     pre = np.asarray(pre, np.int64)
     post = np.asarray(post, np.int64)
     P = np.repeat(pre, post.size)
     Q = np.tile(post, pre.size)
-    d = {"pre_indices": P, "post_indices": Q, "initial_weights": np.full(P.size, float(w), np.float32),
-         "plastic": False, "conn_type": "CV_V5", "count": int(P.size)}
+    ww = np.full(P.size, float(w), np.float32)
+    if post_scale is not None:
+        ww = (float(w) * np.tile(np.asarray(post_scale, np.float32), pre.size)).astype(np.float32)
+    d = {"pre_indices": P, "post_indices": Q, "initial_weights": ww, "plastic": False, "conn_type": "CV_V5",
+         "count": int(P.size)}
     d.update(kw)
     return d
 
@@ -157,8 +163,8 @@ def _dense(pre, post, w, **kw):
 def _cv_spec(seed):
     return ([BrainRegion(name=f"cv_veto{k}", n_neurons=CV_N, exc_fraction=0.0, internal_density=0.0,
                          enable_nmda=False, izh_neuron_type=RS) for k in (0, 1)]
-            + [BrainRegion(name="cv_pool", n_neurons=CP_N, exc_fraction=0.0, internal_density=0.0,
-                           enable_nmda=False, izh_neuron_type=FS)], [], {})
+            + [BrainRegion(name=f"cv_inh{k}", n_neurons=CI_N, exc_fraction=0.0, internal_density=0.0,
+                           enable_nmda=False, izh_neuron_type=FS) for k in (0, 1)], [], {})
 
 
 def meta_halves(rm):
@@ -167,21 +173,28 @@ def meta_halves(rm):
     return {0: meta[:h], 1: meta[h:]}           # the comparator's own class split (_comparator_wiring)
 
 
-def _cv_rows(rm):
-    """(name, pre idx, post idx, weight, extra keys) for every synapse this organ declares."""
+def _cv_rows(rm, seed: int):
+    """(name, pre idx, post idx, weight, extra keys) for every synapse this organ declares. The two feedforward
+    drives get a per-postsynaptic-neuron gain drawn once from U(1-HET, 1+HET) with a seed- and name-keyed RNG."""
+    import zlib
+    rng = np.random.default_rng([int(seed), zlib.crc32(b"commitment_veto_v5")])
     mh = meta_halves(rm)
-    ix = {n: np.asarray(rm.indices(n), np.int64) for n in CV_REGIONS + ("ask", "meta_schema")}
-    rows = [("cv_meta_to_pool", ix["meta_schema"], ix["cv_pool"], W_MP, {})]
+    ix = {n: np.asarray(rm.indices(n), np.int64) for n in CV_REGIONS + ("ask",)}
+    rows = []
     for k in (0, 1):
-        rows.append((f"cv_meta{k}_to_veto{k}", mh[k], ix[f"cv_veto{k}"], W_MV, {}))
-        rows.append((f"cv_pool_to_veto{k}", ix["cv_pool"], ix[f"cv_veto{k}"], W_PV0,
+        sv = rng.uniform(1.0 - HET, 1.0 + HET, size=ix[f"cv_veto{k}"].size)
+        si = rng.uniform(1.0 - HET, 1.0 + HET, size=ix[f"cv_inh{k}"].size)
+        rows.append((f"cv_meta{k}_to_veto{k}", mh[k], ix[f"cv_veto{k}"], W_MV, {"post_scale": sv}))
+        rows.append((f"cv_meta{k}_to_inh{k}", mh[k], ix[f"cv_inh{k}"], W_MI, {"post_scale": si}))
+    for k in (0, 1):
+        rows.append((f"cv_inh{1 - k}_to_veto{k}", ix[f"cv_inh{1 - k}"], ix[f"cv_veto{k}"], W_PV0,
                      {"plastic": True, "plasticity_gate": ISTDP_GATE}))
         rows.append((f"cv_veto{k}_to_ask", ix[f"cv_veto{k}"], ix["ask"], W_VA, {"transmission_gate": VETO_GATE}))
     return rows
 
 
 def _cv_wiring(bridge, rm):
-    return {name: _dense(pre, post, w, **kw) for name, pre, post, w, kw in _cv_rows(rm)}
+    return {name: _dense(pre, post, w, **kw) for name, pre, post, w, kw in _cv_rows(rm, bridge.core_config.seed)}
 
 
 def _cv_post_inject(bridge):
@@ -247,8 +260,8 @@ def _syn_mask(bridge, pre_regions, post_regions):
 
 
 def _iv_mask(bridge):
-    """The plastic pool -> veto synapses (cv_pool -> cv_veto*)."""
-    return _syn_mask(bridge, ("cv_pool",), ("cv_veto0", "cv_veto1"))
+    """The plastic rival-relay -> veto synapses (cv_inh* -> cv_veto*)."""
+    return _syn_mask(bridge, ("cv_inh0", "cv_inh1"), ("cv_veto0", "cv_veto1"))
 
 
 def _weights(bridge):
@@ -324,7 +337,7 @@ def calibrate(pool, org, rec, n_reads=None) -> dict:
     with pool.sequence_isolation():
         for i in range(n_reads):
             r = calibration_read(pool, org, rec, i)
-            trace.append({"veto0_hz": r["cv_veto0_hz"], "veto1_hz": r["cv_veto1_hz"], "pool_hz": r["cv_pool_hz"],
+            trace.append({"veto0_hz": r["cv_veto0_hz"], "veto1_hz": r["cv_veto1_hz"], "inh0_hz": r["cv_inh0_hz"], "inh1_hz": r["cv_inh1_hz"],
                           "meta_0_hz": r["meta_0_hz"], "meta_1_hz": r["meta_1_hz"]})
     b.set_plasticity_gate(ISTDP_GATE, 0.0)
     w1 = _weights(b)
@@ -332,7 +345,7 @@ def calibrate(pool, org, rec, n_reads=None) -> dict:
         post = _epoch_rates(pool, org, rec, 2)
     ivw = {}
     for k in (0, 1):
-        mk = _syn_mask(b, ("cv_pool",), (f"cv_veto{k}",))
+        mk = _syn_mask(b, (f"cv_inh{1 - k}",), (f"cv_veto{k}",))
         ivw[f"to_veto{k}_mean"] = float(w1[mk].mean())
         ivw[f"to_veto{k}_std"] = float(w1[mk].std())
     return {"trace": trace, "eligible_pairs_at_open_gate": elig, "cal_mode": int(CAL_MODE), "n_reads": n_reads,
@@ -398,7 +411,7 @@ def digest(sw) -> str:
     h = hashlib.sha256()
     h.update(V4.digest(sw).encode())
     for l in sw["levels"]:
-        h.update(np.asarray([l["cv_veto0_hz"], l["cv_veto1_hz"], l["cv_pool_hz"]],
+        h.update(np.asarray([l["cv_veto0_hz"], l["cv_veto1_hz"], l["cv_inh0_hz"], l["cv_inh1_hz"]],
                             np.float64).tobytes())
     return h.hexdigest()
 
@@ -429,7 +442,7 @@ def _byte_off_check(bridge, seed: int) -> dict:
     rb, cb, db = V4._edge_map(base.bridge)
     base_map = {(int(a), int(b)): float(w) for a, b, w in zip(rb, cb, db)}
     n_v4 = sum(len(rm.indices(s)) * len(rm.indices(t)) for _, s, t, _, _ in V4._wiring_rows())
-    n_v5 = sum(len(pre) * len(post) for _, pre, post, _, _ in _cv_rows(rm))
+    n_v5 = sum(len(pre) * len(post) for _, pre, post, _, _ in _cv_rows(rm, seed))
     n_expected = n_v4 + n_v5 + meta.size * ask.size
     return {"PASS": bool(kept == base_map and int(declared.sum()) == n_expected),
             "base_connectivity_identical": bool(kept == base_map), "n_declared_removed": int(declared.sum()),
@@ -696,7 +709,7 @@ def run_seed(seed: int, determinism: bool = True, verbose: bool = True, quick: b
         "no_host_novelty_signal": float(getattr(b.core_config, "current_novelty_signal", 0.0) or 0.0) == 0.0,
         "neuromodulator_subsystem_enabled": bool(getattr(b.core_config, "enable_neuromodulator_subsystem", False)),
         "istdp_eligible_only_declared_rows": set(cal["eligible_pairs_at_open_gate"]) == {
-            "cv_pool->cv_veto0", "cv_pool->cv_veto1"},
+            "cv_inh1->cv_veto0", "cv_inh0->cv_veto1"},
         "calibration_changed_only_plastic_rows": bool(cal["weights_changed_outside_plastic_rows"] == 0
                                                       and cal["plastic_rows_changed"] > 0),
         "veto_weights_frozen_after_calibration": bool(iv_sha_end == iv_sha_after_cal),
@@ -887,7 +900,7 @@ def _decide(rows) -> dict:
 
 
 RUNNER_REL = "research/runners/_curiosity_commitment_veto_v5_derisk.py"
-CIRCUIT_CONSTANTS = ("CV_N", "CP_N", "W_MV", "W_MP", "W_PV0", "W_VA", "ISTDP_TARGET_HZ", "ISTDP_ETA",
+CIRCUIT_CONSTANTS = ("CV_N", "CI_N", "W_MV", "W_MI", "HET", "W_PV0", "W_VA", "ISTDP_TARGET_HZ", "ISTDP_ETA",
                      "ISTDP_TAU_MS", "ISTDP_W_MAX", "CAL_READS", "CAL_MODE", "W_PV0_ALT")   # the only names --set may override
 _OVERRIDES: list = []
 
