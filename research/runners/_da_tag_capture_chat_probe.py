@@ -29,7 +29,7 @@ Selftest (no brain):   ... --selftest
 Aggregate:             ... --aggregate research/findings/raw/_da_tag_capture_chat
 Byte-identical off vs the pinned pre-change SHA (two tiny-demo builds, exact sha256):
   tools/memcap.sh 12 -- .venv/bin/python -u -m research.runners._da_tag_capture_chat_probe --offcheck \
-      --pinned-sha f35196e66 --out research/findings/raw/_da_tag_capture_chat/offcheck.json
+      --pinned-sha 36a175534 --out research/findings/raw/_da_tag_capture_chat/offcheck.json
 """
 from __future__ import annotations
 
@@ -48,7 +48,11 @@ _REPO = os.path.normpath(os.path.join(_HERE, "..", ".."))
 
 SEEDS = [42, 43, 44, 100, 101, 102]
 FACT = ["cat", "chase", "ball"]
-PINNED_SHA = "f35196e66"            # origin/main at branch point (pre-change); byte-identical-off reference
+PINNED_SHA = "36a175534"            # merge-base of this branch and origin/main (2026-09-24 Amendment 2, review
+                                    #  v2:2a37f2493): was f35196e66, a SHA that PREDATES this branch's own two
+                                    #  origin/main merges, so webapp/server.py (+55/-1 between the two SHAs) could
+                                    #  make branch-OFF differ from the pinned tree for reasons that are not this
+                                    #  branch's change; the merge-base is the correct byte-identical-off reference
 ON = {"BRAIN_DA_TAG_CAPTURE": "1", "BRAIN_DA_TAG_CAPTURE_CLOCK": "turn"}
 OFF = {"BRAIN_DA_TAG_CAPTURE": "0", "BRAIN_DA_TAG_CAPTURE_CLOCK": "turn"}
 LES = {"BRAIN_DA_ENCODING_LESION": "1"}
@@ -227,6 +231,14 @@ def aggregate(d):
             rows.append(json.load(open(p)))
         except Exception:
             continue
+    # RE-GRADE every row with the CURRENT grade_seed rather than trusting the stored gates.seed_verdict (2026-09-24,
+    # review v2:2a37f2493 of commit 5d3810f2d): a seed*.json written before a grading-logic fix lands (e.g. the
+    # confounded research/findings/raw/_da_tag_capture_chat/seed42.json, run at c4c62d066 before the D1-reader-
+    # isolation fix daa4b382d, whose stored gates read seed_verdict=GO) must not silently count toward n_go / the
+    # 6-seed verdict on its stale grade. grade_seed is a pure function of res["arms"], so re-calling it here is
+    # idempotent for a row already graded under the current code and corrective for one that is not.
+    for r in rows:
+        r["gates"] = grade_seed(r)
     verdicts = {r["seed"]: r["gates"]["seed_verdict"] for r in rows}
     n_go = sum(1 for v in verdicts.values() if v == "GO")
     diffs = [int(r["gates"]["outcomes"]["sal_night_intact_a"] == "correct")
@@ -460,6 +472,20 @@ def selftest():
     g_bad = grade_seed({"arms": arms_iso_bad})
     checks["grade: isolation gamma MISMATCH -> gate fails"] = g_bad["G_isolation_gamma_consistent"] is False
     checks["grade: isolation gamma mismatch -> seed UNDEFINED"] = g_bad["seed_verdict"] == "UNDEFINED"
+    # aggregate() must RE-GRADE every seed.json with the CURRENT grade_seed, never trust a stored gates.seed_verdict
+    # (2026-09-24, review v2:2a37f2493: the confounded research/findings/raw/_da_tag_capture_chat/seed42.json was
+    # written under pre-fix code and its stored gates read seed_verdict=GO, but re-grading its own arms under the
+    # isolation-consistency gate above reads UNDEFINED). Build one seed*.json on disk whose STORED gates say GO
+    # (as if written by old code) but whose "arms" data is the isolation-mismatch pattern above, and confirm
+    # aggregate() reports it as UNDEFINED, not GO.
+    import tempfile as _tf
+    with _tf.TemporaryDirectory() as _td:
+        stale = {"seed": 900, "arms": arms_iso_bad,
+                 "gates": {"seed_verdict": "GO", "outcomes": g_iso_ok["outcomes"]}}   # stale, pre-fix-shaped record
+        json.dump(stale, open(os.path.join(_td, "seed900.json"), "w"))
+        agg = aggregate(_td)
+        checks["aggregate: re-grades a stale stored-GO row to the current UNDEFINED verdict"] = \
+            agg["seed_verdicts"][900] == "UNDEFINED" and agg["seed_verdicts"][900] != stale["gates"]["seed_verdict"]
     for k, v in checks.items():
         print("  [%s] %s" % ("PASS" if v else "FAIL", k))
     ok = all(checks.values())
