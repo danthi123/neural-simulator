@@ -203,3 +203,37 @@ Byte-identity ("knob-off"): a stock 10-turn conversation (the existing `PROBE_TU
 on this branch with no env override (both flags at their shipped default, ON) and hashed against the identical
 run on origin/main `1ad61df45` -- this branch adds only new list entries kept OUT of `PROBE_TURNS` and a new,
 unimported-by-default module, so no existing code path is touched; the hash equality is the data proof of that.
+
+## Amendment 1, 2026-09-24 ~12:35 EDT: the seed-7 live run did not complete in this lane's window
+
+**The build itself is static-verified and reachable; only the LIVE numeric read is deferred.** No design change.
+
+- **What was attempted.** `bash tools/mem_ok.sh 4 3` (and 6 4) passed twice after waiting; each time, the local
+  d5c-consolidate `held_intact` build (a single episodic BTSP store + one referential recall + the idle tick +
+  one more recall, under `tools/memcap.sh 6`) stalled in kernel `D` state with CPU time flat for 15-20 s
+  stretches despite ~80% lifetime CPU average, growing to ~5.4 GB RSS before I killed it as unproductive. A
+  SEPARATE, simpler retry of just the cheap `_knob_off_probe` (10 stock `PROBE_TURNS`, no episodic store at all)
+  stalled the SAME way. At the time of both stalls, `ps` showed 2-4 other lanes' `onebrain_regression_battery
+  --worker` processes ALSO running concurrently (one, `research/findings/raw/_lbf_rows_conflict_kb/`, running the
+  IDENTICAL 10-turn set as my knob-off probe, in the same `D`-state stall) against a machine at 33-35 GB/46 GB
+  used and 21-25 GB swap in use. This reads as machine-wide swap-thrashing from several concurrent brain-sized
+  builds each individually mem_ok-approved but jointly oversubscribing the box, not a defect in these two rows
+  or their turn groups -- consistent with `research/FAILURE_LOG.md`'s own recent entries on this class of
+  contention (loadavg-gated GPU dispatch, DA tag-capture mem_gb under-declared vs measured).
+- **What still stands, unmeasured-but-verified.** The static selftest (`research/runners/lbf_rows/learning.py`,
+  11/11 checks) and the purely-additive source diff (`git diff origin/main -- research/runners/
+  onebrain_regression_battery.py` has zero removed lines) are NOT affected by this stall -- they run with no
+  brain build. The mechanism itself (idle-tick BTSP re-activation via `consolidate_used_memory` /
+  `consolidate_sleep_replay`) is the SAME kernel already 6-seed-GO'd at the organ level twice (2026-08-21
+  d5-learn-through-use flip; 2026-08-26 sleep-replay soak, `soak_summary_6seed.json`), so this is not a NEW
+  mechanism being proposed unverified -- it is a NEW HARNESS (this LBF row) reusing an already-validated write.
+- **Verdict on this lane's own live evidence: NOT completed, not NO-GO.** No `load_bearing` / `verdict` value is
+  claimed for either row from a seed-7 run today; none is written to any artifact this document cites. This is
+  reported as `pending, to be measured post-window` (the plan's own allowance for a row still running past its
+  step's end), not banked as a negative.
+- **Staged, not run here (per this lane's own scope: no 6-seed evaluation, no merge to main).** The exact
+  6-seed job lines are in the Commands section above, unchanged by this amendment. Once the machine (or pool2,
+  unreachable from this sandboxed lane -- `ssh pool2` resolved no hostname) has headroom, the FIRST thing to run
+  is the seed-7 smoke exactly as specified there, before the 6-seed jobs, to get the numeric confirmation this
+  amendment could not obtain.
+- **Nothing here changes the row definitions, the lesion flags, the compared fields, or the turn groups.**
