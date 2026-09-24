@@ -1,0 +1,38 @@
+{
+ "seed": 42,
+ "held_word_phrase": "the wolf watches the owl",
+ "r1_in_scope": true,
+ "r1_n_referents": 2,
+ "r1_input_order": [
+  "wolf",
+  "owl"
+ ],
+ "r1_pass": true,
+ "r2_in_scope": false,
+ "r2_pass": true,
+ "population": [
+  {
+   "cond": "intact",
+   "recovered_both_rate": 0.9166666666666666,
+   "n_pairs": 12
+  },
+  {
+   "cond": "lesion",
+   "recovered_both_rate": 0.0,
+   "n_pairs": 12
+  },
+  {
+   "cond": "hand",
+   "recovered_both_rate": 0.0,
+   "n_pairs": 12
+  }
+ ],
+ "r3_recovered_both_rate": 0.9166666666666666,
+ "r3_pass": true,
+ "r4_lesion_recovered_both_rate": 0.0,
+ "hand_baseline_recovered_both_rate": 0.0,
+ "r4_lever_moved": true,
+ "r4_pass": true,
+ "r5_lexicon_built": true,
+ "elapsed_s": 26.0
+}
