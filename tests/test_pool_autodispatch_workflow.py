@@ -85,6 +85,24 @@ def test_jobs_default_to_one_math_thread_unless_they_set_their_own(tmp_path: Pat
         assert out.read_text().strip() == want
 
 
+def test_queue_add_waits_for_the_dispatchers_lock(tmp_path: Path) -> None:
+    # 2026-09-24: `pool_queue.sh add` appended without the lock pop_job holds while it rewrites the queue
+    # (awk > tmp; mv), so an add landing mid-rewrite went to the replaced file and was lost.
+    import fcntl
+    queue = tmp_path / "pool.queue"
+    queue.write_text("")
+    with open(str(queue) + ".lock", "w") as lk:
+        fcntl.flock(lk, fcntl.LOCK_EX)
+        p = subprocess.Popen(["bash", str(ROOT / "tools" / "pool_queue.sh"), "add", "echo lock-test",
+                              "--checked", "test"], cwd=ROOT, env={**os.environ, "POOL_QUEUE_PATH": str(queue)},
+                             stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+        time.sleep(1.0)
+        assert p.poll() is None and queue.read_text() == ""       # blocked on the lock, nothing written
+        fcntl.flock(lk, fcntl.LOCK_UN)
+    assert p.wait(timeout=30) == 0
+    assert "echo lock-test  #checked:test" in queue.read_text()
+
+
 def test_pop_takes_first_job_that_fits_the_node_budget(tmp_path: Path) -> None:
     now = int(time.time())
     queue = tmp_path / "pool.queue"
