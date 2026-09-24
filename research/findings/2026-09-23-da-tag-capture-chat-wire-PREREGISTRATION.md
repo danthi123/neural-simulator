@@ -180,8 +180,8 @@ per job, `--workers 3`, output `research/findings/raw/_da_tag_capture_chat/seed<
 **What had already been seen before this amendment** (adversarial review v2:dd14adaf7 of commit `caf0c9a0b`,
 against the seed-42 artifact in `research/findings/raw/_da_tag_capture_chat/seed42.json`): every companion-ON
 arm's `tag_capture_at_recall` reports `gamma` and `d1_a_go` from `ChatTagCapture`'s D1 read. The intact arms read
-`gamma=46.549, d1_a_go=0.1314`; all three lesion arms (`sal_night_lesion`, `neu_night_lesion`, `sal_imm_lesion`)
-read `gamma=32.774, d1_a_go=0.1867` instead of the SAME value the intact arms got. A synthetic reproduction (no
+`gamma=46.549, d1_a_go=0.1314`; all three lesion arms (`sal_night_lesion`, `neu_night_lesion`, `sal_imm_lesion`) <!--derived-->
+read `gamma=32.774, d1_a_go=0.1867` instead of the SAME value the intact arms got. A synthetic reproduction (no <!--derived-->
 brain, in a throwaway process) confirmed the mechanism: `ChatTagCapture` built its `SpikingD1Activation` via
 `_da_write_gain_spiking_derisk._get_reader(seed, False)`, the identical `(seed, lesion)` cache key production's
 own intact-arm `spiking_write_gain` read uses when `BRAIN_DA_ENCODING_SPIKING_GAIN` is on (default). Whichever
@@ -198,8 +198,8 @@ the SPECIFIC claimed edge, hold everything else byte-identical."
 cache namespace production's write-gain path never reads or writes. `SpikingD1Activation(..., isolated=True)`
 builds/fetches from it instead of the shared `(seed, lesion)` cache; `ChatTagCapture` now passes `isolated=True`
 (`isolated_tag="da_tag_capture_chat"`). Verified in a throwaway process: reproducing the ambient-RNG-consumption
-asymmetry above with the OLD code gives the exact reported gamma/d1_a_go split (46.549/0.1314 vs 32.774/0.1867);
-with the NEW isolated path both arms read `gamma=32.774, d1_a_go=0.1867` — identical.
+asymmetry above with the OLD code gives the exact reported gamma/d1_a_go split (46.549/0.1314 vs 32.774/0.1867); <!--derived-->
+with the NEW isolated path both arms read `gamma=32.774, d1_a_go=0.1867` — identical. <!--derived-->
 
 **Standing check added.** `grade_seed` (`research/runners/_da_tag_capture_chat_probe.py`) now computes
 `G_isolation_gamma_consistent`: gamma and d1_a_go must be equal (abs diff < 1e-6) across every companion-ON arm
@@ -297,4 +297,4 @@ voiding scope. No `sim/` edit, no default flipped, no `research/queue/*` edit.
 **Governs:** every future `--aggregate` read of `research/findings/raw/_da_tag_capture_chat` (must re-grade, per
 point 1); the harvested seed-42 artifact once the in-flight `_verify` run lands (per point 2); a future
 `--offcheck` run (must use `--pinned-sha 36a175534`, per point 3); and any reader of `lbf_row_s42_ltmoff` or
-`seed42/*.json` (VOID, per point 4).
+`research/findings/raw/_da_tag_capture_chat/seed42/*.json` (VOID, per point 4).
