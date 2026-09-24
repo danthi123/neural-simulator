@@ -837,7 +837,8 @@ def _wmf_gate(arms, require_resolution=True):
       RES    (ON only) on both intact arms each ask was resolved by the organ (multiref.kind=='resolve') to one of
              that session's own intro referents                                     -> "probe-inadequate:no-resolution"
              and the two sessions of the pair resolved DIFFERENT referents          -> "probe-inadequate:same-referent"
-      L      both lesion arms' intros read hold_alive_min == 0.0                     -> "lesion-not-effective"
+      L      both lesion arms' intros read hold_alive_min == 0.0, and (ON only) the lesion still holds at the ask:
+             its retrieval record exists and every register rate is 0.0            -> "lesion-not-effective"
       N      intact_a == intact_b on every ask `answer`                              -> "noisy-null-control"
       C      (ON only) each intact reply follows its resolution: recalled_svo is None (abstain) or its agent is the
              resolved referent                                                       -> "probe-inadequate:content"
@@ -895,6 +896,14 @@ def _wmf_gate(arms, require_resolution=True):
             r["RES_pair_differs"] = bool(len(set(resolved)) == 2 and None not in resolved)
         r["L_lesion_hold_dead"] = bool(all(mr(arms[k], intro).get("hold_alive_min") == 0.0
                                            for k in ("lesion", "lesion_rep") for intro, _ask in sessions))
+        if require_resolution:
+            # the lesion must STILL HOLD at the moment of measurement (docs/TERMS.md `lesion`): on the ON lesion arms
+            # the ask turn's own retrieval read must find no live register
+            r["L_lesion_holds_at_ask"] = bool(all(
+                mr(arms[k], ask).get("kind") == "resolve"
+                and max(mr(arms[k], ask).get("register_rates") or [1.0]) == 0.0
+                for k in ("lesion", "lesion_rep") for _intro, ask in sessions))
+            r["L_lesion_hold_dead"] = bool(r["L_lesion_hold_dead"] and r["L_lesion_holds_at_ask"])
         r["N_null_clean"] = bool(all(ans(arms["intact_a"], ask) == ans(arms["intact_b"], ask)
                                      for _intro, ask in sessions))
         if require_resolution:
@@ -1973,7 +1982,7 @@ def _wmf_selftest_checks():
     held = {"A": (("dog", "cat"), ("cat", "dog")), "B": (("cat", "bird"), ("bird", "cat"))}
 
     def mk(reply, resolved=None, lesion_reply=None, les_alive=0.0, les_scope="recur", intact_b_reply=None,
-           lesion_rep_reply=None, no_resolve=False, svo=None, ask_extra=None):
+           lesion_rep_reply=None, no_resolve=False, svo=None, ask_extra=None, les_ask_rates=(0.0, 0.0, 0.0, 0.0, 0.0)):
         """Synthetic arms. reply/resolved/lesion_reply/svo: {pair: (session1, session2)}."""
         def arm(kind):
             a = {}
@@ -1990,7 +1999,10 @@ def _wmf_selftest_checks():
                     if kind.startswith("intact") and not no_resolve:
                         # default resolution: each session's first-mentioned referent (register 0 won the race)
                         res_pair = (resolved or {}).get(p) or (held[p][0][0], held[p][1][0])
-                        d["multiref"] = {"kind": "resolve", "resolved": res_pair[s]}
+                        d["multiref"] = {"kind": "resolve", "resolved": res_pair[s],
+                                         "register_rates": [0.09, 0.08, 0.0, 0.0, 0.0]}
+                    elif kind.startswith("lesion") and not no_resolve:
+                        d["multiref"] = {"kind": "resolve", "resolved": None, "register_rates": list(les_ask_rates)}
                     d.update(ask_extra or {})
                     a[ask] = d
             return a
@@ -2033,6 +2045,9 @@ def _wmf_selftest_checks():
                                                           "B": svo_ok["B"]}))[1] == "probe-inadequate:content",
         "wmf gate: lesion hold still alive -> lesion-not-effective":
             _wmf_gate(mk(content, lesion_reply=same, svo=svo_ok, les_alive=0.05))[1] == "lesion-not-effective",
+        "wmf gate: lesion no longer holds at the ask (a live register) -> lesion-not-effective":
+            _wmf_gate(mk(content, lesion_reply=same, svo=svo_ok, les_ask_rates=(0.0, 0.07, 0.0, 0.0, 0.0)))[1]
+            == "lesion-not-effective",
         "wmf gate: lesion arm not confined -> probe-inadequate:route":
             _wmf_gate(mk(content, lesion_reply=same, svo=svo_ok, les_scope=None))[1] == "probe-inadequate:route",
         "wmf gate: ask is an inner-state read-out -> probe-inadequate:not-ordinary":

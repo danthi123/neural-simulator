@@ -1,0 +1,32 @@
+{
+ "run_id": "1790257718-4143306",
+ "runner": "research/runners/_wm_focus_bind_calib.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-acb7d373ca274ab24/research/runners/_wm_focus_bind_calib.py",
+  "--seeds",
+  "7,11,13,17,19,23,29,31",
+  "--settings",
+  "12000:150:60,12000:150:150,20000:150:60,20000:150:150,8000:150:150",
+  "--out",
+  "research/findings/raw/_wm_focus_bind/calib_dev_seeds.json"
+ ],
+ "git_sha": "f4117ebd6",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-24T09:48:38",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 2631.0,
+ "corpus_check_query": "spiking referent focus binding pronoun resolution working memory",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_wm_focus_bind/calib_dev_seeds.json"
+}
