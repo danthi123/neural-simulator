@@ -182,7 +182,6 @@ prereg-same-commit: the dev-seed-7 full-probe-shaped calibration artifacts under
   "the dog and the cat walked in" -> "what does it chase" -> "the dog chases the cat";
   "what does dog chase" -> "As for it — the dog chases the cat";
   "what does cat chase" -> "Setting the held thread aside — On cat, then — I don't know about that."
-- DEV_SMOKE_PLACEHOLDER
 
 ## Byte-identity (flags OFF)
 
@@ -199,8 +198,13 @@ Raw per-tree responses: `research/findings/raw/_wm_focus_bind/byte_identity_s7/`
 ## Compute
 
 One pool line per seed, from a revision provisioned at the pushed branch head. Each line runs 32 builds in sequence,
-one session each. Measured on dev seed 7 on the local box (numpy, `OMP_NUM_THREADS=1`, shared with other jobs): peak
-RSS 5.97-6.07 GB per build, 365-805 s per build, so about 6 h per seed. `mem_gb=7`.
+one session each (numpy, `OMP_NUM_THREADS=1`). An earlier draft of this section stated specific peak-RSS and
+per-build-duration figures for the dev-seed-7 calibration run; those were an unlogged live `ps`/`top` observation,
+not a number written to any committed artifact, and traced to no artifact when checked -- see the AMENDMENT LOG.
+No RSS or duration figure is claimed here. `mem_gb=7` is a conservative operational budget carried over from that
+unlogged observation, not a measured/citable one; neither `load_bearing_fraction.py` nor its provenance sidecar
+instruments per-build RSS or wall time, so no committed artifact retroactively supports a specific figure either --
+a citable measurement would need a separate, purpose-built instrumentation pass, not attempted here.
 
 ```
 bash tools/pool_queue.sh add 'cd ~/derisk-pool/revisions/<pushed head> && SIM_BACKEND=numpy OMP_NUM_THREADS=1 LB_WMB_FOCUS_PROBE=1 .venv/bin/python -u -m research.runners.load_bearing_fraction --only wm-binding-advanced --repeats 2 --seed <s> --out research/findings/raw/_load_bearing/wmb_focus/s<s>/lbf.json' --checked 'wm referent->focus bind prereg research/findings/2026-09-24-wm-referent-focus-bind-anaphor-probe-PREREGISTRATION.md; the ordinary-content probe read 6/6 clean negatives and names this mechanism; flags-off byte-identity in data (offflag_byte_identity_s7.json); mem_gb=7'
@@ -216,3 +220,23 @@ output. No felt state is asserted.
 ## AMENDMENT LOG
 
 (empty at filing)
+
+- **2026-09-24, documentation fix round, before any evaluation seed was built (still zero -- 6-seed battery queued
+  on the pool but not pulled).** An independent review of this filing found three document defects, none touching
+  the pre-registered mechanism, probe, decision rule or headline rule:
+  1. The `Biology:` line cited `research/biology/wm-referent-focus-retrieval.md`, which did not exist. It now
+     does, binding HOLD to persistent prefrontal delay-period firing (Kandel PNS-6e) and RETRIEVE to the project's
+     own established N-way lateral-inhibition WTA primitive (`affective-marker-lateral-inhibition-wta.md`,
+     already reused once by `question-route-selection-wta.md`), and declaring the discourse-salience residual
+     (Lewis & Vasishth 2005) as NOT yet implemented. `tools/biology_check.py` passes on it (4/4 sources resolve).
+  2. The Compute section stated specific peak-RSS/per-build-duration figures that traced to no committed
+     artifact. Corrected above: no specific figure is claimed; `mem_gb=7` is disclosed as an unlogged operational
+     choice, not a measurement.
+  3. A leftover `DEV_SMOKE_PLACEHOLDER` line in "Seen before this was written" (empty template content) is
+     removed.
+  Nothing above changes the mechanism code, the probe's turn shapes, the pre-registered decision rule (`_wmf_gate`
+  section) or the headline rule -- `git diff 4da72fd23..HEAD -- research/runners/d6_multiref_wm_production_organ.py
+  webapp/server.py research/runners/brain_chat_tui.py webapp/gnw_bus_shadow.py webapp/gnw_two_organ_bus.py
+  webapp/gnw_three_organ_bus.py research/runners/load_bearing_fraction.py` is empty, so the 6-seed pool jobs already
+  queued and pinned to `4da72fd23` still measure the correct, unchanged code and were left in place rather than
+  requeued.
