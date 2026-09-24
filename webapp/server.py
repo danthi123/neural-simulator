@@ -5710,8 +5710,10 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
     # scenario is active. Placed after affect/episodic/worldmodel/multiref/discourse (their short-circuits keep
     # precedence) and before causal/comprehension (a false-belief query is never mis-read as a why/what-if or a
     # plain assertion) — the query class is DISJOINT (no other organ answers "where will X look"), so every
-    # non-false-belief turn is byte-identical. Default-OFF: `BRAIN_FALSE_BELIEF_CHAT` unset -> this module is
-    # never imported -> byte-identical, including on a turn whose text happens to match the grammar.
+    # non-false-belief turn is byte-identical. Default-OFF: `BRAIN_FALSE_BELIEF_CHAT` unset -> this module IS
+    # still imported below (cheap, side-effect-free, just to read the flag) but the organ is never built and
+    # no turn content is inspected -> byte-identical, including on a turn whose text happens to match the
+    # grammar (2026-09-24 review finding: an earlier wording of this comment overclaimed "never imported").
     # `BRAIN_FALSE_BELIEF_LESION=1` -> the witnessing gate is forced open at write AND query (mirrors the
     # derisk's own other-lesion) -> the belief store collapses onto reality -> an unwitnessed-move query
     # answers with the TRUE location instead of the stale one (load-bearing). HONEST RESIDUAL: witnessing/

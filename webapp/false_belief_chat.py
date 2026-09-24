@@ -31,15 +31,19 @@ research/findings/2026-09-24-tom-false-belief-chat-wire-PREREGISTRATION.md):
     next rung, not a held-back shortcut.
 
 CONTRACT (additive, reversible, byte-identical-off), mirroring every sibling Gate-B organ:
-  * `false_belief_chat_enabled()` gates the whole block. DISABLED (`BRAIN_FALSE_BELIEF_CHAT` unset or falsy)
-    -> the server-side hook never imports this module -> byte-identical, including on a turn whose text would
-    otherwise match one of the regexes below.
+  * `false_belief_chat_enabled()` gates the whole block. DISABLED (`BRAIN_FALSE_BELIEF_CHAT` unset or falsy):
+    the server-side hook still imports this module (cheap, side-effect-free -- just the regex constants and a
+    flag read) to evaluate `false_belief_chat_enabled()`, but never builds the organ, never calls
+    `has_false_belief_content()`/`observe_turn()`, and never perturbs any RNG -> byte-identical, including on a
+    turn whose text would otherwise match one of the regexes below.
   * An ORDINARY turn (matches none of PLACE/LEAVE/RETURN/MOVE/QUERY) returns `acted=False` WITHOUT touching the
     organ (no bridge build, no RNG perturbation) even with the flag ON.
   * A narration turn (PLACE/LEAVE/RETURN/MOVE, no query) is a WRITE-ONLY side effect: state updates, the reply
     is UNCHANGED (mirrors the D6/E2/silent-WM "maintain" folds already in `webapp/server.py`).
-  * A QUERY turn short-circuits with the belief-store read-out IF a scenario is active; otherwise it falls
-    through unchanged (nothing to report) -- never a fabricated answer.
+  * A QUERY turn short-circuits with the belief-store read-out IF a scenario is active AND the query's own
+    parsed agent/object match the tracked scenario's (agent, object); otherwise it falls through unchanged
+    (nothing to report, `reason` names which field mismatched) -- never a fabricated answer, and never a
+    silent misattribution to the wrong agent (e.g. asking about Anne's belief must not answer with Sally's).
 
 LESION (`BRAIN_FALSE_BELIEF_LESION=1`): forwarded to `FalseBeliefChatOrgan.observe_event`/`.query` as
 `lesion=True` on every call for the lifetime of the flag -- the witnessing gate is forced open at write AND
@@ -258,6 +262,24 @@ def observe_turn(cache_key, message: str, *, seed: int = _DEFAULT_SEED, lesion: 
             scen = _get_active_scenario(cache_key)
             if scen is None or scen.obj is None:
                 info["reason"] = "no_active_scenario"
+                return info
+            # Finding A (2026-09-24 review of research/tom-false-belief-chat): the query's OWN parsed agent/
+            # object were previously discarded and the reply was always built from `scen.tracked_agent`/
+            # `scen.obj`, so asking about a DIFFERENT agent (e.g. "Where will Anne look..." after a Sally
+            # scenario) silently answered about Sally with no mismatch signal. One scenario tracks exactly one
+            # (agent, object) pair (declared scope limit, module docstring); a query naming a different agent or
+            # object is honestly UNANSWERABLE from this scenario, not a wrong answer.
+            q_agent = last_query["agent"]
+            q_obj = last_query["object"]
+            if scen.tracked_agent is None or q_agent.lower() != scen.tracked_agent.lower():
+                info["reason"] = "agent_mismatch"
+                info["query_agent"] = q_agent
+                info["tracked_agent"] = scen.tracked_agent
+                return info
+            if q_obj != scen.obj:
+                info["reason"] = "object_mismatch"
+                info["query_object"] = q_obj
+                info["tracked_object"] = scen.obj
                 return info
             read = scen.organ.query(lesion=les)
             belief_name = scen.loc_name(read["belief_loc"])

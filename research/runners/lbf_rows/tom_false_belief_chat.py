@@ -2,7 +2,9 @@
 
 Exposes `EXTRA_LESIONS`/`EXTRA_PROBES` in the exact shapes
 `research.runners.load_bearing_fraction.FACULTY_LESIONS`/`research.runners.onebrain_regression_battery.
-FACULTY_PROBES` use, for the AG-REG import hook to merge — this module never edits those registries directly.
+FACULTY_PROBES` use, for a future "AG-REG import hook" to merge (NOT YET WRITTEN anywhere in the repo as of
+2026-09-24 -- see `research/runners/lbf_rows/__init__.py`) — this module never edits those registries directly,
+so this row is inert/unregistered until that hook lands.
 
 Also exposes `EXTRA_TURNS` (same shape as `onebrain_regression_battery._EXTRA_TURNS`): the plan's row contract
 names only EXTRA_LESIONS/EXTRA_PROBES, but this faculty's probe needs a turn label
