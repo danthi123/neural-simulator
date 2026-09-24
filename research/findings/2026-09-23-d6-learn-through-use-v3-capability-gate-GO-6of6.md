@@ -5,13 +5,14 @@ date: 2026-09-23
 lane: D6-learn-and-grow
 mechanism: D6 gate v3 (capability gate) — a local spiking Hebbian store write (BRAIN_D6_HEBBIAN_STORE=1 with BRAIN_D6_ENGRAM_VOCAB=1 and BRAIN_D6_ENGRAM_READTIME=1, all default-OFF) replacing the host pattern copy for in-conversation fact acquisition, 6 seeds, numpy
 seeds: [42, 43, 44, 100, 101, 102]
-verdict: GO 6/6 on the pre-registered K1-K7 (every criterion on every seed). The later recall reply depends on the synaptic write and on the synapse read at probe time; the host record of the fact is inert; the lesion changes only the write; the null is clean. The EXPO_H exposure-matched SECONDARY (K3e/K4e, non-scoring) is UNDEFINED on all 6 seeds — its arms are staged, not yet run.
+verdict: GO 6/6 on the pre-registered K1-K7 (every criterion on every seed). The later recall reply depends on the synaptic write and on the synapse read at probe time; the host record of the fact is inert; the lesion changes only the write; the null is clean. The EXPO_H exposure-matched SECONDARY (K3e/K4e, non-scoring) PASSES on all 6 seeds (measured 2026-09-23 23:05, see the section below).
 runner: research/runners/d6_learn_through_use_lb.py
 builds_on:
   - research/findings/2026-09-23-d6-learn-through-use-v3-PREREGISTRATION-capability-gate.md
   - research/findings/2026-09-23-d6-learn-through-use-v3-s42-all-criteria-pass-INCOMPLETE-1of6-plus-v1-pool-banked.md (superseded by this finding)
 artifacts:
   - research/findings/raw/_d6_learn_through_use_v3/d6_ltu_v3_6seed_verdict.json
+  - research/findings/raw/_d6_learn_through_use_v3/d6_ltu_v3_6seed_verdict_with_expo.json
   - research/findings/raw/_d6_learn_through_use_v3/s{42,43,44,100,101,102}_{USE_H,USE_H_REP,USE_D,FREEZE_H,SHUF_H,NOREC_H,ABL_H}.json
 ---
 
@@ -87,3 +88,12 @@ local learning rule discovers the pattern. The same review measured the store's 
 fact with exact host routing, so recall cannot degrade with N, while per-operation cost grows linearly (per-fact encode
 ~12.7 s and a projected read-time view ~3923 s per turn at N=2000). Scaling work continues in workflow `w1di54v7l`
 (an honest cost-criterion capacity curve, and a distributed store in shared synapses that can interfere).
+
+## Secondary measured (2026-09-23 ~23:05): EXPO_H K3e/K4e pass on all 6 seeds
+The six EXPO_H arms (same content words, no write; revision `01f7a5a4`, whose `sim/`, `experiment/`, `webapp/` and
+`bridges/` are identical to the K-arm revision) landed and were scored with the same registered command
+(`research/findings/raw/_d6_learn_through_use_v3/d6_ltu_v3_6seed_verdict_with_expo.json`; K1-K7 unchanged, GO 6/6).
+On every seed: EXPO_H made no store write and has no taught block; K3e (FREEZE_H.probe == EXPO_H.probe, no 'deer')
+and K4e (ABL_H.probe == EXPO_H.probe, no 'deer') both hold. The lesion arms' abstention is therefore the same reply the
+brain gives after merely hearing the words — the recall is carried by the write, not by word exposure. As
+pre-registered, this secondary cannot move `go`.
