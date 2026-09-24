@@ -37,6 +37,11 @@ facts are stored -- the loading risk is throughput and that the loaded bindings 
 collapse. The bulk loader evaluates the closed-form FHRR algebra (phase-add bind + phasor-sum bundle) the composer's
 per-op spiking resonate CONVERGES to, cross-checked to reproduce the spiking composer's recall answers.
 
+**Premise flagged (2026-09-23).** "Independent of how many other facts are stored" holds only because this store
+shares ZERO synapses between facts. That is a localist design constant, not cortical biology, and it means a
+capacity curve measured on this store cannot fail. The superposed replacement, in which every fact is written into
+shared synapses and capacity follows a law, is `ca3-superposed-fact-attractor` (pre-registered, not yet measured).
+
 ## What is established, and where the shortcut stands
 
 **De-risk (`_bulk_kb_load_derisk.py`, 6 seeds):** bulk-load N=100k synthetic agent-action-patient triples at
