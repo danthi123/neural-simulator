@@ -83,7 +83,13 @@ def test_resolve_turn_publishes_a_per_turn_override(flag_on):
 
 def test_chatbrain_resolve_anaphora_honors_the_override_only_for_its_own_turn():
     from research.runners.brain_chat_tui import ChatBrain
-    from webapp.gnw_bus_shadow import _multiref_resolved
+    from webapp.gnw_bus_shadow import _multiref_resolved as _mr_bus
+    from webapp.gnw_two_organ_bus import _multiref_resolved as _mr_2organ
+
+    def _multiref_resolved(c):
+        # every gate combiner (the substrate bus and the 2/3-organ buses) must agree
+        assert _mr_bus(c) == _mr_2organ(c)
+        return _mr_bus(c)
     cb = types.SimpleNamespace(is_multiturn=False)
     cb._multiref_referent_override = {"question": "what does it chase", "pronoun": "it", "referent": "cat"}
     assert ChatBrain._resolve_anaphora(cb, "what does it chase") == "what does cat chase"

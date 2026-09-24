@@ -88,6 +88,15 @@ from research.runners._gnw_two_distinct_organs_derisk import (
 from research.runners._p1_2_workspace_deliberation_loop_derisk import build_workspace_bridge
 from research.runners._gnw_coincidence_integrator_derisk import _pick_decoy, D_SUB_DEFAULT
 
+
+def _multiref_resolved(chat) -> bool:
+    """True iff THIS turn's anaphor was resolved by the D6 multi-referent organ off its live held state
+    (BRAIN_MULTIREF_FOCUS_BIND, default OFF -> the attribute is never set -> False, byte-identical). A veto on such a
+    turn abstains instead of falling through to the host keyword router, which would answer about a DIFFERENT agent
+    than the one the organ resolved (the rank-13 neural-abstain behaviour, applied only to organ-resolved pronouns)."""
+    ovr = getattr(chat, "_multiref_referent_override", None)
+    return bool(ovr and ovr.get("referent"))
+
 _DEFAULT_SEED = int(os.environ.get("BRAIN_CHAT_SEED", "42"))  # research/seed-threading-lbf, 2026-09-20: reads the
 # same env var as webapp/server.py._brain_chat_seed so this organ reseeds coherently with the rest of the tiny-
 # demo brain. Unset -> 42, BYTE-IDENTICAL to the pre-existing hardcoded `seed: int = 42` defaults below.
@@ -367,6 +376,11 @@ def two_organ_gate_via(chat, question: str, *, seed: int = _DEFAULT_SEED,
             info.update({"routable": True, "agent": agent, "action": action, "anaphora_used": False,
                          "authored_by": "two_organ_bus", "host_combination_computed": False, "bus_svo": None})
             return None, info
+        if _multiref_resolved(chat):                          # REFERENT->FOCUS BIND (default OFF): organ-resolved -> abstain
+            info.update({"routable": True, "agent": agent, "action": action, "anaphora_used": True,
+                         "authored_by": "two_organ_bus_veto_multiref_resolved_abstain",
+                         "host_combination_computed": False, "bus_svo": None})
+            return None, info
         svo = chat._gate_router_combine(q)                    # anaphora-abstain fall-through -> host router (out of scope)
         info.update({"routable": True, "agent": agent, "action": action, "anaphora_used": True,
                      "authored_by": "two_organ_bus_veto_then_host_router", "host_combination_computed": True,
@@ -378,6 +392,9 @@ def two_organ_gate_via(chat, question: str, *, seed: int = _DEFAULT_SEED,
         if not anaphora_used:
             return None, {"routable": False, "reason": "parser_decline_abstain", "authored_by": "host_abstain",
                           "host_combination_computed": False, "bus_svo": None}
+        if _multiref_resolved(chat):                          # REFERENT->FOCUS BIND (default OFF): organ-resolved -> abstain
+            return None, {"routable": False, "reason": "parser_decline_multiref_resolved_abstain",
+                          "authored_by": "host_abstain", "host_combination_computed": False, "bus_svo": None}
         svo = chat._gate_router_combine(q)
         _l = (list(svo) if svo is not None else None)
         return svo, {"routable": False, "reason": "parser_decline_anaphora_router", "authored_by": "host_router",
