@@ -1,0 +1,37 @@
+{
+ "run_id": "1790179805-1142153",
+ "runner": "research/runners/_lbf_open_ended_production_turn_probe.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/wf_6cf1082d-b06-2/research/runners/_lbf_open_ended_production_turn_probe.py",
+  "--worker",
+  "--env",
+  "{\"BRAIN_OPEN_ENDED\": \"1\", \"BRAIN_OPEN_ENDED_GENERATE_ROUTE\": \"0\", \"BRAIN_OPEN_ENDED_NO_QWEN_FALLBACK\": \"1\", \"BRAIN_SPIKING_DRAW_LESION\": \"0\"}",
+  "--seed",
+  "42",
+  "--k",
+  "40",
+  "--out",
+  "research/findings/raw/_load_bearing/_oe_production_turn/oe_unfixed/oe_unfixed_s42_intact.json"
+ ],
+ "git_sha": "dfcc72ce4",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-23T12:10:05",
+ "env": {
+  "SIM_BACKEND": "numpy",
+  "CUDA_VISIBLE_DEVICES": "",
+  "SIM_RUN_ID": "1790179805-1142117"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 1633.9,
+ "corpus_check_query": "open-ended generation production turn not load-bearing spiking draw",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_load_bearing/_oe_production_turn/oe_unfixed/oe_unfixed_s42_intact.json"
+}

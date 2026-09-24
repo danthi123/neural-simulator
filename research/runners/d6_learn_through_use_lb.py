@@ -610,6 +610,7 @@ def _arm_path(arm_dir, seed, name):
 
 def run(seeds, arm_dir, resume=True, score_only=False, variant="base", only_arms=None):
     per = {}
+    failed = []   # arms whose worker died or wrote nothing -- 2026-09-23: 12/35 v3 arms vanished behind an rc=0
     for s in seeds:
         arms = {}
         for name, (env, teach, post_teach) in arms_for(variant).items():
@@ -621,11 +622,13 @@ def run(seeds, arm_dir, resume=True, score_only=False, variant="base", only_arms
             if a is None and not score_only:
                 print("[d6] seed %s arm %s ..." % (s, name), flush=True)
                 a = _spawn(env, teach, path, s, post_teach=post_teach)
+                if a is None:
+                    failed.append("s%s_%s" % (s, name))
             arms[name] = a
         per[str(s)] = score_seed(arms, variant=variant)
         print("[d6] seed %s -> %s" % (s, per[str(s)]["verdict"]), flush=True)
     return {"runner": "research.runners.d6_learn_through_use_lb", "variant": variant, "seeds": list(seeds), "arm_dir": arm_dir,
-            "per_seed": per, "aggregate": aggregate(per)}
+            "per_seed": per, "aggregate": aggregate(per), "failed_arms": failed}
 
 
 # ── self-test: the verdict must FAIL in each failing direction (a gate that cannot fail measures nothing) ────────
@@ -841,6 +844,10 @@ def main():
         os.makedirs(os.path.dirname(a.json) or ".", exist_ok=True)
         json.dump(res, open(a.json, "w"), indent=2, default=str)
         print("[d6] wrote", a.json)
+    if res["failed_arms"]:
+        # A dead worker (OOM, crash) must not exit 0: the pool records rc per job, and a 0 here read as "arm done".
+        print("[d6] FAILED arms (worker died or wrote no file): %s" % ", ".join(res["failed_arms"]), flush=True)
+        return 4
     return 0
 
 

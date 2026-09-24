@@ -3744,6 +3744,59 @@ def _integrated_loop_enabled() -> bool:
     return env.strip().lower() in ("1", "true", "on", "yes")
 
 
+def _open_ended_generate_route(chat, msg) -> bool:
+    """OPEN-ENDED GENERATE ROUTE (default-OFF: `BRAIN_OPEN_ENDED_GENERATE_ROUTE`, lane research/open-ended-production-
+    turn-lb, 2026-09-23). True -> the BRAIN_OPEN_ENDED free-talk block is SKIPPED for THIS turn so it falls through to
+    the ordinary pipeline, whose `chat.gate()`/`gate_extract()` enters the brain's #3E GENERATE channel
+    (`ChatBrain._generate_hypothesis` -> the spiking soft-WTA DRAW -> plausibility / non-contradiction gates -> the
+    moat verify -> a FLAGGED hypothesis, or an honest abstain).
+
+    THE DEFECT THIS CLOSES (measured, research/runners/_lbf_open_ended_production_turn_probe.py mode `oe_unfixed`):
+    with BRAIN_OPEN_ENDED=1 EVERY turn goes to `open_ended_chat.answer_turn`, which never calls `chat.gate`, so an
+    explicit generation prompt ("what might a dog chase") NEVER reaches the generative draw -- `extract_topic` yields
+    the whole prompt as an unknown topic and the reply is the fixed honest-abstain string. The open-ended reply was
+    therefore lesion-INVARIANT to the spiking draw BY CONSTRUCTION (0 draws in both arms): the generative faculty was
+    bypassed on the very path meant to host open-ended conversation (the R1 "specialist-query routing" residual,
+    rung-4, for the generation class).
+
+    Only an EXPLICIT generation prompt is routed -- `chat._parse_open_ended` is the SAME conservative pattern set
+    gate() uses (fixed lead-ins only), so every other open-ended free-talk turn is untouched. Flag OFF (default) ->
+    returns False before touching `chat` -> the BRAIN_OPEN_ENDED block runs exactly as before (and with
+    BRAIN_OPEN_ENDED off this function is never even called: the caller short-circuits). Any error -> False (the
+    unchanged free-talk path)."""
+    if os.environ.get("BRAIN_OPEN_ENDED_GENERATE_ROUTE", "0").strip().lower() not in ("1", "true", "on", "yes"):
+        return False
+    try:
+        from research.runners.brain_chat_tui import _NOT_OPEN_ENDED
+        return chat._parse_open_ended(msg) is not _NOT_OPEN_ENDED
+    except Exception:
+        return False
+
+
+def _open_ended_acquire_route(chat, msg) -> bool:
+    """OPEN-ENDED ACQUIRE ROUTE (default-OFF: `BRAIN_OPEN_ENDED_ACQUIRE_ROUTE`, lane research/open-ended-production-
+    turn-lb fix round, 2026-09-23). True -> the BRAIN_OPEN_ENDED free-talk block is SKIPPED for THIS turn so an SVO
+    ASSERTION reaches the ordinary pipeline, whose `chat.gate()`/`gate_extract()` runs in-loop acquisition
+    (`ChatBrain._maybe_acquire` -> `inner.hear`). THE DEFECT THIS CLOSES (measured, probe mode `oe_routed` seed 42):
+    with BRAIN_OPEN_ENDED=1 a told fact ("the wolf chase the rabbit") went to `open_ended_chat.answer_turn`, was never
+    stored, and `stored_facts` stayed at the 5 build-time facts -- open-ended mode did not learn from being told.
+    The test is `chat._is_acquisition_candidate`, a SIDE-EFFECT-FREE mirror of `_maybe_acquire`'s accept predicate
+    (pinned equal to it by tests/test_open_ended_generate_route.py). Flag OFF (default) -> returns False before
+    touching `chat`. Any error -> False (the unchanged free-talk path)."""
+    if os.environ.get("BRAIN_OPEN_ENDED_ACQUIRE_ROUTE", "0").strip().lower() not in ("1", "true", "on", "yes"):
+        return False
+    try:
+        return bool(chat._is_acquisition_candidate(msg))
+    except Exception:
+        return False
+
+
+def _open_ended_brain_route(chat, msg) -> bool:
+    """True -> skip the BRAIN_OPEN_ENDED free-talk block for this turn (either default-OFF route fires). Both flags OFF
+    -> False without touching `chat`. Only ever evaluated when BRAIN_OPEN_ENDED is truthy (the caller short-circuits)."""
+    return _open_ended_generate_route(chat, msg) or _open_ended_acquire_route(chat, msg)
+
+
 def _brain_chat_seed() -> int:
     """THE single substrate-seed source of truth for the tiny-demo chat brain (research/seed-threading-lbf,
     2026-09-20 -- built so the load-bearing-fraction instrument, research/runners/load_bearing_fraction.py, can
@@ -4845,7 +4898,8 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
     # behind the no-confab post-filter moat). Reuse-by-import (NO sim/ edit). See webapp/open_ended_chat.py.
     # Cheap env read FIRST so the DEFAULT-OFF path imports NOTHING (the open_ended_chat module pulls in the de-risk
     # modules, one of which disables INFO logging process-wide at import) -> off is truly byte-identical + side-effect-free.
-    if os.environ.get("BRAIN_OPEN_ENDED", "0").strip().lower() in ("1", "true", "on", "yes"):
+    if (os.environ.get("BRAIN_OPEN_ENDED", "0").strip().lower() in ("1", "true", "on", "yes")
+            and not _open_ended_brain_route(chat, msg)):
         try:
             from webapp import open_ended_chat as _OE
             # the ONE warm Qwen faculty the server already loaded for the `qwen` renderer (builds it once if the

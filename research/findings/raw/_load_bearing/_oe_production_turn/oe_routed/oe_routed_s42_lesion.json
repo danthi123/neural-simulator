@@ -1,0 +1,441 @@
+{
+  "env": {
+    "BRAIN_OPEN_ENDED": "1",
+    "BRAIN_OPEN_ENDED_GENERATE_ROUTE": "1",
+    "BRAIN_OPEN_ENDED_NO_QWEN_FALLBACK": "1",
+    "BRAIN_SPIKING_DRAW_LESION": "1"
+  },
+  "seed": 42,
+  "k": 40,
+  "rich": true,
+  "teach": [
+    {
+      "msg": "the wolf chase the rabbit",
+      "answer": "I'm not sure about wolf chase the rabbit \u2014 I don't have anything about it in what I've actually learned, so I'd only be guessing.",
+      "recalled_svo": null
+    },
+    {
+      "msg": "the fox chase the rabbit",
+      "answer": "I'm not sure about fox chase the rabbit \u2014 I don't have anything about it in what I've actually learned, so I'd only be guessing.",
+      "recalled_svo": null
+    },
+    {
+      "msg": "the hawk chase the rabbit",
+      "answer": "I'm not sure about hawk chase the rabbit \u2014 I don't have anything about it in what I've actually learned, so I'd only be guessing.",
+      "recalled_svo": null
+    },
+    {
+      "msg": "the eagle chase the rabbit",
+      "answer": "I'm not sure about eagle chase the rabbit \u2014 I don't have anything about it in what I've actually learned, so I'd only be guessing.",
+      "recalled_svo": null
+    },
+    {
+      "msg": "the lion chase the deer",
+      "answer": "I'm not sure about lion chase the deer \u2014 I don't have anything about it in what I've actually learned, so I'd only be guessing.",
+      "recalled_svo": null
+    },
+    {
+      "msg": "the tiger chase the deer",
+      "answer": "I'm not sure about tiger chase the deer \u2014 I don't have anything about it in what I've actually learned, so I'd only be guessing.",
+      "recalled_svo": null
+    },
+    {
+      "msg": "the cougar chase the deer",
+      "answer": "I'm not sure about cougar chase the deer \u2014 I don't have anything about it in what I've actually learned, so I'd only be guessing.",
+      "recalled_svo": null
+    },
+    {
+      "msg": "the owl chase the mouse",
+      "answer": "I'm not sure about owl chase the mouse \u2014 I don't have anything about it in what I've actually learned, so I'd only be guessing.",
+      "recalled_svo": null
+    },
+    {
+      "msg": "the snake chase the mouse",
+      "answer": "I'm not sure about snake chase the mouse \u2014 I don't have anything about it in what I've actually learned, so I'd only be guessing.",
+      "recalled_svo": null
+    },
+    {
+      "msg": "the crow chase the beetle",
+      "answer": "I'm not sure about crow chase the beetle \u2014 I don't have anything about it in what I've actually learned, so I'd only be guessing.",
+      "recalled_svo": null
+    },
+    {
+      "msg": "the pike chase the minnow",
+      "answer": "I'm not sure about pike chase the minnow \u2014 I don't have anything about it in what I've actually learned, so I'd only be guessing.",
+      "recalled_svo": null
+    },
+    {
+      "msg": "the coyote chase the dog",
+      "answer": "I'm not sure about coyote chase the dog \u2014 I don't have anything about it in what I've actually learned, so I'd only be guessing.",
+      "recalled_svo": null
+    },
+    {
+      "msg": "the bear chase the dog",
+      "answer": "I'm not sure about bear chase the dog \u2014 I don't have anything about it in what I've actually learned, so I'd only be guessing.",
+      "recalled_svo": null
+    }
+  ],
+  "stored_facts": [
+    [
+      "brain",
+      "learn",
+      "words"
+    ],
+    [
+      "brain",
+      "store",
+      "memory"
+    ],
+    [
+      "brain",
+      "use",
+      "spikes"
+    ],
+    [
+      "cat",
+      "eat",
+      "fish"
+    ],
+    [
+      "dog",
+      "chase",
+      "cat"
+    ]
+  ],
+  "replies": [
+    {
+      "i": 0,
+      "hypothesis_svo": null,
+      "abstained": true,
+      "answer": "As for it \u2014 I don't know about that.",
+      "mode": null,
+      "n_draws": 400
+    },
+    {
+      "i": 1,
+      "hypothesis_svo": null,
+      "abstained": true,
+      "answer": "As for it \u2014 I don't know about that.",
+      "mode": null,
+      "n_draws": 400
+    },
+    {
+      "i": 2,
+      "hypothesis_svo": null,
+      "abstained": true,
+      "answer": "As for it \u2014 I don't know about that.",
+      "mode": null,
+      "n_draws": 400
+    },
+    {
+      "i": 3,
+      "hypothesis_svo": null,
+      "abstained": true,
+      "answer": "As for it \u2014 I don't know about that.",
+      "mode": null,
+      "n_draws": 400
+    },
+    {
+      "i": 4,
+      "hypothesis_svo": null,
+      "abstained": true,
+      "answer": "As for it \u2014 I don't know about that.",
+      "mode": null,
+      "n_draws": 400
+    },
+    {
+      "i": 5,
+      "hypothesis_svo": null,
+      "abstained": true,
+      "answer": "As for it \u2014 I don't know about that.",
+      "mode": null,
+      "n_draws": 400
+    },
+    {
+      "i": 6,
+      "hypothesis_svo": null,
+      "abstained": true,
+      "answer": "As for it \u2014 I don't know about that.",
+      "mode": null,
+      "n_draws": 400
+    },
+    {
+      "i": 7,
+      "hypothesis_svo": null,
+      "abstained": true,
+      "answer": "As for it \u2014 I don't know about that.",
+      "mode": null,
+      "n_draws": 400
+    },
+    {
+      "i": 8,
+      "hypothesis_svo": null,
+      "abstained": true,
+      "answer": "As for it \u2014 I don't know about that.",
+      "mode": null,
+      "n_draws": 400
+    },
+    {
+      "i": 9,
+      "hypothesis_svo": null,
+      "abstained": true,
+      "answer": "As for it \u2014 I don't know about that.",
+      "mode": null,
+      "n_draws": 400
+    },
+    {
+      "i": 10,
+      "hypothesis_svo": null,
+      "abstained": true,
+      "answer": "As for it \u2014 I don't know about that.",
+      "mode": null,
+      "n_draws": 400
+    },
+    {
+      "i": 11,
+      "hypothesis_svo": null,
+      "abstained": true,
+      "answer": "As for it \u2014 I don't know about that.",
+      "mode": null,
+      "n_draws": 400
+    },
+    {
+      "i": 12,
+      "hypothesis_svo": null,
+      "abstained": true,
+      "answer": "As for it \u2014 I don't know about that.",
+      "mode": null,
+      "n_draws": 400
+    },
+    {
+      "i": 13,
+      "hypothesis_svo": null,
+      "abstained": true,
+      "answer": "As for it \u2014 I don't know about that.",
+      "mode": null,
+      "n_draws": 400
+    },
+    {
+      "i": 14,
+      "hypothesis_svo": null,
+      "abstained": true,
+      "answer": "As for it \u2014 I don't know about that.",
+      "mode": null,
+      "n_draws": 400
+    },
+    {
+      "i": 15,
+      "hypothesis_svo": null,
+      "abstained": true,
+      "answer": "As for it \u2014 I don't know about that.",
+      "mode": null,
+      "n_draws": 400
+    },
+    {
+      "i": 16,
+      "hypothesis_svo": null,
+      "abstained": true,
+      "answer": "As for it \u2014 I don't know about that.",
+      "mode": null,
+      "n_draws": 400
+    },
+    {
+      "i": 17,
+      "hypothesis_svo": null,
+      "abstained": true,
+      "answer": "As for it \u2014 I don't know about that.",
+      "mode": null,
+      "n_draws": 400
+    },
+    {
+      "i": 18,
+      "hypothesis_svo": null,
+      "abstained": true,
+      "answer": "As for it \u2014 I don't know about that.",
+      "mode": null,
+      "n_draws": 400
+    },
+    {
+      "i": 19,
+      "hypothesis_svo": null,
+      "abstained": true,
+      "answer": "As for it \u2014 I don't know about that.",
+      "mode": null,
+      "n_draws": 400
+    },
+    {
+      "i": 20,
+      "hypothesis_svo": null,
+      "abstained": true,
+      "answer": "As for it \u2014 I don't know about that.",
+      "mode": null,
+      "n_draws": 400
+    },
+    {
+      "i": 21,
+      "hypothesis_svo": null,
+      "abstained": true,
+      "answer": "As for it \u2014 I don't know about that.",
+      "mode": null,
+      "n_draws": 400
+    },
+    {
+      "i": 22,
+      "hypothesis_svo": null,
+      "abstained": true,
+      "answer": "As for it \u2014 I don't know about that.",
+      "mode": null,
+      "n_draws": 400
+    },
+    {
+      "i": 23,
+      "hypothesis_svo": null,
+      "abstained": true,
+      "answer": "As for it \u2014 I don't know about that.",
+      "mode": null,
+      "n_draws": 400
+    },
+    {
+      "i": 24,
+      "hypothesis_svo": null,
+      "abstained": true,
+      "answer": "As for it \u2014 I don't know about that.",
+      "mode": null,
+      "n_draws": 400
+    },
+    {
+      "i": 25,
+      "hypothesis_svo": null,
+      "abstained": true,
+      "answer": "As for it \u2014 I don't know about that.",
+      "mode": null,
+      "n_draws": 400
+    },
+    {
+      "i": 26,
+      "hypothesis_svo": null,
+      "abstained": true,
+      "answer": "As for it \u2014 I don't know about that.",
+      "mode": null,
+      "n_draws": 400
+    },
+    {
+      "i": 27,
+      "hypothesis_svo": null,
+      "abstained": true,
+      "answer": "As for it \u2014 I don't know about that.",
+      "mode": null,
+      "n_draws": 400
+    },
+    {
+      "i": 28,
+      "hypothesis_svo": null,
+      "abstained": true,
+      "answer": "As for it \u2014 I don't know about that.",
+      "mode": null,
+      "n_draws": 400
+    },
+    {
+      "i": 29,
+      "hypothesis_svo": null,
+      "abstained": true,
+      "answer": "As for it \u2014 I don't know about that.",
+      "mode": null,
+      "n_draws": 400
+    },
+    {
+      "i": 30,
+      "hypothesis_svo": null,
+      "abstained": true,
+      "answer": "As for it \u2014 I don't know about that.",
+      "mode": null,
+      "n_draws": 400
+    },
+    {
+      "i": 31,
+      "hypothesis_svo": null,
+      "abstained": true,
+      "answer": "As for it \u2014 I don't know about that.",
+      "mode": null,
+      "n_draws": 400
+    },
+    {
+      "i": 32,
+      "hypothesis_svo": null,
+      "abstained": true,
+      "answer": "As for it \u2014 I don't know about that.",
+      "mode": null,
+      "n_draws": 400
+    },
+    {
+      "i": 33,
+      "hypothesis_svo": null,
+      "abstained": true,
+      "answer": "As for it \u2014 I don't know about that.",
+      "mode": null,
+      "n_draws": 400
+    },
+    {
+      "i": 34,
+      "hypothesis_svo": null,
+      "abstained": true,
+      "answer": "As for it \u2014 I don't know about that.",
+      "mode": null,
+      "n_draws": 400
+    },
+    {
+      "i": 35,
+      "hypothesis_svo": null,
+      "abstained": true,
+      "answer": "As for it \u2014 I don't know about that.",
+      "mode": null,
+      "n_draws": 400
+    },
+    {
+      "i": 36,
+      "hypothesis_svo": null,
+      "abstained": true,
+      "answer": "As for it \u2014 I don't know about that.",
+      "mode": null,
+      "n_draws": 400
+    },
+    {
+      "i": 37,
+      "hypothesis_svo": null,
+      "abstained": true,
+      "answer": "As for it \u2014 I don't know about that.",
+      "mode": null,
+      "n_draws": 400
+    },
+    {
+      "i": 38,
+      "hypothesis_svo": null,
+      "abstained": true,
+      "answer": "As for it \u2014 I don't know about that.",
+      "mode": null,
+      "n_draws": 400
+    },
+    {
+      "i": 39,
+      "hypothesis_svo": null,
+      "abstained": true,
+      "answer": "As for it \u2014 I don't know about that.",
+      "mode": null,
+      "n_draws": 400
+    }
+  ],
+  "draw_counter": {
+    "n_calls": 16000,
+    "n_ablated_calls": 16000
+  },
+  "likelihood_weight": {
+    "cat": 2.0,
+    "fish": 0.0,
+    "memory": 0.0,
+    "spikes": 0.0,
+    "words": 0.0
+  },
+  "t_teach_s": 249.4,
+  "t_total_s": 637.6,
+  "backend": "numpy"
+}

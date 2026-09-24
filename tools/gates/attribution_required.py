@@ -86,18 +86,59 @@ def _check_one(path, text=None):
             % (rel, ", ".join(controls[:4]) + ("..." if len(controls) > 4 else ""))]
 
 
-def check(paths):
-    # An EMPTY list means "staged mode, nothing of my kind staged" -> nothing to check. Only paths=None means
-    # "standalone run". Without this the pre-commit driver's --diff-filter=A scoping is undone by a corpus
-    # fallback, which is exactly how doc-type fired 192 legacy hits in one commit.
-    if paths is not None and len(paths) == 0:
+def _regressed(rel, old_text, new_text):
+    """REGRESSION MODE. A runner that SATISFIED this gate before a modification and FAILS it after has had its
+    attribution call removed. Legacy files that already failed before are NOT flagged (no corpus flood; they are
+    audited when written, as above) -- only a file that was clean and was made dirty.
+
+    Earned 2026-09-23: the D3 affect-pool verify runner imported `lever` + `attributable_to` and called both on its
+    edge-lesion pair (7b46d761e, clean). The v2 gate amendment (cd5288018) rewrote the arm and dropped both calls.
+    The gate went red on the file -- but pre-commit only passes ADDED files (--diff-filter=A) and the runner was
+    already tracked, so the commit, the push and a fix round all went through; an adversarial re-review caught it."""
+    if _check_one(rel, old_text):
+        return []                                        # already failing before: legacy, not a regression
+    if not _check_one(rel, new_text):
         return []
-    targets = [p for p in (paths or []) if p.endswith(".py")]
-    if paths is not None and not targets:
-        return []
-    if paths is None:
-        return []                                        # standalone: legacy corpus is audited on next touch
+    return ["%s: REGRESSION -- this MODIFICATION removed the file's tools.lab attribution call (it passed "
+            "attribution-required before the change and fails it after). A rewrite of an arm must keep asking "
+            "whose the difference was; restore lever / attributable_to / term_budget / before_after / "
+            "sign_budget on the treatment/control pair." % rel]
+
+
+def _git(args):
+    import subprocess
+    try:
+        r = subprocess.run(["git"] + args, cwd=_ROOT, capture_output=True, text=True, timeout=30)
+    except (OSError, subprocess.SubprocessError):
+        return None
+    return r.stdout if r.returncode == 0 else None
+
+
+def _staged_modification_regressions():
+    """Staged MODIFIED runners (index vs HEAD) checked in regression mode. Empty outside a commit (nothing staged)."""
+    out = _git(["diff", "--cached", "--name-only", "--diff-filter=M", "--", "research/runners/"])
     problems = []
+    for rel in (out or "").split("\n"):
+        rel = rel.strip()
+        if not rel.endswith(".py"):
+            continue
+        old, new = _git(["show", "HEAD:" + rel]), _git(["show", ":" + rel])
+        if old is None or new is None:
+            continue
+        problems += _regressed(rel, old, new)
+    return problems
+
+
+def check(paths):
+    # paths=None means "standalone run": the legacy corpus is audited on next touch, so nothing is checked.
+    # Otherwise (staged mode) two things are checked: (1) staged MODIFIED runners in REGRESSION mode (a clean
+    # file made dirty -- see `_regressed`); this runs even when no file was ADDED, because the pre-commit driver
+    # passes only --diff-filter=A paths and a modification never appears in them; (2) the ADDED paths, as before.
+    # An empty added-list is NOT a corpus fallback -- that is how doc-type fired 192 legacy hits in one commit.
+    if paths is None:
+        return []
+    problems = _staged_modification_regressions()
+    targets = [p for p in paths if p.endswith(".py")]
     for p in targets:
         full = p if os.path.isabs(p) else os.path.join(_ROOT, p)
         if os.path.exists(full):
@@ -142,4 +183,15 @@ def selftest():
         open(p4, "w").write("arm = 1\napical_lesion = 2\n")
         if _check_one(p4):
             bad.append("FALSE POSITIVE: flagged a file outside research/runners/")
+        clean = open(p2).read()
+        dirty = open(p1).read()
+    # 5. REGRESSION MODE -- a modification that DROPS the attribution call from a clean runner MUST be caught.
+    rel = "research/runners/_x_derisk.py"
+    if not _regressed(rel, clean, dirty):
+        bad.append("did NOT catch a modification that removed a runner's attribution call (regression mode)")
+    # 6. NEGATIVE CONTROLS -- a legacy file that already failed is not a regression; a clean->clean edit passes.
+    if _regressed(rel, dirty, dirty):
+        bad.append("FALSE POSITIVE: flagged a legacy (already failing) runner as a regression")
+    if _regressed(rel, clean, clean + "\n# edited\n"):
+        bad.append("FALSE POSITIVE: flagged a clean->clean modification")
     return bad

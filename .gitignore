@@ -198,3 +198,4 @@ research/queue/.parallel_compute_waiver
 research/queue/.waiver_history.jsonl
 research/queue/.brain_build_reference.json
 research/queue/.aws_spend_ledger.jsonl
+research/queue/.pool_reservations

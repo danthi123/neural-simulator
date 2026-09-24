@@ -1157,6 +1157,30 @@ class ChatBrain:
         self._refresh_facts()                    # pick up the new fact -> agents_set/actions_set now include it
         return [a, v, p]                         # the acquired SVO; gate() returns it so the endpoint renders a confirm
 
+    def _is_acquisition_candidate(self, question):
+        """SIDE-EFFECT-FREE mirror of `_maybe_acquire`'s ACCEPT predicate (no store, no refresh): True iff
+        `_maybe_acquire(question)` would try to TEACH it (a declarative SVO assertion). Used ONLY by the default-OFF
+        `BRAIN_OPEN_ENDED_ACQUIRE_ROUTE` (webapp/server.py::_open_ended_acquire_route) to send a told fact in open-ended
+        mode to the ordinary acquisition path. Nothing on the default path calls it. Pinned equal to `_maybe_acquire`'s
+        accept/decline decision by tests/test_open_ended_generate_route.py (both B3 on and off). The one divergence is
+        a `inner.hear` exception, which `_maybe_acquire` swallows as a decline; routing such a turn only means the
+        ordinary path answers it."""
+        q = question.strip()
+        ql = q.lower()
+        if "?" in q or ql.split()[:1] and ql.split()[0] in (
+                "what", "who", "whom", "where", "when", "why", "how", "is", "are", "was", "were", "does", "do", "did"):
+            return False
+        try:
+            import research.runners.b3_noncontradiction_production_organ as _b3nc
+            _b3nc_on = _b3nc.noncontradiction_enabled()
+        except Exception:
+            _b3nc = None
+            _b3nc_on = False
+        if _b3nc_on:
+            return _b3nc.extract_polar_assertion(q) is not None
+        toks = [t.strip(".,!?") for t in q.split() if t.strip(".,!?")]
+        return len(toks) == 3
+
     def _neural_question_parse(self, content):
         """CHOOSE (#1) — comprehend the question's (agent, action) NEURALLY. Present the stripped content words
         (position-padded to SVO, the queried patient a placeholder) to the ON-BRAIN BridgeParser, whose (position,
