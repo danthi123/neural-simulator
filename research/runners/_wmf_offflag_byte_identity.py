@@ -4,14 +4,14 @@ real `webapp.server.brain_chat` returns, pinned tree vs branch tree, with the fl
 
 Coverage: every code path this change touches with the flags OFF -- the D6 MAINTAIN load + the xedge focus that
 comprehension reads (`hold`/`held`), an anaphor turn over two held referents through `ChatBrain._resolve_anaphora`
-and the GNW bus's anaphora branches (`bc`), the hold-query read-out (`wmb`), a plain recall, and the probe's own four
-order-swapped anaphor sessions (so the probe's OFF arms are shown to measure the pre-change positional route). Messages
+and the GNW bus's anaphora branches (`bc`), the hold-query read-out (`wmb`), and one of the probe's own order-swapped
+anaphor sessions (so the probe's OFF arm is shown to take the pre-change route). Messages
 are given literally (not by battery label), so the pinned tree, which lacks the new labels, runs the same text.
 
   # collect, once per tree (cwd AND PYTHONPATH = that tree; every flag below unset):
   cd <tree> && PYTHONPATH=<tree> BRAIN_CHAT_SEED=<dev seed> SIM_BACKEND=numpy tools/memcap.sh 10 -- \\
       .venv/bin/python -u <branch>/research/runners/_wmf_offflag_byte_identity.py --collect --part 1 --out <tree_p1.json>
-  # ... and again with --part 2 (each part <= 4 sessions in one process)
+  # ... and again with --part 2 (two sessions per part, one process each)
   # compare (no brain build):
   .venv/bin/python -m research.runners._wmf_offflag_byte_identity --compare --pinned <p.json> --branch <b.json> \\
       --pinned-tree <T1> --branch-tree <T2> --pinned-sha <sha> --branch-sha <sha> --out <artifact.json>
@@ -31,14 +31,11 @@ SCRIPT = [
     ("bi_hold", ["the fox and the wolf walked in", "the wolf watches the owl"]),
     ("bi_bc", ["the cat and the ball walked in", "what does it eat"]),
     ("bi_wmb", ["the fox and the wolf walked in", "who are we talking about"]),
-    ("bi_plain", ["what does the dog chase"]),
     ("bi_wmfa1", ["the dog and the cat walked in", "what does it chase"]),
-    ("bi_wmfa2", ["the cat and the dog walked in", "what does it chase"]),
-    ("bi_wmfb1", ["the cat and the bird walked in", "what does it eat"]),
-    ("bi_wmfb2", ["the bird and the cat walked in", "what does it eat"]),
 ]
-# collected in two parts (<= 4 sessions per process keeps one build under ~8 GB on numpy)
-PARTS = {"1": ["bi_hold", "bi_bc", "bi_wmb", "bi_plain"], "2": ["bi_wmfa1", "bi_wmfa2", "bi_wmfb1", "bi_wmfb2"]}
+# collected in two parts of two sessions each: every session builds its own ChatBrain + composer, and a 4-session
+# process was measured past 15 GB on numpy (2026-09-24, dev seed 7); two sessions stay within one pool job budget.
+PARTS = {"1": ["bi_hold", "bi_bc"], "2": ["bi_wmb", "bi_wmfa1"]}
 FLAGS_UNSET = ("BRAIN_MULTIREF_FOCUS_BIND", "LB_WMB_FOCUS_PROBE", "LB_WMB_CONTENT_PROBE", "LB_WMB_HOLDQUERY_PROBE",
                "BRAIN_MULTIREF_LESION_SCOPE", "BRAIN_MULTIREF_LESION")
 
