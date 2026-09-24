@@ -391,6 +391,214 @@ def test_down_starts_a_stopped_instance_syncs_then_terminates(tmp_path):
     assert state.read_text().startswith("# TORN DOWN")
 
 
+def _make_down_stub_bin_stopped_with_new_ip(tmp_path):
+    """Like _make_down_stub_bin_stopped_then_reachable, but describe-instances' PublicIpAddress query answers a
+    DIFFERENT ip AFTER start-instances than before -- exactly what EC2 does on every stop/start (there is no
+    Elastic IP in this feature). ssh only succeeds once it is invoked against the NEW ip (embedded in its own
+    -F ssh_config argument), so a `down` that never rewrites the Host block would time out here exactly as it
+    did in production before the fix, instead of the old stub's lucky-because-content-agnostic reachability."""
+    bin_dir = tmp_path / "bin"
+    bin_dir.mkdir()
+    log = tmp_path / "combined.log"
+    log.write_text("")
+    started_marker = tmp_path / "started"
+    OLD_IP, NEW_IP = "1.2.3.4", "9.9.9.9"
+
+    aws_stub = bin_dir / "aws"
+    aws_stub.write_text(f"""#!/usr/bin/env bash
+echo "AWS $*" >> "{log}"
+case "$*" in
+  *"ec2 start-instances"*) touch "{started_marker}"; echo ok; exit 0 ;;
+  *"describe-instances"*"State.Name"*)
+    if [ -f "{started_marker}" ]; then echo running; else echo stopped; fi
+    exit 0 ;;
+  *"describe-instances"*"PublicIpAddress"*)
+    if [ -f "{started_marker}" ]; then echo "{NEW_IP}"; else echo "{OLD_IP}"; fi
+    exit 0 ;;
+esac
+echo ok
+exit 0
+""")
+    aws_stub.chmod(aws_stub.stat().st_mode | stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH)
+
+    ssh_stub = bin_dir / "ssh"
+    # Reachable ONLY when invoked with a config file whose testnode Host block carries the NEW ip -- proves the
+    # probe actually ran against the rewritten block, not merely that some ssh call happened to succeed.
+    ssh_stub.write_text(f"""#!/usr/bin/env bash
+echo "SSH $*" >> "{log}"
+cfg=""
+prev=""
+for a in "$@"; do
+  if [ "$prev" = "-F" ]; then cfg="$a"; fi
+  prev="$a"
+done
+[ -n "$cfg" ] && grep -q "{NEW_IP}" "$cfg" 2>/dev/null || exit 255
+case "$*" in *pgrep*) echo 0 ;; esac
+exit 0
+""")
+    ssh_stub.chmod(ssh_stub.stat().st_mode | stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH)
+
+    for name in ("rsync", "scp"):
+        stub = bin_dir / name
+        stub.write_text(f"""#!/usr/bin/env bash
+echo "{name.upper()} $*" >> "{log}"
+exit 0
+""")
+        stub.chmod(stub.stat().st_mode | stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH)
+    return bin_dir, log, started_marker, OLD_IP, NEW_IP
+
+
+def test_down_rewrites_the_host_block_to_the_new_ip_after_restarting_a_stopped_instance(tmp_path):
+    # THE ACTUAL DEFECT (re-review, HIGH, "the prior HIGH #4 stopped-instance branch does not work in practice"):
+    # EC2 assigns a NEW public IPv4 on every stop/start (no Elastic IP here). The old code started the instance
+    # then probed ssh against the SAME persistent Host block written at the LAST `up`/`down` -- i.e. the STALE
+    # ip -- so the probe always timed out and `down` exited 1 leaving the instance RUNNING (a cost leak `down`
+    # itself created). Fix: re-read the current PublicIpAddress and rewrite the Host block before probing.
+    bin_dir, log, started_marker, old_ip, new_ip = _make_down_stub_bin_stopped_with_new_ip(tmp_path)
+    state = _write_state(tmp_path)
+    ssh_config = tmp_path / "ssh_config"
+    ssh_config.write_text(f"Include ~/.ssh/config\nHost testnode\n  HostName {old_ip}\n")
+    env = {
+        "AWS_POOL_NODE_STATE_FILE": str(state),
+        "POOL_EXTRA_NODES_FILE": str(tmp_path / "extra_nodes"),
+        "POOL_SSH_CONFIG": str(ssh_config),
+        "AWS_POOL_START_TIMEOUT_S": "5",
+        "AWS_POOL_START_POLL_S": "0",
+        "AWS_POOL_DRAIN_TIMEOUT_S": "5",
+        "AWS_POOL_DRAIN_POLL_S": "0",
+    }
+    (tmp_path / "extra_nodes").write_text("testnode\n")
+
+    res = _run(["down", "testnode"], bin_dir=bin_dir, tmp_path=tmp_path, env=env)
+    assert res.returncode == 0, res.stderr
+    assert started_marker.exists()
+    assert "ec2 terminate-instances" in log.read_text()   # reached termination -- the reachability probe passed
+    assert state.read_text().startswith("# TORN DOWN")
+    # The Host block is removed as the LAST step (after terminate) -- while `down` was running, it must have
+    # carried the NEW ip (asserted by the ssh stub itself refusing the OLD one); this re-confirms via the log
+    # that at least one ssh call was made once the marker (and therefore the new ip) existed.
+    ssh_calls_after_restart = [ln for ln in log.read_text().splitlines() if ln.startswith("SSH ")]
+    assert ssh_calls_after_restart, "expected at least one ssh probe after restarting the instance"
+
+
+def test_down_leaves_empty_describe_instances_state_unknown_not_gone(tmp_path):
+    # THE ACTUAL DEFECT (re-review, MEDIUM, cost leak + false record): an EMPTY describe-instances result (a
+    # transient AWS API/credential/throttle failure) was treated identically to a CONFIRMED terminated/gone
+    # instance. With --force (which the old refusal text itself invited), `down` marked the state file
+    # "# TORN DOWN" and removed the Host block WITHOUT ever calling terminate-instances -- a still-live instance
+    # recorded as gone, its EBS volume and SG leaking indefinitely. Without --force it must simply refuse (not
+    # crash, not silently proceed); it must never take the "already gone" shortcut on an empty read.
+    bin_dir = tmp_path / "bin"
+    bin_dir.mkdir()
+    log = tmp_path / "combined.log"
+    log.write_text("")
+    aws_stub = bin_dir / "aws"
+    aws_stub.write_text(f"""#!/usr/bin/env bash
+echo "AWS $*" >> "{log}"
+case "$*" in
+  *"describe-instances"*) echo ""; exit 0 ;;
+esac
+echo ok
+exit 0
+""")
+    aws_stub.chmod(aws_stub.stat().st_mode | stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH)
+    for name in ("ssh", "rsync", "scp"):
+        stub = bin_dir / name
+        stub.write_text(f'#!/usr/bin/env bash\necho "{name.upper()} $*" >> "{log}"\nexit 255\n')
+        stub.chmod(stub.stat().st_mode | stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH)
+    state = _write_state(tmp_path)
+    ssh_config = tmp_path / "ssh_config"
+    ssh_config.write_text("Include ~/.ssh/config\nHost testnode\n  HostName 1.2.3.4\n")
+    env = {
+        "AWS_POOL_NODE_STATE_FILE": str(state),
+        "POOL_EXTRA_NODES_FILE": str(tmp_path / "extra_nodes"),
+        "POOL_SSH_CONFIG": str(ssh_config),
+        "AWS_POOL_DRAIN_TIMEOUT_S": "1",
+        "AWS_POOL_DRAIN_POLL_S": "0",
+    }
+    (tmp_path / "extra_nodes").write_text("testnode\n")
+
+    res = _run(["down", "testnode"], bin_dir=bin_dir, tmp_path=tmp_path, env=env)
+    assert res.returncode == 1
+    assert "ec2 terminate-instances" not in log.read_text()
+    assert not state.read_text().startswith("# TORN DOWN")   # never marked gone on an unconfirmed read
+    assert "HostName 1.2.3.4" in ssh_config.read_text()       # Host block untouched -- never removed either
+
+
+def test_down_force_still_calls_terminate_on_empty_describe_instances(tmp_path):
+    # --force may skip the REFUSAL above, but must never skip the actual terminate-instances CALL, and must
+    # never mark the state file torn down as a substitute for attempting it (re-review, MEDIUM).
+    bin_dir = tmp_path / "bin"
+    bin_dir.mkdir()
+    log = tmp_path / "combined.log"
+    log.write_text("")
+    aws_stub = bin_dir / "aws"
+    aws_stub.write_text(f"""#!/usr/bin/env bash
+echo "AWS $*" >> "{log}"
+case "$*" in
+  *"describe-instances"*) echo ""; exit 0 ;;
+esac
+echo ok
+exit 0
+""")
+    aws_stub.chmod(aws_stub.stat().st_mode | stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH)
+    for name in ("ssh", "rsync", "scp"):
+        stub = bin_dir / name
+        stub.write_text(f'#!/usr/bin/env bash\necho "{name.upper()} $*" >> "{log}"\nexit 255\n')
+        stub.chmod(stub.stat().st_mode | stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH)
+    state = _write_state(tmp_path)
+    ssh_config = tmp_path / "ssh_config"
+    ssh_config.write_text("Include ~/.ssh/config\nHost testnode\n  HostName 1.2.3.4\n")
+    env = {
+        "AWS_POOL_NODE_STATE_FILE": str(state),
+        "POOL_EXTRA_NODES_FILE": str(tmp_path / "extra_nodes"),
+        "POOL_SSH_CONFIG": str(ssh_config),
+        "AWS_POOL_DRAIN_TIMEOUT_S": "1",
+        "AWS_POOL_DRAIN_POLL_S": "0",
+    }
+    (tmp_path / "extra_nodes").write_text("testnode\n")
+
+    res = _run(["down", "testnode", "--force"], bin_dir=bin_dir, tmp_path=tmp_path, env=env)
+    assert res.returncode == 0, res.stderr
+    assert "ec2 terminate-instances" in log.read_text()   # the real terminate call was actually made
+    assert state.read_text().startswith("# TORN DOWN")
+
+
+def test_down_marks_torn_down_when_describe_instances_confirms_terminated(tmp_path):
+    # The mirror/baseline case: a genuinely CONFIRMED terminated/shutting-down state (as opposed to an EMPTY,
+    # unconfirmed read) is still the safe, cheap "already gone" shortcut -- unaffected by the empty-is-UNKNOWN
+    # fix, and still requires --force like before (only the EMPTY case's handling changed).
+    bin_dir = tmp_path / "bin"
+    bin_dir.mkdir()
+    log = tmp_path / "combined.log"
+    log.write_text("")
+    aws_stub = bin_dir / "aws"
+    aws_stub.write_text(f"""#!/usr/bin/env bash
+echo "AWS $*" >> "{log}"
+case "$*" in
+  *"describe-instances"*) echo "terminated"; exit 0 ;;
+esac
+echo ok
+exit 0
+""")
+    aws_stub.chmod(aws_stub.stat().st_mode | stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH)
+    state = _write_state(tmp_path)
+    ssh_config = tmp_path / "ssh_config"
+    ssh_config.write_text("Include ~/.ssh/config\nHost testnode\n  HostName 1.2.3.4\n")
+    env = {
+        "AWS_POOL_NODE_STATE_FILE": str(state),
+        "POOL_EXTRA_NODES_FILE": str(tmp_path / "extra_nodes"),
+        "POOL_SSH_CONFIG": str(ssh_config),
+    }
+    (tmp_path / "extra_nodes").write_text("testnode\n")
+
+    res = _run(["down", "testnode", "--force"], bin_dir=bin_dir, tmp_path=tmp_path, env=env)
+    assert res.returncode == 0, res.stderr
+    assert "ec2 terminate-instances" not in log.read_text()   # nothing left to terminate -- the cheap shortcut
+    assert state.read_text().startswith("# TORN DOWN")
+    assert "Host testnode" not in ssh_config.read_text()
+
+
 def test_down_pulls_job_status_log_before_terminating(tmp_path):
     # MEDIUM (re-review, lost-job observability): a crash on this node must be surfaced, not destroyed with the
     # root volume on terminate.

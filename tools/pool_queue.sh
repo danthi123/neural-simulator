@@ -8,6 +8,8 @@
 # no-ready-work waiver records why replaying old commands would be worse than leaving the queue empty.
 set -uo pipefail
 ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
+# shellcheck source=tools/pool_revision_marker.sh
+source "$ROOT/tools/pool_revision_marker.sh"
 Q="${POOL_QUEUE_PATH:-/home/dant123/Projects/sim/research/queue/pool.queue}"
 mkdir -p "$(dirname "$Q")"; touch "$Q"
 # AWS-AS-EXTRA-POOL-NODE (2026-09-23) -- same repo-local, gitignored ssh config as pool_autodispatch.sh /
@@ -138,8 +140,18 @@ case "${1:-list}" in
              # regardless of whether other reachable nodes are fine. Reproduced: registering one AWS node with only
              # ~/derisk-pool/sim provisioned made `add` refuse ALL revision-pinned adds, including ones pool40/41/42
              # could already run.
+             #
+             # SHARED PREDICATE (2026-09-23 fix round #3, re-review MEDIUM): this used to ask `[ -d ~/$REMOTE_DIR ]`
+             # -- bare directory existence -- while pool_autodispatch.sh's revision_available() (the check that
+             # actually decides whether the dispatcher will EVER hand this job to this node) requires the
+             # `.provisioned_ok` completion marker. A half-provisioned dir (pool_provision.sh's remote `mkdir -p`
+             # creates it FIRST, before rsync/venv/manifest-verify/sanity even run) or a LEGACY dir predating that
+             # marker therefore passed `add` and got the job staged onto a node the dispatcher would then skip
+             # forever -- the job silently stranded. Both scripts now call the SAME
+             # tools/pool_revision_marker.sh:revision_marker_probe_cmd so they can never ask two different
+             # questions of the same directory again.
              if [ "$IS_REVISION" = 1 ] && ! timeout 10 ssh "${SSH_F[@]}" -o BatchMode=yes -o ConnectTimeout=6 "$n" \
-                  "[ -d ~/$REMOTE_DIR ]" >/dev/null 2>&1; then
+                  "$(revision_marker_probe_cmd "$REMOTE_DIR")" >/dev/null 2>&1; then
                NODE_SKIP="$NODE_SKIP $n"; continue
              fi
              if timeout 25 ssh "${SSH_F[@]}" -o BatchMode=yes -o ConnectTimeout=8 "$n" \

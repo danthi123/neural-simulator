@@ -272,31 +272,78 @@ cmd_down() {
         echo "[aws-pool-node] $NODE_NAME's instance $IID is STOPPED — starting it to sync + terminate cleanly…"
         aws ec2 start-instances --instance-ids "$IID" --region "$REGION_S" >/dev/null 2>&1
         START_TIMEOUT="${AWS_POOL_START_TIMEOUT_S:-180}"; START_BEGIN=$(date +%s)
+        RUNNING_STATE_SEEN=0
         while :; do
-          if [ -f "$SSH_CONFIG" ] && grep -q "^Host $NODE_NAME\$" "$SSH_CONFIG" 2>/dev/null && \
-             timeout 8 ssh -F "$SSH_CONFIG" -o BatchMode=yes -o ConnectTimeout=6 "$NODE_NAME" true 2>/dev/null; then
-            echo "  [aws-pool-node] $NODE_NAME is back up and reachable."
-            break
-          fi
+          _POLL_STATE=$(aws ec2 describe-instances --instance-ids "$IID" --region "$REGION_S" \
+              --query 'Reservations[].Instances[].State.Name' --output text 2>/dev/null)
+          if [ "$_POLL_STATE" = "running" ]; then RUNNING_STATE_SEEN=1; break; fi
           if [ $(( $(date +%s) - START_BEGIN )) -ge "$START_TIMEOUT" ]; then
-            echo "  ⛔ $NODE_NAME did not become reachable within ${START_TIMEOUT}s of starting it." >&2
+            echo "  ⛔ $NODE_NAME's instance did not reach 'running' within ${START_TIMEOUT}s of starting it (last state: ${_POLL_STATE:-unknown})." >&2
             [ "$FORCE" = 1 ] || { echo "     Refusing to terminate an instance we could not verify/sync. Re-run with --force to accept the loss." >&2; exit 1; }
             break
           fi
           sleep "${AWS_POOL_START_POLL_S:-10}"
         done
+        if [ "$RUNNING_STATE_SEEN" = 1 ]; then
+          # RE-READ THE PUBLIC IP AND REWRITE THE HOST BLOCK (2026-09-23 fix round #3, re-review HIGH: "the
+          # stopped-instance branch does not work in practice"). EC2 assigns a NEW public IPv4 on every
+          # stop/start (there is no Elastic IP anywhere in this feature), but the persistent Host block still
+          # carries the IP from the last `up` (or the previous `down` that started it) -- so probing "$NODE_NAME"
+          # against it always hit the STALE address and timed out after ${AWS_POOL_START_TIMEOUT_S:-180}s, `down`
+          # exited 1 leaving the instance RUNNING (a cost leak `down` itself created, only re-stopped once
+          # aws_idle_stop's next cycle noticed), and the refusal text ("re-run with --force to accept the loss")
+          # was exactly the unsynced-termination case HIGH #4 exists to prevent. Re-read the CURRENT
+          # PublicIpAddress and rewrite the Host block BEFORE the reachability probe below -- exactly like `up`
+          # does for a freshly-launched instance (see _write_host_block's call further down this file).
+          NEW_IP=$(aws ec2 describe-instances --instance-ids "$IID" --region "$REGION_S" \
+              --query 'Reservations[].Instances[].PublicIpAddress' --output text 2>/dev/null)
+          KEY_S=$(_state_get key)
+          if [ -n "$NEW_IP" ] && [ "$NEW_IP" != "None" ] && [ -n "$KEY_S" ]; then
+            _write_host_block "$SSH_CONFIG" "$NODE_NAME" "$NEW_IP" "$KEY_S"
+            echo "  [aws-pool-node] $NODE_NAME's Host block updated to its current IP $NEW_IP."
+          else
+            echo "  ⛔ could not re-read a public IP (or the recorded key) for restarted instance $IID -- the" >&2
+            echo "     Host block still carries the OLD IP; the reachability probe below will likely time out." >&2
+          fi
+          PROBE_TIMEOUT="${AWS_POOL_START_TIMEOUT_S:-180}"; PROBE_BEGIN=$(date +%s)
+          while :; do
+            if [ -f "$SSH_CONFIG" ] && grep -q "^Host $NODE_NAME\$" "$SSH_CONFIG" 2>/dev/null && \
+               timeout 8 ssh -F "$SSH_CONFIG" -o BatchMode=yes -o ConnectTimeout=6 "$NODE_NAME" true 2>/dev/null; then
+              echo "  [aws-pool-node] $NODE_NAME is back up and reachable."
+              break
+            fi
+            if [ $(( $(date +%s) - PROBE_BEGIN )) -ge "$PROBE_TIMEOUT" ]; then
+              echo "  ⛔ $NODE_NAME did not become reachable within ${PROBE_TIMEOUT}s of restarting it." >&2
+              [ "$FORCE" = 1 ] || { echo "     Refusing to terminate an instance we could not verify/sync. Re-run with --force to accept the loss." >&2; exit 1; }
+              break
+            fi
+            sleep "${AWS_POOL_START_POLL_S:-10}"
+          done
+        fi
         ;;
-      ""|terminated|shutting-down)
-        # Already gone at AWS's side (e.g. terminated out-of-band, or describe-instances itself unreachable) --
-        # there is nothing left to drain, sync or terminate. Mark torn down and stop; forcing a sync/terminate
-        # attempt against a non-existent instance would just fail the SAME way `down` already treats an
-        # unreachable node (refuse without --force), for no benefit.
-        echo "[aws-pool-node] $NODE_NAME's instance $IID is already '${EC2_STATE:-unknown}' at AWS -- nothing to sync/terminate." >&2
+      terminated|shutting-down)
+        # Already CONFIRMED gone at AWS's side (a successful describe-instances says so) -- there is nothing left
+        # to drain, sync or terminate. Mark torn down and stop.
+        echo "[aws-pool-node] $NODE_NAME's instance $IID is already '$EC2_STATE' at AWS -- nothing to sync/terminate." >&2
         [ "$FORCE" = 1 ] || { echo "     Re-run with --force to mark it torn down anyway (no data can be recovered either way)." >&2; exit 1; }
         _remove_host_block "$SSH_CONFIG" "$NODE_NAME"
-        { echo "# TORN DOWN $(date '+%F %T %Z') (instance already ${EC2_STATE:-unknown} at AWS)"; cat "$STATE"; } > "$STATE.tmp" && mv "$STATE.tmp" "$STATE"
+        { echo "# TORN DOWN $(date '+%F %T %Z') (instance already $EC2_STATE at AWS)"; cat "$STATE"; } > "$STATE.tmp" && mv "$STATE.tmp" "$STATE"
         echo "[aws-pool-node] ✓ $NODE_NAME marked torn down."
         exit 0
+        ;;
+      "")
+        # EMPTY describe-instances is UNKNOWN, NOT gone (2026-09-23 fix round #3, re-review MEDIUM: "empty
+        # describe-instances = UNKNOWN"). A transient AWS API/credential/throttle failure on a STILL-RUNNING
+        # instance reads EXACTLY like this too -- the old code treated it identically to a confirmed-terminated
+        # instance and, with --force, marked the state file torn down and removed the Host block WITHOUT ever
+        # calling terminate-instances: a still-live instance recorded as gone, its EBS volume and SG leaking
+        # indefinitely (aws_idle_stop.sh only STOPs, never terminates, so nothing ever cleans it up after that).
+        # Never take the "already gone" shortcut here: fall through to the normal drain/sync/terminate path below
+        # instead. Its own --force handling already governs each of ITS refusals, but step 5's
+        # `_terminate_and_delete_sg` call always runs regardless -- so --force may skip a refusal along the way,
+        # but the actual terminate-instances call is never skipped, and the state file is only ever marked torn
+        # down AFTER that real attempt (never in place of it).
+        echo "  ⛔ describe-instances returned EMPTY for $IID -- instance state UNKNOWN (a transient AWS API/credential/throttle failure on a still-running instance reads identically), not assumed gone." >&2
         ;;
     esac
   fi
