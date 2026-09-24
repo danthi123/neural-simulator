@@ -1,0 +1,35 @@
+{
+ "run_id": "1788309083-427492",
+ "runner": "research/runners/_curiosity_metacog_lowconfidence_coupling_derisk.py",
+ "argv": [
+  "/home/node/derisk-pool/sim/research/runners/_curiosity_metacog_lowconfidence_coupling_derisk.py",
+  "--seeds",
+  "42",
+  "43",
+  "44",
+  "100",
+  "101",
+  "102",
+  "--out",
+  "research/findings/raw/_curiosity_metacog_lowconfidence_coupling_6seed.json"
+ ],
+ "git_sha": "65c5a334",
+ "git_dirty": true,
+ "source_kind": "git_archive",
+ "source_manifest_sha256": "21abcf806efc23a67aad3af049f53099c9792ec47cc5a6396af6dd228f5dbf0f",
+ "source_manifest_verified_at_start": true,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": true,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-01T20:31:23",
+ "env": {
+  "POOL_CHECKED_REASON": "lane B curiosity: curiosity_production_organ.py own docstring names verbatim \"curiosity on a low-confidence recall is a named next rung\", distinct from the already-GO-landed curiosity-to-d6wm cross-edge (2026-09-01, WM-referent binding, a different edge) and the exhausted/multi-lever learning-progress-slope SELECTOR chase (2026-08-02, a different residual: WHICH concept to ask about, not WHETHER to be curious on an uncertain-not-abstained answer); before_you_build.sh + rag_search surfaced only an adjacent-but-distinct 2026-08-07 laneC hedge-gate single-seed finding (status contributing), no prior coupling of these two organs public judge() APIs found",
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_curiosity_metacog_lowconfidence_coupling_6seed.json"
+}
