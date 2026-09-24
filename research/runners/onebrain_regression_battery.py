@@ -298,6 +298,40 @@ _EXTRA_TURNS += [
     ("slp_tick", _WORLD_NIGHT, "slp", False, None, False),
     ("slp_recall", "you mentioned the owl", "slp", False, None, False),
 ]
+
+
+def _lbf_rows_extra_turns():
+    """Turns that research/runners/lbf_rows/<module>.py declares as a LITERAL `EXTRA_TURNS` list (same 6-tuple shape as
+    _EXTRA_TURNS), read with ast and NEVER imported: a row module may set env defaults at import, and a battery worker
+    must not inherit them. A label already defined here wins; a malformed entry is skipped. This is what lets a row's
+    probe turn -- and the same-session turns before it (turn_group) -- reach the workers (2026-09-24: live_organs'
+    affective-tom and causal-whatif were parked because the battery could not run lbf_tom1 / lbf_cau_whatif)."""
+    import ast
+    import glob
+    found = []
+    for path in sorted(glob.glob(os.path.join(os.path.dirname(os.path.abspath(__file__)), "lbf_rows", "*.py"))):
+        if os.path.basename(path).startswith("_"):
+            continue
+        try:
+            tree = ast.parse(open(path, encoding="utf-8").read())
+        except (OSError, SyntaxError):
+            continue
+        for node in tree.body:
+            if isinstance(node, ast.Assign) and any(getattr(t, "id", "") == "EXTRA_TURNS" for t in node.targets):
+                try:
+                    value = ast.literal_eval(node.value)
+                except ValueError:
+                    continue
+                found += [tuple(t) for t in value
+                          if isinstance(t, (tuple, list)) and len(t) == 6 and isinstance(t[0], str)]
+    return found
+
+
+_known_labels = {t[0] for t in PROBE_TURNS} | {t[0] for t in _EXTRA_TURNS}
+for _t in _lbf_rows_extra_turns():
+    if _t[0] not in _known_labels:
+        _EXTRA_TURNS.append(_t)          # in place: load_bearing_fraction imports this list by reference
+        _known_labels.add(_t[0])
 _WORLD_STEPS = {t[0]: "overnight_24h" for t in _EXTRA_TURNS if t[1] == _WORLD_NIGHT}
 _TURN_BY_LABEL.update({t[0]: t for t in _EXTRA_TURNS})
 

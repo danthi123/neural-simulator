@@ -151,6 +151,8 @@ def merge_lbf_rows(faculty_lesions: Dict[str, Any], faculty_probes: List[tuple],
             report["parked"].append("%s: %r parked by its module -- %s" % (short_name, key, why))
         if known_turns is not None:
             for key, row in extra_probes.items():
+                if key in parked:
+                    continue
                 if isinstance(row, (tuple, list)) and len(row) == 4 and row[1] not in known_turns:
                     parked.add(key)
                     report["parked"].append(

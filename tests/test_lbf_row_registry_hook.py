@@ -147,3 +147,26 @@ def test_a_module_can_park_its_own_row():
     assert "synthetic-retracted" not in lesions
     assert not any(row[0] == "synthetic-retracted" for row in probes)
     assert any("retracted by its own amendment" in p for p in report["parked"])
+
+
+def test_a_row_module_turns_reach_the_battery_with_their_session():
+    """A row module's literal EXTRA_TURNS become runnable battery turns, and a probe resolves to its whole same-session
+    group (causal-whatif is only meaningful after its six teach turns)."""
+    from research.runners import onebrain_regression_battery as ob
+    assert "lbf_cau_whatif" in ob._TURN_BY_LABEL
+    grp = lbf.turn_group("lbf_cau_whatif")
+    assert grp[-1] == "lbf_cau_whatif" and len(grp) == 7 and all(g.startswith("lbf_cau_") for g in grp)
+
+
+def test_loading_the_battery_never_imports_a_row_module():
+    """Row turns are read with ast, not imported: a row module may set env defaults at import, and battery workers must
+    not inherit them."""
+    import subprocess
+    import sys
+    code = ("import sys, research.runners.onebrain_regression_battery as ob; "
+            "print(sorted(m for m in sys.modules if m.startswith('research.runners.lbf_rows.')))")
+    out = subprocess.run([sys.executable, "-c", code], capture_output=True, text=True,
+                         env=dict(os.environ, SIM_NO_PROVENANCE="1"),
+                         cwd=os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    assert out.returncode == 0, out.stderr[-2000:]
+    assert out.stdout.strip().endswith("[]"), out.stdout
