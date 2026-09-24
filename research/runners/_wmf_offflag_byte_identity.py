@@ -4,14 +4,14 @@ real `webapp.server.brain_chat` returns, pinned tree vs branch tree, with the fl
 
 Coverage: every code path this change touches with the flags OFF -- the D6 MAINTAIN load + the xedge focus that
 comprehension reads (`hold`/`held`), an anaphor turn over two held referents through `ChatBrain._resolve_anaphora`
-and the GNW bus's anaphora branches (`bc`), the hold-query read-out (`wmb`), and one of the probe's own order-swapped
-anaphor sessions (so the probe's OFF arm is shown to take the pre-change route). Messages
+and the GNW bus's anaphora branches plus the flag-off skip of the organ's anaphor resolution (`bc`: a 2-referent intro,
+then an anaphor -- the same turn shape as the probe's sessions), and the hold-query read-out (`wmb`). Messages
 are given literally (not by battery label), so the pinned tree, which lacks the new labels, runs the same text.
 
   # collect, once per tree (cwd AND PYTHONPATH = that tree; every flag below unset):
   cd <tree> && PYTHONPATH=<tree> BRAIN_CHAT_SEED=<dev seed> SIM_BACKEND=numpy tools/memcap.sh 8 -- \\
       .venv/bin/python -u <branch>/research/runners/_wmf_offflag_byte_identity.py --collect --part 1 --out <tree_p1.json>
-  # ... and again with --part 2, 3, 4 (one session per part, one process each)
+  # ... and again with --part 2 and 3 (one session per part, one process each)
   # compare (no brain build):
   .venv/bin/python -m research.runners._wmf_offflag_byte_identity --compare --pinned <p.json> --branch <b.json> \\
       --pinned-tree <T1> --branch-tree <T2> --pinned-sha <sha> --branch-sha <sha> --out <artifact.json>
@@ -31,11 +31,10 @@ SCRIPT = [
     ("bi_hold", ["the fox and the wolf walked in", "the wolf watches the owl"]),
     ("bi_bc", ["the cat and the ball walked in", "what does it eat"]),
     ("bi_wmb", ["the fox and the wolf walked in", "who are we talking about"]),
-    ("bi_wmfa1", ["the dog and the cat walked in", "what does it chase"]),
 ]
 # collected one session per process: every session builds its own ChatBrain + composer (~3 GB each on numpy), and a
 # 4-session process was measured past 15 GB (2026-09-24, dev seed 7); one session stays at ~6 GB, like the probe arms.
-PARTS = {"1": ["bi_hold"], "2": ["bi_bc"], "3": ["bi_wmb"], "4": ["bi_wmfa1"]}
+PARTS = {"1": ["bi_hold"], "2": ["bi_bc"], "3": ["bi_wmb"]}
 FLAGS_UNSET = ("BRAIN_MULTIREF_FOCUS_BIND", "LB_WMB_FOCUS_PROBE", "LB_WMB_CONTENT_PROBE", "LB_WMB_HOLDQUERY_PROBE",
                "BRAIN_MULTIREF_LESION_SCOPE", "BRAIN_MULTIREF_LESION")
 
