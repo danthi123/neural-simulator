@@ -10,8 +10,9 @@ mechanism: webapp/affect_tone_selection.py (BRAIN_OPEN_ENDED_AFFECT_TONE_SELECT=
   affect organ evaluates every admissible candidate, and the candidate whose organ-evoked valence is closest to the
   organ's held valence is released (host comparator + argmin, a declared shortcut).
 runner: research/runners/_lbf_affect_tone_selection_derisk.py
-verdict: PREREGISTERED. No run of this runner exists yet (not even the smoke). A separate finding reads the 6-seed
-  result against the gate fixed here.
+verdict: PREREGISTERED; 6-seed run NOT STAGED. The seed-7 design probe (AMENDMENT 1/2) predicts a neg-direction
+  failure for every proposal-generator variant (coverage <= 0.133 < 0.5). Blockers are the rewrite generator, the
+  180-word appraisal vocabulary and a lock hole; no evaluation seed has run.
 ---
 
 # Affect selects the reply's tone among content-locked rewrites of one draft (D5), preregistration
@@ -176,3 +177,54 @@ the design is predicted to fail, and the 6-seed run is NOT staged.** The chosen 
 and the seed-7 smoke is re-run on it before the 6-seed run is staged.
 
 Unchanged: every gate and precondition above, the thresholds, the arms, the prompts and the seeds.
+
+**AMENDMENT 2: 2026-09-24, about 01:15 EDT. The probe result: no variant is chosen, so the 6-seed run is NOT
+staged.** No evaluation seed has run.
+
+<!--derived-->
+The probe summary, from `research/findings/raw/_affect_tone_selection/amend1_probe/restyle_probe_s7.json`, seed 7,
+15 prompts:
+
+| variant | prompts with an admissible candidate appraised <= -0.30 | ... >= +0.30 | coverage | lock pass | max salad (admissible) |
+|---|---|---|---|---|---|
+| v0 | 0.0 | 0.667 | 0.0 | 0.633 | 0.167 |
+| v1 | 0.0 | 0.667 | 0.0 | 0.55 | 0.222 |
+| v2 | 0.067 | 0.4 | 0.067 | 0.683 | 0.217 |
+| v3 | 0.133 | 0.667 | 0.133 | 0.567 | 0.447 |
+
+<!--derived-->
+No variant is fluent: all four have max admissible salad above 0.16. The best coverage is 0.133, below the 0.5
+floor, so `choose_variant` returns NONE. Under the preregistered rule the design predicts a neg-direction
+failure, and the 6-seed run is not staged.
+
+<!--derived-->
+Why, from a post-hoc diagnosis (`research/findings/raw/_affect_tone_selection/amend1_probe/probe_diagnosis_s7.json`,
+seed 7 only, written after the choice). There are three separate blockers:
+1. **The proposal generator seldom writes a negative rewrite.** Of 30 "sad"-style rewrites per variant, the
+   independent tone lexicon reads 3 / 9 / 7 / 10 as negative (v0 / v1 / v2 / v3). Qwen-0.5B often answers a
+   request for a sad rewrite with a neutral paraphrase, a refusal ("I'm sorry, but I can't do that"), or
+   unrelated text. v3's fixed CAA steer moves more rewrites negative but breaks fluency.
+2. **The brain's appraisal cannot perceive most negative words.** The appraisal's salience gate is the 180-word
+   WARRINER set. "sad", "pain", "grief", "hurt" and "despair" read strongly negative. But "sadness", "saddened",
+   "unhappy", "sorrow", "melancholy", "loss", "loneliness", "decay" and "alone" read 0.0: they are not in the set.
+   Even rewrites that the ruler reads as negative mostly appraise above -0.30 (1 / 0 / 1 / 6 of 30). So the organ
+   cannot tell a negative candidate from a neutral one. The held mood has the same problem one step earlier: it
+   is read through the same 180-word gate.
+3. **The content lock has a hole for drafts with no names or numbers.** Unknown-topic drafts carry nothing for
+   the lock to check. 3 or 4 admissible candidates per variant are refusals, which (C2) would catch only at the
+   gate. The lock needs a general content-word recall term.
+
+What held (seed 7, 2 arms; an integrity smoke, not evidence): the affect-free draft was byte-identical between
+the `neg` and `lesion` arms on all 4 prompts. Separating draft from tone removes the content drift that made D5
+UNDEFINED, by construction.
+
+THE LAW: this is a verdict on the method's current COMPONENTS, not on the capability. The next rungs, in order:
+- (a) The brain's affect PERCEPTION vocabulary. This is the missing companion process: the mouth speaks
+  open-vocabulary text, but the appraisal hears 180 words. A learned salience gate over the DR-2 map, or
+  morphological generalisation (sadness -> sad, loneliness -> lonely, un- negation), would widen what the organ
+  perceives in both the held mood and each candidate. It is an appraisal-lane build with its own neutral-fact
+  invariant (see `affect_production_organ.appraise_text`'s note on why the learned gate was not adopted).
+- (b) A proposal generator that writes negative rewrites fluently, and a lock that rejects refusals (content-word
+  recall against the draft).
+
+The 6-seed run is staged only after (a) and (b) pass this same probe rule on seed 7.

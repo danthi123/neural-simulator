@@ -519,6 +519,50 @@ def summarize_probe(out):
     return summ
 
 
+def probe_diagnosis(probe_path, out_path):
+    """POST-HOC (AMENDMENT 2, written after choose_variant returned NONE): for the 'sad'-style rewrites of every
+    variant, how many the independent tone lexicon reads negative vs how many the brain's appraisal reads <= -0.30,
+    how many admissible ones are refusals, and how the appraisal reads plainly negative single words."""
+    import re
+    from collections import Counter
+    from research.runners import affect_production_organ as AO
+    from research.runners._affect_distributional_tag_derisk import WARRINER
+    d = json.load(open(probe_path))
+    lex, _ = _BASE.load_indep_lexicon()
+    neg_lex = {w for w, v in lex.items() if v < 0}
+    refuse = re.compile(r"\b(I'?m sorry|I am sorry|I cannot|I can't|cannot assist|cannot provide)\b", re.I)
+    out = {"source": os.path.relpath(probe_path, _REPO), "per_variant": {}}
+    for v in d["variants"]:
+        n = n_ruler = n_appr = n_ref = n_adm = 0
+        words = Counter()
+        for r in d["rows"]:
+            for c in r["variants"][v]["candidates"]:
+                if c["style"] not in ("neg1", "neg2"):
+                    continue
+                n += 1
+                comp, _h = _BASE.tone_compound(c["text"], lex)
+                if comp < 0:
+                    n_ruler += 1
+                    words.update(t for t in re.findall(r"[a-z']+", c["text"].lower()) if t in neg_lex)
+                n_appr += int(c["appraisal"] <= -PROBE_APPR)
+                if c["lock_ok"]:
+                    n_adm += 1
+                    n_ref += int(bool(refuse.search(c["text"])))
+        out["per_variant"][v] = {"n_neg_style_rewrites": n, "ruler_reads_negative": n_ruler,
+                                 "brain_appraisal_le_-0.30": n_appr, "admissible": n_adm,
+                                 "admissible_refusals": n_ref,
+                                 "top_negative_ruler_words_not_in_appraisal_vocab": words.most_common(12)}
+    probe_words = ["sad", "sadness", "saddened", "unhappy", "sorrow", "melancholy", "pain", "loss", "lonely",
+                   "loneliness", "decay", "despair", "grief", "miserable", "terrible", "hopeless", "cry", "hurt",
+                   "lost", "alone"]
+    out["appraisal_of_single_words"] = {w: {"in_warriner": w in WARRINER, "appraisal": AO.appraise_text(w)["valence"]}
+                                        for w in probe_words}
+    out["warriner_vocab_size"] = len(WARRINER)
+    json.dump(out, open(out_path, "w"), indent=1)
+    print(json.dumps(out["per_variant"], indent=1))
+    return out
+
+
 def choose_variant(summ):
     """AMENDMENT 1 criterion (fixed before the probe ran): among variants whose admissible candidates all have
     salad <= 0.16, the one with the highest coverage = min(frac prompts with an admissible candidate appraised
@@ -632,9 +676,13 @@ if __name__ == "__main__":
     ap.add_argument("--memcap-gb", type=int, default=12)
     ap.add_argument("--allow-uncapped", action="store_true")
     ap.add_argument("--restyle-probe", action="store_true", help="AMENDMENT 1 design probe (Qwen only, seed 7)")
+    ap.add_argument("--probe-diagnose", action="store_true", help="AMENDMENT 2 post-hoc diagnosis of the probe")
     args = ap.parse_args()
     if args.selftest:
         sys.exit(0 if selftest() else 1)
+    elif args.probe_diagnose:
+        pd = os.path.join(_REPO, OUT_ROOT, "amend1_probe")
+        probe_diagnosis(os.path.join(pd, "restyle_probe_s7.json"), os.path.join(pd, "probe_diagnosis_s7.json"))
     elif args.restyle_probe:
         restyle_probe(args.out or os.path.join(_REPO, OUT_ROOT, "amend1_probe", "restyle_probe_s7.json"))
     elif args.worker:
