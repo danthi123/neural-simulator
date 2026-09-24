@@ -298,7 +298,11 @@ def mode_score(arms_path, pre_path, out_path):
     out = {
         "runner": "_reward_value_afferent_derisk", "mode": "score", "seed": A.get("seed"),
         "seed_kind": A.get("seed_kind"), "composer_forced": A.get("composer_forced"),
+        # reward_value.composer was null on every read of the v2 run (the module looked for chat.inner.agent.composer;
+        # fixed after that run). The handler's own per-turn activity.composer label is the record for that run.
         "composer_class": {t: on_rv[t].get("composer") for t in TURNS},
+        "composer_activity_label": {arm: {t: ((((arms.get(arm) or {}).get(t) or {}).get("activity") or {})
+                                              .get("composer")) for t in TURNS} for arm in ARMS},
         "inputs": {"arms": arms_path, "pre": pre_path},
         "go": bool(decided["go"]), "status": decided["status"],
         "A_off_identity_vs_prepatch": {"no_reward_value_key": no_key, "da_drives_equal": a_dd_equal,

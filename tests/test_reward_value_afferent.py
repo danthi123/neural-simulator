@@ -187,6 +187,22 @@ def test_surprise_path_normalizes_against_the_organ_threshold(SO, monkeypatch):
     assert "pa" not in info and "lesion_cut" not in info
 
 
+def test_composer_class_is_read_from_the_agent_itself(SO, monkeypatch):
+    """chat.inner (BrainConversationalAgent) holds .composer directly; the v2 seed-7 run recorded null because the
+    first version looked for chat.inner.agent.composer."""
+    import webapp.reward_value_afferent_chat as RVA
+
+    class OneBrainComposer:
+        pass
+
+    monkeypatch.setattr(SO, "get_organ", lambda seed=42: _FakeOrgan(hz=1.0, thr=2.5))
+    chat = _chat()
+    chat.inner.composer = OneBrainComposer()
+    info = RVA.spiking_reward_value(chat, "the dog chase the cat", seed=7)
+    assert info["composer"] == "OneBrainComposer"
+    assert RVA._composer_class(_chat()) is None
+
+
 def test_degenerate_threshold_does_not_drive(SO, monkeypatch):
     import webapp.reward_value_afferent_chat as RVA
     monkeypatch.setattr(SO, "get_organ", lambda seed=42: _FakeOrgan(hz=1.0, thr=0.0))

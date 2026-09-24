@@ -95,9 +95,14 @@ def reward_value_lesioned() -> bool:
 
 def _composer_class(chat) -> Optional[str]:
     """The recall composer's class name (e.g. OneBrainComposer vs RFPhasorComposer), so a record says which recall
-    produced the expected patient. None if the chain is not present."""
+    produced the expected patient. `chat.inner` is the BrainConversationalAgent, which holds `.composer` itself (the
+    first version looked for `chat.inner.agent.composer`, which does not exist, and so recorded null on every read of
+    the v2 seed-7 run). None if neither chain is present."""
     try:
-        comp = getattr(getattr(getattr(chat, "inner", None), "agent", None), "composer", None)
+        inner = getattr(chat, "inner", None)
+        comp = getattr(inner, "composer", None)
+        if comp is None:
+            comp = getattr(getattr(inner, "agent", None), "composer", None)
         return None if comp is None else type(comp).__name__
     except Exception:
         return None
