@@ -340,6 +340,7 @@ from research.runners._vision_hmax_spiking_derisk import (  # noqa: E402
     _c1_spiking,
     _flat,
     lif_spike_read,
+    lif_spike_read_fbgain,
     spike_code,
 )
 # ---- the RANDOM S2 template bank (config-C-like; keep S2 FIXED, learning is at the READOUT) ----
@@ -1612,8 +1613,88 @@ def _attention_gated_soft_class_read(r, V, b, mu, sd, a, code, base_seed):
     return pred, sp.astype(np.float32)
 
 
+def _attention_gated_soft_fbgain_class_read(r, V, b, mu, sd, a, code, base_seed):
+    """SPIKING FEEDBACK DIVISIVE GAIN-CONTROL READOUT (2026-09-23, `--readout
+    attention-gated-soft-fbgain`) -- research/findings/2026-09-23-vision-configural-binding-spiking-
+    feedback-divisive-gain-control-readout-PREREGISTERED.md. Targets the attention-gated-soft readout's
+    OWN banked collapse (research/findings/2026-09-23-vision-attention-gated-soft-readout-spiking-port-
+    collapse-NOGO-banked.md: LEARNED_spkwta_held at exact chance on 12/12 seeds across two front-end
+    operating points, while LEARNED_linscore_held -- computed from a totally separate, never-gated
+    pathway, see `_lin_score_pred` -- retains real signal) with a DIFFERENT method than another
+    attention/normalization retune: it asks first what the real system runs alongside a fixed
+    read-time gain that this file replaced with a constant, per this project's standing wall question.
+
+    IDENTICAL top-down template and continuous multiplicative gain step to `_attention_gated_soft_class_
+    read` (`A_c = |w_c| / mean(|w_c|)`; `bd = r * A_c ** attn_gain_exponent`). The DIFFERENCE is
+    downstream of that gain: this function does NOT apply the host `_apply_s2_norm` satdiv step (that
+    is a PRE-spike, PER-CLASS, one-shot algebraic ratio -- the exact host-computed 'constant' this
+    finding targets). Instead `gated = bd` is passed RAW into the sign-split, and the divisive
+    normalization is realized by `lif_spike_read_fbgain`'s SPIKING, POST-spike, POOLED-ACROSS-CLASSES
+    feedback loop (see that function's docstring: Wilson & Cowan 1972 population-feedback state +
+    Heeger 1992 recurrent/shunting realization of normalization) -- a mechanism computed BY THE SPIKING
+    STAGE from its own realized activity, not a host formula computed once before any spike is drawn.
+
+    HOST SHORTCUT DECLARED (CLAUDE.md boundary): the top-down template `A_c` and the gain multiply
+    `bd = r * A_c**exponent` remain HOST numpy formulas, identical to every other arm in this file --
+    this finding does not close that shortcut, only the DOWNSTREAM normalization/gain-control shortcut
+    (previously `_apply_s2_norm`'s host satdiv ratio, now a spiking feedback loop). `read_gain`/
+    `read_bias` remain the SAME fixed host constants applied upstream of `lif_spike_read_fbgain`'s own
+    `gain=` argument -- this mechanism is ADDITIVE (a further, dynamic correction on top of them), not a
+    replacement for that existing degree of freedom.
+
+    TWO INDEPENDENTLY-DISABLEABLE LEVERS, each with its own byte-identical-off point:
+      - `attn_gain_exponent <= 0`: short-circuits to `gated = r` (identical to every other arm's
+        byte-identical-off convention) BEFORE the gain multiply is ever evaluated.
+      - `fb_strength <= 0`: `lif_spike_read_fbgain` delegates to plain `lif_spike_read` verbatim.
+    Both disabled together reproduces `_spiking_class_read` (`--readout linear`) bit-for-bit. Gain ON
+    + feedback OFF reproduces a THIRD, distinct ablation point (raw gain-shaped drive, no normalization
+    of any kind, fixed-gain LIF) -- the pre-registered gate's own OFF-arm control for isolating the
+    feedback loop's specific causal contribution, distinct from disabling the gain template itself.
+
+    NOT SHARED with any other `*_class_read` function (duplicated instead, the SAME discipline this file
+    already follows throughout): keeps every other `--readout` mode provably untouched. Returns pred
+    (N,), class_spikes (N, n_classes) -- identical contract to `_spiking_class_read`."""
+    n_classes, D = V.shape
+    w = (V / sd).astype(np.float32)
+    const = (b - (w * mu).sum(axis=1)).astype(np.float32)
+    wp = np.clip(w, 0.0, None)
+    wm = np.clip(-w, 0.0, None)
+
+    absw = np.abs(w)
+    A = absw / (absw.mean(axis=1, keepdims=True) + 1e-9)          # (n_classes, D) top-down template, mean 1
+
+    N = r.shape[0]
+    exponent = float(getattr(a, "attn_gain_exponent", 1.0))
+    disabled = exponent <= 0.0
+    fb_strength = float(getattr(a, "fb_strength", 0.0))
+    fb_tau = float(getattr(a, "fb_tau", 8.0))
+
+    E = np.zeros((N, n_classes), dtype=np.float32)
+    I = np.zeros((N, n_classes), dtype=np.float32)
+    for c in range(n_classes):
+        if disabled:
+            gated = r
+        else:
+            gated = (r * np.power(A[c][None, :], exponent)).astype(np.float32)   # RAW gain, no satdiv
+        E[:, c] = gated @ wp[c]
+        I[:, c] = gated @ wm[c]
+    net = (E - I) + const[None, :]
+    net = net - net.mean(axis=1, keepdims=True)
+    net = net * a.read_gain + a.read_bias
+    M = max(1, a.class_pop)
+    tiled = np.repeat(net, M, axis=1)
+    counts, first = lif_spike_read_fbgain(np.clip(tiled, 0.0, None), a.T_read, base_seed + 7,
+                                          tau=a.tau, v_thresh=a.v_thresh, t_ref=a.t_ref,
+                                          noise=a.noise, gain=1.0,
+                                          fb_strength=fb_strength, fb_tau=fb_tau)
+    sp = spike_code(counts, first, a.T_read, code).reshape(N, n_classes, M).sum(axis=2)
+    pred = sp.argmax(axis=1).astype(np.int64)
+    return pred, sp.astype(np.float32)
+
+
 def _class_read(r, V, b, mu, sd, a, code, base_seed):
-    """Dispatcher: routes to the ATTENTION-GATED (hard k-WTA) or ATTENTION-GATED-SOFT (graded gain)
+    """Dispatcher: routes to the ATTENTION-GATED (hard k-WTA), ATTENTION-GATED-SOFT (graded gain, host
+    satdiv), or ATTENTION-GATED-SOFT-FBGAIN (graded gain, spiking feedback divisive gain control)
     readout per `--readout`, else the existing `_spiking_class_read` (the exact prior behaviour).
     `--readout` defaults to `linear` -> every call site is byte-identical to every prior run of this
     file until this flag is explicitly set."""
@@ -1622,6 +1703,8 @@ def _class_read(r, V, b, mu, sd, a, code, base_seed):
         return _attention_gated_class_read(r, V, b, mu, sd, a, code, base_seed)
     if mode == "attention-gated-soft":
         return _attention_gated_soft_class_read(r, V, b, mu, sd, a, code, base_seed)
+    if mode == "attention-gated-soft-fbgain":
+        return _attention_gated_soft_fbgain_class_read(r, V, b, mu, sd, a, code, base_seed)
     return _spiking_class_read(r, V, b, mu, sd, a, code, base_seed)
 
 
@@ -2232,7 +2315,8 @@ def main():
     # ATTENTION-GATED READOUT (2026-09-09, this de-risk; --readout attention-gated; NEXT MECHANISM after
     # the competitive-selection operating-point sweep landed EXHAUSTED). 'linear' (default) is the exact
     # existing _spiking_class_read path -> byte-identical to every prior run of this file.
-    p.add_argument("--readout", choices=["linear", "attention-gated", "attention-gated-soft"],
+    p.add_argument("--readout", choices=["linear", "attention-gated", "attention-gated-soft",
+                                          "attention-gated-soft-fbgain"],
                    default="linear",
                    help="2026-09-09 NEXT MECHANISM (pre-registered after the competitive-selection "
                         "operating-point sweep landed EXHAUSTED -- research/findings/2026-09-09-vision-"
@@ -2287,6 +2371,21 @@ def main():
                         "grows, a structural property of population divisive normalization) to a magnitude "
                         "comparable to a single raw unit's own drive, the actual replacement for the hard "
                         "k-WTA version's ad hoc /k_eff_frac gain-renormalization.")
+    p.add_argument("--fb-strength", type=float, default=0.0,
+                   help="'attention-gated-soft-fbgain' mode only (2026-09-23, research/findings/"
+                        "2026-09-23-vision-configural-binding-spiking-feedback-divisive-gain-control-"
+                        "readout-PREREGISTERED.md): the SPIKING feedback shunting-inhibition strength in "
+                        "lif_spike_read_fbgain -- I_eff = I0 / (1 + fb_strength * r_fb), where r_fb is a "
+                        "leaky low-pass trace of the READ population's own realized output-spike "
+                        "fraction, pooled across the whole class population for that trial (Wilson & "
+                        "Cowan 1972 population-feedback state; Heeger 1992 recurrent/shunting "
+                        "normalization). <= 0.0 (the default) disables the feedback loop entirely -- "
+                        "lif_spike_read_fbgain then delegates to lif_spike_read verbatim (byte-identical "
+                        "by DELEGATION, not by algebraic construction).")
+    p.add_argument("--fb-tau", type=float, default=8.0,
+                   help="'attention-gated-soft-fbgain' mode only: the feedback trace's own leaky time "
+                        "constant (ms), r_fb(t+1) = r_fb(t) + (1/fb_tau)*(-r_fb(t) + mean_pop(spk(t))). "
+                        "Unused when --fb-strength <= 0.")
     p.add_argument("--T1", type=int, default=64)
     p.add_argument("--T2", type=int, default=48)
     p.add_argument("--tau", type=float, default=8.0)

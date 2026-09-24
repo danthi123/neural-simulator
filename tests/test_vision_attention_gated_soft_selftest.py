@@ -4,7 +4,9 @@ readout, built 2026-09-16 as the named next rung after the hard-k-WTA `--readout
 research/findings/2026-09-09-vision-configural-binding-attention-gated-readout-NEXT-MECHANISM-PREREGISTERED.md).
 
 Pre-registration: research/findings/2026-09-23-vision-configural-binding-attention-gated-soft-readout-
-NEXT-MECHANISM-PREREGISTERED.md. This mechanism shipped on `main` (commit b7108ca04) with a manual
+PREREGISTERED.md (⛔ RETRACTED 2026-09-23 -- see docs/RETRACTED.md; superseded by research/findings/
+2026-09-23-vision-attention-gated-soft-readout-spiking-port-collapse-NOGO-banked.md, which does not
+change anything this selftest pins). This mechanism shipped on `main` (commit b7108ca04) with a manual
 "byte-identical-off proof" written into the module docstring, but no automated test ever pinned it -- a
 regression in `--attn-gain-exponent <= 0`'s short-circuit, or in the enabled path collapsing to a no-op,
 would have shipped silently. This file makes both directions a CI-checked selftest, sub-second, no
