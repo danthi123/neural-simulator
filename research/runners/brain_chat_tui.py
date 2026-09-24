@@ -772,7 +772,15 @@ class ChatBrain:
         # D6 (default-OFF, BRAIN_D6_ENGRAM_VOCAB): keep only the facts whose ENGRAM reactivates on the substrate
         # (research/runners/d6_hebbian_store.engram_held) -- so "which facts/words does the brain hold" is read off
         # neurons, not off the host kb list that records every heard fact whether or not a synapse changed.
-        _kb = comp.kb
+        # COMPOSER COMPATIBILITY (found 2026-09-24 by the SlotBinder production gate, research/FAILURE_LOG.md):
+        # SlotBinderComposer has no `.kb` (its taught facts live in `.facts`, a plain list of dicts -- see
+        # slotbinder_composer.py's own docstring), so `comp.kb` raised AttributeError for composer_kind='slotbinder'
+        # through this REAL production path (ChatBrain.__init__ -> _refresh_facts, i.e. webapp.server's
+        # _build_chat_brain / /api/brain-chat) even though the L1-L3 SlotBinder de-risk findings never hit it
+        # (they call the composer directly, never ChatBrain). `(fact, None)` matches the `.kb` tuple shape
+        # `for f, _ in _kb` below expects; the D6 engram branch is unaffected (it is gated on
+        # `hasattr(comp, "_measure_block_readout")`, which neither SlotBinderComposer nor RFPhasorComposer has).
+        _kb = comp.kb if hasattr(comp, "kb") else [(f, None) for f in getattr(comp, "facts", [])]
         if hasattr(comp, "_measure_block_readout"):
             from research.runners import d6_hebbian_store as _d6h
             if _d6h.engram_readtime_enabled():
