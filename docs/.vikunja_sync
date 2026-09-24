@@ -179,3 +179,6 @@ attempts 4-5), #206 (slot-binder GPU latency GO, label de-risked), #207 (thought
 server), #143 (transitive reasoning wired), #230 (AI-teacher 6-seed running). New: #231 working memory reaching
 ordinary replies, #232 false-belief in chat, #233 learned noun meanings (de-risked), #234 local-model fallback,
 #235 safety guards (done).
+
+## 2026-09-24  content-provenance probe preregistered
+- #228 updated (stays OPEN, default-off): the fact-learning test is being repeated with the real language-model mouth on, plus a learned-content share count; prereg committed on research/content-provenance-learned-facts.

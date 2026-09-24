@@ -1,0 +1,35 @@
+{
+ "run_id": "1790274919-899693",
+ "runner": "research/runners/content_provenance_probe.py",
+ "argv": [
+  "/home/ubuntu/derisk-pool/revisions/53d884616cd9b3899d8b01c3c0cf7dc7e89a40c9/research/runners/content_provenance_probe.py",
+  "--worker",
+  "--arm",
+  "HEARD",
+  "--out",
+  "research/findings/raw/_content_provenance/s43_HEARD.json"
+ ],
+ "git_sha": "53d884616cd9b3899d8b01c3c0cf7dc7e89a40c9",
+ "git_dirty": false,
+ "source_kind": "git_archive",
+ "source_manifest_sha256": "68f286930604b86fd8e275228648eabf3a2db4b790855425ad3b4db36ce8e002",
+ "source_manifest_verified_at_start": true,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": true,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-24T18:35:19",
+ "env": {
+  "OPENBLAS_NUM_THREADS": "1",
+  "MKL_NUM_THREADS": "1",
+  "OMP_NUM_THREADS": "1",
+  "SIM_BACKEND": "numpy",
+  "SIM_RUN_ID": "1790274918-899595",
+  "BRAIN_CHAT_SEED": "43"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": false,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_content_provenance/s43_HEARD.json"
+}
