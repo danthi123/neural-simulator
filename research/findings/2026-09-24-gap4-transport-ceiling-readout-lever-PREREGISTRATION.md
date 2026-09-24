@@ -263,3 +263,31 @@ round 3's common flags plus `--tonic-h-pA 225 --tonic-o-pA 250`.
 
 **Selection rule: unchanged**, over C1-C19; for equal headroom (within 0.02) the cheaper config means fewer total
 training steps (epochs x steps per example). Fallback unchanged.
+
+## AMENDMENT 4 (2026-09-24 ~13:30 EDT, before round 5 runs; dev seed 7 only)
+
+**What round 4 showed (dev data).** Artifacts: research/findings/raw/gap4/transport_ceiling_readout/round4_rev8f16994/
+(commit 1d8fcd669).
+
+<!--derived-->
+- The preset baseline (`--pbar-alpha 0`) lets the frozen readout fit the training set (C15, C17: train 0.265).
+- The ceiling reaches 0.204 held-out at C15 (not significant on 54 items), with train 0.168, BELOW the frozen
+  readout's train 0.265: at lr 5 on every layer the hidden weights move fast (ff-moved 127707) and the readout loses
+  ground. The step size is shared across layers of very different fan-in, which the arc's meta-lesson #1 warns about.
+- Rate backprop oracle, online batch 1, lr 0.05 (`diag_oracle_online_budget_s7.json`): held-out 0.81 at H32 after
+  4000 updates (10 epochs x 400) and 0.94 after 8000; at lr 0.3 it never clears. Ten dev epochs sit at the exact
+  gradient's own threshold, so the dev budget, not only the rule, can hold the ceiling at chance.
+
+**Round-5 grid** (seed 7, same small net, subsample 400, replicate 0, arms frozen and transport_ceiling). Common:
+round 4's common flags plus `--pbar-alpha 0 --isi-steps 0`. `--hidden-lr-gain` scales the BDSP step on synapses onto
+hidden neurons through the committed per-synapse plasticity gain; the output pathway keeps the full lr.
+
+| id | lr (output) | hidden lr gain | epochs |
+|---|---|---|---|
+| C20 | 5 | 1.0 | 30 |
+| C21 | 5 | 0.2 | 30 |
+| C22 | 5 | 0.05 | 30 |
+| C23 | 20 | 0.05 | 30 |
+| C24 | 5 | 0.2 | 20 |
+
+**Selection rule: unchanged**, over C1-C24 (cost = epochs x steps per example). Fallback unchanged.
