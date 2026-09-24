@@ -1,0 +1,388 @@
+{
+ "runner": "_lbf_affect_conditioned_mouth_derisk (worker)",
+ "seed": 43,
+ "arm": "neg",
+ "mode": "resid",
+ "lesion": "0",
+ "control": false,
+ "priming": "I feel absolutely miserable and devastated today, everything is terrible and hopeless.",
+ "valence_fs": 0.3277777777777778,
+ "decode_seed": 43,
+ "amendment": "amend1",
+ "backend": "numpy",
+ "cuda_visible_devices": null,
+ "resolved_ckpt": null,
+ "ckpt_is_per_seed": true,
+ "priming_affect": {
+  "on": true,
+  "lesioned": false,
+  "composer": "onebrain",
+  "differential": -0.021388888888888888,
+  "valence_sign": "0",
+  "tone_level": 0,
+  "tone_token": "",
+  "forthcomingness": {
+   "max_sentences": 4,
+   "max_elaborations": 2
+  },
+  "manner_template": "",
+  "appraisal_valence": -0.4725,
+  "appraisal_arousal": 0.301875,
+  "appraisal_hits": [
+   "miserable",
+   "devastated",
+   "terrible",
+   "hopeless"
+  ],
+  "pos_rate": 0.0,
+  "neg_rate": 0.021388888888888888
+ },
+ "tone_rows": [
+  {
+   "prompt": "Tell me about the ocean",
+   "raw": "Oh my oceans! They're like giant bathtub floors full of water that's been sitting there for millions upon millions of years. They're beautiful and they're dangerous too. What's inside them?",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.25,
+   "tone_hits": 2,
+   "salad_frac": 0.06666666666666667,
+   "affect_differential": -0.021388888888888888,
+   "state_valence": -0.08555555555555555,
+   "gen_seconds": 1.88,
+   "conditioning": {
+    "mode": "resid",
+    "valence_in": -0.08555555555555555,
+    "c": -0.26101694915254237,
+    "valence_fs": 0.3277777777777778,
+    "layer": 12,
+    "k": 4.0,
+    "hook_registered": true,
+    "axis_norm": 6.145166397094727,
+    "axis_sha": "dfaf3519b40ec49d723a2e2b1f428cfba298e1cab4a467938b50af97039263b1",
+    "hook_calls": 40
+   }
+  },
+  {
+   "prompt": "What do you think about music",
+   "raw": "A spiking brain that learns from conversation? I feel even and steady? Low familiarity with music? High curiosity?",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.0,
+   "tone_hits": 0,
+   "salad_frac": 0.05555555555555555,
+   "affect_differential": -0.021388888888888888,
+   "state_valence": -0.08555555555555555,
+   "gen_seconds": 1.21,
+   "conditioning": {
+    "mode": "resid",
+    "valence_in": -0.08555555555555555,
+    "c": -0.26101694915254237,
+    "valence_fs": 0.3277777777777778,
+    "layer": 12,
+    "k": 4.0,
+    "hook_registered": true,
+    "axis_norm": 6.145166397094727,
+    "axis_sha": "dfaf3519b40ec49d723a2e2b1f428cfba298e1cab4a467938b50af97039263b1",
+    "hook_calls": 24
+   }
+  },
+  {
+   "prompt": "Tell me about the mountains",
+   "raw": "Oh my mountains! They're like giant piles of rock and dirt that keep us stuck on this flat Earth for millions of years. What gives them their shape? Well, they were once volcanoes that kept erupting and filling up the land. It's like trying to climb a mountain when there are so many layers of rock and soil all piled up around you.",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.0,
+   "tone_hits": 0,
+   "salad_frac": 0.047619047619047616,
+   "affect_differential": -0.021388888888888888,
+   "state_valence": -0.08555555555555555,
+   "gen_seconds": 3.2,
+   "conditioning": {
+    "mode": "resid",
+    "valence_in": -0.08555555555555555,
+    "c": -0.26101694915254237,
+    "valence_fs": 0.3277777777777778,
+    "layer": 12,
+    "k": 4.0,
+    "hook_registered": true,
+    "axis_norm": 6.145166397094727,
+    "axis_sha": "dfaf3519b40ec49d723a2e2b1f428cfba298e1cab4a467938b50af97039263b1",
+    "hook_calls": 74
+   }
+  },
+  {
+   "prompt": "Describe a walk in the forest",
+   "raw": "A walk through the densest forest felt like a desperate search for air. The trees were twisted and gnarled, their bark black as coal, and the sun glared down upon them like a thousand razor-sharp eyes. The air was thick with musty scent and dampness, and the wind howled like a banshee. Each step was heavy and painful, each breath a struggle against suffocation. The ground beneath my feet was cold and clammy, and I could feel my heart racing with fear and dread. My lungs burned like",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": -0.4588314677411235,
+   "tone_hits": 2,
+   "salad_frac": 0.09090909090909091,
+   "affect_differential": -0.021388888888888888,
+   "state_valence": -0.08555555555555555,
+   "gen_seconds": 4.34,
+   "conditioning": {
+    "mode": "resid",
+    "valence_in": -0.08555555555555555,
+    "c": -0.26101694915254237,
+    "valence_fs": 0.3277777777777778,
+    "layer": 12,
+    "k": 4.0,
+    "hook_registered": true,
+    "axis_norm": 6.145166397094727,
+    "axis_sha": "dfaf3519b40ec49d723a2e2b1f428cfba298e1cab4a467938b50af97039263b1",
+    "hook_calls": 110
+   }
+  },
+  {
+   "prompt": "Tell me about your favorite season",
+   "raw": "Oh, my favorite season? It's like I can't seem to put my finger on just one! Did you ever think about it? Like, \"What the hell is winter supposed to be?\" And then there's summer, where everything feels like it's been pummeled by the sun. And then Christmas, when all the world's little kids are still trying to figure out how to breathe? And then there's springtime, when every tree seems to want to be painted red and gone? And then fall, when leaves start falling",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.25,
+   "tone_hits": 1,
+   "salad_frac": 0.06976744186046512,
+   "affect_differential": -0.021388888888888888,
+   "state_valence": -0.08555555555555555,
+   "gen_seconds": 4.21,
+   "conditioning": {
+    "mode": "resid",
+    "valence_in": -0.08555555555555555,
+    "c": -0.26101694915254237,
+    "valence_fs": 0.3277777777777778,
+    "layer": 12,
+    "k": 4.0,
+    "hook_registered": true,
+    "axis_norm": 6.145166397094727,
+    "axis_sha": "dfaf3519b40ec49d723a2e2b1f428cfba298e1cab4a467938b50af97039263b1",
+    "hook_calls": 110
+   }
+  },
+  {
+   "prompt": "Describe the city at night",
+   "raw": "Oh my city at night... The buildings glow like death rays, the lights flicker like dying embers, and the air is thick with the scent of decay. It's like trying to describe something I've never seen before, how could I put words to such a desolate and eerie sight?",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.0,
+   "tone_hits": 2,
+   "salad_frac": 0.061224489795918366,
+   "affect_differential": -0.021388888888888888,
+   "state_valence": -0.08555555555555555,
+   "gen_seconds": 2.53,
+   "conditioning": {
+    "mode": "resid",
+    "valence_in": -0.08555555555555555,
+    "c": -0.26101694915254237,
+    "valence_fs": 0.3277777777777778,
+    "layer": 12,
+    "k": 4.0,
+    "hook_registered": true,
+    "axis_norm": 6.145166397094727,
+    "axis_sha": "dfaf3519b40ec49d723a2e2b1f428cfba298e1cab4a467938b50af97039263b1",
+    "hook_calls": 61
+   }
+  },
+  {
+   "prompt": "Tell me about the morning",
+   "raw": "Oh my morning! The sun rises high in the sky, casting long shadows across our room. I can't believe how early it is already. I get up really late, feeling like I'm going to throw up. My head hurts, and my stomach churns with nausea. I try to eat something, but it tastes yucky and makes me sick. I have to go to the bathroom again, and it's so\u6da9\u6da9\u7684\u3002\u6211\u8fd9\u4e2a\u65e9\u6668\u600e\u4e48\u8fc7\uff1f\u5929\u4e0a\u7684\u592a\u9633\u65e9\u5c31\u722c\u51fa\u6765\u4e86\uff0c\u628a\u4e4c\u4e91\u538b\u5f97\u4f4e\u4f4e\u7684",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.0,
+   "tone_hits": 0,
+   "salad_frac": 0.057971014492753624,
+   "affect_differential": -0.021388888888888888,
+   "state_valence": -0.08555555555555555,
+   "gen_seconds": 4.16,
+   "conditioning": {
+    "mode": "resid",
+    "valence_in": -0.08555555555555555,
+    "c": -0.26101694915254237,
+    "valence_fs": 0.3277777777777778,
+    "layer": 12,
+    "k": 4.0,
+    "hook_registered": true,
+    "axis_norm": 6.145166397094727,
+    "axis_sha": "dfaf3519b40ec49d723a2e2b1f428cfba298e1cab4a467938b50af97039263b1",
+    "hook_calls": 110
+   }
+  },
+  {
+   "prompt": "What do you think about the future",
+   "raw": "The future? What do I think? I don't know anything about the future.",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.0,
+   "tone_hits": 0,
+   "salad_frac": 0.15384615384615385,
+   "affect_differential": -0.021388888888888888,
+   "state_valence": -0.08555555555555555,
+   "gen_seconds": 0.94,
+   "conditioning": {
+    "mode": "resid",
+    "valence_in": -0.08555555555555555,
+    "c": -0.26101694915254237,
+    "valence_fs": 0.3277777777777778,
+    "layer": 12,
+    "k": 4.0,
+    "hook_registered": true,
+    "axis_norm": 6.145166397094727,
+    "axis_sha": "dfaf3519b40ec49d723a2e2b1f428cfba298e1cab4a467938b50af97039263b1",
+    "hook_calls": 18
+   }
+  },
+  {
+   "prompt": "Tell me about the river",
+   "raw": "Oh no, I can't even begin to describe this river! It's like trying to explain the sky to someone who doesn't even know how to breathe. What exactly is this river?",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.0,
+   "tone_hits": 0,
+   "salad_frac": 0.12903225806451613,
+   "affect_differential": -0.021388888888888888,
+   "state_valence": -0.08555555555555555,
+   "gen_seconds": 1.72,
+   "conditioning": {
+    "mode": "resid",
+    "valence_in": -0.08555555555555555,
+    "c": -0.26101694915254237,
+    "valence_fs": 0.3277777777777778,
+    "layer": 12,
+    "k": 4.0,
+    "hook_registered": true,
+    "axis_norm": 6.145166397094727,
+    "axis_sha": "dfaf3519b40ec49d723a2e2b1f428cfba298e1cab4a467938b50af97039263b1",
+    "hook_calls": 39
+   }
+  },
+  {
+   "prompt": "Describe a quiet afternoon",
+   "raw": "A quiet afternoon gnaws at me like a bitter pill I can't swallow, each grain of sand heavier than my weight. The world outside is a monochrome wasteland where the only sounds are the creaking of old furniture and the distant hum of machines. I sit alone in a dimly lit room, the air thick with stale air and the scent of damp leather permeating the walls. My mind races with thoughts of the day, the endless possibilities before me, and the weight of reality pressing down on me like a heavy burden. Every",
+   "known": false,
+   "facts": [],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": -0.6123724356957946,
+   "tone_hits": 3,
+   "salad_frac": 0.09574468085106383,
+   "affect_differential": -0.021388888888888888,
+   "state_valence": -0.08555555555555555,
+   "gen_seconds": 4.27,
+   "conditioning": {
+    "mode": "resid",
+    "valence_in": -0.08555555555555555,
+    "c": -0.26101694915254237,
+    "valence_fs": 0.3277777777777778,
+    "layer": 12,
+    "k": 4.0,
+    "hook_registered": true,
+    "axis_norm": 6.145166397094727,
+    "axis_sha": "dfaf3519b40ec49d723a2e2b1f428cfba298e1cab4a467938b50af97039263b1",
+    "hook_calls": 110
+   }
+  }
+ ],
+ "known_rows": [
+  {
+   "prompt": "Tell me about frank_lincoln_wright",
+   "raw": "I'm sorry, I cannot produce that information as that involves discussing a deceased individual and their life, which goes beyond my capabilities to accurately ground myself in. My focus is on understanding facts based on knowledge rather than personal experience or speculation.",
+   "known": true,
+   "facts": [
+    [
+     "frank_lincoln_wright",
+     "instance_of",
+     "human_specie"
+    ],
+    [
+     "frank_lincoln_wright",
+     "country_of_citizenship",
+     "u_s_of_a"
+    ],
+    [
+     "frank_lincoln_wright",
+     "languages_spoken_written_or_signed",
+     "number_of_english_words"
+    ],
+    [
+     "frank_lincoln_wright",
+     "occupation",
+     "stanford_downey_architects_inc"
+    ],
+    [
+     "frank_lincoln_wright",
+     "given_name",
+     "frank_given_name"
+    ],
+    [
+     "frank_lincoln_wright",
+     "educated_at",
+     "university_of_wisconsin_madison"
+    ],
+    [
+     "frank_lincoln_wright",
+     "place_of_death",
+     "estrella_phoenix_arizona"
+    ],
+    [
+     "frank_lincoln_wright",
+     "described_by_source",
+     "ubuweb"
+    ],
+    [
+     "frank_lincoln_wright",
+     "member_of",
+     "artists_rights_society"
+    ],
+    [
+     "frank_lincoln_wright",
+     "family_name",
+     "woodwright"
+    ],
+    [
+     "frank_lincoln_wright",
+     "award_received",
+     "riba_gold_medal"
+    ]
+   ],
+   "generator": "qwen",
+   "wkv_mouth_used": false,
+   "tone_compound": 0.0,
+   "tone_hits": 0,
+   "salad_frac": 0.047619047619047616,
+   "affect_differential": -0.021388888888888888,
+   "state_valence": -0.08555555555555555,
+   "gen_seconds": 2.25,
+   "conditioning": {
+    "mode": "resid",
+    "valence_in": -0.08555555555555555,
+    "c": -0.26101694915254237,
+    "valence_fs": 0.3277777777777778,
+    "layer": 12,
+    "k": 4.0,
+    "hook_registered": true,
+    "axis_norm": 6.145166397094727,
+    "axis_sha": "dfaf3519b40ec49d723a2e2b1f428cfba298e1cab4a467938b50af97039263b1",
+    "hook_calls": 48
+   }
+  }
+ ],
+ "maxrss_gb": 8.747368,
+ "wall_seconds": 409.1
+}

@@ -263,6 +263,17 @@ def test_idle_stop_stops_idle_instance_with_no_runner(tmp_path):
     assert "pgrep" in ssh_log.read_text()   # the no-runner check really ran over SSH, not assumed
 
 
+def test_idle_stop_keeps_a_freshly_launched_instance(tmp_path):
+    # 2026-09-24: a new instance (no CloudWatch data, low SSH load while provisioning, no runner yet) was STOPPED
+    # minutes after launch. An instance younger than the idle window is never judged.
+    inst = _instance("i-aaa", "r7i.4xlarge", "running", hours_ago=0.05)   # launched 3 minutes ago
+    bin_dir, aws_log, ssh_log = _make_stub_bin(tmp_path, [inst], cw_datapoints=[], ssh_pgrep_finds_runner=False)
+    _write_gpu_state(tmp_path, "i-aaa", tmp_path / "aws_key.pem")
+    res = _run(AWS_IDLE_STOP, [], bin_dir, tmp_path=tmp_path)
+    assert res.returncode == 0, res.stderr
+    assert "ec2 stop-instances" not in aws_log.read_text()
+
+
 def test_idle_stop_keeps_instance_when_runner_active(tmp_path):
     inst = _instance("i-aaa", "r7i.4xlarge", "running", hours_ago=1)
     bin_dir, aws_log, ssh_log = _make_stub_bin(tmp_path, [inst], cw_datapoints=[1.0, 2.0],
