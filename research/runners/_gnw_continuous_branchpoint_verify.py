@@ -477,10 +477,14 @@ def main():
     # touches, so G3 would spuriously FAIL (looks like a broken fork) and G3-neg would spuriously PASS (looks
     # like a good negative control) for a reason that has nothing to do with the instrument. Fail loudly as
     # MIS-CONFIGURED rather than let either read as a real result.
-    backend = os.environ.get("SIM_BACKEND", "numpy").lower()
-    if backend not in ("numpy", "np", ""):
+    # Check the RESOLVED backend, not the env string (re-review 2026-09-24): sim/backend.py resolves an UNSET
+    # SIM_BACKEND to "auto", which picks CuPy when it is importable, so reading unset as numpy let a GPU run through.
+    from sim.backend import get_backend
+    _xp, backend = get_backend()
+    if _xp is not np:
         raise SystemExit(
-            f"[branchpoint-verify] MIS-CONFIGURED: SIM_BACKEND={backend!r} -- this instrument's RNG capture "
+            f"[branchpoint-verify] MIS-CONFIGURED: resolved backend {backend!r} "
+            f"(SIM_BACKEND={os.environ.get('SIM_BACKEND', '<unset>')!r}) -- this instrument's RNG capture "
             f"(np.random.get_state/set_state) only controls the stream OU noise actually reads from under "
             f"SIM_BACKEND=numpy. Re-run with SIM_BACKEND=numpy.")
 
