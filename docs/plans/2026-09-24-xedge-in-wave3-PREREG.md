@@ -111,4 +111,16 @@ battery belongs to the orchestrator; the job lines are staged in the lane report
 
 ## 6. Amendment log
 
-(none)
+**A1 — 2026-09-24 ~12:45 EDT. An ADDITIONAL, non-gating arm; no existing gate or threshold changed.**
+- Artifacts already seen at this time (all seed 7):
+  - `_xedge_wave3_probe/s7_flag_{on,off}.json`
+  - `_xedge_in_wave3/s7/g2t_*.json` and `g2l_*.json`, with their compares
+- G1 and G3 had not reported.
+- Why the arm exists. In the G2-transient arm the edge sits at W0=0.05. There, the WM-resolved-role read never
+  resolves (`wm_resolved` stayed None), so that arm cannot show a leak THROUGH the cross-edge.
+- The arm: **G2-pregrown** runs the same three processes and the same compare, with `--pregrow 24`. That is 24
+  credited live turns (alternating agent/patient, focus p_agent/p_patient), run before either session exists.
+  They are deterministic and identical across the three processes. No credit follows during the script.
+- Reported with the same compare. It is informational, and it does not replace G2-transient.
+- The 2 verdict-precondition blocks were added to the runner at `13c39411d`, after the G2 artifacts were produced.
+  They re-score the same raw files and change no criterion.
