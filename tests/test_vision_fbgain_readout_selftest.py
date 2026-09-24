@@ -110,6 +110,23 @@ def _reference_fbgain_with_pinned_rfb(drive, T, seed, pinned_rfb, tau=8.0, v_thr
     return counts, first
 
 
+def test_feedback_is_zero_until_the_rows_first_spike():
+    """GENERAL guard against a disconnected r_fb (any constant, not only the 0.5 a prior review named). A
+    spike-driven, row-pooled r_fb is exactly 0 until that row's first spike, and the RNG draws are identical with
+    feedback on or off, so each row's FIRST spike time must be identical at fb_strength=3.0 and 0.0. Any positive
+    constant r_fb reduces the drive from t=0 and delays it (re-review round 4 measured 0.1 -> [17,22,2],
+    0.25 -> [55,60,3], 0.5 -> [60,60,3] vs the real [11,14,2]). The 0.0 constant is caught by the count-change
+    assertion in the test below."""
+    drive = np.array([[1.3] * 5, [1.1] * 5, [3.0] * 5], dtype=np.float32)
+    T, seed, fb_tau = 60, 7, 8.0
+    _, first_on = lif_spike_read_fbgain(drive, T=T, seed=seed, fb_strength=3.0, fb_tau=fb_tau)
+    _, first_off = lif_spike_read_fbgain(drive, T=T, seed=seed, fb_strength=0.0, fb_tau=fb_tau)
+    assert np.array_equal(first_on.min(axis=1), first_off.min(axis=1)), (
+        f"a row's first spike moved when feedback was switched on ({first_on.min(axis=1)} vs "
+        f"{first_off.min(axis=1)}): r_fb is non-zero before any spike, i.e. not driven by the row's own spikes")
+    assert (first_off.min(axis=1) < T).all(), "fixture drift: every row must spike with feedback off"
+
+
 def test_feedback_trace_is_driven_by_real_spikes_not_a_constant():
     """DIRECTLY catches the reviewer's exact mutation (r_fb's update target `spk.mean(axis=1)` replaced by
     a constant, e.g. 0.5) by comparing the PRODUCTION function against `_reference_fbgain_with_pinned_rfb`
