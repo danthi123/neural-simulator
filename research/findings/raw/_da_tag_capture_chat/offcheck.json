@@ -1,0 +1,23 @@
+{
+  "pinned_sha": "f35196e66",
+  "branch_repo": "/home/dant123/Projects/sim/.claude/worktrees/wf_faf08c17-18c-3",
+  "ltm": "off",
+  "pinned": {
+    "repo": "/tmp/tmp951gbo1o/pinned",
+    "replies_sha256": "491f6b6beda82972ab480b0bcdbcffcf430c537d002e895709b9543fae74af0a",
+    "store_sha256": "dc0d91089e088a0ddee04d253996dc2eed9b519240853f44cf4f56be69c4621c",
+    "n_store_conns": 768
+  },
+  "pinned_ledger_scenario_sha256": "82f8856dc8465ca5eb25a6bb8ca380fc46134a552b11326aa30ad18d841248c8",
+  "branch": {
+    "repo": "/home/dant123/Projects/sim/.claude/worktrees/wf_faf08c17-18c-3",
+    "replies_sha256": "491f6b6beda82972ab480b0bcdbcffcf430c537d002e895709b9543fae74af0a",
+    "store_sha256": "dc0d91089e088a0ddee04d253996dc2eed9b519240853f44cf4f56be69c4621c",
+    "n_store_conns": 768
+  },
+  "branch_ledger_scenario_sha256": "82f8856dc8465ca5eb25a6bb8ca380fc46134a552b11326aa30ad18d841248c8",
+  "replies_identical": true,
+  "store_identical": true,
+  "v3_ledger_scenario_identical": true,
+  "byte_identical_off": true
+}

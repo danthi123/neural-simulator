@@ -1,0 +1,28 @@
+{
+ "run_id": "1790213318-2417821",
+ "runner": "research/runners/load_bearing_fraction.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/wf_faf08c17-18c-3/research/runners/load_bearing_fraction.py",
+  "--only",
+  "da-gated-encoding",
+  "--out",
+  "research/findings/raw/_da_tag_capture_chat/lbf_row_s42_ltmoff"
+ ],
+ "git_sha": "d4484acfc",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-23T21:28:38",
+ "env": {},
+ "sim_backend": "numpy",
+ "sim_backend_requested": "(unset -> runner default)",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 14126.4,
+ "corpus_check_query": "DA tag capture wired into chat next-day recall battery probe",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_da_tag_capture_chat/lbf_row_s42_ltmoff"
+}
