@@ -198,7 +198,8 @@ def measure_seed(seed: int) -> dict:
     res = {
         "seed": seed,
         "lc_gain_share_of_ask_range": gain_share,
-        "operating_point": {k: operating_point_readout(v) for k, v in fi.items()},
+        "operating_point": {k: operating_point_readout({g: v["ask_hz"] for g, v in c.items()})
+                            for k, c in fi.items()},
         "fi_curves": {k: {str(g): v for g, v in c.items()} for k, c in fi.items()},
         "comparator": {k: comparator_readout(v) for k, v in arms.items()},
         "arms": arms,
@@ -245,12 +246,37 @@ def summarize(paths, out):
     return 0
 
 
+def selftest():
+    """The derived read-outs on synthetic data (no simulation), so a read-out bug cannot eat a measurement run."""
+    fi = {0.0: 0.0}
+    fi.update({g: max(0.0, 4.0 * (g - 0.85)) if g <= 1.2 else 1.0 for g in FI_GRID})
+    op = operating_point_readout(fi)
+    assert op["threshold_drive"] == 1.0 and op["peak_drive"] == 1.2 and op["falls_after_peak"], op
+    assert abs(op["rising_limb_slope_hz_per_unit_drive"] - 4.0) < 1e-6, op
+    u = [181, 164, 149, 134, 111, 90, 82, 76, 78, 88, 111]          # a U-shaped input (seed-44-like)
+    b = best_threshold_rho(u)
+    assert b["rho"] < spearman(list(EVIDENCE_GRID), u) and b["n_silenced"] >= 7, b
+    mono = [200, 180, 160, 140, 120, 100, 80, 60, 40, 20, 0]
+    assert best_threshold_rho(mono)["rho"] == -1.0
+    lv = [{"meta_0_hz": 2.0 + 3.0 * e, "meta_1_hz": 2.0 * (1 - e), "ask_hz": 3.0 * (1 - e)} for e in EVIDENCE_GRID]
+    c = comparator_readout({"levels": lv})
+    assert c["rho_favored"] == 1.0 and c["rho_rival"] == -1.0 and c["rho_min"] == -1.0, c
+    assert c["rho_total"] == 1.0 and c["total_argmin_evidence"] == 0.0, c
+    print("[ask op measure selftest] read-outs OK", flush=True)
+    return 0
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--seeds", type=int, nargs="+", default=[7])
     ap.add_argument("--summarize", nargs="+", default=None)
-    ap.add_argument("--out", required=True)
+    ap.add_argument("--selftest", action="store_true")
+    ap.add_argument("--out", default=None)
     a = ap.parse_args()
+    if a.selftest:
+        return selftest()
+    if not a.out:
+        ap.error("--out is required")
     if a.summarize:
         return summarize(a.summarize, a.out)
     bad = [s for s in a.seeds if s not in MEASURE_DEV_SEEDS]
