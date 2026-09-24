@@ -1,0 +1,12 @@
+{
+  "seed": 7,
+  "verb": "eat",
+  "candidates": [
+    "worm",
+    "rock"
+  ],
+  "unlesioned_choice": "worm",
+  "lesioned_choice": null,
+  "moved": true,
+  "note": "isolated proof only -- NOT exercised by the shipped bc_b probe on the tiny-demo build; see EXTRA_LESIONS['selective-attention-biased-competition']"
+}
