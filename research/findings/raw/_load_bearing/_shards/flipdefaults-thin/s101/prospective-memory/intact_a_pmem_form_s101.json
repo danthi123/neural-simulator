@@ -1,0 +1,80 @@
+{
+  "pmem_form": {
+    "answer": "Okay \u2014 I'll hold onto that and remind you to feed the dog when the bird sings comes up.",
+    "abstained": false,
+    "recalled_svo": null,
+    "verified": true,
+    "renderer": "template-stub (GPU-free)",
+    "brain": "tiny-demo",
+    "source": "tiny-demo +LTM",
+    "rich": false,
+    "activity": null,
+    "affect": {
+      "on": true,
+      "lesioned": false,
+      "composer": "onebrain",
+      "differential": 0.0,
+      "valence_sign": "0",
+      "tone_level": 0,
+      "tone_token": "",
+      "forthcomingness": {
+        "max_sentences": 4,
+        "max_elaborations": 2
+      },
+      "manner_template": "",
+      "appraisal_valence": 0.0,
+      "appraisal_arousal": 0.0,
+      "appraisal_hits": [],
+      "pos_rate": 0.0,
+      "neg_rate": 0.0
+    },
+    "prospective": {
+      "held": true,
+      "action": "feed the dog",
+      "cue_clause": "the bird sings",
+      "cue_keywords": [
+        "bird",
+        "sings"
+      ],
+      "lesioned": false,
+      "held_after_lesion": null,
+      "calib": {
+        "bias_pA": {
+          "A": -1083.3,
+          "B": -1153.3
+        },
+        "plateau_diag": {
+          "A": {
+            "g_single_cue": 31.579,
+            "g_single_held": 127.059,
+            "g_coinc": 160.227,
+            "theta": 133.412,
+            "coinc_over_theta": true,
+            "coinc_margin": 26.815
+          },
+          "B": {
+            "g_single_cue": 32.587,
+            "g_single_held": 131.084,
+            "g_coinc": 165.398,
+            "theta": 137.639,
+            "coinc_over_theta": true,
+            "coinc_margin": 27.759
+          }
+        },
+        "fire_thr": 0.2,
+        "silent_max": 0.06
+      },
+      "hebbian": true,
+      "hebbian_lesioned": false,
+      "binding_learned": {
+        "pre_act_rate": 0.4125,
+        "pre_cue_rate": 0.4433,
+        "post_rel_rate": 0.2372,
+        "learned_norm": 17760.0,
+        "canonical_norm_per_action": 17760.0
+      },
+      "kind": "formation"
+    },
+    "inner_state_readout": true
+  }
+}

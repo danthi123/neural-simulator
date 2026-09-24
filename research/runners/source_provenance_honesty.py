@@ -60,8 +60,8 @@ PROVENANCES = (PROVENANCE_PERCEIVED, PROVENANCE_GENERATED)
 # masking the lesion there while correctly exposing it elsewhere (s100) -- seed-dependence in the INTEGRATION
 # step that reads the (perfectly-separated) opponent output, not in the substrate's own discrimination.
 #
-# FIX, gated behind BRAIN_SOURCE_PROV_ABSTAIN_AT_TIE (default OFF -- unset/0/false/no/off/"" all read as off,
-# byte-identical to pre-fix): when the judged |d| falls below TIE_D_EPS -- i.e. the opponent produced NO signal,
+# FIX, gated behind BRAIN_SOURCE_PROV_ABSTAIN_AT_TIE (default ON since 2026-09-23; an explicit 0/false/no/off/""
+# reads as off, byte-identical to pre-fix): when the judged |d| falls below TIE_D_EPS -- i.e. the opponent produced NO signal,
 # not merely a close call -- `judge_fact()` reports `label=None` DETERMINISTICALLY instead of forwarding the
 # coin-flipped `winner`. `label=None` is not a new sentinel invented for this fix: it is the EXACT value
 # `judge_fact()` already returns for a never-encoded key (`known=False`), and `provenance_framed_text()`'s own
@@ -75,15 +75,22 @@ PROVENANCES = (PROVENANCE_PERCEIVED, PROVENANCE_GENERATED)
 # confident intact read into an abstain.
 TIE_D_EPS = 1e-6
 
+# PRODUCTION DEFAULT-ON since 2026-09-23 (owner-authorized validated flip; evidence: finding
+# 2026-09-22-source-provenance-abstain-at-tie-load-bearing-6-6 + allfixes2 robust core). An EXPLICIT falsy value
+# (BRAIN_SOURCE_PROV_ABSTAIN_AT_TIE=0/false/no/off/"") is the reversible escape -> the pre-fix coin-flip forward,
+# byte-identical.
+_ABSTAIN_AT_TIE_DEFAULT_ON = True
+
 
 def source_prov_abstain_at_tie_enabled() -> bool:
-    """`BRAIN_SOURCE_PROV_ABSTAIN_AT_TIE` in {1,true,on,yes} -> `judge_fact()` reports a deterministic abstain
-    (`label=None`) at a genuine opponent no-signal collapse (`|d| < TIE_D_EPS`) instead of forwarding `_judge()`'s
-    host coin-flip. Mirrors the enabled()/lesioned() env-flag convention used by the sibling production organ
-    (`source_provenance_production_organ.source_provenance_enabled` / `.source_provenance_lesioned`)."""
+    """`BRAIN_SOURCE_PROV_ABSTAIN_AT_TIE` unset -> `_ABSTAIN_AT_TIE_DEFAULT_ON` (True since 2026-09-23); set -> ON iff
+    in {1,true,on,yes} (so an explicit `=0` keeps the OFF arm reachable). ON -> `judge_fact()` reports a
+    deterministic abstain (`label=None`) at a genuine opponent no-signal collapse (`|d| < TIE_D_EPS`) instead of
+    forwarding `_judge()`'s host coin-flip. Mirrors the enabled()/lesioned() env-flag convention used by the sibling
+    production organ (`source_provenance_production_organ.source_provenance_enabled` / `.source_provenance_lesioned`)."""
     v = os.environ.get("BRAIN_SOURCE_PROV_ABSTAIN_AT_TIE")
     if v is None:
-        return False
+        return _ABSTAIN_AT_TIE_DEFAULT_ON
     return v.strip().lower() in ("1", "true", "on", "yes")
 
 
@@ -141,7 +148,7 @@ class SourceProvenanceHonestyMonitor:
         monitor never fabricates a provenance judgment for content it was never shown (the de-risk's anti-cheat
         (3): 'a never-encoded pattern must leave both prov pools ~silent').
 
-        `BRAIN_SOURCE_PROV_ABSTAIN_AT_TIE` (default OFF, `source_prov_abstain_at_tie_enabled()`): at a genuine
+        `BRAIN_SOURCE_PROV_ABSTAIN_AT_TIE` (default ON since 2026-09-23, `source_prov_abstain_at_tie_enabled()`): at a genuine
         opponent no-signal collapse (`|d| < TIE_D_EPS`) the label reads a deterministic abstain (`None`) rather
         than `_judge()`'s seed-dependent host coin-flip -- see the module-level note above `TIE_D_EPS`. OFF, this
         method is byte-identical to its pre-fix behavior (`label` is always `_judge()`'s raw `winner`)."""

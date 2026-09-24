@@ -1,0 +1,31 @@
+{
+ "run_id": "1790215741-2611568",
+ "runner": "research/runners/_flip_validated_fixes_chat_sha.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/wf_4b88ad6e-fc0-3/research/runners/_flip_validated_fixes_chat_sha.py",
+  "--arm",
+  "default",
+  "--label",
+  "branch_default",
+  "--out",
+  "research/findings/raw/_flip_validated_fixes/chat_sha_branch_default.json"
+ ],
+ "git_sha": "35589d5c5",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-23T22:09:01",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_flip_validated_fixes/chat_sha_branch_default.json"
+}
