@@ -4,48 +4,77 @@ rate -- the COMPANION PROCESS the point-to-point CrossEdge rung never modeled.
 Pre-registration: `docs/plans/2026-09-23-curiosity-metacog-neuromod-gain-PREREG.md` (read it first; the gates
 below are copied from it and were frozen before the 6-seed run).
 
-WHY THIS RUNNER EXISTS (and what it adds, not replaces). `_curiosity_metacog_conflict_xedge_derisk.py` wired
-metacog's margin comparator into curiosity's ASK pool through ONE declared point-to-point CrossEdge (fixed
-weight 4.0). Its 6-seed verdict is NO-GO
-(`research/findings/2026-09-23-cpu-lane-harvest-curiosity-metacog-conflict-xedge-6seed-no-go.md`): 4/6 seeds
-pass, and even on a passing seed the synaptic drive alone sits 3x-14x BELOW production's own 19-24 Hz curious
-threshold (its S1, secondary). The review correction named the next lever: "the missing companion drive /
-neuromodulatory gain that the real system runs" -- not another retune of the same fixed-weight edge.
+REVIEW HISTORY (v1 -> v2, this file). v1 (commit 7ba619532) built the "gain" as a HOST relay: a `GainRecorder`
+read the comparator's firing-fraction each step and wrote it to `core_config.current_novelty_signal`, which the
+ALREADY-REGISTERED `curiosity` neuromodulator (an ODE over that host scalar) then turned into current on `ask`.
+Adversarial review (v2:fcc2f77) correctly flagged this as a host rate-relay wearing a spiking costume: the
+comparator->modulator step was `sum(firing)/len(firing)`, host Python, not a synapse. **v2 (this file) replaces
+that relay with an ACTUAL spiking population**: metacog's comparator projects, through real synapses, onto a new
+locus-coeruleus-analog population (`lc_ne`), which projects, through real synapses, diffusely onto `ask`. No
+host code reads a spike raster and writes a modulator input anywhere in this mechanism any more.
 
-THE WALL QUESTION (CLAUDE.md standing rule): what does the real system run ALONGSIDE a single excitatory
-synapse that the prior rung replaced with a constant? Externally grounded (recorded
+WHY THIS RUNG EXISTS (and what it replaces). `_curiosity_metacog_conflict_xedge_derisk.py` wired metacog's margin
+comparator into curiosity's ASK pool through ONE declared point-to-point CrossEdge (fixed weight 4.0). Its 6-seed
+verdict is NO-GO (`research/findings/2026-09-23-cpu-lane-harvest-curiosity-metacog-conflict-xedge-6seed-no-go.md`):
+4/6 seeds pass, and even on a passing seed the synaptic drive alone sits 3x-14x BELOW production's own 19-24 Hz
+curious threshold (its S1, secondary). The review correction on that lane named the next lever: "the missing
+companion drive / neuromodulatory gain that the real system runs" -- not another retune of the fixed-weight edge.
+
+THE WALL QUESTION (CLAUDE.md standing rule): what does the real system run ALONGSIDE a single excitatory synapse
+that the prior rung replaced with a constant? Externally grounded (recorded
 `research/queue/.external_searches.jsonl`, lane=curiosity, 2026-09-23): Aston-Jones & Cohen (2005), Annu Rev
-Neurosci 28:403-450 -- the locus-coeruleus norepinephrine system's tonic mode broadcasts a GLOBAL, MULTIPLICATIVE
-population excitability GAIN (driven by cortical conflict/utility monitoring), not a point-to-point glutamatergic
-increment. A single fixed-weight CrossEdge has no gain-multiplication analog and no principled relation to the
-scale of production's own ASK-pool gain constant (`PROD_CURIOSITY_EXCIT_SENSITIVITY=500.0`).
+Neurosci 28:403-450 -- the locus-coeruleus norepinephrine system's tonic mode broadcasts a GLOBAL population
+excitability GAIN (driven by cortical conflict/utility monitoring, e.g. ACC/OFC), not a point-to-point
+glutamatergic increment.
 
-THE CIRCUIT ADDED (every step is neurons + synapses; host code only drives metacog's INPUT, as production does,
-and reduces a spike raster to a rate scalar -- the SAME reduction every `judge()`/`want_hz` read in this codebase
-performs, never an evidence-derived formula):
-  - The metacog comparator (`meta_schema` + `meta_margin_fs`, UNCHANGED from the conflict_xedge rung) computes its
-    own margin signal, exactly as before.
-  - EACH SIMULATION STEP, the comparator's instantaneous population firing FRACTION (neurons that spiked this
-    step / comparator population size) is written to `core_config.current_novelty_signal` for the NEXT step
-    (causal: last step's comparator spikes drive this step's modulator input), clipped to [0,1] by a fixed
-    `CMP_RATE_NORM` (calibrated on seed 42 only, frozen before the 6-seed run; see the PREREG).
-  - The ALREADY-REGISTERED `curiosity` neuromodulator (reused BY IMPORT from
-    `research.runners.onebrain_merge_framework._curiosity_modulator_cfg` -- the SAME `from_novelty` ->
-    `excitability_drive(scope=group:ask, sensitivity=PROD_CURIOSITY_EXCIT_SENSITIVITY)` config the merge
-    framework's own curiosity organ-read installs on a shared pool) integrates this over its own
-    `decay_tau_ms=50.0` kinetics and applies a population-wide additive current to the ASK pool. The temporal
-    integration is the MODULATOR'S OWN kinetics, not a host-side EMA.
+THE CIRCUIT (v2; every step is neurons + synapses ONLY -- host code drives metacog's INPUT, exactly as
+production does, and nothing else):
+  - The metacog comparator (`meta_schema`, UNCHANGED from the conflict_xedge rung) computes its own margin
+    signal, exactly as before.
+  - A NEW small population, `lc_ne` (`LC_N` neurons, excitatory-typed, no internal recurrence -- the LC nucleus
+    is small and does not need internal dynamics for this rung), receives a FIXED-WEIGHT, uniform, dense
+    CrossEdge from `meta_schema` (`x_metacog_meta_to_lc_ne`, weight `CMP_TO_LC_W`). `meta_schema` -- the
+    comparator's excitatory principal cells, not its inhibitory relay `meta_margin_fs` -- is the source: this is
+    also the more anatomically apt choice (LC's cortical afferents are glutamatergic projection neurons, not
+    local interneurons; Aston-Jones & Cohen 2005 Fig 1).
+  - `lc_ne` projects, through a SECOND fixed-weight, uniform, dense CrossEdge, DIFFUSELY onto curiosity's `ask`
+    pool (`x_lc_ne_to_curiosity_ask`, weight `LC_TO_ASK_W`) -- every `lc_ne` neuron synapses onto every `ask`
+    neuron. This CrossEdge carries a `transmission_gate` ("lc_ne_gain") used ONLY as this runner's lesion switch
+    (`bridge.set_transmission_gate`, `sim/bridge.py:5281` -- a runtime multiplicative scalar on this ONE
+    pathway's current, 0.0=closed/1.0=open); it is never driven continuously from a host readout.
   - The FROZEN point-to-point edge from the conflict_xedge rung (`x_metacog_meta_to_curiosity_ask`, weight 4.0)
-    stays wired, unchanged, alongside the new gain pathway -- both are independently lesionable (G3/G4).
+    stays wired, unchanged, alongside the new `lc_ne` pathway -- both are independently lesionable.
 
-WHAT IS HOST-DESIGNED (declared, not hidden): `CMP_RATE_NORM` and `GAIN_EXCIT_SENSITIVITY` are hand-set,
-calibrated on the seed-42 smoke only (the 5 other seeds are held out). `GAIN_EXCIT_SENSITIVITY` replaces
-production's own `PROD_CURIOSITY_EXCIT_SENSITIVITY=500.0` because that constant SATURATED this pool's ASK region
-(the correct gain MAGNITUDE, not merely a gain pathway's existence, is population-specific -- see the operating-
-point note above the constant). The modulator's SHAPE (`from_novelty` rule, `excitability_drive` target,
-`decay_tau_ms`, production sensitivity) is reused unchanged by import. The comparator and edge weights are
-unchanged, hand-set residuals inherited from the prior rung. Neither the comparator nor the edge nor the gain
-pathway is Hebbian-grown.
+HONESTY: ADDITIVE, NOT MULTIPLICATIVE (the residual this rung does NOT close). Aston-Jones & Cohen's LC-NE gain
+is MULTIPLICATIVE: it rescales a neuron's RESPONSIVENESS to its other inputs, not just its baseline current. This
+substrate's population-to-population synapses (the ONLY mechanism available for a population-to-population
+broadcast) deliver ADDITIVE per-spike current, identical in kind to the frozen point-edge -- `lc_ne`'s "diffuse
+projection" is architecturally a broadcast (few-to-many) rather than a point edge (one-region-to-one-region), but
+it is NOT a gain on `ask`'s excitability to ITS OTHER inputs. Two substrate mechanisms come closer to a true gain
+and were considered and rejected for this rung, both honestly:
+  (1) `sim/neuromodulators.py`'s `synaptic_gain` target IS multiplicative (`compute_synaptic_gain_multiplier`:
+      "Multiplies effective_synaptic_strength"), but `compute_synaptic_gain_multiplier` only supports
+      `scope="all"` -- there is no `scope="group:ask"` path. Using `scope="all"` would multiply EVERY synapse in
+      the pool, including metacog's own comparator synapses, which G5 requires to stay EXACTLY unchanged; using
+      it would confound the very invariance this rung's gates depend on.
+  (2) `set_transmission_gate` / `cp_transmission_gain` (`sim/bridge.py:5281`) IS a multiplicative scalar, but it
+      scales only the CURRENT of the ONE declared pathway it is attached to (a "volume knob" on `lc_ne -> ask`
+      itself) -- it does not rescale `ask`'s response to its OTHER inputs (the frozen point-edge, or any future
+      input), so it does not implement gain in the LC-NE sense either. It is used here only as a static lesion
+      switch (the role the framework itself declares for it: "the lesion handle for a FIXED (plastic=False)
+      neuromodulatory projection"), never as this rung's continuous drive.
+The honest next rung, named and not built here: a per-group (not global) `synaptic_gain`-style multiplicative
+target on the neuromodulator subsystem, OR a per-neuron background-conductance/threshold shift driven by `lc_ne`
+firing rate through the SAME `couple_gate_to_pool`-style in-substrate coupling `sim/bridge.py:5307` already uses
+for thalamocortical gating (which would need a continuous, not threshold-open/close, coupling law it does not
+yet have).
+
+WHAT IS HOST-DESIGNED (declared, not hidden): `CMP_TO_LC_W` and `LC_TO_ASK_W` are hand-set, calibrated on the
+seed-42 smoke only (the 5 other seeds are held out). `LC_N` (population size) is hand-set. Neither the comparator,
+the point-edge, nor either new CrossEdge is Hebbian-grown. `lc_ne`'s own internal dynamics (a plain LIF/AdEx
+population with `internal_density=0.0`) are NOT a tonic/phasic biophysical LC model -- this rung tests the
+POPULATION-RELAY structure (comparator -> a dedicated broadcasting nucleus -> diffuse target), not LC's
+intrinsic bistable tonic/phasic firing modes (those are the honest next rung after the gain-vs-additive one).
 
 FUNCTIONAL CORRELATE ONLY -- no phenomenal claim. Additive research runner: no `sim/` edit, no production flag,
 no default flip; nothing in the live chat path imports this file.
@@ -55,6 +84,12 @@ Run:
   SIM_BACKEND=numpy python -m research.runners._curiosity_metacog_neuromod_gain_derisk \
       --seeds 42 43 44 100 101 102 --out research/findings/raw/_curiosity_metacog_neuromod_gain_6seed.json
   python -m research.runners._curiosity_metacog_neuromod_gain_derisk --selftest   # gate-logic selftest, no sim
+  python -m research.runners._curiosity_metacog_neuromod_gain_derisk --combine <f1.json> <f2.json> ... --out <out>
+      # COMBINER (declared, PREREG Sec 5): the pre-registered 6/6 verdict is split across separate pool-staged
+      # artifacts (one per batch). This mode loads each file's `per_seed` rows, unions them (asserting the seed
+      # SET is exactly {42,43,44,100,101,102} with no duplicate/missing seed), and re-applies the SAME
+      # Verdict/require logic `main()` uses for a single-process 6-seed run, so a split run and a monolithic run
+      # would decide identically on the same per-seed data. This is the ONLY authoritative combined verdict.
 """
 from __future__ import annotations
 
@@ -79,169 +114,151 @@ import json  # noqa: E402
 import numpy as np  # noqa: E402
 
 from sim.backend import to_host  # noqa: E402
-from research.runners.onebrain_crossedge_gate import cross_edge_masks, lesion_cross_edges  # noqa: E402
+from sim.regions import BrainRegion  # noqa: E402
+from research.runners.onebrain_merge_framework import REGISTRY, CrossEdge, OrganDescriptor, merge_organs  # noqa: E402
+from research.runners.onebrain_crossedge_gate import (  # noqa: E402
+    cross_edge_masks, lesion_cross_edges, verify_byte_off,
+)
 from research.runners.metacog_production_organ import MetacogProductionOrgan  # noqa: E402
 from research.runners._curiosity_metacog_conflict_xedge_derisk import (  # noqa: E402
-    build_pool, Recorder, coupled_sweep, level_rho, perm_null, _range, _digest, _meta_exact,
-    _curiosity_production_threshold, CMP_REGIONS, XEDGE, XEDGE_KEY,
-    G1_RHO_MAX, G1_MIN_RANGE_HZ, G4_P_MAX, G7_RHO_MAX, G8_RHO_MIN,
+    build_pool as build_base_pool, Recorder, coupled_sweep, level_rho, perm_null, _range, _digest, _meta_exact,
+    _curiosity_production_threshold, _metacog_het, METACOG_MARGIN, CMP_REGIONS, XEDGE, XEDGE_KEY,
+    G1_RHO_MAX, G1_MIN_RANGE_HZ, G7_RHO_MAX, G8_RHO_MIN,
 )
-from research.runners.onebrain_merge_framework import _curiosity_modulator_cfg  # noqa: E402
-from research.runners._curiosity_seek_learn_onbridge_derisk import PROD_CURIOSITY_EXCIT_SENSITIVITY  # noqa: E402
 
-# ── FROZEN operating point for THIS rung (seed-42-only calibration, 2026-09-23; see the PREREG doc) ───────────
-CMP_RATE_NORM = 0.28      # comparator per-step firing-FRACTION that maps to current_novelty_signal=1.0
-# The modulator's SHAPE (from_novelty rule, excitability_drive/group:ask target, decay_tau_ms=50.0, production
-# sensitivity 0.10) is reused UNCHANGED from `_curiosity_modulator_cfg()`. Its GAIN MAGNITUDE is NOT: production's
-# PROD_CURIOSITY_EXCIT_SENSITIVITY=500.0 saturated THIS 3-organ pool's 80-neuron ASK region to ~30 Hz at every
-# evidence level (seed-42 smoke, 2026-09-23) -- the constant's correct scale, not merely its existence, is
-# pool-specific (population size + baseline excitability differ from the standalone build it was tuned for).
-# GAIN_EXCIT_SENSITIVITY is therefore its OWN seed-42-only calibrated constant, declared as a hand-set residual.
-GAIN_EXCIT_SENSITIVITY = 30.0
-G3_GAIN_ATTRIB_MIN = 0.2  # the gain pathway must own >= this fraction of the combined ASK dynamic range (a floor)
-
-
-def _install_gain_modulator(pool):
-    """Install the `curiosity` neuromodulator with the merge framework's own SHAPE
-    (`_curiosity_modulator_cfg`) but THIS rung's own seed-42-calibrated gain magnitude
-    (`GAIN_EXCIT_SENSITIVITY`, see the operating-point note above), on THIS pool's bridge."""
-    from dataclasses import replace as _dc_replace
-    from sim.neuromodulators import NeuromodulatorManager
-    b = pool.bridge
-    cfg = b.core_config
-    n = int(b.cp_membrane_potential_v.shape[0])
-    base = _curiosity_modulator_cfg()
-    targets = [_dc_replace(t, sensitivity=GAIN_EXCIT_SENSITIVITY) for t in base.targets]
-    modulator = _dc_replace(base, targets=targets)
-    cfg.enable_neuromodulator_subsystem = True
-    cfg.neuromodulators = [modulator]
-    b.neuromodulator_manager = NeuromodulatorManager(cfg.neuromodulators, cfg.dt_ms)
-    b.neuromodulator_manager.initialize(n, pool.xp)
-    if b.region_manager is not None:
-        b.neuromodulator_manager.set_group_indices(b.region_manager.region_indices_dict())
-    cfg.current_novelty_signal = 0.0
+# ── FROZEN operating point for THIS rung (seed-42-only calibration, 2026-09-23 v1; RE-CALIBRATED 2026-09-23 v2
+#    after the mechanism was rebuilt as spiking synapses -- the v1 constants (CMP_RATE_NORM, GAIN_EXCIT_
+#    SENSITIVITY) governed a host modulator ODE that no longer exists and do not transfer) ─────────────────────
+LC_N = 20                  # locus-coeruleus-analog population size (small nucleus, no internal recurrence)
+CMP_TO_LC_W = 30.0         # meta_schema -> lc_ne, uniform dense CrossEdge weight (seed-42 calibration; a plain
+                           # RS-cortical-pyramidal lc_ne has a HIGHER rheobase than the comparator's own FS-typed
+                           # relay, so this does not reuse the comparator's CMP_EXC=1.2-2.4 scale -- measured
+                           # directly: lc_ne fires 0 times at weight 3.0, ~940 times at weight 30.0 over the same
+                           # evidence=1.0 judge() window that drives meta_schema to ~1137 spikes)
+LC_TO_ASK_W = 1.0          # lc_ne -> ask, uniform dense DIFFUSE CrossEdge weight (seed-42 calibration; measured
+                           # 2026-09-23: LC_TO_ASK_W=20 SATURATES ask into a high-rate ceiling regime where the
+                           # response INCREASES with evidence (rho=+0.96, fails G1/G7 -- the same saturation
+                           # failure mode v1's GAIN_EXCIT_SENSITIVITY=500 hit); LC_TO_ASK_W>=2 already compresses
+                           # the combined dynamic range below the edge-alone range (frac_gain goes negative). 1.0
+                           # is the largest value that keeps G1 (rho=-0.998), G7 (rho_swap=-0.964) monotone AND
+                           # clears G3's floor (frac_gain=0.436) simultaneously.
+G3_GAIN_ATTRIB_MIN = 0.2   # the gain pathway must own >= this fraction of the combined ASK dynamic range (a floor)
+LC_GATE_KEY = "lc_ne_gain"          # transmission_gate name: the LESION switch for lc_ne -> ask (NOT a live drive)
+CMP_TO_LC_KEY = "x_metacog_meta_to_lc_ne"
+LC_TO_ASK_KEY = "x_lc_ne_to_curiosity_ask"
 
 
-class GainRecorder(Recorder):
-    """Recorder that ALSO drives the neuromodulator each step from the comparator's own spike raster (causal:
-    step t's `current_novelty_signal` is set from step t-1's comparator firing fraction), and can independently
-    toggle the gain pathway off (`gain_enabled=False` -> `current_novelty_signal` held at 0.0 every step) without
-    touching the neuromodulator installation or the CrossEdge, so gain-only and edge-only lesions compose."""
+def _lc_spec(seed):
+    return ([BrainRegion(name="lc_ne", n_neurons=LC_N, exc_fraction=1.0, internal_density=0.0,
+                         enable_nmda=False)], [], {})
 
-    def __init__(self, pool, rate_norm=CMP_RATE_NORM):
-        self.gain_enabled = True
-        self.rate_norm = float(rate_norm)
-        self._last_novelty = 0.0
-        super().__init__(pool)
 
-    def reset(self):
-        super().reset()
-        self._last_novelty = 0.0
+LC_ORGAN = OrganDescriptor(
+    key="lc_ne_organ", regions=("lc_ne",), spec_fn=_lc_spec,
+    scaffold_residuals=("hand-set meta_schema->lc_ne and lc_ne->ask CrossEdge weights + LC_N (seed-42 "
+                        "calibration); not Hebbian-grown; lc_ne has no internal dynamics of its own (a plain "
+                        "relay population, not a tonic/phasic LC biophysical model -- see the module honesty "
+                        "note on ADDITIVE vs MULTIPLICATIVE gain).",))
 
-    def _step(self):
-        cfg = self.b.core_config
-        if self.on:
-            cfg.current_novelty_signal = self._last_novelty if self.gain_enabled else 0.0
-        self._orig()
-        if not self.on:
-            return
-        fs = np.asarray(to_host(self.b.cp_firing_states)).astype(bool)
-        self.ask_counts.append(int(fs[self.ask].sum()))
-        self.h_meta.update(np.packbits(fs[self.meta_idx]).tobytes())
-        if self.cmp_idx is not None:
-            cmp_fire = fs[self.cmp_idx]
-            self.h_cmp.update(np.packbits(cmp_fire).tobytes())
-            self._last_novelty = float(np.clip(cmp_fire.sum() / max(len(self.cmp_idx), 1) / self.rate_norm,
-                                                0.0, 1.0))
+CMP_TO_LC = CrossEdge(key=CMP_TO_LC_KEY, source_key="metacog", source_region="meta_schema",
+                      target_key="lc_ne_organ", target_region="lc_ne", init_weight=CMP_TO_LC_W,
+                      plastic=False, learn_rule="none", freeze_rest=False)
+
+LC_TO_ASK = CrossEdge(key=LC_TO_ASK_KEY, source_key="lc_ne_organ", source_region="lc_ne",
+                      target_key="curiosity", target_region="ask", init_weight=LC_TO_ASK_W,
+                      plastic=False, learn_rule="none", freeze_rest=False, transmission_gate=LC_GATE_KEY)
+
+ALL_CROSS_EDGES = [XEDGE, CMP_TO_LC, LC_TO_ASK]
 
 
 def build_combined_pool(seed: int):
-    """The conflict_xedge rung's own pool (comparator + frozen edge, unchanged) with the gain modulator ALSO
-    installed. `coupled=True` in `build_pool` already wires the CrossEdge; the modulator is added here."""
-    pool = build_pool(int(seed), coupled=True)
-    _install_gain_modulator(pool)
+    """[metacog(het), curiosity, metacog_margin, lc_ne_organ] + the frozen point-edge + the two new LC CrossEdges.
+    Every synapse in this pool is either a base-organ pathway or one of `ALL_CROSS_EDGES` -- there is no
+    explicit_wiring_fn and no host-driven state anywhere in the LC pathway."""
+    desc = [_metacog_het(), REGISTRY["curiosity"], METACOG_MARGIN, LC_ORGAN]
+    pool = merge_organs(desc, seed=int(seed), wire=True, cross_edges=ALL_CROSS_EDGES)
+    pool.ensure_built()
     return pool
 
 
-def _relay_lesion(b, rm, xp):
-    coo = b.cp_connections.tocoo()
-    row = np.asarray(to_host(coo.row))
-    col = np.asarray(to_host(coo.col))
-    mask = np.isin(row, np.asarray(rm.indices("meta_margin_fs"))) & np.isin(col, np.asarray(rm.indices("meta_schema")))
-    data = np.asarray(to_host(b.cp_connections.data)).copy()
-    data2 = data.copy()
-    data2[mask] = 0.0
-    return data, data2
+def _byte_off_check(seed: int) -> dict:
+    """INTEGRITY (promised, PREREG Sec 3, NOT run in v1 -- fixed here): base connectivity of the combined pool,
+    with the point-edge AND both LC CrossEdges (hence all of `lc_ne`'s synapses, since it has no internal
+    connectivity of its own) excluded, must be BYTE-IDENTICAL to the conflict_xedge rung's own `coupled=False`
+    pool -- i.e. adding the LC organ + its two edges perturbed NOTHING else."""
+    combined = build_combined_pool(seed)
+    base = build_base_pool(seed, coupled=False)
+    spec = type("ByteOffSpec", (), {"cross_edges": ALL_CROSS_EDGES})()
+    return verify_byte_off(combined.bridge, base.bridge, spec)
 
 
 def run_seed(seed: int, determinism: bool = True, verbose: bool = True) -> dict:
     t0 = time.time()
     pool = build_combined_pool(seed)
     org = MetacogProductionOrgan(seed=seed, shared=pool)
-    rec = GainRecorder(pool)
+    rec = Recorder(pool)  # the PLAIN recorder -- no host relay of any kind; only the sim's own bridge runs
 
     b, xp = pool.bridge, pool.xp
-    masks = cross_edge_masks(b, [XEDGE])
+    masks = cross_edge_masks(b, ALL_CROSS_EDGES)
     n_edge = int(masks[XEDGE_KEY].sum())
+    n_cmp_lc = int(masks[CMP_TO_LC_KEY].sum())
+    n_lc_ask = int(masks[LC_TO_ASK_KEY].sum())
 
-    # ONE throwaway PRIMING sweep (discarded, not an arm). Measured 2026-09-23: the very first sweep ever run
-    # against a freshly-built pool with the neuromodulator subsystem installed differs from every subsequent
-    # sweep on rep 0-1 of level 0 ONLY (a one-time cold-start transient somewhere in the modulator/bridge
-    # lazy-init path, not a science effect -- confirmed by isolating it: two REPEATS of the SAME intact sweep,
-    # both AFTER one priming call, are byte-identical on all 11 levels x 8 reps). This is the same class of
-    # artifact `_settle()` exists elsewhere in this codebase to burn through before any measured read.
+    def _prime():
+        # ANY `cp_connections.data` reassignment (a lesion OR a restore) re-triggers a small transient on the
+        # FIRST 1-2 reps of the NEXT sweep (isolated 2026-09-23 on the v1 mechanism by bisection; carried
+        # forward here defensively for the SAME class of `cp_connections.data` write -- the point-edge lesion).
+        # `set_transmission_gate` does NOT reassign `cp_connections.data` (it writes `cp_transmission_gain`
+        # instead, sim/bridge.py:5299), so it is not known to need this, but every gain-lesion arm below still
+        # primes after toggling it: cheap insurance, and `restore_exact` below would catch it either way if it
+        # did turn out to matter.
+        with pool.sequence_isolation():
+            coupled_sweep(pool, org, rec)
+
+    # ONE throwaway PRIMING sweep against the freshly-built pool (see _prime's note; the v1 cold-start transient
+    # was on the FIRST sweep after ANY connectivity write, including pool construction itself).
     with pool.sequence_isolation():
         coupled_sweep(pool, org, rec)
 
-    # EACH ARM is wrapped in `pool.sequence_isolation()`: `org.judge()`'s own per-rep `_restore_state` resets
-    # the neuromodulator CONCENTRATION and membrane/conductance state between reps, but NOT the refractory
-    # timers / prev-firing-state / activity-EMA arrays (`MergedPool._PER_NEURON_STATE`) -- exactly the read-
-    # isolation gap the 2026-09-02 onebrain finding hit for a different cross-edge (an unrestored `_hard_reset`
-    # leaking C2 + NMDA-recurrent state). Wrapping every arm makes each one start from the SAME snapshot the
-    # block was entered with, so `combined_intact` and `restored` (called after 5 intervening arms) are
-    # byte-comparable instead of differing by leftover refractory/EMA state from prior arms.
     with pool.sequence_isolation():
         combined_intact = coupled_sweep(pool, org, rec)
     with pool.sequence_isolation():
         combined_swap = coupled_sweep(pool, org, rec, swap=True)
 
-    def _prime():
-        # ANY `cp_connections.data` reassignment (a lesion OR a restore) re-triggers a small transient on the
-        # FIRST 1-2 reps of the NEXT sweep (isolated 2026-09-23 by bisection: a bare data reassign to IDENTICAL
-        # values does NOT trigger it, but a real zero-then-restore cycle does; one throwaway sweep afterward
-        # washes it out completely -- 0/88 mismatches in every isolated repro). Called after EVERY connectivity
-        # write below so every MEASURED arm starts from a settled matrix, not just the ones `restore_exact`
-        # itself checks.
-        with pool.sequence_isolation():
-            coupled_sweep(pool, org, rec)
-
-    # G3: gain-only lesion (edge intact, gain off) -- no connectivity write, no priming needed.
-    rec.gain_enabled = False
+    # G3: gain-only lesion (edge intact, lc_ne -> ask closed via its transmission_gate).
+    b.set_transmission_gate(LC_GATE_KEY, 0.0)
+    _prime()
     with pool.sequence_isolation():
         gain_lesion = coupled_sweep(pool, org, rec)
-    rec.gain_enabled = True
+    b.set_transmission_gate(LC_GATE_KEY, 1.0)
+    _prime()
 
-    # edge-only lesion (gain intact, edge off) -- kept for G5's exact-metacog check and reported.
-    before_edge = lesion_cross_edges(b, masks, xp)
+    # edge-only lesion (gain intact, point-edge off) -- kept for G5's exact-metacog check and reported.
+    before_edge = lesion_cross_edges(b, {XEDGE_KEY: masks[XEDGE_KEY]}, xp)
     _prime()
     with pool.sequence_isolation():
         edge_lesion = coupled_sweep(pool, org, rec)
     b.cp_connections.data = xp.asarray(before_edge, dtype=b.cp_connections.data.dtype)
     _prime()
 
-    # G4: BOTH lesioned -- joint necessity.
-    rec.gain_enabled = False
-    before_edge2 = lesion_cross_edges(b, masks, xp)
+    # G4 (INTEGRITY, not gating -- see the reclassification note below): BOTH lesioned.
+    b.set_transmission_gate(LC_GATE_KEY, 0.0)
+    before_edge2 = lesion_cross_edges(b, {XEDGE_KEY: masks[XEDGE_KEY]}, xp)
     _prime()
     with pool.sequence_isolation():
         both_lesion = coupled_sweep(pool, org, rec)
     b.cp_connections.data = xp.asarray(before_edge2, dtype=b.cp_connections.data.dtype)
-    rec.gain_enabled = True
+    b.set_transmission_gate(LC_GATE_KEY, 1.0)
     _prime()
 
-    # G8: comparator-relay lesion, edge+gain intact.
+    # G8: comparator-relay lesion (meta_margin_fs -> meta_schema inhibition), edge+gain intact.
     rm = b.region_manager
-    data, data2 = _relay_lesion(b, rm, xp)
+    coo = b.cp_connections.tocoo()
+    row = np.asarray(to_host(coo.row)); col = np.asarray(to_host(coo.col))
+    relay_mask = np.isin(row, np.asarray(rm.indices("meta_margin_fs"))) & np.isin(col, np.asarray(rm.indices("meta_schema")))
+    data = np.asarray(to_host(b.cp_connections.data)).copy()
+    data2 = data.copy()
+    data2[relay_mask] = 0.0
     b.cp_connections.data = xp.asarray(data2, dtype=b.cp_connections.data.dtype)
     _prime()
     with pool.sequence_isolation():
@@ -264,8 +281,8 @@ def run_seed(seed: int, determinism: bool = True, verbose: bool = True) -> dict:
     g9 = perm_null(combined_intact, seed)
 
     from tools.lab import attributable_to
-    attrib_gain = attributable_to(f"seed{seed} ASK range = the gain pathway", rng_c, rng_g)
-    attrib_edge = attributable_to(f"seed{seed} ASK range = the edge pathway", rng_c, rng_e)
+    attrib_gain = attributable_to(f"seed{seed} ASK range = the lc_ne gain pathway", rng_c, rng_g)
+    attrib_edge = attributable_to(f"seed{seed} ASK range = the point edge", rng_c, rng_e)
 
     m_gain = _meta_exact(combined_intact, gain_lesion)
     m_edge = _meta_exact(combined_intact, edge_lesion)
@@ -290,16 +307,8 @@ def run_seed(seed: int, determinism: bool = True, verbose: bool = True) -> dict:
 
     undefined = rho is None or rng_c < G1_MIN_RANGE_HZ
 
-    # S1 (secondary, NOT gating -- amended before ANY 6-seed run, seed-42-calibration-phase only, matching the
-    # conflict_xedge PREREG's own S1 precedent): does the combined mechanism reach + separate at the seed's OWN
-    # production threshold? Reported because it is the motivating question for this rung, but NOT required for
-    # the GO verdict -- the calibration smoke showed this 3-organ pool's own baseline (no OU, no homeostasis, no
-    # co-resident organs providing the ambient excitability production's 11-organ pool has) caps peak ASK well
-    # under threshold at every excit_sensitivity that keeps G1/G3/G7 (monotone / gain-load-bearing / class-
-    # symmetric) intact; forcing S1 to gate would mean re-tuning the sensitivity into the SAME saturated,
-    # non-monotone regime PREREG-1 already banked as uninformative for the point-edge-only mechanism. The
-    # PRIMARY claim under test (S: the companion GAIN pathway is a real, independently-lesionable, class-
-    # symmetric, mechanism-specific process) is scored by G1/G3/G4/G5/G7/G8 below.
+    # S1 (secondary, NOT gating -- amended before ANY 6-seed run in v1, carried forward unchanged in v2): does
+    # the combined mechanism reach + separate at the seed's OWN production threshold?
     cal = _curiosity_production_threshold(seed)
     thr = cal.get("threshold_hz")
     uncertain = [l for l in combined_intact["levels"] if not l["confident"]]
@@ -308,37 +317,41 @@ def run_seed(seed: int, determinism: bool = True, verbose: bool = True) -> dict:
     s1_reaches_threshold = (not s1_undefined) and (max(l["ask_hz"] for l in uncertain) >= thr) and \
         (max(l["ask_hz"] for l in confident) < thr)
 
-    # G3: the gain pathway independently carries >= the pre-registered floor of the combined range.
-    g3 = attrib_gain is not None and attrib_gain >= G3_GAIN_ATTRIB_MIN
-
-    # G4: joint necessity -- a None (flat, ASK-silent) both-lesion arm IS the expected positive outcome (no
-    # third pathway drives ASK); a DEFINED rho must fail G1's own bar. This is the mirror of G8 below: there a
-    # None is an uninformative measurement gap (never a pass); here a None is the strongest possible pass.
-    g4 = (rho_both is None) or (rho_both > G1_RHO_MAX)
-
-    # G5: metacog exact-unchanged under every lesion arm.
+    g3 = bool(attrib_gain is not None and attrib_gain >= G3_GAIN_ATTRIB_MIN)
+    g4 = gate_g4_joint_lesion(rho_both)
     g5 = bool(m_gain["balance_equal"] and m_gain["metacog_raster_equal"]
               and m_edge["balance_equal"] and m_edge["metacog_raster_equal"]
               and m_both["balance_equal"] and m_both["metacog_raster_equal"] and cmp_equal)
+    g8 = gate_g8_relay_lesion(rho_relay)
 
-    # G8: a None relay-lesion rho is an UNCONFIRMED measurement, never a silent pass (the bug the review
-    # flagged on the prior rung's scorer). Only a DEFINED rho clearing the bar counts.
-    g8 = (rho_relay is not None) and (rho_relay > G8_RHO_MIN)
-
-    checks = {
-        "G1_monotone_rho<=-0.8": (not undefined) and rho <= G1_RHO_MAX,
-        "G3_gain_pathway_load_bearing": bool(g3),
-        "G4_joint_lesion_breaks_coupling": bool(g4),
-        "G5_metacog_unchanged_EXACT": g5,
+    # REQUIRED gates (evidence FOR the mechanism): G1/G3/G6/G7/G8.
+    # INTEGRITY gates (reported, NOT counted toward GO): G4, G5. Review v2:fcc2f77 flagged both as passing BY
+    # CONSTRUCTION on the v1 mechanism (no feedback path from ask/gain back into metacog makes G5 vacuous; the
+    # v1 edge_lesion arm was already flat, making both_lesion trivially flat too, so G4 could not have failed).
+    # v2's spiking rebuild does not remove that structural fact -- there is STILL no path from ask/gain back into
+    # metacog (so G5 remains a pure integrity check by the pool's own topology, not evidence), and whether
+    # edge_lesion happens to be flat on v2's freshly-calibrated weights is exactly the kind of load-bearing-
+    # magnitude question G3's floor already measures -- G4 is demoted alongside it rather than re-litigated
+    # per-seed. Both are still SCORED and printed; neither can block or grant a GO.
+    checks_required = {
+        "G1_monotone_rho<=-0.8": bool((not undefined) and rho <= G1_RHO_MAX),
+        "G3_gain_pathway_load_bearing": g3,
         "G6_determinism_fresh_process_hash": bool(det.get("equal")) if determinism else None,
-        "G7_class_swap_monotone": rho_swap is not None and rho_swap <= G7_RHO_MAX,
+        "G7_class_swap_monotone": bool(rho_swap is not None and rho_swap <= G7_RHO_MAX),
         "G8_relay_lesion_abolishes_coupling": g8,
     }
-    required = [k for k, v in checks.items() if v is not None]
-    go = all(checks[k] for k in required)
+    checks_integrity = {
+        "G4_joint_lesion_breaks_coupling": g4,
+        "G5_metacog_unchanged_EXACT": g5,
+    }
+    required = [k for k, v in checks_required.items() if v is not None]
+    go = all(checks_required[k] for k in required)
+
+    byte_off = _byte_off_check(seed)
 
     res = {
-        "seed": seed, "go": bool(go), "checks": checks, "calibration_seed": seed == 42,
+        "seed": seed, "go": bool(go), "checks": checks_required, "checks_integrity": checks_integrity,
+        "calibration_seed": seed == 42,
         "rho": rho, "rho_swap": rho_swap, "rho_relay_lesion": rho_relay, "rho_both_lesion": rho_both,
         "s1_reaches_production_threshold": bool(s1_reaches_threshold), "s1_undefined": bool(s1_undefined),
         "s1_threshold_hz": thr, "g9_perm_null": g9,
@@ -348,9 +361,10 @@ def run_seed(seed: int, determinism: bool = True, verbose: bool = True) -> dict:
         "metacog_exact": {"vs_gain_lesion": m_gain, "vs_edge_lesion": m_edge, "vs_both_lesion": m_both},
         "comparator_raster_equal_across_arms": cmp_equal,
         "determinism": det,
-        "integrity": {"n_edge_synapses": n_edge,
-                      "gain_pathway_off_by_default_on_base_organ": True,
-                      "cmp_rate_norm": CMP_RATE_NORM, "restore_exact": restored_ok},
+        "integrity": {"n_edge_synapses": n_edge, "n_cmp_to_lc_synapses": n_cmp_lc, "n_lc_to_ask_synapses": n_lc_ask,
+                      "restore_exact": restored_ok, "byte_off": byte_off,
+                      "no_host_novelty_signal": float(getattr(b.core_config, "current_novelty_signal", 0.0) or 0.0) == 0.0,
+                      "neuromodulator_subsystem_enabled": bool(getattr(b.core_config, "enable_neuromodulator_subsystem", False))},
         "production_threshold_calibration": cal,
         "arms": {"combined_intact": combined_intact, "class_swap": combined_swap, "gain_lesion": gain_lesion,
                   "edge_lesion": edge_lesion, "both_lesion": both_lesion, "relay_lesion": relay_lesion},
@@ -361,38 +375,89 @@ def run_seed(seed: int, determinism: bool = True, verbose: bool = True) -> dict:
               f"ask combined={[round(l['ask_hz'], 2) for l in combined_intact['levels']]} "
               f"thr_hz={thr} attrib_gain={attrib_gain} attrib_edge={attrib_edge} "
               f"det={det.get('equal')} GO={go} ({res['elapsed_s']}s)", flush=True)
-        print(f"[seed {seed}] checks: {checks}", flush=True)
+        print(f"[seed {seed}] checks={checks_required} integrity={checks_integrity}", flush=True)
     return res
 
 
+# ── module-level gate predicates (2026-09-23 fix: SHARED by run_seed AND _selftest_gate_logic, per the review's
+#    "selftest tests a copy, not the scored code" finding. A regression in either would now be caught by BOTH.) ──
+def gate_g8_relay_lesion(rho_relay):
+    """A None (uninformative/flat) relay-lesion rho NEVER passes -- the v1 bug the review re-flagged risk of."""
+    return bool((rho_relay is not None) and (rho_relay > G8_RHO_MIN))
+
+
+def gate_g4_joint_lesion(rho_both):
+    """INTEGRITY, not required (see run_seed's reclassification note). A None (flat, ASK-silent) both-lesion arm
+    IS the expected outcome (no third pathway drives ASK); a DEFINED rho must fail G1's own bar."""
+    return bool((rho_both is None) or (rho_both > G1_RHO_MAX))
+
+
 def _selftest_gate_logic():
-    """Gate-logic selftest -- NO simulation. Asserts the None-handling directions (the review's flagged bug on
-    the prior rung's G8) are correct, and FAILS if the direction is flipped (run it against the deliberately
-    wrong logic below to see it fail)."""
-    G1_MAX, G8_MIN = -0.8, -0.5
-
-    def g8(rho_relay):
-        return (rho_relay is not None) and (rho_relay > G8_MIN)
-
-    def g4(rho_both):
-        return (rho_both is None) or (rho_both > G1_MAX)
-
+    """Gate-logic selftest -- NO simulation. Calls the SAME `gate_g8_relay_lesion` / `gate_g4_joint_lesion`
+    functions `run_seed` scores with, using the SAME imported G1_RHO_MAX/G8_RHO_MIN constants -- so a regression
+    in either function's logic, or an accidental import of the wrong constant, fails THIS selftest, not just a
+    private copy of it (the review's flagged gap on the v1 file)."""
     # G8: a None (uninformative) relay-lesion arm must NEVER pass.
-    assert g8(None) is False, "G8 selftest FAILED: a None relay-lesion rho passed (the flagged bug reproduced)"
-    assert g8(-0.9) is False, "G8 selftest FAILED: a strongly negative (still-coupled) relay-lesion rho passed"
-    assert g8(0.1) is True, "G8 selftest FAILED: an abolished (near-zero/positive) relay-lesion rho failed"
-    # G4: a None (flat, ASK-silent) both-lesion arm IS the expected pass; a defined, still-coupled rho fails.
-    assert g4(None) is True, "G4 selftest FAILED: a flat both-lesion arm (the expected outcome) failed"
-    assert g4(-0.9) is False, "G4 selftest FAILED: a still-monotone both-lesion arm passed (should fail)"
-    assert g4(0.1) is True, "G4 selftest FAILED: a broken-coupling both-lesion arm failed"
-    # deliberately wrong direction (the bug this selftest exists to catch) must NOT pass this selftest:
+    assert gate_g8_relay_lesion(None) is False, "G8 selftest FAILED: a None relay-lesion rho passed"
+    assert gate_g8_relay_lesion(-0.9) is False, "G8 selftest FAILED: a strongly negative (still-coupled) rho passed"
+    assert gate_g8_relay_lesion(G8_RHO_MIN + 0.1) is True, "G8 selftest FAILED: an abolished rho failed"
+    # G4 (integrity): a None (flat, ASK-silent) both-lesion arm IS the expected pass; a still-monotone rho fails.
+    assert gate_g4_joint_lesion(None) is True, "G4 selftest FAILED: a flat both-lesion arm (expected) failed"
+    assert gate_g4_joint_lesion(G1_RHO_MAX - 0.1) is False, "G4 selftest FAILED: a still-monotone rho passed"
+    assert gate_g4_joint_lesion(G1_RHO_MAX + 0.1) is True, "G4 selftest FAILED: a broken-coupling rho failed"
+    # deliberately wrong direction (the class of bug this selftest exists to catch) must NOT pass this selftest:
     def _bad_g8(rho_relay):
-        return rho_relay is None or rho_relay > G8_MIN
+        return rho_relay is None or rho_relay > G8_RHO_MIN
     bad_none_passes = _bad_g8(None)
-    assert bad_none_passes is True and g8(None) is False, (
+    assert bad_none_passes is True and gate_g8_relay_lesion(None) is False, (
         "selftest cannot distinguish the fixed logic from the flagged bug -- selftest itself is broken")
-    print("[selftest] gate-logic directions OK (G8 None never passes; G4 None is the expected pass)")
+    print("[selftest] gate-logic directions OK (module-level functions, shared with run_seed)")
     return 0
+
+
+REQUIRED_SEED_SET = frozenset({42, 43, 44, 100, 101, 102})
+
+
+def _decide(rows) -> dict:
+    """The ONE authoritative decision procedure over a list of per-seed result dicts -- called identically by a
+    monolithic `main()` run and by `--combine` over N separately-staged artifacts (PREREG Sec 5's combiner)."""
+    n_go = sum(1 for r in rows if r["go"])
+    held_out = [r for r in rows if not r["calibration_seed"]]
+    from tools.verdict import Verdict
+    v = Verdict("metacog margin comparator -> CrossEdge + spiking lc_ne gain population -> curiosity ASK "
+                "(per-seed pre-registered gates)")
+    for r in rows:
+        s, integ = r["seed"], r["integrity"]
+        bal = [l["balance"] for l in r["arms"]["combined_intact"]["levels"]]
+        v.require(f"seed{s} metacog balance varies across the evidence grid", (max(bal) - min(bal)) > 0.0)
+        v.require(f"seed{s} declared point-edge wired (>0 synapses)", integ["n_edge_synapses"] > 0)
+        v.require(f"seed{s} declared lc_ne pathway wired (>0 synapses both legs)",
+                  integ["n_cmp_to_lc_synapses"] > 0 and integ["n_lc_to_ask_synapses"] > 0)
+        v.require(f"seed{s} byte-off: base connectivity identical minus the point-edge + lc_ne organ",
+                  bool(integ["byte_off"]["PASS"]))
+        v.require(f"seed{s} lesion restore exact (combined-intact digest re-reads)", bool(integ["restore_exact"]))
+        v.require(f"seed{s} no host novelty scalar / neuromodulator subsystem installed",
+                  bool(integ["no_host_novelty_signal"] and not integ["neuromodulator_subsystem_enabled"]))
+        v.require(f"seed{s} every intact read ran the full rep window",
+                  all(len(l["ask_hz_per_rep"]) > 0 for l in r["arms"]["combined_intact"]["levels"]))
+    v.disabled("STDP / Hebbian / homeostasis / OU / conductance noise on the comparator, edge, or lc_ne pathway",
+               "the production metacog pool config; the comparator, the point-edge and both new lc_ne CrossEdges "
+               "are fixed-weight by design")
+    decided = v.decide(bool(n_go == len(rows)))
+    return {
+        "mechanism": "metacog margin-comparator -> [frozen point-edge + a SPIKING lc_ne population diffusely "
+                     "projecting onto curiosity's ASK pool, both fixed-weight CrossEdges] (every step is neurons "
+                     "+ synapses; ADDITIVE current, not a multiplicative gain -- see the module honesty note)",
+        "prereg": "docs/plans/2026-09-23-curiosity-metacog-neuromod-gain-PREREG.md",
+        "builds_on": "docs/plans/2026-09-23-curiosity-metacog-conflict-xedge-PREREG.md",
+        "verdict": decided["status"], "preconditions": decided["preconditions"],
+        "undefined_reasons": decided["undefined_reasons"], "disabled_processes": decided["disabled_processes"],
+        "GO": bool(decided["go"]), "n_go": n_go, "n_seeds": len(rows),
+        "held_out_n_go": sum(1 for r in held_out if r["go"]), "held_out_n": len(held_out),
+        "operating_point": {"LC_N": LC_N, "CMP_TO_LC_W": CMP_TO_LC_W, "LC_TO_ASK_W": LC_TO_ASK_W,
+                            "G3_GAIN_ATTRIB_MIN": G3_GAIN_ATTRIB_MIN},
+        "per_seed": rows,
+    }
 
 
 def main():
@@ -402,6 +467,10 @@ def main():
     ap.add_argument("--no-determinism", action="store_true")
     ap.add_argument("--digest-only", action="store_true", help="internal: print the combined-intact digest and exit")
     ap.add_argument("--selftest", action="store_true", help="gate-logic selftest, no simulation")
+    ap.add_argument("--combine", nargs="+", default=None,
+                    help="COMBINER (PREREG Sec 5): load per_seed rows from these JSON artifacts, union them, "
+                         "and re-decide with the SAME logic as a monolithic run. Requires the union to cover "
+                         "exactly REQUIRED_SEED_SET with no duplicates.")
     ap.add_argument("--out", default=str(_REPO / "research" / "findings" / "raw" /
                                          "_curiosity_metacog_neuromod_gain.json"))
     a = ap.parse_args()
@@ -411,59 +480,49 @@ def main():
         s = a.seeds[0]
         pool = build_combined_pool(s)
         org = MetacogProductionOrgan(seed=s, shared=pool)
-        rec = GainRecorder(pool)
+        rec = Recorder(pool)
         with pool.sequence_isolation():
             coupled_sweep(pool, org, rec)  # priming sweep, discarded (see run_seed)
         with pool.sequence_isolation():
             print("DIGEST", _digest(coupled_sweep(pool, org, rec)), flush=True)
         return 0
+    if a.combine:
+        rows = []
+        seen = {}
+        for fp in a.combine:
+            data = json.loads(Path(fp).read_text())
+            for r in data["per_seed"]:
+                seen.setdefault(r["seed"], []).append(fp)
+                rows.append(r)
+        dup = {s: fps for s, fps in seen.items() if len(fps) > 1}
+        missing = REQUIRED_SEED_SET - set(seen.keys())
+        extra = set(seen.keys()) - REQUIRED_SEED_SET
+        if dup or missing or extra:
+            print(f"[combine] REFUSED: dup={dup} missing={missing} extra={extra}", flush=True)
+            return 2
+        rows.sort(key=lambda r: r["seed"])
+        summary = _decide(rows)
+        summary["config"] = {"combined_from": list(a.combine)}
+        Path(a.out).parent.mkdir(parents=True, exist_ok=True)
+        Path(a.out).write_text(json.dumps(summary, indent=1, default=str))
+        print("=" * 100, flush=True)
+        print(f"[metacog->curiosity lc_ne gain] COMBINED VERDICT: {summary['verdict']} "
+              f"({summary['n_go']}/{summary['n_seeds']} seeds; held-out {summary['held_out_n_go']}/"
+              f"{summary['held_out_n']}) <- {a.combine} -> {a.out}", flush=True)
+        return 0 if summary["GO"] else 1
     seeds = [a.seeds[0]] if a.smoke else a.seeds
     t0 = time.time()
-    print(f"[metacog->curiosity neuromod-gain] seeds={seeds} backend={os.environ.get('SIM_BACKEND')} "
-          f"CMP_RATE_NORM={CMP_RATE_NORM}", flush=True)
+    print(f"[metacog->curiosity lc_ne gain] seeds={seeds} backend={os.environ.get('SIM_BACKEND')} "
+          f"LC_N={LC_N} CMP_TO_LC_W={CMP_TO_LC_W} LC_TO_ASK_W={LC_TO_ASK_W}", flush=True)
     rows = [run_seed(s, determinism=not a.no_determinism) for s in seeds]
-    n_go = sum(1 for r in rows if r["go"])
-    held_out = [r for r in rows if not r["calibration_seed"]]
-
-    from tools.verdict import Verdict
-    v = Verdict("metacog margin comparator -> CrossEdge + neuromodulatory GAIN -> curiosity ASK "
-                "(per-seed pre-registered gates)")
-    for r in rows:
-        s, integ = r["seed"], r["integrity"]
-        bal = [l["balance"] for l in r["arms"]["combined_intact"]["levels"]]
-        v.require(f"seed{s} metacog balance varies across the evidence grid", (max(bal) - min(bal)) > 0.0)
-        v.require(f"seed{s} declared cross-edge wired (>0 synapses)", integ["n_edge_synapses"] > 0)
-        v.require(f"seed{s} lesion restore exact (combined-intact digest re-reads)", bool(integ["restore_exact"]))
-        v.require(f"seed{s} every intact read ran the full rep window",
-                  all(len(l["ask_hz_per_rep"]) > 0 for l in r["arms"]["combined_intact"]["levels"]))
-    v.disabled("STDP / Hebbian / homeostasis / OU / conductance noise on the comparator or edge",
-               "the production metacog pool config; the comparator and edge are fixed-weight by design "
-               "(unchanged from the conflict_xedge rung); ONLY the neuromodulator subsystem is newly installed "
-               "here, with its own kinetics (decay_tau_ms), which is not a plasticity rule")
-    decided = v.decide(bool(n_go == len(rows)))
-    summary = {
-        "mechanism": "metacog margin-comparator -> [frozen CrossEdge + comparator-rate-driven neuromodulatory "
-                     "GAIN on curiosity's ASK pool] (spiking; the gain reuses production's own "
-                     "from_novelty->excitability_drive curiosity modulator, by import)",
-        "prereg": "docs/plans/2026-09-23-curiosity-metacog-neuromod-gain-PREREG.md",
-        "builds_on": "docs/plans/2026-09-23-curiosity-metacog-conflict-xedge-PREREG.md",
-        "verdict": decided["status"], "preconditions": decided["preconditions"],
-        "undefined_reasons": decided["undefined_reasons"], "disabled_processes": decided["disabled_processes"],
-        "GO": bool(decided["go"]), "n_go": n_go, "n_seeds": len(rows),
-        "held_out_n_go": sum(1 for r in held_out if r["go"]), "held_out_n": len(held_out),
-        "operating_point": {"CMP_RATE_NORM": CMP_RATE_NORM,
-                            "GAIN_EXCIT_SENSITIVITY": GAIN_EXCIT_SENSITIVITY,
-                            "PROD_CURIOSITY_EXCIT_SENSITIVITY_reference_only": PROD_CURIOSITY_EXCIT_SENSITIVITY,
-                            "G3_GAIN_ATTRIB_MIN": G3_GAIN_ATTRIB_MIN},
-        "per_seed": rows,
-        "config": {"seeds": seeds, "smoke": a.smoke, "backend": os.environ.get("SIM_BACKEND")},
-        "elapsed_s": round(time.time() - t0, 1),
-    }
+    summary = _decide(rows)
+    summary["config"] = {"seeds": seeds, "smoke": a.smoke, "backend": os.environ.get("SIM_BACKEND")}
+    summary["elapsed_s"] = round(time.time() - t0, 1)
     Path(a.out).parent.mkdir(parents=True, exist_ok=True)
     Path(a.out).write_text(json.dumps(summary, indent=1, default=str))
     print("=" * 100, flush=True)
-    print(f"[metacog->curiosity neuromod-gain] VERDICT: {summary['verdict']} ({n_go}/{len(rows)} seeds; "
-          f"held-out {summary['held_out_n_go']}/{summary['held_out_n']}) -> {a.out}", flush=True)
+    print(f"[metacog->curiosity lc_ne gain] VERDICT: {summary['verdict']} ({summary['n_go']}/{summary['n_seeds']} "
+          f"seeds; held-out {summary['held_out_n_go']}/{summary['held_out_n']}) -> {a.out}", flush=True)
     return 0 if summary["GO"] else 1
 
 

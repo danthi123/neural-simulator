@@ -1,11 +1,23 @@
-# Pre-registration: a broadly-projecting neuromodulatory GAIN on curiosity's ASK pool, driven by metacog's own comparator spike rate
+# Pre-registration (v2, superseding v1): a spiking locus-coeruleus-analog population diffusely projecting onto curiosity's ASK pool, driven by metacog's own comparator through real synapses
 
-**Written 2026-09-23, before the smoke run of `research/runners/_curiosity_metacog_neuromod_gain_derisk.py` and
-before any 6-seed run.** The gate constants below are copied into the runner (`G*_...`) before the seed-42
-calibration smoke. Any later change goes in the AMENDMENT LOG (§6) with a timestamp and every result artifact
-already seen at that time.
+**AMENDMENT HISTORY.** v1 (2026-09-23, commit `7ba619532`) pre-registered a mechanism built as a HOST rate relay:
+a `GainRecorder` read the comparator's firing fraction each step in Python and wrote it to
+`core_config.current_novelty_signal`, which the neuromodulator subsystem's own concentration ODE then turned into
+current on `ask`. Adversarial review (key `v2:fcc2f777`) correctly rejected this: `GainRecorder._step` computing
+`sum(firing)/len(firing)` is host code standing between two neural populations, not a synapse, and CLAUDE.md
+lists neuromodulators among the things that must be neurons/synapses. **This v2 document REPLACES the mechanism
+under test** (§1 below), written and committed BEFORE any new run of the rebuilt mechanism — the v1 seed-42
+artifact (`_curiosity_metacog_neuromod_gain_smoke_s42.json`) is VOID under this rebuild and is being removed in
+the same commit as this document; a fresh seed-42 calibration run follows in a SEPARATE, later commit (this is
+the `gates/prereg_before_run` discipline: a prereg commit carries no `research/findings/raw/**` artifact).
 
-## 0. Why this rung, and what wall it answers
+**The two pool lines staged from `f9dbafc9c`** (the v1 mechanism's isolated revision, referenced in that build
+round's `honest_residuals`) **are SUPERSEDED by this document** — they governed a mechanism (a host relay) that
+no longer exists in this file. They are not removed here (`research/queue/*` is live state this fix round does
+not edit), but any result they eventually produce is NOT a verdict on the mechanism this document describes and
+must not be read as one.
+
+## 0. Why this rung, and what wall it answers (unchanged from v1)
 
 `docs/plans/2026-09-23-curiosity-metacog-conflict-xedge-PREREG.md` built ONE declared point-to-point CrossEdge
 (metacog's margin comparator `meta_schema` -> curiosity's `ask` pool, fixed weight 4.0). Its 6-seed verdict
@@ -20,141 +32,177 @@ excitatory synapse that the conflict_xedge rung replaced with a constant?** Answ
 (recorded `research/queue/.external_searches.jsonl`, lane=`curiosity`, 2026-09-23): **Aston-Jones & Cohen (2005),
 Annu Rev Neurosci 28:403-450, "An integrative theory of locus coeruleus-norepinephrine function: adaptive gain
 and optimal performance."** The LC-NE system's tonic mode, driven by cortical utility/conflict monitoring
-(ACC/OFC), broadcasts a **GLOBAL, MULTIPLICATIVE population excitability GAIN** — not a point-to-point
-glutamatergic increment. A single fixed-weight `CrossEdge` has no gain-multiplication analog: it can only ever
-add one synapse's worth of current to its postsynaptic targets, at a scale hand-set once and never related to
-the population-wide gain constant the ASK pool's own production calibration (`PROD_CURIOSITY_EXCIT_SENSITIVITY
-= 500.0`) already runs on. That mismatch of SCALE, not merely of magnitude, is read as the mechanistic reason
-S1 stayed 3x-14x short on every seed.
+(ACC/OFC), broadcasts a global population excitability gain — not a point-to-point glutamatergic increment.
 
-**This rung does not re-tune `XEDGE_W`.** It ADDS the companion process: the SAME `curiosity` neuromodulator
-production already ships (`from_novelty` -> `excitability_drive` on `group:ask`, reused by-import from
-`research/runners/onebrain_merge_framework.py::_curiosity_modulator_cfg` and
-`research/runners/_curiosity_seek_learn_onbridge_derisk.py::PROD_CURIOSITY_EXCIT_SENSITIVITY`), but instead of
-its production host-supplied `current_novelty_signal` (the abstain-derived epistemic-gap scalar), the signal is
-now **the metacog comparator's OWN spiking population rate** — the identical raster the conflict_xedge rung
-already reads for its `cmp_raster_sha256` hash — reduced to a scalar (a rate CODE readout, the same reduction
-every `judge()`/`want_hz` read in this codebase performs, not a host decision formula over the input evidence).
+## 1. Claim under test (v2 — the STRUCTURAL claim is now primary; v1's §1 stated the operating-point claim as
+primary and left the S1 amendment (§6) contradicting it — this is the fix)
 
-## 1. Claim under test
-
-Curiosity's ASK pool reaches the SAME operating-point band production's own novelty-driven ASK pool ships at
-(the 19-24 Hz confident/uncertain separation), when driven by metacognition's own spiking margin computation
-through TWO co-existing, independently-lesionable pathways:
+Curiosity's ASK pool firing is a monotone, class-symmetric, mechanism-specific function of metacognition's own
+spiking margin computation, driven through TWO co-existing, independently-lesionable, ALL-SPIKING pathways:
 
 1. **The frozen point-to-point edge** (unchanged from the conflict_xedge rung): `x_metacog_meta_to_curiosity_ask`,
    `meta_schema -> ask`, fixed weight 4.0.
-2. **NEW: a broadly-projecting neuromodulatory gain.** Each simulation step, the comparator's instantaneous
-   population firing FRACTION (`meta_schema` + `meta_margin_fs` neurons that spiked this step, divided by
-   comparator population size — a rate code, computed the same way `ask_hz`/`want_hz` are computed everywhere
-   else in this codebase) sets `core_config.current_novelty_signal` for that step (clipped to `[0, 1]` by a
-   FIXED normalization constant `CMP_RATE_NORM`, calibrated on seed 42 only, §2). The already-registered
-   `curiosity` neuromodulator (`from_novelty` production rule, `excitability_drive` target, `scope="group:ask"`,
-   `sensitivity=PROD_CURIOSITY_EXCIT_SENSITIVITY=500.0` — production's own frozen gain constant, not a new
-   hand-picked one) integrates this over its own `decay_tau_ms=50.0` kinetics and applies a population-wide
-   additive current to every ASK neuron.
+2. **NEW (v2): a dedicated spiking relay population, `lc_ne`** (a locus-coeruleus analog, `LC_N` neurons,
+   excitatory-typed, no internal recurrence), wired through TWO fixed-weight, dense, uniform CrossEdges:
+   - `x_metacog_meta_to_lc_ne`: `meta_schema -> lc_ne` (the comparator's excitatory principal cells — NOT its
+     inhibitory relay `meta_margin_fs` — drive `lc_ne`; this is also the more anatomically apt choice, since
+     LC's cortical afferents are glutamatergic projection neurons, not local interneurons).
+   - `x_lc_ne_to_curiosity_ask`: `lc_ne -> ask`, DIFFUSE (every `lc_ne` neuron synapses onto every `ask` neuron).
 
-Host code only: (a) drives metacog's input evidence, exactly as production does; (b) reduces the comparator
-raster to a per-step firing fraction (a rate-code reduction, not an evidence-derived formula — the host never
-reads `evidence` to set `current_novelty_signal`, only the comparator's own spikes). No host scalar reaches ASK
-directly; the modulator's own concentration dynamics (kinetics that ARE part of the neuromodulator subsystem,
-`sim/neuromodulators.py`) provide the temporal integration, not a host-side EMA.
+**No host scalar of any kind reaches `ask` or `lc_ne`.** Host code only (a) drives metacog's input evidence,
+exactly as production does, and (b) reads out the resulting spike rasters for logging/statistics AFTER a step
+has already run — it never writes into a step before it runs. There is no modulator ODE, no `current_novelty_
+signal`, and no `enable_neuromodulator_subsystem` in this mechanism (v1 had all three; v2 has none).
+
+### v1-vs-v2, and why the rebuild (kept for the record, not part of the claim under test)
+
+v1's `GainRecorder` counted BOTH `meta_schema` and `meta_margin_fs` spikes toward the host relay's rate
+(sign-blind: a spike from either region counted the same). v2 cannot do this with real synapses without
+confronting Dale's-law sign: `meta_margin_fs` is typed inhibitory (`exc_fraction=0.0`, it is the comparator's own
+lateral-inhibition relay), so a real synapse from it onto `lc_ne` would deliver INHIBITORY current, not add to a
+sign-blind rate the way host summation did. Rather than build a mixed excitatory/inhibitory afferent onto `lc_ne`
+(which changes the read from "population activity, unsigned" to "net synaptic drive, signed" — arguably MORE
+faithful, since real neurons integrate signed current, not raw spike counts, but a different constant regime),
+v2 drives `lc_ne` from `meta_schema` alone. `meta_schema`'s own firing rate already reflects the net effect of
+the relay's inhibition (the relay acts ON `meta_schema`, so `meta_schema`'s rate already carries that
+computation) — this is a genuine simplification, declared, not hidden, and it is why v2's calibration constants
+(§2) do not reuse any v1 numeric value.
 
 ## 2. Operating point (declared; calibration seed = 42 only)
 
 Inherited unchanged from the conflict_xedge PREREG: `CMP_EXC=(1.2,2.4)`, `CMP_REL=2.5`, `CMP_INH=(6.0,14.0)`,
 relay 2x30, `XEDGE_W=4.0`.
 
-NEW for this rung, chosen from scratchpad probes on **seed 42 only**, 2026-09-23, before this document commits:
-`CMP_RATE_NORM` (the comparator per-step firing-fraction that maps to `current_novelty_signal=1.0`). The
-modulator's SHAPE is reused unchanged by import (`from_novelty` production rule, `excitability_drive` target on
-`group:ask`, `decay_tau_ms=50.0`, production sensitivity `0.10` — all from
-`_curiosity_modulator_cfg()`). Its GAIN MAGNITUDE, `excit_sensitivity` (production ships
-`PROD_CURIOSITY_EXCIT_SENSITIVITY=500.0`, calibrated for the STANDALONE curiosity build's own population/config),
-is ALSO calibrated on seed 42 here rather than force-reused verbatim: the seed-42 smoke showed 500.0 saturating
-this 3-organ pool's 80-neuron ASK region to ~30 Hz at every evidence level regardless of input (the constant's
-correct MAGNITUDE, not merely its existence, is pool-specific — the same lesson `_curiosity_modulator_cfg`'s own
-comment about the "FAITHFUL/CALMER" retune already recorded for a different pool composition). A seed-42-only
-excit-sensitivity value, `GAIN_EXCIT_SENSITIVITY`, is frozen below alongside `CMP_RATE_NORM`, both declared
-hand-set residuals (§4), and NEITHER is fit on any held-out seed.
+NEW for v2, chosen from calibration probes on **seed 42 only**, 2026-09-23, before the calibration run this
+document governs commits: `LC_N` (population size), `CMP_TO_LC_W` (`meta_schema -> lc_ne` uniform dense weight),
+`LC_TO_ASK_W` (`lc_ne -> ask` uniform dense weight). All three are hand-set, seed-42-only, and declared as
+residuals on `LC_ORGAN.scaffold_residuals`. The calibration criterion (identical in kind to v1's, re-run against
+the new mechanism): the LARGEST `LC_TO_ASK_W` that (a) keeps G1 (monotone, rho<=-0.8) and G7 (class-symmetric)
+intact and (b) clears G3's floor (the gain pathway independently carries >= `G3_GAIN_ATTRIB_MIN` of the combined
+ASK dynamic range) is frozen; if no value clears both simultaneously, the AMENDMENT LOG (§6) records exactly
+which constraint failed and at what values, per `docs/BUILD_LANE_CHECKLIST.md`'s "do not stage a run whose
+pre-registration already predicts failure" rule.
 
 - Seeds 43/44/100/101/102 are HELD OUT; the verdict reports them separately, exactly as the prior PREREG did.
-- `CMP_RATE_NORM` is fit ONLY on seed 42's comparator rate range under the evidence grid — never on any
+- `LC_N`/`CMP_TO_LC_W`/`LC_TO_ASK_W` are fit ONLY on seed 42's response under the evidence grid — never on any
   held-out seed's ASK response, and never on whether a held-out seed passes a gate (that would be circular).
 
 ## 3. Gates (per seed; GO requires every REQUIRED gate on 6/6 seeds 42/43/44/100/101/102)
 
+**RECLASSIFICATION (v2, per review v2:fcc2f777): G4 and G5 are INTEGRITY checks, not required evidence.** The
+review found both pass BY CONSTRUCTION on v1's own data: this pool has NO path from `ask`/`lc_ne` back into
+metacog (so a metacog-exact check under an ask-side lesion cannot fail by the pool's own topology — G5), and
+v1's edge-lesion arm was already flat (0 Hz at every level), so a joint (both-pathways) lesion was trivially
+also flat, making G4 pass on the `rho_both is None` branch regardless of whether the new pathway does anything
+(G4). v2's rebuild does not remove the structural fact behind either: there is still no feedback path for G5, and
+whether `edge_lesion` happens to be flat on v2's own calibrated weights is exactly the load-bearing-magnitude
+question G3's floor already measures directly. Both are still SCORED and reported per seed; neither gates GO.
+
 | id | required | measures | pass condition |
 |---|---|---|---|
 | G1 | yes | monotone coupling, COMBINED (edge+gain) arm | Spearman rho(evidence, level-mean ASK Hz) over 11 levels <= -0.8, AND intact ASK range >= 1.0 Hz (else UNDEFINED = fail) |
-| G3 | yes | the GAIN pathway is independently load-bearing | lesioning ONLY the gain (held at `current_novelty_signal=0`, edge intact) removes >= 20% of the COMBINED arm's ASK dynamic range (`tools.lab.attributable_to`); this is a floor, not the full effect, because the edge alone already carries some of the range |
-| G4 | yes | joint necessity | with BOTH the edge AND the gain lesioned, the coupling FAILS G1's own bar (rho > -0.8, or UNDEFINED from a flat arm) — no third pathway is silently carrying the effect |
-| G5 | yes | metacog unchanged, EXACT, under every lesion arm (edge-only / gain-only / both) | metacog balance, threshold, confident flags (==) and workspace/workspace_fs + comparator spike-raster sha256 are identical to the combined-intact arm in every lesion arm |
+| G3 | yes | the `lc_ne` pathway is independently load-bearing | closing `lc_ne -> ask`'s transmission_gate (edge intact) removes >= `G3_GAIN_ATTRIB_MIN` of the COMBINED arm's ASK dynamic range (`tools.lab.attributable_to`); a floor, not the full effect, because the edge alone already carries some of the range |
 | G6 | yes | determinism | the combined-intact digest (sha256 over per-rep ASK rates, balances, raster hashes) is identical in a FRESH subprocess |
 | G7 | yes | class-symmetry anti-cheat | evidence driven into the OTHER assembly: rho <= -0.8 on the combined arm |
 | G8 | yes | mechanism specificity | lesioning metacog's comparator relay (relay->meta inhibition), edge+gain intact: rho > -0.5, or UNDEFINED — the coupling needs the margin computation, not just metacog activity or raw comparator noise |
-| S1 (secondary, reported not gating — AMENDED before any run, §6) | no | reaches the PRODUCTION operating point | on each seed: `max(ask_hz at an uncertain/not-confident level) >= threshold_hz` (the seed's OWN `CuriosityProductionOrgan` calibration) AND `max(ask_hz at a confident level) < threshold_hz` (separation) |
-| G9 (secondary, reported not gating) | no | permutation null | Spearman rho over the 88 per-rep observations vs 10,000 permutations, one-sided p<=0.01 — reported with the SAME pseudo-replication caveat the conflict_xedge review raised (each level's reps are consecutive reads on one pool, not independent draws; G1's stronger per-level bar is the primary evidence, G9 is not read as independent confirmation) |
+| G4 (INTEGRITY, not gating) | no | joint necessity | with BOTH the edge lesioned AND `lc_ne -> ask` closed, the coupling FAILS G1's own bar (rho > -0.8, or UNDEFINED from a flat arm) |
+| G5 (INTEGRITY, not gating) | no | metacog unchanged, EXACT, under every lesion arm | metacog balance, threshold, confident flags (==) and workspace/workspace_fs + comparator spike-raster sha256 identical to the combined-intact arm |
+| S1 (secondary, reported not gating) | no | reaches the PRODUCTION operating point | on each seed: `max(ask_hz at an uncertain/not-confident level) >= threshold_hz` (the seed's OWN `CuriosityProductionOrgan` calibration) AND `max(ask_hz at a confident level) < threshold_hz` |
+| G9 (secondary, reported not gating) | no | permutation null | Spearman rho over the 88 per-rep observations vs 10,000 permutations, one-sided p<=0.01 — same pseudo-replication caveat as the conflict_xedge review raised |
 
-**The G8/UNDEFINED-as-pass bug the review flagged on the prior rung is fixed here explicitly**: `rho_relay is
-None` is scored via `tools.lab.undefined_if_empty`-style handling — a genuinely flat relay-lesion arm is reported
-as UNDEFINED and counted toward `required` only when a real (non-None) rho fails to clear the bar; a None does
-NOT silently pass. The runner's own selftest exercises this branch and asserts it does not pass-by-construction.
+**G8's None-never-passes handling** (the bug the review flagged on v1's PRIOR rung, the conflict_xedge one) is
+kept: a genuinely flat relay-lesion arm reports UNDEFINED and never silently passes. **v2 also moves BOTH G4's
+and G8's predicates into module-level functions (`gate_g4_joint_lesion`, `gate_g8_relay_lesion`) that `run_seed`
+and `--selftest` both call** — the review's other flagged gap (v1's selftest asserted its OWN local copies of the
+gate logic, with hard-coded thresholds, so a real regression in `run_seed`'s scoring would not have been caught
+by `--selftest` passing).
 
-Integrity smokes (reported, NOT counted as evidence — pass by construction if the code is right):
-- byte-off: base connectivity with BOTH the edge and the neuromodulator subsystem absent is byte-identical to
-  the conflict_xedge rung's own `coupled=False` pool.
+Integrity smokes (reported, NOT counted as evidence — pass by construction if the code is right; v2 IMPLEMENTS
+the byte-off check v1 only promised):
+- **byte-off (v2: actually run, not a hard-coded `True`).** The combined pool's base connectivity, with the
+  point-edge and BOTH `lc_ne` CrossEdges excluded (which excludes every `lc_ne` synapse, since it has no internal
+  connectivity of its own), is compared via `onebrain_crossedge_gate.verify_byte_off` against the conflict_xedge
+  rung's own `coupled=False` pool, built by literally calling that rung's own `build_pool(seed, coupled=False)`
+  — an exact (`==`) dict-of-(row,col)->weight compare, not `allclose`.
 - restore-exact: re-reading after every lesion arm restores the combined-intact digest.
-- gain-pathway-is-genuinely-off-by-default: `enable_neuromodulator_subsystem=False` on the base `curiosity`
-  organ descriptor from `REGISTRY` (unchanged) — this runner installs it LOCALLY on its own pool build, exactly
-  the pattern `_CuriosityReadOrgan._build_shared` already uses for the SAME modulator on a merged pool.
+- `neuromodulator_subsystem_enabled` / `no_host_novelty_signal`: read directly off `pool.bridge.core_config`
+  after building the pool (a real read, not a hard-coded claim — v1's runner had
+  `"gain_pathway_off_by_default_on_base_organ": True` as a literal, never measured; v2 has no neuromodulator
+  installation anywhere in this mechanism, so both read as their off/zero defaults by construction of the code
+  path, and the artifact shows the actual measured value either way).
 
 ## 4. What a GO would and would not mean
 
-- **GO means:** on this 2-organ (+comparator) merged pool, curiosity's ASK pool firing is a monotone,
+- **GO means:** on this 2-organ (+comparator, +`lc_ne`) merged pool, curiosity's ASK pool firing is a monotone,
   class-symmetric, mechanism-specific function of metacognition's own spiking margin computation, driven through
-  TWO co-existing, INDEPENDENTLY lesion-attributable pathways (the frozen point-to-point edge AND the new
-  comparator-rate-driven neuromodulatory gain), with metacog unperturbed. This is the structural claim: a real
-  companion GAIN process now exists alongside the point synapse, and it independently carries part of the
-  dynamic range (G3) rather than merely riding on the edge.
-- **GO does NOT mean S1 (reaching production's 19-24 Hz threshold) holds** — S1 is reported, not gated (§6). The
-  seed-42 calibration smoke found no `GAIN_EXCIT_SENSITIVITY` value that both (a) keeps G1/G3/G7 informative
-  (monotone, independently gain-attributable, class-symmetric) and (b) reaches threshold: values that reach
-  ~30 Hz saturate the ASK pool into a FLAT, non-monotone response at every evidence level (G1/G7 fail), and the
-  monotone, well-behaved regime (`GAIN_EXCIT_SENSITIVITY=30`) peaks at ~7 Hz on the calibration seed — a real
-  narrowing of the previous rung's 3x-14x gap (now closer to ~2.7x at the calibration seed) but not closure. The
-  remaining gap is read as this pool's missing AMBIENT excitability context (no OU background, no homeostasis,
-  no co-resident organs) that production's full 11-organ pool supplies alongside its own gain — i.e. a second,
-  narrower instance of the SAME "what else does the real system run alongside this" question, now naming a
-  baseline-excitability process rather than a point synapse. That is the honest NEXT rung, not re-tuning this one.
+  TWO co-existing, INDEPENDENTLY lesion-attributable, ALL-SPIKING pathways (the frozen point-to-point edge AND a
+  dedicated relay population diffusely projecting onto ASK), with metacog unperturbed. This is a STRUCTURAL claim
+  about the pathway, not a claim that the pathway is a multiplicative gain (see the honesty section below) or
+  that it reaches production's operating point (S1, secondary).
+- **GO does NOT mean this is a multiplicative gain.** Aston-Jones & Cohen's LC-NE gain rescales a neuron's
+  RESPONSIVENESS to its OTHER inputs; it is not simply "more current from one more source." This substrate's
+  only mechanism for a population-to-population broadcast — plain excitatory synapses — delivers ADDITIVE
+  per-spike current, identical in kind to the frozen point-edge. Two substrate mechanisms that ARE multiplicative
+  were considered and rejected, both for stated reasons, not because they were unavailable:
+  - `sim/neuromodulators.py`'s `synaptic_gain` target IS multiplicative (`compute_synaptic_gain_multiplier`), but
+    supports `scope="all"` ONLY — no per-group scope exists. Using it globally would multiply metacog's own
+    comparator synapses too, violating G5's exact-invariance requirement.
+  - `set_transmission_gate`/`cp_transmission_gain` (`sim/bridge.py:5281`) IS a multiplicative scalar, but it
+    scales only the ONE declared pathway's OWN current (a volume knob on `lc_ne -> ask` itself), not `ask`'s
+    responsiveness to ITS OTHER inputs (the point-edge) — so it does not implement gain in the LC-NE sense
+    either. It is used in this rung ONLY as the static lesion switch for `lc_ne -> ask` (the role the framework's
+    own docstring assigns it: "the lesion handle for a FIXED (plastic=False) neuromodulatory projection"), never
+    as a continuously-driven signal.
+  The honest next rung: a per-group multiplicative excitability target on the neuromodulator subsystem (which
+  does not exist yet), or `couple_gate_to_pool`-style in-substrate coupling (`sim/bridge.py:5307`) extended from
+  its current threshold-open/close law to a continuous one.
 - **GO does not mean:**
-  - that this runs on the 11-organ production pool (gain-0 freeze still forbids new cross-edges into
-    `ask`/`workspace`, and this pool has no separate freeze seam for the neuromodulator subsystem either — a
-    seam change is the next rung, exactly as the prior PREREG named for the edge alone);
-  - that `CMP_RATE_NORM` self-organized (it is hand-set, calibrated on seed 42, and declared as a residual);
+  - that this runs on the 11-organ production pool (a freeze-seam change is the next rung, exactly as the prior
+    PREREG named for the edge alone);
+  - that `CMP_TO_LC_W`/`LC_TO_ASK_W`/`LC_N` self-organized (all hand-set, calibrated on seed 42, declared as
+    residuals);
+  - that `lc_ne` models LC's own intrinsic tonic/phasic biophysics (it is a plain relay population with no
+    internal recurrence — the honest next rung after the gain-vs-additive one, not this one);
   - that anything is wired into the chat path.
 
 ## 5. Compute
 
 - Smoke: 1 seed (42), local, numpy CPU, gated on `bash tools/mem_ok.sh <need_gb>` before running.
 - 6-seed: on the mini-PC pool via `tools/pool_queue.sh`, pinned to an isolated revision
-  (`tools/pool_provision.sh --isolated --revision <pushed sha>`).
-- Output: `research/findings/raw/_curiosity_metacog_neuromod_gain_6seed.json`.
+  (`tools/pool_provision.sh --isolated --revision <pushed sha>`) — a FRESH sha from this fix round, NOT
+  `f9dbafc9c` (superseded, see the amendment history above).
+- Output: split across pool-staged batches is expected (mirroring the prior round's `heldout_A`/`heldout_B`
+  split); **the combined 6-seed verdict is declared HERE as `--combine`'s output, not any one batch file**:
+  `SIM_BACKEND=numpy python -m research.runners._curiosity_metacog_neuromod_gain_derisk --combine <file1.json>
+  <file2.json> ... --out research/findings/raw/_curiosity_metacog_neuromod_gain_6seed_combined.json`. The
+  combiner (module-level `_decide`, shared verbatim with a monolithic run's `main()`) refuses unless the union of
+  `per_seed` rows across the given files covers EXACTLY `{42,43,44,100,101,102}` with no duplicate seed — so a
+  split run and a hypothetical single-process 6-seed run decide identically on the same per-seed data. No
+  individual batch file's own embedded `"GO"`/`"verdict"` field (computed over only ITS seeds) is the
+  pre-registered verdict; only the `--combine` output is.
 
 ## 6. AMENDMENT LOG
 
-**2026-09-23, before any 6-seed run; only seed-42 scratchpad calibration probes had been seen at this point (no
-held-out seed data, no committed pre-registered run).** The original draft made "reaches the production
-threshold" a REQUIRED gate (G2). Seed-42 calibration probes at three `GAIN_EXCIT_SENSITIVITY` values (30 / 100 /
-500) showed: 500 (production's own constant) saturates this pool's ASK region to a flat ~30 Hz at every evidence
-level (G1 monotonicity and G7 class-symmetry FAIL); 30 keeps G1/G3/G4/G5/G7/G8 all passing but peaks at ~7 Hz,
-short of the ~19 Hz threshold. No probed value cleared BOTH the structural gates and the threshold simultaneously.
-Per this project's own standard (`docs/BUILD_LANE_CHECKLIST.md`: "do not stage a run whose pre-registration
-already predicts failure — fix the design first"), the gate was redesigned rather than staged to a predicted
-failure: "reaches production threshold" is DEMOTED to S1 (secondary, reported, not gating — exactly the role the
-conflict_xedge PREREG's own S1 played), and `GAIN_EXCIT_SENSITIVITY=30` (the monotone, structurally-clean
-regime) is the frozen operating point. The PRIMARY claim under test is now the structural one (§1/§4): a real,
-independently-lesionable companion gain process exists and narrows, without yet closing, the magnitude gap.
-This is a HONEST SCOPE NARROWING, not a threshold moved to manufacture a GO — S1 is still measured and reported
-per seed, and a 6/6 S1 pass would still be noted as a bonus; a 6/6 S1 fail (expected, given the calibration
-smoke) does not block the primary GO.
+**v1, 2026-09-23, before any 6-seed run; only seed-42 scratchpad calibration probes had been seen at this
+point.** The original v1 draft made "reaches the production threshold" a REQUIRED gate. Seed-42 calibration
+probes showed no single `GAIN_EXCIT_SENSITIVITY` value cleared both the structural gates AND the threshold
+simultaneously. Per `docs/BUILD_LANE_CHECKLIST.md` ("do not stage a run whose pre-registration already predicts
+failure — fix the design first"), "reaches production threshold" was DEMOTED to S1 (secondary, reported, not
+gating). This demotion is CARRIED FORWARD UNCHANGED into v2 — v2 rebuilds the MECHANISM (host relay -> spiking
+population), not the gate structure the v1 amendment already fixed.
+
+**v2, 2026-09-23, WRITTEN BEFORE any run of the rebuilt mechanism (only the v1 artifacts, now void, had been
+seen).** Following adversarial review v2:fcc2f777 of the v1 build (commit `7ba619532`), this document REPLACES
+§1 (the mechanism under test: a spiking `lc_ne` population and two CrossEdges, not a host relay + modulator
+ODE), REPLACES §2's constants (none of v1's `CMP_RATE_NORM`/`GAIN_EXCIT_SENSITIVITY` transfer), and
+RECLASSIFIES G4/G5 as integrity (§3). §1's operating-point claim is now explicitly the STRUCTURAL one (matching
+§4, which v1 already stated correctly — v1's actual bug was that §1 still asserted the operating-point claim as
+primary while §6 had already demoted it; this version keeps them consistent). The ADDITIVE-vs-MULTIPLICATIVE
+honesty statement (§4) is NEW in v2; v1 did not disclose it and the runner's own docstring claimed "every step is
+neurons + synapses" without naming what kind of synaptic effect (additive current) that spiking pathway actually
+delivers. **Per this project's own `gates/prereg_before_run` and `docs/BUILD_LANE_CHECKLIST.md`, this v2 document
+is committed in a commit that contains NO `research/findings/raw/**` artifact.** The seed-42 calibration run this
+document governs (§2's constant-freezing criterion) is run and committed SEPARATELY, afterward, and is labeled
+`calibration_seed: true` in its own artifact, exactly as the conflict_xedge PREREG's precedent and v1's own
+convention already established — it is NOT reused from v1 (v1's `_curiosity_metacog_neuromod_gain_smoke_s42.json`
+is removed in this same commit as void, since it measured a mechanism that no longer exists in this file).
