@@ -451,6 +451,11 @@ def apply_rich(chat, msg, r, **kw):
     r2["abstained"] = rep["abstained"]
     if rep["abstained"]:
         r2["facts"] = []
+        if r2.get("hypothesis"):
+            # a HELD hypothesis is not volunteered: drop the hypothesis markers from the response (the held SVO stays
+            # in the trace as open_ended_gated.gate.svo)
+            r2["hypothesis"] = False
+            r2["hypothesis_svo"] = None
     return r2
 
 
