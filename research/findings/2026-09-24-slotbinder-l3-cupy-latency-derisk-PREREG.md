@@ -29,3 +29,16 @@ Queued through `tools/gpu_queue.sh` (one brain-loading GPU process at a time). T
   `moat_pass` and `mismatch_pass` true on both.
 - **not yet:** latency above 2.0 s on either seed, or any correctness field false.
 - The status is always "de-risk (2 seeds)". A wire-in needs its own 6-seed gate.
+
+## AMENDMENT 1 (2026-09-24, after seeds 42/43 read candidate; criterion unchanged)
+
+Seeds 44, 100, 101 and 102 are run with the identical command and criterion into the same directory, so the rung is
+measured on all six project seeds. A six-seed pass (every seed at most 2.0 s mean per query with recall 1.0, moat and
+mismatch passing) is reported as "L3 GPU latency GO 6/6" for this measurement only. The SlotBinder wire-in into the
+production composer path still needs its own gate.
+
+```
+SIM_BACKEND=cupy .venv/bin/python -m research.runners._slotbinder_l3_latency_derisk --seeds 44 100 101 102 \
+    --out-dir research/findings/raw/_slotbinder_l3_latency_derisk_cupy
+```
+
