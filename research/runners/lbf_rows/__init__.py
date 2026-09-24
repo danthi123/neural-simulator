@@ -105,8 +105,9 @@ def merge_lbf_rows(faculty_lesions: Dict[str, Any], faculty_probes: List[tuple],
     global _MERGED
     report: Dict[str, Any] = {"modules": [], "import_errors": [], "keys_added": [], "collisions": [], "parked": []}
     try:
-        from research.runners.onebrain_regression_battery import PROBE_TURNS as _probe_turns
-        known_turns = {t[0] for t in _probe_turns}
+        # _TURN_BY_LABEL = PROBE_TURNS plus the battery's opt-in _EXTRA_TURNS: every turn a shard can be asked to run.
+        from research.runners.onebrain_regression_battery import _TURN_BY_LABEL as _turns
+        known_turns = set(_turns)
     except Exception:                       # the battery module unavailable: skip the turn check, never crash
         known_turns = None
     if _MERGED and _mods_override is None:
@@ -143,12 +144,17 @@ def merge_lbf_rows(faculty_lesions: Dict[str, Any], faculty_probes: List[tuple],
         # (First case, 2026-09-24 merge: reasoning_transitive_chat probes `transitive_nonadjacent`, which its own
         # module keeps in _PROPOSED_PROBE_TURNS for a later pass.)
         parked = set()
+        # A row module may PARK its own rows: PARKED = {faculty_key: "why"} (a retracted or broken row stays in the file,
+        # with its record, but never enters the registry until the reason is resolved).
+        for key, why in (getattr(mod, "PARKED", {}) or {}).items():
+            parked.add(key)
+            report["parked"].append("%s: %r parked by its module -- %s" % (short_name, key, why))
         if known_turns is not None:
             for key, row in extra_probes.items():
                 if isinstance(row, (tuple, list)) and len(row) == 4 and row[1] not in known_turns:
                     parked.add(key)
                     report["parked"].append(
-                        "%s: %r probes turn %r, which is not in onebrain_regression_battery.PROBE_TURNS -- row parked "
+                        "%s: %r probes turn %r, which the battery cannot run (not in PROBE_TURNS or _EXTRA_TURNS) -- row parked "
                         "(lesion and probe both left out)" % (short_name, key, row[1]))
         extra_lesions = {k: v for k, v in extra_lesions.items() if k not in parked}
         extra_probes = {k: v for k, v in extra_probes.items() if k not in parked}

@@ -206,6 +206,14 @@ EXTRA_LESIONS = {
 }
 
 # ── EXTRA_PROBES: same entry shape as FACULTY_PROBES (a list of (key, turn_label, fields, thin) 4-tuples) ────────
+# PARKED (2026-09-24, Amendment 3 of research/findings/2026-09-24-lbf-rows-live-organs-PREREGISTRATION.md): the
+# seed-7 smoke raised KeyError('authorship') -- the registered turn `rich_open` never attaches an `authorship` block in
+# the live brain_chat response, so this row's lesion check reads nothing and its integrity note describes a different
+# turn (`is_hyp`). The row stays here for the record; the registry hook leaves it out until it is redesigned.
+PARKED = {
+    "self-schema": "retracted by Amendment 3: probe turn rich_open never attaches 'authorship' (KeyError at seed 7)",
+}
+
 EXTRA_PROBES = [
     ("self-schema", "rich_open", ["authorship.is_self", "authorship.label"], False),
     ("affective-tom", "lbf_tom1", ["affective_tom.reason", "affective_tom.tone_level"], False),
