@@ -178,7 +178,7 @@ def run_claim_check(finding_path):
     r = claim_check._scan(finding_path)
     unsupported = list(r["unsupported"])           # [(lineno, val, ctx), ...] -- val is already a float
     missing = list(r["missing"])
-    rc = 1 if (missing or unsupported or r["low_coverage"]) else 0
+    rc = 1 if claim_check._verdict(r) == "FAIL" else 0    # the ONE verdict rule check() and the hook use
     return rc, unsupported, missing, r
 
 
@@ -289,7 +289,7 @@ def scaffold_claim_check(finding_path, unsupported, missing, artifact_paths, do_
                  "/".join("%.4g" % x for x in vals)))
         else:
             emit("    line %-4s %-12s is in no cited artifact. Either cite the artifact FILE that holds "
-                 "it (a path with a '/'), or mark it <!--derived--> inline on the same line." % (lineno, valstr))
+                 "it (a path with a '/'), or %s." % (lineno, valstr, claim_check.MARKER_RULE))
     if mean_hits:
         agg_rel = _suggest_aggregate_path(finding_path)
         emit("    FIX (the aggregate miss): means over seeds belong in an aggregate JSON you cite.")
@@ -482,10 +482,15 @@ def lint_one(finding_path, extra_paths, do_fix, quiet, include_untracked):
     if cc_rc != 0:
         probs = ["line %s: %s  (%s)" % (n, v, c[:60]) for n, v, c in cc_unsupported] \
             + ["MISSING artifact: %s" % m for m in cc_missing]
+        if cc_result.get("unreadable"):
+            probs.append("UNREADABLE: %s" % cc_result["unreadable"])
+        for n, v, ch, c in cc_result.get("too_broad", ()):
+            probs.append("line %s: %s  chance %.0f%%: %s  (%s)" % (n, v, 100 * ch, claim_check.TOO_BROAD_MSG, c[:60]))
         if cc_result["low_coverage"]:
-            checked, total = cc_result["checked"], cc_result["total_numeric"]
-            probs.append("LOW COVERAGE: only %d/%d numeric claim(s) checked -- mark the specific derived "
-                        "numbers inline, not (almost) the whole doc" % (checked, total))
+            checked = cc_result.get("checked_visible_distinct", cc_result["checked"])
+            total = cc_result["total_numeric"]
+            probs.append("LOW COVERAGE: only %d/%d numeric claim(s) checked (distinct, outside hidden regions) -- "
+                        "mark the specific derived numbers, not (almost) the whole doc" % (checked, total))
         probs = probs or ["a measurement is unsupported by the cited artifacts (see claim_check)"]
         blocking_gates.append({"name": "claim-check", "class_id": "G2", "problems": probs, "kind": "claim"})
     if not g4_ok:

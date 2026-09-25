@@ -27,3 +27,10 @@ matplotlib
 # failing CI (brian2 installs fine here -- numpy>=1.23.5 is satisfied and NOT downgraded --
 # it only fails at import). Revisit the pin when a numpy>=2 compatible brian2 releases.
 brian2
+
+# tools/claim_check.py (GATE 2 of tools/githooks/pre-commit, and the CCT registry gate) verifies every
+# <!--derived--> marker by asking markdown-it -- in BOTH CommonMark and GFM-with-tables -- whether it is an HTML
+# comment outside code spans, fences and escapes, and builds the reader's rendering of each block from its tokens.
+# Without it no marker can be verified, so claim_check refuses to run (UNREADABLE) rather than guess. Pinned to
+# the major version whose token stream the selftest registry (tools/claim_check_cases.py) was verified against.
+markdown-it-py>=4.2,<5
