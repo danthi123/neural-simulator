@@ -15,6 +15,14 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-19 (RESUME HERE) — NEW ARC: PERMANENT LLM MOUTH + LOAD-BEARING METRIC
 
+**🌙 02:35 progress (overnight):** sleep-replay capture rc family GO 6/6, independently re-derived (merged 4a2093a74);
+open-ended provenance fix merged with content binding (56c0465c9, re-review SOUND): B2a's six oed cells now count as
+covered-by-parent. Claim-check audit (workflow w2lnwio5g): 690 flagged numbers correctly derived/rounded, 8 transcription
+errors corrected, 19 unsupported numbers, 0 verdicts at risk (details `.claude/worktrees/claimcheck_audit_results_2026-09-25.json`);
+the checker's round-2 re-review found a NEW fence hole (a '# derived' comment inside a code fence opened a section
+exemption) and list false positives, so round 3 runs (workflow `wou3e7upy`); the checker branch and the 4 audit branches
+(research/claimcheck-audit-1..4) are held until round 3 reviews SOUND, then merge together.
+
 **🌙 PRE-DECIDED NEXT ACTIONS — OVERNIGHT PLAN (owner asleep from 01:35, 2026-09-25); work in order, re-arm the heartbeat on every expiry:**
 1. B2a: the heartbeat aggregates b2a0924 with `--pin 9db7613296c3...` at 186/186; if open-ended-generation shows excluded,
    wait for the oed provenance fix (workflow `wkqok0g80`), merge it, re-aggregate, then re-score R1/R2 and correct the
