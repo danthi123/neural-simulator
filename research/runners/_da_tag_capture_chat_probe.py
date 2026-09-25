@@ -35,6 +35,11 @@ Selftest (no brain):   ... --selftest
 Aggregate:             ... --aggregate research/findings/raw/_da_tag_capture_chat
 R2 FAMILY (`--family r2`, branch research/sleep-replay-capture-r2, Amendment 1 of the sleep-replay-capture prereg):
 a fact told 4 h before sleep onset (awake world step), and three nights with sleep downscaling (BRAIN_SLEEP_DOWNSCALING).
+FI FAMILY (`--family fi`, branch research/sleep-forgetting-interference, Amendment 6 of the same prereg): the r3 sub-flag
+BRAIN_SLEEP_LOAD_RENORM (the night's downscaling set by the day's learning load). The weak telling, seven nights with the
+recall question each morning, and k other facts told on each later day (k = 0 / 1 / 3), plus the salient telling and a
+re-mentioned telling at k = 3 and the load-edge lesion. Output defaults to FI_OUT.
+  tools/memcap.sh 8 -- .venv/bin/python -u -m research.runners._da_tag_capture_chat_probe --family fi --seed 42
 Byte-identical OFF (r2: a COUNTERFACTUAL built from the current tree -- HEAD vs HEAD minus the feature's own commits,
 plus a HEAD-vs-HEAD null control; three tiny-demo builds, exact sha256; replaces the stale fixed-pin check):
   tools/memcap.sh 8 -- .venv/bin/python -u -m research.runners._da_tag_capture_chat_probe --offcheck \
@@ -48,6 +53,7 @@ import hashlib
 import itertools
 import json
 import os
+import re
 import subprocess
 import sys
 import tempfile
@@ -151,7 +157,30 @@ ARC_REPORTED_ARMS = ("lq_arc", "lz_arc", "lr_ledger_off")
 ARC_BOUTS = {"datr_recall": 48, "datcr_recall": 48, "datq_recall": 4, "datz_recall": 12, "datl_recall": 0,
              "datni_recall": 0}                        # == the battery's rest ticks (one bout per tick, 5-min limit)
 ARC_OUT = "research/findings/raw/_awake_replay_capture"
-AWAKE_H = 4.0                        # == onebrain_regression_battery._run_world_step("awake_4h")
+# ── FORGETTING-INTERFERENCE FAMILY (`--family fi`; branch research/sleep-forgetting-interference, the r3 sub-flag
+# BRAIN_SLEEP_LOAD_RENORM of webapp/sleep_replay_capture.py; gates pre-registered as Amendment 6 of the sleep-replay-
+# capture prereg). The weak telling, seven nights, the recall question every morning (read-only in this model), and on
+# each later day k OTHER facts told (battery groups fiv k=0 / fil k=1 / fih k=3; fis = salient telling, k=3; fir = the
+# weak telling re-mentioned after nights 1 and 2, k=3). The night's downscaling is set by the day's load.
+FI = {"BRAIN_SLEEP_LOAD_RENORM": "1"}
+FI_LES = {"BRAIN_SLEEP_LOAD_RENORM_LESION": "1"}
+FI_NIGHTS = 7
+FI_ARMS = [
+    ("fiv_lr", "fiv_recall7", {**ON, **RC, **FI}),                  # FI1: nothing else learned -> kept
+    ("fil_lr", "fil_recall7", {**ON, **RC, **FI}),                  # REPORTED (FI3 reads its ratio): one fact a day
+    ("fih_lr_a", "fih_recall7", {**ON, **RC, **FI}),                # FI2: three facts a day -> lost by night 7
+    ("fih_lr_b", "fih_recall7", {**ON, **RC, **FI}),                # G0 null-control rebuild
+    ("fih_lr_lesion", "fih_recall7", {**ON, **RC, **FI, **FI_LES}), # FI4: the load edge cut -> kept
+    ("fih_shy", "fih_recall7", {**ON, **RC, **SHY}),                # REPORTED: r2's constant under the same dose
+    ("fis_lr", "fis_recall7", {**ON, **RC, **FI}),                  # FI5: salient telling, same dose -> kept
+    ("fir_lr", "fir_recall7", {**ON, **RC, **FI}),                  # FI6: re-mentioned twice, same dose -> kept
+    ("neu_imm_fi", "datni_recall", {**ON, **RC, **FI}),             # P1: stored + recalled at once
+]
+FI_REPORTED_ARMS = ("fih_shy",)                                      # fil_lr's outcome is reported, its ratio gated
+FI_DOSE = {"fiv": 0, "fil": 1, "fih": 3, "fis": 3, "fir": 3}          # facts told per later day (== the battery groups)
+FI_REMENTION = {"fir": (1, 2)}                                       # re-mention after these nights (== the battery)
+FI_OUT = "research/findings/raw/_sleep_forgetting_interference"
+AWAKE_H = 4.0                       # == onebrain_regression_battery._run_world_step("awake_4h")
 LESION_HELD_MAX_RATIO = 0.25        # G6: lesion PRP p_max must stay below 25 % of the intact arm's (the D1 pool's
                                     #  tonic-rate noise floor gives a ~0.1 per turn at DA=0.5; see the prereg)
 
@@ -202,8 +231,9 @@ def run_seed(seed, out_dir, ltm="off", workers=1, family="base", only=None):
               "set LB_ALLOW_NO_CORPUS=1 to measure the degraded brain on purpose." % _miss, file=sys.stderr)
         raise SystemExit(3)
     sys.path.insert(0, _REPO)
-    arm_list = {"rc": RC_ARMS, "r2": R2_ARMS, "arc": ARC_ARMS}.get(family, ARMS)
-    grader = {"rc": grade_seed_rc, "r2": grade_seed_r2, "arc": grade_seed_arc}.get(family, grade_seed)
+    arm_list = {"rc": RC_ARMS, "r2": R2_ARMS, "arc": ARC_ARMS, "fi": FI_ARMS}.get(family, ARMS)
+    grader = {"rc": grade_seed_rc, "r2": grade_seed_r2, "arc": grade_seed_arc, "fi": grade_seed_fi}.get(family,
+                                                                                                        grade_seed)
     if only:                                   # a de-risk subset (never a gate row): run only these arms, do not grade
         arm_list = [a for a in arm_list if a[0] in set(only)]
         grader = lambda _res: {"partial": True, "arms_run": [a[0] for a in arm_list],   # noqa: E731
@@ -230,7 +260,7 @@ def run_seed(seed, out_dir, ltm="off", workers=1, family="base", only=None):
             arms[name] = rec
     res = {"seed": int(seed), "fact": FACT, "arms": {}, "pinned_sha": PINNED_SHA, "ltm": ltm,
            "backend": os.environ.get("SIM_BACKEND", "numpy"), "argv": list(sys.argv), "workers": int(workers)}
-    if family in ("rc", "r2", "arc"):
+    if family in ("rc", "r2", "arc", "fi"):
         res["family"] = family
     for name, a in arms.items():
         r = a["responses"] or {}
@@ -248,9 +278,23 @@ def run_seed(seed, out_dir, ltm="off", workers=1, family="base", only=None):
                            .get("a_eff") for t in a["turns"]],
             "errors": [str(v.get("_error"))[:300] for v in r.values() if isinstance(v, dict) and v.get("_error")],
         }
-        if family in ("rc", "r2", "arc"):
+        if family in ("rc", "r2", "arc", "fi"):
             res["arms"][name]["sleep_replay_at_recall"] = _tc(rec).get("sleep_replay_capture")
             res["arms"][name]["blocks_at_recall"] = _tc(rec).get("blocks")
+        if family == "fi" and a["label"] != "datni_recall":
+            pre = a["label"].rsplit("_recall", 1)[0]
+            daily = [r.get("%s_recall%d" % (pre, n)) for n in range(1, FI_NIGHTS + 1)]
+            res["arms"][name]["daily_outcomes"] = [outcome(d) for d in daily]
+            res["arms"][name]["daily_recalled_svo"] = [(d or {}).get("recalled_svo") for d in daily]
+            res["arms"][name]["daily_blocks"] = [_tc(d).get("blocks") for d in daily]
+            res["arms"][name]["daily_n_managed_blocks"] = [_tc(d).get("n_managed_blocks") for d in daily]
+            told_re = re.compile(r"^%s_(d\d+f\d+|remention\d+)$" % re.escape(pre))
+            res["arms"][name]["told_new_blocks"] = {t: ((r.get(t) or {}).get("da_tag_capture") or {})
+                                                    .get("new_blocks_this_turn")
+                                                    for t in a["turns"] if told_re.match(t)}
+            res["arms"][name]["recall1_state"] = {"outcome": outcome(daily[0]),
+                                                  "blocks": _tc(daily[0]).get("blocks"),
+                                                  "sleep": _tc(daily[0]).get("sleep_replay_capture")}
         if family == "arc":
             res["arms"][name]["awake_replay_at_recall"] = _tc(rec).get("awake_replay_capture")
             res["arms"][name]["awake_until_h"] = _tc(rec).get("awake_until_h")
@@ -733,6 +777,158 @@ def aggregate_arc(d):
            "signflip_p_rest_rescue_intact_vs_awake_lesion": (seed_signflip_p(edge) if rows else None),
            "diffs_on_minus_off": rescue, "diffs_intact_minus_lesion": edge,
            "reported_correct_counts": {k: sum(oc(r, k) for r in rows) for k in ARC_REPORTED_ARMS}}
+    json.dump(out, open(os.path.join(d, "aggregate.json"), "w"), indent=2)
+    print(json.dumps(out, indent=2))
+    return out
+
+
+def _fi_ratio(bl):
+    """A block's increment-to-baseline magnitude ratio (the read is magnitude-invariant, so this is what it sees)."""
+    if not bl or not bl.get("base_mag"):
+        return None
+    return float(bl["inc_mag"]) / float(bl["base_mag"])
+
+
+def _fi_first_not_correct(daily):
+    return next((i + 1 for i, v in enumerate(daily or []) if v != "correct"), None)
+
+
+def grade_seed_fi(res):
+    """The forgetting-interference family's pre-registered gates (Amendment 6 of research/findings/2026-09-24-sleep-
+    replay-capture-PREREGISTRATION.md), verbatim. Pure function of res["arms"]. FI_REPORTED_ARMS never enter a gate, an
+    error count, the gamma check or an UNDEFINED rule -- except FI7 (no confab), which reads every arm."""
+    A = res["arms"]
+    o = {k: v["recall_outcome"] for k, v in A.items()}
+    gated = [k for k in A if k not in FI_REPORTED_ARMS]
+    nights = [k for k in A if k != "neu_imm_fi"]
+    errs = sum(len(A[k]["errors"]) for k in gated)
+    daily = {k: (A[k].get("daily_outcomes") or []) for k in nights}
+    g = {}
+    a, b = A["fih_lr_a"], A["fih_lr_b"]
+    g["G0_null_clean"] = bool(a.get("daily_outcomes") == b.get("daily_outcomes")
+                              and a.get("daily_recalled_svo") == b.get("daily_recalled_svo")
+                              and a["tag_capture_at_recall"] == b["tag_capture_at_recall"]
+                              and a.get("blocks_at_recall") == b.get("blocks_at_recall")
+                              and a.get("sleep_replay_at_recall") == b.get("sleep_replay_at_recall"))
+    g["P1_immediate_precondition"] = bool(o["neu_imm_fi"] == "correct")
+    gam = [A[k]["tag_capture_at_recall"].get("gamma") for k in gated
+           if (A[k].get("env") or {}).get("BRAIN_DA_TAG_CAPTURE") == "1" and A[k]["tag_capture_at_recall"].get("gamma")]
+    g["G_isolation_gamma_consistent"] = bool(not gam or all(abs(x - gam[0]) < 1e-6 for x in gam))
+
+    def _inst(k):
+        """Seven nights, one epoch each, every block read; the downscaling record as armed; the registered dose
+        delivered (every told sentence stored as one new block, and each night's load read counts exactly the blocks
+        the preceding day wrote)."""
+        arm = A[k]
+        env = arm.get("env") or {}
+        ep = _epochs(arm)
+        if len(ep) != FI_NIGHTS or any(e.get("no_reader") or e.get("R") is None for e in ep):
+            return False
+        lr_on = env.get("BRAIN_SLEEP_LOAD_RENORM") == "1"
+        shy_on = env.get("BRAIN_SLEEP_DOWNSCALING") == "1"
+        if not all(("load" in e) == lr_on and ("shy_scale" in e) == (lr_on or shy_on) for e in ep):
+            return False
+        if len(daily[k]) != FI_NIGHTS:
+            return False
+        told = arm.get("told_new_blocks") or {}
+        grp = arm["label"].rsplit("_recall", 1)[0]
+        want_told = FI_DOSE[grp] * (FI_NIGHTS - 1) + len(FI_REMENTION.get(grp, ()))
+        if len(told) != want_told or any(v != 1 for v in told.values()):
+            return False
+        if lr_on:
+            want = [1] + [FI_DOSE[grp] + (1 if n - 1 in FI_REMENTION.get(grp, ()) else 0)
+                          for n in range(2, FI_NIGHTS + 1)]
+            if [e["load"].get("n_new_blocks") for e in ep] != want:
+                return False
+        return True
+
+    g["I1_seven_nights_dose_delivered"] = bool(all(_inst(k) for k in nights if k in gated))
+    g["I1_reported_arms"] = {k: bool(_inst(k)) for k in FI_REPORTED_ARMS if k in A}
+    # I2 the load lesion held on the record: the read ran (delta_read > 0 on every dosed night), the applied delta was 0
+    # and nothing was scaled; on the intact load arms the applied delta IS the read
+    held = True
+    for k in gated:
+        env = A[k].get("env") or {}
+        for i, e in enumerate(_epochs(A[k])):
+            ld = e.get("load")
+            if ld is None:
+                continue
+            if env.get("BRAIN_SLEEP_LOAD_RENORM_LESION") == "1":
+                held &= bool(ld.get("lesioned") and ld.get("delta") == 0.0
+                             and all(s == 1.0 for s in e.get("shy_scale") or [])
+                             and (i == 0 or ld.get("delta_read", 0.0) > 0.0))
+            else:
+                held &= bool((not ld.get("lesioned")) and ld.get("delta") == ld.get("delta_read"))
+    g["I2_load_lesion_held"] = bool(held)
+    # I3 the dose arms are the SAME brain through the first morning (the protocol differs only after recall 1)
+    same = ("fiv_lr", "fil_lr", "fih_lr_a", "fih_lr_b", "fir_lr")
+    r1 = [A[k].get("recall1_state") for k in same if k in A]
+    g["I3_identical_through_night1"] = bool(len(r1) == len(same) and all(x == r1[0] for x in r1))
+    # the pre-registered behavioural gates
+    ratio7 = {k: _fi_ratio(((A[k].get("daily_blocks") or [[]] * FI_NIGHTS)[-1] or [None])[0]) for k in nights}
+    g["FI1_kept_when_nothing_else_is_learned"] = bool(daily["fiv_lr"] and all(v == "correct" for v in daily["fiv_lr"]))
+    g["FI2_later_learning_erases_by_night7"] = bool(len(daily["fih_lr_a"]) == FI_NIGHTS
+                                                    and daily["fih_lr_a"][-1] == "abstain")
+    r_v, r_l, r_h = ratio7.get("fiv_lr"), ratio7.get("fil_lr"), ratio7.get("fih_lr_a")
+    g["FI3_ratio_ordered_by_dose"] = bool(None not in (r_v, r_l, r_h) and r_v > r_l > r_h)
+    g["FI4_load_edge_lesion_keeps_it"] = bool(daily["fih_lr_lesion"]
+                                              and all(v == "correct" for v in daily["fih_lr_lesion"]))
+    g["FI5_salient_kept_under_the_dose"] = bool(len(daily["fis_lr"]) == FI_NIGHTS and daily["fis_lr"][-1] == "correct")
+    g["FI6_remention_kept_under_the_dose"] = bool(len(daily["fir_lr"]) == FI_NIGHTS
+                                                  and daily["fir_lr"][-1] == "correct")
+    g["FI7_no_confab"] = bool(all(v != "confab" for k in nights for v in daily[k]) and o["neu_imm_fi"] != "confab")
+    g["reported"] = {k: {"daily_outcomes": daily[k], "first_night_not_correct": _fi_first_not_correct(daily[k]),
+                         "correct_at_night3": (daily[k][2] == "correct" if len(daily[k]) >= 3 else None),
+                         "fact_ratio_by_night": [_fi_ratio((bl or [None])[0]) for bl in (A[k].get("daily_blocks") or [])],
+                         "fact_R_by_night": [(e.get("R") or [None])[0] for e in _epochs(A[k])],
+                         "delta_by_night": [((e.get("load") or {}).get("delta") if "load" in e else
+                                             (None if "shy_scale" not in e else "const")) for e in _epochs(A[k])],
+                         "dW_by_night": [(e.get("load") or {}).get("dW") for e in _epochs(A[k])],
+                         "W_by_night": [(e.get("load") or {}).get("W") for e in _epochs(A[k])],
+                         "n_managed_blocks_by_night": A[k].get("daily_n_managed_blocks"),
+                         "errors": A[k].get("errors")} for k in nights}
+    undefined = (not g["G0_null_clean"]) or (not g["P1_immediate_precondition"]) \
+        or (not g["I1_seven_nights_dose_delivered"]) or (not g["I2_load_lesion_held"]) \
+        or (not g["I3_identical_through_night1"]) or (not g["G_isolation_gamma_consistent"]) or errs > 0 \
+        or any(v == "undefined" for k in nights if k in gated for v in daily[k]) \
+        or any(o[k] == "undefined" for k in gated)
+    core = all(g[k] for k in ("FI1_kept_when_nothing_else_is_learned", "FI2_later_learning_erases_by_night7",
+                              "FI3_ratio_ordered_by_dose", "FI4_load_edge_lesion_keeps_it",
+                              "FI5_salient_kept_under_the_dose", "FI6_remention_kept_under_the_dose",
+                              "FI7_no_confab"))
+    g["outcomes"] = o
+    g["n_arm_errors"] = errs
+    g["seed_verdict"] = "UNDEFINED" if undefined else ("GO" if core else "NO-GO")
+    return g
+
+
+def aggregate_fi(d):
+    """6-seed combine for the fi family: GO iff all 6 pre-registered seeds are GO (re-graded with the current code)."""
+    rows = []
+    for p in sorted(glob.glob(os.path.join(d, "seed*.json"))):
+        try:
+            r = json.load(open(p))
+        except Exception:
+            continue
+        if r.get("family") == "fi":
+            rows.append(r)
+    for r in rows:
+        r["gates"] = grade_seed_fi(r)
+    verdicts = {r["seed"]: r["gates"]["seed_verdict"] for r in rows}
+    n_go = sum(1 for v in verdicts.values() if v == "GO")
+    last = lambda r, k: int(((r["gates"]["reported"].get(k) or {}).get("daily_outcomes") or [None])[-1]  # noqa: E731
+                            == "correct")
+    dose = [last(r, "fiv_lr") - last(r, "fih_lr_a") for r in rows]
+    edge = [last(r, "fih_lr_lesion") - last(r, "fih_lr_a") for r in rows]
+    complete = sorted(verdicts) == sorted(SEEDS)
+    out = {"family": "fi", "seeds": sorted(verdicts), "seed_verdicts": verdicts, "n_go": n_go,
+           "verdict": "INCOMPLETE" if not complete else ("GO" if n_go == 6 else "NO-GO"),
+           "signflip_p_vacuum_minus_dose": (seed_signflip_p(dose) if rows else None),
+           "signflip_p_lesion_minus_dose": (seed_signflip_p(edge) if rows else None),
+           "diffs_vacuum_minus_dose": dose, "diffs_lesion_minus_dose": edge,
+           "first_night_not_correct": {k: {r["seed"]: (r["gates"]["reported"].get(k) or {})
+                                           .get("first_night_not_correct") for r in rows}
+                                       for k in ("fiv_lr", "fil_lr", "fih_lr_a", "fih_shy", "fis_lr", "fir_lr")}}
     json.dump(out, open(os.path.join(d, "aggregate.json"), "w"), indent=2)
     print(json.dumps(out, indent=2))
     return out
@@ -1410,6 +1606,81 @@ def selftest():
         agg = aggregate_arc(_td)
         checks["arc aggregate: 6 designed-GO seeds -> GO, p=1/64"] = \
             agg["verdict"] == "GO" and abs(agg["signflip_p_rest_rescue_on_vs_off"] - 1 / 64.0) < 1e-12
+    # ── fi family (load-dependent renormalization): the grader must be able to read GO, NO-GO and UNDEFINED ─────────
+    def _fi_arm(name, label, env, daily_outcomes, ratio7=1.0, lesion_delta=0.0, n_new_shift=0, told_value=1,
+                n_epochs=FI_NIGHTS, recall1=None):
+        lr_on = env.get("BRAIN_SLEEP_LOAD_RENORM") == "1"
+        les = env.get("BRAIN_SLEEP_LOAD_RENORM_LESION") == "1"
+        shy_on = env.get("BRAIN_SLEEP_DOWNSCALING") == "1"
+        last = daily_outcomes[-1] if daily_outcomes else "correct"
+        rec = {"label": label, "env": dict(env), "errors": [], "tag_capture_at_recall": {"gamma": 32.77},
+               "fact_block_at_recall": None, "blocks_at_recall": [], "recall_outcome": last,
+               "recalled_svo": FACT if last == "correct" else None, "abstained": last == "abstain"}
+        if label == "datni_recall":
+            rec["sleep_replay_at_recall"] = {"n_epochs": 0, "epochs": []}
+            return rec
+        grp = label.rsplit("_recall", 1)[0]
+        k, rem = FI_DOSE[grp], FI_REMENTION.get(grp, ())
+        eps = []
+        for n in range(1, n_epochs + 1):
+            n_new = 1 if n == 1 else k + (1 if n - 1 in rem else 0) + n_new_shift
+            ep = {"R": [0.35], "no_reader": False, "t_h": 24.0 * n}
+            if lr_on:
+                dr = 0.19 if n_new else 0.0
+                ep["load"] = {"dW": dr * 7.0, "W": 7.0, "delta_read": dr, "delta": (lesion_delta if les else dr),
+                              "lesioned": les, "n_new_blocks": n_new}
+                ep["shy_scale"] = [1.0 - (lesion_delta if les else dr) * 0.65]
+            elif shy_on:
+                ep["shy_scale"] = [0.9]
+            eps.append(ep)
+        rec["sleep_replay_at_recall"] = {"n_epochs": n_epochs, "epochs": eps}
+        rec["daily_outcomes"] = list(daily_outcomes)
+        rec["daily_recalled_svo"] = [FACT if v == "correct" else None for v in daily_outcomes]
+        rec["daily_blocks"] = [[{"inc_mag": ratio7, "base_mag": 1.0}] for _ in daily_outcomes]
+        told = {"%s_d%df%d" % (grp, d, j): told_value for d in range(2, FI_NIGHTS + 1) for j in range(1, k + 1)}
+        told.update({"%s_remention%d" % (grp, n): 1 for n in rem})
+        rec["told_new_blocks"] = told
+        rec["recall1_state"] = recall1 or {"outcome": "correct", "blocks": [{"inc_mag": 1.2}], "sleep": {"n_epochs": 1}}
+        return rec
+    C7, A2 = ["correct"] * 7, ["correct"] * 5 + ["abstain"] * 2
+    fi_designed = {"fiv_lr": (C7, 1.3), "fil_lr": (C7, 0.8), "fih_lr_a": (A2, 0.45), "fih_lr_b": (A2, 0.45),
+                   "fih_lr_lesion": (C7, 1.46), "fih_shy": (["correct"] * 6 + ["abstain"], 0.55),
+                   "fis_lr": (C7, 1.2), "fir_lr": (C7, 0.5), "neu_imm_fi": (["correct"], 1.0)}
+    fi_ok = {n: _fi_arm(n, lab, env, *fi_designed[n]) for n, lab, env in FI_ARMS}
+    checks["fi grade: designed-GO pattern -> GO"] = grade_seed_fi({"arms": fi_ok})["seed_verdict"] == "GO"
+
+    def _fi_with(changes):
+        arms_x = dict(fi_ok)
+        for arm_name, kw in changes.items():
+            lab, env = [(l, e) for n, l, e in FI_ARMS if n == arm_name][0]
+            d, r = fi_designed[arm_name]
+            kw = dict(kw)
+            arms_x[arm_name] = _fi_arm(arm_name, lab, env, kw.pop("daily", d), kw.pop("ratio7", r), **kw)
+        return grade_seed_fi({"arms": arms_x})["seed_verdict"]
+    for label_, changes, want in (
+            ("fih kept at night 7 (both rebuilds)", {"fih_lr_a": {"daily": C7}, "fih_lr_b": {"daily": C7}}, "NO-GO"),
+            ("vacuum lost at night 7", {"fiv_lr": {"daily": A2}}, "NO-GO"),
+            ("load lesion does not keep it", {"fih_lr_lesion": {"daily": A2}}, "NO-GO"),
+            ("salient lost", {"fis_lr": {"daily": A2}}, "NO-GO"),
+            ("re-mentioned lost", {"fir_lr": {"daily": A2}}, "NO-GO"),
+            ("ratio not ordered by dose", {"fil_lr": {"ratio7": 0.3}}, "NO-GO"),
+            ("a != b rebuild", {"fih_lr_a": {"daily": ["correct"] * 6 + ["abstain"]}}, "UNDEFINED"),
+            ("no immediate recall", {"neu_imm_fi": {"daily": ["abstain"]}}, "UNDEFINED"),
+            ("load lesion not held (delta applied)", {"fih_lr_lesion": {"lesion_delta": 0.19}}, "UNDEFINED"),
+            ("a told sentence was not stored", {"fil_lr": {"told_value": 0}}, "UNDEFINED"),
+            ("the load read counted the wrong dose", {"fis_lr": {"n_new_shift": 1}}, "UNDEFINED"),
+            ("only six nights ran", {"fiv_lr": {"n_epochs": 6}}, "UNDEFINED"),
+            ("dose arms differ before the dose", {"fil_lr": {"recall1": {"outcome": "abstain"}}}, "UNDEFINED"),
+            ("REPORTED constant arm kept", {"fih_shy": {"daily": C7}}, "GO"),
+            ("REPORTED constant arm confabulates", {"fih_shy": {"daily": ["correct"] * 6 + ["confab"]}}, "NO-GO")):
+        checks["fi grade: %s -> %s" % (label_, want)] = _fi_with(changes) == want
+    with _tf.TemporaryDirectory() as _td:
+        for s in SEEDS:
+            json.dump({"seed": s, "family": "fi", "arms": fi_ok}, open(os.path.join(_td, "seed%d.json" % s), "w"))
+        agg = aggregate_fi(_td)
+        checks["fi aggregate: 6 designed-GO seeds -> GO, p=1/64"] = \
+            agg["verdict"] == "GO" and abs(agg["signflip_p_vacuum_minus_dose"] - 1 / 64.0) < 1e-12 \
+            and agg["first_night_not_correct"]["fih_lr_a"][42] == 6
     # counterfactual offcheck: the feature's own commits are derived from the tree (never a fixed pin)
     sc = production_scope()
     checks["offcheck counterfactual: scope = production-reachable paths (webapp-imported runner in, instrument out)"] = \
@@ -1446,9 +1717,10 @@ def main():
     ap.add_argument("--seed", type=int)
     ap.add_argument("--ltm", choices=["off", "on"], default="off")
     ap.add_argument("--workers", type=int, default=1)
-    ap.add_argument("--family", choices=["base", "rc", "r2", "arc"], default="base",
+    ap.add_argument("--family", choices=["base", "rc", "r2", "arc", "fi"], default="base",
                     help="base = the G0-G6 family (unchanged); rc = the sleep-replay-capture family (RC_ARMS); "
-                         "r2 = long delay + sleep downscaling (R2_ARMS); arc = awake-rest replay (ARC_ARMS)")
+                         "r2 = long delay + sleep downscaling (R2_ARMS); arc = awake-rest replay (ARC_ARMS); "
+                         "fi = load-dependent renormalization under later learning (FI_ARMS)")
     ap.add_argument("--out", default=None)
     ap.add_argument("--only", default=None,
                     help="comma list of arm names: run only these, ungraded (a de-risk subset, never a gate row)")
@@ -1463,11 +1735,13 @@ def main():
     if a.selftest:
         return 0 if selftest() else 1
     if a.out is None:                                   # base keeps its pre-branch default exactly
-        a.out = {"rc": RC_OUT, "r2": R2_OUT, "arc": ARC_OUT}.get(a.family, "research/findings/raw/_da_tag_capture_chat")
+        a.out = {"rc": RC_OUT, "r2": R2_OUT, "arc": ARC_OUT, "fi": FI_OUT}.get(
+            a.family, "research/findings/raw/_da_tag_capture_chat")
     if a.offcheck:
         return 0 if offcheck(a.out, ltm=a.ltm)["byte_identical_off"] else 1
     if a.aggregate:
-        {"rc": aggregate_rc, "r2": aggregate_r2, "arc": aggregate_arc}.get(a.family, aggregate)(a.aggregate)
+        {"rc": aggregate_rc, "r2": aggregate_r2, "arc": aggregate_arc, "fi": aggregate_fi}.get(
+            a.family, aggregate)(a.aggregate)
         return 0
     if a.seed is None:
         ap.error("--seed required")
