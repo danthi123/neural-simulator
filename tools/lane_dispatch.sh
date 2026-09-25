@@ -7,7 +7,7 @@
 # The warning was not the missing piece. The missing piece was that acting on it required INVENTING A JOB
 # on the spot, so the cheap response was always to launch one or two things and move on.
 #
-# CLAUDE.md: "Drift prevention is MECHANICAL, not remembered... prefer converting a rule into a check that
+# CLAUDE.md (section now in docs/CLAUDE_RATIONALE_ARCHIVE.md): "Drift prevention is MECHANICAL, not remembered... prefer converting a rule into a check that
 # can FAIL LOUDLY." This converts "parallelize" from a decision into a loop: the dispatcher keeps N slots
 # busy from a queue file, so the only thing a session must do is KEEP THE QUEUE STOCKED — which is the
 # standing "build de-risks ahead of time so idle compute always has a ready job" directive, made executable.

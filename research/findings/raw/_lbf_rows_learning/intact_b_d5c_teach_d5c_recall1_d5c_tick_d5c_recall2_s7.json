@@ -1,0 +1,475 @@
+{
+  "d5c_teach": {
+    "answer": "I caught the verb 'chase' with the wolf and the rabbit, but my role-binding didn't resolve the PATIENT \u2014 which of them is the 'chase' done to, the wolf or the rabbit?",
+    "abstained": true,
+    "recalled_svo": null,
+    "verified": false,
+    "renderer": "template-stub (GPU-free)",
+    "brain": "tiny-demo",
+    "source": "tiny-demo +LTM",
+    "rich": false,
+    "activity": null,
+    "affect": {
+      "on": true,
+      "lesioned": false,
+      "composer": "onebrain",
+      "differential": 0.0,
+      "valence_sign": "0",
+      "tone_level": 0,
+      "tone_token": "",
+      "forthcomingness": {
+        "max_sentences": 4,
+        "max_elaborations": 2
+      },
+      "manner_template": "",
+      "appraisal_valence": 0.0,
+      "appraisal_arousal": 0.0,
+      "appraisal_hits": [],
+      "pos_rate": 0.0,
+      "neg_rate": 0.0
+    },
+    "comprehension": {
+      "on": true,
+      "lesioned": false,
+      "in_scope": true,
+      "svo": [
+        "wolf",
+        "chase",
+        "rabbit"
+      ],
+      "margin": 0.09999999999999998,
+      "threshold": 0.19999999999999998,
+      "comprehended": false,
+      "calib": {
+        "mean_well": 0.3,
+        "min_well": 0.3,
+        "mean_ill": 0.038888888888888876,
+        "max_ill": 0.09999999999999998,
+        "read_steps": 60,
+        "n_calib": 24
+      },
+      "known_binding": false,
+      "abstained": true
+    },
+    "not_understood": true,
+    "pragmatic": null,
+    "repair": {
+      "on": true,
+      "lesioned": false,
+      "svo": [
+        "wolf",
+        "chase",
+        "rabbit"
+      ],
+      "a0": 0.23333333333333334,
+      "a1": 0.3333333333333333,
+      "pair_max": 0.3333333333333333,
+      "net_lean": 0.5666666666666667,
+      "role_floor": 0.06333333333333334,
+      "lean_margin": 0.31666666666666665,
+      "loadbearing": "spiking_role_evidence",
+      "kind": "role",
+      "role": "patient",
+      "word": null,
+      "repaired": true
+    }
+  },
+  "d5c_recall1": {
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about mentioned yet: what can you tell me about mentioned?",
+    "abstained": true,
+    "recalled_svo": null,
+    "derived": false,
+    "derived_from": null,
+    "verified": false,
+    "renderer": "template-stub (GPU-free)",
+    "brain": "tiny-demo",
+    "source": "tiny-demo +LTM",
+    "rich": false,
+    "activity": {
+      "roles": [
+        {
+          "word": "mentioned_wolf",
+          "confidence": null,
+          "role": "agent",
+          "cue": true,
+          "asserted": "mentioned_wolf"
+        },
+        {
+          "word": "alias_of",
+          "confidence": null,
+          "role": "action",
+          "cue": true,
+          "asserted": "alias_of"
+        }
+      ],
+      "matched_fact_index": null,
+      "n_facts_scanned": 226,
+      "abstained": true,
+      "rf": {
+        "n_readout_neurons": 57856,
+        "frac_fired": 1.0,
+        "mean_magnitude": 104.4994118140609
+      },
+      "composer": "rf"
+    },
+    "provenance": null,
+    "affect": {
+      "on": true,
+      "lesioned": false,
+      "composer": "onebrain",
+      "differential": 0.0,
+      "valence_sign": "0",
+      "tone_level": 0,
+      "tone_token": "",
+      "forthcomingness": {
+        "max_sentences": 4,
+        "max_elaborations": 2
+      },
+      "manner_template": "",
+      "appraisal_valence": 0.0,
+      "appraisal_arousal": 0.0,
+      "appraisal_hits": [],
+      "pos_rate": 0.0,
+      "neg_rate": 0.0
+    },
+    "comprehension": null,
+    "surprise": null,
+    "metacog": null,
+    "worldmodel": null,
+    "curiosity": {
+      "on": true,
+      "lesioned": false,
+      "novelty": 0.9728461861671232,
+      "want_hz": 38.88888888888888,
+      "threshold": 19.09722222222222,
+      "curious": true,
+      "calib": {
+        "want_novel_hz": 38.19444444444444,
+        "want_familiar_hz": 0.0,
+        "threshold_hz": 19.09722222222222,
+        "novel_signal": 0.95,
+        "familiar_signal": 0.0,
+        "read_reps": 4
+      },
+      "topic": "mentioned",
+      "graded_novelty": {
+        "on": true,
+        "value": 0.9728461861671232,
+        "lesioned": false
+      },
+      "curiosity_da": {
+        "on": true,
+        "lesioned": false,
+        "da_level": 0.47557185447158107,
+        "da_tonic": 0.5,
+        "k_da": 1.5,
+        "da_crave_gain": 0.9633577817073716,
+        "base_threshold": 19.09722222222222,
+        "eff_threshold": 19.823603011101405,
+        "want_hz": 38.88888888888888,
+        "want_eff_hz": 37.463913733064445,
+        "curious": true
+      }
+    },
+    "multiref": null,
+    "noncontradiction": null,
+    "reconsolidation": null,
+    "pragmatic": null,
+    "episodic": null,
+    "affect_drives": {
+      "acted": true,
+      "turn": 2,
+      "lesioned": false,
+      "ema_valence": 0.0,
+      "ema_arousal": 0.0,
+      "body_h": 0.5,
+      "body_a": 0.0,
+      "mood": -0.0012916666666666632,
+      "felt_arousal": 0.0,
+      "level": 0,
+      "high_arousal": false,
+      "lead": "",
+      "reason": "neutral_hold",
+      "seed": 7,
+      "vplus_rate": 0.03779166666666667,
+      "vminus_rate": 0.03908333333333333
+    },
+    "swap_drives": {
+      "acted": false,
+      "turn": 2,
+      "topic": null,
+      "swapped": false,
+      "held_topic_before": null,
+      "held_topic": null,
+      "evicted_topic": null,
+      "reason": "no_topic_hold",
+      "seed": 7,
+      "lesioned": false,
+      "on": true,
+      "lead": "",
+      "new_topic": null,
+      "reason_lead": "no_topic_hold"
+    },
+    "common_ground_drives": {
+      "on": true,
+      "topic": null,
+      "decision": null,
+      "reason": "no_grounded_topic",
+      "lead": "",
+      "lesioned": false,
+      "reason_lead": "no_referent"
+    },
+    "da_drives": {
+      "acted": true,
+      "turn": 2,
+      "lesioned": false,
+      "turn_engagement": 0.21818181818181817,
+      "ema_engagement": 0.25309090909090903,
+      "afferent_pA": 354.32727272727266,
+      "da_level": 0.47557185447158107,
+      "snc_firing": 0.06999999999999992,
+      "mode": "neutral",
+      "lead": "",
+      "reason": "low_engagement",
+      "seed": 7,
+      "shared_salience": {
+        "raw": 0.5730769230769232,
+        "want_hz": 8.333333333333332,
+        "normalized": 0.21818181818181817,
+        "lesioned": false,
+        "calib": {
+          "want_novel_hz": 38.19444444444444,
+          "want_familiar_hz": 0.0,
+          "threshold_hz": 19.09722222222222,
+          "novel_signal": 0.95,
+          "familiar_signal": 0.0,
+          "read_reps": 4
+        },
+        "on": true
+      },
+      "spiking_novelty": {
+        "novelty": 0.7884615384615385,
+        "n_tokens": 2,
+        "per_word_freshness": [
+          0.9230769230769231,
+          0.6538461538461539
+        ],
+        "fresh_ref": 26.0,
+        "n_channels": 64,
+        "lesioned": false,
+        "on": true
+      },
+      "on": true
+    },
+    "da_encoding": {
+      "on": true,
+      "g": 1.7113961519486924,
+      "da_level": 0.47557185447158107,
+      "lesioned": false
+    }
+  },
+  "d5c_tick": {
+    "world_step": "overnight_24h",
+    "hours": 24.0,
+    "n_sessions_ticked": 1
+  },
+  "d5c_recall2": {
+    "answer": "(I'd been mulling over bird.) I don't know about that. My curiosity is piqued \u2014 I haven't learned about mentioned yet: what can you tell me about mentioned?",
+    "abstained": true,
+    "recalled_svo": null,
+    "derived": false,
+    "derived_from": null,
+    "verified": false,
+    "renderer": "template-stub (GPU-free)",
+    "brain": "tiny-demo",
+    "source": "tiny-demo +LTM",
+    "rich": false,
+    "activity": {
+      "roles": [
+        {
+          "word": "mentioned_wolf",
+          "confidence": null,
+          "role": "agent",
+          "cue": true,
+          "asserted": "mentioned_wolf"
+        },
+        {
+          "word": "alias_of",
+          "confidence": null,
+          "role": "action",
+          "cue": true,
+          "asserted": "alias_of"
+        }
+      ],
+      "matched_fact_index": null,
+      "n_facts_scanned": 226,
+      "abstained": true,
+      "rf": {
+        "n_readout_neurons": 57856,
+        "frac_fired": 1.0,
+        "mean_magnitude": 104.4994118140609
+      },
+      "composer": "rf"
+    },
+    "provenance": null,
+    "affect": {
+      "on": true,
+      "lesioned": false,
+      "composer": "onebrain",
+      "differential": 0.0,
+      "valence_sign": "0",
+      "tone_level": 0,
+      "tone_token": "",
+      "forthcomingness": {
+        "max_sentences": 4,
+        "max_elaborations": 2
+      },
+      "manner_template": "",
+      "appraisal_valence": 0.0,
+      "appraisal_arousal": 0.0,
+      "appraisal_hits": [],
+      "pos_rate": 0.0,
+      "neg_rate": 0.0
+    },
+    "comprehension": null,
+    "surprise": null,
+    "metacog": null,
+    "worldmodel": null,
+    "curiosity": {
+      "on": true,
+      "lesioned": false,
+      "novelty": 0.9728461861671232,
+      "want_hz": 38.88888888888888,
+      "threshold": 19.09722222222222,
+      "curious": true,
+      "calib": {
+        "want_novel_hz": 38.19444444444444,
+        "want_familiar_hz": 0.0,
+        "threshold_hz": 19.09722222222222,
+        "novel_signal": 0.95,
+        "familiar_signal": 0.0,
+        "read_reps": 4
+      },
+      "topic": "mentioned",
+      "graded_novelty": {
+        "on": true,
+        "value": 0.9728461861671232,
+        "lesioned": false
+      },
+      "curiosity_da": {
+        "on": true,
+        "lesioned": false,
+        "da_level": 0.1758934504500382,
+        "da_tonic": 0.5,
+        "k_da": 1.5,
+        "da_crave_gain": 0.5138401756750574,
+        "base_threshold": 19.09722222222222,
+        "eff_threshold": 37.165685219403585,
+        "want_hz": 38.88888888888888,
+        "want_eff_hz": 19.982673498474448,
+        "curious": true
+      }
+    },
+    "multiref": null,
+    "noncontradiction": null,
+    "reconsolidation": null,
+    "pragmatic": null,
+    "episodic": null,
+    "affect_drives": {
+      "acted": true,
+      "turn": 3,
+      "lesioned": false,
+      "ema_valence": 0.0,
+      "ema_arousal": 0.0,
+      "body_h": 0.5,
+      "body_a": 0.0,
+      "mood": -0.0012916666666666632,
+      "felt_arousal": 0.0,
+      "level": 0,
+      "high_arousal": false,
+      "lead": "",
+      "reason": "neutral_hold",
+      "seed": 7,
+      "vplus_rate": 0.03779166666666667,
+      "vminus_rate": 0.03908333333333333
+    },
+    "swap_drives": {
+      "acted": false,
+      "turn": 3,
+      "topic": null,
+      "swapped": false,
+      "held_topic_before": null,
+      "held_topic": null,
+      "evicted_topic": null,
+      "reason": "no_topic_hold",
+      "seed": 7,
+      "lesioned": false,
+      "on": true,
+      "lead": "",
+      "new_topic": null,
+      "reason_lead": "no_topic_hold"
+    },
+    "common_ground_drives": {
+      "on": true,
+      "topic": null,
+      "decision": null,
+      "reason": "no_grounded_topic",
+      "lead": "",
+      "lesioned": false,
+      "reason_lead": "no_referent"
+    },
+    "wander_drives": {
+      "on": true,
+      "concept": "bird",
+      "lead": "(I'd been mulling over bird.) "
+    },
+    "da_drives": {
+      "acted": true,
+      "turn": 3,
+      "lesioned": false,
+      "turn_engagement": 0.03636363636363636,
+      "ema_engagement": 0.10786909090909089,
+      "afferent_pA": 151.01672727272725,
+      "da_level": 0.1758934504500382,
+      "snc_firing": 0.017500000000000005,
+      "mode": "rest",
+      "lead": "",
+      "reason": "low_engagement",
+      "seed": 7,
+      "shared_salience": {
+        "raw": 0.3423076923076923,
+        "want_hz": 1.3888888888888888,
+        "normalized": 0.03636363636363636,
+        "lesioned": false,
+        "calib": {
+          "want_novel_hz": 38.19444444444444,
+          "want_familiar_hz": 0.0,
+          "threshold_hz": 19.09722222222222,
+          "novel_signal": 0.95,
+          "familiar_signal": 0.0,
+          "read_reps": 4
+        },
+        "on": true
+      },
+      "spiking_novelty": {
+        "novelty": 0.40384615384615385,
+        "n_tokens": 2,
+        "per_word_freshness": [
+          0.46153846153846156,
+          0.34615384615384615
+        ],
+        "fresh_ref": 26.0,
+        "n_channels": 64,
+        "lesioned": false,
+        "on": true
+      },
+      "on": true
+    },
+    "da_encoding": {
+      "on": true,
+      "g": 1.1785890478539711,
+      "da_level": 0.1758934504500382,
+      "lesioned": false
+    }
+  }
+}

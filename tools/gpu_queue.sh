@@ -35,6 +35,8 @@
 # GPU_QUEUE_NO_RESIDENCY_GUARD (bypass the residency check — proves the failing direction in --selftest).
 set -e
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"; cd "$ROOT"
+# shellcheck source=tools/queue_job_shape_check.sh
+source "$ROOT/tools/queue_job_shape_check.sh"
 # SINGLETON across worktrees: resolve the SHARED repo root (the parent of the ONE git-common-dir every worktree
 # shares) so the queue + dpid + lock + daemon are ONE, not per-checkout. Before 2026-08-21 QDIR was relative to each
 # worktree's cwd, so N worktrees each ran their OWN daemon against the ONE physical 3090 -> concurrent brain loads ->
@@ -68,6 +70,75 @@ gpu_resident_brain_pids() {
     tr '\0' ' ' < "/proc/$p/cmdline" 2>/dev/null | grep -qE 'python.*(research\.runners|webapp)' && echo "$p"
   done
 }
+
+# LOCAL-LLM AUTOSWAP (2026-09-25, fix-round same day): the interactive local-llm service (tools/local_llm/llm.sh,
+# ~22GB of the 24GB 3090) and this queue are NOT coordinated on their own -- a queued job starting while it is
+# loaded exhausts the card (this machine has fallen off the bus on such hangs before, see
+# docs/GPU_CRASH_RECOVERY.md). Mirrors the older Hermes-era tools/qwen_supervisor.sh pattern (stop the model for
+# a job, reload it once idle), inlined here because nothing else drives the owner's own interactive model.
+# `.local_llm_was_on` is a ONE-SHOT marker whose CONTENTS are the profile to restore, written only when THIS code
+# actually VERIFIES it stopped a running unit (never fabricates an "it was on" memory, and never claims success
+# on a stop that didn't take) and consumed the moment a real restore attempt is made, win or lose -- so a
+# failed/hung `llm on` can never retry forever, and llm.sh's own `off` also removes it (a manual off, even
+# mid-job, always cancels the pending restore -- see llm.sh's cmd_off).
+#
+# BLOCKER fixed here (2026-09-25 fix-round): the stop path used to write the marker and THEN call `llm.sh off`
+# for the actual stop -- but `off`'s own cmd_off unconditionally deletes that SAME marker file (its own "a
+# manual off cancels the pending restore" behavior), so the marker this code had just written was destroyed a
+# few lines later, and the model was never auto-restored. Stopping is now done DIRECTLY via
+# $LOCAL_LLM_SYSTEMCTL (never through llm.sh's `off`), and the marker is written only AFTER a verified stop.
+# `llm on`'s own profile resolution / systemd-run / health-wait are still reused for the RESTORE side (that path
+# never touches the marker).
+LLM_SH="${GPU_QUEUE_LLM_SH:-$ROOT/tools/local_llm/llm.sh}"   # override is TEST-ONLY (a fake script); NEVER set in production
+LLM_UNIT="local-llm"
+LLM_WAS_ON="$QDIR/.local_llm_was_on"                         # CONTENTS = the profile to restore; presence == "gpu_queue stopped it; restore when idle"
+LOCAL_LLM_SYSTEMCTL=${LOCAL_LLM_SYSTEMCTL:-systemctl}        # TEST-ONLY override (shared name with llm.sh); NEVER set in production
+export LOCAL_LLM_SYSTEMCTL                                   # llm.sh (invoked as a subprocess below) must see the same stub
+
+llm_is_active() { "$LOCAL_LLM_SYSTEMCTL" --user is-active --quiet "$LLM_UNIT" 2>/dev/null; }
+
+# Call right before a queued job is allowed to compete for VRAM (before the freevram wait, so the wait can
+# actually succeed), AND from the dispatcher's own contention loop below as a retry while the unit is still
+# active. A no-op unless the unit is genuinely active -- never writes the marker for a model that was already
+# down, which would fabricate a restore the owner never asked for. Stops the unit DIRECTLY via
+# $LOCAL_LLM_SYSTEMCTL (see the BLOCKER note above) and only writes the marker -- carrying the profile name, so
+# the restore brings back the SAME profile -- once the stop is VERIFIED (still active afterward => log the
+# failure and return 1 instead of ever claiming "stopped"; the caller's own retry loop tries again).
+llm_stop_for_job() {
+  llm_is_active || return 0
+  local prof; prof=$(bash "$LLM_SH" __current_profile 2>/dev/null || true)
+  "$LOCAL_LLM_SYSTEMCTL" --user stop "$LLM_UNIT" >> "$LOG" 2>&1
+  "$LOCAL_LLM_SYSTEMCTL" --user reset-failed "$LLM_UNIT" >/dev/null 2>&1 || true
+  if llm_is_active; then
+    echo "$(date '+%F %T') LLM-AUTOSWAP: FAILED to stop $LLM_UNIT for a queued job -- still active, will retry" >> "$LOG"
+    return 1
+  fi
+  printf '%s\n' "$prof" > "$LLM_WAS_ON"
+  echo "$(date '+%F %T') LLM-AUTOSWAP: stopped $LLM_UNIT for a queued GPU job" >> "$LOG"
+}
+
+# Call on every idle poll (queue empty). Cheap no-op unless llm_stop_for_job set the marker. Two conditions
+# DEFER (leave the marker for the next idle poll, retried every ~12s) rather than give up: GPU_PAUSE (gaming --
+# reloading a ~22GB model mid-game would be exactly backwards) and a brain process still GPU-resident (a job
+# that outlived a dead daemon incarnation, or a truly-standalone launch -- restoring now would double-load the
+# card). Only the restart attempt itself is one-shot: the marker is consumed immediately before it, so a crash
+# or a failed `llm on` is never retried forever.
+llm_restore_if_idle() {
+  [ -f "$LLM_WAS_ON" ] || return 0
+  if [ -f "$PAUSE" ]; then return 0; fi
+  if [ -n "$(gpu_resident_brain_pids)" ]; then
+    echo "$(date '+%F %T') LLM-AUTOSWAP: queue drained but a brain process is still GPU-resident -- deferring restore" >> "$LOG"
+    return 0
+  fi
+  local prof; prof=$(cat "$LLM_WAS_ON" 2>/dev/null || true)
+  rm -f "$LLM_WAS_ON"                       # consumed HERE, before the one attempt below
+  llm_is_active && return 0                 # owner (or a race) already reloaded it manually
+  echo "$(date '+%F %T') LLM-AUTOSWAP: queue drained -- restoring $LLM_UNIT${prof:+ ($prof)}" >> "$LOG"
+  # backgrounded (loading can take a while, must not block dispatch) + 8>&- so this child can never keep the
+  # daemon's singleton lock held after the daemon itself dies (same fd-inheritance hazard as the dispatched job).
+  bash "$LLM_SH" on ${prof:+"$prof"} >> "$LOG" 2>&1 8>&- &
+}
+
 # Serialise every queue read-modify-write: `add` (>> append) racing the daemon's pop (tail>tmp;mv) could clobber a
 # concurrently-added job (the "queued job vanished without a START line" wedge). flock makes add + pop mutually exclusive.
 
@@ -115,19 +186,30 @@ daemon() {
     # tracking-loss fix in exactly the scenario it exists for.
     if [ -f "$PAUSE" ]; then sleep 8 8>&-; continue; fi
     job=$(head -1 "$QUEUE" 2>/dev/null || true)
-    if [ -z "$job" ]; then sleep 12 8>&-; continue; fi
-    # Contention guard: wait for (1) no PAUSE, (2) the GPU to be genuinely free of any brain-loading
-    # process — GROUND TRUTH via nvidia-smi, not just "does our own gpu.running say something is running"
-    # — and (3) raw VRAM headroom (auto-yields to a game / another run). (2) is what closes the
-    # tracking-loss bug: a prior daemon incarnation can die mid-job without ever cleaning up gpu.running or
-    # killing the job it launched; the orphan keeps running+holding VRAM, invisible to a freshly-started
-    # daemon that only trusts its own (empty) bookkeeping, and MIN_FREE alone would never catch it at this
-    # workload's typical per-job VRAM footprint. Checking residency before EVERY dispatch (not just at
-    # startup) also catches a truly-standalone brain process launched outside the queue entirely.
-    # GPU_QUEUE_NO_RESIDENCY_GUARD is TEST-ONLY (proves the failing direction in --selftest); it must NEVER
-    # be set in production.
+    if [ -z "$job" ]; then llm_restore_if_idle; sleep 12 8>&-; continue; fi
+    llm_stop_for_job   # free the model's VRAM BEFORE waiting for headroom below -- retried in the loop right below if it failed
+    # Contention guard: wait for (1) no PAUSE, (2) local-llm to be GENUINELY stopped (never dispatch over a
+    # loaded model just because raw VRAM headroom happens to clear -- the ~22GB unit alone can still leave
+    # ~3-4GB free, comfortably above MIN_FREE's default 3000MiB while very much still holding the card; a
+    # stop attempt above can also simply fail, e.g. a wedged unit -- HIGH finding, 2026-09-25 fix-round), (3)
+    # the GPU to be genuinely free of any OTHER brain-loading process — GROUND TRUTH via nvidia-smi, not just
+    # "does our own gpu.running say something is running" — and (4) raw VRAM headroom (auto-yields to a game
+    # / another run). (3) is what closes the tracking-loss bug: a prior daemon incarnation can die mid-job
+    # without ever cleaning up gpu.running or killing the job it launched; the orphan keeps running+holding
+    # VRAM, invisible to a freshly-started daemon that only trusts its own (empty) bookkeeping, and MIN_FREE
+    # alone would never catch it at this workload's typical per-job VRAM footprint. Checking residency before
+    # EVERY dispatch (not just at startup) also catches a truly-standalone brain process launched outside the
+    # queue entirely. GPU_QUEUE_NO_RESIDENCY_GUARD is TEST-ONLY (proves the failing direction in --selftest);
+    # it must NEVER be set in production.
     while :; do
       [ -f "$PAUSE" ] && break
+      if llm_is_active; then
+        # a stop attempt failed (or the owner/something else reloaded it mid-wait) -- retry rather than EVER
+        # proceed to dispatch over a loaded model.
+        llm_stop_for_job
+        sleep "$POLL_SEC" 8>&-
+        continue
+      fi
       if [ -z "${GPU_QUEUE_NO_RESIDENCY_GUARD:-}" ]; then
         resident=$(gpu_resident_brain_pids)
         if [ -n "$resident" ]; then _adopt_resident "$resident"; sleep "$POLL_SEC" 8>&-; continue; fi
@@ -139,11 +221,25 @@ daemon() {
     # pop the job atomically (flock so a concurrent `add` append is not clobbered by this rewrite)
     ( flock 9; tail -n +2 "$QUEUE" > "$QUEUE.tmp" 2>/dev/null && mv "$QUEUE.tmp" "$QUEUE" ) 9>"$QLOCK" 8>&-
     echo "$(date '+%F %T') START: $job" >> "$LOG"
+    start_s=$(date +%s)
     setsid bash -c "$job" >> "$LOG" 2>&1 8>&- & jpid=$!   # own process GROUP so pause --now can kill the whole job tree (frees VRAM); 8>&- so the job never holds the daemon's singleton lock (see note above)
     printf '%s\t%s\n' "$jpid" "$job" > "$RUNNING"
     wait "$jpid" 2>/dev/null; rc=$?
     rm -f "$RUNNING"
+    dur=$(( $(date +%s) - start_s ))
     echo "$(date '+%F %T') DONE(rc=$rc): $job" >> "$LOG"
+    # FAST-FAIL, LOUDLY (2026-09-25). rc=127 ("command not found") or rc=2 (a shell syntax/usage error) inside
+    # FAST_FAIL_S of START means the job never actually ran -- it died on argv[0]/syntax, exactly like the
+    # historical `status` job (2026-08-31/09-01, three cycles, rc=127 in under a second each time) that sat in
+    # this very log as an ordinary, unremarkable DONE(rc=127) line for weeks. A plain DONE line is easy to miss
+    # in a log this size; a distinct marker is not. tools/queue_job_shape_check.sh now refuses that SHAPE at
+    # enqueue time, but this catches whatever it cannot see (e.g. a module importable locally but not on the
+    # box actually running the job, or a bug in the shape check itself) -- belt and suspenders.
+    if [ "$rc" -eq 127 ] || [ "$rc" -eq 2 ]; then
+      if [ "$dur" -le "${GPU_QUEUE_FAST_FAIL_S:-10}" ]; then
+        echo "$(date '+%F %T') ⛔ FAST-FAIL: rc=$rc after ${dur}s (died on argv[0]/syntax, not a real run): $job" >> "$LOG"
+      fi
+    fi
   done
 }
 
@@ -172,7 +268,7 @@ selftest() {
   # scratch dir is GLOBAL (not local) so the EXIT-trap cleanup still sees it after this function returns.
   _GPU_SELFTEST_T=$(mktemp -d "${TMPDIR:-/tmp}/gpu_queue_selftest.XXXXXX")
   trap _gpu_selftest_cleanup EXIT
-  local T="$_GPU_SELFTEST_T" SELF="$0" A="" B="" C="" D="" E="" F="" G="" H="" rc=0 out dead_pid
+  local T="$_GPU_SELFTEST_T" SELF="$0" A="" B="" C="" D="" E="" F="" G="" H="" I="" J="" rc=0 out dead_pid
   live()    { kill -0 "$1" 2>/dev/null; }
   dpid_is() { [ "$(cat "$T/gpu_queue.dpid" 2>/dev/null)" = "$1" ]; }
   lock_free() { ( exec 8>"$T/.gpu_daemon.lock"; flock -n 8 ) 2>/dev/null; }
@@ -288,6 +384,50 @@ FAKEEOF
   fi
   rm -f "$T/fake_resident_pid" "$T/gpu.running" "$T/GPU_PAUSE"
 
+  # ---- TEST E: a job that dies almost instantly with rc=127/2 is logged as a LOUD FAST-FAIL, not buried in --
+  # ---- an ordinary DONE line (2026-09-25: the historical `status` job did exactly this, unflagged, 3x) ------
+  echo
+  echo "-- TEST E: a fast rc=127 job is logged as a loud FAST-FAIL, an rc=0 job is NOT --"
+  # Dispatch messages (START/DONE/FAST-FAIL) are written to \$LOG (\$T/gpu_queue.log), NOT the ">>...  2>&1"
+  # redirection target below (that one only catches the daemon subprocess's own raw stdout/stderr).
+  DLOG="$T/gpu_queue.log"
+  if ! waitfor lock_free; then echo "  FAIL(E-setup): singleton lock not free before TEST E (prior daemon's kill hadn't released it yet)"; rc=1; fi
+  rm -f "$DLOG"
+  # A job whose FIRST WORD resolves (so the enqueue-time shape check accepts it -- see
+  # tools/queue_job_shape_check.sh) but whose TARGET does not -- the exact `status`-job shape: `env` is a real
+  # command, the thing it tries to exec is not, so the real dispatch still dies with rc=127 in well under a
+  # second.
+  GPU_QUEUE_DIR="$T" bash "$SELF" add "env this_command_does_not_exist_xyz_12345" >/dev/null
+  GPU_QUEUE_DIR="$T" GPU_QUEUE_NVIDIA_SMI="$T/fake_nvidia_smi.sh" GPU_QUEUE_POLL_SEC=1 \
+    bash "$SELF" __daemon >/dev/null 2>&1 & I=$!
+  if waitfor grep -q 'DONE(rc=127)' "$DLOG"; then
+    if grep -q 'FAST-FAIL: rc=127' "$DLOG"; then
+      echo "  PASS(E1): a fast rc=127 job is logged as a loud FAST-FAIL"
+    else
+      echo "  FAIL(E1): job died rc=127 fast but NO FAST-FAIL line was logged -- exactly the \`status\` bug"; rc=1
+    fi
+  else
+    echo "  FAIL(E-setup): the rc=127 job never completed (log tail: $(tail -3 "$DLOG" 2>/dev/null))"; rc=1
+  fi
+  kill -KILL "$I" 2>/dev/null
+  if ! waitfor lock_free; then echo "  FAIL(E-setup): daemon #E1's singleton lock never freed after kill"; rc=1; fi
+  # (E2) the FAILING DIRECTION: an ordinary rc=0 job must NEVER be flagged -- proves E1 is a real signal, not a
+  # marker stamped on every completion regardless of outcome.
+  rm -f "$DLOG"
+  GPU_QUEUE_DIR="$T" bash "$SELF" add "true" >/dev/null
+  GPU_QUEUE_DIR="$T" GPU_QUEUE_NVIDIA_SMI="$T/fake_nvidia_smi.sh" GPU_QUEUE_POLL_SEC=1 \
+    bash "$SELF" __daemon >/dev/null 2>&1 & J=$!
+  if waitfor grep -q 'DONE(rc=0)' "$DLOG"; then
+    if grep -q 'FAST-FAIL' "$DLOG"; then
+      echo "  FAIL(E2): a normal rc=0 job was wrongly flagged FAST-FAIL"; rc=1
+    else
+      echo "  PASS(E2): a normal rc=0 job is correctly never flagged"
+    fi
+  else
+    echo "  FAIL(E2-setup): the rc=0 job never completed (log tail: $(tail -3 "$DLOG" 2>/dev/null))"; rc=1
+  fi
+  kill -KILL "$J" 2>/dev/null
+
   echo
   if [ "$rc" -eq 0 ]; then echo "SELFTEST: PASS — singleton holds, the residency guard holds (+ both failing directions are detectable), and pause --now reaches a genuinely-resident job even with a stale record."
   else echo "SELFTEST: FAIL"; fi
@@ -325,6 +465,11 @@ case "${1:-}" in
     daemon ;;
   add)
     [ -z "${2:-}" ] && { echo 'usage: add "<full gpu command incl. --json out>"' >&2; exit 1; }
+    # SHAPE GATE (2026-09-25, tools/queue_job_shape_check.sh): refuse a line whose first word could not
+    # possibly run (a prose label, a torn line, a syntax error) BEFORE it is queued -- see that file's header
+    # for the real historical failures (the SETTLE A2 pool lines; a bare `status` job in this very log,
+    # 2026-08-31/09-01, three separate cycles, rc=127 each time, never flagged).
+    if ! SHAPE_MSG=$(queue_job_runnable_check "$2"); then echo "$SHAPE_MSG" >&2; exit 1; fi
     ( flock 9; printf '%s\n' "$2" >> "$QUEUE" ) 9>"$QLOCK"; echo "queued (depth $(wc -l < "$QUEUE")): ${2:0:80}" ;;
   pause)
     touch "$PAUSE"
@@ -416,6 +561,11 @@ case "${1:-}" in
     fi
     exit 0 ;;
   stop) [ -f "$DPID" ] && kill "$(cat "$DPID")" 2>/dev/null && rm -f "$DPID" && echo "dispatcher stopped" || echo "not running" ;;
+  # TEST-ONLY hidden entry points: run one autoswap decision synchronously, without the daemon's infinite loop,
+  # so tests can drive it deterministically with stubbed LOCAL_LLM_SYSTEMCTL / GPU_QUEUE_NVIDIA_SMI /
+  # GPU_QUEUE_LLM_SH. The real daemon() calls the same functions in-process (see above).
+  __llm_stop_for_job) llm_stop_for_job ;;
+  __llm_restore_if_idle) llm_restore_if_idle ;;
   --selftest) selftest; exit $? ;;
   *) grep '^#' "$0" | sed 's/^# \{0,1\}//' | head -20 ;;
 esac

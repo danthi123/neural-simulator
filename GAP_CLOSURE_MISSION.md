@@ -165,6 +165,87 @@ recommendation: redo on a different host, log in b2b0924_reruns.tsv, one-line pr
 recommendation: merge the 8 confirmed corrections from claimcheck-audit-1..4, add a dated scope note, no bulk-marking, no retractions.
 (5) flipdefaults-adequate unpinned reference: FYI; B2a pinned R2 independently confirms the three flips; accept with the caveat.
 
+**☀️ 13:05 OWNER RULINGS:** (1) memory pair: WAIT ON FIX -- "a certain degree of forgetting is acceptable ... What's important is
+that the brain should remember things that matter ... prioritizing what should be remembered and focusing on key details, while
+forgetting minor details over time ... not just stores info like a RAG system" (memory project_remember_what_matters). The target
+is PRIORITIZED retention (important facts + key details kept, minor details fade, gist survives), not every fact kept. (2) affect
+congruence: owner wants more context; stated view: feelings must shape HOW the brain speaks, not insert 'Wonderful!'-style words
+(memory feedback_affect_shapes_speech) -- context workflow `w4reqinlw`. (3) B2b torn cells: APPROVED as recommended. (4) legacy
+claim-check: APPROVED as recommended. Execution = workflow `wgw2xgcw9` (prioritized-memory research + design + registered
+'what-matters' test battery; B2b torn-cell redo with a node constraint + rerun log + amendment; claim-check corrections + scope note).
+
+**☀️ 13:15 SETTLE A3 smoke:** the Amendment-3 crossover worker runs end to end at b21140758 (cupy, Qwen renderer, planned arm every
+turn, one reader per arm, WTA read with the arm's config, no exception); verdict UNDEFINED as expected at 1 process/orientation
+(n=8). INSTRUMENT BUG: M4_render reads exactly 0.0 (se 0, resid 0) on every turn -- the render-time hook captures nothing; fix before
+any long run (artifacts: .claude/worktrees/settle-a3x-smoke-b21140758/research/findings/raw/_affect_marker_settle_gpu_timing/a3x_smoke/).
+The 7.5 h A3 GPU run is HELD pending owner item 2 (the owner questions the prepended-marker design itself).
+
+**☀️ 13:35 lanes:** item-2 context delivered (the six-word marker IS on by default and gets glued onto 'I don't know' replies;
+mood also sets reply length + a warm/blunt instruction to the Qwen mouth on cupy; recommendation A+B+C, awaiting the owner's go on
+retiring the word). Merged the ssh-in-read-loop gate SR (4f77a5c7d). Fix round 3 (enqueue-time job-shape check: HIGH -- a subshell
+first command executed locally; fragment audit: evidence not committed; AWS stop/start: durable pause) = `wsogpg6ty`. Harvest census +
+scoring of unscored result sets = `wjiqn7u7e`. SlotBinder fast teach toward 404 facts = `w1v63a0sa`. GPU: dev-seed-7 run of the
+pair's rc family on CUPY (episodic store writes on cupy; the review's production-path gap) in worktree
+.claude/worktrees/pair-cupy-dev-4f77a5c7d -> research/findings/raw/_sleep_replay_capture_cupy_dev (dev record, not a gate row).
+
+**☀️ 13:55 merges + a gate gap:** merged dup-guard liveness (5c4be897e, 46 pool tests pass). gap#4 C25-C27 + C26 scoring (branch
+research/score-gap4-c26-0925 @ ed6758f61, verifier SOUND: UNDEFINED on interpretability; the sliding baseline removes the one-sided
+clamp saturation) is BLOCKED by gate CC: one C25 ckpt (1.08 h) carries no corpus_check_fresh although the lane ran a corpus check
+at 01:38 (logged in its worktree). Root cause: before_you_build.sh logs per-worktree (115 separate logs; main's last entry 09-24
+20:28) and pool/GPU jobs are never stamped -> fix = workflow `w6ceucy8n` (shared log, stamp propagation, gate accepts a real prior
+check from any log); merge after it lands. Merge aborted cleanly, 108 set-aside files restored. Fix round 4 (pool-stall 2 HIGH,
+prereg gate false positive, claim-check r8 non-ASCII regression, SETTLE A3 small items + M4 render=0) = `w8hj1o2ap`.
+
+**☀️ 14:05 awake-replay completion:** dev result (research/awake-replay-completion-r2 @ 111667aaa; dev seeds 1-15 only): completion
+rescued both weak dev seeds (2, 13), lesion-controlled, normal seeds unchanged, no confab -- but the NIGHT completion carried it.
+Review SOUND-WITH-ISSUES: the spiking item bank SATURATES at 300 pA and sometimes reinstates the WRONG word (seed 3: 'ball') = a
+false-memory risk; a host-argmax substitute passes every test; stale pin. NOT queued. Fix round (unsaturated bank, abstain when
+ambiguous, pin the spiking pick in tests, addendum before any gate run, re-pin) = workflow `wog6646nw`.
+
+**☀️ 14:10 HANDOFF MODE (owner, 2026-09-25 ~14:00):** Claude weekly usage at 71% (reset Tue 11:00). Finish in-flight work (not
+cut short), then hand compute supervision to the LOCAL model (Claude Code via `llm claude`, Qwen3.8-27B); keep Claude for high
+complexity. Policy: at most ONE more fix round per lane; then merge if nothing threatens results/safety, else park with the issue
+list; tooling polish (pool-stall, prereg-amendment gate, claim-check) parks first. OWNER DECISIONS: (1) AWS allowed through the
+weekend for batteries Claude queues, within $50/day, auto-stop on; (2) RETIRE the prepended affect-marker word from replies
+(option A; mood still computed internally; SETTLE A3 7.5 h run CANCELLED; SETTLE/congruence = measurement only); (3) the local
+model may commit harvested raw results + one-line board entries straight to main through the gates. Prep = workflow `werouis9k`
+(marker retirement, GPU<->local-model auto-swap, tools/status.sh + LOCAL_LLM_RUNBOOK.md, larger-context local-model scouting).
+
+**☀️ 14:40 RESUME RECORD (5-hour usage at 92%, resets ~15:55):** if interrupted, after the reset: read each workflow journal under
+~/.claude/projects/-home-dant123-Projects-sim/87891831-e642-4a2f-abeb-50ea0867609b/subagents/workflows/<run>/journal.jsonl, salvage
+uncommitted work from .claude/worktrees/<run>-N (commit through gates, push), then resume with Workflow({scriptPath, resumeFromRunId}).
+Running: wf_69528e21-31b (pair: review-doc fix, B2c fix, production-path arms), wf_43f07082-768 (slotbinder fast teach),
+wf_99dde278-e1e (enqueue check / fragment audit / AWS r4), wf_84715f6a-68f (awake completion fix), wf_99bc7abf-15b (handoff prep:
+marker retirement, GPU<->llm swap, status+runbook, model scout), wf_87826bf5-9db (corpus-check shared log), wf_e650785f-7b8
+(condense CLAUDE.md + memory; owner approves before apply). STOPPED at 14:40 to save usage: wf_0d0ca4c2-1f4 (6/8 done: pool-stall,
+claim-check r8 and SETTLE A3 built + reviewed SOUND-WITH-ISSUES; the prereg-amendment gate lane is parked). Pending merge:
+research/score-gap4-c26-0925 and research/score--pmem-live-cliff-detector-v2-0925 (both wait on the corpus-check shared-log fix).
+
+**☀️ 14:50 HOLD (owner):** let the running local work finish, queue NOTHING new on the local machine/GPU (owner will game), then
+pause; the handoff wrap-up happens when the owner calls it. Harvest notices are recorded only. wf_99dde278-e1e finished: enqueue
+check (research/pool-enqueue-runnable-check @ 03c53f5f7) SOUND-WITH-ISSUES -- 1 MEDIUM (a multi-line job passes the check but the
+line-oriented queue splits it: refuse any job containing a newline) + LOWs; fragment audit (@ 34ae88a62) SOUND-WITH-ISSUES, LOWs only;
+AWS stop/start r4 result in the journal. Wrap-up list: merge/park per the one-more-round rule; apply marker retirement + GPU<->llm
+auto-swap; fill LOCAL_LLM_RUNBOOK 'Queue next'; queue reviewed pool/AWS batteries; owner approves the condensed CLAUDE.md/memory;
+live-check `llm claude`; then hand off.
+
+**☀️ 16:40 HARVEST (raw results only; verdict findings PARKED for Claude after the reset):** fi (sleep-forgetting after later
+learning, prereg Amendment 6): aggregator reads NO-GO, 3/6 seeds GO (42, 44, 102); sign-flip p 0.0625 both contrasts. Seeds 43 and
+101 fail on the FIRST morning in most arms (plain facts never recalled), which looks like an encoding miss upstream of forgetting;
+seed 100 loses the re-mentioned fact on night 4 (FI6). D6 capacity at N=2000 (18/18): recall holds to 2000 facts in HEBB and COPY;
+cost ceiling between 50 and 500 facts for both; HEBB vs COPY reads PARITY-BY-CONSTRUCTION (the finding must say what that means).
+Committed fe1066f64: fi per-seed files + `research/findings/raw/_d6_capacity_curve/score.json`. The fi aggregate is NOT committed:
+its aggregator writes no `preconditions` block (gate verdict-preconditions), so the scoring step adds one after the independent
+check. Seven D6 N=2000 cells ran 14.6-31.0 h each with no cost projection; each now carries a retroactive note saying so.
+
+**☀️ 16:20 WRAP-UP MERGES (owner gaming; Claude weekly at 79%):** MERGED to main: marker-word retirement 606e1c7d8
+(BRAIN_AFFECT_MARKER_SURFACE default OFF; mood still computed + recorded; review SOUND, gate mutation-checked); corpus-check
+shared log ecb6bae29 (review SOUND after a test-path fix 4b24c02a4); then the two merges it unblocked, gap4 C26 scoring 3d16962d0
+and pmem live cliff-detector v2 4c0b9fada. LOCAL_LLM_RUNBOOK.md filled (0b967376f): harvest recipes for fi / D6 N=2000 / SETTLE A2,
+idle-gate waiver guidance, Queue next EMPTY, parked-for-Claude list. 16:30: GPU<->llm auto-swap MERGED d78f6a997
+(review SOUND, mutation-verified; gpu-queue-dispatch restarted onto it while idle). Condense branch brought up to date with main
+(ea25fbbaf, diff now only its own 8 files) and awaits OWNER approval. Still open: live check of `llm claude` once the GPU is free.
+
 **🌙 PRE-DECIDED NEXT ACTIONS — OVERNIGHT PLAN (owner asleep from 01:35, 2026-09-25); work in order, re-arm the heartbeat on every expiry:**
 1. ✅ B2a DONE 03:45: re-scored R1 PASS (28/28, 0 regressions) + R2 PASS (168/168 valid at pinned M1, 6 covered-by-parent,
    0 incomplete), two verifiers agree, merged 075c24cd3 (follow-up to the FAIL finding). Robust core 24, union 25, mean

@@ -206,3 +206,4 @@ ordinary replies, #232 false-belief in chat, #233 learned noun meanings (de-risk
 ## 2026-09-25  07:45 slot-binder N=32 merge (#206), sleep load-renorm merge + awake arc scoring (#227)
 ## 2026-09-25  08:00 awake-rest replay NO-GO 5/6 (#227)
 ## 2026-09-25  11:30 LTM-on GO 6/6 + r2 NO-GO (#227)
+## 2026-09-25  14:25 census scoring: affect learned vocab NO-GO (#218), open-ended gated NOT-GO (#112), lexicon v1 NO-GO (#121), ToM seed-7 PASS, SETTLE cost VOID
