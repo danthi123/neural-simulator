@@ -95,8 +95,12 @@ files, add ONE board line with the verdict string the command printed (copy it, 
   NEEDS CLAUDE line naming the file. Never hand-write a preconditions block.
 - **When blocked by `device-and-cost`** (a long run with no cost projection): do not edit the raw files; add a NEEDS CLAUDE
   line and leave that battery uncommitted.
-- **b2b_base: DO NOT HARVEST.** Three of its cells need an owner-approved re-run first (see "Parked for Claude").
-  Leave it at 256/258 or 258/258; Claude scores it.
+- **arcc_awake_completion** (awake replay with pattern completion; prereg
+  `research/findings/2026-09-24-sleep-replay-capture-PREREGISTRATION.md` Amendment 8 / Addendum 8a), only at 6/6:
+  `.venv/bin/python -m research.runners._da_tag_capture_chat_probe --family arcc --aggregate research/findings/raw/_awake_replay_completion`.
+  Commit the six seed files + board line; if the aggregate is blocked by verdict-preconditions, leave it (see below).
+- **b2b_base: DO NOT HARVEST.** The three torn cells are being re-run on pool41/pool42 (queued 17:51); two seed-102 cells
+  (discourse-register, episodic-memory) never produced a result and wait for Claude's ruling. It reads ~253/258; Claude scores it.
 
 ## Commit blocked by an idle-compute check (lane-starvation / compute-idle-persistent)
 
@@ -128,6 +132,10 @@ lines here after the Tuesday reset.)_
   arms, the SlotBinder fast teach review (`research/slotbinder-fast-teach`, UNREVIEWED; touches sim/).
 - Designs with open review issues: prioritized memory (`research/prioritized-memory-design`), B2c combined battery
   (`research/b2c-paired-flip-prereg-fixround1`), claim-check round 8, the prereg-amendment gate, the pool-stall detector.
+- B2b: (a) before AWS pool1 or pool2 next starts, run Steps 1a/1b of `research/coordination/b2b0924_reruns_commands.txt`
+  (move the stale copies aside on those nodes); (b) seed 102 discourse-register + episodic-memory were dispatched twice
+  (00:54 pool2, 13:15 pool1/pool2), left partial arm files and no lb.json -- decide under prereg A1.4 whether a further
+  re-run is allowed; (c) fill `research/coordination/b2b0924_reruns.tsv` results when the three redo cells land, then score.
 - Scoring findings, harvested but not yet written: fi (aggregate reads NO-GO 3/6; seeds 43 and 101 look like an encoding
   miss, not forgetting; needs the independent check + `preconditions` block) and D6 at N=2000 (recall holds to 2000; cost
   ceiling 50-500; explain HEBB vs COPY PARITY-BY-CONSTRUCTION).
