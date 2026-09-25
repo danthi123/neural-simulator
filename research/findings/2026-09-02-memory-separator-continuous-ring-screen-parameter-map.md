@@ -22,9 +22,8 @@ which is the input to picking configs for a full (with-control) separability run
 memory-separator GO.
 
 ## Result (116 of 216 configs harvested so far via pool_sync)
-<!--derived-->
-- Dendritic learning signal `dw` spans **0.0002 → 0.0489**.
-- **`ring_spacing=2` is the clear promising region:** all top-8 configs by `dw` (~0.0486–0.0489) use spacing=2
+- Dendritic learning signal `dw` spans **0.0002 → 0.0489**.  <!--derived-->
+- **`ring_spacing=2` is the clear promising region:** all top-8 configs by `dw` (~0.0486–0.0489) use spacing=2  <!--derived-->
   (vs spacing=1). k_thresh=2.0 and self_regen=0.1 dominate the top; lateral_exc / surround_inhib / slot_drive vary
   across the leaders (0.5–3.0 / 3.0–6.0 / 700–1400), so those are second-order within the spacing=2 basin. <!--derived-->
 - Top configs: cfg 77 (spacing2, self_regen0.1, surr_inhib6, slot700), 95, 91, 87, 73 (see SCREEN_SUMMARY.json `top8_by_dw`).

@@ -46,22 +46,20 @@ genuine signal") and satdiv-divisive-norm BORDERLINE. This overnight batch runs 
 adjudicate BOTH, all under the full anti-cheat protocol (held-out position + scramble-null, config-B spiking front end).
 
 ## (A) Divisive normalization IS the lever — the confound resolved
-<!--derived-->
 From research/findings/raw/lanes/perception/satdiv_sig8_sc760_r1p0_nglim6_heldoutpos_scramblenull_6seed.json,
 research/findings/raw/lanes/perception/norm_z_nglim6_r1p0_heldoutpos_scramblenull_6seed.json, and
 research/findings/raw/lanes/perception/norm_none_nglim6_r1p0_heldoutpos_scramblenull_6seed.json —
 all three arms share n_glimpses=6, ridge=1.0, and the full anti-cheats; only the C2 normalization differs:
 - s2-norm satdiv (ON): capability-GO 5/6, beats-config-C-floor 5/6, learning-load-bearing 6/6, scramble-null 6/6 ->
-  LINDISCRIM-READOUT-GO. Held-out learned spiking-WTA accuracy ~0.477 (vs flat-pool ~0.278, random ~0.233).
-- s2-norm z (satdiv OFF): capability-GO 0/6, beats-floor 1/6, load-bearing 4/6 -> PARTIAL. Held-out learned ~0.373.
-- s2-norm none (satdiv OFF): capability-GO 1/6, beats-floor 1/6, load-bearing 3/6 -> PARTIAL. Held-out learned ~0.347.
+  LINDISCRIM-READOUT-GO. Held-out learned spiking-WTA accuracy ~0.477 (vs flat-pool ~0.278, random ~0.233).  <!--derived-->
+- s2-norm z (satdiv OFF): capability-GO 0/6, beats-floor 1/6, load-bearing 4/6 -> PARTIAL. Held-out learned ~0.373.  <!--derived-->
+- s2-norm none (satdiv OFF): capability-GO 1/6, beats-floor 1/6, load-bearing 3/6 -> PARTIAL. Held-out learned ~0.347.  <!--derived-->
 
 Turning satdiv off, with glimpses and ridge held fixed, collapses the GO (5/6 -> 0-1/6) and drops held-out learned
 accuracy toward the flat-pool floor. The earlier GO arm confounded satdiv with more glimpses (6 vs 2) and a higher ridge
 (1.0 vs 0.5); this isolation removes that confound and shows the normalization itself is decisive.
 
 ## (B) Conjunctive binding is NOT the lever
-<!--derived-->
 From research/findings/raw/lanes/perception/conjbind_widthctrl_n1152_heldoutpos_scramblenull_6seed.json and
 research/findings/raw/lanes/perception/conjbind_competitive_n1152_heldoutpos_scramblenull_c2basistopo_6seed.json (with
 the product/bind-arm/attention-gated/triple sibling arms in the same directory) — all arms share n_glimpses=2,
@@ -76,7 +74,6 @@ A width-matched flat pool matches or beats every binding topology, so the positi
 finding attributed to configural binding is genuine but NOT binding-specific.
 
 ## Robustness (independent seeds 200-205)
-<!--derived-->
 From research/findings/raw/lanes/perception/satdiv_sig8_sc760_r1p0_nglim6_heldoutpos_scramblenull_seeds200-205.json —
 the satdiv GO arm re-run on six fresh held-out seeds (200-205) is capability-GO 6/6, learning-load-bearing 6/6,
 scramble-null 6/6 (LINDISCRIM-READOUT-GO). So the position-invariant readout GO holds on 11 of 12 seeds across the two

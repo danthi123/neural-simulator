@@ -104,25 +104,25 @@ the token response at a capacity-matched operating point, not an absolute fluenc
 
 ## 3. Results (6 seeds, wikitext103, d96/V2000, deep d10-99 held-out NLL)
 
-Per-seed WKV deep NLL vs training tokens (nats; every seed monotone-decreasing):
+Per-seed WKV deep NLL vs training tokens (nats; every seed monotone-decreasing; delta/top-slope are computed
+from the raw per-point values, which are quoted here at the artifact's own precision):
 
-<!--derived-->
-| tok/param | 0.38 | 0.76 | 1.51 | 3.02 | 4.54 | delta(min->max) | top slope (3.02->4.54) |
+| seed | delta(min->max) | top slope (3.02->4.54) | @0.38 tok/param | @0.76 | @1.51 | @3.02 | @4.54 |
 |---|---|---|---|---|---|---|---|
-| seed 42  | 4.570 | 4.401 | 4.232 | 4.038 | 3.923 | 0.647 | +0.115 |
-| seed 43  | 4.625 | 4.460 | 4.281 | 4.085 | 3.977 | 0.647 | +0.108 |
-| seed 44  | 4.571 | 4.392 | 4.210 | 4.016 | 3.909 | 0.663 | +0.108 |
-| seed 100 | 4.558 | 4.396 | 4.239 | 4.028 | 3.926 | 0.632 | +0.102 |
-| seed 101 | 4.569 | 4.397 | 4.233 | 4.030 | 3.926 | 0.642 | +0.103 |
-| seed 102 | 4.578 | 4.408 | 4.246 | 4.045 | 3.932 | 0.646 | +0.112 |  <!--derived-->
-| **mean** | **4.578** | **4.409** | **4.240** | **4.040** | **3.932** | **0.646** | **+0.108** |  <!--derived-->
+| 42  | <!--derived-->0.647 | +0.115<!--/derived--> | 4.5699 | 4.4011 | 4.232 | 4.0377 | 3.9226 |
+| 43  | <!--derived-->0.647 | +0.108<!--/derived--> | 4.6245 | 4.4602 | 4.2805 | 4.0848 | 3.9771 |
+| 44  | <!--derived-->0.663 | +0.108<!--/derived--> | 4.5714 | 4.3917 | 4.2098 | 4.0161 | 3.9085 |
+| 100 | <!--derived-->0.632 | +0.102<!--/derived--> | 4.5576 | 4.396 | 4.2387 | 4.0278 | 3.9255 |
+| 101 | <!--derived-->0.642 | +0.103<!--/derived--> | 4.5687 | 4.3973 | 4.2327 | 4.0297 | 3.9264 |
+| 102 | <!--derived-->0.646 | +0.112<!--/derived--> | 4.5784 | 4.4083 | 4.2461 | 4.0445 | 3.9323 |
+| **mean** | **0.646** | **+0.108** | **4.578** | **4.409** | **4.240** | **4.040** | **3.932** |  <!--derived-->
 
 Gate readout (6/6 on every criterion): `uses_tokens` (delta > 0.10) **6/6**; `still_descending_at_top`
 (top-slope > 0.02) **6/6**; `uses_context_at_top` (perm & mless collapse) **6/6**; `beats_trigram_at_top`
 **6/6**; `margin_grows_with_tokens` **6/6**. The WKV beats the fair trigram at ALL 30 points, and its
-margin over the trigram GROWS with tokens (mean margin +0.240 at 0.38 tok/param -> +0.252 at 4.54
+margin over the trigram GROWS with tokens (mean margin +0.240 at 0.38 tok/param -> +0.252 at 4.54 <!--derived-->
 tok/param — it stays wide as data grows, never shrinking toward the trigram) — the OPPOSITE of the record's d512 result, where the trigram
-improved with data while the WKV stayed flat and the margin collapsed +0.791 -> +0.296. Anti-cheats
+improved with data while the WKV stayed flat and the margin collapsed +0.791 -> +0.296. Anti-cheats <!--derived-->
 strengthen with tokens (perm-collapse +0.65 -> +1.66; memoryless-collapse positive throughout). Runtime
 2288 s / 6 seeds, CPU. Verdict field: **GO-TOKEN-LEVER**.
 

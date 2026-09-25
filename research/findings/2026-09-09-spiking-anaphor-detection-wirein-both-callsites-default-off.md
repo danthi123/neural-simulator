@@ -80,21 +80,20 @@ call sites are byte-identical to pre-wiring.
 **(B) LOAD-BEARING WHEN ON (focused spiking organ, per seed).** 6/6 seeds GO (board bar >=5/6). The per-seed numbers
 below are a rounded presentation of the cited artifact `verify_6seed.json` (exact 4-decimal values live there):
 
-<!--derived-->
 | seed | clean detect | false-positive rate | corrupted-cue recovery (keep=0.20) | lesion clean | lesion corrupt | attrib->attractor | GO |
 |---|---|---|---|---|---|---|---|
-| 42  | 1.000 | 0.000 | 0.933 | 0.000 | 0.000 | 1.000 | GO |
-| 43  | 1.000 | 0.000 | 0.867 | 0.000 | 0.000 | 1.000 | GO |
-| 44  | 1.000 | 0.000 | 1.000 | 0.000 | 0.000 | 1.000 | GO |
-| 100 | 1.000 | 0.000 | 1.000 | 0.000 | 0.000 | 1.000 | GO |
-| 101 | 1.000 | 0.000 | 1.000 | 0.000 | 0.000 | 1.000 | GO |
-| 102 | 1.000 | 0.000 | 1.000 | 0.000 | 0.000 | 1.000 | GO |
+| 42  | 1.000 | 0.000 | 0.933 | 0.000 | 0.000 | 1.000 | GO |  <!--derived-->
+| 43  | 1.000 | 0.000 | 0.867 | 0.000 | 0.000 | 1.000 | GO |  <!--derived-->
+| 44  | 1.000 | 0.000 | 1.000 | 0.000 | 0.000 | 1.000 | GO |  <!--derived-->
+| 100 | 1.000 | 0.000 | 1.000 | 0.000 | 0.000 | 1.000 | GO |  <!--derived-->
+| 101 | 1.000 | 0.000 | 1.000 | 0.000 | 0.000 | 1.000 | GO |  <!--derived-->
+| 102 | 1.000 | 0.000 | 1.000 | 0.000 | 0.000 | 1.000 | GO |  <!--derived-->
 
 - **L1 clean detection:** every one of the 5 known anaphors is DETECTED on the substrate on a clean cue -- every seed.
 - **L2 specificity:** content words ("cat","dog","fish","hello","banana","house","running","water") are NOT falsely
   detected (false-positive rate 0.000) -- their unused-pool cue cannot ignite (de-risk G3), every seed.
 - **L3 corrupted-cue SURPASS:** a cue containing only 20% of a stored assembly's neurons still completes to the correct
-  anaphor 0.867-1.000 of the time (>=0.85 bar) -- the capability an exact `x in {...}` structurally cannot have.
+  anaphor 0.867-1.000 of the time (>=0.85 bar) -- the capability an exact `x in {...}` structurally cannot have.  <!--derived-->
 - **L4 lesion reverts:** with the attractor weights removed, BOTH clean detection AND corrupted-cue completion collapse
   to 0.000, and `attributable_to` assigns 1.000 of the effect to the recurrent attractor -- the CA3 completion, not the
   host encoding, is doing the recognition.

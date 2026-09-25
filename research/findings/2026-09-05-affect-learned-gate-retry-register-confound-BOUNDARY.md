@@ -57,10 +57,9 @@ caught a real overfit during development: a purity+magnitude configuration read 
 
 ## Result (6-seed, `research/findings/raw/_affect_learned_gate_derisk.json`)
 
-<!--derived-->
 The table below rounds this run's own `research/findings/raw/_affect_learned_gate_derisk.json` fields
 (`worst_case_recall`, `full_corpus_recall`, per-candidate `params`) to 3 significant figures for display; the
-GO-bar paragraph after it restates those same rounded figures in prose. Block-derived to the next heading.
+GO-bar paragraph after it restates those same rounded figures in prose.
 
 On the common vocabulary present in the full corpus and all 6 resamples (n=164; 102 raw-gated "true affect"
 words, 62 raw-excluded "neutral" words — the exact partition the fixed `_STRONG_MARGIN=2.0` threshold makes):
@@ -68,11 +67,11 @@ words, 62 raw-excluded "neutral" words — the exact partition the fixed `_STRON
 | candidate | joint FP=0 achievable? | worst-case recall (6-seed) | full-corpus recall | calibrated params |
 |---|---|---|---|---|
 | NAIVE (learned-magnitude only — the refuted 2026-08-12 lever, reproduced as a negative control) | **NO** | n/a | n/a | no `Tv` clears FP=0 jointly across the full corpus + all 6 resamples at all |
-| A. arousal co-gate | yes | 0.010 | 0.020 | Tv=3.25, Ta=1.25 |
-| B. habituation/frequency exclusion | yes | 0.147 | 0.167 | Tv=2.90, Fpct<=50 |
-| C. cross-resample stability | yes | 0.020 | 0.020 | Tv=3.90, Sceil=0.20, Afloor=0.6 |
-| D. neighbor affect-purity | yes | 0.147 | 0.167 | Tv=1.50, Pfloor>=0.86 |
-| **D+B combined (best found)** | **yes** | **0.294** | 0.324 | Tv=2.70, Pfloor>=0.65, Fpct<=80 |
+| A. arousal co-gate | yes | 0.010 | 0.020 | Tv=3.25, Ta=1.25 |  <!--derived-->
+| B. habituation/frequency exclusion | yes | 0.147 | 0.167 | Tv=2.90, Fpct<=50 |  <!--derived-->
+| C. cross-resample stability | yes | 0.020 | 0.020 | Tv=3.90, Sceil=0.20, Afloor=0.6 |  <!--derived-->
+| D. neighbor affect-purity | yes | 0.147 | 0.167 | Tv=1.50, Pfloor>=0.86 |  <!--derived-->
+| **D+B combined (best found)** | **yes** | **0.294** | 0.324 | Tv=2.70, Pfloor>=0.65, Fpct<=80 |  <!--derived-->
 
 **GO bar (pre-registered in the runner):** worst-case recall >= 0.5 at joint FP=0. **None of the six
 configurations clears it** — the best (D+B combined) recovers under a third of the words the fixed threshold

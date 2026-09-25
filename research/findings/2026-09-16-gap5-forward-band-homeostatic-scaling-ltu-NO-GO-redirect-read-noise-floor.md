@@ -35,12 +35,10 @@ candidate: Turrigiano absolute-magnitude scaling of the forward band.
 ## Result (values from the artifact)
 
 (from `research/findings/raw/gap5_ecker_adex/forward_band_homeostatic_scaling_ltu_mult2p0_6seed.json`; numbers below rounded from that artifact)
-<!--derived-->
-
 
 - The scaling WORKS mechanically: `adj_fwd_before` 319.4 -> `adj_fwd_after` 342.8 (n_fwd_raised 6/6), the write stays
-  directional (n_directional 6/6), and read headroom is intact (`weak_depth_frac_before` 0.586, n_headroom 6/6).
-- But it does NOT lift recall: `weak_depth_frac` 0.586 -> 0.500 (it DROPS), `weak_tau` 1.000 -> 0.798; use-dependence
+  directional (n_directional 6/6), and read headroom is intact (`weak_depth_frac_before` 0.586, n_headroom 6/6).  <!--derived-->
+- But it does NOT lift recall: `weak_depth_frac` 0.586 -> 0.500 (it DROPS), `weak_tau` 1.000 -> 0.798; use-dependence  <!--derived-->
   clears the gain bar on only n_use_dependent 1/6 (lesion-null 6/6). `GO: false`, n_go 1, status NO-GO.
 
 ## Interpretation — both weight-side levers exhausted; the instrument is next

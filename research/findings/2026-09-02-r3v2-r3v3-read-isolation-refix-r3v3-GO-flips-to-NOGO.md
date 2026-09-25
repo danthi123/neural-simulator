@@ -48,7 +48,6 @@ exact figure the 2026-09-02 audit's own dynamic probe reported independently.
 
 ## R3v2: NO-GO 0/6, confirmed unchanged — the false-wall prediction did NOT hold
 
-<!--derived-->
 | seed | BEFORE `delta_agent_intact` | AFTER | BEFORE `delta_patient_intact` | AFTER | BEFORE F2 | AFTER F2 |
 |---|---|---|---|---|---|---|
 | 42  | 0.005278 | 0.005556 | 0.004074 | 0.003981 | False | False |
@@ -60,7 +59,7 @@ exact figure the 2026-09-02 audit's own dynamic probe reported independently.
 
 BEFORE: `research/findings/raw/_onebrain_integration_r3v2_noncorrupting_6seed.json`. AFTER:
 `research/findings/raw/_onebrain_integration_r3v2_noncorrupting_readfix_numpy6seed.json`. Best seed (100)
-still misses `F2_INTACT_FLOOR=0.008` — now by 0.00170, vs 0.00198 before the fix (a small, non-monotonic
+still misses `F2_INTACT_FLOOR=0.008` — now by 0.00170, vs 0.00198 before the fix (a small, non-monotonic  <!--derived-->
 per-seed shift, sign genuinely unpinned as the audit warned, but never crosses the floor). Every other arm
 (F1/F3/F4/lesion-recovers-migration/R3a-three-factor/dopamine-lesion) stays 6/6, unaffected — the fix's whole
 measurable effect is a sub-0.001 wobble on F2's already-sub-floor numbers. `emergence.no_corruption_intact`
@@ -79,7 +78,6 @@ work that leaves R3v2 an honest, still-standing NO-GO — not the false wall the
 
 ## R3v3: GO 6/6 → NO-GO 3/6 — a REAL flip, not a false-wall confirmation
 
-<!--derived-->
 R3v3 inherited the identical C2 gap and had never been isolation-tested (its own `read_isolation_verified`
 check only proves a READ doesn't move the candidate weights — it says nothing about repeat-read bitwise
 identity of the refractory/prev-firing arrays this gap concerns). The lane's task was to confirm the banked
@@ -87,12 +85,12 @@ GO 6/6 SURVIVES isolation. **It does not.**
 
 | seed | BEFORE `delta_agent_intact` | AFTER | BEFORE sel_intact | AFTER | BEFORE sel_shuffled | AFTER | BEFORE ratio | AFTER ratio | BEFORE R3a | AFTER R3a | AFTER overall PASS |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| 42  | 0.01222 | 0.01917 | 11.225 | 14.671 | 2.293 | 5.153 | 0.2043 | 0.3512 | True | **False** | **False** |
-| 43  | 0.01417 | 0.02083 | 10.680 | 15.089 | 1.845 | 4.299 | 0.1728 | 0.2849 | True | True | True |
-| 44  | 0.01241 | 0.01944 | 10.769 | 14.974 | 2.525 | 5.142 | 0.2345 | 0.3434 | True | True | True |
-| 100 | 0.01361 | 0.02083 | 11.059 | 14.939 | 2.506 | 5.111 | 0.2266 | 0.3421 | True | True | True |
-| 101 | 0.01296 | 0.01861 | 10.972 | 14.931 | 2.987 | 6.240 | 0.2723 | 0.4180 | True | **False** | **False** |
-| 102 | 0.01306 | 0.01972 | 10.913 | 15.083 | 2.739 | 5.745 | 0.2510 | 0.3809 | True | **False** | **False** |
+| 42  | 0.01222 | 0.01917 | 11.225 | 14.671 | 2.293 | 5.153 | 0.2043 | 0.3512 | True | **False** | **False** |  <!--derived-->
+| 43  | 0.01417 | 0.02083 | 10.680 | 15.089 | 1.845 | 4.299 | 0.1727 | 0.2849 | True | True | True |  <!--derived-->
+| 44  | 0.01241 | 0.01944 | 10.769 | 14.974 | 2.525 | 5.142 | 0.2345 | 0.3434 | True | True | True |  <!--derived-->
+| 100 | 0.01361 | 0.02083 | 11.059 | 14.939 | 2.506 | 5.111 | 0.2266 | 0.3421 | True | True | True |  <!--derived-->
+| 101 | 0.01296 | 0.01861 | 10.972 | 14.931 | 2.987 | 6.240 | 0.2723 | 0.4180 | True | **False** | **False** |  <!--derived-->
+| 102 | 0.01306 | 0.01972 | 10.913 | 15.083 | 2.739 | 5.745 | 0.2510 | 0.3809 | True | **False** | **False** |  <!--derived-->
 
 BEFORE: `research/findings/2026-08-27-onebrain-integration-R3v3-functional-drive-GO.md`'s own artifact
 (`research/findings/raw/_onebrain_integration_r3v3_functional_drive_6seed.json`). AFTER:
@@ -106,7 +104,7 @@ control must degrade relative to intact, or the mechanism is not shown to be sel
 'emergence.read_isolation_verified': '6/6'}` — every arm stays 6/6 except R3a, which is the SOLE blocker on
 all 3 failing seeds.
 
-**F2 itself did not weaken — it got STRONGER** (`delta_agent_intact` 0.0122-0.0142 before, 0.0186-0.0208
+**F2 itself did not weaken — it got STRONGER** (`delta_agent_intact` 0.0122-0.0142 before, 0.0186-0.0208  <!--derived-->
 after; `frac_attributable` stays 1.0/1.0 every seed). The flip is entirely in R3a's shuffled-control check.
 `no_corruption_intact` and `read_isolation_verified` both stay 6/6 (the fix does not corrupt non-candidate
 synapses, and the gate-freeze from R3v3's Fix #1 still holds).
@@ -159,3 +157,10 @@ that would show the R3a check itself, not the mechanism, needs the update. Until
 stand, cited above.
 
 Functional read-outs only; no phenomenal-experience claim.
+
+## Corrections (2026-09-25 claim-check audit)
+
+- Seed 43 BEFORE `ratio` (R3v3 table): 0.1728 -> 0.1727 (`selectivity_shuffled / selectivity_intact` =  <!--derived-->
+  1.8447000000000005 / 10.679524999999998 = 0.17273, from `research/findings/raw/_onebrain_integration_r3v3_functional_drive_6seed.json`).  <!--derived-->
+  Does not change any verdict: this is a BEFORE-column reference value, well under `SEL_SHUFFLE_RATIO=0.35`
+  either way, and seed 43's own row stays `True`/`True`/`True`.

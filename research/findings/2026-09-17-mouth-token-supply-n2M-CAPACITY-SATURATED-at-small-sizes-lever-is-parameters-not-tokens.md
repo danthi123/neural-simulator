@@ -38,16 +38,15 @@ fluency: is more READING (training tokens) the lever, or has it saturated? This 
 and scales the training-token supply to n2M (2M sentences) at fixed model size, across two corpora and two model sizes.
 
 ## Result (from research/findings/raw/_gencortex_scaling/*_n2M_*.json)
-<!--derived-->
 Per config (3 seeds each; fluency band = deep NLL 3.0-3.69; lower is better):
 - FineWeb-Edu d_model=192: CAPACITY-SATURATED. delta-NLL over the token range ~0.07 nats (tiny), NOT still descending
   at the top, top deep-NLL ~3.91 (residual ~+0.22 above the band), ~80 tokens/active-param.
 - FineWeb-Edu d_model=96: PARTIAL. delta-NLL ~0.19 nats (still gains from tokens — uses_tokens), but NOT still
   descending at the top, top deep-NLL ~3.95 (residual ~+0.26), ~174 tokens/active-param.
-- WikiText-103 d_model=96: CAPACITY-SATURATED. delta-NLL ~0.076 nats, top deep-NLL ~3.75 (residual ~+0.06 — the
+- WikiText-103 d_model=96: CAPACITY-SATURATED. delta-NLL ~0.076 nats, top deep-NLL ~3.75 (residual ~+0.06 — the  <!--derived-->
   CLOSEST to the band), ~87 tokens/active-param.
 - Common to all: beats the trigram at the top point, but NONE reach the fluency band, and margin does not grow with
-  tokens. Compute-optimal (Chinchilla, Hoffmann et al. 2022, arXiv:2203.15556) is ~20 tokens/param; every config here
+  tokens. Compute-optimal (Chinchilla, Hoffmann et al. 2022, arXiv:2203.15556) is ~20 tokens/param; every config here  <!--derived-->
   is 4-9x over-tokened.
 
 ## What it means, and the next lever

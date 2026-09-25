@@ -61,44 +61,38 @@ mouth, not of 6 independent draws.
 
 <!--derived--> (all numeric values below are rounded presentations of the cited verdict artifact + its per-arm JSONs in the same directory)
 
-<!--derived-->
 Instrument validity (all preconditions clean, so the reading is trustworthy): determinism byte-identical 6/6;
 attribution control clean 6/6; content-identity (facts + known byte-identical intact vs lesion) 6/6; moat holds
-(every unknown free-talk prompt stayed known=False under the active bias) 6/6; fluency max salad-fraction 0.155 ≤
+(every unknown free-talk prompt stayed known=False under the active bias) 6/6; fluency max salad-fraction 0.155 ≤  <!--derived-->
 0.16; lexicon overlap with WARRINER = 0; every seed's mouth checkpoint resolved to its OWN per-seed file (no
 seed42 fallback confound).
 
-<!--derived-->
-Directional, under the PREREGISTERED band δ=0.1346 (pop-std of the neutral per-prompt tone): **NO-GO** — all 12
+Directional, under the PREREGISTERED band δ=0.1346 (pop-std of the neutral per-prompt tone): **NO-GO** — all 12  <!--derived-->
 per-direction states (6 pos + 6 neg) are `null` (below the neutral tone-noise band).
-
-<!--derived-->
 
 | seed | tone_pos | tone_neg | tone_lesion | gap_pos | gap_neg | pos | neg |
 |------|----------|----------|-------------|---------|---------|-----|-----|
-| 42   | +0.1209  | +0.0959  | +0.0250     | +0.0959 | +0.0709 | null | null |
-| 43   | +0.1209  | +0.0250  | +0.0250     | +0.0959 | +0.0000 | null | null |
-| 44   | +0.0750  | +0.0709  | +0.0250     | +0.0500 | +0.0459 | null | null |
-| 100  | +0.0750  | +0.0250  | +0.0250     | +0.0500 | +0.0000 | null | null |
-| 101  | +0.1209  | +0.0459  | +0.0250     | +0.0959 | +0.0209 | null | null |
-| 102  | +0.1209  | +0.0250  | +0.0250     | +0.0959 | +0.0000 | null | null |
+| 42   | +0.1209  | +0.0959  | +0.0250     | +0.0959 | +0.0709 | null | null |  <!--derived-->
+| 43   | +0.1209  | +0.0250  | +0.0250     | +0.0959 | +0.0000 | null | null |  <!--derived-->
+| 44   | +0.0750  | +0.0709  | +0.0250     | +0.0500 | +0.0459 | null | null |  <!--derived-->
+| 100  | +0.0750  | +0.0250  | +0.0250     | +0.0500 | +0.0000 | null | null |  <!--derived-->
+| 101  | +0.1209  | +0.0459  | +0.0250     | +0.0959 | +0.0209 | null | null |  <!--derived-->
+| 102  | +0.1209  | +0.0250  | +0.0250     | +0.0959 | +0.0000 | null | null |  <!--derived-->
 
-<!--derived-->
-The neutral baseline `tone_lesion` = +0.0250 on ALL 6 seeds (a stable, reproducible neutral tone floor). `gap_pos`
+The neutral baseline `tone_lesion` = +0.0250 on ALL 6 seeds (a stable, reproducible neutral tone floor). `gap_pos`  <!--derived-->
 is POSITIVE on every seed; `gap_neg` is ≥ 0 on every seed (never the required negative).
 
 ## Why NO-GO: a POSITIVE-ASYMMETRIC, lexically-localized effect (the scientific content)
 
 Two secondary reads (reported, NOT the gate) explain the NO-GO and are consistent across all 6 seeds:
 
-<!--derived-->
-- Under a SEM band δ=0.0426 (δ/√10, the natural noise scale for a mean — reported to show the effect is not
+- Under a SEM band δ=0.0426 (δ/√10, the natural noise scale for a mean — reported to show the effect is not  <!--derived-->
   merely a band artifact): the POSITIVE direction is `correct` on ALL 6 seeds (positive mood reliably raises the
   free reply's tone, visible even to the disjoint independent lexicon); the NEGATIVE direction is `wrong` on 2
   seeds and `null` on 4 — negative mood never yields a negative tonal shift on any seed under any band.
 - Boosted-word diagnostic (net signed WARRINER-word count — CIRCULAR by design, mechanism check only): pos-minus-neg
-  sign is +1 on all 6 seeds; `gap_pos−lesion` in WARRINER words is consistently positive (+0.0045..+0.0109) while
-  `gap_neg−lesion` ≈ 0 (±0.0006). So even at the mechanism level the negative mood surfaces essentially NO extra
+  sign is +1 on all 6 seeds; `gap_pos−lesion` in WARRINER words is consistently positive (+0.0045..+0.0109) while  <!--derived-->
+  `gap_neg−lesion` ≈ 0 (±0.0006). So even at the mechanism level the negative mood surfaces essentially NO extra  <!--derived-->
   negative words.
 
 <!--derived-->

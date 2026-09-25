@@ -56,17 +56,16 @@ zeroed, instead exceeds `lesion_ratio=0.34 * |delta_intact|`).
 Per-seed `delta_lesion` (`runs[*].interaction.per_condition.high.delta_lesion`), plain vs gated, identical seeds
 — table values are the cited artifacts' own numbers rounded to 4dp for readability:
 
-<!--derived-->
 | seed | plain `delta_lesion` | gated `delta_lesion` | plain GO | gated GO |
 |---|---|---|---|---|
-| 42  | -0.0051 | -0.0245 | true | true |
-| 43  | -0.0018 | +0.0153 | true | true |
-| 44  | +0.0034 | +0.0123 | true | true |
-| 100 | -0.0131 | +0.0431 | true | false |
-| 101 | -0.0332 | -0.0638 | true | false |
-| 102 | -0.0016 | +0.0950 | true | false |
+| 42  | -0.0051 | -0.0245 | true | true |  <!--derived-->
+| 43  | -0.0018 | +0.0153 | true | true |  <!--derived-->
+| 44  | +0.0034 | +0.0123 | true | true |  <!--derived-->
+| 100 | -0.0131 | +0.0431 | true | false |  <!--derived-->
+| 101 | -0.0332 | -0.0638 | true | false |  <!--derived-->
+| 102 | -0.0016 | +0.0950 | true | false |  <!--derived-->
 
-Mean `|delta_lesion|` across the 6 seeds: plain 0.0097, gated 0.0423 (mean of the |delta_lesion| column above,
+Mean `|delta_lesion|` across the 6 seeds: plain 0.0097, gated 0.0423 (mean of the |delta_lesion| column above,  <!--derived-->
 each value read from the two cited JSONs' `runs[*].interaction.per_condition.high.delta_lesion`) — roughly 4.3x
 larger under the gated mechanism, and the confound GREW (not shrank) on 5 of 6 seeds. The gate did not reduce
 the lesion-baseline confound; it enlarged it.

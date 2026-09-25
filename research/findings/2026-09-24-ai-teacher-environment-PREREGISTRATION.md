@@ -152,7 +152,6 @@ checks that the gate passes the capability case and fails or reads UNDEFINED in 
 
 ## What was SEEN before filing
 
-<!--derived-->
 One plumbing run at DEV SEED 3 (not a registered seed; K=2; arms TEACH, FREEZE, ZERO; pool2, commit `153af81bf`
 code with the first curriculum; artifacts kept out of the verdict and filed later under
 `research/findings/raw/_ai_teacher/plumbing_s3/`, carrying no pre-registered weight):
@@ -160,14 +159,14 @@ code with the first curriculum; artifacts kept out of the verdict and filed late
 - "the blicket eats the dax" was delivered as the answer to the brain's own curiosity ask ("... what can you tell me
   about blicket?"), acquired, answered right in the quiz (TEACH, ZERO), and recalled in the test after the sleep tick
   with the teacher absent (TEACH). FREEZE and ZERO abstained on it at test; the FREEZE blocks read 0.0, the ZERO
-  block 1.504 before ablation and 0.0 after.
+  block 1.504 before ablation and 0.0 after.  <!--derived-->
 - "the selva borders the osona" was REFUSED by the brain's D4 comprehension monitor (verb and both nouns unfamiliar
   to its cue lexicons -> "I followed the shape of that, but I don't know the words 'selva' or 'osona' yet -- what do
   they refer to?"), in all three arms. That is why the template verbs were changed to verbs the brain already knows
   (commit `77aa1cb30`), before this filing. The refused-sentence case is a real boundary, reported here and named in
   the finding: the brain's repair ask has no learning path yet.
 - The sleep tick ran (1 session, ~21-26 s): a thought-wander, a Turrigiano scaling pass over the DA-encoded engrams
-  (it rescaled the taught block 1.723 -> 1.504), and a DA-mode relax.
+  (it rescaled the taught block 1.723 -> 1.504), and a DA-mode relax.  <!--derived-->
 - Guard: 30 entry points patched, 0 violations, 15-16 brain-attributed and 5-6 other (build + experimenter) calls.
 - Cost at pool2 load ~23 on 16 cores: warmup (brain build + first turn) ~1050-1070 s, later turns 9-93 s, ~1420-1480 s
   per K=2 arm, peak RSS ~0.7 GB.

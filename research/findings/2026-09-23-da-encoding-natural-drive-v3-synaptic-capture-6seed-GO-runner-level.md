@@ -42,22 +42,21 @@ found in v2 (`2026-09-23-da-encoding-natural-drive-v2-D128-6seed-GO-runner-level
 
 ## Result
 
-<!--derived-->
 | seed | salient DA min | neutral DA max | salient intact 24 h | DA->encoding lesion | neutral intact | capture lesion | companion off (sal / neu) | salient PRP max (intact / lesion) |
 |---|---|---|---|---|---|---|---|---|
-| 42 | 0.897 | 0.549 | 4/4 | 0/4 | 0/4 | 0/4 | 4/4 / 4/4 | 0.070 / 0.0047 |
-| 43 | 0.798 | 0.411 | 4/4 | 0/4 | 0/4 | 0/4 | 4/4 / 4/4 | 0.060 / 0.0066 |
-| 44 | 0.897 | 0.413 | 4/4 | 0/4 | 0/4 | 0/4 | 4/4 / 4/4 | 0.068 / 0.0038 |
-| 100 | 0.897 | 0.335 | 4/4 | 0/4 | 0/4 | 0/4 | 4/4 / 4/4 | 0.070 / 0.0030 |
-| 101 | 0.897 | 0.573 | 4/4 | 0/4 | 0/4 | 0/4 | 4/4 / 4/4 | 0.067 / 0.0030 |
-| 102 | 0.792 | 0.196 | 4/4 | 0/4 | 0/4 | 0/4 | 4/4 / 4/4 | 0.056 / 0.0036 |
+| 42 | 0.897 | 0.549 | 4/4 | 0/4 | 0/4 | 0/4 | 4/4 / 4/4 | 0.070 / 0.0047 |  <!--derived-->
+| 43 | 0.798 | 0.411 | 4/4 | 0/4 | 0/4 | 0/4 | 4/4 / 4/4 | 0.060 / 0.0066 |  <!--derived-->
+| 44 | 0.897 | 0.413 | 4/4 | 0/4 | 0/4 | 0/4 | 4/4 / 4/4 | 0.068 / 0.0038 |  <!--derived-->
+| 100 | 0.897 | 0.335 | 4/4 | 0/4 | 0/4 | 0/4 | 4/4 / 4/4 | 0.070 / 0.0030 |  <!--derived-->
+| 101 | 0.897 | 0.573 | 4/4 | 0/4 | 0/4 | 0/4 | 4/4 / 4/4 | 0.066 / 0.0030 |  <!--derived-->
+| 102 | 0.792 | 0.196 | 4/4 | 0/4 | 0/4 | 0/4 | 4/4 / 4/4 | 0.056 / 0.0036 |  <!--derived-->
 
 - **All six seeds GO; the aggregate is GO.** No seed UNDEFINED. With the seed as the unit (the four facts of one
   conversation share one PRP pool and are not exchangeable), the one-sided sign-flip p is 1/64 for intact vs
   DA->encoding lesion and 1/64 for salient vs neutral.
 - **The reply changes under the lesion.** A fact told as surprising news is answered the next day; with the DA edge
   lesioned the same question gets an abstention. The lesion was verified to hold at measurement: the PRP pool never
-  exceeded 0.0066 in the lesion arm (0 in the capture-lesion arm) against 0.056-0.070 intact.
+  exceeded 0.0066 in the lesion arm (0 in the capture-lesion arm) against 0.056-0.070 intact.  <!--derived-->
 - **All 8 capture-band points were informative and held on every seed.** Zero confabulations at the primary point
   and across the capture band. Immediate recall was 4/4 in every primary arm.
 - **Production default reproduces the old null.** With the companion off every fact is recalled at 24 h.
@@ -76,7 +75,6 @@ was informative in the kernel sense but, on this drive, only seed 42's neutral c
 
 ## What this licenses, and what it does not
 
-<!--derived-->
 - **Licensed:** the brain's spiking DA, read by a spiking D1 population, drove a pre-registered synaptic
   tag-and-capture rule on the store synapses; surprising facts were kept at 24 h and plain ones were not; the reply
   changed under a lesion of the DA edge; no host compare on the DA trace decided it.
@@ -90,7 +88,6 @@ was informative in the kernel sense but, on this drive, only seed 42's neutral c
 
 ## Honest residuals
 
-<!--derived-->
 - **Wide margins mean the DA contrast still does most of the work.** The neutral conversations mostly held DA at or
   below tonic, so the D1 pool got no drive on four seeds; the synaptic dynamics were only tested near their boundary
   on seed 42 (x3.2). A harder neutral stimulus (moderately engaging plain facts) is the next test of the dynamics.
@@ -100,7 +97,7 @@ was informative in the kernel sense but, on this drive, only seed 42's neutral c
 - **The write gain still carries information into the tag**, so the DA->encoding lesion removes two routes at once
   (tag size and PRP). The capture-only lesion isolates the PRP route (0/4 on every seed); a gain-only lesion was not run.
 - **Calibration sits on seed 42's D1 reader for every run seed.** That is the production reader (`_leaf_gain` uses
-  seed 42 regardless of the brain seed), so a_go = 0.187 and gamma = 32.77 are identical across all runs.
+  seed 42 regardless of the brain seed), so a_go = 0.187 and gamma = 32.77 are identical across all runs.  <!--derived-->
 - **Provenance marks the runs git_dirty** (the shared provenance ledger and untracked artifacts); the code commit is
   `d40de0817`, which differs from the prereg-governed `492231df3` only in docs. For about a minute after seeds
   101/102 launched (14:24:53) the working-tree runner carried extra exploratory functions not on the run path, so
@@ -119,3 +116,10 @@ was informative in the kernel sense but, on this drive, only seed 42's neutral c
 3. The other late-phase routes (repetition-triggered PRP, sleep replay) so ordinary facts that matter are kept, and
    PRP competition between tagged synapses (Fonseca et al. 2004).
 4. Move the per-synapse late-phase state into the spiking substrate's own synapse kernel.
+
+## Corrections (2026-09-25 claim-check audit)
+
+- Seed 101 "salient PRP max (intact)": 0.067 -> 0.066 (`gates.salient_p_max_intact` = 0.066491, from  <!--derived-->
+  `research/findings/raw/_da_encoding_natural_drive_v3/seed101.json`). Does not change any verdict or the
+  "0.056-0.070 intact" range quoted elsewhere in this document (0.066 is still inside that range, and no gate  <!--derived-->
+  in `aggregate.json` reads this field).
