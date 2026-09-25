@@ -1,0 +1,289 @@
+{
+ "provenance": {
+  "cmd": "python tools/ssh_stdin_gate_mutations.py --out research/coordination/sr_gate_mutations_2026-09-25.json",
+  "script": "tools/ssh_stdin_gate_mutations.py",
+  "git_sha": "0db1a99414b39672354da2bfa9dee0c770232e35",
+  "gate_sha256": "b404391a9deedd11a648451c9cd148f231990548ef88461b7395fff90c18811a",
+  "device": "cpu (host python; no simulator backend)",
+  "generated_utc": "2026-09-25T16:54:25+00:00"
+ },
+ "mutations": 24,
+ "mutations_caught": 24,
+ "restored_suite_green": true,
+ "restored_suite": "152 passed in 4.39s",
+ "results": [
+  {
+   "mutation": "HIGH1 staged ACMR query dropped",
+   "suite_red": true,
+   "n_failed": 3,
+   "failed": [
+    "test_a_staged_modification_is_scanned_although_the_hook_passes_only_added_files",
+    "test_the_staged_blob_is_judged_not_the_working_tree",
+    "test_a_staged_callee_that_starts_draining_reports_its_unstaged_callers"
+   ],
+   "tail": "3 failed, 149 passed in 4.45s"
+  },
+  {
+   "mutation": "HIGH1 index blob not read (worktree instead)",
+   "suite_red": true,
+   "n_failed": 1,
+   "failed": [
+    "test_the_staged_blob_is_judged_not_the_working_tree"
+   ],
+   "tail": "1 failed, 151 passed in 4.35s"
+  },
+  {
+   "mutation": "HIGH2 variable resolution of command words dropped",
+   "suite_red": true,
+   "n_failed": 5,
+   "failed": [
+    "test_registry_selftest_passes",
+    "test_a_known_script_reached_through_a_variable_or_a_quoted_path_is_blocked[\"$QUEUE_TOOL\" add \"$h\"]",
+    "test_ssh_through_variables[SSH=\"ssh -o BatchMode=yes\"\\n-$SSH \"$h\" true-True]",
+    "test_ssh_through_variables[SSH=(ssh -o BatchMode=yes)\\n-\"${SSH[@]}\" \"$h\" true-True]",
+    "test_ssh_through_variables[SSH=\"${1:?usage}\"\\n-$SSH \"cd x && ls\"-True]"
+   ],
+   "tail": "5 failed, 147 passed in 4.39s"
+  },
+  {
+   "mutation": "HIGH2 corpus-derived wrapper set dropped (floor only)",
+   "suite_red": true,
+   "n_failed": 3,
+   "failed": [
+    "test_a_staged_callee_that_starts_draining_reports_its_unstaged_callers",
+    "test_a_script_that_drains_stdin_is_derived_from_the_corpus",
+    "test_a_script_calling_a_draining_script_is_itself_draining"
+   ],
+   "tail": "3 failed, 149 passed in 4.38s"
+  },
+  {
+   "mutation": "MED any later -n counts (old statement window)",
+   "suite_red": true,
+   "n_failed": 5,
+   "failed": [
+    "test_registry_selftest_passes",
+    "test_a_dash_n_or_redirect_that_is_not_ssh_s_own_does_not_protect_it[ssh \"$h\" head -n 1 f]",
+    "test_the_gate_verdict_matches_what_bash_actually_does[remote -n]",
+    "test_ssh_option_parsing_matches_openssh[h head -n 1]",
+    "test_ssh_option_parsing_matches_openssh[-o BatchMode=yes h tail -n 5]"
+   ],
+   "tail": "5 failed, 147 passed in 4.75s"
+  },
+  {
+   "mutation": "MED old _piped_in: an earlier pipe in the and-or list protects",
+   "suite_red": true,
+   "n_failed": 4,
+   "failed": [
+    "test_registry_selftest_passes",
+    "test_only_a_pipe_into_the_call_itself_protects_it[echo \"$h\" | grep -q x && ssh \"$h\" true-True]",
+    "test_only_a_pipe_into_the_call_itself_protects_it[echo \"$h\" | grep -q x || ssh \"$h\" true-True]",
+    "test_the_gate_verdict_matches_what_bash_actually_does[pipe then &&]"
+   ],
+   "tail": "4 failed, 148 passed in 5.00s"
+  },
+  {
+   "mutation": "MED # is a comment anywhere ($#, ${#a[@]})",
+   "suite_red": true,
+   "n_failed": 5,
+   "failed": [
+    "test_registry_selftest_passes",
+    "test_lexical_noise_does_not_close_the_enclosing_read_loop[n=$#; for i in 1 2; do\\n    :\\n  done\\n]",
+    "test_lexical_noise_does_not_close_the_enclosing_read_loop[n=${#arr[@]}; for i in 1 2; do\\n    :\\n  done\\n]",
+    "test_lexical_noise_does_not_close_the_enclosing_read_loop[echo \"${x#*/}\" ${y##*.}; for i in 1 2; do\\n    :\\n  done\\n]",
+    "test_every_tracked_script_parses_with_no_unmatched_tokens"
+   ],
+   "tail": "5 failed, 147 passed in 4.37s"
+  },
+  {
+   "mutation": "MED case pattern `done)` closes the loop",
+   "suite_red": true,
+   "n_failed": 2,
+   "failed": [
+    "test_registry_selftest_passes",
+    "test_lexical_noise_does_not_close_the_enclosing_read_loop[case \"$h\" in done) : ;; esac\\n]"
+   ],
+   "tail": "2 failed, 150 passed in 5.51s"
+  },
+  {
+   "mutation": "MED `done` as an argument closes the loop",
+   "suite_red": true,
+   "n_failed": 1,
+   "failed": [
+    "test_lexical_noise_does_not_close_the_enclosing_read_loop[x=\"$d/done\"; y=$d/done; echo done\\n]"
+   ],
+   "tail": "1 failed, 151 passed in 4.54s"
+  },
+  {
+   "mutation": "MED `function name {` not a definition",
+   "suite_red": true,
+   "n_failed": 15,
+   "failed": [
+    "test_registry_selftest_passes",
+    "test_every_function_definition_and_call_shape_is_followed[probe \"$h\"-function probe {\\n  ssh \"$1\" true\\n}\\n]",
+    "test_every_function_definition_and_call_shape_is_followed[probe \"$h\"-function probe() {\\n  ssh \"$1\" true\\n}\\n]",
+    "test_every_function_definition_and_call_shape_is_followed[r=$(probe \"$h\")-function probe {\\n  ssh \"$1\" true\\n}\\n]",
+    "test_every_function_definition_and_call_shape_is_followed[r=$(probe \"$h\")-function probe() {\\n  ssh \"$1\" true\\n}\\n]",
+    "test_every_function_definition_and_call_shape_is_followed[echo \"$(probe \"$h\")\"-function probe {\\n  ssh \"$1\" true\\n}\\n]"
+   ],
+   "tail": "15 failed, 137 passed in 5.77s"
+  },
+  {
+   "mutation": "MED one-line function body not a definition",
+   "suite_red": true,
+   "n_failed": 10,
+   "failed": [
+    "test_registry_selftest_passes",
+    "test_a_script_calling_a_draining_script_is_itself_draining",
+    "test_every_function_definition_and_call_shape_is_followed[probe \"$h\"-probe() { ssh \"$1\" true; }\\n]",
+    "test_every_function_definition_and_call_shape_is_followed[r=$(probe \"$h\")-probe() { ssh \"$1\" true; }\\n]",
+    "test_every_function_definition_and_call_shape_is_followed[echo \"$(probe \"$h\")\"-probe() { ssh \"$1\" true; }\\n]",
+    "test_every_function_definition_and_call_shape_is_followed[probe \"$h\" | cat-probe() { ssh \"$1\" true; }\\n]"
+   ],
+   "tail": "10 failed, 142 passed in 4.50s"
+  },
+  {
+   "mutation": "MED command substitutions not walked ($(probe), \"$(ssh ..)\")",
+   "suite_red": true,
+   "n_failed": 15,
+   "failed": [
+    "test_registry_selftest_passes",
+    "test_incident_3_aws_idle_stop_is_blocked_when_added_and_the_lane_a_fix_passes",
+    "test_every_function_definition_and_call_shape_is_followed[r=$(probe \"$h\")-probe() { ssh \"$1\" true; }\\n]",
+    "test_every_function_definition_and_call_shape_is_followed[r=$(probe \"$h\")-function probe {\\n  ssh \"$1\" true\\n}\\n]",
+    "test_every_function_definition_and_call_shape_is_followed[r=$(probe \"$h\")-function probe() {\\n  ssh \"$1\" true\\n}\\n]",
+    "test_every_function_definition_and_call_shape_is_followed[r=$(probe \"$h\")-probe()\\n{\\n  ssh \"$1\" true\\n}\\n]"
+   ],
+   "tail": "15 failed, 137 passed in 5.63s"
+  },
+  {
+   "mutation": "MED FP read -u N treated as fd 0",
+   "suite_red": true,
+   "n_failed": 4,
+   "failed": [
+    "test_registry_selftest_passes",
+    "test_correct_fix_shapes_are_not_blocked[while IFS= read -r -u 3 h; do\\n  ssh \"$h\" true\\ndone 3< q\\n]",
+    "test_correct_fix_shapes_are_not_blocked[while IFS= read -ru3 h; do\\n  ssh \"$h\" true\\ndone 3< q\\n]",
+    "test_the_gate_verdict_matches_what_bash_actually_does[read -u 3]"
+   ],
+   "tail": "4 failed, 148 passed in 4.75s"
+  },
+  {
+   "mutation": "MED FP read <&N treated as fd 0",
+   "suite_red": true,
+   "n_failed": 4,
+   "failed": [
+    "test_registry_selftest_passes",
+    "test_correct_fix_shapes_are_not_blocked[while IFS= read -r h <&3; do\\n  ssh \"$h\" true\\ndone 3< q\\n]",
+    "test_correct_fix_shapes_are_not_blocked[while IFS= read -r h < /tmp/one; do\\n  ssh \"$h\" true\\ndone\\n]",
+    "test_the_gate_verdict_matches_what_bash_actually_does[read <&3]"
+   ],
+   "tail": "4 failed, 148 passed in 5.45s"
+  },
+  {
+   "mutation": "MED FP only a bare -n protects (-nT, -f, -fN)",
+   "suite_red": true,
+   "n_failed": 9,
+   "failed": [
+    "test_registry_selftest_passes",
+    "test_correct_fix_shapes_are_not_blocked[#!/usr/bin/env bash\\nwhile IFS= read -r h; do\\n  ssh -nT \"$h\" true\\ndone < <(printf 'a\\\\nb\\\\nc\\\\n')\\n]",
+    "test_correct_fix_shapes_are_not_blocked[#!/usr/bin/env bash\\nwhile IFS= read -r h; do\\n  ssh -f \"$h\" \"sleep 5\"\\ndone < <(printf 'a\\\\nb\\\\nc\\\\n')\\n]",
+    "test_correct_fix_shapes_are_not_blocked[#!/usr/bin/env bash\\nwhile IFS= read -r h; do\\n  ssh -fN -L 1:x:2 \"$h\"\\ndone < <(printf 'a\\\\nb\\\\nc\\\\n')\\n]",
+    "test_the_gate_verdict_matches_what_bash_actually_does[-nT]",
+    "test_the_gate_verdict_matches_what_bash_actually_does[-f]"
+   ],
+   "tail": "9 failed, 143 passed in 5.22s"
+  },
+  {
+   "mutation": "MED FP group redirect ignored",
+   "suite_red": true,
+   "n_failed": 4,
+   "failed": [
+    "test_registry_selftest_passes",
+    "test_correct_fix_shapes_are_not_blocked[#!/usr/bin/env bash\\nwhile IFS= read -r h; do\\n  { ssh \"$h\" true; ssh \"$h\" false; } </dev/null\\ndone < <(printf 'a\\\\nb\\\\nc\\\\n')\\n]",
+    "test_correct_fix_shapes_are_not_blocked[#!/usr/bin/env bash\\nwhile IFS= read -r h; do\\n  ( ssh \"$h\" true ) </dev/null\\ndone < <(printf 'a\\\\nb\\\\nc\\\\n')\\n]",
+    "test_the_gate_verdict_matches_what_bash_actually_does[group redirect]"
+   ],
+   "tail": "4 failed, 148 passed in 5.52s"
+  },
+  {
+   "mutation": "MED FP `|` line continuation ends the pipeline",
+   "suite_red": true,
+   "n_failed": 2,
+   "failed": [
+    "test_registry_selftest_passes",
+    "test_correct_fix_shapes_are_not_blocked[#!/usr/bin/env bash\\nwhile IFS= read -r h; do\\n  printf x |\\n    ssh \"$h\" \"cat > f\"\\ndone < <(printf 'a\\\\nb\\\\nc\\\\n')\\n]"
+   ],
+   "tail": "2 failed, 150 passed in 5.38s"
+  },
+  {
+   "mutation": "MED FP quoted ; ends the statement",
+   "suite_red": true,
+   "n_failed": 3,
+   "failed": [
+    "test_registry_selftest_passes",
+    "test_a_quoted_semicolon_does_not_end_the_statement_before_its_redirect",
+    "test_every_tracked_script_parses_with_no_unmatched_tokens"
+   ],
+   "tail": "3 failed, 149 passed in 5.00s"
+  },
+  {
+   "mutation": "M5 nested for loses the read-loop state",
+   "suite_red": true,
+   "n_failed": 4,
+   "failed": [
+    "test_registry_selftest_passes",
+    "test_a_loop_or_branch_nested_in_a_while_read_body_is_still_in_scope[for n in 1 2; do\\n    ssh \"$h\" true\\n  done\\n]",
+    "test_a_loop_or_branch_nested_in_a_while_read_body_is_still_in_scope[for ((i=0; i<2; i++)); do\\n    ssh \"$h\" true\\n  done\\n]",
+    "test_the_gate_verdict_matches_what_bash_actually_does[for nested]"
+   ],
+   "tail": "4 failed, 148 passed in 4.56s"
+  },
+  {
+   "mutation": "LOW docstring not raw",
+   "suite_red": true,
+   "n_failed": 1,
+   "failed": [
+    "test_the_module_compiles_with_warnings_as_errors"
+   ],
+   "tail": "1 failed, 151 passed, 1 warning in 4.27s"
+  },
+  {
+   "mutation": "callee regression not reported to unstaged callers",
+   "suite_red": true,
+   "n_failed": 1,
+   "failed": [
+    "test_a_staged_callee_that_starts_draining_reports_its_unstaged_callers"
+   ],
+   "tail": "1 failed, 151 passed in 4.27s"
+  },
+  {
+   "mutation": "rsync flagged (would block correct code)",
+   "suite_red": true,
+   "n_failed": 3,
+   "failed": [
+    "test_registry_selftest_passes",
+    "test_correct_fix_shapes_are_not_blocked[#!/usr/bin/env bash\\nwhile IFS= read -r h; do\\n  rsync -a -e \"ssh -o BatchMode=yes\" \"$h:x/\" y/\\ndone < <(printf 'a\\\\nb\\\\nc\\\\n')\\n]",
+    "test_rsync_with_a_stdin_draining_transport_leaves_the_loop_intact"
+   ],
+   "tail": "3 failed, 149 passed in 4.26s"
+  },
+  {
+   "mutation": "ForkAfterAuthentication=yes treated as StdinNull",
+   "suite_red": true,
+   "n_failed": 1,
+   "failed": [
+    "test_ssh_option_parsing_matches_openssh[-o ForkAfterAuthentication=yes h true]"
+   ],
+   "tail": "1 failed, 151 passed in 4.24s"
+  },
+  {
+   "mutation": "unseen $SSH value not treated as ssh",
+   "suite_red": true,
+   "n_failed": 1,
+   "failed": [
+    "test_ssh_through_variables[SSH=\"${1:?usage}\"\\n-$SSH \"cd x && ls\"-True]"
+   ],
+   "tail": "1 failed, 151 passed in 4.30s"
+  }
+ ]
+}

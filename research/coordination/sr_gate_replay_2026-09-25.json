@@ -1,0 +1,1220 @@
+{
+ "provenance": {
+  "cmd": "python tools/ssh_stdin_gate_replay.py --n 2000 --all-refs --compare-old a497db159 --out research/coordination/sr_gate_replay_2026-09-25.json",
+  "script": "tools/ssh_stdin_gate_replay.py",
+  "device": "cpu (host python; no simulator backend)",
+  "gate_at": "0db1a99414b39672354da2bfa9dee0c770232e35",
+  "git_sha": "0db1a99414b39672354da2bfa9dee0c770232e35",
+  "generated_utc": "2026-09-25T16:52:17+00:00"
+ },
+ "refs": "all",
+ "commits_touching_sh": 486,
+ "oldest_commit": "0cdbb6b1315ab0c0be98985a6b65c85fdcb6261e",
+ "staged_sh_files_checked": 786,
+ "distinct_blobs_parsed": 424,
+ "parse_errors": [],
+ "blobs_with_unmatched_tokens": [],
+ "commits_blocked": 37,
+ "blocks_by_review_verdict": {
+  "TRUE POSITIVE, incident 3 (lane A WIP a144f6d46): pool_sync.sh, which runs ssh on its stdin, called in the same loop; that lane's own review flagged it HIGH #2 and 75dfb7960 fixed it": 1,
+  "TRUE POSITIVE, incident 3: per-instance ssh probes in `while read iid ... done <<<\"$ids\"` (fixed on research/aws-pool-stop-start-safety)": 69,
+  "TRUE POSITIVE, incident 1: pool_queue.sh's probes (no -n) read the job-file loop's stdin (fixed 6406924ee)": 1,
+  "TRUE POSITIVE, incident 2: revision_available() ssh without -n, called from pop_job's while-read loop (fixed 096dfdae0)": 15
+ },
+ "blocked": [
+  {
+   "commit": "a144f6d46797c8660456c909ac96aad6aba8bcdd",
+   "date": "2026-09-25T10:30:33-04:00",
+   "subject": "WIP(aws pool stop/start safety): partial edits saved when the lane was stopped 10:30 (its tests wrote the production spend ledger) -- NOT reviewed, NOT for merg",
+   "touched": {
+    "tools/aws_idle_stop.sh": "M",
+    "tools/aws_pool_node.sh": "M",
+    "tools/pool_sync.sh": "M"
+   },
+   "problems": [
+    "tools/aws_idle_stop.sh:58 -- `pool_sync.sh` (a script that runs ssh on its own stdin) reads fd 0 in sync_node_before_stop(), called from the `while read` loop at line 179: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: bash \"$ROOT/tools/pool_sync.sh\" >>\"$LOG\" 2>&1; then",
+    "tools/aws_idle_stop.sh:147 -- `ssh` (no -n/-f) reads fd 0 inside a `while read` loop: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: la=$(ssh -i \"$state_key\" -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes \\",
+    "tools/aws_idle_stop.sh:151 -- `ssh` (no -n/-f) reads fd 0 inside a `while read` loop: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: ncpu=$(ssh -i \"$state_key\" -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes \\",
+    "tools/aws_idle_stop.sh:163 -- `ssh` (no -n/-f) reads fd 0 inside a `while read` loop: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: if ssh -i \"$state_key\" -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes \\"
+   ],
+   "review": [
+    "TRUE POSITIVE, incident 3 (lane A WIP a144f6d46): pool_sync.sh, which runs ssh on its stdin, called in the same loop; that lane's own review flagged it HIGH #2 and 75dfb7960 fixed it",
+    "TRUE POSITIVE, incident 3: per-instance ssh probes in `while read iid ... done <<<\"$ids\"` (fixed on research/aws-pool-stop-start-safety)"
+   ]
+  },
+  {
+   "commit": "8cc766c4829a5d121728a5e0f64691bc88f65467",
+   "date": "2026-09-24T19:32:47-04:00",
+   "subject": "jobs(B2b): base-only job file (258 = 43 rows x 6 seeds, the b2b0924-base lines of b2b0924_jobs.txt) + the wave queuer (Amendment 1, A1.8)",
+   "touched": {
+    "research/coordination/b2b_queue_next_wave.sh": "A"
+   },
+   "problems": [
+    "research/coordination/b2b_queue_next_wave.sh:104 -- `pool_queue.sh` (a script that runs ssh on its own stdin) reads fd 0 inside a `while read` loop: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: bash \"$QUEUE_TOOL\" add \"$line\" --checked \"$REASON\" >/dev/null 2>\"${XDG_RUNTIME_DIR:-/tmp}/b2b0924_add.err\""
+   ],
+   "review": [
+    "TRUE POSITIVE, incident 1: pool_queue.sh's probes (no -n) read the job-file loop's stdin (fixed 6406924ee)"
+   ]
+  },
+  {
+   "commit": "85d2cd02cdc6e288e4de1f1c2c1353b423dd11b6",
+   "date": "2026-09-24T10:20:07-04:00",
+   "subject": "merge origin/main into research/affect-learned-vocabulary",
+   "touched": {
+    "tools/pool_autodispatch.sh": "M",
+    "tools/pool_provision.sh": "M",
+    "tools/pool_queue.sh": "M"
+   },
+   "problems": [
+    "tools/pool_autodispatch.sh:105 -- `ssh` (no -n/-f) reads fd 0 in revision_available_cached(), called from the `while read` loop at line 297: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: timeout 10 ssh \"${SSH_F[@]}\" -o BatchMode=yes -o ConnectTimeout=6 \"$node\" \\"
+   ],
+   "review": [
+    "TRUE POSITIVE, incident 2: revision_available() ssh without -n, called from pop_job's while-read loop (fixed 096dfdae0)"
+   ]
+  },
+  {
+   "commit": "f398a923a1ec8b3cdcb06f547b50db0ebd677a35",
+   "date": "2026-09-24T01:26:15-04:00",
+   "subject": "Merge remote-tracking branch 'origin/main' into research/perception-readout-homeostasis",
+   "touched": {
+    "tools/pool_autodispatch.sh": "M",
+    "tools/pool_queue.sh": "M"
+   },
+   "problems": [
+    "tools/pool_autodispatch.sh:105 -- `ssh` (no -n/-f) reads fd 0 in revision_available_cached(), called from the `while read` loop at line 297: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: timeout 10 ssh \"${SSH_F[@]}\" -o BatchMode=yes -o ConnectTimeout=6 \"$node\" \\"
+   ],
+   "review": [
+    "TRUE POSITIVE, incident 2: revision_available() ssh without -n, called from pop_job's while-read loop (fixed 096dfdae0)"
+   ]
+  },
+  {
+   "commit": "738894a0829a4eaef544e8db09eccf7116ea59a9",
+   "date": "2026-09-24T01:21:10-04:00",
+   "subject": "fix(pool): default every dispatched job to one math thread (BLAS on all cores stalled dispatch for 50 min)",
+   "touched": {
+    "tools/pool_autodispatch.sh": "M"
+   },
+   "problems": [
+    "tools/pool_autodispatch.sh:105 -- `ssh` (no -n/-f) reads fd 0 in revision_available_cached(), called from the `while read` loop at line 297: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: timeout 10 ssh \"${SSH_F[@]}\" -o BatchMode=yes -o ConnectTimeout=6 \"$node\" \\"
+   ],
+   "review": [
+    "TRUE POSITIVE, incident 2: revision_available() ssh without -n, called from pop_job's while-read loop (fixed 096dfdae0)"
+   ]
+  },
+  {
+   "commit": "ab81e1ff4f5812778db3205288f3c6e27053d757",
+   "date": "2026-09-24T01:08:31-04:00",
+   "subject": "Merge remote-tracking branch 'origin/main' into research/gnw-continuous-branchpoint",
+   "touched": {
+    "tools/aws_idle_stop.sh": "M"
+   },
+   "problems": [
+    "tools/aws_idle_stop.sh:100 -- `ssh` (no -n/-f) reads fd 0 inside a `while read` loop: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: la=$(ssh -i \"$state_key\" -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes \\",
+    "tools/aws_idle_stop.sh:104 -- `ssh` (no -n/-f) reads fd 0 inside a `while read` loop: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: ncpu=$(ssh -i \"$state_key\" -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes \\",
+    "tools/aws_idle_stop.sh:116 -- `ssh` (no -n/-f) reads fd 0 inside a `while read` loop: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: if ssh -i \"$state_key\" -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes \\"
+   ],
+   "review": [
+    "TRUE POSITIVE, incident 3: per-instance ssh probes in `while read iid ... done <<<\"$ids\"` (fixed on research/aws-pool-stop-start-safety)"
+   ]
+  },
+  {
+   "commit": "eb43a5d98c30f5dd34b3646010430837ec58394b",
+   "date": "2026-09-24T01:03:48-04:00",
+   "subject": "merge(language-learned-referent-route): origin/main into the D6 learned-referent env-flag route",
+   "touched": {
+    "tools/aws_idle_stop.sh": "M"
+   },
+   "problems": [
+    "tools/aws_idle_stop.sh:100 -- `ssh` (no -n/-f) reads fd 0 inside a `while read` loop: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: la=$(ssh -i \"$state_key\" -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes \\",
+    "tools/aws_idle_stop.sh:104 -- `ssh` (no -n/-f) reads fd 0 inside a `while read` loop: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: ncpu=$(ssh -i \"$state_key\" -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes \\",
+    "tools/aws_idle_stop.sh:116 -- `ssh` (no -n/-f) reads fd 0 inside a `while read` loop: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: if ssh -i \"$state_key\" -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes \\"
+   ],
+   "review": [
+    "TRUE POSITIVE, incident 3: per-instance ssh probes in `while read iid ... done <<<\"$ids\"` (fixed on research/aws-pool-stop-start-safety)"
+   ]
+  },
+  {
+   "commit": "a5ea82bd443691f5d48147b26baa0b3f75a6ffb0",
+   "date": "2026-09-24T00:51:51-04:00",
+   "subject": "Merge remote-tracking branch 'origin/main' into research/affect-content-preserving-tone",
+   "touched": {
+    "tools/aws_idle_stop.sh": "M"
+   },
+   "problems": [
+    "tools/aws_idle_stop.sh:100 -- `ssh` (no -n/-f) reads fd 0 inside a `while read` loop: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: la=$(ssh -i \"$state_key\" -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes \\",
+    "tools/aws_idle_stop.sh:104 -- `ssh` (no -n/-f) reads fd 0 inside a `while read` loop: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: ncpu=$(ssh -i \"$state_key\" -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes \\",
+    "tools/aws_idle_stop.sh:116 -- `ssh` (no -n/-f) reads fd 0 inside a `while read` loop: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: if ssh -i \"$state_key\" -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes \\"
+   ],
+   "review": [
+    "TRUE POSITIVE, incident 3: per-instance ssh probes in `while read iid ... done <<<\"$ids\"` (fixed on research/aws-pool-stop-start-safety)"
+   ]
+  },
+  {
+   "commit": "cd8518e00d8b9f7a4f4d3ae5db011f02747ee469",
+   "date": "2026-09-24T00:36:39-04:00",
+   "subject": "merge(da-tag-capture): sync origin/main into the aggregate-regrade fix round",
+   "touched": {
+    "tools/aws_brain_sanity_check.sh": "M",
+    "tools/aws_cpu_launch.sh": "M",
+    "tools/aws_cpu_provision.sh": "M",
+    "tools/aws_idle_stop.sh": "M",
+    "tools/aws_pool_node.sh": "A",
+    "tools/pool_autodispatch.sh": "M",
+    "tools/pool_backfill_provisioned_markers.sh": "A",
+    "tools/pool_opsweep_collect.sh": "M",
+    "tools/pool_opsweep_dispatch.sh": "M",
+    "tools/pool_provision.sh": "M",
+    "tools/pool_queue.sh": "M",
+    "tools/pool_revision_marker.sh": "A",
+    "tools/pool_sync.sh": "M",
+    "tools/pool_sync_assets.sh": "M",
+    "tools/pull_pool_results.sh": "M",
+    "tools/workflow_check.sh": "M"
+   },
+   "problems": [
+    "tools/aws_idle_stop.sh:100 -- `ssh` (no -n/-f) reads fd 0 inside a `while read` loop: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: la=$(ssh -i \"$state_key\" -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes \\",
+    "tools/aws_idle_stop.sh:104 -- `ssh` (no -n/-f) reads fd 0 inside a `while read` loop: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: ncpu=$(ssh -i \"$state_key\" -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes \\",
+    "tools/aws_idle_stop.sh:116 -- `ssh` (no -n/-f) reads fd 0 inside a `while read` loop: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: if ssh -i \"$state_key\" -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes \\",
+    "tools/pool_autodispatch.sh:105 -- `ssh` (no -n/-f) reads fd 0 in revision_available_cached(), called from the `while read` loop at line 293: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: timeout 10 ssh \"${SSH_F[@]}\" -o BatchMode=yes -o ConnectTimeout=6 \"$node\" \\"
+   ],
+   "review": [
+    "TRUE POSITIVE, incident 2: revision_available() ssh without -n, called from pop_job's while-read loop (fixed 096dfdae0)",
+    "TRUE POSITIVE, incident 3: per-instance ssh probes in `while read iid ... done <<<\"$ids\"` (fixed on research/aws-pool-stop-start-safety)"
+   ]
+  },
+  {
+   "commit": "ff390308879d11b28c86fbe8053308084f40bd7b",
+   "date": "2026-09-24T00:32:48-04:00",
+   "subject": "Merge remote-tracking branch 'origin/main' into swap-record-fix",
+   "touched": {
+    "tools/aws_brain_sanity_check.sh": "M",
+    "tools/aws_cpu_launch.sh": "M",
+    "tools/aws_cpu_provision.sh": "M",
+    "tools/aws_idle_stop.sh": "M",
+    "tools/aws_pool_node.sh": "A",
+    "tools/pool_autodispatch.sh": "M",
+    "tools/pool_backfill_provisioned_markers.sh": "A",
+    "tools/pool_opsweep_collect.sh": "M",
+    "tools/pool_opsweep_dispatch.sh": "M",
+    "tools/pool_provision.sh": "M",
+    "tools/pool_queue.sh": "M",
+    "tools/pool_revision_marker.sh": "A",
+    "tools/pool_sync.sh": "M",
+    "tools/pool_sync_assets.sh": "M",
+    "tools/pull_pool_results.sh": "M",
+    "tools/workflow_check.sh": "M"
+   },
+   "problems": [
+    "tools/aws_idle_stop.sh:100 -- `ssh` (no -n/-f) reads fd 0 inside a `while read` loop: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: la=$(ssh -i \"$state_key\" -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes \\",
+    "tools/aws_idle_stop.sh:104 -- `ssh` (no -n/-f) reads fd 0 inside a `while read` loop: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: ncpu=$(ssh -i \"$state_key\" -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes \\",
+    "tools/aws_idle_stop.sh:116 -- `ssh` (no -n/-f) reads fd 0 inside a `while read` loop: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: if ssh -i \"$state_key\" -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes \\",
+    "tools/pool_autodispatch.sh:105 -- `ssh` (no -n/-f) reads fd 0 in revision_available_cached(), called from the `while read` loop at line 293: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: timeout 10 ssh \"${SSH_F[@]}\" -o BatchMode=yes -o ConnectTimeout=6 \"$node\" \\"
+   ],
+   "review": [
+    "TRUE POSITIVE, incident 2: revision_available() ssh without -n, called from pop_job's while-read loop (fixed 096dfdae0)",
+    "TRUE POSITIVE, incident 3: per-instance ssh probes in `while read iid ... done <<<\"$ids\"` (fixed on research/aws-pool-stop-start-safety)"
+   ]
+  },
+  {
+   "commit": "747d6a5780339527f10624d93a58217ecec51187",
+   "date": "2026-09-24T00:26:27-04:00",
+   "subject": "Merge remote-tracking branch 'origin/main' into fixround-wm-binding-adequate-probe-r3",
+   "touched": {
+    "tools/aws_idle_stop.sh": "M"
+   },
+   "problems": [
+    "tools/aws_idle_stop.sh:100 -- `ssh` (no -n/-f) reads fd 0 inside a `while read` loop: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: la=$(ssh -i \"$state_key\" -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes \\",
+    "tools/aws_idle_stop.sh:104 -- `ssh` (no -n/-f) reads fd 0 inside a `while read` loop: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: ncpu=$(ssh -i \"$state_key\" -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes \\",
+    "tools/aws_idle_stop.sh:116 -- `ssh` (no -n/-f) reads fd 0 inside a `while read` loop: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: if ssh -i \"$state_key\" -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes \\"
+   ],
+   "review": [
+    "TRUE POSITIVE, incident 3: per-instance ssh probes in `while read iid ... done <<<\"$ids\"` (fixed on research/aws-pool-stop-start-safety)"
+   ]
+  },
+  {
+   "commit": "58068b0912cae75ff9c9bc0c941a8b6e4d6d6c9b",
+   "date": "2026-09-24T00:17:31-04:00",
+   "subject": "Merge remote-tracking branch 'origin/main' into fix/distributed-fact-store-review",
+   "touched": {
+    "tools/aws_idle_stop.sh": "M"
+   },
+   "problems": [
+    "tools/aws_idle_stop.sh:100 -- `ssh` (no -n/-f) reads fd 0 inside a `while read` loop: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: la=$(ssh -i \"$state_key\" -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes \\",
+    "tools/aws_idle_stop.sh:104 -- `ssh` (no -n/-f) reads fd 0 inside a `while read` loop: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: ncpu=$(ssh -i \"$state_key\" -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes \\",
+    "tools/aws_idle_stop.sh:116 -- `ssh` (no -n/-f) reads fd 0 inside a `while read` loop: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: if ssh -i \"$state_key\" -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes \\"
+   ],
+   "review": [
+    "TRUE POSITIVE, incident 3: per-instance ssh probes in `while read iid ... done <<<\"$ids\"` (fixed on research/aws-pool-stop-start-safety)"
+   ]
+  },
+  {
+   "commit": "14b23db7edab0791ec521f6e49da4cff3cb20262",
+   "date": "2026-09-24T00:15:43-04:00",
+   "subject": "fix(aws idle-stop): launch grace \u2014 never judge an instance younger than the idle window",
+   "touched": {
+    "tools/aws_idle_stop.sh": "M"
+   },
+   "problems": [
+    "tools/aws_idle_stop.sh:100 -- `ssh` (no -n/-f) reads fd 0 inside a `while read` loop: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: la=$(ssh -i \"$state_key\" -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes \\",
+    "tools/aws_idle_stop.sh:104 -- `ssh` (no -n/-f) reads fd 0 inside a `while read` loop: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: ncpu=$(ssh -i \"$state_key\" -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes \\",
+    "tools/aws_idle_stop.sh:116 -- `ssh` (no -n/-f) reads fd 0 inside a `while read` loop: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: if ssh -i \"$state_key\" -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes \\"
+   ],
+   "review": [
+    "TRUE POSITIVE, incident 3: per-instance ssh probes in `while read iid ... done <<<\"$ids\"` (fixed on research/aws-pool-stop-start-safety)"
+   ]
+  },
+  {
+   "commit": "0e37c637aa3f19b875293a77820d04cb809eb5f4",
+   "date": "2026-09-23T23:12:45-04:00",
+   "subject": "Merge remote-tracking branch 'origin/main' into fix/wm-binding-adequate-probe-r2",
+   "touched": {
+    "tools/aws_brain_sanity_check.sh": "M",
+    "tools/aws_cpu_launch.sh": "M",
+    "tools/aws_cpu_provision.sh": "M",
+    "tools/aws_pool_node.sh": "A",
+    "tools/pool_autodispatch.sh": "M",
+    "tools/pool_backfill_provisioned_markers.sh": "A",
+    "tools/pool_opsweep_collect.sh": "M",
+    "tools/pool_opsweep_dispatch.sh": "M",
+    "tools/pool_provision.sh": "M",
+    "tools/pool_queue.sh": "M",
+    "tools/pool_revision_marker.sh": "A",
+    "tools/pool_sync.sh": "M",
+    "tools/pool_sync_assets.sh": "M",
+    "tools/pull_pool_results.sh": "M",
+    "tools/workflow_check.sh": "M"
+   },
+   "problems": [
+    "tools/pool_autodispatch.sh:105 -- `ssh` (no -n/-f) reads fd 0 in revision_available_cached(), called from the `while read` loop at line 293: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: timeout 10 ssh \"${SSH_F[@]}\" -o BatchMode=yes -o ConnectTimeout=6 \"$node\" \\"
+   ],
+   "review": [
+    "TRUE POSITIVE, incident 2: revision_available() ssh without -n, called from pop_job's while-read loop (fixed 096dfdae0)"
+   ]
+  },
+  {
+   "commit": "4f87b5ee62f5aab46a2089bf249a60b5b191eeb6",
+   "date": "2026-09-23T23:04:37-04:00",
+   "subject": "Merge remote-tracking branch 'origin/main' into research/distributed-fact-store",
+   "touched": {
+    "tools/aws_brain_sanity_check.sh": "M",
+    "tools/aws_cpu_launch.sh": "M",
+    "tools/aws_cpu_provision.sh": "M",
+    "tools/aws_pool_node.sh": "A",
+    "tools/pool_autodispatch.sh": "M",
+    "tools/pool_backfill_provisioned_markers.sh": "A",
+    "tools/pool_opsweep_collect.sh": "M",
+    "tools/pool_opsweep_dispatch.sh": "M",
+    "tools/pool_provision.sh": "M",
+    "tools/pool_queue.sh": "M",
+    "tools/pool_revision_marker.sh": "A",
+    "tools/pool_sync.sh": "M",
+    "tools/pool_sync_assets.sh": "M",
+    "tools/pull_pool_results.sh": "M",
+    "tools/workflow_check.sh": "M"
+   },
+   "problems": [
+    "tools/pool_autodispatch.sh:105 -- `ssh` (no -n/-f) reads fd 0 in revision_available_cached(), called from the `while read` loop at line 293: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: timeout 10 ssh \"${SSH_F[@]}\" -o BatchMode=yes -o ConnectTimeout=6 \"$node\" \\"
+   ],
+   "review": [
+    "TRUE POSITIVE, incident 2: revision_available() ssh without -n, called from pop_job's while-read loop (fixed 096dfdae0)"
+   ]
+  },
+  {
+   "commit": "2c32188526781facd2615c1491e61c04ca32c74b",
+   "date": "2026-09-23T23:01:58-04:00",
+   "subject": "merge(d6-capacity): origin/main into research/d6-capacity-curve-amend (pre-provision sync; merge-tree verified clean)",
+   "touched": {
+    "tools/aws_brain_sanity_check.sh": "M",
+    "tools/aws_cpu_launch.sh": "M",
+    "tools/aws_cpu_provision.sh": "M",
+    "tools/aws_pool_node.sh": "A",
+    "tools/pool_autodispatch.sh": "M",
+    "tools/pool_backfill_provisioned_markers.sh": "A",
+    "tools/pool_opsweep_collect.sh": "M",
+    "tools/pool_opsweep_dispatch.sh": "M",
+    "tools/pool_provision.sh": "M",
+    "tools/pool_queue.sh": "M",
+    "tools/pool_revision_marker.sh": "A",
+    "tools/pool_sync.sh": "M",
+    "tools/pool_sync_assets.sh": "M",
+    "tools/pull_pool_results.sh": "M",
+    "tools/workflow_check.sh": "M"
+   },
+   "problems": [
+    "tools/pool_autodispatch.sh:105 -- `ssh` (no -n/-f) reads fd 0 in revision_available_cached(), called from the `while read` loop at line 293: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: timeout 10 ssh \"${SSH_F[@]}\" -o BatchMode=yes -o ConnectTimeout=6 \"$node\" \\"
+   ],
+   "review": [
+    "TRUE POSITIVE, incident 2: revision_available() ssh without -n, called from pop_job's while-read loop (fixed 096dfdae0)"
+   ]
+  },
+  {
+   "commit": "58e41e085eb81e23f3cf626aa68f7e0a965561e2",
+   "date": "2026-09-23T23:00:45-04:00",
+   "subject": "fix(audit): a RAM-bound pool node is not idle capacity; stop tracking live .aws_gpu state",
+   "touched": {
+    "tools/pool_autodispatch.sh": "M"
+   },
+   "problems": [
+    "tools/pool_autodispatch.sh:105 -- `ssh` (no -n/-f) reads fd 0 in revision_available_cached(), called from the `while read` loop at line 293: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: timeout 10 ssh \"${SSH_F[@]}\" -o BatchMode=yes -o ConnectTimeout=6 \"$node\" \\"
+   ],
+   "review": [
+    "TRUE POSITIVE, incident 2: revision_available() ssh without -n, called from pop_job's while-read loop (fixed 096dfdae0)"
+   ]
+  },
+  {
+   "commit": "af93db5c8ab53861b3e46e2ffc266f07814cd8bd",
+   "date": "2026-09-23T22:55:11-04:00",
+   "subject": "Merge remote-tracking branch 'origin/main' into flip-guard",
+   "touched": {
+    "tools/aws_brain_sanity_check.sh": "M",
+    "tools/aws_cpu_launch.sh": "M",
+    "tools/aws_cpu_provision.sh": "M",
+    "tools/aws_pool_node.sh": "A",
+    "tools/pool_autodispatch.sh": "M",
+    "tools/pool_backfill_provisioned_markers.sh": "A",
+    "tools/pool_opsweep_collect.sh": "M",
+    "tools/pool_opsweep_dispatch.sh": "M",
+    "tools/pool_provision.sh": "M",
+    "tools/pool_queue.sh": "M",
+    "tools/pool_revision_marker.sh": "A",
+    "tools/pool_sync.sh": "M",
+    "tools/pool_sync_assets.sh": "M",
+    "tools/pull_pool_results.sh": "M",
+    "tools/workflow_check.sh": "M"
+   },
+   "problems": [
+    "tools/pool_autodispatch.sh:105 -- `ssh` (no -n/-f) reads fd 0 in revision_available_cached(), called from the `while read` loop at line 293: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: timeout 10 ssh \"${SSH_F[@]}\" -o BatchMode=yes -o ConnectTimeout=6 \"$node\" \\"
+   ],
+   "review": [
+    "TRUE POSITIVE, incident 2: revision_available() ssh without -n, called from pop_job's while-read loop (fixed 096dfdae0)"
+   ]
+  },
+  {
+   "commit": "561efa58642717a6140edab262f1b50eab13d07e",
+   "date": "2026-09-23T22:44:43-04:00",
+   "subject": "merge(aws-pool-node): run an AWS instance as an extra pool node (repo-local ssh config, dynamic node list, revision-ready markers, strict final sync, safe teard",
+   "touched": {
+    "tools/aws_brain_sanity_check.sh": "M",
+    "tools/aws_cpu_launch.sh": "M",
+    "tools/aws_pool_node.sh": "A",
+    "tools/pool_autodispatch.sh": "M",
+    "tools/pool_backfill_provisioned_markers.sh": "A",
+    "tools/pool_opsweep_collect.sh": "M",
+    "tools/pool_opsweep_dispatch.sh": "M",
+    "tools/pool_provision.sh": "M",
+    "tools/pool_queue.sh": "M",
+    "tools/pool_revision_marker.sh": "A",
+    "tools/pool_sync.sh": "M",
+    "tools/pool_sync_assets.sh": "M",
+    "tools/pull_pool_results.sh": "M",
+    "tools/workflow_check.sh": "M"
+   },
+   "problems": [
+    "tools/pool_autodispatch.sh:105 -- `ssh` (no -n/-f) reads fd 0 in revision_available_cached(), called from the `while read` loop at line 293: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: timeout 10 ssh \"${SSH_F[@]}\" -o BatchMode=yes -o ConnectTimeout=6 \"$node\" \\"
+   ],
+   "review": [
+    "TRUE POSITIVE, incident 2: revision_available() ssh without -n, called from pop_job's while-read loop (fixed 096dfdae0)"
+   ]
+  },
+  {
+   "commit": "294e415d6be1458c768ac3c26e8c787ca06d54da",
+   "date": "2026-09-23T22:28:33-04:00",
+   "subject": "fix(aws-pool-node): close round-3 re-review items -- legacy revision markers, stopped-instance IP, empty-describe, cache subshell",
+   "touched": {
+    "tools/aws_pool_node.sh": "M",
+    "tools/pool_autodispatch.sh": "M",
+    "tools/pool_backfill_provisioned_markers.sh": "A",
+    "tools/pool_queue.sh": "M",
+    "tools/pool_revision_marker.sh": "A"
+   },
+   "problems": [
+    "tools/pool_autodispatch.sh:105 -- `ssh` (no -n/-f) reads fd 0 in revision_available_cached(), called from the `while read` loop at line 293: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: timeout 10 ssh \"${SSH_F[@]}\" -o BatchMode=yes -o ConnectTimeout=6 \"$node\" \\"
+   ],
+   "review": [
+    "TRUE POSITIVE, incident 2: revision_available() ssh without -n, called from pop_job's while-read loop (fixed 096dfdae0)"
+   ]
+  },
+  {
+   "commit": "1705a2a689a68c3833064a3f7f54ed6fbe668d93",
+   "date": "2026-09-23T22:13:38-04:00",
+   "subject": "Merge remote-tracking branch 'origin/main' into fix/wm-binding-adequate-probe-r2",
+   "touched": {
+    "research/runners/_lbf_open_ended_production_turn_harvest_a2.sh": "A",
+    "research/runners/_lbf_open_ended_production_turn_harvest_a3.sh": "A",
+    "research/runners/_lbf_open_ended_production_turn_stage.sh": "A",
+    "research/runners/_lbf_open_ended_production_turn_stage_a2.sh": "A",
+    "research/runners/_lbf_open_ended_production_turn_stage_a3_pool.sh": "A",
+    "tools/aws_idle_stop.sh": "M",
+    "tools/pool_autodispatch.sh": "M",
+    "tools/pool_provision.sh": "M"
+   },
+   "problems": [
+    "tools/aws_idle_stop.sh:93 -- `ssh` (no -n/-f) reads fd 0 inside a `while read` loop: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: la=$(ssh -i \"$state_key\" -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes \\",
+    "tools/aws_idle_stop.sh:97 -- `ssh` (no -n/-f) reads fd 0 inside a `while read` loop: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: ncpu=$(ssh -i \"$state_key\" -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes \\",
+    "tools/aws_idle_stop.sh:109 -- `ssh` (no -n/-f) reads fd 0 inside a `while read` loop: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: if ssh -i \"$state_key\" -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes \\"
+   ],
+   "review": [
+    "TRUE POSITIVE, incident 3: per-instance ssh probes in `while read iid ... done <<<\"$ids\"` (fixed on research/aws-pool-stop-start-safety)"
+   ]
+  },
+  {
+   "commit": "06e03d6acd03cff60999e499f802e085eaa31ffa",
+   "date": "2026-09-23T21:48:35-04:00",
+   "subject": "fix(aws-pool-node): close CRITICAL/HIGH/MEDIUM/LOW items from adversarial re-review",
+   "touched": {
+    "tools/aws_pool_node.sh": "M",
+    "tools/pool_autodispatch.sh": "M",
+    "tools/pool_opsweep_collect.sh": "M",
+    "tools/pool_opsweep_dispatch.sh": "M",
+    "tools/pool_provision.sh": "M",
+    "tools/pool_sync.sh": "M",
+    "tools/pull_pool_results.sh": "M",
+    "tools/workflow_check.sh": "M"
+   },
+   "problems": [
+    "tools/pool_autodispatch.sh:107 -- `ssh` (no -n/-f) reads fd 0 in revision_available_cached(), called from the `while read` loop at line 276: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: timeout 10 ssh \"${SSH_F[@]}\" -o BatchMode=yes -o ConnectTimeout=6 \"$node\" \\"
+   ],
+   "review": [
+    "TRUE POSITIVE, incident 2: revision_available() ssh without -n, called from pop_job's while-read loop (fixed 096dfdae0)"
+   ]
+  },
+  {
+   "commit": "83a9490daa4d4f412331cbdb0974a0f63167924b",
+   "date": "2026-09-23T21:26:56-04:00",
+   "subject": "merge origin/main into aws-pool-node-fixround2 (pre-fix-round sync)",
+   "touched": {
+    "tools/pool_autodispatch.sh": "M"
+   },
+   "problems": [
+    "tools/pool_autodispatch.sh:70 -- `ssh` (no -n/-f) reads fd 0 in revision_available(), called from the `while read` loop at line 216: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: timeout 10 ssh \"${SSH_F[@]}\" -o BatchMode=yes -o ConnectTimeout=6 \"$node\" \\"
+   ],
+   "review": [
+    "TRUE POSITIVE, incident 2: revision_available() ssh without -n, called from pop_job's while-read loop (fixed 096dfdae0)"
+   ]
+  },
+  {
+   "commit": "9f7d4095b0020872c182ba5334bee20129c21548",
+   "date": "2026-09-23T20:45:04-04:00",
+   "subject": "fix(aws-pool-node): close CRITICAL/HIGH/MEDIUM/LOW items from adversarial review v2:c46f1a0",
+   "touched": {
+    "tools/aws_cpu_launch.sh": "M",
+    "tools/aws_pool_node.sh": "M",
+    "tools/pool_autodispatch.sh": "M",
+    "tools/pool_queue.sh": "M",
+    "tools/pool_sync.sh": "M"
+   },
+   "problems": [
+    "tools/pool_autodispatch.sh:70 -- `ssh` (no -n/-f) reads fd 0 in revision_available(), called from the `while read` loop at line 192: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: timeout 10 ssh \"${SSH_F[@]}\" -o BatchMode=yes -o ConnectTimeout=6 \"$node\" \\"
+   ],
+   "review": [
+    "TRUE POSITIVE, incident 2: revision_available() ssh without -n, called from pop_job's while-read loop (fixed 096dfdae0)"
+   ]
+  },
+  {
+   "commit": "c4c62d06658a39175d414487f98c2d2f7b1e04ff",
+   "date": "2026-09-23T20:32:31-04:00",
+   "subject": "Merge remote-tracking branch 'origin/main' into research/da-tag-capture-chat-wire",
+   "touched": {
+    "research/runners/_lbf_open_ended_production_turn_harvest_a2.sh": "A",
+    "research/runners/_lbf_open_ended_production_turn_harvest_a3.sh": "A",
+    "research/runners/_lbf_open_ended_production_turn_stage.sh": "A",
+    "research/runners/_lbf_open_ended_production_turn_stage_a2.sh": "A",
+    "research/runners/_lbf_open_ended_production_turn_stage_a3_pool.sh": "A",
+    "tools/aws_idle_stop.sh": "M",
+    "tools/pool_autodispatch.sh": "M",
+    "tools/pool_provision.sh": "M"
+   },
+   "problems": [
+    "tools/aws_idle_stop.sh:93 -- `ssh` (no -n/-f) reads fd 0 inside a `while read` loop: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: la=$(ssh -i \"$state_key\" -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes \\",
+    "tools/aws_idle_stop.sh:97 -- `ssh` (no -n/-f) reads fd 0 inside a `while read` loop: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: ncpu=$(ssh -i \"$state_key\" -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes \\",
+    "tools/aws_idle_stop.sh:109 -- `ssh` (no -n/-f) reads fd 0 inside a `while read` loop: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: if ssh -i \"$state_key\" -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes \\"
+   ],
+   "review": [
+    "TRUE POSITIVE, incident 3: per-instance ssh probes in `while read iid ... done <<<\"$ids\"` (fixed on research/aws-pool-stop-start-safety)"
+   ]
+  },
+  {
+   "commit": "7f90034dfbf48bfc128e3f9b1c7f7506bb3fe8a6",
+   "date": "2026-09-23T19:24:19-04:00",
+   "subject": "Merge remote-tracking branch 'origin/main' into research/swap-drives-adequate-probe",
+   "touched": {
+    "research/runners/_lbf_open_ended_production_turn_harvest_a2.sh": "A",
+    "research/runners/_lbf_open_ended_production_turn_harvest_a3.sh": "A",
+    "research/runners/_lbf_open_ended_production_turn_stage.sh": "A",
+    "research/runners/_lbf_open_ended_production_turn_stage_a2.sh": "A",
+    "research/runners/_lbf_open_ended_production_turn_stage_a3_pool.sh": "A",
+    "tools/aws_idle_stop.sh": "M",
+    "tools/pool_autodispatch.sh": "M",
+    "tools/pool_provision.sh": "M"
+   },
+   "problems": [
+    "tools/aws_idle_stop.sh:93 -- `ssh` (no -n/-f) reads fd 0 inside a `while read` loop: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: la=$(ssh -i \"$state_key\" -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes \\",
+    "tools/aws_idle_stop.sh:97 -- `ssh` (no -n/-f) reads fd 0 inside a `while read` loop: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: ncpu=$(ssh -i \"$state_key\" -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes \\",
+    "tools/aws_idle_stop.sh:109 -- `ssh` (no -n/-f) reads fd 0 inside a `while read` loop: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: if ssh -i \"$state_key\" -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes \\"
+   ],
+   "review": [
+    "TRUE POSITIVE, incident 3: per-instance ssh probes in `while read iid ... done <<<\"$ids\"` (fixed on research/aws-pool-stop-start-safety)"
+   ]
+  },
+  {
+   "commit": "80a9851011330b93f5c407749fb340ec4740308d",
+   "date": "2026-09-23T18:36:10-04:00",
+   "subject": "fix(aws): idle-stop checks every project instance, not only the one in .aws_gpu",
+   "touched": {
+    "tools/aws_idle_stop.sh": "M"
+   },
+   "problems": [
+    "tools/aws_idle_stop.sh:93 -- `ssh` (no -n/-f) reads fd 0 inside a `while read` loop: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: la=$(ssh -i \"$state_key\" -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes \\",
+    "tools/aws_idle_stop.sh:97 -- `ssh` (no -n/-f) reads fd 0 inside a `while read` loop: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: ncpu=$(ssh -i \"$state_key\" -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes \\",
+    "tools/aws_idle_stop.sh:109 -- `ssh` (no -n/-f) reads fd 0 inside a `while read` loop: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: if ssh -i \"$state_key\" -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes \\"
+   ],
+   "review": [
+    "TRUE POSITIVE, incident 3: per-instance ssh probes in `while read iid ... done <<<\"$ids\"` (fixed on research/aws-pool-stop-start-safety)"
+   ]
+  },
+  {
+   "commit": "922451111446ea88a4ff51120aaa3dfd69bc2535",
+   "date": "2026-09-23T11:47:39-04:00",
+   "subject": "Merge remote-tracking branch 'origin/main' into fix/gnw-thought-swap-drive",
+   "touched": {
+    "tools/aws_brain_sanity_check.sh": "A",
+    "tools/aws_budget.sh": "A",
+    "tools/aws_cpu_launch.sh": "M",
+    "tools/aws_cpu_provision.sh": "M",
+    "tools/aws_gpu.sh": "M",
+    "tools/aws_idle_stop.sh": "A",
+    "tools/aws_provision.sh": "M",
+    "tools/install_aws_guard_timer.sh": "A",
+    "tools/pool_autodispatch.sh": "M",
+    "tools/pool_provision.sh": "M",
+    "tools/pool_sync.sh": "M",
+    "tools/pool_sync_assets.sh": "A"
+   },
+   "problems": [
+    "tools/aws_idle_stop.sh:82 -- `ssh` (no -n/-f) reads fd 0 inside a `while read` loop: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: la=$(ssh -i \"$state_key\" -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes \\",
+    "tools/aws_idle_stop.sh:86 -- `ssh` (no -n/-f) reads fd 0 inside a `while read` loop: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: ncpu=$(ssh -i \"$state_key\" -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes \\",
+    "tools/aws_idle_stop.sh:98 -- `ssh` (no -n/-f) reads fd 0 inside a `while read` loop: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: if ssh -i \"$state_key\" -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes \\"
+   ],
+   "review": [
+    "TRUE POSITIVE, incident 3: per-instance ssh probes in `while read iid ... done <<<\"$ids\"` (fixed on research/aws-pool-stop-start-safety)"
+   ]
+  },
+  {
+   "commit": "b497dca6e7b99c917e9ad57feef450b54c301a88",
+   "date": "2026-09-23T11:47:14-04:00",
+   "subject": "Merge remote-tracking branch 'origin/main' into worktree-wf_500634cf-d18-3",
+   "touched": {
+    "tools/aws_brain_sanity_check.sh": "A",
+    "tools/aws_budget.sh": "A",
+    "tools/aws_cpu_launch.sh": "M",
+    "tools/aws_cpu_provision.sh": "M",
+    "tools/aws_gpu.sh": "M",
+    "tools/aws_idle_stop.sh": "A",
+    "tools/aws_provision.sh": "M",
+    "tools/install_aws_guard_timer.sh": "A",
+    "tools/memcap.sh": "M",
+    "tools/pool_autodispatch.sh": "M",
+    "tools/pool_provision.sh": "M",
+    "tools/pool_sync.sh": "M",
+    "tools/pool_sync_assets.sh": "A"
+   },
+   "problems": [
+    "tools/aws_idle_stop.sh:82 -- `ssh` (no -n/-f) reads fd 0 inside a `while read` loop: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: la=$(ssh -i \"$state_key\" -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes \\",
+    "tools/aws_idle_stop.sh:86 -- `ssh` (no -n/-f) reads fd 0 inside a `while read` loop: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: ncpu=$(ssh -i \"$state_key\" -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes \\",
+    "tools/aws_idle_stop.sh:98 -- `ssh` (no -n/-f) reads fd 0 inside a `while read` loop: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: if ssh -i \"$state_key\" -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes \\"
+   ],
+   "review": [
+    "TRUE POSITIVE, incident 3: per-instance ssh probes in `while read iid ... done <<<\"$ids\"` (fixed on research/aws-pool-stop-start-safety)"
+   ]
+  },
+  {
+   "commit": "c576d7fab1c7d226d22e3f17f7f80fcd4866af66",
+   "date": "2026-09-23T11:46:49-04:00",
+   "subject": "merge origin/main into research/d3-onebrain-next-organ",
+   "touched": {
+    "tools/aws_brain_sanity_check.sh": "A",
+    "tools/aws_budget.sh": "A",
+    "tools/aws_cpu_launch.sh": "M",
+    "tools/aws_cpu_provision.sh": "M",
+    "tools/aws_gpu.sh": "M",
+    "tools/aws_idle_stop.sh": "A",
+    "tools/aws_provision.sh": "M",
+    "tools/install_aws_guard_timer.sh": "A",
+    "tools/pool_autodispatch.sh": "M",
+    "tools/pool_provision.sh": "M",
+    "tools/pool_sync.sh": "M",
+    "tools/pool_sync_assets.sh": "A"
+   },
+   "problems": [
+    "tools/aws_idle_stop.sh:82 -- `ssh` (no -n/-f) reads fd 0 inside a `while read` loop: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: la=$(ssh -i \"$state_key\" -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes \\",
+    "tools/aws_idle_stop.sh:86 -- `ssh` (no -n/-f) reads fd 0 inside a `while read` loop: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: ncpu=$(ssh -i \"$state_key\" -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes \\",
+    "tools/aws_idle_stop.sh:98 -- `ssh` (no -n/-f) reads fd 0 inside a `while read` loop: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: if ssh -i \"$state_key\" -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes \\"
+   ],
+   "review": [
+    "TRUE POSITIVE, incident 3: per-instance ssh probes in `while read iid ... done <<<\"$ids\"` (fixed on research/aws-pool-stop-start-safety)"
+   ]
+  },
+  {
+   "commit": "3125cf454407ed3bb5c68b9f9cc48b901c9363eb",
+   "date": "2026-09-23T11:46:48-04:00",
+   "subject": "merge origin/main into research/d1-grow-robust-core",
+   "touched": {
+    "tools/aws_brain_sanity_check.sh": "A",
+    "tools/aws_budget.sh": "A",
+    "tools/aws_cpu_launch.sh": "M",
+    "tools/aws_cpu_provision.sh": "M",
+    "tools/aws_gpu.sh": "M",
+    "tools/aws_idle_stop.sh": "A",
+    "tools/aws_provision.sh": "M",
+    "tools/install_aws_guard_timer.sh": "A",
+    "tools/pool_autodispatch.sh": "M",
+    "tools/pool_provision.sh": "M",
+    "tools/pool_sync.sh": "M",
+    "tools/pool_sync_assets.sh": "A"
+   },
+   "problems": [
+    "tools/aws_idle_stop.sh:82 -- `ssh` (no -n/-f) reads fd 0 inside a `while read` loop: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: la=$(ssh -i \"$state_key\" -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes \\",
+    "tools/aws_idle_stop.sh:86 -- `ssh` (no -n/-f) reads fd 0 inside a `while read` loop: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: ncpu=$(ssh -i \"$state_key\" -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes \\",
+    "tools/aws_idle_stop.sh:98 -- `ssh` (no -n/-f) reads fd 0 inside a `while read` loop: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: if ssh -i \"$state_key\" -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes \\"
+   ],
+   "review": [
+    "TRUE POSITIVE, incident 3: per-instance ssh probes in `while read iid ... done <<<\"$ids\"` (fixed on research/aws-pool-stop-start-safety)"
+   ]
+  },
+  {
+   "commit": "bca675ea369105bebde7d05884afdaad3678f9ec",
+   "date": "2026-09-23T10:18:45-04:00",
+   "subject": "Merge remote-tracking branch 'origin/main' into research/d6-learn-through-use",
+   "touched": {
+    "tools/aws_brain_sanity_check.sh": "A",
+    "tools/aws_budget.sh": "A",
+    "tools/aws_cpu_launch.sh": "M",
+    "tools/aws_cpu_provision.sh": "M",
+    "tools/aws_gpu.sh": "M",
+    "tools/aws_idle_stop.sh": "A",
+    "tools/aws_provision.sh": "M",
+    "tools/install_aws_guard_timer.sh": "A",
+    "tools/pool_autodispatch.sh": "M",
+    "tools/pool_provision.sh": "M",
+    "tools/pool_sync.sh": "M",
+    "tools/pool_sync_assets.sh": "A"
+   },
+   "problems": [
+    "tools/aws_idle_stop.sh:82 -- `ssh` (no -n/-f) reads fd 0 inside a `while read` loop: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: la=$(ssh -i \"$state_key\" -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes \\",
+    "tools/aws_idle_stop.sh:86 -- `ssh` (no -n/-f) reads fd 0 inside a `while read` loop: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: ncpu=$(ssh -i \"$state_key\" -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes \\",
+    "tools/aws_idle_stop.sh:98 -- `ssh` (no -n/-f) reads fd 0 inside a `while read` loop: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: if ssh -i \"$state_key\" -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes \\"
+   ],
+   "review": [
+    "TRUE POSITIVE, incident 3: per-instance ssh probes in `while read iid ... done <<<\"$ids\"` (fixed on research/aws-pool-stop-start-safety)"
+   ]
+  },
+  {
+   "commit": "b9d0349404f3aa4e11172b2df668fa2a4797218b",
+   "date": "2026-09-23T09:58:04-04:00",
+   "subject": "Merge remote-tracking branch 'origin/main' into research/language-lane-next",
+   "touched": {
+    "tools/aws_brain_sanity_check.sh": "A",
+    "tools/aws_budget.sh": "A",
+    "tools/aws_cpu_launch.sh": "M",
+    "tools/aws_cpu_provision.sh": "M",
+    "tools/aws_gpu.sh": "M",
+    "tools/aws_idle_stop.sh": "A",
+    "tools/aws_provision.sh": "M",
+    "tools/install_aws_guard_timer.sh": "A",
+    "tools/pool_provision.sh": "M",
+    "tools/pool_sync_assets.sh": "A"
+   },
+   "problems": [
+    "tools/aws_idle_stop.sh:82 -- `ssh` (no -n/-f) reads fd 0 inside a `while read` loop: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: la=$(ssh -i \"$state_key\" -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes \\",
+    "tools/aws_idle_stop.sh:86 -- `ssh` (no -n/-f) reads fd 0 inside a `while read` loop: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: ncpu=$(ssh -i \"$state_key\" -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes \\",
+    "tools/aws_idle_stop.sh:98 -- `ssh` (no -n/-f) reads fd 0 inside a `while read` loop: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: if ssh -i \"$state_key\" -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes \\"
+   ],
+   "review": [
+    "TRUE POSITIVE, incident 3: per-instance ssh probes in `while read iid ... done <<<\"$ids\"` (fixed on research/aws-pool-stop-start-safety)"
+   ]
+  },
+  {
+   "commit": "fd3683ccd5cb6157d7a941455e6deb1664c40cb9",
+   "date": "2026-09-23T09:55:17-04:00",
+   "subject": "merge origin/main into curiosity lane (infra only; no sim/ or runner changes)",
+   "touched": {
+    "tools/aws_brain_sanity_check.sh": "A",
+    "tools/aws_budget.sh": "A",
+    "tools/aws_cpu_launch.sh": "M",
+    "tools/aws_cpu_provision.sh": "M",
+    "tools/aws_gpu.sh": "M",
+    "tools/aws_idle_stop.sh": "A",
+    "tools/aws_provision.sh": "M",
+    "tools/install_aws_guard_timer.sh": "A",
+    "tools/pool_provision.sh": "M",
+    "tools/pool_sync_assets.sh": "A"
+   },
+   "problems": [
+    "tools/aws_idle_stop.sh:82 -- `ssh` (no -n/-f) reads fd 0 inside a `while read` loop: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: la=$(ssh -i \"$state_key\" -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes \\",
+    "tools/aws_idle_stop.sh:86 -- `ssh` (no -n/-f) reads fd 0 inside a `while read` loop: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: ncpu=$(ssh -i \"$state_key\" -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes \\",
+    "tools/aws_idle_stop.sh:98 -- `ssh` (no -n/-f) reads fd 0 inside a `while read` loop: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: if ssh -i \"$state_key\" -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes \\"
+   ],
+   "review": [
+    "TRUE POSITIVE, incident 3: per-instance ssh probes in `while read iid ... done <<<\"$ids\"` (fixed on research/aws-pool-stop-start-safety)"
+   ]
+  },
+  {
+   "commit": "1b214bda659f5e49e3dcbf7176451d52dbfebb7b",
+   "date": "2026-09-23T09:29:57-04:00",
+   "subject": "merge: origin/main (511cabf78 pool_provision.sh prune fix) into the infra-loophole-aws additive branch",
+   "touched": {
+    "tools/aws_budget.sh": "A",
+    "tools/aws_cpu_launch.sh": "M",
+    "tools/aws_gpu.sh": "M",
+    "tools/aws_idle_stop.sh": "A",
+    "tools/install_aws_guard_timer.sh": "A",
+    "tools/memcap.sh": "M",
+    "tools/pool_autodispatch.sh": "M",
+    "tools/pool_provision.sh": "M",
+    "tools/pool_sync.sh": "M"
+   },
+   "problems": [
+    "tools/aws_idle_stop.sh:82 -- `ssh` (no -n/-f) reads fd 0 inside a `while read` loop: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: la=$(ssh -i \"$state_key\" -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes \\",
+    "tools/aws_idle_stop.sh:86 -- `ssh` (no -n/-f) reads fd 0 inside a `while read` loop: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: ncpu=$(ssh -i \"$state_key\" -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes \\",
+    "tools/aws_idle_stop.sh:98 -- `ssh` (no -n/-f) reads fd 0 inside a `while read` loop: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: if ssh -i \"$state_key\" -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes \\"
+   ],
+   "review": [
+    "TRUE POSITIVE, incident 3: per-instance ssh probes in `while read iid ... done <<<\"$ids\"` (fixed on research/aws-pool-stop-start-safety)"
+   ]
+  },
+  {
+   "commit": "fff2a28d0963fbd6064d89b89a74c372bcd80337",
+   "date": "2026-09-23T09:29:42-04:00",
+   "subject": "merge(aws): budget guard ($50/day cap, pre-launch refusal, enforce-stop) + idle auto-stop timer",
+   "touched": {
+    "tools/aws_budget.sh": "A",
+    "tools/aws_cpu_launch.sh": "M",
+    "tools/aws_gpu.sh": "M",
+    "tools/aws_idle_stop.sh": "A",
+    "tools/install_aws_guard_timer.sh": "A"
+   },
+   "problems": [
+    "tools/aws_idle_stop.sh:82 -- `ssh` (no -n/-f) reads fd 0 inside a `while read` loop: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: la=$(ssh -i \"$state_key\" -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes \\",
+    "tools/aws_idle_stop.sh:86 -- `ssh` (no -n/-f) reads fd 0 inside a `while read` loop: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: ncpu=$(ssh -i \"$state_key\" -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes \\",
+    "tools/aws_idle_stop.sh:98 -- `ssh` (no -n/-f) reads fd 0 inside a `while read` loop: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: if ssh -i \"$state_key\" -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes \\"
+   ],
+   "review": [
+    "TRUE POSITIVE, incident 3: per-instance ssh probes in `while read iid ... done <<<\"$ids\"` (fixed on research/aws-pool-stop-start-safety)"
+   ]
+  },
+  {
+   "commit": "ab37684784e2e9dc0147c760603a63ddc8796da9",
+   "date": "2026-09-23T09:27:38-04:00",
+   "subject": "feat(aws): budget guard \u2014 daily spend cap + idle-stop, enforced by tooling",
+   "touched": {
+    "tools/aws_budget.sh": "A",
+    "tools/aws_cpu_launch.sh": "M",
+    "tools/aws_gpu.sh": "M",
+    "tools/aws_idle_stop.sh": "A",
+    "tools/install_aws_guard_timer.sh": "A"
+   },
+   "problems": [
+    "tools/aws_idle_stop.sh:82 -- `ssh` (no -n/-f) reads fd 0 inside a `while read` loop: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: la=$(ssh -i \"$state_key\" -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes \\",
+    "tools/aws_idle_stop.sh:86 -- `ssh` (no -n/-f) reads fd 0 inside a `while read` loop: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: ncpu=$(ssh -i \"$state_key\" -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes \\",
+    "tools/aws_idle_stop.sh:98 -- `ssh` (no -n/-f) reads fd 0 inside a `while read` loop: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: if ssh -i \"$state_key\" -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes \\"
+   ],
+   "review": [
+    "TRUE POSITIVE, incident 3: per-instance ssh probes in `while read iid ... done <<<\"$ids\"` (fixed on research/aws-pool-stop-start-safety)"
+   ]
+  }
+ ],
+ "rsync_in_read_loop_sites_not_flagged": [],
+ "seconds": 29.6,
+ "old_gate": {
+  "rev": "a497db159",
+  "commits_blocked_as_wired_added_only": 10,
+  "commits_blocked_with_modified": 37,
+  "blocked": [
+   {
+    "commit": "75dfb7960351581a324f383630f5f1d04bc9ace7",
+    "subject": "fix(aws pool stop/start safety): address opus review -- wrong fallback dir, stdin-swallowing loop, stale re-check, non-a",
+    "as_wired_added_only": [],
+    "with_modified": [
+     "tools/aws_idle_stop.sh:97 rsync"
+    ]
+   },
+   {
+    "commit": "a144f6d46797c8660456c909ac96aad6aba8bcdd",
+    "subject": "WIP(aws pool stop/start safety): partial edits saved when the lane was stopped 10:30 (its tests wrote the production spe",
+    "as_wired_added_only": [],
+    "with_modified": [
+     "tools/aws_idle_stop.sh:66 rsync",
+     "tools/aws_idle_stop.sh:147 ssh",
+     "tools/aws_idle_stop.sh:151 ssh",
+     "tools/aws_idle_stop.sh:163 ssh"
+    ]
+   },
+   {
+    "commit": "85d2cd02cdc6e288e4de1f1c2c1353b423dd11b6",
+    "subject": "merge origin/main into research/affect-learned-vocabulary",
+    "as_wired_added_only": [],
+    "with_modified": [
+     "tools/pool_autodispatch.sh:105 ssh"
+    ]
+   },
+   {
+    "commit": "f398a923a1ec8b3cdcb06f547b50db0ebd677a35",
+    "subject": "Merge remote-tracking branch 'origin/main' into research/perception-readout-homeostasis",
+    "as_wired_added_only": [],
+    "with_modified": [
+     "tools/pool_autodispatch.sh:105 ssh"
+    ]
+   },
+   {
+    "commit": "738894a0829a4eaef544e8db09eccf7116ea59a9",
+    "subject": "fix(pool): default every dispatched job to one math thread (BLAS on all cores stalled dispatch for 50 min)",
+    "as_wired_added_only": [],
+    "with_modified": [
+     "tools/pool_autodispatch.sh:105 ssh"
+    ]
+   },
+   {
+    "commit": "ab81e1ff4f5812778db3205288f3c6e27053d757",
+    "subject": "Merge remote-tracking branch 'origin/main' into research/gnw-continuous-branchpoint",
+    "as_wired_added_only": [],
+    "with_modified": [
+     "tools/aws_idle_stop.sh:100 ssh",
+     "tools/aws_idle_stop.sh:104 ssh",
+     "tools/aws_idle_stop.sh:116 ssh"
+    ]
+   },
+   {
+    "commit": "eb43a5d98c30f5dd34b3646010430837ec58394b",
+    "subject": "merge(language-learned-referent-route): origin/main into the D6 learned-referent env-flag route",
+    "as_wired_added_only": [],
+    "with_modified": [
+     "tools/aws_idle_stop.sh:100 ssh",
+     "tools/aws_idle_stop.sh:104 ssh",
+     "tools/aws_idle_stop.sh:116 ssh"
+    ]
+   },
+   {
+    "commit": "a5ea82bd443691f5d48147b26baa0b3f75a6ffb0",
+    "subject": "Merge remote-tracking branch 'origin/main' into research/affect-content-preserving-tone",
+    "as_wired_added_only": [],
+    "with_modified": [
+     "tools/aws_idle_stop.sh:100 ssh",
+     "tools/aws_idle_stop.sh:104 ssh",
+     "tools/aws_idle_stop.sh:116 ssh"
+    ]
+   },
+   {
+    "commit": "cd8518e00d8b9f7a4f4d3ae5db011f02747ee469",
+    "subject": "merge(da-tag-capture): sync origin/main into the aggregate-regrade fix round",
+    "as_wired_added_only": [],
+    "with_modified": [
+     "tools/aws_idle_stop.sh:100 ssh",
+     "tools/aws_idle_stop.sh:104 ssh",
+     "tools/aws_idle_stop.sh:116 ssh",
+     "tools/pool_autodispatch.sh:105 ssh"
+    ]
+   },
+   {
+    "commit": "ff390308879d11b28c86fbe8053308084f40bd7b",
+    "subject": "Merge remote-tracking branch 'origin/main' into swap-record-fix",
+    "as_wired_added_only": [],
+    "with_modified": [
+     "tools/aws_idle_stop.sh:100 ssh",
+     "tools/aws_idle_stop.sh:104 ssh",
+     "tools/aws_idle_stop.sh:116 ssh",
+     "tools/pool_autodispatch.sh:105 ssh"
+    ]
+   },
+   {
+    "commit": "747d6a5780339527f10624d93a58217ecec51187",
+    "subject": "Merge remote-tracking branch 'origin/main' into fixround-wm-binding-adequate-probe-r3",
+    "as_wired_added_only": [],
+    "with_modified": [
+     "tools/aws_idle_stop.sh:100 ssh",
+     "tools/aws_idle_stop.sh:104 ssh",
+     "tools/aws_idle_stop.sh:116 ssh"
+    ]
+   },
+   {
+    "commit": "58068b0912cae75ff9c9bc0c941a8b6e4d6d6c9b",
+    "subject": "Merge remote-tracking branch 'origin/main' into fix/distributed-fact-store-review",
+    "as_wired_added_only": [],
+    "with_modified": [
+     "tools/aws_idle_stop.sh:100 ssh",
+     "tools/aws_idle_stop.sh:104 ssh",
+     "tools/aws_idle_stop.sh:116 ssh"
+    ]
+   },
+   {
+    "commit": "14b23db7edab0791ec521f6e49da4cff3cb20262",
+    "subject": "fix(aws idle-stop): launch grace \u2014 never judge an instance younger than the idle window",
+    "as_wired_added_only": [],
+    "with_modified": [
+     "tools/aws_idle_stop.sh:100 ssh",
+     "tools/aws_idle_stop.sh:104 ssh",
+     "tools/aws_idle_stop.sh:116 ssh"
+    ]
+   },
+   {
+    "commit": "0e37c637aa3f19b875293a77820d04cb809eb5f4",
+    "subject": "Merge remote-tracking branch 'origin/main' into fix/wm-binding-adequate-probe-r2",
+    "as_wired_added_only": [],
+    "with_modified": [
+     "tools/pool_autodispatch.sh:105 ssh"
+    ]
+   },
+   {
+    "commit": "4f87b5ee62f5aab46a2089bf249a60b5b191eeb6",
+    "subject": "Merge remote-tracking branch 'origin/main' into research/distributed-fact-store",
+    "as_wired_added_only": [],
+    "with_modified": [
+     "tools/pool_autodispatch.sh:105 ssh"
+    ]
+   },
+   {
+    "commit": "2c32188526781facd2615c1491e61c04ca32c74b",
+    "subject": "merge(d6-capacity): origin/main into research/d6-capacity-curve-amend (pre-provision sync; merge-tree verified clean)",
+    "as_wired_added_only": [],
+    "with_modified": [
+     "tools/pool_autodispatch.sh:105 ssh"
+    ]
+   },
+   {
+    "commit": "58e41e085eb81e23f3cf626aa68f7e0a965561e2",
+    "subject": "fix(audit): a RAM-bound pool node is not idle capacity; stop tracking live .aws_gpu state",
+    "as_wired_added_only": [],
+    "with_modified": [
+     "tools/pool_autodispatch.sh:105 ssh"
+    ]
+   },
+   {
+    "commit": "af93db5c8ab53861b3e46e2ffc266f07814cd8bd",
+    "subject": "Merge remote-tracking branch 'origin/main' into flip-guard",
+    "as_wired_added_only": [],
+    "with_modified": [
+     "tools/pool_autodispatch.sh:105 ssh"
+    ]
+   },
+   {
+    "commit": "561efa58642717a6140edab262f1b50eab13d07e",
+    "subject": "merge(aws-pool-node): run an AWS instance as an extra pool node (repo-local ssh config, dynamic node list, revision-read",
+    "as_wired_added_only": [],
+    "with_modified": [
+     "tools/pool_autodispatch.sh:105 ssh"
+    ]
+   },
+   {
+    "commit": "294e415d6be1458c768ac3c26e8c787ca06d54da",
+    "subject": "fix(aws-pool-node): close round-3 re-review items -- legacy revision markers, stopped-instance IP, empty-describe, cache",
+    "as_wired_added_only": [],
+    "with_modified": [
+     "tools/pool_autodispatch.sh:105 ssh"
+    ]
+   },
+   {
+    "commit": "1705a2a689a68c3833064a3f7f54ed6fbe668d93",
+    "subject": "Merge remote-tracking branch 'origin/main' into fix/wm-binding-adequate-probe-r2",
+    "as_wired_added_only": [],
+    "with_modified": [
+     "tools/aws_idle_stop.sh:93 ssh",
+     "tools/aws_idle_stop.sh:97 ssh",
+     "tools/aws_idle_stop.sh:109 ssh"
+    ]
+   },
+   {
+    "commit": "06e03d6acd03cff60999e499f802e085eaa31ffa",
+    "subject": "fix(aws-pool-node): close CRITICAL/HIGH/MEDIUM/LOW items from adversarial re-review",
+    "as_wired_added_only": [],
+    "with_modified": [
+     "tools/pool_autodispatch.sh:107 ssh"
+    ]
+   },
+   {
+    "commit": "83a9490daa4d4f412331cbdb0974a0f63167924b",
+    "subject": "merge origin/main into aws-pool-node-fixround2 (pre-fix-round sync)",
+    "as_wired_added_only": [],
+    "with_modified": [
+     "tools/pool_autodispatch.sh:70 ssh"
+    ]
+   },
+   {
+    "commit": "9f7d4095b0020872c182ba5334bee20129c21548",
+    "subject": "fix(aws-pool-node): close CRITICAL/HIGH/MEDIUM/LOW items from adversarial review v2:c46f1a0",
+    "as_wired_added_only": [],
+    "with_modified": [
+     "tools/pool_autodispatch.sh:70 ssh"
+    ]
+   },
+   {
+    "commit": "c4c62d06658a39175d414487f98c2d2f7b1e04ff",
+    "subject": "Merge remote-tracking branch 'origin/main' into research/da-tag-capture-chat-wire",
+    "as_wired_added_only": [],
+    "with_modified": [
+     "tools/aws_idle_stop.sh:93 ssh",
+     "tools/aws_idle_stop.sh:97 ssh",
+     "tools/aws_idle_stop.sh:109 ssh"
+    ]
+   },
+   {
+    "commit": "7f90034dfbf48bfc128e3f9b1c7f7506bb3fe8a6",
+    "subject": "Merge remote-tracking branch 'origin/main' into research/swap-drives-adequate-probe",
+    "as_wired_added_only": [],
+    "with_modified": [
+     "tools/aws_idle_stop.sh:93 ssh",
+     "tools/aws_idle_stop.sh:97 ssh",
+     "tools/aws_idle_stop.sh:109 ssh"
+    ]
+   },
+   {
+    "commit": "80a9851011330b93f5c407749fb340ec4740308d",
+    "subject": "fix(aws): idle-stop checks every project instance, not only the one in .aws_gpu",
+    "as_wired_added_only": [],
+    "with_modified": [
+     "tools/aws_idle_stop.sh:93 ssh",
+     "tools/aws_idle_stop.sh:97 ssh",
+     "tools/aws_idle_stop.sh:109 ssh"
+    ]
+   },
+   {
+    "commit": "922451111446ea88a4ff51120aaa3dfd69bc2535",
+    "subject": "Merge remote-tracking branch 'origin/main' into fix/gnw-thought-swap-drive",
+    "as_wired_added_only": [
+     "tools/aws_idle_stop.sh:82 ssh",
+     "tools/aws_idle_stop.sh:86 ssh",
+     "tools/aws_idle_stop.sh:98 ssh"
+    ],
+    "with_modified": [
+     "tools/aws_idle_stop.sh:82 ssh",
+     "tools/aws_idle_stop.sh:86 ssh",
+     "tools/aws_idle_stop.sh:98 ssh"
+    ]
+   },
+   {
+    "commit": "b497dca6e7b99c917e9ad57feef450b54c301a88",
+    "subject": "Merge remote-tracking branch 'origin/main' into worktree-wf_500634cf-d18-3",
+    "as_wired_added_only": [
+     "tools/aws_idle_stop.sh:82 ssh",
+     "tools/aws_idle_stop.sh:86 ssh",
+     "tools/aws_idle_stop.sh:98 ssh"
+    ],
+    "with_modified": [
+     "tools/aws_idle_stop.sh:82 ssh",
+     "tools/aws_idle_stop.sh:86 ssh",
+     "tools/aws_idle_stop.sh:98 ssh"
+    ]
+   },
+   {
+    "commit": "c576d7fab1c7d226d22e3f17f7f80fcd4866af66",
+    "subject": "merge origin/main into research/d3-onebrain-next-organ",
+    "as_wired_added_only": [
+     "tools/aws_idle_stop.sh:82 ssh",
+     "tools/aws_idle_stop.sh:86 ssh",
+     "tools/aws_idle_stop.sh:98 ssh"
+    ],
+    "with_modified": [
+     "tools/aws_idle_stop.sh:82 ssh",
+     "tools/aws_idle_stop.sh:86 ssh",
+     "tools/aws_idle_stop.sh:98 ssh"
+    ]
+   },
+   {
+    "commit": "3125cf454407ed3bb5c68b9f9cc48b901c9363eb",
+    "subject": "merge origin/main into research/d1-grow-robust-core",
+    "as_wired_added_only": [
+     "tools/aws_idle_stop.sh:82 ssh",
+     "tools/aws_idle_stop.sh:86 ssh",
+     "tools/aws_idle_stop.sh:98 ssh"
+    ],
+    "with_modified": [
+     "tools/aws_idle_stop.sh:82 ssh",
+     "tools/aws_idle_stop.sh:86 ssh",
+     "tools/aws_idle_stop.sh:98 ssh"
+    ]
+   },
+   {
+    "commit": "bca675ea369105bebde7d05884afdaad3678f9ec",
+    "subject": "Merge remote-tracking branch 'origin/main' into research/d6-learn-through-use",
+    "as_wired_added_only": [
+     "tools/aws_idle_stop.sh:82 ssh",
+     "tools/aws_idle_stop.sh:86 ssh",
+     "tools/aws_idle_stop.sh:98 ssh"
+    ],
+    "with_modified": [
+     "tools/aws_idle_stop.sh:82 ssh",
+     "tools/aws_idle_stop.sh:86 ssh",
+     "tools/aws_idle_stop.sh:98 ssh"
+    ]
+   },
+   {
+    "commit": "b9d0349404f3aa4e11172b2df668fa2a4797218b",
+    "subject": "Merge remote-tracking branch 'origin/main' into research/language-lane-next",
+    "as_wired_added_only": [
+     "tools/aws_idle_stop.sh:82 ssh",
+     "tools/aws_idle_stop.sh:86 ssh",
+     "tools/aws_idle_stop.sh:98 ssh"
+    ],
+    "with_modified": [
+     "tools/aws_idle_stop.sh:82 ssh",
+     "tools/aws_idle_stop.sh:86 ssh",
+     "tools/aws_idle_stop.sh:98 ssh"
+    ]
+   },
+   {
+    "commit": "fd3683ccd5cb6157d7a941455e6deb1664c40cb9",
+    "subject": "merge origin/main into curiosity lane (infra only; no sim/ or runner changes)",
+    "as_wired_added_only": [
+     "tools/aws_idle_stop.sh:82 ssh",
+     "tools/aws_idle_stop.sh:86 ssh",
+     "tools/aws_idle_stop.sh:98 ssh"
+    ],
+    "with_modified": [
+     "tools/aws_idle_stop.sh:82 ssh",
+     "tools/aws_idle_stop.sh:86 ssh",
+     "tools/aws_idle_stop.sh:98 ssh"
+    ]
+   },
+   {
+    "commit": "1b214bda659f5e49e3dcbf7176451d52dbfebb7b",
+    "subject": "merge: origin/main (511cabf78 pool_provision.sh prune fix) into the infra-loophole-aws additive branch",
+    "as_wired_added_only": [
+     "tools/aws_idle_stop.sh:82 ssh",
+     "tools/aws_idle_stop.sh:86 ssh",
+     "tools/aws_idle_stop.sh:98 ssh"
+    ],
+    "with_modified": [
+     "tools/aws_idle_stop.sh:82 ssh",
+     "tools/aws_idle_stop.sh:86 ssh",
+     "tools/aws_idle_stop.sh:98 ssh"
+    ]
+   },
+   {
+    "commit": "fff2a28d0963fbd6064d89b89a74c372bcd80337",
+    "subject": "merge(aws): budget guard ($50/day cap, pre-launch refusal, enforce-stop) + idle auto-stop timer",
+    "as_wired_added_only": [
+     "tools/aws_idle_stop.sh:82 ssh",
+     "tools/aws_idle_stop.sh:86 ssh",
+     "tools/aws_idle_stop.sh:98 ssh"
+    ],
+    "with_modified": [
+     "tools/aws_idle_stop.sh:82 ssh",
+     "tools/aws_idle_stop.sh:86 ssh",
+     "tools/aws_idle_stop.sh:98 ssh"
+    ]
+   },
+   {
+    "commit": "ab37684784e2e9dc0147c760603a63ddc8796da9",
+    "subject": "feat(aws): budget guard \u2014 daily spend cap + idle-stop, enforced by tooling",
+    "as_wired_added_only": [
+     "tools/aws_idle_stop.sh:82 ssh",
+     "tools/aws_idle_stop.sh:86 ssh",
+     "tools/aws_idle_stop.sh:98 ssh"
+    ],
+    "with_modified": [
+     "tools/aws_idle_stop.sh:82 ssh",
+     "tools/aws_idle_stop.sh:86 ssh",
+     "tools/aws_idle_stop.sh:98 ssh"
+    ]
+   }
+  ]
+ }
+}
