@@ -140,6 +140,10 @@ lines here after the Tuesday reset.)_
   the change wraps `cp_plasticity_rate_gain` in a cupy subclass on EVERY bridge (flag on or off), never run on cupy, the
   production default -- needs a flag-gated wrap + a cupy parity run; also stale '7.7-17x' title numbers and an
   uncalibrated AMENDMENT 3 pass criterion. Issue list in workflow wf_fb8debe7-bdc.
+- Full test suite: the 2026-09-25 CPU-only run (`CUDA_VISIBLE_DEVICES=""`) exceeded its 2 h cap at ~97% with ~400 `F` marks and
+  no summary, so failures are unclassified. Re-run so partial results survive, then sort GPU-environment failures from
+  regressions against a pre-2026-09-25 baseline: `bash tools/memcap.sh 12 -- env SIM_NO_PROVENANCE=1 .venv/bin/python -m pytest -q
+  -p no:cacheprovider --continue-on-collection-errors --junitxml=<scratch>/suite.xml -rfE tests` (with the GPU free, or hidden).
 - B2c combined battery prereg (`research/b2c-paired-flip-prereg-fixround1`): open review issues.
 - Tooling: claim-check round 8 (MEDIUM: more false blocks on block-scope derived markers) and the pool-stall detector (HIGH: no
   timeout on the live-node memory probe), issue lists in workflow wf_9944d7c2-aca; make `tools/gpu_queue.sh` and
