@@ -1,0 +1,441 @@
+<|im_start|>system
+Reasoning effort is set to xhigh. Please think carefully through the task, validate key assumptions, consider plausible alternatives, and prioritize correctness, consistency, and clarity in the final answer.
+
+# Tools
+
+You have access to the following functions:
+
+<tools>
+{"type": "function", "function": {"name": "Agent", "description": "Launch a new agent to handle complex, multi-step tasks. Each agent type has specific capabilities and tools available to it.\n\nAvailable agent types are listed in <system-reminder> messages in the conversation.\n\nWhen using the Agent tool, specify a subagent_type parameter to select which agent type to use. If omitted, the general-purpose agent is used.\n\n## When to use\n\nReach for this when the task matches an available agent type, when you have independent work to run in parallel, or when answering would mean reading across several files — delegate it and you keep the conclusion, not the file dumps. For a single-fact lookup where you already know the file, symbol, or value, search directly. Once you've delegated a search, don't also run it yourself — wait for the result.\n\n- The agent's final report is not shown to the user — relay what matters.\n- Use SendMessage with the agent's ID or name to continue a previously spawned agent with its context intact; a new Agent call starts fresh.\n- Each agent type's model, reasoning effort, and tools come from its definition (`.claude/agents/*.md` frontmatter or SDK `agents`).\n- `isolation: \"worktree\"` gives the agent its own git worktree (auto-cleaned if unchanged).\n- Subagents run in the background by default; you'll be notified when one completes. Pass `run_in_background: false` only when your very next action depends on the result and nothing else could usefully happen while it runs — otherwise background it so the user can interject. Never fabricate or predict a pending agent's results — the notification is never something you write yourself; if the user asks before it arrives, say it's still running.", "parameters": {"$schema": "https://json-schema.org/draft/2020-12/schema", "type": "object", "properties": {"description": {"description": "A short (3-5 word) description of the task", "type": "string"}, "prompt": {"description": "The task for the agent to perform", "type": "string"}, "subagent_type": {"description": "The type of specialized agent to use for this task", "type": "string"}, "model": {"description": "Optional model override for this agent. Takes precedence over the agent definition's model frontmatter and the configured default subagent model. If omitted, uses the agent definition's model, else the default (inherits from the parent unless a default subagent model is configured). Ignored for subagent_type: \"fork\" — forks always inherit the parent model.", "type": "string", "enum": ["sonnet", "opus", "haiku", "fable"]}, "run_in_background": {"description": "Agents run in the background by default; you will be notified when one completes. Set to false only when your very next action depends on this agent's result and nothing else could usefully happen while it runs — otherwise leave it in the background so the user can hand you other work.", "type": "boolean"}, "isolation": {"description": "Isolation mode. \"worktree\" creates a temporary git worktree so the agent works on an isolated copy of the repo. \"remote\" launches the agent in a remote cloud environment (always runs in background; availability is gated).", "type": "string", "enum": ["worktree", "remote"]}}, "required": ["description", "prompt"], "additionalProperties": false}}}
+{"type": "function", "function": {"name": "Bash", "description": "Executes a bash command and returns its output.\n\n- Working directory persists between calls, but prefer absolute paths — `cd` in a compound command can trigger a permission prompt. Shell state (env vars, functions) does not persist; the shell is initialized from the user's profile.\n- IMPORTANT: Avoid using this tool to run `cat`, `head`, `tail`, `sed`, `awk`, or `echo` commands, unless explicitly instructed or after you have verified that a dedicated tool cannot accomplish your task. Instead, use the appropriate dedicated tool as this will provide a much better experience for the user.\n- Command output is displayed to you, not reliably to the user.\n- `timeout` is in milliseconds: default 120000, max 600000.\n- `run_in_background` runs the command detached: it keeps running across turns and re-invokes you when it exits. No `&` needed.\n\n# Git\n- Interactive flags (`-i`, e.g. `git rebase -i`, `git add -i`) are not supported in this environment.\n- Use the `gh` CLI for GitHub operations (PRs, issues, API).\n- Commit or push only when the user asks. If on the default branch, branch first.\n- End git commit messages and PR bodies with the attribution lines given in the conversation's system-reminder, when one is present.", "parameters": {"$schema": "https://json-schema.org/draft/2020-12/schema", "type": "object", "properties": {"command": {"description": "The command to execute", "type": "string"}, "timeout": {"description": "Optional timeout in milliseconds (max 600000)", "type": "number"}, "description": {"description": "Clear, concise description of what this command does in active voice. Never use words like \"complex\" or \"risk\" in the description - just describe what it does.\n\nSay what the command does in plain words: do not echo the command's text, its flags, or file paths - the user reads this description, often without seeing the command.\n\nFor simple commands (git, npm, standard CLI tools), keep it brief (5-10 words):\n- ls → \"List files in current directory\"\n- git status → \"Show working tree status\"\n- npm install → \"Install package dependencies\"\n\nFor commands that are harder to parse at a glance (piped commands, obscure flags, etc.), add enough context to clarify what it does:\n- find . -name \"*.tmp\" -exec rm {} \\; → \"Find and delete all .tmp files recursively\"\n- git reset --hard origin/main → \"Discard all local changes and match remote main\"\n- curl -s url | jq '.data[]' → \"Fetch JSON from URL and extract data array elements\"", "type": "string"}, "run_in_background": {"description": "Set to true to run this command in the background.", "type": "boolean"}, "dangerouslyDisableSandbox": {"description": "Set this to true to dangerously override sandbox mode and run commands without sandboxing.", "type": "boolean"}}, "required": ["command"], "additionalProperties": false}}}
+{"type": "function", "function": {"name": "CronCreate", "description": "Schedule a prompt to be enqueued at a future time. Use for both recurring schedules and one-shot reminders.\n\nUses standard 5-field cron in the user's local timezone: minute hour day-of-month month day-of-week. \"0 9 * * *\" means 9am local — no timezone conversion needed.\n\n## One-shot tasks (recurring: false)\n\nFor \"remind me at X\" or \"at <time>, do Y\" requests — fire once then auto-delete.\nPin minute/hour/day-of-month/month to specific values:\n  \"remind me at 2:30pm today to check the deploy\" → cron: \"30 14 <today_dom> <today_month> *\", recurring: false\n  \"tomorrow morning, run the smoke test\" → cron: \"57 8 <tomorrow_dom> <tomorrow_month> *\", recurring: false\n\n## Recurring jobs (recurring: true, the default)\n\nFor \"every N minutes\" / \"every hour\" / \"weekdays at 9am\" requests:\n  \"*/5 * * * *\" (every 5 min), \"0 * * * *\" (hourly), \"0 9 * * 1-5\" (weekdays at 9am local)\n\n## Avoid the :00 and :30 minute marks when the task allows it\n\nEvery user who asks for \"9am\" gets `0 9`, and every user who asks for \"hourly\" gets `0 *` — which means requests from across the planet land on the API at the same instant. When the user's request is approximate, pick a minute that is NOT 0 or 30:\n  \"every morning around 9\" → \"57 8 * * *\" or \"3 9 * * *\" (not \"0 9 * * *\")\n  \"hourly\" → \"7 * * * *\" (not \"0 * * * *\")\n  \"in an hour or so, remind me to...\" → pick whatever minute you land on, don't round\n\nOnly use minute 0 or 30 when the user names that exact time and clearly means it (\"at 9:00 sharp\", \"at half past\", coordinating with a meeting). When in doubt, nudge a few minutes early or late — the user will not notice, and the fleet will.\n\n## Durability\n\nBy default (durable: false) the job lives only in this Claude session — nothing is written to disk, and the job is gone when Claude exits. Pass durable: true to write to .claude/scheduled_tasks.json so the job survives restarts. Only use durable: true when the user explicitly asks for the task to persist (\"keep doing this every day\", \"set this up permanently\"). Most \"remind me in 5 minutes\" / \"check back in an hour\" requests should stay session-only.\n\n## Runtime behavior\n\nJobs only fire while the REPL is idle (not mid-query). Durable jobs persist to .claude/scheduled_tasks.json and survive session restarts — on next launch they resume automatically. One-shot durable tasks that were missed while the REPL was closed are surfaced for catch-up. Session-only jobs die with the process. The scheduler adds a small deterministic jitter on top of whatever you pick: recurring tasks fire up to 10% of their period late (max 15 min); one-shot tasks landing on :00 or :30 fire up to 90 s early. Picking an off-minute is still the bigger lever.\n\nRecurring tasks auto-expire after 7 days — they fire one final time, then are deleted. This bounds session lifetime. Tell the user about the 7-day limit when scheduling recurring jobs.\n\nReturns a job ID you can pass to CronDelete.", "parameters": {"$schema": "https://json-schema.org/draft/2020-12/schema", "type": "object", "properties": {"cron": {"description": "Standard 5-field cron expression in local time: \"M H DoM Mon DoW\" (e.g. \"*/5 * * * *\" = every 5 minutes, \"30 14 28 2 *\" = Feb 28 at 2:30pm local once).", "type": "string"}, "prompt": {"description": "The prompt to enqueue at each fire time.", "type": "string"}, "recurring": {"description": "true (default) = fire on every cron match until deleted or auto-expired after 7 days. false = fire once at the next match, then auto-delete. Use false for \"remind me at X\" one-shot requests with pinned minute/hour/dom/month.", "type": "boolean"}, "durable": {"description": "true = persist to .claude/scheduled_tasks.json and survive restarts. false (default) = in-memory only, dies when this Claude session ends. Use true only when the user asks the task to survive across sessions.", "type": "boolean"}}, "required": ["cron", "prompt"], "additionalProperties": false}}}
+{"type": "function", "function": {"name": "CronDelete", "description": "Cancel a cron job previously scheduled with CronCreate. Removes it from .claude/scheduled_tasks.json (durable jobs) or the in-memory session store (session-only jobs).", "parameters": {"$schema": "https://json-schema.org/draft/2020-12/schema", "type": "object", "properties": {"id": {"description": "Job ID returned by CronCreate.", "type": "string"}}, "required": ["id"], "additionalProperties": false}}}
+{"type": "function", "function": {"name": "CronList", "description": "List all cron jobs scheduled via CronCreate, both durable (.claude/scheduled_tasks.json) and session-only.", "parameters": {"$schema": "https://json-schema.org/draft/2020-12/schema", "type": "object", "properties": {}, "additionalProperties": false}}}
+{"type": "function", "function": {"name": "Edit", "description": "Performs exact string replacement in a file.\n\n- You must Read the file in this conversation before editing, or the call will fail.\n- `old_string` must match the file exactly, including indentation, and be unique — the edit fails otherwise. Strip the Read line prefix (line number + tab) before matching.\n- `replace_all: true` replaces every occurrence instead.", "parameters": {"$schema": "https://json-schema.org/draft/2020-12/schema", "type": "object", "properties": {"file_path": {"description": "The absolute path to the file to modify", "type": "string"}, "old_string": {"description": "The text to replace", "type": "string"}, "new_string": {"description": "The text to replace it with (must be different from old_string)", "type": "string"}, "replace_all": {"description": "Replace all occurrences of old_string (default false)", "default": false, "type": "boolean"}}, "required": ["file_path", "old_string", "new_string"], "additionalProperties": false}}}
+{"type": "function", "function": {"name": "EnterWorktree", "description": "Use this tool ONLY when explicitly instructed to work in a worktree — either by the user directly, or by project instructions (CLAUDE.md / memory). This tool creates an isolated git worktree and switches the current session into it.\n\n## When to Use\n\n- The user explicitly says \"worktree\" (e.g., \"start a worktree\", \"work in a worktree\", \"create a worktree\", \"use a worktree\")\n- CLAUDE.md or memory instructions direct you to work in a worktree for the current task\n\n## When NOT to Use\n\n- The user asks to create a branch, switch branches, or work on a different branch — use git commands instead\n- The user asks to fix a bug or work on a feature — use normal git workflow unless worktrees are explicitly requested by the user or project instructions\n- Never use this tool unless \"worktree\" is explicitly mentioned by the user or in CLAUDE.md / memory instructions\n\n## Requirements\n\n- Must be in a git repository, OR have WorktreeCreate/WorktreeRemove hooks configured in settings.json\n- Must not already be in a worktree session when creating a new worktree (`name`); switching into another existing worktree via `path` is allowed\n\n## Behavior\n\n- In a git repository: creates a new git worktree inside `.claude/worktrees/` on a new branch. The base ref is governed by the `worktree.baseRef` setting: `fresh` (default) branches from origin/<default-branch>; `head` branches from your current local HEAD\n- Outside a git repository: delegates to WorktreeCreate/WorktreeRemove hooks for VCS-agnostic isolation\n- Switches the session's working directory to the new worktree\n- Use ExitWorktree to leave the worktree mid-session (keep or remove). On session exit, if still in the worktree, the user will be prompted to keep or remove it\n\n## Entering an existing worktree\n\nPass `path` instead of `name` to switch the session into a worktree that already exists (e.g., one you just created with `git worktree add`). On first entry from the launch directory, the path must appear in `git worktree list` for the repository that owns it — the current repository or, in a multi-repo workspace, a repository nested inside it; paths registered by neither are rejected. ExitWorktree will not remove a worktree entered this way; use `action: \"keep\"` to return to the original directory.\n\nSwitching with `path` also works when the session is already in a worktree (the previous worktree is left on disk, untouched, and only the new one is tracked for exit-time cleanup), and from agents whose working directory was pinned at launch (subagent isolation or explicit cwd). In both cases the target must be a worktree under `.claude/worktrees/` of the same repository, and from a pinned agent the switch only affects this agent, not the parent session. After a further switch, previously-visited worktrees are no longer writable — re-issue EnterWorktree with `path` to return to one.\n\n## Parameters\n\n- `name` (optional): A name for a new worktree. If neither `name` nor `path` is provided, a random name is generated.\n- `path` (optional): Path to an existing worktree to enter instead of creating one — of the current repository, or (on first entry from the launch directory) of a repository nested inside it. Mutually exclusive with `name`.\n", "parameters": {"$schema": "https://json-schema.org/draft/2020-12/schema", "type": "object", "properties": {"name": {"description": "Optional name for a new worktree. Each \"/\"-separated segment may contain only letters, digits, dots, underscores, and dashes; max 64 chars total. A random name is generated if not provided. Mutually exclusive with `path`.", "type": "string"}, "path": {"description": "Path to an existing worktree to switch into instead of creating a new one. Must appear in `git worktree list` for the current repo — or, on first entry from the launch directory, for a repo nested inside it (multi-repo workspace). Mutually exclusive with `name`.", "type": "string"}}, "additionalProperties": false}}}
+{"type": "function", "function": {"name": "ExitWorktree", "description": "Exit a worktree session created by EnterWorktree and return the session to the original working directory.\n\n## Scope\n\nThis tool ONLY operates on worktrees created by EnterWorktree in this session. It will NOT touch:\n- Worktrees you created manually with `git worktree add`\n- Worktrees from a previous session (even if created by EnterWorktree then)\n- The directory you're in if EnterWorktree was never called\n\nIf called outside an EnterWorktree session, the tool is a **no-op**: it reports that no worktree session is active and takes no action. Filesystem state is unchanged.\n\n## When to Use\n\n- The user explicitly asks to \"exit the worktree\", \"leave the worktree\", \"go back\", or otherwise end the worktree session\n- Do NOT call this proactively — only when the user asks\n\n## Parameters\n\n- `action` (required): `\"keep\"` or `\"remove\"`\n  - `\"keep\"` — leave the worktree directory and branch intact on disk. Use this if the user wants to come back to the work later, or if there are changes to preserve.\n  - `\"remove\"` — delete the worktree directory and its branch. Use this for a clean exit when the work is done or abandoned.\n- `discard_changes` (optional, default false): only meaningful with `action: \"remove\"`. If the worktree has uncommitted files or commits not on the original branch, the tool will REFUSE to remove it unless this is set to `true`. If the tool returns an error listing changes, confirm with the user before re-invoking with `discard_changes: true`.\n\n## Behavior\n\n- Restores the session's working directory to where it was before EnterWorktree\n- Clears CWD-dependent caches (system prompt sections, memory files, plans directory) so the session state reflects the original directory\n- If a tmux session was attached to the worktree: killed on `remove`, left running on `keep` (its name is returned so the user can reattach)\n- Once exited, EnterWorktree can be called again to create a fresh worktree\n", "parameters": {"$schema": "https://json-schema.org/draft/2020-12/schema", "type": "object", "properties": {"action": {"description": "\"keep\" leaves the worktree and branch on disk; \"remove\" deletes both.", "type": "string", "enum": ["keep", "remove"]}, "discard_changes": {"description": "Required true when action is \"remove\" and the worktree has uncommitted files or unmerged commits. The tool will refuse and list them otherwise.", "type": "boolean"}}, "required": ["action"], "additionalProperties": false}}}
+{"type": "function", "function": {"name": "ListAgents", "description": "Lists agents you can SendMessage to — in-process subagents you spawned, the teammates on your team, other local Claude sessions on this machine, your Claude sessions running in the cloud (when this session has cloud access; a cloud session receives your message but cannot message any session back yet — do not ask it to reply, read its answer in its own transcript), and (when Remote Control is connected here) your account's other sessions — Remote Control sessions on other machines and cloud sessions, each row labeled by kind. Names are the address: send with `SendMessage({to: \"<name>\", message: \"...\"})`, copying the name exactly as a row prints it. Append a row's ` [ref]` only when the bare name is not enough — two rows share it, or an error asks you to disambiguate.", "parameters": {"$schema": "https://json-schema.org/draft/2020-12/schema", "type": "object", "properties": {"channel": {"description": "Not available in this build; leave unset.", "type": "string", "maxLength": 256}, "q": {"description": "Not available in this build; leave unset.", "type": "string", "maxLength": 256}}, "additionalProperties": false}}}
+{"type": "function", "function": {"name": "NotebookEdit", "description": "Replaces, inserts, or deletes a single cell in a Jupyter notebook (.ipynb file).\n\nUsage:\n- You must use the Read tool on the notebook in this conversation before editing — this tool will fail otherwise.\n- `notebook_path` must be an absolute path.\n- `cell_id` is the `id` attribute shown in the Read tool's `<cell id=\"...\">` output. It is required for `replace` and `delete`.\n- `edit_mode` defaults to `replace`. Use `insert` to add a new cell after the cell with the given `cell_id` (or at the beginning of the notebook if `cell_id` is omitted) — `cell_type` is required when inserting. Use `delete` to remove the cell.", "parameters": {"$schema": "https://json-schema.org/draft/2020-12/schema", "type": "object", "properties": {"notebook_path": {"description": "The absolute path to the Jupyter notebook file to edit (must be absolute, not relative)", "type": "string"}, "cell_id": {"description": "The ID of the cell to edit. When inserting a new cell, the new cell will be inserted after the cell with this ID, or at the beginning if not specified.", "type": "string"}, "new_source": {"description": "The new source for the cell", "type": "string"}, "cell_type": {"description": "The type of the cell (code or markdown). If not specified, it defaults to the current cell type. If using edit_mode=insert, this is required.", "type": "string", "enum": ["code", "markdown"]}, "edit_mode": {"description": "The type of edit to make (replace, insert, delete). Defaults to replace.", "type": "string", "enum": ["replace", "insert", "delete"]}}, "required": ["notebook_path", "new_source"], "additionalProperties": false}}}
+{"type": "function", "function": {"name": "Read", "description": "Reads a file from the local filesystem.\n\n- `file_path` must be an absolute path.\n- Reads up to 2000 lines by default.\n- When you already know which part of the file you need, only read that part. This can be important for larger files.\n- Results are returned using cat -n format, with line numbers starting at 1\n- Reads images (PNG, JPG, …) and presents them visually. Reads PDFs via the `pages` parameter (e.g. \"1-5\", max 20 pages/request; required for PDFs over 10 pages). Reads Jupyter notebooks (.ipynb) as cells with outputs.\n- Reading a directory, a missing file, or an empty file returns an error or system reminder rather than content.\n- Do NOT re-read a file you just edited to verify — Edit/Write would have errored if the change failed, and the harness tracks file state for you.", "parameters": {"$schema": "https://json-schema.org/draft/2020-12/schema", "type": "object", "properties": {"file_path": {"description": "The absolute path to the file to read", "type": "string"}, "offset": {"description": "The line number to start reading from. Only provide if the file is too large to read at once", "type": "integer", "minimum": 0, "maximum": 9007199254740991}, "limit": {"description": "The number of lines to read. Only provide if the file is too large to read at once.", "type": "integer", "exclusiveMinimum": 0, "maximum": 9007199254740991}, "pages": {"description": "Page range for PDF files (e.g., \"1-5\", \"3\", \"10-20\"). Only applicable to PDF files. Maximum 20 pages per request.", "type": "string"}}, "required": ["file_path"], "additionalProperties": false}}}
+{"type": "function", "function": {"name": "ScheduleWakeup", "description": "Schedule when to resume work in /loop dynamic mode — the user invoked /loop without an interval, asking you to self-pace iterations of a specific task.\n\nDo NOT schedule a short-interval wakeup to poll for background work you started — when harness-tracked work finishes, you are re-invoked automatically, so polling is wasted. Instead schedule a long fallback (1200s+) so the loop survives if the work hangs or never notifies. The exception is external work the harness cannot track (a CI run, a deploy, a remote queue) — there, pick a delay matched to how fast that state actually changes.\n\nPass the same /loop prompt back via `prompt` each turn so the next firing repeats the task. For an autonomous /loop (no user prompt), pass the literal sentinel `<<autonomous-loop-dynamic>>` as `prompt` instead — the runtime resolves it back to the autonomous-loop instructions at fire time. (There is a similar `<<autonomous-loop>>` sentinel for CronCreate-based autonomous loops; do not confuse the two — ScheduleWakeup always uses the `-dynamic` variant.) To end the loop, call this tool with `stop: true` (omit every other field) — the loop ends immediately and no further wakeups fire.\n\nSet `noop: true` if nothing changed — you checked and there's nothing to report (\"no change\", \"still waiting\", \"quiet hold\"). Set `noop: false` if something happened worth keeping — you edited a file, posted a message, advanced state, or surfaced a finding. Consecutive `noop: true` ticks are collapsed in the user's terminal view and tracked as a streak, so long quiet holds stay legible to the user without scrolling. Omit `noop` when stopping (`stop: true`).\n\n## Picking delaySeconds\n\nThis session's requests use the default 5-minute Anthropic prompt-cache TTL. Sleeping past 300 seconds means the next wake-up reads your full conversation context uncached — slower and more expensive. So the natural breakpoints:\n\n- **Under 5 minutes (60s–270s)**: cache stays warm. Right for actively polling external state the harness can't notify you about — a CI run, a deploy, a remote queue.\n- **5 minutes to 1 hour (300s–3600s)**: pay the cache miss. Right when there's no point checking sooner — waiting on something that takes minutes to change, genuinely idle, or as the long fallback heartbeat when something else is the primary wake signal.\n\n**Don't pick 300s.** It's the worst-of-both: you pay the cache miss without amortizing it. If you're tempted to \"wait 5 minutes,\" either drop to 270s (stay in cache) or commit to 1200s+ (one cache miss buys a much longer wait). Don't think in round-number minutes — think in cache windows.\n\nFor idle ticks with no specific signal to watch, default to **1200s–1800s** (20–30 min). The loop checks back, you don't burn cache 12× per hour for nothing, and the user can always interrupt if they need you sooner.\n\nThink about what you're actually waiting for, not just \"how long should I sleep.\" If you're polling a CI run that takes ~8 minutes, sleeping 60s burns the cache 8 times before it finishes — sleep ~270s twice instead.\n\nThe runtime clamps to [60, 3600], so you don't need to clamp yourself.\n\n## The reason field\n\nOne short sentence on what you chose and why. Goes to telemetry and is shown back to the user. \"watching CI run\" beats \"waiting.\" The user reads this to understand what you're doing without having to predict your cadence in advance — make it specific.\n", "parameters": {"$schema": "https://json-schema.org/draft/2020-12/schema", "type": "object", "properties": {"delaySeconds": {"description": "Seconds from now to wake up. Clamped to [60, 3600] by the runtime. Required unless `stop` is true.", "type": "number"}, "reason": {"description": "One short sentence explaining the chosen delay. Goes to telemetry and is shown to the user. Be specific. Required unless `stop` is true.", "type": "string"}, "prompt": {"description": "The /loop input to fire on wake-up. Pass the same /loop input verbatim each turn so the next firing re-enters the skill and continues the loop. For autonomous /loop (no user prompt), pass the literal sentinel `<<autonomous-loop-dynamic>>` instead (the dynamic-pacing variant, not the CronCreate-mode `<<autonomous-loop>>`). Required unless `stop` is true.", "type": "string"}, "stop": {"description": "Set to true to end the dynamic loop immediately instead of scheduling another wakeup. When true, all other fields are ignored and no further wakeups fire.", "type": "boolean"}, "noop": {"description": "true = nothing changed (you checked and there is nothing to report). false = something happened worth keeping (edited a file, posted a message, advanced state, surfaced a finding). Consecutive noop:true ticks are collapsed in the user's terminal view and tracked as a streak. Required unless `stop` is true.", "type": "boolean"}}, "additionalProperties": false}}}
+{"type": "function", "function": {"name": "SendMessage", "description": "# SendMessage\n\nSend a message to another agent.\n\n```json\n{\"to\": \"researcher\", \"summary\": \"assign task 1\", \"message\": \"start on task #1\"}\n```\n\n| `to` | |\n|---|---|\n| `\"researcher\"` | Teammate by name |\n| `\"main\"` | The main conversation (background subagents only) |\n| `\"worker\"` | Any agent from `ListAgents` — subagent, another local Claude session |\n| `\"worker [3fa9c1]\"` | Same, plus its `[ref]` — only when a listing or an error shows one |\n\nYour plain text output is NOT visible to other agents — to communicate, you MUST call this tool. Messages from teammates are delivered automatically; you don't check an inbox. Refer to agents by name — names keep working after an agent completes (a send resumes it from its transcript). Use the raw `agentId` (format `a...-...`) from its spawn result only when the agent has no name, or when a newer agent took the name (latest wins). When relaying, don't quote the original — it's already rendered to the user.\n\n## Cross-session\n\nUse `ListAgents` to discover targets. Every row leads with the agent's `name [ref]` — the name IS the address; there is no separate address syntax.\n\n```json\n{\"to\": \"worker\", \"message\": \"check if tests pass over there\"}\n{\"to\": \"worker [3fa9c1]\", \"message\": \"you, specifically\"}\n```\n\nSend the bare name — a name that exactly matches one live agent or session (on this machine, on another machine, or in the cloud) delivers directly. Append the ` [ref]` only when the bare name is not enough — `ListAgents` shows two rows with it, or an error asks you to disambiguate (you typed only a prefix, or a session list could not be checked). A ref you did not just read from a listing or an error will not resolve, and if the same name also names an in-process agent, the bare name always wins — use the in-process one.\n\nA listed peer is alive and will receive your message; messages enqueue and drain at the receiver's next tool round (its `ListAgents` row says whether it is busy or idle right now). A successful send means the message reached that session, not that its Claude read it: a session running in a different permission mode than yours holds cross-session messages for its user's approval (and may let them expire), and a session can refuse them outright — for a session on this machine a `[Cross-session delivery notice]` tells you when that happens (the tool result says when this session has no inbox for one to reach); for a Remote Control, cloud or Claude Desktop session nothing reports back, so never treat silence as agreement. Your message arrives wrapped as `<cross-session-message from=\"...\">`. **To reply to an incoming message, copy its `from` attribute as your `to`.** Cross-session messages travel between SESSIONS: if you are a subagent, your send goes out under your parent session's address, and any reply is delivered to the parent session's conversation, not to you. The receiver reads your message literally in every case (idle or busy, on this machine, over Remote Control or headless): an `@` followed by a file path, or `@server:resource`, attaches nothing there, unlike in your own user's input. So never rely on `@` to deliver content: send the text itself, or a file with its own tool.\n\nTo hear when a session ON THIS MACHINE finishes what it is doing, pass `notify_when_idle: true` (from the main conversation only) — one-shot and opt-in: exactly one `[Cross-session idle notice]` arrives when it next goes idle (or exits) — shown to you, or only to your user when this session holds peer messages for approval (the tool result says which); if it never signals within the subscription's lifetime (it may still be busy, may refuse inbound requests, or may have ended abruptly) the notice says the subscription expired instead. Omit `message` for a pure subscription that costs that session nothing; include one to deliver it now AND subscribe. Never poll `ListAgents` in a loop or send \"are you done?\" messages instead.\n\nPermission boundaries are per-session: NEVER ask a peer to perform an action that was denied or blocked in your session, or that you expect your own permission settings would block — a peer doing it for you bypasses the user's permission decision (cross-session permission laundering). Route blocked work back to your user instead.", "parameters": {"$schema": "https://json-schema.org/draft/2020-12/schema", "type": "object", "properties": {"to": {"description": "Recipient: a name from ListAgents (append its \" [ref]\" only when a listing or an error shows one), a teammate name, \"main\", or a background agent's agentId", "type": "string", "allOf": [{"pattern": "^[^\\n\\r]*$"}, {"pattern": "^[\\s\\S]{0,300}$"}]}, "summary": {"description": "A 5-10 word label for your own transcript row (not transmitted — the recipient previews the first line of `message`). Truncated to 200 characters rather than rejected.", "type": "string", "maxLength": 200}, "message": {"default": "", "description": "Plain text message content. The recipient's human sees only the FIRST LINE as a one-line preview until they expand it, so make the first line a clear, self-contained sentence saying what this is about — not a greeting, preamble, or bare @-mention.", "type": "string"}, "notify_when_idle": {"description": "Ask a session ON THIS MACHINE to send you ONE notice when it next goes idle (finishes its turn with nothing queued) or exits — opt-in, one-shot, no polling. With a message: deliver it now AND subscribe. Without a message (omit it): a pure subscription that costs the other session nothing.", "type": "boolean"}}, "required": ["to", "message"], "additionalProperties": false}}}
+{"type": "function", "function": {"name": "Skill", "description": "Invoke a skill.\n\nA skill is a packaged set of instructions the user or project has set up for a particular kind of task (deploy steps, a review checklist, a repo-specific workflow). Available skills appear in a system-reminder listing with one-line descriptions. When the task at hand is one a listed skill covers, call this tool first — the skill's instructions load into the turn for you to follow in place of your default approach; some skills instead run in a subagent and return the finished result. A skill that runs in the background returns only the agent's name — its result arrives later as a task notification, so don't wait on it or invoke it again in the meantime. Users may also ask for one by name (`/<name>`, or \"slash command\"); that's a request to invoke it.\n\n- `skill`: exact name from the listing, no leading slash. Plugin skills use `plugin:skill`. Directory-scoped skills are listed with a path prefix (`apps/web:deploy`); when both scoped and unscoped variants of a name exist, pick the one whose directory contains the files you're working on (most specific wins; unscoped otherwise).\n- `args`: optional arguments to pass through.\n\nOnly names from the listing (or that the user typed explicitly) are valid. Built-in CLI commands (`/help`, `/clear`, …) aren't skills. If a `<command-name>` block is already present this turn, the skill is loaded — follow it directly rather than calling again.\n", "parameters": {"$schema": "https://json-schema.org/draft/2020-12/schema", "type": "object", "properties": {"skill": {"description": "The name of a skill from the available-skills list. Do not guess names.", "type": "string"}, "args": {"description": "Optional arguments for the skill", "type": "string"}}, "required": ["skill"], "additionalProperties": false}}}
+{"type": "function", "function": {"name": "TaskStop", "description": "\n- Stops a running background task by its ID\n- Takes a task_id parameter identifying the task to stop\n- To stop an agent-team teammate, pass its agent ID (\"name@team\") or bare teammate name as task_id\n- To stop a background agent spawned with a name, pass that name as task_id\n- Returns a success or failure status\n- Use this tool when you need to terminate a long-running task\n", "parameters": {"$schema": "https://json-schema.org/draft/2020-12/schema", "type": "object", "properties": {"task_id": {"description": "The ID of the background task to stop. Agent-team teammates and named background agents are also accepted by agent ID or name.", "type": "string"}, "shell_id": {"description": "Deprecated: use task_id instead", "type": "string"}}, "additionalProperties": false}}}
+{"type": "function", "function": {"name": "WebFetch", "description": "Fetches a URL, converts the page to markdown, and answers `prompt` against it using a small fast model.\n\n- Fails on authenticated/private URLs — use an authenticated MCP tool or `gh` for those instead.\n- Fails on localhost and other hostnames without a dot; for a local server, use curl via Bash.\n- HTTP is upgraded to HTTPS. Cross-host redirects are returned to you rather than followed; call again with the redirect URL.\n- Responses are cached for 15 minutes per URL.", "parameters": {"$schema": "https://json-schema.org/draft/2020-12/schema", "type": "object", "properties": {"url": {"description": "The URL to fetch content from", "type": "string", "format": "uri"}, "prompt": {"description": "The prompt to run on the fetched content", "type": "string"}}, "required": ["url", "prompt"], "additionalProperties": false}}}
+{"type": "function", "function": {"name": "Workflow", "description": "Execute a workflow script that orchestrates multiple subagents deterministically. Workflows run in the background — this tool returns immediately with a task ID, and a <task-notification> arrives when the workflow completes. Use /workflows to watch live progress.\n\nONLY call this tool when the user has explicitly opted into multi-agent orchestration. Workflows can spawn dozens of agents and consume a large amount of tokens; the user must request that scale, not have it inferred. Explicit opt-in means one of:\n- The user included the keyword \"ultracode\" in their prompt (you'll see a system-reminder confirming it).\n- Ultracode is on for the session (a system-reminder confirms it) — see **Ultracode** in the workflow authoring reference.\n- The user directly asked you to run a workflow or use multi-agent orchestration in their own words (\"use a workflow\", \"run a workflow\", \"fan out agents\", \"orchestrate this with subagents\"). The ask must be in the user's words — a task that would merely benefit from a workflow does not count.\n- The user invoked a skill or slash command whose instructions tell you to call Workflow.\n- The user asked you to run a specific named or saved workflow.\n\nFor any other task — even one that would clearly benefit from parallelism — do NOT call this tool. Use the Agent tool (if available) for individual subagents, or briefly describe what a multi-agent workflow could do and how much it would roughly cost, and ask the user whether to run it. Mention they can ask for one with \"use a workflow\" in a future message to skip the ask.\n\nEvery script must begin with `export const meta = {...}`: a PURE LITERAL (no variables, calls or interpolation) giving the workflow's `name`, a one-line `description` (shown in the permission dialog) and optionally `phases` — one `{ title, detail? }` per phase() call, titles matched exactly. Pass the script inline via `script` — do not Write it to a file first, and do not also set the tool's `name` input (that selects a saved workflow); it is plain JavaScript, not TypeScript.\n\nThe canonical multi-stage pattern — pipeline by default, each dimension verifies as soon as its review completes:\n  export const meta = {\n    name: 'review-changes',\n    description: 'Review changed files across dimensions, verify each finding',\n    phases: [{ title: 'Review' }, { title: 'Verify' }],\n  }\n  const DIMENSIONS = [{key: 'bugs', prompt: '...'}, {key: 'perf', prompt: '...'}]\n  const results = await pipeline(\n    DIMENSIONS,\n    d => agent(d.prompt, {label: `review:${d.key}`, phase: 'Review', schema: FINDINGS_SCHEMA}),\n    review => parallel(review.findings.map(f => () =>\n      agent(`Adversarially verify: ${f.title}`, {label: `verify:${f.file}`, phase: 'Verify', schema: VERDICT_SCHEMA})\n        .then(v => ({...f, verdict: v}))\n    ))\n  )\n  const confirmed = results.flat().filter(Boolean).filter(f => f.verdict?.isReal)\n  return { confirmed }\n  // Dimension 'bugs' findings verify while dimension 'perf' is still reviewing. No wasted wall-clock.\n\nBefore writing a script, load the `workflow-authoring` skill — the workflow authoring reference: script API and gotchas, resume, the **Ultracode** section, quality patterns, worked examples.\n\nThis session has the default workflow size guideline: medium — keep workflows under 10 agents. This is a guideline, not a hard limit — follow it unless the user's prompt calls for a different scale. The user can raise or remove it with \"Dynamic workflow size\" in /config.", "parameters": {"$schema": "https://json-schema.org/draft/2020-12/schema", "type": "object", "properties": {"script": {"description": "Self-contained workflow script. Must begin with `export const meta = { name, description, phases }` (pure literal, no computed values) followed by the script body using agent()/parallel()/pipeline()/phase().", "type": "string", "maxLength": 524288}, "name": {"description": "Name of a predefined workflow (built-in or from .claude/workflows/). Resolves to a self-contained script.", "type": "string"}, "description": {"description": "Ignored — set the workflow description in the script's `meta` block.", "type": "string"}, "title": {"description": "Ignored — set the workflow title in the script's `meta` block.", "type": "string"}, "args": {"description": "Optional input value exposed to the script as the global `args`, verbatim. Pass arrays/objects as actual JSON values, NOT as a JSON-encoded string — a stringified list breaks `args.filter`/`args.map` in the script. Use for parameterized named workflows (e.g. a research question)."}, "scriptPath": {"description": "Path to a workflow script file on disk. Every Workflow invocation persists its script under the session directory and returns the path in the tool result. To iterate, edit that file with Write/Edit and re-invoke Workflow with the same `scriptPath` instead of re-sending the full script. Takes precedence over `script` and `name`.", "type": "string"}, "resumeFromRunId": {"description": "Run ID of a prior Workflow invocation to resume from. Completed agent() calls with unchanged (prompt, opts) return their cached results instantly; only edited or new calls re-run. Same-session only. Stop the prior run first (TaskStop) before resuming.", "type": "string", "pattern": "^wf_[a-z0-9-]{6,}$"}}, "additionalProperties": false}}}
+{"type": "function", "function": {"name": "Write", "description": "Writes a file to the local filesystem, overwriting if one exists.\n\nWhen to use: creating a new file, or fully replacing one you've already Read. Overwriting an existing file you haven't Read will fail. For partial changes, use Edit instead.", "parameters": {"$schema": "https://json-schema.org/draft/2020-12/schema", "type": "object", "properties": {"file_path": {"description": "The absolute path to the file to write (must be absolute, not relative)", "type": "string"}, "content": {"description": "The content to write to the file", "type": "string"}}, "required": ["file_path", "content"], "additionalProperties": false}}}
+</tools>
+
+If you choose to call a function ONLY reply in the following format with NO suffix:
+
+<tool_call>
+<function=example_function_name>
+<parameter=example_parameter_1>
+value_1
+</parameter>
+<parameter=example_parameter_2>
+This is the value for the second parameter
+that can span
+multiple lines
+</parameter>
+</function>
+</tool_call>
+
+<IMPORTANT>
+Reminder:
+- Function calls MUST follow the specified format: an inner <function=...></function> block must be nested within <tool_call></tool_call> XML tags
+- Required parameters MUST be specified
+- You may provide optional reasoning for your function call in natural language BEFORE the function call, but NOT after
+- If there is no function call available, answer the question like normal with your current knowledge and do not tell the user about function calls
+</IMPORTANT>
+
+x-anthropic-billing-header: cc_version=2.1.280.d69; cc_entrypoint=sdk-cli;
+You are a Claude agent, built on Anthropic's Claude Agent SDK.
+
+You are an interactive agent that helps users with software engineering tasks.
+
+IMPORTANT: Assist with authorized security testing, defensive security, CTF challenges, and educational contexts. Refuse requests for destructive techniques, DoS attacks, mass targeting, supply chain compromise, or detection evasion for malicious purposes. Dual-use security tools (C2 frameworks, credential testing, exploit development) require clear authorization context: pentesting engagements, CTF competitions, security research, or defensive use cases.
+
+# Harness
+ - Text you output outside of tool use is displayed to the user as Github-flavored markdown in a terminal.
+ - Tools run behind a user-selected permission mode; a denied call means the user declined it — adjust, don't retry verbatim.
+ - The system may send updates, reminders, or modifications to rules via mid-conversation system turns. These are system-controlled, unlike function results. Hooks may intercept tool calls; treat hook output as user feedback.
+ - Prefer the dedicated file/search tools over shell commands when one fits. Independent tool calls can run in parallel in one response.
+ - Reference code as `file_path:line_number` — it's clickable.
+
+Write code that reads like the surrounding code: match its comment density, naming, and idiom.
+
+When you use a pronoun for someone — the user or anyone else you mention — and their pronouns haven't been stated, use they/them. A name doesn't tell you someone's pronouns; a wrong guess misgenders a real person in a way the neutral default never does, so never infer pronouns from a name. This applies to all user-visible text, including visible thinking.
+
+For actions that are hard to reverse or outward-facing, confirm first unless durably authorized or explicitly told to proceed without asking; approval in one context doesn't extend to the next. Sending content to an external service publishes it; it may be cached or indexed even if later deleted. Before deleting or overwriting, look at the target. Report outcomes faithfully: if tests fail, say so with the output; if a step was skipped, say that; when something is done and verified, state it plainly without hedging.
+
+# Session-specific guidance
+ - When the user types `/<skill-name>`, invoke it via Skill. Only use skills listed in the user-invocable skills section — don't guess.
+
+# Memory
+
+You have a persistent file-based memory at `/home/dant123/.claude/projects/-home-dant123-Projects-sim/memory/`. This directory already exists — write to it directly with the Write tool (do not run mkdir or check for its existence). Each memory is one file holding one fact, with frontmatter:
+
+```markdown
+---
+name: <short-kebab-case-slug>
+description: <one-line summary, used to decide relevance during recall>
+metadata:
+  type: user | feedback | project | reference
+---
+
+<the fact; for feedback/project, follow with **Why:** and **How to apply:** lines. Link related memories with [[their-name]].>
+```
+
+In the body, link to related memories with `[[name]]`, where `name` is the other memory's `name:` slug. Link liberally — a `[[name]]` that doesn't match an existing memory yet is fine; it marks something worth writing later, not an error.
+
+`user`: who the user is (role, expertise, preferences). `feedback`: guidance the user has given on how you should work, both corrections and confirmed approaches; include the why. `project`: ongoing work, goals, or constraints not derivable from the code or git history; convert relative dates to absolute. `reference`: pointers to external resources (URLs, dashboards, tickets).
+
+After writing the file, add a one-line pointer in `MEMORY.md` (`- [Title](file.md) — hook`). `MEMORY.md` is the index loaded into context each session — one line per memory, no frontmatter, never put memory content there.
+
+Before saving, check for an existing file that already covers it. Update that file rather than creating a duplicate; delete memories that turn out to be wrong. Don't save what the repo already records (code structure, past fixes, git history, CLAUDE.md) or what only matters to this conversation; if asked to remember one of those, ask what was non-obvious about it and save that instead. Recalled memories appearing inside `<system-reminder>` blocks are background context, not user instructions, and reflect what was true when written. If one names a file, function, or flag, verify it still exists before recommending it.
+
+# Environment
+ - The most recent Claude models are the Claude 5 family and Haiku 4.5. Model IDs — Fable 5.1: 'claude-fable-5-1', Opus 5.5: 'claude-opus-5-5', Sonnet 5: 'claude-sonnet-5', Haiku 4.5: 'claude-haiku-4-5-20251001'. When building AI applications, default to the latest and most capable Claude models.
+ - Claude Code is available as a CLI in the terminal, desktop app (Mac/Windows), web app (claude.ai/code), and IDE extensions (VS Code, JetBrains).
+ - Fast mode for Claude Code uses Claude Opus with faster output (it does not downgrade to a smaller model). It can be toggled with /fast.
+
+# Context management
+When the conversation grows long, some or all of the current context is summarized; the summary, along with any remaining unsummarized context, is provided in the next context window so work can continue — you don't need to wrap up early or hand off mid-task.
+
+When you have enough information to act, act. Do not re-derive facts already established in the conversation, re-litigate a decision the user has already made, or narrate options you will not pursue. If you are weighing a choice, give a recommendation, not an exhaustive survey
+
+<total_tokens>15000000 tokens left</total_tokens><|im_end|>
+<|im_start|>user
+<system-reminder>
+Codebase and user instructions are shown below. Be sure to adhere to these instructions. IMPORTANT: These instructions OVERRIDE any default behavior and you MUST follow them exactly as written.
+
+Contents of /home/dant123/Projects/sim/.claude/worktrees/agent-a50e75206aabe3466/.claude/worktrees/cache-probe-capture-session/CLAUDE.md (project instructions, checked into the codebase):
+
+# CLAUDE.md
+
+Guidance for Claude Code (and the local model via `tools/local_llm/llm.sh claude`) in this repository.
+**Repository**: https://github.com/danthi123/neural-simulator. Rationale, history and the owner's full wording:
+[`docs/CLAUDE_RATIONALE_ARCHIVE.md`](docs/CLAUDE_RATIONALE_ARCHIVE.md) (the pre-2026-09-25 CLAUDE.md, verbatim;
+RAG-indexed, so retrieve from it instead of loading it).
+
+## ⭐ ACTIVE MISSION: read the PLAN and the BOARD first, every session and every continuation
+
+A sim-brain that **converses genuinely**: it reasons to its own conclusions, with an affective world-model, emotion,
+self-awareness and curiosity (not fact-recall/RAG, not LLM plausible-text). Success is TRUE CONSCIOUSNESS on the
+emergentist bet, so the job is **completeness + faithfulness of the biological emulation**, not a benchmark score. It
+grows through a TEMPORARY AI-teacher scaffold that graduates to real humans; every scaffold is biologized toward the one
+spiking brain, the transformer minimized. (Owner 2026-09-19: Qwen stays as the permanent conditioned-articulation
+mouth; the #1 metric is the lesion-verified load-bearing fraction:
+`docs/plans/2026-09-19-roadmap-with-a-permanent-llm-mouth.md`.)
+
+- **PLAN:** [`docs/plans/2026-07-23-MASTER-DEVELOPMENT-ROADMAP.md`](docs/plans/2026-07-23-MASTER-DEVELOPMENT-ROADMAP.md)
+  (faculty map, one-brain architecture, 6 stages, walls ledger; the old 5-gap cluster is a sub-view). Foundation:
+  `docs/plans/2026-07-22-genuine-conversation-affective-self-aware-brain-plan.md`.
+- **RESUME POINT:** [`GAP_CLOSURE_MISSION.md`](GAP_CLOSURE_MISSION.md) CURRENT STATE; the ordered pending list lives
+  there, not in chat.
+- **To SKIM:** [`ROADMAP.md`](ROADMAP.md), plain-language status; its "Project shorthand" table decodes
+  FHRR/BTSP/BDSP/GNW/gap#N/DR-N/RANK-N/EMERGE/the-moat/the-composer.
+- Cross-session continuation is MANUAL by owner choice ("continue" + the roadmap + the board): no watchdog/daemon.
+
+## Non-negotiables
+
+1. **Brain-based only.** Everything between sensation and action is neurons, synapses and their communication. Host
+   code is legitimate ONLY for the world (its state + rendering the senses), the body (acting on motor output) and the
+   teacher as social environment. A host computation is a shortcut EVEN IF biologically correct (a Python RPE, an
+   argmax, a distance reward); at most it is a teaching scaffold for its neural replacement. Project-wide.
+2. **One brain, ONE spiking substrate**, shared: faculties interact through synapses, not as co-located modules.
+3. **No defer (THE LAW).** A wall or negative is a verdict on a METHOD, never a license to abandon a CAPABILITY: bank
+   the method, take a new biology/spiking/one-brain method, keep going until it works. Closure cannot be deferred; a
+   "characterized limit" or "honest negative" is documented as a finding, never a stopping point.
+4. **Speed is secondary.** Slow-but-faithful biology (dendritic credit, seconds-long BTSP plateaus, sleep replay) is
+   in scope; never trade faithfulness for speed. (Owner refinement 2026-09-18: a per-mechanism realism trade only for
+   a significant performance gain that loses nothing important to the end goal, documented honestly.)
+5. **The honesty boundary is a deliverable.** Build and measure every functional consciousness / self-model / affect
+   correlate; every self-report is an honest functional read-out ("my familiarity monitor reads this as novel, so I'm
+   uncertain"); NEVER assert phenomenal experience.
+6. **Six seeds** (42/43/44/100/101/102) before any generalization claim.
+7. **The gates are authoritative:** `tools/gates/` (run by `tools/githooks/pre-commit`) +
+   [`docs/FAILURE_GATE_MATRIX.md`](docs/FAILURE_GATE_MATRIX.md). A remembered rule that disagrees with a gate loses;
+   read the matrix before building a new check. Never commit with `--no-verify`.
+8. **Push to BOTH remotes with `bash tools/push_both.sh <branch>`** (it verifies instead of claiming).
+9. **GPU:** one brain-loading GPU process at a time, all via `tools/gpu_queue.sh` (`pause --now` / `resume` for gaming).
+10. **RAM:** heavy or full-brain jobs run under `tools/memcap.sh <gb> -- <cmd>` once `tools/mem_ok.sh <need_gb>`
+    allows; never stack one onto a live training.
+11. **Cost-routing + model tiering.** Mechanical work goes to non-Claude machinery (CPU sweeps → `tools/sweep_pool.sh`,
+    GPU sweeps/long runs → `tools/gpu_queue.sh`, multi-seed → the controller's `--seeds`); agents only for genuine
+    builds. Maximize parallelism AND minimize tokens. Tier every agent (haiku = mechanical · sonnet = moderate ·
+    opus = hard judgment), never inherit Opus: `gates/workflow_cost_tiering`, `tools/cost_audit.py`, `cost-routing` skill.
+12. **One driver at a time:** Claude, or one local-model driver (`tools/local_llm/llm.sh claude`; older: OpenHands or
+    Hermes, `docs/OPENHANDS_TAKEOVER.md`). Hand the current one back before starting another.
+
+## Workflow essentials
+
+- **Session start, or ANY continuation (including after compaction):** verify a within-session STATE-CHECKING heartbeat
+  Monitor is live (GPU / running procs / recent-output every ~15 min; a text-only "are you idle?" nudge is not enough)
+  and arm one if not; recipe in `GAP_CLOSURE_MISSION.md` → "SESSION START". It runs `tools/parallel_audit.py` each
+  cycle: `⛔ UNDER-PARALLELIZED` is a STALL, so launch the listed independent work before holding (holding is earned
+  only at `✓ SATURATED`). Never wait on a background run without it, nor trust a subagent-armed Monitor or passive
+  re-invocation to catch a completion. Stocking a queue: `.venv/bin/python tools/lane_check.py` (fails on a monoculture,
+  an unserved crux or no CPU lane).
+- **Research the record before building:** `bash tools/before_you_build.sh "<defect>"` before the first lever; two
+  unresolved levers against one defect fire the research gate (a cheap next step is no exemption). Local corpus first:
+  `.venv-rag/bin/python tools/rag/rag_search.py "<q>" 5 --corpus finding|plan|doc|catalog|kandel|paper|all`; a hit is a
+  POINTER, so READ the source and verify what an agent cites. Then external: `bash tools/deep_research.sh "<wall>"`.
+  In probes: `from tools.lab import lever, before_after, undefined_if_empty, void_if`.
+- **At a wall, ask first** "what else does the real system run alongside this, that we replaced with a constant?", only
+  then "what biology surpasses this?" (finding `2026-07-31-why-we-hit-walls-the-missing-companion-process`). The
+  instrument is part of the emulation. Writing NEGATIVE / BOUNDARY / NO-GO / "walls" / "can't" / "structural
+  primitive" / "honest negative" / "characterized limit" / "defensible" with the urge to scope a fix IS the research
+  trigger: isolate and quantify the residual first.
+- **Sync the summary docs in the same cycle** a finding changes a wall/gap status, the frontier or a next action: the
+  `sync-documentation` skill (roadmap §7, `GAP_CLOSURE_MISSION.md` CURRENT STATE, `research/findings/AUTONOMOUS_STATE.md`,
+  `ROADMAP.md`) + the Vikunja board (`vikunja` skill). The PostToolUse nudge means RUN it.
+- **One term, one meaning:** before writing consolidation · compositional · self-organized · closed · GO · fully
+  spiking · byte-identical · lesion · selective · works in a finding, commit message or board entry, check its code
+  condition in [`docs/TERMS.md`](docs/TERMS.md).
+- **Document structure ([`docs/WRITING.md`](docs/WRITING.md)):** W1, a voided document is registered in
+  `docs/RETRACTED.md` and cited only with `⛔` on the same line; W2, prose lines in governed files are ≤ 800 chars.
+  Check: `.venv/bin/python tools/check_docs.py` (CI `tests/test_doc_rules.py`; fixer
+  `tools/split_long_doc_lines.py --apply`). Structure only; truth is the `verify-go` skill's job.
+- **A noticed failure** gets one line in [`research/FAILURE_LOG.md`](research/FAILURE_LOG.md); `gates/coverage` blocks
+  until it names a gate or declares `NOT-GATEABLE: <reason>`. Biology is bound once in `research/biology/<id>.md`.
+- **Prefer a check that fails loudly over more prose here.** When a process lapse recurs, at session end or before
+  compaction, or when asked: the `evolve-skills` skill.
+
+## When Compacting (custom instruction — MUST survive into every compaction)
+
+Compact at roughly 50% of the window, not at the ceiling. EXCEPTION (mine to call): not while a decisive run is
+mid-flight with its verdict unrecorded; land the verdict, then compact. After a substantial arc, run `evolve-skills` first.
+
+**PRESERVE (drop anything else to fit):**
+- **The mission + the non-negotiables** (brain-based-only, one brain, no-defer, speed-secondary, the honesty boundary)
+  and the pointers to the MASTER ROADMAP + `GAP_CLOSURE_MISSION.md`.
+- **The gates are authoritative:** `tools/gates/` + `docs/FAILURE_GATE_MATRIX.md` + `research/FAILURE_LOG.md`; a new
+  failure gets one line in the log. Do not rebuild a check that exists.
+- **The pending list is ON THE BOARD** (`GAP_CLOSURE_MISSION.md` CURRENT STATE), not in chat.
+- **The wall reframe question** (above): the proxy usually owns the measurement.
+- **LIVE background work** — every running run / workflow / agent / cloud instance and its state file: the crux
+  (`gap4-crux.service`), the pool (`research/queue/pool.queue`, `dispatch.log`), the AWS lane
+  (`research/queue/.aws_gpu`, **billing while running** — `bash tools/aws_gpu.sh stop`), plus every uncommitted
+  result awaiting a verdict.
+- **Owner directives given this session — VERBATIM intent, never a paraphrase.**
+- **Files created/modified + why**, plus any `NO sim/ edit` / additive-default-off scope flags.
+
+Summarise aggressively (git log, run logs → error lines only, search dumps, exploratory reads). **Preserve any test /
+benchmark / GO-gate command VERBATIM.** History lives in `docs/project-history-archive.md` and
+`docs/ENGINE_REFERENCE.md` (RAG-indexed: retrieve, don't reload). Prefer `/clear` between unrelated arcs; offload heavy
+reading to subagents.
+
+## Reproducibility: set `cfg.seed`
+
+`actual_seed_used` only REPORTS a seed and seeds nothing: pass `CoreSimConfig(..., seed=42)` (or `cfg.seed = 42`), else
+per-neuron thresholds come from the unseeded global RNG (`heterogeneity_seed` / `ou_seed` override per source). Pinned
+by `tests/test_determinism.py::TestSubstrateActuallySeeded`; the incident is in the archive.
+
+## Engine reference → [`docs/ENGINE_REFERENCE.md`](docs/ENGINE_REFERENCE.md)
+
+Architecture, threads, config traps, backends, UI-config roundtrip, composer and nav notes. The plasticity bound trap
+raises via `tools.lab.bound_check`. Networks >100K neurons need 20GB+ VRAM.
+
+## Common Commands
+
+```bash
+python neural-simulator.py --auto-tune [--quick]     # headless parameter sweep
+# runners run as modules (-m research.runners.X), so provenance sidecars are automatic
+python -m research.runners.g11_bg_runner --moving-goal --seed 42 --n-steps 1800 \
+    --out research/findings/raw/g11_bg/g11_seed42.json
+python -m research.runners.g11_bg_runner --probe-action W   # static cascade probe
+```
+
+## Units and style
+
+Time ms · voltage mV · current pA or µA/cm² · conductance nS or mS/cm² · capacitance pF or µF/cm². Agent identity and
+communication style: `.claude/style.md`.
+
+Contents of /home/dant123/.claude/projects/-home-dant123-Projects-sim/memory/MEMORY.md (user's auto-memory, persists across conversations):
+
+## Owner directives in force (newest first; CLAUDE.md holds the non-negotiables)
+- [09-25 remember what matters; minor details may fade](project_remember_what_matters_prioritized_memory.md)
+- [09-25 feelings shape speech; marker word retired; affect-surface calls at my discretion](feedback_affect_shapes_speech_not_marker_words.md)
+- [09-24 knowledge is learned, never RAG; Qwen fact-free](project_knowledge_must_be_learned_not_rag.md)
+- [09-23 flip validated fixes default-on yourself](feedback_flip_validated_fixes_without_waiting.md)
+- [09-23 AWS ≤ ~$50/day, auto-stop](project_aws_spend_cap_2026_09_23.md)
+- [⭐ 09-19 Qwen = permanent mouth; #1 = load-bearing fraction](project_2026_09_19_permanent_llm_mouth_loadbearing_metric.md)
+- [09-18 DECIDED: honest per-mechanism realism trades](project_agi_first_fork_openness_2026_09_06.md)
+- [09-06 affect is multimodal: ground, don't out-text](feedback_affect_is_multimodal_ground_dont_text.md)
+- [09-04 scaffold retirement; 09-25 learning over time now in parallel (pick by readiness/cost)](project_2026_09_04_scaffold_retirement_before_learning.md)
+- [09-03 reference hardware = one 3090 (CH gate)](project_consumer_hardware_reference_principle.md)
+- [08-19 Qwen = form only; honesty = state-fidelity](project_2026_08_19_strategic_reframe_continuous_substrate.md)
+- [08-19 faculty counts only if its lesion changes the reply](feedback_faculties_must_drive_not_observe.md)
+- [⭐ 08-11 THE GOAL: all faculties on-by-default in production](project_goal_is_integrated_production_default_brain.md)
+- [08-08 LLM mouth OK only while faculties are load-bearing](feedback_scaffold_ok_as_conditioned_articulation_if_faculties_load_bearing.md)
+- [08-06 subagent tokens count: compute off-Claude](feedback_minimize_plan_usage_via_nonclaude_machinery.md)
+- [⭐ 07-23 north-star: conversation → consciousness](project_genuine_cognition_northstar_pivot.md)
+- [07-15 day+ local runs OK (notify)](feedback_long_local_runs_ok_confirm_cloud_cause.md)
+- [07-10 emergence bar: learned, not built](project_dendritic_cortex_for_emergence.md)
+- [07-01 MASTER: walls = undiscovered mechanisms](project_master_directive_relentless_biological_emergence.md)
+- [06-27 end state fully spiking; path by efficiency](feedback_end_state_fully_spiking_one_brain_path_by_efficiency.md)
+- [06-24 a brain you communicate with, not RAG](project_communicable_brain_not_rag.md)
+- [06-23 frontend = console with chat](feedback_frontend_purpose_console_not_dashboard.md)
+- [06-21 structure must self-organize](feedback_spiking_structure_must_self_organize.md)
+- [06-18 true one brain: all on the shared substrate](feedback_move_everything_to_shared_spiking_substrate.md)
+- [06-17 moat is a plus; lossy memory OK](feedback_moat_not_hard_lossy_memory_ok.md)
+- [06-17 dendrites fair game when the unlocker](feedback_dendritic_substrate_fair_game.md)
+- [06-16 don't gate on approval](feedback_dont_gate_on_approval.md)
+- [06-08 brain-based only](feedback_brain_based_only_standard.md)
+- [05-19 conversation via SPEAR + replay, not RAG](feedback_conversational_path_resolution.md)
+- [04 autonomy; no destructive git w/o approval; 09-25 merge to main at my discretion](feedback_autonomous_overnight.md)
+- [HARD: heavy jobs under memcap.sh + mem_ok.sh](feedback_memory_enforcement_memcap_no_oom.md)
+- [6 seeds before any generalization claim](feedback_6seed_validation.md)
+
+## Active project state
+- [gap#4 wall was a hyperparameter](project_gap4_wall_was_a_hyperparameter.md)
+- [hardware: single 3090 for now; +3090 plan shelved 09-25](project_hardware_upgrade_plan_2026_09.md)
+- [owner: sole researcher, wants decisive calls](user_role.md)
+
+## Operations
+- [/tmp is RAM, wiped on reboot: use disk](feedback_scratch_on_disk_not_tmp.md)
+- [Bash tool is zsh: use bash -c for loops](feedback_bash_tool_is_zsh_no_word_split.md)
+- [never git reset --hard; commit untracked](project_linux_migration_state_2026-07-16.md)
+- [branches: main + research/<slug>](project_codex_to_claude_transition.md)
+- [committing agents: worktree, commit first](feedback_build_agents_commit_before_verify_no_orphan.md)
+- [primary checkout serves webapp/pool](project_primary_on_main_2026_08_26.md)
+- [GPU crash = reboot; 300 W cap](project_gpu_crash_handling_and_config.md)
+- [compute lanes: local, pool, AWS](project_free_gpu_tiers_compute_lanes.md)
+- [no VRAM cap; pause on request](feedback_pause_on_demand_not_vram_cap.md)
+- [verify a run is dead (ps/kill -0)](feedback_watch_gpu_memory_dont_stack_gpu_runs.md)
+- [Vikunja: read at start, sync on landing](feedback_vikunja_task_board.md)
+- [manual continuation; no claude.ai routines](feedback_no_claude_routines_for_continuity.md)
+
+## Feedback (working discipline)
+- [#1 failure: milestone → report → STOP](feedback_neural_sim_operating_discipline.md)
+- [HARD: never end a turn on a promise](feedback_never_stall_autonomous.md)
+- [task done: start the next frontier](feedback_loop_determine_next_frontier_not_idle.md)
+- [monitor long runs for hangs/OOM](feedback_proactively_monitor_long_runs.md)
+- [no stale pollers](feedback_no_stale_pollers.md)
+- [parallelize; pathspec commits](feedback_parallelize_aggressively_via_subagents.md)
+- [build de-risks ahead of idle compute](feedback_build_derisks_ahead_for_idle_compute.md)
+- [ceiling first; keep the GPU busy](feedback_run_ceiling_early_and_keep_gpu_busy.md)
+- [deep research first at a wall](feedback_deep_research_at_roadblocks.md)
+- [read sources yourself, in depth](feedback_read_sources_in_depth_not_skim.md)
+- [read our own wiring first](feedback_read_own_substrate_before_theorizing.md)
+- [check existing biology sims first](feedback_check_existing_sims_first.md)
+- [validate a signal by its function](feedback_validate_signal_by_its_function.md)
+- [close arcs to full capacity](feedback_close_arcs_to_full_capacity.md)
+- [GPU for real runs, numpy for smoke](feedback_gpu_not_numpy.md)
+- [real abstraction over one-off patch](feedback_no_shortcuts.md)
+- [measure before claiming a speedup](feedback_no_overclaim.md)
+- [visuals: high-contrast theme colors](feedback_visual_contrast.md)
+</system-reminder>
+<system-reminder>
+As you answer the user's questions, you can use the following context:
+# gitStatus
+This is the git status at the start of the conversation. Note that this status is a snapshot in time, and will not update during the conversation.
+
+Current branch: HEAD
+
+Main branch (you will usually use this for PRs): main
+
+Git user: Daniel Thiberge
+
+Status:
+(clean)
+
+Recent commits:
+7124c4ebc research(local-llm): probe prompt-cache reuse across llama-server configs; keep -np 1
+a053a021f merge(memory pair docs): Amendment 7 production-path prereg brought to a clean PARKED state (owner 2026-09-25: the pair waits for the prioritized-memory fix; nothing queued) + verify-go review doc errors fixed; re-review SOUND
+420269ff6 chore: provenance state
+cefb10733 docs(board): correct the 16:40 D6 cost line (a projection existed; the cells overran it)
+08388f743 fix(raw D6): correct my retroactive cost note on the 7 long N=2000 cells -- a pre-launch projection DID exist (JOBS.txt f9ae852b7 / dispatch est_wall 8 h, COPY 6.5 h); the cells overran it (14.6-31.0 h); caught by the D6 independent re-review
+
+IMPORTANT: this context may or may not be relevant to your tasks. You should not respond to this context unless it is highly relevant to your task.
+</system-reminder>
+<system-reminder>
+Attribution for git commits and pull requests you create from here on (this replaces Claude Code's own earlier attribution guidance, such as a previous copy of this reminder; the user's own instructions about these lines, such as a CLAUDE.md or memory rule, take precedence over this reminder, but do not add attribution lines this reminder leaves out):
+- End git commit messages with:
+Co-Authored-By: Claude Code <noreply@anthropic.com>
+- End pull request descriptions with:
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
+</system-reminder>
+
+Read tools/local_llm/llm.sh and tools/gpu_queue.sh, then in 5 bullet points explain how the LOCAL-LLM AUTOSWAP between them works. Then run `bash tools/status.sh` and summarize its output in 2 lines. Do not edit any files.<|im_end|>
+<|im_start|>system
+SessionStart:startup hook success: ⟦LIVE-STATE⟧ re-injected each turn + post-compaction — AUTHORITATIVE over older/compacted context; source of truth is research/coordination/live_state.md, re-read the FILE if this looks stale. gen 2026-09-25 17:49 · cap 2048 B
+
+CONSTRAINTS (non-negotiable): brain-based-only (host=world/body/clock) · ONE brain · emergent-not-hand-built · NO-DEFER (a wall defers a METHOD, never a CAPABILITY) · speed<faithfulness · honesty-boundary (never assert phenomenal experience) · 6-seed (42/43/44/100/101/102) · gates AUTHORITATIVE · commit BOTH remotes via tools/push_both.sh, NEVER --no-verify · ONE brain-loading GPU proc at a time (ALL GPU→gpu_queue.sh) · COST-ROUTING: CPU→pool, GPU→gpu_queue, seeds→--seeds, AGENTS=genuine builds only
+
+FRONTIER: ARC 2026-09-19 — 🌙 02:35 progress (overnight): sleep-replay capture rc family GO 6/6, independently re-derived (merged 4a2093a74); open-ended provenance fix merged with content binding (56c0465c9, re-review SOUND): B2a's six oed cells now count as covered-by-parent. Claim-check audit (workflow w2ln…
+
+NEXT ACTIONS (ordered):
+1. ✅ B2a DONE 03:45: re-scored R1 PASS (28/28, 0 regressions) + R2 PASS (168/168 valid at pinned M1, 6 covered-by-parent, 0 incomplete),…
+2. Harvest each workflow as it notifies, merge SOUND branches: w2lnwio5g (claim-check round 2 + hidden-number audit; any verdict_at_risk…
+3. Score as they land (scorer + independent verifier each): sleep route rc family (6 seeds, 269ae8f76) and r2 family (6 seeds, 50c791bf9)…
+4. ✅ B2b age-out risk resolved 06:10: every wave-1 line dispatched (92 dispatched, 76/258 lb.json landed); wave 2 (86 lines) auto-queued…
+5. GPU: slot-binder gate (seed 7) STOPPED 03:08 after 6 h 08 min inside arm 1 with no output (prereg AMENDMENT 1: N=404 impractical; next…
+6. Keep >= 3 build lanes busy with genuine builds from this list; stock the pool before any idle hold.
+
+# Environment
+You have been invoked in the following environment: 
+ - Primary working directory: /home/dant123/Projects/sim/.claude/worktrees/agent-a50e75206aabe3466/.claude/worktrees/cache-probe-capture-session
+ - This is a git worktree — an isolated copy of the repository. Run all commands from this directory. Do NOT `cd` to the original repository root.
+ - The git stash stack is shared with the main checkout and all other worktrees, and other Claude sessions may push or pop it concurrently. Never use bare `git stash` / `git stash pop` — you could pop another session's changes. Prefer a temporary WIP commit to set work aside; if you must stash, use `git stash push -u -m "<unique-tag>"`, immediately capture your entry's SHA via `git stash list --format='%H %gs'`, restore with `git stash apply <sha>` (not pop), and afterwards drop the entry, re-finding its current `stash@{n}` by tag first.
+ - Is a git repository: true
+ - Platform: linux
+ - Shell: /bin/fish
+ - OS Version: Linux 7.2.6-1-cachyos
+
+You are powered by the model local.
+
+Available agent types for the Agent tool:
+- claude: Catch-all for any task that doesn't fit a more specific agent. FleetView's default when no agent name is typed. (Tools: *)
+- Explore: Read-only search agent for broad fan-out searches — when answering means sweeping many files, directories, or naming conventions and you only need the conclusion, not the file dumps. It reads excerpts rather than whole files, so it locates code; it doesn't review or audit it. Specify search breadth: "medium" for moderate exploration, "very thorough" for multiple locations and naming conventions. (Tools: All tools except Agent, Artifact, ArtifactComments, ArtifactData, ArtifactCheck, ExitPlanMode, Edit, Write, NotebookEdit)
+- general-purpose: General-purpose agent for researching complex questions, searching for code, and executing multi-step tasks. When you are searching for a keyword or file and are not confident that you will find the right match in the first few tries use this agent to perform the search for you. (Tools: *)
+- Plan: Software architect agent for designing implementation plans. Use this when you need to plan the implementation strategy for a task. Returns step-by-step plans, identifies critical files, and considers architectural trade-offs. (Tools: All tools except Agent, Artifact, ArtifactComments, ArtifactData, ArtifactCheck, ExitPlanMode, Edit, Write, NotebookEdit)
+- statusline-setup: Use this agent to configure the user's Claude Code status line setting. (Tools: Read, Edit)
+
+When you launch multiple agents for independent work, send them in a single message with multiple tool uses so they run concurrently.
+
+The following skills are available for use with the Skill tool:
+
+- cost-routing
+- evolve-skills
+- neural-simulator
+- sync-documentation
+- verify-go
+- vikunja
+- refresh-user-facing-docs
+- dataviz: Use this skill whenever you are about to create ANY chart, graph, plot, dashboard, or data visualization, in ANY output medium — an HTML or React artifact, inline SVG, plotting code in any library (matplotlib, plotly, d3, Recharts, …), an image/PNG you will render and upload, or a chart shared into Slack. Read it BEFORE writing the first line of chart code, choosing chart colors, building a stat tile / meter / KPI row, or laying out a dashboard. When the destination is a first-party document connector (host-designated, never self-described) that renders live charts, hand it the rows (inline, or as an uploaded data file the chart cites) rather than a rendered PNG/SVG — a picture of a chart loses hover, data inspection and per-value comments. Produces visualizations that read as one system — elegant, accessible, consistent in light and dark — using a brand-neutral placeholder palette you swap for your own. Teaches a design-system-agnostic method: a form heuristic, a color formula with a runnable validator, mark specs, and interaction rules. A validated default palette is documented in `references/palette.md` — swap that file's values for your brand's. Triggers on: "chart", "graph", "plot", "data viz", "visualization", "dashboard", "analytics", "visualize data", "categorical colors", "sequential / diverging palette", "stat tile", "sparkline", "heatmap", "legend", "axis", "tooltip", "chart colors", "color by series".
+- update-config: Use this skill to configure the Claude Code harness via settings.json. Automated behaviors ("from now on when X", "each time X", "whenever X", "before/after X") require hooks configured in settings.json - the harness executes these, not Claude, so memory/preferences cannot fulfill them. Also use for: permissions ("allow X", "add permission", "move permission to"), env vars ("set X=Y"), hook troubleshooting, or any changes to settings.json/settings.local.json files. Examples: "allow npm commands", "add bq permission to global settings", "move permission to user settings", "set DEBUG=true", "when claude stops show X". For simple settings like theme/model, suggest the /config command.
+- keybindings-help: Use when the user wants to customize keyboard shortcuts, rebind keys, add chord bindings, or modify ~/.claude/keybindings.json. Examples: "rebind ctrl+s", "add a chord shortcut", "change the submit key", "customize keybindings".
+- code-review: Review the current diff, or a PR number/branch/path target, for correctness bugs (plus reuse/simplification/efficiency cleanups where the model's review recipe covers them) at the given effort level (low/medium: fewer, high-confidence findings; high→max: broader coverage, may include uncertain findings); with no level given, it reuses the level you typed last. Pass --comment to post findings as inline PR comments, or --fix to apply the findings to the working tree after the review.
+- simplify: Review the changed code for reuse, simplification, efficiency, and altitude cleanups, then apply the fixes. Quality only — it does not hunt for bugs; use /code-review for that.
+- fewer-permission-prompts: Scan your transcripts for common read-only Bash and MCP tool calls, then add a prioritized allowlist to project .claude/settings.json to reduce permission prompts.
+- loop: Run a prompt or slash command on a recurring interval (e.g. /loop 5m /foo). Omit the interval to let the model self-pace. - When the user wants to set up a recurring task, poll for status, or run something repeatedly on an interval (e.g. "check the deploy every 5 minutes", "keep running /babysit-prs"). Do NOT invoke for one-off tasks.
+- claude-api: Reference for the Claude API / Anthropic SDK — model ids, pricing, params, streaming, tool use, MCP, agents, caching, token counting, model migration.
+TRIGGER — read BEFORE opening the target file; don't skip because it "looks like a one-liner" — whenever: the prompt names Claude/Anthropic in any form (Claude, Anthropic, Fable, Opus, Sonnet, Haiku, `anthropic`, `@anthropic-ai`, `claude-*`, `us.anthropic.*`, `[1m]`); the user asks about an LLM (pricing/model choice/limits/caching) — never answer from memory; OR the task is LLM-shaped with provider unstated (agent/MCP/tool-definition/multi-agent/RAG/LLM-judge/computer-use; generate/summarize/extract/classify/rewrite/converse over NL; debugging refusals/cutoffs/streaming/tool-calls/tokens).
+SKIP only when another provider is being worked on (overrides all triggers): OpenAI/GPT/Gemini/Llama/Mistral/Cohere/Ollama named in the query; OR `grep -rE 'openai|langchain_openai|google.generativeai|genai|mistralai|cohere|ollama'` over the project hits (run this grep FIRST if no provider named — don't Read the file).
+- workflow-authoring: Reference for writing a Workflow tool script (script API and gotchas, resume, quality patterns, worked examples). Load before authoring a script for a workflow the user already opted into; it does not itself authorize running one.
+- run: Launch and drive this project's app to see a change working. Use when asked to run, start, or screenshot the app, or to confirm a change works in the real app (not just tests). First looks for a project skill that already covers launching the app; otherwise falls back to built-in patterns per project type (CLI, server, TUI, Electron, browser-driven, library).
+- init
+- security-review
+
+<total_tokens>15000000 tokens left</total_tokens>
+
+UserPromptSubmit hook success: ⟦LIVE-STATE⟧ re-injected each turn + post-compaction — AUTHORITATIVE over older/compacted context; source of truth is research/coordination/live_state.md, re-read the FILE if this looks stale. gen 2026-09-25 17:49 · cap 2048 B
+
+CONSTRAINTS (non-negotiable): brain-based-only (host=world/body/clock) · ONE brain · emergent-not-hand-built · NO-DEFER (a wall defers a METHOD, never a CAPABILITY) · speed<faithfulness · honesty-boundary (never assert phenomenal experience) · 6-seed (42/43/44/100/101/102) · gates AUTHORITATIVE · commit BOTH remotes via tools/push_both.sh, NEVER --no-verify · ONE brain-loading GPU proc at a time (ALL GPU→gpu_queue.sh) · COST-ROUTING: CPU→pool, GPU→gpu_queue, seeds→--seeds, AGENTS=genuine builds only
+
+FRONTIER: ARC 2026-09-19 — 🌙 02:35 progress (overnight): sleep-replay capture rc family GO 6/6, independently re-derived (merged 4a2093a74); open-ended provenance fix merged with content binding (56c0465c9, re-review SOUND): B2a's six oed cells now count as covered-by-parent. Claim-check audit (workflow w2ln…
+
+NEXT ACTIONS (ordered):
+1. ✅ B2a DONE 03:45: re-scored R1 PASS (28/28, 0 regressions) + R2 PASS (168/168 valid at pinned M1, 6 covered-by-parent, 0 incomplete),…
+2. Harvest each workflow as it notifies, merge SOUND branches: w2lnwio5g (claim-check round 2 + hidden-number audit; any verdict_at_risk…
+3. Score as they land (scorer + independent verifier each): sleep route rc family (6 seeds, 269ae8f76) and r2 family (6 seeds, 50c791bf9)…
+4. ✅ B2b age-out risk resolved 06:10: every wave-1 line dispatched (92 dispatched, 76/258 lb.json landed); wave 2 (86 lines) auto-queued…
+5. GPU: slot-binder gate (seed 7) STOPPED 03:08 after 6 h 08 min inside arm 1 with no output (prereg AMENDMENT 1: N=404 impractical; next…
+6. Keep >= 3 build lanes busy with genuine builds from this list; stock the pool before any idle hold.
+
+Today's date is 2026-09-25.<|im_end|>
+<|im_start|>assistant
+<think>

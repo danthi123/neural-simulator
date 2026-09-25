@@ -1,0 +1,30 @@
+{
+ "backend": "llama.cpp/apply-template (HTTP; not a SIM_BACKEND numpy/cupy run)",
+ "capture1": "tools/local_llm/results/template_divergence/capture_old_template/0001_POST_v1_messages?beta=true.json",
+ "capture2": "tools/local_llm/results/template_divergence/capture_old_template/0003_POST_v1_messages?beta=true.json",
+ "template": "tools/local_llm/templates/qwen38-27b-iq4nl-mtp.round1-2026-09-25.jinja",
+ "provenance1": {
+  "top_level_system_blocks": 3,
+  "embedded_system_messages_in_array": 1,
+  "embedded_system_positions": [
+   1
+  ]
+ },
+ "provenance2": {
+  "top_level_system_blocks": 3,
+  "embedded_system_messages_in_array": 2,
+  "embedded_system_positions": [
+   1,
+   4
+  ]
+ },
+ "rendered_len1": 82848,
+ "rendered_len2": 144389,
+ "first_divergence_char_index": 62857,
+ "context_before_1": "e arm 1 with no output (prereg AMENDMENT 1: N=404 impractical; next\u2026\n6. Keep >= 3 build lanes busy with genuine builds from this list; stock the pool before any idle hold.\n\nToday's date is 2026-09-25.",
+ "context_at_1": "<|im_end|>\n<|im_start|>user\n<system-reminder>\nCodebase and user instructions are shown below. Be sure to adhere to these instructions. IMPORTANT: These instructions OVERRIDE any default behavior and you MUST follow them exactly as written.\n\nContents of /home/dant123/Projects/sim/.claude/worktrees/ag",
+ "context_before_2": "e arm 1 with no output (prereg AMENDMENT 1: N=404 impractical; next\u2026\n6. Keep >= 3 build lanes busy with genuine builds from this list; stock the pool before any idle hold.\n\nToday's date is 2026-09-25.",
+ "context_at_2": "\n<total_tokens>14978678 tokens left</total_tokens><|im_end|>\n<|im_start|>user\n<system-reminder>\nCodebase and user instructions are shown below. Be sure to adhere to these instructions. IMPORTANT: These instructions OVERRIDE any default behavior and you MUST follow them exactly as written.\n\nContents ",
+ "divergence_frac_of_p1": 0.7587,
+ "divergence_frac_of_p2": 0.4353
+}

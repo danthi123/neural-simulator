@@ -88,6 +88,13 @@ def http(path, payload=None, timeout=1800):
 
 
 def start_server(profile):
+    # -np 1: kept in sync with llm.sh's profile_cmd(), which carries the full writeup (research/
+    # local-llm-prompt-cache branch, 2026-09-25). Round 1's server-flag sweep (-np/-kvu/-ctxcp/-cms/-cram/
+    # --cache-reuse) found 0% prompt-cache reuse under every combination and wrongly concluded that was an
+    # upstream llama.cpp hybrid-model limitation; round 2 (real captured requests + /apply-template) found and
+    # fixed the ACTUAL cause in tools/local_llm/templates/qwen38-27b-iq4nl-mtp.jinja itself (a mid-conversation
+    # system-reminder was being hoisted into the leading system block, shifting it every turn) -- reuse went
+    # 0% -> 60.6% at this same -np 1, no flag change. See tools/local_llm/results/cache_probe.md.
     cmd = ["llama-server", "-m", os.path.expanduser(profile["model"]), "--port", str(PORT), "--alias", "local",
            "-ngl", "99", "-np", "1", "-fa", "on", "-c", str(profile["ctx"]), "-ctk", profile["kv"], "-ctv", profile["kv"],
            "--jinja"]
@@ -256,7 +263,8 @@ def tasks(profile):
 
 
 def run_profile(profile):
-    rec = {"profile": profile["name"], "model": profile["model"], "started": time.strftime("%Y-%m-%d %H:%M:%S")}
+    rec = {"profile": profile["name"], "model": profile["model"], "started": time.strftime("%Y-%m-%d %H:%M:%S"),
+           "device": "cuda:0 (llama-server -ngl 99, all layers on GPU)"}
     used0, total = gpu_used_mib()
     rec["vram_before_mib"], rec["vram_total_mib"] = used0, total
     proc = None

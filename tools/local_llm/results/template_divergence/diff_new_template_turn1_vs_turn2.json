@@ -1,0 +1,30 @@
+{
+ "backend": "llama.cpp/apply-template (HTTP; not a SIM_BACKEND numpy/cupy run)",
+ "capture1": "tools/local_llm/results/template_divergence/capture_old_template/0001_POST_v1_messages?beta=true.json",
+ "capture2": "tools/local_llm/results/template_divergence/capture_old_template/0003_POST_v1_messages?beta=true.json",
+ "template": "tools/local_llm/templates/qwen38-27b-iq4nl-mtp.jinja",
+ "provenance1": {
+  "top_level_system_blocks": 3,
+  "embedded_system_messages_in_array": 1,
+  "embedded_system_positions": [
+   1
+  ]
+ },
+ "provenance2": {
+  "top_level_system_blocks": 3,
+  "embedded_system_messages_in_array": 2,
+  "embedded_system_positions": [
+   1,
+   4
+  ]
+ },
+ "rendered_len1": 82877,
+ "rendered_len2": 144447,
+ "first_divergence_char_index": 82877,
+ "context_before_1": "1: N=404 impractical; next\u2026\n6. Keep >= 3 build lanes busy with genuine builds from this list; stock the pool before any idle hold.\n\nToday's date is 2026-09-25.<|im_end|>\n<|im_start|>assistant\n<think>\n",
+ "context_at_1": "",
+ "context_before_2": "1: N=404 impractical; next\u2026\n6. Keep >= 3 build lanes busy with genuine builds from this list; stock the pool before any idle hold.\n\nToday's date is 2026-09-25.<|im_end|>\n<|im_start|>assistant\n<think>\n",
+ "context_at_2": "Let's start by reading the two files, then running the status script.\n</think>\n\n<tool_call>\n<function=Read>\n<parameter=file_path>\n/home/dant123/Projects/sim/.claude/worktrees/agent-a50e75206aabe3466/.claude/worktrees/cache-probe-capture-session/tools/local_llm/llm.sh\n</parameter>\n</function>\n</tool_",
+ "divergence_frac_of_p1": 1.0,
+ "divergence_frac_of_p2": 0.5738
+}
