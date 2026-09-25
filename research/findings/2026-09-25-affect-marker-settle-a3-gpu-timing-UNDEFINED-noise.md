@@ -182,6 +182,10 @@ cd <pin> && export XDG_RUNTIME_DIR=/run/user/1000; for i in $(seq 1 240); do bas
   --orient off,on,on,off --runs 48 --run-len 4 --out-dir <a3x> --out <a3x>/verdict.json
 ```
 
+The queued form also runs `bash tools/before_you_build.sh "<question>"` inside `<pin>` after the memory wait and
+before the run, so the provenance door stamps a corpus check less than 24 h old on every artifact
+(`gates/corpus_check_required` refuses a run of more than 1 h without one; the door reads the pin's own log).
+
 If it reads UNDEFINED because turn noise stays high, the prereg names the next rung: variance control (a quiet
 machine window or CPU isolation), not a smaller bound or a looser rule.
 
