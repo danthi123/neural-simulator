@@ -7,6 +7,13 @@ User=dant123
 Group=dant123
 WorkingDirectory=/home/dant123/Projects/sim
 Environment=HOME=/home/dant123
+# TimeoutStartSec (2026-09-25 review, LOW/INFO): with none set, a single hung idle-stop or enforce cycle (a
+# wedged ssh/rsync call with no bound of its own) blocks EVERY later cap enforcement indefinitely -- this unit
+# runs both scripts back to back with no per-call timeout of its own at this level. 20 minutes comfortably
+# covers a normal cycle (aws_budget.sh's own sync timeout is 120s/instance; aws_idle_stop.sh's remote probes are
+# now individually bounded at 30s each) with room for several instances, while still guaranteeing systemd kills
+# a wedged run well before the NEXT 10-minute timer tick would otherwise queue up behind it.
+TimeoutStartSec=1200
 # ORDER MATTERS (2026-09-23 review): `enforce` is what RECORDS this cycle's spend to the ledger
 # (tools/aws_spend_ledger.py). If aws_idle_stop.sh ran first and decided to stop an instance, that instance
 # would already be "stopped" (hours_running_today -> 0) by the time enforce observed and recorded it --

@@ -211,6 +211,32 @@ weekend for batteries Claude queues, within $50/day, auto-stop on; (2) RETIRE th
 model may commit harvested raw results + one-line board entries straight to main through the gates. Prep = workflow `werouis9k`
 (marker retirement, GPU<->local-model auto-swap, tools/status.sh + LOCAL_LLM_RUNBOOK.md, larger-context local-model scouting).
 
+**☀️ 14:40 RESUME RECORD (5-hour usage at 92%, resets ~15:55):** if interrupted, after the reset: read each workflow journal under
+~/.claude/projects/-home-dant123-Projects-sim/87891831-e642-4a2f-abeb-50ea0867609b/subagents/workflows/<run>/journal.jsonl, salvage
+uncommitted work from .claude/worktrees/<run>-N (commit through gates, push), then resume with Workflow({scriptPath, resumeFromRunId}).
+Running: wf_69528e21-31b (pair: review-doc fix, B2c fix, production-path arms), wf_43f07082-768 (slotbinder fast teach),
+wf_99dde278-e1e (enqueue check / fragment audit / AWS r4), wf_84715f6a-68f (awake completion fix), wf_99bc7abf-15b (handoff prep:
+marker retirement, GPU<->llm swap, status+runbook, model scout), wf_87826bf5-9db (corpus-check shared log), wf_e650785f-7b8
+(condense CLAUDE.md + memory; owner approves before apply). STOPPED at 14:40 to save usage: wf_0d0ca4c2-1f4 (6/8 done: pool-stall,
+claim-check r8 and SETTLE A3 built + reviewed SOUND-WITH-ISSUES; the prereg-amendment gate lane is parked). Pending merge:
+research/score-gap4-c26-0925 and research/score--pmem-live-cliff-detector-v2-0925 (both wait on the corpus-check shared-log fix).
+
+**☀️ 14:50 HOLD (owner):** let the running local work finish, queue NOTHING new on the local machine/GPU (owner will game), then
+pause; the handoff wrap-up happens when the owner calls it. Harvest notices are recorded only. wf_99dde278-e1e finished: enqueue
+check (research/pool-enqueue-runnable-check @ 03c53f5f7) SOUND-WITH-ISSUES -- 1 MEDIUM (a multi-line job passes the check but the
+line-oriented queue splits it: refuse any job containing a newline) + LOWs; fragment audit (@ 34ae88a62) SOUND-WITH-ISSUES, LOWs only;
+AWS stop/start r4 result in the journal. Wrap-up list: merge/park per the one-more-round rule; apply marker retirement + GPU<->llm
+auto-swap; fill LOCAL_LLM_RUNBOOK 'Queue next'; queue reviewed pool/AWS batteries; owner approves the condensed CLAUDE.md/memory;
+live-check `llm claude`; then hand off.
+
+**☀️ 16:20 WRAP-UP MERGES (owner gaming; Claude weekly at 79%):** MERGED to main: marker-word retirement 606e1c7d8
+(BRAIN_AFFECT_MARKER_SURFACE default OFF; mood still computed + recorded; review SOUND, gate mutation-checked); corpus-check
+shared log ecb6bae29 (review SOUND after a test-path fix 4b24c02a4); then the two merges it unblocked, gap4 C26 scoring 3d16962d0
+and pmem live cliff-detector v2 4c0b9fada. LOCAL_LLM_RUNBOOK.md filled (0b967376f): harvest recipes for fi / D6 N=2000 / SETTLE A2,
+idle-gate waiver guidance, Queue next EMPTY, parked-for-Claude list. Still open: GPU<->llm auto-swap fix (in review, workflow
+wf_aae2784e); condensed CLAUDE.md + memory (review faithful; branch must merge main first; awaits OWNER approval); live check of
+`llm claude` once the GPU is free.
+
 **🌙 PRE-DECIDED NEXT ACTIONS — OVERNIGHT PLAN (owner asleep from 01:35, 2026-09-25); work in order, re-arm the heartbeat on every expiry:**
 1. ✅ B2a DONE 03:45: re-scored R1 PASS (28/28, 0 regressions) + R2 PASS (168/168 valid at pinned M1, 6 covered-by-parent,
    0 incomplete), two verifiers agree, merged 075c24cd3 (follow-up to the FAIL finding). Robust core 24, union 25, mean

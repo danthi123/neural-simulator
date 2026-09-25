@@ -1,0 +1,41 @@
+{
+  "seeds": [
+    7,
+    8,
+    9,
+    10,
+    11,
+    12
+  ],
+  "n_diffs": 60,
+  "median_diff": 0.0006,
+  "mad": 0.00225,
+  "sigma": 0.003336,
+  "cusum_k": 0.001668,
+  "cusum_h": 0.016679,
+  "k_sigma": 0.5,
+  "h_sigma": 5.0,
+  "mad_to_sigma": 1.4826,
+  "lattice": [
+    6000.0,
+    6500.0,
+    7000.0,
+    7500.0,
+    8000.0,
+    8500.0,
+    9000.0,
+    9500.0,
+    10000.0,
+    10500.0,
+    11000.0
+  ],
+  "calib_file_sha256": {
+    "7": "96b9001d6649eca26bad7dfa47b788161dfd5d2abe480d28ddb5720002ffb26e",
+    "8": "811859bcbc3a071fccc3b1e71fd023f6c39fcc7f38df0d631c765fdf6abe6684",
+    "9": "4f756afd28b91528da4a5c0eba09c7af679556150972a1742cdbff0d73618535",
+    "10": "6e7be19777901f10676d7afb7243a9a425d1c99bb0dc4fe0482890bf663f24c0",
+    "11": "b9721d4b387bc47c441a01bcf84ac955917f42f5b7c5ea325b17995ee096adfa",
+    "12": "64b31406ac6baea511ad68042134abf9cddbdd53d3a91ebbebcde65dc757250e"
+  },
+  "frozen_at": "2026-09-23T15:33:13"
+}

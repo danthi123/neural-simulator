@@ -10,6 +10,8 @@ set -uo pipefail
 ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 # shellcheck source=tools/pool_revision_marker.sh
 source "$ROOT/tools/pool_revision_marker.sh"
+# shellcheck source=tools/queue_job_shape_check.sh
+source "$ROOT/tools/queue_job_shape_check.sh"
 Q="${POOL_QUEUE_PATH:-/home/dant123/Projects/sim/research/queue/pool.queue}"
 mkdir -p "$(dirname "$Q")"; touch "$Q"
 # AWS-AS-EXTRA-POOL-NODE (2026-09-23) -- same repo-local, gitignored ssh config as pool_autodispatch.sh /
@@ -164,6 +166,15 @@ case "${1:-list}" in
            echo "⛔ REFUSED: --checked '<what the record already says about this>' is required." >&2
            echo "   Run first:  bash tools/before_you_build.sh \"<the defect/question>\"" >&2
            echo "   Then:       bash tools/pool_queue.sh add '<cmd>' --checked 'corpus: nothing covers laps x dwell at w_max>W0'" >&2
+           exit 2
+         fi
+         # SHAPE GATE (2026-09-25, tools/queue_job_shape_check.sh). Six SETTLE A2 lines were queued as
+         # 'A2 wiring seed 42: mem_gb=8 && cd ~/derisk-pool/revisions/... && ...' -- a prose label as the first
+         # word -- so the node ran `A2`, got "command not found" (rc=127), and nothing ran, while the board said
+         # they were dispatched. Runs FIRST, before any ssh probe below, both because it is cheap (no network)
+         # and because a line that cannot even start is not worth spending a probe on.
+         if ! SHAPE_MSG=$(queue_job_runnable_check "$2"); then
+           echo "$SHAPE_MSG" >&2
            exit 2
          fi
          # TIMESTAMP every entry (2026-07-31). The first run of this queue reused a path that already held 69
