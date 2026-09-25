@@ -1,0 +1,3753 @@
+{
+ "seed": 13,
+ "arm": "arcc",
+ "group": "datr",
+ "env": {
+  "BRAIN_DA_TAG_CAPTURE": "1",
+  "BRAIN_DA_TAG_CAPTURE_CLOCK": "turn",
+  "BRAIN_SLEEP_REPLAY_CAPTURE": "1",
+  "BRAIN_AWAKE_REPLAY_CAPTURE": "1",
+  "BRAIN_AWAKE_REPLAY_COMPLETION": "1",
+  "BRAIN_SLEEP_REPLAY_COMPLETION": "1"
+ },
+ "labels": [
+  "datr_t1",
+  "datr_t2",
+  "datr_t3",
+  "datr_t4",
+  "datr_t5",
+  "datr_rest",
+  "datr_night",
+  "datr_recall"
+ ],
+ "tell_seconds": 151.7,
+ "curve": [
+  {
+   "e": 1.0,
+   "R": 0.03482801561208096,
+   "roles": {
+    "agent": {
+     "word": "cat",
+     "margin": 0.628652392
+    },
+    "action": {
+     "word": "chase",
+     "margin": 0.653356688
+    },
+    "patient": {
+     "word": "ball",
+     "margin": 0.034828016
+    },
+    "attribute": {
+     "word": null,
+     "margin": 0.12957484
+    },
+    "polarity": {
+     "word": "AFFIRM",
+     "margin": 0.953099501
+    }
+   },
+   "completion": {
+    "R": 0.03482801561208096,
+    "R_c": 0.0,
+    "coherence_abs": 0.0,
+    "items": {
+     "agent": null,
+     "action": null,
+     "patient": null
+    },
+    "resolved": {
+     "agent": "cat",
+     "action": "chase",
+     "patient": null
+    },
+    "ignited": false,
+    "spikes": {
+     "agent": [
+      400.0,
+      119.0
+     ],
+     "action": [
+      404.0,
+      96.0
+     ],
+     "patient": [
+      400.0,
+      380.0
+     ]
+    },
+    "n_items": 0
+   }
+  },
+  {
+   "e": 0.9,
+   "R": 0.005652979392536873,
+   "roles": {
+    "agent": {
+     "word": "cat",
+     "margin": 0.621100664
+    },
+    "action": {
+     "word": "chase",
+     "margin": 0.63066403
+    },
+    "patient": {
+     "word": null,
+     "margin": 0.005652979
+    },
+    "attribute": {
+     "word": null,
+     "margin": 0.144990996
+    },
+    "polarity": {
+     "word": "AFFIRM",
+     "margin": 0.936306573
+    }
+   },
+   "completion": {
+    "R": 0.005652979392536873,
+    "R_c": 0.0,
+    "coherence_abs": 0.0,
+    "items": {
+     "agent": null,
+     "action": null,
+     "patient": null
+    },
+    "resolved": {
+     "agent": "cat",
+     "action": "chase",
+     "patient": null
+    },
+    "ignited": false,
+    "spikes": {
+     "agent": [
+      400.0,
+      126.0
+     ],
+     "action": [
+      404.0,
+      115.0
+     ],
+     "patient": [
+      399.0,
+      391.0
+     ]
+    },
+    "n_items": 0
+   }
+  },
+  {
+   "e": 0.8,
+   "R": 0.00022675811978179426,
+   "roles": {
+    "agent": {
+     "word": "cat",
+     "margin": 0.61173993
+    },
+    "action": {
+     "word": "chase",
+     "margin": 0.601727564
+    },
+    "patient": {
+     "word": null,
+     "margin": 0.000226758
+    },
+    "attribute": {
+     "word": null,
+     "margin": 0.162468499
+    },
+    "polarity": {
+     "word": "AFFIRM",
+     "margin": 0.915441053
+    }
+   },
+   "completion": {
+    "R": 0.00022675811978179426,
+    "R_c": 0.0,
+    "coherence_abs": 0.0,
+    "items": {
+     "agent": null,
+     "action": null,
+     "patient": null
+    },
+    "resolved": {
+     "agent": "cat",
+     "action": "chase",
+     "patient": null
+    },
+    "ignited": false,
+    "spikes": {
+     "agent": [
+      400.0,
+      126.0
+     ],
+     "action": [
+      404.0,
+      130.0
+     ],
+     "patient": [
+      392.0,
+      391.0
+     ]
+    },
+    "n_items": 0
+   }
+  },
+  {
+   "e": 0.7,
+   "R": 0.01997090465309948,
+   "roles": {
+    "agent": {
+     "word": "cat",
+     "margin": 0.599831411
+    },
+    "action": {
+     "word": "chase",
+     "margin": 0.563559375
+    },
+    "patient": {
+     "word": null,
+     "margin": 0.019970905
+    },
+    "attribute": {
+     "word": null,
+     "margin": 0.182450774
+    },
+    "polarity": {
+     "word": "AFFIRM",
+     "margin": 0.88881816
+    }
+   },
+   "completion": {
+    "R": 0.01997090465309948,
+    "R_c": 0.0,
+    "coherence_abs": 0.0,
+    "items": {
+     "agent": null,
+     "action": null,
+     "patient": null
+    },
+    "resolved": {
+     "agent": "cat",
+     "action": "chase",
+     "patient": null
+    },
+    "ignited": false,
+    "spikes": {
+     "agent": [
+      400.0,
+      133.0
+     ],
+     "action": [
+      404.0,
+      146.0
+     ],
+     "patient": [
+      392.0,
+      383.0
+     ]
+    },
+    "n_items": 0
+   }
+  },
+  {
+   "e": 0.6,
+   "R": 0.04359069487279143,
+   "roles": {
+    "agent": {
+     "word": "cat",
+     "margin": 0.584170705
+    },
+    "action": {
+     "word": "chase",
+     "margin": 0.510903326
+    },
+    "patient": {
+     "word": null,
+     "margin": 0.043590695
+    },
+    "attribute": {
+     "word": null,
+     "margin": 0.171971091
+    },
+    "polarity": {
+     "word": "AFFIRM",
+     "margin": 0.853671326
+    }
+   },
+   "completion": {
+    "R": 0.04359069487279143,
+    "R_c": 0.0,
+    "coherence_abs": 0.0,
+    "items": {
+     "agent": null,
+     "action": null,
+     "patient": null
+    },
+    "resolved": {
+     "agent": "cat",
+     "action": "chase",
+     "patient": null
+    },
+    "ignited": false,
+    "spikes": {
+     "agent": [
+      400.0,
+      139.0
+     ],
+     "action": [
+      404.0,
+      174.0
+     ],
+     "patient": [
+      392.0,
+      377.0
+     ]
+    },
+    "n_items": 0
+   }
+  },
+  {
+   "e": 0.5,
+   "R": 0.07158437046160629,
+   "roles": {
+    "agent": {
+     "word": "cat",
+     "margin": 0.562653594
+    },
+    "action": {
+     "word": "chase",
+     "margin": 0.433577169
+    },
+    "patient": {
+     "word": null,
+     "margin": 0.07158437
+    },
+    "attribute": {
+     "word": null,
+     "margin": 0.135809873
+    },
+    "polarity": {
+     "word": "AFFIRM",
+     "margin": 0.805128635
+    }
+   },
+   "completion": {
+    "R": 0.07158437046160629,
+    "R_c": 0.0,
+    "coherence_abs": 0.0,
+    "items": {
+     "agent": null,
+     "action": null,
+     "patient": null
+    },
+    "resolved": {
+     "agent": "cat",
+     "action": "chase",
+     "patient": null
+    },
+    "ignited": false,
+    "spikes": {
+     "agent": [
+      400.0,
+      154.0
+     ],
+     "action": [
+      404.0,
+      210.0
+     ],
+     "patient": [
+      392.0,
+      369.0
+     ]
+    },
+    "n_items": 0
+   }
+  },
+  {
+   "e": 0.4,
+   "R": 0.10529218729614101,
+   "roles": {
+    "agent": {
+     "word": "cat",
+     "margin": 0.505140191
+    },
+    "action": {
+     "word": "chase",
+     "margin": 0.308940744
+    },
+    "patient": {
+     "word": null,
+     "margin": 0.105292187
+    },
+    "attribute": {
+     "word": null,
+     "margin": 0.09305056
+    },
+    "polarity": {
+     "word": "AFFIRM",
+     "margin": 0.733728976
+    }
+   },
+   "completion": {
+    "R": 0.10529218729614101,
+    "R_c": 0.0,
+    "coherence_abs": 0.0,
+    "items": {
+     "agent": null,
+     "action": null,
+     "patient": null
+    },
+    "resolved": {
+     "agent": "cat",
+     "action": "chase",
+     "patient": null
+    },
+    "ignited": false,
+    "spikes": {
+     "agent": [
+      400.0,
+      193.0
+     ],
+     "action": [
+      404.0,
+      267.0
+     ],
+     "patient": [
+      392.0,
+      356.0
+     ]
+    },
+    "n_items": 0
+   }
+  },
+  {
+   "e": 0.3,
+   "R": 0.07443868552551121,
+   "roles": {
+    "agent": {
+     "word": "cat",
+     "margin": 0.371424429
+    },
+    "action": {
+     "word": "chase",
+     "margin": 0.074438686
+    },
+    "patient": {
+     "word": null,
+     "margin": 0.14666129
+    },
+    "attribute": {
+     "word": null,
+     "margin": 0.03815165
+    },
+    "polarity": {
+     "word": "AFFIRM",
+     "margin": 0.618355267
+    }
+   },
+   "completion": {
+    "R": 0.07443868552551121,
+    "R_c": 0.0,
+    "coherence_abs": 0.0,
+    "items": {
+     "agent": null,
+     "action": null,
+     "patient": null
+    },
+    "resolved": {
+     "agent": "cat",
+     "action": null,
+     "patient": null
+    },
+    "ignited": false,
+    "spikes": {
+     "agent": [
+      400.0,
+      256.0
+     ],
+     "action": [
+      404.0,
+      359.0
+     ],
+     "patient": [
+      392.0,
+      344.0
+     ]
+    },
+    "n_items": 0
+   }
+  },
+  {
+   "e": 0.2,
+   "R": 0.12316740660739364,
+   "roles": {
+    "agent": {
+     "word": "cat",
+     "margin": 0.123809628
+    },
+    "action": {
+     "word": null,
+     "margin": 0.129556747
+    },
+    "patient": {
+     "word": null,
+     "margin": 0.123167407
+    },
+    "attribute": {
+     "word": null,
+     "margin": 0.064294624
+    },
+    "polarity": {
+     "word": "AFFIRM",
+     "margin": 0.400307118
+    }
+   },
+   "completion": {
+    "R": 0.12316740660739364,
+    "R_c": 0.0,
+    "coherence_abs": 0.0,
+    "items": {
+     "agent": null,
+     "action": null,
+     "patient": null
+    },
+    "resolved": {
+     "agent": null,
+     "action": null,
+     "patient": null
+    },
+    "ignited": false,
+    "spikes": {
+     "agent": [
+      400.0,
+      366.0
+     ],
+     "action": [
+      387.0,
+      347.0
+     ],
+     "patient": [
+      392.0,
+      360.0
+     ]
+    },
+    "n_items": 0
+   }
+  },
+  {
+   "e": 0.15,
+   "R": 0.048071550897483294,
+   "roles": {
+    "agent": {
+     "word": null,
+     "margin": 0.088821808
+    },
+    "action": {
+     "word": null,
+     "margin": 0.08081056
+    },
+    "patient": {
+     "word": null,
+     "margin": 0.048071551
+    },
+    "attribute": {
+     "word": null,
+     "margin": 0.093684372
+    },
+    "polarity": {
+     "word": "AFFIRM",
+     "margin": 0.197693516
+    }
+   },
+   "completion": {
+    "R": 0.048071550897483294,
+    "R_c": 0.0,
+    "coherence_abs": 0.0,
+    "items": {
+     "agent": null,
+     "action": null,
+     "patient": null
+    },
+    "resolved": {
+     "agent": null,
+     "action": null,
+     "patient": null
+    },
+    "ignited": false,
+    "spikes": {
+     "agent": [
+      415.0,
+      360.0
+     ],
+     "action": [
+      387.0,
+      362.0
+     ],
+     "patient": [
+      392.0,
+      378.0
+     ]
+    },
+    "n_items": 0
+   }
+  },
+  {
+   "e": 0.1,
+   "R": 0.027713148455115976,
+   "roles": {
+    "agent": {
+     "word": null,
+     "margin": 0.095802705
+    },
+    "action": {
+     "word": null,
+     "margin": 0.027713148
+    },
+    "patient": {
+     "word": null,
+     "margin": 0.067005024
+    },
+    "attribute": {
+     "word": null,
+     "margin": 0.122491789
+    },
+    "polarity": {
+     "word": "NEGATE",
+     "margin": 0.143359876
+    }
+   },
+   "completion": {
+    "R": 0.027713148455115976,
+    "R_c": 0.0,
+    "coherence_abs": 0.0,
+    "items": {
+     "agent": null,
+     "action": null,
+     "patient": null
+    },
+    "resolved": {
+     "agent": null,
+     "action": null,
+     "patient": null
+    },
+    "ignited": false,
+    "spikes": {
+     "agent": [
+      415.0,
+      359.0
+     ],
+     "action": [
+      387.0,
+      377.0
+     ],
+     "patient": [
+      398.0,
+      374.0
+     ]
+    },
+    "n_items": 0
+   }
+  },
+  {
+   "e": 0.07,
+   "R": 0.0064397721932403056,
+   "roles": {
+    "agent": {
+     "word": null,
+     "margin": 0.100070012
+    },
+    "action": {
+     "word": "cat",
+     "margin": 0.006439772
+    },
+    "patient": {
+     "word": null,
+     "margin": 0.13240008
+    },
+    "attribute": {
+     "word": null,
+     "margin": 0.139503787
+    },
+    "polarity": {
+     "word": "NEGATE",
+     "margin": 0.363597915
+    }
+   },
+   "completion": {
+    "R": 0.0064397721932403056,
+    "R_c": 0.0,
+    "coherence_abs": 0.0,
+    "items": {
+     "agent": null,
+     "action": null,
+     "patient": null
+    },
+    "resolved": {
+     "agent": null,
+     "action": null,
+     "patient": null
+    },
+    "ignited": false,
+    "spikes": {
+     "agent": [
+      415.0,
+      356.0
+     ],
+     "action": [
+      400.0,
+      385.0
+     ],
+     "patient": [
+      398.0,
+      346.0
+     ]
+    },
+    "n_items": 0
+   }
+  },
+  {
+   "e": 0.05,
+   "R": 0.029448006041325196,
+   "roles": {
+    "agent": {
+     "word": null,
+     "margin": 0.102948367
+    },
+    "action": {
+     "word": "cat",
+     "margin": 0.029448006
+    },
+    "patient": {
+     "word": null,
+     "margin": 0.1740565
+    },
+    "attribute": {
+     "word": null,
+     "margin": 0.150733539
+    },
+    "polarity": {
+     "word": "NEGATE",
+     "margin": 0.505154675
+    }
+   },
+   "completion": {
+    "R": 0.029448006041325196,
+    "R_c": 0.0,
+    "coherence_abs": 0.0,
+    "items": {
+     "agent": null,
+     "action": null,
+     "patient": null
+    },
+    "resolved": {
+     "agent": null,
+     "action": null,
+     "patient": null
+    },
+    "ignited": false,
+    "spikes": {
+     "agent": [
+      415.0,
+      355.0
+     ],
+     "action": [
+      400.0,
+      379.0
+     ],
+     "patient": [
+      398.0,
+      330.0
+     ]
+    },
+    "n_items": 0
+   }
+  },
+  {
+   "e": 0.03,
+   "R": 0.05223248979294242,
+   "roles": {
+    "agent": {
+     "word": null,
+     "margin": 0.105854604
+    },
+    "action": {
+     "word": "cat",
+     "margin": 0.05223249
+    },
+    "patient": {
+     "word": null,
+     "margin": 0.214257441
+    },
+    "attribute": {
+     "word": null,
+     "margin": 0.161876284
+    },
+    "polarity": {
+     "word": "NEGATE",
+     "margin": 0.642705235
+    }
+   },
+   "completion": {
+    "R": 0.05223248979294242,
+    "R_c": 0.0,
+    "coherence_abs": 0.0,
+    "items": {
+     "agent": null,
+     "action": null,
+     "patient": null
+    },
+    "resolved": {
+     "agent": null,
+     "action": null,
+     "patient": null
+    },
+    "ignited": false,
+    "spikes": {
+     "agent": [
+      415.0,
+      355.0
+     ],
+     "action": [
+      400.0,
+      373.0
+     ],
+     "patient": [
+      398.0,
+      313.0
+     ]
+    },
+    "n_items": 0
+   }
+  },
+  {
+   "e": 0.02,
+   "R": 0.0635406269369078,
+   "roles": {
+    "agent": {
+     "word": null,
+     "margin": 0.107318249
+    },
+    "action": {
+     "word": "cat",
+     "margin": 0.063540627
+    },
+    "patient": {
+     "word": null,
+     "margin": 0.233834943
+    },
+    "attribute": {
+     "word": null,
+     "margin": 0.167414268
+    },
+    "polarity": {
+     "word": "NEGATE",
+     "margin": 0.710030131
+    }
+   },
+   "completion": {
+    "R": 0.0635406269369078,
+    "R_c": 0.0,
+    "coherence_abs": 0.0,
+    "items": {
+     "agent": null,
+     "action": null,
+     "patient": null
+    },
+    "resolved": {
+     "agent": null,
+     "action": null,
+     "patient": null
+    },
+    "ignited": false,
+    "spikes": {
+     "agent": [
+      415.0,
+      354.0
+     ],
+     "action": [
+      400.0,
+      367.0
+     ],
+     "patient": [
+      398.0,
+      310.0
+     ]
+    },
+    "n_items": 0
+   }
+  },
+  {
+   "e": 0.01,
+   "R": 0.07479484705116742,
+   "roles": {
+    "agent": {
+     "word": null,
+     "margin": 0.108788593
+    },
+    "action": {
+     "word": "cat",
+     "margin": 0.074794847
+    },
+    "patient": {
+     "word": null,
+     "margin": 0.253077119
+    },
+    "attribute": {
+     "word": null,
+     "margin": 0.172931139
+    },
+    "polarity": {
+     "word": "NEGATE",
+     "margin": 0.776416576
+    }
+   },
+   "completion": {
+    "R": 0.07479484705116742,
+    "R_c": 0.0,
+    "coherence_abs": 0.0,
+    "items": {
+     "agent": null,
+     "action": null,
+     "patient": null
+    },
+    "resolved": {
+     "agent": null,
+     "action": null,
+     "patient": null
+    },
+    "ignited": false,
+    "spikes": {
+     "agent": [
+      415.0,
+      354.0
+     ],
+     "action": [
+      400.0,
+      367.0
+     ],
+     "patient": [
+      398.0,
+      297.0
+     ]
+    },
+    "n_items": 0
+   }
+  },
+  {
+   "e": 0.0,
+   "R": 0.08599397609484846,
+   "roles": {
+    "agent": {
+     "word": null,
+     "margin": 0.11026655
+    },
+    "action": {
+     "word": "cat",
+     "margin": 0.085993976
+    },
+    "patient": {
+     "word": null,
+     "margin": 0.271991117
+    },
+    "attribute": {
+     "word": null,
+     "margin": 0.17161806
+    },
+    "polarity": {
+     "word": "NEGATE",
+     "margin": 0.841884093
+    }
+   },
+   "completion": {
+    "R": 0.08599397609484846,
+    "R_c": 0.0,
+    "coherence_abs": 0.0,
+    "items": {
+     "agent": null,
+     "action": null,
+     "patient": null
+    },
+    "resolved": {
+     "agent": null,
+     "action": null,
+     "patient": null
+    },
+    "ignited": false,
+    "spikes": {
+     "agent": [
+      415.0,
+      354.0
+     ],
+     "action": [
+      400.0,
+      369.0
+     ],
+     "patient": [
+      398.0,
+      295.0
+     ]
+    },
+    "n_items": 0
+   }
+  }
+ ],
+ "curve_seconds": 30.8,
+ "rest_night_recall_seconds": 78.4,
+ "outcome": "abstain",
+ "recalled_svo": null,
+ "abstained": true,
+ "awake_replay": {
+  "on": true,
+  "lesioned": false,
+  "n_bouts": 48,
+  "n_ticks_asleep": 1,
+  "n_ticks_rate_limited": 0,
+  "bout_h": 0.08333333333333333,
+  "bouts": [
+   {
+    "t_h": 0.125,
+    "R": [
+     0.007662999
+    ],
+    "R_eff": [
+     0.0
+    ],
+    "early_before": [
+     0.930324134
+    ],
+    "early_after": [
+     0.930324134
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.0,
+      "coherence_abs": 0.0,
+      "items": {
+       "agent": null,
+       "action": null,
+       "patient": null
+      },
+      "resolved": {
+       "agent": "cat",
+       "action": "chase",
+       "patient": null
+      },
+      "ignited": false,
+      "spikes": {
+       "agent": [
+        400.0,
+        122.0
+       ],
+       "action": [
+        404.0,
+        112.0
+       ],
+       "patient": [
+        400.0,
+        388.0
+       ]
+      },
+      "n_items": 0
+     }
+    ],
+    "completion_lesioned": false
+   },
+   {
+    "t_h": 0.20833333333333331,
+    "R": [
+     0.014195715
+    ],
+    "R_eff": [
+     0.0
+    ],
+    "early_before": [
+     0.880048924
+    ],
+    "early_after": [
+     0.880048924
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.0,
+      "coherence_abs": 0.0,
+      "items": {
+       "agent": null,
+       "action": null,
+       "patient": null
+      },
+      "resolved": {
+       "agent": "cat",
+       "action": "chase",
+       "patient": null
+      },
+      "ignited": false,
+      "spikes": {
+       "agent": [
+        400.0,
+        126.0
+       ],
+       "action": [
+        404.0,
+        117.0
+       ],
+       "patient": [
+        395.0,
+        391.0
+       ]
+      },
+      "n_items": 0
+     }
+    ],
+    "completion_lesioned": false
+   },
+   {
+    "t_h": 0.2916666666666667,
+    "R": [
+     0.006135329
+    ],
+    "R_eff": [
+     0.0
+    ],
+    "early_before": [
+     0.832490613
+    ],
+    "early_after": [
+     0.832490613
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.0,
+      "coherence_abs": 0.0,
+      "items": {
+       "agent": null,
+       "action": null,
+       "patient": null
+      },
+      "resolved": {
+       "agent": "cat",
+       "action": "chase",
+       "patient": null
+      },
+      "ignited": false,
+      "spikes": {
+       "agent": [
+        400.0,
+        126.0
+       ],
+       "action": [
+        404.0,
+        124.0
+       ],
+       "patient": [
+        391.0,
+        390.0
+       ]
+      },
+      "n_items": 0
+     }
+    ],
+    "completion_lesioned": false
+   },
+   {
+    "t_h": 0.375,
+    "R": [
+     0.002135738
+    ],
+    "R_eff": [
+     0.0
+    ],
+    "early_before": [
+     0.787502378
+    ],
+    "early_after": [
+     0.787502378
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.0,
+      "coherence_abs": 0.0,
+      "items": {
+       "agent": null,
+       "action": null,
+       "patient": null
+      },
+      "resolved": {
+       "agent": "cat",
+       "action": "chase",
+       "patient": null
+      },
+      "ignited": false,
+      "spikes": {
+       "agent": [
+        400.0,
+        127.0
+       ],
+       "action": [
+        404.0,
+        131.0
+       ],
+       "patient": [
+        392.0,
+        391.0
+       ]
+      },
+      "n_items": 0
+     }
+    ],
+    "completion_lesioned": false
+   },
+   {
+    "t_h": 0.4583333333333333,
+    "R": [
+     0.010515576
+    ],
+    "R_eff": [
+     0.0
+    ],
+    "early_before": [
+     0.744945331
+    ],
+    "early_after": [
+     0.744945331
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.0,
+      "coherence_abs": 0.0,
+      "items": {
+       "agent": null,
+       "action": null,
+       "patient": null
+      },
+      "resolved": {
+       "agent": "cat",
+       "action": "chase",
+       "patient": null
+      },
+      "ignited": false,
+      "spikes": {
+       "agent": [
+        400.0,
+        130.0
+       ],
+       "action": [
+        404.0,
+        137.0
+       ],
+       "patient": [
+        392.0,
+        388.0
+       ]
+      },
+      "n_items": 0
+     }
+    ],
+    "completion_lesioned": false
+   },
+   {
+    "t_h": 0.5416666666666666,
+    "R": [
+     0.018953431
+    ],
+    "R_eff": [
+     0.0
+    ],
+    "early_before": [
+     0.70468809
+    ],
+    "early_after": [
+     0.70468809
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.0,
+      "coherence_abs": 0.0,
+      "items": {
+       "agent": null,
+       "action": null,
+       "patient": null
+      },
+      "resolved": {
+       "agent": "cat",
+       "action": "chase",
+       "patient": null
+      },
+      "ignited": false,
+      "spikes": {
+       "agent": [
+        400.0,
+        133.0
+       ],
+       "action": [
+        404.0,
+        143.0
+       ],
+       "patient": [
+        392.0,
+        383.0
+       ]
+      },
+      "n_items": 0
+     }
+    ],
+    "completion_lesioned": false
+   },
+   {
+    "t_h": 0.6249999999999999,
+    "R": [
+     0.027436587
+    ],
+    "R_eff": [
+     0.0
+    ],
+    "early_before": [
+     0.666606371
+    ],
+    "early_after": [
+     0.666606371
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.0,
+      "coherence_abs": 0.0,
+      "items": {
+       "agent": null,
+       "action": null,
+       "patient": null
+      },
+      "resolved": {
+       "agent": "cat",
+       "action": "chase",
+       "patient": null
+      },
+      "ignited": false,
+      "spikes": {
+       "agent": [
+        400.0,
+        134.0
+       ],
+       "action": [
+        404.0,
+        154.0
+       ],
+       "patient": [
+        392.0,
+        382.0
+       ]
+      },
+      "n_items": 0
+     }
+    ],
+    "completion_lesioned": false
+   },
+   {
+    "t_h": 0.7083333333333333,
+    "R": [
+     0.03595256
+    ],
+    "R_eff": [
+     0.0
+    ],
+    "early_before": [
+     0.630582609
+    ],
+    "early_after": [
+     0.630582609
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.0,
+      "coherence_abs": 0.0,
+      "items": {
+       "agent": null,
+       "action": null,
+       "patient": null
+      },
+      "resolved": {
+       "agent": "cat",
+       "action": "chase",
+       "patient": null
+      },
+      "ignited": false,
+      "spikes": {
+       "agent": [
+        400.0,
+        137.0
+       ],
+       "action": [
+        404.0,
+        168.0
+       ],
+       "patient": [
+        392.0,
+        380.0
+       ]
+      },
+      "n_items": 0
+     }
+    ],
+    "completion_lesioned": false
+   },
+   {
+    "t_h": 0.7916666666666666,
+    "R": [
+     0.04448861
+    ],
+    "R_eff": [
+     0.0
+    ],
+    "early_before": [
+     0.59650559
+    ],
+    "early_after": [
+     0.59650559
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.0,
+      "coherence_abs": 0.0,
+      "items": {
+       "agent": null,
+       "action": null,
+       "patient": null
+      },
+      "resolved": {
+       "agent": "cat",
+       "action": "chase",
+       "patient": null
+      },
+      "ignited": false,
+      "spikes": {
+       "agent": [
+        400.0,
+        139.0
+       ],
+       "action": [
+        404.0,
+        175.0
+       ],
+       "patient": [
+        392.0,
+        377.0
+       ]
+      },
+      "n_items": 0
+     }
+    ],
+    "completion_lesioned": false
+   },
+   {
+    "t_h": 0.875,
+    "R": [
+     0.053031424
+    ],
+    "R_eff": [
+     0.0
+    ],
+    "early_before": [
+     0.564270111
+    ],
+    "early_after": [
+     0.564270111
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.0,
+      "coherence_abs": 0.0,
+      "items": {
+       "agent": null,
+       "action": null,
+       "patient": null
+      },
+      "resolved": {
+       "agent": "cat",
+       "action": "chase",
+       "patient": null
+      },
+      "ignited": false,
+      "spikes": {
+       "agent": [
+        400.0,
+        144.0
+       ],
+       "action": [
+        404.0,
+        186.0
+       ],
+       "patient": [
+        392.0,
+        376.0
+       ]
+      },
+      "n_items": 0
+     }
+    ],
+    "completion_lesioned": false
+   },
+   {
+    "t_h": 0.9583333333333334,
+    "R": [
+     0.061566943
+    ],
+    "R_eff": [
+     0.0
+    ],
+    "early_before": [
+     0.533776654
+    ],
+    "early_after": [
+     0.533776654
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.0,
+      "coherence_abs": 0.0,
+      "items": {
+       "agent": null,
+       "action": null,
+       "patient": null
+      },
+      "resolved": {
+       "agent": "cat",
+       "action": "chase",
+       "patient": null
+      },
+      "ignited": false,
+      "spikes": {
+       "agent": [
+        400.0,
+        147.0
+       ],
+       "action": [
+        404.0,
+        196.0
+       ],
+       "patient": [
+        392.0,
+        372.0
+       ]
+      },
+      "n_items": 0
+     }
+    ],
+    "completion_lesioned": false
+   },
+   {
+    "t_h": 1.0416666666666667,
+    "R": [
+     0.070083431
+    ],
+    "R_eff": [
+     0.0
+    ],
+    "early_before": [
+     0.50493108
+    ],
+    "early_after": [
+     0.50493108
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.0,
+      "coherence_abs": 0.0,
+      "items": {
+       "agent": null,
+       "action": null,
+       "patient": null
+      },
+      "resolved": {
+       "agent": "cat",
+       "action": "chase",
+       "patient": null
+      },
+      "ignited": false,
+      "spikes": {
+       "agent": [
+        400.0,
+        152.0
+       ],
+       "action": [
+        404.0,
+        208.0
+       ],
+       "patient": [
+        392.0,
+        370.0
+       ]
+      },
+      "n_items": 0
+     }
+    ],
+    "completion_lesioned": false
+   },
+   {
+    "t_h": 1.125,
+    "R": [
+     0.078567796
+    ],
+    "R_eff": [
+     0.0
+    ],
+    "early_before": [
+     0.477644337
+    ],
+    "early_after": [
+     0.477644337
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.0,
+      "coherence_abs": 0.0,
+      "items": {
+       "agent": null,
+       "action": null,
+       "patient": null
+      },
+      "resolved": {
+       "agent": "cat",
+       "action": "chase",
+       "patient": null
+      },
+      "ignited": false,
+      "spikes": {
+       "agent": [
+        400.0,
+        157.0
+       ],
+       "action": [
+        404.0,
+        222.0
+       ],
+       "patient": [
+        392.0,
+        365.0
+       ]
+      },
+      "n_items": 0
+     }
+    ],
+    "completion_lesioned": false
+   },
+   {
+    "t_h": 1.2083333333333333,
+    "R": [
+     0.087005644
+    ],
+    "R_eff": [
+     0.0
+    ],
+    "early_before": [
+     0.451832183
+    ],
+    "early_after": [
+     0.451832183
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.0,
+      "coherence_abs": 0.0,
+      "items": {
+       "agent": null,
+       "action": null,
+       "patient": null
+      },
+      "resolved": {
+       "agent": "cat",
+       "action": "chase",
+       "patient": null
+      },
+      "ignited": false,
+      "spikes": {
+       "agent": [
+        400.0,
+        172.0
+       ],
+       "action": [
+        404.0,
+        232.0
+       ],
+       "patient": [
+        392.0,
+        364.0
+       ]
+      },
+      "n_items": 0
+     }
+    ],
+    "completion_lesioned": false
+   },
+   {
+    "t_h": 1.2916666666666665,
+    "R": [
+     0.095385979
+    ],
+    "R_eff": [
+     0.0
+    ],
+    "early_before": [
+     0.427414932
+    ],
+    "early_after": [
+     0.427414932
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.0,
+      "coherence_abs": 0.0,
+      "items": {
+       "agent": null,
+       "action": null,
+       "patient": null
+      },
+      "resolved": {
+       "agent": "cat",
+       "action": "chase",
+       "patient": null
+      },
+      "ignited": false,
+      "spikes": {
+       "agent": [
+        400.0,
+        179.0
+       ],
+       "action": [
+        404.0,
+        251.0
+       ],
+       "patient": [
+        392.0,
+        359.0
+       ]
+      },
+      "n_items": 0
+     }
+    ],
+    "completion_lesioned": false
+   },
+   {
+    "t_h": 1.3749999999999998,
+    "R": [
+     0.103696292
+    ],
+    "R_eff": [
+     0.0
+    ],
+    "early_before": [
+     0.404317202
+    ],
+    "early_after": [
+     0.404317202
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.0,
+      "coherence_abs": 0.0,
+      "items": {
+       "agent": null,
+       "action": null,
+       "patient": null
+      },
+      "resolved": {
+       "agent": "cat",
+       "action": "chase",
+       "patient": null
+      },
+      "ignited": false,
+      "spikes": {
+       "agent": [
+        400.0,
+        188.0
+       ],
+       "action": [
+        404.0,
+        262.0
+       ],
+       "patient": [
+        392.0,
+        358.0
+       ]
+      },
+      "n_items": 0
+     }
+    ],
+    "completion_lesioned": false
+   },
+   {
+    "t_h": 1.458333333333333,
+    "R": [
+     0.111924324
+    ],
+    "R_eff": [
+     0.0
+    ],
+    "early_before": [
+     0.382467686
+    ],
+    "early_after": [
+     0.382467686
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.0,
+      "coherence_abs": 0.0,
+      "items": {
+       "agent": null,
+       "action": null,
+       "patient": null
+      },
+      "resolved": {
+       "agent": "cat",
+       "action": "chase",
+       "patient": null
+      },
+      "ignited": false,
+      "spikes": {
+       "agent": [
+        400.0,
+        206.0
+       ],
+       "action": [
+        404.0,
+        280.0
+       ],
+       "patient": [
+        392.0,
+        355.0
+       ]
+      },
+      "n_items": 0
+     }
+    ],
+    "completion_lesioned": false
+   },
+   {
+    "t_h": 1.5416666666666663,
+    "R": [
+     0.120058659
+    ],
+    "R_eff": [
+     0.0
+    ],
+    "early_before": [
+     0.361798929
+    ],
+    "early_after": [
+     0.361798929
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.0,
+      "coherence_abs": 0.0,
+      "items": {
+       "agent": null,
+       "action": null,
+       "patient": null
+      },
+      "resolved": {
+       "agent": "cat",
+       "action": "chase",
+       "patient": null
+      },
+      "ignited": false,
+      "spikes": {
+       "agent": [
+        400.0,
+        218.0
+       ],
+       "action": [
+        404.0,
+        293.0
+       ],
+       "patient": [
+        392.0,
+        350.0
+       ]
+      },
+      "n_items": 0
+     }
+    ],
+    "completion_lesioned": false
+   },
+   {
+    "t_h": 1.6249999999999996,
+    "R": [
+     0.128089667
+    ],
+    "R_eff": [
+     0.0
+    ],
+    "early_before": [
+     0.342247123
+    ],
+    "early_after": [
+     0.342247123
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.0,
+      "coherence_abs": 0.0,
+      "items": {
+       "agent": null,
+       "action": null,
+       "patient": null
+      },
+      "resolved": {
+       "agent": "cat",
+       "action": "chase",
+       "patient": null
+      },
+      "ignited": false,
+      "spikes": {
+       "agent": [
+        400.0,
+        233.0
+       ],
+       "action": [
+        404.0,
+        317.0
+       ],
+       "patient": [
+        392.0,
+        348.0
+       ]
+      },
+      "n_items": 0
+     }
+    ],
+    "completion_lesioned": false
+   },
+   {
+    "t_h": 1.7083333333333328,
+    "R": [
+     0.136006398
+    ],
+    "R_eff": [
+     0.0
+    ],
+    "early_before": [
+     0.323751906
+    ],
+    "early_after": [
+     0.323751906
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.0,
+      "coherence_abs": 0.0,
+      "items": {
+       "agent": null,
+       "action": null,
+       "patient": null
+      },
+      "resolved": {
+       "agent": "cat",
+       "action": "chase",
+       "patient": null
+      },
+      "ignited": false,
+      "spikes": {
+       "agent": [
+        400.0,
+        242.0
+       ],
+       "action": [
+        404.0,
+        330.0
+       ],
+       "patient": [
+        392.0,
+        346.0
+       ]
+      },
+      "n_items": 0
+     }
+    ],
+    "completion_lesioned": false
+   },
+   {
+    "t_h": 1.791666666666666,
+    "R": [
+     0.095008008
+    ],
+    "R_eff": [
+     0.0
+    ],
+    "early_before": [
+     0.306256181
+    ],
+    "early_after": [
+     0.306256181
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.0,
+      "coherence_abs": 0.0,
+      "items": {
+       "agent": null,
+       "action": null,
+       "patient": null
+      },
+      "resolved": {
+       "agent": "cat",
+       "action": null,
+       "patient": null
+      },
+      "ignited": false,
+      "spikes": {
+       "agent": [
+        400.0,
+        253.0
+       ],
+       "action": [
+        404.0,
+        354.0
+       ],
+       "patient": [
+        392.0,
+        344.0
+       ]
+      },
+      "n_items": 0
+     }
+    ],
+    "completion_lesioned": false
+   },
+   {
+    "t_h": 1.8749999999999993,
+    "R": [
+     0.038005522
+    ],
+    "R_eff": [
+     0.0
+    ],
+    "early_before": [
+     0.289705935
+    ],
+    "early_after": [
+     0.289705935
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.0,
+      "coherence_abs": 0.0,
+      "items": {
+       "agent": null,
+       "action": null,
+       "patient": null
+      },
+      "resolved": {
+       "agent": "cat",
+       "action": null,
+       "patient": null
+      },
+      "ignited": false,
+      "spikes": {
+       "agent": [
+        400.0,
+        267.0
+       ],
+       "action": [
+        404.0,
+        378.0
+       ],
+       "patient": [
+        392.0,
+        344.0
+       ]
+      },
+      "n_items": 0
+     }
+    ],
+    "completion_lesioned": false
+   },
+   {
+    "t_h": 1.9583333333333326,
+    "R": [
+     0.023969643
+    ],
+    "R_eff": [
+     0.0
+    ],
+    "early_before": [
+     0.274050072
+    ],
+    "early_after": [
+     0.274050072
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.0,
+      "coherence_abs": 0.0,
+      "items": {
+       "agent": null,
+       "action": null,
+       "patient": null
+      },
+      "resolved": {
+       "agent": "cat",
+       "action": null,
+       "patient": null
+      },
+      "ignited": false,
+      "spikes": {
+       "agent": [
+        400.0,
+        285.0
+       ],
+       "action": [
+        395.0,
+        387.0
+       ],
+       "patient": [
+        392.0,
+        346.0
+       ]
+      },
+      "n_items": 0
+     }
+    ],
+    "completion_lesioned": false
+   },
+   {
+    "t_h": 2.0416666666666656,
+    "R": [
+     0.08544585
+    ],
+    "R_eff": [
+     0.0
+    ],
+    "early_before": [
+     0.259240261
+    ],
+    "early_after": [
+     0.259240261
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.0,
+      "coherence_abs": 0.0,
+      "items": {
+       "agent": null,
+       "action": null,
+       "patient": null
+      },
+      "resolved": {
+       "agent": "cat",
+       "action": null,
+       "patient": null
+      },
+      "ignited": false,
+      "spikes": {
+       "agent": [
+        400.0,
+        298.0
+       ],
+       "action": [
+        387.0,
+        374.0
+       ],
+       "patient": [
+        392.0,
+        348.0
+       ]
+      },
+      "n_items": 0
+     }
+    ],
+    "completion_lesioned": false
+   },
+   {
+    "t_h": 2.124999999999999,
+    "R": [
+     0.140449616
+    ],
+    "R_eff": [
+     0.0
+    ],
+    "early_before": [
+     0.245230779
+    ],
+    "early_after": [
+     0.245230779
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.0,
+      "coherence_abs": 0.0,
+      "items": {
+       "agent": null,
+       "action": null,
+       "patient": null
+      },
+      "resolved": {
+       "agent": "cat",
+       "action": null,
+       "patient": null
+      },
+      "ignited": false,
+      "spikes": {
+       "agent": [
+        400.0,
+        311.0
+       ],
+       "action": [
+        387.0,
+        350.0
+       ],
+       "patient": [
+        392.0,
+        350.0
+       ]
+      },
+      "n_items": 0
+     }
+    ],
+    "completion_lesioned": false
+   },
+   {
+    "t_h": 2.2083333333333326,
+    "R": [
+     0.135585925
+    ],
+    "R_eff": [
+     0.0
+    ],
+    "early_before": [
+     0.231978378
+    ],
+    "early_after": [
+     0.231978378
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.0,
+      "coherence_abs": 0.0,
+      "items": {
+       "agent": null,
+       "action": null,
+       "patient": null
+      },
+      "resolved": {
+       "agent": "cat",
+       "action": null,
+       "patient": null
+      },
+      "ignited": false,
+      "spikes": {
+       "agent": [
+        400.0,
+        321.0
+       ],
+       "action": [
+        387.0,
+        339.0
+       ],
+       "patient": [
+        392.0,
+        352.0
+       ]
+      },
+      "n_items": 0
+     }
+    ],
+    "completion_lesioned": false
+   },
+   {
+    "t_h": 2.291666666666666,
+    "R": [
+     0.130835636
+    ],
+    "R_eff": [
+     0.0
+    ],
+    "early_before": [
+     0.219442143
+    ],
+    "early_after": [
+     0.219442143
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.0,
+      "coherence_abs": 0.0,
+      "items": {
+       "agent": null,
+       "action": null,
+       "patient": null
+      },
+      "resolved": {
+       "agent": null,
+       "action": null,
+       "patient": null
+      },
+      "ignited": false,
+      "spikes": {
+       "agent": [
+        400.0,
+        342.0
+       ],
+       "action": [
+        387.0,
+        343.0
+       ],
+       "patient": [
+        392.0,
+        355.0
+       ]
+      },
+      "n_items": 0
+     }
+    ],
+    "completion_lesioned": false
+   },
+   {
+    "t_h": 2.3749999999999996,
+    "R": [
+     0.126203613
+    ],
+    "R_eff": [
+     0.0
+    ],
+    "early_before": [
+     0.207583373
+    ],
+    "early_after": [
+     0.207583373
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.0,
+      "coherence_abs": 0.0,
+      "items": {
+       "agent": null,
+       "action": null,
+       "patient": null
+      },
+      "resolved": {
+       "agent": null,
+       "action": null,
+       "patient": null
+      },
+      "ignited": false,
+      "spikes": {
+       "agent": [
+        400.0,
+        360.0
+       ],
+       "action": [
+        387.0,
+        347.0
+       ],
+       "patient": [
+        392.0,
+        356.0
+       ]
+      },
+      "n_items": 0
+     }
+    ],
+    "completion_lesioned": false
+   },
+   {
+    "t_h": 2.458333333333333,
+    "R": [
+     0.110775033
+    ],
+    "R_eff": [
+     0.0
+    ],
+    "early_before": [
+     0.196365457
+    ],
+    "early_after": [
+     0.196365457
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.0,
+      "coherence_abs": 0.0,
+      "items": {
+       "agent": null,
+       "action": null,
+       "patient": null
+      },
+      "resolved": {
+       "agent": null,
+       "action": null,
+       "patient": null
+      },
+      "ignited": false,
+      "spikes": {
+       "agent": [
+        400.0,
+        371.0
+       ],
+       "action": [
+        387.0,
+        347.0
+       ],
+       "patient": [
+        392.0,
+        360.0
+       ]
+      },
+      "n_items": 0
+     }
+    ],
+    "completion_lesioned": false
+   },
+   {
+    "t_h": 2.5416666666666665,
+    "R": [
+     0.070260971
+    ],
+    "R_eff": [
+     0.0
+    ],
+    "early_before": [
+     0.185753764
+    ],
+    "early_after": [
+     0.185753764
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.0,
+      "coherence_abs": 0.0,
+      "items": {
+       "agent": null,
+       "action": null,
+       "patient": null
+      },
+      "resolved": {
+       "agent": null,
+       "action": null,
+       "patient": null
+      },
+      "ignited": false,
+      "spikes": {
+       "agent": [
+        400.0,
+        384.0
+       ],
+       "action": [
+        387.0,
+        349.0
+       ],
+       "patient": [
+        392.0,
+        360.0
+       ]
+      },
+      "n_items": 0
+     }
+    ],
+    "completion_lesioned": false
+   },
+   {
+    "t_h": 2.625,
+    "R": [
+     0.028176752
+    ],
+    "R_eff": [
+     0.0
+    ],
+    "early_before": [
+     0.175715532
+    ],
+    "early_after": [
+     0.175715532
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.0,
+      "coherence_abs": 0.0,
+      "items": {
+       "agent": null,
+       "action": null,
+       "patient": null
+      },
+      "resolved": {
+       "agent": null,
+       "action": null,
+       "patient": null
+      },
+      "ignited": false,
+      "spikes": {
+       "agent": [
+        400.0,
+        400.0
+       ],
+       "action": [
+        387.0,
+        354.0
+       ],
+       "patient": [
+        392.0,
+        361.0
+       ]
+      },
+      "n_items": 0
+     }
+    ],
+    "completion_lesioned": false
+   },
+   {
+    "t_h": 2.7083333333333335,
+    "R": [
+     0.015265881
+    ],
+    "R_eff": [
+     0.0
+    ],
+    "early_before": [
+     0.166219771
+    ],
+    "early_after": [
+     0.166219771
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.0,
+      "coherence_abs": 0.0,
+      "items": {
+       "agent": null,
+       "action": null,
+       "patient": null
+      },
+      "resolved": {
+       "agent": null,
+       "action": null,
+       "patient": null
+      },
+      "ignited": false,
+      "spikes": {
+       "agent": [
+        415.0,
+        389.0
+       ],
+       "action": [
+        387.0,
+        356.0
+       ],
+       "patient": [
+        392.0,
+        364.0
+       ]
+      },
+      "n_items": 0
+     }
+    ],
+    "completion_lesioned": false
+   },
+   {
+    "t_h": 2.791666666666667,
+    "R": [
+     0.057312267
+    ],
+    "R_eff": [
+     0.0
+    ],
+    "early_before": [
+     0.157237166
+    ],
+    "early_after": [
+     0.157237166
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.0,
+      "coherence_abs": 0.0,
+      "items": {
+       "agent": null,
+       "action": null,
+       "patient": null
+      },
+      "resolved": {
+       "agent": null,
+       "action": null,
+       "patient": null
+      },
+      "ignited": false,
+      "spikes": {
+       "agent": [
+        415.0,
+        370.0
+       ],
+       "action": [
+        387.0,
+        358.0
+       ],
+       "patient": [
+        392.0,
+        372.0
+       ]
+      },
+      "n_items": 0
+     }
+    ],
+    "completion_lesioned": false
+   },
+   {
+    "t_h": 2.8750000000000004,
+    "R": [
+     0.045252211
+    ],
+    "R_eff": [
+     0.0
+    ],
+    "early_before": [
+     0.148739986
+    ],
+    "early_after": [
+     0.148739986
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.0,
+      "coherence_abs": 0.0,
+      "items": {
+       "agent": null,
+       "action": null,
+       "patient": null
+      },
+      "resolved": {
+       "agent": null,
+       "action": null,
+       "patient": null
+      },
+      "ignited": false,
+      "spikes": {
+       "agent": [
+        415.0,
+        360.0
+       ],
+       "action": [
+        387.0,
+        363.0
+       ],
+       "patient": [
+        392.0,
+        380.0
+       ]
+      },
+      "n_items": 0
+     }
+    ],
+    "completion_lesioned": false
+   },
+   {
+    "t_h": 2.958333333333334,
+    "R": [
+     0.027036109
+    ],
+    "R_eff": [
+     0.0
+    ],
+    "early_before": [
+     0.140701998
+    ],
+    "early_after": [
+     0.140701998
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.0,
+      "coherence_abs": 0.0,
+      "items": {
+       "agent": null,
+       "action": null,
+       "patient": null
+      },
+      "resolved": {
+       "agent": null,
+       "action": null,
+       "patient": null
+      },
+      "ignited": false,
+      "spikes": {
+       "agent": [
+        415.0,
+        360.0
+       ],
+       "action": [
+        387.0,
+        367.0
+       ],
+       "patient": [
+        392.0,
+        388.0
+       ]
+      },
+      "n_items": 0
+     }
+    ],
+    "completion_lesioned": false
+   },
+   {
+    "t_h": 3.0416666666666674,
+    "R": [
+     0.009426365
+    ],
+    "R_eff": [
+     0.0
+    ],
+    "early_before": [
+     0.133098388
+    ],
+    "early_after": [
+     0.133098388
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.0,
+      "coherence_abs": 0.0,
+      "items": {
+       "agent": null,
+       "action": null,
+       "patient": null
+      },
+      "resolved": {
+       "agent": null,
+       "action": null,
+       "patient": null
+      },
+      "ignited": false,
+      "spikes": {
+       "agent": [
+        415.0,
+        359.0
+       ],
+       "action": [
+        387.0,
+        370.0
+       ],
+       "patient": [
+        396.0,
+        392.0
+       ]
+      },
+      "n_items": 0
+     }
+    ],
+    "completion_lesioned": false
+   },
+   {
+    "t_h": 3.125000000000001,
+    "R": [
+     0.0075237
+    ],
+    "R_eff": [
+     0.0
+    ],
+    "early_before": [
+     0.12590568
+    ],
+    "early_after": [
+     0.12590568
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.0,
+      "coherence_abs": 0.0,
+      "items": {
+       "agent": null,
+       "action": null,
+       "patient": null
+      },
+      "resolved": {
+       "agent": null,
+       "action": null,
+       "patient": null
+      },
+      "ignited": false,
+      "spikes": {
+       "agent": [
+        415.0,
+        359.0
+       ],
+       "action": [
+        387.0,
+        370.0
+       ],
+       "patient": [
+        398.0,
+        390.0
+       ]
+      },
+      "n_items": 0
+     }
+    ],
+    "completion_lesioned": false
+   },
+   {
+    "t_h": 3.2083333333333344,
+    "R": [
+     0.023429309
+    ],
+    "R_eff": [
+     0.0
+    ],
+    "early_before": [
+     0.11910167
+    ],
+    "early_after": [
+     0.11910167
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.0,
+      "coherence_abs": 0.0,
+      "items": {
+       "agent": null,
+       "action": null,
+       "patient": null
+      },
+      "resolved": {
+       "agent": null,
+       "action": null,
+       "patient": null
+      },
+      "ignited": false,
+      "spikes": {
+       "agent": [
+        415.0,
+        359.0
+       ],
+       "action": [
+        387.0,
+        372.0
+       ],
+       "patient": [
+        398.0,
+        387.0
+       ]
+      },
+      "n_items": 0
+     }
+    ],
+    "completion_lesioned": false
+   },
+   {
+    "t_h": 3.291666666666668,
+    "R": [
+     0.038287697
+    ],
+    "R_eff": [
+     0.0
+    ],
+    "early_before": [
+     0.112665353
+    ],
+    "early_after": [
+     0.112665353
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.0,
+      "coherence_abs": 0.0,
+      "items": {
+       "agent": null,
+       "action": null,
+       "patient": null
+      },
+      "resolved": {
+       "agent": null,
+       "action": null,
+       "patient": null
+      },
+      "ignited": false,
+      "spikes": {
+       "agent": [
+        415.0,
+        359.0
+       ],
+       "action": [
+        387.0,
+        375.0
+       ],
+       "patient": [
+        398.0,
+        381.0
+       ]
+      },
+      "n_items": 0
+     }
+    ],
+    "completion_lesioned": false
+   },
+   {
+    "t_h": 3.3750000000000013,
+    "R": [
+     0.03496644
+    ],
+    "R_eff": [
+     0.0
+    ],
+    "early_before": [
+     0.106576857
+    ],
+    "early_after": [
+     0.106576857
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.0,
+      "coherence_abs": 0.0,
+      "items": {
+       "agent": null,
+       "action": null,
+       "patient": null
+      },
+      "resolved": {
+       "agent": null,
+       "action": null,
+       "patient": null
+      },
+      "ignited": false,
+      "spikes": {
+       "agent": [
+        415.0,
+        359.0
+       ],
+       "action": [
+        387.0,
+        377.0
+       ],
+       "patient": [
+        398.0,
+        377.0
+       ]
+      },
+      "n_items": 0
+     }
+    ],
+    "completion_lesioned": false
+   },
+   {
+    "t_h": 3.458333333333335,
+    "R": [
+     0.028619712
+    ],
+    "R_eff": [
+     0.0
+    ],
+    "early_before": [
+     0.100817387
+    ],
+    "early_after": [
+     0.100817387
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.0,
+      "coherence_abs": 0.0,
+      "items": {
+       "agent": null,
+       "action": null,
+       "patient": null
+      },
+      "resolved": {
+       "agent": null,
+       "action": null,
+       "patient": null
+      },
+      "ignited": false,
+      "spikes": {
+       "agent": [
+        415.0,
+        359.0
+       ],
+       "action": [
+        387.0,
+        377.0
+       ],
+       "patient": [
+        398.0,
+        374.0
+       ]
+      },
+      "n_items": 0
+     }
+    ],
+    "completion_lesioned": false
+   },
+   {
+    "t_h": 3.5416666666666683,
+    "R": [
+     0.022555374
+    ],
+    "R_eff": [
+     0.0
+    ],
+    "early_before": [
+     0.095369162
+    ],
+    "early_after": [
+     0.095369162
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.0,
+      "coherence_abs": 0.0,
+      "items": {
+       "agent": null,
+       "action": null,
+       "patient": null
+      },
+      "resolved": {
+       "agent": null,
+       "action": null,
+       "patient": null
+      },
+      "ignited": false,
+      "spikes": {
+       "agent": [
+        415.0,
+        359.0
+       ],
+       "action": [
+        387.0,
+        382.0
+       ],
+       "patient": [
+        398.0,
+        369.0
+       ]
+      },
+      "n_items": 0
+     }
+    ],
+    "completion_lesioned": false
+   },
+   {
+    "t_h": 3.6250000000000018,
+    "R": [
+     0.016763767
+    ],
+    "R_eff": [
+     0.0
+    ],
+    "early_before": [
+     0.090215362
+    ],
+    "early_after": [
+     0.090215362
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.0,
+      "coherence_abs": 0.0,
+      "items": {
+       "agent": null,
+       "action": null,
+       "patient": null
+      },
+      "resolved": {
+       "agent": null,
+       "action": null,
+       "patient": null
+      },
+      "ignited": false,
+      "spikes": {
+       "agent": [
+        415.0,
+        358.0
+       ],
+       "action": [
+        389.0,
+        387.0
+       ],
+       "patient": [
+        398.0,
+        360.0
+       ]
+      },
+      "n_items": 0
+     }
+    ],
+    "completion_lesioned": false
+   },
+   {
+    "t_h": 3.7083333333333353,
+    "R": [
+     0.011235563
+    ],
+    "R_eff": [
+     0.0
+    ],
+    "early_before": [
+     0.085340076
+    ],
+    "early_after": [
+     0.085340076
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.0,
+      "coherence_abs": 0.0,
+      "items": {
+       "agent": null,
+       "action": null,
+       "patient": null
+      },
+      "resolved": {
+       "agent": null,
+       "action": null,
+       "patient": null
+      },
+      "ignited": false,
+      "spikes": {
+       "agent": [
+        415.0,
+        357.0
+       ],
+       "action": [
+        392.0,
+        387.0
+       ],
+       "patient": [
+        398.0,
+        356.0
+       ]
+      },
+      "n_items": 0
+     }
+    ],
+    "completion_lesioned": false
+   },
+   {
+    "t_h": 3.7916666666666687,
+    "R": [
+     0.005961437
+    ],
+    "R_eff": [
+     0.0
+    ],
+    "early_before": [
+     0.080728253
+    ],
+    "early_after": [
+     0.080728253
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.0,
+      "coherence_abs": 0.0,
+      "items": {
+       "agent": null,
+       "action": null,
+       "patient": null
+      },
+      "resolved": {
+       "agent": null,
+       "action": null,
+       "patient": null
+      },
+      "ignited": false,
+      "spikes": {
+       "agent": [
+        415.0,
+        357.0
+       ],
+       "action": [
+        396.0,
+        387.0
+       ],
+       "patient": [
+        398.0,
+        354.0
+       ]
+      },
+      "n_items": 0
+     }
+    ],
+    "completion_lesioned": false
+   },
+   {
+    "t_h": 3.875000000000002,
+    "R": [
+     0.000930516
+    ],
+    "R_eff": [
+     0.0
+    ],
+    "early_before": [
+     0.076365655
+    ],
+    "early_after": [
+     0.076365655
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.0,
+      "coherence_abs": 0.0,
+      "items": {
+       "agent": null,
+       "action": null,
+       "patient": null
+      },
+      "resolved": {
+       "agent": null,
+       "action": null,
+       "patient": null
+      },
+      "ignited": false,
+      "spikes": {
+       "agent": [
+        415.0,
+        356.0
+       ],
+       "action": [
+        399.0,
+        387.0
+       ],
+       "patient": [
+        398.0,
+        349.0
+       ]
+      },
+      "n_items": 0
+     }
+    ],
+    "completion_lesioned": false
+   },
+   {
+    "t_h": 3.9583333333333357,
+    "R": [
+     0.003849062
+    ],
+    "R_eff": [
+     0.0
+    ],
+    "early_before": [
+     0.072238815
+    ],
+    "early_after": [
+     0.072238815
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.0,
+      "coherence_abs": 0.0,
+      "items": {
+       "agent": null,
+       "action": null,
+       "patient": null
+      },
+      "resolved": {
+       "agent": null,
+       "action": null,
+       "patient": null
+      },
+      "ignited": false,
+      "spikes": {
+       "agent": [
+        415.0,
+        356.0
+       ],
+       "action": [
+        400.0,
+        385.0
+       ],
+       "patient": [
+        398.0,
+        346.0
+       ]
+      },
+      "n_items": 0
+     }
+    ],
+    "completion_lesioned": false
+   },
+   {
+    "t_h": 4.04166666666667,
+    "R": [
+     0.008363148
+    ],
+    "R_eff": [
+     0.0
+    ],
+    "early_before": [
+     0.068334991
+    ],
+    "early_after": [
+     0.068334991
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.0,
+      "coherence_abs": 0.0,
+      "items": {
+       "agent": null,
+       "action": null,
+       "patient": null
+      },
+      "resolved": {
+       "agent": null,
+       "action": null,
+       "patient": null
+      },
+      "ignited": false,
+      "spikes": {
+       "agent": [
+        415.0,
+        356.0
+       ],
+       "action": [
+        400.0,
+        385.0
+       ],
+       "patient": [
+        398.0,
+        345.0
+       ]
+      },
+      "n_items": 0
+     }
+    ],
+    "completion_lesioned": false
+   }
+  ],
+  "completion": true,
+  "completion_lesioned": false
+ },
+ "sleep_replay": {
+  "on": true,
+  "lesioned": false,
+  "n_epochs": 1,
+  "episode_done": true,
+  "epochs": [
+   {
+    "episode": [
+     5,
+     4.041666667
+    ],
+    "t_h": 4.125000000000003,
+    "R": [
+     0.012626508
+    ],
+    "R_eff": [
+     0.0
+    ],
+    "sum_R_eff": 0.0,
+    "da_swr": 0.5,
+    "da_seen_by_d1": 0.5,
+    "a_eff_mean": 0.016731216,
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "replay_lesioned": false,
+    "capture_lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.0,
+      "coherence_abs": 0.0,
+      "items": {
+       "agent": null,
+       "action": null,
+       "patient": null
+      },
+      "resolved": {
+       "agent": null,
+       "action": null,
+       "patient": null
+      },
+      "ignited": false,
+      "spikes": {
+       "agent": [
+        415.0,
+        356.0
+       ],
+       "action": [
+        400.0,
+        384.0
+       ],
+       "patient": [
+        398.0,
+        343.0
+       ]
+      },
+      "n_items": 0
+     }
+    ],
+    "completion_lesioned": false
+   }
+  ]
+ },
+ "blocks_at_recall": [
+  {
+   "block": 0,
+   "t_w": 0.016666666666666666,
+   "tag0_mean": 1.6166748889985196,
+   "z_mean": 5.736918872774884e-13,
+   "z_min": 5.736918872774884e-13,
+   "z_max": 5.736918872774884e-13,
+   "frac_synapses_z_gt_half": 0.0,
+   "inc_mag": 1.4081895195797216,
+   "base_mag": 0.7601365516873724,
+   "tag_rep_mean": 0.0,
+   "t_rep": 4.125000000000003
+  }
+ ],
+ "world_steps": {
+  "datr_rest": {
+   "world_step": "awake_rest_4h",
+   "hours": 4.0,
+   "rest_period_h": 0.08333333333333333,
+   "n_rest_ticks": 48,
+   "n_session_ticks": 48
+  },
+  "datr_night": {
+   "world_step": "overnight_24h",
+   "hours": 24.0,
+   "n_sessions_ticked": 1
+  }
+ },
+ "tell_da": [
+  0.13872415989438813,
+  0.4438706010744427,
+  0.4455155108074955,
+  0.12404127343721429,
+  0.04616293556102311
+ ],
+ "elapsed_seconds": 260.9
+}
