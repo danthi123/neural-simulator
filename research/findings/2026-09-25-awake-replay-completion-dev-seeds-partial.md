@@ -9,8 +9,8 @@ mechanism: replay pattern completion (webapp/replay_completion.py; BRAIN_AWAKE_R
   a replay event reinstates the stored fact's ensemble through a spiking item competition and the composer's own
   re-bind op, and each route uses the reinstated ensemble's coherence with the block's increment (R_c) where it used
   the partial trace's decode margin (R)
-prereg: research/findings/2026-09-24-sleep-replay-capture-PREREGISTRATION.md (Amendment 7, committed after this
-  finding and before any gate-seed run of the `arcc` family)
+prereg: research/findings/2026-09-24-sleep-replay-capture-PREREGISTRATION.md (Amendment 7, commit a34593b0d, after
+  this finding and before any gate-seed run of the `arcc` family)
 seeds: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
 seed-waiver: development seeds only, by design; none of the six gate seeds (42/43/44/100/101/102) was built by this
   arc. This finding makes no generalization claim; the six-seed test is Amendment 7's `arcc` family, prepared and
@@ -258,7 +258,27 @@ what keeps ARC1's `lr_noarc` and ARC3's `ln_arc` abstaining with the night's com
 
 ## Next
 
-Amendment 7 of the prereg (committed after this finding, before any gate-seed run) registers the `arcc` family for
-the six gate seeds; the six pool lines are below. They are prepared, not queued.
+Amendment 7 of the prereg (commit `a34593b0d`, after this finding and before any gate-seed run) registers the `arcc`
+family for the six gate seeds. The six pool lines are below, pinned to that commit's full SHA. They are prepared, NOT
+queued: queueing them is the orchestrator's call, after review.
 
-The six pool lines, pinned to the Amendment-7 commit, are added below in the commit that follows it.
+Provision the revision first (a `git_archive` revision dir on the pool; the provisioner refuses a revision that does
+not contain `origin/main`, see Amendment 7's compute section if `main` has moved):
+
+```
+bash tools/pool_provision.sh --revision a34593b0dab81a674ba4068a897194c521cbc4be --isolated
+```
+
+Then the six rows (one worker, `mem_gb=2`, output `research/findings/raw/_awake_replay_completion`):
+
+```
+bash tools/pool_queue.sh add 'cd ~/derisk-pool/revisions/a34593b0dab81a674ba4068a897194c521cbc4be && env SIM_BACKEND=numpy OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1 CUDA_VISIBLE_DEVICES= .venv/bin/python -u -m research.runners._da_tag_capture_chat_probe --family arcc --seed 42 --ltm off --workers 1 --out research/findings/raw/_awake_replay_completion' --checked 'prereg research/findings/2026-09-24-sleep-replay-capture-PREREGISTRATION.md (Amendment 7, branch research/awake-replay-completion-r2 @ a34593b0d); replay-completion family arcc 6-seed; mem_gb=2'
+bash tools/pool_queue.sh add 'cd ~/derisk-pool/revisions/a34593b0dab81a674ba4068a897194c521cbc4be && env SIM_BACKEND=numpy OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1 CUDA_VISIBLE_DEVICES= .venv/bin/python -u -m research.runners._da_tag_capture_chat_probe --family arcc --seed 43 --ltm off --workers 1 --out research/findings/raw/_awake_replay_completion' --checked 'prereg research/findings/2026-09-24-sleep-replay-capture-PREREGISTRATION.md (Amendment 7, branch research/awake-replay-completion-r2 @ a34593b0d); replay-completion family arcc 6-seed; mem_gb=2'
+bash tools/pool_queue.sh add 'cd ~/derisk-pool/revisions/a34593b0dab81a674ba4068a897194c521cbc4be && env SIM_BACKEND=numpy OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1 CUDA_VISIBLE_DEVICES= .venv/bin/python -u -m research.runners._da_tag_capture_chat_probe --family arcc --seed 44 --ltm off --workers 1 --out research/findings/raw/_awake_replay_completion' --checked 'prereg research/findings/2026-09-24-sleep-replay-capture-PREREGISTRATION.md (Amendment 7, branch research/awake-replay-completion-r2 @ a34593b0d); replay-completion family arcc 6-seed; mem_gb=2'
+bash tools/pool_queue.sh add 'cd ~/derisk-pool/revisions/a34593b0dab81a674ba4068a897194c521cbc4be && env SIM_BACKEND=numpy OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1 CUDA_VISIBLE_DEVICES= .venv/bin/python -u -m research.runners._da_tag_capture_chat_probe --family arcc --seed 100 --ltm off --workers 1 --out research/findings/raw/_awake_replay_completion' --checked 'prereg research/findings/2026-09-24-sleep-replay-capture-PREREGISTRATION.md (Amendment 7, branch research/awake-replay-completion-r2 @ a34593b0d); replay-completion family arcc 6-seed; mem_gb=2'
+bash tools/pool_queue.sh add 'cd ~/derisk-pool/revisions/a34593b0dab81a674ba4068a897194c521cbc4be && env SIM_BACKEND=numpy OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1 CUDA_VISIBLE_DEVICES= .venv/bin/python -u -m research.runners._da_tag_capture_chat_probe --family arcc --seed 101 --ltm off --workers 1 --out research/findings/raw/_awake_replay_completion' --checked 'prereg research/findings/2026-09-24-sleep-replay-capture-PREREGISTRATION.md (Amendment 7, branch research/awake-replay-completion-r2 @ a34593b0d); replay-completion family arcc 6-seed; mem_gb=2'
+bash tools/pool_queue.sh add 'cd ~/derisk-pool/revisions/a34593b0dab81a674ba4068a897194c521cbc4be && env SIM_BACKEND=numpy OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1 CUDA_VISIBLE_DEVICES= .venv/bin/python -u -m research.runners._da_tag_capture_chat_probe --family arcc --seed 102 --ltm off --workers 1 --out research/findings/raw/_awake_replay_completion' --checked 'prereg research/findings/2026-09-24-sleep-replay-capture-PREREGISTRATION.md (Amendment 7, branch research/awake-replay-completion-r2 @ a34593b0d); replay-completion family arcc 6-seed; mem_gb=2'
+```
+
+Scoring, after all six rows are back:
+`python3 -u -m research.runners._da_tag_capture_chat_probe --family arcc --aggregate research/findings/raw/_awake_replay_completion`.
