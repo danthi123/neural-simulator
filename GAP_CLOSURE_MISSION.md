@@ -72,7 +72,9 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
    all 8 pool riders are FROZEN-BY-DESIGN; source-provenance, prospective memory, the xedge pool and the host-level
    stores learn at chat time; NO faculty is silently frozen. Built default-OFF local per-pathway freezes
    (BRAIN_WORLDMODEL_LOCAL_FREEZE / BRAIN_SURPRISE_LOCAL_FREEZE) for the rungs that will need chat-time learning on
-   the pool (curiosity graded novelty, causal-whatif staleness). Review running before merge.
+   the pool (curiosity graded novelty, causal-whatif staleness). MERGED 55823d1bd (review SOUND-WITH-ISSUES). Round 2
+   `research/chat-time-plasticity-audit-r2`: test on the real wave3 pool with both flags on (the real safety net for the
+   other riders is `_apply_gain0_freeze`), and fix the KeyError on the WAVE3_POOL=0 fallback with a flag on.
 
 **🟢 UPDATE ~17:15 (2026-09-24) — main a5e37143b. (history: superseded by the 20:25 block above)**
 - **Incident 13:53:** a review subagent's `rm -rf <scratch> ~/.claude/projects` deleted every project's Claude session
