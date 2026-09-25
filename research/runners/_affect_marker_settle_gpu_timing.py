@@ -1050,7 +1050,9 @@ def decompose_a3(raw_dir: str, seed: int = 42, order=None, bound: float = BOUND_
     keys = sorted({k for _i, _a, r in recs for t in r["warm_turns"] for k in t})
     return {"probe": "affect_marker_settle_gpu_timing", "analysis": "A3 decomposition (2026-09-25)",
             "runner": "research/runners/_affect_marker_settle_gpu_timing.py --decompose-a3", "seeds": [seed],
-            "sim_backend": sorted({r.get("backend") for _i, _a, r in recs}), "bound_s": bound, "M2_wta_delta_s": m2,
+            "sim_backend": "none: pure analysis of recorded artifacts, no simulation ran",
+            "analyzed_run_backend": sorted({r.get("backend") for _i, _a, r in recs}), "bound_s": bound,
+            "M2_wta_delta_s": m2,
             "margin_for_non_wta_s": margin, "processes": procs, "two_way_all": tw_all,
             "two_way_without_pos0": tw_wo0, "within_arm_process_median_sd_s": sd_arm,
             "pooled_process_median_sd_s": sd_pool,
