@@ -252,7 +252,7 @@ Part A is the a3 successor for the SPIKING DRAW under the gated flag. The gated 
 **CONT is re-labelled a MANIPULATION CHECK. It can never produce a GO.** CONT weights the firing shares of the
 reply-selecting competition by the same host vector w that the lesion replaces with ones.
 A lesion arm whose firing follows its uniform drive therefore reads about mean(w)/peak, whatever the reply does.
-Seed-7 smoke, per ask: lesion 0.327 / 0.347 / 0.339, uniform-firing value 0.367, intact 0.609 / 0.548 / 0.564
+Seed-7 smoke, per ask: lesion 0.327 / 0.347 / 0.339, uniform-firing value 0.367, intact 0.609 / 0.548 / 0.564 <!--derived-->
 (recomputed with `session_cont` from the two `partA_smoke` files, `w_ref` = the intact session's `likelihood_weight`).
 So CONT can clear 0.10 on a seed where the reply never moves (at a3 seed 100 both arms answered `deer` on all 32 asks).
 It shows that the lesion reached the competition that selects the reply. Nothing more.
@@ -273,7 +273,7 @@ The aggregate writes one verdict string: `GO`, `NO-GO` (all 6 DEFINED, a rule no
 **Expected outcome, stated before the run.** The a3 noise streams `seed*1000 + {0, 500} + j` for j = 0..2 are the same
 streams Part A uses. If the pass-through holds, Part A's replies should equal the a3 `default` sessions on them, up to
 code drift since `eefdd666a`.
-The a3 per-seed Delta read 0.031 / 0.021 / 0.010 / UNDEFINED / 0.146 / 0.260 for 42 / 43 / 44 / 100 / 101 / 102
+The a3 per-seed Delta read 0.031 / 0.021 / 0.010 / UNDEFINED / 0.146 / 0.260 for 42 / 43 / 44 / 100 / 101 / 102 <!--derived-->
 (`research/findings/raw/_load_bearing/_oe_production_turn/a3/default_a3_aggregate.json`, `summary.delta`).
 So Part A is expected to read NO-GO or NOT-GO (UNDEFINED). A GO would contradict the pass-through; it must be checked
 against the reads below before anyone believes it.
