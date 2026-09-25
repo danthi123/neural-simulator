@@ -161,6 +161,37 @@ ARC_REPORTED_ARMS = ("lq_arc", "lz_arc", "lr_ledger_off")
 ARC_BOUTS = {"datr_recall": 48, "datcr_recall": 48, "datq_recall": 4, "datz_recall": 12, "datl_recall": 0,
              "datni_recall": 0}                        # == the battery's rest ticks (one bout per tick, 5-min limit)
 ARC_OUT = "research/findings/raw/_awake_replay_capture"
+# ── REPLAY-COMPLETION FAMILY (`--family arcc`; branch research/awake-replay-completion, webapp/replay_completion.py;
+# gates pre-registered as Amendment 8 of research/findings/2026-09-24-sleep-replay-capture-PREREGISTRATION.md). The arc
+# family's arms, groups and gates, with pattern completion armed in every replay route an arm arms:
+# BRAIN_AWAKE_REPLAY_COMPLETION on every arm with the awake route, BRAIN_SLEEP_REPLAY_COMPLETION on every arm with the
+# night route (so lr_noarc's night is the same night as lr_arc_a's), plus one arm with the completion edge cut in both
+# routes (lr_arc_nocomp: every read runs, each route uses the partial cue's own read = the Amendment-4 + rc routes).
+# Arm names are kept so grade_seed_arc applies verbatim; grade_seed_arcc adds I4 (the completion records held).
+ARCC_AWAKE = {"BRAIN_AWAKE_REPLAY_COMPLETION": "1"}
+ARCC_SLEEP = {"BRAIN_SLEEP_REPLAY_COMPLETION": "1"}
+ARCC_LES = {"BRAIN_REPLAY_COMPLETION_LESION": "1"}
+
+
+def _arcc_env(env):
+    out = dict(env)
+    if env.get("BRAIN_AWAKE_REPLAY_CAPTURE") == "1":
+        out.update(ARCC_AWAKE)
+    if env.get("BRAIN_SLEEP_REPLAY_CAPTURE") == "1":
+        out.update(ARCC_SLEEP)
+    return out
+
+
+# Two more REPORTED attribution arms (instrument-gated like lr_arc_nocomp, outcome never gated): the completion in ONE
+# route only. On dev seed 2 the night's completion alone rescued the fact (the awake margin route held the trace at
+# 0.73) while the awake completion alone did not (the night's margin read stayed below the capture point); which
+# route carries the rescue on each gate seed is therefore measured, not assumed.
+ARCC_ARMS = ([(n, lab, _arcc_env(env)) for (n, lab, env) in ARC_ARMS]
+             + [("lr_arc_nocomp", "datr_recall", {**_arcc_env({**ON, **RC, **ARC}), **ARCC_LES}),
+                ("lr_arc_awakeonly", "datr_recall", {**ON, **RC, **ARC, **ARCC_AWAKE}),
+                ("lr_arc_sleeponly", "datr_recall", {**ON, **RC, **ARC, **ARCC_SLEEP})])
+ARCC_ATTRIBUTION_ARMS = ("lr_arc_nocomp", "lr_arc_awakeonly", "lr_arc_sleeponly")
+ARCC_OUT = "research/findings/raw/_awake_replay_completion"
 # ── FORGETTING-INTERFERENCE FAMILY (`--family fi`; branch research/sleep-forgetting-interference, the r3 sub-flag
 # BRAIN_SLEEP_LOAD_RENORM of webapp/sleep_replay_capture.py; gates pre-registered as Amendment 6 of the sleep-replay-
 # capture prereg). The weak telling, seven nights, the recall question every morning (read-only in this model), and on
@@ -235,9 +266,9 @@ def run_seed(seed, out_dir, ltm="off", workers=1, family="base", only=None):
               "set LB_ALLOW_NO_CORPUS=1 to measure the degraded brain on purpose." % _miss, file=sys.stderr)
         raise SystemExit(3)
     sys.path.insert(0, _REPO)
-    arm_list = {"rc": RC_ARMS, "r2": R2_ARMS, "arc": ARC_ARMS, "fi": FI_ARMS}.get(family, ARMS)
-    grader = {"rc": grade_seed_rc, "r2": grade_seed_r2, "arc": grade_seed_arc, "fi": grade_seed_fi}.get(family,
-                                                                                                        grade_seed)
+    arm_list = {"rc": RC_ARMS, "r2": R2_ARMS, "arc": ARC_ARMS, "fi": FI_ARMS, "arcc": ARCC_ARMS}.get(family, ARMS)
+    grader = {"rc": grade_seed_rc, "r2": grade_seed_r2, "arc": grade_seed_arc, "fi": grade_seed_fi,
+              "arcc": grade_seed_arcc}.get(family, grade_seed)
     if only:                                   # a de-risk subset (never a gate row): run only these arms, do not grade
         arm_list = [a for a in arm_list if a[0] in set(only)]
         grader = lambda _res: {"partial": True, "arms_run": [a[0] for a in arm_list],   # noqa: E731
@@ -264,7 +295,7 @@ def run_seed(seed, out_dir, ltm="off", workers=1, family="base", only=None):
             arms[name] = rec
     res = {"seed": int(seed), "fact": FACT, "arms": {}, "pinned_sha": PINNED_SHA, "ltm": ltm,
            "backend": os.environ.get("SIM_BACKEND", "numpy"), "argv": list(sys.argv), "workers": int(workers)}
-    if family in ("rc", "r2", "arc", "fi"):
+    if family in ("rc", "r2", "arc", "fi", "arcc"):
         res["family"] = family
     for name, a in arms.items():
         r = a["responses"] or {}
@@ -282,7 +313,7 @@ def run_seed(seed, out_dir, ltm="off", workers=1, family="base", only=None):
                            .get("a_eff") for t in a["turns"]],
             "errors": [str(v.get("_error"))[:300] for v in r.values() if isinstance(v, dict) and v.get("_error")],
         }
-        if family in ("rc", "r2", "arc", "fi"):
+        if family in ("rc", "r2", "arc", "fi", "arcc"):
             res["arms"][name]["sleep_replay_at_recall"] = _tc(rec).get("sleep_replay_capture")
             res["arms"][name]["blocks_at_recall"] = _tc(rec).get("blocks")
         if family == "fi" and a["label"] != "datni_recall":
@@ -299,7 +330,7 @@ def run_seed(seed, out_dir, ltm="off", workers=1, family="base", only=None):
             res["arms"][name]["recall1_state"] = {"outcome": outcome(daily[0]),
                                                   "blocks": _tc(daily[0]).get("blocks"),
                                                   "sleep": _tc(daily[0]).get("sleep_replay_capture")}
-        if family == "arc":
+        if family in ("arc", "arcc"):
             res["arms"][name]["awake_replay_at_recall"] = _tc(rec).get("awake_replay_capture")
             res["arms"][name]["awake_until_h"] = _tc(rec).get("awake_until_h")
             res["arms"][name]["world_steps"] = {t: r.get(t) for t in a["turns"]
@@ -781,6 +812,115 @@ def aggregate_arc(d):
            "signflip_p_rest_rescue_intact_vs_awake_lesion": (seed_signflip_p(edge) if rows else None),
            "diffs_on_minus_off": rescue, "diffs_intact_minus_lesion": edge,
            "reported_correct_counts": {k: sum(oc(r, k) for r in rows) for k in ARC_REPORTED_ARMS}}
+    json.dump(out, open(os.path.join(d, "aggregate.json"), "w"), indent=2)
+    print(json.dumps(out, indent=2))
+    return out
+
+
+def grade_seed_arcc(res):
+    """The replay-completion family's pre-registered gates (Amendment 8 of research/findings/2026-09-24-sleep-
+    replay-capture-PREREGISTRATION.md), verbatim: every arc-family gate as `grade_seed_arc` computes it on the
+    completion arms (ARCC1-ARCC7 == ARC1-ARC7 on these arms; G0/P1/I1/I2/I3/gamma unchanged), plus
+
+      I4 (UNDEFINED if it fails) -- the completion branch ran as armed in each route, read off the records: every
+          awake bout of an arm with BRAIN_AWAKE_REPLAY_COMPLETION=1, and every sleep epoch of an arm with
+          BRAIN_SLEEP_REPLAY_COMPLETION=1, carries a completion record for every block; it used R_c (the completion
+          arms) or R (lr_arc_nocomp, BRAIN_REPLAY_COMPLETION_LESION) -- R_eff equals the value it should have used,
+          unless that route's own edge is cut (then R_eff = 0, checked by I2); a route without its flag carries no
+          completion record.
+
+    The OUTCOMES of the attribution arms (lr_arc_nocomp, lr_arc_awakeonly, lr_arc_sleeponly) enter no behavioural
+    gate (on a seed whose margin read already rescues, they are correct; on one whose read collapses, the relevant one
+    abstains). They are REPORTED: `completion_load_bearing` = lr_arc_a correct AND lr_arc_nocomp abstain;
+    `awake_completion_needed` = lr_arc_a correct AND lr_arc_sleeponly abstain; `night_completion_needed` = lr_arc_a
+    correct AND lr_arc_awakeonly abstain. ARCC7 (no confab) reads every arm, the attribution arms included."""
+    g = grade_seed_arc(res)
+    A = res["arms"]
+
+    def _route_held(events, on, les, edge_cut):
+        ok = True
+        for x in events:
+            recs = x.get("completion")
+            if not on:
+                ok &= recs is None
+                continue
+            if not isinstance(recs, list) or len(recs) != len(x.get("R") or []) or any(c is None for c in recs):
+                ok = False
+                continue
+            ok &= bool(x.get("completion_lesioned")) == les
+            if edge_cut:
+                continue
+            for c, r, re_ in zip(recs, x.get("R") or [], x.get("R_eff") or []):
+                want = min(1.0, max(0.0, (r if les else c.get("R_c")) or 0.0))
+                ok &= abs(float(re_) - want) < 1e-6
+        return ok
+
+    held = True
+    for k, arm in A.items():
+        env = arm.get("env") or {}
+        les = env.get("BRAIN_REPLAY_COMPLETION_LESION") == "1"
+        held &= _route_held(_bouts(arm), env.get("BRAIN_AWAKE_REPLAY_COMPLETION") == "1"
+                            and env.get("BRAIN_AWAKE_REPLAY_CAPTURE") == "1", les,
+                            env.get("BRAIN_AWAKE_REPLAY_CAPTURE_LESION") == "1")
+        held &= _route_held(_epochs(arm), env.get("BRAIN_SLEEP_REPLAY_COMPLETION") == "1"
+                            and env.get("BRAIN_SLEEP_REPLAY_CAPTURE") == "1", les,
+                            env.get("BRAIN_SLEEP_REPLAY_CAPTURE_LESION") == "1")
+    g["I4_completion_record_held"] = bool(held)
+    o = g["outcomes"]
+    g["completion_load_bearing"] = bool(o.get("lr_arc_a") == "correct" and o.get("lr_arc_nocomp") == "abstain")
+    g["awake_completion_needed"] = bool(o.get("lr_arc_a") == "correct" and o.get("lr_arc_sleeponly") == "abstain")
+    g["night_completion_needed"] = bool(o.get("lr_arc_a") == "correct" and o.get("lr_arc_awakeonly") == "abstain")
+    for k in ("lr_arc_a", "lr_arc_nocomp", "lr_arc_awakeonly", "lr_arc_sleeponly", "lz_arc", "lq_arc"):
+        bo = _bouts(A.get(k))
+        if bo and g["reported"].get(k) is not None:
+            first, last = bo[0].get("completion") or [None], bo[-1].get("completion") or [None]
+            g["reported"][k]["R_c_first_bout"] = [None if c is None else c.get("R_c") for c in first]
+            g["reported"][k]["R_c_last_bout"] = [None if c is None else c.get("R_c") for c in last]
+            g["reported"][k]["items_last_bout"] = [None if c is None else c.get("items") for c in last]
+        ep = _epochs(A.get(k))
+        if ep and g["reported"].get(k) is not None:
+            night = ep[0].get("completion") or [None]
+            g["reported"][k]["R_c_at_sleep_onset"] = [None if c is None else c.get("R_c") for c in night]
+            g["reported"][k]["items_at_sleep_onset"] = [None if c is None else c.get("items") for c in night]
+    if g["seed_verdict"] != "UNDEFINED" and not g["I4_completion_record_held"]:
+        g["seed_verdict"] = "UNDEFINED"
+    return g
+
+
+def aggregate_arcc(d):
+    """6-seed combine for the arcc family: GO iff all 6 pre-registered seeds are GO (re-graded with the current code).
+    INCOMPLETE if a seed is missing; otherwise NO-GO."""
+    rows = []
+    for p in sorted(glob.glob(os.path.join(d, "seed*.json"))):
+        try:
+            r = json.load(open(p))
+        except Exception:
+            continue
+        if r.get("family") == "arcc":
+            rows.append(r)
+    for r in rows:
+        r["gates"] = grade_seed_arcc(r)
+    verdicts = {r["seed"]: r["gates"]["seed_verdict"] for r in rows}
+    n_go = sum(1 for v in verdicts.values() if v == "GO")
+    oc = lambda r, k: int(r["gates"]["outcomes"].get(k) == "correct")   # noqa: E731
+    rescue = [oc(r, "lr_arc_a") - oc(r, "lr_noarc") for r in rows]
+    edge = [oc(r, "lr_arc_a") - oc(r, "lr_arc_lesion") for r in rows]
+    comp = [oc(r, "lr_arc_a") - oc(r, "lr_arc_nocomp") for r in rows]
+    awake_only = [oc(r, "lr_arc_a") - oc(r, "lr_arc_awakeonly") for r in rows]
+    sleep_only = [oc(r, "lr_arc_a") - oc(r, "lr_arc_sleeponly") for r in rows]
+    complete = sorted(verdicts) == sorted(SEEDS)
+    out = {"family": "arcc", "seeds": sorted(verdicts), "seed_verdicts": verdicts, "n_go": n_go,
+           "verdict": "INCOMPLETE" if not complete else ("GO" if n_go == 6 else "NO-GO"),
+           "signflip_p_rest_rescue_on_vs_off": (seed_signflip_p(rescue) if rows else None),
+           "signflip_p_rest_rescue_intact_vs_awake_lesion": (seed_signflip_p(edge) if rows else None),
+           "diffs_on_minus_off": rescue, "diffs_intact_minus_lesion": edge,
+           "diffs_completion_minus_nocomp": comp,
+           "diffs_both_minus_awakeonly": awake_only, "diffs_both_minus_sleeponly": sleep_only,
+           "n_completion_load_bearing": sum(1 for r in rows if r["gates"].get("completion_load_bearing")),
+           "n_awake_completion_needed": sum(1 for r in rows if r["gates"].get("awake_completion_needed")),
+           "n_night_completion_needed": sum(1 for r in rows if r["gates"].get("night_completion_needed")),
+           "reported_correct_counts": {k: sum(oc(r, k) for r in rows)
+                                       for k in ARC_REPORTED_ARMS + ARCC_ATTRIBUTION_ARMS}}
     json.dump(out, open(os.path.join(d, "aggregate.json"), "w"), indent=2)
     print(json.dumps(out, indent=2))
     return out
@@ -1610,6 +1750,104 @@ def selftest():
         agg = aggregate_arc(_td)
         checks["arc aggregate: 6 designed-GO seeds -> GO, p=1/64"] = \
             agg["verdict"] == "GO" and abs(agg["signflip_p_rest_rescue_on_vs_off"] - 1 / 64.0) < 1e-12
+    # ── arcc family (awake replay + pattern completion, Amendment 8): GO, NO-GO and UNDEFINED, incl. the I4 record ────
+    def _arcc_arm(name, label, env, outcome):
+        rec = _arc_arm(name, label, env, outcome)
+        les = env.get("BRAIN_REPLAY_COMPLETION_LESION") == "1"
+        on = env.get("BRAIN_AWAKE_REPLAY_COMPLETION") == "1" and env.get("BRAIN_AWAKE_REPLAY_CAPTURE") == "1"
+        cut = env.get("BRAIN_AWAKE_REPLAY_CAPTURE_LESION") == "1"
+        if on and rec.get("awake_replay_at_recall"):
+            bo = []
+            for x in _bouts(rec):
+                x = dict(x, completion=[{"R_c": 0.79, "items": {}, "n_items": 3}], completion_lesioned=les)
+                if not cut:
+                    x["R_eff"] = [0.4 if les else 0.79]
+                bo.append(x)
+            rec["awake_replay_at_recall"] = dict(rec["awake_replay_at_recall"], bouts=bo)
+        s_on = env.get("BRAIN_SLEEP_REPLAY_COMPLETION") == "1" and env.get("BRAIN_SLEEP_REPLAY_CAPTURE") == "1"
+        s_cut = env.get("BRAIN_SLEEP_REPLAY_CAPTURE_LESION") == "1"
+        if s_on and _epochs(rec):
+            eps = []
+            for e in _epochs(rec):
+                e = dict(e, completion=[{"R_c": 0.79, "items": {}, "n_items": 3}], completion_lesioned=les)
+                r0 = (e.get("R") or [0.4])[0]
+                if not s_cut:
+                    e["R_eff"] = [r0 if les else 0.79]
+                eps.append(e)
+            rec["sleep_replay_at_recall"] = dict(rec["sleep_replay_at_recall"], epochs=eps)
+        return rec
+    arcc_designed = dict(arc_designed, lr_arc_nocomp="abstain", lr_arc_awakeonly="abstain", lr_arc_sleeponly="correct")
+    arcc_ok = {n: _arcc_arm(n, lab, env, arcc_designed[n]) for n, lab, env in ARCC_ARMS}
+    checks["arcc arms: each route armed with its completion flag; nocomp adds the lesion; the rest unchanged"] = (
+        all((env.get("BRAIN_AWAKE_REPLAY_COMPLETION") == "1") == (env.get("BRAIN_AWAKE_REPLAY_CAPTURE") == "1")
+            and (env.get("BRAIN_SLEEP_REPLAY_COMPLETION") == "1") == (env.get("BRAIN_SLEEP_REPLAY_CAPTURE") == "1")
+            for _n, _l, env in ARCC_ARMS if _n not in ("lr_arc_awakeonly", "lr_arc_sleeponly"))
+        and [n for n, _l, _e in ARCC_ARMS] == [n for n, _l, _e in ARC_ARMS] + list(ARCC_ATTRIBUTION_ARMS)
+        and dict((n, e) for n, _l, e in ARCC_ARMS)["lr_arc_awakeonly"].get("BRAIN_SLEEP_REPLAY_COMPLETION") is None
+        and dict((n, e) for n, _l, e in ARCC_ARMS)["lr_arc_sleeponly"].get("BRAIN_AWAKE_REPLAY_COMPLETION") is None
+        and dict((n, e) for n, _l, e in ARCC_ARMS)["lr_arc_nocomp"].get("BRAIN_REPLAY_COMPLETION_LESION") == "1"
+        and all(e.get("BRAIN_REPLAY_COMPLETION_LESION") != "1" for n, _l, e in ARCC_ARMS if n != "lr_arc_nocomp"))
+    g_ok = grade_seed_arcc({"arms": arcc_ok})
+    checks["arcc grade: designed-GO pattern -> GO, completion load-bearing reported"] = (
+        g_ok["seed_verdict"] == "GO" and g_ok["I4_completion_record_held"] and g_ok["completion_load_bearing"]
+        and g_ok["night_completion_needed"] and not g_ok["awake_completion_needed"])
+    for arm_name, bad, want in (("lr_noarc", "correct", "NO-GO"), ("lr_arc_lesion", "correct", "NO-GO"),
+                                ("ln_arc", "correct", "NO-GO"), ("lr_arc_sleeplesion", "correct", "NO-GO"),
+                                ("lr_arc_dalesion", "correct", "NO-GO"), ("lsr_arc_sleeplesion", "abstain", "NO-GO"),
+                                ("neu_imm_arc", "abstain", "UNDEFINED"), ("lr_arc_a", "abstain", "UNDEFINED"),
+                                ("lr_arc_nocomp", "correct", "GO"),       # the nocomp OUTCOME is reported, never gated
+                                ("lr_arc_nocomp", "confab", "NO-GO"),     # ... except a confab (ARCC7 reads all)
+                                ("lr_arc_sleeponly", "abstain", "GO"),
+                                ("lr_arc_awakeonly", "confab", "NO-GO"),
+                                ("lz_arc", "correct", "GO")):
+        arms_x = dict(arcc_ok)
+        lab = [l for n, l, _e in ARCC_ARMS if n == arm_name][0]
+        arms_x[arm_name] = _arcc_arm(arm_name, lab, arcc_ok[arm_name]["env"], bad)
+        checks["arcc grade: %s=%s -> %s" % (arm_name, bad, want)] = \
+            grade_seed_arcc({"arms": arms_x})["seed_verdict"] == want
+    arms_x = dict(arcc_ok)
+    bo = [dict(x) for x in _bouts(arcc_ok["lr_arc_a"])]
+    bo[3].pop("completion")
+    arms_x["lr_arc_a"] = dict(arcc_ok["lr_arc_a"], awake_replay_at_recall={"n_bouts": 48, "bouts": bo})
+    arms_x["lr_arc_b"] = dict(arms_x["lr_arc_a"])
+    checks["arcc grade: a bout without its completion record -> UNDEFINED (I4)"] = \
+        grade_seed_arcc({"arms": arms_x})["seed_verdict"] == "UNDEFINED"
+    arms_x = dict(arcc_ok)
+    bo = [dict(x, R_eff=[0.79]) for x in _bouts(arcc_ok["lr_arc_nocomp"])]
+    arms_x["lr_arc_nocomp"] = dict(arcc_ok["lr_arc_nocomp"], awake_replay_at_recall={"n_bouts": 48, "bouts": bo})
+    checks["arcc grade: completion lesion not held (bout induced with R_c) -> UNDEFINED (I4)"] = \
+        grade_seed_arcc({"arms": arms_x})["seed_verdict"] == "UNDEFINED"
+    arms_x = dict(arcc_ok)
+    bo = [dict(x, R_eff=[0.4]) for x in _bouts(arcc_ok["lr_arc_a"])]
+    arms_x["lr_arc_a"] = dict(arcc_ok["lr_arc_a"], awake_replay_at_recall={"n_bouts": 48, "bouts": bo})
+    arms_x["lr_arc_b"] = dict(arms_x["lr_arc_a"])
+    checks["arcc grade: a completion arm induced with R, not R_c -> UNDEFINED (I4)"] = \
+        grade_seed_arcc({"arms": arms_x})["seed_verdict"] == "UNDEFINED"
+    arms_x = dict(arcc_ok)
+    eps = [dict(e) for e in _epochs(arcc_ok["lr_arc_a"])]
+    eps[0].pop("completion")
+    arms_x["lr_arc_a"] = dict(arcc_ok["lr_arc_a"], sleep_replay_at_recall={"n_epochs": 1, "epochs": eps})
+    arms_x["lr_arc_b"] = dict(arms_x["lr_arc_a"])
+    checks["arcc grade: a sleep epoch without its completion record -> UNDEFINED (I4)"] = \
+        grade_seed_arcc({"arms": arms_x})["seed_verdict"] == "UNDEFINED"
+    arms_x = dict(arcc_ok)
+    eps = [dict(e, R_eff=[0.79]) for e in _epochs(arcc_ok["lr_arc_nocomp"])]
+    arms_x["lr_arc_nocomp"] = dict(arcc_ok["lr_arc_nocomp"], sleep_replay_at_recall={"n_epochs": 1, "epochs": eps})
+    checks["arcc grade: the night used R_c under the completion lesion -> UNDEFINED (I4)"] = \
+        grade_seed_arcc({"arms": arms_x})["seed_verdict"] == "UNDEFINED"
+    arms_x = dict(arcc_ok)
+    arms_x["lr_ledger_off"] = dict(arcc_ok["lr_ledger_off"], awake_replay_at_recall=arcc_ok["lr_arc_a"]["awake_replay_at_recall"])
+    checks["arcc grade: a completion record on a flag-OFF arm -> UNDEFINED (I4)"] = \
+        grade_seed_arcc({"arms": arms_x})["I4_completion_record_held"] is False
+    with _tf.TemporaryDirectory() as _td:
+        for s in SEEDS:
+            json.dump({"seed": s, "family": "arcc", "arms": arcc_ok}, open(os.path.join(_td, "seed%d.json" % s), "w"))
+        agg = aggregate_arcc(_td)
+        checks["arcc aggregate: 6 designed-GO seeds -> GO, p=1/64, 6 load-bearing"] = (
+            agg["verdict"] == "GO" and abs(agg["signflip_p_rest_rescue_on_vs_off"] - 1 / 64.0) < 1e-12
+            and agg["n_completion_load_bearing"] == 6)
+        os.remove(os.path.join(_td, "seed101.json"))
+        checks["arcc aggregate: a missing seed -> INCOMPLETE"] = aggregate_arcc(_td)["verdict"] == "INCOMPLETE"
     # ── fi family (load-dependent renormalization): the grader must be able to read GO, NO-GO and UNDEFINED ─────────
     def _fi_arm(name, label, env, daily_outcomes, ratio7=1.0, lesion_delta=0.0, n_new_shift=0, told_value=1,
                 n_epochs=FI_NIGHTS, recall1=None):
@@ -1721,10 +1959,11 @@ def main():
     ap.add_argument("--seed", type=int)
     ap.add_argument("--ltm", choices=["off", "on"], default="off")
     ap.add_argument("--workers", type=int, default=1)
-    ap.add_argument("--family", choices=["base", "rc", "r2", "arc", "fi"], default="base",
+    ap.add_argument("--family", choices=["base", "rc", "r2", "arc", "fi", "arcc"], default="base",
                     help="base = the G0-G6 family (unchanged); rc = the sleep-replay-capture family (RC_ARMS); "
                          "r2 = long delay + sleep downscaling (R2_ARMS); arc = awake-rest replay (ARC_ARMS); "
-                         "fi = load-dependent renormalization under later learning (FI_ARMS)")
+                         "fi = load-dependent renormalization under later learning (FI_ARMS); "
+                         "arcc = awake-rest replay with pattern completion (ARCC_ARMS, Amendment 8)")
     ap.add_argument("--out", default=None)
     ap.add_argument("--only", default=None,
                     help="comma list of arm names: run only these, ungraded (a de-risk subset, never a gate row)")
@@ -1739,12 +1978,13 @@ def main():
     if a.selftest:
         return 0 if selftest() else 1
     if a.out is None:                                   # base keeps its pre-branch default exactly
-        a.out = {"rc": RC_OUT, "r2": R2_OUT, "arc": ARC_OUT, "fi": FI_OUT}.get(
+        a.out = {"rc": RC_OUT, "r2": R2_OUT, "arc": ARC_OUT, "fi": FI_OUT, "arcc": ARCC_OUT}.get(
             a.family, "research/findings/raw/_da_tag_capture_chat")
     if a.offcheck:
         return 0 if offcheck(a.out, ltm=a.ltm)["byte_identical_off"] else 1
     if a.aggregate:
-        {"rc": aggregate_rc, "r2": aggregate_r2, "arc": aggregate_arc, "fi": aggregate_fi}.get(
+        {"rc": aggregate_rc, "r2": aggregate_r2, "arc": aggregate_arc, "fi": aggregate_fi,
+         "arcc": aggregate_arcc}.get(
             a.family, aggregate)(a.aggregate)
         return 0
     if a.seed is None:
