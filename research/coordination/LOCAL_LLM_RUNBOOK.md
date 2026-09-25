@@ -131,6 +131,9 @@ lines here after the Tuesday reset.)_
 - Scoring findings, harvested but not yet written: fi (aggregate reads NO-GO 3/6; seeds 43 and 101 look like an encoding
   miss, not forgetting; needs the independent check + `preconditions` block) and D6 at N=2000 (recall holds to 2000; cost
   ceiling 50-500; explain HEBB vs COPY PARITY-BY-CONSTRUCTION).
+- Make `tools/gpu_queue.sh` and `tools/pool_autodispatch.sh` daemons immune to in-place edits of their own script (FAILURE_LOG
+  2026-09-25); claim-check round 8 (MEDIUM: more false blocks on block-scope derived markers) and the pool-stall detector (HIGH: no
+  timeout on the live-node memory probe) are parked with their final-review issue lists in workflow wf_9944d7c2-aca.
 - Small fixes: findings cite the git-ignored receipt `research/queue/.corpus_checks.jsonl` (FAILURE_LOG 2026-09-25; if a
   commit in a worktree is blocked for it, copy that file from the main checkout into the worktree); the GPU auto-swap's two
   LOW review notes (validate the profile name before writing the restore marker; `|| true` on the test-only stop path).
