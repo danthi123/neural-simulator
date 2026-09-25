@@ -1,0 +1,35 @@
+{
+ "run_id": "1790308373-2876610",
+ "runner": "research/runners/_da_tag_capture_chat_probe.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-a18a2a18b0b9ae4e8/research/runners/_da_tag_capture_chat_probe.py",
+  "--offcheck",
+  "--out",
+  "research/findings/raw/_sleep_replay_capture_r2/offcheck_counterfactual.json"
+ ],
+ "git_sha": "24380cbe4",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-24T23:52:53",
+ "env": {
+  "SIM_BACKEND": "numpy",
+  "OMP_NUM_THREADS": "1",
+  "OPENBLAS_NUM_THREADS": "1",
+  "MKL_NUM_THREADS": "1",
+  "NUMEXPR_NUM_THREADS": "1",
+  "CUDA_VISIBLE_DEVICES": ""
+ },
+ "host": "dant123-wk",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 11938.6,
+ "corpus_check_query": "ordinary facts forgotten overnight under DA tag-and-capture; no sleep replay or repetition route to capture",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_sleep_replay_capture_r2/offcheck_counterfactual.json"
+}
