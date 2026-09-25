@@ -144,6 +144,22 @@ prediction that it should). Neither item is a defect in the rc-family gates scor
 follow-on questions the rc prereg itself scoped out ("one fact per conversation... a follow-on family, not
 claimed here").
 
+### SCOPE NOTE (2026-09-25, post-hoc; does not change the GO verdict above)
+
+This finding's own registered gates (RC1-RC6) show the pair keeps ONE ordinary telling (`datn`) overnight on 6/6
+seeds; that is the scope of the GO 6/6 above and it is unchanged. Read together with the separate, later r2 family
+cited just above, the pair's reach on OTHER tellings of the same mechanism is narrower than "the pair keeps
+ordinary facts" would suggest -- a wording the project board used, which the DA-tag-capture + sleep-replay-capture
+pair verify-go review (`research/findings/2026-09-25-da-capture-sleep-replay-pair-verify-go-review.md`, finding
+I-1) flags as an overclaim when read as a general statement about the pair rather than about RC1's one telling. As
+measured across these two findings, not this one alone: a second, WEAK telling (the same fact, said last after its
+own words habituated the DA; r2's `d3w_rc`/`d10w_rc`) is recalled the next morning on 4 of 6 seeds and not recalled
+on 2 of 6 (seeds 43, 101) -- whether it was ever capturable at write time on those 2 is UNMEASURED, since no arm
+recalls it immediately or runs it with the ledger off; and a fact told 4 hours before sleep (r2's `ld_rc`, already
+named above) is not rescued on 0 of 6 seeds, against today's default which keeps it on 6 of 6 (`ld_ledger_off`).
+None of these numbers changes this finding's own GO 6/6 on RC1-RC6, which is scoped to the one telling those gates
+test.
+
 ## Flip candidacy
 
 `BRAIN_SLEEP_REPLAY_CAPTURE` is wired (reachable from `/api/brain-chat` through the same companion-ON path as the
