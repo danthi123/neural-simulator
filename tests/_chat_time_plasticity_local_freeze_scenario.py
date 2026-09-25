@@ -140,11 +140,66 @@ def run(mode: str, seed: int = 42) -> dict:
     return out
 
 
+def run_fallback_pool_check(seed: int = 42) -> dict:
+    """Coordinator review round 2 (2026-09-24): with `BRAIN_ONEBRAIN_WAVE3_POOL=0` AND `BRAIN_ONEBRAIN_SINGLE_
+    POOL=0` (both default-ON; setting both is required to actually reach the LEGACY pool below -- WAVE3_POOL=0
+    alone still falls through to `onebrain_single_pool_production.get_single_pool`, which builds via
+    `onebrain_merge_framework.merge_organs` + the SAME `_surprise_spec`/`_worldmodel_spec` this fix already
+    threads `local_freeze_gate` into, so it does NOT crash), `get_organ()` falls back further, to the legacy
+    `onebrain_merge_production.MergedSubstrate` (pool #1, surprise+world-model only) -- built via its OWN inline
+    `build_expectation_circuit(...)`/`build_world_model_circuit(...)` calls, which never pass `local_freeze_gate`.
+    With `BRAIN_WORLDMODEL_LOCAL_FREEZE=1`/`BRAIN_SURPRISE_LOCAL_FREEZE=1` also set, `_build_one` used to call
+    `bridge.set_plasticity_gate(<GATE>, 0.0)` unconditionally and crash with `KeyError` (the gate was never
+    declared on this bridge's wiring plan). `_freeze_local_or_fallback` (in both organ modules) now checks
+    `<GATE> in bridge.list_plasticity_gates()` first and falls back to the pre-fix `cfg.enable_hebbian_learning
+    = False` with a logged `RuntimeWarning` instead of crashing. This function builds BOTH organs through the
+    real `get_organ()` entry point under this exact flag combination and reports whether it crashed, whether the
+    fallback warning fired, and what state the bridge ended up in."""
+    seed = int(seed)
+    os.environ["BRAIN_ONEBRAIN_WAVE3_POOL"] = "0"
+    os.environ["BRAIN_ONEBRAIN_SINGLE_POOL"] = "0"
+    os.environ["BRAIN_WORLDMODEL_LOCAL_FREEZE"] = "1"
+    os.environ["BRAIN_SURPRISE_LOCAL_FREEZE"] = "1"
+
+    import warnings as _warnings
+    out = {"seed": seed, "crashed": False, "error": None, "warnings": []}
+    try:
+        with _warnings.catch_warnings(record=True) as caught:
+            _warnings.simplefilter("always")
+            from research.runners.onebrain_merge_production import get_merged_substrate
+            pool_before = get_merged_substrate(seed)   # confirms which pool this combination actually reaches
+            out["reached_pool"] = type(pool_before).__name__
+
+            from research.runners.surprise_production_organ import get_organ as get_surprise_organ
+            from research.runners.worldmodel_production_organ import get_organ as get_worldmodel_organ
+            surp = get_surprise_organ(seed=seed)
+            surp.ensure_built()
+            wm = get_worldmodel_organ(seed=seed)
+            wm.ensure_built()
+            out["warnings"] = [str(w.message) for w in caught]
+    except Exception as e:
+        out["crashed"] = True
+        out["error"] = f"{type(e).__name__}: {e}"
+        return out
+
+    out["surprise_bridge_is_worldmodel_bridge"] = bool(surp.bridge is wm._st["bridge"])
+    out["enable_hebbian_learning_after_build"] = bool(surp.bridge.core_config.enable_hebbian_learning)
+    out["gates_present"] = sorted(surp.bridge.list_plasticity_gates())
+    # both organs still read correctly on the fallback (global-kill) path -- the crash fix must not make the
+    # organ itself non-functional, only change HOW it freezes.
+    out["surprise_answer"] = surp.judge("dog", "chase", "cat", "bone")
+    out["worldmodel_answer"] = wm.expectation(1)
+    return out
+
+
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
-    ap.add_argument("--mode", choices=["off", "on"], required=True)
+    ap.add_argument("--mode", choices=["off", "on", "fallback-pool"], required=True)
     ap.add_argument("--seed", type=int, default=42)
     a = ap.parse_args()
-    result = run(a.mode, seed=a.seed)
+    if a.mode == "fallback-pool":
+        result = run_fallback_pool_check(seed=a.seed)
+    else:
+        result = run(a.mode, seed=a.seed)
     print(json.dumps(result, default=str))
     sys.exit(0)

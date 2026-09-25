@@ -34,6 +34,33 @@ def _run_scenario(mode: str) -> dict:
     return json.loads(line)
 
 
+def test_fallback_pool_does_not_crash_and_warns():
+    """Coordinator review round 2 (2026-09-24): `BRAIN_ONEBRAIN_WAVE3_POOL=0` + `BRAIN_ONEBRAIN_SINGLE_POOL=0`
+    (both default-ON; both must be off to actually reach the legacy `onebrain_merge_production.MergedSubstrate`
+    -- WAVE3_POOL=0 alone still falls through to `onebrain_single_pool_production.get_single_pool`, which builds
+    via `onebrain_merge_framework.merge_organs` and so already carries the threaded `local_freeze_gate`) used to
+    raise `KeyError` when either `BRAIN_*_LOCAL_FREEZE` flag was on, because that legacy pool builds surprise/
+    world-model's regions via its OWN inline `build_expectation_circuit`/`build_world_model_circuit` calls,
+    which never pass `local_freeze_gate`, so the gate `set_plasticity_gate` needs was never declared.
+    `_freeze_local_or_fallback` (both organ modules) now checks gate presence first and falls back to the
+    pre-fix global kill with a logged `RuntimeWarning` instead of crashing."""
+    r = _run_scenario("fallback-pool")
+    assert r["crashed"] is False, f"still crashes on the fallback pool: {r.get('error')!r}"
+    assert r["reached_pool"] == "MergedSubstrate", (
+        "this test's premise (reaching the legacy pool) did not hold -- got a different pool object: "
+        f"{r.get('reached_pool')!r}")
+    assert len(r["warnings"]) == 2, f"expected exactly 2 fallback warnings (surprise + world-model), got: {r['warnings']!r}"
+    assert any("surprise_frozen" in w for w in r["warnings"])
+    assert any("worldmodel_frozen" in w for w in r["warnings"])
+    # the fallback engages the OLD mechanism on this pool -- no gate is declared, and the global switch is False,
+    # exactly the pre-fix behavior (this pool is no WORSE off than before the fix existed).
+    assert r["gates_present"] == []
+    assert r["enable_hebbian_learning_after_build"] is False
+    # the organs themselves still work correctly on the fallback path (the crash fix is not a functional no-op).
+    assert r["surprise_answer"]["surprised"] is True
+    assert r["worldmodel_answer"]["pred_sign"] == 1
+
+
 def test_off_is_byte_identical_to_the_old_global_kill():
     """Default (flag unset/off): no new gate is even DECLARED, and the shared cfg ends up with
     `enable_hebbian_learning=False` exactly as `main` does today -- the mechanism this test guards is entirely
