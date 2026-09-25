@@ -3771,6 +3771,37 @@
    "n_facts": null
   }
  },
+ "provenance": {
+  "covered_by_parent_cells": {
+   "s100/open-ended-generation": {
+    "oed_distributional_s100.json": "covered-by-parent: no own sidecar, but written by the same process as lb.json.prov.json (mtime 1790292306 in parent window [1790292271, 1790311407]), content matches this cell's own lb.json entry"
+   },
+   "s101/open-ended-generation": {
+    "oed_distributional_s101.json": "covered-by-parent: no own sidecar, but written by the same process as lb.json.prov.json (mtime 1790295121 in parent window [1790295078, 1790295121]), content matches this cell's own lb.json entry"
+   },
+   "s102/open-ended-generation": {
+    "oed_distributional_s102.json": "covered-by-parent: no own sidecar, but written by the same process as lb.json.prov.json (mtime 1790295647 in parent window [1790295606, 1790295648]), content matches this cell's own lb.json entry"
+   },
+   "s42/open-ended-generation": {
+    "oed_distributional.json": "covered-by-parent: no own sidecar, but written by the same process as lb.json.prov.json (mtime 1790283708 in parent window [1790283651, 1790283708]), content matches this cell's own lb.json entry"
+   },
+   "s43/open-ended-generation": {
+    "oed_distributional_s43.json": "covered-by-parent: no own sidecar, but written by the same process as lb.json.prov.json (mtime 1790286500 in parent window [1790286458, 1790286501]), content matches this cell's own lb.json entry"
+   },
+   "s44/open-ended-generation": {
+    "oed_distributional_s44.json": "covered-by-parent: no own sidecar, but written by the same process as lb.json.prov.json (mtime 1790289115 in parent window [1790289079, 1790289116]), content matches this cell's own lb.json entry"
+   }
+  },
+  "invalid_cells": {},
+  "n_cells_checked": 168,
+  "n_covered_by_parent": 6,
+  "n_invalid": 0,
+  "n_valid": 168,
+  "pin": "9db7613296c3d02a161b36fb15da3983188b7902",
+  "pin_source": "--pin",
+  "rule": "B2b Amendment 1.2",
+  "status": "verified"
+ },
  "robust_core": [
   "affect-coloring",
   "affect-drives-response",
