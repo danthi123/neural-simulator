@@ -31,12 +31,16 @@ round that did so opened a hole (see HISTORY): deleting `*`/`_` glued numbers to
      (`1.525e-1`), a glued unit (`0.1525ms`) and a scale suffix (`1.088B`, read as the scaled value OR the bare
      mantissa). A number is measurement-shaped when its stated precision is >= 3 decimals (d = fraction digits
      minus the exponent). A dash/minus glyph directly before the digits is a SIGN unless a digit, `.`, `)`, `]`
-     or `%` precedes it (then it is a range or a subtraction); an ASCII hyphen after a word character or after
-     `)`, `]`, `%` is AMBIGUOUS (main and round 5 decide those the other way) and is read BOTH ways, each a claim.
-     Numbers are ALSO extracted from a lightly normalized COPY in which every character maps to exactly one
-     character -- dash/minus variants to `-`, zero-width/format/combining/filler characters to a SPACE, dot-like
-     characters between digits to `.`, any Unicode decimal digit to its ASCII digit -- so no reading can glue or
-     drop anything. A third, ADDITIVE reading is the text a reader SEES (markdown-it's tokens: emphasis, tags,
+     or `%` precedes it (then it is a range or a subtraction). Where main and round 5 decide a dash the other way
+     the RAW reading reads the number BOTH ways, each a claim: an ASCII hyphen after a word character or after
+     `)`, `]`, `%`; a true minus glyph (U+2212, U+2796, U+02D7) after a word character; and ANY other dash glyph
+     (en/em dash, hyphen, the small/fullwidth hyphen-minus, ...) in a sign position -- main and round 5 never read
+     a non-ASCII dash as a sign. Numbers are ALSO extracted from two lightly normalized COPIES in which every
+     character maps to exactly one character -- dash/minus variants to `-`, zero-width/format/combining/filler
+     characters to a SPACE, any Unicode decimal digit to its ASCII digit, and dot-like characters between digits to
+     `.` in one copy and every dot-like character to a SPACE in the other (the `.` copy turns `5`, U+00B7, U+0663,
+     `2.5051` into `5.32.5051` and hides the 32.5051 main reads) -- so no reading can glue or drop anything. A
+     further, ADDITIVE reading is the text a reader SEES (markdown-it's tokens: emphasis, tags,
      comments, code-span backticks and hidden elements render as NOTHING, entities and escapes are decoded), in
      two variants (elements that carry an attribute shown, and hidden -- a style can hide them). A reader number is
      the SAME claim as a raw one only by POSITION: made of verbatim source characters with no markup glued inside
@@ -55,11 +59,13 @@ round that did so opened a hole (see HISTORY): deleting `*`/`_` glued numbers to
   3. MATCHING. A number written with d decimals matches an artifact value v when |x - v| <= 0.5 * 10^-d (v rounds
      to x at the stated precision), or within the legacy relative tolerance max(5e-6, 1e-4 |x|) that main and
      round 5 used. The rule used (exact / rounding / legacy) is reported per number.
-  4. DISCRIMINATING POWER, PER CLAIM. For every checked number, CHANCE_DECOYS (100) seeded decoys x + k * 10^-d
-     (k drawn without replacement from +-[1, CHANCE_WINDOW]) are matched with rule 3; the fraction that match is
-     that CLAIM's own chance-match rate. A number that matches, but whose own rate exceeds CHANCE_MAX, is NOT
-     supported: it fails with "cite a narrower artifact or state more decimals". (Round 7 averaged the rate over
-     the document, so one wrong coarse headline among many precise numbers passed.) The distribution is printed.
+  4. DISCRIMINATING POWER, PER CLAIM. For every checked number, ALL 2 * CHANCE_WINDOW decoys x + k * 10^-d
+     (k = +-1 .. +-CHANCE_WINDOW) are matched with rule 3; the fraction that match is that CLAIM's own chance-match
+     rate -- exact, so it depends on the value, stated precision, scale suffix and tier, never on how the number is
+     spelled. A number that matches, but whose own rate exceeds the limit for its stated precision, chance_max(d)
+     (0.04 at 3 decimals, 0.15 at 4, CHANCE_MAX 0.20 at 5 or more), is NOT supported: it fails with "cite a
+     narrower artifact or state more decimals". (Round 7 averaged the rate over the document, so one wrong coarse
+     headline among many precise numbers passed.) The distribution is printed.
   5. KEPT FROM ROUND 5 / REQUIRED: WARNINGs for the inert scope idioms; strict UTF-8 and no bidirectional controls
      (UNREADABLE blocks); `claim_check: synthesis` applies only inside a CLOSED frontmatter block with a non-empty
      `claim_check_reason:`, only where main and round 5 also read the flag (before the first `\n---` of a file
@@ -68,8 +74,10 @@ round that did so opened a hole (see HISTORY): deleting `*`/`_` glued numbers to
      (`G**O**`, `G<!-- -->O`, `&#71;O`), or an HTML `<h1>`-`<h6>` -- carries a verdict word (GO(s), NO-GO, NOGO,
      PASS(ED/ES), FAIL(ED/S), REFUTED, CONFIRMED; case-insensitive, invisible characters removed); the
      LOW_COVERAGE floor on DISTINCT checked values seen outside HTML comments, link-reference lines and hidden
-     elements; a citation inside one of those is ignored (with a WARNING); `tools/gates/claim_check_selftest.py`
-     (class CCT) passes this file's selftest problems through verbatim.
+     elements (an HTML comment ends at the FIRST `-->`, as a browser ends it); a citation inside one of those adds
+     nothing to the pool (with a WARNING) but is still opened -- a missing or unreadable file fails, as in main and
+     round 5; `tools/gates/claim_check_selftest.py` (class CCT) passes this file's selftest problems through
+     verbatim.
 
 HISTORY -- every round, and the hole each one left (each hole is a SELFTEST_CASES entry whose `wrong_on` is
 re-derived from git by tests/test_claim_check_line_only.py on every run):
@@ -95,39 +103,62 @@ re-derived from git by tests/test_claim_check_line_only.py on every run):
      so a sign error main and r5 catch passed; the synthesis bar missed headings split by markup, a `title: |`
      block across a blank line, and accepted a quoted flag, a flag after an earlier `----` line and a byte-order
      mark that main and r5 refuse.
+  r8a (654d95664, round 8 as reviewed): a flat 0.20 chance limit let wrong 3-decimal numbers through more often
+     than main (replayed: 12.9% vs 7.6%; in the review's sampling 14.7% vs 5.1%); a non-ASCII dash before a number
+     was read only as a minus sign (`lesion`, U+2013, `0.1625`), so a sign error main and r5 catch passed; the `.`
+     copy glued a dot-like character and an Arabic-Indic digit into `5.32.5051` and hid the 32.5051 main reads; a
+     hidden citation of a corrupt file was only checked for existence; the chance rate was a 100-decoy sample
+     seeded by the claim's TEXT (one value rated 0.16 / 0.20 / 0.28 as `.417` / `0.417` / `00.417`); the second
+     reader reading dropped a claim as a duplicate while ignoring its scale suffix
+     (`0.15<b>2</b>5<span class="u">k</span>`); several scans were quadratic (210 KB of `x <b y` took 198 s, one
+     line of `<!--derived: x` never finished); and no registry case pinned the BOTH-parsers marker rule (an
+     either-parser mutant passed the whole suite).
 
-CALIBRATION (2026-09-25; re-derive with `tools/claim_check_retro_compare.py --since 2026-09-01 --calibrate`;
+CALIBRATION (2026-09-25; re-derive with `tools/claim_check_retro_compare.py --since 2026-09-01 --calibrate --replay`;
 outputs committed as research/coordination/claimcheck_r8_retro_since2026-09-01_2026-09-25.{tsv,txt}):
-  * CHANCE_MAX = 0.20. The per-claim rate over the 3,821 precision-tier matches in the 353 findings added since
-    2026-09-01: p50 0.02, p90 0.16, p95 0.25, p99 0.62. Docs that would fail on breadth ALONE at T = 0.05 / 0.10 /
-    0.15 / 0.20 / 0.25 / 0.30: 45 / 32 / 24 / 15 / 11 / 7. At 0.20 a wrong number of a claim's own shape is accepted
-    at most 1 time in 5; the 15 docs it fails on breadth alone (13 on numbers correct at their written precision,
-    2 on legacy-only matches) are each fixed by one more stated decimal or a narrower citation. The 19 legacy-only
-    matches have median rate 0.53: the relative window survives only against sparse pools.
-  * CHANCE_WINDOW = 500 units of the claim's last decimal either side, CHANCE_DECOYS = 100 drawn without
-    replacement, seeded by the claim's own text (sampling error ~0.04 at the 0.20 bar).
+  * The per-claim limit depends on the stated precision: CHANCE_MAX_BY_DECIMALS {3: 0.04, 4: 0.15}, CHANCE_MAX
+    0.20 at 5 or more decimals -- the loosest of the swept limits at which round 8 accepts REPLAYED WRONG NUMBERS
+    (every matched claim shifted by 1..10 units of its last decimal) no more often than main at EVERY stated
+    precision, in both samplings the script prints. Every distinct matched claim, both directions: 3 decimals
+    3.89% vs main 7.59%, 4: 6.85% vs 8.81%, 5: 16.74% vs 17.47%, 6+: 45.17% vs 81.79%. The review's sampling
+    (claims the flat limit accepted, +1..+10): 3: 4.88% vs 5.07%, 4 and 5: equal (879 and 341 of 12,420 and
+    1,230), 6+: 47.58% vs 82.44%. The flat 0.20 round 8 was reviewed with: 3 decimals 12.9% vs 7.6% (14.7% vs
+    5.1%). Rates are measured on the 360 findings since 2026-09-01 with both rules on round 8's own pool.
+  * The cost of those limits, same findings: 153 fail (0.20 flat: 119); 45 fail ONLY on numbers matched at
+    their written precision but too broad -- each fixed by one more stated decimal or a narrower citation.
+  * The per-claim rate over the 4,030 precision-tier matches: p50 0.020, p90 0.160, p95 0.218, p99 0.572. The
+    19 legacy-only matches have median rate 0.52: the relative window survives only against sparse pools.
+  * CHANCE_WINDOW = 500 units of the claim's last decimal either side; all 1,000 decoys are counted.
   * The rate is taken in the TIER that matched: a claim matched at its stated precision is rated against the
     precision rule, a legacy-only match against precision-or-legacy. (Rating every claim against the union made a
     6-decimal value that EXACTLY matches the artifact read as "too broad" beside a dense sweep -- the relative
     window, not the claim, was broad.)
   * LOW_COVERAGE_MIN_TOTAL = 30: the largest non-synthesis doc since 2026-09-01 under 5% distinct-visible-checked
     has 27 numeric claims.
-  * FALSE POSITIVES on the same 353 findings (none re-gated: the gate checks only NEWLY ADDED findings): round 8
-    fails 122 (main 31, r5 135, r6 155, r7 108). Of its 911 flagged numbers, 274 (30%) are correct at their
-    written precision and fail only as too broad (r5: 931 of its 1,381 flags, 67%, were correct roundings);
-    13 findings fail ONLY on such numbers. The rest by cause: 378 unmarked prose numbers (derived, aggregated,
-    quoted, or wrong), 75 identifiers, 73 near misses (a truncation or a wrong rounding), 55 with nothing
-    loaded, 28 in code spans, 12 read as a minus sign, 2 in comments, 1 in a fence. The one finding main fails
-    and round 8 passes writes 0.031 for a cited 0.0307 (a correct rounding; its own chance rate 11%).
+  * FAILURES on the same 360 findings (none re-gated: the gate checks only NEWLY ADDED findings): round 8 fails
+    153 (main 30, r5 138, r6 158, r7 107, r8a 122; r8a -> round 8: 31 newly fail, none newly pass). Of its 1,668
+    flagged numbers, 1,030 (62%) MATCHED at their written precision but are too broad -- by this checker's own
+    logic that match does not show them correct, since a random number of their shape matches too (round 8 as
+    reviewed called such numbers "correct"; r5: 939 of its 1,395 flags were roundings main's window rejects). By
+    cause: 1,044 too broad (14 of them legacy-only matches), 371 unmarked prose numbers (derived, aggregated,
+    quoted, or wrong), 75 identifiers, 72 near misses (a truncation or a wrong rounding), 55 with nothing loaded,
+    28 in code spans, 20 whose artifact holds the opposite sign, 2 in comments, 1 in a fence. The one finding
+    main fails and round 8 passes writes 0.031 for a cited 0.0307 (a rounding at its written precision).
 
 ACCEPTED TRADE vs main and round 5 (required by the round-8 spec): rule 3's precision window 0.5 * 10^-d is WIDER
 than main's relative window for a coarse small number (0.477 matches a stored 0.4772; main's window is 4.8e-5), so
-a wrong coarse number that lands in the window of an unrelated cited value passes where main fails it -- bounded
-per claim by rule 4: such a match is accepted only when a random number of the claim's own shape would match less
-than CHANCE_MAX of the time.
+a wrong coarse number that lands in the window of an unrelated cited value can pass where main fails it -- bounded
+per claim by rule 4, and in aggregate no more often than in main at any stated precision (CALIBRATION, measured
+above: at 3 decimals 3.89% / 4.88% of replayed wrong numbers against main's 7.59% / 5.07%).
+COST: every scan is linear in the size of the document. markdown-it's html_inline rule, which rescanned to the end
+of the paragraph from every unclosed `<!--`, `<?`, `<!X` or `<![CDATA[`, is guarded (`_html_inline_linear`, exact),
+and every regex that rescanned a line or the text from each candidate is replaced by an index-and-bisect emulation
+pinned against it by a differential test (the regexes stay here as the SPEC). 200 KB adversarial documents scan in
+0.3-4 s (round 8 as reviewed: 39 s to never finishing). Known residual: markdown-it-py's own link-label scan costs
+about 1.5 s per 100 KB of a paragraph dense with `[` (the same in round 8 as reviewed; main has no parser).
 CANNOT CATCH (known): a number spelled in words; a decimal comma; homoglyph letters for digits; digit-group
 separators (`0.152 5`); an integer mantissa with an exponent (`1525e-4`, as in main and r5); a wrong number within
-the matching window of an unrelated cited value whose own chance rate is under CHANCE_MAX; a wrong number within
+the matching window of an unrelated cited value whose own chance rate is under its limit; a wrong number within
 the legacy relative window of the right one (1e-4 |x|, as in main and r5); a value that IS in the artifact but
 belongs to another quantity (existence is not agreement -- gates/stated_value_mismatch); content hidden by CSS
 from a stylesheet on an element with no attribute.
@@ -148,7 +179,6 @@ import io
 import json
 import math
 import os
-import random
 import re
 import sys
 import unicodedata
@@ -158,6 +188,8 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 try:                                               # pinned in requirements-dev.txt: markdown-it-py>=4.2,<5
     from markdown_it import MarkdownIt
+    from markdown_it.common import html_re as _mdit_html_re
+    from markdown_it.rules_inline.html_inline import html_inline as _mdit_html_inline
     _MD_IMPORT_ERROR = None
 except Exception as _e:                            # fail CLOSED: without the parser no marker can be verified
     MarkdownIt = None
@@ -210,7 +242,7 @@ VERDICT_RE = re.compile(r"\b(GO|NO-GO|PASS|FAIL|REFUTED|CONFIRMED)\b")
 DERIVED_MARK = "<!--derived-->"
 DERIVED_CLOSE = "<!--/derived-->"                  # closes nothing -- matched only to print a WARNING
 # The ONLY two spellings that can exempt anything. One physical line; the note may not contain `-->`.
-_EXACT_MARKER_RE = re.compile(r"<!--derived(?:-->|:[ \t]+[^\n]*?\S[^\n]*?-->)")
+_EXACT_MARKER_RE = re.compile(r"<!--derived(?:-->|:[ \t]+[^\n]*?\S[^\n]*?-->)")   # the SPEC; matched by _marker_end
 _MARKER_LIKE_RE = re.compile(r"<!--[ \t]*derived", re.I)   # anything an author may have MEANT as a marker
 _STANDALONE_MARKER_RE = re.compile(r"^\s*(?:>\s*)*<!--\s*derived\b[^\n]*?-->\s*$", re.I)
 _ATX_DERIVED_RE = re.compile(r"^\s*(?:>\s*)*#{1,6}\s*[*_`]*\s*derived\b", re.I)
@@ -220,20 +252,44 @@ MAX_EXEMPT_PER_MARKER = 8
 MAX_EXEMPT_PER_LINE = MAX_EXEMPT_PER_MARKER        # name kept for callers of earlier rounds
 # Cell cuts: every `|` (escaped or not, table row or not -- a cut only NARROWS an exemption), `<br>` and
 # block-level tags.
-_CELL_CUT_RE = re.compile(r"\||<\s*/?\s*(?:br|p|div|li|tr|td|th|table|thead|tbody|tfoot|ul|ol|dl|dt|dd|h[1-6]|hr|"
-                          r"blockquote|pre|section|article|header|footer|details|summary|caption|figure|"
-                          r"figcaption)\b[^>\n]*>", re.I)
+_CELL_TAGS = (r"(?:br|p|div|li|tr|td|th|table|thead|tbody|tfoot|ul|ol|dl|dt|dd|h[1-6]|hr|blockquote|pre|section|"
+              r"article|header|footer|details|summary|caption|figure|figcaption)\b")
+_CELL_CUT_RE = re.compile(r"\||<\s*/?\s*" + _CELL_TAGS + r"[^>\n]*>", re.I)   # the SPEC; matched by _cell_cuts
+_CELL_CUT_HEAD_RE = re.compile(r"\||<\s*/?\s*" + _CELL_TAGS, re.I)
+
+
+def _cell_cuts(ln):
+    """Start offsets of `_CELL_CUT_RE.finditer(ln)` (non-overlapping) in linear time: the regex scanned from every
+    `<br` to the end of the line when no `>` followed."""
+    cuts = []
+    gt = None
+    resume = 0
+    for m in _CELL_CUT_HEAD_RE.finditer(ln):
+        if m.start() < resume:
+            continue
+        if m.group() == "|":
+            cuts.append(m.start())
+            continue
+        if gt is None:
+            gt = _Next(ln, ">")
+        g = gt(m.end())
+        if g >= 0:
+            cuts.append(m.start())
+            resume = g + 1
+    return cuts
 
 # =================================================================================================================
 # matching and discriminating power
 # =================================================================================================================
 LEGACY_REL_TOL = 1e-4
 LEGACY_ABS_FLOOR = 5e-6
-CHANCE_DECOYS = 100
 CHANCE_WINDOW = 500
-CHANCE_SEED = 20260925
-# CALIBRATED 2026-09-25 -- see the docstring CALIBRATION (tools/claim_check_retro_compare.py --calibrate).
-CHANCE_MAX = 0.20
+CHANCE_DECOYS = 2 * CHANCE_WINDOW                  # every decoy, +-1 .. +-CHANCE_WINDOW: the rate is exact
+# CALIBRATED 2026-09-25 -- see the docstring CALIBRATION (tools/claim_check_retro_compare.py --calibrate --replay).
+# The limit depends on the stated precision: at 3 decimals the precision window (+-0.0005) is ~10x main's relative
+# window for a number near 0.5, so a looser limit let wrong 3-decimal numbers through more often than main does.
+CHANCE_MAX = 0.20                                  # 4 or more decimals
+CHANCE_MAX_BY_DECIMALS = {3: 0.04, 4: 0.15}
 
 # LOW COVERAGE (defense in depth against marking (almost) everything derived). Distinct checked values seen
 # outside hidden regions / all numeric claims.
@@ -257,7 +313,9 @@ _SETEXT_ANY_RE = re.compile(r"^[ \t]{0,3}(?:=+|-+)[ \t]*$")
 # =================================================================================================================
 # hidden regions (for CITATIONS and the COVERAGE numerator only -- numbers there are still checked)
 # =================================================================================================================
-_COMMENT_RE = re.compile(r"<!---?>|<!--(?:[^-]|-[^-]|--[^>])*-->")      # markdown-it's own comment pattern
+# markdown-it's own comment pattern -- kept for reference: a hidden comment span follows the BROWSER (_comment_spans)
+_COMMENT_RE = re.compile(r"<!---?>|<!--(?:[^-]|-[^-]|--[^>])*-->")
+# the SPEC of a hidden element's opening tag; matched in linear time by _hidden_element_spans (differential test)
 _HIDDEN_OPEN_RE = re.compile(r"<([A-Za-z][A-Za-z0-9-]*)\b(?=[^>]*(?:\bhidden\b|display\s*:\s*none|"
                              r"visibility\s*:\s*hidden))[^>]*>|<(script|style|template|noscript)\b[^>]*>", re.I)
 _TAG_RE = re.compile(r"</?[A-Za-z][A-Za-z0-9-]*(?:\s[^<>]*)?/?>")
@@ -351,9 +409,12 @@ def load_artifacts(paths):
 # =================================================================================================================
 # 1. readings
 # =================================================================================================================
-def _n_copy(text):
+def _n_copy(text, dot_as_space=False):
     """The lightly normalized copy: every character maps to EXACTLY ONE character, so positions are preserved and
-    nothing can be glued or dropped."""
+    nothing can be glued or dropped. A dot-like character between digits becomes `.`; with `dot_as_space` EVERY
+    dot-like character becomes a space instead -- a second copy, because turning `5`, U+00B7, U+0663, `2.5051` into
+    `5.32.5051` hides the 32.5051 main reads (the `.` glues it into a version-like run), while the space copy reads
+    `5 32.5051`."""
     out = list(text)
     n = len(text)
     for i, c in enumerate(text):
@@ -366,6 +427,9 @@ def _n_copy(text):
         elif unicodedata.category(c) == "Nd":
             out[i] = str(unicodedata.decimal(c))
         elif c in _DOTLIKE:
+            if dot_as_space:
+                out[i] = " "
+                continue
             left = text[i - 1] if i > 0 else ""
             right = text[i + 1] if i + 1 < n else ""
             if (left.isdigit() or left == "") and right.isdigit():
@@ -374,16 +438,31 @@ def _n_copy(text):
 
 
 _WORDCHAR_RE = re.compile(r"\w")
+# The glyphs that ARE minus signs. Every other character of _DASH_CHARS (en/em dash, hyphen, figure dash, the
+# small/fullwidth hyphen-minus, ...) is punctuation as often as a sign, and main and round 5 never read it as one.
+_MINUS_GLYPHS = frozenset("\u2212\u2796\u02d7")
 
 
 def _ambiguous_hyphen(s, a):
-    """True when an ASCII hyphen-minus directly before the digits at `a` is read as a sign by one of main/round 5
-    (sign unless a word character or `.` precedes it) and round 8 (sign unless a digit, `.`, `)`, `]` or `%` precedes
-    it) but not the other: after a letter or `_` (`acc-0.1525`) or after `)`, `]`, `%` (`(a)-0.1525`)."""
-    if a < 1 or s[a - 1] != "-":
+    """True when the dash directly before the digits at `a` is read as a sign by one of main/round 5 and round 8 but
+    not the other, so the RAW reading reads the number BOTH ways (each reading a claim of its own):
+      * an ASCII hyphen-minus after a letter or `_` (`acc-0.1525`: main/round 5 read no sign) or after `)`, `]`, `%`
+        (`(a)-0.1525`: main/round 5 read a sign, round 8 a range);
+      * a true minus glyph (U+2212, U+2796, U+02D7) after a word character (`x`, U+2212, `0.1625`): main/round 5 never read a
+        non-ASCII dash as a sign; after a space or punctuation it is a minus sign (every non-ASCII sign in the
+        findings since 2026-09-01 is U+2212 there);
+      * any OTHER dash glyph in a sign position (`lesion`, U+2013, `0.1625`; `x `, U+2014, `0.1625`): main/round 5 read no sign."""
+    if a < 1 or s[a - 1] not in _DASH_CHARS:
         return False
+    dash = s[a - 1]
     prev = s[a - 2] if a >= 2 else " "
-    return prev in ")]%" or (bool(_WORDCHAR_RE.match(prev)) and prev not in "0123456789")
+    if dash == "-":
+        return prev in ")]%" or (bool(_WORDCHAR_RE.match(prev)) and prev not in "0123456789")
+    if prev in _RANGE_LEFT:                              # a range/subtraction in every revision: never a sign
+        return False
+    if dash in _MINUS_GLYPHS:
+        return bool(_WORDCHAR_RE.match(prev))
+    return True
 
 
 def _extract(s, both_signs=False):
@@ -545,13 +624,14 @@ def _reader_text_html(content, hide_attr=False):
     hidden element's content is skipped, entities are decoded (not verbatim)."""
     els = []
     ln, i, n = 0, 0, len(content)
+    comment_end = dict(_comment_spans(content))          # linear: no per-`<` rescan to the end of the block
     while i < n:
         c = content[i]
         if c == "<":
-            m = _COMMENT_RE.match(content, i) or _TAG_RE.match(content, i)
-            if m:
-                tag = m.group(0)
-                end = m.end()
+            m = _TAG_RE.match(content, i) if i not in comment_end else None
+            if i in comment_end or m:
+                end = comment_end[i] if i in comment_end else m.end()
+                tag = content[i:end]
                 name = None if tag.startswith("<!") else _hidden_open(tag, hide_attr)
                 if name:
                     close = re.compile(r"</\s*%s\s*>" % re.escape(name), re.I).search(content, end)
@@ -667,13 +747,19 @@ def _reader_claims(tokens):
             if not keep:
                 continue
             raw_s = "".join(k[0] for k in keep)
-            s = _n_copy(raw_s)
             src = tok.content or ""
-            for (sa, b, v, d, u, alts, txt) in _extract(s):
-                if _same_claim_as_source(keep, s, raw_s, src, sa, b, v, d):
-                    continue
+            found = {}                                  # both normalized copies (see _n_copy), one entry per claim
+            for s in (_n_copy(raw_s), _n_copy(raw_s, True)):
+                for (sa, b, v, d, u, alts, txt) in _extract(s):
+                    k = (sa, b, round(v, 12), d, alts)
+                    if k not in found and not _same_claim_as_source(keep, s, raw_s, src, sa, b, v, d):
+                        found[k] = (sa, v, d, u, alts, txt)
+            for (sa, v, d, u, alts, txt) in found.values():
                 line = l0 + keep[min(sa, len(keep) - 1)][1]
-                key = (line, round(v, 12), d)
+                # The second reading drops a number only when the first already holds a claim that is checked
+                # IDENTICALLY -- same value, stated precision AND scale suffix (a hidden `k` changes what is checked:
+                # `0.15<b>2</b>5<span class="u">k</span>` is 152.5 in the first reading, 0.1525 in the second).
+                key = (line, round(v, 12), d, alts)
                 count[key] += 1
                 if hide_attr and count[key] <= first[key]:
                     continue
@@ -694,7 +780,87 @@ def _parsers():
     if not _PARSERS:
         _PARSERS["cm"] = MarkdownIt("commonmark").disable("text_join")
         _PARSERS["gfm"] = MarkdownIt("commonmark").enable("table").enable("strikethrough").disable("text_join")
+        for md in _PARSERS.values():
+            md.inline.ruler.at("html_inline", _html_inline_linear)
     return _PARSERS["cm"], _PARSERS["gfm"]
+
+
+# markdown-it's html_inline rule runs HTML_TAG_RE.search(src[pos:]) at EVERY `<`: an unclosed `<!--`, `<?`, `<!X` or
+# `<![CDATA[` rescans to the end of the paragraph each time (80 KB of `x <!-- y` took 21 s; main, which has no parser,
+# is instant). `_html_inline_linear` decides, from positions indexed once per paragraph, whether HTML_TAG_RE CAN match
+# at `pos`; when it cannot it returns False (exactly what the rule would), and when it can it runs the rule itself,
+# whose scan then ends at the match -- consumed text is never rescanned. The decision is exact (a differential test
+# pins it against HTML_TAG_RE on random text).
+_MDIT_TAG_RE = None
+
+
+def _mdit_comment_closes(src):
+    """Where markdown-it's comment body `(?:[^-]|-[^-]|--[^>])*` stops: its tokens are forced (a dash run is eaten 3
+    at a time), so from any dash run entered at a token boundary the body stops at `-->` exactly when the run has
+    k >= 2 dashes, k % 3 == 2, and `>` follows. -> sorted positions of those `-->`."""
+    out = []
+    n = len(src)
+    i = src.find("-")
+    while i >= 0:
+        j = i
+        while j < n and src[j] == "-":
+            j += 1
+        if j - i >= 2 and (j - i) % 3 == 2 and j < n and src[j] == ">":
+            out.append(j - 2)
+        i = src.find("-", j)
+    return out
+
+
+def _mdit_comment_at(src, pos, closes):
+    """True when markdown-it's `comment` pattern matches at `pos` (which starts with `<!--`)."""
+    if src.startswith("<!-->", pos) or src.startswith("<!--->", pos):
+        return True
+    n = len(src)
+    j = pos + 4
+    while j < n and src[j] == "-":
+        j += 1
+    k = j - (pos + 4)
+    if j >= n:
+        return False                                     # the body is stuck at the end of the text
+    if src[j] == ">" and k >= 2 and k % 3 == 2:
+        return True
+    # src[j] ends the leading dash run (as `c`, `-c` or `--c`); every later run is entered at a token boundary
+    i = bisect.bisect_left(closes, j + 1)
+    return i < len(closes)
+
+
+def _mdit_html_possible(src, pos, memo):
+    """True exactly when markdown-it's HTML_TAG_RE.search(src[pos:]) matches (`src[pos]` is `<`); `memo` caches the
+    per-paragraph indexes. Pinned against the regex by a differential test."""
+    def last(sub):
+        if sub not in memo:
+            memo[sub] = src.rfind(sub)
+        return memo[sub]
+    c = src[pos + 1] if pos + 1 < len(src) else ""
+    if src.startswith("<!--", pos):
+        if "closes" not in memo:
+            memo["closes"] = _mdit_comment_closes(src)
+        return _mdit_comment_at(src, pos, memo["closes"])
+    if c == "?":
+        return last("?>") >= pos + 2                     # processing: `<?` ... the first `?>`
+    if src.startswith("<![CDATA[", pos):
+        return last("]]>") >= pos + 9
+    if c == "!":                                         # declaration: `<!` + a letter ... the first `>`
+        return pos + 2 < len(src) and src[pos + 2].isascii() and src[pos + 2].isalpha() and last(">") >= pos + 3
+    if c == "/" or (c.isascii() and c.isalpha()):
+        global _MDIT_TAG_RE
+        if _MDIT_TAG_RE is None:
+            _MDIT_TAG_RE = re.compile("(?:" + _mdit_html_re.open_tag + "|" + _mdit_html_re.close_tag + ")")
+        return _MDIT_TAG_RE.match(src, pos) is not None
+    return False
+
+
+def _html_inline_linear(state, silent):
+    src, pos = state.src, state.pos
+    if src.startswith("<", pos) and pos + 2 < state.posMax and state.md.options.get("html", None):
+        if not _mdit_html_possible(src, pos, state.__dict__.setdefault("_claim_check_memo", {})):
+            return False
+    return _mdit_html_inline(state, silent)
 
 
 def _label_prefix(text):
@@ -702,6 +868,61 @@ def _label_prefix(text):
         if c not in text:
             return c
     return None
+
+
+class _Next:
+    """Memoized `s.find(sub, frm)` for non-decreasing `frm`: a run of lookups that share one far (or missing) target
+    costs one scan, not one scan each."""
+
+    def __init__(self, s, sub):
+        self.s, self.sub, self.frm, self.at = s, sub, -1, -1
+
+    def __call__(self, frm):
+        if not (self.frm >= 0 and self.frm <= frm and (self.at < 0 or frm <= self.at)):
+            self.frm, self.at = frm, self.s.find(self.sub, frm)
+        return self.at
+
+
+def _marker_end(s, j, nl, close):
+    """End of an exact marker whose `<!--derived` (or its 7-character label) ends at `j`, or None -- exactly what
+    `_EXACT_MARKER_RE` matches there (`-->`, or `:`, one or more spaces/tabs, then a note holding a non-space character
+    and ending at the first `-->` after it, all on one line) in LINEAR time: the regex's two lazy runs rescanned the
+    rest of the line for every start, so one long line of `<!--derived: x ` never finished. `nl` and `close` are
+    `_Next` finders for `\\n` and `-->` over `s`."""
+    if s.startswith("-->", j):
+        return j + 3
+    if not s.startswith(":", j):
+        return None
+    line_end = nl(j)
+    line_end = len(s) if line_end < 0 else line_end
+    p = j + 1
+    while p < line_end and s[p] in " \t":
+        p += 1
+    if p == j + 1:
+        return None
+    while p < line_end and s[p].isspace():               # `[^\n]*?\S`: the first non-space character of the note
+        p += 1
+    if p >= line_end:
+        return None
+    e = close(p + 1)
+    return e + 3 if 0 <= e and e + 3 <= line_end else None
+
+
+def _exact_marker_starts(text):
+    """Start offsets of `_EXACT_MARKER_RE.finditer(text)` (non-overlapping), in linear time."""
+    starts = []
+    nl, close = _Next(text, "\n"), _Next(text, "-->")
+    i = 0
+    while True:
+        a = text.find("<!--derived", i)
+        if a < 0:
+            return starts
+        e = _marker_end(text, a + 11, nl, close)
+        if e is None:
+            i = a + 1
+        else:
+            starts.append(a)
+            i = e
 
 
 def _labeled(text, marks):
@@ -712,12 +933,21 @@ def _labeled(text, marks):
         return text, [None] * len(marks), None       # cannot label: no marker is live (fails closed)
     buf = list(text)
     labels = []
-    for i, m in enumerate(marks):
+    for i, start in enumerate(marks):
         lab = pre + "%06d" % i
-        a = m.start() + 4
+        a = start + 4
         buf[a:a + 7] = list(lab)
         labels.append(lab)
     return "".join(buf), labels, pre
+
+
+def _label_at(s, prefix):
+    """The label when `s` STARTS with an exact labeled marker (`<!--` + label + the marker's tail), else None ->
+    (label, end)."""
+    if not (s.startswith("<!--" + prefix) and len(s) >= 11 and s[5:11].isascii() and s[5:11].isdigit()):
+        return None, None
+    e = _marker_end(s, 11, _Next(s, "\n"), _Next(s, "-->"))
+    return (s[4:11], e) if e is not None else (None, None)
 
 
 def _live_labels(tokens, prefix):
@@ -727,18 +957,17 @@ def _live_labels(tokens, prefix):
     live = set()
     if prefix is None:
         return live
-    rx = re.compile(r"<!--(" + re.escape(prefix) + r"[0-9]{6})(?:-->|:[ \t]+[^\n]*?\S[^\n]*?-->)")
     for tok in tokens:
         if tok.type == "html_block":
-            m = rx.match(tok.content.lstrip(" "))
-            if m:
-                live.add(m.group(1))
+            lab, _e = _label_at(tok.content.lstrip(" "), prefix)
+            if lab:
+                live.add(lab)
         elif tok.type == "inline":
             for ch in tok.children or ():
                 if ch.type == "html_inline":
-                    m = rx.fullmatch(ch.content)
-                    if m:
-                        live.add(m.group(1))
+                    lab, e = _label_at(ch.content, prefix)
+                    if lab and e == len(ch.content):
+                        live.add(lab)
     return live
 
 
@@ -778,12 +1007,77 @@ def _hidden(text, tokens, line_starts):
     for i, ln in enumerate(lines):
         if ln.strip() and i not in covered:
             hidden_lines.add(i)                         # link-reference definitions, or anything not rendered
-    spans = [(m.start(), m.end()) for m in _COMMENT_RE.finditer(text)]
-    for m in _HIDDEN_OPEN_RE.finditer(text):
-        tag = (m.group(1) or m.group(2)).lower()
-        close = re.compile(r"</\s*%s\s*>" % re.escape(tag), re.I).search(text, m.end())
-        spans.append((m.start(), close.end() if close else len(text)))
+    spans = _comment_spans(text) + _hidden_element_spans(text)
     return hidden_lines, _merge(spans)
+
+
+_TAG_START_RE = re.compile(r"<([A-Za-z][A-Za-z0-9-]*)\b")
+_CLOSE_ANY_RE = re.compile(r"</\s*([A-Za-z][A-Za-z0-9-]*)\s*>")
+_HIDDEN_ELEMENT_RE = re.compile(r"<(script|style|template|noscript)\b", re.I)
+_HIDDEN_ATTR_PARTS = [re.compile(p, re.I) for p in (r"\bhidden\b", r"display\s*:\s*none", r"visibility\s*:\s*hidden")]
+
+
+def _hidden_element_spans(text):
+    """The spans `_HIDDEN_OPEN_RE.finditer` + a search for each element's close tag give, in LINEAR time: an opening
+    tag from `<name` to the next `>` that carries a hidden attribute (or names script/style/template/noscript) is
+    hidden up to the first close tag of ITS name after it, or to the end of the text; matches never overlap. The regex
+    scanned from every `<letter` to the next `>` and searched for a close tag from every hidden opener (210 KB of
+    `x <b y` took 198 s). Here the next `>` is found once per run of openers, hidden attributes (each alternative
+    separately, so one nested in another is still seen) and close tags are indexed once, and every lookup is a
+    bisection. The regex may shorten the tag name to any word boundary inside it (`<span-hidden>` is the element
+    `span-` with the attribute `hidden`), so the name chosen is the LONGEST boundary prefix with an attribute after
+    it, as the regex's backtracking chooses; a differential test pins this against the regex."""
+    attr_starts = sorted({m.start() for rx in _HIDDEN_ATTR_PARTS for m in rx.finditer(text)})
+    closes = {}
+    for m in _CLOSE_ANY_RE.finditer(text):
+        closes.setdefault(m.group(1).lower(), []).append((m.start(), m.end()))
+    spans = []
+    gt = _Next(text, ">")
+    resume = 0                                           # finditer never reports a match overlapping the last one
+    for m in _TAG_START_RE.finditer(text):
+        if m.start() < resume:
+            continue
+        g = gt(m.start())
+        if g < 0:
+            break                                        # no `>` after this point: no opening tag can end
+        i = bisect.bisect_left(attr_starts, g) - 1
+        last_attr = attr_starts[i] if i >= 0 else -1     # the last hidden attribute that starts before the `>`
+        name = None
+        if last_attr >= m.start() + 2:
+            # the longest name ending at a word boundary (inside the name: next to a `-`) at or before last_attr
+            e = min(m.end(), last_attr)
+            while e > m.start() + 2 and e < m.end() and (text[e - 1] == "-") == (text[e] == "-"):
+                e -= 1
+            if e <= m.end() and (e == m.end() or (text[e - 1] == "-") != (text[e] == "-")):
+                name = text[m.start() + 1:e].lower()
+        if name is None:
+            h = _HIDDEN_ELEMENT_RE.match(text, m.start())
+            if not h:
+                continue
+            name = h.group(1).lower()
+        cl = closes.get(name, [])
+        j = bisect.bisect_left(cl, (g + 1, -1))
+        spans.append((m.start(), cl[j][1] if j < len(cl) else len(text)))
+        resume = g + 1
+    return spans
+
+
+def _comment_spans(text):
+    """HTML comments as a BROWSER ends them -- `<!--` to the first `-->` after it (`<!-->` and `<!--->` included) --
+    in linear time; an unclosed `<!--` hides nothing. (`_COMMENT_RE.finditer`, markdown-it's older pattern, re-scanned
+    to the end of the text from every unclosed `<!--`, and could run past a `-->` (`<!-- a ---> b -->`) that a
+    browser stops at -- the text after it is VISIBLE, so its citations count.)"""
+    spans = []
+    i = 0
+    while True:
+        a = text.find("<!--", i)
+        if a < 0:
+            return spans
+        e = text.find("-->", a + 2)
+        if e < 0:
+            return spans                                 # no `-->` after this point closes any later `<!--` either
+        spans.append((a, e + 3))
+        i = e + 3
 
 
 def _merge(spans):
@@ -807,10 +1101,13 @@ def _in_spans(merged, pos):
 def _fm_value(fm, key):
     # The key is matched case-insensitively and quoted or not (`Title:`, `"title":`) -- barring is the fail-closed
     # direction, so every spelling a reader would take for the title is read.
-    m = re.search(r"^[\"']?%s[\"']?[ \t]*:[ \t]*(.*?)[ \t]*$" % re.escape(key), fm, re.M | re.I)
+    # (`^key:[ \t]*(.*?)[ \t]*$` rescanned the trailing blanks for every character of the value: quadratic on a long
+    # line; the prefix is matched here and the value is the rest of its line with trailing blanks removed.)
+    m = re.search(r"^[\"']?%s[\"']?[ \t]*:[ \t]*" % re.escape(key), fm, re.M | re.I)
     if not m:
         return ""
-    v = m.group(1)
+    e = fm.find("\n", m.end())
+    v = fm[m.end():len(fm) if e < 0 else e].rstrip(" \t")
     # Every indented or blank line after the key continues its value -- a block scalar (`|`, `>`, blank lines
     # included) or a multi-line plain or quoted scalar (`title: 'Lane A` / `  GO'`) -- so a verdict word on a
     # continuation line is still read.
@@ -840,7 +1137,73 @@ def _verdict_word(s):
     return None
 
 
-_TAG_OR_COMMENT_RE = re.compile(r"<!--.*?-->|<[^<>]*>", re.S)
+_TAG_OR_COMMENT_RE = re.compile(r"<!--.*?-->|<[^<>]*>", re.S)      # the SPEC; applied by _strip_tags_comments
+_LT_GT_RE = re.compile(r"[<>]")
+_HTML_H_OPEN_RE = re.compile(r"<h[1-6]\b", re.I)
+_HTML_H_CLOSE_RE = re.compile(r"</h[1-6]\s*>", re.I)
+
+
+def _strip_tags_comments(s):
+    """`_TAG_OR_COMMENT_RE.sub("", s)` in linear time (its lazy comment scan ran to the end from every unclosed
+    `<!--`)."""
+    out = []
+    close = _Next(s, "-->")
+    i, n = 0, len(s)
+    while i < n:
+        if s[i] == "<":
+            if s.startswith("<!--", i):
+                e = close(i + 4)
+                if e >= 0:
+                    i = e + 3
+                    continue
+            m = _LT_GT_RE.search(s, i + 1)
+            if m and m.group() == ">":
+                i = m.end()
+                continue
+        out.append(s[i])
+        i += 1
+    return "".join(out)
+
+
+def _html_headings(text):
+    """The content (group 1) of every `_HTML_HEADING_RE.finditer(text)` match, in linear time: an opening `<hN` to
+    the first `>` after it, then up to the first `</hN>` after that; matches never overlap."""
+    closes = [(m.start(), m.end()) for m in _HTML_H_CLOSE_RE.finditer(text)]
+    gt = _Next(text, ">")
+    out = []
+    resume = 0
+    for m in _HTML_H_OPEN_RE.finditer(text):
+        if m.start() < resume:
+            continue
+        g = gt(m.end())
+        if g < 0:
+            break
+        j = bisect.bisect_left(closes, (g + 1, -1))
+        if j >= len(closes):
+            break                                        # no close after this `>`: no later opener closes either
+        out.append(text[g + 1:closes[j][0]])
+        resume = closes[j][1]
+    return out
+
+
+def _atx_text(ln):
+    """`_ATX_ANY_RE.match(ln)` in linear time -> the heading text (group 2, or "" when absent), or None when the line
+    is not an ATX heading. (The lazy text group re-scanned the trailing ` #` run for every character.)"""
+    i = 0
+    while i < 3 and i < len(ln) and ln[i] in " \t":
+        i += 1
+    j = i
+    while j < len(ln) and j - i < 6 and ln[j] == "#":
+        j += 1
+    if j == i:
+        return None
+    rest = ln[j:]
+    if not rest.strip(" \t#"):
+        return ""                                        # only blanks and `#` after the opening run
+    if rest[0] not in " \t":
+        return None
+    body = rest.lstrip(" \t")
+    return body[:len(body.rstrip(" \t#"))]
 
 
 def _synthesis_status(text, doc_path, tokens=(), bom=False):
@@ -869,14 +1232,14 @@ def _synthesis_status(text, doc_path, tokens=(), bom=False):
               ("frontmatter verdict:", _fm_value(fm, "verdict"))]
     lines = text.split("\n")
     for i, ln in enumerate(lines):
-        h = _ATX_ANY_RE.match(ln)
-        if h:
-            probes.append(("heading on line %d" % (i + 1), h.group(2) or ""))
+        h = _atx_text(ln)
+        if h is not None:
+            probes.append(("heading on line %d" % (i + 1), h))
         elif i > 0 and _SETEXT_ANY_RE.match(ln) and lines[i - 1].strip():
             probes.append(("setext heading on line %d" % i, lines[i - 1]))
-    for hm in _HTML_HEADING_RE.finditer(text):
-        probes.append(("HTML heading", hm.group(1)))
-        probes.append(("HTML heading", html.unescape(_TAG_OR_COMMENT_RE.sub("", hm.group(1)))))
+    for hm in _html_headings(text):
+        probes.append(("HTML heading", hm))
+        probes.append(("HTML heading", html.unescape(_strip_tags_comments(hm))))
     fm_lines = text.count("\n", 0, m.end())            # the frontmatter itself parses as a setext heading: skipped
     for i, tok in enumerate(tokens):
         if tok.type == "heading_open" and tok.map and tok.map[0] >= fm_lines and i + 1 < len(tokens):
@@ -912,11 +1275,10 @@ def _slack(x):
     return 8.0 * math.ulp(x) if x else 8.0 * math.ulp(1e-300)
 
 
-def _match(c, pool, tol=None, legacy=True):
-    """-> 'exact' | 'rounding' | 'legacy' | 'tolerance' (+ '+<suffix>' for a scaled reading), or None.
-    exact/rounding form the PRECISION tier (|x - v| <= 0.5 * 10^-d); 'legacy' is main's relative window, tried
-    only when `legacy` is set."""
-    for x, u, lab in _readings(c):
+def _match_value(value, unit, alts, pool, tol=None, legacy=True):
+    """`_match` for a bare (value, unit, alts) -- the decoy loop calls it ~1000 times per claim."""
+    readings = [(value, unit, "")] + [(value * scale, unit * scale, "+" + suf) for scale, suf in alts]
+    for x, u, lab in readings:
         s = _slack(x)
         if tol is not None:
             if _any_within(pool, x, tol + s):
@@ -927,28 +1289,41 @@ def _match(c, pool, tol=None, legacy=True):
         if _any_within(pool, x, 0.5 * u * (1 + 1e-9) + s):
             return "rounding" + lab
     if tol is None and legacy:
-        for x, u, lab in _readings(c):
+        for x, u, lab in readings:
             if _any_within(pool, x, max(LEGACY_ABS_FLOOR, LEGACY_REL_TOL * abs(x)) + _slack(x)):
                 return "legacy" + lab
     return None
 
 
+def _match(c, pool, tol=None, legacy=True):
+    """-> 'exact' | 'rounding' | 'legacy' | 'tolerance' (+ '+<suffix>' for a scaled reading), or None.
+    exact/rounding form the PRECISION tier (|x - v| <= 0.5 * 10^-d); 'legacy' is main's relative window, tried
+    only when `legacy` is set."""
+    return _match_value(c.value, c.unit, c.alts, pool, tol, legacy)
+
+
+def chance_max(decimals):
+    """The per-claim chance limit for a number stated with `decimals` decimals (rule 4; see CALIBRATION)."""
+    return CHANCE_MAX_BY_DECIMALS.get(decimals, CHANCE_MAX)
+
+
 def _chance(c, pool, tol=None, tier="legacy"):
-    """This claim's OWN chance-match rate: the fraction of CHANCE_DECOYS seeded decoys of the same shape (same
-    stated precision, stepped by k whole units of its last decimal from the written value, k drawn without
-    replacement from +-[1, CHANCE_WINDOW]) that the matching rule accepts. The rule is the TIER that accepted the
-    claim: a claim matched at its stated precision is rated against the precision rule; a claim matched only by
-    the legacy relative window is rated against precision-or-legacy (the wider window, the higher the rate)."""
+    """This claim's OWN chance-match rate, computed EXACTLY: the fraction of ALL 2 * CHANCE_WINDOW decoys of the same
+    shape -- the written value stepped by k whole units of its last decimal, k = +-1 .. +-CHANCE_WINDOW -- that the
+    matching rule accepts. It depends only on (value, stated precision, scale suffix, tier), never on how the number
+    is spelled (`.417`, `0.417` and `00.417` rate the same; a seeded sample keyed by the TEXT moved the rate by up to
+    0.06 between spellings). The rule is the TIER that accepted the claim: a claim matched at its stated precision is
+    rated against the precision rule; a claim matched only by the legacy relative window is rated against
+    precision-or-legacy (the wider window, the higher the rate)."""
     if not pool:
         return 0.0
-    h = hashlib.sha256(("%s|%d|%d" % (c.text, c.decimals, CHANCE_SEED)).encode()).digest()
-    rng = random.Random(int.from_bytes(h[:8], "big"))
-    ks = rng.sample(range(1, 2 * CHANCE_WINDOW + 1), CHANCE_DECOYS)
     step = max(c.unit, abs(c.value) * 1e-12)
+    legacy = tier == "legacy"
     hits = 0
-    for k in ks:
-        k = k if k <= CHANCE_WINDOW else CHANCE_WINDOW - k      # 1..W and -1..-W
-        if _match(c._replace(value=c.value + k * step), pool, tol, legacy=(tier == "legacy")):
+    for k in range(1, CHANCE_WINDOW + 1):
+        if _match_value(c.value + k * step, c.unit, c.alts, pool, tol, legacy):
+            hits += 1
+        if _match_value(c.value - k * step, c.unit, c.alts, pool, tol, legacy):
             hits += 1
     return hits / float(CHANCE_DECOYS)
 
@@ -959,12 +1334,18 @@ def _tier(rule):
     return "precision"
 
 
-def _hint(c, pool, tol):
+def _hint(c, pool, tol, text=None):
     if c.reading == "reader":
         return "a reader sees this number but markup or an invisible character splits it in the source"
     if c.value < 0 and _match(c._replace(value=-c.value), pool, tol):
         return ("the artifact holds +%s: a dash directly before a number reads as a MINUS sign -- put a space after "
                 "a punctuation dash" % c.text.lstrip("-"))
+    if c.value > 0 and _match(c._replace(value=-c.value), pool, tol):
+        if text and c.start and text[c.start - 1] in _DASH_CHARS:
+            return ("the artifact holds -%s: the dash before it is read both as a minus sign and as punctuation "
+                    "(glued to a word, or not a minus glyph) -- write the sign after a space: `x -%s` or `x \u2212%s`"
+                    % (c.text, c.text, c.text))
+        return "the artifact holds -%s: is the minus sign missing?" % c.text
     i = bisect.bisect_left(pool, c.value)
     near = [pool[j] for j in (i - 1, i) if 0 <= j < len(pool)]
     if near:
@@ -1053,7 +1434,7 @@ def _scan(doc_path, tol=None):
     warnings = _line_warnings(lines)
 
     # ---- markers -------------------------------------------------------------------------------------------------
-    marks = list(_EXACT_MARKER_RE.finditer(text))
+    marks = _exact_marker_starts(text)                   # start offsets of every exact marker
     labeled, labels, prefix = _labeled(text, marks)
     md_cm, md_gfm = _parsers()
     try:
@@ -1066,11 +1447,11 @@ def _scan(doc_path, tol=None):
     live = _live_labels(toks_gfm, prefix) & _live_labels(toks_cm, prefix)
     live_markers = []                                    # (line, col)
     exact_starts = set()
-    for m, lab in zip(marks, labels):
-        exact_starts.add(m.start())
-        li = line_of(m.start())
+    for start, lab in zip(marks, labels):
+        exact_starts.add(start)
+        li = line_of(start)
         if lab in live:
-            live_markers.append((li, m.start() - line_starts[li]))
+            live_markers.append((li, start - line_starts[li]))
         else:
             warnings.append((li + 1, "marker not live",
                              "this <!--derived--> is %s, so it exempts NOTHING."
@@ -1084,19 +1465,18 @@ def _scan(doc_path, tol=None):
 
     # ---- claims: raw reading + normalized copy (union, deduplicated) ---------------------------------------------
     claims = []
-    for reading, s in (("raw", text), ("normalized", _n_copy(text))):
+    for reading, s in (("raw", text), ("normalized", _n_copy(text)), ("normalized", _n_copy(text, True))):
         for (a, b, v, d, u, alts, txt) in _extract(s, both_signs=(reading == "raw")):
             claims.append(Claim(a, b, line_of(a), v, d, u, alts, txt, reading))
-    seen, rn = {}, []
+    # Two readings of the SAME number end at the same offset with the same value, precision and scale suffix; a
+    # hash on exactly that is linear (a scan of every earlier claim on the line was quadratic: 11,000 numbers on one
+    # line took minutes). The suffix is part of the key: `0.1525k` followed by a non-ASCII digit is scaled in the raw
+    # reading and bare in the normalized one, and dropping either would check it more loosely.
+    seen, rn = set(), []
     for c in claims:
-        dup = False
-        for o in seen.get(c.line, ()):
-            if o.start < c.end and c.start < o.end and abs(o.value - c.value) <= 1e-12 * max(1.0, abs(c.value)) \
-                    and o.decimals == c.decimals:
-                dup = True
-                break
-        if not dup:
-            seen.setdefault(c.line, []).append(c)
+        key = (c.end, round(c.value, 12), c.decimals, c.alts)
+        if key not in seen:
+            seen.add(key)
             rn.append(c)
     rn.sort(key=lambda c: c.start)
     hidden_lines, hidden_spans = _hidden(text, toks_gfm, line_starts)
@@ -1109,7 +1489,7 @@ def _scan(doc_path, tol=None):
     # ---- exemption: live markers, per cell, capped ---------------------------------------------------------------
     def cells(li):
         ln = lines[li]
-        return [m.start() for m in _CELL_CUT_RE.finditer(ln)]
+        return _cell_cuts(ln)
 
     cut_cache = {}
 
@@ -1156,17 +1536,25 @@ def _scan(doc_path, tol=None):
                          "-- a reader cannot see it, so it is not loaded" % p))
     cited = sorted(cited)
     pool, _verdicts, loaded, missing = load_artifacts(cited)
-    for p in sorted(ignored):          # never loaded, but a hidden citation of a MISSING file still fails (as in r5)
+    # A hidden citation adds NOTHING to the pool, but it is still opened: a MISSING or UNREADABLE file fails, as in
+    # main and round 5 (which load every citation, hidden or not).
+    for p in sorted(ignored):
         full = p if os.path.isabs(p) else os.path.join(ROOT, p)
-        if not (glob.glob(full) if any(c in full for c in "*?[") else os.path.exists(full)):
+        hits = sorted(glob.glob(full)) if any(c in full for c in "*?[") else ([full] if os.path.exists(full) else [])
+        if not hits:
             missing.append("%s (cited only inside hidden text)" % p)
+        for h in hits:
+            try:
+                _load_one(h)
+            except Exception as e:                       # narrow enough to see; never silent
+                missing.append("%s (unreadable: %s; cited only inside hidden text)" % (p, type(e).__name__))
 
     # ---- check -----------------------------------------------------------------------------------------------------
     records, unsupported, too_broad, chances = [], [], [], []
     suppressed = {"inline": 0, "synthesis": 0}
     chance_cache = {}
     for c in rn + extra:
-        rec = dict(line=c.line + 1, value=c.value, text=c.text, decimals=c.decimals, reading=c.reading,
+        rec = dict(line=c.line + 1, value=c.value, text=c.text, decimals=c.decimals, alts=c.alts, reading=c.reading,
                    status=None, rule=None, chance=None,
                    visible=(c.reading != "reader" and not is_hidden(c.start)))
         if c.reading != "reader" and id(c) in exempt_ids:
@@ -1179,16 +1567,16 @@ def _scan(doc_path, tol=None):
             rec["status"] = "checked"
             rule = _match(c, pool, tol)
             rec["rule"] = rule
-            key = (c.text, c.decimals, _tier(rule))
+            key = (round(c.value, 12), c.decimals, c.alts, _tier(rule))       # never the spelling (see _chance)
             if key not in chance_cache:
                 chance_cache[key] = _chance(c, pool, tol, _tier(rule))
             ch = rec["chance"] = chance_cache[key]
             chances.append(ch)
             ctx = lines[c.line].strip()[:88] if c.line < len(lines) else ""
             if rule is None:
-                rec["hint"] = _hint(c, pool, tol)
+                rec["hint"] = _hint(c, pool, tol, text)
                 unsupported.append((c.line + 1, c.value, ctx))
-            elif ch > CHANCE_MAX:
+            elif ch > chance_max(c.decimals):
                 rec["status"] = "too_broad"
                 too_broad.append((c.line + 1, c.value, ch, ctx))
         records.append(rec)
@@ -1225,8 +1613,14 @@ def _verdict(r):
 MARKER_RULE = ("mark a derived/quoted value with <!--derived--> or <!--derived: note--> on the SAME physical line "
                "as the number -- in a table, in the SAME cell; at most %d numbers per marker; a marker in code, "
                "escaped, alone on a line, or spelled any other way exempts nothing" % MAX_EXEMPT_PER_MARKER)
-TOO_BROAD_MSG = ("matches only by chance: a random number of this shape would match the cited pool more than %d%% of "
-                 "the time -- cite a narrower artifact or state more decimals" % round(100 * CHANCE_MAX))
+def _limits_text():
+    lim = dict(CHANCE_MAX_BY_DECIMALS)
+    return ", ".join(["%d%% at %d decimals" % (round(100 * v), d) for d, v in sorted(lim.items())]
+                     + ["%d%% otherwise" % round(100 * CHANCE_MAX)])
+
+
+TOO_BROAD_MSG = ("matches only by chance: a random number of this shape would match the cited pool more often than "
+                 "the limit for its precision (%s) -- cite a narrower artifact or state more decimals" % _limits_text())
 FIX_HINT = ("fix the number, cite the artifact FILE that holds it (a path with a /), or " + MARKER_RULE)
 
 
@@ -1272,8 +1666,7 @@ def check(doc_path, tol=None, verbose=True):
         print("  exempted        : %d by a live <!--derived--> in the same cell (line(s) %s), %d by synthesis, of %d "
               "numeric claim(s)" % (r["suppressed"]["inline"], ", ".join(str(n) for n in r["marked_lines"]) or "-",
                                     r["suppressed"]["synthesis"], r["total_numeric"]))
-        print("  chance match    : %s; limit %.0f%% per claim" % (_chance_distribution(r["chance"]),
-                                                                  100 * CHANCE_MAX))
+        print("  chance match    : %s; limit per claim %s" % (_chance_distribution(r["chance"]), _limits_text()))
         for lineno, kind, msg in r["warnings"]:
             print("      ⚠  WARNING line %-4d %-24s %s" % (lineno, kind, msg))
         hints = {(x["line"], x["value"]): x.get("hint", "") for x in r["records"] if x["status"] == "checked"}
@@ -1284,9 +1677,11 @@ def check(doc_path, tol=None, verbose=True):
                   % (lineno, written.get((lineno, val), repr(val)), ctx, ("\n           -> " + h) if h else ""))
         if len(r["unsupported"]) > 12:
             print("      ... and %d more" % (len(r["unsupported"]) - 12))
+        dec = {(x["line"], x["value"]): x["decimals"] for x in r["records"]}
         for lineno, val, ch, ctx in r["too_broad"][:12]:
-            print("      ⛔ line %-4d %-14s chance %.0f%%: %s | %s"
-                  % (lineno, written.get((lineno, val), repr(val)), 100 * ch, TOO_BROAD_MSG, ctx))
+            print("      ⛔ line %-4d %-14s chance %.0f%% > %.0f%%: %s | %s"
+                  % (lineno, written.get((lineno, val), repr(val)), 100 * ch,
+                     100 * chance_max(dec.get((lineno, val), 99)), TOO_BROAD_MSG, ctx))
         if len(r["too_broad"]) > 12:
             print("      ... and %d more too broad" % (len(r["too_broad"]) - 12))
         if r["low_coverage"]:
@@ -1308,7 +1703,7 @@ def check(doc_path, tol=None, verbose=True):
 # loaded from git, and asserts the recorded `wrong_on` equals the set that ACTUALLY gets it wrong.
 # =================================================================================================================
 _HISTORY_SHAS = {"main": "7e2edc08e", "r1": "d4959ecb0", "r2": "6abb28469", "r3": "662e167e8", "r4": "214e509bf",
-                 "r5": "4fda849d4", "r6": "f2b7db2b4", "r7": "4ff05b018"}
+                 "r5": "4fda849d4", "r6": "f2b7db2b4", "r7": "4ff05b018", "r8a": "654d95664"}
 _DEFAULT_ARTIFACT = {"accuracy": 0.17, "baseline": 0.1625}
 WRONG_VALUES = {0.1525, 0.14, 1.23456, -0.1525, -0.1625, 0.153, 0.15925, 10.1525}
 
@@ -1342,8 +1737,12 @@ def _write_case(d, case):
     art = os.path.relpath(art_abs, ROOT).replace(os.sep, "/")
     sub = os.path.join(d, case["name"])
     os.makedirs(sub, exist_ok=True)
+    for fname, raw in case.get("raw_files", {}).items():   # verbatim files (e.g. a corrupt artifact) next to the doc
+        with open(os.path.join(sub, fname), "w", encoding="utf-8") as fh:
+            fh.write(raw)
     path = os.path.join(sub, case.get("filename", "doc.md"))
-    body = case["doc"] % {"art": art} if "%(art)s" in case["doc"] else case["doc"]
+    subst = {"art": art, "sub": os.path.relpath(sub, ROOT).replace(os.sep, "/")}
+    body = case["doc"] % subst if ("%(art)s" in case["doc"] or "%(sub)s" in case["doc"]) else case["doc"]
     with open(path, "w", encoding="utf-8") as fh:
         fh.write(body)
     return path
@@ -1364,6 +1763,8 @@ def _case_problems(case, r, printed=None):
             out.append("case %s failed, but not as too broad" % case["name"])
         elif reason == "unreadable" and not r.get("unreadable"):
             out.append("case %s failed, but was not refused as unreadable" % case["name"])
+        elif reason == "missing" and not r["missing"]:
+            out.append("case %s failed, but not on a missing/unreadable artifact" % case["name"])
         elif reason is None and not case.get("must_flag") and not (flagged & WRONG_VALUES):
             out.append("case %s failed but never flagged a designated wrong number (%s): flagged=%s"
                        % (case["name"], sorted(WRONG_VALUES), sorted(flagged)))

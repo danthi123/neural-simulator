@@ -1,13 +1,14 @@
 """SELFTEST REGISTRY for tools/claim_check.py (round 8). DATA ONLY -- no imports from claim_check.
 
 Every entry is one repro. `tests/test_claim_check_line_only.py` re-runs each against every historical revision in
-claim_check._HISTORY_SHAS (main, r1-r7, loaded from git) and asserts the recorded `wrong_on` equals the set that
+claim_check._HISTORY_SHAS (main, r1-r7, r8a, loaded from git) and asserts the recorded `wrong_on` equals the set that
 ACTUALLY gets the case wrong -- so "this used to pass, now it fails" is RE-DERIVED on every run, never remembered.
 
 Keys: name, expect ('FAIL'|'PASS'), wrong_on, why; optional: doc (`%(art)s` = the cited artifact's path),
 artifact (default {"accuracy": 0.17, "baseline": 0.1625}), filename, expect_reason ('low_coverage' | 'too_broad' |
-'unreadable'), must_flag (values that must be flagged -- replaces the designated-wrong-value requirement),
-expect_warning (substrings a WARNING must contain), expect_output (substrings check()'s report must contain).
+'unreadable' | 'missing'), must_flag (values that must be flagged -- replaces the designated-wrong-value requirement),
+expect_warning (substrings a WARNING must contain), expect_output (substrings check()'s report must contain),
+raw_files ({name: text} written verbatim next to the doc -- a corrupt artifact; `%(sub)s` in doc is that directory).
 
 Designated WRONG numbers (not in the default artifact): 0.1525, 0.14, 1.23456, -0.1525, -0.1625, 0.153, 0.15925,
 10.1525. Legitimately derived placeholders: 0.104615, 0.207531, 0.311079.
@@ -20,6 +21,7 @@ from __future__ import annotations
 U = chr
 ZWSP, SHY, BIDI_RLO, BIDI_PDF = U(0x200B), U(0x00AD), U(0x202E), U(0x202C)
 MINUS, EN_DASH, EM_DASH = U(0x2212), U(0x2013), U(0x2014)
+HYPHEN, MIDDLE_DOT, ARABIC_3, ARABIC_DECIMAL_SEP = U(0x2010), U(0x00B7), U(0x0663), U(0x066B)
 BOM = U(0xFEFF)
 DELTA = U(0x0394)
 
@@ -27,6 +29,30 @@ _HDR = "# Some finding\n\nArtifact: `%(art)s`\n\n"
 _BEFORE_R6 = ("main", "r1", "r2", "r3", "r4", "r5")
 _THROUGH_R6 = _BEFORE_R6 + ("r6",)
 _ALL_BEFORE_R8 = _THROUGH_R6 + ("r7",)
+# 210 offsets (units of 1e-4 around 0.1525) whose values make the EXACT chance rate of a written 0.1525 0.21 -- over
+# the 4-decimal limit (0.15) -- while round 8 as reviewed, sampling 100 decoys seeded by the TEXT, rated `0.1525` 0.15
+# and `.1525` 0.24 (found by search; see the case below).
+_SPELLING_KS = (
+    -499, -498, -495, -491, -488, -486, -483, -478, -474, -472, -471, -470, -469, -467, -465, -456,
+    -443, -436, -428, -415, -412, -407, -404, -398, -396, -390, -380, -377, -368, -363, -333, -328,
+    -326, -323, -319, -315, -310, -306, -296, -290, -286, -279, -276, -273, -268, -266, -265, -264,
+    -263, -262, -252, -239, -228, -225, -210, -204, -197, -190, -185, -175, -161, -160, -148, -147,
+    -146, -139, -135, -127, -125, -121, -117, -112, -110, -108, -101, -98, -97, -87, -86, -77,
+    -76, -74, -68, -64, -57, -52, -51, -44, -40, -37, -31, -30, -20, -17, -9, -8,
+    -4, -1, 2, 8, 12, 13, 15, 17, 18, 20, 21, 25, 27, 32, 34, 41,
+    52, 53, 54, 55, 62, 64, 65, 67, 68, 70, 75, 83, 84, 92, 93, 99,
+    102, 104, 106, 108, 115, 123, 124, 128, 130, 139, 145, 151, 158, 163, 166, 168,
+    176, 180, 181, 187, 190, 191, 194, 203, 213, 220, 221, 229, 239, 242, 244, 247,
+    251, 256, 259, 261, 262, 273, 274, 280, 281, 283, 286, 290, 295, 297, 298, 303,
+    306, 308, 317, 322, 329, 350, 355, 356, 357, 358, 361, 367, 368, 369, 374, 381,
+    393, 397, 403, 404, 406, 415, 418, 424, 438, 453, 462, 470, 482, 491, 492, 494,
+    496, 497,
+)
+_SPELLING_POOL = {"sweep": sorted({round(0.1525 + k * 1e-4, 6) for k in _SPELLING_KS} | {0.15252})}
+# A sweep with one value every 0.01 (offset 0.0032): a wrong 3-decimal 0.153 lands within +-0.0005 of 0.1532, and a
+# random 3-decimal number would match about 1 time in 10 -- under the old flat 0.20 limit, over the 3-decimal 0.04.
+_SWEEP_3DEC = {"accuracy": 0.17, "baseline": 0.1625, "sweep": [round(0.0032 + i / 100.0, 4) for i in range(100)]}
+_NEG = {"accuracy": 0.17, "delta": -0.1625}
 _MARKED_80 = "\n\n".join("The value was 0.%06d here. <!--derived-->" % (i * 7 + 1) for i in range(80))
 _SYN = "---\nclaim_check: synthesis\nclaim_check_reason: quotes prior runs\n"
 
@@ -611,4 +637,69 @@ SELFTEST_CASES = [
              "12.3456 for a cited 12.3449 passes (a wider window than its stated precision; its own chance rate "
              "stays low because the pool is sparse). Recorded so the acceptance is a stated decision",
          artifact={"x": 12.3449}, doc=_HDR + "The value was 12.3456 here.\n"),
+    # =============================================================================================================
+    # round 8 as reviewed (654d95664): the review's repros, each wrong on r8a and caught now
+    # =============================================================================================================
+    dict(name="r8a_wrong_3_decimal_number_in_a_10pct_pool_is_too_broad", expect="FAIL", wrong_on=('r7', 'r8a'),
+         expect_reason="too_broad", artifact=_SWEEP_3DEC,
+         why="review 1: a wrong 3-decimal number lands in the +-0.0005 window of an unrelated value; its own chance "
+             "rate (~0.10) was under the flat 0.20 limit, so wrong 3-decimal numbers passed more often than in main "
+             "(replay: 12.9% vs 7.6%) -- the 3-decimal limit is now 0.04",
+         doc=_HDR + "The headline was 0.153 here.\n"),
+    dict(name="r8a_en_dash_after_a_word_reads_both_signs", expect="FAIL", wrong_on=('r7', 'r8a'), must_flag=(0.1625,),
+         artifact=_NEG,
+         why="review 2: main and r5 never read a non-ASCII dash as a sign, so `lesion" + EN_DASH + "0.1625` is +0.1625 "
+             "to them; r8a read only -0.1625 and passed a doc main fails -- both readings are checked now",
+         doc=_HDR + "The lesion" + EN_DASH + "0.1625 here.\n"),
+    dict(name="r8a_em_dash_after_a_space_reads_both_signs", expect="FAIL", wrong_on=('r7', 'r8a'), must_flag=(0.1625,),
+         artifact=_NEG, why="review 2: `x " + EM_DASH + "0.1625` -- an em dash in a sign position is read both ways",
+         doc=_HDR + "The x " + EM_DASH + "0.1625 here.\n"),
+    dict(name="r8a_unicode_hyphen_after_a_word_reads_both_signs", expect="FAIL", wrong_on=('r7', 'r8a'),
+         must_flag=(0.1625,), artifact=_NEG,
+         why="review 2: `lesion" + HYPHEN + "0.1625` (U+2010) -- a hyphen glyph is read both ways",
+         doc=_HDR + "The lesion" + HYPHEN + "0.1625 here.\n"),
+    dict(name="r8a_minus_sign_after_a_letter_reads_both_signs", expect="FAIL", wrong_on=('r7', 'r8a'),
+         must_flag=(0.1625,),
+         artifact=_NEG,
+         why="review 2: `x" + MINUS + "0.1625` -- U+2212 glued to a word is read both ways (x minus 0.1625)",
+         doc=_HDR + "The x" + MINUS + "0.1625 here.\n"),
+    dict(name="r8a_minus_sign_after_a_space_is_a_sign", expect="PASS", wrong_on=('main', 'r1', 'r2', 'r3', 'r4', 'r5'),
+         artifact=_NEG,
+         why="U+2212 after a space is a minus sign (every non-ASCII sign in the findings since 2026-09-01 is written "
+             "so); main and r1-r5 read it as +0.1625",
+         doc=_HDR + "The delta " + MINUS + "0.1625 here.\n"),
+    dict(name="r8a_middle_dot_before_an_arabic_digit_hides_nothing", expect="FAIL", wrong_on=('r7', 'r8a'),
+         must_flag=(32.5051,), artifact={"x": 2.5051},
+         why="review 3: in `5" + MIDDLE_DOT + ARABIC_3 + "2.5051` main reads 32.5051; the raw reading stops at the "
+             "Arabic-Indic digit (2.5051) and the dot copy reads `5.32.5051` (nothing) -- a copy with the dot as a "
+             "space reads `5 32.5051`",
+         doc=_HDR + "The value 5" + MIDDLE_DOT + ARABIC_3 + "2.5051 here.\n"),
+    dict(name="r8a_arabic_decimal_separator_before_an_arabic_digit_hides_nothing", expect="FAIL",
+         wrong_on=('r7', 'r8a'),
+         must_flag=(32.5051,), artifact={"x": 2.5051},
+         why="review 3: the same with U+066B ARABIC DECIMAL SEPARATOR",
+         doc=_HDR + "The value 5" + ARABIC_DECIMAL_SEP + ARABIC_3 + "2.5051 here.\n"),
+    dict(name="r8a_hidden_citation_of_a_corrupt_artifact_fails", expect="FAIL", wrong_on=('r6', 'r7', 'r8a'),
+         expect_reason="missing", raw_files={"broken.json": "{not json"},
+         why="review 4: a citation inside a comment adds nothing to the pool but is still opened -- a file that is "
+             "not valid JSON fails as unreadable, as in main and r5 (r8a only checked that it existed)",
+         doc=_HDR + "<!-- see also %(sub)s/broken.json -->\n\nThe accuracy was 0.170 here.\n"),
+    dict(name="r8a_chance_rate_does_not_depend_on_the_spelling", expect="FAIL", wrong_on=('r8a',),
+         expect_reason="too_broad", artifact=_SPELLING_POOL,
+         why="review 5: r8a sampled 100 decoys seeded by the claim's TEXT -- `0.1525` rated 0.15 (passed) and "
+             "`.1525` 0.24 against this pool; the rate is now exact over all 1000 decoys (0.21 for every spelling)",
+         doc=_HDR + "The value was 0.1525 here.\n"),
+    dict(name="r8a_hidden_scale_suffix_is_not_the_same_claim", expect="FAIL", wrong_on=_THROUGH_R6 + ('r8a',),
+         must_flag=(0.1525,),
+         artifact={"x": 152.5},
+         why="review 6: the first reader reading sees `0.1525k` (152.5, in the pool); the second hides the "
+             "attribute-bearing span and sees 0.1525 -- r8a dropped it as a duplicate of (line, value, decimals) "
+             "ignoring the suffix",
+         doc=_HDR + 'The value 0.15<b>2</b>5<span class="u">k</span> here.\n'),
+    dict(name="r8a_marker_live_in_gfm_only_exempts_nothing", expect="FAIL",
+         wrong_on=('main', 'r1', 'r2', 'r3', 'r5', 'r6', 'r7'),
+         why="review 7: GFM splits the row into cells before inline parsing, so the marker is a comment in its own "
+             "cell; CommonMark reads one code span across the pipes. A marker is live only when BOTH parsers read a "
+             "comment (an either-parser rule passes this doc)",
+         doc=_HDR + "| a | b | c |\n|---|---|---|\n| `x | 0.1525 <!--derived--> | y` |\n"),
 ]

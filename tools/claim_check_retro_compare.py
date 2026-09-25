@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
-"""Retro-compare tools/claim_check.py (the working copy, round 8) against main / r5 / r6 / r7 over existing findings,
-with a CAUSE for every number round 8 fails, and the CALIBRATION of CHANCE_MAX and LOW_COVERAGE_MIN_TOTAL.
+"""Retro-compare tools/claim_check.py (the working copy, round 8) against main / r5 / r6 / r7 / r8a over findings,
+with a CAUSE for every number round 8 fails, and the CALIBRATION of the per-precision chance limits (against false
+positives AND, with --replay, against wrong numbers let through) and LOW_COVERAGE_MIN_TOTAL.
 
 For every findings doc (filename date >= --since) it records each revision's verdict (loaded read-only from git, so
 this script cannot drift from what shipped), round 8's verdict and failing rules, and for every number round 8 does
 not accept, WHY -- one cause per number:
-  too-broad          matched (exact/rounding/legacy) but its own chance-match rate exceeds CHANCE_MAX -- a number
-                     CORRECT at its written precision when the rule was exact/rounding
+  too-broad          matched (exact/rounding/legacy) but its own chance-match rate exceeds the limit for its
+                     precision -- MATCHED at its written precision when the rule was exact/rounding, which by the
+                     checker's own logic does not show it is correct (a random number of its shape matches too)
   identifier         an arXiv id, a DOI, a URL or a file path (checked like any number, by design)
   code-fence         inside a fenced/indented code block (a marker there is code, so it cannot be exempted)
   code-span          inside an inline code span
@@ -41,14 +43,15 @@ if ROOT not in sys.path:
     sys.path.insert(0, ROOT)
 import tools.claim_check as cc                      # noqa: E402
 
-REVS = {"main": "7e2edc08e", "r5": "4fda849d4", "r6": "f2b7db2b4", "r7": "4ff05b018"}
+# r8a = round 8 as reviewed (654d95664); the working copy is reported as "r8".
+REVS = {"main": "7e2edc08e", "r5": "4fda849d4", "r6": "f2b7db2b4", "r7": "4ff05b018", "r8a": "654d95664"}
 _DATE_RE = re.compile(r"^(\d{4}-\d{2}-\d{2})-")
 _ID_RE = re.compile(r"(?:\b(?:https?|ftp)://|\bwww\.)\S+|\barxiv[:\s]*\d{4}\.\d{4,5}|\bdoi[:\s]*10\.\d{4,9}/\S+|"
                     r"\b10\.\d{4,9}/\S+|[\w.\-*?\[\]]+(?:/[\w.\-*?\[\]]+)+\.\w{1,5}\b", re.I)
 _CODE_SPAN_RE = re.compile(r"(`+)(.+?)\1")
 _MODS = {}
-FIELDS = ["path", "main", "r5", "r6", "r7", "r8", "r8_fail_rules", "r8_failing_numbers", "r8_causes",
-          "r8_correct_only", "total", "checked", "exempt", "chance_p50", "chance_max", "synthesis"]
+FIELDS = ["path", "main", "r5", "r6", "r7", "r8a", "r8", "r8_fail_rules", "r8_failing_numbers", "r8_causes",
+          "r8_matched_only", "total", "checked", "exempt", "chance_p50", "chance_max", "synthesis"]
 
 
 def _load(tag):
@@ -103,7 +106,7 @@ def _cause(rec, line, pool, fence, comment_spans_by_line):
         return "code-span"
     if any(num in c for c in comment_spans_by_line.get(rec["line"] - 1, ())):
         return "html-comment"
-    if rec.get("hint", "").startswith("the artifact holds +"):
+    if rec.get("hint", "").startswith(("the artifact holds +", "the artifact holds -")):
         return "sign"
     if rec.get("hint", "").startswith("near miss"):
         return "near-miss"
@@ -136,16 +139,16 @@ def scan_one(path):
     row["chance_p50"] = "%.3f" % ch[len(ch) // 2] if ch else ""
     row["chance_max"] = "%.3f" % ch[-1] if ch else ""
     causes = collections.Counter()
-    correct_flags, n_fail = 0, 0
+    matched_flags, n_fail = 0, 0
     detail = []
     if not r.get("unreadable"):
         text = open(path, encoding="utf-8").read()
         lines = text.split("\n")
         fence = _fence_lines(text)
         comments = {}
-        for m in cc._COMMENT_RE.finditer(text):
-            li = text.count("\n", 0, m.start())
-            for k, seg in enumerate(m.group(0).split("\n")):
+        for a, b in cc._comment_spans(text):
+            li = text.count("\n", 0, a)
+            for k, seg in enumerate(text[a:b].split("\n")):
                 comments.setdefault(li + k, []).append(seg)
         for rec in r["records"]:
             if rec["status"] == "too_broad" or (rec["status"] == "checked" and rec["rule"] is None):
@@ -154,27 +157,109 @@ def scan_one(path):
                 c = _cause(rec, line, r["nums"], fence, comments)
                 causes[c] += 1
                 precise = rec["status"] == "too_broad" and (rec["rule"] or "").split("+")[0] in ("exact", "rounding")
-                correct_flags += precise
+                matched_flags += precise
                 detail.append("%d:%s:%s:%s" % (rec["line"], rec["text"], c,
                                                ("%.2f" % rec["chance"]) if rec["chance"] is not None else ""))
     row["r8_failing_numbers"] = n_fail
     row["r8_causes"] = " ".join("%s=%d" % kv for kv in sorted(causes.items()))
-    # A doc fails ONLY on numbers correct at their written precision: every failing number is a too-broad match at
+    # A doc fails ONLY on numbers MATCHED at their written precision: every failing number is a too-broad match at
     # exact/rounding precision, and nothing else fails it.
-    row["r8_correct_only"] = (row["r8"] == "FAIL" and n_fail > 0 and correct_flags == n_fail
+    row["r8_matched_only"] = (row["r8"] == "FAIL" and n_fail > 0 and matched_flags == n_fail
                               and not r["missing"] and not r["low_coverage"] and not r.get("unreadable"))
     row["_detail"] = detail
-    row["_n_fail"], row["_n_correct"] = n_fail, correct_flags
+    row["_n_fail"], row["_n_matched"] = n_fail, matched_flags
     row["_chance_recs"] = [(rec["chance"], (rec["rule"] or "").split("+")[0], rec["decimals"])
                            for rec in r["records"] if rec["status"] in ("checked", "too_broad")
                            and rec["rule"] is not None]
     row["_coverage"] = (r["synthesis"], r["total_numeric"], r["checked_visible_distinct"])
+    row["_replay"] = _replay(r) if _REPLAY else []
     # What round 8 does with every number an OLDER revision flagged: are the older revision's failures of this doc
-    # made ONLY of numbers round 8 matches at their written precision (a correct rounding -- the r5/r6 false
+    # made ONLY of numbers round 8 matches at their written precision (a rounding main's window rejects -- the r5/r6
     # positive), or at least one it also rejects?
     for tag in REVS:
         row["_old_%s" % tag] = _old_flag_fates(tag, path, r) if row[tag] == "FAIL" else None
     return row
+
+
+REPLAY_K = 10
+_REPLAY = False
+
+
+def _replay(r):
+    """WRONG numbers made from the claims round 8 MATCHES in this doc: each value shifted by k = +-1 .. +-REPLAY_K
+    units of its last decimal (a typo, a wrong rounding, a neighbouring seed's value). For each: does main's rule
+    accept it (relative window max(5e-6, 1e-4|x|), bare reading), does round 8's matching rule accept it, and at what
+    chance rate (rated in the tier that matched)? Both rules see the SAME pool (round 8's), so the difference is the
+    rule, not the citation parsing. Two samplings are read from the rows (see _replay_table):
+      "distinct"  every distinct matched claim of the doc, both directions (the calibration's own);
+      "review"    every matched claim record whose own chance is <= 0.20 (accepted by the flat limit round 8 was
+                  reviewed with), repeats kept, +1 .. +REPLAY_K only -- the sampling the 2026-09-25 review described.
+    -> [(decimals, main_ok, r8_matched, chance, in_distinct, in_review)]."""
+    out = []
+    pool = r["nums"]
+    seen = set()
+    cache = {}
+    for rec in r["records"]:
+        if rec["status"] not in ("checked", "too_broad") or rec["rule"] is None:
+            continue
+        key = (round(rec["value"], 12), rec["decimals"], rec["alts"])
+        first = key not in seen
+        seen.add(key)
+        review = rec["chance"] <= 0.20
+        if not (first or review):
+            continue
+        d, alts = rec["decimals"], rec["alts"]
+        u = 10.0 ** (-d)
+        for k in range(1, REPLAY_K + 1):
+            for sgn in (1, -1):
+                if not first and sgn < 0:
+                    continue
+                x = rec["value"] + sgn * k * u
+                if (key, sgn, k) not in cache:
+                    main_ok = cc._any_within(pool, x, max(5e-6, 1e-4 * abs(x)))
+                    rule = cc._match_value(x, u, alts, pool)
+                    ch = (cc._chance(cc.Claim(None, None, 0, x, d, u, alts, "", "raw"), pool, None, cc._tier(rule))
+                          if rule else None)
+                    cache[(key, sgn, k)] = (main_ok, rule is not None, ch)
+                main_ok, matched, ch = cache[(key, sgn, k)]
+                out.append((d, main_ok, matched, ch, first, review and sgn > 0))
+    return out
+
+
+def _set_replay(on):
+    global _REPLAY
+    _REPLAY = on
+
+
+def _cap(caps, d):
+    return caps.get(d, caps.get("default", cc.CHANCE_MAX))
+
+
+def _replay_table(rows, caps, sampling="distinct"):
+    """Acceptance of the replayed wrong numbers by stated precision: main vs round 8 under `caps`."""
+    by_d = collections.defaultdict(lambda: [0, 0, 0])
+    for r in rows:
+        for d, main_ok, matched, ch, in_distinct, in_review in r["_replay"]:
+            if not (in_distinct if sampling == "distinct" else in_review):
+                continue
+            b = by_d[min(d, 6)]
+            b[0] += 1
+            b[1] += main_ok
+            b[2] += matched and ch <= _cap(caps, d)
+    return by_d
+
+
+def _breadth_cost(rows, caps):
+    """(docs failing, docs failing on breadth ALONE, flagged numbers matched at their written precision) if the
+    per-precision limits were `caps`."""
+    fail = alone = matched_flags = 0
+    for r in rows:
+        other = any(w in r["r8_fail_rules"] for w in ("unsupported", "missing", "low_coverage", "unreadable"))
+        hi = [(c, rule, d) for c, rule, d in r["_chance_recs"] if c > _cap(caps, d)]
+        matched_flags += sum(1 for _c, rule, _d in hi if rule in ("exact", "rounding"))
+        fail += bool(other or hi)
+        alone += bool(hi and not other)
+    return fail, alone, matched_flags
 
 
 _OUT_LINE_RE = re.compile(r"line\s+(\d+)\s+(-?[0-9.eE+-]+)\s+not in any cited artifact")
@@ -221,7 +306,7 @@ def _old_flag_fates(tag, path, r8):
         if x["status"] == "exempt":
             fates["exempt-in-r8"] += 1
         elif rule in ("exact", "rounding"):
-            fates["correct-at-precision"] += 1
+            fates["matched-at-precision"] += 1
         elif rule == "legacy":
             fates["legacy"] += 1
         else:
@@ -245,11 +330,15 @@ def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--since", default=None)
     ap.add_argument("--out", default=None)
-    ap.add_argument("--calibrate", action="store_true", help="print the CHANCE_MAX / coverage-floor tables")
+    ap.add_argument("--calibrate", action="store_true", help="print the chance-limit / coverage-floor tables")
+    ap.add_argument("--replay", action="store_true",
+                    help="also replay WRONG numbers (every matched claim shifted by +-1..+-%d units of its last "
+                         "decimal) through main's rule and round 8's, by stated precision, with the breadth cost "
+                         "of each per-precision limit" % REPLAY_K)
     ap.add_argument("--jobs", type=int, default=max(1, (os.cpu_count() or 2) - 2))
     args = ap.parse_args(argv)
     paths = _paths(args.since)
-    with Pool(args.jobs) as pool:
+    with Pool(args.jobs, initializer=_set_replay, initargs=(args.replay,)) as pool:
         rows = pool.map(scan_one, paths, chunksize=4)
 
     n = len(rows)
@@ -268,11 +357,11 @@ def main(argv=None):
         if len(ws) == 1:
             alone[ws[0]] += 1
     print("  r8 failing docs on ONE rule only: %s" % dict(alone))
-    print("  r8 docs failing ONLY on numbers correct at their written precision (too broad, exact/rounding match): "
-          "%d" % sum(1 for r in rows if r["r8_correct_only"]))
+    print("  r8 docs failing ONLY on numbers matched at their written precision but too broad (exact/rounding "
+          "match, chance over the limit -- not shown correct): %d" % sum(1 for r in rows if r["r8_matched_only"]))
     n_flag = sum(r["_n_fail"] for r in rows)
-    n_ok = sum(r["_n_correct"] for r in rows)
-    print("  r8 flagged numbers: %d, of which %d (%.0f%%) are correct at their written precision (too broad); "
+    n_ok = sum(r["_n_matched"] for r in rows)
+    print("  r8 flagged numbers: %d, of which %d (%.0f%%) matched at their written precision but are too broad; "
           "failing docs: %d/%d (%.0f%%)" % (n_flag, n_ok, 100.0 * n_ok / max(1, n_flag), len(r8_fail), n,
                                             100.0 * len(r8_fail) / max(1, n)))
     causes = collections.Counter()
@@ -295,18 +384,18 @@ def main(argv=None):
     for tag in REVS:
         fails = [r["_old_%s" % tag] for r in rows if r.get("_old_%s" % tag)]
         tot = collections.Counter()
-        only_correct = 0
+        only_matched = 0
         for f in fails:
             for k, v in f.items():
                 if not k.startswith("_"):
                     tot[k] += v
-            if f.get("_n") and not f.get("_other_reason") and f.get("correct-at-precision", 0) == f["_n"]:
-                only_correct += 1
+            if f.get("_n") and not f.get("_other_reason") and f.get("matched-at-precision", 0) == f["_n"]:
+                only_matched += 1
         n = sum(v for k, v in tot.items() if k != "error")
-        print("  %s: %d failing docs, %d flagged numbers; what round 8 makes of them: %s; %.0f%% correct at their "
-              "written precision; docs failing ONLY on numbers correct at their written precision: %d"
-              % (tag, len(fails), n, dict(tot.most_common()), 100.0 * tot["correct-at-precision"] / max(1, n),
-                 only_correct))
+        print("  %s: %d failing docs, %d flagged numbers; what round 8 makes of them: %s; %.0f%% matched at their "
+              "written precision; docs failing ONLY on numbers matched at their written precision: %d"
+              % (tag, len(fails), n, dict(tot.most_common()), 100.0 * tot["matched-at-precision"] / max(1, n),
+                 only_matched))
 
     if args.calibrate:
         recs = [x for r in rows for x in r["_chance_recs"]]
@@ -339,6 +428,40 @@ def main(argv=None):
         low = [(tot, vis) for tot, vis in cov if vis / float(tot) < cc.MIN_CHECK_FRACTION]
         print("  coverage: non-synthesis docs below %.0f%% visible-distinct-checked: %d; their totals (largest 8): %s"
               % (100 * cc.MIN_CHECK_FRACTION, len(low), sorted(low)[-8:]))
+
+    if args.replay:
+        live = dict(cc.CHANCE_MAX_BY_DECIMALS, default=cc.CHANCE_MAX)
+        for sampling, what in (("distinct", "every distinct matched claim, +-1..+-%d units of its last decimal"
+                                % REPLAY_K),
+                               ("review", "every matched claim record with chance <= 0.20, +1..+%d units (the "
+                                "review's sampling)" % REPLAY_K)):
+            tab = _replay_table(rows, live, sampling)
+            print("  REPLAY (%s): wrong numbers from %s; accepted by main / by round 8 at its live limits %s:"
+                  % (sampling, what, live))
+            tot = [0, 0, 0]
+            for d in sorted(tab):
+                n, m, r8 = tab[d]
+                tot = [a + b for a, b in zip(tot, tab[d])]
+                print("    d=%s%s: %6d wrong, main accepts %5d (%5.2f%%), round 8 accepts %5d (%5.2f%%)%s"
+                      % (d, "+" if d == 6 else " ", n, m, 100.0 * m / n, r8, 100.0 * r8 / n,
+                         "" if r8 <= m else "   <-- MORE than main"))
+            print("    all : %6d wrong, main accepts %5d (%5.2f%%), round 8 accepts %5d (%5.2f%%)"
+                  % (tot[0], tot[1], 100.0 * tot[1] / max(1, tot[0]), tot[2], 100.0 * tot[2] / max(1, tot[0])))
+        print("  per-precision limit sweep (d=3 limit / d=4 limit / d>=5 limit): wrong numbers accepted at d=3, d=4, "
+              "all; docs failing; docs failing on breadth alone; flagged numbers matched at their written precision:")
+        for c3, c4, c5 in ((0.20, 0.20, 0.20), (0.10, 0.20, 0.20), (0.08, 0.20, 0.20), (0.05, 0.20, 0.20),
+                           (0.04, 0.20, 0.20), (0.03, 0.20, 0.20), (0.05, 0.15, 0.20), (0.04, 0.15, 0.20),
+                           (0.03, 0.10, 0.20)):
+            caps = {3: c3, 4: c4, "default": c5}
+            accs = []
+            for sampling in ("distinct", "review"):
+                t = _replay_table(rows, caps, sampling)
+                acc = {d: 100.0 * t[d][2] / t[d][0] for d in t if t[d][0]}
+                allp = 100.0 * sum(t[d][2] for d in t) / max(1, sum(t[d][0] for d in t))
+                accs.append("%5.1f%% %5.1f%% %5.1f%%" % (acc.get(3, 0.0), acc.get(4, 0.0), allp))
+            fail, alone, mflags = _breadth_cost(rows, caps)
+            print("    %.2f / %.2f / %.2f: distinct %s | review %s; %d failing, %d on breadth alone, %d flagged"
+                  % (c3, c4, c5, accs[0], accs[1], fail, alone, mflags))
 
     out = args.out
     if out:

@@ -2,7 +2,7 @@
 
   1. REGISTRY: every tools/claim_check_cases.py entry gets its expected verdict for its stated reason (a FAIL case
      must flag its designated wrong number or trip its reason; a PASS case flags nothing).
-  2. HISTORY: every case is re-run through each earlier checker (main, r1-r7, read straight from git) and its
+  2. HISTORY: every case is re-run through each earlier checker (main, r1-r7, r8a, read straight from git) and its
      recorded `wrong_on` must equal the set of revisions that ACTUALLY get it wrong -- "this used to pass, now it
      fails" is re-derived on every run, never remembered. Every round-7-review repro must be wrong on r7.
   3. SPEC GUARDS for the round-8 contract: nothing deleted/hidden (the normalized copy is 1:1), markers verified by
@@ -11,6 +11,10 @@
   5. The CCT registry gate reports a broken instrument verbatim.
   6. A seeded differential fuzz over the whole hole vocabulary: one wrong number in any markup context fails the
      doc; correct or properly marked numbers pass.
+  7. The round-8 review (654d95664, "r8a" in the history) fixes: per-precision chance limits, an exact and
+     spelling-independent chance rate, dash signs read both ways where main/r5 differ, the dot-as-space copy, hidden
+     citations opened, the suffix in both duplicate keys; every linear-time emulation pinned against the regex it
+     replaces (random text), and adversarial 200 KB documents scanned within a killed-at-the-limit child process.
 """
 from __future__ import annotations
 
@@ -210,6 +214,11 @@ def test_marker_in_one_parser_only_is_dead(casedir):
     body = _H + "x | y | z\n---|---|---\n`a | <!--derived--> | b` 0.104615 | 1 | 2\n"
     r = _scan_doc(casedir, "parser_disagree", body)
     assert 0.104615 in _flagged(r)
+    # the number in the marker's OWN GFM cell: only the both-parsers rule keeps it checked (an either-parser rule --
+    # `|` for `&` in _scan -- exempts it, and this assertion is what catches that mutant)
+    body = _H + "x | y | z\n---|---|---\n`a | 0.104615 <!--derived--> | b` | 1 | 2\n"
+    r = _scan_doc(casedir, "parser_disagree_same_cell", body)
+    assert 0.104615 in _flagged(r)
 
 
 def test_chance_is_per_claim_and_printed(casedir):
@@ -221,8 +230,9 @@ def test_chance_is_per_claim_and_printed(casedir):
     with contextlib.redirect_stdout(buf):
         cc.check(cc._write_case(casedir, {"name": "per_claim_chance", "doc": body, "artifact": art}))
     out = buf.getvalue()
-    assert "chance match    : p50" in out and "limit %.0f%% per claim" % (100 * cc.CHANCE_MAX) in out
+    assert "chance match    : p50" in out and "limit per claim " + cc._limits_text() in out
     assert cc.TOO_BROAD_MSG in out
+    assert re.search(r"chance \d+% > 4%", out)       # a 3-decimal claim is held to the 3-decimal limit
 
 
 def test_chance_is_deterministic():
@@ -461,3 +471,165 @@ def test_fuzz_correct_or_marked_numbers_pass(seed):
             if cc._verdict(r) != "PASS":
                 fps.append((body, sorted(_flagged(r))))
     assert not fps, "a clean doc failed: %r" % fps[:5]
+
+
+# ---- 7. the round-8 review (654d95664) fixes ----------------------------------------------------------------------
+def test_chance_is_exact_and_does_not_depend_on_the_spelling():
+    pool = sorted({round(0.417 + k * 1e-3 + 0.0002, 4) for k in range(-500, 501, 7)} | {0.4172})
+    rates = set()
+    for text in (".417", "0.417", "00.417"):
+        rates.add(cc._chance(cc.Claim(0, 0, 0, 0.417, 3, 1e-3, (), text, "raw"), pool, None, "precision"))
+    assert len(rates) == 1
+    brute = sum(1 for k in range(-cc.CHANCE_WINDOW, cc.CHANCE_WINDOW + 1)
+                if k and cc._match_value(0.417 + k * 1e-3, 1e-3, (), pool, None, False)) / (2.0 * cc.CHANCE_WINDOW)
+    assert rates == {brute}
+
+
+def test_chance_limit_depends_on_the_stated_precision(casedir):
+    assert cc.chance_max(3) == 0.04 and cc.chance_max(4) == 0.15 and cc.chance_max(7) == cc.CHANCE_MAX == 0.20
+    art = {"sweep": [round(0.0032 + i / 100.0, 4) for i in range(100)]}
+    wrong = _scan_doc(casedir, "limit_3dec", _H + "The headline was 0.153 here.\n", artifact=art)
+    assert [round(v, 6) for _l, v, _ch, _c in wrong["too_broad"]] == [0.153]
+    assert 0.04 < wrong["too_broad"][0][2] <= 0.20                # the flat 0.20 limit passed it
+    right = _scan_doc(casedir, "limit_4dec", _H + "The headline was 0.1532 here.\n", artifact=art)
+    assert cc._verdict(right) == "PASS"                            # one more stated decimal fixes it
+
+
+@pytest.mark.parametrize("dash,before,artifact,ok", [
+    (chr(0x2013), "lesion", {"d": -0.1625}, False),                # en dash after a word: also +0.1625
+    (chr(0x2013), "lesion", {"d": 0.1625}, False),                 # ... and also -0.1625
+    (chr(0x2013), "lesion", {"a": 0.1625, "d": -0.1625}, True),    # both readings supported
+    (chr(0x2014), "x ", {"d": -0.1625}, False),                    # em dash after a space
+    (chr(0x2010), "lesion", {"d": -0.1625}, False),                # U+2010 hyphen
+    (chr(0xFF0D), "x ", {"d": -0.1625}, False),                    # fullwidth hyphen-minus
+    (chr(0x2212), "x", {"d": -0.1625}, False),                     # U+2212 glued to a word
+    (chr(0x2212), "x ", {"d": -0.1625}, True),                     # U+2212 after a space: a minus sign
+    (chr(0x2212), "x ", {"d": 0.1625}, False),                     # ... so +0.1625 does not support it
+    (chr(0x2013), "0.170", {"a": 0.17, "b": 0.1625}, True),        # a range after a digit: never a sign
+    ("-", "x ", {"d": -0.1625}, True),                             # an ASCII minus after a space
+])
+def test_dash_sign_readings(dash, before, artifact, ok, casedir):
+    r = _scan_doc(casedir, "dash_%x_%d_%s" % (ord(dash), len(before), abs(hash(str(artifact)))),
+                  _H + "The value %s%s0.1625 here.\n" % (before, dash), artifact=artifact)
+    assert (cc._verdict(r) == "PASS") is ok, (dash, before, artifact, r["unsupported"])
+
+
+def test_dot_like_characters_are_also_read_as_a_space():
+    s = "5" + chr(0xB7) + chr(0x663) + "2.5051"
+    assert cc._n_copy(s) == "5.32.5051" and cc._n_copy(s, True) == "5 32.5051"
+    assert len(cc._n_copy(s, True)) == len(s)
+
+
+def test_hidden_citation_is_opened_but_adds_nothing(casedir):
+    """A citation inside a comment never widens the pool -- only its readability is checked."""
+    hidden = {"name": "hidden_pool", "doc": "# T\n\nArtifact: `%(art)s`\n\n<!-- %(sub)s/extra.json -->\n\n"
+                                            "The value was 0.1525 here.\n",
+              "raw_files": {"extra.json": '{"v": 0.1525}'}}
+    r = cc._scan(cc._write_case(casedir, hidden))
+    assert _flagged(r) == {0.1525} and not r["missing"]
+
+
+def test_scaled_reading_is_part_of_the_duplicate_key(casedir):
+    """`0.1525k` then a non-ASCII digit: the raw reading scales it (152.5), the normalized one reads the bare 0.1525
+    (the digit is ASCII there). Both are checked -- dropping either as a duplicate checks it more loosely."""
+    r = _scan_doc(casedir, "suffix_dup", _H + "The value 0.1525k" + chr(0x663) + " here.\n", artifact={"x": 152.5})
+    assert 0.1525 in _flagged(r)
+
+
+# linear-time emulations, each pinned against the regex it replaces on random text (the regexes stay as the SPEC)
+_ALPHA = ["<", ">", "-", "!", "/", "|", " ", "\t", "\n", "x", "h1", "br", "<br", "</h2 >", "<h3 a>", "-->", "<!--",
+          "derived", ":", "<!--derived", "#", "=", '"', "hidden", "span", "<span hidden>", "</span>", "style",
+          "display:none", "<b ", "?>", "<?", "<!D", "<![CDATA[", "]]>", "a=", "0.15"]
+
+
+def _random_texts(seed, n=4000, k=24):
+    rng = random.Random(seed)
+    for _ in range(n):
+        yield "".join(rng.choice(_ALPHA) for _ in range(rng.randint(1, k)))
+
+
+def _old_hidden_element_spans(text):
+    spans = []
+    for m in cc._HIDDEN_OPEN_RE.finditer(text):
+        tag = (m.group(1) or m.group(2)).lower()
+        close = re.compile(r"</\s*%s\s*>" % re.escape(tag), re.I).search(text, m.end())
+        spans.append((m.start(), close.end() if close else len(text)))
+    return spans
+
+
+@pytest.mark.parametrize("seed", [0, 1])
+def test_linear_emulations_match_their_regexes(seed):
+    from markdown_it.common.html_re import HTML_TAG_RE
+    for s in _random_texts(seed):
+        assert cc._exact_marker_starts(s) == [m.start() for m in cc._EXACT_MARKER_RE.finditer(s)], s
+        for ln in s.split("\n"):
+            assert cc._cell_cuts(ln) == [m.start() for m in cc._CELL_CUT_RE.finditer(ln)], ln
+            h = cc._ATX_ANY_RE.match(ln)
+            assert cc._atx_text(ln) == ((h.group(2) or "") if h else None), ln
+        assert cc._html_headings(s) == [m.group(1) for m in cc._HTML_HEADING_RE.finditer(s)], s
+        assert cc._strip_tags_comments(s) == cc._TAG_OR_COMMENT_RE.sub("", s), s
+        assert cc._hidden_element_spans(s) == _old_hidden_element_spans(s), s
+        memo = {}
+        for pos in (i for i, c in enumerate(s) if c == "<"):
+            assert cc._mdit_html_possible(s, pos, memo) == (HTML_TAG_RE.search(s[pos:]) is not None), (s, pos)
+        # comments end at the FIRST `-->` (a browser's rule), never hide an unclosed `<!--`
+        for a, b in cc._comment_spans(s):
+            assert s.startswith("<!--", a) and s.endswith("-->", 0, b) and "-->" not in s[a + 2:b - 1]
+
+
+def test_fm_value_reads_the_rest_of_the_line():
+    fm = "Title:   Lane A GO \t\nverdict: x\n  continued\nother: y"
+    assert cc._fm_value(fm, "title") == "Lane A GO"
+    assert cc._fm_value(fm, "verdict") == "x continued"
+
+
+# Each of these took a minute or more at 200 KB (or never finished) on round 8 as reviewed; main is instant.
+_SLOW_BEFORE = {
+    "tag without >": "x <b y ",
+    "unclosed comment": "x <!-- y ",
+    "marker note without -->": "<!--derived: x ",
+    "numbers on one line": "0.1525 ",
+    "cell tags without >": "x <br y 0.170 ",
+    "html heading without close (synthesis)": "<h1>x ",
+    "unclosed CDATA": "x <![CDATA[ y ",
+}
+
+
+@pytest.mark.parametrize("name", sorted(_SLOW_BEFORE))
+def test_adversarial_documents_scan_in_linear_time(name, casedir):
+    unit = _SLOW_BEFORE[name]
+    pre = "---\nclaim_check: synthesis\nclaim_check_reason: r\n---\n\n" if "synthesis" in name else ""
+    body = pre + _H + unit * (200000 // len(unit)) + "\n"
+    path = cc._write_case(casedir, {"name": "slow_%d" % abs(hash(name)), "doc": body})
+    # ~0.3-4 s now; the quadratic scans took 39 s (the synthesis heading) to minutes, or never finished (the marker)
+    assert _finishes_within(cc._scan, (path,), 30.0), "%s: no result after 30 s" % name
+
+
+def _finishes_within(fn, args, seconds):
+    """Run fn(*args) in a child process that is KILLED at the limit: a regex call holds the GIL, so a thread could
+    not time out, and a scan that never finishes must fail the test, not hang the suite."""
+    import multiprocessing
+    proc = multiprocessing.get_context("fork").Process(target=fn, args=args)
+    proc.start()
+    proc.join(seconds)
+    alive = proc.is_alive()
+    if alive:
+        proc.kill()
+        proc.join()
+    return not alive and proc.exitcode == 0
+
+
+@pytest.mark.parametrize("fn,arg", [
+    ("_atx_text", "# a" + " " * 400000 + "x"),                      # the lazy text group vs a trailing blank run
+    ("_strip_tags_comments", "<!-- x " * 60000),                    # the lazy comment scan from every `<!--`
+    ("_fm_value", "title: a" + " \t" * 200000 + "b"),              # the lazy value vs trailing blanks
+])
+def test_synthesis_bar_helpers_are_linear(fn, arg):
+    args = (arg, "title") if fn == "_fm_value" else (arg,)
+    assert _finishes_within(getattr(cc, fn), args, 20.0), fn
+
+
+def test_cell_cuts_are_linear_on_one_long_line():
+    """1 MB of `x <br y` on ONE line: the regex scanned to the end of the line from every `<br` (~70 s); the
+    emulation takes a fraction of a second."""
+    assert _finishes_within(cc._cell_cuts, ("x <br y " * 130000,), 20.0)
