@@ -1275,7 +1275,7 @@ def _format(rel, line, tok, kind, via, summary):
     snippet = summary.lines[line - 1].strip()[:110] if 0 < line <= len(summary.lines) else ""
     what = "`ssh` (no -n/-f)" if kind == "ssh" else "`%s` (a script that runs ssh on its own stdin)" % tok
     where = "inside a `while read` loop" if via is None else (
-        "in %s(), called from the `while read` loop at line %d" % (via[1], via[0]))
+        "via %s(), which a `while read` loop calls at line %d" % (via[1], via[0]))
     return ("%s:%d -- %s reads fd 0 %s: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a "
             "pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / "
             "pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. "
