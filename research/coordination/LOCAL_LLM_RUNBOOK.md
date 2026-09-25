@@ -128,25 +128,24 @@ lines here after the Tuesday reset.)_
 
 ## Parked for Claude (after the Tuesday reset) — do NOT work on these
 
-- B2b torn-cell re-run (owner approved 2026-09-25): branch `research/b2b-torn-cells-redo` needs its review fixes, then the
-  redo is run and B2b is scored.
-- Interrupted builds: awake-replay completion fix (`research/awake-replay-completion-r2`), the memory pair's production-path
-  arms, the SlotBinder fast teach review (`research/slotbinder-fast-teach`, UNREVIEWED; touches sim/).
-- Designs with open review issues: prioritized memory (`research/prioritized-memory-design`), B2c combined battery
-  (`research/b2c-paired-flip-prereg-fixround1`), claim-check round 8, the prereg-amendment gate, the pool-stall detector.
+- Prioritized memory (owner's top memory directive): the DESIGN is on main (e7c7a281f) with its open re-review issues listed at
+  the top (1 MEDIUM, 3 LOW); next is a preregistration that closes them, then the build. The DA tag-capture + sleep-replay pair
+  stays off until this lands (owner, 2026-09-25).
 - B2b: (a) before AWS pool1 or pool2 next starts, run Steps 1a/1b of `research/coordination/b2b0924_reruns_commands.txt`
   (move the stale copies aside on those nodes); (b) seed 102 discourse-register + episodic-memory were dispatched twice
   (00:54 pool2, 13:15 pool1/pool2), left partial arm files and no lb.json -- decide under prereg A1.4 whether a further
   re-run is allowed; (c) fill `research/coordination/b2b0924_reruns.tsv` results when the three redo cells land, then score.
-- Scoring findings, harvested but not yet written: fi (aggregate reads NO-GO 3/6; seeds 43 and 101 look like an encoding
-  miss, not forgetting; needs the independent check + `preconditions` block) and D6 at N=2000 (recall holds to 2000; cost
-  ceiling 50-500; explain HEBB vs COPY PARITY-BY-CONSTRUCTION).
-- Make `tools/gpu_queue.sh` and `tools/pool_autodispatch.sh` daemons immune to in-place edits of their own script (FAILURE_LOG
-  2026-09-25); claim-check round 8 (MEDIUM: more false blocks on block-scope derived markers) and the pool-stall detector (HIGH: no
-  timeout on the live-node memory probe) are parked with their final-review issue lists in workflow wf_9944d7c2-aca.
-- Small fixes: findings cite the git-ignored receipt `research/queue/.corpus_checks.jsonl` (FAILURE_LOG 2026-09-25; if a
-  commit in a worktree is blocked for it, copy that file from the main checkout into the worktree); the GPU auto-swap's two
-  LOW review notes (validate the profile name before writing the restore marker; `|| true` on the test-only stop path).
+- Score the arcc awake-replay battery (6 seeds queued 18:05) once it lands; its aggregate needs a checked `preconditions` block.
+- SlotBinder fast teach (`research/slotbinder-fast-teach-final`, touches sim/): final fix round result pending at handoff --
+  merge only on an independent SOUND re-review; its GPU plan (AMENDMENT 3) needs explicit pass criteria first.
+- B2c combined battery prereg (`research/b2c-paired-flip-prereg-fixround1`): open review issues.
+- Tooling: claim-check round 8 (MEDIUM: more false blocks on block-scope derived markers) and the pool-stall detector (HIGH: no
+  timeout on the live-node memory probe), issue lists in workflow wf_9944d7c2-aca; make `tools/gpu_queue.sh` and
+  `tools/pool_autodispatch.sh` daemons immune to in-place edits of their own script; make `pool_provision.sh --revision` imply
+  `--isolated` (FAILURE_LOG 2026-09-25).
+- Small fixes: findings cite the git-ignored receipt `research/queue/.corpus_checks.jsonl` (if a commit in a worktree is
+  blocked for it, copy that file from the main checkout into the worktree); the GPU auto-swap's two LOW review notes (validate
+  the profile name before writing the restore marker; `|| true` on the test-only stop path).
 
 ## NEEDS CLAUDE
 
