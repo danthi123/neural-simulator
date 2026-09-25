@@ -136,6 +136,15 @@ dup-guard UNSOUND, pool-stall UNSOUND -> all five fix rounds + opus re-reviews a
 `wag8gn2mw` (review texts saved as .claude/worktrees/_review_<lane>_2026-09-25.txt). Paired-flip legs (b)+(c) = `wq8hepp4u`;
 stdin-class fixes + fragment-job audit = `wvh50k7ah`; awake-completion still building in `wjnk7jtnb`. B2b wave 3 queued.
 
+**☀️ 12:10 SETTLE A2 never ran:** its six pool lines began with a prose label ('A2 wiring seed 42: mem_gb=8 && ...'), so bash ran
+`A2` and exited 127 at 09:59-10:00 -- nothing ran. Re-queued the six without the label at 12:05 (same pinned revision 5b5ea1b74).
+Fragment-job audit (research/dispatcher-fragment-audit @ 273cfc1b4, review SOUND-WITH-ISSUES): 14 fragments, 9 exit 127, 1 exit 2,
+4 ran load_bearing_fraction off-pin; every off-pin copy fails the pin rule and was replaced by the pinned full run; NO committed
+finding at risk. OWNER ITEMS before B2b is scored: B2b prereg A1.4(c) ruling for s43/d5-consolidate, s42/causal-whatif,
+s42/affect-appraisal-interoceptive (torn line ran off-pin, then the full line ran pinned on the same host, not logged as a rerun).
+Next rounds = workflow `w5lillvm5` (stop/start round 3, ssh-loop gate round 2 [was UNSOUND: scanned only added files], audit
+evidence made durable + PIN.txt, and a new enqueue-time 'first word must be runnable' check).
+
 **🌙 PRE-DECIDED NEXT ACTIONS — OVERNIGHT PLAN (owner asleep from 01:35, 2026-09-25); work in order, re-arm the heartbeat on every expiry:**
 1. ✅ B2a DONE 03:45: re-scored R1 PASS (28/28, 0 regressions) + R2 PASS (168/168 valid at pinned M1, 6 covered-by-parent,
    0 incomplete), two verifiers agree, merged 075c24cd3 (follow-up to the FAIL finding). Robust core 24, union 25, mean
