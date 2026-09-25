@@ -40,6 +40,10 @@ BRAIN_SLEEP_LOAD_RENORM (the night's downscaling set by the day's learning load)
 recall question each morning, and k other facts told on each later day (k = 0 / 1 / 3), plus the salient telling and a
 re-mentioned telling at k = 3 and the load-edge lesion. Output defaults to FI_OUT.
   tools/memcap.sh 8 -- .venv/bin/python -u -m research.runners._da_tag_capture_chat_probe --family fi --seed 42
+THE PAIR ON ITS PRODUCTION PATH (branch research/pair-production-path-arms, Amendment 7 of the same prereg; review
+items B3/B4/D3): the wall-clock day, the one-family salient/neutral contrast with a waking-only DA lesion, the weak
+telling's immediate and ledger-off reads, and the cupy arms live in the SIBLING runner
+research/runners/_pair_production_path_probe.py (families pp / sn / cu), which reuses this module's helpers.
 Byte-identical OFF (r2: a COUNTERFACTUAL built from the current tree -- HEAD vs HEAD minus the feature's own commits,
 plus a HEAD-vs-HEAD null control; three tiny-demo builds, exact sha256; replaces the stale fixed-pin check):
   tools/memcap.sh 8 -- .venv/bin/python -u -m research.runners._da_tag_capture_chat_probe --offcheck \

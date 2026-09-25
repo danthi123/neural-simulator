@@ -86,6 +86,13 @@ THE REPLAY-EDGE LESION. `BRAIN_SLEEP_REPLAY_CAPTURE_LESION=1` severs the reactiv
 still run (same compute, same substrate state) but R_eff = 0, so no replay tag is set and the SWR bout's DA stays
 tonic. The D1 pool is still read at tonic (it fires at its tonic rate + noise), exactly as the v3 lesions do.
 
+THE WAKING-ONLY DA LESION (branch research/pair-production-path-arms; review B4 / I-3). `BRAIN_DA_ENCODING_LESION` moves
+three edges at once: the waking write gain, the waking D1 drive, and the DA the D1 pool sees during the SWR bout. So under
+it a next-day abstain cannot say whether waking salience or the sleep route's DA edge carried the fact.
+`BRAIN_DA_ENCODING_LESION_SPARE_SWR=1` (default OFF, read only inside an epoch) keeps the first two and lifts the third:
+the SWR bout's D1 read sees the route's own DA (`swr_prp_da`). `BRAIN_DA_CAPTURE_LESION` still pins it. The epoch record
+carries `da_lesion_spares_swr: true` only when the knob is set.
+
 WHY ONE EPOCH PER NIGHT, NOT ONE PER NREM CYCLE (measured 2026-09-24, fake-substrate test, before any brain run). A
 5-cycle variant (90-min cycles, Buzsaki's "four or five non-REM/REM cycles") RESURRECTED noise-level traces: a fact told
 8 h before sleep (read-back R = 0.035, at baseline) was captured by cycle 4, because a sub-threshold late-phase z is
@@ -155,6 +162,23 @@ def replay_capture_enabled() -> bool:
 def replay_capture_lesioned() -> bool:
     """`BRAIN_SLEEP_REPLAY_CAPTURE_LESION` severs the reactivation -> synapse / DA edge (the reads still run)."""
     return _truthy("BRAIN_SLEEP_REPLAY_CAPTURE_LESION")
+
+
+def da_lesion_spares_swr() -> bool:
+    """`BRAIN_DA_ENCODING_LESION_SPARE_SWR` (default OFF; branch research/pair-production-path-arms, review B4 / I-3),
+    read only inside an SWR epoch: with `BRAIN_DA_ENCODING_LESION` set it keeps the lesion WAKING-ONLY -- the waking
+    write gain and the waking D1 drive stay pinned by that lesion, but the DA the D1 pool sees during the SWR bout is the
+    route's own DA, not tonic. So the pair's sleep route runs intact while waking salience is cut. It never overrides
+    `BRAIN_DA_CAPTURE_LESION` (that one still pins the SWR read too)."""
+    return _truthy("BRAIN_DA_ENCODING_LESION_SPARE_SWR")
+
+
+def swr_prp_da(da_level: float) -> float:
+    """The DA the D1 pool sees during an SWR bout: `prp_da` (both existing lesions pin it to tonic), except under the
+    waking-only lesion (`da_lesion_spares_swr`), where the DA-encoding lesion's pin is not applied here."""
+    if da_lesion_spares_swr() and not capture_lesioned():
+        return float(da_level)
+    return prp_da(da_level)
 
 
 def downscaling_enabled() -> bool:
@@ -299,7 +323,7 @@ class SleepReplayCapture:
         # (4) SWR-coupled DA onto the spiking D1 pool -> the shared PRP pool (through both existing lesion edges)
         sum_r = float(sum(R_eff))
         da = swr_da(sum_r)
-        d_seen = prp_da(da)
+        d_seen = swr_prp_da(da)
         cap_coupling = 0.0 if capture_lesioned() else 1.0
         a_log = []
         for j in range(N_SWR_SUBREADS):
@@ -345,6 +369,8 @@ class SleepReplayCapture:
                             "pre_frac_z_gt_half": [round(v, 9) for v in pre_z],
                             "replay_lesioned": bool(coupling == 0.0), "capture_lesioned": bool(cap_coupling == 0.0),
                             "no_reader": bool(any(r is None for r in R))})
+        if da_lesion_spares_swr():                     # additive key, only with the waking-only lesion knob set
+            self.epochs[-1]["da_lesion_spares_swr"] = True
         if shy is not None:
             self.epochs[-1]["shy_scale"] = shy
         if load is not None:
