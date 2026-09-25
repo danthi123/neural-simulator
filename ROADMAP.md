@@ -16,10 +16,12 @@ daily cap. **Scored today (each independently re-checked):** the ability to hold
 on all six seeds; the old nightly scaling-down rule: NO-GO; learning feeling-words from reading: NO-GO; a learned
 word-to-thing lexicon: NO-GO; the gated free-talk turn: not a GO; tracking another person's false belief in chat: a
 practice-seed pass; two battery rows, a reminder-memory detector and an old timing measurement: undefined or void. The
-deep-credit (gap#4) sliding baseline stops the weights piling up at their limit (merge pending a provenance-stamp fix).
+deep-credit (gap#4) sliding baseline stops the weights piling up at their limit (now merged).
 Several pool bugs were found and fixed (duplicate jobs, a dispatcher that starved the queue, jobs that never ran), and a
 test that wrote fake spend into the real AWS ledger was stopped. From this evening a local model supervises the queued
-experiments over the weekend while Claude usage is conserved. (Board: GAP_CLOSURE_MISSION.md 13:05-14:25 entries.)
+experiments over the weekend while Claude usage is conserved. **Done by late afternoon:** the feeling word is off
+in replies by default (the mood is still computed and recorded), and the local model's runbook is written.
+(Board: GAP_CLOSURE_MISSION.md 13:05-16:20 entries.)
 
 ## 2026-09-25 (overnight) — overnight memory: a fact kept through sleep passes; resting hours before sleep works on 5 of 6 seeds; nothing switched on
 

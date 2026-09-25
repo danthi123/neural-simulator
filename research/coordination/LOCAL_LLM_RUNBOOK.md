@@ -118,7 +118,6 @@ lines here after the Tuesday reset.)_
 
 - B2b torn-cell re-run (owner approved 2026-09-25): branch `research/b2b-torn-cells-redo` needs its review fixes, then the
   redo is run and B2b is scored.
-- Merges waiting on the corpus-check shared-log fix: `research/score-gap4-c26-0925`, `research/score--pmem-live-cliff-detector-v2-0925`.
 - Interrupted builds: awake-replay completion fix (`research/awake-replay-completion-r2`), the memory pair's production-path
   arms, the SlotBinder fast teach review (`research/slotbinder-fast-teach`, UNREVIEWED; touches sim/).
 - Designs with open review issues: prioritized memory (`research/prioritized-memory-design`), B2c combined battery

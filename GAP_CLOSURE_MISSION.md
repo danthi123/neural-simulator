@@ -229,6 +229,14 @@ AWS stop/start r4 result in the journal. Wrap-up list: merge/park per the one-mo
 auto-swap; fill LOCAL_LLM_RUNBOOK 'Queue next'; queue reviewed pool/AWS batteries; owner approves the condensed CLAUDE.md/memory;
 live-check `llm claude`; then hand off.
 
+**☀️ 16:20 WRAP-UP MERGES (owner gaming; Claude weekly at 79%):** MERGED to main: marker-word retirement 606e1c7d8
+(BRAIN_AFFECT_MARKER_SURFACE default OFF; mood still computed + recorded; review SOUND, gate mutation-checked); corpus-check
+shared log ecb6bae29 (review SOUND after a test-path fix 4b24c02a4); then the two merges it unblocked, gap4 C26 scoring 3d16962d0
+and pmem live cliff-detector v2 4c0b9fada. LOCAL_LLM_RUNBOOK.md filled (0b967376f): harvest recipes for fi / D6 N=2000 / SETTLE A2,
+idle-gate waiver guidance, Queue next EMPTY, parked-for-Claude list. Still open: GPU<->llm auto-swap fix (in review, workflow
+wf_aae2784e); condensed CLAUDE.md + memory (review faithful; branch must merge main first; awaits OWNER approval); live check of
+`llm claude` once the GPU is free.
+
 **🌙 PRE-DECIDED NEXT ACTIONS — OVERNIGHT PLAN (owner asleep from 01:35, 2026-09-25); work in order, re-arm the heartbeat on every expiry:**
 1. ✅ B2a DONE 03:45: re-scored R1 PASS (28/28, 0 regressions) + R2 PASS (168/168 valid at pinned M1, 6 covered-by-parent,
    0 incomplete), two verifiers agree, merged 075c24cd3 (follow-up to the FAIL finding). Robust core 24, union 25, mean
