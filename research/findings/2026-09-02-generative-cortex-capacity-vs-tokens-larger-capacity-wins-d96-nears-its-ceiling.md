@@ -166,7 +166,7 @@ Gate readout (6 seeds): `uses_tokens` 6/6, `still_descending_at_top` **6/6**, `u
 more than 3x Arm A's slope at its own top, i.e. still descending at a healthy clip. The margin over trigram
 also softens slightly at the very last point (0.3327 -> 0.3023, mirroring Arm A's shape faintly) but from a
 much higher absolute level, and the NLL descent itself shows no sign of flattening. Per-seed overfit gap at
-the top point is consistently POSITIVE (0.033-0.076, healthy generalization gap) -- unlike Arm A's near-zero/
+the top point is consistently POSITIVE (0.035-0.076, healthy generalization gap) -- unlike Arm A's near-zero/
 slightly-negative gap at its top, another independent signal that d192 has NOT yet run out of capacity the
 way d96 has. Runner's own aggregation formula on these 6 seeds: **GO-TOKEN-LEVER**, clean (all three
 thresholds cleared: `n_uses=6>=5`, `n_desc=6>=4`, `n_clean=6>=5`).
@@ -246,3 +246,10 @@ from 0.242 to 0.084 nats, which is real, measured progress, not a declared solve
 **NO-DEFER note:** Arm A's PARTIAL is a verdict on d96's OWN capacity ceiling, not on the token lever or the
 capability. The capability (brain-native arbitrary prose) is not deferred; Arm B hands the next method
 (capacity growth, jointly with tokens) exactly as the runner docstring anticipated.
+
+## Corrections (2026-09-25 claim-check spot audit)
+
+- Section 4, Arm B overfit-gap range: `0.033` -> `0.035` <!--derived--> (nearest rounding of the minimum
+  per-seed top-point `overfit_gap`, 0.0345, seed 43, in
+  `research/findings/raw/_gen_cortex_capacity_rung/armB_d192_matched_seed43.json`). Illustrative range bound
+  only; does not change the qualitative claim (all 6 seeds' overfit gaps are positive) or any gate/verdict.

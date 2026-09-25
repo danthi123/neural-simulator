@@ -278,14 +278,16 @@ def run_profile(profile):
 
 
 def summarize(recs):
-    lines = ["| profile | load s | peak VRAM (MiB, desktop incl.) | headroom | short gen tok/s | 60K prompt tok/s | "
-             "60K gen tok/s | recall @60K | T1 locate | T2 debug | T3 extend |", "|" + "---|" * 11]
+    ctx_of = {p["name"]: p for p in json.load(open(os.path.join(HERE, "profiles.json")))}
+    lines = ["| profile | ctx | load s | peak VRAM (MiB, desktop incl.) | headroom | short gen tok/s | long prompt tokens | "
+             "long prompt tok/s | long gen tok/s | recall @long | T1 locate | T2 debug | T3 extend |", "|" + "---|" * 13]
     for r in recs:
+        prof = ctx_of.get(r["profile"], {})
         t = r.get("tasks", {})
         cell = lambda k: ("PASS" if t.get(k, {}).get("pass") else "fail") + " (%ss)" % t.get(k, {}).get("wall_s", "?")
-        lines.append("| %s | %s | %s | %s | %s | %s | %s | %s | %s | %s | %s |" % (
-            r["profile"], r.get("load_s"), r.get("vram_peak_mib"), r.get("vram_headroom_mib"), r.get("short_gen_tok_s"),
-            r.get("long_pp_tok_s"), r.get("long_gen_tok_s"), r.get("long_recall_ok"), cell("T1_locate"),
+        lines.append("| %s | %s | %s | %s | %s | %s | %s | %s | %s | %s | %s | %s | %s |" % (
+            r["profile"], prof.get("ctx"), r.get("load_s"), r.get("vram_peak_mib"), r.get("vram_headroom_mib"), r.get("short_gen_tok_s"),
+            prof.get("long_tokens", 60000), r.get("long_pp_tok_s"), r.get("long_gen_tok_s"), r.get("long_recall_ok"), cell("T1_locate"),
             cell("T2_debug"), cell("T3_extend")) + ("  ERROR: %s" % r["error"] if r.get("error") else ""))
     open(os.path.join(RESULTS, "summary.md"), "w").write("\n".join(lines) + "\n")
     print("\n".join(lines))
@@ -299,7 +301,15 @@ def main():
     profiles = json.load(open(os.path.join(HERE, "profiles.json")))
     if a.profiles:
         profiles = [p for p in profiles if p["name"] in a.profiles]
-    recs = [run_profile(p) for p in profiles]
+    for p in profiles:
+        run_profile(p)
+    # summarize EVERY profile that has a result on disk, so a partial re-run (--profiles X) keeps the earlier rows
+    # beside it instead of overwriting summary.md with only this run's profiles
+    recs = []
+    for p in json.load(open(os.path.join(HERE, "profiles.json"))):
+        f = os.path.join(RESULTS, p["name"] + ".json")
+        if os.path.exists(f):
+            recs.append(json.load(open(f)))
     summarize(recs)
 
 

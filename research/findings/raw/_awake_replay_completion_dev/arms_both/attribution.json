@@ -1,0 +1,101 @@
+{
+ "2": {
+  "outcomes": {
+   "arcc": "correct",
+   "arcc_sleep": "correct",
+   "arcc_norest": "abstain",
+   "arcc_lesion": "abstain",
+   "arcc_dalesion": "abstain",
+   "arcc_sleeplesion": "abstain",
+   "arc": "abstain",
+   "arcc_nocomp": "abstain",
+   "noarc_c": "abstain"
+  },
+  "e_last": {
+   "arcc": 0.982736605,
+   "arcc_sleep": 0.729794488,
+   "arcc_norest": null,
+   "arcc_lesion": 0.068334991,
+   "arcc_dalesion": 0.982736605,
+   "arcc_sleeplesion": 0.982736605,
+   "arc": 0.729794488,
+   "arcc_nocomp": 0.729794488,
+   "noarc_c": null
+  },
+  "z_at_recall": {
+   "arcc": 1.0,
+   "arcc_sleep": 1.0,
+   "arcc_norest": 0.0,
+   "arcc_lesion": 0.0,
+   "arcc_dalesion": 0.0,
+   "arcc_sleeplesion": 0.0,
+   "arc": 0.0,
+   "arcc_nocomp": 0.0,
+   "noarc_c": 0.0
+  },
+  "attributable_to_e_last_vs_arcc_nocomp": 0.25738546393110084,
+  "attributable_to_e_last_vs_arcc_lesion": 0.9304645917814367,
+  "attributable_to_e_last_vs_arcc_sleep": 0.25738546393110084,
+  "lesion_reproduces_margin_route": {
+   "bouts_identical": true,
+   "epochs_identical": true,
+   "blocks_at_recall_identical": true,
+   "outcome_identical": true
+  },
+  "attributable_to_z_vs_arcc_nocomp": 1.0,
+  "attributable_to_z_vs_arcc_sleep": 0.0,
+  "attributable_to_z_vs_arcc_lesion": 1.0
+ },
+ "7": {
+  "outcomes": {
+   "arcc": "correct"
+  },
+  "e_last": {
+   "arcc": 0.987991394
+  },
+  "z_at_recall": {
+   "arcc": 1.0
+  }
+ },
+ "11": {
+  "outcomes": {
+   "arcc_nocomp": "correct",
+   "arcc": "correct"
+  },
+  "e_last": {
+   "arcc_nocomp": 0.794999654,
+   "arcc": 0.986432929
+  },
+  "z_at_recall": {
+   "arcc_nocomp": 1.0,
+   "arcc": 1.0
+  },
+  "attributable_to_e_last_vs_arcc_nocomp": 0.1940661847066138,
+  "attributable_to_z_vs_arcc_nocomp": 0.0
+ },
+ "13": {
+  "outcomes": {
+   "arcc_nocomp": "abstain",
+   "arcc_awake": "abstain",
+   "arcc": "correct",
+   "arcc_sleep": "correct"
+  },
+  "e_last": {
+   "arcc_nocomp": 0.556871989,
+   "arcc_awake": 0.978174563,
+   "arcc": 0.978174563,
+   "arcc_sleep": 0.556871989
+  },
+  "z_at_recall": {
+   "arcc_nocomp": 0.0,
+   "arcc_awake": 0.0,
+   "arcc": 1.0,
+   "arcc_sleep": 1.0
+  },
+  "attributable_to_e_last_vs_arcc_nocomp": 0.4307028519611995,
+  "attributable_to_e_last_vs_arcc_sleep": 0.4307028519611995,
+  "attributable_to_z_vs_arcc_nocomp": 1.0,
+  "attributable_to_z_vs_arcc_awake": 1.0,
+  "attributable_to_z_vs_arcc_sleep": 0.0
+ }
+}

@@ -1,0 +1,27 @@
+{
+ "run_id": "1790354848-2190636",
+ "runner": "research/runners/_pair_production_path_probe.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/wf_69528e21-31b-3/research/runners/_pair_production_path_probe.py",
+  "--design-fake",
+  "research/findings/raw/_pair_production_path/design_fake_substrate.json"
+ ],
+ "git_sha": "6e436d14e",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-25T12:47:28",
+ "env": {},
+ "host": "dant123-wk",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 1615.4,
+ "corpus_check_query": "wall-clock production path multi-epoch sleep replay capture resurrection of decayed fact",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_pair_production_path/design_fake_substrate.json"
+}

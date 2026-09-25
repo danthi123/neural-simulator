@@ -1,0 +1,3364 @@
+{
+ "seed": 11,
+ "arm": "arcc",
+ "group": "datr",
+ "env": {
+  "BRAIN_DA_TAG_CAPTURE": "1",
+  "BRAIN_DA_TAG_CAPTURE_CLOCK": "turn",
+  "BRAIN_SLEEP_REPLAY_CAPTURE": "1",
+  "BRAIN_AWAKE_REPLAY_CAPTURE": "1",
+  "BRAIN_AWAKE_REPLAY_COMPLETION": "1",
+  "BRAIN_SLEEP_REPLAY_COMPLETION": "1"
+ },
+ "labels": [
+  "datr_t1",
+  "datr_t2",
+  "datr_t3",
+  "datr_t4",
+  "datr_t5",
+  "datr_rest",
+  "datr_night",
+  "datr_recall"
+ ],
+ "tell_seconds": 462.6,
+ "curve": [
+  {
+   "e": 1.0,
+   "R": 0.2930378290028675,
+   "roles": {
+    "agent": {
+     "word": "cat",
+     "margin": 0.730676358
+    },
+    "action": {
+     "word": "chase",
+     "margin": 0.603639993
+    },
+    "patient": {
+     "word": "ball",
+     "margin": 0.293037829
+    },
+    "attribute": {
+     "word": null,
+     "margin": 0.071300705
+    },
+    "polarity": {
+     "word": "AFFIRM",
+     "margin": 1.0
+    }
+   },
+   "completion": {
+    "R": 0.2930378290028675,
+    "R_c": 0.7971261773680383,
+    "coherence_abs": 0.7971263688271241,
+    "items": {
+     "agent": "cat",
+     "action": "chase",
+     "patient": "ball"
+    },
+    "spikes": {
+     "agent": [
+      4.0,
+      1.0
+     ],
+     "action": [
+      7.0,
+      3.0
+     ],
+     "patient": [
+      10.0,
+      5.0
+     ]
+    },
+    "n_items": 3
+   }
+  },
+  {
+   "e": 0.9,
+   "R": 0.25369220533757697,
+   "roles": {
+    "agent": {
+     "word": "cat",
+     "margin": 0.734370758
+    },
+    "action": {
+     "word": "chase",
+     "margin": 0.58044971
+    },
+    "patient": {
+     "word": "ball",
+     "margin": 0.253692205
+    },
+    "attribute": {
+     "word": null,
+     "margin": 0.061994066
+    },
+    "polarity": {
+     "word": "AFFIRM",
+     "margin": 1.0
+    }
+   },
+   "completion": {
+    "R": 0.25369220533757697,
+    "R_c": 0.7971261773680383,
+    "coherence_abs": 0.7971263688271241,
+    "items": {
+     "agent": "cat",
+     "action": "chase",
+     "patient": "ball"
+    },
+    "spikes": {
+     "agent": [
+      4.0,
+      1.0
+     ],
+     "action": [
+      7.0,
+      3.0
+     ],
+     "patient": [
+      10.0,
+      5.0
+     ]
+    },
+    "n_items": 3
+   }
+  },
+  {
+   "e": 0.8,
+   "R": 0.20267443426350473,
+   "roles": {
+    "agent": {
+     "word": "cat",
+     "margin": 0.738994037
+    },
+    "action": {
+     "word": "chase",
+     "margin": 0.551963517
+    },
+    "patient": {
+     "word": "ball",
+     "margin": 0.202674434
+    },
+    "attribute": {
+     "word": null,
+     "margin": 0.051925116
+    },
+    "polarity": {
+     "word": "AFFIRM",
+     "margin": 1.0
+    }
+   },
+   "completion": {
+    "R": 0.20267443426350473,
+    "R_c": 0.7971261773680383,
+    "coherence_abs": 0.7971263688271241,
+    "items": {
+     "agent": "cat",
+     "action": "chase",
+     "patient": "ball"
+    },
+    "spikes": {
+     "agent": [
+      4.0,
+      1.0
+     ],
+     "action": [
+      7.0,
+      4.0
+     ],
+     "patient": [
+      10.0,
+      5.0
+     ]
+    },
+    "n_items": 3
+   }
+  },
+  {
+   "e": 0.7,
+   "R": 0.1338853869921415,
+   "roles": {
+    "agent": {
+     "word": "cat",
+     "margin": 0.718547887
+    },
+    "action": {
+     "word": "chase",
+     "margin": 0.516133071
+    },
+    "patient": {
+     "word": "ball",
+     "margin": 0.133885387
+    },
+    "attribute": {
+     "word": null,
+     "margin": 0.040995368
+    },
+    "polarity": {
+     "word": "AFFIRM",
+     "margin": 1.0
+    }
+   },
+   "completion": {
+    "R": 0.1338853869921415,
+    "R_c": 0.7971261773680383,
+    "coherence_abs": 0.7971263688271241,
+    "items": {
+     "agent": "cat",
+     "action": "chase",
+     "patient": "ball"
+    },
+    "spikes": {
+     "agent": [
+      4.0,
+      1.0
+     ],
+     "action": [
+      7.0,
+      4.0
+     ],
+     "patient": [
+      10.0,
+      6.0
+     ]
+    },
+    "n_items": 3
+   }
+  },
+  {
+   "e": 0.6,
+   "R": 0.036081027080199335,
+   "roles": {
+    "agent": {
+     "word": "cat",
+     "margin": 0.689104136
+    },
+    "action": {
+     "word": "chase",
+     "margin": 0.469698489
+    },
+    "patient": {
+     "word": "ball",
+     "margin": 0.036081027
+    },
+    "attribute": {
+     "word": null,
+     "margin": 0.029089129
+    },
+    "polarity": {
+     "word": "AFFIRM",
+     "margin": 1.0
+    }
+   },
+   "completion": {
+    "R": 0.036081027080199335,
+    "R_c": 0.7971261773680383,
+    "coherence_abs": 0.7971263688271241,
+    "items": {
+     "agent": "cat",
+     "action": "chase",
+     "patient": "ball"
+    },
+    "spikes": {
+     "agent": [
+      4.0,
+      1.0
+     ],
+     "action": [
+      7.0,
+      5.0
+     ],
+     "patient": [
+      10.0,
+      6.0
+     ]
+    },
+    "n_items": 3
+   }
+  },
+  {
+   "e": 0.5,
+   "R": 0.07628235993752086,
+   "roles": {
+    "agent": {
+     "word": "cat",
+     "margin": 0.647774211
+    },
+    "action": {
+     "word": "chase",
+     "margin": 0.407133836
+    },
+    "patient": {
+     "word": null,
+     "margin": 0.07628236
+    },
+    "attribute": {
+     "word": null,
+     "margin": 0.016070795
+    },
+    "polarity": {
+     "word": "AFFIRM",
+     "margin": 1.0
+    }
+   },
+   "completion": {
+    "R": 0.07628235993752086,
+    "R_c": 0.7971261773680383,
+    "coherence_abs": 0.7971263688271241,
+    "items": {
+     "agent": "cat",
+     "action": "chase",
+     "patient": "ball"
+    },
+    "spikes": {
+     "agent": [
+      4.0,
+      2.0
+     ],
+     "action": [
+      7.0,
+      5.0
+     ],
+     "patient": [
+      9.0,
+      6.0
+     ]
+    },
+    "n_items": 3
+   }
+  },
+  {
+   "e": 0.4,
+   "R": 0.011830492807405729,
+   "roles": {
+    "agent": {
+     "word": "cat",
+     "margin": 0.585542572
+    },
+    "action": {
+     "word": "chase",
+     "margin": 0.318268582
+    },
+    "patient": {
+     "word": null,
+     "margin": 0.011830493
+    },
+    "attribute": {
+     "word": null,
+     "margin": 0.001775174
+    },
+    "polarity": {
+     "word": "AFFIRM",
+     "margin": 1.0
+    }
+   },
+   "completion": {
+    "R": 0.011830492807405729,
+    "R_c": 0.720692168588102,
+    "coherence_abs": 0.7207899796190081,
+    "items": {
+     "agent": "cat",
+     "action": "chase",
+     "patient": null
+    },
+    "spikes": {
+     "agent": [
+      4.0,
+      2.0
+     ],
+     "action": [
+      7.0,
+      6.0
+     ],
+     "patient": [
+      7.0,
+      7.0
+     ]
+    },
+    "n_items": 2
+   }
+  },
+  {
+   "e": 0.3,
+   "R": 0.001719246390097253,
+   "roles": {
+    "agent": {
+     "word": "cat",
+     "margin": 0.481185662
+    },
+    "action": {
+     "word": "chase",
+     "margin": 0.182103509
+    },
+    "patient": {
+     "word": null,
+     "margin": 0.001719246
+    },
+    "attribute": {
+     "word": null,
+     "margin": 0.013801845
+    },
+    "polarity": {
+     "word": "AFFIRM",
+     "margin": 0.976953932
+    }
+   },
+   "completion": {
+    "R": 0.001719246390097253,
+    "R_c": 0.5947678001569822,
+    "coherence_abs": 0.5950644516180638,
+    "items": {
+     "agent": "cat",
+     "action": null,
+     "patient": null
+    },
+    "spikes": {
+     "agent": [
+      4.0,
+      3.0
+     ],
+     "action": [
+      7.0,
+      7.0
+     ],
+     "patient": [
+      7.0,
+      7.0
+     ]
+    },
+    "n_items": 1
+   }
+  },
+  {
+   "e": 0.2,
+   "R": 0.02037139291397716,
+   "roles": {
+    "agent": {
+     "word": "cat",
+     "margin": 0.270045719
+    },
+    "action": {
+     "word": null,
+     "margin": 0.050167424
+    },
+    "patient": {
+     "word": "river",
+     "margin": 0.020371393
+    },
+    "attribute": {
+     "word": null,
+     "margin": 0.030518735
+    },
+    "polarity": {
+     "word": "AFFIRM",
+     "margin": 0.898346961
+    }
+   },
+   "completion": {
+    "R": 0.02037139291397716,
+    "R_c": 0.0,
+    "coherence_abs": 0.0,
+    "items": {
+     "agent": null,
+     "action": null,
+     "patient": null
+    },
+    "spikes": {
+     "agent": [
+      5.0,
+      5.0
+     ],
+     "action": [
+      9.0,
+      6.0
+     ],
+     "patient": [
+      7.0,
+      7.0
+     ]
+    },
+    "n_items": 0
+   }
+  },
+  {
+   "e": 0.15,
+   "R": 0.03165870018039929,
+   "roles": {
+    "agent": {
+     "word": "cat",
+     "margin": 0.055607629
+    },
+    "action": {
+     "word": null,
+     "margin": 0.198923654
+    },
+    "patient": {
+     "word": "river",
+     "margin": 0.0316587
+    },
+    "attribute": {
+     "word": null,
+     "margin": 0.039342614
+    },
+    "polarity": {
+     "word": "AFFIRM",
+     "margin": 0.838783006
+    }
+   },
+   "completion": {
+    "R": 0.03165870018039929,
+    "R_c": 0.0,
+    "coherence_abs": 0.0,
+    "items": {
+     "agent": null,
+     "action": null,
+     "patient": null
+    },
+    "spikes": {
+     "agent": [
+      7.0,
+      7.0
+     ],
+     "action": [
+      9.0,
+      5.0
+     ],
+     "patient": [
+      7.0,
+      7.0
+     ]
+    },
+    "n_items": 0
+   }
+  },
+  {
+   "e": 0.1,
+   "R": 0.009445591775680075,
+   "roles": {
+    "agent": {
+     "word": null,
+     "margin": 0.009445592
+    },
+    "action": {
+     "word": null,
+     "margin": 0.22070661
+    },
+    "patient": {
+     "word": "river",
+     "margin": 0.043109186
+    },
+    "attribute": {
+     "word": null,
+     "margin": 0.048502142
+    },
+    "polarity": {
+     "word": "AFFIRM",
+     "margin": 0.754503512
+    }
+   },
+   "completion": {
+    "R": 0.009445591775680075,
+    "R_c": 0.0,
+    "coherence_abs": 0.0,
+    "items": {
+     "agent": null,
+     "action": null,
+     "patient": null
+    },
+    "spikes": {
+     "agent": [
+      7.0,
+      7.0
+     ],
+     "action": [
+      9.0,
+      5.0
+     ],
+     "patient": [
+      7.0,
+      7.0
+     ]
+    },
+    "n_items": 0
+   }
+  },
+  {
+   "e": 0.07,
+   "R": 0.025751917551297486,
+   "roles": {
+    "agent": {
+     "word": null,
+     "margin": 0.025751918
+    },
+    "action": {
+     "word": null,
+     "margin": 0.194239491
+    },
+    "patient": {
+     "word": "river",
+     "margin": 0.050060255
+    },
+    "attribute": {
+     "word": null,
+     "margin": 0.054165599
+    },
+    "polarity": {
+     "word": "AFFIRM",
+     "margin": 0.684762049
+    }
+   },
+   "completion": {
+    "R": 0.025751917551297486,
+    "R_c": 0.0,
+    "coherence_abs": 0.0,
+    "items": {
+     "agent": null,
+     "action": null,
+     "patient": null
+    },
+    "spikes": {
+     "agent": [
+      7.0,
+      7.0
+     ],
+     "action": [
+      9.0,
+      5.0
+     ],
+     "patient": [
+      7.0,
+      7.0
+     ]
+    },
+    "n_items": 0
+   }
+  },
+  {
+   "e": 0.05,
+   "R": 0.03625405169361008,
+   "roles": {
+    "agent": {
+     "word": null,
+     "margin": 0.036254052
+    },
+    "action": {
+     "word": null,
+     "margin": 0.176028814
+    },
+    "patient": {
+     "word": "river",
+     "margin": 0.054728863
+    },
+    "attribute": {
+     "word": null,
+     "margin": 0.058014286
+    },
+    "polarity": {
+     "word": "AFFIRM",
+     "margin": 0.626097036
+    }
+   },
+   "completion": {
+    "R": 0.03625405169361008,
+    "R_c": 0.0,
+    "coherence_abs": 0.0,
+    "items": {
+     "agent": null,
+     "action": null,
+     "patient": null
+    },
+    "spikes": {
+     "agent": [
+      7.0,
+      7.0
+     ],
+     "action": [
+      9.0,
+      5.0
+     ],
+     "patient": [
+      7.0,
+      7.0
+     ]
+    },
+    "n_items": 0
+   }
+  },
+  {
+   "e": 0.03,
+   "R": 0.04380339905543725,
+   "roles": {
+    "agent": {
+     "word": null,
+     "margin": 0.046474172
+    },
+    "action": {
+     "word": null,
+     "margin": 0.157344113
+    },
+    "patient": {
+     "word": "river",
+     "margin": 0.043803399
+    },
+    "attribute": {
+     "word": null,
+     "margin": 0.061922906
+    },
+    "polarity": {
+     "word": "AFFIRM",
+     "margin": 0.553707464
+    }
+   },
+   "completion": {
+    "R": 0.04380339905543725,
+    "R_c": 0.0,
+    "coherence_abs": 0.0,
+    "items": {
+     "agent": null,
+     "action": null,
+     "patient": null
+    },
+    "spikes": {
+     "agent": [
+      7.0,
+      7.0
+     ],
+     "action": [
+      9.0,
+      6.0
+     ],
+     "patient": [
+      7.0,
+      7.0
+     ]
+    },
+    "n_items": 0
+   }
+  },
+  {
+   "e": 0.02,
+   "R": 0.03248470515090048,
+   "roles": {
+    "agent": {
+     "word": null,
+     "margin": 0.051480522
+    },
+    "action": {
+     "word": null,
+     "margin": 0.147817727
+    },
+    "patient": {
+     "word": "river",
+     "margin": 0.032484705
+    },
+    "attribute": {
+     "word": null,
+     "margin": 0.063899463
+    },
+    "polarity": {
+     "word": "AFFIRM",
+     "margin": 0.510767828
+    }
+   },
+   "completion": {
+    "R": 0.03248470515090048,
+    "R_c": 0.0,
+    "coherence_abs": 0.0,
+    "items": {
+     "agent": null,
+     "action": null,
+     "patient": null
+    },
+    "spikes": {
+     "agent": [
+      8.0,
+      7.0
+     ],
+     "action": [
+      9.0,
+      6.0
+     ],
+     "patient": [
+      7.0,
+      7.0
+     ]
+    },
+    "n_items": 0
+   }
+  },
+  {
+   "e": 0.01,
+   "R": 0.021132965794000185,
+   "roles": {
+    "agent": {
+     "word": null,
+     "margin": 0.056422592
+    },
+    "action": {
+     "word": null,
+     "margin": 0.138166341
+    },
+    "patient": {
+     "word": "river",
+     "margin": 0.021132966
+    },
+    "attribute": {
+     "word": null,
+     "margin": 0.065892518
+    },
+    "polarity": {
+     "word": "AFFIRM",
+     "margin": 0.462140582
+    }
+   },
+   "completion": {
+    "R": 0.021132965794000185,
+    "R_c": 0.0,
+    "coherence_abs": 0.0,
+    "items": {
+     "agent": null,
+     "action": null,
+     "patient": null
+    },
+    "spikes": {
+     "agent": [
+      8.0,
+      7.0
+     ],
+     "action": [
+      9.0,
+      6.0
+     ],
+     "patient": [
+      7.0,
+      7.0
+     ]
+    },
+    "n_items": 0
+   }
+  },
+  {
+   "e": 0.0,
+   "R": 0.00974743218930059,
+   "roles": {
+    "agent": {
+     "word": null,
+     "margin": 0.061298956
+    },
+    "action": {
+     "word": null,
+     "margin": 0.128386307
+    },
+    "patient": {
+     "word": "river",
+     "margin": 0.009747432
+    },
+    "attribute": {
+     "word": null,
+     "margin": 0.067900929
+    },
+    "polarity": {
+     "word": "AFFIRM",
+     "margin": 0.406617268
+    }
+   },
+   "completion": {
+    "R": 0.00974743218930059,
+    "R_c": 0.0,
+    "coherence_abs": 0.0,
+    "items": {
+     "agent": null,
+     "action": null,
+     "patient": null
+    },
+    "spikes": {
+     "agent": [
+      8.0,
+      7.0
+     ],
+     "action": [
+      9.0,
+      6.0
+     ],
+     "patient": [
+      7.0,
+      7.0
+     ]
+    },
+    "n_items": 0
+   }
+  }
+ ],
+ "curve_seconds": 24.6,
+ "rest_night_recall_seconds": 583.7,
+ "outcome": "correct",
+ "recalled_svo": [
+  "cat",
+  "chase",
+  "ball"
+ ],
+ "abstained": false,
+ "awake_replay": {
+  "on": true,
+  "lesioned": false,
+  "n_bouts": 48,
+  "n_ticks_asleep": 1,
+  "n_ticks_rate_limited": 0,
+  "bout_h": 0.08333333333333333,
+  "bouts": [
+   {
+    "t_h": 0.125,
+    "R": [
+     0.266656712
+    ],
+    "R_eff": [
+     0.797126177
+    ],
+    "early_before": [
+     0.930324134
+    ],
+    "early_after": [
+     0.985864591
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.797126177,
+      "coherence_abs": 0.797126369,
+      "items": {
+       "agent": "cat",
+       "action": "chase",
+       "patient": "ball"
+      },
+      "spikes": {
+       "agent": [
+        4.0,
+        1.0
+       ],
+       "action": [
+        7.0,
+        3.0
+       ],
+       "patient": [
+        10.0,
+        5.0
+       ]
+      },
+      "n_items": 3
+     }
+    ],
+    "completion_lesioned": false
+   },
+   {
+    "t_h": 0.20833333333333331,
+    "R": [
+     0.26758568
+    ],
+    "R_eff": [
+     0.797126177
+    ],
+    "early_before": [
+     0.932587945
+    ],
+    "early_after": [
+     0.986323859
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.797126177,
+      "coherence_abs": 0.797126369,
+      "items": {
+       "agent": "cat",
+       "action": "chase",
+       "patient": "ball"
+      },
+      "spikes": {
+       "agent": [
+        4.0,
+        1.0
+       ],
+       "action": [
+        7.0,
+        3.0
+       ],
+       "patient": [
+        10.0,
+        5.0
+       ]
+      },
+      "n_items": 3
+     }
+    ],
+    "completion_lesioned": false
+   },
+   {
+    "t_h": 0.2916666666666667,
+    "R": [
+     0.267763182
+    ],
+    "R_eff": [
+     0.797126177
+    ],
+    "early_before": [
+     0.933022393
+    ],
+    "early_after": [
+     0.986411997
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.797126177,
+      "coherence_abs": 0.797126369,
+      "items": {
+       "agent": "cat",
+       "action": "chase",
+       "patient": "ball"
+      },
+      "spikes": {
+       "agent": [
+        4.0,
+        1.0
+       ],
+       "action": [
+        7.0,
+        3.0
+       ],
+       "patient": [
+        10.0,
+        5.0
+       ]
+      },
+      "n_items": 3
+     }
+    ],
+    "completion_lesioned": false
+   },
+   {
+    "t_h": 0.375,
+    "R": [
+     0.267797519
+    ],
+    "R_eff": [
+     0.797126177
+    ],
+    "early_before": [
+     0.933105769
+    ],
+    "early_after": [
+     0.986428912
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.797126177,
+      "coherence_abs": 0.797126369,
+      "items": {
+       "agent": "cat",
+       "action": "chase",
+       "patient": "ball"
+      },
+      "spikes": {
+       "agent": [
+        4.0,
+        1.0
+       ],
+       "action": [
+        7.0,
+        3.0
+       ],
+       "patient": [
+        10.0,
+        5.0
+       ]
+      },
+      "n_items": 3
+     }
+    ],
+    "completion_lesioned": false
+   },
+   {
+    "t_h": 0.4583333333333333,
+    "R": [
+     0.267804151
+    ],
+    "R_eff": [
+     0.797126177
+    ],
+    "early_before": [
+     0.933121769
+    ],
+    "early_after": [
+     0.986432158
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.797126177,
+      "coherence_abs": 0.797126369,
+      "items": {
+       "agent": "cat",
+       "action": "chase",
+       "patient": "ball"
+      },
+      "spikes": {
+       "agent": [
+        4.0,
+        1.0
+       ],
+       "action": [
+        7.0,
+        3.0
+       ],
+       "patient": [
+        10.0,
+        5.0
+       ]
+      },
+      "n_items": 3
+     }
+    ],
+    "completion_lesioned": false
+   },
+   {
+    "t_h": 0.5416666666666666,
+    "R": [
+     0.267805007
+    ],
+    "R_eff": [
+     0.797126177
+    ],
+    "early_before": [
+     0.93312484
+    ],
+    "early_after": [
+     0.986432781
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.797126177,
+      "coherence_abs": 0.797126369,
+      "items": {
+       "agent": "cat",
+       "action": "chase",
+       "patient": "ball"
+      },
+      "spikes": {
+       "agent": [
+        4.0,
+        1.0
+       ],
+       "action": [
+        7.0,
+        3.0
+       ],
+       "patient": [
+        10.0,
+        5.0
+       ]
+      },
+      "n_items": 3
+     }
+    ],
+    "completion_lesioned": false
+   },
+   {
+    "t_h": 0.6249999999999999,
+    "R": [
+     0.267805319
+    ],
+    "R_eff": [
+     0.797126177
+    ],
+    "early_before": [
+     0.933125429
+    ],
+    "early_after": [
+     0.9864329
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.797126177,
+      "coherence_abs": 0.797126369,
+      "items": {
+       "agent": "cat",
+       "action": "chase",
+       "patient": "ball"
+      },
+      "spikes": {
+       "agent": [
+        4.0,
+        1.0
+       ],
+       "action": [
+        7.0,
+        3.0
+       ],
+       "patient": [
+        10.0,
+        5.0
+       ]
+      },
+      "n_items": 3
+     }
+    ],
+    "completion_lesioned": false
+   },
+   {
+    "t_h": 0.7083333333333333,
+    "R": [
+     0.267805287
+    ],
+    "R_eff": [
+     0.797126177
+    ],
+    "early_before": [
+     0.933125542
+    ],
+    "early_after": [
+     0.986432923
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.797126177,
+      "coherence_abs": 0.797126369,
+      "items": {
+       "agent": "cat",
+       "action": "chase",
+       "patient": "ball"
+      },
+      "spikes": {
+       "agent": [
+        4.0,
+        1.0
+       ],
+       "action": [
+        7.0,
+        3.0
+       ],
+       "patient": [
+        10.0,
+        5.0
+       ]
+      },
+      "n_items": 3
+     }
+    ],
+    "completion_lesioned": false
+   },
+   {
+    "t_h": 0.7916666666666666,
+    "R": [
+     0.267805287
+    ],
+    "R_eff": [
+     0.797126177
+    ],
+    "early_before": [
+     0.933125564
+    ],
+    "early_after": [
+     0.986432928
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.797126177,
+      "coherence_abs": 0.797126369,
+      "items": {
+       "agent": "cat",
+       "action": "chase",
+       "patient": "ball"
+      },
+      "spikes": {
+       "agent": [
+        4.0,
+        1.0
+       ],
+       "action": [
+        7.0,
+        3.0
+       ],
+       "patient": [
+        10.0,
+        5.0
+       ]
+      },
+      "n_items": 3
+     }
+    ],
+    "completion_lesioned": false
+   },
+   {
+    "t_h": 0.875,
+    "R": [
+     0.267805287
+    ],
+    "R_eff": [
+     0.797126177
+    ],
+    "early_before": [
+     0.933125568
+    ],
+    "early_after": [
+     0.986432928
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.797126177,
+      "coherence_abs": 0.797126369,
+      "items": {
+       "agent": "cat",
+       "action": "chase",
+       "patient": "ball"
+      },
+      "spikes": {
+       "agent": [
+        4.0,
+        1.0
+       ],
+       "action": [
+        7.0,
+        3.0
+       ],
+       "patient": [
+        10.0,
+        5.0
+       ]
+      },
+      "n_items": 3
+     }
+    ],
+    "completion_lesioned": false
+   },
+   {
+    "t_h": 0.9583333333333334,
+    "R": [
+     0.267805287
+    ],
+    "R_eff": [
+     0.797126177
+    ],
+    "early_before": [
+     0.933125569
+    ],
+    "early_after": [
+     0.986432929
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.797126177,
+      "coherence_abs": 0.797126369,
+      "items": {
+       "agent": "cat",
+       "action": "chase",
+       "patient": "ball"
+      },
+      "spikes": {
+       "agent": [
+        4.0,
+        1.0
+       ],
+       "action": [
+        7.0,
+        3.0
+       ],
+       "patient": [
+        10.0,
+        5.0
+       ]
+      },
+      "n_items": 3
+     }
+    ],
+    "completion_lesioned": false
+   },
+   {
+    "t_h": 1.0416666666666667,
+    "R": [
+     0.267805287
+    ],
+    "R_eff": [
+     0.797126177
+    ],
+    "early_before": [
+     0.933125569
+    ],
+    "early_after": [
+     0.986432929
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.797126177,
+      "coherence_abs": 0.797126369,
+      "items": {
+       "agent": "cat",
+       "action": "chase",
+       "patient": "ball"
+      },
+      "spikes": {
+       "agent": [
+        4.0,
+        1.0
+       ],
+       "action": [
+        7.0,
+        3.0
+       ],
+       "patient": [
+        10.0,
+        5.0
+       ]
+      },
+      "n_items": 3
+     }
+    ],
+    "completion_lesioned": false
+   },
+   {
+    "t_h": 1.125,
+    "R": [
+     0.267805287
+    ],
+    "R_eff": [
+     0.797126177
+    ],
+    "early_before": [
+     0.933125569
+    ],
+    "early_after": [
+     0.986432929
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.797126177,
+      "coherence_abs": 0.797126369,
+      "items": {
+       "agent": "cat",
+       "action": "chase",
+       "patient": "ball"
+      },
+      "spikes": {
+       "agent": [
+        4.0,
+        1.0
+       ],
+       "action": [
+        7.0,
+        3.0
+       ],
+       "patient": [
+        10.0,
+        5.0
+       ]
+      },
+      "n_items": 3
+     }
+    ],
+    "completion_lesioned": false
+   },
+   {
+    "t_h": 1.2083333333333333,
+    "R": [
+     0.267805287
+    ],
+    "R_eff": [
+     0.797126177
+    ],
+    "early_before": [
+     0.933125569
+    ],
+    "early_after": [
+     0.986432929
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.797126177,
+      "coherence_abs": 0.797126369,
+      "items": {
+       "agent": "cat",
+       "action": "chase",
+       "patient": "ball"
+      },
+      "spikes": {
+       "agent": [
+        4.0,
+        1.0
+       ],
+       "action": [
+        7.0,
+        3.0
+       ],
+       "patient": [
+        10.0,
+        5.0
+       ]
+      },
+      "n_items": 3
+     }
+    ],
+    "completion_lesioned": false
+   },
+   {
+    "t_h": 1.2916666666666665,
+    "R": [
+     0.267805287
+    ],
+    "R_eff": [
+     0.797126177
+    ],
+    "early_before": [
+     0.933125569
+    ],
+    "early_after": [
+     0.986432929
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.797126177,
+      "coherence_abs": 0.797126369,
+      "items": {
+       "agent": "cat",
+       "action": "chase",
+       "patient": "ball"
+      },
+      "spikes": {
+       "agent": [
+        4.0,
+        1.0
+       ],
+       "action": [
+        7.0,
+        3.0
+       ],
+       "patient": [
+        10.0,
+        5.0
+       ]
+      },
+      "n_items": 3
+     }
+    ],
+    "completion_lesioned": false
+   },
+   {
+    "t_h": 1.3749999999999998,
+    "R": [
+     0.267805287
+    ],
+    "R_eff": [
+     0.797126177
+    ],
+    "early_before": [
+     0.933125569
+    ],
+    "early_after": [
+     0.986432929
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.797126177,
+      "coherence_abs": 0.797126369,
+      "items": {
+       "agent": "cat",
+       "action": "chase",
+       "patient": "ball"
+      },
+      "spikes": {
+       "agent": [
+        4.0,
+        1.0
+       ],
+       "action": [
+        7.0,
+        3.0
+       ],
+       "patient": [
+        10.0,
+        5.0
+       ]
+      },
+      "n_items": 3
+     }
+    ],
+    "completion_lesioned": false
+   },
+   {
+    "t_h": 1.458333333333333,
+    "R": [
+     0.267805287
+    ],
+    "R_eff": [
+     0.797126177
+    ],
+    "early_before": [
+     0.933125569
+    ],
+    "early_after": [
+     0.986432929
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.797126177,
+      "coherence_abs": 0.797126369,
+      "items": {
+       "agent": "cat",
+       "action": "chase",
+       "patient": "ball"
+      },
+      "spikes": {
+       "agent": [
+        4.0,
+        1.0
+       ],
+       "action": [
+        7.0,
+        3.0
+       ],
+       "patient": [
+        10.0,
+        5.0
+       ]
+      },
+      "n_items": 3
+     }
+    ],
+    "completion_lesioned": false
+   },
+   {
+    "t_h": 1.5416666666666663,
+    "R": [
+     0.267805287
+    ],
+    "R_eff": [
+     0.797126177
+    ],
+    "early_before": [
+     0.933125569
+    ],
+    "early_after": [
+     0.986432929
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.797126177,
+      "coherence_abs": 0.797126369,
+      "items": {
+       "agent": "cat",
+       "action": "chase",
+       "patient": "ball"
+      },
+      "spikes": {
+       "agent": [
+        4.0,
+        1.0
+       ],
+       "action": [
+        7.0,
+        3.0
+       ],
+       "patient": [
+        10.0,
+        5.0
+       ]
+      },
+      "n_items": 3
+     }
+    ],
+    "completion_lesioned": false
+   },
+   {
+    "t_h": 1.6249999999999996,
+    "R": [
+     0.267805287
+    ],
+    "R_eff": [
+     0.797126177
+    ],
+    "early_before": [
+     0.933125569
+    ],
+    "early_after": [
+     0.986432929
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.797126177,
+      "coherence_abs": 0.797126369,
+      "items": {
+       "agent": "cat",
+       "action": "chase",
+       "patient": "ball"
+      },
+      "spikes": {
+       "agent": [
+        4.0,
+        1.0
+       ],
+       "action": [
+        7.0,
+        3.0
+       ],
+       "patient": [
+        10.0,
+        5.0
+       ]
+      },
+      "n_items": 3
+     }
+    ],
+    "completion_lesioned": false
+   },
+   {
+    "t_h": 1.7083333333333328,
+    "R": [
+     0.267805287
+    ],
+    "R_eff": [
+     0.797126177
+    ],
+    "early_before": [
+     0.933125569
+    ],
+    "early_after": [
+     0.986432929
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.797126177,
+      "coherence_abs": 0.797126369,
+      "items": {
+       "agent": "cat",
+       "action": "chase",
+       "patient": "ball"
+      },
+      "spikes": {
+       "agent": [
+        4.0,
+        1.0
+       ],
+       "action": [
+        7.0,
+        3.0
+       ],
+       "patient": [
+        10.0,
+        5.0
+       ]
+      },
+      "n_items": 3
+     }
+    ],
+    "completion_lesioned": false
+   },
+   {
+    "t_h": 1.791666666666666,
+    "R": [
+     0.267805287
+    ],
+    "R_eff": [
+     0.797126177
+    ],
+    "early_before": [
+     0.933125569
+    ],
+    "early_after": [
+     0.986432929
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.797126177,
+      "coherence_abs": 0.797126369,
+      "items": {
+       "agent": "cat",
+       "action": "chase",
+       "patient": "ball"
+      },
+      "spikes": {
+       "agent": [
+        4.0,
+        1.0
+       ],
+       "action": [
+        7.0,
+        3.0
+       ],
+       "patient": [
+        10.0,
+        5.0
+       ]
+      },
+      "n_items": 3
+     }
+    ],
+    "completion_lesioned": false
+   },
+   {
+    "t_h": 1.8749999999999993,
+    "R": [
+     0.267805287
+    ],
+    "R_eff": [
+     0.797126177
+    ],
+    "early_before": [
+     0.933125569
+    ],
+    "early_after": [
+     0.986432929
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.797126177,
+      "coherence_abs": 0.797126369,
+      "items": {
+       "agent": "cat",
+       "action": "chase",
+       "patient": "ball"
+      },
+      "spikes": {
+       "agent": [
+        4.0,
+        1.0
+       ],
+       "action": [
+        7.0,
+        3.0
+       ],
+       "patient": [
+        10.0,
+        5.0
+       ]
+      },
+      "n_items": 3
+     }
+    ],
+    "completion_lesioned": false
+   },
+   {
+    "t_h": 1.9583333333333326,
+    "R": [
+     0.267805287
+    ],
+    "R_eff": [
+     0.797126177
+    ],
+    "early_before": [
+     0.933125569
+    ],
+    "early_after": [
+     0.986432929
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.797126177,
+      "coherence_abs": 0.797126369,
+      "items": {
+       "agent": "cat",
+       "action": "chase",
+       "patient": "ball"
+      },
+      "spikes": {
+       "agent": [
+        4.0,
+        1.0
+       ],
+       "action": [
+        7.0,
+        3.0
+       ],
+       "patient": [
+        10.0,
+        5.0
+       ]
+      },
+      "n_items": 3
+     }
+    ],
+    "completion_lesioned": false
+   },
+   {
+    "t_h": 2.0416666666666656,
+    "R": [
+     0.267805287
+    ],
+    "R_eff": [
+     0.797126177
+    ],
+    "early_before": [
+     0.933125569
+    ],
+    "early_after": [
+     0.986432929
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.797126177,
+      "coherence_abs": 0.797126369,
+      "items": {
+       "agent": "cat",
+       "action": "chase",
+       "patient": "ball"
+      },
+      "spikes": {
+       "agent": [
+        4.0,
+        1.0
+       ],
+       "action": [
+        7.0,
+        3.0
+       ],
+       "patient": [
+        10.0,
+        5.0
+       ]
+      },
+      "n_items": 3
+     }
+    ],
+    "completion_lesioned": false
+   },
+   {
+    "t_h": 2.124999999999999,
+    "R": [
+     0.267805287
+    ],
+    "R_eff": [
+     0.797126177
+    ],
+    "early_before": [
+     0.933125569
+    ],
+    "early_after": [
+     0.986432929
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.797126177,
+      "coherence_abs": 0.797126369,
+      "items": {
+       "agent": "cat",
+       "action": "chase",
+       "patient": "ball"
+      },
+      "spikes": {
+       "agent": [
+        4.0,
+        1.0
+       ],
+       "action": [
+        7.0,
+        3.0
+       ],
+       "patient": [
+        10.0,
+        5.0
+       ]
+      },
+      "n_items": 3
+     }
+    ],
+    "completion_lesioned": false
+   },
+   {
+    "t_h": 2.2083333333333326,
+    "R": [
+     0.267805287
+    ],
+    "R_eff": [
+     0.797126177
+    ],
+    "early_before": [
+     0.933125569
+    ],
+    "early_after": [
+     0.986432929
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.797126177,
+      "coherence_abs": 0.797126369,
+      "items": {
+       "agent": "cat",
+       "action": "chase",
+       "patient": "ball"
+      },
+      "spikes": {
+       "agent": [
+        4.0,
+        1.0
+       ],
+       "action": [
+        7.0,
+        3.0
+       ],
+       "patient": [
+        10.0,
+        5.0
+       ]
+      },
+      "n_items": 3
+     }
+    ],
+    "completion_lesioned": false
+   },
+   {
+    "t_h": 2.291666666666666,
+    "R": [
+     0.267805287
+    ],
+    "R_eff": [
+     0.797126177
+    ],
+    "early_before": [
+     0.933125569
+    ],
+    "early_after": [
+     0.986432929
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.797126177,
+      "coherence_abs": 0.797126369,
+      "items": {
+       "agent": "cat",
+       "action": "chase",
+       "patient": "ball"
+      },
+      "spikes": {
+       "agent": [
+        4.0,
+        1.0
+       ],
+       "action": [
+        7.0,
+        3.0
+       ],
+       "patient": [
+        10.0,
+        5.0
+       ]
+      },
+      "n_items": 3
+     }
+    ],
+    "completion_lesioned": false
+   },
+   {
+    "t_h": 2.3749999999999996,
+    "R": [
+     0.267805287
+    ],
+    "R_eff": [
+     0.797126177
+    ],
+    "early_before": [
+     0.933125569
+    ],
+    "early_after": [
+     0.986432929
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.797126177,
+      "coherence_abs": 0.797126369,
+      "items": {
+       "agent": "cat",
+       "action": "chase",
+       "patient": "ball"
+      },
+      "spikes": {
+       "agent": [
+        4.0,
+        1.0
+       ],
+       "action": [
+        7.0,
+        3.0
+       ],
+       "patient": [
+        10.0,
+        5.0
+       ]
+      },
+      "n_items": 3
+     }
+    ],
+    "completion_lesioned": false
+   },
+   {
+    "t_h": 2.458333333333333,
+    "R": [
+     0.267805287
+    ],
+    "R_eff": [
+     0.797126177
+    ],
+    "early_before": [
+     0.933125569
+    ],
+    "early_after": [
+     0.986432929
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.797126177,
+      "coherence_abs": 0.797126369,
+      "items": {
+       "agent": "cat",
+       "action": "chase",
+       "patient": "ball"
+      },
+      "spikes": {
+       "agent": [
+        4.0,
+        1.0
+       ],
+       "action": [
+        7.0,
+        3.0
+       ],
+       "patient": [
+        10.0,
+        5.0
+       ]
+      },
+      "n_items": 3
+     }
+    ],
+    "completion_lesioned": false
+   },
+   {
+    "t_h": 2.5416666666666665,
+    "R": [
+     0.267805287
+    ],
+    "R_eff": [
+     0.797126177
+    ],
+    "early_before": [
+     0.933125569
+    ],
+    "early_after": [
+     0.986432929
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.797126177,
+      "coherence_abs": 0.797126369,
+      "items": {
+       "agent": "cat",
+       "action": "chase",
+       "patient": "ball"
+      },
+      "spikes": {
+       "agent": [
+        4.0,
+        1.0
+       ],
+       "action": [
+        7.0,
+        3.0
+       ],
+       "patient": [
+        10.0,
+        5.0
+       ]
+      },
+      "n_items": 3
+     }
+    ],
+    "completion_lesioned": false
+   },
+   {
+    "t_h": 2.625,
+    "R": [
+     0.267805287
+    ],
+    "R_eff": [
+     0.797126177
+    ],
+    "early_before": [
+     0.933125569
+    ],
+    "early_after": [
+     0.986432929
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.797126177,
+      "coherence_abs": 0.797126369,
+      "items": {
+       "agent": "cat",
+       "action": "chase",
+       "patient": "ball"
+      },
+      "spikes": {
+       "agent": [
+        4.0,
+        1.0
+       ],
+       "action": [
+        7.0,
+        3.0
+       ],
+       "patient": [
+        10.0,
+        5.0
+       ]
+      },
+      "n_items": 3
+     }
+    ],
+    "completion_lesioned": false
+   },
+   {
+    "t_h": 2.7083333333333335,
+    "R": [
+     0.267805287
+    ],
+    "R_eff": [
+     0.797126177
+    ],
+    "early_before": [
+     0.933125569
+    ],
+    "early_after": [
+     0.986432929
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.797126177,
+      "coherence_abs": 0.797126369,
+      "items": {
+       "agent": "cat",
+       "action": "chase",
+       "patient": "ball"
+      },
+      "spikes": {
+       "agent": [
+        4.0,
+        1.0
+       ],
+       "action": [
+        7.0,
+        3.0
+       ],
+       "patient": [
+        10.0,
+        5.0
+       ]
+      },
+      "n_items": 3
+     }
+    ],
+    "completion_lesioned": false
+   },
+   {
+    "t_h": 2.791666666666667,
+    "R": [
+     0.267805287
+    ],
+    "R_eff": [
+     0.797126177
+    ],
+    "early_before": [
+     0.933125569
+    ],
+    "early_after": [
+     0.986432929
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.797126177,
+      "coherence_abs": 0.797126369,
+      "items": {
+       "agent": "cat",
+       "action": "chase",
+       "patient": "ball"
+      },
+      "spikes": {
+       "agent": [
+        4.0,
+        1.0
+       ],
+       "action": [
+        7.0,
+        3.0
+       ],
+       "patient": [
+        10.0,
+        5.0
+       ]
+      },
+      "n_items": 3
+     }
+    ],
+    "completion_lesioned": false
+   },
+   {
+    "t_h": 2.8750000000000004,
+    "R": [
+     0.267805287
+    ],
+    "R_eff": [
+     0.797126177
+    ],
+    "early_before": [
+     0.933125569
+    ],
+    "early_after": [
+     0.986432929
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.797126177,
+      "coherence_abs": 0.797126369,
+      "items": {
+       "agent": "cat",
+       "action": "chase",
+       "patient": "ball"
+      },
+      "spikes": {
+       "agent": [
+        4.0,
+        1.0
+       ],
+       "action": [
+        7.0,
+        3.0
+       ],
+       "patient": [
+        10.0,
+        5.0
+       ]
+      },
+      "n_items": 3
+     }
+    ],
+    "completion_lesioned": false
+   },
+   {
+    "t_h": 2.958333333333334,
+    "R": [
+     0.267805287
+    ],
+    "R_eff": [
+     0.797126177
+    ],
+    "early_before": [
+     0.933125569
+    ],
+    "early_after": [
+     0.986432929
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.797126177,
+      "coherence_abs": 0.797126369,
+      "items": {
+       "agent": "cat",
+       "action": "chase",
+       "patient": "ball"
+      },
+      "spikes": {
+       "agent": [
+        4.0,
+        1.0
+       ],
+       "action": [
+        7.0,
+        3.0
+       ],
+       "patient": [
+        10.0,
+        5.0
+       ]
+      },
+      "n_items": 3
+     }
+    ],
+    "completion_lesioned": false
+   },
+   {
+    "t_h": 3.0416666666666674,
+    "R": [
+     0.267805287
+    ],
+    "R_eff": [
+     0.797126177
+    ],
+    "early_before": [
+     0.933125569
+    ],
+    "early_after": [
+     0.986432929
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.797126177,
+      "coherence_abs": 0.797126369,
+      "items": {
+       "agent": "cat",
+       "action": "chase",
+       "patient": "ball"
+      },
+      "spikes": {
+       "agent": [
+        4.0,
+        1.0
+       ],
+       "action": [
+        7.0,
+        3.0
+       ],
+       "patient": [
+        10.0,
+        5.0
+       ]
+      },
+      "n_items": 3
+     }
+    ],
+    "completion_lesioned": false
+   },
+   {
+    "t_h": 3.125000000000001,
+    "R": [
+     0.267805287
+    ],
+    "R_eff": [
+     0.797126177
+    ],
+    "early_before": [
+     0.933125569
+    ],
+    "early_after": [
+     0.986432929
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.797126177,
+      "coherence_abs": 0.797126369,
+      "items": {
+       "agent": "cat",
+       "action": "chase",
+       "patient": "ball"
+      },
+      "spikes": {
+       "agent": [
+        4.0,
+        1.0
+       ],
+       "action": [
+        7.0,
+        3.0
+       ],
+       "patient": [
+        10.0,
+        5.0
+       ]
+      },
+      "n_items": 3
+     }
+    ],
+    "completion_lesioned": false
+   },
+   {
+    "t_h": 3.2083333333333344,
+    "R": [
+     0.267805287
+    ],
+    "R_eff": [
+     0.797126177
+    ],
+    "early_before": [
+     0.933125569
+    ],
+    "early_after": [
+     0.986432929
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.797126177,
+      "coherence_abs": 0.797126369,
+      "items": {
+       "agent": "cat",
+       "action": "chase",
+       "patient": "ball"
+      },
+      "spikes": {
+       "agent": [
+        4.0,
+        1.0
+       ],
+       "action": [
+        7.0,
+        3.0
+       ],
+       "patient": [
+        10.0,
+        5.0
+       ]
+      },
+      "n_items": 3
+     }
+    ],
+    "completion_lesioned": false
+   },
+   {
+    "t_h": 3.291666666666668,
+    "R": [
+     0.267805287
+    ],
+    "R_eff": [
+     0.797126177
+    ],
+    "early_before": [
+     0.933125569
+    ],
+    "early_after": [
+     0.986432929
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.797126177,
+      "coherence_abs": 0.797126369,
+      "items": {
+       "agent": "cat",
+       "action": "chase",
+       "patient": "ball"
+      },
+      "spikes": {
+       "agent": [
+        4.0,
+        1.0
+       ],
+       "action": [
+        7.0,
+        3.0
+       ],
+       "patient": [
+        10.0,
+        5.0
+       ]
+      },
+      "n_items": 3
+     }
+    ],
+    "completion_lesioned": false
+   },
+   {
+    "t_h": 3.3750000000000013,
+    "R": [
+     0.267805287
+    ],
+    "R_eff": [
+     0.797126177
+    ],
+    "early_before": [
+     0.933125569
+    ],
+    "early_after": [
+     0.986432929
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.797126177,
+      "coherence_abs": 0.797126369,
+      "items": {
+       "agent": "cat",
+       "action": "chase",
+       "patient": "ball"
+      },
+      "spikes": {
+       "agent": [
+        4.0,
+        1.0
+       ],
+       "action": [
+        7.0,
+        3.0
+       ],
+       "patient": [
+        10.0,
+        5.0
+       ]
+      },
+      "n_items": 3
+     }
+    ],
+    "completion_lesioned": false
+   },
+   {
+    "t_h": 3.458333333333335,
+    "R": [
+     0.267805287
+    ],
+    "R_eff": [
+     0.797126177
+    ],
+    "early_before": [
+     0.933125569
+    ],
+    "early_after": [
+     0.986432929
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.797126177,
+      "coherence_abs": 0.797126369,
+      "items": {
+       "agent": "cat",
+       "action": "chase",
+       "patient": "ball"
+      },
+      "spikes": {
+       "agent": [
+        4.0,
+        1.0
+       ],
+       "action": [
+        7.0,
+        3.0
+       ],
+       "patient": [
+        10.0,
+        5.0
+       ]
+      },
+      "n_items": 3
+     }
+    ],
+    "completion_lesioned": false
+   },
+   {
+    "t_h": 3.5416666666666683,
+    "R": [
+     0.267805287
+    ],
+    "R_eff": [
+     0.797126177
+    ],
+    "early_before": [
+     0.933125569
+    ],
+    "early_after": [
+     0.986432929
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.797126177,
+      "coherence_abs": 0.797126369,
+      "items": {
+       "agent": "cat",
+       "action": "chase",
+       "patient": "ball"
+      },
+      "spikes": {
+       "agent": [
+        4.0,
+        1.0
+       ],
+       "action": [
+        7.0,
+        3.0
+       ],
+       "patient": [
+        10.0,
+        5.0
+       ]
+      },
+      "n_items": 3
+     }
+    ],
+    "completion_lesioned": false
+   },
+   {
+    "t_h": 3.6250000000000018,
+    "R": [
+     0.267805287
+    ],
+    "R_eff": [
+     0.797126177
+    ],
+    "early_before": [
+     0.933125569
+    ],
+    "early_after": [
+     0.986432929
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.797126177,
+      "coherence_abs": 0.797126369,
+      "items": {
+       "agent": "cat",
+       "action": "chase",
+       "patient": "ball"
+      },
+      "spikes": {
+       "agent": [
+        4.0,
+        1.0
+       ],
+       "action": [
+        7.0,
+        3.0
+       ],
+       "patient": [
+        10.0,
+        5.0
+       ]
+      },
+      "n_items": 3
+     }
+    ],
+    "completion_lesioned": false
+   },
+   {
+    "t_h": 3.7083333333333353,
+    "R": [
+     0.267805287
+    ],
+    "R_eff": [
+     0.797126177
+    ],
+    "early_before": [
+     0.933125569
+    ],
+    "early_after": [
+     0.986432929
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.797126177,
+      "coherence_abs": 0.797126369,
+      "items": {
+       "agent": "cat",
+       "action": "chase",
+       "patient": "ball"
+      },
+      "spikes": {
+       "agent": [
+        4.0,
+        1.0
+       ],
+       "action": [
+        7.0,
+        3.0
+       ],
+       "patient": [
+        10.0,
+        5.0
+       ]
+      },
+      "n_items": 3
+     }
+    ],
+    "completion_lesioned": false
+   },
+   {
+    "t_h": 3.7916666666666687,
+    "R": [
+     0.267805287
+    ],
+    "R_eff": [
+     0.797126177
+    ],
+    "early_before": [
+     0.933125569
+    ],
+    "early_after": [
+     0.986432929
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.797126177,
+      "coherence_abs": 0.797126369,
+      "items": {
+       "agent": "cat",
+       "action": "chase",
+       "patient": "ball"
+      },
+      "spikes": {
+       "agent": [
+        4.0,
+        1.0
+       ],
+       "action": [
+        7.0,
+        3.0
+       ],
+       "patient": [
+        10.0,
+        5.0
+       ]
+      },
+      "n_items": 3
+     }
+    ],
+    "completion_lesioned": false
+   },
+   {
+    "t_h": 3.875000000000002,
+    "R": [
+     0.267805287
+    ],
+    "R_eff": [
+     0.797126177
+    ],
+    "early_before": [
+     0.933125569
+    ],
+    "early_after": [
+     0.986432929
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.797126177,
+      "coherence_abs": 0.797126369,
+      "items": {
+       "agent": "cat",
+       "action": "chase",
+       "patient": "ball"
+      },
+      "spikes": {
+       "agent": [
+        4.0,
+        1.0
+       ],
+       "action": [
+        7.0,
+        3.0
+       ],
+       "patient": [
+        10.0,
+        5.0
+       ]
+      },
+      "n_items": 3
+     }
+    ],
+    "completion_lesioned": false
+   },
+   {
+    "t_h": 3.9583333333333357,
+    "R": [
+     0.267805287
+    ],
+    "R_eff": [
+     0.797126177
+    ],
+    "early_before": [
+     0.933125569
+    ],
+    "early_after": [
+     0.986432929
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.797126177,
+      "coherence_abs": 0.797126369,
+      "items": {
+       "agent": "cat",
+       "action": "chase",
+       "patient": "ball"
+      },
+      "spikes": {
+       "agent": [
+        4.0,
+        1.0
+       ],
+       "action": [
+        7.0,
+        3.0
+       ],
+       "patient": [
+        10.0,
+        5.0
+       ]
+      },
+      "n_items": 3
+     }
+    ],
+    "completion_lesioned": false
+   },
+   {
+    "t_h": 4.04166666666667,
+    "R": [
+     0.267805287
+    ],
+    "R_eff": [
+     0.797126177
+    ],
+    "early_before": [
+     0.933125569
+    ],
+    "early_after": [
+     0.986432929
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.797126177,
+      "coherence_abs": 0.797126369,
+      "items": {
+       "agent": "cat",
+       "action": "chase",
+       "patient": "ball"
+      },
+      "spikes": {
+       "agent": [
+        4.0,
+        1.0
+       ],
+       "action": [
+        7.0,
+        3.0
+       ],
+       "patient": [
+        10.0,
+        5.0
+       ]
+      },
+      "n_items": 3
+     }
+    ],
+    "completion_lesioned": false
+   }
+  ],
+  "completion": true,
+  "completion_lesioned": false
+ },
+ "sleep_replay": {
+  "on": true,
+  "lesioned": false,
+  "n_epochs": 1,
+  "episode_done": true,
+  "epochs": [
+   {
+    "episode": [
+     5,
+     4.041666667
+    ],
+    "t_h": 4.125000000000003,
+    "R": [
+     0.267805287
+    ],
+    "R_eff": [
+     0.797126177
+    ],
+    "sum_R_eff": 0.797126177,
+    "da_swr": 1.089873371,
+    "da_seen_by_d1": 1.089873371,
+    "a_eff_mean": 0.811696359,
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "replay_lesioned": false,
+    "capture_lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.797126177,
+      "coherence_abs": 0.797126369,
+      "items": {
+       "agent": "cat",
+       "action": "chase",
+       "patient": "ball"
+      },
+      "spikes": {
+       "agent": [
+        4.0,
+        1.0
+       ],
+       "action": [
+        7.0,
+        3.0
+       ],
+       "patient": [
+        10.0,
+        5.0
+       ]
+      },
+      "n_items": 3
+     }
+    ],
+    "completion_lesioned": false
+   }
+  ]
+ },
+ "blocks_at_recall": [
+  {
+   "block": 0,
+   "t_w": 0.016666666666666666,
+   "tag0_mean": 1.4597927972372955,
+   "z_mean": 1.0000000000928895,
+   "z_min": 1.0000000000928895,
+   "z_max": 1.0000000000928895,
+   "frac_synapses_z_gt_half": 1.0,
+   "inc_mag": 1.2927988095536556,
+   "base_mag": 0.8057543353577237,
+   "tag_rep_mean": 1.2063436250875217,
+   "t_rep": 4.125000000000003,
+   "e_rep": 0.9864329285969472,
+   "t_erep": 4.04166666666667,
+   "early_expression_now": 1.1100840196848791e-07
+  }
+ ],
+ "world_steps": {
+  "datr_rest": {
+   "world_step": "awake_rest_4h",
+   "hours": 4.0,
+   "rest_period_h": 0.08333333333333333,
+   "n_rest_ticks": 48,
+   "n_session_ticks": 48
+  },
+  "datr_night": {
+   "world_step": "overnight_24h",
+   "hours": 24.0,
+   "n_sessions_ticked": 1
+  }
+ },
+ "tell_da": [
+  0.287292155914943,
+  0.1924005888340784,
+  0.2685696780457803,
+  0.04616293556102311,
+  0.04616293556102311
+ ],
+ "elapsed_seconds": 1070.8
+}

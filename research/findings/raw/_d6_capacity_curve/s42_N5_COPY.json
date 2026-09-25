@@ -1,0 +1,279 @@
+{
+ "runner": "research.runners.d6_capacity_curve",
+ "seed": 42,
+ "n_facts": 5,
+ "arm": "COPY",
+ "env": {
+  "SIM_BACKEND": "numpy",
+  "BRAIN_FACT_SHARD_RETRIEVAL": "1",
+  "BRAIN_D6_ENGRAM_PRUNE": "0",
+  "BRAIN_D6_HEBBIAN_STORE": "0",
+  "BRAIN_D6_ENGRAM_VOCAB": "0",
+  "BRAIN_D6_ENGRAM_READTIME": "0",
+  "BRAIN_D6_HEBBIAN_FREEZE": "0"
+ },
+ "resource_probe": false,
+ "D": 128,
+ "lexicon": [
+  220,
+  60,
+  220
+ ],
+ "vocab_headroom": 128,
+ "rss_mb": {
+  "start": 32.9296875,
+  "after_build": 74.91015625,
+  "after_teach": 75.83984375,
+  "after_probe": 112.83203125
+ },
+ "error": null,
+ "cost_hardware_class": "pool-cpu-shared",
+ "node": {
+  "hostname": "node-dl5d243",
+  "cpu_count": 12,
+  "loadavg_start": [
+   9.0087890625,
+   9.70166015625,
+   14.7119140625
+  ],
+  "loadavg_end": [
+   11.98681640625,
+   10.423828125,
+   14.6943359375
+  ]
+ },
+ "probe_spec_hash": "5726055e2978972cc4dc0e7c66f494aa98609ef9af9bc5fc12553d310ea75227",
+ "facts_hash": "fbd40c1a1e749b5214b0ad475b3120db7e08c150be1c06dc453501dcb65c3657",
+ "build_s": 20.55,
+ "substrate_threshold_sha256": "1be825fddb830df83d9bd7deb8a72f1885a4a4eb93ae7a68ad0df9a36fc9a20c",
+ "n_total": 6385,
+ "k_max": 21,
+ "fact_shard_active_flag": true,
+ "encode_s": [
+  0.3091,
+  0.3234,
+  0.3231,
+  0.3271,
+  0.3881
+ ],
+ "encode_cpu_s": [
+  0.3091,
+  0.3234,
+  0.3231,
+  0.327,
+  0.3241
+ ],
+ "parse_errors": 0,
+ "kb_len_after_teach": 5,
+ "encode_diag": null,
+ "probes": {
+  "taught": [
+   {
+    "i": 0,
+    "answer": "pt037",
+    "cls": "correct",
+    "yn": "yes",
+    "block_ok": true,
+    "block_decode": {
+     "agent": "ag143",
+     "action": "ac09",
+     "patient": "pt037"
+    },
+    "held": true,
+    "readout": 207.998788,
+    "mean_abs_w": 1.0,
+    "shard": 3,
+    "t_query": 0.8213,
+    "t_yn": 0.778,
+    "t_engram": 0.0676,
+    "t_engram_cpu": 0.0676
+   },
+   {
+    "i": 1,
+    "answer": "pt205",
+    "cls": "correct",
+    "yn": "yes",
+    "block_ok": true,
+    "block_decode": {
+     "agent": "ag143",
+     "action": "ac28",
+     "patient": "pt205"
+    },
+    "held": true,
+    "readout": 207.998781,
+    "mean_abs_w": 1.0,
+    "shard": 3,
+    "t_query": 1.4276,
+    "t_yn": 1.4868,
+    "t_engram": 0.0545,
+    "t_engram_cpu": 0.0545
+   },
+   {
+    "i": 2,
+    "answer": "pt037",
+    "cls": "correct",
+    "yn": "yes",
+    "block_ok": true,
+    "block_decode": {
+     "agent": "ag127",
+     "action": "ac03",
+     "patient": "pt037"
+    },
+    "held": true,
+    "readout": 207.998785,
+    "mean_abs_w": 1.0,
+    "shard": 2,
+    "t_query": 0.8118,
+    "t_yn": 0.7397,
+    "t_engram": 0.0541,
+    "t_engram_cpu": 0.0541
+   },
+   {
+    "i": 3,
+    "answer": "pt205",
+    "cls": "correct",
+    "yn": "yes",
+    "block_ok": true,
+    "block_decode": {
+     "agent": "ag127",
+     "action": "ac21",
+     "patient": "pt205"
+    },
+    "held": true,
+    "readout": 207.998776,
+    "mean_abs_w": 1.0,
+    "shard": 2,
+    "t_query": 1.5883,
+    "t_yn": 1.3876,
+    "t_engram": 0.0905,
+    "t_engram_cpu": 0.0545
+   },
+   {
+    "i": 4,
+    "answer": "pt038",
+    "cls": "correct",
+    "yn": "yes",
+    "block_ok": true,
+    "block_decode": {
+     "agent": "ag165",
+     "action": "ac28",
+     "patient": "pt038"
+    },
+    "held": true,
+    "readout": 207.99879,
+    "mean_abs_w": 1.0,
+    "shard": 3,
+    "t_query": 2.3774,
+    "t_yn": 2.4497,
+    "t_engram": 0.0551,
+    "t_engram_cpu": 0.0551
+   }
+  ],
+  "nearmiss": [
+   {
+    "i": 0,
+    "yn": "unknown",
+    "kind": "same_subject_sibling",
+    "shard": 3,
+    "t_yn": 2.1147
+   },
+   {
+    "i": 1,
+    "yn": "unknown",
+    "kind": "same_subject_sibling",
+    "shard": 3,
+    "t_yn": 2.2228
+   },
+   {
+    "i": 2,
+    "yn": "unknown",
+    "kind": "same_subject_sibling",
+    "shard": 2,
+    "t_yn": 1.4853
+   },
+   {
+    "i": 3,
+    "yn": "unknown",
+    "kind": "same_subject_sibling",
+    "shard": 2,
+    "t_yn": 1.428
+   },
+   {
+    "i": 4,
+    "yn": "unknown",
+    "kind": "random_stored",
+    "shard": 3,
+    "t_yn": 2.4376
+   }
+  ],
+  "novel": [
+   {
+    "agent": "ag143",
+    "action": "ac21",
+    "answer": null,
+    "shard": 3,
+    "t_query": 2.2523
+   },
+   {
+    "agent": "ag143",
+    "action": "ac03",
+    "answer": null,
+    "shard": 0,
+    "t_query": 0.0003
+   },
+   {
+    "agent": "ag127",
+    "action": "ac28",
+    "answer": null,
+    "shard": 1,
+    "t_query": 0.7737
+   },
+   {
+    "agent": "ag127",
+    "action": "ac09",
+    "answer": null,
+    "shard": 1,
+    "t_query": 0.67
+   },
+   {
+    "agent": "ag165",
+    "action": "ac03",
+    "answer": null,
+    "shard": 0,
+    "t_query": 0.0003
+   }
+  ]
+ },
+ "store_writes_during_probe": [],
+ "store_synapses": 640,
+ "store_weight_bytes_complex128": 10240,
+ "summary": {
+  "n_taught_probes": 5,
+  "n_nearmiss": 5,
+  "n_novel": 5,
+  "recall": 1.0,
+  "abstain": 0.0,
+  "crossed_same_subject": 0.0,
+  "crossed_other_fact": 0.0,
+  "wrong_word": 0.0,
+  "yn_hit": 1.0,
+  "block_decode_ok": 1.0,
+  "engram_held": 1.0,
+  "mean_abs_w_probed": 1.0,
+  "nearmiss_false_accept": 0.0,
+  "novel_false_recall": 0.0,
+  "novel_shard_empty": 0.4,
+  "nearmiss_shard_empty": 0.0,
+  "encode_s_median": 0.3234,
+  "encode_s_mean": 0.33415999999999996,
+  "encode_s_last_decile_mean": 0.3881,
+  "encode_cpu_s_median": 0.3234,
+  "query_s_median": 0.81655,
+  "engram_read_s_median": 0.0551,
+  "engram_read_cpu_s_median": 0.0545,
+  "readtime_view_s_per_turn_projected": 0.2755
+ },
+ "peak_rss_mb": 125.91015625,
+ "elapsed_s": 53.9,
+ "process_time_s": 48.1
+}

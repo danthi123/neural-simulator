@@ -1,0 +1,39 @@
+{
+ "run_id": "1790296822-1575672",
+ "runner": "research/runners/load_bearing_fraction.py",
+ "argv": [
+  "/home/ubuntu/derisk-pool/sim/research/runners/load_bearing_fraction.py",
+  "--only",
+  "affect-appraisal-interoceptive",
+  "--seed",
+  "42",
+  "--repeats",
+  "2",
+  "--out",
+  "research/findings/raw/_load_bearing/_shards/b2b0924-base/s42/affect-appraisal-interoceptive/lb.json"
+ ],
+ "git_sha": "d7b2a2bb56e7af143c61b926e31f36912434b27d",
+ "git_dirty": false,
+ "source_kind": "git_archive",
+ "source_manifest_sha256": "9c18419bc8b513434af947b103673219b0ba3ce0a1a3cace756ae7a724dfd3c8",
+ "source_manifest_verified_at_start": true,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": true,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-25T00:40:22",
+ "env": {
+  "POOL_CHECKED_REASON": "prereg research/findings/2026-09-24-production-default-battery-B2b-PREREGISTRATION.md (F a308f1e09) AMENDMENT 1; B2b base; mem_gb=8",
+  "NUMEXPR_NUM_THREADS": "1",
+  "POOL_JOB_ID": "1790296822318513008-5138",
+  "OPENBLAS_NUM_THREADS": "1",
+  "POOL_JOB_MEM_GB": "8",
+  "OMP_NUM_THREADS": "1",
+  "MKL_NUM_THREADS": "1"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "(unset -> runner default)",
+ "sim_backend_cupy_importable": false,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_load_bearing/_shards/b2b0924-base/s42/affect-appraisal-interoceptive/lb.json"
+}

@@ -467,6 +467,78 @@ def test_pop_job_without_a_node_arg_skips_the_revision_check_entirely(tmp_path: 
     assert ssh_log.read_text() == ""             # and no ssh call was made to check
 
 
+# --------------------------------------------------------------- pool_node= constraint (2026-09-25 B2b torn-cell fix)
+# research/coordination/b2b0924_reruns.tsv: a torn dispatcher-fragment's cell must be re-run on a DIFFERENT host
+# than the one that ran the fragment (B2b prereg Amendment 2, A1.4(b)). A line may declare `pool_node=<name>`
+# anywhere in its text (typically the --checked reason, same convention as `mem_gb=N`) to require that ONLY that
+# node may pop it. No ssh stub needed here: unlike the revision check, this is a pure text match on the candidate.
+
+def test_pop_job_skips_a_line_pinned_to_a_different_node_leaving_it_queued(tmp_path: Path) -> None:
+    now = int(time.time())
+    queue = tmp_path / "pool.queue"
+    queue.write_text(f"{now}\tbash run.sh  #checked:r pool_node=pool41 mem_gb=1\n")
+    env = {**os.environ, "POOL_QUEUE_PATH": str(queue), "POOL_RUNNING_PATH": str(tmp_path / "pool.running")}
+    res = subprocess.run(["bash", str(DISPATCHER), "--pop-once", "999", "pool42"],
+                          cwd=ROOT, env=env, capture_output=True, text=True, timeout=30)
+    assert res.returncode == 0, res.stderr
+    assert res.stdout == ""                       # pool42 is not pool41 -- nothing handed out
+    assert "run.sh" in queue.read_text()           # never popped -- still queued for pool41
+
+
+def test_pop_job_hands_a_node_pinned_line_to_its_named_node(tmp_path: Path) -> None:
+    now = int(time.time())
+    queue = tmp_path / "pool.queue"
+    queue.write_text(f"{now}\tbash run.sh  #checked:r pool_node=pool41 mem_gb=1\n")
+    env = {**os.environ, "POOL_QUEUE_PATH": str(queue), "POOL_RUNNING_PATH": str(tmp_path / "pool.running")}
+    res = subprocess.run(["bash", str(DISPATCHER), "--pop-once", "999", "pool41"],
+                          cwd=ROOT, env=env, capture_output=True, text=True, timeout=30)
+    assert res.returncode == 0, res.stderr
+    assert "run.sh" in res.stdout
+    assert "run.sh" not in queue.read_text()       # popped -- removed from the queue
+
+
+def test_pop_job_node_constraint_does_not_swallow_a_later_unconstrained_candidate(tmp_path: Path) -> None:
+    # Mirrors the revision-check scan-truncation regression (test_pop_job_does_not_let_an_unavailable_revision_
+    # probe_swallow_later_queued_candidates, above): a mismatched pool_node= candidate must be `continue`d past,
+    # not stop the scan, so a later, unconstrained line behind it is still reachable this cycle.
+    now = int(time.time())
+    queue = tmp_path / "pool.queue"
+    queue.write_text(f"{now}\tbash blocked.sh  #checked:r pool_node=pool41 mem_gb=1\n"
+                      f"{now + 1}\tbash good.sh  #checked:r mem_gb=1\n")
+    env = {**os.environ, "POOL_QUEUE_PATH": str(queue), "POOL_RUNNING_PATH": str(tmp_path / "pool.running")}
+    res = subprocess.run(["bash", str(DISPATCHER), "--pop-once", "999", "pool42"],
+                          cwd=ROOT, env=env, capture_output=True, text=True, timeout=30)
+    assert res.returncode == 0, res.stderr
+    assert "good.sh" in res.stdout
+    assert "pool_node=pool41" in queue.read_text()  # the constrained line is still queued, untouched
+    assert "good.sh" not in queue.read_text()
+
+
+def test_pop_job_without_a_node_arg_skips_the_node_constraint_too(tmp_path: Path) -> None:
+    # Backward compatibility: node-less callers (test seams that never pass [node]) see unchanged behaviour even
+    # for a pool_node=-tagged line -- the constraint only applies once a real node identity is in play.
+    now = int(time.time())
+    queue = tmp_path / "pool.queue"
+    queue.write_text(f"{now}\tbash run.sh  #checked:r pool_node=pool41 mem_gb=1\n")
+    env = {**os.environ, "POOL_QUEUE_PATH": str(queue), "POOL_RUNNING_PATH": str(tmp_path / "pool.running")}
+    res = subprocess.run(["bash", str(DISPATCHER), "--pop-once", "999"],
+                          cwd=ROOT, env=env, capture_output=True, text=True, timeout=30)
+    assert res.returncode == 0, res.stderr
+    assert "run.sh" in res.stdout
+
+
+def test_pop_job_ignores_pool_node_absent_lines_exactly_as_before(tmp_path: Path) -> None:
+    # No behaviour change for lines without the token: a plain line pops for ANY node.
+    now = int(time.time())
+    queue = tmp_path / "pool.queue"
+    queue.write_text(f"{now}\tbash run.sh  #checked:r mem_gb=1\n")
+    env = {**os.environ, "POOL_QUEUE_PATH": str(queue), "POOL_RUNNING_PATH": str(tmp_path / "pool.running")}
+    res = subprocess.run(["bash", str(DISPATCHER), "--pop-once", "999", "pool40"],
+                          cwd=ROOT, env=env, capture_output=True, text=True, timeout=30)
+    assert res.returncode == 0, res.stderr
+    assert "run.sh" in res.stdout
+
+
 def _write_ssh_stub_dir_exists_but_no_marker(tmp_path: Path, sha: str):
     """REGRESSION (2026-09-23 fix round #2): a stub answering `[ -d ... ]` TRUE (dir exists -- the defect: a
     half-provisioned revision from a FAILED pool_provision.sh run always leaves this true) but `[ -f
@@ -667,6 +739,125 @@ def test_ssh_f_is_refreshed_mid_loop_without_a_restart(tmp_path: Path) -> None:
             proc.wait(timeout=5)
         except subprocess.TimeoutExpired:
             proc.kill()
+
+
+# --------------------------------------------------- stale-HostName auto-refresh, dispatcher side (2026-09-25)
+
+def _write_aws_pool_state(state_dir: Path, node: str, key: Path, instance: str = "i-aaa") -> Path:
+    key.write_text("fake key\n")
+    state = state_dir / f".aws_{node}"
+    state.write_text(f"instance={instance}\nregion=us-east-1\nkey={key}\nsg=sg-x\n")
+    return state
+
+
+def _make_always_unreachable_ssh_stub(tmp_path: Path) -> Path:
+    bin_dir = tmp_path / "bin"
+    bin_dir.mkdir()
+    stub = bin_dir / "ssh"
+    stub.write_text("#!/usr/bin/env bash\nexit 255\n")
+    stub.chmod(stub.stat().st_mode | stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH)
+    return bin_dir
+
+
+def _make_refresh_aws_stub(bin_dir: Path, log: Path, new_ip: str = "9.9.9.9") -> None:
+    stub = bin_dir / "aws"
+    stub.write_text(f"""#!/usr/bin/env bash
+echo "$*" >> "{log}"
+case "$*" in
+  *"State.Name"*) echo running; exit 0 ;;
+  *"PublicIpAddress"*) echo "{new_ip}"; exit 0 ;;
+esac
+echo ok; exit 0
+""")
+    stub.chmod(stub.stat().st_mode | stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH)
+
+
+def test_node_is_idle_self_heals_a_stale_hostname_for_an_aws_managed_node(tmp_path: Path) -> None:
+    # LOW (2026-09-25 review): "spec gap" -- only tools/pool_sync.sh's post-sync-failure retry self-healed a
+    # stale ip (an AWS pool node's public ip changes on EVERY stop/start, no Elastic IP in this feature); the
+    # dispatcher's OWN node_is_idle probe never did, though the spec says every entry point that finds a stale
+    # HostName should. A node with a research/queue/.aws_<name> state file, unreachable at its recorded (stale)
+    # ip, must trigger ONE `aws_pool_node.sh refresh` -- which rewrites the Host block to the current ip -- even
+    # though THIS cycle's capacity check still reports busy/unreachable (the refresh helps the NEXT cycle).
+    bin_dir = _make_always_unreachable_ssh_stub(tmp_path)
+    aws_log = tmp_path / "aws.log"; aws_log.write_text("")
+    _make_refresh_aws_stub(bin_dir, aws_log, new_ip="9.9.9.9")
+
+    state_dir = tmp_path / "state"; state_dir.mkdir()
+    _write_aws_pool_state(state_dir, "testnode", tmp_path / "key.pem")
+    ssh_config = tmp_path / "pool_ssh_config"
+    ssh_config.write_text("Include ~/.ssh/config\nHost testnode\n  HostName 1.2.3.4\n")
+
+    res = run_bash(DISPATCHER, "--node-budget", "testnode", env={
+        "PATH": f"{bin_dir}:{os.environ.get('PATH', '')}",
+        "POOL_QUEUE_PATH": str(tmp_path / "pool.queue"),
+        "POOL_SSH_CONFIG": str(ssh_config),
+        "POOL_AWS_STATE_DIR": str(state_dir),
+        "POOL_STALE_REFRESH_MARK_DIR": str(tmp_path / "marks"),
+    })
+    assert "busy/unreachable" in res.stdout   # this cycle's OWN capacity check still failed (ssh never answers)
+    assert "State.Name" in aws_log.read_text() and "PublicIpAddress" in aws_log.read_text()
+    assert "9.9.9.9" in ssh_config.read_text(), "the Host block was never refreshed to the current ip"
+    assert "1.2.3.4" not in ssh_config.read_text()
+
+
+def test_node_is_idle_refresh_is_rate_limited(tmp_path: Path) -> None:
+    # A refresh attempt costs an `aws describe-instances` round trip; node_is_idle runs on every dispatch poll
+    # (default every 60s) for every configured node, so an un-rate-limited refresh would hammer `aws` every
+    # single cycle for a node that stays unreachable for a mundane reason. A second call within the rate-limit
+    # window must NOT call `aws` again.
+    bin_dir = _make_always_unreachable_ssh_stub(tmp_path)
+    aws_log = tmp_path / "aws.log"; aws_log.write_text("")
+    _make_refresh_aws_stub(bin_dir, aws_log, new_ip="9.9.9.9")
+
+    state_dir = tmp_path / "state"; state_dir.mkdir()
+    _write_aws_pool_state(state_dir, "testnode", tmp_path / "key.pem")
+    ssh_config = tmp_path / "pool_ssh_config"
+    ssh_config.write_text("Include ~/.ssh/config\nHost testnode\n  HostName 1.2.3.4\n")
+    env = {
+        "PATH": f"{bin_dir}:{os.environ.get('PATH', '')}",
+        "POOL_QUEUE_PATH": str(tmp_path / "pool.queue"),
+        "POOL_SSH_CONFIG": str(ssh_config),
+        "POOL_AWS_STATE_DIR": str(state_dir),
+        "POOL_STALE_REFRESH_MARK_DIR": str(tmp_path / "marks"),
+        "POOL_STALE_REFRESH_RATE_S": "300",
+    }
+    run_bash(DISPATCHER, "--node-budget", "testnode", env=env)
+    first_call_count = len(aws_log.read_text().splitlines())
+    assert first_call_count > 0, "the first call never even attempted a refresh"
+
+    run_bash(DISPATCHER, "--node-budget", "testnode", env=env)   # immediately again -- well within the window
+    assert len(aws_log.read_text().splitlines()) == first_call_count, (
+        "a second call within the rate-limit window made another `aws` call -- not rate-limited")
+
+
+def test_node_is_idle_never_attempts_refresh_for_a_minipc_node_without_an_aws_state_file(tmp_path: Path) -> None:
+    # pool40/41/42 have no research/queue/.aws_<name> state file -- must stay byte-identical to before this
+    # feature: node_is_idle fails exactly as before, no `aws` call at all (no `aws` binary on PATH needed).
+    bin_dir = _make_always_unreachable_ssh_stub(tmp_path)
+    res = run_bash(DISPATCHER, "--node-budget", "pool40", env={
+        "PATH": f"{bin_dir}:{os.environ.get('PATH', '')}",
+        "POOL_QUEUE_PATH": str(tmp_path / "pool.queue"),
+        "POOL_SSH_CONFIG": str(tmp_path / "does-not-exist"),
+        "POOL_AWS_STATE_DIR": str(tmp_path / "state"),   # dir does not even exist
+        "POOL_STALE_REFRESH_MARK_DIR": str(tmp_path / "marks"),
+    })
+    assert "busy/unreachable" in res.stdout
+
+
+def test_stale_refresh_call_is_timeout_bounded() -> None:
+    # LOW/INFO (2026-09-25 review, fix round 3): "_maybe_refresh_stale_aws_node runs the aws CLI inside
+    # node_is_idle on the main dispatch loop with no timeout ... a hung AWS API can stall dispatch." A real
+    # hang-reproduction test would need to actually wait it out (SELF_DIR always resolves to the real
+    # tools/aws_pool_node.sh, so a PATH stub cannot intercept the call) -- this checks the guard structurally,
+    # matching test_queue_flag_check_never_pipes_help_into_grep_q's own source-inspection approach just below.
+    import re
+    src = (ROOT / "tools" / "pool_autodispatch.sh").read_text()
+    start = src.index("_maybe_refresh_stale_aws_node() {")
+    end = src.index("\n}", start)
+    body = src[start:end]   # isolate the function body -- an unrelated `timeout` call elsewhere must not pass this
+    assert re.search(r"timeout\s+\d+\s+bash[^\n]*aws_pool_node\.sh[^\n]*refresh", body), (
+        f"the refresh call is not wrapped in a bounded `timeout`:\n{body}")
 
 
 def test_queue_flag_check_never_pipes_help_into_grep_q() -> None:

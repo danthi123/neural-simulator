@@ -34,7 +34,7 @@ more grounding data — by scaling the emergent Hebbian convergence from 60k to 
 <!--derived-->
 - CLEAN/full grounding: the emergent code is separable, worst-case ~1.000 vs text ~0.059; grounding load-bearing
   (lesion ~0.069, shuffle ~0.059); held-out clean ~1.000; text-only transfer ~0.010-0.023 (grounding, not text, carries it).
-- REALISTIC-noise arm: ~0.049 worst (below the pre-registered bar); three-factor US-gated realistic ~0.049. FAILED:
+- REALISTIC-noise arm: ~0.010 worst (below the pre-registered bar; see Corrections); three-factor US-gated realistic ~0.049. FAILED:
   G1_lift_clears_bar. GO=False.
 
 ## What it means
@@ -45,3 +45,7 @@ data-scale limit. This is an honest negative that CONFIRMS the direction: the te
 vision), not more text-derived grounding data. The artifact's (rho,sigma) frontier + relaxed-FP sensitivity bound what
 coverage/noise-model/FP-tolerance would clear the bar — the input for a realistic-noise or multimodal grounding arc.
 A wall defers a METHOD (text-data-scale), not the capability (grounded affect).
+
+## Corrections (2026-09-25 claim-check spot audit)
+
+- "REALISTIC-noise arm: ~0.049 worst" -> "~0.010 worst" (`grounded_taught_realistic_worst` = 0.00980, from the cited artifact; the previously-stated 0.049 was `gated_three_factor_realistic_worst`, the DIFFERENT three-factor US-gated figure correctly reported immediately after it in the same sentence); does not change the verdict -- the plain realistic-noise arm was already below the pre-registered bar and `G1_lift_clears_bar` already read False, and the corrected value is further below the bar, not closer to it. <!--derived-->
