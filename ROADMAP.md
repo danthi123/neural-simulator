@@ -7,6 +7,17 @@ the [project handoff](HANDOFF.md), and the live state in
 board, when checked out, was `research/coordination/workboard.json` (⚠️ now ~a month
 stale — the live board is [GAP_CLOSURE_MISSION.md](GAP_CLOSURE_MISSION.md) CURRENT STATE; workboard.json is being retired).
 
+## 2026-09-25 (morning) — the GPU cost test for the mood-settling pause comes back undecided; a sharper test is registered
+
+The "settle before answering" pause for the emotion marker has three conditions to meet before it can be switched on
+by default. The third is that it must not add more than 0.3 s to an emotional reply on the GPU. The pre-registered
+test, run overnight on four fresh copies of the brain, reads **undecided** (not a pass, not a fail). The pause's
+own work costs about 0.13 s per emotional reply, inside the limit. But two copies of the brain doing exactly the same
+work differed by up to 4.7 s per reply, so the whole-reply cost cannot be told apart from 0.3 s, and the test's
+noise measure grows with every copy added. A new test that switches the pause on and off inside the same copy (so
+the copy-to-copy difference cancels) is registered and ready for the GPU queue (about 7 hours); it has not run.
+The pause stays off. (Finding: `2026-09-25-affect-marker-settle-a3-gpu-timing-UNDEFINED-noise`.)
+
 ## 2026-09-24 (night) — gap#4's weight limit is confirmed load-bearing; the bigger network still reads exactly at chance
 
 The deep-credit crux lane (gap#4) had two runs left open from the transport-ceiling diagnosis published earlier
@@ -59,7 +70,7 @@ each repeat actually ran caught it. No default is flipped by this finding either
 
 **Curiosity driven by uncertainty, second attempt:** the burst-driven version now scales the "ask" response as intended on all six seeds (it carries 37-92% of the effect, up from 8-25%). It still passes on only 3 of 6 seeds, because on the other three the circuit underneath it misbehaves the same way with the new link switched off, or the test's drive steps were too coarse to measure. Next: a finer test and a self-tuning set-point for the "ask" cells.
 **Working memory reaching ordinary replies:** a clean no on all six seeds. The brain holds the two things it was told about, but an ordinary reply reads a fixed slot instead of what is held, so switching off the memory changes nothing. The fix is being built: the reply's focus should come from whichever memory is actually active.
-**Also merged:** the learned-word route for "who are we talking about" (its six-seed test now runs on one recorded text corpus after a mix-up was caught), the thought branch-point instrument, and the working-memory tests. The "settle before answering" pause costs about 0.14 s per turn on the GPU and joins the next batch of switch-ons.
+**Also merged:** the learned-word route for "who are we talking about" (its six-seed test now runs on one recorded text corpus after a mix-up was caught), the thought branch-point instrument, and the working-memory tests. The "settle before answering" pause costs about 0.14 s per turn on the GPU and joins the next batch of switch-ons. (Update 2026-09-25: that is the pause's own work; the whole-reply cost test came back undecided, see the 2026-09-25 morning entry.)
 
 ## 2026-09-24 (overnight) — 25 of 26 abilities drive the reply on every seed; three fixes being switched on for real; curiosity's mood-chemical link falls short and the reason is named
 
