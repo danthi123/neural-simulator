@@ -15,6 +15,7 @@ import os
 import stat
 import subprocess
 import sys
+import time
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -160,6 +161,10 @@ def _run(script, args, bin_dir, extra_env=None, tmp_path=None):
         # read/write this file every idle-stop/enforce cycle -- must never touch the SHARED production
         # research/queue/.pool_extra_nodes (other sessions/agents read it too).
         env.setdefault("POOL_EXTRA_NODES_FILE", str(tmp_path / "no-such-pool-extra-nodes"))
+        # reregister_stale_paused_nodes (2026-09-25 fix round 4) now runs at the START of every aws_idle_stop.sh/
+        # aws_budget.sh invocation and scans this directory for a stale pause marker -- must never resolve to the
+        # SHARED production research/queue/.pool_paused (a live marker there belongs to a real in-flight pause).
+        env.setdefault("POOL_PAUSE_MARK_DIR", str(tmp_path / "no-such-pool-paused"))
         # aws_budget.sh enforce's per-instance node/key lookup (2026-09-25 fix round 3) globs this directory's
         # `.aws_*` state files -- must never resolve to the SHARED production research/queue/.
         env.setdefault("AWS_NODE_STATE_DIR", str(tmp_path / "state"))
@@ -334,6 +339,63 @@ exit 0
     assert seen, "no rsync call observed the extra-nodes file -- test setup is wrong"
     assert all(s == "ABSENT" for s in seen), f"node was still registered for dispatch during the sync: {seen}"
     assert extra_nodes.read_text().splitlines() == ["gpu"], "registration was not restored after the cycle"
+
+
+def test_budget_enforce_kills_the_whole_sync_process_tree_on_timeout_no_orphan(tmp_path):
+    # LOW (2026-09-25 review): "the outer timeout also orphans the lib's own nested `timeout 180 rsync`" --
+    # reproduced with 4 orphaned rsync processes still writing into research/findings/raw after the outer timeout
+    # returned. A plain `timeout $T bash lib --sync` only SIGTERMs its DIRECT child; the nested `timeout 180
+    # rsync` (sync_node_before_stop's fallback path) is a GRANDCHILD it never signals, so it survives, reparented.
+    # This rsync stub records its OWN pid before sleeping well past the (short) outer timeout below -- if it is
+    # still alive once `enforce` returns, the fix did not actually reach the whole process tree.
+    inst = _instance("i-aaa", "r7i.4xlarge", "running", hours_ago=40)
+    bin_dir, shared_log, describe_fixture = _budget_stop_stub_bin(tmp_path)
+    describe_fixture.write_text(_describe_json([inst]))
+    _write_gpu_state(tmp_path, "i-aaa", tmp_path / "aws_key.pem")
+    rsync_pidfile = tmp_path / "rsync.pid"
+    rsync_stub = bin_dir / "rsync"
+    rsync_stub.write_text(f"""#!/usr/bin/env bash
+echo $$ > "{rsync_pidfile}"
+echo "RSYNC $*" >> "{shared_log}"
+sleep 20
+exit 0
+""")
+    rsync_stub.chmod(rsync_stub.stat().st_mode | stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH)
+
+    t0 = time.monotonic()
+    res = _run(AWS_BUDGET, ["enforce"], bin_dir,
+               {"AWS_DAILY_CAP_USD": "1", "AWS_BUDGET_SYNC_TIMEOUT_S": "1"}, tmp_path=tmp_path)
+    elapsed = time.monotonic() - t0
+    assert res.returncode == 0, res.stderr
+    assert elapsed < 15.0, (
+        f"enforce took {elapsed:.1f}s -- it must return shortly after the 1s sync timeout, not wait out the "
+        f"rsync stub's own 20s sleep")
+    assert rsync_pidfile.exists(), "the rsync stub never started -- test setup is wrong"
+    rsync_pid = int(rsync_pidfile.read_text().strip())
+
+    def _pid_alive(pid):
+        try:
+            os.kill(pid, 0)
+        except ProcessLookupError:
+            return False
+        except PermissionError:
+            return True   # exists, owned by someone else -- not our case here, but fail safe
+        return True
+
+    still_alive = _wait_true(lambda: not _pid_alive(rsync_pid), timeout_s=5)
+    assert still_alive, (
+        f"rsync (pid {rsync_pid}) is STILL RUNNING after `enforce` returned -- it was orphaned, not killed as "
+        f"part of the whole sync process group")
+    assert "ec2 stop-instances" in shared_log.read_text()
+
+
+def _wait_true(predicate, timeout_s=5, interval_s=0.05):
+    deadline = time.monotonic() + timeout_s
+    while time.monotonic() < deadline:
+        if predicate():
+            return True
+        time.sleep(interval_s)
+    return predicate()
 
 
 def test_budget_check_refuses_after_earlier_instance_vanished_from_live_snapshot(tmp_path):

@@ -42,6 +42,12 @@ POOL_SSH_CFG="${POOL_SSH_CONFIG:-$ROOT/research/queue/.pool_ssh_config}"
 AWS_STATE_DIR="${AWS_NODE_STATE_DIR:-$ROOT/research/queue}"
 source "$ROOT/tools/aws_stop_safety_lib.sh"
 
+# RE-REGISTER ANY STALE PAUSE, AT STARTUP (2026-09-25 review, MEDIUM: "the pause/resume pair has no durable
+# restore" -- see tools/aws_idle_stop.sh's own identical call for the full reasoning). Cheap; runs before every
+# subcommand (status/check/enforce), not just `enforce`, since any of them running is a legitimate "notice"
+# point and the check itself never touches AWS.
+reregister_stale_paused_nodes
+
 _fetch_instances() {
   aws ec2 describe-instances --region "$REGION" \
     --filters "Name=instance-state-name,Values=pending,running,stopping,stopped" \
@@ -108,18 +114,41 @@ case "$cmd" in
         fi
         if [ -n "$ip" ] && [ "$ip" != "None" ]; then
           was_reg=$(pause_dispatch_for_node "$node")   # see tools/aws_idle_stop.sh's own use -- same reasoning
-          if timeout "${AWS_BUDGET_SYNC_TIMEOUT_S:-120}" env AWS_SYNC_LOG="$LOG" POOL_SSH_CONFIG="$POOL_SSH_CFG" \
-               bash "$ROOT/tools/aws_stop_safety_lib.sh" --sync "$node" "$ip" "$key" </dev/null >>"$LOG" 2>&1; then
+          # TRAP, AT MINIMUM (2026-09-25 review, MEDIUM): same durable-restore reasoning as tools/aws_idle_stop.sh's
+          # own identical trap -- catches a graceful kill of THIS process before the explicit resume below runs;
+          # reregister_stale_paused_nodes at startup is the half that also covers SIGKILL/OOM/reboot.
+          trap "resume_dispatch_for_node $(printf '%q' "$node") $(printf '%q' "$was_reg"); exit" EXIT INT TERM
+          # setsid + group-kill (2026-09-25 review, LOW: "the outer timeout also orphans the lib's own nested
+          # `timeout 180 rsync`"). Reproduced: a plain `timeout $T bash lib --sync` only SIGTERMs its DIRECT
+          # child; that child's OWN nested `timeout 180 rsync` (in sync_node_before_stop's fallback path) is a
+          # GRANDCHILD the outer timeout never signals, so it survives as an orphan, reparented, still writing
+          # into research/findings/raw. `setsid` makes this whole pipeline its own process group ($sync_pid ==
+          # the group id, since setsid/env/bash all exec in place with no extra fork); after `timeout` itself
+          # returns (by any means -- success, failure, or its own SIGTERM-on-expiry), unconditionally signal the
+          # NEGATIVE pid to reach every process still alive in that group in one call, whichever child of
+          # aws_stop_safety_lib.sh it happens to be.
+          setsid timeout "${AWS_BUDGET_SYNC_TIMEOUT_S:-120}" env AWS_SYNC_LOG="$LOG" POOL_SSH_CONFIG="$POOL_SSH_CFG" \
+               bash "$ROOT/tools/aws_stop_safety_lib.sh" --sync "$node" "$ip" "$key" </dev/null >>"$LOG" 2>&1 &
+          sync_pid=$!
+          wait "$sync_pid"; sync_rc=$?
+          kill -TERM -- "-$sync_pid" 2>/dev/null
+          kill -KILL -- "-$sync_pid" 2>/dev/null
+          if [ "$sync_rc" -eq 0 ]; then
             echo "$(date -u '+%FT%TZ') [aws_budget] $iid ($node): synced before stopping at cap" | tee -a "$LOG"
           else
             echo "$(date -u '+%FT%TZ') [aws_budget] $iid ($node): sync-before-stop failed/timed out -- stopping ANYWAY (hard cap, see comment above)" | tee -a "$LOG"
           fi
-          resume_dispatch_for_node "$node" "$was_reg"
         else
           echo "$(date -u '+%FT%TZ') [aws_budget] $iid: no verified ssh key/ip on hand -- cannot sync, stopping ANYWAY (hard cap)" | tee -a "$LOG"
         fi
         echo "$(date -u '+%FT%TZ') [aws_budget] cap ($CAP USD) reached — stopping $iid" | tee -a "$LOG"
         aws ec2 stop-instances --region "$REGION" --instance-ids "$iid" --output text 2>&1 | tee -a "$LOG"
+        # RESUME AFTER stop-instances (2026-09-25 review, LOW): same reordering + reasoning as tools/
+        # aws_idle_stop.sh's own fix -- resuming any earlier reopens a window where a job could land on a node
+        # that is about to be stopped out from under it.
+        if [ -n "$ip" ] && [ "$ip" != "None" ]; then
+          resume_dispatch_for_node "$node" "$was_reg"; trap - EXIT INT TERM
+        fi
       done 3<<<"$to_stop"
     fi
     exit 0

@@ -29,6 +29,14 @@ def _run(args, bin_dir=None, env=None, tmp_path=None):
     iso = Path(tmp_path) if tmp_path is not None else Path(tempfile.mkdtemp(prefix="aws_pool_node_test_"))
     full_env.setdefault("AWS_BUDGET_LOG", str(iso / "aws_budget.log"))
     full_env.setdefault("AWS_SPEND_LEDGER", str(iso / "aws_spend_ledger.jsonl"))
+    # up/down/status/start/refresh all now call reregister_stale_paused_nodes at startup (2026-09-25 fix round
+    # 4), which reads $EXTRA_NODES_FILE and scans $POOL_PAUSE_MARK_DIR -- default BOTH to this call's own
+    # isolated dir so a test that forgets to set them (most of the ones below never register anything at all)
+    # can never read from, or write into, the SHARED production research/queue/.pool_extra_nodes /
+    # research/queue/.pool_paused. A test that explicitly passes its own value via `env=` still wins (`update`
+    # below runs after these `setdefault` calls).
+    full_env.setdefault("POOL_EXTRA_NODES_FILE", str(iso / "no-such-pool-extra-nodes"))
+    full_env.setdefault("POOL_PAUSE_MARK_DIR", str(iso / "no-such-pool-paused"))
     if env:
         full_env.update(env)
     return subprocess.run(["bash", str(SCRIPT), *args], cwd=ROOT, env=full_env,
@@ -236,6 +244,77 @@ def test_remove_host_block_leaves_no_stray_tmp_file_behind_on_success(tmp_path):
     assert res.returncode == 0, res.stderr
     leftover = list(tmp_path.glob(".host_block.*"))
     assert leftover == [], f"mv did not consume its own tmp file (mv replaced with something else?): {leftover}"
+
+
+def test_write_host_block_replaces_the_file_via_rename_not_in_place(tmp_path):
+    # MUTATION CHECK (2026-09-25 re-review, LOW: "replacing `mv \"$tmp\" \"$file\"` with an in-place
+    # `cat \"$tmp\" > \"$file\" && rm -f \"$tmp\"` passes all 68 tests" -- the no-stray-tmp test above only
+    # catches a bare `cp` that LEAVES the tmp file sitting around; an in-place `cat >` + `rm` also consumes it,
+    # so that test alone cannot tell an atomic rename from a non-atomic overwrite). `mv` on the same filesystem
+    # replaces the destination's INODE; an in-place rewrite (any `> "$file"` truncate-and-write) keeps the
+    # ORIGINAL inode. A concurrent reader that already has the file open sees this difference directly: `mv`
+    # never gives it a half-written view (it still reads the OLD complete content, or reopens to the NEW file);
+    # an in-place rewrite can hand it a truncated/partial read mid-write.
+    cfg = tmp_path / "ssh_config"
+    cfg.write_text("Include ~/.ssh/config\n")
+    ino_before = cfg.stat().st_ino
+    res = _run(["--write-host-block", str(cfg), "pool1", "1.2.3.4", "/tmp/key.pem"])
+    assert res.returncode == 0, res.stderr
+    ino_after = cfg.stat().st_ino
+    assert ino_after != ino_before, (
+        "the config's inode did not change across the write -- this was rewritten IN PLACE, not replaced by an "
+        "atomic rename (mv), so a concurrent reader could observe a half-written file")
+
+
+def test_remove_host_block_replaces_the_file_via_rename_not_in_place(tmp_path):
+    cfg = tmp_path / "ssh_config"
+    cfg.write_text("Include ~/.ssh/config\nHost pool1\n  HostName 1.1.1.1\n")
+    ino_before = cfg.stat().st_ino
+    res = _run(["--remove-host-block", str(cfg), "pool1"])
+    assert res.returncode == 0, res.stderr
+    ino_after = cfg.stat().st_ino
+    assert ino_after != ino_before, "the config's inode did not change across the removal -- not an atomic rename"
+
+
+def test_write_host_block_lock_timeout_is_overridable_and_fails_closed(tmp_path):
+    # MUTATION CHECK (2026-09-25 re-review, LOW: "changing `flock -w 30` back to `flock` (unbounded) passes
+    # 48/48" -- the fixed 30s wait could not be tested without a real 30-second wait, so nothing exercised the
+    # bound at all). POOL_HOST_BLOCK_LOCK_TIMEOUT_S makes the wait itself testable: hold the lock in a BACKGROUND
+    # flock for longer than a short override, and require _write_host_block to give up (rc=1) at that short
+    # timeout rather than waiting out the holder -- proving the argument to `flock -w` is genuinely THIS value,
+    # not a hardcoded 30 that would still "pass" (by returning success late) under a short deadline.
+    cfg = tmp_path / "ssh_config"
+    cfg.write_text("Include ~/.ssh/config\n")
+    lock = tmp_path / "ssh_config.lock"
+    holder = subprocess.Popen(["flock", str(lock), "sleep", "5"])
+    try:
+        time.sleep(0.3)
+        t0 = time.monotonic()
+        res = _run(["--write-host-block", str(cfg), "pool1", "1.2.3.4", "/tmp/key.pem"],
+                   env={"POOL_HOST_BLOCK_LOCK_TIMEOUT_S": "1"})
+        elapsed = time.monotonic() - t0
+    finally:
+        holder.wait(timeout=10)
+    assert res.returncode != 0, "a 1s override must fail closed against a 5s external holder, not wait it out"
+    assert elapsed < 4.0, f"took {elapsed:.2f}s -- the override was not honored (still waiting close to 30s/5s)"
+    assert cfg.read_text() == "Include ~/.ssh/config\n", "original content must be untouched on a lock timeout"
+
+
+def test_remove_host_block_lock_timeout_is_overridable_and_fails_closed(tmp_path):
+    cfg = tmp_path / "ssh_config"
+    cfg.write_text("Include ~/.ssh/config\nHost pool1\n  HostName 1.1.1.1\n")
+    lock = tmp_path / "ssh_config.lock"
+    holder = subprocess.Popen(["flock", str(lock), "sleep", "5"])
+    try:
+        time.sleep(0.3)
+        t0 = time.monotonic()
+        res = _run(["--remove-host-block", str(cfg), "pool1"], env={"POOL_HOST_BLOCK_LOCK_TIMEOUT_S": "1"})
+        elapsed = time.monotonic() - t0
+    finally:
+        holder.wait(timeout=10)
+    assert res.returncode != 0
+    assert elapsed < 4.0, f"took {elapsed:.2f}s -- the override was not honored"
+    assert cfg.read_text() == "Include ~/.ssh/config\nHost pool1\n  HostName 1.1.1.1\n"
 
 
 # --------------------------------------------------------------------------------------------- down ordering

@@ -72,11 +72,14 @@ _write_host_block() {   # _write_host_block <file> <alias> <ip> <key>  -- append
   mkdir -p "$dir"
   local lock="$file.lock" tmp
   exec 8>"$lock"
-  # -w 30 (2026-09-25 review, LOW/INFO): an unbounded flock can stall pool_autodispatch.sh's MAIN dispatch loop
+  # -w (2026-09-25 review, LOW/INFO): an unbounded flock can stall pool_autodispatch.sh's MAIN dispatch loop
   # forever -- its _maybe_refresh_stale_aws_node calls `refresh`, which calls this, from inside node_is_idle on
-  # every cycle. 30s is generous next to this function's own sub-second normal runtime; a self-heal that fails
-  # to acquire the lock in 30s (dispatcher already treats it as best-effort/silent) beats hanging dispatch.
-  flock -w 30 8 || { echo "⛔ _write_host_block: timed out waiting for the lock on $lock" >&2; exec 8>&-; return 1; }
+  # every cycle. 30s (default) is generous next to this function's own sub-second normal runtime; a self-heal
+  # that fails to acquire the lock in 30s (dispatcher already treats it as best-effort/silent) beats hanging
+  # dispatch. OVERRIDABLE (2026-09-25 re-review, LOW: "changing `flock -w 30` back to `flock` passes 48/48" --
+  # the fixed 30 could not be tested without a real 30s wait) via POOL_HOST_BLOCK_LOCK_TIMEOUT_S, so a test can
+  # hold the lock for a fraction of a second and assert a SHORT timeout still fails closed.
+  flock -w "${POOL_HOST_BLOCK_LOCK_TIMEOUT_S:-30}" 8 || { echo "⛔ _write_host_block: timed out waiting for the lock on $lock" >&2; exec 8>&-; return 1; }
   tmp=$(mktemp "$dir/.host_block.XXXXXX") || { flock -u 8; exec 8>&-; return 1; }
   # GUARD EVERY STEP (2026-09-25 review, MEDIUM regression): the prior version ran the filter/copy step, the
   # append, and the `mv` as three UNCHECKED statements -- a failed awk (or a full-disk cat/append) was silently
@@ -130,8 +133,9 @@ _remove_host_block() {   # _remove_host_block <file> <alias>
   local dir; dir="$(dirname "$file")"
   local lock="$file.lock" tmp
   exec 8>"$lock"
-  # -w 30: same reasoning as _write_host_block's own flock -w 30 above.
-  flock -w 30 8 || { echo "⛔ _remove_host_block: timed out waiting for the lock on $lock" >&2; exec 8>&-; return 1; }
+  # -w, overridable: same reasoning (and same POOL_HOST_BLOCK_LOCK_TIMEOUT_S override) as _write_host_block's own
+  # flock -w above.
+  flock -w "${POOL_HOST_BLOCK_LOCK_TIMEOUT_S:-30}" 8 || { echo "⛔ _remove_host_block: timed out waiting for the lock on $lock" >&2; exec 8>&-; return 1; }
   tmp=$(mktemp "$dir/.host_block.XXXXXX") || { flock -u 8; exec 8>&-; return 1; }
   # GUARD (2026-09-25 review, MEDIUM regression, same fix as _write_host_block above): a failed awk must never
   # be followed by an unconditional `mv` that would swap the real config for a truncated/wrong one.
@@ -211,6 +215,21 @@ SSH_CONFIG="${POOL_SSH_CONFIG:-$ROOT/research/queue/.pool_ssh_config}"
 EXTRA_NODES_FILE="${POOL_EXTRA_NODES_FILE:-$ROOT/research/queue/.pool_extra_nodes}"
 POOL_QUEUE_FILE="${POOL_QUEUE_PATH:-$ROOT/research/queue/pool.queue}"
 
+# _extra_nodes_add / _extra_nodes_remove / reregister_stale_paused_nodes (2026-09-25 review, MEDIUM + LOW/INFO):
+# SOURCED (not reimplemented) so `up`/`down` below take the SAME "$EXTRA_NODES_FILE.lock" flock as
+# pause_dispatch_for_node/resume_dispatch_for_node -- the review's own "one shared flock across all writers"
+# ask. LOG/POOL_SSH_CFG are given harmless defaults first: this script never calls sync_node_before_stop (the
+# only function that reads them), but the library is written under `set -u` and expects them set by the time
+# it is sourced.
+LOG="${AWS_POOL_NODE_LOG:-/dev/null}"
+POOL_SSH_CFG="$SSH_CONFIG"
+source "$ROOT/tools/aws_stop_safety_lib.sh"
+# RE-REGISTER ANY STALE PAUSE (2026-09-25 review, MEDIUM), before dispatching to any subcommand -- `start`/
+# `refresh` are the two the review names explicitly (an owner running either of them is exactly the kind of
+# "someone noticed" moment this self-heal exists for), but running it unconditionally here covers `up`/`down`/
+# `status` too at no real cost (a directory listing + a `cat`/`stat` per marker).
+reregister_stale_paused_nodes
+
 cmd_up() {
   [ -f "$STATE" ] && ! grep -q '^# TORN DOWN' "$STATE" && {
     echo "⛔ $NODE_NAME already recorded live in $STATE — 'down' it first, or pick a different node-name." >&2
@@ -273,7 +292,11 @@ cmd_up() {
   # provision/sanity failure. EXIT fires unconditionally (normal exit, `exit N`, or an unhandled error), so it
   # is cleared here explicitly on function return AND fires on any `exit` below.
   trap 'rm -f "$TMP_CONFIG"' EXIT
-  _write_host_block "$TMP_CONFIG" "$STAGING_ALIAS" "$IP" "$KEY"
+  # PROPAGATE THE RETURN (2026-09-25 review, LOW: "callers ignore the new non-zero return of _write_host_block").
+  # A failure here (e.g. the flock timing out, or a filesystem error) would leave $TMP_CONFIG with no usable
+  # Host block for $STAGING_ALIAS -- provisioning below would then fail with a confusing "unknown host" instead
+  # of the real cause. Route it through the SAME auto-teardown as any other provisioning-stage failure.
+  _write_host_block "$TMP_CONFIG" "$STAGING_ALIAS" "$IP" "$KEY" || _up_failed "could not write the staging ssh Host block for $NODE_NAME"
 
   echo "[aws-pool-node] provisioning ~/derisk-pool/sim on $NODE_NAME via staging alias…"
   if ! POOL_SSH_CONFIG="$TMP_CONFIG" bash "$ROOT/tools/pool_provision.sh" "$STAGING_ALIAS"; then
@@ -305,7 +328,10 @@ cmd_up() {
       echo "Include /etc/ssh/ssh_config"
       echo; } > "$SSH_CONFIG"
   fi
-  _write_host_block "$SSH_CONFIG" "$NODE_NAME" "$IP" "$KEY"
+  # PROPAGATE THE RETURN (2026-09-25 review, LOW/MEDIUM-regression-verification: "`up` also reports success, and
+  # `up` registers the node with no Host block" -- reproduced with an awk stub that fails only the rewrite). A
+  # failure here must never fall through to registering $NODE_NAME for dispatch below with no usable Host block.
+  _write_host_block "$SSH_CONFIG" "$NODE_NAME" "$IP" "$KEY" || _up_failed "could not write the persistent ssh Host block for $NODE_NAME"
 
   # PRE-PROVISION every git revision the LIVE queue already references (2026-09-23 fix round, best-effort).
   # pool.queue's revision-pinned jobs (`cd ~/derisk-pool/revisions/<sha> && ...`, from `pool_provision.sh
@@ -328,8 +354,11 @@ cmd_up() {
     done
   fi
 
-  mkdir -p "$(dirname "$EXTRA_NODES_FILE")"; touch "$EXTRA_NODES_FILE"
-  grep -qxF "$NODE_NAME" "$EXTRA_NODES_FILE" 2>/dev/null || echo "$NODE_NAME" >> "$EXTRA_NODES_FILE"
+  # _extra_nodes_add (2026-09-25 review, LOW/INFO: "pause/resume rewrite .pool_extra_nodes without a lock shared
+  # with aws_pool_node.sh up/down" -- the OLD unlocked grep+append here could race a concurrent
+  # pause_dispatch_for_node/resume_dispatch_for_node and drop one writer's update). Sourced from
+  # tools/aws_stop_safety_lib.sh; takes the SAME "$EXTRA_NODES_FILE.lock" those functions do.
+  _extra_nodes_add "$NODE_NAME"
   echo "[aws-pool-node] ✓ $NODE_NAME is LIVE, provisioned, and registered in $EXTRA_NODES_FILE."
   echo "                tools/pool_autodispatch.sh picks it up within one poll cycle (no restart needed)."
 }
@@ -345,10 +374,10 @@ cmd_down() {
   # 1. UNREGISTER FIRST — no new job can be dispatched to a node that is about to disappear. This is a pure
   #    local file edit (no network round-trip), so by the time step 2 below even starts, the dispatcher's
   #    NEXT cycle (which re-reads this file every time, see pool_autodispatch.sh) will no longer offer it work.
-  if [ -f "$EXTRA_NODES_FILE" ]; then
-    grep -vxF "$NODE_NAME" "$EXTRA_NODES_FILE" > "$EXTRA_NODES_FILE.tmp" 2>/dev/null || true
-    mv "$EXTRA_NODES_FILE.tmp" "$EXTRA_NODES_FILE"
-  fi
+  #    _extra_nodes_remove (2026-09-25 review, LOW/INFO): same shared-lock reasoning as `up`'s _extra_nodes_add
+  #    above -- the OLD unlocked grep+mv here could race a concurrent pause_dispatch_for_node/
+  #    resume_dispatch_for_node and either drop this removal or have a resume re-add the node right after.
+  _extra_nodes_remove "$NODE_NAME" >/dev/null
   echo "[aws-pool-node] $NODE_NAME removed from $EXTRA_NODES_FILE (dispatcher will not target it again)."
 
   # 1b. A STOPPED instance is started, synced, THEN terminated (2026-09-23 fix round #2). aws_idle_stop.sh only
@@ -391,8 +420,16 @@ cmd_down() {
               --query 'Reservations[].Instances[].PublicIpAddress' --output text 2>/dev/null)
           KEY_S=$(_state_get key)
           if [ -n "$NEW_IP" ] && [ "$NEW_IP" != "None" ] && [ -n "$KEY_S" ]; then
-            _write_host_block "$SSH_CONFIG" "$NODE_NAME" "$NEW_IP" "$KEY_S"
-            echo "  [aws-pool-node] $NODE_NAME's Host block updated to its current IP $NEW_IP."
+            # PROPAGATE THE RETURN (2026-09-25 review, LOW: "callers ignore the new non-zero return of
+            # _write_host_block"). Same FORCE-gated refusal already used by this function's own timeout guards
+            # just below -- a failed rewrite here means the probe is about to use a stale/missing Host block, so
+            # fail the SAME way that probe timing out would, without waiting out the full timeout to find out.
+            if _write_host_block "$SSH_CONFIG" "$NODE_NAME" "$NEW_IP" "$KEY_S"; then
+              echo "  [aws-pool-node] $NODE_NAME's Host block updated to its current IP $NEW_IP."
+            else
+              echo "  ⛔ could not rewrite $NODE_NAME's Host block to its current IP $NEW_IP -- the reachability probe below will likely use a stale/missing entry." >&2
+              [ "$FORCE" = 1 ] || { echo "     Refusing to terminate an instance we could not verify/sync. Re-run with --force to accept the loss." >&2; exit 1; }
+            fi
           else
             echo "  ⛔ could not re-read a public IP (or the recorded key) for restarted instance $IID -- the" >&2
             echo "     Host block still carries the OLD IP; the reachability probe below will likely time out." >&2
@@ -418,7 +455,12 @@ cmd_down() {
         # to drain, sync or terminate. Mark torn down and stop.
         echo "[aws-pool-node] $NODE_NAME's instance $IID is already '$EC2_STATE' at AWS -- nothing to sync/terminate." >&2
         [ "$FORCE" = 1 ] || { echo "     Re-run with --force to mark it torn down anyway (no data can be recovered either way)." >&2; exit 1; }
-        _remove_host_block "$SSH_CONFIG" "$NODE_NAME"
+        # PROPAGATE THE RETURN, BUT DO NOT ABORT (2026-09-25 review, LOW: "callers ignore the new non-zero
+        # return of _remove_host_block"). The instance is ALREADY confirmed gone at AWS -- a failed rewrite here
+        # leaves a stale Host block pointing at a dead ip (harmless: any ssh against it just fails), but aborting
+        # instead would skip marking $STATE torn down, which is strictly worse (a provably-gone instance left
+        # recorded as live). Warn and still proceed to the state-file update below.
+        _remove_host_block "$SSH_CONFIG" "$NODE_NAME" || echo "  ⛔ could not remove $NODE_NAME's stale Host block (instance is gone regardless) -- proceeding to mark it torn down." >&2
         { echo "# TORN DOWN $(date '+%F %T %Z') (instance already $EC2_STATE at AWS)"; cat "$STATE"; } > "$STATE.tmp" && mv "$STATE.tmp" "$STATE"
         echo "[aws-pool-node] ✓ $NODE_NAME marked torn down."
         exit 0
@@ -532,7 +574,13 @@ cmd_down() {
 
   # 6. Remove the now-stale persistent ssh Host entry, and mark the state file torn down (never delete it —
   #    same durability intent as .aws_gpu: the record of what ran and when survives).
-  _remove_host_block "$SSH_CONFIG" "$NODE_NAME"
+  #    PROPAGATE THE RETURN, BUT DO NOT ABORT (2026-09-25 review, LOW: "callers ignore the new non-zero return
+  #    of _remove_host_block", named this exact call site). terminate-instances above ALREADY SUCCEEDED -- a
+  #    failed rewrite here leaves a stale Host block pointing at a now-terminated instance (harmless: ssh
+  #    against it just fails), but aborting instead would skip marking $STATE torn down, which is strictly
+  #    worse (a confirmed-terminated instance left recorded as live, so a later `down` refuses with "already
+  #    torn down" while `start` tries to start an instance that no longer exists). Warn and still proceed.
+  _remove_host_block "$SSH_CONFIG" "$NODE_NAME" || echo "  ⛔ could not remove $NODE_NAME's stale Host block (instance is terminated regardless) -- proceeding to mark it torn down." >&2
   { echo "# TORN DOWN $(date '+%F %T %Z')"; cat "$STATE"; } > "$STATE.tmp" && mv "$STATE.tmp" "$STATE"
   echo "[aws-pool-node] ✓ $NODE_NAME torn down."
 }
@@ -643,7 +691,14 @@ cmd_start() {
   # own tmp-file-then-`mv` (same filesystem, so `mv` is atomic) replace it -- a reader never observes a
   # half-written config either way.
   _backup_ssh_config "$SSH_CONFIG"
-  _write_host_block "$SSH_CONFIG" "$NODE_NAME" "$CUR_IP" "$KEY_S"
+  # PROPAGATE THE RETURN (2026-09-25 review, LOW: "`start` also reports success" -- reproduced with an awk stub
+  # that fails only the rewrite: the OLD code printed the success line below and exited 0 with the file
+  # UNCHANGED). The instance is now running and billing regardless, but this command's entire point is a usable
+  # Host block -- never claim success without one.
+  _write_host_block "$SSH_CONFIG" "$NODE_NAME" "$CUR_IP" "$KEY_S" || {
+    echo "⛔ $NODE_NAME: could not write the Host block for $CUR_IP -- the instance IS running (billing) but is not reachable via ssh -F $SSH_CONFIG $NODE_NAME yet. Retry: bash tools/aws_pool_node.sh start $NODE_NAME" >&2
+    exit 1
+  }
   echo "[aws-pool-node] $NODE_NAME's Host block set to $CUR_IP (backup: $SSH_CONFIG.bak)."
 
   echo "[aws-pool-node] waiting for ssh…"
@@ -702,7 +757,13 @@ cmd_refresh() {
   [ -n "$KEY_S" ] && [ -f "$KEY_S" ] || { echo "⛔ $NODE_NAME: no usable key= in $STATE -- cannot write a usable Host block" >&2; exit 1; }
 
   _backup_ssh_config "$SSH_CONFIG"
-  _write_host_block "$SSH_CONFIG" "$NODE_NAME" "$CUR_IP" "$KEY_S"
+  # PROPAGATE THE RETURN (2026-09-25 review, LOW, reproduced verbatim: "`aws_pool_node.sh refresh` printed 'Host
+  # block refreshed 1.1.1.1 -> 7.7.7.7', exited 0 and left the file unchanged" with an awk stub that fails only
+  # the rewrite). Never print the "refreshed" line below unless the write actually happened.
+  _write_host_block "$SSH_CONFIG" "$NODE_NAME" "$CUR_IP" "$KEY_S" || {
+    echo "⛔ $NODE_NAME: could not refresh the Host block to $CUR_IP -- it may still carry ${RECORDED_IP:-no ip}." >&2
+    exit 1
+  }
   echo "$NODE_NAME: Host block refreshed ${RECORDED_IP:-<none>} -> $CUR_IP"
 }
 

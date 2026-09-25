@@ -39,6 +39,13 @@ POOL_SSH_CFG="${POOL_SSH_CONFIG:-$ROOT/research/queue/.pool_ssh_config}"
 # all. Depends on ROOT/LOG/POOL_SSH_CFG (all set above) and sets/uses EXTRA_NODES_FILE for the pause/resume pair.
 source "$ROOT/tools/aws_stop_safety_lib.sh"
 
+# RE-REGISTER ANY STALE PAUSE, AT STARTUP (2026-09-25 review, MEDIUM: "the pause/resume pair has no durable
+# restore"). If a PREVIOUS cycle's process was killed mid-sync (SIGKILL, OOM, a reboot, systemctl stop) after
+# pause_dispatch_for_node removed a node's registration but before its own resume_dispatch_for_node could run,
+# that node is permanently missing from dispatch -- every later cycle reads was_reg=0 for it and never notices.
+# Cheap (a directory listing); safe to run unconditionally every cycle.
+reregister_stale_paused_nodes
+
 json=$(aws ec2 describe-instances --region "$REGION" \
   --filters "Name=instance-state-name,Values=running,pending" --output json 2>/dev/null)
 if [ -z "$json" ]; then
@@ -185,6 +192,19 @@ while IFS= read -r iid <&3; do
     # stops the instance (registration tracks 'up'/'down', not this one cycle's outcome). A no-op (was_reg=0)
     # for any node never registered for dispatch to begin with (e.g. the single-instance `.aws_gpu` lane).
     was_reg=$(pause_dispatch_for_node "$node_name")
+    # TRAP, AT MINIMUM (2026-09-25 review, MEDIUM): if THIS process is killed (SIGINT/SIGTERM) or exits for any
+    # other reason before one of the explicit resume_dispatch_for_node calls below runs, resume it here instead
+    # -- the graceful-kill half of the durable-restore fix (reregister_stale_paused_nodes above is the half that
+    # also covers SIGKILL/OOM/reboot, which no trap can catch). The command string bakes in the CURRENT
+    # $node_name/$was_reg BY VALUE (printf %q), not by reference, so a later loop iteration overwriting those
+    # variables can never leak into a trap armed for an earlier iteration's node. Disarmed right after each of
+    # the explicit resume calls below so a normal exit never double-fires it (harmless if it did -- resume is
+    # idempotent -- but disarming keeps the intent clear).
+    # `; exit` (no explicit code) matters for INT/TERM: bash does NOT auto-terminate a script after running a
+    # trap it set for those signals -- without this, a SIGTERM would run the resume cleanup and then the script
+    # would simply keep going, which defeats the point of sending it a termination signal in the first place
+    # (e.g. `systemctl stop`). For the plain EXIT case this just re-exits with the same $? already in flight.
+    trap "resume_dispatch_for_node $(printf '%q' "$node_name") $(printf '%q' "$was_reg"); exit" EXIT INT TERM
     # SYNC-BEFORE-STOP (2026-09-25, incident-driven -- see sync_node_before_stop's own comment). A `stop` is
     # non-destructive to the EBS volume, but the NODE goes cold and unreachable the instant it stops, so
     # anything written after the last routine pool_sync between here and whenever someone next notices and
@@ -203,7 +223,11 @@ while IFS= read -r iid <&3; do
       recheck_runner_flag="--runner-active true"   # same inconclusive-by-default bias as the original check
       recheck_note="a runner appeared during the sync"
       if [ "$have_ssh" = 1 ]; then
-        ssh -n -i "$state_key" -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes \
+        # timeout 30 (2026-09-25 review, LOW/INFO): ConnectTimeout=10 only bounds the TCP/auth handshake -- a
+        # remote pgrep that hangs (a wedged shell, a stuck /proc read) after the connection is up would block
+        # this re-check (and everything after it in this cycle) indefinitely. A timed-out call falls into the
+        # same `*)` INCONCLUSIVE-keep branch below as any other non-0/1 rc, so this changes no decision logic.
+        timeout 30 ssh -n -i "$state_key" -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes \
              ubuntu@"$ip" "pgrep -f '[r]esearch\.runners' >/dev/null 2>&1" 2>/dev/null
         recheck_rc=$?
         case "$recheck_rc" in
@@ -214,15 +238,26 @@ while IFS= read -r iid <&3; do
              recheck_note="the re-check's ssh was INCONCLUSIVE (rc=$recheck_rc, not 0/1)" ;;
         esac
       fi
-      resume_dispatch_for_node "$node_name" "$was_reg"
       if [ "$recheck_runner_flag" != "--runner-active false" ]; then
+        resume_dispatch_for_node "$node_name" "$was_reg"; trap - EXIT INT TERM
         echo "$(date -u '+%FT%TZ') [aws_idle_stop] $iid: $recheck_note (re-check after sync, before stop) — NOT stopping this cycle" | tee -a "$LOG"
       else
-        echo "$(date -u '+%FT%TZ') [aws_idle_stop] $iid idle >= ${IDLE_MINUTES}m (signal: $idle_signal), no runner (re-checked after sync) — STOPPING" | tee -a "$LOG"
+        # judged idle (2026-09-25 review, INFO: this line used to say "idle >= ${IDLE_MINUTES}m" unconditionally
+        # ahead of $idle_signal's own text, which for the SSH-loadavg branch immediately contradicts itself with
+        # "single 1-minute sample, NOT a sustained ${IDLE_MINUTES}m signal" one clause later. "judged idle" makes
+        # no claim about HOW LONG; $idle_signal alone states the evidence honestly, sustained or not.
+        echo "$(date -u '+%FT%TZ') [aws_idle_stop] $iid judged idle (signal: $idle_signal), no runner (re-checked after sync) — STOPPING" | tee -a "$LOG"
         aws ec2 stop-instances --region "$REGION" --instance-ids "$iid" --output text 2>&1 | tee -a "$LOG"
+        # RESUME AFTER stop-instances, NOT BEFORE (2026-09-25 review, LOW: "resume runs BEFORE stop-instances...
+        # reopens the window" -- the OLD ordering restored dispatch eligibility for a node that was about to be
+        # (but had not yet been) stopped, so a job could land in the gap between resume and the actual
+        # stop-instances call, then be killed under it seconds later. The instance is already stopping/gone by
+        # the time dispatch sees this node again on its NEXT cycle either way, so there is no correctness reason
+        # to resume any earlier than this.
+        resume_dispatch_for_node "$node_name" "$was_reg"; trap - EXIT INT TERM
       fi
     else
-      resume_dispatch_for_node "$node_name" "$was_reg"
+      resume_dispatch_for_node "$node_name" "$was_reg"; trap - EXIT INT TERM
       echo "$(date -u '+%FT%TZ') [aws_idle_stop] $iid idle but sync-before-stop FAILED — NOT stopping this cycle (will retry)" | tee -a "$LOG"
     fi
   fi

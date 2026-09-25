@@ -48,6 +48,13 @@ GROWTH_WINDOW_S="${POOL_GROWTH_WINDOW_S:-600}"   # D6/LB workers reach full RSS 
 POOL_SSH_CONFIG="${POOL_SSH_CONFIG:-$ROOT/research/queue/.pool_ssh_config}"
 SSH_F=(); [ -f "$POOL_SSH_CONFIG" ] && SSH_F=(-F "$POOL_SSH_CONFIG")
 EXTRA_NODES_FILE="${POOL_EXTRA_NODES_FILE:-$ROOT/research/queue/.pool_extra_nodes}"
+# reregister_stale_paused_nodes / PAUSE_MARK_DIR (2026-09-25 review, MEDIUM: "a cheap check in the dispatcher
+# cycle" + LOW: "fill_node never re-reads registration -- a cycle already running keeps filling the node through
+# the whole pause"). Sourced via $SELF_DIR (this checkout's own tools/, not the hardcoded $ROOT above -- same
+# reasoning as pool_revision_marker.sh's own sourcing just above). LOG left unset (default /dev/stderr inside
+# the library's own `${LOG:-...}` guards) -- this script has no log file of its own to reuse.
+# shellcheck source=tools/aws_stop_safety_lib.sh
+source "$SELF_DIR/aws_stop_safety_lib.sh"
 # STALE-HOSTNAME AUTO-REFRESH, DISPATCHER SIDE (2026-09-25 review, LOW: "spec gap"). tools/pool_sync.sh already
 # self-heals a stale ip (research/queue/.aws_<node> exists -> one `aws_pool_node.sh refresh <node>` + retry, see
 # its own header), but THIS dispatcher's own node_is_idle probe never did, even though the spec says every entry
@@ -112,6 +119,10 @@ cycle_setup() {
   # holds for both callers (the production loop runs after NODES= below; the test seam sets POOL_QUEUE_PATH/
   # POOL_EXTRA_NODES_FILE via env before this script even starts).
   refresh_ssh_f
+  # REREGISTER ANY STALE PAUSE, EVERY CYCLE (2026-09-25 review, MEDIUM: "a cheap check in the dispatcher cycle").
+  # Runs BEFORE CYCLE_NODES is computed below so a node this call just re-registered is picked up THIS cycle,
+  # not the next one.
+  reregister_stale_paused_nodes
   CYCLE_NODES="$NODES $(extra_nodes)"
   # Reset the per-cycle revision-availability cache (see its own comment, right before revision_available_cached())
   # so each cycle re-probes fresh (a node CAN gain a revision between cycles, e.g. aws_pool_node.sh's
@@ -411,7 +422,14 @@ fill_node() {
   # -- rather than a re-typed copy that could silently drift from what the live `while true` loop (at the bottom
   # of this file) runs.
   local NODE="$1"
-  while node_is_idle "$NODE"; do
+  # PAUSE-MARKER CHECK, EVERY ITERATION (2026-09-25 review, LOW: "the pause does not close the race at its
+  # source" -- CYCLE_NODES is built ONCE per cycle in cycle_setup, so a node paused (by
+  # tools/aws_stop_safety_lib.sh's pause_dispatch_for_node, for a sync-before-stop window) mid-cycle used to keep
+  # being filled for the REST of that cycle; the existing re-check-before-stop in aws_idle_stop.sh/aws_budget.sh
+  # only DETECTS a job that landed there, it never prevented one. Checking the CHEAP marker file first (before
+  # node_is_idle's ssh round trip) on every iteration -- not just once per cycle -- stops filling THIS node the
+  # INSTANT it is paused, closing the race within the same cycle it started in, not just the next one.
+  while [ ! -f "$PAUSE_MARK_DIR/$NODE" ] && node_is_idle "$NODE"; do
     JOB=$(pop_job "$NODE_BUDGET" "$NODE")
     [ -z "$JOB" ] && break
     echo "[pool-dispatch] $(date '+%H:%M:%S') $NODE <- $JOB"
