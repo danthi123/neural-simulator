@@ -52,7 +52,7 @@ def _CLAUSE_LABEL(j):
 class SlotBinderComposer:
     def __init__(self, seed=42, vocab=None, D=128, max_facts=16, concepts=None, grounded_codes=None,
                  gain=400.0, teach_steps=40, retr_steps=40, max_clauses=None, fanout=None, prewire_facts=None,
-                 **_ignored):
+                 sparse_step=None, **_ignored):
         """fanout / prewire_facts (L2 sparsification, 2026-09-04 -- see
         research/findings/2026-09-04-slotbinder-live-scale-derisk-NOGO-dense-pathway-blowup.md): `fanout=None`
         (default) is byte-identical to the pre-2026-09-04 dense O(K*KF) slot->filler wiring. Passing an int
@@ -63,7 +63,16 @@ class SlotBinderComposer:
         so the sparsified wiring is guaranteed to include it (padded to `fanout` with random distractors). Without
         `prewire_facts`, a sparse build is BLIND (no foreknowledge) -- honest about the coverage risk that
         carries. `bind`/`write`/`recall`/`moat` mechanics below (`store_pair`, `read_slot`, `_match`, ...) are
-        UNCHANGED either way -- only the WIRING differs."""
+        UNCHANGED either way -- only the WIRING differs.
+
+        sparse_step (2026-09-25, default OFF): `None` reads `BRAIN_SLOTBINDER_SPARSE_STEP` (truthy -> on; unset ->
+        off, the unchanged path). On = the bridge's EVENT-DRIVEN step (`build_binder_bridge(sparse_step=True)`: each
+        simulation step touches only the synapses of neurons that fired plus the gain!=0 synapses, instead of all
+        ~14,160 synapses per slot) and `read_slot` accumulates its filler rates ON the device (one host copy per
+        read, not one per step). The same spiking network, the same teach/read protocol, the same numbers: stored
+        weights and every answer are bit-identical to the off path on numpy
+        (tests/test_slotbinder_sparse_step_equivalence.py;
+        research/findings/2026-09-25-slotbinder-event-driven-step-bit-identical-numpy.md)."""
         self.seed = int(seed)
         self.D = int(D)                        # API compat (unused: this composer binds pools, not D-dim codes)
         base = list(vocab) if vocab is not None else (list(concepts.keys()) if concepts else list(_DEFAULT_VOCAB))
@@ -88,6 +97,10 @@ class SlotBinderComposer:
         self._b = None                         # bridge built lazily on first store
         self.fanout = None if fanout is None else int(fanout)
         self._prewire_facts = prewire_facts
+        if sparse_step is None:
+            sparse_step = os.environ.get("BRAIN_SLOTBINDER_SPARSE_STEP", "").strip().lower() in ("1", "true", "on",
+                                                                                                "yes")
+        self.sparse_step = bool(sparse_step)
 
     def _required_fillers_from_prewire(self):
         """Precompute {slot_index: [filler_index]} for every (fact_i, role) this composer will populate, from
@@ -126,7 +139,7 @@ class SlotBinderComposer:
         KF = len(self._vocab)
         required = self._required_fillers_from_prewire() if (self.fanout is not None and self._prewire_facts) else None
         b = build_binder_bridge(self.seed, K=_ROLES * self.max_facts, KF=KF, fanout=self.fanout,
-                                required_fillers=required)
+                                required_fillers=required, sparse_step=self.sparse_step)
         n = b.core_config.num_neurons
         slot_idx = [_idx(b, f"w{k}") for k in range(b._K_slots)]
         fill_idx = [_idx(b, f"f{f}") for f in range(KF)]
@@ -182,6 +195,25 @@ class SlotBinderComposer:
                     for f in range(KF):
                         rate[f] += fir[fill_idx[f]].mean()
             return int(np.argmax(rate)), float(rate.max())
+
+        if self.sparse_step and fill_idx_mat is not None:
+            # sparse_step: the SAME readout (float64 per-step pool means, summed step by step in the same order),
+            # accumulated on the device -- one device->host copy per read instead of one per simulation step. The
+            # pool mean is sum(20 zeros/ones)/20 on both backends (an exact integer divided once, correctly rounded),
+            # so `rate` and its argmax are bit-identical to the host loop above.
+            from sim.backend import get_backend
+            xp, _ = get_backend()
+            fill_idx_dev = from_host(fill_idx_mat)
+
+            def read_slot(slot):                                            # noqa: F811 (sparse_step variant)
+                _reset()
+                cur = np.zeros(n); cur[slot_idx[slot]] = self.gain
+                dev = from_host(cur.astype(np.float64)); rate_dev = xp.zeros(KF, dtype=xp.float64)
+                for _ in range(self.retr_steps):
+                    b.cp_external_input_current[:] = dev; b._run_one_simulation_step()
+                    rate_dev += b.cp_firing_states.astype(xp.float64)[fill_idx_dev].mean(axis=1)
+                rate = np.asarray(to_host(rate_dev))
+                return int(np.argmax(rate)), float(rate.max())
 
         self._b, self._store_pair, self._read_slot = b, store_pair, read_slot
 

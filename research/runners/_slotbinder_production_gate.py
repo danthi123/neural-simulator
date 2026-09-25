@@ -186,9 +186,12 @@ def _free_gpu():
 
 # ============================================================================================================
 # PER-FACT TEACH PROGRESS (AMENDMENT 1, 2026-09-25) -- the dev seed-7 run sat silent for 6h08m inside the
-# slotbinder arm's build (_build_chat_brain -> load_developed_brain -> developed_brain_io._restore_facts ->
-# SlotBinderComposer.store(), called once per fact, with NO progress signal anywhere in that call chain) and
-# was stopped with no artifact written. This monkeypatches SlotBinderComposer.store for the duration of ONE
+# slotbinder arm (its build = _build_chat_brain -> load_developed_brain -> developed_brain_io._restore_facts ->
+# SlotBinderComposer.store(), called once per fact, had NO progress signal anywhere in that call chain, and
+# neither did the query loops) and was stopped with no artifact written. CORRECTION (prereg AMENDMENT 3): the
+# stall was first read as being in the teach; a step count of this arm's own protocol puts the teach under 1%
+# of the arm's simulation steps at N=404 (the recall scan and the zeroed-synapse re-query hold the rest), so it
+# was most likely in the query loops -- see research/FAILURE_LOG.md 2026-09-25. This monkeypatches SlotBinderComposer.store for the duration of ONE
 # build call to print a flush=True per-fact line and (cheaply) refresh a JSON progress sidecar -- additive,
 # scoped to a `with` block, and restores the original method on exit (even on exception), so it changes
 # nothing about `store()`'s own behavior or return value, only adds an observable side effect around each
@@ -238,14 +241,24 @@ def _progress_instrumented_slotbinder_store(seed, n_expect, progress_path=None, 
 # ============================================================================================================
 
 def run_arm(bundle_dir, composer_kind, fanout, sample, seed, renderer="stub", run_ablation=True,
-           progress_json_path=None):
+           progress_json_path=None, sparse_step=False):
     """composer_kind in {'slotbinder', 'rf'}, or None to mean "leave BRAIN_COMPOSER_KIND UNSET" (the flag-off
     check). Routes through webapp.server._build_chat_brain -- the SAME function /api/brain-chat calls.
 
     `progress_json_path`: optional path for a cheap JSON progress sidecar (AMENDMENT 1, 2026-09-25), refreshed
     once per taught fact during the build -- see `_progress_instrumented_slotbinder_store`. `None` (the default)
     means no sidecar file; the per-fact PRINT lines still fire either way (they are the required observability
-    fix, the sidecar is an additional, optional convenience)."""
+    fix, the sidecar is an additional, optional convenience).
+
+    `sparse_step` (AMENDMENT 3, 2026-09-25; default False = the unchanged arm): sets
+    BRAIN_SLOTBINDER_SPARSE_STEP=1 for the slotbinder arm, so SlotBinderComposer builds its bridge with the
+    EVENT-DRIVEN step (bit-identical on numpy -- tests/test_slotbinder_sparse_step_equivalence.py). The arm's
+    result records what was requested, what the composer resolved, and whether the bridge's dispatch guard
+    actually took the event-driven path."""
+    if composer_kind == "slotbinder" and sparse_step:
+        os.environ["BRAIN_SLOTBINDER_SPARSE_STEP"] = "1"
+    else:
+        os.environ.pop("BRAIN_SLOTBINDER_SPARSE_STEP", None)
     if composer_kind is None:
         os.environ.pop("BRAIN_COMPOSER_KIND", None)
     else:
@@ -258,7 +271,7 @@ def run_arm(bundle_dir, composer_kind, fanout, sample, seed, renderer="stub", ru
     print(f"[seed {seed}] arm={composer_kind}: build starting (n_facts={len(sample)}) ...", flush=True)
     t0 = time.time()
     if composer_kind == "slotbinder":
-        # This is the phase AMENDMENT 1 found silent for 6h08m: _build_chat_brain -> load_developed_brain ->
+        # The build re-teaches every fact: _build_chat_brain -> load_developed_brain ->
         # developed_brain_io._restore_facts -> SlotBinderComposer.store() once per fact (no .kb fast path).
         with _progress_instrumented_slotbinder_store(seed, len(sample), progress_json_path, label="teach"):
             chat, source = _build_chat_brain(bundle_dir, renderer)
@@ -269,6 +282,16 @@ def run_arm(bundle_dir, composer_kind, fanout, sample, seed, renderer="stub", ru
     inner = chat.inner
     comp = inner.composer
     resolved_class = type(comp).__name__
+    _sb_bridge = getattr(comp, "_b", None)
+    sparse_info = {
+        "requested": bool(sparse_step and composer_kind == "slotbinder"),
+        "composer_sparse_step": getattr(comp, "sparse_step", None),
+        "bridge_dispatches_event_driven_step": (
+            bool(_sb_bridge._sparse_activity_step_can_dispatch(_sb_bridge.core_config))
+            if _sb_bridge is not None and hasattr(_sb_bridge, "_sparse_activity_step_can_dispatch") else None),
+    }
+    if composer_kind == "slotbinder":
+        print(f"[seed {seed}] arm={composer_kind}: sparse_step={sparse_info}", flush=True)
 
     per_fact = []
     for qi, f in enumerate(sample):
@@ -312,6 +335,7 @@ def run_arm(bundle_dir, composer_kind, fanout, sample, seed, renderer="stub", ru
     result = {
         "composer_kind_requested": composer_kind, "composer_class_resolved": resolved_class, "source": source,
         "build_seconds": build_s,
+        "sparse_step": sparse_info,
         "per_fact": per_fact,
         "moat_probe": moat, "mismatch_probe": mismatch,
         "recall_accuracy": (sum(r["hit"] for r in per_fact) / len(per_fact)) if per_fact else None,
@@ -385,6 +409,9 @@ def main():
                     help="also build a THIRD arm with BRAIN_COMPOSER_KIND unset -- cheap, run once (the dev "
                          "seed), not for every seed of the 6-seed battery")
     ap.add_argument("--no-ablation", action="store_true", help="skip the zeroed-synapses falsifiability check")
+    ap.add_argument("--sparse-step", action="store_true",
+                    help="AMENDMENT 3: build the slotbinder arm with the event-driven step "
+                         "(BRAIN_SLOTBINDER_SPARSE_STEP=1; bit-identical on numpy, default off)")
     ap.add_argument("--allow-numpy-debug", action="store_true",
                     help="run on SIM_BACKEND=numpy for a correctness-only dry run of THIS SCRIPT -- never a "
                          "valid production-gate result (the output JSON's sim_backend field says so)")
@@ -410,7 +437,8 @@ def main():
         progress_path = f"{args.out}.progress_{kind}.json"
         t0 = time.time()
         chat, res = run_arm(bundle_dir, kind, args.fanout, sample, args.seed, renderer=args.renderer,
-                            run_ablation=(not args.no_ablation), progress_json_path=progress_path)
+                            run_ablation=(not args.no_ablation), progress_json_path=progress_path,
+                            sparse_step=args.sparse_step)
         res["wall_clock_s"] = time.time() - t0
         arm_results[kind] = res
         print(f"[seed {args.seed}] arm={kind} resolved={res['composer_class_resolved']} "
@@ -463,7 +491,7 @@ def main():
     preconditions = [{"name": k, "ok": v} for k, v in verdict_criteria.items()]
 
     summary = {
-        "seed": args.seed, "n_facts": args.n_facts, "fanout": args.fanout,
+        "seed": args.seed, "n_facts": args.n_facts, "fanout": args.fanout, "sparse_step": bool(args.sparse_step),
         "sim_backend": os.environ.get("SIM_BACKEND", ""),
         "sampled_corpus_indices": idx, "missing_real_codes_for": missing_codes,
         "bundle_dir": bundle_dir, "bundle_staging_build_seconds": bundle_build_s,

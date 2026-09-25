@@ -748,6 +748,10 @@ class SimulationBridge:
         self._plasticity_gate_to_synapses = {}
         self._plasticity_gate_indices_gpu = {}
         self._plasticity_gate_values = {}
+        # cfg.sparse_activity_step: in-place writes to cp_plasticity_rate_gain bump this so the cached gain!=0 /
+        # gain>0 synapse index sets are recomputed (see _sparse_gain_index_sets).
+        self._plasticity_gain_version = 0
+        self._sparse_gain_cache = None
 
         # Per-pathway TRANSMISSION gating (2026-06-03; thalamocortical dynamical gating).
         # cp_transmission_gain: per-synapse float multiplier (1.0=full current, 0.0=closed).
@@ -1020,6 +1024,132 @@ class SimulationBridge:
             self._coo_cache_valid = True
 
         return self._cached_coo_matrix
+
+    # ---- cfg.sparse_activity_step: the EVENT-DRIVEN step (default off) ------------------------------------------
+    # The dense step does ~20 passes over every synapse per step. For a synapse whose presynaptic neuron did not
+    # fire, the transpose matvec adds an exact +0.0 to its target and the Hebbian coincidence test is False; for a
+    # synapse whose plasticity gain is 0 the decay multiplies it by exactly 1.0 and the (gain>0-masked) clip skips
+    # it. The helpers below compute only the non-zero work: O(outgoing synapses of the neurons that fired + gain!=0
+    # synapses) per step. Values are unchanged; on numpy the summation order is unchanged too (ascending
+    # presynaptic neuron, CSR order within a row -- the order scipy's csc matvec uses), so results are bit-identical.
+    def _sparse_activity_step_can_dispatch(self, cfg) -> bool:
+        """True iff cfg.sparse_activity_step is set AND every feature this step runs is one the event-driven path
+        reproduces exactly (verified in tests/test_slotbinder_sparse_step_equivalence.py). Otherwise False, and the
+        unchanged dense step runs."""
+        if not getattr(cfg, "sparse_activity_step", False):
+            return False
+        C = self.cp_connections
+        if C is None or C.nnz == 0 or getattr(C, "format", None) != "csr":
+            return False
+        if cfg.enable_short_term_plasticity or cfg.enable_structural_plasticity:
+            return False
+        if getattr(cfg, "enable_neuromodulator_subsystem", False) or getattr(cfg, "enable_inhibitory_stdp", False):
+            return False
+        if self.experiment_engine is not None and self.experiment_engine.is_experiment_running:
+            return False
+        if (self.cp_transmission_gain is not None or self.cp_graded_synapse_mask is not None
+                or self.cp_dendritic_source_activity is not None):
+            return False
+        # features that read the AMPA-split effective matrix or need a deterministic reduction order
+        if (getattr(cfg, "deterministic_transpose_matvec", False)
+                or getattr(cfg, "enable_coincidence_detection", False)
+                or getattr(cfg, "enable_graded_dendritic_plateau", False)
+                or getattr(cfg, "enable_gabab", False)):
+            return False
+        if cfg.enable_hebbian_learning:
+            # only the default causal pre(t-1)&post(t) rule with the named-gate gain array is event-driven here
+            if (getattr(cfg, "enable_branchless_plasticity", False)
+                    or getattr(cfg, "hebbian_rate_window", False)
+                    or getattr(cfg, "hebbian_symmetric", False)
+                    or self._hebbian_plastic_mask_enforced(cfg)
+                    or self.cp_plasticity_rate_gain is None):
+                return False
+        return True
+
+    def _sparse_csr_rows(self, pre_idx):
+        """(syn, bounds): the global CSR positions of every outgoing synapse of the ASCENDING presynaptic neurons
+        `pre_idx`, in ascending order (row by row, CSR order within a row), and the len(pre_idx)+1 row boundaries
+        into `syn`. Backend-agnostic (no cp.repeat with an array argument, which cupy does not accept)."""
+        C = self.cp_connections
+        pre_idx = pre_idx.astype(cp.int64)
+        starts = C.indptr[pre_idx].astype(cp.int64)
+        lens = C.indptr[pre_idx + 1].astype(cp.int64) - starts
+        bounds = cp.zeros(int(pre_idx.size) + 1, dtype=cp.int64)
+        if pre_idx.size:
+            bounds[1:] = cp.cumsum(lens)
+        total = int(bounds[-1])
+        if total == 0:
+            return cp.zeros(0, dtype=cp.int64), bounds
+        k = cp.arange(total, dtype=cp.int64)
+        r = cp.searchsorted(bounds[1:], k, side="right")
+        return starts[r] + (k - bounds[r]), bounds
+
+    def _sparse_rows_state(self):
+        """Event-driven view of this step's presynaptic activity: (P, syn, bounds, w, nr_mask) for the neurons that
+        fired LAST step (the ones the transpose matvec and the causal Hebbian rule read). `w` is the weight of each
+        synapse in `syn` at step start (the dense path captures its NMDA/AMPA split at the same point); `nr_mask` the
+        slow-NMDA routing mask over `syn`, or None."""
+        P = cp.flatnonzero(self.cp_prev_firing_states)
+        syn, bounds = self._sparse_csr_rows(P)
+        w = self.cp_connections.data[syn]
+        nr = None
+        if self.cp_nmda_recurrent_synapse_mask is not None:
+            nnz = self.cp_connections.nnz
+            nr = self._ensure_gate_capacity("cp_nmda_recurrent_synapse_mask", nnz, fill=False,
+                                            dtype=cp.bool_)[:nnz][syn]
+        return P, syn, bounds, w, nr
+
+    def _sparse_transpose_matvec(self, P, syn, bounds, vals, keep, x_rows):
+        """W_sub^T @ x_rows, W_sub = rows P of cp_connections carrying `vals` (aligned with `syn`), restricted to
+        `keep` (None = all). Dropped entries are exactly-zero contributions (their value or their x is 0), and a
+        partial sum that starts at +0.0 and only accumulates such terms is unchanged by them."""
+        C = self.cp_connections
+        n_post = C.shape[1]
+        if keep is not None:
+            cs = cp.zeros(int(syn.size) + 1, dtype=cp.int64)
+            if syn.size:
+                cs[1:] = cp.cumsum(keep, dtype=cp.int64)
+            sub_indptr = cs[bounds]
+            syn = syn[keep]
+            vals = vals[keep]
+        else:
+            sub_indptr = bounds
+        out_dtype = cp.result_type(vals.dtype, x_rows.dtype)
+        if syn.size == 0:
+            return cp.zeros((n_post,) + tuple(x_rows.shape[1:]), dtype=out_dtype)
+        idx_dtype = C.indices.dtype
+        sub = csp.csr_matrix((vals, C.indices[syn], sub_indptr.astype(idx_dtype)),
+                             shape=(int(P.size), n_post))
+        return sub.T @ x_rows
+
+    def _sparse_ampa_transpose_matvec(self, sp, x_full):
+        """The dense step's AMPA/GABA_A matvec (`effective_connections_matrix.T @ x`, with slow-NMDA-routed
+        synapses' AMPA zeroed by the same `data * (1.0 - mask_f)` expression), over the fired rows only."""
+        P, syn, bounds, w, nr = sp
+        if nr is None:
+            return self._sparse_transpose_matvec(P, syn, bounds, w, None, x_full[P])
+        vals = w * (1.0 - nr.astype(cp.float32))
+        return self._sparse_transpose_matvec(P, syn, bounds, vals, ~nr, x_full[P])
+
+    def _sparse_nmda_transpose_matvec(self, sp, x_full):
+        """The dense step's slow-NMDA recurrent matvec (`_nr_mat.T @ x`, data = `data * mask_f`), fired rows only."""
+        P, syn, bounds, w, nr = sp
+        vals = w * nr.astype(cp.float32)
+        return self._sparse_transpose_matvec(P, syn, bounds, vals, nr, x_full[P])
+
+    def _sparse_gain_index_sets(self):
+        """(nz, pos): cached ascending indices of synapses with plasticity gain != 0 (the only ones the gated decay
+        changes) and gain > 0 (the only ones the gated clip touches). Recomputed when the gain array object, nnz, or
+        _plasticity_gain_version (bumped by every in-place gain writer in this class) changes."""
+        nnz = self.cp_connections.nnz
+        g = self._ensure_gate_capacity("cp_plasticity_rate_gain", nnz)
+        key = (nnz, getattr(self, "_plasticity_gain_version", 0))
+        cache = getattr(self, "_sparse_gain_cache", None)
+        if cache is None or cache[0] is not g or cache[1] != key:
+            gs = g[:nnz]
+            cache = (g, key, cp.flatnonzero(gs != 0.0), cp.flatnonzero(gs > 0.0))
+            self._sparse_gain_cache = cache
+        return cache[2], cache[3]
 
     def _invalidate_coo_cache(self):
         """Invalidates COO cache and derived caches when connectivity changes."""
@@ -5256,6 +5386,7 @@ class SimulationBridge:
             idx = self._plasticity_gate_indices_gpu.get(name)
             if idx is not None and idx.size > 0 and self.cp_plasticity_rate_gain is not None:
                 self.cp_plasticity_rate_gain[idx] = cp.float32(val)
+                self._plasticity_gain_version = getattr(self, "_plasticity_gain_version", 0) + 1
 
 
     def set_plasticity_gate(self, name: str, value: float) -> None:
@@ -5283,6 +5414,7 @@ class SimulationBridge:
         nnz = self.cp_plasticity_rate_gain.shape[0]
         if indices.size > 0 and int(indices.max()) < nnz:
             self.cp_plasticity_rate_gain[indices] = cp.float32(value)
+            self._plasticity_gain_version = getattr(self, "_plasticity_gain_version", 0) + 1
 
     def set_transmission_gate(self, name: str, value: float) -> None:
         """Set the runtime synaptic-CURRENT gain for all synapses in pathways tagged with
@@ -5905,6 +6037,7 @@ class SimulationBridge:
             self.cp_plasticity_rate_gain = cp.full(nnz, v, dtype=cp.float32)
         else:
             self.cp_plasticity_rate_gain.fill(v)
+            self._plasticity_gain_version = getattr(self, "_plasticity_gain_version", 0) + 1
 
     def get_global_plasticity_gain(self) -> float | None:
         """Return the current global gain if uniform; else None.
@@ -5960,6 +6093,7 @@ class SimulationBridge:
         weights[prune_mask] = 0.0
         if self.cp_plasticity_rate_gain is not None:
             self.cp_plasticity_rate_gain[prune_mask] = 0.0
+            self._plasticity_gain_version = getattr(self, "_plasticity_gain_version", 0) + 1
 
     def start_simulation(self):
         """Starts or restarts the simulation (called by sim_thread)."""
@@ -8746,6 +8880,9 @@ class SimulationBridge:
                     self._run_one_step_megakernel()
                 return
 
+            # cfg.sparse_activity_step (default off): event-driven propagation + Hebbian bookkeeping for this step.
+            _sparse_step = self._sparse_activity_step_can_dispatch(cfg)
+
             # --- 1. Synaptic Plasticity (STP) Update ---
             if _profiling: _backend_synchronize(); _prof['t_init'] = _time.perf_counter() - _t0; _t0 = _time.perf_counter()
             base_synaptic_weights = self.cp_connections.data
@@ -8893,7 +9030,8 @@ class SimulationBridge:
             # left None when unused. (The mask is grown to the live nnz with FALSE padding via
             # _ensure_gate_capacity, mirroring the GABA_B-mask growth fix 6f73b5f0.)
             _nmda_rec_src_data = None
-            if self.cp_nmda_recurrent_synapse_mask is not None and self.cp_connections.nnz > 0:
+            # (_sparse_step: the split is taken per fired row inside _sparse_ampa/_nmda_transpose_matvec instead)
+            if self.cp_nmda_recurrent_synapse_mask is not None and self.cp_connections.nnz > 0 and not _sparse_step:
                 _nr_nnz = self.cp_connections.nnz
                 _nr_mask_f = self._ensure_gate_capacity(
                     "cp_nmda_recurrent_synapse_mask", _nr_nnz, fill=False, dtype=cp.bool_
@@ -8951,6 +9089,9 @@ class SimulationBridge:
             )
 
             g_e_increase = None  # Track for NMDA input
+            # cfg.sparse_activity_step: the fired-last-step rows (+ their step-start weights), shared by the E/I
+            # matvec, the slow-NMDA recurrent matvec and the causal Hebbian coincidence below. None otherwise.
+            _sp_rows = self._sparse_rows_state() if (_sparse_step and _prev_any) else None
             if effective_connections_matrix.nnz > 0 and _prev_any:
                 prev_fired_float = self.cp_prev_firing_states.astype(cp.float32)
 
@@ -9007,8 +9148,11 @@ class SimulationBridge:
                         # perform one A.T @ B. This is the original default path and must remain
                         # byte-identical when deterministic_transpose_matvec is false.
                         fired_2col = cp.stack([exc_fired_prev, inhib_fired_prev], axis=1)
-                        _eff_cT = effective_connections_matrix.T
-                        g_increase_2col = _eff_cT @ fired_2col
+                        if _sp_rows is not None:
+                            g_increase_2col = self._sparse_ampa_transpose_matvec(_sp_rows, fired_2col)
+                        else:
+                            _eff_cT = effective_connections_matrix.T
+                            g_increase_2col = _eff_cT @ fired_2col
                         g_e_increase = g_increase_2col[:, 0] * cfg.propagation_strength
                         g_i_increase = g_increase_2col[:, 1] * cfg.inhibitory_propagation_strength
 
@@ -9021,6 +9165,9 @@ class SimulationBridge:
                     if getattr(cfg, "deterministic_transpose_matvec", False):
                         g_e_increase = _deterministic_csr_matvec(
                             _eff_cT1.tocsr(), prev_fired_float) * cfg.propagation_strength
+                    elif _sp_rows is not None:
+                        g_e_increase = (self._sparse_ampa_transpose_matvec(_sp_rows, prev_fired_float)
+                                        * cfg.propagation_strength)
                     else:
                         g_e_increase = (_eff_cT1 @ prev_fired_float) * cfg.propagation_strength
                     self.cp_conductance_g_e += g_e_increase
@@ -9270,6 +9417,17 @@ class SimulationBridge:
                             _nr_matT.tocsr(), self.cp_prev_firing_states.astype(cp.float32))
                     else:
                         _nr_drive = _nr_matT @ self.cp_prev_firing_states.astype(cp.float32)
+                    g_nmda_rec_increase = (
+                        _nr_drive
+                        * getattr(cfg, "nmda_recurrent_propagation_strength", 0.05)
+                        * getattr(cfg, "nmda_recurrent_ratio", 1.0))
+                    self.cp_conductance_g_nmda_recurrent += g_nmda_rec_increase
+                    self.cp_conductance_g_nmda_recurrent_rise += g_nmda_rec_increase
+                elif (_sp_rows is not None and self.cp_nmda_recurrent_synapse_mask is not None
+                        and self.cp_connections.nnz > 0 and _prev_any):
+                    # cfg.sparse_activity_step: the same increment from the fired rows' routed synapses only.
+                    _nr_drive = self._sparse_nmda_transpose_matvec(
+                        _sp_rows, self.cp_prev_firing_states.astype(cp.float32))
                     g_nmda_rec_increase = (
                         _nr_drive
                         * getattr(cfg, "nmda_recurrent_propagation_strength", 0.05)
@@ -9985,7 +10143,8 @@ class SimulationBridge:
                         _ba = cp.float32(getattr(cfg, "hebbian_bcm_theta_alpha", 0.001))
                         self.cp_bcm_theta = (1.0 - _ba) * self.cp_bcm_theta + _ba * (_y_bcm * _y_bcm)
                 if _prev_any and _fired_any:
-                    coo_matrix_heb = self._get_cached_coo()  # Use cached COO
+                    # (cfg.sparse_activity_step never reads the all-nnz COO: the fired rows come from _sp_rows)
+                    coo_matrix_heb = None if _sparse_step else self._get_cached_coo()  # Use cached COO
                     base_weights_data_array = self.cp_connections.data
                     num_potentiation_events = 0
                     if getattr(cfg, "enable_branchless_plasticity", False):
@@ -10079,12 +10238,20 @@ class SimulationBridge:
                         # SYMMETRIC (offset-free) co-activity: pre fires in the SAME step as post (fired_this_step for
                         # both) -- the associative form for a synchronously-firing recurrent autoassociator (CA3).
                         # Default (both flags off) = the causal rule: pre fired at t-1 (prev_firing).
-                        if getattr(cfg, "hebbian_symmetric", False):
-                            pre_fired_mask_heb = fired_this_step[coo_matrix_heb.row]
+                        if _sparse_step:
+                            # cfg.sparse_activity_step (causal rule only -- the dispatch guard excludes symmetric):
+                            # synapses of last step's fired neurons whose target fired now, ascending -- the same
+                            # index set cp.where(pre & post)[0] returns.
+                            _hsp = _sp_rows if _sp_rows is not None else self._sparse_rows_state()
+                            _hsyn = _hsp[1]
+                            active_synapse_indices_heb = _hsyn[fired_this_step[self.cp_connections.indices[_hsyn]]]
                         else:
-                            pre_fired_mask_heb = self.cp_prev_firing_states[coo_matrix_heb.row]
-                        post_fired_mask_heb = fired_this_step[coo_matrix_heb.col]
-                        active_synapse_indices_heb = cp.where(pre_fired_mask_heb & post_fired_mask_heb)[0]
+                            if getattr(cfg, "hebbian_symmetric", False):
+                                pre_fired_mask_heb = fired_this_step[coo_matrix_heb.row]
+                            else:
+                                pre_fired_mask_heb = self.cp_prev_firing_states[coo_matrix_heb.row]
+                            post_fired_mask_heb = fired_this_step[coo_matrix_heb.col]
+                            active_synapse_indices_heb = cp.where(pre_fired_mask_heb & post_fired_mask_heb)[0]
                         if active_synapse_indices_heb.size > 0:
                             current_weights_active_syn = base_weights_data_array[active_synapse_indices_heb]
                             delta_weights = cfg.hebbian_learning_rate * (cfg.hebbian_max_weight - current_weights_active_syn)
@@ -10106,7 +10273,13 @@ class SimulationBridge:
                         # Per-pathway plasticity gain: decay rate scales with gain.
                         # gain=0 → no decay (frozen pathway preserves weights);
                         # gain=1 → full decay (current behavior).
-                        if self.cp_plasticity_rate_gain is not None:
+                        if self.cp_plasticity_rate_gain is not None and _sparse_step:
+                            # cfg.sparse_activity_step: the same gated decay on the gain!=0 synapses only (a gain-0
+                            # synapse is multiplied by 1.0 - decay*0.0 == 1.0 exactly, i.e. unchanged).
+                            _g_nz, _ = self._sparse_gain_index_sets()
+                            _g_all = self.cp_plasticity_rate_gain
+                            self.cp_connections.data[_g_nz] *= (1.0 - cfg.hebbian_weight_decay * _g_all[_g_nz])
+                        elif self.cp_plasticity_rate_gain is not None:
                             # 2026-07-16: route through _ensure_gate_capacity (the 2026-06-08 catch-all) -- the
                             # Hebbian block was the one place still using the RAW array. Structural plasticity grows
                             # cp_connections.nnz without growing the gate arrays, so this line raised "operands could
@@ -10139,7 +10312,12 @@ class SimulationBridge:
                     # ONLY gain>0 synapses; leave frozen weights verbatim. Uniform gain (all 1.0) reproduces the
                     # un-gated clip exactly; gain is None (the default for non-gated configs) takes the byte-
                     # identical else branch. Operand sizing mirrors the gated decay directly above (proven-correct).
-                    if self.cp_plasticity_rate_gain is not None:
+                    if self.cp_plasticity_rate_gain is not None and _sparse_step:
+                        # cfg.sparse_activity_step: the same gain>0-masked clip, on the gain>0 synapses only.
+                        _, _g_pos = self._sparse_gain_index_sets()
+                        self.cp_connections.data[_g_pos] = cp.clip(
+                            self.cp_connections.data[_g_pos], cfg.hebbian_min_weight, cfg.hebbian_max_weight)
+                    elif self.cp_plasticity_rate_gain is not None:
                         _clipped_data = cp.clip(self.cp_connections.data, cfg.hebbian_min_weight, cfg.hebbian_max_weight)
                         # SIZE-MATCH the mask to the data (2026-07-31). cp_plasticity_rate_gain is not
                         # guaranteed nnz-sized -- structural plasticity can grow nnz past it -- and a boolean

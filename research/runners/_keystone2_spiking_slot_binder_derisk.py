@@ -48,8 +48,17 @@ def slot_filler_nnz_formula(K, KF, fanout=None):
 
 
 def build_binder_bridge(seed, K, KF, n_word=20, n_fs=24, n_fill=20, recur=25.0, fs_to_exc=10.0, nmda=True,
-                        fanout=None, required_fillers=None):
+                        fanout=None, required_fillers=None, sparse_step=False):
     """K NMDA-recurrent slot pools + shared FS + KF filler pools + a PLASTIC slot->filler pathway.
+
+    sparse_step (2026-09-25, default False = the unchanged build): turn on the bridge's EVENT-DRIVEN step
+    (`cfg.sparse_activity_step` -- synaptic propagation and Hebbian bookkeeping touch only the synapses of neurons
+    that fired and the gain!=0 synapses, not all nnz every step) and turn OFF `enable_reward_modulation`, which is
+    INERT on this private bridge: nothing ever sets `current_reward_signal` away from `reward_baseline` (both 0.0),
+    so the reward weight update never runs, and nothing writes the eligibility trace (STDP and coactivity
+    eligibility are off), so its per-step all-nnz decay only decays zeros. Weights, spikes and every answer are
+    bit-identical on numpy (tests/test_slotbinder_sparse_step_equivalence.py;
+    research/findings/2026-09-25-slotbinder-event-driven-step-bit-identical-numpy.md).
 
     fanout (L2 sparsification, 2026-09-04 -- research/findings/2026-09-04-slotbinder-live-scale-derisk-NOGO-...):
     `None` (default) or `>= KF` wires EVERY slot to EVERY filler pool -- the ORIGINAL dense `O(K*KF)` pathway,
@@ -127,6 +136,9 @@ def build_binder_bridge(seed, K, KF, n_word=20, n_fs=24, n_fill=20, recur=25.0, 
     # read-calibration (2026-07-17): the readout weight must clear the ~0.1 held-slot rate to fire the filler robustly.
     # maxw~250/lr=0.05 gives slot-sep 0.56 > shared 0.33 on spikes (directional GO); maxw=30 gave 0.00 (too weak).
     cfg.enable_hebbian_learning = True; cfg.hebbian_learning_rate = 0.05; cfg.hebbian_max_weight = 250.0
+    if sparse_step:
+        cfg.sparse_activity_step = True
+        cfg.enable_reward_modulation = False
     b = SimulationBridge(core_config=cfg, viz_config=VisualizationConfig(),
                          runtime_state=RuntimeState(), gpu_config=GPUConfig())
     b._initialize_simulation_data(called_from_playback_init=False)

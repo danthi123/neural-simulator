@@ -442,6 +442,20 @@ class CoreSimConfig:
     # 15-45x faster in the launch/sync-bound learning regime (~100K-1M nnz); byte-identical (tests/test_branchless_plasticity.py).
     # Structural plasticity stays on the compacting path (it mutates the CSR nnz/shape) -- out of scope for this flag.
     enable_branchless_plasticity: bool = False
+    # OPT-IN (default off -> the unchanged dense step): EVENT-DRIVEN synaptic propagation + Hebbian bookkeeping
+    # (2026-09-25, research/findings/2026-09-25-slotbinder-event-driven-step-bit-identical-numpy.md). The dense step
+    # touches EVERY synapse every step (the E/I + slow-NMDA transpose matvecs, the NMDA-recurrent data split, the
+    # Hebbian pre/post coincidence gather, the gain-weighted decay and the gain-masked clip) -- ~20 passes over nnz.
+    # A synapse whose presynaptic neuron did not fire adds an exact +0.0 to its target, and a synapse whose plasticity
+    # gain is 0 is multiplied by exactly 1.0 by the decay; this flag skips that zero-work, so each step costs
+    # O(synapses of neurons that fired + gain!=0 synapses) instead of O(nnz). Same equations, same numbers: on numpy
+    # the synaptic sums are taken in the same order (ascending presynaptic neuron), so state and weights are
+    # bit-identical (tests/test_slotbinder_sparse_step_equivalence.py); on cupy the transpose matvec is cuSPARSE's
+    # atomic scatter in BOTH paths, so the FP summation order was already run-to-run nondeterministic. GUARDED to the
+    # regime it was verified in (see SimulationBridge._sparse_activity_step_can_dispatch); any unsupported feature
+    # falls back to the dense step. Callers that edit cp_plasticity_rate_gain in place must go through
+    # set_plasticity_gate / set_global_plasticity_gain (which bump the cached gain index sets).
+    sparse_activity_step: bool = False
     # ADDITIVE, DEFAULT-OFF correctness enforcement (2026-09-02). The runtime Hebbian LTP/decay/clip path historically
     # consulted ONLY the named `plasticity_gate` (cp_plasticity_rate_gain); it never read cp_synapse_plastic_mask, so a
     # RegionPathway(plastic=False)/BrainRegion(plastic_internal=False) synapse WITHOUT an explicit zeroed named gate
