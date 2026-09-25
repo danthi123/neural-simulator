@@ -7,6 +7,19 @@ the [project handoff](HANDOFF.md), and the live state in
 board, when checked out, was `research/coordination/workboard.json` (⚠️ now ~a month
 stale — the live board is [GAP_CLOSURE_MISSION.md](GAP_CLOSURE_MISSION.md) CURRENT STATE; workboard.json is being retired).
 
+## 2026-09-24 (night) — gap#4's weight limit is confirmed load-bearing; the bigger network still reads exactly at chance
+
+The deep-credit crux lane (gap#4) had two runs left open from the transport-ceiling diagnosis published earlier
+tonight. The first counted how many connections in the small test network hit their hard strength limit during
+training: in the read-out arm that matters, at least a fifth to four-fifths of the connections into each of the
+two learning layers pin at that limit on every one of three repeats, so the limit itself is confirmed as the next
+thing to fix, ahead of the two other candidates already named (an output competition step, a self-adjusting
+output). The second scaled the same setup up to the real network size on the GPU: every arm that tries to learn
+lands exactly at chance on every repeat, a cleaner miss than the smaller network's partial one, so the small
+network's best setting does not yet carry over to full size. Both are dev-seed checks, not a six-seed result, and
+nothing here changes a production default. (Finding:
+`2026-09-24-gap4-transport-ceiling-bound-census-clamp-load-bearing-fullsize-UNDEFINED`.)
+
 ## 2026-09-24 (evening) — the measurement grows from 38 to 49 abilities; nine more pieces merged, all off by default; curiosity's fifth attempt falls short; one result rejected for missing records
 
 **Merged after independent review, all off by default until their own six-seed tests:** tracking what someone else wrongly believes, multi-step "A before B before C" reasoning, a faster warm start, the brain's own spiking fact-binder in chat, a link between two thinking organs in the shared core, the working-memory focus link, a test of whether a fact in a reply was learned by the brain itself, and the multi-turn test for the mood-settling mechanism (which stays off until its three conditions pass). Merging tonight: the chat-only AI teacher, the reward signal read from the brain's own surprise, and the gap#4 learning lever.

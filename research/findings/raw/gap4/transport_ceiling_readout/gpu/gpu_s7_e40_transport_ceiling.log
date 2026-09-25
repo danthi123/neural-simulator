@@ -1,0 +1,84 @@
+[gap4-tc][s7 r0] task_seed 7 n_in 9 k 9 n_train 400 n_inh 54 chance 0.167 oracle 0.963
+[2026-09-24 15:55:07][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (23.6 GB), mempool limit: 80%
+[2026-09-24 15:55:07][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-09-24 15:55:07][INFO] SIM_BRIDGE: RNG initialized with seed: 7
+[2026-09-24 15:55:07][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 2336 neurons...
+[2026-09-24 15:55:07][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-09-24 15:55:07][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-09-24 15:55:07][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=100.0pA)...
+[2026-09-24 15:55:07][INFO] SIM_BRIDGE: Generating 3D neuron positions for 2336 neurons...
+[2026-09-24 15:55:07][INFO] SIM_BRIDGE: Generating connections (3D)...
+[2026-09-24 15:55:07][INFO] SIM_BRIDGE: Generating Watts-Strogatz 3D network (n=2336, k=10, p_rewire=0.1)...
+WS generation: 0.0%WS generation: 5.0%WS generation: 9.9%WS generation: 14.9%WS generation: 19.9%WS generation: 24.8%WS generation: 29.8%WS generation: 34.8%WS generation: 39.7%WS generation: 44.7%WS generation: 49.7%WS generation: 54.6%WS generation: 59.6%WS generation: 64.6%WS generation: 69.5%WS generation: 74.5%WS generation: 79.5%WS generation: 84.4%WS generation: 89.4%WS generation: 94.3%WS generation: 99.3%WS generation: 100.0%
+[2026-09-24 15:55:24][INFO] SIM_BRIDGE: Watts-Strogatz network complete: 23344 connections (avg degree: 10.0, expected: 10). Time: 17.54s
+[2026-09-24 15:55:24][INFO] SIM_BRIDGE: Initializing STP state for 23344 synapses (capacity: 35016)...
+[2026-09-24 15:55:24][INFO] SIM_BRIDGE: Initializing eligibility traces for 23344 synapses (capacity: 35016, dtype: float32)...
+[2026-09-24 15:55:24][WARNING] SIM_BRIDGE: No trait info available; all synapses default to E->E STP type.
+[2026-09-24 15:55:24][INFO] SIM_BRIDGE: Initializing structural plasticity state...
+[2026-09-24 15:55:24][INFO] SIM_BRIDGE: Simulation data initialized for 2336 neurons (3D). Synapses: 23344. GPU memory: 5.0GB/25.3GB (19.8%)
+[2026-09-24 15:55:25][WARNING] SIM_BRIDGE: No trait info available; all synapses default to E->E STP type.
+[2026-09-24 15:55:25][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 1343488 synapses across 3 populations.
+[gap4-tc][s7 r0 transport_ceiling] epoch 1/40 153s (steps 26000, 6.62 ms/step, ETA train 99.6 min)
+[gap4-tc][s7 r0 transport_ceiling] epoch 8/40 162s (steps 208000, 6.77 ms/step, ETA train 92.6 min)
+[gap4-tc][s7 r0 transport_ceiling] epoch 16/40 198s (steps 416000, 6.76 ms/step, ETA train 69.9 min)
+[gap4-tc][s7 r0 transport_ceiling] epoch 24/40 171s (steps 624000, 6.60 ms/step, ETA train 45.6 min)
+[gap4-tc][s7 r0 transport_ceiling] epoch 32/40 207s (steps 832000, 6.77 ms/step, ETA train 23.4 min)
+[gap4-tc][s7 r0 transport_ceiling] epoch 40/40 178s (steps 1040000, 6.71 ms/step, ETA train 0.0 min)
+[gap4-tc][s7 r0 transport_ceiling] held-out 0.167 train 0.172 decode_h2 0.111 (chance 0.167, oracle 0.963) ff-moved 10922034.8 nwt False eval-reads-unchanged True | 7082s 6.69 ms/step rss 832 MB
+[gap4-tc][s7 r1] task_seed 10014 n_in 9 k 9 n_train 400 n_inh 54 chance 0.167 oracle 0.889
+[2026-09-24 17:53:14][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (23.6 GB), mempool limit: 80%
+[2026-09-24 17:53:14][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-09-24 17:53:14][INFO] SIM_BRIDGE: RNG initialized with seed: 7
+[2026-09-24 17:53:14][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 2336 neurons...
+[2026-09-24 17:53:14][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-09-24 17:53:14][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-09-24 17:53:14][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=100.0pA)...
+[2026-09-24 17:53:14][INFO] SIM_BRIDGE: Generating 3D neuron positions for 2336 neurons...
+[2026-09-24 17:53:14][INFO] SIM_BRIDGE: Generating connections (3D)...
+[2026-09-24 17:53:14][INFO] SIM_BRIDGE: Generating Watts-Strogatz 3D network (n=2336, k=10, p_rewire=0.1)...
+WS generation: 0.0%WS generation: 5.0%WS generation: 9.9%WS generation: 14.9%WS generation: 19.9%WS generation: 24.8%WS generation: 29.8%WS generation: 34.8%WS generation: 39.7%WS generation: 44.7%WS generation: 49.7%WS generation: 54.6%WS generation: 59.6%WS generation: 64.6%WS generation: 69.5%WS generation: 74.5%WS generation: 79.5%WS generation: 84.4%WS generation: 89.4%WS generation: 94.3%WS generation: 99.3%WS generation: 100.0%
+[2026-09-24 17:53:42][INFO] SIM_BRIDGE: Watts-Strogatz network complete: 23344 connections (avg degree: 10.0, expected: 10). Time: 28.23s
+[2026-09-24 17:53:42][INFO] SIM_BRIDGE: Initializing STP state for 23344 synapses (capacity: 35016)...
+[2026-09-24 17:53:42][INFO] SIM_BRIDGE: Initializing eligibility traces for 23344 synapses (capacity: 35016, dtype: float32)...
+[2026-09-24 17:53:42][WARNING] SIM_BRIDGE: No trait info available; all synapses default to E->E STP type.
+[2026-09-24 17:53:42][INFO] SIM_BRIDGE: Initializing structural plasticity state...
+[2026-09-24 17:53:42][INFO] SIM_BRIDGE: Simulation data initialized for 2336 neurons (3D). Synapses: 23344. GPU memory: 5.9GB/25.3GB (23.3%)
+[2026-09-24 17:53:43][WARNING] SIM_BRIDGE: No trait info available; all synapses default to E->E STP type.
+[2026-09-24 17:53:43][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 1343488 synapses across 3 populations.
+[gap4-tc][s7 r1 transport_ceiling] epoch 1/40 183s (steps 26000, 8.17 ms/step, ETA train 118.8 min)
+[gap4-tc][s7 r1 transport_ceiling] epoch 8/40 156s (steps 208000, 6.91 ms/step, ETA train 93.8 min)
+[gap4-tc][s7 r1 transport_ceiling] epoch 16/40 163s (steps 416000, 6.60 ms/step, ETA train 67.9 min)
+[gap4-tc][s7 r1 transport_ceiling] epoch 24/40 160s (steps 624000, 6.60 ms/step, ETA train 45.4 min)
+[gap4-tc][s7 r1 transport_ceiling] epoch 32/40 154s (steps 832000, 6.42 ms/step, ETA train 22.1 min)
+[gap4-tc][s7 r1 transport_ceiling] epoch 40/40 160s (steps 1040000, 6.37 ms/step, ETA train 0.0 min)
+[gap4-tc][s7 r1 transport_ceiling] held-out 0.167 train 0.170 decode_h2 0.130 (chance 0.167, oracle 0.889) ff-moved 10419652.8 nwt False eval-reads-unchanged True | 6721s 6.35 ms/step rss 832 MB
+[gap4-tc][s7 r2] task_seed 20021 n_in 9 k 9 n_train 400 n_inh 54 chance 0.167 oracle 0.926
+[2026-09-24 19:45:20][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (23.6 GB), mempool limit: 80%
+[2026-09-24 19:45:20][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-09-24 19:45:20][INFO] SIM_BRIDGE: RNG initialized with seed: 7
+[2026-09-24 19:45:20][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 2336 neurons...
+[2026-09-24 19:45:20][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-09-24 19:45:20][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-09-24 19:45:20][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=100.0pA)...
+[2026-09-24 19:45:20][INFO] SIM_BRIDGE: Generating 3D neuron positions for 2336 neurons...
+[2026-09-24 19:45:20][INFO] SIM_BRIDGE: Generating connections (3D)...
+[2026-09-24 19:45:20][INFO] SIM_BRIDGE: Generating Watts-Strogatz 3D network (n=2336, k=10, p_rewire=0.1)...
+WS generation: 0.0%WS generation: 5.0%WS generation: 9.9%WS generation: 14.9%WS generation: 19.9%WS generation: 24.8%WS generation: 29.8%WS generation: 34.8%WS generation: 39.7%WS generation: 44.7%WS generation: 49.7%WS generation: 54.6%WS generation: 59.6%WS generation: 64.6%WS generation: 69.5%WS generation: 74.5%WS generation: 79.5%WS generation: 84.4%WS generation: 89.4%WS generation: 94.3%WS generation: 99.3%WS generation: 100.0%
+[2026-09-24 19:46:01][INFO] SIM_BRIDGE: Watts-Strogatz network complete: 23344 connections (avg degree: 10.0, expected: 10). Time: 41.31s
+[2026-09-24 19:46:01][INFO] SIM_BRIDGE: Initializing STP state for 23344 synapses (capacity: 35016)...
+[2026-09-24 19:46:01][INFO] SIM_BRIDGE: Initializing eligibility traces for 23344 synapses (capacity: 35016, dtype: float32)...
+[2026-09-24 19:46:01][WARNING] SIM_BRIDGE: No trait info available; all synapses default to E->E STP type.
+[2026-09-24 19:46:01][INFO] SIM_BRIDGE: Initializing structural plasticity state...
+[2026-09-24 19:46:01][INFO] SIM_BRIDGE: Simulation data initialized for 2336 neurons (3D). Synapses: 23344. GPU memory: 6.2GB/25.3GB (24.4%)
+[2026-09-24 19:46:03][WARNING] SIM_BRIDGE: No trait info available; all synapses default to E->E STP type.
+[2026-09-24 19:46:03][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 1343488 synapses across 3 populations.
+[gap4-tc][s7 r2 transport_ceiling] epoch 1/40 153s (steps 26000, 7.54 ms/step, ETA train 99.7 min)
+[gap4-tc][s7 r2 transport_ceiling] epoch 8/40 151s (steps 208000, 6.13 ms/step, ETA train 82.1 min)
+[gap4-tc][s7 r2 transport_ceiling] epoch 16/40 148s (steps 416000, 5.94 ms/step, ETA train 60.7 min)
+[gap4-tc][s7 r2 transport_ceiling] epoch 24/40 83s (steps 624000, 5.50 ms/step, ETA train 37.6 min)
+[gap4-tc][s7 r2 transport_ceiling] epoch 32/40 57s (steps 832000, 4.73 ms/step, ETA train 16.2 min)
+[gap4-tc][s7 r2 transport_ceiling] epoch 40/40 73s (steps 1040000, 4.31 ms/step, ETA train 0.0 min)
+[gap4-tc][s7 r2 transport_ceiling] held-out 0.167 train 0.163 decode_h2 0.185 (chance 0.167, oracle 0.926) ff-moved 9406836.8 nwt False eval-reads-unchanged True | 4517s 4.27 ms/step rss 832 MB
+[gap4-tc][agg s7] UNDEFINED (ceiling clears chance on 0/3 replicates < 2) | ceiling clears 0/3 | n_fa_wall 3 | surpass 0 | means frozen=0.216 fixed_fa=0.167 micro_inengine=0.167 transport_ceiling=0.167
+[gap4-tc] verdict: no 6-seed verdict (seeds incomplete); per-seed status only -> wrote research/findings/raw/gap4/transport_ceiling_readout/gpu/gpu_s7_e40.json
+[provenance] stamped 1 artifact(s) | run_id 1790279699-1037175

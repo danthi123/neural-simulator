@@ -1,0 +1,173 @@
+{
+  "seed": 7,
+  "replicate": 0,
+  "arm": "micro_inengine",
+  "feedback": "micro_inengine",
+  "mode": "bdsp",
+  "git_sha": "afe2b323871b7363b0db119c05241ef147a84922",
+  "git_dirty": false,
+  "task_seed": 7,
+  "chance": 0.16666666666666666,
+  "oracle_heldout": 0.9629629629629629,
+  "n_inh": 54,
+  "inherit_heldout": 0.16666666666666666,
+  "train_acc": 0.1825,
+  "train_chance": 0.1825,
+  "train_binom_p": 0.5203489168381341,
+  "ff_l1_norm_start": 85816.4765625,
+  "ff_l1_norm_end": 232162.578125,
+  "bound_census_start": {
+    "w_max": 12.0,
+    "w_min": -12.0,
+    "pathways": [
+      {
+        "pathway": "ff_0",
+        "post_is_hidden": true,
+        "n": 4608,
+        "frac_at_or_above_w_max": 0.0,
+        "frac_at_or_below_w_min": 0.0,
+        "mean_abs_w": 3.826174199058945,
+        "max_abs_w": 7.642212867736816
+      },
+      {
+        "pathway": "ff_1",
+        "post_is_hidden": true,
+        "n": 16384,
+        "frac_at_or_above_w_max": 0.0,
+        "frac_at_or_below_w_min": 0.0,
+        "mean_abs_w": 3.0910208142274245,
+        "max_abs_w": 6.1226701736450195
+      },
+      {
+        "pathway": "ff_2",
+        "post_is_hidden": false,
+        "n": 4608,
+        "frac_at_or_above_w_max": 0.0,
+        "frac_at_or_below_w_min": 0.0,
+        "mean_abs_w": 3.806897088859993,
+        "max_abs_w": 7.648608684539795
+      }
+    ],
+    "frac_at_bound_all_ff": 0.0
+  },
+  "bound_census_end": {
+    "w_max": 12.0,
+    "w_min": -12.0,
+    "pathways": [
+      {
+        "pathway": "ff_0",
+        "post_is_hidden": true,
+        "n": 4608,
+        "frac_at_or_above_w_max": 0.2267795138888889,
+        "frac_at_or_below_w_min": 0.0010850694444444445,
+        "mean_abs_w": 10.139419082718328,
+        "max_abs_w": 11.999998092651367
+      },
+      {
+        "pathway": "ff_1",
+        "post_is_hidden": true,
+        "n": 16384,
+        "frac_at_or_above_w_max": 0.17230224609375,
+        "frac_at_or_below_w_min": 0.0,
+        "mean_abs_w": 10.244973176786644,
+        "max_abs_w": 11.999998092651367
+      },
+      {
+        "pathway": "ff_2",
+        "post_is_hidden": false,
+        "n": 4608,
+        "frac_at_or_above_w_max": 0.0,
+        "frac_at_or_below_w_min": 0.0,
+        "mean_abs_w": 3.8165113998258877,
+        "max_abs_w": 9.907081604003906
+      }
+    ],
+    "frac_at_bound_all_ff": 0.1512890625
+  },
+  "bound_check_at_build": true,
+  "decode_h2_train": 0.3175,
+  "decode_h2_heldout": 0.18518518518518517,
+  "mean_output_rate_heldout": 0.009087791495198904,
+  "pred_hist_train": [
+    162,
+    237,
+    0,
+    1,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "true_hist_train": [
+    69,
+    73,
+    41,
+    43,
+    43,
+    39,
+    48,
+    44,
+    0
+  ],
+  "pred_hist_heldout": [
+    23,
+    31,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "true_hist_heldout": [
+    9,
+    9,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    0
+  ],
+  "mean_output_read_by_class_train": [
+    0.0428743961352657,
+    0.04121004566210046,
+    0.0002032520325203252,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    null
+  ],
+  "mean_output_read_other_class_train": [
+    0.03640483383685801,
+    0.043476044852191635,
+    0.001415970287836583,
+    0.0008169934640522876,
+    0.00018674136321195143,
+    0.0003693444136657434,
+    0.0008285984848484848,
+    0.00018726591760299626,
+    0.00037500000000000006
+  ],
+  "read_quantity": "spikes",
+  "ff_weight_moved": 146346.1015625,
+  "ff_weight_moved_definition": "|L1 norm at end - L1 norm at start| over the feedforward weights (a change in L1 norm, not a total per-synapse change)",
+  "eval_reads_left_weights_unchanged": true,
+  "no_weight_transport": true,
+  "ast_no_forward_W": true,
+  "thr_hash": "b7d34045c83c0f63",
+  "n_steps_train": 780000,
+  "n_steps_total": 798160,
+  "train_seconds": 979.9,
+  "elapsed_seconds": 1001.3,
+  "ms_per_step": 1.254,
+  "peak_rss_mb": 110.6,
+  "backend": "numpy",
+  "fingerprint": "bd108215d75223ed",
+  "inengine_apical": {}
+}
