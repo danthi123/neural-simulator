@@ -44,7 +44,7 @@
     "node": "pool2"
    },
    "is_mid_line_fragment": true,
-   "n_host_lines": 249
+   "n_host_lines": 268
   },
   {
    "dispatch_log_line": 36682,
@@ -59,7 +59,7 @@
   }
  ],
  "fix_commit_time": "2026-09-25T11:04:36",
- "n_claims": 2005,
+ "n_claims": 2037,
  "n_fragments": 14,
  "n_fragments_before_since": 0,
  "fragments": [
@@ -100,13 +100,7 @@
        "line": 1582,
        "time": "2026-09-24 19:24:30",
        "node": "pool2",
-       "node_status": [
-        {
-         "node": "pool2",
-         "ts": 1790292306,
-         "rc": 0
-        }
-       ]
+       "node_status": null
       }
      ],
      "head_tail": "_load_bearing/_shards/b2a0924/s100/open-ended-generation && env SIM_BACKEND=numpy OMP_NUM_THREADS=1 "
@@ -188,13 +182,7 @@
        "line": 1505,
        "time": "2026-09-24 17:27:50",
        "node": "pool1",
-       "node_status": [
-        {
-         "node": "pool1",
-         "ts": 1790286406,
-         "rc": 0
-        }
-       ]
+       "node_status": null
       }
      ],
      "head_tail": "-seed 43 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2a0924/s43/wm-binding-advanc"
@@ -211,13 +199,7 @@
        "line": 1536,
        "time": "2026-09-24 18:17:01",
        "node": "pool2",
-       "node_status": [
-        {
-         "node": "pool2",
-         "ts": 1790289227,
-         "rc": 0
-        }
-       ]
+       "node_status": null
       }
      ],
      "head_tail": "-seed 44 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2a0924/s44/wm-binding-advanc"
@@ -234,13 +216,7 @@
        "line": 1567,
        "time": "2026-09-24 19:05:30",
        "node": "pool2",
-       "node_status": [
-        {
-         "node": "pool2",
-         "ts": 1790292134,
-         "rc": 0
-        }
-       ]
+       "node_status": null
       }
      ],
      "head_tail": "eed 100 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2a0924/s100/wm-binding-advanc"
@@ -257,13 +233,7 @@
        "line": 1599,
        "time": "2026-09-24 19:46:51",
        "node": "pool1",
-       "node_status": [
-        {
-         "node": "pool1",
-         "ts": 1790294757,
-         "rc": 0
-        }
-       ]
+       "node_status": null
       }
      ],
      "head_tail": "eed 101 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2a0924/s101/wm-binding-advanc"
@@ -313,13 +283,7 @@
        "line": 1488,
        "time": "2026-09-24 17:00:50",
        "node": "pool2",
-       "node_status": [
-        {
-         "node": "pool2",
-         "ts": 1790283708,
-         "rc": 0
-        }
-       ]
+       "node_status": null
       }
      ],
      "head_tail": "d-generation --seed 42 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2a0924/s42/ope"
@@ -336,13 +300,7 @@
        "line": 1519,
        "time": "2026-09-24 17:47:38",
        "node": "pool1",
-       "node_status": [
-        {
-         "node": "pool1",
-         "ts": 1790286501,
-         "rc": 0
-        }
-       ]
+       "node_status": null
       }
      ],
      "head_tail": "d-generation --seed 43 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2a0924/s43/ope"
@@ -359,13 +317,7 @@
        "line": 1550,
        "time": "2026-09-24 18:31:18",
        "node": "pool2",
-       "node_status": [
-        {
-         "node": "pool2",
-         "ts": 1790289115,
-         "rc": 0
-        }
-       ]
+       "node_status": null
       }
      ],
      "head_tail": "d-generation --seed 44 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2a0924/s44/ope"
@@ -382,13 +334,7 @@
        "line": 1582,
        "time": "2026-09-24 19:24:30",
        "node": "pool2",
-       "node_status": [
-        {
-         "node": "pool2",
-         "ts": 1790292306,
-         "rc": 0
-        }
-       ]
+       "node_status": null
       }
      ],
      "head_tail": "generation --seed 100 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2a0924/s100/ope"
@@ -405,13 +351,7 @@
        "line": 1613,
        "time": "2026-09-24 20:11:18",
        "node": "pool1",
-       "node_status": [
-        {
-         "node": "pool1",
-         "ts": 1790295121,
-         "rc": 0
-        }
-       ]
+       "node_status": null
       }
      ],
      "head_tail": "generation --seed 101 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2a0924/s101/ope"
@@ -428,13 +368,7 @@
        "line": 1620,
        "time": "2026-09-24 20:20:06",
        "node": "pool1",
-       "node_status": [
-        {
-         "node": "pool1",
-         "ts": 1790295648,
-         "rc": 0
-        }
-       ]
+       "node_status": null
       }
      ],
      "head_tail": "generation --seed 102 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2a0924/s102/ope"
@@ -484,13 +418,7 @@
        "line": 1506,
        "time": "2026-09-24 17:27:58",
        "node": "pool2",
-       "node_status": [
-        {
-         "node": "pool2",
-         "ts": 1790288203,
-         "rc": 0
-        }
-       ]
+       "node_status": null
       }
      ],
      "head_tail": "e-memory --seed 43 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2a0924/s43/prospec"
@@ -507,13 +435,7 @@
        "line": 1537,
        "time": "2026-09-24 18:19:23",
        "node": "pool1",
-       "node_status": [
-        {
-         "node": "pool1",
-         "ts": 1790291549,
-         "rc": 0
-        }
-       ]
+       "node_status": null
       }
      ],
      "head_tail": "e-memory --seed 44 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2a0924/s44/prospec"
@@ -530,13 +452,7 @@
        "line": 1568,
        "time": "2026-09-24 19:06:46",
        "node": "pool2",
-       "node_status": [
-        {
-         "node": "pool2",
-         "ts": 1790294159,
-         "rc": 0
-        }
-       ]
+       "node_status": null
       }
      ],
      "head_tail": "memory --seed 100 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2a0924/s100/prospec"
@@ -553,13 +469,7 @@
        "line": 1600,
        "time": "2026-09-24 19:49:14",
        "node": "pool2",
-       "node_status": [
-        {
-         "node": "pool2",
-         "ts": 1790296595,
-         "rc": 0
-        }
-       ]
+       "node_status": null
       }
      ],
      "head_tail": "memory --seed 101 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2a0924/s101/prospec"
@@ -609,13 +519,7 @@
        "line": 1846,
        "time": "2026-09-25 05:36:30",
        "node": "pool2",
-       "node_status": [
-        {
-         "node": "pool2",
-         "ts": 1790329692,
-         "rc": 0
-        }
-       ]
+       "node_status": null
       }
      ],
      "head_tail": "d_bearing_fraction --only vision-identity-spiking-hmax --seed 43 --repeats 2 --out research/findings"
@@ -667,13 +571,7 @@
        "line": 1852,
        "time": "2026-09-25 05:43:01",
        "node": "pool2",
-       "node_status": [
-        {
-         "node": "pool2",
-         "ts": 1790330419,
-         "rc": 0
-        }
-       ]
+       "node_status": null
       }
      ],
      "head_tail": "/_load_bearing/_shards/b2b0924-base/s43/d5-consolidate && env SIM_BACKEND=numpy OMP_NUM_THREADS=1 OP"
@@ -781,13 +679,7 @@
        "line": 1790,
        "time": "2026-09-25 02:50:13",
        "node": "pool2",
-       "node_status": [
-        {
-         "node": "pool2",
-         "ts": 1790320192,
-         "rc": 0
-        }
-       ]
+       "node_status": null
       }
      ],
      "head_tail": "orward --seed 42 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s42/worl"
@@ -804,13 +696,7 @@
        "line": 1839,
        "time": "2026-09-25 04:57:16",
        "node": "pool2",
-       "node_status": [
-        {
-         "node": "pool2",
-         "ts": 1790327837,
-         "rc": 0
-        }
-       ]
+       "node_status": null
       }
      ],
      "head_tail": "orward --seed 43 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s43/worl"
@@ -827,13 +713,7 @@
        "line": 1942,
        "time": "2026-09-25 10:07:06",
        "node": "pool1",
-       "node_status": [
-        {
-         "node": "pool1",
-         "ts": 1790346540,
-         "rc": 0
-        }
-       ]
+       "node_status": null
       }
      ],
      "head_tail": "orward --seed 44 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/worl"
@@ -850,16 +730,27 @@
        "line": 1985,
        "time": "2026-09-25 11:11:14",
        "node": "pool2",
-       "node_status": [
-        {
-         "node": "pool2",
-         "ts": 1790350265,
-         "rc": 0
-        }
-       ]
+       "node_status": null
       }
      ],
      "head_tail": "ward --seed 100 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/worl"
+    },
+    {
+     "offset": 728,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/worldmodel-forward/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 2028,
+       "time": "2026-09-25 12:11:48",
+       "node": "pool2",
+       "node_status": null
+      }
+     ],
+     "head_tail": "ward --seed 101 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/worl"
     }
    ],
    "node_status": [
@@ -908,13 +799,7 @@
        "line": 1806,
        "time": "2026-09-25 03:38:28",
        "node": "pool1",
-       "node_status": [
-        {
-         "node": "pool1",
-         "ts": 1790325289,
-         "rc": 0
-        }
-       ]
+       "node_status": null
       }
      ],
      "head_tail": " OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 LB_AFFECT_DRIVE_PROBE=1 LB_BG_SELECT_DRIVE_PROBE=1 LB_CG_D"
@@ -1024,13 +909,7 @@
        "line": 1810,
        "time": "2026-09-25 03:48:21",
        "node": "pool2",
-       "node_status": [
-        {
-         "node": "pool2",
-         "ts": 1790323809,
-         "rc": 0
-        }
-       ]
+       "node_status": null
       }
      ],
      "head_tail": "NONCONTRADICTION_DRIVE_PROBE=1 LB_OPEN_ENDED_DISTRIB_PROBE=1 LB_PMEM_DRIVE_PROBE=1 LB_SURPRISE_CONFI"
@@ -1138,13 +1017,7 @@
        "line": 1754,
        "time": "2026-09-25 00:21:01",
        "node": "pool2",
-       "node_status": [
-        {
-         "node": "pool2",
-         "ts": 1790310990,
-         "rc": 0
-        }
-       ]
+       "node_status": null
       }
      ],
      "head_tail": "--seed 42 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s42/da-gated-en"
@@ -1161,13 +1034,7 @@
        "line": 1824,
        "time": "2026-09-25 04:10:59",
        "node": "pool2",
-       "node_status": [
-        {
-         "node": "pool2",
-         "ts": 1790324778,
-         "rc": 0
-        }
-       ]
+       "node_status": null
       }
      ],
      "head_tail": "--seed 43 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s43/da-gated-en"
@@ -1184,13 +1051,7 @@
        "line": 1933,
        "time": "2026-09-25 10:00:58",
        "node": "pool2",
-       "node_status": [
-        {
-         "node": "pool2",
-         "ts": 1790345807,
-         "rc": 0
-        }
-       ]
+       "node_status": null
       }
      ],
      "head_tail": "--seed 44 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/da-gated-en"
@@ -1207,16 +1068,27 @@
        "line": 1976,
        "time": "2026-09-25 11:00:07",
        "node": "pool1",
-       "node_status": [
-        {
-         "node": "pool1",
-         "ts": 1790349455,
-         "rc": 0
-        }
-       ]
+       "node_status": null
       }
      ],
      "head_tail": "seed 100 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/da-gated-en"
+    },
+    {
+     "offset": 733,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/da-gated-encoding/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 2019,
+       "time": "2026-09-25 11:58:17",
+       "node": "pool1",
+       "node_status": null
+      }
+     ],
+     "head_tail": "seed 101 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/da-gated-en"
     }
    ],
    "node_status": [
@@ -1265,13 +1137,7 @@
        "line": 1752,
        "time": "2026-09-25 00:19:36",
        "node": "pool2",
-       "node_status": [
-        {
-         "node": "pool2",
-         "ts": 1790311317,
-         "rc": 0
-        }
-       ]
+       "node_status": null
       }
      ],
      "head_tail": "cd ~/derisk-pool/revisions/a308f1e09babcc9ed096c3c8046d00040391368c &"
@@ -1381,13 +1247,7 @@
        "line": 1791,
        "time": "2026-09-25 02:52:42",
        "node": "pool2",
-       "node_status": [
-        {
-         "node": "pool2",
-         "ts": 1790319905,
-         "rc": 0
-        }
-       ]
+       "node_status": null
       }
      ],
      "head_tail": "E=1 LB_PMEM_DRIVE_PROBE=1 LB_SURPRISE_CONFIRM_PROBE=1 .venv/bin/python -u -m research.runners.load_b"
@@ -1481,7 +1341,7 @@
    "pinned": false,
    "outputs": [],
    "job_b64": "UE9PTF9DSEVDS0VEX1JFQVNPTj1wcmVyZWdcIHJlc2VhcmNoL2ZpbmRpbmdzLzIwMjYtMDktMjQtcHJvZHVjdGlvbi1kZWZhdWx0LWJhdHRlcnktQjJiLVBSRVJFR0lTVFJBVElPTi5tZFwgXChGXCBhMzA4ZjFlMDlcKVwgQU1FTkRNRU5UXCAxXDtcIEIyYlwgYmFzZVw7XCBtZW1fZ2I9OCBuY2UvbGIuanNvbg==",
-   "n_parents": 5,
+   "n_parents": 6,
    "parents": [
     {
      "offset": 754,
@@ -1495,13 +1355,7 @@
        "line": 1948,
        "time": "2026-09-25 10:19:02",
        "node": "pool2",
-       "node_status": [
-        {
-         "node": "pool2",
-         "ts": 1790346636,
-         "rc": 0
-        }
-       ]
+       "node_status": null
       }
      ],
      "head_tail": "--repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/self-initiated-uttera"
@@ -1518,16 +1372,27 @@
        "line": 1991,
        "time": "2026-09-25 11:16:53",
        "node": "pool2",
-       "node_status": [
-        {
-         "node": "pool2",
-         "ts": 1790350113,
-         "rc": 0
-        }
-       ]
+       "node_status": null
       }
      ],
      "head_tail": "-repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/self-initiated-uttera"
+    },
+    {
+     "offset": 757,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/self-initiated-utterance/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 2034,
+       "time": "2026-09-25 12:17:26",
+       "node": "pool1",
+       "node_status": null
+      }
+     ],
+     "head_tail": "-repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/self-initiated-uttera"
     }
    ],
    "node_status": [
@@ -1560,7 +1425,7 @@
    "pinned": false,
    "outputs": [],
    "job_b64": "UE9PTF9DSEVDS0VEX1JFQVNPTj1wcmVyZWdcIHJlc2VhcmNoL2ZpbmRpbmdzLzIwMjYtMDktMjQtcHJvZHVjdGlvbi1kZWZhdWx0LWJhdHRlcnktQjJiLVBSRVJFR0lTVFJBVElPTi5tZFwgXChGXCBhMzA4ZjFlMDlcKVwgQU1FTkRNRU5UXCAxXDtcIEIyYlwgYmFzZVw7XCBtZW1fZ2I9OCAuanNvbg==",
-   "n_parents": 239,
+   "n_parents": 258,
    "parents": [
     {
      "offset": 790,
@@ -1574,13 +1439,7 @@
        "line": 1917,
        "time": "2026-09-25 07:35:43",
        "node": "pool1",
-       "node_status": [
-        {
-         "node": "pool1",
-         "ts": 1790337063,
-         "rc": 0
-        }
-       ]
+       "node_status": null
       }
      ],
      "head_tail": "t research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/comprehension-learned-verb-selects/lb"
@@ -1597,13 +1456,7 @@
        "line": 1918,
        "time": "2026-09-25 07:35:50",
        "node": "pool1",
-       "node_status": [
-        {
-         "node": "pool1",
-         "ts": 1790336958,
-         "rc": 0
-        }
-       ]
+       "node_status": null
       }
      ],
      "head_tail": "epeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/noncontradiction-gate/lb"
@@ -1620,13 +1473,7 @@
        "line": 1929,
        "time": "2026-09-25 10:00:32",
        "node": "pool2",
-       "node_status": [
-        {
-         "node": "pool2",
-         "ts": 1790346187,
-         "rc": 0
-        }
-       ]
+       "node_status": null
       }
      ],
      "head_tail": "44 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/affect-coloring/lb"
@@ -1643,13 +1490,7 @@
        "line": 1930,
        "time": "2026-09-25 10:00:39",
        "node": "pool2",
-       "node_status": [
-        {
-         "node": "pool2",
-         "ts": 1790345791,
-         "rc": 0
-        }
-       ]
+       "node_status": null
       }
      ],
      "head_tail": "peats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/affect-drives-response/lb"
@@ -1666,13 +1507,7 @@
        "line": 1931,
        "time": "2026-09-25 10:00:45",
        "node": "pool2",
-       "node_status": [
-        {
-         "node": "pool2",
-         "ts": 1790346204,
-         "rc": 0
-        }
-       ]
+       "node_status": null
       }
      ],
      "head_tail": "ts 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/affect-marker-spiking-wta/lb"
@@ -1689,13 +1524,7 @@
        "line": 1932,
        "time": "2026-09-25 10:00:51",
        "node": "pool2",
-       "node_status": [
-        {
-         "node": "pool2",
-         "ts": 1790345797,
-         "rc": 0
-        }
-       ]
+       "node_status": null
       }
      ],
      "head_tail": "eats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/da-mode-drives-response/lb"
@@ -1712,13 +1541,7 @@
        "line": 1933,
        "time": "2026-09-25 10:00:58",
        "node": "pool2",
-       "node_status": [
-        {
-         "node": "pool2",
-         "ts": 1790345807,
-         "rc": 0
-        }
-       ]
+       "node_status": null
       }
      ],
      "head_tail": " --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/da-gated-encoding/lb"
@@ -1735,13 +1558,7 @@
        "line": 1934,
        "time": "2026-09-25 10:01:04",
        "node": "pool2",
-       "node_status": [
-        {
-         "node": "pool2",
-         "ts": 1790345820,
-         "rc": 0
-        }
-       ]
+       "node_status": null
       }
      ],
      "head_tail": "ts 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/source-provenance-honesty/lb"
@@ -1758,13 +1575,7 @@
        "line": 1935,
        "time": "2026-09-25 10:01:10",
        "node": "pool2",
-       "node_status": [
-        {
-         "node": "pool2",
-         "ts": 1790345868,
-         "rc": 0
-        }
-       ]
+       "node_status": null
       }
      ],
      "head_tail": "repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/common-ground-drives/lb"
@@ -1781,13 +1592,7 @@
        "line": 1936,
        "time": "2026-09-25 10:06:28",
        "node": "pool1",
-       "node_status": [
-        {
-         "node": "pool1",
-         "ts": 1790346312,
-         "rc": 0
-        }
-       ]
+       "node_status": null
       }
      ],
      "head_tail": "repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/swap-drives-response/lb"
@@ -1804,13 +1609,7 @@
        "line": 1937,
        "time": "2026-09-25 10:06:35",
        "node": "pool1",
-       "node_status": [
-        {
-         "node": "pool1",
-         "ts": 1790346302,
-         "rc": 0
-        }
-       ]
+       "node_status": null
       }
      ],
      "head_tail": "-repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/wm-binding-advanced/lb"
@@ -1827,13 +1626,7 @@
        "line": 1938,
        "time": "2026-09-25 10:06:41",
        "node": "pool1",
-       "node_status": [
-        {
-         "node": "pool1",
-         "ts": 1790348106,
-         "rc": 0
-        }
-       ]
+       "node_status": null
       }
      ],
      "head_tail": "--repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/prospective-memory/lb"
@@ -1850,13 +1643,7 @@
        "line": 1939,
        "time": "2026-09-25 10:06:47",
        "node": "pool1",
-       "node_status": [
-        {
-         "node": "pool1",
-         "ts": 1790346106,
-         "rc": 0
-        }
-       ]
+       "node_status": null
       }
      ],
      "head_tail": "epeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/pragmatic-implicature/lb"
@@ -1873,13 +1660,7 @@
        "line": 1940,
        "time": "2026-09-25 10:06:54",
        "node": "pool1",
-       "node_status": [
-        {
-         "node": "pool1",
-         "ts": 1790348683,
-         "rc": 0
-        }
-       ]
+       "node_status": null
       }
      ],
      "head_tail": "4 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/surprise-monitor/lb"
@@ -1896,13 +1677,7 @@
        "line": 1941,
        "time": "2026-09-25 10:07:00",
        "node": "pool1",
-       "node_status": [
-        {
-         "node": "pool1",
-         "ts": 1790348667,
-         "rc": 0
-        }
-       ]
+       "node_status": null
       }
      ],
      "head_tail": "44 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/metacog-monitor/lb"
@@ -1919,13 +1694,7 @@
        "line": 1942,
        "time": "2026-09-25 10:07:06",
        "node": "pool1",
-       "node_status": [
-        {
-         "node": "pool1",
-         "ts": 1790346540,
-         "rc": 0
-        }
-       ]
+       "node_status": null
       }
      ],
      "head_tail": "--repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/worldmodel-forward/lb"
@@ -1942,13 +1711,7 @@
        "line": 1943,
        "time": "2026-09-25 10:07:13",
        "node": "pool1",
-       "node_status": [
-        {
-         "node": "pool1",
-         "ts": 1790346077,
-         "rc": 0
-        }
-       ]
+       "node_status": null
       }
      ],
      "head_tail": "--repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/curiosity-followup/lb"
@@ -1965,13 +1728,7 @@
        "line": 1944,
        "time": "2026-09-25 10:17:21",
        "node": "pool2",
-       "node_status": [
-        {
-         "node": "pool2",
-         "ts": 1790348991,
-         "rc": 0
-        }
-       ]
+       "node_status": null
       }
      ],
      "head_tail": "44 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/reconsolidation/lb"
@@ -2005,13 +1762,7 @@
        "line": 1946,
        "time": "2026-09-25 10:17:34",
        "node": "pool2",
-       "node_status": [
-        {
-         "node": "pool2",
-         "ts": 1790349225,
-         "rc": 0
-        }
-       ]
+       "node_status": null
       }
      ],
      "head_tail": "--repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/discourse-register/lb"
@@ -2028,13 +1779,7 @@
        "line": 1947,
        "time": "2026-09-25 10:17:40",
        "node": "pool2",
-       "node_status": [
-        {
-         "node": "pool2",
-         "ts": 1790347078,
-         "rc": 0
-        }
-       ]
+       "node_status": null
       }
      ],
      "head_tail": "s 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/gnw-multistep-deliberation/lb"
@@ -2051,13 +1796,7 @@
        "line": 1948,
        "time": "2026-09-25 10:19:02",
        "node": "pool2",
-       "node_status": [
-        {
-         "node": "pool2",
-         "ts": 1790346636,
-         "rc": 0
-        }
-       ]
+       "node_status": null
       }
      ],
      "head_tail": "ats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/self-initiated-utterance/lb"
@@ -2074,13 +1813,7 @@
        "line": 1949,
        "time": "2026-09-25 10:21:37",
        "node": "pool1",
-       "node_status": [
-        {
-         "node": "pool1",
-         "ts": 1790346826,
-         "rc": 0
-        }
-       ]
+       "node_status": null
       }
      ],
      "head_tail": "2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/vision-identity-spiking-hmax/lb"
@@ -2097,13 +1830,7 @@
        "line": 1950,
        "time": "2026-09-25 10:22:59",
        "node": "pool1",
-       "node_status": [
-        {
-         "node": "pool1",
-         "ts": 1790346911,
-         "rc": 0
-        }
-       ]
+       "node_status": null
       }
      ],
      "head_tail": "-repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/bg-action-selection/lb"
@@ -2120,13 +1847,7 @@
        "line": 1951,
        "time": "2026-09-25 10:24:23",
        "node": "pool2",
-       "node_status": [
-        {
-         "node": "pool2",
-         "ts": 1790346300,
-         "rc": 0
-        }
-       ]
+       "node_status": null
       }
      ],
      "head_tail": "epeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/open-ended-generation/lb"
@@ -2143,13 +1864,7 @@
        "line": 1952,
        "time": "2026-09-25 10:24:29",
        "node": "pool2",
-       "node_status": [
-        {
-         "node": "pool2",
-         "ts": 1790346271,
-         "rc": 0
-        }
-       ]
+       "node_status": null
       }
      ],
      "head_tail": "4 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/gnw-deliberation/lb"
@@ -2166,13 +1881,7 @@
        "line": 1953,
        "time": "2026-09-25 10:24:36",
        "node": "pool2",
-       "node_status": [
-        {
-         "node": "pool2",
-         "ts": 1790346277,
-         "rc": 0
-        }
-       ]
+       "node_status": null
       }
      ],
      "head_tail": "-repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/value-driven-choice/lb"
@@ -2189,13 +1898,7 @@
        "line": 1954,
        "time": "2026-09-25 10:24:42",
        "node": "pool2",
-       "node_status": [
-        {
-         "node": "pool2",
-         "ts": 1790348569,
-         "rc": 0
-        }
-       ]
+       "node_status": null
       }
      ],
      "head_tail": "s 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/confidence-forthcomingness/lb"
@@ -2212,13 +1915,7 @@
        "line": 1955,
        "time": "2026-09-25 10:26:03",
        "node": "pool1",
-       "node_status": [
-        {
-         "node": "pool1",
-         "ts": 1790347412,
-         "rc": 0
-        }
-       ]
+       "node_status": null
       }
      ],
      "head_tail": " 44 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/d5-consolidate/lb"
@@ -2235,13 +1932,7 @@
        "line": 1956,
        "time": "2026-09-25 10:26:09",
        "node": "pool1",
-       "node_status": [
-        {
-         "node": "pool1",
-         "ts": 1790347445,
-         "rc": 0
-        }
-       ]
+       "node_status": null
       }
      ],
      "head_tail": "ed 44 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/sleep-replay/lb"
@@ -2258,13 +1949,7 @@
        "line": 1957,
        "time": "2026-09-25 10:26:17",
        "node": "pool2",
-       "node_status": [
-        {
-         "node": "pool2",
-         "ts": 1790347640,
-         "rc": 0
-        }
-       ]
+       "node_status": null
       }
      ],
      "head_tail": "d 44 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/affective-tom/lb"
@@ -2281,13 +1966,7 @@
        "line": 1958,
        "time": "2026-09-25 10:30:10",
        "node": "pool1",
-       "node_status": [
-        {
-         "node": "pool1",
-         "ts": 1790348655,
-         "rc": 0
-        }
-       ]
+       "node_status": null
       }
      ],
      "head_tail": "d 44 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/causal-whatif/lb"
@@ -2304,13 +1983,7 @@
        "line": 1959,
        "time": "2026-09-25 10:31:33",
        "node": "pool2",
-       "node_status": [
-        {
-         "node": "pool2",
-         "ts": 1790349061,
-         "rc": 0
-        }
-       ]
+       "node_status": null
       }
      ],
      "head_tail": "44 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/spiking-anaphor/lb"
@@ -2327,13 +2000,7 @@
        "line": 1960,
        "time": "2026-09-25 10:34:11",
        "node": "pool1",
-       "node_status": [
-        {
-         "node": "pool1",
-         "ts": 1790348132,
-         "rc": 0
-        }
-       ]
+       "node_status": null
       }
      ],
      "head_tail": " --seed 44 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/gnw-bus/lb"
@@ -2350,13 +2017,7 @@
        "line": 1961,
        "time": "2026-09-25 10:35:35",
        "node": "pool1",
-       "node_status": [
-        {
-         "node": "pool1",
-         "ts": 1790347941,
-         "rc": 0
-        }
-       ]
+       "node_status": null
       }
      ],
      "head_tail": "repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/multiref-competition/lb"
@@ -2373,13 +2034,7 @@
        "line": 1962,
        "time": "2026-09-25 10:38:14",
        "node": "pool2",
-       "node_status": [
-        {
-         "node": "pool2",
-         "ts": 1790348476,
-         "rc": 0
-        }
-       ]
+       "node_status": null
       }
      ],
      "head_tail": "--out research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/affect-appraisal-interoceptive/lb"
@@ -2396,13 +2051,7 @@
        "line": 1963,
        "time": "2026-09-25 10:43:26",
        "node": "pool2",
-       "node_status": [
-        {
-         "node": "pool2",
-         "ts": 1790347407,
-         "rc": 0
-        }
-       ]
+       "node_status": null
       }
      ],
      "head_tail": " 44 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/spiking-qroute/lb"
@@ -2419,13 +2068,7 @@
        "line": 1964,
        "time": "2026-09-25 10:43:33",
        "node": "pool2",
-       "node_status": [
-        {
-         "node": "pool2",
-         "ts": 1790347414,
-         "rc": 0
-        }
-       ]
+       "node_status": null
       }
      ],
      "head_tail": "4 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/learned-referent/lb"
@@ -2442,13 +2085,7 @@
        "line": 1965,
        "time": "2026-09-25 10:43:40",
        "node": "pool2",
-       "node_status": [
-        {
-         "node": "pool2",
-         "ts": 1790347422,
-         "rc": 0
-        }
-       ]
+       "node_status": null
       }
      ],
      "head_tail": " 44 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/onebrain-xedge/lb"
@@ -2465,13 +2102,7 @@
        "line": 1966,
        "time": "2026-09-25 10:43:47",
        "node": "pool2",
-       "node_status": [
-        {
-         "node": "pool2",
-         "ts": 1790347429,
-         "rc": 0
-        }
-       ]
+       "node_status": null
       }
      ],
      "head_tail": "--out research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/surprise-salience-snc-afferent/lb"
@@ -2488,13 +2119,7 @@
        "line": 1967,
        "time": "2026-09-25 10:43:54",
        "node": "pool2",
-       "node_status": [
-        {
-         "node": "pool2",
-         "ts": 1790347436,
-         "rc": 0
-        }
-       ]
+       "node_status": null
       }
      ],
      "head_tail": "repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/one-brain-substrate/lb"
@@ -2511,13 +2136,7 @@
        "line": 1968,
        "time": "2026-09-25 10:44:01",
        "node": "pool2",
-       "node_status": [
-        {
-         "node": "pool2",
-         "ts": 1790348396,
-         "rc": 0
-        }
-       ]
+       "node_status": null
       }
      ],
      "head_tail": "peats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/comprehension-monitor/lb"
@@ -2534,13 +2153,7 @@
        "line": 1969,
        "time": "2026-09-25 10:45:21",
        "node": "pool42",
-       "node_status": [
-        {
-         "node": "pool42",
-         "ts": 1790349083,
-         "rc": 0
-        }
-       ]
+       "node_status": null
       }
      ],
      "head_tail": "t research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/comprehension-learned-animacy-cue/lb"
@@ -2557,13 +2170,7 @@
        "line": 1970,
        "time": "2026-09-25 10:45:32",
        "node": "pool1",
-       "node_status": [
-        {
-         "node": "pool1",
-         "ts": 1790348502,
-         "rc": 0
-        }
-       ]
+       "node_status": null
       }
      ],
      "head_tail": " research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/comprehension-learned-verb-selects/lb"
@@ -2580,13 +2187,7 @@
        "line": 1971,
        "time": "2026-09-25 10:45:39",
        "node": "pool1",
-       "node_status": [
-        {
-         "node": "pool1",
-         "ts": 1790348386,
-         "rc": 0
-        }
-       ]
+       "node_status": null
       }
      ],
      "head_tail": "peats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/noncontradiction-gate/lb"
@@ -2603,13 +2204,7 @@
        "line": 1972,
        "time": "2026-09-25 10:48:18",
        "node": "pool2",
-       "node_status": [
-        {
-         "node": "pool2",
-         "ts": 1790349064,
-         "rc": 0
-        }
-       ]
+       "node_status": null
       }
      ],
      "head_tail": "0 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/affect-coloring/lb"
@@ -2626,13 +2221,7 @@
        "line": 1973,
        "time": "2026-09-25 10:53:27",
        "node": "pool1",
-       "node_status": [
-        {
-         "node": "pool1",
-         "ts": 1790349058,
-         "rc": 0
-        }
-       ]
+       "node_status": null
       }
      ],
      "head_tail": "eats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/affect-drives-response/lb"
@@ -2649,13 +2238,7 @@
        "line": 1974,
        "time": "2026-09-25 10:56:07",
        "node": "pool1",
-       "node_status": [
-        {
-         "node": "pool1",
-         "ts": 1790349667,
-         "rc": 0
-        }
-       ]
+       "node_status": null
       }
      ],
      "head_tail": "s 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/affect-marker-spiking-wta/lb"
@@ -2672,13 +2255,7 @@
        "line": 1975,
        "time": "2026-09-25 10:56:14",
        "node": "pool1",
-       "node_status": [
-        {
-         "node": "pool1",
-         "ts": 1790349220,
-         "rc": 0
-        }
-       ]
+       "node_status": null
       }
      ],
      "head_tail": "ats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/da-mode-drives-response/lb"
@@ -2695,13 +2272,7 @@
        "line": 1976,
        "time": "2026-09-25 11:00:07",
        "node": "pool1",
-       "node_status": [
-        {
-         "node": "pool1",
-         "ts": 1790349455,
-         "rc": 0
-        }
-       ]
+       "node_status": null
       }
      ],
      "head_tail": "--repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/da-gated-encoding/lb"
@@ -2718,13 +2289,7 @@
        "line": 1977,
        "time": "2026-09-25 11:00:16",
        "node": "pool2",
-       "node_status": [
-        {
-         "node": "pool2",
-         "ts": 1790349368,
-         "rc": 0
-        }
-       ]
+       "node_status": null
       }
      ],
      "head_tail": "s 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/source-provenance-honesty/lb"
@@ -2741,13 +2306,7 @@
        "line": 1978,
        "time": "2026-09-25 11:01:41",
        "node": "pool2",
-       "node_status": [
-        {
-         "node": "pool2",
-         "ts": 1790349506,
-         "rc": 0
-        }
-       ]
+       "node_status": null
       }
      ],
      "head_tail": "epeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/common-ground-drives/lb"
@@ -2764,13 +2323,7 @@
        "line": 1979,
        "time": "2026-09-25 11:03:04",
        "node": "pool1",
-       "node_status": [
-        {
-         "node": "pool1",
-         "ts": 1790349703,
-         "rc": 0
-        }
-       ]
+       "node_status": null
       }
      ],
      "head_tail": "epeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/swap-drives-response/lb"
@@ -2787,13 +2340,7 @@
        "line": 1980,
        "time": "2026-09-25 11:03:13",
        "node": "pool2",
-       "node_status": [
-        {
-         "node": "pool2",
-         "ts": 1790349602,
-         "rc": 0
-        }
-       ]
+       "node_status": null
       }
      ],
      "head_tail": "repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/wm-binding-advanced/lb"
@@ -2827,13 +2374,7 @@
        "line": 1982,
        "time": "2026-09-25 11:04:41",
        "node": "pool1",
-       "node_status": [
-        {
-         "node": "pool1",
-         "ts": 1790349569,
-         "rc": 0
-        }
-       ]
+       "node_status": null
       }
      ],
      "head_tail": "peats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/pragmatic-implicature/lb"
@@ -2884,13 +2425,7 @@
        "line": 1985,
        "time": "2026-09-25 11:11:14",
        "node": "pool2",
-       "node_status": [
-        {
-         "node": "pool2",
-         "ts": 1790350265,
-         "rc": 0
-        }
-       ]
+       "node_status": null
       }
      ],
      "head_tail": "-repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/worldmodel-forward/lb"
@@ -2907,13 +2442,7 @@
        "line": 1986,
        "time": "2026-09-25 11:11:21",
        "node": "pool2",
-       "node_status": [
-        {
-         "node": "pool2",
-         "ts": 1790349841,
-         "rc": 0
-        }
-       ]
+       "node_status": null
       }
      ],
      "head_tail": "-repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/curiosity-followup/lb"
@@ -2998,13 +2527,7 @@
        "line": 1991,
        "time": "2026-09-25 11:16:53",
        "node": "pool2",
-       "node_status": [
-        {
-         "node": "pool2",
-         "ts": 1790350113,
-         "rc": 0
-        }
-       ]
+       "node_status": null
       }
      ],
      "head_tail": "ts 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/self-initiated-utterance/lb"
@@ -3021,13 +2544,7 @@
        "line": 1992,
        "time": "2026-09-25 11:18:12",
        "node": "pool1",
-       "node_status": [
-        {
-         "node": "pool1",
-         "ts": 1790350274,
-         "rc": 0
-        }
-       ]
+       "node_status": null
       }
      ],
      "head_tail": " --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/vision-identity-spiking-hmax/lb"
@@ -3044,13 +2561,7 @@
        "line": 1993,
        "time": "2026-09-25 11:19:30",
        "node": "pool1",
-       "node_status": [
-        {
-         "node": "pool1",
-         "ts": 1790350359,
-         "rc": 0
-        }
-       ]
+       "node_status": null
       }
      ],
      "head_tail": "repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/bg-action-selection/lb"
@@ -3067,13 +2578,7 @@
        "line": 1994,
        "time": "2026-09-25 11:19:39",
        "node": "pool2",
-       "node_status": [
-        {
-         "node": "pool2",
-         "ts": 1790349615,
-         "rc": 0
-        }
-       ]
+       "node_status": null
       }
      ],
      "head_tail": "peats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/open-ended-generation/lb"
@@ -3090,13 +2595,7 @@
        "line": 1995,
        "time": "2026-09-25 11:20:59",
        "node": "pool2",
-       "node_status": [
-        {
-         "node": "pool2",
-         "ts": 1790349661,
-         "rc": 0
-        }
-       ]
+       "node_status": null
       }
      ],
      "head_tail": " --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/gnw-deliberation/lb"
@@ -3113,13 +2612,7 @@
        "line": 1996,
        "time": "2026-09-25 11:21:05",
        "node": "pool2",
-       "node_status": [
-        {
-         "node": "pool2",
-         "ts": 1790349667,
-         "rc": 0
-        }
-       ]
+       "node_status": null
       }
      ],
      "head_tail": "repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/value-driven-choice/lb"
@@ -3285,9 +2778,11 @@
      ],
      "occurrences_at_or_after_fragment": [
       {
-       "src": "pool.queue",
-       "line": 1,
-       "time": "2026-09-25 05:47:14"
+       "src": "claims",
+       "line": 2006,
+       "time": "2026-09-25 11:38:11",
+       "node": "pool2",
+       "node_status": null
       }
      ],
      "head_tail": "00 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/spiking-qroute/lb"
@@ -3300,9 +2795,11 @@
      ],
      "occurrences_at_or_after_fragment": [
       {
-       "src": "pool.queue",
-       "line": 2,
-       "time": "2026-09-25 05:47:31"
+       "src": "claims",
+       "line": 2007,
+       "time": "2026-09-25 11:38:17",
+       "node": "pool2",
+       "node_status": null
       }
      ],
      "head_tail": " --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/learned-referent/lb"
@@ -3315,9 +2812,11 @@
      ],
      "occurrences_at_or_after_fragment": [
       {
-       "src": "pool.queue",
-       "line": 3,
-       "time": "2026-09-25 05:47:48"
+       "src": "claims",
+       "line": 2008,
+       "time": "2026-09-25 11:38:24",
+       "node": "pool2",
+       "node_status": null
       }
      ],
      "head_tail": "00 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/onebrain-xedge/lb"
@@ -3330,12 +2829,490 @@
      ],
      "occurrences_at_or_after_fragment": [
       {
-       "src": "pool.queue",
-       "line": 4,
-       "time": "2026-09-25 05:48:02"
+       "src": "claims",
+       "line": 2009,
+       "time": "2026-09-25 11:38:31",
+       "node": "pool2",
+       "node_status": null
       }
      ],
      "head_tail": "-out research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/surprise-salience-snc-afferent/lb"
+    },
+    {
+     "offset": 748,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/one-brain-substrate/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 2010,
+       "time": "2026-09-25 11:38:37",
+       "node": "pool2",
+       "node_status": null
+      }
+     ],
+     "head_tail": "repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/one-brain-substrate/lb"
+    },
+    {
+     "offset": 754,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/comprehension-monitor/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 2011,
+       "time": "2026-09-25 11:38:43",
+       "node": "pool2",
+       "node_status": null
+      }
+     ],
+     "head_tail": "peats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/comprehension-monitor/lb"
+    },
+    {
+     "offset": 790,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/comprehension-learned-animacy-cue/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 2012,
+       "time": "2026-09-25 11:40:05",
+       "node": "pool2",
+       "node_status": null
+      }
+     ],
+     "head_tail": "t research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/comprehension-learned-animacy-cue/lb"
+    },
+    {
+     "offset": 793,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/comprehension-learned-verb-selects/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 2013,
+       "time": "2026-09-25 11:43:54",
+       "node": "pool1",
+       "node_status": null
+      }
+     ],
+     "head_tail": " research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/comprehension-learned-verb-selects/lb"
+    },
+    {
+     "offset": 754,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/noncontradiction-gate/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 2014,
+       "time": "2026-09-25 11:46:30",
+       "node": "pool1",
+       "node_status": null
+      }
+     ],
+     "head_tail": "peats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/noncontradiction-gate/lb"
+    },
+    {
+     "offset": 736,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/affect-coloring/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 2015,
+       "time": "2026-09-25 11:49:07",
+       "node": "pool2",
+       "node_status": null
+      }
+     ],
+     "head_tail": "1 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/affect-coloring/lb"
+    },
+    {
+     "offset": 757,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/affect-drives-response/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 2016,
+       "time": "2026-09-25 11:55:27",
+       "node": "pool1",
+       "node_status": null
+      }
+     ],
+     "head_tail": "eats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/affect-drives-response/lb"
+    },
+    {
+     "offset": 766,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/affect-marker-spiking-wta/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 2017,
+       "time": "2026-09-25 11:55:36",
+       "node": "pool2",
+       "node_status": null
+      }
+     ],
+     "head_tail": "s 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/affect-marker-spiking-wta/lb"
+    },
+    {
+     "offset": 760,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/da-mode-drives-response/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 2018,
+       "time": "2026-09-25 11:55:43",
+       "node": "pool2",
+       "node_status": null
+      }
+     ],
+     "head_tail": "ats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/da-mode-drives-response/lb"
+    },
+    {
+     "offset": 742,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/da-gated-encoding/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 2019,
+       "time": "2026-09-25 11:58:17",
+       "node": "pool1",
+       "node_status": null
+      }
+     ],
+     "head_tail": "--repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/da-gated-encoding/lb"
+    },
+    {
+     "offset": 766,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/source-provenance-honesty/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 2020,
+       "time": "2026-09-25 11:58:25",
+       "node": "pool2",
+       "node_status": null
+      }
+     ],
+     "head_tail": "s 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/source-provenance-honesty/lb"
+    },
+    {
+     "offset": 751,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/common-ground-drives/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 2021,
+       "time": "2026-09-25 11:59:44",
+       "node": "pool1",
+       "node_status": null
+      }
+     ],
+     "head_tail": "epeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/common-ground-drives/lb"
+    },
+    {
+     "offset": 751,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/swap-drives-response/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 2022,
+       "time": "2026-09-25 11:59:52",
+       "node": "pool2",
+       "node_status": null
+      }
+     ],
+     "head_tail": "epeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/swap-drives-response/lb"
+    },
+    {
+     "offset": 748,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/wm-binding-advanced/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 2023,
+       "time": "2026-09-25 12:01:12",
+       "node": "pool1",
+       "node_status": null
+      }
+     ],
+     "head_tail": "repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/wm-binding-advanced/lb"
+    },
+    {
+     "offset": 745,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/prospective-memory/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 2024,
+       "time": "2026-09-25 12:01:19",
+       "node": "pool1",
+       "node_status": null
+      }
+     ],
+     "head_tail": "-repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/prospective-memory/lb"
+    },
+    {
+     "offset": 754,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/pragmatic-implicature/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 2025,
+       "time": "2026-09-25 12:06:26",
+       "node": "pool2",
+       "node_status": null
+      }
+     ],
+     "head_tail": "peats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/pragmatic-implicature/lb"
+    },
+    {
+     "offset": 739,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/surprise-monitor/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 2026,
+       "time": "2026-09-25 12:07:47",
+       "node": "pool1",
+       "node_status": null
+      }
+     ],
+     "head_tail": " --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/surprise-monitor/lb"
+    },
+    {
+     "offset": 736,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/metacog-monitor/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 2027,
+       "time": "2026-09-25 12:09:10",
+       "node": "pool2",
+       "node_status": null
+      }
+     ],
+     "head_tail": "1 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/metacog-monitor/lb"
+    },
+    {
+     "offset": 745,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/worldmodel-forward/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 2028,
+       "time": "2026-09-25 12:11:48",
+       "node": "pool2",
+       "node_status": null
+      }
+     ],
+     "head_tail": "-repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/worldmodel-forward/lb"
+    },
+    {
+     "offset": 745,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/curiosity-followup/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 2029,
+       "time": "2026-09-25 12:13:08",
+       "node": "pool1",
+       "node_status": null
+      }
+     ],
+     "head_tail": "-repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/curiosity-followup/lb"
+    },
+    {
+     "offset": 736,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/reconsolidation/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 2030,
+       "time": "2026-09-25 12:13:14",
+       "node": "pool1",
+       "node_status": null
+      }
+     ],
+     "head_tail": "1 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/reconsolidation/lb"
+    },
+    {
+     "offset": 736,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/episodic-memory/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 2031,
+       "time": "2026-09-25 12:13:22",
+       "node": "pool2",
+       "node_status": null
+      }
+     ],
+     "head_tail": "1 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/episodic-memory/lb"
+    },
+    {
+     "offset": 745,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/discourse-register/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 2032,
+       "time": "2026-09-25 12:14:44",
+       "node": "pool2",
+       "node_status": null
+      }
+     ],
+     "head_tail": "-repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/discourse-register/lb"
+    },
+    {
+     "offset": 769,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/gnw-multistep-deliberation/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 2033,
+       "time": "2026-09-25 12:16:05",
+       "node": "pool1",
+       "node_status": null
+      }
+     ],
+     "head_tail": " 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/gnw-multistep-deliberation/lb"
+    },
+    {
+     "offset": 763,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/self-initiated-utterance/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 2034,
+       "time": "2026-09-25 12:17:26",
+       "node": "pool1",
+       "node_status": null
+      }
+     ],
+     "head_tail": "ts 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/self-initiated-utterance/lb"
+    },
+    {
+     "offset": 775,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/vision-identity-spiking-hmax/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 2035,
+       "time": "2026-09-25 12:17:34",
+       "node": "pool2",
+       "node_status": null
+      }
+     ],
+     "head_tail": " --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/vision-identity-spiking-hmax/lb"
+    },
+    {
+     "offset": 748,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/bg-action-selection/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 2036,
+       "time": "2026-09-25 12:18:55",
+       "node": "pool1",
+       "node_status": null
+      }
+     ],
+     "head_tail": "repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/bg-action-selection/lb"
+    },
+    {
+     "offset": 754,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/open-ended-generation/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 2037,
+       "time": "2026-09-25 12:19:03",
+       "node": "pool2",
+       "node_status": null
+      }
+     ],
+     "head_tail": "peats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/open-ended-generation/lb"
     }
    ],
    "node_status": [
@@ -3463,7 +3440,7 @@
   {
    "tag": "b2b0924-base",
    "pin": "a308f1e09babcc9ed096c3c8046d00040391368c",
-   "n_cells": 147,
+   "n_cells": 177,
    "pin_rule_failing_cells": {},
    "unpinned_tree_sidecars": []
   }
@@ -3576,37 +3553,37 @@
    "--json",
    "research/findings/raw/_dispatcher_fragment_audit/2026-09-25-fragments.json",
    "--node-status",
-   "/tmp/claude-1000/-home-dant123-Projects-sim/87891831-e642-4a2f-abeb-50ea0867609b/scratchpad/nodes",
+   "research/findings/raw/_dispatcher_fragment_audit/node_evidence",
    "--scan-shards",
    "b2a0924=9db7613296c3d02a161b36fb15da3983188b7902",
    "--scan-shards",
    "b2b0924-base=a308f1e09babcc9ed096c3c8046d00040391368c",
    "--node-outputs",
-   "/tmp/claude-1000/-home-dant123-Projects-sim/87891831-e642-4a2f-abeb-50ea0867609b/scratchpad/fragcells"
+   "research/findings/raw/_dispatcher_fragment_audit/node_evidence"
   ],
-  "git_sha": "096dfdae0c14100f251f350dddbe83fde78bd5fc",
-  "generated": "2026-09-25T11:36:08",
+  "git_sha": "c2440fcb269eaa2aa8452634d028a5ed7dfbc199",
+  "generated": "2026-09-25T12:20:12",
   "backend": "none -- host-side audit of queue/log/sidecar files; no simulation is run",
   "inputs": {
    "pool.queue.claims": {
-    "lines": 2005,
-    "mtime": "2026-09-25 11:33:10"
+    "lines": 2037,
+    "mtime": "2026-09-25 12:19:03"
    },
    "pool.running": {
-    "lines": 971,
-    "mtime": "2026-09-25 11:33:30"
+    "lines": 1003,
+    "mtime": "2026-09-25 12:19:03"
    },
    "pool.queue": {
-    "lines": 71,
-    "mtime": "2026-09-25 11:35:57"
+    "lines": 64,
+    "mtime": "2026-09-25 12:19:03"
    },
    "pool.queue.unchecked": {
     "lines": 1,
     "mtime": "2026-09-25 04:05:08"
    },
    "dispatch.log": {
-    "lines": 37295,
-    "mtime": "2026-09-25 11:33:10"
+    "lines": 37327,
+    "mtime": "2026-09-25 12:19:03"
    }
   },
   "read_only": "no queue file, node, or shard cell is written; node files are copies fetched with ssh -n"
