@@ -1188,6 +1188,17 @@ Perception/attention/WM, affect, curiosity, self/workspace/ToM, and language are
 
 ## 8. IMMEDIATE NEXT ACTIONS
 
+**2026-09-24 (night, provenance-fix scoring):** **CA3 superposed-fact-attractor capacity law: GO 6/6 RE-CONFIRMED,
+this time with valid provenance for every registered cell** (`research/findings/2026-09-24-ca3-superposed-fact-attractor-capacity-GO-6seed-reruns-provenance-fixed.md`).
+The seeds-101/102 provenance gap logged in the entry below (18 files, no execution trace) is closed: the 18 rerun
+jobs at the SAME pinned revision (`ab2adcf51bb452f322fabe94b5668335c7d687a7`) are now verified via
+`research/queue/dispatch.log` (54/54 CA3 dispatch lines, zero unaccounted) and `research/queue/pool_sync.log`
+(independent corroboration from pool1 + pool42). Scored the full 9-arm x 6-seed grid on ONLY the provenance-clean
+cells: all 9 gates (G1-G9) PASS 6/6, 0 missing, 0 UNDEFINED, `k_fit` 0.13 (registered band 0.1-0.3); the
+extrapolated fast-store ceiling is ~49,022 facts (corrects the unmerged commit's "inside 5e4-1e5" to "just under
+the 5e4 edge"). Supersedes the unmerged `3e81251ee9` (branch `research/score-ca3-grid`). Default-off standalone
+research runner (`sim/`/`webapp/` import nothing from it) — no production default exists for this GO to flip.
+
 **2026-09-24 (evening):** merged default-OFF after SOUND review: AG-REG row-registry hook (list rows; rows whose turn the
 battery cannot run are parked; module `PARKED`; the battery now reads each row module's literal `EXTRA_TURNS` via ast),
 A1 live-organ rows, A2 learning rows, A5 false-belief, A7 prewarm, A4 xedge-in-wave3, slot-binder production gate,
