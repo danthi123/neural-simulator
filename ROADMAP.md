@@ -7,6 +7,17 @@ the [project handoff](HANDOFF.md), and the live state in
 board, when checked out, was `research/coordination/workboard.json` (⚠️ now ~a month
 stale — the live board is [GAP_CLOSURE_MISSION.md](GAP_CLOSURE_MISSION.md) CURRENT STATE; workboard.json is being retired).
 
+## 2026-09-25 — scoring the shipped-brain #1 metric finds a hidden bad measurement, not a bad brain
+
+**B2a (the #1 metric measured on the brain exactly as it ships) FAILS its own completeness check:** re-running the
+aggregation and auditing every one of its 186 measurement cells against the pinned revision it was supposed to use
+found that 23 of 28 measured abilities have one of their six repeats (seed 102) run from a local, not-yet-committed
+copy of the code instead of the locked-down snapshot the test was pre-registered against. The test's own automatic
+clean-run check saw nothing wrong — the numbers it produced looked fine — and only a check of exactly which code
+each repeat actually ran caught it. No default is flipped by this finding either way; the fix is to re-run those
+23 abilities' sixth repeat from the correct locked snapshot. Finding:
+[`2026-09-25-production-default-battery-B2a-FAIL.md`](research/findings/2026-09-25-production-default-battery-B2a-FAIL.md).
+
 ## 2026-09-24 (evening) — the measurement grows from 38 to 49 abilities; nine more pieces merged, all off by default; curiosity's fifth attempt falls short; one result rejected for missing records
 
 **Merged after independent review, all off by default until their own six-seed tests:** tracking what someone else wrongly believes, multi-step "A before B before C" reasoning, a faster warm start, the brain's own spiking fact-binder in chat, a link between two thinking organs in the shared core, the working-memory focus link, a test of whether a fact in a reply was learned by the brain itself, and the multi-turn test for the mood-settling mechanism (which stays off until its three conditions pass). Merging tonight: the chat-only AI teacher, the reward signal read from the brain's own surprise, and the gap#4 learning lever.
