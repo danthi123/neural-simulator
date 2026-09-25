@@ -34,6 +34,13 @@ HERE = os.path.join(ROOT, "tools", "local_llm")
 RESULTS = os.path.join(HERE, "results")
 PORT = 8091
 VENV_PY = os.path.join(ROOT, ".venv", "bin", "python")
+if not os.path.exists(VENV_PY):
+    # A linked worktree has no .venv of its own (a 2026-09-25 re-run from one failed every task on it): use the
+    # primary checkout's, found through git's common dir.
+    _common = subprocess.run(["git", "rev-parse", "--path-format=absolute", "--git-common-dir"], cwd=ROOT,
+                             capture_output=True, text=True).stdout.strip()
+    if _common:
+        VENV_PY = os.path.join(os.path.dirname(_common), ".venv", "bin", "python")
 PASSPHRASE = "ORCHID-7431-TANGERINE"
 
 
