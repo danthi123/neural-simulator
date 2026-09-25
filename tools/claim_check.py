@@ -52,8 +52,8 @@ Two deliberate departures from pure render semantics, both in the direction of c
 author and the reviewer read the SOURCE:
   * a lazy-continuation line (CommonMark "paragraph continuation text" that sits outside its list item's or
     blockquote's indentation, e.g. an unindented sentence right after a bullet) and a table row with no
-    unescaped `|` (GFM renders a pipe-less line right after a table as a one-cell row) are never inside a
-    sibling scope. In the source they read as prose after the list/table, which is how the "no blank line
+    unescaped `|` (GFM renders a pipe-less line right after a table as a one-cell row), or, under a header row
+    that starts with `|`, a row that does not start with `|`, are never inside a sibling scope. In the source they read as prose after the list/table, which is how the "no blank line
     before a wrong number" exploit hid a number.
   * an UNCLOSED fence ends a Derived section at the fence's opening line. Rendered, the rest of the document is
     one code block and every later heading is swallowed; read as source, those headings end the section. The
@@ -287,7 +287,12 @@ def derived_scope(text):
         elif t.type == "paragraph_open":
             lazy.update((t.meta or {}).get("lazy", ()))
         elif t.type == "table_open":
-            pipeless.update(ln for ln in range(s, e) if not _UNESCAPED_PIPE.search(lines[ln]))
+            # A body row counts as a row only if it LOOKS like one in the source: it carries an unescaped pipe,
+            # and when the header row starts with `|`, it starts with `|` too (so `The accuracy was 0.1525 (a|b).`
+            # straight after a leading-pipe table reads as prose, and is checked as prose).
+            lead = lines[s].lstrip().startswith("|")
+            pipeless.update(ln for ln in range(s, e) if not _UNESCAPED_PIPE.search(lines[ln])
+                            or (lead and not lines[ln].lstrip().startswith("|")))
             # GFM DROPS a row's cells beyond the header's count, so a marker written after a row's last pipe
             # (`| a | 0.97 | <!--derived-->`, 107 corpus lines) never reaches a cell's inline token. Each row is
             # therefore parsed WHOLE as inline text: markers inside code spans still stay text.
@@ -533,6 +538,10 @@ SELFTEST_CASES = [
          why="a pipe-less line straight after a derived table (GFM: a one-cell row) is checked",
          doc=_HDR + "<!--derived-->\n| metric | value |\n|---|---|\n| ratio | 0.104615 |\n"
                     "The accuracy was 0.1525 here.\n"),
+    dict(name="table_then_prose_with_a_pipe", expect="FAIL", wrong_on=("main", "r1"),
+         why="a prose line holding a `|` straight after a leading-pipe table is not a row in the source",
+         doc=_HDR + "<!--derived-->\n| metric | value |\n|---|---|\n| ratio | 0.104615 |\n"
+                    "The accuracy was 0.1525 here (train | held-out).\n"),
     dict(name="list_lazy_line_wrong_number", expect="FAIL", wrong_on=("main", "r1", "r2", "r3"),
          why="an unindented line straight after a derived list (a lazy continuation) is checked",
          doc=_HDR + "<!--derived-->\n- ratio 0.104615\nThe accuracy was 0.1525 here.\n"),
