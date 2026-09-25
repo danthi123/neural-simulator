@@ -15,7 +15,7 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-19 (RESUME HERE) — NEW ARC: PERMANENT LLM MOUTH + LOAD-BEARING METRIC
 
-**🌙 OVERNIGHT PLAN (owner asleep from 01:35, 2026-09-25) — work it in this order, re-arm the heartbeat on every expiry:**
+**🌙 PRE-DECIDED NEXT ACTIONS — OVERNIGHT PLAN (owner asleep from 01:35, 2026-09-25); work in order, re-arm the heartbeat on every expiry:**
 1. B2a: the heartbeat aggregates b2a0924 with `--pin 9db7613296c3...` at 186/186; if open-ended-generation shows excluded,
    wait for the oed provenance fix (workflow `wkqok0g80`), merge it, re-aggregate, then re-score R1/R2 and correct the
    2026-09-25 B2a FAIL finding with a follow-up finding (never rewrite the FAIL doc's verdict in place).
@@ -81,7 +81,7 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
   (workflow `wyzt42x79`); GPU: A9 gap#4 seed-7 run, then the local-LLM bake-off; AWS pool1/pool2 (~$1 so far today).
   pool40 stays OFFLINE (owner: OS reinstall deferred).
 
-**PRE-DECIDED NEXT ACTIONS:**
+**PRE-DECIDED NEXT ACTIONS (2026-09-24 20:25 — history, superseded by the overnight plan above):**
 1. ✅ Harvested 21:15: B2b Amendment 1 merged (b589c7bf9; base arm only, wave 1 = 86 lines queued, waves 2-3 queued
    by `research/coordination/b2b_queue_next_wave.sh`, which the heartbeat now runs every cycle; commit its ledger
    `b2b0924_base_waves.tsv` when it moves). Frame-junction lexicon merged default-OFF (d68a607af), dev seed 7 NOT
@@ -781,7 +781,7 @@ retired but mouth-blocked), metacog + semantic-recall ruled-not-retirable-now by
 caught + ledger corrected), da-write-gain held. scaffold_retired stays 4 (the deletes + production validations are the
 follow-ons). The keystone confirmed twice over: the own-voice MOUTH (neural-render) is the mass-retirement unlock.
 
-**PRE-DECIDED NEXT ACTIONS:**
+**PRE-DECIDED NEXT ACTIONS (2026-09-24 20:25 — history, superseded by the overnight plan above):**
 1. ⭐ CONTINUE scaffold-retirement (owner's #1 metric, now 4): scan the ledger for the next RETIRABLE_NOW rows and the un-retired host scaffolds — the named follow-on is `multi_turn_agent_v2.py`'s SEPARATE host-anaphor scaffold; the B-curiosity row's retirement frontier is neural-render (retire the host qualifier template). Verify-first (grep the log for each capability) before scoping.
 2. Token `_n2M` bend-test sweep PAUSED at 9/18 (owner gaming — local GPU idle, verified paused). Resume `bash tools/game.sh off` when gaming ends; harvest at 18/18: does the deep-context NLL curve BEND at ~74M tokens? (owner #1 mouth fork).
 3. Frontier de-risks (build-then-run): vision configural-binding next lever = a richer S2/C2 code (n_glimpses saturated at 4/6; board #217); gap#4 next lever = bound census at the best dev read-regime (C21), then spiking output competition, so the transport-ceiling oracle can clear chance, THEN re-compare (UNDEFINED at dev 2026-09-24, A9); affect grounding/embodiment (Rank-7 parked, board #218). Pool idle → stock a CPU de-risk once one of these is built.
@@ -804,7 +804,7 @@ the mini-PCs, independent of local GPU/gaming): Rank-7 affect-opponent competiti
 `tools/stock_research_queue.sh` is re-derivation-guarded + queue-aware (safe to re-run to top up). Owner controls +
 science summary: `research/queue/QUEUE_GUIDE.md`. Tooling committed; GAME_MODE still ON (the paused state).
 
-**PRE-DECIDED NEXT ACTIONS:**
+**PRE-DECIDED NEXT ACTIONS (2026-09-24 20:25 — history, superseded by the overnight plan above):**
 1. OWNER starts the GPU lane when ready: `bash tools/gpu_queue.sh start && bash tools/game.sh off` (pause for gaming = `bash tools/game.sh on`; resume = off). Claude does NOT auto-start it.
 2. On the next Claude session / owner return: aggregate per-cell artifacts — gap#4 `research/findings/raw/gap4/selfpredict_inengine_s*.json`; token-scaling `research/findings/raw/_gencortex_scaling/{fineweb,wt103}_d*_s*.json` (reconstruct the 6-seed scaling curve vs the flat d96 prior); affect `research/findings/raw/_affect_gain_sweep/opp_to*_fs*_s*.json`. Write findings + sync board/Vikunja.
 3. gap#4 verdict may be UNDEFINED under the interpretability gate — a valid deliverable, not a NO-GO.
