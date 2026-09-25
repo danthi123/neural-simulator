@@ -41,6 +41,23 @@ import pytest
 _REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 
 
+def _cupy_or_skip():
+    """Replaces the bare `pytest.importorskip("cupy")` this file used at every call site below, which only
+    checks that the PACKAGE imports; it does not check that a CUDA device is reachable. On a box with cupy
+    installed but no visible GPU (e.g. `CUDA_VISIBLE_DEVICES=`), every test below used to ERROR
+    (`cupy_backends.cuda.api.runtime.CUDARuntimeError: cudaErrorNoDevice`) the first time it touched the
+    device -- e.g. via this file's subprocess scenarios, which force `SIM_BACKEND=cupy` -- instead of
+    skipping (research/FAILURE_LOG.md, 2026-09-24). Mirrors `tests/test_backend.py::_has_cupy`'s
+    `(ImportError, RuntimeError)` catch (`CUDARuntimeError` is a `RuntimeError` subclass)."""
+    cupy = pytest.importorskip("cupy")
+    try:
+        if cupy.cuda.runtime.getDeviceCount() == 0:
+            pytest.skip("cupy installed but no CUDA device is visible")
+    except (RuntimeError, ImportError) as e:
+        pytest.skip(f"cupy installed but device check failed: {type(e).__name__}: {e}")
+    return cupy
+
+
 def _run_scenario(seed, all_plastic):
     env = dict(os.environ)
     env["SIM_BACKEND"] = "cupy"
@@ -115,7 +132,7 @@ def test_plastic_mask_freezes_fixed_synapses_rate_window_hebbian():
     Write site: sim/bridge.py:10066-10069 (`delta_weights` masked in the `elif _rate_win:`
     branch, non-BCM sub-case) plus the shared decay/clip masking at :10114-10123 / :10151-10156.
     """
-    pytest.importorskip("cupy")
+    _cupy_or_skip()
     _assert_hebbian_variant_freezes_fixed_synapses("rate_window")
 
 
@@ -125,7 +142,7 @@ def test_plastic_mask_freezes_fixed_synapses_bcm_hebbian():
     Write site: sim/bridge.py:10013-10014 (`_dw_b` masked in the BCM sub-branch of
     `elif _rate_win:`) plus the shared decay/clip masking at :10114-10123 / :10151-10156.
     """
-    pytest.importorskip("cupy")
+    _cupy_or_skip()
     _assert_hebbian_variant_freezes_fixed_synapses("bcm")
 
 
@@ -138,12 +155,12 @@ def test_plastic_mask_freezes_fixed_synapses_branchless_hebbian():
     :10094-10159) still runs after this function returns (see that block's own guarding),
     so this test also exercises decay/clip masking for the branchless variant.
     """
-    pytest.importorskip("cupy")
+    _cupy_or_skip()
     _assert_hebbian_variant_freezes_fixed_synapses("branchless")
 
 
 def test_plastic_mask_freezes_fixed_synapses():
-    pytest.importorskip("cupy")
+    _cupy_or_skip()
 
     fixed = _run_scenario(seed=7, all_plastic=False)
     plastic = _run_scenario(seed=7, all_plastic=True)
@@ -174,7 +191,7 @@ def test_plastic_mask_freezes_fixed_synapses():
 def test_no_mask_means_all_plastic():
     """When inject_explicit_wiring is called with no plastic=False populations,
     cp_synapse_plastic_mask should stay None (back-compat with existing paths)."""
-    pytest.importorskip("cupy")
+    _cupy_or_skip()
     import cupy as cp
 
     from sim import SimulationBridge, VisualizationConfig, RuntimeState, GPUConfig
@@ -213,7 +230,7 @@ def test_no_mask_means_all_plastic():
 def test_mask_aligned_with_csr_order():
     """When populations have a mix of plastic and non-plastic synapses, the
     mask must align with cp_connections.data's internal CSR order."""
-    pytest.importorskip("cupy")
+    _cupy_or_skip()
     import cupy as cp
 
     from sim import SimulationBridge, VisualizationConfig, RuntimeState, GPUConfig
