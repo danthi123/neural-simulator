@@ -50,6 +50,7 @@ implemented_by:
   - webapp/da_tag_capture.py
 findings:
   - research/findings/2026-09-24-sleep-replay-capture-PREREGISTRATION.md
+  - research/findings/2026-09-25-prioritized-memory-remember-what-matters-DESIGN.md
 ---
 
 # Quiet rest keeps the day's trace alive until sleep can capture it
