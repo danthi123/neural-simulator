@@ -3,7 +3,7 @@ type: design
 status: live
 date: 2026-09-25
 lane: load-bearing
-mechanism: prioritized memory (keep what matters, let minor details fade) as the companion of the DA tag-capture + sleep-replay pair, revision 2 -- every review item of b82e7d2 closed, and encoding added after the fi battery's first-morning losses -- research and design only, no sim/ or webapp/ change
+mechanism: prioritized memory (keep what matters, let minor details fade) as the companion of the DA tag-capture + sleep-replay pair, revision 3 -- every review item of b82e7d2 and of fcf3c847d closed, and encoding added after the fi battery's first-morning losses -- research and design only, no sim/ or webapp/ change
 seeds: [42, 43, 44, 100, 101, 102]
 artifacts:
   - research/findings/raw/_sleep_replay_capture/aggregate.json
@@ -16,6 +16,10 @@ artifacts:
   - research/findings/raw/_sleep_forgetting_interference/seed100.json
   - research/findings/raw/_sleep_forgetting_interference/seed101.json
   - research/findings/raw/_sleep_forgetting_interference/seed102.json
+  - research/findings/raw/_sleep_forgetting_interference/seed*/fiv_lr.json
+  - research/findings/raw/_sleep_forgetting_interference/seed*/fis_lr.json
+  - research/findings/raw/_sleep_forgetting_interference/seed43/fir_lr.json
+  - research/findings/raw/_sleep_forgetting_interference/seed101/fir_lr.json
 biology:
   - research/biology/importance-tagging-at-encoding.md
   - research/biology/prp-competition-and-locality.md
@@ -28,7 +32,7 @@ biology:
   - research/biology/sleep-load-dependent-renormalization.md
 ---
 
-# Prioritized memory: remember what matters, let minor details fade (DESIGN, revision 2)
+# Prioritized memory: remember what matters, let minor details fade (DESIGN, revision 3)
 
 Research and design, no code. It answers the owner's ruling of 2026-09-25 on the overnight forgetting of the DA
 tag-and-capture + sleep-replay pair, maps what the brain already has against what real brains run to prioritize
@@ -39,7 +43,14 @@ the model, and a verdict word only as a gate's own verdict.
 Revision 2 (branch `research/prioritized-memory-design-final`) closes all seventeen items of the review of `b82e7d2` (eight MEDIUM)
 (section 10 lists each and where it landed) and adds encoding: section 2a reads the fi battery's six seed records and
 answers whether the design must address what gets stored and how strongly, not only retention. It must (section 2a,
-Steps 0b and 1a, gate WM0). The document is ready for a preregistration and a build; it queues nothing.
+Steps 0b and 1a, gate WM0). Revision 3 closes the ten items of the independent review of `fcf3c847d` (five MEDIUM;
+section 10b): the homeostat's effect on the replay tag and capture with the ledger on, a misread of seed 43's
+re-mention record, WM0b's read, WM2a's timing and the per-step gate sets, the cued read's host path, and five LOW
+items. The document is ready for a preregistration and a build; it queues nothing.
+
+**Merge order.** Section 2's central measurement (the keep/lose cliff) and section 7's Amendment 7 cite documents
+that are on branch `research/pair-docs-final` (which carries `research/pair-verify-go` and
+`research/pair-production-path-arms`) and not yet on main: merge that branch before this one, or with it.
 
 ## 0. The owner's ruling (verbatim) and what it changes
 
@@ -84,10 +95,10 @@ and never forgets. The pair adds forgetting, but through one threshold that does
 ## 2. Why the pair's keep-or-lose is a single threshold
 
 The adversarial review of the pair (research/findings/2026-09-25-da-capture-sleep-replay-pair-verify-go-review.md,
-branch `research/pair-verify-go`, finding I-1) measured, across 24 seed x telling cells with both flags on, that the
-next-day outcome is a step in one number: R, the store's cleanup margin at the night's one SWR epoch. Every cell at R
-0.185 or below was lost, every cell at 0.209 or above was kept. <!--derived-->
-Reading the code gives four reasons, each a constant standing where the real system runs a process:
+branch `research/pair-verify-go`, carried by `research/pair-docs-final` and not yet on main, finding I-1) measured,
+across 24 seed x telling cells with both flags on, that the next-day outcome is a step in one number: R, the store's
+cleanup margin at the night's one SWR epoch. Every cell at R 0.185 or below was lost, every cell at 0.209 or above was <!--derived-->
+kept. Reading the code gives four reasons, each a constant standing where the real system runs a process:
 
 1. **One switch per fact.** The composer writes a block as `complex(g) * zc[k]` with `zc` a unit phasor
    (`research/runners/one_brain_composer.py` `_write_block`), and the ledger sets each synapse's tag to
@@ -144,7 +155,7 @@ magnitude of the fact's block (`tag0_mean`, the ledger's write tag = the written
 reactivation read R at the first SWR epoch, and the first-morning outcome, for the weak telling (arm `fiv_lr`) and for
 the salient telling of the same fact (arm `fis_lr`, same seed, same block index):
 
-<!--derived-->
+<!-- table below: two-decimal reads of the fi seed records (not claim-checked: under three decimals) -->
 | seed | weak: write magnitude | weak: R at first epoch | weak: morning 1 | salient: write magnitude | salient: R | salient: morning 1 |
 |---|---|---|---|---|---|---|
 | 42 | 1.23 | 0.36 | correct | 2.46 | 0.47 | correct |
@@ -158,12 +169,15 @@ What the records show:
 
 1. **What gets stored at all did not fail.** Every seed wrote one managed block for the telling
    (`daily_n_managed_blocks` = 1 in `fiv_lr`), and the confabulation gate held everywhere (FI7).
-2. **The first-morning loss was decided at encoding.** The first SWR epoch ran five minutes after the telling (sleep
-   onset after the last turn), when the early phase was still about 95 % of its written value, so R there is the
-   encoded read, not a decayed one. On seeds 43 and 101 it sat below the pair's measured cliff (section 2), the late
-   phase never started (`z_mean` about 0 at the first recall), and the early phase then decayed by morning. With one
-   block in the store the night's SWR dopamine is set by that block's own R (`da_swr` 0.62 and 0.53 against 0.73-0.81
-   on the passing seeds), so a weakly encoded lone fact also cannot pay for its own capture: R entered twice. <!--derived-->
+2. **Encoding set the read that the first night acted on.** The first SWR epoch ran five minutes after the telling
+   (sleep onset after the last turn), when the early phase was still about 95 % of its written value, so R there is
+   the encoded read, not a decayed one. On seeds 43 and 101 it sat below the pair's measured cliff (section 2), the
+   late phase never started (`z_mean` about 0 at the first recall), and the early phase then decayed by morning. On
+   seed 101 the loss was decided at encoding (a read at noise, below the separator); on seed 43 encoding set a read
+   above noise and just under the cliff, and the pair's single threshold decided it (the paragraph after this list).
+   With one block in the store the night's SWR dopamine is set by that block's own R (`da_swr` 0.62 and 0.53 against
+   0.73-0.81 on the passing seeds), so a weakly encoded lone fact also cannot pay for its own capture: R entered
+   twice. <!--derived-->
 3. **At the floor write, encoding strength is a lottery.** Four seeds wrote the weak telling at magnitude 1.0, the DA
    write gain's recall-safe floor (`webapp/da_encoding_drives_chat.py`: a below-tonic-DA fact is written at unit
    magnitude), and read 0.17, 0.31, 0.32 and 0.04: same words, same script, same turn, same block index. With the
@@ -171,11 +185,17 @@ What the records show:
    expected magnitude (`BETA_BASELINE = 1.0`,
    "increment ~ baseline"), and the read is the minimum over three roles of a D = 128 matched-filter margin
    (`brain_conversational_agent.py` default). Which component owns the spread -- the slot's baseline draw, the seed's
-   word codes, or read noise -- is not in the record. One pointer: on seed 101 the same fact re-told the next day
-   (arm `fir_lr`) went into a new block, read 0.28 at its first night and was recalled from day 2 on, against 0.04
-   for the original block; on seed 43 the re-told block read 0.01 at its first night and was still recalled from day 3
-   (captured through the one shared PRP pool that the day's other tellings and their replay fill, section 2 item 3),
-   so on seed 43 the slot is not the whole story. <!--derived-->
+   word codes, or read noise -- is not in the record. The re-mention arm (`fir_lr`, 5 build-time facts, so recall
+   `matched_fact_index` 5 is managed block 0 and 10 is managed block 5) tells the same fact again on days 2 and 3,
+   each time into a new block. Read at each block's first night, the same content read, on seed 43, 0.168588 (block
+   0), 0.008005 (block 1, the day-2 re-mention: captured through the shared PRP pool, yet never the block that
+   answered) and 0.362487 (block 5, the day-3 re-mention, which answered every recall from the third on); on seed 101,
+   0.035600, 0.282606 (block 1, which answered recalls 2 and 3) and 0.482487 (block 5, recalls 4 to 7)
+   (research/findings/raw/_sleep_forgetting_interference/seed43/fir_lr.json,
+   research/findings/raw/_sleep_forgetting_interference/seed101/fir_lr.json). Identical content spanned about 0.01 to
+   0.48 across slots of one seed, which if anything points toward slot or store state rather than the word codes; but
+   here the slot is confounded with the store's load and the write gain (block 5 wrote at 1.12 against 1.0), so the
+   record does not attribute it. Step 0b does.
 4. **Importance already acts at encoding, through dopamine.** The salient telling of the same fact wrote at about
    twice the magnitude and read 0.29-0.55 on every seed, above the cliff, and was recalled on the first morning on
    seeds 43 and 101 too (seed 101's salient fact was lost later, by day 5: FI5 false, a retention matter). At a fixed
@@ -195,12 +215,14 @@ WM0c), the second through graded capture and selective replay (Steps 1-4, scored
 **The answer: yes, the design must address encoding.** Not admission -- every telling was stored -- but how strongly
 and how cleanly a plainly told fact is written, which today is set by the seed's realization of the store at the floor
 write gain and not by anything the fact is worth. The owner's rule allows a minor fact to fade, but not at once and
-not by lottery: a fact lost by the first morning in the vacuum arm because of where it landed is not "forgetting
-minor details over time". The design is changed in four places:
+not by lottery: a fact lost by the first morning in the vacuum arm, at the same write gain at which other seeds kept
+it, is not "forgetting minor details over time". The design is changed in four places:
 
 - **Measure it.** The encoding read becomes graded and per arm (Step 0 and 5.1): right after each telling, in every
-  arm, the arm's OWN telling is decoded and its R0 (the sleep route's own reactivation read) and cue-role margins are
-  recorded. A precondition read on a sibling script is not allowed (the fi lesson).
+  arm, the arm's OWN telling is decoded and its written magnitude, its R0 (the sleep route's own reactivation read) and
+  its cue-role margins are recorded. A precondition read on a sibling script is not allowed (the fi lesson). R0 is a
+  normalized margin and cannot see how strongly a fact was written, so importance at encoding is read on the magnitude
+  (WM0b) and noise-level encoding on R0 (WM0c).
 - **Score it as the brain's outcome.** A fact that does not encode is scored as lost, under a new gate WM0 (learned,
   and learned by importance, and not by lottery), instead of voiding the seed (5.3, 5.4 U2).
 - **Attribute, then build.** Step 0b attributes the spread of R0 at a fixed write gain to slot, content, read noise and
@@ -251,16 +273,55 @@ states how it interacts (biology: `homeostatic-scaling-relative-strength`).
 - *With the ledger off (today's default).* The per-write gain is already floored at the set-point (1.0), so an N fact
   sits at it; an S fact written at about twice the gain is pulled part of the way down (for a 2x engram by
   `0.5 ** 0.25`, about 0.84), so the S-N magnitude difference that the DA write gain created shrinks at the first idle
-  tick, before any delay. This works against WM0b and WM1 for S in the default baseline.
-- *With the ledger on.* `sync_from_store` reads the pass as an external rescale and applies it to the block's baseline
-  and increment alike (the fi records count them: `external_rescales` is 1 in the one-fact arm `fiv_lr` and 70 in
-  `fih_lr_a`, consistent with a pass after each day's new facts that rescales every managed block). The cleanup margin R is
-  scale-invariant, so R, the replay tag and capture are unchanged; what changes is magnitude-dependent: r3's load read
-  (dW / W) and the cross-block cue-match competition of the recall.
+  tick, before any delay. This works against WM1 for S in the default baseline (not against WM0b, which reads the
+  written magnitude right after the telling, before the pass).
+- *With the ledger on.* The pass senses the whole block, the drawn baseline plus the increment, so a gain-1 fact whose
+  baseline adds to its readout sits ABOVE the set-point and is pulled down too, and a strongly written fact is pulled
+  down further. `sync_from_store` (`webapp/da_tag_capture.py`) reads the pass as an external rescale and multiplies the
+  block's baseline and increment by its scale s, but not its write tag h0 (the fi records count the passes:
+  `external_rescales` is 1 in the one-fact arm `fiv_lr` and 70 in `fih_lr_a`, consistent with a pass after each day's
+  new facts that rescales every managed block). The cleanup margin R is scale-invariant, so R itself is unchanged. The
+  replay tag is not: the SWR re-tag is h_rep = R |inc| (`webapp/sleep_replay_capture.py` `_epoch`), taken from the
+  rescaled increment, so every replay tag carries s. The capture drive gamma p h (h the larger of the decayed write tag
+  and the decayed replay tag, both with TAU_TAG_H = 1.5 h) then carries s wherever the replay tag is the larger term:
+  a block told more than about 1.5 h x ln(1 / (R s)) before its epoch (about 2 h at R = 0.3), which, for any block
+  reading R above about 0.08, is every target of this battery's day-1 blocks (told at least 4 h before the night), and
+  every block on every later night. It is asymmetric: the important fact loses
+  more. It is also slot-dependent: the sensed magnitude includes the (seed, block) baseline draw, so s is a second
+  slot-dependent input to capture, which an attribution of R0 alone cannot see. Also magnitude-dependent: r3's load
+  read (dW / W) and the recall's cross-block cue-match competition.
+- *What the fi records show.* The bookkeeping is reproduced exactly: at the first recall a block's increment
+  magnitude is its write tag x s x the night's r3 scale. Per seed, weak telling (`fiv_lr`) then salient telling
+  (`fis_lr`): write tag `tag0_mean`, increment `inc_mag` at the first recall, r3 `shy_scale`, and s derived from them
+  (research/findings/raw/_sleep_forgetting_interference/seed*/fiv_lr.json,
+  research/findings/raw/_sleep_forgetting_interference/seed*/fis_lr.json):
+
+| seed | weak: tag0 | weak: inc | weak: r3 | weak: s | salient: tag0 | salient: inc | salient: r3 | salient: s | s ratio S:N |
+|---|---|---|---|---|---|---|---|---|---|
+| 42 | 1.225950 | 0.989153 | 0.893078 | 0.90 | 2.463246 | 1.662990 | 0.858694 | 0.79 | 0.87 |
+| 43 | 1.000000 | 0.821410 | 0.881904 | 0.93 | 2.202763 | 1.512364 | 0.848213 | 0.81 | 0.87 |
+| 44 | 1.000000 | 0.840662 | 0.901931 | 0.93 | 2.001480 | 1.458259 | 0.883170 | 0.82 | 0.89 |
+| 100 | 1.000000 | 0.847601 | 0.902021 | 0.94 | 2.330044 | 1.603520 | 0.860459 | 0.80 | 0.85 |
+| 101 | 1.000000 | 0.802122 | 0.863550 | 0.93 | 2.122842 | 1.428693 | 0.829802 | 0.81 | 0.87 |
+| 102 | 1.045387 | 0.899379 | 0.912721 | 0.94 | 1.965960 | 1.467779 | 0.894709 | 0.83 | 0.89 |
+
+  The same s is recovered from the replay tag (`tag_rep_mean` / (R x tag0)) on every row. So with the ledger on the
+  pass pulls even gain-1 N facts down (s 0.90-0.94 on all six seeds), pulls the salient fact harder (0.79-0.83), and
+  shrinks the S:N replay-tag ratio by 11-15 % (mean 13 %) before the first SWR epoch. <!--derived-->
+  In fi's first night the write tag, told five minutes earlier, is still the larger term, so first-night capture
+  there did not carry s; in this battery it does (above).
+- *What it predicts for the gates in ledger-on arms* (the pair baseline, and every step until Step 2(c) replaces
+  the pass). It works against WM1 for S (lower capture drive and replay tag for S relative to N at every pass) and
+  against WM6 wherever the burst competition's drive is read off the block's weights (the Step-4 prereg states whether
+  it is; its excitability mark is not rescaled by the pass). It lowers N's replay tag and capture drive too, by less.
+  Predicted direction: `n7_nohomeo` reads score(S) - score(N) and S's replay wins at least as high as `n7`.
 - *In the arms.* It stays ON in every arm, because it is production and the flip candidate must hold with it. Step 0
-  adds a default-off lesion knob that skips the pass (byte-identical off, asserted in the data) and a REPORTED arm
-  `n7_nohomeo` per group for both baselines and for the step under test, so its cost to WM0b and WM1 is measured.
-  Step 2(c) replaces it with a homeostat over units that several engrams share.
+  adds a default-off lesion knob that skips the pass (byte-identical off, asserted in the data), a per-block record of
+  every pass's scale s (the composer's `_homeo_scales`, with the pass's time), and a REPORTED arm `n7_nohomeo` per group
+  for both baselines and for the step under test, so its cost to WM0b, WM1 and WM6 is measured. Reading `n7_nohomeo`:
+  skipping the pass removes the S:N compression AND the pull-down of N AND changes r3's load read, so a difference
+  between `n7` and `n7_nohomeo` is not the compression alone; it is read with the per-block s record beside it. Step
+  2(c) replaces the pass with a homeostat over units that several engrams share.
 
 ## 4. The mechanism plan, in order
 
@@ -272,25 +333,36 @@ not part of this plan. Every step is default OFF, byte-identical off (asserted i
 own biology binding and its own prereg committed before any run.
 
 **Step 0 -- the instrument first.** Build the what-matters battery (section 5) as a runner family, with the graded
-outcome grader; the graded encoding read after every telling (the decode of the arm's own telling, R0 and the cue-role
-margins, section 5.1); a per-block read of the late-phase fraction and of each block's reactivation count; the
-homeostat lesion knob; and the two baselines: today's production default and the pair as it stands, each at the delay
-arms {`d1h`, `d4h`, `n1`, `n3`, `n7`} so that every gate predicted to fail in 5.6 is scored at a delay the baseline
-actually runs. No brain change. Its own gate is discriminating power: both baselines must read NO-GO on the gates
-predicted in 5.6. If a baseline passes a gate predicted to fail, that gate is repaired by amendment before any
-mechanism result is scored. "The instrument is part of the emulation."
+outcome grader; the graded encoding read after every telling (the decode of the arm's own telling, the written
+magnitude, R0 and the cue-role margins, section 5.1), which saves and restores the substrate state it touches and is
+checked by a read-off control (U0b); a per-block read of the late-phase fraction and of each block's reactivation
+count; a per-block record of every homeostatic pass's scale s (section 3); the homeostat lesion knob; and the two
+baselines: today's production default and the pair as it stands, each at the delay arms {`d1h`, `d4h`, `n1`, `n3`,
+`n7`} so that every gate predicted to fail in 5.6 is scored at a delay the baseline actually runs. No brain change.
+Its own gate is discriminating power: both baselines must read NO-GO on the gates predicted in 5.6. If a baseline
+passes a gate predicted to fail, that gate is repaired by amendment before any mechanism result is scored. If a
+baseline FAILS a gate predicted to pass, the failure is diagnosed on the record before any mechanism result is scored:
+an instrument cause (grader, probe, protocol, the read's own perturbation) is fixed by amendment and the baseline
+re-run; a brain cause stands as a baseline finding, the prediction is corrected by amendment, and the gate stays as
+registered for every step that binds it (a prediction can be corrected, a gate never loosened). "The instrument is
+part of the emulation."
 
 **Step 0b -- attribute the encoding spread (instrument).** A composer-plus-ledger measurement, no chat: at the six
 seeds, (i) the same fact written into eight block slots, (ii) eight different facts written into the same slot index
 over rebuilds, (iii) the ledger's baseline on versus off (b = 0), (iv) the read repeated under eight private RNG
-streams, (v) D in {128, 256} as the ensemble-size factor, all at write gain 1.0 and at the salient gain. Output: the
-share of the variance of R0 (and of the cue-role margins) carried by slot, content, read noise and D, per seed. No
-verdict of its own; a seed-7 dev run precedes the six seeds. **Decision rule for Step 1a, registered now:** among
-slot, content and read noise, the component with the largest share of R0's variance at write gain 1.0 decides which
-candidate is built first ((a), (b) or (c) below); if none carries more than half, (a) and (b) are built together. D
-is reported as the change in R0's mean and spread from 128 to 256; a larger D enters candidate (c) only if it lifts
-every seed's gain-1 R0 above the composer's separator (g = 0.15) AND the doubled store still fits the one-3090
-reference (`gates/consumer_hardware_reference`).
+streams, (v) D in {128, 256} as the ensemble-size factor, (vi) the homeostatic pass applied once after the writes, as
+the idle tick applies it, all at write gain 1.0 and at the salient gain. Output, per seed: the share of the variance
+of R0 (and of the cue-role margins) carried by slot, content, read noise and D; the written magnitude of every block;
+and the pass's scale s per block with the share of its variance carried by slot (through the baseline draw), content
+and D, because s is a second slot-dependent input to capture that R0 cannot see (section 3). No verdict of its own; a
+seed-7 dev run precedes the six seeds. **Decision rule for Step 1a, registered now** (exactly one of (1) and (2)
+applies, and (3) adds to it): (1) if one of slot, content and read noise carries more than half of R0's variance at
+write gain 1.0, its candidate ((a), (b) or (c) below) is built first; (2) otherwise the candidates of the two largest
+of the three are built together, so (c) is among them whenever read noise is one of the two largest; (3) if the slot
+carries more than half of s's variance, (a) is added, since it removes the drawn baseline that s senses. D is reported
+as the change in R0's mean and spread from 128 to 256; a larger D enters candidate (c) only if it lifts every seed's
+gain-1 R0 above the composer's separator (g = 0.15) AND the doubled store still fits the one-3090 reference
+(`gates/consumer_hardware_reference`).
 
 **Step 1a -- encoding strength set by the brain's state, not by where the fact lands** (C-0;
 `encoding-strength-and-allocation`). Candidates, each brain-based:
@@ -299,7 +371,8 @@ reference (`gates/consumer_hardware_reference`).
   chosen by an excitability competition at learning (Han 2007; Yiu 2014). The new block is allocated by a spiking
   competition among free trigger units driven by their excitability, and its pre-existing strength is what the store
   actually holds on those units (Step 2's compartments), so interference is earned by what has been learned, not drawn.
-  If (a) is chosen, Step 1a and Step 2(a) are built together.
+  If (a) is chosen, Step 1a and Step 2(a) are built together. On fresh units the normalized read R0 no longer sees
+  the gain through its ratio to a drawn baseline, which is one reason WM0b reads the written magnitude, not R0.
 - (b) *Content dominates: separation at the write.* The fact's composite is decorrelated from stored and vocabulary
   codes before it is written (dentate-gyrus pattern separation, Leutgeb 2007), through the composer's DG sparse index
   (`research/biology/dg-ca3-sparse-index.md`), so overlapping word codes stop sharing a readout at the store.
@@ -311,7 +384,9 @@ reference (`gates/consumer_hardware_reference`).
   biased-competition / GNW state), never by a host test of which turns are assertions; and Step 5's channels raising
   encoding strength. The awake rest route (post-encoding rest helps, Tambini 2010; Dewar 2012) cannot rescue a trace encoded at
   noise, because its re-induction is proportional to R (the arc family's seed-101 miss), so it is not a candidate here.
-Lesion: the step's mechanism cut (the pre-step write). Gates first expected: WM0a, WM0c, WM2a.
+Lesion: the step's mechanism cut (the pre-step write). Gates that bind: 5.3a's Step-1a row (WM0a, WM0b for S, WM0c,
+WM4). WM2a is scored and REPORTED here: before Step 2 its same-day keep of the morning N fact can come only from the
+global pool's same-block capture (section 2 item 3), a pass by the defect.
 
 **Step 1 -- graded induction over heterogeneous synapses** (C-1; `prp-competition-and-locality`). Give each managed
 block's synapses a seeded per-synapse readiness drawn once at the write (primed with a probability below one half,
@@ -321,7 +396,8 @@ of the trace, and unprimed synapses become ready on an hour scale (Step 3c's spa
 graded by Step 2's competition and locality (Govindarajan 2011), not by readiness. Built after Step 1a: potentiating
 fewer than half the synapses lowers the encoded read, so the Step-1 prereg first checks, on a dev seed, that the recall
 margin at the primed fraction clears the confidence gate at the floor write gain on the Step-1a store. Lesion:
-`rho_k = 1` (today's single switch). Gates first expected: WM5d, WM2a, WM2c, WM4, WM10.
+`rho_k = 1` (today's single switch). Gates that bind: 5.3a's Step-1 row (adds WM2b-d, WM5d, WM10); WM2a REPORTED
+as at Step 1a.
 
 **Step 2 -- limited, local, competed-for PRPs, and a homeostat over shared units** (C-1; Fonseca 2004; Govindarajan
 2011; Dunsmoor 2015; Turrigiano 1998). (a) Compartments: a block is allocated to the compartment whose units its
@@ -333,24 +409,44 @@ all of their engrams by one factor, so it regulates total drive and keeps the or
 (replacing the per-engram pass, section 3). This makes behavioural tagging specific, makes salience competitive, and is
 the registered NR response already named in Amendment 7. The compartment allocation rule is a declared host step until
 the store has dendritic structure (`sim/dendritic_neuron.py` is the named rung). Lesions: one global, unconsumed pool;
-the per-engram homeostat restored. Gates first expected: WM8, WM2c on the multi-fact day, WM1 for S against
-`n7_nohomeo`, WM6b (reported).
+the per-engram homeostat restored. Gates that bind: 5.3a's Step-2 row (adds WM8; WM2c now on the multi-fact day).
+**Predicted regression, registered now: WM2a fails at Steps 2 and 3.** The morning N fact is about 11 h old at `d1h`
+and, with TAU_EARLY_H = 1.5 h, survives only if captured; before Step 2 the global, never-consumed pool fed by the same
+block's S, E and F tellings captures it (the non-specific capture of section 2 item 3), Step 2 removes that, and no
+registered mechanism keeps an unrelated ordinary morning fact through the day until Step 4(c)'s awake bursts. WM10 is
+at risk for the same reason (its comparator, the pair as it stands, keeps what the global pool captured). Both are
+scored and REPORTED at Steps 2 and 3 and bind again from Step 4. REPORTED: WM1 for S against `n7_nohomeo` (whether (c)
+removed the per-engram pass's S compression, section 3), WM6b.
 
-**Step 3 -- one trace per fact: repetition and recall strengthen it** (C-4; `repetition-retrieval-strengthen-same-trace`).
-(a) A re-telling is recognized by the composer's own cued read (`_find_cued_block`, the spiking K-way sequencer); a
-predicted re-statement, now "restabilize", re-induces early LTP and re-sets the tag on that block through the ledger
-(the awake-replay rule `e <- e + R (1 - e)`, reused) instead of appending a copy. Strengthening acts on the same
-synapses: an earlier finding here showed re-encoding a second copy is a random walk in binding quality
+**Step 3 -- one trace per fact: repetition and recall strengthen it** (C-4;
+`repetition-retrieval-strengthen-same-trace`). (a) A re-telling is recognized by the composer's own cued read
+(`_find_cued_block`); a predicted re-statement, now "restabilize", re-induces early LTP and re-sets the tag on that
+block through the ledger (the awake-replay rule `e <- e + R (1 - e)`, reused) instead of appending a copy. That cued
+read is the spiking K-way sequencer only when the composer's integrated loop is on, and production has it OFF
+(`webapp/server.py` `_INTEGRATED_LOOP_DEFAULT_ON = False`; `BrainConversationalAgent` defaults
+`integrated_loop=False`): then `_seq_block` runs the host first-match loop over the decoded blocks (an agent and
+action string compare), and "this is a re-telling" would be a host decision. So Step 3's arms, and the arms of every
+later step, run with `BRAIN_INTEGRATED_LOOP=1`, registered in the Step-3 prereg, and the flip candidate and leg (d)
+carry it. The flip then includes turning the integrated loop on by default, which has its own open owner decision (the
+sequencer's characterized over-abstention at the tiny-demo's small vocabulary, noted at that constant in
+`webapp/server.py`); the Step-3 prereg's seed-7 dev run measures that over-abstention on this battery's vocabulary
+before any six-seed set, and from Step 3 on WM10's comparator (the pair as it stands) runs with the same selection
+path. The prediction error that separates a re-statement from a correction is the spike-resident matched-filter read
+(`_patient_prediction_error`, persistent loop on by default); its threshold compare and calibration are host
+arithmetic on that read, declared like R. Strengthening acts on the same synapses: an earlier finding here showed
+re-encoding a second copy is a random walk in binding quality
 (research/findings/2026-05-31-P4-multihop-trace-bimodality-DIAGNOSED-per-pair-per-seed-recall-strength-lottery-actionable.md).
-(b) The brain's own retrieval event strengthens what it retrieved: when its cued read selected a managed block and the
-reply did not abstain, that block gets the same re-induction, WHETHER OR NOT THE ANSWER IS RIGHT. No host grader
-enters: retrieval practice helps without feedback (Roediger & Karpicke 2006), and people strengthen what they produced
-even when it was wrong (Roediger & Marsh 2005); WM4 catches any confabulation that results. The re-induction is applied
-after the reply, so the read never writes during itself (the systems-consolidation protocol rule is kept). (c) Spacing:
-synapses left unprimed by an episode become ready on an hour scale (Kramar's 1-h rule), so a repeat after an hour
-recruits them and a massed repeat does not. The host `kb` list must not be the dedupe key. Lesion L-RECON: the
-re-induction edge cut (and dedupe must still hold). Gates first expected: WM5a, WM5b, WM5c, WM1 for Rsp and T, WM7
-L-RECON.
+(b) The brain's own retrieval event strengthens what it retrieved: when its cued read (the sequencer's selection, as
+in (a)) selected a managed block and the reply did not abstain, that block gets the same re-induction, WHETHER OR NOT
+THE ANSWER IS RIGHT. No host grader enters: retrieval practice helps without feedback (Roediger & Karpicke 2006). The
+risk side is real and is why WM4 must catch any confabulation that results: wrong answers met at a test can become
+later answers (reading more multiple-choice lures raised lure intrusions on a final test, Roediger & Marsh 2005; this
+shows exposure to wrong alternatives, not directly that a produced wrong answer is strengthened). The re-induction is
+applied after the reply, so the read never writes during itself (the systems-consolidation protocol rule is kept). (c)
+Spacing: synapses left unprimed by an episode become ready on an hour scale (Kramar's 1-h rule), so a repeat after an
+hour recruits them and a massed repeat does not. The host `kb` list must not be the dedupe key. Lesion L-RECON: the
+re-induction edge cut (and dedupe must still hold). Gates that bind: 5.3a's Step-3 row (adds WM5a-c, WM1 and WM3 for
+Rsp and T, WM7 L-RECON); WM2a and WM10 REPORTED as at Step 2.
 
 **Step 4 -- replay that spends effort where it matters** (C-2; `prioritized-replay-triage`). (a) An importance mark
 carried by excitability: at encoding the neuromodulatory mix at the telling (DA now; the Step-5 channels later) raises
@@ -365,8 +461,10 @@ graded induction; the five-cycle fake-substrate runaway that forced one epoch pe
 recur. (e) The replay-to-DA map: the Step-4 prereg replaces the host map `tonic + (DA_SWR_FULL - tonic) * min(1, sum R)`
 with the spiking SNc's own output during the burst; if that cannot be built inside the step, the map is declared and a
 registered arm pins the burst's DA to tonic while the re-tag stays, so R's two entries (tag and PRP supply) are
-measured apart. Lesion L-PRIO-replay: uniform selection (every trigger equally likely). Gates first expected: WM6,
-WM1 and WM3 for S, WM7 L-DA, WM2c under several epochs.
+measured apart. Lesion L-PRIO-replay: uniform selection (every trigger equally likely). Gates that bind: 5.3a's
+Step-4 row (adds WM6, WM1 and WM3 for S, WM7 L-DA and L-PRIO; WM2c now under several epochs), and WM2a and WM10 bind
+again: the awake bursts of (c), in the rest pauses and quiet wakefulness after each block, are the registered same-day
+maintenance of an ordinary fact.
 
 **Step 5 -- the other importance channels** (C-3; `importance-tagging-at-encoding`). Each is a spiking afferent onto
 an existing population with its own lesion; none is a host importance score or a keyword test. Each raises encoding
@@ -387,7 +485,7 @@ strength as well as the tag and the Step-4 excitability mark.
   overlap score. Lesion L-TOPIC cuts the projection. Cue G.
 - 5d value: a signed outcome (praise, correction) needs a signed value afferent that does not exist yet; named, not
   built here.
-Gates first expected: WM0b, WM1, WM3, WM7 for E, F and G.
+Gates that bind: 5.3a's Step-5 row (WM0b, WM1, WM3, WM7 for each channel built).
 
 **Step 6 -- gist and detail on separable traces** (C-4; `gist-detail-graded-forgetting`). The core predicate and a
 peripheral detail are stored on separate synapse sets (separate managed blocks linked by the shared agent code), each
@@ -396,14 +494,15 @@ salient moment favours. The gist that survives a lost detail is carried by the e
 the common-ground referent, which get a decay of their own (Amendment 7 predicts that the episodic organ, not managed
 by the ledger, keeps every topic it formed; its `wd_epi` arm will measure it). The within-fact case is probed with the
 composer's attribute role (WM9c). The reply for "familiar but not recalled" is a functional read-out (section 8). Gates
-first expected: WM9a, WM9c, WM3 peripheral for F.
+that bind: 5.3a's Step-6 row (WM9a, WM9c, WM3 peripheral for F).
 
 **Step 7 -- replay-written transfer to a slow cortical store** (`gist-detail-graded-forgetting`; CLS). Replay
 interleaves captured, important facts into a slow cortical store (the CA3 superposed-fact attractor or a slow cortical
 Hebbian store), fewer replays needed when the fact's concepts already have many stored associates (schema, Tse 2007);
 `promote_buffer_to_ltm()` stops being a host hook. The word "consolidation" becomes available only when a source
-lesion (the composer block removed) shows the cortical trace answers. Lesion L-SCHEMA. Gates: WM1 and WM7 for K, and
-a source-lesion gate in its own prereg. This is the "grows" part of the owner's ruling.
+lesion (the composer block removed) shows the cortical trace answers. Lesion L-SCHEMA. Gates that bind: 5.3a's Step-7
+row (WM0b, WM1, WM3, WM7 for K) and a source-lesion gate in its own prereg. This is the "grows" part of the owner's
+ruling.
 
 **Step 8 -- regulated forgetting of what is marked unneeded** (Hardt 2013; Berry 2012). A dopamine-dependent
 forgetting drive during sleep aimed by a "forget" mark (Step 5b's complementary edge) and by staleness (a superseded
@@ -445,22 +544,32 @@ the existing override to at least the block count; P0 below).
 - **Behavioural tagging (wa):** BT-rel is told 20 min before the second S fact and shares its agent; BT-rel-N is told
   20 min before the second N fact and shares ITS agent (the control for plain agent-sharing crosstalk); BT-unrel is
   told in the turn after BT-rel, about an unrelated agent.
-- **Spacing, the lag design (wb):** each Rsp fact is told, then told again 2 h later; each Rms fact is told twice within
-  the same minute, AT THE CLOCK TIME of the matching Rsp fact's second telling. The last exposure of both is at the same
-  time, so the retention interval from the last exposure to every probe is equal (Cepeda 2006: the inter-study interval
-  and the retention interval act jointly, so only the interval between tellings may differ).
+- **Spacing, the lag design (wb):** each Rsp fact's SECOND telling is at its slot inside the registered block, and
+  its first telling 2 h earlier (07:00-08:30 for the morning block, 16:30-18:00 for the evening block); each Rms fact is
+  told twice within the same minute, AT THE CLOCK TIME of the matching Rsp fact's second telling. The last exposure of
+  both is at the same time and inside a block, so the retention interval from the last exposure to every probe is equal
+  (Cepeda 2006: the inter-study interval and the retention interval act jointly, so only the interval between tellings
+  may differ), and every telling of every cue is over before `d1h` (21:00), which probes each fact at least an hour
+  after its last exposure.
 - **Content:** a pool of content triples per group rotated across cue slots by seed (a Latin-square shift), so
   vocabulary crosstalk is not confounded with cue; no (agent, action) cue of a target collides with a build-time or
   LTM fact, checked offline against the store's fact list before the run (test construction, not the brain).
 - **The encoding read (P1, graded), in every arm:** right after each telling of each target and aside, (i) the
-  composer's own non-writing decode of the new block(s): told roles returned or not; (ii) R0, the sleep route's own
-  reactivation read of each new block; (iii) the cue-role margins of the decode. The reads run under a private RNG
-  stream in every arm, so the shared prefix stays identical (U0 checks it). They read the arm's OWN telling; a
-  precondition read on a sibling script is not allowed (section 2a, item 5). Their outcomes are the BRAIN's: a core
-  block whose decode does not return the told roles is scored lost at every delay and fails WM0a; an aside that does
-  not encode is scored not recalled at every delay (a faithful arousal mechanism may do exactly that to a background
-  detail). A behavioural `imm` arm (a chat probe right after each telling; it diverges after its first probe) is
-  REPORTED beside it.
+  composer's own non-writing decode of the new block(s): told roles returned or not; (ii) the written magnitude W0 of
+  each new block, taken before any homeostatic pass: the ledger's write tag `tag0` (mean |inc|) with the ledger on,
+  and with it off the block's sensed readout A_i / A* (`_measure_block_readout`, the homeostat's own read, linear in
+  the write); A_i / A* is REPORTED in both; (iii) R0, the sleep route's own reactivation read of each new block; (iv)
+  the cue-role margins of the decode. The reads run under a private RNG stream in every arm, so the shared prefix
+  stays identical (U0 checks it). They set the RF bridge's weights and resonate its units mid-day
+  (`_block_role_scores`, `_measure_block_readout`), so the read saves and restores every substrate state it touches
+  (the bridge's complex weights, membrane state and RNG streams) and asserts, on the data (a hash compare), that the
+  substrate state after the read is byte-identical to the state before it; and each config and group runs a read-off
+  control `n1_noread` (U0b), because U0 cannot see a perturbation that `n1` and `n1_b` share. They read the arm's OWN
+  telling; a precondition read on a sibling script is not allowed (section 2a, item 5). Their outcomes are the
+  BRAIN's: a core block whose decode does not return the told roles is scored lost at every delay and fails WM0a; an
+  aside that does not encode is scored not recalled at every delay (a faithful arousal mechanism may do exactly that
+  to a background detail). A behavioural `imm` arm (a chat probe right after each telling; it diverges after its first
+  probe) is REPORTED beside it.
 - **Probes at the delay, once per arm:** for each target fact, in fixed order, the central question (the core's
   patient), the peripheral question (the aside's patient), then the referential probe ("you mentioned the <agent>",
   read on the episodic organ's `in_memory`). Nw and BT facts: central only.
@@ -473,8 +582,10 @@ the existing override to at least the block count; P0 below).
   the replay bias and the re-induction on repetition and recall, while keeping the machinery (one trace per fact,
   graded induction, consumed local PRPs, the r3 brake). REPORTED: `rp` (probed at every delay in one arm: the testing
   effect over the whole protocol), `n7_vac` (no interference: retention in a vacuum, Wixted's case), `n7_nohomeo`
-  (the homeostatic pass skipped, section 3).
-- **Env:** production defaults plus the flags of the step under test; the LTM tier OFF in the gated arms (a declared
+  (the homeostatic pass skipped, section 3). Instrument control: `n1_noread` (the encoding read skipped, every other
+  step equal; U0b).
+- **Env:** production defaults plus the flags of every step in the stack of the step under test (5.3a), with
+  `BRAIN_INTEGRATED_LOOP=1` from Step 3 on (Step 3(a)); the LTM tier OFF in the gated arms (a declared
   deviation, the same one the chat-wire family's LTM-off GO made: an LTM-on build exceeds the 15 GB pool nodes, no gate
   reads the LTM tier, and target content is checked offline against it; LTM on is flip leg D7's job, section 6);
   `BRAIN_EPISODIC_STORE=1` so the episodic organ writes; the seed through `BRAIN_CHAT_SEED` to `cfg.seed` (never
@@ -499,33 +610,55 @@ For Nw and BT facts (core only) kept = 2 on a correct central probe.
 
 ### 5.3 Gates (per seed and group)
 
-| gate | passes only if | first expected at |
+| gate | passes only if | first binds at (5.3a) |
 |---|---|---|
-| WM0 what is told is learned, by importance, not by lottery | (a) every target core block's post-telling decode returns the told roles, in every gated arm; (b) for each cue whose importance is present at the telling (wa: S, E, F; wb: G, K), mean R0 over its core blocks >= mean R0 over N's; (c) every N and Nw core block's R0 is at or above the composer's own clean/noise separator g = 0.15 (the confidence gate's constant: a told ordinary fact is written where the brain's own reads can tell it from noise). REPORTED: every block's R0 and cue-role margins, the step in outcome against R0 | (a) baseline; (b) S baseline, E/F/G step 5, K step 7; (c) step 1a |
+| WM0 what is told is learned, by importance, not by lottery | (a) every target core block's post-telling decode returns the told roles, in every gated arm; (b) for each cue whose importance is present at the telling (wa: S, E, F; wb: G, K), mean written magnitude W0 (5.1) over its core blocks > mean W0 over N's, strictly (at the floor write gain two cues tie, and a tie fails); (c) every N and Nw core block's R0 is at or above the composer's own clean/noise separator g = 0.15 (the confidence gate's constant: a told ordinary fact is written where the brain's own reads can tell it from noise). (b) reads the magnitude because R0 is a normalized margin, (peak - runner_up) / peak (`OneBrainComposer._margin`), which with the ledger off does not depend on the write gain at all and with it on sees the gain only through its ratio to the drawn baseline. REPORTED: every block's W0, A_i / A*, R0 and cue-role margins, the scale s of each homeostatic pass, R0 per cue, the step in outcome against R0 | (a) step 1a (predicted to hold in both baselines); (b) S step 1a, E/F/G step 5, K step 7; (c) step 1a |
 | WM1 importance order | for each cue X (wa: S, E, F; wb: Rsp, T, G, K): (a) score(X) >= score(N) at every delay, and (b) score(X) > score(N) at `n7` | per cue: S step 4, Rsp/T step 3, E/F/G step 5, K step 7 |
-| WM2 ordinary facts fade gradually | (a) not at once: both N facts kept at `d1h` and mean N score >= 1 at `n1`; (b) not never: mean N score at `n7` below its `d1h` value and at least one peripheral detail in the group lost at `n7`; (c) no resurrection: no fact scored 0 at one delay scores above 0 at a later delay; (d) the group's loss events fall in at least two different delay intervals. Nw facts are REPORTED beside N (a-d). REPORTED (e): whether each N fact's familiarity reaches "lost" by `n7` (the "eventually gone" half; seven nights may be too few to require it) | step 1 |
+| WM2 ordinary facts fade gradually | (a) not at once: both N facts kept at `d1h` and mean N score >= 1 at `n1`; (b) not never: mean N score at `n7` below its `d1h` value and at least one peripheral detail in the group lost at `n7`; (c) no resurrection: no fact scored 0 at one delay scores above 0 at a later delay; (d) the group's loss events fall in at least two different delay intervals. Nw facts are REPORTED beside N (a-d). REPORTED (e): whether each N fact's familiarity reaches "lost" by `n7` (the "eventually gone" half; seven nights may be too few to require it) | (b-d) step 1; (a) step 4 (REPORTED at steps 1a-3, predicted to fail at steps 2-3) |
 | WM3 important kept | wa: every F and E fact's central correct at `n7`, every S fact's central correct at `n3`, every F fact's peripheral correct at `n3`; wb: every G, K, T and Rsp fact's central correct at `n3` | per cue as WM1; F peripheral step 6 |
-| WM4 no confabulation | zero unflagged wrong answers on every probe of every gated arm; every familiarity-without-content reply names no content | always |
-| WM5 not RAG-like storage | (a) after each re-telling and each retrieval the fact has exactly one managed block (the composer's own count); (b) with the lag design of 5.1, score(Rsp) >= score(Rms) at `n3` and `n7`, and higher summed over delays; (c) score(T) > score(N) at `n7`; (d) at `n3` at least three target blocks per group express a fraction of their written increment strictly between 0.1 and 0.9 (the ledger's weight factor `e + z(1 - e)` averaged over the block's synapses; 1 by construction with no ledger) | (a-c) step 3; (d) step 1 |
-| WM6 effort follows importance | the mean number of replay reactivations won by cued target blocks exceeds that of N blocks over the protocol; REPORTED (6b): PRP consumed per block | step 4 (6b step 2) |
-| WM7 lesions remove the prioritization | at `n7`, under each channel lesion its mapped cue's advantage is gone (score(X) <= score(N): wa L-DA -> S, L-NE -> E, L-REL -> F; wb L-RECON -> Rsp and T, L-TOPIC -> G, L-SCHEMA -> K) while at least one other cue's advantage remains; under L-PRIO every cue's advantage is gone while WM2a and WM2b still hold (importance-blind, neither amnesic nor keeping everything) | with each channel |
+| WM4 no confabulation | zero unflagged wrong answers on every probe of every gated arm; every familiarity-without-content reply names no content | step 1a, and every step after |
+| WM5 not RAG-like storage | (a) after each re-telling and each retrieval the fact has exactly one managed block (the composer's own count); (b) with the lag design of 5.1, score(Rsp) >= score(Rms) at `n3` and `n7`, and higher summed over delays; (c) score(T) > score(N) at `n7`; (d) at `n3` at least three target blocks per group express a fraction of their written increment strictly between 0.1 and 0.9 (the ledger's weight factor `e + z(1 - e)` averaged over the block's synapses; 1 by construction with no ledger). (d) is an installation check: with readiness below one half fixed a priori, every captured block expresses about the primed fraction, which lies inside (0.1, 0.9) by construction at Step 1, so (d) shows that graded induction is installed, not that retention is graded by importance. REPORTED (e): at `n3`, each cue's mean expressed fraction against N's (the importance order of the fraction; WM1 carries the binding order) | (a-c) step 3; (d) step 1 |
+| WM6 effort follows importance | the mean number of replay reactivations won by cued target blocks exceeds that of N blocks over the protocol; REPORTED (6b): PRP consumed per block | step 4 (6b REPORTED from step 2) |
+| WM7 lesions remove the prioritization | at `n7`, under each channel lesion its mapped cue's advantage is gone (score(X) <= score(N): wa L-DA -> S, L-NE -> E, L-REL -> F; wb L-RECON -> Rsp and T, L-TOPIC -> G, L-SCHEMA -> K) while at least one other cue's advantage remains; under L-PRIO every cue's advantage is gone while WM2a and WM2b still hold (importance-blind, neither amnesic nor keeping everything) | L-RECON step 3; L-DA and L-PRIO step 4; L-NE, L-REL, L-TOPIC step 5; L-SCHEMA step 7 |
 | WM8 behavioural tagging is specific | at `n3`: score(BT-rel) > score(BT-unrel) AND score(BT-rel) > score(BT-rel-N) | step 2 |
-| WM9 the gist survives the detail | (a) no inversion for any cued fact at any delay (N inversions REPORTED); (b) REPORTED: at `n3` or `n7` at least one cued fact per group reads gist (the across-turn aside is a separate block, so the pair can pass this without Step 6; it is evidence of nothing on its own); (c) within-fact, in Step 6's arms with the attribute role bound (`enable_attributed`, a declared deviation) and an attributed patient ("the cat chases the red ball"): at `n3` or `n7` at least one cued fact per group reads core correct and attribute not recalled | (a, c) step 6 |
-| WM10 prioritizing does not mean forgetting more | summed target score at `n7` >= the pair-as-is baseline's at the same seed (the Step-0 row, re-run if the protocol changes); REPORTED against today's default | step 1 |
+| WM9 the gist survives the detail | (a) no inversion for any cued fact at any delay (N inversions REPORTED); (b) REPORTED: at `n3` or `n7` at least one cued fact per group reads gist (the across-turn aside is a separate block, so the pair can pass this without Step 6; it is evidence of nothing on its own); (c) within-fact, in Step 6's arms with an attributed patient ("the cat chases the red ball") written into the composer's attribute role: at `n3` or `n7` at least one cued fact per group reads core correct and attribute not recalled. The role itself is bound and read by default (`BrainConversationalAgent` defaults `enable_attributed=True` and builds the onebrain composer with it, its "default OFF" comments are stale; the fi records decode an attribute role, e.g. seed 43 `fir_recall3`, "fish" at margin 0.08, a noise read of an attribute never told). What production chat lacks is the route that parses an attributed sentence into it: chat acquisition (`_maybe_acquire`) stores a three-word SVO, and the neural attributed parser (`hear_attributed`) has no chat caller. So Step 6's arms route the attributed telling through `hear_attributed`, a declared deviation unless Step 6 wires that route into chat acquisition | (a, c) step 6 |
+| WM10 prioritizing does not mean forgetting more | summed target score at `n7` >= the pair-as-is baseline's at the same seed (the Step-0 row, re-run if the protocol changes, and from Step 3 on with the same cue-match selection path, Step 3(a)); REPORTED against today's default | step 1 (REPORTED at steps 2-3, binding again from step 4) |
 
-**Verdicts.** A group reads GO at a seed only if every gate registered for the step under test holds, and NO-GO if
-one fails; a seed where any U-rule fires reads UNDEFINED, never GO and never NO-GO. A step's family verdict is, in this
-order: INCOMPLETE if a seed is missing; UNDEFINED if any seed is still UNDEFINED after its re-run budget (the defined
-seeds' verdicts are then REPORTED beside it); GO iff all six seeds read GO; NO-GO otherwise. Re-run budget: one re-run
-per seed for U4 (run integrity) only, at the same pinned revision; U0, U1, U2, U3 and U5 are instrument or input
-failures that need a fix and an amendment before any re-run. The one-sided exact sign-flip p over seeds is reported for
-WM0b per cue, WM1b per cue, WM5b and WM8. The flip candidate is held to every gate registered for the steps it contains
-(section 6 lists them).
+**Verdicts.** A group reads GO at a seed only if every gate in the binding set of the step under test (5.3a) holds,
+and NO-GO if one fails; a seed where any U-rule fires reads UNDEFINED, never GO and never NO-GO. A step's family
+verdict is, in this order: INCOMPLETE if a seed is missing; UNDEFINED if any seed is still UNDEFINED after its re-run
+budget (the defined seeds' verdicts are then REPORTED beside it); GO iff all six seeds read GO; NO-GO otherwise.
+Re-run budget: one re-run per seed for U4 (run integrity) only, at the same pinned revision; U0, U0b, U1, U2, U3 and
+U5 are instrument or input failures that need a fix and an amendment before any re-run. The one-sided exact sign-flip
+p over seeds is reported for WM0b per cue, WM1b per cue, WM5b and WM8. The flip candidate is held to the binding set
+of the highest step it contains (5.3a; section 6).
+
+### 5.3a Which gates bind at which step (registered now)
+
+Each step is tested on its stack: the pair plus every step before it in the order 1a, 1, 2, 3, 4, 5 (5a, 5b and 5c in
+any order), 6, 7, with their flags set (a step may be dev-run on a shorter stack; that is REPORTED only). The binding
+set is cumulative: at a step, every gate in its row and in every row above binds, except a gate that the step's row
+lists as REPORTED. Every other gate is scored at every step and REPORTED. Step 0's gate is discriminating power (5.6);
+Step 0b has no verdict.
+
+| step under test | adds to the binding set | scored and REPORTED only, at this step |
+|---|---|---|
+| 1a | WM0a; WM0b for S; WM0c; WM4 | WM2a: before Step 2 the morning N fact reaches `d1h` only through the global pool's same-block capture, so a pass is the defect's |
+| 1 | WM2b, WM2c, WM2d; WM5d; WM10 | WM2a (as at 1a); WM5e |
+| 2 | WM8 | WM2a, predicted to FAIL (the registered Step-2 regression, Step 2); WM10, at risk for the same cause; WM1 for S against `n7_nohomeo`; WM6b |
+| 3 | WM5a, WM5b, WM5c; WM1 and WM3 for Rsp and T; WM7 L-RECON | WM2a and WM10 (as at 2) |
+| 4 | WM2a and WM10 (binding again: Step 4(c) supplies the same-day maintenance); WM6; WM1 and WM3 for S; WM7 L-DA and L-PRIO | -- |
+| 5 | for each channel built: WM0b, WM1, WM3 and WM7 for E (L-NE), F (L-REL), G (L-TOPIC) | -- |
+| 6 | WM9a, WM9c; WM3 for F's peripheral detail | -- |
+| 7 | WM0b, WM1, WM3 and WM7 for K (L-SCHEMA); the source-lesion gate of its own prereg | -- |
 
 ### 5.4 UNDEFINED rules (never scored as a pass or as zero)
 
 - **U0 G0:** `n1` and `n1_b` differ in any outcome, triple, abstain flag, familiarity read, encoding read, ledger state,
   sleep record or final store.
+- **U0b the instrument does not act on the brain:** the encoding read's state assertion fails at any telling (5.1), or
+  `n1` and `n1_noread` differ in any outcome, triple, abstain flag, familiarity read, ledger state, sleep record or
+  final store.
 - **U1 P0 input and capacity:** a telling did not store the registered number of blocks; the managed-block count
   exceeded `k_max`; a scripted re-telling, retrieval probe or rest pause did not happen; a world step failed.
 - **U2 input reached the store:** a target core telling does not decode in the ledger-off baseline arm of the same seed
@@ -551,13 +684,14 @@ number; it is used because the brain's own reads use it, and R0 is host arithmet
 
 ### 5.6 Baselines the battery must fail (discriminating power, Step 0)
 
-Both baselines run {`d1h`, `d4h`, `n1`, `n3`, `n7`} plus `n1_b` and `n7_nohomeo` per group, so every prediction below
-is scored at a delay the baseline runs.
+Both baselines run {`d1h`, `d4h`, `n1`, `n3`, `n7`} plus `n1_b`, `n1_noread` and `n7_nohomeo` per group, so every
+prediction below is scored at a delay the baseline runs. A baseline that fails a gate predicted to pass is handled by
+Step 0's rule (diagnose; an instrument cause is fixed, a brain cause corrects the prediction, never the gate).
 
 | config | predicted to fail | predicted to pass |
 |---|---|---|
-| today's production default (ledger off) | WM2b (nothing fades), WM5a (a re-telling appends), WM5d (no graded traces), WM6 (no replay selection), WM1b for every cue (everything kept, nothing ordered), WM8 (BT-rel, BT-rel-N and BT-unrel all kept, so no strict order), WM9b REPORTED as absent (nothing lost, no gist state), WM0b for E, F, G, K (no channel) | WM2a, WM3 (trivially: everything kept), WM4, WM9a (trivially), WM0a, WM0b for S (the DA write gain); WM0c not predicted (no ledger baseline on this store; REPORTED) |
-| the pair as it stands (DA capture + sleep route) | WM5a, WM5d (fractions only 0 or 1), WM6 (every block reactivated once a night), WM8 (the global pool captures all three BT facts alike), WM1b for E, F, G, K, T; WM2a likely (a neutral fact told about 4 h before sleep was lost 6/6 in r2); WM0c on at least one seed (at the floor write the fi weak telling read 0.04 on seed 101, below the separator; seed 43's 0.17 was above it, so the prediction rests on the six N and Nw core tellings per seed (36 over the family) meeting at least one noise-level read, and a pass here is repaired by amendment per Step 0); WM9a on at least one seed (core and aside are separate blocks kept or lost independently on their own R) | WM4, WM0a, WM0b for S |
+| today's production default (ledger off) | WM2b (nothing fades), WM5a (a re-telling appends), WM5d (no graded traces), WM6 (no replay selection), WM1b for every cue (everything kept, nothing ordered), WM8 (BT-rel, BT-rel-N and BT-unrel all kept, so no strict order), WM9b REPORTED as absent (nothing lost, no gist state), WM0b for E, F, G, K (no channel: at the floor write gain their W0 ties N's, and a tie fails) | WM2a, WM3 (trivially: everything kept), WM4, WM9a (trivially), WM0a, WM0b for S on the written magnitude (the DA write gain scales the write and W0 is linear in it; fi's salient telling wrote at about twice the weak one's magnitude on every seed). The previous revision's R0-based WM0b-S prediction is withdrawn: with the ledger off R0 does not depend on the write gain. WM0c not predicted (no ledger baseline on this store; REPORTED) |
+| the pair as it stands (DA capture + sleep route) | WM5a, WM5d (fractions only 0 or 1), WM6 (every block reactivated once a night), WM8 (the global pool captures all three BT facts alike), WM1b for E, F, G, K, T; WM0b for E, F, G, K (as for the default); WM2a in wb, likely: wb has no S, E or F telling, a plain telling's own D1 read was 0 at every turn of the fi weak and neutral scripts on five seeds (one turn read 0.11 on seed 42), so nothing captures the morning N fact before `d1h`. WM2a in wa is NOT predicted: the same block's S, E and F tellings feed the global, never-consumed pool, which can capture both N facts (the fake design day of Amendment 7 captured every fact told within the hour after a salient telling), so a wa pass would be the defect's, and is REPORTED as such; WM0c on at least one seed (at the floor write the fi weak telling read 0.04 on seed 101, below the separator; seed 43's 0.17 was above it, so the prediction rests on the six N and Nw core tellings per seed (36 over the family) meeting at least one noise-level read, and a pass here is repaired by amendment per Step 0); WM9a on at least one seed (core and aside are separate blocks kept or lost independently on their own R) | WM4, WM0a, WM0b for S on the written magnitude (the DA write gain sets the write tag `tag0`, which fi's salient telling put at about twice the weak one's on every seed) |
 
 ### 5.7 What it takes to run
 
@@ -575,15 +709,15 @@ the LTM-on GO ran on AWS `r7i.4xlarge` with a 48 GB job cap). The registered pla
 - **Flip leg D7 (LTM on).** AWS `r7i.4xlarge`, one seed per instance job, the memory cap set from a measured seed-42
   peak before the other five are queued (the chat-wire LTM-on convention).
 - **Estimates, to be replaced by the smoke's measured per-arm wall time and peak RSS before any six-seed set is
-  queued.** Step 0: 2 configs x 7 arms (`d1h`, `d4h`, `n1`, `n3`, `n7`, `n1_b`, `n7_nohomeo`) x 2 groups = 28 arms per
-  seed, 168 for six seeds. On numpy the episodic write dominates: about 25 topics on day 1 plus up to 14 interference
-  topics later, at about 510 s each, puts an arm at roughly 3.5-5.5 h, so about 100-150 CPU-h per seed and 600-900
-  CPU-h for six seeds, about 45-65 instance-hours of one `r7i.4xlarge` at 14 concurrent processes (the budget guard
-  converts that to spend and holds the owner's daily cap). On the 3090, where the episodic write takes seconds, an arm
-  should cost near the fi basis (20-60 min by delay): about 15-25 GPU-h per seed and 90-150 GPU-h for six seeds, one
-  brain process at a time. Step 0b is small (composer-plus-ledger builds, no chat), well under 10 CPU-h on local cores
-  under `tools/memcap.sh`. The full battery after Step 4 has about twice Step 0's arm count and longer nights (several
-  epochs). <!--derived-->
+  queued.** Step 0: 2 configs x 8 arms (`d1h`, `d4h`, `n1`, `n3`, `n7`, `n1_b`, `n1_noread`, `n7_nohomeo`) x 2 groups
+  = 32 arms per seed, 192 for six seeds. On numpy the episodic write dominates: about 25 topics on day 1 plus up to 14
+  interference topics later, at about 510 s each, puts an arm at roughly 3.5-5.5 h, so about 110-175 CPU-h per seed
+  and 670-1060 CPU-h for six seeds, about 50-75 instance-hours of one `r7i.4xlarge` at 14 concurrent processes (the
+  budget guard converts that to spend and holds the owner's daily cap). On the 3090, where the episodic write takes
+  seconds, an arm should cost near the fi basis (20-60 min by delay): about 17-29 GPU-h per seed and 100-170 GPU-h for
+  six seeds, one brain process at a time. Step 0b is small (composer-plus-ledger builds, no chat), well under 10 CPU-h
+  on local cores under `tools/memcap.sh`. The full battery after Step 4 has about twice Step 0's arm count and longer
+  nights (several epochs). <!--derived-->
 - A seed-7 dev smoke precedes every six-seed set; a full-brain snapshot fork at the branch points (the GNW fork
   instrument generalized) could cut the shared-prefix cost but needs its own fork-equals-rerun check first.
 Nothing is queued by this document.
@@ -594,27 +728,30 @@ The flip candidate is no longer the pair alone but the pair plus Steps 0, 0b, 1a
 OFF until then (the owner's "wait on fix").
 
 - **Leg (b), verify-go review.** B1 (record corrections) is unchanged and still required. B2 (the owner's decision on
-  the measured forgetting) is answered in principle by the ruling: losing an ordinary fact is acceptable when the
-  loss follows importance, so the 0/6 loss of a neutral fact told 4 h before sleep is not by itself a blocker. What
-  blocks is that the loss is importance-blind, and that encoding is a lottery at the floor write. B2 becomes a
-  registered criterion: every gate registered for the steps in the flip candidate reads GO 6/6 in the battery (wall
-  clock, LTM off as declared in 5.1) and again in D7 (production defaults, LTM on). For the minimum candidate (pair + Steps 0, 0b, 1a, 1, 2, 3, 4) that is WM0, WM1 and WM3 for the
-  cues whose channels are in it (S, Rsp, T), WM2, WM4, WM5, WM6, WM7 (L-DA, L-RECON, L-PRIO), WM8 and WM10; E, F, G and
-  K join WM0b, WM1, WM3 and WM7 with Steps 5 and 7, and WM9a and WM9c with Step 6. WM1 is a relative order, so a brain
-  that forgot nearly everything could pass it; WM3 (important facts kept, absolute) and WM10 (no more forgetting than
-  the pair as it stands) are what stop that. B3 (the `pp` wall-clock day) stays; its registered verdicts stand as
-  registered, its WD2 ("ordinary kept") is read as REPORTED for the flip decision, and its NR gate becomes binding (it
-  is WM2c on a production day). B4 (`sn`: salient vs neutral at long delay in one family, waking-only DA lesion) stays
-  as the first registered instance of WM1 and WM7 for the dopamine channel. B5 (the weak telling read at once and with
-  the ledger off) stays; it is the P1 logic, now graded (WM0).
+  the measured forgetting) is answered in principle by the ruling: losing an ordinary fact is acceptable when the loss
+  follows importance, so the 0/6 loss of a neutral fact told 4 h before sleep is not by itself a blocker. What blocks
+  is that the loss is importance-blind, and that encoding is a lottery at the floor write. B2 becomes a registered
+  criterion: every gate registered for the steps in the flip candidate reads GO 6/6 in the battery (wall clock, LTM
+  off as declared in 5.1) and again in D7 (production defaults, LTM on). For the minimum candidate (pair + Steps 0,
+  0b, 1a, 1, 2, 3, 4) that is the cumulative binding set of 5.3a's Step-4 row: WM0a, WM0b for S, WM0c, WM1 and WM3 for
+  S, Rsp and T, WM2a-d, WM4, WM5a-d, WM6, WM7 (L-DA, L-RECON, L-PRIO), WM8 and WM10; E, F, G and K join WM0b, WM1, WM3
+  and WM7 with Steps 5 and 7, and WM9a and WM9c with Step 6. The candidate carries `BRAIN_INTEGRATED_LOOP=1` (Step
+  3(a)), so the flip includes the integrated loop's own default, which has an open owner decision. WM1 is a relative
+  order, so a brain that forgot nearly everything could pass it; WM3 (important facts kept, absolute) and WM10 (no
+  more forgetting than the pair as it stands) are what stop that. B3 (the `pp` wall-clock day) stays; its registered
+  verdicts stand as registered, its WD2 ("ordinary kept") is read as REPORTED for the flip decision, and its NR gate
+  becomes binding (it is WM2c on a production day). B4 (`sn`: salient vs neutral at long delay in one family,
+  waking-only DA lesion) stays as the first registered instance of WM1 and WM7 for the dopamine channel. B5 (the weak
+  telling read at once and with the ledger off) stays; it is the P1 logic, now graded (WM0).
 - **Leg (c), combined no-regression battery.** C1-C3 carry over, run at the revision that carries the prioritization
   steps. Added: every memory faculty that reads the composer store (episodic, source provenance, prospective memory,
   WM binding, common ground) keeps its load-bearing row, because Steps 1a, 3 and 6 change what a told fact writes.
-- **Leg (d), production-default validation.** D1-D6 carry over. D6 (many managed facts) becomes a behaviour check,
-  not only a latency check: the battery is a many-facts session. Added D7: the full battery at production defaults (no
-  flags in env), LTM on, the episodic organ writing (cupy on the 3090, or `BRAIN_EPISODIC_STORE=1`). Added D8: a
-  normal day with several 5-minute pauses (several epochs inside one early-phase window) raises no minor fact over an
-  important one and resurrects nothing (WM1a and WM2c on the `pp` day).
+- **Leg (d), production-default validation.** D1-D6 carry over. D6 (many managed facts) becomes a behaviour check, not
+  only a latency check: the battery is a many-facts session. Added D7: the full battery at production defaults (no
+  flags in env; the candidate's flags, the integrated loop among them, flipped on by default), LTM on, the episodic
+  organ writing (cupy on the 3090, or `BRAIN_EPISODIC_STORE=1`). Added D8: a normal day with several 5-minute pauses
+  (several epochs inside one early-phase window) raises no minor fact over an important one and resurrects nothing
+  (WM1a and WM2c on the `pp` day).
 
 ## 7. The in-flight lanes: keep, reshape, supersede
 
@@ -646,15 +783,19 @@ OFF until then (the owner's "wait on fix").
 Every memory self-report is a functional read-out of a measured state, never a claim of experience. Gist:
 "You told me something about the dog, but I can't recall what" only when the episodic familiarity read is positive
 and the recall abstains. Flagged facts: "you asked me to keep this" only when the relevance latch is on. Fading: "I'm
-not sure any more" only when the recall margin is in the registered uncertain band; the reply says nothing about how
-long ago the fact was told, because the brain has no read of a memory's age (a recency read would be its own design).
+not sure" only when the recall margin is in the registered uncertain band; the reply says nothing about how long ago
+the fact was told or how sure the brain used to be, because it has no read of a memory's age or of its past
+confidence (a recency read would be its own design).
 The brain never asserts a detail it cannot recall (WM4), and never says it "feels" that it remembers.
 
 ## 9. What this design does not do, and open questions
 
 - It builds nothing, queues nothing and changes no default. Each step is its own build, binding, prereg and review.
 - The ledger's host-integrated synaptic equations stay; Step 2's compartment allocation is a declared host step; the
-  sleep/wake clock stays the body's host clock; R and R0 are host arithmetic on substrate reads, declared.
+  sleep/wake clock stays the body's host clock; R and R0 are host arithmetic on substrate reads, declared; W0 is the
+  ledger's host record of the write with the ledger on and the homeostat's substrate read with it off.
+- Step 3 depends on the integrated loop (the spiking cue-match sequencer), whose production default is an open owner
+  decision; until it flips, the production cued read is the host first-match (Step 3(a)).
 - A further constant, named here and not addressed: production starts "sleep" after any 5 min of idle
   (`continuous_engine.SLEEP_IDLE_SEC`), where a real brain runs quiet wakefulness with awake ripples and sleeps when
   sleep pressure and circadian phase say so. The battery uses the body's awake mark instead; the production effect is
@@ -692,6 +833,27 @@ The brain never asserts a detail it cannot recall (WM4), and never says it "feel
 | 15 | wb lesion-to-cue mapping; Step 5c read as a host overlap score; "eventually gone" never gated (LOW) | 5.1 other arms and WM7 (explicit mapping), Step 5c (a spiking projection, Hebbian coincidence at the write), WM2e REPORTED |
 | 16 | Step 4 multiplies bursts with the host sum-R DA map untouched (LOW) | Step 4(e), section 2 item 2; `prioritized-replay-triage` binding |
 | 17 | "that was a while ago" asserts elapsed time with no read (LOW, honesty) | section 8 |
+
+## 10b. The review of fcf3c847d, closed item by item
+
+The independent review of `fcf3c847d` read SOUND-WITH-ISSUES. It re-derived by hand the numbers this document marks as
+derived (all six rows of the 2a table, the first-night SWR dopamine, P1's write range, the rescale counts, the fi
+ratio and FI1/FI5/FI6/I3 per seed) and found them exact; the claim checker had verified only one of them, because it
+checks only numbers of three or more decimals outside derived markers. The new homeostat and re-mention numbers of
+this revision are written at the records' precision beside their paths, so the checker verifies them.
+
+| # | review item (severity) | closed in |
+|---|---|---|
+| 1 | with the ledger on, the homeostat changes the replay tag and capture (h_rep = R \|inc\| from the rescaled increment; h0 not rescaled), asymmetrically, and is a second slot-dependent input (MEDIUM) | section 3 (ledger-on paragraph corrected; traced table: s 0.90-0.94 N, 0.79-0.83 S, S:N tag ratio down 11-15 %; predictions for WM1-S and WM6; how to read `n7_nohomeo`); Step 0 (per-block s record); Step 0b (s attributed; rule clause 3); biology `homeostatic-scaling-relative-strength` |
+| 2 | seed 43's `fir_lr` misread: the recalled block is block 5 (the day-3 re-mention, R 0.36), not block 1 (R 0.008) (MEDIUM) | section 2a item 3 (corrected with the full per-block reads of seeds 43 and 101; the inference dropped, the slot confound stated) |
+| 3 | WM0b read R0, a scale-invariant margin blind to the write gain with the ledger off; no rule for a baseline that fails a gate predicted to pass (MEDIUM) | 5.1 (written magnitude W0), WM0b on W0 with a strict order, R0 kept for WM0c; 5.6 (the R0-based ledger-off WM0b-S prediction withdrawn, restated on W0 with its mechanism); Step 0 (rule for an unexpected baseline failure) |
+| 4 | WM2a at `d1h` needs same-day capture: before Step 2 only the defect supplies it, Steps 2-3 predictably fail it; the pair prediction ignored same-block capture; which gates bind a step was ambiguous (MEDIUM) | 5.3a (per-step cumulative binding sets); WM2a binds from Step 4 (the awake bursts); the Step-2 regression registered in Step 2, WM10 with it; 5.6 pair row (wb likely fail, wa not predicted, a pass the defect's) |
+| 5 | Step 3's cued read is the host first-match with the integrated loop off, as in production (MEDIUM) | Step 3(a, b): `BRAIN_INTEGRATED_LOOP=1` in Step 3's and every later step's arms, in the flip candidate and D7; its over-abstention measured first; WM10's comparator on the same path; section 9 |
+| 6 | the attribute role is on by default; the missing piece is the chat parse route (LOW) | WM9c; biology `gist-detail-graded-forgetting`; the stale "default OFF" code comments noted in WM9c |
+| 7 | Rsp's second telling and Rms fell after `d1h` in the evening, and outside the morning block (LOW) | 5.1 spacing: first tellings moved 2 h earlier, last exposures inside the blocks, all before `d1h` |
+| 8 | WM5d passes by construction at Step 1; Step 0b's rule contradicted itself (LOW) | WM5d (named an installation check; WM5e REPORTED); Step 0b rule (clauses exclusive, (c) reachable) |
+| 9 | the per-telling read is invasive and U0 cannot see a shared perturbation (LOW) | 5.1 (save and restore, state assertion), `n1_noread`, U0b; 5.6 and 5.7 arm counts |
+| 10 | wording: "decided at encoding" for both seeds; "where it landed"; "not sure any more"; Roediger & Marsh stretched; merge order and evidence strength (LOW) | section 2a items 2 and the answer paragraph; section 8; Step 3(b) and biology `repetition-retrieval-strengthen-same-trace`; the merge-order note after the introduction; this section's first paragraph |
 
 
 ## Sources

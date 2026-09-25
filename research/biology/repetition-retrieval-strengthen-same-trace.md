@@ -22,7 +22,7 @@ sources:
     note: "Roediger & Karpicke 2006, Psychol Sci 17:249 (doi 10.1111/j.1467-9280.2006.01693.x), abstract read via PubMed 2026-09-25: on the delayed tests (2 days, 1 week) prior testing without feedback produced substantially greater retention than restudy. The strengthening is triggered by the act of retrieving, with nobody telling the learner whether the answer was right."
   - path: "PMID:16248758"
     anchor: "increased production of multiple-choice lures as incorrect answers on the final test"
-    note: "Roediger & Marsh 2005, J Exp Psychol Learn Mem Cogn 31:1155 (doi 10.1037/0278-7393.31.5.1155), abstract read via PubMed 2026-09-25: what was produced on a test is strengthened even when it is wrong ('may inadvertently lead to the creation of false knowledge'). A retrieval-triggered rule that strengthens whatever was retrieved is faithful; one gated on correctness would need a grader the brain does not have."
+    note: "Roediger & Marsh 2005, J Exp Psychol Learn Mem Cogn 31:1155 (doi 10.1037/0278-7393.31.5.1155), abstract read via PubMed 2026-09-25: reading more multiple-choice lures on a test increased the production of those lures as wrong answers on a later test ('may inadvertently lead to the creation of false knowledge'). This is the risk side of test-time learning, shown for wrong alternatives READ at test; it does not show directly that a produced wrong answer is strengthened. The case for a retrieval-triggered rule without a correctness grader rests on Roediger & Karpicke 2006 (no feedback needed); this source is why the design's no-confabulation gate must watch it."
   - path: "PMID:18849987"
     anchor: "one normal function of hippocampal memory reconsolidation in rats is to modify the strength of a contextual-fear memory as a result of further learning"
     note: "Lee 2008, Nat Neurosci 11:1264 (doi 10.1038/nn.2205), abstract via PubMed 2026-09-25: reactivation destabilizes the memory and restabilization updates its strength -- further learning strengthens the SAME trace."
@@ -49,12 +49,15 @@ findings:
 **What the real system runs.** A repeat after a gap recruits synapses the first episode missed (Kramar 2012; Kandel
 ch.53 for the spaced-training protocol); reactivation plus restabilization strengthens the same trace (Lee 2008);
 retrieval is a stronger learning event than restudy, even without feedback (Karpicke & Roediger 2008; Roediger &
-Karpicke 2006), strengthens a wrong answer too (Roediger & Marsh 2005), and prevents detail loss (Sekeres 2016);
+Karpicke 2006), wrong alternatives met at a test can become later answers (Roediger & Marsh 2005, shown for lures
+read, not for answers produced), and early retrieval prevents detail loss (Sekeres 2016);
 the best spacing grows with how long the memory must last (Cepeda 2006).
 
 ## How the code is expected to bind to it (design only, nothing implemented)
 
-Design doc step 3: the composer's own cued-block read decides "this is a trace I already have"; a predicted
+Design doc step 3: the composer's own cued-block read decides "this is a trace I already have" (the spiking cue-match
+sequencer, so Step 3's arms run with `BRAIN_INTEGRATED_LOOP=1`; with it off, as in production today, the read is a
+host first-match string compare); a predicted
 re-statement, or the brain's own retrieval event (its cued read selected a managed block and the reply did not
 abstain, whether or not the answer is right -- no host grader), then re-induces early LTP and re-sets the tag on THAT
 block through the ledger (the awake-replay rule e <- e + R (1 - e), reused), after the reply, so the read itself never

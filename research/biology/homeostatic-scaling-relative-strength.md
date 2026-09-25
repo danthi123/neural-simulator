@@ -25,8 +25,12 @@ rescales that block alone: a weak engram up to the set-point (at most x4), a str
 (`ratio ** 0.25`, at least x0.34). Each block owns its own D readout units (trig+1..trig+D), so a rule that is
 per-neuron in the tissue becomes per-memory here: it removes every importance difference below the set-point and
 compresses the ones above it (the chat's per-write gain is floored at the set-point, so today the compression of
-strongly written, important facts is the live effect). It also runs on the first idle tick after a write, where
-the tissue's scaling develops over tens of hours.
+strongly written, important facts is the live effect). With the DA tag-capture ledger on, the pass senses the block's
+drawn baseline plus its increment, so even a gain-1 fact sits above the set-point and is pulled down, and the
+ledger's replay re-tag (R x the rescaled increment) carries the scale into capture: in the fi records the scale was
+0.90-0.94 for a gain-1 fact and 0.79-0.83 for a salient one, about 13 % off the salient-to-neutral replay-tag ratio
+before the first sleep epoch (design doc section 3). It also runs on the first idle tick after a write, where the
+tissue's scaling develops over tens of hours.
 
 **What the real system runs.** One multiplicative factor per neuron over all of its inputs, proportional to each
 synapse's strength (Turrigiano 1998), so a neuron that carries several memories keeps their order while its total

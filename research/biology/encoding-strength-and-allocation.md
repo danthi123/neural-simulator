@@ -48,9 +48,12 @@ findings:
 six seeds) lost a plainly told fact by the first morning on seeds 43 and 101, even in the arm where nothing else was
 learned. The design doc listed under `findings` (section 2a) reads the per-seed records: every telling wrote its block,
 but the block's own reactivation read five minutes after it was written -- the encoded read -- ranged about 0.04 to
-0.32 across the four seeds that wrote it at the same floor gain, and the seeds at the low end lost it. The encoded
-strength was set by the seed's realization of the store (the slot's seeded baseline draw, the word codes, the read
-noise; which one is not in the record), not by anything the fact was worth.
+0.32 across the four seeds that wrote it at the same floor gain. The seed at 0.04 (101) encoded it at noise; the seed
+at 0.17 (43) encoded it above noise and just under the pair's capture cliff, where the pair's single threshold lost
+it. The encoded read was set by the seed's realization of the store (the slot's seeded baseline draw, the word codes,
+the read noise; which one is not in the record), not by anything the fact was worth. The read is a normalized margin,
+so it measures how cleanly a fact was written, not how strongly: the design reads importance at encoding on the
+written magnitude and noise-level encoding on the margin.
 
 **The constants this replaces (read in the code).** The composer writes a told fact into the next free block at the
 DA write gain (`research/runners/one_brain_composer.py` `_write_block`); with the ledger on, the block's synapses carry

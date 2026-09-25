@@ -67,8 +67,12 @@ Design doc steps 6-8: the core predicate and each peripheral detail on separate 
 reads (no min over roles); the local priority mark of `importance-tagging-at-encoding` deciding which component is
 kept; the episodic / common-ground topic trace carrying the gist, with a decay of its own; replay-written transfer to a
 slow cortical store for important and schema-consistent facts. The within-fact case (one block carrying the core and a
-detail) is probed with the composer's attribute role (`enable_attributed`, default off, declared in Step 6's arms and
-their baseline rows), because an aside told in its own turn is already a separate block and cannot show the defect.
+detail) is probed with the composer's attribute role, because an aside told in its own turn is already a separate
+block and cannot show the defect. The role is bound and read by default (`BrainConversationalAgent` defaults
+`enable_attributed=True` and builds the onebrain composer with it); what production chat lacks is the route that
+parses an attributed sentence into it (chat acquisition stores a three-word SVO; `hear_attributed`, the neural
+attributed parser, has no chat caller), so that route is the declared deviation in Step 6's arms and their baseline
+rows, unless Step 6 wires it into chat acquisition.
 The word "consolidation" is reserved for the model
 until a source lesion shows the cortical trace answers without the composer block (docs/TERMS.md). No
 `constraints_config`.
