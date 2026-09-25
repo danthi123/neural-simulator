@@ -165,6 +165,15 @@ recommendation: redo on a different host, log in b2b0924_reruns.tsv, one-line pr
 recommendation: merge the 8 confirmed corrections from claimcheck-audit-1..4, add a dated scope note, no bulk-marking, no retractions.
 (5) flipdefaults-adequate unpinned reference: FYI; B2a pinned R2 independently confirms the three flips; accept with the caveat.
 
+**☀️ 13:05 OWNER RULINGS:** (1) memory pair: WAIT ON FIX -- "a certain degree of forgetting is acceptable ... What's important is
+that the brain should remember things that matter ... prioritizing what should be remembered and focusing on key details, while
+forgetting minor details over time ... not just stores info like a RAG system" (memory project_remember_what_matters). The target
+is PRIORITIZED retention (important facts + key details kept, minor details fade, gist survives), not every fact kept. (2) affect
+congruence: owner wants more context; stated view: feelings must shape HOW the brain speaks, not insert 'Wonderful!'-style words
+(memory feedback_affect_shapes_speech) -- context workflow `w4reqinlw`. (3) B2b torn cells: APPROVED as recommended. (4) legacy
+claim-check: APPROVED as recommended. Execution = workflow `wgw2xgcw9` (prioritized-memory research + design + registered
+'what-matters' test battery; B2b torn-cell redo with a node constraint + rerun log + amendment; claim-check corrections + scope note).
+
 **🌙 PRE-DECIDED NEXT ACTIONS — OVERNIGHT PLAN (owner asleep from 01:35, 2026-09-25); work in order, re-arm the heartbeat on every expiry:**
 1. ✅ B2a DONE 03:45: re-scored R1 PASS (28/28, 0 regressions) + R2 PASS (168/168 valid at pinned M1, 6 covered-by-parent,
    0 incomplete), two verifiers agree, merged 075c24cd3 (follow-up to the FAIL finding). Robust core 24, union 25, mean
