@@ -21,6 +21,10 @@ WIRING (three hooks, all no-ops unless `BRAIN_DA_TAG_CAPTURE` is armed):
     world-now and rewrite the store. Night-time decay and capture therefore run on the brain's own offline tick; a
     session the tick skips is caught up on its next observed turn (the ledger is event-driven: same integral).
 
+SLEEP ROUTE (branch research/sleep-replay-capture, default-OFF `BRAIN_SLEEP_REPLAY_CAPTURE`): `_catch_up` first runs any
+due NREM cycle of webapp/sleep_replay_capture.py (SWR reactivation read off the store's own cleanup -> re-tag +
+SWR-coupled D1 drive into the same PRP pool). Flag unset -> never entered.
+
 Blocks stored BEFORE the ledger existed (the tiny-demo build-time knowledge) are not managed (`block_offset`): they are
 treated as already-consolidated knowledge. DECLARED.
 
@@ -70,6 +74,11 @@ from webapp.da_tag_capture import (_DA_TONIC, SpikingD1Activation, SynapticTagCa
 TURN_DRIVE_H = 30.0 / 3600.0      # == research/runners/_da_encoding_natural_drive_persistence.TURN_H (v3)
 D1_READER_SEED = 42               # the production write-gain reader seed (as in the v3 runner)
 _WORLD_OFFSET_H = 0.0             # environment clock jump; only the battery's scripted night moves it
+
+
+def _replay_capture_enabled() -> bool:
+    """`BRAIN_SLEEP_REPLAY_CAPTURE` (default OFF) -- read here so the flag-off path imports nothing new."""
+    return os.environ.get("BRAIN_SLEEP_REPLAY_CAPTURE", "0").strip().lower() in ("1", "true", "on", "yes")
 
 
 def store_composer(chat):
@@ -155,6 +164,14 @@ class ChatTagCapture:
         return (time.time() - self.t0_wall) / 3600.0 + jump
 
     def _catch_up(self, comp, t: float) -> None:
+        # SLEEP-REPLAY CAPTURE (default-OFF `BRAIN_SLEEP_REPLAY_CAPTURE`, webapp/sleep_replay_capture.py): before the
+        # ledger moves to t, run every NREM cycle of the sleep episode that began a sleep-onset interval after the last
+        # observed turn and is due by t. Flag unset -> this branch is never entered -> byte-identical.
+        if _replay_capture_enabled() and self.n_turns > 0:
+            from webapp import sleep_replay_capture as _SRC
+            if getattr(self, "_src", None) is None:
+                self._src = _SRC.SleepReplayCapture(self.seed, self.d1, rng_ctx=_private_rng)
+            self._src.catch_up(self.ledger, comp, self.t_turn, self.n_turns, t)
         self.ledger.sync_from_store(comp, t)
         self.ledger.on_store(comp, t)          # a block written outside an observed turn (none on the probe path)
         self.ledger.advance(comp, t)
@@ -182,11 +199,14 @@ class ChatTagCapture:
 
     def summary(self) -> dict:
         L = self.ledger
-        return {"on": True, "clock": self.mode, "world_t_h": L.t, "n_turns": self.n_turns, "gamma": self.gamma,
-                "d1_a_go": self.d1.a_go, "p": L.p, "p_max": L.p_max, "block_offset": L.block_offset,
-                "n_managed_blocks": len(L.blocks), "external_rescales": L.n_external_rescales,
-                "external_rewrites": L.n_external_rewrites, "blocks": L.summary(),
-                "last_turn": (L.turn_log[-1] if L.turn_log else None)}
+        out = {"on": True, "clock": self.mode, "world_t_h": L.t, "n_turns": self.n_turns, "gamma": self.gamma,
+               "d1_a_go": self.d1.a_go, "p": L.p, "p_max": L.p_max, "block_offset": L.block_offset,
+               "n_managed_blocks": len(L.blocks), "external_rescales": L.n_external_rescales,
+               "external_rewrites": L.n_external_rewrites, "blocks": L.summary(),
+               "last_turn": (L.turn_log[-1] if L.turn_log else None)}
+        if getattr(self, "_src", None) is not None:          # only ever set with BRAIN_SLEEP_REPLAY_CAPTURE armed
+            out["sleep_replay_capture"] = self._src.summary()
+        return out
 
 
 def get_chat_capture(chat, seed: int) -> Optional[ChatTagCapture]:

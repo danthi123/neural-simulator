@@ -25,6 +25,12 @@ Run one seed (numpy CPU, 10 brain builds, `--workers N` concurrent subprocesses;
   bash tools/mem_ok.sh 12 && BRAIN_CHAT_SEED unset is fine (the runner sets it per seed):
   tools/memcap.sh 12 -- .venv/bin/python -u -m research.runners._da_tag_capture_chat_probe --seed 42 \
       --out research/findings/raw/_da_tag_capture_chat
+SLEEP-REPLAY CAPTURE FAMILY (`--family rc`, branch research/sleep-replay-capture): RC_ARMS / grade_seed_rc /
+aggregate_rc, gates pre-registered in research/findings/2026-09-24-sleep-replay-capture-PREREGISTRATION.md. Does an
+ordinary fact survive the night once BRAIN_SLEEP_REPLAY_CAPTURE (webapp/sleep_replay_capture.py) is armed, does cutting
+the replay edge remove that, and do the DA lesions still gate capture? Output defaults to RC_OUT.
+  tools/memcap.sh 12 -- .venv/bin/python -u -m research.runners._da_tag_capture_chat_probe --family rc --seed 42
+  ... --family rc --aggregate research/findings/raw/_sleep_replay_capture
 Selftest (no brain):   ... --selftest
 Aggregate:             ... --aggregate research/findings/raw/_da_tag_capture_chat
 Byte-identical off vs the pinned pre-change SHA (two tiny-demo builds, exact sha256):
@@ -75,6 +81,25 @@ ARMS = [
     # makes an ORDINARY (non-salient) fact WORSE off than it is today -- see g["ordinary_fact_flip_forgetting"].
     ("neu_night_off_intact", "datn_recall", dict(OFF)),
 ]
+# ── SLEEP-REPLAY CAPTURE FAMILY (`--family rc`; branch research/sleep-replay-capture, webapp/sleep_replay_capture.py;
+# gates pre-registered in research/findings/2026-09-24-sleep-replay-capture-PREREGISTRATION.md). A SEPARATE arm list
+# and grader: the base family's ARMS / grade_seed / aggregate are untouched, so no committed seed*.json is re-graded.
+RC = {"BRAIN_SLEEP_REPLAY_CAPTURE": "1"}
+RC_LES = {"BRAIN_SLEEP_REPLAY_CAPTURE_LESION": "1"}
+CAP_LES = {"BRAIN_DA_CAPTURE_LESION": "1"}
+RC_ARMS = [
+    ("neu_night_norc", "datn_recall", dict(ON)),                          # the flag-off baseline (ledger on, no route)
+    ("neu_night_rc_a", "datn_recall", {**ON, **RC}),
+    ("neu_night_rc_b", "datn_recall", {**ON, **RC}),                      # null-control rebuild of the new path
+    ("neu_night_rc_replaylesion", "datn_recall", {**ON, **RC, **RC_LES}),
+    ("neu_night_rc_dalesion", "datn_recall", {**ON, **RC, **LES}),        # REPORTED: is the rescue DA-gated too?
+    ("neu_imm_rc", "datni_recall", {**ON, **RC}),                         # precondition: stored + immediately recalled
+    ("sal_night_rc", "datc_recall", {**ON, **RC}),
+    ("sal_night_rc_dalesion", "datc_recall", {**ON, **RC, **LES}),
+    ("sal_night_rc_caplesion", "datc_recall", {**ON, **RC, **CAP_LES}),
+    ("sal_night_rc_replaylesion", "datc_recall", {**ON, **RC, **RC_LES}),
+]
+RC_OUT = "research/findings/raw/_sleep_replay_capture"
 LESION_HELD_MAX_RATIO = 0.25        # G6: lesion PRP p_max must stay below 25 % of the intact arm's (the D1 pool's
                                     #  tonic-rate noise floor gives a ~0.1 per turn at DA=0.5; see the prereg)
 
@@ -104,8 +129,10 @@ def _fact_block(resp):
 
 
 # ── arms ─────────────────────────────────────────────────────────────────────────────────────────────────────────
-def run_seed(seed, out_dir, ltm="off", workers=1):
+def run_seed(seed, out_dir, ltm="off", workers=1, family="base"):
     sys.path.insert(0, _REPO)
+    arm_list = RC_ARMS if family == "rc" else ARMS
+    grader = grade_seed_rc if family == "rc" else grade_seed
     os.environ["BRAIN_CHAT_SEED"] = str(int(seed))       # every arm's worker inherits it (the battery's seed thread)
     if ltm == "off":                                     # the LTM tier is a separate routed store the ledger never
         os.environ["BRAIN_LTM_SHIP_DEFAULT"] = "0"       #  touches; its load does not fit the 15 GB pool nodes (declared)
@@ -124,10 +151,12 @@ def run_seed(seed, out_dir, ltm="off", workers=1):
 
     import concurrent.futures as cf
     with cf.ThreadPoolExecutor(max_workers=max(1, int(workers))) as ex:
-        for name, rec in ex.map(_one, ARMS):
+        for name, rec in ex.map(_one, arm_list):
             arms[name] = rec
     res = {"seed": int(seed), "fact": FACT, "arms": {}, "pinned_sha": PINNED_SHA, "ltm": ltm,
            "backend": os.environ.get("SIM_BACKEND", "numpy"), "argv": list(sys.argv), "workers": int(workers)}
+    if family == "rc":
+        res["family"] = "rc"
     for name, a in arms.items():
         r = a["responses"] or {}
         rec = r.get(a["label"])
@@ -144,7 +173,10 @@ def run_seed(seed, out_dir, ltm="off", workers=1):
                            .get("a_eff") for t in a["turns"]],
             "errors": [str(v.get("_error"))[:300] for v in r.values() if isinstance(v, dict) and v.get("_error")],
         }
-    res["gates"] = grade_seed(res)
+        if family == "rc":
+            res["arms"][name]["sleep_replay_at_recall"] = _tc(rec).get("sleep_replay_capture")
+            res["arms"][name]["blocks_at_recall"] = _tc(rec).get("blocks")
+    res["gates"] = grader(res)
     json.dump(res, open(os.path.join(out_dir, "seed%d.json" % int(seed)), "w"), indent=2, default=str)
     print(json.dumps(res["gates"], indent=2, default=str), flush=True)
     return res
@@ -235,6 +267,124 @@ def grade_seed(res):
     g["n_arm_errors"] = errs
     g["seed_verdict"] = "UNDEFINED" if undefined else ("GO" if core else "NO-GO")
     return g
+
+
+_DA_TONIC_REF = 0.5                 # == webapp.da_tag_capture._DA_TONIC (what both DA lesions pin the D1 read to)
+
+
+def _epochs(arm):
+    return ((arm or {}).get("sleep_replay_at_recall") or {}).get("epochs") or []
+
+
+def grade_seed_rc(res):
+    """The sleep-replay-capture family's pre-registered gates (research/findings/2026-09-24-sleep-replay-capture-
+    PREREGISTRATION.md), verbatim. Pure function of res["arms"]."""
+    A = res["arms"]
+    o = {k: v["recall_outcome"] for k, v in A.items()}
+    g = {}
+    a, b = A["neu_night_rc_a"], A["neu_night_rc_b"]
+    # G0 null control on the NEW path: the rebuild reproduces the decision, the ledger state and the sleep record
+    g["G0_null_clean"] = bool(o["neu_night_rc_a"] == o["neu_night_rc_b"]
+                              and a["recalled_svo"] == b["recalled_svo"] and a["abstained"] == b["abstained"]
+                              and a["tag_capture_at_recall"] == b["tag_capture_at_recall"]
+                              and a.get("blocks_at_recall") == b.get("blocks_at_recall")
+                              and a.get("sleep_replay_at_recall") == b.get("sleep_replay_at_recall"))
+    # P1 precondition: the plainly told fact is stored and recalled at once with the route armed
+    g["P1_immediate_precondition"] = bool(o["neu_imm_rc"] == "correct")
+    # I1 instrument: on every night arm with the route armed the replay branch EXECUTED (>= 1 SWR epoch, every block
+    # read back by the store's own cleanup); on the immediate arm it did NOT (no sleep-depth idle)
+    night = [k for k in A if "_night_rc" in k]
+    g["I1_replay_branch_executed"] = bool(
+        all(len(_epochs(A[k])) >= 1 and all(not e.get("no_reader") and e.get("R") is not None for e in _epochs(A[k]))
+            for k in night)
+        and len(_epochs(A["neu_imm_rc"])) == 0)
+    # I2 every lesion held at measurement (read off the sleep record itself, not assumed from the env)
+    held = True
+    for k in night:
+        env = A[k].get("env") or {}
+        for e in _epochs(A[k]):
+            if env.get("BRAIN_SLEEP_REPLAY_CAPTURE_LESION") == "1":
+                held &= bool(e.get("replay_lesioned") and all(r == 0.0 for r in e.get("R_eff") or [])
+                             and abs(e.get("da_swr", -1) - _DA_TONIC_REF) < 1e-9)
+            else:
+                held &= not e.get("replay_lesioned")
+            if env.get("BRAIN_DA_CAPTURE_LESION") == "1":
+                held &= bool(e.get("capture_lesioned") and e.get("a_eff_mean") == 0.0)
+            if env.get("BRAIN_DA_ENCODING_LESION") == "1":
+                held &= bool(abs(e.get("da_seen_by_d1", -1) - _DA_TONIC_REF) < 1e-9)
+    g["I2_lesions_held"] = bool(held)
+    # the calibration is identical across every companion-ON arm (the Amendment-1 confound, re-checked here)
+    gam = [v["tag_capture_at_recall"].get("gamma") for v in A.values()
+           if (v.get("env") or {}).get("BRAIN_DA_TAG_CAPTURE") == "1" and v["tag_capture_at_recall"].get("gamma")]
+    g["G_isolation_gamma_consistent"] = bool(not gam or all(abs(x - gam[0]) < 1e-6 for x in gam))
+    # RC1 the route rescues the ordinary fact: kept with the flag on, gone with it off (ledger on in both)
+    g["RC1_ordinary_fact_rescued"] = bool(o["neu_night_rc_a"] == "correct" and o["neu_night_norc"] == "abstain")
+    # RC2 cutting the replay edge removes the rescue
+    g["RC2_replay_lesion_removes_rescue"] = bool(o["neu_night_rc_replaylesion"] == "abstain")
+    # RC3 salient-vs-neutral separation kept: with the replay edge cut the salient fact is still kept (its waking DA
+    # capture alone) while the ordinary one is not (RC2) -- the G3 contrast, reproduced with the route armed
+    g["RC3_salient_kept_without_replay_edge"] = bool(o["sal_night_rc_replaylesion"] == "correct")
+    # RC4 the capture lesion still blocks salient capture (it gates the sleep route too)
+    g["RC4_capture_lesion_blocks_salient"] = bool(o["sal_night_rc_caplesion"] == "abstain")
+    # RC5 the DA-encoding lesion still changes the salient next-day reply with the route armed (G1 under the route)
+    g["RC5_da_lesion_still_changes_next_day_reply"] = bool(o["sal_night_rc"] == "correct"
+                                                            and o["sal_night_rc_dalesion"] == "abstain")
+    g["RC6_no_confab"] = bool(all(v != "confab" for v in o.values()))
+    # REPORTED (never gating)
+    ep_a = _epochs(a)
+    g["reported"] = {
+        "neu_night_rc_dalesion_outcome": o.get("neu_night_rc_dalesion"),
+        "R_epoch0": {k: (_epochs(A[k])[0].get("R") if _epochs(A[k]) else None) for k in night},
+        "da_swr_epoch0": {k: (_epochs(A[k])[0].get("da_swr") if _epochs(A[k]) else None) for k in night},
+        "a_eff_mean_epoch0": {k: (_epochs(A[k])[0].get("a_eff_mean") if _epochs(A[k]) else None) for k in night},
+        "pre_sleep_frac_z_gt_half": {k: (_epochs(A[k])[0].get("pre_frac_z_gt_half") if _epochs(A[k]) else None)
+                                     for k in ("neu_night_rc_a", "sal_night_rc")},
+        "n_managed_blocks_neu_rc": (a["tag_capture_at_recall"] or {}).get("n_managed_blocks"),
+        "epoch_t_h_neu_rc": (ep_a[0].get("t_h") if ep_a else None)}
+    errs = sum(len(v["errors"]) for v in A.values())
+    undefined = (not g["G0_null_clean"]) or (not g["P1_immediate_precondition"]) or (not g["I1_replay_branch_executed"]) \
+        or (not g["I2_lesions_held"]) or (not g["G_isolation_gamma_consistent"]) or errs > 0 \
+        or any(v == "undefined" for v in o.values())
+    core = all(g[k] for k in ("RC1_ordinary_fact_rescued", "RC2_replay_lesion_removes_rescue",
+                              "RC3_salient_kept_without_replay_edge", "RC4_capture_lesion_blocks_salient",
+                              "RC5_da_lesion_still_changes_next_day_reply", "RC6_no_confab"))
+    g["outcomes"] = o
+    g["n_arm_errors"] = errs
+    g["seed_verdict"] = "UNDEFINED" if undefined else ("GO" if core else "NO-GO")
+    return g
+
+
+def aggregate_rc(d):
+    """6-seed combine for the rc family: GO iff all 6 pre-registered seeds are GO (re-graded with the current code)."""
+    rows = []
+    for p in sorted(glob.glob(os.path.join(d, "seed*.json"))):
+        try:
+            r = json.load(open(p))
+        except Exception:
+            continue
+        if r.get("family") == "rc":
+            rows.append(r)
+    for r in rows:
+        r["gates"] = grade_seed_rc(r)
+    verdicts = {r["seed"]: r["gates"]["seed_verdict"] for r in rows}
+    n_go = sum(1 for v in verdicts.values() if v == "GO")
+    rescue = [int(r["gates"]["outcomes"]["neu_night_rc_a"] == "correct")
+              - int(r["gates"]["outcomes"]["neu_night_norc"] == "correct") for r in rows]
+    da_lb = [int(r["gates"]["outcomes"]["sal_night_rc"] == "correct")
+             - int(r["gates"]["outcomes"]["sal_night_rc_dalesion"] == "correct") for r in rows]
+    complete = sorted(verdicts) == sorted(SEEDS)
+    verdict = "INCOMPLETE" if not complete else ("GO" if n_go == 6 else "NO-GO")
+    out = {"family": "rc", "seeds": sorted(verdicts), "seed_verdicts": verdicts, "n_go": n_go, "verdict": verdict,
+           "ordinary_fact_rescue_rate_on": (sum(1 for r in rows if r["gates"]["outcomes"]["neu_night_rc_a"] == "correct")
+                                            / float(len(rows)) if rows else None),
+           "ordinary_fact_rescue_rate_off": (sum(1 for r in rows if r["gates"]["outcomes"]["neu_night_norc"] == "correct")
+                                             / float(len(rows)) if rows else None),
+           "signflip_p_rescue_on_vs_off": (seed_signflip_p(rescue) if rows else None),
+           "signflip_p_da_lesion_under_route": (seed_signflip_p(da_lb) if rows else None),
+           "diffs_rescue_on_minus_off": rescue, "diffs_da_intact_minus_lesion_under_route": da_lb}
+    json.dump(out, open(os.path.join(d, "aggregate.json"), "w"), indent=2)
+    print(json.dumps(out, indent=2))
+    return out
 
 
 def seed_signflip_p(diffs):
@@ -524,6 +674,55 @@ def selftest():
         agg = aggregate(_td)
         checks["aggregate: re-grades a stale stored-GO row to the current UNDEFINED verdict"] = \
             agg["seed_verdicts"][900] == "UNDEFINED" and agg["seed_verdicts"][900] != stale["gates"]["seed_verdict"]
+    # ── rc family (sleep-replay capture): the grader must be able to read GO, NO-GO and UNDEFINED ────────────────────
+    def _rc_arm(name, env, outcome):
+        ep = {"R": [0.7], "R_eff": [0.0 if env.get("BRAIN_SLEEP_REPLAY_CAPTURE_LESION") == "1" else 0.7],
+              "da_swr": (0.5 if env.get("BRAIN_SLEEP_REPLAY_CAPTURE_LESION") == "1" else 1.02),
+              "da_seen_by_d1": (0.5 if (env.get("BRAIN_SLEEP_REPLAY_CAPTURE_LESION") == "1"
+                                        or env.get("BRAIN_DA_ENCODING_LESION") == "1") else 1.02),
+              "a_eff_mean": (0.0 if env.get("BRAIN_DA_CAPTURE_LESION") == "1" else 0.5),
+              "replay_lesioned": env.get("BRAIN_SLEEP_REPLAY_CAPTURE_LESION") == "1",
+              "capture_lesioned": env.get("BRAIN_DA_CAPTURE_LESION") == "1", "no_reader": False,
+              "pre_frac_z_gt_half": [0.0], "t_h": 0.1}
+        rc_on = env.get("BRAIN_SLEEP_REPLAY_CAPTURE") == "1"
+        night = "_night_" in name
+        sr = ({"n_epochs": 1 if night else 0, "epochs": [ep] if night else []} if rc_on else None)
+        return {"recall_outcome": outcome, "recalled_svo": FACT if outcome == "correct" else None,
+                "abstained": outcome == "abstain", "env": dict(env), "errors": [],
+                "tag_capture_at_recall": {"gamma": 32.77, "n_managed_blocks": 1}, "fact_block_at_recall": None,
+                "blocks_at_recall": [], "sleep_replay_at_recall": sr}
+    designed = {"neu_night_norc": "abstain", "neu_night_rc_a": "correct", "neu_night_rc_b": "correct",
+                "neu_night_rc_replaylesion": "abstain", "neu_night_rc_dalesion": "abstain", "neu_imm_rc": "correct",
+                "sal_night_rc": "correct", "sal_night_rc_dalesion": "abstain", "sal_night_rc_caplesion": "abstain",
+                "sal_night_rc_replaylesion": "correct"}
+    rc_ok = {n: _rc_arm(n, env, designed[n]) for n, _l, env in RC_ARMS}
+    checks["rc grade: designed-GO pattern -> GO"] = grade_seed_rc({"arms": rc_ok})["seed_verdict"] == "GO"
+    for arm_name, bad, want in (("neu_night_rc_a", "abstain", "UNDEFINED"),         # a != b rebuild -> G0 fails
+                                ("neu_night_norc", "correct", "NO-GO"),             # flag-off already keeps it
+                                ("neu_night_rc_replaylesion", "correct", "NO-GO"),  # lesion does not remove rescue
+                                ("sal_night_rc_replaylesion", "abstain", "NO-GO"),  # separation lost
+                                ("sal_night_rc_caplesion", "correct", "NO-GO"),     # capture lesion bypassed
+                                ("sal_night_rc_dalesion", "correct", "NO-GO"),      # DA no longer load-bearing
+                                ("neu_imm_rc", "abstain", "UNDEFINED")):            # precondition
+        arms_x = dict(rc_ok)
+        arms_x[arm_name] = _rc_arm(arm_name, rc_ok[arm_name]["env"], bad)
+        checks["rc grade: %s=%s -> %s" % (arm_name, bad, want)] = grade_seed_rc({"arms": arms_x})["seed_verdict"] == want
+    arms_x = dict(rc_ok)
+    arms_x["sal_night_rc"] = dict(rc_ok["sal_night_rc"], sleep_replay_at_recall={"n_epochs": 0, "epochs": []})
+    checks["rc grade: replay branch never executed -> UNDEFINED"] = \
+        grade_seed_rc({"arms": arms_x})["seed_verdict"] == "UNDEFINED"
+    arms_x = dict(rc_ok)
+    bad_ep = dict(_epochs(rc_ok["neu_night_rc_replaylesion"])[0], R_eff=[0.7], replay_lesioned=False)
+    arms_x["neu_night_rc_replaylesion"] = dict(rc_ok["neu_night_rc_replaylesion"],
+                                               sleep_replay_at_recall={"n_epochs": 1, "epochs": [bad_ep]})
+    checks["rc grade: replay lesion not held -> UNDEFINED"] = \
+        grade_seed_rc({"arms": arms_x})["seed_verdict"] == "UNDEFINED"
+    with _tf.TemporaryDirectory() as _td:
+        for s in SEEDS:
+            json.dump({"seed": s, "family": "rc", "arms": rc_ok}, open(os.path.join(_td, "seed%d.json" % s), "w"))
+        agg = aggregate_rc(_td)
+        checks["rc aggregate: 6 designed-GO seeds -> GO, p=1/64"] = \
+            agg["verdict"] == "GO" and abs(agg["signflip_p_rescue_on_vs_off"] - 1 / 64.0) < 1e-12
     for k, v in checks.items():
         print("  [%s] %s" % ("PASS" if v else "FAIL", k))
     ok = all(checks.values())
@@ -536,7 +735,9 @@ def main():
     ap.add_argument("--seed", type=int)
     ap.add_argument("--ltm", choices=["off", "on"], default="off")
     ap.add_argument("--workers", type=int, default=1)
-    ap.add_argument("--out", default="research/findings/raw/_da_tag_capture_chat")
+    ap.add_argument("--family", choices=["base", "rc"], default="base",
+                    help="base = the G0-G6 family (unchanged); rc = the sleep-replay-capture family (RC_ARMS)")
+    ap.add_argument("--out", default=None)
     ap.add_argument("--aggregate")
     ap.add_argument("--selftest", action="store_true")
     ap.add_argument("--offcheck", action="store_true")
@@ -547,14 +748,16 @@ def main():
         return offcheck_worker(*a.offcheck_worker)
     if a.selftest:
         return 0 if selftest() else 1
+    if a.out is None:                                   # base keeps its pre-branch default exactly
+        a.out = RC_OUT if a.family == "rc" else "research/findings/raw/_da_tag_capture_chat"
     if a.offcheck:
         return 0 if offcheck(a.pinned_sha, a.out, ltm=a.ltm)["byte_identical_off"] else 1
     if a.aggregate:
-        aggregate(a.aggregate)
+        (aggregate_rc if a.family == "rc" else aggregate)(a.aggregate)
         return 0
     if a.seed is None:
         ap.error("--seed required")
-    run_seed(a.seed, a.out, ltm=a.ltm, workers=a.workers)
+    run_seed(a.seed, a.out, ltm=a.ltm, workers=a.workers, family=a.family)
     return 0
 
 
