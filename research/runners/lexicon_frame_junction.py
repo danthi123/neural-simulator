@@ -34,6 +34,8 @@ LESIONS (`set_lesion`, each verified at measurement by the inherited weight-hash
   "afferent_zero" FJ -> CN/CX zeroed (integrity smoke).
   "coincidence"   every FR -> FJ weight set to OR_LESION_FACTOR x W_J, so one afferent delivers what two did: the
                   AND becomes an OR. The learned FJ -> CN/CX weights are untouched (the G3 lesion).
+  "elemental"     (AMENDMENT 3, elemental variant only) the elemental FR(+-1) -> CN/CX edge zeroed.
+  "conjunctive"   (AMENDMENT 3, elemental variant only) every FR -> FJ weight zeroed: no junction can fire.
 
 CONSTANTS were set at DEV seed 7 (not an evaluation seed), by the rules of AMENDMENT 1 of the pre-registration:
   * T_ON_J = 50: the junction's first spike to a coincident pair comes 19-43 steps after onset across the committed
@@ -75,6 +77,20 @@ three mechanism changes, each a new companion process, none a threshold hack on 
     this is runner-side (the engine's `enable_synaptic_scaling` clip bound, hebbian_max_weight=5.0 with Hebbian
     learning off on this circuit, is a BOUND TRAP at this circuit's ~1000-unit weight scale; `tools.lab.bound_check`
     exists for exactly this failure).
+
+AMENDMENT 3 (2026-09-25; flag BRAIN_LEARNED_REFERENT_JUNCTION_ELEMENTAL, default OFF, read only when the junction
+variant is routed; research/biology/elemental-partial-match-beside-conjunction.md): an ELEMENTAL partial-match edge
+beside the junction edge. FR(-1,a) and FR(+1,b) -- the two afferent blocks every junction reads -- also project
+straight to CN0/CX0 (2C x 2 N_CAT synapses, no STP), learned by the same Oja rule jointly with the junction edge, at
+v2's OWN frame->category constants, unscaled (W_INIT_E / ETA_E / OJA_BETA_E): the junction edge keeps its
+DRIVE_MATCH_S boost because junctions are sparse, the elemental afferents are not, so the elemental vote is the
+unamplified, weaker component and no new constant is chosen. A lone input on a real conjunction branch is integrated
+passively (small, not zero; Kandel ch. 13); a conjunctive code must still represent every active input (Marr 1969
+section 4). Lesions added: "elemental" (the elemental edge zeroed; the AND pathway kept) and "conjunctive" (every
+FR->FJ weight zeroed so no junction can fire; the elemental edge kept) -- AMENDMENT 3's G3', both of which REMOVE
+drive; "learned_edge" now resets BOTH learned edges and the homeostatic settle scales both per postsynaptic neuron;
+"afferent_zero" zeroes both. `drive_of(word)` records the afferent drive into each pool per edge (an instrument).
+Flag unset -> the AMENDMENT 2 lexicon exactly (no group added to the wiring plan, no extra learning step).
 
 HONEST RESIDUALS (declared in the pre-registration): the junction WIRING is host-designed (exhaustive, fixed, one
 unit per (-1,+1) pair over the C most-heard words), not grown by development; the AND is a somatic threshold, not a
@@ -141,7 +157,22 @@ W_INIT_J = L.W_INIT * DRIVE_MATCH_S                   # FJ -> category start wei
 ETA_J = L.ETA * DRIVE_MATCH_S ** 2                    # Oja rate
 OJA_BETA_J = L.OJA_BETA / DRIVE_MATCH_S ** 2          # Oja normalisation strength
 
-LESION_KINDS = L.LESION_KINDS + ("coincidence", "coincidence_matched")
+# AMENDMENT 3 (2026-09-25): the ELEMENTAL partial-match edge FR(-1,a), FR(+1,b) -> CN/CX, beside the junction edge
+# (flag BRAIN_LEARNED_REFERENT_JUNCTION_ELEMENTAL, default OFF; read only when the junction variant is routed). Its
+# constants are v2's OWN frame->category constants, UNSCALED -- deliberately no drive-matching boost: the junction
+# edge is boosted by DRIVE_MATCH_S because junctions fire sparsely, the elemental afferents are not sparse, so the
+# elemental vote is the unamplified (weaker) component and its weight relative to the conjunction follows from
+# constants already frozen. No constant is chosen for this edge. research/biology/elemental-partial-match-beside-
+# conjunction.md.
+W_INIT_E = L.W_INIT                                   # elemental start weight (uniform, jittered by L.W_JITTER)
+ETA_E = L.ETA                                         # elemental Oja rate
+OJA_BETA_E = L.OJA_BETA                               # elemental Oja normalisation
+ELEMENTAL_ENV = "BRAIN_LEARNED_REFERENT_JUNCTION_ELEMENTAL"
+ELEMENTAL_JITTER_SEED = 0xE1E                         # the elemental start-weight jitter stream: rng([seed, this])
+
+# "elemental" and "conjunctive" (AMENDMENT 3's G3' lesions) exist only on a lexicon built WITH the elemental edge.
+LESION_KINDS = L.LESION_KINDS + ("coincidence", "coincidence_matched", "elemental", "conjunctive")
+ELEMENTAL_ONLY_LESIONS = ("elemental", "conjunctive")
 _OFF_L, _OFF_R = L.OFFSETS.index(-1), L.OFFSETS.index(1)
 
 # AMENDMENT 2 mechanism C: a sentence-boundary PAUSE token fed into the heard stream as an ordinary context word
@@ -177,12 +208,31 @@ def junction_enabled() -> bool:
     return v is not None and v.strip().lower() in ("1", "true", "yes", "on")
 
 
-def build_junction_circuit(seed: int, n_frame: int, C: int, w_j: float = W_J, w_init: float = W_INIT_J):
+def elemental_enabled() -> bool:
+    """`BRAIN_LEARNED_REFERENT_JUNCTION_ELEMENTAL` in {1,true,yes,on} (AMENDMENT 3). DEFAULT OFF; it only has an
+    effect when `BRAIN_LEARNED_REFERENT_JUNCTION` also routes the junction variant."""
+    v = os.environ.get(ELEMENTAL_ENV)
+    return v is not None and v.strip().lower() in ("1", "true", "yes", "on")
+
+
+def elemental_afferents(fr, C: int):
+    """The FR afferents the elemental edge reads: the -1 block then the +1 block (the two blocks each junction
+    reads), 2*C neurons."""
+    return np.concatenate([fr[_OFF_L * C:(_OFF_L + 1) * C], fr[_OFF_R * C:(_OFF_R + 1) * C]])
+
+
+def build_junction_circuit(seed: int, n_frame: int, C: int, w_j: float = W_J, w_init: float = W_INIT_J,
+                           elemental: bool = False, w_init_e: float = W_INIT_E):
     """FR (n_frame afferents) + FJ (C*C junctions) -> {CN0, CX0} with the v2 reciprocal FSI inhibition.
 
     The region framework builds every pathway except FR -> FJ (a RegionPathway cannot express "exactly these two
     presynaptic neurons"); the built connectivity is then re-installed verbatim together with the 2*C*C FR -> FJ
-    synapses through `inject_explicit_wiring` (presynaptic polarity traits preserved)."""
+    synapses through `inject_explicit_wiring` (presynaptic polarity traits preserved).
+
+    AMENDMENT 3 `elemental=True` adds one more explicit group: FR(-1,*) and FR(+1,*) -> CN0 and CX0, all-to-all
+    (2*C x 2*N_CAT synapses), start weight w_init_e x (1 + N(0, L.W_JITTER)) floored at 0.01 (the RegionPathway
+    jitter form v2's own frame->category edge uses), drawn from rng([seed, ELEMENTAL_JITTER_SEED]); no STP on these
+    synapses. With `elemental=False` the plan is exactly AMENDMENT 2's (no group added)."""
     from sim import CoreSimConfig, GPUConfig, RuntimeState, SimulationBridge, VisualizationConfig
     from sim.backend import to_host
     from sim.enums import NeuronType
@@ -251,6 +301,19 @@ def build_junction_circuit(seed: int, n_frame: int, C: int, w_j: float = W_J, w_
                   "initial_weights": [float(w_j)] * len(pre_j), "plastic": False,
                   "conn_type": "frame junction: FR(-1,a) and FR(+1,b) -> J(a,b)"},
     }
+    if elemental:
+        # AMENDMENT 3: the elemental (partial-match) edge. stp_disabled=True: like v2's frame->category synapses,
+        # these carry no short-term depression (STP stays scoped to the FR->FJ coincidence-detector input).
+        fr_e = elemental_afferents(fr, C)
+        pools = np.concatenate([np.asarray(list(rm.indices("CN0")), dtype=np.int64),
+                                np.asarray(list(rm.indices("CX0")), dtype=np.int64)])
+        pre_e = np.repeat(fr_e, len(pools))
+        post_e = np.tile(pools, len(fr_e))
+        rng_e = np.random.default_rng([int(seed), ELEMENTAL_JITTER_SEED])
+        w_e = np.maximum(0.01, float(w_init_e) * (1.0 + rng_e.normal(0.0, L.W_JITTER, size=len(pre_e))))
+        plan["elemental"] = {"pre_indices": pre_e.tolist(), "post_indices": post_e.tolist(),
+                             "initial_weights": w_e.tolist(), "plastic": False, "stp_disabled": True,
+                             "conn_type": "elemental partial-match edge: FR(-1,a), FR(+1,b) -> CN0/CX0 (AMENDMENT 3)"}
     b.inject_explicit_wiring(plan)
     return b
 
@@ -262,7 +325,8 @@ class FrameJunctionLexicon(L.SpikingFrameCategoryLexicon):
 
     def __init__(self, seed: int, env, n_replicas: int = 1, *, eta=ETA_J, oja_beta=OJA_BETA_J,
                  teacher_i=L.TEACHER_I, i_frame=L.I_FRAME, k_occ=L.K_OCC, t_on=T_ON_J, epochs=L.EPOCHS,
-                 w_j=W_J, w_init=W_INIT_J, i_tonic=I_TONIC_J):
+                 w_j=W_J, w_init=W_INIT_J, i_tonic=I_TONIC_J,
+                 elemental=None, w_init_e=W_INIT_E, eta_e=ETA_E, oja_beta_e=OJA_BETA_E):
         from sim.backend import to_host
         if int(n_replicas) != 1:
             raise ValueError("FrameJunctionLexicon is the deployment variant: n_replicas must be 1")
@@ -270,7 +334,14 @@ class FrameJunctionLexicon(L.SpikingFrameCategoryLexicon):
         self.eta, self.beta, self.teacher_i, self.i_frame = float(eta), float(oja_beta), float(teacher_i), float(i_frame)
         self.k_occ, self.t_on, self.epochs = int(k_occ), int(t_on), int(epochs)
         self.C, self.w_j, self.i_tonic = int(env.C), float(w_j), float(i_tonic)
-        self.b = build_junction_circuit(self.seed, env.n_frame, self.C, w_j=self.w_j, w_init=w_init)
+        # AMENDMENT 3: the elemental edge. None -> follow the env flag (default OFF). The instance attribute
+        # `variant` lets get_lexicon() rebuild when the requested variant differs.
+        self.elemental = elemental_enabled() if elemental is None else bool(elemental)
+        if self.elemental:
+            self.variant = "junction_elemental"
+            self.eta_e, self.beta_e = float(eta_e), float(oja_beta_e)
+        self.b = build_junction_circuit(self.seed, env.n_frame, self.C, w_j=self.w_j, w_init=w_init,
+                                        elemental=self.elemental, w_init_e=w_init_e)
         rm = self.b.region_manager
         self.fr = np.asarray(list(rm.indices("FR")), dtype=np.int64)
         self.fj = np.asarray(list(rm.indices("FJ")), dtype=np.int64)
@@ -293,8 +364,16 @@ class FrameJunctionLexicon(L.SpikingFrameCategoryLexicon):
         # can update it once, the first time the lesion engages (see `_r4_homeostatic_settle` / `set_lesion` below).
         self.W_lesion_settled = self.W_init.copy()
         self._le_settled = False
+        if self.elemental:
+            self.fr_e = elemental_afferents(self.fr, self.C)                      # 2*C afferents (-1 then +1)
+            self.S_E = L._synapse_slots(self.b, self.fr_e, self.post_groups)      # (2*C, 2*N_CAT) elemental edge
+            self.WE_init = data[self.S_E].astype(np.float64).copy()
+            self.WE = self.WE_init.copy()
+            self.WE_lesion_settled = self.WE_init.copy()
         self.lesion = None
         self._cache = {}
+        self._drive = {}                 # (word, lesion) -> afferent drive into the pools (instrument; AMENDMENT 3)
+        self._last_present = None
         self._install()
 
     # AMENDMENT 2 mechanism A: the per-presentation washout ALSO resets short-term-plasticity state (u->stp_U,
@@ -338,15 +417,27 @@ class FrameJunctionLexicon(L.SpikingFrameCategoryLexicon):
         data[self.S] = W
         data[self.S_inh] = 0.0 if self.lesion == "competition" else self.inh_init
         or_factor = {"coincidence": OR_LESION_FACTOR,
-                    "coincidence_matched": (OR_MATCH_FACTOR if OR_MATCH_FACTOR is not None else OR_LESION_FACTOR)
+                    "coincidence_matched": (OR_MATCH_FACTOR if OR_MATCH_FACTOR is not None else OR_LESION_FACTOR),
+                    "conjunctive": 0.0,       # AMENDMENT 3 G3': every FR->FJ weight zeroed -> no junction can fire
                     }.get(self.lesion, 1.0)
         data[self.S_j] = self.wj_init * or_factor
+        if self.elemental:
+            # AMENDMENT 3: the elemental edge. learned_edge -> its settled start weights (settled together with the
+            # junction edge, per postsynaptic neuron); afferent_zero and the G3' `elemental` lesion -> zero.
+            WE = self.WE
+            if self.lesion == "learned_edge":
+                WE = self.WE_lesion_settled
+            elif self.lesion in ("afferent_zero", "elemental"):
+                WE = np.zeros_like(self.WE)
+            data[self.S_E] = WE
         self.b.cp_connections.data = from_host(data.astype(np.float32))
         self._w_hash = self.weight_hash()
 
     def set_lesion(self, kind):
         if kind not in (None,) + LESION_KINDS:
             raise ValueError(kind)
+        if kind in ELEMENTAL_ONLY_LESIONS and not self.elemental:
+            raise ValueError(f"lesion {kind!r} needs the elemental edge (AMENDMENT 3); this lexicon has none")
         # AMENDMENT 2 R4 fix: the FIRST transition into "learned_edge" runs a one-time homeostatic settle (below)
         # BEFORE the lesioned weights are installed for reading; later re-entries reuse the already-settled result
         # (deterministic, and matches "settle once after the lesioning event" biology, not per-read).
@@ -393,6 +484,9 @@ class FrameJunctionLexicon(L.SpikingFrameCategoryLexicon):
         from sim.backend import to_host, from_host
         words, _ = L.seed_curriculum(self.env)
         Wl = self.W_init.copy()
+        # AMENDMENT 3: with the elemental edge, synaptic scaling is CELL-WIDE -- one scale per postsynaptic neuron,
+        # applied to both learned edges it receives (both start from their pre-learning weights).
+        WEl = self.WE_init.copy() if self.elemental else None
         rng = np.random.default_rng(self.seed + 5)
         data = np.asarray(to_host(self.b.cp_connections.data)).copy()
         saved_k_occ = self.k_occ
@@ -401,6 +495,8 @@ class FrameJunctionLexicon(L.SpikingFrameCategoryLexicon):
             for _ in range(int(epochs)):
                 for w in rng.permutation(np.asarray(words, dtype=object)):
                     data[self.S] = Wl
+                    if WEl is not None:
+                        data[self.S_E] = WEl
                     self.b.cp_connections.data = from_host(data.astype(np.float32))
                     counts, steps = self.present(str(w), teacher=None)
                     if counts is None:
@@ -408,9 +504,13 @@ class FrameJunctionLexicon(L.SpikingFrameCategoryLexicon):
                     y = np.concatenate([counts[g] for g in self.post_groups]) / steps
                     scale = np.clip(1.0 + rate_gain * (target_rate - y), clip[0], clip[1])
                     Wl = Wl * scale[None, :]
+                    if WEl is not None:
+                        WEl = WEl * scale[None, :]
         finally:
             self.k_occ = saved_k_occ
         self.W_lesion_settled = Wl
+        if WEl is not None:
+            self.WE_lesion_settled = WEl
 
     # ── one presentation: v2's, plus the junctions' constant tonic current ───────────────────────────────────
     def present(self, word: str, teacher=None):
@@ -441,6 +541,7 @@ class FrameJunctionLexicon(L.SpikingFrameCategoryLexicon):
                 counts += np.asarray(to_host(b.cp_firing_states), dtype=np.float64)
                 steps += 1
         b.cp_external_input_current[:] = 0.0
+        self._last_present = (counts, steps)     # read by decide() for the afferent-drive instrument only
         return counts, steps
 
     # ── learning: the v2 Oja rule with the JUNCTION rates as the pre factor ──────────────────────────────────
@@ -448,6 +549,48 @@ class FrameJunctionLexicon(L.SpikingFrameCategoryLexicon):
         x = counts[self.fj] / steps
         y = np.concatenate([counts[g] for g in self.post_groups]) / steps
         self.W += self.eta * (np.outer(x, y) - self.beta * (y * y)[None, :] * self.W)
+        if self.elemental:
+            # AMENDMENT 3: the SAME synapse-local Oja rule on the elemental edge, v2's own rate/normalisation, the
+            # same post factor (the pools' rates this presentation), pre = the -1/+1 afferent rates.
+            xe = counts[self.fr_e] / steps
+            self.WE += self.eta_e * (np.outer(xe, y) - self.beta_e * (y * y)[None, :] * self.WE)
+
+    def reset_learning(self):
+        if self.elemental:
+            self.WE = self.WE_init.copy()
+        super().reset_learning()
+
+    # ── the afferent-drive instrument (AMENDMENT 3's G3' drive condition; never read by the decision) ─────────
+    def decide(self, word: str):
+        key = (word, self.lesion)
+        fresh = key not in self._cache
+        self._last_present = None
+        out = super().decide(word)
+        if fresh:
+            lp = self._last_present
+            self._drive[key] = None if (lp is None or lp[0] is None) else self._afferent_drive(*lp)
+        return out
+
+    def _afferent_drive(self, counts, steps):
+        """Afferent drive into each category pool over one presentation, from the INSTALLED weights: sum over
+        presynaptic units of (spikes / steps) x weight, averaged over the pool's N_CAT neurons, per edge. FR and FJ
+        spike trains are feed-forward (they do not depend on the pools), so zeroing an edge can only lower this."""
+        from sim.backend import to_host
+        data = np.asarray(to_host(self.b.cp_connections.data), dtype=np.float64)
+        n = L.N_CAT
+        dj = (counts[self.fj] / steps) @ data[self.S]
+        out = {"junction_cn": float(dj[:n].mean()), "junction_cx": float(dj[n:].mean())}
+        if self.elemental:
+            de = (counts[self.fr_e] / steps) @ data[self.S_E]
+            out.update({"elemental_cn": float(de[:n].mean()), "elemental_cx": float(de[n:].mean())})
+        out["total"] = float(sum(out.values()))
+        return out
+
+    def drive_of(self, word: str):
+        """The recorded afferent drive for `word` under the CURRENT lesion and weights (None if not decided since the
+        last weight change, or unheard). Tied to `_cache`, which training and reset_learning clear."""
+        key = (word, self.lesion)
+        return self._drive.get(key) if key in self._cache else None
 
     def graded_drive(self, word: str):
         """Diagnostic only: the CN-minus-CX drive of the word's COMPLETE (-1,+1) frames through the installed
@@ -464,7 +607,21 @@ class FrameJunctionLexicon(L.SpikingFrameCategoryLexicon):
                     x[a * C + bb] += 1
         data_w = {None: self.W, "learned_edge": self.W_lesion_settled,
                  "afferent_zero": 0 * self.W}.get(self.lesion, self.W)
+        if self.lesion == "conjunctive":
+            data_w = 0 * self.W                     # no junction can fire under the AMENDMENT 3 conjunctive lesion
         d = (x @ data_w).reshape(1, 2, L.N_CAT).mean(axis=2)
+        if self.elemental:
+            # AMENDMENT 3: plus the elemental edge's drive from every -1/+1 afferent the occurrences activate
+            xe = np.zeros(2 * C)
+            for feats in occ:
+                for f in feats:
+                    if _OFF_L * C <= f < (_OFF_L + 1) * C:
+                        xe[f - _OFF_L * C] += 1
+                    elif _OFF_R * C <= f < (_OFF_R + 1) * C:
+                        xe[C + f - _OFF_R * C] += 1
+            we = {"learned_edge": self.WE_lesion_settled, "afferent_zero": 0 * self.WE,
+                  "elemental": 0 * self.WE}.get(self.lesion, self.WE)
+            d = d + (xe @ we).reshape(1, 2, L.N_CAT).mean(axis=2)
         return d[:, 0] - d[:, 1]
 
     # ── the AND, measured (integrity smoke + dev calibration) ────────────────────────────────────────────────

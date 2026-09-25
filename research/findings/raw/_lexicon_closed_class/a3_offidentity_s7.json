@@ -1,0 +1,127 @@
+{
+ "seed": 7,
+ "pre_sha": "db8db2a5b",
+ "pre_change_source_sha256": "8299830229240c577fa0ba10bb2c594c7e69c4ba73c98ad666fda1ce810676a1",
+ "corpus_path": "/home/dant123/Projects/sim/data/corpus/tinystories.txt",
+ "train_words": [
+  "dog",
+  "cat",
+  "always",
+  "again"
+ ],
+ "probes": [
+  "owl",
+  "most",
+  "might",
+  "dog",
+  "when",
+  "wonderful"
+ ],
+ "pre_change": {
+  "variant": "junction",
+  "elemental_attr": null,
+  "build": {
+   "data": "a092c5321779d36c82c32a64512e637f2ae8e7a3f88373899452d93245ecfc45",
+   "indices": "da9d594d8ff17c77b5d9e2b36cecaf5b7607a6f5033b53380e5d51b548c95bdc",
+   "indptr": "f4678ff58b6f72d31d19531ce270bf144ddda0fc9c670ad19b759ebd919164aa"
+  },
+  "train": {
+   "W": "27dfa1a534e8e1a148ee1599c986251d548030e6c94f55b9827876f94d44a92d",
+   "data": "5f4688b85a6befed1a14ccf8664e4c53a144135f6407122a0ae1093a7d887b23"
+  },
+  "decide": {
+   "owl": [
+    null,
+    0.003,
+    0.0033125
+   ],
+   "most": [
+    null,
+    0.0,
+    0.0
+   ],
+   "might": [
+    null,
+    0.00671875,
+    0.00634375
+   ],
+   "dog": [
+    null,
+    0.00640625,
+    0.006843749999999999
+   ],
+   "when": [
+    null,
+    0.0017499999999999998,
+    0.0016250000000000001
+   ],
+   "wonderful": [
+    null,
+    0.00340625,
+    0.00309375
+   ]
+  },
+  "learned_edge_settle": {
+   "W_lesion_settled": "6fd835122140449c7d1e449b1dd1a948783ecb60198227c4be93bcb36ab30c99",
+   "data": "d60241f372d208a557c71870a2c38714cfadf616009d5804d71bbb23d583b029"
+  },
+  "elapsed_s": 157.6
+ },
+ "post_change": {
+  "variant": "junction",
+  "elemental_attr": false,
+  "build": {
+   "data": "a092c5321779d36c82c32a64512e637f2ae8e7a3f88373899452d93245ecfc45",
+   "indices": "da9d594d8ff17c77b5d9e2b36cecaf5b7607a6f5033b53380e5d51b548c95bdc",
+   "indptr": "f4678ff58b6f72d31d19531ce270bf144ddda0fc9c670ad19b759ebd919164aa"
+  },
+  "train": {
+   "W": "27dfa1a534e8e1a148ee1599c986251d548030e6c94f55b9827876f94d44a92d",
+   "data": "5f4688b85a6befed1a14ccf8664e4c53a144135f6407122a0ae1093a7d887b23"
+  },
+  "decide": {
+   "owl": [
+    null,
+    0.003,
+    0.0033125
+   ],
+   "most": [
+    null,
+    0.0,
+    0.0
+   ],
+   "might": [
+    null,
+    0.00671875,
+    0.00634375
+   ],
+   "dog": [
+    null,
+    0.00640625,
+    0.006843749999999999
+   ],
+   "when": [
+    null,
+    0.0017499999999999998,
+    0.0016250000000000001
+   ],
+   "wonderful": [
+    null,
+    0.00340625,
+    0.00309375
+   ]
+  },
+  "learned_edge_settle": {
+   "W_lesion_settled": "6fd835122140449c7d1e449b1dd1a948783ecb60198227c4be93bcb36ab30c99",
+   "data": "d60241f372d208a557c71870a2c38714cfadf616009d5804d71bbb23d583b029"
+  },
+  "elapsed_s": 155.0
+ },
+ "identical": {
+  "build": true,
+  "train": true,
+  "decide": true,
+  "learned_edge_settle": true
+ },
+ "byte_identical_flag_off": true
+}
