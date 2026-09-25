@@ -36,6 +36,18 @@ biology:
 
 # Prioritized memory: remember what matters, let minor details fade (DESIGN, revision 4)
 
+> **OPEN REVIEW ISSUES (independent re-review of revision 4, 2026-09-25; merged with these open, the preregistration
+> step must close each before any gate is registered):**
+> - **MEDIUM:** the matched frames (5.1 item (iii), 5.5, 5.6, the introduction) treat the habituation organ's input as "the
+>   number of words new to the session"; the organ does not work that way (`research/runners/spiking_novelty_habituation_organ.py`:
+>   only `novelty_of` steps its bridge, a fixed simulated time per content word), so novelty is matched on the wrong variable.
+> - **LOW:** WM0d is weaker than its prose: it fails only when the channel contributes nothing, so an advantage mostly carried by
+>   novelty with a small channel share passes both WM0b and WM0d.
+> - **LOW:** the cue manipulation check (5.1) reports the chat record's `da_encoding.g`, a separate peek at the write-gain
+>   population, not the store-time gain the ledger records as `tag0` (they differ in fi, e.g. `neu_imm_fi` seed 100).
+> - **LOW:** section 3's ledger-off bullet still says the gain is floored at 1.0 "so an N fact sits at it", a premise revision 4
+>   withdraws in 5.6 (its conclusion still holds).
+
 Research and design, no code. It answers the owner's ruling of 2026-09-25 on the overnight forgetting of the DA
 tag-and-capture + sleep-replay pair, maps what the brain already has against what real brains run to prioritize
 memory, orders the mechanisms to build, and registers the test battery ("what-matters gates") the mechanisms will be
