@@ -811,7 +811,9 @@ occur on `main` at `4f77a5c7d`; any such change now takes the next free number.
 
 The development evidence committed before this amendment is on dev seeds only (1-15; no gate seed was built by this
 arc; the dev instrument `research/runners/_awake_replay_completion_dev.py` refuses a gate seed):
-`research/findings/2026-09-25-awake-replay-completion-dev-seeds-partial.md`, artifacts
+`research/findings/2026-09-25-awake-replay-completion-dev-seeds-partial.md` ⛔ PARTIAL (its "rescue on seeds 2 and
+13" claim; see addendum 7a's "Did the corrected design change the reported rescue?"; the wiring/wall/wanted-mechanism
+sections and the arm data survive), artifacts
 `research/findings/raw/_awake_replay_completion_dev/scan/s*_arcc_scan.json`,
 `research/findings/raw/_awake_replay_completion_dev/arms/s*_arcc*.json` and
 `research/findings/raw/_awake_replay_completion_dev/arms_both/s*_*.json`.
@@ -951,7 +953,8 @@ first and last bout, the items reinstated at the last bout, R_c and the items at
   trace is left at e ~0.07 <!--derived--> at sleep onset, and those arms abstain only if no item still resolves
   there. R_c was 0 at e = 0.065-0.07 on every dev seed measured that low (2, 7, 13, 14, 15; seeds 1, 3-6 and 8-12
   were scanned only down to e = 0.3). A gate seed whose items still resolve at e ~0.07 <!--derived--> would read NO-GO
-  (capture without rest), and that NO-GO would be a verdict on the ignition point, not on completion.
+  (capture without rest), ~~and that NO-GO would be a verdict on the ignition point, not on completion~~ **withdrawn,
+  addendum 7a: a NO-GO there is a NO-GO** (this clause pre-softened a possible NO-GO before it was measured).
 - `lr_arc_nocomp` reproduces the arc family's `lr_arc_a`: correct on 42, 43, 44, 100, 102 and abstain on 101, so
   `completion_load_bearing` on seed 101 only.
 - `lr_arc_awakeonly`: correct on all six. On seed 101 this is uncertain: the night reads the margin at e ~0.98
@@ -1003,3 +1006,210 @@ the night's completion captures a trace left without rest on any seed, the famil
   contain it), the pin may move to a commit that only merges `main` and touches none of the governed files listed
   above; the scoring finding states the new pin and that `git diff` between the two pins over those files is empty.
   Any other change is Amendment 8, and the pin moves with it.
+
+## Addendum 7a (2026-09-25, branch research/awake-replay-completion-final) — the item competition rebuilt; recorded BEFORE any gate-seed run
+
+Committed before any `--family arcc` output exists at any gate seed, locally or on the pool, and before any line of
+the family is queued (confirmed again for this addendum: `research/queue/pool.queue` is empty, `pool.queue.claims`
+and `dispatch.log` contain no `arcc` / pin-SHA entry, and `research/findings/raw/_awake_replay_completion/` does not
+exist in the working tree or anywhere in `git log --all` — see "Were the six pool lines ever run?" below). This
+addendum governs the same family, arms and gates as Amendment 7 (the next free amendment number stays 8); the pin
+moves to this addendum's commit, `f7693a36f6b352fe805fb7e7c26fc9d34cd72129` on branch `research/awake-replay-completion-final`, which merges
+`origin/main` at `ae5f2b22bed17963d6451b65bd6aef85dae5876f` (`git diff` between the prior pin `a34593b0d` and `ae5f2b22bed17963d6451b65bd6aef85dae5876f` over the governed
+files — `webapp/replay_completion.py`, `webapp/awake_replay_capture.py`, `webapp/sleep_replay_capture.py`,
+`research/runners/_da_tag_capture_chat_probe.py` — is empty, verified before the merge).
+
+### What an adversarial review found at `111667aaa` (SOUND-WITH-ISSUES)
+
+**MEDIUM 1** (false memory). At `_margin_drive_pA` = 300 the production item bank's single-cell spike counts run
+4-9 over 120 steps at the operating point (a small candidate bank, ~18 vocabulary items; verified directly on the
+committed pre-fix-round artifact, `research/findings/raw/_awake_replay_completion_dev/scan/s*_arcc_scan.json`), so
+per-unit excitability and whole-spike ties picked the winner, not the stored item: 44 of 273 dev role reads (15
+seeds) disagreed with the matched-filter word (re-verified 2026-09-25 from that same artifact: exactly 44/273);
+seed 14 e=1.0 'cat' spikes tied 4:4; seed 3 e=0.3 the agent slot reinstated the WRONG word 'ball' (a false memory,
+the single wrong pick in that data); seed 13's patient read only 7:6 (top:runner-up) at e=0.065, illustrating how
+thin the single-digit margin is even off a tie. A separate 4096-cell diagnostic bank (same cell model, seed 7, used
+below to size the assembly) measures a single cell's CV at 0.182 (3-11 spikes) at the same 300 pA/120-step point --
+a different bank size than production's ~18-candidate competition, so a different absolute spike range, the same
+saturated regime. Amendment 7's claim "the ignition point is not a constant" was therefore wrong as built, and the
+seed-2 night-only rescue reported in the dev finding rode on one such override (a single reinstated item, R_c
+0.439902563 -- disclosed below).
+
+**MEDIUM 2** (tests do not pin the substrate). Mutating `spiking_pick` to a host argmax over the raw scores passed
+all 18 tests; removing the reserved-slot/no-code filter also passed.
+
+**LOW.** Stale pin (`origin/main` had moved); the Predictions clause "and that NO-GO would be a verdict on the
+ignition point, not on completion" pre-softened a possible NO-GO; a single-item ignition (R_c ~0.44) captured the
+whole dev-seed-2 block, undisclosed; the injected `reactivate_fn` was not passed through `read_blocks` /
+`completion_read`; the `R_c < 0.15` assertion tolerated a nonzero read where nothing should complete.
+
+**OWNER DIRECTION (2026-09-25, this fix round):** the brain must remember what MATTERS and let minor details fade;
+never confabulate -- a completion that reinstates the wrong item is a false memory and is worse than forgetting.
+
+### What changed (`webapp/replay_completion.py`; tests `tests/test_awake_replay_completion.py`, 24)
+
+1. **ASSEMBLY CODING.** Each candidate item drives an assembly of `ASSEMBLY_CELLS` = 64 cells of the same bank
+   (`_izh_bank`, same cell model, heterogeneity and seed), each cell at the item's peak-normalized drive; the item's
+   evidence is the assembly's pooled spike count. Biology: Kandel 6e ch.21 p.518, "When many neurons contribute to
+   the discrimination, the signal-to-noise ratio increases" (bound in
+   `research/biology/awake-replay-pattern-completion.md`). 64 was chosen from the bank's OWN measured spread, before
+   the new design's dev outcome was seen: at `_margin_drive_pA` (300 pA, 120 steps, 4096-cell bank, seed 7) the
+   single-cell CV is 0.182 (min 3, max 11 spikes); pooled at N=64 the CV is 0.0269 and the largest equal-drive
+   normalized lead over 2000 random assembly pairs is 0.105 -- both comfortably under the discrimination criterion
+   below (`.scratch/cv.py`, re-run 2026-09-25, not committed as an artifact -- a `.scratch/` dev script, not a
+   findings deliverable; the numbers are quoted here and in the module's constant comments).
+2. **DISCRIMINATION CRITERION.** A role's item is the assembly with the largest pooled count, reinstated only when
+   its lead over the runner-up is at least `DISCRIMINATION_G` = 0.15 of its own count; otherwise the role abstains.
+   0.15 is the composer's validated clean/noise separator on the same normalized form (`confidence_gate` g = 0.15,
+   `2026-06-18-emergent-graceful-degradation-derisk.md`), reused. Kandel 6e ch.21 p.518: a change in response must
+   "significantly exceed the normal variability in the response".
+3. **IGNITION REQUIRES EVERY CONTENT ROLE** (`IGNITION_MIN_ITEMS` = 3, unanimous -- NOT the majority first tried).
+   Two thresholds were tried and measured, in order, both disclosed:
+   - **No ignition threshold** (discrimination alone): on the validated 15-dev-seed grid (255 blocks x 3 roles = 765
+     role reads, `scan_assembly64/`) this design alone produced only 4 wrong role-level picks, all four dev seed 1's
+     action role at e <= 0.03 resolving to 'brain' -- the matched filter ITSELF decodes 'brain' past
+     `DISCRIMINATION_G` there (margin 0.176-0.196) while agent and patient stay silent; no statistic of one role's own
+     scores separates that crosstalk read from a true one on the recorded vectors.
+   - **A majority (2 of 3)** eliminated that (0 wrong on the same grid: 106 blocks ignited, 77 fully-resolved, 0 wrong)
+     but, tested against the pre-existing `small` D=64 composer fixture in `tests/test_awake_replay_completion.py`
+     (dev seed 7, a 3-fact vocabulary: `dog go north` / `bird look south` / `cat chase ball`, present in the test
+     suite before this fix round), let a genuinely wrong item through: at e = 0.3 the action role resolved 'chase'
+     (correct) and the patient role resolved 'south' -- decisively (margin 0.159), but WRONG: 'south' is a different
+     fact's patient word, borrowed by crosstalk. Two of three resolved, majority ignited, a false memory was
+     reinstated.
+   - **Requiring all three** (this addendum's setting) blocks both: dev seed 1's single-role crosstalk (agent and
+     patient stay silent) and dev-seed-7's two-role crosstalk (agent stays silent at e = 0.3 there). Measured cost on
+     the validated 15-dev-seed grid: ignited blocks fall from 106 (2-of-3) to 77 (3-of-3), but the fully-resolved
+     count is IDENTICAL, 77 in both cases -- every block requiring only 2-of-3 for AN INCOMPLETE reinstatement is a
+     block that, when it resolves at all beyond one item, resolves all three; unanimity costs nothing measured here,
+     only the 29 partial (2-of-3, one role silent) ignitions. Biology: de la Prida et al. 2006 (a population burst
+     starts at a threshold level of POPULATION firing, not one unit's); Kandel ch.54 / Marr (completion runs from a
+     SUBSET of the stored assembly -- the biology gives a threshold, not its value).
+4. The bank is reset in full (v, u, refractory timers, firing flags) before and after each competition
+   (`_reset_bank`); the record adds `resolved` (each role's own competition winner, whether or not the burst
+   ignited) and `ignited`; the routes pass their injected `reactivate_fn` through `read_blocks` / `completion_read`
+   (`webapp/awake_replay_capture.py`, `webapp/sleep_replay_capture.py`; a spy test,
+   `test_routes_pass_their_injected_read_to_the_completion`, pins it).
+
+### Constants now (none fitted to a gate seed; all measured on dev seeds / a pre-existing test fixture)
+
+`ASSEMBLY_CELLS` 64 (from the bank's measured spread, chosen before the new design's dev outcome was seen),
+`DISCRIMINATION_G` 0.15 (reused, unchanged), `IGNITION_MIN_ITEMS` 3 (unanimous; its NEED was found in two measured
+steps on dev seeds and a pre-existing test fixture, disclosed above -- never on a gate seed). Reused unchanged:
+`_margin_drive_pA`, `_cleanup_window`, `_compose_phases`, every Amendment-4 constant.
+
+### Text of Amendment 7 withdrawn or replaced
+
+The Predictions clause "and that NO-GO would be a verdict on the ignition point, not on completion" is struck in
+place, in Amendment 7's own Predictions section above, with a pointer to this addendum: a NO-GO there is a NO-GO.
+Amendment 7's "None new" constants line and "The ignition point is not a constant" claim (in its own "Constants"
+section and module docstring at the time) are superseded by the constants and disclosure above. Every other
+Amendment-7 rule stands: arms, envs, gates ARCC1-ARCC7, I4, the REPORTED fields, the 6-seed verdict, and the compute
+plan (pool rows at this addendum's commit).
+
+### Mutation verification (2026-09-25, re-run against `f7693a36f6b352fe805fb7e7c26fc9d34cd72129`)
+
+- Host argmax substitute for `spiking_pick` (ignore the bank, `argmax(scores)`): 5 of 24 tests fail, including
+  `test_full_expression_reinstates_the_fact_and_the_baseline_does_not`, `test_the_bank_makes_the_pick_not_the_scores`,
+  `test_an_unresolved_competition_reinstates_nothing`, `test_one_resolved_item_does_not_ignite_the_burst`,
+  `test_a_wrong_word_is_never_reinstated`.
+- Removing the reserved-slot / no-code filter in `select_items`: 1 test fails
+  (`test_reserved_slots_and_codeless_words_are_never_reinstated`).
+- `IGNITION_MIN_ITEMS` mutated to 1 (no ignition requirement): 4 tests fail. Mutated to 2 (the withdrawn majority):
+  3 tests fail, including `test_a_wrong_word_is_never_reinstated` (the dev-seed-7 'south' case above).
+- All 24 pass restored. `.venv/bin/python -m pytest tests/test_awake_replay_completion.py tests/test_awake_replay_capture.py tests/test_sleep_replay_capture.py -q` (CPU, `CUDA_VISIBLE_DEVICES=`): 82 passed.
+
+### Dev evidence under this addendum (dev seeds only; the validated 15-dev-seed grid, `scan_assembly64/`)
+
+Computed offline and reproducibly from the recorded per-role score vectors (`--record-scores --grid full`, one
+`_private_rng`-seeded read per curve point, no live re-simulation): 255 blocks (15 seeds x 17-point `E_GRID`), 765
+role reads. This design (assembly + discrimination + unanimous ignition): 77 blocks ignite, all 77 fully resolve all
+three items to the stored words, ZERO wrong reinstatements. The single-cell (first-build) design, replayed on the
+SAME recorded vectors for a like-for-like comparison: 283 of 765 role-level picks differ from the block's own true
+item (most at e near or below the block's own decay floor, where no fact is left to recover; the review's own
+disclosed reads above -- 44/245, one wrong word -- were a narrower, hand-checked subset of this same first build).
+
+### Did the corrected design change the reported rescue? Re-run, honestly
+
+Re-run under this addendum's code (`bash tools/memcap.sh 2 -- ... --seed 2 --arm arcc --out
+research/findings/raw/_awake_replay_completion_dev/arms_final/s2_arcc.json`, CPU-only, dev seed 2, the weaker of the
+two dev seeds the original finding reported a rescue on): **outcome = ABSTAIN** (the original finding reported
+CORRECT). R itself is unchanged (first bout 0.107457145, matching the original to 9 digits -- the margin read is not
+touched by this fix). But R_eff = 0.0 at EVERY one of the 48 bouts: bout 0 already resolves only 2 of 3 roles
+(`resolved`: agent None, action 'chase', patient 'ball' -- exactly the 2-of-3 pattern a majority design would have
+ignited on), so unanimity abstains from the first bout onward, R decays under rest with no completion holding it
+(0.107 -> 0.045 by the 48th bout, e falling to 0.068 at sleep onset), and the night epoch reads R_c = 0.0 too
+(agent, action AND patient all None there). The original finding's seed-2 "rescue" is CONFIRMED to have been the
+false-memory artifact the review's MEDIUM 1 suspected: R_c 0.439902563 came from a single item (agent 'cat')
+igniting alone under the old single-cell/no-ignition-requirement design, on a role the matched filter itself did
+not decode there (Amendment 7's own words). Under this addendum's design nothing is confabulated on dev seed 2 --
+the awake and night completions correctly ABSTAIN rather than reinstate a partial, false pattern. This is the
+"it may shrink" the task asked to report honestly: the rescue does not shrink, it disappears, because it was never
+a real rescue.
+
+The same re-run for dev seed 13 (the finding's OTHER reported weak-seed rescue,
+`arms_final/s13_arcc.json`): **outcome = ABSTAIN** too (originally CORRECT). R starts near zero (0.007662999 at
+bout 0, matching the finding's own note that seed 13's margin was always thin) and stays near zero (0.008363148 at
+bout 48); the first bout already resolves only 2 of 3 (agent 'cat', action 'chase', patient None) and by the last
+bout resolves none; the night epoch resolves none either (R_eff = 0.0). Both of the original finding's reported
+rescues are therefore ABSTAIN under this addendum's design -- neither survives unanimous ignition, because neither
+was ever a full, unanimous three-item completion; both were partial (2-of-3 or a single-item) reinstatements the
+majority/no-threshold designs let through.
+
+
+
+### Predictions under this addendum (replacing Amendment 7's, given the re-run above)
+
+Amendment 7's Predictions assumed the dev evidence's reported rescue on seeds 2 and 13 was real completion; the
+re-run above shows it was not. Restated, honestly weaker: ARCC1-ARCC7 are unchanged as gates (a GO still requires
+all seven); what changed is the confidence that `lr_arc_a` rescues gate seed 101. The mechanism now only reinstates
+when a block's own read resolves ALL THREE content roles independently -- on the two dev seeds checked, that never
+happened during the collapse (each stalls at a 2-of-3 or weaker partial read), so the completion did not rescue them
+and, on the same evidence, need not rescue seed 101 either. No prediction is made for `lr_arc_awakeonly` /
+`lr_arc_sleeponly` / `lz_arc` / `lq_arc`: this addendum did not re-run them (see "Compute for this addendum"). If
+seed 101 also fails to resolve all three roles at any point during rest, ARCC1 abstains on `lr_arc_a` and the family
+reads NO-GO -- which, per the struck Predictions clause above, is what a NO-GO there now means: a verdict on
+completion, not on the ignition point.
+
+### Were the six `arcc` pool lines ever queued, run, or landed? No -- plainly
+
+Checked directly against the live queue state in the primary checkout (`/home/dant123/Projects/sim`), not inferred:
+- `research/queue/pool.queue`: 0 lines (empty).
+- `research/queue/pool.queue.claims`: 2101 lines, zero contain `arcc` or the prior pin `a34593b0d`.
+- `research/queue/dispatch.log`: 37393 lines, zero contain `arcc` or `a34593b0d`.
+- `research/findings/raw/_awake_replay_completion/` (the family's gate-seed output directory): does not exist in the
+  working tree, and `git log --all --oneline -- research/findings/raw/_awake_replay_completion` returns nothing --
+  no commit, on any branch, ever wrote to it.
+- The revisions dir the six lines `cd` into, `~/derisk-pool/revisions/a34593b0dab81a674ba4068a897194c521cbc4be`, is
+  not present locally either.
+The six lines committed in `research/findings/2026-09-25-awake-replay-completion-dev-seeds-partial.md` were prepared
+and pinned, and stayed exactly that: prepared, never queued. This addendum re-pins them (below) to
+`f7693a36f6b352fe805fb7e7c26fc9d34cd72129` and supersedes the prior six; still NOT queued.
+
+### The six pool lines, re-pinned to this addendum's commit (prepared, NOT queued)
+
+Provision the revision first (a `git_archive` revision dir on the pool; the provisioner refuses a revision that does
+not contain `origin/main`):
+
+```
+bash tools/pool_provision.sh --revision f7693a36f6b352fe805fb7e7c26fc9d34cd72129 --isolated
+```
+
+Then the six lines (shape-checked with `bash tools/queue_job_shape_check.sh`, NOT run through `pool_queue.sh add`):
+
+```
+bash tools/pool_queue.sh add 'cd ~/derisk-pool/revisions/f7693a36f6b352fe805fb7e7c26fc9d34cd72129 && env SIM_BACKEND=numpy OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1 CUDA_VISIBLE_DEVICES= .venv/bin/python -u -m research.runners._da_tag_capture_chat_probe --family arcc --seed 42 --ltm off --workers 1 --out research/findings/raw/_awake_replay_completion' --checked 'prereg research/findings/2026-09-24-sleep-replay-capture-PREREGISTRATION.md (Amendment 7 addendum 7a, branch research/awake-replay-completion-final @ f7693a36f6b352fe805fb7e7c26fc9d34cd72129); replay-completion family arcc 6-seed, unanimous-ignition item competition; mem_gb=2'
+bash tools/pool_queue.sh add 'cd ~/derisk-pool/revisions/f7693a36f6b352fe805fb7e7c26fc9d34cd72129 && env SIM_BACKEND=numpy OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1 CUDA_VISIBLE_DEVICES= .venv/bin/python -u -m research.runners._da_tag_capture_chat_probe --family arcc --seed 43 --ltm off --workers 1 --out research/findings/raw/_awake_replay_completion' --checked 'prereg research/findings/2026-09-24-sleep-replay-capture-PREREGISTRATION.md (Amendment 7 addendum 7a, branch research/awake-replay-completion-final @ f7693a36f6b352fe805fb7e7c26fc9d34cd72129); replay-completion family arcc 6-seed, unanimous-ignition item competition; mem_gb=2'
+bash tools/pool_queue.sh add 'cd ~/derisk-pool/revisions/f7693a36f6b352fe805fb7e7c26fc9d34cd72129 && env SIM_BACKEND=numpy OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1 CUDA_VISIBLE_DEVICES= .venv/bin/python -u -m research.runners._da_tag_capture_chat_probe --family arcc --seed 44 --ltm off --workers 1 --out research/findings/raw/_awake_replay_completion' --checked 'prereg research/findings/2026-09-24-sleep-replay-capture-PREREGISTRATION.md (Amendment 7 addendum 7a, branch research/awake-replay-completion-final @ f7693a36f6b352fe805fb7e7c26fc9d34cd72129); replay-completion family arcc 6-seed, unanimous-ignition item competition; mem_gb=2'
+bash tools/pool_queue.sh add 'cd ~/derisk-pool/revisions/f7693a36f6b352fe805fb7e7c26fc9d34cd72129 && env SIM_BACKEND=numpy OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1 CUDA_VISIBLE_DEVICES= .venv/bin/python -u -m research.runners._da_tag_capture_chat_probe --family arcc --seed 100 --ltm off --workers 1 --out research/findings/raw/_awake_replay_completion' --checked 'prereg research/findings/2026-09-24-sleep-replay-capture-PREREGISTRATION.md (Amendment 7 addendum 7a, branch research/awake-replay-completion-final @ f7693a36f6b352fe805fb7e7c26fc9d34cd72129); replay-completion family arcc 6-seed, unanimous-ignition item competition; mem_gb=2'
+bash tools/pool_queue.sh add 'cd ~/derisk-pool/revisions/f7693a36f6b352fe805fb7e7c26fc9d34cd72129 && env SIM_BACKEND=numpy OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1 CUDA_VISIBLE_DEVICES= .venv/bin/python -u -m research.runners._da_tag_capture_chat_probe --family arcc --seed 101 --ltm off --workers 1 --out research/findings/raw/_awake_replay_completion' --checked 'prereg research/findings/2026-09-24-sleep-replay-capture-PREREGISTRATION.md (Amendment 7 addendum 7a, branch research/awake-replay-completion-final @ f7693a36f6b352fe805fb7e7c26fc9d34cd72129); replay-completion family arcc 6-seed, unanimous-ignition item competition; mem_gb=2'
+bash tools/pool_queue.sh add 'cd ~/derisk-pool/revisions/f7693a36f6b352fe805fb7e7c26fc9d34cd72129 && env SIM_BACKEND=numpy OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1 CUDA_VISIBLE_DEVICES= .venv/bin/python -u -m research.runners._da_tag_capture_chat_probe --family arcc --seed 102 --ltm off --workers 1 --out research/findings/raw/_awake_replay_completion' --checked 'prereg research/findings/2026-09-24-sleep-replay-capture-PREREGISTRATION.md (Amendment 7 addendum 7a, branch research/awake-replay-completion-final @ f7693a36f6b352fe805fb7e7c26fc9d34cd72129); replay-completion family arcc 6-seed, unanimous-ignition item competition; mem_gb=2'
+```
+
+### Compute for this addendum
+
+- The re-run above used `bash tools/memcap.sh 2 -- ... --seed 2 --arm arcc[_nocomp] --out
+  research/findings/raw/_awake_replay_completion_dev/arms_final/`, one worker at a time, CPU-only
+  (`CUDA_VISIBLE_DEVICES=`), no brain build outside memcap.
+- The six gate rows remain pool runs at the full SHA of this addendum's commit (unchanged from Amendment 7's plan),
+  one worker, `mem_gb=2`. Not queued with this commit.
