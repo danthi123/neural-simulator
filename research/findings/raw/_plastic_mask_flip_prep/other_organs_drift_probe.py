@@ -95,7 +95,14 @@ def probe_worldmodel(seed):
     import research.runners.worldmodel_production_organ as WM
     org = WM.get_organ(seed=seed)
     org.ensure_built()
-    b = org.bridge
+    # WorldModelProductionOrgan does NOT expose `.bridge` directly (unlike affect/curiosity/surprise/
+    # metacog): `_build_one` returns a dict {"bridge":..., "cfg":..., ...} stored as `self._st` (the
+    # intact circuit state). Note this dict-returning `_build_one` ALSO does
+    # `cfg.enable_hebbian_learning = False` right after its own one-time Hebbian training
+    # ("TRAINED then FROZEN" per the class docstring) -- on a SHARED wave3-pool cfg object, this is a
+    # bridge-WIDE kill switch any co-resident organ's read after this point inherits, independent of
+    # cp_synapse_plastic_mask/this Vikunja flag entirely.
+    b = org._st["bridge"]
     w0 = _to_host(b.cp_connections.data)[:b.cp_connections.nnz].copy()
     for _ in range(10):
         r = org.read_surprise(1, -1)

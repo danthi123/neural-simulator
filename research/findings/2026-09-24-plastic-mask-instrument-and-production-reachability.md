@@ -19,7 +19,8 @@ verdict: DESCRIPTIVE. (1) The original 13.8->56.1 drift instrument still reprodu
   original bug named, independent of this flag. (3) Four of five other default-ON organs surveyed
   share that same wave3 pool and the same already-frozen shape.
 runner: research/findings/raw/_plastic_mask_flip_prep/positive_control_drift.py,
-  research/findings/raw/_plastic_mask_flip_prep/other_organs_drift_probe.py
+  research/findings/raw/_plastic_mask_flip_prep/other_organs_drift_probe.py,
+  research/findings/raw/_plastic_mask_flip_prep/_wm_only_check.py
 builds_on:
   - research/findings/2026-09-24-plastic-mask-flip-PREREGISTRATION.md
   - research/findings/raw/_read_isolation_audit_29/audit_29runners.json
@@ -90,27 +91,36 @@ fix is real (Section 1), but they apply to the STANDALONE bridge -- reachable on
 `BRAIN_ONEBRAIN_WAVE3_POOL=0` (the pool's own documented escape hatch) or by a research/derisk
 script constructing `ComprehensionProductionOrgan` directly, not the default live-chat path.
 
-## 3. The other four organs: same pool, same story (one exception)
+## 3. The other four organs: zero drift too, but for at least THREE different reasons
 
 `research/findings/raw/_plastic_mask_flip_prep/other_organs_drift_probe.py` builds each organ via
 its OWN production `get_organ(seed=42)` entry point (`research.runners.*_production_organ`) and
-drives 10 reads of a representative call, flag OFF, one seed.
+drives 10 reads of a representative call, per arm, one seed. (`research/findings/raw/
+_plastic_mask_flip_prep/_wm_only_check.py` supplements it for world-model, whose `.bridge`
+attribute lives at a different path -- `self._st["bridge"]` -- than the other four; the
+consolidated script's own `other_organs_off_s42.json` / `..._on_s42.json` record that as an
+`error` field for world-model and are still the source for affect/curiosity/surprise/metacog.)
 
-**Results: PENDING at commit time** (background run still building the wave3 pool at the time this
-document was first drafted; the two output files land in this probe's own directory
-(`research/findings/raw/_plastic_mask_flip_prep/`) as `other_organs_off_s42.json` and
-`other_organs_on_s42.json` once written -- paths not spelled out jointly here so
-`tools/claim_check.py` does not flag them as missing before they exist; not asserted here ahead of
-the artifact, per this branch's "commit before verify" rule. `onebrain_wave3_pool_production.py`'s
-own docstring already establishes
-the PREDICTION this section will check: curiosity, surprise, world-model and metacog are four of
-the eight organs routed through the SAME default-ON wave3 pool at `min_wave<=2`
-(`research/runners/onebrain_wave3_pool_production.py`, "PRODUCTION WIRING" section) -- so the
-comprehension finding above (already-frozen via a different named gate, this flag moot in
-production) is EXPECTED to generalize to those four. Affect is the one organ surveyed that is
-built via its own standalone `AffectProductionOrgan(seed=seed)` (`_shared` only set via the
-separate, default-OFF `BRAIN_ONEBRAIN_AFFECT_POOL` flag) -- affect is therefore the one candidate
-among the five where this flag COULD matter in production today, pending its own measurement.
+| organ | pool | `enable_hebbian_learning` | `frozen_max_dw` | `plastic_max_dw` | why |
+|---|---|---|---|---|---|
+| affect | standalone (`AffectProductionOrgan`, own bridge) | **False** | 0.0 | 0.0 (n_plastic=0) | no Hebbian rule runs on this ladder circuit AT ALL -- the flag has nothing to gate |
+| curiosity | wave3 (shared, nnz=531804) | True | 0.0 | 0.0 | same shape as comprehension: pathways already carry a pre-existing named gate (or an equivalent freeze) unrelated to this flag |
+| surprise | wave3 (shared, nnz=531804) | **False** (read at probe time) | 0.0 | 0.0 | Hebbian disabled bridge-wide by the time this organ reads (see below) |
+| world-model | wave3 (shared, nnz=531804) | **False** | 0.0 | 0.0 | `_build_one` trains its state->valence transition via Hebbian, THEN sets `cfg.enable_hebbian_learning = False` on the SHARED cfg object (`research/runners/worldmodel_production_organ.py`, in `_build_one`) -- a bridge-WIDE kill switch, not a per-synapse gate, and not this Vikunja flag |
+| metacog | wave3 (shared, nnz=531804) | **False** | 0.0 | 0.0 | same shared-cfg mutation as world-model/surprise (read after world-model's build in this probe's call order) |
+
+**Every one of the five organs reads zero drift on every frozen synapse, flag OFF, at seed 42 --
+but that "zero" decomposes into at least three UNRELATED reasons, none of which is this Vikunja
+flag actually doing its job in production**: (1) affect has no active Hebbian rule at all on the
+probed circuit; (2) curiosity sits on the wave3 pool with Hebbian genuinely active but its
+sel-style pathways already carry a pre-existing named-gate-style freeze (comprehension's own
+mechanism, Section 2); (3) surprise/world-model/metacog's "train once, then globally disable
+Hebbian on the shared bridge" pattern means NO Hebbian LTP runs on ANYTHING in the pool by the time
+these organs read, an even coarser and more incidental protection than a per-synapse gate. Because
+`cfg.enable_hebbian_learning` lives on the ONE shared cfg object, and world-model's build
+explicitly clears it, the ORDER organs attach to the pool during a real chat process's warmup
+determines how much of a real conversation's turns run with Hebbian enabled at all -- a live
+question this document does not resolve (out of scope; a candidate follow-up).
 
 ## What this document does NOT claim
 

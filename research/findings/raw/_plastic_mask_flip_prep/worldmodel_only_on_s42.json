@@ -1,0 +1,21 @@
+{
+  "runner": "research/findings/raw/_plastic_mask_flip_prep/_wm_only_check.py",
+  "seed": 42,
+  "backend": "numpy",
+  "organ": "worldmodel",
+  "shared_pool": true,
+  "nnz": 531804,
+  "enable_hebbian_learning": false,
+  "enable_stdp": false,
+  "whole_bridge_max_dw": 0.0,
+  "sample_reply": {
+    "surprise_hz": 44.44444444444444,
+    "surprised": true
+  },
+  "enforced_flag_read": true,
+  "mask_present": true,
+  "n_frozen": 391728,
+  "n_plastic": 140076,
+  "frozen_max_dw": 0.0,
+  "plastic_max_dw": 0.0
+}
