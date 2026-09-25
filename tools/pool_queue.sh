@@ -99,25 +99,56 @@ strip_checked_reason_prefix() {
   printf '%s' "$s"
 }
 
-job_liveness_on_node() {
-  # job_liveness_on_node <node> <exact pool.running JOB field text> -- echoes ALIVE, DEAD or UNREACH.
-  # The text is exactly what pool_autodispatch.sh:remote_launch_command base64-encoded into JOB_B64 for
-  # that dispatch (pop_job's output, byte-for-byte -- fill_node passes the identical string to both the
-  # CLAIMED/pool.running record and remote_launch_command), so a still-running process of that exact
-  # claim carries `JOB_B64=<same b64>` in its /proc/<pid>/environ for its whole lifetime (inherited
-  # through remote_launch_command's `setsid bash -c`). Same ssh/-F/timeout conventions as --probe-node.
-  local node="$1" job_text="$2" b64
-  b64=$(printf '%s' "$job_text" | base64 -w0)
-  if ! timeout 10 ssh -n "${SSH_F[@]}" -o BatchMode=yes -o ConnectTimeout=6 "$node" true >/dev/null 2>&1; then
-    echo UNREACH; return 0
-  fi
-  if timeout 20 ssh -n "${SSH_F[@]}" -o BatchMode=yes -o ConnectTimeout=8 "$node" \
-       "for e in /proc/[0-9]*/environ; do tr '\\0' '\\n' < \$e 2>/dev/null; done | grep -qxF 'JOB_B64=$b64'" \
-       >/dev/null 2>&1; then
-    echo ALIVE
-  else
-    echo DEAD
-  fi
+trim() {
+  # trim <string> -- strips leading/trailing [:space:] (fix #4, 2026-09-25 review round: NEW_CMD, the
+  # stripped pool.running command and the queue-side existing command were all only `tr -s ' '`
+  # squeezed, which collapses REPEATED internal spaces but leaves a single leading/trailing one in
+  # place -- so "cmd" and "cmd " (one trailing space) compared unequal and the guard silently missed a
+  # duplicate whose only difference was incidental whitespace).
+  local s="$1"
+  s="${s#"${s%%[![:space:]]*}"}"
+  s="${s%"${s##*[![:space:]]}"}"
+  printf '%s' "$s"
+}
+
+node_in_list() {
+  # node_in_list <node> <space-separated list> -- true iff <node> is a member.
+  local node="$1" list="$2" n
+  for n in $list; do [ "$n" = "$node" ] && return 0; done
+  return 1
+}
+
+LIVENESS_SENTINEL="POOL_LIVENESS_SCAN_OK"
+
+node_live_b64_set() {
+  # node_live_b64_set <node> -- ONE ssh call (fixes #1 and #5, 2026-09-25 review round). The OLD
+  # job_liveness_on_node made TWO ssh calls -- a bare `... true` reachability probe, then a second
+  # probe that grep -qxF'd ONE specific JOB_B64 value -- and was invoked (with the result cached) once
+  # per DISTINCT NODE, keyed on the node name alone. A node carrying SEVERAL matching pool.running
+  # records (e.g. an older DEAD claim and a newer LIVE retry of the identical command -- the exact
+  # shape reproduced with the real D6 pool41 records from 2026-09-24 06:06:14 and 2026-09-25 00:05:22)
+  # got its liveness decided by whichever record's own JOB_B64 happened to be checked FIRST; every
+  # other record on that node then silently reused that one verdict from the cache, so a dead older
+  # claim could hide a live retry of the same command on the same node (HIGH fail-open). Fix: fetch
+  # the node's whole live JOB_B64 SET once, and have the caller check each candidate record's own
+  # base64 against that set locally -- correctness no longer depends on which record is checked first.
+  #
+  # THE SENTINEL (fix #2): the OLD second probe only ever asked "does /proc/*/environ contain THIS ONE
+  # b64", so a `timeout`-killed scan (rc 124) or an ssh transport error (rc 255) produced no match --
+  # indistinguishable from a genuinely dead process -- and silently fell through to DEAD, though
+  # nothing had actually been verified (only the FIRST, bare-reachability probe's failure ever mapped
+  # to UNREACH). A fixed marker appended as the remote command's LAST line, required to be present in
+  # the captured output before any JOB_B64 line is trusted, closes that: a dropped connection, a
+  # `timeout` kill, a remote shell error, or a scan that never finishes now all report UNREACH --
+  # regardless of ssh's own exit status, which a partial/killed transfer can still report as 0.
+  local node="$1" out
+  out=$(timeout 20 ssh -n "${SSH_F[@]}" -o BatchMode=yes -o ConnectTimeout=8 "$node" \
+    "for e in /proc/[0-9]*/environ; do tr '\\0' '\\n' < \$e 2>/dev/null; done | grep '^JOB_B64=' | sort -u; echo $LIVENESS_SENTINEL" \
+    2>/dev/null)
+  case "$out" in
+    *"$LIVENESS_SENTINEL"*) printf '%s\n' "$out" | grep '^JOB_B64=' ;;
+    *) echo UNREACH ;;
+  esac
 }
 
 case "${1:-list}" in
@@ -277,14 +308,25 @@ case "${1:-list}" in
          #
          # FIX: parse the record correctly (strip_checked_reason_prefix, above) AND never trust a text match
          # alone -- a stopped/crashed job leaves its pool.running line behind (nothing here retires it), so a
-         # text match is only a CANDIDATE; job_liveness_on_node (above) verifies against the claimed node's
-         # own /proc/*/environ before refusing. The queue-side comparison carries no such staleness problem
-         # (a queued line is retired the moment it is popped) and is left exactly as it was.
-         NEW_CMD=$(printf '%s' "$2" | tr -s ' ')
+         # text match is only a CANDIDATE; node_live_b64_set (below) verifies against the claimed node's own
+         # /proc/*/environ before refusing. The queue-side comparison carries no such staleness problem (a
+         # queued line is retired the moment it is popped) and is left exactly as it was, aside from fix #4's
+         # whitespace trim (below).
+         #
+         # 2026-09-25 REVIEW ROUND (fixes #1-#5, #7): the node-keyed liveness cache above could fail OPEN
+         # (a dead older claim on a node hid a live retry of the same command there, see node_live_b64_set's
+         # own comment); only a bare-reachability-probe failure ever mapped to UNREACH, so a scan timeout or
+         # ssh transport error silently reported DEAD instead of failing closed; a claim on a node no longer
+         # among the dispatcher's own targets (removed from .pool_extra_nodes, an idle-stopped AWS node) was
+         # refused FOREVER with FORCE_DUP=1 as the only (blanket) escape; NEW_CMD/the running-record command/
+         # the queue-side command were squeezed but never trimmed, so a lone leading/trailing space defeated
+         # the comparison; and the running-file scan ran the expensive per-line prefix-stripping on every one
+         # of (potentially) thousands of lines instead of prefiltering first. All fixed below.
+         NEW_CMD=$(trim "$(printf '%s' "$2" | tr -s ' ')")
          DUP=""
          if [ -f "$Q" ]; then
            while IFS= read -r line; do
-             existing=$(printf '%s' "$line" | cut -f2- | sed 's/  #checked:.*//' | tr -s ' ')
+             existing=$(trim "$(printf '%s' "$line" | cut -f2- | sed 's/  #checked:.*//' | tr -s ' ')")
              [ "$existing" = "$NEW_CMD" ] && DUP="$Q"
            done < "$Q"
          fi
@@ -294,30 +336,77 @@ case "${1:-list}" in
            echo "   If the repeat is deliberate (a genuine replication), re-run with FORCE_DUP=1." >&2
            exit 2
          fi
-         RUNNING_FILE="${Q%.queue}.running"
+         # fix #7: honour POOL_RUNNING_PATH (the env var pool_autodispatch.sh and its own tests already use
+         # to point pool.running elsewhere) instead of always deriving it from $Q -- a caller setting only
+         # POOL_RUNNING_PATH was silently checked against the wrong (or a nonexistent) running file.
+         RUNNING_FILE="${POOL_RUNNING_PATH:-${Q%.queue}.running}"
          RUN_ALIVE_NODE=""; RUN_ALIVE_DATE=""; RUN_UNREACH_NODE=""; RUN_DEAD_NODE=""; RUN_DEAD_DATE=""
          if [ -f "$RUNNING_FILE" ]; then
-           declare -A _RQ_LIVENESS=()   # node -> ALIVE|DEAD|UNREACH; one ssh per distinct node even with several matches
-           while IFS=$'\t' read -r rdate rnode rjob; do
-             [ -n "$rnode" ] && [ -n "$rjob" ] || continue
-             norm=$(strip_checked_reason_prefix "$rjob" | tr -s ' ')
-             [ "$norm" = "$NEW_CMD" ] || continue
-             if [ -z "${_RQ_LIVENESS[$rnode]+x}" ]; then
-               _RQ_LIVENESS[$rnode]=$(job_liveness_on_node "$rnode" "$rjob")
-             fi
-             case "${_RQ_LIVENESS[$rnode]}" in
-               ALIVE) RUN_ALIVE_NODE="$rnode"; RUN_ALIVE_DATE="$rdate" ;;
-               UNREACH) [ -n "$RUN_UNREACH_NODE" ] || RUN_UNREACH_NODE="$rnode" ;;
-               DEAD)    [ -n "$RUN_DEAD_NODE" ] || { RUN_DEAD_NODE="$rnode"; RUN_DEAD_DATE="$rdate"; } ;;
-             esac
-           done < "$RUNNING_FILE"
+           # PREFILTER (fix #5, cost): 874 running lines cost 9.3s vs 4.4s on main because
+           # strip_checked_reason_prefix -- a bash char-by-char scan -- ran on EVERY line even when it
+           # plainly could not match. One cheap awk pass narrows to lines that contain NEW_CMD as a
+           # substring (necessary, not sufficient, for the normalized forms to be equal) before that
+           # expensive per-line work runs on anything at all.
+           CANDIDATES=$(awk -F'\t' -v cmd="$NEW_CMD" 'NF>=3 && index($0, cmd) {print}' "$RUNNING_FILE")
+           if [ -n "$CANDIDATES" ]; then
+             declare -A _RQ_LIVESET=()   # node -> UNREACH | RETIRED | ASSUMED_DEAD | its live JOB_B64 set
+             ASSUME_DEAD="${POOL_DUP_ASSUME_DEAD_NODES:-}"
+             CURRENT_NODES="$(probe_nodes)"
+             while IFS=$'\t' read -r rdate rnode rjob; do
+               [ -n "$rnode" ] && [ -n "$rjob" ] || continue
+               norm=$(trim "$(strip_checked_reason_prefix "$rjob" | tr -s ' ')")
+               [ "$norm" = "$NEW_CMD" ] || continue
+               if [ -z "${_RQ_LIVESET[$rnode]+x}" ]; then
+                 # fix #3 (MEDIUM): a claim on a node that is no longer a dispatch target at all (removed
+                 # from .pool_extra_nodes, an idle-stopped AWS node) can never be live again from THIS
+                 # dispatcher's point of view -- ssh'ing it just to fail UNREACH forever was pointless and
+                 # left FORCE_DUP=1 (a blanket bypass of every check) as the only escape. Treat it as
+                 # retired = DEAD, with an info line, same as an explicit POOL_DUP_ASSUME_DEAD_NODES entry
+                 # (a narrow override for a node the operator knows is dead but that IS still a probe
+                 # target) -- neither path skips the ALIVE check for any OTHER node's matching claim.
+                 if node_in_list "$rnode" "$ASSUME_DEAD"; then
+                   echo "ℹ️  $rnode is listed in POOL_DUP_ASSUME_DEAD_NODES -- assuming its claim is dead without contacting it." >&2
+                   _RQ_LIVESET[$rnode]="ASSUMED_DEAD"
+                 elif ! node_in_list "$rnode" "$CURRENT_NODES"; then
+                   echo "ℹ️  $rnode is no longer a dispatch target (not in the current pool node list) -- its claim is retired." >&2
+                   _RQ_LIVESET[$rnode]="RETIRED"
+                 else
+                   _RQ_LIVESET[$rnode]=$(node_live_b64_set "$rnode")
+                 fi
+               fi
+               case "${_RQ_LIVESET[$rnode]}" in
+                 UNREACH)
+                   [ -n "$RUN_UNREACH_NODE" ] || RUN_UNREACH_NODE="$rnode" ;;
+                 RETIRED|ASSUMED_DEAD)
+                   [ -n "$RUN_DEAD_NODE" ] || { RUN_DEAD_NODE="$rnode"; RUN_DEAD_DATE="$rdate"; } ;;
+                 *)
+                   # the node's live JOB_B64 SET (fix #1) -- check THIS record's own base64 against it,
+                   # never a cached single verdict for the node.
+                   b64="JOB_B64=$(printf '%s' "$rjob" | base64 -w0)"
+                   if grep -qxF "$b64" <<<"${_RQ_LIVESET[$rnode]}"; then
+                     RUN_ALIVE_NODE="$rnode"; RUN_ALIVE_DATE="$rdate"
+                   else
+                     [ -n "$RUN_DEAD_NODE" ] || { RUN_DEAD_NODE="$rnode"; RUN_DEAD_DATE="$rdate"; }
+                   fi
+                   ;;
+               esac
+             done <<< "$CANDIDATES"
+           fi
          fi
          if [ -n "$RUN_ALIVE_NODE" ]; then
-           echo "⛔ REFUSED: this exact command is already RUNNING on $RUN_ALIVE_NODE since $RUN_ALIVE_DATE; FORCE_DUP=1 only for a deliberate replication." >&2
-           [ "${FORCE_DUP:-0}" = "1" ] || exit 2
+           if [ "${FORCE_DUP:-0}" = "1" ]; then
+             echo "⚠️  queueing despite a matching claim RUNNING on $RUN_ALIVE_NODE since $RUN_ALIVE_DATE (FORCE_DUP=1)." >&2
+           else
+             echo "⛔ REFUSED: this exact command is already RUNNING on $RUN_ALIVE_NODE since $RUN_ALIVE_DATE; FORCE_DUP=1 only for a deliberate replication." >&2
+             exit 2
+           fi
          elif [ -n "$RUN_UNREACH_NODE" ]; then
-           echo "⛔ REFUSED: a matching claim exists on $RUN_UNREACH_NODE but it could not be reached to verify liveness; failing closed. FORCE_DUP=1 to override." >&2
-           [ "${FORCE_DUP:-0}" = "1" ] || exit 2
+           if [ "${FORCE_DUP:-0}" = "1" ]; then
+             echo "⚠️  queueing despite $RUN_UNREACH_NODE being unreachable to verify liveness (FORCE_DUP=1)." >&2
+           else
+             echo "⛔ REFUSED: a matching claim exists on $RUN_UNREACH_NODE but it could not be reached to verify liveness; failing closed. FORCE_DUP=1 to override." >&2
+             exit 2
+           fi
          elif [ -n "$RUN_DEAD_NODE" ]; then
            echo "ℹ️  a previous identical claim exists ($RUN_DEAD_NODE, $RUN_DEAD_DATE) but is no longer alive -- queueing." >&2
          fi
