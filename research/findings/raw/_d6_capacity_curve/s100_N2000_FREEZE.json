@@ -7501,5 +7501,5 @@
  "peak_rss_mb": 231.7734375,
  "elapsed_s": 98869.0,
  "process_time_s": 98840.4,
- "cost_acknowledged": "RETROACTIVE, added 2026-09-25 at harvest: no run-time cost projection was made before this cell was launched (the D6 prereg set per-chat-turn cost bars, not a compute-hours projection). This cell recorded 27.5 h on the pool. Recorded so the missing projection is visible; it does not imply one existed."
+ "cost_acknowledged": "CORRECTED 2026-09-25 (supersedes a same-day note that wrongly said no projection existed): a pre-launch projection DID exist -- research/findings/raw/_d6_capacity_curve/JOBS.txt at f9ae852b7 and this cell's dispatch.log line carry est_wall=8h for an N=2000 FREEZE cell. This cell recorded 27.5 h on the pool, an overrun that was not caught while it ran. Recorded so the projection and the overrun are both visible."
 }
