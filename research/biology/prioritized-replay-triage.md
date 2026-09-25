@@ -14,9 +14,9 @@ sources:
   - path: "PMC5826623"
     anchor: "sleep-dependent memory processing is unlikely to be complete after just a single night"
     note: "Stickgold & Walker 2013, Nat Neurosci 16:139 (doi 10.1038/nn.3303), full text via PubMed Central 2026-09-25: 'memory triage' -- sleep selects which memories to keep and which to forget from prior waking salience tags, then stabilizes, integrates or generalizes them; the repeating cycles of sleep stages across the night and across nights matter."
-  - path: "https://consensus.app/papers/details/c9a3b8b259e7522087c0fe107c167920/"
+  - path: "PMC11068097"
     anchor: "SPW-Rs continued to replay those trial blocks that were reactivated most frequently during waking SPW-Rs"
-    note: "Yang, Sun, Huszar, Hainmueller, Kiselev & Buzsaki 2024, Science (Selection of experience for memory by hippocampal sharp wave ripples), abstract read via the Consensus index 2026-09-25 (not returned by the PubMed title search): awake ripple content during reward consumption tags which experiences post-experience sleep replays."
+    note: "Yang, Sun, Huszar, Hainmueller, Kiselev & Buzsaki 2024, Science 383:1478 (Selection of experience for memory by hippocampal sharp wave ripples; PMID 38547293, doi 10.1126/science.adk8261), abstract re-read via PubMed 2026-09-25 (the first read went through the Consensus index; the PubMed record resolves the same anchor): awake ripple content during reward consumption tags which experiences post-experience sleep replays."
   - path: "PMC6156217"
     anchor: "Objects that were remembered less well were replayed more during the subsequent rest period"
     note: "Schapiro, McDevitt, Rogers, Mednick & Norman 2018, Nat Commun 9:3920 (doi 10.1038/s41467-018-06213-1), abstract via PubMed 2026-09-25: rest replay prioritizes weakly learned items; more replay predicted better memory 12 h later, and replay predicted improvement only for participants who slept. Priority includes NEED, not only strength."
@@ -68,8 +68,12 @@ so every trace keeps a chance, and important, at-risk traces get most of the dra
 Design doc step 4: an excitability mark set at encoding by the importance channels and decaying within a day; SWR
 bursts in which managed blocks compete (a lateral-inhibition WTA over their triggers) with initiation biased by that
 mark and by need; one epoch per NREM cycle and awake bursts in rest pauses; the r3 renormalization, limited local PRPs
-and graded capture as the brake. The sleep/wake clock stays the body's (host) clock. No `constraints_config`.
+and graded capture as the brake. The host replay-to-DA map of the sleep route (SWR dopamine = tonic + (full - tonic) *
+min(1, sum of R)) makes R enter twice, as the replay tag and as the PRP supply; the Step-4 prereg replaces it with the
+spiking SNc's own output during the burst, or declares it and registers an arm that pins the burst's DA to tonic while
+the re-tag stays, so the two entries are measured apart. The sleep/wake clock stays the body's (host) clock. No
+`constraints_config`.
 
 ⚠️ **Provenance honesty.** The Buzsaki anchors are in the local corpus. The rest were read as abstracts through PubMed
-on 2026-09-25 (Stickgold & Walker 2013 in full text); Yang et al. 2024 through the Consensus index, whose URL is the
-locator given.
+on 2026-09-25 (Stickgold & Walker 2013 in full text); Yang et al. 2024 first through the Consensus index, then its
+PubMed record (PMC11068097), which is the locator given.

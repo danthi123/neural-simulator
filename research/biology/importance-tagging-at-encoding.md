@@ -1,7 +1,7 @@
 ---
 type: biology
 id: importance-tagging-at-encoding
-mechanism: What a new memory is worth is marked at (or within hours of) encoding by several converging signals -- dopamine for novelty and reward, noradrenaline from the locus coeruleus and the basolateral amygdala for emotional arousal, and a prefrontal expectation that the memory will be needed -- and those marks, not the bare fact of storage, decide which traces later processing keeps; the arousal mark acts locally (it amplifies the most active representation and suppresses weaker ones), and a later salient event rescues earlier weak memories only when they are related to it
+mechanism: What a new memory is worth is marked at (or within hours of) encoding by several converging signals -- dopamine for novelty and reward (including dopamine co-released by locus coeruleus fibres in the hippocampus), beta-adrenergic noradrenaline acting through the basolateral amygdala for emotional arousal, and a prefrontal expectation that the memory will be needed -- and those marks, not the bare fact of storage, decide which traces later processing keeps; the arousal mark acts locally (it amplifies the most active representation and suppresses weaker ones), and a later salient event rescues earlier weak memories only when they are related to it
 status: proposed
 last_verified: 2026-09-25
 sources:
@@ -22,7 +22,7 @@ sources:
     note: "Cahill, Prins, Weber & McGaugh 1994, Nature 371:702 (doi 10.1038/371702a0), abstract via PubMed 2026-09-25. The lesion template for the arousal channel: blocking beta-adrenergic receptors removes the emotional advantage and leaves neutral memory alone."
   - path: "PMC5161591"
     anchor: "neuronal firing in the locus coeruleus is especially sensitive to environmental novelty"
-    note: "Takeuchi et al. 2016, Nature 537:357 (doi 10.1038/nature19325), abstract via PubMed 2026-09-25: LC TH+ neurons project to the hippocampus more than VTA ones, their optogenetic activation mimics the novelty effect on everyday memory, the enhancement survives VTA inactivation, and it is blocked by hippocampal D1/D5 antagonism (not by adrenoceptor blockade) -- consistent with dopamine co-release from LC. An arousal channel therefore reaches the SAME D1/D5 capture edge."
+    note: "Takeuchi et al. 2016, Nature 537:357 (doi 10.1038/nature19325), abstract re-read via PubMed 2026-09-25: the effect studied is NOVELTY -- LC TH+ neurons project to the hippocampus more than VTA ones, their optogenetic activation mimics the novelty effect on everyday memory, the enhancement survives VTA inactivation, and it is 'sensitive to hippocampal D1/D5 receptor blockade and resistant to adrenoceptor blockade', consistent with dopamine co-release from LC. This is a second NOVELTY route onto the same D1/D5 capture edge (cue S, lesion L-DA). It is NOT the emotional-arousal route: that one is beta-adrenergic (Cahill 1994, above) and runs through the BLA (McGaugh 2004). Corrected 2026-09-25 after review: the earlier note stretched this paper to cover arousal."
   - path: "PMC5830137"
     anchor: "Emotional arousal enhances perception and memory of high-priority information but impairs processing of other information"
     note: "Mather, Clewett, Sakaki & Harley 2016, Behav Brain Sci 39:e200 (doi 10.1017/S0140525X15000667), abstract via PubMed 2026-09-25 (GANE): local glutamate marks the currently strongest representation, NE release is amplified there ('hotspots'), and 'LC activation promotes a few hotspots of excitation in the context of widespread suppression'; a surge of NE around encoding triggers local protein synthesis at the hotspots. The basis for a LOCAL priority mark: key detail up, background down."
@@ -60,9 +60,12 @@ proteins. The owner ruled on 2026-09-25 that forgetting is acceptable and that w
 matters. The biology above says "what matters" is written by several converging channels, not one.
 
 **What the real system runs alongside the DA tag, that the model replaced with zero.**
-- Arousal: basolateral amygdala + locus coeruleus noradrenaline (McGaugh 2004; Cahill 1994 is the lesion). LC neurons
-  also co-release dopamine onto the same hippocampal D1/D5 receptors (Takeuchi 2016), so an arousal channel can reach
-  the existing capture edge without a new PRP route.
+- Emotional arousal: noradrenaline acting on beta-adrenergic receptors, through the basolateral amygdala, which then
+  modulates encoding and consolidation elsewhere (McGaugh 2004). Cahill 1994 is the lesion: propranolol removes the
+  emotional advantage and leaves neutral memory alone. This is its own edge, not the D1/D5 one.
+- Novelty has a second source: LC fibres co-release dopamine onto hippocampal D1/D5 receptors, and that effect is
+  resistant to adrenoceptor blockade (Takeuchi 2016). It belongs with the novelty/surprise cue and its DA lesion, not
+  with arousal.
 - Local priority: arousal amplifies the most active representation and suppresses the rest (GANE, Mather 2016). A
   key detail and its background are not marked equally.
 - Expected future use: being told a memory will be needed changes whether sleep keeps it (Wilhelm 2011), and the
@@ -73,9 +76,11 @@ matters. The biology above says "what matters" is written by several converging 
 
 ## How the code is expected to bind to it (design only, nothing implemented)
 
-See the design doc listed under `findings`, steps 2 and 5. Each channel is to be a spiking afferent onto an existing
-population (the D1 pool, a trace's excitability), with its own lesion, and none may be a host keyword test or a host
-importance score. No `constraints_config`: nothing here is a scalar the biology pins to an equality.
+See the design doc listed under `findings`, steps 1a, 2 and 5. Each channel is to be a spiking afferent onto an
+existing population (the D1 pool, a BLA-like arousal population, a trace's excitability), with its own lesion, and none
+may be a host keyword test or a host importance score. The arousal cue E is bound to the beta-adrenergic / BLA route
+(lesion L-NE cuts it); the LC dopamine co-release is part of the novelty cue S (lesion L-DA). Each channel acts on
+encoding strength as well as on the tag (Kandel ch.52: encoding is stronger when one is motivated to remember). No `constraints_config`: nothing here is a scalar the biology pins to an equality.
 
 ⚠️ **Provenance honesty.** The Kandel anchors are in the local corpus. The PMID/PMC sources are not; they were read as
 abstracts through PubMed on 2026-09-25, and Stickgold & Walker 2013 and Dunsmoor et al. 2015 in full text.

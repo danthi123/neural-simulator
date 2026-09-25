@@ -25,7 +25,7 @@ sources:
     note: "Govindarajan, Kelleher & Tonegawa 2006, Nat Rev Neurosci 7:575 (doi 10.1038/nrn1937), abstract via PubMed 2026-09-25: the clustered-plasticity model -- engrams form through weight changes among synapses within a dendritic branch."
   - path: "PMC3323981"
     anchor: "less than half of the spines in adult hippocampus are primed to undergo plasticity under baseline conditions"
-    note: "Kramar et al. 2012, PNAS 109:5121 (doi 10.1073/pnas.1120700109), abstract via PubMed 2026-09-25 (no full text in PMC through the tool): 'intrinsic variability among individual synapses imposes a repetitive presentation requirement for maximizing the percentage of potentiated connections'. Synapses of one trace are not identical, so capture of a trace is a fraction."
+    note: "Kramar et al. 2012, PNAS 109:5121 (doi 10.1073/pnas.1120700109), abstract via PubMed 2026-09-25 (no full text in PMC through the tool): 'intrinsic variability among individual synapses imposes a repetitive presentation requirement for maximizing the percentage of potentiated connections'. The heterogeneity is in which synapses can be POTENTIATED at induction ('primed to undergo plasticity'; a later bout recruits synapses 'missed' by the first), not in capture efficacy. So readiness belongs on the early increment and the write tag (design Step 1), and heterogeneity of capture comes from branch locality and competition (Govindarajan 2011, above). Corrected 2026-09-25 after review: the earlier note put readiness into capture."
   - path: "PMC3992944"
     anchor: "specific mechanisms, such as increases in neuronal excitability and synaptic tagging and capture, determine the exact sites where memories are stored"
     note: "Rogerson et al. 2014, Nat Rev Neurosci 15:157 (doi 10.1038/nrn3667), abstract via PubMed 2026-09-25: neuronal allocation, synaptic tagging and capture, spine clustering and metaplasticity as one family of memory-allocation mechanisms."
@@ -54,15 +54,17 @@ findings:
 
 **What the tissue runs instead.** Limited PRPs that capture uses up, so new strong potentiation is maintained at the
 expense of older weak potentiation (Fonseca 2004); capture that is strongest within a dendritic branch and falls with
-distance and time (Govindarajan 2011); synapses that differ in readiness, so one episode potentiates only part of a
+distance and time (Govindarajan 2011); synapses that differ in readiness to be potentiated at induction, so one episode potentiates only part of a
 trace and a spaced repetition recruits the rest (Kramar 2012); and allocation of a memory to the currently most
 excitable neurons (Yiu 2014; Rogerson 2014), which is how related memories come to share units.
 
 ## How the code is expected to bind to it (design only, nothing implemented)
 
-Design doc steps 1 and 2: a seeded per-synapse readiness inside each managed block (graded capture), and a PRP supply
-that capture consumes and that is shared only among blocks allocated to the same compartment by overlap of their
-concept codes. The allocation rule is a declared host step until the store has dendritic structure. No
+Design doc steps 1 and 2: a seeded per-synapse readiness inside each managed block that gates the early increment and
+the write tag at induction (Kramar), so one telling potentiates part of the block; a PRP supply that capture consumes
+and that is shared only among blocks allocated to the same compartment by overlap of their concept codes, with capture
+falling off across compartments (Govindarajan), so the captured fraction of a trace is graded by competition and
+locality. The allocation rule is a declared host step until the store has dendritic structure. No
 `constraints_config`: the biology constrains readiness only as a distribution, not a scalar.
 
 ⚠️ **Provenance honesty.** The Kandel anchor is in the local corpus. The PMID/PMC sources were read as abstracts through

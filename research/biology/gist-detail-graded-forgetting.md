@@ -66,7 +66,10 @@ forgetting (Hardt 2013; Berry 2012), which is adaptive (Richards & Frankland 201
 Design doc steps 6-8: the core predicate and each peripheral detail on separate synapse sets with their own tags and
 reads (no min over roles); the local priority mark of `importance-tagging-at-encoding` deciding which component is
 kept; the episodic / common-ground topic trace carrying the gist, with a decay of its own; replay-written transfer to a
-slow cortical store for important and schema-consistent facts. The word "consolidation" is reserved for the model
+slow cortical store for important and schema-consistent facts. The within-fact case (one block carrying the core and a
+detail) is probed with the composer's attribute role (`enable_attributed`, default off, declared in Step 6's arms and
+their baseline rows), because an aside told in its own turn is already a separate block and cannot show the defect.
+The word "consolidation" is reserved for the model
 until a source lesion shows the cortical trace answers without the composer block (docs/TERMS.md). No
 `constraints_config`.
 

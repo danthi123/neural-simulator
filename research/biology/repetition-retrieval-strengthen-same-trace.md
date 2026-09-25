@@ -13,10 +13,16 @@ sources:
     note: "Kramar et al. 2012, PNAS 109:5121 (doi 10.1073/pnas.1120700109), abstract via PubMed 2026-09-25: the added LTP from a delayed bout recruited synapses the first bout missed, because fewer than half of spines are primed at baseline. A synaptic account of the spacing effect."
   - path: "PMID:16719566"
     anchor: "the ISI producing maximal retention increased as retention interval increased"
-    note: "Cepeda, Pashler, Vul, Wixted & Rohrer 2006, Psychol Bull 132:354 (doi 10.1037/0033-2909.132.3.354), abstract via PubMed 2026-09-25: meta-analysis of 839 assessments of distributed practice."
+    note: "Cepeda, Pashler, Vul, Wixted & Rohrer 2006, Psychol Bull 132:354 (doi 10.1037/0033-2909.132.3.354), abstract via PubMed 2026-09-25: meta-analysis of 839 assessments of distributed practice; 'ISI and retention interval operate jointly to affect final-test retention', so a spacing comparison must hold the retention interval (last presentation to test) equal across its arms -- the lag design of the battery's Rsp / Rms cues."
   - path: "PMID:18276894"
     anchor: "Repeated studying after learning had no effect on delayed recall, but repeated testing produced a large positive effect"
     note: "Karpicke & Roediger 2008, Science 319:966 (doi 10.1126/science.1152408), abstract via PubMed 2026-09-25: the testing effect -- retrieval practice, not re-exposure, carries delayed retention."
+  - path: "PMID:16507066"
+    anchor: "took one or three immediate free-recall tests, without feedback, or restudied the material the same number of times"
+    note: "Roediger & Karpicke 2006, Psychol Sci 17:249 (doi 10.1111/j.1467-9280.2006.01693.x), abstract read via PubMed 2026-09-25: on the delayed tests (2 days, 1 week) prior testing without feedback produced substantially greater retention than restudy. The strengthening is triggered by the act of retrieving, with nobody telling the learner whether the answer was right."
+  - path: "PMID:16248758"
+    anchor: "increased production of multiple-choice lures as incorrect answers on the final test"
+    note: "Roediger & Marsh 2005, J Exp Psychol Learn Mem Cogn 31:1155 (doi 10.1037/0278-7393.31.5.1155), abstract read via PubMed 2026-09-25: what was produced on a test is strengthened even when it is wrong ('may inadvertently lead to the creation of false knowledge'). A retrieval-triggered rule that strengthens whatever was retrieved is faithful; one gated on correctness would need a grader the brain does not have."
   - path: "PMID:18849987"
     anchor: "one normal function of hippocampal memory reconsolidation in rats is to modify the strength of a contextual-fear memory as a result of further learning"
     note: "Lee 2008, Nat Neurosci 11:1264 (doi 10.1038/nn.2205), abstract via PubMed 2026-09-25: reactivation destabilizes the memory and restabilization updates its strength -- further learning strengthens the SAME trace."
@@ -42,14 +48,17 @@ findings:
 
 **What the real system runs.** A repeat after a gap recruits synapses the first episode missed (Kramar 2012; Kandel
 ch.53 for the spaced-training protocol); reactivation plus restabilization strengthens the same trace (Lee 2008);
-retrieval is a stronger learning event than restudy (Karpicke & Roediger 2008) and prevents detail loss (Sekeres 2016);
+retrieval is a stronger learning event than restudy, even without feedback (Karpicke & Roediger 2008; Roediger &
+Karpicke 2006), strengthens a wrong answer too (Roediger & Marsh 2005), and prevents detail loss (Sekeres 2016);
 the best spacing grows with how long the memory must last (Cepeda 2006).
 
 ## How the code is expected to bind to it (design only, nothing implemented)
 
 Design doc step 3: the composer's own cued-block read decides "this is a trace I already have"; a predicted
-re-statement or a correct recall then re-induces early LTP and re-sets the tag on THAT block through the ledger (the
-awake-replay rule e <- e + R (1 - e), reused), after the reply, so the read itself never writes; synapses left unprimed
+re-statement, or the brain's own retrieval event (its cued read selected a managed block and the reply did not
+abstain, whether or not the answer is right -- no host grader), then re-induces early LTP and re-sets the tag on THAT
+block through the ledger (the awake-replay rule e <- e + R (1 - e), reused), after the reply, so the read itself never
+writes; synapses left unprimed
 by the first episode become ready on an hour scale, so a spaced repeat recruits them and a massed one does not. The
 host `kb` list must not be the dedupe key. No `constraints_config`.
 

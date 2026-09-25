@@ -46,6 +46,7 @@ implemented_by:
   - research/runners/_sleep_load_renorm_design.py
 findings:
   - research/findings/2026-09-24-sleep-replay-capture-PREREGISTRATION.md
+  - research/findings/2026-09-25-prioritized-memory-remember-what-matters-DESIGN.md
 ---
 
 # Sleep renormalization is paid for by the day's learning; later learning is what makes a recent trace fade
