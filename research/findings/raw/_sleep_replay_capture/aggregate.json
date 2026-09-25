@@ -1,0 +1,76 @@
+{
+  "family": "rc",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "seed_verdicts": {
+    "100": "GO",
+    "101": "GO",
+    "102": "GO",
+    "42": "GO",
+    "43": "GO",
+    "44": "GO"
+  },
+  "n_go": 6,
+  "verdict": "GO",
+  "ordinary_fact_rescue_rate_on": 1.0,
+  "ordinary_fact_rescue_rate_off": 0.0,
+  "signflip_p_rescue_on_vs_off": 0.015625,
+  "signflip_p_da_lesion_under_route": 0.015625,
+  "diffs_rescue_on_minus_off": [
+    1,
+    1,
+    1,
+    1,
+    1,
+    1
+  ],
+  "diffs_da_intact_minus_lesion_under_route": [
+    1,
+    1,
+    1,
+    1,
+    1,
+    1
+  ],
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "all 6 registered seeds present",
+      "ok": true,
+      "detail": "seeds=[42, 43, 44, 100, 101, 102]"
+    },
+    {
+      "kind": "require",
+      "name": "no seed read UNDEFINED (G0/P1/gamma instrument gates all held)",
+      "ok": true,
+      "detail": "seed_verdicts={42: 'GO', 43: 'GO', 44: 'GO', 100: 'GO', 101: 'GO', 102: 'GO'}"
+    },
+    {
+      "kind": "require",
+      "name": "replay branch executed on every night arm, not on the immediate arm (I1)",
+      "ok": true
+    },
+    {
+      "kind": "require",
+      "name": "every lesion held at the sleep-epoch record, not merely the env flag (I2)",
+      "ok": true
+    },
+    {
+      "kind": "require",
+      "name": "zero arm errors across all 60 arms (10 arms x 6 seeds)",
+      "ok": true,
+      "detail": "sum(n_arm_errors)=0"
+    },
+    {
+      "kind": "require",
+      "name": "all 6 seeds independently read GO on RC1-RC6 (aggregate_rc's own gate, re-derived)",
+      "ok": true
+    }
+  ]
+}
