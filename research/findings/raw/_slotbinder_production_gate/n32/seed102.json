@@ -1,0 +1,1167 @@
+{
+  "seed": 102,
+  "n_facts": 32,
+  "fanout": 32,
+  "sim_backend": "cupy",
+  "sampled_corpus_indices": [
+    20,
+    33,
+    43,
+    59,
+    63,
+    91,
+    95,
+    108,
+    112,
+    134,
+    136,
+    165,
+    168,
+    178,
+    182,
+    203,
+    215,
+    219,
+    220,
+    237,
+    247,
+    261,
+    282,
+    310,
+    311,
+    332,
+    344,
+    371,
+    387,
+    391,
+    397,
+    401
+  ],
+  "missing_real_codes_for": [],
+  "bundle_dir": "/home/dant123/.cache/slotbinder_production_gate/seed102_n32",
+  "bundle_staging_build_seconds": 54.87520170211792,
+  "arms": {
+    "slotbinder": {
+      "composer_kind_requested": "slotbinder",
+      "composer_class_resolved": "SlotBinderComposer",
+      "source": "developed-brain:/home/dant123/.cache/slotbinder_production_gate/seed102_n32",
+      "build_seconds": 10.870135068893433,
+      "per_fact": [
+        {
+          "agent": "dog",
+          "action": "go",
+          "expected_patient": "walk",
+          "got_patient": "walk",
+          "hit": true,
+          "query_latency_s": 0.1632380485534668
+        },
+        {
+          "agent": "mom",
+          "action": "give",
+          "expected_patient": "hug",
+          "got_patient": "hug",
+          "hit": true,
+          "query_latency_s": 0.21782612800598145
+        },
+        {
+          "agent": "cat",
+          "action": "see",
+          "expected_patient": "table",
+          "got_patient": "table",
+          "hit": true,
+          "query_latency_s": 0.282243013381958
+        },
+        {
+          "agent": "butterfly",
+          "action": "fly",
+          "expected_patient": "sky",
+          "got_patient": "sky",
+          "hit": true,
+          "query_latency_s": 0.30620813369750977
+        },
+        {
+          "agent": "cat",
+          "action": "liked",
+          "expected_patient": "song",
+          "got_patient": "song",
+          "hit": true,
+          "query_latency_s": 0.42914915084838867
+        },
+        {
+          "agent": "plant",
+          "action": "drink",
+          "expected_patient": "water",
+          "got_patient": "water",
+          "hit": true,
+          "query_latency_s": 0.48402905464172363
+        },
+        {
+          "agent": "tree",
+          "action": "wave",
+          "expected_patient": "branch",
+          "got_patient": "branch",
+          "hit": true,
+          "query_latency_s": 0.4803049564361572
+        },
+        {
+          "agent": "team",
+          "action": "win",
+          "expected_patient": "game",
+          "got_patient": "game",
+          "hit": true,
+          "query_latency_s": 0.49956583976745605
+        },
+        {
+          "agent": "machine",
+          "action": "make",
+          "expected_patient": "noise",
+          "got_patient": "noise",
+          "hit": true,
+          "query_latency_s": 0.5468626022338867
+        },
+        {
+          "agent": "word",
+          "action": "come",
+          "expected_patient": "name",
+          "got_patient": "name",
+          "hit": true,
+          "query_latency_s": 0.5982224941253662
+        },
+        {
+          "agent": "people",
+          "action": "drink",
+          "expected_patient": "coffee",
+          "got_patient": "coffee",
+          "hit": true,
+          "query_latency_s": 0.6438291072845459
+        },
+        {
+          "agent": "people",
+          "action": "use",
+          "expected_patient": "metal",
+          "got_patient": "metal",
+          "hit": true,
+          "query_latency_s": 0.7458851337432861
+        },
+        {
+          "agent": "people",
+          "action": "speak",
+          "expected_patient": "language",
+          "got_patient": "language",
+          "hit": true,
+          "query_latency_s": 0.7928335666656494
+        },
+        {
+          "agent": "player",
+          "action": "use",
+          "expected_patient": "game",
+          "got_patient": "game",
+          "hit": true,
+          "query_latency_s": 0.7907159328460693
+        },
+        {
+          "agent": "player",
+          "action": "move",
+          "expected_patient": "piece",
+          "got_patient": "piece",
+          "hit": true,
+          "query_latency_s": 0.855649471282959
+        },
+        {
+          "agent": "people",
+          "action": "use",
+          "expected_patient": "history",
+          "got_patient": "metal",
+          "hit": false,
+          "query_latency_s": 0.7158560752868652
+        },
+        {
+          "agent": "sun",
+          "action": "done",
+          "expected_patient": "damage",
+          "got_patient": "damage",
+          "hit": true,
+          "query_latency_s": 0.8414647579193115
+        },
+        {
+          "agent": "activity",
+          "action": "take",
+          "expected_patient": "place",
+          "got_patient": "place",
+          "hit": true,
+          "query_latency_s": 0.9209535121917725
+        },
+        {
+          "agent": "meaning",
+          "action": "change",
+          "expected_patient": "time",
+          "got_patient": "time",
+          "hit": true,
+          "query_latency_s": 0.9853413105010986
+        },
+        {
+          "agent": "people",
+          "action": "use",
+          "expected_patient": "service",
+          "got_patient": "metal",
+          "hit": false,
+          "query_latency_s": 0.7102847099304199
+        },
+        {
+          "agent": "name",
+          "action": "come",
+          "expected_patient": "phrase",
+          "got_patient": "phrase",
+          "hit": true,
+          "query_latency_s": 1.0985934734344482
+        },
+        {
+          "agent": "man",
+          "action": "place",
+          "expected_patient": "penis",
+          "got_patient": "penis",
+          "hit": true,
+          "query_latency_s": 1.157346487045288
+        },
+        {
+          "agent": "machine",
+          "action": "make",
+          "expected_patient": "noise",
+          "got_patient": "noise",
+          "hit": true,
+          "query_latency_s": 0.5072498321533203
+        },
+        {
+          "agent": "people",
+          "action": "wear",
+          "expected_patient": "reason",
+          "got_patient": "reason",
+          "hit": true,
+          "query_latency_s": 1.580749273300171
+        },
+        {
+          "agent": "computer",
+          "action": "use",
+          "expected_patient": "bit",
+          "got_patient": "bit",
+          "hit": true,
+          "query_latency_s": 1.4330942630767822
+        },
+        {
+          "agent": "substance",
+          "action": "contain",
+          "expected_patient": "type",
+          "got_patient": "type",
+          "hit": true,
+          "query_latency_s": 1.3675076961517334
+        },
+        {
+          "agent": "teacher",
+          "action": "ask",
+          "expected_patient": "class",
+          "got_patient": "class",
+          "hit": true,
+          "query_latency_s": 1.4379515647888184
+        },
+        {
+          "agent": "people",
+          "action": "give",
+          "expected_patient": "money",
+          "got_patient": "money",
+          "hit": true,
+          "query_latency_s": 1.8194422721862793
+        },
+        {
+          "agent": "car",
+          "action": "win",
+          "expected_patient": "race",
+          "got_patient": "race",
+          "hit": true,
+          "query_latency_s": 1.4561090469360352
+        },
+        {
+          "agent": "people",
+          "action": "wear",
+          "expected_patient": "clothes",
+          "got_patient": "reason",
+          "hit": false,
+          "query_latency_s": 1.4088191986083984
+        },
+        {
+          "agent": "people",
+          "action": "wear",
+          "expected_patient": "clothing",
+          "got_patient": "reason",
+          "hit": false,
+          "query_latency_s": 1.4603877067565918
+        },
+        {
+          "agent": "change",
+          "action": "take",
+          "expected_patient": "place",
+          "got_patient": "place",
+          "hit": true,
+          "query_latency_s": 1.6020026206970215
+        }
+      ],
+      "moat_probe": {
+        "agent": "come",
+        "action": "language",
+        "abstained": true,
+        "query_latency_s": 1.4855999946594238
+      },
+      "mismatch_probe": {
+        "agent": "dog",
+        "action_from_other_fact": "give",
+        "did_not_leak_fact0_patient": true,
+        "query_latency_s": 1.4832801818847656
+      },
+      "recall_accuracy": 0.875,
+      "moat_pass": true,
+      "mismatch_pass": true,
+      "gpu_mem_after_build_and_queries": {
+        "cupy_used_bytes": 118302720,
+        "cupy_total_bytes": 220571136,
+        "nvidia_smi_used_mib": 3297,
+        "nvidia_smi_total_mib": 24576
+      },
+      "ablation_zeroed_synapses": {
+        "nnz": 2265600,
+        "nonzero_weights_before_zeroing": 2265600,
+        "recall_accuracy": 0.0,
+        "per_fact": [
+          {
+            "agent": "dog",
+            "action": "go",
+            "expected_patient": "walk",
+            "got_patient": null,
+            "hit": false
+          },
+          {
+            "agent": "mom",
+            "action": "give",
+            "expected_patient": "hug",
+            "got_patient": null,
+            "hit": false
+          },
+          {
+            "agent": "cat",
+            "action": "see",
+            "expected_patient": "table",
+            "got_patient": null,
+            "hit": false
+          },
+          {
+            "agent": "butterfly",
+            "action": "fly",
+            "expected_patient": "sky",
+            "got_patient": null,
+            "hit": false
+          },
+          {
+            "agent": "cat",
+            "action": "liked",
+            "expected_patient": "song",
+            "got_patient": null,
+            "hit": false
+          },
+          {
+            "agent": "plant",
+            "action": "drink",
+            "expected_patient": "water",
+            "got_patient": null,
+            "hit": false
+          },
+          {
+            "agent": "tree",
+            "action": "wave",
+            "expected_patient": "branch",
+            "got_patient": null,
+            "hit": false
+          },
+          {
+            "agent": "team",
+            "action": "win",
+            "expected_patient": "game",
+            "got_patient": null,
+            "hit": false
+          },
+          {
+            "agent": "machine",
+            "action": "make",
+            "expected_patient": "noise",
+            "got_patient": null,
+            "hit": false
+          },
+          {
+            "agent": "word",
+            "action": "come",
+            "expected_patient": "name",
+            "got_patient": null,
+            "hit": false
+          },
+          {
+            "agent": "people",
+            "action": "drink",
+            "expected_patient": "coffee",
+            "got_patient": null,
+            "hit": false
+          },
+          {
+            "agent": "people",
+            "action": "use",
+            "expected_patient": "metal",
+            "got_patient": null,
+            "hit": false
+          },
+          {
+            "agent": "people",
+            "action": "speak",
+            "expected_patient": "language",
+            "got_patient": null,
+            "hit": false
+          },
+          {
+            "agent": "player",
+            "action": "use",
+            "expected_patient": "game",
+            "got_patient": null,
+            "hit": false
+          },
+          {
+            "agent": "player",
+            "action": "move",
+            "expected_patient": "piece",
+            "got_patient": null,
+            "hit": false
+          },
+          {
+            "agent": "people",
+            "action": "use",
+            "expected_patient": "history",
+            "got_patient": null,
+            "hit": false
+          },
+          {
+            "agent": "sun",
+            "action": "done",
+            "expected_patient": "damage",
+            "got_patient": null,
+            "hit": false
+          },
+          {
+            "agent": "activity",
+            "action": "take",
+            "expected_patient": "place",
+            "got_patient": null,
+            "hit": false
+          },
+          {
+            "agent": "meaning",
+            "action": "change",
+            "expected_patient": "time",
+            "got_patient": null,
+            "hit": false
+          },
+          {
+            "agent": "people",
+            "action": "use",
+            "expected_patient": "service",
+            "got_patient": null,
+            "hit": false
+          },
+          {
+            "agent": "name",
+            "action": "come",
+            "expected_patient": "phrase",
+            "got_patient": null,
+            "hit": false
+          },
+          {
+            "agent": "man",
+            "action": "place",
+            "expected_patient": "penis",
+            "got_patient": null,
+            "hit": false
+          },
+          {
+            "agent": "machine",
+            "action": "make",
+            "expected_patient": "noise",
+            "got_patient": null,
+            "hit": false
+          },
+          {
+            "agent": "people",
+            "action": "wear",
+            "expected_patient": "reason",
+            "got_patient": null,
+            "hit": false
+          },
+          {
+            "agent": "computer",
+            "action": "use",
+            "expected_patient": "bit",
+            "got_patient": null,
+            "hit": false
+          },
+          {
+            "agent": "substance",
+            "action": "contain",
+            "expected_patient": "type",
+            "got_patient": null,
+            "hit": false
+          },
+          {
+            "agent": "teacher",
+            "action": "ask",
+            "expected_patient": "class",
+            "got_patient": null,
+            "hit": false
+          },
+          {
+            "agent": "people",
+            "action": "give",
+            "expected_patient": "money",
+            "got_patient": null,
+            "hit": false
+          },
+          {
+            "agent": "car",
+            "action": "win",
+            "expected_patient": "race",
+            "got_patient": null,
+            "hit": false
+          },
+          {
+            "agent": "people",
+            "action": "wear",
+            "expected_patient": "clothes",
+            "got_patient": null,
+            "hit": false
+          },
+          {
+            "agent": "people",
+            "action": "wear",
+            "expected_patient": "clothing",
+            "got_patient": null,
+            "hit": false
+          },
+          {
+            "agent": "change",
+            "action": "take",
+            "expected_patient": "place",
+            "got_patient": null,
+            "hit": false
+          }
+        ]
+      },
+      "wall_clock_s": 88.91928362846375
+    },
+    "rf": {
+      "composer_kind_requested": "rf",
+      "composer_class_resolved": "Pool1BoundComposer",
+      "source": "developed-brain:/home/dant123/.cache/slotbinder_production_gate/seed102_n32",
+      "build_seconds": 0.005394697189331055,
+      "per_fact": [
+        {
+          "agent": "dog",
+          "action": "go",
+          "expected_patient": "walk",
+          "got_patient": "walk",
+          "hit": true,
+          "query_latency_s": 0.27674317359924316
+        },
+        {
+          "agent": "mom",
+          "action": "give",
+          "expected_patient": "hug",
+          "got_patient": "hug",
+          "hit": true,
+          "query_latency_s": 0.2919144630432129
+        },
+        {
+          "agent": "cat",
+          "action": "see",
+          "expected_patient": "table",
+          "got_patient": "table",
+          "hit": true,
+          "query_latency_s": 0.39476585388183594
+        },
+        {
+          "agent": "butterfly",
+          "action": "fly",
+          "expected_patient": "sky",
+          "got_patient": "sky",
+          "hit": true,
+          "query_latency_s": 0.44382190704345703
+        },
+        {
+          "agent": "cat",
+          "action": "liked",
+          "expected_patient": "song",
+          "got_patient": "song",
+          "hit": true,
+          "query_latency_s": 0.4268174171447754
+        },
+        {
+          "agent": "plant",
+          "action": "drink",
+          "expected_patient": "water",
+          "got_patient": "water",
+          "hit": true,
+          "query_latency_s": 0.32125282287597656
+        },
+        {
+          "agent": "tree",
+          "action": "wave",
+          "expected_patient": "branch",
+          "got_patient": "branch",
+          "hit": true,
+          "query_latency_s": 0.2611262798309326
+        },
+        {
+          "agent": "team",
+          "action": "win",
+          "expected_patient": "game",
+          "got_patient": "game",
+          "hit": true,
+          "query_latency_s": 0.266202449798584
+        },
+        {
+          "agent": "machine",
+          "action": "make",
+          "expected_patient": "noise",
+          "got_patient": "noise",
+          "hit": true,
+          "query_latency_s": 0.2647249698638916
+        },
+        {
+          "agent": "word",
+          "action": "come",
+          "expected_patient": "name",
+          "got_patient": "name",
+          "hit": true,
+          "query_latency_s": 0.25929903984069824
+        },
+        {
+          "agent": "people",
+          "action": "drink",
+          "expected_patient": "coffee",
+          "got_patient": "coffee",
+          "hit": true,
+          "query_latency_s": 0.2678253650665283
+        },
+        {
+          "agent": "people",
+          "action": "use",
+          "expected_patient": "metal",
+          "got_patient": "metal",
+          "hit": true,
+          "query_latency_s": 0.27261805534362793
+        },
+        {
+          "agent": "people",
+          "action": "speak",
+          "expected_patient": "language",
+          "got_patient": "language",
+          "hit": true,
+          "query_latency_s": 0.2847483158111572
+        },
+        {
+          "agent": "player",
+          "action": "use",
+          "expected_patient": "game",
+          "got_patient": "game",
+          "hit": true,
+          "query_latency_s": 0.26065587997436523
+        },
+        {
+          "agent": "player",
+          "action": "move",
+          "expected_patient": "piece",
+          "got_patient": "piece",
+          "hit": true,
+          "query_latency_s": 0.26621460914611816
+        },
+        {
+          "agent": "people",
+          "action": "use",
+          "expected_patient": "history",
+          "got_patient": "metal",
+          "hit": false,
+          "query_latency_s": 0.26429128646850586
+        },
+        {
+          "agent": "sun",
+          "action": "done",
+          "expected_patient": "damage",
+          "got_patient": "damage",
+          "hit": true,
+          "query_latency_s": 0.265045166015625
+        },
+        {
+          "agent": "activity",
+          "action": "take",
+          "expected_patient": "place",
+          "got_patient": "place",
+          "hit": true,
+          "query_latency_s": 0.26441121101379395
+        },
+        {
+          "agent": "meaning",
+          "action": "change",
+          "expected_patient": "time",
+          "got_patient": "time",
+          "hit": true,
+          "query_latency_s": 0.265120267868042
+        },
+        {
+          "agent": "people",
+          "action": "use",
+          "expected_patient": "service",
+          "got_patient": "metal",
+          "hit": false,
+          "query_latency_s": 0.26226329803466797
+        },
+        {
+          "agent": "name",
+          "action": "come",
+          "expected_patient": "phrase",
+          "got_patient": "phrase",
+          "hit": true,
+          "query_latency_s": 0.2857639789581299
+        },
+        {
+          "agent": "man",
+          "action": "place",
+          "expected_patient": "penis",
+          "got_patient": "penis",
+          "hit": true,
+          "query_latency_s": 0.2658696174621582
+        },
+        {
+          "agent": "machine",
+          "action": "make",
+          "expected_patient": "noise",
+          "got_patient": "noise",
+          "hit": true,
+          "query_latency_s": 0.26615309715270996
+        },
+        {
+          "agent": "people",
+          "action": "wear",
+          "expected_patient": "reason",
+          "got_patient": "reason",
+          "hit": true,
+          "query_latency_s": 0.30022215843200684
+        },
+        {
+          "agent": "computer",
+          "action": "use",
+          "expected_patient": "bit",
+          "got_patient": "bit",
+          "hit": true,
+          "query_latency_s": 0.7307994365692139
+        },
+        {
+          "agent": "substance",
+          "action": "contain",
+          "expected_patient": "type",
+          "got_patient": "type",
+          "hit": true,
+          "query_latency_s": 0.26226329803466797
+        },
+        {
+          "agent": "teacher",
+          "action": "ask",
+          "expected_patient": "class",
+          "got_patient": "class",
+          "hit": true,
+          "query_latency_s": 0.29669713973999023
+        },
+        {
+          "agent": "people",
+          "action": "give",
+          "expected_patient": "money",
+          "got_patient": "money",
+          "hit": true,
+          "query_latency_s": 0.3986649513244629
+        },
+        {
+          "agent": "car",
+          "action": "win",
+          "expected_patient": "race",
+          "got_patient": "race",
+          "hit": true,
+          "query_latency_s": 0.44056248664855957
+        },
+        {
+          "agent": "people",
+          "action": "wear",
+          "expected_patient": "clothes",
+          "got_patient": "reason",
+          "hit": false,
+          "query_latency_s": 0.4019477367401123
+        },
+        {
+          "agent": "people",
+          "action": "wear",
+          "expected_patient": "clothing",
+          "got_patient": "reason",
+          "hit": false,
+          "query_latency_s": 0.38112401962280273
+        },
+        {
+          "agent": "change",
+          "action": "take",
+          "expected_patient": "place",
+          "got_patient": "place",
+          "hit": true,
+          "query_latency_s": 0.48964500427246094
+        }
+      ],
+      "moat_probe": {
+        "agent": "come",
+        "action": "language",
+        "abstained": true,
+        "query_latency_s": 0.24044537544250488
+      },
+      "mismatch_probe": {
+        "agent": "dog",
+        "action_from_other_fact": "give",
+        "did_not_leak_fact0_patient": true,
+        "query_latency_s": 0.24136948585510254
+      },
+      "recall_accuracy": 0.875,
+      "moat_pass": true,
+      "mismatch_pass": true,
+      "gpu_mem_after_build_and_queries": {
+        "cupy_used_bytes": 6482432,
+        "cupy_total_bytes": 10143232,
+        "nvidia_smi_used_mib": 3091,
+        "nvidia_smi_total_mib": 24576
+      },
+      "wall_clock_s": 10.90429949760437
+    }
+  },
+  "flagoff_check": null,
+  "parity": {
+    "rows": [
+      {
+        "agent": "dog",
+        "action": "go",
+        "expected_patient": "walk",
+        "slotbinder_answer": "walk",
+        "fhrr_answer": "walk",
+        "match": true
+      },
+      {
+        "agent": "mom",
+        "action": "give",
+        "expected_patient": "hug",
+        "slotbinder_answer": "hug",
+        "fhrr_answer": "hug",
+        "match": true
+      },
+      {
+        "agent": "cat",
+        "action": "see",
+        "expected_patient": "table",
+        "slotbinder_answer": "table",
+        "fhrr_answer": "table",
+        "match": true
+      },
+      {
+        "agent": "butterfly",
+        "action": "fly",
+        "expected_patient": "sky",
+        "slotbinder_answer": "sky",
+        "fhrr_answer": "sky",
+        "match": true
+      },
+      {
+        "agent": "cat",
+        "action": "liked",
+        "expected_patient": "song",
+        "slotbinder_answer": "song",
+        "fhrr_answer": "song",
+        "match": true
+      },
+      {
+        "agent": "plant",
+        "action": "drink",
+        "expected_patient": "water",
+        "slotbinder_answer": "water",
+        "fhrr_answer": "water",
+        "match": true
+      },
+      {
+        "agent": "tree",
+        "action": "wave",
+        "expected_patient": "branch",
+        "slotbinder_answer": "branch",
+        "fhrr_answer": "branch",
+        "match": true
+      },
+      {
+        "agent": "team",
+        "action": "win",
+        "expected_patient": "game",
+        "slotbinder_answer": "game",
+        "fhrr_answer": "game",
+        "match": true
+      },
+      {
+        "agent": "machine",
+        "action": "make",
+        "expected_patient": "noise",
+        "slotbinder_answer": "noise",
+        "fhrr_answer": "noise",
+        "match": true
+      },
+      {
+        "agent": "word",
+        "action": "come",
+        "expected_patient": "name",
+        "slotbinder_answer": "name",
+        "fhrr_answer": "name",
+        "match": true
+      },
+      {
+        "agent": "people",
+        "action": "drink",
+        "expected_patient": "coffee",
+        "slotbinder_answer": "coffee",
+        "fhrr_answer": "coffee",
+        "match": true
+      },
+      {
+        "agent": "people",
+        "action": "use",
+        "expected_patient": "metal",
+        "slotbinder_answer": "metal",
+        "fhrr_answer": "metal",
+        "match": true
+      },
+      {
+        "agent": "people",
+        "action": "speak",
+        "expected_patient": "language",
+        "slotbinder_answer": "language",
+        "fhrr_answer": "language",
+        "match": true
+      },
+      {
+        "agent": "player",
+        "action": "use",
+        "expected_patient": "game",
+        "slotbinder_answer": "game",
+        "fhrr_answer": "game",
+        "match": true
+      },
+      {
+        "agent": "player",
+        "action": "move",
+        "expected_patient": "piece",
+        "slotbinder_answer": "piece",
+        "fhrr_answer": "piece",
+        "match": true
+      },
+      {
+        "agent": "people",
+        "action": "use",
+        "expected_patient": "history",
+        "slotbinder_answer": "metal",
+        "fhrr_answer": "metal",
+        "match": true
+      },
+      {
+        "agent": "sun",
+        "action": "done",
+        "expected_patient": "damage",
+        "slotbinder_answer": "damage",
+        "fhrr_answer": "damage",
+        "match": true
+      },
+      {
+        "agent": "activity",
+        "action": "take",
+        "expected_patient": "place",
+        "slotbinder_answer": "place",
+        "fhrr_answer": "place",
+        "match": true
+      },
+      {
+        "agent": "meaning",
+        "action": "change",
+        "expected_patient": "time",
+        "slotbinder_answer": "time",
+        "fhrr_answer": "time",
+        "match": true
+      },
+      {
+        "agent": "people",
+        "action": "use",
+        "expected_patient": "service",
+        "slotbinder_answer": "metal",
+        "fhrr_answer": "metal",
+        "match": true
+      },
+      {
+        "agent": "name",
+        "action": "come",
+        "expected_patient": "phrase",
+        "slotbinder_answer": "phrase",
+        "fhrr_answer": "phrase",
+        "match": true
+      },
+      {
+        "agent": "man",
+        "action": "place",
+        "expected_patient": "penis",
+        "slotbinder_answer": "penis",
+        "fhrr_answer": "penis",
+        "match": true
+      },
+      {
+        "agent": "machine",
+        "action": "make",
+        "expected_patient": "noise",
+        "slotbinder_answer": "noise",
+        "fhrr_answer": "noise",
+        "match": true
+      },
+      {
+        "agent": "people",
+        "action": "wear",
+        "expected_patient": "reason",
+        "slotbinder_answer": "reason",
+        "fhrr_answer": "reason",
+        "match": true
+      },
+      {
+        "agent": "computer",
+        "action": "use",
+        "expected_patient": "bit",
+        "slotbinder_answer": "bit",
+        "fhrr_answer": "bit",
+        "match": true
+      },
+      {
+        "agent": "substance",
+        "action": "contain",
+        "expected_patient": "type",
+        "slotbinder_answer": "type",
+        "fhrr_answer": "type",
+        "match": true
+      },
+      {
+        "agent": "teacher",
+        "action": "ask",
+        "expected_patient": "class",
+        "slotbinder_answer": "class",
+        "fhrr_answer": "class",
+        "match": true
+      },
+      {
+        "agent": "people",
+        "action": "give",
+        "expected_patient": "money",
+        "slotbinder_answer": "money",
+        "fhrr_answer": "money",
+        "match": true
+      },
+      {
+        "agent": "car",
+        "action": "win",
+        "expected_patient": "race",
+        "slotbinder_answer": "race",
+        "fhrr_answer": "race",
+        "match": true
+      },
+      {
+        "agent": "people",
+        "action": "wear",
+        "expected_patient": "clothes",
+        "slotbinder_answer": "reason",
+        "fhrr_answer": "reason",
+        "match": true
+      },
+      {
+        "agent": "people",
+        "action": "wear",
+        "expected_patient": "clothing",
+        "slotbinder_answer": "reason",
+        "fhrr_answer": "reason",
+        "match": true
+      },
+      {
+        "agent": "change",
+        "action": "take",
+        "expected_patient": "place",
+        "slotbinder_answer": "place",
+        "fhrr_answer": "place",
+        "match": true
+      }
+    ],
+    "parity_rate": 1.0
+  },
+  "latency_slotbinder_per_fact_query_s": {
+    "p50": 0.7917747497558594,
+    "p95": 1.5903132796287536,
+    "mean": 0.8856161385774612,
+    "max": 1.8194422721862793,
+    "min": 0.1632380485534668,
+    "n": 32
+  },
+  "latency_fhrr_per_fact_query_s": {
+    "p50": 0.27468061447143555,
+    "p95": 0.4644423007965088,
+    "mean": 0.3249867111444473,
+    "max": 0.7307994365692139,
+    "min": 0.25929903984069824,
+    "n": 32
+  },
+  "ablation_collapses_recall": true,
+  "verdict_criteria": {
+    "recall_ge_fhrr": true,
+    "parity_1_0": true,
+    "slotbinder_moat_pass": true,
+    "slotbinder_mismatch_pass": true,
+    "fhrr_moat_pass": true,
+    "fhrr_mismatch_pass": true,
+    "ablation_falsifies_intact_pass": true
+  },
+  "preconditions": [
+    {
+      "name": "recall_ge_fhrr",
+      "ok": true
+    },
+    {
+      "name": "parity_1_0",
+      "ok": true
+    },
+    {
+      "name": "slotbinder_moat_pass",
+      "ok": true
+    },
+    {
+      "name": "slotbinder_mismatch_pass",
+      "ok": true
+    },
+    {
+      "name": "fhrr_moat_pass",
+      "ok": true
+    },
+    {
+      "name": "fhrr_mismatch_pass",
+      "ok": true
+    },
+    {
+      "name": "ablation_falsifies_intact_pass",
+      "ok": true
+    }
+  ],
+  "verdict": "GO"
+}

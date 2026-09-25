@@ -1,0 +1,36 @@
+{
+ "run_id": "1790331789-222620",
+ "runner": "research/runners/_slotbinder_production_gate.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/slotbinder-sizing-seed44/research/runners/_slotbinder_production_gate.py",
+  "--seed",
+  "44",
+  "--n-facts",
+  "32",
+  "--fanout",
+  "32",
+  "--renderer",
+  "stub",
+  "--out",
+  "research/findings/raw/_slotbinder_production_gate/n32/seed44.json"
+ ],
+ "git_sha": "835fc252e",
+ "git_dirty": false,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-25T06:23:09",
+ "env": {
+  "SIM_BACKEND": "cupy"
+ },
+ "host": "dant123-wk",
+ "sim_backend": "cupy",
+ "sim_backend_requested": "cupy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_slotbinder_production_gate/n32/seed44.json"
+}
