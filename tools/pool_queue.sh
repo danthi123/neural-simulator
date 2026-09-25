@@ -10,6 +10,8 @@ set -uo pipefail
 ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 # shellcheck source=tools/pool_revision_marker.sh
 source "$ROOT/tools/pool_revision_marker.sh"
+# shellcheck source=tools/queue_job_shape_check.sh
+source "$ROOT/tools/queue_job_shape_check.sh"
 Q="${POOL_QUEUE_PATH:-/home/dant123/Projects/sim/research/queue/pool.queue}"
 mkdir -p "$(dirname "$Q")"; touch "$Q"
 # AWS-AS-EXTRA-POOL-NODE (2026-09-23) -- same repo-local, gitignored ssh config as pool_autodispatch.sh /
@@ -166,23 +168,13 @@ case "${1:-list}" in
            echo "   Then:       bash tools/pool_queue.sh add '<cmd>' --checked 'corpus: nothing covers laps x dwell at w_max>W0'" >&2
            exit 2
          fi
-         # FIRST-WORD-RUNNABLE GATE (2026-09-25 review, LOW: "the six 'A2 wiring seed N: ...' claims exited 127
-         # -- bash tried to run 'A2' as a command, so the `&&`-chained real command after it never ran, and the
-         # queue was starved behind them for nothing"). A stray prose label accidentally left at the head of a
-         # queued command dispatches, fails INSTANTLY on "command not found", and is unrecoverable after the
-         # fact -- catch it before it ever reaches the queue. Cheap, LOCAL and conservative: only refuses a
-         # single bare word (no `=`, no `/`) that this shell cannot even locate -- a real job's first token is
-         # always either a `VAR=value` assignment (`mem_gb=8 && cd ...`, this queue's own convention) or a
-         # locatable command/builtin (`cd`, `ssh`, ...) or a path (`/foo`, `.venv/bin/...`), so this cannot
-         # false-positive on any of those shapes.
-         FIRST_WORD=$(printf '%s' "$2" | awk '{print $1}')
-         if [ -n "$FIRST_WORD" ] \
-            && ! [[ "$FIRST_WORD" =~ ^[A-Za-z_][A-Za-z0-9_]*=.*$ ]] \
-            && [[ "$FIRST_WORD" != */* ]] \
-            && ! command -v "$FIRST_WORD" >/dev/null 2>&1; then
-           echo "⛔ REFUSED: the command does not start with a runnable word or a VAR=value assignment: '$FIRST_WORD'" >&2
-           echo "   It would dispatch and die instantly on 'command not found' (2026-09-25: six queued 'A2" >&2
-           echo "   wiring seed N: ...' jobs did exactly this -- a stray prose label at the head of the command)." >&2
+         # SHAPE GATE (2026-09-25, tools/queue_job_shape_check.sh). Six SETTLE A2 lines were queued as
+         # 'A2 wiring seed 42: mem_gb=8 && cd ~/derisk-pool/revisions/... && ...' -- a prose label as the first
+         # word -- so the node ran `A2`, got "command not found" (rc=127), and nothing ran, while the board said
+         # they were dispatched. Runs FIRST, before any ssh probe below, both because it is cheap (no network)
+         # and because a line that cannot even start is not worth spending a probe on.
+         if ! SHAPE_MSG=$(queue_job_runnable_check "$2"); then
+           echo "$SHAPE_MSG" >&2
            exit 2
          fi
          # TIMESTAMP every entry (2026-07-31). The first run of this queue reused a path that already held 69

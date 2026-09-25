@@ -36,7 +36,7 @@ def test_add_refuses_a_bare_unresolvable_first_word(tmp_path):
     res = _run(["add", "A2 wiring seed 1: mem_gb=8 && cd ~/derisk-pool/revisions/abc1234 && true",
                 "--checked", "x"], tmp_path=tmp_path)
     assert res.returncode == 2
-    assert "does not start with a runnable word" in res.stderr
+    assert "REFUSED" in res.stderr   # wording now comes from tools/queue_job_shape_check.sh (merged 2026-09-25)
     assert "A2" in res.stderr
     queue = tmp_path / "pool.queue"
     assert not queue.exists() or queue.read_text() == "", "the malformed job must never reach the queue"

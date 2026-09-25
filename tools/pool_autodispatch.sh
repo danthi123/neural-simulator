@@ -323,6 +323,52 @@ printf "v2\t%s\t%s\t%s\n" "$(date +%s)" "$rc" "$JOB_B64" >> job_status.log'
     "$jid" "$est" "$th" "$th" "$th" "$th" "$job_b64" "$wrapper_b64"
 }
 
+check_fast_fail() {
+  # check_fast_fail <node> <job-as-dispatched> -- READ-ONLY. Tails the node's OWN job_status.log for the v2
+  # record this exact dispatch produced and, when it died with rc=127 ("command not found") or rc=2 (a shell
+  # syntax/usage error) -- the signature of a job that never actually ran -- logs a LOUD line HERE (never
+  # remotely; this never writes anything to the node, and never touches remote_launch_command's wrapper).
+  #
+  # WHY (2026-09-25). Six SETTLE A2 pool lines and, independently, a bare `status` job in gpu_queue.log
+  # (2026-08-31/09-01, three separate cycles) all died this way in well under a second, and NOTHING said so
+  # louder than an ordinary v2 status row nobody was tailing -- the board and the claim record both said
+  # "dispatched" while nothing ran. tools/queue_job_shape_check.sh now refuses that SHAPE at enqueue time; this
+  # is the belt-and-suspenders net for whatever it cannot see from here (a module importable on this node's
+  # SHARED checkout but not on the pinned revision this job actually runs in, e.g.) -- it is deliberately not
+  # a substitute for the enqueue-time check, since a fast-fail already happened by the time this runs.
+  #
+  # Called from fill_node AFTER the existing POOL_DISPATCH_LAUNCH_SLEEP (default 5s, already there to "let the
+  # launch register") -- every real rc=127/2 in the historical record completed in well under 1s, so 5s is
+  # ample; a job that legitimately takes longer than that to even START is simply not yet in the log and this
+  # silently finds nothing (best-effort, never a false alarm).
+  #
+  # THIS DISPATCH'S record only (2026-09-25 fix round, review MEDIUM). <t0> is the local `date +%s` fill_node
+  # took just BEFORE its `ssh -f` launch. job_status.log is append-only and keeps every earlier attempt, so the
+  # first version (`grep -F <b64> | tail -1`, no time check) reported a re-dispatch of an identical job whose
+  # EARLIER attempt had died rc=127 as a new FAST-FAIL -- and its substring match could also hit a longer job
+  # whose base64 merely starts with this one's. A record now counts only when its job field is EXACTLY this
+  # job's base64 AND its timestamp is >= t0. The remote side stays a read-only grep; the exact-match and time
+  # filter run HERE, on its output. The record's timestamp is the node's clock: a node running more than a
+  # second or so behind this host makes a genuine fast-fail read as older than t0 and go unreported (a miss,
+  # never a false alarm). With no numeric <t0> there is no way to tell this dispatch from an earlier one, so it
+  # reports nothing.
+  local node="$1" job="$2" t0="${3:-}" job_b64 remote_cmd raw rec rc ts
+  [[ $t0 =~ ^[0-9]+$ ]] || return 0
+  job_b64=$(printf '%s' "$job" | base64 -w0) || return 0
+  remote_cmd=$(printf 'grep -F -- %q ~/derisk-pool/sim/job_status.log 2>/dev/null | tail -n 50' "$job_b64")
+  raw=$(timeout 10 ssh -n "${SSH_F[@]}" -o BatchMode=yes -o ConnectTimeout=6 "$node" "$remote_cmd" 2>/dev/null)
+  [ -n "$raw" ] || return 0
+  rec=$(printf '%s\n' "$raw" | awk -F'\t' -v b="$job_b64" -v t="$t0" \
+        '$1 == "v2" && $4 == b && $2 ~ /^[0-9]+$/ && $2 + 0 >= t + 0 {r = $0} END {if (r != "") print r}')
+  [ -n "$rec" ] || return 0
+  ts=$(printf '%s' "$rec" | cut -f2)
+  rc=$(printf '%s' "$rec" | cut -f3)
+  case "$rc" in
+    127|2)
+      echo "[pool-dispatch] ⛔ FAST-FAIL: $node rc=$rc $(( ts - t0 ))s after dispatch (died on argv[0]/syntax, not a real run): $(printf '%s' "$job" | tr '\n\t' '  ' | cut -c1-160)" >&2 ;;
+  esac
+}
+
 pop_job() {
   # pop_job <max_gb> [node] -- atomically take the first non-comment line that fits <max_gb> AND (if [node] is
   # given and the candidate is revision-pinned) whose revision dir already exists on [node]. flock keeps two
@@ -421,7 +467,7 @@ fill_node() {
   # below calls the EXACT production code path -- including the real `JOB=$(pop_job ...)` command substitution
   # -- rather than a re-typed copy that could silently drift from what the live `while true` loop (at the bottom
   # of this file) runs.
-  local NODE="$1"
+  local NODE="$1" t0
   # PAUSE-MARKER CHECK, EVERY ITERATION (2026-09-25 review, LOW: "the pause does not close the race at its
   # source" -- CYCLE_NODES is built ONCE per cycle in cycle_setup, so a node paused (by
   # tools/aws_stop_safety_lib.sh's pause_dispatch_for_node, for a sync-before-stop window) mid-cycle used to keep
@@ -443,9 +489,11 @@ fill_node() {
       echo "[pool-dispatch] failed to encode job for $NODE" >&2
       break
     }
+    t0=$(date +%s)   # taken BEFORE the launch: check_fast_fail accepts only a status record written at/after it
     ssh -f -n "${SSH_F[@]}" -o BatchMode=yes "$NODE" "$REMOTE_COMMAND" 2>/dev/null
     printf '%s %s %s\n' "$(date +%s)" "$NODE" "$(job_est_gb "$JOB")" >> "$RESV"
     sleep "${POOL_DISPATCH_LAUNCH_SLEEP:-5}"     # let the launch register before this node's next capacity check
+    [ "${POOL_SKIP_FAST_FAIL_CHECK:-0}" = "1" ] || check_fast_fail "$NODE" "$JOB" "$t0"
   done
 }
 
@@ -495,6 +543,14 @@ if [ "${1:-}" = "--revision-available" ]; then
   # completion MARKER, not bare directory existence).
   [ "$#" -eq 3 ] || { echo "usage: $0 --revision-available <node> <sha>" >&2; exit 2; }
   revision_available "$2" "$3"; exit $?
+fi
+if [ "${1:-}" = "--check-fast-fail" ]; then
+  # TEST SEAM (2026-09-25): exercises the REAL check_fast_fail ssh call (same argv construction, including
+  # SSH_F) against one node/job pair, without a real node -- so a stubbed `ssh` on PATH can assert both the
+  # exact read-only grep probe it makes AND that a matching rc=127/2 record is logged loudly to stderr.
+  # <t0> is the dispatch time fill_node would pass (records older than it are earlier attempts, not this one).
+  { [ "$#" -eq 3 ] || [ "$#" -eq 4 ]; } || { echo "usage: $0 --check-fast-fail <node> <job> [<t0>]" >&2; exit 2; }
+  check_fast_fail "$2" "$3" "${4:-}"; exit 0
 fi
 if [ "${1:-}" = "--fill-node" ]; then
   # TEST SEAM (2026-09-23 fix round #3): calls cycle_setup then fill_node -- the SAME function the production
