@@ -16,7 +16,7 @@ PORT="${LLM_PORT:-8080}"
 UNIT="local-llm"
 
 profile_cmd() {   # profile_cmd <name> -> the llama-server command line for that profile
-  python3 - "$HERE/profiles.json" "$1" "$PORT" <<'EOF'
+  python3 - "$HERE/profiles.json" "$1" "$PORT" "$HERE/../.." <<'EOF'
 import json, os, shlex, sys
 profiles = {p["name"]: p for p in json.load(open(sys.argv[1]))}
 p = profiles.get(sys.argv[2])
@@ -24,7 +24,14 @@ if p is None:
     sys.exit("unknown profile %r; known: %s" % (sys.argv[2], ", ".join(profiles)))
 cmd = ["llama-server", "-m", os.path.expanduser(p["model"]), "--host", "127.0.0.1", "--port", sys.argv[3],
        "--alias", "local", "-ngl", "99", "-np", "1", "-fa", "on", "-c", str(p["ctx"]), "-ctk", p["kv"], "-ctv", p["kv"],
-       "--jinja"] + p.get("extra", [])
+       "--jinja"]
+if p.get("chat_template_file"):
+    # See tools/local_llm/templates/ -- the stock embedded template rejects a mid-conversation Claude
+    # Code "system reminder" message; this profile-specific copy fixes that (tool-call formatting is
+    # byte-for-byte unchanged, checked offline by templates/test_templates_offline.py).
+    root = os.path.abspath(sys.argv[4])
+    cmd += ["--chat-template-file", os.path.join(root, p["chat_template_file"])]
+cmd += p.get("extra", [])
 print(shlex.join(cmd))
 EOF
 }

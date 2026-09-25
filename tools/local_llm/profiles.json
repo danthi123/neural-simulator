@@ -2,9 +2,11 @@
  {"name": "qwen38-27b-iq4nl-mtp",
   "model": "~/models/qwen3.8-27b-gguf/unsloth-iq4nl/Qwen3.8-27B-IQ4_NL.gguf",
   "ctx": 65536, "kv": "q8_0", "long_tokens": 60000,
+  "chat_template_file": "tools/local_llm/templates/qwen38-27b-iq4nl-mtp.jinja",
   "extra": ["--spec-type", "draft-mtp", "--spec-draft-n-max", "3", "--temp", "0.6", "--top-p", "0.95", "--top-k", "20"]},
  {"name": "devstral-small2-24b-iq4xs",
   "model": "~/models/devstral-small-2-gguf/Devstral-Small-2-24B-Instruct-2512-IQ4_XS.gguf",
   "ctx": 65536, "kv": "q8_0", "long_tokens": 60000,
+  "chat_template_file": "tools/local_llm/templates/devstral-small2-24b-iq4xs.jinja",
   "extra": ["--temp", "0.15"]}
 ]
