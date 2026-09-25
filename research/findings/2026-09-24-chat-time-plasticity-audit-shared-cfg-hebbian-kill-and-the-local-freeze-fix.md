@@ -33,6 +33,7 @@ runner: research/runners/chat_time_plasticity_audit.py,
   tests/_chat_time_plasticity_local_freeze_scenario.py
 artifacts:
   - research/findings/raw/_chat_time_plasticity_audit/s42.json
+  - research/findings/raw/_chat_time_plasticity_audit/real_pool_freeze_s42.json
   - research/findings/raw/_chat_time_plasticity_local_freeze_mechanism_smoke/off_s42.json
   - research/findings/raw/_chat_time_plasticity_local_freeze_mechanism_smoke/on_s42.json
 builds_on:
@@ -41,6 +42,30 @@ builds_on:
 ---
 
 # Chat-time plasticity audit: the shared wave3-pool Hebbian kill is a latent hazard, not (yet) a lost capability — and a local-gate fix (2026-09-24)
+
+## ROUND 2 AMENDMENT (coordinator review, 2026-09-24)
+
+Round 1 (branch `research/chat-time-plasticity-audit`, merged to main as `55823d1bd`) was reviewed
+SOUND-WITH-ISSUES. Three fixes landed here (branch `research/chat-time-plasticity-audit-r2`), amending this SAME
+finding in place rather than superseding it (the underlying measurements and conclusions all still hold):
+
+1. **The fix was verified only on a synthetic 3-organ pool, never the real wave3 production pool, and the
+   finding omitted the REAL safety net for the other 6 co-resident organs** (`onebrain_merge_framework.py`'s
+   `_apply_gain0_freeze`, a `freeze_regions`-driven direct gain-0 freeze independent of `cfg.enable_hebbian_
+   learning`) — added as new §3a, the per-faculty table's substrate/evidence columns were corrected, and a new
+   `--real-pool-freeze-check` mode was added to `research/runners/chat_time_plasticity_audit.py` (§6, K6).
+2. **A crash on the fallback pool**: `BRAIN_ONEBRAIN_WAVE3_POOL=0` + `BRAIN_ONEBRAIN_SINGLE_POOL=0` (both
+   default-ON) reaches the legacy `onebrain_merge_production.MergedSubstrate` pool, which never threads
+   `local_freeze_gate` into its own build calls, so a flag-on run raised `KeyError` on `bridge.
+   set_plasticity_gate`. Fixed: `_freeze_local_or_fallback` (added to both organ modules) checks gate presence
+   first and falls back to the pre-fix global kill with a logged `RuntimeWarning` instead of crashing — verified
+   with a new `--mode fallback-pool` scenario + `tests/test_chat_time_plasticity_local_freeze.py::
+   test_fallback_pool_does_not_crash_and_warns` (§6, K7).
+3. **Wording**: the byte-identical-OFF claim leaned on "verified via `git diff`" instead of the measured OFF-arm
+   data (docs/TERMS.md: byte-identical must be asserted IN THE DATA). Reworded (§5) to rest on the three measured
+   OFF-arm quantities (no gate declared, `enable_hebbian_learning` False, the probe pathway killed) instead.
+
+---
 
 Branch `research/chat-time-plasticity-audit`. Coordinator follow-up to the 2026-09-24 plastic-mask finding,
 which found that `WorldModelProductionOrgan._build_one` trains its own state->valence transition then sets
@@ -123,6 +148,55 @@ inhibition pathways) but carry no NAMED plasticity gate, so they are exactly the
 gated by `BRAIN_ENFORCE_PLASTIC_MASK`, default OFF) — a pre-existing, differently-caused drift on a NEW organ
 this audit happened to observe, not this finding's shared-cfg mechanism. Flagged, not chased further here.
 
+## 3a. The REAL safety net for the other 6 organs, omitted by round 1: `_apply_gain0_freeze`
+
+Coordinator review round 2 (2026-09-24) named the gap: round 1 characterized comprehension/metacog/pragmatic/
+self_schema/curiosity/causal_whatif/source_provenance as "FROZEN-BY-DESIGN" without saying WHY their edges can
+survive `cfg.enable_hebbian_learning` ever reading True (which this finding's own fix makes happen). The answer
+is a SEPARATE, independent mechanism from world-model/surprise's cfg switch or named gate:
+`onebrain_merge_framework.MergedPool.ensure_built`'s step 7 (`_apply_gain0_freeze`, lines ~398-406/454-472) unions
+every registered `OrganDescriptor.freeze_regions` at POOL-BUILD time and sets `cp_plasticity_rate_gain = 0.0`
+DIRECTLY on every edge with BOTH endpoints inside that union — a raw array write, not a NAMED gate (so it never
+appears in `bridge.list_plasticity_gates()`, and nothing can `set_plasticity_gate` it back open by name). Because
+this gain multiplies the Hebbian delta INSIDE the same `if cfg.enable_hebbian_learning:` block (§1), it holds
+these edges at exactly 0 drift NO MATTER what `cfg.enable_hebbian_learning` reads afterward — permanently, for
+the life of the pool.
+
+Tracing which organs declare `freeze_regions` (`_onebrain_wave3_organread_verify._wave3_descriptors`, reuse-by-
+import) confirms comprehension, metacog, pragmatic, self_schema, curiosity, causal_whatif and source_provenance
+ALL do (`_onebrain_twopool_merge_organread_verify._recon_descriptors` is where metacog/pragmatic's are set, with
+a comment that states the design intent outright: `mc["enable_hebbian_learning"] = True  # match pool-1 global;
+pool-2 edges gain-0 frozen` — the pool's original designers deliberately made these two organs robust to
+whatever pool-#1's (surprise/world-model's) global switch does). **World-model and surprise are the ONLY two
+wave3-pool organs with NO `freeze_regions` declared** — they are the SOLE reason the fragile global switch
+existed in the first place, and the sole organs this finding's fix actually needed to change.
+
+**Measured on the REAL wave3 production pool** (`research/runners/chat_time_plasticity_audit.py
+--real-pool-freeze-check`, both `BRAIN_WORLDMODEL_LOCAL_FREEZE=1` and `BRAIN_SURPRISE_LOCAL_FREEZE=1`, seed 42,
+`research/findings/raw/_chat_time_plasticity_audit/real_pool_freeze_s42.json`):
+
+| quantity | measured value |
+|---|---|
+| `enable_hebbian_learning_after_warmup` | **True** |
+| `worldmodel_gate_value` | 0.0 |
+| `surprise_gate_value` | 0.0 |
+| `gain0_frozen_regions_ok` (comprehension+metacog+pragmatic+self_schema+curiosity+causal_whatif+source_provenance+prospective_memory+d6_multiref_wm's own regions, 278,364 synapses) | **True** (`max\|dw\| == 0.0`) |
+| `whole_bridge_max_dw` (every synapse on the pool, no bucketing) | 0.0 |
+
+`frozen_regions_by_organ` confirms the exact region sets `_apply_gain0_freeze` protects for each of the 9 other
+organs (e.g. `metacog: [workspace, workspace_fs, meta_schema]`, `comprehension: [sel_agent, sel_FS_agent,
+sel_patient, sel_FS_patient, cue_position_pos, cue_position_neg, cue_animacy_pos, cue_animacy_neg,
+cue_verbfit_pos, cue_verbfit_neg, cue_lexbias_pos, cue_lexbias_neg]`) and `organs_with_no_freeze_regions:
+[surprise, worldmodel]` confirms those two are the only pool members without one. `whole_bridge_max_dw == 0.0`
+means nothing moved ANYWHERE on the real pool across these 4 turns even with `enable_hebbian_learning` now True
+— consistent with §4's finding that no REAL production faculty currently has an ungated, chat-time-plastic
+pathway on this pool (the synthetic probe pathway in §5 exists precisely because the real pool has none to
+demonstrate the restored capability with).
+
+This closes round 1's gap: the fix's safety for the other 6 organs was never "no faculty happens to want ongoing
+learning" alone — it is this independent, pool-build-time, un-named freeze that makes their edges immovable
+regardless of the global switch. World-model/surprise are the only load-bearing case for the local-gate fix.
+
 ## 4. The per-faculty table (LIVE / FROZEN-BY-DESIGN / SILENTLY FROZEN)
 
 Every faculty whose design docstring or a findings doc claims it learns/adapts/writes DURING a live
@@ -130,15 +204,15 @@ conversation (not merely once at build time), classified against what §1–3 ac
 
 | faculty | mechanism | substrate | classification | evidence |
 |---|---|---|---|---|
-| world-model (state→pred) | bridge Hebbian, `train_transition` | shared wave3 pool | **FROZEN-BY-DESIGN** (for itself) — but via the hazardous global-switch MECHANISM (§1) | own docstring: "TRAINED (Hebbian state->valence) then FROZEN"; code confirmed |
-| surprise (cue→patient_expected) | bridge Hebbian, `train_expectation` | shared wave3 pool | **FROZEN-BY-DESIGN** (same mechanism) | own docstring: "LEARN ... then FREEZE (per-turn reads never learn)" |
-| metacog | static NMDA-conductance-balance readout | shared wave3 pool | **FROZEN-BY-DESIGN** — never claims chat-time Hebbian learning; never touches `enable_hebbian_learning` at all | own docstring: "the confidence IS a synaptic-conductance balance" |
-| pragmatic | fixed RSA circuit | shared wave3 pool | **FROZEN-BY-DESIGN** | own docstring: "computed ONCE at organ-build and FROZEN ... plasticity OFF, a FIXED operating point" |
-| comprehension | role-competition; specific pathways separately frozen by the PRE-EXISTING named gate `workspace_loop_fixed` | shared wave3 pool | **FROZEN-BY-DESIGN**, independent of this bug | 2026-09-24 plastic-mask finding, §2 |
-| self_schema | fixed authorship-readout circuit | shared wave3 pool | **FROZEN-BY-DESIGN** | own docstring: reuse-by-import of a static de-risked circuit |
-| curiosity | novelty-driven ASK-pool read; a graded habituation-style novelty is a DECLARED, unbuilt next rung | shared wave3 pool | **FROZEN-BY-DESIGN** | own docstring: "a graded familiarity-gate novelty (Bogacz-Brown) is the next rung" (not yet built, so nothing is silently lost) |
-| causal_whatif | causal curriculum trained once, `ensure_built` guard, keyed per-brain-composer | shared wave3 pool | **FROZEN-BY-DESIGN** (a separate, undeclared build-once-staleness residual — out of scope here) | code: `if self._built: return` |
-| source_provenance | per-call live Hebbian encode, `encode_fact` → `ProvenanceBrain.encode(pattern, provenance, learning=True)` | **own standalone bridge/cfg** — `get_organ()` has NO `shared=` parameter at all | **LIVE** | `ProvenanceBrain.__init__`: `cfg.enable_hebbian_learning = True` permanently, own cfg; `encode()` opens the NAMED gates `prov_learn`/`content_learn` only for the encode call, in a `try/finally`, then re-closes them — the SAME local-per-pathway pattern this finding's fix reuses |
+| world-model (state→pred) | bridge Hebbian, `train_transition` | shared wave3 pool; **NO `freeze_regions` declared** (§3a) | **FROZEN-BY-DESIGN** (for itself) — but via the hazardous global-switch MECHANISM (§1), the ONLY safety net it has | own docstring: "TRAINED (Hebbian state->valence) then FROZEN"; code confirmed |
+| surprise (cue→patient_expected) | bridge Hebbian, `train_expectation` | shared wave3 pool; **NO `freeze_regions` declared** (§3a) | **FROZEN-BY-DESIGN** (same mechanism, same sole safety net) | own docstring: "LEARN ... then FREEZE (per-turn reads never learn)" |
+| metacog | static NMDA-conductance-balance readout | shared wave3 pool; `freeze_regions` gain0-frozen (§3a) | **FROZEN-BY-DESIGN** — never claims chat-time Hebbian learning, AND independently hard-frozen regardless of `enable_hebbian_learning` | own docstring: "the confidence IS a synaptic-conductance balance"; `_recon_descriptors`: "pool-2 edges gain-0 frozen" |
+| pragmatic | fixed RSA circuit | shared wave3 pool; `freeze_regions` gain0-frozen (§3a) | **FROZEN-BY-DESIGN**, independently hard-frozen | own docstring: "computed ONCE at organ-build and FROZEN ... plasticity OFF, a FIXED operating point" |
+| comprehension | role-competition; specific pathways separately frozen by the PRE-EXISTING named gate `workspace_loop_fixed` | shared wave3 pool; `freeze_regions=tuple(comp.regions)` gain0-frozen (§3a), ON TOP of the named gate | **FROZEN-BY-DESIGN**, TWICE independent of this bug | 2026-09-24 plastic-mask finding, §2; §3a |
+| self_schema | fixed authorship-readout circuit | shared wave3 pool; `freeze_regions` gain0-frozen (§3a) | **FROZEN-BY-DESIGN**, independently hard-frozen | own docstring: reuse-by-import of a static de-risked circuit |
+| curiosity | novelty-driven ASK-pool read; a graded habituation-style novelty is a DECLARED, unbuilt next rung | shared wave3 pool; `freeze_regions` gain0-frozen (§3a) | **FROZEN-BY-DESIGN** today, independently hard-frozen — but the gain0 freeze would ALSO have to be removed (not just this fix's flags flipped) before the declared next rung (graded novelty) could actually learn | own docstring: "a graded familiarity-gate novelty (Bogacz-Brown) is the next rung" (not yet built, so nothing is silently lost) |
+| causal_whatif | causal curriculum trained once, `ensure_built` guard, keyed per-brain-composer | shared wave3 pool; `freeze_regions=("evt",)` gain0-frozen (§3a) | **FROZEN-BY-DESIGN** (a separate, undeclared build-once-staleness residual — out of scope here), independently hard-frozen too | code: `if self._built: return` |
+| source_provenance | per-call live Hebbian encode, `encode_fact` → `ProvenanceBrain.encode(pattern, provenance, learning=True)` | **own standalone bridge/cfg** — `get_organ()` has NO `shared=` parameter at all (the WAVE3-POOL COPY of source_provenance's regions IS gain0-frozen per §3a, but production never reads that copy) | **LIVE** | `ProvenanceBrain.__init__`: `cfg.enable_hebbian_learning = True` permanently, own cfg; `encode()` opens the NAMED gates `prov_learn`/`content_learn` only for the encode call, in a `try/finally`, then re-closes them — the SAME local-per-pathway pattern this finding's fix reuses |
 | prospective_memory | one-shot Hebbian cue→action binding at intention-FORMATION | **own standalone bridge, per-session** — `ProspectiveMemoryOrgan.__init__` takes no `shared=` at all | **LIVE** | code: no shared-pool path exists for this organ |
 | d6_multiref_wm Hebbian store | local phase-coupled rule, its own per-write `eta` (never reads `cfg.enable_hebbian_learning`) | own path, `BRAIN_D6_HEBBIAN_STORE` default **OFF** | **FROZEN-BY-DESIGN / not-yet-default-on** (an explicit, working knob — not silently broken) | research/findings/2026-09-23-d6-learn-through-use-v3-capability-gate-GO-6of6.md |
 | xedge cross-edge credit (`credit_live_turn`) | a temporarily-opened `enable_stdp` window + the named gate `wm_to_sel_r2`, re-frozen after each credited turn | **its own SEPARATE pool** (`onebrain_xedge_production.get_xedge_pool`, comprehension+d6+da_credit), `BRAIN_ONEBRAIN_XEDGE`/`_LEARN` default **ON** since 2026-08-28 | **LIVE (weights genuinely move)**, but presently a SEPARATE, already-documented architecture gap: comprehension's live read resolves the WAVE3 pool first, so this pool's cross-edge has "no path to a reply" — see that module's own docstring ("live cross-organ synapses in production = 0"). NOT this bug (different pool, different cfg); flagged here only so it is not mistaken for the same defect | `research/runners/onebrain_xedge_production.py` module docstring, "THE SEVERANCE THIS CLOSES" |
@@ -147,12 +221,16 @@ conversation (not merely once at build time), classified against what §1–3 ac
 
 **No faculty is SILENTLY FROZEN today.** Every wave3-pool rider is honestly documented as a build-once oracle
 and the audit's own measurement (§3) confirms zero chat-time drift on all of them — exactly what each one's own
-design says should happen. The finding is that the MECHANISM achieving this (a bridge-wide switch on a cfg
-object EIGHT organs share) has zero isolation: it is a coincidence, not a guarantee, that none of today's eight
-riders wants ongoing chat-time Hebbian learning. Two of this pool's own declared "next rungs" — curiosity's
-graded habituation-style novelty, causal_whatif's staleness fix — would need exactly that, and would be
-silently defeated by this switch the moment either is built, with no error and no signal (the "instrument is
-part of the emulation" hazard CLAUDE.md names).
+design says should happen. **Correction from round 1 (coordinator review, 2026-09-24): this is NOT a coincidence
+for 6 of the 8 riders** — comprehension/metacog/pragmatic/self_schema/curiosity/causal_whatif are independently,
+permanently hard-frozen by `_apply_gain0_freeze` (§3a) regardless of what `cfg.enable_hebbian_learning` reads,
+by original design ("match pool-1 global; pool-2 edges gain-0 frozen"). **It IS a coincidence, and the real
+hazard, for the remaining 2:** world-model and surprise declare NO `freeze_regions` at all, so the fragile global
+switch was their ONLY protection pre-fix — exactly the two organs this finding's local-gate fix targets. Two of
+this pool's own declared "next rungs" that live on ALREADY-gain0-frozen organs — curiosity's graded habituation-
+style novelty, causal_whatif's staleness fix — would need MORE than this fix's flags to ever learn chat-time
+(the gain0 freeze itself would have to be relaxed too, a separate, larger change); they are not at risk from the
+mechanism this finding fixes, only from the (separate, independent) gain0 freeze, which this fix does not touch.
 
 ## 5. The fix: two known-good LOCAL patterns already in this codebase, applied to world-model and surprise
 
@@ -195,10 +273,14 @@ drives 300 steps of real co-activity on the probe pathway. Saved runs:
 | the UNGATED probe pathway's max\|dw\| after 300 co-active steps (144 synapses) | **0.0** (killed by the global switch, same blast radius the audit measured) | **0.0339** (genuinely learns) |
 | both organs' own functional answers (`judge()`/`expectation()`/`read_surprise()`) | — | **identical** to OFF (dict-equal) |
 
-The OFF arm reproduces the exact CURRENT mechanism (verified via `git diff`: the `else:` branch on every
-changed call site is the pre-existing line, unmodified). The ON arm proves the causal claim: the SAME probe
-pathway that the global switch silently kills is free to learn once the switch is no longer touched, while
-both organs' own reads are provably unchanged.
+The OFF arm's own measured data is what supports "byte-identical to the pre-fix mechanism", not an inspection of
+the diff: no named gate is declared at all (`gates_after_organ_build: []`), `enable_hebbian_learning` reads
+False after both organs build (the ONE externally-visible state the pre-fix code ever produced), and the
+UNGATED probe pathway is killed (`max|dw| == 0.0`) -- together these three measured quantities fully
+characterize "the old bridge-wide kill and nothing else ran", which is what byte-identical-to-today means here
+(docs/TERMS.md: asserted in the data, not inferred from reading the code). The ON arm proves the causal claim:
+the SAME probe pathway that the global switch silently kills is free to learn once the switch is no longer
+touched (`max|dw| == 0.0339 > 0`), while both organs' own reads are measured identical to the OFF arm's.
 
 **Regression checks** (existing suites that exercise `onebrain_merge_framework.py`, unaffected since the new
 code paths are default-OFF): `python -m research.runners.onebrain_merge_framework --smoke` — PASS
@@ -219,6 +301,16 @@ hold on all 6 seeds (42, 43, 44, 100, 101, 102):
   seed (both organs' functional output to their callers never changes).
 - **K5 off byte-identical** — OFF: no gate named `worldmodel_frozen`/`surprise_frozen` exists at all, and
   `enable_hebbian_learning` reads False (the pre-existing mechanism, unmodified).
+- **K6 real-pool safety net** (coordinator round 2, 2026-09-24 — extends the check to the REAL wave3 production
+  pool, not just the synthetic 3-organ one) — ON, via `--real-pool-freeze-check`: `gain0_frozen_regions_ok` is
+  True (the union of comprehension/metacog/pragmatic/self_schema/curiosity/causal_whatif/source_provenance's
+  `freeze_regions` edges reads max\|dw\|==0.0 over the real chat turns) AND `worldmodel_gate_value`/
+  `surprise_gate_value` both read 0.0 AND `enable_hebbian_learning_after_warmup` reads True — on EVERY seed.
+- **K7 fallback pool** (coordinator round 2) — with `BRAIN_ONEBRAIN_WAVE3_POOL=0` + `BRAIN_ONEBRAIN_SINGLE_
+  POOL=0` + either local-freeze flag ON, via `--mode fallback-pool`: `crashed` is False, exactly 2 `RuntimeWarning`s
+  fire (naming `worldmodel_frozen`/`surprise_frozen`), `enable_hebbian_learning_after_build` reads False (the
+  documented, no-worse-than-before fallback), and both organs' own functional answers are unchanged from a
+  flags-off run on the SAME fallback pool — on every seed.
 
 Commands (numpy/CPU; run only when the owner authorizes the flip decision):
 ```bash
@@ -230,9 +322,22 @@ for s in 42 43 44 100 101 102; do
       tests._chat_time_plasticity_local_freeze_scenario --mode "$mode" --seed "$s" \
       > "research/findings/raw/_chat_time_plasticity_local_freeze_6seed/${mode}_s${s}.json"
   done
+  # K7: the fallback-pool combination (BRAIN_ONEBRAIN_WAVE3_POOL=0 + BRAIN_ONEBRAIN_SINGLE_POOL=0), same seed
+  SIM_BACKEND=numpy bash tools/memcap.sh 8 -- .venv/bin/python -m \
+    tests._chat_time_plasticity_local_freeze_scenario --mode fallback-pool --seed "$s" \
+    > "research/findings/raw/_chat_time_plasticity_local_freeze_6seed/fallback_s${s}.json"
 done
-# Score: for each seed, diff off_s<seed>.json vs on_s<seed>.json against K1-K5 above
-# (no scorer script exists yet -- write one, or diff by hand; do not report a verdict without it).
+# K6: the REAL wave3 production pool is much heavier (a real webapp.server.brain_chat build + turns) -- run each
+# seed as its own memcapped job, not fanned in a loop, so a single seed's OOM/crash does not lose the others.
+for s in 42 43 44 100 101 102; do
+  bash tools/mem_ok.sh 12
+  SIM_BACKEND=numpy bash tools/memcap.sh 12 -- .venv/bin/python -m research.runners.chat_time_plasticity_audit \
+    --real-pool-freeze-check --seed "$s" \
+    --out "research/findings/raw/_chat_time_plasticity_audit/real_pool_freeze_s${s}.json"
+done
+# Score: for each seed, diff off_s<seed>.json vs on_s<seed>.json against K1-K5, fallback_s<seed>.json against K7,
+# and real_pool_freeze_s<seed>.json against K6 (no scorer script exists yet -- write one, or diff by hand; do
+# not report a verdict without it).
 ```
 
 ## What this document does NOT claim

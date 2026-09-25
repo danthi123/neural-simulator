@@ -58,6 +58,7 @@ import contextlib
 import os
 import re
 import statistics as _st
+import warnings
 
 from research.runners._affective_world_model_derisk import (
     build_world_model_circuit,
@@ -117,6 +118,33 @@ def worldmodel_local_freeze_enabled() -> bool:
     return v.strip().lower() in ("1", "true", "yes", "on")
 
 
+def _freeze_local_or_fallback(bridge, cfg) -> None:
+    """Apply the local per-pathway freeze (`WORLDMODEL_FREEZE_GATE`) if the shared bridge's wiring actually
+    declared it -- true for every pool built via `onebrain_merge_framework.py`'s `_worldmodel_spec` (wave1/2/3,
+    which this fix's flag threads `local_freeze_gate` into). FALLS BACK to the old global switch, with a logged
+    warning, on any OTHER pool that never threaded the flag -- coordinator round-2 finding (2026-09-24): with
+    `BRAIN_ONEBRAIN_WAVE3_POOL=0`, `get_organ()` falls back to `onebrain_single_pool_production` or the legacy
+    `onebrain_merge_production.MergedSubstrate` (pool #1, surprise+world-model only), NEITHER of which threads
+    `local_freeze_gate` into their own `build_world_model_circuit(...)` call, so the gate `bridge.
+    set_plasticity_gate` needs was never declared on THAT bridge's wiring plan and raised `KeyError` (sim/
+    bridge.py's own documented behavior: "Raises KeyError if `name` was not declared on any pathway"). This
+    check-before-call makes every pool degrade safely instead of crashing; a genuinely un-isolated flip on such
+    a pool still protects world-model's own pathway (via the global switch), it just ALSO refreezes co-resident
+    organs on THAT pool exactly as before this fix existed -- no worse than the pre-fix mechanism, never a crash."""
+    from research.runners._affective_world_model_derisk import WORLDMODEL_FREEZE_GATE
+    if WORLDMODEL_FREEZE_GATE in bridge.list_plasticity_gates():
+        bridge.set_plasticity_gate(WORLDMODEL_FREEZE_GATE, 0.0)
+    else:
+        warnings.warn(
+            f"BRAIN_WORLDMODEL_LOCAL_FREEZE=1 but the shared bridge never declared the "
+            f"{WORLDMODEL_FREEZE_GATE!r} plasticity gate (this pool did not thread local_freeze_gate into its "
+            f"build_world_model_circuit() call -- e.g. BRAIN_ONEBRAIN_WAVE3_POOL=0's fallback pools). Falling "
+            f"back to the pre-fix global kill (cfg.enable_hebbian_learning = False) for this pool -- world-model's "
+            f"own pathway is still frozen, but so is every co-resident organ's on THIS pool, same as before this "
+            f"fix existed.", RuntimeWarning, stacklevel=2)
+        cfg.enable_hebbian_learning = False
+
+
 def is_expectation_query(text: str) -> bool:
     return bool(_EXPECT_RE.search(text or ""))
 
@@ -166,9 +194,10 @@ class WorldModelProductionOrgan:
                 # LOCAL freeze (chat-time-plasticity-audit 2026-09-24): freeze ONLY this organ's own trained
                 # pathway (the gate the merged pool's `_worldmodel_spec` tags it with under the same flag) --
                 # leave `cfg.enable_hebbian_learning` exactly as `train_transition` left it (True) so a
-                # co-resident organ's own UNGATED Hebbian pathway is not silently killed pool-wide.
-                from research.runners._affective_world_model_derisk import WORLDMODEL_FREEZE_GATE
-                bridge.set_plasticity_gate(WORLDMODEL_FREEZE_GATE, 0.0)
+                # co-resident organ's own UNGATED Hebbian pathway is not silently killed pool-wide. Falls back
+                # to the old global switch (with a logged warning) on a pool that never threaded the gate --
+                # see `_freeze_local_or_fallback`'s docstring (coordinator round-2, 2026-09-24).
+                _freeze_local_or_fallback(bridge, cfg)
             else:
                 cfg.enable_hebbian_learning = False
             return {"bridge": bridge, "cfg": cfg, "meta": meta, "xp": xp, "idx_map": idx_map, "vmap": vmap}
@@ -179,8 +208,10 @@ class WorldModelProductionOrgan:
         # LEARN the state->valence transition (Hebbian co-fire), then FREEZE (per-turn reads never learn).
         train_transition(bridge, cfg, idx_map, meta, xp, vmap, n_reps=self.n_reps)
         if worldmodel_local_freeze_enabled():
-            from research.runners._affective_world_model_derisk import WORLDMODEL_FREEZE_GATE
-            bridge.set_plasticity_gate(WORLDMODEL_FREEZE_GATE, 0.0)
+            # standalone build: `build_world_model_circuit` above was called WITH `local_freeze_gate=True`, so
+            # the gate always exists here -- `_freeze_local_or_fallback` never takes its fallback branch on this
+            # path, but reuses the SAME helper for a single source of truth.
+            _freeze_local_or_fallback(bridge, cfg)
         else:
             cfg.enable_hebbian_learning = False
         if lesion:

@@ -1,0 +1,32 @@
+{
+ "run_id": "1790308039-2869681",
+ "runner": "research/runners/chat_time_plasticity_audit.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-a8aceb60a46487f56/research/runners/chat_time_plasticity_audit.py",
+  "--real-pool-freeze-check",
+  "--seed",
+  "42",
+  "--out",
+  "research/findings/raw/_chat_time_plasticity_audit/real_pool_freeze_s42.json"
+ ],
+ "git_sha": "c1e0ded5c",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-24T23:47:19",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "host": "dant123-wk",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 7834.9,
+ "corpus_check_query": "shared-cfg Hebbian kill freezes chat-time learning pool-wide (world-model sets cfg.enable_hebbian_learning=False on the shared wave3 pool cfg)",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_chat_time_plasticity_audit/real_pool_freeze_s42.json"
+}

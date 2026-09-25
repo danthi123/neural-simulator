@@ -29,9 +29,19 @@ today's shipped mechanism) at seed 42, numpy/CPU. It is a single-seed DESCRIPTIV
 on 'works'/'selective'): the qualitative claims here (which cfg is shared, which pathway is gated, whether a
 drift is exactly 0.0 or nonzero) do not depend on the seed; a magnitude claim would.
 
+`--real-pool-freeze-check` (coordinator review round 2, 2026-09-24): `run_real_pool_freeze_check()` builds the
+REAL wave3 production pool with BOTH `BRAIN_WORLDMODEL_LOCAL_FREEZE=1` and `BRAIN_SURPRISE_LOCAL_FREEZE=1`,
+drives a few real chat turns, and asserts every co-resident organ's gain0-frozen edges
+(`onebrain_merge_framework._apply_gain0_freeze`, a `freeze_regions`-driven direct-array freeze independent of
+`cfg.enable_hebbian_learning` -- the real safety net the first round of this audit omitted) stay at max|dw|==0,
+in addition to re-checking world-model/surprise's own new named gates. See that function's docstring for the
+full mechanism explanation.
+
 Run (numpy/CPU, memcapped):
-  bash tools/mem_ok.sh 8 && bash tools/memcap.sh 8 -- .venv/bin/python -m research.runners.chat_time_plasticity_audit \
+  bash tools/mem_ok.sh 12 && bash tools/memcap.sh 12 -- .venv/bin/python -m research.runners.chat_time_plasticity_audit \
       --seed 42 --out research/findings/raw/_chat_time_plasticity_audit/s42.json
+  bash tools/mem_ok.sh 12 && bash tools/memcap.sh 12 -- .venv/bin/python -m research.runners.chat_time_plasticity_audit \
+      --real-pool-freeze-check --seed 42 --out research/findings/raw/_chat_time_plasticity_audit/real_pool_freeze_s42.json
 """
 from __future__ import annotations
 
@@ -221,12 +231,134 @@ def run(seed: int) -> dict:
     return out
 
 
+def run_real_pool_freeze_check(seed: int) -> dict:
+    """Coordinator review round 2 (2026-09-24): the FIRST audit's fix (`BRAIN_WORLDMODEL_LOCAL_FREEZE` /
+    `BRAIN_SURPRISE_LOCAL_FREEZE`) was verified only on a SYNTHETIC 3-organ pool
+    (`tests/_chat_time_plasticity_local_freeze_scenario.py`), never on the REAL wave3 production pool -- and the
+    finding OMITTED the real safety net that protects the other 6 co-resident organs: `onebrain_merge_framework.
+    py`'s `_apply_gain0_freeze` (pool-build step 7) sets `cp_plasticity_rate_gain = 0.0` DIRECTLY (no gate NAME,
+    so it is invisible to `set_plasticity_gate`/`list_plasticity_gates`) on every edge with BOTH endpoints inside
+    a descriptor's declared `freeze_regions` -- INDEPENDENT of `cfg.enable_hebbian_learning`. Comprehension,
+    metacog, pragmatic, self_schema, curiosity, causal_whatif and source_provenance's wave3-pool regions ALL
+    declare `freeze_regions` (`_onebrain_wave3_organread_verify._wave3_descriptors`, reuse-by-import below);
+    world-model and surprise are the ONLY two pool-#1 organs that do NOT (`_onebrain_twopool_merge_organread_
+    verify._recon_descriptors`'s own comment: "match pool-1 global; pool-2 edges gain-0 frozen" -- the pool's
+    original designers built this distinction on purpose). So flipping the two new flags on can ONLY ever affect
+    world-model/surprise's own now-named-gated pathways; every other organ's edges are hard-frozen at pool BUILD
+    time regardless of what `cfg.enable_hebbian_learning` reads afterward. This function measures that directly
+    on the REAL pool instead of arguing it from source: builds the actual wave3 pool with BOTH flags on, drives
+    a few real chat turns through `webapp.server.brain_chat`, and asserts the gain0-frozen union's weights are
+    UNCHANGED, in addition to re-checking world-model/surprise's own named gates (as `run()` already does on the
+    default/flags-off configuration)."""
+    os.environ.setdefault("SIM_BACKEND", "numpy")
+    os.environ["BRAIN_CHAT_RENDERER"] = "stub"
+    os.environ["SIM_DISABLE_LLM"] = "1"
+    os.environ["BRAIN_CHAT_SEED"] = str(seed)
+    os.environ["BRAIN_WORLDMODEL_LOCAL_FREEZE"] = "1"
+    os.environ["BRAIN_SURPRISE_LOCAL_FREEZE"] = "1"
+
+    import numpy as np
+    from webapp import server as S
+    from research.runners._onebrain_wave3_organread_verify import _wave3_descriptors
+    from research.runners._onebrain_wave2_organread_verify import _frozen_edge_weights
+
+    out = {"seed": seed, "flags": {"BRAIN_WORLDMODEL_LOCAL_FREEZE": "1", "BRAIN_SURPRISE_LOCAL_FREEZE": "1"}}
+
+    descs = _wave3_descriptors()
+    frozen_owners = {d.key: list(d.freeze_regions) for d in descs if d.freeze_regions}
+    frozen_regions = sorted({r for regs in frozen_owners.values() for r in regs})
+    out["frozen_regions_by_organ"] = frozen_owners
+    out["organs_with_no_freeze_regions"] = sorted(d.key for d in descs if not d.freeze_regions)
+
+    renderer = "stub"
+    chat, source = S._build_chat_brain("tiny-demo", renderer)
+    chat._brain_chat_source = source
+    cache_key = ("real_pool_freeze_check", "tiny-demo", renderer)
+    S._BRAIN_CHATS[cache_key] = chat
+
+    # warmup order (mirrors _warm_chat_brain / run()'s own replication above; value-choice skipped, same reason).
+    from research.runners.affect_production_organ import affect_enabled
+    if affect_enabled():
+        S._get_affect_organ().ensure_built()
+    from research.runners.comprehension_production_organ import comprehension_enabled
+    if comprehension_enabled():
+        S._get_comprehension_organ().ensure_built()
+    from research.runners.surprise_production_organ import surprise_enabled
+    if surprise_enabled():
+        S._get_surprise_organ().ensure_built()
+    from research.runners.metacog_production_organ import metacog_enabled
+    if metacog_enabled():
+        S._get_metacog_organ().ensure_built()
+    from research.runners.worldmodel_production_organ import worldmodel_enabled
+    if worldmodel_enabled():
+        S._get_worldmodel_organ().ensure_built()
+    from research.runners.pragmatic_production_organ import pragmatic_enabled
+    if pragmatic_enabled():
+        S._get_pragmatic_organ().ensure_built()
+
+    from research.runners.onebrain_wave3_pool_production import get_merged_cortical_pool
+    wave3 = get_merged_cortical_pool(seed, min_wave=1)
+    if wave3 is None:
+        out["error"] = "wave3 pool did not build (wave3_pool_enabled() False? check BRAIN_ONEBRAIN_WAVE3_POOL)"
+        return out
+    bridge = wave3.bridge
+    out["enable_hebbian_learning_after_warmup"] = bool(bridge.core_config.enable_hebbian_learning)
+    gates_after_warmup = {n: float(bridge.get_plasticity_gate_value(n)) for n in bridge.list_plasticity_gates()}
+    out["gates_after_warmup"] = gates_after_warmup
+
+    from research.runners._affective_world_model_derisk import WORLDMODEL_FREEZE_GATE
+    from research.runners._spiking_expectation_rpe_derisk import SURPRISE_FREEZE_GATE
+    out["worldmodel_gate_value"] = gates_after_warmup.get(WORLDMODEL_FREEZE_GATE)
+    out["surprise_gate_value"] = gates_after_warmup.get(SURPRISE_FREEZE_GATE)
+
+    frozen_w0 = _frozen_edge_weights(bridge, frozen_regions)
+    nnz = bridge.cp_connections.nnz
+    whole_w0 = np.asarray(_to_host(bridge.cp_connections.data))[:nnz].copy()
+
+    TURNS = [
+        ("teach_dog", "the dog chases the cat"),
+        ("teach_bird", "the bird eats the worm"),
+        ("recall_dog", "what does the dog chase"),
+        ("novel", "what does the elephant drink"),
+    ]
+    responses = []
+    for i, (label, msg) in enumerate(TURNS):
+        r = S.brain_chat(S.BrainChatRequest(session="real_pool_freeze_check", message=msg, brain="tiny-demo",
+                                            renderer=renderer, rich=False, reset=False))
+        responses.append({"label": label, "response": json.loads(r.body)})
+    out["responses"] = responses
+
+    frozen_w1 = _frozen_edge_weights(bridge, frozen_regions)
+    frozen_max_dw = (float(np.max(np.abs(frozen_w1 - frozen_w0)))
+                     if frozen_w0.shape == frozen_w1.shape else float("inf"))
+    out["gain0_frozen_regions_max_dw"] = frozen_max_dw
+    out["gain0_frozen_regions_n_synapses"] = int(frozen_w0.size)
+    out["gain0_frozen_regions_ok"] = bool(frozen_max_dw == 0.0)
+
+    # WHOLE-BRIDGE cross-check: everything protected (gain0-frozen union + world-model/surprise's own named
+    # gates) plus anything NOT protected. `run()`'s synthetic-probe test already proved the MECHANISM moves an
+    # ungated synapse when the switch is genuinely True; this checks whether any such unprotected synapse
+    # actually EXISTS on the REAL pool today. `gain0_frozen_regions_max_dw` above (computed on the exact index
+    # set `_frozen_edge_weights` derives from `frozen_regions`) is the authoritative per-mechanism verdict for
+    # the other 6 organs; this is only an order-of-magnitude cross-check over the whole bridge.
+    whole_w1 = np.asarray(_to_host(bridge.cp_connections.data))[:nnz]
+    dw_all = np.abs(whole_w1 - whole_w0)
+    out["whole_bridge_max_dw"] = float(dw_all.max()) if dw_all.size else 0.0
+    out["residual_note"] = ("whole_bridge_max_dw covers every synapse (gain0-frozen + named-gated + anything "
+                            "else); gain0_frozen_regions_max_dw and the world-model/surprise gate values above "
+                            "are the authoritative per-mechanism checks.")
+    return out
+
+
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--out", default=None)
+    ap.add_argument("--real-pool-freeze-check", action="store_true",
+                    help="Coordinator round 2: verify the REAL wave3 pool with both BRAIN_*_LOCAL_FREEZE=1 flags "
+                         "holds every co-resident organ's gain0-frozen edges at max|dw|==0 over a few chat turns.")
     a = ap.parse_args()
-    result = run(a.seed)
+    result = run_real_pool_freeze_check(a.seed) if a.real_pool_freeze_check else run(a.seed)
     js = json.dumps(result, indent=2, default=str)
     if a.out:
         os.makedirs(os.path.dirname(a.out) or ".", exist_ok=True)
