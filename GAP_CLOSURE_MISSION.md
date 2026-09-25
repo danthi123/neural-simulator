@@ -44,7 +44,7 @@ tokens (workflow `wk7t5ig9v`, opus build + opus review). When it merges: carry t
 UNSOUND: HTML blocks/unclosed comments hide a heading inside a Derived section; an inline marker pair hijacks an earlier
 standalone marker into a range; h1/setext/nested 'Derived' headings open oversized sections; container tables leak; the
 parser is an undeclared dependency. Four rounds of multi-line scoping all leaked, so round 5 SIMPLIFIES: a number is
-exempt only if <!--derived--> is on its own line (workflow `wrlt8b5ij`, opus review). Emitters migrate to per-line
+exempt only if <!--derived--> is on the SAME line as the number (workflow `wrlt8b5ij`, opus review). Emitters migrate to per-line
 marks; legacy findings are not rewritten (the gate checks newly added findings). Bake-off template fix merged
 (ed86e077f); the re-run is queued on the GPU after SETTLE A3.
 
