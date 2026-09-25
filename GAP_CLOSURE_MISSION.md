@@ -68,6 +68,11 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
    world-model/surprise/metacog clear `cfg.enable_hebbian_learning` on the SHARED cfg after training). Flip = low value.
    Lane `research/chat-time-plasticity-audit` (22:00) measures what can change during a real chat and classifies each
    learn-through-use faculty LIVE / FROZEN-BY-DESIGN / SILENTLY FROZEN.
+   RESULT 23:00 (branch @ a58572ba4): the shared cfg's Hebbian switch goes off when SURPRISE builds (not world-model);
+   all 8 pool riders are FROZEN-BY-DESIGN; source-provenance, prospective memory, the xedge pool and the host-level
+   stores learn at chat time; NO faculty is silently frozen. Built default-OFF local per-pathway freezes
+   (BRAIN_WORLDMODEL_LOCAL_FREEZE / BRAIN_SURPRISE_LOCAL_FREEZE) for the rungs that will need chat-time learning on
+   the pool (curiosity graded novelty, causal-whatif staleness). Review running before merge.
 
 **🟢 UPDATE ~17:15 (2026-09-24) — main a5e37143b. (history: superseded by the 20:25 block above)**
 - **Incident 13:53:** a review subagent's `rm -rf <scratch> ~/.claude/projects` deleted every project's Claude session
