@@ -14,6 +14,15 @@ sources:
   - path: ~/Projects/sim-catalog/references/textbooks/kandel-pns-6e/full-book.txt
     anchor: "platform with fewer spatial cues, their performance"
     note: "ch.54 (p.1360-1361): CA3-specific NMDA-receptor knockout mice find the platform with the full cue set but are impaired 'with fewer spatial cues' -- completion from a partial cue needs the recurrent synapses' LTP. The lesion logic behind BRAIN_REPLAY_COMPLETION_LESION (every read kept, the completion's effect cut)."
+  - path: ~/Projects/sim-catalog/references/textbooks/kandel-pns-6e/full-book.txt
+    anchor: "exceeds the normal variability in the response of the"
+    note: "ch.21 (p.518): a change in stimulus value must 'elicit a change in response that significantly exceeds the normal variability in the response of the neuron'. Bound 2026-09-25 (addendum 7a) to the item competition's discrimination criterion: a lead inside the competition's own resolution is not a discrimination, so the role reinstates nothing."
+  - path: ~/Projects/sim-catalog/references/textbooks/kandel-pns-6e/full-book.txt
+    anchor: "to-noise ratio increases, a process known as probabil"
+    note: "ch.21 (p.518): 'When many neurons contribute to the discrimination, the signal-to-noise ratio increases, a process known as probability summation, and the critical difference in stimulus value required for a significant change in neuronal response is less.' Bound (addendum 7a) to ASSEMBLY coding: each candidate item is an assembly of cells whose pooled count averages out single-cell excitability (with one cell per item the most excitable cell won; measured)."
+  - path: ~/Projects/sim-catalog/references/textbooks/buzsaki-rhythms/Buzsaki-RhythmsOfTheBrain-2006.txt
+    anchor: "suppressing the similarly activated neighboring neurons"
+    note: "p.63 (fig. 3.2 caption): 'Lateral inhibition provides autonomy (segregation) of neurons by suppressing the similarly activated neighboring neurons (winner take all)'. The competition the bank's discrimination criterion stands in for (the bank's cells are independent); the named next rung."
   - path: ~/Projects/sim-catalog/references/textbooks/buzsaki-rhythms/Buzsaki-RhythmsOfTheBrain-2006.txt
     anchor: "wave emerges in the excitatory recurrent circuits of the CA3 region"
     note: "p.345: 'In the intact brain, the endogenous hippocampal sharp wave emerges in the excitatory recurrent circuits of the CA3 region', from 'the synchronous bursting of CA3 pyramidal cells' -- the replay event IS a recurrent-network burst."
@@ -71,18 +80,34 @@ nearest competitor word sits; when the trace no longer selects it, nothing of it
 ## How the code binds to it
 
 - The bout still runs the Amendment-4 read R (kept on the record).
-- Per content role, the concept units' matched-filter drive (the store's own cleanup read) drives the composer's
-  Izhikevich concept bank (peak-normalized, the feedback-inhibition stand-in already used by the spiking cleanup) at
-  its graded operating point; the unit that fires most is the reinstated item; a silent or tied competition
-  reinstates nothing.
+- Per content role, the concept units' matched-filter drive (the store's own cleanup read) drives an ASSEMBLY of 64
+  cells per candidate item in the composer's Izhikevich concept bank (peak-normalized, the feedback-inhibition
+  stand-in already used by the spiking cleanup, at `_margin_drive_pA`); the assembly with the largest pooled count is
+  the role's item, and only if it leads the runner-up by the discrimination criterion (0.15 of its count, the
+  composer's validated clean/noise separator, reused); otherwise the role reinstates nothing (Kandel ch.21: a
+  difference must exceed the response's own variability; pooling many neurons raises the signal-to-noise ratio).
+  Addendum 7a of the prereg replaced the first build's ONE cell per item, whose picks were set by single-cell
+  excitability (44 of 273 dev role reads disagreed with the matched filter; one wrong word reinstated).
+- The burst ignites only when EVERY one of the fact's three content items resolves (unanimous, not a majority): de
+  la Prida's burst starts at a threshold level of POPULATION firing and Marr's completion starts from a SUBSET of
+  the assembly; the biology gives a threshold, not its value. Two weaker thresholds were tried and measured, both
+  disclosed: NO threshold let the bare baseline of dev seed 1 decode the wrong action word 'brain' past the
+  criterion (nothing else resolved); a MAJORITY (2 of 3) closed that, but on a pre-existing 3-fact vocabulary (dev
+  seed 7's own composer, `tests/test_awake_replay_completion.py`) two roles resolved at e = 0.3 with one of them
+  decisively wrong (a word borrowed from a different stored fact) and still ignited. Requiring all three costs
+  nothing measured on the validated 15-dev-seed corpus (same 77/255 fully-resolved facts as at 2-of-3; only the
+  blocks that had resolved exactly 2 of 3 no longer ignite there).
 - The reinstated items are re-bound and bundled on the composer's own resonate-and-fire work registers
   (`_compose_phases`, the op that encoded the fact) and read back as spike phases: the reinstated ensemble.
 - R_c = its in-phase coherence with the block's stored increment (Sadowski's pairing count). The bout induces
   e <- e + R_c (1 - e) (`BRAIN_AWAKE_REPLAY_COMPLETION`). The night's SWR epoch, with its own flag
   (`BRAIN_SLEEP_REPLAY_COMPLETION`), uses R_c for its re-tag, its SWR-coupled DA and its downscaling protection.
   `BRAIN_REPLAY_COMPLETION_LESION` keeps every read and uses R in both routes.
-- No new constant. The threshold is where the partial trace stops selecting its own items (the decayed increment
-  against the baseline and the vocabulary crosstalk), not a set number.
+- Constants (corrected in addendum 7a; the first build claimed none, which was wrong as built): 64 cells per
+  assembly (chosen from the bank's own measured excitability spread, before any dev outcome of the new design), the
+  discrimination criterion 0.15 (reused), the unanimous (3-of-3) ignition requirement (a priori threshold, its
+  strength set by measurement -- see above). Where a block stops igniting still varies with its decayed increment
+  against the baseline and the vocabulary crosstalk, but it is set by these.
 - No `constraints_config` / `protocol`: nothing here is a config scalar the checker can compare.
 
 ## Alternatives weighed (and why they are not the fix for this failure)
@@ -107,10 +132,18 @@ nearest competitor word sits; when the trace no longer selects it, nothing of it
   CA3 superposed-fact attractor (`research/runners/ca3_superposed_fact_attractor.py`, capacity GO 6/6) is a
   standalone binary k-WTA runner with its own EC codes and no chat write path; routing the awake read through it would
   need a second store for every told fact. Not used; named as the rung that would make the completion literally CA3.
-- **The competition has no lateral inhibition.** The concept bank's neurons are driven independently (no synapses),
-  so the "winner" is the most-firing unit of a peak-normalized drive; spike counts are small (5-8 in 120 steps at the
-  graded point) and near-ties resolve as no reinstatement. An equal drive to every unit still produces a winner (the
-  bank's heterogeneous thresholds). A lateral-inhibition WTA is the named next rung.
+- **The competition has no lateral inhibition.** The concept bank's neurons are driven independently (no synapses).
+  With one cell per item (the first build) spike counts were single digits and the bank's most excitable cell won an
+  equal drive; with 64-cell assemblies (addendum 7a) the pooled counts are graded and an equal drive or a near-tie
+  reinstates nothing, but the discrimination criterion is still host arithmetic on the counts. A lateral-inhibition
+  WTA (Buzsaki p.63) that resolves or fails to resolve on its own is the named next rung.
+- **A peak-normalized drive cannot tell a weak trace from background.** On a bare baseline the read's crosstalk can
+  still single out one word decisively (dev seed 1, e <= 0.03: 'brain' in the action role, margin 0.18-0.20), and on
+  a different vocabulary a crosstalk word from ANOTHER stored fact can win a role's competition just as decisively
+  (dev seed 7, e = 0.3: 'south', a different fact's patient word); no statistic of one role's own scores separates
+  either from a true read on the recorded vectors. The UNANIMOUS ignition requirement is what keeps both from being
+  reinstated; three simultaneous decisive crosstalk winners in one read (never observed on the validated corpus)
+  would still get through it.
 - **One pass.** No multi-cycle settle within the ripple.
 - **Wrong items are credited only along the stored increment.** The LTP a wrong reinstated item would write elsewhere
   is dropped by the ledger's bookkeeping (it can only understate confabulation risk); every bout records the items.

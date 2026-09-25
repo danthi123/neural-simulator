@@ -15,6 +15,14 @@ Two layers:
     fully expressed block reinstates its own three items through the spiking competition and the substrate re-bind
     (R_c = the three-role composite's coherence with the stored increment); the bare baseline does not; a silent or
     tied competition reinstates nothing; no code is grown by the read.
+  * THE ITEM COMPETITION ITSELF (Amendment 7 addendum 7a: assembly-coded, a discrimination criterion, a majority
+    ignition). Each test here is written to FAIL for a named mutation (verified by mutation, recorded in the addendum):
+    the assemblies' pooled counts are graded with the drive; silencing the winning assembly INSIDE the bank changes the
+    pick (a host argmax over the scores cannot see that); an equal drive and a near-tie reinstate nothing; a reserved
+    slot or a word with no code is never reinstated even when it wins decisively; one resolved item does not ignite the
+    burst; and no word other than the stored one is ever reinstated -- over an expression sweep of the real composer,
+    on a wrong word leading a near-tie, and on the recorded dev-seed-1 bare-baseline read where the matched filter
+    itself decodes the wrong word 'brain' past the criterion.
 """
 from __future__ import annotations
 
@@ -99,9 +107,10 @@ class LowMarginComposer:
                 "polarity": ("pos", 1.0, 1.0, None)}
 
 
-def fake_completion_read(comp, block_idx, blk):
-    """R = the store's own read; R_c = a reinstated three-role ensemble while the trace still selects its items."""
-    r = S.reactivation_strength(comp, block_idx)
+def fake_completion_read(comp, block_idx, blk, reactivate_fn=None):
+    """R = the route's own read (its injected `reactivate_fn`, as the real completion read takes it); R_c = a reinstated
+    three-role ensemble while the trace still selects its items."""
+    r = (reactivate_fn or S.reactivation_strength)(comp, block_idx)
     rc = RC_FULL if comp.ratio(block_idx) >= IGNITE_RATIO else 0.0
     return {"R": float(r), "R_c": rc, "coherence_abs": rc, "items": {}, "spikes": {}, "n_items": 3 if rc else 0}
 
@@ -263,6 +272,36 @@ def test_completion_lesion_writes_exactly_what_the_margin_routes_write(monkeypat
     assert [x["R"] for x in bo] == R_arc and _store_hash(comp2) == h_arc                   # ... = the margin routes
 
 
+def test_routes_pass_their_injected_read_to_the_completion(monkeypatch):
+    """Each route's injected `reactivate_fn` is the partial-cue read the completion runs (not a hard-wired module
+    function): with both completion flags armed, a spy injected into the awake route and into the night's route is
+    called once per bout and once per epoch. A route that dropped it would fall back to the module read and the spy
+    would stay at zero."""
+    calls = {"awake": 0, "sleep": 0}
+
+    def spy(tag):
+        def f(comp, i):
+            calls[tag] += 1
+            return S.reactivation_strength(comp, i)
+        return f
+
+    class ArcSpy(A.AwakeReplayCapture):
+        def __init__(self, seed, reactivate_fn=None, rng_ctx=None):
+            super().__init__(seed, reactivate_fn=spy("awake"), rng_ctx=rng_ctx)
+
+    class SrcSpy(S.SleepReplayCapture):
+        def __init__(self, seed, d1, reactivate_fn=None, rng_ctx=None):
+            super().__init__(seed, d1, reactivate_fn=spy("sleep"), rng_ctx=rng_ctx)
+
+    monkeypatch.setattr(A, "AwakeReplayCapture", ArcSpy)
+    monkeypatch.setattr(S, "SleepReplayCapture", SrcSpy)
+    chat, cap, comp = _tell(monkeypatch, env={**RC, **ARC, **ARCC, **SLPC})
+    _rest(chat, hours=1.0)
+    _night(chat)
+    assert cap._arc.summary()["n_bouts"] == 12 and len(cap._src.summary()["epochs"]) == 1
+    assert calls == {"awake": 12, "sleep": 1}
+
+
 def _run_hash(monkeypatch, env, composer=LowMarginComposer, rest=True):
     """The long-delay telling, then 4 h awake WITH quiet rest (rest=True: the arc family's datr) or WITHOUT an idle
     tick (rest=False: datl), then the night. Returns (store hash, capture state)."""
@@ -421,33 +460,193 @@ def test_role_scores_are_the_composers_own_block_read(small):
 
 
 def test_full_expression_reinstates_the_fact_and_the_baseline_does_not(small):
+    """Both reads run inside `_private_rng` -- the SAME seeded-substream discipline every production route uses
+    (module docstring: 'every D1 read runs inside `_private_rng(seed, k)`'; `read_blocks` wraps each block's
+    `completion_read` in `rng_ctx(seed, k_base + i)`). The composer's main substrate carries real background
+    current noise (`ou_std_current_pA` = 20, `research/runners/one_brain_composer.py`); an UNSEEDED read (as a bare
+    call from a test would be) samples a fresh, uncontrolled draw of it every time and is not what any route ever
+    reads. `_izh_bank`'s concept-bank competition itself is noise-free (`ou_std_current_pA` = 0, addendum 7a)."""
     c, i, inc, express = small
     n_concepts = len(c.comp.concepts)
     express(1.0)
-    full = C.completion_read(c, i, {"inc": inc})
+    with W._private_rng(7, 1):
+        full = C.completion_read(c, i, {"inc": inc})
     assert full["items"] == {"agent": "cat", "action": "chase", "patient": "ball"} and full["n_items"] == 3
+    assert full["ignited"] is True
     z = np.asarray(c._compose_phases(["cat", "chase", "ball"], ["agent", "action", "patient"]))
     d = inc / np.abs(inc)
     assert abs(full["R_c"] - float(np.mean(np.conj(d) * z).real)) < 1e-9 and full["R_c"] > 0.7
     assert full["R_c"] > full["R"]                                        # the burst is not the decode margin
     express(0.0)
-    bare = C.completion_read(c, i, {"inc": inc})
-    assert bare["R_c"] < 0.15                                             # nothing of the fact left to complete
+    with W._private_rng(7, 2):
+        bare = C.completion_read(c, i, {"inc": inc})
+    assert bare["R_c"] == 0.0 and bare["n_items"] == 0                   # nothing of the fact left to complete ...
+    assert bare["ignited"] is False and all(v is None for v in bare["items"].values())   # ... and nothing reinstated
     assert len(c.comp.concepts) == n_concepts                            # the read grew no code
+
+
+# ── the item competition itself (addendum 7a) ────────────────────────────────────────────────────────────────────
+def _peaked(V, pairs, floor=0.0):
+    s = np.full(V, float(floor))
+    for j, v in pairs:
+        s[j] = float(v)
+    return s
+
+
+def test_assembly_counts_are_graded_with_the_drive(small):
+    """The bank's operating point is graded: each assembly's pooled count follows its drive (the ratio of counts tracks
+    the ratio of drives within 0.1), undriven assemblies stay silent, and the counts are large (hundreds of spikes, not
+    single digits). With one cell per item the same drive ratios were overturned by single-cell excitability."""
+    c, i, inc, express = small
+    V = len(c.words)
+    s = _peaked(V, [(0, 1.0), (1, 0.8), (2, 0.6), (3, 0.4)])
+    n = C.assembly_counts(c.comp, s)
+    assert n.shape == (V,) and np.all(n[4:] == 0.0)
+    assert n[0] > n[1] > n[2] > n[3] > 0.0 and n[0] >= 100.0
+    for j, r in ((1, 0.8), (2, 0.6), (3, 0.4)):
+        assert abs(n[j] / n[0] - r) < 0.1
+
+
+def test_the_bank_makes_the_pick_not_the_scores(small, monkeypatch):
+    """Silence the leading item's assembly INSIDE the bank (a hyperpolarizing current on its cells at every step): the
+    pick moves to the runner-up. A host argmax over the scores (or any read of the score vector) cannot see the
+    lesion and would still return the leading item."""
+    c, i, inc, express = small
+    V = len(c.words)
+    s = _peaked(V, [(0, 1.0), (1, 0.6)], floor=0.05)
+    assert C.spiking_pick(c.comp, s)[0] == 0
+    bank = C._assembly_bank(c.comp, V)
+    step = bank._run_one_simulation_step
+    cells = np.arange(0, C.ASSEMBLY_CELLS)
+
+    def lesioned_step(*a, **kw):
+        bank.cp_external_input_current[cells] = -500.0
+        return step(*a, **kw)
+
+    monkeypatch.setattr(bank, "_run_one_simulation_step", lesioned_step)
+    j, (top, run) = C.spiking_pick(c.comp, s)
+    assert j == 1 and top > 0.0
+    assert C.assembly_counts(c.comp, s)[0] == 0.0
 
 
 def test_an_unresolved_competition_reinstates_nothing(small, monkeypatch):
     c, i, inc, express = small
-    assert C.spiking_pick(c.comp, np.zeros(len(c.words)))[0] is None    # silent -> no winner
-    # NOTE (measured): an equal drive to every unit is NOT a tie in spikes -- the bank's heterogeneous thresholds let
-    # its most excitable unit win. An uninformative read therefore reinstates SOME item; what keeps that from
-    # re-potentiating the block is R_c (an unrelated item has ~no in-phase coherence with the stored increment).
-    j, _t2 = C.spiking_pick(c.comp, np.ones(len(c.words)))
-    assert j is not None
+    V = len(c.words)
+    assert C.spiking_pick(c.comp, np.zeros(V))[0] is None                  # silent -> no winner
+    # an equal drive to every assembly does not let the bank's most excitable assembly win (it did with one cell per
+    # item: the first build reinstated SOME item on an uninformative read)
+    j, (top, run) = C.spiking_pick(c.comp, np.ones(V))
+    assert j is None and top > 0.0 and (top - run) / top < C.DISCRIMINATION_G
+    # a near-tie (5% apart in drive) is inside the competition's resolution: nothing reinstated
+    assert C.spiking_pick(c.comp, _peaked(V, [(3, 1.0), (7, 0.95)], floor=0.05))[0] is None
+    # ... while a clear lead is reinstated
+    assert C.spiking_pick(c.comp, _peaked(V, [(3, 1.0), (7, 0.6)], floor=0.05))[0] == 3
     express(1.0)
     monkeypatch.setattr(C, "spiking_pick", lambda inner, s: (None, (0.0, 0.0)))
     r = C.completion_read(c, i, {"inc": inc})
     assert r["R_c"] == 0.0 and r["n_items"] == 0 and r["R"] > 0.0       # the partial read alone is not a burst
+
+
+def _fake_scores(c, spec):
+    """{role: (scores, vocab)} for the three content roles: spec[role] = (vocab list, {word: score}), the rest 0.05."""
+    out = {}
+    for role, (vocab, top) in spec.items():
+        s = np.full(len(vocab), 0.05)
+        for w, v in top.items():
+            s[vocab.index(w)] = float(v)
+        out[role] = (s, list(vocab))
+    return out
+
+
+def test_reserved_slots_and_codeless_words_are_never_reinstated(small, monkeypatch):
+    """A reserved (unrecruited) cleanup slot, or a word the composer has no code for, is never reinstated even when its
+    assembly wins decisively; no code is grown. Since IGNITION_MIN_ITEMS requires EVERY content role to resolve
+    (unanimity, not a majority -- see test_one_resolved_item_does_not_ignite_the_burst), a reserved/codeless pick in
+    ONE role blocks the whole burst even though the other two are individually decisive: measured (the
+    2-of-3-majority design let a genuinely wrong item through when the third role's own read was this decisive but
+    invalid, research/findings/raw/_awake_replay_completion_dev/scan_assembly64/; a role that cannot be trusted taints
+    the whole read, not just its own slot)."""
+    c, i, inc, express = small
+    n_concepts = len(c.comp.concepts)
+    vocab = list(c.words) + ["__free0__", "zzqx"]            # a reserved slot and a codeless word
+    assert "zzqx" not in c.comp.concepts
+    for intruder in ("__free0__", "zzqx"):
+        spec = {"agent": (vocab, {intruder: 1.0, "cat": 0.3}), "action": (vocab, {"chase": 1.0}),
+                "patient": (vocab, {"ball": 1.0})}
+        monkeypatch.setattr(C, "_role_scores", lambda comp, b, _sp=spec: _fake_scores(comp, _sp))
+        r = C.completion_read(c, i, {"inc": inc})
+        assert r["resolved"]["agent"] is None and r["resolved"]["action"] == "chase"
+        assert r["ignited"] is False and r["n_items"] == 0 and r["R_c"] == 0.0
+        assert all(v is None for v in r["items"].values())
+        assert len(c.comp.concepts) == n_concepts
+
+
+def test_one_resolved_item_does_not_ignite_the_burst(small, monkeypatch):
+    """The burst needs EVERY content role to resolve (`IGNITION_MIN_ITEMS` = 3, unanimity, not a majority). One
+    resolved item -- the only thing a bare baseline's crosstalk can produce on the recorded dev reads -- reinstates
+    nothing; nor do two: a 2-of-3-majority design was tried first and withdrawn (addendum 7a) after it let a
+    genuinely wrong item through (a pre-existing 3-fact vocabulary, dev seed 7's own composer: at e = 0.3 two roles
+    resolved, one of them decisively to a WRONG word borrowed from a different stored fact -- see
+    test_a_wrong_word_is_never_reinstated). All three resolving is what ignites."""
+    c, i, inc, express = small
+    V = list(c.words)
+    one = {"agent": (V, {"cat": 1.0}), "action": (V, {"chase": 1.0, "go": 0.97}), "patient": (V, {})}
+    monkeypatch.setattr(C, "_role_scores", lambda comp, b: _fake_scores(comp, one))
+    r = C.completion_read(c, i, {"inc": inc})
+    assert r["resolved"] == {"agent": "cat", "action": None, "patient": None}
+    assert r["ignited"] is False and r["n_items"] == 0 and r["R_c"] == 0.0
+    assert all(v is None for v in r["items"].values())
+    two = {"agent": (V, {"cat": 1.0}), "action": (V, {"chase": 1.0}), "patient": (V, {})}
+    monkeypatch.setattr(C, "_role_scores", lambda comp, b: _fake_scores(comp, two))
+    r = C.completion_read(c, i, {"inc": inc})
+    assert r["resolved"] == {"agent": "cat", "action": "chase", "patient": None}
+    assert r["ignited"] is False and r["n_items"] == 0 and r["R_c"] == 0.0     # two of three still does not ignite
+    three = {"agent": (V, {"cat": 1.0}), "action": (V, {"chase": 1.0}), "patient": (V, {"ball": 1.0})}
+    monkeypatch.setattr(C, "_role_scores", lambda comp, b: _fake_scores(comp, three))
+    r = C.completion_read(c, i, {"inc": inc})
+    assert r["ignited"] is True and r["items"] == {"agent": "cat", "action": "chase", "patient": "ball"}
+    assert r["n_items"] == 3 and r["R_c"] > 0.0
+
+
+_S1_SCAN = os.path.join(_REPO, "research/findings/raw/_awake_replay_completion_dev/scan_assembly64/s1_arcc_scan.json")
+
+
+def test_a_wrong_word_is_never_reinstated(small, monkeypatch):
+    """Never a false memory. (a) Over a 21-point expression sweep of the real composer's stored fact every reinstated
+    item is the stored word or nothing. (b) A wrong word leading the stored one by 5% is a near-tie: nothing is
+    reinstated in that role. (c) The recorded dev-seed-1 reads at e <= 0.03 (a bare baseline), where the matched filter
+    itself decodes the wrong action word 'brain' past the criterion: the burst does not ignite and nothing is
+    reinstated. (a)'s reads run inside `_private_rng` -- the seeded-substream discipline every production route uses
+    (see test_full_expression_..._does_not); an unseeded read samples the main substrate's real background noise
+    (`ou_std_current_pA` = 20) fresh and uncontrolled on every call, which no route ever does."""
+    c, i, inc, express = small
+    true = {"agent": "cat", "action": "chase", "patient": "ball"}
+    for n, e in enumerate(np.linspace(1.0, 0.0, 21)):
+        express(float(e))
+        with W._private_rng(7, 100 + n):
+            r = C.completion_read(c, i, {"inc": inc})
+        for role, w in r["items"].items():
+            assert w is None or w == true[role], (e, role, w)
+    V = list(c.words)
+    tie = {"agent": (V, {"dog": 1.0, "cat": 0.95}), "action": (V, {"chase": 1.0}), "patient": (V, {"ball": 1.0})}
+    monkeypatch.setattr(C, "_role_scores", lambda comp, b: _fake_scores(comp, tie))
+    r = C.completion_read(c, i, {"inc": inc})
+    assert r["resolved"]["agent"] is None and r["resolved"]["action"] == "chase"
+    assert r["ignited"] is False and all(v is None for v in r["items"].values())  # agent's near-tie taints the burst
+    if not os.path.exists(_S1_SCAN):                                          # pragma: no cover
+        pytest.skip("dev scan artifact missing: %s" % _S1_SCAN)
+    from research.runners.rf_phasor_composer import RFPhasorComposer
+    d = json.load(open(_S1_SCAN))
+    inner = RFPhasorComposer(seed=int(d["inner_seed"]), D=64, vocab=list(d["vocab"]))
+    rows = [x for x in d["curve"] if x["e"] <= 0.03]
+    assert len(rows) == 4
+    for x in rows:
+        sc = {role: (np.asarray(x["scores"][role]), list(d["vocab"])) for role in C.COMPLETION_ROLES}
+        s = np.asarray(x["scores"]["action"])
+        top2 = np.sort(s)[::-1][:2]
+        assert d["vocab"][int(np.argmax(s))] == "brain" and (top2[0] - top2[1]) / top2[0] >= C.DISCRIMINATION_G
+        sel = C.select_items(inner, sc)
+        assert sel["ignited"] is False and all(v is None for v in sel["items"].values())
 
 
 def test_polarity_is_not_reinstated():

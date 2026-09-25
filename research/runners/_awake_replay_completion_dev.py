@@ -62,6 +62,7 @@ ARMS = {
 }
 E_GRID = (1.0, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.15, 0.1, 0.07, 0.05, 0.03, 0.02, 0.01, 0.0)
 _K_DEV = 900000                         # private-RNG stream offset for the curve reads (disjoint from every route's)
+_K_DEV_SCORES = 950000                  # ... and for the recorded score vectors (`--record-scores`)
 
 
 def _set_block_expression(L, comp, e):
@@ -78,7 +79,7 @@ def _set_block_expression(L, comp, e):
         comp._csr_cache = {}
 
 
-def curve(seed, chat, grid=E_GRID):
+def curve(seed, chat, grid=E_GRID, record_scores=False):
     from webapp.da_tag_capture_chat import _private_rng, store_composer
     from webapp.sleep_replay_capture import reactivation_strength
     cap = chat._da_tag_capture
@@ -102,6 +103,15 @@ def curve(seed, chat, grid=E_GRID):
         if comp_mod is not None:
             with _private_rng(seed, _K_DEV + 2 * n + 1):
                 row["completion"] = comp_mod.completion_read(comp, j, L.blocks[0])
+        if record_scores:
+            # the per-role matched-filter drive the completion's item competition receives (the rectified cleanup
+            # membrane, `replay_completion._role_scores`), so the competition can be studied offline on the recorded
+            # vectors; its own private-RNG stream (the read is a deterministic substrate op)
+            from webapp import replay_completion as _rc
+            with _private_rng(seed, _K_DEV_SCORES + n):
+                sc = _rc._role_scores(comp, j)
+            row["scores"] = (None if sc is None else
+                             {k: [round(float(x), 9) for x in v[0]] for k, v in sc.items() if k in _rc.COMPLETION_ROLES})
         rows.append(row)
     L.advance(comp, L.t)                   # restore the store exactly as the ledger holds it
     return rows
@@ -110,7 +120,7 @@ def curve(seed, chat, grid=E_GRID):
 SCAN_GRID = (1.0, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.15, 0.1, 0.065)   # seeds 1-12: (1.0, 0.9, 0.7, 0.5, 0.3)
 
 
-def run(seed, arm, out, scan=False):
+def run(seed, arm, out, scan=False, grid=None, record_scores=False):
     if int(seed) in GATE_SEEDS:
         raise SystemExit("⛔ %d is a GATE seed; this dev instrument refuses it (develop on dev seeds only)" % seed)
     env, group = ARMS[arm]
@@ -148,7 +158,14 @@ def run(seed, arm, out, scan=False):
     out_d = {"seed": int(seed), "arm": arm, "group": group, "env": env, "labels": labels,
              "tell_seconds": round(t_tell - t0, 1)}
     if getattr(chat, "_da_tag_capture", None) is not None and chat._da_tag_capture.ledger.blocks:
-        out_d["curve"] = curve(int(seed), chat, SCAN_GRID if scan else E_GRID)
+        g = {"full": E_GRID, "scan": SCAN_GRID}[grid] if grid else (SCAN_GRID if scan else E_GRID)
+        out_d["curve"] = curve(int(seed), chat, g, record_scores=record_scores)
+        if record_scores:
+            from webapp.da_tag_capture_chat import store_composer
+            sc_comp = store_composer(chat)
+            out_d["vocab"] = list(sc_comp.words)
+            out_d["inner_seed"] = int(sc_comp.comp.seed)
+            out_d["true_items"] = {"agent": "cat", "action": "chase", "patient": "ball"}   # the datr telling
     out_d["curve_seconds"] = round(time.time() - t_tell, 1)
     if scan:                                  # the scan stops at the curve: no rest, no night, no recall
         out_d.update({"scan": True, "elapsed_seconds": round(time.time() - t0, 1),
@@ -247,13 +264,17 @@ def main():
     ap.add_argument("--arm", default="arc", choices=sorted(ARMS))
     ap.add_argument("--out")
     ap.add_argument("--scan", action="store_true", help="tell + the R(e) curve on a short grid only (no rest/night)")
+    ap.add_argument("--grid", choices=("scan", "full"), default=None,
+                    help="the curve's e grid (default: the short SCAN_GRID with --scan, the 17-point E_GRID otherwise)")
+    ap.add_argument("--record-scores", action="store_true",
+                    help="record each curve point's per-role matched-filter score vectors + the vocab and composer seed")
     a = ap.parse_args()
     if a.attribute:
         attribute(a.attribute)
         return
     if a.seed is None or a.out is None:
         ap.error("--seed and --out are required (or --attribute <dir>)")
-    run(a.seed, a.arm, a.out, scan=a.scan)
+    run(a.seed, a.arm, a.out, scan=a.scan, grid=a.grid, record_scores=a.record_scores)
 
 
 if __name__ == "__main__":

@@ -204,7 +204,8 @@ class AwakeReplayCapture:
             # PATTERN COMPLETION (default-OFF `BRAIN_AWAKE_REPLAY_COMPLETION`, webapp/replay_completion.py): the same read
             # R, then the spiking item competition + the substrate re-bind of the reinstated ensemble, R_c.
             from webapp import replay_completion as _C
-            R, R_read, comp_rec = _C.read_blocks(comp, ledger, self.rng_ctx, self.seed, _K_AWAKE + b_idx * 1000)
+            R, R_read, comp_rec = _C.read_blocks(comp, ledger, self.rng_ctx, self.seed, _K_AWAKE + b_idx * 1000,
+                                                  reactivate_fn=self.reactivate_fn)
         else:
             for i in range(len(ledger.blocks)):
                 with self.rng_ctx(self.seed, _K_AWAKE + b_idx * 1000 + i):
