@@ -1,0 +1,396 @@
+[
+ {
+  "config": "A_np1_baseline",
+  "np": 1,
+  "extra": [],
+  "note": "today's production flags, unchanged (profile_cmd()/bakeoff.py start_server())",
+  "server_cmd": "llama-server -m /home/dant123/models/qwen3.8-27b-gguf/unsloth-iq4nl/Qwen3.8-27B-IQ4_NL.gguf --host 127.0.0.1 --port 8093 --alias local -ngl 99 -np 1 -fa on -c 131072 -ctk q4_0 -ctv q4_0 --jinja --chat-template-file /home/dant123/Projects/sim/.claude/worktrees/agent-a50e75206aabe3466/tools/local_llm/templates/qwen38-27b-iq4nl-mtp.jinja --spec-type draft-mtp --spec-draft-n-max 3 --temp 0.6 --top-p 0.95 --top-k 20",
+  "started": "2026-09-25 17:14:20",
+  "vram_before_mib": 2917,
+  "load_s": 16.0,
+  "vram_after_load_mib": 22444,
+  "claude": {
+   "wall_s": 99.2,
+   "exit": 0,
+   "num_turns": 4,
+   "is_error": false,
+   "result": "failed `llm on` is never retried forever, and it restores the *same* profile that was running.\n- **`llm on` side:** `llm.sh on` refuses to load while a GPU job is running/queued \u2014 but only real contention: a live dispatcher (dpid or singleton lock) **and** a live queue/recorded job pid, so a stale `gpu.running` from a dead daemon can't refuse forever. With `--wait` it blocks until the queue drains; a plain refusal **writes the same marker itself** with the requested profile, recording the owner's intent so the \"it will load automatically once the queue drains\" message is actually kept by the dispatcher's restore path.\n- **Manual off always wins + shared state:** `llm off` always deletes the marker, so an explicit off \u2014 even mid-job, even if the queue itself stopped the unit \u2014 cancels the pending auto-restore. All shared state (queue, dpid, lock, marker) lives under the git-common-dir root's `research/queue/`, so both scripts see the same marker no matter which worktree invoked them.\n\n## `bash tools/status.sh` summary (2 lines)\n\nGPU: dispatcher up, one job running (a `tools/local_llm/\u2026` python command, pid 29042), queue empty, only 1628 MiB VRAM free (below the 3000 MiB min_free), local-llm unit inactive.\nPool/AWS/batteries: pool queue 0 (pool41 6 running/1 fail, pool42 2 running/6 fails, pool40 unreachable); both AWS r7i.4xlarge instances stopped with ~$37.34 of the $50/day cap spent; batteries fi 6/6 and d6_n2000 18/18 READY, settle_a2_wiring 0/18 and b2b_base 0/258 WAITING.",
+   "stderr_tail": "[claude-code:unrecognized_model] {\"model\":\"local\",\"query_source\":\"sdk\"}\n"
+  },
+  "vram_peak_mib": 22815,
+  "vram_headroom_mib": 1761,
+  "requests": [
+   {
+    "task_id": 0,
+    "slot_id": 0,
+    "selection": "lru",
+    "sim_best": null,
+    "f_keep": null,
+    "requested_tokens": 21053,
+    "reprocessed_tokens": 21053,
+    "generated_tokens": 222,
+    "pp_time_s": 19.99,
+    "gen_time_s": 2.98,
+    "n_past_after_reuse": null,
+    "reused_frac": 0.0
+   },
+   {
+    "task_id": 72,
+    "slot_id": 0,
+    "selection": "lcp",
+    "sim_best": 0.386,
+    "f_keep": 0.734,
+    "requested_tokens": 40494,
+    "reprocessed_tokens": 40493,
+    "generated_tokens": 1643,
+    "pp_time_s": 40.05,
+    "gen_time_s": 29.93,
+    "n_past_after_reuse": null,
+    "reused_frac": 0.0
+   }
+  ],
+  "summary": {
+   "n_requests": 2,
+   "n_scored_requests": 2,
+   "total_requested_tokens": 61547,
+   "total_reprocessed_tokens": 61546,
+   "overall_reused_frac": 0.0,
+   "total_pp_time_s": 60.0,
+   "last_request_reused_frac": 0.0,
+   "last_request_sim_best": 0.386,
+   "last_request_f_keep": 0.734,
+   "prompt_sizes_monotonic_nondecreasing": true,
+   "prompt_sizes": [
+    21053,
+    40494
+   ],
+   "checkpoints_created": 0
+  },
+  "finished": "2026-09-25 17:16:22"
+ },
+ {
+  "config": "B_np2_kvu",
+  "np": 2,
+  "extra": [
+   "-kvu"
+  ],
+  "note": "a second slot for Claude Code's small-fast-model side calls, so they never evict the main conversation's slot (tests hypothesis a)",
+  "server_cmd": "llama-server -m /home/dant123/models/qwen3.8-27b-gguf/unsloth-iq4nl/Qwen3.8-27B-IQ4_NL.gguf --host 127.0.0.1 --port 8093 --alias local -ngl 99 -np 2 -fa on -c 131072 -ctk q4_0 -ctv q4_0 --jinja --chat-template-file /home/dant123/Projects/sim/.claude/worktrees/agent-a50e75206aabe3466/tools/local_llm/templates/qwen38-27b-iq4nl-mtp.jinja --spec-type draft-mtp --spec-draft-n-max 3 --temp 0.6 --top-p 0.95 --top-k 20 -kvu",
+  "started": "2026-09-25 17:16:22",
+  "vram_before_mib": 2900,
+  "load_s": 8.0,
+  "vram_after_load_mib": 23106,
+  "claude": {
+   "wall_s": 163.6,
+   "exit": 0,
+   "num_turns": 4,
+   "is_error": false,
+   "result": " while a GPU job is running/queued \u2014 but only when a dispatcher is *alive* and the recorded job pid is *live* (stale `gpu.running`/`gpu.queue` files from a dead daemon no longer wedge it forever). A refused `on` **writes the marker itself**, recording the owner's intent, so its \"it will load automatically once the queue drains\" promise is actually kept by the queue's restore path; `--wait` instead polls until the queue drains. `llm off` always **removes** the marker \u2014 a manual off, even mid-job, permanently cancels the pending restore.\n- **Why both directions are needed:** the ~22 GB model can still leave >3000 MiB free (above `MIN_FREE`), so the dispatch guard also checks `llm_is_active` and never dispatches over a loaded model on raw VRAM headroom alone; and the marker's write-after-verified-stop / consume-before-one-attempt discipline guarantees no infinite retries and no \"it was on\" memory that never was.\n\n## `tools/status.sh` summary (2 lines)\n\n- **GPU:** dispatcher up (pid 28900), one job currently running (a `tools/local_llm/\u2026` command, pid 29042), 0 queued, only **1055 MiB VRAM free** (below min_free 3000); the `local-llm` unit itself is inactive.\n- **Rest:** pool queue depth 0 (pool41 running=6, pool42 running=2, pool40 unreachable; a handful of non-zero jobs in 24 h); both AWS r7i.4xlarge instances **stopped**, spend \u2248$37.34 of the $50/day cap; batteries `fi` 6/6 and `d6_n2000` 18/18 READY, `settle_a2_wiring` 0/18 and `b2b_base` 0/258 WAITING.\n\nNo files were edited.",
+   "stderr_tail": "[claude-code:unrecognized_model] {\"model\":\"local\",\"query_source\":\"sdk\"}\n"
+  },
+  "vram_peak_mib": 23678,
+  "vram_headroom_mib": 898,
+  "requests": [
+   {
+    "task_id": 0,
+    "slot_id": 1,
+    "selection": "lru",
+    "sim_best": null,
+    "f_keep": null,
+    "requested_tokens": 21054,
+    "reprocessed_tokens": 21055,
+    "generated_tokens": 253,
+    "pp_time_s": 20.75,
+    "gen_time_s": 3.7,
+    "n_past_after_reuse": null,
+    "reused_frac": 0.0
+   },
+   {
+    "task_id": 82,
+    "slot_id": 1,
+    "selection": "lcp",
+    "sim_best": 0.39,
+    "f_keep": 0.733,
+    "requested_tokens": 40030,
+    "reprocessed_tokens": 40030,
+    "generated_tokens": 86,
+    "pp_time_s": 44.13,
+    "gen_time_s": 1.54,
+    "n_past_after_reuse": null,
+    "reused_frac": 0.0
+   },
+   {
+    "task_id": 131,
+    "slot_id": 1,
+    "selection": "lcp",
+    "sim_best": 0.385,
+    "f_keep": 0.39,
+    "requested_tokens": 40640,
+    "reprocessed_tokens": 40641,
+    "generated_tokens": 1962,
+    "pp_time_s": 45.26,
+    "gen_time_s": 38.66,
+    "n_past_after_reuse": null,
+    "reused_frac": 0.0
+   }
+  ],
+  "summary": {
+   "n_requests": 3,
+   "n_scored_requests": 3,
+   "total_requested_tokens": 101724,
+   "total_reprocessed_tokens": 101726,
+   "overall_reused_frac": 0.0,
+   "total_pp_time_s": 110.1,
+   "last_request_reused_frac": 0.0,
+   "last_request_sim_best": 0.385,
+   "last_request_f_keep": 0.39,
+   "prompt_sizes_monotonic_nondecreasing": true,
+   "prompt_sizes": [
+    21054,
+    40030,
+    40640
+   ],
+   "checkpoints_created": 0
+  },
+  "finished": "2026-09-25 17:19:20"
+ },
+ {
+  "config": "C_np2_kvu_denser_checkpoints",
+  "np": 2,
+  "extra": [
+   "-kvu",
+   "-ctxcp",
+   "32",
+   "-cms",
+   "1024"
+  ],
+  "note": "B + checkpoints every >=1024 tokens instead of the 8192 default, so a hybrid-model rollback lands closer to the actual divergence point (tests hypothesis b)",
+  "server_cmd": "llama-server -m /home/dant123/models/qwen3.8-27b-gguf/unsloth-iq4nl/Qwen3.8-27B-IQ4_NL.gguf --host 127.0.0.1 --port 8093 --alias local -ngl 99 -np 2 -fa on -c 131072 -ctk q4_0 -ctv q4_0 --jinja --chat-template-file /home/dant123/Projects/sim/.claude/worktrees/agent-a50e75206aabe3466/tools/local_llm/templates/qwen38-27b-iq4nl-mtp.jinja --spec-type draft-mtp --spec-draft-n-max 3 --temp 0.6 --top-p 0.95 --top-k 20 -kvu -ctxcp 32 -cms 1024",
+  "started": "2026-09-25 17:19:20",
+  "vram_before_mib": 2937,
+  "load_s": 8.0,
+  "vram_after_load_mib": 23040,
+  "claude": {
+   "wall_s": 111.9,
+   "exit": 0,
+   "num_turns": 4,
+   "is_error": false,
+   "result": "out the marker; **defers** (retried every ~12 s) while the gaming `GPU_PAUSE` sentinel exists or a brain process is still GPU-resident per nvidia-smi ground truth; otherwise it **consumes the marker before its single restart attempt** (so a crash or failed `llm on` is never retried forever) and background-runs `llm.sh on <profile>` to bring back the same profile.\n\n- **`llm.sh`'s own side:** `llm on` refuses to load while a queue job is running/queued (checking dispatcher liveness + the recorded job pid's liveness, not bare file existence, so stale `gpu.running` files can't wedge it forever) \u2014 and a refused `llm on` **writes the marker itself** to record the owner's intent, so its \"it will load automatically once the queue drains\" promise is actually kept by the queue's restore. Meanwhile `llm off` always removes the marker: a manual off, even mid-job, permanently cancels the pending auto-restore.\n\n## `tools/status.sh` summary\n\n- **GPU:** dispatcher up (pid 28900) with one job running (a `local_llm/` python cmd, pid 29042), queue empty, only 1044 MiB VRAM free (below the 3000 MiB min_free); the `local-llm` unit is currently inactive.\n- **Everything else:** pool depth 0 (pool40 unreachable, pool41/42 have running jobs plus 1/6 non-zero exits in 24 h), both AWS instances stopped with spend \u2248$37.34 of the $50 cap, batteries `fi` 6/6 and `d6_n2000` 18/18 READY while `settle_a2_wiring` (0/18) and `b2b_base` (0/258) are WAITING, and one rc=143 (SIGTERM) job in the 24 h failure list.",
+   "stderr_tail": "[claude-code:unrecognized_model] {\"model\":\"local\",\"query_source\":\"sdk\"}\n"
+  },
+  "vram_peak_mib": 23460,
+  "vram_headroom_mib": 1116,
+  "requests": [
+   {
+    "task_id": 0,
+    "slot_id": 1,
+    "selection": "lru",
+    "sim_best": null,
+    "f_keep": null,
+    "requested_tokens": 21063,
+    "reprocessed_tokens": 21063,
+    "generated_tokens": 336,
+    "pp_time_s": 21.41,
+    "gen_time_s": 5.19,
+    "n_past_after_reuse": null,
+    "reused_frac": 0.0
+   },
+   {
+    "task_id": 106,
+    "slot_id": 1,
+    "selection": "lcp",
+    "sim_best": 0.384,
+    "f_keep": 0.73,
+    "requested_tokens": 40618,
+    "reprocessed_tokens": 40617,
+    "generated_tokens": 1666,
+    "pp_time_s": 45.37,
+    "gen_time_s": 32.8,
+    "n_past_after_reuse": null,
+    "reused_frac": 0.0
+   }
+  ],
+  "summary": {
+   "n_requests": 2,
+   "n_scored_requests": 2,
+   "total_requested_tokens": 61681,
+   "total_reprocessed_tokens": 61680,
+   "overall_reused_frac": 0.0,
+   "total_pp_time_s": 66.8,
+   "last_request_reused_frac": 0.0,
+   "last_request_sim_best": 0.384,
+   "last_request_f_keep": 0.73,
+   "prompt_sizes_monotonic_nondecreasing": true,
+   "prompt_sizes": [
+    21063,
+    40618
+   ],
+   "checkpoints_created": 0
+  },
+  "finished": "2026-09-25 17:21:26"
+ },
+ {
+  "config": "D_np2_kvu_checkpoints_cram16g",
+  "np": 2,
+  "extra": [
+   "-kvu",
+   "-ctxcp",
+   "32",
+   "-cms",
+   "1024",
+   "-cram",
+   "16384"
+  ],
+  "note": "C + doubled cache-ram (8192 -> 16384 MiB) so idle-slot caching/checkpoint storage is not the limiting factor",
+  "server_cmd": "llama-server -m /home/dant123/models/qwen3.8-27b-gguf/unsloth-iq4nl/Qwen3.8-27B-IQ4_NL.gguf --host 127.0.0.1 --port 8093 --alias local -ngl 99 -np 2 -fa on -c 131072 -ctk q4_0 -ctv q4_0 --jinja --chat-template-file /home/dant123/Projects/sim/.claude/worktrees/agent-a50e75206aabe3466/tools/local_llm/templates/qwen38-27b-iq4nl-mtp.jinja --spec-type draft-mtp --spec-draft-n-max 3 --temp 0.6 --top-p 0.95 --top-k 20 -kvu -ctxcp 32 -cms 1024 -cram 16384",
+  "started": "2026-09-25 17:21:26",
+  "vram_before_mib": 2911,
+  "load_s": 6.0,
+  "vram_after_load_mib": 23047,
+  "claude": {
+   "wall_s": 165.2,
+   "exit": 0,
+   "num_turns": 4,
+   "is_error": false,
+   "result": "unning`/`gpu.queue` files from a dead dispatcher no longer cause a permanent refusal). If busy without `--wait`, it **refuses but writes the marker itself** with the requested profile, recording the owner's intent so the printed \"it will load automatically once the queue drains\" promise is actually kept by the queue's restore path; with `--wait` it just polls until the queue drains.\n- **Explicit `llm off` always wins**: `cmd_off` removes the marker unconditionally \u2014 even mid-job when the queue itself had stopped the unit \u2014 so the queue draining afterward never silently reloads the model against the owner's choice. Symmetrically, the queue's contention guard never dispatches over a *loaded* model just because raw VRAM headroom clears (the ~22 GB unit can still leave ~3\u20134 GB free, above `MIN_FREE`'s 3000 MiB default) \u2014 it requires the unit genuinely stopped, plus nvidia-smi residency ground truth, plus VRAM headroom.\n\n**`tools/status.sh` summary (2 lines):**\n\n- GPU: dispatcher up (pid 28900) with a `local_llm` job running (pid 29042), queue empty, but only **1049 MiB VRAM free \u2014 below the 3000 MiB min_free** threshold; pool40 unreachable, pool41/42 running 6+2 jobs with some 24 h failures, AWS both instances stopped at ~$37.34 of the $50/day cap.\n- local-llm unit is inactive; batteries: `fi` 6/6 and `d6_n2000` 18/18 READY, `settle_a2_wiring` 0/18 and `b2b_base` 0/258 WAITING; last 24 h shows one rc=143 (SIGTERM) GPU job at 03:08 plus 7 non-zero pool jobs.\n\nNo files were edited.",
+   "stderr_tail": "[claude-code:unrecognized_model] {\"model\":\"local\",\"query_source\":\"sdk\"}\n"
+  },
+  "vram_peak_mib": 23439,
+  "vram_headroom_mib": 1137,
+  "requests": [
+   {
+    "task_id": 0,
+    "slot_id": 1,
+    "selection": "lru",
+    "sim_best": null,
+    "f_keep": null,
+    "requested_tokens": 21069,
+    "reprocessed_tokens": 21069,
+    "generated_tokens": 275,
+    "pp_time_s": 21.69,
+    "gen_time_s": 3.92,
+    "n_past_after_reuse": null,
+    "reused_frac": 0.0
+   },
+   {
+    "task_id": 85,
+    "slot_id": 1,
+    "selection": "lcp",
+    "sim_best": 0.39,
+    "f_keep": 0.732,
+    "requested_tokens": 40066,
+    "reprocessed_tokens": 40066,
+    "generated_tokens": 81,
+    "pp_time_s": 45.11,
+    "gen_time_s": 1.38,
+    "n_past_after_reuse": null,
+    "reused_frac": 0.0
+   },
+   {
+    "task_id": 131,
+    "slot_id": 1,
+    "selection": "lcp",
+    "sim_best": 0.384,
+    "f_keep": 0.39,
+    "requested_tokens": 40673,
+    "reprocessed_tokens": 40672,
+    "generated_tokens": 1931,
+    "pp_time_s": 46.32,
+    "gen_time_s": 37.92,
+    "n_past_after_reuse": null,
+    "reused_frac": 0.0
+   }
+  ],
+  "summary": {
+   "n_requests": 3,
+   "n_scored_requests": 3,
+   "total_requested_tokens": 101808,
+   "total_reprocessed_tokens": 101807,
+   "overall_reused_frac": 0.0,
+   "total_pp_time_s": 113.1,
+   "last_request_reused_frac": 0.0,
+   "last_request_sim_best": 0.384,
+   "last_request_f_keep": 0.39,
+   "prompt_sizes_monotonic_nondecreasing": true,
+   "prompt_sizes": [
+    21069,
+    40066,
+    40673
+   ],
+   "checkpoints_created": 0
+  },
+  "finished": "2026-09-25 17:24:24"
+ },
+ {
+  "config": "E_np1_cache_reuse",
+  "np": 1,
+  "extra": [
+   "--cache-reuse",
+   "256"
+  ],
+  "note": "A + --cache-reuse (min chunk 256 tokens; default 0 = OFF in every other config here). Isolates whether the plain prefix-match path even ATTEMPTS a KV trim/checkpoint-restore for this hybrid model at all when explicitly told to, independent of -np/-kvu.",
+  "server_cmd": "llama-server -m /home/dant123/models/qwen3.8-27b-gguf/unsloth-iq4nl/Qwen3.8-27B-IQ4_NL.gguf --host 127.0.0.1 --port 8093 --alias local -ngl 99 -np 1 -fa on -c 131072 -ctk q4_0 -ctv q4_0 --jinja --chat-template-file /home/dant123/Projects/sim/.claude/worktrees/agent-a50e75206aabe3466/tools/local_llm/templates/qwen38-27b-iq4nl-mtp.jinja --spec-type draft-mtp --spec-draft-n-max 3 --temp 0.6 --top-p 0.95 --top-k 20 --cache-reuse 256",
+  "started": "2026-09-25 17:26:00",
+  "vram_before_mib": 2961,
+  "load_s": 6.0,
+  "vram_after_load_mib": 22464,
+  "claude": {
+   "wall_s": 115.9,
+   "exit": 0,
+   "num_turns": 4,
+   "is_error": false,
+   "result": "ne-shot):** on every idle poll with an empty queue, `llm_restore_if_idle` consumes the marker *before* its single restart attempt and re-runs `llm.sh on <profile>` in the background \u2014 restoring the **same** profile that was running, and because the marker is consumed up front, a crash or failed reload is never retried forever (`gpu_queue.sh:126-140`).\n- **Deferral + manual cancellation:** the restore is deferred (marker kept, retried every ~12 s) while gaming's `GPU_PAUSE` sentinel exists or a brain process is still GPU-resident; and any manual `llm off` always removes the marker, so an explicit off cancels the pending auto-restore even mid-job (`llm.sh:136-143`, `gpu_queue.sh:120-132`).\n- **Intent recording:** a refused `llm on` (GPU busy, no `--wait`) writes the marker itself with the requested profile, so its \"it will load automatically once the queue drains\" message is actually kept by the dispatcher's restore rather than being a broken promise (`llm.sh:119-128`).\n\n**`tools/status.sh` summary (2 lines):**\n- GPU: dispatcher up (pid 89965) with one job running (a `tools/local_llm/...` python command, pid 91345), queue empty, VRAM free 1628 MiB \u2014 *below* the 3000 MiB `min_free`; the `local-llm` unit itself is inactive.\n- Pool: pool41 running=6 (1 failure/24 h), pool42 running=0 (6 failures/24 h); both AWS r7i.4xlarge instances **stopped** (spend \u2248 $37.34 of the $50/day cap); batteries: `fi` 6/6 and `d6_n2000` 18/18 READY, `settle_a2_wiring` 0/18 and `b2b_base` 0/258 WAITING.",
+   "stderr_tail": "[claude-code:unrecognized_model] {\"model\":\"local\",\"query_source\":\"sdk\"}\n"
+  },
+  "vram_peak_mib": 22778,
+  "vram_headroom_mib": 1798,
+  "requests": [
+   {
+    "task_id": 0,
+    "slot_id": 0,
+    "selection": "lru",
+    "sim_best": null,
+    "f_keep": null,
+    "requested_tokens": 21059,
+    "reprocessed_tokens": 21059,
+    "generated_tokens": 290,
+    "pp_time_s": 20.9,
+    "gen_time_s": 4.24,
+    "n_past_after_reuse": null,
+    "reused_frac": 0.0
+   },
+   {
+    "task_id": 91,
+    "slot_id": 0,
+    "selection": "lcp",
+    "sim_best": 0.385,
+    "f_keep": 0.731,
+    "requested_tokens": 40568,
+    "reprocessed_tokens": 40567,
+    "generated_tokens": 2065,
+    "pp_time_s": 44.16,
+    "gen_time_s": 39.25,
+    "n_past_after_reuse": null,
+    "reused_frac": 0.0
+   }
+  ],
+  "summary": {
+   "n_requests": 2,
+   "n_scored_requests": 2,
+   "total_requested_tokens": 61627,
+   "total_reprocessed_tokens": 61626,
+   "overall_reused_frac": 0.0,
+   "total_pp_time_s": 65.1,
+   "last_request_reused_frac": 0.0,
+   "last_request_sim_best": 0.385,
+   "last_request_f_keep": 0.731,
+   "prompt_sizes_monotonic_nondecreasing": true,
+   "prompt_sizes": [
+    21059,
+    40568
+   ],
+   "checkpoints_created": 0
+  },
+  "finished": "2026-09-25 17:28:09"
+ }
+]

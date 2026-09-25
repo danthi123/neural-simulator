@@ -79,6 +79,20 @@ current_profile() {
 }
 
 profile_cmd() {   # profile_cmd <name> -> the llama-server command line for that profile
+  # -np 1 was INVESTIGATED, not merely inherited (research/local-llm-prompt-cache branch, 2026-09-25,
+  # tools/local_llm/cache_probe.py + tools/local_llm/results/cache_probe.md): a live `llm claude` session
+  # reprocesses its ENTIRE prompt every turn instead of reusing the cached prefix. Five configs were measured
+  # against the SAME real multi-turn Claude Code task -- -np 1 (this), -np 2 with -kvu, -kvu + denser context
+  # checkpoints (-ctxcp/-cms), + doubled -cram, and -np 1 + --cache-reuse -- and ALL FIVE showed 0% prompt-cache
+  # reuse across turns (a genuine, large common prefix was DETECTED each time -- sim_best/f_keep well above the
+  # slot-reuse threshold -- but never a single "context reuse" or "context checkpoint created" log line, so it
+  # was never actually applied). Root cause: this model is a HYBRID architecture (48/64 layers Gated DeltaNet
+  # linear-attention with a fixed-size recurrent state); llama-server (b10042/50b29f6) never creates a context
+  # checkpoint for a plain append-only multi-turn conversation (only for an actual context-shift/eviction event),
+  # so there is no valid point to roll the recurrent state back to, REGARDLESS of -np/-kvu/-ctxcp/-cms/-cram/
+  # --cache-reuse -- an upstream llama.cpp hybrid-model limitation, not a flag this profile was missing. Keeping
+  # -np 1: the multi-slot variants added VRAM and, in this build, occasionally an extra conversational round with
+  # zero offsetting benefit. Re-test if llama-server is upgraded past this build.
   python3 - "$HERE/profiles.json" "$1" "$PORT" "$HERE/../.." <<'EOF'
 import json, os, shlex, sys
 profiles = {p["name"]: p for p in json.load(open(sys.argv[1]))}

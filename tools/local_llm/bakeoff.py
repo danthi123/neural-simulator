@@ -88,6 +88,10 @@ def http(path, payload=None, timeout=1800):
 
 
 def start_server(profile):
+    # -np 1: kept in sync with llm.sh's profile_cmd(), which carries the full writeup of why (research/
+    # local-llm-prompt-cache branch, 2026-09-25 -- tools/local_llm/cache_probe.py / results/cache_probe.md found
+    # this hybrid model gets 0% prompt-cache reuse across turns under every tested -np/-kvu/-ctxcp/-cms/-cram/
+    # --cache-reuse combination, an upstream llama.cpp hybrid-model limitation, not a missing flag here).
     cmd = ["llama-server", "-m", os.path.expanduser(profile["model"]), "--port", str(PORT), "--alias", "local",
            "-ngl", "99", "-np", "1", "-fa", "on", "-c", str(profile["ctx"]), "-ctk", profile["kv"], "-ctv", profile["kv"],
            "--jinja"]
