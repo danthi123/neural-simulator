@@ -83,7 +83,16 @@ def http(path, payload=None, timeout=1800):
 def start_server(profile):
     cmd = ["llama-server", "-m", os.path.expanduser(profile["model"]), "--port", str(PORT), "--alias", "local",
            "-ngl", "99", "-np", "1", "-fa", "on", "-c", str(profile["ctx"]), "-ctk", profile["kv"], "-ctv", profile["kv"],
-           "--jinja"] + profile.get("extra", [])
+           "--jinja"]
+    if profile.get("chat_template_file"):
+        # A model's stock embedded template only merges a LEADING run of system messages and raises on
+        # any other one; Claude Code sends leading system blocks AND later mid-conversation "system
+        # reminders", which is exactly what broke every T1/T2/T3 agentic task in the bake-off (see
+        # tools/local_llm/templates/). This profile-specific patched copy fixes that; see that
+        # directory's *.orig.jinja for the unmodified original and test_templates_offline.py for the
+        # offline render/diff check that must pass before this ever reaches the GPU.
+        cmd += ["--chat-template-file", os.path.join(ROOT, profile["chat_template_file"])]
+    cmd += profile.get("extra", [])
     log = open(os.path.join(RESULTS, profile["name"] + ".server.log"), "w")
     proc = subprocess.Popen(cmd, stdout=log, stderr=subprocess.STDOUT, start_new_session=True)
     t0 = time.time()
