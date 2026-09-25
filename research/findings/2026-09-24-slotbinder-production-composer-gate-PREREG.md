@@ -88,3 +88,18 @@ established by `git diff main` over wiring files, not by this smoke -- see the r
    'onebrain_composer'` building the production-default (`onebrain`) arm -- a bundle-structure gap in the ad hoc
    sample bundle, not in the SlotBinder path this gate is about. OPEN, not gating this document's criteria. See
    the FAILURE_LOG row dated 2026-09-24.
+
+## AMENDMENT 1 (2026-09-25 03:10, orchestrator) -- measured wall-clock ceiling, before any 6-seed battery
+
+The dev-seed run registered above (`--seed 7 --n-facts 404 --fanout 32 --check-flagoff`, cupy, GPU queue, worktree
+`agent-ad44199e6b8cdcc9b`) started 2026-09-24 21:00:38 and printed `[seed 7] running arm=slotbinder ...` after a 266.9 s
+staging build. It was still inside that FIRST arm (of three: slotbinder, the FHRR reference, flag-off) at 03:08, after 6 h
+08 min of GPU time, with no further output: the runner prints nothing per query, so per-query latency and progress
+were not observable. It was stopped (SIGTERM, rc 143) to free the shared GPU for three queued jobs. No artifact was written.
+
+This is the case the sizing note above anticipates: N=404 is impractical per seed on this path, against the L3 de-risk's
+~1 s/query for a directly constructed composer (so the production `load_developed_brain` path costs orders of magnitude more
+per query, consistent with 2026-09-05-slotbinder-L3-wirein-derisk-NOGO-perstep-cost-dominates-latency). Before any 6-seed
+battery: (1) add per-fact progress and per-query latency lines to the runner; (2) re-run seed 7 at small N (e.g. 8, 32, 128)
+to measure the per-query cost on this path; (3) register the largest N whose three arms finish within a stated wall-clock
+budget as a further amendment. The gate criteria themselves are unchanged.
