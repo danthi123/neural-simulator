@@ -1015,9 +1015,16 @@ and `dispatch.log` contain no `arcc` / pin-SHA entry, and `research/findings/raw
 exist in the working tree or anywhere in `git log --all` — see "Were the six pool lines ever run?" below). This
 addendum governs the same family, arms and gates as Amendment 7 (the next free amendment number stays 8); the pin
 moves to this addendum's commit, `f7693a36f6b352fe805fb7e7c26fc9d34cd72129` on branch `research/awake-replay-completion-final`, which merges
-`origin/main` at `ae5f2b22bed17963d6451b65bd6aef85dae5876f` (`git diff` between the prior pin `a34593b0d` and `ae5f2b22bed17963d6451b65bd6aef85dae5876f` over the governed
-files — `webapp/replay_completion.py`, `webapp/awake_replay_capture.py`, `webapp/sleep_replay_capture.py`,
-`research/runners/_da_tag_capture_chat_probe.py` — is empty, verified before the merge).
+`origin/main` at `ae5f2b22bed17963d6451b65bd6aef85dae5876f` (CORRECTED 2026-09-25 fix round, LOW from an independent review of `d828311ac`: the
+meaningful no-conflict check, independently re-verified here, is that `git diff` from the two branches' merge-base, `4f77a5c7d`, to
+`ae5f2b22bed17963d6451b65bd6aef85dae5876f`, over the governed files — `webapp/replay_completion.py`, `webapp/awake_replay_capture.py`,
+`webapp/sleep_replay_capture.py`, `research/runners/_da_tag_capture_chat_probe.py` — is empty (confirmed: 0 diff lines on each file), i.e.
+origin/main's own progress since the branches diverged touched none of them. The ORIGINAL wording here described a straight two-pin `git diff`
+between `a34593b0d` and `ae5f2b22bed17963d6451b65bd6aef85dae5876f` as "empty, verified before the merge" — that is imprecise: run literally, that
+diff over the same files is NOT empty (268 lines for `webapp/replay_completion.py` alone; confirmed), because `ae5f2b22b` is a bare point on
+`origin/main` that never had the arcc feature at all, so it necessarily differs from the feature branch on every governed file. The underlying
+no-conflict conclusion the pin move relies on is unaffected by this correction — only the prior sentence's description of which diff was run,
+and which one was empty, was wrong).
 
 ### What an adversarial review found at `111667aaa` (SOUND-WITH-ISSUES)
 
@@ -1116,8 +1123,14 @@ plan (pool rows at this addendum's commit).
 - Removing the reserved-slot / no-code filter in `select_items`: 1 test fails
   (`test_reserved_slots_and_codeless_words_are_never_reinstated`).
 - `IGNITION_MIN_ITEMS` mutated to 1 (no ignition requirement): 4 tests fail. Mutated to 2 (the withdrawn majority):
-  3 tests fail, including `test_a_wrong_word_is_never_reinstated` (the dev-seed-7 'south' case above).
-- All 24 pass restored. `.venv/bin/python -m pytest tests/test_awake_replay_completion.py tests/test_awake_replay_capture.py tests/test_sleep_replay_capture.py -q` (CPU, `CUDA_VISIBLE_DEVICES=`): 82 passed.
+  4 tests fail (CORRECTED 2026-09-25 fix round, MEDIUM from an independent review of `d828311ac`: the original text here said 3; reproduced
+  twice on that commit's tree, deterministic both times): `test_full_expression_reinstates_the_fact_and_the_baseline_does_not`,
+  `test_reserved_slots_and_codeless_words_are_never_reinstated`, `test_one_resolved_item_does_not_ignite_the_burst`, and
+  `test_a_wrong_word_is_never_reinstated` (the dev-seed-7 'south' case above). Each failure is a logically-expected consequence of the mutation
+  (e.g. `test_reserved_slots_...` asserts `ignited is False` when action+patient resolve 2-of-3, which a 2-of-3 threshold necessarily ignites).
+  The shipped design (unanimous, `IGNITION_MIN_ITEMS` = 3) is unaffected by this correction and, if anything, better supported than the original
+  text stated.
+- All 24 pass restored. `.venv/bin/python -m pytest tests/test_awake_replay_completion.py tests/test_awake_replay_capture.py tests/test_sleep_replay_capture.py -q` (CPU, `CUDA_VISIBLE_DEVICES=`): 64 passed (CORRECTED 2026-09-25 fix round: the original text said 82; re-run on this tree gives 24 + 19 + 21 = 64 collected and 64 passed, confirmed by both a combined run and per-file `--collect-only` counts).
 
 ### Dev evidence under this addendum (dev seeds only; the validated 15-dev-seed grid, `scan_assembly64/`)
 
