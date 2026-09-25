@@ -71,8 +71,9 @@ mouth; the #1 metric is the lesion-verified load-bearing fraction:
   In probes: `from tools.lab import lever, before_after, undefined_if_empty, void_if`.
 - **At a wall, ask first** "what else does the real system run alongside this, that we replaced with a constant?", only
   then "what biology surpasses this?" (finding `2026-07-31-why-we-hit-walls-the-missing-companion-process`). The
-  instrument is part of the emulation. Writing NEGATIVE / BOUNDARY / "honest negative" / "characterized limit" /
-  "defensible" with the urge to scope a fix IS the research trigger: isolate and quantify the residual first.
+  instrument is part of the emulation. Writing NEGATIVE / BOUNDARY / NO-GO / "walls" / "can't" / "structural
+  primitive" / "honest negative" / "characterized limit" / "defensible" with the urge to scope a fix IS the research
+  trigger: isolate and quantify the residual first.
 - **Sync the summary docs in the same cycle** a finding changes a wall/gap status, the frontier or a next action: the
   `sync-documentation` skill (roadmap §7, `GAP_CLOSURE_MISSION.md` CURRENT STATE, `research/findings/AUTONOMOUS_STATE.md`,
   `ROADMAP.md`) + the Vikunja board (`vikunja` skill). The PostToolUse nudge means RUN it.
