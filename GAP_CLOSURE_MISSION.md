@@ -48,7 +48,10 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
    number); it dispatched to pool1 at 21:11. Offcheck at pin 36a175534 RAN (peak 1.9 GB) and reads UNDEFINED: the store and the ledger scenario are identical, but 19 unrelated server.py hunks merged since the pin also change the hashed reply path, so a fixed historical pin cannot answer the question (Amendment 4, branch head f6b0f31f7). Needed: an offcheck that compares current main flag-OFF against current main with the feature's own diff reverted. Audit verdict: an ordinary fact told once is
    NOT kept overnight with the ledger on, and no replay/repetition route reaches that store, so a flip would make ordinary
    facts forgettable. Build lane `research/sleep-replay-capture` (brain-driven reactivation during the night tick,
-   default-OFF) launched 21:10.
+   default-OFF) launched 21:10. RESULT 22:19: branch @ 269ae8f76 (prereg ea8ee1bed), seed-42 smoke reads GO on every
+   registered gate (ordinary fact: flag-off abstains, flag-on recalled; replay-edge and DA lesions abstain). 6 seeds
+   queued at the pool front 22:30 (`--family rc`, mem_gb=2, ~1.5 h each); adversarial review running. Open: sleep
+   downscaling not built, so nothing is forgotten with the flag on.
 7. gap#4 crux (A9): the full-size GPU run (H64/pool 16, 40 epochs, dev seed 7) finished 21:00, rc 0. The collapse
    persists at full size: every hidden-learning arm trains at chance on all 3 replicates, the frozen arm does not
    (`research/findings/raw/gap4/transport_ceiling_readout/gpu/gpu_s7_e40.json` in worktree `wf_4703a2bd-4dd-15`).
