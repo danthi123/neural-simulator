@@ -276,6 +276,44 @@ def _resolve_argv(rec):
     return rec
 
 
+def _shared_queue_root(root=None):
+    """Resolve the ONE shared corpus-check log location: the parent of git's *common* dir, which every git
+    worktree of this repo shares (a worktree's `.git` is a file pointing at the main checkout's
+    `.git/worktrees/<name>`, and the common dir is the one thing every worktree agrees on) -- mirrors
+    tools/corpus_check_lib.sh's `corpus_check_shared_log()` exactly (kept in lockstep by hand; no
+    cross-language sourcing), and the same resolution tools/gpu_queue.sh / tools/pool_queue.sh already use
+    for their own singleton queue/daemon state.
+
+    EARNED 2026-09-25 (incident: gate corpus-check-required blocked a genuinely-checked gap4 artifact). Before
+    this fix the log path was `_ROOT`-relative -- `_ROOT` is wherever THIS file physically sits, i.e. whichever
+    checkout's `research/runners/__init__.py` got imported. A run launched from one worktree's own checkout
+    stamped from THAT checkout's own log and never saw a check logged from a different worktree (or from the
+    main root); a run launched by a dispatcher whose OWN cwd was the main root (as the shared gpu/pool queue
+    daemons are) stamped from the main root's log regardless of which worktree had queued the job and run the
+    check. Resolving through git's shared common-dir makes every one of those the SAME file.
+
+    `root` is the fallback used both when git is unavailable (no `.git` anywhere -- an rsync'd pool-node copy
+    or an isolated `derisk-pool/revisions/<sha>` checkout; there is no shared log to find there, which is
+    exactly why (3) in the incident fix carries the check via the job's own CORPUS_CHECK_WHEN/QUERY env
+    instead) and as the `cwd` git itself resolves from; it defaults to this module's own `_ROOT` but is
+    parameterised so a test can point it at an isolated real git checkout instead of monkeypatching `_ROOT`."""
+    root = root if root is not None else _ROOT
+    override = os.environ.get("SIM_CORPUS_CHECK_LOG")
+    if override:
+        return override
+    try:
+        out = subprocess.run(
+            ["git", "rev-parse", "--path-format=absolute", "--git-common-dir"],
+            cwd=root, capture_output=True, text=True, timeout=5,
+        )
+        common = out.stdout.strip()
+        if out.returncode == 0 and common:
+            return os.path.join(os.path.dirname(common), "research", "queue", ".corpus_checks.jsonl")
+    except Exception:
+        pass
+    return os.path.join(root, "research", "queue", ".corpus_checks.jsonl")
+
+
 def _corpus_check_state(max_age_h=24.0):
     """How long since `before_you_build.sh` last ran. Stamped into every run record.
 
@@ -284,9 +322,31 @@ def _corpus_check_state(max_age_h=24.0):
     launched against a question already answered three weeks earlier at six seeds, with its root cause
     named in a second finding. The heartbeat flagged the missing check about fifteen times that day and was
     read past every time -- so this is recorded as a FACT of the run rather than as a reminder, and
-    `gates/corpus_check_required` refuses an expensive artifact whose run carries no recent check."""
+    `gates/corpus_check_required` refuses an expensive artifact whose run carries no recent check.
+
+    TWO SOURCES, checked in order (2026-09-25 incident fix, root cause (b): a pool/GPU job commonly runs on a
+    remote node or an isolated revision checkout with NO shared log reachable at all -- there is nothing on
+    disk there for a log-file read to find, ever, regardless of the path resolution).
+      1. CORPUS_CHECK_WHEN / CORPUS_CHECK_QUERY in the environment -- stamped into the job's own env by
+         tools/pool_queue.sh / tools/gpu_queue.sh `add` at enqueue time, carrying whatever the shared log's
+         freshest entry was THEN. This is the only source that can reach a job with no local git checkout.
+      2. The shared log itself (`_shared_queue_root`), for a run launched directly (no queue) from a real
+         checkout of this repo.
+    """
     try:
-        log = os.path.join(_ROOT, "research", "queue", ".corpus_checks.jsonl")
+        env_when = os.environ.get("CORPUS_CHECK_WHEN")
+        if env_when:
+            try:
+                when = float(env_when)
+            except (TypeError, ValueError):
+                when = None
+            if when is not None:
+                age = max(0.0, time.time() - when)
+                return {"corpus_check_age_s": round(age, 1),
+                        "corpus_check_query": os.environ.get("CORPUS_CHECK_QUERY", "")[:200],
+                        "corpus_check_fresh": bool(age <= max_age_h * 3600.0),
+                        "corpus_check_source": "env"}
+        log = _shared_queue_root()
         if not os.path.exists(log):
             return {"corpus_check_age_s": None, "corpus_check_query": None}
         last = None
@@ -303,7 +363,8 @@ def _corpus_check_state(max_age_h=24.0):
         age = max(0.0, time.time() - float(last.get("when", 0)))
         return {"corpus_check_age_s": round(age, 1),
                 "corpus_check_query": str(last.get("query", ""))[:200],
-                "corpus_check_fresh": bool(age <= max_age_h * 3600.0)}
+                "corpus_check_fresh": bool(age <= max_age_h * 3600.0),
+                "corpus_check_source": "log:%s" % log}
     except Exception:
         return {"corpus_check_age_s": None, "corpus_check_query": None}
 

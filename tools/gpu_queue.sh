@@ -43,6 +43,8 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"; cd "$ROOT"
 GIT_COMMON=$(git -C "$ROOT" rev-parse --path-format=absolute --git-common-dir 2>/dev/null || true)
 if [ -n "$GIT_COMMON" ] && [ -d "$(dirname "$GIT_COMMON")" ]; then SHARED_ROOT="$(dirname "$GIT_COMMON")"; else SHARED_ROOT="$ROOT"; fi
 QDIR=${GPU_QUEUE_DIR:-"$SHARED_ROOT/research/queue"}
+# shellcheck source=tools/corpus_check_lib.sh
+source "$ROOT/tools/corpus_check_lib.sh"
 QUEUE=$QDIR/gpu.queue; PAUSE=$QDIR/GPU_PAUSE
 RUNNING=$QDIR/gpu.running; DPID=$QDIR/gpu_queue.dpid; LOG=$QDIR/gpu_queue.log
 QLOCK=$QDIR/.gpu_queue.lock                  # fd 9: serialises queue read-modify-write (add vs pop)
@@ -325,7 +327,20 @@ case "${1:-}" in
     daemon ;;
   add)
     [ -z "${2:-}" ] && { echo 'usage: add "<full gpu command incl. --json out>"' >&2; exit 1; }
-    ( flock 9; printf '%s\n' "$2" >> "$QUEUE" ) 9>"$QLOCK"; echo "queued (depth $(wc -l < "$QUEUE")): ${2:0:80}" ;;
+    # CARRY THE CORPUS CHECK INTO THE JOB'S ENV (2026-09-25 incident fix, same rationale as pool_queue.sh add).
+    # This queue has no --checked gate and no dup guard to preserve, and the daemon runs the queued line
+    # VERBATIM via `bash -c "$job"` (see daemon(), above) -- so, unlike pool_queue.sh, the simplest correct
+    # place to carry the stamp is directly on the command: prepend CORPUS_CHECK_WHEN/QUERY exactly the way a
+    # job already prepends e.g. `SIM_BACKEND=cupy` to itself. Silently omitted when the shared log has no
+    # entry yet (see corpus_check_lib.sh's SIM_CORPUS_CHECK_LOG override and its git-checkout limitation).
+    JOB="$2"
+    CC_LATEST=$(corpus_check_latest "$(corpus_check_shared_log "$SHARED_ROOT")")
+    if [ -n "$CC_LATEST" ]; then
+      CC_WHEN=$(printf '%s' "$CC_LATEST" | cut -f1)
+      CC_QUERY=$(printf '%s' "$CC_LATEST" | cut -f2-)
+      JOB="CORPUS_CHECK_WHEN=$(printf '%q' "$CC_WHEN") CORPUS_CHECK_QUERY=$(printf '%q' "$CC_QUERY") $JOB"
+    fi
+    ( flock 9; printf '%s\n' "$JOB" >> "$QUEUE" ) 9>"$QLOCK"; echo "queued (depth $(wc -l < "$QUEUE")): ${JOB:0:80}" ;;
   pause)
     touch "$PAUSE"
     # --now: reclaim the GPU immediately. Retry the running-job lookup briefly (the daemon writes $RUNNING just

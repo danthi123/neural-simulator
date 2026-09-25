@@ -356,7 +356,29 @@ pop_job() {
   local checked_reason="${job#*#checked:}"
   job="${job%%#checked:*}"
   job=$(printf '%s' "$job" | sed 's/[[:space:]]*$//')
+  # CORPUS-CHECK PROPAGATION (2026-09-25 incident fix). pool_queue.sh's `add` appends
+  # "  #corpuscheck:<when>|<base64 query>" onto the human $CHECKED reason (same string tools/pool_queue.sh
+  # writes into the "#checked:" field above), so it rides along inside $checked_reason here. Split it back off
+  # BEFORE turning the rest into POOL_CHECKED_REASON, then export it as CORPUS_CHECK_WHEN/QUERY -- inherited
+  # env, exactly like POOL_CHECKED_REASON below -- so research/runners/__init__.py's stamp can see a real
+  # corpus check even when this job runs on a node/revision dir with no local git checkout (and thus no
+  # shared-log FILE to read at all). Absent on jobs queued before this fix, or when the shared log had no
+  # entry yet at enqueue time -- this block is then simply a no-op, unchanged from before.
+  local cc_annot=""
+  case "$checked_reason" in
+    *"  #corpuscheck:"*)
+      cc_annot="${checked_reason#*  #corpuscheck:}"
+      checked_reason="${checked_reason%%  #corpuscheck:*}"
+      ;;
+  esac
   job="POOL_CHECKED_REASON=$(printf '%q' "$checked_reason") $job"
+  if [ -n "$cc_annot" ]; then
+    local cc_when="${cc_annot%%|*}" cc_b64="${cc_annot#*|}" cc_query=""
+    [ -n "$cc_b64" ] && cc_query=$(printf '%s' "$cc_b64" | base64 -d 2>/dev/null || true)
+    if [ -n "$cc_when" ]; then
+      job="CORPUS_CHECK_WHEN=$(printf '%q' "$cc_when") CORPUS_CHECK_QUERY=$(printf '%q' "$cc_query") $job"
+    fi
+  fi
   printf '%s' "$job"
 }
 

@@ -9,6 +9,8 @@
 #   bash tools/before_you_build.sh "the slot competition ignores the cue"
 set -uo pipefail
 cd "$(dirname "$0")/.."
+# shellcheck source=tools/corpus_check_lib.sh
+source "$(dirname "$0")/corpus_check_lib.sh"
 Q="${*:-}"
 [ -z "$Q" ] && { echo "usage: bash tools/before_you_build.sh \"<the defect in one line>\""; exit 2; }
 
@@ -43,9 +45,15 @@ echo "Proceed only after reading what the above surfaced — a hit is a POINTER,
 # this script -- which returns those four priors in 0.63 s -- was not run until after the write-up.
 # The heartbeat flagged the missing check ~15 times that day and was read past every time, so REPORTING is
 # demonstrably insufficient for this class. The record below is what `gates/corpus_check_required` reads.
-_CC_LOG="${SIM_CORPUS_CHECK_LOG:-$PWD/research/queue/.corpus_checks.jsonl}"
+#
+# SHARED LOG, NOT $PWD (2026-09-25 fix, incident: gate blocked a genuinely-checked gap4 artifact). Every git
+# worktree used to get its OWN log at its own $PWD, invisible to a run launched from any other checkout of
+# this repo -- 115 such logs existed under .claude/worktrees/*/research/queue/ the day this was found. $PWD
+# is still recorded below (the "cwd" field) so which checkout ran the check is never lost, but the check
+# itself is written to the ONE log every worktree + the runner stamp now reads: see corpus_check_lib.sh.
+_CC_LOG=$(corpus_check_shared_log "$PWD")
 mkdir -p "$(dirname "$_CC_LOG")"
 printf '{"when": %s, "iso": "%s", "query": %s, "cwd": "%s"}\n' \
   "$(date +%s)" "$(date -Iseconds)" "$(printf '%s' "$Q" | python3 -c 'import json,sys; print(json.dumps(sys.stdin.read()))')" "$PWD" \
   >> "$_CC_LOG" 2>/dev/null || true
-echo "  [recorded] corpus check logged to research/queue/.corpus_checks.jsonl"
+echo "  [recorded] corpus check logged to $_CC_LOG"

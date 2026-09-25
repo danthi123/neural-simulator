@@ -10,6 +10,8 @@ set -uo pipefail
 ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 # shellcheck source=tools/pool_revision_marker.sh
 source "$ROOT/tools/pool_revision_marker.sh"
+# shellcheck source=tools/corpus_check_lib.sh
+source "$ROOT/tools/corpus_check_lib.sh"
 Q="${POOL_QUEUE_PATH:-/home/dant123/Projects/sim/research/queue/pool.queue}"
 mkdir -p "$(dirname "$Q")"; touch "$Q"
 # AWS-AS-EXTRA-POOL-NODE (2026-09-23) -- same repo-local, gitignored ssh config as pool_autodispatch.sh /
@@ -65,6 +67,23 @@ case "${1:-list}" in
            echo "   Run first:  bash tools/before_you_build.sh \"<the defect/question>\"" >&2
            echo "   Then:       bash tools/pool_queue.sh add '<cmd>' --checked 'corpus: nothing covers laps x dwell at w_max>W0'" >&2
            exit 2
+         fi
+         # CARRY THE CORPUS CHECK INTO THE JOB'S ENV (2026-09-25 incident fix). --checked above is a human
+         # sentence the gate cannot verify happened; this appends the MACHINE record -- the shared log's
+         # freshest (when, query) at enqueue time -- so a pool job (which may execute on a node with no git
+         # checkout at all, see corpus_check_lib.sh) still carries proof of a real check with it. Appended onto
+         # $CHECKED itself (not a new printf placeholder) so the producer format
+         # tests/test_seam_contracts.py pins stays exactly 3 `%s` fields, and the existing dup-guard/pop_job
+         # `#checked:` strip (which removes everything from `#checked:` to end of line) keeps stripping this
+         # too -- no consumer of the human reason needs to change. Silently omitted when the log has no entry
+         # yet (a job queued before anyone has ever run before_you_build.sh); pop_job then carries no
+         # CORPUS_CHECK_* env for it either, exactly as before this fix.
+         CC_LATEST=$(corpus_check_latest "$(corpus_check_shared_log "$ROOT")")
+         if [ -n "$CC_LATEST" ]; then
+           CC_WHEN=$(printf '%s' "$CC_LATEST" | cut -f1)
+           CC_QUERY=$(printf '%s' "$CC_LATEST" | cut -f2-)
+           CC_B64=$(printf '%s' "$CC_QUERY" | base64 -w0 2>/dev/null || printf '%s' "$CC_QUERY" | base64 | tr -d '\n')
+           CHECKED="${CHECKED}  #corpuscheck:${CC_WHEN}|${CC_B64}"
          fi
          # TIMESTAMP every entry (2026-07-31). The first run of this queue reused a path that already held 69
          # STALE jobs from an opsweep stopped days earlier as live-but-stalled, and the dispatcher cheerfully
