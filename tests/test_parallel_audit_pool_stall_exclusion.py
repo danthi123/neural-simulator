@@ -74,6 +74,9 @@ def _stub_main_dependencies(monkeypatch, *, lanes_pool, flagged_pool, agents=5):
     monkeypatch.setattr(pa, "pool_idle", lambda: (0, lanes_pool, 3))
     monkeypatch.setattr(pa, "pool_stall_summary",
                          lambda nodes, timeout=12: (flagged_pool, (["⚠ fake stall line"] if flagged_pool else [])))
+    # queue_unrunnable_summary (2026-09-25 addition) makes its own ssh calls via pool_stall_check.check_queue --
+    # stub it too, same reason as pool_stall_summary above (no real ssh from a test).
+    monkeypatch.setattr(pa, "queue_unrunnable_summary", lambda nodes, timeout=12: [])
     monkeypatch.setattr(pa, "open_tasks", lambda: (1, [(1, "some task")]))
     monkeypatch.setattr(pa, "active_agents", lambda: agents)
     monkeypatch.setattr(pa, "gpu_queue_busy", lambda: False)

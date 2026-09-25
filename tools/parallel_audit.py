@@ -30,6 +30,11 @@ cells whose output had already landed at the same pinned revision, running 7-26h
 `pool_stall_summary()` runs `tools/pool_stall_check.py`'s read-only DUP-OF-LANDED / OVERDUE check every cycle
 and subtracts flagged lanes from `lanes_pool` before the SATURATED/UNDER-PARALLELIZED decision below, printing
 them as a standalone ⚠ line -- never blocking, never killing anything (that tool is read-only by design).
+2026-09-25 (same day, one addition): six revision-pinned QUEUED lines sat 7.5h because that revision was never
+provisioned where it could fit -- `pool_autodispatch.sh`'s own per-cycle log said so, but nothing outside that
+one log line ever surfaced it. `queue_unrunnable_summary()` runs `tools/pool_stall_check.py`'s read-only
+UNRUNNABLE / memory-budget check every cycle too, printed the same way (queued lines were never counted in
+`lanes_pool` to begin with, so there is nothing to subtract -- this is pure surfacing).
 """
 import json, os, re, subprocess, sys, time
 
@@ -154,6 +159,30 @@ def pool_stall_summary(nodes=None, timeout=12):
     return len(flagged), lines
 
 
+def queue_unrunnable_summary(nodes=None, timeout=12):
+    """Read-only UNRUNNABLE / memory-budget-impossible check on QUEUED (not-yet-dispatched) pool.queue lines
+    (tools/pool_stall_check.py:check_queue) -- lines to print, never blocking, never raising (exit-0-always
+    heartbeat). 2026-09-25: six revision-pinned queue lines sat 7.5h with the dispatcher logging "revision ...
+    not provisioned on pool2" every cycle, and NOTHING outside that one log line ever surfaced it -- this makes
+    it a heartbeat line instead, the same fix shape as pool_stall_summary() above for running jobs."""
+    if pool_stall_check is None:
+        return []
+    try:
+        report = pool_stall_check.check_queue(nodes=nodes, timeout=timeout)
+    except Exception as e:
+        return ["⚠ pool-queue-check failed to run (%s) -- treating as clean, not silently OK" % e]
+    unrunnable = report.get("unrunnable", [])
+    mem_stalled = report.get("memory_budget_stalled", [])
+    lines = []
+    if unrunnable or mem_stalled:
+        lines.append("⚠ %s" % report.get("summary_line", "pool queue check flagged stuck line(s)"))
+        for row in unrunnable[:4]:
+            lines.append("   ⚠ %s" % pool_stall_check.format_unrunnable_row(row))
+        for row in mem_stalled[:4]:
+            lines.append("   ⚠ %s" % pool_stall_check.format_membudget_row(row))
+    return lines
+
+
 def active_agents(base=None):
     # Count in-flight Claude subagents by their transcript activity. Agent .output files under a session's
     # tasks/ dir are SYMLINKS to the growing JSONL transcript; backgrounded bash/monitor .output files are
@@ -209,6 +238,10 @@ def main():
     # core is not actually free) is what stops them being counted toward SATURATED (2026-09-25).
     flagged_pool, stall_lines = pool_stall_summary(POOL)
     lanes_pool = max(0, lanes_pool - flagged_pool)
+    # QUEUED (not yet dispatched) lines are never counted in lanes_pool in the first place, so there is nothing
+    # to subtract here -- this is purely a surfaced warning (2026-09-25: the failure was a stuck line nobody
+    # SAW, not a lane miscounted as covered).
+    queue_stuck_lines = queue_unrunnable_summary(POOL)
     n_open, top = open_tasks()
     agents = active_agents()
 
@@ -265,6 +298,8 @@ def main():
               "the mini-PC pool + build/research agents are separate/GPU-free and STILL enforced below.")
     for _stall_line in stall_lines:
         print(_stall_line)
+    for _q_line in queue_stuck_lines:
+        print(_q_line)
 
     # WAIVER SURFACING (2026-09-23, closes the "printed correctly, read past" shape for the escape hatches
     # THEMSELVES, not just the stall they excuse): a live .parallel_compute_waiver / .lane_waiver is easy to

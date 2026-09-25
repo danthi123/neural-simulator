@@ -301,3 +301,500 @@ def test_format_row_includes_kill_command():
     line = psc.format_row(row)
     assert "DUP-OF-LANDED" in line
     assert 'kill -TERM 1 2' in line
+
+
+# =================================================================================== queue-line checks (UNRUNNABLE)
+# 2026-09-25 addition: six revision-pinned queue lines sat 7.5h because the revision was never provisioned where
+# it could fit, and nothing outside the dispatcher's own per-cycle log line ever surfaced it.
+
+# --------------------------------------------------------------------------------------------------- job_est_gb
+
+def test_job_est_gb_reads_explicit_mem_gb_first():
+    assert psc.job_est_gb("cd ~/derisk-pool/sim && mem_gb=8 python3 -m research.runners.foo") == 8
+
+
+def test_job_est_gb_falls_back_to_memcap_wrapper(monkeypatch):
+    monkeypatch.delenv("POOL_RUNNER_MEM_PATH", raising=False)
+    text = "bash tools/memcap.sh 12 -- python3 -m research.runners.foo"
+    assert psc.job_est_gb(text) == 12
+
+
+def test_job_est_gb_prefers_mem_gb_over_memcap_when_both_present():
+    text = "mem_gb=8 bash tools/memcap.sh 12 -- python3 -m research.runners.foo"
+    assert psc.job_est_gb(text) == 8
+
+
+def test_job_est_gb_falls_back_to_runner_mem_table(tmp_path):
+    tsv = tmp_path / "pool_runner_mem.tsv"
+    tsv.write_text("# comment\nload_bearing_fraction\t6\nother_runner\t3\n")
+    text = "cd ~/derisk-pool/sim && python3 -m research.runners.load_bearing_fraction --n-facts 5"
+    assert psc.job_est_gb(text, runner_mem_path=str(tsv)) == 6
+
+
+def test_job_est_gb_runner_table_env_override(tmp_path, monkeypatch):
+    tsv = tmp_path / "pool_runner_mem.tsv"
+    tsv.write_text("some_runner\t9\n")
+    monkeypatch.setenv("POOL_RUNNER_MEM_PATH", str(tsv))
+    text = "cd ~/derisk-pool/sim && python3 -m research.runners.some_runner"
+    assert psc.job_est_gb(text) == 9
+
+
+def test_job_est_gb_default_when_nothing_matches(monkeypatch, tmp_path):
+    monkeypatch.setenv("POOL_RUNNER_MEM_PATH", str(tmp_path / "no-such-table.tsv"))
+    monkeypatch.delenv("POOL_JOB_EST_GB", raising=False)
+    assert psc.job_est_gb("cd ~/derisk-pool/sim && python3 -m research.runners.never_seen") == 1
+
+
+def test_job_est_gb_default_honours_env_override(monkeypatch):
+    monkeypatch.setenv("POOL_JOB_EST_GB", "3")
+    assert psc.job_est_gb("no runner module here at all") == 3
+
+
+def test_job_est_gb_empty_text():
+    assert psc.job_est_gb(None) == 1
+    assert psc.job_est_gb("") == 1
+
+
+# --------------------------------------------------------------------------------------------------- load_queue
+
+def test_load_queue_parses_valid_lines_and_skips_malformed(tmp_path):
+    q = tmp_path / "pool.queue"
+    q.write_text(
+        "# a comment\n"
+        "\n"
+        "1000\tcd ~/derisk-pool/sim && python3 -m research.runners.foo  #checked:x\n"
+        "not-a-number\tbad line\n"
+        "2000\n"                       # no tab / no command -> malformed
+        "3000\tpython3 -m research.runners.bar\n"
+    )
+    entries = psc.load_queue(str(q))
+    assert entries == [
+        (1000, "cd ~/derisk-pool/sim && python3 -m research.runners.foo  #checked:x"),
+        (3000, "python3 -m research.runners.bar"),
+    ]
+
+
+def test_load_queue_missing_file_returns_empty(tmp_path):
+    assert psc.load_queue(str(tmp_path / "no-such-queue")) == []
+
+
+def test_load_claims_and_load_queue_share_parsing_but_different_files(tmp_path):
+    # Regression guard for the load_claims/load_queue refactor: each reads its OWN path, not the other's.
+    claims = tmp_path / "pool.queue.claims"
+    queue = tmp_path / "pool.queue"
+    claims.write_text("111\tclaims-line\n")
+    queue.write_text("222\tqueue-line\n")
+    assert psc.load_claims(str(claims)) == [(111, "claims-line")]
+    assert psc.load_queue(str(queue)) == [(222, "queue-line")]
+
+
+# ---------------------------------------------------------------------------------------- fix_provision_command
+
+def test_fix_provision_command_format():
+    cmd = psc.fix_provision_command("abc1234", ["pool1", "pool2"])
+    assert cmd == "bash tools/pool_provision.sh --revision abc1234 --isolated pool1 pool2"
+
+
+# ------------------------------------------------------------------------ provisioned-marker filename drift guard
+
+def test_provisioned_marker_filename_matches_bash_source():
+    # tools/pool_revision_marker.sh is the ONE place the bash dispatcher/queue scripts get this predicate from;
+    # this Python module cannot `source` bash, so POOL_REVISION_MARKER_FILE is a duplicated literal -- this test
+    # is what stops the two from drifting apart the way pool_autodispatch.sh's revision_available() and
+    # pool_queue.sh's `add` once did over the SAME question (see that file's own docstring).
+    marker_path = os.path.join(ROOT, "tools", "pool_revision_marker.sh")
+    with open(marker_path) as f:
+        text = f.read()
+    m = None
+    for line in text.splitlines():
+        line = line.strip()
+        if line.startswith("POOL_REVISION_MARKER_FILE="):
+            m = line.split("=", 1)[1].strip('"').strip("'")
+            break
+    assert m is not None, "tools/pool_revision_marker.sh no longer defines POOL_REVISION_MARKER_FILE"
+    assert m == psc.POOL_REVISION_MARKER_FILE
+
+
+# --------------------------------------------------------------------------- probe_mem_total_gb / check_provisioned
+# Unit-level (monkeypatched subprocess.run), not a fake-ssh binary -- these two functions make ONE simple ssh
+# call each, and testing the exact returncode/stdout branches directly is more mutation-resistant than routing
+# through a shell script that could itself hide a bug the same way.
+
+class _FakeCompleted:
+    def __init__(self, returncode, stdout=""):
+        self.returncode = returncode
+        self.stdout = stdout
+
+
+def test_probe_mem_total_gb_parses_stdout(monkeypatch):
+    monkeypatch.setattr(psc.subprocess, "run", lambda *a, **k: _FakeCompleted(0, "15\n"))
+    assert psc.probe_mem_total_gb("pool40") == 15
+
+
+def test_probe_mem_total_gb_nonzero_returncode_is_none(monkeypatch):
+    monkeypatch.setattr(psc.subprocess, "run", lambda *a, **k: _FakeCompleted(255, ""))
+    assert psc.probe_mem_total_gb("pool40") is None
+
+
+def test_probe_mem_total_gb_unparseable_stdout_is_none(monkeypatch):
+    monkeypatch.setattr(psc.subprocess, "run", lambda *a, **k: _FakeCompleted(0, "garbage\n"))
+    assert psc.probe_mem_total_gb("pool40") is None
+
+
+def test_probe_mem_total_gb_timeout_is_none(monkeypatch):
+    def boom(*a, **k):
+        raise psc.subprocess.TimeoutExpired(cmd="ssh", timeout=10)
+    monkeypatch.setattr(psc.subprocess, "run", boom)
+    assert psc.probe_mem_total_gb("pool40") is None
+
+
+def test_check_provisioned_marker_present_is_true(monkeypatch):
+    monkeypatch.setattr(psc.subprocess, "run", lambda *a, **k: _FakeCompleted(0, ""))
+    assert psc.check_provisioned("pool40", "abc1234") is True
+
+
+def test_check_provisioned_marker_absent_is_false(monkeypatch):
+    monkeypatch.setattr(psc.subprocess, "run", lambda *a, **k: _FakeCompleted(1, ""))
+    assert psc.check_provisioned("pool40", "abc1234") is False
+
+
+def test_check_provisioned_unreachable_is_none_not_false(monkeypatch):
+    # A confident "not provisioned" (False) must never be produced for a node the probe could not even reach --
+    # callers (check_queue) treat False as evidence, None as "cannot say".
+    monkeypatch.setattr(psc.subprocess, "run", lambda *a, **k: _FakeCompleted(255, ""))
+    assert psc.check_provisioned("pool40", "abc1234") is None
+
+
+def test_check_provisioned_timeout_is_none(monkeypatch):
+    def boom(*a, **k):
+        raise psc.subprocess.TimeoutExpired(cmd="ssh", timeout=10)
+    monkeypatch.setattr(psc.subprocess, "run", boom)
+    assert psc.check_provisioned("pool40", "abc1234") is None
+
+
+def test_all_mem_totals_splits_reachable_and_unreachable(monkeypatch):
+    def fake_probe(node, timeout=10, connect_timeout=6):
+        return {"pool40": 15, "pool41": 8}.get(node)
+    monkeypatch.setattr(psc, "probe_mem_total_gb", fake_probe)
+    totals, unreachable = psc.all_mem_totals(["pool40", "pool41", "pool99"])
+    assert totals == {"pool40": 15, "pool41": 8}
+    assert unreachable == ["pool99"]
+
+
+# ------------------------------------------------------------------------------------------ check_queue: pure logic
+# (mem_totals / provisioned status injected directly via monkeypatch -- no ssh at all)
+
+def test_check_queue_flags_unrunnable_when_no_capable_node_has_the_marker(tmp_path, monkeypatch):
+    now = int(time.time())
+    sha = "a" * 40
+    q = tmp_path / "pool.queue"
+    q.write_text("%d\tcd ~/derisk-pool/revisions/%s && mem_gb=8 python3 -m research.runners.settle_a2 "
+                 "--out x.json  #checked:x\n" % (now - 3600, sha))
+    monkeypatch.setattr(psc, "all_mem_totals", lambda nodes, timeout=10, connect_timeout=6:
+                         ({"pool1": 32, "pool2": 32, "pool41": 15, "pool42": 15}, []))
+    monkeypatch.setattr(psc, "check_provisioned", lambda node, s, timeout=10, connect_timeout=6: False)
+    report = psc.check_queue(nodes=["pool1", "pool2", "pool41", "pool42"], queue_path_=str(q), now=now)
+    assert report["n_queued"] == 1
+    assert len(report["unrunnable"]) == 1
+    row = report["unrunnable"][0]
+    assert row["pinned_sha"] == sha
+    assert row["mem_gb"] == 8
+    assert set(row["capable_nodes"]) == {"pool1", "pool2", "pool41", "pool42"}   # all 4 fit 8+2<=15
+    assert "pool_provision.sh --revision %s --isolated" % sha in row["fix_cmd"]
+    assert report["memory_budget_stalled"] == []
+    assert "UNRUNNABLE" in report["summary_line"]
+
+
+def test_check_queue_not_flagged_when_one_capable_node_has_the_marker(tmp_path, monkeypatch):
+    now = int(time.time())
+    sha = "b" * 40
+    q = tmp_path / "pool.queue"
+    q.write_text("%d\tcd ~/derisk-pool/revisions/%s && mem_gb=8 python3 -m research.runners.settle_a2\n"
+                 % (now - 3600, sha))
+    monkeypatch.setattr(psc, "all_mem_totals", lambda nodes, timeout=10, connect_timeout=6:
+                         ({"pool1": 32, "pool41": 15}, []))
+    monkeypatch.setattr(psc, "check_provisioned",
+                         lambda node, s, timeout=10, connect_timeout=6: node == "pool1")
+    report = psc.check_queue(nodes=["pool1", "pool41"], queue_path_=str(q), now=now)
+    assert report["unrunnable"] == []
+    assert "clean" in report["summary_line"]
+
+
+def test_check_queue_not_flagged_before_min_age(tmp_path, monkeypatch):
+    now = int(time.time())
+    sha = "c" * 40
+    q = tmp_path / "pool.queue"
+    q.write_text("%d\tcd ~/derisk-pool/revisions/%s && mem_gb=8 python3 -m research.runners.settle_a2\n"
+                 % (now - 60, sha))   # 1 minute old, well under the default 30 min
+    monkeypatch.setattr(psc, "all_mem_totals", lambda nodes, timeout=10, connect_timeout=6: ({"pool1": 32}, []))
+    monkeypatch.setattr(psc, "check_provisioned", lambda node, s, timeout=10, connect_timeout=6: False)
+    report = psc.check_queue(nodes=["pool1"], queue_path_=str(q), now=now)
+    assert report["unrunnable"] == []
+
+
+def test_check_queue_custom_age_threshold_flags_a_younger_line(tmp_path, monkeypatch):
+    now = int(time.time())
+    sha = "d" * 40
+    q = tmp_path / "pool.queue"
+    q.write_text("%d\tcd ~/derisk-pool/revisions/%s && mem_gb=8 python3 -m research.runners.settle_a2\n"
+                 % (now - 300, sha))   # 5 minutes old
+    monkeypatch.setattr(psc, "all_mem_totals", lambda nodes, timeout=10, connect_timeout=6: ({"pool1": 32}, []))
+    monkeypatch.setattr(psc, "check_provisioned", lambda node, s, timeout=10, connect_timeout=6: False)
+    report = psc.check_queue(nodes=["pool1"], queue_path_=str(q), now=now, unrunnable_min_age_min=2)
+    assert len(report["unrunnable"]) == 1
+
+
+def test_check_queue_memory_budget_stalled_when_no_node_could_ever_fit(tmp_path, monkeypatch):
+    now = int(time.time())
+    q = tmp_path / "pool.queue"
+    q.write_text("%d\tcd ~/derisk-pool/sim && mem_gb=40 python3 -m research.runners.huge_job\n" % (now - 7200,))
+    monkeypatch.setattr(psc, "all_mem_totals", lambda nodes, timeout=10, connect_timeout=6:
+                         ({"pool40": 15, "pool41": 15}, []))
+    report = psc.check_queue(nodes=["pool40", "pool41"], queue_path_=str(q), now=now)
+    assert report["unrunnable"] == []
+    assert len(report["memory_budget_stalled"]) == 1
+    row = report["memory_budget_stalled"][0]
+    assert row["mem_gb"] == 40
+    assert row["max_known_ceiling_gb"] == 13   # 15 - POOL_OS_RESERVE_GB(2)
+    assert "over every known node's memory ceiling" in report["summary_line"]
+
+
+def test_check_queue_capability_respects_os_reserve_gb(tmp_path, monkeypatch):
+    # Boundary case: a 15 GB node minus the default 2 GB OS reserve leaves 13 GB -- a line declaring mem_gb=14
+    # must NOT be counted "capable" here (mutation-caught: a version that checked raw MemTotal without
+    # subtracting the reserve passed every OTHER check_queue test unchanged, since none of them sat exactly on
+    # this boundary).
+    now = int(time.time())
+    q = tmp_path / "pool.queue"
+    q.write_text("%d\tcd ~/derisk-pool/sim && mem_gb=14 python3 -m research.runners.tight_fit\n" % (now - 7200,))
+    monkeypatch.setattr(psc, "all_mem_totals", lambda nodes, timeout=10, connect_timeout=6: ({"pool41": 15}, []))
+    report = psc.check_queue(nodes=["pool41"], queue_path_=str(q), now=now)
+    assert len(report["memory_budget_stalled"]) == 1   # 15 - 2(reserve) = 13 < 14 -> no capable node
+    assert report["memory_budget_stalled"][0]["max_known_ceiling_gb"] == 13
+
+    # The SAME line, with the reserve overridden to 0 (15 - 0 = 15 >= 14), IS capable -> not memory-stalled.
+    report2 = psc.check_queue(nodes=["pool41"], queue_path_=str(q), now=now, os_reserve_gb=0)
+    assert report2["memory_budget_stalled"] == []
+
+
+def test_check_queue_memory_budget_not_flagged_before_its_own_age_threshold(tmp_path, monkeypatch):
+    now = int(time.time())
+    q = tmp_path / "pool.queue"
+    q.write_text("%d\tcd ~/derisk-pool/sim && mem_gb=40 python3 -m research.runners.huge_job\n" % (now - 300,))
+    monkeypatch.setattr(psc, "all_mem_totals", lambda nodes, timeout=10, connect_timeout=6: ({"pool40": 15}, []))
+    report = psc.check_queue(nodes=["pool40"], queue_path_=str(q), now=now)
+    assert report["memory_budget_stalled"] == []
+
+
+def test_check_queue_unpinned_line_never_flagged_unrunnable(tmp_path, monkeypatch):
+    # The ~/derisk-pool/sim compatibility path (no revision pin) is always "provisioned" -- not this check's job.
+    now = int(time.time())
+    q = tmp_path / "pool.queue"
+    q.write_text("%d\tcd ~/derisk-pool/sim && mem_gb=8 python3 -m research.runners.foo\n" % (now - 7200,))
+    monkeypatch.setattr(psc, "all_mem_totals", lambda nodes, timeout=10, connect_timeout=6: ({"pool40": 15}, []))
+    monkeypatch.setattr(psc, "check_provisioned", lambda *a, **k: False)
+    report = psc.check_queue(nodes=["pool40"], queue_path_=str(q), now=now)
+    assert report["unrunnable"] == []
+    assert report["memory_budget_stalled"] == []
+
+
+def test_check_queue_probes_each_node_sha_pair_once_even_across_several_lines(tmp_path, monkeypatch):
+    now = int(time.time())
+    sha = "e" * 40
+    q = tmp_path / "pool.queue"
+    q.write_text(
+        "%d\tcd ~/derisk-pool/revisions/%s && mem_gb=8 python3 -m research.runners.a --out a.json\n"
+        "%d\tcd ~/derisk-pool/revisions/%s && mem_gb=8 python3 -m research.runners.b --out b.json\n"
+        % (now - 3600, sha, now - 3600, sha)
+    )
+    calls = []
+
+    def fake_check_provisioned(node, s, timeout=10, connect_timeout=6):
+        calls.append((node, s))
+        return False
+    monkeypatch.setattr(psc, "all_mem_totals", lambda nodes, timeout=10, connect_timeout=6: ({"pool1": 32}, []))
+    monkeypatch.setattr(psc, "check_provisioned", fake_check_provisioned)
+    report = psc.check_queue(nodes=["pool1"], queue_path_=str(q), now=now)
+    assert len(report["unrunnable"]) == 2
+    assert calls == [("pool1", sha)]   # one probe reused for both lines, not two
+
+
+def test_check_queue_no_entries_reports_clean(tmp_path, monkeypatch):
+    monkeypatch.setattr(psc, "all_mem_totals", lambda nodes, timeout=10, connect_timeout=6: ({"pool40": 15}, []))
+    report = psc.check_queue(nodes=["pool40"], queue_path_=str(tmp_path / "no-queue"))
+    assert report["n_queued"] == 0
+    assert report["unrunnable"] == []
+    assert report["memory_budget_stalled"] == []
+    assert "clean" in report["summary_line"]
+
+
+def test_check_queue_never_raises_when_all_mem_totals_blows_up(tmp_path, monkeypatch):
+    q = tmp_path / "pool.queue"
+    q.write_text("%d\tpython3 -m research.runners.foo\n" % int(time.time()))
+
+    def boom(*a, **k):
+        raise RuntimeError("ssh exploded")
+    monkeypatch.setattr(psc, "all_mem_totals", boom)
+    report = psc.check_queue(nodes=["pool40"], queue_path_=str(q))   # must not raise
+    assert report["mem_totals"] == {}
+    assert report["mem_unreachable"] == ["pool40"]
+
+
+# --------------------------------------------------------------------------------------- check_queue: end-to-end
+# (fake ssh on PATH, branching on the REMOTE SCRIPT this time -- not just the node, since check_queue makes two
+# DIFFERENT kinds of probe per node: MemTotal and the .provisioned_ok marker)
+
+def _write_fake_ssh_probes(tmp_path, mem_totals=None, markers=(), unreachable=()):
+    bin_dir = tmp_path / "bin_probes"
+    bin_dir.mkdir(exist_ok=True)
+    memdir = tmp_path / "memtotals"
+    memdir.mkdir(exist_ok=True)
+    for node, gb in (mem_totals or {}).items():
+        (memdir / node).write_text(str(gb))
+    markers_file = tmp_path / "markers.txt"
+    markers_file.write_text("\n".join("%s %s" % (n, s) for n, s in markers) + "\n")
+    unreach_file = tmp_path / "unreachable_probes.txt"
+    unreach_file.write_text("\n".join(unreachable) + "\n")
+    stub = bin_dir / "ssh"
+    stub.write_text(
+        "#!/usr/bin/env bash\n"
+        'node="${@: -2:1}"\n'
+        'script="${@: -1}"\n'
+        'if grep -qxF "$node" "%s" 2>/dev/null; then exit 255; fi\n'
+        'case "$script" in\n'
+        '  *MemTotal*)\n'
+        '    f="%s/$node"\n'
+        '    if [ -f "$f" ]; then cat "$f"; exit 0; else exit 1; fi\n'
+        '    ;;\n'
+        "  *provisioned_ok*)\n"
+        "    sha=$(grep -oE 'revisions/[0-9a-f]+' <<< \"$script\" | cut -d/ -f2)\n"
+        '    if grep -qxF "$node $sha" "%s" 2>/dev/null; then exit 0; else exit 1; fi\n'
+        '    ;;\n'
+        '  *) exit 0 ;;\n'
+        "esac\n"
+        % (unreach_file, memdir, markers_file)
+    )
+    st = stub.stat()
+    stub.chmod(st.st_mode | stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH)
+    return bin_dir
+
+
+def test_check_queue_end_to_end_with_fake_ssh(tmp_path, monkeypatch):
+    now = int(time.time())
+    sha = "f" * 40
+    q = tmp_path / "pool.queue"
+    q.write_text(
+        # UNRUNNABLE: pinned, 2h old, fits pool41 (15GB) and pool1 (32GB), marker present on NEITHER
+        "%d\tcd ~/derisk-pool/revisions/%s && mem_gb=8 python3 -m research.runners.settle_a2 --out a.json\n"
+        # memory_budget_stalled: 2h old, mem_gb 40 exceeds every node
+        "%d\tcd ~/derisk-pool/sim && mem_gb=40 python3 -m research.runners.huge_job\n"
+        # clean: pinned, marker present on pool1
+        "%d\tcd ~/derisk-pool/revisions/%s && mem_gb=4 python3 -m research.runners.ok_job\n"
+        % (now - 7200, sha, now - 7200, now - 7200, "1" * 40)
+    )
+    bin_dir = _write_fake_ssh_probes(
+        tmp_path,
+        mem_totals={"pool1": 32, "pool41": 15},
+        markers=[("pool1", "1" * 40)],   # only the third line's revision is provisioned, only on pool1
+        unreachable=[],
+    )
+    monkeypatch.setenv("PATH", "%s:%s" % (bin_dir, os.environ.get("PATH", "")))
+    report = psc.check_queue(nodes=["pool1", "pool41"], queue_path_=str(q), now=now)
+
+    assert report["mem_totals"] == {"pool1": 32, "pool41": 15}
+    assert report["n_queued"] == 3
+    assert len(report["unrunnable"]) == 1
+    assert report["unrunnable"][0]["pinned_sha"] == sha
+    assert set(report["unrunnable"][0]["capable_nodes"]) == {"pool1", "pool41"}
+    assert len(report["memory_budget_stalled"]) == 1
+    assert report["memory_budget_stalled"][0]["mem_gb"] == 40
+
+
+def test_check_queue_end_to_end_unreachable_node_excluded_from_capability(tmp_path, monkeypatch):
+    now = int(time.time())
+    sha = "9" * 40
+    q = tmp_path / "pool.queue"
+    q.write_text("%d\tcd ~/derisk-pool/revisions/%s && mem_gb=8 python3 -m research.runners.x\n"
+                 % (now - 7200, sha))
+    bin_dir = _write_fake_ssh_probes(tmp_path, mem_totals={"pool41": 15}, markers=(), unreachable=["pool99"])
+    monkeypatch.setenv("PATH", "%s:%s" % (bin_dir, os.environ.get("PATH", "")))
+    report = psc.check_queue(nodes=["pool41", "pool99"], queue_path_=str(q), now=now)
+    assert report["mem_unreachable"] == ["pool99"]
+    assert len(report["unrunnable"]) == 1
+    assert report["unrunnable"][0]["capable_nodes"] == ["pool41"]   # pool99 excluded, not "capable but missing"
+
+
+# ------------------------------------------------------------------------------------- row formatting / main() CLI
+
+def test_format_unrunnable_row_names_missing_nodes_and_fix_cmd():
+    row = {
+        "age_s": 7200, "module": "settle_a2", "pinned_sha": "a" * 40, "mem_gb": 8,
+        "capable_nodes": ["pool1", "pool41"],
+        "node_status": {"pool1": False, "pool41": None},
+        "fix_cmd": "bash tools/pool_provision.sh --revision %s --isolated pool1 pool41" % ("a" * 40),
+    }
+    line = psc.format_unrunnable_row(row)
+    assert "settle_a2" in line
+    assert "pool1,pool41" in line or ("pool1" in line and "pool41" in line)
+    assert "fix: bash tools/pool_provision.sh" in line
+
+
+def test_format_membudget_row_names_ceiling():
+    row = {"age_s": 7200, "module": "huge_job", "mem_gb": 40, "max_known_ceiling_gb": 13}
+    line = psc.format_membudget_row(row)
+    assert "huge_job" in line
+    assert "40" in line
+    assert "13" in line
+
+
+def test_main_json_includes_queue_report(monkeypatch, capsys):
+    monkeypatch.setattr(psc, "check_all", lambda timeout=12: {
+        "unreachable": [], "running": [], "flagged": [], "n_running": 0, "n_dup": 0, "n_overdue": 0,
+        "n_unknown_overdue": 0, "summary_line": "POOL STALL CHECK: clean (of 0 running across 0 node(s))",
+    })
+    monkeypatch.setattr(psc, "check_queue", lambda timeout=12: {
+        "nodes": [], "mem_totals": {}, "mem_unreachable": [], "n_queued": 0, "unrunnable": [],
+        "memory_budget_stalled": [], "summary_line": "POOL QUEUE CHECK: clean (of 0 queued line(s))",
+    })
+    rc = psc.main(["--json"])
+    assert rc == 0
+    out = json.loads(capsys.readouterr().out)
+    assert "queue" in out
+    assert out["queue"]["summary_line"].startswith("POOL QUEUE CHECK")
+
+
+def test_main_skip_queue_omits_queue_report(monkeypatch, capsys):
+    monkeypatch.setattr(psc, "check_all", lambda timeout=12: {
+        "unreachable": [], "running": [], "flagged": [], "n_running": 0, "n_dup": 0, "n_overdue": 0,
+        "n_unknown_overdue": 0, "summary_line": "POOL STALL CHECK: clean (of 0 running across 0 node(s))",
+    })
+    called = []
+    monkeypatch.setattr(psc, "check_queue", lambda timeout=12: called.append(1))
+    rc = psc.main(["--json", "--skip-queue"])
+    assert rc == 0
+    assert called == []
+    out = json.loads(capsys.readouterr().out)
+    assert "queue" not in out
+
+
+def test_main_human_readable_prints_queue_flags(monkeypatch, capsys):
+    monkeypatch.setattr(psc, "check_all", lambda timeout=12: {
+        "unreachable": [], "running": [], "flagged": [], "n_running": 0, "n_dup": 0, "n_overdue": 0,
+        "n_unknown_overdue": 0, "summary_line": "POOL STALL CHECK: clean (of 0 running across 0 node(s))",
+    })
+    unrunnable_row = {
+        "age_s": 7200, "module": "settle_a2", "pinned_sha": "a" * 40, "mem_gb": 8,
+        "capable_nodes": ["pool1"], "node_status": {"pool1": False},
+        "fix_cmd": "bash tools/pool_provision.sh --revision %s --isolated pool1" % ("a" * 40),
+    }
+    monkeypatch.setattr(psc, "check_queue", lambda timeout=12: {
+        "nodes": ["pool1"], "mem_totals": {"pool1": 32}, "mem_unreachable": [], "n_queued": 1,
+        "unrunnable": [unrunnable_row], "memory_budget_stalled": [],
+        "summary_line": "POOL QUEUE CHECK: 1 UNRUNNABLE (of 1 queued line(s), 0 node(s) mem-unreachable)",
+    })
+    rc = psc.main([])
+    assert rc == 0
+    out = capsys.readouterr().out
+    assert "POOL QUEUE CHECK" in out
+    assert "settle_a2" in out
+    assert "fix: bash tools/pool_provision.sh" in out
