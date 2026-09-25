@@ -1,0 +1,6 @@
+node	host	file	sha256	source_git_sha	provisioned_ok	recorded_utc
+primary-checkout	dant123-wk	data/corpus/tinystories.txt	7a00272e6ca4a29c91d7bc3508de2c76dc1369b351637adf2769e1d3a3679aec	-	-	2026-09-24T23:36:01Z
+pool1	ip-172-31-47-37	data/corpus/tinystories.txt	7a00272e6ca4a29c91d7bc3508de2c76dc1369b351637adf2769e1d3a3679aec	a308f1e09babcc9ed096c3c8046d00040391368c	yes	2026-09-24T23:36:02Z
+pool2	ip-172-31-47-57	data/corpus/tinystories.txt	7a00272e6ca4a29c91d7bc3508de2c76dc1369b351637adf2769e1d3a3679aec	a308f1e09babcc9ed096c3c8046d00040391368c	yes	2026-09-24T23:36:03Z
+pool41	node-dl4g243	data/corpus/tinystories.txt	7a00272e6ca4a29c91d7bc3508de2c76dc1369b351637adf2769e1d3a3679aec	a308f1e09babcc9ed096c3c8046d00040391368c	yes	2026-09-24T23:36:04Z
+pool42	node-dl5d243	data/corpus/tinystories.txt	7a00272e6ca4a29c91d7bc3508de2c76dc1369b351637adf2769e1d3a3679aec	a308f1e09babcc9ed096c3c8046d00040391368c	yes	2026-09-24T23:36:06Z
