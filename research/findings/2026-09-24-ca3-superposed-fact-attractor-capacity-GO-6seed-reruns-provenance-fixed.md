@@ -43,6 +43,15 @@ This finding scores the SAME registered grid again, using ONLY provenance-clean 
 (`grid/`, seeds 42/43/44/100) plus the 18 verified reruns (`rerun_s101_s102/`, seeds 101/102) -- and supersedes
 the unmerged commit. The 18 original seed-101/seed-102 files under `grid/` remain excluded and uncited here.
 
+## Correction after scoring (2026-09-25 00:40)
+
+One rerun cell, `rerun_s101_s102/sparse_dg_c2_s101.json`, was still running on a pool node when this finding was
+first scored: the copy scored then ended at the P=50000 checkpoint, and the job wrote its final P=100000 checkpoint at
+00:05. The queue files showed no pending CA3 line, but a running job is not in the queue, so the completeness check
+missed it. The complete file now replaces the partial one in both `rerun_s101_s102/` and
+`scored_54cell_valid_provenance/`, and the registered `--aggregate` was re-run: the new `aggregate.json` is identical
+to the first one key by key (every gate, every per-seed value, k_fit), so the verdict below is unchanged.
+
 ## Provenance check, before any scoring
 
 Full detail (extracted log lines, exact counts, mtimes) is in

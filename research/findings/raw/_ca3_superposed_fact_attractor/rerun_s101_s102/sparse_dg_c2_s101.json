@@ -433,6 +433,45 @@
    "rec_synapses_touched_frac": 0.9830678,
    "rec_touched_shared_by_ge2_facts_frac": 0.9404111293239388,
    "ca3_pattern_mean_pairwise_overlap": 0.010445
+  },
+  {
+   "P": 100000,
+   "write_s_interval": 1009.076247215271,
+   "write_ms_per_fact": 20.05708910226822,
+   "synapse_bytes": 448352000,
+   "materialize_s": 4.303438663482666,
+   "intact": {
+    "recall": 0.0,
+    "n": 200,
+    "ca3_overlap_init": 0.11040000000000003,
+    "ca3_overlap_final": 0.1035,
+    "settle_final": 0.6441,
+    "per_query_ms_batched": 46.58561825752258,
+    "recall_recent": 0.0,
+    "novel_settle_final": 0.6312000000000001,
+    "stored_settle_final": 0.6441,
+    "per_query_ms_single": 58.199167251586914
+   },
+   "rec_zero": {
+    "recall": 0.0,
+    "n": 200,
+    "ca3_overlap_init": 0.11040000000000003,
+    "ca3_overlap_final": 0.11040000000000003,
+    "settle_final": 1.0,
+    "per_query_ms_batched": 62.416309118270874
+   },
+   "rec_shuffle": {
+    "recall": 0.0,
+    "n": 200,
+    "ca3_overlap_init": 0.11040000000000003,
+    "ca3_overlap_final": 0.08405,
+    "settle_final": 0.4701000000000001,
+    "per_query_ms_batched": 72.17620849609375
+   },
+   "crosstalk_dprime": 2.2967233657836914,
+   "rec_synapses_touched_frac": 0.9992042,
+   "rec_touched_shared_by_ge2_facts_frac": 0.9956890943813086,
+   "ca3_pattern_mean_pairwise_overlap": 0.010315
   }
  ],
  "sha_facts": "b4dd0682dea3ec21d38b2e2843420965fb9f1b79f276ec54642c2f811355d6cf",
@@ -447,7 +486,8 @@
    5000,
    10000,
    20000,
-   50000
+   50000,
+   100000
   ],
   "recall": [
    1.0,
@@ -459,6 +499,7 @@
    1.0,
    1.0,
    0.3,
+   0.0,
    0.0
   ],
   "recall_recent": [
@@ -471,7 +512,8 @@
    1.0,
    1.0,
    0.33,
-   0.01
+   0.01,
+   0.0
   ],
   "recall_rec_zero": [
    1.0,
@@ -483,6 +525,7 @@
    1.0,
    0.625,
    0.04,
+   0.0,
    0.0
   ],
   "recall_rec_shuffle": [
@@ -494,6 +537,7 @@
    1.0,
    0.98,
    0.165,
+   0.0,
    0.0,
    0.0
   ],
@@ -507,7 +551,8 @@
    8.780288696289062,
    6.272211074829102,
    4.5457763671875,
-   3.0141687393188477
+   3.0141687393188477,
+   2.2967233657836914
   ],
   "per_query_ms_single": [
    50.133466720581055,
@@ -519,9 +564,11 @@
    53.79033088684082,
    51.68294906616211,
    56.15973472595215,
-   56.23602867126465
+   56.23602867126465,
+   58.199167251586914
   ],
   "synapse_bytes": [
+   448352000,
    448352000,
    448352000,
    448352000,
