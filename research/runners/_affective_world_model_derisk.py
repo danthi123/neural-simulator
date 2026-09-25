@@ -155,10 +155,18 @@ def _shuffle_map(v, seed):
     return v[::-1].copy()
 
 
+# NAMED plasticity gate for the LOCAL freeze (chat-time-plasticity-audit 2026-09-24, default-OFF via
+# `build_world_model_circuit(local_freeze_gate=...)`). Declared here (not inline) so callers on either side of
+# the shared-bridge boundary (worldmodel_production_organ.py, onebrain_merge_framework.py's `_worldmodel_spec`)
+# name the SAME gate rather than each spelling the string independently.
+WORLDMODEL_FREEZE_GATE = "worldmodel_frozen"
+
+
 def build_world_model_circuit(seed, *, n_states=6, blk=40, npred=48, nobs=48, nsurp=48,
                               state_to_pred_weight=0.0, obs_to_surprise_weight=3.0,
                               pred_to_surprise_weight=2.0, hebbian_learning_rate=0.06,
-                              hebbian_max_weight=45.0, enable_heterogeneity=False):
+                              hebbian_max_weight=45.0, enable_heterogeneity=False,
+                              local_freeze_gate=False):
     """state -> pred_{pos,neg}(FS, GABA_A, PLASTIC learned transition);
     obs_{pos,neg}(exc) -> surprise_{pos,neg} <- pred_{pos,neg}(inh). The surprise pools'
     firing IS the affective prediction-error signal.
@@ -167,7 +175,16 @@ def build_world_model_circuit(seed, *, n_states=6, blk=40, npred=48, nobs=48, ns
     is LEARNED from zero by Hebbian co-fire so cueing a state drives ONLY the pred pool of
     the valence that followed it (a non-zero baseline drives BOTH pools -> no selectivity ->
     the predictive-coding cancellation fails). Verified 2026-08-12: init 0.0 -> target-pred
-    22Hz / non-target 0Hz; init 0.3 -> 37 / 29 (ratio 1.3, cancellation dead)."""
+    22Hz / non-target 0Hz; init 0.3 -> 37 / 29 (ratio 1.3, cancellation dead).
+
+    local_freeze_gate (default False, chat-time-plasticity-audit 2026-09-24): when True, tags the
+    state->pred_{pos,neg} transition with the NAMED plasticity gate `WORLDMODEL_FREEZE_GATE` instead
+    of leaving it ungated. This lets the caller freeze ONLY this organ's own trained pathway via
+    `bridge.set_plasticity_gate(WORLDMODEL_FREEZE_GATE, 0.0)` after training, instead of the bridge-WIDE
+    `cfg.enable_hebbian_learning = False` kill switch worldmodel_production_organ.py used to reach for
+    (research/findings/2026-09-24-chat-time-plasticity-audit-*.md — that global switch silently freezes
+    EVERY co-resident organ's Hebbian pathway on a shared bridge, not just this one's). False (default)
+    leaves every pathway ungated exactly as before -> byte-identical wiring."""
     from sim.bridge import SimulationBridge
     from sim.config import CoreSimConfig, RuntimeState, GPUConfig, VisualizationConfig
     from sim.regions import BrainRegion, RegionPathway
@@ -231,15 +248,16 @@ def build_world_model_circuit(seed, *, n_states=6, blk=40, npred=48, nobs=48, ns
         region("surprise_pos", nsurp, 1.0),            # error unit (+)
         region("surprise_neg", nsurp, 1.0),            # error unit (-)
     ]
+    _wm_gate = WORLDMODEL_FREEZE_GATE if local_freeze_gate else None
     cfg.region_pathways = [
         # LEARNED transition: state -> pred_{pos,neg}. PLASTIC, all-to-all so Hebbian co-fire
         # SELECTS which valence pool each state drives (the others stay ~0).
         RegionPathway(from_region="state", to_region="pred_pos",
                       density=1.0, weight_mean=float(state_to_pred_weight),
-                      weight_jitter=0.0, plastic=True),
+                      weight_jitter=0.0, plastic=True, plasticity_gate=_wm_gate),
         RegionPathway(from_region="state", to_region="pred_neg",
                       density=1.0, weight_mean=float(state_to_pred_weight),
-                      weight_jitter=0.0, plastic=True),
+                      weight_jitter=0.0, plastic=True, plasticity_gate=_wm_gate),
         # Observed feed-forward drive (exc).
         RegionPathway(from_region="obs_pos", to_region="surprise_pos",
                       density=1.0, weight_mean=float(obs_to_surprise_weight),

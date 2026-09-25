@@ -97,6 +97,23 @@ def surprise_lesioned() -> bool:
     return v.strip().lower() in ("1", "true", "yes", "on")
 
 
+def surprise_local_freeze_enabled() -> bool:
+    """DEFAULT-OFF (chat-time-plasticity-audit, 2026-09-24 — see
+    research/findings/2026-09-24-chat-time-plasticity-audit-*.md). Unset/off (default): `_build_one` freezes
+    this organ's trained cue->patient_expected association the OLD way, `cfg.enable_hebbian_learning = False`
+    on the (possibly SHARED) bridge cfg -- byte-identical to every build before this flag existed. `BRAIN_
+    SURPRISE_LOCAL_FREEZE` in {1,true,yes,on}: `_build_one` instead freezes ONLY its own pathway via the NAMED
+    gate `_spiking_expectation_rpe_derisk.SURPRISE_FREEZE_GATE` (`bridge.set_plasticity_gate(..., 0.0)`) and
+    never touches `cfg.enable_hebbian_learning` -- so on the shared wave3 pool, surprise's own association
+    still reads frozen (max|dw|==0 on cue->patient_expected) while a co-resident organ's own UNGATED Hebbian
+    pathway is not silently killed pool-wide. `worldmodel_production_organ.worldmodel_local_freeze_enabled` is
+    the matching flag for the other organ that does the same thing on the SAME shared cfg."""
+    v = os.environ.get("BRAIN_SURPRISE_LOCAL_FREEZE")
+    if v is None:
+        return False
+    return v.strip().lower() in ("1", "true", "yes", "on")
+
+
 def surprise_homeostat_enabled() -> bool:
     """Default-ON. The per-block HOMEOSTATIC PREDICTION-GAIN equalizer (the precision companion, de-risk GO 6/6,
     `2026-08-13-surprise-organ-homeostat-GO.md`) runs at build. `BRAIN_SURPRISE_HOMEOSTAT` in {0,false,no,off} ->
@@ -210,17 +227,29 @@ class SurpriseProductionOrgan:
             bridge._blk = meta["blk"]                       # this organ's block size before it drives (shared bridge)
             cfg.enable_hebbian_learning = True              # train_expectation assumes plasticity ON
             train_expectation(bridge, cfg, idx_map, meta, xp, n_reps=self.n_reps)
-            cfg.enable_hebbian_learning = False
+            if surprise_local_freeze_enabled():
+                # LOCAL freeze (chat-time-plasticity-audit 2026-09-24): freeze ONLY this organ's own trained
+                # pathway (the gate the merged pool's `_surprise_spec` tags it with under the same flag) --
+                # leave `cfg.enable_hebbian_learning` True so a co-resident organ's own UNGATED Hebbian
+                # pathway is not silently killed pool-wide.
+                from research.runners._spiking_expectation_rpe_derisk import SURPRISE_FREEZE_GATE
+                bridge.set_plasticity_gate(SURPRISE_FREEZE_GATE, 0.0)
+            else:
+                cfg.enable_hebbian_learning = False
             return bridge, cfg, meta, xp, idx_map
         bridge, cfg, meta = build_expectation_circuit(
             self.seed, n_trained=8, n_novel=4, blk=24, cue_blk=24,
-            cue_to_expected_weight=self.cue_w)
+            cue_to_expected_weight=self.cue_w, local_freeze_gate=surprise_local_freeze_enabled())
         bridge._blk = meta["blk"]
         regions = ("cue", "patient_expected", "patient_asserted", "surprise")
         idx_map = {n: xp.asarray(_idx(bridge, n)) for n in regions}
         # LEARN the topographic cue->expected association (strength), then FREEZE (per-turn reads never learn).
         train_expectation(bridge, cfg, idx_map, meta, xp, n_reps=self.n_reps)
-        cfg.enable_hebbian_learning = False
+        if surprise_local_freeze_enabled():
+            from research.runners._spiking_expectation_rpe_derisk import SURPRISE_FREEZE_GATE
+            bridge.set_plasticity_gate(SURPRISE_FREEZE_GATE, 0.0)
+        else:
+            cfg.enable_hebbian_learning = False
         if lesion:
             _install_block_diagonal(bridge, "patient_expected", "surprise", meta["blk"], 0.0)  # remove prediction
         return bridge, cfg, meta, xp, idx_map

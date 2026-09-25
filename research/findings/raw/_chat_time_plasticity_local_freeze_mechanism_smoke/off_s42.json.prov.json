@@ -1,9 +1,12 @@
 {
- "run_id": "1790303252-2707754",
- "runner": "research/runners/onebrain_merge_framework.py",
+ "run_id": "1790305274-2791380",
+ "runner": "tests/_chat_time_plasticity_local_freeze_scenario.py",
  "argv": [
-  "/home/dant123/Projects/sim/.claude/worktrees/agent-a8aceb60a46487f56/research/runners/onebrain_merge_framework.py",
-  "--smoke"
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-a8aceb60a46487f56/tests/_chat_time_plasticity_local_freeze_scenario.py",
+  "--mode",
+  "on",
+  "--seed",
+  "42"
  ],
  "git_sha": "409397bf5",
  "git_dirty": true,
@@ -13,16 +16,19 @@
  "source_manifest_start_error": null,
  "source_manifest_verified_at_exit": null,
  "source_manifest_exit_error": null,
- "started": "2026-09-24T22:27:32",
+ "started": "2026-09-24T23:01:14",
  "env": {
-  "SIM_BACKEND": "numpy"
+  "SIM_BACKEND": "numpy",
+  "OMP_NUM_THREADS": "1",
+  "BRAIN_WORLDMODEL_LOCAL_FREEZE": "1",
+  "BRAIN_SURPRISE_LOCAL_FREEZE": "1"
  },
  "host": "dant123-wk",
  "sim_backend": "numpy",
  "sim_backend_requested": "numpy",
  "sim_backend_cupy_importable": true,
- "corpus_check_age_s": 1633.9,
+ "corpus_check_age_s": 3780.8,
  "corpus_check_query": "shared-cfg Hebbian kill freezes chat-time learning pool-wide (world-model sets cfg.enable_hebbian_learning=False on the shared wave3 pool cfg)",
  "corpus_check_fresh": true,
- "artifact": "research/findings/raw/_onebrain_merge_framework_smoke_s42.json"
+ "artifact": "research/findings/raw/_chat_time_plasticity_local_freeze_mechanism_smoke/off_s42.json"
 }
