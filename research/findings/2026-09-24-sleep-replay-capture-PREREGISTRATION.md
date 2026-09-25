@@ -800,6 +800,10 @@ seeds for `fiv_lr` minus `fih_lr_a` correct on the seventh morning, and for `fih
 
 ## Amendment 7 (2026-09-25, branch research/pair-production-path-arms) — the pair on its production path
 
+> **STATUS (2026-09-25, owner ruling): PARKED.** The pair's move toward production waits for the prioritized-memory
+> design; this amendment's dev-seed smoke is finished and committed, but neither family's six-seed gate row below
+> is queued, and nothing further runs on this branch, until that design lands.
+
 Committed on its own, BEFORE any run of the families it governs (no `pp`, `sn` or `cu` output exists at this commit).
 It governs code commit `6e436d14e` on branch `research/pair-production-path-arms`, off `main` at `9d06baeac`, with the
 review branch `research/pair-verify-go` at `865dd6be6` merged in. Every constant below is fixed there. The runner is
@@ -1034,3 +1038,7 @@ Each response is its own registered amendment and family, with a biology binding
 - The six gate rows per family are pool runs (pp, sn) and a local 3090 gpu_queue job (cu) at a full-SHA-pinned
   revision containing this amendment. They are not queued with this commit; the exact lines are in the smoke's dev
   record.
+- The seed-7 smoke above landed as
+  `research/findings/2026-09-25-pair-production-path-seed7-dev-smoke.md`: `pp`'s `wd_a`/`wd_b` and 10 `sn` arms
+  completed; `pp`'s `wd_replaylesion`/`wd_ledger_off` and every `cu` seed-7 smoke did not run. Per the STATUS note
+  at this amendment's top, the branch is now PARKED and the gate rows above stay unqueued.
