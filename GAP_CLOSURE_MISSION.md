@@ -180,6 +180,14 @@ turn, one reader per arm, WTA read with the arm's config, no exception); verdict
 any long run (artifacts: .claude/worktrees/settle-a3x-smoke-b21140758/research/findings/raw/_affect_marker_settle_gpu_timing/a3x_smoke/).
 The 7.5 h A3 GPU run is HELD pending owner item 2 (the owner questions the prepended-marker design itself).
 
+**☀️ 13:35 lanes:** item-2 context delivered (the six-word marker IS on by default and gets glued onto 'I don't know' replies;
+mood also sets reply length + a warm/blunt instruction to the Qwen mouth on cupy; recommendation A+B+C, awaiting the owner's go on
+retiring the word). Merged the ssh-in-read-loop gate SR (4f77a5c7d). Fix round 3 (enqueue-time job-shape check: HIGH -- a subshell
+first command executed locally; fragment audit: evidence not committed; AWS stop/start: durable pause) = `wsogpg6ty`. Harvest census +
+scoring of unscored result sets = `wjiqn7u7e`. SlotBinder fast teach toward 404 facts = `w1v63a0sa`. GPU: dev-seed-7 run of the
+pair's rc family on CUPY (episodic store writes on cupy; the review's production-path gap) in worktree
+.claude/worktrees/pair-cupy-dev-4f77a5c7d -> research/findings/raw/_sleep_replay_capture_cupy_dev (dev record, not a gate row).
+
 **🌙 PRE-DECIDED NEXT ACTIONS — OVERNIGHT PLAN (owner asleep from 01:35, 2026-09-25); work in order, re-arm the heartbeat on every expiry:**
 1. ✅ B2a DONE 03:45: re-scored R1 PASS (28/28, 0 regressions) + R2 PASS (168/168 valid at pinned M1, 6 covered-by-parent,
    0 incomplete), two verifiers agree, merged 075c24cd3 (follow-up to the FAIL finding). Robust core 24, union 25, mean
