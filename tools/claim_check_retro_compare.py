@@ -164,6 +164,7 @@ def scan_one(path):
     row["r8_correct_only"] = (row["r8"] == "FAIL" and n_fail > 0 and correct_flags == n_fail
                               and not r["missing"] and not r["low_coverage"] and not r.get("unreadable"))
     row["_detail"] = detail
+    row["_n_fail"], row["_n_correct"] = n_fail, correct_flags
     row["_chance_recs"] = [(rec["chance"], (rec["rule"] or "").split("+")[0], rec["decimals"])
                            for rec in r["records"] if rec["status"] in ("checked", "too_broad")
                            and rec["rule"] is not None]
@@ -269,6 +270,11 @@ def main(argv=None):
     print("  r8 failing docs on ONE rule only: %s" % dict(alone))
     print("  r8 docs failing ONLY on numbers correct at their written precision (too broad, exact/rounding match): "
           "%d" % sum(1 for r in rows if r["r8_correct_only"]))
+    n_flag = sum(r["_n_fail"] for r in rows)
+    n_ok = sum(r["_n_correct"] for r in rows)
+    print("  r8 flagged numbers: %d, of which %d (%.0f%%) are correct at their written precision (too broad); "
+          "failing docs: %d/%d (%.0f%%)" % (n_flag, n_ok, 100.0 * n_ok / max(1, n_flag), len(r8_fail), n,
+                                            100.0 * len(r8_fail) / max(1, n)))
     causes = collections.Counter()
     cause_docs = collections.Counter()
     only_cause_docs = collections.Counter()

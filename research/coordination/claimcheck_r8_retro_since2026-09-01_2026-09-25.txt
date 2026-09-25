@@ -1,0 +1,33 @@
+scanned 353 finding(s) since 2026-09-01
+  FAIL main 31
+  FAIL r5   135
+  FAIL r6   155
+  FAIL r7   108
+  FAIL r8   122
+  r8 failing docs by rule (a doc can fail on several): {'unsupported': 99, 'too_broad': 31, 'missing': 17}
+  r8 failing docs on ONE rule only: {'unsupported': 77, 'too_broad': 15, 'missing': 6}
+  r8 docs failing ONLY on numbers correct at their written precision (too broad, exact/rounding match): 13
+  r8 flagged numbers: 911, of which 274 (30%) are correct at their written precision (too broad); failing docs: 122/353 (35%)
+  r8 failing NUMBERS by cause: {'prose': 378, 'too-broad': 287, 'identifier': 75, 'near-miss': 73, 'no-pool': 55, 'code-span': 28, 'sign': 12, 'html-comment': 2, 'code-fence': 1}
+  r8 docs with >=1 failing number of that cause: {'prose': 71, 'too-broad': 31, 'near-miss': 27, 'identifier': 19, 'code-span': 8, 'sign': 6, 'no-pool': 5, 'html-comment': 2, 'code-fence': 1}
+  r8 docs whose ONLY failure is numbers of that one cause: {'prose': 36, 'too-broad': 15, 'identifier': 7, 'near-miss': 7, 'code-span': 3, 'no-pool': 1}
+  main -> r8 verdict pairs: {('PASS', 'PASS'): 230, ('PASS', 'FAIL'): 92, ('FAIL', 'FAIL'): 30, ('FAIL', 'PASS'): 1}
+  r5 -> r8 verdict pairs: {('PASS', 'PASS'): 198, ('FAIL', 'PASS'): 33, ('FAIL', 'FAIL'): 102, ('PASS', 'FAIL'): 20}
+  r6 -> r8 verdict pairs: {('PASS', 'PASS'): 194, ('FAIL', 'PASS'): 37, ('FAIL', 'FAIL'): 118, ('PASS', 'FAIL'): 4}
+  r7 -> r8 verdict pairs: {('PASS', 'PASS'): 230, ('PASS', 'FAIL'): 15, ('FAIL', 'FAIL'): 107, ('FAIL', 'PASS'): 1}
+  main: 31 failing docs, 43 flagged numbers; what round 8 makes of them: {'unsupported-in-r8': 30, 'correct-at-precision': 9, 'not-a-claim-in-r8': 4}; 21% correct at their written precision; docs failing ONLY on numbers correct at their written precision: 2
+  r5: 135 failing docs, 1381 flagged numbers; what round 8 makes of them: {'correct-at-precision': 931, 'unsupported-in-r8': 356, 'not-a-claim-in-r8': 94}; 67% correct at their written precision; docs failing ONLY on numbers correct at their written precision: 43
+  r6: 155 failing docs, 1651 flagged numbers; what round 8 makes of them: {'correct-at-precision': 1029, 'unsupported-in-r8': 622}; 62% correct at their written precision; docs failing ONLY on numbers correct at their written precision: 49
+  r7: 108 failing docs, 563 flagged numbers; what round 8 makes of them: {'unsupported-in-r8': 549, 'legacy': 14}; 0% correct at their written precision; docs failing ONLY on numbers correct at their written precision: 0
+  chance over 3821 precision-tier matches: p50 0.020 p75 0.060 p90 0.160 p95 0.250 p99 0.620 max 0.860
+  chance over 19 legacy-tier matches: p50 0.530 p75 1.000 p90 1.000 p95 1.000 p99 1.000 max 1.000
+  CHANCE_MAX sweep (docs with >=1 matched claim above T / docs failing on breadth ALONE, i.e. no unsupported, missing, low-coverage):
+    T=0.05: 1084 claims above, 101 docs above, 45 docs would fail on breadth alone
+    T=0.10: 605 claims above, 60 docs above, 32 docs would fail on breadth alone
+    T=0.15: 418 claims above, 43 docs above, 24 docs would fail on breadth alone
+    T=0.20: 287 claims above, 31 docs above, 15 docs would fail on breadth alone
+    T=0.25: 201 claims above, 24 docs above, 11 docs would fail on breadth alone
+    T=0.30: 155 claims above, 15 docs above, 7 docs would fail on breadth alone
+    T=0.50: 80 claims above, 13 docs above, 7 docs would fail on breadth alone
+  coverage: non-synthesis docs below 5% visible-distinct-checked: 25; their totals (largest 8): [(4, 0), (4, 0), (4, 0), (5, 0), (11, 0), (14, 0), (24, 1), (27, 0)]
+  wrote research/coordination/claimcheck_r8_retro_since2026-09-01_2026-09-25.tsv

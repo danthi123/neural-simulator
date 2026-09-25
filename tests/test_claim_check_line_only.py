@@ -364,7 +364,7 @@ def _number_in(rng, ctx="prose"):
 def _ctx_wrong(rng):
     n = _number_in(rng)
     p = rng.choice(PREFIX)
-    kind = rng.randint(0, 16)
+    kind = rng.randint(0, 17)
     if kind == 0:
         return "%s%s here.\n%s\n" % (p, n, MARK if rng.random() < .5 else "")
     if kind == 1:
@@ -402,15 +402,26 @@ def _ctx_wrong(rng):
         return "<!-- %s -->\n" % rng.choice(["0.1525", "-0.1625", "1.23456"])
     if kind == 15:
         return "%s%s here.\n" % (p, n)
+    if kind == 17:                                  # an exempt same-valued TWIN the reader never sees as that number
+        twin = rng.choice(['<a title="0.1525"></a>', "[x](http://x.org/0.1525)", '[x](http://x.org "0.1525")',
+                           "![0.1525](i.png)", "0.1525<b></b>9", '<span data-v="0.1525">v</span>'])
+        split = "0.1" + rng.choice(["**52**5", "<i></i>525", "5<!---->25", "5*2*5"])   # intraword `_` is no emphasis
+        return "%saccuracy %s here, %s %s\n" % (p, split, twin, MARK)
     return "| a |\n|---|\n| %s |\n| %s |\n" % (n, MARK)
 
 
 def _ctx_ok(rng):
-    kind = rng.randint(0, 7)
+    kind = rng.randint(0, 9)
     good = rng.choice(["0.170", "0.1625", "0.17000", "0.163", "0.162"])
     w = lambda n: _wrap(rng.choice(WRAPS[:9])[0], n)    # noqa: E731
     if kind == 0:
         return "%s%s here.\n" % (rng.choice(PREFIX[6:12]), w(good))
+    if kind == 8:                                   # a code span spanning a line break before a marked bold number
+        return "See `a\nb` then %s here. %s\n" % (rng.choice(["**0.104615**", "*-0.104615*", "`0.104615`",
+                                                             "<b>0.104615</b>"]), MARK)
+    if kind == 9:                                   # a range written with markup around each end
+        m = rng.choice(["**", "`", "*", "<b>"])
+        return "Between %s-%s here.\n" % (_wrap(m, "0.170"), _wrap(m, "0.1625"))
     if kind == 1:
         return "| metric | value |\n|---|---|\n| ratio | 0.104615 %s |\n| acc | %s |\n" % (MARK, w(good))
     if kind == 2:

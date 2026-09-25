@@ -31,14 +31,20 @@ round that did so opened a hole (see HISTORY): deleting `*`/`_` glued numbers to
      (`1.525e-1`), a glued unit (`0.1525ms`) and a scale suffix (`1.088B`, read as the scaled value OR the bare
      mantissa). A number is measurement-shaped when its stated precision is >= 3 decimals (d = fraction digits
      minus the exponent). A dash/minus glyph directly before the digits is a SIGN unless a digit, `.`, `)`, `]`
-     or `%` precedes it (then it is a range or a subtraction). Numbers are ALSO extracted from a lightly
-     normalized COPY in which every character maps to exactly one character -- dash/minus variants to `-`,
-     zero-width/format/combining/filler characters to a SPACE, dot-like characters between digits to `.`, any
-     Unicode decimal digit to its ASCII digit -- so no reading can glue or drop anything. A third, ADDITIVE
-     reading is the text a reader SEES (markdown-it's rendering: emphasis, inline tags, comments, entities and
-     escapes render as nothing, invisible characters are dropped): it exists only to catch a number the reader
-     sees but the raw text splits (`0.15**25**`, `0.15<!---->25`, `0&#46;1525`, `0.15\\u200b25`), and a number
-     found only there is checked and can never be exempted. A number fails if it is unsupported in ANY reading.
+     or `%` precedes it (then it is a range or a subtraction); an ASCII hyphen after a word character or after
+     `)`, `]`, `%` is AMBIGUOUS (main and round 5 decide those the other way) and is read BOTH ways, each a claim.
+     Numbers are ALSO extracted from a lightly normalized COPY in which every character maps to exactly one
+     character -- dash/minus variants to `-`, zero-width/format/combining/filler characters to a SPACE, dot-like
+     characters between digits to `.`, any Unicode decimal digit to its ASCII digit -- so no reading can glue or
+     drop anything. A third, ADDITIVE reading is the text a reader SEES (markdown-it's tokens: emphasis, tags,
+     comments, code-span backticks and hidden elements render as NOTHING, entities and escapes are decoded), in
+     two variants (elements that carry an attribute shown, and hidden -- a style can hide them). A reader number is
+     the SAME claim as a raw one only by POSITION: made of verbatim source characters with no markup glued inside
+     it and read the same way from the source characters before it. Every other reader number -- `0.15**25**`,
+     `0.15<!---->25`, `0&#46;1525`, `0.15<ZWSP>25`, `<b>-</b>0.1625`, `_.1525_` -- is a claim of its own, checked
+     and never exempt. (Matching by VALUE let any same-valued twin vouch for a split number: an exempt copy in an
+     attribute, a link title or an image, or a raw number the reader sees glued into another.) A number fails if
+     it is unsupported in ANY reading.
   2. EXEMPTION. A number is exempt only if its OWN physical line holds an exact marker `<!--derived-->` or
      `<!--derived: <note>-->` that markdown-it (both CommonMark and GFM-with-tables) parses as an HTML comment,
      i.e. outside code spans, fences, escapes and other HTML. On any line, the line is cut into cells at every `|`
@@ -56,12 +62,14 @@ round that did so opened a hole (see HISTORY): deleting `*`/`_` glued numbers to
      the document, so one wrong coarse headline among many precise numbers passed.) The distribution is printed.
   5. KEPT FROM ROUND 5 / REQUIRED: WARNINGs for the inert scope idioms; strict UTF-8 and no bidirectional controls
      (UNREADABLE blocks); `claim_check: synthesis` applies only inside a CLOSED frontmatter block with a non-empty
-     same-line `claim_check_reason:`, and never when the filename, the frontmatter `title:`/`verdict:`, or any
-     heading carries a verdict word (GO, NO-GO, NOGO, PASS(ED), FAIL(ED), REFUTED, CONFIRMED; case-insensitive,
-     invisible characters removed); the LOW_COVERAGE floor on DISTINCT checked values seen outside HTML
-     comments/blocks, link-reference lines and hidden elements; a citation inside one of those is ignored (with a
-     WARNING); `tools/gates/claim_check_selftest.py` (class CCT) passes this file's selftest problems through
-     verbatim.
+     `claim_check_reason:`, only where main and round 5 also read the flag (before the first `\n---` of a file
+     that starts with `---`: no byte-order mark, no quoted value), and never when the filename, the frontmatter
+     `title:`/`verdict:` (any key case, continuation lines included), or any heading -- as written, as rendered
+     (`G**O**`, `G<!-- -->O`, `&#71;O`), or an HTML `<h1>`-`<h6>` -- carries a verdict word (GO(s), NO-GO, NOGO,
+     PASS(ED/ES), FAIL(ED/S), REFUTED, CONFIRMED; case-insensitive, invisible characters removed); the
+     LOW_COVERAGE floor on DISTINCT checked values seen outside HTML comments, link-reference lines and hidden
+     elements; a citation inside one of those is ignored (with a WARNING); `tools/gates/claim_check_selftest.py`
+     (class CCT) passes this file's selftest problems through verbatim.
 
 HISTORY -- every round, and the hole each one left (each hole is a SELFTEST_CASES entry whose `wrong_on` is
 re-derived from git by tests/test_claim_check_line_only.py on every run):
@@ -79,10 +87,18 @@ re-derived from git by tests/test_claim_check_line_only.py on every run):
      `FULL<FROZEN by 0.1525 ... FROZEN>`; a literal `<!--derived` inside a code span or fence opened a "marker"
      span to the next `-->` anywhere and hid whole sections; any comment starting with `derived`
      (`<!--derived-from ...-->`) exempted numbers; the chance rate was a DOC average.
+  r8 draft (a960fa231, staged when its session was killed): matched a reader number to a raw one by (line,
+     value), so an exempt same-valued twin in an attribute, a link title or destination, an image, or glued into
+     another number vouched for a split wrong number; a code span spanning a line break shifted every later reader
+     line (16 numbers in 10 findings since 2026-09-01 re-checked as reader-only, 6 failing on nothing else);
+     a bold range `**0.170**-**0.1625**` read as a minus sign; an ambiguous ASCII hyphen (`(a)-0.1625`) read one way,
+     so a sign error main and r5 catch passed; the synthesis bar missed headings split by markup, a `title: |`
+     block across a blank line, and accepted a quoted flag, a flag after an earlier `----` line and a byte-order
+     mark that main and r5 refuse.
 
 CALIBRATION (2026-09-25; re-derive with `tools/claim_check_retro_compare.py --since 2026-09-01 --calibrate`;
 outputs committed as research/coordination/claimcheck_r8_retro_since2026-09-01_2026-09-25.{tsv,txt}):
-  * CHANCE_MAX = 0.20. The per-claim rate over the 3,820 precision-tier matches in the 353 findings added since
+  * CHANCE_MAX = 0.20. The per-claim rate over the 3,821 precision-tier matches in the 353 findings added since
     2026-09-01: p50 0.02, p90 0.16, p95 0.25, p99 0.62. Docs that would fail on breadth ALONE at T = 0.05 / 0.10 /
     0.15 / 0.20 / 0.25 / 0.30: 45 / 32 / 24 / 15 / 11 / 7. At 0.20 a wrong number of a claim's own shape is accepted
     at most 1 time in 5; the 15 docs it fails on breadth alone (13 on numbers correct at their written precision,
@@ -96,15 +112,30 @@ outputs committed as research/coordination/claimcheck_r8_retro_since2026-09-01_2
     window, not the claim, was broad.)
   * LOW_COVERAGE_MIN_TOTAL = 30: the largest non-synthesis doc since 2026-09-01 under 5% distinct-visible-checked
     has 27 numeric claims.
+  * FALSE POSITIVES on the same 353 findings (none re-gated: the gate checks only NEWLY ADDED findings): round 8
+    fails 122 (main 31, r5 135, r6 155, r7 108). Of its 911 flagged numbers, 274 (30%) are correct at their
+    written precision and fail only as too broad (r5: 931 of its 1,381 flags, 67%, were correct roundings);
+    13 findings fail ONLY on such numbers. The rest by cause: 378 unmarked prose numbers (derived, aggregated,
+    quoted, or wrong), 75 identifiers, 73 near misses (a truncation or a wrong rounding), 55 with nothing
+    loaded, 28 in code spans, 12 read as a minus sign, 2 in comments, 1 in a fence. The one finding main fails
+    and round 8 passes writes 0.031 for a cited 0.0307 (a correct rounding; its own chance rate 11%).
 
-CANNOT CATCH (known): a number spelled in words; a decimal comma; homoglyph letters for digits; a wrong number
-within the matching window of an unrelated cited value whose own chance rate is under CHANCE_MAX; a wrong number
-within the legacy relative window of the right one (1e-4 |x|, as in main and r5); a value that IS in the artifact
-but belongs to another quantity (existence is not agreement -- gates/stated_value_mismatch).
+ACCEPTED TRADE vs main and round 5 (required by the round-8 spec): rule 3's precision window 0.5 * 10^-d is WIDER
+than main's relative window for a coarse small number (0.477 matches a stored 0.4772; main's window is 4.8e-5), so
+a wrong coarse number that lands in the window of an unrelated cited value passes where main fails it -- bounded
+per claim by rule 4: such a match is accepted only when a random number of the claim's own shape would match less
+than CHANCE_MAX of the time.
+CANNOT CATCH (known): a number spelled in words; a decimal comma; homoglyph letters for digits; digit-group
+separators (`0.152 5`); an integer mantissa with an exponent (`1525e-4`, as in main and r5); a wrong number within
+the matching window of an unrelated cited value whose own chance rate is under CHANCE_MAX; a wrong number within
+the legacy relative window of the right one (1e-4 |x|, as in main and r5); a value that IS in the artifact but
+belongs to another quantity (existence is not agreement -- gates/stated_value_mismatch); content hidden by CSS
+from a stylesheet on an element with no attribute.
 BY DESIGN (fail closed): an identifier with >= 3 decimals (an arXiv id, a DOI prefix, a version inside a URL) is
 checked like any number -- mark it on its own line (`<!--derived: arXiv id-->`); numbers inside fenced code
 cannot be marked (a marker in a fence is code) -- cite an artifact that holds them or move them out of the fence;
-a `|` or a `<br>` anywhere on a line (a table row or not) cuts it into cells, which only ever narrows an exemption.
+a `|` or a `<br>` anywhere on a line (a table row or not) cuts it into cells, which only ever narrows an exemption;
+digits either side of an image or an attribute-bearing element are also read glued.
 """
 from __future__ import annotations
 
@@ -212,7 +243,10 @@ LOW_COVERAGE_MIN_TOTAL = 30
 # =================================================================================================================
 # synthesis
 # =================================================================================================================
-SYNTH_RE = re.compile(r"^claim_check:[ \t]*[\"']?synthesis[\"']?[ \t]*$", re.M)
+SYNTH_RE = re.compile(r"^claim_check:[ \t]*synthesis[ \t]*$", re.M)
+# main's and round 5's own test, kept as a NECESSARY condition so the escape is never granted where they checked
+# every number: the flag must precede the first `\n---` of a file that starts with `---` (no byte-order mark).
+_MAIN_SYNTH_RE = re.compile(r"^claim_check:\s*synthesis\s*$", re.M)
 _FRONTMATTER_RE = re.compile(r"\A---[ \t]*\n(.*?)\n---[ \t]*(?:\n|\Z)", re.S)
 _VERDICT_WORD_RE = re.compile(r"(?<![A-Za-z0-9])((?:no[ \t-]*)?gos?|pass(?:ed|es)?|fail(?:ed|s)?|refuted|confirmed)"
                               r"(?![A-Za-z0-9])", re.I)
@@ -339,9 +373,24 @@ def _n_copy(text):
     return "".join(out)
 
 
-def _extract(s):
+_WORDCHAR_RE = re.compile(r"\w")
+
+
+def _ambiguous_hyphen(s, a):
+    """True when an ASCII hyphen-minus directly before the digits at `a` is read as a sign by one of main/round 5
+    (sign unless a word character or `.` precedes it) and round 8 (sign unless a digit, `.`, `)`, `]` or `%` precedes
+    it) but not the other: after a letter or `_` (`acc-0.1525`) or after `)`, `]`, `%` (`(a)-0.1525`)."""
+    if a < 1 or s[a - 1] != "-":
+        return False
+    prev = s[a - 2] if a >= 2 else " "
+    return prev in ")]%" or (bool(_WORDCHAR_RE.match(prev)) and prev not in "0123456789")
+
+
+def _extract(s, both_signs=False):
     """Every measurement-shaped number in string `s` -> list of (start, end, value, decimals, unit, alts, text).
-    `start` covers a sign when one is read."""
+    `start` covers a sign when one is read. With `both_signs` (the RAW reading), a number behind an ambiguous ASCII
+    hyphen is read BOTH signed and unsigned -- each reading is a claim of its own, so a sign error main or round 5
+    would catch is never read away."""
     out = []
     for m in _NUM_RE.finditer(s):
         a, b = m.start(), m.end()
@@ -361,69 +410,140 @@ def _extract(s):
         alts = ()
         if b < len(s) and s[b] in _MAGNITUDE and (b + 1 >= len(s) or not (s[b + 1].isascii() and s[b + 1].isalnum())):
             alts = ((_MAGNITUDE[s[b]], s[b]),)
-        text = ("-" if neg else "") + s[a:b] + (alts[0][1] if alts else "")
-        out.append((sa, b, -mag if neg else mag, d, 10.0 ** (-d), alts, text))
+        suffix = alts[0][1] if alts else ""
+        out.append((sa, b, -mag if neg else mag, d, 10.0 ** (-d), alts, ("-" if neg else "") + s[a:b] + suffix))
+        if both_signs and _ambiguous_hyphen(s, a):
+            other = not neg
+            out.append((a - 1 if other else a, b, -mag if other else mag, d, 10.0 ** (-d), alts,
+                        ("-" if other else "") + s[a:b] + suffix))
     return out
 
 
 # ---- the READER's reading (additive) ----------------------------------------------------------------------------
+# The reader's text of every rendered block is a list of ELEMENTS (char, line, verbatim, raw_last):
+#   char      a character the reader sees, or None for a BOUNDARY -- markup, a tag, a comment, a hidden element or an
+#             invisible character: anything that renders as NOTHING;
+#   verbatim  True when the character is the same character at the same place in the SOURCE (plain text, code);
+#             False for a boundary and for a DECODED character (an entity, a backslash escape, a normalized autolink);
+#   raw_last  the source character directly before whatever follows this element: a boundary's last markup character
+#             (`*`, `_`, `~`, `` ` ``, `>`, `)`, `[`), a decoded character's `;` or escaped character.
+# A number the reader sees is the SAME claim as a raw/normalized one only when it is made of verbatim characters with
+# no boundary glued inside it and the source characters before it decide its start and sign the same way. Every
+# other reader number is a claim of its OWN, checked and never exempt. The decision is by POSITION, never by value:
+# a value-based match lets any twin with the same value vouch for the split number -- an exempt copy in an
+# attribute, a link title, an image, or a raw number the reader sees glued into another (`0.1525<b></b>9`).
 _HIDDEN_ATTR_RE = re.compile(r"\bhidden\b|display\s*:\s*none|visibility\s*:\s*hidden", re.I)
 _OPEN_TAG_NAME_RE = re.compile(r"<\s*([A-Za-z][A-Za-z0-9-]*)")
 _CLOSE_TAG_NAME_RE = re.compile(r"<\s*/\s*([A-Za-z][A-Za-z0-9-]*)")
+_ATTR_TAG_RE = re.compile(r"<\s*[A-Za-z][A-Za-z0-9-]*\s+[^\s/>]")     # an opening tag that carries an attribute
+_VOID_TAGS = frozenset("area base br col embed hr img input link meta source track wbr".split())
 
 
-def _hidden_open(tag):
+def _hidden_open(tag, hide_attr=False):
     """The element name when `tag` opens an element a reader never sees (a `hidden` attribute, display:none,
-    visibility:hidden, or script/style/template/noscript), else None."""
+    visibility:hidden, or script/style/template/noscript) -- and, in the SECOND reading (`hide_attr`), any element
+    that carries an attribute at all, since a style or a class can hide it (`0.15<span style="font-size:0">9</span>25`
+    shows 0.1525). Else None."""
     m = _OPEN_TAG_NAME_RE.match(tag)
     if not m or tag.startswith("</") or tag.rstrip().endswith("/>"):
         return None
     name = m.group(1).lower()
     if name in ("script", "style", "template", "noscript") or _HIDDEN_ATTR_RE.search(tag):
         return name
+    if hide_attr and name not in _VOID_TAGS and _ATTR_TAG_RE.match(tag):
+        return name
     return None
 
 
-def _reader_text_inline(tok):
-    """(chars, line offsets) of what a reader sees for one inline token: text and code, with every tag and comment
-    rendering as NOTHING (inside a paragraph they do not break the text), the content of a hidden element skipped,
-    and emphasis/link markers gone. Additive only -- see `_reader_claims`."""
-    chars, lines = [], []
+def _code_span_newlines(src, tok, start):
+    """How many line breaks the SOURCE of code span `tok` holds (markdown-it turns them into spaces, which would make
+    every later reader line lag), found by searching the block's source from `start`. -> (count, next_start); (0,
+    start) when it cannot be found -- only a reported line number depends on it."""
+    body = "".join("[ \n]" if c == " " else re.escape(c) for c in tok.content)
+    fence = re.escape(tok.markup or "`")
+    m = re.compile(fence + "[ \n]?" + body + "[ \n]?" + fence).search(src, start)
+    if not m:
+        return 0, start
+    return src.count("\n", m.start(), m.end()), m.end()
+
+
+def _reader_text_inline(tok, hide_attr=False):
+    """The reader's elements for one inline token: text and code (verbatim), decoded entities/escapes (not verbatim),
+    and a BOUNDARY for every tag, comment, emphasis/strike/link marker, image and code-span fence; the content of a
+    hidden element is skipped."""
+    els = []
     ln = 0
     hide = []                                           # stack of hidden element names currently open
+    links = []                                          # stack: is the open link an autolink?
+    src = tok.content or ""
+    code_at = 0
 
-    def put(s):
+    def put(s, verbatim=True, raw_last=None):
         for c in s:
-            chars.append(_BOUNDARY if _invisible(c) else c)
-            lines.append(ln)
+            if _invisible(c):
+                els.append((None, ln, False, " "))
+            else:
+                els.append((c, ln, verbatim, c if (verbatim or raw_last is None) else raw_last))
+
+    def gap(raw_last):
+        els.append((None, ln, False, raw_last or " "))
     for ch in tok.children or ():
         t = ch.type
-        if t in ("text", "code_inline"):
+        if t in ("softbreak", "hardbreak"):
+            if hide:
+                gap(" ")
+            else:
+                put("\n")
+            ln += 1
+        elif t == "code_inline":
+            nl, code_at = _code_span_newlines(src, ch, code_at)
+            gap("`")
             if not hide:
                 put(ch.content)
-        elif t in ("softbreak", "hardbreak"):
-            put("\n")
-            ln += 1
-        else:
-            if t == "html_inline":
-                name = _hidden_open(ch.content)
-                if name:
-                    hide.append(name)
-                elif hide:
-                    m = _CLOSE_TAG_NAME_RE.match(ch.content)
-                    if m and m.group(1).lower() == hide[-1]:
-                        hide.pop()
-                ln += ch.content.count("\n")
-            # a tag, a comment, emphasis/strike/link open+close, an image: renders as nothing -- a BOUNDARY
-            chars.append(_BOUNDARY)
-            lines.append(ln)
-    return chars, lines
+            ln += nl
+            gap("`")
+        elif t in ("text", "text_special"):
+            if hide:
+                continue
+            if t == "text_special":                     # an entity or a backslash escape: DECODED
+                put(ch.content, False, (ch.markup or ch.content)[-1:])
+            elif links and links[-1]:                   # an autolink's text is its NORMALIZED url
+                put(ch.content, ("<" + ch.content + ">") in src)
+            else:
+                put(ch.content)
+        elif t == "html_inline":
+            name = _hidden_open(ch.content, hide_attr)
+            closed = False                              # this tag closes a hidden element (no box: no break)
+            if name:
+                hide.append(name)
+            elif hide:
+                m = _CLOSE_TAG_NAME_RE.match(ch.content)
+                if m and m.group(1).lower() == hide[-1]:
+                    hide.pop()
+                    closed = True
+            tm = None if ch.content.startswith("<!") else _OPEN_TAG_NAME_RE.match(ch.content.replace("/", "", 1))
+            if tm and tm.group(1).lower() not in _INLINE_TAGS and not hide and not closed:
+                els.append((" ", ln, False, ">"))        # `<br>`, `</p><p>`, `</td>`: a break the reader sees
+            else:
+                gap(ch.content[-1:])
+            ln += ch.content.count("\n")
+        elif t == "image":                              # alt text, src and title render as no text
+            gap(")")
+            ln += sum(1 for g in ch.children or () if g.type in ("softbreak", "hardbreak"))
+        elif t == "link_open":
+            links.append(ch.markup in ("autolink", "linkify"))
+            gap("<" if links[-1] else "[")
+        elif t == "link_close":
+            gap(">" if (links.pop() if links else False) else ")")
+        else:                                           # emphasis, strong, strikethrough open/close
+            gap((ch.markup or " ")[-1:])
+    return els
 
 
-def _reader_text_html(content):
+def _reader_text_html(content, hide_attr=False):
     """Approximate rendering of an HTML block: comments and inline tags render as nothing, other tags as a break, a
-    hidden element's content is skipped, entities are decoded."""
-    chars, lines = [], []
+    hidden element's content is skipped, entities are decoded (not verbatim)."""
+    els = []
     ln, i, n = 0, 0, len(content)
     while i < n:
         c = content[i]
@@ -432,14 +552,16 @@ def _reader_text_html(content):
             if m:
                 tag = m.group(0)
                 end = m.end()
-                name = None if tag.startswith("<!") else _hidden_open(tag)
+                name = None if tag.startswith("<!") else _hidden_open(tag, hide_attr)
                 if name:
                     close = re.compile(r"</\s*%s\s*>" % re.escape(name), re.I).search(content, end)
                     end = close.end() if close else n
                     tag = content[i:end]
                 tm = None if tag.startswith("<!") or name else _OPEN_TAG_NAME_RE.match(tag.replace("/", "", 1))
-                chars.append(" " if (tm and tm.group(1).lower() not in _INLINE_TAGS) else _BOUNDARY)
-                lines.append(ln)
+                if tm and tm.group(1).lower() not in _INLINE_TAGS:
+                    els.append((" ", ln, False, ">"))    # a block-level tag breaks the text
+                else:
+                    els.append((None, ln, False, ">"))
                 ln += tag.count("\n")
                 i = end
                 continue
@@ -447,93 +569,116 @@ def _reader_text_html(content):
             m = _ENTITY_RE.match(content, i)
             if m:
                 for c2 in html.unescape(m.group(0)):
-                    chars.append(c2)
-                    lines.append(ln)
+                    els.append((None, ln, False, " ") if _invisible(c2) else (c2, ln, False, ";"))
                 i = m.end()
                 continue
-        chars.append(_BOUNDARY if _invisible(c) else c)
-        lines.append(ln)
+        els.append((None, ln, False, " ") if _invisible(c) else (c, ln, True, c))
         if c == "\n":
             ln += 1
         i += 1
-    return chars, lines
+    return els
 
 
-def _reader_segments(tokens):
-    """[(first_line, last_line_exclusive, chars, line_offsets)] -- the reader's text of every rendered block."""
+def _reader_segments(tokens, hide_attr=False):
+    """[(token, first_line, elements)] -- the reader's text of every rendered block."""
     segs = []
     for tok in tokens:
         if not tok.map:
             continue
         if tok.type == "inline":
-            ch, ln = _reader_text_inline(tok)
+            els = _reader_text_inline(tok, hide_attr)
         elif tok.type in ("fence", "code_block"):
-            ch = [_BOUNDARY if _invisible(c) else c for c in tok.content]
-            ln, k = [], (1 if tok.type == "fence" else 0)
-            for c in ch:
-                ln.append(k)
+            els, k = [], (1 if tok.type == "fence" else 0)
+            for c in tok.content:
+                els.append((None, k, False, " ") if _invisible(c) else (c, k, True, c))
                 if c == "\n":
                     k += 1
         elif tok.type == "html_block":
-            ch, ln = _reader_text_html(tok.content)
+            els = _reader_text_html(tok.content, hide_attr)
         else:
             continue
-        segs.append((tok.map[0], tok.map[1], ch, ln))
+        segs.append((tok, tok.map[0], els))
     return segs
 
 
-_BOUNDARY = None                                        # markup/invisible character that renders as nothing
-_DIGITISH = frozenset("0123456789.")
-
-
-def _resolve_boundaries(chars, lines):
-    """A run of boundaries (markup or invisible characters, which render as nothing) GLUES the characters on either
-    side when both are digits or a decimal point -- `0.15**25**`, `0.15<!---->25`, `0.15<ZWSP>25` show 0.1525 --
-    and otherwise SEPARATES them, so a bold word or a tag never glues a number to a letter (`**acc**0.1525`)."""
+def _resolve_boundaries(els):
+    """Markup renders as NOTHING: a run of boundaries is removed and the reader sees the characters on either side
+    side by side -- `0.15**25**`, `0.15<!---->25`, `0.15<ZWSP>25` and `<b>-</b>0.1625` show one number,
+    `` `0.956`-`1.013` `` a range, `**acc**0.1525` the number 0.1525 after a word. (This reading is additive, so
+    gluing can never hide a number the raw reading holds.) The character right after a run records the run's last
+    markup character, which is the SOURCE character directly before it. -> [(char, line, verbatim, raw_last,
+    joined)], `joined` None or that markup character."""
     out = []
-    n = len(chars)
-    i = 0
-    while i < n:
-        if chars[i] is not _BOUNDARY:
-            out.append((chars[i], lines[i]))
-            i += 1
+    pend = None
+    for c, ln, vb, raw in els:
+        if c is None:
+            pend = raw or " "
             continue
-        j = i
-        while j < n and chars[j] is _BOUNDARY:
-            j += 1
-        left = out[-1][0] if out else ""
-        right = chars[j] if j < n else ""
-        # a dash before the digits glues too: `**-**0.1625` and `-<ZWSP>0.1625` show a SIGNED number
-        if not (left and right and (left in _DIGITISH or left in _DASH_CHARS) and right in _DIGITISH):
-            out.append((" ", lines[i]))
-        i = j
+        out.append((c, ln, vb, raw, pend))
+        pend = None
     return out
 
 
-def _reader_claims(tokens, rn_claims, is_hidden):
-    """Numbers only the READER's reading holds (a number split by markup or an invisible character). Additive: each
-    reader number is matched to a raw/normalized claim with the same value and stated precision on the SAME physical
-    line that a reader can SEE (not inside a comment or hidden element); every unmatched one is returned as a claim
-    of its own, which is checked and can never be exempted. (Matching against a hidden copy -- `0.15**25** <!--
-    0.1525 --> <!--derived-->` -- or a copy on another line would let a hidden or exempt twin vouch for the number a
-    reader sees.) It can only ADD a failure."""
-    pool = Counter()
-    for c in rn_claims:
-        if not is_hidden(c.start):
-            pool[(c.line, round(c.value, 12), c.decimals)] += 1
+def _source_before(keep, s, i):
+    """The two SOURCE characters directly before reader character i (normalized; fewer at a block start): a glued
+    markup run contributes its last character, a decoded character its own last source character."""
+    out = []
+    p = i
+    while len(out) < 2:
+        if keep[p][4]:
+            out.append(_n_copy(keep[p][4]))
+            if len(out) == 2:
+                break
+        p -= 1
+        if p < 0:
+            break
+        out.append(s[p] if keep[p][2] else _n_copy(keep[p][3]))
+    return "".join(reversed(out))
+
+
+def _same_claim_as_source(keep, s, raw_s, src, sa, b, v, d):
+    """True when the reader's number s[sa:b] is exactly a number of the raw/normalized readings at the same place:
+    every character verbatim, no markup glued inside it (between its sign and digits included), the two source
+    characters before it (which decide where it starts and whether a dash is its sign) reading it the same way, and
+    its text occurring in the block's source."""
+    if any(not keep[p][2] for p in range(sa, b)) or any(keep[p][4] for p in range(sa + 1, b)):
+        return False
+    pre = _source_before(keep, s, sa)
+    off = len(pre)
+    if not any(x[0] == off and x[1] == off + b - sa and x[3] == d and abs(x[2] - v) <= 1e-12 * max(1.0, abs(v))
+               for x in _extract(pre + s[sa:b + 2])):
+        return False
+    return raw_s[sa:b] in src
+
+
+def _reader_claims(tokens):
+    """Numbers only the READER's reading holds -- split by markup or an invisible character, decoded from an entity or
+    an escape, or signed/started differently from the source -- each a claim of its own, checked and never exempt.
+    Two readings: elements with attributes shown, and hidden (a style can hide them); the second adds only numbers
+    the first does not already hold on that line. Additive: it can only ADD a failure."""
     extra = []
-    for l0, _l1, ch, lns in _reader_segments(tokens):
-        keep = _resolve_boundaries(ch, lns)
-        if not keep:
-            continue
-        s = _n_copy("".join(c for c, _ in keep))
-        for (a, b, v, d, u, alts, txt) in _extract(s):
-            line = l0 + keep[min(a, len(keep) - 1)][1]
-            key = (line, round(v, 12), d)
-            if pool[key] > 0:
-                pool[key] -= 1
+    first = Counter()
+    for hide_attr in (False, True):
+        count = Counter()
+        for tok, l0, els in _reader_segments(tokens, hide_attr):
+            if hide_attr and not (tok.type == "html_block" or _ATTR_TAG_RE.search(tok.content or "")):
+                continue                                # the second reading differs only where a tag has attributes
+            keep = _resolve_boundaries(els)
+            if not keep:
                 continue
-            extra.append(Claim(None, None, line, v, d, u, alts, txt, "reader"))
+            raw_s = "".join(k[0] for k in keep)
+            s = _n_copy(raw_s)
+            src = tok.content or ""
+            for (sa, b, v, d, u, alts, txt) in _extract(s):
+                if _same_claim_as_source(keep, s, raw_s, src, sa, b, v, d):
+                    continue
+                line = l0 + keep[min(sa, len(keep) - 1)][1]
+                key = (line, round(v, 12), d)
+                count[key] += 1
+                if hide_attr and count[key] <= first[key]:
+                    continue
+                extra.append(Claim(None, None, line, v, d, u, alts, txt, "reader"))
+        first = count
     return extra
 
 
@@ -544,9 +689,11 @@ _PARSERS = {}
 
 
 def _parsers():
+    # `text_join` is disabled so an entity or a backslash escape stays its own `text_special` token: the reader's
+    # reading must know which characters were DECODED (`0&#46;1525` is not the source text `0.1525`).
     if not _PARSERS:
-        _PARSERS["cm"] = MarkdownIt("commonmark")
-        _PARSERS["gfm"] = MarkdownIt("commonmark").enable("table").enable("strikethrough")
+        _PARSERS["cm"] = MarkdownIt("commonmark").disable("text_join")
+        _PARSERS["gfm"] = MarkdownIt("commonmark").enable("table").enable("strikethrough").disable("text_join")
     return _PARSERS["cm"], _PARSERS["gfm"]
 
 
@@ -658,15 +805,18 @@ def _in_spans(merged, pos):
 # 5. synthesis
 # =================================================================================================================
 def _fm_value(fm, key):
-    m = re.search(r"^%s:[ \t]*(.*?)[ \t]*$" % re.escape(key), fm, re.M)
+    # The key is matched case-insensitively and quoted or not (`Title:`, `"title":`) -- barring is the fail-closed
+    # direction, so every spelling a reader would take for the title is read.
+    m = re.search(r"^[\"']?%s[\"']?[ \t]*:[ \t]*(.*?)[ \t]*$" % re.escape(key), fm, re.M | re.I)
     if not m:
         return ""
     v = m.group(1)
-    # Every indented line after the key continues its value -- a block scalar (`|`, `>`) or a multi-line plain or
-    # quoted scalar (`title: 'Lane A` / `  GO'`) -- so a verdict word on a continuation line is still read.
+    # Every indented or blank line after the key continues its value -- a block scalar (`|`, `>`, blank lines
+    # included) or a multi-line plain or quoted scalar (`title: 'Lane A` / `  GO'`) -- so a verdict word on a
+    # continuation line is still read.
     block = []
     for ln in fm[m.end():].split("\n")[1:]:
-        if ln.startswith((" ", "\t")):
+        if ln.startswith((" ", "\t")) or not ln.strip():
             block.append(ln.strip())
         else:
             break
@@ -690,8 +840,13 @@ def _verdict_word(s):
     return None
 
 
-def _synthesis_status(text, doc_path):
-    """-> (is_synthesis, reason, warning_or_None)."""
+_TAG_OR_COMMENT_RE = re.compile(r"<!--.*?-->|<[^<>]*>", re.S)
+
+
+def _synthesis_status(text, doc_path, tokens=(), bom=False):
+    """-> (is_synthesis, reason, warning_or_None). Headings are read as WRITTEN and as a reader SEES them (markdown-it's
+    heading text, with emphasis, comments and tags rendering as nothing and entities decoded: `G**O**`, `G<!-- -->O`
+    and `&#71;O` all show GO)."""
     m = _FRONTMATTER_RE.match(text)
     if not m:
         if SYNTH_RE.search(text):
@@ -701,6 +856,10 @@ def _synthesis_status(text, doc_path):
     fm = m.group(1)
     if not SYNTH_RE.search(fm):
         return False, None, None
+    if bom or not _MAIN_SYNTH_RE.search(text.split("\n---", 1)[0]):
+        return False, None, ("`claim_check: synthesis` must sit in the FIRST `---` block, before any other line "
+                             "starting with `---`, with no byte-order mark before the file's first `---` -- ignored, "
+                             "every number is checked")
     reason = _fm_value(fm, "claim_check_reason")
     if not reason:
         return False, None, ("declares `claim_check: synthesis` but no non-empty `claim_check_reason:` on the same "
@@ -715,7 +874,16 @@ def _synthesis_status(text, doc_path):
             probes.append(("heading on line %d" % (i + 1), h.group(2) or ""))
         elif i > 0 and _SETEXT_ANY_RE.match(ln) and lines[i - 1].strip():
             probes.append(("setext heading on line %d" % i, lines[i - 1]))
-    probes.extend(("HTML heading", m.group(1)) for m in _HTML_HEADING_RE.finditer(text))
+    for hm in _HTML_HEADING_RE.finditer(text):
+        probes.append(("HTML heading", hm.group(1)))
+        probes.append(("HTML heading", html.unescape(_TAG_OR_COMMENT_RE.sub("", hm.group(1)))))
+    fm_lines = text.count("\n", 0, m.end())            # the frontmatter itself parses as a setext heading: skipped
+    for i, tok in enumerate(tokens):
+        if tok.type == "heading_open" and tok.map and tok.map[0] >= fm_lines and i + 1 < len(tokens):
+            parts = [c.content for c in tokens[i + 1].children or ()
+                     if c.type in ("text", "text_special", "code_inline")]
+            for joiner in ("", " "):
+                probes.append(("heading on line %d as rendered" % (tok.map[0] + 1), joiner.join(parts)))
     for where, s in probes:
         w = _verdict_word(s)
         if w:
@@ -845,21 +1013,23 @@ def _empty(unreadable):
 
 
 def _read(doc_path):
+    """-> (text, error, had_byte_order_mark)."""
     try:
         raw = open(doc_path, "rb").read()
     except OSError as e:
-        return None, "cannot read %s: %s: %s" % (doc_path, type(e).__name__, e)
+        return None, "cannot read %s: %s: %s" % (doc_path, type(e).__name__, e), False
     try:
         text = raw.decode("utf-8", errors="strict")
     except UnicodeDecodeError as e:
         return None, ("%s is not valid UTF-8 (%s at byte offset %d) -- fix the file's encoding before it can be "
-                      "checked" % (doc_path, e.reason, e.start))
+                      "checked" % (doc_path, e.reason, e.start)), False
+    bom = text.startswith("\ufeff")
     text = text.lstrip("\ufeff").replace("\r\n", "\n").replace("\r", "\n")
     b = _BIDI_RE.search(text)
     if b:
         return None, ("%s contains a bidirectional control character (U+%04X, line %d) that can reorder digits on "
-                      "screen -- remove it" % (doc_path, ord(b.group(0)), text.count("\n", 0, b.start()) + 1))
-    return text, None
+                      "screen -- remove it" % (doc_path, ord(b.group(0)), text.count("\n", 0, b.start()) + 1)), bom
+    return text, None, bom
 
 
 def _scan(doc_path, tol=None):
@@ -868,7 +1038,7 @@ def _scan(doc_path, tol=None):
     if MarkdownIt is None:
         return _empty("markdown-it-py is not installed (%s) -- `pip install -r requirements-dev.txt`; without it no "
                       "<!--derived--> marker can be verified" % _MD_IMPORT_ERROR)
-    text, err = _read(doc_path)
+    text, err, bom = _read(doc_path)
     if err:
         return _empty(err)
     lines = text.split("\n")
@@ -915,7 +1085,7 @@ def _scan(doc_path, tol=None):
     # ---- claims: raw reading + normalized copy (union, deduplicated) ---------------------------------------------
     claims = []
     for reading, s in (("raw", text), ("normalized", _n_copy(text))):
-        for (a, b, v, d, u, alts, txt) in _extract(s):
+        for (a, b, v, d, u, alts, txt) in _extract(s, both_signs=(reading == "raw")):
             claims.append(Claim(a, b, line_of(a), v, d, u, alts, txt, reading))
     seen, rn = {}, []
     for c in claims:
@@ -934,7 +1104,7 @@ def _scan(doc_path, tol=None):
     def is_hidden(pos):
         return line_of(pos) in hidden_lines or _in_spans(hidden_spans, pos)
 
-    extra = _reader_claims(toks_gfm, rn, is_hidden)
+    extra = _reader_claims(toks_gfm)
 
     # ---- exemption: live markers, per cell, capped ---------------------------------------------------------------
     def cells(li):
@@ -972,7 +1142,7 @@ def _scan(doc_path, tol=None):
                              % (k, MAX_EXEMPT_PER_MARKER * k, len(cl) - MAX_EXEMPT_PER_MARKER * k)))
 
     # ---- synthesis + citations ----------------------------------------------------------------------------------
-    synthesis, _reason, synth_warn = _synthesis_status(text, doc_path)
+    synthesis, _reason, synth_warn = _synthesis_status(text, doc_path, toks_gfm, bom)
     if synth_warn:
         warnings.append((1, "synthesis escape not applied", synth_warn))
 

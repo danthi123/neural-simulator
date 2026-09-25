@@ -20,6 +20,7 @@ from __future__ import annotations
 U = chr
 ZWSP, SHY, BIDI_RLO, BIDI_PDF = U(0x200B), U(0x00AD), U(0x202E), U(0x202C)
 MINUS, EN_DASH, EM_DASH = U(0x2212), U(0x2013), U(0x2014)
+BOM = U(0xFEFF)
 DELTA = U(0x0394)
 
 _HDR = "# Some finding\n\nArtifact: `%(art)s`\n\n"
@@ -503,6 +504,107 @@ SELFTEST_CASES = [
              "one a reader sees, so it is loaded (an early round-8 draft hid whole HTML-block lines)",
          doc="# Some finding\n\n<!--derived--> the ratio 0.104615 is from `%(art)s`\n\nThe baseline was 0.162500 "
              "here.\n"),
+    # =============================================================================================================
+    # ROUND 8, second pass (after the 07:51 kill): a reader number is matched to a source number by POSITION, never
+    # by value -- the staged draft matched by (line, value) and let any same-valued twin vouch for a split number
+    # =============================================================================================================
+    dict(name="r8_attribute_twin_cannot_vouch_for_a_split_number", expect="FAIL", wrong_on=_ALL_BEFORE_R8,
+         why="an exempt copy of 0.1525 inside a tag attribute is a raw number no reader sees; it must not vouch for "
+             "the 0.15**25** the reader does see",
+         doc=_HDR + "The accuracy was 0.15**25** here. <a title=\"0.1525\"></a> <!--derived-->\n"),
+    dict(name="r8_link_title_twin_cannot_vouch_for_a_split_number", expect="FAIL", wrong_on=_ALL_BEFORE_R8,
+         why="the same with the exempt copy in a link title",
+         doc=_HDR + "The accuracy was 0.15**25** here, [see](http://x.org \"0.1525\") <!--derived-->\n"),
+    dict(name="r8_link_url_twin_cannot_vouch_for_a_split_number", expect="FAIL", wrong_on=_ALL_BEFORE_R8,
+         why="the same with the exempt copy in a link destination",
+         doc=_HDR + "The accuracy was 0.15**25** here, [see](http://x.org/0.1525) <!--derived-->\n"),
+    dict(name="r8_image_alt_twin_cannot_vouch_for_a_split_number", expect="FAIL", wrong_on=_ALL_BEFORE_R8,
+         why="the same with the exempt copy in an image's alt text",
+         doc=_HDR + "The accuracy was 0.15**25** here ![0.1525](x.png) <!--derived-->\n"),
+    dict(name="r8_glued_twin_cannot_vouch_for_a_split_number", expect="FAIL", wrong_on=_ALL_BEFORE_R8,
+         must_flag=(0.1525,),
+         artifact={"accuracy": 0.17, "x": 0.15259},
+         why="the raw 0.1525 in `0.1525<b></b>9` is exempt, but a reader sees it as 0.15259 (which the artifact "
+             "holds); it must not vouch for the split 0.15**25** later on the line",
+         doc=_HDR + "Ratio 0.1525<b></b>9 and 0.15**25** here. <!--derived-->\n"),
+    dict(name="r8_sign_flipped_twin_cannot_vouch_for_a_split_number", expect="FAIL", wrong_on=_ALL_BEFORE_R8,
+         must_flag=(0.1525,),
+         artifact={"accuracy": 0.17, "delta": -0.1525},
+         why="the raw +0.1525 in `<b>-</b>0.1525` is exempt, but a reader sees -0.1525 (which the artifact holds); "
+             "it must not vouch for the split +0.15**25**",
+         doc=_HDR + "Delta <b>-</b>0.1525 and 0.15**25** here. <!--derived-->\n"),
+    dict(name="r8_style_hidden_digit_is_read_as_hidden", expect="FAIL", wrong_on=_ALL_BEFORE_R8, must_flag=(0.1525,),
+         artifact={"accuracy": 0.17, "x": 0.15925},
+         why="`0.15<span style=\"font-size:0\">9</span>25` shows 0.1525: a second reading hides the content of every "
+             "element that carries an attribute (a style or class can hide it)",
+         doc=_HDR + "The accuracy was 0.15<span style=\"font-size:0\">9</span>25 here.\n"),
+    dict(name="r8_underscore_emphasis_dot_start_number_is_read", expect="FAIL", wrong_on=_BEFORE_R6,
+         why="`_.1525_` shows .1525; the raw lookbehind skips a dot after `_`, the reader's reading does not",
+         doc=_HDR + "The drop was _.1525_ here.\n"),
+    dict(name="r8_entity_digit_inside_a_number_is_read", expect="FAIL", wrong_on=_BEFORE_R6,
+         why="`0.&#49;525` shows 0.1525",
+         doc=_HDR + "The accuracy was 0.&#49;525 here.\n"),
+    dict(name="r8_percent_decoded_autolink_number_is_read", expect="FAIL", wrong_on=_ALL_BEFORE_R8,
+         why="an autolink shows its url percent-DECODED: `<http://x.org/0%%2E1525>` shows 0.1525",
+         doc=_HDR + "See <http://x.org/0%%2E1525> here.\n"),
+    dict(name="r8_code_span_glued_after_a_digit_is_read", expect="FAIL", wrong_on=_BEFORE_R6,
+         why="``0`.1525` `` shows 0.1525 (the backticks render as nothing)",
+         doc=_HDR + "The value 0`.1525` here.\n"),
+    dict(name="r8_code_span_range_is_read_as_a_range", expect="PASS", wrong_on=(),
+         why="`` `0.170`-`0.1625` `` shows the range 0.170-0.1625, not a negative 0.1625 (markup renders as nothing, "
+             "so the reader's reading must not put a space where the backticks were)",
+         doc=_HDR + "Between `0.170`-`0.1625` here.\n"),
+    dict(name="r8_bold_range_is_read_as_a_range", expect="PASS", wrong_on=(),
+         why="`**0.170**-**0.1625**` shows the range 0.170-0.1625 (the draft put a space after the bold and read a "
+             "minus sign)",
+         doc=_HDR + "Between **0.170**-**0.1625** here.\n"),
+    dict(name="r8_bold_derived_number_after_a_multiline_code_span_passes", expect="PASS", wrong_on=(),
+         why="a code span that spans a line break keeps its newline in the line count, so a bold derived number after "
+             "it is still the SAME claim as its raw copy (the draft keyed it one line early and re-checked it)",
+         doc=_HDR + "See `foo\nbar` and the ratio **0.104615** here. <!--derived-->\n"),
+    dict(name="r8_bold_negative_derived_number_passes", expect="PASS", wrong_on=(),
+         why="`**-0.104615**` is one claim: its sign sits inside the bold, so raw and reader read it the same way",
+         doc=_HDR + "Delta **-0.104615** here. <!--derived-->\n"),
+    dict(name="r8_marked_autolink_identifier_passes", expect="PASS", wrong_on=_THROUGH_R6,
+         why="an autolink's text is the source url when nothing was percent-decoded, so its marker exempts it",
+         doc=_HDR + "See <https://arxiv.org/abs/2403.12345> <!--derived: arXiv id--> -- accuracy 0.170 here.\n"),
+    dict(name="r8_ascii_hyphen_after_a_paren_reads_both_signs", expect="FAIL", wrong_on=('r7',), must_flag=(-0.1625,),
+         why="`(lesion)-0.1625`: main and round 5 read a minus sign, the draft read a range; an ambiguous ASCII "
+             "hyphen is read BOTH ways, so the sign error main catches is caught",
+         doc=_HDR + "The gain (lesion)-0.1625 here.\n"),
+    dict(name="r8_ascii_hyphen_after_a_letter_reads_both_signs", expect="FAIL", wrong_on=('r7',), must_flag=(0.1525,),
+         artifact={"accuracy": 0.17, "delta": -0.1525},
+         why="`acc-0.1525`: main and round 5 read +0.1525 (a hyphen after a word), the draft a minus sign; both "
+             "readings are checked",
+         doc=_HDR + "The acc-0.1525 here.\n"),
+    dict(name="r8_synthesis_heading_split_by_emphasis_bars", expect="FAIL", wrong_on=_ALL_BEFORE_R8,
+         why="`# Lane A G**O**` shows GO",
+         doc=_SYN + "---\n\n# Lane A G**O**\n\nArtifact: `%(art)s`\n\nThe accuracy was 0.1525 here.\n"),
+    dict(name="r8_synthesis_heading_split_by_comment_bars", expect="FAIL", wrong_on=_ALL_BEFORE_R8,
+         why="`# Lane A G<!-- -->O` shows GO",
+         doc=_SYN + "---\n\n# Lane A G<!-- -->O\n\nArtifact: `%(art)s`\n\nThe accuracy was 0.1525 here.\n"),
+    dict(name="r8_synthesis_heading_entity_bars", expect="FAIL", wrong_on=_ALL_BEFORE_R8,
+         why="`# Lane A &#71;O` shows GO",
+         doc=_SYN + "---\n\n# Lane A &#71;O\n\nArtifact: `%(art)s`\n\nThe accuracy was 0.1525 here.\n"),
+    dict(name="r8_synthesis_block_scalar_title_across_a_blank_line_bars", expect="FAIL", wrong_on=_THROUGH_R6,
+         why="a `title: |` block scalar continues across a blank line (the draft stopped reading at it)",
+         doc=_SYN + "title: |\n  Lane A\n\n  GO\nlane: x\n---\n\n# Notes\n\nArtifact: `%(art)s`\n\n"
+                    "The accuracy was 0.1525 here.\n"),
+    dict(name="r8_synthesis_capitalized_title_key_bars", expect="FAIL", wrong_on=_ALL_BEFORE_R8,
+         why="`Title:` is read as the title too",
+         doc=_SYN + "Title: Lane A GO\nlane: x\n---\n\n# Notes\n\nArtifact: `%(art)s`\n\n"
+                    "The accuracy was 0.1525 here.\n"),
+    dict(name="r8_synthesis_quoted_flag_is_not_synthesis", expect="FAIL", wrong_on=('r7',),
+         why="main and round 5 do not read `claim_check: \"synthesis\"` as the flag, so round 8 does not either",
+         doc="---\nclaim_check: \"synthesis\"\nclaim_check_reason: quotes prior runs\n---\n\n# A literature summary\n\n"
+             "Artifact: `%(art)s`\n\nThe accuracy was 0.1525 here.\n"),
+    dict(name="r8_synthesis_flag_after_an_earlier_dash_line_is_not_synthesis", expect="FAIL", wrong_on=('r6', 'r7'),
+         why="main and round 5 read the flag only before the first `\\n---`; a `----` line ends their block",
+         doc="---\ntitle: notes\n----\nclaim_check: synthesis\nclaim_check_reason: quotes prior runs\n---\n\n"
+             "# A literature summary\n\nArtifact: `%(art)s`\n\nThe accuracy was 0.1525 here.\n"),
+    dict(name="r8_synthesis_after_a_byte_order_mark_is_not_synthesis", expect="FAIL", wrong_on=('r7',),
+         why="main and round 5 do not see `---` at the start of a file that begins with a byte-order mark",
+         doc=BOM + _SYN + "---\n\n# A literature summary\n\nArtifact: `%(art)s`\n\nThe accuracy was 0.1525 here.\n"),
     dict(name="r8_legacy_tolerance_is_accepted_and_reported", expect="PASS", wrong_on=('r7',),
          expect_output=("1 legacy relative tolerance",),
          why="SPEC: the legacy relative tolerance max(5e-6, 1e-4|x|) is also accepted, as in main and r5 -- "
