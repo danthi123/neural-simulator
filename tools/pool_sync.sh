@@ -27,6 +27,11 @@
 # SAFETY: rsync -au (archive + UPDATE) copies remote->local ONLY when the remote file is newer or absent locally,
 # so a committed local result is never clobbered by a stale remote copy. *.log and per-node _provenance/ are
 # excluded (merging three nodes' runs.jsonl would clobber); provenance sidecars (*.prov.json) ARE pulled.
+#
+# STALE-HOSTNAME AUTO-REFRESH (2026-09-25): a first pull failure for a node with a research/queue/.aws_<node>
+# state file (i.e. one tools/aws_pool_node.sh manages) triggers one cheap `aws_pool_node.sh refresh <node>` --
+# rewrites .pool_ssh_config's Host block if the node is actually running under a NEW ip (there is no Elastic
+# IP anywhere in this feature) -- then retries the pull once. pool40/41/42 (no such state file) are unaffected.
 set -uo pipefail   # NOT -e: a per-node/per-revision rsync failure must be handled explicitly (below), not abort
                     # the whole script -- strict mode needs to see EVERY node's outcome to report all of them.
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"; cd "$ROOT"
@@ -65,14 +70,51 @@ NODES="${POOL_NODES:-pool40 pool41 pool42} $_EXTRA"
 REMOTE_DIR="${POOL_REMOTE_DIR:-~/derisk-pool/sim/research/findings/raw/}"
 LOCAL_DIR="research/findings/raw/"
 mkdir -p "$LOCAL_DIR"
+# STALE-HOSTNAME AUTO-REFRESH (2026-09-25, incident-driven -- pool1's public ip changes on every AWS stop/start,
+# no Elastic IP anywhere in this feature, so .pool_ssh_config's Host block for it can go stale between cadences;
+# the owner had to fix it by hand). AWS_STATE_DIR default matches tools/aws_pool_node.sh's own state-file
+# convention (research/queue/.aws_<node-name>) -- override exists so tests never touch the shared production dir.
+AWS_STATE_DIR="${POOL_SYNC_AWS_STATE_DIR:-$ROOT/research/queue}"
+_rsync_pull() {   # _rsync_pull <node> -- one itemized pull; the ONE place this shape is spelled out, so the
+                   # main call and the post-refresh retry below can never drift apart.
+  timeout 180 rsync -au $DRY --itemize-changes \
+      --exclude='*.log' --exclude='_provenance/' \
+      -e "$RSYNC_SSH" \
+      "$1:$REMOTE_DIR" "$LOCAL_DIR" 2>/dev/null
+}
 total=0
 FAILED=0
 for N in $NODES; do
   # -u protects newer local files; itemize so we can count + show what moved.
-  out=$(timeout 180 rsync -au $DRY --itemize-changes \
-        --exclude='*.log' --exclude='_provenance/' \
-        -e "$RSYNC_SSH" \
-        "$N:$REMOTE_DIR" "$LOCAL_DIR" 2>/dev/null) || { echo "  $N: UNREACHABLE (skipped)"; FAILED=1; continue; }
+  out=$(_rsync_pull "$N") || {
+    # Only for nodes tools/aws_pool_node.sh itself manages (a research/queue/.aws_<N> state file exists) --
+    # pool40/41/42 (mini-PCs, no such file) are completely unaffected, byte-identical to before this change.
+    # `refresh` is cheap and bounded to this ONE retry: it never starts a stopped instance, so a genuinely
+    # stopped/gone node still reports UNREACHABLE exactly as before, just after one extra (fast, local-file-only
+    # unless the ip actually changed) round trip.
+    _aws_state="$AWS_STATE_DIR/.aws_$N"
+    _refreshed=0
+    # --dry-run MUST CHANGE NOTHING (2026-09-25 review, LOW): `refresh` rewrites .pool_ssh_config (+ its .bak)
+    # on disk -- a real, persistent change -- which the old code ran even under --dry-run, breaking that
+    # promise. Skip the refresh attempt entirely when $DRY is set; a dry-run node that would have been
+    # refreshed just reports UNREACHABLE like any other unreachable node, same as before this feature existed.
+    if [ -z "$DRY" ] && [ -f "$_aws_state" ]; then
+      # Only retry if the Host block ACTUALLY changed -- `refresh` exits 0 both when it rewrote something and
+      # when it correctly declined (node not running, ip already current, etc.), so a before/after content
+      # compare is the one signal that distinguishes "worth a retry" from "nothing to gain by retrying."
+      _cfg_before=$(cat "$POOL_SSH_CONFIG" 2>/dev/null || true)
+      if AWS_POOL_NODE_STATE_FILE="$_aws_state" POOL_SSH_CONFIG="$POOL_SSH_CONFIG" \
+           bash "$ROOT/tools/aws_pool_node.sh" refresh "$N" >>"${POOL_SYNC_REFRESH_LOG:-/dev/null}" 2>&1; then
+        _cfg_after=$(cat "$POOL_SSH_CONFIG" 2>/dev/null || true)
+        [ "$_cfg_before" != "$_cfg_after" ] && _refreshed=1
+      fi
+    fi
+    if [ "$_refreshed" = 1 ]; then
+      out=$(_rsync_pull "$N") || { echo "  $N: UNREACHABLE (skipped, even after a Host-block refresh)"; FAILED=1; continue; }
+    else
+      echo "  $N: UNREACHABLE (skipped)"; FAILED=1; continue
+    fi
+  }
   n=$(printf '%s\n' "$out" | grep -cE '^>f' || true)
   echo "  $N: ${DRY:+would pull }$n file(s)"
   # BUGFIX (2026-09-03): under `set -eo pipefail`, this display-only pipeline dies with exit 1 whenever

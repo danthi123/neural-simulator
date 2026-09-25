@@ -31,6 +31,22 @@ CAP="${AWS_DAILY_CAP_USD:-50}"
 # AWS_BUDGET_LOG override exists for tests -- keeps them from writing into the SHARED production queue dir
 # (other sessions/agents touch research/queue/ concurrently; see the worktree environment note on this).
 LOG="${AWS_BUDGET_LOG:-$ROOT/research/queue/aws_budget.log}"
+# POOL_SSH_CFG / aws_stop_safety_lib.sh (2026-09-25 review, fix round 3): `enforce` now syncs a node's results
+# before stopping it at the cap -- see the `enforce)` case below for why this NEVER blocks the stop itself
+# (unlike tools/aws_idle_stop.sh's own opportunistic use of the same library, where an unverified sync DOES
+# block). POOL_SSH_CFG override exists for tests, same reasoning as LOG above.
+POOL_SSH_CFG="${POOL_SSH_CONFIG:-$ROOT/research/queue/.pool_ssh_config}"
+# AWS_STATE_DIR override exists for tests -- `enforce`'s per-instance node/key lookup globs this directory's
+# `.aws_*` state files (the same convention tools/aws_idle_stop.sh reads), which must never resolve to the
+# SHARED production research/queue/ (other sessions/agents write state files there concurrently).
+AWS_STATE_DIR="${AWS_NODE_STATE_DIR:-$ROOT/research/queue}"
+source "$ROOT/tools/aws_stop_safety_lib.sh"
+
+# RE-REGISTER ANY STALE PAUSE, AT STARTUP (2026-09-25 review, MEDIUM: "the pause/resume pair has no durable
+# restore" -- see tools/aws_idle_stop.sh's own identical call for the full reasoning). Cheap; runs before every
+# subcommand (status/check/enforce), not just `enforce`, since any of them running is a legitimate "notice"
+# point and the check itself never touches AWS.
+reregister_stale_paused_nodes
 
 _fetch_instances() {
   aws ec2 describe-instances --region "$REGION" \
@@ -69,11 +85,71 @@ case "$cmd" in
     fi
     to_stop=$("$PY" "$ROOT/tools/aws_cost_lib.py" enforce --cap "$CAP" <<<"$json")
     if [ -n "$to_stop" ]; then
-      while IFS= read -r iid; do
+      # fd 3 FOR THE LOOP (2026-09-25 review, fix round 3 -- the SAME class of bug tools/aws_idle_stop.sh's own
+      # main loop was fixed for): every ssh call the sync below makes must not drain $to_stop off fd 0 for the
+      # REST of this loop. Reading the id list from fd 3 makes that structurally impossible regardless of any
+      # one remote call's own stdin habits.
+      while IFS= read -r iid <&3; do
         [ -z "$iid" ] && continue
+        # SYNC BEFORE STOP (2026-09-25 review, still-open item: "aws_budget.sh:72-76 still stops a node at the
+        # cap without syncing first"). Best-effort and BOUNDED, and it NEVER blocks the stop itself -- this is
+        # the one deliberate difference from tools/aws_idle_stop.sh's own (blocking) use of the same
+        # sync_node_before_stop: `enforce` exists to cap SPEND, and an instance that keeps running while a sync
+        # is stuck/failing is exactly the outcome the cap is meant to prevent, so it must never be defeated by
+        # one. A slower/failed sync here costs at most the same unsynced-results risk aws_idle_stop.sh already
+        # accepts when it CANNOT verify a key/ip at all (also logged, never fatal) -- traded deliberately for
+        # "the cap always holds."
+        node=""; key=""; ip=""
+        for sf in "$AWS_STATE_DIR"/.aws_*; do
+          [ -f "$sf" ] || continue
+          if grep -q "^instance=$iid\$" "$sf" 2>/dev/null; then
+            key=$(awk -F= '/^key=/{print $2}' "$sf" 2>/dev/null)
+            node=$(basename "$sf" 2>/dev/null); node="${node#.aws_}"
+            break
+          fi
+        done
+        if [ -n "$key" ] && [ -f "$key" ]; then
+          ip=$(aws ec2 describe-instances --instance-ids "$iid" --region "$REGION" \
+                --query 'Reservations[].Instances[].PublicIpAddress' --output text 2>/dev/null)
+        fi
+        if [ -n "$ip" ] && [ "$ip" != "None" ]; then
+          was_reg=$(pause_dispatch_for_node "$node")   # see tools/aws_idle_stop.sh's own use -- same reasoning
+          # TRAP, AT MINIMUM (2026-09-25 review, MEDIUM): same durable-restore reasoning as tools/aws_idle_stop.sh's
+          # own identical trap -- catches a graceful kill of THIS process before the explicit resume below runs;
+          # reregister_stale_paused_nodes at startup is the half that also covers SIGKILL/OOM/reboot.
+          trap "resume_dispatch_for_node $(printf '%q' "$node") $(printf '%q' "$was_reg"); exit" EXIT INT TERM
+          # setsid + group-kill (2026-09-25 review, LOW: "the outer timeout also orphans the lib's own nested
+          # `timeout 180 rsync`"). Reproduced: a plain `timeout $T bash lib --sync` only SIGTERMs its DIRECT
+          # child; that child's OWN nested `timeout 180 rsync` (in sync_node_before_stop's fallback path) is a
+          # GRANDCHILD the outer timeout never signals, so it survives as an orphan, reparented, still writing
+          # into research/findings/raw. `setsid` makes this whole pipeline its own process group ($sync_pid ==
+          # the group id, since setsid/env/bash all exec in place with no extra fork); after `timeout` itself
+          # returns (by any means -- success, failure, or its own SIGTERM-on-expiry), unconditionally signal the
+          # NEGATIVE pid to reach every process still alive in that group in one call, whichever child of
+          # aws_stop_safety_lib.sh it happens to be.
+          setsid timeout "${AWS_BUDGET_SYNC_TIMEOUT_S:-120}" env AWS_SYNC_LOG="$LOG" POOL_SSH_CONFIG="$POOL_SSH_CFG" \
+               bash "$ROOT/tools/aws_stop_safety_lib.sh" --sync "$node" "$ip" "$key" </dev/null >>"$LOG" 2>&1 &
+          sync_pid=$!
+          wait "$sync_pid"; sync_rc=$?
+          kill -TERM -- "-$sync_pid" 2>/dev/null
+          kill -KILL -- "-$sync_pid" 2>/dev/null
+          if [ "$sync_rc" -eq 0 ]; then
+            echo "$(date -u '+%FT%TZ') [aws_budget] $iid ($node): synced before stopping at cap" | tee -a "$LOG"
+          else
+            echo "$(date -u '+%FT%TZ') [aws_budget] $iid ($node): sync-before-stop failed/timed out -- stopping ANYWAY (hard cap, see comment above)" | tee -a "$LOG"
+          fi
+        else
+          echo "$(date -u '+%FT%TZ') [aws_budget] $iid: no verified ssh key/ip on hand -- cannot sync, stopping ANYWAY (hard cap)" | tee -a "$LOG"
+        fi
         echo "$(date -u '+%FT%TZ') [aws_budget] cap ($CAP USD) reached — stopping $iid" | tee -a "$LOG"
         aws ec2 stop-instances --region "$REGION" --instance-ids "$iid" --output text 2>&1 | tee -a "$LOG"
-      done <<<"$to_stop"
+        # RESUME AFTER stop-instances (2026-09-25 review, LOW): same reordering + reasoning as tools/
+        # aws_idle_stop.sh's own fix -- resuming any earlier reopens a window where a job could land on a node
+        # that is about to be stopped out from under it.
+        if [ -n "$ip" ] && [ "$ip" != "None" ]; then
+          resume_dispatch_for_node "$node" "$was_reg"; trap - EXIT INT TERM
+        fi
+      done 3<<<"$to_stop"
     fi
     exit 0
     ;;
