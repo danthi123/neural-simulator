@@ -1,0 +1,42 @@
+{
+ "run_id": "1790327758-3893823",
+ "runner": "research/runners/onebrain_regression_battery.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/wf_75c2e89f-181-3/research/runners/onebrain_regression_battery.py",
+  "--worker",
+  "--env",
+  "{\"BRAIN_DA_TAG_CAPTURE\": \"1\", \"BRAIN_DA_TAG_CAPTURE_CLOCK\": \"turn\", \"BRAIN_SLEEP_REPLAY_CAPTURE\": \"1\", \"BRAIN_SLEEP_LOAD_RENORM\": \"1\"}",
+  "--turns",
+  "fih_t1,fih_t2,fih_t3,fih_t4,fih_t5,fih_night1,fih_recall1,fih_d2f1,fih_d2f2,fih_d2f3,fih_night2,fih_recall2,fih_d3f1,fih_d3f2,fih_d3f3,fih_night3,fih_recall3,fih_d4f1,fih_d4f2,fih_d4f3,fih_night4,fih_recall4,fih_d5f1,fih_d5f2,fih_d5f3,fih_night5,fih_recall5,fih_d6f1,fih_d6f2,fih_d6f3,fih_night6,fih_recall6,fih_d7f1,fih_d7f2,fih_d7f3,fih_night7,fih_recall7",
+  "--out",
+  "research/findings/raw/_sleep_forgetting_interference_smoke/seed42/fih_lr_b.json"
+ ],
+ "git_sha": "2def39c76",
+ "git_dirty": false,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-25T05:15:58",
+ "env": {
+  "SIM_BACKEND": "numpy",
+  "OMP_NUM_THREADS": "1",
+  "OPENBLAS_NUM_THREADS": "1",
+  "MKL_NUM_THREADS": "1",
+  "NUMEXPR_NUM_THREADS": "1",
+  "CUDA_VISIBLE_DEVICES": "",
+  "SIM_RUN_ID": "1790327758-3893753",
+  "BRAIN_CHAT_SEED": "42",
+  "BRAIN_LTM_SHIP_DEFAULT": "0"
+ },
+ "host": "dant123-wk",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 5454.8,
+ "corpus_check_query": "weak never-re-mentioned fact still recalled after 3 nights of sleep downscaling (SHY1 NO-GO); forgetting of a sleep-captured single-exposure fact over days; interference from later learning, whole-sto",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_sleep_forgetting_interference_smoke/seed42/fih_lr_b.json"
+}
