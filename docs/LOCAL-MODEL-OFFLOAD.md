@@ -150,3 +150,16 @@ local biology catalog. The local model may summarize material that has already
 been retrieved, but it does not replace `tools/rag/search.sh`, source reading,
 the research gate, or primary-source verification. RAG/index refresh failures
 must remain visible rather than being hidden by a local-model answer.
+
+## Interactive Local Model And GPU-Queue Autoswap
+
+`tools/local_llm/llm.sh` runs a separate, interactive local model (Claude
+Code's own offline fallback, `llm on`/`off`/`status`/`claude`) as the
+`local-llm` user service, unrelated to the broker above. It and
+`tools/gpu_queue.sh` jobs are not coordinated on their own and both want the
+one 3090, so the queue's dispatcher now stops `local-llm` itself right before
+a queued job would contend with it for VRAM and restarts it once the queue
+drains, only if it found the unit actually running. `llm off` always cancels
+that pending auto-restore, even mid-job, and a crashed or failed restart is
+never retried more than once per drain. See the AUTOSWAP note at the top of
+`tools/local_llm/llm.sh` for the exact mechanism.

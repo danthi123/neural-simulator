@@ -68,6 +68,57 @@ gpu_resident_brain_pids() {
     tr '\0' ' ' < "/proc/$p/cmdline" 2>/dev/null | grep -qE 'python.*(research\.runners|webapp)' && echo "$p"
   done
 }
+
+# LOCAL-LLM AUTOSWAP (2026-09-25): the interactive local-llm service (tools/local_llm/llm.sh, ~22GB of the 24GB
+# 3090) and this queue are NOT coordinated on their own -- a queued job starting while it is loaded exhausts the
+# card (this machine has fallen off the bus on such hangs before, see docs/GPU_CRASH_RECOVERY.md). Mirrors the
+# older Hermes-era tools/qwen_supervisor.sh pattern (stop the model for a job, reload it once idle), inlined here
+# because nothing else drives the owner's own interactive model. `.local_llm_was_on` is a ONE-SHOT marker,
+# written only when THIS code actually stops a running unit (never fabricates an "it was on" memory) and
+# consumed the moment a real restore attempt is made, win or lose -- so a failed/hung `llm on` can never retry
+# forever, and llm.sh's own `off` also removes it (a manual off, even mid-job, always cancels the pending
+# restore -- see llm.sh's cmd_off). Reuses llm.sh's own on/off (profile resolution, systemd-run, health-wait)
+# rather than re-implementing them here.
+LLM_SH="${GPU_QUEUE_LLM_SH:-$ROOT/tools/local_llm/llm.sh}"   # override is TEST-ONLY (a fake script); NEVER set in production
+LLM_UNIT="local-llm"
+LLM_WAS_ON="$QDIR/.local_llm_was_on"                         # presence == "gpu_queue stopped it; restore when idle"
+LOCAL_LLM_SYSTEMCTL=${LOCAL_LLM_SYSTEMCTL:-systemctl}        # TEST-ONLY override (shared name with llm.sh); NEVER set in production
+export LOCAL_LLM_SYSTEMCTL                                   # llm.sh (invoked as a subprocess below) must see the same stub
+
+llm_is_active() { "$LOCAL_LLM_SYSTEMCTL" --user is-active --quiet "$LLM_UNIT" 2>/dev/null; }
+
+# Call right before a queued job is allowed to compete for VRAM (before the freevram wait, so the wait can
+# actually succeed). A no-op unless the unit is genuinely active -- never writes the marker for a model that
+# was already down, which would fabricate a restore the owner never asked for.
+llm_stop_for_job() {
+  if llm_is_active; then
+    : > "$LLM_WAS_ON"
+    bash "$LLM_SH" off >> "$LOG" 2>&1
+    echo "$(date '+%F %T') LLM-AUTOSWAP: stopped $LLM_UNIT for a queued GPU job" >> "$LOG"
+  fi
+}
+
+# Call on every idle poll (queue empty). Cheap no-op unless llm_stop_for_job set the marker. Two conditions
+# DEFER (leave the marker for the next idle poll, retried every ~12s) rather than give up: GPU_PAUSE (gaming --
+# reloading a ~22GB model mid-game would be exactly backwards) and a brain process still GPU-resident (a job
+# that outlived a dead daemon incarnation, or a truly-standalone launch -- restoring now would double-load the
+# card). Only the restart attempt itself is one-shot: the marker is consumed immediately before it, so a crash
+# or a failed `llm on` is never retried forever.
+llm_restore_if_idle() {
+  [ -f "$LLM_WAS_ON" ] || return 0
+  if [ -f "$PAUSE" ]; then return 0; fi
+  if [ -n "$(gpu_resident_brain_pids)" ]; then
+    echo "$(date '+%F %T') LLM-AUTOSWAP: queue drained but a brain process is still GPU-resident -- deferring restore" >> "$LOG"
+    return 0
+  fi
+  rm -f "$LLM_WAS_ON"                       # consumed HERE, before the one attempt below
+  llm_is_active && return 0                 # owner (or a race) already reloaded it manually
+  echo "$(date '+%F %T') LLM-AUTOSWAP: queue drained -- restoring $LLM_UNIT" >> "$LOG"
+  # backgrounded (loading can take a while, must not block dispatch) + 8>&- so this child can never keep the
+  # daemon's singleton lock held after the daemon itself dies (same fd-inheritance hazard as the dispatched job).
+  bash "$LLM_SH" on >> "$LOG" 2>&1 8>&- &
+}
+
 # Serialise every queue read-modify-write: `add` (>> append) racing the daemon's pop (tail>tmp;mv) could clobber a
 # concurrently-added job (the "queued job vanished without a START line" wedge). flock makes add + pop mutually exclusive.
 
@@ -115,7 +166,8 @@ daemon() {
     # tracking-loss fix in exactly the scenario it exists for.
     if [ -f "$PAUSE" ]; then sleep 8 8>&-; continue; fi
     job=$(head -1 "$QUEUE" 2>/dev/null || true)
-    if [ -z "$job" ]; then sleep 12 8>&-; continue; fi
+    if [ -z "$job" ]; then llm_restore_if_idle; sleep 12 8>&-; continue; fi
+    llm_stop_for_job   # free the model's VRAM BEFORE waiting for headroom below -- otherwise the wait never ends
     # Contention guard: wait for (1) no PAUSE, (2) the GPU to be genuinely free of any brain-loading
     # process — GROUND TRUTH via nvidia-smi, not just "does our own gpu.running say something is running"
     # — and (3) raw VRAM headroom (auto-yields to a game / another run). (2) is what closes the
@@ -416,6 +468,11 @@ case "${1:-}" in
     fi
     exit 0 ;;
   stop) [ -f "$DPID" ] && kill "$(cat "$DPID")" 2>/dev/null && rm -f "$DPID" && echo "dispatcher stopped" || echo "not running" ;;
+  # TEST-ONLY hidden entry points: run one autoswap decision synchronously, without the daemon's infinite loop,
+  # so tests can drive it deterministically with stubbed LOCAL_LLM_SYSTEMCTL / GPU_QUEUE_NVIDIA_SMI /
+  # GPU_QUEUE_LLM_SH. The real daemon() calls the same functions in-process (see above).
+  __llm_stop_for_job) llm_stop_for_job ;;
+  __llm_restore_if_idle) llm_restore_if_idle ;;
   --selftest) selftest; exit $? ;;
   *) grep '^#' "$0" | sed 's/^# \{0,1\}//' | head -20 ;;
 esac
