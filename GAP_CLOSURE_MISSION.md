@@ -15,7 +15,19 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-19 (RESUME HERE) — NEW ARC: PERMANENT LLM MOUTH + LOAD-BEARING METRIC
 
-**🟢 UPDATE 00:45 (2026-09-25) — main 265e1390. RESUME HERE. Scored tonight, each re-derived by an independent verifier, merged (8b4f91c6d):**
+**🟢 UPDATE 01:25 (2026-09-25) — main 5ddff4934. RESUME HERE (the 00:45 block below still holds).**
+- Merged: lb_shard aggregate `--pin` provenance gate + new gate LBP (0d2642ee6, review SOUND; the heartbeat now
+  aggregates b2a0924 with `--pin 9db7613296c3...`); wm-focus-bind is ALIVE on pool1/pool2 (the scorer missed job
+  liveness; nothing requeued); A10 v4 arms dispatched on pool1/pool2 (bd73c5cbe); sleep route round 2 (branch @
+  50c791bf9: long-delay fact not rescued, downscaling 3-night NO-GO at seed 42, revert offcheck IDENTICAL; 6 seeds queued).
+- Provenance gaps found by the new gate: open-ended-generation's oed_distributional*.json has no .prov.json on any
+  seed (its cells are excluded under --pin; B2b needs a fix before scoring); the flipdefaults-adequate reference
+  battery (this morning's flip basis) reads 0/168 valid under the pin rule because it predates git_archive pinning.
+- Claim-check: round 1 (paragraph scope + low-coverage fail) reviewed SOUND-WITH-ISSUES with 3 exploits; round 2 +
+  a number-by-number audit of the ~37 findings whose hidden numbers now fail: workflow `w2lnwio5g`.
+- Running: awake-replay build + r2 review (`wf6m1hyvo`), lexicon round 2, 24 B2a s102 re-runs, B2b waves.
+
+**🟢 UPDATE 00:45 (2026-09-25) — main 265e1390. (superseded by 01:25 above). Scored tonight, each re-derived by an independent verifier, merged (8b4f91c6d):**
 - AI teacher (chat-only) + synaptic learning: GO 6/6 (default-OFF). Learned-content provenance: GO 6/6, prod and
   Qwen-forced; learned-content fraction 0.00 default / 0.60 with the learned store. CA3 capacity: GO 6/6 on the full
   54-cell grid with valid provenance (one cell rescored complete, aggregate identical). gap#4 A9: the +-12 clamp is
