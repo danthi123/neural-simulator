@@ -979,8 +979,8 @@ INCOMPLETE if a seed is missing; otherwise NO-GO. Reported with them: the one-si
 
 - WD GO. On the fake, A is captured at pause 2 and kept, B is captured awake, and with the replay edge cut A reads at
   the noise floor by the pre-B probe (coherence 0.216 vs 0.796 intact). <!--derived-->
-- NR NO-GO. On the fake, C decays (coherence 0.086 at its decay probe) and is then captured during the first night:
-  its replay read stays at the noise floor (R 0.050 at pause 3, 0.103 at night onset) but the bout's DA is at the
+- NR NO-GO. On the fake, C decays (coherence 0.086 <!--derived--> at its decay probe) and is then captured during the first night:
+  its replay read stays at the noise floor (R 0.050 at pause 3, 0.103 <!--derived--> at night onset) but the bout's DA is at the
   ceiling (1.24) because A and B replay strongly, and the shared PRP pool captures C's small replay tag; C reads 0.802
   next morning. This is the multi-epoch cross-capture the review's I-1 scope note asked about. Uncertain on the brain:
   its decayed-block R is lower (0.004 to 0.058 in the review's table) than the fake's. <!--derived-->
@@ -988,7 +988,7 @@ INCOMPLETE if a seed is missing; otherwise NO-GO. Reported with them: the one-si
   fact, the episodic organ will still say the topic was discussed (REPORTED as a disagreement).
 - SN GO: `lsal_rc_a` kept on its waking capture (as ARC6), `lneu_rc` lost (as r2 `ld_rc`, 0/6), the waking-only
   lesion loses the salient fact (no waking capture; ~4-h-old trace at sleep onset). REPORTED `sal_rc_wakelesion`:
-  kept where the review's DA-lesion R was above the 0.209 edge (seeds 42, 44, 100, 102), lost at 43 and 101. The weak
+  kept where the review's DA-lesion R was above the 0.209 <!--derived--> edge (seeds 42, 44, 100, 102), lost at 43 and 101. The weak
   telling: read at once on every seed with the ledger off; with the pair on, uncertain at 43 and 101 (the opus
   re-review's point: seed 101's fresh read was at noise); next day kept 4 of 6 with the pair, 6 of 6 with the ledger
   off. <!--derived-->

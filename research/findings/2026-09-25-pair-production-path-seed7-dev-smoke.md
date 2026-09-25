@@ -42,11 +42,16 @@ end, prepared and NOT queued.
   evening, morning, day-5) for all three registered facts A/B/C: no rebuild-difference surfaced on this one seed.
 - **sn family** (`--family sn`), the salient/neutral long-delay contrast: 10 arms ran to completion (`lneu_rc`,
   `lsal_ledger_off`, `lsal_rc_a`, `lsal_rc_b`, `lsal_rc_dalesion`, `lsal_rc_wakelesion`, `neu_imm_rc`, `sal_imm_rc`,
-  `sal_rc_wakelesion`, `wk_imm_rc`). At each arm's own long-delay recall probe, the one told fact ("the cat chases
-  the ball") was recalled (not abstained) on 8 of 10 arms; the two that abstained at that probe are exactly the two
-  arms whose own label names a lesion -- `lsal_rc_dalesion` (a DA-encoding lesion) and `lsal_rc_wakelesion` (a
-  waking-only lesion) -- pointing the direction each is meant to test. One seed, one fact, no scrambled control, no
-  statistics: a plumbing sanity signal, not a scored lesion result.
+  `sal_rc_wakelesion`, `wk_imm_rc`). At each arm's own long-delay recall probe (its final `*_recall` key), the one
+  told fact ("the cat chases the ball") was recalled (not abstained) on 7 of 10 arms; 3 of 10 abstained at that
+  probe, and the three split into two categorically different groups. `lneu_rc` (the neutral-telling control)
+  abstaining is the pre-registered EXPECTED outcome for that arm -- `research/findings/2026-09-24-sleep-replay-capture-PREREGISTRATION.md`'s
+  own Amendment 7 GO condition SN1 reads `lsal_rc_a` correct AND `lneu_rc` not recalled, so this abstain is the
+  salient-vs-neutral contrast already pointing its registered direction on this one seed, not an anomaly to
+  explain. The other two abstains are the two arms whose own label names a lesion -- `lsal_rc_dalesion` (a
+  DA-encoding lesion) and `lsal_rc_wakelesion` (a waking-only lesion) -- pointing the direction each is meant to
+  test. One seed, one fact, no scrambled control, no statistics: a plumbing sanity signal, not a scored lesion
+  result.
 - **A separate, uncommitted dev script** (its full text and output are `envcheck_seed7.json`, run at the branch base
   `381f608e3` before the Amendment-7 code, and already committed with the amendment): 32 real `brain_chat` turns
   plus 4 idle/sleep ticks under numpy/tiny-demo, both flags on turn-clocked, completed with no error. Per-turn
