@@ -374,3 +374,8 @@ def test_battery_r2_groups_are_label_only_and_world_steps_resolve():
     assert B._WORLD_STEPS["datl_awake"] == "awake_4h" and B._WORLD_STEPS["datl_night"] == "overnight_24h"
     assert B._WORLD_STEPS["d3r_night3"] == "overnight_24h" and "d3r_remention1" not in B._WORLD_STEPS
     assert B._WORLD_STEPS["datc_night"] == "overnight_24h"                   # pre-r2 groups unchanged
+    from research.runners.load_bearing_fraction import turn_group
+    grp = turn_group("d10w_recall10")
+    assert B._WORLD_STEPS["d10w_night10"] == "overnight_24h" and "d10w_recall5" in B._TURN_BY_LABEL
+    assert grp[-1] == "d10w_recall10" and sum(1 for x in grp if x in B._WORLD_STEPS) == 10
+    assert sum(1 for x in turn_group("datl_recall") if x in B._WORLD_STEPS) == 2      # awake + night

@@ -120,7 +120,12 @@ R2_ARMS = [
     ("d3w_shy_b", "d3w_recall", {**ON, **RC, **SHY}),                     # null-control rebuild
     ("d3c_shy", "d3c_recall", {**ON, **RC, **SHY}),
     ("d3r_shy", "d3r_recall", {**ON, **RC, **SHY}),
+    # Amendment 3 (REPORTED only, never in a gate or an UNDEFINED rule): the ten-night horizon, a read-only daily probe
+    ("d10w_rc", "d10w_recall10", {**ON, **RC}),
+    ("d10w_shy", "d10w_recall10", {**ON, **RC, **SHY}),
 ]
+HORIZON_ARMS = ("d10w_rc", "d10w_shy")
+HORIZON_NIGHTS = 10
 R2_OUT = "research/findings/raw/_sleep_replay_capture_r2"
 AWAKE_H = 4.0                        # == onebrain_regression_battery._run_world_step("awake_4h")
 LESION_HELD_MAX_RATIO = 0.25        # G6: lesion PRP p_max must stay below 25 % of the intact arm's (the D1 pool's
@@ -152,10 +157,14 @@ def _fact_block(resp):
 
 
 # ── arms ─────────────────────────────────────────────────────────────────────────────────────────────────────────
-def run_seed(seed, out_dir, ltm="off", workers=1, family="base"):
+def run_seed(seed, out_dir, ltm="off", workers=1, family="base", only=None):
     sys.path.insert(0, _REPO)
     arm_list = {"rc": RC_ARMS, "r2": R2_ARMS}.get(family, ARMS)
     grader = {"rc": grade_seed_rc, "r2": grade_seed_r2}.get(family, grade_seed)
+    if only:                                   # a de-risk subset (never a gate row): run only these arms, do not grade
+        arm_list = [a for a in arm_list if a[0] in set(only)]
+        grader = lambda _res: {"partial": True, "arms_run": [a[0] for a in arm_list],   # noqa: E731
+                               "outcomes": {k: v["recall_outcome"] for k, v in _res["arms"].items()}}
     os.environ["BRAIN_CHAT_SEED"] = str(int(seed))       # every arm's worker inherits it (the battery's seed thread)
     if ltm == "off":                                     # the LTM tier is a separate routed store the ledger never
         os.environ["BRAIN_LTM_SHIP_DEFAULT"] = "0"       #  touches; its load does not fit the 15 GB pool nodes (declared)
@@ -201,6 +210,11 @@ def run_seed(seed, out_dir, ltm="off", workers=1, family="base"):
             res["arms"][name]["blocks_at_recall"] = _tc(rec).get("blocks")
         if family == "r2":
             res["arms"][name]["awake_until_h"] = _tc(rec).get("awake_until_h")
+            if name in HORIZON_ARMS:
+                daily = [r.get("d10w_recall%d" % n) for n in range(1, HORIZON_NIGHTS + 1)]
+                res["arms"][name]["daily_outcomes"] = [outcome(d) for d in daily]
+                res["arms"][name]["daily_inc_mag"] = [((_tc(d).get("blocks") or [{}])[0].get("inc_mag")) for d in daily]
+                res["arms"][name]["daily_base_mag"] = [((_tc(d).get("blocks") or [{}])[0].get("base_mag")) for d in daily]
     res["gates"] = grader(res)
     json.dump(res, open(os.path.join(out_dir, "seed%d.json" % int(seed)), "w"), indent=2, default=str)
     print(json.dumps(res["gates"], indent=2, default=str), flush=True)
@@ -418,10 +432,11 @@ def grade_seed_r2(res):
     Pure function of res["arms"]."""
     A = res["arms"]
     o = {k: v["recall_outcome"] for k, v in A.items()}
-    errs = sum(len(v["errors"]) for v in A.values())
+    # the Amendment-3 horizon arms are REPORTED only: excluded from every error count, gate and UNDEFINED rule
+    errs = sum(len(v["errors"]) for k, v in A.items() if k not in HORIZON_ARMS)
     g = {}
-    gam = [v["tag_capture_at_recall"].get("gamma") for v in A.values()
-           if (v.get("env") or {}).get("BRAIN_DA_TAG_CAPTURE") == "1" and v["tag_capture_at_recall"].get("gamma")]
+    gam = [v["tag_capture_at_recall"].get("gamma") for k, v in A.items() if k not in HORIZON_ARMS
+           and (v.get("env") or {}).get("BRAIN_DA_TAG_CAPTURE") == "1" and v["tag_capture_at_recall"].get("gamma")]
     g["G_isolation_gamma_consistent"] = bool(not gam or all(abs(x - gam[0]) < 1e-6 for x in gam))
     # ── item 1: a fact told ~4 h before sleep onset (REPORTED) ──────────────────────────────────────────────────────
     g["P1_immediate_precondition"] = bool(o["neu_imm_rc"] == "correct")
@@ -486,6 +501,16 @@ def grade_seed_r2(res):
         or any(o[k] == "undefined" for k in ("d3w_rc", "d3w_shy_a", "d3w_shy_b", "d3c_shy", "d3r_shy"))
     core = all(g[k] for k in ("SHY1_weak_unmentioned_fact_fades", "SHY2_salient_fact_survives",
                               "SHY3_remention_fact_survives", "SHY4_no_confab"))
+    hz = {}
+    for k in HORIZON_ARMS:
+        if k not in A:
+            continue
+        daily = A[k].get("daily_outcomes") or []
+        first = next((i + 1 for i, v in enumerate(daily) if v != "correct"), None)
+        hz[k] = {"daily_outcomes": daily, "first_night_not_correct": first,
+                 "daily_inc_mag": A[k].get("daily_inc_mag"), "daily_base_mag": A[k].get("daily_base_mag"),
+                 "R_per_night": [e.get("R") for e in _epochs(A[k])], "errors": A[k].get("errors")}
+    g["SHY_horizon_reported"] = hz
     g["outcomes"] = o
     g["n_arm_errors"] = errs
     g["seed_verdict"] = "UNDEFINED" if undefined else ("GO" if core else "NO-GO")
@@ -515,7 +540,10 @@ def aggregate_r2(d):
     out = {"family": "r2", "seeds": sorted(verdicts), "seed_verdicts": verdicts, "n_go": n_go,
            "verdict": "INCOMPLETE" if not complete else ("GO" if n_go == 6 else "NO-GO"),
            "signflip_p_downscaling_fade": (seed_signflip_p(fade) if rows else None), "diffs_fade": fade,
-           "long_delay_verdict_counts": ld}
+           "long_delay_verdict_counts": ld,
+           "horizon_first_night_not_correct": {k: {r["seed"]: (r["gates"].get("SHY_horizon_reported") or {})
+                                                   .get(k, {}).get("first_night_not_correct") for r in rows}
+                                               for k in HORIZON_ARMS}}
     json.dump(out, open(os.path.join(d, "aggregate.json"), "w"), indent=2)
     print(json.dumps(out, indent=2))
     return out
@@ -1084,11 +1112,22 @@ def selftest():
         return rec
     r2_designed = {"ld_ledger_off": "correct", "ld_norc": "abstain", "ld_rc": "abstain",
                    "ld_rc_replaylesion": "abstain", "neu_imm_rc": "correct", "d3w_rc": "correct",
-                   "d3w_shy_a": "abstain", "d3w_shy_b": "abstain", "d3c_shy": "correct", "d3r_shy": "correct"}
+                   "d3w_shy_a": "abstain", "d3w_shy_b": "abstain", "d3c_shy": "correct", "d3r_shy": "correct",
+                   "d10w_rc": "correct", "d10w_shy": "abstain"}
     r2_ok = {n: _r2_arm(n, env, r2_designed[n]) for n, _l, env in R2_ARMS}
+    r2_ok["d10w_shy"]["daily_outcomes"] = ["correct"] * 6 + ["abstain"] * 4
     g_r2 = grade_seed_r2({"arms": r2_ok})
     checks["r2 grade: designed pattern -> item2 GO, item1 NOT-RESCUED"] = \
         g_r2["seed_verdict"] == "GO" and g_r2["LD_verdict"] == "NOT-RESCUED"
+    checks["r2 horizon: first night not correct is read off the daily probe"] = \
+        g_r2["SHY_horizon_reported"]["d10w_shy"]["first_night_not_correct"] == 7
+    arms_x = dict(r2_ok)
+    arms_x["d10w_shy"] = dict(r2_ok["d10w_shy"], errors=["boom"], recall_outcome="undefined")
+    checks["r2 horizon: a horizon-arm error never touches the item-2 verdict (REPORTED only)"] = \
+        grade_seed_r2({"arms": arms_x})["seed_verdict"] == "GO"
+    arms_x = {k: v for k, v in r2_ok.items() if k not in HORIZON_ARMS}
+    checks["r2 horizon: arms absent (pre-Amendment-3 file) -> still graded"] = \
+        grade_seed_r2({"arms": arms_x})["seed_verdict"] == "GO"
     for arm_name, bad, key, want in (("d3w_shy_a", "correct", "seed_verdict", "UNDEFINED"),   # a != b rebuild
                                      ("d3c_shy", "abstain", "seed_verdict", "NO-GO"),         # salient lost
                                      ("d3r_shy", "abstain", "seed_verdict", "NO-GO"),         # re-mention lost
@@ -1157,6 +1196,8 @@ def main():
                     help="base = the G0-G6 family (unchanged); rc = the sleep-replay-capture family (RC_ARMS); "
                          "r2 = long delay + sleep downscaling (R2_ARMS)")
     ap.add_argument("--out", default=None)
+    ap.add_argument("--only", default=None,
+                    help="comma list of arm names: run only these, ungraded (a de-risk subset, never a gate row)")
     ap.add_argument("--aggregate")
     ap.add_argument("--selftest", action="store_true")
     ap.add_argument("--offcheck", action="store_true",
@@ -1176,7 +1217,8 @@ def main():
         return 0
     if a.seed is None:
         ap.error("--seed required")
-    run_seed(a.seed, a.out, ltm=a.ltm, workers=a.workers, family=a.family)
+    run_seed(a.seed, a.out, ltm=a.ltm, workers=a.workers, family=a.family,
+             only=([x.strip() for x in a.only.split(",") if x.strip()] if a.only else None))
     return 0
 
 

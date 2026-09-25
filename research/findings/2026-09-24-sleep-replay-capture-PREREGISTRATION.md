@@ -285,3 +285,27 @@ Dry run with this construction, at HEAD `2f3bd2087`. Six feature commits were re
 `webapp/da_tag_capture*.py` and `webapp/sleep_replay_capture.py`. It restores the pre-isolation
 `_da_write_gain_spiking_derisk.py`, which is a pure refactor. It removes exactly the three `server.py` hook blocks
 and the one `continuous_engine.py` hook block, and nothing else. The verdict rule of Amendment 1 is unchanged.
+
+## Amendment 3 (2026-09-25, r2) — a REPORTED ten-night horizon for the downscaling NO-GO
+
+Committed before any run of the arms it adds. The seed-42 r2 smoke (a de-risk, not a gate row; artifacts committed
+at `27fe9202`) read item 2 NO-GO on SHY1 alone. The weak, never re-mentioned fact was still recalled after three
+nights of downscaling, as Amendment 1 had declared possible. Three nights leave open whether downscaling at the
+literature magnitude erases the fact at all, and when. Rather than retune the constant on a gate seed, this
+amendment MEASURES that horizon.
+
+- Group `d10w`: the weak telling, then ten nights, each followed by "what does the cat chase". In this model the
+  recall is a read-only probe: the store read writes nothing, and the question stores no fact. The daily question
+  is an observed turn, so it starts a new idle stretch, and the next night's epoch begins sleep-onset after it.
+- Arms `d10w_rc` (downscaling off) and `d10w_shy` (downscaling on), both route on. They are REPORTED ONLY: excluded
+  from every gate, error count, gamma check and UNDEFINED rule of item 2, so they cannot change a seed verdict. For
+  each arm and seed, `grade_seed_r2` reports the daily outcomes, the first night the fact is not recalled, and the
+  daily increment/baseline magnitude and read.
+- Predictions (from the three-night trajectory: increment x0.88 per night, and the read falls as it shrinks):
+  `d10w_rc` is recalled on all ten nights. For `d10w_shy`, the first night the fact is not recalled falls in 4-10,
+  or it is still recalled at night 10. Either is reported as measured.
+- Items 1 and 2 keep their Amendment-1 rules. Item 2's gate stays at three nights: this amendment does not move it.
+
+A seed-42 de-risk of just these two arms (`--only d10w_rc,d10w_shy`, ungraded) goes to
+`research/findings/raw/_sleep_replay_capture_r2_horizon_smoke`. The 6-seed pool lines run the full r2 family,
+horizon included, at a revision containing this amendment.

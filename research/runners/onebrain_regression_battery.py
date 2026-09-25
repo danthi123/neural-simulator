@@ -316,6 +316,12 @@ def _d3_group(prefix, texts, remention):
 
 _EXTRA_TURNS += (_d3_group("d3w", _DATC_WEAK, False) + _d3_group("d3c", _DATC_SALIENT, False)
                  + _d3_group("d3r", _DATC_WEAK, True))
+# 'd10w' HORIZON (r2 Amendment 3, REPORTED): the weak telling, then TEN nights, each followed by the recall question
+# (a read-only probe in this model: the store read writes nothing), so the night a fact stops being recalled is measured.
+_EXTRA_TURNS += ([("d10w_t%d" % (i + 1), txt, "d10w", i == 0, None, False) for i, txt in enumerate(_DATC_WEAK)]
+                 + [row for n in range(1, 11) for row in (("d10w_night%d" % n, _WORLD_NIGHT, "d10w", False, None, False),
+                                                          ("d10w_recall%d" % n, _DATC_RECALL, "d10w", False, None,
+                                                           False))])
 
 # ── D5-CONSOLIDATE / SLEEP-REPLAY DRIVING GROUPS (label-only; used only by load_bearing_fraction's new
 # lbf_rows/learning.py EXTRA_PROBES for "d5-consolidate" / "sleep-replay") ──────────────────────────────────────
