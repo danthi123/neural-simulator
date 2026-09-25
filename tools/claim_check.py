@@ -25,6 +25,24 @@ learned twice today). It checks ONLY:
   * verdict words that contradict a cited artifact's own verdict field.
 Derived values (ratios, differences, percentages) are legitimately absent from artifacts, so an inline
 `<!--derived-->` marker on the line, or a `## Derived` section listing them, suppresses the check for that line.
+
+THE BLOCK-SCOPE HOLE (found 2026-09-25, independent verifier). A standalone `<!--derived-->` marker opened
+BLOCK scope until the next `## ` heading -- so a marker placed right after a heading suppressed EVERY number in
+that WHOLE section, and a doc with the marker after several headings suppressed every number in ALL of them. A
+scorer did exactly this: the run reported "0 checked against 336 artifact values" and still printed "every
+measurement traces to a cited artifact", while two numbers in the document (0.1525, 0.140) did not match the
+artifact it cited (0.17, 0.1625). THE FIX, two layers:
+  1. A standalone marker now opens PARAGRAPH scope: it closes at the next blank line, the next heading, or an
+     explicit `<!--/derived-->` close marker -- whichever comes first. A `## Derived` heading SECTION (a whole
+     section titled "Derived") is a separate, deliberate mechanism and keeps its section-until-next-heading
+     scope; that one was never the hole.
+  2. Independent of scope logic: the report ALWAYS prints how many numbers were suppressed and by which marker
+     (section / block / inline / synthesis), and the check FAILS (not passes) when a non-synthesis doc has
+     numeric claims but examined ZERO of them -- the exact shape of the incident, regardless of which future
+     mechanism produces a total suppression.
+`selftest()` demonstrates both directions: a doc with the ORIGINAL failure shape (marker after headings, wrong
+numbers in the sections that follow) still FAILS; a doc with a small, correctly paragraph-scoped derived table
+still PASSES.
 """
 from __future__ import annotations
 
@@ -44,6 +62,22 @@ NUM_RE = re.compile(r"(?<![\w.])(-?\d+\.\d{3,})(?![\w])")
 PATH_RE = re.compile(r"([\w.\-*?\[\]]+(?:/[\w.\-*?\[\]]+)+\.(?:jsonl|json))")
 VERDICT_RE = re.compile(r"\b(GO|NO-GO|PASS|FAIL|REFUTED|CONFIRMED)\b")
 DERIVED_MARK = "<!--derived-->"
+DERIVED_CLOSE = "<!--/derived-->"          # explicit close, for a legitimate derived block wider than one paragraph
+
+# A non-synthesis doc that examined this fraction or less of its own numeric claims is treated the same as
+# examining ZERO of them -- the 2026-09-25 incident's ratio was 0/~50 (0%), but the failure mode is "suppressed
+# almost everything", not literally "suppressed everything".
+MIN_CHECK_FRACTION = 0.05
+# ... AND ONLY when the doc has at least this many numeric claims in total. CALIBRATED, not guessed: a
+# checked==0-of-everything retro-scan over the 353 `research/findings/*.md` added since 2026-09-01 (2026-09-25)
+# found 71 documents that are ENTIRELY, LEGITIMATELY derived (a short diagnosis note built purely from
+# already-published ratios/deltas/percentages, correctly all-marked) -- up to 39 numeric claims, 0 checked, by
+# design, not by error. A blanket "checked==0 fails" rule would have blocked every one of them. The real incident
+# examined 0 of ~50 numeric claims in a SUBSTANTIAL document (336 candidate artifact values, ~43-53 claims in the
+# doc itself). This floor sits just above the largest legitimate all-derived doc in the corpus (39) and well
+# below the incident's scale, so it passes every real 2026-09-01+ document while still catching the observed
+# shape (a large document reporting essentially nothing checked). Retro-scan: see the 2026-09-25 branch notes.
+LOW_COVERAGE_MIN_TOTAL = 40
 
 
 def _flatten_numbers(obj, out):
@@ -101,10 +135,14 @@ def load_artifacts(paths):
 SYNTH_RE = re.compile(r"^claim_check:\s*synthesis\s*$", re.M)
 
 
-def check(doc_path, tol=None, verbose=True):
-    """tol=None => RELATIVE tolerance. An absolute 5e-4 let a fabricated 0.9999 match a stored 1.0, so the
+def _scan(doc_path, tol=None):
+    """Pure computation, no printing -- shared by the CLI (`check`), `finding_lint.py` and the registry gate
+    `tools/gates/claim_check_coverage.py`, so all three see the exact same verdict.
+
+    tol=None => RELATIVE tolerance. An absolute 5e-4 let a fabricated 0.9999 match a stored 1.0, so the
     checker's own negative control failed on first run: with ~1000 artifact values, near-misses are common and an
-    absolute window is far too loose. Relative tolerance scales with the claim."""
+    absolute window is far too loose. Relative tolerance scales with the claim.
+    """
     text = open(doc_path).read()
     lines = text.split("\n")
     # A SYNTHESIS doc quotes other experiments throughout its prose; line-by-line marking degenerates into
@@ -117,23 +155,66 @@ def check(doc_path, tol=None, verbose=True):
     nums, verdicts, loaded, missing = load_artifacts(cited)
 
     unsupported, checked = [], 0
-    in_derived = False
+    suppressed = {"section": 0, "block": 0, "inline": 0, "synthesis": 0}
+    in_section = False     # a `## Derived` HEADING section -- deliberately scoped until the next heading
+    in_block = False       # a standalone marker's PARAGRAPH scope -- closes at a blank line/heading/close-marker
+    block_has_content = False  # blank lines BETWEEN the marker and its paragraph (common authoring style: the
+    # marker sits alone, then a blank line for visual separation, THEN the derived paragraph/table) do not
+    # themselves end the block -- only a blank line AFTER real content has started does. Corpus-measured
+    # (2026-09-25 retro-scan): treating the marker's OWN following blank line as an immediate close broke this
+    # exact, common, legitimate pattern in real findings (e.g. a `<!--derived-->` line, a blank line, THEN the
+    # paragraph it covers) with no security benefit -- the incident shape is a scope that outlives ONE paragraph,
+    # not a blank line existing at all near the marker.
     for i, ln in enumerate(lines, 1):
-        if ln.strip().lower().startswith("## derived"):
-            in_derived = True
+        stripped = ln.strip()
+
+        # Heading transitions. A `## Derived` heading opens the section mechanism; ANY OTHER `## ` heading ends
+        # both mechanisms -- ending `in_block` here too is a safety net beyond the blank-line scope below, for a
+        # marker block that is never followed by a blank line before the next heading.
+        if stripped.lower().startswith("## derived"):
+            in_section = True
+            in_block = False
             continue
         if ln.startswith("## "):
-            in_derived = False
-        # A marker ALONE on a line opens BLOCK scope (until the next heading); inline it suppresses just that
-        # line. Learned immediately: the first real use put the marker at the END of a block whose earlier lines
-        # were the ones being flagged, which is the natural way to write it.
-        if ln.strip() == DERIVED_MARK:
-            in_derived = True
+            in_section = False
+            in_block = False
+
+        # An explicit close ends a marker block immediately, for a legitimately-derived block that spans more
+        # than one paragraph (e.g. a table followed directly by an explanatory line, no blank line between).
+        if stripped == DERIVED_CLOSE:
+            in_block = False
             continue
-        if in_derived or DERIVED_MARK in ln:
+        # A marker ALONE on a line opens PARAGRAPH scope -- THE FIX (2026-09-25): this used to open scope until
+        # the next heading, which let one marker suppress whole sections. It now closes at the next blank line
+        # AFTER its paragraph/table has started (below), the next heading (above), or `<!--/derived-->` (above)
+        # -- whichever comes first.
+        if stripped == DERIVED_MARK:
+            in_block = True
+            block_has_content = False
             continue
-        if synthesis:
+        # A blank line BEFORE any content is just spacing between the marker and its paragraph (tolerated). A
+        # blank line AFTER content has started ends the paragraph/table -- and with it, the block's scope.
+        if in_block and stripped == "":
+            if block_has_content:
+                in_block = False
             continue
+
+        if in_section:
+            reason = "section"
+        elif in_block:
+            reason = "block"
+            block_has_content = True
+        elif DERIVED_MARK in ln:
+            reason = "inline"
+        elif synthesis:
+            reason = "synthesis"
+        else:
+            reason = None
+
+        if reason is not None:
+            suppressed[reason] += len(NUM_RE.findall(ln))
+            continue
+
         for m in NUM_RE.finditer(ln):
             val = float(m.group(1))
             checked += 1
@@ -141,22 +222,53 @@ def check(doc_path, tol=None, verbose=True):
             if not any(abs(val - a) <= eps for a in nums):
                 unsupported.append((i, val, ln.strip()[:88]))
 
+    if synthesis and not cited:
+        unsupported.append((0, 0.0, "synthesis doc cites NO artifact — the escape still requires citations"))
+
+    total_numeric = checked + sum(suppressed.values())
+    # LOW COVERAGE (2026-09-25, defense-in-depth independent of the scope fix above): a SUBSTANTIAL non-synthesis
+    # doc that examined none/almost-none of its own numeric claims is the same shape as the incident regardless
+    # of which future mechanism produces the total suppression -- report it, don't just trust that scope alone
+    # closes the class. Gated on LOW_COVERAGE_MIN_TOTAL (see its comment): a SHORT all-derived note is normal
+    # here, not suspicious.
+    low_coverage = (not synthesis and total_numeric >= LOW_COVERAGE_MIN_TOTAL
+                    and (checked == 0 or (checked / total_numeric) < MIN_CHECK_FRACTION))
+
+    return dict(cited=cited, nums=nums, loaded=loaded, missing=missing, checked=checked,
+                suppressed=suppressed, total_numeric=total_numeric, unsupported=unsupported,
+                synthesis=synthesis, low_coverage=low_coverage)
+
+
+def check(doc_path, tol=None, verbose=True):
+    r = _scan(doc_path, tol)
+    checked, suppressed, total_numeric = r["checked"], r["suppressed"], r["total_numeric"]
+    unsupported, missing, loaded, cited = r["unsupported"], r["missing"], r["loaded"], r["cited"]
+    synthesis, low_coverage = r["synthesis"], r["low_coverage"]
+
     if verbose:
         print("claim_check: %s" % os.path.relpath(doc_path, ROOT))
         print("  cited artifacts : %d found, %d missing" % (len(loaded), len(missing)))
         for mp in missing[:5]:
             print("      ⛔ MISSING  %s" % mp)
         print("  measurements    : %d checked against %d artifact values%s"
-              % (checked, len(nums), "   [synthesis: per-line rule suppressed, citations still required]"
+              % (checked, len(r["nums"]), "   [synthesis: per-line rule suppressed, citations still required]"
                  if synthesis else ""))
+        # ALWAYS printed (2026-09-25) -- the incident this closes reported "0 checked" with nothing to say WHY.
+        print("  suppressed      : %d total by <!--derived--> (section=%d block=%d inline=%d), %d by synthesis "
+              "of %d numeric claim(s) found"
+              % (suppressed["section"] + suppressed["block"] + suppressed["inline"], suppressed["section"],
+                 suppressed["block"], suppressed["inline"], suppressed["synthesis"], total_numeric))
         for lineno, val, ctx in unsupported[:12]:
             print("      ⛔ line %-4d %-14g not in any cited artifact | %s" % (lineno, val, ctx))
         if len(unsupported) > 12:
             print("      ... and %d more" % (len(unsupported) - 12))
+        if low_coverage:
+            print("      ⛔ LOW COVERAGE: only %d/%d (%.0f%%) numeric claim(s) were actually checked -- the "
+                  "rest were suppressed by markers. Verify the <!--derived--> markers are not exempting a whole "
+                  "section; a derived block should cover the specific numbers it derives, not surrounding prose."
+                  % (checked, total_numeric, 100.0 * checked / total_numeric if total_numeric else 0.0))
 
-    if synthesis and not cited:
-        unsupported.append((0, 0.0, "synthesis doc cites NO artifact — the escape still requires citations"))
-    fail = bool(missing) or bool(unsupported)
+    fail = bool(missing) or bool(unsupported) or low_coverage
     if verbose:
         if not cited:
             print("  ⚠️  NO ARTIFACT CITED — a findings doc with no artifact path cannot be checked at all.")
@@ -165,7 +277,92 @@ def check(doc_path, tol=None, verbose=True):
     return 0 if not fail else 1
 
 
+def selftest():
+    """Same contract as `tools/gates/*.selftest()`: return a list of problems, empty means the check itself is
+    trustworthy. Demonstrates BOTH directions of the 2026-09-25 block-scope hole:
+
+      (a) FAILING DIRECTION -- a standalone `<!--derived-->` marker placed right after `## ` headings (the
+          exact incident shape), with WRONG numbers in the sections that follow, must still FAIL. Under the OLD
+          block-until-next-heading scope this PASSED with "0 checked"; if this ever regresses, this selftest
+          catches it before a real doc does.
+      (b) PASSING DIRECTION -- a legitimately-derived small table, correctly paragraph-scoped (marker, table,
+          blank line), sitting next to a normally-checked headline number, must still PASS. A fix that closes
+          (a) by over-restricting scope (e.g. treating every marker as inline-only) would break this.
+    """
+    import tempfile
+    problems = []
+    # `PATH_RE` (deliberately) requires a citation to start with a word character, so it drops a LEADING "/" off
+    # an absolute path when parsing doc prose -- the tempdir lives UNDER ROOT so a ROOT-relative citation (as
+    # every real finding uses) resolves exactly the way it does in production, not through that regex quirk.
+    with tempfile.TemporaryDirectory(dir=ROOT) as d:
+        art_abs = os.path.join(d, "art.json")
+        json.dump({"accuracy": 0.17, "baseline": 0.1625}, open(art_abs, "w"))
+        art = os.path.relpath(art_abs, ROOT).replace(os.sep, "/")
+
+        # Reproduces the REAL incident's shape exactly: a marker right after a heading covers only its OWN
+        # immediate paragraph (harmless provenance prose, no numbers) -- the wrong number sits in a LATER
+        # paragraph of the SAME section, which the OLD until-next-heading scope also swallowed but this fix does
+        # not (it is a separate paragraph, past the closing blank line).
+        bad = os.path.join(d, "bad.md")
+        open(bad, "w", encoding="utf-8").write(
+            "# Some finding\n\nArtifact: `%s`\n\n"
+            "## Section A\n<!--derived-->\n"
+            "Runner: some_runner.py, revision deadbeef, no numbers in this sentence at all.\n\n"
+            "The accuracy was 0.1525 here.\n\n"
+            "## Section B\n<!--derived-->\n"
+            "Runner: some_runner.py, revision deadbeef, no numbers in this sentence at all.\n\n"
+            "The baseline was 0.140 here.\n"
+            "## Section C\n<!--derived-->\nNothing derived here either.\n" % art)
+        if check(bad, verbose=False) == 0:
+            problems.append("SELFTEST BROKEN: a standalone <!--derived--> marker placed right after `## ` "
+                            "headings, with WRONG numbers (0.1525, 0.140) in the sections that follow, PASSED -- "
+                            "the 2026-09-25 block-scope hole is back (a scorer's block suppressed every number "
+                            "in the sections after it)")
+
+        good = os.path.join(d, "good.md")
+        open(good, "w", encoding="utf-8").write(
+            "# Some finding\n\nArtifact: `%s`\n\n"
+            "The accuracy is 0.170000 (matches the artifact).\n\n"
+            "<!--derived-->\n"
+            "| metric | value |\n|---|---|\n| ratio | 0.104615 |\n| delta | 0.007500 |\n\n"
+            "## Next section\n\nThe baseline was 0.162500 here (matches the artifact).\n" % art)
+        if check(good, verbose=False) != 0:
+            problems.append("SELFTEST BROKEN: a legitimately-derived, correctly paragraph-scoped small table "
+                            "(next to normally-checked, matching headline numbers) FAILED -- the fix "
+                            "over-restricts legitimate derived blocks")
+
+        # a SUBSTANTIAL doc (>= LOW_COVERAGE_MIN_TOTAL claims) that suppresses ALL of them via inline markers,
+        # with NO wrong numbers anywhere, must still be flagged LOW COVERAGE -- defense-in-depth independent of
+        # scope, sized to the incident (a large doc reporting ~0 checked), not a short legitimately-derived note.
+        overmarked = os.path.join(d, "overmarked.md")
+        n_claims = LOW_COVERAGE_MIN_TOTAL + 5
+        body = "\n\n".join("The value was 0.%06d here. <!--derived-->" % (i * 7 + 1) for i in range(n_claims))
+        open(overmarked, "w", encoding="utf-8").write("# Over-marked\n\nArtifact: `%s`\n\n%s\n" % (art, body))
+        if check(overmarked, verbose=False) == 0:
+            problems.append("SELFTEST BROKEN: a %d-claim doc that inline-marks EVERY numeric claim as derived "
+                            "(checked=0) PASSED -- the low-coverage safety net did not fire" % n_claims)
+
+        # ... but the SAME pattern on a SHORT doc (below the floor) must still PASS -- a short note built purely
+        # from already-derived ratios is normal, not suspicious (2026-09-25 retro-scan: 71 real corpus docs are
+        # exactly this shape).
+        short_derived = os.path.join(d, "short_derived.md")
+        open(short_derived, "w", encoding="utf-8").write(
+            "# Short diagnosis note\n\nArtifact: `%s`\n\n"
+            "The ratio here is 0.104615. <!--derived-->\n" % art)
+        if check(short_derived, verbose=False) != 0:
+            problems.append("SELFTEST BROKEN: a SHORT, entirely-derived note (1 claim, below "
+                            "LOW_COVERAGE_MIN_TOTAL) FAILED -- the size floor did not protect a legitimate "
+                            "short doc")
+    return problems
+
+
 def main():
+    if len(sys.argv) >= 2 and sys.argv[1] == "--selftest":
+        problems = selftest()
+        for p in problems:
+            print("⛔", p)
+        print("claim_check selftest: %s" % ("FAILED" if problems else "OK (both directions demonstrated)"))
+        return 1 if problems else 0
     if len(sys.argv) < 2:
         print(__doc__)
         return 2

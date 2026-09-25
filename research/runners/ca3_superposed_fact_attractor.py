@@ -437,8 +437,14 @@ def run(cfg: Cfg, out_path: str | None, p_max_override: int | None = None, log=p
     # the stored CA3 pattern of each fact is whatever the fixed detonator fires (kept only for the INSTRUMENT:
     # completion overlap and the crosstalk d'; the read never consults it)
     ca3_idx = np.zeros((p_max, cfg.k_ca3), dtype=np.int32)      # stored pattern of each fact, as cell indices
+    # `complete` (2026-09-25, research/FAILURE_LOG.md): each checkpoint's `_dump()` below writes the file to disk
+    # PROGRESSIVELY, so a structurally-valid, ostensibly-complete-looking JSON exists on disk at every P in the
+    # grid, not just the last one -- a scorer read `rerun_s101_s102/sparse_dg_c2_s101.json` while its job was
+    # still running and mistook that in-progress checkpoint for the finished run (the missing P=100000 point was
+    # not obviously missing from the file's shape). `complete` stays False until the FINAL `_dump()` call after
+    # the loop; a reader/aggregator should refuse a file where this is not `true`.
     rec = dict(config=asdict(cfg), backend="numpy+scipy.sparse (CPU)", runner="research.runners.ca3_superposed_fact_attractor",
-               build_s=build_s, checkpoints=[], sha_facts=hashlib.sha256(facts.tobytes()).hexdigest())
+               build_s=build_s, checkpoints=[], sha_facts=hashlib.sha256(facts.tobytes()).hexdigest(), complete=False)
     written = 0
     write_s = 0.0
     freeze_done = False
@@ -510,6 +516,9 @@ def run(cfg: Cfg, out_path: str | None, p_max_override: int | None = None, log=p
         rec["summary"] = summarize(rec)
         if out_path:
             _dump(rec, out_path)
+    rec["complete"] = True             # every P in `grid` finished -- see the `complete=False` comment above
+    if out_path:
+        _dump(rec, out_path)
     return rec
 
 

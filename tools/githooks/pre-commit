@@ -42,6 +42,18 @@ fi
 # artifacts that were never written. The gate's scope had silently assumed "has frontmatter" == "is new"; after
 # the classification pass that assumption is false. Claims are checked on findings as WRITTEN, which is when the
 # author can actually satisfy them; editing an old finding's status must not demand its rewrite.
+# This gate's own checker is not trusted blindly (the same discipline GATE 5's registry enforces on itself,
+# class 3 -- "check-that-cannot-fail"): a 2026-09-25 hole let a standalone <!--derived--> marker suppress whole
+# SECTIONS, so a commit reporting "0 checked against 336 artifact values" still printed "every measurement
+# traces to a cited artifact". `--selftest` demonstrates both directions (a doc reproducing that hole's shape
+# still FAILS; a legitimately-derived table still PASSES) and runs on EVERY commit, not just ones that touch
+# this file -- a regression introduced anywhere is caught before it can silently start passing findings.
+if ! "$PY" "$ROOT/tools/claim_check.py" --selftest > /tmp/_precommit_claims_selftest.out 2>&1; then
+  echo "⛔ COMMIT BLOCKED — tools/claim_check.py FAILED ITS OWN SELFTEST (its verdict is not trusted until this passes):"
+  sed 's/^/   /' /tmp/_precommit_claims_selftest.out | tail -20
+  echo "   Deliberate override: git commit --no-verify"
+  exit 1
+fi
 STAGED=$(git diff --cached --name-only --diff-filter=A | grep -E '^research/findings/[^/]+\.md$' || true)
 if [ -n "$STAGED" ]; then
   if ! echo "$STAGED" | xargs -r "$PY" "$ROOT/tools/claim_check.py" > /tmp/_precommit_claims.out 2>&1; then
@@ -50,7 +62,9 @@ if [ -n "$STAGED" ]; then
     echo
     echo "   Fix ONE of:  cite the artifact that contains the number (a path with a / in it);"
     echo "                save the aggregate you computed and cite THAT (means over seeds live in no per-seed file);"
-    echo "                mark a derived/quoted value with <!--derived--> (inline, or alone on a line for block scope)."
+    echo "                mark a derived/quoted value with <!--derived--> (inline, or alone on a line for block scope);"
+    echo "                or check the printed 'suppressed' count -- LOW COVERAGE on a substantial doc means a"
+    echo "                marker is exempting more than it should."
     echo "   Deliberate override: git commit --no-verify"
     exit 1
   fi

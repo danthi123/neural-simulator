@@ -56,6 +56,7 @@ _PATH_TOKEN_RE = re.compile(r"[\w.\-*?\[\]]+(?:/[\w.\-*?\[\]]+)+/?")
 # parsed claim_check stdout
 _CC_LINE_RE = re.compile(r"⛔ line\s+(\d+)\s+([-\d.eE+]+)\s+not in any cited artifact\s*\|\s*(.*)")
 _CC_MISS_RE = re.compile(r"⛔ MISSING\s+(.*)")
+_CC_LOWCOV_RE = re.compile(r"⛔ LOW COVERAGE:\s*(.*)")
 
 # provenance sources to mine for a backend value (device_and_cost scaffolding)
 _BACKEND_IN_TEXT = re.compile(r"SIM_BACKEND\s*[=:]\s*['\"]?(cupy|numpy|cuda|gpu|cpu)['\"]?", re.I)
@@ -177,7 +178,7 @@ def run_claim_check(finding_path):
     with contextlib.redirect_stdout(buf):
         rc = claim_check.check(finding_path, verbose=True)
     text = buf.getvalue()
-    unsupported, missing = [], []
+    unsupported, missing, low_coverage = [], [], []
     for ln in text.split("\n"):
         m = _CC_LINE_RE.search(ln)
         if m:
@@ -186,7 +187,11 @@ def run_claim_check(finding_path):
         m = _CC_MISS_RE.search(ln)
         if m:
             missing.append(m.group(1).strip())
-    return rc, unsupported, missing, text
+            continue
+        m = _CC_LOWCOV_RE.search(ln)
+        if m:
+            low_coverage.append(m.group(1).strip())
+    return rc, unsupported, missing, low_coverage, text
 
 
 # ---------------------------------------------------------------------------------------------------
@@ -471,7 +476,7 @@ def lint_one(finding_path, extra_paths, do_fix, quiet, include_untracked):
              % len(arts_skipped))
 
     # GATE 2 — claims
-    cc_rc, cc_unsupported, cc_missing, _cc_text = run_claim_check(finding_path)
+    cc_rc, cc_unsupported, cc_missing, cc_low_coverage, _cc_text = run_claim_check(finding_path)
     # GATE 4 — status
     g4_ok = status_present(finding_path)
     # GATE 5 — registry (authoritative verdict) + per-gate pass (grouping/scaffolding)
@@ -489,6 +494,7 @@ def lint_one(finding_path, extra_paths, do_fix, quiet, include_untracked):
     if cc_rc != 0:
         probs = ["line %s: %s  (%s)" % (n, v, c[:60]) for n, v, c in cc_unsupported] \
             + ["MISSING artifact: %s" % m for m in cc_missing] \
+            + ["LOW COVERAGE: %s" % m for m in cc_low_coverage] \
             or ["a measurement is unsupported by the cited artifacts (see claim_check)"]
         blocking_gates.append({"name": "claim-check", "class_id": "G2", "problems": probs, "kind": "claim"})
     if not g4_ok:
@@ -521,6 +527,11 @@ def lint_one(finding_path, extra_paths, do_fix, quiet, include_untracked):
         # scaffolding
         if g["kind"] == "claim":
             scaffold_claim_check(finding_path, cc_unsupported, cc_missing, arts_all, do_fix, emit)
+            if cc_low_coverage:
+                emit("    FIX (low coverage): a <!--derived--> marker is exempting most of a substantial doc's "
+                     "numeric claims. Prefer per-line inline marks, or scope a block to its own paragraph/table "
+                     "(it now closes at the next blank line); use `<!--/derived-->` only when a block "
+                     "genuinely spans more than one paragraph, and say so.")
         elif g["name"] == "stated-value-mismatch":
             emit("    FIX: a NAMED quantity disagrees with the artifact's own value — quote the artifact's "
                  "number, or fix the prose. (Existence is not agreement; claim_check cannot catch this.)")

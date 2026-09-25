@@ -128,6 +128,34 @@ def test_tiny_end_to_end_learns_and_freeze_is_chance():
     assert s["recall"][0] >= 0.8                    # learns below capacity
     assert rec["checkpoints"][0]["freeze_all_recall"] <= 0.1
     assert len(set(s["synapse_bytes"])) == 1
+    assert rec["complete"] is True                  # every P in the grid finished
+
+
+def test_checkpoint_file_reads_incomplete_until_the_final_write(tmp_path, monkeypatch):
+    """research/FAILURE_LOG.md 2026-09-25: a scorer graded `sparse_dg_c2_s101.json` while its job was STILL
+    RUNNING -- the progressively-written checkpoint file looked complete (structurally valid JSON) with its last
+    sweep point missing. `complete` must read False on every intermediate on-disk write and True ONLY on the
+    final one, so a reader checking the field (not just "does the file parse") can tell an in-progress run from a
+    finished one."""
+    seen = []
+    real_dump = M._dump
+
+    def _spy_dump(obj, path):
+        seen.append(bool(obj.get("complete")))
+        real_dump(obj, path)
+    monkeypatch.setattr(M, "_dump", _spy_dump)
+
+    out = tmp_path / "sparse_dg_c2_s101.json"
+    cfg = _tiny(arm="sparse_dg_c2")                 # TINY's p_grid has 2 points -> 2 intermediate dumps + 1 final
+    M.run(cfg, str(out), log=lambda m: None)
+
+    assert len(seen) >= 3
+    assert seen[:-1] == [False] * (len(seen) - 1), "an intermediate checkpoint write reported complete=True"
+    assert seen[-1] is True, "the FINAL write did not flip complete to True"
+
+    import json as _json
+    on_disk = _json.loads(out.read_text())
+    assert on_disk["complete"] is True               # the file left on disk after a finished run is the final one
 
 
 def _summary(recall, recent=None, dprime=None, rz=None, rs=None, t=None, P=M.P_GRID):
