@@ -107,6 +107,19 @@ def world_offset_h() -> float:
     return _WORLD_OFFSET_H
 
 
+def mark_awake(chat) -> Optional[float]:
+    """The ENVIRONMENT/BODY says this session's brain stayed AWAKE up to world-now (research/sleep-replay-capture-r2:
+    the battery's `awake_*` world step, a waking interval with no conversation). Without it the ledger's sleep route
+    uses the engine's convention (idle >= SLEEP_IDLE_SEC = asleep); with it, sleep onset is measured from the end of
+    the waking interval. Only the sleep route (BRAIN_SLEEP_REPLAY_CAPTURE) reads it. Returns the mark, or None when
+    this chat has no ledger. Never called in production (the live server has no awake/asleep signal of its own)."""
+    cap = getattr(chat, "_da_tag_capture", None)
+    if cap is None:
+        return None
+    cap.awake_until_h = max(cap.now_h(), cap.ledger.t)
+    return cap.awake_until_h
+
+
 class _private_rng:
     """Save the global numpy + python RNG, seed a private stream from (seed, k), restore on exit."""
 
@@ -171,7 +184,12 @@ class ChatTagCapture:
             from webapp import sleep_replay_capture as _SRC
             if getattr(self, "_src", None) is None:
                 self._src = _SRC.SleepReplayCapture(self.seed, self.d1, rng_ctx=_private_rng)
-            self._src.catch_up(self.ledger, comp, self.t_turn, self.n_turns, t)
+            # the body was awake until the later of the last turn and any environment awake mark (r2 item 1)
+            t_ref, key = self.t_turn, self.n_turns
+            aw = getattr(self, "awake_until_h", None)
+            if aw is not None and aw > t_ref:
+                t_ref, key = aw, (self.n_turns, round(aw, 9))   # a waking interval starts its own sleep episode
+            self._src.catch_up(self.ledger, comp, t_ref, key, t)
         self.ledger.sync_from_store(comp, t)
         self.ledger.on_store(comp, t)          # a block written outside an observed turn (none on the probe path)
         self.ledger.advance(comp, t)
@@ -206,6 +224,8 @@ class ChatTagCapture:
                "last_turn": (L.turn_log[-1] if L.turn_log else None)}
         if getattr(self, "_src", None) is not None:          # only ever set with BRAIN_SLEEP_REPLAY_CAPTURE armed
             out["sleep_replay_capture"] = self._src.summary()
+        if getattr(self, "awake_until_h", None) is not None:  # only ever set by the battery's awake world step (r2)
+            out["awake_until_h"] = self.awake_until_h
         return out
 
 

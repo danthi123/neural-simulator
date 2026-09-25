@@ -277,3 +277,100 @@ def test_constants_are_reused_not_new():
     assert S.SWR_BOUT_H == T.CAPTURE_PROTOCOL_MIN / 60.0
     from webapp.continuous_engine import SLEEP_IDLE_SEC
     assert S.sleep_onset_h() == SLEEP_IDLE_SEC / 3600.0
+
+
+# ── r2 (research/sleep-replay-capture-r2): nightly epochs, the awake mark, sleep downscaling ────────────────────────
+@pytest.fixture(autouse=True)
+def _clean_env_r2(monkeypatch):
+    monkeypatch.delenv("BRAIN_SLEEP_DOWNSCALING", raising=False)
+    yield
+
+
+def _nights(chat, n):
+    for _ in range(n):
+        W.advance_world_clock_h(24.0)
+        W.tick_chat(chat)
+
+
+def test_one_night_protocol_still_one_epoch_three_nights_three(monkeypatch):
+    chat, cap, comp = _conversation(monkeypatch, da_turns=NEUTRAL, rc=True)       # one 24 h night
+    assert cap._src.summary()["n_epochs"] == 1
+    _nights(chat, 2)
+    src = cap._src.summary()
+    assert src["n_epochs"] == 3
+    gaps = [b["t_h"] - a["t_h"] for a, b in zip(src["epochs"], src["epochs"][1:])]
+    assert all(abs(g - S.NIGHT_PERIOD_H) < 1e-9 for g in gaps)
+
+
+def test_awake_mark_moves_sleep_onset_and_an_old_fact_is_not_rescued(monkeypatch):
+    chat, cap, comp = _conversation(monkeypatch, da_turns=NEUTRAL, rc=True, night=False)
+    W.advance_world_clock_h(4.0)
+    aw = W.mark_awake(chat)
+    assert aw is not None and aw >= 4.0
+    _nights(chat, 1)
+    e0 = cap._src.summary()["epochs"][0]
+    assert abs(e0["t_h"] - (aw + S.sleep_onset_h())) < 1e-9     # sleep began after the waking interval
+    assert e0["R"][0] < 0.3                                     # the 4 h-old trace reads near baseline
+    assert _fact_captured(cap) == 0.0 and comp.coherence(2) < 0.3
+
+
+def test_mark_awake_without_a_ledger_is_a_noop():
+    comp = FakeComposer(); comp.store()
+    assert W.mark_awake(Chat(comp)) is None
+
+
+def _two_fact_night(monkeypatch, shy, n_nights=3):
+    """A strong (g=2.5) and a weak (g=0.3) fact told together just before sleep; n nights; flag ON."""
+    monkeypatch.setenv("BRAIN_DA_TAG_CAPTURE", "1")
+    monkeypatch.setenv("BRAIN_DA_TAG_CAPTURE_CLOCK", "turn")
+    monkeypatch.setenv("BRAIN_SLEEP_REPLAY_CAPTURE", "1")
+    if shy:
+        monkeypatch.setenv("BRAIN_SLEEP_DOWNSCALING", "1")
+    comp = FakeComposer()
+    chat = Chat(comp)
+    for g in (2.5, 0.3):
+        chat._last_da_drives = {"da_level": 0.5}
+        W.observe_chat_turn(chat, seed=7)
+        comp.store(g=g)
+        W.after_store_chat(chat)
+    _nights(chat, n_nights)
+    cap = chat._da_tag_capture
+    return cap, comp, [float(np.mean(np.abs(b["inc"]))) for b in cap.ledger.blocks]
+
+
+def test_downscaling_off_is_byte_identical(monkeypatch):
+    _cap0, comp0, _ = _two_fact_night(monkeypatch, shy=False)
+    h0 = _store_hash(comp0)
+    monkeypatch.setattr(W, "_WORLD_OFFSET_H", 0.0)
+    monkeypatch.setenv("BRAIN_SLEEP_DOWNSCALING", "0")
+    cap1, comp1, _ = _two_fact_night(monkeypatch, shy=False)
+    assert _store_hash(comp1) == h0
+    assert all("shy_scale" not in e for e in cap1._src.summary()["epochs"])
+
+
+def test_downscaling_fades_the_weakly_read_fact_and_spares_the_strong_one(monkeypatch):
+    cap_off, comp_off, inc_off = _two_fact_night(monkeypatch, shy=False)
+    monkeypatch.setattr(W, "_WORLD_OFFSET_H", 0.0)
+    cap_on, comp_on, inc_on = _two_fact_night(monkeypatch, shy=True)
+    assert all(b["frac_synapses_z_gt_half"] == 1.0 for b in cap_on.ledger.summary())   # both captured on night 1
+    assert inc_on[1] / inc_off[1] < 0.75                                     # weakly read: > 25 % lost over 3 nights
+    assert inc_on[0] / inc_off[0] > 0.95                                     # strongly read: < 5 % lost
+    assert comp_on.coherence(1) < comp_off.coherence(1) - 0.05
+    scales = [e["shy_scale"] for e in cap_on._src.summary()["epochs"]]
+    assert len(scales) == 3 and all(s[1] < s[0] for s in scales)            # the weak block is depressed more each night
+
+
+def test_downscaling_without_the_replay_edge_protects_nothing(monkeypatch):
+    monkeypatch.setenv("BRAIN_SLEEP_REPLAY_CAPTURE_LESION", "1")
+    cap, comp, _ = _two_fact_night(monkeypatch, shy=True, n_nights=1)
+    assert cap._src.summary()["epochs"][0]["shy_scale"] == [round(1.0 - S.SHY_DELTA, 9)] * 2
+
+
+def test_battery_r2_groups_are_label_only_and_world_steps_resolve():
+    from research.runners import onebrain_regression_battery as B
+    probe_labels = {t[0] for t in B.PROBE_TURNS}
+    for lab in ("datl_recall", "d3w_recall", "d3c_recall", "d3r_recall"):
+        assert lab in B._TURN_BY_LABEL and lab not in probe_labels
+    assert B._WORLD_STEPS["datl_awake"] == "awake_4h" and B._WORLD_STEPS["datl_night"] == "overnight_24h"
+    assert B._WORLD_STEPS["d3r_night3"] == "overnight_24h" and "d3r_remention1" not in B._WORLD_STEPS
+    assert B._WORLD_STEPS["datc_night"] == "overnight_24h"                   # pre-r2 groups unchanged
