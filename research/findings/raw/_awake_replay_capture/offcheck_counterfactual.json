@@ -1,0 +1,86 @@
+{
+  "method": "counterfactual: HEAD vs HEAD minus the feature's own commits (built from the current tree)",
+  "head": "c582933fa9b50dcf31e8373aee243072462d9393",
+  "uncommitted_code_paths_ignored": [],
+  "ltm": "off",
+  "feature_commits": [
+    "c582933fa9b50dcf31e8373aee243072462d9393",
+    "5651ce54902cf35c047cdc9143479a4d08011aa1",
+    "1d011480aa576bea200f1d5e19c1aeb6dbfff400",
+    "fd664ef3f8165b9c2e48de815b812f0427428a63",
+    "daa4b382d61352c18ac60c87359e222d4e0d3fe7",
+    "a201293f5327b7228a644a1aa9714f457be45c1a",
+    "492231df35d7e74119f7546c75bb704d63a0548b",
+    "48bb87beff04f7bc6079e444f6f6bebee0fccc1e"
+  ],
+  "reverted_scope": "production_scope(): webapp/, sim/, webapp-imported runners",
+  "counterfactual": {
+    "ok": true,
+    "steps": [
+      {
+        "commit": "c582933fa9b50dcf31e8373aee243072462d9393",
+        "status": "reverted-3way"
+      },
+      {
+        "commit": "5651ce54902cf35c047cdc9143479a4d08011aa1",
+        "status": "reverted-3way"
+      },
+      {
+        "commit": "1d011480aa576bea200f1d5e19c1aeb6dbfff400",
+        "status": "reverted-3way"
+      },
+      {
+        "commit": "fd664ef3f8165b9c2e48de815b812f0427428a63",
+        "status": "reverted-3way"
+      },
+      {
+        "commit": "daa4b382d61352c18ac60c87359e222d4e0d3fe7",
+        "status": "reverted-3way"
+      },
+      {
+        "commit": "a201293f5327b7228a644a1aa9714f457be45c1a",
+        "status": "reverted-zero-context",
+        "3way_conflicted": [
+          "webapp/server.py"
+        ]
+      },
+      {
+        "commit": "492231df35d7e74119f7546c75bb704d63a0548b",
+        "status": "reverted-3way"
+      },
+      {
+        "commit": "48bb87beff04f7bc6079e444f6f6bebee0fccc1e",
+        "status": "reverted-3way"
+      }
+    ],
+    "changed_vs_head": [
+      "M\tresearch/runners/_da_write_gain_spiking_derisk.py",
+      "D\twebapp/awake_replay_capture.py",
+      "M\twebapp/continuous_engine.py",
+      "D\twebapp/da_tag_capture.py",
+      "D\twebapp/da_tag_capture_chat.py",
+      "M\twebapp/server.py",
+      "D\twebapp/sleep_replay_capture.py"
+    ],
+    "untracked": [],
+    "residual_feature_refs": [],
+    "n_scope_paths": 123
+  },
+  "null_replies_identical": true,
+  "null_store_identical": true,
+  "replies_identical": true,
+  "store_identical": true,
+  "head_run": {
+    "replies_sha256": "491f6b6beda82972ab480b0bcdbcffcf430c537d002e895709b9543fae74af0a",
+    "store_sha256": "dc0d91089e088a0ddee04d253996dc2eed9b519240853f44cf4f56be69c4621c",
+    "n_store_conns": 768
+  },
+  "counterfactual_run": {
+    "replies_sha256": "491f6b6beda82972ab480b0bcdbcffcf430c537d002e895709b9543fae74af0a",
+    "store_sha256": "dc0d91089e088a0ddee04d253996dc2eed9b519240853f44cf4f56be69c4621c",
+    "n_store_conns": 768
+  },
+  "byte_identical_off": true,
+  "verdict": "IDENTICAL",
+  "temp_worktrees_removed": true
+}
