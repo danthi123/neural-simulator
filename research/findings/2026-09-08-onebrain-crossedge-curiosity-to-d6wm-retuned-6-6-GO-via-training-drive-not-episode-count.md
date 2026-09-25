@@ -52,18 +52,17 @@ re-tuning is not attempted here."*
 The banked trajectory for 43/101/102 was still nominally rising at `ep=100` (not flat), so the first hypothesis
 was plain under-training. Re-run at `N_EPISODES=300` (3x, `research/findings/raw/_onebrain_crossedge_curiosity_to_d6wm_nepisodes300_scout_negative.json`):
 
-<!--derived-->
 (rounded to 4dp for legibility; the "@100ep" column is the ALREADY-BANKED
 `research/findings/raw/_onebrain_crossedge_curiosity_to_d6wm_readfix_6seed.json` values for these 3 seeds,
 reproduced here for the side-by-side comparison; the "@300ep" column is this row's own cited artifact,
-`_onebrain_crossedge_curiosity_to_d6wm_nepisodes300_scout_negative.json`, at full precision `1.6149...`,
-`1.6478...`, `1.7605...` for grown and `-0.0035`/`-0.0055`/`-0.0030` for delta_intact.)
+`_onebrain_crossedge_curiosity_to_d6wm_nepisodes300_scout_negative.json`, at full precision `1.6155...`,
+`1.6476...`, `1.7612...` for grown and `-0.0035`/`-0.0055`/`-0.0030` for delta_intact.) <!--derived-->
 
 | seed | grown @100ep | grown @300ep | Δintact @100ep | Δintact @300ep |
 |---|---|---|---|---|
 | 43  | 1.589 | 1.615 | -0.0035 | -0.0035 |
-| 101 | 1.622 | 1.648 | -0.0055 | -0.0055 |
-| 102 | 1.661 | 1.761 | -0.0020 | -0.0030 |
+| 101 | 1.622 | 1.648 | -0.0055 | -0.0055 | <!--derived-->
+| 102 | 1.661 | 1.761 | -0.0020 | -0.0030 | <!--derived-->
 
 Tripling the episode count moved grown weight by only 0.03-0.10 and left `delta_intact` essentially flat — these
 3 seeds are genuinely converging to a seed-specific fixed point well under `HMAX=6.0`, not merely
@@ -80,12 +79,12 @@ synapse). `run_seed()`'s new `train_drive_scale` parameter multiplies ONLY the t
 
 A quick 3-seed scout (43/101/102) at `train_drive_scale` in {1.0, 1.5, 2.0}:
 
-<!--derived-->
 (this scout ran via a throwaway diagnostic script, not saved as a committed artifact — an honest gap, not a
 withheld one. The `scale=1.0` column reproduces the ALREADY-BANKED
 `_onebrain_crossedge_curiosity_to_d6wm_readfix_6seed.json` delta_intact values for these 3 seeds; the `scale=1.5`
 column is reproduced, saved, and fully cited in §5's own artifact below; the `scale=2.0` column alone is
-UNARCHIVED — used here only to show the dose-response is monotonic, not as a standalone claim.)
+UNARCHIVED — used here only to show the dose-response is monotonic, not as a standalone claim; its 3 values
+below are therefore left unmarked, not `<!--derived-->`, since no cited artifact backs them.)
 
 | seed | scale=1.0 Δintact | scale=1.5 Δintact | scale=2.0 Δintact |
 |---|---|---|---|
@@ -100,18 +99,17 @@ Monotonic, seed-consistent, and well clear of the floor by `scale=1.5` — a rea
 `--train-drive-scale 1.5` across the full battery
 (`research/findings/raw/_onebrain_crossedge_curiosity_to_d6wm_traindrivescale1.5_6seed.json`):
 
-<!--derived-->
 (grown weight rounded to 3dp for legibility from the cited artifact's full-precision values: seed 42
 `3.490537...`, 43 `3.268718...`, 44 `3.000558...`, 100 `2.774332...`, 101 `3.297610...`, 102 `2.782245...`.
 delta_intact/delta_lesion/frac_attrib/GO are the artifact's own `interaction.per_condition.novel` fields verbatim.)
 
 | seed | grown | Δintact (novel) | Δlesion | frac_attrib | GO |
 |---|---|---|---|---|---|
-| 42  | 3.491 | -0.0175 | +0.0000 | 1.0 | GO |
+| 42  | 3.491 | -0.0175 | +0.0000 | 1.0 | GO | <!--derived-->
 | 43  | 3.269 | -0.0130 | +0.0000 | 1.0 | GO |
-| 44  | 3.001 | -0.0140 | +0.0000 | 1.0 | GO |
-| 100 | 2.774 | -0.0115 | +0.0000 | 1.0 | GO |
-| 101 | 3.298 | -0.0150 | +0.0000 | 1.0 | GO |
+| 44  | 3.001 | -0.0140 | +0.0000 | 1.0 | GO | <!--derived-->
+| 100 | 2.774 | -0.0115 | +0.0000 | 1.0 | GO | <!--derived-->
+| 101 | 3.298 | -0.0150 | +0.0000 | 1.0 | GO | <!--derived-->
 | 102 | 2.782 | -0.0095 | +0.0000 | 1.0 | GO |
 
 **6/6 GO** — the runner's own `Verdict` machinery (`Vd.decide`, not a metric lifted out of a negative run),
@@ -159,3 +157,11 @@ production flip, per this lane's explicit scope (rank-1/rank-6 flip files untouc
   finding), so this is not assumed to reproduce identically on cupy without that confirmation.
 
 Functional read-outs only; no phenomenal-experience claim.
+
+## Corrections (2026-09-25 claim-check audit)
+
+- Section 3's "full precision" parenthetical: `1.6149...` -> `1.6155...`, `1.6478...` -> `1.6476...`, <!--derived-->
+  `1.7605...` -> `1.7612...` (transcription errors; true full-precision `grown.ask_to_w0` for seeds 43/101/102 in
+  `research/findings/raw/_onebrain_crossedge_curiosity_to_d6wm_nepisodes300_scout_negative.json` are
+  1.6154699325561523 / 1.6476027965545654 / 1.7612478733062744). The table's own rounded values (1.615/1.648/ <!--derived-->
+  1.761) were already correct and unaffected; this only fixes the illustrative full-precision citation.

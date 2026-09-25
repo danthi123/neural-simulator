@@ -127,22 +127,21 @@ process exceeded the 4GB RSS budget at any point.
 
 ## 4. Results
 
-<!--derived-->
 Per-point and per-arm MEANS across the 6 seeds below are computed from the 12 cited per-seed JSONs (each
 individual seed's own numbers -- e.g. "42=3.8075" -- are the literal values in that seed's artifact; the
-means, deltas, and table aggregates are this document's own arithmetic over them, marked derived once here
-for the whole section rather than annotating every cell).
+means, deltas, and table aggregates are this document's own arithmetic over them, each marked `<!--derived-->`
+on its own line below).
 
 ### Arm A -- d96 extended, mean deep NLL across 6 seeds (nats)
 
 | tok/param | 4.536 | 6.805 | 9.073 | 12.097 | 15.121 |
 |---|---|---|---|---|---|
-| mean WKV deep NLL | 3.9516 | 3.8802 | 3.8433 | 3.8178 | 3.8029 |
-| mean margin vs trigram | 0.2623 | 0.2619 | 0.2528 | 0.2341 | 0.2161 |
+| mean WKV deep NLL | 3.9516 | 3.8802 | 3.8433 | 3.8178 | 3.8029 | <!--derived-->
+| mean margin vs trigram | 0.2623 | 0.2619 | 0.2528 | 0.2341 | 0.2161 | <!--derived-->
 
-Per-seed top-point NLL: 42=3.8075, 43=3.8251, 44=3.7976, 100=3.7987, 101=3.7917, 102=3.7969 (mean 3.8029).
+Per-seed top-point NLL: 42=3.8075, 43=3.8251, 44=3.7976, 100=3.7987, 101=3.7917, 102=3.7969 (mean 3.8029). <!--derived-->
 Gate readout (6 seeds): `uses_tokens` 6/6, `still_descending_at_top` **0/6**, `uses_context_at_top` 6/6,
-`beats_trigram_at_top` 6/6, `margin_grows_with_tokens` **0/6**. Mean top-segment slope (128k->160k) = 0.0148,
+`beats_trigram_at_top` 6/6, `margin_grows_with_tokens` **0/6**. Mean top-segment slope (128k->160k) = 0.0148, <!--derived-->
 below the 0.02 still-descending bar in every seed. The margin over the fair trigram PEAKS at 4.5-6.8
 tok/param (~0.26) then narrows monotonically through 15.1 tok/param (6/6 seeds) -- the same "counts start
 catching up" signature the 2026-09-01 finding named as the record's d512 saturation tell, now appearing
@@ -157,16 +156,16 @@ logic exactly): **PARTIAL** -- `token_lever_go` requires `n_still_descending_at_
 
 | tok/param | 0.348 | 0.697 | 1.394 | 2.788 | 4.53 |
 |---|---|---|---|---|---|
-| mean WKV deep NLL | 4.3082 | 4.1388 | 3.9629 | 3.8243 | 3.7737 |
-| mean margin vs trigram | 0.3130 | 0.3015 | 0.3264 | 0.3327 | 0.3023 |
+| mean WKV deep NLL | 4.3082 | 4.1388 | 3.9629 | 3.8243 | 3.7737 | <!--derived-->
+| mean margin vs trigram | 0.3130 | 0.3015 | 0.3264 | 0.3327 | 0.3023 | <!--derived-->
 
 Per-seed top-point NLL: 42=3.7485, 43=3.7855, 44=3.7846, 100=3.7669, 101=3.7737, 102=3.783 (mean 3.7737).
 Gate readout (6 seeds): `uses_tokens` 6/6, `still_descending_at_top` **6/6**, `uses_context_at_top` 6/6,
-`beats_trigram_at_top` 6/6, `margin_grows_with_tokens` 1/6. Mean top-segment slope (64k->104k) = 0.0506 --
+`beats_trigram_at_top` 6/6, `margin_grows_with_tokens` 1/6. Mean top-segment slope (64k->104k) = 0.0506 -- <!--derived-->
 more than 3x Arm A's slope at its own top, i.e. still descending at a healthy clip. The margin over trigram
 also softens slightly at the very last point (0.3327 -> 0.3023, mirroring Arm A's shape faintly) but from a
 much higher absolute level, and the NLL descent itself shows no sign of flattening. Per-seed overfit gap at
-the top point is consistently POSITIVE (0.033-0.076, healthy generalization gap) -- unlike Arm A's near-zero/
+the top point is consistently POSITIVE (0.035-0.076, healthy generalization gap) -- unlike Arm A's near-zero/ <!--derived-->
 slightly-negative gap at its top, another independent signal that d192 has NOT yet run out of capacity the
 way d96 has. Runner's own aggregation formula on these 6 seeds: **GO-TOKEN-LEVER**, clean (all three
 thresholds cleared: `n_uses=6>=5`, `n_desc=6>=4`, `n_clean=6>=5`).
@@ -176,11 +175,11 @@ thresholds cleared: `n_uses=6>=5`, `n_desc=6>=4`, `n_clean=6>=5`).
 | run | capacity (active params) | top tok/param | mean top-point deep NLL | residual above fluency band (3.69) |
 |---|---|---|---|---|
 | banked 2026-09-01 (d96) | 423,248 | 4.536 | 3.9321 | 0.2421 |
-| Arm A (d96, extended tokens) | 423,248 | 15.121 | 3.8029 | 0.1129 |
+| Arm A (d96, extended tokens) | 423,248 | 15.121 | 3.8029 | 0.1129 | <!--derived-->
 | Arm B (d192, matched tokens) | 918,224 (2.17x) | 4.53 | **3.7737** | **0.0837** |
 
-Tripling tok/param on the SAME d96 model (banked -> Arm A) bought 0.1292 nats, while doubling capacity at the
-SAME tok/param (banked -> Arm B) bought 0.1584 nats -- MORE improvement, for less relative "effort" on the
+Tripling tok/param on the SAME d96 model (banked -> Arm A) bought 0.1292 nats, while doubling capacity at the <!--derived-->
+SAME tok/param (banked -> Arm B) bought 0.1584 nats -- MORE improvement, for less relative "effort" on the <!--derived-->
 axis that isn't yet showing a ceiling. Sampled prose from Arm B's top point (seed42, temp 0.8) shows the same
 real grammatical scaffolding as the 2026-09-01 sample, still heavily `<unk>`-bottlenecked by V=2000 (e.g.
 *"in the second episode a &lt;unk&gt; and &lt;unk&gt; it &lt;unk&gt; the episode had been a major &lt;unk&gt;
@@ -246,3 +245,10 @@ from 0.242 to 0.084 nats, which is real, measured progress, not a declared solve
 **NO-DEFER note:** Arm A's PARTIAL is a verdict on d96's OWN capacity ceiling, not on the token lever or the
 capability. The capability (brain-native arbitrary prose) is not deferred; Arm B hands the next method
 (capacity growth, jointly with tokens) exactly as the runner docstring anticipated.
+
+## Corrections (2026-09-25 claim-check audit)
+
+- Section 4, Arm B overfit-gap range: `0.033` -> `0.035` <!--derived--> (nearest rounding of the minimum
+  per-seed top-point `overfit_gap`, 0.0345, seed 43, in
+  `research/findings/raw/_gen_cortex_capacity_rung/armB_d192_matched_seed43.json`). Illustrative range bound
+  only; does not change the qualitative claim (all 6 seeds' overfit gaps are positive) or any gate/verdict.

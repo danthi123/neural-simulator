@@ -50,17 +50,16 @@ LEARNING the S2 templates could do better. Two unsupervised-LOCAL rules were alr
 projection. This tests the remaining OPEN class — SUPERVISED / error-guided shaping — and sizes the data-dependence.
 
 ## Supervised R-STDP S2 shaping: NO-GO (6-seed) — from research/findings/raw/lanes/perception/rstdp_g0.05_d0.1_ep5_6seed.json
-<!--derived-->
 Reward-modulated STDP on the S2 templates (round-robin class-assignment; potentiate winners of the true class toward
 the patch, depress winners of other classes; L2-renorm; Mozafari 2017/2018), best explore config (gain 0.05,
 depress_scale 0.1, competitive_frac 0.1, 5 epochs), 6 seeds at the satdiv-GO op-point (--n-s2 96 --s2-norm satdiv
 --s2-satdiv-n 2.0 --s2-satdiv-sigma 8.0 --s2-satdiv-scale 760.0 --ridge 1.0 --n-glimpses 6 --heldout-position
 --scramble-null):
 - per-seed capability_go = [True, False, True, False, False, False] = 2/6 (the >=5/6 bar is NOT met).
-- LEARNED spiking-WTA held accuracy mean ~0.457 (per seed 0.510/0.438/0.490/0.375/0.479/0.448) vs the frozen-random
-  bank's ~0.477 (GO 5/6) at the SAME op-point — supervised is slightly BELOW, not above.
+- LEARNED spiking-WTA held accuracy mean ~0.457 (per seed 0.510/0.438/0.490/0.375/0.479/0.448) vs the frozen-random <!--derived-->
+  bank's ~0.477 (GO 5/6) at the SAME op-point — supervised is slightly BELOW, not above. <!--derived-->
 - The templates did NOT collapse (mean_pairwise_cosine_abs ~0.59 across seeds, vs the ~0.65 random init) and the
-  readout is load-bearing 6/6 (LEARNED spiking-WTA ~0.457 >> RANDOM-readout ~0.238), so the readout works and the
+  readout is load-bearing 6/6 (LEARNED spiking-WTA ~0.457 >> RANDOM-readout ~0.238), so the readout works and the <!--derived-->
   anti-cheats are clean (scramble ~0.25, label-shuffle ~0.24, both chance) — this is a genuine METHOD verdict, not a
   broken instrument.
 
@@ -77,10 +76,9 @@ which did NOT generalize (the 6-seed above reads 2/6). The function is correct i
 decorrelates templates and raises class discriminability on a toy problem, and is hyperparameter-sensitive).
 
 ## The residual is DATA-limited, not code-limited — from the nex_scaling_ne{2,4,10,16}_6seed.json artifacts
-<!--derived-->
 Sizing the FROZEN-RANDOM bank (no learning) vs examples-per-class, 6 seeds, at the same satdiv op-point:
-- LEARNED held accuracy rises monotonically: n_ex 2 -> ~0.391 (PARTIAL), 4 -> ~0.471 (PARTIAL), 6 -> ~0.477
-  (GO 5/6), 10 -> ~0.517 (GO 5/6), 16 -> ~0.543 (GO 5/6). Anti-cheats clean throughout (scramble/label-shuffle at
+- LEARNED held accuracy rises monotonically: n_ex 2 -> ~0.391 (PARTIAL), 4 -> ~0.471 (PARTIAL), 6 -> ~0.477 <!--derived-->
+  (GO 5/6), 10 -> ~0.517 (GO 5/6), 16 -> ~0.543 (GO 5/6). Anti-cheats clean throughout (scramble/label-shuffle at <!--derived-->
   chance; object/position dissociated).
 - So the already-banked capability GO holds from the standard example count (6) upward and STRENGTHENS with more
   data, degrading only when examples are cut below it. The frozen-random JL bank is data-limited, not code-limited.

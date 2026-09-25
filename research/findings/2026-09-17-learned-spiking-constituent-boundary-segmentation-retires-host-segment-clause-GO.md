@@ -55,11 +55,10 @@ transitional-probability tracking is necessary but not sufficient) — but the s
 which is the load-bearing shift.
 
 ## Verify (from research/findings/raw/_learned_spiking_segmentation/verify_6seed.json)
-<!--derived-->
 - GO 5/6 all-gates; verdict preconditions all hold (all-gates >=5/6; intact boundary AUC >= 0.85 min over seeds; no-
   learning collapses; scramble collapses; coverage learned >= host; byte-identical-off; moat-safe).
-- Boundary-detection AUC (chance 0.5): intact 6/6 >= 0.85 (0.935, 0.970, 0.975, 0.973, 0.938, 0.998); NO-LEARNING 6/6
-  -> 0.500 (learning load-bearing); STREAM-SCRAMBLE 5/6 -> ~0.50 (seed 44 = 0.659, a hair above the 0.65 cap);
+- Boundary-detection AUC (chance 0.5): intact 6/6 >= 0.85 (0.935, 0.970, 0.975, 0.973, 0.938, 0.998); NO-LEARNING 6/6 <!--derived-->
+  -> 0.500 (learning load-bearing); STREAM-SCRAMBLE 5/6 -> ~0.50 (seed 44 = 0.659, a hair above the 0.65 cap); <!--derived-->
   intact-vs-scramble mean separation ~0.44.
 - Extraction coverage (learned front-end + existing spiking NP-head-binder + parser): learned >= host 6/6, a genuine WIN
   on 5/6 (the learned segmenter parses verb-headed clauses the host VERB_LEXICON cannot — host 9/14, learned up to
@@ -68,7 +67,6 @@ which is the load-bearing shift.
   never fabricates a triple).
 
 ## External sources actually read (comprehension lane, recorded)
-<!--derived-->
 - Masumori, Sinapayen & Ikegami 2019, "Predictive Coding as Stimulus Avoidance in Spiking Neural Networks",
   arXiv:1911.09230 (WebFetch-verified: SNNs learn to predict temporal sequences by STDP alone).
 - Daikoku — statistical-learning neural prediction-error is high at low-transitional-probability (boundary)

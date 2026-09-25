@@ -36,16 +36,12 @@ external:
 
 # Read-fidelity iteration 7: reading the recall signal off the #129 SEPARATE TRACE (upstream shaping) CLOSES the read-power residual the shared edge could not -- GO 6/6
 
-<!--derived-->
-
 Artifact: `research/findings/raw/_read_fidelity_separate_trace_recall_read_6seed.json` (numpy, 6 seeds). Runner:
 `research/runners/_read_fidelity_separate_trace_recall_read_derisk.py`. Seed-trap (build-twice at seed 42):
 identical=True, differs-across-seed=True, n=352, hash `02a1f0301568` -- a genuine 6-seed de-risk on a seeded
 substrate.
 
 ## Why this run exists (the named rank-2 lever, not a re-derivation)
-
-<!--derived-->
 
 The read-fidelity iteration-6 finding
 (`2026-09-01-read-fidelity-learned-whitened-opponent-read-NOGO-residual-is-read-architecture-not-estimator`)
@@ -61,8 +57,6 @@ shared edge may be intrinsically harder than a separate-trace-encoded read -- i.
 
 ## The lever (board #129, the separate-trace wiring; already GO 6/6 for the FACULTY)
 
-<!--derived-->
-
 Instead of writing BOTH provenances onto ONE shared edge and decoding which one it was, source monitoring is
 delivered by TWO SEPARATE zero-init plastic traces, `episode->prov_perceived` and `episode->prov_generated`, each
 gated open at encode ONLY by its own neuromodulatory context line (`ctx_perceived` / `ctx_generated`). The active
@@ -72,8 +66,6 @@ learned trace: provenance is carried by WHICH POOL FIRES. The substrate is the l
 (`ProvenanceBrain`, `make_paired_patterns`, `_encode_all`) reused VERBATIM (byte-for-byte the faculty's own).
 
 ## What this run adds, and why it is not the laneC GO re-badged
-
-<!--derived-->
 
 This run is NOT the laneC GO under a different name. Three things are new and decisive. (1) It is graded on the
 READ-FIDELITY gate -- the SAME permutation-null `z>=Z_FLOOR=2.0`, the SAME `F2_LESION_RATIO=0.34` lesion bar, the
@@ -87,20 +79,18 @@ consumes -- so the shuffle anti-cheat and the pool-mean margin come from one spi
 
 ## Result -- GO, 6/6
 
-<!--derived-->
-
 Primary gate (per seed): `real_margin > 0` AND permutation-null `z >= 2.0` AND lesion-attributable
 (`|real_lesion| < 0.34*|real_intact|`) AND the neuron-identity shuffle null collapses
 (`frac_self_clearing <= 0.15`). All values rounded from the cited artifact.
 
 | seed | pool-mean margin | perm-null z | null mean +- std | shuffle frac-clears | min d (non-gating) | lesion margin | PASS |
 |---|---|---|---|---|---|---|---|
-| 42 | +9.086 | 8.80 | -0.28 +- 1.06 | 0.050 | 0.894 | 0.000 | True |
-| 43 | +8.625 | 9.66 | +0.23 +- 0.87 | 0.050 | 0.858 | 0.000 | True |
-| 44 | +8.602 | 11.21 | -0.18 +- 0.78 | 0.000 | 0.832 | 0.000 | True |
-| 100 | +8.957 | 8.56 | -0.20 +- 1.07 | 0.000 | 0.854 | 0.000 | True |
-| 101 | +9.105 | 7.73 | +0.45 +- 1.12 | 0.000 | 0.869 | 0.000 | True |
-| 102 | +9.289 | 5.60 | -0.12 +- 1.68 | 0.050 | 0.848 | 0.000 | True |
+| 42 | +9.086 | 8.80 | -0.28 +- 1.06 | 0.050 | 0.894 | 0.000 | True | <!--derived-->
+| 43 | +8.625 | 9.66 | +0.23 +- 0.87 | 0.050 | 0.858 | 0.000 | True | <!--derived-->
+| 44 | +8.602 | 11.21 | -0.18 +- 0.78 | 0.000 | 0.832 | 0.000 | True | <!--derived-->
+| 100 | +8.957 | 8.56 | -0.20 +- 1.07 | 0.000 | 0.854 | 0.000 | True | <!--derived-->
+| 101 | +9.105 | 7.73 | +0.45 +- 1.12 | 0.000 | 0.869 | 0.000 | True | <!--derived-->
+| 102 | +9.289 | 5.60 | -0.12 +- 1.68 | 0.050 | 0.848 | 0.000 | True | <!--derived-->
 
 - **perm-null z 5.60-11.21 (mean 8.59)** -- every seed clears the floor with wide margin; the SHARED edge never
   cleared it on ANY seed across 6 iterations. The null is well-behaved (null_mean ~0, null_std 0.78-1.68 in count
@@ -112,12 +102,10 @@ Primary gate (per seed): `real_margin > 0` AND permutation-null `z >= 2.0` AND l
   shared edge's near-zero-intact instability.
 - **Learned, not pre-wired.** `prov_l1_before = 0.0` -> `prov_l1_after ~98k-103k` on every seed (emergence grew
   from exactly zero). All 4 `tools.verdict` preconditions PASS, so the verdict machinery returns GO (not UNDEFINED).
-- **Normalized d (non-gating, laneC faculty metric)**: worst-seed min 0.832, mean 0.913 -- reproduces the #129
+- **Normalized d (non-gating, laneC faculty metric)**: worst-seed min 0.832, mean 0.913 <!--derived--> -- reproduces the #129
   faculty GO's 0.83-0.89 range, confirming the substrate is the faculty's own.
 
 ## What this settles (NO-DEFER -- it moves the whole read-power arc)
-
-<!--derived-->
 
 **1. The read-power residual is a READ-ARCHITECTURE x ENCODING interaction, and separate-trace encoding is the
 fix.** The primary read here is a POPULATION-COLLAPSE read (a difference of two pool means). On the SHARED edge
@@ -141,8 +129,6 @@ available).
 
 ## Honest scope -- a GATE comparison, not a single-variable A/B; a de-risk, not integration
 
-<!--derived-->
-
 This is a GATE comparison, NOT a controlled single-variable A/B. The separate-trace read differs from the
 shared-edge read in BOTH the encoding (two context-gated traces vs one trained cross-edge) AND the substrate (the
 pure #129 `ProvenanceBrain` vs the merged `surprise->prov_generated` pool) -- precisely because the ENCODING is the
@@ -157,8 +143,6 @@ shared-edge-read side -- it says: shape the encoding onto a dedicated (separate)
 suffices.
 
 ## Scaffolds / residuals
-
-<!--derived-->
 
 The read is a HOST spike-count of the substrate's own `cp_firing_states` (the accepted read scaffold used
 identically by the whole read-fidelity arc and the laneC faculty GO); the SIGNAL (which pool fires) is computed by

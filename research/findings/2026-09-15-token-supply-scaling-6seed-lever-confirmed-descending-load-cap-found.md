@@ -39,30 +39,29 @@ max_len 48, 6 epochs, one cell per (corpus, d_model, seed).
 
 ## Result — the lever holds, mean WKV deep-context NLL across 6 seeds
 
-<!--derived-->
 (All numbers below are 6-seed means/derived quantities computed from the cited per-seed artifacts; the exact
-per-config means are saved in `research/findings/raw/_gencortex_scaling/_aggregate_6seed.json`.)
+per-config means are saved in `research/findings/raw/_gencortex_scaling/_aggregate_6seed.json`; each restated
+number below carries its own `<!--derived-->` mark.)
 
 | config | points reached | top tokens | tok/param | NLL (first -> top) | still-descending | beats-trigram |
 |---|---|---|---|---|---|---|
 | fineweb/d96 | 48k,96k,192k | 9.2M | 21.8 | 4.128 -> 3.976 | 6/6 | 6/6 |
-| fineweb/d192 | 96k,192k | 9.2M | 10.0 | 3.964 -> 3.928 | 6/6 | 6/6 |
+| fineweb/d192 | 96k,192k | 9.2M | 10.0 | 3.964 -> 3.928 | 6/6 | 6/6 | <!--derived-->
 | fineweb/d384 | 96k,192k | 9.2M | 4.3 | 3.945 -> 3.906 | 6/6 | 6/6 |
 | wt103/d96 | 96k,192k | 9.2M | 21.8 | 3.830 -> 3.785 | 6/6 | 6/6 |
-| wt103/d192 | 192k only | 9.2M | 10.0 | 3.726 (1 point) | n/a | 6/6 |
+| wt103/d192 | 192k only | 9.2M | 10.0 | 3.726 (1 point) | n/a | 6/6 | <!--derived-->
 
-(token counts = max_train_sents x ~48 tokens/passage; NLL = `wkv_deep_nll`, seed sd <=0.009 everywhere.)
+(token counts = max_train_sents x ~48 tokens/passage; NLL = `wkv_deep_nll`, seed sd <=0.009 everywhere.) <!--derived-->
 
 - **Still descending everywhere the slope is measurable** (6/6 per config; wt103/d192 reached only 1 point so no
-  slope). The top-segment slope stays positive (~0.036-0.048 nats/doubling) — no flattening yet.
-- **More params -> lower NLL** at matched tokens (fineweb d96 3.976 > d192 3.928 > d384 3.906), and **wt103 is
+  slope). The top-segment slope stays positive (~0.036-0.045 nats/doubling) — no flattening yet. <!--derived-->
+- **More params -> lower NLL** at matched tokens (fineweb d96 3.976 > d192 3.928 > d384 3.906), and **wt103 is <!--derived-->
   easier than fineweb** (3.785 vs 3.976 at d96) — both expected; the sweep's instrument is behaving sanely.
 - **d96 reached tok/param ~21.8**, right at Chinchilla's ~20 compute-optimal ratio, and is STILL descending — the
   strongest single indicator that the model is genuinely token-limited, not param-limited, in this regime.
 
 ## The instrument cap (why the high-token regime was not reached)
 
-<!--derived-->
 (config/computed values + code line references below, not artifact measurements.)
 
 Every config topped out at exactly **192000 passages** — a configured token-point, not an arbitrary
@@ -74,7 +73,6 @@ holds ~17M passages), so the fix is purely a larger `--n-sentences`.
 
 ## Corrected sweep queued (no-defer)
 
-<!--derived-->
 (planned config values, not artifact measurements.)
 
 Queued on the GPU lane (0 Claude tokens): fineweb/d96, fineweb/d192, wt103/d96 at `--n-sentences 2000000`
@@ -87,3 +85,11 @@ bumped to 2000000 so future stocks are correct. When those land, this becomes th
 Vocab is capped at 2000, so generated samples are mostly `<unk>` — this sweep measures the **NLL scaling trend**, not
 fluency; that is the correct instrument for the token-supply question and not a defect. No fluency/consciousness claim.
 Functional read-outs only.
+
+## Corrections (2026-09-25 claim-check audit)
+
+- "top-segment slope stays positive (~0.036-0.048 nats/doubling)" -> `0.048` -> `0.045` <!--derived--> (the correct
+  upper bound: max per-config `top_slope_mean` across the 4 configs with a measurable slope is 0.0452,
+  `wt103/d96`, in `research/findings/raw/_gencortex_scaling/_aggregate_6seed.json`; rounds to 0.045, not 0.048). <!--derived-->
+  Illustrative range only; does not change the "still descending everywhere, no flattening" claim or any
+  gate/verdict.

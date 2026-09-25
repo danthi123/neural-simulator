@@ -148,7 +148,7 @@ construction:
 - The "slightly more subdued and wistful" and "very sad, somber and melancholy" rewrites carried no strongly
   negative word that the appraisal reads. Both appraised 0.0 on both tone prompts ("The sea is a vast and intricate
   system..."). The affect-free drafts appraised POSITIVE (+0.60, +0.69), so the most neutral candidate was a
-  "subdued" rewrite at 0.0. The `neg` arm (held valence -0.157) released that same candidate. The lesion arm (held
+  "subdued" rewrite at 0.0. The `neg` arm (held valence -0.157) released that same candidate. The lesion arm (held <!--derived-->
   valence 0) must release it too, so neg_gap = 0 on such prompts.
 - The lock rejected most rewrites of the known replies. They dropped dates or names, and one invented "Aged 103 ...
   April 14, 2023". This is the lock working, but it leaves few candidates.

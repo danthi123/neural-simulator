@@ -102,14 +102,12 @@ which counts only the clean + 7-sigma organic degradation sweep. Confusing that 
 organic residual would be exactly the "UNDEFINED, not a score" trap this project's `tools/lab.py` discipline
 warns against, applied to the wrong axis.
 
-<!--derived-->
-
 **Load-bearing (criterion 2), unambiguous, 6/6:** every seed's `clean_real_ON_confident: true` →
-`lesioned_real_ON_confident: false`, `collapsed_to_hedge: true`. The clean balance reads 0.08564659007052086 on
+`lesioned_real_ON_confident: false`, `collapsed_to_hedge: true`. The clean balance reads 0.08564659007052086 on <!--derived-->
 every single seed (the downstream WTA organ's evidence input saturates at 1.0 for any clearly-confident upstream
 margin, host or spiking alike, so a "clearly confident" clean turn is indistinguishable downstream regardless of
 which channel fed it — the two channels only diverge where one crosses the confidence threshold and the other
-does not, exactly the ambiguous-band turns this finding is about) and collapses to 0.01807477725971096 under the
+does not, exactly the ambiguous-band turns this finding is about) and collapses to 0.01807477725971096 under the <!--derived-->
 forced lesion on every seed — this is the SAME lesion mechanism the original de-risk validated,
 reproduced here at the live conversational-response surface (the actual `resp["metacog"]["confident"]` boolean
 and the actual hedge prefix in `resp["answer"]`), not merely an internal composer number.
@@ -206,8 +204,6 @@ counterfactual machinery already built) is reusable to re-verify it without rebu
 
 ## ADDENDUM (2026-09-16, scaffold-retirement wire-in de-risk session)
 
-<!--derived-->
-
 **This finding was orphaned.** It existed only on the never-merged branch `research/metacog-spiking-margin-
 prodflip-verify` (HEAD `09153561d`, parent `551a84b57`, which itself flipped the flag default-ON in-worktree to
 build the code path under test then reverted). `git merge-base --is-ancestor 09153561d HEAD` on `main` returns
@@ -227,9 +223,9 @@ from the same stale backlog entry; `scaffold_retirement_backlog.md` rank 9 is co
 **Is the residual confined to the ambiguous band real traffic mostly avoids?** Re-reading this finding's own
 artifact (`full_run.json`) turn-by-turn: yes, in this sweep, but the answer is close to true by construction,
 not an independent reassurance. All 4 false-confidence-direction turns have BOTH arms' `mean_role_conf` inside
-[0.30, 0.50] — seed42 sigma1.5 (ON 0.450 / OFF 0.336), seed44 sigma0.9 (ON 0.413 / OFF 0.402), seed100 sigma0.9
-(ON 0.442 / OFF 0.396), seed100 sigma2.0 (ON 0.482 / OFF 0.368) — squarely the band `2026-08-27-...recalibration`
-found real confident production traffic mostly sits ABOVE (mrc 0.504–0.615). But the noise sweep that produced
+[0.30, 0.50] — seed42 sigma1.5 (ON 0.450 / OFF 0.336), seed44 sigma0.9 (ON 0.413 / OFF 0.402), seed100 sigma0.9 <!--derived-->
+(ON 0.442 / OFF 0.396), seed100 sigma2.0 (ON 0.482 / OFF 0.368) — squarely the band `2026-08-27-...recalibration` <!--derived-->
+found real confident production traffic mostly sits ABOVE (mrc 0.504–0.615). But the noise sweep that produced <!--derived-->
 these turns is DESIGNED to walk `mean_role_conf` down through exactly this band on its way from clean (~0.6+) to
 clearly-degraded (<0.2) — every turn that could disagree does so somewhere in the middle of that walk almost by
 definition, so "the 4 disagreements are in the band" is closer to a restatement of the sweep's own shape than a

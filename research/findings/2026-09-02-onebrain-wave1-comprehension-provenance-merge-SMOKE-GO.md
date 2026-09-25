@@ -66,11 +66,11 @@ today and explicitly names Wave 1 as the next unbuilt step.
 
 ## The genuinely NEW seam (not in the taxonomy) — found, bisected, fixed
 
-<!--derived-->
 The numbers in this section (through the end of "Why this is a genuinely new seam") come from ad-hoc scratch
-diagnostic scripts run during investigation, not from a saved/cited artifact — reported narratively as the
-reasoning trail that led to the fix, not as claims requiring their own artifact citation. The GATING numbers this
-finding stands on are the cited 3-seed `organread_3seed_smoke.json` table further below.
+diagnostic scripts run during investigation, not from a saved/cited artifact, and are NOT marked `<!--derived-->`
+(they are not a rounding/ratio/mean of a cited artifact value -- they were never saved to one) -- reported
+narratively as the reasoning trail that led to the fix, not as claims requiring their own artifact citation. The
+GATING numbers this finding stands on are the cited 3-seed `organread_3seed_smoke.json` table further below.
 
 The first full 6-organ smoke (seed 42) built cleanly and passed gate (a) [co-residence invariance] for all 6
 organs, but source_provenance's read was DEGENERATE even alone under the wave1 superset config (acc 1.0→0.5,

@@ -59,7 +59,6 @@ the same words. **G3** (anti-hollow) the no-conditioning lesion collapses the se
 
 ## Result (6-seed, `research/findings/raw/_affect_experienced_opponent_gate_6seed.json`) — BOUNDARY
 
-<!--derived-->
 Numbers below are read/rounded from the cited 6seed JSON (`gate_worst_case_recall`, `read_variant_worst_case_recall`,
 `negctrl_worst_case_recall`, `conditioning_window_sweep`, `input_lesion_floor_max`, per-seed `corr_s_c_warriner`).
 
@@ -78,8 +77,8 @@ Numbers below are read/rounded from the cited 6seed JSON (`gate_worst_case_recal
   *elaborated* co-occurrence mechanism (D+B combined, **0.294** <!--derived--> quoted from that finding, not this run).
   So the experience-bound channel is **not a surpass — it is worse** than the co-occurrence channel it was to beat.
 - **The read IS experience-driven (not hollow), it just doesn't separate.** The input-lesion floor is ~silent
-  (max 0.0068) and the no-conditioning lesion (s_c:=0 -> weights collapse to 0) drives the opponent to ZERO for every
-  word — so the intact drive (mean 0.089) exists ONLY because of the conditioning; the mechanism genuinely uses the
+  (max 0.0068) <!--derived--> and the no-conditioning lesion (s_c:=0 -> weights collapse to 0) drives the opponent to ZERO for every
+  word — so the intact drive (mean 0.089) <!--derived--> exists ONLY because of the conditioning; the mechanism genuinely uses the
   experienced-affect channel. It is the channel's SEPARATING power that is absent, not the wiring.
 - **The VALUE channel works while the GATE does not** — a clean dissociation. `corr(acquired s_c, Warriner)` is
   +0.42..+0.52 across the 6 seeds (the conditioning acquires honest signed valence, consistent with DR-2b), yet no read
@@ -156,8 +155,8 @@ production salience gate. This file is additive-only; the controller decides any
 
 ## Anti-cheats
 
-<!--derived-->
-(numbers below restate values from the cited 6seed JSON, or quote the 2026-09-05 finding — see the Result table.)
+(numbers below restate values from the cited 6seed JSON, or quote the 2026-09-05 finding — see the Result table;
+each restated number below carries its own `<!--derived-->` mark.)
 
 - **Warriner-free weights (asserted, not commented):** the reused `selforg_opponent_weights` takes no Warriner argument
   and its assertion (corrupting `s_true` leaves the weights byte-identical) travels with it; Warriner enters ONLY the
@@ -166,18 +165,17 @@ production salience gate. This file is additive-only; the controller decides any
   other fold), so recall is not inflated by a word re-reading its own `s_c`.
 - **The refuted lever is reproduced as an explicit negative control** (the naive co-occurrence learned-magnitude, via
   `build_gate_features`), on the SAME words + seeds — it reads 0.000 here, and the 2026-09-05 finding's best elaborated
-  co-occurrence mechanism (0.294) is quoted as the harder bar the experience-bound channel is below.
-- **The conditioning-level window sweep** isolates the boundary to the experience SOURCE (0.088 best across windows 1-4,
+  co-occurrence mechanism (0.294) is quoted as the harder bar the experience-bound channel is below. <!--derived-->
+- **The conditioning-level window sweep** isolates the boundary to the experience SOURCE (0.088 best across windows 1-4, <!--derived-->
   no bridge) — proving it is not a spiking operating-point artifact.
-- **Load-bearing wiring proof for a negative:** input-lesion floor ~silent (0.0068) + no-conditioning lesion drives the
+- **Load-bearing wiring proof for a negative:** input-lesion floor ~silent (0.0068) + no-conditioning lesion drives the <!--derived-->
   opponent to 0 for all words -> the read is genuinely experience-driven; the separation, not the wiring, is absent.
 - **`tools.lab.void_if`/`undefined_if_empty`** guard the partition size + the affect/neutral split so a degenerate build
   aborts loudly rather than reporting a hollow 0/0.
 
 ## Sources
 
-<!--derived-->
-(the 0.294 below is quoted from the cited 2026-09-05 co-occurrence BOUNDARY finding, not this run's artifact.)
+(the 0.294 below is quoted from the cited 2026-09-05 co-occurrence BOUNDARY finding, not this run's artifact.) <!--derived-->
 
 - Namburi, P., Tye, K.M. et al. (2015, *Nature*), "A circuit mechanism for differentiating positive and negative
   associations" — opposing valence-coding BLA populations bound by conditioning to a REAL unconditioned stimulus
@@ -185,7 +183,7 @@ production salience gate. This file is additive-only; the controller decides any
   valence(differential) distinction, and the embodied-US redirection.
 - Rescorla, R.A. & Wagner, A.R. (1972) — the associative-strength asymptote used for the conditioning `s_c`.
 - `research/findings/2026-09-05-affect-learned-gate-retry-register-confound-BOUNDARY.md` — the co-occurrence-graph
-  channel is register-confounded (best 0.294 at FP=0); named the experience-bound opponent as the surpass this tests.
+  channel is register-confounded (best 0.294 at FP=0); named the experience-bound opponent as the surpass this tests. <!--derived-->
 - `research/findings/2026-08-13-affect-appraisal-origin-self-organizes-from-reinforcement-6seed-GO.md` (DR-2b) — the
   experience-bound conditioning map (concept->valence from ~10 innate primaries) reused here for the opponent weights.
 

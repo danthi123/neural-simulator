@@ -53,9 +53,8 @@ No single-turn flip is claimed (there is none — treat=0, honestly). Making the
 The recommendation above (score open-ended by its DISTRIBUTIONAL lesion metric, not the single-turn decision-diff)
 is now robustly confirmed. The `_followon2_spiking_wta_sampler_derisk` distributional metric — draw-many, then
 plausible-fraction-of-novel — run 6-seed (42/43/44/100/101/102) on the merged main code lands **verdict = GO**.
-<!--derived-->
 Artifact: research/findings/raw/_load_bearing/_followon2_openended_distributional_6seed.json
-- PLAUSIBLE (across all 6 seeds): spiking plausible-frac ~0.337, advantage ~17.2x the random floor (>= 3.0x on
+- PLAUSIBLE (across all 6 seeds): spiking plausible-frac ~0.337, advantage ~17.2x the random floor (>= 3.0x on <!--derived-->
   every seed), spiking/host quality mean ~1.03 (>= 0.7 on every seed) — the spiking draw matches host quality.
 - LESION collapses all seeds: True — ablating the likelihood collapses the plausible-frac (the load-bearing proof);
   the SHUFFLED-graph control also collapses (True), so the effect is the real co-occurrence structure, not noise.

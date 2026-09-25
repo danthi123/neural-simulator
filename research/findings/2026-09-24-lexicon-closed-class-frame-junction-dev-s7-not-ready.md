@@ -67,13 +67,13 @@ followed by "Tom ...", "They ...", "... was": the environment strips punctuation
 right that "the most." is a nominal use. The residual is a sentence boundary the heard input does not carry, plus
 a decision rule that counts six noun-framed occurrences out of 32 as a referent.
 
-**R4 lesion 0.333.** The learned-edge lesion restores the uniform, 10%-jittered start weights (at the drive-matched
+**R4 lesion 0.333.** <!--derived--> The learned-edge lesion restores the uniform, 10%-jittered start weights (at the drive-matched
 scale). One junction fires per occurrence, so a word's drive comes from a few junctions. The jitter does not
 average out; it decides some words for CN at random instead of leaving them to abstain. v2's lesion read 0.0.
 
 **AND smoke.** `and_population` (new, all 10,000 junctions at once: junctions have no lateral or feedback input) finds
 102 violations at the frozen W_J 300, I_TONIC_J -650. 100 of them are one whole column: the junctions whose right
-input is context word 12 ('day'). That afferent fires at 0.233 spikes/step against a median of 0.147 (neuron
+input is context word 12 ('day'). That afferent fires at 0.233 spikes/step against a median of 0.147 (neuron <!--derived-->
 heterogeneity), so it drives its junctions alone. The other 2 are silent pairs. No point of the committed grid (W_J 250-500 x I_TONIC_J
 -550 to -1000) has zero violations; the best is 47. The 64-junction calibration sample could not see an
 afferent-level column. That lapse is logged in research/FAILURE_LOG.md.

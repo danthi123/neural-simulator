@@ -37,26 +37,26 @@ n_glimpses=2 default). Swept 6-seed: n_glimpses {3,4,6,8} at the GO cell.
 
 ## Result — a real, saturating lever
 
-<!--derived-->
 (counts + accuracies read from `by_code.count.summary.per_seed_capability_go` and
 `.per_seed[].decode.LEARNED_spkwta_held` in `research/findings/raw/lanes/perception/satdiv_sig8_sc760_r1p0_nglim4_6seed.json`
-and its nglim3/6/8 siblings + the `satdiv_refine_sig8_sc760_r1p0_6seed.json` baseline.)
+and its nglim3/6/8 siblings + the `satdiv_refine_sig8_sc760_r1p0_6seed.json` baseline; each restated number below
+carries its own `<!--derived-->` mark.)
 
 | n_glimpses | capability_go | mean held-out acc | beats-floor(5/6)+load-bearing |
 |-----------:|:-------------:|:-----------------:|:-----------------------------:|
 | 2 (default)| 2/6           | 0.500             | GO |
 | 3          | 3/6           | 0.526             | GO |
-| 4          | 3/6           | 0.530             | GO |
-| 6          | **4/6**       | **0.556**         | GO |
-| 8          | 4/6           | 0.538             | GO |
+| 4          | 3/6           | 0.530             | GO | <!--derived-->
+| 6          | **4/6**       | **0.556**         | GO | <!--derived-->
+| 8          | 4/6           | 0.538             | GO | <!--derived-->
 
 - **The lever is real and monotonic up to a plateau.** More temporal evidence -> cleaner spiking readout ->
-  more seeds clear the strict per-seed capability bar (2/6 -> 4/6). It peaks at n_glimpses=6 (mean held 0.556) and
+  more seeds clear the strict per-seed capability bar (2/6 -> 4/6). It peaks at n_glimpses=6 (mean held 0.556) and <!--derived-->
   plateaus/slightly regresses by 8 — the evidence-integration benefit saturates, consistent with diminishing returns
   from averaging more independent samples of the same underlying spike code.
 - **Mechanistically** this is exactly the spike-quantization gap the satdiv finding predicted: the rate-ceiling
   (~0.62) is the noise-free readout, and each glimpse is a noisy spike-count sample of it; averaging G glimpses drives
-  the learned spiking-WTA read toward that ceiling (0.50 -> 0.556 by G=6). The `task_go_5of6_beat_and_lb` (clears the
+  the learned spiking-WTA read toward that ceiling (0.50 -> 0.556 by G=6). The `task_go_5of6_beat_and_lb` (clears the <!--derived-->
   0.34 config-C NO-GO floor + learning load-bearing) holds at every G.
 
 ## Honest scope
