@@ -55,6 +55,11 @@ tokens (workflow `wk7t5ig9v`, opus build + opus review). When it merges: carry t
 5. GPU: slot-binder gate (seed 7) STOPPED 03:08 after 6 h 08 min inside arm 1 with no output (prereg AMENDMENT 1: N=404
    impractical; next = per-fact progress/latency logging + small-N latency runs, a small build for its lane). Bake-off
    started 03:08; then SETTLE A3, plastic-mask cupy test.
+   BAKE-OFF RESULT 03:28: both models load and run with headroom (Qwen3.8-27B IQ4_NL+MTP: 2.6 GB free, 68 tok/s short,
+   823 tok/s prompt and 61 tok/s gen at 60K, recall OK; Devstral-Small-2 24B IQ4_XS: 3.5 GB free, 50 tok/s, 1022/26 at
+   60K, recall OK). All 6 agentic tasks FAILED before any model turn: chat-template rejection of Claude Code's system
+   messages (Qwen: 'System message must be at the beginning'; Devstral: 'Only user, assistant and tool roles'). Harness
+   fix + GPU re-run: workflow `wqf40cc45`. default_profile NOT set until an agentic result exists.
    When the bake-off lands: read tools/local_llm/results/summary.md, set tools/local_llm/default_profile.
 6. Keep >= 3 build lanes busy with genuine builds from this list; stock the pool before any idle hold.
 
