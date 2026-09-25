@@ -45,7 +45,7 @@ the unmerged commit. The 18 original seed-101/seed-102 files under `grid/` remai
 
 ## Correction after scoring (2026-09-25 00:40)
 
-One rerun cell, `rerun_s101_s102/sparse_dg_c2_s101.json`, was still running on a pool node when this finding was
+One rerun cell, `research/findings/raw/_ca3_superposed_fact_attractor/rerun_s101_s102/sparse_dg_c2_s101.json`, was still running on a pool node when this finding was
 first scored: the copy scored then ended at the P=50000 checkpoint, and the job wrote its final P=100000 checkpoint at
 00:05. The queue files showed no pending CA3 line, but a running job is not in the queue, so the completeness check
 missed it. The complete file now replaces the partial one in both `rerun_s101_s102/` and
