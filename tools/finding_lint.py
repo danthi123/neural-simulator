@@ -492,8 +492,7 @@ def lint_one(finding_path, extra_paths, do_fix, quiet, include_untracked):
                         "mark the specific derived numbers in their own cells, not (almost) the whole doc"
                         % (checked, total))
         if cc_result.get("too_broad"):
-            probs.append("CITATIONS TOO BROAD: %s (chance-match %.0f%%)"
-                         % (claim_check.TOO_BROAD_MSG, 100 * cc_result["chance"]))
+            probs.append("chance-match %.0f%% -- %s" % (100 * cc_result["chance"], claim_check.TOO_BROAD_MSG))
         probs = probs or ["a measurement is unsupported by the cited artifacts (see claim_check)"]
         blocking_gates.append({"name": "claim-check", "class_id": "G2", "problems": probs, "kind": "claim"})
     if not g4_ok:
