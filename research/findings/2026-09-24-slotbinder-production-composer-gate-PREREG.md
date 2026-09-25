@@ -242,3 +242,87 @@ variance (a different 32-fact sample per seed) -- comfortably inside a single qu
 prereg-amendments-before-runs discipline; the queued commands are added by `tools/gpu_queue.sh add` right after
 this commit, not run ahead of it. (The N=8/32/128 sizing runs item (2) registered were themselves queued and
 landed before this completion -- see the artifact paths and timestamps above.)
+
+## AMENDMENT 3 (2026-09-25, review fix round) -- the N=404 dense-step model + 3090 time projection (item 4), and
+the prepared sparse_activity_step smoke/6-seed commands (item 5)
+
+**Why this section exists.** research/FAILURE_LOG.md's 2026-09-25 row and this runner's own comments/help text
+(`_slotbinder_production_gate.py` around the `run_arm` docstring and the `--sparse-step` CLI flag) already CITED
+"AMENDMENT 3" before this section was written -- an independent review of the event-driven-step branch caught
+the gap (the citation pointed at nothing, and at the WRONG document: FAILURE_LOG's parenthetical named
+`research/findings/2026-09-25-slotbinder-event-driven-step-bit-identical-numpy.md`, a different finding, not
+this prereg). This section is what those citations now resolve to; the stale parenthetical is corrected in the
+same commit.
+
+**Item (4): the N=404 dense-step count and its 3090 time projection.**
+`research/runners/_slotbinder_gate_step_model.py` counts the slotbinder arm's simulation steps EXACTLY from the
+fixed protocol (5 `_store_pair` calls/fact x `teach_steps`=40 for teach; `SlotBinderComposer._match`'s read
+count x `retr_steps`=40 for each intact query, the moat probe and the mismatch probe; N reads x 40 for the
+post-ablation re-query, since every ablated query scans the whole corpus) and cross-checks it against the
+measured N=8/32/128 cupy sizing artifacts (`research/findings/raw/_slotbinder_production_gate/sizing/seed7_n{8,
+32,128}.json`) by dividing each artifact's measured phase seconds by the model's step count for that phase --
+agreement within the teach/query per-step-cost difference across all three sizes confirms the model. Run and
+committed this section (`research/findings/raw/_slotbinder_sparse_step/step_model_seed7.json`,
+`.prov.json` sidecar):
+
+```
+CUDA_VISIBLE_DEVICES="" SIM_BACKEND=numpy .venv/bin/python -m research.runners._slotbinder_gate_step_model
+```
+
+At **N=404** (the full corpus, this document's fixed FACT SCALE) the model gives **teach 80,800 / intact-query
+1,877,000 / post-ablation-re-query 6,560,960 / total 8,518,760** simulation steps (all read from
+`step_model_seed7.json:per_n.404`, no decimals to round) -- teach is under 1% of the arm's own steps, matching
+FAILURE_LOG's reading of the AMENDMENT-1 stall as "most likely in the query loops", not the teach. Applying the
+mean per-step cost measured on cupy at this exact topology (K=2020, the L3 latency de-risk's 6-seed GO artifacts
+`research/findings/raw/_slotbinder_l3_latency_derisk_cupy/latency_f32_s{42,43,44,100,101,102}.json`, each
+seed's moat-probe latency over its 80 steps): 8.81 / 9.2 / 7.85 / 8.31 / 8.51 / 8.86 ms/step, mean ~8.59 ms/step
+<!--derived-->, `step_model_seed7.json:l3_ms_per_step_mean`. Projected slotbinder-arm-alone wall-clock at N=404
+on the CURRENT (dense, unchanged) step, on a 3090: **~20.3 h** <!--derived--> (`total_steps x l3_ms_per_step_mean`,
+read directly as `step_model_seed7.json:n404_dense_cupy_projection_h`), of which the teach
+phase alone projects to ~11.6 min <!--derived--> (`n404_dense_cupy_teach_projection_min`). AMENDMENT 1's kill
+(6 h 08 min = 368 min, still inside the slotbinder arm, no artifact written) is therefore consistent with the
+run having reached roughly 30% of its own projected total when stopped -- a live-but-slow run inside the query
+phase, not evidence of a hang. This projection is a MEASURE-AND-STATE of the CURRENT dense step; it does not by
+itself make N=404 practical, and does not change this document's chosen N=32 for the 6-seed battery (AMENDMENT
+2) or its GO criteria.
+
+**Item (5): the event-driven step exists; the smoke and 6-seed commands with it are PREPARED, not yet run.**
+Independently of this gate, `cfg.sparse_activity_step` (default off; sim/config.py, sim/bridge.py) was verified
+BIT-IDENTICAL to the unchanged dense step on numpy for the SlotBinder's own bridge topology
+(`tests/test_slotbinder_sparse_step_equivalence.py`;
+`research/findings/2026-09-25-slotbinder-event-driven-step-bit-identical-numpy.md`), and wired into this runner
+as `--sparse-step` (`run_arm(..., sparse_step=True)` sets `BRAIN_SLOTBINDER_SPARSE_STEP=1` for the slotbinder
+arm only). **No cupy equivalence or timing run for this flag exists yet** -- that finding's own open issue,
+unchanged by this amendment. Two commands are PREPARED here (their exact invocations, not their results) so
+the next GPU session can run them without re-deriving the protocol; neither has been run against cupy yet, and
+neither is a criterion this document gates on:
+
+```
+# (a) extend the bit-identity check past numpy, at a size cheap enough to run inline before trusting the flag
+# on GPU (SIM_BACKEND is read at import time by both the equivalence runner and the production gate -- set it
+# in the environment, do not rely on the module's numpy default):
+N=8
+SIM_BACKEND=cupy .venv/bin/python -m research.runners._slotbinder_sparse_step_equivalence \
+    --n-facts $N --out research/findings/raw/_slotbinder_sparse_step/equivalence_seed7_n${N}_cupy.json
+
+# (b) a single-seed GPU smoke of the production-gate slotbinder arm WITH the flag, at the already-chosen N=32
+# (AMENDMENT 2), dev seed 7, before spending any 6-seed budget on it:
+N=32
+SIM_BACKEND=cupy .venv/bin/python -m research.runners._slotbinder_production_gate \
+    --seed 7 --n-facts $N --fanout 32 --renderer stub --sparse-step \
+    --out research/findings/raw/_slotbinder_production_gate/sparse_step/seed7_n${N}.json
+
+# (c) the 6-seed battery this document already registers (AMENDMENT 2), WITH --sparse-step, held pending (a)
+# and (b) both passing -- this is the first proposed cupy use of the flag, so it is not queued by this
+# amendment, only written down for whoever runs it next:
+for SEED in 42 43 44 100 101 102; do
+  until bash tools/mem_ok.sh 12 4; do sleep 30; done
+  bash tools/gpu_queue.sh add "SIM_BACKEND=cupy .venv/bin/python -m research.runners._slotbinder_production_gate \
+      --seed $SEED --n-facts 32 --fanout 32 --renderer stub --sparse-step \
+      --out research/findings/raw/_slotbinder_production_gate/sparse_step/seed${SEED}_n32.json"
+done
+```
+
+Command (c) is deliberately NOT queued by this commit (same discipline as AMENDMENT 2's own battery: registered
+here, queued separately, not run ahead of the prereg) -- it additionally waits on (a)/(b), which AMENDMENT 2's
+original (non-sparse) battery did not need to.

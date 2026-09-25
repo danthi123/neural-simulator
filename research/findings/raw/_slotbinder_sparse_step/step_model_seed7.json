@@ -1,0 +1,147 @@
+{
+  "seed": 7,
+  "teach_steps_per_pair": 40,
+  "retr_steps_per_read": 40,
+  "per_n": {
+    "8": {
+      "n_facts": 8,
+      "teach_steps": 1600,
+      "intact_reads": 53,
+      "moat_reads": 8,
+      "mismatch_reads": 9,
+      "ablation_reads": 72,
+      "query_steps": 2800,
+      "ablation_steps": 2880,
+      "total_steps": 7280,
+      "teach_share": 0.21978021978021978,
+      "query_share": 0.38461538461538464,
+      "ablation_share": 0.3956043956043956,
+      "measured_cupy": {
+        "artifact": "research/findings/raw/_slotbinder_production_gate/sizing/seed7_n8.json",
+        "teach_s": 2.5693235397338867,
+        "query_s": 3.0218148231506348,
+        "ablation_s": 3.0770342350006104,
+        "arm_wall_s": 8.668172597885132,
+        "ms_per_step_teach": 1.6058272123336792,
+        "ms_per_step_query": 1.0792195796966553,
+        "ms_per_step_ablation": 1.0684146649307675
+      }
+    },
+    "32": {
+      "n_facts": 32,
+      "teach_steps": 6400,
+      "intact_reads": 565,
+      "moat_reads": 32,
+      "mismatch_reads": 35,
+      "ablation_reads": 1024,
+      "query_steps": 25280,
+      "ablation_steps": 40960,
+      "total_steps": 72640,
+      "teach_share": 0.0881057268722467,
+      "query_share": 0.34801762114537443,
+      "ablation_share": 0.5638766519823789,
+      "measured_cupy": {
+        "artifact": "research/findings/raw/_slotbinder_production_gate/sizing/seed7_n32.json",
+        "teach_s": 20.618388891220093,
+        "query_s": 38.875067949295044,
+        "ablation_s": 51.64184856414795,
+        "arm_wall_s": 111.13530540466309,
+        "ms_per_step_teach": 3.2216232642531395,
+        "ms_per_step_query": 1.5377795866018609,
+        "ms_per_step_ablation": 1.2607873184606433
+      }
+    },
+    "128": {
+      "n_facts": 128,
+      "teach_steps": 25600,
+      "intact_reads": 6418,
+      "moat_reads": 130,
+      "mismatch_reads": 0,
+      "ablation_reads": 16512,
+      "query_steps": 261920,
+      "ablation_steps": 660480,
+      "total_steps": 948000,
+      "teach_share": 0.0270042194092827,
+      "query_share": 0.2762869198312236,
+      "ablation_share": 0.6967088607594937,
+      "measured_cupy": {
+        "artifact": "research/findings/raw/_slotbinder_production_gate/sizing/seed7_n128.json",
+        "teach_s": 99.52799129486084,
+        "query_s": 788.6614816188812,
+        "ablation_s": 1757.3765606880188,
+        "arm_wall_s": 2645.566033601761,
+        "ms_per_step_teach": 3.8878121599555016,
+        "ms_per_step_query": 3.0110777398399557,
+        "ms_per_step_ablation": 2.6607566628634007
+      }
+    },
+    "404": {
+      "n_facts": 404,
+      "teach_steps": 80800,
+      "intact_reads": 46521,
+      "moat_reads": 404,
+      "mismatch_reads": 0,
+      "ablation_reads": 164024,
+      "query_steps": 1877000,
+      "ablation_steps": 6560960,
+      "total_steps": 8518760,
+      "teach_share": 0.00948494851363344,
+      "query_share": 0.22033723217933127,
+      "ablation_share": 0.7701778193070353,
+      "measured_cupy": null
+    }
+  },
+  "l3_cupy_per_step_at_k2020": [
+    {
+      "seed": 42,
+      "artifact": "research/findings/raw/_slotbinder_l3_latency_derisk_cupy/latency_f32_s42.json",
+      "K": 2020,
+      "nnz": 28603200,
+      "moat_probe_s": 0.7050509452819824,
+      "ms_per_step": 8.81313681602478
+    },
+    {
+      "seed": 43,
+      "artifact": "research/findings/raw/_slotbinder_l3_latency_derisk_cupy/latency_f32_s43.json",
+      "K": 2020,
+      "nnz": 28603200,
+      "moat_probe_s": 0.7357485294342041,
+      "ms_per_step": 9.196856617927551
+    },
+    {
+      "seed": 44,
+      "artifact": "research/findings/raw/_slotbinder_l3_latency_derisk_cupy/latency_f32_s44.json",
+      "K": 2020,
+      "nnz": 28603200,
+      "moat_probe_s": 0.6276888847351074,
+      "ms_per_step": 7.846111059188843
+    },
+    {
+      "seed": 100,
+      "artifact": "research/findings/raw/_slotbinder_l3_latency_derisk_cupy/latency_f32_s100.json",
+      "K": 2020,
+      "nnz": 28603200,
+      "moat_probe_s": 0.6647317409515381,
+      "ms_per_step": 8.309146761894226
+    },
+    {
+      "seed": 101,
+      "artifact": "research/findings/raw/_slotbinder_l3_latency_derisk_cupy/latency_f32_s101.json",
+      "K": 2020,
+      "nnz": 28603200,
+      "moat_probe_s": 0.6811044216156006,
+      "ms_per_step": 8.513805270195007
+    },
+    {
+      "seed": 102,
+      "artifact": "research/findings/raw/_slotbinder_l3_latency_derisk_cupy/latency_f32_s102.json",
+      "K": 2020,
+      "nnz": 28603200,
+      "moat_probe_s": 0.7089285850524902,
+      "ms_per_step": 8.861607313156128
+    }
+  ],
+  "l3_ms_per_step_mean": 8.590110639731089,
+  "n404_dense_cupy_projection_h": 20.326969698143223,
+  "n404_dense_cupy_teach_projection_min": 11.568015661504534
+}

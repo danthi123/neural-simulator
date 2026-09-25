@@ -1139,15 +1139,27 @@ class SimulationBridge:
 
     def _sparse_gain_index_sets(self):
         """(nz, pos): cached ascending indices of synapses with plasticity gain != 0 (the only ones the gated decay
-        changes) and gain > 0 (the only ones the gated clip touches). Recomputed when the gain array object, nnz, or
-        _plasticity_gain_version (bumped by every in-place gain writer in this class) changes."""
+        changes) and gain > 0 (the only ones the gated clip touches).
+
+        SELF-HEALING against staleness, not just version-gated: `_plasticity_gain_version` (bumped by
+        set_plasticity_gate / set_global_plasticity_gain) is a fast pre-check, but it is NOT the correctness
+        mechanism, because ~40 research/runners sites write `cp_plasticity_rate_gain` in place directly
+        (`g[:] = 0.0`, `g[idx] = 1.0`, `g[:] = saved`) without going through either setter, so the version
+        counter never bumps for them and the dispatch guard cannot see it either (it only checks config flags).
+        A version-only cache would then serve a stale index set after such a write (reproduced: freeze all
+        gains in place, run steps, open one gate in place, run more steps -> the sparse and dense paths
+        diverge). So every call also compares the CONTENTS of the gain array against the snapshot taken at the
+        last cache build (one O(nnz) equality read, versus the ~20 dense passes this flag exists to avoid) and
+        rebuilds on any mismatch, in-place write or not. See tests/test_sparse_gain_index_sets_self_heals.py."""
         nnz = self.cp_connections.nnz
         g = self._ensure_gate_capacity("cp_plasticity_rate_gain", nnz)
+        gs = g[:nnz]
         key = (nnz, getattr(self, "_plasticity_gain_version", 0))
         cache = getattr(self, "_sparse_gain_cache", None)
-        if cache is None or cache[0] is not g or cache[1] != key:
-            gs = g[:nnz]
-            cache = (g, key, cp.flatnonzero(gs != 0.0), cp.flatnonzero(gs > 0.0))
+        stale = (cache is None or cache[0] is not g or cache[1] != key
+                 or gs.shape != cache[4].shape or not bool(cp.array_equal(gs, cache[4])))
+        if stale:
+            cache = (g, key, cp.flatnonzero(gs != 0.0), cp.flatnonzero(gs > 0.0), gs.copy())
             self._sparse_gain_cache = cache
         return cache[2], cache[3]
 

@@ -11,9 +11,11 @@ Pinned here:
      after the zeroed-synapse ablation, every answer (patient, agent, yes/no, attribute, describe), final state;
   3. seed 7, N=8 REAL day_33 facts, the production gate's own slotbinder-arm protocol (teach, every query, moat,
      mismatch, ablation re-query) -- skipped only when the machine-local live bundle is absent;
-  4. seed 7, N=32 real facts, same protocol -- RUN_SLOW_TESTS=1 (the unchanged path takes ~30 min on numpy;
-     the committed artifact research/findings/raw/_slotbinder_sparse_step/equivalence_seed7_n8_n32.json is
-     that run);
+  4. seed 7, N=32 real facts, same protocol -- RUN_SLOW_TESTS=1 (the FULL 32-teach/32-query run this test
+     performs takes ~30 min on numpy and has not been run; the committed artifact
+     research/findings/raw/_slotbinder_sparse_step/equivalence_seed7_n32_partial.json is a PARTIAL run at this
+     N=32 topology -- only 8 of the 32 facts were taught and queried [`--teach-facts 8 --queries 8`], for
+     timing, not this test's full coverage);
   5. the comparison CAN FAIL: a sabotaged event-driven decay is detected;
   6. flag-off is the default, and the dispatch guard refuses configurations it was not verified in.
 """
@@ -60,18 +62,45 @@ def test_flag_off_is_the_default():
 
 
 def test_dispatch_guard_refuses_unverified_features():
+    """Every config-level exclusion in _sparse_activity_step_can_dispatch, individually: turning ONE on (all
+    others at their verified-True baseline) must refuse dispatch. Mutation check (2026-09-25 fix round): deleting
+    ANY single exclusion below from the guard still passes every OTHER assertion in this test, so each one is
+    independently load-bearing, not merely collectively sufficient."""
     b = build_binder_bridge(3, K=4, KF=6, sparse_step=True)
     cfg = b.core_config
     assert b._sparse_activity_step_can_dispatch(cfg) is True
     for attr, val in (("hebbian_symmetric", True), ("enable_branchless_plasticity", True),
                       ("enable_short_term_plasticity", True), ("deterministic_transpose_matvec", True),
-                      ("enable_coincidence_detection", True), ("hebbian_rate_window", True)):
+                      ("enable_coincidence_detection", True), ("hebbian_rate_window", True),
+                      ("enable_structural_plasticity", True), ("enable_neuromodulator_subsystem", True),
+                      ("enable_inhibitory_stdp", True), ("enable_gabab", True),
+                      ("enable_graded_dendritic_plateau", True), ("enforce_plastic_mask_in_hebbian", True)):
         old = getattr(cfg, attr)
         setattr(cfg, attr, val)
         try:
             assert b._sparse_activity_step_can_dispatch(cfg) is False, attr
         finally:
             setattr(cfg, attr, old)
+
+
+def test_dispatch_guard_refuses_unverified_bridge_state():
+    """The dispatch guard also excludes on BRIDGE-level state the event-driven path cannot honor: it reads raw
+    `cp_connections.data` directly and has no code to apply a per-synapse TRANSMISSION gain, a graded-synapse
+    routing mask, or a dendritic-source-activity gate, so any of those being present must refuse dispatch
+    (2026-09-25 fix round -- the reviewed test file only exercised config-level exclusions, and the guard's own
+    transmission-gain and neuromodulator-synaptic-gain exclusions are load-bearing precisely because the
+    event-driven path ignores them, not because they are merely unusual configurations)."""
+    b = build_binder_bridge(3, K=4, KF=6, sparse_step=True)
+    cfg = b.core_config
+    assert b._sparse_activity_step_can_dispatch(cfg) is True
+    for attr in ("cp_transmission_gain", "cp_graded_synapse_mask", "cp_dendritic_source_activity"):
+        old = getattr(b, attr, None)
+        assert old is None, f"test assumption violated: {attr} was not None on the freshly built bridge"
+        setattr(b, attr, np.ones(1, dtype=np.float32))
+        try:
+            assert b._sparse_activity_step_can_dispatch(cfg) is False, attr
+        finally:
+            setattr(b, attr, old)
 
 
 def test_lockstep_per_step_bit_identity_teach_and_read():

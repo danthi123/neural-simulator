@@ -107,10 +107,21 @@ exact.
 Both rows: `sparse_activity_step_dispatches: true` for the "on" path and `false` for "off" (the guard is doing
 what it says), and every one of the 9 bit-comparisons (`thresholds`, `weights_after_teach`, `intact_answers`,
 `intact_reads`, `probe_answers`, `weights_after_queries`, `final_state`, `ablation_answers`,
-`weights_after_ablation`) reads `true`. The speedup GROWS with N (7.7x -> 17.1x teach) because the dense path's
-cost is `O(nnz)` per step regardless of how few neurons fired, while the event-driven path's cost tracks the
-(roughly N-independent, ~20-neuron) firing slot -- consistent with the mechanism, not just a coincidence of one
-run.
+`weights_after_ablation`) reads `true`. The speedup GROWS with N (7.7x -> 17.1x teach; 9.6x -> 16.9x overall) --
+that direction is safe: the dense path's cost is `O(nnz)` per step, so a 4x increase in nnz (N=8 -> 32-topology)
+costs the dense path ~3.94x (4.96657 -> 19.5767 ms/step), consistent with `O(nnz)`. **The event-driven path's
+cost is NOT N-independent, only sub-linear in nnz**: its own overall ms/step rises 0.517288 -> 1.15849 (~2.2x
+for that same 4x increase in nnz), and its per-fact teach time WITHIN the N=8 run climbs monotonically across
+the 8 facts (0.0859 -> 0.2119 s, ~2.5x), a trend the dense path's per-fact times do not show (0.9408-1.0635 s
+across all 8 facts, flat within noise) -- this residual is UNEXPLAINED by this finding and not investigated
+further here. Two
+methodological limits on the >=7x headline itself (which the measured numbers do support): each size is ONE
+sequential off-then-on run on a shared, loaded host, not repeated trials, so run-to-run variance at either N is
+uncharacterized; and `SlotBinderComposer(sparse_step=True)` bundles THREE changes on this private bridge --
+the event-driven step measured here, `enable_reward_modulation=False` (which also drops an all-`nnz`
+eligibility-trace decay every step, inert on this bridge's actual dynamics but still removed work), and the
+event-driven helpers' own read-side accumulation -- and this measurement does not decompose the speedup between
+them.
 
 `tests/test_slotbinder_sparse_step_equivalence.py::test_the_comparison_can_fail` sabotages the event-driven
 decay (monkeypatches `_sparse_gain_index_sets` to return empty index sets, i.e. "decay nothing") and confirms
@@ -119,11 +130,16 @@ fail in their failing direction, not just able to pass.
 
 ## What this does not cover
 
-- **cupy is untested for bit-identity.** The transpose matvec is cuSPARSE's atomic scatter in BOTH paths on
-  GPU, so summation order was already run-to-run nondeterministic there before this change; the dispatch guard
-  does not depend on backend, but no cupy equivalence run backs this finding. GPU was unavailable this session
-  (a local-model bake-off held the only GPU) -- a cupy equivalence + timing pass is the natural next step before
-  this flag is turned on for a GPU production-gate run.
+- **cupy is untested for bit-identity OR speed.** The transpose matvec is cuSPARSE's atomic scatter in BOTH
+  paths on GPU, so summation order was already run-to-run nondeterministic there before this change; the
+  dispatch guard does not depend on backend, but no cupy equivalence or timing run backs this finding. GPU was
+  unavailable this session (a local-model bake-off held the only GPU) -- a cupy equivalence + timing pass is the
+  natural next step before this flag is turned on for a GPU production-gate run (prepared, not yet run:
+  `research/findings/2026-09-24-slotbinder-production-composer-gate-PREREG.md` AMENDMENT 3). The event-driven
+  helpers also add per-step HOST syncs the dense path does not have (`_sparse_csr_rows`'s `int(bounds[-1])`,
+  `_sparse_rows_state`'s `cp.flatnonzero`) -- free on numpy (already host-side), but a device->host sync on
+  cupy, so the numpy speedups measured above should NOT be assumed to transfer to GPU; they may be smaller
+  there, or in principle even negative at small firing counts, until actually measured.
 - **N=404 is not measured with this path.** The speedups above are measured at N=8 and N=32-equivalent nnz; they
   are not extrapolated to N=404 here. `research/FAILURE_LOG.md` 2026-09-25 already established that N=404's cost
   is dominated by query/ablation reads (`O(N)` scan per query x `N` queries in `SlotBinderComposer._match`, plus

@@ -1,5 +1,10 @@
 """_slotbinder_step_cost_profile.py -- where one SlotBinder simulation step's time goes, on the REAL built bridge
-(2026-09-25; the profile behind research/findings/2026-09-25-slotbinder-event-driven-step-bit-identical-numpy.md).
+(2026-09-25). A per-operation timing profiler for the dense step, meant to break down the cost
+research/findings/2026-09-25-slotbinder-event-driven-step-bit-identical-numpy.md's event-driven step removes --
+NOT its measurement instrument (that finding's own numbers come from
+research/runners/_slotbinder_sparse_step_equivalence.py, and it does not cite this file). No committed output
+artifact exists for this profiler yet (2026-09-25 review fix round: the prior docstring's "the profile behind"
+wording overclaimed a result that was never run to an artifact).
 
 Two measurements on a real seed-S N-fact binder (the production gate's own sampler, fanout 32):
   1. the bridge's own step profiler (GPUConfig.enable_step_profiler) over a short teach and one query: the share
