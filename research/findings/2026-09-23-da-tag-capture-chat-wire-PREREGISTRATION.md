@@ -427,16 +427,25 @@ else merged since" -- the identical class Amendment 2 fixed once (a +55/-1 diff)
 
 **What this does NOT show.** It does not show the OFF path is broken, and it does not show it is fine -- it is
 UNDEFINED under the current instrument. Re-pinning to a fresher SHA only defers the same recurrence to the next
-time this check is run against a still-moving `main`. A durable fix (not built here, scope discipline / one
-branch should not also rebuild a shared research-runner pattern) would diff against `git revert` of just the
-feature's own commits applied to CURRENT HEAD -- a self-updating counterfactual immune to unrelated history --
-and have `offcheck_worker` preserve the raw reply diff (not only its sha256) so a future mismatch is
-diagnosable without a full two-tree re-run.
+time this check is run against a still-moving `main`. The durable fix is diffing against `git revert` of just
+the feature's own commits applied to CURRENT HEAD -- a self-updating counterfactual immune to unrelated history
+-- and is NOT built here (scope discipline: a byte-identical-off check that self-derives its own counterfactual
+pin is a pattern shared by every `_*_offcheck*`-style runner in this repo, not something to rebuild ad hoc on
+one branch). **The DIAGNOSABILITY half IS built** (same commit as this amendment's data):
+`_offcheck_first_diff(pinned_replies, branch_replies)` in `_da_tag_capture_chat_probe.py` -- on a mismatch,
+`offcheck()` now keeps both trees' full turn-by-turn replies (previously popped unconditionally) plus a
+`first_diff` field naming the first differing turn's index and both sides' content, so a FUTURE mismatch (at a
+fresh pin, or once the counterfactual fix above lands) is diagnosable from the committed JSON alone, without a
+full two-tree re-run. On a match the replies are still popped (the sha256 already proves equality). Proven both
+directions in `--selftest` (identical lists -> `None`; a real difference -> the correct index + content;
+an extra turn on one side -> `None` on the other, not a crash) -- 34/34 checks pass. This branch's OWN
+`offcheck.json` (Amendment 4's data, above) predates this fix and does not carry `first_diff`; a future re-run
+at any pin will.
 
 **What this amendment does NOT change:** the gates, arms, LTM-ON registration, or `ordinary_fact_flip_forgetting`
-field from Amendments 1-3 -- only the offcheck's status, from PENDING to ATTEMPTED-FAILED-UNDEFINED, and a new
-FAILURE_LOG entry. No `sim/` edit, no default flipped, no `research/runners/_da_tag_capture_chat_probe.py` edit
-in this amendment (the pin/preservation fix above is a candidate, not built).
+field from Amendments 1-3, or the offcheck's arms/gates/pin -- only the offcheck's status (PENDING to
+ATTEMPTED-FAILED-UNDEFINED), a new FAILURE_LOG entry, and `offcheck()`'s own diagnosability on a future
+mismatch. No `sim/` edit, no default flipped, no gate/arm/threshold from Amendments 1-3 touched.
 
 **Governs:** any reader of this document's byte-identical-off status -- it is NOT verified at any pin as of this
 amendment, and a future `--offcheck` run must be read against this amendment's stale-pin caution, not treated as

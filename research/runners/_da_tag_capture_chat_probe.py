@@ -356,6 +356,20 @@ print(hashlib.sha256(json.dumps([(p, q, w.real, w.imag) for (p, q, w) in comp.st
     return r.stdout.strip() or ("ERR " + r.stderr[-500:])
 
 
+def _offcheck_first_diff(pinned_replies, branch_replies):
+    """The index + content of the first reply that differs between the two trees' turn-by-turn reply lists (a
+    per-index compare over the LONGER length; an extra turn on one side reads `None` on the other). None if the
+    lists are equal. Pulled out of `offcheck()` so this diffing logic (not the git/subprocess machinery around
+    it) can be selftested directly."""
+    n = max(len(pinned_replies), len(branch_replies))
+    for i in range(n):
+        p = pinned_replies[i] if i < len(pinned_replies) else None
+        b = branch_replies[i] if i < len(branch_replies) else None
+        if p != b:
+            return {"turn_index": i, "pinned": p, "branch": b}
+    return None
+
+
 def offcheck(pinned_sha, out, ltm="off"):
     if ltm == "off":
         os.environ["BRAIN_LTM_SHIP_DEFAULT"] = "0"     # both trees; the workers inherit it (declared, as run_seed)
@@ -369,6 +383,7 @@ def offcheck(pinned_sha, out, ltm="off"):
         os.makedirs(os.path.join(pin, "data"), exist_ok=True)
         os.symlink(os.path.realpath(os.path.join(_REPO, "data", "corpus")), os.path.join(pin, "data", "corpus"))
         res = {"pinned_sha": pinned_sha, "branch_repo": _REPO, "ltm": ltm}
+        raw_replies = {}
         for tag, repo in (("pinned", pin), ("branch", _REPO)):
             o = os.path.join(td, tag + ".json")
             r = subprocess.run([sys.executable, "-u", os.path.abspath(__file__), "--offcheck-worker", repo, o],
@@ -376,14 +391,26 @@ def offcheck(pinned_sha, out, ltm="off"):
             if r.returncode != 0 or not os.path.exists(o):
                 raise RuntimeError("offcheck worker %s failed: %s" % (tag, r.stderr[-2000:]))
             res[tag] = json.load(open(o))
-            res[tag].pop("replies", None)
-            res[tag + "_ledger_scenario_sha256"] = _ledger_scenario_hash(repo)
+            raw_replies[tag] = res[tag].pop("replies", None)   # popped from `res` unconditionally; RE-ATTACHED
+            res[tag + "_ledger_scenario_sha256"] = _ledger_scenario_hash(repo)   # below IFF the shas mismatch
         res["replies_identical"] = res["pinned"]["replies_sha256"] == res["branch"]["replies_sha256"]
         res["store_identical"] = res["pinned"]["store_sha256"] == res["branch"]["store_sha256"]
         res["v3_ledger_scenario_identical"] = (res["pinned_ledger_scenario_sha256"]
                                               == res["branch_ledger_scenario_sha256"])
         res["byte_identical_off"] = bool(res["replies_identical"] and res["store_identical"]
                                          and res["v3_ledger_scenario_identical"])
+        # DIAGNOSABILITY (2026-09-24, Amendment 4 candidate fix): a mismatch used to be undiagnosable without a
+        # full, expensive two-tree re-run -- the raw replies were popped unconditionally, so a `replies_identical:
+        # false` verdict carried no way to tell WHICH turn differed or by what content. On a mismatch, keep both
+        # trees' full replies AND the index/content of the first turn that differs (a per-turn compare over the
+        # shorter list; an extra turn in one tree is reported at its own index with `None` on the other side).
+        # On a match, still pop them (the sha256 already proves equality; no need to bloat the committed artifact).
+        if not res["replies_identical"] and raw_replies.get("pinned") is not None and raw_replies.get("branch") is not None:
+            res["pinned"]["replies"] = raw_replies["pinned"]
+            res["branch"]["replies"] = raw_replies["branch"]
+            fd = _offcheck_first_diff(raw_replies["pinned"], raw_replies["branch"])
+            if fd is not None:
+                res["first_diff"] = fd
     os.makedirs(os.path.dirname(os.path.abspath(out)), exist_ok=True)
     json.dump(res, open(out, "w"), indent=2)
     print(json.dumps(res, indent=2))
@@ -524,6 +551,20 @@ def selftest():
         agg = aggregate(_td)
         checks["aggregate: re-grades a stale stored-GO row to the current UNDEFINED verdict"] = \
             agg["seed_verdicts"][900] == "UNDEFINED" and agg["seed_verdicts"][900] != stale["gates"]["seed_verdict"]
+    # _offcheck_first_diff (Amendment 4 candidate fix, 2026-09-24): a mismatch must be DIAGNOSABLE (which turn,
+    # what content) without a full two-tree re-run. Both directions: identical lists -> None (never falsely
+    # flags a diff); a real difference -> the correct index + both sides' content, including the "one tree ran
+    # an extra turn" case (index past the shorter list's end reads None on that side, not an IndexError).
+    same = [{"a": 1}, {"a": 2}, {"a": 3}]
+    checks["offcheck first_diff: identical lists -> None"] = _offcheck_first_diff(same, list(same)) is None
+    diff_at_1 = [{"a": 1}, {"a": 2}, {"a": 3}]
+    diff_at_1b = [{"a": 1}, {"a": 99}, {"a": 3}]
+    fd = _offcheck_first_diff(diff_at_1, diff_at_1b)
+    checks["offcheck first_diff: finds the first differing turn, both sides' content"] = \
+        fd == {"turn_index": 1, "pinned": {"a": 2}, "branch": {"a": 99}}
+    fd_extra = _offcheck_first_diff([{"a": 1}], [{"a": 1}, {"a": 2}])
+    checks["offcheck first_diff: an extra turn on one side reads None on the other, not a crash"] = \
+        fd_extra == {"turn_index": 1, "pinned": None, "branch": {"a": 2}}
     for k, v in checks.items():
         print("  [%s] %s" % ("PASS" if v else "FAIL", k))
     ok = all(checks.values())
