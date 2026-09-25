@@ -14,9 +14,19 @@ not_surface). Proves:
 """
 import os
 
-import pytest
+# `webapp.affect_drives_chat` imports `research.runners._graded_affect_attractor_derisk`, which imports the
+# `research.runners` package -- the automatic provenance door (research/runners/__init__.py). That import is
+# what actually latches the door's `_ENABLED` flag (read once, at first import, from `SIM_NO_PROVENANCE`), so it
+# must be disabled BEFORE this module-level import, exactly like tests/test_seam_contracts.py does for its own
+# import of the same package -- otherwise this file collected ahead of test_seam_contracts.py (alphabetically,
+# "affect" < "seam") leaves the door latched ENABLED in `sys.modules` for the rest of the session, and that
+# test's `assert not prov_door._ENABLED` fails even though ITS OWN import guard is correct (a cached module is
+# not re-executed, so the guard only protects the FIRST import in the process).
+os.environ.setdefault("SIM_NO_PROVENANCE", "1")
 
-from webapp import affect_drives_chat as adc
+import pytest  # noqa: E402
+
+from webapp import affect_drives_chat as adc  # noqa: E402
 
 ENV = "BRAIN_AFFECT_MARKER_SURFACE"
 
