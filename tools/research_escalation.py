@@ -291,38 +291,45 @@ def _render(state: dict[str, Any]) -> str:
     else:
         lines.append("No source has been recorded yet.")
 
-    # Packet values are quotations from independently reviewed external sources,
-    # not measurements produced by a local experiment artifact.
-    lines.extend(["", "## External research packets", "", "<!--derived-->", ""])
+    # Packet values are quotations from independently reviewed external sources, not measurements produced by a
+    # local experiment artifact. claim_check (round 5, 2026-09-25) exempts a number ONLY when the literal
+    # `<!--derived-->` marker sits on that number's OWN physical line -- a single marker before this section no
+    # longer reaches anything inside it (that was main's block-scope hole: a standalone marker exempted every
+    # line up to the next heading, hiding whatever a scorer put there). So every generated line below that could
+    # ever carry a quoted number (a claim value, a locator, an evidence quote) carries its OWN inline marker.
+    lines.extend(["", "## External research packets", ""])
     if packets:
         for handoff in packets:
             packet = handoff["packet"]
             lines.extend([
                 f"### {handoff['id']}: question {handoff['question_id']}",
                 "",
-                f"- Packet file: `{_safe_cell(_display_packet_path(handoff['packet_path']))}`",
-                f"- Received: {handoff['received_at']}",
-                f"- Review status: `{handoff['status']}`; promotable as resolved evidence: `{handoff['promotable']}`",
+                f"- Packet file: `{_safe_cell(_display_packet_path(handoff['packet_path']))}` <!--derived-->",
+                f"- Received: {handoff['received_at']} <!--derived-->",
+                f"- Review status: `{handoff['status']}`; promotable as resolved evidence: "
+                f"`{handoff['promotable']}` <!--derived-->",
                 "- Prior-work matches:",
             ])
             for prior in packet["prior_work_matches"]:
                 lines.append(
                     f"  - `{prior['id']}` `{prior['status']}`: {_safe_cell(prior['reference'])}; "
-                    f"{_safe_cell(prior['relationship'])}; {_safe_cell(prior['summary'])}"
+                    f"{_safe_cell(prior['relationship'])}; {_safe_cell(prior['summary'])} <!--derived-->"
                 )
             lines.append("- Online searches:")
             for search in packet["online_searches"]:
                 lines.append(
                     f"  - `{search['id']}` {_safe_cell('; '.join(search['databases']))}; "
                     f"queries: {_safe_cell('; '.join(search['query_variants']))}; "
-                    f"URLs: {_safe_cell('; '.join(search['urls']))}; {_safe_cell(search['outcome'])}"
+                    f"URLs: {_safe_cell('; '.join(search['urls']))}; {_safe_cell(search['outcome'])} "
+                    f"<!--derived-->"
                 )
             lines.append("- Sources and provenance claims:")
             for source in packet["sources"]:
                 lines.append(
                     f"  - `{source['id']}` `{source['kind']}`: {_safe_cell(source['citation'])}; "
                     f"{_safe_cell(source['url'])}; locator: {_safe_cell(source['locator'])}; "
-                    f"evidence: {_safe_cell(source['evidence'])}; license: `{source['license_status']}`"
+                    f"evidence: {_safe_cell(source['evidence'])}; license: `{source['license_status']}` "
+                    f"<!--derived-->"
                 )
             lines.append("- Structured claims:")
             for claim in packet["claims"]:
@@ -337,7 +344,7 @@ def _render(state: dict[str, Any]) -> str:
                     f"value: {_safe_cell(value_text)} {_safe_cell(claim['units'])}; "
                     f"condition: {_safe_cell(claim['condition'])}; sources: {', '.join(claim['source_ids'])}; "
                     f"locator: {_safe_cell(claim['locator'])}; review: {_safe_cell(review_text)}; "
-                    f"limitations: {_safe_cell(claim['limitations'])}"
+                    f"limitations: {_safe_cell(claim['limitations'])} <!--derived-->"
                 )
             lines.append("")
     else:

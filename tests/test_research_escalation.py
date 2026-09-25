@@ -208,8 +208,10 @@ def test_valid_external_packet_handoff_keeps_prior_work_and_provenance_reviewabl
     assert handoff["packet"]["sources"][0]["url"] == "https://doi.org/10.0000/example"
     assert state["questions"][0]["status"] == "open"
     rendered = gate.read_text(encoding="utf-8")
-    assert "## External research packets\n\n<!--derived-->" in rendered
-    assert "Packet file: `deep-research.json`" in rendered
+    assert "## External research packets" in rendered
+    # round 5 (2026-09-25): claim_check exempts a number only on its OWN line, so each packet line below the
+    # section heading carries its own inline marker rather than relying on one standalone marker for the section.
+    assert "Packet file: `deep-research.json` <!--derived-->" in rendered
     assert "prior-tonic-output-wall.md" in rendered
     assert "https://doi.org/10.0000/example" in rendered
     assert "pending_review" in rendered

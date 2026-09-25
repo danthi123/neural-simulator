@@ -238,8 +238,10 @@ def _verdict(result):
 
 
 def _aggregate(paths):
-    """6-seed aggregate: mean retention-vs-budget curve + per-seed best/gap. Emits a <!--derived--> marker line so
-    the finding's derived table is machine-flagged."""
+    """6-seed aggregate: mean retention-vs-budget curve + per-seed best/gap. Prints a derived summary meant to be
+    pasted verbatim into a finding; claim_check (round 5, 2026-09-25) exempts a number ONLY on its own physical
+    line, so every printed line carrying a mean/sd/etc. below carries its OWN `<!--derived-->` (a single marker
+    on the line before this block, main's old idiom, no longer reaches any of them once pasted in)."""
     seeds = []
     by_work = {}
     for pth in paths:
@@ -255,18 +257,18 @@ def _aggregate(paths):
         for rc in r["replay_curve"]:
             by_work.setdefault(rc["work"], {"epochs": rc["replay_epochs"], "per_fact": rc["replay_per_fact"],
                                             "fracs": []})["fracs"].append(rc["frac_recalled"])
-    print("\n<!--derived-->")
-    print("6-SEED SLEEP-REPLAY BUDGET SWEEP -- retention vs replay budget")
+    print("\n6-SEED SLEEP-REPLAY BUDGET SWEEP -- retention vs replay budget")
     print(f"{'work':>6} {'(re_e,re_pf)':>14} {'mean_frac':>10} {'sd':>6} {'n':>3}")
     for w in sorted(by_work):
         e = by_work[w]; f = np.array(e["fracs"])
         print(f"{w:>6} {'('+str(e['epochs'])+','+str(e['per_fact'])+')':>14} "
-              f"{f.mean():>10.3f} {f.std():>6.3f} {len(f):>3}")
+              f"{f.mean():>10.3f} {f.std():>6.3f} {len(f):>3}  <!--derived-->")
     nore = np.array([s["noreplay"] for s in seeds]); maxb = np.array([s["max_budget"] for s in seeds])
     best = np.array([s["best"] for s in seeds if s["best"] is not None])
     print(f"\nnoreplay mean {nore.mean():.3f} | max-budget mean {maxb.mean():.3f} | "
-          f"best mean {best.mean():.3f} | ceiling 0.8")
-    print("per-seed:", [(s["seed"], round(s["noreplay"], 2), round(s["max_budget"], 2), s["outcome"]) for s in seeds])
+          f"best mean {best.mean():.3f} | ceiling 0.8  <!--derived-->")
+    print("per-seed:", [(s["seed"], round(s["noreplay"], 2), round(s["max_budget"], 2), s["outcome"]) for s in seeds],
+          " <!--derived-->")
     reach = sum(1 for s in seeds if s["best"] is not None and s["best"] >= 0.8 - 1e-9)
     print(f"\nAGGREGATE: {reach}/{len(seeds)} seeds reach the 0.8 ceiling at best budget. "
           f"{'BUDGET SUFFICES' if reach >= 5 else 'BUDGET DOES NOT SUFFICE -> store-fidelity (WS-1) is the lever'}")

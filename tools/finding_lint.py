@@ -19,8 +19,11 @@ This file contains NO copy of any gate's logic. It IMPORTS and CALLS the real mo
     tools/githooks/pre-commit invokes. run_all's verdict is authoritative here; a per-gate pass is
     derived from the same `discover()` modules purely to attach fix scaffolding, and is cross-checked
     against run_all every run (a DRIFT line prints if they ever disagree).
-  * GATE 2 — claims: `tools.claim_check.check`, the SAME module the hook shells out to. Its stdout is
-    captured to name the specific unsupported numbers; the verdict is the module's own return code.
+  * GATE 2 — claims: `tools.claim_check._scan`, the SAME structured computation `check()` (the module the hook
+    shells out to) itself calls before printing. Consuming the STRUCTURED result directly (round 5, 2026-09-25)
+    rather than regex-parsing `check()`'s printed stdout means a wording change in claim_check's report can never
+    silently desync this tool's scaffolding from what the gate actually decided; the verdict (and now LOW
+    COVERAGE) come from the exact same dict the CLI prints from.
   * GATE 4 — new-finding status: the hook's 2-line inline test (first line `---`, a `status:` field).
     It is not a module, so it is reproduced faithfully and labelled as such.
 
@@ -32,9 +35,7 @@ finding itself — so they are intentionally out of scope here (noted, not run).
 from __future__ import annotations
 
 import argparse
-import contextlib
 import glob
-import io
 import json
 import os
 import re
@@ -52,10 +53,6 @@ import tools.claim_check as claim_check            # the SAME GATE 2 module the 
 _ART_FILE_RE = re.compile(r"[\w.\-*?\[\]]+(?:/[\w.\-*?\[\]]+)+\.(?:jsonl|json)")
 # A bare path token (may be a directory) — used only for frontmatter `artifacts:` items and existence-tested.
 _PATH_TOKEN_RE = re.compile(r"[\w.\-*?\[\]]+(?:/[\w.\-*?\[\]]+)+/?")
-
-# parsed claim_check stdout
-_CC_LINE_RE = re.compile(r"⛔ line\s+(\d+)\s+([-\d.eE+]+)\s+not in any cited artifact\s*\|\s*(.*)")
-_CC_MISS_RE = re.compile(r"⛔ MISSING\s+(.*)")
 
 # provenance sources to mine for a backend value (device_and_cost scaffolding)
 _BACKEND_IN_TEXT = re.compile(r"SIM_BACKEND\s*[=:]\s*['\"]?(cupy|numpy|cuda|gpu|cpu)['\"]?", re.I)
@@ -170,23 +167,19 @@ def cited_artifacts(finding_path):
 
 
 # ---------------------------------------------------------------------------------------------------
-# GATE 2 — claim_check (reuse the module; capture its stdout for the specific unsupported numbers)
+# GATE 2 — claim_check, reused as a STRUCTURED result. Round 5 (2026-09-25): this used to run `check(verbose=
+# True)` under `contextlib.redirect_stdout` and regex-parse the captured text for "⛔ line ..." / "⛔ MISSING
+# ..." -- fragile by construction, since a wording change in claim_check's report (exactly what round 5 made,
+# adding the "exempted"/WARNING lines) would silently stop matching and this tool would report a false clean
+# bill. `_scan()` is the same dict `check()` itself builds before printing a word of it, so there is nothing
+# left to desync.
 # ---------------------------------------------------------------------------------------------------
 def run_claim_check(finding_path):
-    buf = io.StringIO()
-    with contextlib.redirect_stdout(buf):
-        rc = claim_check.check(finding_path, verbose=True)
-    text = buf.getvalue()
-    unsupported, missing = [], []
-    for ln in text.split("\n"):
-        m = _CC_LINE_RE.search(ln)
-        if m:
-            unsupported.append((int(m.group(1)), m.group(2), m.group(3).strip()))
-            continue
-        m = _CC_MISS_RE.search(ln)
-        if m:
-            missing.append(m.group(1).strip())
-    return rc, unsupported, missing, text
+    r = claim_check._scan(finding_path)
+    unsupported = list(r["unsupported"])           # [(lineno, val, ctx), ...] -- val is already a float
+    missing = list(r["missing"])
+    rc = 1 if (missing or unsupported or r["low_coverage"]) else 0
+    return rc, unsupported, missing, r
 
 
 # ---------------------------------------------------------------------------------------------------
@@ -471,7 +464,7 @@ def lint_one(finding_path, extra_paths, do_fix, quiet, include_untracked):
              % len(arts_skipped))
 
     # GATE 2 — claims
-    cc_rc, cc_unsupported, cc_missing, _cc_text = run_claim_check(finding_path)
+    cc_rc, cc_unsupported, cc_missing, cc_result = run_claim_check(finding_path)
     # GATE 4 — status
     g4_ok = status_present(finding_path)
     # GATE 5 — registry (authoritative verdict) + per-gate pass (grouping/scaffolding)
@@ -488,8 +481,12 @@ def lint_one(finding_path, extra_paths, do_fix, quiet, include_untracked):
     blocking_gates = []
     if cc_rc != 0:
         probs = ["line %s: %s  (%s)" % (n, v, c[:60]) for n, v, c in cc_unsupported] \
-            + ["MISSING artifact: %s" % m for m in cc_missing] \
-            or ["a measurement is unsupported by the cited artifacts (see claim_check)"]
+            + ["MISSING artifact: %s" % m for m in cc_missing]
+        if cc_result["low_coverage"]:
+            checked, total = cc_result["checked"], cc_result["total_numeric"]
+            probs.append("LOW COVERAGE: only %d/%d numeric claim(s) checked -- mark the specific derived "
+                        "numbers inline, not (almost) the whole doc" % (checked, total))
+        probs = probs or ["a measurement is unsupported by the cited artifacts (see claim_check)"]
         blocking_gates.append({"name": "claim-check", "class_id": "G2", "problems": probs, "kind": "claim"})
     if not g4_ok:
         blocking_gates.append({"name": "status-frontmatter", "class_id": "G4",
