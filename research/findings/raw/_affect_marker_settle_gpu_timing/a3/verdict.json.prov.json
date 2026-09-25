@@ -1,0 +1,28 @@
+{
+ "run_id": "1790320889-3662939",
+ "runner": "research/runners/_affect_marker_settle_gpu_timing.py",
+ "argv": [
+  "-m",
+  "--run",
+  "--seeds",
+  "42",
+  "--order",
+  "off,on,on,off",
+  "--out-dir",
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-aae1faee385698589/research/findings/raw/_affect_marker_settle_gpu_timing/a3",
+  "--out",
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-aae1faee385698589/research/findings/raw/_affect_marker_settle_gpu_timing/a3/verdict.json"
+ ],
+ "cwd": "/home/dant123/Projects/sim/.claude/worktrees/settle-a3-pin-d71c1a2c9",
+ "git_sha": "d71c1a2c9",
+ "git_dirty": false,
+ "started": "2026-09-25T03:21:29",
+ "env": {
+  "SIM_BACKEND": "cupy",
+  "OMP_NUM_THREADS": "1"
+ },
+ "sim_backend": "cupy",
+ "cpu_count": 20,
+ "artifact": "research/findings/raw/_affect_marker_settle_gpu_timing/a3/verdict.json",
+ "reconstructed": "Written at copy time, NOT by the automatic provenance door: the run's cwd was the pinned checkout and its --out-dir was another worktree, so no sidecar was produced. Every field except `runner`, `sim_backend`, `artifact` and this note is copied verbatim from provenance_runs.jsonl line 1 (the controller record, pinned checkout runs.jsonl line 14471). `sim_backend` is the controller env SIM_BACKEND and matches the `backend` field ('cupy', read from sim.backend.get_backend) that each of the four worker records s42/*.json carries."
+}

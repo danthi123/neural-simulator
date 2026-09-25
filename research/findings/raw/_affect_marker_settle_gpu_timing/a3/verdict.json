@@ -1,0 +1,159 @@
+{
+ "probe": "affect_marker_settle_gpu_timing",
+ "amendment": "A3 (2026-09-24)",
+ "bound_s": 0.3,
+ "renderer_required": "qwen",
+ "status": "UNDEFINED",
+ "go": false,
+ "metrics": {
+  "M1_total_delta_s": -3.46265474325628,
+  "M2_wta_delta_s": 0.13281588826794177,
+  "M3_non_wta_delta_s": -3.596977249268093,
+  "noise_s": 4.722352820986998,
+  "arm_total_s": {
+   "off": 32.948247886008176,
+   "on": 29.485593142751895
+  },
+  "arm_wta_s": {
+   "off": 0.020224969732225873,
+   "on": 0.15304085800016765
+  },
+  "fraction_of_total_delta_in_wta": -0.03879176989083702
+ },
+ "processes": [
+  {
+   "pos": 0,
+   "arm": "off",
+   "valid": true,
+   "problems": [],
+   "sha": "d71c1a2c950b8887b7ebe55d819cdbf2f452e6dd",
+   "median_total_s": 35.309424296501675,
+   "median_wta_s": 0.021174314490053803,
+   "median_non_wta_s": 35.292884692011285
+  },
+  {
+   "pos": 1,
+   "arm": "on",
+   "valid": true,
+   "problems": [],
+   "sha": "d71c1a2c950b8887b7ebe55d819cdbf2f452e6dd",
+   "median_total_s": 30.164113812003052,
+   "median_wta_s": 0.15865184749418404,
+   "median_non_wta_s": 30.015844153997023
+  },
+  {
+   "pos": 2,
+   "arm": "on",
+   "valid": true,
+   "problems": [],
+   "sha": "d71c1a2c950b8887b7ebe55d819cdbf2f452e6dd",
+   "median_total_s": 28.80707247350074,
+   "median_wta_s": 0.14742986850615125,
+   "median_non_wta_s": 28.65571696301049
+  },
+  {
+   "pos": 3,
+   "arm": "off",
+   "valid": true,
+   "problems": [],
+   "sha": "d71c1a2c950b8887b7ebe55d819cdbf2f452e6dd",
+   "median_total_s": 30.587071475514676,
+   "median_wta_s": 0.019275624974397942,
+   "median_non_wta_s": 30.572630923532415
+  }
+ ],
+ "verdict": {
+  "label": "affect_marker_settle_gpu_timing_A3",
+  "status": "UNDEFINED",
+  "go": false,
+  "undefined_reasons": [
+   "unmet: resolvable at the 0.30 s bound given the measured noise (measured=False expect=True)"
+  ],
+  "preconditions": [
+   {
+    "kind": "require",
+    "name": "every process completed and validated: cupy, Qwen renderer, affective warm turns, WTA ran with the arm's expected config (lever), clean code",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": ">= 2 processes per arm",
+    "ok": true,
+    "detail": "measured=2 expect=<function decide.<locals>.<lambda> at 0x7f1be24f0900>",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "order counterbalanced (equal mean position per arm)",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": "{'off': 1.5, 'on': 1.5}"
+   },
+   {
+    "kind": "require",
+    "name": "one code revision across processes",
+    "ok": true,
+    "detail": "measured=1 expect=1",
+    "note": "['d71c1a2c950b8887b7ebe55d819cdbf2f452e6dd']"
+   },
+   {
+    "kind": "require",
+    "name": "resolvable at the 0.30 s bound given the measured noise",
+    "ok": false,
+    "detail": "measured=False expect=True",
+    "note": "M1=-3.463 M2=+0.133 noise=4.722"
+   }
+  ],
+  "disabled_processes": [],
+  "chance": null
+ },
+ "preconditions": [
+  {
+   "kind": "require",
+   "name": "every process completed and validated: cupy, Qwen renderer, affective warm turns, WTA ran with the arm's expected config (lever), clean code",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": ">= 2 processes per arm",
+   "ok": true,
+   "detail": "measured=2 expect=<function decide.<locals>.<lambda> at 0x7f1be24f0900>",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "order counterbalanced (equal mean position per arm)",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": "{'off': 1.5, 'on': 1.5}"
+  },
+  {
+   "kind": "require",
+   "name": "one code revision across processes",
+   "ok": true,
+   "detail": "measured=1 expect=1",
+   "note": "['d71c1a2c950b8887b7ebe55d819cdbf2f452e6dd']"
+  },
+  {
+   "kind": "require",
+   "name": "resolvable at the 0.30 s bound given the measured noise",
+   "ok": false,
+   "detail": "measured=False expect=True",
+   "note": "M1=-3.463 M2=+0.133 noise=4.722"
+  }
+ ],
+ "rule": "GO iff every precondition holds and M2 <= bound and M1 + noise <= bound; NO-GO iff they hold and M2 > bound or M1 - noise > bound; otherwise UNDEFINED.",
+ "seeds": [
+  42
+ ],
+ "order": [
+  "off",
+  "on",
+  "on",
+  "off"
+ ]
+}

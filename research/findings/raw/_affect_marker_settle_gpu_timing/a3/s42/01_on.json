@@ -1,0 +1,126 @@
+{
+ "env": {
+  "BRAIN_AFFECT_MARKER_SETTLE": "1"
+ },
+ "seed": "42",
+ "backend": "cupy",
+ "renderer_requested": "qwen",
+ "sim_disable_llm": null,
+ "code": {
+  "sha": "d71c1a2c950b8887b7ebe55d819cdbf2f452e6dd",
+  "dirty_tracked": [],
+  "git_ok": true
+ },
+ "build_turn": {
+  "wall_s": 668.1624313679931,
+  "http_status": 200,
+  "wta_s": 0,
+  "n_wta_reads": 0,
+  "wta_configs": [],
+  "level": 0,
+  "lead": "",
+  "reason": "neutral_hold",
+  "renderer": "off-bridge Qwen-0.5B (spiking forward)",
+  "abstained": false
+ },
+ "first_affective_turn": {
+  "wall_s": 57.37631026800955,
+  "http_status": 200,
+  "wta_s": 0.1517797770211473,
+  "n_wta_reads": 2,
+  "wta_configs": [
+   [
+    true,
+    500,
+    1000
+   ]
+  ],
+  "level": 2,
+  "lead": "Gladly! ",
+  "reason": "graded_affect",
+  "renderer": "off-bridge Qwen-0.5B (spiking forward)",
+  "abstained": true
+ },
+ "warm_turns": [
+  {
+   "wall_s": 30.449302466993686,
+   "http_status": 200,
+   "wta_s": 0.15268094101338647,
+   "n_wta_reads": 2,
+   "wta_configs": [
+    [
+     true,
+     500,
+     1000
+    ]
+   ],
+   "level": 3,
+   "lead": "Wonderful! ",
+   "reason": "graded_affect",
+   "renderer": "off-bridge Qwen-0.5B (spiking forward)",
+   "abstained": true
+  },
+  {
+   "wall_s": 29.878925157012418,
+   "http_status": 200,
+   "wta_s": 0.14385837499867193,
+   "n_wta_reads": 2,
+   "wta_configs": [
+    [
+     true,
+     500,
+     1000
+    ]
+   ],
+   "level": 3,
+   "lead": "Wonderful! ",
+   "reason": "graded_affect",
+   "renderer": "off-bridge Qwen-0.5B (spiking forward)",
+   "abstained": true
+  },
+  {
+   "wall_s": 28.98433830900467,
+   "http_status": 200,
+   "wta_s": 0.1646227539749816,
+   "n_wta_reads": 2,
+   "wta_configs": [
+    [
+     true,
+     500,
+     1000
+    ]
+   ],
+   "level": 3,
+   "lead": "Wonderful! ",
+   "reason": "graded_affect",
+   "renderer": "off-bridge Qwen-0.5B (spiking forward)",
+   "abstained": true
+  },
+  {
+   "wall_s": 32.584799516014755,
+   "http_status": 200,
+   "wta_s": 0.17487192200496793,
+   "n_wta_reads": 2,
+   "wta_configs": [
+    [
+     true,
+     500,
+     1000
+    ]
+   ],
+   "level": 3,
+   "lead": "Wonderful! ",
+   "reason": "graded_affect",
+   "renderer": "off-bridge Qwen-0.5B (spiking forward)",
+   "abstained": true
+  }
+ ],
+ "readers": [
+  {
+   "key": "(42, 'settle')",
+   "settle": true,
+   "warmup": 500,
+   "washout": 1000
+  }
+ ]
+}
