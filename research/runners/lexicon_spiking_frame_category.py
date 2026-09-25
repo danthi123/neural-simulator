@@ -447,7 +447,15 @@ def get_lexicon(seed: int = 42, corpus_path=None, max_chars: int = 8_000_000, to
     want = "junction" if _junction_requested() else "frame"
     if _LEXICON is None or getattr(_LEXICON, "variant", "frame") != want:
         from research.runners._comprehension_learned_animacy_cue_derisk import load_tokens, build_vocab
-        tokens = load_tokens(corpus_path or _DEFAULT_CORPUS, max_chars)
+        if want == "junction":
+            # AMENDMENT 2 mechanism C: the junction variant hears an explicit sentence-boundary PAUSE token instead
+            # of the shared tokenizer's silent punctuation-stripping (see lexicon_frame_junction.py's module
+            # docstring). v2 (want == "frame") is UNTOUCHED -- it still calls the shared `load_tokens` below, so its
+            # default-OFF byte-identity is unaffected by this branch existing.
+            from research.runners.lexicon_frame_junction import load_tokens_with_pause
+            tokens = load_tokens_with_pause(corpus_path or _DEFAULT_CORPUS, max_chars)
+        else:
+            tokens = load_tokens(corpus_path or _DEFAULT_CORPUS, max_chars)
         vocab, _ = build_vocab(tokens, top_v)
         env = FrameEnvironment(tokens, vocab + [w for w in HAND_NOUN_SEEDS + NONNOUN_SEEDS if w not in vocab])
         if want == "junction":

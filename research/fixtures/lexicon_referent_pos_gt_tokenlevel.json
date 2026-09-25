@@ -1,0 +1,2548 @@
+{
+ "backend": "numpy",
+ "device": "cpu",
+ "n_labels": 112,
+ "n_turns": 112,
+ "non_tags": [
+  "CC",
+  "DT",
+  "EX",
+  "IN",
+  "JJ",
+  "JJR",
+  "JJS",
+  "MD",
+  "PDT",
+  "POS",
+  "PRP",
+  "PRP$",
+  "RB",
+  "RBR",
+  "RBS",
+  "RP",
+  "TO",
+  "UH",
+  "VB",
+  "VBD",
+  "VBG",
+  "VBN",
+  "VBP",
+  "VBZ",
+  "WDT",
+  "WP",
+  "WP$",
+  "WRB"
+ ],
+ "noun_tags": [
+  "NN",
+  "NNP",
+  "NNPS",
+  "NNS"
+ ],
+ "source": "nltk averaged_perceptron_tagger (pos_tag), per-turn, tokenized with D6._WORD_RE ([A-Za-z']+)",
+ "tag_counts": {
+  "CC": 13,
+  "DT": 136,
+  "IN": 26,
+  "JJ": 22,
+  "MD": 6,
+  "NN": 187,
+  "NNP": 7,
+  "NNS": 6,
+  "PDT": 1,
+  "PRP": 26,
+  "RB": 25,
+  "RBS": 2,
+  "TO": 3,
+  "VB": 18,
+  "VBD": 35,
+  "VBG": 8,
+  "VBN": 5,
+  "VBP": 5,
+  "VBZ": 54,
+  "WDT": 13,
+  "WP": 15,
+  "WRB": 3
+ },
+ "turns": {
+  "animacy": {
+   "carries": {
+    "class": "NON",
+    "tag": "VBZ"
+   },
+   "cup": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "monkey": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "the": {
+    "class": "NON",
+    "tag": "DT"
+   }
+  },
+  "bc_a": {
+   "and": {
+    "class": "NON",
+    "tag": "CC"
+   },
+   "ball": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "cat": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "in": {
+    "class": "NON",
+    "tag": "IN"
+   },
+   "the": {
+    "class": "NON",
+    "tag": "DT"
+   },
+   "walked": {
+    "class": "NON",
+    "tag": "VBD"
+   }
+  },
+  "bc_b": {
+   "does": {
+    "class": "NON",
+    "tag": "VBZ"
+   },
+   "eat": {
+    "class": "NON",
+    "tag": "VB"
+   },
+   "it": {
+    "class": "NON",
+    "tag": "PRP"
+   },
+   "what": {
+    "class": "NON",
+    "tag": "WP"
+   }
+  },
+  "bgdots": {},
+  "cg_mention1": {
+   "dog": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "fast": {
+    "class": "NON",
+    "tag": "RB"
+   },
+   "runs": {
+    "class": "NON",
+    "tag": "VBZ"
+   },
+   "the": {
+    "class": "NON",
+    "tag": "DT"
+   }
+  },
+  "cg_mention2": {
+   "again": {
+    "class": "NON",
+    "tag": "RB"
+   },
+   "dog": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "runs": {
+    "class": "NON",
+    "tag": "VBZ"
+   },
+   "the": {
+    "class": "NON",
+    "tag": "DT"
+   }
+  },
+  "chase": {
+   "all": {
+    "class": "NON",
+    "tag": "PDT"
+   },
+   "chase": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "does": {
+    "class": "NON",
+    "tag": "VBZ"
+   },
+   "dog": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "the": {
+    "class": "NON",
+    "tag": "DT"
+   },
+   "way": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "what": {
+    "class": "NON",
+    "tag": "WDT"
+   }
+  },
+  "confirm": {
+   "cat": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "chase": {
+    "class": "NON",
+    "tag": "VBD"
+   },
+   "dog": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "the": {
+    "class": "NON",
+    "tag": "DT"
+   }
+  },
+  "contra": {
+   "chase": {
+    "class": "NON",
+    "tag": "VBD"
+   },
+   "dog": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "fish": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "the": {
+    "class": "NON",
+    "tag": "DT"
+   }
+  },
+  "d5c_recall1": {
+   "mentioned": {
+    "class": "NON",
+    "tag": "VBD"
+   },
+   "the": {
+    "class": "NON",
+    "tag": "DT"
+   },
+   "wolf": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "you": {
+    "class": "NON",
+    "tag": "PRP"
+   }
+  },
+  "d5c_recall2": {
+   "mentioned": {
+    "class": "NON",
+    "tag": "VBD"
+   },
+   "the": {
+    "class": "NON",
+    "tag": "DT"
+   },
+   "wolf": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "you": {
+    "class": "NON",
+    "tag": "PRP"
+   }
+  },
+  "d5c_teach": {
+   "chase": {
+    "class": "NON",
+    "tag": "VBD"
+   },
+   "rabbit": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "the": {
+    "class": "NON",
+    "tag": "DT"
+   },
+   "wolf": {
+    "class": "NOUN",
+    "tag": "NN"
+   }
+  },
+  "d5c_tick": {
+   "h": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "overnight": {
+    "class": "NON",
+    "tag": "JJ"
+   },
+   "step": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "world": {
+    "class": "NOUN",
+    "tag": "NN"
+   }
+  },
+  "datc_night": {
+   "h": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "overnight": {
+    "class": "NON",
+    "tag": "JJ"
+   },
+   "step": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "world": {
+    "class": "NOUN",
+    "tag": "NN"
+   }
+  },
+  "datc_recall": {
+   "cat": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "chase": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "does": {
+    "class": "NON",
+    "tag": "VBZ"
+   },
+   "the": {
+    "class": "NON",
+    "tag": "DT"
+   },
+   "what": {
+    "class": "NON",
+    "tag": "WDT"
+   }
+  },
+  "datc_t1": {
+   "at": {
+    "class": "NON",
+    "tag": "IN"
+   },
+   "circus": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "guess": {
+    "class": "NOUN",
+    "tag": "NNP"
+   },
+   "happened": {
+    "class": "NON",
+    "tag": "VBN"
+   },
+   "something": {
+    "class": "NON",
+    "tag": "NN"
+   },
+   "the": {
+    "class": "NON",
+    "tag": "DT"
+   },
+   "today": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "unbelievable": {
+    "class": "NON",
+    "tag": "JJ"
+   },
+   "what": {
+    "class": "NON",
+    "tag": "WP"
+   }
+  },
+  "datc_t2": {
+   "absolutely": {
+    "class": "NON",
+    "tag": "RB"
+   },
+   "amazing": {
+    "class": "NON",
+    "tag": "JJ"
+   },
+   "believe": {
+    "class": "NON",
+    "tag": "VB"
+   },
+   "crazy": {
+    "class": "NON",
+    "tag": "JJ"
+   },
+   "is": {
+    "class": "NON",
+    "tag": "VBZ"
+   },
+   "it": {
+    "class": "NON",
+    "tag": "PRP"
+   },
+   "never": {
+    "class": "NON",
+    "tag": "RB"
+   },
+   "story": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "this": {
+    "class": "NON",
+    "tag": "DT"
+   },
+   "will": {
+    "class": "NON",
+    "tag": "MD"
+   },
+   "you": {
+    "class": "NON",
+    "tag": "PRP"
+   }
+  },
+  "datc_t3": {
+   "ball": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "cat": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "chases": {
+    "class": "NON",
+    "tag": "VBZ"
+   },
+   "the": {
+    "class": "NON",
+    "tag": "DT"
+   }
+  },
+  "datc_t4": {
+   "and": {
+    "class": "NON",
+    "tag": "CC"
+   },
+   "audience": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "everyone": {
+    "class": "NON",
+    "tag": "NN"
+   },
+   "in": {
+    "class": "NON",
+    "tag": "IN"
+   },
+   "laughing": {
+    "class": "NON",
+    "tag": "VBG"
+   },
+   "screaming": {
+    "class": "NON",
+    "tag": "VBG"
+   },
+   "shock": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "the": {
+    "class": "NON",
+    "tag": "DT"
+   },
+   "total": {
+    "class": "NON",
+    "tag": "JJ"
+   },
+   "was": {
+    "class": "NON",
+    "tag": "VBD"
+   }
+  },
+  "datc_t5": {
+   "anybody": {
+    "class": "NON",
+    "tag": "NN"
+   },
+   "astonishing": {
+    "class": "NON",
+    "tag": "JJ"
+   },
+   "ever": {
+    "class": "NON",
+    "tag": "RB"
+   },
+   "has": {
+    "class": "NON",
+    "tag": "VBZ"
+   },
+   "honestly": {
+    "class": "NON",
+    "tag": "RB"
+   },
+   "it": {
+    "class": "NON",
+    "tag": "PRP"
+   },
+   "most": {
+    "class": "NON",
+    "tag": "RBS"
+   },
+   "spectacle": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "the": {
+    "class": "NON",
+    "tag": "DT"
+   },
+   "was": {
+    "class": "NON",
+    "tag": "VBD"
+   },
+   "witnessed": {
+    "class": "NON",
+    "tag": "VBN"
+   }
+  },
+  "datci_recall": {
+   "cat": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "chase": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "does": {
+    "class": "NON",
+    "tag": "VBZ"
+   },
+   "the": {
+    "class": "NON",
+    "tag": "DT"
+   },
+   "what": {
+    "class": "NON",
+    "tag": "WDT"
+   }
+  },
+  "datci_t1": {
+   "at": {
+    "class": "NON",
+    "tag": "IN"
+   },
+   "circus": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "guess": {
+    "class": "NOUN",
+    "tag": "NNP"
+   },
+   "happened": {
+    "class": "NON",
+    "tag": "VBN"
+   },
+   "something": {
+    "class": "NON",
+    "tag": "NN"
+   },
+   "the": {
+    "class": "NON",
+    "tag": "DT"
+   },
+   "today": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "unbelievable": {
+    "class": "NON",
+    "tag": "JJ"
+   },
+   "what": {
+    "class": "NON",
+    "tag": "WP"
+   }
+  },
+  "datci_t2": {
+   "absolutely": {
+    "class": "NON",
+    "tag": "RB"
+   },
+   "amazing": {
+    "class": "NON",
+    "tag": "JJ"
+   },
+   "believe": {
+    "class": "NON",
+    "tag": "VB"
+   },
+   "crazy": {
+    "class": "NON",
+    "tag": "JJ"
+   },
+   "is": {
+    "class": "NON",
+    "tag": "VBZ"
+   },
+   "it": {
+    "class": "NON",
+    "tag": "PRP"
+   },
+   "never": {
+    "class": "NON",
+    "tag": "RB"
+   },
+   "story": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "this": {
+    "class": "NON",
+    "tag": "DT"
+   },
+   "will": {
+    "class": "NON",
+    "tag": "MD"
+   },
+   "you": {
+    "class": "NON",
+    "tag": "PRP"
+   }
+  },
+  "datci_t3": {
+   "ball": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "cat": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "chases": {
+    "class": "NON",
+    "tag": "VBZ"
+   },
+   "the": {
+    "class": "NON",
+    "tag": "DT"
+   }
+  },
+  "datci_t4": {
+   "and": {
+    "class": "NON",
+    "tag": "CC"
+   },
+   "audience": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "everyone": {
+    "class": "NON",
+    "tag": "NN"
+   },
+   "in": {
+    "class": "NON",
+    "tag": "IN"
+   },
+   "laughing": {
+    "class": "NON",
+    "tag": "VBG"
+   },
+   "screaming": {
+    "class": "NON",
+    "tag": "VBG"
+   },
+   "shock": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "the": {
+    "class": "NON",
+    "tag": "DT"
+   },
+   "total": {
+    "class": "NON",
+    "tag": "JJ"
+   },
+   "was": {
+    "class": "NON",
+    "tag": "VBD"
+   }
+  },
+  "datci_t5": {
+   "anybody": {
+    "class": "NON",
+    "tag": "NN"
+   },
+   "astonishing": {
+    "class": "NON",
+    "tag": "JJ"
+   },
+   "ever": {
+    "class": "NON",
+    "tag": "RB"
+   },
+   "has": {
+    "class": "NON",
+    "tag": "VBZ"
+   },
+   "honestly": {
+    "class": "NON",
+    "tag": "RB"
+   },
+   "it": {
+    "class": "NON",
+    "tag": "PRP"
+   },
+   "most": {
+    "class": "NON",
+    "tag": "RBS"
+   },
+   "spectacle": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "the": {
+    "class": "NON",
+    "tag": "DT"
+   },
+   "was": {
+    "class": "NON",
+    "tag": "VBD"
+   },
+   "witnessed": {
+    "class": "NON",
+    "tag": "VBN"
+   }
+  },
+  "datn_night": {
+   "h": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "overnight": {
+    "class": "NON",
+    "tag": "JJ"
+   },
+   "step": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "world": {
+    "class": "NOUN",
+    "tag": "NN"
+   }
+  },
+  "datn_recall": {
+   "cat": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "chase": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "does": {
+    "class": "NON",
+    "tag": "VBZ"
+   },
+   "the": {
+    "class": "NON",
+    "tag": "DT"
+   },
+   "what": {
+    "class": "NON",
+    "tag": "WDT"
+   }
+  },
+  "datn_t1": {
+   "cat": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "here": {
+    "class": "NON",
+    "tag": "RB"
+   },
+   "is": {
+    "class": "NON",
+    "tag": "VBZ"
+   },
+   "the": {
+    "class": "NON",
+    "tag": "DT"
+   }
+  },
+  "datn_t2": {
+   "ball": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "here": {
+    "class": "NON",
+    "tag": "RB"
+   },
+   "is": {
+    "class": "NON",
+    "tag": "VBZ"
+   },
+   "the": {
+    "class": "NON",
+    "tag": "DT"
+   }
+  },
+  "datn_t3": {
+   "ball": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "cat": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "chases": {
+    "class": "NON",
+    "tag": "VBZ"
+   },
+   "the": {
+    "class": "NON",
+    "tag": "DT"
+   }
+  },
+  "datn_t4": {
+   "cat": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "here": {
+    "class": "NON",
+    "tag": "RB"
+   },
+   "is": {
+    "class": "NON",
+    "tag": "VBZ"
+   },
+   "the": {
+    "class": "NON",
+    "tag": "DT"
+   }
+  },
+  "datn_t5": {
+   "ball": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "here": {
+    "class": "NON",
+    "tag": "RB"
+   },
+   "is": {
+    "class": "NON",
+    "tag": "VBZ"
+   },
+   "the": {
+    "class": "NON",
+    "tag": "DT"
+   }
+  },
+  "datni_recall": {
+   "cat": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "chase": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "does": {
+    "class": "NON",
+    "tag": "VBZ"
+   },
+   "the": {
+    "class": "NON",
+    "tag": "DT"
+   },
+   "what": {
+    "class": "NON",
+    "tag": "WDT"
+   }
+  },
+  "datni_t1": {
+   "cat": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "here": {
+    "class": "NON",
+    "tag": "RB"
+   },
+   "is": {
+    "class": "NON",
+    "tag": "VBZ"
+   },
+   "the": {
+    "class": "NON",
+    "tag": "DT"
+   }
+  },
+  "datni_t2": {
+   "ball": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "here": {
+    "class": "NON",
+    "tag": "RB"
+   },
+   "is": {
+    "class": "NON",
+    "tag": "VBZ"
+   },
+   "the": {
+    "class": "NON",
+    "tag": "DT"
+   }
+  },
+  "datni_t3": {
+   "ball": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "cat": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "chases": {
+    "class": "NON",
+    "tag": "VBZ"
+   },
+   "the": {
+    "class": "NON",
+    "tag": "DT"
+   }
+  },
+  "datni_t4": {
+   "cat": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "here": {
+    "class": "NON",
+    "tag": "RB"
+   },
+   "is": {
+    "class": "NON",
+    "tag": "VBZ"
+   },
+   "the": {
+    "class": "NON",
+    "tag": "DT"
+   }
+  },
+  "datni_t5": {
+   "ball": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "here": {
+    "class": "NON",
+    "tag": "RB"
+   },
+   "is": {
+    "class": "NON",
+    "tag": "VBZ"
+   },
+   "the": {
+    "class": "NON",
+    "tag": "DT"
+   }
+  },
+  "dr2_a": {
+   "bird": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "chase": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "worm": {
+    "class": "NOUN",
+    "tag": "NN"
+   }
+  },
+  "dr2_b": {
+   "cat": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "chase": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "dog": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "then": {
+    "class": "NON",
+    "tag": "RB"
+   }
+  },
+  "dr2_c": {
+   "before": {
+    "class": "NON",
+    "tag": "IN"
+   },
+   "doing": {
+    "class": "NON",
+    "tag": "VBG"
+   },
+   "it": {
+    "class": "NON",
+    "tag": "PRP"
+   },
+   "was": {
+    "class": "NON",
+    "tag": "VBD"
+   },
+   "who": {
+    "class": "NON",
+    "tag": "WP"
+   }
+  },
+  "dr_a": {
+   "cat": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "chase": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "dog": {
+    "class": "NOUN",
+    "tag": "NN"
+   }
+  },
+  "dr_b": {
+   "bird": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "chase": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "then": {
+    "class": "NON",
+    "tag": "RB"
+   },
+   "worm": {
+    "class": "NOUN",
+    "tag": "NN"
+   }
+  },
+  "dr_c": {
+   "before": {
+    "class": "NON",
+    "tag": "IN"
+   },
+   "doing": {
+    "class": "NON",
+    "tag": "VBG"
+   },
+   "it": {
+    "class": "NON",
+    "tag": "PRP"
+   },
+   "was": {
+    "class": "NON",
+    "tag": "VBD"
+   },
+   "who": {
+    "class": "NON",
+    "tag": "WP"
+   }
+  },
+  "emo": {
+   "am": {
+    "class": "NON",
+    "tag": "VBP"
+   },
+   "amazing": {
+    "class": "NON",
+    "tag": "JJ"
+   },
+   "and": {
+    "class": "NON",
+    "tag": "CC"
+   },
+   "delighted": {
+    "class": "NON",
+    "tag": "JJ"
+   },
+   "fantastic": {
+    "class": "NON",
+    "tag": "JJ"
+   },
+   "happy": {
+    "class": "NON",
+    "tag": "JJ"
+   },
+   "i": {
+    "class": "NON",
+    "tag": "PRP"
+   },
+   "is": {
+    "class": "NON",
+    "tag": "VBZ"
+   },
+   "so": {
+    "class": "NON",
+    "tag": "RB"
+   },
+   "this": {
+    "class": "NON",
+    "tag": "DT"
+   },
+   "wonderful": {
+    "class": "NON",
+    "tag": "JJ"
+   }
+  },
+  "epi_recall": {
+   "did": {
+    "class": "NON",
+    "tag": "VBD"
+   },
+   "discuss": {
+    "class": "NON",
+    "tag": "VB"
+   },
+   "dog": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "the": {
+    "class": "NON",
+    "tag": "DT"
+   },
+   "we": {
+    "class": "NON",
+    "tag": "PRP"
+   }
+  },
+  "epi_store": {
+   "cat": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "chase": {
+    "class": "NON",
+    "tag": "VBD"
+   },
+   "dog": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "the": {
+    "class": "NON",
+    "tag": "DT"
+   }
+  },
+  "episodic": {
+   "did": {
+    "class": "NON",
+    "tag": "VBD"
+   },
+   "discuss": {
+    "class": "NON",
+    "tag": "VB"
+   },
+   "dog": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "the": {
+    "class": "NON",
+    "tag": "DT"
+   },
+   "we": {
+    "class": "NON",
+    "tag": "PRP"
+   }
+  },
+  "expect_q": {
+   "do": {
+    "class": "NON",
+    "tag": "VBP"
+   },
+   "expect": {
+    "class": "NON",
+    "tag": "VB"
+   },
+   "what": {
+    "class": "NON",
+    "tag": "WP"
+   },
+   "you": {
+    "class": "NON",
+    "tag": "PRP"
+   }
+  },
+  "held": {
+   "owl": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "the": {
+    "class": "NON",
+    "tag": "DT"
+   },
+   "watches": {
+    "class": "NON",
+    "tag": "VBZ"
+   },
+   "wolf": {
+    "class": "NOUN",
+    "tag": "NN"
+   }
+  },
+  "hold": {
+   "and": {
+    "class": "NON",
+    "tag": "CC"
+   },
+   "fox": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "in": {
+    "class": "NON",
+    "tag": "IN"
+   },
+   "the": {
+    "class": "NON",
+    "tag": "DT"
+   },
+   "walked": {
+    "class": "NON",
+    "tag": "VBD"
+   },
+   "wolf": {
+    "class": "NOUN",
+    "tag": "NN"
+   }
+  },
+  "lbf_cau_teach1": {
+   "dog": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "east": {
+    "class": "NON",
+    "tag": "RB"
+   },
+   "goes": {
+    "class": "NON",
+    "tag": "VBZ"
+   },
+   "the": {
+    "class": "NON",
+    "tag": "DT"
+   }
+  },
+  "lbf_cau_teach2": {
+   "dog": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "reaches": {
+    "class": "NON",
+    "tag": "VBZ"
+   },
+   "river": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "the": {
+    "class": "NON",
+    "tag": "DT"
+   }
+  },
+  "lbf_cau_teach3": {
+   "dog": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "drinks": {
+    "class": "NOUN",
+    "tag": "NNS"
+   },
+   "the": {
+    "class": "NON",
+    "tag": "DT"
+   },
+   "water": {
+    "class": "NOUN",
+    "tag": "NN"
+   }
+  },
+  "lbf_cau_teach4": {
+   "rises": {
+    "class": "NON",
+    "tag": "VBZ"
+   },
+   "sky": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "sun": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "the": {
+    "class": "NON",
+    "tag": "DT"
+   }
+  },
+  "lbf_cau_teach5": {
+   "bird": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "dawn": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "sings": {
+    "class": "NOUN",
+    "tag": "NNS"
+   },
+   "the": {
+    "class": "NON",
+    "tag": "DT"
+   }
+  },
+  "lbf_cau_teach6": {
+   "dog": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "morning": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "the": {
+    "class": "NON",
+    "tag": "DT"
+   },
+   "wakes": {
+    "class": "NON",
+    "tag": "VBZ"
+   }
+  },
+  "lbf_cau_whatif": {
+   "dog": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "east": {
+    "class": "NON",
+    "tag": "RB"
+   },
+   "goes": {
+    "class": "NON",
+    "tag": "VBZ"
+   },
+   "happens": {
+    "class": "NON",
+    "tag": "VBZ"
+   },
+   "if": {
+    "class": "NON",
+    "tag": "IN"
+   },
+   "the": {
+    "class": "NON",
+    "tag": "DT"
+   },
+   "what": {
+    "class": "NON",
+    "tag": "WP"
+   }
+  },
+  "lbf_tom1": {
+   "devastated": {
+    "class": "NON",
+    "tag": "VBN"
+   },
+   "is": {
+    "class": "NON",
+    "tag": "VBZ"
+   },
+   "maria": {
+    "class": "NOUN",
+    "tag": "NNP"
+   }
+  },
+  "noncontra_neg": {
+   "cat": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "chase": {
+    "class": "NON",
+    "tag": "VB"
+   },
+   "does": {
+    "class": "NON",
+    "tag": "VBZ"
+   },
+   "dog": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "not": {
+    "class": "NON",
+    "tag": "RB"
+   },
+   "the": {
+    "class": "NON",
+    "tag": "DT"
+   }
+  },
+  "oe_ask": {
+   "a": {
+    "class": "NON",
+    "tag": "DT"
+   },
+   "chase": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "dog": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "might": {
+    "class": "NON",
+    "tag": "MD"
+   },
+   "what": {
+    "class": "NON",
+    "tag": "WDT"
+   }
+  },
+  "oe_t1": {
+   "chase": {
+    "class": "NON",
+    "tag": "VBD"
+   },
+   "rabbit": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "the": {
+    "class": "NON",
+    "tag": "DT"
+   },
+   "wolf": {
+    "class": "NOUN",
+    "tag": "NN"
+   }
+  },
+  "oe_t2": {
+   "chase": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "fox": {
+    "class": "NON",
+    "tag": "JJ"
+   },
+   "rabbit": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "the": {
+    "class": "NON",
+    "tag": "DT"
+   }
+  },
+  "oe_t3": {
+   "chase": {
+    "class": "NON",
+    "tag": "VBD"
+   },
+   "hawk": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "rabbit": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "the": {
+    "class": "NON",
+    "tag": "DT"
+   }
+  },
+  "oe_t4": {
+   "chase": {
+    "class": "NON",
+    "tag": "VBD"
+   },
+   "eagle": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "rabbit": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "the": {
+    "class": "NON",
+    "tag": "DT"
+   }
+  },
+  "oe_t5": {
+   "chase": {
+    "class": "NON",
+    "tag": "VBD"
+   },
+   "deer": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "lion": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "the": {
+    "class": "NON",
+    "tag": "DT"
+   }
+  },
+  "oe_t6": {
+   "bear": {
+    "class": "NON",
+    "tag": "JJ"
+   },
+   "chase": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "mouse": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "the": {
+    "class": "NON",
+    "tag": "DT"
+   }
+  },
+  "oe_t7": {
+   "beetle": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "chase": {
+    "class": "NON",
+    "tag": "VBD"
+   },
+   "owl": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "the": {
+    "class": "NON",
+    "tag": "DT"
+   }
+  },
+  "oe_t8": {
+   "chase": {
+    "class": "NON",
+    "tag": "VBD"
+   },
+   "minnow": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "pike": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "the": {
+    "class": "NON",
+    "tag": "DT"
+   }
+  },
+  "oe_t9": {
+   "boar": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "chase": {
+    "class": "NON",
+    "tag": "VBD"
+   },
+   "crow": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "the": {
+    "class": "NON",
+    "tag": "DT"
+   }
+  },
+  "open": {
+   "a": {
+    "class": "NON",
+    "tag": "DT"
+   },
+   "chase": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "dog": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "might": {
+    "class": "NON",
+    "tag": "MD"
+   },
+   "what": {
+    "class": "NON",
+    "tag": "WDT"
+   }
+  },
+  "pmem_cue": {
+   "bird": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "sings": {
+    "class": "NOUN",
+    "tag": "NNS"
+   },
+   "the": {
+    "class": "NON",
+    "tag": "DT"
+   }
+  },
+  "pmem_d0": {
+   "cat": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "does": {
+    "class": "NON",
+    "tag": "VBZ"
+   },
+   "eat": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "the": {
+    "class": "NON",
+    "tag": "DT"
+   },
+   "what": {
+    "class": "NON",
+    "tag": "WDT"
+   }
+  },
+  "pmem_d1": {
+   "how": {
+    "class": "NON",
+    "tag": "WRB"
+   },
+   "is": {
+    "class": "NON",
+    "tag": "VBZ"
+   },
+   "the": {
+    "class": "NON",
+    "tag": "DT"
+   },
+   "today": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "weather": {
+    "class": "NOUN",
+    "tag": "NN"
+   }
+  },
+  "pmem_d2": {
+   "about": {
+    "class": "NON",
+    "tag": "IN"
+   },
+   "me": {
+    "class": "NON",
+    "tag": "PRP"
+   },
+   "sky": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "tell": {
+    "class": "NON",
+    "tag": "VB"
+   },
+   "the": {
+    "class": "NON",
+    "tag": "DT"
+   }
+  },
+  "pmem_form": {
+   "bird": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "dog": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "feed": {
+    "class": "NON",
+    "tag": "VB"
+   },
+   "me": {
+    "class": "NON",
+    "tag": "PRP"
+   },
+   "remind": {
+    "class": "NON",
+    "tag": "VB"
+   },
+   "sings": {
+    "class": "NOUN",
+    "tag": "NNS"
+   },
+   "the": {
+    "class": "NON",
+    "tag": "DT"
+   },
+   "to": {
+    "class": "NON",
+    "tag": "TO"
+   },
+   "when": {
+    "class": "NON",
+    "tag": "WRB"
+   }
+  },
+  "pmem_form2": {
+   "bird": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "dog": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "feed": {
+    "class": "NON",
+    "tag": "VB"
+   },
+   "me": {
+    "class": "NON",
+    "tag": "PRP"
+   },
+   "remind": {
+    "class": "NON",
+    "tag": "VB"
+   },
+   "sings": {
+    "class": "NOUN",
+    "tag": "NNS"
+   },
+   "the": {
+    "class": "NON",
+    "tag": "DT"
+   },
+   "to": {
+    "class": "NON",
+    "tag": "TO"
+   },
+   "when": {
+    "class": "NON",
+    "tag": "WRB"
+   }
+  },
+  "question": {
+   "bite": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "does": {
+    "class": "NON",
+    "tag": "VBZ"
+   },
+   "the": {
+    "class": "NON",
+    "tag": "DT"
+   },
+   "what": {
+    "class": "NON",
+    "tag": "WDT"
+   },
+   "wolf": {
+    "class": "NOUN",
+    "tag": "NN"
+   }
+  },
+  "rich_open": {
+   "a": {
+    "class": "NON",
+    "tag": "DT"
+   },
+   "chase": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "dog": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "might": {
+    "class": "NON",
+    "tag": "MD"
+   },
+   "what": {
+    "class": "NON",
+    "tag": "WDT"
+   }
+  },
+  "rich_well": {
+   "apple": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "bites": {
+    "class": "NON",
+    "tag": "VBZ"
+   },
+   "the": {
+    "class": "NON",
+    "tag": "DT"
+   },
+   "wolf": {
+    "class": "NOUN",
+    "tag": "NN"
+   }
+  },
+  "scalar": {
+   "dogs": {
+    "class": "NOUN",
+    "tag": "NNS"
+   },
+   "of": {
+    "class": "NON",
+    "tag": "IN"
+   },
+   "ran": {
+    "class": "NON",
+    "tag": "VBD"
+   },
+   "some": {
+    "class": "NON",
+    "tag": "DT"
+   },
+   "the": {
+    "class": "NON",
+    "tag": "DT"
+   }
+  },
+  "selfinit": {},
+  "slp_recall": {
+   "mentioned": {
+    "class": "NON",
+    "tag": "VBD"
+   },
+   "owl": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "the": {
+    "class": "NON",
+    "tag": "DT"
+   },
+   "you": {
+    "class": "NON",
+    "tag": "PRP"
+   }
+  },
+  "slp_teach1": {
+   "chase": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "fox": {
+    "class": "NON",
+    "tag": "JJ"
+   },
+   "hare": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "the": {
+    "class": "NON",
+    "tag": "DT"
+   }
+  },
+  "slp_teach2": {
+   "chase": {
+    "class": "NON",
+    "tag": "VBD"
+   },
+   "mouse": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "owl": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "the": {
+    "class": "NON",
+    "tag": "DT"
+   }
+  },
+  "slp_teach3": {
+   "chase": {
+    "class": "NON",
+    "tag": "VBD"
+   },
+   "hawk": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "the": {
+    "class": "NON",
+    "tag": "DT"
+   },
+   "vole": {
+    "class": "NOUN",
+    "tag": "NN"
+   }
+  },
+  "slp_tick": {
+   "h": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "overnight": {
+    "class": "NON",
+    "tag": "JJ"
+   },
+   "step": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "world": {
+    "class": "NOUN",
+    "tag": "NN"
+   }
+  },
+  "sw_hold": {
+   "chase": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "does": {
+    "class": "NON",
+    "tag": "VBZ"
+   },
+   "dog": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "the": {
+    "class": "NON",
+    "tag": "DT"
+   },
+   "what": {
+    "class": "NON",
+    "tag": "WDT"
+   }
+  },
+  "sw_open": {
+   "chase": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "does": {
+    "class": "NON",
+    "tag": "VBZ"
+   },
+   "dog": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "the": {
+    "class": "NON",
+    "tag": "DT"
+   },
+   "what": {
+    "class": "NON",
+    "tag": "WDT"
+   }
+  },
+  "sw_switch": {
+   "cat": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "does": {
+    "class": "NON",
+    "tag": "VBZ"
+   },
+   "eat": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "the": {
+    "class": "NON",
+    "tag": "DT"
+   },
+   "what": {
+    "class": "NON",
+    "tag": "WDT"
+   }
+  },
+  "tom_fb": {
+   "anne": {
+    "class": "NOUN",
+    "tag": "NNP"
+   },
+   "basket": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "box": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "for": {
+    "class": "NON",
+    "tag": "IN"
+   },
+   "in": {
+    "class": "NON",
+    "tag": "IN"
+   },
+   "leaves": {
+    "class": "NON",
+    "tag": "VBZ"
+   },
+   "look": {
+    "class": "NON",
+    "tag": "VB"
+   },
+   "marble": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "moves": {
+    "class": "NON",
+    "tag": "VBZ"
+   },
+   "puts": {
+    "class": "NON",
+    "tag": "VBZ"
+   },
+   "room": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "sally": {
+    "class": "NON",
+    "tag": "RB"
+   },
+   "the": {
+    "class": "NON",
+    "tag": "DT"
+   },
+   "to": {
+    "class": "NON",
+    "tag": "TO"
+   },
+   "where": {
+    "class": "NOUN",
+    "tag": "NNP"
+   },
+   "will": {
+    "class": "NON",
+    "tag": "MD"
+   }
+  },
+  "unknown": {
+   "capital": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "france": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "is": {
+    "class": "NON",
+    "tag": "VBZ"
+   },
+   "of": {
+    "class": "NON",
+    "tag": "IN"
+   },
+   "the": {
+    "class": "NON",
+    "tag": "DT"
+   },
+   "what": {
+    "class": "NON",
+    "tag": "WP"
+   }
+  },
+  "verbsel": {
+   "cleans": {
+    "class": "NON",
+    "tag": "VBZ"
+   },
+   "cup": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "dog": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "the": {
+    "class": "NON",
+    "tag": "DT"
+   }
+  },
+  "vision": {
+   "do": {
+    "class": "NON",
+    "tag": "VBP"
+   },
+   "see": {
+    "class": "NON",
+    "tag": "VB"
+   },
+   "what": {
+    "class": "NON",
+    "tag": "WP"
+   },
+   "you": {
+    "class": "NON",
+    "tag": "PRP"
+   }
+  },
+  "well": {
+   "apple": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "bites": {
+    "class": "NON",
+    "tag": "VBZ"
+   },
+   "the": {
+    "class": "NON",
+    "tag": "DT"
+   },
+   "wolf": {
+    "class": "NOUN",
+    "tag": "NN"
+   }
+  },
+  "wmb1_ask": {
+   "about": {
+    "class": "NON",
+    "tag": "IN"
+   },
+   "are": {
+    "class": "NON",
+    "tag": "VBP"
+   },
+   "talking": {
+    "class": "NON",
+    "tag": "VBG"
+   },
+   "we": {
+    "class": "NON",
+    "tag": "PRP"
+   },
+   "who": {
+    "class": "NON",
+    "tag": "WP"
+   }
+  },
+  "wmb1_intro": {
+   "fox": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "in": {
+    "class": "NON",
+    "tag": "IN"
+   },
+   "the": {
+    "class": "NON",
+    "tag": "DT"
+   },
+   "walked": {
+    "class": "NON",
+    "tag": "VBD"
+   }
+  },
+  "wmb_ask": {
+   "about": {
+    "class": "NON",
+    "tag": "IN"
+   },
+   "are": {
+    "class": "NON",
+    "tag": "VBP"
+   },
+   "talking": {
+    "class": "NON",
+    "tag": "VBG"
+   },
+   "we": {
+    "class": "NON",
+    "tag": "PRP"
+   },
+   "who": {
+    "class": "NON",
+    "tag": "WP"
+   }
+  },
+  "wmb_intro": {
+   "and": {
+    "class": "NON",
+    "tag": "CC"
+   },
+   "fox": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "in": {
+    "class": "NON",
+    "tag": "IN"
+   },
+   "the": {
+    "class": "NON",
+    "tag": "DT"
+   },
+   "walked": {
+    "class": "NON",
+    "tag": "VBD"
+   },
+   "wolf": {
+    "class": "NOUN",
+    "tag": "NN"
+   }
+  },
+  "wmc_drive": {
+   "owl": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "the": {
+    "class": "NON",
+    "tag": "DT"
+   },
+   "watches": {
+    "class": "NON",
+    "tag": "VBZ"
+   },
+   "wolf": {
+    "class": "NOUN",
+    "tag": "NN"
+   }
+  },
+  "wmc_intro": {
+   "and": {
+    "class": "NON",
+    "tag": "CC"
+   },
+   "fox": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "in": {
+    "class": "NON",
+    "tag": "IN"
+   },
+   "the": {
+    "class": "NON",
+    "tag": "DT"
+   },
+   "walked": {
+    "class": "NON",
+    "tag": "VBD"
+   },
+   "wolf": {
+    "class": "NOUN",
+    "tag": "NN"
+   }
+  },
+  "wmcx_drive": {
+   "dog": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "owl": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "the": {
+    "class": "NON",
+    "tag": "DT"
+   },
+   "watches": {
+    "class": "NON",
+    "tag": "VBZ"
+   }
+  },
+  "wmcx_intro": {
+   "and": {
+    "class": "NON",
+    "tag": "CC"
+   },
+   "cat": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "dog": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "in": {
+    "class": "NON",
+    "tag": "IN"
+   },
+   "the": {
+    "class": "NON",
+    "tag": "DT"
+   },
+   "walked": {
+    "class": "NON",
+    "tag": "VBD"
+   }
+  },
+  "wmf_a1_ask": {
+   "chase": {
+    "class": "NON",
+    "tag": "VB"
+   },
+   "does": {
+    "class": "NON",
+    "tag": "VBZ"
+   },
+   "it": {
+    "class": "NON",
+    "tag": "PRP"
+   },
+   "what": {
+    "class": "NON",
+    "tag": "WP"
+   }
+  },
+  "wmf_a1_intro": {
+   "and": {
+    "class": "NON",
+    "tag": "CC"
+   },
+   "cat": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "dog": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "in": {
+    "class": "NON",
+    "tag": "IN"
+   },
+   "the": {
+    "class": "NON",
+    "tag": "DT"
+   },
+   "walked": {
+    "class": "NON",
+    "tag": "VBD"
+   }
+  },
+  "wmf_a2_ask": {
+   "chase": {
+    "class": "NON",
+    "tag": "VB"
+   },
+   "does": {
+    "class": "NON",
+    "tag": "VBZ"
+   },
+   "it": {
+    "class": "NON",
+    "tag": "PRP"
+   },
+   "what": {
+    "class": "NON",
+    "tag": "WP"
+   }
+  },
+  "wmf_a2_intro": {
+   "and": {
+    "class": "NON",
+    "tag": "CC"
+   },
+   "cat": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "dog": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "in": {
+    "class": "NON",
+    "tag": "IN"
+   },
+   "the": {
+    "class": "NON",
+    "tag": "DT"
+   },
+   "walked": {
+    "class": "NON",
+    "tag": "VBD"
+   }
+  },
+  "wmf_b1_ask": {
+   "does": {
+    "class": "NON",
+    "tag": "VBZ"
+   },
+   "eat": {
+    "class": "NON",
+    "tag": "VB"
+   },
+   "it": {
+    "class": "NON",
+    "tag": "PRP"
+   },
+   "what": {
+    "class": "NON",
+    "tag": "WP"
+   }
+  },
+  "wmf_b1_intro": {
+   "and": {
+    "class": "NON",
+    "tag": "CC"
+   },
+   "bird": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "cat": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "in": {
+    "class": "NON",
+    "tag": "IN"
+   },
+   "the": {
+    "class": "NON",
+    "tag": "DT"
+   },
+   "walked": {
+    "class": "NON",
+    "tag": "VBD"
+   }
+  },
+  "wmf_b2_ask": {
+   "does": {
+    "class": "NON",
+    "tag": "VBZ"
+   },
+   "eat": {
+    "class": "NON",
+    "tag": "VB"
+   },
+   "it": {
+    "class": "NON",
+    "tag": "PRP"
+   },
+   "what": {
+    "class": "NON",
+    "tag": "WP"
+   }
+  },
+  "wmf_b2_intro": {
+   "and": {
+    "class": "NON",
+    "tag": "CC"
+   },
+   "bird": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "cat": {
+    "class": "NOUN",
+    "tag": "NN"
+   },
+   "in": {
+    "class": "NON",
+    "tag": "IN"
+   },
+   "the": {
+    "class": "NON",
+    "tag": "DT"
+   },
+   "walked": {
+    "class": "NON",
+    "tag": "VBD"
+   }
+  }
+ },
+ "unknown_tags_seen": []
+}

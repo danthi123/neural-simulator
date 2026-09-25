@@ -1,0 +1,1406 @@
+{
+ "seed": 7,
+ "backend": "numpy",
+ "corpus_path": "/home/dant123/Projects/sim/data/corpus/tinystories.txt",
+ "git_sha": "d0bde2432d9bcbfdc981601578ccbd2c3d350679",
+ "corpus_sha256": "7a00272e6ca4a29c91d7bc3508de2c76dc1369b351637adf2769e1d3a3679aec",
+ "corpus_bytes": 19971040,
+ "D0_default_off": {
+  "parse_sha256": "81737f9706d815e56244e7e1886aa622617fe72cc22a5cc780626b67a2bc0d29",
+  "decisions_sha256": "94a29a45b55112beab7383cb7ef6b1749593a2e3b2ee602aa5d1d7d89dd1871d",
+  "variant": "frame",
+  "junction_module_imported": false,
+  "identical_to_pinned": true
+ },
+ "constants": {
+  "W_J": 2950.0,
+  "I_TONIC_J": -762.5,
+  "T_ON_J": 50,
+  "DRIVE_MATCH_S": 165.10471204188482,
+  "W_INIT_J": 6604.188481675393,
+  "ETA_J": 27259565.93843371,
+  "OJA_BETA_J": 1.4673747957080763e-07,
+  "OR_LESION_FACTOR": 2.0,
+  "OR_MATCH_FACTOR": 1.02,
+  "STP_ENABLED": true
+ },
+ "D3_parse": {
+  "build_train_s": 5654.7,
+  "elapsed_s": 7684.3,
+  "peak_rss_mb": 598.9,
+  "intact": {
+   "n_changed": 36,
+   "n_mismatch": 5,
+   "mismatch_labels": [
+    "open",
+    "rich_open",
+    "oe_ask",
+    "lbf_cau_teach1",
+    "lbf_cau_whatif"
+   ],
+   "offending_words": [
+    "east",
+    "might"
+   ],
+   "unknown_admits": [],
+   "new_gt_nouns_recovered": [
+    "apple",
+    "audience",
+    "basket",
+    "beetle",
+    "circus",
+    "deer",
+    "hawk",
+    "marble",
+    "monkey",
+    "morning",
+    "owl",
+    "river",
+    "sky",
+    "story",
+    "sun",
+    "way",
+    "weather",
+    "world",
+    "worm"
+   ],
+   "admitted_by_decision": [
+    "apple",
+    "audience",
+    "basket",
+    "beetle",
+    "circus",
+    "deer",
+    "east",
+    "hawk",
+    "marble",
+    "might",
+    "monkey",
+    "morning",
+    "owl",
+    "river",
+    "sky",
+    "story",
+    "sun",
+    "way",
+    "weather",
+    "world",
+    "worm"
+   ],
+   "admitted_margins": [
+    {
+     "label": "well",
+     "word": "apple",
+     "rate_cn": 0.0036875000000000002,
+     "rate_cx": 0.00021874999999999998,
+     "margin": 0.0034687500000000005,
+     "gt_class": "NOUN",
+     "near_boundary": false
+    },
+    {
+     "label": "held",
+     "word": "owl",
+     "rate_cn": 0.004625000000000001,
+     "rate_cx": 3.125e-05,
+     "margin": 0.004593750000000001,
+     "gt_class": "NOUN",
+     "near_boundary": false
+    },
+    {
+     "label": "open",
+     "word": "might",
+     "rate_cn": 0.00253125,
+     "rate_cx": 0.0001875,
+     "margin": 0.00234375,
+     "gt_class": "UNKNOWN",
+     "near_boundary": true
+    },
+    {
+     "label": "dr_b",
+     "word": "worm",
+     "rate_cn": 0.0050625,
+     "rate_cx": 0.000125,
+     "margin": 0.0049375,
+     "gt_class": "NOUN",
+     "near_boundary": false
+    },
+    {
+     "label": "chase",
+     "word": "way",
+     "rate_cn": 0.00625,
+     "rate_cx": 0.00043749999999999995,
+     "margin": 0.0058125,
+     "gt_class": "NOUN",
+     "near_boundary": false
+    },
+    {
+     "label": "animacy",
+     "word": "monkey",
+     "rate_cn": 0.010843750000000001,
+     "rate_cx": 0.00015625,
+     "margin": 0.0106875,
+     "gt_class": "NOUN",
+     "near_boundary": false
+    },
+    {
+     "label": "rich_well",
+     "word": "apple",
+     "rate_cn": 0.0036875000000000002,
+     "rate_cx": 0.00021874999999999998,
+     "margin": 0.0034687500000000005,
+     "gt_class": "NOUN",
+     "near_boundary": false
+    },
+    {
+     "label": "rich_open",
+     "word": "might",
+     "rate_cn": 0.00253125,
+     "rate_cx": 0.0001875,
+     "margin": 0.00234375,
+     "gt_class": "UNKNOWN",
+     "near_boundary": true
+    },
+    {
+     "label": "dr2_a",
+     "word": "worm",
+     "rate_cn": 0.0050625,
+     "rate_cx": 0.000125,
+     "margin": 0.0049375,
+     "gt_class": "NOUN",
+     "near_boundary": false
+    },
+    {
+     "label": "pmem_d1",
+     "word": "weather",
+     "rate_cn": 0.00284375,
+     "rate_cx": 6.25e-05,
+     "margin": 0.00278125,
+     "gt_class": "NOUN",
+     "near_boundary": true
+    },
+    {
+     "label": "pmem_d2",
+     "word": "sky",
+     "rate_cn": 0.002875,
+     "rate_cx": 0.0,
+     "margin": 0.002875,
+     "gt_class": "NOUN",
+     "near_boundary": true
+    },
+    {
+     "label": "oe_t3",
+     "word": "hawk",
+     "rate_cn": 0.00603125,
+     "rate_cx": 0.0,
+     "margin": 0.00603125,
+     "gt_class": "NOUN",
+     "near_boundary": false
+    },
+    {
+     "label": "oe_t5",
+     "word": "deer",
+     "rate_cn": 0.0145625,
+     "rate_cx": 0.0003125,
+     "margin": 0.01425,
+     "gt_class": "NOUN",
+     "near_boundary": false
+    },
+    {
+     "label": "oe_t7",
+     "word": "owl",
+     "rate_cn": 0.004625000000000001,
+     "rate_cx": 3.125e-05,
+     "margin": 0.004593750000000001,
+     "gt_class": "NOUN",
+     "near_boundary": false
+    },
+    {
+     "label": "oe_t7",
+     "word": "beetle",
+     "rate_cn": 0.00853125,
+     "rate_cx": 0.0001875,
+     "margin": 0.00834375,
+     "gt_class": "NOUN",
+     "near_boundary": false
+    },
+    {
+     "label": "oe_ask",
+     "word": "might",
+     "rate_cn": 0.00253125,
+     "rate_cx": 0.0001875,
+     "margin": 0.00234375,
+     "gt_class": "UNKNOWN",
+     "near_boundary": true
+    },
+    {
+     "label": "wmc_drive",
+     "word": "owl",
+     "rate_cn": 0.004625000000000001,
+     "rate_cx": 3.125e-05,
+     "margin": 0.004593750000000001,
+     "gt_class": "NOUN",
+     "near_boundary": false
+    },
+    {
+     "label": "wmcx_drive",
+     "word": "owl",
+     "rate_cn": 0.004625000000000001,
+     "rate_cx": 3.125e-05,
+     "margin": 0.004593750000000001,
+     "gt_class": "NOUN",
+     "near_boundary": false
+    },
+    {
+     "label": "datc_t1",
+     "word": "circus",
+     "rate_cn": 0.002875,
+     "rate_cx": 0.000125,
+     "margin": 0.00275,
+     "gt_class": "NOUN",
+     "near_boundary": true
+    },
+    {
+     "label": "datc_t2",
+     "word": "story",
+     "rate_cn": 0.002875,
+     "rate_cx": 0.0001875,
+     "margin": 0.0026875,
+     "gt_class": "NOUN",
+     "near_boundary": true
+    },
+    {
+     "label": "datc_t4",
+     "word": "audience",
+     "rate_cn": 0.002875,
+     "rate_cx": 0.0,
+     "margin": 0.002875,
+     "gt_class": "NOUN",
+     "near_boundary": true
+    },
+    {
+     "label": "datc_night",
+     "word": "world",
+     "rate_cn": 0.0023125000000000003,
+     "rate_cx": 0.000125,
+     "margin": 0.0021875,
+     "gt_class": "NOUN",
+     "near_boundary": true
+    },
+    {
+     "label": "datn_night",
+     "word": "world",
+     "rate_cn": 0.0023125000000000003,
+     "rate_cx": 0.000125,
+     "margin": 0.0021875,
+     "gt_class": "NOUN",
+     "near_boundary": true
+    },
+    {
+     "label": "datci_t1",
+     "word": "circus",
+     "rate_cn": 0.002875,
+     "rate_cx": 0.000125,
+     "margin": 0.00275,
+     "gt_class": "NOUN",
+     "near_boundary": true
+    },
+    {
+     "label": "datci_t2",
+     "word": "story",
+     "rate_cn": 0.002875,
+     "rate_cx": 0.0001875,
+     "margin": 0.0026875,
+     "gt_class": "NOUN",
+     "near_boundary": true
+    },
+    {
+     "label": "datci_t4",
+     "word": "audience",
+     "rate_cn": 0.002875,
+     "rate_cx": 0.0,
+     "margin": 0.002875,
+     "gt_class": "NOUN",
+     "near_boundary": true
+    },
+    {
+     "label": "d5c_tick",
+     "word": "world",
+     "rate_cn": 0.0023125000000000003,
+     "rate_cx": 0.000125,
+     "margin": 0.0021875,
+     "gt_class": "NOUN",
+     "near_boundary": true
+    },
+    {
+     "label": "slp_teach2",
+     "word": "owl",
+     "rate_cn": 0.004625000000000001,
+     "rate_cx": 3.125e-05,
+     "margin": 0.004593750000000001,
+     "gt_class": "NOUN",
+     "near_boundary": false
+    },
+    {
+     "label": "slp_teach3",
+     "word": "hawk",
+     "rate_cn": 0.00603125,
+     "rate_cx": 0.0,
+     "margin": 0.00603125,
+     "gt_class": "NOUN",
+     "near_boundary": false
+    },
+    {
+     "label": "slp_tick",
+     "word": "world",
+     "rate_cn": 0.0023125000000000003,
+     "rate_cx": 0.000125,
+     "margin": 0.0021875,
+     "gt_class": "NOUN",
+     "near_boundary": true
+    },
+    {
+     "label": "slp_recall",
+     "word": "owl",
+     "rate_cn": 0.004625000000000001,
+     "rate_cx": 3.125e-05,
+     "margin": 0.004593750000000001,
+     "gt_class": "NOUN",
+     "near_boundary": false
+    },
+    {
+     "label": "lbf_cau_teach1",
+     "word": "east",
+     "rate_cn": 0.0031875,
+     "rate_cx": 6.25e-05,
+     "margin": 0.0031249999999999997,
+     "gt_class": "UNKNOWN",
+     "near_boundary": false
+    },
+    {
+     "label": "lbf_cau_teach2",
+     "word": "river",
+     "rate_cn": 0.002875,
+     "rate_cx": 0.0,
+     "margin": 0.002875,
+     "gt_class": "NOUN",
+     "near_boundary": true
+    },
+    {
+     "label": "lbf_cau_teach4",
+     "word": "sun",
+     "rate_cn": 0.00253125,
+     "rate_cx": 0.0,
+     "margin": 0.00253125,
+     "gt_class": "NOUN",
+     "near_boundary": true
+    },
+    {
+     "label": "lbf_cau_teach4",
+     "word": "sky",
+     "rate_cn": 0.002875,
+     "rate_cx": 0.0,
+     "margin": 0.002875,
+     "gt_class": "NOUN",
+     "near_boundary": true
+    },
+    {
+     "label": "lbf_cau_teach6",
+     "word": "morning",
+     "rate_cn": 0.006062499999999999,
+     "rate_cx": 9.375e-05,
+     "margin": 0.005968749999999999,
+     "gt_class": "NOUN",
+     "near_boundary": false
+    },
+    {
+     "label": "lbf_cau_whatif",
+     "word": "east",
+     "rate_cn": 0.0031875,
+     "rate_cx": 6.25e-05,
+     "margin": 0.0031249999999999997,
+     "gt_class": "UNKNOWN",
+     "near_boundary": false
+    },
+    {
+     "label": "tom_fb",
+     "word": "marble",
+     "rate_cn": 0.0029375,
+     "rate_cx": 0.00015625,
+     "margin": 0.00278125,
+     "gt_class": "NOUN",
+     "near_boundary": true
+    },
+    {
+     "label": "tom_fb",
+     "word": "basket",
+     "rate_cn": 0.00775,
+     "rate_cx": 9.375e-05,
+     "margin": 0.00765625,
+     "gt_class": "NOUN",
+     "near_boundary": false
+    }
+   ],
+   "n_non_heard": 57,
+   "silent_non_words": [
+    "again",
+    "all",
+    "am",
+    "before",
+    "believe",
+    "chases",
+    "cleans",
+    "did",
+    "does",
+    "doing",
+    "everyone",
+    "expect",
+    "feed",
+    "goes",
+    "happened",
+    "happens",
+    "has",
+    "here",
+    "how",
+    "if",
+    "look",
+    "most",
+    "not",
+    "remind",
+    "rises",
+    "screaming",
+    "some",
+    "something",
+    "wakes",
+    "what",
+    "when",
+    "where",
+    "who",
+    "will"
+   ],
+   "silent_non_fraction": 0.5964912280701754,
+   "unexplained_drops": [],
+   "tom_fb_on": [
+    "marble",
+    "basket",
+    "sally",
+    "anne",
+    "box"
+   ],
+   "tom_fb_anne_kept": true
+  },
+  "coincidence": {
+   "n_changed": 31,
+   "n_mismatch": 1,
+   "mismatch_labels": [
+    "emo"
+   ],
+   "offending_words": [
+    "wonderful"
+   ],
+   "unknown_admits": [],
+   "new_gt_nouns_recovered": [
+    "audience",
+    "basket",
+    "beetle",
+    "circus",
+    "crow",
+    "deer",
+    "dogs",
+    "eagle",
+    "hawk",
+    "marble",
+    "monkey",
+    "owl",
+    "river",
+    "room",
+    "shock",
+    "sky",
+    "story",
+    "weather",
+    "world",
+    "worm"
+   ],
+   "admitted_by_decision": [
+    "audience",
+    "basket",
+    "beetle",
+    "circus",
+    "crow",
+    "deer",
+    "dogs",
+    "eagle",
+    "hawk",
+    "marble",
+    "monkey",
+    "owl",
+    "river",
+    "room",
+    "shock",
+    "sky",
+    "story",
+    "weather",
+    "wonderful",
+    "world",
+    "worm"
+   ],
+   "admitted_margins": [
+    {
+     "label": "held",
+     "word": "owl",
+     "rate_cn": 0.056968750000000005,
+     "rate_cx": 0.03459375,
+     "margin": 0.022375000000000006,
+     "gt_class": "NOUN",
+     "near_boundary": false
+    },
+    {
+     "label": "scalar",
+     "word": "dogs",
+     "rate_cn": 0.04115625,
+     "rate_cx": 0.03534375,
+     "margin": 0.005812499999999998,
+     "gt_class": "NOUN",
+     "near_boundary": false
+    },
+    {
+     "label": "dr_b",
+     "word": "worm",
+     "rate_cn": 0.04275,
+     "rate_cx": 0.025875,
+     "margin": 0.016875000000000005,
+     "gt_class": "NOUN",
+     "near_boundary": false
+    },
+    {
+     "label": "animacy",
+     "word": "monkey",
+     "rate_cn": 0.064125,
+     "rate_cx": 0.03271875,
+     "margin": 0.031406250000000004,
+     "gt_class": "NOUN",
+     "near_boundary": false
+    },
+    {
+     "label": "emo",
+     "word": "wonderful",
+     "rate_cn": 0.04,
+     "rate_cx": 0.0355625,
+     "margin": 0.004437500000000004,
+     "gt_class": "NON",
+     "near_boundary": false
+    },
+    {
+     "label": "dr2_a",
+     "word": "worm",
+     "rate_cn": 0.04275,
+     "rate_cx": 0.025875,
+     "margin": 0.016875000000000005,
+     "gt_class": "NOUN",
+     "near_boundary": false
+    },
+    {
+     "label": "pmem_d1",
+     "word": "weather",
+     "rate_cn": 0.02565625,
+     "rate_cx": 0.010812500000000001,
+     "margin": 0.014843749999999998,
+     "gt_class": "NOUN",
+     "near_boundary": false
+    },
+    {
+     "label": "pmem_d2",
+     "word": "sky",
+     "rate_cn": 0.01790625,
+     "rate_cx": 0.01484375,
+     "margin": 0.0030624999999999993,
+     "gt_class": "NOUN",
+     "near_boundary": false
+    },
+    {
+     "label": "oe_t3",
+     "word": "hawk",
+     "rate_cn": 0.0463125,
+     "rate_cx": 0.013656250000000002,
+     "margin": 0.03265625,
+     "gt_class": "NOUN",
+     "near_boundary": false
+    },
+    {
+     "label": "oe_t4",
+     "word": "eagle",
+     "rate_cn": 0.027156250000000003,
+     "rate_cx": 0.02175,
+     "margin": 0.005406250000000005,
+     "gt_class": "NOUN",
+     "near_boundary": false
+    },
+    {
+     "label": "oe_t5",
+     "word": "deer",
+     "rate_cn": 0.06109375,
+     "rate_cx": 0.0383125,
+     "margin": 0.022781250000000003,
+     "gt_class": "NOUN",
+     "near_boundary": false
+    },
+    {
+     "label": "oe_t7",
+     "word": "owl",
+     "rate_cn": 0.056968750000000005,
+     "rate_cx": 0.03459375,
+     "margin": 0.022375000000000006,
+     "gt_class": "NOUN",
+     "near_boundary": false
+    },
+    {
+     "label": "oe_t7",
+     "word": "beetle",
+     "rate_cn": 0.043125,
+     "rate_cx": 0.0250625,
+     "margin": 0.018062499999999995,
+     "gt_class": "NOUN",
+     "near_boundary": false
+    },
+    {
+     "label": "oe_t9",
+     "word": "crow",
+     "rate_cn": 0.04650000000000001,
+     "rate_cx": 0.03865625,
+     "margin": 0.007843750000000003,
+     "gt_class": "NOUN",
+     "near_boundary": false
+    },
+    {
+     "label": "wmc_drive",
+     "word": "owl",
+     "rate_cn": 0.056968750000000005,
+     "rate_cx": 0.03459375,
+     "margin": 0.022375000000000006,
+     "gt_class": "NOUN",
+     "near_boundary": false
+    },
+    {
+     "label": "wmcx_drive",
+     "word": "owl",
+     "rate_cn": 0.056968750000000005,
+     "rate_cx": 0.03459375,
+     "margin": 0.022375000000000006,
+     "gt_class": "NOUN",
+     "near_boundary": false
+    },
+    {
+     "label": "datc_t1",
+     "word": "circus",
+     "rate_cn": 0.02703125,
+     "rate_cx": 0.010562499999999999,
+     "margin": 0.01646875,
+     "gt_class": "NOUN",
+     "near_boundary": false
+    },
+    {
+     "label": "datc_t2",
+     "word": "story",
+     "rate_cn": 0.03546875,
+     "rate_cx": 0.03,
+     "margin": 0.005468750000000001,
+     "gt_class": "NOUN",
+     "near_boundary": false
+    },
+    {
+     "label": "datc_t4",
+     "word": "audience",
+     "rate_cn": 0.01159375,
+     "rate_cx": 0.0075625,
+     "margin": 0.00403125,
+     "gt_class": "NOUN",
+     "near_boundary": false
+    },
+    {
+     "label": "datc_t4",
+     "word": "shock",
+     "rate_cn": 0.02703125,
+     "rate_cx": 0.02490625,
+     "margin": 0.0021249999999999984,
+     "gt_class": "NOUN",
+     "near_boundary": true
+    },
+    {
+     "label": "datc_night",
+     "word": "world",
+     "rate_cn": 0.033875,
+     "rate_cx": 0.03065625,
+     "margin": 0.003218750000000003,
+     "gt_class": "NOUN",
+     "near_boundary": false
+    },
+    {
+     "label": "datn_night",
+     "word": "world",
+     "rate_cn": 0.033875,
+     "rate_cx": 0.03065625,
+     "margin": 0.003218750000000003,
+     "gt_class": "NOUN",
+     "near_boundary": false
+    },
+    {
+     "label": "datci_t1",
+     "word": "circus",
+     "rate_cn": 0.02703125,
+     "rate_cx": 0.010562499999999999,
+     "margin": 0.01646875,
+     "gt_class": "NOUN",
+     "near_boundary": false
+    },
+    {
+     "label": "datci_t2",
+     "word": "story",
+     "rate_cn": 0.03546875,
+     "rate_cx": 0.03,
+     "margin": 0.005468750000000001,
+     "gt_class": "NOUN",
+     "near_boundary": false
+    },
+    {
+     "label": "datci_t4",
+     "word": "audience",
+     "rate_cn": 0.01159375,
+     "rate_cx": 0.0075625,
+     "margin": 0.00403125,
+     "gt_class": "NOUN",
+     "near_boundary": false
+    },
+    {
+     "label": "datci_t4",
+     "word": "shock",
+     "rate_cn": 0.02703125,
+     "rate_cx": 0.02490625,
+     "margin": 0.0021249999999999984,
+     "gt_class": "NOUN",
+     "near_boundary": true
+    },
+    {
+     "label": "d5c_tick",
+     "word": "world",
+     "rate_cn": 0.033875,
+     "rate_cx": 0.03065625,
+     "margin": 0.003218750000000003,
+     "gt_class": "NOUN",
+     "near_boundary": false
+    },
+    {
+     "label": "slp_teach2",
+     "word": "owl",
+     "rate_cn": 0.056968750000000005,
+     "rate_cx": 0.03459375,
+     "margin": 0.022375000000000006,
+     "gt_class": "NOUN",
+     "near_boundary": false
+    },
+    {
+     "label": "slp_teach3",
+     "word": "hawk",
+     "rate_cn": 0.0463125,
+     "rate_cx": 0.013656250000000002,
+     "margin": 0.03265625,
+     "gt_class": "NOUN",
+     "near_boundary": false
+    },
+    {
+     "label": "slp_tick",
+     "word": "world",
+     "rate_cn": 0.033875,
+     "rate_cx": 0.03065625,
+     "margin": 0.003218750000000003,
+     "gt_class": "NOUN",
+     "near_boundary": false
+    },
+    {
+     "label": "slp_recall",
+     "word": "owl",
+     "rate_cn": 0.056968750000000005,
+     "rate_cx": 0.03459375,
+     "margin": 0.022375000000000006,
+     "gt_class": "NOUN",
+     "near_boundary": false
+    },
+    {
+     "label": "lbf_cau_teach2",
+     "word": "river",
+     "rate_cn": 0.02890625,
+     "rate_cx": 0.02284375,
+     "margin": 0.006062500000000002,
+     "gt_class": "NOUN",
+     "near_boundary": false
+    },
+    {
+     "label": "lbf_cau_teach4",
+     "word": "sky",
+     "rate_cn": 0.01790625,
+     "rate_cx": 0.01484375,
+     "margin": 0.0030624999999999993,
+     "gt_class": "NOUN",
+     "near_boundary": false
+    },
+    {
+     "label": "tom_fb",
+     "word": "marble",
+     "rate_cn": 0.035687500000000004,
+     "rate_cx": 0.0284375,
+     "margin": 0.007250000000000003,
+     "gt_class": "NOUN",
+     "near_boundary": false
+    },
+    {
+     "label": "tom_fb",
+     "word": "basket",
+     "rate_cn": 0.04371875,
+     "rate_cx": 0.0243125,
+     "margin": 0.01940625,
+     "gt_class": "NOUN",
+     "near_boundary": false
+    },
+    {
+     "label": "tom_fb",
+     "word": "room",
+     "rate_cn": 0.038531249999999996,
+     "rate_cx": 0.026062500000000002,
+     "margin": 0.012468749999999994,
+     "gt_class": "NOUN",
+     "near_boundary": false
+    }
+   ],
+   "n_non_heard": 57,
+   "silent_non_words": [],
+   "silent_non_fraction": 0.0
+  },
+  "coincidence_matched": {
+   "n_changed": 37,
+   "n_mismatch": 5,
+   "mismatch_labels": [
+    "open",
+    "rich_open",
+    "oe_ask",
+    "lbf_cau_teach1",
+    "lbf_cau_whatif"
+   ],
+   "offending_words": [
+    "east",
+    "might"
+   ],
+   "unknown_admits": [],
+   "new_gt_nouns_recovered": [
+    "apple",
+    "audience",
+    "basket",
+    "beetle",
+    "circus",
+    "crow",
+    "deer",
+    "hawk",
+    "marble",
+    "monkey",
+    "morning",
+    "owl",
+    "river",
+    "sky",
+    "story",
+    "sun",
+    "way",
+    "weather",
+    "world",
+    "worm"
+   ],
+   "admitted_by_decision": [
+    "apple",
+    "audience",
+    "basket",
+    "beetle",
+    "circus",
+    "crow",
+    "deer",
+    "east",
+    "hawk",
+    "marble",
+    "might",
+    "monkey",
+    "morning",
+    "owl",
+    "river",
+    "sky",
+    "story",
+    "sun",
+    "way",
+    "weather",
+    "world",
+    "worm"
+   ],
+   "admitted_margins": [
+    {
+     "label": "well",
+     "word": "apple",
+     "rate_cn": 0.0036875000000000002,
+     "rate_cx": 0.00021874999999999998,
+     "margin": 0.0034687500000000005,
+     "gt_class": "NOUN",
+     "near_boundary": false
+    },
+    {
+     "label": "held",
+     "word": "owl",
+     "rate_cn": 0.004625000000000001,
+     "rate_cx": 3.125e-05,
+     "margin": 0.004593750000000001,
+     "gt_class": "NOUN",
+     "near_boundary": false
+    },
+    {
+     "label": "open",
+     "word": "might",
+     "rate_cn": 0.00253125,
+     "rate_cx": 0.00025,
+     "margin": 0.0022812500000000003,
+     "gt_class": "UNKNOWN",
+     "near_boundary": true
+    },
+    {
+     "label": "dr_b",
+     "word": "worm",
+     "rate_cn": 0.0050625,
+     "rate_cx": 0.000125,
+     "margin": 0.0049375,
+     "gt_class": "NOUN",
+     "near_boundary": false
+    },
+    {
+     "label": "chase",
+     "word": "way",
+     "rate_cn": 0.00625,
+     "rate_cx": 0.00040625000000000004,
+     "margin": 0.00584375,
+     "gt_class": "NOUN",
+     "near_boundary": false
+    },
+    {
+     "label": "animacy",
+     "word": "monkey",
+     "rate_cn": 0.010843750000000001,
+     "rate_cx": 0.00015625,
+     "margin": 0.0106875,
+     "gt_class": "NOUN",
+     "near_boundary": false
+    },
+    {
+     "label": "rich_well",
+     "word": "apple",
+     "rate_cn": 0.0036875000000000002,
+     "rate_cx": 0.00021874999999999998,
+     "margin": 0.0034687500000000005,
+     "gt_class": "NOUN",
+     "near_boundary": false
+    },
+    {
+     "label": "rich_open",
+     "word": "might",
+     "rate_cn": 0.00253125,
+     "rate_cx": 0.00025,
+     "margin": 0.0022812500000000003,
+     "gt_class": "UNKNOWN",
+     "near_boundary": true
+    },
+    {
+     "label": "dr2_a",
+     "word": "worm",
+     "rate_cn": 0.0050625,
+     "rate_cx": 0.000125,
+     "margin": 0.0049375,
+     "gt_class": "NOUN",
+     "near_boundary": false
+    },
+    {
+     "label": "pmem_d1",
+     "word": "weather",
+     "rate_cn": 0.00284375,
+     "rate_cx": 6.25e-05,
+     "margin": 0.00278125,
+     "gt_class": "NOUN",
+     "near_boundary": true
+    },
+    {
+     "label": "pmem_d2",
+     "word": "sky",
+     "rate_cn": 0.002875,
+     "rate_cx": 0.0,
+     "margin": 0.002875,
+     "gt_class": "NOUN",
+     "near_boundary": true
+    },
+    {
+     "label": "oe_t3",
+     "word": "hawk",
+     "rate_cn": 0.00603125,
+     "rate_cx": 0.0,
+     "margin": 0.00603125,
+     "gt_class": "NOUN",
+     "near_boundary": false
+    },
+    {
+     "label": "oe_t5",
+     "word": "deer",
+     "rate_cn": 0.0145625,
+     "rate_cx": 0.0003125,
+     "margin": 0.01425,
+     "gt_class": "NOUN",
+     "near_boundary": false
+    },
+    {
+     "label": "oe_t7",
+     "word": "owl",
+     "rate_cn": 0.004625000000000001,
+     "rate_cx": 3.125e-05,
+     "margin": 0.004593750000000001,
+     "gt_class": "NOUN",
+     "near_boundary": false
+    },
+    {
+     "label": "oe_t7",
+     "word": "beetle",
+     "rate_cn": 0.008562499999999999,
+     "rate_cx": 0.0001875,
+     "margin": 0.008374999999999999,
+     "gt_class": "NOUN",
+     "near_boundary": false
+    },
+    {
+     "label": "oe_t9",
+     "word": "crow",
+     "rate_cn": 0.00571875,
+     "rate_cx": 0.00215625,
+     "margin": 0.0035624999999999997,
+     "gt_class": "NOUN",
+     "near_boundary": false
+    },
+    {
+     "label": "oe_ask",
+     "word": "might",
+     "rate_cn": 0.00253125,
+     "rate_cx": 0.00025,
+     "margin": 0.0022812500000000003,
+     "gt_class": "UNKNOWN",
+     "near_boundary": true
+    },
+    {
+     "label": "wmc_drive",
+     "word": "owl",
+     "rate_cn": 0.004625000000000001,
+     "rate_cx": 3.125e-05,
+     "margin": 0.004593750000000001,
+     "gt_class": "NOUN",
+     "near_boundary": false
+    },
+    {
+     "label": "wmcx_drive",
+     "word": "owl",
+     "rate_cn": 0.004625000000000001,
+     "rate_cx": 3.125e-05,
+     "margin": 0.004593750000000001,
+     "gt_class": "NOUN",
+     "near_boundary": false
+    },
+    {
+     "label": "datc_t1",
+     "word": "circus",
+     "rate_cn": 0.002875,
+     "rate_cx": 0.000125,
+     "margin": 0.00275,
+     "gt_class": "NOUN",
+     "near_boundary": true
+    },
+    {
+     "label": "datc_t2",
+     "word": "story",
+     "rate_cn": 0.002875,
+     "rate_cx": 0.0001875,
+     "margin": 0.0026875,
+     "gt_class": "NOUN",
+     "near_boundary": true
+    },
+    {
+     "label": "datc_t4",
+     "word": "audience",
+     "rate_cn": 0.004125,
+     "rate_cx": 3.125e-05,
+     "margin": 0.00409375,
+     "gt_class": "NOUN",
+     "near_boundary": false
+    },
+    {
+     "label": "datc_night",
+     "word": "world",
+     "rate_cn": 0.0023125000000000003,
+     "rate_cx": 0.000125,
+     "margin": 0.0021875,
+     "gt_class": "NOUN",
+     "near_boundary": true
+    },
+    {
+     "label": "datn_night",
+     "word": "world",
+     "rate_cn": 0.0023125000000000003,
+     "rate_cx": 0.000125,
+     "margin": 0.0021875,
+     "gt_class": "NOUN",
+     "near_boundary": true
+    },
+    {
+     "label": "datci_t1",
+     "word": "circus",
+     "rate_cn": 0.002875,
+     "rate_cx": 0.000125,
+     "margin": 0.00275,
+     "gt_class": "NOUN",
+     "near_boundary": true
+    },
+    {
+     "label": "datci_t2",
+     "word": "story",
+     "rate_cn": 0.002875,
+     "rate_cx": 0.0001875,
+     "margin": 0.0026875,
+     "gt_class": "NOUN",
+     "near_boundary": true
+    },
+    {
+     "label": "datci_t4",
+     "word": "audience",
+     "rate_cn": 0.004125,
+     "rate_cx": 3.125e-05,
+     "margin": 0.00409375,
+     "gt_class": "NOUN",
+     "near_boundary": false
+    },
+    {
+     "label": "d5c_tick",
+     "word": "world",
+     "rate_cn": 0.0023125000000000003,
+     "rate_cx": 0.000125,
+     "margin": 0.0021875,
+     "gt_class": "NOUN",
+     "near_boundary": true
+    },
+    {
+     "label": "slp_teach2",
+     "word": "owl",
+     "rate_cn": 0.004625000000000001,
+     "rate_cx": 3.125e-05,
+     "margin": 0.004593750000000001,
+     "gt_class": "NOUN",
+     "near_boundary": false
+    },
+    {
+     "label": "slp_teach3",
+     "word": "hawk",
+     "rate_cn": 0.00603125,
+     "rate_cx": 0.0,
+     "margin": 0.00603125,
+     "gt_class": "NOUN",
+     "near_boundary": false
+    },
+    {
+     "label": "slp_tick",
+     "word": "world",
+     "rate_cn": 0.0023125000000000003,
+     "rate_cx": 0.000125,
+     "margin": 0.0021875,
+     "gt_class": "NOUN",
+     "near_boundary": true
+    },
+    {
+     "label": "slp_recall",
+     "word": "owl",
+     "rate_cn": 0.004625000000000001,
+     "rate_cx": 3.125e-05,
+     "margin": 0.004593750000000001,
+     "gt_class": "NOUN",
+     "near_boundary": false
+    },
+    {
+     "label": "lbf_cau_teach1",
+     "word": "east",
+     "rate_cn": 0.0031875,
+     "rate_cx": 6.25e-05,
+     "margin": 0.0031249999999999997,
+     "gt_class": "UNKNOWN",
+     "near_boundary": false
+    },
+    {
+     "label": "lbf_cau_teach2",
+     "word": "river",
+     "rate_cn": 0.002875,
+     "rate_cx": 0.0,
+     "margin": 0.002875,
+     "gt_class": "NOUN",
+     "near_boundary": true
+    },
+    {
+     "label": "lbf_cau_teach4",
+     "word": "sun",
+     "rate_cn": 0.00253125,
+     "rate_cx": 0.0,
+     "margin": 0.00253125,
+     "gt_class": "NOUN",
+     "near_boundary": true
+    },
+    {
+     "label": "lbf_cau_teach4",
+     "word": "sky",
+     "rate_cn": 0.002875,
+     "rate_cx": 0.0,
+     "margin": 0.002875,
+     "gt_class": "NOUN",
+     "near_boundary": true
+    },
+    {
+     "label": "lbf_cau_teach6",
+     "word": "morning",
+     "rate_cn": 0.006062499999999999,
+     "rate_cx": 0.00015625,
+     "margin": 0.005906249999999999,
+     "gt_class": "NOUN",
+     "near_boundary": false
+    },
+    {
+     "label": "lbf_cau_whatif",
+     "word": "east",
+     "rate_cn": 0.0031875,
+     "rate_cx": 6.25e-05,
+     "margin": 0.0031249999999999997,
+     "gt_class": "UNKNOWN",
+     "near_boundary": false
+    },
+    {
+     "label": "tom_fb",
+     "word": "marble",
+     "rate_cn": 0.0029375,
+     "rate_cx": 0.00015625,
+     "margin": 0.00278125,
+     "gt_class": "NOUN",
+     "near_boundary": true
+    },
+    {
+     "label": "tom_fb",
+     "word": "basket",
+     "rate_cn": 0.00775,
+     "rate_cx": 9.375e-05,
+     "margin": 0.00765625,
+     "gt_class": "NOUN",
+     "near_boundary": false
+    }
+   ],
+   "n_non_heard": 57,
+   "silent_non_words": [
+    "again",
+    "all",
+    "am",
+    "before",
+    "believe",
+    "chases",
+    "cleans",
+    "did",
+    "does",
+    "doing",
+    "everyone",
+    "expect",
+    "feed",
+    "goes",
+    "happened",
+    "happens",
+    "has",
+    "here",
+    "how",
+    "if",
+    "look",
+    "most",
+    "not",
+    "remind",
+    "rises",
+    "screaming",
+    "some",
+    "something",
+    "wakes",
+    "what",
+    "when",
+    "where",
+    "who",
+    "will"
+   ],
+   "silent_non_fraction": 0.5964912280701754
+  },
+  "g3_lever_moved": false,
+  "g3_matched_lever_moved": false,
+  "g3_lever_recorded": true,
+  "g3_matched_lever_recorded": false,
+  "fraction_of_v2_mismatches_removed": 0.5,
+  "v2_silent_non_fraction": 0.10526315789473684,
+  "v2_silent_non_words": [
+   "cleans",
+   "does",
+   "happens",
+   "if",
+   "something",
+   "what"
+  ]
+ },
+ "D1_curriculum": {
+  "n": 75,
+  "correct": 69,
+  "abstain": 6,
+  "wrong": []
+ },
+ "D2_and_smoke": {
+  "n": 256,
+  "lone_left_fired": 0,
+  "lone_right_fired": 0,
+  "pair_fired_in_window": 256,
+  "pair_spikes_mean": 1.01953125,
+  "pair_first_spike_max": 22,
+  "and_holds": true,
+  "coincidence_lesion_lone_left_fired": 64,
+  "coincidence_lesion_n": 64
+ },
+ "D2_and_population": {
+  "n_junctions": 10000,
+  "lone_left_fired": 0,
+  "lone_right_fired": 0,
+  "pair_silent": 0,
+  "pair_spikes_mean": 1.0161,
+  "and_violations": 0,
+  "and_holds_all": true,
+  "left_afferent_rate": {
+   "median": 0.14666666666666667,
+   "max": 0.20666666666666667,
+   "argmax": 10
+  },
+  "right_afferent_rate": {
+   "median": 0.14666666666666667,
+   "max": 0.23333333333333334,
+   "argmax": 12
+  }
+ },
+ "D4_route": {
+  "r1_pass": true,
+  "r1_input_order": [
+   "wolf",
+   "owl"
+  ],
+  "r2_pass": true,
+  "r3_recovered_both_rate": 0.25,
+  "r3_pass": false,
+  "r4_lesion_recovered_both_rate": 0.0,
+  "r4_lever_moved": true,
+  "r4_pass": true,
+  "hand_baseline_recovered_both_rate": 0.0,
+  "elapsed_s": 398.8
+ },
+ "elapsed_s": 8834.4,
+ "peak_rss_mb": 598.9
+}

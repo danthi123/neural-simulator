@@ -64,7 +64,17 @@ if _REPO not in sys.path:
 FIXTURE = os.path.join(_REPO, "research", "fixtures", "lexicon_referent_pos_gt.json")
 CORPUS_POS_MAP = os.path.join(_REPO, "research", "findings", "raw", "_corpus_pos_map.json")
 CLOSED_CLASS = os.path.join(_REPO, "research", "fixtures", "closed_class_inventory_nltk_english.json")
+TOKEN_FIXTURE = os.path.join(_REPO, "research", "fixtures", "lexicon_referent_pos_gt_tokenlevel.json")
 _FLAG_ENV = ("BRAIN_LEARNED_REFERENT_LEXICON", "BRAIN_LEARNED_REFERENT_LESION")
+
+# AMENDMENT 2 (review issue G2-3): a small, explicit override for words the NLTK stopword list and the dominant-POS
+# maps both miss AND the Penn Treebank convention itself tags NN (see
+# `_lexicon_closed_class_token_pos_fixture.py`'s `_INDEFINITE_PRONOUN_OVERRIDE` docstring). Applied to BOTH the
+# type-level and token-level classifiers below so the two instruments agree on this word class.
+INDEFINITE_PRONOUNS = {
+    "something", "someone", "somebody", "anything", "anyone", "anybody",
+    "everything", "everyone", "everybody", "nothing", "noone", "nobody",
+}
 
 
 # ── the independent ground truth ───────────────────────────────────────────────────────────────────────────────
@@ -72,7 +82,9 @@ NOUN, NON, UNKNOWN = "NOUN", "NON", "UNKNOWN"
 
 
 def load_gt():
-    """(gt_class, gt_pos): gt_class(word) -> NOUN / NON / UNKNOWN (see the module docstring)."""
+    """(gt_class, gt_pos): gt_class(word) -> NOUN / NON / UNKNOWN, TYPE-level (one dominant-POS reading per word
+    form, see the module docstring). Used for the cross-turn `queried` report (AMENDMENT 2 keeps this scope) and as
+    the per-turn adjudication FALLBACK for any word the token-level fixture does not cover."""
     fx = json.load(open(FIXTURE))["pos"]
     cm = json.load(open(CORPUS_POS_MAP))
     closed = set(json.load(open(CLOSED_CLASS))["words"])
@@ -85,7 +97,7 @@ def load_gt():
         return e.get("pos") if e else None
 
     def gt_class(w: str) -> str:
-        if w in closed:
+        if w in closed or w in INDEFINITE_PRONOUNS:
             return NON
         p = gt_pos(w)
         if p == "NOUN":
@@ -95,6 +107,34 @@ def load_gt():
         return UNKNOWN
 
     return gt_class, gt_pos
+
+
+def load_token_gt():
+    """label -> {word_lower: NOUN/NON/UNKNOWN}, TOKEN-level (AMENDMENT 2, review issue G2-3): each battery turn's
+    OWN words tagged IN THAT SENTENCE by `_lexicon_closed_class_token_pos_fixture.py` (nltk averaged-perceptron,
+    Penn Treebank tagset, built once and committed -- no runtime nltk dependency; see that module's docstring).
+    Fixes 'leaves' (VBZ in "Sally leaves the room", not the type-level dominant NOUN), 'today' (whatever its
+    CONTEXTUAL tag is, not the fixture's blanket NOUN), and every modal/wh-word/pronoun/adverb the NLTK-198
+    stopword list and the NOUN/VERB/ADJ-only POS maps miss (falls to UNKNOWN there; resolves directly here).
+    HONEST RESIDUAL: the tagger is itself imperfect (verified: 'east' tags RB, an adverb reading, in "the sun
+    rises in the east" -- a noun use the tagger gets wrong). This is a second, independently-imperfect instrument,
+    not a superseding one."""
+    d = json.load(open(TOKEN_FIXTURE))
+    return {label: pw for label, pw in d["turns"].items()}
+
+
+def make_turn_gt_class(label: str, token_gt: dict, gt_class_fallback):
+    """A gt_class(word) closure SCOPED TO ONE TURN: the token-level tag for that turn's own occurrence of `word`
+    when available, else the type-level fallback (AMENDMENT 2)."""
+    per_word = token_gt.get(label) or {}
+
+    def gt_class_turn(w: str) -> str:
+        info = per_word.get(w)
+        if info is not None:
+            return info["class"]
+        return gt_class_fallback(w)
+
+    return gt_class_turn
 
 
 # ── the adjudication rule (pure) ─────────────────────────────────────────────────────────────────────────────
@@ -127,10 +167,16 @@ def _clean_env():
         os.environ.pop(k, None)
 
 
-def _parse_arm(lex, arm, gt_class, gt_pos):
-    """Parse every battery probe turn with and without `lex` (its current lesion state) and adjudicate."""
+def _parse_arm(lex, arm, gt_class, gt_pos, token_gt=None):
+    """Parse every battery probe turn with and without `lex` (its current lesion state) and adjudicate.
+
+    AMENDMENT 2 (review issues G2-2, G2-3): adjudication uses the TOKEN-level ground truth for each turn's own
+    words when `token_gt` is given (falls back to the type-level `gt_class`), and every queried word carries its
+    CN-CX rate margin plus a NON-word silence flag (silent = both pools below `L.MIN_RATE`, a failure to decide,
+    not a margin abstain)."""
     from research.runners import d6_multiref_wm_production_organ as D6
     from research.runners.onebrain_regression_battery import _TURN_BY_LABEL
+    from research.runners import lexicon_spiking_frame_category as L
 
     cap = min(D6.R_MAX, D6._BINDER_K)
     turns, queried = [], {}
@@ -138,7 +184,8 @@ def _parse_arm(lex, arm, gt_class, gt_pos):
         text, session = t[1], t[2]
         off = D6.extract_referents(text)
         on = D6.extract_referents(text, referent_lexicon=lex)
-        adj = adjudicate(off, on, cap, gt_class)
+        gt_class_turn = make_turn_gt_class(label, token_gt, gt_class) if token_gt is not None else gt_class
+        adj = adjudicate(off, on, cap, gt_class_turn)
         turns.append({"label": label, "session": session, "text": text, "off": off, "on": on, **adj})
         for w in D6._WORD_RE.findall(text or ""):
             lw = w.lower()
@@ -146,17 +193,42 @@ def _parse_arm(lex, arm, gt_class, gt_pos):
                     or lw in queried):
                 continue
             dec, rn, rx = lex.decide(lw)
-            queried[lw] = {"decision": dec[0], "rate_cn": None if rn is None else float(rn[0]),
-                           "rate_cx": None if rx is None else float(rx[0]),
+            rn0 = None if rn is None else float(rn[0])
+            rx0 = None if rx is None else float(rx[0])
+            queried[lw] = {"decision": dec[0], "rate_cn": rn0, "rate_cx": rx0,
+                           "margin": None if (rn0 is None or rx0 is None) else rn0 - rx0,
                            "heard": int(len(lex.env.pos.get(lw, ())))}
     changed = [r for r in turns if r["changed"]]
     mism = [r for r in turns if not r["match"]]
     parse_blob = json.dumps([(r["label"], r["off"], r["on"]) for r in turns], sort_keys=True).encode()
-    # the hash covers the lexicon's own outputs only (not the ground-truth labels), so it can pin byte-identity
-    dec_blob = json.dumps(queried, sort_keys=True).encode()
+    # the hash covers the lexicon's own outputs only (not the ground-truth labels), so it can pin byte-identity.
+    # AMENDMENT 2: hashed over the ORIGINAL 4 fields only (decision/rate_cn/rate_cx/heard) -- "margin" added below
+    # is a pure re-derivation of rate_cn-rate_cx, not new decision information, and must not perturb this pin.
+    dec_blob = json.dumps({w: {k: q[k] for k in ("decision", "rate_cn", "rate_cx", "heard")}
+                           for w, q in queried.items()}, sort_keys=True).encode()
     for w, q in queried.items():
         q["gt_pos"], q["gt_class"] = gt_pos(w), gt_class(w)
+        q["silent"] = bool(q["rate_cn"] is not None and q["rate_cx"] is not None
+                           and q["rate_cn"] < L.MIN_RATE and q["rate_cx"] < L.MIN_RATE)
     tom = next((r for r in turns if r["label"] == "tom_fb"), None)
+    # AMENDMENT 2 G3 (review issue G3-1): per-word margins for every ADMITTED word (not just bad_admits), and a
+    # near-boundary flag (margin within 1.5x DEAD_MARGIN of the abstain threshold) -- separates "the conjunction
+    # decided this word cleanly" from "this word rode in on general drive, barely clearing the margin".
+    admitted_margins = []
+    for r in turns:
+        for w in r["admitted"]:
+            q = queried.get(w)
+            if q is None or q["margin"] is None:
+                continue
+            admitted_margins.append({"label": r["label"], "word": w, "rate_cn": q["rate_cn"], "rate_cx": q["rate_cx"],
+                                     "margin": q["margin"], "gt_class": q["gt_class"],
+                                     "near_boundary": bool(abs(q["margin"]) < 1.5 * L.DEAD_MARGIN)})
+    # AMENDMENT 2 G2-2 (review issue G2-2, no-pass-by-abstaining): NON-ground-truth words the lexicon was ASKED
+    # ABOUT that leave BOTH pools silent -- a failure to decide, distinct from a margin abstain (both pools active
+    # but too close to call). Reported per arm; `score()` compares this seed's junction reading against v2's own
+    # reading at the SAME seed (never a cross-seed or absolute bar chosen after the fact).
+    non_queried = {w: q for w, q in queried.items() if q["gt_class"] == NON and q["heard"] > 0}
+    silent_non = sorted(w for w, q in non_queried.items() if q["silent"])
     return {
         "arm": arm, "cap": cap,
         "n_turns": len(turns), "n_changed": len(changed), "n_mismatch": len(mism),
@@ -169,12 +241,23 @@ def _parse_arm(lex, arm, gt_class, gt_pos):
         "sessions_changed": sorted({r["session"] for r in changed}),
         "sessions_mismatch": sorted({r["session"] for r in mism}),
         "admitted_by_decision": sorted(w for w, q in queried.items() if q["decision"] is True),
+        "admitted_margins": admitted_margins,
+        "n_non_heard": len(non_queried), "silent_non_words": silent_non,
+        "silent_non_fraction": (len(silent_non) / len(non_queried)) if non_queried else None,
         "tom_fb_on": None if tom is None else tom["on"],
         "tom_fb_anne_kept": None if tom is None else ("anne" in tom["on"]),
         "parse_sha256": hashlib.sha256(parse_blob).hexdigest(),
         "decisions_sha256": hashlib.sha256(dec_blob).hexdigest(),
         "turns": turns, "queried": queried,
     }
+
+
+def _git_sha():
+    try:
+        import subprocess
+        return subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=_REPO, text=True).strip()
+    except Exception:  # noqa: BLE001
+        return None
 
 
 def run(seed: int, corpus: str, lesions=(None,)):
@@ -189,16 +272,26 @@ def run(seed: int, corpus: str, lesions=(None,)):
     lex = L.get_lexicon(seed=seed, corpus_path=corpus)
     t_build = round(time.time() - t0, 1)
     gt_class, gt_pos = load_gt()
+    token_gt = load_token_gt()
     arms = {}
     for lesion in lesions:
         name = lesion or "intact"
         lex.set_lesion(lesion)
-        arms[name] = _parse_arm(lex, name, gt_class, gt_pos)
+        arms[name] = _parse_arm(lex, name, gt_class, gt_pos, token_gt=token_gt)
     lex.set_lesion(None)
     _clean_env()
     out = {"seed": seed, "variant": getattr(lex, "variant", "frame"),
            "junction_flag": os.environ.get("BRAIN_LEARNED_REFERENT_JUNCTION"),
-           "arms": arms, "build_train_s": t_build}
+           "arms": arms, "build_train_s": t_build, "git_sha": _git_sha()}
+    # AMENDMENT 2 (review issue #6): record the junction variant's own frozen constants on every run, so score()
+    # can refuse to pool seeds that ran under different constants/code as MIXED-INPUT (below) instead of silently
+    # averaging them.
+    if out["variant"] == "junction":
+        from research.runners import lexicon_frame_junction as J
+        out["constants"] = {"W_J": J.W_J, "I_TONIC_J": J.I_TONIC_J, "T_ON_J": J.T_ON_J,
+                            "DRIVE_MATCH_S": J.DRIVE_MATCH_S, "OR_LESION_FACTOR": J.OR_LESION_FACTOR,
+                            "OR_MATCH_FACTOR": getattr(J, "OR_MATCH_FACTOR", None),
+                            "stp_enabled": getattr(J, "STP_ENABLED", None)}
     # headline copy of the intact arm (the first arm) for readability
     first = arms[next(iter(arms))]
     for k in ("n_turns", "n_changed", "n_mismatch", "offending_words", "unknown_admits", "parse_sha256",
@@ -209,6 +302,7 @@ def run(seed: int, corpus: str, lesions=(None,)):
     out["fixture_sha256"], _ = _sha256(FIXTURE)
     out["corpus_pos_map_sha256"], _ = _sha256(CORPUS_POS_MAP)
     out["closed_class_sha256"], _ = _sha256(CLOSED_CLASS)
+    out["token_fixture_sha256"], _ = _sha256(TOKEN_FIXTURE)
     try:
         import resource
         out["peak_rss_mb"] = round(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1024.0, 1)
@@ -261,9 +355,18 @@ def score(src, route_dir=None):
     n_g3 = sum(r["g3_lever_moved"] for r in rows.values())
     g2 = bool(rows.get(PRODUCTION_SEED, {}).get("g2_pass")) and n_g2 >= 5
     g3 = n_g3 >= 5
+    # AMENDMENT 2 (review issue #6): REQUIRED provenance (corpus/fixture/POS-map/closed-class hashes) must always be
+    # present and identical, as before. OPTIONAL provenance added here (token-fixture hash, junction constants, git
+    # SHA) does not need to be POPULATED on every artifact (older runs predate these fields), but if it disagrees
+    # across seeds -- different constants because an amendment landed mid-run, or a different git SHA -- that is
+    # still MIXED-INPUT, never silently pooled as homogeneous.
+    inputs_required = sorted({(d.get("corpus_sha256"), d.get("fixture_sha256"), d.get("corpus_pos_map_sha256"),
+                              d.get("closed_class_sha256")) for d in M.values()}, key=str)
     inputs = sorted({(d.get("corpus_sha256"), d.get("fixture_sha256"), d.get("corpus_pos_map_sha256"),
-                      d.get("closed_class_sha256")) for d in M.values()}, key=str)
-    one_input = len(inputs) == 1 and None not in inputs[0]
+                      d.get("closed_class_sha256"), d.get("token_fixture_sha256"),
+                      json.dumps(d.get("constants"), sort_keys=True) if d.get("constants") else None,
+                      d.get("git_sha")) for d in M.values()}, key=str)
+    one_input = len(inputs_required) == 1 and None not in inputs_required[0] and len(inputs) == 1
     g1 = None
     if route_dir:
         vpath = os.path.join(route_dir, "verdict.json")

@@ -1,0 +1,33 @@
+{
+ "run_id": "1790302254-2680899",
+ "runner": "research/runners/lexicon_frame_junction.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-a81b6f6baf33930bd/research/runners/lexicon_frame_junction.py",
+  "--and-population",
+  "--seed",
+  "7",
+  "--weights=2950,3000,3050,3100",
+  "--biases=-750,-755,-760,-765,-770,-775,-780,-785,-790,-795,-800,-805,-810,-815,-820,-825,-830",
+  "--json=research/findings/raw/_lexicon_closed_class/and_population_stp_grid_s7_width.json"
+ ],
+ "git_sha": "67650da5d",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-24T22:10:54",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "host": "dant123-wk",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 1757.7,
+ "corpus_check_query": "frame-junction AND circuit fires to a single fast afferent (rate-dependent, not coincidence-only)",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_lexicon_closed_class/and_population_stp_grid_s7_width.json"
+}

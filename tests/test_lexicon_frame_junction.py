@@ -76,13 +76,21 @@ def test_and_holds_and_coincidence_lesion_makes_it_an_or(junction):
     assert J.and_smoke(junction, n_sample=12)["and_holds"], "the lesion must be fully reversible"
 
 
-def test_learned_edge_lesion_restores_start_weights(junction):
+def test_learned_edge_lesion_settles_near_start_weights(junction):
+    """AMENDMENT 2 (R4 fix): the lesion no longer installs raw W_init -- it runs a ONE-TIME homeostatic settle
+    (`_r4_homeostatic_settle`) starting from W_init and returns the RESULT, `W_lesion_settled`. The installed
+    weights must therefore (a) NOT be the artificially-inflated `W` this test set, and (b) stay within the settle's
+    own multiplicative clip bound of the pre-learning start weights (never far from them, just not IDENTICAL)."""
     from sim.backend import to_host
     junction.W = junction.W_init * 1.5
     junction._install()
     junction.set_lesion("learned_edge")
     data = np.asarray(to_host(junction.b.cp_connections.data))
-    assert np.array_equal(data[junction.S], junction.W_init.astype(np.float32))
+    installed = data[junction.S].astype(np.float64)
+    assert not np.allclose(installed, (junction.W_init * 1.5).astype(np.float32))
+    ratio = installed / junction.W_init
+    assert np.all(ratio >= 0.5 - 1e-6) and np.all(ratio <= 2.0 + 1e-6), \
+        "the settled weights must stay within the homeostatic scale's own clip bound of W_init"
     junction.set_lesion(None)
     data = np.asarray(to_host(junction.b.cp_connections.data))
     assert np.array_equal(data[junction.S], junction.W.astype(np.float32))
