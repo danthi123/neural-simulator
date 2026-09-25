@@ -45,7 +45,7 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 5. Flip candidates that clear 6-seed GO + B2b no-regression: flip them myself (owner authorization 2026-09-23).
 6. DA tag-capture (#227) flip path, branch `research/da-tag-capture-ltm-on` @ cce3c1dbd (prereg Amendment 3): LTM-ON
    seed-42 run queued at the pool front with `mem_gb=48` (it measures the real peak; queue seeds 43-102 from that
-   number). Offcheck at pin 36a175534 is running in the lane's worktree. Audit verdict: an ordinary fact told once is
+   number); it dispatched to pool1 at 21:11. Offcheck at pin 36a175534 RAN (peak 1.9 GB) and reads UNDEFINED: the store and the ledger scenario are identical, but 19 unrelated server.py hunks merged since the pin also change the hashed reply path, so a fixed historical pin cannot answer the question (Amendment 4, branch head f6b0f31f7). Needed: an offcheck that compares current main flag-OFF against current main with the feature's own diff reverted. Audit verdict: an ordinary fact told once is
    NOT kept overnight with the ledger on, and no replay/repetition route reaches that store, so a flip would make ordinary
    facts forgettable. Build lane `research/sleep-replay-capture` (brain-driven reactivation during the night tick,
    default-OFF) launched 21:10.
