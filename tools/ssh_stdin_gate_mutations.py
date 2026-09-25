@@ -157,6 +157,8 @@ def main():
     out = {
         "provenance": {"cmd": "python tools/ssh_stdin_gate_mutations.py --out " + args.out,
                        "script": "tools/ssh_stdin_gate_mutations.py", "git_sha": git_sha, "gate_sha256": orig_sha,
+                       # gates/device_and_cost: pytest on the host CPU; no simulator backend runs
+                       "device": "cpu (host python; no simulator backend)",
                        "generated_utc": datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds")},
         "mutations": len(results),
         "mutations_caught": sum(1 for r in results if r["suite_red"]),

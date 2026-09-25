@@ -187,6 +187,8 @@ def main(argv=None):
         "provenance": {
             "cmd": "python tools/ssh_stdin_gate_replay.py " + " ".join(argv if argv is not None else sys.argv[1:]),
             "script": "tools/ssh_stdin_gate_replay.py",
+            # gates/device_and_cost: static analysis of git history on the host CPU; no simulator backend runs
+            "device": "cpu (host python; no simulator backend)",
             "gate_at": head,
             "git_sha": _git(["rev-parse", "HEAD"]).decode().strip(),
             "generated_utc": datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds"),
