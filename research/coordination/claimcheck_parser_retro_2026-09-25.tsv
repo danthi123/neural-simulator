@@ -1,5 +1,5 @@
 # claim_check retro-scan, 2026-09-25: MAIN's tools/claim_check.py (7e2edc08e, standalone <!--derived--> runs to the next '## ' heading)
-# vs ROUND 4's parser-based tools/claim_check.py (branch research/claimcheck-parser-scope @ 6b9844c3c).
+# vs ROUND 4's parser-based tools/claim_check.py (branch research/claimcheck-parser-scope @ 214e509bf).
 # Run inside the round-4 worktree, so both checkers resolve the SAME artifacts (research/findings/raw files that are
 # untracked in the primary checkout are absent here for BOTH; a 'missing artifact' reason is shared, not new).
 # Populations: (a) research/findings/*.md ADDED on main since 2026-09-01 (git log --since=2026-09-01 --diff-filter=A):
