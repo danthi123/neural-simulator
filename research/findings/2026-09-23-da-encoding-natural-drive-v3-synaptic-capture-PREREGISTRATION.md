@@ -112,9 +112,9 @@ competition between tagged synapses, Fonseca et al. 2004) rather than retuning g
 - The kernel's band shifts listed above (computed from the equations only).
 - The v3 pilot on seed 7 (not a gate seed), run at `492231df3` after the constants were committed:
   verdict GO; all preconditions held (G0 replicate identical in a second process, gamma identical in all 43 arm
-  processes). a_go = 0.187 from the three-read calibration (gamma = 32.77). Salient: D1 activation 0.50-1.00 on the
-  fact and following turns, PRP maximum 0.068, all four blocks z = 1.0, 4/4 at 24 h; DA->encoding lesion PRP maximum
-  0.0018, 0/4; capture lesion PRP 0, 0/4. Neutral (DA maximum 0.554): D1 activation 0-0.125, PRP maximum 0.0023,
+  processes). a_go = 0.187 from the three-read calibration (gamma = 32.77). Salient: D1 activation 0.50-1.00 on the <!--derived-->
+  fact and following turns, PRP maximum 0.068, all four blocks z = 1.0, 4/4 at 24 h; DA->encoding lesion PRP maximum <!--derived-->
+  0.0018, 0/4; capture lesion PRP 0, 0/4. Neutral (DA maximum 0.554): D1 activation 0-0.125, PRP maximum 0.0023, <!--derived-->
   z about 1e-11, 0/4. Companion off 4/4 both. All 8 capture-band points informative and holding; both beta points
   DEFINED and holding on this seed; the exploratory novelty-lesion arm kept neutral facts (4/4). Runtime 238 s with
   3 workers; about 0.4 GB per arm process.

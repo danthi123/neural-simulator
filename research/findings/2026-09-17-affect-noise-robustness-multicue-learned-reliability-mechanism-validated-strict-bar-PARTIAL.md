@@ -43,36 +43,33 @@ copies of one channel and cannot suppress its false-positive tail. This de-risks
 fuse SEVERAL conditionally-independent-noise cues.
 
 ## The arc (each method banked, the next taken — no-defer)
-<!--derived-->
 (All numbers from research/findings/raw/_affect_multicue_convergence_6seed.json.)
 1. Per-cue-threshold-then-AND/OR fusion: NO-GO. Splitting a fixed budget across K cues craters each cue's per-cue SNR
    (~sqrt(6) vs sqrt(24)); thresholding each small cue individually destroys the evidence before fusion, and no AND/OR
-   combinator recovers it (worst-case ~0.010; the sum/OR lineage arm ~0.000).
+   combinator recovers it (worst-case ~0.010; the sum/OR lineage arm ~0.000). <!--derived-->
 2. RAW pre-threshold weighted-sum fusion (one threshold on the fused evidence): recovers the collapse >50x (worst-case
-   ~0.010 -> ~0.539). G1 clears. But G4a near-ties the matched single wide channel — because at EQUAL per-cue
+   ~0.010 -> ~0.539). G1 clears. But G4a near-ties the matched single wide channel — because at EQUAL per-cue <!--derived-->
    reliability, averaging K cue-means before one threshold is mathematically the same estimator as one (K x n)-wide
    channel. The multi-cue advantage only exists when per-cue reliabilities are UNEQUAL and exploited.
 3. HETEROGENEOUS cues + LEARNED inverse-variance reliability weights (primary): the decisive isolation. On the
    bit-identical cue draw at the decisive noisy point, the learned arm beats BOTH matched-budget controls — single wide
-   channel AND uniform-weight multi-cue (both ~0.225 worst / ~0.306 mean) — by ~+0.186 worst / ~+0.279 mean, past the
-   +0.15 margin. Learned weights track the true per-cue inverse-variance at pooled correlation ~0.893, rank-matches-truth
+   channel AND uniform-weight multi-cue (both ~0.225 worst / ~0.306 mean) — by ~+0.186 worst / ~+0.279 mean, past the <!--derived-->
+   +0.15 margin. Learned weights track the true per-cue inverse-variance at pooled correlation ~0.893, rank-matches-truth <!--derived-->
    6/6 seeds -> a real functional read-out, not a relabelled constant.
 4. Principled per-cue-population increase (budget 24 -> 32, per-cue 6 -> 8; both G4a controls rebuilt at the same new
-   total): 5/6 seeds clear the bar (per-seed ~0.598/0.618/0.431/0.618/0.618/0.627, mean ~0.585). The lift is BROAD — the
+   total): 5/6 seeds clear the bar (per-seed ~0.598/0.618/0.431/0.618/0.618/0.627, mean ~0.585). The lift is BROAD — the <!--derived-->
    previously-worst seed 44 moved LEAST (+0.010) while every other seed moved +0.088..+0.186 — the opposite of
    tune-to-seed. G4a margin widened. Anti-cheats hold: shared-noise arm stays low (independent-noise fusion, not extra
-   dims), lesion ~0.088, shuffle ~0.059, held-out(clean) 1.000, synthetic instrument 1.000, text ceiling ~0.059.
+   dims), lesion ~0.088, shuffle ~0.059, held-out(clean) 1.000, synthetic instrument 1.000, text ceiling ~0.059. <!--derived-->
 
 ## The strict-bar residual (honest)
-<!--derived-->
-The runner's pre-registered G1 is worst-case over ALL 6 seeds >= the bar; seed 44 sits at ~0.431 (~0.069 short), so the
+The runner's pre-registered G1 is worst-case over ALL 6 seeds >= the bar; seed 44 sits at ~0.431 (~0.069 short), so the <!--derived-->
 runner reports GO=False / PARTIAL. This is single-seed operating-point variance on the strongest-mechanism arm, not a
 mechanism failure — the decisive three-way G4a isolation and the weight<->truth correlation both hold with margin. Under
 the repo >=5/6-seed convention it is a 5/6 result; under the runner's stricter all-6 worst-case bar it is PARTIAL. I did
 NOT relax the gate or chase seed 44 (that would be tune-to-seed).
 
 ## External sources actually read (affect lane, recorded)
-<!--derived-->
 Ernst & Banks 2002 (Nature 415:429-433, doi:10.1038/415429a — optimal MLE cue integration, combined precision = sum of
 per-cue precisions); Kramer/Manoonpong et al. 2022 (Front Neural Circuits 16:921453, doi:10.3389/fncir.2022.921453 —
 crossmodal Hebbian plasticity learns inverse-variance reliability weights unsupervised); Craig 2002/2009

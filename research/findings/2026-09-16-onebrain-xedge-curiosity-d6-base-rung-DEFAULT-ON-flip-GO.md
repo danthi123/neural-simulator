@@ -44,14 +44,13 @@ re-earns 6/6 GO with reads isolated.
 
 ## The two gates, both re-verified at the SHIPPED config (train_drive_scale=1.5)
 
-<!--derived-->
 (verdicts + counts read directly from the two cited raw artifacts, not from a run's stdout.)
 
 1. **The faculty works at 1.5 through the PRODUCTION WRAPPER's own self-test** (not only the isolated de-risk
    runner). `research/findings/raw/_onebrain_xedge_curiosity_d6_production_frozen_traindrivescale1.5_6seed.json`:
    `train_drive_scale=1.5`, `n_go=6/6`. Every seed (42/43/44/100/101/102): `GO:True`, `lesion_attributable:True`,
    `frac_attributable_to_cross_edge=1.0`, `clears_registered_floor:True`, `no_signal_no_bias_ok:True`. The read is
-   correct in SIGN and structure: holding a live crave shifts w0's held rate NEGATIVE (~ -0.01 to -0.017,
+   correct in SIGN and structure: holding a live crave shifts w0's held rate NEGATIVE (~ -0.01 to -0.017, <!--derived-->
    suppression) when `ask_held=True`, exactly 0.0 when `ask_held=False` (no signal, no bias), and collapses to 0.0
    under `BRAIN_ONEBRAIN_XEDGE_CURIOSITY_D6_LESION=1` (the cross-edge weight zeroed). Produced by the module's own
    official CLI (`--grow --semantic-drop --train-drive-scale 1.5 --seeds 42,43,44,100,101,102`).

@@ -81,23 +81,23 @@ the dev net, and at full size by one of the two pre-registered statistics (item 
    0.83 at tonic 0.5). At full size the combined variant clears the reliability bar (0.77) and misses the effect/noise
    bar by 0.01 (1.99). The full-size two-factor record is therefore supported but not claimed under that rule. The
    mean H1 read barely moves even where the item reliability shows transmission (full size, both factors: reliability
-   0.77, mean 0.0917 to 0.0900), which is why the earlier probe's mean statistic could not discriminate. That probe
+   0.77, mean 0.0917 to 0.0900), which is why the earlier probe's mean statistic could not discriminate. That probe <!--derived-->
    (`research/findings/raw/gap4/transport_ceiling_readout/round4_rev8f16994/diag_fullsize_ff_transmission_s7.json`)
-   read the same in both of its variants: legacy 0.0548 to
-   0.0547 (per-unit change 0.0093) and STP bypassed at the legacy gain 0.0547 to 0.0547 (0.0091). The round-2 dev scan
+   read the same in both of its variants: legacy 0.0548 to <!--derived-->
+   0.0547 (per-unit change 0.0093) and STP bypassed at the legacy gain 0.0547 to 0.0547 (0.0091). The round-2 dev scan <!--derived-->
    (`diag_transmit_scan_stp_ts*_s7.json`) agrees: it switched STP off for ALL synapses, not only the feedforward ones,
-   and at tonic 1.0 and legacy gain that left H1 input dependence at 0.159 against 0.160. Only STP off plus ff 40 / ps
-   0.5 moved it (0.429). The test `tests/test_gap4_tc_feedforward_transmission.py` pins all four directions at tonic 0
+   and at tonic 1.0 and legacy gain that left H1 input dependence at 0.159 against 0.160. Only STP off plus ff 40 / ps <!--derived-->
+   0.5 moved it (0.429). The test `tests/test_gap4_tc_feedforward_transmission.py` pins all four directions at tonic 0 <!--derived-->
    and at tonic 1.0.
 2. **The event read is non-monotonic in drive** (`diag_eread_monotonic_s7.json`). Extra output current from 0 to
-   +1600 pA raises the total spike rate from 86 to 404 Hz but lowers the BDSP event rate `E` from 0.050 to 0.002. The
+   +1600 pA raises the total spike rate from 86 to 404 Hz but lowers the BDSP event rate `E` from 0.050 to 0.002. The <!--derived-->
    default output layer sits at the peak, so strengthening an output neuron lowers its read. Round 1 (event read)
    trained every arm to BELOW-chance training accuracy. Fix: `--read-quantity spikes`.
 3. **The burst-probability baseline cancels each teaching transient.** Training chance is the majority-class rate of
    the 400 training items (class 8 has none): 0.1825 on replicate 0, which every calibration config used (AMENDMENT 5
    A; the earlier "1/9" reference was wrong). With the EMA baseline (alpha 0.05/step) the frozen readout's training
    accuracy is BELOW that chance at the transmitting operating point (C12, lr 5: 0.115, binomial p 1.5e-4 for below;
-   C18, 30 epochs: 0.142, p 0.02). With the preset baseline (`--pbar-alpha 0`) it fits the training set to 0.265 (C15,
+   C18, 30 epochs: 0.142, p 0.02). With the preset baseline (`--pbar-alpha 0`) it fits the training set to 0.265 (C15, <!--derived-->
    p 2.9e-5 for above chance).
 4. **Synapse elimination, not learning, made up most of the reported weight movement.** With elimination off (C9),
    the frozen arm's change in feedforward L1 norm (`ff_weight_moved`, |L1 end - L1 start|) is 2.1, against about 1270
@@ -106,11 +106,11 @@ the dev net, and at full size by one of the two pre-registered statistics (item 
 5. **Residual, not fixed: the transport ceiling's hidden learning collapses the output.** At the best configs the
    ceiling predicts one class for 360-395 of 400 training items (C15, C17). At every preset-baseline config (C15,
    C17, C19-C24) its training accuracy (0.150-0.190) is at or below the training chance of 0.1825 and below the frozen
-   readout's (0.242-0.273). (At the two EMA-baseline configs the frozen readout itself stays low: C16 0.180, C18
-   0.142.) The collapse is not specific to the ceiling: in the dev run fixed_fa (286 and 324 of 400 on class 0) and
+   readout's (0.242-0.273). <!--derived--> (At the two EMA-baseline configs the frozen readout itself stays low: C16 0.180, C18
+   0.142.) The collapse is not specific to the ceiling: in the dev run fixed_fa (286 and 324 of 400 on class 0) and <!--derived-->
    micro_inengine (237 and 244 of 400 on one class) collapse too, on replicates r0 and r1. The best held-out is C21 (hidden
-   step x0.2, 30 epochs): 0.222,
-   12 of 54 items, binomial p 0.18 against chance 0.167, with headroom 0.093 over the frozen control. Neither 30
+   step x0.2, 30 epochs): 0.222, <!--derived-->
+   12 of 54 items, binomial p 0.18 against chance 0.167, with headroom 0.093 over the frozen control. Neither 30 <!--derived-->
    epochs (C20-C23) nor a smaller hidden step (C21, C22, C24) reached p < 0.05.
    `calib_selection_all_rounds_s7.json` applies the pre-registered rule to C0-C24: none qualifies.
 6. **The dev budget sits at the exact gradient's threshold** (`diag_oracle_online_budget_s7.json`). The rate
@@ -134,8 +134,8 @@ pre-registered weight. Artifact: `research/findings/raw/gap4/transport_ceiling_r
 
 Held-out inheritance accuracy, 54 items per replicate, chance 0.16667 (the majority-class rate, 9 of 54). The ceiling clears chance on 0 of 3 replicates,
 so seed 7 is UNDEFINED under the pre-registered rule, and n_fa_wall is 1 of 3. Replicate 0 is the same task, config
-and cfg.seed as C21, and it reproduced C21's reads exactly (ceiling 0.222, frozen 0.130, ff-moved 162621.2 and 9063.4
-in both). C21's 0.222 did not recur on the other two task replicates. Training accuracy against each replicate's
+and cfg.seed as C21, and it reproduced C21's reads exactly (ceiling 0.222, frozen 0.130, ff-moved 162621.2 and 9063.4 <!--derived-->
+in both). C21's 0.222 did not recur on the other two task replicates. <!--derived--> Training accuracy against each replicate's
 training chance (0.1825, 0.170, 0.1625): the ceiling is at or below chance on all three (0.190, 0.1525, 0.140; binomial
 p for above 0.37, 0.84, 0.90). The frozen readout is above chance on r0 and r2 (0.2725, p 6e-6; 0.265, p 1.4e-7) but not
 on r1 (0.200, p 0.065). That is the same residual as item 5. The plan's success check (n_fa_wall at least 3 and a

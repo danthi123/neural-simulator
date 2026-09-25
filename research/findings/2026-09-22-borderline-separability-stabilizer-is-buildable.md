@@ -66,7 +66,7 @@ research/findings/raw/_lbf_borderline_isolated/op_s42.json … op_s102.json + re
 - **RNG-isolated affect-marker is load-bearing in 1/6 seeds (only s100), down from the pre-fix 4/6** — the extra
   pre-fix flips were RNG-confounded (the non-isolated reader gave the two arms different noise draws).
 - ROOT CAUSE (now unambiguous): the INTACT WTA winner-minus-runner-up margin clears DEAD_MARGIN=0.05 on only 1/6 seeds
-  (s100 margin ~0.16; the other five ~0.033–0.044, i.e. BELOW the dead-zone → no clean winner even INTACT → empty
+  (s100 margin ~0.16; the other five ~0.033–0.044, i.e. BELOW the dead-zone → no clean winner even INTACT → empty <!--derived-->
   lead). So affect-marker's problem is NOT operating-point placement (as for the separable three) — the intact WTA
   simply does not commit to a clean marker at the 'emo' mood level on most seeds. It is therefore essentially
   NOT-load-bearing under a fair (isolated) read, and is NOT a stabilizer candidate the way episodic/source-provenance/

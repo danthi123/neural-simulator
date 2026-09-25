@@ -72,15 +72,14 @@ therefore `observe()`'s engagement path when off — is byte-identical to pre-wi
 **(B) LOAD-BEARING WHEN ON (focused spiking organ, per seed).** 5/6 seeds GO (board bar >=5/6). The per-seed numbers
 below are a rounded presentation of the cited artifact `verify_6seed.json` (exact 4-decimal values live there):
 
-<!--derived-->
 | seed | nov_first | nov_rep (2-3) | ratio (rep/first) | new-word fresh | lesion ratio | attrib->STP | e_hi vs e_lo | GO |
 |---|---|---|---|---|---|---|---|---|
-| 42  | 0.871 | 0.431 | 0.495 | 0.862 | 0.987 | 0.975 | 0.722 / 0.459 | GO |
-| 43  | 0.938 | 0.339 | 0.361 | 0.969 | 1.000 | 1.000 | 0.762 / 0.403 | GO |
-| 44  | 0.957 | 0.299 | 0.312 | 1.000 | 0.994 | 0.992 | 0.774 / 0.379 | GO |
-| 100 | 0.674 | 0.216 | 0.320 | 0.765 | 0.951 | 0.927 | 0.605 / 0.330 | no (L1 only) |
-| 101 | 0.862 | 0.250 | 0.290 | 0.905 | 0.968 | 0.955 | 0.717 / 0.350 | GO |
-| 102 | 0.850 | 0.338 | 0.397 | 0.792 | 0.987 | 0.978 | 0.710 / 0.403 | GO |
+| 42  | 0.871 | 0.431 | 0.495 | 0.862 | 0.987 | 0.975 | 0.722 / 0.459 | GO | <!--derived-->
+| 43  | 0.938 | 0.339 | 0.361 | 0.969 | 1.000 | 1.000 | 0.762 / 0.403 | GO | <!--derived-->
+| 44  | 0.957 | 0.299 | 0.312 | 1.000 | 0.994 | 0.992 | 0.774 / 0.379 | GO | <!--derived-->
+| 100 | 0.674 | 0.216 | 0.320 | 0.765 | 0.951 | 0.927 | 0.605 / 0.330 | no (L1 only) | <!--derived-->
+| 101 | 0.862 | 0.250 | 0.290 | 0.905 | 0.968 | 0.955 | 0.717 / 0.350 | GO | <!--derived-->
+| 102 | 0.850 | 0.338 | 0.397 | 0.792 | 0.987 | 0.978 | 0.710 / 0.403 | GO | <!--derived-->
 
 - **Novelty varies with input:** fresh words read novel (nov_first), repeating them habituates the read to ~30-50% of
   fresh, and brand-new words recruit a fresh channel and read novel again (no cross-talk) — every seed.
@@ -90,9 +89,9 @@ below are a rounded presentation of the cited artifact `verify_6seed.json` (exac
 - **Lesion reverts:** with STP off the repeat-ratio stays >=0.95 (barely drops) and `attributable_to` assigns 0.93-1.00
   of the habituation to the STP manipulation — synaptic depression, not some other circuit artifact, produces the
   signal.
-- **Seed 100** misses ONLY the absolute L1 sanity threshold (nov_first=0.674 vs the 0.70 bar) — a per-channel
+- **Seed 100** misses ONLY the absolute L1 sanity threshold (nov_first=0.674 vs the 0.70 bar) — a per-channel <!--derived-->
   heterogeneity effect on the fresh-baseline normalization at that seed, NOT a mechanism failure: its relative
-  habituation (ratio 0.320), engagement tracking (0.605 vs 0.330), and lesion-revert (0.951 / attrib 0.927) all hold
+  habituation (ratio 0.320), engagement tracking (0.605 vs 0.330), and lesion-revert (0.951 / attrib 0.927) all hold <!--derived-->
   cleanly, exactly the pattern the de-risk itself argued carries the load. No threshold was changed after seeing the
   6-seed numbers (the discipline); 5/6 clears the board bar.
 

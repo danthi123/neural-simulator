@@ -81,15 +81,14 @@ characterized, not a regression.
 `flag` on every seed: unset->ON, `=1`->ON, `=0`->OFF, lesion active at default -- **flip correct**; `all_gates_pass`
 on all 6. Per-seed (rounded from artifact `verify_AB.json`):
 
-<!--derived-->
 | seed | da_mode default/lesion mode | da_lesion | da vary intact/lesion | value spread def/lesion (attrib) | bg default/lesion |
 |---|---|---|---|---|---|
-| 42  | focus / **rest** | 0.0462 | 0.748 / **0.000** | 1.060 / 0.0086 (**99.2%**) | 1.060 / 0.000 |
-| 43  | focus / **rest** | 0.0462 | 0.744 / **0.000** | 1.010 / 0.0064 (**99.4%**) | 1.030 / 0.005 |
-| 44  | focus / **rest** | 0.0462 | 0.750 / **0.000** | 1.034 / 0.0197 (**98.1%**) | 1.053 / 0.005 |
-| 100 | focus / **rest** | 0.0462 | 0.752 / **0.000** | 1.051 / 0.0062 (**99.4%**) | 1.047 / 0.000 |
-| 101 | focus / **rest** | 0.0462 | 0.741 / **0.000** | 1.020 / 0.0029 (**99.7%**) | 1.045 / 0.001 |
-| 102 | focus / **rest** | 0.0462 | 0.745 / **0.000** | 1.041 / 0.0098 (**99.1%**) | 1.022 / 0.000 |
+| 42  | focus / **rest** | 0.0462 | 0.748 / **0.000** | 1.060 / 0.0086 (**99.2%**) | 1.060 / 0.000 | <!--derived-->
+| 43  | focus / **rest** | 0.0462 | 0.744 / **0.000** | 1.010 / 0.0064 (**99.4%**) | 1.030 / 0.005 | <!--derived-->
+| 44  | focus / **rest** | 0.0462 | 0.750 / **0.000** | 1.034 / 0.0197 (**98.1%**) | 1.053 / 0.005 | <!--derived-->
+| 100 | focus / **rest** | 0.0462 | 0.752 / **0.000** | 1.051 / 0.0062 (**99.4%**) | 1.047 / 0.000 | <!--derived-->
+| 101 | focus / **rest** | 0.0462 | 0.741 / **0.000** | 1.020 / 0.0029 (**99.7%**) | 1.045 / 0.001 | <!--derived-->
+| 102 | focus / **rest** | 0.0462 | 0.745 / **0.000** | 1.041 / 0.0098 (**99.1%**) | 1.022 / 0.000 | <!--derived-->
 
 Every seed: BASELINE (`=0`) is the pre-wiring oracle (da_mode no `shared_salience` key; bg `(1.0,0.0)`==host; value
 `[0,.5,1]`); DEFAULT matches EXPLICIT_ON (same mode band, within OU tol); DEFAULT is load-bearing (in the path,
@@ -98,23 +97,21 @@ by ~0.75 with message salience intact and by **exactly 0.000** under lesion (col
 value cross-candidate spread collapses to ~1-2% (98-99.7% attributable); bg collapses to ~0. **Not hollow.**
 
 ### PART B -- the REAL trained striosome_value critic at the new default (seed 42, `verify_AB.json`)
-<!--derived-->
 Three candidates (`cat`,`ball`,`shoe`) at recency `[0,.5,1]`, the value-train critic built at
-`value_train_trials=40` (490s on the contended CPU). Engagement fed to the critic: DEFAULT `[0.0, 0.306, 1.049]`,
-DEF_LESION `[0.001, 0.0, 0.0]`.
+`value_train_trials=40` (490s on the contended CPU). Engagement fed to the critic: DEFAULT `[0.0, 0.306, 1.049]`, <!--derived-->
+DEF_LESION `[0.001, 0.0, 0.0]`. <!--derived-->
 
 | arm | fed spread | commit |
 |---|---|---|
 | BASELINE (`=0`) | 1.000 | shoe |
-| DEFAULT (unset) | 1.049 | shoe |
+| DEFAULT (unset) | 1.049 | shoe | <!--derived-->
 | DEF_LESION | **0.0014** | **cat** |
 
-Lesioning the shared afferent collapses the fed gradient by **99.86%** (1.049 -> 0.0014, attributable_to) and **FLIPS
+Lesioning the shared afferent collapses the fed gradient by **99.86%** (1.049 -> 0.0014, attributable_to) and **FLIPS <!--derived-->
 the real critic's commit shoe -> cat** -- the de-risk's headline result, reproduced at the production default (the
 decision the coupling feeds genuinely changes when the afferent is severed; not cosmetic).
 
 ### PART C -- the REAL brain_chat handler, no-regression + load-bearing (seed 42, `verify_C.json`)
-<!--derived-->
 Through `webapp.server.brain_chat` (stub renderer, brain=`tiny-demo`, ALL faculties at production defaults, a fresh
 session per turn), a battery of 3 real messages, BASELINE(`=0`) vs DEFAULT(unset):
 
@@ -130,10 +127,10 @@ session per turn), a battery of 3 real messages, BASELINE(`=0`) vs DEFAULT(unset
 changes the DA-mode engagement suffix where the shared afferent moves the self-produced DA across a mode band (1 of 3
 battery messages), exactly the load-bearing effect this coupling is for.
 
-**Load-bearing end-to-end (anti-hollow at the handler).** On the novel/rich message: DEFAULT `da_level=0.791`,
-mode=**focus**, lead=`" — worth going further here."`; DEFAULT+LESION `da_level=0.0462`, mode=**rest**, lead=`""` --
+**Load-bearing end-to-end (anti-hollow at the handler).** On the novel/rich message: DEFAULT `da_level=0.791`, <!--derived-->
+mode=**focus**, lead=`" — worth going further here."`; DEFAULT+LESION `da_level=0.0462`, mode=**rest**, lead=`""` -- <!--derived-->
 the engagement suffix **vanishes** when the shared afferent is severed. da_level tracks message salience intact
-(novel 0.791 vs low-content 0.046, spread **0.745**) and is pinned to the floor under lesion (spread **0.000**).
+(novel 0.791 vs low-content 0.046, spread **0.745**) and is pinned to the floor under lesion (spread **0.000**). <!--derived-->
 
 ## Overall verdict: GO (all three requirements met)
 - **Req 1 NO REGRESSION** -- GO (PART C: no crash, content byte-identical, faculties live, clean instrument).

@@ -63,14 +63,14 @@ peak-relative, scale-invariant ratio. It is not. Measuring the SAME clean correc
 
 | scale | vocab V | winner cosine (top) | runner-up | non-winner mean / std | p99 noise | **margin_norm** | **winner_z** |
 |-------|---------|---------------------|-----------|-----------------------|-----------|-----------------|--------------|
-| 15k   | 7,032   | 0.42–0.47           | 0.21–0.23 | ~0.000 / 0.062        | 0.144     | **0.497**       | **7.24**     |
-| 100k  | 23,914  | 0.40–0.50           | 0.24–0.29 | ~0.000 / 0.062        | 0.144     | **0.395**       | **7.03**     |
+| 15k   | 7,032   | 0.42–0.47           | 0.21–0.23 | ~0.000 / 0.062        | 0.144     | **0.497**       | **7.24**     | <!--derived-->
+| 100k  | 23,914  | 0.40–0.50           | 0.24–0.29 | ~0.000 / 0.062        | 0.144     | **0.395**       | **7.03**     | <!--derived-->
 
-The winner's cosine and the entire NON-WINNER BULK (mean ~0, std ~0.062 = ~1/sqrt(D), p99 0.144) are IDENTICAL
+The winner's cosine and the entire NON-WINNER BULK (mean ~0, std ~0.062 = ~1/sqrt(D), p99 0.144) are IDENTICAL <!--derived-->
 across the two scales — the recall is exactly as decisive. Only the single runner-up inflates: it is the MAX over
-the V-1 non-winner candidates, an order statistic whose expectation grows as ~sqrt(2 ln V) (0.062·sqrt(2·ln 7032)
-= 0.261, 0.062·sqrt(2·ln 23914) = 0.278). That inflation alone drags `margin_norm = 1 - runner/top` down from
-0.497 to 0.395. The winner-vs-BULK z-score `(top - mean_nonwin)/std_nonwin` — dominance over the STABLE noise
+the V-1 non-winner candidates, an order statistic whose expectation grows as ~sqrt(2 ln V) (0.062·sqrt(2·ln 7032) <!--derived-->
+= 0.261, 0.062·sqrt(2·ln 23914) = 0.278). That inflation alone drags `margin_norm = 1 - runner/top` down from <!--derived-->
+0.497 to 0.395. The winner-vs-BULK z-score `(top - mean_nonwin)/std_nonwin` — dominance over the STABLE noise <!--derived-->
 floor — is scale-INVARIANT: **7.24 (15k) == 7.03 (100k)**. So this is the task's "should be scale-invariant but
 isn't" case, NOT a legitimate operating-point shift: at 100k the winner still sits ~7 SD above the field.
 

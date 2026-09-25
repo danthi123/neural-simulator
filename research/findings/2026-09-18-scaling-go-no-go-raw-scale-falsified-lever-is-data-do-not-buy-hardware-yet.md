@@ -56,13 +56,13 @@ the external scaling literature. The adversarial "the curve is flat, not rising"
   tok/param, residual ~+0.22 above the 3.0-3.69 fluency band; the margin over a fair trigram REVERSES
   (~0.367 -> ~0.146). A real, clean plateau.
 - **Capacity at matched tokens — still descending but UNDER-tokened.** _aggregate_6seed.json: d96 3.976 > d192
-  3.928 > d384 3.906 (all 6/6 still-descending), BUT d384 is at only ~4.328 tok/param — under-tokened, not a
+  3.928 > d384 3.906 (all 6/6 still-descending), BUT d384 is at only ~4.328 tok/param — under-tokened, not a <!--derived-->
   clean capacity ceiling; gains halve per doubling.
 - **The decisive JOINT cell does NOT exist.** No d384 x ~20-tok/param artifact; nothing postdates 2026-09-17.
   The exact regime a hardware buy targets is literally unmeasured. And d192 at Chinchilla-matched 20 tok/param
   already sits ~3.9227, +0.23 above the band, flat — denting even that hope.
 - **The realistic large-compute analog REGRESSED.** The AWS ~39-GPU-h d192 / 2B-token run: deep-context margin
-  -0.408 at deployable vocab (vs -0.082 at 0.4B); train loss nearly flat (4.826 -> 4.802 over 4 epochs) — small
+  -0.408 at deployable vocab (vs -0.082 at 0.4B); train loss nearly flat (4.826 -> 4.802 over 4 epochs) — small <!--derived-->
   capacity already bound + single-domain over-training HURT the out-of-domain eval. Confounded (fixed small
   capacity + single-domain), but it is the closest thing we have to "buy compute and run it big," and it is
   negative.

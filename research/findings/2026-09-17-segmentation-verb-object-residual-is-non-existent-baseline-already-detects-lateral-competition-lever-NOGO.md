@@ -38,21 +38,19 @@ verb->object pair (high transitional probability) could have its boundary spike 
 inhibition (Benjamin 2021 — pure TP is necessary but not sufficient). This sizes that residual and tests a lever.
 
 ## The residual, sized (from research/findings/raw/_learned_spiking_segmentation/verify_6seed_vo_baseline.json)
-<!--derived-->
 A new verb->object-only boundary diagnostic (verb->object transitions vs within-constituent negatives; sv-boundaries
 excluded to isolate it), 6-seed OFF baseline:
-- heldout_vo_boundary_auc per seed: 0.976, 0.976, 0.997, 0.971, 0.899, 0.972 (mean ~0.965, min ~0.899) — all well
+- heldout_vo_boundary_auc per seed: 0.976, 0.976, 0.997, 0.971, 0.899, 0.972 (mean ~0.965, min ~0.899) — all well <!--derived-->
   above the 0.85 boundary gate and far above chance 0.5.
-- overall heldout_boundary_auc per seed stays 0.935-0.998 (the banked GO, reproduced).
+- overall heldout_boundary_auc per seed stays 0.935-0.998 (the banked GO, reproduced). <!--derived-->
 So the base segmenter ALREADY detects verb->object boundaries on every seed. The named TP-invisibility residual is a
 theoretical concern that does not materialize on this corpus.
 
 ## The lever, tested (seed-42 explore — single-seed, exploratory, NOT verdict-bearing)
-<!--derived-->
 Learned per-pre lateral competition (Harris successor-variety off the STDP weights), seed-42 gain sweep vs OFF (a
 single-seed EXPLORE — no verdict is asserted on it; the pre-registered rule requires beating baseline on the explore
 before any 6-seed spend, and it does not):
-- OFF vo_auc 0.976 -> ON gain 20: 0.818, gain 45: 0.659, gain 90: 0.500 (collapse). vo_recall rises to 1.0 while AUC
+- OFF vo_auc 0.976 -> ON gain 20: 0.818, gain 45: 0.659, gain 90: 0.500 (collapse). vo_recall rises to 1.0 while AUC <!--derived-->
   falls: the bonus current adds boundary spikes indiscriminately (precision loss), it does not selectively recover a
   missed boundary because there is no missed boundary to recover. No 6-seed ON spent (fails the seed-42 explore).
 - Anti-cheats: no-learning and stream-scramble verb->object AUC both 0.5 (ON and OFF) — the diagnostic is a valid

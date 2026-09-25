@@ -98,19 +98,17 @@ the pool's wiring.
 
 ### 3a. What changed, numerically (a mix of cited-artifact values and quotes from the original finding)
 
-<!--derived-->
-
-**What changed, and by how much:** the grown weight fell ~27-39% per seed (e.g. seed 43: 4.670 → 2.778, a 40.5%
-drop); `delta_intact` fell ~39-46% per seed (e.g. seed 43: 0.02375 → 0.01183, a 50.2% drop — the single largest
+**What changed, and by how much:** the grown weight fell ~27-39% per seed (e.g. seed 43: 4.670 → 2.778, a 40.5% <!--derived-->
+drop); `delta_intact` fell ~39-46% per seed (e.g. seed 43: 0.02375 → 0.01183, a 50.2% drop — the single largest <!--derived-->
 proportional shrink of the six). **Headroom over the registered floor** (`delta_intact / INTACT_FLOOR`) — the
 number the original finding characterized as "2.1-2.4x headroom" (§3 of that finding) — is now **1.18x-1.37x**
-(min at seed 43: 0.011833/0.010 = 1.1833; max at seed 44: 0.013667/0.010 = 1.3667). The verdict category (GO)
+(min at seed 43: 0.011833/0.010 = 1.1833; max at seed 44: 0.013667/0.010 = 1.3667). The verdict category (GO) <!--derived-->
 does not change, but a reader relying on the original headroom characterization to judge this rung's robustness
 margin would be materially misled — this is why a PARTIAL retraction row is added for that specific claim (§5),
 even though the GO itself is not retracted.
 
 **Why this shrink, unlike the curiosity-d6wm pair, did not flip any seed:** that pair's pre-fix headroom
-(computed the same way against its own `INTACT_FLOOR=0.008`) ranged roughly 1.25x-1.78x across its 6 seeds —
+(computed the same way against its own `INTACT_FLOOR=0.008`) ranged roughly 1.25x-1.78x across its 6 seeds — <!--derived-->
 already close enough to the floor that a leak-driven ~40-75% swing (documented in that finding, both directions
 depending on seed) pushed half the seeds under 1.0x. This rung's pre-fix headroom (2.1-2.4x) had roughly double
 the margin, so an isolated-read correction of comparable proportional size (~40-50% shrink) left every seed still
@@ -130,11 +128,9 @@ BUG, because the bug lived in a code pattern that was copied, not in a value tha
 
 ## 5. Retraction scope — PARTIAL, the GO itself is not retracted
 
-<!--derived-->
-
 `docs/RETRACTED.md` gets a PARTIAL row for `2026-09-01-onebrain-crossedge-provenance-to-selfschema-reciprocal-
 GO.md` (quoting that finding's own superseded figures, not an artifact this finding cites): the specific
-grown-weight range ("4.0-4.7 across seeds"), the specific `delta_intact` range ("+0.021 to +0.024"), and the
+grown-weight range ("4.0-4.7 across seeds"), the specific `delta_intact` range ("+0.021 to +0.024"), and the <!--derived-->
 "2.1-2.4x headroom" characterization are superseded by the values in §3 above. The `GO 6/6` verdict, the
 lesion-attributability (`frac_attributable=1.0`), the byte-identical-off property, and the mechanism itself (a
 genuinely Hebbian-grown reciprocal edge) all survive unretracted.

@@ -80,7 +80,7 @@ proposal drive; the addressing/wiring is untouched by it, so a changed verdict i
 
 **The boolean parity above saturates at 1.00 on every seed — a ceiling, not evidence on its own** (flagged
 correctly by `gates/discriminating_power` as advisory). The CONTINUOUS signal underneath it is on record and
-genuinely varies: mean match `mm_peak` 0.0007-0.0545, mean mismatch `mm_peak` 0.270-0.306, margin 0.225-0.287
+genuinely varies: mean match `mm_peak` 0.0007-0.0545, mean mismatch `mm_peak` 0.270-0.306, margin 0.225-0.286 <!--derived-->
 across the 6 seeds (`per_seed[].mean_match_mm_peak` / `mean_mismatch_mm_peak` / `mm_peak_margin` in the cited
 6-seed artifact) — a real, seed-varying physical margin the threshold clears on every seed, not a degenerate
 test where the boolean read has no headroom to fail.
@@ -162,3 +162,7 @@ SIM_BACKEND=numpy python -u -m research.runners._gnw_congruence_spiking_read_der
 SIM_BACKEND=numpy python -u -m research.runners._gnw_congruence_spiking_hook_verify \
     --seeds 42 43 44 100 101 102 --json research/findings/raw/_gnw_congruence_spiking_hook_verify.json
 ```
+
+## Corrections (2026-09-25 claim-check audit)
+
+- Margin range upper bound: `0.287` -> `0.286` (`research/findings/raw/_gnw_congruence_spiking_read_6seed.json`, `per_seed[].mm_peak_margin`, max at seed 100 = 0.28645833... rounds to 0.286, not 0.287). Does not change the GO verdict (which rests on parity/lesion-collapse/attributable-fraction, all 1.0 on every seed). <!--derived-->

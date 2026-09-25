@@ -29,7 +29,7 @@ From `research/findings/raw/_emerge_wkv_lm_assoc_temporal_depth2_contiguous_6see
 | exact-math wkv, sentence-mode | −0.125 |
 | exact-math wkv, CONTIGUOUS (1-seed) | **+0.02 (crossed)** |
 
-The temporal/order signal did exactly what the diagnosis predicted: it resolved the bag underfit (−0.347 → −0.147, +0.20). But ordered attention lands AT the ~−0.12/−0.15 zone the linear recurrence and HiPPO already occupy — **not a surpass**. This is the July content-addressable arc's predicted "content+order is NECESSARY-BUT-NOT-SUFFICIENT" pattern (`2026-07-11-LEARNED-keys-make-content-addressable-retrieval-load-bearing`).
+The temporal/order signal did exactly what the diagnosis predicted: it resolved the bag underfit (−0.347 → −0.147, +0.20). But ordered attention lands AT the ~−0.12/−0.15 zone the linear recurrence and HiPPO already occupy — **not a surpass**. This is the July content-addressable arc's predicted "content+order is NECESSARY-BUT-NOT-SUFFICIENT" pattern (`2026-07-11-LEARNED-keys-make-content-addressable-retrieval-load-bearing`). <!--derived-->
 
 ## The bound-investigation verdict (10-agent workflow: record + external literature)
 
@@ -38,7 +38,7 @@ The temporal/order signal did exactly what the diagnosis predicted: it resolved 
 
 **Completeness-critic caveats (load-bearing — do NOT over-read the "shared bound"):**
 1. In the MATCHED contiguous regime the families do NOT all sit at −0.12: exact wkv is at **+0.02 (crossed)** while spiking/HiPPO/assoc_t cluster below — evidence FOR an **exactness/architecture gap** (exact-math read pulling ahead of approximate/spiking reads), not purely a shared bound. The "convergence" partly compared sentence-mode wkv to contiguous-everything-else.
-2. The decisive wkv −0.125 → +0.02 jump is **1-seed** AND confounds token-count with **context-length** (sentence-mode resets state every 3-16 words, so the deep bucket is measured on a sparse tail). So "more tokens crosses" is fragile on both counts.
+2. The decisive wkv −0.125 → +0.02 jump is **1-seed** AND confounds token-count with **context-length** (sentence-mode resets state every 3-16 words, so the deep bucket is measured on a sparse tail). So "more tokens crosses" is fragile on both counts. <!--derived-->
 3. External literature's strongest SAME-budget datapoint points at **OBJECTIVE, not memory or data**: at 10M words a causal+masked hybrid hits BLiMP 0.794 vs a tuned n-gram's 0.633 and a plain causal LSTM's 0.661 (recurrence-alone barely ties the n-gram = this arc's failure mode).
 4. Honesty flag: 3 of 8 investigators returned placeholder content — the synthesis rests on 5 substantive digests.
 
