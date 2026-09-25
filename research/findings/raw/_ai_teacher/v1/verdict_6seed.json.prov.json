@@ -1,8 +1,8 @@
 {
- "run_id": "1790284417-1376911",
+ "run_id": "1790309083-2899724",
  "runner": "research/runners/ai_teacher_experiment.py",
  "argv": [
-  "/home/dant123/Projects/sim/.claude/worktrees/wf_7a18c55b-7a5-1/research/runners/ai_teacher_experiment.py",
+  "/home/dant123/Projects/sim/.claude/worktrees/wf_39b59d60-6a7-4/research/runners/ai_teacher_experiment.py",
   "--score-only",
   "--seeds",
   "42",
@@ -21,23 +21,23 @@
   "--json",
   "research/findings/raw/_ai_teacher/v1/verdict_6seed.json"
  ],
- "git_sha": "011df5f5e",
- "git_dirty": false,
+ "git_sha": "c1e0ded5c",
+ "git_dirty": true,
  "source_kind": null,
  "source_manifest_sha256": null,
  "source_manifest_verified_at_start": null,
  "source_manifest_start_error": null,
  "source_manifest_verified_at_exit": null,
  "source_manifest_exit_error": null,
- "started": "2026-09-24T17:13:37",
+ "started": "2026-09-25T00:04:43",
  "env": {
   "SIM_BACKEND": "numpy"
  },
+ "host": "dant123-wk",
  "sim_backend": "numpy",
  "sim_backend_requested": "numpy",
- "sim_backend_cupy_importable": true,
- "corpus_check_age_s": 16021.2,
- "corpus_check_query": "AI teacher social environment learn-through-use from conversation",
- "corpus_check_fresh": true,
+ "sim_backend_cupy_importable": false,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
  "artifact": "research/findings/raw/_ai_teacher/v1/verdict_6seed.json"
 }

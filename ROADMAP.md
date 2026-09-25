@@ -7,6 +7,11 @@ the [project handoff](HANDOFF.md), and the live state in
 board, when checked out, was `research/coordination/workboard.json` (⚠️ now ~a month
 stale — the live board is [GAP_CLOSURE_MISSION.md](GAP_CLOSURE_MISSION.md) CURRENT STATE; workboard.json is being retired).
 
+## 2026-09-24 (late evening) — the chat-only AI teacher's six-seed test comes back a clean GO: what the brain learns only from being told, it keeps because of its own synaptic change
+
+**Six-seed GO, every check:** the last missing control -- a sham lesion that runs the exact same cutting procedure but rewrites the taught connections back unchanged, and cuts an equal-size unrelated set instead -- landed on all six registered seeds. With it in, the pre-registered scorer reads a clean GO: every seed passes every check. The brain recalls facts taught only in conversation after a sleep gap with the teacher gone; it loses them when the write is frozen or the taught connections are zeroed afterward; it keeps a counterfactual, or a teacher's outright lie, rather than the vetted truth it was never told; and nothing outside the conversation ever touches the store, so no leak or stray write explains any of it.
+**Not switched on:** this closes the experiment's own registered gate, not the switch-on bar. The underlying code already passed its own sound review. Still missing before it could be turned on by default: a run of the full production battery with it on (checking nothing else breaks) and a check under real production conditions.
+
 ## 2026-09-24 (evening) — the measurement grows from 38 to 49 abilities; nine more pieces merged, all off by default; curiosity's fifth attempt falls short; one result rejected for missing records
 
 **Merged after independent review, all off by default until their own six-seed tests:** tracking what someone else wrongly believes, multi-step "A before B before C" reasoning, a faster warm start, the brain's own spiking fact-binder in chat, a link between two thinking organs in the shared core, the working-memory focus link, a test of whether a fact in a reply was learned by the brain itself, and the multi-turn test for the mood-settling mechanism (which stays off until its three conditions pass). Merging tonight: the chat-only AI teacher, the reward signal read from the brain's own surprise, and the gap#4 learning lever.
