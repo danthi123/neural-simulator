@@ -1,0 +1,31 @@
+{
+ "run_id": "1790349040-982594",
+ "runner": "research/runners/_awake_replay_completion_dev.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/wf_68c24c6d-86e-3/research/runners/_awake_replay_completion_dev.py",
+  "--seed",
+  "7",
+  "--arm",
+  "arcc",
+  "--out",
+  "research/findings/raw/_awake_replay_completion_dev/arms/s7_arcc.json"
+ ],
+ "git_sha": "938ee5ad5",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-25T11:10:40",
+ "env": {},
+ "host": "dant123-wk",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 5106.6,
+ "corpus_check_query": "awake replay subcritical collapse weak trace",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_awake_replay_completion_dev/arms/s7_arcc.json"
+}

@@ -215,6 +215,20 @@ def attribute(out_dir):
             if t is not None and c is not None:
                 rec["attributable_to_e_last_vs_" + ctrl] = attributable_to(
                     "seed %d e_last arcc vs %s" % (seed, ctrl), t, c)
+        if "arc" in arms and "arcc_nocomp" in arms:
+            # THE READS ARE INERT UNDER THE LESION: the completion-lesioned arm (every completion read runs, both
+            # routes use R) must reproduce the pure margin-route arm (no completion flag) field for field.
+            a, b = arms["arc"], arms["arcc_nocomp"]
+            kb = ("t_h", "R", "R_eff", "early_before", "early_after", "pre_frac_z_gt_half", "p_at_bout",
+                  "n_drive_entries")
+            ke = ("t_h", "R", "R_eff", "sum_R_eff", "da_swr", "da_seen_by_d1", "a_eff_mean", "pre_frac_z_gt_half")
+            ab, bb = a["awake_replay"]["bouts"], b["awake_replay"]["bouts"]
+            ae, be = a["sleep_replay"]["epochs"], b["sleep_replay"]["epochs"]
+            rec["lesion_reproduces_margin_route"] = {
+                "bouts_identical": len(ab) == len(bb) and all(all(x[k] == y[k] for k in kb) for x, y in zip(ab, bb)),
+                "epochs_identical": len(ae) == len(be) and all(all(x[k] == y[k] for k in ke) for x, y in zip(ae, be)),
+                "blocks_at_recall_identical": a["blocks_at_recall"] == b["blocks_at_recall"],
+                "outcome_identical": (a["outcome"], a["recalled_svo"]) == (b["outcome"], b["recalled_svo"])}
         t = rec["z_at_recall"].get("arcc")
         for ctrl in ("arcc_nocomp", "arcc_awake", "arcc_sleep", "arcc_lesion"):
             c = rec["z_at_recall"].get(ctrl)

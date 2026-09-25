@@ -1,0 +1,2065 @@
+{
+ "seed": 2,
+ "arm": "arcc_sleep",
+ "group": "datr",
+ "env": {
+  "BRAIN_DA_TAG_CAPTURE": "1",
+  "BRAIN_DA_TAG_CAPTURE_CLOCK": "turn",
+  "BRAIN_SLEEP_REPLAY_CAPTURE": "1",
+  "BRAIN_AWAKE_REPLAY_CAPTURE": "1",
+  "BRAIN_SLEEP_REPLAY_COMPLETION": "1"
+ },
+ "labels": [
+  "datr_t1",
+  "datr_t2",
+  "datr_t3",
+  "datr_t4",
+  "datr_t5",
+  "datr_rest",
+  "datr_night",
+  "datr_recall"
+ ],
+ "tell_seconds": 370.3,
+ "curve": [
+  {
+   "e": 1.0,
+   "R": 0.15977610578218768,
+   "roles": {
+    "agent": {
+     "word": "cat",
+     "margin": 0.159776106
+    },
+    "action": {
+     "word": "chase",
+     "margin": 0.558493446
+    },
+    "patient": {
+     "word": "ball",
+     "margin": 0.418650779
+    },
+    "attribute": {
+     "word": null,
+     "margin": 0.22298277
+    },
+    "polarity": {
+     "word": "AFFIRM",
+     "margin": 1.0
+    }
+   },
+   "completion": {
+    "R": 0.15977610578218768,
+    "R_c": 0.7546802721465853,
+    "coherence_abs": 0.756517460482745,
+    "items": {
+     "agent": "cat",
+     "action": "chase",
+     "patient": "ball"
+    },
+    "spikes": {
+     "agent": [
+      9.0,
+      4.0
+     ],
+     "action": [
+      4.0,
+      3.0
+     ],
+     "patient": [
+      6.0,
+      4.0
+     ]
+    },
+    "n_items": 3
+   }
+  },
+  {
+   "e": 0.9,
+   "R": 0.08105453463572877,
+   "roles": {
+    "agent": {
+     "word": "cat",
+     "margin": 0.081054535
+    },
+    "action": {
+     "word": "chase",
+     "margin": 0.541480693
+    },
+    "patient": {
+     "word": "ball",
+     "margin": 0.378000903
+    },
+    "attribute": {
+     "word": null,
+     "margin": 0.227047383
+    },
+    "polarity": {
+     "word": "AFFIRM",
+     "margin": 1.0
+    }
+   },
+   "completion": {
+    "R": 0.08105453463572877,
+    "R_c": 0.7546802721465853,
+    "coherence_abs": 0.756517460482745,
+    "items": {
+     "agent": "cat",
+     "action": "chase",
+     "patient": "ball"
+    },
+    "spikes": {
+     "agent": [
+      9.0,
+      5.0
+     ],
+     "action": [
+      4.0,
+      3.0
+     ],
+     "patient": [
+      6.0,
+      5.0
+     ]
+    },
+    "n_items": 3
+   }
+  },
+  {
+   "e": 0.8,
+   "R": 0.026815872804131013,
+   "roles": {
+    "agent": {
+     "word": null,
+     "margin": 0.026815873
+    },
+    "action": {
+     "word": "chase",
+     "margin": 0.517474661
+    },
+    "patient": {
+     "word": "ball",
+     "margin": 0.316625644
+    },
+    "attribute": {
+     "word": null,
+     "margin": 0.231619955
+    },
+    "polarity": {
+     "word": "AFFIRM",
+     "margin": 1.0
+    }
+   },
+   "completion": {
+    "R": 0.026815872804131013,
+    "R_c": 0.7546802721465853,
+    "coherence_abs": 0.756517460482745,
+    "items": {
+     "agent": "cat",
+     "action": "chase",
+     "patient": "ball"
+    },
+    "spikes": {
+     "agent": [
+      8.0,
+      5.0
+     ],
+     "action": [
+      4.0,
+      3.0
+     ],
+     "patient": [
+      6.0,
+      5.0
+     ]
+    },
+    "n_items": 3
+   }
+  },
+  {
+   "e": 0.7,
+   "R": 0.12550221397749076,
+   "roles": {
+    "agent": {
+     "word": null,
+     "margin": 0.125502214
+    },
+    "action": {
+     "word": "chase",
+     "margin": 0.486938678
+    },
+    "patient": {
+     "word": "ball",
+     "margin": 0.224530356
+    },
+    "attribute": {
+     "word": null,
+     "margin": 0.236801161
+    },
+    "polarity": {
+     "word": "AFFIRM",
+     "margin": 1.0
+    }
+   },
+   "completion": {
+    "R": 0.12550221397749076,
+    "R_c": 0.43990256318720306,
+    "coherence_abs": 0.440215664681798,
+    "items": {
+     "agent": "cat",
+     "action": null,
+     "patient": null
+    },
+    "spikes": {
+     "agent": [
+      7.0,
+      5.0
+     ],
+     "action": [
+      4.0,
+      4.0
+     ],
+     "patient": [
+      6.0,
+      6.0
+     ]
+    },
+    "n_items": 1
+   }
+  },
+  {
+   "e": 0.6,
+   "R": 0.08895221535649517,
+   "roles": {
+    "agent": {
+     "word": null,
+     "margin": 0.146124418
+    },
+    "action": {
+     "word": "chase",
+     "margin": 0.415896189
+    },
+    "patient": {
+     "word": "ball",
+     "margin": 0.088952215
+    },
+    "attribute": {
+     "word": null,
+     "margin": 0.242722313
+    },
+    "polarity": {
+     "word": "AFFIRM",
+     "margin": 1.0
+    }
+   },
+   "completion": {
+    "R": 0.08895221535649517,
+    "R_c": 0.43990256318720306,
+    "coherence_abs": 0.440215664681798,
+    "items": {
+     "agent": "cat",
+     "action": null,
+     "patient": null
+    },
+    "spikes": {
+     "agent": [
+      6.0,
+      5.0
+     ],
+     "action": [
+      5.0,
+      4.0
+     ],
+     "patient": [
+      7.0,
+      6.0
+     ]
+    },
+    "n_items": 1
+   }
+  },
+  {
+   "e": 0.5,
+   "R": 0.08366678895449568,
+   "roles": {
+    "agent": {
+     "word": null,
+     "margin": 0.165667305
+    },
+    "action": {
+     "word": "chase",
+     "margin": 0.314387598
+    },
+    "patient": {
+     "word": null,
+     "margin": 0.083666789
+    },
+    "attribute": {
+     "word": null,
+     "margin": 0.205017438
+    },
+    "polarity": {
+     "word": "AFFIRM",
+     "margin": 1.0
+    }
+   },
+   "completion": {
+    "R": 0.08366678895449568,
+    "R_c": 0.0,
+    "coherence_abs": 0.0,
+    "items": {
+     "agent": null,
+     "action": null,
+     "patient": null
+    },
+    "spikes": {
+     "agent": [
+      5.0,
+      5.0
+     ],
+     "action": [
+      6.0,
+      5.0
+     ],
+     "patient": [
+      7.0,
+      7.0
+     ]
+    },
+    "n_items": 0
+   }
+  },
+  {
+   "e": 0.4,
+   "R": 0.03136755652998457,
+   "roles": {
+    "agent": {
+     "word": null,
+     "margin": 0.031367557
+    },
+    "action": {
+     "word": "chase",
+     "margin": 0.166238452
+    },
+    "patient": {
+     "word": null,
+     "margin": 0.098655596
+    },
+    "attribute": {
+     "word": null,
+     "margin": 0.158537571
+    },
+    "polarity": {
+     "word": "AFFIRM",
+     "margin": 1.0
+    }
+   },
+   "completion": {
+    "R": 0.03136755652998457,
+    "R_c": 0.0,
+    "coherence_abs": 0.0,
+    "items": {
+     "agent": null,
+     "action": null,
+     "patient": null
+    },
+    "spikes": {
+     "agent": [
+      5.0,
+      5.0
+     ],
+     "action": [
+      7.0,
+      5.0
+     ],
+     "patient": [
+      7.0,
+      7.0
+     ]
+    },
+    "n_items": 0
+   }
+  },
+  {
+   "e": 0.3,
+   "R": 0.06567052773561466,
+   "roles": {
+    "agent": {
+     "word": null,
+     "margin": 0.113672427
+    },
+    "action": {
+     "word": null,
+     "margin": 0.065670528
+    },
+    "patient": {
+     "word": null,
+     "margin": 0.096337902
+    },
+    "attribute": {
+     "word": null,
+     "margin": 0.103617473
+    },
+    "polarity": {
+     "word": "AFFIRM",
+     "margin": 1.0
+    }
+   },
+   "completion": {
+    "R": 0.06567052773561466,
+    "R_c": 0.0,
+    "coherence_abs": 0.0,
+    "items": {
+     "agent": null,
+     "action": null,
+     "patient": null
+    },
+    "spikes": {
+     "agent": [
+      5.0,
+      5.0
+     ],
+     "action": [
+      8.0,
+      6.0
+     ],
+     "patient": [
+      7.0,
+      7.0
+     ]
+    },
+    "n_items": 0
+   }
+  },
+  {
+   "e": 0.2,
+   "R": 0.09371450043121458,
+   "roles": {
+    "agent": {
+     "word": null,
+     "margin": 0.243049891
+    },
+    "action": {
+     "word": null,
+     "margin": 0.300269959
+    },
+    "patient": {
+     "word": null,
+     "margin": 0.0937145
+    },
+    "attribute": {
+     "word": null,
+     "margin": 0.037727289
+    },
+    "polarity": {
+     "word": "AFFIRM",
+     "margin": 1.0
+    }
+   },
+   "completion": {
+    "R": 0.09371450043121458,
+    "R_c": 0.0,
+    "coherence_abs": 0.0,
+    "items": {
+     "agent": null,
+     "action": null,
+     "patient": null
+    },
+    "spikes": {
+     "agent": [
+      4.0,
+      4.0
+     ],
+     "action": [
+      8.0,
+      6.0
+     ],
+     "patient": [
+      7.0,
+      7.0
+     ]
+    },
+    "n_items": 0
+   }
+  },
+  {
+   "e": 0.15,
+   "R": 0.09227005041427622,
+   "roles": {
+    "agent": {
+     "word": null,
+     "margin": 0.302353026
+    },
+    "action": {
+     "word": null,
+     "margin": 0.31361601
+    },
+    "patient": {
+     "word": null,
+     "margin": 0.09227005
+    },
+    "attribute": {
+     "word": null,
+     "margin": 0.00041054
+    },
+    "polarity": {
+     "word": "AFFIRM",
+     "margin": 1.0
+    }
+   },
+   "completion": {
+    "R": 0.09227005041427622,
+    "R_c": 0.0,
+    "coherence_abs": 0.0,
+    "items": {
+     "agent": null,
+     "action": null,
+     "patient": null
+    },
+    "spikes": {
+     "agent": [
+      4.0,
+      4.0
+     ],
+     "action": [
+      8.0,
+      5.0
+     ],
+     "patient": [
+      7.0,
+      7.0
+     ]
+    },
+    "n_items": 0
+   }
+  },
+  {
+   "e": 0.1,
+   "R": 0.08243566511401908,
+   "roles": {
+    "agent": {
+     "word": null,
+     "margin": 0.358452044
+    },
+    "action": {
+     "word": null,
+     "margin": 0.299080612
+    },
+    "patient": {
+     "word": null,
+     "margin": 0.082435665
+    },
+    "attribute": {
+     "word": null,
+     "margin": 0.041025802
+    },
+    "polarity": {
+     "word": "AFFIRM",
+     "margin": 0.0
+    }
+   },
+   "completion": {
+    "R": 0.08243566511401908,
+    "R_c": 0.0,
+    "coherence_abs": 0.0,
+    "items": {
+     "agent": null,
+     "action": null,
+     "patient": null
+    },
+    "spikes": {
+     "agent": [
+      4.0,
+      4.0
+     ],
+     "action": [
+      8.0,
+      5.0
+     ],
+     "patient": [
+      7.0,
+      7.0
+     ]
+    },
+    "n_items": 0
+   }
+  },
+  {
+   "e": 0.07,
+   "R": 0.04701944333857727,
+   "roles": {
+    "agent": {
+     "word": null,
+     "margin": 0.390680935
+    },
+    "action": {
+     "word": null,
+     "margin": 0.290278148
+    },
+    "patient": {
+     "word": null,
+     "margin": 0.047019443
+    },
+    "attribute": {
+     "word": null,
+     "margin": 0.06588849
+    },
+    "polarity": {
+     "word": "AFFIRM",
+     "margin": 0.0
+    }
+   },
+   "completion": {
+    "R": 0.04701944333857727,
+    "R_c": 0.0,
+    "coherence_abs": 0.0,
+    "items": {
+     "agent": null,
+     "action": null,
+     "patient": null
+    },
+    "spikes": {
+     "agent": [
+      4.0,
+      4.0
+     ],
+     "action": [
+      8.0,
+      5.0
+     ],
+     "patient": [
+      7.0,
+      7.0
+     ]
+    },
+    "n_items": 0
+   }
+  },
+  {
+   "e": 0.05,
+   "R": 0.022545925409987396,
+   "roles": {
+    "agent": {
+     "word": null,
+     "margin": 0.411602479
+    },
+    "action": {
+     "word": null,
+     "margin": 0.284376306
+    },
+    "patient": {
+     "word": null,
+     "margin": 0.022545925
+    },
+    "attribute": {
+     "word": null,
+     "margin": 0.08267521
+    },
+    "polarity": {
+     "word": "AFFIRM",
+     "margin": 0.0
+    }
+   },
+   "completion": {
+    "R": 0.022545925409987396,
+    "R_c": 0.0,
+    "coherence_abs": 0.0,
+    "items": {
+     "agent": null,
+     "action": null,
+     "patient": null
+    },
+    "spikes": {
+     "agent": [
+      4.0,
+      4.0
+     ],
+     "action": [
+      8.0,
+      5.0
+     ],
+     "patient": [
+      7.0,
+      7.0
+     ]
+    },
+    "n_items": 0
+   }
+  },
+  {
+   "e": 0.03,
+   "R": 0.0026469640233783764,
+   "roles": {
+    "agent": {
+     "word": null,
+     "margin": 0.432087323
+    },
+    "action": {
+     "word": null,
+     "margin": 0.278445332
+    },
+    "patient": {
+     "word": "memory",
+     "margin": 0.002646964
+    },
+    "attribute": {
+     "word": null,
+     "margin": 0.099634311
+    },
+    "polarity": {
+     "word": "AFFIRM",
+     "margin": 0.0
+    }
+   },
+   "completion": {
+    "R": 0.0026469640233783764,
+    "R_c": 0.0,
+    "coherence_abs": 0.0,
+    "items": {
+     "agent": null,
+     "action": null,
+     "patient": null
+    },
+    "spikes": {
+     "agent": [
+      4.0,
+      4.0
+     ],
+     "action": [
+      8.0,
+      5.0
+     ],
+     "patient": [
+      7.0,
+      7.0
+     ]
+    },
+    "n_items": 0
+   }
+  },
+  {
+   "e": 0.02,
+   "R": 0.015300102943486953,
+   "roles": {
+    "agent": {
+     "word": null,
+     "margin": 0.442170526
+    },
+    "action": {
+     "word": null,
+     "margin": 0.275469776
+    },
+    "patient": {
+     "word": "memory",
+     "margin": 0.015300103
+    },
+    "attribute": {
+     "word": null,
+     "margin": 0.108179257
+    },
+    "polarity": {
+     "word": "AFFIRM",
+     "margin": 0.0
+    }
+   },
+   "completion": {
+    "R": 0.015300102943486953,
+    "R_c": 0.0,
+    "coherence_abs": 0.0,
+    "items": {
+     "agent": null,
+     "action": null,
+     "patient": null
+    },
+    "spikes": {
+     "agent": [
+      4.0,
+      4.0
+     ],
+     "action": [
+      8.0,
+      5.0
+     ],
+     "patient": [
+      7.0,
+      7.0
+     ]
+    },
+    "n_items": 0
+   }
+  },
+  {
+   "e": 0.01,
+   "R": 0.027817432770241454,
+   "roles": {
+    "agent": {
+     "word": null,
+     "margin": 0.446461633
+    },
+    "action": {
+     "word": null,
+     "margin": 0.272487356
+    },
+    "patient": {
+     "word": "memory",
+     "margin": 0.027817433
+    },
+    "attribute": {
+     "word": null,
+     "margin": 0.11676781
+    },
+    "polarity": {
+     "word": "AFFIRM",
+     "margin": 0.0
+    }
+   },
+   "completion": {
+    "R": 0.027817432770241454,
+    "R_c": 0.0,
+    "coherence_abs": 0.0,
+    "items": {
+     "agent": null,
+     "action": null,
+     "patient": null
+    },
+    "spikes": {
+     "agent": [
+      4.0,
+      4.0
+     ],
+     "action": [
+      8.0,
+      5.0
+     ],
+     "patient": [
+      7.0,
+      7.0
+     ]
+    },
+    "n_items": 0
+   }
+  },
+  {
+   "e": 0.0,
+   "R": 0.040204287721277154,
+   "roles": {
+    "agent": {
+     "word": null,
+     "margin": 0.450389436
+    },
+    "action": {
+     "word": null,
+     "margin": 0.269497823
+    },
+    "patient": {
+     "word": "memory",
+     "margin": 0.040204288
+    },
+    "attribute": {
+     "word": null,
+     "margin": 0.125400906
+    },
+    "polarity": {
+     "word": "AFFIRM",
+     "margin": 0.0
+    }
+   },
+   "completion": {
+    "R": 0.040204287721277154,
+    "R_c": 0.0,
+    "coherence_abs": 0.0,
+    "items": {
+     "agent": null,
+     "action": null,
+     "patient": null
+    },
+    "spikes": {
+     "agent": [
+      4.0,
+      4.0
+     ],
+     "action": [
+      8.0,
+      5.0
+     ],
+     "patient": [
+      7.0,
+      6.0
+     ]
+    },
+    "n_items": 0
+   }
+  }
+ ],
+ "curve_seconds": 23.9,
+ "rest_night_recall_seconds": 516.6,
+ "outcome": "correct",
+ "recalled_svo": [
+  "cat",
+  "chase",
+  "ball"
+ ],
+ "abstained": false,
+ "awake_replay": {
+  "on": true,
+  "lesioned": false,
+  "n_bouts": 48,
+  "n_ticks_asleep": 1,
+  "n_ticks_rate_limited": 0,
+  "bout_h": 0.08333333333333333,
+  "bouts": [
+   {
+    "t_h": 0.125,
+    "R": [
+     0.107457145
+    ],
+    "R_eff": [
+     0.107457145
+    ],
+    "early_before": [
+     0.930324134
+    ],
+    "early_after": [
+     0.937811304
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false
+   },
+   {
+    "t_h": 0.20833333333333331,
+    "R": [
+     0.069061462
+    ],
+    "R_eff": [
+     0.069061462
+    ],
+    "early_before": [
+     0.887131483
+    ],
+    "early_after": [
+     0.894926348
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false
+   },
+   {
+    "t_h": 0.2916666666666667,
+    "R": [
+     0.02773163
+    ],
+    "R_eff": [
+     0.02773163
+    ],
+    "early_before": [
+     0.846564053
+    ],
+    "early_after": [
+     0.850819082
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false
+   },
+   {
+    "t_h": 0.375,
+    "R": [
+     0.020910253
+    ],
+    "R_eff": [
+     0.020910253
+    ],
+    "early_before": [
+     0.804840367
+    ],
+    "early_after": [
+     0.808921204
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false
+   },
+   {
+    "t_h": 0.4583333333333333,
+    "R": [
+     0.07036995
+    ],
+    "R_eff": [
+     0.07036995
+    ],
+    "early_before": [
+     0.765206672
+    ],
+    "early_after": [
+     0.781729067
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false
+   },
+   {
+    "t_h": 0.5416666666666666,
+    "R": [
+     0.103867649
+    ],
+    "R_eff": [
+     0.103867649
+    ],
+    "early_before": [
+     0.739484013
+    ],
+    "early_after": [
+     0.766543196
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false
+   },
+   {
+    "t_h": 0.6249999999999999,
+    "R": [
+     0.120757581
+    ],
+    "R_eff": [
+     0.120757581
+    ],
+    "early_before": [
+     0.725118795
+    ],
+    "early_after": [
+     0.758312784
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false
+   },
+   {
+    "t_h": 0.7083333333333333,
+    "R": [
+     0.122210616
+    ],
+    "R_eff": [
+     0.122210616
+    ],
+    "early_before": [
+     0.717333159
+    ],
+    "early_after": [
+     0.751878047
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false
+   },
+   {
+    "t_h": 0.7916666666666666,
+    "R": [
+     0.123357542
+    ],
+    "R_eff": [
+     0.123357542
+    ],
+    "early_before": [
+     0.711246158
+    ],
+    "early_after": [
+     0.746866122
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false
+   },
+   {
+    "t_h": 0.875,
+    "R": [
+     0.124257732
+    ],
+    "R_eff": [
+     0.124257732
+    ],
+    "early_before": [
+     0.706505081
+    ],
+    "early_after": [
+     0.742974094
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false
+   },
+   {
+    "t_h": 0.9583333333333334,
+    "R": [
+     0.124960236
+    ],
+    "R_eff": [
+     0.124960236
+    ],
+    "early_before": [
+     0.702823379
+    ],
+    "early_after": [
+     0.73995864
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false
+   },
+   {
+    "t_h": 1.0416666666666667,
+    "R": [
+     0.12550716
+    ],
+    "R_eff": [
+     0.12550716
+    ],
+    "early_before": [
+     0.699970882
+    ],
+    "early_after": [
+     0.737626684
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false
+   },
+   {
+    "t_h": 1.125,
+    "R": [
+     0.125931465
+    ],
+    "R_eff": [
+     0.125931465
+    ],
+    "early_before": [
+     0.697764946
+    ],
+    "early_after": [
+     0.73582585
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false
+   },
+   {
+    "t_h": 1.2083333333333333,
+    "R": [
+     0.126260845
+    ],
+    "R_eff": [
+     0.126260845
+    ],
+    "early_before": [
+     0.69606143
+    ],
+    "early_after": [
+     0.734436971
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false
+   },
+   {
+    "t_h": 1.2916666666666665,
+    "R": [
+     0.126514317
+    ],
+    "R_eff": [
+     0.126514317
+    ],
+    "early_before": [
+     0.694747607
+    ],
+    "early_after": [
+     0.733366405
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false
+   },
+   {
+    "t_h": 1.3749999999999998,
+    "R": [
+     0.126710878
+    ],
+    "R_eff": [
+     0.126710878
+    ],
+    "early_before": [
+     0.693734895
+    ],
+    "early_after": [
+     0.732542015
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false
+   },
+   {
+    "t_h": 1.458333333333333,
+    "R": [
+     0.126862373
+    ],
+    "R_eff": [
+     0.126862373
+    ],
+    "early_before": [
+     0.692955055
+    ],
+    "early_after": [
+     0.731907506
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false
+   },
+   {
+    "t_h": 1.5416666666666663,
+    "R": [
+     0.126978387
+    ],
+    "R_eff": [
+     0.126978387
+    ],
+    "early_before": [
+     0.692354835
+    ],
+    "early_after": [
+     0.731419122
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false
+   },
+   {
+    "t_h": 1.6249999999999996,
+    "R": [
+     0.127068122
+    ],
+    "R_eff": [
+     0.127068122
+    ],
+    "early_before": [
+     0.691892845
+    ],
+    "early_after": [
+     0.731043442
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false
+   },
+   {
+    "t_h": 1.7083333333333328,
+    "R": [
+     0.127136845
+    ],
+    "R_eff": [
+     0.127136845
+    ],
+    "early_before": [
+     0.691537466
+    ],
+    "early_after": [
+     0.73075442
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false
+   },
+   {
+    "t_h": 1.791666666666666,
+    "R": [
+     0.127190208
+    ],
+    "R_eff": [
+     0.127190208
+    ],
+    "early_before": [
+     0.691264063
+    ],
+    "early_after": [
+     0.730532251
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false
+   },
+   {
+    "t_h": 1.8749999999999993,
+    "R": [
+     0.127231306
+    ],
+    "R_eff": [
+     0.127231306
+    ],
+    "early_before": [
+     0.6910539
+    ],
+    "early_after": [
+     0.730361516
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false
+   },
+   {
+    "t_h": 1.9583333333333326,
+    "R": [
+     0.127263033
+    ],
+    "R_eff": [
+     0.127263033
+    ],
+    "early_before": [
+     0.690892392
+    ],
+    "early_after": [
+     0.730230363
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false
+   },
+   {
+    "t_h": 2.0416666666666656,
+    "R": [
+     0.127286766
+    ],
+    "R_eff": [
+     0.127286766
+    ],
+    "early_before": [
+     0.690768327
+    ],
+    "early_after": [
+     0.730129427
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false
+   },
+   {
+    "t_h": 2.124999999999999,
+    "R": [
+     0.127304944
+    ],
+    "R_eff": [
+     0.127304944
+    ],
+    "early_before": [
+     0.690672845
+    ],
+    "early_after": [
+     0.730051721
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false
+   },
+   {
+    "t_h": 2.2083333333333326,
+    "R": [
+     0.127319948
+    ],
+    "R_eff": [
+     0.127319948
+    ],
+    "early_before": [
+     0.690599338
+    ],
+    "early_after": [
+     0.729992214
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false
+   },
+   {
+    "t_h": 2.291666666666666,
+    "R": [
+     0.127329773
+    ],
+    "R_eff": [
+     0.127329773
+    ],
+    "early_before": [
+     0.690543047
+    ],
+    "early_after": [
+     0.729946131
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false
+   },
+   {
+    "t_h": 2.3749999999999996,
+    "R": [
+     0.127338857
+    ],
+    "R_eff": [
+     0.127338857
+    ],
+    "early_before": [
+     0.690499454
+    ],
+    "early_after": [
+     0.7299109
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false
+   },
+   {
+    "t_h": 2.458333333333333,
+    "R": [
+     0.127345414
+    ],
+    "R_eff": [
+     0.127345414
+    ],
+    "early_before": [
+     0.690466127
+    ],
+    "early_after": [
+     0.729883847
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false
+   },
+   {
+    "t_h": 2.5416666666666665,
+    "R": [
+     0.12735017
+    ],
+    "R_eff": [
+     0.12735017
+    ],
+    "early_before": [
+     0.690440536
+    ],
+    "early_after": [
+     0.729862986
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false
+   },
+   {
+    "t_h": 2.625,
+    "R": [
+     0.127354021
+    ],
+    "R_eff": [
+     0.127354021
+    ],
+    "early_before": [
+     0.690420803
+    ],
+    "early_after": [
+     0.729846958
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false
+   },
+   {
+    "t_h": 2.7083333333333335,
+    "R": [
+     0.127357371
+    ],
+    "R_eff": [
+     0.127357371
+    ],
+    "early_before": [
+     0.690405641
+    ],
+    "early_after": [
+     0.729834765
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false
+   },
+   {
+    "t_h": 2.791666666666667,
+    "R": [
+     0.127359739
+    ],
+    "R_eff": [
+     0.127359739
+    ],
+    "early_before": [
+     0.690394106
+    ],
+    "early_after": [
+     0.729825432
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false
+   },
+   {
+    "t_h": 2.8750000000000004,
+    "R": [
+     0.12736121
+    ],
+    "R_eff": [
+     0.12736121
+    ],
+    "early_before": [
+     0.690385278
+    ],
+    "early_after": [
+     0.729818184
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false
+   },
+   {
+    "t_h": 2.958333333333334,
+    "R": [
+     0.12736233
+    ],
+    "R_eff": [
+     0.12736233
+    ],
+    "early_before": [
+     0.690378422
+    ],
+    "early_after": [
+     0.729812547
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false
+   },
+   {
+    "t_h": 3.0416666666666674,
+    "R": [
+     0.127363607
+    ],
+    "R_eff": [
+     0.127363607
+    ],
+    "early_before": [
+     0.69037309
+    ],
+    "early_after": [
+     0.72980829
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false
+   },
+   {
+    "t_h": 3.125000000000001,
+    "R": [
+     0.127364362
+    ],
+    "R_eff": [
+     0.127364362
+    ],
+    "early_before": [
+     0.690369062
+    ],
+    "early_after": [
+     0.729805009
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false
+   },
+   {
+    "t_h": 3.2083333333333344,
+    "R": [
+     0.127365074
+    ],
+    "R_eff": [
+     0.127365074
+    ],
+    "early_before": [
+     0.690365959
+    ],
+    "early_after": [
+     0.729802522
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false
+   },
+   {
+    "t_h": 3.291666666666668,
+    "R": [
+     0.127365039
+    ],
+    "R_eff": [
+     0.127365039
+    ],
+    "early_before": [
+     0.690363606
+    ],
+    "early_after": [
+     0.729800457
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false
+   },
+   {
+    "t_h": 3.3750000000000013,
+    "R": [
+     0.127365976
+    ],
+    "R_eff": [
+     0.127365976
+    ],
+    "early_before": [
+     0.690361653
+    ],
+    "early_after": [
+     0.729799043
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false
+   },
+   {
+    "t_h": 3.458333333333335,
+    "R": [
+     0.127365805
+    ],
+    "R_eff": [
+     0.127365805
+    ],
+    "early_before": [
+     0.690360315
+    ],
+    "early_after": [
+     0.729797823
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false
+   },
+   {
+    "t_h": 3.5416666666666683,
+    "R": [
+     0.127366434
+    ],
+    "R_eff": [
+     0.127366434
+    ],
+    "early_before": [
+     0.690359161
+    ],
+    "early_after": [
+     0.72979701
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false
+   },
+   {
+    "t_h": 3.6250000000000018,
+    "R": [
+     0.127366275
+    ],
+    "R_eff": [
+     0.127366275
+    ],
+    "early_before": [
+     0.690358392
+    ],
+    "early_after": [
+     0.729796291
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false
+   },
+   {
+    "t_h": 3.7083333333333353,
+    "R": [
+     0.12736617
+    ],
+    "R_eff": [
+     0.12736617
+    ],
+    "early_before": [
+     0.690357712
+    ],
+    "early_after": [
+     0.729795664
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false
+   },
+   {
+    "t_h": 3.7916666666666687,
+    "R": [
+     0.127366291
+    ],
+    "R_eff": [
+     0.127366291
+    ],
+    "early_before": [
+     0.690357119
+    ],
+    "early_after": [
+     0.729795184
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false
+   },
+   {
+    "t_h": 3.875000000000002,
+    "R": [
+     0.127366492
+    ],
+    "R_eff": [
+     0.127366492
+    ],
+    "early_before": [
+     0.690356665
+    ],
+    "early_after": [
+     0.72979485
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false
+   },
+   {
+    "t_h": 3.9583333333333357,
+    "R": [
+     0.127366866
+    ],
+    "R_eff": [
+     0.127366866
+    ],
+    "early_before": [
+     0.690356349
+    ],
+    "early_after": [
+     0.72979469
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false
+   },
+   {
+    "t_h": 4.04166666666667,
+    "R": [
+     0.12736664
+    ],
+    "R_eff": [
+     0.12736664
+    ],
+    "early_before": [
+     0.690356198
+    ],
+    "early_after": [
+     0.729794488
+    ],
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "p_at_bout": 0.0,
+    "n_drive_entries": 5,
+    "lesioned": false,
+    "no_reader": false
+   }
+  ]
+ },
+ "sleep_replay": {
+  "on": true,
+  "lesioned": false,
+  "n_epochs": 1,
+  "episode_done": true,
+  "epochs": [
+   {
+    "episode": [
+     5,
+     4.041666667
+    ],
+    "t_h": 4.125000000000003,
+    "R": [
+     0.127366667
+    ],
+    "R_eff": [
+     0.439902563
+    ],
+    "sum_R_eff": 0.439902563,
+    "da_swr": 0.825527897,
+    "da_seen_by_d1": 0.825527897,
+    "a_eff_mean": 0.449651433,
+    "pre_frac_z_gt_half": [
+     0.0
+    ],
+    "replay_lesioned": false,
+    "capture_lesioned": false,
+    "no_reader": false,
+    "completion": [
+     {
+      "R_c": 0.439902563,
+      "coherence_abs": 0.440215665,
+      "items": {
+       "agent": "cat",
+       "action": null,
+       "patient": null
+      },
+      "spikes": {
+       "agent": [
+        7.0,
+        5.0
+       ],
+       "action": [
+        4.0,
+        4.0
+       ],
+       "patient": [
+        6.0,
+        6.0
+       ]
+      },
+      "n_items": 1
+     }
+    ],
+    "completion_lesioned": false
+   }
+  ]
+ },
+ "blocks_at_recall": [
+  {
+   "block": 0,
+   "t_w": 0.016666666666666666,
+   "tag0_mean": 1.0749876665022202,
+   "z_mean": 1.000000000028297,
+   "z_min": 1.0000000000282965,
+   "z_max": 1.0000000000282965,
+   "frac_synapses_z_gt_half": 1.0,
+   "inc_mag": 1.009490496491757,
+   "base_mag": 0.8732405711014775,
+   "tag_rep_mean": 0.6969078277400815,
+   "t_rep": 4.125000000000003,
+   "e_rep": 0.7297944882145241,
+   "t_erep": 4.04166666666667,
+   "early_expression_now": 8.212755024037375e-08
+  }
+ ],
+ "world_steps": {
+  "datr_rest": {
+   "world_step": "awake_rest_4h",
+   "hours": 4.0,
+   "rest_period_h": 0.08333333333333333,
+   "n_rest_ticks": 48,
+   "n_session_ticks": 48
+  },
+  "datr_night": {
+   "world_step": "overnight_24h",
+   "hours": 24.0,
+   "n_sessions_ticked": 1
+  }
+ },
+ "tell_da": [
+  0.04616293556102311,
+  0.09133155671679015,
+  0.10151821665409727,
+  0.04616293556102311,
+  0.04616293556102311
+ ],
+ "elapsed_seconds": 910.8
+}
