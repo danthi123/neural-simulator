@@ -1,0 +1,2687 @@
+{
+  "datcr_t1": {
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about guess yet: what can you tell me about guess? \u2014 worth going further here.",
+    "abstained": true,
+    "recalled_svo": null,
+    "derived": false,
+    "derived_from": null,
+    "verified": false,
+    "renderer": "template-stub (GPU-free)",
+    "brain": "tiny-demo",
+    "source": "tiny-demo",
+    "rich": false,
+    "activity": null,
+    "provenance": null,
+    "affect": {
+      "on": true,
+      "lesioned": false,
+      "composer": "onebrain",
+      "differential": 0.0,
+      "valence_sign": "0",
+      "tone_level": 0,
+      "tone_token": "",
+      "forthcomingness": {
+        "max_sentences": 4,
+        "max_elaborations": 2
+      },
+      "manner_template": "",
+      "appraisal_valence": 0.0,
+      "appraisal_arousal": 0.0,
+      "appraisal_hits": [],
+      "pos_rate": 0.0,
+      "neg_rate": 0.0
+    },
+    "comprehension": null,
+    "surprise": null,
+    "metacog": null,
+    "worldmodel": null,
+    "curiosity": {
+      "on": true,
+      "lesioned": false,
+      "novelty": 0.9795954664816054,
+      "want_hz": 38.88888888888888,
+      "threshold": 19.09722222222222,
+      "curious": true,
+      "calib": {
+        "want_novel_hz": 38.19444444444444,
+        "want_familiar_hz": 0.0,
+        "threshold_hz": 19.09722222222222,
+        "novel_signal": 0.95,
+        "familiar_signal": 0.0,
+        "read_reps": 4
+      },
+      "topic": "guess",
+      "graded_novelty": {
+        "on": true,
+        "value": 0.9795954664816054,
+        "lesioned": false
+      },
+      "curiosity_da": {
+        "on": true,
+        "lesioned": false,
+        "da_level": 0.6478803447434558,
+        "da_tonic": 0.5,
+        "k_da": 1.5,
+        "da_crave_gain": 1.2218205171151837,
+        "base_threshold": 19.09722222222222,
+        "eff_threshold": 15.630137123014022,
+        "want_hz": 38.88888888888888,
+        "want_eff_hz": 47.51524233225713,
+        "curious": true
+      }
+    },
+    "multiref": null,
+    "noncontradiction": null,
+    "reconsolidation": null,
+    "pragmatic": null,
+    "episodic": null,
+    "affect_drives": {
+      "acted": true,
+      "turn": 1,
+      "lesioned": false,
+      "ema_valence": 0.0,
+      "ema_arousal": 0.0,
+      "body_h": 0.5,
+      "body_a": 0.0,
+      "mood": 0.0010000000000000009,
+      "felt_arousal": 0.0,
+      "level": 0,
+      "high_arousal": false,
+      "lead": "",
+      "reason": "neutral_hold",
+      "seed": 43,
+      "vplus_rate": 0.03979166666666667,
+      "vminus_rate": 0.03879166666666667
+    },
+    "swap_drives": {
+      "acted": false,
+      "turn": 1,
+      "topic": null,
+      "swapped": false,
+      "held_topic_before": null,
+      "held_topic": null,
+      "evicted_topic": null,
+      "reason": "no_topic_hold",
+      "seed": 43,
+      "lesioned": false,
+      "on": true,
+      "lead": "",
+      "new_topic": null,
+      "reason_lead": "no_topic_hold"
+    },
+    "common_ground_drives": {
+      "on": true,
+      "topic": null,
+      "decision": null,
+      "reason": "no_grounded_topic",
+      "lead": "",
+      "lesioned": false,
+      "reason_lead": "no_referent"
+    },
+    "da_drives": {
+      "acted": true,
+      "turn": 1,
+      "lesioned": false,
+      "turn_engagement": 0.6545454545454544,
+      "ema_engagement": 0.39272727272727265,
+      "afferent_pA": 549.8181818181818,
+      "da_level": 0.6478803447434558,
+      "snc_firing": 0.09999999999999996,
+      "mode": "focus",
+      "lead": " \u2014 worth going further here.",
+      "reason": "engaged",
+      "seed": 43,
+      "shared_salience": {
+        "raw": 0.8,
+        "want_hz": 24.999999999999996,
+        "normalized": 0.6545454545454544,
+        "lesioned": false,
+        "calib": {
+          "want_novel_hz": 38.19444444444444,
+          "want_familiar_hz": 0.0,
+          "threshold_hz": 19.09722222222222,
+          "novel_signal": 0.95,
+          "familiar_signal": 0.0,
+          "read_reps": 4
+        },
+        "on": true
+      },
+      "spiking_novelty": {
+        "novelty": 0.8333333333333334,
+        "n_tokens": 6,
+        "per_word_freshness": [
+          0.6896551724137931,
+          0.9655172413793104,
+          0.7586206896551724,
+          0.896551724137931,
+          0.8620689655172413,
+          0.8275862068965517
+        ],
+        "fresh_ref": 29.0,
+        "n_channels": 64,
+        "lesioned": false,
+        "on": true
+      },
+      "on": true
+    },
+    "da_encoding": {
+      "on": true,
+      "g": 1.9274790330537734,
+      "da_level": 0.6478803447434558,
+      "lesioned": false
+    },
+    "da_tag_capture": {
+      "observe": {
+        "on": true,
+        "observed": {
+          "t_h": 0.0,
+          "da_level": 0.6478803447434558,
+          "a_eff": 0.20681642137877665
+        }
+      },
+      "on": true,
+      "clock": "turn",
+      "world_t_h": 0.0,
+      "n_turns": 1,
+      "gamma": 32.77353587789152,
+      "d1_a_go": 0.18667699457784698,
+      "p": 0.0,
+      "p_max": 0.0,
+      "block_offset": 5,
+      "n_managed_blocks": 0,
+      "external_rescales": 0,
+      "external_rewrites": 0,
+      "blocks": [],
+      "last_turn": {
+        "t_h": 0.0,
+        "da": 0.6478803447434558,
+        "da_seen_by_d1": 0.6478803447434558,
+        "d1_rate_hz": 44.85416666666667,
+        "a": 0.20681642137877665,
+        "a_eff": 0.20681642137877665
+      },
+      "new_blocks_this_turn": 0
+    }
+  },
+  "datcr_t2": {
+    "answer": "Gladly! I don't know about that. My curiosity is piqued \u2014 I haven't learned about never yet: what can you tell me about never? \u2014 worth going further here.",
+    "abstained": true,
+    "recalled_svo": null,
+    "derived": false,
+    "derived_from": null,
+    "verified": false,
+    "renderer": "template-stub (GPU-free)",
+    "brain": "tiny-demo",
+    "source": "tiny-demo",
+    "rich": false,
+    "activity": {
+      "roles": [
+        {
+          "role": "agent",
+          "word": "absolutely_amazing",
+          "confidence": null,
+          "margin": null,
+          "margin_spiking": null,
+          "cue": true,
+          "asserted": "absolutely_amazing"
+        },
+        {
+          "role": "action",
+          "word": "alias_of",
+          "confidence": null,
+          "margin": null,
+          "margin_spiking": null,
+          "cue": true,
+          "asserted": "alias_of"
+        }
+      ],
+      "matched_fact_index": null,
+      "n_facts_scanned": 5,
+      "abstained": true,
+      "rf": {
+        "n_readout_neurons": 6880,
+        "frac_fired": 0.16744186046511628,
+        "mean_magnitude": 1475.2694038539075
+      },
+      "composer": "onebrain"
+    },
+    "provenance": null,
+    "affect": {
+      "on": true,
+      "lesioned": false,
+      "composer": "onebrain",
+      "differential": 0.03833333333333333,
+      "valence_sign": "+",
+      "tone_level": 2,
+      "tone_token": "gladly",
+      "forthcomingness": {
+        "max_sentences": 4,
+        "max_elaborations": 3
+      },
+      "manner_template": "Keep the words {a}, {v}, {p} and the verb '{v}'. Write ONE short, warm, friendly sentence.",
+      "appraisal_valence": 0.44999999999999996,
+      "appraisal_arousal": 0.375,
+      "appraisal_hits": [
+        "amazing"
+      ],
+      "pos_rate": 0.03833333333333333,
+      "neg_rate": 0.0
+    },
+    "comprehension": null,
+    "surprise": null,
+    "metacog": null,
+    "worldmodel": {
+      "on": true,
+      "lesioned": false,
+      "kind": "update",
+      "context_sign": 1,
+      "predicted_next_sign": 1,
+      "pred_margin": 460.06944444444446
+    },
+    "curiosity": {
+      "on": true,
+      "lesioned": false,
+      "novelty": 0.9688473267184252,
+      "want_hz": 38.88888888888888,
+      "threshold": 19.09722222222222,
+      "curious": true,
+      "calib": {
+        "want_novel_hz": 38.19444444444444,
+        "want_familiar_hz": 0.0,
+        "threshold_hz": 19.09722222222222,
+        "novel_signal": 0.95,
+        "familiar_signal": 0.0,
+        "read_reps": 4
+      },
+      "topic": "never",
+      "graded_novelty": {
+        "on": true,
+        "value": 0.9688473267184252,
+        "lesioned": false
+      },
+      "curiosity_da": {
+        "on": true,
+        "lesioned": false,
+        "da_level": 0.8960979627223284,
+        "da_tonic": 0.5,
+        "k_da": 1.5,
+        "da_crave_gain": 1.5941469440834926,
+        "base_threshold": 19.09722222222222,
+        "eff_threshold": 11.979587134736567,
+        "want_hz": 38.88888888888888,
+        "want_eff_hz": 61.994603381024696,
+        "curious": true
+      }
+    },
+    "multiref": null,
+    "noncontradiction": null,
+    "reconsolidation": null,
+    "pragmatic": null,
+    "episodic": null,
+    "affect_drives": {
+      "acted": true,
+      "turn": 2,
+      "lesioned": false,
+      "ema_valence": 0.44999999999999996,
+      "ema_arousal": 0.375,
+      "body_h": 0.725,
+      "body_a": 0.5625,
+      "mood": 0.06870833333333333,
+      "felt_arousal": 0.054875,
+      "level": 2,
+      "high_arousal": true,
+      "lead": "Gladly! ",
+      "reason": "graded_affect",
+      "seed": 43,
+      "vplus_rate": 0.06870833333333333,
+      "vminus_rate": 0.0
+    },
+    "swap_drives": {
+      "acted": false,
+      "turn": 2,
+      "topic": null,
+      "swapped": false,
+      "held_topic_before": null,
+      "held_topic": null,
+      "evicted_topic": null,
+      "reason": "no_topic_hold",
+      "seed": 43,
+      "lesioned": false,
+      "on": true,
+      "lead": "",
+      "new_topic": null,
+      "reason_lead": "no_topic_hold"
+    },
+    "common_ground_drives": {
+      "on": true,
+      "topic": null,
+      "decision": null,
+      "reason": "no_grounded_topic",
+      "lead": "",
+      "lesioned": false,
+      "reason_lead": "no_referent"
+    },
+    "da_drives": {
+      "acted": true,
+      "turn": 2,
+      "lesioned": false,
+      "turn_engagement": 0.7272727272727272,
+      "ema_engagement": 0.5934545454545453,
+      "afferent_pA": 830.8363636363634,
+      "da_level": 0.8960979627223284,
+      "snc_firing": 0.14166666666666666,
+      "mode": "focus",
+      "lead": " \u2014 worth going further here.",
+      "reason": "engaged",
+      "seed": 43,
+      "shared_salience": {
+        "raw": 0.8172413793103449,
+        "want_hz": 27.777777777777775,
+        "normalized": 0.7272727272727272,
+        "lesioned": false,
+        "calib": {
+          "want_novel_hz": 38.19444444444444,
+          "want_familiar_hz": 0.0,
+          "threshold_hz": 19.09722222222222,
+          "novel_signal": 0.95,
+          "familiar_signal": 0.0,
+          "read_reps": 4
+        },
+        "on": true
+      },
+      "spiking_novelty": {
+        "novelty": 0.8620689655172414,
+        "n_tokens": 6,
+        "per_word_freshness": [
+          1.0,
+          0.9310344827586207,
+          0.8620689655172413,
+          0.8275862068965517,
+          0.7586206896551724,
+          0.7931034482758621
+        ],
+        "fresh_ref": 29.0,
+        "n_channels": 64,
+        "lesioned": false,
+        "on": true
+      },
+      "on": true
+    },
+    "da_encoding": {
+      "on": true,
+      "g": 2.47508633448446,
+      "da_level": 0.8960979627223284,
+      "lesioned": false
+    },
+    "da_tag_capture": {
+      "observe": {
+        "on": true,
+        "observed": {
+          "t_h": 0.008333333333333333,
+          "da_level": 0.8960979627223284,
+          "a_eff": 0.5251742835011621
+        }
+      },
+      "on": true,
+      "clock": "turn",
+      "world_t_h": 0.008333333333333333,
+      "n_turns": 2,
+      "gamma": 32.77353587789152,
+      "d1_a_go": 0.18667699457784698,
+      "p": 0.0017163089584973797,
+      "p_max": 0.0017163089584973797,
+      "block_offset": 5,
+      "n_managed_blocks": 0,
+      "external_rescales": 0,
+      "external_rewrites": 0,
+      "blocks": [],
+      "last_turn": {
+        "t_h": 0.008333333333333333,
+        "da": 0.8960979627223284,
+        "da_seen_by_d1": 0.8960979627223284,
+        "d1_rate_hz": 47.708333333333336,
+        "a": 0.5251742835011621,
+        "a_eff": 0.5251742835011621
+      },
+      "sleep_replay_capture": {
+        "on": true,
+        "lesioned": true,
+        "n_epochs": 0,
+        "episode_done": false,
+        "epochs": []
+      },
+      "new_blocks_this_turn": 0
+    }
+  },
+  "datcr_t3": {
+    "answer": "Gladly! the cat chases the ball! \u2014 worth going further here.",
+    "abstained": false,
+    "recalled_svo": [
+      "cat",
+      "chase",
+      "ball"
+    ],
+    "derived": false,
+    "derived_from": null,
+    "verified": true,
+    "renderer": "template-stub (GPU-free)",
+    "brain": "tiny-demo",
+    "source": "tiny-demo",
+    "rich": false,
+    "activity": {
+      "roles": [
+        {
+          "role": "agent",
+          "word": "cat",
+          "confidence": null,
+          "margin": null,
+          "margin_spiking": null,
+          "cue": true,
+          "asserted": "cat"
+        },
+        {
+          "role": "action",
+          "word": "chase",
+          "confidence": null,
+          "margin": null,
+          "margin_spiking": null,
+          "cue": true,
+          "asserted": "chase"
+        },
+        {
+          "role": "patient",
+          "word": "ball",
+          "confidence": null,
+          "margin": null,
+          "margin_spiking": null,
+          "cue": true,
+          "asserted": "ball"
+        }
+      ],
+      "matched_fact_index": null,
+      "n_facts_scanned": 5,
+      "abstained": true,
+      "rf": {
+        "n_readout_neurons": 6880,
+        "frac_fired": 0.00029069767441860465,
+        "mean_magnitude": 0.973424782649439
+      },
+      "composer": "onebrain"
+    },
+    "provenance": {
+      "known": true,
+      "label": "perceived",
+      "d": 0.9999999901538462,
+      "rate_perceived": 0.1015625,
+      "rate_generated": 0.0,
+      "encoded_as": "perceived",
+      "agrees_with_encoded": true
+    },
+    "affect": {
+      "on": true,
+      "lesioned": false,
+      "composer": "onebrain",
+      "differential": 0.03833333333333333,
+      "valence_sign": "+",
+      "tone_level": 2,
+      "tone_token": "gladly",
+      "forthcomingness": {
+        "max_sentences": 4,
+        "max_elaborations": 3
+      },
+      "manner_template": "Keep the words {a}, {v}, {p} and the verb '{v}'. Write ONE short, warm, friendly sentence.",
+      "appraisal_valence": 0.44999999999999996,
+      "appraisal_arousal": 0.375,
+      "appraisal_hits": [],
+      "pos_rate": 0.03833333333333333,
+      "neg_rate": 0.0
+    },
+    "comprehension": {
+      "on": true,
+      "lesioned": false,
+      "in_scope": true,
+      "svo": [
+        "cat",
+        "chase",
+        "ball"
+      ],
+      "margin": 0.32291666666666663,
+      "threshold": 0.19999999999999998,
+      "comprehended": true,
+      "calib": {
+        "mean_well": 0.3,
+        "min_well": 0.3,
+        "mean_ill": 0.038888888888888876,
+        "max_ill": 0.09999999999999998,
+        "read_steps": 60,
+        "n_calib": 24
+      },
+      "known_binding": false,
+      "xedge_live_learn": {
+        "credited": true,
+        "teach": "teach_agent",
+        "margin": 0.32222222222222224,
+        "focus": "w0",
+        "content_direction": "agent",
+        "w_before": {
+          "w0->A": 0.05,
+          "w0->P": 0.05,
+          "w1->A": 0.05,
+          "w1->P": 0.05,
+          "w2->A": 0.05,
+          "w2->P": 0.05
+        },
+        "w_after": {
+          "w0->A": 0.704,
+          "w0->P": 0.05,
+          "w1->A": 0.05,
+          "w1->P": 0.05,
+          "w2->A": 0.05,
+          "w2->P": 0.05
+        },
+        "n_live_credited": 1,
+        "a0": 0.23333333333333334,
+        "a1": -0.08958333333333332,
+        "role_floor": 0.06333333333333334
+      }
+    },
+    "surprise": null,
+    "metacog": null,
+    "worldmodel": null,
+    "curiosity": null,
+    "multiref": {
+      "on": true,
+      "lesioned": false,
+      "in_scope": true,
+      "composer": "onebrain",
+      "n_referents": 2,
+      "input_order": [
+        "cat",
+        "ball"
+      ],
+      "recovered": {
+        "0": "cat",
+        "1": "ball"
+      },
+      "hold_alive_min": 0.0638888888888889,
+      "zero_input_ok": true,
+      "all_recovered": true,
+      "is_hold_query": false,
+      "kind": "maintain"
+    },
+    "noncontradiction": {
+      "on": true,
+      "lesioned": false,
+      "in_scope": true,
+      "svo": [
+        "cat",
+        "chases",
+        "ball"
+      ],
+      "recall_action": "chases",
+      "asserted_polarity": "AFFIRM",
+      "recalled_yn": "unknown",
+      "stored_polarity": null,
+      "reject": false
+    },
+    "reconsolidation": null,
+    "pragmatic": null,
+    "episodic": null,
+    "affect_drives": {
+      "acted": true,
+      "turn": 3,
+      "lesioned": false,
+      "ema_valence": 0.44999999999999996,
+      "ema_arousal": 0.375,
+      "body_h": 0.725,
+      "body_a": 0.5625,
+      "mood": 0.06870833333333333,
+      "felt_arousal": 0.054875,
+      "level": 2,
+      "high_arousal": true,
+      "lead": "Gladly! ",
+      "reason": "graded_affect",
+      "seed": 43,
+      "vplus_rate": 0.06870833333333333,
+      "vminus_rate": 0.0
+    },
+    "swap_drives": {
+      "acted": true,
+      "turn": 3,
+      "topic": "cat",
+      "swapped": false,
+      "held_topic_before": null,
+      "held_topic": "cat",
+      "evicted_topic": null,
+      "reason": "first_thought",
+      "seed": 43,
+      "lesioned": false,
+      "proposed_slot": 0,
+      "held_slot": 0,
+      "winner_slot": 0,
+      "n_ignited_post": 1,
+      "held_rate_post": 0.3333333333333333,
+      "mm_peak": 0.03888888888888889,
+      "boost_max": 0.019444444444444445,
+      "on": true,
+      "lead": "",
+      "new_topic": null,
+      "reason_lead": "first_thought"
+    },
+    "common_ground_drives": {
+      "on": true,
+      "topic": "cat",
+      "slot": 0,
+      "decision": "introduce",
+      "in_common_ground": false,
+      "first_mention": true,
+      "reduce_rate": 0.0,
+      "introduce_rate": 0.043333333333333335,
+      "evidence_rate": 0.0,
+      "margin": -0.043333333333333335,
+      "lesioned": false,
+      "lead": "",
+      "reason_lead": "introduce"
+    },
+    "da_drives": {
+      "acted": true,
+      "turn": 3,
+      "lesioned": false,
+      "turn_engagement": 0.5090909090909089,
+      "ema_engagement": 0.5428363636363636,
+      "afferent_pA": 759.970909090909,
+      "da_level": 0.7980108110666576,
+      "snc_firing": 0.125,
+      "mode": "focus",
+      "lead": " \u2014 worth going further here.",
+      "reason": "engaged",
+      "seed": 43,
+      "shared_salience": {
+        "raw": 0.75,
+        "want_hz": 19.44444444444444,
+        "normalized": 0.5090909090909089,
+        "lesioned": false,
+        "calib": {
+          "want_novel_hz": 38.19444444444444,
+          "want_familiar_hz": 0.0,
+          "threshold_hz": 19.09722222222222,
+          "novel_signal": 0.95,
+          "familiar_signal": 0.0,
+          "read_reps": 4
+        },
+        "on": true
+      },
+      "spiking_novelty": {
+        "novelty": 1.0,
+        "n_tokens": 3,
+        "per_word_freshness": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "fresh_ref": 29.0,
+        "n_channels": 64,
+        "lesioned": false,
+        "on": true
+      },
+      "on": true
+    },
+    "da_encoding": {
+      "on": true,
+      "g": 2.294523926985693,
+      "da_level": 0.7980108110666576,
+      "lesioned": false
+    },
+    "da_tag_capture": {
+      "observe": {
+        "on": true,
+        "observed": {
+          "t_h": 0.016666666666666666,
+          "da_level": 0.7980108110666576,
+          "a_eff": 0.3880712625871415
+        }
+      },
+      "on": true,
+      "clock": "turn",
+      "world_t_h": 0.016666666666666666,
+      "n_turns": 3,
+      "gamma": 32.77353587789152,
+      "d1_a_go": 0.18667699457784698,
+      "p": 0.006060333505073658,
+      "p_max": 0.006060333505073658,
+      "block_offset": 5,
+      "n_managed_blocks": 1,
+      "external_rescales": 0,
+      "external_rewrites": 0,
+      "blocks": [
+        {
+          "block": 0,
+          "t_w": 0.016666666666666666,
+          "tag0_mean": 2.2027627035027137,
+          "z_mean": 0.0,
+          "z_min": 0.0,
+          "z_max": 0.0,
+          "frac_synapses_z_gt_half": 0.0,
+          "inc_mag": 2.2027627035027137,
+          "base_mag": 0.9223548200488956
+        }
+      ],
+      "last_turn": {
+        "t_h": 0.016666666666666666,
+        "da": 0.7980108110666576,
+        "da_seen_by_d1": 0.7980108110666576,
+        "d1_rate_hz": 46.479166666666664,
+        "a": 0.3880712625871415,
+        "a_eff": 0.3880712625871415
+      },
+      "sleep_replay_capture": {
+        "on": true,
+        "lesioned": true,
+        "n_epochs": 0,
+        "episode_done": false,
+        "epochs": []
+      },
+      "new_blocks_this_turn": 1
+    }
+  },
+  "datcr_t4": {
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about everyone yet: what can you tell me about everyone? \u2014 worth going further here.",
+    "abstained": true,
+    "recalled_svo": null,
+    "derived": false,
+    "derived_from": null,
+    "verified": false,
+    "renderer": "template-stub (GPU-free)",
+    "brain": "tiny-demo",
+    "source": "tiny-demo",
+    "rich": false,
+    "activity": {
+      "roles": [
+        {
+          "role": "agent",
+          "word": "everyone",
+          "confidence": null,
+          "margin": null,
+          "margin_spiking": null,
+          "cue": true,
+          "asserted": "everyone"
+        },
+        {
+          "role": "action",
+          "word": "in",
+          "confidence": null,
+          "margin": null,
+          "margin_spiking": null,
+          "cue": true,
+          "asserted": "in"
+        }
+      ],
+      "matched_fact_index": null,
+      "n_facts_scanned": 6,
+      "abstained": true,
+      "rf": {
+        "n_readout_neurons": 6880,
+        "frac_fired": 0.16744186046511628,
+        "mean_magnitude": 1456.7931829108256
+      },
+      "composer": "onebrain"
+    },
+    "provenance": null,
+    "affect": {
+      "on": true,
+      "lesioned": false,
+      "composer": "onebrain",
+      "differential": 0.03833333333333333,
+      "valence_sign": "+",
+      "tone_level": 2,
+      "tone_token": "gladly",
+      "forthcomingness": {
+        "max_sentences": 4,
+        "max_elaborations": 3
+      },
+      "manner_template": "Keep the words {a}, {v}, {p} and the verb '{v}'. Write ONE short, warm, friendly sentence.",
+      "appraisal_valence": 0.44999999999999996,
+      "appraisal_arousal": 0.375,
+      "appraisal_hits": [],
+      "pos_rate": 0.03833333333333333,
+      "neg_rate": 0.0
+    },
+    "comprehension": null,
+    "surprise": null,
+    "metacog": null,
+    "worldmodel": null,
+    "curiosity": {
+      "on": true,
+      "lesioned": false,
+      "novelty": 0.9683847206386192,
+      "want_hz": 38.88888888888888,
+      "threshold": 19.09722222222222,
+      "curious": true,
+      "calib": {
+        "want_novel_hz": 38.19444444444444,
+        "want_familiar_hz": 0.0,
+        "threshold_hz": 19.09722222222222,
+        "novel_signal": 0.95,
+        "familiar_signal": 0.0,
+        "read_reps": 4
+      },
+      "topic": "everyone",
+      "graded_novelty": {
+        "on": true,
+        "value": 0.9683847206386192,
+        "lesioned": false
+      },
+      "curiosity_da": {
+        "on": true,
+        "lesioned": false,
+        "da_level": 0.9032609892666146,
+        "da_tonic": 0.5,
+        "k_da": 1.5,
+        "da_crave_gain": 1.6048914838999218,
+        "base_threshold": 19.09722222222222,
+        "eff_threshold": 11.899385356457591,
+        "want_hz": 38.88888888888888,
+        "want_eff_hz": 62.412446596108055,
+        "curious": true
+      }
+    },
+    "multiref": null,
+    "noncontradiction": null,
+    "reconsolidation": null,
+    "pragmatic": null,
+    "episodic": null,
+    "affect_drives": {
+      "acted": true,
+      "turn": 4,
+      "lesioned": false,
+      "ema_valence": 0.44999999999999996,
+      "ema_arousal": 0.375,
+      "body_h": 0.725,
+      "body_a": 0.5625,
+      "mood": 0.06870833333333333,
+      "felt_arousal": 0.054875,
+      "level": 2,
+      "high_arousal": true,
+      "lead": "",
+      "reason": "graded_affect",
+      "seed": 43,
+      "vplus_rate": 0.06870833333333333,
+      "vminus_rate": 0.0
+    },
+    "swap_drives": {
+      "acted": false,
+      "turn": 4,
+      "topic": null,
+      "swapped": false,
+      "held_topic_before": "cat",
+      "held_topic": "cat",
+      "evicted_topic": null,
+      "reason": "no_topic_hold",
+      "seed": 43,
+      "lesioned": false,
+      "on": true,
+      "lead": "",
+      "new_topic": null,
+      "reason_lead": "no_topic_hold"
+    },
+    "common_ground_drives": {
+      "on": true,
+      "topic": null,
+      "decision": null,
+      "reason": "no_grounded_topic",
+      "lead": "",
+      "lesioned": false,
+      "reason_lead": "no_referent"
+    },
+    "da_drives": {
+      "acted": true,
+      "turn": 4,
+      "lesioned": false,
+      "turn_engagement": 0.7454545454545454,
+      "ema_engagement": 0.6644072727272726,
+      "afferent_pA": 930.1701818181816,
+      "da_level": 0.9032609892666146,
+      "snc_firing": 0.1458333333333332,
+      "mode": "focus",
+      "lead": " \u2014 worth going further here.",
+      "reason": "engaged",
+      "seed": 43,
+      "shared_salience": {
+        "raw": 0.8379310344827586,
+        "want_hz": 28.472222222222218,
+        "normalized": 0.7454545454545454,
+        "lesioned": false,
+        "calib": {
+          "want_novel_hz": 38.19444444444444,
+          "want_familiar_hz": 0.0,
+          "threshold_hz": 19.09722222222222,
+          "novel_signal": 0.95,
+          "familiar_signal": 0.0,
+          "read_reps": 4
+        },
+        "on": true
+      },
+      "spiking_novelty": {
+        "novelty": 0.896551724137931,
+        "n_tokens": 6,
+        "per_word_freshness": [
+          1.0,
+          0.8620689655172413,
+          0.7586206896551724,
+          0.9655172413793104,
+          0.9310344827586207,
+          0.8620689655172413
+        ],
+        "fresh_ref": 29.0,
+        "n_channels": 64,
+        "lesioned": false,
+        "on": true
+      },
+      "on": true
+    },
+    "da_encoding": {
+      "on": true,
+      "g": 2.4543660582141094,
+      "da_level": 0.9032609892666146,
+      "lesioned": false
+    },
+    "da_tag_capture": {
+      "observe": {
+        "on": true,
+        "observed": {
+          "t_h": 0.025,
+          "da_level": 0.9032609892666146,
+          "a_eff": 0.478698683191325
+        }
+      },
+      "on": true,
+      "clock": "turn",
+      "world_t_h": 0.024999999999999998,
+      "n_turns": 4,
+      "gamma": 32.77353587789152,
+      "d1_a_go": 0.18667699457784698,
+      "p": 0.009230530414276837,
+      "p_max": 0.009230530414276837,
+      "block_offset": 5,
+      "n_managed_blocks": 1,
+      "external_rescales": 0,
+      "external_rewrites": 0,
+      "blocks": [
+        {
+          "block": 0,
+          "t_w": 0.016666666666666666,
+          "tag0_mean": 2.2027627035027137,
+          "z_mean": 0.010120298021219321,
+          "z_min": 0.010120298021219318,
+          "z_max": 0.010120298021219323,
+          "frac_synapses_z_gt_half": 0.0,
+          "inc_mag": 2.2027627035027137,
+          "base_mag": 0.9223548200488956
+        }
+      ],
+      "last_turn": {
+        "t_h": 0.025,
+        "da": 0.9032609892666146,
+        "da_seen_by_d1": 0.9032609892666146,
+        "d1_rate_hz": 47.29166666666667,
+        "a": 0.478698683191325,
+        "a_eff": 0.478698683191325
+      },
+      "sleep_replay_capture": {
+        "on": true,
+        "lesioned": true,
+        "n_epochs": 0,
+        "episode_done": false,
+        "epochs": []
+      },
+      "new_blocks_this_turn": 0
+    }
+  },
+  "datcr_t5": {
+    "answer": "Gladly! I don't know about that. My curiosity is piqued \u2014 I haven't learned about honestly yet: what can you tell me about honestly? \u2014 there's plenty more to dig into here!",
+    "abstained": true,
+    "recalled_svo": null,
+    "derived": false,
+    "derived_from": null,
+    "verified": false,
+    "renderer": "template-stub (GPU-free)",
+    "brain": "tiny-demo",
+    "source": "tiny-demo",
+    "rich": false,
+    "activity": {
+      "roles": [
+        {
+          "role": "agent",
+          "word": "honestly",
+          "confidence": null,
+          "margin": null,
+          "margin_spiking": null,
+          "cue": true,
+          "asserted": "honestly"
+        },
+        {
+          "role": "action",
+          "word": "most",
+          "confidence": null,
+          "margin": null,
+          "margin_spiking": null,
+          "cue": true,
+          "asserted": "most"
+        }
+      ],
+      "matched_fact_index": null,
+      "n_facts_scanned": 6,
+      "abstained": true,
+      "rf": {
+        "n_readout_neurons": 6880,
+        "frac_fired": 0.16744186046511628,
+        "mean_magnitude": 1456.7931940854064
+      },
+      "composer": "onebrain"
+    },
+    "provenance": null,
+    "affect": {
+      "on": true,
+      "lesioned": false,
+      "composer": "onebrain",
+      "differential": 0.03833333333333333,
+      "valence_sign": "+",
+      "tone_level": 2,
+      "tone_token": "gladly",
+      "forthcomingness": {
+        "max_sentences": 4,
+        "max_elaborations": 3
+      },
+      "manner_template": "Keep the words {a}, {v}, {p} and the verb '{v}'. Write ONE short, warm, friendly sentence.",
+      "appraisal_valence": 0.44999999999999996,
+      "appraisal_arousal": 0.375,
+      "appraisal_hits": [],
+      "pos_rate": 0.03833333333333333,
+      "neg_rate": 0.0
+    },
+    "comprehension": null,
+    "surprise": null,
+    "metacog": null,
+    "worldmodel": null,
+    "curiosity": {
+      "on": true,
+      "lesioned": false,
+      "novelty": 0.9776118380299249,
+      "want_hz": 38.88888888888888,
+      "threshold": 19.09722222222222,
+      "curious": true,
+      "calib": {
+        "want_novel_hz": 38.19444444444444,
+        "want_familiar_hz": 0.0,
+        "threshold_hz": 19.09722222222222,
+        "novel_signal": 0.95,
+        "familiar_signal": 0.0,
+        "read_reps": 4
+      },
+      "topic": "honestly",
+      "graded_novelty": {
+        "on": true,
+        "value": 0.9776118380299249,
+        "lesioned": false
+      },
+      "curiosity_da": {
+        "on": true,
+        "lesioned": false,
+        "da_level": 1.03907707638594,
+        "da_tonic": 0.5,
+        "k_da": 1.5,
+        "da_crave_gain": 1.80861561457891,
+        "base_threshold": 19.09722222222222,
+        "eff_threshold": 10.559027616638442,
+        "want_hz": 38.88888888888888,
+        "want_eff_hz": 70.33505167806871,
+        "curious": true
+      }
+    },
+    "multiref": null,
+    "noncontradiction": null,
+    "reconsolidation": null,
+    "pragmatic": null,
+    "episodic": null,
+    "affect_drives": {
+      "acted": true,
+      "turn": 5,
+      "lesioned": false,
+      "ema_valence": 0.44999999999999996,
+      "ema_arousal": 0.375,
+      "body_h": 0.725,
+      "body_a": 0.5625,
+      "mood": 0.06870833333333333,
+      "felt_arousal": 0.054875,
+      "level": 2,
+      "high_arousal": true,
+      "lead": "Gladly! ",
+      "reason": "graded_affect",
+      "seed": 43,
+      "vplus_rate": 0.06870833333333333,
+      "vminus_rate": 0.0
+    },
+    "swap_drives": {
+      "acted": false,
+      "turn": 5,
+      "topic": null,
+      "swapped": false,
+      "held_topic_before": "cat",
+      "held_topic": "cat",
+      "evicted_topic": null,
+      "reason": "no_topic_hold",
+      "seed": 43,
+      "lesioned": false,
+      "on": true,
+      "lead": "",
+      "new_topic": null,
+      "reason_lead": "no_topic_hold"
+    },
+    "common_ground_drives": {
+      "on": true,
+      "topic": null,
+      "decision": null,
+      "reason": "no_grounded_topic",
+      "lead": "",
+      "lesioned": false,
+      "reason_lead": "no_referent"
+    },
+    "da_drives": {
+      "acted": true,
+      "turn": 5,
+      "lesioned": false,
+      "turn_engagement": 0.8181818181818181,
+      "ema_engagement": 0.7566719999999999,
+      "afferent_pA": 1059.3408,
+      "da_level": 1.03907707638594,
+      "snc_firing": 0.16666666666666666,
+      "mode": "arousal",
+      "lead": " \u2014 there's plenty more to dig into here!",
+      "reason": "engaged",
+      "seed": 43,
+      "shared_salience": {
+        "raw": 0.8701970443349754,
+        "want_hz": 31.249999999999996,
+        "normalized": 0.8181818181818181,
+        "lesioned": false,
+        "calib": {
+          "want_novel_hz": 38.19444444444444,
+          "want_familiar_hz": 0.0,
+          "threshold_hz": 19.09722222222222,
+          "novel_signal": 0.95,
+          "familiar_signal": 0.0,
+          "read_reps": 4
+        },
+        "on": true
+      },
+      "spiking_novelty": {
+        "novelty": 0.8669950738916257,
+        "n_tokens": 7,
+        "per_word_freshness": [
+          0.6206896551724138,
+          1.0,
+          0.896551724137931,
+          0.8275862068965517,
+          0.8620689655172413,
+          0.9310344827586207,
+          0.9310344827586207
+        ],
+        "fresh_ref": 29.0,
+        "n_channels": 64,
+        "lesioned": false,
+        "on": true
+      },
+      "on": true
+    },
+    "da_encoding": {
+      "on": true,
+      "g": 2.6852491366551563,
+      "da_level": 1.03907707638594,
+      "lesioned": false
+    },
+    "da_tag_capture": {
+      "observe": {
+        "on": true,
+        "observed": {
+          "t_h": 0.03333333333333333,
+          "da_level": 1.03907707638594,
+          "a_eff": 0.6994577846630521
+        }
+      },
+      "on": true,
+      "clock": "turn",
+      "world_t_h": 0.03333333333333333,
+      "n_turns": 5,
+      "gamma": 32.77353587789152,
+      "d1_a_go": 0.18667699457784698,
+      "p": 0.012751247434708037,
+      "p_max": 0.012751247434708037,
+      "block_offset": 5,
+      "n_managed_blocks": 1,
+      "external_rescales": 0,
+      "external_rewrites": 0,
+      "blocks": [
+        {
+          "block": 0,
+          "t_w": 0.016666666666666666,
+          "tag0_mean": 2.2027627035027137,
+          "z_mean": 0.024086127873447938,
+          "z_min": 0.024086127873447934,
+          "z_max": 0.024086127873447945,
+          "frac_synapses_z_gt_half": 0.0,
+          "inc_mag": 2.2027627035027137,
+          "base_mag": 0.9223548200488956
+        }
+      ],
+      "last_turn": {
+        "t_h": 0.03333333333333333,
+        "da": 1.03907707638594,
+        "da_seen_by_d1": 1.03907707638594,
+        "d1_rate_hz": 49.270833333333336,
+        "a": 0.6994577846630521,
+        "a_eff": 0.6994577846630521
+      },
+      "sleep_replay_capture": {
+        "on": true,
+        "lesioned": true,
+        "n_epochs": 0,
+        "episode_done": false,
+        "epochs": []
+      },
+      "new_blocks_this_turn": 0
+    }
+  },
+  "datcr_rest": {
+    "world_step": "awake_rest_4h",
+    "hours": 4.0,
+    "rest_period_h": 0.08333333333333333,
+    "n_rest_ticks": 48,
+    "n_session_ticks": 48
+  },
+  "datcr_night": {
+    "world_step": "overnight_24h",
+    "hours": 24.0,
+    "n_sessions_ticked": 1
+  },
+  "datcr_recall": {
+    "answer": "As for it \u2014 Gladly! the cat chases the ball",
+    "abstained": false,
+    "recalled_svo": [
+      "cat",
+      "chase",
+      "ball"
+    ],
+    "derived": false,
+    "derived_from": null,
+    "verified": true,
+    "renderer": "template-stub (GPU-free)",
+    "brain": "tiny-demo",
+    "source": "tiny-demo",
+    "rich": false,
+    "activity": {
+      "roles": [
+        {
+          "role": "agent",
+          "word": "cat",
+          "confidence": 1.0,
+          "margin": 0.5444835245617531,
+          "margin_spiking": null,
+          "cue": true,
+          "asserted": "cat"
+        },
+        {
+          "role": "action",
+          "word": "chase",
+          "confidence": 1.0,
+          "margin": 0.39560884364776566,
+          "margin_spiking": null,
+          "cue": true,
+          "asserted": "chase"
+        },
+        {
+          "role": "patient",
+          "word": "ball",
+          "confidence": 1.0,
+          "margin": 0.5915347035209275,
+          "margin_spiking": null,
+          "cue": false
+        },
+        {
+          "role": "attribute",
+          "word": null,
+          "confidence": 1.0,
+          "margin": 0.23340957318094657,
+          "margin_spiking": null,
+          "cue": false
+        },
+        {
+          "role": "polarity",
+          "word": "AFFIRM",
+          "confidence": 1.0,
+          "margin": 0.8473001460062222,
+          "margin_spiking": null,
+          "cue": false
+        }
+      ],
+      "matched_fact_index": 5,
+      "n_facts_scanned": 6,
+      "abstained": false,
+      "rf": {
+        "n_readout_neurons": 6880,
+        "frac_fired": 0.11177325581395349,
+        "mean_magnitude": 80737.14850835066
+      },
+      "composer": "onebrain"
+    },
+    "provenance": {
+      "known": true,
+      "label": "perceived",
+      "d": 0.9999999901538462,
+      "rate_perceived": 0.1015625,
+      "rate_generated": 0.0,
+      "encoded_as": "perceived",
+      "agrees_with_encoded": true
+    },
+    "affect": {
+      "on": true,
+      "lesioned": false,
+      "composer": "onebrain",
+      "differential": 0.0,
+      "valence_sign": "0",
+      "tone_level": 0,
+      "tone_token": "",
+      "forthcomingness": {
+        "max_sentences": 4,
+        "max_elaborations": 2
+      },
+      "manner_template": "",
+      "appraisal_valence": 0.00015658129255378183,
+      "appraisal_arousal": 0.00013048441046148478,
+      "appraisal_hits": [],
+      "pos_rate": 0.0,
+      "neg_rate": 0.0
+    },
+    "comprehension": null,
+    "surprise": null,
+    "metacog": {
+      "on": true,
+      "lesioned": false,
+      "evidence": 1.0,
+      "balance": 0.0947718891723637,
+      "threshold": 0.06032454599202189,
+      "confident": true,
+      "calib": {
+        "mean_hi": 0.07997666222084746,
+        "min_hi": 0.06691467366215187,
+        "mean_lo": 0.03759547655202469,
+        "max_lo": 0.053734418321891915,
+        "clean_gap": true,
+        "read_reps": 8,
+        "role_conf_lo": 0.3,
+        "role_conf_hi": 0.5,
+        "confidence_read": "nmda_norm"
+      },
+      "mean_role_conf": 0.522467358183523
+    },
+    "worldmodel": null,
+    "curiosity": null,
+    "multiref": null,
+    "noncontradiction": null,
+    "reconsolidation": null,
+    "pragmatic": null,
+    "episodic": null,
+    "affect_drives": {
+      "acted": true,
+      "turn": 6,
+      "lesioned": false,
+      "ema_valence": 0.44999999999999996,
+      "ema_arousal": 0.375,
+      "body_h": 0.725,
+      "body_a": 0.5625,
+      "mood": 0.06870833333333333,
+      "felt_arousal": 0.054875,
+      "level": 2,
+      "high_arousal": true,
+      "lead": "Gladly! ",
+      "reason": "graded_affect",
+      "seed": 43,
+      "vplus_rate": 0.06870833333333333,
+      "vminus_rate": 0.0
+    },
+    "swap_drives": {
+      "acted": true,
+      "turn": 6,
+      "topic": "cat",
+      "swapped": false,
+      "held_topic_before": "cat",
+      "held_topic": "cat",
+      "evicted_topic": null,
+      "reason": "same_topic_hold",
+      "seed": 43,
+      "lesioned": false,
+      "proposed_slot": 0,
+      "held_slot": 0,
+      "incumbent_slot": 0,
+      "winner_slot": 0,
+      "n_ignited_post": 1,
+      "old_residual_post": 0.3333333333333333,
+      "new_rate_post": 0.3333333333333333,
+      "mm_peak": 0.044444444444444446,
+      "boost_max": 0.022222222222222223,
+      "on": true,
+      "lead": "",
+      "new_topic": null,
+      "reason_lead": "same_topic_hold"
+    },
+    "common_ground_drives": {
+      "on": true,
+      "topic": "cat",
+      "slot": 0,
+      "decision": "reduce",
+      "in_common_ground": true,
+      "first_mention": false,
+      "reduce_rate": 0.11,
+      "introduce_rate": 0.03666666666666667,
+      "evidence_rate": 0.11166666666666666,
+      "margin": 0.07333333333333333,
+      "lesioned": false,
+      "lead": "As for it \u2014 ",
+      "reason_lead": "reduced_reference"
+    },
+    "da_drives": {
+      "acted": true,
+      "turn": 6,
+      "lesioned": false,
+      "turn_engagement": 0.2909090909090909,
+      "ema_engagement": 0.1746507707052761,
+      "afferent_pA": 244.51107898738653,
+      "da_level": 0.331091805500416,
+      "snc_firing": 0.04583333333333331,
+      "mode": "rest",
+      "lead": "",
+      "reason": "low_engagement",
+      "seed": 43,
+      "shared_salience": {
+        "raw": 0.6275862068965516,
+        "want_hz": 11.11111111111111,
+        "normalized": 0.2909090909090909,
+        "lesioned": false,
+        "calib": {
+          "want_novel_hz": 38.19444444444444,
+          "want_familiar_hz": 0.0,
+          "threshold_hz": 19.09722222222222,
+          "novel_signal": 0.95,
+          "familiar_signal": 0.0,
+          "read_reps": 4
+        },
+        "on": true
+      },
+      "spiking_novelty": {
+        "novelty": 0.8793103448275862,
+        "n_tokens": 2,
+        "per_word_freshness": [
+          0.8275862068965517,
+          0.9310344827586207
+        ],
+        "fresh_ref": 29.0,
+        "n_channels": 64,
+        "lesioned": false,
+        "on": true
+      },
+      "on": true
+    },
+    "da_encoding": {
+      "on": true,
+      "g": 1.5041933892451895,
+      "da_level": 0.331091805500416,
+      "lesioned": false
+    },
+    "da_tag_capture": {
+      "observe": {
+        "on": true,
+        "observed": {
+          "t_h": 28.04166666666667,
+          "da_level": 0.331091805500416,
+          "a_eff": 0.0
+        }
+      },
+      "on": true,
+      "clock": "turn",
+      "world_t_h": 28.04166666666667,
+      "n_turns": 6,
+      "gamma": 32.77353587789152,
+      "d1_a_go": 0.18667699457784698,
+      "p": 6.066815930106189e-14,
+      "p_max": 0.018450024030136875,
+      "block_offset": 5,
+      "n_managed_blocks": 1,
+      "external_rescales": 1,
+      "external_rewrites": 0,
+      "blocks": [
+        {
+          "block": 0,
+          "t_w": 0.016666666666666666,
+          "tag0_mean": 2.2027627035027137,
+          "z_mean": 1.0000000000088334,
+          "z_min": 1.0000000000088332,
+          "z_max": 1.0000000000088332,
+          "frac_synapses_z_gt_half": 1.0,
+          "inc_mag": 1.7829996950950857,
+          "base_mag": 0.7465889813285725,
+          "tag_rep_mean": 1.558577620523497,
+          "t_rep": 4.125000000000003,
+          "e_rep": 0.9240695046388742,
+          "t_erep": 4.04166666666667,
+          "early_expression_now": 1.0399032315727492e-07
+        }
+      ],
+      "last_turn": {
+        "t_h": 28.04166666666667,
+        "da": 0.331091805500416,
+        "da_seen_by_d1": 0.331091805500416,
+        "d1_rate_hz": 41.5625,
+        "a": 0.0,
+        "a_eff": 0.0
+      },
+      "sleep_replay_capture": {
+        "on": true,
+        "lesioned": true,
+        "n_epochs": 1,
+        "episode_done": true,
+        "epochs": [
+          {
+            "episode": [
+              5,
+              4.041666667
+            ],
+            "t_h": 4.125000000000003,
+            "R": [
+              0.396605337
+            ],
+            "R_eff": [
+              0.0
+            ],
+            "sum_R_eff": 0.0,
+            "da_swr": 0.5,
+            "da_seen_by_d1": 0.5,
+            "a_eff_mean": 0.013245546,
+            "pre_frac_z_gt_half": [
+              1.0
+            ],
+            "replay_lesioned": true,
+            "capture_lesioned": false,
+            "no_reader": false
+          }
+        ]
+      },
+      "awake_until_h": 4.04166666666667,
+      "awake_replay_capture": {
+        "on": true,
+        "lesioned": false,
+        "n_bouts": 48,
+        "n_ticks_asleep": 1,
+        "n_ticks_rate_limited": 0,
+        "bout_h": 0.08333333333333333,
+        "bouts": [
+          {
+            "t_h": 0.125,
+            "R": [
+              0.388331443
+            ],
+            "R_eff": [
+              0.388331443
+            ],
+            "early_before": [
+              0.930324134
+            ],
+            "early_after": [
+              0.957381464
+            ],
+            "pre_frac_z_gt_half": [
+              0.0
+            ],
+            "p_at_bout": 0.016974841559,
+            "n_drive_entries": 5,
+            "lesioned": false,
+            "no_reader": false
+          },
+          {
+            "t_h": 0.20833333333333331,
+            "R": [
+              0.387953896
+            ],
+            "R_eff": [
+              0.387953896
+            ],
+            "early_before": [
+              0.905644061
+            ],
+            "early_after": [
+              0.942249815
+            ],
+            "pre_frac_z_gt_half": [
+              0.0
+            ],
+            "p_at_bout": 0.015617608165,
+            "n_drive_entries": 5,
+            "lesioned": false,
+            "no_reader": false
+          },
+          {
+            "t_h": 0.2916666666666667,
+            "R": [
+              0.389156694
+            ],
+            "R_eff": [
+              0.389156694
+            ],
+            "early_before": [
+              0.891330135
+            ],
+            "early_after": [
+              0.93361974
+            ],
+            "pre_frac_z_gt_half": [
+              1.0
+            ],
+            "p_at_bout": 0.014368893162,
+            "n_drive_entries": 5,
+            "lesioned": false,
+            "no_reader": false
+          },
+          {
+            "t_h": 0.375,
+            "R": [
+              0.390962141
+            ],
+            "R_eff": [
+              0.390962141
+            ],
+            "early_before": [
+              0.883166434
+            ],
+            "early_after": [
+              0.928843935
+            ],
+            "pre_frac_z_gt_half": [
+              1.0
+            ],
+            "p_at_bout": 0.013220019898,
+            "n_drive_entries": 5,
+            "lesioned": false,
+            "no_reader": false
+          },
+          {
+            "t_h": 0.4583333333333333,
+            "R": [
+              0.392863932
+            ],
+            "R_eff": [
+              0.392863932
+            ],
+            "early_before": [
+              0.878648715
+            ],
+            "early_after": [
+              0.926323258
+            ],
+            "pre_frac_z_gt_half": [
+              1.0
+            ],
+            "p_at_bout": 0.012163005469,
+            "n_drive_entries": 5,
+            "lesioned": false,
+            "no_reader": false
+          },
+          {
+            "t_h": 0.5416666666666666,
+            "R": [
+              0.394613549
+            ],
+            "R_eff": [
+              0.394613549
+            ],
+            "early_before": [
+              0.876264257
+            ],
+            "early_after": [
+              0.925092058
+            ],
+            "pre_frac_z_gt_half": [
+              1.0
+            ],
+            "p_at_bout": 0.011190505247,
+            "n_drive_entries": 5,
+            "lesioned": false,
+            "no_reader": false
+          },
+          {
+            "t_h": 0.6249999999999999,
+            "R": [
+              0.396155873
+            ],
+            "R_eff": [
+              0.396155873
+            ],
+            "early_before": [
+              0.875099592
+            ],
+            "early_after": [
+              0.924579622
+            ],
+            "pre_frac_z_gt_half": [
+              1.0
+            ],
+            "p_at_bout": 0.010295761849,
+            "n_drive_entries": 5,
+            "lesioned": false,
+            "no_reader": false
+          },
+          {
+            "t_h": 0.7083333333333333,
+            "R": [
+              0.397422114
+            ],
+            "R_eff": [
+              0.397422114
+            ],
+            "early_before": [
+              0.874614848
+            ],
+            "early_after": [
+              0.92444568
+            ],
+            "pre_frac_z_gt_half": [
+              1.0
+            ],
+            "p_at_bout": 0.009472558184,
+            "n_drive_entries": 5,
+            "lesioned": false,
+            "no_reader": false
+          },
+          {
+            "t_h": 0.7916666666666666,
+            "R": [
+              0.398398386
+            ],
+            "R_eff": [
+              0.398398386
+            ],
+            "early_before": [
+              0.874488145
+            ],
+            "early_after": [
+              0.924491865
+            ],
+            "pre_frac_z_gt_half": [
+              1.0
+            ],
+            "p_at_bout": 0.008715174249,
+            "n_drive_entries": 5,
+            "lesioned": false,
+            "no_reader": false
+          },
+          {
+            "t_h": 0.875,
+            "R": [
+              0.39910651
+            ],
+            "R_eff": [
+              0.39910651
+            ],
+            "early_before": [
+              0.874531834
+            ],
+            "early_after": [
+              0.924606996
+            ],
+            "pre_frac_z_gt_half": [
+              1.0
+            ],
+            "p_at_bout": 0.00801834739,
+            "n_drive_entries": 5,
+            "lesioned": false,
+            "no_reader": false
+          },
+          {
+            "t_h": 0.9583333333333334,
+            "R": [
+              0.399587528
+            ],
+            "R_eff": [
+              0.399587528
+            ],
+            "early_before": [
+              0.874640743
+            ],
+            "early_after": [
+              0.924732738
+            ],
+            "pre_frac_z_gt_half": [
+              1.0
+            ],
+            "p_at_bout": 0.007377235731,
+            "n_drive_entries": 5,
+            "lesioned": false,
+            "no_reader": false
+          },
+          {
+            "t_h": 1.0416666666666667,
+            "R": [
+              0.399888216
+            ],
+            "R_eff": [
+              0.399888216
+            ],
+            "early_before": [
+              0.87475969
+            ],
+            "early_after": [
+              0.924841814
+            ],
+            "pre_frac_z_gt_half": [
+              1.0
+            ],
+            "p_at_bout": 0.00678738453,
+            "n_drive_entries": 5,
+            "lesioned": false,
+            "no_reader": false
+          },
+          {
+            "t_h": 1.125,
+            "R": [
+              0.400053179
+            ],
+            "R_eff": [
+              0.400053179
+            ],
+            "early_before": [
+              0.874862871
+            ],
+            "early_after": [
+              0.924924378
+            ],
+            "pre_frac_z_gt_half": [
+              1.0
+            ],
+            "p_at_bout": 0.006244695227,
+            "n_drive_entries": 5,
+            "lesioned": false,
+            "no_reader": false
+          },
+          {
+            "t_h": 1.2083333333333333,
+            "R": [
+              0.400118611
+            ],
+            "R_eff": [
+              0.400118611
+            ],
+            "early_before": [
+              0.874940973
+            ],
+            "early_after": [
+              0.924979417
+            ],
+            "pre_frac_z_gt_half": [
+              1.0
+            ],
+            "p_at_bout": 0.005745396964,
+            "n_drive_entries": 5,
+            "lesioned": false,
+            "no_reader": false
+          },
+          {
+            "t_h": 1.2916666666666665,
+            "R": [
+              0.400112399
+            ],
+            "R_eff": [
+              0.400112399
+            ],
+            "early_before": [
+              0.874993038
+            ],
+            "early_after": [
+              0.925009874
+            ],
+            "pre_frac_z_gt_half": [
+              1.0
+            ],
+            "p_at_bout": 0.005286020387,
+            "n_drive_entries": 5,
+            "lesioned": false,
+            "no_reader": false
+          },
+          {
+            "t_h": 1.3749999999999998,
+            "R": [
+              0.400056733
+            ],
+            "R_eff": [
+              0.400056733
+            ],
+            "early_before": [
+              0.875021849
+            ],
+            "early_after": [
+              0.9250202
+            ],
+            "pre_frac_z_gt_half": [
+              1.0
+            ],
+            "p_at_bout": 0.004863373533,
+            "n_drive_entries": 5,
+            "lesioned": false,
+            "no_reader": false
+          },
+          {
+            "t_h": 1.458333333333333,
+            "R": [
+              0.399967082
+            ],
+            "R_eff": [
+              0.399967082
+            ],
+            "early_before": [
+              0.875031617
+            ],
+            "early_after": [
+              0.925014856
+            ],
+            "pre_frac_z_gt_half": [
+              1.0
+            ],
+            "p_at_bout": 0.004474519655,
+            "n_drive_entries": 5,
+            "lesioned": false,
+            "no_reader": false
+          },
+          {
+            "t_h": 1.5416666666666663,
+            "R": [
+              0.399854461
+            ],
+            "R_eff": [
+              0.399854461
+            ],
+            "early_before": [
+              0.875026562
+            ],
+            "early_after": [
+              0.924997749
+            ],
+            "pre_frac_z_gt_half": [
+              1.0
+            ],
+            "p_at_bout": 0.004116756817,
+            "n_drive_entries": 5,
+            "lesioned": false,
+            "no_reader": false
+          },
+          {
+            "t_h": 1.6249999999999996,
+            "R": [
+              0.399727148
+            ],
+            "R_eff": [
+              0.399727148
+            ],
+            "early_before": [
+              0.875010379
+            ],
+            "early_after": [
+              0.924972124
+            ],
+            "pre_frac_z_gt_half": [
+              1.0
+            ],
+            "p_at_bout": 0.003787599115,
+            "n_drive_entries": 5,
+            "lesioned": false,
+            "no_reader": false
+          },
+          {
+            "t_h": 1.7083333333333328,
+            "R": [
+              0.399590341
+            ],
+            "R_eff": [
+              0.399590341
+            ],
+            "early_before": [
+              0.874986139
+            ],
+            "early_after": [
+              0.92494047
+            ],
+            "pre_frac_z_gt_half": [
+              1.0
+            ],
+            "p_at_bout": 0.003484759411,
+            "n_drive_entries": 5,
+            "lesioned": false,
+            "no_reader": false
+          },
+          {
+            "t_h": 1.791666666666666,
+            "R": [
+              0.399448206
+            ],
+            "R_eff": [
+              0.399448206
+            ],
+            "early_before": [
+              0.874956196
+            ],
+            "early_after": [
+              0.924904719
+            ],
+            "pre_frac_z_gt_half": [
+              1.0
+            ],
+            "p_at_bout": 0.003206133432,
+            "n_drive_entries": 5,
+            "lesioned": false,
+            "no_reader": false
+          },
+          {
+            "t_h": 1.8749999999999993,
+            "R": [
+              0.399304073
+            ],
+            "R_eff": [
+              0.399304073
+            ],
+            "early_before": [
+              0.874922377
+            ],
+            "early_after": [
+              0.924866381
+            ],
+            "pre_frac_z_gt_half": [
+              1.0
+            ],
+            "p_at_bout": 0.002949785157,
+            "n_drive_entries": 5,
+            "lesioned": false,
+            "no_reader": false
+          },
+          {
+            "t_h": 1.9583333333333326,
+            "R": [
+              0.399159904
+            ],
+            "R_eff": [
+              0.399159904
+            ],
+            "early_before": [
+              0.874886111
+            ],
+            "early_after": [
+              0.924826559
+            ],
+            "pre_frac_z_gt_half": [
+              1.0
+            ],
+            "p_at_bout": 0.002713933358,
+            "n_drive_entries": 5,
+            "lesioned": false,
+            "no_reader": false
+          },
+          {
+            "t_h": 2.0416666666666656,
+            "R": [
+              0.39901632
+            ],
+            "R_eff": [
+              0.39901632
+            ],
+            "early_before": [
+              0.87484844
+            ],
+            "early_after": [
+              0.924785955
+            ],
+            "pre_frac_z_gt_half": [
+              1.0
+            ],
+            "p_at_bout": 0.002496939228,
+            "n_drive_entries": 5,
+            "lesioned": false,
+            "no_reader": false
+          },
+          {
+            "t_h": 2.124999999999999,
+            "R": [
+              0.398875319
+            ],
+            "R_eff": [
+              0.398875319
+            ],
+            "early_before": [
+              0.874810031
+            ],
+            "early_after": [
+              0.92474522
+            ],
+            "pre_frac_z_gt_half": [
+              1.0
+            ],
+            "p_at_bout": 0.00229729499,
+            "n_drive_entries": 5,
+            "lesioned": false,
+            "no_reader": false
+          },
+          {
+            "t_h": 2.2083333333333326,
+            "R": [
+              0.398737094
+            ],
+            "R_eff": [
+              0.398737094
+            ],
+            "early_before": [
+              0.874771497
+            ],
+            "early_after": [
+              0.924704746
+            ],
+            "pre_frac_z_gt_half": [
+              1.0
+            ],
+            "p_at_bout": 0.002113613425,
+            "n_drive_entries": 5,
+            "lesioned": false,
+            "no_reader": false
+          },
+          {
+            "t_h": 2.291666666666666,
+            "R": [
+              0.398602172
+            ],
+            "R_eff": [
+              0.398602172
+            ],
+            "early_before": [
+              0.874733211
+            ],
+            "early_after": [
+              0.924664825
+            ],
+            "pre_frac_z_gt_half": [
+              1.0
+            ],
+            "p_at_bout": 0.001944618226,
+            "n_drive_entries": 5,
+            "lesioned": false,
+            "no_reader": false
+          },
+          {
+            "t_h": 2.3749999999999996,
+            "R": [
+              0.398471106
+            ],
+            "R_eff": [
+              0.398471106
+            ],
+            "early_before": [
+              0.874695447
+            ],
+            "early_after": [
+              0.924625691
+            ],
+            "pre_frac_z_gt_half": [
+              1.0
+            ],
+            "p_at_bout": 0.001789135137,
+            "n_drive_entries": 5,
+            "lesioned": false,
+            "no_reader": false
+          },
+          {
+            "t_h": 2.458333333333333,
+            "R": [
+              0.39834331
+            ],
+            "R_eff": [
+              0.39834331
+            ],
+            "early_before": [
+              0.874658427
+            ],
+            "early_after": [
+              0.924587404
+            ],
+            "pre_frac_z_gt_half": [
+              1.0
+            ],
+            "p_at_bout": 0.00164608379,
+            "n_drive_entries": 5,
+            "lesioned": false,
+            "no_reader": false
+          },
+          {
+            "t_h": 2.5416666666666665,
+            "R": [
+              0.398220369
+            ],
+            "R_eff": [
+              0.398220369
+            ],
+            "early_before": [
+              0.87462221
+            ],
+            "early_after": [
+              0.9245502
+            ],
+            "pre_frac_z_gt_half": [
+              1.0
+            ],
+            "p_at_bout": 0.001514470197,
+            "n_drive_entries": 5,
+            "lesioned": false,
+            "no_reader": false
+          },
+          {
+            "t_h": 2.625,
+            "R": [
+              0.398101393
+            ],
+            "R_eff": [
+              0.398101393
+            ],
+            "early_before": [
+              0.874587016
+            ],
+            "early_after": [
+              0.9245141
+            ],
+            "pre_frac_z_gt_half": [
+              1.0
+            ],
+            "p_at_bout": 0.001393379846,
+            "n_drive_entries": 5,
+            "lesioned": false,
+            "no_reader": false
+          },
+          {
+            "t_h": 2.7083333333333335,
+            "R": [
+              0.397986248
+            ],
+            "R_eff": [
+              0.397986248
+            ],
+            "early_before": [
+              0.874552867
+            ],
+            "early_after": [
+              0.924479101
+            ],
+            "pre_frac_z_gt_half": [
+              1.0
+            ],
+            "p_at_bout": 0.001281971345,
+            "n_drive_entries": 5,
+            "lesioned": false,
+            "no_reader": false
+          },
+          {
+            "t_h": 2.791666666666667,
+            "R": [
+              0.397875747
+            ],
+            "R_eff": [
+              0.397875747
+            ],
+            "early_before": [
+              0.874519759
+            ],
+            "early_after": [
+              0.924445304
+            ],
+            "pre_frac_z_gt_half": [
+              1.0
+            ],
+            "p_at_bout": 0.001179470575,
+            "n_drive_entries": 5,
+            "lesioned": false,
+            "no_reader": false
+          },
+          {
+            "t_h": 2.8750000000000004,
+            "R": [
+              0.397768919
+            ],
+            "R_eff": [
+              0.397768919
+            ],
+            "early_before": [
+              0.874487788
+            ],
+            "early_after": [
+              0.924412645
+            ],
+            "pre_frac_z_gt_half": [
+              1.0
+            ],
+            "p_at_bout": 0.001085165315,
+            "n_drive_entries": 5,
+            "lesioned": false,
+            "no_reader": false
+          },
+          {
+            "t_h": 2.958333333333334,
+            "R": [
+              0.39766651
+            ],
+            "R_eff": [
+              0.39766651
+            ],
+            "early_before": [
+              0.874456895
+            ],
+            "early_after": [
+              0.924381183
+            ],
+            "pre_frac_z_gt_half": [
+              1.0
+            ],
+            "p_at_bout": 0.000998400287,
+            "n_drive_entries": 5,
+            "lesioned": false,
+            "no_reader": false
+          },
+          {
+            "t_h": 3.0416666666666674,
+            "R": [
+              0.397567634
+            ],
+            "R_eff": [
+              0.397567634
+            ],
+            "early_before": [
+              0.874427133
+            ],
+            "early_after": [
+              0.924350841
+            ],
+            "pre_frac_z_gt_half": [
+              1.0
+            ],
+            "p_at_bout": 0.000918572608,
+            "n_drive_entries": 5,
+            "lesioned": false,
+            "no_reader": false
+          },
+          {
+            "t_h": 3.125000000000001,
+            "R": [
+              0.397472896
+            ],
+            "R_eff": [
+              0.397472896
+            ],
+            "early_before": [
+              0.87439843
+            ],
+            "early_after": [
+              0.92432165
+            ],
+            "pre_frac_z_gt_half": [
+              1.0
+            ],
+            "p_at_bout": 0.000845127597,
+            "n_drive_entries": 5,
+            "lesioned": false,
+            "no_reader": false
+          },
+          {
+            "t_h": 3.2083333333333344,
+            "R": [
+              0.39738217
+            ],
+            "R_eff": [
+              0.39738217
+            ],
+            "early_before": [
+              0.874370817
+            ],
+            "early_after": [
+              0.924293614
+            ],
+            "pre_frac_z_gt_half": [
+              1.0
+            ],
+            "p_at_bout": 0.000777554925,
+            "n_drive_entries": 5,
+            "lesioned": false,
+            "no_reader": false
+          },
+          {
+            "t_h": 3.291666666666668,
+            "R": [
+              0.397294487
+            ],
+            "R_eff": [
+              0.397294487
+            ],
+            "early_before": [
+              0.874344297
+            ],
+            "early_after": [
+              0.924266615
+            ],
+            "pre_frac_z_gt_half": [
+              1.0
+            ],
+            "p_at_bout": 0.000715385066,
+            "n_drive_entries": 5,
+            "lesioned": false,
+            "no_reader": false
+          },
+          {
+            "t_h": 3.3750000000000013,
+            "R": [
+              0.39721156
+            ],
+            "R_eff": [
+              0.39721156
+            ],
+            "early_before": [
+              0.874318756
+            ],
+            "early_after": [
+              0.924240799
+            ],
+            "pre_frac_z_gt_half": [
+              1.0
+            ],
+            "p_at_bout": 0.000658186035,
+            "n_drive_entries": 5,
+            "lesioned": false,
+            "no_reader": false
+          },
+          {
+            "t_h": 3.458333333333335,
+            "R": [
+              0.397131281
+            ],
+            "R_eff": [
+              0.397131281
+            ],
+            "early_before": [
+              0.874294335
+            ],
+            "early_after": [
+              0.924215987
+            ],
+            "pre_frac_z_gt_half": [
+              1.0
+            ],
+            "p_at_bout": 0.000605560385,
+            "n_drive_entries": 5,
+            "lesioned": false,
+            "no_reader": false
+          },
+          {
+            "t_h": 3.5416666666666683,
+            "R": [
+              0.397054452
+            ],
+            "R_eff": [
+              0.397054452
+            ],
+            "early_before": [
+              0.874270864
+            ],
+            "early_after": [
+              0.924192177
+            ],
+            "pre_frac_z_gt_half": [
+              1.0
+            ],
+            "p_at_bout": 0.00055714245,
+            "n_drive_entries": 5,
+            "lesioned": false,
+            "no_reader": false
+          },
+          {
+            "t_h": 3.6250000000000018,
+            "R": [
+              0.39698129
+            ],
+            "R_eff": [
+              0.39698129
+            ],
+            "early_before": [
+              0.874248341
+            ],
+            "early_after": [
+              0.924169397
+            ],
+            "pre_frac_z_gt_half": [
+              1.0
+            ],
+            "p_at_bout": 0.000512595799,
+            "n_drive_entries": 5,
+            "lesioned": false,
+            "no_reader": false
+          },
+          {
+            "t_h": 3.7083333333333353,
+            "R": [
+              0.396911204
+            ],
+            "R_eff": [
+              0.396911204
+            ],
+            "early_before": [
+              0.874226792
+            ],
+            "early_after": [
+              0.924147587
+            ],
+            "pre_frac_z_gt_half": [
+              1.0
+            ],
+            "p_at_bout": 0.000471610902,
+            "n_drive_entries": 5,
+            "lesioned": false,
+            "no_reader": false
+          },
+          {
+            "t_h": 3.7916666666666687,
+            "R": [
+              0.396844398
+            ],
+            "R_eff": [
+              0.396844398
+            ],
+            "early_before": [
+              0.874206161
+            ],
+            "early_after": [
+              0.924126741
+            ],
+            "pre_frac_z_gt_half": [
+              1.0
+            ],
+            "p_at_bout": 0.000433902976,
+            "n_drive_entries": 5,
+            "lesioned": false,
+            "no_reader": false
+          },
+          {
+            "t_h": 3.875000000000002,
+            "R": [
+              0.396780329
+            ],
+            "R_eff": [
+              0.396780329
+            ],
+            "early_before": [
+              0.874186441
+            ],
+            "early_after": [
+              0.924106786
+            ],
+            "pre_frac_z_gt_half": [
+              1.0
+            ],
+            "p_at_bout": 0.00039921001,
+            "n_drive_entries": 5,
+            "lesioned": false,
+            "no_reader": false
+          },
+          {
+            "t_h": 3.9583333333333357,
+            "R": [
+              0.396719306
+            ],
+            "R_eff": [
+              0.396719306
+            ],
+            "early_before": [
+              0.874167565
+            ],
+            "early_after": [
+              0.924087721
+            ],
+            "pre_frac_z_gt_half": [
+              1.0
+            ],
+            "p_at_bout": 0.00036729094,
+            "n_drive_entries": 5,
+            "lesioned": false,
+            "no_reader": false
+          },
+          {
+            "t_h": 4.04166666666667,
+            "R": [
+              0.396661011
+            ],
+            "R_eff": [
+              0.396661011
+            ],
+            "early_before": [
+              0.87414953
+            ],
+            "early_after": [
+              0.924069505
+            ],
+            "pre_frac_z_gt_half": [
+              1.0
+            ],
+            "p_at_bout": 0.000337923978,
+            "n_drive_entries": 5,
+            "lesioned": false,
+            "no_reader": false
+          }
+        ]
+      },
+      "new_blocks_this_turn": 0
+    }
+  }
+}

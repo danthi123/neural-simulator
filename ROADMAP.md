@@ -7,6 +7,33 @@ the [project handoff](HANDOFF.md), and the live state in
 board, when checked out, was `research/coordination/workboard.json` (⚠️ now ~a month
 stale — the live board is [GAP_CLOSURE_MISSION.md](GAP_CLOSURE_MISSION.md) CURRENT STATE; workboard.json is being retired).
 
+## 2026-09-25 (overnight) — overnight memory: a fact kept through sleep passes; resting hours before sleep works on 5 of 6 seeds; nothing switched on
+
+**Keeping an ordinary fact overnight:** the sleep-replay route (the brain's own memory read replays each recent fact at
+sleep onset) passed its six-seed test on every check, independently re-checked. Two gaps named with it are now worked:
+**resting before sleep** (a fact told 4 hours before bed, with quiet rest in between) is kept on 5 of 6 seeds but not
+the sixth, so it does not pass. On that seed the memory started weakest and faded during rest instead of being
+refreshed. The rest-time refresh scales with how strong the trace already is, so a weak trace fades. The next attempt,
+now being built on practice seeds, makes one replay event fill in the whole pattern (as the hippocampus does) instead of
+scaling with the trace. **Letting unimportant facts fade:** the old nightly rule removed a fixed share every night and
+forgot even an untouched fact within three nights. It is replaced (off by default) by a rule where each night's
+scaling-down matches how much the day added, so forgetting comes from later learning. On the first seed an untouched
+fact lasts 7 nights and one followed by 3 new facts a day is lost on day 4; its six-seed test is queued.
+**Also tonight:** the brain's own fact-binder passes its production-size check on six seeds at 32 facts. Loading all
+404 example facts is not yet practical, so a faster teaching step comes next. The emotion-marker "settle" timing
+check came back undecided: the settle step itself adds 0.13 s, inside the 0.3 s budget, but whole-reply times vary too
+much to judge, so a sharper measurement is being registered. A local assistant model for terminal work (Qwen3.8-27B)
+passed all three agent tasks in the local-model comparison and is set as the default. A pool bug that ran seven
+finished jobs twice for up to 26 hours was found and is being fixed. No production default changed. (Findings:
+`2026-09-25-sleep-replay-capture-rc-GO-6seed`, `2026-09-25-awake-replay-capture-arc-no-go-6seed`,
+`2026-09-25-sleep-forgetting-interference-fi-seed42-smoke`, `2026-09-25-slotbinder-production-composer-gate-GO-6seed-n32`.)
+**Later on 2026-09-25:** the "remember surprising things the next day" process passed its six-seed test with the
+long-term memory switched on (the configuration that decides switching it on), independently re-checked. It stays off:
+it still needs an independent review, the combined no-regression battery, and a production check, and it must ship
+together with the sleep-replay route, because on its own it forgets an ordinary fact overnight. The earlier nightly
+scaling-down rule (round 2) failed its six-seed test as registered and is replaced by the load-based rule now running.
+(Findings: `2026-09-25-da-tag-capture-chat-wire-ltm-on-GO-runner-level-6seed`, `2026-09-25-sleep-replay-capture-r2-NO-GO-6seed`.)
+
 ## 2026-09-24 (night) — gap#4's weight limit is confirmed load-bearing; the bigger network still reads exactly at chance
 
 The deep-credit crux lane (gap#4) had two runs left open from the transport-ceiling diagnosis published earlier

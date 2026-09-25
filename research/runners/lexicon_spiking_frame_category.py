@@ -440,14 +440,25 @@ def _junction_requested() -> bool:
     return v is not None and v.strip().lower() in ("1", "true", "yes", "on")
 
 
+def _elemental_requested() -> bool:
+    """`BRAIN_LEARNED_REFERENT_JUNCTION_ELEMENTAL` in {1,true,yes,on} -> the junction variant ALSO gets the elemental
+    partial-match edge (AMENDMENT 3 of the pre-registration). DEFAULT OFF; ignored unless the junction is requested."""
+    v = os.environ.get("BRAIN_LEARNED_REFERENT_JUNCTION_ELEMENTAL")
+    return v is not None and v.strip().lower() in ("1", "true", "yes", "on")
+
+
 def get_lexicon(seed: int = 42, corpus_path=None, max_chars: int = 8_000_000, top_v: int = 2000):
     """The process-shared DEPLOYMENT lexicon (built + trained once, lazily): all 38 + 37 seeds, R=1. The variant
-    follows `BRAIN_LEARNED_REFERENT_JUNCTION` (default: v2, this module's class)."""
+    follows `BRAIN_LEARNED_REFERENT_JUNCTION` (default: v2, this module's class) and, for the junction variant,
+    `BRAIN_LEARNED_REFERENT_JUNCTION_ELEMENTAL` (default off)."""
     global _LEXICON
-    want = "junction" if _junction_requested() else "frame"
+    if _junction_requested():
+        want = "junction_elemental" if _elemental_requested() else "junction"
+    else:
+        want = "frame"
     if _LEXICON is None or getattr(_LEXICON, "variant", "frame") != want:
         from research.runners._comprehension_learned_animacy_cue_derisk import load_tokens, build_vocab
-        if want == "junction":
+        if want.startswith("junction"):
             # AMENDMENT 2 mechanism C: the junction variant hears an explicit sentence-boundary PAUSE token instead
             # of the shared tokenizer's silent punctuation-stripping (see lexicon_frame_junction.py's module
             # docstring). v2 (want == "frame") is UNTOUCHED -- it still calls the shared `load_tokens` below, so its
@@ -458,9 +469,9 @@ def get_lexicon(seed: int = 42, corpus_path=None, max_chars: int = 8_000_000, to
             tokens = load_tokens(corpus_path or _DEFAULT_CORPUS, max_chars)
         vocab, _ = build_vocab(tokens, top_v)
         env = FrameEnvironment(tokens, vocab + [w for w in HAND_NOUN_SEEDS + NONNOUN_SEEDS if w not in vocab])
-        if want == "junction":
+        if want.startswith("junction"):
             from research.runners.lexicon_frame_junction import FrameJunctionLexicon
-            lex = FrameJunctionLexicon(seed, env, n_replicas=1)
+            lex = FrameJunctionLexicon(seed, env, n_replicas=1, elemental=(want == "junction_elemental"))
         else:
             lex = SpikingFrameCategoryLexicon(seed, env, n_replicas=1)
         words, labels = seed_curriculum(env)

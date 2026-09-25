@@ -1,0 +1,2290 @@
+{
+  "what": "fake-substrate design sweep: a weak fact told once, then n nights; on each later day k other facts are told; the night's downscaling is off, constant (r2) or set by the day's load (r3)",
+  "substrate": "FAKE (Hill read-back fitted to measured seed-42 (ratio, R) pairs; linear D1; five unit build-time blocks; no Turrigiano pass); not brain evidence",
+  "hill_fit": {
+    "Rmax": 0.5093192874323118,
+    "c": 0.9222631904648466,
+    "n": 2.1069464979187074,
+    "max_abs_err_on_measured": 0.004002839833070036,
+    "measured_pairs": [
+      [
+        0.1414,
+        0.005609012
+      ],
+      [
+        1.1151,
+        0.306307325
+      ],
+      [
+        1.1389,
+        0.31162051
+      ],
+      [
+        1.292,
+        0.34171585
+      ],
+      [
+        1.3823,
+        0.356535268
+      ],
+      [
+        1.4612,
+        0.367943946
+      ],
+      [
+        2.0469,
+        0.426299712
+      ],
+      [
+        2.3961,
+        0.447724412
+      ],
+      [
+        2.654,
+        0.460067608
+      ],
+      [
+        2.7467,
+        0.466426613
+      ]
+    ]
+  },
+  "recall_boundary": {
+    "lo": 0.537,
+    "hi": 0.638,
+    "mid": 0.5875,
+    "source": "research/findings/raw/_sleep_replay_capture_r2_horizon_smoke/seed42/d10w_shy.json (nights 6 and 7)"
+  },
+  "constants": {
+    "N_BUILD": 5,
+    "U_BUILD": 1.0,
+    "R_WEAK": 1.461,
+    "R_SALIENT": 2.7467,
+    "DA_FACT": 0.35,
+    "DA_PROBE": 0.2
+  },
+  "rows": {
+    "route_only_vacuum_10n": {
+      "mode": "none",
+      "k_per_day": 0,
+      "telling": "weak",
+      "remention_after": [],
+      "lesion": false,
+      "n_epochs": 10,
+      "nights": [
+        {
+          "night": 1,
+          "fact_ratio": [
+            1.461
+          ],
+          "fact_R": [
+            0.357059
+          ],
+          "delta": 0.0,
+          "dW": null,
+          "W": null,
+          "n_blocks": 1,
+          "recalled_mid": true,
+          "recalled_lo": true,
+          "recalled_hi": true
+        },
+        {
+          "night": 2,
+          "fact_ratio": [
+            1.461
+          ],
+          "fact_R": [
+            0.369245
+          ],
+          "delta": 0.0,
+          "dW": null,
+          "W": null,
+          "n_blocks": 1,
+          "recalled_mid": true,
+          "recalled_lo": true,
+          "recalled_hi": true
+        },
+        {
+          "night": 3,
+          "fact_ratio": [
+            1.461
+          ],
+          "fact_R": [
+            0.369245
+          ],
+          "delta": 0.0,
+          "dW": null,
+          "W": null,
+          "n_blocks": 1,
+          "recalled_mid": true,
+          "recalled_lo": true,
+          "recalled_hi": true
+        },
+        {
+          "night": 4,
+          "fact_ratio": [
+            1.461
+          ],
+          "fact_R": [
+            0.369245
+          ],
+          "delta": 0.0,
+          "dW": null,
+          "W": null,
+          "n_blocks": 1,
+          "recalled_mid": true,
+          "recalled_lo": true,
+          "recalled_hi": true
+        },
+        {
+          "night": 5,
+          "fact_ratio": [
+            1.461
+          ],
+          "fact_R": [
+            0.369245
+          ],
+          "delta": 0.0,
+          "dW": null,
+          "W": null,
+          "n_blocks": 1,
+          "recalled_mid": true,
+          "recalled_lo": true,
+          "recalled_hi": true
+        },
+        {
+          "night": 6,
+          "fact_ratio": [
+            1.461
+          ],
+          "fact_R": [
+            0.369245
+          ],
+          "delta": 0.0,
+          "dW": null,
+          "W": null,
+          "n_blocks": 1,
+          "recalled_mid": true,
+          "recalled_lo": true,
+          "recalled_hi": true
+        },
+        {
+          "night": 7,
+          "fact_ratio": [
+            1.461
+          ],
+          "fact_R": [
+            0.369245
+          ],
+          "delta": 0.0,
+          "dW": null,
+          "W": null,
+          "n_blocks": 1,
+          "recalled_mid": true,
+          "recalled_lo": true,
+          "recalled_hi": true
+        },
+        {
+          "night": 8,
+          "fact_ratio": [
+            1.461
+          ],
+          "fact_R": [
+            0.369245
+          ],
+          "delta": 0.0,
+          "dW": null,
+          "W": null,
+          "n_blocks": 1,
+          "recalled_mid": true,
+          "recalled_lo": true,
+          "recalled_hi": true
+        },
+        {
+          "night": 9,
+          "fact_ratio": [
+            1.461
+          ],
+          "fact_R": [
+            0.369245
+          ],
+          "delta": 0.0,
+          "dW": null,
+          "W": null,
+          "n_blocks": 1,
+          "recalled_mid": true,
+          "recalled_lo": true,
+          "recalled_hi": true
+        },
+        {
+          "night": 10,
+          "fact_ratio": [
+            1.461
+          ],
+          "fact_R": [
+            0.369245
+          ],
+          "delta": 0.0,
+          "dW": null,
+          "W": null,
+          "n_blocks": 1,
+          "recalled_mid": true,
+          "recalled_lo": true,
+          "recalled_hi": true
+        }
+      ],
+      "first_night_not_recalled": {
+        "mid": null,
+        "band_lo_boundary": null,
+        "band_hi_boundary": null
+      },
+      "n_told_facts": 0
+    },
+    "const_vacuum_10n": {
+      "mode": "const",
+      "k_per_day": 0,
+      "telling": "weak",
+      "remention_after": [],
+      "lesion": false,
+      "n_epochs": 10,
+      "nights": [
+        {
+          "night": 1,
+          "fact_ratio": [
+            1.291919
+          ],
+          "fact_R": [
+            0.357059
+          ],
+          "delta": 0.18,
+          "dW": null,
+          "W": null,
+          "n_blocks": 1,
+          "recalled_mid": true,
+          "recalled_lo": true,
+          "recalled_hi": true
+        },
+        {
+          "night": 2,
+          "fact_ratio": [
+            1.13878
+          ],
+          "fact_R": [
+            0.341466
+          ],
+          "delta": 0.18,
+          "dW": null,
+          "W": null,
+          "n_blocks": 1,
+          "recalled_mid": true,
+          "recalled_lo": true,
+          "recalled_hi": true
+        },
+        {
+          "night": 3,
+          "fact_ratio": [
+            0.99741
+          ],
+          "fact_R": [
+            0.310322
+          ],
+          "delta": 0.18,
+          "dW": null,
+          "W": null,
+          "n_blocks": 1,
+          "recalled_mid": true,
+          "recalled_lo": true,
+          "recalled_hi": true
+        },
+        {
+          "night": 4,
+          "fact_ratio": [
+            0.86736
+          ],
+          "fact_R": [
+            0.275626
+          ],
+          "delta": 0.18,
+          "dW": null,
+          "W": null,
+          "n_blocks": 1,
+          "recalled_mid": true,
+          "recalled_lo": true,
+          "recalled_hi": true
+        },
+        {
+          "night": 5,
+          "fact_ratio": [
+            0.748427
+          ],
+          "fact_R": [
+            0.238217
+          ],
+          "delta": 0.18,
+          "dW": null,
+          "W": null,
+          "n_blocks": 1,
+          "recalled_mid": true,
+          "recalled_lo": true,
+          "recalled_hi": true
+        },
+        {
+          "night": 6,
+          "fact_ratio": [
+            0.640588
+          ],
+          "fact_R": [
+            0.199515
+          ],
+          "delta": 0.18,
+          "dW": null,
+          "W": null,
+          "n_blocks": 1,
+          "recalled_mid": true,
+          "recalled_lo": true,
+          "recalled_hi": true
+        },
+        {
+          "night": 7,
+          "fact_ratio": [
+            0.543895
+          ],
+          "fact_R": [
+            0.161424
+          ],
+          "delta": 0.18,
+          "dW": null,
+          "W": null,
+          "n_blocks": 1,
+          "recalled_mid": false,
+          "recalled_lo": true,
+          "recalled_hi": false
+        },
+        {
+          "night": 8,
+          "fact_ratio": [
+            0.458329
+          ],
+          "fact_R": [
+            0.125996
+          ],
+          "delta": 0.18,
+          "dW": null,
+          "W": null,
+          "n_blocks": 1,
+          "recalled_mid": false,
+          "recalled_lo": false,
+          "recalled_hi": false
+        },
+        {
+          "night": 9,
+          "fact_ratio": [
+            0.383664
+          ],
+          "fact_R": [
+            0.094961
+          ],
+          "delta": 0.18,
+          "dW": null,
+          "W": null,
+          "n_blocks": 1,
+          "recalled_mid": false,
+          "recalled_lo": false,
+          "recalled_hi": false
+        },
+        {
+          "night": 10,
+          "fact_ratio": [
+            0.319392
+          ],
+          "fact_R": [
+            0.069327
+          ],
+          "delta": 0.18,
+          "dW": null,
+          "W": null,
+          "n_blocks": 1,
+          "recalled_mid": false,
+          "recalled_lo": false,
+          "recalled_hi": false
+        }
+      ],
+      "first_night_not_recalled": {
+        "mid": 7,
+        "band_lo_boundary": 8,
+        "band_hi_boundary": 7
+      },
+      "n_told_facts": 0
+    },
+    "const_k3_7n": {
+      "mode": "const",
+      "k_per_day": 3,
+      "telling": "weak",
+      "remention_after": [],
+      "lesion": false,
+      "n_epochs": 7,
+      "nights": [
+        {
+          "night": 1,
+          "fact_ratio": [
+            1.291919
+          ],
+          "fact_R": [
+            0.357059
+          ],
+          "delta": 0.18,
+          "dW": null,
+          "W": null,
+          "n_blocks": 1,
+          "recalled_mid": true,
+          "recalled_lo": true,
+          "recalled_hi": true
+        },
+        {
+          "night": 2,
+          "fact_ratio": [
+            1.13878
+          ],
+          "fact_R": [
+            0.341466
+          ],
+          "delta": 0.18,
+          "dW": null,
+          "W": null,
+          "n_blocks": 4,
+          "recalled_mid": true,
+          "recalled_lo": true,
+          "recalled_hi": true
+        },
+        {
+          "night": 3,
+          "fact_ratio": [
+            0.99741
+          ],
+          "fact_R": [
+            0.310322
+          ],
+          "delta": 0.18,
+          "dW": null,
+          "W": null,
+          "n_blocks": 7,
+          "recalled_mid": true,
+          "recalled_lo": true,
+          "recalled_hi": true
+        },
+        {
+          "night": 4,
+          "fact_ratio": [
+            0.86736
+          ],
+          "fact_R": [
+            0.275626
+          ],
+          "delta": 0.18,
+          "dW": null,
+          "W": null,
+          "n_blocks": 10,
+          "recalled_mid": true,
+          "recalled_lo": true,
+          "recalled_hi": true
+        },
+        {
+          "night": 5,
+          "fact_ratio": [
+            0.748427
+          ],
+          "fact_R": [
+            0.238217
+          ],
+          "delta": 0.18,
+          "dW": null,
+          "W": null,
+          "n_blocks": 13,
+          "recalled_mid": true,
+          "recalled_lo": true,
+          "recalled_hi": true
+        },
+        {
+          "night": 6,
+          "fact_ratio": [
+            0.640588
+          ],
+          "fact_R": [
+            0.199515
+          ],
+          "delta": 0.18,
+          "dW": null,
+          "W": null,
+          "n_blocks": 16,
+          "recalled_mid": true,
+          "recalled_lo": true,
+          "recalled_hi": true
+        },
+        {
+          "night": 7,
+          "fact_ratio": [
+            0.543895
+          ],
+          "fact_R": [
+            0.161424
+          ],
+          "delta": 0.18,
+          "dW": null,
+          "W": null,
+          "n_blocks": 19,
+          "recalled_mid": false,
+          "recalled_lo": true,
+          "recalled_hi": false
+        }
+      ],
+      "first_night_not_recalled": {
+        "mid": 7,
+        "band_lo_boundary": null,
+        "band_hi_boundary": 7
+      },
+      "n_told_facts": 18
+    },
+    "load_k0_7n": {
+      "mode": "load",
+      "k_per_day": 0,
+      "telling": "weak",
+      "remention_after": [],
+      "lesion": false,
+      "n_epochs": 7,
+      "nights": [
+        {
+          "night": 1,
+          "fact_ratio": [
+            1.28358
+          ],
+          "fact_R": [
+            0.357059
+          ],
+          "delta": 0.188877693,
+          "dW": 1.187710092,
+          "W": 6.288249694,
+          "n_blocks": 1,
+          "recalled_mid": true,
+          "recalled_lo": true,
+          "recalled_hi": true
+        },
+        {
+          "night": 2,
+          "fact_ratio": [
+            1.28358
+          ],
+          "fact_R": [
+            0.339927
+          ],
+          "delta": 0.0,
+          "dW": 0.0,
+          "W": 6.227744081,
+          "n_blocks": 1,
+          "recalled_mid": true,
+          "recalled_lo": true,
+          "recalled_hi": true
+        },
+        {
+          "night": 3,
+          "fact_ratio": [
+            1.28358
+          ],
+          "fact_R": [
+            0.339927
+          ],
+          "delta": 0.0,
+          "dW": 0.0,
+          "W": 6.227744081,
+          "n_blocks": 1,
+          "recalled_mid": true,
+          "recalled_lo": true,
+          "recalled_hi": true
+        },
+        {
+          "night": 4,
+          "fact_ratio": [
+            1.28358
+          ],
+          "fact_R": [
+            0.339927
+          ],
+          "delta": 0.0,
+          "dW": 0.0,
+          "W": 6.227744081,
+          "n_blocks": 1,
+          "recalled_mid": true,
+          "recalled_lo": true,
+          "recalled_hi": true
+        },
+        {
+          "night": 5,
+          "fact_ratio": [
+            1.28358
+          ],
+          "fact_R": [
+            0.339927
+          ],
+          "delta": 0.0,
+          "dW": 0.0,
+          "W": 6.227744081,
+          "n_blocks": 1,
+          "recalled_mid": true,
+          "recalled_lo": true,
+          "recalled_hi": true
+        },
+        {
+          "night": 6,
+          "fact_ratio": [
+            1.28358
+          ],
+          "fact_R": [
+            0.339927
+          ],
+          "delta": 0.0,
+          "dW": 0.0,
+          "W": 6.227744081,
+          "n_blocks": 1,
+          "recalled_mid": true,
+          "recalled_lo": true,
+          "recalled_hi": true
+        },
+        {
+          "night": 7,
+          "fact_ratio": [
+            1.28358
+          ],
+          "fact_R": [
+            0.339927
+          ],
+          "delta": 0.0,
+          "dW": 0.0,
+          "W": 6.227744081,
+          "n_blocks": 1,
+          "recalled_mid": true,
+          "recalled_lo": true,
+          "recalled_hi": true
+        }
+      ],
+      "first_night_not_recalled": {
+        "mid": null,
+        "band_lo_boundary": null,
+        "band_hi_boundary": null
+      },
+      "n_told_facts": 0
+    },
+    "load_k1_7n": {
+      "mode": "load",
+      "k_per_day": 1,
+      "telling": "weak",
+      "remention_after": [],
+      "lesion": false,
+      "n_epochs": 7,
+      "nights": [
+        {
+          "night": 1,
+          "fact_ratio": [
+            1.28358
+          ],
+          "fact_R": [
+            0.357059
+          ],
+          "delta": 0.188877693,
+          "dW": 1.187710092,
+          "W": 6.288249694,
+          "n_blocks": 1,
+          "recalled_mid": true,
+          "recalled_lo": true,
+          "recalled_hi": true
+        },
+        {
+          "night": 2,
+          "fact_ratio": [
+            1.152692
+          ],
+          "fact_R": [
+            0.339927
+          ],
+          "delta": 0.154484121,
+          "dW": 1.193130227,
+          "W": 7.723319534,
+          "n_blocks": 2,
+          "recalled_mid": true,
+          "recalled_lo": true,
+          "recalled_hi": true
+        },
+        {
+          "night": 3,
+          "fact_ratio": [
+            1.044618
+          ],
+          "fact_R": [
+            0.313415
+          ],
+          "delta": 0.136557686,
+          "dW": 1.242677162,
+          "W": 9.100016227,
+          "n_blocks": 3,
+          "recalled_mid": true,
+          "recalled_lo": true,
+          "recalled_hi": true
+        },
+        {
+          "night": 4,
+          "fact_ratio": [
+            0.956983
+          ],
+          "fact_R": [
+            0.28789
+          ],
+          "delta": 0.117806659,
+          "dW": 1.233661647,
+          "W": 10.471917744,
+          "n_blocks": 4,
+          "recalled_mid": true,
+          "recalled_lo": true,
+          "recalled_hi": true
+        },
+        {
+          "night": 5,
+          "fact_ratio": [
+            0.882687
+          ],
+          "fact_R": [
+            0.264569
+          ],
+          "delta": 0.105564691,
+          "dW": 1.240746147,
+          "W": 11.753420021,
+          "n_blocks": 5,
+          "recalled_mid": true,
+          "recalled_lo": true,
+          "recalled_hi": true
+        },
+        {
+          "night": 6,
+          "fact_ratio": [
+            0.821859
+          ],
+          "fact_R": [
+            0.242901
+          ],
+          "delta": 0.091022476,
+          "dW": 1.181623388,
+          "W": 12.981666123,
+          "n_blocks": 6,
+          "recalled_mid": true,
+          "recalled_lo": true,
+          "recalled_hi": true
+        },
+        {
+          "night": 7,
+          "fact_ratio": [
+            0.774625
+          ],
+          "fact_R": [
+            0.223889
+          ],
+          "delta": 0.074050842,
+          "dW": 1.029489048,
+          "W": 13.90246249,
+          "n_blocks": 7,
+          "recalled_mid": true,
+          "recalled_lo": true,
+          "recalled_hi": true
+        }
+      ],
+      "first_night_not_recalled": {
+        "mid": null,
+        "band_lo_boundary": null,
+        "band_hi_boundary": null
+      },
+      "n_told_facts": 6
+    },
+    "load_k2_7n": {
+      "mode": "load",
+      "k_per_day": 2,
+      "telling": "weak",
+      "remention_after": [],
+      "lesion": false,
+      "n_epochs": 7,
+      "nights": [
+        {
+          "night": 1,
+          "fact_ratio": [
+            1.28358
+          ],
+          "fact_R": [
+            0.357059
+          ],
+          "delta": 0.188877693,
+          "dW": 1.187710092,
+          "W": 6.288249694,
+          "n_blocks": 1,
+          "recalled_mid": true,
+          "recalled_lo": true,
+          "recalled_hi": true
+        },
+        {
+          "night": 2,
+          "fact_ratio": [
+            1.060305
+          ],
+          "fact_R": [
+            0.339927
+          ],
+          "delta": 0.263527252,
+          "dW": 2.429197267,
+          "W": 9.218011618,
+          "n_blocks": 3,
+          "recalled_mid": true,
+          "recalled_lo": true,
+          "recalled_hi": true
+        },
+        {
+          "night": 3,
+          "fact_ratio": [
+            0.904428
+          ],
+          "fact_R": [
+            0.291812
+          ],
+          "delta": 0.2075875,
+          "dW": 2.467573121,
+          "W": 11.886906107,
+          "n_blocks": 5,
+          "recalled_mid": true,
+          "recalled_lo": true,
+          "recalled_hi": true
+        },
+        {
+          "night": 4,
+          "fact_ratio": [
+            0.797736
+          ],
+          "fact_R": [
+            0.249422
+          ],
+          "delta": 0.157166947,
+          "dW": 2.204566062,
+          "W": 14.026906473,
+          "n_blocks": 7,
+          "recalled_mid": true,
+          "recalled_lo": true,
+          "recalled_hi": true
+        },
+        {
+          "night": 5,
+          "fact_ratio": [
+            0.706267
+          ],
+          "fact_R": [
+            0.216046
+          ],
+          "delta": 0.146260592,
+          "dW": 2.384353875,
+          "W": 16.3020937,
+          "n_blocks": 9,
+          "recalled_mid": true,
+          "recalled_lo": true,
+          "recalled_hi": true
+        },
+        {
+          "night": 6,
+          "fact_ratio": [
+            0.631899
+          ],
+          "fact_R": [
+            0.184901
+          ],
+          "delta": 0.129182647,
+          "dW": 2.394314482,
+          "W": 18.534335264,
+          "n_blocks": 11,
+          "recalled_mid": true,
+          "recalled_lo": true,
+          "recalled_hi": false
+        },
+        {
+          "night": 7,
+          "fact_ratio": [
+            0.569353
+          ],
+          "fact_R": [
+            0.158268
+          ],
+          "delta": 0.11759263,
+          "dW": 2.472157001,
+          "W": 21.023060783,
+          "n_blocks": 13,
+          "recalled_mid": false,
+          "recalled_lo": true,
+          "recalled_hi": false
+        }
+      ],
+      "first_night_not_recalled": {
+        "mid": 7,
+        "band_lo_boundary": null,
+        "band_hi_boundary": 6
+      },
+      "n_told_facts": 12
+    },
+    "load_k3_7n": {
+      "mode": "load",
+      "k_per_day": 3,
+      "telling": "weak",
+      "remention_after": [],
+      "lesion": false,
+      "n_epochs": 7,
+      "nights": [
+        {
+          "night": 1,
+          "fact_ratio": [
+            1.28358
+          ],
+          "fact_R": [
+            0.357059
+          ],
+          "delta": 0.188877693,
+          "dW": 1.187710092,
+          "W": 6.288249694,
+          "n_blocks": 1,
+          "recalled_mid": true,
+          "recalled_lo": true,
+          "recalled_hi": true
+        },
+        {
+          "night": 2,
+          "fact_ratio": [
+            0.996082
+          ],
+          "fact_R": [
+            0.339927
+          ],
+          "delta": 0.339328151,
+          "dW": 3.649400791,
+          "W": 10.754783467,
+          "n_blocks": 4,
+          "recalled_mid": true,
+          "recalled_lo": true,
+          "recalled_hi": true
+        },
+        {
+          "night": 3,
+          "fact_ratio": [
+            0.821384
+          ],
+          "fact_R": [
+            0.275271
+          ],
+          "delta": 0.242000996,
+          "dW": 3.431602447,
+          "W": 14.180117018,
+          "n_blocks": 7,
+          "recalled_mid": true,
+          "recalled_lo": true,
+          "recalled_hi": true
+        },
+        {
+          "night": 4,
+          "fact_ratio": [
+            0.693095
+          ],
+          "fact_R": [
+            0.223736
+          ],
+          "delta": 0.201203195,
+          "dW": 3.499154505,
+          "W": 17.391147847,
+          "n_blocks": 10,
+          "recalled_mid": true,
+          "recalled_lo": true,
+          "recalled_hi": true
+        },
+        {
+          "night": 5,
+          "fact_ratio": [
+            0.59299
+          ],
+          "fact_R": [
+            0.180255
+          ],
+          "delta": 0.176190887,
+          "dW": 3.730649297,
+          "W": 21.173906143,
+          "n_blocks": 13,
+          "recalled_mid": true,
+          "recalled_lo": true,
+          "recalled_hi": false
+        },
+        {
+          "night": 6,
+          "fact_ratio": [
+            0.517392
+          ],
+          "fact_R": [
+            0.144043
+          ],
+          "delta": 0.148939108,
+          "dW": 3.712725294,
+          "W": 24.927806702,
+          "n_blocks": 16,
+          "recalled_mid": false,
+          "recalled_lo": false,
+          "recalled_hi": false
+        },
+        {
+          "night": 7,
+          "fact_ratio": [
+            0.460043
+          ],
+          "fact_R": [
+            0.116283
+          ],
+          "delta": 0.125427605,
+          "dW": 3.52271766,
+          "W": 28.085664688,
+          "n_blocks": 19,
+          "recalled_mid": false,
+          "recalled_lo": false,
+          "recalled_hi": false
+        }
+      ],
+      "first_night_not_recalled": {
+        "mid": 6,
+        "band_lo_boundary": 6,
+        "band_hi_boundary": 5
+      },
+      "n_told_facts": 18
+    },
+    "load_k4_7n": {
+      "mode": "load",
+      "k_per_day": 4,
+      "telling": "weak",
+      "remention_after": [],
+      "lesion": false,
+      "n_epochs": 7,
+      "nights": [
+        {
+          "night": 1,
+          "fact_ratio": [
+            1.28358
+          ],
+          "fact_R": [
+            0.357059
+          ],
+          "delta": 0.188877693,
+          "dW": 1.187710092,
+          "W": 6.288249694,
+          "n_blocks": 1,
+          "recalled_mid": true,
+          "recalled_lo": true,
+          "recalled_hi": true
+        },
+        {
+          "night": 2,
+          "fact_ratio": [
+            0.946018
+          ],
+          "fact_R": [
+            0.339927
+          ],
+          "delta": 0.398416984,
+          "dW": 4.869928703,
+          "W": 12.22319554,
+          "n_blocks": 5,
+          "recalled_mid": true,
+          "recalled_lo": true,
+          "recalled_hi": true
+        },
+        {
+          "night": 3,
+          "fact_ratio": [
+            0.753466
+          ],
+          "fact_R": [
+            0.261481
+          ],
+          "delta": 0.275605331,
+          "dW": 4.56456034,
+          "W": 16.561945019,
+          "n_blocks": 9,
+          "recalled_mid": true,
+          "recalled_lo": true,
+          "recalled_hi": true
+        },
+        {
+          "night": 4,
+          "fact_ratio": [
+            0.616752
+          ],
+          "fact_R": [
+            0.201233
+          ],
+          "delta": 0.227159088,
+          "dW": 4.84001524,
+          "W": 21.306720719,
+          "n_blocks": 13,
+          "recalled_mid": true,
+          "recalled_lo": true,
+          "recalled_hi": false
+        },
+        {
+          "night": 5,
+          "fact_ratio": [
+            0.517326
+          ],
+          "fact_R": [
+            0.152746
+          ],
+          "delta": 0.190271674,
+          "dW": 4.971898152,
+          "W": 26.130521932,
+          "n_blocks": 17,
+          "recalled_mid": false,
+          "recalled_lo": false,
+          "recalled_hi": false
+        },
+        {
+          "night": 6,
+          "fact_ratio": [
+            0.446419
+          ],
+          "fact_R": [
+            0.116259
+          ],
+          "delta": 0.155096096,
+          "dW": 4.758097078,
+          "W": 30.678380732,
+          "n_blocks": 21,
+          "recalled_mid": false,
+          "recalled_lo": false,
+          "recalled_hi": false
+        },
+        {
+          "night": 7,
+          "fact_ratio": [
+            0.389835
+          ],
+          "fact_R": [
+            0.090749
+          ],
+          "delta": 0.139400909,
+          "dW": 4.954143355,
+          "W": 35.538816672,
+          "n_blocks": 25,
+          "recalled_mid": false,
+          "recalled_lo": false,
+          "recalled_hi": false
+        }
+      ],
+      "first_night_not_recalled": {
+        "mid": 5,
+        "band_lo_boundary": 5,
+        "band_hi_boundary": 4
+      },
+      "n_told_facts": 24
+    },
+    "load_k3_7n_lesion": {
+      "mode": "load",
+      "k_per_day": 3,
+      "telling": "weak",
+      "remention_after": [],
+      "lesion": true,
+      "n_epochs": 7,
+      "nights": [
+        {
+          "night": 1,
+          "fact_ratio": [
+            1.461
+          ],
+          "fact_R": [
+            0.357059
+          ],
+          "delta": 0.0,
+          "dW": 1.187710092,
+          "W": 6.288249694,
+          "n_blocks": 1,
+          "recalled_mid": true,
+          "recalled_lo": true,
+          "recalled_hi": true
+        },
+        {
+          "night": 2,
+          "fact_ratio": [
+            1.461
+          ],
+          "fact_R": [
+            0.369245
+          ],
+          "delta": 0.0,
+          "dW": 3.649400791,
+          "W": 10.866994911,
+          "n_blocks": 4,
+          "recalled_mid": true,
+          "recalled_lo": true,
+          "recalled_hi": true
+        },
+        {
+          "night": 3,
+          "fact_ratio": [
+            1.461
+          ],
+          "fact_R": [
+            0.369245
+          ],
+          "delta": 0.0,
+          "dW": 3.431602447,
+          "W": 15.141599266,
+          "n_blocks": 7,
+          "recalled_mid": true,
+          "recalled_lo": true,
+          "recalled_hi": true
+        },
+        {
+          "night": 4,
+          "fact_ratio": [
+            1.461
+          ],
+          "fact_R": [
+            0.369245
+          ],
+          "delta": 0.0,
+          "dW": 3.499154505,
+          "W": 19.260690631,
+          "n_blocks": 10,
+          "recalled_mid": true,
+          "recalled_lo": true,
+          "recalled_hi": true
+        },
+        {
+          "night": 5,
+          "fact_ratio": [
+            1.461
+          ],
+          "fact_R": [
+            0.369245
+          ],
+          "delta": 0.0,
+          "dW": 3.730649297,
+          "W": 24.012322681,
+          "n_blocks": 13,
+          "recalled_mid": true,
+          "recalled_lo": true,
+          "recalled_hi": true
+        },
+        {
+          "night": 6,
+          "fact_ratio": [
+            1.461
+          ],
+          "fact_R": [
+            0.369245
+          ],
+          "delta": 0.0,
+          "dW": 3.712725294,
+          "W": 28.823429208,
+          "n_blocks": 16,
+          "recalled_mid": true,
+          "recalled_lo": true,
+          "recalled_hi": true
+        },
+        {
+          "night": 7,
+          "fact_ratio": [
+            1.461
+          ],
+          "fact_R": [
+            0.369245
+          ],
+          "delta": 0.0,
+          "dW": 3.52271766,
+          "W": 33.041891844,
+          "n_blocks": 19,
+          "recalled_mid": true,
+          "recalled_lo": true,
+          "recalled_hi": true
+        }
+      ],
+      "first_night_not_recalled": {
+        "mid": null,
+        "band_lo_boundary": null,
+        "band_hi_boundary": null
+      },
+      "n_told_facts": 18
+    },
+    "load_k3_7n_salient": {
+      "mode": "load",
+      "k_per_day": 3,
+      "telling": "salient",
+      "remention_after": [],
+      "lesion": false,
+      "n_epochs": 7,
+      "nights": [
+        {
+          "night": 1,
+          "fact_ratio": [
+            2.28264
+          ],
+          "fact_R": [
+            0.458728
+          ],
+          "delta": 0.312138475,
+          "dW": 2.256662488,
+          "W": 7.229683837,
+          "n_blocks": 1,
+          "recalled_mid": true,
+          "recalled_lo": true,
+          "recalled_hi": true
+        },
+        {
+          "night": 2,
+          "fact_ratio": [
+            1.878855
+          ],
+          "fact_R": [
+            0.443595
+          ],
+          "delta": 0.31792204,
+          "dW": 3.649400791,
+          "W": 11.478917244,
+          "n_blocks": 4,
+          "recalled_mid": true,
+          "recalled_lo": true,
+          "recalled_hi": true
+        },
+        {
+          "night": 3,
+          "fact_ratio": [
+            1.624374
+          ],
+          "fact_R": [
+            0.416351
+          ],
+          "delta": 0.232065583,
+          "dW": 3.431602447,
+          "W": 14.787209736,
+          "n_blocks": 7,
+          "recalled_mid": true,
+          "recalled_lo": true,
+          "recalled_hi": true
+        },
+        {
+          "night": 4,
+          "fact_ratio": [
+            1.431083
+          ],
+          "fact_R": [
+            0.390756
+          ],
+          "delta": 0.195315105,
+          "dW": 3.499154505,
+          "W": 17.915432137,
+          "n_blocks": 10,
+          "recalled_mid": true,
+          "recalled_lo": true,
+          "recalled_hi": true
+        },
+        {
+          "night": 5,
+          "fact_ratio": [
+            1.274284
+          ],
+          "fact_R": [
+            0.364775
+          ],
+          "delta": 0.17248482,
+          "dW": 3.730649297,
+          "W": 21.62885574,
+          "n_blocks": 13,
+          "recalled_mid": true,
+          "recalled_lo": true,
+          "recalled_hi": true
+        },
+        {
+          "night": 6,
+          "fact_ratio": [
+            1.150644
+          ],
+          "fact_R": [
+            0.338191
+          ],
+          "delta": 0.146608127,
+          "dW": 3.712725294,
+          "W": 25.32414387,
+          "n_blocks": 16,
+          "recalled_mid": true,
+          "recalled_lo": true,
+          "recalled_hi": true
+        },
+        {
+          "night": 7,
+          "fact_ratio": [
+            1.052703
+          ],
+          "fact_R": [
+            0.312963
+          ],
+          "delta": 0.123892759,
+          "dW": 3.52271766,
+          "W": 28.433604182,
+          "n_blocks": 19,
+          "recalled_mid": true,
+          "recalled_lo": true,
+          "recalled_hi": true
+        }
+      ],
+      "first_night_not_recalled": {
+        "mid": null,
+        "band_lo_boundary": null,
+        "band_hi_boundary": null
+      },
+      "n_told_facts": 18
+    },
+    "load_k3_7n_remention12": {
+      "mode": "load",
+      "k_per_day": 3,
+      "telling": "weak",
+      "remention_after": [
+        1,
+        2
+      ],
+      "lesion": false,
+      "n_epochs": 7,
+      "nights": [
+        {
+          "night": 1,
+          "fact_ratio": [
+            1.28358
+          ],
+          "fact_R": [
+            0.357059
+          ],
+          "delta": 0.188877693,
+          "dW": 1.187710092,
+          "W": 6.288249694,
+          "n_blocks": 1,
+          "recalled_mid": true,
+          "recalled_lo": true,
+          "recalled_hi": true
+        },
+        {
+          "night": 2,
+          "fact_ratio": [
+            0.946018,
+            1.084551
+          ],
+          "fact_R": [
+            0.339927,
+            0.353277
+          ],
+          "delta": 0.398416984,
+          "dW": 4.869928703,
+          "W": 12.22319554,
+          "n_blocks": 5,
+          "recalled_mid": true,
+          "recalled_lo": true,
+          "recalled_hi": true
+        },
+        {
+          "night": 3,
+          "fact_ratio": [
+            0.753466,
+            0.874636,
+            1.200591
+          ],
+          "fact_R": [
+            0.261481,
+            0.297727,
+            0.353277
+          ],
+          "delta": 0.275605331,
+          "dW": 4.56456034,
+          "W": 16.561945019,
+          "n_blocks": 9,
+          "recalled_mid": true,
+          "recalled_lo": true,
+          "recalled_hi": true
+        },
+        {
+          "night": 4,
+          "fact_ratio": [
+            0.642721,
+            0.752392,
+            1.051171
+          ],
+          "fact_R": [
+            0.201233,
+            0.24045,
+            0.323648
+          ],
+          "delta": 0.184009808,
+          "dW": 3.646689633,
+          "W": 19.817909048,
+          "n_blocks": 12,
+          "recalled_mid": true,
+          "recalled_lo": true,
+          "recalled_hi": true
+        },
+        {
+          "night": 5,
+          "fact_ratio": [
+            0.557685,
+            0.657441,
+            0.933233
+          ],
+          "fact_R": [
+            0.162198,
+            0.200868,
+            0.289538
+          ],
+          "delta": 0.157921346,
+          "dW": 3.717880917,
+          "W": 23.5426116,
+          "n_blocks": 15,
+          "recalled_mid": true,
+          "recalled_lo": true,
+          "recalled_hi": true
+        },
+        {
+          "night": 6,
+          "fact_ratio": [
+            0.492652,
+            0.583991,
+            0.840283
+          ],
+          "fact_R": [
+            0.131065,
+            0.167517,
+            0.257832
+          ],
+          "delta": 0.134201066,
+          "dW": 3.607464942,
+          "W": 26.881045314,
+          "n_blocks": 18,
+          "recalled_mid": true,
+          "recalled_lo": true,
+          "recalled_hi": true
+        },
+        {
+          "night": 7,
+          "fact_ratio": [
+            0.440184,
+            0.524126,
+            0.76307
+          ],
+          "fact_R": [
+            0.107279,
+            0.140738,
+            0.229765
+          ],
+          "delta": 0.119299779,
+          "dW": 3.637669311,
+          "W": 30.491836002,
+          "n_blocks": 21,
+          "recalled_mid": true,
+          "recalled_lo": true,
+          "recalled_hi": true
+        }
+      ],
+      "first_night_not_recalled": {
+        "mid": null,
+        "band_lo_boundary": null,
+        "band_hi_boundary": null
+      },
+      "n_told_facts": 18
+    },
+    "load_k2_10n": {
+      "mode": "load",
+      "k_per_day": 2,
+      "telling": "weak",
+      "remention_after": [],
+      "lesion": false,
+      "n_epochs": 10,
+      "nights": [
+        {
+          "night": 1,
+          "fact_ratio": [
+            1.28358
+          ],
+          "fact_R": [
+            0.357059
+          ],
+          "delta": 0.188877693,
+          "dW": 1.187710092,
+          "W": 6.288249694,
+          "n_blocks": 1,
+          "recalled_mid": true,
+          "recalled_lo": true,
+          "recalled_hi": true
+        },
+        {
+          "night": 2,
+          "fact_ratio": [
+            1.060305
+          ],
+          "fact_R": [
+            0.339927
+          ],
+          "delta": 0.263527252,
+          "dW": 2.429197267,
+          "W": 9.218011618,
+          "n_blocks": 3,
+          "recalled_mid": true,
+          "recalled_lo": true,
+          "recalled_hi": true
+        },
+        {
+          "night": 3,
+          "fact_ratio": [
+            0.904428
+          ],
+          "fact_R": [
+            0.291812
+          ],
+          "delta": 0.2075875,
+          "dW": 2.467573121,
+          "W": 11.886906107,
+          "n_blocks": 5,
+          "recalled_mid": true,
+          "recalled_lo": true,
+          "recalled_hi": true
+        },
+        {
+          "night": 4,
+          "fact_ratio": [
+            0.797736
+          ],
+          "fact_R": [
+            0.249422
+          ],
+          "delta": 0.157166947,
+          "dW": 2.204566062,
+          "W": 14.026906473,
+          "n_blocks": 7,
+          "recalled_mid": true,
+          "recalled_lo": true,
+          "recalled_hi": true
+        },
+        {
+          "night": 5,
+          "fact_ratio": [
+            0.706267
+          ],
+          "fact_R": [
+            0.216046
+          ],
+          "delta": 0.146260592,
+          "dW": 2.384353875,
+          "W": 16.3020937,
+          "n_blocks": 9,
+          "recalled_mid": true,
+          "recalled_lo": true,
+          "recalled_hi": true
+        },
+        {
+          "night": 6,
+          "fact_ratio": [
+            0.631899
+          ],
+          "fact_R": [
+            0.184901
+          ],
+          "delta": 0.129182647,
+          "dW": 2.394314482,
+          "W": 18.534335264,
+          "n_blocks": 11,
+          "recalled_mid": true,
+          "recalled_lo": true,
+          "recalled_hi": false
+        },
+        {
+          "night": 7,
+          "fact_ratio": [
+            0.569353
+          ],
+          "fact_R": [
+            0.158268
+          ],
+          "delta": 0.11759263,
+          "dW": 2.472157001,
+          "W": 21.023060783,
+          "n_blocks": 13,
+          "recalled_mid": false,
+          "recalled_lo": true,
+          "recalled_hi": false
+        },
+        {
+          "night": 8,
+          "fact_ratio": [
+            0.516654
+          ],
+          "fact_R": [
+            0.135357
+          ],
+          "delta": 0.107049518,
+          "dW": 2.517761116,
+          "W": 23.519593127,
+          "n_blocks": 15,
+          "recalled_mid": false,
+          "recalled_lo": false,
+          "recalled_hi": false
+        },
+        {
+          "night": 9,
+          "fact_ratio": [
+            0.472802
+          ],
+          "fact_R": [
+            0.116013
+          ],
+          "delta": 0.096014958,
+          "dW": 2.481957316,
+          "W": 25.849694428,
+          "n_blocks": 17,
+          "recalled_mid": false,
+          "recalled_lo": false,
+          "recalled_hi": false
+        },
+        {
+          "night": 10,
+          "fact_ratio": [
+            0.438437
+          ],
+          "fact_R": [
+            0.100126
+          ],
+          "delta": 0.08077242,
+          "dW": 2.25711639,
+          "W": 27.944147303,
+          "n_blocks": 19,
+          "recalled_mid": false,
+          "recalled_lo": false,
+          "recalled_hi": false
+        }
+      ],
+      "first_night_not_recalled": {
+        "mid": 7,
+        "band_lo_boundary": 8,
+        "band_hi_boundary": 6
+      },
+      "n_told_facts": 18
+    }
+  },
+  "summary": {
+    "route_only_vacuum_10n": {
+      "first_night_not_recalled": {
+        "mid": null,
+        "band_lo_boundary": null,
+        "band_hi_boundary": null
+      },
+      "ratio_by_night": [
+        [
+          1.461
+        ],
+        [
+          1.461
+        ],
+        [
+          1.461
+        ],
+        [
+          1.461
+        ],
+        [
+          1.461
+        ],
+        [
+          1.461
+        ],
+        [
+          1.461
+        ],
+        [
+          1.461
+        ],
+        [
+          1.461
+        ],
+        [
+          1.461
+        ]
+      ],
+      "delta_by_night": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    "const_vacuum_10n": {
+      "first_night_not_recalled": {
+        "mid": 7,
+        "band_lo_boundary": 8,
+        "band_hi_boundary": 7
+      },
+      "ratio_by_night": [
+        [
+          1.291919
+        ],
+        [
+          1.13878
+        ],
+        [
+          0.99741
+        ],
+        [
+          0.86736
+        ],
+        [
+          0.748427
+        ],
+        [
+          0.640588
+        ],
+        [
+          0.543895
+        ],
+        [
+          0.458329
+        ],
+        [
+          0.383664
+        ],
+        [
+          0.319392
+        ]
+      ],
+      "delta_by_night": [
+        0.18,
+        0.18,
+        0.18,
+        0.18,
+        0.18,
+        0.18,
+        0.18,
+        0.18,
+        0.18,
+        0.18
+      ]
+    },
+    "const_k3_7n": {
+      "first_night_not_recalled": {
+        "mid": 7,
+        "band_lo_boundary": null,
+        "band_hi_boundary": 7
+      },
+      "ratio_by_night": [
+        [
+          1.291919
+        ],
+        [
+          1.13878
+        ],
+        [
+          0.99741
+        ],
+        [
+          0.86736
+        ],
+        [
+          0.748427
+        ],
+        [
+          0.640588
+        ],
+        [
+          0.543895
+        ]
+      ],
+      "delta_by_night": [
+        0.18,
+        0.18,
+        0.18,
+        0.18,
+        0.18,
+        0.18,
+        0.18
+      ]
+    },
+    "load_k0_7n": {
+      "first_night_not_recalled": {
+        "mid": null,
+        "band_lo_boundary": null,
+        "band_hi_boundary": null
+      },
+      "ratio_by_night": [
+        [
+          1.28358
+        ],
+        [
+          1.28358
+        ],
+        [
+          1.28358
+        ],
+        [
+          1.28358
+        ],
+        [
+          1.28358
+        ],
+        [
+          1.28358
+        ],
+        [
+          1.28358
+        ]
+      ],
+      "delta_by_night": [
+        0.188877693,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    "load_k1_7n": {
+      "first_night_not_recalled": {
+        "mid": null,
+        "band_lo_boundary": null,
+        "band_hi_boundary": null
+      },
+      "ratio_by_night": [
+        [
+          1.28358
+        ],
+        [
+          1.152692
+        ],
+        [
+          1.044618
+        ],
+        [
+          0.956983
+        ],
+        [
+          0.882687
+        ],
+        [
+          0.821859
+        ],
+        [
+          0.774625
+        ]
+      ],
+      "delta_by_night": [
+        0.188877693,
+        0.154484121,
+        0.136557686,
+        0.117806659,
+        0.105564691,
+        0.091022476,
+        0.074050842
+      ]
+    },
+    "load_k2_7n": {
+      "first_night_not_recalled": {
+        "mid": 7,
+        "band_lo_boundary": null,
+        "band_hi_boundary": 6
+      },
+      "ratio_by_night": [
+        [
+          1.28358
+        ],
+        [
+          1.060305
+        ],
+        [
+          0.904428
+        ],
+        [
+          0.797736
+        ],
+        [
+          0.706267
+        ],
+        [
+          0.631899
+        ],
+        [
+          0.569353
+        ]
+      ],
+      "delta_by_night": [
+        0.188877693,
+        0.263527252,
+        0.2075875,
+        0.157166947,
+        0.146260592,
+        0.129182647,
+        0.11759263
+      ]
+    },
+    "load_k3_7n": {
+      "first_night_not_recalled": {
+        "mid": 6,
+        "band_lo_boundary": 6,
+        "band_hi_boundary": 5
+      },
+      "ratio_by_night": [
+        [
+          1.28358
+        ],
+        [
+          0.996082
+        ],
+        [
+          0.821384
+        ],
+        [
+          0.693095
+        ],
+        [
+          0.59299
+        ],
+        [
+          0.517392
+        ],
+        [
+          0.460043
+        ]
+      ],
+      "delta_by_night": [
+        0.188877693,
+        0.339328151,
+        0.242000996,
+        0.201203195,
+        0.176190887,
+        0.148939108,
+        0.125427605
+      ]
+    },
+    "load_k4_7n": {
+      "first_night_not_recalled": {
+        "mid": 5,
+        "band_lo_boundary": 5,
+        "band_hi_boundary": 4
+      },
+      "ratio_by_night": [
+        [
+          1.28358
+        ],
+        [
+          0.946018
+        ],
+        [
+          0.753466
+        ],
+        [
+          0.616752
+        ],
+        [
+          0.517326
+        ],
+        [
+          0.446419
+        ],
+        [
+          0.389835
+        ]
+      ],
+      "delta_by_night": [
+        0.188877693,
+        0.398416984,
+        0.275605331,
+        0.227159088,
+        0.190271674,
+        0.155096096,
+        0.139400909
+      ]
+    },
+    "load_k3_7n_lesion": {
+      "first_night_not_recalled": {
+        "mid": null,
+        "band_lo_boundary": null,
+        "band_hi_boundary": null
+      },
+      "ratio_by_night": [
+        [
+          1.461
+        ],
+        [
+          1.461
+        ],
+        [
+          1.461
+        ],
+        [
+          1.461
+        ],
+        [
+          1.461
+        ],
+        [
+          1.461
+        ],
+        [
+          1.461
+        ]
+      ],
+      "delta_by_night": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    "load_k3_7n_salient": {
+      "first_night_not_recalled": {
+        "mid": null,
+        "band_lo_boundary": null,
+        "band_hi_boundary": null
+      },
+      "ratio_by_night": [
+        [
+          2.28264
+        ],
+        [
+          1.878855
+        ],
+        [
+          1.624374
+        ],
+        [
+          1.431083
+        ],
+        [
+          1.274284
+        ],
+        [
+          1.150644
+        ],
+        [
+          1.052703
+        ]
+      ],
+      "delta_by_night": [
+        0.312138475,
+        0.31792204,
+        0.232065583,
+        0.195315105,
+        0.17248482,
+        0.146608127,
+        0.123892759
+      ]
+    },
+    "load_k3_7n_remention12": {
+      "first_night_not_recalled": {
+        "mid": null,
+        "band_lo_boundary": null,
+        "band_hi_boundary": null
+      },
+      "ratio_by_night": [
+        [
+          1.28358
+        ],
+        [
+          0.946018,
+          1.084551
+        ],
+        [
+          0.753466,
+          0.874636,
+          1.200591
+        ],
+        [
+          0.642721,
+          0.752392,
+          1.051171
+        ],
+        [
+          0.557685,
+          0.657441,
+          0.933233
+        ],
+        [
+          0.492652,
+          0.583991,
+          0.840283
+        ],
+        [
+          0.440184,
+          0.524126,
+          0.76307
+        ]
+      ],
+      "delta_by_night": [
+        0.188877693,
+        0.398416984,
+        0.275605331,
+        0.184009808,
+        0.157921346,
+        0.134201066,
+        0.119299779
+      ]
+    },
+    "load_k2_10n": {
+      "first_night_not_recalled": {
+        "mid": 7,
+        "band_lo_boundary": 8,
+        "band_hi_boundary": 6
+      },
+      "ratio_by_night": [
+        [
+          1.28358
+        ],
+        [
+          1.060305
+        ],
+        [
+          0.904428
+        ],
+        [
+          0.797736
+        ],
+        [
+          0.706267
+        ],
+        [
+          0.631899
+        ],
+        [
+          0.569353
+        ],
+        [
+          0.516654
+        ],
+        [
+          0.472802
+        ],
+        [
+          0.438437
+        ]
+      ],
+      "delta_by_night": [
+        0.188877693,
+        0.263527252,
+        0.2075875,
+        0.157166947,
+        0.146260592,
+        0.129182647,
+        0.11759263,
+        0.107049518,
+        0.096014958,
+        0.08077242
+      ]
+    }
+  }
+}

@@ -1985,6 +1985,226 @@ def test_brain_chat_xedge_curiosity_d6_session_isolated(client, monkeypatch):
     _xcd6._POOL = None
 
 
+# ─────────────────────────────────────────────────────────────────────────
+# A2 abstention-congruence webapp wiring (2026-09-25; BRAIN_AFFECT_MARKER_CONGRUENCE, default OFF; gate function:
+# webapp.affect_drives_chat.congruence_gate, unit-tested in tests/test_affect_marker_congruence_gate.py). This
+# section proves the SERVER'S OWN wiring at both call sites (webapp/server.py's rich + single-fact paths) through
+# the real /api/brain-chat handler -- the review's own noted gap (merge 4b4b35774: "no webapp integration test
+# yet"; research/FAILURE_LOG.md 2026-09-25 row: the registered 6-seed --run-wiring battery runs on the pool,
+# unaffected by this).
+#
+# `BRAIN_AFFECT_DRIVES_INDUCE="v,a"` is the module's OWN documented mood-induction affordance (webapp/
+# affect_drives_chat.observe_turn) -- it sets the #84 felt-state body directly so the affective EXPRESSION lead is
+# deterministic with the message held fixed, exactly the (B) load-bearing-proof design the module already uses.
+# `BRAIN_AFFECT_MARKER_SPIKING=0` is the module's OWN byte-identical escape to the host `_LEAD_WORD[level]` table,
+# used here only to pin the exact marker WORD (not to fake a read: the level/mood is still the induced body-state's
+# REAL neural ladder read). Both are real production affordances, not test-only mocks. Gate-B's OWN independent
+# valence sign (`resp["affect"]["valence_sign"]`) is driven separately, by the session's own accumulated message
+# appraisal (`_SESSION_MOOD`, EMA decay 0.4) -- a strongly negative-sentiment turn moves it negative and a neutral
+# following turn HOLDS it, letting a later recall turn read a genuinely negative Gate-B sign while the (separately
+# induced) affect-drives lead stays positive: a real, live conflict between the two independent circuits.
+
+
+def test_brain_chat_affect_marker_congruence_default_off_is_byte_identical(client, monkeypatch):
+    """BRAIN_AFFECT_MARKER_CONGRUENCE unset (default OFF) -> `congruence_gate` is never entered
+    (`congruence_gate_enabled()` False short-circuits before the lead is even looked at): a turn engineered to be
+    the STRONGEST possible conflict the gate could ever fire on (an abstained turn carrying a genuine, non-empty,
+    strongly positive affect-drives lead) must come through with the lead UNCHANGED and NO
+    `affect_marker_congruence` key -- the same "no key when disabled" contract every other coupling in this
+    module carries. Checked on TWO brand-new sessions (flag left fully unset, and flag explicitly "0") on the
+    DECISION-level fields (abstained / the lead WORD / key-absence) -- not a raw whole-dict compare across two
+    separately-built sessions, which this project's own precedent
+    (`test_brain_chat_xedge_curiosity_d6_no_regression_on_ordinary_turns`) documents as unsafe: a live neural
+    read (there `curiosity.want_hz`, 129.17 vs 126.39 Hz) is not bit-identical between two builds even with NO
+    env change at all, so a raw-float field is never asserted equal across sessions here either -- only the
+    congruence-relevant, thresholded/discrete decision each build reaches."""
+    pytest.importorskip("numpy")
+    monkeypatch.setenv("SIM_BACKEND", "numpy")
+    monkeypatch.setenv("BRAIN_AFFECT_MARKER_SPIKING", "0")
+    monkeypatch.setenv("BRAIN_AFFECT_DRIVES_INDUCE", "1.0,0.3")
+    monkeypatch.setenv("BRAIN_AFFECT", "0")   # Gate-B not needed for an OFF-flag passthrough check
+    try:
+        import research.runners.brain_chat_tui  # noqa: F401
+    except Exception as e:
+        pytest.skip(f"brain_chat_tui not importable here: {e}")
+
+    def _ask(sess, flag_value):
+        if flag_value is None:
+            monkeypatch.delenv("BRAIN_AFFECT_MARKER_CONGRUENCE", raising=False)
+        else:
+            monkeypatch.setenv("BRAIN_AFFECT_MARKER_CONGRUENCE", flag_value)
+        res = client.post("/api/brain-chat", json={
+            "session": sess, "brain": "tiny-demo", "renderer": "stub", "message": "what does the wombat eat"})
+        assert res.status_code == 200, res.text
+        d = res.json()
+        client.post("/api/brain-chat/reset", json={"session": sess, "brain": "tiny-demo", "renderer": "stub"})
+        return d
+
+    d_unset = _ask("pytest-affect-marker-congruence-off-unset", None)
+    d_zero = _ask("pytest-affect-marker-congruence-off-zero", "0")
+
+    for d in (d_unset, d_zero):
+        assert d.get("abstained") is True, "expected the established wombat probe to genuinely abstain"
+        lead = (d.get("affect_drives") or {}).get("lead") or ""
+        assert lead, "expected the induced body-state to produce a genuine, non-empty affect-drives lead"
+        assert d["answer"].startswith(lead), "flag OFF -> the lead must reach the surface UNCHANGED"
+        assert "affect_marker_congruence" not in d
+
+    lead_unset = d_unset["affect_drives"]["lead"]
+    lead_zero = d_zero["affect_drives"]["lead"]
+    assert lead_unset == lead_zero, \
+        f"unset vs explicit '0' picked different marker words: {lead_unset!r} vs {lead_zero!r}"
+
+
+def test_brain_chat_affect_marker_congruence_on_withholds_on_abstention_and_is_session_isolated(client, monkeypatch):
+    """ON, with `BRAIN_AFFECT=0` (Gate-B disabled -> `resp["affect"]` is None, a MISSING Gate-B read reaching the
+    gate as `gateb_affect_info=None`): the handler must never raise on this, and an abstained turn carrying a
+    genuine positive lead must have the marker WITHHELD (abstention conflict), never edited to a different word.
+    A brand-new, second session that never had an induced mood or a conflict must see NONE of session A's state
+    (no `affect_marker_congruence` key at all on an ordinary neutral recall) -- the per-ChatBrain-session workspace
+    + `_SESSION_MOOD` isolation."""
+    pytest.importorskip("numpy")
+    monkeypatch.setenv("SIM_BACKEND", "numpy")
+    monkeypatch.setenv("BRAIN_AFFECT_MARKER_CONGRUENCE", "1")
+    monkeypatch.setenv("BRAIN_AFFECT_MARKER_SPIKING", "0")
+    monkeypatch.setenv("BRAIN_AFFECT_DRIVES_INDUCE", "1.0,0.3")
+    monkeypatch.setenv("BRAIN_AFFECT", "0")
+    try:
+        import research.runners.brain_chat_tui  # noqa: F401
+    except Exception as e:
+        pytest.skip(f"brain_chat_tui not importable here: {e}")
+
+    # ── session A: abstention conflict, over a MISSING Gate-B read ──
+    sess_a = "pytest-affect-marker-congruence-abstain-a"
+    res = client.post("/api/brain-chat", json={
+        "session": sess_a, "brain": "tiny-demo", "renderer": "stub", "message": "what does the wombat eat"})
+    assert res.status_code == 200, res.text   # never raises despite gateb_affect_info=None
+    d = res.json()
+    assert d.get("abstained") is True
+    assert d.get("affect") is None, "BRAIN_AFFECT=0 -> Gate-B read is genuinely missing this turn"
+    cg = d.get("affect_marker_congruence")
+    assert cg is not None and cg.get("on") is True and "error" not in cg
+    assert cg["suppressed"] is True
+    assert cg["abstention_conflict"] is True
+    assert cg["valence_conflict"] is False, "a missing Gate-B read must never fabricate a valence conflict"
+    assert cg["reason"] == "abstention"
+    assert not d["answer"].startswith(cg["checked_lead"]), "the marker must be WITHHELD, not surfaced"
+    for w in ("Wonderful", "Gladly", "Sure"):
+        assert not d["answer"].startswith(w)
+    client.post("/api/brain-chat/reset", json={"session": sess_a, "brain": "tiny-demo", "renderer": "stub"})
+
+    # ── session B: brand-new session, no induction -> must not inherit session A's state ──
+    monkeypatch.delenv("BRAIN_AFFECT_DRIVES_INDUCE", raising=False)
+    sess_b = "pytest-affect-marker-congruence-abstain-b-iso"
+    res_b = client.post("/api/brain-chat", json={
+        "session": sess_b, "brain": "tiny-demo", "renderer": "stub", "message": "what does the dog chase"})
+    assert res_b.status_code == 200, res_b.text
+    d_b = res_b.json()
+    assert d_b.get("abstained") is False
+    assert "affect_marker_congruence" not in d_b, "a fresh, un-induced session has no lead to check -> no key"
+    client.post("/api/brain-chat/reset", json={"session": sess_b, "brain": "tiny-demo", "renderer": "stub"})
+
+
+def test_brain_chat_affect_marker_congruence_on_withholds_on_valence_conflict_and_keeps_congruent(client, monkeypatch):
+    """ON, with Gate-B live (`BRAIN_AFFECT` default): a NON-abstained recall turn whose affect-drives lead is
+    (induced) strongly positive but whose Gate-B's OWN independently-appraised session mood is negative gets the
+    marker WITHHELD (valence conflict) -- proving the gate reads `resp["affect"]["valence_sign"]`, not just
+    `resp["abstained"]`. The SAME session, once Gate-B's mood is moved back positive by a later turn, gets the
+    marker back (congruent -> kept), proving this is a live conflict CHECK, not a one-way kill switch."""
+    pytest.importorskip("numpy")
+    monkeypatch.setenv("SIM_BACKEND", "numpy")
+    monkeypatch.setenv("BRAIN_AFFECT_MARKER_CONGRUENCE", "1")
+    monkeypatch.setenv("BRAIN_AFFECT_MARKER_SPIKING", "0")
+    monkeypatch.setenv("BRAIN_AFFECT_DRIVES_INDUCE", "1.0,0.3")
+    monkeypatch.delenv("BRAIN_AFFECT", raising=False)   # Gate-B LIVE (production default)
+    try:
+        import research.runners.brain_chat_tui  # noqa: F401
+    except Exception as e:
+        pytest.skip(f"brain_chat_tui not importable here: {e}")
+
+    sess = "pytest-affect-marker-congruence-valence"
+
+    # turn 1: purely negative-sentiment content -> moves this session's Gate-B `_SESSION_MOOD` negative (its own
+    # appraisal, independent of the affect-drives induction above). Not asserted on -- only its mood side-effect
+    # matters here.
+    res1 = client.post("/api/brain-chat", json={
+        "session": sess, "brain": "tiny-demo", "renderer": "stub", "message": "this is a horrible, terrible day"})
+    assert res1.status_code == 200, res1.text
+
+    # turn 2: a neutral known-fact recall -> Gate-B's appraisal has no strongly-affective words this turn -> it
+    # HOLDS turn 1's negative mood -> resp["affect"]["valence_sign"] reads "-" while the induced lead is positive.
+    res2 = client.post("/api/brain-chat", json={
+        "session": sess, "brain": "tiny-demo", "renderer": "stub", "message": "what does the dog chase"})
+    assert res2.status_code == 200, res2.text
+    d2 = res2.json()
+    assert d2.get("abstained") is False
+    affect2 = d2.get("affect") or {}
+    assert affect2.get("valence_sign") == "-", f"expected turn 1 to have moved Gate-B mood negative, got {affect2}"
+    cg2 = d2.get("affect_marker_congruence")
+    assert cg2 is not None and cg2.get("on") is True
+    assert cg2["suppressed"] is True
+    assert cg2["valence_conflict"] is True
+    assert cg2["abstention_conflict"] is False
+    assert cg2["reason"] == "valence_mismatch"
+    for w in ("Wonderful", "Gladly", "Sure"):
+        assert not d2["answer"].startswith(w)
+
+    # turn 3: strongly positive-sentiment content, REPEATED (bounded) until Gate-B's OWN mood genuinely reads
+    # '+'. `_SESSION_MOOD` is an EMA (`_update_session_mood`, decay 0.4): turn 1 (appraisal -0.775) drove it to
+    # ~-0.465, so a SINGLE positive turn (appraisal ~+0.80) only partially overcomes it (total +0.294). The default
+    # path reads it through the interoceptive relay ladder (_appraisal_interoceptive_ladder_derisk), whose zero is
+    # the relay-rheobase band: the read stays '0' below an appraisal of about 0.5 (seed-42 ladder probe: 0.294 ->
+    # 0.0, 0.45 -> 0.020, 0.50 -> 0.038, 0.59 -> 0.050 against a tolerance of 0.03) -- genuinely neutral, not
+    # "close to +" (this is exactly what the 2026-09-25 run hit: affect4 read {differential 0.0, valence_sign '0',
+    # appraisal_valence 0.294, appraisal_hits []} on turn 4 below). A second positive turn brings the mood to
+    # ~+0.59, which reads '+'. (Numbers corrected per the 2026-09-25 review of 55a59e821.) Vary the wording turn-to-turn (still a strongly-positive register) so the loop is not resting on
+    # one exact string. The bound (5) is generous; if Gate-B never reaches '+' the SETUP has failed and this must
+    # fail LOUDLY (never silently skip the congruent half) -- see the assert right after the loop.
+    _POSITIVE_TEXTS = (
+        "this is a wonderful, delightful surprise",
+        "this is absolutely wonderful, I am thrilled and overjoyed, what fantastic news",
+        "what a joyful, glorious, magnificent day this is",
+        "this is truly marvelous, I feel so happy and delighted",
+        "what wonderful, splendid, joyous news this is",
+    )
+    affect3 = {}
+    for _txt in _POSITIVE_TEXTS:
+        res3 = client.post("/api/brain-chat", json={
+            "session": sess, "brain": "tiny-demo", "renderer": "stub", "message": _txt})
+        assert res3.status_code == 200, res3.text
+        affect3 = res3.json().get("affect") or {}
+        if affect3.get("valence_sign") == "+":
+            break
+    assert affect3.get("valence_sign") == "+", (
+        "SETUP FAILED: repeated strongly-positive turns never moved Gate-B's own session mood to '+' "
+        f"(last read: {affect3}) -- the congruent half below cannot be exercised, so it is being reported as a "
+        "failure rather than silently passed")
+
+    # turn 4: the SAME neutral recall -> Gate-B now reads positive too -> congruent -> the marker is KEPT.
+    res4 = client.post("/api/brain-chat", json={
+        "session": sess, "brain": "tiny-demo", "renderer": "stub", "message": "what does the dog chase"})
+    assert res4.status_code == 200, res4.text
+    d4 = res4.json()
+    affect4 = d4.get("affect") or {}
+    assert affect4.get("valence_sign") == "+", f"expected turn 3 to have moved Gate-B mood positive, got {affect4}"
+    cg4 = d4.get("affect_marker_congruence")
+    assert cg4 is not None and cg4.get("on") is True
+    assert cg4["suppressed"] is False
+    assert cg4["incongruent"] is False
+    lead4 = (d4.get("affect_drives") or {}).get("lead") or ""
+    assert lead4, "a congruent turn must keep its (non-empty) lead"
+    # NOT `.startswith(lead4)`: by the time Gate-B's own mood is genuinely positive (the loop above), this session
+    # has crossed multiple topics (day/surprise/dog), so the topic-swap ("On dog, then -- ", webapp/server.py
+    # ~6689), common-ground ("As for it -- ", ~6698) and GNW-stop ("Setting the held thread aside -- ", ~6757)
+    # leads can ALSO legitimately fire on this same turn -- production composes leads in a fixed onion order
+    # (gnw_stop outermost ... affect innermost, each `resp["answer"] = X_lead + resp["answer"]` in sequence), so
+    # affect's lead is not necessarily the first substring. This is documented, intentional composition (verified
+    # by reading webapp/server.py's lead-prepend chain), not a production bug -- "kept" means present, not first.
+    assert lead4 in d4["answer"], f"congruent turn's marker missing from the answer: {lead4!r} not in {d4['answer']!r}"
+
+    client.post("/api/brain-chat/reset", json={"session": sess, "brain": "tiny-demo", "renderer": "stub"})
+
+
 def test_brain_chat_curiosity_graded_novelty_explicit_off_is_byte_identical(client, monkeypatch):
     """Scaffold-retirement backlog rank-10: FLIPPED DEFAULT-ON 2026-09-05 (production-flip GO,
     `research/findings/2026-09-05-rank16-rank20-rank10-production-flip-GO.md`). The BYTE-IDENTICAL ESCAPE is now the

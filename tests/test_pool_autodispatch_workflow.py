@@ -381,6 +381,71 @@ def test_pop_job_hands_out_revision_pinned_job_when_the_revision_is_present(tmp_
     assert sha not in queue.read_text()          # popped -- removed from the queue
 
 
+def _write_ssh_stub_that_forwards_stdin_like_real_ssh(tmp_path: Path, missing_sha: str):
+    """A stub `ssh` that actually DRAINS its own stdin before answering -- unlike every other stub `ssh` in this
+    file (`echo "$*" >> log; exit N`, which never touches stdin at all). Real `ssh`, run non-interactively
+    WITHOUT `-n`, still opens and forwards its local stdin to the remote command; only `-n` (or a `</dev/null`
+    redirect) stops it. This is the one behaviour needed to reproduce the 2026-09-25 incident (pool1+pool2
+    starved 07:35-09:59 EDT: 74 already-runnable mem_gb=8 B2b jobs sat queued behind ONE job pinned to a
+    not-yet-provisioned revision) -- see revision_available()'s own comment in tools/pool_autodispatch.sh."""
+    bin_dir = tmp_path / "bin"
+    bin_dir.mkdir()
+    log = tmp_path / "ssh.log"
+    log.write_text("")
+    stub = bin_dir / "ssh"
+    stub.write_text(f"""#!/usr/bin/env bash
+echo "$*" >> "{log}"
+has_n=0
+for a in "$@"; do [ "$a" = "-n" ] && has_n=1; done
+# Mirror real ssh: with no -n (and no caller-side </dev/null), it forwards local stdin to the remote side --
+# here that means draining whatever the CALLER's fd 0 happens to be at this moment.
+[ "$has_n" = 0 ] && cat >/dev/null
+case "$*" in
+  *"revisions/{missing_sha}"*) exit 1 ;;
+esac
+exit 0
+""")
+    stub.chmod(stub.stat().st_mode | stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH)
+    return bin_dir, log
+
+
+def test_pop_job_does_not_let_an_unavailable_revision_probe_swallow_later_queued_candidates(tmp_path: Path) -> None:
+    # THE 2026-09-25 INCIDENT: pop_job's revision-pinned check runs INSIDE `while IFS= read -r cand; do ... done
+    # < <(awk ...)` -- one candidate per iteration, `continue` past a candidate this node can't run. revision_
+    # available()'s ssh call used to omit `-n`, so real ssh (which still opens/forwards ITS OWN stdin even
+    # non-interactively) drained the SAME pipe the enclosing `read` was consuming from, on the very first probe
+    # -- silently truncating the scan to that one candidate. pop_job returned empty every time, discarding every
+    # OTHER admissible job behind it (this queue's second, unpinned, perfectly runnable line), for as long as
+    # the blocking revision stayed unprovisioned -- exactly what happened to pool1 AND pool2 (pool2 was never
+    # AWS-idle-stopped, ruling out an AWS-specific cause) for ~2.5 h with 74 ready mem_gb=8 B2b lines stranded
+    # behind one line pinned to a different, not-yet-provisioned revision.
+    now = int(time.time())
+    missing_sha = "5b5ea1b"
+    queue = tmp_path / "pool.queue"
+    queue.write_text(
+        f"{now}\tcd ~/derisk-pool/revisions/{missing_sha} && bash blocked.sh  #checked:r mem_gb=1\n"
+        f"{now + 1}\tbash good.sh  #checked:r mem_gb=1\n"
+    )
+    bin_dir, ssh_log = _write_ssh_stub_that_forwards_stdin_like_real_ssh(tmp_path, missing_sha)
+    env = {
+        **os.environ,
+        "PATH": f"{bin_dir}:{os.environ.get('PATH', '')}",
+        "POOL_QUEUE_PATH": str(queue),
+        "POOL_RUNNING_PATH": str(tmp_path / "pool.running"),
+        "POOL_SSH_CONFIG": str(tmp_path / "does-not-exist"),
+    }
+    res = subprocess.run(["bash", str(DISPATCHER), "--pop-once", "999", "pool1"],
+                          cwd=ROOT, env=env, capture_output=True, text=True, timeout=30)
+    assert res.returncode == 0, res.stderr
+    assert "good.sh" in res.stdout, (
+        f"pop_job returned {res.stdout!r} -- the unavailable-revision probe swallowed the rest of the queue "
+        "scan instead of just being skipped (the 2026-09-25 starvation bug)"
+    )
+    assert missing_sha in queue.read_text()      # the blocked candidate was never popped -- still queued
+    assert "good.sh" not in queue.read_text()    # the good candidate WAS popped -- removed from the queue
+    assert " -n " in ssh_log.read_text() or ssh_log.read_text().strip().startswith("-n")
+
+
 def test_pop_job_without_a_node_arg_skips_the_revision_check_entirely(tmp_path: Path) -> None:
     # Backward compatibility: test seams / callers that never pass [node] (this file's other --pop-once tests)
     # must see UNCHANGED size-only selection -- no ssh call at all, even for a revision-pinned candidate.

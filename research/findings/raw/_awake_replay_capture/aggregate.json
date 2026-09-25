@@ -1,0 +1,50 @@
+{
+  "family": "arc",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "seed_verdicts": {
+    "100": "GO",
+    "101": "NO-GO",
+    "102": "GO",
+    "42": "GO",
+    "43": "GO",
+    "44": "GO"
+  },
+  "n_go": 5,
+  "verdict": "NO-GO",
+  "signflip_p_rest_rescue_on_vs_off": 0.03125,
+  "signflip_p_rest_rescue_intact_vs_awake_lesion": 0.03125,
+  "diffs_on_minus_off": [
+    1,
+    0,
+    1,
+    1,
+    1,
+    1
+  ],
+  "diffs_intact_minus_lesion": [
+    1,
+    0,
+    1,
+    1,
+    1,
+    1
+  ],
+  "reported_correct_counts": {
+    "lq_arc": 0,
+    "lz_arc": 0,
+    "lr_ledger_off": 6
+  },
+  "preconditions": [
+    {"name": "six_seeds_complete", "ok": true},
+    {"name": "zero_arm_errors_all_seeds", "ok": true},
+    {"name": "no_undefined_seed_verdicts", "ok": true},
+    {"name": "instrument_gates_hold_G0_P1_I1_I2_I3_gamma_all_6_seeds", "ok": true}
+  ]
+}
