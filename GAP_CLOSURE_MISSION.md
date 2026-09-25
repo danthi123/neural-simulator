@@ -155,6 +155,16 @@ SOUND-WITH-ISSUES; held, NOT queued until B3/B4 run. Workflow `wqjppzlyh`: revie
 production-path arm set (B3 wall-clock day with a clock seam, B4 salient-vs-neutral + waking-only DA lesion, episodic-store arm,
 D3 cupy spec) with a prereg amendment + dev smoke.
 
+**☀️ 12:40 OWNER ITEMS (briefed 12:35; briefs = workflow `w9vezagal` journal):** (1) memory pair B2: accept the overnight
+forgetting at flip time or wait for a fix -- recommendation: no ruling until B3/B4 land (the 'weak telling lost' number was never
+checked against immediate recall); lean wait. (2) SETTLE A2 congruence mechanism: the prereg reserved it for the owner; an overnight
+lane wired a HOST if/lookup gate (default-OFF, 5b5ea1b74) without asking -- recommendation: keep it as a measurement-only interim,
+NEVER flip BRAIN_AFFECT_MARKER_CONGRUENCE or BRAIN_AFFECT_MARKER_SETTLE without explicit owner sign-off; the brain-based target is
+the speak/abstain race gating the marker. (3) B2b torn cells (s43/d5-consolidate, s42/causal-whatif, s42/affect-appraisal-interoceptive):
+recommendation: redo on a different host, log in b2b0924_reruns.tsv, one-line prereg amendment. (4) Legacy claim-check failures:
+recommendation: merge the 8 confirmed corrections from claimcheck-audit-1..4, add a dated scope note, no bulk-marking, no retractions.
+(5) flipdefaults-adequate unpinned reference: FYI; B2a pinned R2 independently confirms the three flips; accept with the caveat.
+
 **🌙 PRE-DECIDED NEXT ACTIONS — OVERNIGHT PLAN (owner asleep from 01:35, 2026-09-25); work in order, re-arm the heartbeat on every expiry:**
 1. ✅ B2a DONE 03:45: re-scored R1 PASS (28/28, 0 regressions) + R2 PASS (168/168 valid at pinned M1, 6 covered-by-parent,
    0 incomplete), two verifiers agree, merged 075c24cd3 (follow-up to the FAIL finding). Robust core 24, union 25, mean
