@@ -1351,9 +1351,15 @@ FACULTY_LESIONS = {
     "affect-drives-response":   dict(flag="BRAIN_AFFECT_DRIVES_LESION", value="1", kind="neural-lesion",
         note="cuts the interoceptive->ladder synapses -> felt mood collapses -> the affective lead vanishes. NOTE the "
              "'well' turn is mood-neutral (level 0) intact too, so the acted decision may be unchanged there; the change "
-             "shows on an affective turn — a lower-confidence row on the neutral probe."),
+             "shows on an affective turn — a lower-confidence row on the neutral probe. 2026-09-25 EFFECT NOTE "
+             "(retire-affect-marker-word, BRAIN_AFFECT_MARKER_SURFACE default OFF): the compared fields "
+             "(affect_drives.on/.acted/.high_arousal/.reason, FACULTY_PROBES below) are the RECORDED internal state, "
+             "not resp['answer'] -- this row is UNCHANGED by the surface flip (#1 load-bearing metric unaffected)."),
     "affect-marker-spiking-wta":dict(flag="BRAIN_AFFECT_MARKER_SPIKING_LESION", value="1", kind="neural-lesion",
-        note="cuts the felt-state->marker WTA selection; measured on the strongly-affective 'emo' turn (level>0)."),
+        note="cuts the felt-state->marker WTA selection; measured on the strongly-affective 'emo' turn (level>0). "
+             "2026-09-25 EFFECT NOTE: the compared field is affect_drives.lead (the RECORDED selection), not the "
+             "answer surface -- UNCHANGED by BRAIN_AFFECT_MARKER_SURFACE's new default-OFF (#1 load-bearing metric "
+             "unaffected; see docs/PRODUCTION_INTEGRATION_LEDGER.yaml affect-drives-response row)."),
     "da-mode-drives-response":  dict(flag="BRAIN_DA_DRIVES_LESION", value="1", kind="neural-lesion", note=""),
     "da-gated-encoding":        dict(flag="BRAIN_DA_ENCODING_LESION", value="1", kind="neural-lesion", note=""),
     "source-provenance-honesty":dict(flag="BRAIN_SOURCE_PROVENANCE_HONESTY_LESION", value="1", kind="neural-lesion",

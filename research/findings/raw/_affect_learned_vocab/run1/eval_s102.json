@@ -1,0 +1,691 @@
+{
+ "seed": 102,
+ "n_shuf": 8,
+ "reader_loaded": true,
+ "vocab_shas": [
+  "7f2a489fb5a4f3a6340d633521ec9681f018e1b9b4418e64614cb813118179dc"
+ ],
+ "n_neg_eval": 104,
+ "n_pos_eval": 82,
+ "n_neg_eval_heard": 104,
+ "replica_stats": {
+  "0": {
+   "neg_recall": 0.4423076923076923,
+   "neg_wrong": 0.04807692307692308,
+   "pos_recall": 0.1951219512195122,
+   "pos_wrong": 0.04878048780487805,
+   "neg_on_pos": 0.04878048780487805,
+   "contrast_D": 0.39352720450281425
+  },
+  "1": {
+   "neg_recall": 0.1346153846153846,
+   "neg_wrong": 0.21153846153846154,
+   "pos_recall": 0.24390243902439024,
+   "pos_wrong": 0.06097560975609756,
+   "neg_on_pos": 0.06097560975609756,
+   "contrast_D": 0.07363977485928705
+  },
+  "2": {
+   "neg_recall": 0.21153846153846154,
+   "neg_wrong": 0.125,
+   "pos_recall": 0.14634146341463414,
+   "pos_wrong": 0.12195121951219512,
+   "neg_on_pos": 0.12195121951219512,
+   "contrast_D": 0.08958724202626642
+  },
+  "3": {
+   "neg_recall": 0.08653846153846154,
+   "neg_wrong": 0.23076923076923078,
+   "pos_recall": 0.17073170731707318,
+   "pos_wrong": 0.04878048780487805,
+   "neg_on_pos": 0.04878048780487805,
+   "contrast_D": 0.037757973733583486
+  },
+  "4": {
+   "neg_recall": 0.10576923076923077,
+   "neg_wrong": 0.22115384615384615,
+   "pos_recall": 0.21951219512195122,
+   "pos_wrong": 0.08536585365853659,
+   "neg_on_pos": 0.08536585365853659,
+   "contrast_D": 0.020403377110694176
+  },
+  "5": {
+   "neg_recall": 0.14423076923076922,
+   "neg_wrong": 0.22115384615384615,
+   "pos_recall": 0.12195121951219512,
+   "pos_wrong": 0.10975609756097561,
+   "neg_on_pos": 0.10975609756097561,
+   "contrast_D": 0.03447467166979361
+  },
+  "6": {
+   "neg_recall": 0.23076923076923078,
+   "neg_wrong": 0.08653846153846154,
+   "pos_recall": 0.14634146341463414,
+   "pos_wrong": 0.14634146341463414,
+   "neg_on_pos": 0.14634146341463414,
+   "contrast_D": 0.08442776735459664
+  },
+  "7": {
+   "neg_recall": 0.2403846153846154,
+   "neg_wrong": 0.14423076923076922,
+   "pos_recall": 0.08536585365853659,
+   "pos_wrong": 0.14634146341463414,
+   "neg_on_pos": 0.14634146341463414,
+   "contrast_D": 0.09404315196998125
+  },
+  "8": {
+   "neg_recall": 0.25961538461538464,
+   "neg_wrong": 0.057692307692307696,
+   "pos_recall": 0.17073170731707318,
+   "pos_wrong": 0.13414634146341464,
+   "neg_on_pos": 0.13414634146341464,
+   "contrast_D": 0.12546904315197
+  }
+ },
+ "true": {
+  "neg_recall": 0.4423076923076923,
+  "neg_wrong": 0.04807692307692308,
+  "pos_recall": 0.1951219512195122,
+  "pos_wrong": 0.04878048780487805,
+  "neg_on_pos": 0.04878048780487805,
+  "contrast_D": 0.39352720450281425
+ },
+ "shuffled": {
+  "contrast_D": [
+   0.07363977485928705,
+   0.08958724202626642,
+   0.037757973733583486,
+   0.020403377110694176,
+   0.03447467166979361,
+   0.08442776735459664,
+   0.09404315196998125,
+   0.12546904315197
+  ],
+  "neg_recall": [
+   0.1346153846153846,
+   0.21153846153846154,
+   0.08653846153846154,
+   0.10576923076923077,
+   0.14423076923076922,
+   0.23076923076923078,
+   0.2403846153846154,
+   0.25961538461538464
+  ]
+ },
+ "held_seed": {
+  "n": 24,
+  "n_decided": 8,
+  "sign_acc_decided": 0.875,
+  "reads": {
+   "angry": [
+    -0.65,
+    -0.5620723362658847
+   ],
+   "brave": [
+    0.55,
+    0.0
+   ],
+   "candy": [
+    0.625,
+    0.0
+   ],
+   "cozy": [
+    0.5,
+    0.0
+   ],
+   "delighted": [
+    0.7999999999999998,
+    0.4887585532746823
+   ],
+   "evil": [
+    -0.7,
+    0.0
+   ],
+   "fun": [
+    0.8500000000000001,
+    0.0
+   ],
+   "gentle": [
+    0.5,
+    0.5131964809384165
+   ],
+   "grief": [
+    -0.775,
+    -0.47653958944281527
+   ],
+   "guilty": [
+    -0.6,
+    0.0
+   ],
+   "happy": [
+    0.875,
+    0.0
+   ],
+   "help": [
+    0.575,
+    0.0
+   ],
+   "hopeless": [
+    -0.775,
+    0.0
+   ],
+   "hug": [
+    0.7,
+    0.8797653958944283
+   ],
+   "kill": [
+    -0.775,
+    -0.4887585532746823
+   ],
+   "kiss": [
+    0.6499999999999999,
+    0.0
+   ],
+   "mean": [
+    -0.575,
+    0.0
+   ],
+   "nasty": [
+    -0.65,
+    0.0
+   ],
+   "peace": [
+    0.675,
+    -0.7209188660801565
+   ],
+   "play": [
+    0.7250000000000001,
+    0.0
+   ],
+   "pretty": [
+    0.575,
+    0.0
+   ],
+   "proud": [
+    0.6499999999999999,
+    0.0
+   ],
+   "terrible": [
+    -0.775,
+    0.0
+   ],
+   "wonderful": [
+    0.7999999999999998,
+    0.5131964809384165
+   ]
+  }
+ },
+ "neutral62_diag": {
+  "n": 62,
+  "nonzero_frac": 0.16129032258064516,
+  "reads": {
+   "cat": -0.4887585532746823,
+   "cold": -0.6964809384164223,
+   "dirty": -0.46432062561094817,
+   "garden": 0.4521016617790812,
+   "mess": -0.46432062561094817,
+   "moon": 0.5498533724340176,
+   "scary": -1.0,
+   "sorry": 0.8064516129032259,
+   "tired": -0.5131964809384165,
+   "witch": 0.5131964809384165
+  }
+ },
+ "g3": {
+  "off_all_zero": true,
+  "frac_within": 0.725,
+  "mean_abs": 0.15233076735092865,
+  "max_abs": 0.6842619745845553,
+  "flagged": [
+   [
+    "What is the capital of France?",
+    -0.5742913000977518,
+    [
+     "france"
+    ]
+   ],
+   [
+    "Tell me about Wolfgang Amadeus Mozart.",
+    0.6842619745845553,
+    [
+     "mozart"
+    ]
+   ],
+   [
+    "Water boils at one hundred degrees Celsius at sea level.",
+    -0.6109481915933529,
+    [
+     "boils",
+     "sea"
+    ]
+   ],
+   [
+    "Paris is the largest city in France.",
+    -0.5742913000977518,
+    [
+     "france"
+    ]
+   ],
+   [
+    "Germany borders France, Poland and Austria.",
+    -0.6017839687194526,
+    [
+     "germany",
+     "france",
+     "poland",
+     "austria"
+    ]
+   ],
+   [
+    "The Pacific is the largest ocean on the planet.",
+    -0.41544477028348,
+    [
+     "pacific"
+    ]
+   ],
+   [
+    "John Adams was the second president of the United States.",
+    -0.5131964809384165,
+    [
+     "second"
+    ]
+   ],
+   [
+    "John von Neumann worked on computer architecture and game theory.",
+    -0.5254154447702836,
+    [
+     "von"
+    ]
+   ],
+   [
+    "Mount Everest is the highest mountain above sea level.",
+    -0.427663734115347,
+    [
+     "sea"
+    ]
+   ],
+   [
+    "Japan is an island country in East Asia.",
+    -0.4887585532746823,
+    [
+     "japan"
+    ]
+   ],
+   [
+    "Beethoven composed nine symphonies.",
+    -0.22507331378299122,
+    [
+     "beethoven",
+     "symphonies"
+    ]
+   ],
+   [
+    "What year did the Berlin Wall come down?",
+    -0.4521016617790812,
+    [
+     "did",
+     "down"
+    ]
+   ]
+  ]
+ },
+ "g4": {
+  "lesion_appraisal_identical_to_off": true,
+  "lesion_neg_words_read_zero": true,
+  "neg_probe_negative_intact": 0.4423076923076923,
+  "neg_probe_negative_lesion": 0.0,
+  "attributable_to_learned_edge": 1.0
+ },
+ "named": {
+  "sadness": 0.0,
+  "saddened": -0.4887585532746823,
+  "unhappy": 0.0,
+  "sorrow": 0.0,
+  "melancholy": 0.0,
+  "loss": -0.4887585532746823,
+  "loneliness": -0.7331378299120236,
+  "decay": -0.41544477028348,
+  "alone": 0.0
+ },
+ "named_sentences": {
+  "It was sadness.": [
+   0.0,
+   []
+  ],
+  "It was saddened.": [
+   -0.4887585532746823,
+   [
+    "saddened"
+   ]
+  ],
+  "It was unhappy.": [
+   0.0,
+   []
+  ],
+  "It was sorrow.": [
+   0.0,
+   []
+  ],
+  "It was melancholy.": [
+   0.0,
+   []
+  ],
+  "It was loss.": [
+   -0.4887585532746823,
+   [
+    "loss"
+   ]
+  ],
+  "It was loneliness.": [
+   -0.7331378299120236,
+   [
+    "loneliness"
+   ]
+  ],
+  "It was decay.": [
+   -0.41544477028348,
+   [
+    "decay"
+   ]
+  ],
+  "It was alone.": [
+   0.0,
+   []
+  ]
+ },
+ "fact_dev_intact": [
+  [
+   "What does the cat eat?",
+   0.0,
+   []
+  ],
+  [
+   "The city council approved the new budget.",
+   0.0,
+   []
+  ],
+  [
+   "Einstein published the theory of relativity.",
+   0.0,
+   []
+  ],
+  [
+   "The river runs past the old mill.",
+   0.0,
+   []
+  ],
+  [
+   "The school year begins in September.",
+   0.0,
+   []
+  ],
+  [
+   "Tell me about the history of Rome.",
+   0.0,
+   []
+  ],
+  [
+   "The computer stores data on a disk.",
+   0.0,
+   []
+  ],
+  [
+   "The farmer planted wheat in the spring.",
+   0.0,
+   []
+  ],
+  [
+   "Mercury is the smallest planet in the solar system.",
+   0.0,
+   []
+  ],
+  [
+   "The orchestra rehearsed for the concert.",
+   0.0,
+   []
+  ],
+  [
+   "The ship sailed from Lisbon to Brazil.",
+   0.0,
+   []
+  ],
+  [
+   "Who wrote the novel Moby Dick?",
+   0.0,
+   []
+  ],
+  [
+   "The engine uses diesel fuel.",
+   0.0,
+   []
+  ],
+  [
+   "The students read the chapter on cells.",
+   0.0,
+   []
+  ],
+  [
+   "The capital of Italy is Rome.",
+   0.0,
+   []
+  ],
+  [
+   "Bread is made from flour, water and yeast.",
+   0.0,
+   []
+  ],
+  [
+   "The election was held in November.",
+   0.0,
+   []
+  ],
+  [
+   "The telescope observed a distant galaxy.",
+   0.0,
+   []
+  ],
+  [
+   "The map shows the northern provinces.",
+   0.0,
+   []
+  ],
+  [
+   "The museum is closed on Sundays.",
+   0.5131964809384165,
+   [
+    "sundays"
+   ]
+  ]
+ ],
+ "neg_eval_reads": {
+  "abandoned": 0.0,
+  "abuse": 0.0,
+  "ache": -1.0,
+  "aggression": -0.843108504398827,
+  "aggressive": -0.5131964809384165,
+  "agitated": 0.0,
+  "appalling": 0.5131964809384165,
+  "arrogant": 0.4887585532746823,
+  "betrayal": 0.0,
+  "bitter": 0.0,
+  "burden": 0.0,
+  "calamity": 0.0,
+  "catastrophic": 0.0,
+  "chaos": -0.6231671554252199,
+  "conflict": -0.5131964809384165,
+  "corrupt": -0.843108504398827,
+  "criminal": -0.427663734115347,
+  "crumbling": 0.0,
+  "cursed": 0.0,
+  "damaged": -0.7209188660801565,
+  "damaging": 0.0,
+  "danger": -0.427663734115347,
+  "dangerous": 0.0,
+  "deadly": -0.46432062561094817,
+  "deceit": -0.9775171065493646,
+  "defeat": -0.647605083088954,
+  "defeated": -0.46432062561094817,
+  "defective": 0.0,
+  "dejected": -0.6842619745845552,
+  "despondent": -0.46432062561094817,
+  "discouraged": 0.0,
+  "disgraceful": 0.0,
+  "disheartened": -0.41544477028348004,
+  "dismal": 0.0,
+  "distressed": 0.0,
+  "downcast": 0.0,
+  "dread": -0.5376344086021506,
+  "enraged": 0.0,
+  "failed": 0.0,
+  "failure": -0.41544477028348,
+  "fatal": 0.0,
+  "fault": 0.0,
+  "faulty": 0.0,
+  "fragile": 0.0,
+  "frail": -0.83088954056696,
+  "fright": -0.7209188660801565,
+  "gloom": 0.0,
+  "gloomy": -0.6109481915933529,
+  "greed": -0.9042033235581624,
+  "grim": 0.0,
+  "hardship": -0.46432062561094817,
+  "horror": 0.0,
+  "ill": -0.43988269794721413,
+  "inadequate": 0.0,
+  "infected": -0.43988269794721413,
+  "inferior": 0.0,
+  "injury": -0.5498533724340176,
+  "injustice": -0.7942326490713588,
+  "intolerable": -1.0,
+  "isolated": 0.0,
+  "lethal": 0.0,
+  "livid": 0.0,
+  "malicious": 0.0,
+  "meaningless": 0.0,
+  "merciless": -0.7209188660801565,
+  "mistake": 0.0,
+  "morbid": -0.7086999022482894,
+  "obnoxious": -0.7942326490713588,
+  "offensive": 0.0,
+  "poisonous": 0.0,
+  "poor": 0.0,
+  "rejected": 0.0,
+  "repugnant": 0.0,
+  "repulsive": 0.0,
+  "rotten": -0.5742913000977518,
+  "savage": -0.7942326490713588,
+  "shabby": -0.7209188660801565,
+  "shattered": -1.0,
+  "sickening": 1.0,
+  "spiteful": 0.4887585532746823,
+  "spoiled": 0.0,
+  "strife": 0.843108504398827,
+  "suffering": -0.610948191593353,
+  "tearful": 0.0,
+  "tension": -0.5376344086021506,
+  "threat": 0.0,
+  "threatening": 0.0,
+  "torment": 0.0,
+  "torture": -0.5131964809384165,
+  "toxic": 0.0,
+  "tragedy": 0.0,
+  "turmoil": 0.0,
+  "unease": -0.598729227761486,
+  "unfair": 0.0,
+  "unjust": 0.0,
+  "useless": -0.5620723362658846,
+  "vicious": -0.6231671554252199,
+  "vile": 0.0,
+  "violence": -0.5865102639296188,
+  "violent": -0.46432062561094817,
+  "weakness": -0.7209188660801565,
+  "wicked": -0.6964809384164223,
+  "worry": -0.46432062561094817,
+  "worthless": 0.0
+ },
+ "pos_eval_reads": {
+  "abundant": 0.0,
+  "achievement": 0.0,
+  "adored": 0.0,
+  "advantage": 0.0,
+  "affectionate": 0.9164222873900294,
+  "appreciative": 0.7086999022482894,
+  "beloved": 0.7697947214076247,
+  "beneficial": 0.0,
+  "best": 0.0,
+  "blissful": -0.5131964809384165,
+  "bold": 0.0,
+  "bright": 0.5865102639296188,
+  "celebrated": 0.0,
+  "competent": 0.0,
+  "considerate": 0.0,
+  "courageous": 0.0,
+  "cure": 0.0,
+  "eager": 0.0,
+  "efficient": 0.0,
+  "elegant": 0.0,
+  "encouraging": 0.0,
+  "esteemed": 0.0,
+  "excellent": 0.0,
+  "fabulous": 0.5131964809384165,
+  "faithful": 0.0,
+  "favorite": 0.0,
+  "finest": 0.0,
+  "fragrant": 0.9164222873900294,
+  "fresh": 0.0,
+  "generous": 0.0,
+  "gifted": 0.0,
+  "gleaming": 0.0,
+  "glorious": 0.0,
+  "glow": 0.0,
+  "gorgeous": 0.0,
+  "great": 0.0,
+  "heavenly": 0.0,
+  "heroic": 0.0,
+  "honest": 0.0,
+  "honored": 0.0,
+  "ideal": 0.0,
+  "impressive": 0.0,
+  "improvement": 0.0,
+  "incredible": 0.0,
+  "inspired": 0.0,
+  "jolly": 1.0,
+  "jubilant": 0.0,
+  "luminous": 0.0,
+  "pleasant": 0.0,
+  "plentiful": 0.0,
+  "positive": 0.0,
+  "praised": 0.5865102639296188,
+  "prize": 0.0,
+  "promising": 0.0,
+  "prosperous": 0.0,
+  "reassuring": 0.41544477028348,
+  "recover": -0.7209188660801565,
+  "refreshing": 0.5865102639296188,
+  "reliable": 0.0,
+  "relief": -1.0,
+  "remarkable": 0.0,
+  "reward": 0.0,
+  "satisfying": 0.0,
+  "serene": 0.0,
+  "shine": 0.8675464320625611,
+  "soothing": 0.8675464320625611,
+  "strong": 0.0,
+  "stunning": 0.0,
+  "successful": 0.0,
+  "supportive": 0.0,
+  "talented": 0.0,
+  "tasty": 0.0,
+  "tender": 0.0,
+  "terrific": 0.0,
+  "tranquil": 0.0,
+  "triumph": 0.7209188660801565,
+  "triumphant": 0.0,
+  "valuable": 0.0,
+  "victorious": -0.5254154447702836,
+  "virtuous": 0.5131964809384165,
+  "welcome": 0.5620723362658846,
+  "welcoming": 0.8064516129032259
+ },
+ "weights_sha256": "cc00363b4db08be986d5c7c4cae91c4e7601c112d83453537ac1159e1c7cd3d8"
+}

@@ -192,6 +192,27 @@ def marker_selection_shuffled() -> bool:
     return os.environ.get("BRAIN_AFFECT_MARKER_SPIKING_SHUFFLE", "0").strip().lower() in ("1", "true", "on", "yes")
 
 
+# ── AFFECT-MARKER SURFACE RETIREMENT (2026-09-25, owner decision on branch research/retire-affect-marker-word).
+#    Owner, verbatim: "It would be weird for the brain's replies to just be adding 'wonderful!' randomly. Its
+#    speech should be influenced by its feelings, not just have a feeling-related word thrown in randomly."
+#    Approved option A: STOP prepending the affect-marker word to the answer surface, but KEEP computing +
+#    recording it (`affect_drives.lead` -- the felt-state read, the #86 spiking WTA selection and the A2
+#    congruence gate are ALL unchanged; only whether the host string is glued onto `resp['answer']` is gated
+#    here). Default OFF: the marker is an internal record only. `BRAIN_AFFECT_MARKER_SURFACE=1` restores the
+#    pre-2026-09-25 production behavior byte-identically (the SAME recorded lead, now also prepended) -- see
+#    `tests/test_webapp_server.py::test_brain_chat_affect_marker_surface_default_off_records_but_does_not_surface`
+#    for the hash-style ON==OFF+lead check. See research/findings/2026-09-24-affect-marker-settle-flip-criteria-
+#    AMENDMENT-PREREG.md (dated 2026-09-25 addendum: SETTLE's A3 timing run is CANCELLED by this decision) and
+#    docs/PRODUCTION_INTEGRATION_LEDGER.yaml (affect-drives-response / affect-marker-spiking-wta rows).
+def affect_marker_surface_enabled() -> bool:
+    """`BRAIN_AFFECT_MARKER_SURFACE` truthy (1/true/on/yes) -> PREPEND the already-selected+congruence-gated
+    marker to the answer surface (today's byte-identical pre-2026-09-25 behavior). Default OFF (unset, or any
+    other value): the marker stays a computed+recorded internal field (`affect_drives.lead`) but is never glued
+    onto `resp['answer']`. This flag touches ONLY the host string-concat step in webapp/server.py -- the neural
+    read, the WTA selection and the congruence gate all run exactly as before regardless of this flag."""
+    return os.environ.get("BRAIN_AFFECT_MARKER_SURFACE", "0").strip().lower() in ("1", "true", "on", "yes")
+
+
 # ── A2 ABSTENTION-CONGRUENCE GATE (2026-09-25 amendment; research/findings/2026-09-24-affect-marker-settle-
 #    flip-criteria-AMENDMENT-PREREG.md, "Amendment 2"; biology: research/biology/affective-marker-abstention-
 #    congruence-gate.md). WHY: the prior mechanism (`research.runners._affect_marker_settle_congruence.apply_policy`)

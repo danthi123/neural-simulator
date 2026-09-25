@@ -1,0 +1,24 @@
+{
+  "seed": 7,
+  "turns": [
+    "well",
+    "question",
+    "unknown",
+    "hold",
+    "held",
+    "scalar",
+    "open",
+    "emo",
+    "episodic",
+    "tom_fb"
+  ],
+  "byte_identical_off": true,
+  "off_diffs": [],
+  "on_arm_query_populated": true,
+  "on_arm_answer": "Sally will look in the basket for the marble.",
+  "arms": {
+    "unset": "/home/ubuntu/derisk-pool/revisions/b5a895471f2f2040fb61fc403aa76f8668c27cd5/research/findings/raw/_tom_false_belief_chat/arm_unset.json",
+    "explicit_off": "/home/ubuntu/derisk-pool/revisions/b5a895471f2f2040fb61fc403aa76f8668c27cd5/research/findings/raw/_tom_false_belief_chat/arm_explicit_off.json",
+    "on": "/home/ubuntu/derisk-pool/revisions/b5a895471f2f2040fb61fc403aa76f8668c27cd5/research/findings/raw/_tom_false_belief_chat/arm_on.json"
+  }
+}

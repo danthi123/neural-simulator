@@ -1,0 +1,284 @@
+{
+ "runner": "research.runners.d6_capacity_curve",
+ "seed": 100,
+ "n_facts": 5,
+ "arm": "HEBB",
+ "env": {
+  "SIM_BACKEND": "numpy",
+  "BRAIN_FACT_SHARD_RETRIEVAL": "1",
+  "BRAIN_D6_ENGRAM_PRUNE": "0",
+  "BRAIN_D6_HEBBIAN_STORE": "1",
+  "BRAIN_D6_ENGRAM_VOCAB": "1",
+  "BRAIN_D6_ENGRAM_READTIME": "1",
+  "BRAIN_D6_HEBBIAN_FREEZE": "0"
+ },
+ "resource_probe": false,
+ "D": 128,
+ "lexicon": [
+  220,
+  60,
+  220
+ ],
+ "vocab_headroom": 128,
+ "rss_mb": {
+  "start": 31.84765625,
+  "after_build": 73.74609375,
+  "after_teach": 74.76171875,
+  "after_probe": 116.73046875
+ },
+ "error": null,
+ "cost_hardware_class": "pool-cpu-shared",
+ "node": {
+  "hostname": "node-dl4g243",
+  "cpu_count": 12,
+  "loadavg_start": [
+   2.92138671875,
+   5.658203125,
+   18.87939453125
+  ],
+  "loadavg_end": [
+   3.677734375,
+   5.591796875,
+   18.4365234375
+  ]
+ },
+ "probe_spec_hash": "2e242cd795083adbc04e54f09a4cdf5fa60aed177eaa7de520bec79fc7a09882",
+ "facts_hash": "7102cbf657e823dd187a4b4d652964cdaf7ae38145a8d1218e346a5667910426",
+ "build_s": 14.39,
+ "substrate_threshold_sha256": "64554026d35490eaebfab37b05eb80eaea32f5d04b5dc7d8282079f5bc397743",
+ "n_total": 6385,
+ "k_max": 21,
+ "fact_shard_active_flag": true,
+ "encode_s": [
+  0.2743,
+  0.2752,
+  0.2753,
+  0.2764,
+  0.2765
+ ],
+ "encode_cpu_s": [
+  0.2743,
+  0.2752,
+  0.2752,
+  0.2764,
+  0.2765
+ ],
+ "parse_errors": 0,
+ "kb_len_after_teach": 5,
+ "encode_diag": {
+  "n": 5,
+  "n_frozen": 0,
+  "n_saturated_min": 128,
+  "mean_abs_w_mean": 1.0
+ },
+ "probes": {
+  "taught": [
+   {
+    "i": 0,
+    "answer": "pt211",
+    "cls": "correct",
+    "yn": "yes",
+    "block_ok": true,
+    "block_decode": {
+     "agent": "ag140",
+     "action": "ac34",
+     "patient": "pt211"
+    },
+    "held": true,
+    "readout": 207.998814,
+    "mean_abs_w": 1.0,
+    "shard": 2,
+    "t_query": 0.3623,
+    "t_yn": 0.3516,
+    "t_engram": 0.0342,
+    "t_engram_cpu": 0.0342
+   },
+   {
+    "i": 1,
+    "answer": "pt083",
+    "cls": "correct",
+    "yn": "yes",
+    "block_ok": true,
+    "block_decode": {
+     "agent": "ag140",
+     "action": "ac31",
+     "patient": "pt083"
+    },
+    "held": true,
+    "readout": 207.998803,
+    "mean_abs_w": 1.0,
+    "shard": 3,
+    "t_query": 0.702,
+    "t_yn": 0.7175,
+    "t_engram": 0.0347,
+    "t_engram_cpu": 0.0347
+   },
+   {
+    "i": 2,
+    "answer": "pt211",
+    "cls": "correct",
+    "yn": "yes",
+    "block_ok": true,
+    "block_decode": {
+     "agent": "ag001",
+     "action": "ac39",
+     "patient": "pt211"
+    },
+    "held": true,
+    "readout": 207.998806,
+    "mean_abs_w": 1.0,
+    "shard": 1,
+    "t_query": 0.3526,
+    "t_yn": 0.3559,
+    "t_engram": 0.0346,
+    "t_engram_cpu": 0.0346
+   },
+   {
+    "i": 3,
+    "answer": "pt083",
+    "cls": "correct",
+    "yn": "yes",
+    "block_ok": true,
+    "block_decode": {
+     "agent": "ag001",
+     "action": "ac35",
+     "patient": "pt083"
+    },
+    "held": true,
+    "readout": 207.998807,
+    "mean_abs_w": 1.0,
+    "shard": 2,
+    "t_query": 0.7101,
+    "t_yn": 0.7072,
+    "t_engram": 0.0351,
+    "t_engram_cpu": 0.0351
+   },
+   {
+    "i": 4,
+    "answer": "pt109",
+    "cls": "correct",
+    "yn": "yes",
+    "block_ok": true,
+    "block_decode": {
+     "agent": "ag131",
+     "action": "ac16",
+     "patient": "pt109"
+    },
+    "held": true,
+    "readout": 207.998818,
+    "mean_abs_w": 1.0,
+    "shard": 1,
+    "t_query": 0.3581,
+    "t_yn": 0.3563,
+    "t_engram": 0.0345,
+    "t_engram_cpu": 0.0345
+   }
+  ],
+  "nearmiss": [
+   {
+    "i": 0,
+    "yn": "unknown",
+    "kind": "same_subject_sibling",
+    "shard": 2,
+    "t_yn": 0.711
+   },
+   {
+    "i": 1,
+    "yn": "unknown",
+    "kind": "same_subject_sibling",
+    "shard": 3,
+    "t_yn": 1.0694
+   },
+   {
+    "i": 2,
+    "yn": "unknown",
+    "kind": "same_subject_sibling",
+    "shard": 1,
+    "t_yn": 0.3496
+   },
+   {
+    "i": 3,
+    "yn": "unknown",
+    "kind": "same_subject_sibling",
+    "shard": 2,
+    "t_yn": 0.7023
+   },
+   {
+    "i": 4,
+    "yn": "unknown",
+    "kind": "random_stored",
+    "shard": 1,
+    "t_yn": 0.3522
+   }
+  ],
+  "novel": [
+   {
+    "agent": "ag140",
+    "action": "ac16",
+    "answer": null,
+    "shard": 1,
+    "t_query": 0.3524
+   },
+   {
+    "agent": "ag140",
+    "action": "ac35",
+    "answer": null,
+    "shard": 2,
+    "t_query": 0.6988
+   },
+   {
+    "agent": "ag001",
+    "action": "ac31",
+    "answer": null,
+    "shard": 3,
+    "t_query": 1.0483
+   },
+   {
+    "agent": "ag001",
+    "action": "ac34",
+    "answer": null,
+    "shard": 2,
+    "t_query": 0.6991
+   },
+   {
+    "agent": "ag131",
+    "action": "ac34",
+    "answer": null,
+    "shard": 0,
+    "t_query": 0.0002
+   }
+  ]
+ },
+ "store_writes_during_probe": [],
+ "store_synapses": 640,
+ "store_weight_bytes_complex128": 10240,
+ "summary": {
+  "n_taught_probes": 5,
+  "n_nearmiss": 5,
+  "n_novel": 5,
+  "recall": 1.0,
+  "abstain": 0.0,
+  "crossed_same_subject": 0.0,
+  "crossed_other_fact": 0.0,
+  "wrong_word": 0.0,
+  "yn_hit": 1.0,
+  "block_decode_ok": 1.0,
+  "engram_held": 1.0,
+  "mean_abs_w_probed": 1.0,
+  "nearmiss_false_accept": 0.0,
+  "novel_false_recall": 0.0,
+  "novel_shard_empty": 0.2,
+  "nearmiss_shard_empty": 0.0,
+  "encode_s_median": 0.2753,
+  "encode_s_mean": 0.27554,
+  "encode_s_last_decile_mean": 0.2765,
+  "encode_cpu_s_median": 0.2752,
+  "query_s_median": 0.53055,
+  "engram_read_s_median": 0.0346,
+  "engram_read_cpu_s_median": 0.0346,
+  "readtime_view_s_per_turn_projected": 0.173
+ },
+ "peak_rss_mb": 124.921875,
+ "elapsed_s": 28.7,
+ "process_time_s": 29.2
+}

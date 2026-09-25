@@ -1,0 +1,226 @@
+{
+  "seed": 7,
+  "replicate": 2,
+  "arm": "transport_ceiling",
+  "feedback": "transport_ceiling",
+  "mode": "bdsp",
+  "git_sha": "feaca2fdf4561d43275250763a54dab18f870298",
+  "git_dirty": false,
+  "task_seed": 20021,
+  "chance": 0.16666666666666666,
+  "oracle_heldout": 0.8888888888888888,
+  "n_inh": 54,
+  "inherit_heldout": 0.09259259259259259,
+  "train_acc": 0.2325,
+  "train_chance": 0.1625,
+  "train_binom_p": 0.0001835830032804558,
+  "ff_l1_norm_start": 85816.4765625,
+  "ff_l1_norm_end": 131147.234375,
+  "bound_census_start": {
+    "w_max": 12.0,
+    "w_min": -12.0,
+    "pathways": [
+      {
+        "pathway": "ff_0",
+        "post_is_hidden": true,
+        "n": 4608,
+        "frac_at_or_above_w_max": 0.0,
+        "frac_at_or_below_w_min": 0.0,
+        "frac_near_w_max": 0.0,
+        "frac_near_w_min": 0.0,
+        "frac_abs_w_ge_c21_bound": 0.0,
+        "mean_w": -0.046163049292620904,
+        "mean_abs_w": 3.826174199058945,
+        "max_abs_w": 7.642212867736816
+      },
+      {
+        "pathway": "ff_1",
+        "post_is_hidden": true,
+        "n": 16384,
+        "frac_at_or_above_w_max": 0.0,
+        "frac_at_or_below_w_min": 0.0,
+        "frac_near_w_max": 0.0,
+        "frac_near_w_min": 0.0,
+        "frac_abs_w_ge_c21_bound": 0.0,
+        "mean_w": 0.05174193821472972,
+        "mean_abs_w": 3.0910208142274245,
+        "max_abs_w": 6.1226701736450195
+      },
+      {
+        "pathway": "ff_2",
+        "post_is_hidden": false,
+        "n": 4608,
+        "frac_at_or_above_w_max": 0.0,
+        "frac_at_or_below_w_min": 0.0,
+        "frac_near_w_max": 0.0,
+        "frac_near_w_min": 0.0,
+        "frac_abs_w_ge_c21_bound": 0.0,
+        "mean_w": 0.01609858061232848,
+        "mean_abs_w": 3.806897088859993,
+        "max_abs_w": 7.648608684539795
+      }
+    ],
+    "frac_at_bound_all_ff": 0.0
+  },
+  "bound_census_end": {
+    "w_max": 12.0,
+    "w_min": -12.0,
+    "pathways": [
+      {
+        "pathway": "ff_0",
+        "post_is_hidden": true,
+        "n": 4608,
+        "frac_at_or_above_w_max": 0.0013020833333333333,
+        "frac_at_or_below_w_min": 0.004991319444444444,
+        "frac_near_w_max": 0.12586805555555555,
+        "frac_near_w_min": 0.07747395833333333,
+        "frac_abs_w_ge_c21_bound": 0.006076388888888889,
+        "mean_w": 1.4309813841408134,
+        "mean_abs_w": 6.221048205184628,
+        "max_abs_w": 11.999998092651367
+      },
+      {
+        "pathway": "ff_1",
+        "post_is_hidden": true,
+        "n": 16384,
+        "frac_at_or_above_w_max": 0.00146484375,
+        "frac_at_or_below_w_min": 0.0009765625,
+        "frac_near_w_max": 0.0517578125,
+        "frac_near_w_min": 0.0272216796875,
+        "frac_abs_w_ge_c21_bound": 0.0023193359375,
+        "mean_w": 1.017949612912652,
+        "mean_abs_w": 4.722707559926114,
+        "max_abs_w": 11.999998092651367
+      },
+      {
+        "pathway": "ff_2",
+        "post_is_hidden": false,
+        "n": 4608,
+        "frac_at_or_above_w_max": 0.04383680555555555,
+        "frac_at_or_below_w_min": 0.001736111111111111,
+        "frac_near_w_max": 0.09874131944444445,
+        "frac_near_w_min": 0.03342013888888889,
+        "frac_abs_w_ge_c21_bound": 0.045355902777777776,
+        "mean_w": 1.051099567136488,
+        "mean_abs_w": 5.447874574713852,
+        "max_abs_w": 12.0
+      }
+    ],
+    "frac_at_bound_all_ff": 0.0108984375
+  },
+  "bound_check_at_build": true,
+  "decode_h2_train": 0.48,
+  "decode_h2_heldout": 0.24074074074074073,
+  "mean_output_rate_heldout": 0.11990740740740742,
+  "mean_read_by_layer_heldout": [
+    0.0695644718792867,
+    0.10675636574074074,
+    0.24899209104938272,
+    0.11990740740740742
+  ],
+  "pbar_by_layer_end": [
+    {
+      "mean": 0.30000001192092896,
+      "min": 0.30000001192092896,
+      "max": 0.30000001192092896
+    },
+    {
+      "mean": 0.30693398229777813,
+      "min": 0.20334771275520325,
+      "max": 0.920611560344696
+    },
+    {
+      "mean": 0.3070695431670174,
+      "min": 0.14669029414653778,
+      "max": 0.5677977800369263
+    },
+    {
+      "mean": 0.30000001192092896,
+      "min": 0.30000001192092896,
+      "max": 0.30000001192092896
+    }
+  ],
+  "pbar_ratio_tau_ms": 5000.0,
+  "pbar_ratio_layers": "hidden",
+  "pred_hist_train": [
+    8,
+    73,
+    51,
+    146,
+    62,
+    30,
+    24,
+    6,
+    0
+  ],
+  "true_hist_train": [
+    58,
+    65,
+    47,
+    53,
+    41,
+    43,
+    46,
+    47,
+    0
+  ],
+  "pred_hist_heldout": [
+    1,
+    10,
+    5,
+    18,
+    10,
+    5,
+    5,
+    0,
+    0
+  ],
+  "true_hist_heldout": [
+    9,
+    9,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    0
+  ],
+  "mean_output_read_by_class_train": [
+    0.13218390804597702,
+    0.1680769230769231,
+    0.17535460992907803,
+    0.22154088050314466,
+    0.1451219512195122,
+    0.0996124031007752,
+    0.15471014492753624,
+    0.1528368794326241,
+    null
+  ],
+  "mean_output_read_other_class_train": [
+    0.12387914230019491,
+    0.1664179104477612,
+    0.13307365439093483,
+    0.1521133525456292,
+    0.09296657381615599,
+    0.08993930905695612,
+    0.11979755178907722,
+    0.15280925401322004,
+    0.0046875
+  ],
+  "read_quantity": "spikes",
+  "ff_weight_moved": 45330.7578125,
+  "ff_weight_moved_definition": "|L1 norm at end - L1 norm at start| over the feedforward weights (a change in L1 norm, not a total per-synapse change)",
+  "eval_reads_left_weights_unchanged": true,
+  "no_weight_transport": false,
+  "ast_no_forward_W": true,
+  "thr_hash": "b7d34045c83c0f63",
+  "n_steps_train": 780000,
+  "n_steps_total": 798160,
+  "train_seconds": 905.8,
+  "elapsed_seconds": 932.7,
+  "ms_per_step": 1.169,
+  "peak_rss_mb": 110.3,
+  "backend": "numpy",
+  "fingerprint": "5660bc3cfb4cdc4c"
+}

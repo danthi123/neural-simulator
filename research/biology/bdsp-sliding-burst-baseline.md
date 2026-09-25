@@ -4,8 +4,8 @@ id: bdsp-sliding-burst-baseline
 mechanism: The burst-probability baseline Pbar of burst-dependent synaptic plasticity (BDSP) is a SLOW per-neuron moving average of the proportion of the neuron's events that are bursts (time scale ~1-10 s), not a constant and not a fast (~20 ms) trace. It is the BDSP form of the BCM sliding modification threshold, and the source introduces it to keep synaptic weight growth finite. In the engine it is `cfg.bdsp_pbar_ratio_tau_ms` (Pbar = EMA(B_post) / EMA(E)), which replaces the preset constant p0 that let a rectified mean of the burst probability drive every active hidden synapse to the hard +w_max clamp.
 status: de-risking
 last_verified: 2026-09-25
-current_finding: research/findings/2026-09-24-gap4-transport-ceiling-readout-lever-PREREGISTRATION.md
-current_status: "PRE-REGISTERED (AMENDMENT 6, 2026-09-25), not yet scored. Built as the companion process of the +-12 BDSP clamp that the 2026-09-24 bound census found load-bearing (one-sided: ff_0/ff_1 synapses pinned at +w_max, none at w_min, in all three hidden-learning arms). Engine unit test: a zero-mean apical credit gives the preset baseline a net-LTP drive of 54.6 (summed E*(P-Pbar) over hidden neurons) and the ratio baseline (tau 200 ms) 3.2. The dev-seed-7 C21 check (4 arms x 3 replicates) is queued; its criteria are in AMENDMENT 6."
+current_finding: research/findings/2026-09-25-gap4-sliding-baseline-c25-c27-and-c26-fullsize-UNDEFINED.md
+current_status: "SCORED 2026-09-25 (dev seed 7, both dev-scale C25-C27 and full-size C26): the ratio baseline REMOVES the one-sided ff_0/ff_1 clamp saturation the 2026-09-24 census found load-bearing, at dev size (0/3 replicates cross the 10%-at-bound threshold, vs 3/3 before the fix) AND at full size (0/3) -- a clamp-relaxed control (C25, no ratio baseline) still saturates (2/3), confirming the drift not the bound position was the cause. Held-out interpretability does NOT follow: 0/3 replicates clear Rule B at either scale, and the dev-scale training-set fit (3/3 replicates above training chance) does not transfer to full size (1/3). Output-silencing (the prior next-companion candidate) is also resolved at full size, ruling it out as the residual's explanation. Scored per the pre-registration's own AMENDMENT 6/7 decision text: the (i)+(ii)-hold-(iii)-fails branch at dev, UNDEFINED (never NO-GO) at full size. See research/findings/2026-09-25-gap4-sliding-baseline-c25-c27-and-c26-fullsize-UNDEFINED.md."
 sources:
   - path: "doi:10.1101/2020.03.30.015511 (Payeur, Guerguiev, Zenke, Richards & Naud, bioRxiv v1 2020; published Nat Neurosci 24:1010, 2021, doi:10.1038/s41593-021-00857-x)"
     anchor: "To ensure a finite growth of synaptic weights, we set this to a moving average of the proportion of events that are bursts in postsynaptic neuron i"
@@ -51,6 +51,7 @@ implemented_by:
 findings:
   - research/findings/2026-09-24-gap4-transport-ceiling-bound-census-clamp-load-bearing-fullsize-UNDEFINED.md
   - research/findings/2026-09-24-gap4-transport-ceiling-readout-lever-PREREGISTRATION.md
+  - research/findings/2026-09-25-gap4-sliding-baseline-c25-c27-and-c26-fullsize-UNDEFINED.md
 ---
 
 # The BDSP baseline is a slow moving average, and that is what keeps the weights finite

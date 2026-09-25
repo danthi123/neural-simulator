@@ -1,0 +1,4254 @@
+{
+ "since": "2026-09-23 22:53:21",
+ "dispatch_log_since_line": 36098,
+ "blocked_unchecked_since": [
+  {
+   "dispatch_log_line": 36451,
+   "after_clock": "16:11:42",
+   "head96": "e any gate-seed run); Part A a3-successor CONT+CAT gate on BRAIN_OPEN_ENDED_GATED; the 2026-09-2",
+   "preceded_by_probe": {
+    "sha": "49a089d8d061440c46f8e3fcf09faab82cc995c8",
+    "node": "pool1"
+   },
+   "is_mid_line_fragment": false,
+   "n_host_lines": 0
+  },
+  {
+   "dispatch_log_line": 36474,
+   "after_clock": "16:38:04",
+   "head96": "b12 = Part A code identical to 7a39851c; mem_gb=7",
+   "preceded_by_probe": {
+    "sha": "49a089d8d061440c46f8e3fcf09faab82cc995c8",
+    "node": "pool1"
+   },
+   "is_mid_line_fragment": false,
+   "n_host_lines": 0
+  },
+  {
+   "dispatch_log_line": 36477,
+   "after_clock": "16:38:04",
+   "head96": "b12 = Part A code identical to 7a39851c; mem_gb=7",
+   "preceded_by_probe": {
+    "sha": "49a089d8d061440c46f8e3fcf09faab82cc995c8",
+    "node": "pool1"
+   },
+   "is_mid_line_fragment": false,
+   "n_host_lines": 0
+  },
+  {
+   "dispatch_log_line": 36637,
+   "after_clock": "20:21:56",
+   "head96": "ENT 1; B2b base; mem_gb=8",
+   "preceded_by_probe": {
+    "sha": "4da72fd2316902697972917a72536d9e9def95ef",
+    "node": "pool2"
+   },
+   "is_mid_line_fragment": true,
+   "n_host_lines": 268
+  },
+  {
+   "dispatch_log_line": 36682,
+   "after_clock": "20:45:14",
+   "head96": "es) in grid/ have no dispatch.log/runs.jsonl trace + identical mtime cluster ~42min before verif",
+   "preceded_by_probe": {
+    "sha": "4da72fd2316902697972917a72536d9e9def95ef",
+    "node": "pool1"
+   },
+   "is_mid_line_fragment": true,
+   "n_host_lines": 18
+  }
+ ],
+ "fix_commit_time": "2026-09-25T11:04:36",
+ "n_claims": 2037,
+ "n_fragments": 14,
+ "n_fragments_before_since": 0,
+ "fragments": [
+  {
+   "claim_line": 1454,
+   "claim_time": "2026-09-24 16:04:49",
+   "fragment": "OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 LB_AFFECT_DRIVE_PROBE=1 LB_BG_SELECT_DRIVE_PROBE=1 LB_CG_DRIVE_PROBE=1 LB_DISCOURSE_REGISTER_DRIVE_PROBE=1 LB_EPISODIC_DRIVE_PROBE=1 LB_NONCONTRADICTION_DRIVE_PROBE=1 LB_OPEN_ENDED_DISTRIB_PROBE=1 LB_PMEM_DRIVE_PROBE=1 LB_SURPRISE_CONFIRM_PROBE=1 .venv/bin/python -u -m research.runners.load_bearing_fraction --only open-ended-generation --seed 100 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2a0924/s100/open-ended-generation/lb.json  #checked:prereg research/findings/2026-09-24-production-default-battery-B2a-PREREGISTRATION.md (M1 9db761329); B2a battery on the merged production default; mem_gb=6",
+   "stripped": "OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 LB_AFFECT_DRIVE_PROBE=1 LB_BG_SELECT_DRIVE_PROBE=1 LB_CG_DRIVE_PROBE=1 LB_DISCOURSE_REGISTER_DRIVE_PROBE=1 LB_EPISODIC_DRIVE_PROBE=1 LB_NONCONTRADICTION_DRIVE_PROBE=1 LB_OPEN_ENDED_DISTRIB_PROBE=1 LB_PMEM_DRIVE_PROBE=1 LB_SURPRISE_CONFIRM_PROBE=1 .venv/bin/python -u -m research.runners.load_bearing_fraction --only open-ended-generation --seed 100 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2a0924/s100/open-ended-generation/lb.json",
+   "node": "pool1",
+   "running_line": 420,
+   "dispatch_log_line": 36437,
+   "swallowing_probe": {
+    "line": 36436,
+    "sha": "49a089d8d061440c46f8e3fcf09faab82cc995c8",
+    "node": "pool1"
+   },
+   "executed": "POOL_CHECKED_REASON=prereg\\ research/findings/2026-09-24-production-default-battery-B2a-PREREGISTRATION.md\\ \\(M1\\ 9db761329\\)\\;\\ B2a\\ battery\\ on\\ the\\ merged\\ production\\ default\\;\\ mem_gb=6 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 LB_AFFECT_DRIVE_PROBE=1 LB_BG_SELECT_DRIVE_PROBE=1 LB_CG_DRIVE_PROBE=1 LB_DISCOURSE_REGISTER_DRIVE_PROBE=1 LB_EPISODIC_DRIVE_PROBE=1 LB_NONCONTRADICTION_DRIVE_PROBE=1 LB_OPEN_ENDED_DISTRIB_PROBE=1 LB_PMEM_DRIVE_PROBE=1 LB_SURPRISE_CONFIRM_PROBE=1 .venv/bin/python -u -m research.runners.load_bearing_fraction --only open-ended-generation --seed 100 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2a0924/s100/open-ended-generation/lb.json",
+   "classification": {
+    "first_word": ".venv/bin/python",
+    "expect": "RUNS"
+   },
+   "pinned": false,
+   "outputs": [
+    "research/findings/raw/_load_bearing/_shards/b2a0924/s100/open-ended-generation/lb.json"
+   ],
+   "job_b64": "UE9PTF9DSEVDS0VEX1JFQVNPTj1wcmVyZWdcIHJlc2VhcmNoL2ZpbmRpbmdzLzIwMjYtMDktMjQtcHJvZHVjdGlvbi1kZWZhdWx0LWJhdHRlcnktQjJhLVBSRVJFR0lTVFJBVElPTi5tZFwgXChNMVwgOWRiNzYxMzI5XClcO1wgQjJhXCBiYXR0ZXJ5XCBvblwgdGhlXCBtZXJnZWRcIHByb2R1Y3Rpb25cIGRlZmF1bHRcO1wgbWVtX2diPTYgT1BFTkJMQVNfTlVNX1RIUkVBRFM9MSBNS0xfTlVNX1RIUkVBRFM9MSBMQl9BRkZFQ1RfRFJJVkVfUFJPQkU9MSBMQl9CR19TRUxFQ1RfRFJJVkVfUFJPQkU9MSBMQl9DR19EUklWRV9QUk9CRT0xIExCX0RJU0NPVVJTRV9SRUdJU1RFUl9EUklWRV9QUk9CRT0xIExCX0VQSVNPRElDX0RSSVZFX1BST0JFPTEgTEJfTk9OQ09OVFJBRElDVElPTl9EUklWRV9QUk9CRT0xIExCX09QRU5fRU5ERURfRElTVFJJQl9QUk9CRT0xIExCX1BNRU1fRFJJVkVfUFJPQkU9MSBMQl9TVVJQUklTRV9DT05GSVJNX1BST0JFPTEgLnZlbnYvYmluL3B5dGhvbiAtdSAtbSByZXNlYXJjaC5ydW5uZXJzLmxvYWRfYmVhcmluZ19mcmFjdGlvbiAtLW9ubHkgb3Blbi1lbmRlZC1nZW5lcmF0aW9uIC0tc2VlZCAxMDAgLS1yZXBlYXRzIDIgLS1vdXQgcmVzZWFyY2gvZmluZGluZ3MvcmF3L19sb2FkX2JlYXJpbmcvX3NoYXJkcy9iMmEwOTI0L3MxMDAvb3Blbi1lbmRlZC1nZW5lcmF0aW9uL2xiLmpzb24=",
+   "n_parents": 1,
+   "parents": [
+    {
+     "offset": 255,
+     "revision": "9db7613296c3d02a161b36fb15da3983188b7902",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2a0924/s100/open-ended-generation/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1582,
+       "time": "2026-09-24 19:24:30",
+       "node": "pool2",
+       "node_status": [
+        {
+         "node": "pool2",
+         "ts": 1790292306,
+         "rc": 0
+        }
+       ],
+       "node_status_source": "archive:research/findings/raw/_dispatcher_fragment_audit/node_evidence/parent_run_status_archive.json"
+      }
+     ],
+     "head_tail": "_load_bearing/_shards/b2a0924/s100/open-ended-generation && env SIM_BACKEND=numpy OMP_NUM_THREADS=1 "
+    }
+   ],
+   "node_status": [
+    {
+     "node": "pool1",
+     "ts": 1790280362,
+     "rc": 0
+    }
+   ],
+   "local_cells": [
+    {
+     "cell": "research/findings/raw/_load_bearing/_shards/b2a0924/s100/open-ended-generation",
+     "exists": true,
+     "lb_prov": {
+      "git_sha": "9db7613296c3d02a161b36fb15da3983188b7902",
+      "source_kind": "git_archive",
+      "started": "2026-09-24T23:24:31",
+      "run_id": "1790292271-1401380",
+      "argv0": "/home/ubuntu/derisk-pool/revisions/9db7613296c3d02a161b36fb15da3983188b7902/research/runners/load_bearing_fraction.py"
+     },
+     "pin": "9db7613296c3d02a161b36fb15da3983188b7902",
+     "pin_source": "parent-line revision",
+     "pin_rule_fails": {},
+     "pin_rule_covered_by_parent": {
+      "oed_distributional_s100.json": "covered-by-parent: no own sidecar, but written by the same process as lb.json.prov.json (mtime 1790292306 in parent window [1790292271, 1790311407]), content matches this cell's own lb.json entry"
+     },
+     "files": [
+      {
+       "name": "lb.json",
+       "mtime": "2026-09-24 19:25:06"
+      },
+      {
+       "name": "lb.json.prov.json",
+       "mtime": "2026-09-25 00:43:26"
+      },
+      {
+       "name": "oed_distributional_s100.json",
+       "mtime": "2026-09-24 19:25:06"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "claim_line": 1455,
+   "claim_time": "2026-09-24 16:06:07",
+   "fragment": "ed/lb.json  #checked:prereg research/findings/2026-09-24-production-default-battery-B2a-PREREGISTRATION.md (M1 9db761329); B2a battery on the merged production default; mem_gb=6",
+   "stripped": "ed/lb.json",
+   "node": "pool1",
+   "running_line": 421,
+   "dispatch_log_line": 36439,
+   "swallowing_probe": {
+    "line": 36438,
+    "sha": "49a089d8d061440c46f8e3fcf09faab82cc995c8",
+    "node": "pool1"
+   },
+   "executed": "POOL_CHECKED_REASON=prereg\\ research/findings/2026-09-24-production-default-battery-B2a-PREREGISTRATION.md\\ \\(M1\\ 9db761329\\)\\;\\ B2a\\ battery\\ on\\ the\\ merged\\ production\\ default\\;\\ mem_gb=6 ed/lb.json",
+   "classification": {
+    "first_word": "ed/lb.json",
+    "expect": "command-not-found (rc 127 expected; nothing after `&&` runs)"
+   },
+   "pinned": false,
+   "outputs": [],
+   "job_b64": "UE9PTF9DSEVDS0VEX1JFQVNPTj1wcmVyZWdcIHJlc2VhcmNoL2ZpbmRpbmdzLzIwMjYtMDktMjQtcHJvZHVjdGlvbi1kZWZhdWx0LWJhdHRlcnktQjJhLVBSRVJFR0lTVFJBVElPTi5tZFwgXChNMVwgOWRiNzYxMzI5XClcO1wgQjJhXCBiYXR0ZXJ5XCBvblwgdGhlXCBtZXJnZWRcIHByb2R1Y3Rpb25cIGRlZmF1bHRcO1wgbWVtX2diPTYgZWQvbGIuanNvbg==",
+   "n_parents": 5,
+   "parents": [
+    {
+     "offset": 730,
+     "revision": "9db7613296c3d02a161b36fb15da3983188b7902",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2a0924/s43/wm-binding-advanced/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1505,
+       "time": "2026-09-24 17:27:50",
+       "node": "pool1",
+       "node_status": [
+        {
+         "node": "pool1",
+         "ts": 1790286406,
+         "rc": 0
+        }
+       ],
+       "node_status_source": "archive:research/findings/raw/_dispatcher_fragment_audit/node_evidence/parent_run_status_archive.json"
+      }
+     ],
+     "head_tail": "-seed 43 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2a0924/s43/wm-binding-advanc"
+    },
+    {
+     "offset": 730,
+     "revision": "9db7613296c3d02a161b36fb15da3983188b7902",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2a0924/s44/wm-binding-advanced/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1536,
+       "time": "2026-09-24 18:17:01",
+       "node": "pool2",
+       "node_status": [
+        {
+         "node": "pool2",
+         "ts": 1790289227,
+         "rc": 0
+        }
+       ],
+       "node_status_source": "archive:research/findings/raw/_dispatcher_fragment_audit/node_evidence/parent_run_status_archive.json"
+      }
+     ],
+     "head_tail": "-seed 44 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2a0924/s44/wm-binding-advanc"
+    },
+    {
+     "offset": 733,
+     "revision": "9db7613296c3d02a161b36fb15da3983188b7902",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2a0924/s100/wm-binding-advanced/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1567,
+       "time": "2026-09-24 19:05:30",
+       "node": "pool2",
+       "node_status": [
+        {
+         "node": "pool2",
+         "ts": 1790292134,
+         "rc": 0
+        }
+       ],
+       "node_status_source": "archive:research/findings/raw/_dispatcher_fragment_audit/node_evidence/parent_run_status_archive.json"
+      }
+     ],
+     "head_tail": "eed 100 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2a0924/s100/wm-binding-advanc"
+    },
+    {
+     "offset": 733,
+     "revision": "9db7613296c3d02a161b36fb15da3983188b7902",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2a0924/s101/wm-binding-advanced/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1599,
+       "time": "2026-09-24 19:46:51",
+       "node": "pool1",
+       "node_status": [
+        {
+         "node": "pool1",
+         "ts": 1790294757,
+         "rc": 0
+        }
+       ],
+       "node_status_source": "archive:research/findings/raw/_dispatcher_fragment_audit/node_evidence/parent_run_status_archive.json"
+      }
+     ],
+     "head_tail": "eed 101 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2a0924/s101/wm-binding-advanc"
+    }
+   ],
+   "node_status": [
+    {
+     "node": "pool1",
+     "ts": 1790280368,
+     "rc": 127
+    }
+   ],
+   "local_cells": []
+  },
+  {
+   "claim_line": 1461,
+   "claim_time": "2026-09-24 16:11:27",
+   "fragment": "n-ended-generation/lb.json  #checked:prereg research/findings/2026-09-24-production-default-battery-B2a-PREREGISTRATION.md (M1 9db761329); B2a battery on the merged production default; mem_gb=6",
+   "stripped": "n-ended-generation/lb.json",
+   "node": "pool1",
+   "running_line": 427,
+   "dispatch_log_line": 36447,
+   "swallowing_probe": {
+    "line": 36446,
+    "sha": "49a089d8d061440c46f8e3fcf09faab82cc995c8",
+    "node": "pool1"
+   },
+   "executed": "POOL_CHECKED_REASON=prereg\\ research/findings/2026-09-24-production-default-battery-B2a-PREREGISTRATION.md\\ \\(M1\\ 9db761329\\)\\;\\ B2a\\ battery\\ on\\ the\\ merged\\ production\\ default\\;\\ mem_gb=6 n-ended-generation/lb.json",
+   "classification": {
+    "first_word": "n-ended-generation/lb.json",
+    "expect": "command-not-found (rc 127 expected; nothing after `&&` runs)"
+   },
+   "pinned": false,
+   "outputs": [],
+   "job_b64": "UE9PTF9DSEVDS0VEX1JFQVNPTj1wcmVyZWdcIHJlc2VhcmNoL2ZpbmRpbmdzLzIwMjYtMDktMjQtcHJvZHVjdGlvbi1kZWZhdWx0LWJhdHRlcnktQjJhLVBSRVJFR0lTVFJBVElPTi5tZFwgXChNMVwgOWRiNzYxMzI5XClcO1wgQjJhXCBiYXR0ZXJ5XCBvblwgdGhlXCBtZXJnZWRcIHByb2R1Y3Rpb25cIGRlZmF1bHRcO1wgbWVtX2diPTYgbi1lbmRlZC1nZW5lcmF0aW9uL2xiLmpzb24=",
+   "n_parents": 6,
+   "parents": [
+    {
+     "offset": 720,
+     "revision": "9db7613296c3d02a161b36fb15da3983188b7902",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2a0924/s42/open-ended-generation/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1488,
+       "time": "2026-09-24 17:00:50",
+       "node": "pool2",
+       "node_status": [
+        {
+         "node": "pool2",
+         "ts": 1790283708,
+         "rc": 0
+        }
+       ],
+       "node_status_source": "archive:research/findings/raw/_dispatcher_fragment_audit/node_evidence/parent_run_status_archive.json"
+      }
+     ],
+     "head_tail": "d-generation --seed 42 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2a0924/s42/ope"
+    },
+    {
+     "offset": 720,
+     "revision": "9db7613296c3d02a161b36fb15da3983188b7902",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2a0924/s43/open-ended-generation/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1519,
+       "time": "2026-09-24 17:47:38",
+       "node": "pool1",
+       "node_status": [
+        {
+         "node": "pool1",
+         "ts": 1790286501,
+         "rc": 0
+        }
+       ],
+       "node_status_source": "archive:research/findings/raw/_dispatcher_fragment_audit/node_evidence/parent_run_status_archive.json"
+      }
+     ],
+     "head_tail": "d-generation --seed 43 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2a0924/s43/ope"
+    },
+    {
+     "offset": 720,
+     "revision": "9db7613296c3d02a161b36fb15da3983188b7902",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2a0924/s44/open-ended-generation/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1550,
+       "time": "2026-09-24 18:31:18",
+       "node": "pool2",
+       "node_status": [
+        {
+         "node": "pool2",
+         "ts": 1790289115,
+         "rc": 0
+        }
+       ],
+       "node_status_source": "archive:research/findings/raw/_dispatcher_fragment_audit/node_evidence/parent_run_status_archive.json"
+      }
+     ],
+     "head_tail": "d-generation --seed 44 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2a0924/s44/ope"
+    },
+    {
+     "offset": 723,
+     "revision": "9db7613296c3d02a161b36fb15da3983188b7902",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2a0924/s100/open-ended-generation/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1582,
+       "time": "2026-09-24 19:24:30",
+       "node": "pool2",
+       "node_status": [
+        {
+         "node": "pool2",
+         "ts": 1790292306,
+         "rc": 0
+        }
+       ],
+       "node_status_source": "archive:research/findings/raw/_dispatcher_fragment_audit/node_evidence/parent_run_status_archive.json"
+      }
+     ],
+     "head_tail": "generation --seed 100 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2a0924/s100/ope"
+    },
+    {
+     "offset": 723,
+     "revision": "9db7613296c3d02a161b36fb15da3983188b7902",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2a0924/s101/open-ended-generation/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1613,
+       "time": "2026-09-24 20:11:18",
+       "node": "pool1",
+       "node_status": [
+        {
+         "node": "pool1",
+         "ts": 1790295121,
+         "rc": 0
+        }
+       ],
+       "node_status_source": "archive:research/findings/raw/_dispatcher_fragment_audit/node_evidence/parent_run_status_archive.json"
+      }
+     ],
+     "head_tail": "generation --seed 101 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2a0924/s101/ope"
+    },
+    {
+     "offset": 723,
+     "revision": "9db7613296c3d02a161b36fb15da3983188b7902",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2a0924/s102/open-ended-generation/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1620,
+       "time": "2026-09-24 20:20:06",
+       "node": "pool1",
+       "node_status": [
+        {
+         "node": "pool1",
+         "ts": 1790295648,
+         "rc": 0
+        }
+       ],
+       "node_status_source": "archive:research/findings/raw/_dispatcher_fragment_audit/node_evidence/parent_run_status_archive.json"
+      }
+     ],
+     "head_tail": "generation --seed 102 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2a0924/s102/ope"
+    }
+   ],
+   "node_status": [
+    {
+     "node": "pool1",
+     "ts": 1790280688,
+     "rc": 127
+    }
+   ],
+   "local_cells": []
+  },
+  {
+   "claim_line": 1473,
+   "claim_time": "2026-09-24 16:45:08",
+   "fragment": "tive-memory/lb.json  #checked:prereg research/findings/2026-09-24-production-default-battery-B2a-PREREGISTRATION.md (M1 9db761329); B2a battery on the merged production default; mem_gb=6",
+   "stripped": "tive-memory/lb.json",
+   "node": "pool1",
+   "running_line": 439,
+   "dispatch_log_line": 36480,
+   "swallowing_probe": {
+    "line": 36479,
+    "sha": "49a089d8d061440c46f8e3fcf09faab82cc995c8",
+    "node": "pool1"
+   },
+   "executed": "POOL_CHECKED_REASON=prereg\\ research/findings/2026-09-24-production-default-battery-B2a-PREREGISTRATION.md\\ \\(M1\\ 9db761329\\)\\;\\ B2a\\ battery\\ on\\ the\\ merged\\ production\\ default\\;\\ mem_gb=6 tive-memory/lb.json",
+   "classification": {
+    "first_word": "tive-memory/lb.json",
+    "expect": "command-not-found (rc 127 expected; nothing after `&&` runs)"
+   },
+   "pinned": false,
+   "outputs": [],
+   "job_b64": "UE9PTF9DSEVDS0VEX1JFQVNPTj1wcmVyZWdcIHJlc2VhcmNoL2ZpbmRpbmdzLzIwMjYtMDktMjQtcHJvZHVjdGlvbi1kZWZhdWx0LWJhdHRlcnktQjJhLVBSRVJFR0lTVFJBVElPTi5tZFwgXChNMVwgOWRiNzYxMzI5XClcO1wgQjJhXCBiYXR0ZXJ5XCBvblwgdGhlXCBtZXJnZWRcIHByb2R1Y3Rpb25cIGRlZmF1bHRcO1wgbWVtX2diPTYgdGl2ZS1tZW1vcnkvbGIuanNvbg==",
+   "n_parents": 5,
+   "parents": [
+    {
+     "offset": 718,
+     "revision": "9db7613296c3d02a161b36fb15da3983188b7902",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2a0924/s43/prospective-memory/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1506,
+       "time": "2026-09-24 17:27:58",
+       "node": "pool2",
+       "node_status": [
+        {
+         "node": "pool2",
+         "ts": 1790288203,
+         "rc": 0
+        }
+       ],
+       "node_status_source": "archive:research/findings/raw/_dispatcher_fragment_audit/node_evidence/parent_run_status_archive.json"
+      }
+     ],
+     "head_tail": "e-memory --seed 43 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2a0924/s43/prospec"
+    },
+    {
+     "offset": 718,
+     "revision": "9db7613296c3d02a161b36fb15da3983188b7902",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2a0924/s44/prospective-memory/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1537,
+       "time": "2026-09-24 18:19:23",
+       "node": "pool1",
+       "node_status": [
+        {
+         "node": "pool1",
+         "ts": 1790291549,
+         "rc": 0
+        }
+       ],
+       "node_status_source": "archive:research/findings/raw/_dispatcher_fragment_audit/node_evidence/parent_run_status_archive.json"
+      }
+     ],
+     "head_tail": "e-memory --seed 44 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2a0924/s44/prospec"
+    },
+    {
+     "offset": 721,
+     "revision": "9db7613296c3d02a161b36fb15da3983188b7902",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2a0924/s100/prospective-memory/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1568,
+       "time": "2026-09-24 19:06:46",
+       "node": "pool2",
+       "node_status": [
+        {
+         "node": "pool2",
+         "ts": 1790294159,
+         "rc": 0
+        }
+       ],
+       "node_status_source": "archive:research/findings/raw/_dispatcher_fragment_audit/node_evidence/parent_run_status_archive.json"
+      }
+     ],
+     "head_tail": "memory --seed 100 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2a0924/s100/prospec"
+    },
+    {
+     "offset": 721,
+     "revision": "9db7613296c3d02a161b36fb15da3983188b7902",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2a0924/s101/prospective-memory/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1600,
+       "time": "2026-09-24 19:49:14",
+       "node": "pool2",
+       "node_status": [
+        {
+         "node": "pool2",
+         "ts": 1790296595,
+         "rc": 0
+        }
+       ],
+       "node_status_source": "archive:research/findings/raw/_dispatcher_fragment_audit/node_evidence/parent_run_status_archive.json"
+      }
+     ],
+     "head_tail": "memory --seed 101 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2a0924/s101/prospec"
+    }
+   ],
+   "node_status": [
+    {
+     "node": "pool1",
+     "ts": 1790282709,
+     "rc": 127
+    }
+   ],
+   "local_cells": []
+  },
+  {
+   "claim_line": 1625,
+   "claim_time": "2026-09-24 20:21:49",
+   "fragment": "/raw/_load_bearing/_shards/b2b0924-base/s43/vision-identity-spiking-hmax/lb.json  #checked:prereg research/findings/2026-09-24-production-default-battery-B2b-PREREGISTRATION.md (F a308f1e09) AMENDMENT 1; B2b base; mem_gb=8",
+   "stripped": "/raw/_load_bearing/_shards/b2b0924-base/s43/vision-identity-spiking-hmax/lb.json",
+   "node": "pool2",
+   "running_line": 591,
+   "dispatch_log_line": 36633,
+   "swallowing_probe": {
+    "line": 36632,
+    "sha": "4da72fd2316902697972917a72536d9e9def95ef",
+    "node": "pool2"
+   },
+   "executed": "POOL_CHECKED_REASON=prereg\\ research/findings/2026-09-24-production-default-battery-B2b-PREREGISTRATION.md\\ \\(F\\ a308f1e09\\)\\ AMENDMENT\\ 1\\;\\ B2b\\ base\\;\\ mem_gb=8 /raw/_load_bearing/_shards/b2b0924-base/s43/vision-identity-spiking-hmax/lb.json",
+   "classification": {
+    "first_word": "/raw/_load_bearing/_shards/b2b0924-base/s43/vision-identity-spiking-hmax/lb.json",
+    "expect": "command-not-found (rc 127 expected; nothing after `&&` runs)"
+   },
+   "pinned": false,
+   "outputs": [],
+   "job_b64": "UE9PTF9DSEVDS0VEX1JFQVNPTj1wcmVyZWdcIHJlc2VhcmNoL2ZpbmRpbmdzLzIwMjYtMDktMjQtcHJvZHVjdGlvbi1kZWZhdWx0LWJhdHRlcnktQjJiLVBSRVJFR0lTVFJBVElPTi5tZFwgXChGXCBhMzA4ZjFlMDlcKVwgQU1FTkRNRU5UXCAxXDtcIEIyYlwgYmFzZVw7XCBtZW1fZ2I9OCAvcmF3L19sb2FkX2JlYXJpbmcvX3NoYXJkcy9iMmIwOTI0LWJhc2UvczQzL3Zpc2lvbi1pZGVudGl0eS1zcGlraW5nLWhtYXgvbGIuanNvbg==",
+   "n_parents": 1,
+   "parents": [
+    {
+     "offset": 697,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s43/vision-identity-spiking-hmax/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1846,
+       "time": "2026-09-25 05:36:30",
+       "node": "pool2",
+       "node_status": [
+        {
+         "node": "pool2",
+         "ts": 1790329692,
+         "rc": 0
+        }
+       ],
+       "node_status_source": "archive:research/findings/raw/_dispatcher_fragment_audit/node_evidence/parent_run_status_archive.json"
+      }
+     ],
+     "head_tail": "d_bearing_fraction --only vision-identity-spiking-hmax --seed 43 --repeats 2 --out research/findings"
+    }
+   ],
+   "node_status": [
+    {
+     "node": "pool2",
+     "ts": 1790295710,
+     "rc": 127
+    }
+   ],
+   "local_cells": []
+  },
+  {
+   "claim_line": 1627,
+   "claim_time": "2026-09-24 20:28:58",
+   "fragment": "ENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 LB_AFFECT_DRIVE_PROBE=1 LB_BG_SELECT_DRIVE_PROBE=1 LB_CG_DRIVE_PROBE=1 LB_DISCOURSE_REGISTER_DRIVE_PROBE=1 LB_EPISODIC_DRIVE_PROBE=1 LB_NONCONTRADICTION_DRIVE_PROBE=1 LB_OPEN_ENDED_DISTRIB_PROBE=1 LB_PMEM_DRIVE_PROBE=1 LB_SURPRISE_CONFIRM_PROBE=1 .venv/bin/python -u -m research.runners.load_bearing_fraction --only d5-consolidate --seed 43 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s43/d5-consolidate/lb.json  #checked:prereg research/findings/2026-09-24-production-default-battery-B2b-PREREGISTRATION.md (F a308f1e09) AMENDMENT 1; B2b base; mem_gb=8",
+   "stripped": "ENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 LB_AFFECT_DRIVE_PROBE=1 LB_BG_SELECT_DRIVE_PROBE=1 LB_CG_DRIVE_PROBE=1 LB_DISCOURSE_REGISTER_DRIVE_PROBE=1 LB_EPISODIC_DRIVE_PROBE=1 LB_NONCONTRADICTION_DRIVE_PROBE=1 LB_OPEN_ENDED_DISTRIB_PROBE=1 LB_PMEM_DRIVE_PROBE=1 LB_SURPRISE_CONFIRM_PROBE=1 .venv/bin/python -u -m research.runners.load_bearing_fraction --only d5-consolidate --seed 43 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s43/d5-consolidate/lb.json",
+   "node": "pool2",
+   "running_line": 593,
+   "dispatch_log_line": 36643,
+   "swallowing_probe": {
+    "line": 36642,
+    "sha": "4da72fd2316902697972917a72536d9e9def95ef",
+    "node": "pool2"
+   },
+   "executed": "POOL_CHECKED_REASON=prereg\\ research/findings/2026-09-24-production-default-battery-B2b-PREREGISTRATION.md\\ \\(F\\ a308f1e09\\)\\ AMENDMENT\\ 1\\;\\ B2b\\ base\\;\\ mem_gb=8 ENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 LB_AFFECT_DRIVE_PROBE=1 LB_BG_SELECT_DRIVE_PROBE=1 LB_CG_DRIVE_PROBE=1 LB_DISCOURSE_REGISTER_DRIVE_PROBE=1 LB_EPISODIC_DRIVE_PROBE=1 LB_NONCONTRADICTION_DRIVE_PROBE=1 LB_OPEN_ENDED_DISTRIB_PROBE=1 LB_PMEM_DRIVE_PROBE=1 LB_SURPRISE_CONFIRM_PROBE=1 .venv/bin/python -u -m research.runners.load_bearing_fraction --only d5-consolidate --seed 43 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s43/d5-consolidate/lb.json",
+   "classification": {
+    "first_word": ".venv/bin/python",
+    "expect": "RUNS"
+   },
+   "pinned": false,
+   "outputs": [
+    "research/findings/raw/_load_bearing/_shards/b2b0924-base/s43/d5-consolidate/lb.json"
+   ],
+   "job_b64": "UE9PTF9DSEVDS0VEX1JFQVNPTj1wcmVyZWdcIHJlc2VhcmNoL2ZpbmRpbmdzLzIwMjYtMDktMjQtcHJvZHVjdGlvbi1kZWZhdWx0LWJhdHRlcnktQjJiLVBSRVJFR0lTVFJBVElPTi5tZFwgXChGXCBhMzA4ZjFlMDlcKVwgQU1FTkRNRU5UXCAxXDtcIEIyYlwgYmFzZVw7XCBtZW1fZ2I9OCBFTkJMQVNfTlVNX1RIUkVBRFM9MSBNS0xfTlVNX1RIUkVBRFM9MSBMQl9BRkZFQ1RfRFJJVkVfUFJPQkU9MSBMQl9CR19TRUxFQ1RfRFJJVkVfUFJPQkU9MSBMQl9DR19EUklWRV9QUk9CRT0xIExCX0RJU0NPVVJTRV9SRUdJU1RFUl9EUklWRV9QUk9CRT0xIExCX0VQSVNPRElDX0RSSVZFX1BST0JFPTEgTEJfTk9OQ09OVFJBRElDVElPTl9EUklWRV9QUk9CRT0xIExCX09QRU5fRU5ERURfRElTVFJJQl9QUk9CRT0xIExCX1BNRU1fRFJJVkVfUFJPQkU9MSBMQl9TVVJQUklTRV9DT05GSVJNX1BST0JFPTEgLnZlbnYvYmluL3B5dGhvbiAtdSAtbSByZXNlYXJjaC5ydW5uZXJzLmxvYWRfYmVhcmluZ19mcmFjdGlvbiAtLW9ubHkgZDUtY29uc29saWRhdGUgLS1zZWVkIDQzIC0tcmVwZWF0cyAyIC0tb3V0IHJlc2VhcmNoL2ZpbmRpbmdzL3Jhdy9fbG9hZF9iZWFyaW5nL19zaGFyZHMvYjJiMDkyNC1iYXNlL3M0My9kNS1jb25zb2xpZGF0ZS9sYi5qc29u",
+   "n_parents": 1,
+   "parents": [
+    {
+     "offset": 254,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s43/d5-consolidate/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1852,
+       "time": "2026-09-25 05:43:01",
+       "node": "pool2",
+       "node_status": [
+        {
+         "node": "pool2",
+         "ts": 1790330419,
+         "rc": 0
+        }
+       ],
+       "node_status_source": "archive:research/findings/raw/_dispatcher_fragment_audit/node_evidence/parent_run_status_archive.json"
+      }
+     ],
+     "head_tail": "/_load_bearing/_shards/b2b0924-base/s43/d5-consolidate && env SIM_BACKEND=numpy OMP_NUM_THREADS=1 OP"
+    }
+   ],
+   "node_status": [
+    {
+     "node": "pool2",
+     "ts": 1790296140,
+     "rc": 0
+    }
+   ],
+   "local_cells": [
+    {
+     "cell": "research/findings/raw/_load_bearing/_shards/b2b0924-base/s43/d5-consolidate",
+     "exists": true,
+     "lb_prov": {
+      "git_sha": "a308f1e09babcc9ed096c3c8046d00040391368c",
+      "source_kind": "git_archive",
+      "started": "2026-09-25T09:43:01",
+      "run_id": "1790329381-2665488",
+      "argv0": "/home/ubuntu/derisk-pool/revisions/a308f1e09babcc9ed096c3c8046d00040391368c/research/runners/load_bearing_fraction.py"
+     },
+     "pin": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "pin_source": "parent-line revision",
+     "pin_rule_fails": {},
+     "pin_rule_covered_by_parent": {},
+     "files": [
+      {
+       "name": "intact_a_d5c_teach_d5c_recall1_d5c_tick_d5c_recall2_s43.json",
+       "mtime": "2026-09-25 05:47:10"
+      },
+      {
+       "name": "intact_a_d5c_teach_d5c_recall1_d5c_tick_d5c_recall2_s43.json.prov.json",
+       "mtime": "2026-09-25 05:47:10"
+      },
+      {
+       "name": "intact_b_d5c_teach_d5c_recall1_d5c_tick_d5c_recall2_s43.json",
+       "mtime": "2026-09-25 05:51:27"
+      },
+      {
+       "name": "intact_b_d5c_teach_d5c_recall1_d5c_tick_d5c_recall2_s43.json.prov.json",
+       "mtime": "2026-09-25 05:51:27"
+      },
+      {
+       "name": "lb.json",
+       "mtime": "2026-09-25 06:00:18"
+      },
+      {
+       "name": "lb.json.prov.json",
+       "mtime": "2026-09-25 06:00:19"
+      },
+      {
+       "name": "lesion_d5_consolidate_s43.json",
+       "mtime": "2026-09-25 05:55:46"
+      },
+      {
+       "name": "lesion_d5_consolidate_s43.json.prov.json",
+       "mtime": "2026-09-25 05:55:47"
+      },
+      {
+       "name": "lesion_d5_consolidate_s43.json.rep0",
+       "mtime": "2026-09-25 06:00:06"
+      },
+      {
+       "name": "lesion_d5_consolidate_s43.json.rep0.prov.json",
+       "mtime": "2026-09-25 06:00:06"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "claim_line": 1630,
+   "claim_time": "2026-09-24 20:39:43",
+   "fragment": "dmodel-forward/lb.json  #checked:prereg research/findings/2026-09-24-production-default-battery-B2b-PREREGISTRATION.md (F a308f1e09) AMENDMENT 1; B2b base; mem_gb=8",
+   "stripped": "dmodel-forward/lb.json",
+   "node": "pool1",
+   "running_line": 596,
+   "dispatch_log_line": 36651,
+   "swallowing_probe": {
+    "line": 36650,
+    "sha": "4da72fd2316902697972917a72536d9e9def95ef",
+    "node": "pool1"
+   },
+   "executed": "POOL_CHECKED_REASON=prereg\\ research/findings/2026-09-24-production-default-battery-B2b-PREREGISTRATION.md\\ \\(F\\ a308f1e09\\)\\ AMENDMENT\\ 1\\;\\ B2b\\ base\\;\\ mem_gb=8 dmodel-forward/lb.json",
+   "classification": {
+    "first_word": "dmodel-forward/lb.json",
+    "expect": "command-not-found (rc 127 expected; nothing after `&&` runs)"
+   },
+   "pinned": false,
+   "outputs": [],
+   "job_b64": "UE9PTF9DSEVDS0VEX1JFQVNPTj1wcmVyZWdcIHJlc2VhcmNoL2ZpbmRpbmdzLzIwMjYtMDktMjQtcHJvZHVjdGlvbi1kZWZhdWx0LWJhdHRlcnktQjJiLVBSRVJFR0lTVFJBVElPTi5tZFwgXChGXCBhMzA4ZjFlMDlcKVwgQU1FTkRNRU5UXCAxXDtcIEIyYlwgYmFzZVw7XCBtZW1fZ2I9OCBkbW9kZWwtZm9yd2FyZC9sYi5qc29u",
+   "n_parents": 6,
+   "parents": [
+    {
+     "offset": 725,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s42/worldmodel-forward/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1790,
+       "time": "2026-09-25 02:50:13",
+       "node": "pool2",
+       "node_status": [
+        {
+         "node": "pool2",
+         "ts": 1790320192,
+         "rc": 0
+        }
+       ],
+       "node_status_source": "archive:research/findings/raw/_dispatcher_fragment_audit/node_evidence/parent_run_status_archive.json"
+      }
+     ],
+     "head_tail": "orward --seed 42 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s42/worl"
+    },
+    {
+     "offset": 725,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s43/worldmodel-forward/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1839,
+       "time": "2026-09-25 04:57:16",
+       "node": "pool2",
+       "node_status": [
+        {
+         "node": "pool2",
+         "ts": 1790327837,
+         "rc": 0
+        }
+       ],
+       "node_status_source": "archive:research/findings/raw/_dispatcher_fragment_audit/node_evidence/parent_run_status_archive.json"
+      }
+     ],
+     "head_tail": "orward --seed 43 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s43/worl"
+    },
+    {
+     "offset": 725,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/worldmodel-forward/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1942,
+       "time": "2026-09-25 10:07:06",
+       "node": "pool1",
+       "node_status": [
+        {
+         "node": "pool1",
+         "ts": 1790346540,
+         "rc": 0
+        }
+       ],
+       "node_status_source": "archive:research/findings/raw/_dispatcher_fragment_audit/node_evidence/parent_run_status_archive.json"
+      }
+     ],
+     "head_tail": "orward --seed 44 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/worl"
+    },
+    {
+     "offset": 728,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/worldmodel-forward/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1985,
+       "time": "2026-09-25 11:11:14",
+       "node": "pool2",
+       "node_status": [
+        {
+         "node": "pool2",
+         "ts": 1790350265,
+         "rc": 0
+        }
+       ],
+       "node_status_source": "archive:research/findings/raw/_dispatcher_fragment_audit/node_evidence/parent_run_status_archive.json"
+      }
+     ],
+     "head_tail": "ward --seed 100 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/worl"
+    },
+    {
+     "offset": 728,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/worldmodel-forward/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 2028,
+       "time": "2026-09-25 12:11:48",
+       "node": "pool2",
+       "node_status": null
+      }
+     ],
+     "head_tail": "ward --seed 101 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/worl"
+    }
+   ],
+   "node_status": [
+    {
+     "node": "pool1",
+     "ts": 1790296784,
+     "rc": 127
+    }
+   ],
+   "local_cells": []
+  },
+  {
+   "claim_line": 1631,
+   "claim_time": "2026-09-24 20:39:51",
+   "fragment": "RIVE_PROBE=1 LB_DISCOURSE_REGISTER_DRIVE_PROBE=1 LB_EPISODIC_DRIVE_PROBE=1 LB_NONCONTRADICTION_DRIVE_PROBE=1 LB_OPEN_ENDED_DISTRIB_PROBE=1 LB_PMEM_DRIVE_PROBE=1 LB_SURPRISE_CONFIRM_PROBE=1 .venv/bin/python -u -m research.runners.load_bearing_fraction --only causal-whatif --seed 42 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s42/causal-whatif/lb.json  #checked:prereg research/findings/2026-09-24-production-default-battery-B2b-PREREGISTRATION.md (F a308f1e09) AMENDMENT 1; B2b base; mem_gb=8",
+   "stripped": "RIVE_PROBE=1 LB_DISCOURSE_REGISTER_DRIVE_PROBE=1 LB_EPISODIC_DRIVE_PROBE=1 LB_NONCONTRADICTION_DRIVE_PROBE=1 LB_OPEN_ENDED_DISTRIB_PROBE=1 LB_PMEM_DRIVE_PROBE=1 LB_SURPRISE_CONFIRM_PROBE=1 .venv/bin/python -u -m research.runners.load_bearing_fraction --only causal-whatif --seed 42 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s42/causal-whatif/lb.json",
+   "node": "pool1",
+   "running_line": 597,
+   "dispatch_log_line": 36653,
+   "swallowing_probe": {
+    "line": 36652,
+    "sha": "d460b44984cdc1ac2e3fe5de4dbfc3cc23290331",
+    "node": "pool1"
+   },
+   "executed": "POOL_CHECKED_REASON=prereg\\ research/findings/2026-09-24-production-default-battery-B2b-PREREGISTRATION.md\\ \\(F\\ a308f1e09\\)\\ AMENDMENT\\ 1\\;\\ B2b\\ base\\;\\ mem_gb=8 RIVE_PROBE=1 LB_DISCOURSE_REGISTER_DRIVE_PROBE=1 LB_EPISODIC_DRIVE_PROBE=1 LB_NONCONTRADICTION_DRIVE_PROBE=1 LB_OPEN_ENDED_DISTRIB_PROBE=1 LB_PMEM_DRIVE_PROBE=1 LB_SURPRISE_CONFIRM_PROBE=1 .venv/bin/python -u -m research.runners.load_bearing_fraction --only causal-whatif --seed 42 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s42/causal-whatif/lb.json",
+   "classification": {
+    "first_word": ".venv/bin/python",
+    "expect": "RUNS"
+   },
+   "pinned": false,
+   "outputs": [
+    "research/findings/raw/_load_bearing/_shards/b2b0924-base/s42/causal-whatif/lb.json"
+   ],
+   "job_b64": "UE9PTF9DSEVDS0VEX1JFQVNPTj1wcmVyZWdcIHJlc2VhcmNoL2ZpbmRpbmdzLzIwMjYtMDktMjQtcHJvZHVjdGlvbi1kZWZhdWx0LWJhdHRlcnktQjJiLVBSRVJFR0lTVFJBVElPTi5tZFwgXChGXCBhMzA4ZjFlMDlcKVwgQU1FTkRNRU5UXCAxXDtcIEIyYlwgYmFzZVw7XCBtZW1fZ2I9OCBSSVZFX1BST0JFPTEgTEJfRElTQ09VUlNFX1JFR0lTVEVSX0RSSVZFX1BST0JFPTEgTEJfRVBJU09ESUNfRFJJVkVfUFJPQkU9MSBMQl9OT05DT05UUkFESUNUSU9OX0RSSVZFX1BST0JFPTEgTEJfT1BFTl9FTkRFRF9ESVNUUklCX1BST0JFPTEgTEJfUE1FTV9EUklWRV9QUk9CRT0xIExCX1NVUlBSSVNFX0NPTkZJUk1fUFJPQkU9MSAudmVudi9iaW4vcHl0aG9uIC11IC1tIHJlc2VhcmNoLnJ1bm5lcnMubG9hZF9iZWFyaW5nX2ZyYWN0aW9uIC0tb25seSBjYXVzYWwtd2hhdGlmIC0tc2VlZCA0MiAtLXJlcGVhdHMgMiAtLW91dCByZXNlYXJjaC9maW5kaW5ncy9yYXcvX2xvYWRfYmVhcmluZy9fc2hhcmRzL2IyYjA5MjQtYmFzZS9zNDIvY2F1c2FsLXdoYXRpZi9sYi5qc29u",
+   "n_parents": 1,
+   "parents": [
+    {
+     "offset": 350,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s42/causal-whatif/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1806,
+       "time": "2026-09-25 03:38:28",
+       "node": "pool1",
+       "node_status": [
+        {
+         "node": "pool1",
+         "ts": 1790325289,
+         "rc": 0
+        }
+       ],
+       "node_status_source": "archive:research/findings/raw/_dispatcher_fragment_audit/node_evidence/parent_run_status_archive.json"
+      }
+     ],
+     "head_tail": " OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 LB_AFFECT_DRIVE_PROBE=1 LB_BG_SELECT_DRIVE_PROBE=1 LB_CG_D"
+    }
+   ],
+   "node_status": [
+    {
+     "node": "pool1",
+     "ts": 1790296793,
+     "rc": 0
+    }
+   ],
+   "local_cells": [
+    {
+     "cell": "research/findings/raw/_load_bearing/_shards/b2b0924-base/s42/causal-whatif",
+     "exists": true,
+     "lb_prov": {
+      "git_sha": "a308f1e09babcc9ed096c3c8046d00040391368c",
+      "source_kind": "git_archive",
+      "started": "2026-09-25T07:38:29",
+      "run_id": "1790321909-2469588",
+      "argv0": "/home/ubuntu/derisk-pool/revisions/a308f1e09babcc9ed096c3c8046d00040391368c/research/runners/load_bearing_fraction.py"
+     },
+     "pin": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "pin_source": "parent-line revision",
+     "pin_rule_fails": {},
+     "pin_rule_covered_by_parent": {},
+     "files": [
+      {
+       "name": "intact_a_lbf_cau_teach1_lbf_cau_teach2_lbf_cau_teach3_lbf_cau_teach4_lbf_cau_teach5_lbf_cau_teach6_lbf_cau_whatif.json",
+       "mtime": "2026-09-25 03:54:33"
+      },
+      {
+       "name": "intact_a_lbf_cau_teach1_lbf_cau_teach2_lbf_cau_teach3_lbf_cau_teach4_lbf_cau_teach5_lbf_cau_teach6_lbf_cau_whatif.json.prov.json",
+       "mtime": "2026-09-25 03:54:34"
+      },
+      {
+       "name": "intact_b_lbf_cau_teach1_lbf_cau_teach2_lbf_cau_teach3_lbf_cau_teach4_lbf_cau_teach5_lbf_cau_teach6_lbf_cau_whatif.json",
+       "mtime": "2026-09-25 04:10:46"
+      },
+      {
+       "name": "intact_b_lbf_cau_teach1_lbf_cau_teach2_lbf_cau_teach3_lbf_cau_teach4_lbf_cau_teach5_lbf_cau_teach6_lbf_cau_whatif.json.prov.json",
+       "mtime": "2026-09-25 04:10:47"
+      },
+      {
+       "name": "lb.json",
+       "mtime": "2026-09-25 04:34:49"
+      },
+      {
+       "name": "lb.json.prov.json",
+       "mtime": "2026-09-25 04:34:49"
+      },
+      {
+       "name": "lesion_causal_whatif.json",
+       "mtime": "2026-09-25 04:24:22"
+      },
+      {
+       "name": "lesion_causal_whatif.json.prov.json",
+       "mtime": "2026-09-25 04:24:23"
+      },
+      {
+       "name": "lesion_causal_whatif.json.rep0",
+       "mtime": "2026-09-25 04:34:35"
+      },
+      {
+       "name": "lesion_causal_whatif.json.rep0.prov.json",
+       "mtime": "2026-09-25 04:34:35"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "claim_line": 1635,
+   "claim_time": "2026-09-24 20:40:22",
+   "fragment": "RM_PROBE=1 .venv/bin/python -u -m research.runners.load_bearing_fraction --only affect-appraisal-interoceptive --seed 42 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s42/affect-appraisal-interoceptive/lb.json  #checked:prereg research/findings/2026-09-24-production-default-battery-B2b-PREREGISTRATION.md (F a308f1e09) AMENDMENT 1; B2b base; mem_gb=8",
+   "stripped": "RM_PROBE=1 .venv/bin/python -u -m research.runners.load_bearing_fraction --only affect-appraisal-interoceptive --seed 42 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s42/affect-appraisal-interoceptive/lb.json",
+   "node": "pool2",
+   "running_line": 601,
+   "dispatch_log_line": 36658,
+   "swallowing_probe": {
+    "line": 36657,
+    "sha": "4da72fd2316902697972917a72536d9e9def95ef",
+    "node": "pool2"
+   },
+   "executed": "POOL_CHECKED_REASON=prereg\\ research/findings/2026-09-24-production-default-battery-B2b-PREREGISTRATION.md\\ \\(F\\ a308f1e09\\)\\ AMENDMENT\\ 1\\;\\ B2b\\ base\\;\\ mem_gb=8 RM_PROBE=1 .venv/bin/python -u -m research.runners.load_bearing_fraction --only affect-appraisal-interoceptive --seed 42 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s42/affect-appraisal-interoceptive/lb.json",
+   "classification": {
+    "first_word": ".venv/bin/python",
+    "expect": "RUNS"
+   },
+   "pinned": false,
+   "outputs": [
+    "research/findings/raw/_load_bearing/_shards/b2b0924-base/s42/affect-appraisal-interoceptive/lb.json"
+   ],
+   "job_b64": "UE9PTF9DSEVDS0VEX1JFQVNPTj1wcmVyZWdcIHJlc2VhcmNoL2ZpbmRpbmdzLzIwMjYtMDktMjQtcHJvZHVjdGlvbi1kZWZhdWx0LWJhdHRlcnktQjJiLVBSRVJFR0lTVFJBVElPTi5tZFwgXChGXCBhMzA4ZjFlMDlcKVwgQU1FTkRNRU5UXCAxXDtcIEIyYlwgYmFzZVw7XCBtZW1fZ2I9OCBSTV9QUk9CRT0xIC52ZW52L2Jpbi9weXRob24gLXUgLW0gcmVzZWFyY2gucnVubmVycy5sb2FkX2JlYXJpbmdfZnJhY3Rpb24gLS1vbmx5IGFmZmVjdC1hcHByYWlzYWwtaW50ZXJvY2VwdGl2ZSAtLXNlZWQgNDIgLS1yZXBlYXRzIDIgLS1vdXQgcmVzZWFyY2gvZmluZGluZ3MvcmF3L19sb2FkX2JlYXJpbmcvX3NoYXJkcy9iMmIwOTI0LWJhc2UvczQyL2FmZmVjdC1hcHByYWlzYWwtaW50ZXJvY2VwdGl2ZS9sYi5qc29u",
+   "n_parents": 1,
+   "parents": [
+    {
+     "offset": 545,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s42/affect-appraisal-interoceptive/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1810,
+       "time": "2026-09-25 03:48:21",
+       "node": "pool2",
+       "node_status": [
+        {
+         "node": "pool2",
+         "ts": 1790323809,
+         "rc": 0
+        }
+       ],
+       "node_status_source": "archive:research/findings/raw/_dispatcher_fragment_audit/node_evidence/parent_run_status_archive.json"
+      }
+     ],
+     "head_tail": "NONCONTRADICTION_DRIVE_PROBE=1 LB_OPEN_ENDED_DISTRIB_PROBE=1 LB_PMEM_DRIVE_PROBE=1 LB_SURPRISE_CONFI"
+    }
+   ],
+   "node_status": [
+    {
+     "node": "pool2",
+     "ts": 1790296823,
+     "rc": 0
+    }
+   ],
+   "local_cells": [
+    {
+     "cell": "research/findings/raw/_load_bearing/_shards/b2b0924-base/s42/affect-appraisal-interoceptive",
+     "exists": true,
+     "lb_prov": {
+      "git_sha": "a308f1e09babcc9ed096c3c8046d00040391368c",
+      "source_kind": "git_archive",
+      "started": "2026-09-25T07:48:22",
+      "run_id": "1790322502-2426970",
+      "argv0": "/home/ubuntu/derisk-pool/revisions/a308f1e09babcc9ed096c3c8046d00040391368c/research/runners/load_bearing_fraction.py"
+     },
+     "pin": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "pin_source": "parent-line revision",
+     "pin_rule_fails": {},
+     "pin_rule_covered_by_parent": {},
+     "files": [
+      {
+       "name": "intact_a_emo.json",
+       "mtime": "2026-09-25 03:53:37"
+      },
+      {
+       "name": "intact_a_emo.json.prov.json",
+       "mtime": "2026-09-25 03:53:38"
+      },
+      {
+       "name": "intact_b_emo.json",
+       "mtime": "2026-09-25 03:59:05"
+      },
+      {
+       "name": "intact_b_emo.json.prov.json",
+       "mtime": "2026-09-25 03:59:06"
+      },
+      {
+       "name": "lb.json",
+       "mtime": "2026-09-25 04:10:08"
+      },
+      {
+       "name": "lb.json.prov.json",
+       "mtime": "2026-09-25 04:10:09"
+      },
+      {
+       "name": "lesion_affect_appraisal_interoceptive.json",
+       "mtime": "2026-09-25 04:04:30"
+      },
+      {
+       "name": "lesion_affect_appraisal_interoceptive.json.prov.json",
+       "mtime": "2026-09-25 04:04:31"
+      },
+      {
+       "name": "lesion_affect_appraisal_interoceptive.json.rep0",
+       "mtime": "2026-09-25 04:09:56"
+      },
+      {
+       "name": "lesion_affect_appraisal_interoceptive.json.rep0.prov.json",
+       "mtime": "2026-09-25 04:09:56"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "claim_line": 1637,
+   "claim_time": "2026-09-24 20:45:14",
+   "fragment": "coding/lb.json  #checked:prereg research/findings/2026-09-24-production-default-battery-B2b-PREREGISTRATION.md (F a308f1e09) AMENDMENT 1; B2b base; mem_gb=8",
+   "stripped": "coding/lb.json",
+   "node": "pool1",
+   "running_line": 603,
+   "dispatch_log_line": 36662,
+   "swallowing_probe": {
+    "line": 36661,
+    "sha": "4da72fd2316902697972917a72536d9e9def95ef",
+    "node": "pool1"
+   },
+   "executed": "POOL_CHECKED_REASON=prereg\\ research/findings/2026-09-24-production-default-battery-B2b-PREREGISTRATION.md\\ \\(F\\ a308f1e09\\)\\ AMENDMENT\\ 1\\;\\ B2b\\ base\\;\\ mem_gb=8 coding/lb.json",
+   "classification": {
+    "first_word": "coding/lb.json",
+    "expect": "command-not-found (rc 127 expected; nothing after `&&` runs)"
+   },
+   "pinned": false,
+   "outputs": [],
+   "job_b64": "UE9PTF9DSEVDS0VEX1JFQVNPTj1wcmVyZWdcIHJlc2VhcmNoL2ZpbmRpbmdzLzIwMjYtMDktMjQtcHJvZHVjdGlvbi1kZWZhdWx0LWJhdHRlcnktQjJiLVBSRVJFR0lTVFJBVElPTi5tZFwgXChGXCBhMzA4ZjFlMDlcKVwgQU1FTkRNRU5UXCAxXDtcIEIyYlwgYmFzZVw7XCBtZW1fZ2I9OCBjb2RpbmcvbGIuanNvbg==",
+   "n_parents": 6,
+   "parents": [
+    {
+     "offset": 730,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s42/da-gated-encoding/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1754,
+       "time": "2026-09-25 00:21:01",
+       "node": "pool2",
+       "node_status": [
+        {
+         "node": "pool2",
+         "ts": 1790310990,
+         "rc": 0
+        }
+       ],
+       "node_status_source": "archive:research/findings/raw/_dispatcher_fragment_audit/node_evidence/parent_run_status_archive.json"
+      }
+     ],
+     "head_tail": "--seed 42 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s42/da-gated-en"
+    },
+    {
+     "offset": 730,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s43/da-gated-encoding/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1824,
+       "time": "2026-09-25 04:10:59",
+       "node": "pool2",
+       "node_status": [
+        {
+         "node": "pool2",
+         "ts": 1790324778,
+         "rc": 0
+        }
+       ],
+       "node_status_source": "archive:research/findings/raw/_dispatcher_fragment_audit/node_evidence/parent_run_status_archive.json"
+      }
+     ],
+     "head_tail": "--seed 43 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s43/da-gated-en"
+    },
+    {
+     "offset": 730,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/da-gated-encoding/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1933,
+       "time": "2026-09-25 10:00:58",
+       "node": "pool2",
+       "node_status": [
+        {
+         "node": "pool2",
+         "ts": 1790345807,
+         "rc": 0
+        }
+       ],
+       "node_status_source": "archive:research/findings/raw/_dispatcher_fragment_audit/node_evidence/parent_run_status_archive.json"
+      }
+     ],
+     "head_tail": "--seed 44 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/da-gated-en"
+    },
+    {
+     "offset": 733,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/da-gated-encoding/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1976,
+       "time": "2026-09-25 11:00:07",
+       "node": "pool1",
+       "node_status": [
+        {
+         "node": "pool1",
+         "ts": 1790349455,
+         "rc": 0
+        }
+       ],
+       "node_status_source": "archive:research/findings/raw/_dispatcher_fragment_audit/node_evidence/parent_run_status_archive.json"
+      }
+     ],
+     "head_tail": "seed 100 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/da-gated-en"
+    },
+    {
+     "offset": 733,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/da-gated-encoding/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 2019,
+       "time": "2026-09-25 11:58:17",
+       "node": "pool1",
+       "node_status": null
+      }
+     ],
+     "head_tail": "seed 101 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/da-gated-en"
+    }
+   ],
+   "node_status": [
+    {
+     "node": "pool1",
+     "ts": 1790297115,
+     "rc": 127
+    }
+   ],
+   "local_cells": []
+  },
+  {
+   "claim_line": 1638,
+   "claim_time": "2026-09-24 20:55:50",
+   "fragment": "& .venv/bin/python tools/assert_flipped_defaults.py && mkdir -p research/findings/raw/_load_bearing/_shards/b2b0924-base/s42/affect-marker-spiking-wta && env SIM_BACKEND=numpy OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 LB_AFFECT_DRIVE_PROBE=1 LB_BG_SELECT_DRIVE_PROBE=1 LB_CG_DRIVE_PROBE=1 LB_DISCOURSE_REGISTER_DRIVE_PROBE=1 LB_EPISODIC_DRIVE_PROBE=1 LB_NONCONTRADICTION_DRIVE_PROBE=1 LB_OPEN_ENDED_DISTRIB_PROBE=1 LB_PMEM_DRIVE_PROBE=1 LB_SURPRISE_CONFIRM_PROBE=1 .venv/bin/python -u -m research.runners.load_bearing_fraction --only affect-marker-spiking-wta --seed 42 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s42/affect-marker-spiking-wta/lb.json  #checked:prereg research/findings/2026-09-24-production-default-battery-B2b-PREREGISTRATION.md (F a308f1e09) AMENDMENT 1; B2b base; mem_gb=8",
+   "stripped": "& .venv/bin/python tools/assert_flipped_defaults.py && mkdir -p research/findings/raw/_load_bearing/_shards/b2b0924-base/s42/affect-marker-spiking-wta && env SIM_BACKEND=numpy OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 LB_AFFECT_DRIVE_PROBE=1 LB_BG_SELECT_DRIVE_PROBE=1 LB_CG_DRIVE_PROBE=1 LB_DISCOURSE_REGISTER_DRIVE_PROBE=1 LB_EPISODIC_DRIVE_PROBE=1 LB_NONCONTRADICTION_DRIVE_PROBE=1 LB_OPEN_ENDED_DISTRIB_PROBE=1 LB_PMEM_DRIVE_PROBE=1 LB_SURPRISE_CONFIRM_PROBE=1 .venv/bin/python -u -m research.runners.load_bearing_fraction --only affect-marker-spiking-wta --seed 42 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s42/affect-marker-spiking-wta/lb.json",
+   "node": "pool2",
+   "running_line": 604,
+   "dispatch_log_line": 36685,
+   "swallowing_probe": {
+    "line": 36684,
+    "sha": "4da72fd2316902697972917a72536d9e9def95ef",
+    "node": "pool2"
+   },
+   "executed": "POOL_CHECKED_REASON=prereg\\ research/findings/2026-09-24-production-default-battery-B2b-PREREGISTRATION.md\\ \\(F\\ a308f1e09\\)\\ AMENDMENT\\ 1\\;\\ B2b\\ base\\;\\ mem_gb=8 & .venv/bin/python tools/assert_flipped_defaults.py && mkdir -p research/findings/raw/_load_bearing/_shards/b2b0924-base/s42/affect-marker-spiking-wta && env SIM_BACKEND=numpy OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 LB_AFFECT_DRIVE_PROBE=1 LB_BG_SELECT_DRIVE_PROBE=1 LB_CG_DRIVE_PROBE=1 LB_DISCOURSE_REGISTER_DRIVE_PROBE=1 LB_EPISODIC_DRIVE_PROBE=1 LB_NONCONTRADICTION_DRIVE_PROBE=1 LB_OPEN_ENDED_DISTRIB_PROBE=1 LB_PMEM_DRIVE_PROBE=1 LB_SURPRISE_CONFIRM_PROBE=1 .venv/bin/python -u -m research.runners.load_bearing_fraction --only affect-marker-spiking-wta --seed 42 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s42/affect-marker-spiking-wta/lb.json",
+   "classification": {
+    "first_word": "& .venv/bin/python",
+    "expect": "RUNS `.venv/bin/python ...` after a backgrounded assignment"
+   },
+   "pinned": false,
+   "outputs": [
+    "research/findings/raw/_load_bearing/_shards/b2b0924-base/s42/affect-marker-spiking-wta/lb.json"
+   ],
+   "job_b64": "UE9PTF9DSEVDS0VEX1JFQVNPTj1wcmVyZWdcIHJlc2VhcmNoL2ZpbmRpbmdzLzIwMjYtMDktMjQtcHJvZHVjdGlvbi1kZWZhdWx0LWJhdHRlcnktQjJiLVBSRVJFR0lTVFJBVElPTi5tZFwgXChGXCBhMzA4ZjFlMDlcKVwgQU1FTkRNRU5UXCAxXDtcIEIyYlwgYmFzZVw7XCBtZW1fZ2I9OCAmIC52ZW52L2Jpbi9weXRob24gdG9vbHMvYXNzZXJ0X2ZsaXBwZWRfZGVmYXVsdHMucHkgJiYgbWtkaXIgLXAgcmVzZWFyY2gvZmluZGluZ3MvcmF3L19sb2FkX2JlYXJpbmcvX3NoYXJkcy9iMmIwOTI0LWJhc2UvczQyL2FmZmVjdC1tYXJrZXItc3Bpa2luZy13dGEgJiYgZW52IFNJTV9CQUNLRU5EPW51bXB5IE9NUF9OVU1fVEhSRUFEUz0xIE9QRU5CTEFTX05VTV9USFJFQURTPTEgTUtMX05VTV9USFJFQURTPTEgTEJfQUZGRUNUX0RSSVZFX1BST0JFPTEgTEJfQkdfU0VMRUNUX0RSSVZFX1BST0JFPTEgTEJfQ0dfRFJJVkVfUFJPQkU9MSBMQl9ESVNDT1VSU0VfUkVHSVNURVJfRFJJVkVfUFJPQkU9MSBMQl9FUElTT0RJQ19EUklWRV9QUk9CRT0xIExCX05PTkNPTlRSQURJQ1RJT05fRFJJVkVfUFJPQkU9MSBMQl9PUEVOX0VOREVEX0RJU1RSSUJfUFJPQkU9MSBMQl9QTUVNX0RSSVZFX1BST0JFPTEgTEJfU1VSUFJJU0VfQ09ORklSTV9QUk9CRT0xIC52ZW52L2Jpbi9weXRob24gLXUgLW0gcmVzZWFyY2gucnVubmVycy5sb2FkX2JlYXJpbmdfZnJhY3Rpb24gLS1vbmx5IGFmZmVjdC1tYXJrZXItc3Bpa2luZy13dGEgLS1zZWVkIDQyIC0tcmVwZWF0cyAyIC0tb3V0IHJlc2VhcmNoL2ZpbmRpbmdzL3Jhdy9fbG9hZF9iZWFyaW5nL19zaGFyZHMvYjJiMDkyNC1iYXNlL3M0Mi9hZmZlY3QtbWFya2VyLXNwaWtpbmctd3RhL2xiLmpzb24=",
+   "n_parents": 1,
+   "parents": [
+    {
+     "offset": 69,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s42/affect-marker-spiking-wta/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1752,
+       "time": "2026-09-25 00:19:36",
+       "node": "pool2",
+       "node_status": [
+        {
+         "node": "pool2",
+         "ts": 1790311317,
+         "rc": 0
+        }
+       ],
+       "node_status_source": "archive:research/findings/raw/_dispatcher_fragment_audit/node_evidence/parent_run_status_archive.json"
+      }
+     ],
+     "head_tail": "cd ~/derisk-pool/revisions/a308f1e09babcc9ed096c3c8046d00040391368c &"
+    }
+   ],
+   "node_status": [
+    {
+     "node": "pool2",
+     "ts": 1790297751,
+     "rc": 2
+    }
+   ],
+   "local_cells": [
+    {
+     "cell": "research/findings/raw/_load_bearing/_shards/b2b0924-base/s42/affect-marker-spiking-wta",
+     "exists": true,
+     "lb_prov": {
+      "git_sha": "a308f1e09babcc9ed096c3c8046d00040391368c",
+      "source_kind": "git_archive",
+      "started": "2026-09-25T04:19:37",
+      "run_id": "1790309977-2002002",
+      "argv0": "/home/ubuntu/derisk-pool/revisions/a308f1e09babcc9ed096c3c8046d00040391368c/research/runners/load_bearing_fraction.py"
+     },
+     "pin": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "pin_source": "parent-line revision",
+     "pin_rule_fails": {},
+     "pin_rule_covered_by_parent": {},
+     "files": [
+      {
+       "name": "intact_a_emo.json",
+       "mtime": "2026-09-25 00:24:58"
+      },
+      {
+       "name": "intact_a_emo.json.prov.json",
+       "mtime": "2026-09-25 00:24:59"
+      },
+      {
+       "name": "intact_b_emo.json",
+       "mtime": "2026-09-25 00:30:35"
+      },
+      {
+       "name": "intact_b_emo.json.prov.json",
+       "mtime": "2026-09-25 00:30:35"
+      },
+      {
+       "name": "lb.json",
+       "mtime": "2026-09-25 00:41:57"
+      },
+      {
+       "name": "lb.json.prov.json",
+       "mtime": "2026-09-25 00:41:57"
+      },
+      {
+       "name": "lesion_affect_marker_spiking_wta.json",
+       "mtime": "2026-09-25 00:36:09"
+      },
+      {
+       "name": "lesion_affect_marker_spiking_wta.json.prov.json",
+       "mtime": "2026-09-25 00:36:10"
+      },
+      {
+       "name": "lesion_affect_marker_spiking_wta.json.rep0",
+       "mtime": "2026-09-25 00:41:44"
+      },
+      {
+       "name": "lesion_affect_marker_spiking_wta.json.rep0.prov.json",
+       "mtime": "2026-09-25 00:41:45"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "claim_line": 1647,
+   "claim_time": "2026-09-24 20:58:04",
+   "fragment": "earing_fraction --only curiosity-followup --seed 42 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s42/curiosity-followup/lb.json  #checked:prereg research/findings/2026-09-24-production-default-battery-B2b-PREREGISTRATION.md (F a308f1e09) AMENDMENT 1; B2b base; mem_gb=8",
+   "stripped": "earing_fraction --only curiosity-followup --seed 42 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s42/curiosity-followup/lb.json",
+   "node": "pool1",
+   "running_line": 613,
+   "dispatch_log_line": 36695,
+   "swallowing_probe": {
+    "line": 36694,
+    "sha": "4da72fd2316902697972917a72536d9e9def95ef",
+    "node": "pool1"
+   },
+   "executed": "POOL_CHECKED_REASON=prereg\\ research/findings/2026-09-24-production-default-battery-B2b-PREREGISTRATION.md\\ \\(F\\ a308f1e09\\)\\ AMENDMENT\\ 1\\;\\ B2b\\ base\\;\\ mem_gb=8 earing_fraction --only curiosity-followup --seed 42 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s42/curiosity-followup/lb.json",
+   "classification": {
+    "first_word": "earing_fraction",
+    "expect": "command-not-found (rc 127 expected; nothing after `&&` runs)"
+   },
+   "pinned": false,
+   "outputs": [
+    "research/findings/raw/_load_bearing/_shards/b2b0924-base/s42/curiosity-followup/lb.json"
+   ],
+   "job_b64": "UE9PTF9DSEVDS0VEX1JFQVNPTj1wcmVyZWdcIHJlc2VhcmNoL2ZpbmRpbmdzLzIwMjYtMDktMjQtcHJvZHVjdGlvbi1kZWZhdWx0LWJhdHRlcnktQjJiLVBSRVJFR0lTVFJBVElPTi5tZFwgXChGXCBhMzA4ZjFlMDlcKVwgQU1FTkRNRU5UXCAxXDtcIEIyYlwgYmFzZVw7XCBtZW1fZ2I9OCBlYXJpbmdfZnJhY3Rpb24gLS1vbmx5IGN1cmlvc2l0eS1mb2xsb3d1cCAtLXNlZWQgNDIgLS1yZXBlYXRzIDIgLS1vdXQgcmVzZWFyY2gvZmluZGluZ3MvcmF3L19sb2FkX2JlYXJpbmcvX3NoYXJkcy9iMmIwOTI0LWJhc2UvczQyL2N1cmlvc2l0eS1mb2xsb3d1cC9sYi5qc29u",
+   "n_parents": 1,
+   "parents": [
+    {
+     "offset": 590,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s42/curiosity-followup/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1791,
+       "time": "2026-09-25 02:52:42",
+       "node": "pool2",
+       "node_status": [
+        {
+         "node": "pool2",
+         "ts": 1790319905,
+         "rc": 0
+        }
+       ],
+       "node_status_source": "archive:research/findings/raw/_dispatcher_fragment_audit/node_evidence/parent_run_status_archive.json"
+      }
+     ],
+     "head_tail": "E=1 LB_PMEM_DRIVE_PROBE=1 LB_SURPRISE_CONFIRM_PROBE=1 .venv/bin/python -u -m research.runners.load_b"
+    }
+   ],
+   "node_status": [
+    {
+     "node": "pool1",
+     "ts": 1790297884,
+     "rc": 127
+    }
+   ],
+   "local_cells": [
+    {
+     "cell": "research/findings/raw/_load_bearing/_shards/b2b0924-base/s42/curiosity-followup",
+     "exists": true,
+     "lb_prov": {
+      "git_sha": "a308f1e09babcc9ed096c3c8046d00040391368c",
+      "source_kind": "git_archive",
+      "started": "2026-09-25T06:52:43",
+      "run_id": "1790319163-2323265",
+      "argv0": "/home/ubuntu/derisk-pool/revisions/a308f1e09babcc9ed096c3c8046d00040391368c/research/runners/load_bearing_fraction.py"
+     },
+     "pin": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "pin_source": "parent-line revision",
+     "pin_rule_fails": {},
+     "pin_rule_covered_by_parent": {},
+     "files": [
+      {
+       "name": "intact_a_unknown.json",
+       "mtime": "2026-09-25 02:55:37"
+      },
+      {
+       "name": "intact_a_unknown.json.prov.json",
+       "mtime": "2026-09-25 02:55:37"
+      },
+      {
+       "name": "intact_b_unknown.json",
+       "mtime": "2026-09-25 02:58:42"
+      },
+      {
+       "name": "intact_b_unknown.json.prov.json",
+       "mtime": "2026-09-25 02:58:42"
+      },
+      {
+       "name": "lb.json",
+       "mtime": "2026-09-25 03:05:05"
+      },
+      {
+       "name": "lb.json.prov.json",
+       "mtime": "2026-09-25 03:05:05"
+      },
+      {
+       "name": "lesion_curiosity_followup.json",
+       "mtime": "2026-09-25 03:01:47"
+      },
+      {
+       "name": "lesion_curiosity_followup.json.prov.json",
+       "mtime": "2026-09-25 03:01:48"
+      },
+      {
+       "name": "lesion_curiosity_followup.json.rep0",
+       "mtime": "2026-09-25 03:04:53"
+      },
+      {
+       "name": "lesion_curiosity_followup.json.rep0.prov.json",
+       "mtime": "2026-09-25 03:04:53"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "claim_line": 1909,
+   "claim_time": "2026-09-25 07:31:27",
+   "fragment": "nce/lb.json  #checked:prereg research/findings/2026-09-24-production-default-battery-B2b-PREREGISTRATION.md (F a308f1e09) AMENDMENT 1; B2b base; mem_gb=8",
+   "stripped": "nce/lb.json",
+   "node": "pool2",
+   "running_line": 875,
+   "dispatch_log_line": 37019,
+   "swallowing_probe": {
+    "line": 37018,
+    "sha": "5b5ea1b7447b24d0978189fb53557a57b88952d4",
+    "node": "pool2"
+   },
+   "executed": "POOL_CHECKED_REASON=prereg\\ research/findings/2026-09-24-production-default-battery-B2b-PREREGISTRATION.md\\ \\(F\\ a308f1e09\\)\\ AMENDMENT\\ 1\\;\\ B2b\\ base\\;\\ mem_gb=8 nce/lb.json",
+   "classification": {
+    "first_word": "nce/lb.json",
+    "expect": "command-not-found (rc 127 expected; nothing after `&&` runs)"
+   },
+   "pinned": false,
+   "outputs": [],
+   "job_b64": "UE9PTF9DSEVDS0VEX1JFQVNPTj1wcmVyZWdcIHJlc2VhcmNoL2ZpbmRpbmdzLzIwMjYtMDktMjQtcHJvZHVjdGlvbi1kZWZhdWx0LWJhdHRlcnktQjJiLVBSRVJFR0lTVFJBVElPTi5tZFwgXChGXCBhMzA4ZjFlMDlcKVwgQU1FTkRNRU5UXCAxXDtcIEIyYlwgYmFzZVw7XCBtZW1fZ2I9OCBuY2UvbGIuanNvbg==",
+   "n_parents": 6,
+   "parents": [
+    {
+     "offset": 754,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/self-initiated-utterance/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1948,
+       "time": "2026-09-25 10:19:02",
+       "node": "pool2",
+       "node_status": [
+        {
+         "node": "pool2",
+         "ts": 1790346636,
+         "rc": 0
+        }
+       ],
+       "node_status_source": "archive:research/findings/raw/_dispatcher_fragment_audit/node_evidence/parent_run_status_archive.json"
+      }
+     ],
+     "head_tail": "--repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/self-initiated-uttera"
+    },
+    {
+     "offset": 757,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/self-initiated-utterance/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1991,
+       "time": "2026-09-25 11:16:53",
+       "node": "pool2",
+       "node_status": [
+        {
+         "node": "pool2",
+         "ts": 1790350113,
+         "rc": 0
+        }
+       ],
+       "node_status_source": "archive:research/findings/raw/_dispatcher_fragment_audit/node_evidence/parent_run_status_archive.json"
+      }
+     ],
+     "head_tail": "-repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/self-initiated-uttera"
+    },
+    {
+     "offset": 757,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/self-initiated-utterance/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 2034,
+       "time": "2026-09-25 12:17:26",
+       "node": "pool1",
+       "node_status": null
+      }
+     ],
+     "head_tail": "-repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/self-initiated-uttera"
+    }
+   ],
+   "node_status": [
+    {
+     "node": "pool2",
+     "ts": 1790335888,
+     "rc": 127
+    }
+   ],
+   "local_cells": []
+  },
+  {
+   "claim_line": 1916,
+   "claim_time": "2026-09-25 07:35:36",
+   "fragment": ".json  #checked:prereg research/findings/2026-09-24-production-default-battery-B2b-PREREGISTRATION.md (F a308f1e09) AMENDMENT 1; B2b base; mem_gb=8",
+   "stripped": ".json",
+   "node": "pool1",
+   "running_line": 882,
+   "dispatch_log_line": 37029,
+   "swallowing_probe": {
+    "line": 37028,
+    "sha": "5b5ea1b7447b24d0978189fb53557a57b88952d4",
+    "node": "pool1"
+   },
+   "executed": "POOL_CHECKED_REASON=prereg\\ research/findings/2026-09-24-production-default-battery-B2b-PREREGISTRATION.md\\ \\(F\\ a308f1e09\\)\\ AMENDMENT\\ 1\\;\\ B2b\\ base\\;\\ mem_gb=8 .json",
+   "classification": {
+    "first_word": ".json",
+    "expect": "command-not-found (rc 127 expected; nothing after `&&` runs)"
+   },
+   "pinned": false,
+   "outputs": [],
+   "job_b64": "UE9PTF9DSEVDS0VEX1JFQVNPTj1wcmVyZWdcIHJlc2VhcmNoL2ZpbmRpbmdzLzIwMjYtMDktMjQtcHJvZHVjdGlvbi1kZWZhdWx0LWJhdHRlcnktQjJiLVBSRVJFR0lTVFJBVElPTi5tZFwgXChGXCBhMzA4ZjFlMDlcKVwgQU1FTkRNRU5UXCAxXDtcIEIyYlwgYmFzZVw7XCBtZW1fZ2I9OCAuanNvbg==",
+   "n_parents": 258,
+   "parents": [
+    {
+     "offset": 790,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/comprehension-learned-verb-selects/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1917,
+       "time": "2026-09-25 07:35:43",
+       "node": "pool1",
+       "node_status": [
+        {
+         "node": "pool1",
+         "ts": 1790337063,
+         "rc": 0
+        }
+       ],
+       "node_status_source": "archive:research/findings/raw/_dispatcher_fragment_audit/node_evidence/parent_run_status_archive.json"
+      }
+     ],
+     "head_tail": "t research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/comprehension-learned-verb-selects/lb"
+    },
+    {
+     "offset": 751,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/noncontradiction-gate/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1918,
+       "time": "2026-09-25 07:35:50",
+       "node": "pool1",
+       "node_status": [
+        {
+         "node": "pool1",
+         "ts": 1790336958,
+         "rc": 0
+        }
+       ],
+       "node_status_source": "archive:research/findings/raw/_dispatcher_fragment_audit/node_evidence/parent_run_status_archive.json"
+      }
+     ],
+     "head_tail": "epeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/noncontradiction-gate/lb"
+    },
+    {
+     "offset": 733,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/affect-coloring/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1929,
+       "time": "2026-09-25 10:00:32",
+       "node": "pool2",
+       "node_status": [
+        {
+         "node": "pool2",
+         "ts": 1790346187,
+         "rc": 0
+        }
+       ],
+       "node_status_source": "archive:research/findings/raw/_dispatcher_fragment_audit/node_evidence/parent_run_status_archive.json"
+      }
+     ],
+     "head_tail": "44 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/affect-coloring/lb"
+    },
+    {
+     "offset": 754,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/affect-drives-response/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1930,
+       "time": "2026-09-25 10:00:39",
+       "node": "pool2",
+       "node_status": [
+        {
+         "node": "pool2",
+         "ts": 1790345791,
+         "rc": 0
+        }
+       ],
+       "node_status_source": "archive:research/findings/raw/_dispatcher_fragment_audit/node_evidence/parent_run_status_archive.json"
+      }
+     ],
+     "head_tail": "peats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/affect-drives-response/lb"
+    },
+    {
+     "offset": 763,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/affect-marker-spiking-wta/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1931,
+       "time": "2026-09-25 10:00:45",
+       "node": "pool2",
+       "node_status": [
+        {
+         "node": "pool2",
+         "ts": 1790346204,
+         "rc": 0
+        }
+       ],
+       "node_status_source": "archive:research/findings/raw/_dispatcher_fragment_audit/node_evidence/parent_run_status_archive.json"
+      }
+     ],
+     "head_tail": "ts 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/affect-marker-spiking-wta/lb"
+    },
+    {
+     "offset": 757,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/da-mode-drives-response/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1932,
+       "time": "2026-09-25 10:00:51",
+       "node": "pool2",
+       "node_status": [
+        {
+         "node": "pool2",
+         "ts": 1790345797,
+         "rc": 0
+        }
+       ],
+       "node_status_source": "archive:research/findings/raw/_dispatcher_fragment_audit/node_evidence/parent_run_status_archive.json"
+      }
+     ],
+     "head_tail": "eats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/da-mode-drives-response/lb"
+    },
+    {
+     "offset": 739,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/da-gated-encoding/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1933,
+       "time": "2026-09-25 10:00:58",
+       "node": "pool2",
+       "node_status": [
+        {
+         "node": "pool2",
+         "ts": 1790345807,
+         "rc": 0
+        }
+       ],
+       "node_status_source": "archive:research/findings/raw/_dispatcher_fragment_audit/node_evidence/parent_run_status_archive.json"
+      }
+     ],
+     "head_tail": " --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/da-gated-encoding/lb"
+    },
+    {
+     "offset": 763,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/source-provenance-honesty/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1934,
+       "time": "2026-09-25 10:01:04",
+       "node": "pool2",
+       "node_status": [
+        {
+         "node": "pool2",
+         "ts": 1790345820,
+         "rc": 0
+        }
+       ],
+       "node_status_source": "archive:research/findings/raw/_dispatcher_fragment_audit/node_evidence/parent_run_status_archive.json"
+      }
+     ],
+     "head_tail": "ts 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/source-provenance-honesty/lb"
+    },
+    {
+     "offset": 748,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/common-ground-drives/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1935,
+       "time": "2026-09-25 10:01:10",
+       "node": "pool2",
+       "node_status": [
+        {
+         "node": "pool2",
+         "ts": 1790345868,
+         "rc": 0
+        }
+       ],
+       "node_status_source": "archive:research/findings/raw/_dispatcher_fragment_audit/node_evidence/parent_run_status_archive.json"
+      }
+     ],
+     "head_tail": "repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/common-ground-drives/lb"
+    },
+    {
+     "offset": 748,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/swap-drives-response/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1936,
+       "time": "2026-09-25 10:06:28",
+       "node": "pool1",
+       "node_status": [
+        {
+         "node": "pool1",
+         "ts": 1790346312,
+         "rc": 0
+        }
+       ],
+       "node_status_source": "archive:research/findings/raw/_dispatcher_fragment_audit/node_evidence/parent_run_status_archive.json"
+      }
+     ],
+     "head_tail": "repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/swap-drives-response/lb"
+    },
+    {
+     "offset": 745,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/wm-binding-advanced/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1937,
+       "time": "2026-09-25 10:06:35",
+       "node": "pool1",
+       "node_status": [
+        {
+         "node": "pool1",
+         "ts": 1790346302,
+         "rc": 0
+        }
+       ],
+       "node_status_source": "archive:research/findings/raw/_dispatcher_fragment_audit/node_evidence/parent_run_status_archive.json"
+      }
+     ],
+     "head_tail": "-repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/wm-binding-advanced/lb"
+    },
+    {
+     "offset": 742,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/prospective-memory/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1938,
+       "time": "2026-09-25 10:06:41",
+       "node": "pool1",
+       "node_status": [
+        {
+         "node": "pool1",
+         "ts": 1790348106,
+         "rc": 0
+        }
+       ],
+       "node_status_source": "archive:research/findings/raw/_dispatcher_fragment_audit/node_evidence/parent_run_status_archive.json"
+      }
+     ],
+     "head_tail": "--repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/prospective-memory/lb"
+    },
+    {
+     "offset": 751,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/pragmatic-implicature/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1939,
+       "time": "2026-09-25 10:06:47",
+       "node": "pool1",
+       "node_status": [
+        {
+         "node": "pool1",
+         "ts": 1790346106,
+         "rc": 0
+        }
+       ],
+       "node_status_source": "archive:research/findings/raw/_dispatcher_fragment_audit/node_evidence/parent_run_status_archive.json"
+      }
+     ],
+     "head_tail": "epeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/pragmatic-implicature/lb"
+    },
+    {
+     "offset": 736,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/surprise-monitor/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1940,
+       "time": "2026-09-25 10:06:54",
+       "node": "pool1",
+       "node_status": [
+        {
+         "node": "pool1",
+         "ts": 1790348683,
+         "rc": 0
+        }
+       ],
+       "node_status_source": "archive:research/findings/raw/_dispatcher_fragment_audit/node_evidence/parent_run_status_archive.json"
+      }
+     ],
+     "head_tail": "4 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/surprise-monitor/lb"
+    },
+    {
+     "offset": 733,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/metacog-monitor/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1941,
+       "time": "2026-09-25 10:07:00",
+       "node": "pool1",
+       "node_status": [
+        {
+         "node": "pool1",
+         "ts": 1790348667,
+         "rc": 0
+        }
+       ],
+       "node_status_source": "archive:research/findings/raw/_dispatcher_fragment_audit/node_evidence/parent_run_status_archive.json"
+      }
+     ],
+     "head_tail": "44 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/metacog-monitor/lb"
+    },
+    {
+     "offset": 742,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/worldmodel-forward/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1942,
+       "time": "2026-09-25 10:07:06",
+       "node": "pool1",
+       "node_status": [
+        {
+         "node": "pool1",
+         "ts": 1790346540,
+         "rc": 0
+        }
+       ],
+       "node_status_source": "archive:research/findings/raw/_dispatcher_fragment_audit/node_evidence/parent_run_status_archive.json"
+      }
+     ],
+     "head_tail": "--repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/worldmodel-forward/lb"
+    },
+    {
+     "offset": 742,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/curiosity-followup/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1943,
+       "time": "2026-09-25 10:07:13",
+       "node": "pool1",
+       "node_status": [
+        {
+         "node": "pool1",
+         "ts": 1790346077,
+         "rc": 0
+        }
+       ],
+       "node_status_source": "archive:research/findings/raw/_dispatcher_fragment_audit/node_evidence/parent_run_status_archive.json"
+      }
+     ],
+     "head_tail": "--repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/curiosity-followup/lb"
+    },
+    {
+     "offset": 733,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/reconsolidation/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1944,
+       "time": "2026-09-25 10:17:21",
+       "node": "pool2",
+       "node_status": [
+        {
+         "node": "pool2",
+         "ts": 1790348991,
+         "rc": 0
+        }
+       ],
+       "node_status_source": "archive:research/findings/raw/_dispatcher_fragment_audit/node_evidence/parent_run_status_archive.json"
+      }
+     ],
+     "head_tail": "44 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/reconsolidation/lb"
+    },
+    {
+     "offset": 733,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/episodic-memory/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1945,
+       "time": "2026-09-25 10:17:27",
+       "node": "pool2",
+       "node_status": null
+      }
+     ],
+     "head_tail": "44 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/episodic-memory/lb"
+    },
+    {
+     "offset": 742,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/discourse-register/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1946,
+       "time": "2026-09-25 10:17:34",
+       "node": "pool2",
+       "node_status": [
+        {
+         "node": "pool2",
+         "ts": 1790349225,
+         "rc": 0
+        }
+       ],
+       "node_status_source": "archive:research/findings/raw/_dispatcher_fragment_audit/node_evidence/parent_run_status_archive.json"
+      }
+     ],
+     "head_tail": "--repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/discourse-register/lb"
+    },
+    {
+     "offset": 766,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/gnw-multistep-deliberation/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1947,
+       "time": "2026-09-25 10:17:40",
+       "node": "pool2",
+       "node_status": [
+        {
+         "node": "pool2",
+         "ts": 1790347078,
+         "rc": 0
+        }
+       ],
+       "node_status_source": "archive:research/findings/raw/_dispatcher_fragment_audit/node_evidence/parent_run_status_archive.json"
+      }
+     ],
+     "head_tail": "s 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/gnw-multistep-deliberation/lb"
+    },
+    {
+     "offset": 760,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/self-initiated-utterance/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1948,
+       "time": "2026-09-25 10:19:02",
+       "node": "pool2",
+       "node_status": [
+        {
+         "node": "pool2",
+         "ts": 1790346636,
+         "rc": 0
+        }
+       ],
+       "node_status_source": "archive:research/findings/raw/_dispatcher_fragment_audit/node_evidence/parent_run_status_archive.json"
+      }
+     ],
+     "head_tail": "ats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/self-initiated-utterance/lb"
+    },
+    {
+     "offset": 772,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/vision-identity-spiking-hmax/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1949,
+       "time": "2026-09-25 10:21:37",
+       "node": "pool1",
+       "node_status": [
+        {
+         "node": "pool1",
+         "ts": 1790346826,
+         "rc": 0
+        }
+       ],
+       "node_status_source": "archive:research/findings/raw/_dispatcher_fragment_audit/node_evidence/parent_run_status_archive.json"
+      }
+     ],
+     "head_tail": "2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/vision-identity-spiking-hmax/lb"
+    },
+    {
+     "offset": 745,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/bg-action-selection/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1950,
+       "time": "2026-09-25 10:22:59",
+       "node": "pool1",
+       "node_status": [
+        {
+         "node": "pool1",
+         "ts": 1790346911,
+         "rc": 0
+        }
+       ],
+       "node_status_source": "archive:research/findings/raw/_dispatcher_fragment_audit/node_evidence/parent_run_status_archive.json"
+      }
+     ],
+     "head_tail": "-repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/bg-action-selection/lb"
+    },
+    {
+     "offset": 751,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/open-ended-generation/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1951,
+       "time": "2026-09-25 10:24:23",
+       "node": "pool2",
+       "node_status": [
+        {
+         "node": "pool2",
+         "ts": 1790346300,
+         "rc": 0
+        }
+       ],
+       "node_status_source": "archive:research/findings/raw/_dispatcher_fragment_audit/node_evidence/parent_run_status_archive.json"
+      }
+     ],
+     "head_tail": "epeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/open-ended-generation/lb"
+    },
+    {
+     "offset": 736,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/gnw-deliberation/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1952,
+       "time": "2026-09-25 10:24:29",
+       "node": "pool2",
+       "node_status": [
+        {
+         "node": "pool2",
+         "ts": 1790346271,
+         "rc": 0
+        }
+       ],
+       "node_status_source": "archive:research/findings/raw/_dispatcher_fragment_audit/node_evidence/parent_run_status_archive.json"
+      }
+     ],
+     "head_tail": "4 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/gnw-deliberation/lb"
+    },
+    {
+     "offset": 745,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/value-driven-choice/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1953,
+       "time": "2026-09-25 10:24:36",
+       "node": "pool2",
+       "node_status": [
+        {
+         "node": "pool2",
+         "ts": 1790346277,
+         "rc": 0
+        }
+       ],
+       "node_status_source": "archive:research/findings/raw/_dispatcher_fragment_audit/node_evidence/parent_run_status_archive.json"
+      }
+     ],
+     "head_tail": "-repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/value-driven-choice/lb"
+    },
+    {
+     "offset": 766,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/confidence-forthcomingness/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1954,
+       "time": "2026-09-25 10:24:42",
+       "node": "pool2",
+       "node_status": [
+        {
+         "node": "pool2",
+         "ts": 1790348569,
+         "rc": 0
+        }
+       ],
+       "node_status_source": "archive:research/findings/raw/_dispatcher_fragment_audit/node_evidence/parent_run_status_archive.json"
+      }
+     ],
+     "head_tail": "s 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/confidence-forthcomingness/lb"
+    },
+    {
+     "offset": 730,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/d5-consolidate/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1955,
+       "time": "2026-09-25 10:26:03",
+       "node": "pool1",
+       "node_status": [
+        {
+         "node": "pool1",
+         "ts": 1790347412,
+         "rc": 0
+        }
+       ],
+       "node_status_source": "archive:research/findings/raw/_dispatcher_fragment_audit/node_evidence/parent_run_status_archive.json"
+      }
+     ],
+     "head_tail": " 44 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/d5-consolidate/lb"
+    },
+    {
+     "offset": 724,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/sleep-replay/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1956,
+       "time": "2026-09-25 10:26:09",
+       "node": "pool1",
+       "node_status": [
+        {
+         "node": "pool1",
+         "ts": 1790347445,
+         "rc": 0
+        }
+       ],
+       "node_status_source": "archive:research/findings/raw/_dispatcher_fragment_audit/node_evidence/parent_run_status_archive.json"
+      }
+     ],
+     "head_tail": "ed 44 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/sleep-replay/lb"
+    },
+    {
+     "offset": 727,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/affective-tom/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1957,
+       "time": "2026-09-25 10:26:17",
+       "node": "pool2",
+       "node_status": [
+        {
+         "node": "pool2",
+         "ts": 1790347640,
+         "rc": 0
+        }
+       ],
+       "node_status_source": "archive:research/findings/raw/_dispatcher_fragment_audit/node_evidence/parent_run_status_archive.json"
+      }
+     ],
+     "head_tail": "d 44 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/affective-tom/lb"
+    },
+    {
+     "offset": 727,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/causal-whatif/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1958,
+       "time": "2026-09-25 10:30:10",
+       "node": "pool1",
+       "node_status": [
+        {
+         "node": "pool1",
+         "ts": 1790348655,
+         "rc": 0
+        }
+       ],
+       "node_status_source": "archive:research/findings/raw/_dispatcher_fragment_audit/node_evidence/parent_run_status_archive.json"
+      }
+     ],
+     "head_tail": "d 44 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/causal-whatif/lb"
+    },
+    {
+     "offset": 733,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/spiking-anaphor/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1959,
+       "time": "2026-09-25 10:31:33",
+       "node": "pool2",
+       "node_status": [
+        {
+         "node": "pool2",
+         "ts": 1790349061,
+         "rc": 0
+        }
+       ],
+       "node_status_source": "archive:research/findings/raw/_dispatcher_fragment_audit/node_evidence/parent_run_status_archive.json"
+      }
+     ],
+     "head_tail": "44 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/spiking-anaphor/lb"
+    },
+    {
+     "offset": 709,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/gnw-bus/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1960,
+       "time": "2026-09-25 10:34:11",
+       "node": "pool1",
+       "node_status": [
+        {
+         "node": "pool1",
+         "ts": 1790348132,
+         "rc": 0
+        }
+       ],
+       "node_status_source": "archive:research/findings/raw/_dispatcher_fragment_audit/node_evidence/parent_run_status_archive.json"
+      }
+     ],
+     "head_tail": " --seed 44 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/gnw-bus/lb"
+    },
+    {
+     "offset": 748,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/multiref-competition/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1961,
+       "time": "2026-09-25 10:35:35",
+       "node": "pool1",
+       "node_status": [
+        {
+         "node": "pool1",
+         "ts": 1790347941,
+         "rc": 0
+        }
+       ],
+       "node_status_source": "archive:research/findings/raw/_dispatcher_fragment_audit/node_evidence/parent_run_status_archive.json"
+      }
+     ],
+     "head_tail": "repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/multiref-competition/lb"
+    },
+    {
+     "offset": 778,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/affect-appraisal-interoceptive/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1962,
+       "time": "2026-09-25 10:38:14",
+       "node": "pool2",
+       "node_status": [
+        {
+         "node": "pool2",
+         "ts": 1790348476,
+         "rc": 0
+        }
+       ],
+       "node_status_source": "archive:research/findings/raw/_dispatcher_fragment_audit/node_evidence/parent_run_status_archive.json"
+      }
+     ],
+     "head_tail": "--out research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/affect-appraisal-interoceptive/lb"
+    },
+    {
+     "offset": 730,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/spiking-qroute/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1963,
+       "time": "2026-09-25 10:43:26",
+       "node": "pool2",
+       "node_status": [
+        {
+         "node": "pool2",
+         "ts": 1790347407,
+         "rc": 0
+        }
+       ],
+       "node_status_source": "archive:research/findings/raw/_dispatcher_fragment_audit/node_evidence/parent_run_status_archive.json"
+      }
+     ],
+     "head_tail": " 44 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/spiking-qroute/lb"
+    },
+    {
+     "offset": 736,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/learned-referent/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1964,
+       "time": "2026-09-25 10:43:33",
+       "node": "pool2",
+       "node_status": [
+        {
+         "node": "pool2",
+         "ts": 1790347414,
+         "rc": 0
+        }
+       ],
+       "node_status_source": "archive:research/findings/raw/_dispatcher_fragment_audit/node_evidence/parent_run_status_archive.json"
+      }
+     ],
+     "head_tail": "4 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/learned-referent/lb"
+    },
+    {
+     "offset": 730,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/onebrain-xedge/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1965,
+       "time": "2026-09-25 10:43:40",
+       "node": "pool2",
+       "node_status": [
+        {
+         "node": "pool2",
+         "ts": 1790347422,
+         "rc": 0
+        }
+       ],
+       "node_status_source": "archive:research/findings/raw/_dispatcher_fragment_audit/node_evidence/parent_run_status_archive.json"
+      }
+     ],
+     "head_tail": " 44 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/onebrain-xedge/lb"
+    },
+    {
+     "offset": 778,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/surprise-salience-snc-afferent/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1966,
+       "time": "2026-09-25 10:43:47",
+       "node": "pool2",
+       "node_status": [
+        {
+         "node": "pool2",
+         "ts": 1790347429,
+         "rc": 0
+        }
+       ],
+       "node_status_source": "archive:research/findings/raw/_dispatcher_fragment_audit/node_evidence/parent_run_status_archive.json"
+      }
+     ],
+     "head_tail": "--out research/findings/raw/_load_bearing/_shards/b2b0924-base/s44/surprise-salience-snc-afferent/lb"
+    },
+    {
+     "offset": 748,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/one-brain-substrate/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1967,
+       "time": "2026-09-25 10:43:54",
+       "node": "pool2",
+       "node_status": [
+        {
+         "node": "pool2",
+         "ts": 1790347436,
+         "rc": 0
+        }
+       ],
+       "node_status_source": "archive:research/findings/raw/_dispatcher_fragment_audit/node_evidence/parent_run_status_archive.json"
+      }
+     ],
+     "head_tail": "repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/one-brain-substrate/lb"
+    },
+    {
+     "offset": 754,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/comprehension-monitor/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1968,
+       "time": "2026-09-25 10:44:01",
+       "node": "pool2",
+       "node_status": [
+        {
+         "node": "pool2",
+         "ts": 1790348396,
+         "rc": 0
+        }
+       ],
+       "node_status_source": "archive:research/findings/raw/_dispatcher_fragment_audit/node_evidence/parent_run_status_archive.json"
+      }
+     ],
+     "head_tail": "peats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/comprehension-monitor/lb"
+    },
+    {
+     "offset": 790,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/comprehension-learned-animacy-cue/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1969,
+       "time": "2026-09-25 10:45:21",
+       "node": "pool42",
+       "node_status": [
+        {
+         "node": "pool42",
+         "ts": 1790349083,
+         "rc": 0
+        }
+       ],
+       "node_status_source": "archive:research/findings/raw/_dispatcher_fragment_audit/node_evidence/parent_run_status_archive.json"
+      }
+     ],
+     "head_tail": "t research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/comprehension-learned-animacy-cue/lb"
+    },
+    {
+     "offset": 793,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/comprehension-learned-verb-selects/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1970,
+       "time": "2026-09-25 10:45:32",
+       "node": "pool1",
+       "node_status": [
+        {
+         "node": "pool1",
+         "ts": 1790348502,
+         "rc": 0
+        }
+       ],
+       "node_status_source": "archive:research/findings/raw/_dispatcher_fragment_audit/node_evidence/parent_run_status_archive.json"
+      }
+     ],
+     "head_tail": " research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/comprehension-learned-verb-selects/lb"
+    },
+    {
+     "offset": 754,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/noncontradiction-gate/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1971,
+       "time": "2026-09-25 10:45:39",
+       "node": "pool1",
+       "node_status": [
+        {
+         "node": "pool1",
+         "ts": 1790348386,
+         "rc": 0
+        }
+       ],
+       "node_status_source": "archive:research/findings/raw/_dispatcher_fragment_audit/node_evidence/parent_run_status_archive.json"
+      }
+     ],
+     "head_tail": "peats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/noncontradiction-gate/lb"
+    },
+    {
+     "offset": 736,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/affect-coloring/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1972,
+       "time": "2026-09-25 10:48:18",
+       "node": "pool2",
+       "node_status": [
+        {
+         "node": "pool2",
+         "ts": 1790349064,
+         "rc": 0
+        }
+       ],
+       "node_status_source": "archive:research/findings/raw/_dispatcher_fragment_audit/node_evidence/parent_run_status_archive.json"
+      }
+     ],
+     "head_tail": "0 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/affect-coloring/lb"
+    },
+    {
+     "offset": 757,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/affect-drives-response/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1973,
+       "time": "2026-09-25 10:53:27",
+       "node": "pool1",
+       "node_status": [
+        {
+         "node": "pool1",
+         "ts": 1790349058,
+         "rc": 0
+        }
+       ],
+       "node_status_source": "archive:research/findings/raw/_dispatcher_fragment_audit/node_evidence/parent_run_status_archive.json"
+      }
+     ],
+     "head_tail": "eats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/affect-drives-response/lb"
+    },
+    {
+     "offset": 766,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/affect-marker-spiking-wta/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1974,
+       "time": "2026-09-25 10:56:07",
+       "node": "pool1",
+       "node_status": [
+        {
+         "node": "pool1",
+         "ts": 1790349667,
+         "rc": 0
+        }
+       ],
+       "node_status_source": "archive:research/findings/raw/_dispatcher_fragment_audit/node_evidence/parent_run_status_archive.json"
+      }
+     ],
+     "head_tail": "s 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/affect-marker-spiking-wta/lb"
+    },
+    {
+     "offset": 760,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/da-mode-drives-response/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1975,
+       "time": "2026-09-25 10:56:14",
+       "node": "pool1",
+       "node_status": [
+        {
+         "node": "pool1",
+         "ts": 1790349220,
+         "rc": 0
+        }
+       ],
+       "node_status_source": "archive:research/findings/raw/_dispatcher_fragment_audit/node_evidence/parent_run_status_archive.json"
+      }
+     ],
+     "head_tail": "ats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/da-mode-drives-response/lb"
+    },
+    {
+     "offset": 742,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/da-gated-encoding/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1976,
+       "time": "2026-09-25 11:00:07",
+       "node": "pool1",
+       "node_status": [
+        {
+         "node": "pool1",
+         "ts": 1790349455,
+         "rc": 0
+        }
+       ],
+       "node_status_source": "archive:research/findings/raw/_dispatcher_fragment_audit/node_evidence/parent_run_status_archive.json"
+      }
+     ],
+     "head_tail": "--repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/da-gated-encoding/lb"
+    },
+    {
+     "offset": 766,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/source-provenance-honesty/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1977,
+       "time": "2026-09-25 11:00:16",
+       "node": "pool2",
+       "node_status": [
+        {
+         "node": "pool2",
+         "ts": 1790349368,
+         "rc": 0
+        }
+       ],
+       "node_status_source": "archive:research/findings/raw/_dispatcher_fragment_audit/node_evidence/parent_run_status_archive.json"
+      }
+     ],
+     "head_tail": "s 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/source-provenance-honesty/lb"
+    },
+    {
+     "offset": 751,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/common-ground-drives/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1978,
+       "time": "2026-09-25 11:01:41",
+       "node": "pool2",
+       "node_status": [
+        {
+         "node": "pool2",
+         "ts": 1790349506,
+         "rc": 0
+        }
+       ],
+       "node_status_source": "archive:research/findings/raw/_dispatcher_fragment_audit/node_evidence/parent_run_status_archive.json"
+      }
+     ],
+     "head_tail": "epeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/common-ground-drives/lb"
+    },
+    {
+     "offset": 751,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/swap-drives-response/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1979,
+       "time": "2026-09-25 11:03:04",
+       "node": "pool1",
+       "node_status": [
+        {
+         "node": "pool1",
+         "ts": 1790349703,
+         "rc": 0
+        }
+       ],
+       "node_status_source": "archive:research/findings/raw/_dispatcher_fragment_audit/node_evidence/parent_run_status_archive.json"
+      }
+     ],
+     "head_tail": "epeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/swap-drives-response/lb"
+    },
+    {
+     "offset": 748,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/wm-binding-advanced/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1980,
+       "time": "2026-09-25 11:03:13",
+       "node": "pool2",
+       "node_status": [
+        {
+         "node": "pool2",
+         "ts": 1790349602,
+         "rc": 0
+        }
+       ],
+       "node_status_source": "archive:research/findings/raw/_dispatcher_fragment_audit/node_evidence/parent_run_status_archive.json"
+      }
+     ],
+     "head_tail": "repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/wm-binding-advanced/lb"
+    },
+    {
+     "offset": 745,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/prospective-memory/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1981,
+       "time": "2026-09-25 11:04:35",
+       "node": "pool1",
+       "node_status": null
+      }
+     ],
+     "head_tail": "-repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/prospective-memory/lb"
+    },
+    {
+     "offset": 754,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/pragmatic-implicature/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1982,
+       "time": "2026-09-25 11:04:41",
+       "node": "pool1",
+       "node_status": [
+        {
+         "node": "pool1",
+         "ts": 1790349569,
+         "rc": 0
+        }
+       ],
+       "node_status_source": "archive:research/findings/raw/_dispatcher_fragment_audit/node_evidence/parent_run_status_archive.json"
+      }
+     ],
+     "head_tail": "peats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/pragmatic-implicature/lb"
+    },
+    {
+     "offset": 739,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/surprise-monitor/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1983,
+       "time": "2026-09-25 11:04:48",
+       "node": "pool1",
+       "node_status": null
+      }
+     ],
+     "head_tail": " --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/surprise-monitor/lb"
+    },
+    {
+     "offset": 736,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/metacog-monitor/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1984,
+       "time": "2026-09-25 11:11:05",
+       "node": "pool1",
+       "node_status": null
+      }
+     ],
+     "head_tail": "0 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/metacog-monitor/lb"
+    },
+    {
+     "offset": 745,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/worldmodel-forward/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1985,
+       "time": "2026-09-25 11:11:14",
+       "node": "pool2",
+       "node_status": [
+        {
+         "node": "pool2",
+         "ts": 1790350265,
+         "rc": 0
+        }
+       ],
+       "node_status_source": "archive:research/findings/raw/_dispatcher_fragment_audit/node_evidence/parent_run_status_archive.json"
+      }
+     ],
+     "head_tail": "-repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/worldmodel-forward/lb"
+    },
+    {
+     "offset": 745,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/curiosity-followup/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1986,
+       "time": "2026-09-25 11:11:21",
+       "node": "pool2",
+       "node_status": [
+        {
+         "node": "pool2",
+         "ts": 1790349841,
+         "rc": 0
+        }
+       ],
+       "node_status_source": "archive:research/findings/raw/_dispatcher_fragment_audit/node_evidence/parent_run_status_archive.json"
+      }
+     ],
+     "head_tail": "-repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/curiosity-followup/lb"
+    },
+    {
+     "offset": 736,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/reconsolidation/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1987,
+       "time": "2026-09-25 11:11:28",
+       "node": "pool2",
+       "node_status": null
+      }
+     ],
+     "head_tail": "0 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/reconsolidation/lb"
+    },
+    {
+     "offset": 736,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/episodic-memory/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1988,
+       "time": "2026-09-25 11:12:46",
+       "node": "pool42",
+       "node_status": null
+      }
+     ],
+     "head_tail": "0 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/episodic-memory/lb"
+    },
+    {
+     "offset": 745,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/discourse-register/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1989,
+       "time": "2026-09-25 11:14:09",
+       "node": "pool1",
+       "node_status": null
+      }
+     ],
+     "head_tail": "-repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/discourse-register/lb"
+    },
+    {
+     "offset": 769,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/gnw-multistep-deliberation/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1990,
+       "time": "2026-09-25 11:14:18",
+       "node": "pool2",
+       "node_status": null
+      }
+     ],
+     "head_tail": " 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/gnw-multistep-deliberation/lb"
+    },
+    {
+     "offset": 763,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/self-initiated-utterance/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1991,
+       "time": "2026-09-25 11:16:53",
+       "node": "pool2",
+       "node_status": [
+        {
+         "node": "pool2",
+         "ts": 1790350113,
+         "rc": 0
+        }
+       ],
+       "node_status_source": "archive:research/findings/raw/_dispatcher_fragment_audit/node_evidence/parent_run_status_archive.json"
+      }
+     ],
+     "head_tail": "ts 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/self-initiated-utterance/lb"
+    },
+    {
+     "offset": 775,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/vision-identity-spiking-hmax/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1992,
+       "time": "2026-09-25 11:18:12",
+       "node": "pool1",
+       "node_status": [
+        {
+         "node": "pool1",
+         "ts": 1790350274,
+         "rc": 0
+        }
+       ],
+       "node_status_source": "archive:research/findings/raw/_dispatcher_fragment_audit/node_evidence/parent_run_status_archive.json"
+      }
+     ],
+     "head_tail": " --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/vision-identity-spiking-hmax/lb"
+    },
+    {
+     "offset": 748,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/bg-action-selection/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1993,
+       "time": "2026-09-25 11:19:30",
+       "node": "pool1",
+       "node_status": [
+        {
+         "node": "pool1",
+         "ts": 1790350359,
+         "rc": 0
+        }
+       ],
+       "node_status_source": "archive:research/findings/raw/_dispatcher_fragment_audit/node_evidence/parent_run_status_archive.json"
+      }
+     ],
+     "head_tail": "repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/bg-action-selection/lb"
+    },
+    {
+     "offset": 754,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/open-ended-generation/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1994,
+       "time": "2026-09-25 11:19:39",
+       "node": "pool2",
+       "node_status": [
+        {
+         "node": "pool2",
+         "ts": 1790349615,
+         "rc": 0
+        }
+       ],
+       "node_status_source": "archive:research/findings/raw/_dispatcher_fragment_audit/node_evidence/parent_run_status_archive.json"
+      }
+     ],
+     "head_tail": "peats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/open-ended-generation/lb"
+    },
+    {
+     "offset": 739,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/gnw-deliberation/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1995,
+       "time": "2026-09-25 11:20:59",
+       "node": "pool2",
+       "node_status": [
+        {
+         "node": "pool2",
+         "ts": 1790349661,
+         "rc": 0
+        }
+       ],
+       "node_status_source": "archive:research/findings/raw/_dispatcher_fragment_audit/node_evidence/parent_run_status_archive.json"
+      }
+     ],
+     "head_tail": " --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/gnw-deliberation/lb"
+    },
+    {
+     "offset": 748,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/value-driven-choice/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1996,
+       "time": "2026-09-25 11:21:05",
+       "node": "pool2",
+       "node_status": [
+        {
+         "node": "pool2",
+         "ts": 1790349667,
+         "rc": 0
+        }
+       ],
+       "node_status_source": "archive:research/findings/raw/_dispatcher_fragment_audit/node_evidence/parent_run_status_archive.json"
+      }
+     ],
+     "head_tail": "repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/value-driven-choice/lb"
+    },
+    {
+     "offset": 769,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/confidence-forthcomingness/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1997,
+       "time": "2026-09-25 11:21:12",
+       "node": "pool2",
+       "node_status": null
+      }
+     ],
+     "head_tail": " 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/confidence-forthcomingness/lb"
+    },
+    {
+     "offset": 733,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/d5-consolidate/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1998,
+       "time": "2026-09-25 11:21:18",
+       "node": "pool2",
+       "node_status": null
+      }
+     ],
+     "head_tail": "00 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/d5-consolidate/lb"
+    },
+    {
+     "offset": 727,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/sleep-replay/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 1999,
+       "time": "2026-09-25 11:22:35",
+       "node": "pool1",
+       "node_status": null
+      }
+     ],
+     "head_tail": " 100 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/sleep-replay/lb"
+    },
+    {
+     "offset": 730,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/affective-tom/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 2000,
+       "time": "2026-09-25 11:22:42",
+       "node": "pool1",
+       "node_status": null
+      }
+     ],
+     "head_tail": "100 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/affective-tom/lb"
+    },
+    {
+     "offset": 730,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/causal-whatif/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 2001,
+       "time": "2026-09-25 11:24:04",
+       "node": "pool2",
+       "node_status": null
+      }
+     ],
+     "head_tail": "100 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/causal-whatif/lb"
+    },
+    {
+     "offset": 736,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/spiking-anaphor/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 2002,
+       "time": "2026-09-25 11:29:06",
+       "node": "pool2",
+       "node_status": null
+      }
+     ],
+     "head_tail": "0 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/spiking-anaphor/lb"
+    },
+    {
+     "offset": 712,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/gnw-bus/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 2003,
+       "time": "2026-09-25 11:31:41",
+       "node": "pool1",
+       "node_status": null
+      }
+     ],
+     "head_tail": "-seed 100 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/gnw-bus/lb"
+    },
+    {
+     "offset": 751,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/multiref-competition/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 2004,
+       "time": "2026-09-25 11:31:50",
+       "node": "pool2",
+       "node_status": null
+      }
+     ],
+     "head_tail": "epeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/multiref-competition/lb"
+    },
+    {
+     "offset": 781,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/affect-appraisal-interoceptive/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 2005,
+       "time": "2026-09-25 11:33:10",
+       "node": "pool1",
+       "node_status": null
+      }
+     ],
+     "head_tail": "-out research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/affect-appraisal-interoceptive/lb"
+    },
+    {
+     "offset": 733,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/spiking-qroute/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 2006,
+       "time": "2026-09-25 11:38:11",
+       "node": "pool2",
+       "node_status": null
+      }
+     ],
+     "head_tail": "00 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/spiking-qroute/lb"
+    },
+    {
+     "offset": 739,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/learned-referent/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 2007,
+       "time": "2026-09-25 11:38:17",
+       "node": "pool2",
+       "node_status": null
+      }
+     ],
+     "head_tail": " --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/learned-referent/lb"
+    },
+    {
+     "offset": 733,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/onebrain-xedge/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 2008,
+       "time": "2026-09-25 11:38:24",
+       "node": "pool2",
+       "node_status": null
+      }
+     ],
+     "head_tail": "00 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/onebrain-xedge/lb"
+    },
+    {
+     "offset": 781,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/surprise-salience-snc-afferent/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 2009,
+       "time": "2026-09-25 11:38:31",
+       "node": "pool2",
+       "node_status": null
+      }
+     ],
+     "head_tail": "-out research/findings/raw/_load_bearing/_shards/b2b0924-base/s100/surprise-salience-snc-afferent/lb"
+    },
+    {
+     "offset": 748,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/one-brain-substrate/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 2010,
+       "time": "2026-09-25 11:38:37",
+       "node": "pool2",
+       "node_status": null
+      }
+     ],
+     "head_tail": "repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/one-brain-substrate/lb"
+    },
+    {
+     "offset": 754,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/comprehension-monitor/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 2011,
+       "time": "2026-09-25 11:38:43",
+       "node": "pool2",
+       "node_status": null
+      }
+     ],
+     "head_tail": "peats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/comprehension-monitor/lb"
+    },
+    {
+     "offset": 790,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/comprehension-learned-animacy-cue/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 2012,
+       "time": "2026-09-25 11:40:05",
+       "node": "pool2",
+       "node_status": null
+      }
+     ],
+     "head_tail": "t research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/comprehension-learned-animacy-cue/lb"
+    },
+    {
+     "offset": 793,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/comprehension-learned-verb-selects/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 2013,
+       "time": "2026-09-25 11:43:54",
+       "node": "pool1",
+       "node_status": null
+      }
+     ],
+     "head_tail": " research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/comprehension-learned-verb-selects/lb"
+    },
+    {
+     "offset": 754,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/noncontradiction-gate/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 2014,
+       "time": "2026-09-25 11:46:30",
+       "node": "pool1",
+       "node_status": null
+      }
+     ],
+     "head_tail": "peats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/noncontradiction-gate/lb"
+    },
+    {
+     "offset": 736,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/affect-coloring/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 2015,
+       "time": "2026-09-25 11:49:07",
+       "node": "pool2",
+       "node_status": null
+      }
+     ],
+     "head_tail": "1 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/affect-coloring/lb"
+    },
+    {
+     "offset": 757,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/affect-drives-response/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 2016,
+       "time": "2026-09-25 11:55:27",
+       "node": "pool1",
+       "node_status": null
+      }
+     ],
+     "head_tail": "eats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/affect-drives-response/lb"
+    },
+    {
+     "offset": 766,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/affect-marker-spiking-wta/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 2017,
+       "time": "2026-09-25 11:55:36",
+       "node": "pool2",
+       "node_status": null
+      }
+     ],
+     "head_tail": "s 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/affect-marker-spiking-wta/lb"
+    },
+    {
+     "offset": 760,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/da-mode-drives-response/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 2018,
+       "time": "2026-09-25 11:55:43",
+       "node": "pool2",
+       "node_status": null
+      }
+     ],
+     "head_tail": "ats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/da-mode-drives-response/lb"
+    },
+    {
+     "offset": 742,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/da-gated-encoding/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 2019,
+       "time": "2026-09-25 11:58:17",
+       "node": "pool1",
+       "node_status": null
+      }
+     ],
+     "head_tail": "--repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/da-gated-encoding/lb"
+    },
+    {
+     "offset": 766,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/source-provenance-honesty/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 2020,
+       "time": "2026-09-25 11:58:25",
+       "node": "pool2",
+       "node_status": null
+      }
+     ],
+     "head_tail": "s 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/source-provenance-honesty/lb"
+    },
+    {
+     "offset": 751,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/common-ground-drives/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 2021,
+       "time": "2026-09-25 11:59:44",
+       "node": "pool1",
+       "node_status": null
+      }
+     ],
+     "head_tail": "epeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/common-ground-drives/lb"
+    },
+    {
+     "offset": 751,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/swap-drives-response/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 2022,
+       "time": "2026-09-25 11:59:52",
+       "node": "pool2",
+       "node_status": null
+      }
+     ],
+     "head_tail": "epeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/swap-drives-response/lb"
+    },
+    {
+     "offset": 748,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/wm-binding-advanced/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 2023,
+       "time": "2026-09-25 12:01:12",
+       "node": "pool1",
+       "node_status": null
+      }
+     ],
+     "head_tail": "repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/wm-binding-advanced/lb"
+    },
+    {
+     "offset": 745,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/prospective-memory/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 2024,
+       "time": "2026-09-25 12:01:19",
+       "node": "pool1",
+       "node_status": null
+      }
+     ],
+     "head_tail": "-repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/prospective-memory/lb"
+    },
+    {
+     "offset": 754,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/pragmatic-implicature/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 2025,
+       "time": "2026-09-25 12:06:26",
+       "node": "pool2",
+       "node_status": null
+      }
+     ],
+     "head_tail": "peats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/pragmatic-implicature/lb"
+    },
+    {
+     "offset": 739,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/surprise-monitor/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 2026,
+       "time": "2026-09-25 12:07:47",
+       "node": "pool1",
+       "node_status": null
+      }
+     ],
+     "head_tail": " --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/surprise-monitor/lb"
+    },
+    {
+     "offset": 736,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/metacog-monitor/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 2027,
+       "time": "2026-09-25 12:09:10",
+       "node": "pool2",
+       "node_status": null
+      }
+     ],
+     "head_tail": "1 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/metacog-monitor/lb"
+    },
+    {
+     "offset": 745,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/worldmodel-forward/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 2028,
+       "time": "2026-09-25 12:11:48",
+       "node": "pool2",
+       "node_status": null
+      }
+     ],
+     "head_tail": "-repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/worldmodel-forward/lb"
+    },
+    {
+     "offset": 745,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/curiosity-followup/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 2029,
+       "time": "2026-09-25 12:13:08",
+       "node": "pool1",
+       "node_status": null
+      }
+     ],
+     "head_tail": "-repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/curiosity-followup/lb"
+    },
+    {
+     "offset": 736,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/reconsolidation/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 2030,
+       "time": "2026-09-25 12:13:14",
+       "node": "pool1",
+       "node_status": null
+      }
+     ],
+     "head_tail": "1 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/reconsolidation/lb"
+    },
+    {
+     "offset": 736,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/episodic-memory/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 2031,
+       "time": "2026-09-25 12:13:22",
+       "node": "pool2",
+       "node_status": null
+      }
+     ],
+     "head_tail": "1 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/episodic-memory/lb"
+    },
+    {
+     "offset": 745,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/discourse-register/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 2032,
+       "time": "2026-09-25 12:14:44",
+       "node": "pool2",
+       "node_status": null
+      }
+     ],
+     "head_tail": "-repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/discourse-register/lb"
+    },
+    {
+     "offset": 769,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/gnw-multistep-deliberation/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 2033,
+       "time": "2026-09-25 12:16:05",
+       "node": "pool1",
+       "node_status": null
+      }
+     ],
+     "head_tail": " 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/gnw-multistep-deliberation/lb"
+    },
+    {
+     "offset": 763,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/self-initiated-utterance/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 2034,
+       "time": "2026-09-25 12:17:26",
+       "node": "pool1",
+       "node_status": null
+      }
+     ],
+     "head_tail": "ts 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/self-initiated-utterance/lb"
+    },
+    {
+     "offset": 775,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/vision-identity-spiking-hmax/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 2035,
+       "time": "2026-09-25 12:17:34",
+       "node": "pool2",
+       "node_status": null
+      }
+     ],
+     "head_tail": " --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/vision-identity-spiking-hmax/lb"
+    },
+    {
+     "offset": 748,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/bg-action-selection/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 2036,
+       "time": "2026-09-25 12:18:55",
+       "node": "pool1",
+       "node_status": null
+      }
+     ],
+     "head_tail": "repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/bg-action-selection/lb"
+    },
+    {
+     "offset": 754,
+     "revision": "a308f1e09babcc9ed096c3c8046d00040391368c",
+     "outputs": [
+      "research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/open-ended-generation/lb.json"
+     ],
+     "occurrences_at_or_after_fragment": [
+      {
+       "src": "claims",
+       "line": 2037,
+       "time": "2026-09-25 12:19:03",
+       "node": "pool2",
+       "node_status": null
+      }
+     ],
+     "head_tail": "peats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s101/open-ended-generation/lb"
+    }
+   ],
+   "node_status": [
+    {
+     "node": "pool1",
+     "ts": 1790336137,
+     "rc": 127
+    }
+   ],
+   "local_cells": []
+  }
+ ],
+ "nonstandard_start_complete_lines": [
+  {
+   "claim_line": 1923,
+   "claim_time": "2026-09-25 09:59:54",
+   "job_head": "A2 wiring seed 42: mem_gb=8 && cd ~/derisk-pool/revisions/5b5ea1b7447b24d0978189fb53557a57b88952d4 && env SIM_BACKEND=numpy CUDA_VISIBLE_DEVICES= OMP_NUM_THREAD",
+   "node": "pool2",
+   "classification": {
+    "first_word": "A2",
+    "expect": "command-not-found (rc 127 expected; nothing after `&&` runs)"
+   },
+   "node_status": [
+    {
+     "node": "pool2",
+     "ts": 1790344794,
+     "rc": 127
+    }
+   ]
+  },
+  {
+   "claim_line": 1924,
+   "claim_time": "2026-09-25 10:00:00",
+   "job_head": "A2 wiring seed 43: mem_gb=8 && cd ~/derisk-pool/revisions/5b5ea1b7447b24d0978189fb53557a57b88952d4 && env SIM_BACKEND=numpy CUDA_VISIBLE_DEVICES= OMP_NUM_THREAD",
+   "node": "pool2",
+   "classification": {
+    "first_word": "A2",
+    "expect": "command-not-found (rc 127 expected; nothing after `&&` runs)"
+   },
+   "node_status": [
+    {
+     "node": "pool2",
+     "ts": 1790344801,
+     "rc": 127
+    }
+   ]
+  },
+  {
+   "claim_line": 1925,
+   "claim_time": "2026-09-25 10:00:06",
+   "job_head": "A2 wiring seed 44: mem_gb=8 && cd ~/derisk-pool/revisions/5b5ea1b7447b24d0978189fb53557a57b88952d4 && env SIM_BACKEND=numpy CUDA_VISIBLE_DEVICES= OMP_NUM_THREAD",
+   "node": "pool2",
+   "classification": {
+    "first_word": "A2",
+    "expect": "command-not-found (rc 127 expected; nothing after `&&` runs)"
+   },
+   "node_status": [
+    {
+     "node": "pool2",
+     "ts": 1790344807,
+     "rc": 127
+    }
+   ]
+  },
+  {
+   "claim_line": 1926,
+   "claim_time": "2026-09-25 10:00:13",
+   "job_head": "A2 wiring seed 100: mem_gb=8 && cd ~/derisk-pool/revisions/5b5ea1b7447b24d0978189fb53557a57b88952d4 && env SIM_BACKEND=numpy CUDA_VISIBLE_DEVICES= OMP_NUM_THREA",
+   "node": "pool2",
+   "classification": {
+    "first_word": "A2",
+    "expect": "command-not-found (rc 127 expected; nothing after `&&` runs)"
+   },
+   "node_status": [
+    {
+     "node": "pool2",
+     "ts": 1790344813,
+     "rc": 127
+    }
+   ]
+  },
+  {
+   "claim_line": 1927,
+   "claim_time": "2026-09-25 10:00:19",
+   "job_head": "A2 wiring seed 101: mem_gb=8 && cd ~/derisk-pool/revisions/5b5ea1b7447b24d0978189fb53557a57b88952d4 && env SIM_BACKEND=numpy CUDA_VISIBLE_DEVICES= OMP_NUM_THREA",
+   "node": "pool2",
+   "classification": {
+    "first_word": "A2",
+    "expect": "command-not-found (rc 127 expected; nothing after `&&` runs)"
+   },
+   "node_status": [
+    {
+     "node": "pool2",
+     "ts": 1790344820,
+     "rc": 127
+    }
+   ]
+  },
+  {
+   "claim_line": 1928,
+   "claim_time": "2026-09-25 10:00:26",
+   "job_head": "A2 wiring seed 102: mem_gb=8 && cd ~/derisk-pool/revisions/5b5ea1b7447b24d0978189fb53557a57b88952d4 && env SIM_BACKEND=numpy CUDA_VISIBLE_DEVICES= OMP_NUM_THREA",
+   "node": "pool2",
+   "classification": {
+    "first_word": "A2",
+    "expect": "command-not-found (rc 127 expected; nothing after `&&` runs)"
+   },
+   "node_status": [
+    {
+     "node": "pool2",
+     "ts": 1790344826,
+     "rc": 127
+    }
+   ]
+  }
+ ],
+ "shard_scans": [
+  {
+   "tag": "b2a0924",
+   "pin": "9db7613296c3d02a161b36fb15da3983188b7902",
+   "n_cells": 186,
+   "pin_rule_failing_cells": {},
+   "unpinned_tree_sidecars": []
+  },
+  {
+   "tag": "b2b0924-base",
+   "pin": "a308f1e09babcc9ed096c3c8046d00040391368c",
+   "n_cells": 177,
+   "pin_rule_failing_cells": {},
+   "unpinned_tree_sidecars": []
+  }
+ ],
+ "node_output_cells": [
+  {
+   "node": "pool1",
+   "cell": "b2a0924/s100/open-ended-generation",
+   "run_id": "1790280290-1098350",
+   "argv0": "/home/ubuntu/derisk-pool/sim/research/runners/load_bearing_fraction.py",
+   "git_sha": "5d10431c6abe834ba432cd439dbfcc5eff5e4bc2",
+   "source_kind": "git_archive",
+   "started_node_clock": "2026-09-24T20:04:50",
+   "env_SIM_BACKEND": null,
+   "per_faculty": [
+    [
+     "open-ended-generation",
+     "regressed",
+     true
+    ]
+   ],
+   "pin": "9db7613296c3d02a161b36fb15da3983188b7902",
+   "pin_rule_fails": {
+    "lb.json.prov.json": [
+     "git_sha='5d10431c6abe834ba432cd439dbfcc5eff5e4bc2' (want 9db7613296c3d02a161b36fb15da3983188b7902 IN FULL)",
+     "env.SIM_BACKEND=None (want numpy)"
+    ],
+    "oed_distributional_s100.json.prov.json": [
+     "missing"
+    ]
+   }
+  },
+  {
+   "node": "pool1",
+   "cell": "b2b0924-base/s42/causal-whatif",
+   "run_id": "1790296792-1720678",
+   "argv0": "/home/ubuntu/derisk-pool/sim/research/runners/load_bearing_fraction.py",
+   "git_sha": "5d10431c6abe834ba432cd439dbfcc5eff5e4bc2",
+   "source_kind": "git_archive",
+   "started_node_clock": "2026-09-25T00:39:52",
+   "env_SIM_BACKEND": null,
+   "per_faculty": [
+    [
+     "causal-whatif",
+     "unmapped-in-battery",
+     null
+    ]
+   ],
+   "pin": "a308f1e09babcc9ed096c3c8046d00040391368c",
+   "pin_rule_fails": {
+    "lb.json.prov.json": [
+     "git_sha='5d10431c6abe834ba432cd439dbfcc5eff5e4bc2' (want a308f1e09babcc9ed096c3c8046d00040391368c IN FULL)",
+     "env.SIM_BACKEND=None (want numpy)"
+    ]
+   }
+  },
+  {
+   "node": "pool2",
+   "cell": "b2b0924-base/s42/affect-appraisal-interoceptive",
+   "run_id": "1790296822-1575672",
+   "argv0": "/home/ubuntu/derisk-pool/sim/research/runners/load_bearing_fraction.py",
+   "git_sha": "d7b2a2bb56e7af143c61b926e31f36912434b27d",
+   "source_kind": "git_archive",
+   "started_node_clock": "2026-09-25T00:40:22",
+   "env_SIM_BACKEND": null,
+   "per_faculty": [
+    [
+     "affect-appraisal-interoceptive",
+     "unmapped-in-battery",
+     null
+    ]
+   ],
+   "pin": "a308f1e09babcc9ed096c3c8046d00040391368c",
+   "pin_rule_fails": {
+    "lb.json.prov.json": [
+     "git_sha='d7b2a2bb56e7af143c61b926e31f36912434b27d' (want a308f1e09babcc9ed096c3c8046d00040391368c IN FULL)",
+     "env.SIM_BACKEND=None (want numpy)"
+    ]
+   }
+  },
+  {
+   "node": "pool2",
+   "cell": "b2b0924-base/s43/d5-consolidate",
+   "run_id": "1790296139-1555371",
+   "argv0": "/home/ubuntu/derisk-pool/sim/research/runners/load_bearing_fraction.py",
+   "git_sha": "d7b2a2bb56e7af143c61b926e31f36912434b27d",
+   "source_kind": "git_archive",
+   "started_node_clock": "2026-09-25T00:28:59",
+   "env_SIM_BACKEND": null,
+   "per_faculty": [
+    [
+     "d5-consolidate",
+     "unmapped-in-battery",
+     null
+    ]
+   ],
+   "pin": "a308f1e09babcc9ed096c3c8046d00040391368c",
+   "pin_rule_fails": {
+    "lb.json.prov.json": [
+     "git_sha='d7b2a2bb56e7af143c61b926e31f36912434b27d' (want a308f1e09babcc9ed096c3c8046d00040391368c IN FULL)",
+     "env.SIM_BACKEND=None (want numpy)"
+    ]
+   }
+  }
+ ],
+ "provenance": {
+  "script": "tools/audit_pool_fragment_claims.py",
+  "argv": [
+   "tools/audit_pool_fragment_claims.py",
+   "--json",
+   "research/findings/raw/_dispatcher_fragment_audit/2026-09-25-fragments.json",
+   "--node-status",
+   "research/findings/raw/_dispatcher_fragment_audit/node_evidence",
+   "--scan-shards",
+   "b2a0924=9db7613296c3d02a161b36fb15da3983188b7902",
+   "--scan-shards",
+   "b2b0924-base=a308f1e09babcc9ed096c3c8046d00040391368c",
+   "--node-outputs",
+   "research/findings/raw/_dispatcher_fragment_audit/node_evidence"
+  ],
+  "git_sha": "c2440fcb269eaa2aa8452634d028a5ed7dfbc199",
+  "generated": "2026-09-25T12:20:12",
+  "backend": "none -- host-side audit of queue/log/sidecar files; no simulation is run",
+  "inputs": {
+   "pool.queue.claims": {
+    "lines": 2037,
+    "mtime": "2026-09-25 12:19:03"
+   },
+   "pool.running": {
+    "lines": 1003,
+    "mtime": "2026-09-25 12:19:03"
+   },
+   "pool.queue": {
+    "lines": 64,
+    "mtime": "2026-09-25 12:19:03"
+   },
+   "pool.queue.unchecked": {
+    "lines": 1,
+    "mtime": "2026-09-25 04:05:08"
+   },
+   "dispatch.log": {
+    "lines": 37327,
+    "mtime": "2026-09-25 12:19:03"
+   }
+  },
+  "read_only": "no queue file, node, or shard cell is written; node files are copies fetched with ssh -n"
+ },
+ "restorations": [
+  {
+   "script": "tools/apply_parent_status_archive.py",
+   "archive": "research/findings/raw/_dispatcher_fragment_audit/node_evidence/parent_run_status_archive.json",
+   "git_sha": "2dcff167ad4760e8dcea52609725ac5a408c1fa5",
+   "applied": "2026-09-25T13:49:11",
+   "filled": 93,
+   "already_live": 0,
+   "no_match": 52,
+   "reason": "this worktree has no research/queue/ access to re-run the audit tool end to end; see this script's own docstring"
+  }
+ ]
+}

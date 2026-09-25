@@ -1,0 +1,228 @@
+{
+ "seed": 7,
+ "replicate": 1,
+ "arm": "fixed_fa",
+ "feedback": "fixed_fa",
+ "mode": "bdsp",
+ "git_sha": "04e6def34e12b595b9197d28a4b6885bc90d796d",
+ "git_dirty": true,
+ "task_seed": 10014,
+ "chance": 0.16666666666666666,
+ "oracle_heldout": 0.8888888888888888,
+ "n_inh": 54,
+ "inherit_heldout": 0.14814814814814814,
+ "train_acc": 0.16,
+ "train_chance": 0.17,
+ "train_binom_p": 0.7222282863547966,
+ "ff_l1_norm_start": 1556983.25,
+ "ff_l1_norm_end": 5388217.0,
+ "bound_census_start": {
+  "w_max": 12.0,
+  "w_min": -12.0,
+  "pathways": [
+   {
+    "pathway": "ff_0",
+    "post_is_hidden": true,
+    "n": 147456,
+    "frac_at_or_above_w_max": 0.0,
+    "frac_at_or_below_w_min": 0.0,
+    "frac_near_w_max": 0.0,
+    "frac_near_w_min": 0.0,
+    "frac_abs_w_ge_c21_bound": 0.0,
+    "mean_w": 0.0025831563451722767,
+    "mean_abs_w": 1.4327651841190243,
+    "max_abs_w": 2.866894006729126
+   },
+   {
+    "pathway": "ff_1",
+    "post_is_hidden": true,
+    "n": 1048576,
+    "frac_at_or_above_w_max": 0.0,
+    "frac_at_or_below_w_min": 0.0,
+    "frac_near_w_max": 0.0,
+    "frac_near_w_min": 0.0,
+    "frac_abs_w_ge_c21_bound": 0.0,
+    "mean_w": -0.0013863141852555158,
+    "mean_abs_w": 1.0823978561278897,
+    "max_abs_w": 2.1650595664978027
+   },
+   {
+    "pathway": "ff_2",
+    "post_is_hidden": false,
+    "n": 147456,
+    "frac_at_or_above_w_max": 0.0,
+    "frac_at_or_below_w_min": 0.0,
+    "frac_near_w_max": 0.0,
+    "frac_near_w_min": 0.0,
+    "frac_abs_w_ge_c21_bound": 0.0,
+    "mean_w": 0.002214770870198773,
+    "mean_abs_w": 1.429151222929359,
+    "max_abs_w": 2.866860866546631
+   }
+  ],
+  "frac_at_bound_all_ff": 0.0
+ },
+ "bound_census_end": {
+  "w_max": 12.0,
+  "w_min": -12.0,
+  "pathways": [
+   {
+    "pathway": "ff_0",
+    "post_is_hidden": true,
+    "n": 147456,
+    "frac_at_or_above_w_max": 0.009745279947916666,
+    "frac_at_or_below_w_min": 0.009819878472222222,
+    "frac_near_w_max": 0.13337537977430555,
+    "frac_near_w_min": 0.0901217990451389,
+    "frac_abs_w_ge_c21_bound": 0.018778483072916668,
+    "mean_w": 0.7708714986647823,
+    "mean_abs_w": 5.655089410802318,
+    "max_abs_w": 11.999998092651367
+   },
+   {
+    "pathway": "ff_1",
+    "post_is_hidden": true,
+    "n": 1048576,
+    "frac_at_or_above_w_max": 0.007134437561035156,
+    "frac_at_or_below_w_min": 0.0023193359375,
+    "frac_near_w_max": 0.08211421966552734,
+    "frac_near_w_min": 0.019347190856933594,
+    "frac_abs_w_ge_c21_bound": 0.009240150451660156,
+    "mean_w": 1.7386585296981085,
+    "mean_abs_w": 4.017427156434226,
+    "max_abs_w": 11.999998092651367
+   },
+   {
+    "pathway": "ff_2",
+    "post_is_hidden": false,
+    "n": 147456,
+    "frac_at_or_above_w_max": 1.3563368055555555e-05,
+    "frac_at_or_below_w_min": 3.390842013888889e-05,
+    "frac_near_w_max": 0.060994466145833336,
+    "frac_near_w_min": 8.138020833333333e-05,
+    "frac_abs_w_ge_c21_bound": 4.7471788194444445e-05,
+    "mean_w": 0.9611024627936372,
+    "mean_abs_w": 2.317728092592375,
+    "max_abs_w": 11.999987602233887
+   }
+  ],
+  "frac_at_bound_all_ff": 0.009531160680259146
+ },
+ "bound_check_at_build": true,
+ "decode_h2_train": 0.625,
+ "decode_h2_heldout": 0.2962962962962963,
+ "mean_output_rate_heldout": 0.05173611111111111,
+ "mean_read_by_layer_heldout": [
+  0.07281807270233197,
+  0.15181206597222222,
+  0.2721076871141975,
+  0.05173611111111111
+ ],
+ "pbar_by_layer_end": [
+  {
+   "mean": 0.30000001192092896,
+   "min": 0.30000001192092896,
+   "max": 0.30000001192092896
+  },
+  {
+   "mean": 0.3013786697656542,
+   "min": 0.010420965030789375,
+   "max": 0.8366078734397888
+  },
+  {
+   "mean": 0.29778964044527356,
+   "min": 0.000129549705889076,
+   "max": 0.9659626483917236
+  },
+  {
+   "mean": 0.30000001192092896,
+   "min": 0.30000001192092896,
+   "max": 0.30000001192092896
+  }
+ ],
+ "pbar_ratio_tau_ms": 5000.0,
+ "pbar_ratio_layers": "hidden",
+ "pred_hist_train": [
+  377,
+  22,
+  1,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0
+ ],
+ "true_hist_train": [
+  67,
+  68,
+  42,
+  47,
+  40,
+  41,
+  46,
+  49,
+  0
+ ],
+ "pred_hist_heldout": [
+  47,
+  7,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0
+ ],
+ "true_hist_heldout": [
+  9,
+  9,
+  6,
+  6,
+  6,
+  6,
+  6,
+  6,
+  0
+ ],
+ "mean_output_read_by_class_train": [
+  0.09269278606965174,
+  0.09255514705882355,
+  0.07033730158730157,
+  0.04166666666666667,
+  0.041666666666666664,
+  0.04197154471544715,
+  0.04166666666666667,
+  0.0417517006802721,
+  null
+ ],
+ "mean_output_read_other_class_train": [
+  0.0930618118118118,
+  0.09057479919678715,
+  0.07163058659217876,
+  0.04167847025495751,
+  0.04167245370370371,
+  0.04201485608170845,
+  0.041666666666666664,
+  0.041666666666666664,
+  0.00036458333333333335
+ ],
+ "read_quantity": "spikes",
+ "ff_weight_moved": 3831233.75,
+ "ff_weight_moved_definition": "|L1 norm at end - L1 norm at start| over the feedforward weights (a change in L1 norm, not a total per-synapse change)",
+ "eval_reads_left_weights_unchanged": true,
+ "no_weight_transport": true,
+ "ast_no_forward_W": true,
+ "thr_hash": "20ba80a42a8f055b",
+ "n_steps_train": 1040000,
+ "n_steps_total": 1058160,
+ "train_seconds": 5024.7,
+ "elapsed_seconds": 5111.8,
+ "ms_per_step": 4.831,
+ "peak_rss_mb": 1003.4,
+ "backend": "cupy",
+ "fingerprint": "f515e8e449c30df6",
+ "corpus_check_fresh": true,
+ "corpus_check_note": "stamped 2026-09-25 by the scoring finding, before commit: before_you_build.sh confirmed this exact question (sliding baseline vs clamp drift at full size) is open, not redundant -- log research/findings/2026-09-25-gap4-sliding-baseline-c25-c27-and-c26-fullsize-UNDEFINED.md"
+}

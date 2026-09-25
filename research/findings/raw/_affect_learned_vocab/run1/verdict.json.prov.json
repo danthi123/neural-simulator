@@ -1,0 +1,28 @@
+{
+ "run_id": "1790358788-3147759",
+ "runner": "research/runners/_affect_learned_vocabulary_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/wf_af4b61fb-32f-2/research/runners/_affect_learned_vocabulary_derisk.py",
+  "--score",
+  "research/findings/raw/_affect_learned_vocab/run1"
+ ],
+ "git_sha": "154b2ab51",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-25T13:53:08",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "host": "dant123-wk",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_affect_learned_vocab/run1/verdict.json"
+}
