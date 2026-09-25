@@ -145,6 +145,16 @@ s42/affect-appraisal-interoceptive (torn line ran off-pin, then the full line ra
 Next rounds = workflow `w5lillvm5` (stop/start round 3, ssh-loop gate round 2 [was UNSOUND: scanned only added files], audit
 evidence made durable + PIN.txt, and a new enqueue-time 'first word must be runnable' check).
 
+**☀️ 12:15 memory pair NOT ready to flip:** verify-go review of BRAIN_DA_TAG_CAPTURE + BRAIN_SLEEP_REPLAY_CAPTURE (research/pair-verify-go
+@ 865dd6be6, opus re-review SOUND-WITH-ISSUES) = leg (b) NOT met: with both ON the next-day outcome is a step in the replay read R
+(lost <= 0.185, kept >= 0.209): the datn telling kept 6/6, the weak telling 4/6, a fact told 4 h before sleep 0/6; the production
+path (wall clock, 5-min pauses as sleep epochs, cupy, the episodic store which only writes on cupy, LTM on with the route armed) was
+never run. OWNER DECISION B2: is that forgetting acceptable at flip time, or does the flip wait for a further mechanism (fi family,
+awake-replay completion)? B2c combined-battery prereg (design (i): base + flipcand at F2 = fd29040db, ~15-17 h pool) reviewed
+SOUND-WITH-ISSUES; held, NOT queued until B3/B4 run. Workflow `wqjppzlyh`: review-doc fixes + B1 record corrections; B2c fixes;
+production-path arm set (B3 wall-clock day with a clock seam, B4 salient-vs-neutral + waking-only DA lesion, episodic-store arm,
+D3 cupy spec) with a prereg amendment + dev smoke.
+
 **🌙 PRE-DECIDED NEXT ACTIONS — OVERNIGHT PLAN (owner asleep from 01:35, 2026-09-25); work in order, re-arm the heartbeat on every expiry:**
 1. ✅ B2a DONE 03:45: re-scored R1 PASS (28/28, 0 regressions) + R2 PASS (168/168 valid at pinned M1, 6 covered-by-parent,
    0 incomplete), two verifiers agree, merged 075c24cd3 (follow-up to the FAIL finding). Robust core 24, union 25, mean
