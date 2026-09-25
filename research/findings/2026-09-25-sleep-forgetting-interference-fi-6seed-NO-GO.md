@@ -141,7 +141,7 @@ phase. At recall 1, `z_mean` is `1.0000000000508993` (seed 42), `0.9999999999814
 `3.8088625378623516e-10` and `1.0692804587972005e-11` -- effectively zero: the block never left early phase. The
 sleep epoch's own reactivation read, `R`, is `0.356535268` / `0.310521057` / `0.320028458` / `0.423728264` on the
 four seeds where the fact was captured, against `0.168587758` (seed 43) and `0.035599825` (seed 101) -- roughly
-half to a fifth as large; the resulting SWR-coupled DA (`da_swr`) is correspondingly lower (`0.624754941` and
+half to a twelfth as large; the resulting SWR-coupled DA (`da_swr`) is correspondingly lower (`0.624754941` and
 `0.526343871` against `0.729785582`-`0.813558916` on those four seeds, low end at seed 44 not seed 42), and the
 D1-gated capture that Amendment 6's mechanism runs through never crosses whatever threshold turns early-phase
 expression into a permanent trace (`a_eff_mean` `0.161502711` / `0.029512006`, `tag_rep_mean` -- the block's own
@@ -225,8 +225,9 @@ lowest point, night 7, is still correct at `1.0217791765005546`). The morning-4 
 matches an OLDER duplicate instead (store position 1, fact index 6, ratio `0.6023277961028686`, from the FIRST
 re-mention) -- `activity.matched_fact_index: 6`, `activity.abstained: false`, patient `ball` at confidence `1.0`,
 but the reply then fails verification (`verified: false`) and the arm abstains. The same match-then-fail-
-verification pattern repeats at morning 5 (matched to the original block, index 0); mornings 6-7 find no match at
-all (`matched_fact_index: null`). The loss on this seed therefore depends on WHICH of the fact's duplicate blocks
+verification pattern repeats at morning 5 (matched to the same first-re-mention block, index 6, as morning 4 --
+not the original block, which is index 0); mornings 6-7 find no match at all (`matched_fact_index: null`). The
+loss on this seed therefore depends on WHICH of the fact's duplicate blocks
 the read settles on, not on every duplicate uniformly eroding below a shared recall margin -- the strongest
 duplicate (the second re-mention) was still comfortably above that margin when the read failed. This is still a
 genuine, mechanism-consistent finding, not an instrument defect (`I2_load_lesion_held` and `n_arm_errors=0` both
@@ -290,11 +291,14 @@ allowed to fade, without RAG. On the 3/6 seeds where every FI gate holds, this f
 that directive's shape: an unrehearsed, unimportant fact fades as later learning accumulates (FI2), the rate is
 ordered by how much is learned (FI3), and two independent importance signals -- telling it saliently (FI5) or
 re-mentioning it (FI6, on 5/6 seeds) -- protect it. That is a real, measured piece of evidence in the directive's
-direction. The R_i protection read and the reactivation itself are read from the brain's own store; the amplitude
-that turns that read into a night's renormalization (the `dW`/`W` sums, their ratio `delta`, and the multiply
-`1 - delta(1-R)`) is declared, in the module's own docstring, as host arithmetic over synaptic quantities, not a
-computation the brain itself performs -- a documented shortcut under the brain-based-only standard, not something
-this finding should imply is fully synaptic.
+direction. Neither the reactivation read itself nor the amplitude that turns it into a night's renormalization is
+brain-computed: `webapp/sleep_replay_capture.py`'s own HOST SHORTCUTS declare `R_i` as "the composer's
+decisiveness margin, (peak - runner_up)/peak of the cleanup membrane scores: host arithmetic on a substrate read"
+-- so the protection read that this whole family turns on is itself a host computation over a substrate read, not
+read directly off the brain's own store. The downstream amplitude (the `dW`/`W` sums, their ratio `delta`, and the
+multiply `1 - delta(1-R)`) is declared in the same docstring as host arithmetic over synaptic quantities. Both are
+documented shortcuts under the brain-based-only standard, not something this finding should imply is fully
+synaptic.
 
 The owner's 2026-09-25 ruling was prompted by exactly the defect this family reproduces: it names the sibling r2
 route's result as losing the weak telling "2/6, through a single threshold on the replay read... forgetting that
@@ -344,8 +348,17 @@ this amendment adds. Similarity-dependent interference (A-B, A-C) is not tested 
   seeds' heterogeneous builds put the weak telling's reactivation margin below the effective threshold while
   the salient telling's (larger tag, on the same seeds) does not; that remains open.
 - Seed 101's FI5 failure (the salient block's own reactivation read collapsing across the week) is reported here
-  for the first time but not root-caused: why THIS seed's salient block's R falls from 0.29 to 0.01 while the
-  other three captured seeds' salient blocks hold up over the same week is not investigated.
+  for the first time but not root-caused, and it is not unique to seed 101: the salient block (`fis_lr`) is
+  captured (`z ≈ 1`) on all six seeds, not four. Why THIS seed's salient block's `R` falls from `0.290963714` to a
+  minimum of `0.009963793` (night 6) is not investigated -- and at night 7, `R` reads `0.315911916` (seed 42),
+  `0.048512264` (43), `0.2689885` (44), `0.328374885` (100), `0.032167699` (101), `0.424426312` (102): only seeds
+  42, 100 and 102 stay clearly above `0.27`, seed 44 ends the week just below it, and seed 43's `R` collapses
+  almost as far as 101's (`0.388730055` -> `0.048512264` over nights 1-7, against 101's `0.290963714` ->
+  `0.032167699`). Seed 43 does not fail FI5 only because it starts from a higher `R` and its own block's ratio
+  (`fact_ratio_by_night`, `inc_mag/base_mag`) does not fall below the recall margin until later: `0.7420857325160359`
+  at morning 7, close to the `0.7063632341370527` at which seed 101 first failed (morning 5, above). Whether seed
+  101's failure is a build-specific fragility, or seed 43 shows the same general failure mode narrowly escaped, is
+  not investigated.
 - Whether the store's own `dW/W` read is the right form of "how much was learned", versus a per-synapse or
   per-region measure, is a declared operating point in Amendment 6, not validated by this scoring.
 
@@ -358,15 +371,20 @@ renormalization step Amendment 6 added -- is the more fragile link for an ordina
 with re-mention continuing past night 2 (e.g. one re-mention per subsequent day) to test whether seed 100's night-4
 loss is a fixed limit of "re-mention twice" or recoverable with sustained rehearsal, which is closer to what a
 person actually does with something they consider worth remembering; (3) a sweep of the salient block's own
-across-week `R` trajectory (seed 101 collapses from 0.29 to 0.01 by night 6 while the other three captured seeds'
-salient blocks hold above 0.27 at night 7) to characterize whether that collapse is a build-specific fragility or
-a general failure mode of leaving a captured trace's own protection to decay unrehearsed for a week.
+across-week `R` trajectory (seed 101 collapses from `0.290963714` to `0.032167699` by night 7; seed 43 collapses
+almost as far, from `0.388730055` to `0.048512264`, without failing FI5; seeds 42, 100 and 102 stay clearly above
+`0.27` at night 7 (`0.315911916` / `0.328374885` / `0.424426312`) while seed 44 ends the week just below it at
+`0.2689885`) to characterize whether seed 101's failure is a build-specific fragility, why seed 43's comparably
+large collapse does not cost it FI5, or whether both are one general failure mode of leaving a captured trace's
+own protection to decay unrehearsed for a week.
 
 ## Flip candidacy
 
-`BRAIN_SLEEP_LOAD_RENORM` is not a flip candidate from this finding. The 6-seed verdict is NO-GO (`n_go=3`), no
-adversarial review of this scoring has run, and no production-default validation has been attempted. This finding
-does not flip any default.
+`BRAIN_SLEEP_LOAD_RENORM` is not a flip candidate from this finding. The 6-seed verdict is NO-GO (`n_go=3`); two
+independent adversarial re-reviews of this scoring have now run -- one on the initial scoring commit, one on the
+fix round that followed it -- and neither changed the NO-GO verdict, each instead finding prose/mechanism errors
+in the write-up that this and the prior fix round corrected. No production-default validation has been attempted.
+This finding does not flip any default.
 
 ## Artifacts
 
