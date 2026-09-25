@@ -54,6 +54,11 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
    (`research/findings/raw/gap4/transport_ceiling_readout/gpu/gpu_s7_e40.json` in worktree `wf_4703a2bd-4dd-15`).
    The bound census (rung 0) sits at pool queue positions 7-9. When it lands, write ONE finding covering rung 0 +
    rung 3, then take lever 1 (spiking output competition) or the bound, per the census rule.
+8. Plastic mask (#203) merged 409397bf5: positive control reproduces the 13.8->56.1 drift OFF and flat ON on the
+   standalone organ, but the flag changes nothing in production (wave3 pool gate `workspace_loop_fixed`, and
+   world-model/surprise/metacog clear `cfg.enable_hebbian_learning` on the SHARED cfg after training). Flip = low value.
+   Lane `research/chat-time-plasticity-audit` (22:00) measures what can change during a real chat and classifies each
+   learn-through-use faculty LIVE / FROZEN-BY-DESIGN / SILENTLY FROZEN.
 
 **🟢 UPDATE ~17:15 (2026-09-24) — main a5e37143b. (history: superseded by the 20:25 block above)**
 - **Incident 13:53:** a review subagent's `rm -rf <scratch> ~/.claude/projects` deleted every project's Claude session
