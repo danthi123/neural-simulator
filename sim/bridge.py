@@ -492,6 +492,12 @@ class SimulationBridge:
         self.cp_bdsp_B = None
         self.cp_bdsp_P = None
         self.cp_bdsp_Pbar = None
+        # RATIO baseline state (cfg.bdsp_pbar_ratio_tau_ms > 0 only; 2026-09-25): slow per-neuron EMAs of the event
+        # rate E and the kernel's burst factor B_post, and an optional runner-set boolean neuron mask. All stay None
+        # when the knob is 0.0 (the default), so the BDSP block below is byte-identical.
+        self.cp_bdsp_Ebar = None
+        self.cp_bdsp_Bbar = None
+        self.cp_bdsp_pbar_ratio_mask = None
         self.cp_bdsp_apical_drive = None
         self.cp_bdsp_int_drive = None
         # LEARNED-IN-ENGINE self-predicting interneuron (gap#4 RANK-1, 2026-09-09; enable_selfpredicting_interneuron).
@@ -10473,6 +10479,27 @@ class SimulationBridge:
                 # B cannot. Default False => _B_post IS cp_bdsp_B => everything below is byte-identical.
                 _B_post = ((self.cp_bdsp_E * self.cp_bdsp_P) if getattr(cfg, "enable_bdsp_graded_credit", False)
                            else self.cp_bdsp_B)
+                # RATIO baseline (Payeur et al. 2020/2021: Pbar = a slow moving average of the burst/event proportion,
+                # "To ensure a finite growth of synaptic weights"). Additive / default-off: bdsp_pbar_ratio_tau_ms <= 0
+                # => unreached => cp_bdsp_Ebar/Bbar never allocated => byte-identical. When on, Pbar = EMA(B_post) /
+                # EMA(E) (time constant tau) for the masked neurons, so sum_t (B_post - Pbar*E) ~ 0 over ~tau: a
+                # rectified (Jensen) mean of P can no longer accumulate into a one-sided weight drift at the clamp.
+                _ptau = float(getattr(cfg, "bdsp_pbar_ratio_tau_ms", 0.0))
+                if _ptau > 0.0:
+                    if self.cp_bdsp_Ebar is None or self.cp_bdsp_Ebar.size != n_bd:
+                        _e0 = cp.float32(getattr(cfg, "bdsp_pbar_ratio_e0", 0.05))
+                        self.cp_bdsp_Ebar = cp.full(n_bd, _e0, dtype=cp.float32)
+                        self.cp_bdsp_Bbar = cp.full(n_bd, _e0 * cp.float32(getattr(cfg, "bdsp_p0", 0.30)),
+                                                    dtype=cp.float32)
+                    _pa = cp.float32(1.0 - np.exp(-float(cfg.dt_ms) / _ptau))
+                    self.cp_bdsp_Ebar = self.cp_bdsp_Ebar + _pa * (self.cp_bdsp_E - self.cp_bdsp_Ebar)
+                    self.cp_bdsp_Bbar = self.cp_bdsp_Bbar + _pa * (_B_post.astype(cp.float32) - self.cp_bdsp_Bbar)
+                    _live = self.cp_bdsp_Ebar > cp.float32(1e-9)      # a long-silent neuron keeps its last baseline
+                    _ratio = cp.where(_live, self.cp_bdsp_Bbar / cp.maximum(self.cp_bdsp_Ebar, cp.float32(1e-9)),
+                                      self.cp_bdsp_Pbar)
+                    if self.cp_bdsp_pbar_ratio_mask is not None:
+                        _ratio = cp.where(self.cp_bdsp_pbar_ratio_mask, _ratio, self.cp_bdsp_Pbar)
+                    self.cp_bdsp_Pbar = _ratio.astype(cp.float32)
                 # restrict to synapses with a live presynaptic factor AND a non-negligible burst deviation (no-op
                 # everywhere else -> at rest / self-predicting P==Pbar => dev==0 => the P0 no-spurious-learning moat).
                 dev_post = _B_post[coo_bd.col] - self.cp_bdsp_Pbar[coo_bd.col] * self.cp_bdsp_E[coo_bd.col]

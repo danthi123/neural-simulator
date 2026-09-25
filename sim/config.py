@@ -600,7 +600,17 @@ class CoreSimConfig:
     bdsp_beta: float = 1.0                         # beta: apical->burst-probability sigmoid slope P = sigmoid(beta * v_apical_scaled)
     burst_isi_threshold_ms: float = 6.0            # a 2nd somatic spike within this ISI of the 1st = a BURST (else a fresh event)
     bdsp_pbar_ema_alpha: float = 0.05              # Pbar EMA update rate: Pbar += alpha*(P - Pbar) each step (slow single-phase baseline)
-    bdsp_rate_tau: float = 0.90                    # per-neuron low-pass factor for E (event) and B (burst) rates: r *= tau; r[fired] += (1-tau)
+    # RATIO baseline (gap#4 clamp-companion lever, 2026-09-25; additive, default OFF). Payeur et al. (bioRxiv
+    # 2020.03.30.015511 v1; Nat Neurosci 2021) set Pbar to "a moving average of the proportion of events that are bursts
+    # in postsynaptic neuron i, with a slow (~ 1 - 10 s) time scale", "To ensure a finite growth of synaptic weights"
+    # (tau_avg 5 s in their XOR task, 15 s in the pairing protocols). tau > 0 => per neuron Pbar = EMA(B_post)/EMA(E),
+    # both with time constant tau (B_post = the kernel's own burst factor: E*P under graded credit, else the sampled B),
+    # so the time-integral of the drive (B_post - Pbar*E) over ~tau is zero and a rectified mean of P cannot accumulate
+    # into a one-sided weight drift. Restricted to the neurons of cp_bdsp_pbar_ratio_mask when a runner sets it (None =
+    # every neuron); other neurons keep the EMA-of-P baseline above. 0.0 => the block is unreached => byte-identical.
+    bdsp_pbar_ratio_tau_ms: float = 0.0
+    bdsp_pbar_ratio_e0: float = 0.05               # prior event rate the ratio EMAs start from (Ebar0; Bbar0 = p0*Ebar0 => Pbar(0) = p0)
+    bdsp_rate_tau: float = 0.90                   # per-neuron low-pass factor for E (event) and B (burst) rates: r *= tau; r[fired] += (1-tau)
     bdsp_v_apical_scale: float = 0.05              # scales cp_v_apical (mV, ~[-65..+20]) into the sigmoid argument so P spans (0,1) around v_apical=E_rest -> P~Pbar
     bdsp_w_min: float = -5.0                       # BDSP feedforward weight lower clip (signed weights: FA credit can drive LTD)
     bdsp_w_max: float = 5.0                        # BDSP feedforward weight upper clip
