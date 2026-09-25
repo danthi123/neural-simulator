@@ -84,6 +84,11 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
    22:55: DA lane merged acca762fa (ordinary-fact forgetting MEASURED at seed 42 through /api/brain-chat: flag-off
    recalls, flag-on abstains). Round 2 `research/sleep-replay-capture-r2`: long-delay arm, sleep downscaling across
    nights, and an offcheck against a current-tree revert counterfactual (a fixed historical pin keeps going stale).
+   ROUND 2 RESULT 01:00 (branch @ 50c791bf9, Amendments 1-3): (1) a fact told 4 h before sleep is NOT rescued (replay
+   read 0.0056) and is lost with the route on, while today's default recalls it; (2) BRAIN_SLEEP_DOWNSCALING seed-42
+   3-night fade NO-GO (the weak fact fades on night 7; constant not retuned); (3) revert-counterfactual offcheck
+   IDENTICAL. 6 seeds of family r2 queued. Next (workflow `wf6m1hyvo`): review r2 + build awake-rest replay (awake SWRs
+   refresh tags between turns so a fact told hours before sleep stays capturable), then review it.
 7. gap#4 crux (A9): the full-size GPU run (H64/pool 16, 40 epochs, dev seed 7) finished 21:00, rc 0. The collapse
    persists at full size: every hidden-learning arm trains at chance on all 3 replicates, the frozen arm does not
    (`research/findings/raw/gap4/transport_ceiling_readout/gpu/gpu_s7_e40.json` in worktree `wf_4703a2bd-4dd-15`).
