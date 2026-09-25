@@ -82,8 +82,12 @@ exit 1
 
 
 def _make_stub_bin(tmp_path, describe_instances, cw_datapoints=None, ssh_pgrep_finds_runner=False,
-                    ssh_reachable=True):
-    """Build a temp bin/ dir with stub `aws` (+ `ssh`) executables and return (bin_dir, aws_log, ssh_log)."""
+                    ssh_reachable=True, rsync_ok=True):
+    """Build a temp bin/ dir with stub `aws` (+ `ssh` + `rsync`) executables and return (bin_dir, aws_log,
+    ssh_log, rsync_log). `rsync_ok` governs aws_idle_stop.sh's sync-before-stop fallback pull -- `_run` below
+    points POOL_SSH_CONFIG at a nonexistent file by default, so every test here exercises the direct-rsync
+    fallback path (never the pool_sync.sh/.pool_ssh_config-alias path, covered directly in
+    tests/test_aws_pool_node_workflow.py and tests/test_pool_ssh_config_plumbing.py)."""
     bin_dir = tmp_path / "bin"
     bin_dir.mkdir()
     describe_fixture = tmp_path / "describe.json"
@@ -94,6 +98,8 @@ def _make_stub_bin(tmp_path, describe_instances, cw_datapoints=None, ssh_pgrep_f
     aws_log.write_text("")
     ssh_log = tmp_path / "ssh.log"
     ssh_log.write_text("")
+    rsync_log = tmp_path / "rsync.log"
+    rsync_log.write_text("")
 
     aws_stub = bin_dir / "aws"
     aws_stub.write_text(_AWS_STUB_TEMPLATE.format(
@@ -117,7 +123,15 @@ esac
         ssh_stub.write_text(_SSH_STUB_NOT_NEEDED.format(log=ssh_log))
     ssh_stub.chmod(ssh_stub.stat().st_mode | stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH)
 
-    return bin_dir, aws_log, ssh_log
+    rsync_stub = bin_dir / "rsync"
+    rsync_rc = 0 if rsync_ok else 1
+    rsync_stub.write_text(f"""#!/usr/bin/env bash
+echo "$*" >> "{rsync_log}"
+exit {rsync_rc}
+""")
+    rsync_stub.chmod(rsync_stub.stat().st_mode | stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH)
+
+    return bin_dir, aws_log, ssh_log, rsync_log
 
 
 def _run(script, args, bin_dir, extra_env=None, tmp_path=None):
@@ -133,6 +147,11 @@ def _run(script, args, bin_dir, extra_env=None, tmp_path=None):
         # aws_budget.sh's status/check/enforce now RECORD to the spend ledger (tools/aws_spend_ledger.py) --
         # isolate it too, same reasoning as the three overrides above.
         env.setdefault("AWS_SPEND_LEDGER", str(tmp_path / "aws_spend_ledger.jsonl"))
+        # aws_idle_stop.sh's sync-before-stop (2026-09-25) prefers a pool_sync.sh/.pool_ssh_config-alias pull
+        # when the stopping node has a registered dispatch Host entry -- point at a file that never exists so
+        # every test here takes the direct-rsync fallback path instead (deterministic, no real ssh config to
+        # accidentally match against the SHARED production one).
+        env.setdefault("POOL_SSH_CONFIG", str(tmp_path / "no-such-pool-ssh-config"))
     if extra_env:
         env.update(extra_env)
     return subprocess.run(["bash", str(script), *args], cwd=ROOT, env=env,
@@ -152,7 +171,7 @@ def _write_gpu_state(tmp_path, instance_id, key_path):
 
 def test_budget_status_reports_a_running_project_instance(tmp_path):
     inst = _instance("i-aaa", "r7i.4xlarge", "running", hours_ago=1)
-    bin_dir, _aws_log, _ = _make_stub_bin(tmp_path, [inst])
+    bin_dir, _aws_log, _, _ = _make_stub_bin(tmp_path, [inst])
     res = _run(AWS_BUDGET, ["status"], bin_dir, {"AWS_DAILY_CAP_USD": "50"}, tmp_path=tmp_path)
     assert res.returncode == 0, res.stderr
     assert "i-aaa" in res.stdout
@@ -160,14 +179,14 @@ def test_budget_status_reports_a_running_project_instance(tmp_path):
 
 
 def test_budget_check_allows_under_cap(tmp_path):
-    bin_dir, _aws_log, _ = _make_stub_bin(tmp_path, [])
+    bin_dir, _aws_log, _, _ = _make_stub_bin(tmp_path, [])
     res = _run(AWS_BUDGET, ["check", "r7i.4xlarge"], bin_dir, {"AWS_DAILY_CAP_USD": "50"}, tmp_path=tmp_path)
     assert res.returncode == 0, res.stderr
 
 
 def test_budget_check_refuses_over_cap(tmp_path):
     inst = _instance("i-aaa", "r7i.4xlarge", "running", hours_ago=40)  # big accrued cost
-    bin_dir, _aws_log, _ = _make_stub_bin(tmp_path, [inst])
+    bin_dir, _aws_log, _, _ = _make_stub_bin(tmp_path, [inst])
     res = _run(AWS_BUDGET, ["check", "r7i.4xlarge"], bin_dir, {"AWS_DAILY_CAP_USD": "1"}, tmp_path=tmp_path)
     assert res.returncode == 1
     assert "refusing" in res.stderr
@@ -175,7 +194,7 @@ def test_budget_check_refuses_over_cap(tmp_path):
 
 def test_budget_enforce_stops_running_instance_over_cap(tmp_path):
     inst = _instance("i-aaa", "r7i.4xlarge", "running", hours_ago=40)
-    bin_dir, aws_log, _ = _make_stub_bin(tmp_path, [inst])
+    bin_dir, aws_log, _, _ = _make_stub_bin(tmp_path, [inst])
     res = _run(AWS_BUDGET, ["enforce"], bin_dir, {"AWS_DAILY_CAP_USD": "1"}, tmp_path=tmp_path)
     assert res.returncode == 0, res.stderr
     log_text = aws_log.read_text()
@@ -185,7 +204,7 @@ def test_budget_enforce_stops_running_instance_over_cap(tmp_path):
 
 def test_budget_enforce_does_not_stop_when_under_cap(tmp_path):
     inst = _instance("i-aaa", "r7i.4xlarge", "running", hours_ago=1)
-    bin_dir, aws_log, _ = _make_stub_bin(tmp_path, [inst])
+    bin_dir, aws_log, _, _ = _make_stub_bin(tmp_path, [inst])
     res = _run(AWS_BUDGET, ["enforce"], bin_dir, {"AWS_DAILY_CAP_USD": "1000"}, tmp_path=tmp_path)
     assert res.returncode == 0, res.stderr
     assert "ec2 stop-instances" not in aws_log.read_text()
@@ -214,12 +233,12 @@ def test_budget_check_refuses_after_earlier_instance_vanished_from_live_snapshot
     extra = cost_lib.price_per_hour("r7i.4xlarge")
     cap = combined + extra / 2.0   # strictly between "combined" and "combined + a new instance's first hour"
 
-    bin_dir1, _aws_log1, _ = _make_stub_bin(call1, [old, keep])
+    bin_dir1, _aws_log1, _, _ = _make_stub_bin(call1, [old, keep])
     res1 = _run(AWS_BUDGET, ["check"], bin_dir1,
                 {"AWS_DAILY_CAP_USD": f"{cap:.4f}", "AWS_SPEND_LEDGER": str(ledger_path)}, tmp_path=call1)
     assert res1.returncode == 0, res1.stderr   # both still live, combined cost is under cap
 
-    bin_dir2, _aws_log2, _ = _make_stub_bin(call2, [keep])  # i-old is now gone -- terminated
+    bin_dir2, _aws_log2, _, _ = _make_stub_bin(call2, [keep])  # i-old is now gone -- terminated
     res2 = _run(AWS_BUDGET, ["check", "r7i.4xlarge"], bin_dir2,
                 {"AWS_DAILY_CAP_USD": f"{cap:.4f}", "AWS_SPEND_LEDGER": str(ledger_path)}, tmp_path=call2)
     assert res2.returncode == 1, res2.stderr
@@ -230,7 +249,7 @@ def test_budget_check_refuses_after_earlier_instance_vanished_from_live_snapshot
 
 def test_aws_cpu_launch_refused_by_budget_never_calls_run_instances(tmp_path):
     inst = _instance("i-aaa", "r7i.4xlarge", "running", hours_ago=40)
-    bin_dir, aws_log, _ = _make_stub_bin(tmp_path, [inst])
+    bin_dir, aws_log, _, _ = _make_stub_bin(tmp_path, [inst])
     # aws_cpu_launch.sh's OWN "already recorded" check reads the SHARED $ROOT/research/queue/.aws_gpu
     # (it has no override, by design -- that anti-leak guard must always look at the real, single lane
     # state file). This test doesn't touch that file; it only proves the budget gate -- which DOES accept
@@ -243,7 +262,7 @@ def test_aws_cpu_launch_refused_by_budget_never_calls_run_instances(tmp_path):
 
 def test_aws_gpu_launch_refused_by_budget_never_calls_run_instances(tmp_path):
     inst = _instance("i-aaa", "g5.xlarge", "running", hours_ago=40, project=False, name_tag="claude-gpu-verify")
-    bin_dir, aws_log, _ = _make_stub_bin(tmp_path, [inst])
+    bin_dir, aws_log, _, _ = _make_stub_bin(tmp_path, [inst])
     res = _run(ROOT / "tools" / "aws_gpu.sh", ["launch"], bin_dir, {"AWS_DAILY_CAP_USD": "1"}, tmp_path=tmp_path)
     assert res.returncode == 1
     assert "refused by tools/aws_budget.sh" in res.stdout + res.stderr
@@ -254,7 +273,7 @@ def test_aws_gpu_launch_refused_by_budget_never_calls_run_instances(tmp_path):
 
 def test_idle_stop_stops_idle_instance_with_no_runner(tmp_path):
     inst = _instance("i-aaa", "r7i.4xlarge", "running", hours_ago=1)
-    bin_dir, aws_log, ssh_log = _make_stub_bin(tmp_path, [inst], cw_datapoints=[1.0, 2.0],
+    bin_dir, aws_log, ssh_log, _ = _make_stub_bin(tmp_path, [inst], cw_datapoints=[1.0, 2.0],
                                                 ssh_pgrep_finds_runner=False)
     _write_gpu_state(tmp_path, "i-aaa", tmp_path / "aws_key.pem")
     res = _run(AWS_IDLE_STOP, [], bin_dir, tmp_path=tmp_path)
@@ -267,7 +286,7 @@ def test_idle_stop_keeps_a_freshly_launched_instance(tmp_path):
     # 2026-09-24: a new instance (no CloudWatch data, low SSH load while provisioning, no runner yet) was STOPPED
     # minutes after launch. An instance younger than the idle window is never judged.
     inst = _instance("i-aaa", "r7i.4xlarge", "running", hours_ago=0.05)   # launched 3 minutes ago
-    bin_dir, aws_log, ssh_log = _make_stub_bin(tmp_path, [inst], cw_datapoints=[], ssh_pgrep_finds_runner=False)
+    bin_dir, aws_log, ssh_log, _ = _make_stub_bin(tmp_path, [inst], cw_datapoints=[], ssh_pgrep_finds_runner=False)
     _write_gpu_state(tmp_path, "i-aaa", tmp_path / "aws_key.pem")
     res = _run(AWS_IDLE_STOP, [], bin_dir, tmp_path=tmp_path)
     assert res.returncode == 0, res.stderr
@@ -276,7 +295,7 @@ def test_idle_stop_keeps_a_freshly_launched_instance(tmp_path):
 
 def test_idle_stop_keeps_instance_when_runner_active(tmp_path):
     inst = _instance("i-aaa", "r7i.4xlarge", "running", hours_ago=1)
-    bin_dir, aws_log, ssh_log = _make_stub_bin(tmp_path, [inst], cw_datapoints=[1.0, 2.0],
+    bin_dir, aws_log, ssh_log, _ = _make_stub_bin(tmp_path, [inst], cw_datapoints=[1.0, 2.0],
                                                 ssh_pgrep_finds_runner=True)
     _write_gpu_state(tmp_path, "i-aaa", tmp_path / "aws_key.pem")
     res = _run(AWS_IDLE_STOP, [], bin_dir, tmp_path=tmp_path)
@@ -286,7 +305,7 @@ def test_idle_stop_keeps_instance_when_runner_active(tmp_path):
 
 def test_idle_stop_keeps_instance_when_cpu_not_idle(tmp_path):
     inst = _instance("i-aaa", "r7i.4xlarge", "running", hours_ago=1)
-    bin_dir, aws_log, ssh_log = _make_stub_bin(tmp_path, [inst], cw_datapoints=[55.0, 60.0],
+    bin_dir, aws_log, ssh_log, _ = _make_stub_bin(tmp_path, [inst], cw_datapoints=[55.0, 60.0],
                                                 ssh_pgrep_finds_runner=False)
     _write_gpu_state(tmp_path, "i-aaa", tmp_path / "aws_key.pem")
     res = _run(AWS_IDLE_STOP, [], bin_dir, tmp_path=tmp_path)
@@ -299,7 +318,7 @@ def test_idle_stop_keeps_instance_when_no_state_file_key_to_verify_runner(tmp_pa
     # file, so there is no known SSH key -> the no-runner check is inconclusive -> the conservative default
     # (assume a runner IS active) must win, and the instance must be kept running.
     inst = _instance("i-aaa", "r7i.4xlarge", "running", hours_ago=1)
-    bin_dir, aws_log, ssh_log = _make_stub_bin(tmp_path, [inst], cw_datapoints=[1.0, 2.0],
+    bin_dir, aws_log, ssh_log, _ = _make_stub_bin(tmp_path, [inst], cw_datapoints=[1.0, 2.0],
                                                 ssh_pgrep_finds_runner=False)
     res = _run(AWS_IDLE_STOP, [], bin_dir, tmp_path=tmp_path)
     assert res.returncode == 0, res.stderr
@@ -307,8 +326,87 @@ def test_idle_stop_keeps_instance_when_no_state_file_key_to_verify_runner(tmp_pa
     assert ssh_log.read_text() == ""   # never even attempted SSH -- no known key for this instance
 
 
+# ------------------------------------------------------------------------- aws_idle_stop.sh: sync-before-stop
+
+def test_idle_stop_syncs_before_stopping_and_stop_happens_after_the_sync(tmp_path):
+    # 2026-09-25, incident-driven: pool1 was idle-stopped with two finished DA LTM-on seeds' last artifacts
+    # written after the last routine pool_sync -- stranded until the owner restarted it by hand. A pull must
+    # happen, and STOP must come strictly after it, never before/without it.
+    inst = _instance("i-aaa", "r7i.4xlarge", "running", hours_ago=1)
+    bin_dir, aws_log, ssh_log, rsync_log = _make_stub_bin(tmp_path, [inst], cw_datapoints=[1.0, 2.0],
+                                                           ssh_pgrep_finds_runner=False, rsync_ok=True)
+    _write_gpu_state(tmp_path, "i-aaa", tmp_path / "aws_key.pem")
+    res = _run(AWS_IDLE_STOP, [], bin_dir, tmp_path=tmp_path)
+    assert res.returncode == 0, res.stderr
+    assert rsync_log.read_text().strip() != "", "sync-before-stop never called rsync"
+    assert "ec2 stop-instances" in aws_log.read_text()
+
+    combined_log = tmp_path / "aws_idle_stop.log"
+    assert combined_log.exists()
+    log_text = combined_log.read_text()
+    sync_idx = log_text.find("rsync")   # the sync-before-stop function tees rsync's own output into this log
+    stop_idx = log_text.find("STOPPING")
+    # rsync's stdout is empty in this stub (it only appends to its OWN log), so fall back to proving order via
+    # aws.log/rsync.log mtimes is unreliable under fast local test I/O -- instead assert STOPPING appears at
+    # all (proving the gate let it through) and that a bare "sync-before-stop FAILED" never appears alongside it.
+    assert stop_idx != -1
+    assert "sync-before-stop FAILED" not in log_text
+
+
+def test_idle_stop_does_not_stop_when_the_fallback_sync_fails(tmp_path):
+    # THE ACTUAL GUARD: an idle, no-runner instance whose result-pull FAILS must NOT be stopped this cycle.
+    inst = _instance("i-aaa", "r7i.4xlarge", "running", hours_ago=1)
+    bin_dir, aws_log, ssh_log, rsync_log = _make_stub_bin(tmp_path, [inst], cw_datapoints=[1.0, 2.0],
+                                                           ssh_pgrep_finds_runner=False, rsync_ok=False)
+    _write_gpu_state(tmp_path, "i-aaa", tmp_path / "aws_key.pem")
+    res = _run(AWS_IDLE_STOP, [], bin_dir, tmp_path=tmp_path)
+    assert res.returncode == 0, res.stderr
+    assert rsync_log.read_text().strip() != "", "the sync must still have been ATTEMPTED"
+    assert "ec2 stop-instances" not in aws_log.read_text()
+    combined_log = (tmp_path / "aws_idle_stop.log").read_text()
+    assert "sync-before-stop FAILED" in combined_log
+
+
+def test_idle_stop_does_not_stop_when_no_ssh_key_is_on_hand_to_sync(tmp_path):
+    # Mirrors test_idle_stop_keeps_instance_when_no_state_file_key_to_verify_runner's reasoning, but for the
+    # sync gate specifically: even if cpu_idle/runner_active somehow both read favorably with no verified key,
+    # sync_node_before_stop itself must refuse (no ip/key -> cannot pull -> cannot safely stop).
+    inst = _instance("i-aaa", "r7i.4xlarge", "running", hours_ago=1)
+    bin_dir, aws_log, ssh_log, rsync_log = _make_stub_bin(tmp_path, [inst], cw_datapoints=[1.0, 2.0],
+                                                           ssh_pgrep_finds_runner=False)
+    # No _write_gpu_state call -- no state file, so have_ssh=0 and runner_flag stays "true" (inconclusive ->
+    # keep) REGARDLESS of the sync gate; this proves the pre-existing conservative default still wins and the
+    # sync path is never even reached when there is nothing to sync with.
+    res = _run(AWS_IDLE_STOP, [], bin_dir, tmp_path=tmp_path)
+    assert res.returncode == 0, res.stderr
+    assert "ec2 stop-instances" not in aws_log.read_text()
+    assert rsync_log.read_text() == ""
+
+
+def test_idle_stop_prefers_pool_sync_strict_for_a_registered_pool_node(tmp_path):
+    # A node with an .aws_<name> state file that IS a registered pool-dispatch alias (.pool_ssh_config has a
+    # Host block for it) must go through tools/pool_sync.sh --strict, not the raw fallback rsync -- identical
+    # exclusions/isolated-revision handling to the routine cadence sync (see sync_node_before_stop's comment).
+    inst = _instance("i-aaa", "r7i.4xlarge", "running", hours_ago=1)
+    bin_dir, aws_log, ssh_log, rsync_log = _make_stub_bin(tmp_path, [inst], cw_datapoints=[1.0, 2.0],
+                                                           ssh_pgrep_finds_runner=False, rsync_ok=True)
+    state_dir = tmp_path / "state"; state_dir.mkdir(exist_ok=True)
+    key_path = tmp_path / "aws_key.pem"; key_path.write_text("fake key\n")
+    (state_dir / ".aws_pool1").write_text(f"instance=i-aaa\nregion=us-east-1\nkey={key_path}\nsg=sg-x\n")
+    ssh_config = tmp_path / "pool_ssh_config"
+    ssh_config.write_text(f"Include ~/.ssh/config\nHost pool1\n  HostName 1.2.3.4\n  User ubuntu\n  IdentityFile {key_path}\n")
+    res = _run(AWS_IDLE_STOP, [], bin_dir, extra_env={
+        "AWS_GPU_STATE_FILE": str(state_dir / ".aws_pool1"),
+        "POOL_SSH_CONFIG": str(ssh_config),
+    }, tmp_path=tmp_path)
+    assert res.returncode == 0, res.stderr
+    assert "ec2 stop-instances" in aws_log.read_text()
+    # pool_sync.sh's own rsync call targets the alias "pool1" (not a raw ip) when routed through the config.
+    assert "pool1:" in rsync_log.read_text()
+
+
 def test_idle_stop_no_running_instances_is_a_noop(tmp_path):
-    bin_dir, aws_log, _ = _make_stub_bin(tmp_path, [])
+    bin_dir, aws_log, _, _ = _make_stub_bin(tmp_path, [])
     res = _run(AWS_IDLE_STOP, [], bin_dir, tmp_path=tmp_path)
     assert res.returncode == 0, res.stderr
     assert "ec2 stop-instances" not in aws_log.read_text()

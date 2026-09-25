@@ -29,6 +29,48 @@ IDLE_CPU_PCT="${AWS_IDLE_CPU_PCT:-10}"
 # research/queue/ concurrently; see the worktree environment note on this).
 LOG="${AWS_IDLE_STOP_LOG:-$ROOT/research/queue/aws_idle_stop.log}"
 GPU_STATE="${AWS_GPU_STATE_FILE:-$ROOT/research/queue/.aws_gpu}"
+# POOL_SSH_CONFIG override exists for tests, same reasoning as the log/state overrides above -- it must never
+# resolve to the SHARED production .pool_ssh_config (other sessions/agents write it concurrently).
+POOL_SSH_CFG="${POOL_SSH_CONFIG:-$ROOT/research/queue/.pool_ssh_config}"
+
+sync_node_before_stop() {   # sync_node_before_stop <node-name> <ip> <key> -- pull this node's results BEFORE
+  # it is stopped (2026-09-25, incident-driven: pool1 was idle-stopped at 13:06Z with two finished DA LTM-on
+  # seeds' last arm+seed JSON written after the last routine pool_sync -- stranded on the stopped node's disk
+  # until the owner restarted it by hand ~55 min later). Returns 0 iff the pull is VERIFIED to have succeeded;
+  # the caller must not stop the instance on a non-zero return (the root volume is not what's at risk here --
+  # unlike aws_pool_node.sh down's DeleteOnTermination=true case -- but a `stop`+cold node still leaves any
+  # result written after this point unreachable until someone notices and restarts it, exactly what happened).
+  #
+  # Prefers tools/pool_sync.sh restricted to this one node (POOL_SYNC_STRICT=1) when the node has a registered
+  # dispatch alias in .pool_ssh_config -- identical exclusions/isolated-revision handling to the routine 15-min
+  # cadence sync, so this call can never diverge from what "synced" already means elsewhere in this repo. Falls
+  # back to the SAME plain rsync pool_sync.sh performs when this node is not a registered pool-dispatch alias
+  # (e.g. the single-instance `.aws_gpu` CPU-verify lane, never wired into .pool_ssh_config) -- using the ip/key
+  # this script already resolved for the no-runner SSH check, so a non-pool AWS lane is covered too, not just
+  # aws_pool_node.sh-managed nodes.
+  local node="$1" ip="$2" key="$3"
+  if [ -z "$ip" ] || [ -z "$key" ] || [ ! -f "$key" ]; then
+    echo "$(date -u '+%FT%TZ') [aws_idle_stop] $node: no verified ssh key/ip on hand -- cannot sync, NOT stopping this cycle" | tee -a "$LOG"
+    return 1
+  fi
+  if [ -n "$node" ] && [ -f "$POOL_SSH_CFG" ] && grep -q "^Host $node\$" "$POOL_SSH_CFG" 2>/dev/null; then
+    if POOL_SSH_CONFIG="$POOL_SSH_CFG" POOL_NODES="$node" POOL_SYNC_STRICT=1 \
+         bash "$ROOT/tools/pool_sync.sh" >>"$LOG" 2>&1; then
+      return 0
+    fi
+    echo "$(date -u '+%FT%TZ') [aws_idle_stop] $node: pool_sync --strict FAILED -- NOT stopping this cycle (will retry)" | tee -a "$LOG"
+    return 1
+  fi
+  local remote_dir="${POOL_REMOTE_DIR:-~/derisk-pool/sim/research/findings/raw/}"
+  mkdir -p "$ROOT/research/findings/raw"
+  if timeout 180 rsync -au --exclude='*.log' --exclude='_provenance/' \
+      -e "ssh -i $key -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes" \
+      "ubuntu@$ip:$remote_dir" "$ROOT/research/findings/raw/" >>"$LOG" 2>&1; then
+    return 0
+  fi
+  echo "$(date -u '+%FT%TZ') [aws_idle_stop] $node: fallback rsync FAILED -- NOT stopping this cycle (will retry)" | tee -a "$LOG"
+  return 1
+}
 
 json=$(aws ec2 describe-instances --region "$REGION" \
   --filters "Name=instance-state-name,Values=running,pending" --output json 2>/dev/null)
@@ -48,7 +90,7 @@ young=$("$PY" "$ROOT/tools/aws_cost_lib.py" young-ids --minutes "$IDLE_MINUTES" 
 # The only per-instance SSH key this repo's tooling durably records today (see CLAUDE.md "the AWS lane" and
 # tools/aws_gpu.sh / tools/aws_cpu_launch.sh, which share this single state file — at most one instance is
 # ever live via this repo's own launch scripts at a time).
-state_iid=""; state_key=""
+state_iid=""; state_key=""; state_file="$GPU_STATE"
 if [ -f "$GPU_STATE" ]; then
   state_iid=$(awk -F= '/^instance=/{print $2}' "$GPU_STATE" 2>/dev/null)
   state_key=$(awk -F= '/^key=/{print $2}' "$GPU_STATE" 2>/dev/null)
@@ -72,10 +114,15 @@ while IFS= read -r iid; do
     for sf in "$ROOT"/research/queue/.aws_*; do
       [ -f "$sf" ] || continue
       if grep -q "^instance=$iid\$" "$sf" 2>/dev/null; then
-        state_iid="$iid"; state_key=$(awk -F= '/^key=/{print $2}' "$sf" 2>/dev/null); break
+        state_iid="$iid"; state_key=$(awk -F= '/^key=/{print $2}' "$sf" 2>/dev/null); state_file="$sf"; break
       fi
     done
   fi
+  # NODE NAME (2026-09-25, for sync-before-stop below): every state file this repo's AWS tooling writes is
+  # `research/queue/.aws_<node-name>` (aws_pool_node.sh's own convention -- `.aws_pool1`, `.aws_pool2`, ... --
+  # and aws_cpu_launch.sh's single-instance default `.aws_gpu`), so its basename minus the `.aws_` prefix IS
+  # the node's ssh-dispatch alias when one is registered, and a harmless best-effort label ("gpu") otherwise.
+  node_name=$(basename "$state_file" 2>/dev/null); node_name="${node_name#.aws_}"
   if [ "$iid" = "$state_iid" ] && [ -n "$state_key" ] && [ -f "$state_key" ]; then
     ip=$(aws ec2 describe-instances --instance-ids "$iid" --region "$REGION" \
           --query 'Reservations[].Instances[].PublicIpAddress' --output text 2>/dev/null)
@@ -122,8 +169,19 @@ while IFS= read -r iid; do
   fi
 
   if "$PY" "$ROOT/tools/aws_cost_lib.py" idle "$([ "$cpu_idle" = 0 ] && echo 1 || echo 0)" $runner_flag; then
-    echo "$(date -u '+%FT%TZ') [aws_idle_stop] $iid idle >= ${IDLE_MINUTES}m, no runner — STOPPING" | tee -a "$LOG"
-    aws ec2 stop-instances --region "$REGION" --instance-ids "$iid" --output text 2>&1 | tee -a "$LOG"
+    # SYNC-BEFORE-STOP (2026-09-25, incident-driven -- see sync_node_before_stop's own comment above). A `stop`
+    # is non-destructive to the EBS volume, but the NODE goes cold and unreachable the instant it stops, so
+    # anything written after the last routine pool_sync between here and whenever someone next notices and
+    # restarts it is effectively stranded exactly as pool1's last two DA-probe seeds were. Pull first, verify,
+    # and only stop once that pull is CONFIRMED -- an unverifiable/failed sync means "not stopping this cycle",
+    # never "stop anyway", so the guard fails toward keeping the (billing) instance up, matching this whole
+    # script's existing bias toward NOT stopping on any other inconclusive signal.
+    if sync_node_before_stop "$node_name" "$ip" "$state_key"; then
+      echo "$(date -u '+%FT%TZ') [aws_idle_stop] $iid idle >= ${IDLE_MINUTES}m, no runner — STOPPING" | tee -a "$LOG"
+      aws ec2 stop-instances --region "$REGION" --instance-ids "$iid" --output text 2>&1 | tee -a "$LOG"
+    else
+      echo "$(date -u '+%FT%TZ') [aws_idle_stop] $iid idle but sync-before-stop FAILED — NOT stopping this cycle (will retry)" | tee -a "$LOG"
+    fi
   fi
 done <<<"$ids"
 exit 0

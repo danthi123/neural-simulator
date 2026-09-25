@@ -849,3 +849,210 @@ exit 255
     assert res.returncode != 0
     assert not state.read_text().startswith("# TORN DOWN")
     assert "Host testnode" in ssh_config.read_text()
+
+
+# --------------------------------------------------------------------------------------------------- `start`
+
+def _make_start_stub_bin(tmp_path, initial_state="stopped", instance_type="r7i.4xlarge",
+                          old_ip="1.2.3.4", new_ip="9.9.9.9", ssh_ok=True):
+    """Stub `aws`+`ssh` for `start`: describe-instances answers State.Name/PublicIpAddress/InstanceType
+    distinctly by --query content, transitioning stopped->running the instant start-instances is called
+    (marked by a sentinel file so the poll loop below observes it on its NEXT describe-instances call, exactly
+    like the real API). Budget's own describe-instances --filters fetch always reports zero project instances
+    (so AWS_DAILY_CAP_USD alone controls whether `check` allows or refuses)."""
+    bin_dir = tmp_path / "bin"
+    bin_dir.mkdir()
+    log = tmp_path / "combined.log"
+    log.write_text("")
+    started_marker = tmp_path / "started"
+    if initial_state == "running":
+        started_marker.write_text("")   # already running from the start -- no start-instances call expected
+
+    aws_stub = bin_dir / "aws"
+    aws_stub.write_text(f"""#!/usr/bin/env bash
+echo "AWS $*" >> "{log}"
+case "$*" in
+  *"--filters"*) echo '{{"Reservations": []}}'; exit 0 ;;
+  *"ec2 start-instances"*) touch "{started_marker}"; echo ok; exit 0 ;;
+  *"State.Name"*)
+    if [ -f "{started_marker}" ]; then echo running; else echo {initial_state}; fi
+    exit 0 ;;
+  *"PublicIpAddress"*)
+    if [ -f "{started_marker}" ]; then echo "{new_ip}"; else echo "{old_ip}"; fi
+    exit 0 ;;
+  *"InstanceType"*) echo "{instance_type}"; exit 0 ;;
+esac
+echo ok
+exit 0
+""")
+    aws_stub.chmod(aws_stub.stat().st_mode | stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH)
+
+    ssh_stub = bin_dir / "ssh"
+    if ssh_ok:
+        ssh_stub.write_text(f"""#!/usr/bin/env bash
+echo "SSH $*" >> "{log}"
+exit 0
+""")
+    else:
+        ssh_stub.write_text(f"""#!/usr/bin/env bash
+echo "SSH $*" >> "{log}"
+exit 255
+""")
+    ssh_stub.chmod(ssh_stub.stat().st_mode | stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH)
+    return bin_dir, log, started_marker
+
+
+def test_start_starts_a_stopped_instance_waits_and_rewrites_the_host_block(tmp_path):
+    bin_dir, log, started_marker = _make_start_stub_bin(tmp_path, initial_state="stopped",
+                                                          old_ip="1.2.3.4", new_ip="9.9.9.9")
+    state = _write_state(tmp_path, instance="i-aaa")
+    ssh_config = tmp_path / "ssh_config"
+    ssh_config.write_text("Include ~/.ssh/config\nHost testnode\n  HostName 1.2.3.4\n")
+    env = {
+        "AWS_POOL_NODE_STATE_FILE": str(state),
+        "POOL_SSH_CONFIG": str(ssh_config),
+        "AWS_POOL_START_TIMEOUT_S": "5",
+        "AWS_POOL_START_POLL_S": "0",
+        "AWS_DAILY_CAP_USD": "10000",
+    }
+    res = _run(["start", "testnode"], bin_dir=bin_dir, tmp_path=tmp_path, env=env)
+    assert res.returncode == 0, res.stderr
+    assert started_marker.exists(), "start-instances was never called"
+    assert "9.9.9.9" in ssh_config.read_text()
+    assert "1.2.3.4" not in ssh_config.read_text()   # stale ip replaced, not merely appended alongside
+    assert (tmp_path / "ssh_config.bak").exists(), "no backup of the prior config was kept"
+    assert "1.2.3.4" in (tmp_path / "ssh_config.bak").read_text()   # the backup holds the PRIOR content
+    assert "reachable" in res.stdout
+
+
+def test_start_refused_by_budget_never_calls_start_instances(tmp_path):
+    bin_dir, log, started_marker = _make_start_stub_bin(tmp_path, initial_state="stopped")
+    state = _write_state(tmp_path, instance="i-aaa")
+    ssh_config = tmp_path / "ssh_config"
+    ssh_config.write_text("Include ~/.ssh/config\nHost testnode\n  HostName 1.2.3.4\n")
+    env = {
+        "AWS_POOL_NODE_STATE_FILE": str(state),
+        "POOL_SSH_CONFIG": str(ssh_config),
+        "AWS_DAILY_CAP_USD": "0",   # any positive-cost launch refuses
+    }
+    res = _run(["start", "testnode"], bin_dir=bin_dir, tmp_path=tmp_path, env=env)
+    assert res.returncode == 1
+    assert "refused by tools/aws_budget.sh" in (res.stdout + res.stderr)
+    assert not started_marker.exists(), "start-instances must never be called once budget refuses"
+    assert "1.2.3.4" in ssh_config.read_text()   # untouched
+
+
+def test_start_on_an_already_running_node_only_refreshes_never_calls_start_instances(tmp_path):
+    bin_dir, log, started_marker = _make_start_stub_bin(tmp_path, initial_state="running", new_ip="9.9.9.9")
+    state = _write_state(tmp_path, instance="i-aaa")
+    ssh_config = tmp_path / "ssh_config"
+    ssh_config.write_text("Include ~/.ssh/config\nHost testnode\n  HostName 1.2.3.4\n")
+    env = {
+        "AWS_POOL_NODE_STATE_FILE": str(state),
+        "POOL_SSH_CONFIG": str(ssh_config),
+        "AWS_DAILY_CAP_USD": "0",   # would refuse a real launch -- proves start-instances truly never happens
+    }
+    res = _run(["start", "testnode"], bin_dir=bin_dir, tmp_path=tmp_path, env=env)
+    assert res.returncode == 0, res.stderr
+    assert "ec2 start-instances" not in log.read_text()
+    assert "9.9.9.9" in ssh_config.read_text()
+
+
+def test_start_refuses_a_terminated_instance(tmp_path):
+    bin_dir, log, started_marker = _make_start_stub_bin(tmp_path, initial_state="terminated")
+    state = _write_state(tmp_path, instance="i-aaa")
+    env = {"AWS_POOL_NODE_STATE_FILE": str(state), "POOL_SSH_CONFIG": str(tmp_path / "no-cfg")}
+    res = _run(["start", "testnode"], bin_dir=bin_dir, tmp_path=tmp_path, env=env)
+    assert res.returncode == 1
+    assert "cannot start" in (res.stdout + res.stderr)
+    assert "ec2 start-instances" not in log.read_text()
+
+
+def test_start_refuses_with_no_state_file(tmp_path):
+    res = _run(["start", "testnode"], env={"AWS_POOL_NODE_STATE_FILE": str(tmp_path / "nope")})
+    assert res.returncode == 1
+    assert "no state file" in (res.stdout + res.stderr)
+
+
+def test_start_refuses_a_torn_down_node(tmp_path):
+    state = _write_state(tmp_path, instance="i-old")
+    state.write_text("# TORN DOWN 2026-09-23 00:00:00 UTC\n" + state.read_text())
+    res = _run(["start", "testnode"], env={"AWS_POOL_NODE_STATE_FILE": str(state)})
+    assert res.returncode == 1
+    assert "TORN DOWN" in (res.stdout + res.stderr)
+
+
+# -------------------------------------------------------------------------------------------------- `refresh`
+
+def _make_refresh_stub_bin(tmp_path, ec2_state="running", ip="9.9.9.9"):
+    bin_dir = tmp_path / "bin"
+    bin_dir.mkdir()
+    log = tmp_path / "combined.log"
+    log.write_text("")
+    aws_stub = bin_dir / "aws"
+    aws_stub.write_text(f"""#!/usr/bin/env bash
+echo "AWS $*" >> "{log}"
+case "$*" in
+  *"State.Name"*) echo "{ec2_state}"; exit 0 ;;
+  *"PublicIpAddress"*) echo "{ip}"; exit 0 ;;
+esac
+echo ok
+exit 0
+""")
+    aws_stub.chmod(aws_stub.stat().st_mode | stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH)
+    return bin_dir, log
+
+
+def test_refresh_rewrites_a_stale_host_block_for_a_running_node(tmp_path):
+    bin_dir, log = _make_refresh_stub_bin(tmp_path, ec2_state="running", ip="9.9.9.9")
+    state = _write_state(tmp_path, instance="i-aaa")
+    ssh_config = tmp_path / "ssh_config"
+    ssh_config.write_text("Include ~/.ssh/config\nHost testnode\n  HostName 1.2.3.4\n")
+    env = {"AWS_POOL_NODE_STATE_FILE": str(state), "POOL_SSH_CONFIG": str(ssh_config)}
+    res = _run(["refresh", "testnode"], bin_dir=bin_dir, tmp_path=tmp_path, env=env)
+    assert res.returncode == 0, res.stderr
+    assert "9.9.9.9" in ssh_config.read_text()
+    assert "1.2.3.4" not in ssh_config.read_text()
+    assert (tmp_path / "ssh_config.bak").exists()
+    assert "refreshed" in res.stdout
+
+
+def test_refresh_is_a_noop_when_the_recorded_ip_is_already_current(tmp_path):
+    bin_dir, log = _make_refresh_stub_bin(tmp_path, ec2_state="running", ip="1.2.3.4")
+    state = _write_state(tmp_path, instance="i-aaa")
+    ssh_config = tmp_path / "ssh_config"
+    ssh_config.write_text("Include ~/.ssh/config\nHost testnode\n  HostName 1.2.3.4\n")
+    env = {"AWS_POOL_NODE_STATE_FILE": str(state), "POOL_SSH_CONFIG": str(ssh_config)}
+    res = _run(["refresh", "testnode"], bin_dir=bin_dir, tmp_path=tmp_path, env=env)
+    assert res.returncode == 0, res.stderr
+    assert "already current" in res.stdout
+    assert not (tmp_path / "ssh_config.bak").exists(), "a no-op refresh must not rewrite (or back up) anything"
+
+
+def test_refresh_never_starts_a_stopped_node(tmp_path):
+    bin_dir, log = _make_refresh_stub_bin(tmp_path, ec2_state="stopped")
+    state = _write_state(tmp_path, instance="i-aaa")
+    ssh_config = tmp_path / "ssh_config"
+    ssh_config.write_text("Include ~/.ssh/config\nHost testnode\n  HostName 1.2.3.4\n")
+    env = {"AWS_POOL_NODE_STATE_FILE": str(state), "POOL_SSH_CONFIG": str(ssh_config)}
+    res = _run(["refresh", "testnode"], bin_dir=bin_dir, tmp_path=tmp_path, env=env)
+    assert res.returncode == 0, res.stderr
+    assert "ec2 start-instances" not in log.read_text()
+    assert "1.2.3.4" in ssh_config.read_text()   # untouched
+
+
+def test_refresh_with_no_state_file_is_a_noop(tmp_path):
+    res = _run(["refresh", "testnode"], env={"AWS_POOL_NODE_STATE_FILE": str(tmp_path / "nope")})
+    assert res.returncode == 0, res.stderr
+    assert "nothing to refresh" in res.stdout
+
+
+def test_refresh_never_touches_the_real_ssh_config_path():
+    # A cheap static guard against a regression that would make `refresh` (or `start`) fall back to the
+    # default POOL_SSH_CONFIG resolution and accidentally reference the user's real ~/.ssh/config path
+    # directly (it must only ever be `Include`d, never written).
+    src = (ROOT / "tools" / "aws_pool_node.sh").read_text()
+    for line in src.splitlines():
+        if "~/.ssh/config" in line:
+            assert "Include" in line or "NEVER" in line or line.strip().startswith("#"), \
+                f"a non-Include, non-comment reference to ~/.ssh/config: {line!r}"

@@ -14,6 +14,16 @@
 #   bash tools/aws_pool_node.sh up [node-name]      # launch + provision + verify, THEN wire it in (default: pool1)
 #   bash tools/aws_pool_node.sh down [node-name] [--force]   # drain, THEN terminate + delete the SG
 #   bash tools/aws_pool_node.sh status [node-name]
+#   bash tools/aws_pool_node.sh start [node-name]   # start a STOPPED node (2026-09-25), wait for running+ssh,
+#                                                    # then rewrite .pool_ssh_config's Host block to its NEW
+#                                                    # public ip (atomically, with a .bak) -- budget-gated
+#                                                    # (tools/aws_budget.sh check) before the start-instances
+#                                                    # call. Already-running is a cheap Host-block refresh only.
+#   bash tools/aws_pool_node.sh refresh [node-name]  # CHEAP: rewrite the Host block ONLY if this node is
+#                                                    # already running and its recorded ip is stale/missing --
+#                                                    # never starts a stopped instance, never budget-gated.
+#                                                    # tools/pool_sync.sh calls this once, automatically, when
+#                                                    # an AWS-managed node it tries to sync from is unreachable.
 #
 # STATE: research/queue/.aws_<node-name> (e.g. .aws_pool1) -- its OWN file, separate from the single-instance
 # `.aws_gpu` lane, so both can run at once and tools/aws_idle_stop.sh (which already globs
@@ -62,6 +72,16 @@ _write_host_block() {   # _write_host_block <file> <alias> <ip> <key>  -- append
     echo "  StrictHostKeyChecking accept-new"
     echo "  UserKnownHostsFile $KNOWN_HOSTS"
   } >> "$file"
+}
+
+_backup_ssh_config() {   # _backup_ssh_config <file> -- best-effort ONE-PRIOR-VERSION .bak before any rewrite by
+  # `start`/`refresh` (2026-09-25). Mirrors this script's existing "never delete, mark instead" durability
+  # intent (the state file's own "# TORN DOWN" convention) at the scale a "keep a backup" ask calls for -- a
+  # single last-good copy an owner can diff/restore from by hand, not a version history. Never touches
+  # ~/.ssh/config (this is always the repo-local POOL_SSH_CONFIG path, never that file). Silent no-op when the
+  # file does not exist yet (a first-ever write has nothing to back up).
+  local file="$1"
+  [ -f "$file" ] && cp -p "$file" "$file.bak" 2>/dev/null
 }
 
 _remove_host_block() {   # _remove_host_block <file> <alias>
@@ -458,6 +478,131 @@ cmd_down() {
   echo "[aws-pool-node] ✓ $NODE_NAME torn down."
 }
 
+cmd_start() {
+  # `start` -- start a STOPPED node (e.g. one tools/aws_idle_stop.sh stopped, or a `down`-in-progress node the
+  # owner wants back without a fresh `up`), wait for running+ssh, and rewrite its .pool_ssh_config Host block
+  # to whatever new public IP EC2 hands it (there is no Elastic IP anywhere in this AWS-pool-node feature, so
+  # every stop/start gets a DIFFERENT ip -- see `down`'s own "stopped-then-reachable" handling above, which
+  # this mirrors for the standalone case). 2026-09-25, incident-driven: pool1 was idle-stopped and only came
+  # back after the owner started it BY HAND and edited .pool_ssh_config BY HAND (a manual step this command
+  # replaces). Budget-gated (tools/aws_budget.sh check) before any spend-incurring start-instances call --
+  # never gated when the instance is already running (no new spend, nothing to refuse).
+  [ -f "$STATE" ] || {
+    echo "⛔ $NODE_NAME: no state file $STATE -- nothing to start (never launched via aws_pool_node.sh, or the record was moved)" >&2
+    exit 1
+  }
+  if grep -q '^# TORN DOWN' "$STATE"; then
+    echo "⛔ $NODE_NAME is TORN DOWN ($STATE) -- there is no instance left to start; use 'up' to launch a fresh one." >&2
+    exit 1
+  fi
+  IID=$(_state_get instance); REGION_S=$(_state_get region); REGION_S="${REGION_S:-$REGION}"; KEY_S=$(_state_get key)
+  [ -n "$IID" ] || { echo "⛔ $STATE has no instance=" >&2; exit 1; }
+  [ -n "$KEY_S" ] && [ -f "$KEY_S" ] || { echo "⛔ $NODE_NAME: no usable key= in $STATE" >&2; exit 1; }
+
+  EC2_STATE=$(aws ec2 describe-instances --instance-ids "$IID" --region "$REGION_S" \
+      --query 'Reservations[].Instances[].State.Name' --output text 2>/dev/null)
+  case "$EC2_STATE" in
+    running)
+      echo "[aws-pool-node] $NODE_NAME's instance $IID is already running -- refreshing its Host block only (no restart, no budget check: no new spend)."
+      ;;
+    terminated|shutting-down)
+      echo "⛔ $NODE_NAME's instance $IID is '$EC2_STATE' at AWS -- cannot start a terminated instance; 'up' launches a fresh one." >&2
+      exit 1 ;;
+    stopped)
+      TYPE_S=$(aws ec2 describe-instances --instance-ids "$IID" --region "$REGION_S" \
+          --query 'Reservations[].Instances[].InstanceType' --output text 2>/dev/null)
+      bash "$ROOT/tools/aws_budget.sh" check "${TYPE_S:-$TYPE}" || {
+        echo "⛔ aws_pool_node.sh start: refused by tools/aws_budget.sh (daily cap) — see above" >&2; exit 1; }
+      echo "[aws-pool-node] starting $NODE_NAME's instance $IID…"
+      aws ec2 start-instances --instance-ids "$IID" --region "$REGION_S" >/dev/null 2>&1
+      START_TIMEOUT="${AWS_POOL_START_TIMEOUT_S:-180}"; START_BEGIN=$(date +%s)
+      while :; do
+        EC2_STATE=$(aws ec2 describe-instances --instance-ids "$IID" --region "$REGION_S" \
+            --query 'Reservations[].Instances[].State.Name' --output text 2>/dev/null)
+        [ "$EC2_STATE" = "running" ] && break
+        if [ $(( $(date +%s) - START_BEGIN )) -ge "$START_TIMEOUT" ]; then
+          echo "⛔ $NODE_NAME's instance did not reach 'running' within ${START_TIMEOUT}s of starting it (last state: ${EC2_STATE:-unknown})." >&2
+          exit 1
+        fi
+        sleep "${AWS_POOL_START_POLL_S:-10}"
+      done
+      ;;
+    *)
+      echo "⛔ $NODE_NAME's instance $IID is in state '${EC2_STATE:-unknown}' -- refusing to start (only 'stopped' or 'running' are handled; describe-instances may be UNKNOWN/unreachable)." >&2
+      exit 1 ;;
+  esac
+
+  CUR_IP=$(aws ec2 describe-instances --instance-ids "$IID" --region "$REGION_S" \
+      --query 'Reservations[].Instances[].PublicIpAddress' --output text 2>/dev/null)
+  [ -n "$CUR_IP" ] && [ "$CUR_IP" != "None" ] || { echo "⛔ $NODE_NAME: instance running but no public IP on record" >&2; exit 1; }
+
+  # ATOMIC REWRITE, WITH A BACKUP (the build ask, verbatim): back up the config, then let _write_host_block's
+  # own tmp-file-then-`mv` (same filesystem, so `mv` is atomic) replace it -- a reader never observes a
+  # half-written config either way.
+  _backup_ssh_config "$SSH_CONFIG"
+  _write_host_block "$SSH_CONFIG" "$NODE_NAME" "$CUR_IP" "$KEY_S"
+  echo "[aws-pool-node] $NODE_NAME's Host block set to $CUR_IP (backup: $SSH_CONFIG.bak)."
+
+  echo "[aws-pool-node] waiting for ssh…"
+  PROBE_TIMEOUT="${AWS_POOL_START_TIMEOUT_S:-180}"; PROBE_BEGIN=$(date +%s)
+  while :; do
+    if timeout 8 ssh -F "$SSH_CONFIG" -o BatchMode=yes -o ConnectTimeout=6 "$NODE_NAME" true 2>/dev/null; then
+      echo "[aws-pool-node] ✓ $NODE_NAME is running and reachable at $CUR_IP."
+      exit 0
+    fi
+    if [ $(( $(date +%s) - PROBE_BEGIN )) -ge "$PROBE_TIMEOUT" ]; then
+      echo "⛔ $NODE_NAME did not become ssh-reachable within ${PROBE_TIMEOUT}s of starting it (Host block carries its current ip, $CUR_IP -- may just need more time, or a security-group/network issue)." >&2
+      exit 1
+    fi
+    sleep "${AWS_POOL_START_POLL_S:-10}"
+  done
+}
+
+cmd_refresh() {
+  # `refresh` -- CHEAP, read-mostly: if this node has a RUNNING instance whose current public ip differs from
+  # (or is missing from) its .pool_ssh_config Host block, rewrite that block (atomically, with a backup);
+  # otherwise a no-op. Never starts a stopped instance (that is `start`'s job, which is budget-gated and can
+  # take minutes) and never calls tools/aws_budget.sh (nothing here spends money). Built so OTHER entry points
+  # that discover a stale Host block for a node that is actually up (e.g. tools/pool_sync.sh, wired in
+  # 2026-09-25) can self-heal in one cheap call instead of needing a human to notice and re-run `start`/`up`.
+  [ -f "$STATE" ] || { echo "$NODE_NAME: no state file $STATE -- nothing to refresh"; exit 0; }
+  if grep -q '^# TORN DOWN' "$STATE"; then
+    echo "$NODE_NAME: torn down ($STATE) -- nothing to refresh"; exit 0
+  fi
+  IID=$(_state_get instance); REGION_S=$(_state_get region); REGION_S="${REGION_S:-$REGION}"; KEY_S=$(_state_get key)
+  [ -n "$IID" ] || { echo "$NODE_NAME: $STATE has no instance= -- nothing to refresh"; exit 0; }
+
+  EC2_STATE=$(aws ec2 describe-instances --instance-ids "$IID" --region "$REGION_S" \
+      --query 'Reservations[].Instances[].State.Name' --output text 2>/dev/null)
+  if [ "$EC2_STATE" != "running" ]; then
+    echo "$NODE_NAME: instance $IID is '${EC2_STATE:-unknown}', not running -- nothing to refresh (use 'start' to bring it up)"
+    exit 0
+  fi
+  CUR_IP=$(aws ec2 describe-instances --instance-ids "$IID" --region "$REGION_S" \
+      --query 'Reservations[].Instances[].PublicIpAddress' --output text 2>/dev/null)
+  if [ -z "$CUR_IP" ] || [ "$CUR_IP" = "None" ]; then
+    echo "⛔ $NODE_NAME: instance $IID is running but describe-instances gave no public IP -- cannot refresh" >&2
+    exit 1
+  fi
+
+  RECORDED_IP=""
+  if [ -f "$SSH_CONFIG" ] && grep -q "^Host $NODE_NAME\$" "$SSH_CONFIG" 2>/dev/null; then
+    RECORDED_IP=$(awk -v a="Host $NODE_NAME" '
+      $0==a {f=1; next}
+      f && /^[[:space:]]*HostName[[:space:]]/ {print $2; exit}
+      f && /^Host / {exit}
+    ' "$SSH_CONFIG" 2>/dev/null)
+  fi
+  if [ "$RECORDED_IP" = "$CUR_IP" ]; then
+    echo "$NODE_NAME: Host block already current ($CUR_IP)"; exit 0
+  fi
+  [ -n "$KEY_S" ] && [ -f "$KEY_S" ] || { echo "⛔ $NODE_NAME: no usable key= in $STATE -- cannot write a usable Host block" >&2; exit 1; }
+
+  _backup_ssh_config "$SSH_CONFIG"
+  _write_host_block "$SSH_CONFIG" "$NODE_NAME" "$CUR_IP" "$KEY_S"
+  echo "$NODE_NAME: Host block refreshed ${RECORDED_IP:-<none>} -> $CUR_IP"
+}
+
 cmd_status() {
   if [ ! -f "$STATE" ]; then echo "$NODE_NAME: not launched (no $STATE)"; exit 0; fi
   if grep -q '^# TORN DOWN' "$STATE"; then
@@ -488,8 +633,10 @@ cmd_status() {
 }
 
 case "$CMD" in
-  up)     cmd_up ;;
-  down)   cmd_down ;;
-  status) cmd_status ;;
-  *) echo "usage: aws_pool_node.sh {up|down|status} [node-name=pool1]" >&2; exit 2 ;;
+  up)      cmd_up ;;
+  down)    cmd_down ;;
+  status)  cmd_status ;;
+  start)   cmd_start ;;
+  refresh) cmd_refresh ;;
+  *) echo "usage: aws_pool_node.sh {up|down|status|start|refresh} [node-name=pool1]" >&2; exit 2 ;;
 esac

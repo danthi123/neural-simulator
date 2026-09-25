@@ -301,3 +301,138 @@ def test_pool_sync_survives_an_empty_or_comment_only_extra_nodes_file(tmp_path):
                     "POOL_EXTRA_NODES_FILE": str(extra)})
         assert res.returncode == 0, f"content={content!r} stderr={res.stderr}"
         assert "pool40" in res.stdout
+
+
+# ------------------------------------------------------------------ pool_sync.sh: stale-hostname auto-refresh
+
+def _make_quiet_ssh_stub(tmp_path: Path):
+    """A reachable `ssh` that answers EVERY call (including pool_sync's own isolated-revisions `ls -d` probe)
+    with empty stdout and rc=0 -- i.e. "reachable, zero isolated revisions provisioned here", so the tests
+    below can count rsync invocations exactly without `_make_ssh_stub`'s fixed node_is_idle-shaped stdout
+    ("8 0.10 0 20 0") being mis-parsed as five bogus revision-directory names and multiplying rsync calls."""
+    bin_dir = tmp_path / "bin"
+    bin_dir.mkdir()
+    log = tmp_path / "ssh.log"
+    log.write_text("")
+    stub = bin_dir / "ssh"
+    stub.write_text(f"""#!/usr/bin/env bash
+echo "$*" >> "{log}"
+exit 0
+""")
+    stub.chmod(stub.stat().st_mode | stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH)
+    return bin_dir, log
+
+
+def _make_rsync_fail_then_succeed_stub(bin_dir: Path, tmp_path: Path, fail_times: int = 1):
+    """A stub `rsync` that fails (rc=255, like an unreachable/stale-ip node) the first `fail_times` calls and
+    succeeds every call after that -- so a test can prove pool_sync retried exactly once post-refresh without
+    needing to fake a real ip change end-to-end (aws_pool_node.sh's OWN ip-rewrite correctness is covered
+    directly in tests/test_aws_pool_node_workflow.py's `refresh`/`start` tests)."""
+    counter = tmp_path / "rsync_calls"
+    counter.write_text("0")
+    log = tmp_path / "rsync.log"
+    log.write_text("")
+    stub = bin_dir / "rsync"
+    stub.write_text(f"""#!/usr/bin/env bash
+echo "$*" >> "{log}"
+n=$(cat "{counter}" 2>/dev/null || echo 0)
+n=$((n + 1))
+echo "$n" > "{counter}"
+if [ "$n" -le {fail_times} ]; then exit 255; fi
+exit 0
+""")
+    stub.chmod(stub.stat().st_mode | stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH)
+    return log, counter
+
+
+def _make_refresh_aws_stub(bin_dir: Path, tmp_path: Path, ip: str = "9.9.9.9") -> Path:
+    log = tmp_path / "aws.log"
+    log.write_text("")
+    stub = bin_dir / "aws"
+    stub.write_text(f"""#!/usr/bin/env bash
+echo "$*" >> "{log}"
+case "$*" in
+  *"State.Name"*) echo running; exit 0 ;;
+  *"PublicIpAddress"*) echo "{ip}"; exit 0 ;;
+esac
+echo ok
+exit 0
+""")
+    stub.chmod(stub.stat().st_mode | stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH)
+    return log
+
+
+def test_pool_sync_refreshes_a_stale_aws_node_and_retries_once(tmp_path):
+    # 2026-09-25, incident-driven: an AWS pool node's public ip changes every stop/start (no Elastic IP in this
+    # feature), so a stale .pool_ssh_config Host block reads as plain UNREACHABLE to pool_sync -- the owner had
+    # to fix pool1's entry by hand. A node with a research/queue/.aws_<name> state file gets ONE automatic
+    # `aws_pool_node.sh refresh` + retry before being reported unreachable.
+    bin_dir, ssh_log = _make_quiet_ssh_stub(tmp_path)
+    rsync_log, counter = _make_rsync_fail_then_succeed_stub(bin_dir, tmp_path, fail_times=1)
+    aws_log = _make_refresh_aws_stub(bin_dir, tmp_path, ip="9.9.9.9")
+
+    aws_state_dir = tmp_path / "state"; aws_state_dir.mkdir()
+    key = tmp_path / "key.pem"; key.write_text("fake key\n")
+    (aws_state_dir / ".aws_pool1").write_text(f"instance=i-aaa\nregion=us-east-1\nkey={key}\nsg=sg-x\n")
+    ssh_config = tmp_path / "pool_ssh_config"   # need not pre-exist; refresh creates/rewrites it
+
+    res = _run(POOL_SYNC, [], bin_dir, {
+        "POOL_NODES": "pool1",
+        "POOL_SYNC_AWS_STATE_DIR": str(aws_state_dir),
+        "POOL_SSH_CONFIG": str(ssh_config),
+    })
+    assert res.returncode == 0, res.stderr
+    assert counter.read_text().strip() == "2", "expected exactly one retry after the refresh"
+    assert "even after a Host-block refresh" not in res.stdout, "the retry should have succeeded"
+    assert "State.Name" in aws_log.read_text() and "PublicIpAddress" in aws_log.read_text()
+    assert "9.9.9.9" in ssh_config.read_text()   # the refresh really rewrote the Host block
+
+
+def test_pool_sync_reports_unreachable_when_the_refresh_itself_cannot_help(tmp_path):
+    # The node has an .aws_<name> state file, but the instance is NOT running (e.g. genuinely stopped) --
+    # `refresh` correctly declines to rewrite anything, and pool_sync must still report UNREACHABLE (never
+    # silently succeed, never loop).
+    bin_dir, ssh_log = _make_quiet_ssh_stub(tmp_path)
+    rsync_log, counter = _make_rsync_fail_then_succeed_stub(bin_dir, tmp_path, fail_times=99)
+    aws_log = tmp_path / "aws.log"; aws_log.write_text("")
+    aws_stub = bin_dir / "aws"
+    aws_stub.write_text(f"""#!/usr/bin/env bash
+echo "$*" >> "{aws_log}"
+case "$*" in
+  *"State.Name"*) echo stopped; exit 0 ;;
+esac
+echo ok
+exit 0
+""")
+    aws_stub.chmod(aws_stub.stat().st_mode | stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH)
+
+    aws_state_dir = tmp_path / "state"; aws_state_dir.mkdir()
+    key = tmp_path / "key.pem"; key.write_text("fake key\n")
+    (aws_state_dir / ".aws_pool1").write_text(f"instance=i-aaa\nregion=us-east-1\nkey={key}\nsg=sg-x\n")
+
+    res = _run(POOL_SYNC, [], bin_dir, {
+        "POOL_NODES": "pool1",
+        "POOL_SYNC_AWS_STATE_DIR": str(aws_state_dir),
+        "POOL_SSH_CONFIG": str(tmp_path / "pool_ssh_config"),
+    })
+    assert res.returncode == 0, res.stderr   # plain mode never fails loudly (unchanged baseline)
+    assert "UNREACHABLE" in res.stdout
+    assert counter.read_text().strip() == "1", "refresh declined -> no retry attempt"
+
+
+def test_pool_sync_never_attempts_refresh_for_a_minipc_node_without_an_aws_state_file(tmp_path):
+    # pool40/41/42 have no research/queue/.aws_<name> state file -- this must stay BYTE-IDENTICAL to before
+    # this feature: plain "UNREACHABLE (skipped)", no aws_pool_node.sh call at all (no `aws` binary needed on
+    # PATH for this test to pass -- its absence would surface as a command-not-found if anything tried).
+    bin_dir, ssh_log = _make_quiet_ssh_stub(tmp_path)
+    rsync_log, counter = _make_rsync_fail_then_succeed_stub(bin_dir, tmp_path, fail_times=99)
+
+    res = _run(POOL_SYNC, [], bin_dir, {
+        "POOL_NODES": "pool40",
+        "POOL_SYNC_AWS_STATE_DIR": str(tmp_path / "state"),   # dir does not even exist
+        "POOL_SSH_CONFIG": str(tmp_path / "does-not-exist"),
+    })
+    assert res.returncode == 0, res.stderr
+    assert "pool40: UNREACHABLE (skipped)" in res.stdout
+    assert "Host-block refresh" not in res.stdout
+    assert counter.read_text().strip() == "1"
