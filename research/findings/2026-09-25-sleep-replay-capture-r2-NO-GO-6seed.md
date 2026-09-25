@@ -132,14 +132,16 @@ weight is `b + (e + z(1 - e)) inc`; at `d3w_rc`'s 72-hour recall (three nights a
 seeds and the early-phase factor e is about 1.4e-21 (`exp(-72/1.5)`), so the synapses read at baseline AT RECALL --
 "stronger than baseline at recall" compares the wrong quantity (stored increment vs. expressed weight).
 
-This does not mean the trace was fully captured at the epoch and simply decayed by 72 hours: at the SWR epoch
-itself, 5 minutes after the telling, the read margin (`R`) was already low on both seeds (0.168587758 on seed 43,
-0.035599825 on seed 101), below the roughly 0.185-0.209 rescue edge a same-day companion review derives across the
-rc and r2 arms together. **The corrected reading: at recall the expressed increment is ~0; it was not captured
-because the epoch's own read margin was low** -- a read-margin problem at the epoch, not "a readout miss" localized
-to recall, and not proof the trace was fully expressed at the epoch and later decayed (the stored record cannot
-distinguish those two). Neither reading changes this finding's verdict (P2 failing makes seeds 43/101 UNDEFINED
-under either explanation) or any number in the tables above; only the stated CAUSE of the P2 failure is corrected.
+The ledger records non-capture directly, not an ambiguous read: at the SWR epoch itself, 5 minutes after the
+telling, the trace was expressed at e about 0.946 but read with a margin (`R`) already low on both seeds
+(0.168587758 on seed 43, 0.035599825 on seed 101), below the roughly 0.185-0.209 rescue edge a same-day companion
+review derives across the rc and r2 arms together, and z stayed about 0 throughout (z_mean 3.8e-10 on seed 43 and
+1.1e-11 on seed 101 after the night-1 epoch, about 1e-12 at this 72-hour recall). **The corrected reading: at
+recall the expressed increment is ~0; it was not captured because the epoch's own read margin was low** -- a
+read-margin problem at the epoch, not "a readout miss" localized to recall, with z never having moved off baseline
+between the epoch and this 72-hour recall. Neither reading changes this finding's verdict (P2 failing makes seeds
+43/101 UNDEFINED under either explanation) or any number in the tables above; only the stated CAUSE of the P2
+failure is corrected.
 Found by the DA-tag-capture + sleep-replay-capture pair verify-go review
 (`research/findings/2026-09-25-da-capture-sleep-replay-pair-verify-go-review.md`, finding I-2; logged in
 `research/FAILURE_LOG.md`'s 2026-09-25 row on this finding's own P2 explanation).

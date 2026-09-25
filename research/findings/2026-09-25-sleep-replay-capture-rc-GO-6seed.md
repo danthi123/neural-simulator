@@ -153,10 +153,12 @@ ordinary facts" would suggest -- a wording the project board used, which the DA-
 pair verify-go review (`research/findings/2026-09-25-da-capture-sleep-replay-pair-verify-go-review.md`, finding
 I-1) flags as an overclaim when read as a general statement about the pair rather than about RC1's one telling. As
 measured across these two findings, not this one alone: a second, WEAK telling (the same fact, said last after its
-own words habituated the DA; r2's `d3w_rc`/`d10w_rc`) is recalled the next morning on 4 of 6 seeds and not recalled
-on 2 of 6 (seeds 43, 101) -- whether it was ever capturable at write time on those 2 is UNMEASURED, since no arm
+own words habituated the DA; r2's `d3w_rc`/`d10w_rc`) is recalled next morning (`d10w_rc` night 1) and after three
+nights (`d3w_rc`) on 4 of 6 seeds and not recalled on 2 of 6 (seeds 43, 101) -- whether it was ever capturable at
+write time on those 2 is UNMEASURED, since no arm
 recalls it immediately or runs it with the ledger off; and a fact told 4 hours before sleep (r2's `ld_rc`, already
-named above) is not rescued on 0 of 6 seeds, against today's default which keeps it on 6 of 6 (`ld_ledger_off`).
+named above) is kept on 0 of 6 seeds (r2 `LD_verdict` NOT-RESCUED 6/6), against today's default which keeps it on
+6 of 6 (`ld_ledger_off`).
 None of these numbers changes this finding's own GO 6/6 on RC1-RC6, which is scoped to the one telling those gates
 test.
 

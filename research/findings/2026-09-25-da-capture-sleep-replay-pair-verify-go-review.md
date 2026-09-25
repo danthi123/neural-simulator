@@ -99,12 +99,16 @@ Consequences for the pair:
   morning after night 1 on seeds 43 and 101 with both flags on (`d10w_rc`: abstain on all ten mornings; `d3w_rc`
   abstains too) -- but that is "not recalled next day", not "lost after the first night": no arm recalls it
   immediately (before any sleep), and no arm runs it with the ledger off, so whether it was ever capturable at
-  write time is unmeasured, not established either way. At the one epoch that ever fires for it (5 min after the
-  telling, e = exp(-1/12 / 1.5) is about 0.946, z 0 <!--derived-->), seed 101's own R (0.035599825) is roughly a
-  fifth of the next-lowest weak-telling seed's (seed 43: 0.168587758) <!--derived--> and well below the 0.209
-  rescue edge -- consistent with the fact never clearing the capture margin at write time, not with a captured
-  trace that later decayed (`n_epochs` climbs 1 through 10 across the ten nightly recalls on both seeds, yet R
-  never moves, since no further content is stored to re-tag; see section 3). The still-running fi family's `fiv_lr`
+  write time is unmeasured, not established either way. At the first epoch (the only one inside the early-phase
+  window; 5 min after the telling, e = exp(-1/12 / 1.5) is about 0.946, z 0 <!--derived-->), seed 101's own R
+  (0.035599825) is roughly a fifth of the next-lowest weak-telling seed's (seed 43: 0.168587758) <!--derived-->
+  and well below the 0.209 rescue edge <!--derived--> -- consistent with the fact never clearing the capture
+  margin at write time, not with a captured trace that later decayed. `n_epochs` climbs 1 through 10 across the
+  ten nightly recalls on both seeds; later epochs (nights 2-10) read the flat baseline-only R <!--derived--> --
+  0.0503 (seed 43) <!--derived--> and 0.0582 (seed 101) <!--derived--> -- since no further content is stored to
+  re-tag, and seed 101's own night-1 R sits BELOW its own baseline-only level (0.0356 < 0.0582 <!--derived-->),
+  unlike seed 43's, which sits above its floor (0.1686 > 0.0503 <!--derived-->); see section 3. The still-running
+  fi family's `fiv_lr`
   arm (same telling, untracked, not a gate row) shows the same two seeds unrecalled from night 1.
 - A fact told 4 h before sleep is lost on 6/6 seeds with both flags on (r2 item 1), while today's default keeps it,
   measured (`ld_ledger_off` correct 6/6). In production that is any fact told early in a conversation that runs on
@@ -122,13 +126,15 @@ ledger's STORED increment `inc_mag` over `base_mag`, a bookkeeping quantity that
 nothing about what is EXPRESSED at recall. The EXPRESSED weight is b + (e + z(1 - e)) inc; `d3w_rc`'s recall is 72 h
 after the telling (three nights), so z is 0 on both seeds and the early-phase factor e is about 1.4e-21 <!--derived-->
 (exp(-72/1.5) -- 72 h, not the 24 h this review used in an earlier draft), so the synapses read at baseline AT
-RECALL. That does not mean the trace was never captured: at the SWR epoch itself, 5 min after the telling, the read
-margin was already low on both seeds (I-1's table), so non-capture is a read-margin problem at the epoch,
-consistent with I-1 -- not proof the epoch fully expressed the trace and it later decayed, or that it never
-captured at all; the stored record cannot distinguish those two. The r2 verdict stands (P2 failing makes those
+RECALL. The ledger records non-capture directly, not an ambiguous read: at the SWR epoch itself (5 min after the
+telling) the trace was expressed at e about 0.946 but read with R below the 0.209 edge <!--derived--> (I-1's
+table), and z stayed about 0 throughout -- z_mean 3.8e-10 on seed 43 and 1.1e-11 on seed 101 after the night-1
+epoch <!--derived-->, about 1e-12 at `d3w_rc`'s 72 h recall <!--derived--> -- so early phase then decays from e
+about 0.946 to e about 1.4e-21 by recall <!--derived--> with z never having moved off baseline. The r2 verdict
+stands (P2 failing makes those
 seeds UNDEFINED either way); the corrected cause is "at recall the expressed increment is ~0; it was not captured
-because the epoch read margin was low", not "stronger than baseline at recall" (r2's wording) or "the trace was
-never captured and it decayed" (this review's own earlier draft, which overcorrected). Logged in
+at the epoch (read margin below edge, z near 0)", not "stronger than baseline at recall" (r2's wording) or "the
+trace was never captured and it decayed" (this review's own earlier draft, which overcorrected). Logged in
 `research/FAILURE_LOG.md`.
 
 **Finding I-3 (MEDIUM): the DA-encoding lesion cannot separate waking salience from the sleep route.** Under
@@ -200,8 +206,9 @@ the ledger lives only in memory, so a "next day" in production needs the process
   both structurally INERT in every arm scored here, not "tried and failed to answer the recall" as an earlier draft
   of this review put it. On cupy in production the episodic organ DOES write and DOES replay at the same 5-minute
   sleep trigger, and may answer a recall the composer's own ledger forgot -- none of these families, on numpy, can
-  show whether it does. B3, D1 and D3 below each add an arm with `BRAIN_EPISODIC_STORE=1` (numpy) plus a gate on
-  episodic-vs-composer next-day agreement, so this becomes measured rather than structurally excluded.
+  show whether it does. B3 and D1 below each add a numpy `BRAIN_EPISODIC_STORE=1` arm; D3 gates the same
+  episodic-vs-composer next-day agreement on cupy, where the write is on by default, so this becomes measured
+  rather than structurally excluded.
 - **Every stored fact changes the moment the flag is on.** `on_store` rewrites each new block as its seeded baseline
   plus the increment (BETA_BASELINE 1, same magnitude) at store time, with no night involved. Every faculty that
   reads the composer store (multi-fact recall, episodic, provenance, WM binding) sees that added baseline, so leg (c)
@@ -263,7 +270,9 @@ Before leg (b) counts as met:
   problem, not a readout miss: at recall the expressed increment is ~0, and it was not captured because the epoch
   read margin was low), and scope notes on the rc finding and the board line: the pair keeps the datn telling 6/6,
   recalls the weak telling next day on 4/6 (whether it was ever capturable on the other 2 is unmeasured, B5), and a
-  fact told 4 h before sleep on 0/6.
+  fact told 4 h before sleep on 0/6. STATUS (2026-09-25, at `6a125183d`): 2 of 3 done -- the r2 correction note and
+  the rc scope note both landed; the board line (`GAP_CLOSURE_MISSION.md:127-128`) is unchanged and still needs its
+  own scope note.
 - **B2** An owner decision, written down, on whether the MEASURED forgetting -- a fact told 4 h before sleep, 0/6,
   against today's default which keeps it 6/6 -- is acceptable at flip time or blocks the flip until a further
   mechanism lands (the fi family is the running candidate); and, once B5 resolves whether the weak telling was ever
@@ -277,7 +286,12 @@ Before leg (b) counts as met:
   numpy -- without one, decay and the timing of a mid-conversation "sleep" depend on host speed, the same
   non-determinism C2 already flags for the no-regression battery. Until this runs, several epochs falling inside
   one early-phase window (a few 5-minute pauses within one evening) is unmeasured; ten separately-triggered nightly
-  epochs, spaced 24 h apart, already ran on `d10w_rc` with no resurrection on any seed (section 3).
+  epochs, spaced 24 h apart, already ran on `d10w_rc` with no resurrection on any seed (section 3). The
+  `BRAIN_EPISODIC_STORE=1` arm has its own unstated clock interaction: `_episodic_store_ok`'s docstring
+  (`webapp/server.py:3498-3500`) gives the numpy D5 BTSP write as ~510 s/topic, and on a real wall clock that write
+  time itself enters `now_h` and on its own exceeds the 5-minute sleep-onset idle threshold, so a mid-turn "sleep"
+  is likely mid-write. This arm must run on the declared clock seam above (or the turn clock) rather than the real
+  wall clock, and the finding must state the ~510 s/topic cost it pays for running the write at all on numpy.
 - **B4** A registered salient-vs-neutral contrast inside ONE family with both flags intact (long-delay salient vs
   neutral), plus a waking-only DA lesion that leaves the SWR DA edge intact, so da-gated-encoding's role under the
   pair is measured rather than inferred across families (I-3, now 4/6, not 1/6).
@@ -292,10 +306,13 @@ Leg (c), the combined no-regression battery:
   numpy shard is not deterministic (decay and a possible mid-conversation "sleep" would depend on host speed); say so
   in the prereg, and let `tools/assert_flipped_defaults.py` and the LBP per-cell rule admit exactly those tokens.
 - **C3** `LB_DA_TAG_CAPTURE_PROBE=1` puts `BRAIN_DA_TAG_CAPTURE=1` plus `BRAIN_DA_TAG_CAPTURE_CLOCK=turn` into
-  da-gated-encoding's `base_env` on BOTH arms (`research/runners/load_bearing_fraction.py:1055,1695-1697`), so
+  da-gated-encoding's `base_env` on BOTH of the row's own intact and lesion arms
+  (`research/runners/load_bearing_fraction.py:1055,1695-1697`), not this C3 paragraph's base/flipcand pair -- so
   arming it on the base arm too (to keep base/flipcand identical apart from the pair's own two flags, per C2) makes
   the base arm's da-gated-encoding row DA-only, not the production default -- contradicting the B2b pattern of a
-  clean production-default base row (B2b prereg:72-78,95). The flag travels in the worker's `--env` argv rather
+  clean production-default base row
+  (`research/findings/2026-09-24-production-default-battery-B2b-PREREGISTRATION.md:72-78,95`). The flag travels in
+  the worker's `--env` argv rather
   than a file, so neither the token check nor a sidecar diff would catch this silently. Register the exception
   explicitly in the prereg (da-gated-encoding's base row is DA-flag-only by construction here, not a defect), or
   measure base on the probe's `well` turn and flipcand on `datc` as a declared cross-probe comparison instead; R1
@@ -315,5 +332,6 @@ Leg (d), production-default validation, on a branch with both defaults flipped a
 ## What this review did not do
 
 It built no brain and ran no battery; every statement rests on committed arm JSON and a code read at this
-worktree's HEAD (fd29040db). The fi family was read only as an untracked, unscored corroboration. It did not flip,
-queue or edit any default or any other finding.
+worktree's HEAD (fd29040db). The fi family was read only as an untracked, unscored corroboration. It did not flip
+or queue any default. A later fix round (B1, `6a125183d`) did land the r2 correction note and the rc scope note
+this review calls for, as dated notes only -- neither finding's own GO/NO-GO verdict changed.
