@@ -1,0 +1,53 @@
+[memcap] MemoryMax=14G MemoryHigh=12G MemorySwapMax=0G :: .venv/bin/python -m pytest -q tests/test_production_chat_gpu_smoke.py --durations=0
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_________________ test_default_production_chat_answers_on_gpu __________________
+
+    @pytest.mark.skipif(not _gpu_available(), reason="no CUDA GPU / cupy — CPU CI, nothing to smoke")
+    def test_default_production_chat_answers_on_gpu():
+        """The default brain_chat must return 200 (not a 400 crash) on the cupy backend."""
+        root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        env = dict(os.environ, SIM_BACKEND="cupy", PYTHONPATH=root)
+>       proc = subprocess.run(
+            [sys.executable, "-u", "-c", _SUBPROCESS],
+            cwd=root, env=env, capture_output=True, text=True, timeout=600,
+        )
+
+tests/test_production_chat_gpu_smoke.py:49: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/usr/lib/python3.11/subprocess.py:550: in run
+    stdout, stderr = process.communicate(input, timeout=timeout)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.11/subprocess.py:1209: in communicate
+    stdout, stderr = self._communicate(input, endtime, timeout)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.11/subprocess.py:2116: in _communicate
+    self._check_timeout(endtime, orig_timeout, stdout, stderr)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <Popen: returncode: -9 args: ['/home/dant123/Projects/sim/.venv/bin/python',...>
+endtime = 126472.119499694, orig_timeout = 600
+stdout_seq = [b'[2026-09-24 10:17:05][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (23.6 GB), mempool limit: 80%\n[202...y to neuron parameters...\n', b'[2026-09-24 10:17:06][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.\n', ...]
+stderr_seq = [b'\rLoading weights:   0%|          | 0/290 [00:00<?, ?it/s]', b'\rLoading weights:  26%|\xe2\x96\x88\xe2\x96\x88\xe2...countered in scalar multiply\n  (keys ^ ((c + np.uint64(1)) * np.uint64(0xD1B54A32D192ED03)).astype(np.uint64)\n', ...]
+skip_check_and_raise = False
+
+    def _check_timeout(self, endtime, orig_timeout, stdout_seq, stderr_seq,
+                       skip_check_and_raise=False):
+        """Convenience for checking if a timeout has expired."""
+        if endtime is None:
+            return
+        if skip_check_and_raise or _time() > endtime:
+>           raise TimeoutExpired(
+                    self.args, orig_timeout,
+                    output=b''.join(stdout_seq) if stdout_seq else None,
+                    stderr=b''.join(stderr_seq) if stderr_seq else None)
+E           subprocess.TimeoutExpired: Command '['/home/dant123/Projects/sim/.venv/bin/python', '-u', '-c', '\nimport json\nfrom webapp.server import brain_chat, BrainChatRequest\nr = brain_chat(BrainChatRequest(session="gpu_smoke", message="what does the dog chase?"))\ncode = int(getattr(r, "status_code", 0))\nbody = json.loads(bytes(r.body))\nanswer = (body.get("answer") or body.get("response") or "")\nassert code == 200, "default chat returned status %s (expected 200): %s" % (code, str(body)[:300])\nassert answer.strip(), "default chat returned an empty answer on the GPU path"\nprint("GPU_SMOKE_OK code=%d answer=%r" % (code, answer[:80]))\n']' timed out after 600 seconds
+
+/usr/lib/python3.11/subprocess.py:1253: TimeoutExpired
+============================== slowest durations ===============================
+600.62s call     tests/test_production_chat_gpu_smoke.py::test_default_production_chat_answers_on_gpu
+
+(2 durations < 0.005s hidden.  Use -vv to show these durations.)
+=========================== short test summary info ============================
+FAILED tests/test_production_chat_gpu_smoke.py::test_default_production_chat_answers_on_gpu
+1 failed in 601.04s (0:10:01)
