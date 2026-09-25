@@ -19,6 +19,10 @@ external: Bellec et al. (2020) Nat Commun 11:3625 (e-prop; readouts are leaky IN
   membrane time constant); Mazurek et al. (2026) Front Neurosci "Operational manifolds in spiking neural networks"
   (accuracy depends on the inference integration horizon); Carandini & Heeger (2012) Nat Rev Neurosci 13:51
   (divisive normalization as a canonical cortical computation). Search recorded with tools/record_external_search.sh.
+  AMENDMENT 6 adds: Payeur et al. (2020) bioRxiv 2020.03.30.015511 v1 / (2021) Nat Neurosci 24:1010 (the slow
+  moving-average baseline; DOIs in research/biology/bdsp-sliding-burst-baseline.md); Bienenstock, Cooper & Munro (1982) J Neurosci
+  2:32 (the sliding threshold); van Rossum, Bi & Turrigiano (2000) J Neurosci 20:8812 and Royer & Pare (2003) Nature
+  422:518 (the alternatives weighed).
 builds_on:
   - research/findings/2026-09-15-gap4-inengine-selfpredict-interneuron-UNDEFINED-transport-ceiling-foreclosed.md
   - research/findings/raw/gap4/_aggregate_5seed.json
@@ -378,3 +382,122 @@ arm, at least 10% of the synapses of a hidden-post pathway (ff_0 or ff_1) end at
 replicates. Then the next lever is the bound (the companion process that the static clamp replaced) before lateral
 inhibition or output homeostasis. Otherwise the clamp is excluded as the cause of the residual and the next-lever order
 stands.
+
+## AMENDMENT 6 (2026-09-25 ~02:10 EDT, the clamp's companion process; before any run of C25-C27; dev seed 7 only)
+
+**Why.** AMENDMENT 5 H's census found the +-12 clamp load-bearing
+(`research/findings/2026-09-24-gap4-transport-ceiling-bound-census-clamp-load-bearing-fullsize-UNDEFINED.md`). Read
+again from its shards (`research/findings/raw/gap4/transport_ceiling_readout/bound_census_revafe2b32/ckpt/s7_r*_*.json`),
+the saturation is ONE-SIDED and common to every arm that trains the hidden weights:
+
+<!--derived-->
+- In fixed_fa, micro_inengine and transport_ceiling, 17-80% of ff_0 and ff_1 end at +w_max and at most 0.2% at w_min,
+  on all 3 replicates. Mean |w| of those two pathways goes from 3.83 / 3.09 at build to 9.7-11.7. In the frozen arm
+  both stay at 3.83 / 3.09 (two decimals) with no synapse at either bound.
+- In the same arms the output layer goes nearly silent: its mean held-out read is 0.001-0.09, against 0.17-0.19 in
+  the frozen arm, and the ridge decode of the top hidden layer on its own training items falls from 0.42-0.48
+  (frozen) to 0.27-0.32.
+
+**What the real system runs alongside this, that the runner replaced with a constant.** The BDSP rule's source
+(Payeur et al., bioRxiv 2020.03.30.015511 v1; Nat Neurosci 2021) sets the baseline to "a moving average of the
+proportion of events that are bursts in postsynaptic neuron i, with a slow (~ 1 – 10 s) time scale", and states
+why: "To ensure a finite growth of synaptic weights". Its Methods use the ratio of two exponential moving averages
+(burst train over event train), with tau_avg 5 s in the XOR task (bioRxiv v1; v2 states 2 s, both inside the ~1-10 s range; see the erratum at the end). C21 presets the baseline to the constant p0 = 0.3
+(`--pbar-alpha 0`), because the engine's only moving baseline was an EMA of the instantaneous P at 0.05 per step
+(about 20 ms), which averaged each teaching transient away (AMENDMENT 3). Mechanism, stated as the hypothesis this
+amendment tests: with p0 = 0.3 the burst-probability sigmoid is convex, so a credit that is zero on average still
+raises mean P above p0. A fixed baseline then turns that excess into potentiation on every active synapse,
+whatever the sign of the credit, and the clamp catches it. The engine unit test
+(`tests/test_bdsp_pbar_ratio.py::test_ratio_baseline_cancels_the_one_sided_drive_a_zero_mean_apical_gives_the_preset_baseline`)
+shows the direction in the engine: under a zero-mean apical current the hidden neurons' summed E*(P - Pbar) is 54.6
+with the preset baseline and 3.2 with the ratio baseline at tau 200 ms. <!--derived-->
+Biology record: `research/biology/bdsp-sliding-burst-baseline.md` (it also records the two alternatives weighed and
+not chosen: weight-dependent soft bounds, and heterosynaptic conservation of total weight).
+
+**The lever (engine + runner, both additive and default-off).** `cfg.bdsp_pbar_ratio_tau_ms` (sim/config.py,
+sim/bridge.py): when above 0, each masked neuron's baseline is Pbar = EMA(B_post) / EMA(E), both with time constant
+tau, where B_post is the burst factor the kernel already uses (E*P under graded credit). The EMAs start from an event
+rate of 0.05 with Pbar = p0. Runner flags: `--pbar-ratio-tau-ms` (default 0, off) and `--pbar-ratio-layers hidden|all`
+(default hidden: the hidden neurons, whose pathways the census names; the output keeps C21's preset baseline).
+The +-12 clip stays in the kernel as a backstop, so the census still measures whether it binds.
+Byte-identity, shown in data: with the knob at its default, a short BDSP training run hashes to the values recorded
+from the engine before the edit (`tests/test_bdsp_pbar_ratio.py`), the runner's `--identity-selftest` still passes in
+all four arms, and `--print-fingerprint` reproduces the census fingerprint bd108215d75223ed and the full-size GPU
+fingerprint 713efa9804a3dbb0.
+
+**Configs (C21 flags plus the listed change; H32/pool 4, 30 epochs, seed 7, 4 arms x 3 replicates, one pool job
+per shard, numpy, at the revision carrying this amendment).**
+
+| id | change from C21 | role |
+|---|---|---|
+| C26 | `--pbar-ratio-tau-ms 5000` (hidden) | PRIMARY: the companion process, tau_avg 5 s (bioRxiv v1 XOR value; v2 uses 2 s; both inside ~1-10 s) |
+| C27 | `--pbar-ratio-tau-ms 5000 --pbar-ratio-layers all` | secondary: the source's form on every neuron |
+| C25 | `--bdsp-w-max 48` (no ratio baseline) | control: the relaxation the census finding proposed; a bigger constant, no process |
+
+(C25 is the label the census finding reserved for exactly this command; it was never registered or run until now.)
+
+**Criteria for C26 (the dev check).**
+- (i) Bound census. Count the replicates on which, in the transport_ceiling arm at END of training, ff_0 or ff_1 has
+  at least 10% of its synapses at +-w_max (the AMENDMENT 5 H quantity). (i) holds iff that count is at most 1 of 3,
+  i.e. the rule that found the clamp load-bearing no longer fires. The fraction within 10% of either bound
+  (`frac_near_w_max`, `frac_near_w_min`) and the mean signed weight are reported beside it for every arm.
+- (ii) Hidden learning no longer collapses the output: the transport_ceiling arm's training accuracy is above its
+  replicate's training chance with one-sided binomial p < 0.05 (the shard's `train_binom_p`) on at least 2 of 3
+  replicates. The same test is reported for fixed_fa and micro_inengine.
+- (iii) Rule B (AMENDMENT 5 B) on the ceiling: seed 7 is DEFINED iff at least 2 of 3 replicates are interpretable
+  (ceiling above chance at binomial p < 0.05 AND headroom over frozen at least 0.05).
+
+**Decision (C26).** All three hold: C26 qualifies as the dev config, and the next step is a full-size dev run on the
+GPU (H64/pool 16, 40 epochs, seed 7) registered by its own amendment, before any EVALUATION CONFIG amendment.
+(i) holds and (ii) fails: the drift is gone but the output still collapses, so the clamp is excluded as the cause of
+the collapse and the next lever is event-rate homeostasis (the source's own H/G terms; the diagnosis finding's rung
+2), then output lateral inhibition (rung 1). (i) and (ii) hold, (iii) fails: the collapse is repaired and the ceiling
+is still not interpretable at the dev budget; the finding reports the budget question (the online rate oracle reads
+0.81 held-out after 4000 updates and 0.94 after 8000, per
+`research/findings/raw/gap4/transport_ceiling_readout/round4_rev8f16994/diag_oracle_online_budget_s7.json`).
+(i) fails: the ratio baseline at 5 s does not stop the saturation; C25 and C27 are read, and the next lever is
+weight dependence or heterosynaptic conservation.
+
+**Secondary readings (no gate).** C27 against C26 says whether the output layer's baseline matters. C25 against C26:
+if C25 also passes (ii) and (iii), a larger constant would have been enough and the finding says so; if C25 still
+collapses, the drift, not the wall's position, caused the collapse. For C25 the census is also reported at |w| >= 12
+(`frac_abs_w_ge_c21_bound`), the C21 clamp's magnitude.
+
+**Smoke (declared now, no decision weight).** Before queueing: locally, under `tools/memcap.sh`, the C21 flags at 3
+epochs, replicate 0, the transport_ceiling arm only, for C21 itself, C25, C26 and C27. It shows whether the flag
+changes the census at a short budget. Its artifacts go to `research/findings/raw/gap4/transport_ceiling_readout/companion_smoke_rev<sha>/`.
+
+**Unchanged.** Evaluation seeds stay locked: the runner's guard still needs a committed EVALUATION CONFIG amendment
+registering the fingerprint, and this amendment is not one. Declared host residuals are as in the parent document.
+The mask that chooses the hidden neurons is runner configuration. The ratio EMAs are per-neuron state in the engine
+step, as the old EMA was. Functional read-outs only.
+
+### AMENDMENT 6, smoke record (appended after the declared smoke ran; the registered rules above are unchanged)
+
+Local numpy smoke at revision feaca2fdf (the commit that registered AMENDMENT 6; every shard `git_dirty: false`),
+under `tools/memcap.sh 1`: the C21 flags at 3 epochs (78000 training steps), replicate 0, transport_ceiling arm only.
+No decision weight. Shards:
+`research/findings/raw/gap4/transport_ceiling_readout/companion_smoke_revfeaca2f/C21/smoke_s7_ckpt/s7_r0_transport_ceiling.json`,
+`research/findings/raw/gap4/transport_ceiling_readout/companion_smoke_revfeaca2f/C25/smoke_s7_ckpt/s7_r0_transport_ceiling.json`,
+`research/findings/raw/gap4/transport_ceiling_readout/companion_smoke_revfeaca2f/C26/smoke_s7_ckpt/s7_r0_transport_ceiling.json`,
+`research/findings/raw/gap4/transport_ceiling_readout/companion_smoke_revfeaca2f/C27/smoke_s7_ckpt/s7_r0_transport_ceiling.json`.
+At build every config has mean signed weight -0.05 (ff_0) and +0.05 (ff_1). <!--derived-->
+
+<!--derived-->
+| config | ff_0 / ff_1 at +-w_max | ff_0 / ff_1 within 10% of w_max | ff_0 / ff_1 mean signed w | train acc (chance 0.1825, p) | H1 / H2 / out mean read |
+|---|---|---|---|---|---|
+| C21 (clamp 12, preset baseline) | 1.5% / 5.2% | 9.1% / 13.6% | +3.29 / +4.31 | 0.138 (p 0.99) | 0.209 / 0.347 / 0.066 |
+| C25 (clamp 48) | 0 / 0 (at 48); 6.9% / 9.7% at abs(w) >= 12 | 0 / 0 | +3.73 / +4.59 | 0.158 (p 0.91) | 0.226 / 0.346 / 0.084 |
+| C26 (ratio baseline, hidden) | 0 / 0 | 0 / 0.01% | +0.11 / +0.34 | 0.210 (p 0.089) | 0.063 / 0.123 / 0.091 |
+| C27 (ratio baseline, all) | 0 / 0 | 0 / 0 | +0.11 / +0.34 | 0.215 (p 0.055) | 0.063 / 0.126 / 0.069 |
+
+What the smoke shows: the flag changes the census. At this short budget the C21 ceiling has not yet crossed the 10%
+rule, but its hidden weights have already drifted to a mean of +3.3 / +4.3 and 9-14% sit within 10% of the clamp. <!--derived-->
+With the ratio baseline the same pathways stay near their build mean (+0.11 / +0.34) and no synapse is near a <!--derived-->
+bound. Relaxing the clamp to 48 (C25) does not stop the drift (mean +3.7 / +4.6). Training accuracy at 3 epochs is <!--derived-->
+one replicate and one arm, so it is not read against (ii). The hidden layers' mean reads fall under the ratio
+baseline (H2 0.35 to 0.12), which the full runs will show at 30 epochs. <!--derived-->
+
+## Erratum (2026-09-25, before any C25-C27 result)
+
+AMENDMENT 6 cited tau_avg = 5 s as "the source's XOR task" value. That is the bioRxiv **v1** value; **v2** states 2 s. Both lie inside the source's ~1-10 s range, which is the actual justification for 5000 ms. No registered rule, config or threshold changes. The drift explanation for the clamp saturation is a hypothesis tested by the C26 runs themselves (see research/biology/bdsp-sliding-burst-baseline.md, Corrections).

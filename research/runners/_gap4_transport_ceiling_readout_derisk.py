@@ -19,6 +19,10 @@ Levers (all default to the legacy value, so with no flag this net IS Gap4InEngin
   --spi-silence-outside-credit      instrument fix: the in-engine interneuron rate is zeroed after the credit phase
                                     (the engine otherwise keeps projecting an uncancelled -int_drive into the next
                                     forward pass and into evaluation reads; the runner-supplied micro arm never did).
+  --pbar-ratio-tau-ms T             AMENDMENT 6, the clamp's companion process: the BDSP baseline becomes the slow
+  --pbar-ratio-layers hidden|all    ratio of moving averages Pbar = EMA(B)/EMA(E) (Payeur et al.: tau_avg ~1-10 s,
+                                    "To ensure a finite growth of synaptic weights"; engine cfg.bdsp_pbar_ratio_tau_ms)
+                                    on the hidden neurons (default) or every neuron. 0 = off; fingerprints unchanged.
 
 ARMS (ONE cfg.seed per seed => the same neurons in every arm):
   frozen            hidden apical 0 (Gap4 'reservoir'): only the output layer learns   = the credit-independent floor
@@ -108,6 +112,11 @@ _FP_KEYS = ("hidden", "pool_k", "n_hidden_layers", "settle_steps", "credit_steps
             "held_per_super", "n_prop", "member_id_dim", "n_obs", "noise", "oracle_epochs", "oracle_lr",
             "oracle_batch", "decode_ridge", "read_quantity", "no_structural", "ff_w_init", "propagation_strength",
             "no_ff_stp", "pbar_alpha", "hidden_lr_gain")
+# AMENDMENT 6 (2026-09-25): keys added after the fingerprints of C0-C24, the census and the GPU run were recorded. They
+# enter the fingerprint ONLY at a non-default value, so every existing fingerprint (and resume/aggregate of its shards)
+# is unchanged when the new lever is off.
+_FP_KEYS_V2 = {"pbar_ratio_tau_ms": 0.0, "pbar_ratio_layers": "hidden"}
+C21_W_MAX = 12.0     # the C21 / census clamp magnitude (AMENDMENT 5 H), a fixed reference for the census instrument
 
 
 # ============================================================================================================
@@ -116,8 +125,26 @@ class Gap4ReadoutNet(Gap4InEngineNet):
 
     def __init__(self, n_in, hidden, k, seed=0, feedback="fixed", read_window=0, read_gain=1.0, isi_steps=0,
                  eval_frozen=False, spi_silence=False, read_quantity="event", no_structural=False,
-                 propagation_strength=None, no_ff_stp=False, hidden_lr_gain=None, **kw):
+                 propagation_strength=None, no_ff_stp=False, hidden_lr_gain=None, pbar_ratio_tau_ms=0.0,
+                 pbar_ratio_layers="hidden", **kw):
         super().__init__(n_in, hidden, k, seed=seed, feedback=feedback, **kw)
+        # AMENDMENT 6 (the clamp's companion process). The census found the +-12 clamp load-bearing on the hidden-post
+        # pathways, with the saturation ONE-SIDED (+w_max only) in all three hidden-learning arms. Payeur et al. set the
+        # BDSP baseline to a slow (~1-10 s) moving average of the burst/event proportion "To ensure a finite growth of
+        # synaptic weights"; C21 presets it to the constant p0. pbar_ratio_tau_ms > 0 turns on the engine's additive
+        # ratio baseline (cfg.bdsp_pbar_ratio_tau_ms: Pbar = EMA(B_post)/EMA(E)); pbar_ratio_layers "hidden" restricts it
+        # to the hidden neurons (the pathways the census implicates; the output keeps the C21 baseline), "all" = every
+        # neuron (the source's form). 0.0 = off = the engine block is unreached = byte-identical.
+        self.pbar_ratio_tau_ms = float(pbar_ratio_tau_ms or 0.0)
+        self.pbar_ratio_layers = str(pbar_ratio_layers)
+        if self.pbar_ratio_layers not in ("hidden", "all"):
+            raise ValueError("pbar_ratio_layers must be hidden|all")
+        if self.pbar_ratio_tau_ms > 0.0:
+            self.cfg.bdsp_pbar_ratio_tau_ms = float(pbar_ratio_tau_ms)
+            if self.pbar_ratio_layers == "hidden":
+                m = np.zeros(self.n_total, dtype=bool)
+                m[self.slices[1].start:self.slices[len(self.sizes) - 2].stop] = True
+                self.br.cp_bdsp_pbar_ratio_mask = self._xp.asarray(m)
         # AMENDMENT 2 (operating point). The dev transmission scan (diag_transmit_scan_*_s7.json) shows that with the
         # default Tsodyks-Markram short-term depression ON, NO feedforward gain (ff_w_init 4->40, propagation
         # 0.05->0.5) and no tonic level changes hidden-layer rates: the explicit feedforward pathway transmits
@@ -225,6 +252,12 @@ class Gap4ReadoutNet(Gap4InEngineNet):
             tot_n += n; tot_hi += hi; tot_lo += lo
             out["pathways"].append({"pathway": f"ff_{li}", "post_is_hidden": bool(li + 1 < len(self.sizes) - 1),
                                     "n": n, "frac_at_or_above_w_max": hi / max(1, n), "frac_at_or_below_w_min": lo / max(1, n),
+                                    # AMENDMENT 6 (hollow-pass guard): within 10% of either bound, not only AT it
+                                    "frac_near_w_max": int(np.sum(wl >= 0.9 * wmax)) / max(1, n),
+                                    "frac_near_w_min": int(np.sum(wl <= 0.9 * wmin)) / max(1, n),
+                                    # at the C21 clamp's magnitude, so a run with a relaxed clamp (C25) is comparable
+                                    "frac_abs_w_ge_c21_bound": int(np.sum(np.abs(wl) >= C21_W_MAX - 1e-3)) / max(1, n),
+                                    "mean_w": float(wl.mean()) if n else None,
                                     "mean_abs_w": float(np.abs(wl).mean()) if n else None,
                                     "max_abs_w": float(np.abs(wl).max()) if n else None})
         out["frac_at_bound_all_ff"] = (tot_hi + tot_lo) / max(1, tot_n)
@@ -320,6 +353,8 @@ class Gap4ReadoutNet(Gap4InEngineNet):
 # ============================================================================================================
 def _fingerprint(args):
     d = {k: getattr(args, k) for k in _FP_KEYS}
+    if float(getattr(args, "pbar_ratio_tau_ms", 0.0) or 0.0) > 0.0:
+        d.update({k: getattr(args, k) for k in _FP_KEYS_V2})
     return hashlib.sha1(json.dumps(d, sort_keys=True).encode()).hexdigest()[:16]
 
 
@@ -341,7 +376,9 @@ def _build(arm, n_in, k, args, seed):
         eval_frozen=args.eval_frozen, spi_silence=args.spi_silence,
         read_quantity=args.read_quantity, no_structural=args.no_structural,
         ff_w_init=args.ff_w_init, propagation_strength=args.propagation_strength, no_ff_stp=args.no_ff_stp,
-        pbar_alpha=args.pbar_alpha, hidden_lr_gain=args.hidden_lr_gain)
+        pbar_alpha=args.pbar_alpha, hidden_lr_gain=args.hidden_lr_gain,
+        pbar_ratio_tau_ms=getattr(args, "pbar_ratio_tau_ms", 0.0),
+        pbar_ratio_layers=getattr(args, "pbar_ratio_layers", "hidden"))
     net.cfg.bdsp_w_max = float(args.bdsp_w_max)
     net.cfg.bdsp_w_min = -float(args.bdsp_w_max)
     net._spi_frozen = bool(freeze)
@@ -451,6 +488,18 @@ def run_shard(seed, r, arm, args, T):
     train = float(np.mean(np.argmax(acts_tr[-1], 1) == np.asarray(T["ytr"])))
     dec_tr, dec_te = _ridge_decode(acts_tr[-2], T["ytr"], acts_te[-2], yte_inh, T["k"], args.decode_ridge)
     out_rate = float(np.mean(acts_te[-1]))
+    # AMENDMENT 6 instruments (reads only): the mean read of every layer on the held-out items (is a hidden layer
+    # saturated or silent?), and the per-layer burst-probability baseline at the end of training.
+    layer_reads = [float(np.mean(a)) for a in acts_te]
+    pbar_by_layer = None
+    try:
+        from sim.backend import to_host
+        if net.br.cp_bdsp_Pbar is not None:
+            _pb = np.asarray(to_host(net.br.cp_bdsp_Pbar), dtype=np.float64)
+            pbar_by_layer = [{"mean": float(_pb[sl].mean()), "min": float(_pb[sl].min()), "max": float(_pb[sl].max())}
+                             for sl in net.slices]
+    except Exception:
+        pbar_by_layer = None
     pred_tr = np.argmax(acts_tr[-1], 1); pred_te = np.argmax(acts_te[-1], 1)
     hist = lambda v: np.bincount(np.asarray(v, int), minlength=T["k"]).tolist()
     try:
@@ -468,6 +517,10 @@ def run_shard(seed, r, arm, args, T):
            "bound_census_start": census0, "bound_census_end": census1, "bound_check_at_build": bound_ok,
            "decode_h2_train": dec_tr, "decode_h2_heldout": dec_te,
            "mean_output_rate_heldout": out_rate,
+           "mean_read_by_layer_heldout": layer_reads, "pbar_by_layer_end": pbar_by_layer,
+           "pbar_ratio_tau_ms": float(getattr(args, "pbar_ratio_tau_ms", 0.0) or 0.0),
+           "pbar_ratio_layers": (getattr(args, "pbar_ratio_layers", "hidden")
+                                 if float(getattr(args, "pbar_ratio_tau_ms", 0.0) or 0.0) > 0.0 else None),
            "pred_hist_train": hist(pred_tr), "true_hist_train": hist(T["ytr"]),
            "pred_hist_heldout": hist(pred_te), "true_hist_heldout": hist(yte_inh),
            "mean_output_read_by_class_train": [float(acts_tr[-1][np.asarray(T["ytr"]) == c, c].mean())
@@ -951,6 +1004,10 @@ def main():
     # p0 (the BurstCCN preset-baseline form, already a parameter of OnBridgeBDSPNet). Default 0.05 = legacy.
     ap.add_argument("--pbar-alpha", dest="pbar_alpha", type=float, default=0.05)
     ap.add_argument("--hidden-lr-gain", dest="hidden_lr_gain", type=float, default=None)
+    # AMENDMENT 6: the clamp's companion process -- the slow ratio baseline Pbar = EMA(B)/EMA(E) (Payeur et al.:
+    # tau_avg ~1-10 s, "To ensure a finite growth of synaptic weights"). 0 = off (legacy, byte-identical).
+    ap.add_argument("--pbar-ratio-tau-ms", dest="pbar_ratio_tau_ms", type=float, default=0.0)
+    ap.add_argument("--pbar-ratio-layers", dest="pbar_ratio_layers", default="hidden", choices=["hidden", "all"])
     ap.add_argument("--silent-stats", dest="silent_stats", action="store_true")
     ap.add_argument("--decode-ridge", dest="decode_ridge", type=float, default=1.0)
     # --- task (the 2026-09-15 task) ---
