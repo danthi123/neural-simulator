@@ -50,7 +50,8 @@ if [ -n "$STAGED" ]; then
     echo
     echo "   Fix ONE of:  cite the artifact that contains the number (a path with a / in it);"
     echo "                save the aggregate you computed and cite THAT (means over seeds live in no per-seed file);"
-    echo "                mark a derived/quoted value with <!--derived--> (inline, or alone on a line for block scope)."
+    echo "                mark a derived/quoted value with <!--derived--> (inline = that line; alone on a line = the next"
+    echo "                paragraph/list/table; <!--derived--> ... <!--/derived--> = exactly the lines between)."
     echo "   Deliberate override: git commit --no-verify"
     exit 1
   fi

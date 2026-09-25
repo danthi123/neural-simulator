@@ -209,6 +209,9 @@ def test_valid_external_packet_handoff_keeps_prior_work_and_provenance_reviewabl
     assert state["questions"][0]["status"] == "open"
     rendered = gate.read_text(encoding="utf-8")
     assert "## External research packets\n\n<!--derived-->" in rendered
+    # the packet quotes sit under `### RP<n>` subsections, so the marker must be an explicit range
+    assert rendered.index("<!--/derived-->") > rendered.index("### RP1")
+    assert rendered.index("<!--/derived-->") < rendered.index("## Question dispositions")
     assert "Packet file: `deep-research.json`" in rendered
     assert "prior-tonic-output-wall.md" in rendered
     assert "https://doi.org/10.0000/example" in rendered

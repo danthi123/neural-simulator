@@ -342,6 +342,10 @@ def _render(state: dict[str, Any]) -> str:
             lines.append("")
     else:
         lines.append("No external research packet has been handed off yet.")
+    # The packets are subsections (`### RP1`), so a standalone marker alone would scope to nothing: since
+    # 2026-09-25 tools/claim_check.py scopes a standalone marker to the next paragraph/list/table only, and a
+    # marker followed later by `<!--/derived-->` to exactly the lines between. This closes the packets range.
+    lines.append("<!--/derived-->")
 
     lines.extend(["", "## Question dispositions", ""])
     dispositions = [q for q in questions if q["status"] != "open"]
