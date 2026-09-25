@@ -229,6 +229,10 @@ AWS stop/start r4 result in the journal. Wrap-up list: merge/park per the one-mo
 auto-swap; fill LOCAL_LLM_RUNBOOK 'Queue next'; queue reviewed pool/AWS batteries; owner approves the condensed CLAUDE.md/memory;
 live-check `llm claude`; then hand off.
 
+**☀️ 18:20 HARVEST:** SETTLE A2 wiring 18/18 (f0f47fc63) reads UNDEFINED: byte-identical-off holds on every valid seed, the gate
+suppresses real markers, 0 attribution problems, but the valence half is UNTESTED (Gate-B never read both signs). Measurement only:
+the marker word is retired (owner 2026-09-25). Artifact `research/findings/raw/_affect_marker_settle_congruence/wiring/verdict.json`.
+
 **☀️ 18:00 CLEAN-BREAK RESULTS:** MERGED: claim-check corrections e8081c913, prereg-amendment-order gate ae5f2b22b,
 test isolation 6adb7d3df (full-suite collection clean again; the class predated today, fixed at the root in tests/conftest.py),
 D6 finding 58316ead8 (+ my false retroactive cost note CORRECTED 08388f74: a projection existed, the cells overran it), pair docs
