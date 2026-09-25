@@ -406,7 +406,7 @@ def run_config(cfg, profile, task, max_turns, timeout, keep_worktree=False):
 # `--reparse` regenerates the file WITHOUT losing the analysis. Update this alongside the CONFIGS list if a new
 # config changes the verdict.
 VERDICT_MD = """
-## What the evidence shows
+## ROUND 1 (server-flag sweep): 0% reuse on all five configs -- but the wrong layer was blamed
 
 Every one of the five configs above (`-np 1` baseline, `-np 2` with `-kvu`, `-kvu` plus denser context
 checkpoints, + doubled `-cram`, and `-np 1` with `--cache-reuse` explicitly enabled) produced **0% prompt-cache
@@ -414,50 +414,87 @@ reuse across turns** and **created zero context checkpoints**, for the exact sam
 Claude Code conversation. This is not "no common prefix to reuse": in every config, the request-2 (or -3)
 `selected slot by LCP similarity` line reports `f_keep` of 0.39-0.73 -- llama-server's own slot-selection
 heuristic correctly DETECTS that a large fraction of the previously-cached prompt is still a valid prefix of the
-new, longer one (exactly as expected, since Claude Code resends the whole growing history each turn). Despite
-that, the subsequent `prompt eval time = ... / N tokens` line for the same request shows N within a few tokens
-of the FULL new prompt length every single time -- i.e. detection works, but the engine never actually applies
-it: no `after context reuse` line and no `created context checkpoint` line EVER appeared in any of the five logs.
+new, longer one. Despite that, the subsequent `prompt eval time = ... / N tokens` line for the same request
+shows N within a few tokens of the FULL new prompt length every single time.
 
-**Root cause: this is a hybrid-architecture limitation of llama-server (b10042/50b29f6), not a missing flag.**
-Qwen3.8-27B here is 48 of 64 layers Gated DeltaNet (linear-attention, a FIXED-SIZE recurrent state per layer,
-not a token-indexed KV cache) plus 16 full-attention layers. A plain transformer's KV cache can be trimmed back
-to an arbitrary earlier token position for free (`memory_seq_rm`); a recurrent layer's state cannot -- it can
-only be rewound to a previously-saved CONTEXT CHECKPOINT (`-ctxcp`/`-cms`, the exact mechanism this branch set
-out to tune). But context checkpoints are apparently only created around an actual context-shift/eviction event,
-never merely because a new request could reuse a slot's prior content -- and a normal multi-turn conversation
-here never gets anywhere near the 131072-token limit that would trigger one. With no checkpoint to roll back to,
-llama-server has no choice but to reprocess from position 0 every time, regardless of `-np`, `-kvu`, `-ctxcp`,
-`-cms`, `-cram`, or `--cache-reuse` -- all five knobs this branch was asked to test.
+**ROUND 1's conclusion -- "this is an upstream llama-server hybrid-model limitation, nothing to fix" -- was
+WRONG, and is corrected by round 2 below on a coordinator challenge that it rested on an untested, inferred
+cause rather than a real captured request.** Round 1 never captured or rendered a real request; it inferred the
+mechanism from server-side log symptoms alone. It was right that llama-server's checkpoint/`-ctxcp`/`-cms`/
+`-cram`/`--cache-reuse` machinery never engaged (still true, see round 2) -- but wrong about why the prefix was
+unusable in the first place. The actual cause was in OUR OWN chat template, entirely fixable, and fixing it took
+prompt-cache reuse on this exact model from 0% to 60.6% overall (98.6% on the largest turn) with NO server-flag
+changes at all.
 
-Hypothesis (a) from the original evidence (Claude Code's small-fast-model side calls sharing the one slot and
-evicting the main conversation) was NOT reproducible in this harness: `--dangerously-skip-permissions` (required
-to run Claude Code unattended) evidently suppresses whatever side-channel calls an interactive session makes --
-every config here shows EXACTLY as many llama-server requests as conversation turns, no interleaved extra
-requests at all. That said, hypothesis (a) is not NEEDED to explain the original production symptom: the falling
-`sim_best` trend (0.62 -> 0.23) reported live is fully explained by an ever-growing denominator (a fixed-size
-old prefix over a growing new prompt naturally yields a falling ratio) plus the same zero-reuse bug reproduced
-here with a single, non-interleaved conversation. Hypothesis (c) (prompt content changing early each turn) is
-also ruled out: Claude Code's conversation format only ever APPENDS, and the detected `f_keep` overlap proves a
-large genuine shared prefix exists -- it is the failure to exploit it that is the bug, not its absence.
+## ROUND 2 (coordinator directive, real captured requests): the chat template was hoisting mid-conversation system messages
 
-## Chosen config: keep `A_np1_baseline` (no change to the production default)
+**Method.** Captured the raw Anthropic `/v1/messages` request bodies of a real 3-turn `claude -p` session via a
+logging reverse proxy (`tools/local_llm/capture_requests.py` + `tools/local_llm/capture_session.py`), then
+rendered pairs of them through the live chat template via llama-server's own `/apply-template` endpoint
+(`tools/local_llm/render_and_diff.py`) to find the exact first character where two consecutive requests'
+rendered prompts diverge. Full captures and diffs: `tools/local_llm/results/template_divergence/`.
 
-None of the four alternatives improved prompt-cache reuse (all four were also on this list: 0.0 overall reused
-fraction, 0 checkpoints), so there is no config-level fix available among the flags llama-server exposes on this
-build. `B`/`D` (the `-kvu` multi-slot variants) also cost noticeably more peak VRAM (~23.4-23.7 GB vs `A`'s
-~22.8 GB, still under the ~23.5 GiB budget but with less headroom) for zero benefit, and in this run took an
-extra conversational round each (a stochastic sampling difference, not a per-token slowdown -- per-token
-prompt-processing throughput was similar, ~900-1050 tok/s, across all five). `tools/local_llm/llm.sh`'s
-`profile_cmd()` and `tools/local_llm/bakeoff.py`'s `start_server()` are left unchanged (`-np 1`, no new flags),
-with a comment added at each recording this investigation so it is not re-derived from scratch later.
+**Finding.** Claude Code sends its per-turn "system reminders" (a live `<total_tokens>N tokens left</total_tokens>`
+line, refreshed every turn; a stable session-start reminder) as literal `role: "system"` entries embedded
+directly in the `messages` array, not just in the leading `system` field -- confirmed directly from the captured
+JSON (`capture_old_template/0003_POST_v1_messages?beta=true.json`, message indices 1 and 4). The
+round-1 chat-template fix (`tools/local_llm/templates/qwen38-27b-iq4nl-mtp.jinja`, "LOCAL FIX 2026-09-25") merged
+EVERY such message, wherever it appeared, into the ONE leading system block to stop a real
+"System message must be at the beginning" failure. That fix worked for correctness but broke caching: each new
+turn's fresh reminder text changes the CONTENT of that leading block, so the leading-block/conversation-turns
+BOUNDARY shifts by a few bytes every turn, and everything after it -- the entire rest of the conversation, even
+though byte-identical -- counts as changed. Measured directly: rendering turn 1 and turn 2 of the SAME real
+session through the round-1 template diverges at char 62857 of turn 1's 82848-char prompt (75.9% in), right at
+that exact boundary (`diff_old_template_turn1_vs_turn2.json`).
 
-**Smallest actual fix given this constraint:** there isn't one at the llama-server flag level on this build.
-The two levers that could plausibly help are both outside this branch's scope: (1) upgrading `llama-server` past
-b10042 in case a newer release creates checkpoints proactively for hybrid models rather than only on a context
-shift, or (2) accepting the full-reprocess cost as inherent to this specific hybrid+MTP model choice and
-weighing it against a less linear-attention-heavy model if turn latency on long sessions matters more than this
-model's throughput/VRAM profile. Both are follow-up investigations, not flag changes.
+**Fix.** `tools/local_llm/templates/qwen38-27b-iq4nl-mtp.jinja` ("LOCAL FIX 2026-09-25 ROUND 2"): only the
+LEADING contiguous run of system/developer messages is merged into the one stable leading block now (as the
+pre-round-1 template did for a single message); every LATER system/developer message renders IN PLACE, as its
+own `<|im_start|>system ... <|im_end|>` turn at its own position, and the main loop skips only the leading run
+by index rather than every system-role message by role. Never raises (the original bug stays fixed). Verified
+offline (no GPU) in `tools/local_llm/templates/test_templates_offline.py::check_prefix_stability_qwen`, which
+would fail against the round-1 template (confirmed: divergence at char 366/849 in the synthetic fixture) and
+passes against the fix.
+
+**Re-measured on the SAME real captured requests, through the FIXED template:** turn 1's entire 82877-char
+rendered prompt is now a byte-for-byte PREFIX of turn 2's 144447-char prompt -- divergence at char 82877, i.e.
+100.0% of turn 1 (`diff_new_template_turn1_vs_turn2.json`). **Re-measured end-to-end with a real llama-server
++ a real 3-turn Claude Code session** (`A_np1_baseline_ROUND1TEMPLATE` vs `A_np1_baseline_ROUND2TEMPLATE` in
+the table above, same `-np 1` config, template swapped): overall reused fraction 0.0 -> **0.606**, last-turn
+reused fraction 0.0 -> **0.986**, total prompt-processing time 107.9s -> **46.2s** for a slightly LARGER
+conversation. Context checkpoints created: 0 in both -- expected and fine, not a regression: with a byte-exact
+prefix the server needs a plain forward CONTINUATION (pick up decoding where the previous turn's cache already
+ends), which every architecture supports natively; a checkpoint-based REWIND (round 1's target) is only needed
+when the divergence point is somewhere back in the MIDDLE of the cache, which no longer happens here.
+
+**Hypothesis 2 (assistant turns re-rendered differently from what was generated) was checked directly and
+ruled out as a contributing factor**, not merely assumed away: the model's actual streamed "thinking" content
+(from the captured SSE response) is byte-identical to what Claude Code resends as history in the next request
+(verified on `capture_old_template/0001_...json.response` vs `0003_...json` message index 2), and the template
+renders historical assistant turns through the exact same formatting code path used for live generation, so
+there is no additional divergence source here to fix.
+
+**Hypothesis (a)** (interleaved small-fast-model side calls) remains unreproduced under
+`--dangerously-skip-permissions` (needed for unattended runs) -- every capture shows exactly as many
+`/v1/messages` requests as conversation turns, no interleaved extra calls. Not needed to explain the bug either
+way: the fix above fully explains and resolves the measured symptom without it.
+
+## Chosen config: `A_np1_baseline` + the FIXED chat template (no llama-server flag changes)
+
+The server-flag sweep (round 1: `-np`/`-kvu`/`-ctxcp`/`-cms`/`-cram`/`--cache-reuse`) is still valid as a
+NEGATIVE result on its own terms -- none of those flags move the needle, and `B`/`D` (the `-kvu` multi-slot
+variants) cost more peak VRAM for it. The actual fix was the chat template, requires no `-np`/`-kvu` change, and
+is already the profile's own template file, so `tools/local_llm/llm.sh`'s `profile_cmd()` and
+`tools/local_llm/bakeoff.py`'s `start_server()` keep `-np 1` with no extra flags -- comments at each now point
+to this corrected history instead of the retracted round-1 conclusion.
+
+**Agentic-task regression check** (`python3 tools/local_llm/bakeoff.py --profiles qwen38-27b-iq4nl-mtp-128k-q4`,
+run against the FIXED template as its own GPU-queue job): all three tasks still PASS -- T1 locate 44s, T2 debug
+64s, T3 extend 42s -- noticeably faster than this same profile's original (pre-branch) bake-off with the
+round-1 template, 90s/213s/139s; long-context passphrase recall at 120K tokens still `True`; peak VRAM 22831
+MiB, in line with every other measurement in this file. The fix does not just avoid regressing these tasks, it
+makes the multi-turn ones (T2/T3, which are themselves several turns within one Claude Code session) noticeably
+faster, for the same reason the cache-probe numbers above improved.
 """
 
 
@@ -505,6 +542,12 @@ def main():
                      help="re-parse the ALREADY-SAVED server logs in tools/local_llm/results/cache_probe_logs/ "
                           "for --out's existing configs and rewrite --out/--md-out, WITHOUT touching the GPU or "
                           "re-running any Claude task -- for when the parser itself changes after a run.")
+    ap.add_argument("--template", default=None,
+                     help="override the default profile's chat_template_file for this run only (profiles.json "
+                          "is not touched) -- e.g. to A/B an in-progress template fix against the shipped one.")
+    ap.add_argument("--config-suffix", default="",
+                     help="appended to every config's name/log/worktree for this run, so e.g. --template X "
+                          "--config-suffix _newtpl does not collide with a prior run's files for the same config.")
     a = ap.parse_args()
 
     if a.selftest_parse:
@@ -528,10 +571,14 @@ def main():
         return 0
 
     os.makedirs(RESULTS, exist_ok=True)
-    profile = load_default_profile()
+    profile = dict(load_default_profile())
+    if a.template:
+        profile["chat_template_file"] = os.path.relpath(a.template, ROOT)
     configs = CONFIGS if not a.configs else [c for c in CONFIGS if c["name"] in a.configs]
     if not configs:
         sys.exit("no matching configs (known: %s)" % ", ".join(c["name"] for c in CONFIGS))
+    if a.config_suffix:
+        configs = [dict(c, name=c["name"] + a.config_suffix) for c in configs]
     # Merge onto any EXISTING results at --out (keyed by config name) rather than overwrite, so running a subset
     # via --configs (e.g. to add one new config after the fact) does not lose earlier configs' data.
     by_name = {}

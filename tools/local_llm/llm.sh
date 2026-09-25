@@ -81,18 +81,28 @@ current_profile() {
 profile_cmd() {   # profile_cmd <name> -> the llama-server command line for that profile
   # -np 1 was INVESTIGATED, not merely inherited (research/local-llm-prompt-cache branch, 2026-09-25,
   # tools/local_llm/cache_probe.py + tools/local_llm/results/cache_probe.md): a live `llm claude` session
-  # reprocesses its ENTIRE prompt every turn instead of reusing the cached prefix. Five configs were measured
-  # against the SAME real multi-turn Claude Code task -- -np 1 (this), -np 2 with -kvu, -kvu + denser context
-  # checkpoints (-ctxcp/-cms), + doubled -cram, and -np 1 + --cache-reuse -- and ALL FIVE showed 0% prompt-cache
-  # reuse across turns (a genuine, large common prefix was DETECTED each time -- sim_best/f_keep well above the
-  # slot-reuse threshold -- but never a single "context reuse" or "context checkpoint created" log line, so it
-  # was never actually applied). Root cause: this model is a HYBRID architecture (48/64 layers Gated DeltaNet
-  # linear-attention with a fixed-size recurrent state); llama-server (b10042/50b29f6) never creates a context
-  # checkpoint for a plain append-only multi-turn conversation (only for an actual context-shift/eviction event),
-  # so there is no valid point to roll the recurrent state back to, REGARDLESS of -np/-kvu/-ctxcp/-cms/-cram/
-  # --cache-reuse -- an upstream llama.cpp hybrid-model limitation, not a flag this profile was missing. Keeping
-  # -np 1: the multi-slot variants added VRAM and, in this build, occasionally an extra conversational round with
-  # zero offsetting benefit. Re-test if llama-server is upgraded past this build.
+  # reprocesses its ENTIRE prompt every turn instead of reusing the cached prefix.
+  #
+  # ROUND 1 swept llama-server flags (-np 1 baseline, -np 2 + -kvu, + denser -ctxcp/-cms, + doubled -cram, +
+  # --cache-reuse) against the same real multi-turn task: all five showed 0% prompt-cache reuse and concluded
+  # this was an upstream llama.cpp hybrid-model (Gated DeltaNet) limitation with nothing to fix. THAT CONCLUSION
+  # WAS WRONG -- it was inferred from server-log symptoms, never from a captured real request.
+  #
+  # ROUND 2 (coordinator challenge: test directly, don't infer) captured real request bodies from a live session
+  # (tools/local_llm/capture_session.py) and rendered them through the chat template via llama-server's
+  # /apply-template (tools/local_llm/render_and_diff.py): the actual cause was tools/local_llm/templates/
+  # qwen38-27b-iq4nl-mtp.jinja itself -- a prior fix for a real "System message must be at the beginning" error
+  # merged EVERY mid-conversation "system-reminder" Claude Code sends (e.g. a live token-count line, refreshed
+  # every turn) into the ONE leading system block, shifting that block's boundary each turn and invalidating the
+  # cached prefix for the entire rest of the conversation (measured: divergence at 76% into turn 1's own
+  # rendered prompt). FIXED in the template ("LOCAL FIX 2026-09-25 ROUND 2"): only the leading run of system/
+  # developer messages is merged; a later one renders in place instead. Re-measured end-to-end at -np 1 (no
+  # flag change): prompt-cache reuse 0% -> 60.6% overall (98.6% on the largest turn), prompt-processing time
+  # roughly halved. See tools/local_llm/results/cache_probe.md for both rounds' full numbers.
+  #
+  # -np 1 itself is kept because round 1's server-flag sweep is still a valid negative result on its own terms
+  # (none of -kvu/-ctxcp/-cms/-cram/--cache-reuse moved the needle once the template was still broken, and the
+  # -kvu multi-slot variants cost more VRAM); the actual fix needed no -np/-kvu change at all.
   python3 - "$HERE/profiles.json" "$1" "$PORT" "$HERE/../.." <<'EOF'
 import json, os, shlex, sys
 profiles = {p["name"]: p for p in json.load(open(sys.argv[1]))}

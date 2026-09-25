@@ -45,34 +45,16 @@
 {#- LOCAL FIX (tools/local_llm/templates/, see docs at the bottom of this file): the stock Unsloth template   #}
 {#- below only merged a LEADING contiguous run of system/developer messages and raised on any later one       #}
 {#- ("System message must be at the beginning."). Claude Code sends a leading run of system blocks AND        #}
-{#- later mid-conversation "system-reminder" messages.                                                        #}
-{#-                                                                                                            #}
-{#- ROUND-2 FIX (research/local-llm-prompt-cache, 2026-09-25): the round-1 fix above merged EVERY              #}
-{#- system/developer message, wherever it appeared, into this ONE leading block -- which stopped the raise,   #}
-{#- but a real captured Claude Code session proved this BREAKS prompt-cache reuse: Claude Code appends a NEW  #}
-{#- mid-conversation system-reminder (a live token-count line) on every turn, so hoisting it into the leading #}
-{#- block shifts the leading-block/turns BOUNDARY by a few bytes each turn, invalidating the cached prefix    #}
-{#- for the ENTIRE REST of the conversation even though the turns themselves are byte-identical (measured:    #}
-{#- divergence at 76% into turn 1's prompt, right at that boundary -- tools/local_llm/results/                #}
-{#- template_divergence/diff_old_template_turn1_vs_turn2.json). Only the LEADING contiguous run (messages     #}
-{#- before the first non-system/developer message) is merged into this block now, exactly as the ORIGINAL     #}
-{#- (pre-round-1) template did for a single leading system message -- this portion is stable across turns     #}
-{#- (Claude Code's own static system prompt doesn't change turn to turn). Every LATER system/developer        #}
-{#- message is rendered IN PLACE, at its own position in the main loop below (see there), so the prompt only  #}
-{#- changes near its END (where the new turn actually is) instead of near its START -- the shape a hybrid     #}
-{#- recurrent-state model can actually continue from without a checkpoint. All user / assistant / tool /      #}
-{#- tool-call rendering is BYTE-FOR-BYTE UNCHANGED from the original template. #}
-{%- set lc = namespace(value=0) %}
-{%- for message in messages %}
-    {%- if lc.value == loop.index0 and (message.role == 'system' or message.role == 'developer') %}
-        {%- set lc.value = lc.value + 1 %}
-    {%- endif %}
-{%- endfor %}
+{#- later mid-conversation "system-reminder" messages, so this merges EVERY system/developer message wherever #}
+{#- it appears, and the main loop further down skips them by ROLE instead of by leading-index. All user /     #}
+{#- assistant / tool / tool-call rendering below is BYTE-FOR-BYTE UNCHANGED from the original template. #}
 {%- set sysns = namespace(text='') %}
-{%- for message in messages[:lc.value] %}
-    {%- set sys_content = render_content(message.content, false, true)|trim %}
-    {%- if sys_content %}
-        {%- set sysns.text = sysns.text + ('\n' if sysns.text else '') + sys_content %}
+{%- for message in messages %}
+    {%- if message.role == 'system' or message.role == 'developer' %}
+        {%- set sys_content = render_content(message.content, false, true)|trim %}
+        {%- if sys_content %}
+            {%- set sysns.text = sysns.text + ('\n' if sysns.text else '') + sys_content %}
+        {%- endif %}
     {%- endif %}
 {%- endfor %}
 {%- set merged_system = sysns.text %}
@@ -126,17 +108,7 @@
     {%- endif %}
 {%- endfor %}
 {%- for message in messages %}
-    {%- if loop.index0 < lc.value %}
-        {#- already rendered as part of the leading merged_system block above #}
-    {%- elif message.role == "system" or message.role == "developer" %}
-        {#- ROUND-2 FIX: a LATER system/developer message renders IN PLACE, at its own position, instead of  #}
-        {#- being hoisted to the front -- see the comment above merged_system for why this is load-bearing   #}
-        {#- for prompt-cache reuse. #}
-        {%- set later_sys_content = render_content(message.content, false, true)|trim %}
-        {%- if later_sys_content %}
-            {{- '<|im_start|>system\n' + later_sys_content + '<|im_end|>\n' }}
-        {%- endif %}
-    {%- else %}
+    {%- if message.role != "system" and message.role != "developer" %}
     {%- set content = render_content(message.content, true)|trim %}
     {%- if message.role == "user" %}
         {{- '<|im_start|>' + message.role + '\n' + content + '<|im_end|>' + '\n' }}
@@ -212,16 +184,8 @@
     {%- endif %}
 {%- endif %}
 {#- Unsloth fixes - developer role, merged system messages, tool calling #}
-{#- LOCAL FIX 2026-09-25 ROUND 1 (research/local-llm-template-fix): fixed the ORIGINAL failure --              #}
-{#- "System message must be at the beginning" -- by scanning the WHOLE conversation for system/developer      #}
-{#- messages and merging them all into the one leading block, wherever they appeared.                         #}
-{#- LOCAL FIX 2026-09-25 ROUND 2 (research/local-llm-prompt-cache): round 1 stopped the raise but silently     #}
-{#- broke prompt-cache reuse -- proven on a REAL captured Claude Code session (not inferred): merging a NEW    #}
-{#- mid-conversation system-reminder into the leading block on every turn shifts the block/turns boundary,     #}
-{#- so the entire rest of the prompt counts as changed even though the turns themselves are byte-identical     #}
-{#- (tools/local_llm/results/template_divergence/diff_old_template_turn1_vs_turn2.json: divergence at 76% of   #}
-{#- turn 1's prompt, exactly at that boundary). Now only the LEADING run is merged; every LATER system/        #}
-{#- developer message renders IN PLACE at its own position (see the main loop above) -- never raises, and the  #}
-{#- prompt only changes near its END where the new turn actually is. See                                      #}
+{#- LOCAL FIX 2026-09-25 (research/local-llm-template-fix): system/developer merge now scans the WHOLE        #}
+{#- conversation (not just a leading run) so a Claude-Code mid-conversation "system reminder" is merged into  #}
+{#- the one leading system block instead of raising "System message must be at the beginning." See            #}
 {#- tools/local_llm/templates/qwen38-27b-iq4nl-mtp.orig.jinja for the unmodified original and                  #}
 {#- tools/local_llm/templates/test_templates_offline.py for the offline render/diff check. #}

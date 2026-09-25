@@ -392,5 +392,173 @@
    "checkpoints_created": 0
   },
   "finished": "2026-09-25 17:28:09"
+ },
+ {
+  "config": "A_np1_baseline_ROUND1TEMPLATE",
+  "np": 1,
+  "extra": [],
+  "note": "today's production flags, unchanged (profile_cmd()/bakeoff.py start_server())",
+  "server_cmd": "llama-server -m /home/dant123/models/qwen3.8-27b-gguf/unsloth-iq4nl/Qwen3.8-27B-IQ4_NL.gguf --host 127.0.0.1 --port 8093 --alias local -ngl 99 -np 1 -fa on -c 131072 -ctk q4_0 -ctv q4_0 --jinja --chat-template-file /home/dant123/Projects/sim/.claude/worktrees/agent-a50e75206aabe3466/tools/local_llm/templates/qwen38-27b-iq4nl-mtp.round1-2026-09-25.jinja --spec-type draft-mtp --spec-draft-n-max 3 --temp 0.6 --top-p 0.95 --top-k 20",
+  "started": "2026-09-25 18:00:59",
+  "vram_before_mib": 2899,
+  "load_s": 4.0,
+  "vram_after_load_mib": 22465,
+  "claude": {
+   "wall_s": 155.9,
+   "exit": 0,
+   "num_turns": 4,
+   "is_error": false,
+   "result": "ia-smi` compute-apps, closing the dead-daemon tracking-loss bug), and (4) free VRAM \u2265 `min_free`.\n- **Restore side (`llm_restore_if_idle`):** on every idle poll (empty queue), if the marker exists it restores via `llm.sh on <profile>` (backgrounded, fd 8 closed so the child can't hold the singleton lock) with the **same profile that was running**. Two conditions *defer* (marker kept, retried ~every 12 s): gaming `GPU_PAUSE` and a brain still GPU-resident. The marker is consumed **immediately before the one restart attempt**, so a crashed or failed `llm on` is never retried forever.\n- **Owner intent & cancellation:** `llm off` always removes the marker (a manual off, even mid-job, cancels the pending restore); a *refused* `llm on` (GPU busy, no `--wait`) writes the marker itself so its \"it will load automatically once the queue drains\" message is actually kept; and the dispatcher exports `XDG_RUNTIME_DIR`/`DBUS_SESSION_BUS_ADDRESS` when unset so the system-scope daemon can reach the user-bus unit at all.\n\n## `tools/status.sh` summary\n\nGPU: dispatcher up (pid 89965) with one job running (a `tools/local_llm/c\u2026` cache-probe job from the agent worktree, pid 181170) leaving only 1654 MiB VRAM free (below the 3000 min_free), queue empty; local-llm inactive.\nPool has 6 queued (pool40 unreachable, pool41/42 running 6/4 jobs); AWS both r7i.4xlarge instances **stopped** with \u2248$37.34 spent today against the $50 cap; batteries `settle_a2_wiring` (0/18) and `b2b_base` (0/258) both WAITING.",
+   "stderr_tail": "[claude-code:unrecognized_model] {\"model\":\"local\",\"query_source\":\"sdk\"}\n"
+  },
+  "vram_peak_mib": 22821,
+  "vram_headroom_mib": 1755,
+  "requests": [
+   {
+    "task_id": 0,
+    "slot_id": 0,
+    "selection": "lru",
+    "sim_best": null,
+    "f_keep": null,
+    "requested_tokens": 21163,
+    "reprocessed_tokens": 21163,
+    "generated_tokens": 247,
+    "pp_time_s": 20.49,
+    "gen_time_s": 3.37,
+    "n_past_after_reuse": null,
+    "reused_frac": 0.0
+   },
+   {
+    "task_id": 77,
+    "slot_id": 0,
+    "selection": "lcp",
+    "sim_best": 0.381,
+    "f_keep": 0.729,
+    "requested_tokens": 40996,
+    "reprocessed_tokens": 40995,
+    "generated_tokens": 104,
+    "pp_time_s": 43.77,
+    "gen_time_s": 1.68,
+    "n_past_after_reuse": null,
+    "reused_frac": 0.0
+   },
+   {
+    "task_id": 131,
+    "slot_id": 0,
+    "selection": "lcp",
+    "sim_best": 0.375,
+    "f_keep": 0.38,
+    "requested_tokens": 41708,
+    "reprocessed_tokens": 41709,
+    "generated_tokens": 1894,
+    "pp_time_s": 43.59,
+    "gen_time_s": 35.32,
+    "n_past_after_reuse": null,
+    "reused_frac": 0.0
+   }
+  ],
+  "summary": {
+   "n_requests": 3,
+   "n_scored_requests": 3,
+   "total_requested_tokens": 103867,
+   "total_reprocessed_tokens": 103867,
+   "overall_reused_frac": 0.0,
+   "total_pp_time_s": 107.9,
+   "last_request_reused_frac": 0.0,
+   "last_request_sim_best": 0.375,
+   "last_request_f_keep": 0.38,
+   "prompt_sizes_monotonic_nondecreasing": true,
+   "prompt_sizes": [
+    21163,
+    40996,
+    41708
+   ],
+   "checkpoints_created": 0
+  },
+  "finished": "2026-09-25 18:03:45"
+ },
+ {
+  "config": "A_np1_baseline_ROUND2TEMPLATE",
+  "np": 1,
+  "extra": [],
+  "note": "today's production flags, unchanged (profile_cmd()/bakeoff.py start_server())",
+  "server_cmd": "llama-server -m /home/dant123/models/qwen3.8-27b-gguf/unsloth-iq4nl/Qwen3.8-27B-IQ4_NL.gguf --host 127.0.0.1 --port 8093 --alias local -ngl 99 -np 1 -fa on -c 131072 -ctk q4_0 -ctv q4_0 --jinja --chat-template-file /home/dant123/Projects/sim/.claude/worktrees/agent-a50e75206aabe3466/tools/local_llm/templates/qwen38-27b-iq4nl-mtp.jinja --spec-type draft-mtp --spec-draft-n-max 3 --temp 0.6 --top-p 0.95 --top-k 20",
+  "started": "2026-09-25 18:03:45",
+  "vram_before_mib": 2902,
+  "load_s": 8.0,
+  "vram_after_load_mib": 22471,
+  "claude": {
+   "wall_s": 119.9,
+   "exit": 0,
+   "num_turns": 4,
+   "is_error": false,
+   "result": "ard). Otherwise it consumes the marker and launches `llm.sh on <same-profile>` **in the background** so the long load never blocks dispatch.\n\n- **`llm.sh` keeps the promises honest:** `llm on` **refuses** while a live dispatcher has a real job (non-empty queue, or a running job whose recorded pid is still alive); without `--wait` it **writes the marker itself** to record the owner's intent, so its \"it will load automatically once the queue drains\" message is actually kept by the dispatcher's restore \u2014 and `--wait` blocks until the queue drains instead. `llm off` **always removes the marker**, so a manual off cancels the pending auto-restore even mid-job. The dispatcher's contention guard also re-checks `llm_is_active` inside the VRAM-wait loop, so it never dispatches over a still-loaded model just because raw free VRAM happens to clear (a ~22 GB unit can leave more than the 3000 MiB `MIN_FREE` while still holding the card).\n\n## `tools/status.sh` summary (2 lines)\n\n- **GPU:** dispatcher up (pid 89965) with the local-llm cache-probe job running (pid 181170), queue empty, only 1656 MiB VRAM free (below the 3000 MiB min) \u2014 the `local-llm` unit itself is inactive.\n- **Rest:** pool has 5 queued jobs (pool40 unreachable; pool41/42 each running 6 with a few 24 h failures); AWS spend \u2248$37.34 of the $50/day cap with both r7i.4xlarge instances stopped; both batteries (`settle_a2_wiring` 0/18, `b2b_base` 0/258) WAITING; recent 24 h failures are one rc=143 (killed) and two rc=1 job exits.",
+   "stderr_tail": "[claude-code:unrecognized_model] {\"model\":\"local\",\"query_source\":\"sdk\"}\n"
+  },
+  "vram_peak_mib": 22813,
+  "vram_headroom_mib": 1763,
+  "requests": [
+   {
+    "task_id": 0,
+    "slot_id": 0,
+    "selection": "lru",
+    "sim_best": null,
+    "f_keep": null,
+    "requested_tokens": 21167,
+    "reprocessed_tokens": 21167,
+    "generated_tokens": 264,
+    "pp_time_s": 20.95,
+    "gen_time_s": 3.8,
+    "n_past_after_reuse": null,
+    "reused_frac": 0.0
+   },
+   {
+    "task_id": 85,
+    "slot_id": 0,
+    "selection": "lcp",
+    "sim_best": 0.522,
+    "f_keep": 1.0,
+    "requested_tokens": 41021,
+    "reprocessed_tokens": 19589,
+    "generated_tokens": 1245,
+    "pp_time_s": 23.87,
+    "gen_time_s": 23.57,
+    "n_past_after_reuse": null,
+    "reused_frac": 0.522
+   },
+   {
+    "task_id": 502,
+    "slot_id": 0,
+    "selection": "lcp",
+    "sim_best": 0.986,
+    "f_keep": 1.0,
+    "requested_tokens": 42880,
+    "reprocessed_tokens": 613,
+    "generated_tokens": 2123,
+    "pp_time_s": 1.4,
+    "gen_time_s": 39.33,
+    "n_past_after_reuse": null,
+    "reused_frac": 0.986
+   }
+  ],
+  "summary": {
+   "n_requests": 3,
+   "n_scored_requests": 3,
+   "total_requested_tokens": 105068,
+   "total_reprocessed_tokens": 41369,
+   "overall_reused_frac": 0.606,
+   "total_pp_time_s": 46.2,
+   "last_request_reused_frac": 0.986,
+   "last_request_sim_best": 0.986,
+   "last_request_f_keep": 1.0,
+   "prompt_sizes_monotonic_nondecreasing": true,
+   "prompt_sizes": [
+    21167,
+    41021,
+    42880
+   ],
+   "checkpoints_created": 0
+  },
+  "finished": "2026-09-25 18:05:59"
  }
 ]

@@ -182,6 +182,33 @@ def check_regressions(name):
             "%s: leading system text was not folded into the first [INST] turn as designed" % name)
 
 
+def check_prefix_stability_qwen():
+    """ROUND-2 regression (research/local-llm-prompt-cache, 2026-09-25). This is the exact defect a real
+    captured Claude Code session exposed in round 1's "merge every system message into the leading block" fix:
+    a NEW mid-conversation system-reminder appended between two turns shifted the leading-block/turns boundary,
+    so the ENTIRE REST of the prompt counted as changed even though the turns themselves were byte-identical
+    (measured: divergence at 76% into turn 1's own prompt -- tools/local_llm/results/template_divergence/
+    diff_old_template_turn1_vs_turn2.json). The round-2 fix keeps the leading block STABLE and renders later
+    system/developer messages in place, so rendering "everything up through some turn" must be a byte-for-byte
+    PREFIX of rendering "that plus more turns AND a new mid-conversation system-reminder" -- prompt-cache reuse
+    for a growing conversation depends on exactly this property. Qwen-only: the leading block is this
+    template's ONLY structural feature that could make an appended mid-conversation system message move
+    anything earlier; Devstral's very different by-design fold (see check_regressions) does not have an
+    equivalent stable "leading block" boundary to test this way."""
+    patched_path = os.path.join(HERE, "qwen38-27b-iq4nl-mtp.jinja")
+    full = cc_messages()
+    # full[:6] = [system, system, user, assistant(+tool_calls), tool, assistant] -- everything BEFORE the
+    # mid-conversation "Plan mode" system-reminder and the next user turn.
+    before = render(patched_path, full[:6], add_generation_prompt=False)
+    after = render(patched_path, full, add_generation_prompt=False)
+    assert after.startswith(before), (
+        "qwen38-27b-iq4nl-mtp: appending a later turn (with a NEW mid-conversation system-reminder) changed "
+        "text that was already rendered for an earlier turn -- this is the exact prompt-cache-breaking defect "
+        "round 2 fixes. First divergence at char %d of %d.\n--- before ---\n%s\n--- after (same prefix) ---\n%s"
+        % (next((i for i in range(min(len(before), len(after))) if before[i] != after[i]), -1), len(before),
+           before[-300:], after[:len(before)][-300:]))
+
+
 def main():
     results = {}
     for name in ("qwen38-27b-iq4nl-mtp", "devstral-small2-24b-iq4xs"):
@@ -190,6 +217,9 @@ def main():
         print("     %-28s tool calls byte-identical: %d/2" % ("", results[name]["tool_calls_matched"]))
         check_regressions(name)
         print("     %-28s no-system-message output UNCHANGED; system folding matches design" % "")
+    check_prefix_stability_qwen()
+    print("PASS %-28s a later mid-conversation system-reminder no longer perturbs the already-rendered prefix" %
+          "qwen38-27b-iq4nl-mtp")
     print("\nALL OFFLINE TEMPLATE CHECKS PASSED")
     return 0
 
