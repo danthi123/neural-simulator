@@ -247,7 +247,8 @@ seed 100 loses the re-mentioned fact on night 4 (FI6). D6 capacity at N=2000 (18
 cost ceiling between 50 and 500 facts for both; HEBB vs COPY reads PARITY-BY-CONSTRUCTION (the finding must say what that means).
 Committed fe1066f64: fi per-seed files + `research/findings/raw/_d6_capacity_curve/score.json`. The fi aggregate is NOT committed:
 its aggregator writes no `preconditions` block (gate verdict-preconditions), so the scoring step adds one after the independent
-check. Seven D6 N=2000 cells ran 14.6-31.0 h each with no cost projection; each now carries a retroactive note saying so.
+check. Seven D6 N=2000 cells ran 14.6-31.0 h against a pre-launch projection of 8 h (COPY 6.5 h; JOBS.txt f9ae852b7); each
+carries a note saying so (CORRECTED 08388f74: my first note wrongly said no projection existed; caught by the D6 re-review).
 
 **☀️ 16:20 WRAP-UP MERGES (owner gaming; Claude weekly at 79%):** MERGED to main: marker-word retirement 606e1c7d8
 (BRAIN_AFFECT_MARKER_SURFACE default OFF; mood still computed + recorded; review SOUND, gate mutation-checked); corpus-check
