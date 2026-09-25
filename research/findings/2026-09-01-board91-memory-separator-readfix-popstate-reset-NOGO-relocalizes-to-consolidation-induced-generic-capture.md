@@ -69,7 +69,6 @@ out not to be the operative locus.
 
 ## Results — 6 seeds (42/43/44/100/101/102), pop_state reset ON vs OFF (`popreset_6seed.json`)
 
-<!--derived-->
 _Numbers from the cited artifact. `own` = the cue reactivates its own engram
 (Jaccard to own > Jaccard to the other); PRE = pre-consolidation baseline
 (fresh, never-consolidated bridge, same seed)._
@@ -87,7 +86,7 @@ _Numbers from the cited artifact. `own` = the cue reactivates its own engram
 manipulation lands and changes nothing); `m0_reactivates_own` ON **6/6** (no
 regression); `novel_no_spurious_completion` (Jaccard to both engrams < 0.5) ON **0/6**
 — a genuinely novel, untaught cue completes to the dominant engram on every seed, ON
-or OFF, reset or not. Mean novel→eng0 Jaccard: **0.437 pre-consolidation** vs **0.900
+or OFF, reset or not. Mean novel→eng0 Jaccard: **0.437 pre-consolidation** vs **0.900 <!--derived-->
 post-consolidation** (`build_bridge_popsetpoint` fresh vs after `base._consolidate`,
 same seed, same wiring) — the collapse is consolidation-induced, not a static wiring
 degeneracy, but it captures ANY sufficiently strong drive, not specifically the

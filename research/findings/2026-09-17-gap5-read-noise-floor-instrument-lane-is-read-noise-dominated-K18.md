@@ -32,10 +32,9 @@ weight-side NO-GOs (forward-band homeostatic scaling; reverse-edge heterosynapti
 "characterize the READ-side noise floor." This builds that instrument and returns the number.
 
 ## The number (from research/findings/raw/gap5_ecker_adex/read_noise_floor_6seed.json)
-<!--derived-->
 - Instrument-VALID 6/6: graded read confirmed per seed, weights frozen across every read trial, and sigma_read>0 on
   6/6 (distinct read-trial seeds actually vary the read — the anti-cheat against a zero-noise degenerate).
-- sigma_read_bar ~0.0745 (single weak-cue read-trial noise, depth_frac units, at the post-consolidation operating
+- sigma_read_bar ~0.0745 (single weak-cue read-trial noise, depth_frac units, at the post-consolidation operating <!--derived-->
   point) vs sigma_substrate ~0.0446 (across-6-seed spread of that operating point's mean read) => read_SNR ~0.60.
 - Minimum-detectable-gain from one read trial ~0.21; K_reads_needed ~18 to resolve the lane's 0.05 depth_frac gain bar
   (this run used 12/arm).

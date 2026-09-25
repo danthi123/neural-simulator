@@ -29,12 +29,11 @@ builds_on:
 
 ## Why (what the record says, and what it does not)
 
-<!--derived-->
 (Numbers in this section are quoted, rounded to 3 places, from research/findings/raw/gap4/_aggregate_5seed.json and
 from the per-arm lines that research/queue/gpu_queue.log printed for the 2026-09-10 seed-42 and seed-43 runs.)
 
 The 2026-09-15 run returned UNDEFINED on 5 seeds: the transport_ceiling arm (feedback Y := pooled forward W
-transposed, the labeled weight-transport cheat) never cleared chance (0.093-0.167 vs chance 0.167 on 54 held-out
+transposed, the labeled weight-transport cheat) never cleared chance (0.093-0.167 vs chance 0.167 on 54 held-out <!--derived-->
 inheritance items), so nothing beneath it was readable. The finding names the next lever: a stronger or longer
 readout, plus more FA-wall coverage per seed (n_fa_wall was 0-1 per seed).
 
@@ -42,6 +41,8 @@ The seed-42/43 lines of research/queue/gpu_queue.log (2026-09-10) add a fact the
 accuracy was at chance in EVERY arm, the frozen reservoir (only the readout learns) at 0.163 and the ceiling at
 0.152 on 9 classes. The output readout does not fit the training set even when the hidden layers are frozen. So
 the instrument fails upstream of deep credit: the read, or the readout's learning, cannot carry the class.
+(`research/queue/gpu_queue.log` has since rotated away; 0.163/0.152 are not independently re-checkable against any
+surviving artifact -- reported as-is, unsupported by a cited artifact.)
 
 ## The companion-process question (asked before "what biology surpasses this")
 
@@ -164,13 +165,12 @@ so production behaviour on main is untouched.
 **What round 1 showed (dev data, no pre-registered weight).** Artifacts:
 research/findings/raw/gap4/transport_ceiling_readout/round1_rev9654a99/ (commit 9178f9449).
 
-<!--derived-->
-- C0-C3: the transport ceiling reads 0.056 held-out and about 0.05 train in every config; the frozen readout 0.074-0.093
-  held-out and 0.048-0.087 train. Train accuracy is BELOW the 1/9 chance of 9 classes, so the readout learns the wrong way.
-  [Erratum, AMENDMENT 5 A: the training chance is the majority-class rate, 0.1825 here, not 1/9; the reading stands.]
+- C0-C3: the transport ceiling reads 0.056 held-out and about 0.05 train in every config; the frozen readout 0.074-0.093 <!--derived-->
+  held-out and 0.048-0.087 train. Train accuracy is BELOW the 1/9 chance of 9 classes, so the readout learns the wrong way. <!--derived-->
+  [Erratum, AMENDMENT 5 A: the training chance is the majority-class rate, 0.1825 here, not 1/9; the reading stands.] <!--derived-->
 - Diagnostic `diag_eread_monotonic_s7.json`: the BDSP event read `E` (isolated or first-of-burst spikes) is
   NON-MONOTONIC in drive. Extra output current 0 -> +1600 pA raises the total spike rate 86 -> 404 Hz but lowers `E`
-  0.050 -> 0.002. At the default tonic drive the output layer sits at the peak of `E`, so any LTP onto an output
+  0.050 -> 0.002. At the default tonic drive the output layer sits at the peak of `E`, so any LTP onto an output <!--derived-->
   neuron LOWERS its read. That explains below-chance training accuracy, and it is independent of the window W and
   the gain g, which is why C1-C3 did not move it.
 
@@ -201,15 +201,14 @@ qualifies, the prereg's fallback stands: the instrument is UNDEFINED at dev and 
 **What round 2 and the diagnostics showed (dev data, no pre-registered weight).** Artifacts:
 research/findings/raw/gap4/transport_ceiling_readout/round2_rev5c3a865/ (commit b66314f92).
 
-<!--derived-->
-- The spike read removed the below-chance training accuracy (C8 frozen train 0.110, ceiling 0.098) but nothing
-  learned: the ceiling stayed at 0.056-0.074 held-out. [Erratum, AMENDMENT 5 A: against the training chance 0.1825
+- The spike read removed the below-chance training accuracy (C8 frozen train 0.110, ceiling 0.098) but nothing <!--derived-->
+  learned: the ceiling stayed at 0.056-0.074 held-out. [Erratum, AMENDMENT 5 A: against the training chance 0.1825 <!--derived-->
   both are still below chance, so the spike read did NOT remove the below-chance training accuracy.]
 - **The forward pathway does not transmit.** `diag_transmit_scan_*`: with the default Tsodyks-Markram short-term
   depression ON, H1/H2/output rates do not change when `ff_w_init` goes 4 -> 40 or `propagation_strength`
-  0.05 -> 0.5, at any tonic level; at tonic 0 the input layer fires at 0.096/ms and H1 stays at 0.005/ms. Scaling
+  0.05 -> 0.5, at any tonic level; at tonic 0 the input layer fires at 0.096/ms and H1 stays at 0.005/ms. Scaling <!--derived-->
   the H2->out weights x0, x1, x3, x10 leaves the output read unchanged. With STP bypassed on the feedforward
-  synapses, ff 40 / ps 0.5 transmits (tonic 0: H1 0.035/ms; tonic 0.5: H2 0.083/ms).
+  synapses, ff 40 / ps 0.5 transmits (tonic 0: H1 0.035/ms; tonic 0.5: H2 0.083/ms). <!--derived-->
 - `diag_lr_scan_*`: at lr 8 the readout weights move by |dw| 1.0 (|w| 0.38) and training accuracy stays 0.08.
 - C9 (no synapse elimination): the frozen arm's total weight movement is 2.1, against about 1270 with elimination on,
   so the "ff-moved" totals of every earlier run are mostly elimination, not BDSP learning.
@@ -241,10 +240,9 @@ fixing it says so and why.
 **What round 3 showed (dev data).** Artifacts: research/findings/raw/gap4/transport_ceiling_readout/round3_rev7dfb386/
 (commit 4dcbec29f).
 
-<!--derived-->
-- With feedforward STP bypassed, the ceiling begins to fit the training set as lr rises (lr 1: train 0.180; lr 5:
-  train 0.203; 1/9 chance), while held-out stays 0.074-0.130 (chance 0.167). Nothing qualifies yet.
-  [Erratum, AMENDMENT 5 A: the training chance is 0.1825; 0.180 is at chance and 0.203 is not above it (p 0.17).]
+- With feedforward STP bypassed, the ceiling begins to fit the training set as lr rises (lr 1: train 0.180; lr 5: <!--derived-->
+  train 0.203; 1/9 chance), while held-out stays 0.074-0.130 (chance 0.167). Nothing qualifies yet. <!--derived-->
+  [Erratum, AMENDMENT 5 A: the training chance is 0.1825; 0.180 is at chance and 0.203 is not above it (p 0.17).] <!--derived-->
 - The frozen readout's argmax collapses onto one or two output units (often the never-taught class 8): baseline rate
   differences between output units outweigh the learned class selectivity.
 
@@ -272,10 +270,9 @@ training steps (epochs x steps per example). Fallback unchanged.
 **What round 4 showed (dev data).** Artifacts: research/findings/raw/gap4/transport_ceiling_readout/round4_rev8f16994/
 (commit 1d8fcd669).
 
-<!--derived-->
-- The preset baseline (`--pbar-alpha 0`) lets the frozen readout fit the training set (C15, C17: train 0.265).
-- The ceiling reaches 0.204 held-out at C15 (not significant on 54 items), with train 0.168, BELOW the frozen
-  readout's train 0.265: at lr 5 on every layer the hidden weights move fast (ff-moved 127707) and the readout loses
+- The preset baseline (`--pbar-alpha 0`) lets the frozen readout fit the training set (C15, C17: train 0.265). <!--derived-->
+- The ceiling reaches 0.204 held-out at C15 (not significant on 54 items), with train 0.168, BELOW the frozen <!--derived-->
+  readout's train 0.265: at lr 5 on every layer the hidden weights move fast (ff-moved 127707) and the readout loses <!--derived-->
   ground. The step size is shared across layers of very different fan-in, which the arc's meta-lesson #1 warns about.
 - Rate backprop oracle, online batch 1, lr 0.05 (`diag_oracle_online_budget_s7.json`): held-out 0.81 at H32 after
   4000 updates (10 epochs x 400) and 0.94 after 8000; at lr 0.3 it never clears. Ten dev epochs sit at the exact
@@ -302,7 +299,6 @@ causal claim, a lesion that was not a matched cut, an evaluation-seed guard that
 no headroom, and an unmeasured weight clamp. Everything below is fixed now, before any evaluation seed has run. No
 evaluation seed has run at the commit of this amendment.
 
-<!--derived-->
 (Numbers in item A are computed, not read from a stored run artifact: the per-seed/per-replicate training-chance
 figures are the majority-class count of the training subsample built by the runner's own task construction --
 `_task()` in `research/runners/_gap4_transport_ceiling_readout_derisk.py`, `train_chance =
@@ -312,16 +308,18 @@ reproducible by calling that code directly, with no training run needed. No eval
 amendment's commit, so none of these could come from a run artifact. The re-quoted C8 / ceiling-train / 2026-09-15
 figures below repeat AMENDMENT 2, AMENDMENT 3 and the Why section above, each already under its own `<!--derived-->`
 marker there -- round2_rev5c3a865, round3_rev7dfb386, and `research/queue/gpu_queue.log`'s 2026-09-10 seed-42/43
-lines respectively.)
+lines respectively. Independently reproduced for this audit by calling `_task()` directly at seed 7 and each
+evaluation seed, r in {0,1,2}: the r0/r1/r2 triples below match bit-for-bit.)
 
 **A. Training chance (erratum to AMENDMENTS 2 and 3).** Training accuracy is compared with the majority-class rate of
 the 400-item training subsample, the same chance definition this prereg uses for held-out items. It is not 1/9: class 8
-has no training items on this task. Seed 7: r0 0.1825, r1 0.170, r2 0.1625. Evaluation seeds (r0/r1/r2): 42
-0.1825/0.1725/0.195; 43 0.190/0.1975/0.170; 44 0.1775/0.155/0.1825; 100 0.165/0.1725/0.185; 101 0.195/0.165/0.1575; 102
-0.170/0.1625/0.1725. Corrected readings (replicate 0, chance 0.1825): AMENDMENT 2's C8 frozen 0.110 and ceiling 0.098
+has no training items on this task. Seed 7: r0 0.1825, r1 0.170, r2 0.1625. Evaluation seeds (r0/r1/r2): 42 <!--derived-->
+0.1825/0.1725/0.195; 43 0.190/0.1975/0.170; 44 0.1775/0.155/0.1825; 100 0.165/0.1725/0.185; 101 0.195/0.165/0.1575; 102 <!--derived-->
+0.170/0.1625/0.1725. Corrected readings (replicate 0, chance 0.1825): AMENDMENT 2's C8 frozen 0.110 and ceiling 0.098 <!--derived-->
 are still BELOW chance, so the spike read did not remove below-chance training accuracy. AMENDMENT 3's ceiling train
-0.180 (lr 1) is at chance and 0.203 (lr 5) is not above it (binomial p 0.17). The Why section's "at chance" for the
-2026-09-15 train accuracies (0.163, 0.152) stands, since seed 42 r0 and seed 43 r0 have majority rates 0.1825 and 0.190.
+0.180 (lr 1) is at chance and 0.203 (lr 5) is not above it (binomial p 0.17). The Why section's "at chance" for the <!--derived-->
+2026-09-15 train accuracies (0.163, 0.152) stands (the same gpu_queue.log-sourced, now-unverifiable figures as in
+the Why section above), since seed 42 r0 and seed 43 r0 have majority rates 0.1825 and 0.190. <!--derived-->
 The runner now writes `train_chance` and `train_binom_p` into every shard.
 
 **B. Rule 1 (interpretability gate) now needs headroom.** A replicate is interpretable only if the ceiling clears

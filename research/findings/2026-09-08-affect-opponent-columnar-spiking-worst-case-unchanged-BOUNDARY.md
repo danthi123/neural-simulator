@@ -46,35 +46,35 @@ byte-identical-off delegate path (no `--spiking`) is untouched (asserted in code
 
 ## Result — 6-seed, full partition (164 words), BOUNDARY
 
-<!--derived-->
 Numbers below are direct reads of the cited 6seed JSON's aggregate + `per_seed` fields.
 
 | quantity | value |
 |---|---|
-| SPIKING recall@FP0, realistic point — **worst-case (min, 6 seeds)** | **0.010** |
-| SPIKING recall@FP0, realistic point — mean (6 seeds) | 0.059 |
+| SPIKING recall@FP0, realistic point — **worst-case (min, 6 seeds)** | **0.010** | <!--derived-->
+| SPIKING recall@FP0, realistic point — mean (6 seeds) | 0.059 | <!--derived-->
 | numpy-GO recall@FP0, same point (reproduced, unchanged) | 0.598 |
-| text-only ceiling (the boundary this all sits above) | 0.059 (worst) |
-| lesion control (no body-state) — worst (max, must stay low) | 0.049 |
-| shuffle control (binding permuted) — worst (max, must stay low) | 0.118 |
+| text-only ceiling (the boundary this all sits above) | 0.059 (worst) | <!--derived-->
+| lesion control (no body-state) — worst (max, must stay low) | 0.049 | <!--derived-->
+| shuffle control (binding permuted) — worst (max, must stay low) | 0.118 | <!--derived-->
 | held-out (generalization) at the realistic point — worst | 0.000 |
 | assembly spikes/concept (grounding-modulated; lesion collapses) | 31.1 mean / 29.4 min |
 | synthetic-instrument ceiling (validates the read) | 1.000 |
 | GO gate | **False** (G0=True, G1=False, G2=True nominal / UNDEFINED by attribution margin, G2b=False, G3=True) |
 
 **The pre-registered G1 bar (worst-case >= 0.5) FAILS by the same order of magnitude as the shared-WTA variant's
-single-seed 0.0095** — the opponent/columnar topology, at the SAME inherited operating point, does **not** move
+single-seed 0.0095** (`research/findings/raw/_affect_onsubstrate_noise_robust_convergence_1seed_full.json`'s <!--derived-->
+`spiking_realistic_worst`=0.009524) — the opponent/columnar topology, at the SAME inherited operating point, does **not** move
 the quantity the strict zero-FP criterion actually gates (the worst seed). Per-seed detail (real / lesion /
 shuffle / held-out-real / text / numpy-real):
 
 | seed | real | lesion | shuffle | held-out(real) | text | numpy@real |
 |---|---|---|---|---|---|---|
-| 42 | 0.020 | 0.049 | 0.020 | 0.433 | 0.059 | 0.608 |
-| 43 | 0.029 | 0.000 | 0.000 | 0.586 | 0.020 | 0.618 |
-| 44 | 0.118 | 0.000 | 0.000 | 0.750 | 0.000 | 0.598 |
-| 100 | 0.059 | 0.020 | 0.118 | 0.029 | 0.010 | 0.598 |
-| 101 | **0.010** | 0.000 | 0.000 | 0.000 | 0.020 | 0.598 |
-| 102 | 0.118 | 0.029 | 0.000 | 0.000 | 0.010 | 0.608 |
+| 42 | 0.020 | 0.049 | 0.020 | 0.433 | 0.059 | 0.608 | <!--derived-->
+| 43 | 0.029 | 0.000 | 0.000 | 0.586 | 0.020 | 0.618 | <!--derived-->
+| 44 | 0.118 | 0.000 | 0.000 | 0.750 | 0.000 | 0.598 | <!--derived-->
+| 100 | 0.059 | 0.020 | 0.118 | 0.029 | 0.010 | 0.598 | <!--derived-->
+| 101 | **0.010** | 0.000 | 0.000 | 0.000 | 0.020 | 0.598 | <!--derived-->
+| 102 | 0.118 | 0.029 | 0.000 | 0.000 | 0.010 | 0.608 | <!--derived-->
 
 **The per-seed spread is the finding.** Two seeds (44, 102) show a real 6x-12x lift over the worst; two seeds
 (101, and near-tied 42/43) sit at or near the shared-WTA's original floor. On seeds 100/42 the LESION or SHUFFLE
@@ -86,17 +86,18 @@ nothing separable forms at all.
 
 ## A single-seed anecdote, reported and explicitly NOT the headline (the 6-seed discipline earning its keep)
 
-<!--derived-->
 A standalone `--seeds 42` run (the SAME invocation shape as the shared-WTA's original 1-seed-full
 finding) landed a DIFFERENT partition size (167 words vs the 6-seed run's 164 — `build_partition` intersects
 across ALL requested seeds' bootstrap resamples, an existing, unmodified property of the imported partition
-builder) and reads **real=0.067** against the shared-WTA's cited single-seed 0.010 — an apparent ~7x lift
+builder) and reads **real=0.067** against the shared-WTA's cited single-seed 0.010 (from <!--derived-->
+`research/findings/raw/_affect_onsubstrate_noise_robust_convergence_1seed_full.json`'s `spiking_realistic_worst`=0.009524)
+— an apparent ~7x lift
 (`research/findings/raw/_affect_onsubstrate_opponent_columnar_1seed_full.json`). Reported for completeness, but
-the 6-seed run's OWN seed-42 row (jointly-partitioned, 164 words) reads only 0.020 — **a ~3x SMALLER number for
+the 6-seed run's OWN seed-42 row (jointly-partitioned, 164 words) reads only 0.020 <!--derived--> — **a ~3x SMALLER number for
 the identical seed once the partition is the one shared across all six**. This is reported explicitly because it
 is the exact failure mode `gates/single_seed` and `feedback_6seed_validation` exist to catch: a single favorable
 seed/partition combination reads a large, attractive lift that does not hold as the headline. The 6-seed
-worst-case (0.010) is the number that governs this finding's verdict, not the anecdote.
+worst-case (0.010) is the number that governs this finding's verdict, not the anecdote. <!--derived-->
 
 ## Reading it (no-defer; a verdict on THIS topology at THIS operating point, not the capability)
 

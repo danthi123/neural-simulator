@@ -67,7 +67,6 @@ sentences. The odd half and FACT_EVAL were never read. The rule is in
 `research/runners/_affect_learned_vocabulary_calibrate.py` (committed before the dev weights were read, then amended three times; each amendment is logged in
 its docstring with what had been seen). Artifacts: `research/findings/raw/_affect_learned_vocab/dev_s7/`.
 
-<!--derived-->
 - Host design diagnostics (not the mechanism): base-rate-corrected seed co-occurrence separated held-out negatives
   from neutral words poorly on TinyStories + wiki (the register confound again) and in adult wiki text alone
   (recall <= 0.18). On fineweb-edu it reached recall 0.48-0.50 at a 7-9% false-flag rate on fact words. A
@@ -77,11 +76,11 @@ its docstring with what had been seen). Artifacts: `research/findings/raw/_affec
   valence at r = 0.38. From rest it carries it at r = 0.95 / 0.96. Two full dev runs of that trainer were also lost
   unread to a full /tmp tmpfs.
 - Fixed trainer, three variants at G = 500 (A: no depression; B: U_DEP 0.5; C: U_DEP 0.5, N0 300): best dev-negative
-  recall 0.126. Re-read over a G grid (amendment 1): recall 0.42-0.55 at G >= 2000, but 3-6 of 20 FACT_DEV
+  recall 0.126 (variant B, `research/findings/raw/_affect_learned_vocab/dev_s7/calibration.json`). <!--derived--> Re-read over a G grid (amendment 1): recall 0.42-0.55 at G >= 2000, but 3-6 of 20 FACT_DEV
   sentences read above 0.25 through frequent topical words ('does', 'planet', 'solar', 'students'). Valence scale
   anchored to the held-out seeds (amendment 2): still no admissible cell. Strong-affect margin V_MIN (amendment 3):
-  the chosen cell is variant B, G_read 4000, MIN_RATE 0.002, V_MIN 0.4. DEV: negative recall 0.295, wrong-sign 0.084,
-  positive recall 0.200, contrast D 0.241, FACT_DEV within 0.95 (19 of 20), held-out seeds decided 8 with sign
+  the chosen cell is variant B, G_read 4000, MIN_RATE 0.002, V_MIN 0.4. DEV: negative recall 0.295, wrong-sign 0.084, <!--derived-->
+  positive recall 0.200, contrast D 0.241, FACT_DEV within 0.95 (19 of 20), held-out seeds decided 8 with sign <!--derived-->
   accuracy 0.50.
 - A fourth variant trained on the whole 4.3 GB file read WORSE (dev-negative recall 0.04 at G 4000; held-out seed sign
   accuracy 0.25): more heard text did not help this rule, and why is not understood.

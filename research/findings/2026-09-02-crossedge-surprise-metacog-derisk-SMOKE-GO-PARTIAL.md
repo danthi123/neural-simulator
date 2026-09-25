@@ -62,7 +62,6 @@ monotone in member[1]'s activity. Both signed and |.| forms are reported; the ga
 
 ## Results (2-seed numpy smoke + seed-7 calibration; artifact below)
 
-<!--derived-->
 The numbers below are a rounded human summary of the committed smoke artifact
 (`_crossedge_surprise_metacog_numpy_smoke.json`, cited in Files); the seed-7 row is the calibration console output
 (not persisted — calibration only). The raw per-seed values live in the artifact.
@@ -74,16 +73,16 @@ intact, drop vanishes on lesion, attributable) AND byte-off PASS AND anti-cheat 
 | seed | edge grown (W0=0.05) | conf low (CONFIRM) | conf high (CONTRADICT) | drop intact | drop lesion | % attributable | byte-off | GO |
 |---|---|---|---|---|---|---|---|---|
 | 7 (calib) | 0.678 | +0.1032 | -0.0088 | -0.1120 | — | — | — | — |
-| 42 | 0.615 | +0.0961 | -0.0092 | -0.1053 | -0.0051 | 95.2% | PASS | True |
-| 43 | 0.659 | +0.1078 | +0.0033 | -0.1045 | -0.0018 | 98.3% | PASS | True |
+| 42 | 0.615 | +0.0961 | -0.0092 | -0.1053 | -0.0051 | 95.2% | PASS | True | <!--derived-->
+| 43 | 0.659 | +0.1078 | +0.0033 | -0.1045 | -0.0018 | 98.3% | PASS | True | <!--derived-->
 
-- **(a) EMERGENCE** — the surprise->metacog weight GROWS from W0=0.05 to 0.615/0.659 (>12x, well above the
+- **(a) EMERGENCE** — the surprise->metacog weight GROWS from W0=0.05 to 0.615/0.659 (>12x, well above the <!--derived-->
   grow_factor*W0=0.25 bar) by the substrate's own rate-Hebbian rule; no non-edge synapse moved (`no_corruption`
   True, frozen-weight maxdrift < 1e-6).
-- **(b) VARY / LESION** — a surprising (CONTRADICT) turn drops the metacog confidence margin by ~-0.105 relative to
+- **(b) VARY / LESION** — a surprising (CONTRADICT) turn drops the metacog confidence margin by ~-0.105 relative to <!--derived-->
   the low-surprise (CONFIRM) control (surprise raises the runner-up g_nmda from ~97 to ~127, flattening the
   winner-vs-runner-up balance to a near-tie / slight flip). FREEZING the edge (the gate's in-place lesion, zeroing
-  exactly the declared synapses; plasticity is OFF at read, so the zero holds) collapses the drop to ~-0.005: the
+  exactly the declared synapses; plasticity is OFF at read, so the zero holds) collapses the drop to ~-0.005: the <!--derived-->
   confidence STAYS HIGH on the surprising turn. The LEVER helper confirms the lesion actually moved the
   high-condition read on both seeds (not a vacuous no-op).
 - **(c) ATTRIBUTABLE** — `attributable_to` assigns 95.2% / 98.3% of the confidence drop to the surprise-driven

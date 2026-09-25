@@ -37,17 +37,15 @@ not commit, which makes it a single-circuit problem with a clean lesion. Open-en
 ruler, not a mechanism. Da-gated-encoding has no natural drive yet.
 
 ## The defect, read off the substrate
-<!--derived-->
 Source: research/findings/raw/_lbf_borderline_isolated/op_s42.json .. op_s102.json (ladder.mood, intact.margin); boundary = midpoint of MOOD_CENTERS[4:6].
-On the 'emo' turn the felt mood is about +0.064 to +0.071, which sits on the +2/+3 register boundary at +0.07125.
-On 5 of 6 seeds the INTACT winner-minus-runner-up margin is about 0.033 to 0.044, below `DEAD_MARGIN`=0.05. The
+On the 'emo' turn the felt mood is about +0.064 to +0.071, which sits on the +2/+3 register boundary at +0.07125. <!--derived-->
+On 5 of 6 seeds the INTACT winner-minus-runner-up margin is about 0.033 to 0.044, below `DEAD_MARGIN`=0.05. The <!--derived-->
 intact circuit therefore emits no marker, the lesion also emits none, and the faculty reads not load-bearing.
 
 We asked what the real circuit runs alongside this that the code had replaced with a constant. Reading the circuit
 found two such constants. Neither one is part of the competition's own wiring. Both were first seen in exploratory
 probes before the gate was registered, and are reproduced as a committed artifact by `--mechanism-probe`
 (research/findings/raw/_affect_marker_settle/mechanism_probe.json):
-<!--derived-->
 Source: research/findings/raw/_affect_marker_settle/mechanism_probe.json.
 1. **Deliberation time (`WARMUP_STEPS`=60 ms).** When two inputs are nearly equal, a lateral-inhibition race resolves
    slowly. Decision time grows as the evidence difference shrinks (Roitman & Shadlen 2002, LIP; Wang 2002, the
@@ -56,7 +54,7 @@ Source: research/findings/raw/_affect_marker_settle/mechanism_probe.json.
    no winner). After 300 ms the race had resolved (0.1375 vs 0.0). After 500 ms it was 0.131944 vs 0.0. The circuit
    could always choose; the read stopped it before the race finished.
 2. **Inter-turn rest (`WASHOUT_STEPS`=40 ms).** The reader stays warm across turns, and the circuit only advances
-   while it is being read. Between two turns it relaxed for only 40 ms. On seed 42 at mood +0.0682, three
+   while it is being read. Between two turns it relaxed for only 40 ms. On seed 42 at mood +0.0682, three <!--derived-->
    consecutive reads on one warm reader gave these margins:
    - 40 ms washout: 0.113889, 0.035417, 0.115278;
    - 200 ms: 0.113889, 0.045139, 0.045139;
@@ -92,7 +90,6 @@ The criterion was pre-registered in commit a4891aa3e before any calibration ran.
 7 to 11, which are disjoint from the verification seeds. It has four parts: C1, commit at every register boundary;
 C2, choose the correct register at every center; C3, no clean winner under the lesion (baseline-only drive); C4, a
 repeated read gives the same answer.
-<!--derived-->
 Source: research/findings/raw/_affect_marker_settle/calibration.json.
 **As registered, no window from 60 to 800 ms passed.** C1 failed in two places:
 - at the mood=0 midpoint between the -1 and +1 registers, on 3 or more seeds at every window;
@@ -108,18 +105,17 @@ gated. The shortest window that passes C1' + C2 + C3 + C4 on all 5 calibration s
 boundary committed on 4/5 seeds at 300 ms and above.
 
 ## Result: circuit-level 6-seed gate (`--verify`)
-<!--derived-->
 Source: research/findings/raw/_affect_marker_settle/oplevel_verify.json.
 All reads use the real ladder mood from the 'emo' turn, through the same `_lbf_borderline_operating_point._affect_marker`
 path the committed diagnosis used.
 | seed | mood | OFF lead intact/lesion (margin) | SETTLE lead intact/lesion (margin) | load-bearing OFF -> ON |
 |---|---|---|---|---|
-| 42 | +0.0682 | '' / '' (0.044) | 'Gladly! ' / '' (0.147) | no -> yes |
-| 43 | +0.0710 | '' / '' (0.033) | 'Gladly! ' / '' (0.137) | no -> yes |
-| 44 | +0.0703 | '' / '' (0.040) | 'Gladly! ' / '' (0.142) | no -> yes |
-| 100 | +0.0639 | 'Gladly! ' / '' (0.160) | 'Gladly! ' / '' (0.158) | yes -> yes |
-| 101 | +0.0685 | '' / '' (0.038) | 'Gladly! ' / '' (0.138) | no -> yes |
-| 102 | +0.0691 | '' / '' (0.040) | 'Gladly! ' / '' (0.146) | no -> yes |
+| 42 | +0.0682 | '' / '' (0.044) | 'Gladly! ' / '' (0.147) | no -> yes | <!--derived-->
+| 43 | +0.0710 | '' / '' (0.033) | 'Gladly! ' / '' (0.137) | no -> yes | <!--derived-->
+| 44 | +0.0703 | '' / '' (0.040) | 'Gladly! ' / '' (0.142) | no -> yes | <!--derived-->
+| 100 | +0.0639 | 'Gladly! ' / '' (0.160) | 'Gladly! ' / '' (0.158) | yes -> yes | <!--derived-->
+| 101 | +0.0685 | '' / '' (0.038) | 'Gladly! ' / '' (0.138) | no -> yes | <!--derived-->
+| 102 | +0.0691 | '' / '' (0.040) | 'Gladly! ' / '' (0.146) | no -> yes | <!--derived-->
 
 The gate result is **GO** (`tools.verdict.Verdict`, every precondition measured):
 - G1: load-bearing with SETTLE on 6/6 seeds, against 1/6 with it off.
@@ -132,12 +128,12 @@ The gate result is **GO** (`tools.verdict.Verdict`, every precondition measured)
 - Fix-round verdict structure: G1 and G4 are outcomes, so a failure now reads NO-GO. The full seed set, G2, G3 and G5
   are validity checks, so a failure reads UNDEFINED. The re-run still reads GO.
 
-The intact margins with SETTLE on are 0.137 to 0.158, about 3 times `DEAD_MARGIN`.
+The intact margins with SETTLE on are 0.137 to 0.158, about 3 times `DEAD_MARGIN`. <!--derived-->
 
 **Attribution (G6, reported, not gated).** Each arm was run separately:
 - deliberation alone is load-bearing on 6/6 seeds;
 - rest alone is load-bearing on 5/6 seeds; it fails on s43, which sits exactly on the boundary, with intact margin
-  0.0097;
+  0.0097; <!--derived-->
 - with neither, 1/6 seeds.
 Most of the flip comes from deliberation time. The rest restores reads that the previous read's state had degraded.
 
@@ -161,7 +157,6 @@ Most of the flip comes from deliberation time. The rest restores reads that the 
   give load-bearing 6/6 with rest 1000 ms, so the choice of 500 ms was not selected by the outcome.
 
 ## Full-brain smoke, 1 seed (local, numpy, memcap 16): load-bearing at s42 (not a headline)
-<!--derived-->
 Source: research/findings/raw/_affect_marker_settle/lbf/lbf_settle_s42.json.
 Command: `BRAIN_AFFECT_MARKER_SETTLE=1 load_bearing_fraction --only affect-marker-spiking-wta --seed 42 --repeats 2`.
 It read `load_bearing=True` (`affect_drives.lead` 'Gladly! ' -> ''), `null_control_clean=True`,
@@ -184,7 +179,6 @@ that OFF rows carry no flag, so it could credit SETTLE even if the OFF control w
 the remaining running and queued jobs were killed by PID. The six rows that had finished (ON s42, s43, s44, s101; OFF
 s42, s43) were copied unread to `research/findings/raw/_affect_marker_settle/lbf_superseded_rev56e588d/` and do not
 enter the verdict.
-<!--derived-->
 Source: research/findings/raw/_affect_marker_settle/lbf_superseded_rev56e588d/pool41/lbf_settle_on_s42.json and siblings.
 Read only after the contrast gate was committed, as an informational cross-check:
 - ON s42, s43 and s101 read load-bearing, null-clean, lesion-reproduced and deterministic, with the flag set.

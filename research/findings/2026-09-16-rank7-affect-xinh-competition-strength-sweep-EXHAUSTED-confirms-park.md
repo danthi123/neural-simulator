@@ -36,18 +36,17 @@ reproduced the default-config boundary. This is the corrected sweep — the ACTU
 
 ## Result — the lever does not move the metric
 
-<!--derived-->
 (means over the 6 seeds per cell; per-seed `spiking_realistic_worst` / `spiking_clean_worst` / `GO` live in the cited
 per-seed artifacts, e.g. `research/findings/raw/_affect_gain_sweep/opp_xinh_e8_i18_s42.json` and its e/i/seed siblings.)
 
 | cell (exc-w/inh-w) | spiking recall worst (mean) | best seed | clean recall worst | GO |
 |:------------------:|:---------------------------:|:---------:|:------------------:|:--:|
-| e16/i12            | 0.029                       | 0.057     | 0.201              | False |
-| e4/i12             | 0.032                       | 0.067     | 0.201              | False |
-| e8/i6              | 0.032                       | 0.067     | 0.201              | False |
-| e8/i18             | 0.032                       | 0.067     | 0.201              | False |
-| e8/i24             | 0.032                       | 0.067     | 0.201              | False |
-| e8/i36             | 0.032                       | 0.067     | 0.201              | False |
+| e16/i12            | 0.029                       | 0.057     | 0.201              | False | <!--derived-->
+| e4/i12             | 0.032                       | 0.067     | 0.201              | False | <!--derived-->
+| e8/i6              | 0.032                       | 0.067     | 0.201              | False | <!--derived-->
+| e8/i18             | 0.032                       | 0.067     | 0.201              | False | <!--derived-->
+| e8/i24             | 0.032                       | 0.067     | 0.201              | False | <!--derived-->
+| e8/i36             | 0.032                       | 0.067     | 0.201              | False | <!--derived-->
 
 The ceiling GO bar is 0.5; the numpy rate+ridge idealization reaches ~0.60 on the same task. Every spiking cell is
 UNDEFINED / GO=False, and the metric is flat across a 4x range of both the excitatory and inhibitory

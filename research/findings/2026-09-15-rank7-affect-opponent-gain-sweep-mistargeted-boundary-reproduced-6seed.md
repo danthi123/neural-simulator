@@ -33,17 +33,15 @@ is now queued on the pool.
 
 ## What the 42 cells show (6 seeds x 7 (to_fs, fs_inh) combos)
 
-<!--derived-->
 (6-seed means/derived quantities from the cited per-cell artifacts; per-combo means saved in
 `research/findings/raw/_affect_gain_sweep/_aggregate_6seed.json`.)
 
-Mean on-substrate (`--spiking`) `spiking_realistic_worst` = **0.0318 (sd 0.027)**, `spiking_clean_worst` = 0.201,
+Mean on-substrate (`--spiking`) `spiking_realistic_worst` = **0.0318 (sd 0.027)**, `spiking_clean_worst` = 0.201, <!--derived-->
 GO 0/42 — **identical across every (to_fs, fs_inh) combo and every seed**. That invariance is the diagnostic: the
 swept parameters had zero effect on the opponent circuit.
 
 ## Why they were inert (traced in the runner)
 
-<!--derived-->
 (code line references + config constants below, not artifact measurements.)
 
 `--opponent` builds `build_opponent_convergence_bridge`
@@ -56,17 +54,15 @@ named XINH, but the command swept TO_FS/FS_INH).
 
 ## What is still true and useful
 
-<!--derived-->
 (6-seed summary + config constants; see the cited artifacts + aggregate.)
 
 At **default XINH** (exc 8.0 / inh 12.0) the on-substrate opponent columnar convergence holds recall@FP0 at floor
 across all 6 project seeds — a genuine 6-seed confirmation of the previously single-seed-floor BOUNDARY. The
 zero-FP bar is not cleared; the assembly spikes (~30.9/concept, grounding-modulated) and the instrument is valid
-(synthetic ceiling 1.0, text ceiling 0.029), so the setup works and the residual is real, not an artifact.
+(synthetic ceiling 1.0, text ceiling 0.029), so the setup works and the residual is real, not an artifact. <!--derived-->
 
 ## Corrected sweep queued (no-defer)
 
-<!--derived-->
 (planned config values, not artifact measurements.)
 
 On the pool (CPU, `--spiking`): `--xinh-exc-w` in {4,8,16} x `--xinh-inh-w` in {6,12,18,24,36} around defaults

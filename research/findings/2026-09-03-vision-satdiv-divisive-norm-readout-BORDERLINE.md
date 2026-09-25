@@ -100,16 +100,14 @@ lb=6/6). Its `capability_go` per-seed breakdown shows exactly which of the 8 AND
 `research/findings/raw/lanes/perception/satdiv_sig8_sc771_6seed.json`'s per-seed `decode` block) — the artifact
 stores each addend, not the pre-subtracted margin:
 
-<!--derived-->
-
 | seed | LEARNED | learned-V1 margin (need >=0.10) | position_pooled_out | capability_go |
 |---:|---:|---:|:---:|:---:|
-| 42 | 0.4479 | +0.0312 | True | False |
-| 43 | 0.4688 | -0.0104 | True | False |
-| 44 | 0.4479 | -0.0104 | False (pos leaks: pos_split 0.4167>0.40) | False |
-| 100 | 0.4375 | +0.0625 | False (obj_split 0.3958<0.40) | False |
-| 101 | 0.5625 | +0.1042 | False (obj_split 0.3958<0.40) | False |
-| 102 | 0.4688 | +0.1459 | False (obj_split 0.3750<0.40) | False |
+| 42 | 0.4479 | +0.0312 | True | False | <!--derived-->
+| 43 | 0.4688 | -0.0104 | True | False | <!--derived-->
+| 44 | 0.4479 | -0.0104 | False (pos leaks: pos_split 0.4167>0.40) | False | <!--derived-->
+| 100 | 0.4375 | +0.0625 | False (obj_split 0.3958<0.40) | False | <!--derived-->
+| 101 | 0.5625 | +0.1042 | False (obj_split 0.3958<0.40) | False | <!--derived-->
+| 102 | 0.4688 | +0.1459 | False (obj_split 0.3750<0.40) | False | <!--derived-->
 
 Two of the strict bar's eight sub-criteria are the actual blockers here (scramble-null and label-shuffle-null
 pass cleanly on every seed, <=0.34 vs the <=0.40 requirement): the **+0.10-over-V1-direct margin** (met on only
@@ -208,14 +206,12 @@ new pass/fail criteria and no new architecture.
 
 ## Sources
 
-<!--derived-->
-
 - Carandini, M. & Heeger, D. J. (2012). Normalization as a canonical neural computation. *Nat. Rev. Neurosci.*
-  13:51-62. doi:10.1038/nrn3136 (the satdiv ratio itself).
+  13:51-62. doi:10.1038/nrn3136 (the satdiv ratio itself). <!--derived-->
 - Heeger, D. J. (1992). Normalization of cell responses in cat striate cortex. *Visual Neuroscience* 9(2):181-197.
   PMID:1504027 (n~2-4 semi-saturation exponent range).
 - Huang, G.-B., Zhu, Q.-Y. & Siew, C.-K. (2006). Extreme learning machine: theory and applications.
-  *Neurocomputing* 70(1-3):489-501. doi:10.1016/j.neucom.2005.12.126 (fixed-random-hidden-layer capacity scales
+  *Neurocomputing* 70(1-3):489-501. doi:10.1016/j.neucom.2005.12.126 (fixed-random-hidden-layer capacity scales <!--derived-->
   with width — recorded via `tools/record_external_search.sh`, lane `perception (board #135 / #75)`, this session).
 - Prior on this substrate: the three `builds_on` findings above (opsweep, readout-exhausted, BCM NOGO), commit
   `ad0648672` (satdiv scoping), and the cross-lane

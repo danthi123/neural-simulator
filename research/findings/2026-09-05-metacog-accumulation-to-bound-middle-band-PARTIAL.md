@@ -31,8 +31,6 @@ naive-ratio bound criterion is dominated by small-spike-count noise); see below.
 
 ## Verify-first: the PARTIAL's residual is real and accurately described
 
-<!--derived-->
-
 Read [`2026-09-05-metacog-spiking-recall-margin-derisk-PARTIAL.md`](2026-09-05-metacog-spiking-recall-margin-derisk-PARTIAL.md),
 its runner (`research/runners/_metacog_spiking_recall_margin_derisk.py`), and its artifact
 (`research/findings/raw/_metacog_spiking_recall_margin_derisk/6seed_results.json`) before building.
@@ -47,7 +45,8 @@ One characterization in the task brief does **not** appear in the PARTIAL itself
 figure. `.venv-rag/bin/python tools/rag/rag_search.py "metacognition confidence recall margin accumulation" 5
 --corpus finding` surfaces only this PARTIAL as the top hit (score 2.72; the next metacog hits are the unrelated
 GateB production-readout and margin-comparator findings) and the PARTIAL's own metrics are Pearson
-r=0.959/Spearman rho=0.954 and the 97.6%/50% agreement split — never a type-2 AUC. `0.825` (and `0.67-0.82`)
+r=0.959/Spearman rho=0.954 and the 97.6%/50% agreement split — never a type-2 AUC. <!--derived-->
+`0.825` (and `0.67-0.82`)
 appear instead in `metacog_production_organ.py`'s own module docstring, describing a DIFFERENT, ARCHITECTURALLY
 DISTINCT mechanism (the metacog WORKSPACE's own settled NMDA-balance read, `_second_order_metacog_monitor_derisk`,
 E1 GO) — a sibling system downstream of this one, not this de-risk's own measurement. This is a loose citation in
@@ -70,8 +69,6 @@ calls this new method by default, `_spiking_margin` itself is byte-unchanged, an
 explicitly unwired, per the task's own scope (de-risk only).
 
 ## An instrument bug found and fixed en route, not banked
-
-<!--derived-->
 
 The first version of `steps_to_bound` put the criterion on the NORMALIZED ratio `_spiking_margin` itself reports
 (`(top1-top2)/(top1+eps)`), reasoning it was "the same form, just read early." This was WRONG, and the wrongness
@@ -100,8 +97,6 @@ the two hand-built cases (0.867 decisive vs. 0.058 tied) even under the flawed r
 
 ## Unit tests: the mechanics are pinned independent of substrate results
 
-<!--derived-->
-
 `tests/test_spiking_margin_accum.py` (9 tests, all passing, SIM_BACKEND=numpy): `final_margin` is bit-exact
 against `_spiking_margin`'s own return on the same scores/lesion (2 seeds); a clearly-separable competition
 reaches the count-bound criterion in under half the window and sustains a trajectory mean at least half its final
@@ -112,8 +107,6 @@ scores) match `_spiking_margin`'s own zero verdict; and a grep-backed test confi
 never calls the new method (unwired by construction, not merely by convention).
 
 ## CPU smoke (3 seeds, numpy): a genuine type-2 test in the ambiguous band
-
-<!--derived-->
 
 `research/runners/_metacog_accumulation_to_bound_derisk.py` reuses the rank-9 PARTIAL's own validated
 composer/capture machinery UNCHANGED (`build_composer`, `capture_raw_scores`, `_host_mrc`, `FACTS`, `VOCAB` —
@@ -133,40 +126,38 @@ Mann-Whitney rank statistic, `research/runners/_stageA_foundation_honesty_arbite
 
 | seed | n ambiguous (correct/incorrect) | AUC snapshot | AUC accum (mean-trajectory) | delta |
 |---:|---:|---:|---:|---:|
-| 42 | 29 (19/10) | 0.574 | 0.600 | +0.026 |
-| 43 | 29 (18/11) | 0.306 | 0.444 | +0.139 |
-| 44 | 24 (20/4)  | 0.487 | 0.575 | +0.087 |
-| **pooled** | **82 (57/25)** | **0.446** | **0.530** | **+0.084** |
+| 42 | 29 (19/10) | 0.574 | 0.600 | +0.026 | <!--derived-->
+| 43 | 29 (18/11) | 0.306 | 0.444 | +0.139 | <!--derived-->
+| 44 | 24 (20/4)  | 0.487 | 0.575 | +0.087 | <!--derived-->
+| **pooled** | **82 (57/25)** | **0.446** | **0.530** | **+0.084** | <!--derived-->
 
 **All-condition results** (every trial, not just the ambiguous band; n=168 of 300 trials produced a usable margin
 — the rest abstained, which the composer's no-confab moat correctly reports as having no recall competition to
-read a margin from, so they carry no signal for either arm): pooled AUC snapshot 0.542, AUC accum 0.586, delta
-+0.043. The improvement is directionally the SAME but smaller than in the ambiguous band specifically — matching
+read a margin from, so they carry no signal for either arm): pooled AUC snapshot 0.542, AUC accum 0.586, delta <!--derived-->
++0.043. The improvement is directionally the SAME but smaller than in the ambiguous band specifically — matching <!--derived-->
 the mission's own hypothesis that accumulation should help MORE exactly where a fixed-endpoint snapshot is
 weakest.
 
 **The time-to-bound diagnostic (`frac_roles_bounded`) is the STRONGEST of the three signals measured**, not just
-an auxiliary: pooled ambiguous-band AUC 0.585 (per-seed 0.618 / 0.525 / 0.631 — all three seeds above chance,
-consistently), versus 0.446 (snapshot) and 0.530 (accum mean-trajectory). Mean `frac_roles_bounded` for correct
-ambiguous-band trials is 0.553 vs. 0.490 for incorrect ones. This was not the read this de-risk set out to
+an auxiliary: pooled ambiguous-band AUC 0.585 (per-seed 0.618 / 0.525 / 0.631 — all three seeds above chance, <!--derived-->
+consistently), versus 0.446 (snapshot) and 0.530 (accum mean-trajectory). Mean `frac_roles_bounded` for correct <!--derived-->
+ambiguous-band trials is 0.553 vs. 0.490 for incorrect ones. This was not the read this de-risk set out to <!--derived-->
 privilege (`mean_trajectory_margin` was the planned primary read) — it emerged from measuring both, and is
 reported because it is the actual strongest result, not folded silently into a blended scalar (see
 `_spiking_margin_accum`'s own docstring for why no single blended `confidence_accum` scalar is defined).
 
 **A new, sharper characterization of the residual**: under this de-risk's genuine-correctness ground truth, the
-EXISTING single-snapshot spiking margin (`snapshot_mrc`) reads **below chance (AUC 0.446)** in the ambiguous band
+EXISTING single-snapshot spiking margin (`snapshot_mrc`) reads **below chance (AUC 0.446)** in the ambiguous band <!--derived-->
 — it is not merely imprecise there, it is mildly ANTI-predictive of correctness at this operating point and
 sample size. The PARTIAL's own agreement-with-host metric could not surface this because it measures agreement
 with a DIFFERENT proxy signal, not predictive validity for ground-truth correctness.
 
 ## Honest characterization
 
-<!--derived-->
-
 **Direction: CONFIRMED, consistently across all 3 seeds tested**, for both the accumulated-trajectory-mean read
 and (more strongly) the time-to-bound fraction — every seed's accum-family AUC exceeds its own snapshot AUC in
 the ambiguous band; none regresses. **Magnitude: MODEST.** No signal measured here reaches strong type-2
-discrimination (the ceiling observed is 0.585-0.631, not the ~0.8+ region a robust confidence code would show);
+discrimination (the ceiling observed is 0.585-0.631, not the ~0.8+ region a robust confidence code would show); <!--derived-->
 the improvement moves the ambiguous band from mildly-anti-predictive toward weakly-predictive, not to a resolved
 state. **Scale: CPU-smoke only.** This is a tiny 5-role/~15-word composer under extreme, sigma-driven synaptic
 damage engineered specifically to LAND trials in the narrow ambiguous band — not the real-handler production
@@ -178,8 +169,6 @@ fidelity a production or "closed" claim would need — an honest positive lead, 
 rank-9 residual.
 
 ## Scope / honesty notes
-
-<!--derived-->
 
 No `sim/` edit. Changes confined to `research/runners/rf_phasor_composer.py` (additive: `_spiking_margin_accum`
 and the `_margin_accum_count_bound` constant; `_spiking_margin` and every existing method are byte-unchanged), a
@@ -218,8 +207,6 @@ also widening `--sigmas` slightly per-seed once real seed-specific hedge-crossin
 rank-9 PARTIAL's own per-seed table.)
 
 ## Next rung (not attempted here)
-
-<!--derived-->
 
 If the 6-seed spiking run reproduces this direction with a materially larger effect (or the `frac_roles_bounded`
 time-to-bound read proves the more robust of the two accumulation arms, as this smoke's pooled numbers already

@@ -41,12 +41,11 @@ templates converged redundant. This tries the biologically-correct fix that BCM 
 pairwise decorrelation objective (SAILnet/Foldiak anti-Hebbian lateral inhibition + homeostatic threshold).
 
 ## Result (from research/findings/raw/lanes/perception/vlin_sail_seed42_al*.json)
-<!--derived-->
 Seed-42 explore, 9 configs (alpha_l in {0.01,0.02,0.05} x lca_iters in {10,15,20}) at the satdiv-GO op-point
 (--n-s2 96 --s2-norm satdiv --ridge 1.0 --n-glimpses 6 --heldout-position --scramble-null):
-- LEARNED held-out spiking-WTA accuracy: 0.24-0.35 across all 9 (best 0.354 at alpha_l=0.02/iters=15), every one a
+- LEARNED held-out spiking-WTA accuracy: 0.24-0.35 across all 9 (best 0.354 at alpha_l=0.02/iters=15), every one a <!--derived-->
   NO-GO or low PARTIAL.
-- Frozen-random baseline (same seed, --s2-learn none): 0.479. So SAIL underperforms frozen-random by ~0.12-0.24 on
+- Frozen-random baseline (same seed, --s2-learn none): 0.479. So SAIL underperforms frozen-random by ~0.12-0.24 on <!--derived-->
   every config, and underperforms the earlier BCM attempt (~0.34) too.
 - The mechanism is implemented correctly (the pure-numpy unit test confirms the lateral matrix grows non-negative and
   reduces pairwise cosine on a toy bars-problem; the unbounded spec updates needed internal stability caps). It works as

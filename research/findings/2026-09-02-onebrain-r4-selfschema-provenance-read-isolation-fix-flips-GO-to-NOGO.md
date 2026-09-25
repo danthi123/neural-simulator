@@ -73,9 +73,8 @@ asymmetric residue, then two back-to-back IDENTICAL ambiguous-item reads are com
 extra-array restore programmatically disabled (reproducing the pre-fix `_hard_reset`), then with it enabled (the
 actual fix). Both directions are asserted: the probe must DIVERGE when disabled (proving it has teeth — it would
 have caught the original bug) and must be IDENTICAL when enabled. (Console output of a live `--selftest` run,
-not saved to a JSON artifact.)
+not saved to a JSON artifact — these four values have no artifact citation and cannot be checked against one.)
 
-<!--derived-->
 ```
 [selftest] fix-disabled diverges=True: {'gen': 0.090625, 'perc': 0.093125} vs {'gen': 0.0925, 'perc': 0.09375}
 [selftest] fix-enabled  identical=True: {'gen': 0.090625, 'perc': 0.093125} vs {'gen': 0.090625, 'perc': 0.093125}
@@ -84,21 +83,20 @@ not saved to a JSON artifact.)
 
 ## Result — BEFORE (banked) vs AFTER (fixed), all 6 seeds
 
-<!--derived-->
 | seed | w grown, before | w grown, after | Δ_intact, before | Δ_intact, after | F2 floor (0.010) | PASS before | PASS after |
 |---|---|---|---|---|---|---|---|
-| 42 | 3.553 | 1.833 | 0.01323 | 0.00813 | miss | GO | **NO-GO** |
-| 43 | 3.468 | 2.496 | 0.01427 | 0.00969 | miss | GO | **NO-GO** |
-| 44 | 3.133 | 2.538 | 0.01583 | 0.01219 | clear | GO | GO |
-| 100 | 2.918 | 2.506 | 0.01104 | 0.00875 | miss | GO | **NO-GO** |
-| 101 | 3.335 | 2.222 | 0.01323 | 0.00812 | miss | GO | **NO-GO** |
-| 102 | 3.359 | 2.791 | 0.01354 | 0.01344 | clear (barely) | GO | GO |
+| 42 | 3.553 | 1.833 | 0.01323 | 0.00813 | miss | GO | **NO-GO** | <!--derived-->
+| 43 | 3.468 | 2.496 | 0.01427 | 0.00969 | miss | GO | **NO-GO** | <!--derived-->
+| 44 | 3.133 | 2.538 | 0.01583 | 0.01219 | clear | GO | GO | <!--derived-->
+| 100 | 2.918 | 2.506 | 0.01104 | 0.00875 | miss | GO | **NO-GO** | <!--derived-->
+| 101 | 3.335 | 2.222 | 0.01323 | 0.00812 | miss | GO | **NO-GO** | <!--derived-->
+| 102 | 3.359 | 2.791 | 0.01354 | 0.01344 | clear (barely) | GO | GO | <!--derived-->
 
 **GO 6/6 → NO-GO 2/6.** F1 (faculty-still-works), F3 (no-runaway), F4 (moat), emergence (grew from near-zero),
 and lesion-recovers-migration all still pass 6/6 after the fix — only F2, the crux vary-then-lesion
-measurement, moves. `delta_lesion` is now exactly `0.0` on every seed after the fix (was `-0.0001` to `+0.0006`
+measurement, moves. `delta_lesion` is now exactly `0.0` on every seed after the fix (was `-0.0001` to `+0.0006` <!--derived-->
 before) — `frac_attributable` is pinned at exactly `1.0` on every seed, cleaner than the banked
-`0.956`-`1.013` range. The mechanism (edge grows from near-zero, vanishes on lesion, moat holds) is intact and
+`0.956`-`1.028` range. <!--derived--> The mechanism (edge grows from near-zero, vanishes on lesion, moat holds) is intact and
 real; what was wrong was the MAGNITUDE the leak let it reach.
 
 **Preconditions carried in the artifact** (`tools.verdict.Verdict`, non-empty list, `n_go` NOT among them):
@@ -106,7 +104,7 @@ real; what was wrong was the MAGNITUDE the leak let it reach.
 `moat_no_winner_from_silence` (ok) — all 4 meta-checks hold; the gate's own `n_go==6` requirement is what fails.
 
 **Sanity check that the fix, not something else, causes the swing:** `git stash`-ing the fix and re-running
-seed 42 alone reproduces the banked numbers to full float precision (`w=3.553`, `delta_intact=0.013229166...`,
+seed 42 alone reproduces the banked numbers to full float precision (`w=3.553`, `delta_intact=0.013229166...`, <!--derived-->
 `frac=1.0078740157480317`, byte-identical to the banked artifact) — confirming the flip is caused by the
 read-isolation fix, not drift elsewhere.
 
@@ -166,3 +164,12 @@ DIR="research/findings/raw"
 NAME="_onebrain_integration_r4_selfschema_provenance_6seed_readfix_cupy.json"
 bash tools/gpu_queue.sh add "SIM_BACKEND=cupy python -m research.runners._onebrain_integration_r4_selfschema_provenance --seeds 42,43,44,100,101,102 --out $DIR/$NAME" --guard "git -C /home/dant123/Projects/sim log --oneline -- research/runners/_onebrain_integration_r4_selfschema_provenance.py | grep -q read-isolation"
 ```
+
+## Corrections (2026-09-25 claim-check audit)
+
+- The banked (before-fix) `frac_attributable` range was stated as `0.956`-`1.013`; the cited artifact <!--derived-->
+  (`_onebrain_integration_r4_selfschema_provenance_6seed.json`) gives per-seed `frac_attributable` of
+  1.0079 (42), 0.9562 (43), 1.0132 (44), 1.0283 (100), 1.0079 (101), 0.9692 (102) — min 0.956 (seed 43) is <!--derived-->
+  correct, but the max is 1.028 (seed 100), not 1.013 (seed 44's value). Corrected `1.013` -> `1.028`. Does <!--derived-->
+  not change the F2 gate outcome (that gate keys on `delta_intact` vs `F2_INTACT_FLOOR`, not on the before-arm
+  `frac_attributable` spread), so the NO-GO 2/6 verdict is unaffected.

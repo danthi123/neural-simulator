@@ -44,16 +44,12 @@ external:
 
 # Read-fidelity iteration 6: the LEARNED / covariance-whitened opponent read is NO-GO 0/6 -- and it PROVES the read-power residual is the READ ARCHITECTURE, not the estimator
 
-<!--derived-->
-
 Artifact: `research/findings/raw/_read_fidelity_learned_opponent_read_derisk_6seed.json` (numpy, 6 seeds; SAME trained
 cross-edge + SAME captured rasters iterations 1-5 used -- no retraining confound; the build-twice seed-trap hash is
 identical to iterations 4/5, so the substrate is byte-for-byte the same one). Runner:
 `research/runners/_read_fidelity_learned_opponent_read_derisk.py`.
 
 ## Why this run exists (the opponent read is BANKED -- this is its rank-1 residual, not a re-derivation)
-
-<!--derived-->
 
 The surprise->`source_provenance` F2 crux asks whether a biological spiking read can separate GENERATED from PERCEIVED
 off ONE SHARED trained cross-edge. Serially banked NO-GO: mean-rate 0/6, first-spike-latency 0/6, ISI-CV/Fano
@@ -69,8 +65,6 @@ lever is deprioritized here; our own 2026-08-25 vision-2layer NO-GO already show
 lift a linear ceiling).
 
 ## The mechanism (single-variable A/B vs iteration 5: the template-fitting METHOD only)
-
-<!--derived-->
 
 iterations 4/5 fit the 10-bin template as the DIAGONAL mean-difference `(mu_gen-mu_perc)/pooled_per_bin_std`, which
 normalizes each time-bin by its own std and IGNORES cross-bin covariance. The 10 bins are temporally correlated, so the
@@ -100,8 +94,6 @@ neuron-identity permutation null collapses on all 6 seeds on every combo; seed-t
 
 ## Result -- GO=False, 0/6, but the residual is isolated
 
-<!--derived-->
-
 Primary gate = `lda` on `delta_held_base` (the cross-edge-attributable component): 0 of 6 seeds PASS (none clears
 Z_FLOOR=2.0; none is lesion-attributable -- the near-zero intact margins make the lesion/intact ratio unstable, the same
 signature the banked opponent/popvec showed).
@@ -111,26 +103,24 @@ classification, chance 0.5) -- all values rounded from the cited artifact's `z_s
 
 | method | read z per-seed [42,43,44,100,101,102] | read z mean / peak | holdout-acc per-seed | acc mean |
 |---|---|---|---|---|
-| meandiff (=iteration-5 opponent) | [-1.29, -0.24, 0.19, 0.20, 1.01, 0.86] | 0.121 / 1.007 | [0.567,0.692,1.000,0.518,0.676,0.630] | 0.680 |
-| **lda (whitened, gating)** | [0.08, 0.66, -0.19, 0.34, 0.47, 0.61] | **0.330 / 0.663** | [0.652,0.683,0.831,0.580,0.712,0.751] | 0.702 |
-| logistic (best-linear diag) | [-0.65, 0.88, 0.20, 1.57, 0.85, 0.33] | 0.530 / 1.573 | [0.731,0.801,0.975,0.561,0.800,0.664] | 0.755 |
+| meandiff (=iteration-5 opponent) | [-1.29, -0.24, 0.19, 0.20, 1.01, 0.86] | 0.121 / 1.007 | [0.567,0.692,1.000,0.518,0.676,0.630] | 0.680 <!--derived--> |
+| **lda (whitened, gating)** | [0.08, 0.66, -0.19, 0.34, 0.47, 0.61] | **0.330 / 0.663** | [0.652,0.683,0.831,0.580,0.712,0.751] | 0.702 <!--derived--> |
+| logistic (best-linear diag) | [-0.65, 0.88, 0.20, 1.57, 0.85, 0.33] | 0.530 / 1.573 | [0.731,0.801,0.975,0.561,0.800,0.664] | 0.755 <!--derived--> |
 
 Shrinkage-sensitivity (lda intact-delta z at shrink in {0.1, 0.3, 1.0}, per seed): no lam clears the floor on any seed
 (largest observed ~1.39 at seed100/lam1.0, ~1.09 at seed102/lam0.1) -- the NO-GO is not a single-shrinkage artifact.
 
 ## What this settles (NO-DEFER -- a verdict on the METHOD, and it moves the whole arc)
 
-<!--derived-->
-
-**1. Covariance-whitening HELPS but is insufficient.** `lda` lifts the mean read z above the diagonal opponent (0.330 vs
-0.121) chiefly by rescuing the catastrophic-negative seeds (seed42 -1.29 -> 0.08; seed43 -0.24 -> 0.66); the improvement
+**1. Covariance-whitening HELPS but is insufficient.** `lda` lifts the mean read z above the diagonal opponent (0.330 <!--derived--> vs
+0.121) chiefly by rescuing the catastrophic-negative seeds (seed42 -1.29 -> 0.08; seed43 -0.24 -> 0.66); <!--derived--> the improvement
 is real but NON-uniform (lda beats meandiff on 3/6, loses on 3/6) and sub-threshold everywhere. So the diagonal template
 WAS leaving estimator power on the table -- but recovering it does not clear the floor.
 
 **2. The residual is DECISIVELY the READ ARCHITECTURE, not the estimator.** Direction quality and read-power are
-DECOUPLED. On seed 44 the fitted directions classify held-out gen-vs-perc NEURONS at accuracy 1.000 (meandiff) / 0.975
+DECOUPLED. On seed 44 the fitted directions classify held-out gen-vs-perc NEURONS at accuracy 1.000 (meandiff) / 0.975 <!--derived-->
 (logistic) -- a near-perfect linear discriminant -- yet every LIF read on that seed recovers z ~= 0.2 (null). Across
-seeds the holdout-accuracy ranking (logistic 0.755 > lda 0.702 > meandiff 0.680) does NOT track the read-z, and
+seeds the holdout-accuracy ranking (logistic 0.755 > lda 0.702 > meandiff 0.680) does NOT track the read-z, and <!--derived-->
 `logistic` (best direction) is also the most VARIABLE read. This is the diagnostic no prior iteration ran, and it
 resolves the deep-research shortlist's open ranks-1-vs-2 question: a better read DIRECTION (the estimator lever,
 constraint #3 / the "learned-gain" rank-1 residual) is NOT the binding constraint. What is binding is the read's
@@ -143,8 +133,6 @@ regularized logistic, over the full shrinkage sweep) as helping-but-insufficient
 the "just needs a better/regularized/whitened linear estimator" hypothesis for the F2 shared-edge read.
 
 ## Honest residual + the next lever (NO-DEFER -- the next method, not a wall)
-
-<!--derived-->
 
 The read-power gap on the F2 crux is real and it lives in the READ ARCHITECTURE. Two ranked next levers, both biological:
 
@@ -164,8 +152,6 @@ The read-power gap on the F2 crux is real and it lives in the READ ARCHITECTURE.
 
 ## Downstream implication
 
-<!--derived-->
-
 This is the SHARED read-power wall behind (a) the mouth spiking generator's read-SNR and (b) learn-through-use recall
 (reading a stored association off a shared substrate edge). The MOUTH side was separately re-framed (the "deep
 0.34-0.37 plateau" was a stale-cache artifact; post-fix the mouth read sits ~0.85, a tuning residual -- board 2026-08-28
@@ -177,8 +163,6 @@ quantified. The instrument (`_read_fidelity_learned_opponent_read_derisk.py`, wi
 diagnostic) is reusable verbatim for iteration 7.
 
 ## Scaffolds / scope
-
-<!--derived-->
 
 DE-RISK ONLY -- new research runner + finding, no `sim/` edit, no production wiring, no default flip, so there is no
 default-off flag to assert byte-identical-off on (nothing in the production path changed). The covariance and the

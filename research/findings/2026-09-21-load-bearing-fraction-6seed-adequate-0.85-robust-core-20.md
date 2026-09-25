@@ -12,10 +12,9 @@ lesioning the brain's contribution provably changes the reply), measured with th
 drive-probe flags ON), on the integration branch. This is the constraint-mandated robust number that supersedes the
 single-seed adequate reading (~0.88) from `2026-09-20-hollow-set-attack-6of9-probe-artifacts-verified.md`.
 
-## Result (artifacts: research/findings/raw/_load_bearing/_adequate6/load_bearing_adequate_s{42,43,44,100,101,102}.json)
+## Result (artifacts: research/findings/raw/_load_bearing/_adequate6/load_bearing_adequate_s*.json — all 6 seeds)
 
-<!--derived-->
-**Robust adequate-probe fraction = 0.8526 mean, 0.0264 std (n_seeds=6).**
+**Robust adequate-probe fraction = 0.8526 mean, 0.0264 std (n_seeds=6).** <!--derived-->
 - Per-seed load_bearing_fraction: s42=0.8462, s43=0.8462, s44=0.8077, s100=0.8846, s101=0.8846, s102=0.8462.
   (Each value is the `load_bearing_fraction` field of the correspondingly-named committed artifact
   research/findings/raw/_load_bearing/_adequate6/load_bearing_adequate_s42.json etc.)
