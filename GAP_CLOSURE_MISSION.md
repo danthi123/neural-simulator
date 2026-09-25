@@ -93,6 +93,14 @@ re-induction scales with the current read (subcritical for a weak trace); lz_arc
 method (companion process: CA3 pattern completion makes a replay event near all-or-none) on DEV seeds + Amendment 7 =
 workflow `w1zb4w1ta` lane B; lane A = dup-guard fix round (review found 2 HIGH fail-open paths). fi-family 6 seeds queued.
 
+**☀️ 09:55 recovery:** the orchestrating session was killed at 07:51 (no kernel OOM logged; the SETTLE A2 web-test process
+died with it). GPU queue and pool kept running; orchestration stalled ~2 h. Saved every partial branch (settle-a3-amendment3
+@ b58e4080b, pool-dup-guard-fixround-wip @ 9460337de, claimcheck-r8 @ a960fa231) and resumed all six lanes in workflow
+`wjnk7jtnb` (SETTLE A3 amendment, dup-guard fix round, awake-replay completion, pool-stall detector + unrunnable-line
+check, prereg-amendment gate fix round after an UNSOUND review, claim-check r8). Found: the six SETTLE A2 lines (revision
+5b5ea1b74) sat 7.5 h because that revision was never provisioned on pool1/pool2 -- provisioning now. Merged lexicon round 3
+(d51e9c88b, dev NOT READY) + its scope correction (05eba333f). Web tests re-running. fi family running (30 arm files).
+
 **🌙 PRE-DECIDED NEXT ACTIONS — OVERNIGHT PLAN (owner asleep from 01:35, 2026-09-25); work in order, re-arm the heartbeat on every expiry:**
 1. ✅ B2a DONE 03:45: re-scored R1 PASS (28/28, 0 regressions) + R2 PASS (168/168 valid at pinned M1, 6 covered-by-parent,
    0 incomplete), two verifiers agree, merged 075c24cd3 (follow-up to the FAIL finding). Robust core 24, union 25, mean
