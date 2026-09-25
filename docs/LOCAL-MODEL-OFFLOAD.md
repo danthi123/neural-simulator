@@ -157,9 +157,15 @@ must remain visible rather than being hidden by a local-model answer.
 Code's own offline fallback, `llm on`/`off`/`status`/`claude`) as the
 `local-llm` user service, unrelated to the broker above. It and
 `tools/gpu_queue.sh` jobs are not coordinated on their own and both want the
-one 3090, so the queue's dispatcher now stops `local-llm` itself right before
-a queued job would contend with it for VRAM and restarts it once the queue
-drains, only if it found the unit actually running. `llm off` always cancels
-that pending auto-restore, even mid-job, and a crashed or failed restart is
-never retried more than once per drain. See the AUTOSWAP note at the top of
-`tools/local_llm/llm.sh` for the exact mechanism.
+one 3090, so the queue's dispatcher stops `local-llm` itself, directly via
+systemctl (never by shelling out to `llm.sh`'s own `off`, which would delete
+its own restore marker), right before a queued job would contend with it for
+VRAM, only after VERIFYING the stop actually took, and restarts it -- with the
+SAME profile that was running -- once the queue drains, only if it found the
+unit actually running. The dispatcher's own contention loop also never starts
+a job while the unit is still active, even if raw VRAM headroom alone would
+otherwise look sufficient. `llm off` always cancels the pending auto-restore,
+even mid-job; a refused `llm on` records the owner's own intent to load it so
+the same auto-restore applies once the queue drains; and a crashed or failed
+restart is never retried more than once per drain. See the AUTOSWAP note at
+the top of `tools/local_llm/llm.sh` for the exact mechanism.
