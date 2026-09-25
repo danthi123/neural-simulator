@@ -21,7 +21,12 @@ Several pool bugs were found and fixed (duplicate jobs, a dispatcher that starve
 test that wrote fake spend into the real AWS ledger was stopped. From this evening a local model supervises the queued
 experiments over the weekend while Claude usage is conserved. **Done by late afternoon:** the feeling word is off
 in replies by default (the mood is still computed and recorded), and the local model's runbook is written.
-(Board: GAP_CLOSURE_MISSION.md 13:05-16:20 entries.)
+**Evening:** the "forget after learning more" test came back NO-GO on its six-seed check (3 of 6 seeds passed); on two seeds
+the plain facts were never stored in the first place, a storage problem rather than forgetting. Memory capacity holds up to
+2,000 facts, but the time and memory a chat turn costs on one graphics card runs out somewhere between 50 and 500 facts. The
+design for "remember what matters, let minor details fade" is written and reviewed, with its remaining open questions listed
+for the next step. The weekend local model now has a 128K-token memory, reuses its prompt between turns (about twice as fast),
+and can run its checklist without stopping for permission. (Board: GAP_CLOSURE_MISSION.md 13:05-19:05 entries.)
 
 ## 2026-09-25 (overnight) — overnight memory: a fact kept through sleep passes; resting hours before sleep works on 5 of 6 seeds; nothing switched on
 
