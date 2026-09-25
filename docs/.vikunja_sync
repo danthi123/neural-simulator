@@ -191,3 +191,6 @@ ordinary replies, #232 false-belief in chat, #233 learned noun meanings (de-risk
 
 ## 2026-09-24  A10 follow-up round
 - new task #236: surprise -> engagement (A10), off by default; follow-up fixes landed on research/a10-followups, AMENDMENT-3 filed, v4 arms not yet run
+
+## 2026-09-24  20:25 A3 open-ended gated turn merged default-OFF
+- #112 appended: gated open-ended turn merged off-by-default (2a84f80e1); opt-in rows, coin-flip row parked.

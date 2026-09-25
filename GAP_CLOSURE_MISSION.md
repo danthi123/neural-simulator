@@ -15,7 +15,30 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-19 (RESUME HERE) — NEW ARC: PERMANENT LLM MOUTH + LOAD-BEARING METRIC
 
-**🟢 UPDATE ~17:15 (2026-09-24) — main a5e37143b. RESUME HERE.**
+**🟢 UPDATE ~20:25 (2026-09-24) — main 2a84f80e1. RESUME HERE (supersedes the 17:15 block below).**
+- **Merged since 17:15 (all default-OFF, review SOUND):** content-provenance test, wm referent focus binding, SETTLE
+  multi-turn instrument, AI teacher, A10 reward/value afferent + follow-ups, A9 gap#4 transport ceiling, REQUIRED_ENV
+  opt-in rows, A3 open-ended gated turn (its coin-flip faculty-drive row PARKED). Scored: curiosity v5 NO-GO 1/6; DA
+  tag-capture buffer-only path GO 6/6. Registry = 50 faculties at production defaults (opt-in rows need their env).
+- **Why nothing flipped yet:** merge bar (SOUND review) is not the flip bar (6-seed GO + no regression in the combined
+  battery with the flag ON). The learned referent lexicon changes the parse on 60/112 probe turns, so it is NOT a flip
+  candidate; B2b runs its base arm only (Amendment 1).
+- **In flight:** B2a 152/186 (last 5 at the pool queue front); B2b base arm queued in waves; lexicon closed-class lane
+  (workflow `wyzt42x79`); GPU: A9 gap#4 seed-7 run, then the local-LLM bake-off; AWS pool1/pool2 (~$1 so far today).
+  pool40 stays OFFLINE (owner: OS reinstall deferred).
+
+**PRE-DECIDED NEXT ACTIONS:**
+1. Harvest workflow `wyzt42x79` (B2b base amendment + wave queue; lexicon closed-class lane + review); merge SOUND
+   branches; run the B2b next-wave script as waves drain.
+2. B2a aggregate at 186/186: `python tools/lb_shard.py aggregate --tag b2a0924 --seeds 42 43 44 100 101 102`, then R1/R2
+   vs `research/findings/raw/_load_bearing/_shards/flipdefaults-adequate/aggregate.json`; use the re-run s100
+   open-ended-generation cell (the off-revision one is set aside); write the finding.
+3. Bake-off done -> read `tools/local_llm/results/summary.md`, set `tools/local_llm/default_profile`, report to owner.
+4. Score as they land: SETTLE multi-turn seeds 44/100-102; AI-teacher SHAM arms; CA3 reruns; affect seed 102; D6 N2000;
+   A10 v4 arms; wm-focus-bind 6-seed.
+5. Flip candidates that clear 6-seed GO + B2b no-regression: flip them myself (owner authorization 2026-09-23).
+
+**🟢 UPDATE ~17:15 (2026-09-24) — main a5e37143b. (history: superseded by the 20:25 block above)**
 - **Incident 13:53:** a review subagent's `rm -rf <scratch> ~/.claude/projects` deleted every project's Claude session
   history and memory notes. Memory rebuilt: 62 from the 2026-07-15 vault backup (bannered), 8 verbatim from file
   history, 27 reconstructed from index lines + repo sources (marked). Guards now at USER level
@@ -381,7 +404,7 @@ the hollow-set finding sits uncommitted in the working tree + a safety stash `pr
 - LOCAL pmem-v2 6-seed (--only prospective-memory) — running throttled (2 seeds live + a memcap'd chain for the
   other 4, after a self-inflicted RAM spike from an uncapped 6-parallel launch — recovered, avail 23G).
 
-**PRE-DECIDED NEXT ACTIONS:**
+**PRE-DECIDED NEXT ACTIONS (2026-09-19 era — history):**
 1. ⏸️ POST-REBOOT (owner rebooting ~22:45Z for updates; say "continue" to resume — nothing running, all committed both
    remotes). Do these ONE HEAVY LANE AT A TIME (RAM lesson, twice-earned): (a) **episodic s100 cupy-repeats** — run s100
    on cupy ~5× + majority-vote the in_memory read (~15-20min GPU); if LB in majority → episodic effectively 6/6 →
