@@ -12,9 +12,7 @@
   "per_seed": {
     "42": {
       "K": 4,
-      "void": {
-        "SHAM": "missing"
-      },
+      "void": {},
       "criteria": {
         "T1_learns": {
           "recall": 1.0,
@@ -119,10 +117,12 @@
               true,
               true
             ],
-            "SHAM": null
+            "SHAM": [
+              true,
+              true
+            ]
           },
-          "pass": null,
-          "undefined": "void arm(s) or a probe that never ran: {\"SHAM\": \"missing\"}"
+          "pass": true
         },
         "T8_isolation": {
           "reads": [
@@ -171,10 +171,14 @@
               "required_present": true,
               "teacher_calls": 0
             },
-            "SHAM": null
+            "SHAM": {
+              "violations": 0,
+              "n_patched": 30,
+              "required_present": true,
+              "teacher_calls": 0
+            }
           },
-          "pass": null,
-          "undefined": "void arm(s) or a probe that never ran: {\"SHAM\": \"missing\"}"
+          "pass": true
         },
         "T9_no_test_writes": {
           "reads": [
@@ -193,18 +197,36 @@
             "ZERO": 0,
             "PERM": 0,
             "ERR": 0,
-            "SHAM": null
+            "SHAM": 0
           },
-          "pass": null,
-          "undefined": "void arm(s) or a probe that never ran: {\"SHAM\": \"missing\"}"
+          "pass": true
         },
         "T10_sham": {
+          "n_teach_recalled": 4,
+          "n_sham_recalled": 4,
+          "n_lost": 0,
+          "same_session_pre_lesion": true,
+          "n_pre_lesion_turns": 13,
+          "sham_ok": true,
+          "n_sham_blocks": 4,
+          "sham_max_abs_dw": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "offtarget_ok": true,
+          "n_offtarget_cut": 3,
+          "offtarget_cut": [
+            "brain use spikes",
+            "brain learn words",
+            "brain store memory"
+          ],
+          "pass": true,
           "reads": [
             "SHAM",
             "TEACH"
-          ],
-          "pass": null,
-          "undefined": "void arm(s): {\"SHAM\": \"missing\"}"
+          ]
         }
       },
       "secondary": {
@@ -308,6 +330,14 @@
               "lesson": 4
             },
             "quiz_corrections": 0
+          },
+          "SHAM": {
+            "n_turns": 19,
+            "writes_by_phase": {
+              "lesson": 4,
+              "lesion": 7
+            },
+            "quiz_corrections": 0
           }
         },
         "teach_taught_block_w": {
@@ -322,16 +352,11 @@
         }
       },
       "provenance_checked": true,
-      "go": null,
-      "defined": false,
-      "status": "UNDEFINED",
+      "go": true,
+      "defined": true,
+      "status": "GO",
       "failed": [],
-      "undefined": [
-        "T7_controls",
-        "T8_isolation",
-        "T9_no_test_writes",
-        "T10_sham"
-      ],
+      "undefined": [],
       "provenance": {
         "TEACH": {
           "ok": true,
@@ -362,6 +387,11 @@
           "ok": true,
           "reason": null,
           "git_sha": "c12c0d47e07ba301bd8fa14b6bd4030c8edc6b29"
+        },
+        "SHAM": {
+          "ok": true,
+          "reason": null,
+          "git_sha": "d460b44984cdc1ac2e3fe5de4dbfc3cc23290331"
         }
       },
       "retention_vs_K": {
@@ -401,14 +431,17 @@
           "elapsed_s": 1497.6,
           "peak_rss_mb": 689.8,
           "n_turns": 19
+        },
+        "SHAM": {
+          "elapsed_s": 918.4,
+          "peak_rss_mb": 695.2,
+          "n_turns": 19
         }
       }
     },
     "43": {
       "K": 4,
-      "void": {
-        "SHAM": "missing"
-      },
+      "void": {},
       "criteria": {
         "T1_learns": {
           "recall": 1.0,
@@ -513,10 +546,12 @@
               true,
               true
             ],
-            "SHAM": null
+            "SHAM": [
+              true,
+              true
+            ]
           },
-          "pass": null,
-          "undefined": "void arm(s) or a probe that never ran: {\"SHAM\": \"missing\"}"
+          "pass": true
         },
         "T8_isolation": {
           "reads": [
@@ -565,10 +600,14 @@
               "required_present": true,
               "teacher_calls": 0
             },
-            "SHAM": null
+            "SHAM": {
+              "violations": 0,
+              "n_patched": 30,
+              "required_present": true,
+              "teacher_calls": 0
+            }
           },
-          "pass": null,
-          "undefined": "void arm(s) or a probe that never ran: {\"SHAM\": \"missing\"}"
+          "pass": true
         },
         "T9_no_test_writes": {
           "reads": [
@@ -587,18 +626,36 @@
             "ZERO": 0,
             "PERM": 0,
             "ERR": 0,
-            "SHAM": null
+            "SHAM": 0
           },
-          "pass": null,
-          "undefined": "void arm(s) or a probe that never ran: {\"SHAM\": \"missing\"}"
+          "pass": true
         },
         "T10_sham": {
+          "n_teach_recalled": 4,
+          "n_sham_recalled": 4,
+          "n_lost": 0,
+          "same_session_pre_lesion": true,
+          "n_pre_lesion_turns": 13,
+          "sham_ok": true,
+          "n_sham_blocks": 4,
+          "sham_max_abs_dw": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "offtarget_ok": true,
+          "n_offtarget_cut": 3,
+          "offtarget_cut": [
+            "brain use spikes",
+            "brain learn words",
+            "brain store memory"
+          ],
+          "pass": true,
           "reads": [
             "SHAM",
             "TEACH"
-          ],
-          "pass": null,
-          "undefined": "void arm(s): {\"SHAM\": \"missing\"}"
+          ]
         }
       },
       "secondary": {
@@ -702,6 +759,14 @@
               "lesson": 4
             },
             "quiz_corrections": 0
+          },
+          "SHAM": {
+            "n_turns": 19,
+            "writes_by_phase": {
+              "lesson": 4,
+              "lesion": 7
+            },
+            "quiz_corrections": 0
           }
         },
         "teach_taught_block_w": {
@@ -716,16 +781,11 @@
         }
       },
       "provenance_checked": true,
-      "go": null,
-      "defined": false,
-      "status": "UNDEFINED",
+      "go": true,
+      "defined": true,
+      "status": "GO",
       "failed": [],
-      "undefined": [
-        "T7_controls",
-        "T8_isolation",
-        "T9_no_test_writes",
-        "T10_sham"
-      ],
+      "undefined": [],
       "provenance": {
         "TEACH": {
           "ok": true,
@@ -756,6 +816,11 @@
           "ok": true,
           "reason": null,
           "git_sha": "c12c0d47e07ba301bd8fa14b6bd4030c8edc6b29"
+        },
+        "SHAM": {
+          "ok": true,
+          "reason": null,
+          "git_sha": "d460b44984cdc1ac2e3fe5de4dbfc3cc23290331"
         }
       },
       "retention_vs_K": {
@@ -795,14 +860,17 @@
           "elapsed_s": 948.0,
           "peak_rss_mb": 694.2,
           "n_turns": 19
+        },
+        "SHAM": {
+          "elapsed_s": 922.5,
+          "peak_rss_mb": 691.6,
+          "n_turns": 19
         }
       }
     },
     "44": {
       "K": 4,
-      "void": {
-        "SHAM": "missing"
-      },
+      "void": {},
       "criteria": {
         "T1_learns": {
           "recall": 1.0,
@@ -907,10 +975,12 @@
               true,
               true
             ],
-            "SHAM": null
+            "SHAM": [
+              true,
+              true
+            ]
           },
-          "pass": null,
-          "undefined": "void arm(s) or a probe that never ran: {\"SHAM\": \"missing\"}"
+          "pass": true
         },
         "T8_isolation": {
           "reads": [
@@ -959,10 +1029,14 @@
               "required_present": true,
               "teacher_calls": 0
             },
-            "SHAM": null
+            "SHAM": {
+              "violations": 0,
+              "n_patched": 30,
+              "required_present": true,
+              "teacher_calls": 0
+            }
           },
-          "pass": null,
-          "undefined": "void arm(s) or a probe that never ran: {\"SHAM\": \"missing\"}"
+          "pass": true
         },
         "T9_no_test_writes": {
           "reads": [
@@ -981,18 +1055,36 @@
             "ZERO": 0,
             "PERM": 0,
             "ERR": 0,
-            "SHAM": null
+            "SHAM": 0
           },
-          "pass": null,
-          "undefined": "void arm(s) or a probe that never ran: {\"SHAM\": \"missing\"}"
+          "pass": true
         },
         "T10_sham": {
+          "n_teach_recalled": 4,
+          "n_sham_recalled": 4,
+          "n_lost": 0,
+          "same_session_pre_lesion": true,
+          "n_pre_lesion_turns": 13,
+          "sham_ok": true,
+          "n_sham_blocks": 4,
+          "sham_max_abs_dw": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "offtarget_ok": true,
+          "n_offtarget_cut": 3,
+          "offtarget_cut": [
+            "brain use spikes",
+            "brain learn words",
+            "brain store memory"
+          ],
+          "pass": true,
           "reads": [
             "SHAM",
             "TEACH"
-          ],
-          "pass": null,
-          "undefined": "void arm(s): {\"SHAM\": \"missing\"}"
+          ]
         }
       },
       "secondary": {
@@ -1096,6 +1188,14 @@
               "lesson": 4
             },
             "quiz_corrections": 0
+          },
+          "SHAM": {
+            "n_turns": 19,
+            "writes_by_phase": {
+              "lesson": 4,
+              "lesion": 7
+            },
+            "quiz_corrections": 0
           }
         },
         "teach_taught_block_w": {
@@ -1110,16 +1210,11 @@
         }
       },
       "provenance_checked": true,
-      "go": null,
-      "defined": false,
-      "status": "UNDEFINED",
+      "go": true,
+      "defined": true,
+      "status": "GO",
       "failed": [],
-      "undefined": [
-        "T7_controls",
-        "T8_isolation",
-        "T9_no_test_writes",
-        "T10_sham"
-      ],
+      "undefined": [],
       "provenance": {
         "TEACH": {
           "ok": true,
@@ -1150,6 +1245,11 @@
           "ok": true,
           "reason": null,
           "git_sha": "c12c0d47e07ba301bd8fa14b6bd4030c8edc6b29"
+        },
+        "SHAM": {
+          "ok": true,
+          "reason": null,
+          "git_sha": "d460b44984cdc1ac2e3fe5de4dbfc3cc23290331"
         }
       },
       "retention_vs_K": {
@@ -1189,14 +1289,17 @@
           "elapsed_s": 936.8,
           "peak_rss_mb": 693.1,
           "n_turns": 19
+        },
+        "SHAM": {
+          "elapsed_s": 897.8,
+          "peak_rss_mb": 694.9,
+          "n_turns": 19
         }
       }
     },
     "100": {
       "K": 4,
-      "void": {
-        "SHAM": "missing"
-      },
+      "void": {},
       "criteria": {
         "T1_learns": {
           "recall": 1.0,
@@ -1301,10 +1404,12 @@
               true,
               true
             ],
-            "SHAM": null
+            "SHAM": [
+              true,
+              true
+            ]
           },
-          "pass": null,
-          "undefined": "void arm(s) or a probe that never ran: {\"SHAM\": \"missing\"}"
+          "pass": true
         },
         "T8_isolation": {
           "reads": [
@@ -1353,10 +1458,14 @@
               "required_present": true,
               "teacher_calls": 0
             },
-            "SHAM": null
+            "SHAM": {
+              "violations": 0,
+              "n_patched": 30,
+              "required_present": true,
+              "teacher_calls": 0
+            }
           },
-          "pass": null,
-          "undefined": "void arm(s) or a probe that never ran: {\"SHAM\": \"missing\"}"
+          "pass": true
         },
         "T9_no_test_writes": {
           "reads": [
@@ -1375,18 +1484,36 @@
             "ZERO": 0,
             "PERM": 0,
             "ERR": 0,
-            "SHAM": null
+            "SHAM": 0
           },
-          "pass": null,
-          "undefined": "void arm(s) or a probe that never ran: {\"SHAM\": \"missing\"}"
+          "pass": true
         },
         "T10_sham": {
+          "n_teach_recalled": 4,
+          "n_sham_recalled": 4,
+          "n_lost": 0,
+          "same_session_pre_lesion": true,
+          "n_pre_lesion_turns": 13,
+          "sham_ok": true,
+          "n_sham_blocks": 4,
+          "sham_max_abs_dw": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "offtarget_ok": true,
+          "n_offtarget_cut": 3,
+          "offtarget_cut": [
+            "brain use spikes",
+            "brain learn words",
+            "brain store memory"
+          ],
+          "pass": true,
           "reads": [
             "SHAM",
             "TEACH"
-          ],
-          "pass": null,
-          "undefined": "void arm(s): {\"SHAM\": \"missing\"}"
+          ]
         }
       },
       "secondary": {
@@ -1490,6 +1617,14 @@
               "lesson": 4
             },
             "quiz_corrections": 0
+          },
+          "SHAM": {
+            "n_turns": 19,
+            "writes_by_phase": {
+              "lesson": 4,
+              "lesion": 7
+            },
+            "quiz_corrections": 0
           }
         },
         "teach_taught_block_w": {
@@ -1504,16 +1639,11 @@
         }
       },
       "provenance_checked": true,
-      "go": null,
-      "defined": false,
-      "status": "UNDEFINED",
+      "go": true,
+      "defined": true,
+      "status": "GO",
       "failed": [],
-      "undefined": [
-        "T7_controls",
-        "T8_isolation",
-        "T9_no_test_writes",
-        "T10_sham"
-      ],
+      "undefined": [],
       "provenance": {
         "TEACH": {
           "ok": true,
@@ -1544,6 +1674,11 @@
           "ok": true,
           "reason": null,
           "git_sha": "c12c0d47e07ba301bd8fa14b6bd4030c8edc6b29"
+        },
+        "SHAM": {
+          "ok": true,
+          "reason": null,
+          "git_sha": "d460b44984cdc1ac2e3fe5de4dbfc3cc23290331"
         }
       },
       "retention_vs_K": {
@@ -1583,14 +1718,17 @@
           "elapsed_s": 1080.3,
           "peak_rss_mb": 692.6,
           "n_turns": 19
+        },
+        "SHAM": {
+          "elapsed_s": 969.4,
+          "peak_rss_mb": 693.8,
+          "n_turns": 19
         }
       }
     },
     "101": {
       "K": 4,
-      "void": {
-        "SHAM": "missing"
-      },
+      "void": {},
       "criteria": {
         "T1_learns": {
           "recall": 1.0,
@@ -1695,10 +1833,12 @@
               true,
               true
             ],
-            "SHAM": null
+            "SHAM": [
+              true,
+              true
+            ]
           },
-          "pass": null,
-          "undefined": "void arm(s) or a probe that never ran: {\"SHAM\": \"missing\"}"
+          "pass": true
         },
         "T8_isolation": {
           "reads": [
@@ -1747,10 +1887,14 @@
               "required_present": true,
               "teacher_calls": 0
             },
-            "SHAM": null
+            "SHAM": {
+              "violations": 0,
+              "n_patched": 30,
+              "required_present": true,
+              "teacher_calls": 0
+            }
           },
-          "pass": null,
-          "undefined": "void arm(s) or a probe that never ran: {\"SHAM\": \"missing\"}"
+          "pass": true
         },
         "T9_no_test_writes": {
           "reads": [
@@ -1769,18 +1913,36 @@
             "ZERO": 0,
             "PERM": 0,
             "ERR": 0,
-            "SHAM": null
+            "SHAM": 0
           },
-          "pass": null,
-          "undefined": "void arm(s) or a probe that never ran: {\"SHAM\": \"missing\"}"
+          "pass": true
         },
         "T10_sham": {
+          "n_teach_recalled": 4,
+          "n_sham_recalled": 4,
+          "n_lost": 0,
+          "same_session_pre_lesion": true,
+          "n_pre_lesion_turns": 13,
+          "sham_ok": true,
+          "n_sham_blocks": 4,
+          "sham_max_abs_dw": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "offtarget_ok": true,
+          "n_offtarget_cut": 3,
+          "offtarget_cut": [
+            "brain use spikes",
+            "brain learn words",
+            "brain store memory"
+          ],
+          "pass": true,
           "reads": [
             "SHAM",
             "TEACH"
-          ],
-          "pass": null,
-          "undefined": "void arm(s): {\"SHAM\": \"missing\"}"
+          ]
         }
       },
       "secondary": {
@@ -1884,6 +2046,14 @@
               "lesson": 4
             },
             "quiz_corrections": 0
+          },
+          "SHAM": {
+            "n_turns": 19,
+            "writes_by_phase": {
+              "lesson": 4,
+              "lesion": 7
+            },
+            "quiz_corrections": 0
           }
         },
         "teach_taught_block_w": {
@@ -1898,16 +2068,11 @@
         }
       },
       "provenance_checked": true,
-      "go": null,
-      "defined": false,
-      "status": "UNDEFINED",
+      "go": true,
+      "defined": true,
+      "status": "GO",
       "failed": [],
-      "undefined": [
-        "T7_controls",
-        "T8_isolation",
-        "T9_no_test_writes",
-        "T10_sham"
-      ],
+      "undefined": [],
       "provenance": {
         "TEACH": {
           "ok": true,
@@ -1938,6 +2103,11 @@
           "ok": true,
           "reason": null,
           "git_sha": "c12c0d47e07ba301bd8fa14b6bd4030c8edc6b29"
+        },
+        "SHAM": {
+          "ok": true,
+          "reason": null,
+          "git_sha": "d460b44984cdc1ac2e3fe5de4dbfc3cc23290331"
         }
       },
       "retention_vs_K": {
@@ -1977,14 +2147,17 @@
           "elapsed_s": 1189.1,
           "peak_rss_mb": 699.9,
           "n_turns": 19
+        },
+        "SHAM": {
+          "elapsed_s": 923.3,
+          "peak_rss_mb": 691.1,
+          "n_turns": 19
         }
       }
     },
     "102": {
       "K": 4,
-      "void": {
-        "SHAM": "missing"
-      },
+      "void": {},
       "criteria": {
         "T1_learns": {
           "recall": 1.0,
@@ -2089,10 +2262,12 @@
               true,
               true
             ],
-            "SHAM": null
+            "SHAM": [
+              true,
+              true
+            ]
           },
-          "pass": null,
-          "undefined": "void arm(s) or a probe that never ran: {\"SHAM\": \"missing\"}"
+          "pass": true
         },
         "T8_isolation": {
           "reads": [
@@ -2141,10 +2316,14 @@
               "required_present": true,
               "teacher_calls": 0
             },
-            "SHAM": null
+            "SHAM": {
+              "violations": 0,
+              "n_patched": 30,
+              "required_present": true,
+              "teacher_calls": 0
+            }
           },
-          "pass": null,
-          "undefined": "void arm(s) or a probe that never ran: {\"SHAM\": \"missing\"}"
+          "pass": true
         },
         "T9_no_test_writes": {
           "reads": [
@@ -2163,18 +2342,36 @@
             "ZERO": 0,
             "PERM": 0,
             "ERR": 0,
-            "SHAM": null
+            "SHAM": 0
           },
-          "pass": null,
-          "undefined": "void arm(s) or a probe that never ran: {\"SHAM\": \"missing\"}"
+          "pass": true
         },
         "T10_sham": {
+          "n_teach_recalled": 4,
+          "n_sham_recalled": 4,
+          "n_lost": 0,
+          "same_session_pre_lesion": true,
+          "n_pre_lesion_turns": 13,
+          "sham_ok": true,
+          "n_sham_blocks": 4,
+          "sham_max_abs_dw": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "offtarget_ok": true,
+          "n_offtarget_cut": 3,
+          "offtarget_cut": [
+            "brain use spikes",
+            "brain learn words",
+            "brain store memory"
+          ],
+          "pass": true,
           "reads": [
             "SHAM",
             "TEACH"
-          ],
-          "pass": null,
-          "undefined": "void arm(s): {\"SHAM\": \"missing\"}"
+          ]
         }
       },
       "secondary": {
@@ -2278,6 +2475,14 @@
               "lesson": 4
             },
             "quiz_corrections": 0
+          },
+          "SHAM": {
+            "n_turns": 19,
+            "writes_by_phase": {
+              "lesson": 4,
+              "lesion": 7
+            },
+            "quiz_corrections": 0
           }
         },
         "teach_taught_block_w": {
@@ -2292,16 +2497,11 @@
         }
       },
       "provenance_checked": true,
-      "go": null,
-      "defined": false,
-      "status": "UNDEFINED",
+      "go": true,
+      "defined": true,
+      "status": "GO",
       "failed": [],
-      "undefined": [
-        "T7_controls",
-        "T8_isolation",
-        "T9_no_test_writes",
-        "T10_sham"
-      ],
+      "undefined": [],
       "provenance": {
         "TEACH": {
           "ok": true,
@@ -2332,12 +2532,17 @@
           "ok": true,
           "reason": null,
           "git_sha": "c12c0d47e07ba301bd8fa14b6bd4030c8edc6b29"
+        },
+        "SHAM": {
+          "ok": true,
+          "reason": null,
+          "git_sha": "d460b44984cdc1ac2e3fe5de4dbfc3cc23290331"
         }
       },
       "retention_vs_K": {
         "2": 1.0,
         "4": 1.0,
-        "8": null
+        "8": 1.0
       },
       "session_lcf_teach": 0.7272727272727273,
       "null_TEACH_vs_REP": null,
@@ -2371,15 +2576,20 @@
           "elapsed_s": 1067.3,
           "peak_rss_mb": 691.9,
           "n_turns": 19
+        },
+        "SHAM": {
+          "elapsed_s": 941.8,
+          "peak_rss_mb": 690.5,
+          "n_turns": 19
         }
       }
     }
   },
-  "n_defined": 0,
-  "n_go": 0,
+  "n_defined": 6,
+  "n_go": 6,
   "n_nogo": 0,
-  "GO": false,
-  "status": "UNDEFINED",
+  "GO": true,
+  "status": "GO",
   "preconditions": [
     {
       "kind": "require",
@@ -2426,9 +2636,9 @@
     {
       "kind": "require",
       "name": "seed 42: arm SHAM present, error-free, write counter on, provenance clean",
-      "ok": false,
-      "detail": "measured=False expect=True",
-      "note": "{\"void\": \"missing\", \"probes_unrun\": null, \"git_sha\": null}"
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "{\"void\": null, \"probes_unrun\": [], \"git_sha\": \"d460b44984cdc1ac2e3fe5de4dbfc3cc23290331\"}"
     },
     {
       "kind": "require",
@@ -2475,30 +2685,30 @@
     {
       "kind": "require",
       "name": "seed 42: T7_controls measured",
-      "ok": false,
-      "detail": "measured=False expect=True",
-      "note": "pass=None void arm(s) or a probe that never ran: {\"SHAM\": \"missing\"}"
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "pass=True "
     },
     {
       "kind": "require",
       "name": "seed 42: T8_isolation measured",
-      "ok": false,
-      "detail": "measured=False expect=True",
-      "note": "pass=None void arm(s) or a probe that never ran: {\"SHAM\": \"missing\"}"
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "pass=True "
     },
     {
       "kind": "require",
       "name": "seed 42: T9_no_test_writes measured",
-      "ok": false,
-      "detail": "measured=False expect=True",
-      "note": "pass=None void arm(s) or a probe that never ran: {\"SHAM\": \"missing\"}"
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "pass=True "
     },
     {
       "kind": "require",
       "name": "seed 42: T10_sham measured",
-      "ok": false,
-      "detail": "measured=False expect=True",
-      "note": "pass=None void arm(s): {\"SHAM\": \"missing\"}"
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "pass=True "
     },
     {
       "kind": "require",
@@ -2545,9 +2755,9 @@
     {
       "kind": "require",
       "name": "seed 43: arm SHAM present, error-free, write counter on, provenance clean",
-      "ok": false,
-      "detail": "measured=False expect=True",
-      "note": "{\"void\": \"missing\", \"probes_unrun\": null, \"git_sha\": null}"
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "{\"void\": null, \"probes_unrun\": [], \"git_sha\": \"d460b44984cdc1ac2e3fe5de4dbfc3cc23290331\"}"
     },
     {
       "kind": "require",
@@ -2594,30 +2804,30 @@
     {
       "kind": "require",
       "name": "seed 43: T7_controls measured",
-      "ok": false,
-      "detail": "measured=False expect=True",
-      "note": "pass=None void arm(s) or a probe that never ran: {\"SHAM\": \"missing\"}"
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "pass=True "
     },
     {
       "kind": "require",
       "name": "seed 43: T8_isolation measured",
-      "ok": false,
-      "detail": "measured=False expect=True",
-      "note": "pass=None void arm(s) or a probe that never ran: {\"SHAM\": \"missing\"}"
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "pass=True "
     },
     {
       "kind": "require",
       "name": "seed 43: T9_no_test_writes measured",
-      "ok": false,
-      "detail": "measured=False expect=True",
-      "note": "pass=None void arm(s) or a probe that never ran: {\"SHAM\": \"missing\"}"
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "pass=True "
     },
     {
       "kind": "require",
       "name": "seed 43: T10_sham measured",
-      "ok": false,
-      "detail": "measured=False expect=True",
-      "note": "pass=None void arm(s): {\"SHAM\": \"missing\"}"
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "pass=True "
     },
     {
       "kind": "require",
@@ -2664,9 +2874,9 @@
     {
       "kind": "require",
       "name": "seed 44: arm SHAM present, error-free, write counter on, provenance clean",
-      "ok": false,
-      "detail": "measured=False expect=True",
-      "note": "{\"void\": \"missing\", \"probes_unrun\": null, \"git_sha\": null}"
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "{\"void\": null, \"probes_unrun\": [], \"git_sha\": \"d460b44984cdc1ac2e3fe5de4dbfc3cc23290331\"}"
     },
     {
       "kind": "require",
@@ -2713,30 +2923,30 @@
     {
       "kind": "require",
       "name": "seed 44: T7_controls measured",
-      "ok": false,
-      "detail": "measured=False expect=True",
-      "note": "pass=None void arm(s) or a probe that never ran: {\"SHAM\": \"missing\"}"
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "pass=True "
     },
     {
       "kind": "require",
       "name": "seed 44: T8_isolation measured",
-      "ok": false,
-      "detail": "measured=False expect=True",
-      "note": "pass=None void arm(s) or a probe that never ran: {\"SHAM\": \"missing\"}"
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "pass=True "
     },
     {
       "kind": "require",
       "name": "seed 44: T9_no_test_writes measured",
-      "ok": false,
-      "detail": "measured=False expect=True",
-      "note": "pass=None void arm(s) or a probe that never ran: {\"SHAM\": \"missing\"}"
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "pass=True "
     },
     {
       "kind": "require",
       "name": "seed 44: T10_sham measured",
-      "ok": false,
-      "detail": "measured=False expect=True",
-      "note": "pass=None void arm(s): {\"SHAM\": \"missing\"}"
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "pass=True "
     },
     {
       "kind": "require",
@@ -2783,9 +2993,9 @@
     {
       "kind": "require",
       "name": "seed 100: arm SHAM present, error-free, write counter on, provenance clean",
-      "ok": false,
-      "detail": "measured=False expect=True",
-      "note": "{\"void\": \"missing\", \"probes_unrun\": null, \"git_sha\": null}"
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "{\"void\": null, \"probes_unrun\": [], \"git_sha\": \"d460b44984cdc1ac2e3fe5de4dbfc3cc23290331\"}"
     },
     {
       "kind": "require",
@@ -2832,30 +3042,30 @@
     {
       "kind": "require",
       "name": "seed 100: T7_controls measured",
-      "ok": false,
-      "detail": "measured=False expect=True",
-      "note": "pass=None void arm(s) or a probe that never ran: {\"SHAM\": \"missing\"}"
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "pass=True "
     },
     {
       "kind": "require",
       "name": "seed 100: T8_isolation measured",
-      "ok": false,
-      "detail": "measured=False expect=True",
-      "note": "pass=None void arm(s) or a probe that never ran: {\"SHAM\": \"missing\"}"
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "pass=True "
     },
     {
       "kind": "require",
       "name": "seed 100: T9_no_test_writes measured",
-      "ok": false,
-      "detail": "measured=False expect=True",
-      "note": "pass=None void arm(s) or a probe that never ran: {\"SHAM\": \"missing\"}"
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "pass=True "
     },
     {
       "kind": "require",
       "name": "seed 100: T10_sham measured",
-      "ok": false,
-      "detail": "measured=False expect=True",
-      "note": "pass=None void arm(s): {\"SHAM\": \"missing\"}"
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "pass=True "
     },
     {
       "kind": "require",
@@ -2902,9 +3112,9 @@
     {
       "kind": "require",
       "name": "seed 101: arm SHAM present, error-free, write counter on, provenance clean",
-      "ok": false,
-      "detail": "measured=False expect=True",
-      "note": "{\"void\": \"missing\", \"probes_unrun\": null, \"git_sha\": null}"
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "{\"void\": null, \"probes_unrun\": [], \"git_sha\": \"d460b44984cdc1ac2e3fe5de4dbfc3cc23290331\"}"
     },
     {
       "kind": "require",
@@ -2951,30 +3161,30 @@
     {
       "kind": "require",
       "name": "seed 101: T7_controls measured",
-      "ok": false,
-      "detail": "measured=False expect=True",
-      "note": "pass=None void arm(s) or a probe that never ran: {\"SHAM\": \"missing\"}"
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "pass=True "
     },
     {
       "kind": "require",
       "name": "seed 101: T8_isolation measured",
-      "ok": false,
-      "detail": "measured=False expect=True",
-      "note": "pass=None void arm(s) or a probe that never ran: {\"SHAM\": \"missing\"}"
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "pass=True "
     },
     {
       "kind": "require",
       "name": "seed 101: T9_no_test_writes measured",
-      "ok": false,
-      "detail": "measured=False expect=True",
-      "note": "pass=None void arm(s) or a probe that never ran: {\"SHAM\": \"missing\"}"
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "pass=True "
     },
     {
       "kind": "require",
       "name": "seed 101: T10_sham measured",
-      "ok": false,
-      "detail": "measured=False expect=True",
-      "note": "pass=None void arm(s): {\"SHAM\": \"missing\"}"
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "pass=True "
     },
     {
       "kind": "require",
@@ -3021,9 +3231,9 @@
     {
       "kind": "require",
       "name": "seed 102: arm SHAM present, error-free, write counter on, provenance clean",
-      "ok": false,
-      "detail": "measured=False expect=True",
-      "note": "{\"void\": \"missing\", \"probes_unrun\": null, \"git_sha\": null}"
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "{\"void\": null, \"probes_unrun\": [], \"git_sha\": \"d460b44984cdc1ac2e3fe5de4dbfc3cc23290331\"}"
     },
     {
       "kind": "require",
@@ -3070,68 +3280,37 @@
     {
       "kind": "require",
       "name": "seed 102: T7_controls measured",
-      "ok": false,
-      "detail": "measured=False expect=True",
-      "note": "pass=None void arm(s) or a probe that never ran: {\"SHAM\": \"missing\"}"
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "pass=True "
     },
     {
       "kind": "require",
       "name": "seed 102: T8_isolation measured",
-      "ok": false,
-      "detail": "measured=False expect=True",
-      "note": "pass=None void arm(s) or a probe that never ran: {\"SHAM\": \"missing\"}"
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "pass=True "
     },
     {
       "kind": "require",
       "name": "seed 102: T9_no_test_writes measured",
-      "ok": false,
-      "detail": "measured=False expect=True",
-      "note": "pass=None void arm(s) or a probe that never ran: {\"SHAM\": \"missing\"}"
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "pass=True "
     },
     {
       "kind": "require",
       "name": "seed 102: T10_sham measured",
-      "ok": false,
-      "detail": "measured=False expect=True",
-      "note": "pass=None void arm(s): {\"SHAM\": \"missing\"}"
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "pass=True "
     }
   ],
   "verdict": {
     "label": "ai_teacher K=4: T1-T10 on every registered seed [42, 43, 44, 100, 101, 102] (amendment 2)",
-    "status": "UNDEFINED",
-    "go": false,
-    "undefined_reasons": [
-      "unmet: seed 42: arm SHAM present, error-free, write counter on, provenance clean (measured=False expect=True)",
-      "unmet: seed 42: T7_controls measured (measured=False expect=True)",
-      "unmet: seed 42: T8_isolation measured (measured=False expect=True)",
-      "unmet: seed 42: T9_no_test_writes measured (measured=False expect=True)",
-      "unmet: seed 42: T10_sham measured (measured=False expect=True)",
-      "unmet: seed 43: arm SHAM present, error-free, write counter on, provenance clean (measured=False expect=True)",
-      "unmet: seed 43: T7_controls measured (measured=False expect=True)",
-      "unmet: seed 43: T8_isolation measured (measured=False expect=True)",
-      "unmet: seed 43: T9_no_test_writes measured (measured=False expect=True)",
-      "unmet: seed 43: T10_sham measured (measured=False expect=True)",
-      "unmet: seed 44: arm SHAM present, error-free, write counter on, provenance clean (measured=False expect=True)",
-      "unmet: seed 44: T7_controls measured (measured=False expect=True)",
-      "unmet: seed 44: T8_isolation measured (measured=False expect=True)",
-      "unmet: seed 44: T9_no_test_writes measured (measured=False expect=True)",
-      "unmet: seed 44: T10_sham measured (measured=False expect=True)",
-      "unmet: seed 100: arm SHAM present, error-free, write counter on, provenance clean (measured=False expect=True)",
-      "unmet: seed 100: T7_controls measured (measured=False expect=True)",
-      "unmet: seed 100: T8_isolation measured (measured=False expect=True)",
-      "unmet: seed 100: T9_no_test_writes measured (measured=False expect=True)",
-      "unmet: seed 100: T10_sham measured (measured=False expect=True)",
-      "unmet: seed 101: arm SHAM present, error-free, write counter on, provenance clean (measured=False expect=True)",
-      "unmet: seed 101: T7_controls measured (measured=False expect=True)",
-      "unmet: seed 101: T8_isolation measured (measured=False expect=True)",
-      "unmet: seed 101: T9_no_test_writes measured (measured=False expect=True)",
-      "unmet: seed 101: T10_sham measured (measured=False expect=True)",
-      "unmet: seed 102: arm SHAM present, error-free, write counter on, provenance clean (measured=False expect=True)",
-      "unmet: seed 102: T7_controls measured (measured=False expect=True)",
-      "unmet: seed 102: T8_isolation measured (measured=False expect=True)",
-      "unmet: seed 102: T9_no_test_writes measured (measured=False expect=True)",
-      "unmet: seed 102: T10_sham measured (measured=False expect=True)"
-    ],
+    "status": "GO",
+    "go": true,
+    "undefined_reasons": [],
     "preconditions": [
       {
         "kind": "require",
@@ -3178,9 +3357,9 @@
       {
         "kind": "require",
         "name": "seed 42: arm SHAM present, error-free, write counter on, provenance clean",
-        "ok": false,
-        "detail": "measured=False expect=True",
-        "note": "{\"void\": \"missing\", \"probes_unrun\": null, \"git_sha\": null}"
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "{\"void\": null, \"probes_unrun\": [], \"git_sha\": \"d460b44984cdc1ac2e3fe5de4dbfc3cc23290331\"}"
       },
       {
         "kind": "require",
@@ -3227,30 +3406,30 @@
       {
         "kind": "require",
         "name": "seed 42: T7_controls measured",
-        "ok": false,
-        "detail": "measured=False expect=True",
-        "note": "pass=None void arm(s) or a probe that never ran: {\"SHAM\": \"missing\"}"
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "pass=True "
       },
       {
         "kind": "require",
         "name": "seed 42: T8_isolation measured",
-        "ok": false,
-        "detail": "measured=False expect=True",
-        "note": "pass=None void arm(s) or a probe that never ran: {\"SHAM\": \"missing\"}"
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "pass=True "
       },
       {
         "kind": "require",
         "name": "seed 42: T9_no_test_writes measured",
-        "ok": false,
-        "detail": "measured=False expect=True",
-        "note": "pass=None void arm(s) or a probe that never ran: {\"SHAM\": \"missing\"}"
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "pass=True "
       },
       {
         "kind": "require",
         "name": "seed 42: T10_sham measured",
-        "ok": false,
-        "detail": "measured=False expect=True",
-        "note": "pass=None void arm(s): {\"SHAM\": \"missing\"}"
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "pass=True "
       },
       {
         "kind": "require",
@@ -3297,9 +3476,9 @@
       {
         "kind": "require",
         "name": "seed 43: arm SHAM present, error-free, write counter on, provenance clean",
-        "ok": false,
-        "detail": "measured=False expect=True",
-        "note": "{\"void\": \"missing\", \"probes_unrun\": null, \"git_sha\": null}"
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "{\"void\": null, \"probes_unrun\": [], \"git_sha\": \"d460b44984cdc1ac2e3fe5de4dbfc3cc23290331\"}"
       },
       {
         "kind": "require",
@@ -3346,30 +3525,30 @@
       {
         "kind": "require",
         "name": "seed 43: T7_controls measured",
-        "ok": false,
-        "detail": "measured=False expect=True",
-        "note": "pass=None void arm(s) or a probe that never ran: {\"SHAM\": \"missing\"}"
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "pass=True "
       },
       {
         "kind": "require",
         "name": "seed 43: T8_isolation measured",
-        "ok": false,
-        "detail": "measured=False expect=True",
-        "note": "pass=None void arm(s) or a probe that never ran: {\"SHAM\": \"missing\"}"
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "pass=True "
       },
       {
         "kind": "require",
         "name": "seed 43: T9_no_test_writes measured",
-        "ok": false,
-        "detail": "measured=False expect=True",
-        "note": "pass=None void arm(s) or a probe that never ran: {\"SHAM\": \"missing\"}"
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "pass=True "
       },
       {
         "kind": "require",
         "name": "seed 43: T10_sham measured",
-        "ok": false,
-        "detail": "measured=False expect=True",
-        "note": "pass=None void arm(s): {\"SHAM\": \"missing\"}"
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "pass=True "
       },
       {
         "kind": "require",
@@ -3416,9 +3595,9 @@
       {
         "kind": "require",
         "name": "seed 44: arm SHAM present, error-free, write counter on, provenance clean",
-        "ok": false,
-        "detail": "measured=False expect=True",
-        "note": "{\"void\": \"missing\", \"probes_unrun\": null, \"git_sha\": null}"
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "{\"void\": null, \"probes_unrun\": [], \"git_sha\": \"d460b44984cdc1ac2e3fe5de4dbfc3cc23290331\"}"
       },
       {
         "kind": "require",
@@ -3465,30 +3644,30 @@
       {
         "kind": "require",
         "name": "seed 44: T7_controls measured",
-        "ok": false,
-        "detail": "measured=False expect=True",
-        "note": "pass=None void arm(s) or a probe that never ran: {\"SHAM\": \"missing\"}"
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "pass=True "
       },
       {
         "kind": "require",
         "name": "seed 44: T8_isolation measured",
-        "ok": false,
-        "detail": "measured=False expect=True",
-        "note": "pass=None void arm(s) or a probe that never ran: {\"SHAM\": \"missing\"}"
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "pass=True "
       },
       {
         "kind": "require",
         "name": "seed 44: T9_no_test_writes measured",
-        "ok": false,
-        "detail": "measured=False expect=True",
-        "note": "pass=None void arm(s) or a probe that never ran: {\"SHAM\": \"missing\"}"
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "pass=True "
       },
       {
         "kind": "require",
         "name": "seed 44: T10_sham measured",
-        "ok": false,
-        "detail": "measured=False expect=True",
-        "note": "pass=None void arm(s): {\"SHAM\": \"missing\"}"
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "pass=True "
       },
       {
         "kind": "require",
@@ -3535,9 +3714,9 @@
       {
         "kind": "require",
         "name": "seed 100: arm SHAM present, error-free, write counter on, provenance clean",
-        "ok": false,
-        "detail": "measured=False expect=True",
-        "note": "{\"void\": \"missing\", \"probes_unrun\": null, \"git_sha\": null}"
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "{\"void\": null, \"probes_unrun\": [], \"git_sha\": \"d460b44984cdc1ac2e3fe5de4dbfc3cc23290331\"}"
       },
       {
         "kind": "require",
@@ -3584,30 +3763,30 @@
       {
         "kind": "require",
         "name": "seed 100: T7_controls measured",
-        "ok": false,
-        "detail": "measured=False expect=True",
-        "note": "pass=None void arm(s) or a probe that never ran: {\"SHAM\": \"missing\"}"
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "pass=True "
       },
       {
         "kind": "require",
         "name": "seed 100: T8_isolation measured",
-        "ok": false,
-        "detail": "measured=False expect=True",
-        "note": "pass=None void arm(s) or a probe that never ran: {\"SHAM\": \"missing\"}"
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "pass=True "
       },
       {
         "kind": "require",
         "name": "seed 100: T9_no_test_writes measured",
-        "ok": false,
-        "detail": "measured=False expect=True",
-        "note": "pass=None void arm(s) or a probe that never ran: {\"SHAM\": \"missing\"}"
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "pass=True "
       },
       {
         "kind": "require",
         "name": "seed 100: T10_sham measured",
-        "ok": false,
-        "detail": "measured=False expect=True",
-        "note": "pass=None void arm(s): {\"SHAM\": \"missing\"}"
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "pass=True "
       },
       {
         "kind": "require",
@@ -3654,9 +3833,9 @@
       {
         "kind": "require",
         "name": "seed 101: arm SHAM present, error-free, write counter on, provenance clean",
-        "ok": false,
-        "detail": "measured=False expect=True",
-        "note": "{\"void\": \"missing\", \"probes_unrun\": null, \"git_sha\": null}"
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "{\"void\": null, \"probes_unrun\": [], \"git_sha\": \"d460b44984cdc1ac2e3fe5de4dbfc3cc23290331\"}"
       },
       {
         "kind": "require",
@@ -3703,30 +3882,30 @@
       {
         "kind": "require",
         "name": "seed 101: T7_controls measured",
-        "ok": false,
-        "detail": "measured=False expect=True",
-        "note": "pass=None void arm(s) or a probe that never ran: {\"SHAM\": \"missing\"}"
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "pass=True "
       },
       {
         "kind": "require",
         "name": "seed 101: T8_isolation measured",
-        "ok": false,
-        "detail": "measured=False expect=True",
-        "note": "pass=None void arm(s) or a probe that never ran: {\"SHAM\": \"missing\"}"
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "pass=True "
       },
       {
         "kind": "require",
         "name": "seed 101: T9_no_test_writes measured",
-        "ok": false,
-        "detail": "measured=False expect=True",
-        "note": "pass=None void arm(s) or a probe that never ran: {\"SHAM\": \"missing\"}"
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "pass=True "
       },
       {
         "kind": "require",
         "name": "seed 101: T10_sham measured",
-        "ok": false,
-        "detail": "measured=False expect=True",
-        "note": "pass=None void arm(s): {\"SHAM\": \"missing\"}"
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "pass=True "
       },
       {
         "kind": "require",
@@ -3773,9 +3952,9 @@
       {
         "kind": "require",
         "name": "seed 102: arm SHAM present, error-free, write counter on, provenance clean",
-        "ok": false,
-        "detail": "measured=False expect=True",
-        "note": "{\"void\": \"missing\", \"probes_unrun\": null, \"git_sha\": null}"
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "{\"void\": null, \"probes_unrun\": [], \"git_sha\": \"d460b44984cdc1ac2e3fe5de4dbfc3cc23290331\"}"
       },
       {
         "kind": "require",
@@ -3822,30 +4001,30 @@
       {
         "kind": "require",
         "name": "seed 102: T7_controls measured",
-        "ok": false,
-        "detail": "measured=False expect=True",
-        "note": "pass=None void arm(s) or a probe that never ran: {\"SHAM\": \"missing\"}"
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "pass=True "
       },
       {
         "kind": "require",
         "name": "seed 102: T8_isolation measured",
-        "ok": false,
-        "detail": "measured=False expect=True",
-        "note": "pass=None void arm(s) or a probe that never ran: {\"SHAM\": \"missing\"}"
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "pass=True "
       },
       {
         "kind": "require",
         "name": "seed 102: T9_no_test_writes measured",
-        "ok": false,
-        "detail": "measured=False expect=True",
-        "note": "pass=None void arm(s) or a probe that never ran: {\"SHAM\": \"missing\"}"
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "pass=True "
       },
       {
         "kind": "require",
         "name": "seed 102: T10_sham measured",
-        "ok": false,
-        "detail": "measured=False expect=True",
-        "note": "pass=None void arm(s): {\"SHAM\": \"missing\"}"
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "pass=True "
       }
     ],
     "disabled_processes": [],
