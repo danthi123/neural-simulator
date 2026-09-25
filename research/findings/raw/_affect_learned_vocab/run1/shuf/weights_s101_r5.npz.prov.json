@@ -1,0 +1,35 @@
+{
+ "run_id": "1790265602-783691",
+ "runner": "research/runners/_affect_learned_vocabulary_derisk.py",
+ "argv": [
+  "/home/node/derisk-pool/revisions/c0803dadcd729649e16a1de8c57cf571418c03d4/research/runners/_affect_learned_vocabulary_derisk.py",
+  "--part",
+  "all",
+  "--seed",
+  "101",
+  "--replicas",
+  "0-8",
+  "--corpus-path",
+  "/home/node/derisk-pool/corpus_extra/fineweb_edu.txt"
+ ],
+ "git_sha": "c0803dadcd729649e16a1de8c57cf571418c03d4",
+ "git_dirty": false,
+ "source_kind": "git_archive",
+ "source_manifest_sha256": "055c753f7a6d2620bfbbd0e7fecf92f6ffca4197ad958da4b50ae9743c183928",
+ "source_manifest_verified_at_start": true,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": true,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-24T12:00:02",
+ "env": {
+  "SIM_BACKEND": "numpy",
+  "POOL_JOB_ID": "1790265601964735445-6378",
+  "POOL_JOB_MEM_GB": "3"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": false,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_affect_learned_vocab/run1/shuf/weights_s101_r5.npz"
+}

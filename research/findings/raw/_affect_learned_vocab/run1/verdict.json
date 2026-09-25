@@ -1,0 +1,231 @@
+{
+ "verdict": "NO-GO",
+ "gate": {
+  "g1_recall": 0.2,
+  "g1_wrong_max": 0.15,
+  "g1_min_seeds": 5,
+  "g2_contrast": 0.15,
+  "g2_shuf_mean_max": 0.05,
+  "g2_min_seeds": 5,
+  "g3_abs_max": 0.25,
+  "g3_min_frac": 0.95,
+  "g3_min_seeds": 6
+ },
+ "preconditions": [
+  {
+   "name": "all 6 seeds present",
+   "ok": true
+  },
+  {
+   "name": "one heard vocabulary on every seed and replica block",
+   "ok": true
+  },
+  {
+   "name": "s100 reader loaded",
+   "ok": true
+  },
+  {
+   "name": "s100 fact sentences read 0 with the flag off",
+   "ok": true
+  },
+  {
+   "name": "s100 >= 20 heard eval negatives",
+   "ok": true
+  },
+  {
+   "name": "s100 INTEGRITY lesion appraisal == off",
+   "ok": true
+  },
+  {
+   "name": "s100 INTEGRITY lesion reads 0",
+   "ok": true
+  },
+  {
+   "name": "s101 reader loaded",
+   "ok": true
+  },
+  {
+   "name": "s101 fact sentences read 0 with the flag off",
+   "ok": true
+  },
+  {
+   "name": "s101 >= 20 heard eval negatives",
+   "ok": true
+  },
+  {
+   "name": "s101 INTEGRITY lesion appraisal == off",
+   "ok": true
+  },
+  {
+   "name": "s101 INTEGRITY lesion reads 0",
+   "ok": true
+  },
+  {
+   "name": "s102 reader loaded",
+   "ok": true
+  },
+  {
+   "name": "s102 fact sentences read 0 with the flag off",
+   "ok": true
+  },
+  {
+   "name": "s102 >= 20 heard eval negatives",
+   "ok": true
+  },
+  {
+   "name": "s102 INTEGRITY lesion appraisal == off",
+   "ok": true
+  },
+  {
+   "name": "s102 INTEGRITY lesion reads 0",
+   "ok": true
+  },
+  {
+   "name": "s42 reader loaded",
+   "ok": true
+  },
+  {
+   "name": "s42 fact sentences read 0 with the flag off",
+   "ok": true
+  },
+  {
+   "name": "s42 >= 20 heard eval negatives",
+   "ok": true
+  },
+  {
+   "name": "s42 INTEGRITY lesion appraisal == off",
+   "ok": true
+  },
+  {
+   "name": "s42 INTEGRITY lesion reads 0",
+   "ok": true
+  },
+  {
+   "name": "s43 reader loaded",
+   "ok": true
+  },
+  {
+   "name": "s43 fact sentences read 0 with the flag off",
+   "ok": true
+  },
+  {
+   "name": "s43 >= 20 heard eval negatives",
+   "ok": true
+  },
+  {
+   "name": "s43 INTEGRITY lesion appraisal == off",
+   "ok": true
+  },
+  {
+   "name": "s43 INTEGRITY lesion reads 0",
+   "ok": true
+  },
+  {
+   "name": "s44 reader loaded",
+   "ok": true
+  },
+  {
+   "name": "s44 fact sentences read 0 with the flag off",
+   "ok": true
+  },
+  {
+   "name": "s44 >= 20 heard eval negatives",
+   "ok": true
+  },
+  {
+   "name": "s44 INTEGRITY lesion appraisal == off",
+   "ok": true
+  },
+  {
+   "name": "s44 INTEGRITY lesion reads 0",
+   "ok": true
+  }
+ ],
+ "gates": {
+  "G1": true,
+  "G2": false,
+  "G3": false,
+  "G4": true
+ },
+ "per_seed": {
+  "100": {
+   "g1": true,
+   "g2": true,
+   "g3": false,
+   "g4": true,
+   "neg_recall": 0.4423076923076923,
+   "neg_wrong": 0.07692307692307693,
+   "contrast_D": 0.3691369606003752,
+   "shuf_D_max": 0.099906191369606,
+   "shuf_D_mean": -0.005276735459662294,
+   "g3_frac_within": 0.7,
+   "g3_max_abs": 1.0
+  },
+  "101": {
+   "g1": true,
+   "g2": true,
+   "g3": false,
+   "g4": true,
+   "neg_recall": 0.36538461538461536,
+   "neg_wrong": 0.0673076923076923,
+   "contrast_D": 0.28001876172607876,
+   "shuf_D_max": 0.11468105065666041,
+   "shuf_D_mean": 0.02943245778611632,
+   "g3_frac_within": 0.875,
+   "g3_max_abs": 0.8919843597262952
+  },
+  "102": {
+   "g1": true,
+   "g2": false,
+   "g3": false,
+   "g4": true,
+   "neg_recall": 0.4423076923076923,
+   "neg_wrong": 0.04807692307692308,
+   "contrast_D": 0.39352720450281425,
+   "shuf_D_max": 0.12546904315197,
+   "shuf_D_mean": 0.06997537523452158,
+   "g3_frac_within": 0.725,
+   "g3_max_abs": 0.6842619745845553
+  },
+  "42": {
+   "g1": true,
+   "g2": true,
+   "g3": false,
+   "g4": true,
+   "neg_recall": 0.3269230769230769,
+   "neg_wrong": 0.08653846153846154,
+   "contrast_D": 0.26594746716697937,
+   "shuf_D_max": 0.08067542213883679,
+   "shuf_D_mean": 0.014012664165103193,
+   "g3_frac_within": 0.725,
+   "g3_max_abs": 0.9652981427174975
+  },
+  "43": {
+   "g1": true,
+   "g2": false,
+   "g3": false,
+   "g4": true,
+   "neg_recall": 0.36538461538461536,
+   "neg_wrong": 0.057692307692307696,
+   "contrast_D": 0.28001876172607876,
+   "shuf_D_max": 0.12546904315197,
+   "shuf_D_mean": 0.05775093808630394,
+   "g3_frac_within": 0.7,
+   "g3_max_abs": 0.8064516129032259
+  },
+  "44": {
+   "g1": true,
+   "g2": true,
+   "g3": false,
+   "g4": true,
+   "neg_recall": 0.25,
+   "neg_wrong": 0.057692307692307696,
+   "contrast_D": 0.22560975609756098,
+   "shuf_D_max": 0.09474671669793622,
+   "shuf_D_mean": 0.010260318949343336,
+   "g3_frac_within": 0.675,
+   "g3_max_abs": 0.6353861192570871
+  }
+ },
+ "missing_seeds": []
+}
