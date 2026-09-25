@@ -230,14 +230,28 @@ wiring error, or in this case an instrument/reachability gap, before spending 6-
 
 ### 6-seed drift-probe (pool jobs; prepared, NOT queued -- the owner queues these)
 
-For `SEED` in `42 43 44 100 101 102`, TWO jobs per seed (off/on), pinned to this branch's head SHA
-via a pool isolated-revision checkout (`~/derisk-pool/revisions/<HEAD_SHA>`, provisioned by
-`tools/pool_provision.sh` if not already present -- not done by this document):
+Per AMENDMENT 1 / Criterion 0, FOUR jobs per seed, not two: the DEFAULT pool config
+(`BRAIN_ONEBRAIN_WAVE3_POOL` unset -- production's actual default, expected to read 0.0 in both
+arms per the companion finding) AND the STANDALONE config (`BRAIN_ONEBRAIN_WAVE3_POOL=0`,
+comprehension's own documented escape hatch back to the pre-merge bridge -- this is the row that
+actually exercises the bug/fix, per the positive control). For `SEED` in `42 43 44 100 101 102`,
+pinned to this branch's head SHA via a pool isolated-revision checkout
+(`~/derisk-pool/revisions/<HEAD_SHA>`, provisioned by `tools/pool_provision.sh` if not already
+present -- not done by this document):
 
 ```
-bash tools/pool_queue.sh add 'cd ~/derisk-pool/revisions/<HEAD_SHA> && SIM_BACKEND=numpy CUDA_VISIBLE_DEVICES= OMP_NUM_THREADS=1 PYTHONPATH=. .venv/bin/python research/findings/raw/_plastic_mask_flip_prep/prod_drift_probe.py --seed=SEED --arm=off --out=research/findings/raw/_plastic_mask_flip_prep/pool_smoke_off_s<SEED>.json'
-bash tools/pool_queue.sh add 'cd ~/derisk-pool/revisions/<HEAD_SHA> && SIM_BACKEND=numpy CUDA_VISIBLE_DEVICES= OMP_NUM_THREADS=1 PYTHONPATH=. BRAIN_ENFORCE_PLASTIC_MASK=1 .venv/bin/python research/findings/raw/_plastic_mask_flip_prep/prod_drift_probe.py --seed=SEED --arm=on --out=research/findings/raw/_plastic_mask_flip_prep/pool_smoke_on_s<SEED>.json'
+# DEFAULT pool config (expected 0.0 both arms; still run so criterion 1's default-config row is on record)
+bash tools/pool_queue.sh add 'cd ~/derisk-pool/revisions/<HEAD_SHA> && SIM_BACKEND=numpy CUDA_VISIBLE_DEVICES= OMP_NUM_THREADS=1 PYTHONPATH=. .venv/bin/python research/findings/raw/_plastic_mask_flip_prep/prod_drift_probe.py --seed=SEED --arm=off --out=research/findings/raw/_plastic_mask_flip_prep/pool_smoke_default_off_s<SEED>.json'
+bash tools/pool_queue.sh add 'cd ~/derisk-pool/revisions/<HEAD_SHA> && SIM_BACKEND=numpy CUDA_VISIBLE_DEVICES= OMP_NUM_THREADS=1 PYTHONPATH=. BRAIN_ENFORCE_PLASTIC_MASK=1 .venv/bin/python research/findings/raw/_plastic_mask_flip_prep/prod_drift_probe.py --seed=SEED --arm=on --out=research/findings/raw/_plastic_mask_flip_prep/pool_smoke_default_on_s<SEED>.json'
+# STANDALONE config (the row that actually tests the fix)
+bash tools/pool_queue.sh add 'cd ~/derisk-pool/revisions/<HEAD_SHA> && SIM_BACKEND=numpy CUDA_VISIBLE_DEVICES= OMP_NUM_THREADS=1 PYTHONPATH=. BRAIN_ONEBRAIN_WAVE3_POOL=0 .venv/bin/python research/findings/raw/_plastic_mask_flip_prep/prod_drift_probe.py --seed=SEED --arm=off --out=research/findings/raw/_plastic_mask_flip_prep/pool_smoke_standalone_off_s<SEED>.json'
+bash tools/pool_queue.sh add 'cd ~/derisk-pool/revisions/<HEAD_SHA> && SIM_BACKEND=numpy CUDA_VISIBLE_DEVICES= OMP_NUM_THREADS=1 PYTHONPATH=. BRAIN_ONEBRAIN_WAVE3_POOL=0 BRAIN_ENFORCE_PLASTIC_MASK=1 .venv/bin/python research/findings/raw/_plastic_mask_flip_prep/prod_drift_probe.py --seed=SEED --arm=on --out=research/findings/raw/_plastic_mask_flip_prep/pool_smoke_standalone_on_s<SEED>.json'
 ```
+
+Alternatively, `positive_control_drift.py --seed=SEED --arm=off|on` (direct
+`ComprehensionProductionOrgan` construction, bypassing `get_organ()`/the pool entirely) is an
+independent second way to get the same standalone-config measurement -- both should agree; a
+mismatch between them would itself be worth a line in `research/FAILURE_LOG.md`.
 
 (`<HEAD_SHA>` = this branch's head at queue time, e.g. the SHA reported alongside this document in
 the review report -- substitute literally, do not queue against a moving branch tip.)
