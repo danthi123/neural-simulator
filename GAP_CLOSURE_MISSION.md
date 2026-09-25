@@ -41,9 +41,9 @@ tokens (workflow `wk7t5ig9v`, opus build + opus review). When it merges: carry t
 <base>..<audit> -- research/findings/` applied per branch; never merge the round-2 checker code they sit on.
 
 **🌙 PRE-DECIDED NEXT ACTIONS — OVERNIGHT PLAN (owner asleep from 01:35, 2026-09-25); work in order, re-arm the heartbeat on every expiry:**
-1. B2a: the heartbeat aggregates b2a0924 with `--pin 9db7613296c3...` at 186/186; if open-ended-generation shows excluded,
-   wait for the oed provenance fix (workflow `wkqok0g80`), merge it, re-aggregate, then re-score R1/R2 and correct the
-   2026-09-25 B2a FAIL finding with a follow-up finding (never rewrite the FAIL doc's verdict in place).
+1. ✅ B2a DONE 03:45: re-scored R1 PASS (28/28, 0 regressions) + R2 PASS (168/168 valid at pinned M1, 6 covered-by-parent,
+   0 incomplete), two verifiers agree, merged 075c24cd3 (follow-up to the FAIL finding). Robust core 24, union 25, mean
+   0.949 beside the shipped 0.603/15. The R1 reference predates git_archive pinning (stated caveat).
 2. Harvest each workflow as it notifies, merge SOUND branches: `w2lnwio5g` (claim-check round 2 + hidden-number audit;
    any verdict_at_risk doc comes to the owner, no autonomous retraction), `wkqok0g80` (oed provenance), `wf6m1hyvo`
    (sleep r2 review + awake replay), `wr439l64n` (gap#4 clamp companion + SETTLE A2 wiring), lexicon round 2 agent.
