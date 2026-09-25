@@ -178,8 +178,15 @@ def _arcc_env(env):
     return out
 
 
+# Two more REPORTED attribution arms (instrument-gated like lr_arc_nocomp, outcome never gated): the completion in ONE
+# route only. On dev seed 2 the night's completion alone rescued the fact (the awake margin route held the trace at
+# 0.73) while the awake completion alone did not (the night's margin read stayed below the capture point); which
+# route carries the rescue on each gate seed is therefore measured, not assumed.
 ARCC_ARMS = ([(n, lab, _arcc_env(env)) for (n, lab, env) in ARC_ARMS]
-             + [("lr_arc_nocomp", "datr_recall", {**_arcc_env({**ON, **RC, **ARC}), **ARCC_LES})])
+             + [("lr_arc_nocomp", "datr_recall", {**_arcc_env({**ON, **RC, **ARC}), **ARCC_LES}),
+                ("lr_arc_awakeonly", "datr_recall", {**ON, **RC, **ARC, **ARCC_AWAKE}),
+                ("lr_arc_sleeponly", "datr_recall", {**ON, **RC, **ARC, **ARCC_SLEEP})])
+ARCC_ATTRIBUTION_ARMS = ("lr_arc_nocomp", "lr_arc_awakeonly", "lr_arc_sleeponly")
 ARCC_OUT = "research/findings/raw/_awake_replay_completion"
 # ── FORGETTING-INTERFERENCE FAMILY (`--family fi`; branch research/sleep-forgetting-interference, the r3 sub-flag
 # BRAIN_SLEEP_LOAD_RENORM of webapp/sleep_replay_capture.py; gates pre-registered as Amendment 6 of the sleep-replay-
@@ -818,9 +825,11 @@ def grade_seed_arcc(res):
           unless that route's own edge is cut (then R_eff = 0, checked by I2); a route without its flag carries no
           completion record.
 
-    lr_arc_nocomp's OUTCOME enters no behavioural gate (on a seed whose margin read already rescues, it is correct; on
-    one whose read collapses, it abstains). It is REPORTED, with `completion_load_bearing` = lr_arc_a correct AND
-    lr_arc_nocomp abstain. ARCC7 (no confab) reads every arm, lr_arc_nocomp included."""
+    The OUTCOMES of the attribution arms (lr_arc_nocomp, lr_arc_awakeonly, lr_arc_sleeponly) enter no behavioural
+    gate (on a seed whose margin read already rescues, they are correct; on one whose read collapses, the relevant one
+    abstains). They are REPORTED: `completion_load_bearing` = lr_arc_a correct AND lr_arc_nocomp abstain;
+    `awake_completion_needed` = lr_arc_a correct AND lr_arc_sleeponly abstain; `night_completion_needed` = lr_arc_a
+    correct AND lr_arc_awakeonly abstain. ARCC7 (no confab) reads every arm, the attribution arms included."""
     g = grade_seed_arc(res)
     A = res["arms"]
 
@@ -855,7 +864,9 @@ def grade_seed_arcc(res):
     g["I4_completion_record_held"] = bool(held)
     o = g["outcomes"]
     g["completion_load_bearing"] = bool(o.get("lr_arc_a") == "correct" and o.get("lr_arc_nocomp") == "abstain")
-    for k in ("lr_arc_a", "lr_arc_nocomp", "lz_arc", "lq_arc"):
+    g["awake_completion_needed"] = bool(o.get("lr_arc_a") == "correct" and o.get("lr_arc_sleeponly") == "abstain")
+    g["night_completion_needed"] = bool(o.get("lr_arc_a") == "correct" and o.get("lr_arc_awakeonly") == "abstain")
+    for k in ("lr_arc_a", "lr_arc_nocomp", "lr_arc_awakeonly", "lr_arc_sleeponly", "lz_arc", "lq_arc"):
         bo = _bouts(A.get(k))
         if bo and g["reported"].get(k) is not None:
             first, last = bo[0].get("completion") or [None], bo[-1].get("completion") or [None]
@@ -891,6 +902,8 @@ def aggregate_arcc(d):
     rescue = [oc(r, "lr_arc_a") - oc(r, "lr_noarc") for r in rows]
     edge = [oc(r, "lr_arc_a") - oc(r, "lr_arc_lesion") for r in rows]
     comp = [oc(r, "lr_arc_a") - oc(r, "lr_arc_nocomp") for r in rows]
+    awake_only = [oc(r, "lr_arc_a") - oc(r, "lr_arc_awakeonly") for r in rows]
+    sleep_only = [oc(r, "lr_arc_a") - oc(r, "lr_arc_sleeponly") for r in rows]
     complete = sorted(verdicts) == sorted(SEEDS)
     out = {"family": "arcc", "seeds": sorted(verdicts), "seed_verdicts": verdicts, "n_go": n_go,
            "verdict": "INCOMPLETE" if not complete else ("GO" if n_go == 6 else "NO-GO"),
@@ -898,8 +911,12 @@ def aggregate_arcc(d):
            "signflip_p_rest_rescue_intact_vs_awake_lesion": (seed_signflip_p(edge) if rows else None),
            "diffs_on_minus_off": rescue, "diffs_intact_minus_lesion": edge,
            "diffs_completion_minus_nocomp": comp,
+           "diffs_both_minus_awakeonly": awake_only, "diffs_both_minus_sleeponly": sleep_only,
            "n_completion_load_bearing": sum(1 for r in rows if r["gates"].get("completion_load_bearing")),
-           "reported_correct_counts": {k: sum(oc(r, k) for r in rows) for k in ARC_REPORTED_ARMS + ("lr_arc_nocomp",)}}
+           "n_awake_completion_needed": sum(1 for r in rows if r["gates"].get("awake_completion_needed")),
+           "n_night_completion_needed": sum(1 for r in rows if r["gates"].get("night_completion_needed")),
+           "reported_correct_counts": {k: sum(oc(r, k) for r in rows)
+                                       for k in ARC_REPORTED_ARMS + ARCC_ATTRIBUTION_ARMS}}
     json.dump(out, open(os.path.join(d, "aggregate.json"), "w"), indent=2)
     print(json.dumps(out, indent=2))
     return out
@@ -1755,24 +1772,29 @@ def selftest():
                 eps.append(e)
             rec["sleep_replay_at_recall"] = dict(rec["sleep_replay_at_recall"], epochs=eps)
         return rec
-    arcc_designed = dict(arc_designed, lr_arc_nocomp="abstain")
+    arcc_designed = dict(arc_designed, lr_arc_nocomp="abstain", lr_arc_awakeonly="abstain", lr_arc_sleeponly="correct")
     arcc_ok = {n: _arcc_arm(n, lab, env, arcc_designed[n]) for n, lab, env in ARCC_ARMS}
     checks["arcc arms: each route armed with its completion flag; nocomp adds the lesion; the rest unchanged"] = (
         all((env.get("BRAIN_AWAKE_REPLAY_COMPLETION") == "1") == (env.get("BRAIN_AWAKE_REPLAY_CAPTURE") == "1")
             and (env.get("BRAIN_SLEEP_REPLAY_COMPLETION") == "1") == (env.get("BRAIN_SLEEP_REPLAY_CAPTURE") == "1")
-            for _n, _l, env in ARCC_ARMS)
-        and [n for n, _l, _e in ARCC_ARMS] == [n for n, _l, _e in ARC_ARMS] + ["lr_arc_nocomp"]
+            for _n, _l, env in ARCC_ARMS if _n not in ("lr_arc_awakeonly", "lr_arc_sleeponly"))
+        and [n for n, _l, _e in ARCC_ARMS] == [n for n, _l, _e in ARC_ARMS] + list(ARCC_ATTRIBUTION_ARMS)
+        and dict((n, e) for n, _l, e in ARCC_ARMS)["lr_arc_awakeonly"].get("BRAIN_SLEEP_REPLAY_COMPLETION") is None
+        and dict((n, e) for n, _l, e in ARCC_ARMS)["lr_arc_sleeponly"].get("BRAIN_AWAKE_REPLAY_COMPLETION") is None
         and dict((n, e) for n, _l, e in ARCC_ARMS)["lr_arc_nocomp"].get("BRAIN_REPLAY_COMPLETION_LESION") == "1"
         and all(e.get("BRAIN_REPLAY_COMPLETION_LESION") != "1" for n, _l, e in ARCC_ARMS if n != "lr_arc_nocomp"))
     g_ok = grade_seed_arcc({"arms": arcc_ok})
     checks["arcc grade: designed-GO pattern -> GO, completion load-bearing reported"] = (
-        g_ok["seed_verdict"] == "GO" and g_ok["I4_completion_record_held"] and g_ok["completion_load_bearing"])
+        g_ok["seed_verdict"] == "GO" and g_ok["I4_completion_record_held"] and g_ok["completion_load_bearing"]
+        and g_ok["night_completion_needed"] and not g_ok["awake_completion_needed"])
     for arm_name, bad, want in (("lr_noarc", "correct", "NO-GO"), ("lr_arc_lesion", "correct", "NO-GO"),
                                 ("ln_arc", "correct", "NO-GO"), ("lr_arc_sleeplesion", "correct", "NO-GO"),
                                 ("lr_arc_dalesion", "correct", "NO-GO"), ("lsr_arc_sleeplesion", "abstain", "NO-GO"),
                                 ("neu_imm_arc", "abstain", "UNDEFINED"), ("lr_arc_a", "abstain", "UNDEFINED"),
                                 ("lr_arc_nocomp", "correct", "GO"),       # the nocomp OUTCOME is reported, never gated
                                 ("lr_arc_nocomp", "confab", "NO-GO"),     # ... except a confab (ARCC7 reads all)
+                                ("lr_arc_sleeponly", "abstain", "GO"),
+                                ("lr_arc_awakeonly", "confab", "NO-GO"),
                                 ("lz_arc", "correct", "GO")):
         arms_x = dict(arcc_ok)
         lab = [l for n, l, _e in ARCC_ARMS if n == arm_name][0]
