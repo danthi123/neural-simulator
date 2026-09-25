@@ -33,6 +33,13 @@ tests/test_webapp_server.py `test_brain_chat_*` integration test before any flip
 NOT READY: AND fixed 102->0-1/10k, R4 fixed; G2 'might', G4 0.60/0.40 vs 0.30, G3 inconsistent); round 3 = workflow
 `wdj51wmk7` (partial-match pathway, opus).
 
+**🌙 02:55 claim-check:** round 3 re-review UNSOUND (a boolean fence toggle desyncs on unmatched/mismatched fences:
+smuggles numbers after a swallowed heading, false-fails later markers; list/table absorption one-directional). Three
+rounds of line-regex patches each opened a new hole, so round 4 changes METHOD: scoping rebuilt on markdown-it-py block
+tokens (workflow `wk7t5ig9v`, opus build + opus review). When it merges: carry the 4 audit branches'
+(research/claimcheck-audit-1..4) FINDING-DOC edits only (8 corrections + per-line marks) onto main, e.g. `git diff
+<base>..<audit> -- research/findings/` applied per branch; never merge the round-2 checker code they sit on.
+
 **🌙 PRE-DECIDED NEXT ACTIONS — OVERNIGHT PLAN (owner asleep from 01:35, 2026-09-25); work in order, re-arm the heartbeat on every expiry:**
 1. B2a: the heartbeat aggregates b2a0924 with `--pin 9db7613296c3...` at 186/186; if open-ended-generation shows excluded,
    wait for the oed provenance fix (workflow `wkqok0g80`), merge it, re-aggregate, then re-score R1/R2 and correct the
