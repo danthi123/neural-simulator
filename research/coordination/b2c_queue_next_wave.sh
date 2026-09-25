@@ -30,6 +30,7 @@
 #         POOL_QUEUE_PATH (default $POOL_ROOT/research/queue/pool.queue)
 # Exit:   0 = nothing to do or wave queued cleanly; 1 = an add failed or a queued line is malformed; 2 = refused/usage.
 set -uo pipefail
+export LC_ALL=C   # byte-order sort and grep: the env-token comparisons below must not depend on the locale
 
 HERE=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 POOL_ROOT="${POOL_ROOT:-/home/dant123/Projects/sim}"
@@ -79,11 +80,11 @@ if [ "${#missing[@]}" -gt 0 ]; then
   printf '[b2c-wave] (not started) missing %s\n' "${missing[@]}"
 fi
 
-touch_q() { [ -f "$1" ] && cat "$1" || true; }
+cat_if() { [ -f "$1" ] && cat "$1" || true; }
 now=$(date +%s); cutoff=$(( now - MAX_AGE ))
-fresh=$(touch_q "$Q" | awk -F'\t' -v c="$cutoff" -v t="$PAT" 'NF>1 && index($2,t) && $1+0 >= c' | wc -l)
-stale=$(touch_q "$Q" | awk -F'\t' -v c="$cutoff" -v t="$PAT" 'NF>1 && index($2,t) && $1+0 < c' | wc -l)
-dispatched=$(touch_q "$RUNNING" | grep -cF "$PAT"); dispatched=${dispatched:-0}
+fresh=$(cat_if "$Q" | awk -F'\t' -v c="$cutoff" -v t="$PAT" 'NF>1 && index($2,t) && $1+0 >= c' | wc -l)
+stale=$(cat_if "$Q" | awk -F'\t' -v c="$cutoff" -v t="$PAT" 'NF>1 && index($2,t) && $1+0 < c' | wc -l)
+dispatched=$(cat_if "$RUNNING" | grep -cF "$PAT"); dispatched=${dispatched:-0}
 landed=$(ls "$SHARDS"/b2c0925-*/s*/*/lb.json 2>/dev/null | wc -l)
 echo "[b2c-wave] b2c0925-*: fresh-queued=$fresh stale-queued=$stale dispatched-ever=$dispatched lb.json-landed=$landed" \
      "of $(wc -l < "$JOBS") (threshold $THRESHOLD, wave $WAVE_SIZE, max age ${MAX_AGE}s)"
@@ -107,7 +108,7 @@ check_queued_lines() {
     n=$((n + 1))
     case "$l" in *"/lb.json  #checked:$REASON") ;; *) bad=$((bad + 1)); continue ;; esac
     line_ok "${l%%  #checked:*}" || bad=$((bad + 1))
-  done < <(touch_q "$Q" | awk -F'\t' -v t="$PAT" 'NF>1 && index($2,t)' | cut -f2-)
+  done < <(cat_if "$Q" | awk -F'\t' -v t="$PAT" 'NF>1 && index($2,t)' | cut -f2-)
   if [ "$bad" -gt 0 ]; then
     echo "[b2c-wave] ⛔ $bad queued B2c line(s) are malformed (torn / wrong pin / wrong env / wrong reason)" >&2; return 1
   fi
@@ -133,7 +134,7 @@ fi
 
 declare -A HANDLED=()
 while IFS= read -r p; do HANDLED["$p"]=1; done < <(
-  { touch_q "$Q"; touch_q "$RUNNING"
+  { cat_if "$Q"; cat_if "$RUNNING"
     [ -f "$LEDGER" ] && awk -F'\t' '$5=="0" {print $4}' "$LEDGER"; } \
   | grep -oE "research/findings/raw/_load_bearing/_shards/b2c0925-(base|flipcand)/s[0-9]+/[a-z0-9-]+/lb\.json" | sort -u)
 

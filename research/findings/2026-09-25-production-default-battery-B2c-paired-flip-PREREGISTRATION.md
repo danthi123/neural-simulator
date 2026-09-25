@@ -98,10 +98,11 @@ modules no production module imports, 18 of them `_`-prefixed plus `chat_time_pl
   the rc family ran at). Of these four, F = a308f1e09 contains only 2ac0fb245.
 - **Why the newest main and not the earliest candidate (3bdf8b619).** A flip, if licensed, lands on main at or after
   F2, so F2 is closer to what would ship. F2's version of the pair includes r2's night schedule and awake mark. Per the
-  module docstring these still run exactly one epoch for any one-night protocol, and the r2 counterfactual reads the
-  whole feature IDENTICAL when OFF. F2 also carries the oed sidecar fix, so no B2c cell needs the covered-by-parent rule.
+  module docstring these still run exactly one epoch for any one-night protocol. The r2 counterfactual read the whole
+  feature IDENTICAL when OFF at 24380cbe4; the awake-replay and load-renorm merges edited the same files after that.
+  F2 also carries the oed sidecar fix, so no B2c cell needs the covered-by-parent rule.
 - **Registry at F2.** `load_bearing_fraction.FACULTY_LESIONS` after the row hook: 50 rows, the same keys and kinds as
-  at F (computed at both revisions from `git archive` trees; identical). Coverable (neural-lesion + whether-disable):
+  at F (computed at filing, F from a `git archive` tree, F2 from a checkout at F2; identical). Coverable (neural-lesion + whether-disable):
   36. Sharded (`lb_shard.py` MEASURABLE_KINDS): 43 per seed, so 258 cells per arm and 516 in all <!--derived-->. The
   43 rows are frozen, in registry order, in `research/coordination/b2c_make_jobs.sh`.
 
@@ -123,8 +124,8 @@ seeds 42 43 44 100 101 102, the 43 frozen rows. Each line keeps B2b's layout:
 Its production default, `wall`, is machine time since the ledger was built. In a battery that is the pool node's compute
 time, which varies with host and load. Flipcand cells would stop being deterministic. Any gap of more than five minutes
 of compute between two observed turns (`continuous_engine.SLEEP_IDLE_SEC` = 300 s) would also start a sleep episode
-mid-conversation. `turn`
-makes each observed turn last 30 s of world time. Every GO run of both flags used it (`_da_tag_capture_chat_probe.py`:
+mid-conversation. `turn` makes each observed turn last 30 s of world time. Every GO run of both flags used it
+(`_da_tag_capture_chat_probe.py`:
 `ON = {BRAIN_DA_TAG_CAPTURE: 1, BRAIN_DA_TAG_CAPTURE_CLOCK: turn}`), and so does the harness's own
 `_DA_TAG_CAPTURE_ENV`. The rc family's arms are `{**ON, **RC}`, so the sleep route's GO ran on it too. The flip
 would change two brain flags; the clock default stays `wall`. B2c does not test the wall clock (see "Residuals": leg
@@ -206,7 +207,7 @@ A DECIDED pair is read on two things.
 
 - **(a) Load-bearing status**, `load_bearing` in each cell's `lb.json`.
 - **(b) The intact reply at the driving turn.** The turn is `turn` in `lb.json`; the reply is that turn's response in
-  the cell's single `intact_a_*.json` arm file. Compared: the row's registered decision fields as the harness's
+  the cell's single `intact_a_*` arm file (not its `.prov.json`). Compared: the row's registered decision fields as the harness's
   `compare()` compares them (its noise fields excluded), plus the top-level `abstained` and `answer` (exact string). The
   pair's own trace key `da_tag_capture` is excluded. For open-ended-generation (no arm file), (b) compares the
   `lb.json` entry on `lb_shard._CONTENT_BOUND_FIELDS`.
@@ -347,8 +348,8 @@ re-queues or moves a stale line.
     episodic-memory load-bearing on 42-43; causal-whatif and prospective-memory load-bearing on 42-44;
   - the seed-42 `intact_a` files of d5-consolidate and sleep-replay. Every recall turn abstains ("I haven't learned
     about mentioned"). `d5c_teach` and `slp_teach2` do not resolve the patient, so the wolf and owl facts are not
-    parsed; `slp_teach1` and `slp_teach3` return fox/hare and hawk/vole. This made me expect little room for an R3
-    improvement on this probe. R3 was written symmetric and was not tuned to it;
+    parsed; `slp_teach1` and `slp_teach3` return fox/hare and hawk/vole. This set the expectation that R3 has little
+    room to show an improvement on this probe. R3 was written symmetric and was not tuned to it;
   - the null-control `answer` check above (126 cells, base only).
 - **Computed at filing:** the registry at F and at F2 (identical); the static turn-group table at F2; B2a's aggregate
   re-run with the modified `lb_shard.py` (`--pin` M1, no expected env), which reproduced the committed

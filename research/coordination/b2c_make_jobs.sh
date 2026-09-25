@@ -20,6 +20,7 @@
 #   of THIS checkout -- run it that way once, in the primary checkout, just before the first wave is queued.
 # Exit: 0 = written and every static check passed; 1 = a check failed (nothing written); 2 = usage.
 set -euo pipefail
+export LC_ALL=C   # byte-order sort: the env-token comparisons below must not depend on the locale
 cd "$(dirname "${BASH_SOURCE[0]}")/../.."
 
 F2=fd29040db19987819461693aaf385977e45840ef
