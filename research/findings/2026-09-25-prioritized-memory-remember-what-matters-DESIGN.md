@@ -731,18 +731,19 @@ OFF until then (the owner's "wait on fix").
   the measured forgetting) is answered in principle by the ruling: losing an ordinary fact is acceptable when the loss
   follows importance, so the 0/6 loss of a neutral fact told 4 h before sleep is not by itself a blocker. What blocks
   is that the loss is importance-blind, and that encoding is a lottery at the floor write. B2 becomes a registered
-  criterion: every gate registered for the steps in the flip candidate reads GO 6/6 in the battery (wall clock, LTM
-  off as declared in 5.1) and again in D7 (production defaults, LTM on). For the minimum candidate (pair + Steps 0,
-  0b, 1a, 1, 2, 3, 4) that is the cumulative binding set of 5.3a's Step-4 row: WM0a, WM0b for S, WM0c, WM1 and WM3 for
-  S, Rsp and T, WM2a-d, WM4, WM5a-d, WM6, WM7 (L-DA, L-RECON, L-PRIO), WM8 and WM10; E, F, G and K join WM0b, WM1, WM3
-  and WM7 with Steps 5 and 7, and WM9a and WM9c with Step 6. The candidate carries `BRAIN_INTEGRATED_LOOP=1` (Step
-  3(a)), so the flip includes the integrated loop's own default, which has an open owner decision. WM1 is a relative
-  order, so a brain that forgot nearly everything could pass it; WM3 (important facts kept, absolute) and WM10 (no
-  more forgetting than the pair as it stands) are what stop that. B3 (the `pp` wall-clock day) stays; its registered
-  verdicts stand as registered, its WD2 ("ordinary kept") is read as REPORTED for the flip decision, and its NR gate
-  becomes binding (it is WM2c on a production day). B4 (`sn`: salient vs neutral at long delay in one family,
-  waking-only DA lesion) stays as the first registered instance of WM1 and WM7 for the dopamine channel. B5 (the weak
-  telling read at once and with the ledger off) stays; it is the P1 logic, now graded (WM0).
+  criterion: every gate in the binding set of the candidate's highest step (5.3a) reads GO 6/6 in the battery (wall
+  clock, LTM off as declared in 5.1) and again in D7 (production defaults, LTM on). For the minimum candidate (pair +
+  Steps 0, 0b, 1a, 1, 2, 3, 4) that is the cumulative binding set of 5.3a's Step-4 row: WM0a, WM0b for S, WM0c, WM1
+  and WM3 for S, Rsp and T, WM2a-d, WM4, WM5a-d, WM6, WM7 (L-DA, L-RECON, L-PRIO), WM8 and WM10; E, F, G and K join
+  WM0b, WM1, WM3 and WM7 with Steps 5 and 7, and WM9a and WM9c with Step 6. The candidate carries
+  `BRAIN_INTEGRATED_LOOP=1` (Step 3(a)), so the flip includes the integrated loop's own default, which has an open
+  owner decision. WM1 is a relative order, so a brain that forgot nearly everything could pass it; WM3 (important
+  facts kept, absolute) and WM10 (no more forgetting than the pair as it stands) are what stop that. B3 (the `pp`
+  wall-clock day) stays; its registered verdicts stand as registered, its WD2 ("ordinary kept") is read as REPORTED
+  for the flip decision, and its NR gate becomes binding (it is WM2c on a production day). B4 (`sn`: salient vs
+  neutral at long delay in one family, waking-only DA lesion) stays as the first registered instance of WM1 and WM7
+  for the dopamine channel. B5 (the weak telling read at once and with the ledger off) stays; it is the P1 logic, now
+  graded (WM0).
 - **Leg (c), combined no-regression battery.** C1-C3 carry over, run at the revision that carries the prioritization
   steps. Added: every memory faculty that reads the composer store (episodic, source provenance, prospective memory,
   WM binding, common ground) keeps its load-bearing row, because Steps 1a, 3 and 6 change what a told fact writes.
