@@ -138,6 +138,12 @@ def _host(a):
 _EXTRA_RESET_ARRAYS = ("cp_refractory_timers", "cp_prev_firing_states",
                        "cp_neuron_activity_ema", "cp_neuron_firing_thresholds")
 
+# NAMED plasticity gate for the LOCAL freeze (chat-time-plasticity-audit 2026-09-24, default-OFF via
+# `build_expectation_circuit(local_freeze_gate=...)`). Declared here (not inline) so callers on either side of
+# the shared-bridge boundary (surprise_production_organ.py, onebrain_merge_framework.py's `_surprise_spec`)
+# name the SAME gate rather than each spelling the string independently.
+SURPRISE_FREEZE_GATE = "surprise_frozen"
+
 
 def build_expectation_circuit(seed, *, n_trained=5, n_novel=2, blk=24, cue_blk=24,
                               cue_to_expected_weight=0.8, asserted_to_surprise_weight=5.0,
@@ -145,7 +151,8 @@ def build_expectation_circuit(seed, *, n_trained=5, n_novel=2, blk=24, cue_blk=2
                               gabab_tau_decay=150.0, hebbian_learning_rate=0.06,
                               hebbian_max_weight=45.0, enable_heterogeneity=False,
                               region_suffix="", per_region_thresh=False,
-                              backend_neutral_init=True, backend_neutral_arith=True):
+                              backend_neutral_init=True, backend_neutral_arith=True,
+                              local_freeze_gate=False):
     """Build cue -> patient_expected(FS, GABA_A) -> surprise <- patient_asserted(exc).
 
     cue->patient_expected is TOPOGRAPHIC + PLASTIC (Hebbian co-fire strengthens the recall).
@@ -258,9 +265,15 @@ def build_expectation_circuit(seed, *, n_trained=5, n_novel=2, blk=24, cue_blk=2
     cfg.region_pathways = [
         # The LEARNED prediction: cue (state) -> patient_expected. PLASTIC, all-to-all so
         # Hebbian co-fire SELECTS cue_i -> patient_i (others stay ~0).
+        # local_freeze_gate (default False, chat-time-plasticity-audit 2026-09-24): tags this pathway with the
+        # NAMED gate SURPRISE_FREEZE_GATE so the caller can freeze ONLY it (`set_plasticity_gate(..., 0.0)`)
+        # instead of the bridge-WIDE `cfg.enable_hebbian_learning = False` kill switch
+        # surprise_production_organ.py used to reach for, which silently freezes every co-resident organ's
+        # Hebbian pathway on a shared bridge. False (default) leaves this ungated -> byte-identical wiring.
         RegionPathway(from_region="cue" + sfx, to_region="patient_expected" + sfx,
                       density=1.0, weight_mean=float(cue_to_expected_weight),
-                      weight_jitter=0.0, plastic=True),
+                      weight_jitter=0.0, plastic=True,
+                      plasticity_gate=(SURPRISE_FREEZE_GATE if local_freeze_gate else None)),
         # The asserted feed-forward drive: patient_asserted -> surprise (exc). Built full,
         # masked block-diagonal after build (concept c -> surprise block c).
         RegionPathway(from_region="patient_asserted" + sfx, to_region="surprise" + sfx,

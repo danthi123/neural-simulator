@@ -1,0 +1,1657 @@
+{
+  "seed": 42,
+  "backend": "numpy",
+  "warmup": [
+    {
+      "enable_hebbian_learning": true,
+      "enable_stdp": false,
+      "gates": {
+        "workspace_loop_fixed": 0.0,
+        "cue_position": 1.0,
+        "cue_animacy": 1.0,
+        "cue_verbfit": 1.0,
+        "cue_lexbias": 1.0,
+        "content_learn": 1.0,
+        "prov_learn": 1.0
+      },
+      "step": "before_any_organ"
+    },
+    {
+      "enable_hebbian_learning": true,
+      "enable_stdp": false,
+      "gates": {
+        "workspace_loop_fixed": 0.0,
+        "cue_position": 1.0,
+        "cue_animacy": 1.0,
+        "cue_verbfit": 1.0,
+        "cue_lexbias": 1.0,
+        "content_learn": 1.0,
+        "prov_learn": 1.0
+      },
+      "step": "after_affect"
+    },
+    {
+      "enable_hebbian_learning": true,
+      "enable_stdp": false,
+      "gates": {
+        "workspace_loop_fixed": 0.0,
+        "cue_position": 0.0,
+        "cue_animacy": 0.0,
+        "cue_verbfit": 0.0,
+        "cue_lexbias": 0.0,
+        "content_learn": 1.0,
+        "prov_learn": 1.0
+      },
+      "step": "after_comprehension"
+    },
+    {
+      "enable_hebbian_learning": false,
+      "enable_stdp": false,
+      "gates": {
+        "workspace_loop_fixed": 0.0,
+        "cue_position": 0.0,
+        "cue_animacy": 0.0,
+        "cue_verbfit": 0.0,
+        "cue_lexbias": 0.0,
+        "content_learn": 1.0,
+        "prov_learn": 1.0
+      },
+      "step": "after_surprise"
+    },
+    {
+      "enable_hebbian_learning": false,
+      "enable_stdp": false,
+      "gates": {
+        "workspace_loop_fixed": 0.0,
+        "cue_position": 0.0,
+        "cue_animacy": 0.0,
+        "cue_verbfit": 0.0,
+        "cue_lexbias": 0.0,
+        "content_learn": 1.0,
+        "prov_learn": 1.0
+      },
+      "step": "after_metacog"
+    },
+    {
+      "enable_hebbian_learning": false,
+      "enable_stdp": false,
+      "gates": {
+        "workspace_loop_fixed": 0.0,
+        "cue_position": 0.0,
+        "cue_animacy": 0.0,
+        "cue_verbfit": 0.0,
+        "cue_lexbias": 0.0,
+        "content_learn": 1.0,
+        "prov_learn": 1.0
+      },
+      "step": "after_worldmodel"
+    },
+    {
+      "enable_hebbian_learning": false,
+      "enable_stdp": false,
+      "gates": {
+        "workspace_loop_fixed": 0.0,
+        "cue_position": 0.0,
+        "cue_animacy": 0.0,
+        "cue_verbfit": 0.0,
+        "cue_lexbias": 0.0,
+        "content_learn": 1.0,
+        "prov_learn": 1.0
+      },
+      "step": "after_pragmatic"
+    }
+  ],
+  "turns": [
+    {
+      "label": "teach_dog",
+      "message": "the dog chases the cat",
+      "response": {
+        "answer": "the dog chases the cat",
+        "abstained": false,
+        "recalled_svo": [
+          "dog",
+          "chase",
+          "cat"
+        ],
+        "derived": false,
+        "derived_from": null,
+        "verified": true,
+        "renderer": "template-stub (GPU-free)",
+        "brain": "tiny-demo",
+        "source": "tiny-demo +LTM",
+        "rich": false,
+        "activity": {
+          "roles": [
+            {
+              "role": "agent",
+              "word": "dog",
+              "confidence": 1.0,
+              "margin": 0.5625418005956131,
+              "margin_spiking": null,
+              "cue": true,
+              "asserted": "dog"
+            },
+            {
+              "role": "action",
+              "word": "chase",
+              "confidence": 1.0,
+              "margin": 0.5166290093472239,
+              "margin_spiking": null,
+              "cue": true,
+              "asserted": "chase"
+            },
+            {
+              "role": "patient",
+              "word": "cat",
+              "confidence": 1.0,
+              "margin": 0.38446043711757766,
+              "margin_spiking": null,
+              "cue": true,
+              "asserted": "cat"
+            },
+            {
+              "role": "attribute",
+              "word": null,
+              "confidence": 1.0,
+              "margin": 0.0575410756721913,
+              "margin_spiking": null,
+              "cue": false
+            },
+            {
+              "role": "polarity",
+              "word": "AFFIRM",
+              "confidence": 1.0,
+              "margin": 0.9999999999999997,
+              "margin_spiking": null,
+              "cue": false
+            }
+          ],
+          "matched_fact_index": 3,
+          "n_facts_scanned": 5,
+          "abstained": false,
+          "rf": {
+            "n_readout_neurons": 6880,
+            "frac_fired": 0.11177325581395349,
+            "mean_magnitude": 41781.16618594054
+          },
+          "composer": "onebrain"
+        },
+        "provenance": {
+          "known": true,
+          "label": "perceived",
+          "d": 0.9999999902140674,
+          "rate_perceived": 0.1021875,
+          "rate_generated": 0.0,
+          "encoded_as": "perceived",
+          "agrees_with_encoded": true
+        },
+        "affect": {
+          "on": true,
+          "lesioned": false,
+          "composer": "onebrain",
+          "differential": 0.0,
+          "valence_sign": "0",
+          "tone_level": 0,
+          "tone_token": "",
+          "forthcomingness": {
+            "max_sentences": 4,
+            "max_elaborations": 2
+          },
+          "manner_template": "",
+          "appraisal_valence": 0.0,
+          "appraisal_arousal": 0.0,
+          "appraisal_hits": [],
+          "pos_rate": 0.0,
+          "neg_rate": 0.0
+        },
+        "comprehension": {
+          "on": true,
+          "lesioned": false,
+          "in_scope": true,
+          "svo": [
+            "dog",
+            "chase",
+            "cat"
+          ],
+          "margin": 0.09999999999999998,
+          "threshold": 0.19999999999999998,
+          "comprehended": false,
+          "calib": {
+            "mean_well": 0.3,
+            "min_well": 0.3,
+            "mean_ill": 0.038888888888888876,
+            "max_ill": 0.09999999999999998,
+            "read_steps": 60,
+            "n_calib": 24
+          },
+          "known_binding": true,
+          "xedge_live_learn": {
+            "credited": true,
+            "teach": "teach_agent",
+            "margin": 0.32222222222222224,
+            "focus": "w0",
+            "content_direction": "agent",
+            "w_before": {
+              "w0->A": 0.05,
+              "w0->P": 0.05,
+              "w1->A": 0.05,
+              "w1->P": 0.05,
+              "w2->A": 0.05,
+              "w2->P": 0.05
+            },
+            "w_after": {
+              "w0->A": 0.6929,
+              "w0->P": 0.05,
+              "w1->A": 0.05,
+              "w1->P": 0.05,
+              "w2->A": 0.05,
+              "w2->P": 0.05
+            },
+            "n_live_credited": 1,
+            "a0": 0.23333333333333334,
+            "a1": 0.3333333333333333,
+            "role_floor": 0.06333333333333334
+          }
+        },
+        "surprise": null,
+        "metacog": {
+          "on": true,
+          "lesioned": false,
+          "evidence": 1.0,
+          "balance": 0.08564659007052086,
+          "threshold": 0.057845546432234586,
+          "confident": true,
+          "calib": {
+            "mean_hi": 0.07254469906489278,
+            "min_hi": 0.06324435069078038,
+            "mean_lo": 0.03623807287266029,
+            "max_lo": 0.05244674217368879,
+            "clean_gap": true,
+            "read_reps": 8,
+            "role_conf_lo": 0.3,
+            "role_conf_hi": 0.5,
+            "confidence_read": "nmda_norm"
+          },
+          "mean_role_conf": 0.5042344645465211
+        },
+        "worldmodel": null,
+        "curiosity": null,
+        "multiref": {
+          "on": true,
+          "lesioned": false,
+          "in_scope": true,
+          "composer": "onebrain",
+          "n_referents": 2,
+          "input_order": [
+            "dog",
+            "cat"
+          ],
+          "recovered": {
+            "0": "dog",
+            "1": "cat"
+          },
+          "hold_alive_min": 0.061111111111111116,
+          "zero_input_ok": true,
+          "all_recovered": true,
+          "is_hold_query": false,
+          "kind": "maintain"
+        },
+        "noncontradiction": {
+          "on": true,
+          "lesioned": false,
+          "in_scope": true,
+          "svo": [
+            "dog",
+            "chases",
+            "cat"
+          ],
+          "recall_action": "chase",
+          "asserted_polarity": "AFFIRM",
+          "recalled_yn": "yes",
+          "stored_polarity": "AFFIRM",
+          "reject": false
+        },
+        "reconsolidation": null,
+        "pragmatic": null,
+        "episodic": null,
+        "affect_drives": {
+          "acted": true,
+          "turn": 1,
+          "lesioned": false,
+          "ema_valence": 0.0,
+          "ema_arousal": 0.0,
+          "body_h": 0.5,
+          "body_a": 0.0,
+          "mood": -0.003375000000000003,
+          "felt_arousal": 0.0,
+          "level": 0,
+          "high_arousal": false,
+          "lead": "",
+          "reason": "neutral_hold",
+          "seed": 42,
+          "vplus_rate": 0.03679166666666667,
+          "vminus_rate": 0.04016666666666667
+        },
+        "swap_drives": {
+          "acted": true,
+          "turn": 1,
+          "topic": "dog",
+          "swapped": false,
+          "held_topic_before": null,
+          "held_topic": "dog",
+          "evicted_topic": null,
+          "reason": "first_thought",
+          "seed": 42,
+          "lesioned": false,
+          "proposed_slot": 0,
+          "held_slot": 0,
+          "winner_slot": 0,
+          "n_ignited_post": 1,
+          "held_rate_post": 0.3333333333333333,
+          "mm_peak": 0.05555555555555555,
+          "boost_max": 0.027777777777777776,
+          "on": true,
+          "lead": "",
+          "new_topic": null,
+          "reason_lead": "first_thought"
+        },
+        "common_ground_drives": {
+          "on": true,
+          "topic": "dog",
+          "slot": 0,
+          "decision": "introduce",
+          "in_common_ground": false,
+          "first_mention": true,
+          "reduce_rate": 0.0,
+          "introduce_rate": 0.04833333333333333,
+          "evidence_rate": 0.0,
+          "margin": -0.04833333333333333,
+          "lesioned": false,
+          "lead": "",
+          "reason_lead": "introduce"
+        },
+        "da_drives": {
+          "acted": true,
+          "turn": 1,
+          "lesioned": false,
+          "turn_engagement": 0.4727272727272727,
+          "ema_engagement": 0.28363636363636363,
+          "afferent_pA": 397.09090909090907,
+          "da_level": 0.5215767297041785,
+          "snc_firing": 0.07833333333333331,
+          "mode": "neutral",
+          "lead": "",
+          "reason": "low_engagement",
+          "seed": 42,
+          "shared_salience": {
+            "raw": 0.734,
+            "want_hz": 18.055555555555554,
+            "normalized": 0.4727272727272727,
+            "lesioned": false,
+            "calib": {
+              "want_novel_hz": 38.19444444444444,
+              "want_familiar_hz": 0.0,
+              "threshold_hz": 19.09722222222222,
+              "novel_signal": 0.95,
+              "familiar_signal": 0.0,
+              "read_reps": 4
+            },
+            "on": true
+          },
+          "spiking_novelty": {
+            "novelty": 0.9733333333333333,
+            "n_tokens": 3,
+            "per_word_freshness": [
+              1.0,
+              1.0,
+              0.92
+            ],
+            "fresh_ref": 25.0,
+            "n_channels": 64,
+            "lesioned": false,
+            "on": true
+          },
+          "on": true
+        },
+        "da_encoding": {
+          "on": true,
+          "g": 1.7202762703502712,
+          "da_level": 0.5215767297041785,
+          "lesioned": false
+        }
+      },
+      "wave3_pool": {
+        "enable_hebbian_learning": false,
+        "enable_stdp": false,
+        "gates": {
+          "workspace_loop_fixed": 0.0,
+          "cue_position": 0.0,
+          "cue_animacy": 0.0,
+          "cue_verbfit": 0.0,
+          "cue_lexbias": 0.0,
+          "content_learn": 1.0,
+          "prov_learn": 1.0
+        },
+        "whole_bridge_max_dw": 0.0,
+        "per_gate_max_dw": {
+          "workspace_loop_fixed": 0.0,
+          "cue_position": 0.0,
+          "cue_animacy": 0.0,
+          "cue_verbfit": 0.0,
+          "cue_lexbias": 0.0,
+          "content_learn": 0.0,
+          "prov_learn": 0.0
+        },
+        "ungated_max_dw": 0.0,
+        "n_gated_synapses": 93856,
+        "n_ungated_synapses": 437948
+      },
+      "affect_bridge": {
+        "enable_hebbian_learning": false,
+        "enable_stdp": false,
+        "gates": {
+          "workspace_loop_fixed": 0.0,
+          "meta_read_fixed": 0.0,
+          "meta_to_self_confid_fixed": 0.0,
+          "arb_wta_fixed": 0.0
+        },
+        "whole_bridge_max_dw": 0.0,
+        "per_gate_max_dw": {
+          "workspace_loop_fixed": 0.0,
+          "meta_read_fixed": 0.0,
+          "meta_to_self_confid_fixed": 0.0,
+          "arb_wta_fixed": 0.0
+        },
+        "ungated_max_dw": 0.0,
+        "n_gated_synapses": 48520,
+        "n_ungated_synapses": 42813
+      },
+      "source_provenance_bridge": {
+        "enable_hebbian_learning": true,
+        "enable_stdp": false,
+        "gates": {
+          "content_learn": 0.0,
+          "prov_learn": 0.0
+        },
+        "whole_bridge_max_dw": 0.0,
+        "per_gate_max_dw": {
+          "content_learn": 0.0,
+          "prov_learn": 0.0
+        },
+        "ungated_max_dw": 0.0,
+        "n_gated_synapses": 16896,
+        "n_ungated_synapses": 2225
+      },
+      "prospective_memory_bridge": null
+    },
+    {
+      "label": "teach_bird",
+      "message": "the bird eats the worm",
+      "response": {
+        "answer": "I caught the verb 'eat' with the bird and the worm, but my role-binding didn't resolve the PATIENT \u2014 which of them is the 'eat' done to, the bird or the worm?",
+        "abstained": true,
+        "recalled_svo": null,
+        "verified": false,
+        "renderer": "template-stub (GPU-free)",
+        "brain": "tiny-demo",
+        "source": "tiny-demo +LTM",
+        "rich": false,
+        "activity": null,
+        "affect": {
+          "on": true,
+          "lesioned": false,
+          "composer": "onebrain",
+          "differential": 0.0,
+          "valence_sign": "0",
+          "tone_level": 0,
+          "tone_token": "",
+          "forthcomingness": {
+            "max_sentences": 4,
+            "max_elaborations": 2
+          },
+          "manner_template": "",
+          "appraisal_valence": 0.0,
+          "appraisal_arousal": 0.0,
+          "appraisal_hits": [],
+          "pos_rate": 0.0,
+          "neg_rate": 0.0
+        },
+        "comprehension": {
+          "on": true,
+          "lesioned": false,
+          "in_scope": true,
+          "svo": [
+            "bird",
+            "eat",
+            "worm"
+          ],
+          "margin": 0.016666666666666663,
+          "threshold": 0.19999999999999998,
+          "comprehended": false,
+          "calib": {
+            "mean_well": 0.3,
+            "min_well": 0.3,
+            "mean_ill": 0.038888888888888876,
+            "max_ill": 0.09999999999999998,
+            "read_steps": 60,
+            "n_calib": 24
+          },
+          "known_binding": false,
+          "abstained": true
+        },
+        "not_understood": true,
+        "pragmatic": null,
+        "repair": {
+          "on": true,
+          "lesioned": false,
+          "svo": [
+            "bird",
+            "eat",
+            "worm"
+          ],
+          "a0": 0.31666666666666665,
+          "a1": 0.3333333333333333,
+          "pair_max": 0.3333333333333333,
+          "net_lean": 0.6499999999999999,
+          "role_floor": 0.06333333333333334,
+          "lean_margin": 0.31666666666666665,
+          "loadbearing": "spiking_role_evidence",
+          "kind": "role",
+          "role": "patient",
+          "word": null,
+          "repaired": true
+        }
+      },
+      "wave3_pool": {
+        "enable_hebbian_learning": false,
+        "enable_stdp": false,
+        "gates": {
+          "workspace_loop_fixed": 0.0,
+          "cue_position": 0.0,
+          "cue_animacy": 0.0,
+          "cue_verbfit": 0.0,
+          "cue_lexbias": 0.0,
+          "content_learn": 1.0,
+          "prov_learn": 1.0
+        },
+        "whole_bridge_max_dw": 0.0,
+        "per_gate_max_dw": {
+          "workspace_loop_fixed": 0.0,
+          "cue_position": 0.0,
+          "cue_animacy": 0.0,
+          "cue_verbfit": 0.0,
+          "cue_lexbias": 0.0,
+          "content_learn": 0.0,
+          "prov_learn": 0.0
+        },
+        "ungated_max_dw": 0.0,
+        "n_gated_synapses": 93856,
+        "n_ungated_synapses": 437948
+      },
+      "affect_bridge": {
+        "enable_hebbian_learning": false,
+        "enable_stdp": false,
+        "gates": {
+          "workspace_loop_fixed": 0.0,
+          "meta_read_fixed": 0.0,
+          "meta_to_self_confid_fixed": 0.0,
+          "arb_wta_fixed": 0.0
+        },
+        "whole_bridge_max_dw": 0.0,
+        "per_gate_max_dw": {
+          "workspace_loop_fixed": 0.0,
+          "meta_read_fixed": 0.0,
+          "meta_to_self_confid_fixed": 0.0,
+          "arb_wta_fixed": 0.0
+        },
+        "ungated_max_dw": 0.0,
+        "n_gated_synapses": 48520,
+        "n_ungated_synapses": 42813
+      },
+      "source_provenance_bridge": {
+        "enable_hebbian_learning": true,
+        "enable_stdp": false,
+        "gates": {
+          "content_learn": 0.0,
+          "prov_learn": 0.0
+        },
+        "whole_bridge_max_dw": 0.0,
+        "per_gate_max_dw": {
+          "content_learn": 0.0,
+          "prov_learn": 0.0
+        },
+        "ungated_max_dw": 0.0,
+        "n_gated_synapses": 16896,
+        "n_ungated_synapses": 2225
+      },
+      "prospective_memory_bridge": null
+    },
+    {
+      "label": "recall_dog",
+      "message": "what does the dog chase",
+      "response": {
+        "answer": "As for it \u2014 the dog chases the cat",
+        "abstained": false,
+        "recalled_svo": [
+          "dog",
+          "chase",
+          "cat"
+        ],
+        "derived": false,
+        "derived_from": null,
+        "verified": true,
+        "renderer": "template-stub (GPU-free)",
+        "brain": "tiny-demo",
+        "source": "tiny-demo +LTM",
+        "rich": false,
+        "activity": {
+          "roles": [
+            {
+              "role": "agent",
+              "word": "dog",
+              "confidence": 1.0,
+              "margin": 0.5625418005956131,
+              "margin_spiking": null,
+              "cue": true,
+              "asserted": "dog"
+            },
+            {
+              "role": "action",
+              "word": "chase",
+              "confidence": 1.0,
+              "margin": 0.5166290093472239,
+              "margin_spiking": null,
+              "cue": true,
+              "asserted": "chase"
+            },
+            {
+              "role": "patient",
+              "word": "cat",
+              "confidence": 1.0,
+              "margin": 0.38446043711757766,
+              "margin_spiking": null,
+              "cue": false
+            },
+            {
+              "role": "attribute",
+              "word": null,
+              "confidence": 1.0,
+              "margin": 0.0575410756721913,
+              "margin_spiking": null,
+              "cue": false
+            },
+            {
+              "role": "polarity",
+              "word": "AFFIRM",
+              "confidence": 1.0,
+              "margin": 0.9999999999999997,
+              "margin_spiking": null,
+              "cue": false
+            }
+          ],
+          "matched_fact_index": 3,
+          "n_facts_scanned": 6,
+          "abstained": false,
+          "rf": {
+            "n_readout_neurons": 6880,
+            "frac_fired": 0.11177325581395349,
+            "mean_magnitude": 41781.16618594054
+          },
+          "composer": "onebrain"
+        },
+        "provenance": {
+          "known": true,
+          "label": "perceived",
+          "d": 0.9999999902140674,
+          "rate_perceived": 0.1021875,
+          "rate_generated": 0.0,
+          "encoded_as": "perceived",
+          "agrees_with_encoded": true
+        },
+        "affect": {
+          "on": true,
+          "lesioned": false,
+          "composer": "onebrain",
+          "differential": 0.0,
+          "valence_sign": "0",
+          "tone_level": 0,
+          "tone_token": "",
+          "forthcomingness": {
+            "max_sentences": 4,
+            "max_elaborations": 2
+          },
+          "manner_template": "",
+          "appraisal_valence": 0.0,
+          "appraisal_arousal": 0.0,
+          "appraisal_hits": [],
+          "pos_rate": 0.0,
+          "neg_rate": 0.0
+        },
+        "comprehension": null,
+        "surprise": null,
+        "metacog": {
+          "on": true,
+          "lesioned": false,
+          "evidence": 1.0,
+          "balance": 0.08564659007052086,
+          "threshold": 0.057845546432234586,
+          "confident": true,
+          "calib": {
+            "mean_hi": 0.07254469906489278,
+            "min_hi": 0.06324435069078038,
+            "mean_lo": 0.03623807287266029,
+            "max_lo": 0.05244674217368879,
+            "clean_gap": true,
+            "read_reps": 8,
+            "role_conf_lo": 0.3,
+            "role_conf_hi": 0.5,
+            "confidence_read": "nmda_norm"
+          },
+          "mean_role_conf": 0.5042344645465211
+        },
+        "worldmodel": null,
+        "curiosity": null,
+        "multiref": null,
+        "noncontradiction": null,
+        "reconsolidation": null,
+        "pragmatic": null,
+        "episodic": null,
+        "affect_drives": {
+          "acted": true,
+          "turn": 3,
+          "lesioned": false,
+          "ema_valence": 0.0,
+          "ema_arousal": 0.0,
+          "body_h": 0.5,
+          "body_a": 0.0,
+          "mood": -0.003375000000000003,
+          "felt_arousal": 0.0,
+          "level": 0,
+          "high_arousal": false,
+          "lead": "",
+          "reason": "neutral_hold",
+          "seed": 42,
+          "vplus_rate": 0.03679166666666667,
+          "vminus_rate": 0.04016666666666667
+        },
+        "swap_drives": {
+          "acted": true,
+          "turn": 3,
+          "topic": "dog",
+          "swapped": false,
+          "held_topic_before": "dog",
+          "held_topic": "dog",
+          "evicted_topic": null,
+          "reason": "same_topic_hold",
+          "seed": 42,
+          "lesioned": false,
+          "proposed_slot": 0,
+          "held_slot": 0,
+          "incumbent_slot": 0,
+          "winner_slot": 0,
+          "n_ignited_post": 1,
+          "old_residual_post": 0.3333333333333333,
+          "new_rate_post": 0.3333333333333333,
+          "mm_peak": 0.06666666666666667,
+          "boost_max": 0.03333333333333333,
+          "on": true,
+          "lead": "",
+          "new_topic": null,
+          "reason_lead": "same_topic_hold"
+        },
+        "common_ground_drives": {
+          "on": true,
+          "topic": "dog",
+          "slot": 0,
+          "decision": "reduce",
+          "in_common_ground": true,
+          "first_mention": false,
+          "reduce_rate": 0.105,
+          "introduce_rate": 0.041666666666666664,
+          "evidence_rate": 0.11666666666666667,
+          "margin": 0.06333333333333332,
+          "lesioned": false,
+          "lead": "As for it \u2014 ",
+          "reason_lead": "reduced_reference"
+        },
+        "da_drives": {
+          "acted": true,
+          "turn": 3,
+          "lesioned": false,
+          "turn_engagement": 0.3272727272727272,
+          "ema_engagement": 0.35519999999999996,
+          "afferent_pA": 497.28,
+          "da_level": 0.6185778360418599,
+          "snc_firing": 0.09249999999999993,
+          "mode": "neutral",
+          "lead": "",
+          "reason": "low_engagement",
+          "seed": 42,
+          "shared_salience": {
+            "raw": 0.6519999999999999,
+            "want_hz": 12.499999999999998,
+            "normalized": 0.3272727272727272,
+            "lesioned": false,
+            "calib": {
+              "want_novel_hz": 38.19444444444444,
+              "want_familiar_hz": 0.0,
+              "threshold_hz": 19.09722222222222,
+              "novel_signal": 0.95,
+              "familiar_signal": 0.0,
+              "read_reps": 4
+            },
+            "on": true
+          },
+          "spiking_novelty": {
+            "novelty": 0.9199999999999999,
+            "n_tokens": 2,
+            "per_word_freshness": [
+              0.84,
+              1.0
+            ],
+            "fresh_ref": 25.0,
+            "n_channels": 64,
+            "lesioned": false,
+            "on": true
+          },
+          "on": true
+        },
+        "da_encoding": {
+          "on": true,
+          "g": 2.001480019733596,
+          "da_level": 0.6185778360418599,
+          "lesioned": false
+        }
+      },
+      "wave3_pool": {
+        "enable_hebbian_learning": false,
+        "enable_stdp": false,
+        "gates": {
+          "workspace_loop_fixed": 0.0,
+          "cue_position": 0.0,
+          "cue_animacy": 0.0,
+          "cue_verbfit": 0.0,
+          "cue_lexbias": 0.0,
+          "content_learn": 1.0,
+          "prov_learn": 1.0
+        },
+        "whole_bridge_max_dw": 0.0,
+        "per_gate_max_dw": {
+          "workspace_loop_fixed": 0.0,
+          "cue_position": 0.0,
+          "cue_animacy": 0.0,
+          "cue_verbfit": 0.0,
+          "cue_lexbias": 0.0,
+          "content_learn": 0.0,
+          "prov_learn": 0.0
+        },
+        "ungated_max_dw": 0.0,
+        "n_gated_synapses": 93856,
+        "n_ungated_synapses": 437948
+      },
+      "affect_bridge": {
+        "enable_hebbian_learning": false,
+        "enable_stdp": false,
+        "gates": {
+          "workspace_loop_fixed": 0.0,
+          "meta_read_fixed": 0.0,
+          "meta_to_self_confid_fixed": 0.0,
+          "arb_wta_fixed": 0.0
+        },
+        "whole_bridge_max_dw": 0.0,
+        "per_gate_max_dw": {
+          "workspace_loop_fixed": 0.0,
+          "meta_read_fixed": 0.0,
+          "meta_to_self_confid_fixed": 0.0,
+          "arb_wta_fixed": 0.0
+        },
+        "ungated_max_dw": 0.0,
+        "n_gated_synapses": 48520,
+        "n_ungated_synapses": 42813
+      },
+      "source_provenance_bridge": {
+        "enable_hebbian_learning": true,
+        "enable_stdp": false,
+        "gates": {
+          "content_learn": 0.0,
+          "prov_learn": 0.0
+        },
+        "whole_bridge_max_dw": 28.73611068725586,
+        "per_gate_max_dw": {
+          "content_learn": 0.0,
+          "prov_learn": 0.0
+        },
+        "ungated_max_dw": 28.73611068725586,
+        "n_gated_synapses": 16896,
+        "n_ungated_synapses": 2225
+      },
+      "prospective_memory_bridge": null
+    },
+    {
+      "label": "pmem_form",
+      "message": "remind me to check the oven when the timer rings",
+      "response": {
+        "answer": "Okay \u2014 I'll hold onto that and remind you to check the oven when the timer rings comes up.",
+        "abstained": false,
+        "recalled_svo": null,
+        "verified": true,
+        "renderer": "template-stub (GPU-free)",
+        "brain": "tiny-demo",
+        "source": "tiny-demo +LTM",
+        "rich": false,
+        "activity": null,
+        "affect": {
+          "on": true,
+          "lesioned": false,
+          "composer": "onebrain",
+          "differential": 0.0,
+          "valence_sign": "0",
+          "tone_level": 0,
+          "tone_token": "",
+          "forthcomingness": {
+            "max_sentences": 4,
+            "max_elaborations": 2
+          },
+          "manner_template": "",
+          "appraisal_valence": 0.0,
+          "appraisal_arousal": 0.0,
+          "appraisal_hits": [],
+          "pos_rate": 0.0,
+          "neg_rate": 0.0
+        },
+        "prospective": {
+          "held": true,
+          "action": "check the oven",
+          "cue_clause": "the timer rings",
+          "cue_keywords": [
+            "timer",
+            "rings"
+          ],
+          "lesioned": false,
+          "held_after_lesion": null,
+          "calib": {
+            "bias_pA": {
+              "A": -1073.3,
+              "B": -1170.0
+            },
+            "plateau_diag": {
+              "A": {
+                "g_single_cue": 36.661,
+                "g_single_held": 127.079,
+                "g_coinc": 165.669,
+                "theta": 133.433,
+                "coinc_over_theta": true,
+                "coinc_margin": 32.236
+              },
+              "B": {
+                "g_single_cue": 31.737,
+                "g_single_held": 130.753,
+                "g_coinc": 164.344,
+                "theta": 137.291,
+                "coinc_over_theta": true,
+                "coinc_margin": 27.053
+              }
+            },
+            "fire_thr": 0.2,
+            "silent_max": 0.06
+          },
+          "hebbian": true,
+          "hebbian_lesioned": false,
+          "binding_learned": {
+            "pre_act_rate": 0.4433,
+            "pre_cue_rate": 0.4567,
+            "post_rel_rate": 0.2278,
+            "learned_norm": 17760.0,
+            "canonical_norm_per_action": 17760.0
+          },
+          "kind": "formation"
+        },
+        "inner_state_readout": true
+      },
+      "wave3_pool": {
+        "enable_hebbian_learning": false,
+        "enable_stdp": false,
+        "gates": {
+          "workspace_loop_fixed": 0.0,
+          "cue_position": 0.0,
+          "cue_animacy": 0.0,
+          "cue_verbfit": 0.0,
+          "cue_lexbias": 0.0,
+          "content_learn": 1.0,
+          "prov_learn": 1.0
+        },
+        "whole_bridge_max_dw": 0.0,
+        "per_gate_max_dw": {
+          "workspace_loop_fixed": 0.0,
+          "cue_position": 0.0,
+          "cue_animacy": 0.0,
+          "cue_verbfit": 0.0,
+          "cue_lexbias": 0.0,
+          "content_learn": 0.0,
+          "prov_learn": 0.0
+        },
+        "ungated_max_dw": 0.0,
+        "n_gated_synapses": 93856,
+        "n_ungated_synapses": 437948
+      },
+      "affect_bridge": {
+        "enable_hebbian_learning": false,
+        "enable_stdp": false,
+        "gates": {
+          "workspace_loop_fixed": 0.0,
+          "meta_read_fixed": 0.0,
+          "meta_to_self_confid_fixed": 0.0,
+          "arb_wta_fixed": 0.0
+        },
+        "whole_bridge_max_dw": 0.0,
+        "per_gate_max_dw": {
+          "workspace_loop_fixed": 0.0,
+          "meta_read_fixed": 0.0,
+          "meta_to_self_confid_fixed": 0.0,
+          "arb_wta_fixed": 0.0
+        },
+        "ungated_max_dw": 0.0,
+        "n_gated_synapses": 48520,
+        "n_ungated_synapses": 42813
+      },
+      "source_provenance_bridge": {
+        "enable_hebbian_learning": true,
+        "enable_stdp": false,
+        "gates": {
+          "content_learn": 0.0,
+          "prov_learn": 0.0
+        },
+        "whole_bridge_max_dw": 28.73611068725586,
+        "per_gate_max_dw": {
+          "content_learn": 0.0,
+          "prov_learn": 0.0
+        },
+        "ungated_max_dw": 28.73611068725586,
+        "n_gated_synapses": 16896,
+        "n_ungated_synapses": 2225
+      },
+      "prospective_memory_bridge": {
+        "enable_hebbian_learning": false,
+        "enable_stdp": true,
+        "gates": {},
+        "whole_bridge_max_dw": 0.0,
+        "per_gate_max_dw": {},
+        "ungated_max_dw": 0.0,
+        "n_gated_synapses": 0,
+        "n_ungated_synapses": 99696
+      }
+    },
+    {
+      "label": "intervening",
+      "message": "what does the bird eat",
+      "response": {
+        "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about bird yet: what can you tell me about bird? \u2014 worth going further here.",
+        "abstained": true,
+        "recalled_svo": null,
+        "derived": false,
+        "derived_from": null,
+        "verified": false,
+        "renderer": "template-stub (GPU-free)",
+        "brain": "tiny-demo",
+        "source": "tiny-demo +LTM",
+        "rich": false,
+        "activity": {
+          "roles": [
+            {
+              "role": "agent",
+              "word": "bird",
+              "confidence": null,
+              "margin": null,
+              "margin_spiking": null,
+              "cue": true,
+              "asserted": "bird"
+            },
+            {
+              "role": "action",
+              "word": "eat",
+              "confidence": null,
+              "margin": null,
+              "margin_spiking": null,
+              "cue": true,
+              "asserted": "eat"
+            }
+          ],
+          "matched_fact_index": null,
+          "n_facts_scanned": 6,
+          "abstained": true,
+          "rf": {
+            "n_readout_neurons": 6880,
+            "frac_fired": 0.11177325581395349,
+            "mean_magnitude": 41782.80687987262
+          },
+          "composer": "onebrain"
+        },
+        "provenance": null,
+        "affect": {
+          "on": true,
+          "lesioned": false,
+          "composer": "onebrain",
+          "differential": 0.0,
+          "valence_sign": "0",
+          "tone_level": 0,
+          "tone_token": "",
+          "forthcomingness": {
+            "max_sentences": 4,
+            "max_elaborations": 2
+          },
+          "manner_template": "",
+          "appraisal_valence": 0.0,
+          "appraisal_arousal": 0.0,
+          "appraisal_hits": [],
+          "pos_rate": 0.0,
+          "neg_rate": 0.0
+        },
+        "comprehension": null,
+        "surprise": null,
+        "metacog": null,
+        "worldmodel": null,
+        "curiosity": {
+          "on": true,
+          "lesioned": false,
+          "novelty": 0.9596305579627334,
+          "want_hz": 38.19444444444444,
+          "threshold": 19.09722222222222,
+          "curious": true,
+          "calib": {
+            "want_novel_hz": 38.19444444444444,
+            "want_familiar_hz": 0.0,
+            "threshold_hz": 19.09722222222222,
+            "novel_signal": 0.95,
+            "familiar_signal": 0.0,
+            "read_reps": 4
+          },
+          "topic": "bird",
+          "graded_novelty": {
+            "on": true,
+            "value": 0.9596305579627334,
+            "lesioned": false
+          },
+          "curiosity_da": {
+            "on": true,
+            "lesioned": false,
+            "da_level": 0.7105129697929916,
+            "da_tonic": 0.5,
+            "k_da": 1.5,
+            "da_crave_gain": 1.3157694546894874,
+            "base_threshold": 19.09722222222222,
+            "eff_threshold": 14.51410971288206,
+            "want_hz": 38.19444444444444,
+            "want_eff_hz": 50.25508333883459,
+            "curious": true
+          }
+        },
+        "multiref": null,
+        "noncontradiction": null,
+        "reconsolidation": null,
+        "pragmatic": null,
+        "episodic": null,
+        "prospective": {
+          "is_cue": false,
+          "fired": false,
+          "rel": 0.0,
+          "held": 0.34375,
+          "threshold": 0.2,
+          "silent_max": 0.06,
+          "lesioned": false,
+          "cue_clause": "the timer rings",
+          "action": "check the oven",
+          "kind": "monitor"
+        },
+        "affect_drives": {
+          "acted": true,
+          "turn": 5,
+          "lesioned": false,
+          "ema_valence": 0.0,
+          "ema_arousal": 0.0,
+          "body_h": 0.5,
+          "body_a": 0.0,
+          "mood": -0.003375000000000003,
+          "felt_arousal": 0.0,
+          "level": 0,
+          "high_arousal": false,
+          "lead": "",
+          "reason": "neutral_hold",
+          "seed": 42,
+          "vplus_rate": 0.03679166666666667,
+          "vminus_rate": 0.04016666666666667
+        },
+        "swap_drives": {
+          "acted": false,
+          "turn": 5,
+          "topic": null,
+          "swapped": false,
+          "held_topic_before": "dog",
+          "held_topic": "dog",
+          "evicted_topic": null,
+          "reason": "no_topic_hold",
+          "seed": 42,
+          "lesioned": false,
+          "on": true,
+          "lead": "",
+          "new_topic": null,
+          "reason_lead": "no_topic_hold"
+        },
+        "common_ground_drives": {
+          "on": true,
+          "topic": null,
+          "decision": null,
+          "reason": "no_grounded_topic",
+          "lead": "",
+          "lesioned": false,
+          "reason_lead": "no_referent"
+        },
+        "da_drives": {
+          "acted": true,
+          "turn": 5,
+          "lesioned": false,
+          "turn_engagement": 0.3272727272727272,
+          "ema_engagement": 0.4408319999999999,
+          "afferent_pA": 617.1647999999999,
+          "da_level": 0.7105129697929916,
+          "snc_firing": 0.11083333333333324,
+          "mode": "focus",
+          "lead": " \u2014 worth going further here.",
+          "reason": "engaged",
+          "seed": 42,
+          "shared_salience": {
+            "raw": 0.652,
+            "want_hz": 12.499999999999998,
+            "normalized": 0.3272727272727272,
+            "lesioned": false,
+            "calib": {
+              "want_novel_hz": 38.19444444444444,
+              "want_familiar_hz": 0.0,
+              "threshold_hz": 19.09722222222222,
+              "novel_signal": 0.95,
+              "familiar_signal": 0.0,
+              "read_reps": 4
+            },
+            "on": true
+          },
+          "spiking_novelty": {
+            "novelty": 0.92,
+            "n_tokens": 2,
+            "per_word_freshness": [
+              0.92,
+              0.92
+            ],
+            "fresh_ref": 25.0,
+            "n_channels": 64,
+            "lesioned": false,
+            "on": true
+          },
+          "on": true
+        },
+        "da_encoding": {
+          "on": true,
+          "g": 2.140601874691663,
+          "da_level": 0.7105129697929916,
+          "lesioned": false
+        }
+      },
+      "wave3_pool": {
+        "enable_hebbian_learning": false,
+        "enable_stdp": false,
+        "gates": {
+          "workspace_loop_fixed": 0.0,
+          "cue_position": 0.0,
+          "cue_animacy": 0.0,
+          "cue_verbfit": 0.0,
+          "cue_lexbias": 0.0,
+          "content_learn": 1.0,
+          "prov_learn": 1.0
+        },
+        "whole_bridge_max_dw": 0.0,
+        "per_gate_max_dw": {
+          "workspace_loop_fixed": 0.0,
+          "cue_position": 0.0,
+          "cue_animacy": 0.0,
+          "cue_verbfit": 0.0,
+          "cue_lexbias": 0.0,
+          "content_learn": 0.0,
+          "prov_learn": 0.0
+        },
+        "ungated_max_dw": 0.0,
+        "n_gated_synapses": 93856,
+        "n_ungated_synapses": 437948
+      },
+      "affect_bridge": {
+        "enable_hebbian_learning": false,
+        "enable_stdp": false,
+        "gates": {
+          "workspace_loop_fixed": 0.0,
+          "meta_read_fixed": 0.0,
+          "meta_to_self_confid_fixed": 0.0,
+          "arb_wta_fixed": 0.0
+        },
+        "whole_bridge_max_dw": 0.0,
+        "per_gate_max_dw": {
+          "workspace_loop_fixed": 0.0,
+          "meta_read_fixed": 0.0,
+          "meta_to_self_confid_fixed": 0.0,
+          "arb_wta_fixed": 0.0
+        },
+        "ungated_max_dw": 0.0,
+        "n_gated_synapses": 48520,
+        "n_ungated_synapses": 42813
+      },
+      "source_provenance_bridge": {
+        "enable_hebbian_learning": true,
+        "enable_stdp": false,
+        "gates": {
+          "content_learn": 0.0,
+          "prov_learn": 0.0
+        },
+        "whole_bridge_max_dw": 28.73611068725586,
+        "per_gate_max_dw": {
+          "content_learn": 0.0,
+          "prov_learn": 0.0
+        },
+        "ungated_max_dw": 28.73611068725586,
+        "n_gated_synapses": 16896,
+        "n_ungated_synapses": 2225
+      },
+      "prospective_memory_bridge": {
+        "enable_hebbian_learning": false,
+        "enable_stdp": true,
+        "gates": {},
+        "whole_bridge_max_dw": 0.0,
+        "per_gate_max_dw": {},
+        "ungated_max_dw": 0.0,
+        "n_gated_synapses": 0,
+        "n_ungated_synapses": 99696
+      }
+    },
+    {
+      "label": "pmem_cue",
+      "message": "the timer rings",
+      "response": {
+        "answer": "(Reminder \u2014 you asked me to check the oven when the timer rings came up, and the timer rings just came up.) I don't know about that. My curiosity is piqued \u2014 I haven't learned about timer yet: what can you tell me about timer?",
+        "abstained": true,
+        "recalled_svo": null,
+        "derived": false,
+        "derived_from": null,
+        "verified": false,
+        "renderer": "template-stub (GPU-free)",
+        "brain": "tiny-demo",
+        "source": "tiny-demo +LTM",
+        "rich": false,
+        "activity": {
+          "roles": [
+            {
+              "role": "agent",
+              "word": "timer",
+              "confidence": null,
+              "margin": null,
+              "margin_spiking": null,
+              "cue": true,
+              "asserted": "timer"
+            },
+            {
+              "role": "action",
+              "word": "rings",
+              "confidence": null,
+              "margin": null,
+              "margin_spiking": null,
+              "cue": true,
+              "asserted": "rings"
+            }
+          ],
+          "matched_fact_index": null,
+          "n_facts_scanned": 6,
+          "abstained": true,
+          "rf": {
+            "n_readout_neurons": 6880,
+            "frac_fired": 0.11177325581395349,
+            "mean_magnitude": 41782.80689334909
+          },
+          "composer": "onebrain"
+        },
+        "provenance": null,
+        "affect": {
+          "on": true,
+          "lesioned": false,
+          "composer": "onebrain",
+          "differential": 0.0,
+          "valence_sign": "0",
+          "tone_level": 0,
+          "tone_token": "",
+          "forthcomingness": {
+            "max_sentences": 4,
+            "max_elaborations": 2
+          },
+          "manner_template": "",
+          "appraisal_valence": 0.0,
+          "appraisal_arousal": 0.0,
+          "appraisal_hits": [],
+          "pos_rate": 0.0,
+          "neg_rate": 0.0
+        },
+        "comprehension": null,
+        "surprise": null,
+        "metacog": null,
+        "worldmodel": null,
+        "curiosity": {
+          "on": true,
+          "lesioned": false,
+          "novelty": 0.9816260650326105,
+          "want_hz": 38.88888888888888,
+          "threshold": 19.09722222222222,
+          "curious": true,
+          "calib": {
+            "want_novel_hz": 38.19444444444444,
+            "want_familiar_hz": 0.0,
+            "threshold_hz": 19.09722222222222,
+            "novel_signal": 0.95,
+            "familiar_signal": 0.0,
+            "read_reps": 4
+          },
+          "topic": "timer",
+          "graded_novelty": {
+            "on": true,
+            "value": 0.9816260650326105,
+            "lesioned": false
+          },
+          "curiosity_da": {
+            "on": true,
+            "lesioned": false,
+            "da_level": 0.5062422026997916,
+            "da_tonic": 0.5,
+            "k_da": 1.5,
+            "da_crave_gain": 1.0093633040496874,
+            "base_threshold": 19.09722222222222,
+            "eff_threshold": 18.92006787407652,
+            "want_hz": 38.88888888888888,
+            "want_eff_hz": 39.25301737971006,
+            "curious": true
+          }
+        },
+        "multiref": null,
+        "noncontradiction": null,
+        "reconsolidation": null,
+        "pragmatic": null,
+        "episodic": null,
+        "prospective": {
+          "is_cue": true,
+          "fired": true,
+          "rel": 0.27,
+          "held": 0.3333333333333333,
+          "threshold": 0.2,
+          "silent_max": 0.06,
+          "lesioned": false,
+          "cue_clause": "the timer rings",
+          "action": "check the oven",
+          "kind": "monitor"
+        },
+        "affect_drives": {
+          "acted": true,
+          "turn": 6,
+          "lesioned": false,
+          "ema_valence": 0.0,
+          "ema_arousal": 0.0,
+          "body_h": 0.5,
+          "body_a": 0.0,
+          "mood": -0.003375000000000003,
+          "felt_arousal": 0.0,
+          "level": 0,
+          "high_arousal": false,
+          "lead": "",
+          "reason": "neutral_hold",
+          "seed": 42,
+          "vplus_rate": 0.03679166666666667,
+          "vminus_rate": 0.04016666666666667
+        },
+        "swap_drives": {
+          "acted": false,
+          "turn": 6,
+          "topic": null,
+          "swapped": false,
+          "held_topic_before": "dog",
+          "held_topic": "dog",
+          "evicted_topic": null,
+          "reason": "no_topic_hold",
+          "seed": 42,
+          "lesioned": false,
+          "on": true,
+          "lead": "",
+          "new_topic": null,
+          "reason_lead": "no_topic_hold"
+        },
+        "common_ground_drives": {
+          "on": true,
+          "topic": null,
+          "decision": null,
+          "reason": "no_grounded_topic",
+          "lead": "",
+          "lesioned": false,
+          "reason_lead": "no_referent"
+        },
+        "da_drives": {
+          "acted": true,
+          "turn": 6,
+          "lesioned": false,
+          "turn_engagement": 0.1636363636363636,
+          "ema_engagement": 0.2745146181818181,
+          "afferent_pA": 384.32046545454534,
+          "da_level": 0.5062422026997916,
+          "snc_firing": 0.07499999999999996,
+          "mode": "neutral",
+          "lead": "",
+          "reason": "low_engagement",
+          "seed": 42,
+          "shared_salience": {
+            "raw": 0.532,
+            "want_hz": 6.249999999999999,
+            "normalized": 0.1636363636363636,
+            "lesioned": false,
+            "calib": {
+              "want_novel_hz": 38.19444444444444,
+              "want_familiar_hz": 0.0,
+              "threshold_hz": 19.09722222222222,
+              "novel_signal": 0.95,
+              "familiar_signal": 0.0,
+              "read_reps": 4
+            },
+            "on": true
+          },
+          "spiking_novelty": {
+            "novelty": 0.72,
+            "n_tokens": 2,
+            "per_word_freshness": [
+              0.64,
+              0.8
+            ],
+            "fresh_ref": 25.0,
+            "n_channels": 64,
+            "lesioned": false,
+            "on": true
+          },
+          "on": true
+        },
+        "da_encoding": {
+          "on": true,
+          "g": 1.8297977306364088,
+          "da_level": 0.5062422026997916,
+          "lesioned": false
+        }
+      },
+      "wave3_pool": {
+        "enable_hebbian_learning": false,
+        "enable_stdp": false,
+        "gates": {
+          "workspace_loop_fixed": 0.0,
+          "cue_position": 0.0,
+          "cue_animacy": 0.0,
+          "cue_verbfit": 0.0,
+          "cue_lexbias": 0.0,
+          "content_learn": 1.0,
+          "prov_learn": 1.0
+        },
+        "whole_bridge_max_dw": 0.0,
+        "per_gate_max_dw": {
+          "workspace_loop_fixed": 0.0,
+          "cue_position": 0.0,
+          "cue_animacy": 0.0,
+          "cue_verbfit": 0.0,
+          "cue_lexbias": 0.0,
+          "content_learn": 0.0,
+          "prov_learn": 0.0
+        },
+        "ungated_max_dw": 0.0,
+        "n_gated_synapses": 93856,
+        "n_ungated_synapses": 437948
+      },
+      "affect_bridge": {
+        "enable_hebbian_learning": false,
+        "enable_stdp": false,
+        "gates": {
+          "workspace_loop_fixed": 0.0,
+          "meta_read_fixed": 0.0,
+          "meta_to_self_confid_fixed": 0.0,
+          "arb_wta_fixed": 0.0
+        },
+        "whole_bridge_max_dw": 0.0,
+        "per_gate_max_dw": {
+          "workspace_loop_fixed": 0.0,
+          "meta_read_fixed": 0.0,
+          "meta_to_self_confid_fixed": 0.0,
+          "arb_wta_fixed": 0.0
+        },
+        "ungated_max_dw": 0.0,
+        "n_gated_synapses": 48520,
+        "n_ungated_synapses": 42813
+      },
+      "source_provenance_bridge": {
+        "enable_hebbian_learning": true,
+        "enable_stdp": false,
+        "gates": {
+          "content_learn": 0.0,
+          "prov_learn": 0.0
+        },
+        "whole_bridge_max_dw": 28.73611068725586,
+        "per_gate_max_dw": {
+          "content_learn": 0.0,
+          "prov_learn": 0.0
+        },
+        "ungated_max_dw": 28.73611068725586,
+        "n_gated_synapses": 16896,
+        "n_ungated_synapses": 2225
+      },
+      "prospective_memory_bridge": {
+        "enable_hebbian_learning": false,
+        "enable_stdp": true,
+        "gates": {},
+        "whole_bridge_max_dw": 0.0,
+        "per_gate_max_dw": {},
+        "ungated_max_dw": 0.0,
+        "n_gated_synapses": 0,
+        "n_ungated_synapses": 99696
+      }
+    }
+  ]
+}

@@ -716,12 +716,26 @@ def substrate_byte_identity(merged: MergedPool, coresident: MergedPool, regions)
 #  Reuse-by-import spec/wiring/idx callables for the two registered organs (pool #1 family).
 # ─────────────────────────────────────────────────────────────────────────────────────────────
 def _surprise_spec(seed):
-    _br, cfgS, metaS = build_expectation_circuit(seed, per_region_thresh=True, **_SURPRISE_KW)
+    # chat-time-plasticity-audit (2026-09-24, default-OFF): thread `BRAIN_SURPRISE_LOCAL_FREEZE` into the pool
+    # build so the MERGED bridge's cue->patient_expected pathway carries the SURPRISE_FREEZE_GATE tag whenever
+    # `surprise_production_organ._build_one` is about to freeze it locally instead of via the bridge-wide
+    # `cfg.enable_hebbian_learning` kill switch. Unset (default) -> `_SURPRISE_KW` unchanged -> byte-identical.
+    from research.runners.surprise_production_organ import surprise_local_freeze_enabled
+    kw = dict(_SURPRISE_KW)
+    if surprise_local_freeze_enabled():
+        kw["local_freeze_gate"] = True
+    _br, cfgS, metaS = build_expectation_circuit(seed, per_region_thresh=True, **kw)
     return list(cfgS.brain_regions), list(cfgS.region_pathways), metaS
 
 
 def _worldmodel_spec(seed):
-    _br, cfgW, metaW = build_world_model_circuit(seed, **_WORLDMODEL_KW)
+    # chat-time-plasticity-audit (2026-09-24, default-OFF): the WORLDMODEL analogue of `_surprise_spec`'s
+    # `BRAIN_SURPRISE_LOCAL_FREEZE` thread -- see that function's comment.
+    from research.runners.worldmodel_production_organ import worldmodel_local_freeze_enabled
+    kw = dict(_WORLDMODEL_KW)
+    if worldmodel_local_freeze_enabled():
+        kw["local_freeze_gate"] = True
+    _br, cfgW, metaW = build_world_model_circuit(seed, **kw)
     return list(cfgW.brain_regions), list(cfgW.region_pathways), metaW
 
 

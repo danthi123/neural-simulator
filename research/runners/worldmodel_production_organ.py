@@ -96,6 +96,27 @@ def worldmodel_lesioned() -> bool:
     return v.strip().lower() in ("1", "true", "yes", "on")
 
 
+def worldmodel_local_freeze_enabled() -> bool:
+    """DEFAULT-OFF (chat-time-plasticity-audit, 2026-09-24 — see
+    research/findings/2026-09-24-chat-time-plasticity-audit-*.md). Unset/off (default): `_build_one` freezes
+    this organ's trained state->pred transition the OLD way, `cfg.enable_hebbian_learning = False` on the
+    (possibly SHARED) bridge cfg -- byte-identical to every build before this flag existed. `BRAIN_WORLDMODEL_
+    LOCAL_FREEZE` in {1,true,yes,on}: `_build_one` instead freezes ONLY its own pathway via the NAMED gate
+    `_affective_world_model_derisk.WORLDMODEL_FREEZE_GATE` (`bridge.set_plasticity_gate(..., 0.0)`) and never
+    touches `cfg.enable_hebbian_learning` -- so on the shared wave3 pool, world-model's own transition still
+    reads frozen (max|dw|==0 on state->pred_pos/neg) while a co-resident organ's Hebbian-eligible, UNGATED
+    pathway is free to learn from chat activity instead of being silently killed pool-wide. `surprise_production_
+    organ.surprise_local_freeze_enabled` is the matching flag for the other organ that does the same thing on
+    the SAME shared cfg; both must be on for the pool to end a warmup with `enable_hebbian_learning` genuinely
+    True (world-model runs last in `webapp/server.py::_warm_chat_brain`'s attach order today, so flipping this
+    one flag alone already achieves that -- but only incidentally, by attach-order accident; fixing both is the
+    order-independent fix)."""
+    v = os.environ.get("BRAIN_WORLDMODEL_LOCAL_FREEZE")
+    if v is None:
+        return False
+    return v.strip().lower() in ("1", "true", "yes", "on")
+
+
 def is_expectation_query(text: str) -> bool:
     return bool(_EXPECT_RE.search(text or ""))
 
@@ -141,14 +162,27 @@ class WorldModelProductionOrgan:
             bridge._blk = meta["blk"]                       # this organ's block size before it drives (shared bridge)
             vmap = _valence_map(self.seed, meta["n_states"])
             train_transition(bridge, cfg, idx_map, meta, xp, vmap, n_reps=self.n_reps)  # sets hebbian ON internally
-            cfg.enable_hebbian_learning = False
+            if worldmodel_local_freeze_enabled():
+                # LOCAL freeze (chat-time-plasticity-audit 2026-09-24): freeze ONLY this organ's own trained
+                # pathway (the gate the merged pool's `_worldmodel_spec` tags it with under the same flag) --
+                # leave `cfg.enable_hebbian_learning` exactly as `train_transition` left it (True) so a
+                # co-resident organ's own UNGATED Hebbian pathway is not silently killed pool-wide.
+                from research.runners._affective_world_model_derisk import WORLDMODEL_FREEZE_GATE
+                bridge.set_plasticity_gate(WORLDMODEL_FREEZE_GATE, 0.0)
+            else:
+                cfg.enable_hebbian_learning = False
             return {"bridge": bridge, "cfg": cfg, "meta": meta, "xp": xp, "idx_map": idx_map, "vmap": vmap}
-        bridge, cfg, meta = build_world_model_circuit(self.seed, n_states=self.n_states)
+        bridge, cfg, meta = build_world_model_circuit(
+            self.seed, n_states=self.n_states, local_freeze_gate=worldmodel_local_freeze_enabled())
         idx_map = {n: xp.asarray(_idx(bridge, n)) for n in _REGIONS}
         vmap = _valence_map(self.seed, meta["n_states"])
         # LEARN the state->valence transition (Hebbian co-fire), then FREEZE (per-turn reads never learn).
         train_transition(bridge, cfg, idx_map, meta, xp, vmap, n_reps=self.n_reps)
-        cfg.enable_hebbian_learning = False
+        if worldmodel_local_freeze_enabled():
+            from research.runners._affective_world_model_derisk import WORLDMODEL_FREEZE_GATE
+            bridge.set_plasticity_gate(WORLDMODEL_FREEZE_GATE, 0.0)
+        else:
+            cfg.enable_hebbian_learning = False
         if lesion:
             _lesion_transition(bridge, meta)               # zero state<->pred edges (removes the prediction)
         return {"bridge": bridge, "cfg": cfg, "meta": meta, "xp": xp, "idx_map": idx_map, "vmap": vmap}
