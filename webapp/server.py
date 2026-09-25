@@ -6647,6 +6647,23 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
             _swap_info = getattr(chat, "_last_gnw_swap", None)
             if _swap_info is not None:
                 resp["gnw_swap"] = _swap_info
+        # A2 ABSTENTION-CONGRUENCE (2026-09-25 amendment to research/findings/2026-09-24-affect-marker-settle-
+        # flip-criteria-AMENDMENT-PREREG.md; default OFF, `BRAIN_AFFECT_MARKER_CONGRUENCE`): gate the marker
+        # BEFORE it is ever prepended, using this turn's ALREADY-recorded moat/abstain decision (`resp["abstained"]`)
+        # + the Gate-B spiking affect organ's OWN independent valence read (`resp["affect"]`). Off, or no lead to
+        # check -> passthrough, byte-identical, no key attached. See webapp/affect_drives_chat.congruence_gate and
+        # research/biology/affective-marker-abstention-congruence-gate.md.
+        try:
+            from webapp import affect_drives_chat as _ADC_cg
+            affect_drives_lead, _cg_trace = _ADC_cg.congruence_gate(
+                affect_drives_lead, abstained=bool(resp.get("abstained")), gateb_affect_info=resp.get("affect"))
+        except Exception:
+            _cg_trace = None
+        if _cg_trace is not None:
+            resp["affect_marker_congruence"] = _cg_trace
+            if affect_drives_info is not None:
+                affect_drives_info = dict(affect_drives_info, lead=affect_drives_lead,
+                                           congruence_suppressed=bool(_cg_trace.get("suppressed")))
         # AFFECT DRIVES THE RESPONSE (board #84): prepend the graded affective EXPRESSION lead OUTERMOST (spoken
         # first, as tone) + attach the additive `affect_drives` trace. Empty lead / no key when disabled or neutral
         # -> byte-identical. The content fields above are unchanged (affect colors the surface, never a fact).
@@ -6985,6 +7002,22 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
         _swap_info = getattr(chat, "_last_gnw_swap", None)
         if _swap_info is not None:
             _resp["gnw_swap"] = _swap_info
+    # A2 ABSTENTION-CONGRUENCE (2026-09-25 amendment, single-fact path; default OFF,
+    # `BRAIN_AFFECT_MARKER_CONGRUENCE`): gate the marker BEFORE it is prepended, using this turn's ALREADY-
+    # recorded moat/abstain decision (`_resp["abstained"]`) + the Gate-B spiking affect organ's OWN independent
+    # valence read (`_resp["affect"]`). Off, or no lead -> passthrough, byte-identical, no key attached. See
+    # webapp/affect_drives_chat.congruence_gate and research/biology/affective-marker-abstention-congruence-gate.md.
+    try:
+        from webapp import affect_drives_chat as _ADC_cg
+        affect_drives_lead, _cg_trace = _ADC_cg.congruence_gate(
+            affect_drives_lead, abstained=bool(_resp.get("abstained")), gateb_affect_info=_resp.get("affect"))
+    except Exception:
+        _cg_trace = None
+    if _cg_trace is not None:
+        _resp["affect_marker_congruence"] = _cg_trace
+        if affect_drives_info is not None:
+            affect_drives_info = dict(affect_drives_info, lead=affect_drives_lead,
+                                       congruence_suppressed=bool(_cg_trace.get("suppressed")))
     # AFFECT DRIVES THE RESPONSE (board #84, single-fact path): prepend the graded affective EXPRESSION lead
     # OUTERMOST + attach the additive `affect_drives` trace. Empty lead / no key when disabled or neutral ->
     # byte-identical. The content fields (abstained/recalled_svo/verified) are unchanged.

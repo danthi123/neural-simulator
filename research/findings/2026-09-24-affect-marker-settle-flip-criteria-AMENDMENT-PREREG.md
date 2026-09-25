@@ -126,7 +126,73 @@ SIM_BACKEND=cupy OMP_NUM_THREADS=1 bash tools/memcap.sh 20 -- .venv/bin/python -
 .venv/bin/python -m research.runners._affect_marker_settle_gpu_timing --selftest
 ```
 
+## Amendment 2 — A2 production wiring + its production-path measurement (2026-09-25)
+
+The A2 section above withdrew `apply_policy`'s "rule holds" status and named the open design question: "a
+production congruence mechanism is a separate design decision for the owner (for example, gating the marker with
+the same spiking speak/abstain race that decides abstention)." This amendment makes that decision, wires it, and
+registers how it is measured on the production path, BEFORE any run it governs.
+
+**The chosen mechanism** (bound in `research/biology/affective-marker-abstention-congruence-gate.md`): a
+conflict-monitoring GATE, `webapp/affect_drives_chat.congruence_gate`, called at the SAME two production sites
+that already prepend the affect-marker lead (`webapp/server.py`'s rich path and single-fact path), BEFORE the
+lead is prepended — not a post-hoc string edit on an already-composed reply. It reads two signals the brain has
+ALREADY computed this turn: `resp["abstained"]` (the moat/BG speak-vs-abstain decision) and
+`resp["affect"]["valence_sign"]` (the Gate-B spiking affect organ's independent valence read). When the marker's
+register disagrees with either (abstention conflict, or a register/Gate-B sign mismatch), the marker is withheld
+before it ever reaches the surface. Flag: `BRAIN_AFFECT_MARKER_CONGRUENCE` (default OFF; unchanged name from the
+research runner, so `congruence_wired_in_webapp()`'s static check now reads True). This is NOT the literal
+same-circuit spiking veto the parenthetical evoked (a projection from the abstain/moat organ onto the marker
+WTA's own assemblies, gating its selection before it fires) — that is named as the next rung, not claimed here.
+
+**Declared host step.** The register-word→sign lookup (the existing `_LEAD_WORD`-derived table) and the
+withhold/surface branch are host control flow over two neural booleans/signs — the same pattern already used for
+every other Gate-B-driven coupling in `webapp/server.py` (metacog hedge, curiosity follow-up, surprise/
+reconsolidation prefixes each gate a string operation on a spiking read's boolean). Nothing computes abstain or
+valence sign; the gate only reads them.
+
+**A2's measurement on the production path** (the battery/probe hook this amendment adds,
+`research/runners/_affect_marker_settle_congruence.py --run-wiring` / `--score-wiring`): for each of the 6
+pre-registered seeds, spawn TWO fresh production `webapp.server.brain_chat` processes (congruence OFF, congruence
+ON; `BRAIN_AFFECT_MARKER_SETTLE` held at its production default, OFF) over the SAME 5-turn multi-turn sequence
+`_affect_marker_settle_multiturn_derisk` already uses (`mt_neutral, mt_emo1, mt_emo2, mt_neg1, mt_emo3`), which is
+known (this document's disclosure above) to contain both an abstention-conflict candidate and, via `mt_neg1`, a
+candidate for a Gate-B negative read — so the SAME turns already used for A1 exercise A2's preconditions instead
+of a new hand-built battery.
+
+  1. **Byte-identical-OFF** (checked in data, not inferred): with the flag unset, every field of every turn's
+     response — including `answer`, `abstained`, `affect_drives`, `affect` — is compared exact-equal against a
+     process run with `BRAIN_AFFECT_MARKER_CONGRUENCE=0` and against the pre-existing (pre-amendment) production
+     response with the env var absent entirely. A single differing byte on any turn is a hard FAIL of this
+     precondition (not UNDEFINED — the additive/byte-identical-off contract is unconditional).
+  2. **Both conflict halves exercised (A2.2, carried over).** The status is UNDEFINED unless `resp["affect"]
+     ["valence_sign"]` reads `"-"` on >= 1 scored turn and `"+"` on >= 1 scored turn across the 6-seed set.
+  3. **Non-vacuous.** UNDEFINED unless the ON arm withholds a marker relative to OFF on >= 1 (seed, turn) that
+     the OFF arm actually emitted one on — the gate must be shown to DO something on a live production turn, not
+     merely fail to crash.
+  4. **Register/attribution.** Every ON-arm withheld turn must trace, via `resp["affect_marker_congruence"]`
+     (the additive trace this amendment's wiring attaches only when the gate ran and had a lead to check), to
+     EXACTLY the abstention-conflict or valence-conflict condition claimed — a withheld marker with no matching
+     condition recorded is a FAIL, not a silent pass.
+  5. **Rule.** GO iff (1) holds on all 6 seeds AND (2) and (3) hold across the set. NO-GO iff (1) holds but (2) or
+     (3) fails. UNDEFINED if (1) fails, or a process errors, or fewer than 6 seeds are valid.
+
+Command (verbatim; `<out>` is `research/findings/raw/_affect_marker_settle_congruence/wiring`):
+```
+.venv/bin/python -m research.runners._affect_marker_settle_congruence --run-wiring \
+  --seeds "42 43 44 100 101 102" --out-dir <out>
+.venv/bin/python -m research.runners._affect_marker_settle_congruence --score-wiring \
+  --raw-dir <out> --seeds "42 43 44 100 101 102" --out <out>/verdict.json
+```
+
+**Committed same-commit as the wiring it governs** (`webapp/affect_drives_chat.py`, `webapp/server.py`,
+`research/runners/_affect_marker_settle_congruence.py`, `tests/test_affect_marker_congruence_gate.py`), before any
+run against it.
+
 ## Amendment log
 
 - A1, A2, A3 (this document, 2026-09-24): first amendment of the three preregistrations committed in 205604a80, b2e50bd37
   and 49a089d8d.
+- Amendment 2 (this document, 2026-09-25): A2 production wiring decided + wired (`BRAIN_AFFECT_MARKER_CONGRUENCE`,
+  default OFF, `webapp/affect_drives_chat.congruence_gate`) + its production-path measurement registered, ahead of
+  any run.

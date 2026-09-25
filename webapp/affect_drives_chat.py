@@ -192,6 +192,91 @@ def marker_selection_shuffled() -> bool:
     return os.environ.get("BRAIN_AFFECT_MARKER_SPIKING_SHUFFLE", "0").strip().lower() in ("1", "true", "on", "yes")
 
 
+# ── A2 ABSTENTION-CONGRUENCE GATE (2026-09-25 amendment; research/findings/2026-09-24-affect-marker-settle-
+#    flip-criteria-AMENDMENT-PREREG.md, "Amendment 2"; biology: research/biology/affective-marker-abstention-
+#    congruence-gate.md). WHY: the prior mechanism (`research.runners._affect_marker_settle_congruence.apply_policy`)
+#    was a host string-edit on an ALREADY-COMPOSED reply, unreachable from `/api/brain-chat` at all (named shortcut
+#    S6 in the amendment) -- a prefix-only strip left the marker in the reply whenever a later stage prepended its
+#    own text. This gate instead checks BEFORE the marker is ever prepended, using two reads the brain has ALREADY
+#    computed this turn: the moat/BG speak-vs-abstain decision (`abstained`) and the Gate-B spiking affect organ's
+#    OWN independent valence read (`gateb_valence_sign`, from `affect_production_organ.read_differential` -- a
+#    DIFFERENT circuit from the #81 ladder that selected this marker). Both inputs are neural; only the register->
+#    sign lookup and the withhold/surface branch are host control flow, the same pattern every other Gate-B-driven
+#    surface coupling in webapp/server.py already uses (metacog hedge / curiosity follow-up / surprise prefix, each
+#    gating a string operation on a spiking read's boolean) -- see the biology entry's "Declared host step".
+CONGRUENCE_ENV = "BRAIN_AFFECT_MARKER_CONGRUENCE"
+# the SAME fixed word->sign mapping `_LEAD_WORD` already inverts to select a word from a level -- re-read here,
+# not re-derived (research.runners._affect_marker_settle_congruence carries the identical table for its own,
+# unreachable, research-only scorer; duplicated here rather than imported so this production module has no
+# import-time dependency on a `research/runners/*` research script -- reuse-by-VALUE of a fixed constant, not
+# reuse-by-import of behavior).
+_POS_REGISTERS = frozenset({"Wonderful", "Gladly", "Sure"})
+_NEG_REGISTERS = frozenset({"Hm", "Honestly", "Frankly"})
+_SIGN_MAP = {"+": 1, "-": -1, "0": 0}
+
+
+def congruence_gate_enabled() -> bool:
+    """`BRAIN_AFFECT_MARKER_CONGRUENCE` truthy -> the A2 gate runs. Default OFF -> `congruence_gate()` below is a
+    no-op passthrough (byte-identical: same lead, no trace attached) -- verified in
+    tests/test_affect_marker_congruence_gate.py."""
+    return os.environ.get(CONGRUENCE_ENV, "0").strip().lower() in ("1", "true", "on", "yes")
+
+
+def _register_word(lead: str) -> str:
+    """The marker WORD a lead surfaces (strip the trailing '! '/' — ' emphasis punctuation), or '' for no lead."""
+    w = (lead or "").strip()
+    for suffix in ("! ", " — ", "!", "—"):
+        if w.endswith(suffix):
+            w = w[: -len(suffix)].strip()
+            break
+    return w
+
+
+def _register_sign(word: str) -> int:
+    if word in _POS_REGISTERS:
+        return 1
+    if word in _NEG_REGISTERS:
+        return -1
+    return 0
+
+
+def congruence_gate(lead: str, *, abstained: bool, gateb_affect_info: Optional[dict] = None) -> tuple:
+    """The A2 production gate. Returns (lead_out, trace_or_None). `lead` is this turn's ALREADY-SELECTED affective
+    marker (from `expression_lead`, upstream and unchanged); `abstained` is the moat/BG decision already recorded
+    on `resp["abstained"]`; `gateb_affect_info` is `resp["affect"]` (Gate-B's dict, carrying `valence_sign` in
+    {"+","-","0"} or None when Gate-B is off).
+
+    Default OFF, or no lead to check -> passthrough: (lead, None), byte-identical, no trace attached (mirrors
+    every other additive coupling's "no key when disabled" contract).
+
+    On, with a lead: an ABSTENTION CONFLICT (a marker on a turn the brain declined to answer) or a VALENCE
+    CONFLICT (the marker's register disagrees with Gate-B's independently-computed sign, when both are non-zero)
+    withholds the lead ('' -- an honest no-lead turn, the SAME documented fallback `expression_lead` itself uses
+    on a reader exception or a lesioned WTA, never a silent revert to a different marker). Congruent -> the lead
+    passes through unchanged. Never raises: any lookup failure degrades to passthrough (an honest no-op), mirroring
+    `expression_lead`'s own never-crash contract."""
+    if not lead or not congruence_gate_enabled():
+        return lead, None
+    try:
+        word = _register_word(lead)
+        rsign = _register_sign(word)
+        vsign_raw = (gateb_affect_info or {}).get("valence_sign")
+        vsign = _SIGN_MAP.get(vsign_raw)
+        abstention_conflict = bool(abstained)
+        valence_conflict = bool(vsign is not None and rsign != 0 and vsign != 0 and rsign != vsign)
+        incongruent = abstention_conflict or valence_conflict
+        trace = {"on": True, "checked_lead": lead, "register_word": word, "register_sign": rsign,
+                 "abstained": bool(abstained), "gateb_valence_sign_raw": vsign_raw, "gateb_valence_sign": vsign,
+                 "abstention_conflict": abstention_conflict, "valence_conflict": valence_conflict,
+                 "incongruent": incongruent, "suppressed": incongruent}
+        if incongruent:
+            trace["reason"] = "abstention" if abstention_conflict else "valence_mismatch"
+            return "", trace
+        return lead, trace
+    except Exception as e:            # never let the congruence check crash or silently mutate a turn
+        return lead, {"on": True, "error": f"{type(e).__name__}: {e}"}
+
+
 def _valence_to_body(valence: float, arousal: float) -> tuple:
     """Map the appraised message affect to the #81 body-state. valence in [-1,1] -> comfort/homeostasis h in [0,1]
     (h = 0.5 + 0.5*valence: valence 0 -> the neutral set-point h=0.5; +1 -> comfort; -1 -> discomfort). arousal in

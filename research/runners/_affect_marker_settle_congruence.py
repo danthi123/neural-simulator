@@ -407,6 +407,263 @@ def settle_contrast(off_by_seed: dict, on_by_seed: dict, expected_turns) -> dict
                     "marker SETTLE adds."}
 
 
+# ══════════════════ AMENDMENT 2 (2026-09-25): the PRODUCTION-PATH battery/probe hook for A2 ══════════════════
+# WHY. A2.1 above says the policy is not `wired` and every mode in THIS file is post-hoc. The 2026-09-25 amendment
+# (research/findings/2026-09-24-affect-marker-settle-flip-criteria-AMENDMENT-PREREG.md, "Amendment 2") wires a
+# congruence GATE into `webapp/affect_drives_chat.py` (`congruence_gate`, `BRAIN_AFFECT_MARKER_CONGRUENCE`,
+# default OFF) called at the two live `/api/brain-chat` sites, BEFORE the marker is ever prepended -- not this
+# file's post-hoc `apply_policy`. This section measures THAT wiring, on a real production `brain_chat` call, over
+# the SAME 5-turn sequence A1 uses (`_affect_marker_settle_multiturn_derisk.MT_TURNS`) so the SAME turns already
+# known to contain an abstention candidate (mt_emo1) and a Gate-B-negative candidate (mt_neg1) exercise A2's own
+# preconditions, instead of a new hand-built battery.
+WIRING_TURN_SOURCE = "_affect_marker_settle_multiturn_derisk.MT_TURNS"
+
+
+def _worker_wiring(env_json: str, out_path: str) -> int:
+    """Subprocess entry (`--worker-wiring`): ONE fresh tiny-demo brain, the SAME 5-turn `MT_TURNS` sequence A1
+    replays, on the numpy/stub/no-LLM harness (`onebrain_regression_battery`'s convention -- fast + deterministic;
+    the GPU/Qwen production-latency question is A3's, not this one's)."""
+    os.environ.setdefault("SIM_BACKEND", "numpy")
+    os.environ.setdefault("BRAIN_CHAT_RENDERER", "stub")
+    os.environ.setdefault("SIM_DISABLE_LLM", "1")
+    env = json.loads(env_json)
+    for k, v in env.items():
+        os.environ[k] = v            # explicit "0"/"1"; a key absent from `env` is left UNSET (the "unset" arm)
+    from webapp.server import brain_chat, BrainChatRequest
+    from research.runners._affect_marker_settle_multiturn_derisk import MT_TURNS
+    responses = {}
+    for label, msg, session, reset, kind in MT_TURNS:
+        try:
+            r = brain_chat(BrainChatRequest(session=session, message=msg, brain="tiny-demo",
+                                            renderer="stub", rich=False, reset=reset))
+            responses[label] = json.loads(r.body)
+        except Exception as e:
+            responses[label] = {"_error": "%s: %s" % (type(e).__name__, e)}
+    rec = {"env": env, "seed": os.environ.get("BRAIN_CHAT_SEED"), "turns": responses}
+    os.makedirs(os.path.dirname(out_path) or ".", exist_ok=True)
+    with open(out_path, "w") as f:
+        json.dump(rec, f, indent=1, default=str)
+    print("[wiring worker] env=%s seed=%s -> %d turns -> %s" % (env, rec["seed"], len(responses), out_path),
+          flush=True)
+    return 0
+
+
+WIRING_ARMS = {"unset": None, "off": "0", "on": "1"}    # env value to set; None = key left OUT of `env` entirely
+
+
+def _spawn_wiring_arm(seed: int, arm: str, out_path: str):
+    value = WIRING_ARMS[arm]
+    env = {} if value is None else {CONGRUENCE_ENV: value}
+    host_env = dict(os.environ)
+    host_env.pop(CONGRUENCE_ENV, None)          # the "unset" arm must not inherit the CALLER's shell env either
+    host_env["BRAIN_CHAT_SEED"] = str(int(seed))
+    host_env.setdefault("SIM_BACKEND", "numpy")
+    p = subprocess.run([sys.executable, "-u", "-m", "research.runners._affect_marker_settle_congruence",
+                        "--worker-wiring", "--env", json.dumps(env), "--out", out_path], env=host_env)
+    if p.returncode != 0 or not os.path.exists(out_path):
+        return None
+    with open(out_path) as f:
+        return json.load(f)
+
+
+def run_seed_wiring(seed: int, out_dir: str) -> dict:
+    sdir = os.path.join(out_dir, "s%d" % seed)
+    os.makedirs(sdir, exist_ok=True)
+    arms = {}
+    for name in WIRING_ARMS:
+        arms[name] = _spawn_wiring_arm(seed, name, os.path.join(sdir, "%s.json" % name))
+        print("  s%d %-6s -> %s" % (seed, name, "OK" if arms[name] is not None else "FAILED"), flush=True)
+    return arms
+
+
+def _deep_diff(a, b, path: str = "") -> list:
+    """Every leaf where `a` and `b` disagree, as `path: a_value != b_value` -- the exact-compare byte-identical
+    check (docs/TERMS.md: asserted IN THE DATA, never inferred). No ignore-list: two production runs of the SAME
+    turns at the SAME seed with the flag off/unset are expected to be IDENTICAL, not merely close (this project's
+    own determinism discipline, tests/test_determinism.py::TestSubstrateActuallySeeded)."""
+    if isinstance(a, dict) and isinstance(b, dict):
+        out = []
+        for k in sorted(set(a) | set(b)):
+            out.extend(_deep_diff(a.get(k, "<absent>"), b.get(k, "<absent>"), "%s.%s" % (path, k)))
+        return out
+    if isinstance(a, list) and isinstance(b, list):
+        out = []
+        for i, (x, y) in enumerate(zip(a, b)):
+            out.extend(_deep_diff(x, y, "%s[%d]" % (path, i)))
+        if len(a) != len(b):
+            out.append("%s: length %d != %d" % (path, len(a), len(b)))
+        return out
+    if a != b:
+        return ["%s: %r != %r" % (path, a, b)]
+    return []
+
+
+def score_wiring(per_seed_arms: dict, seeds=VERIFY_SEEDS) -> dict:
+    """The Amendment-2 rule (research/findings/2026-09-24-affect-marker-settle-flip-criteria-AMENDMENT-PREREG.md).
+    `per_seed_arms[seed]` = {"unset": turns, "off": turns, "on": turns} from `run_seed_wiring`, `turns` = {label:
+    response}. GO iff (1) holds on all valid seeds AND (2)+(3) hold across the set. NO-GO iff (1) holds but (2) or
+    (3) fails. UNDEFINED if (1) fails on any seed, a process errored, or fewer than 6 seeds are valid."""
+    from research.runners._affect_marker_settle_multiturn_derisk import MT_LABELS
+    per_seed_report, byte_identical_off_ok = {}, True
+    n_valid = 0
+    neg_seen = pos_seen = False
+    non_vacuous_instances, attribution_problems = [], []
+    for s in seeds:
+        arms = per_seed_arms.get(s) or {}
+        unset, off, on = arms.get("unset"), arms.get("off"), arms.get("on")
+        row = {"seed": s, "valid": False, "problems": []}
+        if not (isinstance(unset, dict) and isinstance(off, dict) and isinstance(on, dict)):
+            row["problems"].append("one or more arms missing/failed to spawn")
+            per_seed_report[str(s)] = row
+            continue
+        u_turns, o_turns, n_turns = unset.get("turns", {}), off.get("turns", {}), on.get("turns", {})
+        missing = [lab for lab in MT_LABELS if lab not in u_turns or lab not in o_turns or lab not in n_turns]
+        if missing:
+            row["problems"].append("missing turns: %s" % missing)
+            per_seed_report[str(s)] = row
+            continue
+        errored = [lab for lab in MT_LABELS if any("_error" in (t.get(lab) or {}) for t in (u_turns, o_turns, n_turns))]
+        if errored:
+            row["problems"].append("errored turns: %s" % errored)
+            per_seed_report[str(s)] = row
+            continue
+        # (1) byte-identical-off: unset == off, EVERY field, every turn.
+        diffs = _deep_diff(u_turns, o_turns)
+        row["byte_identical_off"] = (not diffs)
+        row["byte_identical_off_diffs"] = diffs[:20]
+        if diffs:
+            byte_identical_off_ok = False
+            row["problems"].append("unset != off (%d field diff(s))" % len(diffs))
+        # (2) both Gate-B signs
+        for lab in MT_LABELS:
+            sign = (n_turns[lab].get("affect") or {}).get("valence_sign")
+            neg_seen = neg_seen or (sign == "-")
+            pos_seen = pos_seen or (sign == "+")
+        # (3)+(4) non-vacuous + attribution
+        for lab in MT_LABELS:
+            off_lead = str((o_turns[lab].get("affect_drives") or {}).get("lead", "") or "")
+            on_turn = n_turns[lab]
+            cg = on_turn.get("affect_marker_congruence")
+            suppressed = bool(cg and cg.get("suppressed"))
+            if off_lead and suppressed:
+                non_vacuous_instances.append("s%d/%s" % (s, lab))
+                reason = cg.get("reason")
+                if reason == "abstention" and not bool(on_turn.get("abstained")):
+                    attribution_problems.append("s%d/%s: reason=abstention but abstained is False" % (s, lab))
+                if reason == "valence_mismatch":
+                    off_sign = _register_sign_of(_register_word_of(off_lead))
+                    on_sign_raw = (on_turn.get("affect") or {}).get("valence_sign")
+                    on_sign = {"+": 1, "-": -1, "0": 0}.get(on_sign_raw)
+                    disagree = bool(off_sign != 0 and on_sign not in (0, None) and on_sign != off_sign)
+                    if not disagree:
+                        attribution_problems.append("s%d/%s: reason=valence_mismatch but signs do not disagree "
+                                                    "(off_sign=%s on_sign=%s)" % (s, lab, off_sign, on_sign_raw))
+                if off_lead in str(on_turn.get("answer", "")):
+                    attribution_problems.append("s%d/%s: marker claimed suppressed but its text is still in the "
+                                                "reply" % (s, lab))
+        row["valid"] = True
+        n_valid += 1
+        per_seed_report[str(s)] = row
+    valence_half = "EXERCISED" if (neg_seen and pos_seen) else "UNTESTED"
+    preconditions_ok = (n_valid == len(seeds) and byte_identical_off_ok)
+    non_vacuous = bool(non_vacuous_instances)
+    if not preconditions_ok or valence_half != "EXERCISED" or not non_vacuous:
+        status, go = "UNDEFINED", False
+    elif attribution_problems:
+        status, go = "NO-GO", False
+    else:
+        status, go = "GO", True
+    return {"probe": "affect_marker_settle_congruence_wiring", "amendment": "Amendment 2 (2026-09-25)",
+            "seeds": list(seeds), "n_valid": n_valid, "byte_identical_off": byte_identical_off_ok,
+            "valence_half": valence_half, "non_vacuous": non_vacuous,
+            "non_vacuous_instances": non_vacuous_instances, "attribution_problems": attribution_problems,
+            "status": status, "go": go, "per_seed": per_seed_report,
+            "rule": "GO iff byte-identical-off holds on every valid seed AND both Gate-B signs are exercised AND "
+                    "the gate suppresses >=1 real production marker AND every suppression's declared reason "
+                    "matches its turn's own abstained/valence-sign fields. NO-GO iff preconditions+non-vacuous+"
+                    "valence-half hold but an attribution mismatch is found. UNDEFINED otherwise."}
+
+
+def _register_word_of(lead: str) -> str:
+    from webapp.affect_drives_chat import _register_word
+    return _register_word(lead)
+
+
+def _register_sign_of(word: str) -> int:
+    from webapp.affect_drives_chat import _register_sign
+    return _register_sign(word)
+
+
+def _selftest_wiring() -> bool:
+    """Pure scorer checks (no brain build): drives `score_wiring` through every failing direction."""
+    ok = True
+
+    def turn(lead="", abstained=False, vsign=None, answer="hi", cg=None):
+        d = {"answer": (lead + answer) if lead else answer, "abstained": abstained,
+             "affect_drives": {"lead": lead}, "affect": ({"valence_sign": vsign} if vsign is not None else {})}
+        if cg is not None:
+            d["affect_marker_congruence"] = cg
+        return d
+
+    from research.runners._affect_marker_settle_multiturn_derisk import MT_LABELS
+    base_off = {lab: turn(lead=("Gladly! " if lab == "mt_emo1" else ""), abstained=(lab == "mt_emo1"))
+               for lab in MT_LABELS}
+    base_unset = dict(base_off)  # identical dict contents -> byte-identical
+    base_on = {lab: turn(abstained=(lab == "mt_emo1"), vsign=("-" if lab == "mt_neg1" else "+"),
+                        cg=({"suppressed": True, "reason": "abstention"} if lab == "mt_emo1" else None))
+              for lab in MT_LABELS}
+    good = {s: {"unset": {"turns": base_unset}, "off": {"turns": base_off}, "on": {"turns": base_on}}
+           for s in VERIFY_SEEDS}
+    r1 = score_wiring(good, VERIFY_SEEDS)
+    got1 = r1["status"] == "GO" and r1["byte_identical_off"] and r1["valence_half"] == "EXERCISED" and r1["non_vacuous"]
+    ok = ok and got1
+    print("  clean 6-seed set, both signs seen, one real suppression, attribution matches -> GO ->",
+          "ok" if got1 else "FAIL (%r)" % r1["status"])
+    # FAILING DIRECTION: unset != off (the flag is NOT truly a no-op) -> UNDEFINED, never GO
+    bad_off = dict(base_off, mt_emo3=turn(lead="Sure — "))   # off differs from unset on one field
+    bad = {s: {"unset": {"turns": base_unset}, "off": {"turns": bad_off}, "on": {"turns": base_on}}
+          for s in VERIFY_SEEDS}
+    r2 = score_wiring(bad, VERIFY_SEEDS)
+    got2 = r2["status"] == "UNDEFINED" and not r2["byte_identical_off"]
+    ok = ok and got2
+    print("  unset != off (flag is not a no-op) -> UNDEFINED ->", "ok" if got2 else "FAIL (%r)" % r2["status"])
+    # FAILING DIRECTION: Gate-B never reads '-' -> valence half UNTESTED -> UNDEFINED
+    plus_only_on = {lab: turn(abstained=(lab == "mt_emo1"), vsign="+",
+                              cg=({"suppressed": True, "reason": "abstention"} if lab == "mt_emo1" else None))
+                   for lab in MT_LABELS}
+    r3 = score_wiring({s: {"unset": {"turns": base_unset}, "off": {"turns": base_off},
+                          "on": {"turns": plus_only_on}} for s in VERIFY_SEEDS}, VERIFY_SEEDS)
+    got3 = r3["status"] == "UNDEFINED" and r3["valence_half"] == "UNTESTED"
+    ok = ok and got3
+    print("  Gate-B never reads '-' -> valence half UNTESTED -> UNDEFINED ->", "ok" if got3 else "FAIL (%r)" % r3["status"])
+    # FAILING DIRECTION: the gate never suppresses anything real (vacuous) -> UNDEFINED, never GO
+    never_on = {lab: turn(abstained=(lab == "mt_emo1"), vsign=("-" if lab == "mt_neg1" else "+")) for lab in MT_LABELS}
+    r4 = score_wiring({s: {"unset": {"turns": base_unset}, "off": {"turns": base_off}, "on": {"turns": never_on}}
+                       for s in VERIFY_SEEDS}, VERIFY_SEEDS)
+    got4 = r4["status"] == "UNDEFINED" and not r4["non_vacuous"]
+    ok = ok and got4
+    print("  ON never actually suppresses a real OFF marker -> UNDEFINED (vacuous) ->",
+          "ok" if got4 else "FAIL (%r)" % r4["status"])
+    # FAILING DIRECTION: attribution mismatch -- claims "abstention" but the turn's own field says not abstained
+    bad_attr_on = dict(base_on)
+    bad_attr_on["mt_emo1"] = turn(abstained=False, cg={"suppressed": True, "reason": "abstention"})
+    r5 = score_wiring({s: {"unset": {"turns": base_unset}, "off": {"turns": base_off}, "on": {"turns": bad_attr_on}}
+                       for s in VERIFY_SEEDS}, VERIFY_SEEDS)
+    got5 = r5["status"] == "NO-GO" and bool(r5["attribution_problems"])
+    ok = ok and got5
+    print("  suppression claims abstention but abstained=False -> attribution mismatch -> NO-GO ->",
+          "ok" if got5 else "FAIL (%r)" % r5["status"])
+    # FAILING DIRECTION: fewer than 6 valid seeds -> UNDEFINED
+    partial = {s: {"unset": {"turns": base_unset}, "off": {"turns": base_off}, "on": {"turns": base_on}}
+              for s in VERIFY_SEEDS[:5]}
+    partial[VERIFY_SEEDS[5]] = {"unset": None, "off": None, "on": None}
+    r6 = score_wiring(partial, VERIFY_SEEDS)
+    got6 = r6["status"] == "UNDEFINED" and r6["n_valid"] == 5
+    ok = ok and got6
+    print("  5/6 seeds valid -> UNDEFINED ->", "ok" if got6 else "FAIL (%r)" % r6["status"])
+    return ok
+
+
 # ─────────────────────────────────────────────────────── selftest ──────────────────────────────────────────────
 def _r(lead="", abstained=False, vsign=None, answer="hi", level=2):
     return {"answer": (lead + answer) if lead else answer, "abstained": abstained,
@@ -552,8 +809,9 @@ def _selftest_policy() -> bool:
 
 def selftest() -> bool:
     ok = _selftest_policy()
-    print("SELFTEST", "PASS" if ok else "FAIL")
-    return bool(ok)
+    ok2 = _selftest_wiring()
+    print("SELFTEST", "PASS" if (ok and ok2) else "FAIL")
+    return bool(ok and ok2)
 
 
 def main():
@@ -562,6 +820,12 @@ def main():
     ap.add_argument("--score-multiturn", action="store_true")
     ap.add_argument("--score-settle-contrast", action="store_true",
                     help="A2.5: off_a vs on_a as shipped, per affective turn (descriptive, no verdict)")
+    ap.add_argument("--worker-wiring", action="store_true", help=argparse.SUPPRESS)   # subprocess entry only
+    ap.add_argument("--run-wiring", action="store_true",
+                    help="Amendment 2: spawn real production brain_chat turns (unset/off/on) per seed")
+    ap.add_argument("--score-wiring", action="store_true",
+                    help="Amendment 2: score the --run-wiring output (GO/NO-GO/UNDEFINED)")
+    ap.add_argument("--env", default="{}", help="--worker-wiring only: JSON env overrides for the subprocess")
     ap.add_argument("--selftest", action="store_true")
     ap.add_argument("--settle", type=int, default=1, choices=(0, 1))
     ap.add_argument("--seeds", default=" ".join(str(s) for s in VERIFY_SEEDS))
@@ -572,7 +836,39 @@ def main():
     a = ap.parse_args()
     if a.selftest:
         sys.exit(0 if selftest() else 1)
+    if a.worker_wiring:
+        sys.exit(_worker_wiring(a.env, a.out or "wiring_worker_out.json"))
     seeds = tuple(int(x) for x in a.seeds.replace(",", " ").split())
+    if a.run_wiring:
+        per_seed = {}
+        for s in seeds:
+            per_seed[s] = run_seed_wiring(s, a.out_dir)
+        rec = score_wiring(per_seed, seeds)
+        out = a.out or os.path.join(a.out_dir, "wiring_arms_manifest.json")
+        os.makedirs(os.path.dirname(out) or ".", exist_ok=True)
+        with open(out, "w") as f:
+            json.dump({"seeds": list(seeds), "out_dir": a.out_dir}, f, indent=1, default=str)
+        print("run-wiring: spawned unset/off/on for %d seed(s) under %s (score with --score-wiring)"
+              % (len(seeds), a.out_dir))
+        return
+    if a.score_wiring:
+        per_seed = {}
+        for s in seeds:
+            sdir = os.path.join(a.raw_dir, "s%d" % s)
+            row = {}
+            for name in WIRING_ARMS:
+                p = os.path.join(sdir, "%s.json" % name)
+                row[name] = json.load(open(p)) if os.path.exists(p) else None
+            per_seed[s] = row
+        rec = score_wiring(per_seed, seeds)
+        out = a.out or os.path.join(a.raw_dir, "verdict.json")
+        os.makedirs(os.path.dirname(out) or ".", exist_ok=True)
+        with open(out, "w") as f:
+            json.dump(rec, f, indent=1, default=str)
+        print("byte_identical_off=%s valence_half=%s non_vacuous=%s attribution_problems=%d -> status=%s -> %s"
+              % (rec["byte_identical_off"], rec["valence_half"], rec["non_vacuous"],
+                 len(rec["attribution_problems"]), rec["status"], out))
+        return
     if a.run:
         per_seed = {}
         for s in seeds:
