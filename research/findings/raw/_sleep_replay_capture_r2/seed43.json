@@ -1,0 +1,2462 @@
+{
+  "seed": 43,
+  "fact": [
+    "cat",
+    "chase",
+    "ball"
+  ],
+  "arms": {
+    "ld_ledger_off": {
+      "label": "datl_recall",
+      "env": {
+        "BRAIN_DA_TAG_CAPTURE": "0",
+        "BRAIN_DA_TAG_CAPTURE_CLOCK": "turn"
+      },
+      "turns": [
+        "datl_t1",
+        "datl_t2",
+        "datl_t3",
+        "datl_t4",
+        "datl_t5",
+        "datl_awake",
+        "datl_night",
+        "datl_recall"
+      ],
+      "artifact": "research/findings/raw/_sleep_replay_capture_r2/seed43/ld_ledger_off.json",
+      "recall_outcome": "correct",
+      "recalled_svo": [
+        "cat",
+        "chase",
+        "ball"
+      ],
+      "abstained": false,
+      "tag_capture_at_recall": {
+        "world_t_h": null,
+        "n_turns": null,
+        "p": null,
+        "p_max": null,
+        "n_managed_blocks": null,
+        "external_rescales": null,
+        "external_rewrites": null,
+        "gamma": null,
+        "d1_a_go": null
+      },
+      "fact_block_at_recall": null,
+      "turn_da": [
+        0.04616293556102311,
+        0.3726834325926455,
+        0.23843243106970416,
+        0.04616293556102311,
+        0.04616293556102311,
+        null,
+        null,
+        0.04616293556102311
+      ],
+      "turn_a_eff": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "errors": [],
+      "sleep_replay_at_recall": null,
+      "blocks_at_recall": null,
+      "awake_until_h": null
+    },
+    "ld_norc": {
+      "label": "datl_recall",
+      "env": {
+        "BRAIN_DA_TAG_CAPTURE": "1",
+        "BRAIN_DA_TAG_CAPTURE_CLOCK": "turn"
+      },
+      "turns": [
+        "datl_t1",
+        "datl_t2",
+        "datl_t3",
+        "datl_t4",
+        "datl_t5",
+        "datl_awake",
+        "datl_night",
+        "datl_recall"
+      ],
+      "artifact": "research/findings/raw/_sleep_replay_capture_r2/seed43/ld_norc.json",
+      "recall_outcome": "abstain",
+      "recalled_svo": null,
+      "abstained": true,
+      "tag_capture_at_recall": {
+        "world_t_h": 28.041666666666668,
+        "n_turns": 6,
+        "p": 0.0,
+        "p_max": 0.0,
+        "n_managed_blocks": 1,
+        "external_rescales": 1,
+        "external_rewrites": 0,
+        "gamma": 32.77353587789152,
+        "d1_a_go": 0.18667699457784698
+      },
+      "fact_block_at_recall": {
+        "block": 0,
+        "t_w": 0.016666666666666666,
+        "tag0_mean": 1.2733103108041433,
+        "z_mean": 0.0,
+        "z_min": 0.0,
+        "z_max": 0.0,
+        "frac_synapses_z_gt_half": 0.0,
+        "inc_mag": 1.1458769112128202,
+        "base_mag": 0.8300451848005612
+      },
+      "turn_da": [
+        0.04616293556102311,
+        0.3726834325926455,
+        0.23843243106970416,
+        0.04616293556102311,
+        0.04616293556102311,
+        null,
+        null,
+        0.04616293556102311
+      ],
+      "turn_a_eff": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        null,
+        null,
+        0.0
+      ],
+      "errors": [],
+      "sleep_replay_at_recall": null,
+      "blocks_at_recall": [
+        {
+          "block": 0,
+          "t_w": 0.016666666666666666,
+          "tag0_mean": 1.2733103108041433,
+          "z_mean": 0.0,
+          "z_min": 0.0,
+          "z_max": 0.0,
+          "frac_synapses_z_gt_half": 0.0,
+          "inc_mag": 1.1458769112128202,
+          "base_mag": 0.8300451848005612
+        }
+      ],
+      "awake_until_h": 4.041666666666667
+    },
+    "ld_rc": {
+      "label": "datl_recall",
+      "env": {
+        "BRAIN_DA_TAG_CAPTURE": "1",
+        "BRAIN_DA_TAG_CAPTURE_CLOCK": "turn",
+        "BRAIN_SLEEP_REPLAY_CAPTURE": "1"
+      },
+      "turns": [
+        "datl_t1",
+        "datl_t2",
+        "datl_t3",
+        "datl_t4",
+        "datl_t5",
+        "datl_awake",
+        "datl_night",
+        "datl_recall"
+      ],
+      "artifact": "research/findings/raw/_sleep_replay_capture_r2/seed43/ld_rc.json",
+      "recall_outcome": "abstain",
+      "recalled_svo": null,
+      "abstained": true,
+      "tag_capture_at_recall": {
+        "world_t_h": 28.041666666666668,
+        "n_turns": 6,
+        "p": 1.13836678562981e-13,
+        "p_max": 0.002541896174044884,
+        "n_managed_blocks": 1,
+        "external_rescales": 1,
+        "external_rewrites": 0,
+        "gamma": 32.77353587789152,
+        "d1_a_go": 0.18667699457784698
+      },
+      "fact_block_at_recall": {
+        "block": 0,
+        "t_w": 0.016666666666666666,
+        "tag0_mean": 1.2733103108041433,
+        "z_mean": 8.659710548363811e-13,
+        "z_min": 8.65971054836381e-13,
+        "z_max": 8.65971054836381e-13,
+        "frac_synapses_z_gt_half": 0.0,
+        "inc_mag": 1.1458769112128202,
+        "base_mag": 0.8300451848005612,
+        "tag_rep_mean": 0.028066956452480227,
+        "t_rep": 4.125
+      },
+      "turn_da": [
+        0.04616293556102311,
+        0.3726834325926455,
+        0.23843243106970416,
+        0.04616293556102311,
+        0.04616293556102311,
+        null,
+        null,
+        0.04616293556102311
+      ],
+      "turn_a_eff": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        null,
+        null,
+        0.0
+      ],
+      "errors": [],
+      "sleep_replay_at_recall": {
+        "on": true,
+        "lesioned": false,
+        "n_epochs": 1,
+        "episode_done": true,
+        "epochs": [
+          {
+            "episode": [
+              5,
+              4.041666667
+            ],
+            "t_h": 4.125,
+            "R": [
+              0.024493867
+            ],
+            "R_eff": [
+              0.024493867
+            ],
+            "sum_R_eff": 0.024493867,
+            "da_swr": 0.518125461,
+            "da_seen_by_d1": 0.518125461,
+            "a_eff_mean": 0.03020914,
+            "pre_frac_z_gt_half": [
+              0.0
+            ],
+            "replay_lesioned": false,
+            "capture_lesioned": false,
+            "no_reader": false
+          }
+        ]
+      },
+      "blocks_at_recall": [
+        {
+          "block": 0,
+          "t_w": 0.016666666666666666,
+          "tag0_mean": 1.2733103108041433,
+          "z_mean": 8.659710548363811e-13,
+          "z_min": 8.65971054836381e-13,
+          "z_max": 8.65971054836381e-13,
+          "frac_synapses_z_gt_half": 0.0,
+          "inc_mag": 1.1458769112128202,
+          "base_mag": 0.8300451848005612,
+          "tag_rep_mean": 0.028066956452480227,
+          "t_rep": 4.125
+        }
+      ],
+      "awake_until_h": 4.041666666666667
+    },
+    "ld_rc_replaylesion": {
+      "label": "datl_recall",
+      "env": {
+        "BRAIN_DA_TAG_CAPTURE": "1",
+        "BRAIN_DA_TAG_CAPTURE_CLOCK": "turn",
+        "BRAIN_SLEEP_REPLAY_CAPTURE": "1",
+        "BRAIN_SLEEP_REPLAY_CAPTURE_LESION": "1"
+      },
+      "turns": [
+        "datl_t1",
+        "datl_t2",
+        "datl_t3",
+        "datl_t4",
+        "datl_t5",
+        "datl_awake",
+        "datl_night",
+        "datl_recall"
+      ],
+      "artifact": "research/findings/raw/_sleep_replay_capture_r2/seed43/ld_rc_replaylesion.json",
+      "recall_outcome": "abstain",
+      "recalled_svo": null,
+      "abstained": true,
+      "tag_capture_at_recall": {
+        "world_t_h": 28.041666666666668,
+        "n_turns": 6,
+        "p": 4.791107448837419e-14,
+        "p_max": 0.001069821945560369,
+        "n_managed_blocks": 1,
+        "external_rescales": 1,
+        "external_rewrites": 0,
+        "gamma": 32.77353587789152,
+        "d1_a_go": 0.18667699457784698
+      },
+      "fact_block_at_recall": {
+        "block": 0,
+        "t_w": 0.016666666666666666,
+        "tag0_mean": 1.2733103108041433,
+        "z_mean": 3.595262994646868e-13,
+        "z_min": 3.5952629946468673e-13,
+        "z_max": 3.5952629946468673e-13,
+        "frac_synapses_z_gt_half": 0.0,
+        "inc_mag": 1.1458769112128202,
+        "base_mag": 0.8300451848005612,
+        "tag_rep_mean": 0.0,
+        "t_rep": 4.125
+      },
+      "turn_da": [
+        0.04616293556102311,
+        0.3726834325926455,
+        0.23843243106970416,
+        0.04616293556102311,
+        0.04616293556102311,
+        null,
+        null,
+        0.04616293556102311
+      ],
+      "turn_a_eff": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        null,
+        null,
+        0.0
+      ],
+      "errors": [],
+      "sleep_replay_at_recall": {
+        "on": true,
+        "lesioned": true,
+        "n_epochs": 1,
+        "episode_done": true,
+        "epochs": [
+          {
+            "episode": [
+              5,
+              4.041666667
+            ],
+            "t_h": 4.125,
+            "R": [
+              0.024493867
+            ],
+            "R_eff": [
+              0.0
+            ],
+            "sum_R_eff": 0.0,
+            "da_swr": 0.5,
+            "da_seen_by_d1": 0.5,
+            "a_eff_mean": 0.013245546,
+            "pre_frac_z_gt_half": [
+              0.0
+            ],
+            "replay_lesioned": true,
+            "capture_lesioned": false,
+            "no_reader": false
+          }
+        ]
+      },
+      "blocks_at_recall": [
+        {
+          "block": 0,
+          "t_w": 0.016666666666666666,
+          "tag0_mean": 1.2733103108041433,
+          "z_mean": 3.595262994646868e-13,
+          "z_min": 3.5952629946468673e-13,
+          "z_max": 3.5952629946468673e-13,
+          "frac_synapses_z_gt_half": 0.0,
+          "inc_mag": 1.1458769112128202,
+          "base_mag": 0.8300451848005612,
+          "tag_rep_mean": 0.0,
+          "t_rep": 4.125
+        }
+      ],
+      "awake_until_h": 4.041666666666667
+    },
+    "neu_imm_rc": {
+      "label": "datni_recall",
+      "env": {
+        "BRAIN_DA_TAG_CAPTURE": "1",
+        "BRAIN_DA_TAG_CAPTURE_CLOCK": "turn",
+        "BRAIN_SLEEP_REPLAY_CAPTURE": "1"
+      },
+      "turns": [
+        "datni_t1",
+        "datni_t2",
+        "datni_t3",
+        "datni_t4",
+        "datni_t5",
+        "datni_recall"
+      ],
+      "artifact": "research/findings/raw/_sleep_replay_capture_r2/seed43/neu_imm_rc.json",
+      "recall_outcome": "correct",
+      "recalled_svo": [
+        "cat",
+        "chase",
+        "ball"
+      ],
+      "abstained": false,
+      "tag_capture_at_recall": {
+        "world_t_h": 0.041666666666666664,
+        "n_turns": 6,
+        "p": 0.0,
+        "p_max": 0.0,
+        "n_managed_blocks": 1,
+        "external_rescales": 0,
+        "external_rewrites": 0,
+        "gamma": 32.77353587789152,
+        "d1_a_go": 0.18667699457784698
+      },
+      "fact_block_at_recall": {
+        "block": 0,
+        "t_w": 0.016666666666666666,
+        "tag0_mean": 1.2733103108041433,
+        "z_mean": 0.0,
+        "z_min": 0.0,
+        "z_max": 0.0,
+        "frac_synapses_z_gt_half": 0.0,
+        "inc_mag": 1.2733103108041433,
+        "base_mag": 0.9223548200488956
+      },
+      "turn_da": [
+        0.04616293556102311,
+        0.3726834325926455,
+        0.23843243106970416,
+        0.04616293556102311,
+        0.04616293556102311,
+        0.04616293556102311
+      ],
+      "turn_a_eff": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "errors": [],
+      "sleep_replay_at_recall": {
+        "on": true,
+        "lesioned": false,
+        "n_epochs": 0,
+        "episode_done": false,
+        "epochs": []
+      },
+      "blocks_at_recall": [
+        {
+          "block": 0,
+          "t_w": 0.016666666666666666,
+          "tag0_mean": 1.2733103108041433,
+          "z_mean": 0.0,
+          "z_min": 0.0,
+          "z_max": 0.0,
+          "frac_synapses_z_gt_half": 0.0,
+          "inc_mag": 1.2733103108041433,
+          "base_mag": 0.9223548200488956
+        }
+      ],
+      "awake_until_h": null
+    },
+    "d3w_rc": {
+      "label": "d3w_recall",
+      "env": {
+        "BRAIN_DA_TAG_CAPTURE": "1",
+        "BRAIN_DA_TAG_CAPTURE_CLOCK": "turn",
+        "BRAIN_SLEEP_REPLAY_CAPTURE": "1"
+      },
+      "turns": [
+        "d3w_t1",
+        "d3w_t2",
+        "d3w_t3",
+        "d3w_t4",
+        "d3w_t5",
+        "d3w_night1",
+        "d3w_night2",
+        "d3w_night3",
+        "d3w_recall"
+      ],
+      "artifact": "research/findings/raw/_sleep_replay_capture_r2/seed43/d3w_rc.json",
+      "recall_outcome": "abstain",
+      "recalled_svo": null,
+      "abstained": true,
+      "tag_capture_at_recall": {
+        "world_t_h": 72.04166666666667,
+        "n_turns": 6,
+        "p": 1.9943969629896423e-13,
+        "p_max": 0.012348507139812323,
+        "n_managed_blocks": 1,
+        "external_rescales": 1,
+        "external_rewrites": 0,
+        "gamma": 32.77353587789152,
+        "d1_a_go": 0.18667699457784698
+      },
+      "fact_block_at_recall": {
+        "block": 0,
+        "t_w": 0.03333333333333333,
+        "tag0_mean": 1.0,
+        "z_mean": 8.674002122648018e-13,
+        "z_min": 8.674002122648016e-13,
+        "z_max": 8.674002122648016e-13,
+        "frac_synapses_z_gt_half": 0.0,
+        "inc_mag": 0.9314042695887695,
+        "base_mag": 0.8590852174693224,
+        "tag_rep_mean": 0.04680609201770358,
+        "t_rep": 48.11666666666667
+      },
+      "turn_da": [
+        0.04616293556102311,
+        0.3726834325926455,
+        0.05328751974523853,
+        0.04616293556102311,
+        0.04616293556102311,
+        null,
+        null,
+        null,
+        0.04616293556102311
+      ],
+      "turn_a_eff": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        null,
+        null,
+        null,
+        0.0
+      ],
+      "errors": [],
+      "sleep_replay_at_recall": {
+        "on": true,
+        "lesioned": false,
+        "n_epochs": 3,
+        "episode_done": true,
+        "epochs": [
+          {
+            "episode": 5,
+            "t_h": 0.11666666666666667,
+            "R": [
+              0.168587758
+            ],
+            "R_eff": [
+              0.168587758
+            ],
+            "sum_R_eff": 0.168587758,
+            "da_swr": 0.624754941,
+            "da_seen_by_d1": 0.624754941,
+            "a_eff_mean": 0.161502711,
+            "pre_frac_z_gt_half": [
+              0.0
+            ],
+            "replay_lesioned": false,
+            "capture_lesioned": false,
+            "no_reader": false
+          },
+          {
+            "episode": 5,
+            "t_h": 24.116666666666667,
+            "R": [
+              0.050253415
+            ],
+            "R_eff": [
+              0.050253415
+            ],
+            "sum_R_eff": 0.050253415,
+            "da_swr": 0.537187527,
+            "da_seen_by_d1": 0.537187527,
+            "a_eff_mean": 0.045546088,
+            "pre_frac_z_gt_half": [
+              0.0
+            ],
+            "replay_lesioned": false,
+            "capture_lesioned": false,
+            "no_reader": false
+          },
+          {
+            "episode": 5,
+            "t_h": 48.11666666666667,
+            "R": [
+              0.05025325
+            ],
+            "R_eff": [
+              0.05025325
+            ],
+            "sum_R_eff": 0.05025325,
+            "da_swr": 0.537187405,
+            "da_seen_by_d1": 0.537187405,
+            "a_eff_mean": 0.056467854,
+            "pre_frac_z_gt_half": [
+              0.0
+            ],
+            "replay_lesioned": false,
+            "capture_lesioned": false,
+            "no_reader": false
+          }
+        ]
+      },
+      "blocks_at_recall": [
+        {
+          "block": 0,
+          "t_w": 0.03333333333333333,
+          "tag0_mean": 1.0,
+          "z_mean": 8.674002122648018e-13,
+          "z_min": 8.674002122648016e-13,
+          "z_max": 8.674002122648016e-13,
+          "frac_synapses_z_gt_half": 0.0,
+          "inc_mag": 0.9314042695887695,
+          "base_mag": 0.8590852174693224,
+          "tag_rep_mean": 0.04680609201770358,
+          "t_rep": 48.11666666666667
+        }
+      ],
+      "awake_until_h": null
+    },
+    "d3w_shy_a": {
+      "label": "d3w_recall",
+      "env": {
+        "BRAIN_DA_TAG_CAPTURE": "1",
+        "BRAIN_DA_TAG_CAPTURE_CLOCK": "turn",
+        "BRAIN_SLEEP_REPLAY_CAPTURE": "1",
+        "BRAIN_SLEEP_DOWNSCALING": "1"
+      },
+      "turns": [
+        "d3w_t1",
+        "d3w_t2",
+        "d3w_t3",
+        "d3w_t4",
+        "d3w_t5",
+        "d3w_night1",
+        "d3w_night2",
+        "d3w_night3",
+        "d3w_recall"
+      ],
+      "artifact": "research/findings/raw/_sleep_replay_capture_r2/seed43/d3w_shy_a.json",
+      "recall_outcome": "abstain",
+      "recalled_svo": null,
+      "abstained": true,
+      "tag_capture_at_recall": {
+        "world_t_h": 72.04166666666667,
+        "n_turns": 6,
+        "p": 1.9943969629896423e-13,
+        "p_max": 0.012348507139812323,
+        "n_managed_blocks": 1,
+        "external_rescales": 1,
+        "external_rewrites": 0,
+        "gamma": 32.77353587789152,
+        "d1_a_go": 0.18667699457784698
+      },
+      "fact_block_at_recall": {
+        "block": 0,
+        "t_w": 0.03333333333333333,
+        "tag0_mean": 1.0,
+        "z_mean": 6.088341857168394e-13,
+        "z_min": 6.088341857168394e-13,
+        "z_max": 6.088341857168394e-13,
+        "frac_synapses_z_gt_half": 0.0,
+        "inc_mag": 0.5443655480756073,
+        "base_mag": 0.8590852174693224,
+        "tag_rep_mean": 0.03299714600627691,
+        "t_rep": 48.11666666666667
+      },
+      "turn_da": [
+        0.04616293556102311,
+        0.3726834325926455,
+        0.05328751974523853,
+        0.04616293556102311,
+        0.04616293556102311,
+        null,
+        null,
+        null,
+        0.04616293556102311
+      ],
+      "turn_a_eff": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        null,
+        null,
+        null,
+        0.0
+      ],
+      "errors": [],
+      "sleep_replay_at_recall": {
+        "on": true,
+        "lesioned": false,
+        "n_epochs": 3,
+        "episode_done": true,
+        "epochs": [
+          {
+            "episode": 5,
+            "t_h": 0.11666666666666667,
+            "R": [
+              0.168587758
+            ],
+            "R_eff": [
+              0.168587758
+            ],
+            "sum_R_eff": 0.168587758,
+            "da_swr": 0.624754941,
+            "da_seen_by_d1": 0.624754941,
+            "a_eff_mean": 0.161502711,
+            "pre_frac_z_gt_half": [
+              0.0
+            ],
+            "replay_lesioned": false,
+            "capture_lesioned": false,
+            "no_reader": false,
+            "shy_scale": [
+              0.850345796
+            ]
+          },
+          {
+            "episode": 5,
+            "t_h": 24.116666666666667,
+            "R": [
+              0.050253423
+            ],
+            "R_eff": [
+              0.050253423
+            ],
+            "sum_R_eff": 0.050253423,
+            "da_swr": 0.537187533,
+            "da_seen_by_d1": 0.537187533,
+            "a_eff_mean": 0.045546088,
+            "pre_frac_z_gt_half": [
+              0.0
+            ],
+            "replay_lesioned": false,
+            "capture_lesioned": false,
+            "no_reader": false,
+            "shy_scale": [
+              0.829045616
+            ]
+          },
+          {
+            "episode": 5,
+            "t_h": 48.11666666666667,
+            "R": [
+              0.05025325
+            ],
+            "R_eff": [
+              0.05025325
+            ],
+            "sum_R_eff": 0.05025325,
+            "da_swr": 0.537187405,
+            "da_seen_by_d1": 0.537187405,
+            "a_eff_mean": 0.056467854,
+            "pre_frac_z_gt_half": [
+              0.0
+            ],
+            "replay_lesioned": false,
+            "capture_lesioned": false,
+            "no_reader": false,
+            "shy_scale": [
+              0.829045585
+            ]
+          }
+        ],
+        "downscaling": true
+      },
+      "blocks_at_recall": [
+        {
+          "block": 0,
+          "t_w": 0.03333333333333333,
+          "tag0_mean": 1.0,
+          "z_mean": 6.088341857168394e-13,
+          "z_min": 6.088341857168394e-13,
+          "z_max": 6.088341857168394e-13,
+          "frac_synapses_z_gt_half": 0.0,
+          "inc_mag": 0.5443655480756073,
+          "base_mag": 0.8590852174693224,
+          "tag_rep_mean": 0.03299714600627691,
+          "t_rep": 48.11666666666667
+        }
+      ],
+      "awake_until_h": null
+    },
+    "d3w_shy_b": {
+      "label": "d3w_recall",
+      "env": {
+        "BRAIN_DA_TAG_CAPTURE": "1",
+        "BRAIN_DA_TAG_CAPTURE_CLOCK": "turn",
+        "BRAIN_SLEEP_REPLAY_CAPTURE": "1",
+        "BRAIN_SLEEP_DOWNSCALING": "1"
+      },
+      "turns": [
+        "d3w_t1",
+        "d3w_t2",
+        "d3w_t3",
+        "d3w_t4",
+        "d3w_t5",
+        "d3w_night1",
+        "d3w_night2",
+        "d3w_night3",
+        "d3w_recall"
+      ],
+      "artifact": "research/findings/raw/_sleep_replay_capture_r2/seed43/d3w_shy_b.json",
+      "recall_outcome": "abstain",
+      "recalled_svo": null,
+      "abstained": true,
+      "tag_capture_at_recall": {
+        "world_t_h": 72.04166666666667,
+        "n_turns": 6,
+        "p": 1.9943969629896423e-13,
+        "p_max": 0.012348507139812323,
+        "n_managed_blocks": 1,
+        "external_rescales": 1,
+        "external_rewrites": 0,
+        "gamma": 32.77353587789152,
+        "d1_a_go": 0.18667699457784698
+      },
+      "fact_block_at_recall": {
+        "block": 0,
+        "t_w": 0.03333333333333333,
+        "tag0_mean": 1.0,
+        "z_mean": 6.088341857168394e-13,
+        "z_min": 6.088341857168394e-13,
+        "z_max": 6.088341857168394e-13,
+        "frac_synapses_z_gt_half": 0.0,
+        "inc_mag": 0.5443655480756073,
+        "base_mag": 0.8590852174693224,
+        "tag_rep_mean": 0.03299714600627691,
+        "t_rep": 48.11666666666667
+      },
+      "turn_da": [
+        0.04616293556102311,
+        0.3726834325926455,
+        0.05328751974523853,
+        0.04616293556102311,
+        0.04616293556102311,
+        null,
+        null,
+        null,
+        0.04616293556102311
+      ],
+      "turn_a_eff": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        null,
+        null,
+        null,
+        0.0
+      ],
+      "errors": [],
+      "sleep_replay_at_recall": {
+        "on": true,
+        "lesioned": false,
+        "n_epochs": 3,
+        "episode_done": true,
+        "epochs": [
+          {
+            "episode": 5,
+            "t_h": 0.11666666666666667,
+            "R": [
+              0.168587758
+            ],
+            "R_eff": [
+              0.168587758
+            ],
+            "sum_R_eff": 0.168587758,
+            "da_swr": 0.624754941,
+            "da_seen_by_d1": 0.624754941,
+            "a_eff_mean": 0.161502711,
+            "pre_frac_z_gt_half": [
+              0.0
+            ],
+            "replay_lesioned": false,
+            "capture_lesioned": false,
+            "no_reader": false,
+            "shy_scale": [
+              0.850345796
+            ]
+          },
+          {
+            "episode": 5,
+            "t_h": 24.116666666666667,
+            "R": [
+              0.050253423
+            ],
+            "R_eff": [
+              0.050253423
+            ],
+            "sum_R_eff": 0.050253423,
+            "da_swr": 0.537187533,
+            "da_seen_by_d1": 0.537187533,
+            "a_eff_mean": 0.045546088,
+            "pre_frac_z_gt_half": [
+              0.0
+            ],
+            "replay_lesioned": false,
+            "capture_lesioned": false,
+            "no_reader": false,
+            "shy_scale": [
+              0.829045616
+            ]
+          },
+          {
+            "episode": 5,
+            "t_h": 48.11666666666667,
+            "R": [
+              0.05025325
+            ],
+            "R_eff": [
+              0.05025325
+            ],
+            "sum_R_eff": 0.05025325,
+            "da_swr": 0.537187405,
+            "da_seen_by_d1": 0.537187405,
+            "a_eff_mean": 0.056467854,
+            "pre_frac_z_gt_half": [
+              0.0
+            ],
+            "replay_lesioned": false,
+            "capture_lesioned": false,
+            "no_reader": false,
+            "shy_scale": [
+              0.829045585
+            ]
+          }
+        ],
+        "downscaling": true
+      },
+      "blocks_at_recall": [
+        {
+          "block": 0,
+          "t_w": 0.03333333333333333,
+          "tag0_mean": 1.0,
+          "z_mean": 6.088341857168394e-13,
+          "z_min": 6.088341857168394e-13,
+          "z_max": 6.088341857168394e-13,
+          "frac_synapses_z_gt_half": 0.0,
+          "inc_mag": 0.5443655480756073,
+          "base_mag": 0.8590852174693224,
+          "tag_rep_mean": 0.03299714600627691,
+          "t_rep": 48.11666666666667
+        }
+      ],
+      "awake_until_h": null
+    },
+    "d3c_shy": {
+      "label": "d3c_recall",
+      "env": {
+        "BRAIN_DA_TAG_CAPTURE": "1",
+        "BRAIN_DA_TAG_CAPTURE_CLOCK": "turn",
+        "BRAIN_SLEEP_REPLAY_CAPTURE": "1",
+        "BRAIN_SLEEP_DOWNSCALING": "1"
+      },
+      "turns": [
+        "d3c_t1",
+        "d3c_t2",
+        "d3c_t3",
+        "d3c_t4",
+        "d3c_t5",
+        "d3c_night1",
+        "d3c_night2",
+        "d3c_night3",
+        "d3c_recall"
+      ],
+      "artifact": "research/findings/raw/_sleep_replay_capture_r2/seed43/d3c_shy.json",
+      "recall_outcome": "correct",
+      "recalled_svo": [
+        "cat",
+        "chase",
+        "ball"
+      ],
+      "abstained": false,
+      "tag_capture_at_recall": {
+        "world_t_h": 72.04166666666667,
+        "n_turns": 6,
+        "p": 1.2696823275105081e-12,
+        "p_max": 0.04451035045170329,
+        "n_managed_blocks": 1,
+        "external_rescales": 1,
+        "external_rewrites": 0,
+        "gamma": 32.77353587789152,
+        "d1_a_go": 0.18667699457784698
+      },
+      "fact_block_at_recall": {
+        "block": 0,
+        "t_w": 0.016666666666666666,
+        "tag0_mean": 2.2027627035027137,
+        "z_mean": 1.0000000000328648,
+        "z_min": 1.000000000032865,
+        "z_max": 1.000000000032865,
+        "frac_synapses_z_gt_half": 1.0,
+        "inc_mag": 1.2474329613853157,
+        "base_mag": 0.7465889813285725,
+        "tag_rep_mean": 0.5087691827554446,
+        "t_rep": 48.11666666666667
+      },
+      "turn_da": [
+        0.6478803447434558,
+        0.8960979627223284,
+        0.7980108110666576,
+        0.9032609892666146,
+        1.03907707638594,
+        null,
+        null,
+        null,
+        0.6161823731414147
+      ],
+      "turn_a_eff": [
+        0.20681642137877665,
+        0.5251742835011621,
+        0.3880712625871415,
+        0.478698683191325,
+        0.6994577846630521,
+        null,
+        null,
+        null,
+        0.20681642137877665
+      ],
+      "errors": [],
+      "sleep_replay_at_recall": {
+        "on": true,
+        "lesioned": false,
+        "n_epochs": 3,
+        "episode_done": true,
+        "epochs": [
+          {
+            "episode": 5,
+            "t_h": 0.11666666666666667,
+            "R": [
+              0.388730055
+            ],
+            "R_eff": [
+              0.388730055
+            ],
+            "sum_R_eff": 0.388730055,
+            "da_swr": 0.787660241,
+            "da_seen_by_d1": 0.787660241,
+            "a_eff_mean": 0.377149497,
+            "pre_frac_z_gt_half": [
+              0.0
+            ],
+            "replay_lesioned": false,
+            "capture_lesioned": false,
+            "no_reader": false,
+            "shy_scale": [
+              0.88997141
+            ]
+          },
+          {
+            "episode": 5,
+            "t_h": 24.116666666666667,
+            "R": [
+              0.379470951
+            ],
+            "R_eff": [
+              0.379470951
+            ],
+            "sum_R_eff": 0.379470951,
+            "da_swr": 0.780808504,
+            "da_seen_by_d1": 0.780808504,
+            "a_eff_mean": 0.3580945,
+            "pre_frac_z_gt_half": [
+              1.0
+            ],
+            "replay_lesioned": false,
+            "capture_lesioned": false,
+            "no_reader": false,
+            "shy_scale": [
+              0.888304771
+            ]
+          },
+          {
+            "episode": 5,
+            "t_h": 48.11666666666667,
+            "R": [
+              0.360937062
+            ],
+            "R_eff": [
+              0.360937062
+            ],
+            "sum_R_eff": 0.360937062,
+            "da_swr": 0.767093426,
+            "da_seen_by_d1": 0.767093426,
+            "a_eff_mean": 0.359024012,
+            "pre_frac_z_gt_half": [
+              1.0
+            ],
+            "replay_lesioned": false,
+            "capture_lesioned": false,
+            "no_reader": false,
+            "shy_scale": [
+              0.884968671
+            ]
+          }
+        ],
+        "downscaling": true
+      },
+      "blocks_at_recall": [
+        {
+          "block": 0,
+          "t_w": 0.016666666666666666,
+          "tag0_mean": 2.2027627035027137,
+          "z_mean": 1.0000000000328648,
+          "z_min": 1.000000000032865,
+          "z_max": 1.000000000032865,
+          "frac_synapses_z_gt_half": 1.0,
+          "inc_mag": 1.2474329613853157,
+          "base_mag": 0.7465889813285725,
+          "tag_rep_mean": 0.5087691827554446,
+          "t_rep": 48.11666666666667
+        }
+      ],
+      "awake_until_h": null
+    },
+    "d3r_shy": {
+      "label": "d3r_recall",
+      "env": {
+        "BRAIN_DA_TAG_CAPTURE": "1",
+        "BRAIN_DA_TAG_CAPTURE_CLOCK": "turn",
+        "BRAIN_SLEEP_REPLAY_CAPTURE": "1",
+        "BRAIN_SLEEP_DOWNSCALING": "1"
+      },
+      "turns": [
+        "d3r_t1",
+        "d3r_t2",
+        "d3r_t3",
+        "d3r_t4",
+        "d3r_t5",
+        "d3r_night1",
+        "d3r_remention1",
+        "d3r_night2",
+        "d3r_remention2",
+        "d3r_night3",
+        "d3r_recall"
+      ],
+      "artifact": "research/findings/raw/_sleep_replay_capture_r2/seed43/d3r_shy.json",
+      "recall_outcome": "abstain",
+      "recalled_svo": null,
+      "abstained": true,
+      "tag_capture_at_recall": {
+        "world_t_h": 72.05833333333334,
+        "n_turns": 8,
+        "p": 2.9650982650336635e-13,
+        "p_max": 0.012348507139812323,
+        "n_managed_blocks": 3,
+        "external_rescales": 6,
+        "external_rewrites": 0,
+        "gamma": 32.77353587789152,
+        "d1_a_go": 0.18667699457784698
+      },
+      "fact_block_at_recall": {
+        "block": 0,
+        "t_w": 0.03333333333333333,
+        "tag0_mean": 1.0,
+        "z_mean": 1.0611586940777652e-12,
+        "z_min": 1.0611586940777648e-12,
+        "z_max": 1.0611586940777648e-12,
+        "frac_synapses_z_gt_half": 0.0,
+        "inc_mag": 0.6336571393523016,
+        "base_mag": 0.9999998643532502,
+        "tag_rep_mean": 0.038409848907495936,
+        "t_rep": 48.13333333333333
+      },
+      "turn_da": [
+        0.04616293556102311,
+        0.3726834325926455,
+        0.05328751974523853,
+        0.04616293556102311,
+        0.04616293556102311,
+        null,
+        0.04616293556102311,
+        null,
+        0.04616293556102311,
+        null,
+        0.04616293556102311
+      ],
+      "turn_a_eff": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        null,
+        0.0,
+        null,
+        0.0,
+        null,
+        0.0
+      ],
+      "errors": [],
+      "sleep_replay_at_recall": {
+        "on": true,
+        "lesioned": false,
+        "n_epochs": 3,
+        "episode_done": true,
+        "epochs": [
+          {
+            "episode": 5,
+            "t_h": 0.11666666666666667,
+            "R": [
+              0.168587758
+            ],
+            "R_eff": [
+              0.168587758
+            ],
+            "sum_R_eff": 0.168587758,
+            "da_swr": 0.624754941,
+            "da_seen_by_d1": 0.624754941,
+            "a_eff_mean": 0.161502711,
+            "pre_frac_z_gt_half": [
+              0.0
+            ],
+            "replay_lesioned": false,
+            "capture_lesioned": false,
+            "no_reader": false,
+            "shy_scale": [
+              0.850345796
+            ]
+          },
+          {
+            "episode": 6,
+            "t_h": 24.125,
+            "R": [
+              0.050253189,
+              0.000883547
+            ],
+            "R_eff": [
+              0.050253189,
+              0.000883547
+            ],
+            "sum_R_eff": 0.051136736,
+            "da_swr": 0.537841185,
+            "da_seen_by_d1": 0.537841185,
+            "a_eff_mean": 0.046707978,
+            "pre_frac_z_gt_half": [
+              0.0,
+              0.0
+            ],
+            "replay_lesioned": false,
+            "capture_lesioned": false,
+            "no_reader": false,
+            "shy_scale": [
+              0.829045574,
+              0.820159039
+            ]
+          },
+          {
+            "episode": 7,
+            "t_h": 48.13333333333333,
+            "R": [
+              0.050253545,
+              0.009530236,
+              0.018303566
+            ],
+            "R_eff": [
+              0.050253545,
+              0.009530236,
+              0.018303566
+            ],
+            "sum_R_eff": 0.078087347,
+            "da_swr": 0.557784637,
+            "da_seen_by_d1": 0.557784637,
+            "a_eff_mean": 0.083888459,
+            "pre_frac_z_gt_half": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "replay_lesioned": false,
+            "capture_lesioned": false,
+            "no_reader": false,
+            "shy_scale": [
+              0.829045638,
+              0.821715442,
+              0.823294642
+            ]
+          }
+        ],
+        "downscaling": true
+      },
+      "blocks_at_recall": [
+        {
+          "block": 0,
+          "t_w": 0.03333333333333333,
+          "tag0_mean": 1.0,
+          "z_mean": 1.0611586940777652e-12,
+          "z_min": 1.0611586940777648e-12,
+          "z_max": 1.0611586940777648e-12,
+          "frac_synapses_z_gt_half": 0.0,
+          "inc_mag": 0.6336571393523016,
+          "base_mag": 0.9999998643532502,
+          "tag_rep_mean": 0.038409848907495936,
+          "t_rep": 48.13333333333333
+        },
+        {
+          "block": 1,
+          "t_w": 24.041666666666668,
+          "tag0_mean": 1.0,
+          "z_mean": 2.165799623239045e-13,
+          "z_min": 2.165799623239046e-13,
+          "z_max": 2.165799623239046e-13,
+          "frac_synapses_z_gt_half": 0.0,
+          "inc_mag": 0.6856263212354299,
+          "base_mag": 0.999999842963689,
+          "tag_rep_mean": 0.007951877561268854,
+          "t_rep": 48.13333333333333
+        },
+        {
+          "block": 2,
+          "t_w": 48.05,
+          "tag0_mean": 1.0,
+          "z_mean": 4.899720846378944e-11,
+          "z_min": 4.8997208463789425e-11,
+          "z_max": 4.8997208463789425e-11,
+          "frac_synapses_z_gt_half": 0.0,
+          "inc_mag": 0.7700759386096128,
+          "base_mag": 0.8532135325446435,
+          "tag_rep_mean": 0.017120402657763403,
+          "t_rep": 48.13333333333333
+        }
+      ],
+      "awake_until_h": null
+    },
+    "d10w_rc": {
+      "label": "d10w_recall10",
+      "env": {
+        "BRAIN_DA_TAG_CAPTURE": "1",
+        "BRAIN_DA_TAG_CAPTURE_CLOCK": "turn",
+        "BRAIN_SLEEP_REPLAY_CAPTURE": "1"
+      },
+      "turns": [
+        "d10w_t1",
+        "d10w_t2",
+        "d10w_t3",
+        "d10w_t4",
+        "d10w_t5",
+        "d10w_night1",
+        "d10w_recall1",
+        "d10w_night2",
+        "d10w_recall2",
+        "d10w_night3",
+        "d10w_recall3",
+        "d10w_night4",
+        "d10w_recall4",
+        "d10w_night5",
+        "d10w_recall5",
+        "d10w_night6",
+        "d10w_recall6",
+        "d10w_night7",
+        "d10w_recall7",
+        "d10w_night8",
+        "d10w_recall8",
+        "d10w_night9",
+        "d10w_recall9",
+        "d10w_night10",
+        "d10w_recall10"
+      ],
+      "artifact": "research/findings/raw/_sleep_replay_capture_r2/seed43/d10w_rc.json",
+      "recall_outcome": "abstain",
+      "recalled_svo": null,
+      "abstained": true,
+      "tag_capture_at_recall": {
+        "world_t_h": 240.11666666666667,
+        "n_turns": 15,
+        "p": 1.6085484073955294e-13,
+        "p_max": 0.012348507139812323,
+        "n_managed_blocks": 1,
+        "external_rescales": 1,
+        "external_rewrites": 0,
+        "gamma": 32.77353587789152,
+        "d1_a_go": 0.18667699457784698
+      },
+      "fact_block_at_recall": {
+        "block": 0,
+        "t_w": 0.03333333333333333,
+        "tag0_mean": 1.0,
+        "z_mean": 6.976203290668332e-13,
+        "z_min": 6.976203290668331e-13,
+        "z_max": 6.976203290668331e-13,
+        "frac_synapses_z_gt_half": 0.0,
+        "inc_mag": 0.9314042695887695,
+        "base_mag": 0.8590852174693224,
+        "tag_rep_mean": 0.04680609201770358,
+        "t_rep": 216.19166666666666
+      },
+      "turn_da": [
+        0.04616293556102311,
+        0.3726834325926455,
+        0.05328751974523853,
+        0.04616293556102311,
+        0.04616293556102311,
+        null,
+        0.04616293556102311,
+        null,
+        0.04616293556102311,
+        null,
+        0.04616293556102311,
+        null,
+        0.04616293556102311,
+        null,
+        0.04616293556102311,
+        null,
+        0.04616293556102311,
+        null,
+        0.04616293556102311,
+        null,
+        0.04616293556102311,
+        null,
+        0.04616293556102311,
+        null,
+        0.04616293556102311
+      ],
+      "turn_a_eff": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        null,
+        0.0,
+        null,
+        0.0,
+        null,
+        0.0,
+        null,
+        0.0,
+        null,
+        0.0,
+        null,
+        0.0,
+        null,
+        0.0,
+        null,
+        0.0,
+        null,
+        0.0,
+        null,
+        0.0
+      ],
+      "errors": [],
+      "sleep_replay_at_recall": {
+        "on": true,
+        "lesioned": false,
+        "n_epochs": 10,
+        "episode_done": true,
+        "epochs": [
+          {
+            "episode": 5,
+            "t_h": 0.11666666666666667,
+            "R": [
+              0.168587758
+            ],
+            "R_eff": [
+              0.168587758
+            ],
+            "sum_R_eff": 0.168587758,
+            "da_swr": 0.624754941,
+            "da_seen_by_d1": 0.624754941,
+            "a_eff_mean": 0.161502711,
+            "pre_frac_z_gt_half": [
+              0.0
+            ],
+            "replay_lesioned": false,
+            "capture_lesioned": false,
+            "no_reader": false
+          },
+          {
+            "episode": 6,
+            "t_h": 24.125,
+            "R": [
+              0.050253415
+            ],
+            "R_eff": [
+              0.050253415
+            ],
+            "sum_R_eff": 0.050253415,
+            "da_swr": 0.537187527,
+            "da_seen_by_d1": 0.537187527,
+            "a_eff_mean": 0.045546088,
+            "pre_frac_z_gt_half": [
+              0.0
+            ],
+            "replay_lesioned": false,
+            "capture_lesioned": false,
+            "no_reader": false
+          },
+          {
+            "episode": 7,
+            "t_h": 48.13333333333333,
+            "R": [
+              0.05025325
+            ],
+            "R_eff": [
+              0.05025325
+            ],
+            "sum_R_eff": 0.05025325,
+            "da_swr": 0.537187405,
+            "da_seen_by_d1": 0.537187405,
+            "a_eff_mean": 0.056467854,
+            "pre_frac_z_gt_half": [
+              0.0
+            ],
+            "replay_lesioned": false,
+            "capture_lesioned": false,
+            "no_reader": false
+          },
+          {
+            "episode": 8,
+            "t_h": 72.14166666666667,
+            "R": [
+              0.05025325
+            ],
+            "R_eff": [
+              0.05025325
+            ],
+            "sum_R_eff": 0.05025325,
+            "da_swr": 0.537187405,
+            "da_seen_by_d1": 0.537187405,
+            "a_eff_mean": 0.046940356,
+            "pre_frac_z_gt_half": [
+              0.0
+            ],
+            "replay_lesioned": false,
+            "capture_lesioned": false,
+            "no_reader": false
+          },
+          {
+            "episode": 9,
+            "t_h": 96.14999999999999,
+            "R": [
+              0.05025325
+            ],
+            "R_eff": [
+              0.05025325
+            ],
+            "sum_R_eff": 0.05025325,
+            "da_swr": 0.537187405,
+            "da_seen_by_d1": 0.537187405,
+            "a_eff_mean": 0.078543765,
+            "pre_frac_z_gt_half": [
+              0.0
+            ],
+            "replay_lesioned": false,
+            "capture_lesioned": false,
+            "no_reader": false
+          },
+          {
+            "episode": 10,
+            "t_h": 120.15833333333333,
+            "R": [
+              0.05025325
+            ],
+            "R_eff": [
+              0.05025325
+            ],
+            "sum_R_eff": 0.05025325,
+            "da_swr": 0.537187405,
+            "da_seen_by_d1": 0.537187405,
+            "a_eff_mean": 0.043222308,
+            "pre_frac_z_gt_half": [
+              0.0
+            ],
+            "replay_lesioned": false,
+            "capture_lesioned": false,
+            "no_reader": false
+          },
+          {
+            "episode": 11,
+            "t_h": 144.16666666666669,
+            "R": [
+              0.05025325
+            ],
+            "R_eff": [
+              0.05025325
+            ],
+            "sum_R_eff": 0.05025325,
+            "da_swr": 0.537187405,
+            "da_seen_by_d1": 0.537187405,
+            "a_eff_mean": 0.043687064,
+            "pre_frac_z_gt_half": [
+              0.0
+            ],
+            "replay_lesioned": false,
+            "capture_lesioned": false,
+            "no_reader": false
+          },
+          {
+            "episode": 12,
+            "t_h": 168.175,
+            "R": [
+              0.05025325
+            ],
+            "R_eff": [
+              0.05025325
+            ],
+            "sum_R_eff": 0.05025325,
+            "da_swr": 0.537187405,
+            "da_seen_by_d1": 0.537187405,
+            "a_eff_mean": 0.0697134,
+            "pre_frac_z_gt_half": [
+              0.0
+            ],
+            "replay_lesioned": false,
+            "capture_lesioned": false,
+            "no_reader": false
+          },
+          {
+            "episode": 13,
+            "t_h": 192.18333333333334,
+            "R": [
+              0.05025325
+            ],
+            "R_eff": [
+              0.05025325
+            ],
+            "sum_R_eff": 0.05025325,
+            "da_swr": 0.537187405,
+            "da_seen_by_d1": 0.537187405,
+            "a_eff_mean": 0.018822618,
+            "pre_frac_z_gt_half": [
+              0.0
+            ],
+            "replay_lesioned": false,
+            "capture_lesioned": false,
+            "no_reader": false
+          },
+          {
+            "episode": 14,
+            "t_h": 216.19166666666666,
+            "R": [
+              0.05025325
+            ],
+            "R_eff": [
+              0.05025325
+            ],
+            "sum_R_eff": 0.05025325,
+            "da_swr": 0.537187405,
+            "da_seen_by_d1": 0.537187405,
+            "a_eff_mean": 0.045546088,
+            "pre_frac_z_gt_half": [
+              0.0
+            ],
+            "replay_lesioned": false,
+            "capture_lesioned": false,
+            "no_reader": false
+          }
+        ]
+      },
+      "blocks_at_recall": [
+        {
+          "block": 0,
+          "t_w": 0.03333333333333333,
+          "tag0_mean": 1.0,
+          "z_mean": 6.976203290668332e-13,
+          "z_min": 6.976203290668331e-13,
+          "z_max": 6.976203290668331e-13,
+          "frac_synapses_z_gt_half": 0.0,
+          "inc_mag": 0.9314042695887695,
+          "base_mag": 0.8590852174693224,
+          "tag_rep_mean": 0.04680609201770358,
+          "t_rep": 216.19166666666666
+        }
+      ],
+      "awake_until_h": null,
+      "daily_outcomes": [
+        "abstain",
+        "abstain",
+        "abstain",
+        "abstain",
+        "abstain",
+        "abstain",
+        "abstain",
+        "abstain",
+        "abstain",
+        "abstain"
+      ],
+      "daily_inc_mag": [
+        0.9314042695887695,
+        0.9314042695887695,
+        0.9314042695887695,
+        0.9314042695887695,
+        0.9314042695887695,
+        0.9314042695887695,
+        0.9314042695887695,
+        0.9314042695887695,
+        0.9314042695887695,
+        0.9314042695887695
+      ],
+      "daily_base_mag": [
+        0.8590852174693224,
+        0.8590852174693224,
+        0.8590852174693224,
+        0.8590852174693224,
+        0.8590852174693224,
+        0.8590852174693224,
+        0.8590852174693224,
+        0.8590852174693224,
+        0.8590852174693224,
+        0.8590852174693224
+      ]
+    },
+    "d10w_shy": {
+      "label": "d10w_recall10",
+      "env": {
+        "BRAIN_DA_TAG_CAPTURE": "1",
+        "BRAIN_DA_TAG_CAPTURE_CLOCK": "turn",
+        "BRAIN_SLEEP_REPLAY_CAPTURE": "1",
+        "BRAIN_SLEEP_DOWNSCALING": "1"
+      },
+      "turns": [
+        "d10w_t1",
+        "d10w_t2",
+        "d10w_t3",
+        "d10w_t4",
+        "d10w_t5",
+        "d10w_night1",
+        "d10w_recall1",
+        "d10w_night2",
+        "d10w_recall2",
+        "d10w_night3",
+        "d10w_recall3",
+        "d10w_night4",
+        "d10w_recall4",
+        "d10w_night5",
+        "d10w_recall5",
+        "d10w_night6",
+        "d10w_recall6",
+        "d10w_night7",
+        "d10w_recall7",
+        "d10w_night8",
+        "d10w_recall8",
+        "d10w_night9",
+        "d10w_recall9",
+        "d10w_night10",
+        "d10w_recall10"
+      ],
+      "artifact": "research/findings/raw/_sleep_replay_capture_r2/seed43/d10w_shy.json",
+      "recall_outcome": "abstain",
+      "recalled_svo": null,
+      "abstained": true,
+      "tag_capture_at_recall": {
+        "world_t_h": 240.11666666666667,
+        "n_turns": 15,
+        "p": 1.6085484073955294e-13,
+        "p_max": 0.012348507139812323,
+        "n_managed_blocks": 1,
+        "external_rescales": 1,
+        "external_rewrites": 0,
+        "gamma": 32.77353587789152,
+        "d1_a_go": 0.18667699457784698
+      },
+      "fact_block_at_recall": {
+        "block": 0,
+        "t_w": 0.03333333333333333,
+        "tag0_mean": 1.0,
+        "z_mean": 1.3112292968686207e-13,
+        "z_min": 1.311229296868621e-13,
+        "z_max": 1.311229296868621e-13,
+        "frac_synapses_z_gt_half": 0.0,
+        "inc_mag": 0.14653437217295323,
+        "base_mag": 0.8590852174693224,
+        "tag_rep_mean": 0.008882296263277651,
+        "t_rep": 216.19166666666666
+      },
+      "turn_da": [
+        0.04616293556102311,
+        0.3726834325926455,
+        0.05328751974523853,
+        0.04616293556102311,
+        0.04616293556102311,
+        null,
+        0.04616293556102311,
+        null,
+        0.04616293556102311,
+        null,
+        0.04616293556102311,
+        null,
+        0.04616293556102311,
+        null,
+        0.04616293556102311,
+        null,
+        0.04616293556102311,
+        null,
+        0.04616293556102311,
+        null,
+        0.04616293556102311,
+        null,
+        0.04616293556102311,
+        null,
+        0.04616293556102311
+      ],
+      "turn_a_eff": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        null,
+        0.0,
+        null,
+        0.0,
+        null,
+        0.0,
+        null,
+        0.0,
+        null,
+        0.0,
+        null,
+        0.0,
+        null,
+        0.0,
+        null,
+        0.0,
+        null,
+        0.0,
+        null,
+        0.0
+      ],
+      "errors": [],
+      "sleep_replay_at_recall": {
+        "on": true,
+        "lesioned": false,
+        "n_epochs": 10,
+        "episode_done": true,
+        "epochs": [
+          {
+            "episode": 5,
+            "t_h": 0.11666666666666667,
+            "R": [
+              0.168587758
+            ],
+            "R_eff": [
+              0.168587758
+            ],
+            "sum_R_eff": 0.168587758,
+            "da_swr": 0.624754941,
+            "da_seen_by_d1": 0.624754941,
+            "a_eff_mean": 0.161502711,
+            "pre_frac_z_gt_half": [
+              0.0
+            ],
+            "replay_lesioned": false,
+            "capture_lesioned": false,
+            "no_reader": false,
+            "shy_scale": [
+              0.850345796
+            ]
+          },
+          {
+            "episode": 6,
+            "t_h": 24.125,
+            "R": [
+              0.050253423
+            ],
+            "R_eff": [
+              0.050253423
+            ],
+            "sum_R_eff": 0.050253423,
+            "da_swr": 0.537187533,
+            "da_seen_by_d1": 0.537187533,
+            "a_eff_mean": 0.045546088,
+            "pre_frac_z_gt_half": [
+              0.0
+            ],
+            "replay_lesioned": false,
+            "capture_lesioned": false,
+            "no_reader": false,
+            "shy_scale": [
+              0.829045616
+            ]
+          },
+          {
+            "episode": 7,
+            "t_h": 48.13333333333333,
+            "R": [
+              0.05025325
+            ],
+            "R_eff": [
+              0.05025325
+            ],
+            "sum_R_eff": 0.05025325,
+            "da_swr": 0.537187405,
+            "da_seen_by_d1": 0.537187405,
+            "a_eff_mean": 0.056467854,
+            "pre_frac_z_gt_half": [
+              0.0
+            ],
+            "replay_lesioned": false,
+            "capture_lesioned": false,
+            "no_reader": false,
+            "shy_scale": [
+              0.829045585
+            ]
+          },
+          {
+            "episode": 8,
+            "t_h": 72.14166666666667,
+            "R": [
+              0.05025325
+            ],
+            "R_eff": [
+              0.05025325
+            ],
+            "sum_R_eff": 0.05025325,
+            "da_swr": 0.537187405,
+            "da_seen_by_d1": 0.537187405,
+            "a_eff_mean": 0.046940356,
+            "pre_frac_z_gt_half": [
+              0.0
+            ],
+            "replay_lesioned": false,
+            "capture_lesioned": false,
+            "no_reader": false,
+            "shy_scale": [
+              0.829045585
+            ]
+          },
+          {
+            "episode": 9,
+            "t_h": 96.14999999999999,
+            "R": [
+              0.05025325
+            ],
+            "R_eff": [
+              0.05025325
+            ],
+            "sum_R_eff": 0.05025325,
+            "da_swr": 0.537187405,
+            "da_seen_by_d1": 0.537187405,
+            "a_eff_mean": 0.078543765,
+            "pre_frac_z_gt_half": [
+              0.0
+            ],
+            "replay_lesioned": false,
+            "capture_lesioned": false,
+            "no_reader": false,
+            "shy_scale": [
+              0.829045585
+            ]
+          },
+          {
+            "episode": 10,
+            "t_h": 120.15833333333333,
+            "R": [
+              0.05025325
+            ],
+            "R_eff": [
+              0.05025325
+            ],
+            "sum_R_eff": 0.05025325,
+            "da_swr": 0.537187405,
+            "da_seen_by_d1": 0.537187405,
+            "a_eff_mean": 0.043222308,
+            "pre_frac_z_gt_half": [
+              0.0
+            ],
+            "replay_lesioned": false,
+            "capture_lesioned": false,
+            "no_reader": false,
+            "shy_scale": [
+              0.829045585
+            ]
+          },
+          {
+            "episode": 11,
+            "t_h": 144.16666666666669,
+            "R": [
+              0.05025325
+            ],
+            "R_eff": [
+              0.05025325
+            ],
+            "sum_R_eff": 0.05025325,
+            "da_swr": 0.537187405,
+            "da_seen_by_d1": 0.537187405,
+            "a_eff_mean": 0.043687064,
+            "pre_frac_z_gt_half": [
+              0.0
+            ],
+            "replay_lesioned": false,
+            "capture_lesioned": false,
+            "no_reader": false,
+            "shy_scale": [
+              0.829045585
+            ]
+          },
+          {
+            "episode": 12,
+            "t_h": 168.175,
+            "R": [
+              0.05025325
+            ],
+            "R_eff": [
+              0.05025325
+            ],
+            "sum_R_eff": 0.05025325,
+            "da_swr": 0.537187405,
+            "da_seen_by_d1": 0.537187405,
+            "a_eff_mean": 0.0697134,
+            "pre_frac_z_gt_half": [
+              0.0
+            ],
+            "replay_lesioned": false,
+            "capture_lesioned": false,
+            "no_reader": false,
+            "shy_scale": [
+              0.829045585
+            ]
+          },
+          {
+            "episode": 13,
+            "t_h": 192.18333333333334,
+            "R": [
+              0.05025325
+            ],
+            "R_eff": [
+              0.05025325
+            ],
+            "sum_R_eff": 0.05025325,
+            "da_swr": 0.537187405,
+            "da_seen_by_d1": 0.537187405,
+            "a_eff_mean": 0.018822618,
+            "pre_frac_z_gt_half": [
+              0.0
+            ],
+            "replay_lesioned": false,
+            "capture_lesioned": false,
+            "no_reader": false,
+            "shy_scale": [
+              0.829045585
+            ]
+          },
+          {
+            "episode": 14,
+            "t_h": 216.19166666666666,
+            "R": [
+              0.05025325
+            ],
+            "R_eff": [
+              0.05025325
+            ],
+            "sum_R_eff": 0.05025325,
+            "da_swr": 0.537187405,
+            "da_seen_by_d1": 0.537187405,
+            "a_eff_mean": 0.045546088,
+            "pre_frac_z_gt_half": [
+              0.0
+            ],
+            "replay_lesioned": false,
+            "capture_lesioned": false,
+            "no_reader": false,
+            "shy_scale": [
+              0.829045585
+            ]
+          }
+        ],
+        "downscaling": true
+      },
+      "blocks_at_recall": [
+        {
+          "block": 0,
+          "t_w": 0.03333333333333333,
+          "tag0_mean": 1.0,
+          "z_mean": 1.3112292968686207e-13,
+          "z_min": 1.311229296868621e-13,
+          "z_max": 1.311229296868621e-13,
+          "frac_synapses_z_gt_half": 0.0,
+          "inc_mag": 0.14653437217295323,
+          "base_mag": 0.8590852174693224,
+          "tag_rep_mean": 0.008882296263277651,
+          "t_rep": 216.19166666666666
+        }
+      ],
+      "awake_until_h": null,
+      "daily_outcomes": [
+        "abstain",
+        "abstain",
+        "abstain",
+        "abstain",
+        "abstain",
+        "abstain",
+        "abstain",
+        "abstain",
+        "abstain",
+        "abstain"
+      ],
+      "daily_inc_mag": [
+        0.7920157054112509,
+        0.6566171485298505,
+        0.5443655480756073,
+        0.45130385430100395,
+        0.3741514679372273,
+        0.3101886226440558,
+        0.25716050814468305,
+        0.21319778393393257,
+        0.1767506815189796,
+        0.14653437217295323
+      ],
+      "daily_base_mag": [
+        0.8590852174693224,
+        0.8590852174693224,
+        0.8590852174693224,
+        0.8590852174693224,
+        0.8590852174693224,
+        0.8590852174693224,
+        0.8590852174693224,
+        0.8590852174693224,
+        0.8590852174693224,
+        0.8590852174693224
+      ]
+    }
+  },
+  "pinned_sha": "36a175534",
+  "ltm": "off",
+  "backend": "numpy",
+  "argv": [
+    "/home/node/derisk-pool/revisions/50c791bf9215df97404a9bf05e3ce40a9a257606/research/runners/_da_tag_capture_chat_probe.py",
+    "--family",
+    "r2",
+    "--seed",
+    "43",
+    "--ltm",
+    "off",
+    "--workers",
+    "1",
+    "--out",
+    "research/findings/raw/_sleep_replay_capture_r2"
+  ],
+  "workers": 1,
+  "family": "r2",
+  "gates": {
+    "G_isolation_gamma_consistent": true,
+    "P1_immediate_precondition": true,
+    "I_LD_sleep_after_waking_and_lesion_held": true,
+    "LD_reported": {
+      "outcomes": {
+        "ld_ledger_off": "correct",
+        "ld_norc": "abstain",
+        "ld_rc": "abstain",
+        "ld_rc_replaylesion": "abstain"
+      },
+      "R_at_sleep_onset": [
+        0.024493867
+      ],
+      "da_swr": 0.518125461,
+      "sleep_onset_h_after_telling": 4.108333333333333,
+      "frac_z_gt_half_at_recall": [
+        0.0
+      ]
+    },
+    "LD_verdict": "NOT-RESCUED",
+    "G0_null_clean": true,
+    "P2_weak_fact_kept_without_downscaling": false,
+    "I_SHY_three_nights_and_scaling_as_armed": true,
+    "SHY1_weak_unmentioned_fact_fades": true,
+    "SHY2_salient_fact_survives": true,
+    "SHY3_remention_fact_survives": false,
+    "SHY4_no_confab": true,
+    "SHY_reported": {
+      "d3w_rc": {
+        "R_per_night": [
+          [
+            0.168587758
+          ],
+          [
+            0.050253415
+          ],
+          [
+            0.05025325
+          ]
+        ],
+        "shy_scale_per_night": [
+          null,
+          null,
+          null
+        ],
+        "inc_mag_at_recall": [
+          0.9314042695887695
+        ],
+        "base_mag_at_recall": [
+          0.8590852174693224
+        ],
+        "frac_z_gt_half_at_recall": [
+          0.0
+        ]
+      },
+      "d3w_shy_a": {
+        "R_per_night": [
+          [
+            0.168587758
+          ],
+          [
+            0.050253423
+          ],
+          [
+            0.05025325
+          ]
+        ],
+        "shy_scale_per_night": [
+          [
+            0.850345796
+          ],
+          [
+            0.829045616
+          ],
+          [
+            0.829045585
+          ]
+        ],
+        "inc_mag_at_recall": [
+          0.5443655480756073
+        ],
+        "base_mag_at_recall": [
+          0.8590852174693224
+        ],
+        "frac_z_gt_half_at_recall": [
+          0.0
+        ]
+      },
+      "d3c_shy": {
+        "R_per_night": [
+          [
+            0.388730055
+          ],
+          [
+            0.379470951
+          ],
+          [
+            0.360937062
+          ]
+        ],
+        "shy_scale_per_night": [
+          [
+            0.88997141
+          ],
+          [
+            0.888304771
+          ],
+          [
+            0.884968671
+          ]
+        ],
+        "inc_mag_at_recall": [
+          1.2474329613853157
+        ],
+        "base_mag_at_recall": [
+          0.7465889813285725
+        ],
+        "frac_z_gt_half_at_recall": [
+          1.0
+        ]
+      },
+      "d3r_shy": {
+        "R_per_night": [
+          [
+            0.168587758
+          ],
+          [
+            0.050253189,
+            0.000883547
+          ],
+          [
+            0.050253545,
+            0.009530236,
+            0.018303566
+          ]
+        ],
+        "shy_scale_per_night": [
+          [
+            0.850345796
+          ],
+          [
+            0.829045574,
+            0.820159039
+          ],
+          [
+            0.829045638,
+            0.821715442,
+            0.823294642
+          ]
+        ],
+        "inc_mag_at_recall": [
+          0.6336571393523016,
+          0.6856263212354299,
+          0.7700759386096128
+        ],
+        "base_mag_at_recall": [
+          0.9999998643532502,
+          0.999999842963689,
+          0.8532135325446435
+        ],
+        "frac_z_gt_half_at_recall": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      }
+    },
+    "SHY_horizon_reported": {
+      "d10w_rc": {
+        "daily_outcomes": [
+          "abstain",
+          "abstain",
+          "abstain",
+          "abstain",
+          "abstain",
+          "abstain",
+          "abstain",
+          "abstain",
+          "abstain",
+          "abstain"
+        ],
+        "first_night_not_correct": 1,
+        "daily_inc_mag": [
+          0.9314042695887695,
+          0.9314042695887695,
+          0.9314042695887695,
+          0.9314042695887695,
+          0.9314042695887695,
+          0.9314042695887695,
+          0.9314042695887695,
+          0.9314042695887695,
+          0.9314042695887695,
+          0.9314042695887695
+        ],
+        "daily_base_mag": [
+          0.8590852174693224,
+          0.8590852174693224,
+          0.8590852174693224,
+          0.8590852174693224,
+          0.8590852174693224,
+          0.8590852174693224,
+          0.8590852174693224,
+          0.8590852174693224,
+          0.8590852174693224,
+          0.8590852174693224
+        ],
+        "R_per_night": [
+          [
+            0.168587758
+          ],
+          [
+            0.050253415
+          ],
+          [
+            0.05025325
+          ],
+          [
+            0.05025325
+          ],
+          [
+            0.05025325
+          ],
+          [
+            0.05025325
+          ],
+          [
+            0.05025325
+          ],
+          [
+            0.05025325
+          ],
+          [
+            0.05025325
+          ],
+          [
+            0.05025325
+          ]
+        ],
+        "errors": []
+      },
+      "d10w_shy": {
+        "daily_outcomes": [
+          "abstain",
+          "abstain",
+          "abstain",
+          "abstain",
+          "abstain",
+          "abstain",
+          "abstain",
+          "abstain",
+          "abstain",
+          "abstain"
+        ],
+        "first_night_not_correct": 1,
+        "daily_inc_mag": [
+          0.7920157054112509,
+          0.6566171485298505,
+          0.5443655480756073,
+          0.45130385430100395,
+          0.3741514679372273,
+          0.3101886226440558,
+          0.25716050814468305,
+          0.21319778393393257,
+          0.1767506815189796,
+          0.14653437217295323
+        ],
+        "daily_base_mag": [
+          0.8590852174693224,
+          0.8590852174693224,
+          0.8590852174693224,
+          0.8590852174693224,
+          0.8590852174693224,
+          0.8590852174693224,
+          0.8590852174693224,
+          0.8590852174693224,
+          0.8590852174693224,
+          0.8590852174693224
+        ],
+        "R_per_night": [
+          [
+            0.168587758
+          ],
+          [
+            0.050253423
+          ],
+          [
+            0.05025325
+          ],
+          [
+            0.05025325
+          ],
+          [
+            0.05025325
+          ],
+          [
+            0.05025325
+          ],
+          [
+            0.05025325
+          ],
+          [
+            0.05025325
+          ],
+          [
+            0.05025325
+          ],
+          [
+            0.05025325
+          ]
+        ],
+        "errors": []
+      }
+    },
+    "outcomes": {
+      "ld_ledger_off": "correct",
+      "ld_norc": "abstain",
+      "ld_rc": "abstain",
+      "ld_rc_replaylesion": "abstain",
+      "neu_imm_rc": "correct",
+      "d3w_rc": "abstain",
+      "d3w_shy_a": "abstain",
+      "d3w_shy_b": "abstain",
+      "d3c_shy": "correct",
+      "d3r_shy": "abstain",
+      "d10w_rc": "abstain",
+      "d10w_shy": "abstain"
+    },
+    "n_arm_errors": 0,
+    "seed_verdict": "UNDEFINED"
+  }
+}

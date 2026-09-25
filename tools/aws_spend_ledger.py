@@ -87,6 +87,16 @@ LEDGER_FILE = os.environ.get("AWS_SPEND_LEDGER") or os.path.join(
     shared_root(), "research", "queue", ".aws_spend_ledger.jsonl")
 
 
+PRODUCTION_LEDGER_FILE = os.path.join(shared_root(), "research", "queue", ".aws_spend_ledger.jsonl")
+
+
+def _is_production_ledger(path):
+    try:
+        return os.path.realpath(path) == os.path.realpath(PRODUCTION_LEDGER_FILE)
+    except (OSError, TypeError, ValueError):
+        return True   # cannot tell: treat as production (fail closed for the guard)
+
+
 def day_key(ts=None):
     """UTC calendar day string 'YYYY-MM-DD' for `ts` (unix seconds; default: now). Matches
     tools.aws_cost_lib.hours_running_today's UTC-calendar-day convention so a "today" in one module is the
@@ -135,6 +145,15 @@ def record(rows, ts=None, ledger_file=None):
     Returns True iff EVERY row was durably written, False if ANY write failed (including "no rows to write"
     trivially returning True). Never raises."""
     ledger_file = ledger_file if ledger_file is not None else LEDGER_FILE
+    # TEST-ISOLATION GUARD (2026-09-25): a test helper that forgot AWS_SPEND_LEDGER wrote a stub instance
+    # ("i-existing", launch 2020-01-01) into the PRODUCTION ledger on 2026-09-24 and again on 2026-09-25; it added
+    # ~$14.8 of phantom spend to "today" and would have made aws-guard stop both real pool nodes at the cap
+    # mid-job. Under pytest (PYTEST_CURRENT_TEST is inherited by every subprocess a test starts) the production
+    # ledger is never written; a test that needs a ledger must point AWS_SPEND_LEDGER at its own tmp file.
+    if os.environ.get("PYTEST_CURRENT_TEST") and _is_production_ledger(ledger_file):
+        print("[aws_spend_ledger] refusing to write the production spend ledger from a test "
+              "(set AWS_SPEND_LEDGER to a tmp file)", file=sys.stderr)
+        return False
     ts = ts if ts is not None else time.time()
     day = day_key(ts)
     ok = True
