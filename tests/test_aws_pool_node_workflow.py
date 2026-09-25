@@ -152,6 +152,92 @@ def test_write_host_block_concurrent_writers_never_lose_or_duplicate_a_block(tmp
         assert f"  HostName 10.0.0.{i}" in lines, f"node{i}'s block is malformed/incomplete:\n{lines}"
 
 
+# ------------------------------------------------------------------------ _write_host_block/_remove_host_block:
+# failure must never reach `mv` (2026-09-25 re-review, MEDIUM regression)
+
+def _make_failing_awk_bin(tmp_path):
+    """A stub `awk` that always fails partway (prints nothing, exits 1) -- reproduces the review's own repro
+    ('a stub awk that fails partway'): an I/O error mid-filter must never let the caller fall through to `mv`."""
+    bin_dir = tmp_path / "bin"; bin_dir.mkdir()
+    stub = bin_dir / "awk"
+    stub.write_text("#!/usr/bin/env bash\nexit 1\n")
+    stub.chmod(stub.stat().st_mode | stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH)
+    return bin_dir
+
+
+def _run_with_bin(args, bin_dir):
+    env = dict(os.environ)
+    env["PATH"] = f"{bin_dir}:{env.get('PATH', '')}"
+    return subprocess.run(["bash", str(SCRIPT), *args], cwd=ROOT, env=env,
+                           capture_output=True, text=True, timeout=30)
+
+
+def test_write_host_block_awk_failure_on_replace_leaves_original_file_untouched(tmp_path):
+    # MEDIUM (2026-09-25 re-review): the tmp+mv rewrite dropped the OLD `awk ... && mv` guard -- a failed awk (or
+    # a full-disk cat/append) was silently ignored and the `mv` still ran, swapping the real config for a
+    # truncated/wrong one while the function still returned 0. This is the REPLACE-existing-alias branch, which
+    # uses awk.
+    cfg = tmp_path / "ssh_config"
+    cfg.write_text("Include ~/.ssh/config\nHost pool1\n  HostName 1.1.1.1\n")
+    bin_dir = _make_failing_awk_bin(tmp_path)
+    res = _run_with_bin(["--write-host-block", str(cfg), "pool1", "9.9.9.9", "/tmp/k1.pem"], bin_dir)
+    assert res.returncode != 0, "must report failure, not silently succeed"
+    assert cfg.read_text() == "Include ~/.ssh/config\nHost pool1\n  HostName 1.1.1.1\n", (
+        "original content was overwritten despite the filter step failing")
+    leftover = list(tmp_path.glob(".host_block.*"))
+    assert leftover == [], f"a temp file was left behind on failure: {leftover}"
+
+
+def test_write_host_block_cat_failure_on_new_alias_leaves_original_file_untouched(tmp_path):
+    # Same guard, the NEW-alias branch, which uses `cat` (no existing block for this alias to filter out).
+    cfg = tmp_path / "ssh_config"
+    cfg.write_text("Include ~/.ssh/config\nHost pool2\n  HostName 2.2.2.2\n")
+    bin_dir = tmp_path / "bin"; bin_dir.mkdir()
+    cat_stub = bin_dir / "cat"
+    cat_stub.write_text("#!/usr/bin/env bash\nexit 1\n")
+    cat_stub.chmod(cat_stub.stat().st_mode | stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH)
+    res = _run_with_bin(["--write-host-block", str(cfg), "pool1", "9.9.9.9", "/tmp/k1.pem"], bin_dir)
+    assert res.returncode != 0, "must report failure, not silently succeed"
+    assert cfg.read_text() == "Include ~/.ssh/config\nHost pool2\n  HostName 2.2.2.2\n", (
+        "original content was overwritten despite the copy step failing")
+    leftover = list(tmp_path.glob(".host_block.*"))
+    assert leftover == [], f"a temp file was left behind on failure: {leftover}"
+
+
+def test_remove_host_block_awk_failure_leaves_original_file_untouched(tmp_path):
+    cfg = tmp_path / "ssh_config"
+    cfg.write_text("Include ~/.ssh/config\nHost pool1\n  HostName 1.1.1.1\n")
+    bin_dir = _make_failing_awk_bin(tmp_path)
+    res = _run_with_bin(["--remove-host-block", str(cfg), "pool1"], bin_dir)
+    assert res.returncode != 0, "must report failure, not silently succeed"
+    assert cfg.read_text() == "Include ~/.ssh/config\nHost pool1\n  HostName 1.1.1.1\n", (
+        "original content was overwritten (block-removed) despite the filter step failing")
+    leftover = list(tmp_path.glob(".host_block.*"))
+    assert leftover == [], f"a temp file was left behind on failure: {leftover}"
+
+
+def test_write_host_block_leaves_no_stray_tmp_file_behind_on_success(tmp_path):
+    # MUTATION CHECK (2026-09-25 review, LOW: "replacing the single `mv` with an in-place `cp` still passes
+    # 43/43"). `mv` CONSUMES the mktemp'd tmp file (renames it away); `cp` would leave it sitting in the same
+    # directory. This is a deterministic, non-racy way to catch that exact substitution -- no reliance on
+    # winning a filesystem timing race with a concurrent reader.
+    cfg = tmp_path / "ssh_config"
+    cfg.write_text("Include ~/.ssh/config\n")
+    res = _run(["--write-host-block", str(cfg), "pool1", "1.2.3.4", "/tmp/key.pem"])
+    assert res.returncode == 0, res.stderr
+    leftover = list(tmp_path.glob(".host_block.*"))
+    assert leftover == [], f"mv did not consume its own tmp file (mv replaced with something else?): {leftover}"
+
+
+def test_remove_host_block_leaves_no_stray_tmp_file_behind_on_success(tmp_path):
+    cfg = tmp_path / "ssh_config"
+    cfg.write_text("Include ~/.ssh/config\nHost pool1\n  HostName 1.1.1.1\n")
+    res = _run(["--remove-host-block", str(cfg), "pool1"])
+    assert res.returncode == 0, res.stderr
+    leftover = list(tmp_path.glob(".host_block.*"))
+    assert leftover == [], f"mv did not consume its own tmp file (mv replaced with something else?): {leftover}"
+
+
 # --------------------------------------------------------------------------------------------- down ordering
 
 _STUB = r"""#!/usr/bin/env bash

@@ -72,27 +72,41 @@ _write_host_block() {   # _write_host_block <file> <alias> <ip> <key>  -- append
   mkdir -p "$dir"
   local lock="$file.lock" tmp
   exec 8>"$lock"
-  flock 8
+  # -w 30 (2026-09-25 review, LOW/INFO): an unbounded flock can stall pool_autodispatch.sh's MAIN dispatch loop
+  # forever -- its _maybe_refresh_stale_aws_node calls `refresh`, which calls this, from inside node_is_idle on
+  # every cycle. 30s is generous next to this function's own sub-second normal runtime; a self-heal that fails
+  # to acquire the lock in 30s (dispatcher already treats it as best-effort/silent) beats hanging dispatch.
+  flock -w 30 8 || { echo "⛔ _write_host_block: timed out waiting for the lock on $lock" >&2; exec 8>&-; return 1; }
   tmp=$(mktemp "$dir/.host_block.XXXXXX") || { flock -u 8; exec 8>&-; return 1; }
-  if [ -f "$file" ] && grep -q "^Host $alias\$" "$file" 2>/dev/null; then
-    # Replace an existing block for this alias (a re-`up` after a torn-down node re-launched with a new IP).
-    awk -v a="Host $alias" '
-      $0==a {skip=1}
-      skip && /^Host / && $0!=a {skip=0}
-      !skip {print}
-    ' "$file" > "$tmp"
-  elif [ -f "$file" ]; then
-    cat "$file" > "$tmp"
-  fi
+  # GUARD EVERY STEP (2026-09-25 review, MEDIUM regression): the prior version ran the filter/copy step, the
+  # append, and the `mv` as three UNCHECKED statements -- a failed awk (or a full-disk cat/append) was silently
+  # ignored and the `mv` still ran, swapping the real config for a truncated/wrong one while still returning 0.
+  # Chain every step with `&&` so ANY failure aborts BEFORE the mv, leaves the original file untouched, and
+  # returns non-zero.
   {
+    if [ -f "$file" ] && grep -q "^Host $alias\$" "$file" 2>/dev/null; then
+      # Replace an existing block for this alias (a re-`up` after a torn-down node re-launched with a new IP).
+      awk -v a="Host $alias" '
+        $0==a {skip=1}
+        skip && /^Host / && $0!=a {skip=0}
+        !skip {print}
+      ' "$file"
+    elif [ -f "$file" ]; then
+      cat "$file"
+    fi
+  } > "$tmp" && {
     echo "Host $alias"
     echo "  HostName $ip"
     echo "  User ubuntu"
     echo "  IdentityFile $key"
     echo "  StrictHostKeyChecking accept-new"
     echo "  UserKnownHostsFile $KNOWN_HOSTS"
-  } >> "$tmp"
-  mv "$tmp" "$file"
+  } >> "$tmp" && mv "$tmp" "$file" || {
+    rm -f "$tmp"
+    flock -u 8; exec 8>&-
+    echo "⛔ _write_host_block: failed to rewrite $file -- original content left untouched" >&2
+    return 1
+  }
   flock -u 8
   exec 8>&-
 }
@@ -116,14 +130,21 @@ _remove_host_block() {   # _remove_host_block <file> <alias>
   local dir; dir="$(dirname "$file")"
   local lock="$file.lock" tmp
   exec 8>"$lock"
-  flock 8
+  # -w 30: same reasoning as _write_host_block's own flock -w 30 above.
+  flock -w 30 8 || { echo "⛔ _remove_host_block: timed out waiting for the lock on $lock" >&2; exec 8>&-; return 1; }
   tmp=$(mktemp "$dir/.host_block.XXXXXX") || { flock -u 8; exec 8>&-; return 1; }
+  # GUARD (2026-09-25 review, MEDIUM regression, same fix as _write_host_block above): a failed awk must never
+  # be followed by an unconditional `mv` that would swap the real config for a truncated/wrong one.
   awk -v a="Host $alias" '
     $0==a {skip=1; next}
     skip && /^Host / {skip=0}
     !skip {print}
-  ' "$file" > "$tmp"
-  mv "$tmp" "$file"
+  ' "$file" > "$tmp" && mv "$tmp" "$file" || {
+    rm -f "$tmp"
+    flock -u 8; exec 8>&-
+    echo "⛔ _remove_host_block: failed to rewrite $file -- original content left untouched" >&2
+    return 1
+  }
   flock -u 8
   exec 8>&-
 }
@@ -163,11 +184,15 @@ if [ "${1:-}" = "--write-host-block" ]; then
   # call, so it can be unit-tested without a real launch (this repo's build-lane rule: "do not launch a real
   # instance" for this feature). Bypasses the node-name validation below, since arg 2 here is a FILE path.
   [ "$#" -eq 5 ] || { echo "usage: $0 --write-host-block <file> <alias> <ip> <key>" >&2; exit 2; }
-  _write_host_block "$2" "$3" "$4" "$5"; exit 0
+  # PROPAGATE THE REAL EXIT CODE (2026-09-25 review, MEDIUM fix verification): this used to be an unconditional
+  # `exit 0` regardless of _write_host_block's own return status, so a test (or any other caller) could not tell
+  # a guarded failure from success through this seam at all -- only by inspecting file content, which does not
+  # distinguish "refused, original untouched" from "silently wrote nothing".
+  _write_host_block "$2" "$3" "$4" "$5"; exit $?
 fi
 if [ "${1:-}" = "--remove-host-block" ]; then
   [ "$#" -eq 3 ] || { echo "usage: $0 --remove-host-block <file> <alias>" >&2; exit 2; }
-  _remove_host_block "$2" "$3"; exit 0
+  _remove_host_block "$2" "$3"; exit $?
 fi
 
 CMD="${1:-status}"

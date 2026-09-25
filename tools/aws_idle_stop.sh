@@ -33,82 +33,11 @@ GPU_STATE="${AWS_GPU_STATE_FILE:-$ROOT/research/queue/.aws_gpu}"
 # resolve to the SHARED production .pool_ssh_config (other sessions/agents write it concurrently).
 POOL_SSH_CFG="${POOL_SSH_CONFIG:-$ROOT/research/queue/.pool_ssh_config}"
 
-sync_node_before_stop() {   # sync_node_before_stop <node-name> <ip> <key> -- pull this node's results BEFORE
-  # it is stopped (2026-09-25, incident-driven: pool1 was idle-stopped at 13:06Z with two finished DA LTM-on
-  # seeds' last arm+seed JSON written after the last routine pool_sync -- stranded on the stopped node's disk
-  # until the owner restarted it by hand ~55 min later). Returns 0 iff the pull is VERIFIED to have succeeded;
-  # the caller must not stop the instance on a non-zero return (the root volume is not what's at risk here --
-  # unlike aws_pool_node.sh down's DeleteOnTermination=true case -- but a `stop`+cold node still leaves any
-  # result written after this point unreachable until someone notices and restarts it, exactly what happened).
-  #
-  # Prefers tools/pool_sync.sh restricted to this one node (POOL_SYNC_STRICT=1) when the node has a registered
-  # dispatch alias in .pool_ssh_config -- identical exclusions/isolated-revision handling to the routine 15-min
-  # cadence sync, so this call can never diverge from what "synced" already means elsewhere in this repo. Falls
-  # back to the SAME plain rsync pool_sync.sh performs when this node is not a registered pool-dispatch alias
-  # (e.g. the single-instance `.aws_gpu` CPU-verify lane, never wired into .pool_ssh_config) -- using the ip/key
-  # this script already resolved for the no-runner SSH check, so a non-pool AWS lane is covered too, not just
-  # aws_pool_node.sh-managed nodes.
-  local node="$1" ip="$2" key="$3"
-  if [ -z "$ip" ] || [ -z "$key" ] || [ ! -f "$key" ]; then
-    echo "$(date -u '+%FT%TZ') [aws_idle_stop] $node: no verified ssh key/ip on hand -- cannot sync, NOT stopping this cycle" | tee -a "$LOG"
-    return 1
-  fi
-  if [ -n "$node" ] && [ -f "$POOL_SSH_CFG" ] && grep -q "^Host $node\$" "$POOL_SSH_CFG" 2>/dev/null; then
-    # </dev/null (2026-09-25 review, HIGH #2): pool_sync.sh's own ssh calls must never inherit the CALLER's
-    # stdin -- see the main dispatch loop's fd-3 fix below for the concrete production incident this class of
-    # bug caused elsewhere in this same script. This call sits inside the per-instance loop body, so give it
-    # its own belt-and-suspenders guard even though the loop's fd-3 fix already keeps `$ids` off fd 0.
-    if POOL_SSH_CONFIG="$POOL_SSH_CFG" POOL_NODES="$node" POOL_SYNC_STRICT=1 \
-         bash "$ROOT/tools/pool_sync.sh" </dev/null >>"$LOG" 2>&1; then
-      return 0
-    fi
-    echo "$(date -u '+%FT%TZ') [aws_idle_stop] $node: pool_sync --strict FAILED -- NOT stopping this cycle (will retry)" | tee -a "$LOG"
-    return 1
-  fi
-  # CANDIDATE REMOTE DIRS (2026-09-25 review, HIGH #1): a node with no .pool_ssh_config alias is NOT necessarily
-  # a tools/aws_pool_node.sh-managed pool node -- the single-instance `.aws_gpu`/.aws_cpuN lanes (tools/
-  # aws_cpu_launch.sh + tools/aws_cpu_provision.sh / tools/aws_provision.sh) rsync code to ~/sim, never
-  # ~/derisk-pool/sim (see those scripts' own `~/sim/` rsync targets). The OLD single-path fallback always tried
-  # ~/derisk-pool/sim: on those lanes the source directory does not exist, rsync exits 23, sync_node_before_stop
-  # logged "NOT stopping this cycle" on EVERY cycle forever (only the $50/day cap ever stopped them), and their
-  # results under ~/sim were never pulled. FIX: `ssh test -d` each known layout's PROJECT ROOT (not the deeper
-  # raw/ results dir -- a genuinely fresh node with zero results yet would otherwise read as a sync FAILURE) and
-  # pull from whichever roots actually exist on THIS node -- a node provisioned any other way is still coverable
-  # by extending this list, with no change to the decision logic below.
-  local remote_dirs rd root status found=0
-  if [ -n "${POOL_REMOTE_DIR:-}" ]; then
-    remote_dirs="$POOL_REMOTE_DIR"
-  else
-    remote_dirs="derisk-pool/sim/research/findings/raw/ sim/research/findings/raw/"
-  fi
-  mkdir -p "$ROOT/research/findings/raw"
-  for rd in $remote_dirs; do
-    root="${rd%/research/findings/raw/}"
-    # ONE round trip per candidate: does the project root exist, and (only if so) does its raw/ results dir
-    # exist yet. `-n` (2026-09-25 review, HIGH #2): every remote call in this script must not read the caller's
-    # stdin -- see the main dispatch loop's own fd-3 fix below for why.
-    status=$(ssh -n -i "$key" -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes \
-        ubuntu@"$ip" "if [ -d ~/$root ]; then if [ -d ~/$rd ]; then echo has_raw; else echo root_only; fi; else echo no_root; fi" 2>/dev/null)
-    case "$status" in
-      no_root|"") continue ;;   # this layout is not this node's -- or the probe itself failed; try the next candidate
-      root_only) found=1; continue ;;   # this IS the node's layout, but nothing has been written yet -- nothing to pull
-      has_raw)
-        found=1
-        if ! timeout 180 rsync -au --exclude='*.log' --exclude='_provenance/' \
-            -e "ssh -i $key -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes" \
-            "ubuntu@$ip:~/$rd" "$ROOT/research/findings/raw/" >>"$LOG" 2>&1; then
-          echo "$(date -u '+%FT%TZ') [aws_idle_stop] $node: fallback rsync of ~/$rd FAILED -- NOT stopping this cycle (will retry)" | tee -a "$LOG"
-          return 1
-        fi
-        ;;
-    esac
-  done
-  if [ "$found" = 0 ]; then
-    echo "$(date -u '+%FT%TZ') [aws_idle_stop] $node: no known project layout found on this node (checked: $remote_dirs) -- cannot verify sync, NOT stopping this cycle" | tee -a "$LOG"
-    return 1
-  fi
-  return 0
-}
+# sync_node_before_stop / pause_dispatch_for_node / resume_dispatch_for_node (2026-09-25 review, fix round 3):
+# EXTRACTED into tools/aws_stop_safety_lib.sh so tools/aws_budget.sh's hard-cap `enforce` can share them rather
+# than diverge -- the review's own still-open item was that `enforce` never got a sync-before-stop treatment at
+# all. Depends on ROOT/LOG/POOL_SSH_CFG (all set above) and sets/uses EXTRA_NODES_FILE for the pause/resume pair.
+source "$ROOT/tools/aws_stop_safety_lib.sh"
 
 json=$(aws ec2 describe-instances --region "$REGION" \
   --filters "Name=instance-state-name,Values=running,pending" --output json 2>/dev/null)
@@ -194,9 +123,18 @@ while IFS= read -r iid <&3; do
   idle_signal="none"
   if [ -n "$cw" ] && echo "$cw" | "$PY" "$ROOT/tools/aws_cost_lib.py" cw-has-data 2>>"$LOG"; then
     # CloudWatch answered CONCLUSIVELY (has datapoints) -> trust it, idle or busy, no SSH fallback needed.
-    if echo "$cw" | "$PY" "$ROOT/tools/aws_cost_lib.py" cpu-idle --threshold "$IDLE_CPU_PCT" 2>>"$LOG"; then
+    # SAMPLE COUNT, NOT "sustained" (2026-09-25 review, LOW): cw-has-data accepts a SINGLE datapoint
+    # (tools/aws_cost_lib.py::cw-has-data just checks the list is non-empty) and CloudWatch itself lags 5-10
+    # minutes -- the old label "sustained, >= ${IDLE_MINUTES}m of 5-min datapoints" overstated the evidence for
+    # exactly that single-datapoint case. cpu-idle already prints "samples=N idle=..." to stderr; capture it
+    # once (combined stdout+stderr -- the command itself never writes to stdout) and quote the REAL count.
+    cw_idle_out=$(echo "$cw" | "$PY" "$ROOT/tools/aws_cost_lib.py" cpu-idle --threshold "$IDLE_CPU_PCT" 2>&1)
+    cw_idle_rc=$?
+    echo "$cw_idle_out" >>"$LOG"
+    cw_n_samples=$(printf '%s' "$cw_idle_out" | grep -oE 'samples=[0-9]+' | head -1 | cut -d= -f2)
+    if [ "$cw_idle_rc" -eq 0 ]; then
       cpu_idle=0
-      idle_signal="CloudWatch (sustained, >= ${IDLE_MINUTES}m of 5-min datapoints)"
+      idle_signal="CloudWatch (${cw_n_samples:-an unstated number of} x 5-min average(s) over the last ${IDLE_MINUTES}m, all < ${IDLE_CPU_PCT}%)"
     fi
   elif [ "$have_ssh" = 1 ]; then
     # CloudWatch had NO datapoints (inconclusive) -> fall back to SSH load-average. `-n` on every remote call in
@@ -220,17 +158,35 @@ while IFS= read -r iid <&3; do
 
   runner_flag="--runner-active true"   # inconclusive-by-default: cannot SSH -> assume a runner IS active (keep)
   if [ "$have_ssh" = 1 ]; then
-    if ssh -n -i "$state_key" -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes \
-         ubuntu@"$ip" "pgrep -f '[r]esearch\.runners' >/dev/null 2>&1" 2>/dev/null; then
-      runner_flag="--runner-active true"
-    else
-      runner_flag="--runner-active false"
-    fi
+    # CAPTURE THE REAL RC (2026-09-25 review, MEDIUM): pgrep's own "not found" (rc=1) and ssh itself FAILING TO
+    # CONNECT (rc=255, e.g. a transient network blip) used to fall into the SAME `else` branch below and read
+    # identically as "no runner" -- an unreachable check was stopping an instance this script could not actually
+    # verify was idle. 0 = pgrep found a match (runner active); 1 = pgrep ran and found nothing (genuinely no
+    # runner); anything else (255 = ssh connection/auth failure, 124 a local timeout, ...) is INCONCLUSIVE and
+    # must default to "active" (keep), matching this whole script's existing bias toward NOT stopping on any
+    # other inconclusive signal.
+    ssh -n -i "$state_key" -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes \
+         ubuntu@"$ip" "pgrep -f '[r]esearch\.runners' >/dev/null 2>&1" 2>/dev/null
+    runner_rc=$?
+    case "$runner_rc" in
+      0) runner_flag="--runner-active true" ;;
+      1) runner_flag="--runner-active false" ;;
+      *) runner_flag="--runner-active true"
+         echo "$(date -u '+%FT%TZ') [aws_idle_stop] $iid: runner-check ssh rc=$runner_rc (not 0/1) -- INCONCLUSIVE, treated as active" >>"$LOG" ;;
+    esac
   fi
 
   if "$PY" "$ROOT/tools/aws_cost_lib.py" idle "$([ "$cpu_idle" = 0 ] && echo 1 || echo 0)" $runner_flag; then
-    # SYNC-BEFORE-STOP (2026-09-25, incident-driven -- see sync_node_before_stop's own comment above). A `stop`
-    # is non-destructive to the EBS volume, but the NODE goes cold and unreachable the instant it stops, so
+    # TAKE THE NODE OUT OF DISPATCH FOR THE SYNC WINDOW (2026-09-25 review, still-open item: "the node was not
+    # taken out of dispatch before the sync"). The re-check right before stop (below) only DETECTS a job that
+    # landed while the sync (which can take minutes) was running; this PREVENTS one from being handed out in the
+    # first place by removing the node from tools/pool_autodispatch.sh's pool for the duration, closing the race
+    # at its source. Restored unconditionally once the decision is made, whether or not this cycle actually
+    # stops the instance (registration tracks 'up'/'down', not this one cycle's outcome). A no-op (was_reg=0)
+    # for any node never registered for dispatch to begin with (e.g. the single-instance `.aws_gpu` lane).
+    was_reg=$(pause_dispatch_for_node "$node_name")
+    # SYNC-BEFORE-STOP (2026-09-25, incident-driven -- see sync_node_before_stop's own comment). A `stop` is
+    # non-destructive to the EBS volume, but the NODE goes cold and unreachable the instant it stops, so
     # anything written after the last routine pool_sync between here and whenever someone next notices and
     # restarts it is effectively stranded exactly as pool1's last two DA-probe seeds were. Pull first, verify,
     # and only stop once that pull is CONFIRMED -- an unverifiable/failed sync means "not stopping this cycle",
@@ -245,21 +201,28 @@ while IFS= read -r iid <&3; do
       # above, immediately before the stop-instances call, so the decision is made on freshness matching the
       # actual action, not on a reading that may now be several minutes stale.
       recheck_runner_flag="--runner-active true"   # same inconclusive-by-default bias as the original check
+      recheck_note="a runner appeared during the sync"
       if [ "$have_ssh" = 1 ]; then
-        if ssh -n -i "$state_key" -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes \
-             ubuntu@"$ip" "pgrep -f '[r]esearch\.runners' >/dev/null 2>&1" 2>/dev/null; then
-          recheck_runner_flag="--runner-active true"
-        else
-          recheck_runner_flag="--runner-active false"
-        fi
+        ssh -n -i "$state_key" -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes \
+             ubuntu@"$ip" "pgrep -f '[r]esearch\.runners' >/dev/null 2>&1" 2>/dev/null
+        recheck_rc=$?
+        case "$recheck_rc" in
+          0) recheck_runner_flag="--runner-active true"; recheck_note="a runner appeared during the sync" ;;
+          1) recheck_runner_flag="--runner-active false" ;;
+          # Same rc=255-is-not-rc=1 fix as the original check above, applied to the re-check.
+          *) recheck_runner_flag="--runner-active true"
+             recheck_note="the re-check's ssh was INCONCLUSIVE (rc=$recheck_rc, not 0/1)" ;;
+        esac
       fi
+      resume_dispatch_for_node "$node_name" "$was_reg"
       if [ "$recheck_runner_flag" != "--runner-active false" ]; then
-        echo "$(date -u '+%FT%TZ') [aws_idle_stop] $iid: a runner appeared during the sync (re-check after sync, before stop) — NOT stopping this cycle" | tee -a "$LOG"
+        echo "$(date -u '+%FT%TZ') [aws_idle_stop] $iid: $recheck_note (re-check after sync, before stop) — NOT stopping this cycle" | tee -a "$LOG"
       else
         echo "$(date -u '+%FT%TZ') [aws_idle_stop] $iid idle >= ${IDLE_MINUTES}m (signal: $idle_signal), no runner (re-checked after sync) — STOPPING" | tee -a "$LOG"
         aws ec2 stop-instances --region "$REGION" --instance-ids "$iid" --output text 2>&1 | tee -a "$LOG"
       fi
     else
+      resume_dispatch_for_node "$node_name" "$was_reg"
       echo "$(date -u '+%FT%TZ') [aws_idle_stop] $iid idle but sync-before-stop FAILED — NOT stopping this cycle (will retry)" | tee -a "$LOG"
     fi
   fi

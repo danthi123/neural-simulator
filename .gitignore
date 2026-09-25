@@ -206,6 +206,17 @@ research/queue/.pool_reservations
 research/queue/.pool_ssh_config
 research/queue/.pool_ssh_known_hosts
 research/queue/.pool_extra_nodes
+# Runtime files these same scripts create ALONGSIDE the two above (2026-09-25 review, LOW: "the new runtime
+# files are not gitignored" -- `.pool_ssh_config.bak` is a FULL COPY of the ssh config, including IPs and
+# IdentityFile paths, which the pattern above deliberately excludes; the rest are transient lock/temp files
+# tools/aws_pool_node.sh + tools/aws_stop_safety_lib.sh + tools/pool_autodispatch.sh's stale-refresh self-heal
+# create in the SAME directory, never meant to be committed).
+research/queue/.pool_ssh_config.bak
+research/queue/.pool_ssh_config.lock
+research/queue/.pool_extra_nodes.tmp
+research/queue/.extra_nodes.*
+research/queue/.host_block.*
+research/queue/.pool_stale_refresh/
 # Per-node AWS-pool-node state files (tools/aws_pool_node.sh: research/queue/.aws_<node-name>, e.g. .aws_pool1,
 # .aws_worker1 -- `up` accepts ANY [a-zA-Z0-9_-] node-name, not just names starting with "pool"). Holds an
 # instance id, security-group id and a LOCAL key PATH (never key material) -- not secret, but a broad

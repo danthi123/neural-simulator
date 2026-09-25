@@ -773,6 +773,21 @@ def test_node_is_idle_never_attempts_refresh_for_a_minipc_node_without_an_aws_st
     assert "busy/unreachable" in res.stdout
 
 
+def test_stale_refresh_call_is_timeout_bounded() -> None:
+    # LOW/INFO (2026-09-25 review, fix round 3): "_maybe_refresh_stale_aws_node runs the aws CLI inside
+    # node_is_idle on the main dispatch loop with no timeout ... a hung AWS API can stall dispatch." A real
+    # hang-reproduction test would need to actually wait it out (SELF_DIR always resolves to the real
+    # tools/aws_pool_node.sh, so a PATH stub cannot intercept the call) -- this checks the guard structurally,
+    # matching test_queue_flag_check_never_pipes_help_into_grep_q's own source-inspection approach just below.
+    import re
+    src = (ROOT / "tools" / "pool_autodispatch.sh").read_text()
+    start = src.index("_maybe_refresh_stale_aws_node() {")
+    end = src.index("\n}", start)
+    body = src[start:end]   # isolate the function body -- an unrelated `timeout` call elsewhere must not pass this
+    assert re.search(r"timeout\s+\d+\s+bash[^\n]*aws_pool_node\.sh[^\n]*refresh", body), (
+        f"the refresh call is not wrapped in a bounded `timeout`:\n{body}")
+
+
 def test_queue_flag_check_never_pipes_help_into_grep_q() -> None:
     # 2026-09-24: under `set -o pipefail`, `printf '%s' "$HELP" | grep -q FLAG` FAILS whenever grep exits before printf
     # has written a help text larger than the 64 KB pipe buffer (SIGPIPE, rc 141): a 72 KB --help reported present

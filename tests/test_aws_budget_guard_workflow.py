@@ -156,6 +156,13 @@ def _run(script, args, bin_dir, extra_env=None, tmp_path=None):
         # every test here takes the direct-rsync fallback path instead (deterministic, no real ssh config to
         # accidentally match against the SHARED production one).
         env.setdefault("POOL_SSH_CONFIG", str(tmp_path / "no-such-pool-ssh-config"))
+        # pause_dispatch_for_node/resume_dispatch_for_node (2026-09-25 fix round 3, tools/aws_stop_safety_lib.sh)
+        # read/write this file every idle-stop/enforce cycle -- must never touch the SHARED production
+        # research/queue/.pool_extra_nodes (other sessions/agents read it too).
+        env.setdefault("POOL_EXTRA_NODES_FILE", str(tmp_path / "no-such-pool-extra-nodes"))
+        # aws_budget.sh enforce's per-instance node/key lookup (2026-09-25 fix round 3) globs this directory's
+        # `.aws_*` state files -- must never resolve to the SHARED production research/queue/.
+        env.setdefault("AWS_NODE_STATE_DIR", str(tmp_path / "state"))
     if extra_env:
         env.update(extra_env)
     # stdin=DEVNULL (2026-09-25, HIGH #2 test coverage): matches how this script actually runs in production
@@ -216,6 +223,117 @@ def test_budget_enforce_does_not_stop_when_under_cap(tmp_path):
     res = _run(AWS_BUDGET, ["enforce"], bin_dir, {"AWS_DAILY_CAP_USD": "1000"}, tmp_path=tmp_path)
     assert res.returncode == 0, res.stderr
     assert "ec2 stop-instances" not in aws_log.read_text()
+
+
+def _budget_stop_stub_bin(tmp_path, ip="5.6.7.8", pgrep_finds_runner=False, rsync_ok=True):
+    """Custom aws/ssh/rsync stubs for aws_budget.sh `enforce`'s sync-before-stop path (2026-09-25 fix round 3):
+    `aws` answers a REAL PublicIpAddress for the ip-resolution call `enforce` now makes -- the generic
+    `_AWS_STUB_TEMPLATE` above ignores `--query`/`--output` entirely (it just dumps the whole describe fixture),
+    which is fine for the pre-existing cap tests but not for exercising an actual sync. All three log to ONE
+    shared file so ordering assertions (sync strictly before stop) are meaningful."""
+    bin_dir = tmp_path / "bin"; bin_dir.mkdir()
+    log = tmp_path / "shared.log"; log.write_text("")
+    describe_fixture = tmp_path / "describe.json"; describe_fixture.write_text("{}")
+    aws_stub = bin_dir / "aws"
+    aws_stub.write_text(f"""#!/usr/bin/env bash
+echo "AWS $*" >> "{log}"
+if [[ "$*" == *"PublicIpAddress"* ]]; then echo "{ip}"; exit 0; fi
+if [[ "$*" == *"ec2 describe-instances"* ]]; then cat "{describe_fixture}"; exit 0; fi
+if [[ "$*" == *"ec2 stop-instances"* ]]; then echo stopped; exit 0; fi
+echo "sg-stub"; exit 0
+""")
+    aws_stub.chmod(aws_stub.stat().st_mode | stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH)
+    pgrep_rc = 0 if pgrep_finds_runner else 1
+    ssh_stub = bin_dir / "ssh"
+    ssh_stub.write_text(f"""#!/usr/bin/env bash
+echo "SSH $*" >> "{log}"
+case "$*" in
+  *pgrep*) exit {pgrep_rc} ;;
+  *"if [ -d "*) echo has_raw ;;
+  *) exit 0 ;;
+esac
+""")
+    ssh_stub.chmod(ssh_stub.stat().st_mode | stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH)
+    rsync_rc = 0 if rsync_ok else 1
+    rsync_stub = bin_dir / "rsync"
+    rsync_stub.write_text(f'#!/usr/bin/env bash\necho "RSYNC $*" >> "{log}"\nexit {rsync_rc}\n')
+    rsync_stub.chmod(rsync_stub.stat().st_mode | stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH)
+    return bin_dir, log, describe_fixture
+
+
+def test_budget_enforce_syncs_before_stopping_and_the_stop_happens_after_it(tmp_path):
+    # STILL-OPEN ITEM (2026-09-25 review, fix round 3): "aws_budget.sh:72-76 still stops a node at the cap
+    # without syncing first". `enforce` now resolves the node's ip/key (from its research/queue/.aws_* state
+    # file) and calls the SAME sync_node_before_stop tools/aws_idle_stop.sh uses, strictly before the stop.
+    inst = _instance("i-aaa", "r7i.4xlarge", "running", hours_ago=40)
+    bin_dir, shared_log, describe_fixture = _budget_stop_stub_bin(tmp_path)
+    describe_fixture.write_text(_describe_json([inst]))
+    _write_gpu_state(tmp_path, "i-aaa", tmp_path / "aws_key.pem")
+    res = _run(AWS_BUDGET, ["enforce"], bin_dir, {"AWS_DAILY_CAP_USD": "1"}, tmp_path=tmp_path)
+    assert res.returncode == 0, res.stderr
+    lines = shared_log.read_text().splitlines()
+    rsync_idx = next((i for i, ln in enumerate(lines) if ln.startswith("RSYNC ")), None)
+    stop_idx = next((i for i, ln in enumerate(lines) if "ec2 stop-instances" in ln), None)
+    assert rsync_idx is not None, f"a sync was never attempted before stopping at the cap: {lines}"
+    assert stop_idx is not None, f"stop-instances was never called: {lines}"
+    assert rsync_idx < stop_idx, f"stop-instances happened before/without a prior sync attempt: {lines}"
+
+
+def test_budget_enforce_stops_even_when_the_sync_fails(tmp_path):
+    # THE DELIBERATE DIFFERENCE from tools/aws_idle_stop.sh's own (blocking) use of sync_node_before_stop: a
+    # hard SPEND CAP must never be defeated by a stuck/failing sync -- continuing to run past the cap is exactly
+    # what `enforce` exists to prevent. The sync is still ATTEMPTED and its failure is still LOGGED, but the
+    # stop proceeds regardless.
+    inst = _instance("i-aaa", "r7i.4xlarge", "running", hours_ago=40)
+    bin_dir, shared_log, describe_fixture = _budget_stop_stub_bin(tmp_path, rsync_ok=False)
+    describe_fixture.write_text(_describe_json([inst]))
+    _write_gpu_state(tmp_path, "i-aaa", tmp_path / "aws_key.pem")
+    res = _run(AWS_BUDGET, ["enforce"], bin_dir, {"AWS_DAILY_CAP_USD": "1"}, tmp_path=tmp_path)
+    assert res.returncode == 0, res.stderr
+    log_text = shared_log.read_text()
+    assert "RSYNC " in log_text, "the sync must still have been ATTEMPTED"
+    assert "ec2 stop-instances" in log_text, "a hard cap must stop the instance REGARDLESS of a failed sync"
+    combined_log = (tmp_path / "aws_budget.log").read_text()
+    assert "sync-before-stop failed" in combined_log
+
+
+def test_budget_enforce_stops_even_with_no_verified_key_for_the_instance(tmp_path):
+    # No research/queue/.aws_* state file names this instance at all -- `enforce` must still stop it (the SAME
+    # "no verified ssh key/ip on hand" case tools/aws_idle_stop.sh treats as inconclusive-keep, but here there
+    # is nothing FOR the cap to keep: the instance is over budget regardless of whether it can be synced).
+    inst = _instance("i-aaa", "r7i.4xlarge", "running", hours_ago=40)
+    bin_dir, shared_log, describe_fixture = _budget_stop_stub_bin(tmp_path)
+    describe_fixture.write_text(_describe_json([inst]))
+    res = _run(AWS_BUDGET, ["enforce"], bin_dir, {"AWS_DAILY_CAP_USD": "1"}, tmp_path=tmp_path)
+    assert res.returncode == 0, res.stderr
+    assert "ec2 stop-instances" in shared_log.read_text()
+    assert "RSYNC " not in shared_log.read_text(), "no key on hand -- must never even attempt a sync"
+
+
+def test_budget_enforce_takes_node_out_of_dispatch_during_the_sync_and_restores_it(tmp_path):
+    # Same still-open item as tools/aws_idle_stop.sh's own fix: the node must be taken OUT of
+    # tools/pool_autodispatch.sh's pool for the duration of the sync, and restored once the decision is made.
+    inst = _instance("i-aaa", "r7i.4xlarge", "running", hours_ago=40)
+    bin_dir, shared_log, describe_fixture = _budget_stop_stub_bin(tmp_path)
+    describe_fixture.write_text(_describe_json([inst]))
+    extra_nodes = tmp_path / "extra_nodes"
+    extra_nodes.write_text("gpu\n")
+    marker = tmp_path / "rsync_saw_extra_nodes"
+    rsync_stub = bin_dir / "rsync"
+    rsync_stub.write_text(f"""#!/usr/bin/env bash
+echo "RSYNC $*" >> "{shared_log}"
+if grep -qxF gpu "{extra_nodes}" 2>/dev/null; then echo PRESENT >> "{marker}"; else echo ABSENT >> "{marker}"; fi
+exit 0
+""")
+    rsync_stub.chmod(rsync_stub.stat().st_mode | stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH)
+    _write_gpu_state(tmp_path, "i-aaa", tmp_path / "aws_key.pem")
+    res = _run(AWS_BUDGET, ["enforce"], bin_dir,
+               {"AWS_DAILY_CAP_USD": "1", "POOL_EXTRA_NODES_FILE": str(extra_nodes)}, tmp_path=tmp_path)
+    assert res.returncode == 0, res.stderr
+    seen = marker.read_text().split()
+    assert seen, "no rsync call observed the extra-nodes file -- test setup is wrong"
+    assert all(s == "ABSENT" for s in seen), f"node was still registered for dispatch during the sync: {seen}"
+    assert extra_nodes.read_text().splitlines() == ["gpu"], "registration was not restored after the cycle"
 
 
 def test_budget_check_refuses_after_earlier_instance_vanished_from_live_snapshot(tmp_path):
@@ -599,6 +717,12 @@ def test_idle_stop_log_states_cloudwatch_signal_is_sustained(tmp_path):
     # MEDIUM (2026-09-25 review): "state the idle-signal strength honestly" -- a CONCLUSIVE CloudWatch read
     # spans the whole idle window (multiple 5-min datapoints); this must read differently in the log than a
     # single SSH load sample (below).
+    #
+    # LOW, re-review (2026-09-25 fix round 3): the original fix's own label ("CloudWatch (sustained, >= 20m of
+    # 5-min datapoints)") itself overstated the evidence -- cw-has-data accepts a SINGLE datapoint, and
+    # CloudWatch lags 5-10 minutes, so "sustained >= 20m" was not actually proven by the data. The label must
+    # name the REAL sample count instead of claiming a duration it cannot support -- here 2 datapoints, not
+    # "sustained".
     inst = _instance("i-aaa", "r7i.4xlarge", "running", hours_ago=1)
     bin_dir, aws_log, ssh_log, rsync_log = _make_stub_bin(tmp_path, [inst], cw_datapoints=[1.0, 2.0],
                                                            ssh_pgrep_finds_runner=False, rsync_ok=True)
@@ -607,7 +731,8 @@ def test_idle_stop_log_states_cloudwatch_signal_is_sustained(tmp_path):
     assert res.returncode == 0, res.stderr
     assert "ec2 stop-instances" in aws_log.read_text()
     combined_log = (tmp_path / "aws_idle_stop.log").read_text()
-    assert "CloudWatch (sustained" in combined_log
+    assert "CloudWatch (2 x 5-min average" in combined_log, combined_log
+    assert "sustained" not in combined_log, "must not claim more than the 2 real datapoints support"
 
 
 def test_idle_stop_log_states_ssh_loadavg_signal_is_a_single_sample(tmp_path):
@@ -624,6 +749,117 @@ def test_idle_stop_log_states_ssh_loadavg_signal_is_a_single_sample(tmp_path):
     combined_log = (tmp_path / "aws_idle_stop.log").read_text()
     assert "single 1-minute sample" in combined_log
     assert "NOT a sustained" in combined_log
+
+
+# --------------------------------------------------------- aws_idle_stop.sh: 2026-09-25 fix round 3 review items
+
+def test_idle_stop_keeps_instance_when_initial_runner_check_ssh_is_unreachable(tmp_path):
+    # MEDIUM (2026-09-25 review, fix round 3): rc=255 (ssh cannot connect) used to fall into the SAME "else"
+    # branch as rc=1 ("pgrep ran and found nothing") and read identically as "no runner" -- an UNREACHABLE check
+    # was able to stop an instance this script could not actually verify was idle. pgrep here always exits 255
+    # (a connection failure), never 0 or 1.
+    inst = _instance("i-aaa", "r7i.4xlarge", "running", hours_ago=1)
+    bin_dir, aws_log, ssh_log, rsync_log = _make_stub_bin(tmp_path, [inst], cw_datapoints=[1.0, 2.0],
+                                                           ssh_pgrep_finds_runner=False, rsync_ok=True)
+    ssh_stub = bin_dir / "ssh"
+    ssh_stub.write_text(f"""#!/usr/bin/env bash
+echo "$*" >> "{ssh_log}"
+case "$*" in
+  *pgrep*) exit 255 ;;
+  *"if [ -d "*) echo has_raw ;;
+  *) exit 0 ;;
+esac
+""")
+    ssh_stub.chmod(ssh_stub.stat().st_mode | stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH)
+    _write_gpu_state(tmp_path, "i-aaa", tmp_path / "aws_key.pem")
+    res = _run(AWS_IDLE_STOP, [], bin_dir, tmp_path=tmp_path)
+    assert res.returncode == 0, res.stderr
+    assert "ec2 stop-instances" not in aws_log.read_text(), (
+        "stopped despite an INCONCLUSIVE (unreachable) runner check")
+    combined_log = (tmp_path / "aws_idle_stop.log").read_text()
+    assert "INCONCLUSIVE, treated as active" in combined_log
+    assert rsync_log.read_text() == "", (
+        "sync must never even have been attempted -- the outer idle() call must read 'keep'")
+
+
+def test_idle_stop_keeps_instance_when_recheck_runner_probe_is_unreachable(tmp_path):
+    # Same rc=255-vs-rc=1 fix, applied to the RE-CHECK right before stop. The first pgrep call (the original
+    # check, which is why the sync even starts) finds no runner (rc=1); every call after (the re-check) is
+    # UNREACHABLE (rc=255) -- must be treated as inconclusive (keep), never as "definitely no runner".
+    inst = _instance("i-aaa", "r7i.4xlarge", "running", hours_ago=1)
+    bin_dir, aws_log, ssh_log, rsync_log = _make_stub_bin(tmp_path, [inst], cw_datapoints=[1.0, 2.0],
+                                                           ssh_pgrep_finds_runner=False, rsync_ok=True)
+    counter = tmp_path / "pgrep_calls"
+    ssh_stub = bin_dir / "ssh"
+    ssh_stub.write_text(f"""#!/usr/bin/env bash
+echo "$*" >> "{ssh_log}"
+case "$*" in
+  *pgrep*)
+    n=$(cat "{counter}" 2>/dev/null || echo 0); n=$((n+1)); echo "$n" > "{counter}"
+    [ "$n" -eq 1 ] && exit 1   # first call (the original check): no runner found
+    exit 255                  # every call after (the re-check): ssh cannot connect
+    ;;
+  *"if [ -d "*) echo has_raw ;;
+  *) exit 0 ;;
+esac
+""")
+    ssh_stub.chmod(ssh_stub.stat().st_mode | stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH)
+    _write_gpu_state(tmp_path, "i-aaa", tmp_path / "aws_key.pem")
+    res = _run(AWS_IDLE_STOP, [], bin_dir, tmp_path=tmp_path)
+    assert res.returncode == 0, res.stderr
+    assert "ec2 stop-instances" not in aws_log.read_text(), (
+        "stopped despite an INCONCLUSIVE (unreachable) re-check")
+    assert rsync_log.read_text().strip() != "", "the sync must still have run (the original check said no runner)"
+    combined_log = (tmp_path / "aws_idle_stop.log").read_text()
+    assert "the re-check's ssh was INCONCLUSIVE (rc=255" in combined_log
+
+
+def test_idle_stop_takes_node_out_of_dispatch_during_the_sync_and_restores_it_after(tmp_path):
+    # STILL-OPEN ITEM (2026-09-25 review, fix round 3): "the node was not taken out of dispatch before the
+    # sync" -- the re-check right before stop only DETECTS a job dispatched during the sync window; this proves
+    # the node is actually taken OUT of tools/pool_autodispatch.sh's pool for the duration of the sync call
+    # itself (the rsync stub below snapshots the extra-nodes file the INSTANT it runs, so this is a genuine
+    # mid-sync observation, not an end-of-run inference), and that registration is restored once the decision
+    # is made.
+    inst = _instance("i-aaa", "r7i.4xlarge", "running", hours_ago=1)
+    bin_dir, aws_log, ssh_log, rsync_log = _make_stub_bin(tmp_path, [inst], cw_datapoints=[1.0, 2.0],
+                                                           ssh_pgrep_finds_runner=False, rsync_ok=True)
+    extra_nodes = tmp_path / "extra_nodes"
+    extra_nodes.write_text("gpu\n")
+    marker = tmp_path / "rsync_saw_extra_nodes"
+    rsync_stub = bin_dir / "rsync"
+    rsync_stub.write_text(f"""#!/usr/bin/env bash
+echo "$*" >> "{rsync_log}"
+if grep -qxF gpu "{extra_nodes}" 2>/dev/null; then echo PRESENT >> "{marker}"; else echo ABSENT >> "{marker}"; fi
+exit 0
+""")
+    rsync_stub.chmod(rsync_stub.stat().st_mode | stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH)
+    _write_gpu_state(tmp_path, "i-aaa", tmp_path / "aws_key.pem")
+    res = _run(AWS_IDLE_STOP, [], bin_dir, extra_env={"POOL_EXTRA_NODES_FILE": str(extra_nodes)}, tmp_path=tmp_path)
+    assert res.returncode == 0, res.stderr
+    assert "ec2 stop-instances" in aws_log.read_text()
+    assert marker.exists(), "rsync (the sync step) never ran -- test setup is wrong"
+    seen = marker.read_text().split()   # one "PRESENT"/"ABSENT" per candidate-directory rsync call
+    assert seen, "no rsync call observed the extra-nodes file -- test setup is wrong"
+    assert all(s == "ABSENT" for s in seen), (
+        f"the node was still registered for dispatch WHILE the sync was running -- never taken out of dispatch: {seen}")
+    assert extra_nodes.read_text().splitlines() == ["gpu"], "registration was not restored after the cycle"
+
+
+def test_idle_stop_restores_dispatch_registration_even_when_sync_fails(tmp_path):
+    # The pause/resume pair must run on EVERY exit from the sync+decision block, not just the "stopped" one --
+    # otherwise a failed sync would permanently strand the node out of dispatch until someone noticed by hand.
+    inst = _instance("i-aaa", "r7i.4xlarge", "running", hours_ago=1)
+    bin_dir, aws_log, ssh_log, rsync_log = _make_stub_bin(tmp_path, [inst], cw_datapoints=[1.0, 2.0],
+                                                           ssh_pgrep_finds_runner=False, rsync_ok=False)
+    extra_nodes = tmp_path / "extra_nodes"
+    extra_nodes.write_text("gpu\n")
+    _write_gpu_state(tmp_path, "i-aaa", tmp_path / "aws_key.pem")
+    res = _run(AWS_IDLE_STOP, [], bin_dir, extra_env={"POOL_EXTRA_NODES_FILE": str(extra_nodes)}, tmp_path=tmp_path)
+    assert res.returncode == 0, res.stderr
+    assert "ec2 stop-instances" not in aws_log.read_text()
+    assert extra_nodes.read_text().splitlines() == ["gpu"], (
+        "registration must be restored even when the sync fails")
 
 
 def test_idle_stop_order_rsync_strictly_before_stop_instances_via_one_shared_call_log(tmp_path):

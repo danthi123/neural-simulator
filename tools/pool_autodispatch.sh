@@ -77,8 +77,13 @@ _maybe_refresh_stale_aws_node() {   # _maybe_refresh_stale_aws_node <node> -- ca
     [ "$age" -lt "$STALE_REFRESH_RATE_S" ] && return 0         # rate-limited -- refreshed too recently
   fi
   touch "$mark" 2>/dev/null
+  # timeout 30 (2026-09-25 review, LOW/INFO): this runs INSIDE node_is_idle, on the MAIN dispatch loop, once per
+  # unreachable AWS-managed node per cycle -- a hung AWS API call inside `refresh` (describe-instances) had no
+  # bound at all and could stall dispatch for every OTHER node indefinitely. 30s comfortably covers `refresh`'s
+  # own normal (sub-few-second) runtime; a timed-out refresh changes nothing about THIS cycle's dispatch
+  # decision either way (best-effort/silent, exactly like any other refresh failure here).
   AWS_POOL_NODE_STATE_FILE="$state" POOL_SSH_CONFIG="$POOL_SSH_CONFIG" \
-    bash "$SELF_DIR/aws_pool_node.sh" refresh "$node" >>"${POOL_STALE_REFRESH_LOG:-/dev/null}" 2>&1
+    timeout 30 bash "$SELF_DIR/aws_pool_node.sh" refresh "$node" >>"${POOL_STALE_REFRESH_LOG:-/dev/null}" 2>&1
 }
 
 refresh_ssh_f() {
