@@ -1,0 +1,40 @@
+{
+ "run_id": "1790300030-1694992",
+ "runner": "research/runners/_open_ended_gated_turn_gate.py",
+ "argv": [
+  "/home/ubuntu/derisk-pool/revisions/b728777aec1287061eecc997fd3a32bbfc4c04a0/research/runners/_open_ended_gated_turn_gate.py",
+  "--session",
+  "--seed",
+  "42",
+  "--arm",
+  "intact_rebuild",
+  "--j",
+  "0"
+ ],
+ "git_sha": "b728777aec1287061eecc997fd3a32bbfc4c04a0",
+ "git_dirty": false,
+ "source_kind": "git_archive",
+ "source_manifest_sha256": "41378d084cc6c52e04b7720f79bd94bab37612f662d14615bce267320d516754",
+ "source_manifest_verified_at_start": true,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": true,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-25T01:33:50",
+ "env": {
+  "NUMEXPR_NUM_THREADS": "1",
+  "POOL_JOB_ID": "1790300029889293919-28448",
+  "OPENBLAS_NUM_THREADS": "1",
+  "POOL_JOB_MEM_GB": "7",
+  "OMP_NUM_THREADS": "1",
+  "MKL_NUM_THREADS": "1",
+  "SIM_BACKEND": "numpy",
+  "CUDA_VISIBLE_DEVICES": ""
+ },
+ "host": "ip-172-31-47-57",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": false,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_open_ended_gated/partA/oe_gated_s42_intact_rebuild_n0.json"
+}
